@@ -1,0 +1,15 @@
+# prevent multiple inclusion
+if(_@PROJECT_NAME@_CONFIG_INCLUDED)
+  return()
+endif()
+set(_@PROJECT_NAME@_CONFIG_INCLUDED TRUE)
+
+# output package information
+if(NOT @PROJECT_NAME@_FIND_QUIETLY)
+  message(STATUS "Found @PROJECT_NAME@: @PACKAGE_VERSION@ (${@PROJECT_NAME@_DIR})")
+endif()
+
+# add the local Modules directory to the modules path, so FindPoco.cmake is considered.
+message(STATUS "Setting OGRE_DIR to: '${@PROJECT_NAME@_DIR}/../../../opt/rviz_ogre_vendor/lib/OGRE/cmake'")
+# list(INSERT CMAKE_MODULE_PATH 0 "${@PROJECT_NAME@_DIR}/../../../opt/rviz_ogre_vendor/lib/OGRE/cmake")
+set(OGRE_DIR "${@PROJECT_NAME@_DIR}/../../../opt/rviz_ogre_vendor/lib/OGRE/cmake")
