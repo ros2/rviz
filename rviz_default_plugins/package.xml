@@ -1,8 +1,8 @@
 <package>
-  <name>rviz_plugin_api</name>
+  <name>rviz_default_plugins</name>
   <version>0.0.1</version>
   <description>
-    Plugin API's for rviz which can be used to extend its functionality.
+    Several default plugins for rviz to cover the basic functionality.
   </description>
   <maintainer email="william@osrfoundation.org">William Woodall</maintainer>
   <license>BSD</license>
@@ -86,4 +86,8 @@
   <run_depend>opengl</run_depend>
   <run_depend>liburdfdom-headers-dev</run_depend> -->
 
+  <export>
+    <!-- TODO(wjwwood): figure out how to have portable (ROS 1 and 2) plugin loading -->
+    <!-- <rviz plugin="${prefix}/plugin_description.xml"/> -->
+  </export>
 </package>
