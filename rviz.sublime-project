@@ -3,6 +3,12 @@
 	[
 		{
 			"path": "."
+		},
+		{
+			"path": "/Users/william/dev/ogre"
+		},
+		{
+			"path": "/Users/william/Downloads/QTOgreWindow2_1"
 		}
 	],
 	"settings":
@@ -14,24 +20,20 @@
 			"-I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include",
 			"-I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/include",
 			"-I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks",
-			// "-framework QtCore",
-			// "-framework QtGui",
-			// "-I/usr/local/Cellar/qt/4.8.6/lib/QtCore.framework/Versions/4/Headers",
-			// "-I/usr/local/Cellar/qt/4.8.6/lib/QtGui.framework/Versions/4/Headers",
-			"-I/usr/local/Cellar/qt5/5.5.1_2/include",
-			"-I/usr/local/Cellar/qt5/5.5.1_2/Frameworks/QtCore.framework/Versions/Current/Headers",
-			"-I/usr/local/Cellar/qt5/5.5.1_2/Frameworks/QtGui.framework/Versions/Current/Headers",
-			"-I/usr/local/Cellar/qt5/5.5.1_2/Frameworks/QtWidgets.framework/Versions/Current/Headers",
-			"-I/usr/local/Cellar/ogre-1.9/1.9.0/include",
-			"-I/usr/local/Cellar/ogre-1.9/1.9.0/include/OGRE",
-			"-I/usr/local/Cellar/ogre-1.9/1.9.0/include/OGRE/Overlay",
-			"-I/usr/local/opt/eigen/include/eigen3",
-			"-I/Users/william/rviz_ws/install_isolated/include",
-			"-I${folder:${project_path:rviz.sublime-project}}/src",
-			"-I${folder:${project_path:rviz.sublime-project}}/src/rviz",
-			"-DROS_PACKAGE_NAME=\"rviz\"",
-			"-Wno-deprecated-register",
-			"-Wno-unused-parameter",
+			"-I/usr/local/Cellar/qt/5.9.1/include",
+			"-I/usr/local/Cellar/qt/5.9.1/Frameworks/QtCore.framework/Versions/Current/Headers",
+			"-I/usr/local/Cellar/qt/5.9.1/Frameworks/QtGui.framework/Versions/Current/Headers",
+			"-I/usr/local/Cellar/qt/5.9.1/Frameworks/QtWidgets.framework/Versions/Current/Headers",
+			// "-I/usr/local/Cellar/ogre/1.10.7/include",
+			// "-I/usr/local/Cellar/ogre/1.10.7/include/OGRE",
+			// "-I/usr/local/Cellar/ogre/1.10.7/include/OGRE/Overlay",
+			// "-I/usr/local/opt/eigen/include/eigen3",
+			"-I/Users/william/rviz2_ws/install/opt/rviz_ogre_vendor/include",
+			"-I/Users/william/rviz2_ws/install/opt/rviz_ogre_vendor/include/OGRE",
+			"-I/Users/william/rviz2_ws/install/opt/rviz_ogre_vendor/include/OGRE/Overlay",
+			// "-I${folder:${project_path:rviz.sublime-project}}/src",
+			// "-I${folder:${project_path:rviz.sublime-project}}/src/rviz",
+			"-I${folder:${project_path:rviz.sublime-project}}/rviz_rendering/include"
 		]
 	}
 }
