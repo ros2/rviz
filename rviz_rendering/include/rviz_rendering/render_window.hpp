@@ -1,5 +1,4 @@
 /*
- * Copyright (c) 2012, Willow Garage, Inc.
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
@@ -28,56 +27,85 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_RENDERING__OGRE_LOGGING_HPP_
-#define RVIZ_RENDERING__OGRE_LOGGING_HPP_
+#ifndef RVIZ_RENDERING__RENDER_WINDOW_HPP_
+#define RVIZ_RENDERING__RENDER_WINDOW_HPP_
 
-#include <string>
+#include <QObject>
+#include <QWindow>
 
 namespace rviz_rendering
 {
 
-/// Convenience interface to Ogre logging.
-/**
- * This all-static class wraps Ogre::LogManager into 3 easy options:
- * no logging, standard out, or file logging.  The option-selection
- * calls (useStandardOut(), useLogFile(), and noLog() must be called
- * before configureLogging().  configureLogging(), in turn, must be
- * called before any Ogre::Root object is instantiated.
- * configureLogging() is called at the right time by the RenderSystem
- * constructor, so you generally won't need to call it explicitly.
- */
-class OgreLogging
+class RenderWindowImpl;
+
+/// QWindow on which a rviz rendering system draws.
+class RenderWindow : public QWindow
 {
+  Q_OBJECT
+
 public:
-  /// Configure Ogre to write output to the given log file name.
-  /**
-   * If file name is a relative path, it will be relative to
-   * the directory which is current when the program is run.  Default
-   * is "Ogre.log".
-   */
-  static
-  void
-  useLogFile(const std::string & filename = "Ogre.log");
+  explicit RenderWindow(QWindow * parent = Q_NULLPTR);
+  virtual ~RenderWindow();
 
-  /// Disable Ogre logging entirely, this is the default.
-  static
+  virtual
   void
-  noLog();
+  render(QPainter *painter);
 
-  /// Configure the Ogre::LogManager to give the currently selected behavior.
-  /**
-   * This must be called before Ogre::Root is instantiated!
-   */
-  static
+  virtual
   void
-  configureLogging();
+  render();
 
-private:
-  typedef enum { StandardOut, FileLogging, NoLogging } Preference;
-  static Preference preference_;
-  static std::string filename_;
+public slots:
+  virtual
+  void
+  renderLater();
+
+  virtual
+  void
+  renderNow();
+
+  // Used to capture keyboard and mouse events.
+  virtual
+  bool
+  eventFilter(QObject * target, QEvent * event) override;
+
+protected:
+  // virtual
+  // void
+  // keyPressEvent(QKeyEvent * key_event) override;
+
+  // virtual
+  // void
+  // keyReleaseEvent(QKeyEvent * key_event) override;
+
+  // virtual
+  // void
+  // mouseMoveEvent(QMouseEvent * mouse_event) override;
+
+  // virtual
+  // void
+  // wheelEvent(QWheelEvent * wheel_event) override;
+
+  // virtual
+  // void
+  // mousePressEvent(QMouseEvent * mouse_event) override;
+
+  // virtual
+  // void
+  // mouseReleaseEvent(QMouseEvent * mouse_event) override;
+
+  virtual
+  void
+  exposeEvent(QExposeEvent * expose_event) override;
+
+  virtual
+  bool
+  event(QEvent * event) override;
+
+  RenderWindowImpl * impl_;
 };
 
-}  // namespace rviz_rendering
+} // namespace rviz_rendering
 
-#endif // RVIZ_RENDERING__OGRE_LOGGING_HPP_
+#endif  // RVIZ_RENDERING__RENDER_WINDOW_HPP_
+

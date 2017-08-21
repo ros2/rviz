@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2011, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,87 +27,124 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef RENDER_SYSTEM_H
-#define RENDER_SYSTEM_H
+
+#ifndef RVIZ_RENDERING__RENDER_SYSTEM_HPP_
+#define RVIZ_RENDERING__RENDER_SYSTEM_HPP_
+
+#include <cstdint>
+
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Woverloaded-virtual"
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+# ifdef __clang__
+#  pragma clang diagnostic ignored "-Wdeprecated-register"
+#  pragma clang diagnostic ignored "-Wextra-semi"
+#  pragma clang diagnostic ignored "-Wkeyword-macro"
+# else
+#  pragma GCC diagnostic ignored "-Wunused-but-set-parameter"
+#  pragma GCC diagnostic ignored "-Wpedantic"
+# endif
+#endif
 
 #include <OgreRoot.h>
-#include <stdint.h>
+#include <OgreOverlaySystem.h>
 
-namespace Ogre
-{
-  class OverlaySystem;
-  class SceneManager;
-}
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
 
-namespace rviz
+namespace rviz_rendering
 {
 
 class RenderSystem
 {
 public:
-
-#if defined(Q_OS_MAC) || defined(Q_OS_WIN)
+#if defined(__APPLE__) || defined(_WIN32)
   typedef size_t WindowIDType;
 #else
   typedef unsigned long WindowIDType;
 #endif
 
-  static RenderSystem* get();
+  static
+  RenderSystem *
+  get();
 
-  Ogre::RenderWindow* makeRenderWindow(
+  Ogre::RenderWindow *
+  makeRenderWindow(
     WindowIDType window_id,
     unsigned int width,
     unsigned int height,
     double pixel_ratio = 1.0);
 
-  Ogre::Root* root() { return ogre_root_; }
+  Ogre::Root *
+  getOgreRoot();
 
   // Prepare a scene_manager to render overlays.
   // Needed for Ogre >= 1.9 to use fonts; does nothing for prior versions.
-  void prepareOverlays(Ogre::SceneManager* scene_manager);
+  void
+  prepareOverlays(Ogre::SceneManager * scene_manager);
 
-  // @brief return OpenGl Version as integer, e.g. 320 for OpenGl 3.20
-  int getGlVersion() { return gl_version_; }
+  /// return OpenGl Version as integer, e.g. 320 for OpenGl 3.20
+  int
+  getGlVersion();
 
-  // @brief return GLSL Version as integer, e.g. 150 for GLSL 1.50
-  int getGlslVersion() { return glsl_version_; }
+  /// return GLSL Version as integer, e.g. 150 for GLSL 1.50
+  int
+  getGlslVersion();
 
-  // @brief Disables the use of Anti Aliasing
-  static void disableAntiAliasing();
+  /// Disables the use of Anti Aliasing
+  static
+  void
+  disableAntiAliasing();
 
-  // @brief Force to use the provided OpenGL version on startup
-  static void forceGlVersion( int version );
+  /// Force to use the provided OpenGL version on startup
+  static
+  void
+  forceGlVersion(int version);
 
-  // @brief Disable stereo rendering even if supported in HW.
-  static void forceNoStereo();
+  /// Disable stereo rendering even if supported in HW.
+  static
+  void
+  forceNoStereo();
 
-  // @brief True if we can render stereo on this device.
-  bool isStereoSupported() { return stereo_supported_; }
+  /// True if we can render stereo on this device.
+  bool
+  isStereoSupported();
 
 private:
   RenderSystem();
-  void setupDummyWindowId();
-  void loadOgrePlugins();
+
+  void
+  setupDummyWindowId();
+
+  void
+  loadOgrePlugins();
 
   // helper for makeRenderWindow()
-  Ogre::RenderWindow* tryMakeRenderWindow(const std::string& name,
-                                          unsigned int width,
-                                          unsigned int height,
-                                          const Ogre::NameValuePairList* params,
-                                          int max_attempts);
+  Ogre::RenderWindow *
+  tryMakeRenderWindow(
+    const std::string & name,
+    unsigned int width,
+    unsigned int height,
+    const Ogre::NameValuePairList * params,
+    int max_attempts);
 
   // Find and configure the render system.
-  void setupRenderSystem();
-  void setupResources();
-  void detectGlVersion();
+  void
+  setupRenderSystem();
+  void
+  setupResources();
+  void
+  detectGlVersion();
 
-  static RenderSystem* instance_;
+  static RenderSystem * instance_;
 
   // ID for a dummy window of size 1x1, used to keep Ogre happy.
   WindowIDType dummy_window_id_;
 
-  Ogre::Root* ogre_root_;
-  Ogre::OverlaySystem* ogre_overlay_system_;
+  Ogre::Root * ogre_root_;
+  Ogre::OverlaySystem * ogre_overlay_system_;
 
   int gl_version_;
   int glsl_version_;
@@ -116,6 +154,6 @@ private:
   static bool force_no_stereo_;
 };
 
-} // end namespace rviz
+} // namespace rviz_rendering
 
-#endif // RENDER_SYSTEM_H
+#endif  // RVIZ_RENDERING__RENDER_SYSTEM_HPP_

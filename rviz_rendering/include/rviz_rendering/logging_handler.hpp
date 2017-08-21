@@ -1,5 +1,4 @@
 /*
- * Copyright (c) 2012, Willow Garage, Inc.
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
@@ -28,56 +27,20 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_RENDERING__OGRE_LOGGING_HPP_
-#define RVIZ_RENDERING__OGRE_LOGGING_HPP_
+#ifndef RVIZ_RENDERING__LOGGING_HANDLER_HPP_
+#define RVIZ_RENDERING__LOGGING_HANDLER_HPP_
 
+#include <functional>
 #include <string>
 
 namespace rviz_rendering
 {
 
-/// Convenience interface to Ogre logging.
-/**
- * This all-static class wraps Ogre::LogManager into 3 easy options:
- * no logging, standard out, or file logging.  The option-selection
- * calls (useStandardOut(), useLogFile(), and noLog() must be called
- * before configureLogging().  configureLogging(), in turn, must be
- * called before any Ogre::Root object is instantiated.
- * configureLogging() is called at the right time by the RenderSystem
- * constructor, so you generally won't need to call it explicitly.
- */
-class OgreLogging
-{
-public:
-  /// Configure Ogre to write output to the given log file name.
-  /**
-   * If file name is a relative path, it will be relative to
-   * the directory which is current when the program is run.  Default
-   * is "Ogre.log".
-   */
-  static
-  void
-  useLogFile(const std::string & filename = "Ogre.log");
+using LoggingHandler = std::function<
+  void (const std::string & message, const std::string & file_name, size_t line_number)
+>;
 
-  /// Disable Ogre logging entirely, this is the default.
-  static
-  void
-  noLog();
+} // namespace rviz_rendering
 
-  /// Configure the Ogre::LogManager to give the currently selected behavior.
-  /**
-   * This must be called before Ogre::Root is instantiated!
-   */
-  static
-  void
-  configureLogging();
+#endif  // RVIZ_RENDERING__LOGGING_HANDLER_HPP_
 
-private:
-  typedef enum { StandardOut, FileLogging, NoLogging } Preference;
-  static Preference preference_;
-  static std::string filename_;
-};
-
-}  // namespace rviz_rendering
-
-#endif // RVIZ_RENDERING__OGRE_LOGGING_HPP_

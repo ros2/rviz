@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2011, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,33 +28,38 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "ogre_helpers/render_widget.h"
-#include "ogre_helpers/render_system.h"
+#include "render_widget.hpp"
 
-#include <OgreRenderWindow.h>
-
-#include <QtGlobal>
 #include <QApplication>
 #include <QMoveEvent>
 #include <QPaintEvent>
 #include <QShowEvent>
+#include <QtGlobal>
 #include <QVBoxLayout>
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 #include <QWindow>
+
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
 
-namespace rviz
+#include <OgreRenderWindow.h>
+
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
+
+#include "render_system.hpp"
+
+namespace rviz_rendering
 {
 
-RenderWidget::RenderWidget( RenderSystem* render_system, QWidget *parent )
-  : QWidget( parent )
-  , render_system_( render_system )
-  , render_window_( 0 )
+RenderWidget::RenderWidget(RenderSystem * render_system, QWidget * parent)
+: QWidget(parent), render_system_(render_system), render_window_(nullptr)
 {
-  setAttribute(Qt::WA_OpaquePaintEvent,true);
-  setAttribute(Qt::WA_PaintOnScreen,true);
+  setAttribute(Qt::WA_OpaquePaintEvent, true);
+  setAttribute(Qt::WA_PaintOnScreen, true);
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
   // It is not clear to me why, but having this frame sub-widget
   // inside the main widget makes an important difference (under X at
   // least).  Without the frame and using this widget's winId()
@@ -66,26 +72,17 @@ RenderWidget::RenderWidget( RenderSystem* render_system, QWidget *parent )
   this->renderFrame->setFrameShape(QFrame::Box);
   this->renderFrame->show();
 
-  QVBoxLayout *mainLayout = new QVBoxLayout;
-  mainLayout->setContentsMargins( 0, 0, 0, 0 );
+  QVBoxLayout * mainLayout = new QVBoxLayout;
+  mainLayout->setContentsMargins(0, 0, 0, 0);
   mainLayout->addWidget(this->renderFrame);
   this->setLayout(mainLayout);
-#endif
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-  rviz::RenderSystem::WindowIDType win_id = this->renderFrame->winId();
-#else
-  rviz::RenderSystem::WindowIDType win_id = this->winId();
-#endif
+  rviz_rendering::RenderSystem::WindowIDType win_id = this->winId();
   QApplication::flush();
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-  QApplication::syncX();
-  double pixel_ratio = 1.0;
-#else
   QWindow* window = windowHandle();
   double pixel_ratio = window ? window->devicePixelRatio() : 1.0;
-#endif
+
   render_window_ = render_system_->makeRenderWindow(win_id, width(), height(), pixel_ratio);
 }
 
@@ -93,14 +90,21 @@ RenderWidget::~RenderWidget()
 {
   if( render_window_ )
   {
-    render_window_->removeViewport( 0 );
+    render_window_->removeViewport(0);
     render_window_->destroy();
   }
 
   render_window_ = 0;
 }
 
-void RenderWidget::moveEvent(QMoveEvent *e)
+Ogre::RenderWindow *
+RenderWidget::getRenderWindow()
+{
+  return render_window_;
+}
+
+void
+RenderWidget::moveEvent(QMoveEvent *e)
 {
   QWidget::moveEvent(e);
 
@@ -110,26 +114,35 @@ void RenderWidget::moveEvent(QMoveEvent *e)
   }
 }
 
-void RenderWidget::paintEvent(QPaintEvent *e)
+void
+RenderWidget::paintEvent(QPaintEvent *e)
 {
-  if( render_window_ )
+  if(render_window_)
   {
     render_window_->update();
   }
   e->accept();
 }
 
-void RenderWidget::resizeEvent(QResizeEvent *e)
+void
+RenderWidget::resizeEvent(QResizeEvent *e)
 {
-  if( render_window_ )
+  (void)e;
+  if(render_window_)
   {
     // render_window_->writeContentsToFile() (used in
     // VisualizationFrame::onSaveImage()) does not work right for
     // window with an odd width, so here I just always force it to be
     // even.
-    render_window_->resize( width() + (width() % 2), height() );
+    render_window_->resize(width() + (width() % 2), height());
     render_window_->windowMovedOrResized();
   }
 }
 
-} // end namespace rviz
+QPaintEngine *
+RenderWidget::paintEngine() const
+{
+  return 0;
+}
+
+}  // namespace rviz_rendering

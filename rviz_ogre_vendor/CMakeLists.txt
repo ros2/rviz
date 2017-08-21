@@ -22,7 +22,7 @@ macro(build_ogre)
   # These next lines can be used to disable some of the components or plugins for OGRE
   # list(APPEND extra_cmake_args "-DOGRE_BUILD_COMPONENT_BITES:BOOL=OFF")
   # list(APPEND extra_cmake_args "-DOGRE_BUILD_COMPONENT_HLMS:BOOL=ON")
-  # list(APPEND extra_cmake_args "-D...")
+  list(APPEND extra_cmake_args "-DOGRE_CONFIG_ENABLE_ZIP:BOOL=OFF")
 
   include(ExternalProject)
   ExternalProject_Add(ogre-1.10.7

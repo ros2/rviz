@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2011, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,44 +27,53 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef RENDER_WIDGET_H
-#define RENDER_WIDGET_H
+#ifndef RVIZ_RENDERING__RENDER_WIDGET_HPP_
+#define RVIZ_RENDERING__RENDER_WIDGET_HPP_
 
 #include <QWidget>
 #include <QFrame>
+
+#include "render_system.hpp"
 
 namespace Ogre
 {
 class RenderWindow;
 }
 
-namespace rviz
+namespace rviz_rendering
 {
 
-class RenderSystem;
-
-class RenderWidget: public QWidget
+class RenderWidget : public QWidget
 {
 public:
-  RenderWidget( RenderSystem* render_system, QWidget *parent = 0 );
+  RenderWidget(RenderSystem * render_system, QWidget * parent = 0);
   virtual ~RenderWidget();
-  Ogre::RenderWindow* getRenderWindow() { return render_window_; }
+
+  Ogre::RenderWindow *
+  getRenderWindow();
 
 protected:
-  virtual void moveEvent(QMoveEvent *e);
-  virtual void paintEvent(QPaintEvent *e);
-  virtual void resizeEvent(QResizeEvent *e);
+  virtual
+  void
+  moveEvent(QMoveEvent * e);
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-  QPaintEngine *paintEngine() const { return 0; }
-#endif
+  virtual
+  void
+  paintEvent(QPaintEvent * e);
 
-  RenderSystem* render_system_;
-  Ogre::RenderWindow* render_window_;
+  virtual
+  void
+  resizeEvent(QResizeEvent * e);
 
-  QFrame* renderFrame;
+  QPaintEngine *
+  paintEngine() const;
+
+  RenderSystem * render_system_;
+  Ogre::RenderWindow * render_window_;
+
+  QFrame * renderFrame;
 };
 
-} // end namespace rviz
+}  // namespace rviz_rendering
 
-#endif // RENDER_WIDGET_H
+#endif  // RVIZ_RENDERING__RENDER_WIDGET_HPP_

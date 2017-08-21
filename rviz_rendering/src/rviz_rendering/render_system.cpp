@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2011, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,160 +28,172 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <QMetaType>
+#include "render_system.hpp"
 
-// This is required for QT_MAC_USE_COCOA to be set
-#include <QtCore/qglobal.h>
+#include <rviz_rendering/logging.hpp>
+#include <rviz_rendering/resource_config.hpp>
 
-#include <QMoveEvent>
-
-#ifndef Q_OS_MAC
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <GL/glx.h>
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
-
-// X.h #defines CursorShape to be "0".  Qt uses CursorShape in normal
-// C++ way.  This wasn't an issue until ogre_logging.h (below)
-// introduced a #include of <QString>.
-#ifdef CursorShape
-#undef CursorShape
-#endif
-
-#include <ros/package.h> // This dependency should be moved out of here, it is just used for a search path.
-#include <ros/console.h>
 
 #include <OgreRenderWindow.h>
-#include <OgreSceneManager.h>
-#if ((OGRE_VERSION_MAJOR == 1 && OGRE_VERSION_MINOR >= 9) || OGRE_VERSION_MAJOR >= 2 )
-#include <OgreOverlaySystem.h>
+
+#ifndef _WIN32
+# pragma GCC diagnostic pop
 #endif
 
-#include "rviz/env_config.h"
-#include "rviz/ogre_helpers/ogre_logging.h"
+#include "ogre_logging.hpp"
 
-#include "rviz/ogre_helpers/render_system.h"
-
-#include <QMessageBox>
-
-namespace rviz
+namespace rviz_rendering
 {
 
-RenderSystem* RenderSystem::instance_ = 0;
+RenderSystem * RenderSystem::instance_ = 0;
 int RenderSystem::force_gl_version_ = 0;
 bool RenderSystem::use_anti_aliasing_ = true;
 bool RenderSystem::force_no_stereo_ = false;
 
-RenderSystem* RenderSystem::get()
+RenderSystem *
+RenderSystem::get()
 {
-  if( instance_ == 0 )
+  if (instance_ == 0)
   {
+    rviz_rendering::OgreLogging::configureLogging();
     instance_ = new RenderSystem();
   }
   return instance_;
 }
 
-void RenderSystem::forceGlVersion( int version )
+Ogre::Root *
+RenderSystem::getOgreRoot()
+{
+  return ogre_root_;
+}
+
+int
+RenderSystem::getGlVersion()
+{
+  return gl_version_;
+}
+
+int
+RenderSystem::getGlslVersion()
+{
+  return glsl_version_;
+}
+
+void
+RenderSystem::forceGlVersion(int version)
 {
   force_gl_version_ = version;
-  ROS_INFO_STREAM( "Forcing OpenGl version " << (float)version / 100.0 << "." );
+  RVIZ_RENDERING_LOG_INFO_STREAM("Forcing OpenGl version " << version / 100.0 << ".");
 }
 
-void RenderSystem::disableAntiAliasing()
+void
+RenderSystem::disableAntiAliasing()
 {
   use_anti_aliasing_ = false;
-  ROS_INFO("Disabling Anti-Aliasing");
+  RVIZ_RENDERING_LOG_INFO("Disabling Anti-Aliasing");
 }
 
-void RenderSystem::forceNoStereo()
+bool
+RenderSystem::isStereoSupported()
+{
+  return stereo_supported_;
+}
+
+void
+RenderSystem::forceNoStereo()
 {
   force_no_stereo_ = true;
-  ROS_INFO("Forcing Stereo OFF");
+  RVIZ_RENDERING_LOG_INFO("Forcing Stereo OFF");
 }
 
 RenderSystem::RenderSystem()
-: ogre_overlay_system_(NULL)
-, stereo_supported_(false)
+: ogre_overlay_system_(nullptr), stereo_supported_(false)
 {
   OgreLogging::configureLogging();
 
-  std::string rviz_path = ros::package::getPath(ROS_PACKAGE_NAME);
-
   setupDummyWindowId();
-  ogre_root_ = new Ogre::Root( rviz_path+"/ogre_media/plugins.cfg" );
+  ogre_root_ = new Ogre::Root(get_resource_directory() + "/ogre_media/plugins.cfg");
 #if ((OGRE_VERSION_MAJOR == 1 && OGRE_VERSION_MINOR >= 9) || OGRE_VERSION_MAJOR >= 2 )
   ogre_overlay_system_ = new Ogre::OverlaySystem();
 #endif
   loadOgrePlugins();
   setupRenderSystem();
   ogre_root_->initialise(false);
-  makeRenderWindow( dummy_window_id_, 1, 1 );
+  makeRenderWindow(dummy_window_id_, 1, 1);
   detectGlVersion();
   setupResources();
   Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 }
 
-void RenderSystem::prepareOverlays(Ogre::SceneManager* scene_manager)
+void
+RenderSystem::prepareOverlays(Ogre::SceneManager* scene_manager)
 {
 #if ((OGRE_VERSION_MAJOR == 1 && OGRE_VERSION_MINOR >= 9) || OGRE_VERSION_MAJOR >= 2 )
-  if (ogre_overlay_system_)
+  if (ogre_overlay_system_) {
     scene_manager->addRenderQueueListener(ogre_overlay_system_);
-#endif
-}
-
-void RenderSystem::setupDummyWindowId()
-{
-#ifdef Q_OS_MAC
-  dummy_window_id_ = 0;
-#else
-  Display *display = XOpenDisplay(0);
-  assert( display );
-
-  int screen = DefaultScreen( display );
-
-  int attribList[] = { GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 16,
-                       GLX_STENCIL_SIZE, 8, None };
-
-  XVisualInfo *visual = glXChooseVisual( display, screen, (int*)attribList );
-
-  dummy_window_id_ = XCreateSimpleWindow( display,
-                                          RootWindow( display, screen ),
-                                          0, 0, 1, 1, 0, 0, 0 );
-
-  GLXContext context = glXCreateContext( display, visual, NULL, 1 );
-
-  glXMakeCurrent( display, dummy_window_id_, context );
-#endif
-}
-
-void RenderSystem::loadOgrePlugins()
-{
-  std::string plugin_prefix = get_ogre_plugin_path() + "/";
-#ifdef Q_OS_MAC
-  plugin_prefix += "lib";
-#endif
-  ogre_root_->loadPlugin( plugin_prefix + "RenderSystem_GL" );
-  ogre_root_->loadPlugin( plugin_prefix + "Plugin_OctreeSceneManager" );
-  ogre_root_->loadPlugin( plugin_prefix + "Plugin_ParticleFX" );
-}
-
-void RenderSystem::detectGlVersion()
-{
-  if ( force_gl_version_ )
-  {
-    gl_version_ = force_gl_version_;
   }
-  else
-  {
-    Ogre::RenderSystem *renderSys = ogre_root_->getRenderSystem();
+#endif
+}
+
+void
+RenderSystem::setupDummyWindowId()
+{
+// #ifdef Q_OS_MAC
+//   dummy_window_id_ = 0;
+// #else
+//   Display *display = XOpenDisplay(0);
+//   assert( display );
+
+//   int screen = DefaultScreen( display );
+
+//   int attribList[] = { GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 16,
+//                        GLX_STENCIL_SIZE, 8, None };
+
+//   XVisualInfo *visual = glXChooseVisual( display, screen, (int*)attribList );
+
+//   dummy_window_id_ = XCreateSimpleWindow( display,
+//                                           RootWindow( display, screen ),
+//                                           0, 0, 1, 1, 0, 0, 0 );
+
+//   GLXContext context = glXCreateContext( display, visual, nullptr, 1 );
+
+//   glXMakeCurrent( display, dummy_window_id_, context );
+// #endif
+}
+
+void
+RenderSystem::loadOgrePlugins()
+{
+  std::string plugin_prefix = get_ogre_plugin_directory() + "/";
+
+// #if __APPLE__
+  ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL");
+// #else
+  // ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL3Plus");
+// #endif
+  // ogre_root_->loadPlugin(plugin_prefix + "Plugin_OctreeSceneManager");
+  // ogre_root_->loadPlugin(plugin_prefix + "Plugin_ParticleFX");
+}
+
+void
+RenderSystem::detectGlVersion()
+{
+  if (force_gl_version_) {
+    gl_version_ = force_gl_version_;
+  } else {
+    Ogre::RenderSystem * renderSys = ogre_root_->getRenderSystem();
     renderSys->createRenderSystemCapabilities();
-    const Ogre::RenderSystemCapabilities* caps = renderSys->getCapabilities();
+    const Ogre::RenderSystemCapabilities * caps = renderSys->getCapabilities();
     int major = caps->getDriverVersion().major;
     int minor = caps->getDriverVersion().minor;
-    gl_version_ = major * 100 + minor*10;
+    gl_version_ = major * 100 + minor * 10;
   }
 
-  switch ( gl_version_ )
+  switch (gl_version_)
   {
     case 200:
       glsl_version_ = 110;
@@ -198,121 +211,123 @@ void RenderSystem::detectGlVersion()
       glsl_version_ = 150;
       break;
     default:
-      if ( gl_version_ > 320 )
-      {
+      if (gl_version_ > 320) {
         glsl_version_  = gl_version_;
-      }
-      else
-      {
+      } else {
         glsl_version_ = 0;
       }
       break;
   }
-  ROS_INFO_STREAM( "OpenGl version: " << (float)gl_version_ / 100.0 << " (GLSL " << (float)glsl_version_ / 100.0 << ")." );
+  RVIZ_RENDERING_LOG_INFO_STREAM(
+    "OpenGl version: " << gl_version_ / 100.0 << " (GLSL " << glsl_version_ / 100.0 << ")"
+  );
 }
 
-void RenderSystem::setupRenderSystem()
+void
+RenderSystem::setupRenderSystem()
 {
-  Ogre::RenderSystem *renderSys;
-  const Ogre::RenderSystemList *rsList;
-
-  // Get the list of available renderers.
-#if OGRE_VERSION_MAJOR == 1 && OGRE_VERSION_MINOR == 6
-  rsList = ogre_root_->getAvailableRenderers();
-#else
-  rsList = &(ogre_root_->getAvailableRenderers());
-#endif
+  Ogre::RenderSystem * render_system;
 
   // Look for the OpenGL one, which we require.
-  renderSys = NULL;
-  for( unsigned int i = 0; i < rsList->size(); i++ )
-  {
-    renderSys = rsList->at( i );
-    if( renderSys->getName().compare("OpenGL Rendering Subsystem")== 0 )
-    {
-      break;
+  render_system = nullptr;
+  std::string renderers_msg =
+    "Available Renderers(" + std::to_string(ogre_root_->getAvailableRenderers().size()) + "): ";
+  for (const auto renderer : ogre_root_->getAvailableRenderers()) {
+    renderers_msg += renderer->getName() + ",";
+  }
+  RVIZ_RENDERING_LOG_DEBUG(renderers_msg.substr(0, renderers_msg.length() - 1));
+  std::vector<std::string> preferred_renderer_list = {
+    "OpenGL 3+",
+    "OpenGL"
+  };
+  for (auto renderer_token : preferred_renderer_list) {
+    for (const auto renderer : ogre_root_->getAvailableRenderers()) {
+      if (renderer->getName().find(renderer_token) != Ogre::String::npos) {
+        render_system = renderer;
+        break;
+      }
     }
   }
 
-  if( renderSys == NULL )
-  {
-    throw std::runtime_error( "Could not find the opengl rendering subsystem!\n" );
+  if (render_system == nullptr) {
+    throw std::runtime_error("Could not find the opengl rendering subsystem!");
   }
 
-  // We operate in windowed mode
-  renderSys->setConfigOption("Full Screen","No");
-
-  /// We used to allow the user to set the RTT mode to PBuffer, FBO, or Copy.
-  ///   Copy is slow, and there doesn't seem to be a good reason to use it
-  ///   PBuffer limits the size of the renderable area of the RTT to the
-  ///           size of the first window created.
-  ///   FBO seem to be the only good option
-  //  renderSys->setConfigOption("RTT Preferred Mode", "FBO");
+  // We operate in windowed mode by default.
+  render_system->setConfigOption("Full Screen", "No");
 
   // Set the Full Screen Anti-Aliasing factor.
   if (use_anti_aliasing_) {
-    renderSys->setConfigOption("FSAA", "4");
+    render_system->setConfigOption("FSAA", "4");
   }
 
-  ogre_root_->setRenderSystem(renderSys);
+  ogre_root_->setRenderSystem(render_system);
 }
 
-void RenderSystem::setupResources()
+void
+RenderSystem::setupResources()
 {
-  std::string rviz_path = ros::package::getPath(ROS_PACKAGE_NAME);
-  Ogre::ResourceGroupManager::getSingleton().addResourceLocation( rviz_path + "/ogre_media", "FileSystem", ROS_PACKAGE_NAME );
-  Ogre::ResourceGroupManager::getSingleton().addResourceLocation( rviz_path + "/ogre_media/textures", "FileSystem", ROS_PACKAGE_NAME );
-  Ogre::ResourceGroupManager::getSingleton().addResourceLocation( rviz_path + "/ogre_media/fonts", "FileSystem", ROS_PACKAGE_NAME );
-  Ogre::ResourceGroupManager::getSingleton().addResourceLocation( rviz_path + "/ogre_media/models", "FileSystem", ROS_PACKAGE_NAME );
-  Ogre::ResourceGroupManager::getSingleton().addResourceLocation( rviz_path + "/ogre_media/materials", "FileSystem", ROS_PACKAGE_NAME );
-  Ogre::ResourceGroupManager::getSingleton().addResourceLocation( rviz_path + "/ogre_media/materials/scripts", "FileSystem", ROS_PACKAGE_NAME );
-  Ogre::ResourceGroupManager::getSingleton().addResourceLocation( rviz_path + "/ogre_media/materials/glsl120", "FileSystem", ROS_PACKAGE_NAME );
-  Ogre::ResourceGroupManager::getSingleton().addResourceLocation( rviz_path + "/ogre_media/materials/glsl120/nogp", "FileSystem", ROS_PACKAGE_NAME );
+  std::string rviz_path = get_resource_directory();
+  Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+    rviz_path + "/ogre_media", "FileSystem", "rviz_rendering");
+  Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+    rviz_path + "/ogre_media/textures", "FileSystem", "rviz_rendering");
+  Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+    rviz_path + "/ogre_media/fonts", "FileSystem", "rviz_rendering");
+  Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+    rviz_path + "/ogre_media/models", "FileSystem", "rviz_rendering");
+  Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+    rviz_path + "/ogre_media/materials", "FileSystem", "rviz_rendering");
+  Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+    rviz_path + "/ogre_media/materials/scripts", "FileSystem", "rviz_rendering");
+  Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+    rviz_path + "/ogre_media/materials/glsl120", "FileSystem", "rviz_rendering");
+  Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+    rviz_path + "/ogre_media/materials/glsl120/nogp", "FileSystem", "rviz_rendering");
   // Add resources that depend on a specific glsl version.
   // Unfortunately, Ogre doesn't have a notion of glsl versions so we can't go
   // the 'official' way of defining multiple schemes per material and let Ogre decide which one to use.
-  if ( getGlslVersion() >= 150  )
-  {
-    Ogre::ResourceGroupManager::getSingleton().addResourceLocation( rviz_path + "/ogre_media/materials/glsl150", "FileSystem", ROS_PACKAGE_NAME );
-    Ogre::ResourceGroupManager::getSingleton().addResourceLocation( rviz_path + "/ogre_media/materials/scripts150", "FileSystem", ROS_PACKAGE_NAME );
-  }
-  else if ( getGlslVersion() >= 120  )
-  {
-    Ogre::ResourceGroupManager::getSingleton().addResourceLocation( rviz_path + "/ogre_media/materials/scripts120", "FileSystem", ROS_PACKAGE_NAME );
-  }
-  else
-  {
-    std::string s = "Your graphics driver does not support OpenGL 2.1. Please enable software rendering before running RViz (e.g. type 'export LIBGL_ALWAYS_SOFTWARE=1').";
-    QMessageBox msgBox;
-    msgBox.setText(s.c_str());
-    msgBox.exec();
-    throw std::runtime_error( s );
+  if (getGlslVersion() >= 150) {
+    Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+      rviz_path + "/ogre_media/materials/glsl150", "FileSystem", "rviz_rendering");
+    Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+      rviz_path + "/ogre_media/materials/scripts150", "FileSystem", "rviz_rendering");
+  } else if (getGlslVersion() >= 120) {
+    Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+      rviz_path + "/ogre_media/materials/scripts120", "FileSystem", "rviz_rendering");
+  } else {
+    std::string s =
+      "Your graphics driver does not support OpenGL 2.1. "
+      "Please enable software rendering before running RViz "
+      "(e.g. type 'export LIBGL_ALWAYS_SOFTWARE=1').";
+    RVIZ_RENDERING_LOG_ERROR(s);
+    throw std::runtime_error(s);
   }
 
   // Add paths exported to the "media_export" package.
-  std::vector<std::string> media_paths;
-  ros::package::getPlugins( "media_export", "ogre_media_path", media_paths );
-  std::string delim(":");
-  for( std::vector<std::string>::iterator iter = media_paths.begin(); iter != media_paths.end(); ++iter )
-  {
-    if( !iter->empty() )
-    {
-      std::string path;
-      int pos1 = 0;
-      int pos2 = iter->find(delim);
-      while( pos2 != (int)std::string::npos )
-      {
-        path = iter->substr( pos1, pos2 - pos1 );
-        ROS_DEBUG("adding resource location: '%s'\n", path.c_str());
-        Ogre::ResourceGroupManager::getSingleton().addResourceLocation( path, "FileSystem", ROS_PACKAGE_NAME );
-        pos1 = pos2 + 1;
-        pos2 = iter->find( delim, pos2 + 1 );
-      }
-      path = iter->substr( pos1, iter->size() - pos1 );
-      ROS_DEBUG("adding resource location: '%s'\n", path.c_str());
-      Ogre::ResourceGroupManager::getSingleton().addResourceLocation( path, "FileSystem", ROS_PACKAGE_NAME );
-    }
-  }
+  // std::vector<std::string> media_paths;
+  // ros::package::getPlugins( "media_export", "ogre_media_path", media_paths );
+  // std::string delim(":");
+  // for( std::vector<std::string>::iterator iter = media_paths.begin(); iter != media_paths.end(); ++iter )
+  // {
+  //   if( !iter->empty() )
+  //   {
+  //     std::string path;
+  //     int pos1 = 0;
+  //     int pos2 = iter->find(delim);
+  //     while( pos2 != (int)std::string::npos )
+  //     {
+  //       path = iter->substr( pos1, pos2 - pos1 );
+  //       ROS_DEBUG("adding resource location: '%s'\n", path.c_str());
+  //       Ogre::ResourceGroupManager::getSingleton().addResourceLocation( path, "FileSystem", "rviz_rendering");
+  //       pos1 = pos2 + 1;
+  //       pos2 = iter->find( delim, pos2 + 1 );
+  //     }
+  //     path = iter->substr( pos1, iter->size() - pos1 );
+  //     ROS_DEBUG("adding resource location: '%s'\n", path.c_str());
+  //     Ogre::ResourceGroupManager::getSingleton().addResourceLocation( path, "FileSystem", "rviz_rendering");
+  //   }
+  // }
 }
 
 // On Intel graphics chips under X11, there sometimes comes a
@@ -323,42 +338,45 @@ void RenderSystem::setupResources()
 // (which is what the problem looks like when it happens) and just try
 // over and over again until it works (or until 100 failures, which
 // makes it seem like it is a different bug).
-static bool x_baddrawable_error = false;
-#ifdef Q_WS_X11
-static int (*old_error_handler)( Display*, XErrorEvent* );
-int checkBadDrawable( Display* display, XErrorEvent* error )
-{
-  if( error->error_code == BadDrawable &&
-      error->request_code == 136 &&
-      error->minor_code == 3 )
-  {
-    x_baddrawable_error = true;
-    return 0;
-  }
-  else
-  {
-    // If the error does not exactly match the one from the driver bug,
-    // handle it the normal way so we see it.
-    return old_error_handler( display, error );
-  }
-}
-#endif // Q_WS_X11
+// static bool x_baddrawable_error = false;
+// #ifdef Q_WS_X11
+// static int (*old_error_handler)( Display*, XErrorEvent* );
+// int checkBadDrawable( Display* display, XErrorEvent* error )
+// {
+//   if( error->error_code == BadDrawable &&
+//       error->request_code == 136 &&
+//       error->minor_code == 3 )
+//   {
+//     x_baddrawable_error = true;
+//     return 0;
+//   }
+//   else
+//   {
+//     // If the error does not exactly match the one from the driver bug,
+//     // handle it the normal way so we see it.
+//     return old_error_handler( display, error );
+//   }
+// }
+// #endif // Q_WS_X11
 
-Ogre::RenderWindow* RenderSystem::makeRenderWindow(
+Ogre::RenderWindow *
+RenderSystem::makeRenderWindow(
   WindowIDType window_id,
   unsigned int width,
   unsigned int height,
   double pixel_ratio)
 {
-  static int windowCounter = 0; // Every RenderWindow needs a unique name, oy.
+  static int window_counter = 0;  // Every RenderWindow needs a unique name, oy.
 
   Ogre::NameValuePairList params;
-  Ogre::RenderWindow *window = NULL;
+  Ogre::RenderWindow * window = nullptr;
+
+  params["currentGLContext"] = Ogre::String("false");
 
   params["externalWindowHandle"] = Ogre::StringConverter::toString(window_id);
   params["parentWindowHandle"] = Ogre::StringConverter::toString(window_id);
 
-  params["externalGLControl"] = true;
+  // params["externalGLControl"] = Ogre::String("true");
 
   // Enable antialiasing
   if (use_anti_aliasing_) {
@@ -366,14 +384,14 @@ Ogre::RenderWindow* RenderSystem::makeRenderWindow(
   }
 
 // Set the macAPI for Ogre based on the Qt implementation
-#if defined(Q_OS_MAC)
+#if __APPLE__
 	params["macAPI"] = "cocoa";
 	params["macAPICocoaUseNSView"] = "true";
 #endif
   params["contentScalingFactor"] = std::to_string(pixel_ratio);
 
   std::ostringstream stream;
-  stream << "OgreWindow(" << windowCounter++ << ")";
+  stream << "OgreWindow(" << window_counter++ << ")";
 
 
   // don't bother trying stereo if Ogre does not support it.
@@ -383,99 +401,90 @@ Ogre::RenderWindow* RenderSystem::makeRenderWindow(
 
   // attempt to create a stereo window
   bool is_stereo = false;
-  if (!force_no_stereo_)
-  {
+  if (!force_no_stereo_) {
     params["stereoMode"] = "Frame Sequential";
-    window = tryMakeRenderWindow( stream.str(), width, height, &params, 100);
+    window = tryMakeRenderWindow(stream.str(), width, height, &params, 100);
     params.erase("stereoMode");
 
-    if (window)
-    {
+    if (window) {
 #if OGRE_STEREO_ENABLE
       is_stereo = window->isStereoEnabled();
 #endif
-      if (!is_stereo)
-      {
+      if (!is_stereo) {
         // Created a non-stereo window.  Discard it and try again (below)
         // without the stereo parameter.
         ogre_root_->detachRenderTarget(window);
         window->destroy();
-        window = NULL;
+        window = nullptr;
         stream << "x";
         is_stereo = false;
       }
     }
   }
 
-  if ( window == NULL )
-  {
-    window = tryMakeRenderWindow( stream.str(), width, height, &params, 100);
+  if (window == nullptr) {
+    window = tryMakeRenderWindow(stream.str(), width, height, &params, 100);
   }
 
-  if( window == NULL )
-  {
-    ROS_ERROR( "Unable to create the rendering window after 100 tries." );
-    assert(false);
+  if (window == nullptr) {
+    const char * msg = "Unable to create the rendering window after 100 tries";
+    RVIZ_RENDERING_LOG_ERROR(msg);
+    throw std::runtime_error(msg);
   }
 
-  if (window)
-  {
+  if (window) {
     window->setActive(true);
-    //window->setVisible(true);
     window->setAutoUpdated(false);
   }
 
   stereo_supported_ = is_stereo;
 
-  ROS_INFO_ONCE("Stereo is %s", stereo_supported_ ? "SUPPORTED" : "NOT SUPPORTED");
+  RVIZ_RENDERING_LOG_INFO_STREAM(
+    "Stereo is " << (stereo_supported_ ? "SUPPORTED" : "NOT SUPPORTED"));
 
   return window;
 }
 
-Ogre::RenderWindow* RenderSystem::tryMakeRenderWindow(
-      const std::string& name,
-      unsigned int width,
-      unsigned int height,
-      const Ogre::NameValuePairList* params,
-      int max_attempts )
+Ogre::RenderWindow *
+RenderSystem::tryMakeRenderWindow(
+  const std::string & name,
+  unsigned int width,
+  unsigned int height,
+  const Ogre::NameValuePairList * params,
+  int max_attempts)
 {
-  Ogre::RenderWindow *window = NULL;
+  Ogre::RenderWindow * window = nullptr;
   int attempts = 0;
 
-#ifdef Q_WS_X11
-  old_error_handler = XSetErrorHandler( &checkBadDrawable );
-#endif
+// #ifdef Q_WS_X11
+//   old_error_handler = XSetErrorHandler(&checkBadDrawable);
+// #endif
 
-  while (window == NULL && (attempts++) < max_attempts)
-  {
-    try
-    {
-      window = ogre_root_->createRenderWindow( name, width, height, false, params );
+  while (window == nullptr && attempts++ < max_attempts) {
+    try {
+      window = ogre_root_->createRenderWindow(name, width, height, false, params);
 
-      // If the driver bug happened, tell Ogre we are done with that
-      // window and then try again.
-      if( x_baddrawable_error )
-      {
-        ogre_root_->detachRenderTarget( window );
-        window = NULL;
-        x_baddrawable_error = false;
-      }
-    }
-    catch( const std::exception & ex )
-    {
-      std::cerr << "rviz::RenderSystem: error creating render window: "
-                << ex.what() << std::endl;
-      window = NULL;
+      // // If the driver bug happened, tell Ogre we are done with that
+      // // window and then try again.
+      // if (x_baddrawable_error)
+      // {
+      //   ogre_root_->detachRenderTarget( window );
+      //   window = nullptr;
+      //   x_baddrawable_error = false;
+      // }
+    } catch(const std::exception & ex) {
+      RVIZ_RENDERING_LOG_ERROR_STREAM(
+        "rviz::RenderSystem: error creating render window: " << ex.what());
+      window = nullptr;
     }
   }
 
-#ifdef Q_WS_X11
-  XSetErrorHandler( old_error_handler );
-#endif
+// #ifdef Q_WS_X11
+//   XSetErrorHandler( old_error_handler );
+// #endif
 
-  if( window && attempts > 1 )
-  {
-    ROS_INFO( "Created render window after %d attempts.", attempts );
+  if (window && attempts > 1) {
+    RVIZ_RENDERING_LOG_INFO_STREAM("Created render window after " << attempts << " attempts.");
   }
 
   return window;
