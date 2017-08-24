@@ -49,6 +49,7 @@
 
 #include <OgreRoot.h>
 #include <OgreOverlaySystem.h>
+#include <RenderSystems/GL/OgreGLPlugin.h>
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop
@@ -137,6 +138,8 @@ private:
   setupResources();
   void
   detectGlVersion();
+
+  static Ogre::GLPlugin * render_system_gl_plugin_;
 
   static RenderSystem * instance_;
 

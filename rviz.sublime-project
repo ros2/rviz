@@ -9,6 +9,9 @@
 		},
 		{
 			"path": "/Users/william/Downloads/QTOgreWindow2_1"
+		},
+		{
+			"path": "/Users/william/dev/aos-rviz2"
 		}
 	],
 	"settings":
@@ -24,15 +27,9 @@
 			"-I/usr/local/Cellar/qt/5.9.1/Frameworks/QtCore.framework/Versions/Current/Headers",
 			"-I/usr/local/Cellar/qt/5.9.1/Frameworks/QtGui.framework/Versions/Current/Headers",
 			"-I/usr/local/Cellar/qt/5.9.1/Frameworks/QtWidgets.framework/Versions/Current/Headers",
-			// "-I/usr/local/Cellar/ogre/1.10.7/include",
-			// "-I/usr/local/Cellar/ogre/1.10.7/include/OGRE",
-			// "-I/usr/local/Cellar/ogre/1.10.7/include/OGRE/Overlay",
-			// "-I/usr/local/opt/eigen/include/eigen3",
 			"-I/Users/william/rviz2_ws/install/opt/rviz_ogre_vendor/include",
 			"-I/Users/william/rviz2_ws/install/opt/rviz_ogre_vendor/include/OGRE",
 			"-I/Users/william/rviz2_ws/install/opt/rviz_ogre_vendor/include/OGRE/Overlay",
-			// "-I${folder:${project_path:rviz.sublime-project}}/src",
-			// "-I${folder:${project_path:rviz.sublime-project}}/src/rviz",
 			"-I${folder:${project_path:rviz.sublime-project}}/rviz_rendering/include"
 		]
 	}

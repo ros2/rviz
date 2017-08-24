@@ -21,13 +21,22 @@ set(CMAKE_AUTOMOC ON)
 find_package(rviz_ogre_vendor QUIET REQUIRED)
 find_package(OGRE REQUIRED)
 
-# TODO(wjwwood): have ogre include linking for FreeImage and FreeType
+# TODO(wjwwood): have ogre include linking for FreeImage, FreeType, OpenGL, and the X11 libraries
 find_library(FREEIMAGE_LIBRARIES freeimage)
 if(NOT FREEIMAGE_LIBRARIES)
   message(FATAL_ERROR "Could not find freeimage library")
 endif()
 find_package(Freetype REQUIRED)
-list(APPEND OGRE_LIBRARIES ${FREEIMAGE_LIBRARIES} ${FREETYPE_LIBRARIES})
+find_package(OpenGL REQUIRED)
+list(APPEND OGRE_LIBRARIES ${FREEIMAGE_LIBRARIES} ${FREETYPE_LIBRARIES} ${OPENGL_LIBRARIES} ${CMAKE_DL_LIBS})
+if(UNIX AND NOT APPLE)
+  find_package(X11 REQUIRED)
+  find_library(XAW_LIBRARY NAMES Xaw Xaw7 PATHS ${DEP_LIB_SEARCH_DIR} ${X11_LIB_SEARCH_PATH})
+  list(APPEND OGRE_LIBRARIES ${X11_LIBRARIES} ${X11_Xt_LIB} ${X11_Xrandr_LIB} ${XAW_LIBRARY})
+endif()
+# if(APPLE)
+#   list(APPEND OGRE_LIBRARIES "-framework Cocoa" "-framework OpenGL")
+# endif()
 # endtodo
 
 find_package(Qt5Widgets REQUIRED)
@@ -60,8 +69,8 @@ target_compile_definitions(${PROJECT_NAME}
 add_executable(rendering_example src/examples/rendering_example.cpp)
 target_link_libraries(rendering_example ${PROJECT_NAME} ${OGRE_LIBRARIES} Qt5::Widgets)
 
-add_executable(test_QTOgreWindow src/test_QTOgreWindow.cpp src/QTOgreWindow.cpp)
-target_link_libraries(test_QTOgreWindow ${OGRE_LIBRARIES} Qt5::Widgets)
-target_compile_options(test_QTOgreWindow PUBLIC -Wno-error)
+# add_executable(test_QTOgreWindow src/test_QTOgreWindow.cpp src/QTOgreWindow.cpp)
+# target_link_libraries(test_QTOgreWindow ${OGRE_LIBRARIES} Qt5::Widgets)
+# target_compile_options(test_QTOgreWindow PUBLIC -Wno-error)
 
 ament_package()

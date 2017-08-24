@@ -30,6 +30,12 @@
 
 #include "render_system.hpp"
 
+#ifdef __linux__
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <GL/glx.h>
+#endif
+
 #include <rviz_rendering/logging.hpp>
 #include <rviz_rendering/resource_config.hpp>
 
@@ -49,7 +55,8 @@
 namespace rviz_rendering
 {
 
-RenderSystem * RenderSystem::instance_ = 0;
+Ogre::GLPlugin * RenderSystem::render_system_gl_plugin_ = nullptr;
+RenderSystem * RenderSystem::instance_ = nullptr;
 int RenderSystem::force_gl_version_ = 0;
 bool RenderSystem::use_anti_aliasing_ = true;
 bool RenderSystem::force_no_stereo_ = false;
@@ -111,7 +118,7 @@ RenderSystem::forceNoStereo()
 }
 
 RenderSystem::RenderSystem()
-: ogre_overlay_system_(nullptr), stereo_supported_(false)
+: dummy_window_id_(0), ogre_overlay_system_(nullptr), stereo_supported_(false)
 {
   OgreLogging::configureLogging();
 
@@ -142,36 +149,38 @@ RenderSystem::prepareOverlays(Ogre::SceneManager* scene_manager)
 void
 RenderSystem::setupDummyWindowId()
 {
-// #ifdef Q_OS_MAC
-//   dummy_window_id_ = 0;
-// #else
-//   Display *display = XOpenDisplay(0);
-//   assert( display );
+  dummy_window_id_ = 0;
+#ifdef __linux__
+  Display *display = XOpenDisplay(0);
+  assert( display );
 
-//   int screen = DefaultScreen( display );
+  int screen = DefaultScreen( display );
 
-//   int attribList[] = { GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 16,
-//                        GLX_STENCIL_SIZE, 8, None };
+  int attribList[] = { GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 16,
+                       GLX_STENCIL_SIZE, 8, None };
 
-//   XVisualInfo *visual = glXChooseVisual( display, screen, (int*)attribList );
+  XVisualInfo *visual = glXChooseVisual( display, screen, (int*)attribList );
 
-//   dummy_window_id_ = XCreateSimpleWindow( display,
-//                                           RootWindow( display, screen ),
-//                                           0, 0, 1, 1, 0, 0, 0 );
+  dummy_window_id_ = XCreateSimpleWindow( display,
+                                          RootWindow( display, screen ),
+                                          0, 0, 1, 1, 0, 0, 0 );
 
-//   GLXContext context = glXCreateContext( display, visual, nullptr, 1 );
+  GLXContext context = glXCreateContext( display, visual, nullptr, 1 );
 
-//   glXMakeCurrent( display, dummy_window_id_, context );
-// #endif
+  glXMakeCurrent( display, dummy_window_id_, context );
+#endif
 }
 
 void
 RenderSystem::loadOgrePlugins()
 {
-  std::string plugin_prefix = get_ogre_plugin_directory() + "/";
+  // std::string plugin_prefix = get_ogre_plugin_directory() + "/";
+
+  render_system_gl_plugin_ = new Ogre::GLPlugin();
+  ogre_root_->installPlugin(render_system_gl_plugin_);
 
 // #if __APPLE__
-  ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL");
+  // ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL");
 // #else
   // ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL3Plus");
 // #endif
@@ -338,26 +347,26 @@ RenderSystem::setupResources()
 // (which is what the problem looks like when it happens) and just try
 // over and over again until it works (or until 100 failures, which
 // makes it seem like it is a different bug).
-// static bool x_baddrawable_error = false;
-// #ifdef Q_WS_X11
-// static int (*old_error_handler)( Display*, XErrorEvent* );
-// int checkBadDrawable( Display* display, XErrorEvent* error )
-// {
-//   if( error->error_code == BadDrawable &&
-//       error->request_code == 136 &&
-//       error->minor_code == 3 )
-//   {
-//     x_baddrawable_error = true;
-//     return 0;
-//   }
-//   else
-//   {
-//     // If the error does not exactly match the one from the driver bug,
-//     // handle it the normal way so we see it.
-//     return old_error_handler( display, error );
-//   }
-// }
-// #endif // Q_WS_X11
+static bool x_baddrawable_error = false;
+#ifdef __linux__
+static int (*old_error_handler)( Display*, XErrorEvent* );
+int checkBadDrawable( Display* display, XErrorEvent* error )
+{
+  if( error->error_code == BadDrawable &&
+      error->request_code == 136 &&
+      error->minor_code == 3 )
+  {
+    x_baddrawable_error = true;
+    return 0;
+  }
+  else
+  {
+    // If the error does not exactly match the one from the driver bug,
+    // handle it the normal way so we see it.
+    return old_error_handler( display, error );
+  }
+}
+#endif // __linux__
 
 Ogre::RenderWindow *
 RenderSystem::makeRenderWindow(
@@ -373,8 +382,8 @@ RenderSystem::makeRenderWindow(
 
   params["currentGLContext"] = Ogre::String("false");
 
-  params["externalWindowHandle"] = Ogre::StringConverter::toString(window_id);
-  params["parentWindowHandle"] = Ogre::StringConverter::toString(window_id);
+  // params["externalWindowHandle"] = Ogre::StringConverter::toString(static_cast<unsigned long>(window_id));
+  params["parentWindowHandle"] = Ogre::StringConverter::toString(static_cast<unsigned long>(window_id));
 
   // params["externalGLControl"] = Ogre::String("true");
 
@@ -456,22 +465,22 @@ RenderSystem::tryMakeRenderWindow(
   Ogre::RenderWindow * window = nullptr;
   int attempts = 0;
 
-// #ifdef Q_WS_X11
-//   old_error_handler = XSetErrorHandler(&checkBadDrawable);
-// #endif
+#ifdef __linux___
+  old_error_handler = XSetErrorHandler(&checkBadDrawable);
+#endif
 
   while (window == nullptr && attempts++ < max_attempts) {
     try {
       window = ogre_root_->createRenderWindow(name, width, height, false, params);
 
-      // // If the driver bug happened, tell Ogre we are done with that
-      // // window and then try again.
-      // if (x_baddrawable_error)
-      // {
-      //   ogre_root_->detachRenderTarget( window );
-      //   window = nullptr;
-      //   x_baddrawable_error = false;
-      // }
+      // If the driver bug happened, tell Ogre we are done with that
+      // window and then try again.
+      if (x_baddrawable_error)
+      {
+        ogre_root_->detachRenderTarget( window );
+        window = nullptr;
+        x_baddrawable_error = false;
+      }
     } catch(const std::exception & ex) {
       RVIZ_RENDERING_LOG_ERROR_STREAM(
         "rviz::RenderSystem: error creating render window: " << ex.what());
@@ -479,9 +488,9 @@ RenderSystem::tryMakeRenderWindow(
     }
   }
 
-// #ifdef Q_WS_X11
-//   XSetErrorHandler( old_error_handler );
-// #endif
+#ifdef __linux___
+  XSetErrorHandler( old_error_handler );
+#endif
 
   if (window && attempts > 1) {
     RVIZ_RENDERING_LOG_INFO_STREAM("Created render window after " << attempts << " attempts.");
