@@ -24,11 +24,13 @@ find_package(OGRE REQUIRED)
 # TODO(wjwwood): have ogre include linking for FreeImage, FreeType, OpenGL, and the X11 libraries
 find_library(FREEIMAGE_LIBRARIES freeimage)
 if(NOT FREEIMAGE_LIBRARIES)
-  message(FATAL_ERROR "Could not find freeimage library")
+  message(STATUS "Could not find freeimage library")
+else()
+  list(APPEND OGRE_LIBRARIES ${FREEIMAGE_LIBRARIES})
 endif()
 find_package(Freetype REQUIRED)
 find_package(OpenGL REQUIRED)
-list(APPEND OGRE_LIBRARIES ${FREEIMAGE_LIBRARIES} ${FREETYPE_LIBRARIES} ${OPENGL_LIBRARIES} ${CMAKE_DL_LIBS})
+list(APPEND OGRE_LIBRARIES ${FREETYPE_LIBRARIES} ${OPENGL_LIBRARIES} ${CMAKE_DL_LIBS})
 if(UNIX AND NOT APPLE)
   find_package(X11 REQUIRED)
   find_library(XAW_LIBRARY NAMES Xaw Xaw7 PATHS ${DEP_LIB_SEARCH_DIR} ${X11_LIB_SEARCH_PATH})
@@ -39,7 +41,28 @@ endif()
 # endif()
 # endtodo
 
-find_package(Qt5Widgets REQUIRED)
+find_package(Qt5 REQUIRED COMPONENTS Widgets)
+# TODO(wjwwood): this block is to setup the windeployqt tool, could be removed later.
+if(Qt5_FOUND AND WIN32 AND TARGET Qt5::qmake AND NOT TARGET Qt5::windeployqt)
+    get_target_property(_qt5_qmake_location Qt5::qmake IMPORTED_LOCATION)
+
+    execute_process(
+        COMMAND "${_qt5_qmake_location}" -query QT_INSTALL_PREFIX
+        RESULT_VARIABLE return_code
+        OUTPUT_VARIABLE qt5_install_prefix
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+
+    set(imported_location "${qt5_install_prefix}/bin/windeployqt.exe")
+
+    if(EXISTS ${imported_location})
+        add_executable(Qt5::windeployqt IMPORTED)
+
+        set_target_properties(Qt5::windeployqt PROPERTIES
+            IMPORTED_LOCATION ${imported_location}
+        )
+    endif()
+endif()
 
 include_directories(include ${OGRE_INCLUDE_DIRS})
 link_directories(${OGRE_LIBRARY_DIRS})
@@ -68,6 +91,29 @@ target_compile_definitions(${PROJECT_NAME}
 
 add_executable(rendering_example src/examples/rendering_example.cpp)
 target_link_libraries(rendering_example ${PROJECT_NAME} ${OGRE_LIBRARIES} Qt5::Widgets)
+
+# TODO(wjwwood): find a way to make this optional or to run without "deploying" the
+#                necessary dlls and stuff to the bin folder.
+#                see:
+# https://stackoverflow.com/questions/41193584/deploy-all-qt-dependencies-when-building#41199492
+if(TARGET Qt5::windeployqt)
+    # execute windeployqt in a tmp directory after build
+    add_custom_command(TARGET rendering_example
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
+        COMMAND set PATH=%PATH%$<SEMICOLON>${qt5_install_prefix}/bin
+        COMMAND Qt5::windeployqt --dir "${CMAKE_CURRENT_BINARY_DIR}/windeployqt" "$<TARGET_FILE_DIR:rendering_example>/$<TARGET_FILE_NAME:rendering_example>"
+    )
+
+    # copy deployment directory during installation
+    install(
+        DIRECTORY
+        "${CMAKE_CURRENT_BINARY_DIR}/windeployqt/"
+        DESTINATION bin
+    )
+endif()
+
+install(TARGETS rendering_example DESTINATION bin)
 
 # add_executable(test_QTOgreWindow src/test_QTOgreWindow.cpp src/QTOgreWindow.cpp)
 # target_link_libraries(test_QTOgreWindow ${OGRE_LIBRARIES} Qt5::Widgets)

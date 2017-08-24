@@ -12,17 +12,26 @@ macro(build_ogre)
   if(NOT WIN32)
     list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=-std=c++14")
   endif()
+  list(APPEND extra_cmake_args "-DOGRE_BUILD_RENDERSYSTEM_GL:BOOL=TRUE")
+  list(APPEND extra_cmake_args "-DOGRE_BUILD_RENDERSYSTEM_D3D11:BOOL=OFF")
+  list(APPEND extra_cmake_args "-DOGRE_BUILD_RENDERSYSTEM_D3D9:BOOL=OFF")
   if(APPLE)
     list(APPEND extra_cmake_args "-DCMAKE_OSX_ARCHITECTURES='x86_64'")
-    list(APPEND extra_cmake_args "-DOGRE_BUILD_RENDERSYSTEM_GL:BOOL=TRUE")
   else()
-    list(APPEND extra_cmake_args "-DOGRE_BUILD_RENDERSYSTEM_GL3PLUS:BOOL=TRUE")
+    # Uncomment this line to enable the GL3PLUS render engine
+    # list(APPEND extra_cmake_args "-DOGRE_BUILD_RENDERSYSTEM_GL3PLUS:BOOL=TRUE")
   endif()
 
   # These next lines can be used to disable some of the components or plugins for OGRE
   # list(APPEND extra_cmake_args "-DOGRE_BUILD_COMPONENT_BITES:BOOL=OFF")
   # list(APPEND extra_cmake_args "-DOGRE_BUILD_COMPONENT_HLMS:BOOL=ON")
   list(APPEND extra_cmake_args "-DOGRE_CONFIG_ENABLE_ZIP:BOOL=OFF")
+
+  if(WIN32)
+    set(patch_exe patch.exe)
+  else()
+    set(patch_exe patch)
+  endif()
 
   include(ExternalProject)
   ExternalProject_Add(ogre-1.10.7
@@ -45,7 +54,7 @@ macro(build_ogre)
       ${extra_cmake_args}
       -Wno-dev
     PATCH_COMMAND
-      patch -p1 -N < ${CMAKE_CURRENT_SOURCE_DIR}/ogre-1.10.7-patch.diff
+      ${patch_exe} -p1 -N < ${CMAKE_CURRENT_SOURCE_DIR}/ogre-1.10.7-patch.diff
   )
 
   # The external project will install to the build folder, but we'll install that on make install.
