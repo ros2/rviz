@@ -19,27 +19,28 @@ set(CMAKE_AUTOMOC ON)
 
 # do find_package(rviz_ogre_vendor) first to make sure the custom OGRE is found
 find_package(rviz_ogre_vendor QUIET REQUIRED)
-find_package(OGRE REQUIRED)
+# find_package(OGRE REQUIRED)
 
-# TODO(wjwwood): have ogre include linking for FreeImage, FreeType, OpenGL, and the X11 libraries
-find_library(FREEIMAGE_LIBRARIES freeimage)
-if(NOT FREEIMAGE_LIBRARIES)
-  message(STATUS "Could not find freeimage library")
-else()
-  list(APPEND OGRE_LIBRARIES ${FREEIMAGE_LIBRARIES})
-endif()
-find_package(Freetype REQUIRED)
-find_package(OpenGL REQUIRED)
-list(APPEND OGRE_LIBRARIES ${FREETYPE_LIBRARIES} ${OPENGL_LIBRARIES} ${CMAKE_DL_LIBS})
-if(UNIX AND NOT APPLE)
-  find_package(X11 REQUIRED)
-  find_library(XAW_LIBRARY NAMES Xaw Xaw7 PATHS ${DEP_LIB_SEARCH_DIR} ${X11_LIB_SEARCH_PATH})
-  list(APPEND OGRE_LIBRARIES ${X11_LIBRARIES} ${X11_Xt_LIB} ${X11_Xrandr_LIB} ${XAW_LIBRARY})
-endif()
-# if(APPLE)
-#   list(APPEND OGRE_LIBRARIES "-framework Cocoa" "-framework OpenGL")
+# # TODO(wjwwood): have ogre include linking for FreeImage, FreeType, OpenGL, and the X11 libraries
+# find_library(FREEIMAGE_LIBRARIES freeimage)
+# if(NOT FREEIMAGE_LIBRARIES)
+#   message(STATUS "Could not find freeimage library")
+# else()
+#   list(APPEND OGRE_LIBRARIES ${FREEIMAGE_LIBRARIES})
 # endif()
-# endtodo
+# find_package(Freetype REQUIRED)
+# find_package(OpenGL REQUIRED)
+# list(APPEND OGRE_LIBRARIES ${FREETYPE_LIBRARIES} ${OPENGL_LIBRARIES} ${CMAKE_DL_LIBS})
+# if(UNIX AND NOT APPLE)
+#   find_package(X11 REQUIRED)
+#   find_library(XAW_LIBRARY NAMES Xaw Xaw7 PATHS ${DEP_LIB_SEARCH_DIR} ${X11_LIB_SEARCH_PATH})
+#   list(APPEND OGRE_LIBRARIES ${X11_LIBRARIES} ${X11_Xt_LIB} ${X11_Xrandr_LIB} ${XAW_LIBRARY})
+# endif()
+# link_directories(${OGRE_LIBRARY_DIRS})
+# # if(APPLE)
+# #   list(APPEND OGRE_LIBRARIES "-framework Cocoa" "-framework OpenGL")
+# # endif()
+# # endtodo
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 # TODO(wjwwood): this block is to setup the windeployqt tool, could be removed later.
@@ -64,8 +65,9 @@ if(Qt5_FOUND AND WIN32 AND TARGET Qt5::qmake AND NOT TARGET Qt5::windeployqt)
     endif()
 endif()
 
-include_directories(include ${OGRE_INCLUDE_DIRS})
-link_directories(${OGRE_LIBRARY_DIRS})
+# include_directories(include ${OGRE_INCLUDE_DIRS})
+# link_directories(${OGRE_LIBRARY_DIRS})
+include_directories(include)
 
 # These need to be added in the add_library() call so AUTOMOC detects them.
 set(headers_with_q_object
@@ -82,15 +84,26 @@ add_library(${PROJECT_NAME}
   # src/rviz_rendering/render_widget.cpp
   src/rviz_rendering/resource_config.cpp
 )
-target_link_libraries(${PROJECT_NAME} ${OGRE_LIBRARIES} Qt5::Widgets)
+# target_link_libraries(${PROJECT_NAME} ${OGRE_LIBRARIES} Qt5::Widgets)
+target_link_libraries(${PROJECT_NAME}
+  rviz_ogre_vendor::OgreMain
+  rviz_ogre_vendor::OgreOverlay
+  rviz_ogre_vendor::RenderSystem_GL
+  rviz_ogre_vendor::OgreGLSupport
+  GL
+  Qt5::Widgets
+)
 # This will give the library a default directory to fallback to, but it should be overridden.
 target_compile_definitions(${PROJECT_NAME}
+  # TODO(wjwwood): replace this with ament_index
   PRIVATE "-DRVIZ_RENDERING_DEFAULT_RESOURCE_DIRECTORY=\"${CMAKE_CURRENT_SOURCE_DIR}\""
+  # TODO(wjwwood): this might not be required anymore with static linking
   PRIVATE "-DRVIZ_RENDERING_OGRE_PLUGIN_DIR=\"${OGRE_PLUGIN_DIR}\""
 )
 
 add_executable(rendering_example src/examples/rendering_example.cpp)
-target_link_libraries(rendering_example ${PROJECT_NAME} ${OGRE_LIBRARIES} Qt5::Widgets)
+# target_link_libraries(rendering_example ${PROJECT_NAME} ${OGRE_LIBRARIES} Qt5::Widgets)
+target_link_libraries(rendering_example ${PROJECT_NAME} Qt5::Widgets)
 
 # TODO(wjwwood): find a way to make this optional or to run without "deploying" the
 #                necessary dlls and stuff to the bin folder.
@@ -102,7 +115,10 @@ if(TARGET Qt5::windeployqt)
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
         COMMAND set PATH=%PATH%$<SEMICOLON>${qt5_install_prefix}/bin
-        COMMAND Qt5::windeployqt --dir "${CMAKE_CURRENT_BINARY_DIR}/windeployqt" "$<TARGET_FILE_DIR:rendering_example>/$<TARGET_FILE_NAME:rendering_example>"
+        COMMAND
+          Qt5::windeployqt
+          --dir "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
+          "$<TARGET_FILE_DIR:rendering_example>/$<TARGET_FILE_NAME:rendering_example>"
     )
 
     # copy deployment directory during installation
