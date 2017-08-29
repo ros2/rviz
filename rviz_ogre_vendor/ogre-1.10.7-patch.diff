@@ -237,3 +237,45 @@ index dd12a93..a2dcf50 100644
  
  # CREATE CONFIG FILES - BUILD DIR VERSIONS
  if (NOT (APPLE_IOS OR WINDOWS_STORE OR WINDOWS_PHONE))
+diff --git a/RenderSystems/GLSupport/src/GLX/OgreGLXGLSupport.cpp b/RenderSystems/GLSupport/src/GLX/OgreGLXGLSupport.cpp
+index 5905baca5..b7ef24197 100644
+--- a/RenderSystems/GLSupport/src/GLX/OgreGLXGLSupport.cpp
++++ b/RenderSystems/GLSupport/src/GLX/OgreGLXGLSupport.cpp
+@@ -877,10 +877,20 @@ namespace Ogre
+         PFNGLXCREATECONTEXTATTRIBSARBPROC _glXCreateContextAttribsARB;
+         _glXCreateContextAttribsARB = (PFNGLXCREATECONTEXTATTRIBSARBPROC)const_cast<GLXGLSupport*>(this)->getProcAddress("glXCreateContextAttribsARB");
+
++        if (!(void *)_glXCreateContextAttribsARB) {
++            std::string msg = "glXCreateContextAttribsARB() function not found";
++            LogManager::getSingleton().logMessage(LML_CRITICAL, msg);
++            // throw std::runtime_error(msg);
++        }
++
+         while(!glxContext && (context_attribs[1] >= minVersion))
+         {
+             ctxErrorOccurred = false;
+-            glxContext = _glXCreateContextAttribsARB(mGLDisplay, fbConfig, shareList, direct, context_attribs);
++            if (!_glXCreateContextAttribsARB) {
++                glxContext = glXCreateNewContext(mGLDisplay, fbConfig, GLX_RGBA_TYPE, shareList, true);
++            } else {
++                glxContext = _glXCreateContextAttribsARB(mGLDisplay, fbConfig, shareList, direct, context_attribs);
++            }
+             // Sync to ensure any errors generated are processed.
+             XSync( mGLDisplay, False );
+             if ( !ctxErrorOccurred && glxContext )
+diff --git a/RenderSystems/GLSupport/src/GLX/OgreGLXWindow.cpp b/RenderSystems/GLSupport/src/GLX/OgreGLXWindow.cpp
+index 78d0212b0..d83c60f10 100644
+--- a/RenderSystems/GLSupport/src/GLX/OgreGLXWindow.cpp
++++ b/RenderSystems/GLSupport/src/GLX/OgreGLXWindow.cpp
+@@ -597,8 +597,10 @@ namespace Ogre
+             }
+             else if( _glXSwapIntervalMESA )
+                 _glXSwapIntervalMESA( vsync ? mVSyncInterval : 0 );
+-            else
++            else if( _glXSwapIntervalSGI )
+                 _glXSwapIntervalSGI( vsync ? mVSyncInterval : 0 );
++            else
++                throw std::runtime_error("no glx swap interval function found");
+         }
+
+         mContext->endCurrent();
