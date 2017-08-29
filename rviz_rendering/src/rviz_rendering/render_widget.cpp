@@ -80,7 +80,7 @@ RenderWidget::RenderWidget(RenderSystem * render_system, QWidget * parent)
   rviz_rendering::RenderSystem::WindowIDType win_id = this->winId();
   QApplication::flush();
 
-  QWindow* window = windowHandle();
+  QWindow * window = windowHandle();
   double pixel_ratio = window ? window->devicePixelRatio() : 1.0;
 
   render_window_ = render_system_->makeRenderWindow(win_id, width(), height(), pixel_ratio);
