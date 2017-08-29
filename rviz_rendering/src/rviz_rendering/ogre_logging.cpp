@@ -124,6 +124,7 @@ void OgreLogging::configureLogging()
   if (preference_ == StandardOut) {
     ll.min_lml = Ogre::LML_NORMAL;
   }
+  // cppcheck-suppress memleak
 }
 
 }  // namespace rviz_rendering
