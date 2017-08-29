@@ -103,4 +103,15 @@ endif()
 
 install(TARGETS rendering_example DESTINATION bin)
 
+if(BUILD_TESTING)
+    find_package(ament_cmake_cppcheck REQUIRED)
+    find_package(ament_cmake_cpplint REQUIRED)
+    find_package(ament_cmake_lint_cmake REQUIRED)
+    find_package(ament_cmake_uncrustify REQUIRED)
+    ament_cppcheck()
+    ament_cpplint()
+    ament_lint_cmake()
+    ament_uncrustify()
+endif()
+
 ament_package()
