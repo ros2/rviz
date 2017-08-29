@@ -19,3 +19,241 @@ else()
   set(OGRE_DIR "${@PROJECT_NAME@_DIR}/../../../opt/rviz_ogre_vendor/lib/OGRE/cmake")
 endif()
 message(STATUS "Setting OGRE_DIR to: '${OGRE_DIR}'")
+
+find_package(OGRE REQUIRED)
+message(STATUS "OGRE_LIBRARIES: ${OGRE_LIBRARIES}")
+message(STATUS "OGRE_LIBRARY_DIRS: ${OGRE_LIBRARY_DIRS}")
+
+foreach(_lib IN LISTS OGRE_LIBRARIES)
+  message(STATUS "- ${_lib}")
+  if("OgreMainStatic" STREQUAL ${_lib})
+    find_library(_ogre_main_static_library_abs ${_lib}
+      PATHS
+        ${OGRE_LIBRARY_DIRS}
+      NO_DEFAULT_PATH
+      NO_CMAKE_ENVIRONMENT_PATH
+      NO_CMAKE_PATH
+      NO_SYSTEM_ENVIRONMENT_PATH
+      NO_CMAKE_SYSTEM_PATH
+      NO_CMAKE_FIND_ROOT_PATH
+    )
+    find_library(_ogre_main_static_library_debug_abs ${_lib}_d
+      PATHS
+        ${OGRE_LIBRARY_DIRS}
+      NO_DEFAULT_PATH
+      NO_CMAKE_ENVIRONMENT_PATH
+      NO_CMAKE_PATH
+      NO_SYSTEM_ENVIRONMENT_PATH
+      NO_CMAKE_SYSTEM_PATH
+      NO_CMAKE_FIND_ROOT_PATH
+    )
+
+    add_library(rviz_ogre_vendor::OgreMain STATIC IMPORTED)
+    set_target_properties(rviz_ogre_vendor::OgreMain
+      PROPERTIES
+        IMPORTED_LOCATION_RELEASE ${_ogre_main_static_library_abs}
+        IMPORTED_LOCATION_DEBUG ${_ogre_main_static_library_debug_abs}
+    )
+
+    set_property(TARGET rviz_ogre_vendor::OgreMain
+      PROPERTY
+        INTERFACE_INCLUDE_DIRECTORIES ${OGRE_INCLUDE_DIRS}
+    )
+
+    set(_extra_interface_link_libraries)
+    find_library(FREEIMAGE_LIBRARIES freeimage)
+    if(NOT FREEIMAGE_LIBRARIES)
+      message(STATUS "Could not find freeimage library")
+    else()
+      list(APPEND _extra_interface_link_libraries ${FREEIMAGE_LIBRARIES})
+    endif()
+    find_package(Freetype REQUIRED)
+    list(APPEND _extra_interface_link_libraries ${FREETYPE_LIBRARIES})
+    find_package(OpenGL REQUIRED)
+    list(APPEND _extra_interface_link_libraries ${OPENGL_LIBRARIES})
+    list(APPEND _extra_interface_link_libraries ${CMAKE_DL_LIBS})
+    if(UNIX AND NOT APPLE)
+      find_package(X11 REQUIRED)
+      list(APPEND _extra_interface_link_libraries ${X11_LIBRARIES} ${X11_Xt_LIB} ${X11_Xrandr_LIB})
+      find_library(XAW_LIBRARY NAMES Xaw Xaw7 PATHS ${DEP_LIB_SEARCH_DIR} ${X11_LIB_SEARCH_PATH})
+      list(APPEND _extra_interface_link_libraries ${XAW_LIBRARY})
+    endif()
+    set_target_properties(rviz_ogre_vendor::OgreMain
+      PROPERTIES
+        "INTERFACE_LINK_LIBRARIES" "${_extra_interface_link_libraries}"
+    )
+  endif()
+  if("OgreOverlayStatic" STREQUAL ${_lib})
+    find_library(_ogre_overlay_static_library_abs ${_lib}
+      PATHS
+        ${OGRE_LIBRARY_DIRS}
+      NO_DEFAULT_PATH
+      NO_CMAKE_ENVIRONMENT_PATH
+      NO_CMAKE_PATH
+      NO_SYSTEM_ENVIRONMENT_PATH
+      NO_CMAKE_SYSTEM_PATH
+      NO_CMAKE_FIND_ROOT_PATH
+    )
+    find_library(_ogre_overlay_static_library_debug_abs ${_lib}_d
+      PATHS
+        ${OGRE_LIBRARY_DIRS}
+      NO_DEFAULT_PATH
+      NO_CMAKE_ENVIRONMENT_PATH
+      NO_CMAKE_PATH
+      NO_SYSTEM_ENVIRONMENT_PATH
+      NO_CMAKE_SYSTEM_PATH
+      NO_CMAKE_FIND_ROOT_PATH
+    )
+
+    add_library(rviz_ogre_vendor::OgreOverlay STATIC IMPORTED)
+    set_target_properties(rviz_ogre_vendor::OgreOverlay
+      PROPERTIES
+        IMPORTED_LOCATION_RELEASE ${_ogre_overlay_static_library_abs}
+        IMPORTED_LOCATION_DEBUG ${_ogre_overlay_static_library_debug_abs}
+    )
+
+    set_property(TARGET rviz_ogre_vendor::OgreOverlay
+      PROPERTY
+        INTERFACE_INCLUDE_DIRECTORIES ${OGRE_INCLUDE_DIRS}
+    )
+
+    set(_extra_interface_link_libraries rviz_ogre_vendor::OgreMain)
+    # find_library(FREEIMAGE_LIBRARIES freeimage)
+    # if(NOT FREEIMAGE_LIBRARIES)
+    #   message(STATUS "Could not find freeimage library")
+    # else()
+    #   list(APPEND _extra_interface_link_libraries ${FREEIMAGE_LIBRARIES})
+    # endif()
+    # find_package(Freetype REQUIRED)
+    # list(APPEND _extra_interface_link_libraries ${FREETYPE_LIBRARIES})
+    # find_package(OpenGL REQUIRED)
+    # list(APPEND _extra_interface_link_libraries ${OPENGL_LIBRARIES})
+    # list(APPEND _extra_interface_link_libraries ${CMAKE_DL_LIBS})
+    # if(UNIX AND NOT APPLE)
+    #   find_package(X11 REQUIRED)
+    #   list(APPEND _extra_interface_link_libraries ${X11_LIBRARIES} ${X11_Xt_LIB} ${X11_Xrandr_LIB})
+    #   find_library(XAW_LIBRARY NAMES Xaw Xaw7 PATHS ${DEP_LIB_SEARCH_DIR} ${X11_LIB_SEARCH_PATH})
+    #   list(APPEND _extra_interface_link_libraries ${XAW_LIBRARY})
+    # endif()
+    set_target_properties(rviz_ogre_vendor::OgreOverlay
+      PROPERTIES
+        "INTERFACE_LINK_LIBRARIES" "${_extra_interface_link_libraries}"
+    )
+  endif()
+  if("RenderSystem_GLStatic" STREQUAL ${_lib})
+    find_library(_render_system_gl_static_library_abs ${_lib}
+      PATHS
+        ${OGRE_LIBRARY_DIRS}
+      NO_DEFAULT_PATH
+      NO_CMAKE_ENVIRONMENT_PATH
+      NO_CMAKE_PATH
+      NO_SYSTEM_ENVIRONMENT_PATH
+      NO_CMAKE_SYSTEM_PATH
+      NO_CMAKE_FIND_ROOT_PATH
+    )
+    find_library(_render_system_gl_static_library_debug_abs ${_lib}_d
+      PATHS
+        ${OGRE_LIBRARY_DIRS}
+      NO_DEFAULT_PATH
+      NO_CMAKE_ENVIRONMENT_PATH
+      NO_CMAKE_PATH
+      NO_SYSTEM_ENVIRONMENT_PATH
+      NO_CMAKE_SYSTEM_PATH
+      NO_CMAKE_FIND_ROOT_PATH
+    )
+
+    add_library(rviz_ogre_vendor::RenderSystem_GL STATIC IMPORTED)
+    set_target_properties(rviz_ogre_vendor::RenderSystem_GL
+      PROPERTIES
+        IMPORTED_LOCATION_RELEASE ${_render_system_gl_static_library_abs}
+        IMPORTED_LOCATION_DEBUG ${_render_system_gl_static_library_debug_abs}
+    )
+
+    set_property(TARGET rviz_ogre_vendor::RenderSystem_GL
+      PROPERTY
+        INTERFACE_INCLUDE_DIRECTORIES ${OGRE_INCLUDE_DIRS}
+    )
+
+    set(_extra_interface_link_libraries rviz_ogre_vendor::OgreMain)
+    # find_library(FREEIMAGE_LIBRARIES freeimage)
+    # if(NOT FREEIMAGE_LIBRARIES)
+    #   message(STATUS "Could not find freeimage library")
+    # else()
+    #   list(APPEND _extra_interface_link_libraries ${FREEIMAGE_LIBRARIES})
+    # endif()
+    # find_package(Freetype REQUIRED)
+    # list(APPEND _extra_interface_link_libraries ${FREETYPE_LIBRARIES})
+    # find_package(OpenGL REQUIRED)
+    # list(APPEND _extra_interface_link_libraries ${OPENGL_LIBRARIES})
+    # list(APPEND _extra_interface_link_libraries ${CMAKE_DL_LIBS})
+    # if(UNIX AND NOT APPLE)
+    #   find_package(X11 REQUIRED)
+    #   list(APPEND _extra_interface_link_libraries ${X11_LIBRARIES} ${X11_Xt_LIB} ${X11_Xrandr_LIB})
+    #   find_library(XAW_LIBRARY NAMES Xaw Xaw7 PATHS ${DEP_LIB_SEARCH_DIR} ${X11_LIB_SEARCH_PATH})
+    #   list(APPEND _extra_interface_link_libraries ${XAW_LIBRARY})
+    # endif()
+    set_target_properties(rviz_ogre_vendor::RenderSystem_GL
+      PROPERTIES
+        "INTERFACE_LINK_LIBRARIES" "${_extra_interface_link_libraries}"
+    )
+  endif()
+  if("OgreGLSupportStatic" STREQUAL ${_lib})
+    find_library(_ogre_gl_support_static_library_abs ${_lib}
+      PATHS
+        ${OGRE_LIBRARY_DIRS}
+      NO_DEFAULT_PATH
+      NO_CMAKE_ENVIRONMENT_PATH
+      NO_CMAKE_PATH
+      NO_SYSTEM_ENVIRONMENT_PATH
+      NO_CMAKE_SYSTEM_PATH
+      NO_CMAKE_FIND_ROOT_PATH
+    )
+    find_library(_ogre_gl_support_static_library_debug_abs ${_lib}_d
+      PATHS
+        ${OGRE_LIBRARY_DIRS}
+      NO_DEFAULT_PATH
+      NO_CMAKE_ENVIRONMENT_PATH
+      NO_CMAKE_PATH
+      NO_SYSTEM_ENVIRONMENT_PATH
+      NO_CMAKE_SYSTEM_PATH
+      NO_CMAKE_FIND_ROOT_PATH
+    )
+
+    add_library(rviz_ogre_vendor::OgreGLSupport STATIC IMPORTED)
+    set_target_properties(rviz_ogre_vendor::OgreGLSupport
+      PROPERTIES
+        IMPORTED_LOCATION_RELEASE ${_ogre_gl_support_static_library_abs}
+        IMPORTED_LOCATION_DEBUG ${_ogre_gl_support_static_library_debug_abs}
+    )
+
+    set_property(TARGET rviz_ogre_vendor::OgreGLSupport
+      PROPERTY
+        INTERFACE_INCLUDE_DIRECTORIES ${OGRE_INCLUDE_DIRS}
+    )
+
+    set(_extra_interface_link_libraries rviz_ogre_vendor::OgreMain)
+    # find_library(FREEIMAGE_LIBRARIES freeimage)
+    # if(NOT FREEIMAGE_LIBRARIES)
+    #   message(STATUS "Could not find freeimage library")
+    # else()
+    #   list(APPEND _extra_interface_link_libraries ${FREEIMAGE_LIBRARIES})
+    # endif()
+    # find_package(Freetype REQUIRED)
+    # list(APPEND _extra_interface_link_libraries ${FREETYPE_LIBRARIES})
+    # find_package(OpenGL REQUIRED)
+    # list(APPEND _extra_interface_link_libraries ${OPENGL_LIBRARIES})
+    # list(APPEND _extra_interface_link_libraries ${CMAKE_DL_LIBS})
+    # if(UNIX AND NOT APPLE)
+    #   find_package(X11 REQUIRED)
+    #   list(APPEND _extra_interface_link_libraries ${X11_LIBRARIES} ${X11_Xt_LIB} ${X11_Xrandr_LIB})
+    #   find_library(XAW_LIBRARY NAMES Xaw Xaw7 PATHS ${DEP_LIB_SEARCH_DIR} ${X11_LIB_SEARCH_PATH})
+    #   list(APPEND _extra_interface_link_libraries ${XAW_LIBRARY})
+    # endif()
+    set_target_properties(rviz_ogre_vendor::OgreGLSupport
+      PROPERTIES
+        "INTERFACE_LINK_LIBRARIES" "${_extra_interface_link_libraries}"
+    )
+  endif()
+endforeach()
+
+# message(FATAL_ERROR "STOP")
