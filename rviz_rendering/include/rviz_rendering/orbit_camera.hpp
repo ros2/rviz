@@ -35,9 +35,9 @@
 
 namespace Ogre
 {
-  class Camera;
-  class SceneNode;
-  class SceneManager;
+class Camera;
+class SceneNode;
+class SceneManager;
 }
 
 namespace rviz
@@ -62,67 +62,66 @@ class Shape;
 class OrbitCamera : public CameraBase
 {
 public:
-  OrbitCamera( Ogre::SceneManager* scene_manager );
+  OrbitCamera(Ogre::SceneManager * scene_manager);
   virtual ~OrbitCamera();
 
   /**
    * \brief Move in/out from the focal point, ie. adjust #distance_ by amount
    * @param amount The distance to move.  Positive amount moves towards the focal point, negative moves away
    */
-  void zoom( float amount );
+  void zoom(float amount);
   /**
    * \brief Set the focal point of the camera.  Keeps the pitch/yaw/distance the same
    * @param focal_point The new focal point
    */
-  void setFocalPoint( const Ogre::Vector3& focal_point );
+  void setFocalPoint(const Ogre::Vector3 & focal_point);
 
-  float getPitch() { return pitch_; }
-  float getYaw() { return yaw_; }
-  float getDistance() { return distance_; }
-  const Ogre::Vector3& getFocalPoint() { return focal_point_; }
+  float getPitch() {return pitch_; }
+  float getYaw() {return yaw_; }
+  float getDistance() {return distance_; }
+  const Ogre::Vector3 & getFocalPoint() {return focal_point_; }
 
-  virtual void setFrom( CameraBase* camera );
-  virtual void yaw( float angle );
-  virtual void pitch( float angle );
-  virtual void roll( float angle );
-  virtual void setOrientation( float x, float y, float z, float w );
-  virtual void setPosition( float x, float y, float z );
-  virtual void move( float x, float y, float z );
+  virtual void setFrom(CameraBase * camera);
+  virtual void yaw(float angle);
+  virtual void pitch(float angle);
+  virtual void roll(float angle);
+  virtual void setOrientation(float x, float y, float z, float w);
+  virtual void setPosition(float x, float y, float z);
+  virtual void move(float x, float y, float z);
 
   virtual Ogre::Vector3 getPosition();
   virtual Ogre::Quaternion getOrientation();
 
-  virtual void lookAt( const Ogre::Vector3& point );
+  virtual void lookAt(const Ogre::Vector3 & point);
 
-  virtual void mouseLeftDrag( int diff_x, int diff_y, bool ctrl, bool alt, bool shift );
-  virtual void mouseMiddleDrag( int diff_x, int diff_y, bool ctrl, bool alt, bool shift );
-  virtual void mouseRightDrag( int diff_x, int diff_y, bool ctrl, bool alt, bool shift );
-  virtual void scrollWheel( int diff, bool ctrl, bool alt, bool shift );
+  virtual void mouseLeftDrag(int diff_x, int diff_y, bool ctrl, bool alt, bool shift);
+  virtual void mouseMiddleDrag(int diff_x, int diff_y, bool ctrl, bool alt, bool shift);
+  virtual void mouseRightDrag(int diff_x, int diff_y, bool ctrl, bool alt, bool shift);
+  virtual void scrollWheel(int diff, bool ctrl, bool alt, bool shift);
 
   /**
    * \brief Calculates the camera's position and orientation from the yaw, pitch, distance and focal point
    */
   virtual void update();
 
-  virtual void mouseLeftDown( int x, int y );
-  virtual void mouseMiddleDown( int x, int y );
-  virtual void mouseRightDown( int x, int y );
-  virtual void mouseLeftUp( int x, int y );
-  virtual void mouseMiddleUp( int x, int y );
-  virtual void mouseRightUp( int x, int y );
+  virtual void mouseLeftDown(int x, int y);
+  virtual void mouseMiddleDown(int x, int y);
+  virtual void mouseRightDown(int x, int y);
+  virtual void mouseLeftUp(int x, int y);
+  virtual void mouseMiddleUp(int x, int y);
+  virtual void mouseRightUp(int x, int y);
 
-  virtual void fromString(const std::string& str);
+  virtual void fromString(const std::string & str);
   virtual std::string toString();
 
 private:
-
   Ogre::Vector3 getGlobalFocalPoint();
 
   /**
    * \brief Calculates pitch and yaw values given a new position and the current focal point
    * @param position Position to calculate the pitch/yaw for
    */
-  void calculatePitchYawFromPosition( const Ogre::Vector3& position );
+  void calculatePitchYawFromPosition(const Ogre::Vector3 & position);
   /**
    * \brief Normalizes the camera's pitch, preventing it from reaching vertical (or turning upside down)
    */
@@ -137,7 +136,7 @@ private:
   float pitch_;                       ///< The camera's pitch (rotation around the x-axis), in radians
   float distance_;                    ///< The camera's distance from the focal point
 
-  Shape* focal_point_object_;
+  Shape * focal_point_object_;
 };
 
 } // namespace rviz
