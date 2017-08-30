@@ -56,9 +56,6 @@ RenderWindow::RenderWindow(QWindow * parent)
 : QWindow(parent), impl_(new RenderWindowImpl(this))
 {
   this->installEventFilter(this);
-  QTimer * timer = new QTimer(this);
-  connect(timer, SIGNAL(timeout()), this, SLOT(renderNow()));
-  timer->start(1000);
 }
 
 RenderWindow::~RenderWindow()
