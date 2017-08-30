@@ -441,10 +441,7 @@ RenderSystem::makeRenderWindow(
     throw std::runtime_error(msg);
   }
 
-  if (window) {
-    window->setActive(true);
-    window->setAutoUpdated(false);
-  }
+  window->setVisible(true);
 
   stereo_supported_ = is_stereo;
 
