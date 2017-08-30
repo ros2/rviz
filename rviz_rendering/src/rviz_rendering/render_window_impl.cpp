@@ -167,7 +167,7 @@ createScene(Ogre::SceneManager * ogre_scene_manager)
     true);
 
   sphereMaterial->getTechnique(0)->getPass(0)->setAmbient(0.1f, 0.1f, 0.1f);
-  sphereMaterial->getTechnique(0)->getPass(0)->setDiffuse(0.2f, 0.2f, 0.2f, 1.0f);
+  sphereMaterial->getTechnique(0)->getPass(0)->setDiffuse(0.3f, 0.3f, 0.3f, 1.0f);
   sphereMaterial->getTechnique(0)->getPass(0)->setSpecular(0.9f, 0.9f, 0.9f, 1.0f);
   // sphereMaterial->setAmbient(0.2f, 0.2f, 0.5f);
   // sphereMaterial->setSelfIllumination(0.2f, 0.2f, 0.1f);
@@ -177,7 +177,7 @@ createScene(Ogre::SceneManager * ogre_scene_manager)
   childSceneNode->setScale(Ogre::Vector3(0.01f, 0.01f, 0.01f));  // Radius, in theory.
 
   Ogre::Light * light = ogre_scene_manager->createLight("MainLight");
-  light->setPosition(20.0f, 80.0f, 50.0f);
+  light->setPosition(40.0f, 80.0f, 50.0f);
 }
 
 void
