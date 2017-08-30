@@ -221,6 +221,7 @@ RenderWindowImpl::resize(size_t width, size_t height)
   if (ogre_render_window_) {
     ogre_render_window_->resize(width, height);
   }
+  this->renderLater();
 }
 
 }  // namespace rviz_rendering

@@ -43,15 +43,8 @@ int main(int argc, char *argv[])
 
   rviz_rendering::RenderWindow render_window;
   QWidget * containing_widget = QWidget::createWindowContainer(&render_window, window);
-  // Q_UNUSED(containing_widget);
-  // QTabWidget * tabs = new QTabWidget(containing_widget);
-  QTabWidget * tabs = new QTabWidget(window);
-  tabs->setFixedSize(245, 245);
-  tabs->addTab(new QWidget(), "TAB 1");
-  tabs->addTab(containing_widget, "TAB 2");
-  // containing_widget->show();
 
-  window->setCentralWidget(tabs);
+  window->setCentralWidget(containing_widget);
   window->show();
 
   return a.exec();
