@@ -57,7 +57,6 @@ add_library(${PROJECT_NAME}
   src/rviz_rendering/render_system.cpp
   src/rviz_rendering/render_window.cpp
   src/rviz_rendering/render_window_impl.cpp
-  # src/rviz_rendering/render_widget.cpp
   src/rviz_rendering/resource_config.cpp
 )
 target_link_libraries(${PROJECT_NAME}
@@ -103,9 +102,5 @@ if(TARGET Qt5::windeployqt)
 endif()
 
 install(TARGETS rendering_example DESTINATION bin)
-
-# add_executable(test_QTOgreWindow src/test_QTOgreWindow.cpp src/QTOgreWindow.cpp)
-# target_link_libraries(test_QTOgreWindow ${OGRE_LIBRARIES} Qt5::Widgets)
-# target_compile_options(test_QTOgreWindow PUBLIC -Wno-error)
 
 ament_package()
