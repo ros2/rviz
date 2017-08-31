@@ -47,6 +47,10 @@
 #include <QWindow>
 #include <QTimer>
 
+#include <QMetaEnum>
+#include <QDebug>
+#include <QTime>
+
 #include "render_window_impl.hpp"
 
 namespace rviz_rendering
@@ -75,36 +79,54 @@ RenderWindow::render(QPainter * painter)
 void
 RenderWindow::render()
 {
-  printf("in RenderWindow::render()\n");
+  // printf("in RenderWindow::render()\n");
   impl_->render();
 }
 
 void
 RenderWindow::renderLater()
 {
-  printf("in RenderWindow::renderLater()\n");
+  // printf("in RenderWindow::renderLater()\n");
   impl_->renderLater();
 }
 
 void
 RenderWindow::renderNow()
 {
-  printf("in RenderWindow::renderNow()\n");
+  // printf("in RenderWindow::renderNow()\n");
   impl_->renderNow();
+}
+
+template<typename EnumType>
+QString
+ToString(const EnumType & enumValue)
+{
+  const char * enumName = qt_getEnumName(enumValue);
+  const QMetaObject * metaObject = qt_getEnumMetaObject(enumValue);
+  if (metaObject) {
+    const int enumIndex = metaObject->indexOfEnumerator(enumName);
+    return QString("%1::%2::%3").arg(
+      metaObject->className(),
+      enumName,
+      metaObject->enumerator(enumIndex).valueToKey(enumValue));
+  }
+
+  return QString("%1::%2").arg(enumName).arg(static_cast<int>(enumValue));
 }
 
 bool
 RenderWindow::event(QEvent * event)
 {
-  printf("in RenderWindow::event(QEvent *)\n");
-  switch (event->type()) {
-    case QEvent::UpdateRequest:
-      // m_update_pending = false;
-      this->renderNow();
-      return true;
-    default:
-      return QWindow::event(event);
-  }
+  // // printf("in RenderWindow::event(QEvent *)\n");
+  // switch (event->type()) {
+  //   case QEvent::UpdateRequest:
+  //     // m_update_pending = false;
+  //     this->renderNow();
+  //     return true;
+  //   default:
+  //     return QWindow::event(event);
+  // }
+  return QWindow::event(event);
 }
 
 void
@@ -121,12 +143,25 @@ RenderWindow::exposeEvent(QExposeEvent * expose_event)
 bool
 RenderWindow::eventFilter(QObject * target, QEvent * event)
 {
-  printf("in RenderWindow::eventFilter(QObject *, QEvent *)\n");
+  // printf("in RenderWindow::eventFilter(QObject *, QEvent *)\n");
   if (target == this) {
-    if (event->type() == QEvent::Resize) {
-      if (this->isExposed()) {
-        impl_->resize(this->width(), this->height());
-      }
+    qDebug() <<
+      "[" << QTime::currentTime().toString() << "]: " <<
+      "event->type() == " << ToString(event->type()) << ", " <<
+      "target == " << target;
+    switch (event->type()) {
+      case QEvent::Resize:
+        if (this->isExposed()) {
+          impl_->resize(this->width(), this->height());
+        } else {
+          printf("here\n");
+        }
+        return false;
+      case QEvent::UpdateRequest:
+        this->renderNow();
+        return true;
+      default:
+        return QWindow::event(event);
     }
   }
   return false;

@@ -68,7 +68,6 @@ RenderWindowImpl::RenderWindowImpl(QWindow * parent)
 void
 RenderWindowImpl::render()
 {
-  printf("in RenderWindowImpl::render()\n");
   // How we tied in the render function for OGre3D with QWindow's render function.
   // This is what gets call repeatedly.
   // Note that we don't call this function directly; rather we use the renderNow()
@@ -79,13 +78,19 @@ RenderWindowImpl::render()
   // experience it seems better to keep things separate and keep the render
   // function as simple as possible.
   Ogre::WindowEventUtilities::messagePump();
-  render_system_->getOgreRoot()->renderOneFrame();
+  if (ogre_render_window_->isClosed()) {
+    RVIZ_RENDERING_LOG_ERROR("in RenderSystemImpl::render() - ogre window is closed");
+    return;
+  }
+  if (!render_system_->getOgreRoot()->renderOneFrame()) {
+    RVIZ_RENDERING_LOG_WARNING("in RenderSystemImpl::render() - renderOneFrame() returned false");
+  }
 }
 
 void
 RenderWindowImpl::renderLater()
 {
-  printf("in RenderWindowImpl::renderLater()\n");
+  // printf("in RenderWindowImpl::renderLater()\n");
   parent_->requestUpdate();
 
   // Alternative impl?:
@@ -107,7 +112,7 @@ RenderWindowImpl::renderLater()
 void
 RenderWindowImpl::renderNow()
 {
-  printf("in RenderWindowImpl::renderNow()\n");
+  // printf("in RenderWindowImpl::renderNow()\n");
   if (!parent_->isExposed()) {
     return;
   }
@@ -120,7 +125,7 @@ RenderWindowImpl::renderNow()
   this->render();
 
   if (animating_) {
-    printf("in RenderWindowImpl::renderNow() -> renderLater()\n");
+    printf("in RenderWindowImpl::renderNow() -> renderLater() because of animating_\n");
     this->renderLater();
   }
 }
