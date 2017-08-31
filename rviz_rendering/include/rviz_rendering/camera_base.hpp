@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,8 +28,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OGRE_TOOLS_CAMERA_BASE_H_
-#define OGRE_TOOLS_CAMERA_BASE_H_
+#ifndef RVIZ_RENDERING__CAMERA_BASE_HPP_
+#define RVIZ_RENDERING__CAMERA_BASE_HPP_
+
+#include <string>
 
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>
@@ -40,56 +43,59 @@ class SceneNode;
 class SceneManager;
 }
 
-namespace rviz
+namespace rviz_rendering
 {
 
+/// Generic interface for a camera.
 /**
- * \class CameraBase
- * \brief Generic interface for a camera
- *
- * Provides a interface that a camera can override, providing interchangeability between different camera types.
+ * Provides a interface that a camera can override,
+ * providing interchangeability between different camera types.
  * Specific implementation is left to the child class.
  */
 class CameraBase
 {
 public:
   /**
-   * \brief Constructor
-   * @param scene_manager Scene manager this camera is displaying
+   * \param scene_manager Scene manager this camera is displaying
    */
-  CameraBase(Ogre::SceneManager * scene_manager);
+  explicit CameraBase(Ogre::SceneManager * scene_manager);
   virtual ~CameraBase();
 
+  /// Get the Ogre camera associated with this camera object.
   /**
-   * \brief Get the Ogre camera associated with this camera object
-   * @return The Ogre camera associated with this camera object
+   * \return The Ogre camera associated with this camera object
    */
-  Ogre::Camera * getOgreCamera() {return camera_; }
+  Ogre::Camera *
+  getOgreCamera() {return camera_; }
 
+  /// Set a scene node that all camera transformations should be relative to.
   /**
-   * \brief Set a scene node that all camera transformations should be relative to
-   * @param node The node
+   * \param node The node
    */
-  void setRelativeNode(Ogre::SceneNode * node);
-  /**
-   * \brief Called when the relative node changes
-   */
-  virtual void relativeNodeChanged() {}
+  void
+  setRelativeNode(Ogre::SceneNode * node);
 
-  virtual void update() = 0;
+  /// Called when the relative node changes.
+  virtual
+  void
+  relativeNodeChanged() {}
 
-  /**
-   * \brief Set the position of the camera
-   */
-  virtual void setPosition(const Ogre::Vector3 & position);
-  /**
-   * \brief Set the orientation of the camera
-   */
-  virtual void setOrientation(const Ogre::Quaternion & orientation);
+  virtual
+  void
+  update() = 0;
 
+  /// Set the position of the camera.
+  virtual
+  void
+  setPosition(const Ogre::Vector3 & position);
+
+  /// Set the orientation of the camera.
+  virtual
+  void
+  setOrientation(const Ogre::Quaternion & orientation);
+
+  /// Yaw the camera.
   /**
-   * \brief Yaw the camera.
-   *
    * Calls to yaw are cumulative, so:
    *   yaw(PI);
    *   yaw(PI);
@@ -97,131 +103,175 @@ public:
    * is equivalent to
    *  yaw(2*PI);
    *
-   * @param angle Angle to yaw, in radians
+   * \param angle Angle to yaw, in radians
    */
-  virtual void yaw(float angle) = 0;
-  /**
-     * \brief Pitch the camera.
-     *
-     * Calls to pitch are cumulative, so:
-     *   pitch(PI);
-     *   pitch(PI);
-     *
-     * is equivalent to
-     *  pitch(2*PI);
-     *
-     * @param angle Angle to pitch, in radians
-     */
-  virtual void pitch(float angle) = 0;
-  /**
-       * \brief Roll the camera.
-       *
-       * Calls to roll are cumulative, so:
-       *   roll(PI);
-       *   roll(PI);
-       *
-       * is equivalent to
-       *  roll(2*PI);
-       *
-       * @param angle Angle to roll, in radians
-       */
-  virtual void roll(float angle) = 0;
+  virtual
+  void
+  yaw(float angle) = 0;
 
+  /// Pitch the camera.
   /**
-   * \brief Set the orientation of the camera from a quaternion
-   */
-  virtual void setOrientation(float x, float y, float z, float w) = 0;
-  /**
-   * \brief Set the position of the camera
-   */
-  virtual void setPosition(float x, float y, float z) = 0;
-
-  /**
-   * \brief Set the position/orientation of this camera from another camera.
+   * Calls to pitch are cumulative, so:
+   *   pitch(PI);
+   *   pitch(PI);
    *
-   * @param camera The camera to set from
-   */
-  virtual void setFrom(CameraBase * camera) = 0;
-
-  /**
-   * \brief Get the position of this camera
-   * @return The position of this camera
-   */
-  virtual Ogre::Vector3 getPosition() = 0;
-  /**
-   * \brief Get the orientation of this camera
-   * @return The orientation of this camera
-   */
-  virtual Ogre::Quaternion getOrientation() = 0;
-
-  /**
-   * \brief Point the camera at the specified point
-   * @param point The point to look at
-   */
-  virtual void lookAt(const Ogre::Vector3 & point) = 0;
-
-  /**
-   * \brief Move the camera relative to its orientation
+   * is equivalent to
+   *  pitch(2*PI);
    *
-   * @param x Distance to move along the X-axis
-   * @param y Distance to move along the Y-axis
-   * @param z Distance to move along the Z-axis
+   * \param angle Angle to pitch, in radians
    */
-  virtual void move(float x, float y, float z) = 0;
+  virtual
+  void
+  pitch(float angle) = 0;
 
-  virtual void mouseLeftDown(int x, int y) {}
-  virtual void mouseMiddleDown(int x, int y) {}
-  virtual void mouseRightDown(int x, int y) {}
-  virtual void mouseLeftUp(int x, int y) {}
-  virtual void mouseMiddleUp(int x, int y) {}
-  virtual void mouseRightUp(int x, int y) {}
+  /// Roll the camera.
+  /**
+   * Calls to roll are cumulative, so:
+   *   roll(PI);
+   *   roll(PI);
+   *
+   * is equivalent to
+   *  roll(2*PI);
+   *
+   * @param angle Angle to roll, in radians
+   */
+  virtual
+  void
+  roll(float angle) = 0;
 
-  /**
-   * \brief Handle a left mouse button drag
-   *
-   * @param diff_x Pixels the mouse has moved in the (window space) x direction
-   * @param diff_y Pixels the mouse has moved in the (window space) y direction
-   */
-  virtual void mouseLeftDrag(int diff_x, int diff_y, bool ctrl, bool alt, bool shift) = 0;
-  /**
-   * \brief Handle a middle mouse button drag
-   *
-   * @param diff_x Pixels the mouse has moved in the (window space) x direction
-   * @param diff_y Pixels the mouse has moved in the (window space) y direction
-   */
-  virtual void mouseMiddleDrag(int diff_x, int diff_y, bool ctrl, bool alt, bool shift) = 0;
-  /**
-   * \brief Handle a right mouse button drag
-   *
-   * @param diff_x Pixels the mouse has moved in the (window space) x direction
-   * @param diff_y Pixels the mouse has moved in the (window space) y direction
-   */
-  virtual void mouseRightDrag(int diff_x, int diff_y, bool ctrl, bool alt, bool shift) = 0;
-  /**
-   * \brief Handle a scrollwheel change
-   *
-   * @param diff Number of "units" the scrollwheel has moved
-   * @todo Probably need to pass in how many units there are in a "click" of the wheel
-   */
-  virtual void scrollWheel(int diff, bool ctrl, bool alt, bool shift) = 0;
+  /// Set the orientation of the camera from a quaternion.
+  virtual
+  void
+  setOrientation(float x, float y, float z, float w) = 0;
 
+  /// Set the position of the camera.
+  virtual
+  void
+  setPosition(float x, float y, float z) = 0;
+
+  /// Set the position/orientation of this camera from another camera.
   /**
-   * \brief Loads the camera's configure from the supplied string (generated through toString())
-   * @param str The string to load from
+   * \param camera The camera to set from
    */
-  virtual void fromString(const std::string & str) = 0;
+  virtual
+  void
+  setFrom(CameraBase * camera) = 0;
+
+  /// Get the position of this camera.
   /**
-   * \brief Returns a string representation of the camera's configuration
+   * \return The position of this camera
    */
-  virtual std::string toString() = 0;
+  virtual
+  Ogre::Vector3
+  getPosition() = 0;
+
+  /// Get the orientation of this camera.
+  /**
+   * \return The orientation of this camera
+   */
+  virtual
+  Ogre::Quaternion
+  getOrientation() = 0;
+
+  /// Point the camera at the specified point.
+  /**
+   * \param point The point to look at
+   */
+  virtual
+  void
+  lookAt(const Ogre::Vector3 & point) = 0;
+
+  /// Move the camera relative to its orientation.
+  /**
+   * \param x Distance to move along the X-axis
+   * \param y Distance to move along the Y-axis
+   * \param z Distance to move along the Z-axis
+   */
+  virtual
+  void
+  move(float x, float y, float z) = 0;  // NOLINT: cpplint thinks this is std::move
+
+  virtual
+  void
+  mouseLeftDown(int x, int y) {(void)x; (void)y;}
+
+  virtual
+  void
+  mouseMiddleDown(int x, int y) {(void)x; (void)y;}
+
+  virtual
+  void
+  mouseRightDown(int x, int y) {(void)x; (void)y;}
+
+  virtual
+  void
+  mouseLeftUp(int x, int y) {(void)x; (void)y;}
+
+  virtual
+  void
+  mouseMiddleUp(int x, int y) {(void)x; (void)y;}
+
+  virtual
+  void
+  mouseRightUp(int x, int y) {(void)x; (void)y;}
+
+
+  /// Handle a left mouse button drag.
+  /**
+   * \param diff_x Pixels the mouse has moved in the (window space) x direction
+   * \param diff_y Pixels the mouse has moved in the (window space) y direction
+   */
+  virtual
+  void
+  mouseLeftDrag(int diff_x, int diff_y, bool ctrl, bool alt, bool shift) = 0;
+
+  /// Handle a middle mouse button drag.
+  /**
+   * \param diff_x Pixels the mouse has moved in the (window space) x direction
+   * \param diff_y Pixels the mouse has moved in the (window space) y direction
+   */
+  virtual
+  void
+  mouseMiddleDrag(int diff_x, int diff_y, bool ctrl, bool alt, bool shift) = 0;
+
+  /// Handle a right mouse button drag.
+  /**
+   * \param diff_x Pixels the mouse has moved in the (window space) x direction
+   * \param diff_y Pixels the mouse has moved in the (window space) y direction
+   */
+  virtual
+  void
+  mouseRightDrag(int diff_x, int diff_y, bool ctrl, bool alt, bool shift) = 0;
+
+  /// Handle a scrollwheel change.
+  /**
+   * \param diff Number of "units" the scrollwheel has moved
+   * \todo Probably need to pass in how many units there are in a "click" of the wheel
+   */
+  virtual
+  void
+  scrollWheel(int diff, bool ctrl, bool alt, bool shift) = 0;
+
+  /// Load the camera's configure from the supplied string (generated through toString()).
+  /**
+   * \param str The string to load from
+   */
+  virtual
+  void
+  fromString(const std::string & str) = 0;
+
+  /// Return a string representation of the camera's configuration.
+  virtual
+  std::string
+  toString() = 0;
 
 protected:
-  Ogre::Camera * camera_;                  ///< Ogre camera associated with this camera object
-  Ogre::SceneManager * scene_manager_;     ///< Scene manager this camera is part of
+  Ogre::Camera * camera_;  ///< Ogre camera associated with this camera object
+  Ogre::SceneManager * scene_manager_;  ///< Scene manager this camera is part of
 
   Ogre::SceneNode * relative_node_;
 };
 
-} // namespace rviz
+}  // namespace rviz_rendering
 
-#endif /*OGRE_TOOLS_CAMERA_BASE_H_*/
+#endif  // RVIZ_RENDERING__CAMERA_BASE_HPP_

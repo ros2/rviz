@@ -27,28 +27,32 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "shape.h"
-#include <ros/assert.h>
+#include "rviz_rendering/shape.hpp"
 
-#include <OgreSceneManager.h>
-#include <OgreSceneNode.h>
-#include <OgreVector3.h>
-#include <OgreQuaternion.h>
+#include <cstdint>
+#include <stdexcept>
+#include <string>
+
 #include <OgreEntity.h>
 #include <OgreMaterialManager.h>
-#include <OgreTextureManager.h>
+#include <OgreQuaternion.h>
+#include <OgreSceneManager.h>
+#include <OgreSceneNode.h>
 #include <OgreTechnique.h>
-#include <stdint.h>
+#include <OgreTextureManager.h>
+#include <OgreVector3.h>
 
-namespace rviz
+namespace rviz_rendering
 {
 
-Ogre::Entity * Shape::createEntity(const std::string & name, Type type,
+Ogre::Entity *
+Shape::createEntity(
+  const std::string & name,
+  Type type,
   Ogre::SceneManager * scene_manager)
 {
   if (type == Mesh) {
-    return NULL; // the entity is initialized after the vertex data was specified
-
+    return NULL;  // the entity is initialized after the vertex data was specified
   }
   std::string mesh_name;
   switch (type) {
@@ -69,7 +73,7 @@ Ogre::Entity * Shape::createEntity(const std::string & name, Type type,
       break;
 
     default:
-      ROS_BREAK();
+      throw std::runtime_error("unexpected shape type");
   }
 
   return scene_manager->createEntity(name, mesh_name);
@@ -181,8 +185,9 @@ void Shape::setUserData(const Ogre::Any & data)
     entity_->getUserObjectBindings().setUserAny(data);
   } else {
     ROS_ERROR(
-      "Shape not yet fully constructed. Cannot set user data. Did you add triangles to the mesh already?");
+      "Shape not yet fully constructed. "
+      "Cannot set user data. Did you add triangles to the mesh already?");
   }
 }
 
-} // namespace rviz
+}  // namespace rviz_rendering

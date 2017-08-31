@@ -27,7 +27,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "camera_base.h"
+#include "rviz_rendering/camera_base.hpp"
+
+#include <cstdint>
+#include <sstream>
 
 #include <OgreCamera.h>
 #include <OgreSceneManager.h>
@@ -35,10 +38,7 @@
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>
 
-#include <stdint.h>
-#include <sstream>
-
-namespace rviz
+namespace rviz_rendering
 {
 
 CameraBase::CameraBase(Ogre::SceneManager * scene_manager)
@@ -75,4 +75,4 @@ void CameraBase::setOrientation(const Ogre::Quaternion & orientation)
   setOrientation(orientation.x, orientation.y, orientation.z, orientation.w);
 }
 
-} // namespace rviz
+}  // namespace rviz_rendering

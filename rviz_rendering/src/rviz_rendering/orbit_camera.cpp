@@ -27,27 +27,29 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "orbit_camera.h"
-#include "shape.h"
+#include "rviz_rendering/orbit_camera.hpp"
+
+#include <cstdint>
+#include <sstream>
+#include <string>
 
 #include <OgreCamera.h>
+#include <OgreQuaternion.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 #include <OgreVector3.h>
-#include <OgreQuaternion.h>
 #include <OgreViewport.h>
 
-#include <stdint.h>
-#include <sstream>
+#include "rviz_rendering/shape.hpp"
 
 #define MIN_DISTANCE 0.01
 
-namespace rviz
+namespace rviz_rendering
 {
 
 static const float PITCH_LIMIT_LOW = 0.001;
 static const float PITCH_LIMIT_HIGH = Ogre::Math::PI - 0.001;
-static const float YAW_START = Ogre::Math::PI;// - 0.001;
+static const float YAW_START = Ogre::Math::PI;
 static const float PITCH_START = Ogre::Math::HALF_PI;
 
 OrbitCamera::OrbitCamera(Ogre::SceneManager * scene_manager)
@@ -58,7 +60,7 @@ OrbitCamera::OrbitCamera(Ogre::SceneManager * scene_manager)
   distance_(10.0f)
 {
   focal_point_object_ = new Shape(Shape::Sphere, scene_manager);
-  focal_point_object_->setScale(Ogre::Vector3(0.05f, 0.01f, 0.05f) );
+  focal_point_object_->setScale(Ogre::Vector3(0.05f, 0.01f, 0.05f));
   focal_point_object_->setColor(1.0f, 1.0f, 0.0f, 0.5f);
   focal_point_object_->getRootNode()->setVisible(false);
 
@@ -218,7 +220,7 @@ void OrbitCamera::setFocalPoint(const Ogre::Vector3 & focal_point)
   update();
 }
 
-void OrbitCamera::move(float x, float y, float z)
+void OrbitCamera::move(float x, float y, float z)  // NOLINT: cpplint thinks this is std::move
 {
   Ogre::Quaternion orientation = camera_->getOrientation();
 
@@ -274,15 +276,17 @@ void OrbitCamera::mouseMiddleDrag(int diff_x, int diff_y, bool ctrl, bool alt, b
   int width = camera_->getViewport()->getActualWidth();
   int height = camera_->getViewport()->getActualHeight();
 
-  move(-((float)diff_x / (float)width) * distance_ * tan(fovX / 2.0f) * 2.0f,
-    ((float)diff_y / (float)height) * distance_ * tan(fovY / 2.0f) * 2.0f, 0.0f);
-
+  move(  // NOLINT: cpplint thinks this is std::move
+    -(static_cast<float>(diff_x) / static_cast<float>(width)) * distance_ * tan(fovX / 2.0f) * 2.0f,
+    (static_cast<float>(diff_y) / static_cast<float>(height)) * distance_ * tan(fovY / 2.0f) * 2.0f,
+    0.0f);
 }
 
 void OrbitCamera::mouseRightDrag(int diff_x, int diff_y, bool ctrl, bool alt, bool shift)
 {
   if (shift) {
-    move(0.0f, 0.0f, diff_y * 0.1 * (distance_ / 10.0f));
+    move(  // NOLINT: cpplint thinks this is std::move
+      0.0f, 0.0f, diff_y * 0.1 * (distance_ / 10.0f));
   } else {
     zoom(-diff_y * 0.1 * (distance_ / 10.0f) );
   }
@@ -291,7 +295,8 @@ void OrbitCamera::mouseRightDrag(int diff_x, int diff_y, bool ctrl, bool alt, bo
 void OrbitCamera::scrollWheel(int diff, bool ctrl, bool alt, bool shift)
 {
   if (shift) {
-    move(0.0f, 0.0f, -diff * 0.01 * (distance_ / 10.0f));
+    move(  // NOLINT: cpplint thinks this is std::move
+      0.0f, 0.0f, -diff * 0.01 * (distance_ / 10.0f));
   } else {
     zoom(diff * 0.01 * (distance_ / 10.0f) );
   }
@@ -355,4 +360,4 @@ std::string OrbitCamera::toString()
   return oss.str();
 }
 
-} // namespace rviz
+}  // namespace rviz_rendering

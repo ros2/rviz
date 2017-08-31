@@ -27,9 +27,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "object.h"
+#include "rviz_rendering/object.hpp"
 
-namespace rviz
+namespace rviz_rendering
 {
 
 Object::Object(Ogre::SceneManager * scene_manager)
@@ -37,4 +37,4 @@ Object::Object(Ogre::SceneManager * scene_manager)
 {
 }
 
-} // namespace rviz
+}  // namespace rviz_rendering
