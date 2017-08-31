@@ -136,6 +136,8 @@ private:
   void
   setupRenderSystem();
   void
+  setResourceDirectory();
+  void
   setupResources();
   void
   detectGlVersion();

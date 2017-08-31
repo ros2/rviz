@@ -17,6 +17,7 @@ find_package(ament_cmake REQUIRED)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
+find_package(ament_index_cpp REQUIRED)
 # do find_package(rviz_ogre_vendor) first to make sure the custom OGRE is found
 find_package(rviz_ogre_vendor REQUIRED)
 
@@ -72,11 +73,11 @@ target_link_libraries(${PROJECT_NAME}
   rviz_ogre_vendor::RenderSystem_GL
   rviz_ogre_vendor::OgreGLSupport
   Qt5::Widgets
+  ament_index_cpp::ament_index_cpp
 )
+
 # This will give the library a default directory to fallback to, but it should be overridden.
 target_compile_definitions(${PROJECT_NAME}
-  # TODO(wjwwood): replace this with ament_index
-  PRIVATE "-DRVIZ_RENDERING_DEFAULT_RESOURCE_DIRECTORY=\"${CMAKE_CURRENT_SOURCE_DIR}\""
   # TODO(wjwwood): this might not be required anymore with static linking
   PRIVATE "-DRVIZ_RENDERING_OGRE_PLUGIN_DIR=\"${OGRE_PLUGIN_DIR}\""
 )
@@ -109,6 +110,10 @@ if(TARGET Qt5::windeployqt)
 endif()
 
 install(TARGETS rendering_example DESTINATION bin)
+
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/ogre_media"
+        DESTINATION "share/rviz_rendering"
+        USE_SOURCE_PERMISSIONS)
 
 if(BUILD_TESTING)
     # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back
