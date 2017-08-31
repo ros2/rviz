@@ -66,7 +66,7 @@ RenderWindow::~RenderWindow()
 // In case any drawing surface backing stores (QRasterWindow or QOpenGLWindow)
 // of Qt are supplied to this class in any way we inform Qt that they will be unused.
 void
-RenderWindow::render(QPainter *painter)
+RenderWindow::render(QPainter * painter)
 {
   printf("in RenderWindow::render(QPainter *)\n");
   Q_UNUSED(painter);
@@ -129,7 +129,6 @@ RenderWindow::eventFilter(QObject * target, QEvent * event)
       }
     }
   }
-
   return false;
 }
 

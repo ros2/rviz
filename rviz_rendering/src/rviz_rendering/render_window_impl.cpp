@@ -69,15 +69,15 @@ void
 RenderWindowImpl::render()
 {
   printf("in RenderWindowImpl::render()\n");
-  /*
-  How we tied in the render function for OGre3D with QWindow's render function. This is what gets call
-  repeatedly. Note that we don't call this function directly; rather we use the renderNow() function
-  to call this method as we don't want to render the Ogre3D scene unless everything is set up first.
-  That is what renderNow() does.
-
-  Theoretically you can have one function that does this check but from my experience it seems better
-  to keep things separate and keep the render function as simple as possible.
-  */
+  // How we tied in the render function for OGre3D with QWindow's render function.
+  // This is what gets call repeatedly.
+  // Note that we don't call this function directly; rather we use the renderNow()
+  // function to call this method as we don't want to render the Ogre3D scene
+  // unless everything is set up first. That is what renderNow() does.
+  //
+  // Theoretically you can have one function that does this check but from my
+  // experience it seems better to keep things separate and keep the render
+  // function as simple as possible.
   Ogre::WindowEventUtilities::messagePump();
   render_system_->getOgreRoot()->renderOneFrame();
 }
@@ -90,9 +90,10 @@ RenderWindowImpl::renderLater()
 
   // Alternative impl?:
 
-  // This function forces QWindow to keep rendering. Omitting this causes the renderNow() function to
-  // only get called when the window is resized, moved, etc. as opposed to all of the time; which is
-  // generally what we need.
+  // // This function forces QWindow to keep rendering.
+  // // Omitting this causes the renderNow() function to only get called when the
+  // // window is resized, moved, etc. as opposed to all of the time; which is
+  // // generally what we need.
   // if (!m_update_pending)
   // {
   //   m_update_pending = true;
@@ -130,31 +131,35 @@ createScene(Ogre::SceneManager * ogre_scene_manager)
   printf("in RenderWindowImpl::createScene()\n");
   /*
   Example scene
-  Derive this class for your own purpose and overwite this function to have a working Ogre widget with
-  your own content.
+  Derive this class for your own purpose and overwite this function to have a
+  working Ogre widget with your own content.
   */
   ogre_scene_manager->setAmbientLight(Ogre::ColourValue(1.0f, 0.0f, 0.0f));
 
-  Ogre::Entity * sphereMesh = ogre_scene_manager->createEntity("mySphere", Ogre::SceneManager::PT_SPHERE);
+  Ogre::Entity * sphereMesh =
+    ogre_scene_manager->createEntity("mySphere", Ogre::SceneManager::PT_SPHERE);
 
-  Ogre::SceneNode * childSceneNode = ogre_scene_manager->getRootSceneNode()->createChildSceneNode();
+  Ogre::SceneNode * childSceneNode =
+    ogre_scene_manager->getRootSceneNode()->createChildSceneNode();
 
   childSceneNode->attachObject(sphereMesh);
 
-  Ogre::MaterialPtr sphereMaterial = Ogre::MaterialManager::getSingleton().create("SphereMaterial",
-    Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
+  Ogre::MaterialPtr sphereMaterial = Ogre::MaterialManager::getSingleton().create(
+    "SphereMaterial",
+    Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+    true);
 
   sphereMaterial->getTechnique(0)->getPass(0)->setAmbient(0.1f, 0.1f, 0.1f);
   sphereMaterial->getTechnique(0)->getPass(0)->setDiffuse(0.2f, 0.2f, 0.2f, 1.0f);
   sphereMaterial->getTechnique(0)->getPass(0)->setSpecular(0.9f, 0.9f, 0.9f, 1.0f);
-  //sphereMaterial->setAmbient(0.2f, 0.2f, 0.5f);
-  //sphereMaterial->setSelfIllumination(0.2f, 0.2f, 0.1f);
+  // sphereMaterial->setAmbient(0.2f, 0.2f, 0.5f);
+  // sphereMaterial->setSelfIllumination(0.2f, 0.2f, 0.1f);
 
   sphereMesh->setMaterialName("SphereMaterial");
   childSceneNode->setPosition(Ogre::Vector3(0.0f, 0.0f, 0.0f));
-  childSceneNode->setScale(Ogre::Vector3(0.01f, 0.01f, 0.01f)); // Radius, in theory.
+  childSceneNode->setScale(Ogre::Vector3(0.01f, 0.01f, 0.01f));  // Radius, in theory.
 
-  Ogre::Light* light = ogre_scene_manager->createLight("MainLight");
+  Ogre::Light * light = ogre_scene_manager->createLight("MainLight");
   light->setPosition(20.0f, 80.0f, 50.0f);
 }
 
@@ -195,7 +200,7 @@ RenderWindowImpl::initialize()
   ogre_camera_->lookAt(Ogre::Vector3(0.0f, 0.0f, -300.0f));
   ogre_camera_->setNearClipDistance(0.1f);
   ogre_camera_->setFarClipDistance(200.0f);
-  camera_man_ = new OgreQtBites::SdkQtCameraMan(ogre_camera_);   // create a default camera controller
+  camera_man_ = new OgreQtBites::SdkQtCameraMan(ogre_camera_);
 
   Ogre::Viewport * pViewPort = ogre_render_window_->addViewport(ogre_camera_);
   auto bg_color = Ogre::ColourValue(0.0f, 0.5f, 1.0f);

@@ -46,4 +46,3 @@ get_render_system_singleton();
 }  // namespace rviz_rendering
 
 #endif  // RVIZ_RENDERING__RVIZ_RENDERING_HPP_
-

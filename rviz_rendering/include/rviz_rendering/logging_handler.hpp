@@ -37,10 +37,9 @@ namespace rviz_rendering
 {
 
 using LoggingHandler = std::function<
-  void (const std::string & message, const std::string & file_name, size_t line_number)
->;
+    void(const std::string & message, const std::string & file_name, size_t line_number)
+    >;
 
-} // namespace rviz_rendering
+}  // namespace rviz_rendering
 
 #endif  // RVIZ_RENDERING__LOGGING_HANDLER_HPP_
-

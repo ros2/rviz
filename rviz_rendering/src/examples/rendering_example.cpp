@@ -34,7 +34,7 @@
 
 #include <rviz_rendering/render_window.hpp>
 
-int main(int argc, char *argv[])
+int main(int argc, char * argv[])
 {
   QApplication a(argc, argv);
   QMainWindow * window = new QMainWindow();
