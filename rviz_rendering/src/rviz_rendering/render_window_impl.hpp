@@ -86,6 +86,7 @@ protected:
   Ogre::FrameListener * ogre_frame_listener_;
   Ogre::SceneManager * ogre_scene_manager_;
   Ogre::Camera * ogre_camera_;
+
   bool animating_;
 };
 

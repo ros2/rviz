@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OGRE_TOOLS_GRID_H
-#define OGRE_TOOLS_GRID_H
+#ifndef RVIZ_RENDERING__GRID_HPP_
+#define RVIZ_RENDERING__GRID_HPP_
 
 #include <stdint.h>
 
@@ -51,7 +51,7 @@ class Any;
 namespace rviz_rendering
 {
 
-//class BillboardLine;
+// class BillboardLine;
 
 /**
  * \class Grid
@@ -131,6 +131,6 @@ private:
   Ogre::ColourValue color_;
 };
 
-} // namespace rviz
+}  // namespace rviz_rendering
 
-#endif
+#endif  // RVIZ_RENDERING__GRID_HPP_

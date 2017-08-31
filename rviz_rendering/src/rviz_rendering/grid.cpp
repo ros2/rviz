@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "grid.h"
-//#include "billboard_line.h"
+#include "grid.hpp"
+// #include "billboard_line.h"
 
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
@@ -147,7 +147,7 @@ void Grid::create()
   manual_object_->clear();
 //  billboard_line_->clear();
 
-  float extent = (cell_length_ * ((double)cell_count_)) / 2;
+  float extent = (cell_length_ * static_cast<float>(cell_count_)) / 2;
 
 //  if (style_ == Billboards)
 //  {
@@ -165,7 +165,7 @@ void Grid::create()
 //  }
 
   for (uint32_t h = 0; h <= height_; ++h) {
-    float h_real = (height_ / 2.0f - (float)h) * cell_length_;
+    float h_real = (height_ / 2.0f - static_cast<float>(h)) * cell_length_;
     for (uint32_t i = 0; i <= cell_count_; i++) {
       float inc = extent - ( i * cell_length_ );
 
@@ -241,4 +241,4 @@ void Grid::setUserData(const Ogre::Any & data)
   manual_object_->getUserObjectBindings().setUserAny(data);
 }
 
-} // namespace rviz
+}  // namespace rviz_rendering
