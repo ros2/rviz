@@ -190,8 +190,9 @@ void
 RenderWindowImpl::initialize()
 {
   render_system_ = RenderSystem::get();
-  ogre_render_window_ =
-    render_system_->makeRenderWindow(parent_->winId(), parent_->width(), parent_->height());
+  double pixel_ratio = parent_->devicePixelRatio();
+  ogre_render_window_ = render_system_->makeRenderWindow(
+    parent_->winId(), parent_->width(), parent_->height(), pixel_ratio);
 
   Ogre::Root * ogre_root = render_system_->getOgreRoot();
   if (!ogre_root) {
