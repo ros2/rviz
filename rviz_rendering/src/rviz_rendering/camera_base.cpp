@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,7 +44,7 @@ namespace rviz_rendering
 
 CameraBase::CameraBase(Ogre::SceneManager * scene_manager)
 : scene_manager_(scene_manager),
-  relative_node_(NULL)
+  relative_node_(nullptr)
 {
   std::stringstream ss;
   static uint32_t count = 0;

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -116,6 +117,7 @@ void OrbitCamera::update()
     Ogre::Vector3 vec = pos - global_focal_point;
     pos = relative_node_->getOrientation() * vec + global_focal_point;
 
+    // relative_node_->attachObject(camera_);
     camera_->setFixedYawAxis(true, relative_node_->getOrientation() * Ogre::Vector3::UNIT_Y);
   }
 
@@ -145,6 +147,7 @@ void OrbitCamera::pitch(float angle)
 
 void OrbitCamera::roll(float angle)
 {
+  (void)angle;
 }
 
 Ogre::Vector3 OrbitCamera::getPosition()

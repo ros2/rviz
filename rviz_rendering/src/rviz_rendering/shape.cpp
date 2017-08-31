@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,6 +42,8 @@
 #include <OgreTechnique.h>
 #include <OgreTextureManager.h>
 #include <OgreVector3.h>
+
+#include "rviz_rendering/logging.hpp"
 
 namespace rviz_rendering
 {
@@ -101,7 +104,8 @@ Shape::Shape(Type type, Ogre::SceneManager * scene_manager, Ogre::SceneNode * pa
 
   ss << "Material";
   material_name_ = ss.str();
-  material_ = Ogre::MaterialManager::getSingleton().create(material_name_, ROS_PACKAGE_NAME);
+  // TODO(wjwwood): remove hard coded rviz_rendering package name, was ROS_PACKAGE_NAME
+  material_ = Ogre::MaterialManager::getSingleton().create(material_name_, "rviz_rendering");
   material_->setReceiveShadows(false);
   material_->getTechnique(0)->setLightingEnabled(true);
   material_->getTechnique(0)->setAmbient(0.5, 0.5, 0.5);
@@ -109,25 +113,19 @@ Shape::Shape(Type type, Ogre::SceneManager * scene_manager, Ogre::SceneNode * pa
   if (entity_) {
     entity_->setMaterialName(material_name_);
   }
-
-#if (OGRE_VERSION_MAJOR <= 1 && OGRE_VERSION_MINOR <= 4)
-  if (entity_) {
-    entity_->setNormaliseNormals(true);
-  }
-#endif
 }
 
 Shape::~Shape()
 {
-  scene_manager_->destroySceneNode(scene_node_->getName() );
-  scene_manager_->destroySceneNode(offset_node_->getName() );
+  scene_manager_->destroySceneNode(scene_node_->getName());
+  scene_manager_->destroySceneNode(offset_node_->getName());
 
   if (entity_) {
     scene_manager_->destroyEntity(entity_);
   }
 
   material_->unload();
-  Ogre::MaterialManager::getSingleton().remove(material_->getName());
+  Ogre::MaterialManager::getSingleton().remove(material_->getName(), "rviz_rendering");
 }
 
 void Shape::setColor(const Ogre::ColourValue & c)
@@ -184,7 +182,7 @@ void Shape::setUserData(const Ogre::Any & data)
   if (entity_) {
     entity_->getUserObjectBindings().setUserAny(data);
   } else {
-    ROS_ERROR(
+    RVIZ_RENDERING_LOG_ERROR(
       "Shape not yet fully constructed. "
       "Cannot set user data. Did you add triangles to the mesh already?");
   }
