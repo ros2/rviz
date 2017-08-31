@@ -39,6 +39,7 @@
 #include <GL/glx.h>
 #endif
 
+#include <ament_index_cpp/get_resource.hpp>
 #include <rviz_rendering/logging.hpp>
 #include <rviz_rendering/resource_config.hpp>
 
@@ -124,6 +125,7 @@ RenderSystem::RenderSystem()
 {
   OgreLogging::configureLogging();
 
+  setResourceDirectory();
   setupDummyWindowId();
   ogre_root_ = new Ogre::Root(get_resource_directory() + "/ogre_media/plugins.cfg");
 #if ((OGRE_VERSION_MAJOR == 1 && OGRE_VERSION_MINOR >= 9) || OGRE_VERSION_MAJOR >= 2 )
@@ -272,6 +274,15 @@ RenderSystem::setupRenderSystem()
   }
 
   ogre_root_->setRenderSystem(render_system);
+}
+
+void
+RenderSystem::setResourceDirectory()
+{
+  std::string content;
+  std::string prefix_path;
+  ament_index_cpp::get_resource("packages", "rviz_rendering", content, &prefix_path);
+  set_resource_directory(prefix_path + "/share/rviz_rendering");
 }
 
 void
