@@ -61,7 +61,6 @@ get_ogre_plugin_directory();
 void
 set_ogre_plugin_directory(const std::string & ogre_plugin_directory);
 
-}
+}  // namespace rviz_rendering
 
 #endif  // RVIZ_RENDERING__RESOURCE_CONFIG_HPP_
-

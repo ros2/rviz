@@ -80,4 +80,4 @@ private:
 
 }  // namespace rviz_rendering
 
-#endif // RVIZ_RENDERING__OGRE_LOGGING_HPP_
+#endif  // RVIZ_RENDERING__OGRE_LOGGING_HPP_

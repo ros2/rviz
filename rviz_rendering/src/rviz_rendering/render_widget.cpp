@@ -88,8 +88,7 @@ RenderWidget::RenderWidget(RenderSystem * render_system, QWidget * parent)
 
 RenderWidget::~RenderWidget()
 {
-  if( render_window_ )
-  {
+  if (render_window_) {
     render_window_->removeViewport(0);
     render_window_->destroy();
   }
@@ -104,32 +103,29 @@ RenderWidget::getRenderWindow()
 }
 
 void
-RenderWidget::moveEvent(QMoveEvent *e)
+RenderWidget::moveEvent(QMoveEvent * e)
 {
   QWidget::moveEvent(e);
 
-  if(e->isAccepted() && render_window_)
-  {
+  if (e->isAccepted() && render_window_) {
     render_window_->windowMovedOrResized();
   }
 }
 
 void
-RenderWidget::paintEvent(QPaintEvent *e)
+RenderWidget::paintEvent(QPaintEvent * e)
 {
-  if(render_window_)
-  {
+  if (render_window_) {
     render_window_->update();
   }
   e->accept();
 }
 
 void
-RenderWidget::resizeEvent(QResizeEvent *e)
+RenderWidget::resizeEvent(QResizeEvent * e)
 {
   (void)e;
-  if(render_window_)
-  {
+  if (render_window_) {
     // render_window_->writeContentsToFile() (used in
     // VisualizationFrame::onSaveImage()) does not work right for
     // window with an odd width, so here I just always force it to be

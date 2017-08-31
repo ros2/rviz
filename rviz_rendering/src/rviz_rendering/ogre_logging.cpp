@@ -30,6 +30,8 @@
 
 #include "ogre_logging.hpp"
 
+#include <string>
+
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # ifdef __clang__
@@ -47,12 +49,13 @@
 # pragma GCC diagnostic pop
 #endif
 
-#include <rviz_rendering/logging.hpp>
+#include "rviz_rendering/logging.hpp"
 
 class CustomOgreLogListener : public Ogre::LogListener
 {
 public:
-  CustomOgreLogListener() : min_lml(Ogre::LML_CRITICAL) {}
+  CustomOgreLogListener()
+  : min_lml(Ogre::LML_CRITICAL) {}
 
   virtual ~CustomOgreLogListener() {}
 
@@ -84,7 +87,7 @@ public:
         }
       }
     }
-   }
+  }
 
   Ogre::LogMessageLevel min_lml;
 };
@@ -93,7 +96,8 @@ namespace rviz_rendering
 {
 
 OgreLogging::Preference OgreLogging::preference_ = OgreLogging::NoLogging;
-std::string OgreLogging::filename_;
+// TODO(wjwwood): refactor this to not have static members.
+std::string OgreLogging::filename_;  // NOLINT: cpplint doesn't allow static strings
 
 void OgreLogging::useLogFile(const std::string & filename)
 {
@@ -110,14 +114,14 @@ void OgreLogging::configureLogging()
 {
   static CustomOgreLogListener ll;
   Ogre::LogManager * log_manager = Ogre::LogManager::getSingletonPtr();
-  if(!log_manager) {
+  if (!log_manager) {
     log_manager = new Ogre::LogManager();
   }
   Ogre::Log * l = log_manager->createLog(filename_, false, false, (preference_ == NoLogging));
   l->addListener(&ll);
 
   // Printing to standard out is what Ogre does if you don't do any LogManager calls.
-  if(preference_ == StandardOut) {
+  if (preference_ == StandardOut) {
     ll.min_lml = Ogre::LML_NORMAL;
   }
 }

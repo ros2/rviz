@@ -49,7 +49,7 @@ public:
 
   virtual
   void
-  render(QPainter *painter);
+  render(QPainter * painter);
 
   virtual
   void
@@ -65,7 +65,6 @@ public slots:
   renderNow();
 
   // Used to capture keyboard and mouse events.
-  virtual
   bool
   eventFilter(QObject * target, QEvent * event) override;
 
@@ -94,18 +93,15 @@ protected:
   // void
   // mouseReleaseEvent(QMouseEvent * mouse_event) override;
 
-  virtual
   void
   exposeEvent(QExposeEvent * expose_event) override;
 
-  virtual
   bool
   event(QEvent * event) override;
 
   RenderWindowImpl * impl_;
 };
 
-} // namespace rviz_rendering
+}  // namespace rviz_rendering
 
 #endif  // RVIZ_RENDERING__RENDER_WINDOW_HPP_
-

@@ -30,6 +30,9 @@
 
 #include "render_system.hpp"
 
+#include <string>
+#include <vector>
+
 #ifdef __linux__
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -64,8 +67,7 @@ bool RenderSystem::force_no_stereo_ = false;
 RenderSystem *
 RenderSystem::get()
 {
-  if (instance_ == 0)
-  {
+  if (instance_ == 0) {
     rviz_rendering::OgreLogging::configureLogging();
     instance_ = new RenderSystem();
   }
@@ -137,7 +139,7 @@ RenderSystem::RenderSystem()
 }
 
 void
-RenderSystem::prepareOverlays(Ogre::SceneManager* scene_manager)
+RenderSystem::prepareOverlays(Ogre::SceneManager * scene_manager)
 {
 #if ((OGRE_VERSION_MAJOR == 1 && OGRE_VERSION_MINOR >= 9) || OGRE_VERSION_MAJOR >= 2 )
   if (ogre_overlay_system_) {
@@ -151,23 +153,23 @@ RenderSystem::setupDummyWindowId()
 {
   dummy_window_id_ = 0;
 #ifdef __linux__
-  Display *display = XOpenDisplay(0);
-  assert( display );
+  Display * display = XOpenDisplay(0);
+  assert(display);
 
-  int screen = DefaultScreen( display );
+  int screen = DefaultScreen(display);
 
-  int attribList[] = { GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 16,
-                       GLX_STENCIL_SIZE, 8, None };
+  int attribList[] = {GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 16,
+                      GLX_STENCIL_SIZE, 8, None};
 
-  XVisualInfo *visual = glXChooseVisual( display, screen, (int*)attribList );
+  XVisualInfo * visual = glXChooseVisual(display, screen, attribList);
 
-  dummy_window_id_ = XCreateSimpleWindow( display,
-                                          RootWindow( display, screen ),
-                                          0, 0, 1, 1, 0, 0, 0 );
+  dummy_window_id_ = XCreateSimpleWindow(display,
+      RootWindow(display, screen),
+      0, 0, 1, 1, 0, 0, 0);
 
-  GLXContext context = glXCreateContext( display, visual, nullptr, 1 );
+  GLXContext context = glXCreateContext(display, visual, nullptr, 1);
 
-  glXMakeCurrent( display, dummy_window_id_, context );
+  glXMakeCurrent(display, dummy_window_id_, context);
 #endif
 }
 
@@ -180,12 +182,12 @@ RenderSystem::loadOgrePlugins()
   ogre_root_->installPlugin(render_system_gl_plugin_);
 
 // #if __APPLE__
-  // ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL");
+// ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL");
 // #else
-  // ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL3Plus");
+// ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL3Plus");
 // #endif
-  // ogre_root_->loadPlugin(plugin_prefix + "Plugin_OctreeSceneManager");
-  // ogre_root_->loadPlugin(plugin_prefix + "Plugin_ParticleFX");
+// ogre_root_->loadPlugin(plugin_prefix + "Plugin_OctreeSceneManager");
+// ogre_root_->loadPlugin(plugin_prefix + "Plugin_ParticleFX");
 }
 
 void
@@ -202,8 +204,7 @@ RenderSystem::detectGlVersion()
     gl_version_ = major * 100 + minor * 10;
   }
 
-  switch (gl_version_)
-  {
+  switch (gl_version_) {
     case 200:
       glsl_version_ = 110;
       break;
@@ -221,7 +222,7 @@ RenderSystem::detectGlVersion()
       break;
     default:
       if (gl_version_ > 320) {
-        glsl_version_  = gl_version_;
+        glsl_version_ = gl_version_;
       } else {
         glsl_version_ = 0;
       }
@@ -295,7 +296,8 @@ RenderSystem::setupResources()
     rviz_path + "/ogre_media/materials/glsl120/nogp", "FileSystem", "rviz_rendering");
   // Add resources that depend on a specific glsl version.
   // Unfortunately, Ogre doesn't have a notion of glsl versions so we can't go
-  // the 'official' way of defining multiple schemes per material and let Ogre decide which one to use.
+  // the 'official' way of defining multiple schemes per material and let Ogre
+  // decide which one to use.
   if (getGlslVersion() >= 150) {
     Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
       rviz_path + "/ogre_media/materials/glsl150", "FileSystem", "rviz_rendering");
@@ -313,28 +315,30 @@ RenderSystem::setupResources()
     throw std::runtime_error(s);
   }
 
-  // Add paths exported to the "media_export" package.
+  // // Add paths exported to the "media_export" package.
   // std::vector<std::string> media_paths;
   // ros::package::getPlugins( "media_export", "ogre_media_path", media_paths );
   // std::string delim(":");
-  // for( std::vector<std::string>::iterator iter = media_paths.begin(); iter != media_paths.end(); ++iter )
+  // for(auto iter = media_paths.begin(); iter != media_paths.end(); ++iter)
   // {
-  //   if( !iter->empty() )
+  //   if(!iter->empty())
   //   {
   //     std::string path;
   //     int pos1 = 0;
   //     int pos2 = iter->find(delim);
-  //     while( pos2 != (int)std::string::npos )
+  //     while(pos2 != (int)std::string::npos)
   //     {
   //       path = iter->substr( pos1, pos2 - pos1 );
   //       ROS_DEBUG("adding resource location: '%s'\n", path.c_str());
-  //       Ogre::ResourceGroupManager::getSingleton().addResourceLocation( path, "FileSystem", "rviz_rendering");
+  //       Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+  //         path, "FileSystem", "rviz_rendering");
   //       pos1 = pos2 + 1;
   //       pos2 = iter->find( delim, pos2 + 1 );
   //     }
   //     path = iter->substr( pos1, iter->size() - pos1 );
   //     ROS_DEBUG("adding resource location: '%s'\n", path.c_str());
-  //     Ogre::ResourceGroupManager::getSingleton().addResourceLocation( path, "FileSystem", "rviz_rendering");
+  //     Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+  //       path, "FileSystem", "rviz_rendering");
   //   }
   // }
 }
@@ -349,24 +353,22 @@ RenderSystem::setupResources()
 // makes it seem like it is a different bug).
 static bool x_baddrawable_error = false;
 #ifdef __linux__
-static int (*old_error_handler)( Display*, XErrorEvent* );
-int checkBadDrawable( Display* display, XErrorEvent* error )
+static int (* old_error_handler)(Display *, XErrorEvent *);
+int checkBadDrawable(Display * display, XErrorEvent * error)
 {
-  if( error->error_code == BadDrawable &&
-      error->request_code == 136 &&
-      error->minor_code == 3 )
+  if (error->error_code == BadDrawable &&
+    error->request_code == 136 &&
+    error->minor_code == 3)
   {
     x_baddrawable_error = true;
     return 0;
-  }
-  else
-  {
+  } else {
     // If the error does not exactly match the one from the driver bug,
     // handle it the normal way so we see it.
-    return old_error_handler( display, error );
+    return old_error_handler(display, error);
   }
 }
-#endif // __linux__
+#endif  // __linux__
 
 Ogre::RenderWindow *
 RenderSystem::makeRenderWindow(
@@ -382,8 +384,9 @@ RenderSystem::makeRenderWindow(
 
   params["currentGLContext"] = Ogre::String("false");
 
-  // params["externalWindowHandle"] = Ogre::StringConverter::toString(static_cast<unsigned long>(window_id));
-  params["parentWindowHandle"] = Ogre::StringConverter::toString(static_cast<unsigned long>(window_id));
+  // params["externalWindowHandle"] =
+  //   Ogre::StringConverter::toString(static_cast<unsigned long>(window_id));
+  params["parentWindowHandle"] = Ogre::StringConverter::toString(window_id);
 
   // params["externalGLControl"] = Ogre::String("true");
 
@@ -394,8 +397,8 @@ RenderSystem::makeRenderWindow(
 
 // Set the macAPI for Ogre based on the Qt implementation
 #if __APPLE__
-	params["macAPI"] = "cocoa";
-	params["macAPICocoaUseNSView"] = "true";
+  params["macAPI"] = "cocoa";
+  params["macAPICocoaUseNSView"] = "true";
 #endif
   params["contentScalingFactor"] = std::to_string(pixel_ratio);
 
@@ -472,13 +475,12 @@ RenderSystem::tryMakeRenderWindow(
 
       // If the driver bug happened, tell Ogre we are done with that
       // window and then try again.
-      if (x_baddrawable_error)
-      {
-        ogre_root_->detachRenderTarget( window );
+      if (x_baddrawable_error) {
+        ogre_root_->detachRenderTarget(window);
         window = nullptr;
         x_baddrawable_error = false;
       }
-    } catch(const std::exception & ex) {
+    } catch (const std::exception & ex) {
       RVIZ_RENDERING_LOG_ERROR_STREAM(
         "rviz::RenderSystem: error creating render window: " << ex.what());
       window = nullptr;
@@ -486,7 +488,7 @@ RenderSystem::tryMakeRenderWindow(
   }
 
 #ifdef __linux___
-  XSetErrorHandler( old_error_handler );
+  XSetErrorHandler(old_error_handler);
 #endif
 
   if (window && attempts > 1) {
@@ -496,5 +498,4 @@ RenderSystem::tryMakeRenderWindow(
   return window;
 }
 
-
-} // end namespace rviz
+}  // namespace rviz_rendering

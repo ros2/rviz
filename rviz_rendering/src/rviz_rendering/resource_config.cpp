@@ -27,9 +27,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <string>
+#include "rviz_rendering/resource_config.hpp"
 
-#include <rviz_rendering/resource_config.hpp>
+#include <string>
 
 #ifndef RVIZ_RENDERING_DEFAULT_RESOURCE_DIRECTORY
 #define RVIZ_RENDERING_DEFAULT_RESOURCE_DIRECTORY ""
@@ -42,10 +42,11 @@
 namespace
 {
 
-static std::string __resource_directory = RVIZ_RENDERING_DEFAULT_RESOURCE_DIRECTORY;
-static std::string __ogre_plugin_directory = RVIZ_RENDERING_OGRE_PLUGIN_DIR;
+// TODO(wjwwood): avoid static std::string's
+static std::string __resource_directory = RVIZ_RENDERING_DEFAULT_RESOURCE_DIRECTORY;  // NOLINT
+static std::string __ogre_plugin_directory = RVIZ_RENDERING_OGRE_PLUGIN_DIR;  // NOLINT
 
-}
+}  // namespace
 
 namespace rviz_rendering
 {
