@@ -168,24 +168,6 @@ createScene(Ogre::SceneManager * ogre_scene_manager)
   light->setPosition(20.0f, 80.0f, 50.0f);
 }
 
-class CustomOgreFrameListener : public Ogre::FrameListener
-{
-public:
-  explicit CustomOgreFrameListener(OgreQtBites::SdkQtCameraMan * camera_man)
-  : camera_man_(camera_man)
-  {}
-
-  virtual
-  bool
-  frameRenderingQueued(const Ogre::FrameEvent & evt)
-  {
-    camera_man_->frameRenderingQueued(evt);
-    return true;
-  }
-
-  OgreQtBites::SdkQtCameraMan * camera_man_;
-};
-
 void
 RenderWindowImpl::initialize()
 {
@@ -202,11 +184,13 @@ RenderWindowImpl::initialize()
   ogre_scene_manager_ = ogre_root->createSceneManager(Ogre::ST_GENERIC);
 
   ogre_camera_ = ogre_scene_manager_->createCamera("MainCamera");
-  ogre_camera_->setPosition(Ogre::Vector3(0.0f, 0.0f, 10.0f));
-  ogre_camera_->lookAt(Ogre::Vector3(0.0f, 0.0f, -300.0f));
   ogre_camera_->setNearClipDistance(0.1f);
   ogre_camera_->setFarClipDistance(200.0f);
-  camera_man_ = new OgreQtBites::SdkQtCameraMan(ogre_camera_);
+
+  auto camera_node_ = ogre_scene_manager_->getRootSceneNode()->createChildSceneNode();
+  ogre_camera_->setPosition(Ogre::Vector3(0.0f, 0.0f, 10.0f));
+  ogre_camera_->lookAt(Ogre::Vector3(0.0f, 0.0f, -300.0f));
+  camera_node_->attachObject(ogre_camera_);
 
   Ogre::Viewport * pViewPort = ogre_render_window_->addViewport(ogre_camera_);
   auto bg_color = Ogre::ColourValue(0.0f, 0.5f, 1.0f);
@@ -220,9 +204,6 @@ RenderWindowImpl::initialize()
   Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
   createScene(ogre_scene_manager_);
-
-  ogre_frame_listener_ = new CustomOgreFrameListener(camera_man_);
-  ogre_root->addFrameListener(ogre_frame_listener_);
 }
 
 void

@@ -22,6 +22,11 @@
   <build_depend>rviz_ogre_vendor</build_depend>
   <build_depend>qtbase5-dev</build_depend>
 
+  <test_depend>ament_cppcheck</test_depend>
+  <test_depend>ament_cpplint</test_depend>
+  <test_depend>ament_cmake</test_depend>
+  <test_depend>ament_uncrustify</test_depend>
+
   <exec_depend>assimp</exec_depend>
   <exec_depend>libogre</exec_depend>
   <exec_depend>libqt5-core</exec_depend>

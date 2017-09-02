@@ -115,6 +115,8 @@ void OgreLogging::configureLogging()
   static CustomOgreLogListener ll;
   Ogre::LogManager * log_manager = Ogre::LogManager::getSingletonPtr();
   if (!log_manager) {
+    // suppressing this memleak warning from cppcheck below
+    // because this pointer is stored by Ogre internally
     log_manager = new Ogre::LogManager();
   }
   Ogre::Log * l = log_manager->createLog(filename_, false, false, (preference_ == NoLogging));
@@ -124,6 +126,7 @@ void OgreLogging::configureLogging()
   if (preference_ == StandardOut) {
     ll.min_lml = Ogre::LML_NORMAL;
   }
+  // cppcheck-suppress memleak
 }
 
 }  // namespace rviz_rendering
