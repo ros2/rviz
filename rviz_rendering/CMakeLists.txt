@@ -104,6 +104,7 @@ endif()
 install(TARGETS rendering_example DESTINATION bin)
 
 if(BUILD_TESTING)
+    # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back
     find_package(ament_cmake_cppcheck REQUIRED)
     find_package(ament_cmake_cpplint REQUIRED)
     find_package(ament_cmake_lint_cmake REQUIRED)
