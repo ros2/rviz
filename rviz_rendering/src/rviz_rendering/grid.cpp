@@ -43,33 +43,39 @@
 namespace rviz_rendering
 {
 
-Grid::Grid( Ogre::SceneManager* scene_manager, Ogre::SceneNode* parent_node, Style style, uint32_t cell_count, float cell_length, float line_width, const Ogre::ColourValue& color )
-: scene_manager_( scene_manager )
-, style_(style)
-, cell_count_(cell_count)
-, cell_length_(cell_length)
-, line_width_(line_width)
-, height_(0)
-, color_(color)
+Grid::Grid(Ogre::SceneManager * scene_manager,
+  Ogre::SceneNode * parent_node,
+  Style style,
+  uint32_t cell_count,
+  float cell_length,
+  float line_width,
+  const Ogre::ColourValue & color)
+: scene_manager_(scene_manager),
+  style_(style),
+  cell_count_(cell_count),
+  cell_length_(cell_length),
+  line_width_(line_width),
+  height_(0),
+  color_(color)
 {
   static uint32_t gridCount = 0;
   std::stringstream ss;
   ss << "Grid" << gridCount++;
 
-  manual_object_ = scene_manager_->createManualObject( ss.str() );
+  manual_object_ = scene_manager_->createManualObject(ss.str() );
 
-  if ( !parent_node )
-  {
+  if (!parent_node) {
     parent_node = scene_manager_->getRootSceneNode();
   }
 
   scene_node_ = parent_node->createChildSceneNode();
-  scene_node_->attachObject( manual_object_ );
+  scene_node_->attachObject(manual_object_);
 
 //  billboard_line_ = new BillboardLine(scene_manager, scene_node_);
 
   ss << "Material";
-  material_ = Ogre::MaterialManager::getSingleton().create( ss.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME );
+  material_ = Ogre::MaterialManager::getSingleton().create(
+    ss.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
   material_->setReceiveShadows(false);
   material_->getTechnique(0)->setLightingEnabled(false);
 
@@ -80,8 +86,8 @@ Grid::~Grid()
 {
 //  delete billboard_line_;
 
-  scene_manager_->destroySceneNode( scene_node_->getName() );
-  scene_manager_->destroyManualObject( manual_object_ );
+  scene_manager_->destroySceneNode(scene_node_->getName() );
+  scene_manager_->destroyManualObject(manual_object_);
 
   material_->unload();
 }
@@ -107,19 +113,16 @@ void Grid::setLineWidth(float width)
   create();
 }
 
-void Grid::setColor(const Ogre::ColourValue& color)
+void Grid::setColor(const Ogre::ColourValue & color)
 {
   color_ = color;
 
-  if ( color_.a < 0.9998 )
-  {
-    material_->setSceneBlending( Ogre::SBT_TRANSPARENT_ALPHA );
-    material_->setDepthWriteEnabled( false );
-  }
-  else
-  {
-    material_->setSceneBlending( Ogre::SBT_REPLACE );
-    material_->setDepthWriteEnabled( true );
+  if (color_.a < 0.9998) {
+    material_->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
+    material_->setDepthWriteEnabled(false);
+  } else {
+    material_->setSceneBlending(Ogre::SBT_REPLACE);
+    material_->setDepthWriteEnabled(true);
   }
 
   create();
@@ -144,7 +147,7 @@ void Grid::create()
   manual_object_->clear();
 //  billboard_line_->clear();
 
-  float extent = (cell_length_*((double)cell_count_))/2;
+  float extent = (cell_length_ * ((double)cell_count_)) / 2;
 
 //  if (style_ == Billboards)
 //  {
@@ -156,15 +159,14 @@ void Grid::create()
 //  }
 //  else
 //  {
-    manual_object_->estimateVertexCount( cell_count_ * 4 * (height_ + 1) + ((cell_count_ + 1) * (cell_count_ + 1) * height_));
-    manual_object_->begin( material_->getName(), Ogre::RenderOperation::OT_LINE_LIST );
+  manual_object_->estimateVertexCount(cell_count_ * 4 * (height_ + 1) +
+    ((cell_count_ + 1) * (cell_count_ + 1) * height_));
+  manual_object_->begin(material_->getName(), Ogre::RenderOperation::OT_LINE_LIST);
 //  }
 
-  for (uint32_t h = 0; h <= height_; ++h)
-  {
+  for (uint32_t h = 0; h <= height_; ++h) {
     float h_real = (height_ / 2.0f - (float)h) * cell_length_;
-    for( uint32_t i = 0; i <= cell_count_; i++ )
-    {
+    for (uint32_t i = 0; i <= cell_count_; i++) {
       float inc = extent - ( i * cell_length_ );
 
       Ogre::Vector3 p1(inc, h_real, -extent);
@@ -189,25 +191,22 @@ void Grid::create()
 //      }
 //      else
 //      {
-        manual_object_->position(p1);
-        manual_object_->colour( color_ );
-        manual_object_->position(p2);
-        manual_object_->colour( color_ );
+      manual_object_->position(p1);
+      manual_object_->colour(color_);
+      manual_object_->position(p2);
+      manual_object_->colour(color_);
 
-        manual_object_->position(p3);
-        manual_object_->colour( color_ );
-        manual_object_->position(p4);
-        manual_object_->colour( color_ );
+      manual_object_->position(p3);
+      manual_object_->colour(color_);
+      manual_object_->position(p4);
+      manual_object_->colour(color_);
 //      }
     }
   }
 
-  if (height_ > 0)
-  {
-    for (uint32_t x = 0; x <= cell_count_; ++x)
-    {
-      for (uint32_t z = 0; z <= cell_count_; ++z)
-      {
+  if (height_ > 0) {
+    for (uint32_t x = 0; x <= cell_count_; ++x) {
+      for (uint32_t z = 0; z <= cell_count_; ++z) {
         float x_real = extent - x * cell_length_;
         float z_real = extent - z * cell_length_;
 
@@ -223,24 +222,23 @@ void Grid::create()
 //        }
 //        else
 //        {
-          manual_object_->position( x_real, y_bottom, z_real );
-          manual_object_->colour( color_ );
-          manual_object_->position(x_real, y_top, z_real);
-          manual_object_->colour( color_ );
+        manual_object_->position(x_real, y_bottom, z_real);
+        manual_object_->colour(color_);
+        manual_object_->position(x_real, y_top, z_real);
+        manual_object_->colour(color_);
 //        }
       }
     }
   }
 
-  if (style_ == Lines)
-  {
+  if (style_ == Lines) {
     manual_object_->end();
   }
 }
 
-void Grid::setUserData( const Ogre::Any& data )
+void Grid::setUserData(const Ogre::Any & data)
 {
-  manual_object_->getUserObjectBindings().setUserAny( data );
+  manual_object_->getUserObjectBindings().setUserAny(data);
 }
 
 } // namespace rviz

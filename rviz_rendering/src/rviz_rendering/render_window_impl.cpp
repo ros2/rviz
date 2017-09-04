@@ -145,12 +145,12 @@ createScene(Ogre::SceneManager * ogre_scene_manager)
   */
 
   QColor color = Qt::gray;
-  new rviz_rendering::Grid( ogre_scene_manager, nullptr,
-                    Grid::Lines,
-                    10,
-                    1.0f,
-                    0.03f,
-                    Ogre::ColourValue( color.redF(), color.greenF(), color.blueF(), color.alphaF() ));
+  new rviz_rendering::Grid(ogre_scene_manager, nullptr,
+    Grid::Lines,
+    10,
+    1.0f,
+    0.03f,
+    Ogre::ColourValue(color.redF(), color.greenF(), color.blueF(), color.alphaF() ));
   ogre_scene_manager->setAmbientLight(Ogre::ColourValue(1.0f, 0.0f, 0.0f));
 
   Ogre::Entity * sphereMesh =
