@@ -21,6 +21,7 @@ endif()
 message(STATUS "Setting OGRE_DIR to: '${OGRE_DIR}'")
 
 set(FREETYPE_HOME "${rviz_ogre_vendor_DIR}/../../../opt/rviz_ogre_vendor")
+set(ZLIB_ROOT "${rviz_ogre_vendor_DIR}/../../../opt/rviz_ogre_vendor")
 
 find_package(OGRE REQUIRED)
 message(STATUS "OGRE_LIBRARIES: ${OGRE_LIBRARIES}")
@@ -76,7 +77,7 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
     endif()
     list(APPEND _extra_interface_link_libraries ${FREETYPE_LIBRARIES})
 
-    find_library(ZLIB_LIBRARIES zlib)
+    find_package(ZLIB REQUIRED)
     if(NOT ZLIB_LIBRARIES)
       message(FATAL_ERROR "Could not find zlib library")
     endif()
