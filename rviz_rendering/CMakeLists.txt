@@ -64,6 +64,7 @@ add_library(${PROJECT_NAME}
   src/rviz_rendering/render_window_impl.cpp
   src/rviz_rendering/resource_config.cpp
   # src/rviz_rendering/shape.cpp
+  src/rviz_rendering/grid.cpp
 )
 target_link_libraries(${PROJECT_NAME}
   rviz_ogre_vendor::OgreMain
