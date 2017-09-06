@@ -8,7 +8,8 @@ if(NOT CMAKE_CXX_STANDARD)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+  # add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+  add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
 find_package(ament_cmake REQUIRED)
@@ -52,12 +53,16 @@ set(headers_with_q_object
 
 add_library(${PROJECT_NAME}
   ${headers_with_q_object}
+  src/rviz_rendering/camera_base.cpp
   src/rviz_rendering/logging.cpp
+  src/rviz_rendering/object.cpp
   src/rviz_rendering/ogre_logging.cpp
+  src/rviz_rendering/orbit_camera.cpp
   src/rviz_rendering/render_system.cpp
   src/rviz_rendering/render_window.cpp
   src/rviz_rendering/render_window_impl.cpp
   src/rviz_rendering/resource_config.cpp
+  src/rviz_rendering/shape.cpp
 )
 target_link_libraries(${PROJECT_NAME}
   rviz_ogre_vendor::OgreMain

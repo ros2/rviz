@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,14 +28,16 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OGRE_TOOLS_SHAPE_H
-#define OGRE_TOOLS_SHAPE_H
+#ifndef RVIZ_RENDERING__SHAPE_HPP_
+#define RVIZ_RENDERING__SHAPE_HPP_
 
-#include "object.h"
+#include <string>
 
 #include <OgreMaterial.h>
 #include <OgreVector3.h>
 #include <OgreSharedPtr.h>
+
+#include "rviz_rendering/object.hpp"
 
 namespace Ogre
 {
@@ -44,11 +47,9 @@ class Any;
 class Entity;
 }
 
-namespace rviz
+namespace rviz_rendering
 {
 
-/**
- */
 class Shape : public Object
 {
 public:
@@ -62,62 +63,85 @@ public:
   };
 
   /**
-   * \brief Constructor
-   *
-   * @param scene_manager The scene manager this object is associated with
-   * @param parent_node A scene node to use as the parent of this object.  If NULL, uses the root scene node.
+   * \param scene_manager The scene manager this object is associated with
+   * \param parent_node A scene node to use as the parent of this object.
+   *                    If nullptr, uses the root scene node.
    */
-  Shape(Type shape_type, Ogre::SceneManager* scene_manager, Ogre::SceneNode* parent_node = NULL);
+  Shape(Type shape_type, Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node = NULL);
   virtual ~Shape();
 
-  Type getType() { return type_; }
+  Type
+  getType();  // {return type_; }
 
+  /// Set the offset for this shape.
   /**
-   * \brief Set the offset for this shape
-   *
    * The default is no offset, which puts the pivot point directly in the center of the object.
    *
-   * @param offset Amount to offset the center of the object from the pivot point
+   * \param offset Amount to offset the center of the object from the pivot point
    */
-  void setOffset( const Ogre::Vector3&  offset );
+  void
+  setOffset(const Ogre::Vector3 & offset);
 
-  virtual void setColor( float r, float g, float b, float a );
-  void setColor( const Ogre::ColourValue& c );
-  virtual void setPosition( const Ogre::Vector3& position );
-  virtual void setOrientation( const Ogre::Quaternion& orientation );
-  virtual void setScale( const Ogre::Vector3& scale );
-  virtual const Ogre::Vector3& getPosition();
-  virtual const Ogre::Quaternion& getOrientation();
+  virtual
+  void
+  setColor(float r, float g, float b, float a);
 
+  void
+  setColor(const Ogre::ColourValue & c);
+
+  virtual
+  void
+  setPosition(const Ogre::Vector3 & position);
+
+  virtual
+  void
+  setOrientation(const Ogre::Quaternion & orientation);
+
+  virtual
+  void
+  setScale(const Ogre::Vector3 & scale);
+
+  virtual
+  const Ogre::Vector3 &
+  getPosition();
+
+  virtual
+  const Ogre::Quaternion &
+  getOrientation();
+
+  /// Get the root scene node (pivot node) for this object.
   /**
-   * \brief Get the root scene node (pivot node) for this object
-   *
-   * @return The root scene node of this object
+   * \return The root scene node of this object
    */
-  Ogre::SceneNode* getRootNode() { return scene_node_; }
+  Ogre::SceneNode *
+  getRootNode();  // {return scene_node_; }
 
-  /**
-   * \brief Sets user data on all ogre objects we own
-   */
-  void setUserData( const Ogre::Any& data );
+  /// Sets user data on all ogre objects we own.
+  void
+  setUserData(const Ogre::Any & data);
 
-  Ogre::Entity* getEntity() { return entity_; }
+  Ogre::Entity *
+  getEntity();  // {return entity_; }
 
-  Ogre::MaterialPtr getMaterial() { return material_; }
+  Ogre::MaterialPtr
+  getMaterial();  // {return material_; }
 
-  static Ogre::Entity* createEntity(const std::string& name, Type shape_type, Ogre::SceneManager* scene_manager);
+  static Ogre::Entity *
+  createEntity(
+    const std::string & name,
+    Type shape_type,
+    Ogre::SceneManager * scene_manager);
 
 protected:
-  Ogre::SceneNode* scene_node_;
-  Ogre::SceneNode* offset_node_;
-  Ogre::Entity* entity_;
+  Ogre::SceneNode * scene_node_;
+  Ogre::SceneNode * offset_node_;
+  Ogre::Entity * entity_;
   Ogre::MaterialPtr material_;
   std::string material_name_;
 
   Type type_;
 };
 
-} // namespace rviz
+}  // namespace rviz_rendering
 
-#endif
-
+#endif  // RVIZ_RENDERING__SHAPE_HPP_
