@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,19 +27,19 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef APPLY_VISIBILITY_BITS_H
-#define APPLY_VISIBILITY_BITS_H
+#ifndef RVIZ_RENDERING__APPLY_VISIBILITY_BITS_HPP_
+#define RVIZ_RENDERING__APPLY_VISIBILITY_BITS_HPP_
 
 namespace Ogre
 {
 class SceneNode;
 }
 
-namespace rviz
+namespace rviz_rendering
 {
 
-void applyVisibilityBits( uint32_t bits, Ogre::SceneNode* node );
+void applyVisibilityBits(uint32_t bits, Ogre::SceneNode * node);
 
-} // end namespace rviz
+}  // namespace rviz_rendering
 
-#endif // APPLY_VISIBILITY_BITS_H
+#endif  // RVIZ_RENDERING__APPLY_VISIBILITY_BITS_HPP_

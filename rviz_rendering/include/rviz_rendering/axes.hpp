@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,15 +28,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OGRE_TOOLS_AXES_H
-#define OGRE_TOOLS_AXES_H
+#ifndef RVIZ_RENDERING__AXES_HPP_
+#define RVIZ_RENDERING__AXES_HPP_
 
-#include "object.h"
-
-#include <stddef.h>
-#include <stdint.h>
-
+#include <cstddef>
+#include <cstdint>
 #include <vector>
+
+#include "rviz_rendering/object.hpp"
 
 namespace Ogre
 {
@@ -47,7 +47,7 @@ class Any;
 class ColourValue;
 }
 
-namespace rviz
+namespace rviz_rendering
 {
 class Shape;
 
@@ -65,7 +65,8 @@ public:
    * @param length Length of the axes
    * @param radius Radius of the axes
    */
-  Axes( Ogre::SceneManager* manager, Ogre::SceneNode* parent_node = NULL, float length = 1.0f, float radius = 0.1f );
+  Axes(Ogre::SceneManager * manager, Ogre::SceneNode * parent_node = NULL, float length = 1.0f,
+    float radius = 0.1f);
   virtual ~Axes();
 
   /**
@@ -74,56 +75,55 @@ public:
    * @param length Length of the axes
    * @param radius Radius of the axes
    */
-  void set( float length, float radius );
+  void set(float length, float radius);
 
-  virtual void setOrientation( const Ogre::Quaternion& orientation );
-  virtual void setPosition( const Ogre::Vector3& position );
-  virtual void setScale( const Ogre::Vector3& scale );
-  virtual void setColor( float r, float g, float b, float a );
-  virtual const Ogre::Vector3& getPosition();
-  virtual const Ogre::Quaternion& getOrientation();
+  virtual void setOrientation(const Ogre::Quaternion & orientation);
+  virtual void setPosition(const Ogre::Vector3 & position);
+  virtual void setScale(const Ogre::Vector3 & scale);
+  virtual void setColor(float r, float g, float b, float a);
+  virtual const Ogre::Vector3 & getPosition();
+  virtual const Ogre::Quaternion & getOrientation();
 
   /**
    * \brief Get the scene node associated with this object
    * @return The scene node associated with this object
    */
-  Ogre::SceneNode* getSceneNode() { return scene_node_; }
+  Ogre::SceneNode * getSceneNode() {return scene_node_; }
 
   /**
    * \brief Sets user data on all ogre objects we own
    */
-  void setUserData( const Ogre::Any& data );
+  void setUserData(const Ogre::Any & data);
 
-  Shape* getXShape() { return x_axis_; }
-  Shape* getYShape() { return y_axis_; }
-  Shape* getZShape() { return z_axis_; }
+  Shape * getXShape() {return x_axis_; }
+  Shape * getYShape() {return y_axis_; }
+  Shape * getZShape() {return z_axis_; }
 
-  void setXColor(const Ogre::ColourValue& col);
-  void setYColor(const Ogre::ColourValue& col);
-  void setZColor(const Ogre::ColourValue& col);
+  void setXColor(const Ogre::ColourValue & col);
+  void setYColor(const Ogre::ColourValue & col);
+  void setZColor(const Ogre::ColourValue & col);
   void setToDefaultColors();
-  static const Ogre::ColourValue& getDefaultXColor();
-  static const Ogre::ColourValue& getDefaultYColor();
-  static const Ogre::ColourValue& getDefaultZColor();
+  static const Ogre::ColourValue & getDefaultXColor();
+  static const Ogre::ColourValue & getDefaultYColor();
+  static const Ogre::ColourValue & getDefaultZColor();
 
 private:
-
   // prohibit copying
-  Axes( const Axes &other ): Object(0) {}
-  Axes& operator=( const Axes &other ) { return *this; }
+  Axes(const Axes & other)
+  : Object(0) {}
+  Axes & operator=(const Axes & other) {return *this; }
 
-  Ogre::SceneNode* scene_node_;
+  Ogre::SceneNode * scene_node_;
 
-  Shape* x_axis_;      ///< Cylinder for the X-axis
-  Shape* y_axis_;      ///< Cylinder for the Y-axis
-  Shape* z_axis_;      ///< Cylinder for the Z-axis
+  Shape * x_axis_;      ///< Cylinder for the X-axis
+  Shape * y_axis_;      ///< Cylinder for the Y-axis
+  Shape * z_axis_;      ///< Cylinder for the Z-axis
 
   static const Ogre::ColourValue default_x_color_;
   static const Ogre::ColourValue default_y_color_;
   static const Ogre::ColourValue default_z_color_;
 };
 
-} // namespace rviz
+}  // namespace rviz_rendering
 
-#endif
-
+#endif  // RVIZ_RENDERING__AXES_HPP_

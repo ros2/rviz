@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,34 +28,33 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdint.h>
+#include "rviz_rendering/apply_visibility_bits.hpp"
+
+#include <cstdint>
 
 #include <OgreMovableObject.h>
 #include <OgreSceneNode.h>
 
-namespace rviz
+namespace rviz_rendering
 {
 
-void applyVisibilityBits( uint32_t bits, Ogre::SceneNode* node )
+void applyVisibilityBits(uint32_t bits, Ogre::SceneNode * node)
 {
-  if (!node)
-  {
+  if (!node) {
     return;
   }
   // Loop over all objects attached to this node.
   Ogre::SceneNode::ObjectIterator obj_it = node->getAttachedObjectIterator();
-  while( obj_it.hasMoreElements() )
-  {
-    Ogre::MovableObject* obj = obj_it.getNext();
-    obj->setVisibilityFlags( bits );
+  while (obj_it.hasMoreElements() ) {
+    Ogre::MovableObject * obj = obj_it.getNext();
+    obj->setVisibilityFlags(bits);
   }
   // Loop over and recurse into all child nodes.
   Ogre::SceneNode::ChildNodeIterator child_it = node->getChildIterator();
-  while( child_it.hasMoreElements() )
-  {
-    Ogre::SceneNode* child = dynamic_cast<Ogre::SceneNode*>( child_it.getNext() );
-    applyVisibilityBits( bits, child );
+  while (child_it.hasMoreElements() ) {
+    Ogre::SceneNode * child = dynamic_cast<Ogre::SceneNode *>( child_it.getNext() );
+    applyVisibilityBits(bits, child);
   }
 }
 
-} // end namespace rviz
+}  // namespace rviz_rendering

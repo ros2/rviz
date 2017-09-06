@@ -52,18 +52,18 @@ set(headers_with_q_object
 
 add_library(${PROJECT_NAME}
   ${headers_with_q_object}
-  src/rviz_rendering/apply_visibility_bits.cpp
-  src/rviz_rendering/arrow.cpp
-  src/rviz_rendering/axes.cpp
-  src/rviz_rendering/initialization.cpp
+  # src/rviz_rendering/apply_visibility_bits.cpp
+  # src/rviz_rendering/arrow.cpp
+  # src/rviz_rendering/axes.cpp
+  # src/rviz_rendering/initialization.cpp
   src/rviz_rendering/logging.cpp
-  src/rviz_rendering/object.cpp
+  # src/rviz_rendering/object.cpp
   src/rviz_rendering/ogre_logging.cpp
   src/rviz_rendering/render_system.cpp
   src/rviz_rendering/render_window.cpp
   src/rviz_rendering/render_window_impl.cpp
   src/rviz_rendering/resource_config.cpp
-  src/rviz_rendering/shape.cpp
+  # src/rviz_rendering/shape.cpp
 )
 target_link_libraries(${PROJECT_NAME}
   rviz_ogre_vendor::OgreMain

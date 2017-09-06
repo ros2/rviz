@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,14 +28,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "object.h"
+#include "rviz_rendering/object.hpp"
 
-namespace rviz
+namespace rviz_rendering
 {
 
-Object::Object( Ogre::SceneManager* scene_manager )
-: scene_manager_( scene_manager )
+Object::Object(Ogre::SceneManager * scene_manager)
+: scene_manager_(scene_manager)
 {
 }
 
-} // namespace rviz
+}  // namespace rviz_rendering
