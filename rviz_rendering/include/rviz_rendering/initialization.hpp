@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,20 +28,20 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OGRE_TOOLS_INITIALIZATION_H
-#define OGRE_TOOLS_INITIALIZATION_H
+#ifndef RVIZ_RENDERING__INITIALIZATION_HPP_
+#define RVIZ_RENDERING__INITIALIZATION_HPP_
 
-#include <stddef.h>
+#include <cstddef>
 #include <string>
 #include <vector>
 
-namespace rviz
+namespace rviz_rendering
 {
 
 typedef std::vector<std::string> V_string;
 void cleanupOgre();
-void initializeResources( const V_string& resource_paths );
+void initializeResources(const V_string & resource_paths);
 
-} // namespace rviz
+}  // namespace rviz_rendering
 
-#endif
+#endif  // RVIZ_RENDERING__INITIALIZATION_HPP_

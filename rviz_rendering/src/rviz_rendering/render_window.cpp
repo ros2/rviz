@@ -117,16 +117,22 @@ ToString(const EnumType & enumValue)
 bool
 RenderWindow::event(QEvent * event)
 {
-  // // printf("in RenderWindow::event(QEvent *)\n");
-  // switch (event->type()) {
-  //   case QEvent::UpdateRequest:
-  //     // m_update_pending = false;
-  //     this->renderNow();
-  //     return true;
-  //   default:
-  //     return QWindow::event(event);
-  // }
-  return QWindow::event(event);
+  qDebug() <<
+    "[" << QTime::currentTime().toString("HH:mm:ss:zzz") << "]:" <<
+    "event->type() ==" << ToString(event->type());
+  switch (event->type()) {
+    case QEvent::Resize:
+      if (this->isExposed()) {
+        impl_->resize(this->width(), this->height());
+      }
+      return QWindow::event(event);
+    case QEvent::UpdateRequest:
+      this->renderNow();
+      return true;
+    default:
+      return QWindow::event(event);
+  }
+  // return QWindow::event(event);
 }
 
 void
@@ -143,28 +149,25 @@ RenderWindow::exposeEvent(QExposeEvent * expose_event)
 bool
 RenderWindow::eventFilter(QObject * target, QEvent * event)
 {
-  // printf("in RenderWindow::eventFilter(QObject *, QEvent *)\n");
-  if (target == this) {
-    qDebug() <<
-      "[" << QTime::currentTime().toString() << "]: " <<
-      "event->type() == " << ToString(event->type()) << ", " <<
-      "target == " << target;
-    switch (event->type()) {
-      case QEvent::Resize:
-        if (this->isExposed()) {
-          impl_->resize(this->width(), this->height());
-        } else {
-          printf("here\n");
-        }
-        return false;
-      case QEvent::UpdateRequest:
-        this->renderNow();
-        return true;
-      default:
-        return QWindow::event(event);
-    }
-  }
-  return false;
+  // if (target == this) {
+  //   qDebug() <<
+  //     "[" << QTime::currentTime().toString("HH:mm:ss:zzz") << "]:" <<
+  //     "event->type() ==" << ToString(event->type()) <<
+  //     "target ==" << target;
+  //   switch (event->type()) {
+  //     case QEvent::Resize:
+  //       if (this->isExposed()) {
+  //         impl_->resize(this->width(), this->height());
+  //       }
+  //       return false;
+  //     case QEvent::UpdateRequest:
+  //       this->renderNow();
+  //       return true;
+  //     default:
+  //       return QWindow::event(event);
+  //   }
+  // }
+  return QWindow::eventFilter(target, event);
 }
 
 }  // namespace rviz_rendering

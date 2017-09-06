@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,8 +27,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef CUSTOM_PARAMETER_INDICES_H
-#define CUSTOM_PARAMETER_INDICES_H
+#ifndef RVIZ_RENDERING__CUSTOM_PARAMETER_INDICES_HPP_
+#define RVIZ_RENDERING__CUSTOM_PARAMETER_INDICES_HPP_
 
 // These are custom parameter indexes for the shader programs.  Keep
 // them all here, so they stay consistent across the app.
@@ -38,12 +39,12 @@
 //   param_named_auto <param name> custom <index number>
 // They are spread out across the files, appearing just
 // where they are needed.
-#define SIZE_PARAMETER 0
-#define ALPHA_PARAMETER 1
-#define PICK_COLOR_PARAMETER 2
-#define NORMAL_PARAMETER 3
-#define UP_PARAMETER 4
-#define HIGHLIGHT_PARAMETER 5
-#define AUTO_SIZE_PARAMETER 6
+#define RVIZ_RENDERING_SIZE_PARAMETER 0
+#define RVIZ_RENDERING_ALPHA_PARAMETER 1
+#define RVIZ_RENDERING_PICK_COLOR_PARAMETER 2
+#define RVIZ_RENDERING_NORMAL_PARAMETER 3
+#define RVIZ_RENDERING_UP_PARAMETER 4
+#define RVIZ_RENDERING_HIGHLIGHT_PARAMETER 5
+#define RVIZ_RENDERING_AUTO_SIZE_PARAMETER 6
 
-#endif // CUSTOM_PARAMETER_INDICES_H
+#endif  // RVIZ_RENDERING__CUSTOM_PARAMETER_INDICES_HPP_

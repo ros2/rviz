@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,10 +28,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "object.h"
+#include "rviz_rendering/object.hpp"
 
-#ifndef OGRE_TOOLS_ARROW_H
-#define OGRE_TOOLS_ARROW_H
+#ifndef RVIZ_RENDERING__ARROW_HPP_
+#define RVIZ_RENDERING__ARROW_HPP_
 
 namespace Ogre
 {
@@ -42,7 +43,7 @@ class ColourValue;
 class Any;
 }
 
-namespace rviz
+namespace rviz_rendering
 {
 class Shape;
 
@@ -69,8 +70,9 @@ public:
    * @param head_length Length of the arrow's head
    * @param head_diameter Diameter of the arrow's head
    */
-  Arrow( Ogre::SceneManager* scene_manager, Ogre::SceneNode* parent_node = 0, float shaft_length = 1.0f, float shaft_diameter = 0.1f,
-      float head_length = 0.3f, float head_diameter =  0.2f );
+  Arrow(Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node = 0,
+    float shaft_length = 1.0f, float shaft_diameter = 0.1f,
+    float head_length = 0.3f, float head_diameter = 0.2f);
   virtual ~Arrow();
 
   /**
@@ -81,7 +83,7 @@ public:
    * @param head_length Length of the arrow's head
    * @param head_diameter Diameter of the arrow's head
    */
-  void set( float shaft_length, float shaft_diameter, float head_length, float head_diameter );
+  void set(float shaft_length, float shaft_diameter, float head_length, float head_diameter);
 
   /**
    * \brief Set the color of this arrow.  Sets both the head and shaft color to the same value.  Values are in the range [0, 1]
@@ -90,8 +92,8 @@ public:
    * @param g Green component
    * @param b Blue component
    */
-  virtual void setColor( float r, float g, float b, float a );
-  void setColor(const Ogre::ColourValue& color);
+  virtual void setColor(float r, float g, float b, float a);
+  void setColor(const Ogre::ColourValue & color);
 
   /**
    * \brief Set the color of the arrow's head.  Values are in the range [0, 1]
@@ -100,8 +102,8 @@ public:
    * @param g Green component
    * @param b Blue component
    */
-  void setHeadColor( float r, float g, float b, float a = 1.0f );
-  void setHeadColor(const Ogre::ColourValue& color);
+  void setHeadColor(float r, float g, float b, float a = 1.0f);
+  void setHeadColor(const Ogre::ColourValue & color);
   /**
    * \brief Set the color of the arrow's shaft.  Values are in the range [0, 1]
    *
@@ -109,18 +111,18 @@ public:
    * @param g Green component
    * @param b Blue component
    */
-  void setShaftColor( float r, float g, float b, float a = 1.0f );
-  void setShaftColor(const Ogre::ColourValue& color);
+  void setShaftColor(float r, float g, float b, float a = 1.0f);
+  void setShaftColor(const Ogre::ColourValue & color);
 
   /** @brief Set the orientation.
    *
    * Note that negative Z is the identity orientation.
    *
    * Both setOrientation() and setDirection() change the direction the arrow points. */
-  virtual void setOrientation( const Ogre::Quaternion& orientation );
+  virtual void setOrientation(const Ogre::Quaternion & orientation);
 
   /** @brief Set the position of the base of the arrow */
-  virtual void setPosition( const Ogre::Vector3& position );
+  virtual void setPosition(const Ogre::Vector3 & position);
 
   /** @brief Set the direction of the arrow.
    *
@@ -130,33 +132,33 @@ public:
    * If direction is zero, this does not change the arrow.
    *
    * Both setOrientation() and setDirection() change the direction the arrow points. */
-  void setDirection( const Ogre::Vector3& direction );
+  void setDirection(const Ogre::Vector3 & direction);
 
-  virtual void setScale( const Ogre::Vector3& scale );
-  virtual const Ogre::Vector3& getPosition();
-  virtual const Ogre::Quaternion& getOrientation();
+  virtual void setScale(const Ogre::Vector3 & scale);
+  virtual const Ogre::Vector3 & getPosition();
+  virtual const Ogre::Quaternion & getOrientation();
 
   /**
    * \brief Get the scene node associated with this arrow
    * @return the scene node associated with this arrow
    */
-  Ogre::SceneNode* getSceneNode() { return scene_node_; }
+  Ogre::SceneNode * getSceneNode() {return scene_node_; }
 
   /**
    * \brief Sets user data on all ogre objects we own
    */
-  void setUserData( const Ogre::Any& data );
+  void setUserData(const Ogre::Any & data);
 
-  Shape* getShaft() { return shaft_; }
-  Shape* getHead() { return head_; }
+  Shape * getShaft() {return shaft_; }
+  Shape * getHead() {return head_; }
 
 private:
-  Ogre::SceneNode* scene_node_;
+  Ogre::SceneNode * scene_node_;
 
-  Shape* shaft_;   ///< Cylinder used for the shaft of the arrow
-  Shape* head_;    ///< Cone used for the head of the arrow
+  Shape * shaft_;   ///< Cylinder used for the shaft of the arrow
+  Shape * head_;    ///< Cone used for the head of the arrow
 };
 
-} // namespace rviz
+}  // namespace rviz_rendering
 
-#endif /* OGRE_TOOLS_ARROW_H */
+#endif  // RVIZ_RENDERING__ARROW_HPP_
