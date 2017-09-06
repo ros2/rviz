@@ -17,24 +17,25 @@
   <url type="repository">https://github.com/ros-visualization/rviz</url>
   <url type="bugtracker">https://github.com/ros-visualization/rviz/issues</url>
 
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
   <build_depend>assimp-dev</build_depend>
-  <!-- <build_depend>libogre-dev</build_depend> -->
   <build_depend>rviz_ogre_vendor</build_depend>
   <build_depend>qtbase5-dev</build_depend>
 
-  <test_depend>ament_cppcheck</test_depend>
-  <test_depend>ament_cpplint</test_depend>
-  <test_depend>ament_cmake</test_depend>
-  <test_depend>ament_uncrustify</test_depend>
+  <test_depend>ament_cmake_cppcheck</test_depend>
+  <test_depend>ament_cmake_cpplint</test_depend>
+  <test_depend>ament_cmake_lint_cmake</test_depend>
+  <test_depend>ament_cmake_uncrustify</test_depend>
 
-  <exec_depend>assimp</exec_depend>
-  <exec_depend>libogre</exec_depend>
+  <!-- <exec_depend>assimp</exec_depend> -->
+  <exec_depend>rviz_ogre_vendor</exec_depend>
   <exec_depend>libqt5-core</exec_depend>
   <exec_depend>libqt5-gui</exec_depend>
   <exec_depend>libqt5-opengl</exec_depend>
   <exec_depend>libqt5-widgets</exec_depend>
 
   <export>
-    <build_type>cmake</build_type>
+    <build_type>ament_cmake</build_type>
   </export>
 </package>
