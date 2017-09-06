@@ -48,10 +48,10 @@ class SceneNode;
 class Any;
 }
 
-namespace rviz
+namespace rviz_rendering
 {
 
-class BillboardLine;
+//class BillboardLine;
 
 /**
  * \class Grid
@@ -65,7 +65,7 @@ public:
   enum Style
   {
     Lines,
-    Billboards,
+//    Billboards,
   };
 
   /**
@@ -118,7 +118,7 @@ private:
   Ogre::SceneNode* scene_node_;           ///< The scene node that this grid is attached to
   Ogre::ManualObject* manual_object_;     ///< The manual object used to draw the grid
 
-  BillboardLine* billboard_line_;
+//  BillboardLine* billboard_line_;
 
   Ogre::MaterialPtr material_;
 

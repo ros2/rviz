@@ -52,7 +52,11 @@
 # pragma GCC diagnostic pop
 #endif
 
+#include <QtWidgets/QtWidgets>
+
 #include <rviz_rendering/logging.hpp>
+
+#include "grid.h"
 
 namespace rviz_rendering
 {
@@ -139,6 +143,14 @@ createScene(Ogre::SceneManager * ogre_scene_manager)
   Derive this class for your own purpose and overwite this function to have a
   working Ogre widget with your own content.
   */
+
+  QColor color = Qt::gray;
+  new rviz_rendering::Grid( ogre_scene_manager, nullptr,
+                    Grid::Lines,
+                    10,
+                    1.0f,
+                    0.03f,
+                    Ogre::ColourValue( color.redF(), color.greenF(), color.blueF(), color.alphaF() ));
   ogre_scene_manager->setAmbientLight(Ogre::ColourValue(1.0f, 0.0f, 0.0f));
 
   Ogre::Entity * sphereMesh =
@@ -188,12 +200,12 @@ RenderWindowImpl::initialize()
   ogre_camera_->setFarClipDistance(200.0f);
 
   auto camera_node_ = ogre_scene_manager_->getRootSceneNode()->createChildSceneNode();
-  ogre_camera_->setPosition(Ogre::Vector3(0.0f, 0.0f, 10.0f));
-  ogre_camera_->lookAt(Ogre::Vector3(0.0f, 0.0f, -300.0f));
+  ogre_camera_->setPosition(Ogre::Vector3(0.0f, 10.0f, 10.0f));
+  ogre_camera_->lookAt(Ogre::Vector3(0.0f, 0.0f, 0.0f));
   camera_node_->attachObject(ogre_camera_);
 
   Ogre::Viewport * pViewPort = ogre_render_window_->addViewport(ogre_camera_);
-  auto bg_color = Ogre::ColourValue(0.0f, 0.5f, 1.0f);
+  auto bg_color = Ogre::ColourValue(0.9f, 0.9f, 0.9f);
   pViewPort->setBackgroundColour(bg_color);
 
   ogre_camera_->setAspectRatio(
