@@ -1,0 +1,26 @@
+<package format="2">
+  <name>rviz_common</name>
+  <version>0.0.1</version>
+  <description>
+    Common rviz API, used by rviz plugins and applications.
+  </description>
+  <maintainer email="william@osrfoundation.org">William Woodall</maintainer>
+  <license>BSD</license>
+
+  <author>Dave Hershberger</author>
+  <author>David Gossow</author>
+  <author>Josh Faust</author>
+
+  <url type="website">http://ros.org/wiki/rviz_common</url>
+  <url type="repository">https://github.com/ros-visualization/rviz</url>
+  <url type="bugtracker">https://github.com/ros-visualization/rviz/issues</url>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rviz_rendering</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+
+</package>
