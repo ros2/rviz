@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,50 +27,25 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SRC__RVIZ_COMMON__WINDOW_MANAGER_INTERFACE_HPP_
-#define SRC__RVIZ_COMMON__WINDOW_MANAGER_INTERFACE_HPP_
+#ifndef INCLUDE__RVIZ_COMMON__ROS_INTEGRATION__OK_HPP_
+#define INCLUDE__RVIZ_COMMON__ROS_INTEGRATION__OK_HPP_
 
-class QWidget;
-class QString;
+#include <string>
 
 namespace rviz_common
 {
-
-class PanelDockWidget;
-
-/// Pure virtual class which represents the interface for adding panels to the main rviz frame.
-/**
- * This class is useful as a way to moc a small part of the VisualizationFrame
- * class while testing without having to moc the whole thing.
- */
-class WindowManagerInterface
+namespace ros_integration
 {
-public:
-  /// Return the parent QWidget.
-  virtual
-  QWidget *
-  getParentWindow() = 0;
 
-  /// Add a pane to the visualizer.
-  /**
-   * To remove a pane, delete it.
-   * Other operations can also be done directly to the PanelDockWidget:
-   * show(), hide(), close(), etc.
-   */
-  virtual
-  PanelDockWidget *
-  addPane(
-    const QString & name,
-    QWidget * pane,
-    Qt::DockWidgetArea area = Qt::LeftDockWidgetArea,
-    bool floating = true) = 0;
+/// Check if ROS is "ok" or not, usually if ROS has been shutdown or not.
+/**
+ * \param node_name the name of the node returned by ros_integration::init()
+ * \return true if ok, otherwise false
+ */
+bool
+ok(const std::string & node_name);
 
-  /// Set the message displayed in the status bar.
-  virtual
-  void
-  setStatus(const QString & message) = 0;
-};
-
+}  // namespace ros_integration
 }  // namespace rviz_common
 
-#endif  // SRC__RVIZ_COMMON__WINDOW_MANAGER_INTERFACE_HPP_
+#endif  // INCLUDE__RVIZ_COMMON__ROS_INTEGRATION__OK_HPP_

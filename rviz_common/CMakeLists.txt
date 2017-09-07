@@ -131,7 +131,7 @@ set(rviz_common_source_files
   # src/rviz_common/views_panel.cpp
   # src/rviz_common/visualization_frame.cpp
   # src/rviz_common/visualization_manager.cpp
-  # src/rviz_common/visualizer_app.cpp
+  src/rviz_common/visualizer_app.cpp
   # src/rviz_common/widget_geometry_change_detector.cpp
   # src/rviz_common/yaml_config_reader.cpp
   # src/rviz_common/yaml_config_writer.cpp

@@ -373,6 +373,12 @@ void VisualizationFrame::initialize(const QString& display_config_file )
   connect( manager_, SIGNAL( statusUpdate( const QString& )), this, SIGNAL( statusUpdate( const QString& )));
 }
 
+VisualizationManager *
+VisualizationFrame::getManager()
+{
+  return manager_;
+}
+
 void VisualizationFrame::initConfigs()
 {
   home_dir_ = QDir::toNativeSeparators( QDir::homePath() ).toStdString();
@@ -780,6 +786,11 @@ bool VisualizationFrame::saveDisplayConfig( const QString& path )
   }
 }
 
+QString VisualizationFrame::getErrorMessage() const
+{
+  return error_message_;
+}
+
 void VisualizationFrame::save( Config config )
 {
   manager_->save( config.mapMakeChild( "Visualization Manager" ));
@@ -1156,6 +1167,7 @@ void VisualizationFrame::showHelpPanel()
   }
   else
   {
+    // TODO(wjwwood): figure out if this is needed
     // show_help_action_ is a toggle action, so trigger() changes its
     // state.  Therefore we must force it to the opposite state from
     // what we want before we call trigger().  (I think.)

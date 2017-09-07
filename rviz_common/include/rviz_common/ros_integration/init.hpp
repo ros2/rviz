@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,50 +27,42 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SRC__RVIZ_COMMON__WINDOW_MANAGER_INTERFACE_HPP_
-#define SRC__RVIZ_COMMON__WINDOW_MANAGER_INTERFACE_HPP_
+#ifndef INCLUDE__RVIZ_COMMON__ROS_INTEGRATION__INIT_HPP_
+#define INCLUDE__RVIZ_COMMON__ROS_INTEGRATION__INIT_HPP_
 
-class QWidget;
-class QString;
+#include <string>
 
 namespace rviz_common
 {
-
-class PanelDockWidget;
-
-/// Pure virtual class which represents the interface for adding panels to the main rviz frame.
-/**
- * This class is useful as a way to moc a small part of the VisualizationFrame
- * class while testing without having to moc the whole thing.
- */
-class WindowManagerInterface
+namespace ros_integration
 {
-public:
-  /// Return the parent QWidget.
-  virtual
-  QWidget *
-  getParentWindow() = 0;
 
-  /// Add a pane to the visualizer.
-  /**
-   * To remove a pane, delete it.
-   * Other operations can also be done directly to the PanelDockWidget:
-   * show(), hide(), close(), etc.
-   */
-  virtual
-  PanelDockWidget *
-  addPane(
-    const QString & name,
-    QWidget * pane,
-    Qt::DockWidgetArea area = Qt::LeftDockWidgetArea,
-    bool floating = true) = 0;
+// TODO(wjwwood): Figure out which exceptions can be raised and document them
+//                consider consolidating all possible exceptions to a few
+//                exceptions defined in this library, to avoid inconsistent
+//                exceptions based on the underly ROS version.
+//                Also define an exception for repeated calls to this function
+//                under ROS 1, which will not be allowed.
+/// Initialize ROS, create the ROS node, return the ROS node name.
+/**
+ * argc and argv maybe mutate to remove any command line arguments consumed by ROS.
+ *
+ * The returned ROS node name will be used in other API calls to reference the
+ * correct node.
+ * In ROS 2, this function maybe called multiple times and so the ROS node name
+ * will be the unique "key" used to operate on the correct node indirectly.
+ * In ROS 1 this will raise an exception.
+ *
+ * \param argc number of elements in argv
+ * \param argv command line arguments as an array of c-string
+ * \param name desired node name, or base node name if using an anonymous name
+ * \param anonymous_name if true then the ROS node name will be randomized
+ * \return name of the resulting ROS node
+ */
+std::string
+init(int argc, char ** argv, const std::string & name, bool anonymous_name = true);
 
-  /// Set the message displayed in the status bar.
-  virtual
-  void
-  setStatus(const QString & message) = 0;
-};
-
+}  // namespace ros_integration
 }  // namespace rviz_common
 
-#endif  // SRC__RVIZ_COMMON__WINDOW_MANAGER_INTERFACE_HPP_
+#endif  // INCLUDE__RVIZ_COMMON__ROS_INTEGRATION__INIT_HPP_
