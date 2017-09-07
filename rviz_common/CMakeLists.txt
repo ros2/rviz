@@ -21,10 +21,8 @@ find_package(rviz_rendering REQUIRED)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
-include_directories(include)
-
 # These need to be added in the add_library() call so AUTOMOC detects them.
-set(${PROJECT_NAME}_headers_to_moc
+set(rviz_common_headers_to_moc
   # include/rviz_common/visualizer_app.hpp
   # src/rviz_common/add_display_dialog.hpp
   # src/rviz_common/display_context.hpp
@@ -75,7 +73,7 @@ set(${PROJECT_NAME}_headers_to_moc
   # src/rviz_common/properties/tf_frame_property.hpp
   # src/rviz_common/selection/selection_manager.hpp
 )
-set(${PROJECT_NAME}_source_files
+set(rviz_common_source_files
   # src/rviz_common/add_display_dialog.cpp
   # src/rviz_common/bit_allocator.cpp
   # src/rviz_common/config.cpp
@@ -139,20 +137,36 @@ set(${PROJECT_NAME}_source_files
   # src/rviz_common/yaml_config_writer.cpp
 )
 
-add_library(${PROJECT_NAME}
-  ${${PROJECT_NAME}_headers_to_moc}
-  ${${PROJECT_NAME}_source_files}
+add_library(rviz_common
+  ${rviz_common_headers_to_moc}
+  ${rviz_common_source_files}
 )
-target_link_libraries(${PROJECT_NAME}
-  rviz_rendering
+target_include_directories(rviz_common
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
+target_link_libraries(rviz_common
+  rviz_rendering::rviz_rendering
   Qt5::Widgets
 )
 
+ament_export_interfaces(rviz_common)
+ament_export_dependencies(rviz_rendering)
+
 install(
-  TARGETS ${PROJECT_NAME}
+  TARGETS rviz_common
+  EXPORT rviz_common
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin)
+  RUNTIME DESTINATION bin
+  INCLUDES DESTINATION include
+)
+
+install(
+  DIRECTORY include/
+  DESTINATION include
+)
 
 if(BUILD_TESTING)
     # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back

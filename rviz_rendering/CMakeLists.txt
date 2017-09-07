@@ -43,14 +43,12 @@ if(Qt5_FOUND AND WIN32 AND TARGET Qt5::qmake AND NOT TARGET Qt5::windeployqt)
     endif()
 endif()
 
-include_directories(include)
-
 # These need to be added in the add_library() call so AUTOMOC detects them.
 set(headers_with_q_object
   include/rviz_rendering/render_window.hpp
 )
 
-add_library(${PROJECT_NAME}
+add_library(rviz_rendering
   ${headers_with_q_object}
   # src/rviz_rendering/apply_visibility_bits.cpp
   # src/rviz_rendering/arrow.cpp
@@ -65,23 +63,44 @@ add_library(${PROJECT_NAME}
   src/rviz_rendering/resource_config.cpp
   # src/rviz_rendering/shape.cpp
 )
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(rviz_rendering
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
   rviz_ogre_vendor::RenderSystem_GL
   rviz_ogre_vendor::OgreGLSupport
   Qt5::Widgets
 )
+target_include_directories(rviz_rendering
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
 # This will give the library a default directory to fallback to, but it should be overridden.
-target_compile_definitions(${PROJECT_NAME}
+target_compile_definitions(rviz_rendering
   # TODO(wjwwood): replace this with ament_index
   PRIVATE "-DRVIZ_RENDERING_DEFAULT_RESOURCE_DIRECTORY=\"${CMAKE_CURRENT_SOURCE_DIR}\""
   # TODO(wjwwood): this might not be required anymore with static linking
   PRIVATE "-DRVIZ_RENDERING_OGRE_PLUGIN_DIR=\"${OGRE_PLUGIN_DIR}\""
 )
 
+ament_export_interfaces(rviz_rendering)
+ament_export_dependencies(rviz_ogre_vendor)
+
+install(
+  TARGETS rviz_rendering
+  EXPORT rviz_rendering
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  INCLUDES DESTINATION include
+)
+
+install(
+  DIRECTORY include/
+  DESTINATION include
+)
+
 add_executable(rendering_example src/examples/rendering_example.cpp)
-target_link_libraries(rendering_example ${PROJECT_NAME} Qt5::Widgets)
+target_link_libraries(rendering_example rviz_rendering Qt5::Widgets)
 
 # TODO(wjwwood): find a way to make this optional or to run without "deploying" the
 #                necessary dlls and stuff to the bin folder.
