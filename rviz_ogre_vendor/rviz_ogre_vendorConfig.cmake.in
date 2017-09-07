@@ -47,6 +47,10 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
       NO_CMAKE_SYSTEM_PATH
       NO_CMAKE_FIND_ROOT_PATH
     )
+    if(NOT _ogre_main_static_library_debug_abs AND APPLE)
+      # On macOS it seems the _d is not used, so just use the normal library name.
+      set(_ogre_main_static_library_debug_abs ${_ogre_main_static_library_abs})
+    endif()
 
     add_library(rviz_ogre_vendor::OgreMain STATIC IMPORTED)
     set_target_properties(rviz_ogre_vendor::OgreMain
@@ -78,6 +82,9 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
       find_library(XAW_LIBRARY NAMES Xaw Xaw7 PATHS ${DEP_LIB_SEARCH_DIR} ${X11_LIB_SEARCH_PATH})
       list(APPEND _extra_interface_link_libraries ${XAW_LIBRARY})
     endif()
+    if(APPLE)
+      list(APPEND _extra_interface_link_libraries "-framework Cocoa")
+    endif()
     set_target_properties(rviz_ogre_vendor::OgreMain
       PROPERTIES
         "INTERFACE_LINK_LIBRARIES" "${_extra_interface_link_libraries}"
@@ -104,6 +111,10 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
       NO_CMAKE_SYSTEM_PATH
       NO_CMAKE_FIND_ROOT_PATH
     )
+    if(NOT _ogre_overlay_static_library_debug_abs AND APPLE)
+      # On macOS it seems the _d is not used, so just use the normal library name.
+      set(_ogre_overlay_static_library_debug_abs ${_ogre_overlay_static_library_abs})
+    endif()
 
     add_library(rviz_ogre_vendor::OgreOverlay STATIC IMPORTED)
     set_target_properties(rviz_ogre_vendor::OgreOverlay
@@ -144,6 +155,10 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
       NO_CMAKE_SYSTEM_PATH
       NO_CMAKE_FIND_ROOT_PATH
     )
+    if(NOT _render_system_gl_static_library_debug_abs AND APPLE)
+      # On macOS it seems the _d is not used, so just use the normal library name.
+      set(_render_system_gl_static_library_debug_abs ${_render_system_gl_static_library_abs})
+    endif()
 
     add_library(rviz_ogre_vendor::RenderSystem_GL STATIC IMPORTED)
     set_target_properties(rviz_ogre_vendor::RenderSystem_GL
@@ -184,6 +199,10 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
       NO_CMAKE_SYSTEM_PATH
       NO_CMAKE_FIND_ROOT_PATH
     )
+    if(NOT _ogre_gl_support_static_library_debug_abs AND APPLE)
+      # On macOS it seems the _d is not used, so just use the normal library name.
+      set(_ogre_gl_support_static_library_debug_abs ${_ogre_gl_support_static_library_abs})
+    endif()
 
     add_library(rviz_ogre_vendor::OgreGLSupport STATIC IMPORTED)
     set_target_properties(rviz_ogre_vendor::OgreGLSupport
