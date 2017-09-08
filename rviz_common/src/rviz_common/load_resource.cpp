@@ -69,7 +69,7 @@ QPixmap loadPixmap(QString url, bool fill_cache)
   // TODO(wjwwood): reenable this, or in the meantime add a placeholder pixmap
   Q_UNUSED(url);
   Q_UNUSED(fill_cache);
-  RVIZ_COMMON_LOG_WARNING_STREAM("did not load pixmap at " << url.toStdString());
+  // RVIZ_COMMON_LOG_WARNING_STREAM("did not load pixmap at " << url.toStdString());
   // // if it's in the cache, no need to locate
   // if (QPixmapCache::find(url, &pixmap) ) {
   //   return pixmap;
@@ -104,7 +104,7 @@ QCursor makeIconCursor(QString url, bool fill_cache)
   // TODO(wjwwood): reenable this
   Q_UNUSED(url);
   Q_UNUSED(fill_cache);
-  RVIZ_COMMON_LOG_WARNING_STREAM("did not load icon as cursor at " << url.toStdString());
+  // RVIZ_COMMON_LOG_WARNING_STREAM("did not load icon as cursor at " << url.toStdString());
   return QCursor(Qt::ArrowCursor);
 #if 0
   QPixmap icon = loadPixmap(url, fill_cache);
@@ -124,7 +124,7 @@ QCursor makeIconCursor(QPixmap icon, QString cache_key, bool fill_cache)
   Q_UNUSED(icon);
   Q_UNUSED(cache_key);
   Q_UNUSED(fill_cache);
-  RVIZ_COMMON_LOG_WARNING_STREAM("did not make icon into cursor at " << cache_key.toStdString());
+  // RVIZ_COMMON_LOG_WARNING_STREAM("did not make icon into cursor at " << cache_key.toStdString());
   return QCursor(Qt::ArrowCursor);
 #if 0
   // if it's in the cache, no need to locate

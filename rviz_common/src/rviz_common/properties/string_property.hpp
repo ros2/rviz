@@ -31,9 +31,11 @@
 
 #include <string>
 
-#include "rviz/properties/property.h"
+#include "./property.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 /** @brief Property specialized for string values. */
@@ -56,6 +58,7 @@ public Q_SLOTS:
   bool setStdString( const std::string& std_str ) { return setValue( QString::fromStdString( std_str )); }
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
 #endif // STRING_PROPERTY_H

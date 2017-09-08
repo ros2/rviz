@@ -27,9 +27,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz/properties/string_property.h"
+#include "./string_property.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 StringProperty::StringProperty( const QString& name,
@@ -41,4 +43,5 @@ StringProperty::StringProperty( const QString& name,
   : Property( name, default_value, description, parent, changed_slot, receiver )
 {}
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common

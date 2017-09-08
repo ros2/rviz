@@ -29,11 +29,13 @@
 #ifndef STATUSPROPERTY_H
 #define STATUSPROPERTY_H
 
-#include "rviz/properties/property.h"
+#include "./property.hpp"
 
 #include <QIcon>
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 class StatusProperty: public Property
@@ -82,6 +84,7 @@ private:
 
 typedef StatusProperty::Level StatusLevel;
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
 #endif // STATUSPROPERTY_H

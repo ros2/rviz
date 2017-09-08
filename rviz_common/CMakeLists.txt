@@ -71,8 +71,8 @@ set(rviz_common_headers_to_moc
   # src/rviz_common/properties/property_tree_with_help.hpp
   # src/rviz_common/properties/splitter_handle.hpp
   # src/rviz_common/properties/status_list.hpp
-  # src/rviz_common/properties/status_property.hpp
-  # src/rviz_common/properties/string_property.hpp
+  src/rviz_common/properties/status_property.hpp
+  src/rviz_common/properties/string_property.hpp
   # src/rviz_common/properties/tf_frame_property.hpp
   # src/rviz_common/selection/selection_manager.hpp
 )
@@ -90,7 +90,7 @@ set(rviz_common_source_files
   # src/rviz_common/failed_view_controller.cpp
   # src/rviz_common/frame_manager.cpp
   # src/rviz_common/help_panel.cpp
-  # src/rviz_common/load_resource.cpp
+  src/rviz_common/load_resource.cpp
   # src/rviz_common/loading_dialog.cpp
   # src/rviz_common/new_object_dialog.cpp
   # src/rviz_common/panel_dock_widget.cpp
@@ -115,8 +115,8 @@ set(rviz_common_source_files
   src/rviz_common/properties/property.cpp
   # src/rviz_common/properties/splitter_handle.cpp
   # src/rviz_common/properties/status_list.cpp
-  # src/rviz_common/properties/status_property.cpp
-  # src/rviz_common/properties/string_property.cpp
+  src/rviz_common/properties/status_property.cpp
+  src/rviz_common/properties/string_property.cpp
   # src/rviz_common/properties/tf_frame_property.cpp
   # src/rviz_common/render_panel.cpp
   # src/rviz_common/scaled_image_widget.cpp
