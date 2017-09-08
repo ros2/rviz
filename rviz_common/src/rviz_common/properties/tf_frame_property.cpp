@@ -31,9 +31,11 @@
 
 #include "rviz/frame_manager.h"
 
-#include "rviz/properties/tf_frame_property.h"
+#include "./tf_frame_property.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 const QString TfFrameProperty::FIXED_FRAME_STRING = "<Fixed Frame>";
@@ -123,4 +125,5 @@ void TfFrameProperty::handleFixedFrameChange()
   }
 }
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common

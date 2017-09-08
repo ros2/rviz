@@ -34,12 +34,14 @@
 #include <QPainter>
 #include <QColorDialog>
 
-#include "rviz/properties/color_property.h"
-#include "rviz/properties/parse_color.h"
+#include "./color_property.hpp"
+#include "./parse_color.hpp"
 
-#include "rviz/properties/color_editor.h"
+#include "./color_editor.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 ColorEditor::ColorEditor( ColorProperty* property, QWidget* parent )
@@ -133,4 +135,5 @@ void ColorEditor::onButtonClick()
   }
 }
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common

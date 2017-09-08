@@ -33,9 +33,11 @@
 #include <QKeyEvent>
 #include <QLineEdit>
 
-#include "rviz/properties/editable_combo_box.h"
+#include "./editable_combo_box.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 EditableComboBox::EditableComboBox( QWidget* parent )
@@ -112,4 +114,5 @@ bool EditableComboBox::event( QEvent* event )
   return ComboBox::event( event );
 }
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common

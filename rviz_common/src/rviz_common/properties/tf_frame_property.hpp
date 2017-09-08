@@ -31,9 +31,11 @@
 
 #include <string>
 
-#include "rviz/properties/editable_enum_property.h"
+#include "./editable_enum_property.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 class FrameManager;
@@ -75,6 +77,7 @@ private:
   bool include_fixed_frame_string_;
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
 #endif // TF_FRAME_PROPERTY_H

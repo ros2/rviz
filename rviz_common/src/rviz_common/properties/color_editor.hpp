@@ -29,9 +29,11 @@
 #ifndef RVIZ_COLOR_EDITOR_H
 #define RVIZ_COLOR_EDITOR_H
 
-#include "rviz/properties/line_edit_with_button.h"
+#include "./line_edit_with_button.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 class ColorProperty;
@@ -64,6 +66,7 @@ private:
   ColorProperty* property_;
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
 #endif // RVIZ_COLOR_EDITOR_H

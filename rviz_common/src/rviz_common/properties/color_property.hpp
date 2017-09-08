@@ -31,11 +31,13 @@
 
 #include <QColor>
 
-#include "rviz/properties/parse_color.h"
+#include "./parse_color.hpp"
 
-#include "rviz/properties/property.h"
+#include "./property.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 class ColorProperty: public Property
@@ -54,8 +56,7 @@ public:
   virtual bool paint( QPainter* painter,
                       const QStyleOptionViewItem& option ) const;
 
-  virtual QWidget* createEditor( QWidget* parent,
-                                 const QStyleOptionViewItem& option );
+  virtual QWidget* createEditor( QWidget* parent );
 
   virtual QColor getColor() const { return color_; }
   Ogre::ColourValue getOgreColor() const { return qtToOgre( color_ ); }
@@ -69,6 +70,7 @@ private:
   QColor color_;
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
 #endif // VECTOR_PROPERTY_H

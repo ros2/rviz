@@ -29,9 +29,11 @@
 #ifndef EDITABLE_COMBO_BOX_H
 #define EDITABLE_COMBO_BOX_H
 
-#include "rviz/properties/combo_box.h"
+#include "./combo_box.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 class EditableComboBox: public ComboBox
@@ -46,6 +48,7 @@ protected:
   virtual bool event( QEvent* event );
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
 #endif // EDITABLE_COMBO_BOX_H

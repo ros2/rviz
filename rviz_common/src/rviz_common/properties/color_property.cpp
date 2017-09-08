@@ -31,11 +31,13 @@
 #include <QStringList>
 #include <QStyleOptionViewItem>
 
-#include "rviz/properties/parse_color.h"
-#include "rviz/properties/color_property.h"
-#include "rviz/properties/color_editor.h"
+#include "./parse_color.hpp"
+#include "./color_property.hpp"
+#include "./color_editor.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 ColorProperty::ColorProperty( const QString& name,
@@ -103,12 +105,12 @@ bool ColorProperty::paint( QPainter * painter,
   return true; // return true, since this function has done the painting.
 }
 
-QWidget *ColorProperty::createEditor( QWidget* parent,
-                                      const QStyleOptionViewItem& option )
+QWidget *ColorProperty::createEditor( QWidget* parent )
 {
   ColorEditor* editor = new ColorEditor( this, parent );
   editor->setFrame( false );
   return editor;
 }
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common

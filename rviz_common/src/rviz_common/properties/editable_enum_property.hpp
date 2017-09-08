@@ -31,9 +31,11 @@
 
 #include <QStringList>
 
-#include "rviz/properties/string_property.h"
+#include "./string_property.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 /** @brief Editable Enum property.
@@ -56,8 +58,7 @@ public:
   virtual void addOption( const QString& option );
   void addOptionStd( const std::string& option ) { addOption( QString::fromStdString( option )); }
 
-  virtual QWidget* createEditor( QWidget* parent,
-                                 const QStyleOptionViewItem& option );
+  virtual QWidget* createEditor( QWidget* parent );
 
   /** @brief Sort the option strings. */
   void sortOptions() { strings_.sort(); }
@@ -82,6 +83,7 @@ protected:
   QStringList strings_;
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
 #endif // EDITABLE_ENUM_PROPERTY_H

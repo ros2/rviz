@@ -29,12 +29,14 @@
 
 #include <QTextBrowser>
 
-#include "rviz/properties/property.h"
-#include "rviz/properties/property_tree_widget.h"
+#include "./property.hpp"
+#include "./property_tree_widget.hpp"
 
-#include "rviz/properties/property_tree_with_help.h"
+#include "./property_tree_with_help.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 PropertyTreeWithHelp::PropertyTreeWithHelp( QWidget* parent )
@@ -102,4 +104,5 @@ void PropertyTreeWithHelp::load( const Config& config )
   }
 }
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
