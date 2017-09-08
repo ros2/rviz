@@ -44,7 +44,7 @@
 // #include "./display.hpp"
 #include "./display_context.hpp"
 #include "./view_controller.hpp"
-#include "./viewport_mouse_event.hpp"    
+#include "./viewport_mouse_event.hpp"
 
 // #include "rviz/visualization_manager.h"
 // #include "rviz/window_manager_interface.h"

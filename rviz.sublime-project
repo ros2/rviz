@@ -30,7 +30,8 @@
 			"-I/Users/william/rviz2_ws/install/opt/rviz_ogre_vendor/include",
 			"-I/Users/william/rviz2_ws/install/opt/rviz_ogre_vendor/include/OGRE",
 			"-I/Users/william/rviz2_ws/install/opt/rviz_ogre_vendor/include/OGRE/Overlay",
-			"-I${folder:${project_path:rviz.sublime-project}}/rviz_rendering/include"
+			"-I${folder:${project_path:rviz.sublime-project}}/rviz_rendering/include",
+			"-I${folder:${project_path:rviz.sublime-project}}/rviz_common/include",
 		]
 	}
 }

@@ -163,7 +163,7 @@ protected:
 
   bool context_menu_visible_;
 
-  // Pointer to the Display which is using this render panel, or NULL
+  // Pointer to the Display which is using this render panel, or nullptr
   // if this does not belong to a Display.
   Display * display_;
 

@@ -32,15 +32,17 @@
 
 #include <sstream>
 
-// #include <QColor>
-// #include <QFont>
-// #include <QKeyEvent>
+#include <QColor>
+#include <QFont>
+#include <QKeyEvent>
+#include <Qt>
 
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
 
+#include <OgreCamera.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 
@@ -48,22 +50,19 @@
 # pragma GCC diagnostic pop
 #endif
 
-// #include <OgreCamera.h>
-
 #include "./display_context.hpp"
+#include "./load_resource.hpp"
 #include "./properties/bool_property.hpp"
+// #include "./properties/enum_property.hpp"
 #include "./properties/float_property.hpp"
+#include "./render_panel.hpp"
 
 // #include "rviz/frame_manager.h"
-// #include "rviz/load_resource.h"
-// #include "rviz/properties/enum_property.h"
-// #include "rviz/render_panel.h"
 // #include "rviz/selection/selection_manager.h"
 // #include "rviz/view_manager.h"
 // #include "rviz/viewport_mouse_event.h"
 // #include "rviz/window_manager_interface.h"
 // #include "rviz/ogre_helpers/render_system.h"
-
 
 namespace rviz_common
 {
@@ -132,10 +131,11 @@ void ViewController::initialize(DisplayContext * context)
   updateNearClipDistance();
   updateStereoProperties();
 
-  if (!RenderSystem::get()->isStereoSupported()) {
-    stereo_enable_->setBool(false);
-    stereo_enable_->hide();
-  }
+  // TODO(wjwwood): replace this with a call to the rviz_rendering::RenderWindow or similar
+  // if (!RenderSystem::get()->isStereoSupported()) {
+  //   stereo_enable_->setBool(false);
+  //   stereo_enable_->hide();
+  // }
 }
 
 ViewController::~ViewController()
