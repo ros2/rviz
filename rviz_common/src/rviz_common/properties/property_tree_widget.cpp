@@ -31,14 +31,16 @@
 #include <QHash>
 #include <QSet>
 
-#include "rviz/properties/property.h"
-#include "rviz/properties/property_tree_delegate.h"
-#include "rviz/properties/splitter_handle.h"
-#include "rviz/properties/status_list.h"
+#include "./property.hpp"
+#include "./property_tree_delegate.hpp"
+#include "./splitter_handle.hpp"
+#include "./status_list.hpp"
 
-#include "rviz/properties/property_tree_widget.h"
+#include "./property_tree_widget.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 PropertyTreeWidget::PropertyTreeWidget( QWidget* parent )
@@ -191,4 +193,5 @@ void PropertyTreeWidget::expandEntries( const QSet<QString>& expanded_full_names
   }
 }
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common

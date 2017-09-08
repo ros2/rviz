@@ -33,7 +33,9 @@
 
 class QTreeView;
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 /** @brief A tall skinny invisible widget providing left-right sliding
@@ -78,6 +80,7 @@ private:
   QColor color_;
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
 #endif // SPLITTER_HANDLE_H

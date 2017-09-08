@@ -33,9 +33,11 @@
 #include <QPainter>
 #include <QTreeView>
 
-#include "rviz/properties/splitter_handle.h"
+#include "./splitter_handle.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 SplitterHandle::SplitterHandle( QTreeView* parent )
@@ -129,4 +131,5 @@ void SplitterHandle::paintEvent( QPaintEvent* event )
   painter.drawLine( 1+width() / 2, 0, 1+width() / 2, height() );
 }
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common

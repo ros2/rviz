@@ -29,9 +29,11 @@
 #ifndef STATUSLIST_H
 #define STATUSLIST_H
 
-#include "rviz/properties/status_property.h"
+#include "./status_property.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 class StatusList: public StatusProperty
@@ -61,6 +63,7 @@ private:
   QString name_prefix_;
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
 #endif // STATUSLIST_H

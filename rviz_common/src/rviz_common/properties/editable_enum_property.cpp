@@ -29,11 +29,13 @@
 
 #include <QCompleter>
 
-#include "rviz/properties/editable_combo_box.h"
+#include "./editable_combo_box.hpp"
 
-#include "rviz/properties/editable_enum_property.h"
+#include "./editable_enum_property.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 EditableEnumProperty::EditableEnumProperty( const QString& name,
@@ -56,8 +58,7 @@ void EditableEnumProperty::addOption( const QString& option )
   strings_.push_back( option );
 }
 
-QWidget* EditableEnumProperty::createEditor( QWidget* parent,
-                                             const QStyleOptionViewItem& option )
+QWidget* EditableEnumProperty::createEditor( QWidget* parent )
 {
   // Emit requestOptions() to give listeners a chance to change the option list.
   Q_EMIT requestOptions( this );
@@ -76,4 +77,5 @@ void EditableEnumProperty::setString( const QString& str )
   setValue( str );
 }
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common

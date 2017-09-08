@@ -27,9 +27,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz/properties/parse_color.h"
+#include "./parse_color.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 static int limit( int i )
@@ -89,4 +91,5 @@ Ogre::ColourValue qtToOgre( const QColor& c )
   return Ogre::ColourValue( c.redF(), c.greenF(), c.blueF(), c.alphaF() );
 }
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common

@@ -29,11 +29,13 @@
 
 #include <stdio.h>
 
-#include "rviz/properties/property_tree_model.h"
+#include "./property_tree_model.hpp"
 
-#include "rviz/properties/status_list.h"
+#include "./status_list.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 StatusList::StatusList( const QString& name, Property* parent )
@@ -132,4 +134,5 @@ void StatusList::updateLabel()
   StatusProperty::setName( name_prefix_ + ": " + statusWord( getLevel() ));
 }
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
