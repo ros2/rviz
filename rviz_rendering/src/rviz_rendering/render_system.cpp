@@ -388,6 +388,10 @@ RenderSystem::makeRenderWindow(
   //   Ogre::StringConverter::toString(static_cast<unsigned long>(window_id));
   params["parentWindowHandle"] = Ogre::StringConverter::toString(window_id);
 
+  // Scale rendering window correctly on Windows
+  params["left"] = std::to_string(0);
+  params["top"] = std::to_string(0);
+
   // params["externalGLControl"] = Ogre::String("true");
 
   // Enable antialiasing
