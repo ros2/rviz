@@ -27,11 +27,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz/properties/combo_box.h"
+#include "./combo_box.hpp"
 
-#include "rviz/properties/enum_property.h"
+#include "./enum_property.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 EnumProperty::EnumProperty( const QString& name,
@@ -67,8 +69,7 @@ int EnumProperty::getOptionInt()
   return 0;
 }
 
-QWidget* EnumProperty::createEditor( QWidget* parent,
-                                     const QStyleOptionViewItem& option )
+QWidget* EnumProperty::createEditor( QWidget* parent )
 {
   // Emit requestOptions() to give listeners a chance to change the option list.
   Q_EMIT requestOptions( this );
@@ -87,4 +88,5 @@ void EnumProperty::setString( const QString& str )
   setValue( str );
 }
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common

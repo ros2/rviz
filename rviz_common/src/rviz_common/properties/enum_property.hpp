@@ -31,9 +31,11 @@
 
 #include <QStringList>
 
-#include "rviz/properties/string_property.h"
+#include "./string_property.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 /** @brief Enum property.
@@ -66,8 +68,7 @@ public:
    * if the current option string does not have an int value. */
   virtual int getOptionInt();
 
-  virtual QWidget* createEditor( QWidget* parent,
-                                 const QStyleOptionViewItem& option );
+  virtual QWidget* createEditor( QWidget* parent );
 
 public Q_SLOTS:
   /** @brief Set the value of this property to the given string.  Does
@@ -99,6 +100,7 @@ private:
   QHash<QString, int> ints_;
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
 #endif // ENUM_PROPERTY_H

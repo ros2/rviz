@@ -31,7 +31,9 @@
 
 #include <QComboBox>
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 class ComboBox: public QComboBox
@@ -42,6 +44,7 @@ public:
   ComboBox( QWidget* parent = 0 );
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
 #endif // COMBO_BOX_H
