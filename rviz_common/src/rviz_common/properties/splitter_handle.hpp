@@ -64,7 +64,7 @@ public:
 protected:
   virtual void mousePressEvent( QMouseEvent* event );
   virtual void mouseMoveEvent( QMouseEvent* event );
-  virtual void paintEvent( QPaintEvent* event );
+  virtual void paintEvent();
 
 private:
   /** @brief Update the parent's column widths and this splitter's
