@@ -29,9 +29,11 @@
 #ifndef INT_PROPERTY_H
 #define INT_PROPERTY_H
 
-#include "rviz/properties/property.h"
+#include "./property.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 /** @brief Property specialized to provide max/min enforcement for integers. */
@@ -81,8 +83,7 @@ public:
    * and with a signal/slot connection to setInt(), so the Property
    * value updates every time the value changes, not just when
    * "return" is pressed. */
-  virtual QWidget* createEditor( QWidget* parent,
-                                 const QStyleOptionViewItem& option );
+  virtual QWidget* createEditor( QWidget* parent );
 
 public Q_SLOTS:
   /** @brief Set the value of this property to the given integer.
@@ -95,6 +96,7 @@ private:
   int max_;
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
 #endif // INT_PROPERTY_H

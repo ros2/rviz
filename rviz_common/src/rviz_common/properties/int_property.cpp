@@ -32,9 +32,11 @@
 #include <QtGlobal>
 #include <QSpinBox>
 
-#include "rviz/properties/int_property.h"
+#include "./int_property.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 IntProperty::IntProperty( const QString& name,
@@ -66,8 +68,7 @@ void IntProperty::setMax( int max )
   setValue( getValue() );
 }
 
-QWidget* IntProperty::createEditor( QWidget* parent,
-                                    const QStyleOptionViewItem& option )
+QWidget* IntProperty::createEditor( QWidget* parent )
 {
   QSpinBox* editor = new QSpinBox( parent );
   editor->setFrame( false );
@@ -76,4 +77,5 @@ QWidget* IntProperty::createEditor( QWidget* parent,
   return editor;
 }
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common

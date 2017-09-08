@@ -61,8 +61,8 @@ set(rviz_common_headers_to_moc
   # src/rviz_common/properties/editable_enum_property.hpp
   # src/rviz_common/properties/enum_property.hpp
   src/rviz_common/properties/float_edit.hpp
-  # src/rviz_common/properties/float_property.hpp
-  # src/rviz_common/properties/int_property.hpp
+  src/rviz_common/properties/float_property.hpp
+  src/rviz_common/properties/int_property.hpp
   # src/rviz_common/properties/line_edit_with_button.hpp
   src/rviz_common/properties/property.hpp
   # src/rviz_common/properties/property_tree_delegate.hpp
@@ -104,8 +104,8 @@ set(rviz_common_source_files
   # src/rviz_common/properties/editable_enum_property.cpp
   # src/rviz_common/properties/enum_property.cpp
   src/rviz_common/properties/float_edit.cpp
-  # src/rviz_common/properties/float_property.cpp
-  # src/rviz_common/properties/int_property.cpp
+  src/rviz_common/properties/float_property.cpp
+  src/rviz_common/properties/int_property.cpp
   # src/rviz_common/properties/line_edit_with_button.cpp
   # src/rviz_common/properties/parse_color.cpp
   # src/rviz_common/properties/property_tree_delegate.cpp
