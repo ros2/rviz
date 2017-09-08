@@ -27,9 +27,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz/properties/combo_box.h"
+#include "./combo_box.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 ComboBox::ComboBox( QWidget* parent )
@@ -37,4 +39,5 @@ ComboBox::ComboBox( QWidget* parent )
 {
 }
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
