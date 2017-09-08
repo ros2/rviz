@@ -19,17 +19,19 @@ set(CMAKE_AUTOMOC ON)
 
 find_package(rviz_common REQUIRED)
 
+find_package(rviz_ogre_vendor REQUIRED)
+
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
-add_executable(${PROJECT_NAME}
+add_executable(${PROJECT_NAME}_app
   src/main.cpp
 )
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(${PROJECT_NAME}_app
   rviz_common::rviz_common
   Qt5::Widgets
 )
 
-install(TARGETS ${PROJECT_NAME} DESTINATION bin)
+install(TARGETS ${PROJECT_NAME}_app DESTINATION bin)
 
 if(BUILD_TESTING)
     # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back

@@ -280,7 +280,7 @@ bool VisualizerApp::init(int argc, char ** argv)
   // }
 
   // frame_->getManager()->getSelectionManager()->setDebugMode(verbose);
-  frame_->getManager()->getSelectionManager()->setDebugMode(false);
+  // frame_->getManager()->getSelectionManager()->setDebugMode(false);
 
   frame_->show();
 
