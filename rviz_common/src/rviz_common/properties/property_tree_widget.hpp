@@ -31,7 +31,7 @@
 
 #include <QTreeView>
 
-#include "rviz_common/config.hpp"
+#include "../config.hpp"
 #include "./property_tree_model.hpp"
 
 namespace rviz_common

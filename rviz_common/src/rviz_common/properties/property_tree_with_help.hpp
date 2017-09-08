@@ -31,7 +31,7 @@
 
 #include <QSplitter>
 
-#include "rviz_common/config.hpp"
+#include "../config.hpp"
 
 class QTextBrowser;
 

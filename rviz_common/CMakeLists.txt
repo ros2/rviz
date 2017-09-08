@@ -65,12 +65,12 @@ set(rviz_common_headers_to_moc
   src/rviz_common/properties/int_property.hpp
   src/rviz_common/properties/line_edit_with_button.hpp
   src/rviz_common/properties/property.hpp
-  # src/rviz_common/properties/property_tree_delegate.hpp
+  src/rviz_common/properties/property_tree_delegate.hpp
   src/rviz_common/properties/property_tree_model.hpp
-  # src/rviz_common/properties/property_tree_widget.hpp
-  # src/rviz_common/properties/property_tree_with_help.hpp
-  # src/rviz_common/properties/splitter_handle.hpp
-  # src/rviz_common/properties/status_list.hpp
+  src/rviz_common/properties/property_tree_widget.hpp
+  src/rviz_common/properties/property_tree_with_help.hpp
+  src/rviz_common/properties/splitter_handle.hpp
+  src/rviz_common/properties/status_list.hpp
   src/rviz_common/properties/status_property.hpp
   src/rviz_common/properties/string_property.hpp
   # src/rviz_common/properties/tf_frame_property.hpp
@@ -108,13 +108,13 @@ set(rviz_common_source_files
   src/rviz_common/properties/int_property.cpp
   src/rviz_common/properties/line_edit_with_button.cpp
   src/rviz_common/properties/parse_color.cpp
-  # src/rviz_common/properties/property_tree_delegate.cpp
+  src/rviz_common/properties/property_tree_delegate.cpp
   src/rviz_common/properties/property_tree_model.cpp
-  # src/rviz_common/properties/property_tree_widget.cpp
-  # src/rviz_common/properties/property_tree_with_help.cpp
+  src/rviz_common/properties/property_tree_widget.cpp
+  src/rviz_common/properties/property_tree_with_help.cpp
   src/rviz_common/properties/property.cpp
-  # src/rviz_common/properties/splitter_handle.cpp
-  # src/rviz_common/properties/status_list.cpp
+  src/rviz_common/properties/splitter_handle.cpp
+  src/rviz_common/properties/status_list.cpp
   src/rviz_common/properties/status_property.cpp
   src/rviz_common/properties/string_property.cpp
   # src/rviz_common/properties/tf_frame_property.cpp
