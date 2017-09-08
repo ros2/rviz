@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,45 +27,54 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef BOOL_PROPERTY_H
-#define BOOL_PROPERTY_H
 
-#include "rviz/properties/property.h"
+#ifndef SRC__RVIZ_COMMON__PROPERTIES__BOOL_PROPERTY_HPP_
+#define SRC__RVIZ_COMMON__PROPERTIES__BOOL_PROPERTY_HPP_
 
-namespace rviz
+#include "./property.hpp"
+
+namespace rviz_common
+{
+namespace properties
 {
 
-/** @brief Property specialized to provide getter for booleans. */
-class BoolProperty: public Property
+/// Property specialized to provide getter for booleans.
+class BoolProperty : public Property
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  BoolProperty( const QString& name = QString(),
-                bool default_value = false,
-                const QString& description = QString(),
-                Property* parent = 0,
-                const char *changed_slot = 0,
-                QObject* receiver = 0 );
+  BoolProperty(
+    const QString & name = QString(),
+    bool default_value = false,
+    const QString & description = QString(),
+    Property * parent = 0,
+    const char * changed_slot = 0,
+    QObject * receiver = 0);
 
   virtual ~BoolProperty();
 
-  virtual bool getBool() const;
+  /// Return the value of this.
+  bool getBool() const;
 
-  //* If this is true, will disable it's children when it's own bool value is false */
-  void setDisableChildrenIfFalse( bool disable );
+  /// If given true, disable this properties own children when this has a value of false.
+  void setDisableChildrenIfFalse(bool disable);
 
+  /// Return the disabled children if this has a value of false.
   bool getDisableChildrenIfFalse();
 
-  //* Overridden from Property */
-  virtual bool getDisableChildren();
+  /// Return the disabled children.
+  bool getDisableChildren() override;
 
 public Q_SLOTS:
-  bool setBool( bool value ) { return setValue( value ); }
+  /// Set the value of this.
+  bool setBool(bool value);
 
 private:
   bool disable_children_if_false_;
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
-#endif // BOOL_PROPERTY_H
+#endif  // SRC__RVIZ_COMMON__PROPERTIES__BOOL_PROPERTY_HPP_

@@ -31,6 +31,7 @@
 #ifndef SRC__RVIZ_COMMON__VISUALIZATION_FRAME_HPP_
 #define SRC__RVIZ_COMMON__VISUALIZATION_FRAME_HPP_
 
+#include <chrono>
 #include <deque>
 #include <map>
 #include <string>
@@ -45,26 +46,27 @@
 #include "./window_manager_interface.hpp"
 
 class QAction;
-// class QActionGroup;
+class QActionGroup;
 class QApplication;
 class QCloseEvent;
 class QDockWidget;
 class QEvent;
-// class QLabel;
-// class QSplashScreen;
-// class QTimer;
-// class QToolButton;
+class QLabel;
+class QSplashScreen;
+class QTimer;
+class QToolButton;
 class QWidget;
 
 namespace rviz_common
 {
 
+class Panel;
 class PanelDockWidget;
 // class PanelFactory;
-// class RenderPanel;
+class RenderPanel;
 class Tool;
 class VisualizationManager;
-// class WidgetGeometryChangeDetector;
+class WidgetGeometryChangeDetector;
 
 /// The main rviz window.
 /**
@@ -484,7 +486,7 @@ protected:
   QToolButton * hide_left_dock_button_;
   QToolButton * hide_right_dock_button_;
 
-  PanelFactory * panel_factory_;
+  // PanelFactory * panel_factory_;
 
   struct PanelRecord
   {
@@ -511,7 +513,7 @@ protected:
   QStatusBar * original_status_bar_;
 
   int frame_count_;
-  ros::WallTime last_fps_calc_time_;
+  std::chrono::steady_clock::time_point last_fps_calc_time_;
 
   /// Error message (if any) from most recent saveDisplayConfig() call.
   QString error_message_;

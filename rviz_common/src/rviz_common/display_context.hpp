@@ -36,12 +36,14 @@
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
-// class QKeyEvent;
+#include "./window_manager_interface.hpp"
 
-// namespace Ogre
-// {
-// class SceneManager;
-// }
+class QKeyEvent;
+
+namespace Ogre
+{
+class SceneManager;
+}  // namespace Ogre
 
 // namespace ros
 // {
@@ -57,15 +59,15 @@ namespace rviz_common
 {
 
 // class BitAllocator;
-// class DisplayFactory;
-// class DisplayGroup;
-// class FrameManager;
-// class RenderPanel;
-// class SelectionManager;
-// class ToolManager;
+class DisplayFactory;
+class DisplayGroup;
+class FrameManager;
+class RenderPanel;
+class SelectionManager;
+class ToolManager;
 // class ViewController;
-// class ViewportMouseEvent;
-// class ViewManager;
+class ViewportMouseEvent;
+class ViewManager;
 // class WindowManagerInterface;
 
 /// Pure-virtual base class for objects which give Display subclasses context in which to work.
@@ -89,8 +91,9 @@ public:
   //                disabled functions from this interface to keep it small
   //                and to keep it with as few dependencies as possible.
 
+  // TODO(wjwwood): refactor this to return something from rviz_rendering without Ogre
   /// Returns the Ogre::SceneManager used for the main RenderPanel.
-  // virtual Ogre::SceneManager * getSceneManager() const = 0;
+  virtual Ogre::SceneManager * getSceneManager() const = 0;
 
   /// Return the window manager, if any.
   virtual

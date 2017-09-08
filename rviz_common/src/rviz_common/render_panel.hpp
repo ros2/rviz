@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,38 +28,49 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_RENDER_PANEL_H
-#define RVIZ_RENDER_PANEL_H
+#ifndef SRC__RVIZ_COMMON__RENDER_PANEL_HPP_
+#define SRC__RVIZ_COMMON__RENDER_PANEL_HPP_
 
-#include "ogre_helpers/qt_ogre_render_window.h"
-
-#ifndef Q_MOC_RUN
-#include <OgreSceneManager.h>
-
-#include <boost/thread/mutex.hpp>
-#endif
-
-#include <vector>
 #include <map>
+#include <memory>
+#include <mutex>
+#include <vector>
 
-namespace Ogre
-{
-class Root;
-class Camera;
-class RaySceneQuery;
-class ParticleSystem;
-}
+// #ifndef Q_MOC_RUN
+// #include <OgreSceneManager.h>
 
-namespace ros
-{
-class Node;
-}
+// #include <boost/thread/mutex.hpp>
+// #endif
+
+#include <QWidget>  // NOLINT: cpplint is unable to handle the include order here
+
+// #include "ogre_helpers/qt_ogre_render_window.h"
+
+// namespace Ogre
+// {
+// class Root;
+// class Camera;
+// class RaySceneQuery;
+// class ParticleSystem;
+// }
+
+// namespace ros
+// {
+// class Node;
+// }
 
 class QMenu;
-class QKeyEvent;
-class PropertyTreeWidget;
+// class QKeyEvent;
+// class PropertyTreeWidget;
 
-namespace rviz
+namespace rviz_rendering
+{
+
+class RenderWindow;
+
+}  // namespace rviz_rendering
+
+namespace rviz_common
 {
 
 class Display;
@@ -66,89 +78,107 @@ class DisplayContext;
 class ViewController;
 
 /**
- * A widget which shows an OGRE-rendered scene in RViz.
+ * A widget which shows a 3D scene in RViz.
  *
  * RenderPanel displays a scene and forwards mouse and key events to
- * the DisplayContext (which further forwards them to the active
- * Tool, etc.)
+ * the DisplayContext (which further forwards them to the active Tool, etc.)
  */
-class RenderPanel: public QtOgreRenderWindow, public Ogre::SceneManager::Listener
+class RenderPanel : public QWidget
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  /** Constructor.  Ogre::Root::createRenderWindow() is called within. */
-  RenderPanel( QWidget* parent = 0 );
+  explicit RenderPanel(QWidget * parent = 0);
   virtual ~RenderPanel();
 
-  /** This sets up the Ogre::Camera for this widget. */
-  void initialize(Ogre::SceneManager* scene_manager, DisplayContext* manager);
+  /// Initialize the render panel.
+  /**
+    * This sets up the Camera for this widget.
+    */
+  void initialize(DisplayContext * manager);
+  // void initialize(Ogre::SceneManager * scene_manager, DisplayContext * manager);
 
-  DisplayContext* getManager() { return context_; }
+  DisplayContext * getManager();
 
-  ViewController* getViewController() { return view_controller_; }
+  ViewController * getViewController();
 
-  /** @brief Set the ViewController which should control the camera
-   * position for this view. */
-  void setViewController( ViewController* controller );
+  /// Set the ViewController which should control the camera position for this view.
+  void setViewController(ViewController * controller);
 
   /** Show the given menu as a context menu, positioned based on the
    * current mouse position.  This can be called from any thread. */
-  void showContextMenu( boost::shared_ptr<QMenu> menu );
+  void showContextMenu(std::shared_ptr<QMenu> menu);
 
   /** Return true if the context menu for this panel is visible */
   bool contextMenuVisible();
 
-  virtual void sceneManagerDestroyed( Ogre::SceneManager* source );
+  // TODO(wjwwood): this should be moved into rviz_rendering::RenderWindowImpl, I think
+  // virtual void sceneManagerDestroyed(Ogre::SceneManager * source);
 
 protected:
-  // Override from QWidget
-  void contextMenuEvent( QContextMenuEvent* event );
+  /// Called when any mouse event happens inside the render window.
+  void onRenderWindowMouseEvents(QMouseEvent * event);
 
-  /// Called when any mouse event happens inside the render window
-  void onRenderWindowMouseEvents( QMouseEvent* event );
+  /* Start QWidget overrides. */
 
-  // QWidget mouse events all get sent to onRenderWindowMouseEvents().
-  // QMouseEvent.type() distinguishes them later.
-  virtual void mouseMoveEvent( QMouseEvent* event ) { onRenderWindowMouseEvents( event ); }
-  virtual void mousePressEvent( QMouseEvent* event ) { onRenderWindowMouseEvents( event ); }
-  virtual void mouseReleaseEvent( QMouseEvent* event ) { onRenderWindowMouseEvents( event ); }
-  virtual void mouseDoubleClickEvent( QMouseEvent* event ) { onRenderWindowMouseEvents( event ); }
+  // TODO(wjwwood): I think most of these can be handled in the rviz_rendering::RenderWindowImpl
+  // /// Called when a context menu event occurs in the render window.
+  // void contextMenuEvent(QContextMenuEvent * event) override;
 
-  virtual void leaveEvent ( QEvent * event );
+  // /// Called when the mouse moved in the render window.
+  // void mouseMoveEvent(QMouseEvent * event) override;
 
-  /// Called when there is a mouse-wheel event.
-  virtual void wheelEvent( QWheelEvent* event );
+  // /// Called when a mouse button is pressed down in the render window.
+  // void mousePressEvent(QMouseEvent * event) override;
 
-  virtual void keyPressEvent( QKeyEvent* event );
+  // /// Called when a mouse button is released in the render window.
+  // void mouseReleaseEvent(QMouseEvent * event) override;
 
-  // Mouse handling
-  int mouse_x_;                                           ///< X position of the last mouse event
-  int mouse_y_;                                           ///< Y position of the last mouse event
+  // /// Called when a mouse button is double-clicked in the render window.
+  // void mouseDoubleClickEvent(QMouseEvent * event) override;
 
-  DisplayContext* context_;
-  Ogre::SceneManager* scene_manager_;
+  // /// Called when a mouse leaves the render window.
+  // void leaveEvent(QEvent * event) override;
 
-  ViewController* view_controller_;
+  // /// Called when there is a mouse-wheel event in the render window.
+  // void wheelEvent(QWheelEvent * event) override;
 
-  boost::shared_ptr<QMenu> context_menu_;
-  boost::mutex context_menu_mutex_;
+  // /// Called when there is a key pressed in the render window.
+  // void keyPressEvent(QKeyEvent * event) override;
+
+  /* End QWidget overrides. */
+
+  /// X position of the last mouse event.
+  int mouse_x_;
+  /// Y position of the last mouse event.
+  int mouse_y_;
+
+  DisplayContext * context_;
+  // Ogre::SceneManager * scene_manager_;
+
+  ViewController * view_controller_;
+
+  std::shared_ptr<QMenu> context_menu_;
+  std::mutex context_menu_mutex_;
 
   bool context_menu_visible_;
 
   // Pointer to the Display which is using this render panel, or NULL
   // if this does not belong to a Display.
-  Display* display_;
+  Display * display_;
 
 private Q_SLOTS:
   void sendMouseMoveEvent();
   void onContextMenuHide();
 
 private:
-  QTimer* fake_mouse_move_event_timer_;
-  Ogre::Camera* default_camera_; ///< A default camera created in initialize().
+  QTimer * fake_mouse_move_event_timer_;
+
+  // TODO(wjwwood): I think this can be stored in rviz_rendering::RenderWindowImpl
+  /// A default camera created in initialize().
+  // Ogre::Camera * default_camera_;
 };
 
-} // namespace rviz
+}  // namespace rviz_common
 
-#endif
-
+#endif  // SRC__RVIZ_COMMON__RENDER_PANEL_HPP_

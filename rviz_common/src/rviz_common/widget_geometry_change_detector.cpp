@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2011, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,22 +30,23 @@
 
 #include <QEvent>
 
-#include "rviz/widget_geometry_change_detector.h"
+#include "./widget_geometry_change_detector.hpp"
 
-namespace rviz
+namespace rviz_common
 {
-WidgetGeometryChangeDetector::WidgetGeometryChangeDetector( QObject* parent )
-  : QObject( parent )
+WidgetGeometryChangeDetector::WidgetGeometryChangeDetector(QObject * parent)
+: QObject(parent)
 {}
 
-bool WidgetGeometryChangeDetector::eventFilter( QObject* watched, QEvent* event )
+bool WidgetGeometryChangeDetector::eventFilter(QObject * watched, QEvent * event)
 {
-  if( event->type() == QEvent::Move ||
-      event->type() == QEvent::Resize )
+  if (
+    event->type() == QEvent::Move ||
+    event->type() == QEvent::Resize)
   {
     Q_EMIT changed();
   }
-  return QObject::eventFilter( watched, event );
+  return QObject::eventFilter(watched, event);
 }
 
-} // end namespace rviz
+}  // namespace rviz_common

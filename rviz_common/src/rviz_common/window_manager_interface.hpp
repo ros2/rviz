@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,6 +30,8 @@
 
 #ifndef SRC__RVIZ_COMMON__WINDOW_MANAGER_INTERFACE_HPP_
 #define SRC__RVIZ_COMMON__WINDOW_MANAGER_INTERFACE_HPP_
+
+#include <Qt>
 
 class QWidget;
 class QString;

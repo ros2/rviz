@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,96 +28,84 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIEWPORT_MOUSE_EVENT_H
-#define VIEWPORT_MOUSE_EVENT_H
+#ifndef SRC__RVIZ_COMMON__VIEWPORT_MOUSE_EVENT_HPP_
+#define SRC__RVIZ_COMMON__VIEWPORT_MOUSE_EVENT_HPP_
 
-#include <QMouseEvent>
-#include <QWheelEvent>
+#include <QEvent>
+#include <Qt>
 
-namespace Ogre
-{
-class Viewport;
-}
+class QMouseEvent;
+class QWheelEvent;
 
-namespace rviz
+namespace rviz_common
 {
 
 class RenderPanel;
 
 class ViewportMouseEvent
 {
- public:
-  ViewportMouseEvent() {}
+public:
+  /// Constructor for use with a QMouseEvent.
+  ViewportMouseEvent(RenderPanel * p, QMouseEvent * e, int lx, int ly);
 
-  /** Constructor for use with a QMouseEvent. */
-  ViewportMouseEvent(RenderPanel* p, Ogre::Viewport* vp, QMouseEvent* e, int lx, int ly)
-  : panel( p )
-  , viewport( vp )
-  , type( e->type() )
-  , x( e->x() )
-  , y( e->y() )
-  , wheel_delta( 0 )
-  , acting_button( e->button() )
-  , buttons_down( e->buttons() )
-  , modifiers( e->modifiers() )
-  , last_x( lx )
-  , last_y( ly )
-  {
-  }
-
-  // Qt has a separate QWheelEvent for mousewheel events which is not
+  // Qt has a separate QWheelEvent for mouse wheel events which is not
   // a subclass of QMouseEvent, but has a lot of overlap with it.
 
-  /** Constructor for use with a QWheelEvent. */
-  ViewportMouseEvent(RenderPanel* p, Ogre::Viewport* vp, QWheelEvent* e, int lx, int ly)
-  : panel( p )
-  , viewport( vp )
-  , type( e->type() )
-  , x( e->x() )
-  , y( e->y() )
-  , wheel_delta( e->delta() )
-  , acting_button( Qt::NoButton )
-  , buttons_down( e->buttons() )
-  , modifiers( e->modifiers() )
-  , last_x( lx )
-  , last_y( ly )
-  {
-  }
+  /// Constructor for use with a QWheelEvent.
+  ViewportMouseEvent(RenderPanel * p, QWheelEvent * e, int lx, int ly);
 
   // Convenience functions for getting the state of the buttons and
-  // modifiers at the time of the event.  For the button which caused
-  // a press or release event, use acting_button.
-  bool left() { return buttons_down & Qt::LeftButton; }
-  bool middle() { return buttons_down & Qt::MidButton; }
-  bool right() { return buttons_down & Qt::RightButton; }
-
-  bool shift() { return modifiers & Qt::ShiftModifier; }
-  bool control() { return modifiers & Qt::ControlModifier; }
-  bool alt() { return modifiers & Qt::AltModifier; }
+  // modifiers at the time of the event.
+  // For the button which caused a press or release event, use acting_button.
+  /// Return true if the left button was used.
+  bool left();
+  /// Return true if the middle button was used.
+  bool middle();
+  /// Return true if the right button was used.
+  bool right();
+  /// Return true if the shift button was pressed during the event.
+  bool shift();
+  /// Return true if the ctrl button was pressed during the event.
+  bool control();
+  /// Return true if the alt button was pressed during the event.
+  bool alt();
 
   // Convenience functions to tell if the event is a mouse-down or
   // mouse-up event and which button caused it.
-  bool leftUp() { return type == QEvent::MouseButtonRelease && acting_button == Qt::LeftButton; }
-  bool middleUp() { return type == QEvent::MouseButtonRelease && acting_button == Qt::MidButton; }
-  bool rightUp() { return type == QEvent::MouseButtonRelease && acting_button == Qt::RightButton; }
+  /// Return true if the left button was raised during the event.
+  bool leftUp();
+  /// Return true if the middle button was raised during the event.
+  bool middleUp();
+  /// Return true if the right button was raised during the event.
+  bool rightUp();
+  /// Return true if the left button was depressed during the event.
+  bool leftDown();
+  /// Return true if the middle button was depressed during the event.
+  bool middleDown();
+  /// Return true if the right button was depressed during the event.
+  bool rightDown();
 
-  bool leftDown() { return type == QEvent::MouseButtonPress && acting_button == Qt::LeftButton; }
-  bool middleDown() { return type == QEvent::MouseButtonPress && acting_button == Qt::MidButton; }
-  bool rightDown() { return type == QEvent::MouseButtonPress && acting_button == Qt::RightButton; }
-
-  RenderPanel* panel;
-  Ogre::Viewport* viewport;
+  RenderPanel * panel;
+  // TODO(wjwwood): this object did have a Ogre::Viewport as a member, but
+  //                I think this needs to be encapsulated into some rviz_rendering
+  //                construct.
+  //                It is fairly commonly used, as an argument to get a 3D point
+  //                based on a mouse event, but I think that can be moved into
+  //                a function on the RenderPanel which can in turn ask a
+  //                rviz_rendering class to get the info.
+  // Ogre::Viewport * viewport;
   QEvent::Type type;
   int x;
   int y;
   int wheel_delta;
-  Qt::MouseButton acting_button; // The button which caused the event.  Can be Qt::NoButton (move or wheel events).
+  // The button which caused the event.  Can be Qt::NoButton (move or wheel events).
+  Qt::MouseButton acting_button;
   Qt::MouseButtons buttons_down;
   Qt::KeyboardModifiers modifiers;
   int last_x;
   int last_y;
 };
 
-} // namespace rviz
+}  // namespace rviz_common
 
-#endif // VIEWPORT_MOUSE_EVENT_H
+#endif  // SRC__RVIZ_COMMON__VIEWPORT_MOUSE_EVENT_HPP_

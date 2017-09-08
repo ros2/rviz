@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,111 +28,115 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "./render_panel.hpp"
+
+// #include <sstream>
+
 #include <QApplication>
 #include <QMenu>
+#include <QMouseEvent>
 #include <QTimer>
+#include <QWidget>
 
-#include <OgreSceneManager.h>
-#include <OgreCamera.h>
+// #include <OgreCamera.h>
+// #include <OgreSceneManager.h>
 
-#include "rviz/display.h"
-#include "rviz/view_controller.h"
-#include "rviz/viewport_mouse_event.h"
-#include "rviz/visualization_manager.h"
-#include "rviz/window_manager_interface.h"
+// #include "./display.hpp"
+#include "./display_context.hpp"
+#include "./view_controller.hpp"
+#include "./viewport_mouse_event.hpp"    
 
-#include "rviz/render_panel.h"
+// #include "rviz/visualization_manager.h"
+// #include "rviz/window_manager_interface.h"
 
-namespace rviz
+namespace rviz_common
 {
 
-RenderPanel::RenderPanel( QWidget* parent )
-  : QtOgreRenderWindow( parent )
-  , mouse_x_( 0 )
-  , mouse_y_( 0 )
-  , context_( 0 )
-  , scene_manager_( 0 )
-  , view_controller_( 0 )
-  , fake_mouse_move_event_timer_( new QTimer() )
-  , default_camera_(0)
-  , context_menu_visible_(false)
+RenderPanel::RenderPanel(QWidget * parent)
+: QWidget(parent),
+  mouse_x_(0),
+  mouse_y_(0),
+  context_(nullptr),
+  // scene_manager_(0),
+  view_controller_(nullptr),
+  // default_camera_(0),
+  context_menu_visible_(false),
+  display_(nullptr),
+  fake_mouse_move_event_timer_(new QTimer())
 {
-  setFocus( Qt::OtherFocusReason );
+  setFocus(Qt::OtherFocusReason);
 }
 
 RenderPanel::~RenderPanel()
 {
   delete fake_mouse_move_event_timer_;
-  if( scene_manager_ && default_camera_ )
-  {
-    scene_manager_->destroyCamera( default_camera_ );
-  }
-  if( scene_manager_ )
-  {
-    scene_manager_->removeListener( this );
-  }
+  // if (scene_manager_ && default_camera_) {
+  //   scene_manager_->destroyCamera(default_camera_);
+  // }
+  // if (scene_manager_) {
+  //   scene_manager_->removeListener(this);
+  // }
 }
 
-void RenderPanel::initialize(Ogre::SceneManager* scene_manager, DisplayContext* context)
+void RenderPanel::initialize(DisplayContext * context)
 {
   context_ = context;
-  scene_manager_ = scene_manager;
-  scene_manager_->addListener( this );
+  // scene_manager_ = scene_manager;
+  // scene_manager_->addListener(this);
 
-  std::stringstream ss;
-  static int count = 0;
-  ss << "RenderPanelCamera" << count++;
-  default_camera_ = scene_manager_->createCamera(ss.str());
-  default_camera_->setNearClipDistance(0.01f);
-  default_camera_->setPosition(0, 10, 15);
-  default_camera_->lookAt(0, 0, 0);
+  // std::stringstream ss;
+  // static int count = 0;
+  // ss << "RenderPanelCamera" << count++;
+  // default_camera_ = scene_manager_->createCamera(ss.str());
+  // default_camera_->setNearClipDistance(0.01f);
+  // default_camera_->setPosition(0, 10, 15);
+  // default_camera_->lookAt(0, 0, 0);
 
-  setCamera( default_camera_ );
+  // setCamera(default_camera_);
 
-  connect( fake_mouse_move_event_timer_, SIGNAL( timeout() ), this, SLOT( sendMouseMoveEvent() ));
-  fake_mouse_move_event_timer_->start( 33 /*milliseconds*/ );
+  // TODO(wjwwood) what is the purpose of this fake mouse move event?
+  connect(fake_mouse_move_event_timer_, SIGNAL(timeout()), this, SLOT(sendMouseMoveEvent()));
+  fake_mouse_move_event_timer_->start(33 /*milliseconds*/);
+}
+
+DisplayContext * RenderPanel::getManager()
+{
+  return context_;
+}
+
+ViewController * RenderPanel::getViewController()
+{
+  return view_controller_;
 }
 
 void RenderPanel::sendMouseMoveEvent()
 {
   QPoint cursor_pos = QCursor::pos();
-  QPoint mouse_rel_widget = mapFromGlobal( cursor_pos );
-  if( rect().contains( mouse_rel_widget ))
-  {
+  QPoint mouse_rel_widget = mapFromGlobal(cursor_pos);
+  if (rect().contains(mouse_rel_widget)) {
     bool mouse_over_this = false;
-    QWidget *w = QApplication::widgetAt( cursor_pos );
-    while( w )
-    {
-      if( w == this )
-      {
+    QWidget * w = QApplication::widgetAt(cursor_pos);
+    while (w) {
+      if (w == this) {
         mouse_over_this = true;
         break;
       }
       w = w->parentWidget();
     }
-    if( !mouse_over_this )
-    {
+    if (!mouse_over_this) {
       return;
     }
 
-    QMouseEvent fake_event( QEvent::MouseMove,
-                            mouse_rel_widget,
-                            Qt::NoButton,
-                            QApplication::mouseButtons(),
-                            QApplication::keyboardModifiers() );
-    onRenderWindowMouseEvents( &fake_event );
-  }
-}
-void RenderPanel::leaveEvent ( QEvent * event )
-{
-  setCursor( Qt::ArrowCursor );
-  if ( context_ )
-  {
-    context_->setStatus("");
+    QMouseEvent fake_event(QEvent::MouseMove,
+      mouse_rel_widget,
+      Qt::NoButton,
+      QApplication::mouseButtons(),
+      QApplication::keyboardModifiers());
+    onRenderWindowMouseEvents(&fake_event);
   }
 }
 
-void RenderPanel::onRenderWindowMouseEvents( QMouseEvent* event )
+void RenderPanel::onRenderWindowMouseEvents(QMouseEvent * event)
 {
   int last_x = mouse_x_;
   int last_y = mouse_y_;
@@ -139,64 +144,91 @@ void RenderPanel::onRenderWindowMouseEvents( QMouseEvent* event )
   mouse_x_ = event->x();
   mouse_y_ = event->y();
 
-  if (context_)
-  {
-    setFocus( Qt::MouseFocusReason );
+  if (context_) {
+    setFocus(Qt::MouseFocusReason);
 
-    ViewportMouseEvent vme(this, getViewport(), event, last_x, last_y);
+    ViewportMouseEvent vme(this, event, last_x, last_y);
     context_->handleMouseEvent(vme);
     event->accept();
   }
 }
 
-void RenderPanel::wheelEvent( QWheelEvent* event )
-{
-  int last_x = mouse_x_;
-  int last_y = mouse_y_;
+// QWidget mouse events all get sent to onRenderWindowMouseEvents().
+// QMouseEvent.type() distinguishes them later.
 
-  mouse_x_ = event->x();
-  mouse_y_ = event->y();
+// TODO(wjwwood): I think these can be handled by the rviz_rendering::RenderWindow class
+// void RenderPanel::leaveEvent(QEvent * event)
+// {
+//   setCursor(Qt::ArrowCursor);
+//   if (context_) {
+//     context_->setStatus("");
+//   }
+// }
 
-  if (context_)
-  {
-    setFocus( Qt::MouseFocusReason );
+// void RenderPanel::mouseMoveEvent(QMouseEvent * event) override
+// {
+//   onRenderWindowMouseEvents(event);
+// }
 
-    ViewportMouseEvent vme(this, getViewport(), event, last_x, last_y);
-    context_->handleMouseEvent(vme);
-    event->accept();
-  }
-}
+// void RenderPanel::mousePressEvent(QMouseEvent * event) override
+// {
+//   onRenderWindowMouseEvents(event);
+// }
 
-void RenderPanel::keyPressEvent( QKeyEvent* event )
-{
-  if( context_ )
-  {
-    context_->handleChar( event, this );
-  }
-}
+// void RenderPanel::mouseReleaseEvent(QMouseEvent * event) override
+// {
+//   onRenderWindowMouseEvents(event);
+// }
 
-void RenderPanel::setViewController( ViewController* controller )
+// void RenderPanel::mouseDoubleClickEvent(QMouseEvent * event) override
+// {
+//   onRenderWindowMouseEvents(event);
+// }
+
+
+// void RenderPanel::wheelEvent(QWheelEvent * event)
+// {
+//   int last_x = mouse_x_;
+//   int last_y = mouse_y_;
+
+//   mouse_x_ = event->x();
+//   mouse_y_ = event->y();
+
+//   if (context_) {
+//     setFocus(Qt::MouseFocusReason);
+
+//     ViewportMouseEvent vme(this, getViewport(), event, last_x, last_y);
+//     context_->handleMouseEvent(vme);
+//     event->accept();
+//   }
+// }
+
+// void RenderPanel::keyPressEvent(QKeyEvent * event)
+// {
+//   if (context_) {
+//     context_->handleChar(event, this);
+//   }
+// }
+
+void RenderPanel::setViewController(ViewController * controller)
 {
   view_controller_ = controller;
 
-  if( view_controller_ )
-  {
-    setCamera( view_controller_->getCamera() );
+  if (view_controller_) {
+    setCamera(view_controller_->getCamera());
     view_controller_->activate();
-  }
-  else
-  {
-    setCamera( NULL );
+  } else {
+    setCamera(NULL);
   }
 }
 
-void RenderPanel::showContextMenu( boost::shared_ptr<QMenu> menu )
+void RenderPanel::showContextMenu(boost::shared_ptr<QMenu> menu)
 {
   boost::mutex::scoped_lock lock(context_menu_mutex_);
   context_menu_ = menu;
   context_menu_visible_ = true;
 
-  QApplication::postEvent( this, new QContextMenuEvent( QContextMenuEvent::Mouse, QPoint() ));
+  QApplication::postEvent(this, new QContextMenuEvent(QContextMenuEvent::Mouse, QPoint()));
 }
 
 void RenderPanel::onContextMenuHide()
@@ -209,7 +241,7 @@ bool RenderPanel::contextMenuVisible()
   return context_menu_visible_;
 }
 
-void RenderPanel::contextMenuEvent( QContextMenuEvent* event )
+void RenderPanel::contextMenuEvent(QContextMenuEvent * event)
 {
   boost::shared_ptr<QMenu> context_menu;
   {
@@ -217,21 +249,19 @@ void RenderPanel::contextMenuEvent( QContextMenuEvent* event )
     context_menu.swap(context_menu_);
   }
 
-  if ( context_menu )
-  {
-    connect( context_menu.get(), SIGNAL( aboutToHide() ), this, SLOT( onContextMenuHide() ) );
-    context_menu->exec( QCursor::pos() );
+  if (context_menu) {
+    connect(context_menu.get(), SIGNAL(aboutToHide()), this, SLOT(onContextMenuHide()));
+    context_menu->exec(QCursor::pos());
   }
 }
 
-void RenderPanel::sceneManagerDestroyed( Ogre::SceneManager* destroyed_scene_manager )
+void RenderPanel::sceneManagerDestroyed(Ogre::SceneManager * destroyed_scene_manager)
 {
-  if( destroyed_scene_manager == scene_manager_ )
-  {
+  if (destroyed_scene_manager == scene_manager_) {
     scene_manager_ = NULL;
     default_camera_ = NULL;
-    setCamera( NULL );
+    setCamera(NULL);
   }
 }
 
-} // namespace rviz
+}  // namespace rviz_common
