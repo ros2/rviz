@@ -23,7 +23,10 @@ find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
 # These need to be added in the add_library() call so AUTOMOC detects them.
 set(rviz_common_headers_to_moc
-  # include/rviz_common/visualizer_app.hpp
+  include/rviz_common/visualizer_app.hpp
+  # include/rviz_common/logging.hpp
+  # include/rviz_common/ros_integration/init.hpp
+  # include/rviz_common/ros_integration/ok.hpp
   # src/rviz_common/add_display_dialog.hpp
   # src/rviz_common/display_context.hpp
   # src/rviz_common/display.hpp
