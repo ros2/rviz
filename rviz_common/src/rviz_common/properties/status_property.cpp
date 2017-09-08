@@ -29,12 +29,14 @@
 
 #include <QColor>
 
-#include "rviz/properties/property_tree_model.h"
+#include "./property_tree_model.hpp"
 
-#include "rviz/properties/status_property.h"
-#include "rviz/load_resource.h"
+#include "./status_property.hpp"
+#include "../load_resource.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 QColor StatusProperty::status_colors_[3] = { QColor(), QColor( 192, 128, 0 ), QColor( 192, 32, 32 ) };
@@ -105,4 +107,5 @@ void StatusProperty::setLevel( Level level )
   }
 }
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
