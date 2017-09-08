@@ -53,20 +53,20 @@ set(rviz_common_headers_to_moc
   # src/rviz_common/visualization_frame.hpp
   # src/rviz_common/visualization_manager.hpp
   # src/rviz_common/widget_geometry_change_detector.hpp
-  # src/rviz_common/properties/bool_property.hpp
+  src/rviz_common/properties/bool_property.hpp
   # src/rviz_common/properties/color_editor.hpp
   # src/rviz_common/properties/color_property.hpp
   # src/rviz_common/properties/combo_box.hpp
   # src/rviz_common/properties/editable_combo_box.hpp
   # src/rviz_common/properties/editable_enum_property.hpp
   # src/rviz_common/properties/enum_property.hpp
-  # src/rviz_common/properties/float_edit.hpp
+  src/rviz_common/properties/float_edit.hpp
   # src/rviz_common/properties/float_property.hpp
   # src/rviz_common/properties/int_property.hpp
   # src/rviz_common/properties/line_edit_with_button.hpp
-  # src/rviz_common/properties/property.hpp
+  src/rviz_common/properties/property.hpp
   # src/rviz_common/properties/property_tree_delegate.hpp
-  # src/rviz_common/properties/property_tree_model.hpp
+  src/rviz_common/properties/property_tree_model.hpp
   # src/rviz_common/properties/property_tree_widget.hpp
   # src/rviz_common/properties/property_tree_with_help.hpp
   # src/rviz_common/properties/splitter_handle.hpp
@@ -79,7 +79,7 @@ set(rviz_common_headers_to_moc
 set(rviz_common_source_files
   # src/rviz_common/add_display_dialog.cpp
   # src/rviz_common/bit_allocator.cpp
-  # src/rviz_common/config.cpp
+  src/rviz_common/config.cpp
   # src/rviz_common/display_factory.cpp
   # src/rviz_common/display_group.cpp
   # src/rviz_common/display.cpp
@@ -96,23 +96,23 @@ set(rviz_common_source_files
   # src/rviz_common/panel_dock_widget.cpp
   # src/rviz_common/panel_factory.cpp
   # src/rviz_common/panel.cpp
-  # src/rviz_common/properties/bool_property.cpp
+  src/rviz_common/properties/bool_property.cpp
   # src/rviz_common/properties/color_editor.cpp
   # src/rviz_common/properties/color_property.cpp
   # src/rviz_common/properties/combo_box.cpp
   # src/rviz_common/properties/editable_combo_box.cpp
   # src/rviz_common/properties/editable_enum_property.cpp
   # src/rviz_common/properties/enum_property.cpp
-  # src/rviz_common/properties/float_edit.cpp
+  src/rviz_common/properties/float_edit.cpp
   # src/rviz_common/properties/float_property.cpp
   # src/rviz_common/properties/int_property.cpp
   # src/rviz_common/properties/line_edit_with_button.cpp
   # src/rviz_common/properties/parse_color.cpp
   # src/rviz_common/properties/property_tree_delegate.cpp
-  # src/rviz_common/properties/property_tree_model.cpp
+  src/rviz_common/properties/property_tree_model.cpp
   # src/rviz_common/properties/property_tree_widget.cpp
   # src/rviz_common/properties/property_tree_with_help.cpp
-  # src/rviz_common/properties/property.cpp
+  src/rviz_common/properties/property.cpp
   # src/rviz_common/properties/splitter_handle.cpp
   # src/rviz_common/properties/status_list.cpp
   # src/rviz_common/properties/status_property.cpp
