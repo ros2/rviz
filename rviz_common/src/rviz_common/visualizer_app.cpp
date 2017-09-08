@@ -37,6 +37,8 @@
 #include <QApplication>
 #include <QTimer>
 
+#include <iostream>
+
 #ifdef Q_OS_MAC
 #include <ApplicationServices/ApplicationServices.h>
 // Apparently OSX #defines 'check' to be an empty string somewhere.
@@ -109,13 +111,13 @@ bool VisualizerApp::init(int argc, char ** argv)
   //                also include versions of more things, like rviz_rendering,
   //                rviz_common, and the plugins
   // RVIZ_COMMON_LOG_INFO_STREAM("rviz version " << get_version().c_str());
-  RVIZ_COMMON_LOG_INFO("compiled against Qt version " QT_VERSION_STR);
-  RVIZ_COMMON_LOG_INFO_STREAM(
-    "compiled against OGRE version " <<
-      OGRE_VERSION_MAJOR << "." <<
-      OGRE_VERSION_MINOR << "." <<
-      OGRE_VERSION_PATCH << OGRE_VERSION_SUFFIX <<
-      " (" << OGRE_VERSION_NAME << ")");
+  // RVIZ_COMMON_LOG_INFO("compiled against Qt version " QT_VERSION_STR);
+  // RVIZ_COMMON_LOG_INFO_STREAM(
+  //   "compiled against OGRE version " <<
+  //     OGRE_VERSION_MAJOR << "." <<
+  //     OGRE_VERSION_MINOR << "." <<
+  //     OGRE_VERSION_PATCH << OGRE_VERSION_SUFFIX <<
+  //     " (" << OGRE_VERSION_NAME << ")");
 
 #ifdef Q_OS_MAC
   ProcessSerialNumber PSN;
@@ -123,12 +125,14 @@ bool VisualizerApp::init(int argc, char ** argv)
   TransformProcessType(&PSN, kProcessTransformToForegroundApplication);
   SetFrontProcess(&PSN);
 #endif
-
-  node_name_ = rviz_common::ros_integration::init(argc, argv, "rviz", true /* anonymous_name */);
+  
+  // TODO(jsquare): remove line below after there is a implementation for rviz_common::ros_integration::init and the include of iostream
+  std::cout << argc << argv;
+  // node_name_ = rviz_common::ros_integration::init(argc, argv, "rviz", true /* anonymous_name */);
 
   startContinueChecker();
 
-  rviz_common::install_rviz_rendering_log_handlers();
+  // rviz_common::install_rviz_rendering_log_handlers();
 
   // TODO(wjwwood): restore the program options without using Boost
   // po::options_description options;
@@ -258,8 +262,8 @@ bool VisualizerApp::init(int argc, char ** argv)
   //   RenderSystem::forceNoStereo();
   // }
 
-  frame_ = new VisualizationFrame();
-  frame_->setApp(this->app_);
+  // frame_ = new VisualizationFrame();
+  // frame_->setApp(this->app_);
 
   // if (help_path != "") {
   //   frame_->setHelpPath(QString::fromStdString(help_path));
@@ -273,7 +277,7 @@ bool VisualizerApp::init(int argc, char ** argv)
   // }
 
   // frame_->initialize(QString::fromStdString(display_config));
-  frame_->initialize();
+  // frame_->initialize();
 
   // if (!fixed_frame.empty() ) {
   //   frame_->getManager()->setFixedFrame(QString::fromStdString(fixed_frame));
@@ -282,7 +286,7 @@ bool VisualizerApp::init(int argc, char ** argv)
   // frame_->getManager()->getSelectionManager()->setDebugMode(verbose);
   // frame_->getManager()->getSelectionManager()->setDebugMode(false);
 
-  frame_->show();
+  // frame_->show();
 
   // TODO(wjwwood): reenable the ROS service to reload the shaders via the ros_integration API
   // ros::NodeHandle private_nh("~");
@@ -311,13 +315,13 @@ void VisualizerApp::checkContinue()
     // This should not happen.
     return;
   }
-  if (!rviz_common::ros_integration::ok(node_name_)) {
+  // if (!rviz_common::ros_integration::ok(node_name_)) {
     if (frame_) {
       // Make sure the window doesn't ask if we want to save first.
       frame_->setWindowModified(false);
     }
     QApplication::closeAllWindows();
-  }
+  // }
 }
 
 }  // namespace rviz_common
