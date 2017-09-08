@@ -226,6 +226,7 @@ RenderWindowImpl::resize(size_t width, size_t height)
   printf("in RenderWindowImpl::resize(size_t %zu, size_t %zu)\n", width, height);
   if (ogre_render_window_) {
     ogre_render_window_->resize(width, height);
+    ogre_render_window_->windowMovedOrResized();
   }
   this->renderLater();
 }
