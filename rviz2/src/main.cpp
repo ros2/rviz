@@ -36,7 +36,7 @@ int main(int argc, char ** argv)
 {
   QApplication qapp(argc, argv);
 
-  rviz::VisualizerApp vapp;
+  rviz_common::VisualizerApp vapp;
   vapp.setApp(&qapp);
   if (vapp.init(argc, argv)) {
     return qapp.exec();
