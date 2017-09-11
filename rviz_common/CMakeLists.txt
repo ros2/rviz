@@ -36,6 +36,7 @@ configure_file(src/rviz_common/env_config.cpp.in ${ENV_CONFIG_CPP} @ONLY)
 
 # These need to be added in the add_library() call so AUTOMOC detects them.
 set(rviz_common_headers_to_moc
+  ${ENV_CONFIG_HPP}
   include/rviz_common/visualizer_app.hpp
   # include/rviz_common/logging.hpp
   # include/rviz_common/ros_integration/init.hpp
@@ -44,11 +45,10 @@ set(rviz_common_headers_to_moc
   src/rviz_common/display_context.hpp
   # src/rviz_common/display.hpp
   # src/rviz_common/displays_panel.hpp
-  ${ENV_CONFIG_HPP}
-  # src/rviz_common/failed_panel.hpp
+  src/rviz_common/failed_panel.hpp
   # src/rviz_common/frame_manager.hpp
   # src/rviz_common/help_panel.hpp
-  # src/rviz_common/loading_dialog.hpp
+  src/rviz_common/loading_dialog.hpp
   # src/rviz_common/new_object_dialog.hpp
   # src/rviz_common/panel_dock_widget.hpp
   src/rviz_common/panel.hpp
@@ -67,6 +67,7 @@ set(rviz_common_headers_to_moc
   # src/rviz_common/visualization_frame.hpp
   # src/rviz_common/visualization_manager.hpp
   # src/rviz_common/widget_geometry_change_detector.hpp
+  src/rviz_common/window_manager_interface.hpp
   src/rviz_common/properties/bool_property.hpp
   src/rviz_common/properties/color_editor.hpp
   src/rviz_common/properties/color_property.hpp
@@ -91,6 +92,7 @@ set(rviz_common_headers_to_moc
   # src/rviz_common/selection/selection_manager.hpp
 )
 set(rviz_common_source_files
+  ${ENV_CONFIG_CPP}
   # src/rviz_common/add_display_dialog.cpp
   # src/rviz_common/bit_allocator.cpp
   src/rviz_common/config.cpp
@@ -98,15 +100,14 @@ set(rviz_common_source_files
   # src/rviz_common/display_group.cpp
   # src/rviz_common/display.cpp
   # src/rviz_common/displays_panel.cpp
-  ${ENV_CONFIG_CPP}
   # src/rviz_common/failed_display.cpp
-  # src/rviz_common/failed_panel.cpp
+  src/rviz_common/failed_panel.cpp
   # src/rviz_common/failed_tool.cpp
   # src/rviz_common/failed_view_controller.cpp
   # src/rviz_common/frame_manager.cpp
   # src/rviz_common/help_panel.cpp
   src/rviz_common/load_resource.cpp
-  # src/rviz_common/loading_dialog.cpp
+  src/rviz_common/loading_dialog.cpp
   # src/rviz_common/new_object_dialog.cpp
   # src/rviz_common/panel_dock_widget.cpp
   # src/rviz_common/panel_factory.cpp
