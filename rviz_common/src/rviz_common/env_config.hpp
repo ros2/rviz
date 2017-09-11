@@ -31,7 +31,7 @@
 
 #include <string>
 
-namespace rviz
+namespace rviz_common
 {
 std::string get_version();
 std::string get_distro();

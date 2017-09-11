@@ -27,16 +27,16 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz/displays_panel.h"
-#include "rviz/help_panel.h"
-#include "rviz/selection_panel.h"
-#include "rviz/time_panel.h"
-#include "rviz/tool_properties_panel.h"
-#include "rviz/views_panel.h"
+#include "./displays_panel.hpp"
+#include "./help_panel.hpp"
+#include "./selection_panel.hpp"
+#include "./time_panel.hpp"
+#include "./tool_properties_panel.hpp"
+#include "./views_panel.hpp"
 
-#include "rviz/panel_factory.h"
+#include "./panel_factory.hpp"
 
-namespace rviz
+namespace rviz_common
 {
 
 static Panel* newDisplaysPanel()       { return new DisplaysPanel(); }
@@ -57,4 +57,4 @@ PanelFactory::PanelFactory()
   addBuiltInClass( "rviz", "Views", "Show and edit viewpoints", &newViewsPanel );
 }
 
-} // end namespace rviz
+} // end namespace rviz_common

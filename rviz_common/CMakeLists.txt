@@ -21,6 +21,19 @@ find_package(rviz_rendering REQUIRED)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
+# Copy env_config.hpp so that env_config.cpp can find it
+# TODO(jsquare): Get rid of copy hpp file
+set(ENV_CONFIG_HPP ${CMAKE_CURRENT_BINARY_DIR}/src/rviz_common/env_config.hpp)
+configure_file(src/rviz_common/env_config.hpp ${ENV_CONFIG_HPP} @ONLY)
+
+# TODO(jsquare): Adopt parameters given here
+set(ENV_CONFIG_CPP ${CMAKE_CURRENT_BINARY_DIR}/src/rviz_common/env_config.cpp)
+set(RVIZ_VERSION "Alpha")
+set(ROS_DISTRO "ROS 2.0")
+set(OGRE_PLUGIN_PATH "rviz_ogre_vendor")
+configure_file(src/rviz_common/env_config.cpp.in ${ENV_CONFIG_CPP} @ONLY)
+
+
 # These need to be added in the add_library() call so AUTOMOC detects them.
 set(rviz_common_headers_to_moc
   include/rviz_common/visualizer_app.hpp
@@ -31,18 +44,19 @@ set(rviz_common_headers_to_moc
   src/rviz_common/display_context.hpp
   # src/rviz_common/display.hpp
   # src/rviz_common/displays_panel.hpp
+  ${ENV_CONFIG_HPP}
   # src/rviz_common/failed_panel.hpp
   # src/rviz_common/frame_manager.hpp
   # src/rviz_common/help_panel.hpp
   # src/rviz_common/loading_dialog.hpp
   # src/rviz_common/new_object_dialog.hpp
   # src/rviz_common/panel_dock_widget.hpp
-  # src/rviz_common/panel.hpp
+  src/rviz_common/panel.hpp
   # src/rviz_common/render_panel.hpp
   # src/rviz_common/scaled_image_widget.hpp
   # src/rviz_common/screenshot_dialog.hpp
   # src/rviz_common/selection_panel.hpp
-  # src/rviz_common/splash_screen.hpp
+  src/rviz_common/splash_screen.hpp
   # src/rviz_common/time_panel.hpp
   # src/rviz_common/tool.hpp
   # src/rviz_common/tool_manager.hpp
@@ -84,6 +98,7 @@ set(rviz_common_source_files
   # src/rviz_common/display_group.cpp
   # src/rviz_common/display.cpp
   # src/rviz_common/displays_panel.cpp
+  ${ENV_CONFIG_CPP}
   # src/rviz_common/failed_display.cpp
   # src/rviz_common/failed_panel.cpp
   # src/rviz_common/failed_tool.cpp
@@ -95,7 +110,7 @@ set(rviz_common_source_files
   # src/rviz_common/new_object_dialog.cpp
   # src/rviz_common/panel_dock_widget.cpp
   # src/rviz_common/panel_factory.cpp
-  # src/rviz_common/panel.cpp
+  src/rviz_common/panel.cpp
   src/rviz_common/properties/bool_property.cpp
   src/rviz_common/properties/color_editor.cpp
   src/rviz_common/properties/color_property.cpp
@@ -124,7 +139,7 @@ set(rviz_common_source_files
   # src/rviz_common/selection_panel.cpp
   # src/rviz_common/selection/selection_handler.cpp
   # src/rviz_common/selection/selection_manager.cpp
-  # src/rviz_common/splash_screen.cpp
+  src/rviz_common/splash_screen.cpp
   # src/rviz_common/time_panel.cpp
   # src/rviz_common/tool_manager.cpp
   # src/rviz_common/tool_properties_panel.cpp
@@ -156,6 +171,7 @@ target_link_libraries(rviz_common
 
 ament_export_interfaces(rviz_common)
 ament_export_dependencies(rviz_rendering)
+
 
 install(
   TARGETS rviz_common

@@ -34,7 +34,7 @@
 #include "./panel.hpp"
 #include "./pluginlib_factory.hpp"
 
-namespace rviz
+namespace rviz_common
 {
 
 class PanelFactory: public PluginlibFactory<Panel>
@@ -43,6 +43,6 @@ public:
   PanelFactory();
 };
 
-} // end namespace rviz
+} // end namespace rviz_common
 
 #endif // PANEL_FACTORY_H

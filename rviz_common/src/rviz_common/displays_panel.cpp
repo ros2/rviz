@@ -36,17 +36,17 @@
 
 #include <boost/bind.hpp>
 
-#include "rviz/display_factory.h"
-#include "rviz/display.h"
-#include "rviz/add_display_dialog.h"
-#include "rviz/properties/property.h"
-#include "rviz/properties/property_tree_widget.h"
-#include "rviz/properties/property_tree_with_help.h"
-#include "rviz/visualization_manager.h"
+#include "./display_factory.hpp"
+#include "./display.hpp"
+#include "./add_display_dialog.hpp"
+#include "./properties/property.hpp"
+#include "./properties/property_tree_widget.hpp"
+#include "./properties/property_tree_with_help.hpp"
+#include "./visualization_manager.hpp"
 
-#include "rviz/displays_panel.h"
+#include "./displays_panel.hpp"
 
-namespace rviz
+namespace rviz_common
 {
 
 DisplaysPanel::DisplaysPanel( QWidget* parent )
@@ -209,7 +209,7 @@ void DisplaysPanel::onRenameDisplay()
   }
   Display* display_to_rename = displays[ 0 ];
 
-  if( !display_to_rename )
+  if( !display_to_rename )rviz
   {
     return;
   }
@@ -237,4 +237,4 @@ void DisplaysPanel::load( const Config& config )
   tree_with_help_->load( config );
 }
 
-} // namespace rviz
+} // namespace rviz_common

@@ -29,15 +29,15 @@
 #ifndef DISPLAY_FACTORY_H
 #define DISPLAY_FACTORY_H
 
-#include "rviz/display.h"
-#include "rviz/pluginlib_factory.h"
+#include "./display.hpp"
+#include "./pluginlib_factory.hpp"
 
 #include <QIcon>
 #include <QSet>
 #include <QString>
 #include <QMap>
 
-namespace rviz
+namespace rviz_common
 {
 
 class DisplayFactory: public PluginlibFactory<Display>
@@ -55,6 +55,6 @@ protected:
   QMap< QString, QSet<QString> > message_type_cache_;
 };
 
-} // end namespace rviz
+} // end namespace rviz_common
 
 #endif // DISPLAY_FACTORY_H

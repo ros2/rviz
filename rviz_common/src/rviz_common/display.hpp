@@ -32,11 +32,11 @@
 #include <string>
 
 #ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
-# include <ros/ros.h>
+// # include <ros/ros.h>
 #endif
 
-#include "rviz/properties/status_property.h"
-#include "rviz/properties/bool_property.h"
+#include "./properties/status_property.hpp"
+#include "./properties/bool_property.hpp"
 
 #include <QIcon>
 #include <QSet>
@@ -200,11 +200,12 @@ public:
   void setName( const QString& name );
 
   /** @brief Emit a time signal that other Displays can synchronize to. */
-  void emitTimeSignal( ros::Time time );
+  // FIXME(Jsquare): Add ros2 here
+  void emitTimeSignal( /*ros::Time time*/ );
 
 Q_SIGNALS:
-
-  void timeSignal( rviz::Display* display, ros::Time time );
+  // FIXME(Jsquare): Add ros2 here
+  void timeSignal( rviz_common::Display* display/*, ros::Time time */);
 
 public Q_SLOTS:
   /** @brief Enable or disable this Display.
