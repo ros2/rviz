@@ -31,16 +31,16 @@
 
 #include <sstream>
 
-#include "rviz/display_context.h"
-#include "rviz/failed_view_controller.h"
-#include "rviz/properties/enum_property.h"
-#include "rviz/properties/property_tree_model.h"
-#include "rviz/render_panel.h"
-#include "rviz/view_controller.h"
+#include "./display_context.hpp"
+#include "./failed_view_controller.hpp"
+#include "./properties/enum_property.hpp"
+#include "./properties/property_tree_model.hpp"
+#include "./render_panel.hpp"
+#include "./view_controller.hpp"
 
-#include "rviz/view_manager.h"
+#include "./view_manager.hpp"
 
-namespace rviz
+namespace rviz_common
 {
 
 ViewManager::ViewManager( DisplayContext* context )
@@ -293,4 +293,4 @@ void ViewControllerContainer::addChildToFront( Property* child )
   Property::addChild( child, 0 );
 }
 
-} // end namespace rviz
+} // end namespace rviz_common

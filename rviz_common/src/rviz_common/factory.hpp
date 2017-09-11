@@ -33,7 +33,7 @@
 #include <QStringList>
 #include <QIcon>
 
-namespace rviz
+namespace rviz_common
 {
 
 /** @brief Abstract superclass representing the ability to get a list
@@ -52,6 +52,6 @@ public:
   virtual QIcon getIcon( const QString& class_id ) const = 0;
 };
 
-} // end namespace rviz
+} // end namespace rviz_common
 
 #endif // RVIZ_FACTORY_H

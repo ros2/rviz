@@ -43,10 +43,10 @@
 #include <pluginlib/class_loader.h>
 #endif
 
-#include "rviz/class_id_recording_factory.h"
-#include "rviz/load_resource.h"
+#include "./class_id_recording_factory.hpp"
+#include "./load_resource.hpp"
 
-namespace rviz
+namespace rviz_common
 {
 
 template<class Type>
@@ -197,10 +197,10 @@ protected:
     }
 
 private:
-  pluginlib::ClassLoader<Type>* class_loader_;
+  class_loader::ClassLoader* class_loader_;
   QHash<QString, BuiltInClassRecord> built_ins_;
 };
 
-} // end namespace rviz
+} // end namespace rviz_common
 
 #endif // PLUGINLIB_FACTORY_H

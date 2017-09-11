@@ -28,7 +28,7 @@ set(rviz_common_headers_to_moc
   # include/rviz_common/ros_integration/init.hpp
   # include/rviz_common/ros_integration/ok.hpp
   # src/rviz_common/add_display_dialog.hpp
-  # src/rviz_common/display_context.hpp
+  src/rviz_common/display_context.hpp
   # src/rviz_common/display.hpp
   # src/rviz_common/displays_panel.hpp
   # src/rviz_common/failed_panel.hpp

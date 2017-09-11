@@ -29,9 +29,9 @@
 #ifndef FAILED_VIEW_CONTROLLER_H
 #define FAILED_VIEW_CONTROLLER_H
 
-#include "view_controller.h"
+#include "./view_controller.hpp"
 
-namespace rviz
+namespace rviz_common
 {
 
 /** @brief A FailedViewController instance represents a ViewController class we
@@ -53,7 +53,7 @@ public:
 
   virtual void onActivate();
 
-  virtual int processMouseEvent( ViewportMouseEvent& event ) { return 0; }
+  virtual int processMouseEvent() { return 0; }
 
   /** @brief Store the given Config data for later, so we can return it
    * with save() when someone writes this back to a file. */
@@ -62,7 +62,7 @@ public:
   /** @brief Write into config data equivalent to the last config sent to load(). */
   virtual void save( Config config ) const;
 
-  virtual void lookAt( const Ogre::Vector3& point ) {}
+  virtual void lookAt() {}
   virtual void reset() {}
 
 private:
@@ -70,6 +70,6 @@ private:
   QString error_message_;
 };
 
-} // end namespace rviz
+} // end namespace rviz_common
 
 #endif // FAILED_VIEW_CONTROLLER_H

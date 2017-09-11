@@ -33,15 +33,15 @@
 #include <QObject>
 #include <QStringList>
 
-#include "rviz/pluginlib_factory.h"
-#include "rviz/view_controller.h"
+#include "./pluginlib_factory.hpp"
+#include "./view_controller.hpp"
 
 namespace Ogre
 {
 class SceneNode;
 }
 
-namespace rviz
+namespace rviz_common
 {
 class DisplayContext;
 class Property;
@@ -162,6 +162,6 @@ public:
   void addChildToFront( Property* child );
 };
 
-} // end namespace rviz
+} // end namespace rviz_common
 
 #endif // VIEW_MANAGER_H
