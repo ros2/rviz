@@ -32,9 +32,9 @@
 #include <QHBoxLayout>
 #include <QTextBrowser>
 
-#include "rviz/failed_panel.h"
+#include "./failed_panel.hpp"
 
-namespace rviz
+namespace rviz_common
 {
 
 FailedPanel::FailedPanel( const QString& desired_class_id, const QString& error_message )
@@ -68,4 +68,4 @@ void FailedPanel::save( Config config ) const
   }
 }
 
-} // end namespace rviz
+} // end namespace rviz_common

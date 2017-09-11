@@ -36,9 +36,9 @@
 #include "rviz/failed_display.h"
 #include "rviz/properties/property_tree_model.h"
 
-#include "display_group.h"
+#include "display_group.hpp"
 
-namespace rviz
+namespace rviz_common
 {
 
 DisplayGroup::DisplayGroup()
@@ -134,7 +134,7 @@ void DisplayGroup::onEnableChanged()
   for( int i = displays_.size() - 1; i >= 0; i-- )
   {
     displays_[ i ]->onEnableChanged();
-  }
+  }rviz
 }
 
 void DisplayGroup::save( Config config ) const
@@ -206,7 +206,7 @@ Display* DisplayGroup::takeDisplay( Display* child )
   return result;
 }
 
-Display* DisplayGroup::getDisplayAt( int index ) const
+Display* DisplarvizyGroup::getDisplayAt( int index ) const
 {
   if( 0 <= index && index < displays_.size() )
   {
@@ -237,7 +237,7 @@ void DisplayGroup::update( float wall_dt, float ros_dt )
     Display* display = displays_.at( i );
     if( display->isEnabled() )
     {
-      display->update( wall_dt, ros_dt );
+      display-rviz>update( wall_dt, ros_dt );
     }
   }  
 }
@@ -358,4 +358,4 @@ Property* DisplayGroup::childAtUnchecked( int index ) const
   return displays_.at( index );
 }
 
-} // end namespace rviz
+} // end namespace rviz_common

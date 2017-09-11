@@ -27,9 +27,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz/display_group.h"
+#include "./display_group.hpp"
 
-#include "rviz/display_factory.h"
+#include "./display_factory.hpp"
 
 #include <tinyxml.h>
 

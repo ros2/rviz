@@ -34,7 +34,7 @@
 
 class QLabel;
 
-namespace rviz
+namespace rviz_common
 {
 
 class LoadingDialog: public QDialog
@@ -50,6 +50,6 @@ protected:
   QLabel* label_;
 };
 
-} // end namespace rviz
+} // end namespace rviz_common
 
 #endif // RVIZ_LOADING_DIALOG_H

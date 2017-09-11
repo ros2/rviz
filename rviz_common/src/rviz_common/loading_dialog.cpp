@@ -31,9 +31,9 @@
 #include <QVBoxLayout>
 #include <QApplication>
 
-#include "loading_dialog.h"
+#include "loading_dialog.hpp"
 
-namespace rviz
+namespace rviz_common
 {
 
 LoadingDialog::LoadingDialog( QWidget* parent )
@@ -55,4 +55,4 @@ void LoadingDialog::showMessage( const QString& message )
   QApplication::flush();
 }
 
-} // end namespace rviz
+} // end namespace rviz_common

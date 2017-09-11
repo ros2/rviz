@@ -29,9 +29,9 @@
 #ifndef DISPLAY_GROUP_H
 #define DISPLAY_GROUP_H
 
-#include "display.h"
+#include "display.hpp"
 
-namespace rviz
+namespace rviz_common
 {
 
 class DisplayFactory;
@@ -156,6 +156,6 @@ private:
   QList<Display*> displays_;
 };
 
-} // end namespace rviz
+} // end namespace rviz_common
 
 #endif // DISPLAY_GROUP_H

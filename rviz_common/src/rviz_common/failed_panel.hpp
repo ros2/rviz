@@ -31,9 +31,9 @@
 
 #include <memory>
 
-#include "rviz/panel.h"
+#include "./panel.hpp"
 
-namespace rviz
+namespace rviz_common
 {
 
 class FailedPanel: public Panel
@@ -54,6 +54,6 @@ private:
   QString error_message_;
 };
 
-} // end namespace rviz
+} // end namespace rviz_common
 
 #endif // FAILED_PANEL_H
