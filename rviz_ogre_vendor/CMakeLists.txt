@@ -36,7 +36,7 @@ macro(build_ogre)
   include(ExternalProject)
   ExternalProject_Add(ogre-1.10.7
     URL https://github.com/OGRECave/ogre/archive/v1.10.7.tar.gz
-    URL_MD5 69b92a5e87ef72afaa578c241c861666
+    URL_MD5 cbedd0320ea4c723a7bbc4560a94fbd7
     TIMEOUT 600
     CMAKE_ARGS
       -DOGRE_STATIC:BOOL=ON
