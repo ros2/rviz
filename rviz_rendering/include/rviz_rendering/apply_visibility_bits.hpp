@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Willow Garage, Inc.
+ * Copyright (c) 2012, Willow Garage, Inc.
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
@@ -27,53 +27,19 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef RVIZ_RENDERING__RENDER_WIDGET_HPP_
-#define RVIZ_RENDERING__RENDER_WIDGET_HPP_
-
-#include <QWidget>
-#include <QFrame>
-
-#include "render_system.hpp"
+#ifndef RVIZ_RENDERING__APPLY_VISIBILITY_BITS_HPP_
+#define RVIZ_RENDERING__APPLY_VISIBILITY_BITS_HPP_
 
 namespace Ogre
 {
-class RenderWindow;
+class SceneNode;
 }
 
 namespace rviz_rendering
 {
 
-class RenderWidget : public QWidget
-{
-public:
-  RenderWidget(RenderSystem * render_system, QWidget * parent = 0);
-  virtual ~RenderWidget();
-
-  Ogre::RenderWindow *
-  getRenderWindow();
-
-protected:
-  virtual
-  void
-  moveEvent(QMoveEvent * e);
-
-  virtual
-  void
-  paintEvent(QPaintEvent * e);
-
-  virtual
-  void
-  resizeEvent(QResizeEvent * e);
-
-  QPaintEngine *
-  paintEngine() const;
-
-  RenderSystem * render_system_;
-  Ogre::RenderWindow * render_window_;
-
-  QFrame * renderFrame;
-};
+void applyVisibilityBits(uint32_t bits, Ogre::SceneNode * node);
 
 }  // namespace rviz_rendering
 
-#endif  // RVIZ_RENDERING__RENDER_WIDGET_HPP_
+#endif  // RVIZ_RENDERING__APPLY_VISIBILITY_BITS_HPP_

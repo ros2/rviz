@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,34 +28,20 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdint.h>
+#ifndef RVIZ_RENDERING__INITIALIZATION_HPP_
+#define RVIZ_RENDERING__INITIALIZATION_HPP_
 
-#include <OgreMovableObject.h>
-#include <OgreSceneNode.h>
+#include <cstddef>
+#include <string>
+#include <vector>
 
-namespace rviz
+namespace rviz_rendering
 {
 
-void applyVisibilityBits( uint32_t bits, Ogre::SceneNode* node )
-{
-  if (!node)
-  {
-    return;
-  }
-  // Loop over all objects attached to this node.
-  Ogre::SceneNode::ObjectIterator obj_it = node->getAttachedObjectIterator();
-  while( obj_it.hasMoreElements() )
-  {
-    Ogre::MovableObject* obj = obj_it.getNext();
-    obj->setVisibilityFlags( bits );
-  }
-  // Loop over and recurse into all child nodes.
-  Ogre::SceneNode::ChildNodeIterator child_it = node->getChildIterator();
-  while( child_it.hasMoreElements() )
-  {
-    Ogre::SceneNode* child = dynamic_cast<Ogre::SceneNode*>( child_it.getNext() );
-    applyVisibilityBits( bits, child );
-  }
-}
+typedef std::vector<std::string> V_string;
+void cleanupOgre();
+void initializeResources(const V_string & resource_paths);
 
-} // end namespace rviz
+}  // namespace rviz_rendering
+
+#endif  // RVIZ_RENDERING__INITIALIZATION_HPP_

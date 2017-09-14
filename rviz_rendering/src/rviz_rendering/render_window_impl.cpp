@@ -52,7 +52,11 @@
 # pragma GCC diagnostic pop
 #endif
 
+#include <QtWidgets/QtWidgets>
+
 #include <rviz_rendering/logging.hpp>
+
+#include "grid.hpp"
 
 namespace rviz_rendering
 {
@@ -68,31 +72,37 @@ RenderWindowImpl::RenderWindowImpl(QWindow * parent)
 void
 RenderWindowImpl::render()
 {
-  printf("in RenderWindowImpl::render()\n");
-  /*
-  How we tied in the render function for OGre3D with QWindow's render function. This is what gets call
-  repeatedly. Note that we don't call this function directly; rather we use the renderNow() function
-  to call this method as we don't want to render the Ogre3D scene unless everything is set up first.
-  That is what renderNow() does.
-
-  Theoretically you can have one function that does this check but from my experience it seems better
-  to keep things separate and keep the render function as simple as possible.
-  */
+  // How we tied in the render function for OGre3D with QWindow's render function.
+  // This is what gets call repeatedly.
+  // Note that we don't call this function directly; rather we use the renderNow()
+  // function to call this method as we don't want to render the Ogre3D scene
+  // unless everything is set up first. That is what renderNow() does.
+  //
+  // Theoretically you can have one function that does this check but from my
+  // experience it seems better to keep things separate and keep the render
+  // function as simple as possible.
   Ogre::WindowEventUtilities::messagePump();
-  render_system_->getOgreRoot()->renderOneFrame();
+  if (ogre_render_window_->isClosed()) {
+    RVIZ_RENDERING_LOG_ERROR("in RenderSystemImpl::render() - ogre window is closed");
+    return;
+  }
+  if (!render_system_->getOgreRoot()->renderOneFrame()) {
+    RVIZ_RENDERING_LOG_WARNING("in RenderSystemImpl::render() - renderOneFrame() returned false");
+  }
 }
 
 void
 RenderWindowImpl::renderLater()
 {
-  printf("in RenderWindowImpl::renderLater()\n");
+  // printf("in RenderWindowImpl::renderLater()\n");
   parent_->requestUpdate();
 
   // Alternative impl?:
 
-  // This function forces QWindow to keep rendering. Omitting this causes the renderNow() function to
-  // only get called when the window is resized, moved, etc. as opposed to all of the time; which is
-  // generally what we need.
+  // // This function forces QWindow to keep rendering.
+  // // Omitting this causes the renderNow() function to only get called when the
+  // // window is resized, moved, etc. as opposed to all of the time; which is
+  // // generally what we need.
   // if (!m_update_pending)
   // {
   //   m_update_pending = true;
@@ -106,7 +116,7 @@ RenderWindowImpl::renderLater()
 void
 RenderWindowImpl::renderNow()
 {
-  printf("in RenderWindowImpl::renderNow()\n");
+  // printf("in RenderWindowImpl::renderNow()\n");
   if (!parent_->isExposed()) {
     return;
   }
@@ -119,7 +129,7 @@ RenderWindowImpl::renderNow()
   this->render();
 
   if (animating_) {
-    printf("in RenderWindowImpl::renderNow() -> renderLater()\n");
+    printf("in RenderWindowImpl::renderNow() -> renderLater() because of animating_\n");
     this->renderLater();
   }
 }
@@ -130,58 +140,55 @@ createScene(Ogre::SceneManager * ogre_scene_manager)
   printf("in RenderWindowImpl::createScene()\n");
   /*
   Example scene
-  Derive this class for your own purpose and overwite this function to have a working Ogre widget with
-  your own content.
+  Derive this class for your own purpose and overwite this function to have a
+  working Ogre widget with your own content.
   */
-  ogre_scene_manager->setAmbientLight(Ogre::ColourValue(1.0f, 0.0f, 0.0f));
 
-  Ogre::Entity * sphereMesh = ogre_scene_manager->createEntity("mySphere", Ogre::SceneManager::PT_SPHERE);
+  QColor color = Qt::gray;
+  new rviz_rendering::Grid(
+    ogre_scene_manager,
+    nullptr,
+    Grid::Lines,
+    10,
+    1.0f,
+    0.03f,
+    Ogre::ColourValue(color.redF(), color.greenF(), color.blueF(), color.alphaF()));
+  ogre_scene_manager->setAmbientLight(Ogre::ColourValue(1.0f, 1.0f, 1.0f));
 
-  Ogre::SceneNode * childSceneNode = ogre_scene_manager->getRootSceneNode()->createChildSceneNode();
+  Ogre::Entity * sphereMesh =
+    ogre_scene_manager->createEntity("mySphere", Ogre::SceneManager::PT_SPHERE);
+
+  Ogre::SceneNode * childSceneNode =
+    ogre_scene_manager->getRootSceneNode()->createChildSceneNode();
 
   childSceneNode->attachObject(sphereMesh);
 
-  Ogre::MaterialPtr sphereMaterial = Ogre::MaterialManager::getSingleton().create("SphereMaterial",
-    Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
+  Ogre::MaterialPtr sphereMaterial = Ogre::MaterialManager::getSingleton().create(
+    "SphereMaterial",
+    Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+    true);
 
   sphereMaterial->getTechnique(0)->getPass(0)->setAmbient(0.1f, 0.1f, 0.1f);
-  sphereMaterial->getTechnique(0)->getPass(0)->setDiffuse(0.2f, 0.2f, 0.2f, 1.0f);
+  sphereMaterial->getTechnique(0)->getPass(0)->setDiffuse(0.3f, 0.3f, 0.3f, 1.0f);
   sphereMaterial->getTechnique(0)->getPass(0)->setSpecular(0.9f, 0.9f, 0.9f, 1.0f);
-  //sphereMaterial->setAmbient(0.2f, 0.2f, 0.5f);
-  //sphereMaterial->setSelfIllumination(0.2f, 0.2f, 0.1f);
+  // sphereMaterial->setAmbient(0.2f, 0.2f, 0.5f);
+  // sphereMaterial->setSelfIllumination(0.2f, 0.2f, 0.1f);
 
   sphereMesh->setMaterialName("SphereMaterial");
   childSceneNode->setPosition(Ogre::Vector3(0.0f, 0.0f, 0.0f));
-  childSceneNode->setScale(Ogre::Vector3(0.01f, 0.01f, 0.01f)); // Radius, in theory.
+  childSceneNode->setScale(Ogre::Vector3(0.01f, 0.01f, 0.01f));  // Radius, in theory.
 
-  Ogre::Light* light = ogre_scene_manager->createLight("MainLight");
-  light->setPosition(20.0f, 80.0f, 50.0f);
+  Ogre::Light * light = ogre_scene_manager->createLight("MainLight");
+  light->setPosition(40.0f, 80.0f, 50.0f);
 }
-
-class CustomOgreFrameListener : public Ogre::FrameListener
-{
-public:
-  explicit CustomOgreFrameListener(OgreQtBites::SdkQtCameraMan * camera_man)
-  : camera_man_(camera_man)
-  {}
-
-  virtual
-  bool
-  frameRenderingQueued(const Ogre::FrameEvent & evt)
-  {
-    camera_man_->frameRenderingQueued(evt);
-    return true;
-  }
-
-  OgreQtBites::SdkQtCameraMan * camera_man_;
-};
 
 void
 RenderWindowImpl::initialize()
 {
   render_system_ = RenderSystem::get();
-  ogre_render_window_ =
-    render_system_->makeRenderWindow(parent_->winId(), parent_->width(), parent_->height());
+  double pixel_ratio = parent_->devicePixelRatio();
+  ogre_render_window_ = render_system_->makeRenderWindow(
+    parent_->winId(), parent_->width(), parent_->height(), pixel_ratio);
 
   Ogre::Root * ogre_root = render_system_->getOgreRoot();
   if (!ogre_root) {
@@ -191,14 +198,16 @@ RenderWindowImpl::initialize()
   ogre_scene_manager_ = ogre_root->createSceneManager(Ogre::ST_GENERIC);
 
   ogre_camera_ = ogre_scene_manager_->createCamera("MainCamera");
-  ogre_camera_->setPosition(Ogre::Vector3(0.0f, 0.0f, 10.0f));
-  ogre_camera_->lookAt(Ogre::Vector3(0.0f, 0.0f, -300.0f));
   ogre_camera_->setNearClipDistance(0.1f);
   ogre_camera_->setFarClipDistance(200.0f);
-  camera_man_ = new OgreQtBites::SdkQtCameraMan(ogre_camera_);   // create a default camera controller
+
+  auto camera_node_ = ogre_scene_manager_->getRootSceneNode()->createChildSceneNode();
+  ogre_camera_->setPosition(Ogre::Vector3(0.0f, 10.0f, 10.0f));
+  ogre_camera_->lookAt(Ogre::Vector3(0.0f, 0.0f, 0.0f));
+  camera_node_->attachObject(ogre_camera_);
 
   Ogre::Viewport * pViewPort = ogre_render_window_->addViewport(ogre_camera_);
-  auto bg_color = Ogre::ColourValue(0.0f, 0.5f, 1.0f);
+  auto bg_color = Ogre::ColourValue(0.9f, 0.9f, 0.9f);
   pViewPort->setBackgroundColour(bg_color);
 
   ogre_camera_->setAspectRatio(
@@ -209,9 +218,6 @@ RenderWindowImpl::initialize()
   Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
   createScene(ogre_scene_manager_);
-
-  ogre_frame_listener_ = new CustomOgreFrameListener(camera_man_);
-  ogre_root->addFrameListener(ogre_frame_listener_);
 }
 
 void
@@ -220,7 +226,9 @@ RenderWindowImpl::resize(size_t width, size_t height)
   printf("in RenderWindowImpl::resize(size_t %zu, size_t %zu)\n", width, height);
   if (ogre_render_window_) {
     ogre_render_window_->resize(width, height);
+    ogre_render_window_->windowMovedOrResized();
   }
+  this->renderLater();
 }
 
 }  // namespace rviz_rendering

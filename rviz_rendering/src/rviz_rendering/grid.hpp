@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OGRE_TOOLS_GRID_H
-#define OGRE_TOOLS_GRID_H
+#ifndef RVIZ_RENDERING__GRID_HPP_
+#define RVIZ_RENDERING__GRID_HPP_
 
 #include <stdint.h>
 
@@ -48,10 +48,10 @@ class SceneNode;
 class Any;
 }
 
-namespace rviz
+namespace rviz_rendering
 {
 
-class BillboardLine;
+// class BillboardLine;
 
 /**
  * \class Grid
@@ -65,7 +65,7 @@ public:
   enum Style
   {
     Lines,
-    Billboards,
+//    Billboards,
   };
 
   /**
@@ -78,7 +78,8 @@ public:
    * @param g Green color component, in the range [0, 1]
    * @param b Blue color component, in the range [0, 1]
    */
-  Grid( Ogre::SceneManager* manager, Ogre::SceneNode* parent_node, Style style, uint32_t cell_count, float cell_length, float line_width, const Ogre::ColourValue& color );
+  Grid(Ogre::SceneManager * manager, Ogre::SceneNode * parent_node, Style style,
+    uint32_t cell_count, float cell_length, float line_width, const Ogre::ColourValue & color);
   ~Grid();
 
   void create();
@@ -88,37 +89,37 @@ public:
    *
    * @return The Ogre scene node associated with this grid
    */
-  Ogre::SceneNode* getSceneNode() { return scene_node_; }
+  Ogre::SceneNode * getSceneNode() {return scene_node_; }
 
   /**
    * \brief Sets user data on all ogre objects we own
    */
-  void setUserData( const Ogre::Any& data );
+  void setUserData(const Ogre::Any & data);
 
   void setStyle(Style style);
-  Style getStyle() { return style_; }
+  Style getStyle() {return style_; }
 
-  void setColor(const Ogre::ColourValue& color);
-  Ogre::ColourValue getColor() { return color_; }
+  void setColor(const Ogre::ColourValue & color);
+  Ogre::ColourValue getColor() {return color_; }
 
   void setCellCount(uint32_t count);
-  float getCellCount() { return cell_count_; }
+  float getCellCount() {return cell_count_; }
 
   void setCellLength(float len);
-  float getCellLength() { return cell_length_; }
+  float getCellLength() {return cell_length_; }
 
   void setLineWidth(float width);
-  float getLineWidth() { return line_width_; }
+  float getLineWidth() {return line_width_; }
 
   void setHeight(uint32_t count);
-  uint32_t getHeight() { return height_; }
+  uint32_t getHeight() {return height_; }
 
 private:
-  Ogre::SceneManager* scene_manager_;
-  Ogre::SceneNode* scene_node_;           ///< The scene node that this grid is attached to
-  Ogre::ManualObject* manual_object_;     ///< The manual object used to draw the grid
+  Ogre::SceneManager * scene_manager_;
+  Ogre::SceneNode * scene_node_;           ///< The scene node that this grid is attached to
+  Ogre::ManualObject * manual_object_;     ///< The manual object used to draw the grid
 
-  BillboardLine* billboard_line_;
+//  BillboardLine* billboard_line_;
 
   Ogre::MaterialPtr material_;
 
@@ -130,6 +131,6 @@ private:
   Ogre::ColourValue color_;
 };
 
-} // namespace rviz
+}  // namespace rviz_rendering
 
-#endif
+#endif  // RVIZ_RENDERING__GRID_HPP_

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2011, Willow Garage, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,19 +26,23 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef APPLY_VISIBILITY_BITS_H
-#define APPLY_VISIBILITY_BITS_H
 
-namespace Ogre
+#include <QApplication>
+
+#include "rviz/visualizer_app.h"
+
+int main( int argc, char** argv )
 {
-class SceneNode;
+  QApplication qapp( argc, argv );
+
+  rviz::VisualizerApp vapp;
+  vapp.setApp( &qapp );
+  if( vapp.init( argc, argv ))
+  {
+    return qapp.exec();
+  }
+  else
+  {
+    return 1;
+  }
 }
-
-namespace rviz
-{
-
-void applyVisibilityBits( uint32_t bits, Ogre::SceneNode* node );
-
-} // end namespace rviz
-
-#endif // APPLY_VISIBILITY_BITS_H

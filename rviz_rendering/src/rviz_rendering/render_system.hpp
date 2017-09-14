@@ -32,6 +32,7 @@
 #define RVIZ_RENDERING__RENDER_SYSTEM_HPP_
 
 #include <cstdint>
+#include <string>
 
 #ifndef _WIN32
 # pragma GCC diagnostic push
@@ -64,7 +65,7 @@ public:
 #if defined(__APPLE__) || defined(_WIN32)
   typedef size_t WindowIDType;
 #else
-  typedef unsigned long WindowIDType;
+  typedef unsigned long WindowIDType;  // NOLINT: we need to use C longs here
 #endif
 
   static
@@ -135,6 +136,8 @@ private:
   void
   setupRenderSystem();
   void
+  setResourceDirectory();
+  void
   setupResources();
   void
   detectGlVersion();
@@ -157,6 +160,6 @@ private:
   static bool force_no_stereo_;
 };
 
-} // namespace rviz_rendering
+}  // namespace rviz_rendering
 
 #endif  // RVIZ_RENDERING__RENDER_SYSTEM_HPP_

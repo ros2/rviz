@@ -1,39 +1,35 @@
 <package format="2">
-  <name>rviz_rendering</name>
+  <name>rviz_common</name>
   <version>0.0.1</version>
   <description>
-    Library which provides the 3D rendering functionality in rviz.
+    Common rviz API, used by rviz plugins and applications.
   </description>
   <maintainer email="william@osrfoundation.org">William Woodall</maintainer>
   <license>BSD</license>
-  <!-- TODO(wjwwood): Is this still needed? -->
-  <!-- <license>Creative Commons</license> -->
 
   <author>Dave Hershberger</author>
   <author>David Gossow</author>
   <author>Josh Faust</author>
 
-  <url type="website">http://ros.org/wiki/rviz_rendering</url>
+  <url type="website">http://ros.org/wiki/rviz_common</url>
   <url type="repository">https://github.com/ros-visualization/rviz</url>
   <url type="bugtracker">https://github.com/ros-visualization/rviz/issues</url>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <build_depend>assimp-dev</build_depend>
-  <build_depend>rviz_ogre_vendor</build_depend>
+  <depend>rviz_rendering</depend>
+
   <build_depend>qtbase5-dev</build_depend>
+
+  <exec_depend>libqt5-core</exec_depend>
+  <exec_depend>libqt5-gui</exec_depend>
+  <exec_depend>libqt5-opengl</exec_depend>
+  <exec_depend>libqt5-widgets</exec_depend>
 
   <test_depend>ament_cmake_cppcheck</test_depend>
   <test_depend>ament_cmake_cpplint</test_depend>
   <test_depend>ament_cmake_lint_cmake</test_depend>
   <test_depend>ament_cmake_uncrustify</test_depend>
-
-  <!-- <exec_depend>assimp</exec_depend> -->
-  <exec_depend>rviz_ogre_vendor</exec_depend>
-  <exec_depend>libqt5-core</exec_depend>
-  <exec_depend>libqt5-gui</exec_depend>
-  <exec_depend>libqt5-opengl</exec_depend>
-  <exec_depend>libqt5-widgets</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

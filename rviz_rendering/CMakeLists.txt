@@ -17,6 +17,7 @@ find_package(ament_cmake REQUIRED)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
+find_package(ament_index_cpp REQUIRED)
 # do find_package(rviz_ogre_vendor) first to make sure the custom OGRE is found
 find_package(rviz_ogre_vendor REQUIRED)
 
@@ -52,13 +53,19 @@ set(headers_with_q_object
 
 add_library(${PROJECT_NAME}
   ${headers_with_q_object}
+  # src/rviz_rendering/apply_visibility_bits.cpp
+  # src/rviz_rendering/arrow.cpp
+  # src/rviz_rendering/axes.cpp
+  # src/rviz_rendering/initialization.cpp
   src/rviz_rendering/logging.cpp
+  # src/rviz_rendering/object.cpp
   src/rviz_rendering/ogre_logging.cpp
   src/rviz_rendering/render_system.cpp
   src/rviz_rendering/render_window.cpp
   src/rviz_rendering/render_window_impl.cpp
-  # src/rviz_rendering/render_widget.cpp
   src/rviz_rendering/resource_config.cpp
+  # src/rviz_rendering/shape.cpp
+  src/rviz_rendering/grid.cpp
 )
 target_link_libraries(${PROJECT_NAME}
   rviz_ogre_vendor::OgreMain
@@ -66,11 +73,11 @@ target_link_libraries(${PROJECT_NAME}
   rviz_ogre_vendor::RenderSystem_GL
   rviz_ogre_vendor::OgreGLSupport
   Qt5::Widgets
+  ament_index_cpp::ament_index_cpp
 )
+
 # This will give the library a default directory to fallback to, but it should be overridden.
 target_compile_definitions(${PROJECT_NAME}
-  # TODO(wjwwood): replace this with ament_index
-  PRIVATE "-DRVIZ_RENDERING_DEFAULT_RESOURCE_DIRECTORY=\"${CMAKE_CURRENT_SOURCE_DIR}\""
   # TODO(wjwwood): this might not be required anymore with static linking
   PRIVATE "-DRVIZ_RENDERING_OGRE_PLUGIN_DIR=\"${OGRE_PLUGIN_DIR}\""
 )
@@ -104,8 +111,20 @@ endif()
 
 install(TARGETS rendering_example DESTINATION bin)
 
-# add_executable(test_QTOgreWindow src/test_QTOgreWindow.cpp src/QTOgreWindow.cpp)
-# target_link_libraries(test_QTOgreWindow ${OGRE_LIBRARIES} Qt5::Widgets)
-# target_compile_options(test_QTOgreWindow PUBLIC -Wno-error)
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/ogre_media"
+        DESTINATION "share/rviz_rendering"
+        USE_SOURCE_PERMISSIONS)
+
+if(BUILD_TESTING)
+    # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back
+    find_package(ament_cmake_cppcheck REQUIRED)
+    find_package(ament_cmake_cpplint REQUIRED)
+    find_package(ament_cmake_lint_cmake REQUIRED)
+    find_package(ament_cmake_uncrustify REQUIRED)
+    ament_cppcheck()
+    ament_cpplint()
+    ament_lint_cmake()
+    ament_uncrustify()
+endif()
 
 ament_package()

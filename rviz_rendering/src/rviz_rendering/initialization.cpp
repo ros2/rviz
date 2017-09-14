@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,20 +28,36 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OGRE_TOOLS_INITIALIZATION_H
-#define OGRE_TOOLS_INITIALIZATION_H
+#include "rviz_rendering/initialization.hpp"
 
-#include <stddef.h>
-#include <string>
-#include <vector>
+#include <exception>
+#include <stdexcept>
 
-namespace rviz
+#include <OgreRenderSystem.h>
+#include <OgreRoot.h>
+
+#include "ros/package.h"
+
+namespace rviz_rendering
 {
 
-typedef std::vector<std::string> V_string;
-void cleanupOgre();
-void initializeResources( const V_string& resource_paths );
+void cleanupOgre()
+{
+  delete Ogre::Root::getSingletonPtr();
+}
 
-} // namespace rviz
+// This should be folded into RenderSystem, but it should work fine as
+// is, so I'm leaving it for now.
+void initializeResources(const V_string & resource_paths)
+{
+  V_string::const_iterator path_it = resource_paths.begin();
+  V_string::const_iterator path_end = resource_paths.end();
+  for (; path_it != path_end; ++path_it) {
+    Ogre::ResourceGroupManager::getSingleton().addResourceLocation(*path_it, "FileSystem",
+      Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+  }
 
-#endif
+  Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+}
+
+}  // namespace rviz_rendering

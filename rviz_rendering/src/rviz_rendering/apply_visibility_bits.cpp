@@ -28,56 +28,33 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_RENDERING__OGRE_LOGGING_HPP_
-#define RVIZ_RENDERING__OGRE_LOGGING_HPP_
+#include "rviz_rendering/apply_visibility_bits.hpp"
 
-#include <string>
+#include <cstdint>
+
+#include <OgreMovableObject.h>
+#include <OgreSceneNode.h>
 
 namespace rviz_rendering
 {
 
-/// Convenience interface to Ogre logging.
-/**
- * This all-static class wraps Ogre::LogManager into 3 easy options:
- * no logging, standard out, or file logging.  The option-selection
- * calls (useStandardOut(), useLogFile(), and noLog() must be called
- * before configureLogging().  configureLogging(), in turn, must be
- * called before any Ogre::Root object is instantiated.
- * configureLogging() is called at the right time by the RenderSystem
- * constructor, so you generally won't need to call it explicitly.
- */
-class OgreLogging
+void applyVisibilityBits(uint32_t bits, Ogre::SceneNode * node)
 {
-public:
-  /// Configure Ogre to write output to the given log file name.
-  /**
-   * If file name is a relative path, it will be relative to
-   * the directory which is current when the program is run.  Default
-   * is "Ogre.log".
-   */
-  static
-  void
-  useLogFile(const std::string & filename = "Ogre.log");
-
-  /// Disable Ogre logging entirely, this is the default.
-  static
-  void
-  noLog();
-
-  /// Configure the Ogre::LogManager to give the currently selected behavior.
-  /**
-   * This must be called before Ogre::Root is instantiated!
-   */
-  static
-  void
-  configureLogging();
-
-private:
-  typedef enum { StandardOut, FileLogging, NoLogging } Preference;
-  static Preference preference_;
-  static std::string filename_;
-};
+  if (!node) {
+    return;
+  }
+  // Loop over all objects attached to this node.
+  Ogre::SceneNode::ObjectIterator obj_it = node->getAttachedObjectIterator();
+  while (obj_it.hasMoreElements() ) {
+    Ogre::MovableObject * obj = obj_it.getNext();
+    obj->setVisibilityFlags(bits);
+  }
+  // Loop over and recurse into all child nodes.
+  Ogre::SceneNode::ChildNodeIterator child_it = node->getChildIterator();
+  while (child_it.hasMoreElements() ) {
+    Ogre::SceneNode * child = dynamic_cast<Ogre::SceneNode *>( child_it.getNext() );
+    applyVisibilityBits(bits, child);
+  }
+}
 
 }  // namespace rviz_rendering
-
-#endif  // RVIZ_RENDERING__OGRE_LOGGING_HPP_

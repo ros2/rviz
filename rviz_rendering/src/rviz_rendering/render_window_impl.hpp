@@ -50,8 +50,6 @@
 #include <OgreRenderWindow.h>
 #include <OgreSceneManager.h>
 
-#include "../SdkQtCameraMan.h"
-
 #ifndef _WIN32
 # pragma GCC diagnostic pop
 #endif
@@ -88,7 +86,7 @@ protected:
   Ogre::FrameListener * ogre_frame_listener_;
   Ogre::SceneManager * ogre_scene_manager_;
   Ogre::Camera * ogre_camera_;
-  OgreQtBites::SdkQtCameraMan * camera_man_;
+
   bool animating_;
 };
 
