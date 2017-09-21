@@ -407,6 +407,11 @@ RenderSystem::makeRenderWindow(
   params["left"] = std::to_string(0);
   params["top"] = std::to_string(0);
 
+  // Hide dummy window borders on Windows
+  if (width <= 1) {
+    params["border"] = "none";
+  }
+
   // params["externalGLControl"] = Ogre::String("true");
 
   // Enable antialiasing
@@ -463,7 +468,12 @@ RenderSystem::makeRenderWindow(
     throw std::runtime_error(msg);
   }
 
-  window->setVisible(true);
+  // Hide dummy window immediately on Windows
+  if (width <= 1) {
+    window->setHidden(true);
+  } else {
+    window->setVisible(true);
+  }
 
   stereo_supported_ = is_stereo;
 
