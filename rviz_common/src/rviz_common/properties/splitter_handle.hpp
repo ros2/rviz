@@ -33,7 +33,9 @@
 
 class QTreeView;
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 /** @brief A tall skinny invisible widget providing left-right sliding
@@ -62,7 +64,7 @@ public:
 protected:
   virtual void mousePressEvent( QMouseEvent* event );
   virtual void mouseMoveEvent( QMouseEvent* event );
-  virtual void paintEvent( QPaintEvent* event );
+  virtual void paintEvent();
 
 private:
   /** @brief Update the parent's column widths and this splitter's
@@ -78,6 +80,7 @@ private:
   QColor color_;
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
 #endif // SPLITTER_HANDLE_H

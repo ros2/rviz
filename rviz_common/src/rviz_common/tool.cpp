@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,23 +28,24 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <ros/package.h>
+#include "./tool.hpp"
 
-#include "rviz/display_context.h"
-#include "rviz/properties/property.h"
-#include "rviz/load_resource.h"
-#include "rviz/window_manager_interface.h"
+#include "./display_context.hpp"
+#include "./load_resource.hpp"
+#include "rviz_common/properties/property.hpp"
 
-#include "rviz/tool.h"
-
-namespace rviz
+namespace rviz_common
 {
+
+using rviz_common::properties::Property;
 
 Tool::Tool()
-  : property_container_( new Property() )
+: scene_manager_(nullptr),
+  context_(nullptr),
+  shortcut_key_('\0'),
+  access_all_keys_(false),
+  property_container_(new Property())
 {
-  access_all_keys_ = false;
-  shortcut_key_ = '\0';
 }
 
 Tool::~Tool()
@@ -51,56 +53,122 @@ Tool::~Tool()
   delete property_container_;
 }
 
-void Tool::initialize( DisplayContext* context )
+void Tool::initialize(DisplayContext * context)
 {
   context_ = context;
-  scene_manager_ = context_->getSceneManager();  
+  scene_manager_ = context_->getSceneManager();
 
   // Let subclasses do initialization if they want.
   onInitialize();
 }
 
-void Tool::setIcon( const QIcon& icon )
+void Tool::onInitialize()
 {
-  icon_=icon;
-  cursor_=makeIconCursor( icon.pixmap(16), "tool_cursor:"+name_ );
 }
 
-void Tool::setCursor( const QCursor& cursor )
+rviz_common::properties::Property * Tool::getPropertyContainer() const
 {
-  cursor_=cursor;
+  return property_container_;
 }
 
-void Tool::setName( const QString& name )
+char Tool::getShortcutKey() const
+{
+  return shortcut_key_;
+}
+
+bool Tool::accessAllKeys() const
+{
+  return access_all_keys_;
+}
+
+void Tool::update(float wall_dt, float ros_dt)
+{
+  (void) wall_dt;
+  (void) ros_dt;
+}
+
+int Tool::processMouseEvent(ViewportMouseEvent & event)
+{
+  (void) event;
+  return 0;
+}
+
+int Tool::processKeyEvent(QKeyEvent * event, RenderPanel * panel)
+{
+  (void) event;
+  (void) panel;
+  return 0;
+}
+
+QString Tool::getName() const
+{
+  return name_;
+}
+
+QString Tool::getDescription() const
+{
+  return description_;
+}
+
+QString Tool::getClassId() const
+{
+  return class_id_;
+}
+
+void Tool::setClassId(const QString & class_id)
+{
+  class_id_ = class_id;
+}
+
+const QIcon & Tool::getIcon()
+{
+  return icon_;
+}
+
+const QCursor & Tool::getCursor()
+{
+  return cursor_;
+}
+
+void Tool::setIcon(const QIcon & icon)
+{
+  icon_ = icon;
+  cursor_ = makeIconCursor(icon.pixmap(16), "tool_cursor:" + name_);
+}
+
+void Tool::setCursor(const QCursor & cursor)
+{
+  cursor_ = cursor;
+}
+
+void Tool::setName(const QString & name)
 {
   name_ = name;
-  property_container_->setName( name_ );
+  property_container_->setName(name_);
 }
 
-void Tool::setDescription( const QString& description )
+void Tool::setDescription(const QString & description)
 {
   description_ = description;
-  property_container_->setDescription( description_ );
+  property_container_->setDescription(description_);
 }
 
-void Tool::load( const Config& config )
+void Tool::load(const Config & config)
 {
-  property_container_->load( config );
+  property_container_->load(config);
 }
 
-void Tool::save( Config config ) const
+void Tool::save(Config config) const
 {
-  property_container_->save( config );
-  config.mapSetValue( "Class", getClassId() );
+  property_container_->save(config);
+  config.mapSetValue("Class", getClassId());
 }
 
-void Tool::setStatus( const QString & message )
+void Tool::setStatus(const QString & message)
 {
-  if ( context_ )
-  {
-    context_->setStatus( message );
+  if (context_) {
+    context_->setStatus(message);
   }
 }
 
-
-} // end namespace rviz
+}  // namespace rviz_common

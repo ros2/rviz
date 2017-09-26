@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,14 +28,21 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "orthographic.h"
+#include "./orthographic.hpp"
 
 #include <OgreMatrix4.h>
 
-namespace rviz
+namespace rviz_rendering
 {
 
-void buildScaledOrthoMatrix(Ogre::Matrix4& proj, float left, float right, float bottom, float top, float near, float far)
+void buildScaledOrthoMatrix(
+  Ogre::Matrix4 & proj,
+  float left,
+  float right,
+  float bottom,
+  float top,
+  float near,
+  float far)
 {
   float invw = 1 / (right - left);
   float invh = 1 / (top - bottom);
@@ -50,4 +58,4 @@ void buildScaledOrthoMatrix(Ogre::Matrix4& proj, float left, float right, float 
   proj[3][3] = 1;
 }
 
-}
+}  // namespace rviz_rendering

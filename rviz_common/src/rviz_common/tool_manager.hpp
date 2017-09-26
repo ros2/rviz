@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,134 +27,160 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef TOOL_MANAGER_H
-#define TOOL_MANAGER_H
 
-#include <QList>
-#include <QObject>
-#include <QStringList>
+#ifndef SRC__RVIZ_COMMON__TOOL_MANAGER_HPP_
+#define SRC__RVIZ_COMMON__TOOL_MANAGER_HPP_
 
-#include "rviz/pluginlib_factory.h"
-#include "rviz/tool.h"
+#include <map>
+
+#include <QList>  // NOLINT: cpplint is unable to handle the include order here
+#include <QObject>  // NOLINT: cpplint is unable to handle the include order here
+#include <QStringList>  // NOLINT: cpplint is unable to handle the include order here
+
+// TODO(wjwwood): restore pluginlib_factory when possible
+// #include "rviz/pluginlib_factory.h"
+#include "./tool.hpp"
 
 class QKeyEvent;
 
-namespace rviz
+namespace rviz_common
 {
-class DisplayContext;
-class PropertyTreeModel;
-class RenderPanel;
 
-class ToolManager: public QObject
+namespace properties
 {
-Q_OBJECT
+
+class PropertyTreeModel;
+
+}  // namespace properties
+
+// class DisplayContext;
+// class RenderPanel;
+
+class ToolManager : public QObject
+{
+  Q_OBJECT
+
 public:
-  ToolManager( DisplayContext* context );
+  explicit ToolManager(DisplayContext * context);
   virtual ~ToolManager();
 
-  /** @brief Initialization for after the DisplayContext is created.
-   * Loads standard RViz tools. */
+  /// Initialization for after the DisplayContext is created.
+  /**
+   * Loads standard RViz tools.
+   */
   void initialize();
 
-  void load( const Config& config );
-  void save( Config config ) const;
-  PropertyTreeModel* getPropertyModel() const { return property_tree_model_; }
+  /// Load settings for tool manager from Config object.
+  void load(const Config & config);
 
-  /** @brief Create a tool by class lookup name, add it to the list, and return it. */
-  Tool* addTool( const QString& tool_class_lookup_name );
+  /// Save settings of tool manager to Config object.
+  void save(Config config) const;
 
+  /// Get the property tree model.
+  rviz_common::properties::PropertyTreeModel * getPropertyModel() const;
+
+  /// Create a tool by class lookup name, add it to the list, and return it.
+  Tool * addTool(const QString & tool_class_lookup_name);
+
+  /// Return the tool currently in use.
   /**
-   * \brief Return the tool currently in use.
-   * \sa setCurrentTool()
+   * \see setCurrentTool()
    */
-  Tool* getCurrentTool() { return current_tool_; }
+  Tool * getCurrentTool();
 
+  /// Return the tool at a given index in the Tool list.
   /**
-   * \brief Return the tool at a given index in the Tool list.
    * If index is less than 0 or greater than the number of tools, this
    * will fail an assertion.
    */
-  Tool* getTool( int index );
+  Tool * getTool(int index);
 
-  int numTools() { return tools_.size(); }
-  void removeTool( int index );
+  /// Get the number of tools.
+  int numTools();
 
+  /// Remove tool by index.
+  void removeTool(int index);
+
+  /// Removal all the tools.
   void removeAll();
 
-  /** @brief Triggers redrawing the tool's icon/text in the toolbar. */
-  void refreshTool( Tool* tool );
+  /// Triggers redrawing the tool's icon/text in the toolbar.
+  void refreshTool(Tool * tool);
 
+  /// Set the current tool.
   /**
-   * \brief Set the current tool.
    * The current tool is given all mouse and keyboard events which
-   * VisualizationManager receives via handleMouseEvent() and
-   * handleChar().
-   * \sa getCurrentTool()
+   * VisualizationManager receives via handleMouseEvent() and handleChar().
+   * \see getCurrentTool()
    */
-  void setCurrentTool( Tool* tool );
+  void setCurrentTool(Tool * tool);
 
+  /// Set the default tool.
   /**
-   * \brief Set the default tool.
-   *
    * The default tool is selected directly by pressing the Escape key.
    * The default tool is indirectly selected when a Tool returns
    * Finished in the bit field result of Tool::processMouseEvent().
    * This is how control moves from the InitialPoseTool back to
    * MoveCamera when InitialPoseTool receives a left mouse button
    * release event.
-   * \sa getDefaultTool()
+   * \see getDefaultTool()
    */
-  void setDefaultTool( Tool* tool );
+  void setDefaultTool(Tool * tool);
 
+  /// Get the default tool.
   /**
-   * \brief Get the default tool.
-   * \sa setDefaultTool()
+   * \see setDefaultTool()
    */
-  Tool* getDefaultTool() { return default_tool_; }
+  Tool * getDefaultTool();
 
+  /// Get the names of the tool classes.
   QStringList getToolClasses();
 
-  void handleChar( QKeyEvent* event, RenderPanel* panel );
+  /// Function to handle a key event.
+  void handleChar(QKeyEvent * event, RenderPanel * panel);
 
-  PluginlibFactory<Tool>* getFactory() { return factory_; }
+#if 0
+  PluginlibFactory<Tool> * getFactory();
+#endif
 
 Q_SIGNALS:
-  /** @brief Emitted when anything changes which will change the saved config file contents. */
+  /// Emitted when anything changes which will change the saved config file contents.
   void configChanged();
 
-  /** @brief Emitted by addTool() after the tool is added to the list of tools. */
-  void toolAdded( Tool* );
+  /// Emitted by addTool() after the tool is added to the list of tools.
+  void toolAdded(Tool *);
 
-  /** @brief Emitted by setCurrentTool() after the newly chosen tool
-   * is activated. */
-  void toolChanged( Tool* );
+  /// Emitted by setCurrentTool() after the newly chosen tool is activated.
+  void toolChanged(Tool *);
 
-  void toolRemoved( Tool* );
+  /// Emitted when a tool is removed.
+  void toolRemoved(Tool *);
 
-  /** @brief Emitted by refreshTool() to gedraw the tool's icon in the toolbar'. */
-  void toolRefreshed( Tool* );
+  /// Emitted by refreshTool() to gedraw the tool's icon in the toolbar.
+  void toolRefreshed(Tool *);
 
 private Q_SLOTS:
-  /** @brief If @a property has children, it is added to the tool
-   * property tree, and if it does not, it is removed. */
-  void updatePropertyVisibility( Property* property );
-  
-  /** @brief Deactivates the current tool and sets the default tool. */
+  /// If property has children, add it to the tool property tree, else remove it.
+  void updatePropertyVisibility(rviz_common::properties::Property * property);
+
+  /// Deactivate the current tool and sets the default tool.
   void closeTool();
 
 private:
-
-  bool toKey( QString const& str, uint& key_out );
-  PluginlibFactory<Tool>* factory_;
-  PropertyTreeModel* property_tree_model_;
-  QList<Tool*> tools_;
-  DisplayContext* context_;
-  Tool* current_tool_;
-  Tool* default_tool_;
-  std::map<int,Tool*> shortkey_to_tool_map_;
-
+  /// Convert a key string to the unsiged integer which represents it.
+  /**
+   * Returns false if the conversion fails.
+   */
+  bool toKey(QString const & str, uint & key_out);
+  // PluginlibFactory<Tool> * factory_;
+  rviz_common::properties::PropertyTreeModel * property_tree_model_;
+  QList<Tool *> tools_;
+  DisplayContext * context_;
+  Tool * current_tool_;
+  Tool * default_tool_;
+  std::map<int, Tool *> shortkey_to_tool_map_;
 };
 
-} // end namespace rviz
+}  // namespace rviz_common
 
-#endif // TOOL_MANAGER_H
+#endif  // SRC__RVIZ_COMMON__TOOL_MANAGER_HPP_

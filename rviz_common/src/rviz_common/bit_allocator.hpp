@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,32 +27,32 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef BIT_ALLOCATOR_H
-#define BIT_ALLOCATOR_H
 
-#include <stdint.h>
+#ifndef SRC__RVIZ_COMMON__BIT_ALLOCATOR_HPP_
+#define SRC__RVIZ_COMMON__BIT_ALLOCATOR_HPP_
 
-namespace rviz
+#include <cstdint>
+
+namespace rviz_common
 {
 
-/** @brief Allocation manager for bit positions within a 32-bit word. */
+/// Allocation manager for bit positions within a 32-bit word.
 class BitAllocator
 {
 public:
-  /** @brief Constructor.  All bits are free initially. */
+  /// Constructor; all bits are free initially.
   BitAllocator();
 
-  /** @brief Return a uint32 with a single bit "on" (previously
-   * unused), or a 0 if all bits are already allocated. */
+  /// Return a uint32 with a single unused bit "on", or a 0 if all bits are already allocated.
   uint32_t allocBit();
 
-  /** @brief Free the given bits. */
-  void freeBits( uint32_t bits );
+  /// Free the given bits.
+  void freeBits(uint32_t bits);
 
 private:
   uint32_t allocated_bits_;
 };
 
-} // end namespace rviz
+}  // namespace rviz_common
 
-#endif // BIT_ALLOCATOR_H
+#endif  // SRC__RVIZ_COMMON__BIT_ALLOCATOR_HPP_

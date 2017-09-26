@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,80 +30,88 @@
 
 #include <QColor>
 
-#include "rviz/properties/property_tree_model.h"
+#include "./property_tree_model.hpp"
 
-#include "rviz/properties/status_property.h"
-#include "rviz/load_resource.h"
+#include "./status_property.hpp"
+#include "../load_resource.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
-QColor StatusProperty::status_colors_[3] = { QColor(), QColor( 192, 128, 0 ), QColor( 192, 32, 32 ) };
-QString StatusProperty::status_words_[3] = { "Ok", "Warn", "Error" };
+QColor StatusProperty::status_colors_[3] = {QColor(), QColor(192, 128, 0), QColor(192, 32, 32)};
+QString StatusProperty::status_words_[3] = {"Ok", "Warn", "Error"};
 
-StatusProperty::StatusProperty( const QString& name, const QString& text, Level level, Property* parent )
-  : Property( name, text, text, parent )
-  , level_( level )
+StatusProperty::StatusProperty(
+  const QString & name,
+  const QString & text,
+  StatusProperty::Level level,
+  Property * parent)
+: Property(name, text, text, parent),
+  level_(level)
 {
-  setShouldBeSaved( false );
-  status_icons_[0] = loadPixmap( "package://rviz/icons/ok.png" );
-  status_icons_[1] = loadPixmap( "package://rviz/icons/warning.png" );
-  status_icons_[2] = loadPixmap( "package://rviz/icons/error.png" );
+  setShouldBeSaved(false);
+  status_icons_[0] = loadPixmap("package://rviz/icons/ok.png");
+  status_icons_[1] = loadPixmap("package://rviz/icons/warning.png");
+  status_icons_[2] = loadPixmap("package://rviz/icons/error.png");
 }
 
-bool StatusProperty::setValue( const QVariant& new_value )
+bool StatusProperty::setValue(const QVariant & new_value)
 {
-  setDescription( new_value.toString() );
-  return Property::setValue( new_value );
+  setDescription(new_value.toString() );
+  return Property::setValue(new_value);
 }
 
-QVariant StatusProperty::getViewData( int column, int role ) const
+QVariant StatusProperty::getViewData(int column, int role) const
 {
-  if ( (getViewFlags(column) & Qt::ItemIsEnabled) && column == 0 && role == Qt::ForegroundRole )
-  {
-    return statusColor( level_ );
+  if ( (getViewFlags(column) & Qt::ItemIsEnabled) && column == 0 && role == Qt::ForegroundRole) {
+    return statusColor(level_);
   }
-  if( column == 0 && role == Qt::DecorationRole )
-  {
-    return statusIcon( level_ );
+  if (column == 0 && role == Qt::DecorationRole) {
+    return statusIcon(level_);
   }
-  return Property::getViewData( column, role );
+  return Property::getViewData(column, role);
 }
 
-Qt::ItemFlags StatusProperty::getViewFlags( int column ) const
+Qt::ItemFlags StatusProperty::getViewFlags(int column) const
 {
-  return Property::getViewFlags( column );
-}
-
-// static function
-QColor StatusProperty::statusColor( Level level )
-{
-  return status_colors_[ (int) level ];
+  return Property::getViewFlags(column);
 }
 
 // static function
-QIcon StatusProperty::statusIcon( Level level ) const
+QColor StatusProperty::statusColor(StatusProperty::Level level)
 {
-  return status_icons_[ level ];
+  return status_colors_[static_cast<int>(level)];
 }
 
-/** @brief Return the word appropriate for the given status level:
- * "Ok", "Warn", or "Error". */
 // static function
-QString StatusProperty::statusWord( Level level )
+QIcon StatusProperty::statusIcon(StatusProperty::Level level) const
 {
-  return status_words_[ (int) level ];
+  return status_icons_[level];
+}
+
+// static function
+QString StatusProperty::statusWord(StatusProperty::Level level)
+{
+  return status_words_[static_cast<int>(level)];
 }
 
 
-void StatusProperty::setLevel( Level level )
+void StatusProperty::setLevel(StatusProperty::Level level)
 {
-  if( level_ != level )
-  {
+  if (level_ != level) {
     level_ = level;
-    if( model_ )
-      model_->emitDataChanged( this );
+    if (model_) {
+      model_->emitDataChanged(this);
+    }
   }
 }
 
-} // end namespace rviz
+StatusProperty::Level StatusProperty::getLevel() const
+{
+  return level_;
+}
+
+}  // namespace properties
+}  // namespace rviz_common

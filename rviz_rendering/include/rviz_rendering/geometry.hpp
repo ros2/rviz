@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,36 +28,41 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GEOMETRY_H
-#define GEOMETRY_H
+#ifndef RVIZ_RENDERING__GEOMETRY_HPP_
+#define RVIZ_RENDERING__GEOMETRY_HPP_
 
 namespace Ogre
 {
 class Plane;
-class Vector3;
 class Vector2;
-}
+class Vector3;
+class Viewport;
+}  // namespace Ogre
 
-namespace rviz
+namespace rviz_rendering
 {
 
-/** @brief Given a viewport and an x,y position in window-pixel coordinates,
- *  find the point on a plane directly behind it, if any.
- * @return true if the intersection exists, false if it does not. */
-bool getPointOnPlaneFromWindowXY( Ogre::Viewport* viewport,
-                                  Ogre::Plane& plane,
-                                  int window_x, int window_y,
-                                  Ogre::Vector3& intersection_out );
+/// Find the point on a plane directly behind a given (x, y) position in window-pixel coordinates.
+/**
+ * @return true if the intersection exists, false if it does not.
+ */
+bool
+getPointOnPlaneFromWindowXY(
+  Ogre::Viewport * viewport,
+  Ogre::Plane & plane,
+  int window_x, int window_y,
+  Ogre::Vector3 & intersection_out);
 
+/// Return the input angle mapped back to the range 0 to 2*PI.
+float
+mapAngleTo0_2Pi(float angle);
 
-/** @brief Return the input angle mapped back to the range 0 to 2*PI. */
-float mapAngleTo0_2Pi( float angle );
-
-/** @brief Given a viewport and a 3D position in world coordinates,
- *  project that point into the view plane.
+/// Project a point into the view plane based on a given 3D position and a Viewport.
+/**
  * @return The 2D floating-point pixel position of the projection. */
-Ogre::Vector2 project3DPointToViewportXY(const Ogre::Viewport* view, const Ogre::Vector3& pos);
+Ogre::Vector2
+project3DPointToViewportXY(const Ogre::Viewport * view, const Ogre::Vector3 & pos);
 
-} // end namespace rviz
+}  // namespace rviz_rendering
 
-#endif
+#endif  // RVIZ_RENDERING__GEOMETRY_HPP_

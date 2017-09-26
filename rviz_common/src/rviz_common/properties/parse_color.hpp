@@ -34,7 +34,9 @@
 
 #include <OgreColourValue.h>
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 QColor parseColor( const QString& color_string );
@@ -42,6 +44,7 @@ QString printColor( const QColor& color );
 QColor ogreToQt( const Ogre::ColourValue& ogre_color );
 Ogre::ColourValue qtToOgre( const QColor& qt_color );
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
 #endif // PARSE_COLOR_H

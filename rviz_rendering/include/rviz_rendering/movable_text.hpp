@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,6 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+// TODO(wjwwood): revist style of this file.
+
 // Adapted from: http://www.ogre3d.org/wiki/index.php/MovableText
 //          now: http://www.ogre3d.org/tikiwiki/tiki-index.php?page=MovableText
 // Original authors:
@@ -39,29 +42,38 @@
  * @update  2006 by barraq see nospam@barraquand.com
  */
 
-#ifndef OGRE_TOOLS_MOVABLE_TEXT_H
-#define OGRE_TOOLS_MOVABLE_TEXT_H
+#ifndef RVIZ_RENDERING__MOVABLE_TEXT_HPP_
+#define RVIZ_RENDERING__MOVABLE_TEXT_HPP_
+
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
 
 #include <OgreMovableObject.h>
-#include <OgreRenderable.h>
-#include <OgreVector3.h>
 #include <OgreQuaternion.h>
+#include <OgreRenderable.h>
 #include <OgreSharedPtr.h>
+#include <OgreVector3.h>
 
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
 
 namespace Ogre
 {
-class RenderQueue;
 class Camera;
 class Font;
-}
+class RenderQueue;
+}  // namespace Ogre
 
-namespace rviz
+namespace rviz_rendering
 {
 
 class MovableText : public Ogre::MovableObject, public Ogre::Renderable
 {
   /******************************** MovableText data ****************************/
+
 public:
   enum HorizontalAlignment
   {
@@ -99,48 +111,50 @@ protected:
   Ogre::Vector3 mGlobalTranslation;
   Ogre::Vector3 mLocalTranslation;
 
-  Ogre::Camera *mpCam;
-  Ogre::RenderWindow *mpWin;
-  Ogre::Font *mpFont;
+  Ogre::Camera * mpCam;
+  Ogre::RenderWindow * mpWin;
+  Ogre::Font * mpFont;
   Ogre::MaterialPtr mpMaterial;
   Ogre::MaterialPtr mpBackgroundMaterial;
 
   /******************************** public methods ******************************/
+
 public:
   MovableText(
-    const Ogre::String &caption,
-    const Ogre::String &fontName = "Liberation Sans",
+    const Ogre::String & caption,
+    const Ogre::String & fontName = "Liberation Sans",
     Ogre::Real charHeight = 1.0,
-    const Ogre::ColourValue &color = Ogre::ColourValue::White);
+    const Ogre::ColourValue & color = Ogre::ColourValue::White);
   virtual ~MovableText();
 
 #if (OGRE_VERSION_MAJOR >= 1 && OGRE_VERSION_MINOR >= 6)
-  virtual void visitRenderables(Ogre::Renderable::Visitor* visitor, bool debugRenderables = false);
+  virtual void visitRenderables(Ogre::Renderable::Visitor * visitor, bool debugRenderables = false);
 #endif
 
   // Set settings
-  void setFontName(const Ogre::String &fontName);
-  void setCaption(const Ogre::String &caption);
-  void setColor(const Ogre::ColourValue &color);
+  void setFontName(const Ogre::String & fontName);
+  void setCaption(const Ogre::String & caption);
+  void setColor(const Ogre::ColourValue & color);
   void setCharacterHeight(Ogre::Real height);
   void setLineSpacing(Ogre::Real height);
   void setSpaceWidth(Ogre::Real width);
-  void setTextAlignment(const HorizontalAlignment& horizontalAlignment,
-      const VerticalAlignment& verticalAlignment);
+  void setTextAlignment(
+    const HorizontalAlignment & horizontalAlignment,
+    const VerticalAlignment & verticalAlignment);
   void setGlobalTranslation(Ogre::Vector3 trans);
   void setLocalTranslation(Ogre::Vector3 trans);
   void showOnTop(bool show = true);
 
   // Get settings
-  const Ogre::String &getFontName() const
+  const Ogre::String & getFontName() const
   {
     return mFontName;
   }
-  const Ogre::String &getCaption() const
+  const Ogre::String & getCaption() const
   {
     return mCaption;
   }
-  const Ogre::ColourValue &getColor() const
+  const Ogre::ColourValue & getColor() const
   {
     return mColor;
   }
@@ -170,64 +184,58 @@ public:
     return mAABB;
   }
 
-  const Ogre::MaterialPtr &getMaterial(void) const
+  const Ogre::MaterialPtr & getMaterial(void) const
   {
-    assert(!mpMaterial.isNull());
+    assert(mpMaterial);
     return mpMaterial;
   }
-  ;
 
 
   /******************************** protected methods and overload **************/
-protected:
 
+protected:
   // from MovableText, create the object
   void _setupGeometry();
   void _updateColors();
 
   // from Ogre::MovableObject
-  void getWorldTransforms(Ogre::Matrix4 *xform) const;
+  void getWorldTransforms(Ogre::Matrix4 * xform) const;
   Ogre::Real getBoundingRadius(void) const
   {
     return mRadius;
   }
-  ;
-  Ogre::Real getSquaredViewDepth(const Ogre::Camera *cam) const
+  Ogre::Real getSquaredViewDepth(const Ogre::Camera * cam) const
   {
+    (void) cam;
     return 0;
   }
-  ;
-  const Ogre::Quaternion &getWorldOrientation(void) const;
-  const Ogre::Vector3 &getWorldPosition(void) const;
-  const Ogre::AxisAlignedBox &getBoundingBox(void) const
+  const Ogre::Quaternion & getWorldOrientation(void) const;
+  const Ogre::Vector3 & getWorldPosition(void) const;
+  const Ogre::AxisAlignedBox & getBoundingBox(void) const
   {
     return mAABB;
   }
-  ;
-  const Ogre::String &getName(void) const
+  const Ogre::String & getName(void) const
   {
     return mName;
   }
-  ;
-  const Ogre::String &getMovableType(void) const
+  const Ogre::String & getMovableType(void) const
   {
     static Ogre::String movType = "MovableText";
     return movType;
   }
-  ;
 
-  void _notifyCurrentCamera(Ogre::Camera *cam);
-  void _updateRenderQueue(Ogre::RenderQueue* queue);
+  void _notifyCurrentCamera(Ogre::Camera * cam);
+  void _updateRenderQueue(Ogre::RenderQueue * queue);
 
   // from renderable
-  void getRenderOperation(Ogre::RenderOperation &op);
-  const Ogre::LightList &getLights(void) const
+  void getRenderOperation(Ogre::RenderOperation & op);
+  const Ogre::LightList & getLights(void) const
   {
     return mLList;
   }
-  ;
 };
 
-}
+}  // namespace rviz_rendering
 
-#endif
+#endif  // RVIZ_RENDERING__MOVABLE_TEXT_HPP_

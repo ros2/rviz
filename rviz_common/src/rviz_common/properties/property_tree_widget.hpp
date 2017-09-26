@@ -31,10 +31,12 @@
 
 #include <QTreeView>
 
-#include "rviz/config.h"
-#include "rviz/properties/property_tree_model.h"
+#include "./property_tree_model.hpp"
+#include "rviz_common/config.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 class Property;
@@ -112,6 +114,7 @@ private:
   SplitterHandle* splitter_handle_;
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
 #endif // PROPERTY_TREE_WIDGET_H

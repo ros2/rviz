@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,21 +28,25 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <QWidget>
+#include "./scaled_image_widget.hpp"
+
 #include <QPainter>
+#include <QWidget>
 
-#include "scaled_image_widget.h"
-
-namespace rviz
+namespace rviz_common
 {
 
-ScaledImageWidget::ScaledImageWidget( float scale, QWidget* parent )
-  : QWidget( parent )
-  , scale_( scale )
+ScaledImageWidget::ScaledImageWidget(float scale, QWidget * parent)
+: QWidget(parent),
+  scale_(scale)
 {
 }
 
-void ScaledImageWidget::setImage( QPixmap image )
+ScaledImageWidget::~ScaledImageWidget()
+{
+}
+
+void ScaledImageWidget::setImage(QPixmap image)
 {
   image_ = image;
   update();
@@ -52,20 +57,20 @@ QSize ScaledImageWidget::sizeHint() const
   return image_.size() * scale_;
 }
 
-void ScaledImageWidget::paintEvent( QPaintEvent* event )
+void ScaledImageWidget::paintEvent(QPaintEvent * event)
 {
-  if( !image_.isNull() )
-  {
+  Q_UNUSED(event);
+  if (!image_.isNull()) {
     QSize dest_size = image_.size();
-    dest_size.scale( width(), height(), Qt::KeepAspectRatio );
-    QRect dest_rect( width() / 2 - dest_size.width() / 2,
-                     height() / 2 - dest_size.height() / 2,
-                     dest_size.width(),
-                     dest_size.height() );
+    dest_size.scale(width(), height(), Qt::KeepAspectRatio);
+    QRect dest_rect(width() / 2 - dest_size.width() / 2,
+      height() / 2 - dest_size.height() / 2,
+      dest_size.width(),
+      dest_size.height());
 
-    QPainter painter( this );
-    painter.drawPixmap( dest_rect, image_ );
+    QPainter painter(this);
+    painter.drawPixmap(dest_rect, image_);
   }
 }
 
-} // end namespace rviz
+}  // namespace rviz_common

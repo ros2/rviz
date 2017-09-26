@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,35 +27,37 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef DISPLAY_FACTORY_H
-#define DISPLAY_FACTORY_H
 
-#include "rviz/display.h"
-#include "rviz/pluginlib_factory.h"
+// TODO(wjwwood): revist this file when pluginlib solution found
 
-#include <QIcon>
-#include <QSet>
-#include <QString>
-#include <QMap>
+#ifndef SRC__RVIZ_COMMON__DISPLAY_FACTORY_HPP_
+#define SRC__RVIZ_COMMON__DISPLAY_FACTORY_HPP_
 
-namespace rviz
+#include "./display.hpp"
+#include "./pluginlib_factory.hpp"
+
+#include <QMap>  // NOLINT: cpplint is unable to handle the include order here
+#include <QSet>  // NOLINT: cpplint is unable to handle the include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
+namespace rviz_common
 {
 
-class DisplayFactory: public PluginlibFactory<Display>
+class DisplayFactory : public PluginlibFactory<Display>
 {
 public:
   DisplayFactory();
 
   /** @brief Get all supported message types for the given class id. */
-  virtual QSet<QString> getMessageTypes( const QString& class_id );
+  virtual QSet<QString> getMessageTypes(const QString & class_id);
 
 protected:
   /** @brief Overridden from PluginlibFactory<Display> to set the icon of the Display. */
-  virtual Display* makeRaw( const QString& class_id, QString* error_return = NULL );
+  virtual Display * makeRaw(const QString & class_id, QString * error_return = NULL);
 
-  QMap< QString, QSet<QString> > message_type_cache_;
+  QMap<QString, QSet<QString>> message_type_cache_;
 };
 
-} // end namespace rviz
+}  // namespace rviz_common
 
-#endif // DISPLAY_FACTORY_H
+#endif  // SRC__RVIZ_COMMON__DISPLAY_FACTORY_HPP_

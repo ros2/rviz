@@ -30,6 +30,8 @@
 #ifndef RVIZ_RENDERING__APPLY_VISIBILITY_BITS_HPP_
 #define RVIZ_RENDERING__APPLY_VISIBILITY_BITS_HPP_
 
+#include <cstdint>
+
 namespace Ogre
 {
 class SceneNode;

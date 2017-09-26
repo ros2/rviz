@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,270 +28,273 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdio.h>
+#include "./view_manager.hpp"
 
+#include <algorithm>
+#include <cstdio>
 #include <sstream>
 
-#include "rviz/display_context.h"
-#include "rviz/failed_view_controller.h"
-#include "rviz/properties/enum_property.h"
-#include "rviz/properties/property_tree_model.h"
-#include "rviz/render_panel.h"
-#include "rviz/view_controller.h"
+#include "./properties/property_tree_model.hpp"
+#include "./render_panel.hpp"
+#include "rviz_common/logging.hpp"
 
-#include "rviz/view_manager.h"
+#include "./temp/default_plugins/view_controllers/orbit_view_controller.h"
 
-namespace rviz
+namespace rviz_common
 {
 
-ViewManager::ViewManager( DisplayContext* context )
-  : context_( context )
-  , root_property_( new ViewControllerContainer )
-  , property_model_( new PropertyTreeModel( root_property_ ))
-  , factory_( new PluginlibFactory<ViewController>( "rviz", "rviz::ViewController" ))
-  , current_( NULL )
-  , render_panel_( NULL )
+using rviz_common::properties::PropertyTreeModel;
+
+ViewManager::ViewManager(DisplayContext * context)
+: context_(context),
+  root_property_(new ViewControllerContainer),
+  property_model_(new PropertyTreeModel(root_property_)),
+  // factory_(new PluginlibFactory<ViewController>("rviz", "rviz::ViewController")),
+  current_(NULL),
+  render_panel_(NULL)
 {
-  property_model_->setDragDropClass( "view-controller" );
-  connect( property_model_, SIGNAL( configChanged() ), this, SIGNAL( configChanged() ));
+  property_model_->setDragDropClass("view-controller");
+  connect(property_model_, SIGNAL(configChanged()), this, SIGNAL(configChanged()));
 }
 
 ViewManager::~ViewManager()
 {
   delete property_model_;
-  delete factory_;
+  // delete factory_;
 }
 
 void ViewManager::initialize()
 {
-  setCurrent( create( "rviz/Orbit" ), false );
+  setCurrent(create("rviz/Orbit"), false);
 }
 
-void ViewManager::update( float wall_dt, float ros_dt )
+void ViewManager::update(float wall_dt, float ros_dt)
 {
-  if( getCurrent() )
-  {
-    getCurrent()->update( wall_dt, ros_dt );
+  if (getCurrent()) {
+    getCurrent()->update(wall_dt, ros_dt);
   }
 }
 
-ViewController* ViewManager::create( const QString& class_id )
+ViewController * ViewManager::create(const QString & class_id)
 {
   QString error;
-  ViewController* view = factory_->make( class_id, &error );
-  if( !view )
-  {
-    view = new FailedViewController( class_id, error );
+  // TODO(wjwwood): replace this with manual loading of a particular view controller
+  //                at least until actual plugin loading is ported
+#if 0
+  ViewController * view = factory_->make(class_id, &error);
+  if (!view) {
+    view = new FailedViewController(class_id, error);
   }
-  view->initialize( context_ );
+  view->initialize(context_);
 
   return view;
+#endif
+  ViewController * view_controller = nullptr;
+  if (class_id == "rviz/Orbit") {
+    view_controller = new rviz_default_plugins::OrbitViewController();
+  }
+  if (view_controller) {
+    view_controller->initialize(context_);
+    return view_controller;
+  }
+  RVIZ_COMMON_LOG_WARNING_STREAM(
+    "would have loaded a view controller called '" << class_id.toStdString() << "'");
+  return nullptr;
 }
 
-ViewController* ViewManager::getCurrent() const
+ViewController * ViewManager::getCurrent() const
 {
   return current_;
 }
 
-void ViewManager::setCurrentFrom( ViewController* source_view )
+void ViewManager::setCurrentFrom(ViewController * source_view)
 {
-  if( source_view == NULL )
-  {
+  if (source_view == NULL) {
     return;
   }
 
-  ViewController* previous = getCurrent();
-  if( source_view != previous )
-  {
-    ViewController* new_current = copy( source_view );
+  ViewController * previous = getCurrent();
+  if (source_view != previous) {
+    ViewController * new_current = copy(source_view);
 
-    setCurrent( new_current, false );
+    setCurrent(new_current, false);
     Q_EMIT configChanged();
   }
 }
 
-void ViewManager::onCurrentDestroyed( QObject* obj )
+void ViewManager::onCurrentDestroyed(QObject * obj)
 {
-  if( obj == current_ )
-  {
+  if (obj == current_) {
     current_ = NULL;
   }
 }
 
-void ViewManager::setCurrent( ViewController* new_current, bool mimic_view )
+void ViewManager::setCurrent(ViewController * new_current, bool mimic_view)
 {
-  ViewController* previous = getCurrent();
-  if( previous )
-  {
-    if( mimic_view )
-    {
-      new_current->mimic( previous );
+  ViewController * previous = getCurrent();
+  if (previous) {
+    if (mimic_view) {
+      new_current->mimic(previous);
+    } else {
+      new_current->transitionFrom(previous);
     }
-    else
-    {
-      new_current->transitionFrom( previous );
-    }
-    disconnect( previous, SIGNAL( destroyed( QObject* )), this, SLOT( onCurrentDestroyed( QObject* )));
+    disconnect(previous, SIGNAL(destroyed(QObject *)), this, SLOT(onCurrentDestroyed(QObject *)));
   }
-  new_current->setName( "Current View" );
-  connect( new_current, SIGNAL( destroyed( QObject* )), this, SLOT( onCurrentDestroyed( QObject* )));
+  new_current->setName("Current View");
+  connect(new_current, SIGNAL(destroyed(QObject *)), this, SLOT(onCurrentDestroyed(QObject *)));
   current_ = new_current;
-  root_property_->addChildToFront( new_current );
+  root_property_->addChildToFront(new_current);
   delete previous;
 
-  if( render_panel_ )
-  {
+  if (render_panel_) {
     // This setViewController() can indirectly call
     // ViewManager::update(), so make sure getCurrent() will return the
     // new one by this point.
-    render_panel_->setViewController( new_current );
+    render_panel_->setViewController(new_current);
   }
   Q_EMIT currentChanged();
 }
 
-void ViewManager::setCurrentViewControllerType( const QString& new_class_id )
+void ViewManager::setCurrentViewControllerType(const QString & new_class_id)
 {
-  setCurrent( create( new_class_id ), true );
+  setCurrent(create(new_class_id), true);
 }
 
 void ViewManager::copyCurrentToList()
 {
-  ViewController* current = getCurrent();
-  if( current )
-  {
-    ViewController* new_copy = copy( current );
-    new_copy->setName( factory_->getClassName( new_copy->getClassId() ));
-    root_property_->addChild( new_copy );
+  ViewController * current = getCurrent();
+  if (current) {
+    ViewController * new_copy = copy(current);
+    // TODO(wjwwood): reenable this when possible
+#if 0
+    new_copy->setName(factory_->getClassName(new_copy->getClassId()));
+#endif
+    root_property_->addChild(new_copy);
   }
 }
 
-ViewController* ViewManager::getViewAt( int index ) const
+ViewController * ViewManager::getViewAt(int index) const
 {
-  if( index < 0 )
-  {
+  if (index < 0) {
     index = 0;
   }
-  return qobject_cast<ViewController*>( root_property_->childAt( index + 1 ));
+  return qobject_cast<ViewController *>(root_property_->childAt(index + 1));
 }
 
 int ViewManager::getNumViews() const
 {
   int count = root_property_->numChildren();
-  if( count <= 0 )
-  {
+  if (count <= 0) {
     return 0;
-  }
-  else
-  {
-    return count-1;
+  } else {
+    return count - 1;
   }
 }
 
-void ViewManager::add( ViewController* view, int index )
+void ViewManager::add(ViewController * view, int index)
 {
-  if( index < 0 )
-  {
+  if (index < 0) {
     index = root_property_->numChildren();
-  }
-  else
-  {
+  } else {
     index++;
   }
-  property_model_->getRoot()->addChild( view, index );
+  property_model_->getRoot()->addChild(view, index);
 }
 
-ViewController* ViewManager::take( ViewController* view )
+ViewController * ViewManager::take(ViewController * view)
 {
-  for( int i = 0; i < getNumViews(); i++ )
-  {
-    if( getViewAt( i ) == view )
-    {
-      return qobject_cast<ViewController*>( root_property_->takeChildAt( i + 1 ));
+  for (int i = 0; i < getNumViews(); i++) {
+    if (getViewAt(i) == view) {
+      return qobject_cast<ViewController *>(root_property_->takeChildAt(i + 1));
     }
   }
   return NULL;
 }
 
-ViewController* ViewManager::takeAt( int index )
+ViewController * ViewManager::takeAt(int index)
 {
-  if( index < 0 )
-  {
+  if (index < 0) {
     return NULL;
   }
-  return qobject_cast<ViewController*>( root_property_->takeChildAt( index + 1 ));
+  return qobject_cast<ViewController *>(root_property_->takeChildAt(index + 1));
 }
 
-void ViewManager::load( const Config& config )
+PropertyTreeModel * ViewManager::getPropertyModel()
 {
-  Config current_config = config.mapGetChild( "Current" );
+  return property_model_;
+}
+
+void ViewManager::load(const Config & config)
+{
+  Config current_config = config.mapGetChild("Current");
   QString class_id;
-  if( current_config.mapGetString( "Class", &class_id ))
-  {
-    ViewController* new_current = create( class_id );
-    new_current->load( current_config );
-    setCurrent( new_current, false );
+  if (current_config.mapGetString("Class", &class_id)) {
+    ViewController * new_current = create(class_id);
+    new_current->load(current_config);
+    setCurrent(new_current, false);
   }
 
-  Config saved_views_config = config.mapGetChild( "Saved" );
-  root_property_->removeChildren( 1 );
+  Config saved_views_config = config.mapGetChild("Saved");
+  root_property_->removeChildren(1);
   int num_saved = saved_views_config.listLength();
-  for( int i = 0; i < num_saved; i++ )
-  {
-    Config view_config = saved_views_config.listChildAt( i );
+  for (int i = 0; i < num_saved; i++) {
+    Config view_config = saved_views_config.listChildAt(i);
 
-    if( view_config.mapGetString( "Class", &class_id ))
-    {
-      ViewController* view = create( class_id );
-      view->load( view_config );
-      add( view );
+    if (view_config.mapGetString("Class", &class_id)) {
+      ViewController * view = create(class_id);
+      view->load(view_config);
+      add(view);
     }
   }
 }
 
-void ViewManager::save( Config config ) const
+void ViewManager::save(Config config) const
 {
-  getCurrent()->save( config.mapMakeChild( "Current" ));
+  getCurrent()->save(config.mapMakeChild("Current"));
 
-  Config saved_views_config = config.mapMakeChild( "Saved" );
-  for( int i = 0; i < getNumViews(); i++ )
-  {
-    getViewAt( i )->save( saved_views_config.listAppendNew() );
+  Config saved_views_config = config.mapMakeChild("Saved");
+  for (int i = 0; i < getNumViews(); i++) {
+    getViewAt(i)->save(saved_views_config.listAppendNew());
   }
 }
 
-ViewController* ViewManager::copy( ViewController* source )
+ViewController * ViewManager::copy(ViewController * source)
 {
   Config config;
-  source->save( config );
+  source->save(config);
 
-  ViewController* copy_of_source = create( source->getClassId() );
-  copy_of_source->load( config );
+  ViewController * copy_of_source = create(source->getClassId());
+  copy_of_source->load(config);
 
   return copy_of_source;
 }
 
-void ViewManager::setRenderPanel( RenderPanel* render_panel )
+void ViewManager::setRenderPanel(RenderPanel * render_panel)
 {
   render_panel_ = render_panel;
 }
 
-Qt::ItemFlags ViewControllerContainer::getViewFlags( int column ) const
+RenderPanel * ViewManager::getRenderPanel() const
 {
-  return Property::getViewFlags( column ) | Qt::ItemIsDropEnabled;
+  return render_panel_;
 }
 
-void ViewControllerContainer::addChild( Property* child, int index )
+Qt::ItemFlags ViewControllerContainer::getViewFlags(int column) const
 {
-  if( index == 0 )
-  {
+  return Property::getViewFlags(column) | Qt::ItemIsDropEnabled;
+}
+
+void ViewControllerContainer::addChild(Property * child, int index)
+{
+  if (index == 0) {
     index = 1;
   }
-  Property::addChild( child, index );
+  Property::addChild(child, index);
 }
 
-void ViewControllerContainer::addChildToFront( Property* child )
+void ViewControllerContainer::addChildToFront(Property * child)
 {
-  Property::addChild( child, 0 );
+  Property::addChild(child, 0);
 }
 
-} // end namespace rviz
+}  // namespace rviz_common

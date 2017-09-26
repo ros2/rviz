@@ -33,6 +33,11 @@
 #include <cstdint>
 #include <string>
 
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
+
 #include <OgreEntity.h>
 #include <OgreMaterialManager.h>
 #include <OgreQuaternion.h>
@@ -42,7 +47,14 @@
 #include <OgreTextureManager.h>
 #include <OgreVector3.h>
 
-#include "ros/assert.h"
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
+
+#include "rviz_rendering/logging.hpp"
+
+// TODO(wjwwood): replace this with info from buildsystem
+#define ROS_PACKAGE_NAME "rviz_rendering"
 
 namespace rviz_rendering
 {
@@ -75,7 +87,7 @@ Shape::createEntity(
       break;
 
     default:
-      ROS_BREAK();
+      throw std::runtime_error("unexpected mesh entity type");
   }
 
   return scene_manager->createEntity(name, mesh_name);
@@ -128,7 +140,7 @@ Shape::~Shape()
   }
 
   material_->unload();
-  Ogre::MaterialManager::getSingleton().remove(material_->getName());
+  Ogre::MaterialManager::getSingleton().remove(material_->getName(), ROS_PACKAGE_NAME);
 }
 
 void Shape::setColor(const Ogre::ColourValue & c)
@@ -185,7 +197,7 @@ void Shape::setUserData(const Ogre::Any & data)
   if (entity_) {
     entity_->getUserObjectBindings().setUserAny(data);
   } else {
-    ROS_ERROR(
+    RVIZ_RENDERING_LOG_ERROR(
       "Shape not yet fully constructed. "
       "Cannot set user data. Did you add triangles to the mesh already?");
   }

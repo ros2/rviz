@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,79 +27,100 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef ENUM_PROPERTY_H
-#define ENUM_PROPERTY_H
+
+#ifndef SRC__RVIZ_COMMON__PROPERTIES__ENUM_PROPERTY_HPP_
+#define SRC__RVIZ_COMMON__PROPERTIES__ENUM_PROPERTY_HPP_
 
 #include <QStringList>
 
-#include "rviz/properties/string_property.h"
+#include "./string_property.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
-/** @brief Enum property.
- *
+/// Enum property.
+/**
  * An enum property works like a string property all the way through
  * the system property system, except when you get a changed() signal
  * you can call getOptionInt() to get the integer value of the current
- * option.  The integer returned will be that passed to addOption()
- * for with the string that is currently selected.
+ * option.
+ * The integer returned will be that passed to addOption() for with the
+ * string that is currently selected.
  */
-class EnumProperty: public StringProperty
+class EnumProperty : public StringProperty
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  EnumProperty( const QString& name = QString(),
-                const QString& default_value = QString(),
-                const QString& description = QString(),
-                Property* parent = 0,
-                const char *changed_slot = 0,
-                QObject* receiver = 0 );
+  explicit
+  EnumProperty(
+    const QString & name = QString(),
+    const QString & default_value = QString(),
+    const QString & description = QString(),
+    Property * parent = 0,
+    const char * changed_slot = 0,
+    QObject * receiver = 0);
 
-  /** @brief Clear the list of options.
-   *
-   * Does not change the current value of the property. */
-  virtual void clearOptions();
-  virtual void addOption( const QString& option, int value = 0 );
-  void addOptionStd( const std::string& option, int value = 0 ) { addOption( QString::fromStdString( option ), value ); }
+  /// Clear the list of options.
+  /**
+   * Does not change the current value of the property.
+   */
+  virtual
+  void
+  clearOptions();
 
-  /** @brief Return the int value of the currently-chosen option, or 0
-   * if the current option string does not have an int value. */
+  virtual
+  void
+  addOption(const QString & option, int value = 0);
+
+  void
+  addOptionStd(const std::string & option, int value = 0);
+
+  /// Return the int value of the currently-chosen option, or 0 if the current value is not an int.
   virtual int getOptionInt();
 
-  virtual QWidget* createEditor( QWidget* parent,
-                                 const QStyleOptionViewItem& option );
+  QWidget * createEditor(QWidget * parent, const QStyleOptionViewItem & option) override;
 
 public Q_SLOTS:
-  /** @brief Set the value of this property to the given string.  Does
-   * not force the value to be one of the list of options. */
-  virtual void setString( const QString& str );
+  /// Set the value of this property to the given string.
+  /**
+   * Does not force the value to be one of the list of options.
+   */
+  virtual void setString(const QString & str);
 
-  /** @brief Set the value of this property to the given std::string.  Does
-   * not force the value to be one of the list of options. */
-  void setStringStd( const std::string& str ) { setString( QString::fromStdString( str )); }
+  /// Set the value of this property to the given std::string.
+  /**
+   * Does not force the value to be one of the list of options.
+   */
+  void setStringStd(const std::string & str);
 
-  /** @brief Sort the option strings.  Does not change string/int associations. */
-  void sortOptions() { strings_.sort(); }
+  /// Sort the option strings.
+  /**
+   * Does not change string/int associations.
+   */
+  void sortOptions();
 
 Q_SIGNALS:
-  /** @brief requestOptions() is emitted each time createEditor() is
-   * called.
-   *
+  /// requestOptions() is emitted each time createEditor() is called.
+  /**
    * A connection to this signal should never be made with a queued
    * connection, because then the "emit" would return before the
    * changes to the options in the EnumProperty were made.
    *
    * A connected slot should make calls to clearOptions() and/or
    * addOption() as needed.  The option list in the EnumProperty will
-   * not be cleared before the signal is emitted. */
-  void requestOptions( EnumProperty* property_in_need_of_options );
+   * not be cleared before the signal is emitted.
+   */
+  void requestOptions(EnumProperty * property_in_need_of_options);
 
 private:
   QStringList strings_;
   QHash<QString, int> ints_;
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
-#endif // ENUM_PROPERTY_H
+#endif  // SRC__RVIZ_COMMON__PROPERTIES__ENUM_PROPERTY_HPP_

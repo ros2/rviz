@@ -21,138 +21,256 @@ find_package(rviz_rendering REQUIRED)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
-include_directories(include)
+find_package(geometry_msgs REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
+find_package(tf2_ros REQUIRED)
+
+find_package(PkgConfig)
+pkg_check_modules(YAMLCPP yaml-cpp>=0.5 REQUIRED)
+# if(YAMLCPP_FOUND)
+#   add_definitions(-DRVIZ_HAVE_YAMLCPP_05)
+# endif(YAMLCPP_FOUND)
+
+find_package(ASSIMP REQUIRED)
+include(FindCURL)
+if(NOT CURL_FOUND)
+  message("CURL not found!  Aborting...")
+  fail()
+endif()
+
+find_package(urdf REQUIRED)
+
+# Copy env_config.hpp so that env_config.cpp can find it
+# TODO(jsquare): Get rid of copy hpp file
+set(ENV_CONFIG_HPP ${CMAKE_CURRENT_BINARY_DIR}/src/rviz_common/env_config.hpp)
+configure_file(src/rviz_common/env_config.hpp ${ENV_CONFIG_HPP} @ONLY)
+
+# TODO(jsquare): Adopt parameters given here
+set(ENV_CONFIG_CPP ${CMAKE_CURRENT_BINARY_DIR}/src/rviz_common/env_config.cpp)
+set(RVIZ_VERSION "Alpha")
+set(ROS_DISTRO "ROS 2.0")
+set(OGRE_PLUGIN_PATH "rviz_ogre_vendor")
+configure_file(src/rviz_common/env_config.cpp.in ${ENV_CONFIG_CPP} @ONLY)
 
 # These need to be added in the add_library() call so AUTOMOC detects them.
-set(${PROJECT_NAME}_headers_to_moc
-  # include/rviz_common/visualizer_app.hpp
+set(rviz_common_headers_to_moc
+  ${ENV_CONFIG_HPP}
   # src/rviz_common/add_display_dialog.hpp
-  # src/rviz_common/display_context.hpp
-  # src/rviz_common/display.hpp
-  # src/rviz_common/displays_panel.hpp
-  # src/rviz_common/failed_panel.hpp
-  # src/rviz_common/frame_manager.hpp
   # src/rviz_common/help_panel.hpp
-  # src/rviz_common/loading_dialog.hpp
-  # src/rviz_common/new_object_dialog.hpp
-  # src/rviz_common/panel_dock_widget.hpp
-  # src/rviz_common/panel.hpp
-  # src/rviz_common/render_panel.hpp
-  # src/rviz_common/scaled_image_widget.hpp
-  # src/rviz_common/screenshot_dialog.hpp
-  # src/rviz_common/selection_panel.hpp
-  # src/rviz_common/splash_screen.hpp
-  # src/rviz_common/time_panel.hpp
-  # src/rviz_common/tool.hpp
-  # src/rviz_common/tool_manager.hpp
-  # src/rviz_common/tool_properties_panel.hpp
-  # src/rviz_common/view_controller.hpp
-  # src/rviz_common/view_manager.hpp
-  # src/rviz_common/views_panel.hpp
-  # src/rviz_common/visualization_frame.hpp
-  # src/rviz_common/visualization_manager.hpp
-  # src/rviz_common/widget_geometry_change_detector.hpp
-  # src/rviz_common/properties/bool_property.hpp
-  # src/rviz_common/properties/color_editor.hpp
-  # src/rviz_common/properties/color_property.hpp
-  # src/rviz_common/properties/combo_box.hpp
-  # src/rviz_common/properties/editable_combo_box.hpp
-  # src/rviz_common/properties/editable_enum_property.hpp
-  # src/rviz_common/properties/enum_property.hpp
-  # src/rviz_common/properties/float_edit.hpp
-  # src/rviz_common/properties/float_property.hpp
-  # src/rviz_common/properties/int_property.hpp
-  # src/rviz_common/properties/line_edit_with_button.hpp
-  # src/rviz_common/properties/property.hpp
-  # src/rviz_common/properties/property_tree_delegate.hpp
-  # src/rviz_common/properties/property_tree_model.hpp
+  src/rviz_common/properties/enum_property.hpp
   # src/rviz_common/properties/property_tree_widget.hpp
-  # src/rviz_common/properties/property_tree_with_help.hpp
   # src/rviz_common/properties/splitter_handle.hpp
-  # src/rviz_common/properties/status_list.hpp
-  # src/rviz_common/properties/status_property.hpp
-  # src/rviz_common/properties/string_property.hpp
-  # src/rviz_common/properties/tf_frame_property.hpp
-  # src/rviz_common/selection/selection_manager.hpp
-)
-set(${PROJECT_NAME}_source_files
-  # src/rviz_common/add_display_dialog.cpp
-  # src/rviz_common/bit_allocator.cpp
-  # src/rviz_common/config.cpp
-  # src/rviz_common/display_factory.cpp
-  # src/rviz_common/display_group.cpp
-  # src/rviz_common/display.cpp
-  # src/rviz_common/displays_panel.cpp
-  # src/rviz_common/failed_display.cpp
-  # src/rviz_common/failed_panel.cpp
-  # src/rviz_common/failed_tool.cpp
-  # src/rviz_common/failed_view_controller.cpp
-  # src/rviz_common/frame_manager.cpp
-  # src/rviz_common/help_panel.cpp
-  # src/rviz_common/load_resource.cpp
-  # src/rviz_common/loading_dialog.cpp
-  # src/rviz_common/new_object_dialog.cpp
-  # src/rviz_common/panel_dock_widget.cpp
-  # src/rviz_common/panel_factory.cpp
-  # src/rviz_common/panel.cpp
-  # src/rviz_common/properties/bool_property.cpp
-  # src/rviz_common/properties/color_editor.cpp
-  # src/rviz_common/properties/color_property.cpp
-  # src/rviz_common/properties/combo_box.cpp
-  # src/rviz_common/properties/editable_combo_box.cpp
-  # src/rviz_common/properties/editable_enum_property.cpp
-  # src/rviz_common/properties/enum_property.cpp
-  # src/rviz_common/properties/float_edit.cpp
-  # src/rviz_common/properties/float_property.cpp
-  # src/rviz_common/properties/int_property.cpp
-  # src/rviz_common/properties/line_edit_with_button.cpp
-  # src/rviz_common/properties/parse_color.cpp
-  # src/rviz_common/properties/property_tree_delegate.cpp
-  # src/rviz_common/properties/property_tree_model.cpp
-  # src/rviz_common/properties/property_tree_widget.cpp
-  # src/rviz_common/properties/property_tree_with_help.cpp
-  # src/rviz_common/properties/property.cpp
-  # src/rviz_common/properties/splitter_handle.cpp
-  # src/rviz_common/properties/status_list.cpp
-  # src/rviz_common/properties/status_property.cpp
-  # src/rviz_common/properties/string_property.cpp
-  # src/rviz_common/properties/tf_frame_property.cpp
-  # src/rviz_common/render_panel.cpp
-  # src/rviz_common/scaled_image_widget.cpp
-  # src/rviz_common/screenshot_dialog.cpp
-  # src/rviz_common/selection_panel.cpp
-  # src/rviz_common/selection/selection_handler.cpp
-  # src/rviz_common/selection/selection_manager.cpp
-  # src/rviz_common/splash_screen.cpp
-  # src/rviz_common/time_panel.cpp
-  # src/rviz_common/tool_manager.cpp
-  # src/rviz_common/tool_properties_panel.cpp
-  # src/rviz_common/tool.cpp
-  # src/rviz_common/view_controller.cpp
-  # src/rviz_common/view_manager.cpp
-  # src/rviz_common/views_panel.cpp
-  # src/rviz_common/visualization_frame.cpp
-  # src/rviz_common/visualization_manager.cpp
-  # src/rviz_common/visualizer_app.cpp
-  # src/rviz_common/widget_geometry_change_detector.cpp
-  # src/rviz_common/yaml_config_reader.cpp
-  # src/rviz_common/yaml_config_writer.cpp
+  # src/rviz_common/selection_panel.hpp
+  include/rviz_common/frame_position_tracking_view_controller.hpp
+  include/rviz_common/properties/quaternion_property.hpp
+  include/rviz_common/visualizer_app.hpp
+  src/rviz_common/display.hpp
+  src/rviz_common/display_context.hpp
+  # src/rviz_common/displays_panel.hpp
+  src/rviz_common/failed_panel.hpp
+  src/rviz_common/frame_manager.hpp
+  src/rviz_common/loading_dialog.hpp
+  src/rviz_common/new_object_dialog.hpp
+  src/rviz_common/panel.hpp
+  src/rviz_common/panel_dock_widget.hpp
+  src/rviz_common/properties/bool_property.hpp
+  src/rviz_common/properties/color_editor.hpp
+  src/rviz_common/properties/color_property.hpp
+  src/rviz_common/properties/combo_box.hpp
+  src/rviz_common/properties/editable_combo_box.hpp
+  src/rviz_common/properties/editable_enum_property.hpp
+  src/rviz_common/properties/float_edit.hpp
+  src/rviz_common/properties/float_property.hpp
+  src/rviz_common/properties/int_property.hpp
+  src/rviz_common/properties/line_edit_with_button.hpp
+  include/rviz_common/properties/property.hpp
+  # src/rviz_common/properties/property_tree_delegate.hpp
+  src/rviz_common/properties/property_tree_model.hpp
+  # src/rviz_common/properties/property_tree_with_help.hpp
+  src/rviz_common/properties/status_list.hpp
+  src/rviz_common/properties/status_property.hpp
+  src/rviz_common/properties/string_property.hpp
+  src/rviz_common/properties/tf_frame_property.hpp
+  include/rviz_common/properties/vector_property.hpp
+  src/rviz_common/render_panel.hpp
+  src/rviz_common/scaled_image_widget.hpp
+  src/rviz_common/screenshot_dialog.hpp
+  src/rviz_common/selection/selection_manager.hpp
+  src/rviz_common/splash_screen.hpp
+  # src/rviz_common/time_panel.hpp
+  src/rviz_common/tool.hpp
+  src/rviz_common/tool_manager.hpp
+  # src/rviz_common/tool_properties_panel.hpp
+  include/rviz_common/view_controller.hpp
+  src/rviz_common/view_manager.hpp
+  # src/rviz_common/views_panel.hpp
+  src/rviz_common/visualization_frame.hpp
+  src/rviz_common/visualization_manager.hpp
+  src/rviz_common/widget_geometry_change_detector.hpp
+  src/rviz_common/window_manager_interface.hpp
 )
 
-add_library(${PROJECT_NAME}
-  ${${PROJECT_NAME}_headers_to_moc}
-  ${${PROJECT_NAME}_source_files}
+# TODO(wjwwood): remove this later
+list(APPEND rviz_common_headers_to_moc
+  src/rviz_common/temp/default_plugins/view_controllers/orbit_view_controller.h)
+list(APPEND rviz_common_headers_to_moc
+  src/rviz_common/temp/default_plugins/tools/move_tool.h)
+list(APPEND rviz_common_headers_to_moc
+  src/rviz_common/temp/default_plugins/displays/grid_display.h)
+list(APPEND rviz_common_headers_to_moc
+  src/rviz_common/temp/default_plugins/displays/tf_display.h)
+list(APPEND rviz_common_headers_to_moc
+  src/rviz_common/temp/default_plugins/displays/robot_model_display.h)
+list(APPEND rviz_common_headers_to_moc
+  src/rviz_common/temp/robot/robot.h)
+list(APPEND rviz_common_headers_to_moc
+  src/rviz_common/temp/robot/robot_link.h)
+list(APPEND rviz_common_headers_to_moc
+  src/rviz_common/temp/robot/robot_joint.h)
+
+set(rviz_common_source_files
+  ${ENV_CONFIG_CPP}
+  # src/rviz_common/add_display_dialog.cpp
+  src/rviz_common/bit_allocator.cpp
+  src/rviz_common/config.cpp
+  # src/rviz_common/display_factory.cpp
+  src/rviz_common/display_group.cpp
+  src/rviz_common/display.cpp
+  # src/rviz_common/displays_panel.cpp
+  src/rviz_common/failed_display.cpp
+  src/rviz_common/failed_panel.cpp
+  # src/rviz_common/failed_tool.cpp
+  # src/rviz_common/failed_view_controller.cpp
+  src/rviz_common/frame_manager.cpp
+  src/rviz_common/frame_position_tracking_view_controller.cpp
+  # src/rviz_common/help_panel.cpp
+  src/rviz_common/load_resource.cpp
+  src/rviz_common/loading_dialog.cpp
+  src/rviz_common/logging.cpp
+  src/rviz_common/new_object_dialog.cpp
+  src/rviz_common/panel_dock_widget.cpp
+  # src/rviz_common/panel_factory.cpp
+  src/rviz_common/panel.cpp
+  src/rviz_common/properties/bool_property.cpp
+  src/rviz_common/properties/color_editor.cpp
+  src/rviz_common/properties/color_property.cpp
+  src/rviz_common/properties/combo_box.cpp
+  src/rviz_common/properties/editable_combo_box.cpp
+  src/rviz_common/properties/editable_enum_property.cpp
+  src/rviz_common/properties/enum_property.cpp
+  src/rviz_common/properties/float_edit.cpp
+  src/rviz_common/properties/float_property.cpp
+  src/rviz_common/properties/int_property.cpp
+  src/rviz_common/properties/line_edit_with_button.cpp
+  src/rviz_common/properties/parse_color.cpp
+  # src/rviz_common/properties/property_tree_delegate.cpp
+  src/rviz_common/properties/property_tree_model.cpp
+  # src/rviz_common/properties/property_tree_widget.cpp
+  # src/rviz_common/properties/property_tree_with_help.cpp
+  src/rviz_common/properties/property.cpp
+  src/rviz_common/properties/quaternion_property.cpp
+  # src/rviz_common/properties/splitter_handle.cpp
+  src/rviz_common/properties/status_list.cpp
+  src/rviz_common/properties/status_property.cpp
+  src/rviz_common/properties/string_property.cpp
+  src/rviz_common/properties/tf_frame_property.cpp
+  src/rviz_common/properties/vector_property.cpp
+  src/rviz_common/render_panel.cpp
+  src/rviz_common/ros_integration/init.cpp
+  src/rviz_common/ros_integration/ok.cpp
+  src/rviz_common/ros_integration/rclcpp_node_storage.cpp
+  src/rviz_common/scaled_image_widget.cpp
+  src/rviz_common/screenshot_dialog.cpp
+  # src/rviz_common/selection_panel.cpp
+  src/rviz_common/selection/selection_handler.cpp
+  src/rviz_common/selection/selection_manager.cpp
+  src/rviz_common/splash_screen.cpp
+  # src/rviz_common/time_panel.cpp
+  src/rviz_common/tool_manager.cpp
+  # src/rviz_common/tool_properties_panel.cpp
+  src/rviz_common/tool.cpp
+  src/rviz_common/uniform_string_stream.cpp
+  src/rviz_common/view_controller.cpp
+  src/rviz_common/view_manager.cpp
+  # src/rviz_common/views_panel.cpp
+  src/rviz_common/viewport_mouse_event.cpp
+  src/rviz_common/visualization_frame.cpp
+  src/rviz_common/visualization_manager.cpp
+  src/rviz_common/visualizer_app.cpp
+  src/rviz_common/widget_geometry_change_detector.cpp
+  src/rviz_common/yaml_config_reader.cpp
+  src/rviz_common/yaml_config_writer.cpp
 )
-target_link_libraries(${PROJECT_NAME}
-  rviz_rendering
+
+# TODO(wjwwood): remove this later
+list(APPEND rviz_common_source_files
+  src/rviz_common/temp/default_plugins/view_controllers/orbit_view_controller.cpp)
+list(APPEND rviz_common_source_files
+  src/rviz_common/temp/default_plugins/tools/move_tool.cpp)
+list(APPEND rviz_common_source_files
+  src/rviz_common/temp/default_plugins/displays/grid_display.cpp)
+list(APPEND rviz_common_source_files
+  src/rviz_common/temp/default_plugins/displays/tf_display.cpp)
+list(APPEND rviz_common_source_files
+  src/rviz_common/temp/default_plugins/displays/robot_model_display.cpp)
+list(APPEND rviz_common_headers_to_moc
+  src/rviz_common/temp/robot/robot.cpp)
+list(APPEND rviz_common_headers_to_moc
+  src/rviz_common/temp/robot/robot_link.cpp)
+list(APPEND rviz_common_headers_to_moc
+  src/rviz_common/temp/robot/robot_joint.cpp)
+list(APPEND rviz_common_headers_to_moc
+  src/rviz_common/temp/robot/tf_link_updater.cpp)
+list(APPEND rviz_common_headers_to_moc
+  src/rviz_common/temp/resource_retriever/retriever.cpp)
+list(APPEND rviz_common_headers_to_moc
+  src/rviz_common/temp/mesh_loader.cpp)
+list(APPEND rviz_common_headers_to_moc
+  src/rviz_common/temp/stl_loader.cpp)
+
+add_library(rviz_common
+  ${rviz_common_headers_to_moc}
+  ${rviz_common_source_files}
+)
+target_include_directories(rviz_common
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+    ${YAMLCPP_INCLUDE_DIRS}
+    ${CURL_INCLUDE_DIRS}
+    ${ASSIMP_INCLUDE_DIRS}
+    ${urdf_INCLUDE_DIRS}
+)
+target_link_libraries(rviz_common
+  rviz_rendering::rviz_rendering
   Qt5::Widgets
+  ${YAMLCPP_LIBRARIES}
+  ${CURL_LIBRARIES}
+  ${ASSIMP_LIBRARIES}
+  tinyxml
+  ${urdf_LIBRARIES}
+)
+ament_target_dependencies(rviz_common geometry_msgs rclcpp tf2 tf2_geometry_msgs tf2_ros)
+
+ament_export_interfaces(rviz_common)
+ament_export_dependencies(rviz_rendering)
+ament_export_dependencies(geometry_msgs rclcpp tf2 tf2_geometry_msgs tf2_ros)
+
+install(
+  TARGETS rviz_common
+  EXPORT rviz_common
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+  INCLUDES DESTINATION include
 )
 
 install(
-  TARGETS ${PROJECT_NAME}
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin)
+  DIRECTORY include/
+  DESTINATION include
+)
 
 if(BUILD_TESTING)
     # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back

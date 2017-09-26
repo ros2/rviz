@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,57 +27,71 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef FLOAT_PROPERTY_H
-#define FLOAT_PROPERTY_H
 
-#include "rviz/properties/property.h"
+#ifndef SRC__RVIZ_COMMON__PROPERTIES__FLOAT_PROPERTY_HPP_
+#define SRC__RVIZ_COMMON__PROPERTIES__FLOAT_PROPERTY_HPP_
 
-namespace rviz
+#include "rviz_common/properties/property.hpp"
+
+namespace rviz_common
+{
+namespace properties
 {
 
-/** @brief Property specialized to enforce floating point max/min. */
-class FloatProperty: public Property
+/// Property specialized to enforce floating point max/min.
+class FloatProperty : public Property
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  FloatProperty( const QString& name = QString(),
-                 float default_value = 0,
-                 const QString& description = QString(),
-                 Property* parent = 0,
-                 const char *changed_slot = 0,
-                 QObject* receiver = 0 );
+  explicit FloatProperty(
+    const QString & name = QString(),
+    float default_value = 0,
+    const QString & description = QString(),
+    Property * parent = 0,
+    const char * changed_slot = 0,
+    QObject * receiver = 0);
 
-  /** @brief Set the new value for this property.  Returns true if the
-   * new value is different from the old value, false if same.
-   *
+  /// Set the new value for this property; return true if different, else false.
+  /**
    * If the new value is different from the old value, this emits
    * aboutToChange() before changing the value and changed() after.
    *
-   * Overridden from Property::setValue() to enforce minimum and maximum. */
-  virtual bool setValue( const QVariant& new_value );
-  
-  virtual float getFloat() const { return getValue().toFloat(); }
+   * Overridden from Property::setValue() to enforce minimum and maximum.
+   */
+  bool setValue(const QVariant & new_value) override;
 
-  void setMin( float min );
-  float getMin() { return min_; }
-  void setMax( float max );
-  float getMax() { return max_; }
+  /// Get the value of the Property as a float.
+  float getFloat() const;
+
+  /// Set the enforced minimum value.
+  void setMin(float min);
+
+  /// Get the currently enforced minimum.
+  float getMin();
+
+  /// Set the enforced maximum value.
+  void setMax(float max);
+
+  /// Get the currently enforced maximum.
+  float getMax();
 
 public Q_SLOTS:
-  /** @brief Float-typed "SLOT" version of setValue(). */
-  bool setFloat( float new_value ) { return setValue( new_value ); }
+  /// Float-typed "SLOT" version of setValue().
+  bool setFloat(float new_value);
 
-  /** @brief Add the given @a delta to the property value. */
-  bool add( float delta ) { return setValue( delta + getValue().toFloat() ); }
+  /// Add the given @a delta to the property value.
+  bool add(float delta);
 
-  /** @brief Multiply the property value by the given @a factor. */
-  bool multiply( float factor ) { return setValue( factor * getValue().toFloat() ); }
+  /// Multiply the property value by the given factor.
+  bool multiply(float factor);
 
 private:
   float min_;
   float max_;
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
-#endif // FLOAT_PROPERTY_H
+#endif  // SRC__RVIZ_COMMON__PROPERTIES__FLOAT_PROPERTY_HPP_

@@ -29,12 +29,12 @@
 
 #include <QMessageBox>
 
-#include "rviz/display_context.h"
-#include "rviz/window_manager_interface.h"
+#include "./display_context.hpp"
+#include "./window_manager_interface.hpp"
 
-#include "rviz/failed_view_controller.h"
+#include "./failed_view_controller.hpp"
 
-namespace rviz
+namespace rviz_common
 {
 
 FailedViewController::FailedViewController( const QString& desired_class_id, const QString& error_message )
@@ -76,4 +76,4 @@ void FailedViewController::onActivate()
   QMessageBox::critical( parent, "ViewController '" + getName() + "'unavailable.", getDescription() );
 }
 
-} // end namespace rviz
+} // end namespace rviz_common

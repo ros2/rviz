@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,44 +28,47 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "rviz_common/properties/vector_property.hpp"
+
 #include <QStringList>
 
-#include "rviz/properties/vector_property.h"
-
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
-VectorProperty::VectorProperty( const QString& name,
-                                const Ogre::Vector3& default_value,
-                                const QString& description,
-                                Property* parent,
-                                const char *changed_slot,
-                                QObject* receiver )
-  : Property( name, QVariant(), description, parent, changed_slot, receiver )
-  , vector_( default_value )
-  , ignore_child_updates_( false )
+VectorProperty::VectorProperty(
+  const QString & name,
+  const Ogre::Vector3 & default_value,
+  const QString & description,
+  Property * parent,
+  const char * changed_slot,
+  QObject * receiver)
+: Property(name, QVariant(), description, parent, changed_slot, receiver),
+  vector_(default_value),
+  ignore_child_updates_(false)
 {
-  x_ = new Property( "X", vector_.x, "X coordinate", this );
-  y_ = new Property( "Y", vector_.y, "Y coordinate", this );
-  z_ = new Property( "Z", vector_.z, "Z coordinate", this );
+  x_ = new Property("X", vector_.x, "X coordinate", this);
+  y_ = new Property("Y", vector_.y, "Y coordinate", this);
+  z_ = new Property("Z", vector_.z, "Z coordinate", this);
   updateString();
-  connect( x_, SIGNAL( aboutToChange() ), this, SLOT( emitAboutToChange() ));
-  connect( y_, SIGNAL( aboutToChange() ), this, SLOT( emitAboutToChange() ));
-  connect( z_, SIGNAL( aboutToChange() ), this, SLOT( emitAboutToChange() ));
-  connect( x_, SIGNAL( changed() ), this, SLOT( updateFromChildren() ));
-  connect( y_, SIGNAL( changed() ), this, SLOT( updateFromChildren() ));
-  connect( z_, SIGNAL( changed() ), this, SLOT( updateFromChildren() ));
+  connect(x_, SIGNAL(aboutToChange()), this, SLOT(emitAboutToChange()));
+  connect(y_, SIGNAL(aboutToChange()), this, SLOT(emitAboutToChange()));
+  connect(z_, SIGNAL(aboutToChange()), this, SLOT(emitAboutToChange()));
+  connect(x_, SIGNAL(changed()), this, SLOT(updateFromChildren()));
+  connect(y_, SIGNAL(changed()), this, SLOT(updateFromChildren()));
+  connect(z_, SIGNAL(changed()), this, SLOT(updateFromChildren()));
 }
 
-bool VectorProperty::setVector( const Ogre::Vector3& new_vector )
+bool VectorProperty::setVector(const Ogre::Vector3 & new_vector)
 {
-  if( new_vector != vector_ ) {
+  if (new_vector != vector_) {
     Q_EMIT aboutToChange();
     vector_ = new_vector;
     ignore_child_updates_ = true;
-    x_->setValue( vector_.x );
-    y_->setValue( vector_.y );
-    z_->setValue( vector_.z );
+    x_->setValue(vector_.x);
+    y_->setValue(vector_.y);
+    z_->setValue(vector_.z);
     ignore_child_updates_ = false;
     updateString();
     Q_EMIT changed();
@@ -73,20 +77,28 @@ bool VectorProperty::setVector( const Ogre::Vector3& new_vector )
   return false;
 }
 
-bool VectorProperty::setValue( const QVariant& new_value )
+Ogre::Vector3 VectorProperty::getVector() const
 {
-  QStringList strings = new_value.toString().split( ';' );
-  if( strings.size() >= 3 )
-  {
+  return vector_;
+}
+
+bool VectorProperty::add(const Ogre::Vector3 & offset)
+{
+  return setVector(getVector() + offset);
+}
+
+bool VectorProperty::setValue(const QVariant & new_value)
+{
+  QStringList strings = new_value.toString().split(';');
+  if (strings.size() >= 3) {
     bool x_ok = true;
-    float x = strings[ 0 ].toFloat( &x_ok );
+    float x = strings[0].toFloat(&x_ok);
     bool y_ok = true;
-    float y = strings[ 1 ].toFloat( &y_ok );
+    float y = strings[1].toFloat(&y_ok);
     bool z_ok = true;
-    float z = strings[ 2 ].toFloat( &z_ok );
-    if( x_ok && y_ok && z_ok )
-    {
-      return setVector( Ogre::Vector3( x, y, z ));
+    float z = strings[2].toFloat(&z_ok);
+    if (x_ok && y_ok && z_ok) {
+      return setVector(Ogre::Vector3(x, y, z));
     }
   }
   return false;
@@ -94,8 +106,7 @@ bool VectorProperty::setValue( const QVariant& new_value )
 
 void VectorProperty::updateFromChildren()
 {
-  if( !ignore_child_updates_ )
-  {
+  if (!ignore_child_updates_) {
     vector_.x = x_->getValue().toFloat();
     vector_.y = y_->getValue().toFloat();
     vector_.z = z_->getValue().toFloat();
@@ -106,49 +117,49 @@ void VectorProperty::updateFromChildren()
 
 void VectorProperty::emitAboutToChange()
 {
-  if( !ignore_child_updates_ )
-  {
+  if (!ignore_child_updates_) {
     Q_EMIT aboutToChange();
   }
 }
 
 void VectorProperty::updateString()
 {
-  value_ = QString( "%1; %2; %3" )
-    .arg( vector_.x, 0, 'g', 5 )
-    .arg( vector_.y, 0, 'g', 5 )
-    .arg( vector_.z, 0, 'g', 5 );
+  value_ = QString("%1; %2; %3")
+    .arg(vector_.x, 0, 'g', 5)
+    .arg(vector_.y, 0, 'g', 5)
+    .arg(vector_.z, 0, 'g', 5);
 }
 
-void VectorProperty::load( const Config& config )
+void VectorProperty::load(const Config & config)
 {
   float x, y, z;
-  if( config.mapGetFloat( "X", &x ) &&
-      config.mapGetFloat( "Y", &y ) &&
-      config.mapGetFloat( "Z", &z ))
+  if (config.mapGetFloat("X", &x) &&
+    config.mapGetFloat("Y", &y) &&
+    config.mapGetFloat("Z", &z))
   {
     // Calling setVector() once explicitly is better than letting the
     // Property class load the X, Y, and Z children independently,
     // which would result in at least 3 calls to setVector().
-    setVector( Ogre::Vector3( x, y, z ));
+    setVector(Ogre::Vector3(x, y, z));
   }
 }
 
-void VectorProperty::save( Config config ) const
+void VectorProperty::save(Config config) const
 {
   // Saving the child values explicitly avoids having Property::save()
   // save the summary string version of the property.
-  config.mapSetValue( "X", x_->getValue() );
-  config.mapSetValue( "Y", y_->getValue() );
-  config.mapSetValue( "Z", z_->getValue() );
+  config.mapSetValue("X", x_->getValue());
+  config.mapSetValue("Y", y_->getValue());
+  config.mapSetValue("Z", z_->getValue());
 }
 
-void VectorProperty::setReadOnly( bool read_only )
+void VectorProperty::setReadOnly(bool read_only)
 {
-  Property::setReadOnly( read_only );
-  x_->setReadOnly( read_only );
-  y_->setReadOnly( read_only );
-  z_->setReadOnly( read_only );
+  Property::setReadOnly(read_only);
+  x_->setReadOnly(read_only);
+  y_->setReadOnly(read_only);
+  z_->setReadOnly(read_only);
 }
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common

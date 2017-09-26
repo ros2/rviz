@@ -35,7 +35,7 @@
 
 class QPainter;
 
-namespace rviz
+namespace rviz_common
 {
 
 class SplashScreen: public QSplashScreen
@@ -48,6 +48,6 @@ public Q_SLOTS:
   void showMessage( const QString& message );
 };
 
-} // end namespace rviz
+} // end namespace rviz_common
 
 #endif // RVIZ_SPLASH_SCREEN_H

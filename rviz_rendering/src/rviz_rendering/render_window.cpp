@@ -44,20 +44,26 @@
 
 #include <rviz_rendering/render_window.hpp>
 
-#include <QWindow>
+#include <OgreCamera.h>
+
+#include <QMouseEvent>
 #include <QTimer>
+#include <QWindow>
 
 #include <QMetaEnum>
 #include <QDebug>
 #include <QTime>
 
-#include "render_window_impl.hpp"
+// Use the Ogre implementation for now.
+// This header will implement the RenderWindowImpl class.
+#include "./ogre_render_window_impl.hpp"
 
 namespace rviz_rendering
 {
 
 RenderWindow::RenderWindow(QWindow * parent)
-: QWindow(parent), impl_(new RenderWindowImpl(this))
+: QWindow(parent), impl_(new RenderWindowImpl(this)),
+  on_mouse_events_callback_(nullptr), on_wheel_events_callback_(nullptr)
 {
   this->installEventFilter(this);
 }
@@ -65,6 +71,12 @@ RenderWindow::RenderWindow(QWindow * parent)
 RenderWindow::~RenderWindow()
 {
   delete impl_;
+}
+
+void
+RenderWindow::initialize()
+{
+  impl_->initialize();
 }
 
 // In case any drawing surface backing stores (QRasterWindow or QOpenGLWindow)
@@ -81,6 +93,18 @@ RenderWindow::render()
 {
   // printf("in RenderWindow::render()\n");
   impl_->render();
+}
+
+void
+RenderWindow::setOnRenderWindowMouseEventsCallback(onRenderWindowMouseEventsCallback callback)
+{
+  on_mouse_events_callback_ = callback;
+}
+
+void
+RenderWindow::setOnRenderWindowWheelEventsCallback(onRenderWindowWheelEventsCallback callback)
+{
+  on_wheel_events_callback_ = callback;
 }
 
 void
@@ -117,9 +141,9 @@ ToString(const EnumType & enumValue)
 bool
 RenderWindow::event(QEvent * event)
 {
-  qDebug() <<
-    "[" << QTime::currentTime().toString("HH:mm:ss:zzz") << "]:" <<
-    "event->type() ==" << ToString(event->type());
+  // qDebug() <<
+  //   "[" << QTime::currentTime().toString("HH:mm:ss:zzz") << "]:" <<
+  //   "event->type() ==" << ToString(event->type());
   switch (event->type()) {
     case QEvent::Resize:
       if (this->isExposed()) {
@@ -129,8 +153,22 @@ RenderWindow::event(QEvent * event)
     case QEvent::UpdateRequest:
       this->renderNow();
       return true;
-    default:
+    case QEvent::Type::MouseMove:
+    case QEvent::Type::MouseButtonPress:
+    case QEvent::Type::MouseButtonRelease:
+    // case QEvent::Type::MouseButtonRelease:
+      if (on_mouse_events_callback_) {
+        on_mouse_events_callback_(static_cast<QMouseEvent *>(event));
+      }
       return QWindow::event(event);
+    case QEvent::Type::Wheel:
+      if (on_wheel_events_callback_) {
+        on_wheel_events_callback_(static_cast<QWheelEvent *>(event));
+      }
+      return QWindow::event(event);
+    default:
+      QWindow::event(event);
+      return false;
   }
   // return QWindow::event(event);
 }
@@ -146,28 +184,61 @@ RenderWindow::exposeEvent(QExposeEvent * expose_event)
   }
 }
 
-bool
-RenderWindow::eventFilter(QObject * target, QEvent * event)
+// bool
+// RenderWindow::eventFilter(QObject * target, QEvent * event)
+// {
+//   // if (target == this) {
+//   //   qDebug() <<
+//   //     "[" << QTime::currentTime().toString("HH:mm:ss:zzz") << "]:" <<
+//   //     "event->type() ==" << ToString(event->type()) <<
+//   //     "target ==" << target;
+//   //   switch (event->type()) {
+//   //     case QEvent::Resize:
+//   //       if (this->isExposed()) {
+//   //         impl_->resize(this->width(), this->height());
+//   //       }
+//   //       return false;
+//   //     case QEvent::UpdateRequest:
+//   //       this->renderNow();
+//   //       return true;
+//   //     default:
+//   //       return QWindow::event(event);
+//   //   }
+//   // }
+//   QWindow::eventFilter(target, event);
+//   return false;
+// }
+
+void
+RenderWindowOgreAdapter::setOgreCamera(RenderWindow * render_window, Ogre::Camera * ogre_camera)
 {
-  // if (target == this) {
-  //   qDebug() <<
-  //     "[" << QTime::currentTime().toString("HH:mm:ss:zzz") << "]:" <<
-  //     "event->type() ==" << ToString(event->type()) <<
-  //     "target ==" << target;
-  //   switch (event->type()) {
-  //     case QEvent::Resize:
-  //       if (this->isExposed()) {
-  //         impl_->resize(this->width(), this->height());
-  //       }
-  //       return false;
-  //     case QEvent::UpdateRequest:
-  //       this->renderNow();
-  //       return true;
-  //     default:
-  //       return QWindow::event(event);
-  //   }
-  // }
-  return QWindow::eventFilter(target, event);
+  render_window->impl_->setCamera(ogre_camera);
+}
+
+Ogre::Viewport *
+RenderWindowOgreAdapter::getOgreViewport(RenderWindow * render_window)
+{
+  return render_window->impl_->getViewport();
+}
+
+void
+RenderWindowOgreAdapter::setBackgroundColor(
+  RenderWindow * render_window,
+  const Ogre::ColourValue * color)
+{
+  render_window->impl_->setBackgroundColor(*color);
+}
+
+Ogre::Light *
+RenderWindowOgreAdapter::getDirectionalLight(RenderWindow * render_window)
+{
+  return render_window->impl_->getDirectionalLight();
+}
+
+Ogre::SceneManager *
+RenderWindowOgreAdapter::getSceneManager(RenderWindow * render_window)
+{
+  return render_window->impl_->getSceneManager();
 }
 
 }  // namespace rviz_rendering

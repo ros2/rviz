@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz/properties/line_edit_with_button.h"
+#include "./line_edit_with_button.hpp"
 
 #include <QPushButton>
 #include <QLineEdit>
@@ -35,7 +35,9 @@
 #include <QKeyEvent>
 #include <QApplication>
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 LineEditWithButton::LineEditWithButton( QWidget* parent )
@@ -89,4 +91,5 @@ void LineEditWithButton::simulateReturnPressed()
   QApplication::postEvent( this, event );
 }
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common

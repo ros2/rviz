@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,21 +28,24 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz/properties/bool_property.h"
+#include "./bool_property.hpp"
 
 #include <QColor>
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
-BoolProperty::BoolProperty( const QString& name,
-                            bool default_value,
-                            const QString& description,
-                            Property* parent,
-                            const char *changed_slot,
-                            QObject* receiver )
-  : Property( name, default_value, description, parent, changed_slot, receiver )
-, disable_children_if_false_(false)
+BoolProperty::BoolProperty(
+  const QString & name,
+  bool default_value,
+  const QString & description,
+  Property * parent,
+  const char * changed_slot,
+  QObject * receiver)
+: Property(name, default_value, description, parent, changed_slot, receiver),
+  disable_children_if_false_(false)
 {
 }
 
@@ -54,7 +58,7 @@ bool BoolProperty::getBool() const
   return getValue().toBool();
 }
 
-void BoolProperty::setDisableChildrenIfFalse( bool disable )
+void BoolProperty::setDisableChildrenIfFalse(bool disable)
 {
   disable_children_if_false_ = disable;
 }
@@ -66,11 +70,16 @@ bool BoolProperty::getDisableChildrenIfFalse()
 
 bool BoolProperty::getDisableChildren()
 {
-  if ( disable_children_if_false_ )
-  {
+  if (disable_children_if_false_) {
     return !getBool() || Property::getDisableChildren();
   }
   return Property::getDisableChildren();
 }
 
-} // end namespace rviz
+bool BoolProperty::setBool(bool value)
+{
+  return setValue(value);
+}
+
+}  // namespace properties
+}  // namespace rviz_common

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2011, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,36 +27,39 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef UNIFORM_STRING_STREAM_H
-#define UNIFORM_STRING_STREAM_H
+
+#ifndef RVIZ_COMMON__UNIFORM_STRING_STREAM_HPP_
+#define RVIZ_COMMON__UNIFORM_STRING_STREAM_HPP_
 
 #include <sstream>
 
-namespace rviz
+namespace rviz_common
 {
 
-/** @brief std::stringstream subclass which defaults to the "C" locale,
- * so serialization of numbers is uniform across locales.
+/// std::stringstream subclass which defaults to the "C" locale.
+/**
+ * This useful so that the serialization of numbers is uniform across locales.
  *
  * For reading floats in, use parseFloat() instead of operator>>,
  * because operator>> is the one from std::stringstream which only
- * handles "C" style floats.  parseFloat() handles "C" and also
- * European-style floats which use the ",", like "1,2" parses to
- * 1.2f */
-class UniformStringStream: public std::stringstream
+ * handles "C" style floats.
+ * parseFloat() handles "C" and also European-style floats which use the ",",
+ * like "1,2" parses to 1.2f
+ */
+class UniformStringStream : public std::stringstream
 {
 public:
   UniformStringStream();
-  UniformStringStream( const std::string& str );
+  explicit UniformStringStream(const std::string & str);
 
-  /** @brief Parse a float, supporting both period- and comma- style
-   * floats (1,2 and 1.2).
-   * 
+  /// Parse a float, supporting both period- and comma- style floats (1,2 and 1.2).
+  /**
    * Uses operator>>(std::string&) internally, so consumes up to next
-   * whitespace from the stream. */
-  void parseFloat( float& f );
+   * whitespace from the stream.
+   */
+  void parseFloat(float & f);
 };
 
-} // end namespace rviz
+}  // namespace rviz_common
 
-#endif // UNIFORM_STRING_STREAM_H
+#endif  // RVIZ_COMMON__UNIFORM_STRING_STREAM_HPP_

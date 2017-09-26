@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,19 +28,28 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OGRE_TOOLS_ORTHOGRAPHIC_H
-#define OGRE_TOOLS_ORTHOGRAPHIC_H
+#ifndef SRC__RVIZ_RENDERING__ORTHOGRAPHIC_HPP_
+#define SRC__RVIZ_RENDERING__ORTHOGRAPHIC_HPP_
 
 namespace Ogre
 {
-class Matrix4;
-}
 
-namespace rviz
+class Matrix4;
+
+}  // namespace Ogre
+
+namespace rviz_rendering
 {
 
-void buildScaledOrthoMatrix(Ogre::Matrix4& proj, float left, float right, float bottom, float top, float near, float far);
+void buildScaledOrthoMatrix(
+  Ogre::Matrix4 & proj,
+  float left,
+  float right,
+  float bottom,
+  float top,
+  float near,
+  float far);
 
-}
+}  // namespace rviz_rendering
 
-#endif
+#endif  // SRC__RVIZ_RENDERING__ORTHOGRAPHIC_HPP_

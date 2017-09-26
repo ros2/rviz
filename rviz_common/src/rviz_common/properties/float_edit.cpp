@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,48 +28,52 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "./float_edit.hpp"
+
 #include <QDoubleValidator>
 #include <QLocale>
 
-#include "rviz/properties/float_edit.h"
-
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
-FloatEdit::FloatEdit( QWidget* parent )
-  : QLineEdit( parent )
+FloatEdit::FloatEdit(QWidget * parent)
+: QLineEdit(parent)
 {
-  setFrame( false );
-  setValidator( new QDoubleValidator( this ));
-  connect( this, SIGNAL( textEdited( const QString& )), this, SLOT( updateValue() ));
+  setFrame(false);
+  setValidator(new QDoubleValidator(this));
+  connect(this, SIGNAL(textEdited(const QString&)), this, SLOT(updateValue()));
 }
 
-void FloatEdit::setValue( float new_value )
+float FloatEdit::getValue()
 {
-  if( value_ != new_value )
-  {
+  return value_;
+}
+
+void FloatEdit::setValue(float new_value)
+{
+  if (value_ != new_value) {
     QLocale locale;
     value_ = new_value;
     bool ok = true;
-    float existing_text_value = locale.toFloat(text(), &ok );
-    if( !ok || existing_text_value != new_value )
-    {
-      setText( locale.toString((double) value_ ));
+    float existing_text_value = locale.toFloat(text(), &ok);
+    if (!ok || existing_text_value != new_value) {
+      setText(locale.toString(static_cast<double>(value_)));
     }
   }
 }
 
 void FloatEdit::updateValue()
 {
-  if( hasAcceptableInput() )
-  {
+  if (hasAcceptableInput() ) {
     bool ok = true;
-    float new_value = QLocale().toFloat(text(), &ok );
-    if( ok )
-    {
-      setValue( new_value );
+    float new_value = QLocale().toFloat(text(), &ok);
+    if (ok) {
+      setValue(new_value);
     }
   }
 }
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common

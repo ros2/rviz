@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2011, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,15 +28,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdio.h>
+#include <cstdio>
 
-#include "panel.h"
+#include "./panel.hpp"
 
-namespace rviz
+namespace rviz_common
 {
 
-Panel::Panel( QWidget* parent )
-  : QWidget( parent )
+Panel::Panel(QWidget * parent)
+: QWidget(parent), vis_manager_(nullptr)
 {
 }
 
@@ -43,25 +44,56 @@ Panel::~Panel()
 {
 }
 
-void Panel::initialize( VisualizationManager* manager )
+void Panel::initialize(VisualizationManager * manager)
 {
   vis_manager_ = manager;
   onInitialize();
 }
 
-void Panel::save( Config config ) const
+void Panel::onInitialize() {}
+
+QString Panel::getName() const
 {
-  config.mapSetValue( "Class", getClassId() );
-  config.mapSetValue( "Name", getName() );
+  return name_;
 }
 
-void Panel::load( const Config& config )
+void Panel::setName(const QString & name)
+{
+  name_ = name;
+}
+
+QString Panel::getDescription() const
+{
+  return description_;
+}
+
+void Panel::setDescription(const QString & description)
+{
+  description_ = description;
+}
+
+QString Panel::getClassId() const
+{
+  return class_id_;
+}
+
+void Panel::setClassId(const QString & class_id)
+{
+  class_id_ = class_id;
+}
+
+void Panel::save(Config config) const
+{
+  config.mapSetValue("Class", getClassId() );
+  config.mapSetValue("Name", getName() );
+}
+
+void Panel::load(const Config & config)
 {
   QString name;
-  if( config.mapGetString( "Name", &name ))
-  {
-    setName( name );
+  if (config.mapGetString("Name", &name)) {
+    setName(name);
   }
 }
 
-} // end namespace rviz
+}  // namespace rviz_common

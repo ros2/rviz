@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,68 +28,77 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdio.h>
+#include "./display.hpp"
 
-#include <QApplication>
-#include <QColor>
-#include <QDockWidget>
-#include <QFont>
-#include <QMetaObject>
-#include <QWidget>
+#include <cstdio>
+#include <string>
+
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
 
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 
-#include "rviz/display_context.h"
-#include "rviz/ogre_helpers/apply_visibility_bits.h"
-#include "rviz/properties/property_tree_model.h"
-#include "rviz/properties/status_list.h"
-#include "rviz/window_manager_interface.h"
-#include "rviz/panel_dock_widget.h"
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
 
-#include "display.h"
+#include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
+#include <QColor>  // NOLINT: cpplint is unable to handle the include order here
+#include <QDockWidget>  // NOLINT: cpplint is unable to handle the include order here
+#include <QFont>  // NOLINT: cpplint is unable to handle the include order here
+#include <QMetaObject>  // NOLINT: cpplint is unable to handle the include order here
+#include <QWidget>  // NOLINT: cpplint is unable to handle the include order here
 
-#include <boost/filesystem.hpp>
+#include "rclcpp/time.hpp"
+#include "rviz_rendering/apply_visibility_bits.hpp"
 
-namespace rviz
+#include "./display_context.hpp"
+#include "./panel_dock_widget.hpp"
+#include "./properties/property_tree_model.hpp"
+#include "./properties/status_list.hpp"
+#include "./window_manager_interface.hpp"
+
+namespace rviz_common
 {
 
 Display::Display()
-  : context_( 0 )
-  , scene_node_( NULL )
-  , status_( 0 )
-  , initialized_( false )
-  , visibility_bits_( 0xFFFFFFFF )
-  , associated_widget_( NULL )
-  , associated_widget_panel_( NULL )
+: context_(0),
+  scene_node_(NULL),
+  status_(0),
+  initialized_(false),
+  visibility_bits_(0xFFFFFFFF),
+  associated_widget_(NULL),
+  associated_widget_panel_(NULL)
 {
   // Needed for timeSignal (see header) to work across threads
-  qRegisterMetaType<ros::Time>();
+  qRegisterMetaType<rclcpp::Time>();
 
   // Make the display-enable checkbox show up, and make it unchecked by default.
-  setValue( false );
+  setValue(false);
 
-  connect( this, SIGNAL( changed() ), this, SLOT( onEnableChanged() ));
+  connect(this, SIGNAL(changed()), this, SLOT(onEnableChanged()));
 
   setDisableChildrenIfFalse(true);
 }
 
 Display::~Display()
 {
-  if( scene_node_ )
-  {
-    scene_manager_->destroySceneNode( scene_node_ );
+  if (scene_node_) {
+    scene_manager_->destroySceneNode(scene_node_);
   }
 }
 
-void Display::initialize( DisplayContext* context )
+void Display::initialize(DisplayContext * context)
 {
   context_ = context;
   scene_manager_ = context_->getSceneManager();
   scene_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
 
-  update_nh_.setCallbackQueue( context_->getUpdateQueue() );
-  threaded_nh_.setCallbackQueue( context_->getThreadedQueue() );
+  // update_nh_.setCallbackQueue(context_->getUpdateQueue());
+  // threaded_nh_.setCallbackQueue(context_->getThreadedQueue());
   fixed_frame_ = context_->getFixedFrame();
 
   onInitialize();
@@ -98,203 +108,224 @@ void Display::initialize( DisplayContext* context )
 
 void Display::queueRender()
 {
-  if( context_ )
-  {
+  if (context_) {
     context_->queueRender();
   }
 }
 
-QVariant Display::getViewData( int column, int role ) const
+QVariant Display::getViewData(int column, int role) const
 {
-  switch( role )
-  {
-  case Qt::BackgroundRole:
-  {
-    /*
-    QLinearGradient q( 0,0, 0,5 );
-    q.setColorAt( 0.0, QColor(230,230,230) );
-    q.setColorAt( 1.0, Qt::white );
-    return QBrush( q );
-    */
-    return QColor( Qt::white );
-  }
-  case Qt::ForegroundRole:
-  {
-    // if we're item-enabled (not greyed out) and in warn/error state, set appropriate color
-    if ( getViewFlags( column ) & Qt::ItemIsEnabled )
-    {
-      if ( isEnabled() )
+  switch (role) {
+    case Qt::BackgroundRole:
       {
-        if ( status_ && status_->getLevel() != StatusProperty::Ok )
-        {
-          return StatusProperty::statusColor( status_->getLevel() );
+        /*
+        QLinearGradient q( 0,0, 0,5);
+        q.setColorAt( 0.0, QColor(230,230,230));
+        q.setColorAt( 1.0, Qt::white);
+        return QBrush( q);
+        */
+        return QColor(Qt::white);
+      }
+    case Qt::ForegroundRole:
+      {
+        // if we're item-enabled (not greyed out) and in warn/error state, set appropriate color
+        if (getViewFlags(column) & Qt::ItemIsEnabled) {
+          if (isEnabled()) {
+            using rviz_common::properties::StatusProperty;
+            if (status_ && status_->getLevel() != StatusProperty::Ok) {
+              return StatusProperty::statusColor(status_->getLevel());
+            } else {
+              // blue means that the enabled checkmark is set
+              return QColor(40, 120, 197);
+            }
+          } else {
+            return QColor(Qt::black);
+          }
         }
-        else
-        {
-          // blue means that the enabled checkmark is set
-          return QColor( 40, 120, 197 );
+        break;
+      }
+    case Qt::FontRole:
+      {
+        QFont font;
+        if (isEnabled()) {
+          font.setBold(true);
         }
+        return font;
       }
-      else
+    case Qt::DecorationRole:
       {
-        return QColor( Qt::black );
-      }
-    }
-    break;
-  }
-  case Qt::FontRole:
-  {
-    QFont font;
-    if ( isEnabled() )
-    {
-      font.setBold( true );
-    }
-    return font;
-  }
-  case Qt::DecorationRole:
-  {
-    if( column == 0 )
-    {
-      if ( isEnabled() )
-      {
-        StatusProperty::Level level = status_ ? status_->getLevel() : StatusProperty::Ok;
-        switch( level )
-        {
-        case StatusProperty::Ok:
-          return getIcon();
-        case StatusProperty::Warn:
-        case StatusProperty::Error:
-          return status_->statusIcon( status_->getLevel() );
+        if (column == 0) {
+          if (isEnabled()) {
+            using rviz_common::properties::StatusProperty;
+            StatusProperty::Level level = status_ ? status_->getLevel() : StatusProperty::Ok;
+            switch (level) {
+              case StatusProperty::Ok:
+                return getIcon();
+              case StatusProperty::Warn:
+              case StatusProperty::Error:
+                return status_->statusIcon(status_->getLevel());
+            }
+          } else {
+            return getIcon();
+          }
         }
+        break;
       }
-      else
-      {
-        return getIcon();
-      }
-    }
-    break;
   }
-  }
-  return BoolProperty::getViewData( column, role );
+  return BoolProperty::getViewData(column, role);
 }
 
-Qt::ItemFlags Display::getViewFlags( int column ) const
+Qt::ItemFlags Display::getViewFlags(int column) const
 {
-  return BoolProperty::getViewFlags( column ) | Qt::ItemIsDragEnabled;
+  return BoolProperty::getViewFlags(column) | Qt::ItemIsDragEnabled;
 }
 
-void Display::setStatus( StatusProperty::Level level, const QString& name, const QString& text )
+QString Display::getClassId() const
 {
-  QMetaObject::invokeMethod( this, "setStatusInternal", Qt::QueuedConnection,
-                             Q_ARG( int, level ),
-                             Q_ARG( QString, name ),
-                             Q_ARG( QString, text ));
+  return class_id_;
 }
 
-void Display::setStatusInternal( int level, const QString& name, const QString& text )
+void Display::setClassId(const QString & class_id)
 {
-  if( !status_ )
-  {
-    status_ = new StatusList( "Status" );
-    addChild( status_, 0 );
+  class_id_ = class_id;
+}
+
+void Display::setTopic(const QString & topic, const QString & datatype)
+{
+  (void) topic;
+  (void) datatype;
+}
+
+void Display::update(float wall_dt, float ros_dt)
+{
+  (void) wall_dt;
+  (void) ros_dt;
+}
+
+void Display::setStatus(
+  rviz_common::properties::StatusProperty::Level level,
+  const QString & name,
+  const QString & text)
+{
+  QMetaObject::invokeMethod(this, "setStatusInternal", Qt::QueuedConnection,
+    Q_ARG(int, level),
+    Q_ARG(QString, name),
+    Q_ARG(QString, text));
+}
+
+void Display::setStatusStd(
+  properties::StatusProperty::Level level,
+  const std::string & name,
+  const std::string & text)
+{
+  setStatus(level, QString::fromStdString(name), QString::fromStdString(text));
+}
+
+void Display::deleteStatusStd(const std::string & name)
+{
+  deleteStatus(QString::fromStdString(name));
+}
+
+void Display::setStatusInternal(int level, const QString & name, const QString & text)
+{
+  using rviz_common::properties::StatusProperty;
+
+  if (!status_) {
+    status_ = new rviz_common::properties::StatusList("Status");
+    addChild(status_, 0);
   }
   StatusProperty::Level old_level = status_->getLevel();
-  
-  status_->setStatus( (StatusProperty::Level) level, name, text );
-  if( model_ && old_level != status_->getLevel() )
-  {
-    model_->emitDataChanged( this );
+
+  status_->setStatus( (StatusProperty::Level) level, name, text);
+  if (model_ && old_level != status_->getLevel()) {
+    model_->emitDataChanged(this);
   }
 }
 
-void Display::deleteStatus( const QString& name )
+void Display::deleteStatus(const QString & name)
 {
-  QMetaObject::invokeMethod( this, "deleteStatusInternal", Qt::QueuedConnection,
-                             Q_ARG( QString, name ));
+  QMetaObject::invokeMethod(this, "deleteStatusInternal", Qt::QueuedConnection,
+    Q_ARG(QString, name));
 }
 
-void Display::deleteStatusInternal( const QString& name )
+void Display::deleteStatusInternal(const QString & name)
 {
-  if( status_ )
-  {
-    status_->deleteStatus( name );
+  if (status_) {
+    status_->deleteStatus(name);
   }
 }
 
 void Display::clearStatuses()
 {
-  QMetaObject::invokeMethod( this, "clearStatusesInternal", Qt::QueuedConnection );
+  QMetaObject::invokeMethod(this, "clearStatusesInternal", Qt::QueuedConnection);
 }
 
 void Display::clearStatusesInternal()
 {
-  if( status_ )
-  {
+  using rviz_common::properties::StatusProperty;
+
+  if (status_) {
     StatusProperty::Level old_level = status_->getLevel();
     status_->clear();
-    if( model_ && old_level != StatusProperty::Ok )
-    {
-      model_->emitDataChanged( this );
+    if (model_ && old_level != StatusProperty::Ok) {
+      model_->emitDataChanged(this);
     }
   }
 }
 
-void Display::load( const Config& config )
+void Display::load(const Config & config)
 {
   // Base class loads sub-properties.
-  BoolProperty::load( config );
+  BoolProperty::load(config);
 
   QString name;
-  if( config.mapGetString( "Name", &name ))
-  {
-    setObjectName( name );
+  if (config.mapGetString("Name", &name)) {
+    setObjectName(name);
   }
 
   bool enabled;
-  if( config.mapGetBool( "Enabled", &enabled ))
-  {
-    setEnabled( enabled );
+  if (config.mapGetBool("Enabled", &enabled)) {
+    setEnabled(enabled);
   }
 }
 
-void Display::save( Config config ) const
+void Display::save(Config config) const
 {
   // Base class saves sub-properties.
-  BoolProperty::save( config );
+  BoolProperty::save(config);
 
-  config.mapSetValue( "Class", getClassId() );
-  config.mapSetValue( "Name", getName() );
-  config.mapSetValue( "Enabled", getBool() );
+  config.mapSetValue("Class", getClassId());
+  config.mapSetValue("Name", getName());
+  config.mapSetValue("Enabled", getBool());
 }
 
-void Display::setEnabled( bool enabled )
+void Display::setEnabled(bool enabled)
 {
-  if ( enabled == isEnabled() ) return;
-  setValue( enabled );
+  if (enabled == isEnabled()) {return;}
+  setValue(enabled);
 }
 
 void Display::disable()
 {
-  setEnabled( false );
+  setEnabled(false);
 }
 
 bool Display::isEnabled() const
 {
-  return getBool() && (getViewFlags( 0 ) & Qt::ItemIsEnabled);
+  return getBool() && (getViewFlags(0) & Qt::ItemIsEnabled);
 }
 
-void Display::setFixedFrame( const QString& fixed_frame )
+void Display::setFixedFrame(const QString & fixed_frame)
 {
   fixed_frame_ = fixed_frame;
-  if( initialized_ )
-  {
+  if (initialized_) {
     fixedFrameChanged();
   }
 }
 
-void Display::emitTimeSignal( ros::Time time )
+void Display::emitTimeSignal(rclcpp::Time time)
 {
-  Q_EMIT( timeSignal( this, time ) );
+  emit timeSignal(this, time);
 }
 
 void Display::reset()
@@ -306,120 +337,140 @@ void Display::onEnableChanged()
 {
   QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
   queueRender();
-  if( isEnabled() )
-  {
-    scene_node_->setVisible( true );
+  if (isEnabled()) {
+    scene_node_->setVisible(true);
 
-    if( associated_widget_panel_ )
-    {
+    if (associated_widget_panel_) {
       associated_widget_panel_->show();
-    }
-    else if( associated_widget_ )
-    {
+    } else if (associated_widget_) {
       associated_widget_->show();
     }
 
     onEnable();
-  }
-  else
-  {
+  } else {
     onDisable();
 
-    if( associated_widget_panel_ )
-    {
-      if( associated_widget_panel_->isVisible() )
-      {
+    if (associated_widget_panel_) {
+      if (associated_widget_panel_->isVisible()) {
         associated_widget_panel_->hide();
       }
-    }
-    else if( associated_widget_ && associated_widget_->isVisible() )
-    {
+    } else if (associated_widget_ && associated_widget_->isVisible()) {
       associated_widget_->hide();
     }
 
-    scene_node_->setVisible( false );
+    scene_node_->setVisible(false);
   }
   QApplication::restoreOverrideCursor();
 }
 
-void Display::setVisibilityBits( uint32_t bits )
+void Display::setVisibilityBits(uint32_t bits)
 {
   visibility_bits_ |= bits;
-  applyVisibilityBits( visibility_bits_, scene_node_ );
+  rviz_rendering::applyVisibilityBits(visibility_bits_, scene_node_);
 }
 
-void Display::unsetVisibilityBits( uint32_t bits )
+void Display::unsetVisibilityBits(uint32_t bits)
 {
   visibility_bits_ &= ~bits;
-  applyVisibilityBits( visibility_bits_, scene_node_ );
+  rviz_rendering::applyVisibilityBits(visibility_bits_, scene_node_);
 }
 
-void Display::setAssociatedWidget( QWidget* widget )
+uint32_t Display::getVisibilityBits()
 {
-  if( associated_widget_panel_ )
-  {
-    disconnect( associated_widget_panel_, SIGNAL( visibilityChanged( bool ) ), this, SLOT( associatedPanelVisibilityChange( bool ) ));
-    disconnect( associated_widget_panel_, SIGNAL( closed( ) ), this, SLOT( disable( )));
+  return visibility_bits_;
+}
+
+Ogre::SceneNode * Display::getSceneNode() const
+{
+  return scene_node_;
+}
+
+void Display::setAssociatedWidget(QWidget * widget)
+{
+  if (associated_widget_panel_) {
+    disconnect(associated_widget_panel_, SIGNAL(visibilityChanged(bool)), this,
+      SLOT(associatedPanelVisibilityChange(bool)));
+    disconnect(associated_widget_panel_, SIGNAL(closed()), this, SLOT(disable()));
   }
 
   associated_widget_ = widget;
-  if( associated_widget_ )
-  {
-    WindowManagerInterface* wm = context_->getWindowManager();
-    if( wm )
-    {
-      associated_widget_panel_ = wm->addPane( getName(), associated_widget_ );
-      connect( associated_widget_panel_, SIGNAL( visibilityChanged( bool ) ), this, SLOT( associatedPanelVisibilityChange( bool ) ));
-      connect( associated_widget_panel_, SIGNAL( closed( ) ), this, SLOT( disable( )));
-      associated_widget_panel_->setIcon( getIcon() );
-    }
-    else
-    {
+  if (associated_widget_) {
+    WindowManagerInterface * wm = context_->getWindowManager();
+    if (wm) {
+      associated_widget_panel_ = wm->addPane(getName(), associated_widget_);
+      connect(associated_widget_panel_, SIGNAL(visibilityChanged(bool)), this,
+        SLOT(associatedPanelVisibilityChange(bool)));
+      connect(associated_widget_panel_, SIGNAL(closed()), this, SLOT(disable()));
+      associated_widget_panel_->setIcon(getIcon());
+    } else {
       associated_widget_panel_ = NULL;
-      associated_widget_->setWindowTitle( getName() );
+      associated_widget_->setWindowTitle(getName());
     }
-  }
-  else
-  {
+  } else {
     associated_widget_panel_ = NULL;
   }
 }
 
-void Display::associatedPanelVisibilityChange( bool visible )
+QWidget * Display::getAssociatedWidget() const
+{
+  return associated_widget_;
+}
+
+PanelDockWidget * Display::getAssociatedWidgetPanel()
+{
+  return associated_widget_panel_;
+}
+
+void Display::associatedPanelVisibilityChange(bool visible)
 {
   // if something external makes the panel visible, make sure we're enabled
-  if ( visible )
-  {
-    setEnabled( true );
-  }
-  else
-  {
-    setEnabled( false );
+  if (visible) {
+    setEnabled(true);
+  } else {
+    setEnabled(false);
   }
 }
 
-void Display::setIcon( const QIcon& icon )
+void Display::setIcon(const QIcon & icon)
 {
-  icon_=icon;
-  if ( associated_widget_panel_ )
-  {
-    associated_widget_panel_->setIcon( getIcon() );
+  icon_ = icon;
+  if (associated_widget_panel_) {
+    associated_widget_panel_->setIcon(getIcon());
   }
 }
 
-void Display::setName( const QString& name )
+void Display::onInitialize()
 {
-  BoolProperty::setName( name );
+}
 
-  if( associated_widget_panel_ )
-  {
-    associated_widget_panel_->setWindowTitle( name );
-    associated_widget_panel_->setObjectName( name ); // QMainWindow::saveState() needs objectName to be set.
-  }
-  else if( associated_widget_ )
-  {
-    associated_widget_->setWindowTitle( name );
+void Display::onEnable()
+{
+}
+
+void Display::onDisable()
+{
+}
+
+void Display::fixedFrameChanged()
+{
+}
+
+bool Display::initialized() const
+{
+  return initialized_;
+}
+
+void Display::setName(const QString & name)
+{
+  BoolProperty::setName(name);
+
+  if (associated_widget_panel_) {
+    associated_widget_panel_->setWindowTitle(name);
+    // QMainWindow::saveState() needs objectName to be set.
+    associated_widget_panel_->setObjectName(name);
+  } else if (associated_widget_) {
+    associated_widget_->setWindowTitle(name);
   }
 }
 
-} // end namespace rviz
+}  // namespace rviz_common

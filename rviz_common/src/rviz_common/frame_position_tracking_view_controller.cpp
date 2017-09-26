@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,41 +28,55 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "rviz_common/frame_position_tracking_view_controller.hpp"
+
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
+
 #include <OgreCamera.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 
-#include "rviz/display_context.h"
-#include "rviz/frame_manager.h"
-#include "rviz/properties/enum_property.h"
-#include "rviz/properties/tf_frame_property.h"
-#include "rviz/viewport_mouse_event.h"
-#include "rviz/view_manager.h"
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
 
-#include "rviz/frame_position_tracking_view_controller.h"
+#include "./display_context.hpp"
+#include "./frame_manager.hpp"
+#include "./properties/enum_property.hpp"
+#include "./properties/tf_frame_property.hpp"
+#include "./view_manager.hpp"
+#include "./viewport_mouse_event.hpp"
 
-namespace rviz
+namespace rviz_common
 {
 
 FramePositionTrackingViewController::FramePositionTrackingViewController()
-  : target_scene_node_( NULL )
+: target_scene_node_(NULL)
 {
-  target_frame_property_ = new TfFrameProperty( "Target Frame", TfFrameProperty::FIXED_FRAME_STRING,
-                                                "TF frame whose motion this view will follow.", this, NULL, true );
+  target_frame_property_ = new rviz_common::properties::TfFrameProperty(
+    "Target Frame",
+    rviz_common::properties::TfFrameProperty::FIXED_FRAME_STRING,
+    "TF frame whose motion this view will follow.",
+    this,
+    NULL,
+    true);
 }
 
 void FramePositionTrackingViewController::onInitialize()
 {
-  target_frame_property_->setFrameManager( context_->getFrameManager() );
+  target_frame_property_->setFrameManager(context_->getFrameManager());
 
   target_scene_node_ = context_->getSceneManager()->getRootSceneNode()->createChildSceneNode();
   camera_->detachFromParent();
-  target_scene_node_->attachObject( camera_ );
+  target_scene_node_->attachObject(camera_);
 }
 
 FramePositionTrackingViewController::~FramePositionTrackingViewController()
 {
-  context_->getSceneManager()->destroySceneNode( target_scene_node_ );
+  context_->getSceneManager()->destroySceneNode(target_scene_node_);
 }
 
 void FramePositionTrackingViewController::onActivate()
@@ -74,11 +89,13 @@ void FramePositionTrackingViewController::onActivate()
   // property so that the view does not jump.  Therefore we make the
   // signal/slot connection from the property here in onActivate()
   // instead of in the constructor.
-  connect( target_frame_property_, SIGNAL( changed() ), this, SLOT( updateTargetFrame() ));
+  connect(target_frame_property_, SIGNAL(changed()), this, SLOT(updateTargetFrame()));
 }
 
 void FramePositionTrackingViewController::update(float dt, float ros_dt)
 {
+  Q_UNUSED(dt);
+  Q_UNUSED(ros_dt);
   updateTargetSceneNode();
 }
 
@@ -88,8 +105,16 @@ void FramePositionTrackingViewController::updateTargetFrame()
   Ogre::Quaternion old_orientation = target_scene_node_->getOrientation();
 
   updateTargetSceneNode();
-  
-  onTargetFrameChanged( old_position, old_orientation );
+
+  onTargetFrameChanged(old_position, old_orientation);
+}
+
+void FramePositionTrackingViewController::onTargetFrameChanged(
+  const Ogre::Vector3 & old_reference_position,
+  const Ogre::Quaternion & old_reference_orientation)
+{
+  Q_UNUSED(old_reference_position);
+  Q_UNUSED(old_reference_orientation);
 }
 
 bool FramePositionTrackingViewController::getNewTransform()
@@ -97,10 +122,10 @@ bool FramePositionTrackingViewController::getNewTransform()
   Ogre::Vector3 new_reference_position;
   Ogre::Quaternion new_reference_orientation;
 
-  bool got_transform = context_->getFrameManager()->getTransform( target_frame_property_->getFrameStd(), ros::Time(),
-        new_reference_position, new_reference_orientation );
-  if( got_transform )
-  {
+  bool got_transform = context_->getFrameManager()->getTransform(
+    target_frame_property_->getFrameStd(), rclcpp::Time(),
+    new_reference_position, new_reference_orientation);
+  if (got_transform) {
     reference_position_ = new_reference_position;
     reference_orientation_ = new_reference_orientation;
   }
@@ -109,34 +134,19 @@ bool FramePositionTrackingViewController::getNewTransform()
 
 void FramePositionTrackingViewController::updateTargetSceneNode()
 {
-  if ( getNewTransform() )
-  {
-    target_scene_node_->setPosition( reference_position_ );
+  if (getNewTransform()) {
+    target_scene_node_->setPosition(reference_position_);
 
     context_->queueRender();
   }
-
-// Need to incorporate this functionality somehow....  Maybe right into TfFrameProperty itself.
-/////  if( frame_manager_->transformHasProblems( getTargetFrame().toStdString(), ros::Time(), error ))
-/////  {
-/////    // target_prop->setToError();
-/////    global_status_->setStatus( StatusProperty::Error, "Target Frame", QString::fromStdString( error ));
-/////  }
-/////  else
-/////  {
-/////    // target_prop->setToOK();
-/////    global_status_->setStatus( StatusProperty::Ok, "Target Frame", "OK" );
-/////  }
-
 }
 
-void FramePositionTrackingViewController::mimic( ViewController* source_view )
+void FramePositionTrackingViewController::mimic(ViewController * source_view)
 {
-  QVariant target_frame = source_view->subProp( "Target Frame" )->getValue();
-  if( target_frame.isValid() )
-  {
-    target_frame_property_->setValue( target_frame );
+  QVariant target_frame = source_view->subProp("Target Frame")->getValue();
+  if (target_frame.isValid()) {
+    target_frame_property_->setValue(target_frame);
   }
 }
 
-} // end namespace rviz
+}  // namespace rviz_common

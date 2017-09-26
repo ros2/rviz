@@ -296,62 +296,69 @@ RenderSystem::setupResources()
   Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
     rviz_path + "/ogre_media/fonts", "FileSystem", "rviz_rendering");
   Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+    rviz_path + "/ogre_media/fonts/liberation-sans", "FileSystem", "rviz_rendering");
+  Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
     rviz_path + "/ogre_media/models", "FileSystem", "rviz_rendering");
   Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
     rviz_path + "/ogre_media/materials", "FileSystem", "rviz_rendering");
-  Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-    rviz_path + "/ogre_media/materials/scripts", "FileSystem", "rviz_rendering");
-  Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-    rviz_path + "/ogre_media/materials/glsl120", "FileSystem", "rviz_rendering");
-  Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-    rviz_path + "/ogre_media/materials/glsl120/nogp", "FileSystem", "rviz_rendering");
+  // Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+  //   rviz_path + "/ogre_media/materials/scripts", "FileSystem", "rviz_rendering");
+  // Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+  //   rviz_path + "/ogre_media/materials/glsl120", "FileSystem", "rviz_rendering");
+  // Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+  //   rviz_path + "/ogre_media/materials/glsl120/nogp", "FileSystem", "rviz_rendering");
   // Add resources that depend on a specific glsl version.
   // Unfortunately, Ogre doesn't have a notion of glsl versions so we can't go
   // the 'official' way of defining multiple schemes per material and let Ogre
   // decide which one to use.
-  if (getGlslVersion() >= 150) {
-    Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-      rviz_path + "/ogre_media/materials/glsl150", "FileSystem", "rviz_rendering");
-    Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-      rviz_path + "/ogre_media/materials/scripts150", "FileSystem", "rviz_rendering");
-  } else if (getGlslVersion() >= 120) {
-    Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-      rviz_path + "/ogre_media/materials/scripts120", "FileSystem", "rviz_rendering");
-  } else {
-    std::string s =
-      "Your graphics driver does not support OpenGL 2.1. "
-      "Please enable software rendering before running RViz "
-      "(e.g. type 'export LIBGL_ALWAYS_SOFTWARE=1').";
-    RVIZ_RENDERING_LOG_ERROR(s);
-    throw std::runtime_error(s);
-  }
-
-  // // Add paths exported to the "media_export" package.
-  // std::vector<std::string> media_paths;
-  // ros::package::getPlugins( "media_export", "ogre_media_path", media_paths );
-  // std::string delim(":");
-  // for(auto iter = media_paths.begin(); iter != media_paths.end(); ++iter)
-  // {
-  //   if(!iter->empty())
-  //   {
-  //     std::string path;
-  //     int pos1 = 0;
-  //     int pos2 = iter->find(delim);
-  //     while(pos2 != (int)std::string::npos)
-  //     {
-  //       path = iter->substr( pos1, pos2 - pos1 );
-  //       ROS_DEBUG("adding resource location: '%s'\n", path.c_str());
-  //       Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-  //         path, "FileSystem", "rviz_rendering");
-  //       pos1 = pos2 + 1;
-  //       pos2 = iter->find( delim, pos2 + 1 );
-  //     }
-  //     path = iter->substr( pos1, iter->size() - pos1 );
-  //     ROS_DEBUG("adding resource location: '%s'\n", path.c_str());
-  //     Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-  //       path, "FileSystem", "rviz_rendering");
-  //   }
+  // TODO(wjwwood): figure out why includes don't work on 150
+  // if (getGlslVersion() >= 150) {
+  //   Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+  //     rviz_path + "/ogre_media/materials/glsl150", "FileSystem", "rviz_rendering");
+  //   Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+  //     rviz_path + "/ogre_media/materials/scripts150", "FileSystem", "rviz_rendering");
+  // } else if (getGlslVersion() >= 120) {
+  // if (getGlslVersion() >= 120) {
+  //   Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+  //     rviz_path + "/ogre_media/materials/scripts120", "FileSystem", "rviz_rendering");
+  // } else {
+  //   std::string s =
+  //     "Your graphics driver does not support OpenGL 2.1. "
+  //     "Please enable software rendering before running RViz "
+  //     "(e.g. type 'export LIBGL_ALWAYS_SOFTWARE=1').";
+  //   RVIZ_RENDERING_LOG_ERROR(s);
+  //   throw std::runtime_error(s);
   // }
+
+// TODO(wjwwood): figure out how to replace/port media export.
+#if 0
+  // Add paths exported to the "media_export" package.
+  std::vector<std::string> media_paths;
+  ros::package::getPlugins( "media_export", "ogre_media_path", media_paths );
+  std::string delim(":");
+  for(auto iter = media_paths.begin(); iter != media_paths.end(); ++iter)
+  {
+    if(!iter->empty())
+    {
+      std::string path;
+      int pos1 = 0;
+      int pos2 = iter->find(delim);
+      while(pos2 != (int)std::string::npos)
+      {
+        path = iter->substr( pos1, pos2 - pos1 );
+        ROS_DEBUG("adding resource location: '%s'\n", path.c_str());
+        Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+          path, "FileSystem", "rviz_rendering");
+        pos1 = pos2 + 1;
+        pos2 = iter->find( delim, pos2 + 1 );
+      }
+      path = iter->substr( pos1, iter->size() - pos1 );
+      ROS_DEBUG("adding resource location: '%s'\n", path.c_str());
+      Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+        path, "FileSystem", "rviz_rendering");
+    }
+  }
+#endif
 }
 
 // On Intel graphics chips under X11, there sometimes comes a

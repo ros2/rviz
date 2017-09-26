@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,42 +28,76 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <float.h> // for FLT_MAX
+#include "./float_property.hpp"
+
+#include <cfloat>  // for FLT_MAX
 
 #include <QtGlobal>
 
-#include "rviz/properties/float_property.h"
-
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
-FloatProperty::FloatProperty( const QString& name,
-                              float default_value,
-                              const QString& description,
-                              Property* parent,
-                              const char *changed_slot,
-                              QObject* receiver )
-  : Property( name, default_value, description, parent, changed_slot, receiver )
-  , min_( -FLT_MAX )
-  , max_( FLT_MAX )
+FloatProperty::FloatProperty(
+  const QString & name,
+  float default_value,
+  const QString & description,
+  Property * parent,
+  const char * changed_slot,
+  QObject * receiver)
+: Property(name, default_value, description, parent, changed_slot, receiver),
+  min_(-FLT_MAX),
+  max_(FLT_MAX)
 {
 }
 
-bool FloatProperty::setValue( const QVariant& new_value )
+bool FloatProperty::setValue(const QVariant & new_value)
 {
-  return Property::setValue( qBound( min_, new_value.toFloat(), max_ ));
+  return Property::setValue(qBound(min_, new_value.toFloat(), max_));
 }
 
-void FloatProperty::setMin( float min )
+float FloatProperty::getFloat() const
+{
+  return getValue().toFloat();
+}
+
+void FloatProperty::setMin(float min)
 {
   min_ = min;
-  setValue( getValue() );
+  setValue(getValue());
 }
 
-void FloatProperty::setMax( float max )
+float FloatProperty::getMin()
+{
+  return min_;
+}
+
+void FloatProperty::setMax(float max)
 {
   max_ = max;
-  setValue( getValue() );
+  setValue(getValue());
 }
 
-} // end namespace rviz
+float FloatProperty::getMax()
+{
+  return max_;
+}
+
+bool FloatProperty::setFloat(float new_value)
+{
+  return setValue(new_value);
+}
+
+bool FloatProperty::add(float delta)
+{
+  return setValue(delta + getValue().toFloat());
+}
+
+bool FloatProperty::multiply(float factor)
+{
+  return setValue(factor * getValue().toFloat());
+}
+
+} // end namespace properties
+} // end namespace rviz_common

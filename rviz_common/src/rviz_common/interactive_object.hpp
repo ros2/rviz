@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,39 +27,41 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef INTERACTIVE_OBJECT_H
-#define INTERACTIVE_OBJECT_H
 
-#include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
+#ifndef SRC__RVIZ_COMMON__INTERACTIVE_OBJECT_HPP_
+#define SRC__RVIZ_COMMON__INTERACTIVE_OBJECT_HPP_
+
+#include <memory>
 
 #include <QCursor>
 
-namespace rviz
+namespace rviz_common
 {
 
 class ViewportMouseEvent;
 
-/** @brief Abstract base class of things in the scene which handle mouse events.
- *
+// TODO(wjwwood): see if this can be removed now (see comment in doc block)
+/// Abstract base class of things in the scene which handle mouse events.
+/**
  * Currently (visualization-1.8) this is only needed as a bridge
  * between interactive markers in the default plugin and the
  * interaction tool in the main executable.  Once the interaction tool
  * is plugin-ized and put into the default plugin, this can probably
- * be removed. */
+ * be removed.
+ */
 class InteractiveObject
 {
 public:
-  virtual ~InteractiveObject() {};
+  virtual ~InteractiveObject() {}
   virtual bool isInteractive() = 0;
-  virtual void enableInteraction( bool enable ) = 0;
-  virtual void handleMouseEvent( ViewportMouseEvent& event ) = 0;
-  virtual const QCursor& getCursor() const = 0;
+  virtual void enableInteraction(bool enable) = 0;
+  virtual void handleMouseEvent(ViewportMouseEvent & event) = 0;
+  virtual const QCursor & getCursor() const = 0;
 };
 
-typedef boost::shared_ptr<InteractiveObject> InteractiveObjectPtr;
-typedef boost::weak_ptr<InteractiveObject> InteractiveObjectWPtr;
+typedef std::shared_ptr<InteractiveObject> InteractiveObjectPtr;
+typedef std::weak_ptr<InteractiveObject> InteractiveObjectWPtr;
 
-} // end namespace rviz
+}  // namespace rviz_common
 
-#endif // INTERACTIVE_OBJECT_H
+#endif  // SRC__RVIZ_COMMON__INTERACTIVE_OBJECT_HPP_

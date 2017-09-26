@@ -81,10 +81,10 @@ namespace rviz_rendering
 
 void
 set_logging_handlers(
-  std::shared_ptr<rviz_rendering::LoggingHandler> debug_handler,
-  std::shared_ptr<rviz_rendering::LoggingHandler> info_handler,
-  std::shared_ptr<rviz_rendering::LoggingHandler> warning_handler,
-  std::shared_ptr<rviz_rendering::LoggingHandler> error_handler);
+  rviz_rendering::LoggingHandler debug_handler,
+  rviz_rendering::LoggingHandler info_handler,
+  rviz_rendering::LoggingHandler warning_handler,
+  rviz_rendering::LoggingHandler error_handler);
 
 void
 log_debug(const std::string & message, const std::string & file_name, size_t line_number);

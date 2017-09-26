@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,36 +27,48 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef STRING_PROPERTY_H
-#define STRING_PROPERTY_H
+
+#ifndef SRC__RVIZ_COMMON__PROPERTIES__STRING_PROPERTY_HPP_
+#define SRC__RVIZ_COMMON__PROPERTIES__STRING_PROPERTY_HPP_
 
 #include <string>
 
-#include "rviz/properties/property.h"
+#include "rviz_common/properties/property.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
-/** @brief Property specialized for string values. */
-class StringProperty: public Property
+/// Property specialized for string values.
+class StringProperty : public Property
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  StringProperty( const QString& name = QString(),
-                  const QString& default_value = QString(),
-                  const QString& description = QString(),
-                  Property* parent = 0,
-                  const char *changed_slot = 0,
-                  QObject* receiver = 0 );
+  explicit StringProperty(
+    const QString & name = QString(),
+    const QString & default_value = QString(),
+    const QString & description = QString(),
+    Property * parent = 0,
+    const char * changed_slot = 0,
+    QObject * receiver = 0);
 
-  std::string getStdString() { return getValue().toString().toStdString(); }
-  QString getString() { return getValue().toString(); }
+  /// Get value as std::string.
+  std::string getStdString();
+
+  /// Get value as QString.
+  QString getString();
 
 public Q_SLOTS:
-  bool setString( const QString& str ) { return setValue( str ); }
-  bool setStdString( const std::string& std_str ) { return setValue( QString::fromStdString( std_str )); }
+  /// Set value from std::string.
+  bool setStdString(const std::string & std_str);
+
+  /// Set value from QString.
+  bool setString(const QString & str);
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
-#endif // STRING_PROPERTY_H
+#endif  // SRC__RVIZ_COMMON__PROPERTIES__STRING_PROPERTY_HPP_

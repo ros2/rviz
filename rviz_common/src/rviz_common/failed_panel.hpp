@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,34 +27,35 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef FAILED_PANEL_H
-#define FAILED_PANEL_H
+
+#ifndef SRC__RVIZ_COMMON__FAILED_PANEL_HPP_
+#define SRC__RVIZ_COMMON__FAILED_PANEL_HPP_
 
 #include <memory>
 
-#include "rviz/panel.h"
+#include "./panel.hpp"
 
-namespace rviz
+namespace rviz_common
 {
 
-class FailedPanel: public Panel
+class FailedPanel : public Panel
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  FailedPanel( const QString& desired_class_id, const QString& error_message );
+  FailedPanel(const QString & desired_class_id, const QString & error_message);
 
-  /** @brief Store the given Config data for later, so we can return it
-   * with save() when someone writes this back to a file. */
-  virtual void load( const Config& config );
+  /// Store the given Config data for later, so it can be returned with save().
+  virtual void load(const Config & config);
 
-  /** @brief Copy Config data into config equivalent to the last which was sent to load(). */
-  virtual void save( Config config ) const;
+  /// Copy Config data into config equivalent to the last which was sent to load().
+  virtual void save(Config config) const;
 
 private:
   Config saved_config_;
   QString error_message_;
 };
 
-} // end namespace rviz
+}  // namespace rviz_common
 
-#endif // FAILED_PANEL_H
+#endif  // SRC__RVIZ_COMMON__FAILED_PANEL_HPP_

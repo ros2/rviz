@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,54 +27,65 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef YAML_CONFIG_WRITER_H
-#define YAML_CONFIG_WRITER_H
+
+#ifndef SRC__RVIZ_COMMON__YAML_CONFIG_WRITER_HPP_
+#define SRC__RVIZ_COMMON__YAML_CONFIG_WRITER_HPP_
 
 #include <ostream>
 
-#include "rviz/config.h"
+#include "rviz_common/config.hpp"
 
 namespace YAML
 {
 class Emitter;
 }
 
-namespace rviz
+namespace rviz_common
 {
 
 class YamlConfigWriter
 {
 public:
-  /** @brief Constructor.  Writer starts in a non-error state. */
+  /// Constructor.
+  /**
+   * Writer starts in a non-error state.
+   */
   YamlConfigWriter();
 
-  /** @brief Write config data to a file.  This potentially changes
-   * the return values of error() and statusMessage(). */
-  void writeFile( const Config& config, const QString& filename );
+  /// Write config data to a file.
+  /**
+   * This potentially changes the return values of error() and statusMessage().
+   */
+  void writeFile(const Config & config, const QString & filename);
 
-  /** @brief Write config data to a string, and return it.  This
-   * potentially changes the return values of error() and
-   * statusMessage(). */
-  QString writeString( const Config& config, const QString& filename = "data string" );
+  /// Write config data to a string, and return it.
+  /**
+   * This potentially changes the return values of error() and statusMessage().
+   */
+  QString writeString(const Config & config, const QString & filename = "data string");
 
-  /** @brief Write config data to a std::ostream.  This potentially
-   * changes the return values of error() and statusMessage(). */
-  void writeStream( const Config& config, std::ostream& out, const QString& filename = "data stream" );
+  /// Write config data to a std::ostream.
+  /**
+   * This potentially changes the return values of error() and statusMessage().
+   */
+  void writeStream(
+    const Config & config,
+    std::ostream & out,
+    const QString & filename = "data stream");
 
-  /** @brief Return true if the latest write operation had an error. */
+  /// Return true if the latest write operation had an error.
   bool error();
 
-  /** @brief Return an error message if the latest write call had an
-   * error, or the empty string if there was no error. */
+  /// Return an error message if the latest write call had an error, else the empty string.
   QString errorMessage();
 
 private:
-  void writeConfigNode( const Config& config, YAML::Emitter& emitter );
+  void writeConfigNode(const Config & config, YAML::Emitter & emitter);
 
   QString message_;
   bool error_;
 };
 
-} // end namespace rviz
+}  // namespace rviz_common
 
-#endif // YAML_CONFIG_WRITER_H
+#endif  // SRC__RVIZ_COMMON__YAML_CONFIG_WRITER_HPP_

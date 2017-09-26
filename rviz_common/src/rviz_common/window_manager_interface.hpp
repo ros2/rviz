@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,34 +28,52 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WINDOW_MANAGER_INTERFACE_H
-#define WINDOW_MANAGER_INTERFACE_H
+#ifndef SRC__RVIZ_COMMON__WINDOW_MANAGER_INTERFACE_HPP_
+#define SRC__RVIZ_COMMON__WINDOW_MANAGER_INTERFACE_HPP_
+
+#include <Qt>
 
 class QWidget;
 class QString;
 
-namespace rviz
+namespace rviz_common
 {
+
 class PanelDockWidget;
 
+/// Pure virtual class which represents the interface for adding panels to the main rviz frame.
+/**
+ * This class is useful as a way to moc a small part of the VisualizationFrame
+ * class while testing without having to moc the whole thing.
+ */
 class WindowManagerInterface
 {
 public:
-  virtual QWidget* getParentWindow() = 0;
+  /// Return the parent QWidget.
+  virtual
+  QWidget *
+  getParentWindow() = 0;
 
-  /** Add a pane to the visualizer.  To remove a pane, just delete it.
-   * For example: "delete my_panel_dock_widget;".  Other operations
-   * can also be done directly to the PanelDockWidget: show(), hide(),
-   * close(), etc. */ 
-  virtual PanelDockWidget* addPane( const QString& name,
-                                QWidget* pane,
-                                Qt::DockWidgetArea area = Qt::LeftDockWidgetArea,
-                                bool floating = true ) = 0;
+  /// Add a pane to the visualizer.
+  /**
+   * To remove a pane, delete it.
+   * Other operations can also be done directly to the PanelDockWidget:
+   * show(), hide(), close(), etc.
+   */
+  virtual
+  PanelDockWidget *
+  addPane(
+    const QString & name,
+    QWidget * pane,
+    Qt::DockWidgetArea area = Qt::LeftDockWidgetArea,
+    bool floating = true) = 0;
 
-  /** Set the message displayed in the status bar */
-  virtual void setStatus( const QString & message ) = 0;
+  /// Set the message displayed in the status bar.
+  virtual
+  void
+  setStatus(const QString & message) = 0;
 };
 
-} // end namespace rviz
+}  // namespace rviz_common
 
-#endif
+#endif  // SRC__RVIZ_COMMON__WINDOW_MANAGER_INTERFACE_HPP_

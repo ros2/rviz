@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,54 +27,81 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef VECTOR_PROPERTY_H
-#define VECTOR_PROPERTY_H
+
+#ifndef RVIZ_COMMON__PROPERTIES__VECTOR_PROPERTY_HPP_
+#define RVIZ_COMMON__PROPERTIES__VECTOR_PROPERTY_HPP_
 
 #include <OgreVector3.h>
 
-#include "rviz/properties/property.h"
+#include "rviz_common/properties/property.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
-class VectorProperty: public Property
+class VectorProperty : public Property
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  VectorProperty( const QString& name = QString(),
-                  const Ogre::Vector3& default_value = Ogre::Vector3::ZERO,
-                  const QString& description = QString(),
-                  Property* parent = 0,
-                  const char *changed_slot = 0,
-                  QObject* receiver = 0 );
+  explicit
+  VectorProperty(
+    const QString & name = QString(),
+    const Ogre::Vector3 & default_value = Ogre::Vector3::ZERO,
+    const QString & description = QString(),
+    Property * parent = 0,
+    const char * changed_slot = 0,
+    QObject * receiver = 0);
 
-  virtual bool setVector( const Ogre::Vector3& vector );
-  virtual Ogre::Vector3 getVector() const { return vector_; }
-  bool add( const Ogre::Vector3& offset ) { return setVector( getVector() + offset ); }
+  virtual
+  bool
+  setVector(const Ogre::Vector3 & vector);
 
-  virtual bool setValue( const QVariant& new_value );
+  virtual
+  Ogre::Vector3
+  getVector() const;
 
-  virtual void load( const Config& config );
-  virtual void save( Config config ) const;
+  bool
+  add(const Ogre::Vector3 & offset);
 
-  /** @brief Overridden from Property to propagate read-only-ness to children. */
-  virtual void setReadOnly( bool read_only );
+  virtual
+  bool
+  setValue(const QVariant & new_value);
+
+  virtual
+  void
+  load(const Config & config);
+
+  virtual
+  void
+  save(Config config) const;
+
+  /// Overridden from Property to propagate read-only-ness to children.
+  virtual
+  void
+  setReadOnly(bool read_only);
 
 private Q_SLOTS:
-  void updateFromChildren();
-  void emitAboutToChange();
+  void
+  updateFromChildren();
+
+  void
+  emitAboutToChange();
 
 private:
-  void updateString();
+  void
+  updateString();
 
   Ogre::Vector3 vector_;
-  Property* x_;
-  Property* y_;
-  Property* z_;
+  Property * x_;
+  Property * y_;
+  Property * z_;
 
   bool ignore_child_updates_;
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
-#endif // VECTOR_PROPERTY_H
+#endif  // RVIZ_COMMON__PROPERTIES__VECTOR_PROPERTY_HPP_

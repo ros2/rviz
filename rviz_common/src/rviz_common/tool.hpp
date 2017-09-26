@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,152 +28,177 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_TOOL_H
-#define RVIZ_TOOL_H
+#ifndef SRC__RVIZ_COMMON__TOOL_HPP_
+#define SRC__RVIZ_COMMON__TOOL_HPP_
 
-#include <QString>
-#include <QIcon>
 #include <QCursor>
+#include <QIcon>
 #include <QObject>
+#include <QString>
 
-#include "rviz/config.h"
+#include "rviz_common/config.hpp"
 
-class QMouseEvent;
 class QKeyEvent;
 
 namespace Ogre
 {
 class SceneManager;
-}
+}  // namespace Ogre
 
-namespace rviz
+namespace rviz_common
 {
-class DisplayContext;
+
+namespace properties
+{
+
 class Property;
+
+}  // namespace properties
+
+class DisplayContext;
 class RenderPanel;
 class ViewportMouseEvent;
 
 class Tool : public QObject
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  /** Default constructor.  Pluginlib only instantiates classes via
-   * default constructors.  Subclasses of Tool should shortcut_key_
-   * field in their constructors.
+  /**
+   * Pluginlib only instantiates classes via default constructors.
+   * Subclasses of Tool should set the shortcut_key_ field in their
+   * constructors.
    *
    * Properties to appear in the Tool Properties panel are typically
    * created in the constructor, as children of the property from
    * getPropertyContainer(), which is set up in this Tool
-   * constructor. */
+   * constructor.
+   */
   Tool();
+
   virtual ~Tool();
 
-  /** Initialize the tool.  Sets the DisplayContext and calls
-   * onInitialize(). */
-  void initialize( DisplayContext* context );
+  /// Initialize the tool.
+  /**
+   * Sets the DisplayContext and calls onInitialize().
+   */
+  void initialize(DisplayContext * context);
 
-  /** @brief Return the container for properties of this Tool. */
-  virtual Property* getPropertyContainer() const { return property_container_; }
+  /// Return the container for properties of this Tool.
+  virtual rviz_common::properties::Property * getPropertyContainer() const;
 
-  char getShortcutKey() { return shortcut_key_; }
+  /// Get the shortcut key for the tool.
+  char getShortcutKey() const;
 
-  bool accessAllKeys() { return access_all_keys_; }
+  /// Return true if the tool needs to access all keys or false if not.
+  bool accessAllKeys() const;
 
+  /// Override to get called when the tool is activated.
   virtual void activate() = 0;
+
+  /// Override to get called when the tool is deactivated.
   virtual void deactivate() = 0;
 
-  virtual void update(float wall_dt, float ros_dt)
-  {
-    (void) wall_dt;
-    (void) ros_dt;
-  }
+  /// Called periodically, typically at 30Hz.
+  virtual void update(float wall_dt, float ros_dt);
 
-  enum {
+  enum
+  {
     Render = 1,
     Finished = 2
   };
 
-  /** Process a mouse event.  This is the central function of all the
-   * tools, as it defines how the mouse is used. */
-  virtual int processMouseEvent( ViewportMouseEvent& event )
-  {
-    (void) event;
-    return 0;
-  }
+  /// Process a mouse event.
+  /**
+   * This is the central function of all the tools, as it defines how the
+   * mouse is used.
+   */
+  virtual int processMouseEvent(ViewportMouseEvent & event);
 
-  /** Process a key event.  Override if your tool should handle any
-      other keypresses than the tool shortcuts, which are handled
-      separately. */
-  virtual int processKeyEvent( QKeyEvent* event, RenderPanel* panel )
-  {
-    (void) event;
-    (void) panel;
-    return 0;
-  }
+  /// Process a key event.
+  /**
+    * Override if your tool should handle any other keypresses than the tool
+    * shortcuts, which are handled separately.
+    */
+  virtual int processKeyEvent(QKeyEvent * event, RenderPanel * panel);
 
-  QString getName() const { return name_; }
+  /// Get the name of the tool.
+  QString getName() const;
 
-  /** @brief Set the name of the tool.
-   *
-   * This is called by ToolManager during tool initialization.  If you
-   * want a different name than it gives you, call this from
-   * onInitialize() (or thereafter). */
-  void setName( const QString& name );
+  /// Set the name of the tool.
+  /**
+   * This is called by ToolManager during tool initialization.
+   * If you want a different name than it gives you, call this from
+   * onInitialize() (or thereafter).
+   */
+  void setName(const QString & name);
 
-  /** @brief Set the description of the tool.  This is called by
-   * ToolManager during tool initialization. */
-  QString getDescription() const { return description_; }
-  void setDescription( const QString& description );
+  /// Set the description of the tool.
+  /**
+   * This is called by ToolManager during tool initialization.
+   */
+  QString getDescription() const;
 
-  /** @brief Return the class identifier which was used to create this
-   * instance.  This version just returns whatever was set with
-   * setClassId(). */
-  virtual QString getClassId() const { return class_id_; }
+  /// Set the description.
+  void setDescription(const QString & description);
 
-  /** @brief Set the class identifier used to create this instance.
-   * Typically this will be set by the factory object which created it. */
-  virtual void setClassId( const QString& class_id ) { class_id_ = class_id; }
+  /// Return the class identifier which was used to create this instance.
+  /**
+   * This version just returns whatever was set with setClassId().
+   */
+  virtual QString getClassId() const;
 
-  /** @brief Load properties from the given Config.
-   *
+  /// Set the class identifier used to create this instance.
+  /**
+   * Typically this will be set by the factory object which created it.
+   */
+  virtual void setClassId(const QString & class_id);
+
+  /// Load properties from the given Config.
+  /**
    * Most tools won't need to override this, because any child
    * Properties of property_container_ are automatically loaded by
-   * this function. */
-  virtual void load( const Config& config );
+   * this function.
+   */
+  virtual void load(const Config & config);
 
-  /** @brief Save this entire tool into the given Config node.
-   *
+  /// Save this entire tool into the given Config node.
+  /**
    * Most tools won't need to override this, because any child
    * Properties of property_container_ are automatically saved by
-   * this function. */
-  virtual void save( Config config ) const;
+   * this function.
+   */
+  virtual void save(Config config) const;
 
-  /** @brief Set the toolbar icon for this tool (will also set its cursor). */
-  void setIcon( const QIcon& icon );
+  /// Set the toolbar icon for this tool (will also set its cursor).
+  void setIcon(const QIcon & icon);
 
-  /** @brief Get the icon of this tool. */
-  const QIcon& getIcon() { return icon_; }
+  /// Get the icon of this tool.
+  const QIcon & getIcon();
 
-  /** @brief Set the cursor for this tool. */
-  void setCursor( const QCursor& cursor );
+  /// Set the cursor for this tool.
+  void setCursor(const QCursor & cursor);
 
-  /** @brief Get current cursor of this tool. */
-  const QCursor& getCursor() { return cursor_; }
+  /// Get current cursor of this tool.
+  const QCursor & getCursor();
 
-  void setStatus( const QString & message );
-  
+  /// Set the status message.
+  void setStatus(const QString & message);
+
 Q_SIGNALS:
-    void close();
+  /// Emitted when closed.
+  void close();
 
 protected:
-  /** Override onInitialize to do any setup needed after the
-      DisplayContext has been set.  This is called by
-      Tool::initialize().  The base implementation here does
-      nothing. */
-  virtual void onInitialize() {}
+  /// Override onInitialize to do any setup needed after the DisplayContext has been set.
+  /**
+   * This is called by Tool::initialize().
+   * The base implementation here does nothing.
+   */
+  virtual void onInitialize();
 
-  Ogre::SceneManager* scene_manager_;
-  DisplayContext* context_;
+  Ogre::SceneManager * scene_manager_;
+  DisplayContext * context_;
 
   char shortcut_key_;
   bool access_all_keys_;
@@ -183,11 +209,11 @@ protected:
 
 private:
   QString class_id_;
-  Property* property_container_;
+  rviz_common::properties::Property * property_container_;
   QString name_;
   QString description_;
 };
 
-}
+}  // namespace rviz_common
 
-#endif
+#endif  // SRC__RVIZ_COMMON__TOOL_HPP_

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,71 +34,84 @@
 #include <OgreQuaternion.h>
 #include <OgreVector3.h>
 
-#include "rviz/view_controller.h"
+#include "rviz_common/view_controller.hpp"
 
-namespace rviz
+namespace rviz_common
 {
 
+namespace properties
+{
 class TfFrameProperty;
+}  // namespace properties
 
-/** @brief Base class of ViewControllers which have a "Target Frame"
- * which is a TF frame whose position they track. */
-class FramePositionTrackingViewController: public ViewController
+/// Base class of ViewControllers which have a "Target Frame".
+/**
+ * The "Target Frame" is a TF frame whose position they track.
+ */
+class FramePositionTrackingViewController : public ViewController
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   FramePositionTrackingViewController();
+
   virtual ~FramePositionTrackingViewController();
 
-  /** @brief Do subclass-specific initialization.  Called by
-   * ViewController::initialize after context_, target_scene_node_,
-   * and camera_ are set.  This version calls
-   * updateTargetSceneNode(). */
+  /// Do subclass-specific initialization.
+  /**
+   * Called by ViewController::initialize after context_, target_scene_node_,
+   * and camera_ are set.
+   * This version calls updateTargetSceneNode().
+   */
   virtual void onInitialize();
 
-  /** @brief called by activate().
-   *
-   * Override to implement view-specific activation.  This version
-   * calls updateTargetSceneNode(). */
+  /// Called by activate().
+  /**
+   * Override to implement view-specific activation.
+   * This version calls updateTargetSceneNode().
+   */
   virtual void onActivate();
 
   virtual void update(float dt, float ros_dt);
 
-  /** @brief Configure the settings of this view controller to give,
-   * as much as possible, a similar view as that given by the
-   * @a source_view.
+  /// Configure the settings of this view controller to give a similar view as the source_view.
+  /**
+   * source_view must return a valid Ogre::Camera* from getCamera().
    *
-   * @a source_view must return a valid @c Ogre::Camera* from getCamera().
-   *
-   * This base class implementation does nothing. */
-  virtual void mimic( ViewController* source_view );
+   * This base class implementation does nothing.
+   */
+  virtual void mimic(ViewController * source_view);
 
 protected Q_SLOTS:
-  /** @brief Called when Target Frame property changes while view is
-   * active.  Purpose is to change values in the view controller (like
+  /// Called when Target Frame property changes while view is active.
+  /**
+   * Purpose is to change values in the view controller (like
    * a position offset) such that the actual viewpoint does not
-   * change.  Calls updateTargetSceneNode() and
-   * onTargetFrameChanged(). */
+   * change.
+   * Calls updateTargetSceneNode() and onTargetFrameChanged().
+   */
   virtual void updateTargetFrame();
 
 protected:
-  /** @brief Override to implement the change in properties which
-   * nullifies the change in target frame.
-   * @see updateTargetFrame() */
-  virtual void onTargetFrameChanged( const Ogre::Vector3& old_reference_position, const Ogre::Quaternion& old_reference_orientation ) {}
+  /// Override to implement the change in properties which nullifies the change in target frame.
+  /**
+   * \see updateTargetFrame()
+   */
+  virtual void onTargetFrameChanged(
+    const Ogre::Vector3 & old_reference_position,
+    const Ogre::Quaternion & old_reference_orientation);
 
   bool getNewTransform();
 
-  /** @brief Update the position of the target_scene_node_ from the TF
-   * frame specified in the Target Frame property. */
+  /// Update the position of the target_scene_node_ based on the Target Frame property.
   virtual void updateTargetSceneNode();
 
-  TfFrameProperty* target_frame_property_;
-  Ogre::SceneNode* target_scene_node_;
+  rviz_common::properties::TfFrameProperty * target_frame_property_;
+  Ogre::SceneNode * target_scene_node_;
   Ogre::Quaternion reference_orientation_;
   Ogre::Vector3 reference_position_;
 };
 
-} // end namespace rviz
+} // end namespace rviz_common
 
 #endif // RVIZ_FRAME_POSITION_TRACKING_VIEW_CONTROLLER_H

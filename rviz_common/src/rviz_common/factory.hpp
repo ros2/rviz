@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,32 +27,36 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef RVIZ_FACTORY_H
-#define RVIZ_FACTORY_H
 
+#ifndef SRC__RVIZ_COMMON__FACTORY_HPP_
+#define SRC__RVIZ_COMMON__FACTORY_HPP_
+
+#include <QIcon>
 #include <QString>
 #include <QStringList>
-#include <QIcon>
 
-namespace rviz
+namespace rviz_common
 {
 
-/** @brief Abstract superclass representing the ability to get a list
- * of class IDs and the ability to get name, description, and package
- * strings for each.  Actually instantiating objects must be done by
- * subclasses specialized for specific types. */
+/// Abstract base class representing a plugin load-able class factory.
+/**
+ * The class represents the ability to get a list of class IDs and the ability
+ * to get name, description, and package strings for each.
+ * Actually instantiating objects must be done by subclasses specialized for
+ * specific types.
+ */
 class Factory
 {
 public:
   virtual ~Factory() {}
 
   virtual QStringList getDeclaredClassIds() = 0;
-  virtual QString getClassDescription( const QString& class_id ) const = 0;
-  virtual QString getClassName( const QString& class_id ) const = 0;
-  virtual QString getClassPackage( const QString& class_id ) const = 0;
-  virtual QIcon getIcon( const QString& class_id ) const = 0;
+  virtual QString getClassDescription(const QString & class_id) const = 0;
+  virtual QString getClassName(const QString & class_id) const = 0;
+  virtual QString getClassPackage(const QString & class_id) const = 0;
+  virtual QIcon getIcon(const QString & class_id) const = 0;
 };
 
-} // end namespace rviz
+}  // namespace rviz_common
 
-#endif // RVIZ_FACTORY_H
+#endif  // SRC__RVIZ_COMMON__FACTORY_HPP_

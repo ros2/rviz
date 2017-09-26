@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,75 +28,94 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "rviz_common/view_controller.hpp"
+
+#include <sstream>
+
 #include <QColor>
 #include <QFont>
 #include <QKeyEvent>
+#include <Qt>
+
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
 
 #include <OgreCamera.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 
-#include "rviz/display_context.h"
-#include "rviz/frame_manager.h"
-#include "rviz/load_resource.h"
-#include "rviz/properties/enum_property.h"
-#include "rviz/properties/float_property.h"
-#include "rviz/properties/bool_property.h"
-#include "rviz/render_panel.h"
-#include "rviz/selection/selection_manager.h"
-#include "rviz/view_manager.h"
-#include "rviz/viewport_mouse_event.h"
-#include "rviz/window_manager_interface.h"
-#include "rviz/ogre_helpers/render_system.h"
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
 
-#include "rviz/view_controller.h"
+#include "rviz_rendering/render_window.hpp"
 
-namespace rviz
+#include "./display_context.hpp"
+#include "./load_resource.hpp"
+#include "./properties/bool_property.hpp"
+// #include "./properties/enum_property.hpp"
+#include "./properties/float_property.hpp"
+#include "./selection/selection_manager.hpp"
+#include "./render_panel.hpp"
+
+// #include "rviz/frame_manager.h"
+// #include "rviz/view_manager.h"
+// #include "rviz/viewport_mouse_event.h"
+// #include "rviz/window_manager_interface.h"
+// #include "rviz/ogre_helpers/render_system.h"
+
+namespace rviz_common
 {
+
+using properties::BoolProperty;
+using properties::FloatProperty;
 
 ViewController::ViewController()
-  : context_( NULL )
-  , camera_( NULL )
-  , is_active_( false )
-  , type_property_( NULL )
+: context_(NULL),
+  camera_(NULL),
+  is_active_(false),
+  type_property_(NULL)
 {
-  near_clip_property_ = new FloatProperty( "Near Clip Distance", 0.01f,
-                                      "Anything closer to the camera than this threshold will not get rendered.",
-                                      this, SLOT( updateNearClipDistance() ) );
-  near_clip_property_->setMin( 0.001 );
-  near_clip_property_->setMax( 10000 );
+  near_clip_property_ = new FloatProperty(
+    "Near Clip Distance", 0.01f,
+    "Anything closer to the camera than this threshold will not get rendered.",
+    this, SLOT(updateNearClipDistance()));
+  near_clip_property_->setMin(0.001);
+  near_clip_property_->setMax(10000);
 
-  stereo_enable_ = new BoolProperty( "Enable Stereo Rendering", true,
-                                      "Render the main view in stereo if supported."
-                                      "  On Linux this requires a recent version of Ogre and"
-                                      " an NVIDIA Quadro card with 3DVision glasses.",
-                                      this, SLOT( updateStereoProperties() ) );
-  stereo_eye_swap_ = new BoolProperty( "Swap Stereo Eyes", false,
-                                      "Swap eyes if the monitor shows the left eye on the right.",
-                                      stereo_enable_, SLOT( updateStereoProperties() ), this );
-  stereo_eye_separation_ = new FloatProperty( "Stereo Eye Separation", 0.06f,
-                                      "Distance between eyes for stereo rendering.",
-                                      stereo_enable_, SLOT( updateStereoProperties() ), this );
-  stereo_focal_distance_ = new FloatProperty( "Stereo Focal Distance", 1.0f,
-                                      "Distance from eyes to screen.  For stereo rendering.",
-                                      stereo_enable_, SLOT( updateStereoProperties() ), this );
-  invert_z_ = new BoolProperty( "Invert Z Axis", false,
-                                      "Invert camera's Z axis for Z-down environments/models.",
-                                      this, SLOT( updateStereoProperties() ) );
+  stereo_enable_ = new BoolProperty("Enable Stereo Rendering", true,
+      "Render the main view in stereo if supported."
+      "  On Linux this requires a recent version of Ogre and"
+      " an NVIDIA Quadro card with 3DVision glasses.",
+      this, SLOT(updateStereoProperties()));
+  stereo_eye_swap_ = new BoolProperty("Swap Stereo Eyes", false,
+      "Swap eyes if the monitor shows the left eye on the right.",
+      stereo_enable_, SLOT(updateStereoProperties()), this);
+  stereo_eye_separation_ = new FloatProperty("Stereo Eye Separation", 0.06f,
+      "Distance between eyes for stereo rendering.",
+      stereo_enable_, SLOT(updateStereoProperties()), this);
+  stereo_focal_distance_ = new FloatProperty("Stereo Focal Distance", 1.0f,
+      "Distance from eyes to screen.  For stereo rendering.",
+      stereo_enable_, SLOT(updateStereoProperties()), this);
+  invert_z_ = new BoolProperty("Invert Z Axis", false,
+      "Invert camera's Z axis for Z-down environments/models.",
+      this, SLOT(updateStereoProperties()));
 }
 
-void ViewController::initialize( DisplayContext* context )
+void ViewController::initialize(DisplayContext * context)
 {
   context_ = context;
 
   std::stringstream ss;
   static int count = 0;
   ss << "ViewControllerCamera" << count++;
-  camera_ = context_->getSceneManager()->createCamera( ss.str() );
-  context_->getSceneManager()->getRootSceneNode()->attachObject( camera_ );
+  camera_ = context_->getSceneManager()->createCamera(ss.str());
+  context_->getSceneManager()->getRootSceneNode()->attachObject(camera_);
 
-  setValue( formatClassId( getClassId() ));
-  setReadOnly( true );
+  setValue(formatClassId(getClassId()));
+  setReadOnly(true);
 
   // Do subclass initialization.
   onInitialize();
@@ -103,79 +123,70 @@ void ViewController::initialize( DisplayContext* context )
   cursor_ = getDefaultCursor();
 
   standard_cursors_[Default] = getDefaultCursor();
-  standard_cursors_[Rotate2D] = makeIconCursor( "package://rviz/icons/rotate.svg" );
-  standard_cursors_[Rotate3D] = makeIconCursor( "package://rviz/icons/rotate_cam.svg" );
-  standard_cursors_[MoveXY] = makeIconCursor( "package://rviz/icons/move2d.svg" );
-  standard_cursors_[MoveZ] = makeIconCursor( "package://rviz/icons/move_z.svg" );
-  standard_cursors_[Zoom] = makeIconCursor( "package://rviz/icons/zoom.svg" );
-  standard_cursors_[Crosshair] = makeIconCursor( "package://rviz/icons/crosshair.svg" );
+  standard_cursors_[Rotate2D] = makeIconCursor("package://rviz/icons/rotate.svg");
+  standard_cursors_[Rotate3D] = makeIconCursor("package://rviz/icons/rotate_cam.svg");
+  standard_cursors_[MoveXY] = makeIconCursor("package://rviz/icons/move2d.svg");
+  standard_cursors_[MoveZ] = makeIconCursor("package://rviz/icons/move_z.svg");
+  standard_cursors_[Zoom] = makeIconCursor("package://rviz/icons/zoom.svg");
+  standard_cursors_[Crosshair] = makeIconCursor("package://rviz/icons/crosshair.svg");
 
   updateNearClipDistance();
   updateStereoProperties();
 
-  if (!RenderSystem::get()->isStereoSupported())
-  {
-    stereo_enable_->setBool(false);
-    stereo_enable_->hide();
-  }
+  // TODO(wjwwood): replace this with a call to the rviz_rendering::RenderWindow or similar
+  // if (!RenderSystem::get()->isStereoSupported()) {
+  //   stereo_enable_->setBool(false);
+  //   stereo_enable_->hide();
+  // }
 }
 
 ViewController::~ViewController()
 {
-  context_->getSceneManager()->destroyCamera( camera_ );
+  context_->getSceneManager()->destroyCamera(camera_);
 }
 
-QString ViewController::formatClassId( const QString& class_id )
+QString ViewController::formatClassId(const QString & class_id)
 {
-  QStringList id_parts = class_id.split( "/" );
-  if( id_parts.size() != 2 )
-  {
+  QStringList id_parts = class_id.split("/");
+  if (id_parts.size() != 2) {
     // Should never happen with pluginlib class ids, which are
     // formatted like "package_name/class_name".  Not worth crashing
     // over though.
     return class_id;
-  }
-  else
-  {
-    return id_parts[ 1 ] + " (" + id_parts[ 0 ] + ")";
+  } else {
+    return id_parts[1] + " (" + id_parts[0] + ")";
   }
 }
 
-QVariant ViewController::getViewData( int column, int role ) const
+QVariant ViewController::getViewData(int column, int role) const
 {
-  if ( role == Qt::TextColorRole )
-  {
+  if (role == Qt::TextColorRole) {
     return QVariant();
   }
 
-  if( is_active_ )
-  {
-    switch( role )
-    {
-    case Qt::BackgroundRole:
-    {
-      return QColor( 0xba, 0xad, 0xa4 );
-    }
-    case Qt::FontRole:
-    {
-      QFont font;
-      font.setBold( true );
-      return font;
-    }
+  if (is_active_) {
+    switch (role) {
+      case Qt::BackgroundRole:
+        {
+          return QColor(0xba, 0xad, 0xa4);
+        }
+      case Qt::FontRole:
+        {
+          QFont font;
+          font.setBold(true);
+          return font;
+        }
     }
   }
-  return Property::getViewData( column, role );
+  return Property::getViewData(column, role);
 }
 
-Qt::ItemFlags ViewController::getViewFlags( int column ) const
+Qt::ItemFlags ViewController::getViewFlags(int column) const
 {
-  if( is_active_ )
-  {
-    return Property::getViewFlags( column );
-  }
-  else
-  {
-    return Property::getViewFlags( column ) | Qt::ItemIsDragEnabled;
+  if (is_active_) {
+    return Property::getViewFlags(column);
+  } else {
+    return Property::getViewFlags(column) | Qt::ItemIsDragEnabled;
   }
 }
 
@@ -185,95 +196,135 @@ void ViewController::activate()
   onActivate();
 }
 
+void ViewController::update(float dt, float ros_dt)
+{
+  (void) dt;
+  (void) ros_dt;
+}
+
+void ViewController::handleMouseEvent(ViewportMouseEvent & evt)
+{
+  (void) evt;
+}
+
 void ViewController::emitConfigChanged()
 {
   Q_EMIT configChanged();
 }
 
-void ViewController::load( const Config& config )
+void ViewController::load(const Config & config)
 {
   // Load the name by hand.
   QString name;
-  if( config.mapGetString( "Name", &name ))
-  {
-    setName( name );
+  if (config.mapGetString("Name", &name)) {
+    setName(name);
   }
   // Load all sub-properties the same way the base class does.
-  Property::load( config );
+  Property::load(config);
 }
 
-void ViewController::save( Config config ) const
+void ViewController::save(Config config) const
 {
-  config.mapSetValue( "Class", getClassId() );
-  config.mapSetValue( "Name", getName() );
+  config.mapSetValue("Class", getClassId());
+  config.mapSetValue("Name", getName());
 
-  Property::save( config );
+  Property::save(config);
 }
 
-void ViewController::handleKeyEvent( QKeyEvent* event, RenderPanel* panel )
+void ViewController::handleKeyEvent(QKeyEvent * event, RenderPanel * panel)
 {
-  if( event->key() == Qt::Key_F &&
-      panel->getViewport() &&
-      context_->getSelectionManager() )
+  Ogre::Viewport * viewport =
+    rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(panel->getRenderWindow());
+  if (event->key() == Qt::Key_F && viewport && context_->getSelectionManager())
   {
-    QPoint mouse_rel_panel = panel->mapFromGlobal( QCursor::pos() );
-    Ogre::Vector3 point_rel_world; // output of get3DPoint().
-    if( context_->getSelectionManager()->get3DPoint( panel->getViewport(),
-                                                     mouse_rel_panel.x(), mouse_rel_panel.y(),
-                                                     point_rel_world ))
+    QPoint mouse_rel_panel = panel->mapFromGlobal(QCursor::pos());
+    Ogre::Vector3 point_rel_world;  // output of get3DPoint().
+    if (context_->getSelectionManager()->get3DPoint(viewport,
+      mouse_rel_panel.x(), mouse_rel_panel.y(),
+      point_rel_world))
     {
-      lookAt( point_rel_world );
+      lookAt(point_rel_world);
     }
   }
 
-  if( event->key() == Qt::Key_Z )
-  {
+  if (event->key() == Qt::Key_Z) {
     reset();
   }
 }
 
-void ViewController::setCursor( CursorType cursor_type )
+void ViewController::setCursor(CursorType cursor_type)
 {
-  cursor_=standard_cursors_[cursor_type];
+  cursor_ = standard_cursors_[cursor_type];
 }
 
-void ViewController::lookAt( float x, float y, float z )
+void ViewController::lookAt(float x, float y, float z)
 {
-  Ogre::Vector3 point( x, y, z );
-  lookAt( point );
+  Ogre::Vector3 point(x, y, z);
+  lookAt(point);
 }
 
-void ViewController::setStatus( const QString & message )
+void ViewController::mimic(ViewController * source_view)
 {
-  if ( context_ )
-  {
-    context_->setStatus( message );
+  (void) source_view;
+}
+
+void ViewController::transitionFrom(ViewController * previous_view)
+{
+  (void) previous_view;
+}
+
+Ogre::Camera * ViewController::getCamera() const
+{
+  return camera_;
+}
+
+QString ViewController::getClassId() const
+{
+  return class_id_;
+}
+
+void ViewController::setClassId(const QString & class_id)
+{
+  class_id_ = class_id;
+}
+
+bool ViewController::isActive() const
+{
+  return is_active_;
+}
+
+QCursor ViewController::getCursor()
+{
+  return cursor_;
+}
+
+void ViewController::setStatus(const QString & message)
+{
+  if (context_) {
+    context_->setStatus(message);
   }
 }
 
 void ViewController::updateNearClipDistance()
 {
   float n = near_clip_property_->getFloat();
-  camera_->setNearClipDistance( n );
+  camera_->setNearClipDistance(n);
 }
 
 void ViewController::updateStereoProperties()
 {
-  if (stereo_enable_->getBool())
-  {
+  if (stereo_enable_->getBool()) {
     float focal_dist = stereo_focal_distance_->getFloat();
     float eye_sep = stereo_eye_swap_->getBool() ?
-                    -stereo_eye_separation_->getFloat() :
-                    stereo_eye_separation_->getFloat();
+      -stereo_eye_separation_->getFloat() :
+      stereo_eye_separation_->getFloat();
     camera_->setFrustumOffset(0.5f * eye_sep, 0.0f);
     camera_->setFocalLength(focal_dist);
     stereo_eye_swap_->show();
     stereo_eye_separation_->show();
     stereo_focal_distance_->show();
-  }
-  else
-  {
-    camera_->setFrustumOffset(0.0f,0.0f);
+  } else {
+    camera_->setFrustumOffset(0.0f, 0.0f);
     camera_->setFocalLength(1.0f);
     stereo_eye_swap_->hide();
     stereo_eye_separation_->hide();
@@ -286,4 +337,17 @@ void ViewController::updateInvertZAxis()
   // We don't seem to need to do anything here.
 }
 
-} // end namespace rviz
+void ViewController::onInitialize()
+{
+}
+
+void ViewController::onActivate()
+{
+}
+
+void ViewController::setCursor(QCursor cursor)
+{
+  cursor_ = cursor;
+}
+
+}  // namespace rviz_common

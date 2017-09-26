@@ -95,7 +95,8 @@ public:
 namespace rviz_rendering
 {
 
-OgreLogging::Preference OgreLogging::preference_ = OgreLogging::NoLogging;
+// OgreLogging::Preference OgreLogging::preference_ = OgreLogging::NoLogging;
+OgreLogging::Preference OgreLogging::preference_ = OgreLogging::StandardOut;
 // TODO(wjwwood): refactor this to not have static members.
 std::string OgreLogging::filename_;  // NOLINT: cpplint doesn't allow static strings
 
@@ -124,7 +125,8 @@ void OgreLogging::configureLogging()
 
   // Printing to standard out is what Ogre does if you don't do any LogManager calls.
   if (preference_ == StandardOut) {
-    ll.min_lml = Ogre::LML_NORMAL;
+    // ll.min_lml = Ogre::LML_NORMAL;
+    ll.min_lml = Ogre::LML_TRIVIAL;
   }
   // cppcheck-suppress memleak
 }

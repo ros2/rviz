@@ -33,7 +33,9 @@
 
 class QPushButton;
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 /**
@@ -65,6 +67,7 @@ private:
   QPushButton* button_;
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
 #endif // RVIZ_LINE_EDIT_WITH_BUTTON_H

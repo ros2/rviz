@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,40 +27,47 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef QUATERNION_PROPERTY_H
-#define QUATERNION_PROPERTY_H
+
+// TODO(wjwwood): revist style of this file.
+
+#ifndef RVIZ_COMMON__PROPERTIES__QUATERNION_PROPERTY_HPP_
+#define RVIZ_COMMON__PROPERTIES__QUATERNION_PROPERTY_HPP_
 
 #include <OgreQuaternion.h>
 
-#include "rviz/properties/property.h"
+#include "rviz_common/properties/property.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
-class QuaternionProperty: public Property
+class QuaternionProperty : public Property
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  QuaternionProperty( const QString& name = QString(),
-                  const Ogre::Quaternion& default_value = Ogre::Quaternion::IDENTITY,
-                  const QString& description = QString(),
-                  Property* parent = 0,
-                  const char *changed_slot = 0,
-                  QObject* receiver = 0 );
+  QuaternionProperty(
+    const QString & name = QString(),
+    const Ogre::Quaternion & default_value = Ogre::Quaternion::IDENTITY,
+    const QString & description = QString(),
+    Property * parent = 0,
+    const char * changed_slot = 0,
+    QObject * receiver = 0);
 
-  virtual bool setQuaternion( const Ogre::Quaternion& quaternion );
-  virtual Ogre::Quaternion getQuaternion() const { return quaternion_; }
+  virtual bool setQuaternion(const Ogre::Quaternion & quaternion);
+  virtual Ogre::Quaternion getQuaternion() const {return quaternion_; }
 
-  virtual bool setValue( const QVariant& new_value );
+  virtual bool setValue(const QVariant & new_value);
 
   /** @brief Load the value of this property and/or its children from
    * the given Config node. */
-  virtual void load( const Config& config );
+  virtual void load(const Config & config);
 
-  virtual void save( Config config ) const;
+  virtual void save(Config config) const;
 
   /** @brief Overridden from Property to propagate read-only-ness to children. */
-  virtual void setReadOnly( bool read_only );
+  virtual void setReadOnly(bool read_only);
 
 private Q_SLOTS:
   void updateFromChildren();
@@ -69,13 +77,14 @@ private:
   void updateString();
 
   Ogre::Quaternion quaternion_;
-  Property* x_;
-  Property* y_;
-  Property* z_;
-  Property* w_;
+  Property * x_;
+  Property * y_;
+  Property * z_;
+  Property * w_;
   bool ignore_child_updates_;
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
-#endif // QUATERNION_PROPERTY_H
+#endif  // RVIZ_COMMON__PROPERTIES__QUATERNION_PROPERTY_HPP_

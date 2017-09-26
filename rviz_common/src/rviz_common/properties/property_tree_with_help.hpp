@@ -31,11 +31,13 @@
 
 #include <QSplitter>
 
-#include "rviz/config.h"
+#include "rviz_common/config.hpp"
 
 class QTextBrowser;
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 class Property;
@@ -64,6 +66,7 @@ private:
   QTextBrowser* help_;
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
 #endif // RVIZ_PROPERTY_TREE_WITH_HELP_H

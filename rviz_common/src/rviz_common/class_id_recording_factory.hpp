@@ -29,9 +29,9 @@
 #ifndef CLASS_ID_RECORDING_FACTORY_H
 #define CLASS_ID_RECORDING_FACTORY_H
 
-#include "rviz/factory.h"
+#include "./factory.hpp"
 
-namespace rviz
+namespace rviz_common
 {
 
 template<class Type>
@@ -67,6 +67,6 @@ protected:
   virtual Type* makeRaw( const QString& class_id, QString* error_return = NULL ) = 0;
 };
 
-} // end namespace rviz
+} // end namespace rviz_common
 
 #endif // CLASS_ID_RECORDING_FACTORY_H

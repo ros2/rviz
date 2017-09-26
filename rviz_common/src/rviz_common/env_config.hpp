@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2011, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,16 +27,24 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef RVIZ_ENV_CONFIG_H
-#define RVIZ_ENV_CONFIG_H
+
+#ifndef SRC__RVIZ_COMMON__ENV_CONFIG_HPP_
+#define SRC__RVIZ_COMMON__ENV_CONFIG_HPP_
 
 #include <string>
 
-namespace rviz
+namespace rviz_common
 {
-std::string get_version();
-std::string get_distro();
-std::string get_ogre_plugin_path();
-}
 
-#endif // RVIZ_ENV_CONFIG_H
+/// Return the version string for rviz.
+std::string get_version();
+
+/// Return the distro name for ROS.
+std::string get_distro();
+
+/// Return the ogre plugin path.
+std::string get_ogre_plugin_path();
+
+}  // namespace rviz_common
+
+#endif  // SRC__RVIZ_COMMON__ENV_CONFIG_HPP_

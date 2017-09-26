@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,70 +27,90 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef RVIZ_PANEL_H
-#define RVIZ_PANEL_H
+
+#ifndef SRC__RVIZ_COMMON__PANEL_HPP_
+#define SRC__RVIZ_COMMON__PANEL_HPP_
 
 #include <QWidget>
 
-#include "rviz/config.h"
+#include "rviz_common/config.hpp"
 
-namespace rviz
+namespace rviz_common
 {
 
 class VisualizationManager;
 
-class Panel: public QWidget
+class Panel : public QWidget
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  Panel( QWidget* parent = 0 );
+  explicit Panel(QWidget * parent = 0);
   virtual ~Panel();
 
-  /** Initialize the panel with a VisualizationManager.  Called by
-   * VisualizationFrame during setup. */
-  void initialize( VisualizationManager* manager );
-
+  /// Initialize the panel with a VisualizationManager.
   /**
-   * Override to do initialization which depends on the
-   * VisualizationManager being available.  This base implementation
-   * does nothing.
+   * Called by VisualizationFrame during setup.
    */
-  virtual void onInitialize() {}
+  void initialize(VisualizationManager * manager);
 
-  virtual QString getName() const { return name_; }
-  virtual void setName( const QString& name ) { name_ = name; }
+  /// Override-able function to do initialization.
+  /**
+   * Override to do initialization which depends on the VisualizationManager
+   * being available.
+   * The default implementation does nothing.
+   */
+  virtual void onInitialize();
 
-  /** @brief Return a description of this Panel. */
-  virtual QString getDescription() const { return description_; }
+  /// Return the name.
+  virtual QString getName() const;
 
-  /** @brief Set a description of this Panel.  Called by the factory which creates it. */
-  virtual void setDescription( const QString& description ) { description_ = description; }
+  /// Set the name.
+  virtual void setName(const QString & name);
 
-  /** @brief Return the class identifier which was used to create this
-   * instance.  This version just returns whatever was set with
-   * setClassId(). */
-  virtual QString getClassId() const { return class_id_; }
+  /// Return a description of this Panel.
+  virtual QString getDescription() const;
 
-  /** @brief Set the class identifier used to create this instance.
-   * Typically this will be set by the factory object which created it. */
-  virtual void setClassId( const QString& class_id ) { class_id_ = class_id; }
+  /// Set a description of this Panel.
+  /**
+   * Called by the factory which creates it.
+   */
+  virtual void setDescription(const QString & description);
 
-  /** @brief Override to load configuration data.  This version loads the name of the panel. */
-  virtual void load( const Config& config );
+  /// Return the class identifier which was used to create this instance.
+  /**
+   * This version just returns whatever was set with setClassId().
+   */
+  virtual QString getClassId() const;
 
-  /** @brief Override to save configuration data.  This version saves the name and class ID of the panel. */
-  virtual void save( Config config ) const;
+  /// Set the class identifier used to create this instance.
+  /**
+   * Typically this will be set by the factory object which created it.
+   */
+  virtual void setClassId(const QString & class_id);
+
+  /// Override to load configuration data.
+  /**
+   * This version loads the name of the panel.
+   */
+  virtual void load(const Config & config);
+
+  /// Override to save configuration data.
+  /**
+   * This version saves the name and class ID of the panel.
+   */
+  virtual void save(Config config) const;
 
 Q_SIGNALS:
-  /** @brief Subclasses must emit this whenever a configuration change
-   *         happens.
-   *
+  /// Subclasses must emit this whenever a configuration change happens.
+  /**
    * This is used to let the system know that changes have been made
-   * since the last time the config was saved. */
+   * since the last time the config was saved.
+   */
   void configChanged();
 
 protected:
-  VisualizationManager* vis_manager_;
+  VisualizationManager * vis_manager_;
 
 private:
   QString class_id_;
@@ -97,6 +118,6 @@ private:
   QString description_;
 };
 
-} // end namespace rviz
+}  // namespace rviz_common
 
-#endif // RVIZ_PANEL_H
+#endif  // SRC__RVIZ_COMMON__PANEL_HPP_

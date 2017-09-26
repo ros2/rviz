@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,20 +28,22 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_SELECTION_FORWARDS_H
-#define RVIZ_SELECTION_FORWARDS_H
+#ifndef SRC__RVIZ_COMMON__SELECTION__FORWARDS_HPP_
+#define SRC__RVIZ_COMMON__SELECTION__FORWARDS_HPP_
 
-#include <vector>
-#include <set>
 #include <map>
-#include <boost/unordered_map.hpp>
+#include <set>
+#include <unordered_map>
+#include <vector>
+
 #include <OgrePixelFormat.h>
 #include <OgreColourValue.h>
 
-#include <ros/console.h>
+#include "rviz_common/logging.hpp"
 
-
-namespace rviz
+namespace rviz_common
+{
+namespace selection
 {
 
 typedef uint32_t CollObjectHandle;
@@ -53,7 +56,7 @@ typedef std::vector<uint64_t> V_uint64;
 
 struct Picked
 {
-  Picked(CollObjectHandle _handle = 0 )
+  explicit Picked(CollObjectHandle _handle = 0)
   : handle(_handle), pixel_count(1)
   {
   }
@@ -62,35 +65,34 @@ struct Picked
   int pixel_count;
   S_uint64 extra_handles;
 };
-typedef boost::unordered_map<CollObjectHandle, Picked> M_Picked;
+
+typedef std::unordered_map<CollObjectHandle, Picked> M_Picked;
 
 
 inline uint32_t colorToHandle(Ogre::PixelFormat fmt, uint32_t col)
 {
   uint32_t handle = 0;
-  if (fmt == Ogre::PF_A8R8G8B8 || fmt == Ogre::PF_X8R8G8B8)
-  {
+  if (fmt == Ogre::PF_A8R8G8B8 || fmt == Ogre::PF_X8R8G8B8) {
     handle = col & 0x00ffffff;
-  }
-  else if (fmt == Ogre::PF_R8G8B8A8)
-  {
+  } else if (fmt == Ogre::PF_R8G8B8A8) {
     handle = col >> 8;
-  }
-  else
-  {
-    ROS_DEBUG("Incompatible pixel format [%d]", fmt);
+  } else {
+    RVIZ_COMMON_LOG_DEBUG_STREAM("Incompatible pixel format [" << fmt << "]");
   }
 
   return handle;
 }
 
-inline CollObjectHandle colorToHandle( const Ogre::ColourValue & color )
+inline CollObjectHandle colorToHandle(const Ogre::ColourValue & color)
 {
-  return (int(color.r * 255) << 16) | (int(color.g * 255) << 8) | int(color.b * 255);
+  return
+    (static_cast<int>(color.r * 255) << 16) |
+    (static_cast<int>(color.g * 255) << 8) |
+    static_cast<int>(color.b * 255);
 }
 
 
+}  // namespace selection
+}  // namespace rviz_common
 
-}
-
-#endif
+#endif  // SRC__RVIZ_COMMON__SELECTION__FORWARDS_HPP_
