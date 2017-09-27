@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,41 +27,57 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef STATUSLIST_H
-#define STATUSLIST_H
 
-#include "rviz/properties/status_property.h"
+#ifndef SRC__RVIZ_COMMON__PROPERTIES__STATUS_LIST_HPP_
+#define SRC__RVIZ_COMMON__PROPERTIES__STATUS_LIST_HPP_
 
-namespace rviz
+#include <QHash>
+#include <QString>
+
+#include "./status_property.hpp"
+
+namespace rviz_common
+{
+namespace properties
 {
 
-class StatusList: public StatusProperty
+class StatusList : public StatusProperty
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  StatusList( const QString& name = QString( "Status" ), Property* parent = 0 );
+  explicit StatusList(const QString & name = QString("Status"), Property * parent = 0);
 
-  virtual void setLevel( Level level );
-  
-  void setStatus( Level level, const QString& name, const QString& text );
-  void deleteStatus( const QString& name );
+  virtual void setLevel(Level level);
+
+  /// Add and set a status to the list by name.
+  void setStatus(Level level, const QString & name, const QString & text);
+
+  /// Delete a status by name.
+  void deleteStatus(const QString & name);
+
+  /// Clear all statuses from the list.
   void clear();
+
+  /// Update the level of the list based on the contained statuses.
   void updateLevel();
 
-  /** @brief Set the prefix of the name.
-   *
-   * Setting the name to "Foo" will give a displayed name like "Foo:
-   * Ok" or "Foo: Error". */
-  virtual void setName( const QString& name );
+  /// Set the prefix of the name for added statuses.
+  /**
+   * Setting the name to "Foo" will give a displayed name like
+   * "Foo: Ok" or "Foo: Error".
+   */
+  virtual void setName(const QString & name);
 
 private:
-  /** @brief Update the label text based on the name_prefix_ and the current status level. */
+  /// Update the label text based on the name_prefix_ and the current status level.
   void updateLabel();
 
-  QHash<QString, StatusProperty*> status_children_;
+  QHash<QString, StatusProperty *> status_children_;
   QString name_prefix_;
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
-#endif // STATUSLIST_H
+#endif  // SRC__RVIZ_COMMON__PROPERTIES__STATUS_LIST_HPP_

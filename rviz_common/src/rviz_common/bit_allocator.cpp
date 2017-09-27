@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,22 +28,20 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz/bit_allocator.h"
+#include "./bit_allocator.hpp"
 
-namespace rviz
+namespace rviz_common
 {
 
 BitAllocator::BitAllocator()
-  : allocated_bits_( 0 )
+: allocated_bits_(0)
 {}
 
 uint32_t BitAllocator::allocBit()
 {
   uint32_t mask = 1;
-  for( int i = 0; i < 32; i++ )
-  {
-    if( (mask & allocated_bits_) == 0 )
-    {
+  for (int i = 0; i < 32; i++) {
+    if ( (mask & allocated_bits_) == 0) {
       allocated_bits_ |= mask;
       return mask;
     }
@@ -52,9 +51,9 @@ uint32_t BitAllocator::allocBit()
   return 0;
 }
 
-void BitAllocator::freeBits( uint32_t bits )
+void BitAllocator::freeBits(uint32_t bits)
 {
   allocated_bits_ &= ~bits;
 }
 
-} // end namespace rviz
+}  // namespace rviz_common

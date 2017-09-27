@@ -27,14 +27,16 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <QAbstractItemView>
+#include "./property_tree_delegate.hpp"
 
-#include "rviz/properties/property.h"
-#include "rviz/properties/line_edit_with_button.h"
+#include <QAbstractItemView>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "rviz/properties/property_tree_delegate.h"
+#include "rviz_common/properties/property.hpp"
+#include "./line_edit_with_button.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 PropertyTreeDelegate::PropertyTreeDelegate( QObject* parent_object )
@@ -70,4 +72,5 @@ QWidget *PropertyTreeDelegate::createEditor( QWidget *parent,
   return QStyledItemDelegate::createEditor( parent, option, index );
 }
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common

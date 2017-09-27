@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,32 +28,32 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "./loading_dialog.hpp"
+
+#include <QApplication>
 #include <QLabel>
 #include <QVBoxLayout>
-#include <QApplication>
 
-#include "loading_dialog.h"
-
-namespace rviz
+namespace rviz_common
 {
 
-LoadingDialog::LoadingDialog( QWidget* parent )
-  : QDialog( parent )
+LoadingDialog::LoadingDialog(QWidget * parent)
+: QDialog(parent)
 {
-  setModal( true );
+  setModal(true);
 
   label_ = new QLabel;
-  QVBoxLayout* layout = new QVBoxLayout;
-  layout->addWidget( label_ );
-  setLayout( layout );
+  QVBoxLayout * layout = new QVBoxLayout;
+  layout->addWidget(label_);
+  setLayout(layout);
 }
 
-void LoadingDialog::showMessage( const QString& message )
+void LoadingDialog::showMessage(const QString & message)
 {
-  label_->setText( message );
+  label_->setText(message);
   QApplication::processEvents();
   QWidget::repaint();
   QApplication::flush();
 }
 
-} // end namespace rviz
+}  // namespace rviz_common

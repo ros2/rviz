@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2011, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,28 +27,29 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef WIDGET_GEOMETRY_CHANGE_DETECTOR_H
-#define WIDGET_GEOMETRY_CHANGE_DETECTOR_H
+#ifndef SRC__RVIZ_COMMON__WIDGET_GEOMETRY_CHANGE_DETECTOR_HPP_
+#define SRC__RVIZ_COMMON__WIDGET_GEOMETRY_CHANGE_DETECTOR_HPP_
 
 #include <QObject>
 
-namespace rviz
+namespace rviz_common
 {
 
-/** @brief Utility class for watching for events which indicate that widget geometry has changed. */
-class WidgetGeometryChangeDetector: public QObject
+/// Utility class for watching for events which indicate that widget geometry has changed.
+class WidgetGeometryChangeDetector : public QObject
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  WidgetGeometryChangeDetector( QObject* parent = NULL );
+  explicit WidgetGeometryChangeDetector(QObject * parent = nullptr);
 
-  virtual bool eventFilter( QObject* watched, QEvent* event );
+  virtual bool eventFilter(QObject * watched, QEvent * event);
 
 Q_SIGNALS:
-  /** @brief This signal is emitted whenever any filtered events are detected. */
+  /// This signal is emitted whenever any filtered events are detected.
   void changed();
 };
 
-} // end namespace rviz
+}  // namespace rviz_common
 
-#endif // WIDGET_GEOMETRY_CHANGE_DETECTOR_H
+#endif  // SRC__RVIZ_COMMON__WIDGET_GEOMETRY_CHANGE_DETECTOR_HPP_

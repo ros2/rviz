@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,30 +27,40 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef FLOAT_EDIT_H
-#define FLOAT_EDIT_H
+
+#ifndef SRC__RVIZ_COMMON__PROPERTIES__FLOAT_EDIT_HPP_
+#define SRC__RVIZ_COMMON__PROPERTIES__FLOAT_EDIT_HPP_
 
 #include <QLineEdit>
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
-class FloatEdit: public QLineEdit
+class FloatEdit : public QLineEdit
 {
-Q_OBJECT
-Q_PROPERTY( float value READ getValue WRITE setValue USER true)
+  Q_OBJECT
+  Q_PROPERTY(float value READ getValue WRITE setValue USER true)
+
 public:
-  FloatEdit( QWidget* parent = 0 );
-  virtual float getValue() { return value_; }
-  virtual void setValue( float new_value );
+  explicit FloatEdit(QWidget * parent = 0);
+
+  /// Return the internal value.
+  virtual float getValue();
+
+  /// Set the internal value.
+  virtual void setValue(float new_value);
 
 private Q_SLOTS:
+  /// Called when value in the line edit should be stored internally.
   void updateValue();
 
 private:
   float value_;
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
-#endif // FLOAT_EDIT_H
+#endif  // SRC__RVIZ_COMMON__PROPERTIES__FLOAT_EDIT_HPP_

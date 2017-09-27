@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,22 +28,27 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "./editable_enum_property.hpp"
+
+#include <string>
+
 #include <QCompleter>
 
-#include "rviz/properties/editable_combo_box.h"
+#include "./editable_combo_box.hpp"
 
-#include "rviz/properties/editable_enum_property.h"
-
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
-EditableEnumProperty::EditableEnumProperty( const QString& name,
-                                            const QString& default_value,
-                                            const QString& description,
-                                            Property* parent,
-                                            const char *changed_slot,
-                                            QObject* receiver )
-  : StringProperty( name, default_value, description, parent, changed_slot, receiver )
+EditableEnumProperty::EditableEnumProperty(
+  const QString & name,
+  const QString & default_value,
+  const QString & description,
+  Property * parent,
+  const char * changed_slot,
+  QObject * receiver)
+: StringProperty(name, default_value, description, parent, changed_slot, receiver)
 {
 }
 
@@ -51,29 +57,42 @@ void EditableEnumProperty::clearOptions()
   strings_.clear();
 }
 
-void EditableEnumProperty::addOption( const QString& option )
+void EditableEnumProperty::addOption(const QString & option)
 {
-  strings_.push_back( option );
+  strings_.push_back(option);
 }
 
-QWidget* EditableEnumProperty::createEditor( QWidget* parent,
-                                             const QStyleOptionViewItem& option )
+void EditableEnumProperty::addOptionStd(const std::string & option)
 {
+  addOption(QString::fromStdString(option));
+}
+
+QWidget * EditableEnumProperty::createEditor(QWidget * parent, const QStyleOptionViewItem & option)
+{
+  Q_UNUSED(option);
+
   // Emit requestOptions() to give listeners a chance to change the option list.
-  Q_EMIT requestOptions( this );
+  Q_EMIT requestOptions(this);
 
-  EditableComboBox* cb = new EditableComboBox( parent );
-  cb->addItems( strings_ );
-  cb->setEditText( getValue().toString() );
-  QObject::connect( cb, SIGNAL( currentIndexChanged( const QString& )), this, SLOT( setString( const QString& )));
+  EditableComboBox * cb = new EditableComboBox(parent);
+  cb->addItems(strings_);
+  cb->setEditText(getValue().toString() );
+  QObject::connect(cb, SIGNAL(currentIndexChanged(const QString&)), this,
+    SLOT(setString(const QString&)));
 
-  // TODO: need to better handle string value which is not in list.
+  // TODO(unknown): need to better handle string value which is not in list.
   return cb;
 }
 
-void EditableEnumProperty::setString( const QString& str )
+void EditableEnumProperty::sortOptions()
 {
-  setValue( str );
+  strings_.sort();
 }
 
-} // end namespace rviz
+void EditableEnumProperty::setString(const QString & str)
+{
+  setValue(str);
+}
+
+}  // namespace properties
+}  // namespace rviz_common

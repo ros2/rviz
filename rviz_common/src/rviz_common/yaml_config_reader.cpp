@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,8 +28,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "./yaml_config_reader.hpp"
+
 #include <fstream>
 #include <sstream>
+#include <string>
+
+// TODO(wjwwood): consider restoring support for yamlcpp < 0.5, force 0.5 for now
+#define RVIZ_HAVE_YAMLCPP_05 1
 
 #ifdef RVIZ_HAVE_YAMLCPP_05
 #include <yaml-cpp/yaml.h>
@@ -37,103 +44,98 @@
 #include <yaml-cpp/parser.h>
 #endif
 
-#include "rviz/yaml_config_reader.h"
-
-namespace rviz
+namespace rviz_common
 {
 
 YamlConfigReader::YamlConfigReader()
-  : error_( false )
+: error_(false)
 {}
 
-void YamlConfigReader::readFile( Config& config, const QString& filename )
+void YamlConfigReader::readFile(Config & config, const QString & filename)
 {
-  std::ifstream in( qPrintable( filename ));
-  readStream( config, in, filename );
+  std::ifstream in(qPrintable(filename));
+  readStream(config, in, filename);
 }
 
-void YamlConfigReader::readString( Config& config, const QString& data, const QString& filename )
+void YamlConfigReader::readString(Config & config, const QString & data, const QString & filename)
 {
-  std::stringstream ss( data.toStdString() );
-  readStream( config, ss, filename );
+  std::stringstream ss(data.toStdString() );
+  readStream(config, ss, filename);
 }
 
-void YamlConfigReader::readStream( Config& config, std::istream& in, const QString& filename )
+void YamlConfigReader::readStream(Config & config, std::istream & in, const QString & filename)
 {
-  try
-  {
+  (void) filename;
+  try {
     YAML::Node yaml_node;
 #ifdef RVIZ_HAVE_YAMLCPP_05
     yaml_node = YAML::Load(in);
 #else
-    YAML::Parser parser( in );
-    parser.GetNextDocument( yaml_node );
+    YAML::Parser parser(in);
+    parser.GetNextDocument(yaml_node);
 #endif
     error_ = false;
     message_ = "";
-    readYamlNode( config, yaml_node );
-  }
-  catch( YAML::ParserException& ex )
-  {
+    readYamlNode(config, yaml_node);
+  } catch (YAML::ParserException & ex) {
     message_ = ex.what();
     error_ = true;
   }
 }
 
-void YamlConfigReader::readYamlNode( Config& config, const YAML::Node& yaml_node )
+void YamlConfigReader::readYamlNode(Config & config, const YAML::Node & yaml_node)
 {
-  switch( yaml_node.Type() )
-  {
-  case YAML::NodeType::Map:
-  {
+  switch (yaml_node.Type() ) {
+    case YAML::NodeType::Map:
+      {
 #ifdef RVIZ_HAVE_YAMLCPP_05
-    for( YAML::const_iterator it = yaml_node.begin(); it != yaml_node.end(); ++it )
+        for (YAML::const_iterator it = yaml_node.begin(); it != yaml_node.end(); ++it)
 #else
-    for( YAML::Iterator it = yaml_node.begin(); it != yaml_node.end(); ++it )
+        for (YAML::Iterator it = yaml_node.begin(); it != yaml_node.end(); ++it)
 #endif
-    {
-      std::string key;
+        {
+          std::string key;
 #ifdef RVIZ_HAVE_YAMLCPP_05
-      key = it->first.as<std::string>();
+          key = it->first.as<std::string>();
 #else
-      it.first() >> key;
+          it.first() >> key;
 #endif
-      Config child = config.mapMakeChild( QString::fromStdString( key ));
+          Config child = config.mapMakeChild(QString::fromStdString(key));
 #ifdef RVIZ_HAVE_YAMLCPP_05
-      readYamlNode( child, it->second );
+          readYamlNode(child, it->second);
 #else
-      readYamlNode( child, it.second() );
+          readYamlNode(child, it.second() );
 #endif
-    }
-    break;
-  }
-  case YAML::NodeType::Sequence:
-  {
+        }
+        break;
+      }
+    case YAML::NodeType::Sequence:
+      {
 #ifdef RVIZ_HAVE_YAMLCPP_05
-    for( YAML::const_iterator it = yaml_node.begin(); it != yaml_node.end(); ++it )
+        for (YAML::const_iterator it = yaml_node.begin(); it != yaml_node.end(); ++it)
 #else
-    for( YAML::Iterator it = yaml_node.begin(); it != yaml_node.end(); ++it )
+        for (YAML::Iterator it = yaml_node.begin(); it != yaml_node.end(); ++it)
 #endif
-    {
-      Config child = config.listAppendNew();
-      readYamlNode( child, *it );
-    }
-    break;
-  }
-  case YAML::NodeType::Scalar:
-  {
-    std::string s;
+        {
+          Config child = config.listAppendNew();
+          readYamlNode(child, *it);
+        }
+        break;
+      }
+    case YAML::NodeType::Scalar:
+      {
+        std::string s;
 #ifdef RVIZ_HAVE_YAMLCPP_05
-    s = yaml_node.as<std::string>();
+        s = yaml_node.as<std::string>();
 #else
-    yaml_node >> s;
+        yaml_node >> s;
 #endif
-    config.setValue( QString::fromStdString( s ));
-    break;
-  }
-  case YAML::NodeType::Null:
-  default:
-    break;
+        config.setValue(QString::fromStdString(s));
+        break;
+      }
+    case YAML::NodeType::Null:
+    default:
+      break;
   }
 }
 
@@ -147,4 +149,4 @@ QString YamlConfigReader::errorMessage()
   return message_;
 }
 
-} // end namespace rviz
+}  // namespace rviz_common

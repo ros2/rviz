@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,45 +28,45 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdio.h>
+#include "./failed_panel.hpp"
 
-#include <QHBoxLayout>
-#include <QTextBrowser>
+#include <cstdio>
 
-#include "rviz/failed_panel.h"
+#include <QHBoxLayout>  // NOLINT: cpplint is unable to handle the include order here
+#include <QTextBrowser>  // NOLINT: cpplint is unable to handle the include order here
 
-namespace rviz
+namespace rviz_common
 {
 
-FailedPanel::FailedPanel( const QString& desired_class_id, const QString& error_message )
-  : error_message_( error_message )
+FailedPanel::FailedPanel(const QString & desired_class_id, const QString & error_message)
+: error_message_(error_message)
 {
-  setClassId( desired_class_id );
+  setClassId(desired_class_id);
 
-  QTextBrowser* error_display = new QTextBrowser;
-  error_display->setHtml( "The class required for this panel, '" + getClassId() + "', could not be loaded.<br><b>Error:</b><br>" + error_message_ );
+  QTextBrowser * error_display = new QTextBrowser;
+  error_display->setHtml(
+    "The class required for this panel, '" + getClassId() +
+    "', could not be loaded.<br><b>Error:</b><br>" +
+    error_message_);
 
-  QHBoxLayout* layout = new QHBoxLayout;
-  layout->addWidget( error_display );
-  setLayout( layout );
+  QHBoxLayout * layout = new QHBoxLayout;
+  layout->addWidget(error_display);
+  setLayout(layout);
 }
 
-void FailedPanel::load( const Config& config )
+void FailedPanel::load(const Config & config)
 {
   saved_config_ = config;
-  Panel::load( config );
+  Panel::load(config);
 }
 
-void FailedPanel::save( Config config ) const
+void FailedPanel::save(Config config) const
 {
-  if( saved_config_.isValid() )
-  {
-    config.copy( saved_config_ );
-  }
-  else
-  {
-    Panel::save( config );
+  if (saved_config_.isValid()) {
+    config.copy(saved_config_);
+  } else {
+    Panel::save(config);
   }
 }
 
-} // end namespace rviz
+}  // namespace rviz_common

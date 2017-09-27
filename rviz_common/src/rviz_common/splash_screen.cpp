@@ -27,9 +27,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz/splash_screen.h"
-#include "rviz/load_resource.h"
-#include "env_config.h"
+#include "./splash_screen.hpp"
+#include "./load_resource.hpp"
+#include "env_config.hpp"
 
 #include <QPainter>
 #include <QPoint>
@@ -37,7 +37,7 @@
 #include <iostream>
 #include <QCoreApplication>
 
-namespace rviz
+namespace rviz_common
 {
 
 SplashScreen::SplashScreen( const QPixmap& pixmap )
@@ -71,4 +71,4 @@ void SplashScreen::showMessage( const QString& message )
   QSplashScreen::showMessage( message, Qt::AlignLeft | Qt::AlignBottom, Qt::white );
 }
 
-} // end namespace rviz
+} // end namespace rviz_common

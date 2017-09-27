@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2011, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,50 +27,49 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef RVIZ_VISUALIZER_APP_H
-#define RVIZ_VISUALIZER_APP_H
+
+#ifndef INCLUDE__RVIZ_COMMON__VISUALIZER_APP_HPP_
+#define INCLUDE__RVIZ_COMMON__VISUALIZER_APP_HPP_
 
 #include <QApplication>
 #include <QObject>
 
-#ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
-# include <ros/ros.h>
-#endif
-
 class QTimer;
 
-namespace rviz
+namespace rviz_common
 {
 
 class VisualizationFrame;
 
-class VisualizerApp: public QObject
+class VisualizerApp : public QObject
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   VisualizerApp();
   virtual ~VisualizerApp();
 
-  void setApp( QApplication * app );
+  void setApp(QApplication * app);
 
-  /** Start everything.  Pass in command line arguments.
-   * @return false on failure, true on success. */
-  bool init( int argc, char** argv );
+  /// Initialize the Visualizer App given the command line arguments.
+  /**
+   * \return false on failure, true on success.
+   */
+  bool init(int argc, char ** argv);
 
 private Q_SLOTS:
-  /** If ros::ok() is false, close all windows. */
+  /// Ensure the application should continue running, otherwise close all windows.
   void checkContinue();
 
 private:
   void startContinueChecker();
 
-  QApplication* app_;
-  QTimer* continue_timer_;
-  VisualizationFrame* frame_;
-  ros::NodeHandlePtr nh_;
-  ros::ServiceServer reload_shaders_service_;
+  QApplication * app_;
+  QTimer * continue_timer_;
+  VisualizationFrame * frame_;
+  std::string node_name_;
 };
 
-} // end namespace rviz
+}  // namespace rviz_common
 
-#endif // RVIZ_VISUALIZER_APP_H
+#endif  // INCLUDE__RVIZ_COMMON__VISUALIZER_APP_HPP_

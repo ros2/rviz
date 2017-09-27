@@ -110,8 +110,8 @@ public:
 private:
   // prohibit copying
   Axes(const Axes & other)
-  : Object(0) {}
-  Axes & operator=(const Axes & other) {return *this; }
+  : Object(0) {(void) other; }
+  Axes & operator=(const Axes & other) {(void) other; return *this; }
 
   Ogre::SceneNode * scene_node_;
 

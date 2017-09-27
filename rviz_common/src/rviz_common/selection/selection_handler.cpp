@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,104 +28,113 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "selection_handler.h"
+#include "./selection_handler.hpp"
 
-#include "properties/property.h"
-#include "visualization_manager.h"
+#include <cassert>
 
-#include <ros/assert.h>
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
 
-#include <OgreSceneNode.h>
-#include <OgreSceneManager.h>
-#include <OgreManualObject.h>
-#include <OgreWireBoundingBox.h>
 #include <OgreEntity.h>
+#include <OgreManualObject.h>
+#include <OgreSceneManager.h>
+#include <OgreSceneNode.h>
 #include <OgreSubEntity.h>
+#include <OgreWireBoundingBox.h>
 
-#include "rviz/selection/selection_manager.h"
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
 
-namespace rviz
+#include "rviz_common/logging.hpp"
+
+#include "rviz_common/properties/property.hpp"
+#include "../selection/selection_manager.hpp"
+#include "../visualization_manager.hpp"
+
+namespace rviz_common
+{
+namespace selection
 {
 
-SelectionHandler::SelectionHandler( DisplayContext* context )
-  : context_( context )
-  , listener_( new Listener( this ))
+using rviz_common::properties::Property;
+
+SelectionHandler::SelectionHandler(DisplayContext * context)
+: context_(context),
+  listener_(new Listener(this))
 {
   pick_handle_ = context_->getSelectionManager()->createHandle();
-  context_->getSelectionManager()->addObject( pick_handle_, this );
+  context_->getSelectionManager()->addObject(pick_handle_, this);
 }
 
 SelectionHandler::~SelectionHandler()
 {
   S_Movable::iterator it = tracked_objects_.begin();
   S_Movable::iterator end = tracked_objects_.end();
-  for (; it != end; ++it)
-  {
-    Ogre::MovableObject* m = *it;
+  for (; it != end; ++it) {
+    Ogre::MovableObject * m = *it;
     m->setListener(0);
   }
 
-  while (!boxes_.empty())
-  {
+  while (!boxes_.empty()) {
     destroyBox(boxes_.begin()->first);
   }
-  context_->getSelectionManager()->removeObject( pick_handle_ );
+  context_->getSelectionManager()->removeObject(pick_handle_);
 }
 
 void SelectionHandler::preRenderPass(uint32_t pass)
 {
+  Q_UNUSED(pass);
   M_HandleToBox::iterator it = boxes_.begin();
   M_HandleToBox::iterator end = boxes_.end();
-  for (; it != end; ++it)
-  {
-    Ogre::WireBoundingBox* box = it->second.second;
+  for (; it != end; ++it) {
+    Ogre::WireBoundingBox * box = it->second.second;
     box->setVisible(false);
   }
 }
 
 void SelectionHandler::postRenderPass(uint32_t pass)
 {
+  Q_UNUSED(pass);
   M_HandleToBox::iterator it = boxes_.begin();
   M_HandleToBox::iterator end = boxes_.end();
-  for (; it != end; ++it)
-  {
-    Ogre::WireBoundingBox* box = it->second.second;
+  for (; it != end; ++it) {
+    Ogre::WireBoundingBox * box = it->second.second;
     box->setVisible(true);
   }
 }
 
 
-void SelectionHandler::addTrackedObjects( Ogre::SceneNode* node )
+void SelectionHandler::addTrackedObjects(Ogre::SceneNode * node)
 {
-  if (!node)
-  {
+  if (!node) {
     return;
   }
   // Loop over all objects attached to this node.
   Ogre::SceneNode::ObjectIterator obj_it = node->getAttachedObjectIterator();
-  while( obj_it.hasMoreElements() )
-  {
-    Ogre::MovableObject* obj = obj_it.getNext();
-    addTrackedObject( obj );
+  while (obj_it.hasMoreElements() ) {
+    Ogre::MovableObject * obj = obj_it.getNext();
+    addTrackedObject(obj);
   }
   // Loop over and recurse into all child nodes.
   Ogre::SceneNode::ChildNodeIterator child_it = node->getChildIterator();
-  while( child_it.hasMoreElements() )
-  {
-    Ogre::SceneNode* child = dynamic_cast<Ogre::SceneNode*>( child_it.getNext() );
-    addTrackedObjects( child );
+  while (child_it.hasMoreElements() ) {
+    Ogre::SceneNode * child = dynamic_cast<Ogre::SceneNode *>( child_it.getNext() );
+    addTrackedObjects(child);
   }
 }
 
-void SelectionHandler::addTrackedObject(Ogre::MovableObject* object)
+void SelectionHandler::addTrackedObject(Ogre::MovableObject * object)
 {
   tracked_objects_.insert(object);
   object->setListener(listener_.get());
 
-  SelectionManager::setPickHandle( pick_handle_, object );
+  SelectionManager::setPickHandle(pick_handle_, object);
 }
 
-void SelectionHandler::removeTrackedObject(Ogre::MovableObject* object)
+void SelectionHandler::removeTrackedObject(Ogre::MovableObject * object)
 {
   tracked_objects_.erase(object);
   object->setListener(0);
@@ -136,20 +146,17 @@ void SelectionHandler::updateTrackedBoxes()
 {
   M_HandleToBox::iterator it = boxes_.begin();
   M_HandleToBox::iterator end = boxes_.end();
-  for (; it != end; ++it)
-  {
+  for (; it != end; ++it) {
     V_AABB aabbs;
     Picked p(it->first.first);
     p.extra_handles.insert(it->first.second);
     getAABBs(Picked(it->first.first), aabbs);
 
-    if (!aabbs.empty())
-    {
+    if (!aabbs.empty()) {
       Ogre::AxisAlignedBox combined;
       V_AABB::iterator aabb_it = aabbs.begin();
       V_AABB::iterator aabb_end = aabbs.end();
-      for (; aabb_it != aabb_end; ++aabb_it)
-      {
+      for (; aabb_it != aabb_end; ++aabb_it) {
         combined.merge(*aabb_it);
       }
 
@@ -158,42 +165,58 @@ void SelectionHandler::updateTrackedBoxes()
   }
 }
 
-void SelectionHandler::getAABBs(const Picked& obj, V_AABB& aabbs)
+void SelectionHandler::createProperties(const Picked & obj, Property * parent_property)
 {
+  Q_UNUSED(obj);
+  Q_UNUSED(parent_property);
+}
+
+void SelectionHandler::getAABBs(const Picked & obj, V_AABB & aabbs)
+{
+  Q_UNUSED(obj);
   S_Movable::iterator it = tracked_objects_.begin();
   S_Movable::iterator end = tracked_objects_.end();
-  for (; it != end; ++it)
-  {
+  for (; it != end; ++it) {
     aabbs.push_back((*it)->getWorldBoundingBox());
   }
 }
 
-void SelectionHandler::destroyProperties( const Picked& obj, Property* parent_property )
+void SelectionHandler::destroyProperties(const Picked & obj, Property * parent_property)
 {
-  for( int i = 0; i < properties_.size(); i++ )
-  {
-    delete properties_.at( i );
+  Q_UNUSED(obj);
+  Q_UNUSED(parent_property);
+  for (int i = 0; i < properties_.size(); i++) {
+    delete properties_.at(i);
   }
   properties_.clear();
 }
 
-void SelectionHandler::createBox(const std::pair<CollObjectHandle, uint64_t>& handles, const Ogre::AxisAlignedBox& aabb, const std::string& material_name)
+void SelectionHandler::updateProperties()
 {
-  Ogre::WireBoundingBox* box = 0;
-  Ogre::SceneNode* node = 0;
+}
+
+bool SelectionHandler::needsAdditionalRenderPass(uint32_t pass)
+{
+  Q_UNUSED(pass);
+  return false;
+}
+
+void SelectionHandler::createBox(const std::pair<CollObjectHandle, uint64_t> & handles,
+  const Ogre::AxisAlignedBox & aabb,
+  const std::string & material_name)
+{
+  Ogre::WireBoundingBox * box = 0;
+  Ogre::SceneNode * node = 0;
 
   M_HandleToBox::iterator it = boxes_.find(handles);
-  if (it == boxes_.end())
-  {
-    Ogre::SceneManager* scene_manager = context_->getSceneManager();
+  if (it == boxes_.end()) {
+    Ogre::SceneManager * scene_manager = context_->getSceneManager();
     node = scene_manager->getRootSceneNode()->createChildSceneNode();
     box = new Ogre::WireBoundingBox;
 
     bool inserted = boxes_.insert(std::make_pair(handles, std::make_pair(node, box))).second;
-    ROS_ASSERT(inserted);
-  }
-  else
-  {
+    assert(inserted);
+  } else {
     node = it->second.first;
     box = it->second.second;
   }
@@ -205,13 +228,12 @@ void SelectionHandler::createBox(const std::pair<CollObjectHandle, uint64_t>& ha
   node->attachObject(box);
 }
 
-void SelectionHandler::destroyBox(const std::pair<CollObjectHandle, uint64_t>& handles)
+void SelectionHandler::destroyBox(const std::pair<CollObjectHandle, uint64_t> & handles)
 {
   M_HandleToBox::iterator it = boxes_.find(handles);
-  if (it != boxes_.end())
-  {
-    Ogre::SceneNode* node = it->second.first;
-    Ogre::WireBoundingBox* box = it->second.second;
+  if (it != boxes_.end()) {
+    Ogre::SceneNode * node = it->second.first;
+    Ogre::WireBoundingBox * box = it->second.second;
 
     node->detachAllObjects();
     node->getParentSceneNode()->removeAndDestroyChild(node->getName());
@@ -222,20 +244,16 @@ void SelectionHandler::destroyBox(const std::pair<CollObjectHandle, uint64_t>& h
   }
 }
 
-void SelectionHandler::onSelect(const Picked& obj)
+void SelectionHandler::onSelect(const Picked & obj)
 {
-  ROS_DEBUG("Selected 0x%08x", obj.handle);
-
   V_AABB aabbs;
   getAABBs(obj, aabbs);
 
-  if (!aabbs.empty())
-  {
+  if (!aabbs.empty()) {
     Ogre::AxisAlignedBox combined;
     V_AABB::iterator it = aabbs.begin();
     V_AABB::iterator end = aabbs.end();
-    for (; it != end; ++it)
-    {
+    for (; it != end; ++it) {
       combined.merge(*it);
     }
 
@@ -243,14 +261,12 @@ void SelectionHandler::onSelect(const Picked& obj)
   }
 }
 
-void SelectionHandler::onDeselect(const Picked& obj)
+void SelectionHandler::onDeselect(const Picked & obj)
 {
-  ROS_DEBUG("Deselected 0x%08x", obj.handle);
-
   destroyBox(std::make_pair(obj.handle, 0ULL));
 }
 
-void SelectionHandler::setInteractiveObject( InteractiveObjectWPtr object )
+void SelectionHandler::setInteractiveObject(InteractiveObjectWPtr object)
 {
   interactive_object_ = object;
 }
@@ -260,4 +276,10 @@ InteractiveObjectWPtr SelectionHandler::getInteractiveObject()
   return interactive_object_;
 }
 
+CollObjectHandle SelectionHandler::getHandle() const
+{
+  return pick_handle_;
 }
+
+}  // namespace selection
+}  // namespace rviz_common

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,26 +27,30 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef EDITABLE_COMBO_BOX_H
-#define EDITABLE_COMBO_BOX_H
 
-#include "rviz/properties/combo_box.h"
+#ifndef SRC__RVIZ_COMMON__PROPERTIES__EDITABLE_COMBO_BOX_HPP_
+#define SRC__RVIZ_COMMON__PROPERTIES__EDITABLE_COMBO_BOX_HPP_
 
-namespace rviz
+#include "./combo_box.hpp"
+
+namespace rviz_common
+{
+namespace properties
 {
 
-class EditableComboBox: public ComboBox
+class EditableComboBox : public ComboBox
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  EditableComboBox( QWidget* parent = 0 );
+  explicit EditableComboBox(QWidget * parent = 0);
 
 protected:
-  /** @brief If event is a tab key press, set the edit text to the
-   * longest common prefix from the completer. */
-  virtual bool event( QEvent* event );
+  /// If event is a tab key press, set the edit text to the longest common prefix of the completer.
+  virtual bool event(QEvent * event);
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
-#endif // EDITABLE_COMBO_BOX_H
+#endif  // SRC__RVIZ_COMMON__PROPERTIES__EDITABLE_COMBO_BOX_HPP_

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,50 +27,65 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef YAML_CONFIG_READER_H
-#define YAML_CONFIG_READER_H
+
+#ifndef SRC__RVIZ_COMMON__YAML_CONFIG_READER_HPP_
+#define SRC__RVIZ_COMMON__YAML_CONFIG_READER_HPP_
 
 #include <istream>
 
-#include "rviz/config.h"
+#include "rviz_common/config.hpp"
 
 namespace YAML
 {
 class Node;
 }
 
-namespace rviz
+namespace rviz_common
 {
 
 class YamlConfigReader
 {
 public:
-  /** @brief Constructor.  Object begins in a no-error state. */
+  /// Constructor.
+  /**
+   * Object begins in a no-error state.
+   */
   YamlConfigReader();
 
-  /** @brief Read config data from a file.  This potentially changes the return value sof error(), statusMessage(), and config(). */
-  void readFile( Config& config, const QString& filename );
+  /// Read config data from a file.
+  /**
+   * This potentially changes the return value sof error(), statusMessage(),
+   * and config().
+   */
+  void readFile(Config & config, const QString & filename);
 
-  /** @brief Read config data from a string.  This potentially changes the return value sof error(), statusMessage(), and config(). */
-  void readString( Config& config, const QString& data, const QString& filename = "data string" );
+  /// Read config data from a string.
+  /**
+   * This potentially changes the return value sof error(), statusMessage(),
+   * and config().
+   */
+  void readString(Config & config, const QString & data, const QString & filename = "data string");
 
-  /** @brief Read config data from a std::istream.  This potentially changes the return value sof error(), statusMessage(), and config(). */
-  void readStream( Config& config, std::istream& in, const QString& filename = "data stream" );
+  /// Read config data from a std::istream.
+  /**
+   * This potentially changes the return value sof error(), statusMessage(),
+   * and config().
+   */
+  void readStream(Config & config, std::istream & in, const QString & filename = "data stream");
 
-  /** @brief Return true if the latest readFile() or readString() call had an error. */
+  /// Return true if the latest readFile() or readString() call had an error.
   bool error();
 
-  /** @brief Return an error message if the latest read call had an
-   * error, or the empty string if not. */
+  /// Return an error message if the latest read call had an error, or the empty string if not.
   QString errorMessage();
 
 private:
-  void readYamlNode( Config& config, const YAML::Node& yaml_node );
+  void readYamlNode(Config & config, const YAML::Node & yaml_node);
 
   QString message_;
   bool error_;
 };
 
-} // end namespace rviz
+}  // namespace rviz_common
 
-#endif // YAML_CONFIG_READER_H
+#endif  // SRC__RVIZ_COMMON__YAML_CONFIG_READER_HPP_

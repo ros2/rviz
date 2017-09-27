@@ -36,12 +36,12 @@
 #include <map>
 #include <set>
 
-#include "rviz/config.h"
-#include "rviz/panel.h"
+#include "rviz_common/config.hpp"
+#include "./panel.hpp"
 
 class QPushButton;
 
-namespace rviz
+namespace rviz_common
 {
 
 class PropertyTreeWidget;
@@ -89,6 +89,6 @@ protected:
   PropertyTreeWithHelp* tree_with_help_;
 };
 
-} // namespace rviz
+} // namespace rviz_common
 
 #endif

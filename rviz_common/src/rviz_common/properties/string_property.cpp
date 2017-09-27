@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,18 +28,43 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz/properties/string_property.h"
+#include <string>
 
-namespace rviz
+#include "./string_property.hpp"
+
+namespace rviz_common
+{
+namespace properties
 {
 
-StringProperty::StringProperty( const QString& name,
-                                const QString& default_value,
-                                const QString& description,
-                                Property* parent,
-                                const char *changed_slot,
-                                QObject* receiver )
-  : Property( name, default_value, description, parent, changed_slot, receiver )
+StringProperty::StringProperty(const QString & name,
+  const QString & default_value,
+  const QString & description,
+  Property * parent,
+  const char * changed_slot,
+  QObject * receiver)
+: Property(name, default_value, description, parent, changed_slot, receiver)
 {}
 
-} // end namespace rviz
+std::string StringProperty::getStdString()
+{
+  return getValue().toString().toStdString();
+}
+
+QString StringProperty::getString()
+{
+  return getValue().toString();
+}
+
+bool StringProperty::setStdString(const std::string & std_str)
+{
+  return setValue(QString::fromStdString(std_str));
+}
+
+bool StringProperty::setString(const QString & str)
+{
+  return setValue(str);
+}
+
+}  // namespace properties
+}  // namespace rviz_common

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,9 +28,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz/display_group.h"
+#include "./display_group.hpp"
 
-#include "rviz/display_factory.h"
+#include "./display_factory.hpp"
 
 #include <tinyxml.h>
 

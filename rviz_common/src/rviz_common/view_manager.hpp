@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,142 +27,174 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef VIEW_MANAGER_H
-#define VIEW_MANAGER_H
 
-#include <QList>
-#include <QObject>
-#include <QStringList>
+#ifndef SRC__RVIZ_COMMON__VIEW_MANAGER_HPP_
+#define SRC__RVIZ_COMMON__VIEW_MANAGER_HPP_
 
-#include "rviz/pluginlib_factory.h"
-#include "rviz/view_controller.h"
+#include <algorithm>
+
+#include <QList>  // NOLINT: cpplint is unable to handle the include order here
+#include <QObject>  // NOLINT: cpplint is unable to handle the include order here
+#include <QStringList>  // NOLINT: cpplint is unable to handle the include order here
+
+// TODO(wjwwood): replace usage of pluginlib_factory
+// #include "./pluginlib_factory.hpp"
+#include "rviz_common/properties/property.hpp"
+#include "rviz_common/view_controller.hpp"
 
 namespace Ogre
 {
 class SceneNode;
 }
 
-namespace rviz
+namespace rviz_common
 {
-class DisplayContext;
-class Property;
+
+namespace properties
+{
+
 class PropertyTreeModel;
-class ViewController;
+
+}  // namespace properties
+
 class ViewControllerContainer;
 
-class ViewManager: public QObject
+class ViewManager : public QObject
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  ViewManager( DisplayContext* context );
+  explicit ViewManager(DisplayContext * context);
   ~ViewManager();
 
   void initialize();
 
-  void update( float wall_dt, float ros_dt );
+  void update(float wall_dt, float ros_dt);
 
-  /** @brief Return the current ViewController in use for the main
-   * RenderWindow. */
-  ViewController* getCurrent() const;
+  /// Return the current ViewController in use for the main RenderWindow.
+  ViewController * getCurrent() const;
 
-  ViewController* create( const QString& type );
+  /// Create a view controller by name.
+  ViewController * create(const QString & type);
 
+  /// Get the number of views.
   int getNumViews() const;
 
-  ViewController* getViewAt( int index ) const;
+  /// Get a ViewController by index.
+  ViewController * getViewAt(int index) const;
 
-  void add( ViewController* view, int index = -1 );
+  /// Add a view controller.
+  void add(ViewController * view, int index = -1);
 
-  /** @brief Remove the given ViewController from the list and return
-   * it.  If it is not in the list, NULL is returned and nothing
-   * changes. */
-  ViewController* take( ViewController* view );
+  /// Remove the given ViewController from the list and return it.
+  /**
+   * If it is not in the list, nullptr is returned and nothing changes.
+   */
+  ViewController * take(ViewController * view);
 
-  /** @brief Remove the ViewController at the given index from the
-   * list and return it.  If the index is not valid, NULL is returned
-   * and nothing changes. */
-  ViewController* takeAt( int index );
+  /// Remove the ViewController at the given index from the list and return it.
+  /**
+   * If the index is not valid, nullptr is returned and nothing changes.
+   */
+  ViewController * takeAt(int index);
 
-  PropertyTreeModel* getPropertyModel() { return property_model_; }
+  /// Get property tree model.
+  rviz_common::properties::PropertyTreeModel * getPropertyModel();
 
-  void load( const Config& config );
-  void save( Config config ) const;
+  /// Load configuration from a Config object.
+  void load(const Config & config);
 
-  /** @brief Make a copy of @a view_to_copy and install that as the new current ViewController. */
-  void setCurrentFrom( ViewController* view_to_copy );
+  /// Save configuration to a Config object.
+  void save(Config config) const;
 
-  /** @brief Return a copy of source, made by saving source to
-   * a Config and instantiating and loading a new one from that. */
-  ViewController* copy( ViewController* source );
+  /// Make a copy of view_to_copy and install that as the new current ViewController.
+  void setCurrentFrom(ViewController * view_to_copy);
 
-  PluginlibFactory<ViewController>* getFactory() const { return factory_; }
+  /// Return a copy of source.
+  /**
+   * The copy is made by saving source to a Config and instantiating and
+   * loading a new one from that.
+   */
+  ViewController * copy(ViewController * source);
 
-  /** @brief Set the 3D view widget whose view will be controlled by
-   * ViewController instances from by this ViewManager. */
-  void setRenderPanel( RenderPanel* render_panel );
+  /// Get the factory for loading view controller plugins.
+  // PluginlibFactory<ViewController> * getFactory() const {return factory_; }
 
-  /** @brief Return the 3D view widget managed by this ViewManager. */
-  RenderPanel* getRenderPanel() const { return render_panel_; }
+  /// Set the render panel whose view will be controlled by ViewControllers of this ViewManager.
+  void setRenderPanel(RenderPanel * render_panel);
+
+  /// Return the render panel widget whos views are managed by this ViewManager.
+  RenderPanel * getRenderPanel() const;
 
 public Q_SLOTS:
-
-  /** @brief Make a copy of the current ViewController and add it to the end of the list of saved views. */
+  /// Make a copy of the current ViewController and add it to the end of the list of saved views.
   void copyCurrentToList();
 
-  /** @brief Create a new view controller of the given type and set it
-   * up to mimic and replace the previous current view. */
-  void setCurrentViewControllerType( const QString& new_class_id );
+  /// Create a new view controller of the given type, then use it to replace the current view.
+  void setCurrentViewControllerType(const QString & new_class_id);
 
 Q_SIGNALS:
+  /// Emitted when the configuration of the view controller changes.
   void configChanged();
 
-  /** @brief Emitted just after the current view controller changes. */
+  /// Emitted just after the current view controller changes.
   void currentChanged();
 
 private Q_SLOTS:
-  void onCurrentDestroyed( QObject* obj );
+  /// Called on destruction.
+  void onCurrentDestroyed(QObject * obj);
 
 private:
-  /** @brief Set @a new_current as current.
-   * @param mimic_view If true, call new_current->mimic( previous ), if false call new_current->transitionFrom( previous ).
-   *
+  /// Set new_current as current.
+  /**
    * This calls mimic() or transitionFrom() on the new controller,
    * deletes the previous controller (if one existed), and tells the
-   * RenderPanel about the new controller. */
-  void setCurrent( ViewController* new_current, bool mimic_view );
+   * RenderPanel about the new controller.
+   *
+   * \param mimic_view If true, call new_current->mimic(previous), if false
+   *   call new_current->transitionFrom(previous).
+   */
+  void setCurrent(ViewController * new_current, bool mimic_view);
 
-  DisplayContext* context_;
-  ViewControllerContainer* root_property_;
-  PropertyTreeModel* property_model_;
-  PluginlibFactory<ViewController>* factory_;
-  ViewController* current_;
-  RenderPanel* render_panel_;
+  DisplayContext * context_;
+  ViewControllerContainer * root_property_;
+  rviz_common::properties::PropertyTreeModel * property_model_;
+  // PluginlibFactory<ViewController> * factory_;
+  ViewController * current_;
+  RenderPanel * render_panel_;
 };
 
-/** @brief Container property for ViewControllers which gets the
- * drag/drop right for the funky way Current-View is always the first
- * entry. */
-class ViewControllerContainer: public Property
+/// Wrapper property for view controllers.
+/**
+ * This container property for ViewControllers is need to get the drag/drop
+ * right for the funky way Current-View is always the first entry.
+ */
+class ViewControllerContainer : public rviz_common::properties::Property
 {
-Q_OBJECT
-public:
-  Qt::ItemFlags getViewFlags( int column ) const;
+  Q_OBJECT
 
-  /** @brief Add a child ViewController.
-   * @param child The child to add.
-   * @param index [optional] The index at which to add the child.  If
-   *   less than 0 or greater than the number of child properties, the
-   *   child will be added at the end.
-   *
+public:
+  /// Get the view flags.
+  Qt::ItemFlags getViewFlags(int column) const;
+
+  /// Add a child ViewController.
+  /**
    * This notifies the model about the addition.
    *
-   * This is overridden from Property to keep saved ViewControllers from being added 
-   * at index 0, where the Current view belongs. */
-  virtual void addChild( Property* child, int index = -1 );
+   * This is overridden from Property to keep saved ViewControllers from being
+   * added at index 0, where the Current view belongs.
+   *
+   * \param child The child to add.
+   * \param index [optional] The index at which to add the child.
+   *   If less than 0 or greater than the number of child properties, the
+   *   child will be added at the end.
+   */
+  virtual void addChild(Property * child, int index = -1);
 
-  void addChildToFront( Property* child );
+  /// Add a child propert to the front of the list of child properties.
+  void addChildToFront(Property * child);
 };
 
-} // end namespace rviz
+}  // namespace rviz_common
 
-#endif // VIEW_MANAGER_H
+#endif  // SRC__RVIZ_COMMON__VIEW_MANAGER_HPP_

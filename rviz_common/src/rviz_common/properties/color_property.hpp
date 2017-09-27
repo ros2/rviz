@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,42 +27,47 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef COLOR_PROPERTY_H
-#define COLOR_PROPERTY_H
+
+#ifndef SRC__RVIZ_COMMON__PROPERTIES__COLOR_PROPERTY_HPP_
+#define SRC__RVIZ_COMMON__PROPERTIES__COLOR_PROPERTY_HPP_
+
+#include <OgreColourValue.h>
 
 #include <QColor>
+#include <QString>
 
-#include "rviz/properties/parse_color.h"
+#include "rviz_common/properties/property.hpp"
 
-#include "rviz/properties/property.h"
-
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
-class ColorProperty: public Property
+class ColorProperty : public Property
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  ColorProperty( const QString& name = QString(),
-                 const QColor& default_value = Qt::black,
-                 const QString& description = QString(),
-                 Property* parent = 0,
-                 const char *changed_slot = 0,
-                 QObject* receiver = 0 );
+  ColorProperty(
+    const QString & name = QString(),
+    const QColor & default_value = Qt::black,
+    const QString & description = QString(),
+    Property * parent = 0,
+    const char * changed_slot = 0,
+    QObject * receiver = 0);
 
-  virtual bool setValue( const QVariant& new_value );
+  bool setValue(const QVariant & new_value) override;
 
-  virtual bool paint( QPainter* painter,
-                      const QStyleOptionViewItem& option ) const;
+  bool paint(QPainter * painter, const QStyleOptionViewItem & option) const override;
 
-  virtual QWidget* createEditor( QWidget* parent,
-                                 const QStyleOptionViewItem& option );
+  QWidget * createEditor(QWidget * parent, const QStyleOptionViewItem & option) override;
 
-  virtual QColor getColor() const { return color_; }
-  Ogre::ColourValue getOgreColor() const { return qtToOgre( color_ ); }
+  virtual QColor getColor() const;
+
+  Ogre::ColourValue getOgreColor() const;
 
 public Q_SLOTS:
-  virtual bool setColor( const QColor& color );
+  virtual bool setColor(const QColor & color);
 
 private:
   void updateString();
@@ -69,6 +75,7 @@ private:
   QColor color_;
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
-#endif // VECTOR_PROPERTY_H
+#endif  // SRC__RVIZ_COMMON__PROPERTIES__COLOR_PROPERTY_HPP_

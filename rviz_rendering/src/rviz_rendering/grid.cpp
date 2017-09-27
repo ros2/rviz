@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "grid.hpp"
+#include "rviz_rendering/grid.hpp"
 // #include "billboard_line.h"
 
 #include <OgreSceneManager.h>
@@ -43,7 +43,8 @@
 namespace rviz_rendering
 {
 
-Grid::Grid(Ogre::SceneManager * scene_manager,
+Grid::Grid(
+  Ogre::SceneManager * scene_manager,
   Ogre::SceneNode * parent_node,
   Style style,
   uint32_t cell_count,
@@ -62,7 +63,7 @@ Grid::Grid(Ogre::SceneManager * scene_manager,
   std::stringstream ss;
   ss << "Grid" << gridCount++;
 
-  manual_object_ = scene_manager_->createManualObject(ss.str() );
+  manual_object_ = scene_manager_->createManualObject(ss.str());
 
   if (!parent_node) {
     parent_node = scene_manager_->getRootSceneNode();
@@ -86,7 +87,7 @@ Grid::~Grid()
 {
 //  delete billboard_line_;
 
-  scene_manager_->destroySceneNode(scene_node_->getName() );
+  scene_manager_->destroySceneNode(scene_node_->getName());
   scene_manager_->destroyManualObject(manual_object_);
 
   material_->unload();
@@ -167,7 +168,7 @@ void Grid::create()
   for (uint32_t h = 0; h <= height_; ++h) {
     float h_real = (height_ / 2.0f - static_cast<float>(h)) * cell_length_;
     for (uint32_t i = 0; i <= cell_count_; i++) {
-      float inc = extent - ( i * cell_length_ );
+      float inc = extent - ( i * cell_length_);
 
       Ogre::Vector3 p1(inc, h_real, -extent);
       Ogre::Vector3 p2(inc, h_real, extent);
@@ -217,8 +218,8 @@ void Grid::create()
 //        {
 //          billboard_line_->newLine();
 //
-//          billboard_line_->addPoint( Ogre::Vector3(x_real, y_bottom, z_real) );
-//          billboard_line_->addPoint( Ogre::Vector3(x_real, y_top, z_real) );
+//          billboard_line_->addPoint( Ogre::Vector3(x_real, y_bottom, z_real));
+//          billboard_line_->addPoint( Ogre::Vector3(x_real, y_top, z_real));
 //        }
 //        else
 //        {

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,50 +27,55 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef STATUSPROPERTY_H
-#define STATUSPROPERTY_H
 
-#include "rviz/properties/property.h"
+#ifndef SRC__RVIZ_COMMON__PROPERTIES__STATUS_PROPERTY_HPP_
+#define SRC__RVIZ_COMMON__PROPERTIES__STATUS_PROPERTY_HPP_
 
 #include <QIcon>
 
-namespace rviz
+#include "rviz_common/properties/property.hpp"
+
+namespace rviz_common
+{
+namespace properties
 {
 
-class StatusProperty: public Property
+class StatusProperty : public Property
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  enum Level { Ok = 0, Warn = 1, Error = 2 }; // values index into status_colors_ array.
+  enum Level { Ok = 0, Warn = 1, Error = 2 };  // values index into status_colors_ array.
 
-  StatusProperty( const QString& name, const QString& text, Level level, Property* parent );
+  StatusProperty(const QString & name, const QString & text, Level level, Property * parent);
 
-  /** @brief Set the status text.  Overridden from Property. */
-  virtual bool setValue( const QVariant& new_value );
+  /// Set the status text.
+  bool setValue(const QVariant & new_value) override;  // Overridden from Property.
 
-  /** @brief Return data appropriate for the given column (0 or 1) and
-   * role for this StatusProperty.
+  /// Return data appropriate for the given column (0 or 1) and role for this StatusProperty.
+  QVariant getViewData(int column, int role) const override;
+
+  /// Return item flags appropriate for the given column (0 or 1) for this StatusProperty.
+  Qt::ItemFlags getViewFlags(int column) const override;
+
+  /// Return the color appropriate for the given status level.
+  /**
+   * Returns an invalid QColor for Ok status, meaning we should use the default
+   * text color.
    */
-  virtual QVariant getViewData( int column, int role ) const;
+  static QColor statusColor(Level level);
 
-  /** @brief Return item flags appropriate for the given column (0 or
-   * 1) for this StatusProperty. */
-  virtual Qt::ItemFlags getViewFlags( int column ) const;
+  /// Return the word appropriate for the given status level: "Ok", "Warn", or "Error".
+  static QString statusWord(Level level);
 
-  /** @brief Return the color appropriate for the given status level.
-   *
-   * Returns an invalid QColor for Ok status, meaning we should use
-   * the default text color. */
-  static QColor statusColor( Level level );
+  /// Get the status icon.
+  QIcon statusIcon(Level level) const;
 
-  /** @brief Return the word appropriate for the given status level:
-   * "Ok", "Warn", or "Error". */
-  static QString statusWord( Level level );
+  /// Set the status level.
+  virtual void setLevel(Level level);
 
-  QIcon statusIcon( Level level ) const;
-
-  virtual void setLevel( Level level );
-  virtual Level getLevel() const { return level_; }
+  /// Get the status level.
+  virtual Level getLevel() const;
 
 protected:
   Level level_;
@@ -82,6 +88,7 @@ private:
 
 typedef StatusProperty::Level StatusLevel;
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
-#endif // STATUSPROPERTY_H
+#endif  // SRC__RVIZ_COMMON__PROPERTIES__STATUS_PROPERTY_HPP_

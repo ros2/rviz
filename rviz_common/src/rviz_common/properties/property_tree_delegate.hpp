@@ -31,7 +31,9 @@
 
 #include <QStyledItemDelegate>
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 class PropertyTreeDelegate: public QStyledItemDelegate
@@ -49,6 +51,7 @@ public:
                                  const QModelIndex &index ) const;
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
 #endif // PROPERTY_TREE_DELEGATE_H

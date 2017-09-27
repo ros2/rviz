@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,55 +27,72 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef TF_FRAME_PROPERTY_H
-#define TF_FRAME_PROPERTY_H
+
+#ifndef SRC__RVIZ_COMMON__PROPERTIES__TF_FRAME_PROPERTY_HPP_
+#define SRC__RVIZ_COMMON__PROPERTIES__TF_FRAME_PROPERTY_HPP_
 
 #include <string>
 
-#include "rviz/properties/editable_enum_property.h"
+#include "./editable_enum_property.hpp"
 
-namespace rviz
+namespace rviz_common
 {
 
 class FrameManager;
 
-class TfFrameProperty: public EditableEnumProperty
+namespace properties
 {
-Q_OBJECT
+
+class TfFrameProperty : public EditableEnumProperty
+{
+  Q_OBJECT
+
 public:
-  TfFrameProperty( const QString& name = QString(),
-                   const QString& default_value = QString(),
-                   const QString& description = QString(),
-                   Property* parent = 0,
-                   FrameManager* frame_manager = 0,
-                   bool include_fixed_frame_string = false,
-                   const char *changed_slot = 0,
-                   QObject* receiver = 0 );
+  TfFrameProperty(
+    const QString & name = QString(),
+    const QString & default_value = QString(),
+    const QString & description = QString(),
+    Property * parent = 0,
+    FrameManager * frame_manager = 0,
+    bool include_fixed_frame_string = false,
+    const char * changed_slot = 0,
+    QObject * receiver = 0);
 
-  /** @brief Override from Property to resolve the frame name on the way in. */
-  virtual bool setValue( const QVariant& new_value );
+  /// Override from Property to resolve the frame name on the way in.
+  virtual bool setValue(const QVariant & new_value);
 
+  /// Get the frame as a QString.
   QString getFrame() const;
+
+  /// Get the frame as a std::string.
   std::string getFrameStd() const;
 
-  void setFrameManager( FrameManager* frame_manager );
-  FrameManager* getFrameManager() const { return frame_manager_; }
+  /// Set the frame manager.
+  void setFrameManager(FrameManager * frame_manager);
+
+  /// Get the frame manager.
+  FrameManager * getFrameManager() const;
 
   static const QString FIXED_FRAME_STRING;
 
 private Q_SLOTS:
+  /// Fill the frame list.
   void fillFrameList();
 
-  /** @brief If this property is currently set to FIXED_FRAME_STRING,
-   * this emits changed() to let users know that a call to getFrame()
-   * will now return something different. */
+  /// Notify users of changed frame, if required.
+  /**
+   * If this property is currently set to FIXED_FRAME_STRING, this emits
+   * changed() to let users know that a call to getFrame() will now return
+   * something different.
+   */
   void handleFixedFrameChange();
 
 private:
-  FrameManager* frame_manager_;
+  FrameManager * frame_manager_;
   bool include_fixed_frame_string_;
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
-#endif // TF_FRAME_PROPERTY_H
+#endif  // SRC__RVIZ_COMMON__PROPERTIES__TF_FRAME_PROPERTY_HPP_

@@ -32,10 +32,19 @@
 
 #include <sstream>
 
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
+
 #include <OgreQuaternion.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 #include <OgreVector3.h>
+
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
 
 #include "rviz_rendering/shape.hpp"
 
@@ -103,6 +112,10 @@ void Axes::setScale(const Ogre::Vector3 & scale)
 
 void Axes::setColor(float r, float g, float b, float a)
 {
+  (void) r;
+  (void) g;
+  (void) b;
+  (void) a;
   // for now, do nothing
   /// \todo should anything be done here?
 }

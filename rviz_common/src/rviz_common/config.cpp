@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,11 +28,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "rviz_common/config.hpp"
+
 #include <QLocale>
 
-#include "rviz/config.h"
-
-namespace rviz
+namespace rviz_common
 {
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -44,23 +45,22 @@ public:
   Node();
   ~Node();
 
-  void setType( Config::Type new_type );
+  void setType(Config::Type new_type);
   void deleteData();
 
   typedef QMap<QString, NodePtr> ChildMap;
   typedef QList<NodePtr> ChildList;
 
   Config::Type type_;
-  union
-  {
-    ChildMap* map;
-    ChildList* list;
-    QVariant* value;
+  union {
+    ChildMap * map;
+    ChildList * list;
+    QVariant * value;
   } data_;
 };
 
 Config::Node::Node()
-  : type_( Empty )
+: type_(Empty)
 {
   data_.map = NULL;
 }
@@ -72,31 +72,28 @@ Config::Node::~Node()
 
 void Config::Node::deleteData()
 {
-  switch( type_ )
-  {
-  case Map: delete data_.map; break;
-  case List: delete data_.list; break;
-  case Value: delete data_.value; break;
-  default:
-    break;
+  switch (type_) {
+    case Map: delete data_.map; break;
+    case List: delete data_.list; break;
+    case Value: delete data_.value; break;
+    default:
+      break;
   }
   data_.map = NULL;
 }
 
-void Config::Node::setType( Config::Type new_type )
+void Config::Node::setType(Config::Type new_type)
 {
-  if( type_ == new_type )
-  {
+  if (type_ == new_type) {
     return;
   }
   deleteData();
   type_ = new_type;
-  switch( type_ )
-  {
-  case Map:   data_.map =   new ChildMap;  break;
-  case List:  data_.list =  new ChildList; break;
-  case Value: data_.value = new QVariant;  break;
-  default:                                 break;
+  switch (type_) {
+    case Map:   data_.map = new ChildMap;  break;
+    case List:  data_.list = new ChildList; break;
+    case Value: data_.value = new QVariant;  break;
+    default:                                 break;
   }
 }
 
@@ -105,63 +102,59 @@ void Config::Node::setType( Config::Type new_type )
 ////////////////////////////////////////////////////////////////////////////////////
 
 Config::Config()
-  : node_( new Config::Node() )
+: node_(new Config::Node())
 {}
 
-Config::Config( const Config& source )
-  : node_( source.node_ )
+Config::Config(const Config & source)
+: node_(source.node_)
 {}
 
-Config::Config( QVariant value )
-  : node_( new Config::Node() )
+Config::Config(QVariant value)
+: node_(new Config::Node())
 {
-  setValue( value );
+  setValue(value);
 }
 
-Config::Config( NodePtr node )
-  : node_( node )
+Config::Config(NodePtr node)
+: node_(node)
 {}
 
-void Config::copy( const Config& source )
+void Config::copy(const Config & source)
 {
-  if( !source.isValid() )
-  {
+  if (!source.isValid()) {
     node_ = NodePtr();
     return;
   }
 
-  setType( source.getType() );
-  switch( source.getType() )
-  {
-  case Map:
-  {
-    MapIterator iter = source.mapIterator();
-    while( iter.isValid() )
-    {
-      mapMakeChild( iter.currentKey() ).copy( iter.currentChild() );
-      iter.advance();
-    }
-    break;
-  }
-  case List:
-  {
-    int num_children = source.listLength();
-    for( int i = 0; i < num_children; i++ )
-    {
-      listAppendNew().copy( source.listChildAt( i ));
-    }
-  }
-  case Value:
-    setValue( source.getValue() );
-    break;
-  default:
-    break;
+  setType(source.getType());
+  switch (source.getType()) {
+    case Map:
+      {
+        MapIterator iter = source.mapIterator();
+        while (iter.isValid()) {
+          mapMakeChild(iter.currentKey()).copy(iter.currentChild());
+          iter.advance();
+        }
+        break;
+      }
+    case List:
+      {
+        int num_children = source.listLength();
+        for (int i = 0; i < num_children; i++) {
+          listAppendNew().copy(source.listChildAt(i));
+        }
+      }
+    case Value:
+      setValue(source.getValue());
+      break;
+    default:
+      break;
   }
 }
 
 Config Config::invalidConfig()
 {
-  return Config( NodePtr() );
+  return Config(NodePtr());
 }
 
 Config::Type Config::getType() const
@@ -169,72 +162,62 @@ Config::Type Config::getType() const
   return isValid() ? node_->type_ : Invalid;
 }
 
-void Config::setType( Type new_type )
+void Config::setType(Type new_type)
 {
-  if( new_type == Invalid )
-  {
+  if (new_type == Invalid) {
     node_ = NodePtr();
-  }
-  else
-  {
+  } else {
     makeValid();
-    node_->setType( new_type );
+    node_->setType(new_type);
   }
 }
 
-void Config::mapSetValue( const QString& key, QVariant value )
+void Config::mapSetValue(const QString & key, QVariant value)
 {
-  mapMakeChild( key ).setValue( value );
+  mapMakeChild(key).setValue(value);
 }
 
-Config Config::mapMakeChild( const QString& key )
+Config Config::mapMakeChild(const QString & key)
 {
   Config child;
 
   makeValid();
-  node_->setType( Map );
-  (*node_->data_.map)[ key ] = child.node_;
+  node_->setType(Map);
+  (*node_->data_.map)[key] = child.node_;
 
   return child;
 }
 
-Config Config::mapGetChild( const QString& key ) const
+Config Config::mapGetChild(const QString & key) const
 {
-  if( node_.get() == NULL || node_->type_ != Map )
-  {
+  if (node_.get() == NULL || node_->type_ != Map) {
     return invalidConfig();
   }
-  Node::ChildMap::const_iterator iter = node_->data_.map->find( key );
-  if( iter == node_->data_.map->end() )
-  {
+  Node::ChildMap::const_iterator iter = node_->data_.map->find(key);
+  if (iter == node_->data_.map->end()) {
     return invalidConfig();
-  }
-  else
-  {
-    return Config( iter.value() );
+  } else {
+    return Config(iter.value());
   }
 }
 
-bool Config::mapGetValue( const QString& key, QVariant *value_out ) const
+bool Config::mapGetValue(const QString & key, QVariant * value_out) const
 {
-  Config child = mapGetChild( key );
-  if( child.getType() == Value ) // getType() checks for validity as well.
-  {
+  Config child = mapGetChild(key);
+  if (child.getType() == Value) {  // getType() checks for validity as well.
     *value_out = child.getValue();
     return true;
   }
   return false;
 }
 
-bool Config::mapGetInt( const QString& key, int *value_out ) const
+bool Config::mapGetInt(const QString & key, int * value_out) const
 {
   QVariant v;
-  if( mapGetValue( key, &v ) && (v.type() == QVariant::Int || v.type() == QVariant::String ))
-  {
+  if (mapGetValue(key, &v) && (v.type() == QVariant::Int || v.type() == QVariant::String)) {
     bool ok;
-    int i = v.toInt( &ok );
-    if( ok )
-    {
+    int i = v.toInt(&ok);
+    if (ok) {
       *value_out = i;
       return true;
     }
@@ -242,15 +225,17 @@ bool Config::mapGetInt( const QString& key, int *value_out ) const
   return false;
 }
 
-bool Config::mapGetFloat( const QString& key, float *value_out ) const
+bool Config::mapGetFloat(const QString & key, float * value_out) const
 {
   QVariant v;
-  if( mapGetValue( key, &v ) && (int(v.type()) == int(QMetaType::Float) || v.type() == QVariant::Double || v.type() == QVariant::String ))
+  if (mapGetValue(key,
+    &v) &&
+    (int(v.type()) == int(QMetaType::Float) || v.type() == QVariant::Double ||
+    v.type() == QVariant::String))
   {
     bool ok;
-    float f = v.toFloat( &ok );
-    if( ok )
-    {
+    float f = v.toFloat(&ok);
+    if (ok) {
       *value_out = f;
       return true;
     }
@@ -258,8 +243,7 @@ bool Config::mapGetFloat( const QString& key, float *value_out ) const
     // Try as European, e.g. 1.234,56 rather than 1,234.56
     QLocale german(QLocale::German);
     f = german.toFloat(as_string, &ok);
-    if ( ok )
-    {
+    if (ok) {
       *value_out = f;
       return true;
     }
@@ -267,22 +251,20 @@ bool Config::mapGetFloat( const QString& key, float *value_out ) const
   return false;
 }
 
-bool Config::mapGetBool( const QString& key, bool *value_out ) const
+bool Config::mapGetBool(const QString & key, bool * value_out) const
 {
   QVariant v;
-  if( mapGetValue( key, &v ) && (v.type() == QVariant::Bool || v.type() == QVariant::String ))
-  {
+  if (mapGetValue(key, &v) && (v.type() == QVariant::Bool || v.type() == QVariant::String)) {
     *value_out = v.toBool();
     return true;
   }
   return false;
 }
 
-bool Config::mapGetString( const QString& key, QString *value_out ) const
+bool Config::mapGetString(const QString & key, QString * value_out) const
 {
   QVariant v;
-  if( mapGetValue( key, &v ) && v.type() == QVariant::String )
-  {
+  if (mapGetValue(key, &v) && v.type() == QVariant::String) {
     *value_out = v.toString();
     return true;
   }
@@ -291,9 +273,8 @@ bool Config::mapGetString( const QString& key, QString *value_out ) const
 
 void Config::makeValid()
 {
-  if( node_.get() == NULL )
-  {
-    node_.reset( new Node() );
+  if (node_.get() == NULL) {
+    node_.reset(new Node());
   }
 }
 
@@ -302,31 +283,28 @@ bool Config::isValid() const
   return node_.get() != NULL;
 }
 
-void Config::setValue( const QVariant& value )
+void Config::setValue(const QVariant & value)
 {
   makeValid();
-  node_->setType( Value );
+  node_->setType(Value);
   *node_->data_.value = value;
 }
 
 QVariant Config::getValue() const
 {
-  return ( isValid() && node_->type_ == Value ) ? *node_->data_.value : QVariant();
+  return ( isValid() && node_->type_ == Value) ? *node_->data_.value : QVariant();
 }
 
 int Config::listLength() const
 {
-  return ( isValid() && node_->type_ == List ) ? node_->data_.list->size() : 0;
+  return ( isValid() && node_->type_ == List) ? node_->data_.list->size() : 0;
 }
 
-Config Config::listChildAt( int i ) const
+Config Config::listChildAt(int i) const
 {
-  if( isValid() && node_->type_ == List && i >= 0 && i < node_->data_.list->size() )
-  {
-    return Config( node_->data_.list->at( i ));
-  }
-  else
-  {
+  if (isValid() && node_->type_ == List && i >= 0 && i < node_->data_.list->size()) {
+    return Config(node_->data_.list->at(i));
+  } else {
     return invalidConfig();
   }
 }
@@ -335,8 +313,8 @@ Config Config::listAppendNew()
 {
   Config child;
 
-  setType( List );
-  node_->data_.list->append( child.node_ );
+  setType(List);
+  node_->data_.list->append(child.node_);
 
   return child;
 }
@@ -346,13 +324,10 @@ Config::MapIterator Config::mapIterator() const
   // Create a new (invalid) iterator.
   Config::MapIterator iter;
 
-  if( node_.get() == NULL || node_->type_ != Map )
-  {
+  if (node_.get() == NULL || node_->type_ != Map) {
     // Force the node to be invalid, since this node does not have a map.
     iter.node_.reset();
-  }
-  else
-  {
+  } else {
     // Copy this config's node reference into the iterator's node reference.
     iter.node_ = node_;
     iter.start();
@@ -361,48 +336,39 @@ Config::MapIterator Config::mapIterator() const
 }
 
 Config::MapIterator::MapIterator()
-  : iterator_valid_( false )
+: iterator_valid_(false)
 {}
 
 void Config::MapIterator::advance()
 {
-  if( node_.get() == NULL || node_->type_ != Config::Map )
-  {
+  if (node_.get() == NULL || node_->type_ != Config::Map) {
     iterator_valid_ = false;
     return;
   }
-  if( !iterator_valid_ )
-  {
+  if (!iterator_valid_) {
     iterator_ = node_->data_.map->begin();
     iterator_valid_ = true;
-  }
-  else
-  {
+  } else {
     iterator_++;
   }
 }
 
 bool Config::MapIterator::isValid()
 {
-  if( node_.get() == NULL || node_->type_ != Config::Map )
-  {
+  if (node_.get() == NULL || node_->type_ != Config::Map) {
     iterator_valid_ = false;
     return false;
   }
-  if( !iterator_valid_ )
-  {
+  if (!iterator_valid_) {
     return false;
-  }
-  else
-  {
+  } else {
     return iterator_ != node_->data_.map->end();
   }
 }
 
 void Config::MapIterator::start()
 {
-  if( node_.get() == NULL || node_->type_ != Config::Map )
-  {
+  if (node_.get() == NULL || node_->type_ != Config::Map) {
     iterator_valid_ = false;
     return;
   }
@@ -412,8 +378,7 @@ void Config::MapIterator::start()
 
 QString Config::MapIterator::currentKey()
 {
-  if( node_.get() == NULL || node_->type_ != Config::Map || !iterator_valid_ )
-  {
+  if (node_.get() == NULL || node_->type_ != Config::Map || !iterator_valid_) {
     iterator_valid_ = false;
     return QString();
   }
@@ -422,12 +387,11 @@ QString Config::MapIterator::currentKey()
 
 Config Config::MapIterator::currentChild()
 {
-  if( node_.get() == NULL || node_->type_ != Config::Map || !iterator_valid_ )
-  {
+  if (node_.get() == NULL || node_->type_ != Config::Map || !iterator_valid_) {
     iterator_valid_ = false;
     return Config();
   }
-  return Config( iterator_.value() );
+  return Config(iterator_.value());
 }
 
-} // end namespace rviz
+}  // namespace rviz_common

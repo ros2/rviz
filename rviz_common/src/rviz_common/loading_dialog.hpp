@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,29 +28,30 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_LOADING_DIALOG_H
-#define RVIZ_LOADING_DIALOG_H
+#ifndef SRC__RVIZ_COMMON__LOADING_DIALOG_HPP_
+#define SRC__RVIZ_COMMON__LOADING_DIALOG_HPP_
 
 #include <QDialog>
 
 class QLabel;
 
-namespace rviz
+namespace rviz_common
 {
 
-class LoadingDialog: public QDialog
+class LoadingDialog : public QDialog
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  LoadingDialog( QWidget* parent = 0 );
+  explicit LoadingDialog(QWidget * parent = 0);
 
 public Q_SLOTS:
-  void showMessage( const QString& message );
+  void showMessage(const QString & message);
 
 protected:
-  QLabel* label_;
+  QLabel * label_;
 };
 
-} // end namespace rviz
+}  // namespace rviz_common
 
-#endif // RVIZ_LOADING_DIALOG_H
+#endif  // SRC__RVIZ_COMMON__LOADING_DIALOG_HPP_

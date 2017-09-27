@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,55 +28,54 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <QColor>
+#include "./failed_display.hpp"
 
-#include "rviz/properties/status_property.h"
-#include "rviz/display_context.h"
-#include "rviz/load_resource.h"
+#include <QColor>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "failed_display.h"
+#include "./load_resource.hpp"
+#include "./properties/status_property.hpp"
 
-namespace rviz
+namespace rviz_common
 {
 
-FailedDisplay::FailedDisplay( const QString& desired_class_id, const QString& error_message )
-  : error_message_( error_message )
+using rviz_common::properties::StatusProperty;
+
+FailedDisplay::FailedDisplay(const QString & desired_class_id, const QString & error_message)
+: error_message_(error_message)
 {
-  setClassId( desired_class_id );
-  setIcon( loadPixmap( "package://rviz/icons/failed_display.png" ) );
+  setClassId(desired_class_id);
+  setIcon(loadPixmap("package://rviz/icons/failed_display.png"));
 }
 
-QVariant FailedDisplay::getViewData( int column, int role ) const
+QVariant FailedDisplay::getViewData(int column, int role) const
 {
-  if( column == 0 )
-  {
-    switch( role )
-    {
-    case Qt::BackgroundRole: return QColor( Qt::white );
-    case Qt::ForegroundRole: return StatusProperty::statusColor( StatusProperty::Error );
-    default: break;
+  if (column == 0) {
+    switch (role) {
+      case Qt::BackgroundRole: return QColor(Qt::white);
+      case Qt::ForegroundRole: return StatusProperty::statusColor(StatusProperty::Error);
+      default: break;
     }
   }
-  return Display::getViewData( column, role );
+  return Display::getViewData(column, role);
 }
 
 QString FailedDisplay::getDescription() const
 {
-  return "The class required for this display, '" + getClassId() + "', could not be loaded.<br><b>Error:</b><br>" + error_message_;
+  return "The class required for this display, '" + getClassId() +
+         "', could not be loaded.<br><b>Error:</b><br>" + error_message_;
 }
 
-void FailedDisplay::load( const Config& config )
+void FailedDisplay::load(const Config & config)
 {
   saved_config_ = config;
-  Display::load( config );
+  Display::load(config);
 }
 
-void FailedDisplay::save( Config config )
+void FailedDisplay::save(Config config) const
 {
-  if( saved_config_.isValid() )
-  {
-    config.copy( saved_config_ );
+  if (saved_config_.isValid()) {
+    config.copy(saved_config_);
   }
 }
 
-} // end namespace rviz
+}  // namespace rviz_common

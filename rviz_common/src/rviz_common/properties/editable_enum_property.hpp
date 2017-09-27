@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,62 +27,80 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef EDITABLE_ENUM_PROPERTY_H
-#define EDITABLE_ENUM_PROPERTY_H
 
-#include <QStringList>
+#ifndef SRC__RVIZ_COMMON__PROPERTIES__EDITABLE_ENUM_PROPERTY_HPP_
+#define SRC__RVIZ_COMMON__PROPERTIES__EDITABLE_ENUM_PROPERTY_HPP_
 
-#include "rviz/properties/string_property.h"
+#include <string>
 
-namespace rviz
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+#include <QStringList>  // NOLINT: cpplint is unable to handle the include order here
+#include <QWidget>  // NOLINT: cpplint is unable to handle the include order here
+
+#include "./string_property.hpp"
+
+namespace rviz_common
+{
+namespace properties
 {
 
-/** @brief Editable Enum property.
- *
+/// Editable Enum property.
+/**
  * An editable enum property works like a string property, but with
  * the addition of a drop-down list of predefined choices.
  */
-class EditableEnumProperty: public StringProperty
+class EditableEnumProperty : public StringProperty
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  EditableEnumProperty( const QString& name = QString(),
-                        const QString& default_value = QString(),
-                        const QString& description = QString(),
-                        Property* parent = 0,
-                        const char *changed_slot = 0,
-                        QObject* receiver = 0 );
+  EditableEnumProperty(
+    const QString & name = QString(),
+    const QString & default_value = QString(),
+    const QString & description = QString(),
+    Property * parent = 0,
+    const char * changed_slot = 0,
+    QObject * receiver = 0);
 
+  /// Clear options.
   virtual void clearOptions();
-  virtual void addOption( const QString& option );
-  void addOptionStd( const std::string& option ) { addOption( QString::fromStdString( option )); }
 
-  virtual QWidget* createEditor( QWidget* parent,
-                                 const QStyleOptionViewItem& option );
+  /// Add an option from a QString.
+  virtual void addOption(const QString & option);
 
-  /** @brief Sort the option strings. */
-  void sortOptions() { strings_.sort(); }
+  /// Add an option from a std::string.
+  void addOptionStd(const std::string & option);
+
+  /// Create the editor.
+  virtual QWidget * createEditor(QWidget * parent, const QStyleOptionViewItem & option);
+  // virtual QWidget * createEditor(QWidget * parent);
+
+  /// Sort the option strings.
+  void sortOptions();
 
 public Q_SLOTS:
-  virtual void setString( const QString& str );
+  /// Set the string value from a QString.
+  virtual void setString(const QString & str);
 
 Q_SIGNALS:
-  /** @brief requestOptions() is emitted each time createEditor() is
-   * called.
+  /// requestOptions() is emitted each time createEditor() is called.
+  /**
+   * A connection to this signal should never be made with a queued connection,
+   * because then the "emit" would return before the changes to the options in
+   * the EnumProperty were made.
    *
-   * A connection to this signal should never be made with a queued
-   * connection, because then the "emit" would return before the
-   * changes to the options in the EnumProperty were made.
-   *
-   * A connected slot should make calls to clearOptions() and/or
-   * addOption() as needed.  The option list in the EditableEnumProperty will
-   * not be cleared before the signal is emitted. */
-  void requestOptions( EditableEnumProperty* property_in_need_of_options );
+   * A connected slot should make calls to clearOptions() and/or addOption() as
+   * needed.
+   * The option list in the EditableEnumProperty will not be cleared before the
+   * signal is emitted.
+   */
+  void requestOptions(EditableEnumProperty * property_in_need_of_options);
 
 protected:
   QStringList strings_;
 };
 
-} // end namespace rviz
+}  // namespace properties
+}  // namespace rviz_common
 
-#endif // EDITABLE_ENUM_PROPERTY_H
+#endif  // SRC__RVIZ_COMMON__PROPERTIES__EDITABLE_ENUM_PROPERTY_HPP_
