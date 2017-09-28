@@ -5,13 +5,10 @@
 			"path": "."
 		},
 		{
-			"path": "/Users/william/dev/ogre"
+			"path": "/Users/william/rviz2_ws/build"
 		},
 		{
-			"path": "/Users/william/Downloads/QTOgreWindow2_1"
-		},
-		{
-			"path": "/Users/william/dev/aos-rviz2"
+			"path": "/Users/william/rviz2_ws/install"
 		}
 	],
 	"settings":
@@ -32,7 +29,7 @@
 			"-I/Users/william/rviz2_ws/install/opt/rviz_ogre_vendor/include/OGRE",
 			"-I/Users/william/rviz2_ws/install/opt/rviz_ogre_vendor/include/OGRE/Overlay",
 			"-I${folder:${project_path:rviz.sublime-project}}/rviz_rendering/include",
-			"-I${folder:${project_path:rviz.sublime-project}}/rviz_common/include",
+			"-I${folder:${project_path:rviz.sublime-project}}/rviz_common/include"
 		]
 	}
 }
