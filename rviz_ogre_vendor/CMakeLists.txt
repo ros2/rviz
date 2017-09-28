@@ -70,10 +70,10 @@ endmacro()
 
 build_ogre()
 
-configure_file(rviz_ogre_vendorConfig.cmake.in "${PROJECT_BINARY_DIR}/rviz_ogre_vendorConfig.cmake" @ONLY)
-configure_file(rviz_ogre_vendorConfig-version.cmake.in "${PROJECT_BINARY_DIR}/rviz_ogre_vendorConfig-version.cmake" @ONLY)
-
-# install(DIRECTORY cmake DESTINATION share/${PROJECT_NAME})
+configure_file(rviz_ogre_vendorConfig.cmake.in
+  "${PROJECT_BINARY_DIR}/rviz_ogre_vendorConfig.cmake" @ONLY)
+configure_file(rviz_ogre_vendorConfig-version.cmake.in
+  "${PROJECT_BINARY_DIR}/rviz_ogre_vendorConfig-version.cmake" @ONLY)
 
 install(FILES
   "${PROJECT_BINARY_DIR}/rviz_ogre_vendorConfig.cmake"
