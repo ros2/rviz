@@ -10,35 +10,6 @@ diff -ur a/CMake/Templates/OGREConfig.cmake.in b/CMake/Templates/OGREConfig.cmak
          
          list(APPEND OGRE_INCLUDE_DIRS @SDL2_INCLUDE_DIR@)
          list(APPEND OGRE_LIBRARIES "@SDL2_LIBRARY@")
-diff -ur a/CMake/Utils/OgreConfigTargets.cmake b/CMake/Utils/OgreConfigTargets.cmake
---- a/CMake/Utils/OgreConfigTargets.cmake	2017-08-30 15:45:28.000000000 -0700
-+++ b/CMake/Utils/OgreConfigTargets.cmake	2017-09-28 11:21:57.009779039 -0700
-@@ -55,19 +55,19 @@
-   set(OGRE_RELWDBG_PATH "")
-   set(OGRE_MINSIZE_PATH "")
-   set(OGRE_DEBUG_PATH "/debug")
--  if (NOT APPLE)
-+  # if (NOT APPLE)
- 	set(OGRE_DEBUG_PATH "")
--  endif ()
-+  # endif ()
-   set(OGRE_LIB_RELEASE_PATH "")
-   set(OGRE_LIB_RELWDBG_PATH "")
-   set(OGRE_LIB_MINSIZE_PATH "")
-   set(OGRE_LIB_DEBUG_PATH "")
--  if(APPLE AND NOT APPLE_IOS)
--    set(OGRE_RELEASE_PATH "/${PLATFORM_NAME}")
--  endif()
-+  # if(APPLE AND NOT APPLE_IOS)
-+  #   set(OGRE_RELEASE_PATH "/${PLATFORM_NAME}")
-+  # endif()
-   if(APPLE AND APPLE_IOS)
-     set(OGRE_LIB_RELEASE_PATH "/Release")
-   endif(APPLE AND APPLE_IOS)
-   if (OGRE_BUILD_LIBS_AS_FRAMEWORKS)
-     set(OGRE_PLUGIN_PATH "/")
-   else()
-
 diff -ur a/CMakeLists.txt b/CMakeLists.txt
 --- a/CMakeLists.txt	2017-08-30 15:45:28.000000000 -0700
 +++ b/CMakeLists.txt	2017-09-28 11:21:57.021779891 -0700
@@ -71,3 +42,29 @@ diff -ur a/CMakeLists.txt b/CMakeLists.txt
    # Make sure that the OpenGL render system is selected for non-iOS Apple builds
    set(OGRE_BUILD_RENDERSYSTEM_GLES FALSE)
    set(OGRE_BUILD_RENDERSYSTEM_GLES2 FALSE)
+diff --git a/CMake/Utils/OgreConfigTargets.cmake b/CMake/Utils/OgreConfigTargets.cmake
+index e1481e2..ad3b92b 100644
+--- a/CMake/Utils/OgreConfigTargets.cmake
++++ b/CMake/Utils/OgreConfigTargets.cmake
+@@ -55,16 +55,16 @@ elseif (UNIX)
+   set(OGRE_RELWDBG_PATH "")
+   set(OGRE_MINSIZE_PATH "")
+   set(OGRE_DEBUG_PATH "/debug")
+-  if (NOT APPLE)
++  # if (NOT APPLE)
+ 	set(OGRE_DEBUG_PATH "")
+-  endif ()
++  # endif ()
+   set(OGRE_LIB_RELEASE_PATH "")
+   set(OGRE_LIB_RELWDBG_PATH "")
+   set(OGRE_LIB_MINSIZE_PATH "")
+   set(OGRE_LIB_DEBUG_PATH "")
+-  if(APPLE AND NOT APPLE_IOS)
+-    set(OGRE_RELEASE_PATH "/${PLATFORM_NAME}")
+-  endif()
++  # if(APPLE AND NOT APPLE_IOS)
++  #   set(OGRE_RELEASE_PATH "/${PLATFORM_NAME}")
++  # endif()
+   if(APPLE AND APPLE_IOS)
+     set(OGRE_LIB_RELEASE_PATH "/Release")
+   endif(APPLE AND APPLE_IOS)
