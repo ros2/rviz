@@ -175,11 +175,11 @@ createScene(Ogre::SceneManager * ogre_scene_manager)
   // sphereMaterial->setSelfIllumination(0.2f, 0.2f, 0.1f);
 
   sphereMesh->setMaterialName("SphereMaterial");
-  childSceneNode->setPosition(Ogre::Vector3(0.0f, 0.0f, 0.0f));
+  childSceneNode->setPosition(Ogre::Vector3(0.0f, 0.5f, 0.0f));
   childSceneNode->setScale(Ogre::Vector3(0.01f, 0.01f, 0.01f));  // Radius, in theory.
 
   Ogre::Light * light = ogre_scene_manager->createLight("MainLight");
-  light->setPosition(40.0f, 80.0f, 50.0f);
+  light->setPosition(Ogre::Vector3(40.0f, 80.0f, 50.0f));
 }
 
 void
