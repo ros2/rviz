@@ -27,11 +27,11 @@ macro(build_ogre)
   # list(APPEND extra_cmake_args "-DOGRE_BUILD_COMPONENT_HLMS:BOOL=ON")
   list(APPEND extra_cmake_args "-DOGRE_CONFIG_ENABLE_ZIP:BOOL=OFF")
 
-  # if(WIN32)
-  #   set(patch_exe patch.exe)
-  # else()
-  #   set(patch_exe patch)
-  # endif()
+  if(WIN32)
+    set(patch_exe patch.exe)
+  else()
+    set(patch_exe patch)
+  endif()
 
   include(ExternalProject)
   ExternalProject_Add(ogre-1.10.8
@@ -51,10 +51,11 @@ macro(build_ogre)
       -DOGRE_CONFIG_THREADS:STRING=0
       -DOGRE_RESOURCEMANAGER_STRICT:BOOL=ON
       -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ogre_install
+      -DOGRE_BUILD_LIBS_AS_FRAMEWORKS:BOOL=OFF
       ${extra_cmake_args}
       -Wno-dev
-    # PATCH_COMMAND
-    #   ${patch_exe} -p1 -N < ${CMAKE_CURRENT_SOURCE_DIR}/ogre-1.10.7-patch.diff
+    PATCH_COMMAND
+      ${patch_exe} -p1 -N < ${CMAKE_CURRENT_SOURCE_DIR}/ogre-1.10.8-patch.diff
   )
 
   # The external project will install to the build folder, but we'll install that on make install.
