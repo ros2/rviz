@@ -217,7 +217,10 @@ createScene(Ogre::SceneManager * ogre_scene_manager)
   childSceneNode->setScale(Ogre::Vector3(0.01f, 0.01f, 0.01f));  // Radius, in theory.
 
   Ogre::Light * light = ogre_scene_manager->createLight("MainLight");
-  light->setPosition(40.0f, 80.0f, 50.0f);
+  Ogre::SceneNode * light_scene_node =
+    ogre_scene_manager->getRootSceneNode()->createChildSceneNode();
+  light_scene_node->attachObject(light);
+  light_scene_node->setPosition(40.0f, 80.0f, 50.0f);
 }
 
 void

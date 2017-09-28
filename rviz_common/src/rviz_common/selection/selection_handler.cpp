@@ -39,6 +39,7 @@
 
 #include <OgreEntity.h>
 #include <OgreManualObject.h>
+#include <OgreMaterialManager.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 #include <OgreSubEntity.h>
@@ -221,7 +222,13 @@ void SelectionHandler::createBox(const std::pair<CollObjectHandle, uint64_t> & h
     box = it->second.second;
   }
 
-  box->setMaterial(material_name);
+  auto material = Ogre::MaterialManager::getSingleton().getByName(material_name);
+  if (!material) {
+    RVIZ_COMMON_LOG_ERROR_STREAM("failed to load material: " << material_name);
+    return;
+  }
+
+  box->setMaterial(material);
 
   box->setupBoundingBox(aabb);
   node->detachAllObjects();

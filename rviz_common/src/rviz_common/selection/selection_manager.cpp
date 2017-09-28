@@ -171,7 +171,7 @@ void SelectionManager::initialize()
     ss.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
   material->setLightingEnabled(false);
   // material->getTechnique(0)->getPass(0)->setPolygonMode(Ogre::PM_WIREFRAME);
-  highlight_rectangle_->setMaterial(material->getName());
+  highlight_rectangle_->setMaterial(material);
   Ogre::AxisAlignedBox aabInf;
   aabInf.setInfinite();
   highlight_rectangle_->setBoundingBox(aabInf);
