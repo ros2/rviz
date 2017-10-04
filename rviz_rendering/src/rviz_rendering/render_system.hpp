@@ -34,6 +34,8 @@
 #include <cstdint>
 #include <string>
 
+#include <QDir>
+
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Woverloaded-virtual"

@@ -39,6 +39,7 @@
 #include <GL/glx.h>
 #endif
 
+
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -51,6 +52,7 @@
 #endif
 
 #include "ament_index_cpp/get_resource.hpp"
+#include "ament_index_cpp/get_resources.hpp"
 #include "rviz_rendering/logging.hpp"
 #include "rviz_rendering/resource_config.hpp"
 
@@ -330,32 +332,33 @@ RenderSystem::setupResources()
   //   throw std::runtime_error(s);
   // }
 
-// TODO(wjwwood): figure out how to replace/port media export.
-#if 0
-  // Add paths exported to the "media_export" package.
-  std::vector<std::string> media_paths;
-  ros::package::getPlugins("media_export", "ogre_media_path", media_paths);
-  std::string delim(":");
-  for (auto iter = media_paths.begin(); iter != media_paths.end(); ++iter) {
-    if (!iter->empty()) {
-      std::string path;
-      int pos1 = 0;
-      int pos2 = iter->find(delim);
-      while (pos2 != static_cast<int>(std::string::npos)) {
-        path = iter->substr(pos1, pos2 - pos1);
-        ROS_DEBUG("adding resource location: '%s'\n", path.c_str());
-        Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-          path, "FileSystem", "rviz_rendering");
-        pos1 = pos2 + 1;
-        pos2 = iter->find(delim, pos2 + 1);
+  // Add paths added as "rviz_ogre_media_exports" resource to ament_index.
+  std::map<std::string,std::string> resource_locations = ament_index_cpp::get_resources("rviz_ogre_media_exports");
+  for(auto resource : resource_locations) {
+    std::string content;
+    std::string prefix_path;
+    if(ament_index_cpp::get_resource("rviz_ogre_media_exports", resource.first, content, &prefix_path)) {
+      std::stringstream content_stream(content);
+      std::string item;
+      std::vector<std::string> filenames;
+      while(std::getline(content_stream, item, '\n')) {
+        auto whitespace_front = std::find_if_not(item.begin(), item.end(), [](int character){return std::isspace(character);});
+        auto whitespace_back = std::find_if_not(item.rbegin(), item.rend(), [](int character){return std::isspace(character);});
+        item.erase(whitespace_back.base(), item.end());
+        item.erase(item.begin(), whitespace_front);
+        if (!item.empty()) {
+          filenames.push_back(item);
+        }
       }
-      path = iter->substr(pos1, iter->size() - pos1);
-      ROS_DEBUG("adding resource location: '%s'\n", path.c_str());
-      Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-        path, "FileSystem", "rviz_rendering");
+      for(const auto &line : filenames) {
+        std::string resource_path = prefix_path + "/share/" + line;
+        if(!QDir(QString::fromStdString(resource_path)).exists()) {
+          RVIZ_RENDERING_LOG_WARNING_STREAM("Could not find folder " << resource_path);
+        }
+        Ogre::ResourceGroupManager::getSingleton().addResourceLocation(resource_path, "FileSystem", "rviz_rendering");
+      }
     }
   }
-#endif
 }
 
 // On Intel graphics chips under X11, there sometimes comes a
