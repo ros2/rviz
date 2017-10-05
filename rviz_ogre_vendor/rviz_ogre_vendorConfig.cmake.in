@@ -28,7 +28,9 @@ message(STATUS "OGRE_LIBRARIES: ${OGRE_LIBRARIES}")
 message(STATUS "OGRE_LIBRARY_DIRS: ${OGRE_LIBRARY_DIRS}")
 
 foreach(_lib IN LISTS OGRE_LIBRARIES)
-  # message(STATUS "- ${_lib}")
+  # Remove debug suffix from library name for matching
+  string(REPLACE "_d" "" _lib ${_lib})
+
   if("OgreMainStatic" STREQUAL ${_lib})
     find_library(_ogre_main_static_library_abs ${_lib}
       PATHS
