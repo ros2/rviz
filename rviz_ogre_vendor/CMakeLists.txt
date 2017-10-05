@@ -40,6 +40,7 @@ macro(build_ogre)
     TIMEOUT 600
     CMAKE_ARGS
       -DOGRE_STATIC:BOOL=ON
+      -DOGRE_DEPENDENCIES_DIR=${CMAKE_CURRENT_BINARY_DIR}/ogredeps
       -DOGRE_INSTALL_PDB:BOOL=OFF
       -DOGRE_BUILD_DEPENDENCIES:BOOL=ON
       -DOGRE_BUILD_TESTS:BOOL=OFF
@@ -69,10 +70,10 @@ endmacro()
 
 build_ogre()
 
-configure_file(rviz_ogre_vendorConfig.cmake.in "${PROJECT_BINARY_DIR}/rviz_ogre_vendorConfig.cmake" @ONLY)
-configure_file(rviz_ogre_vendorConfig-version.cmake.in "${PROJECT_BINARY_DIR}/rviz_ogre_vendorConfig-version.cmake" @ONLY)
-
-# install(DIRECTORY cmake DESTINATION share/${PROJECT_NAME})
+configure_file(rviz_ogre_vendorConfig.cmake.in
+  "${PROJECT_BINARY_DIR}/rviz_ogre_vendorConfig.cmake" @ONLY)
+configure_file(rviz_ogre_vendorConfig-version.cmake.in
+  "${PROJECT_BINARY_DIR}/rviz_ogre_vendorConfig-version.cmake" @ONLY)
 
 install(FILES
   "${PROJECT_BINARY_DIR}/rviz_ogre_vendorConfig.cmake"
