@@ -73,7 +73,7 @@ public:
   Shape(Type shape_type, Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node = NULL);
   virtual ~Shape();
 
-  Type getType() {return type_; }
+  Type getType() {return type_;}
 
   /**
    * \brief Set the offset for this shape
@@ -97,18 +97,19 @@ public:
    *
    * @return The root scene node of this object
    */
-  Ogre::SceneNode * getRootNode() {return scene_node_; }
+  Ogre::SceneNode * getRootNode() {return scene_node_;}
 
   /**
    * \brief Sets user data on all ogre objects we own
    */
   void setUserData(const Ogre::Any & data);
 
-  Ogre::Entity * getEntity() {return entity_; }
+  Ogre::Entity * getEntity() {return entity_;}
 
-  Ogre::MaterialPtr getMaterial() {return material_; }
+  Ogre::MaterialPtr getMaterial() {return material_;}
 
-  static Ogre::Entity * createEntity(const std::string & name, Type shape_type,
+  static Ogre::Entity * createEntity(
+    const std::string & name, Type shape_type,
     Ogre::SceneManager * scene_manager);
 
 protected:

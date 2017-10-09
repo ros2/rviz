@@ -28,14 +28,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SRC__RVIZ_RENDERING__OGRE_RENDER_WINDOW_IMPL_HPP_
-#define SRC__RVIZ_RENDERING__OGRE_RENDER_WINDOW_IMPL_HPP_
+#ifndef RVIZ_RENDERING__OGRE_RENDER_WINDOW_IMPL_HPP_
+#define RVIZ_RENDERING__OGRE_RENDER_WINDOW_IMPL_HPP_
 
-#include <functional>
-
-#include <QEvent>
-#include <QObject>
-#include <QWindow>
+#include "render_system.hpp"
 
 #ifndef _WIN32
 # pragma GCC diagnostic push
@@ -56,11 +52,15 @@
 // #include <OgreColourValue.h>
 // #include <OgreRenderTargetListener.h>
 
+#include <QEvent>
+#include <QObject>
+#include <QWindow>
+
+#include <functional>
+
 #ifndef _WIN32
 # pragma GCC diagnostic pop
 #endif
-
-#include "render_system.hpp"
 
 namespace Ogre
 {
@@ -155,7 +155,7 @@ public:
   /** \brief Prepare to render in stereo if enabled and supported. */
   void setupStereo();
 
-  void setAutoRender(bool auto_render) {auto_render_ = auto_render; }
+  void setAutoRender(bool auto_render) {auto_render_ = auto_render;}
 
   ////// Functions mimicked from Ogre::Viewport to satisfy timing of
   ////// after-constructor creation of Ogre::RenderWindow.
@@ -216,4 +216,4 @@ protected:
 
 }  // namespace rviz_rendering
 
-#endif  // SRC__RVIZ_RENDERING__OGRE_RENDER_WINDOW_IMPL_HPP_
+#endif  // RVIZ_RENDERING__OGRE_RENDER_WINDOW_IMPL_HPP_

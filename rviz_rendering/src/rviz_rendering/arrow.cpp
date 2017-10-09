@@ -42,7 +42,8 @@
 namespace rviz_rendering
 {
 
-Arrow::Arrow(Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node, float shaft_length,
+Arrow::Arrow(
+  Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node, float shaft_length,
   float shaft_diameter,
   float head_length, float head_diameter)
 : Object(scene_manager)

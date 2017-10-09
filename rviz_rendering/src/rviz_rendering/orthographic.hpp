@@ -28,8 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SRC__RVIZ_RENDERING__ORTHOGRAPHIC_HPP_
-#define SRC__RVIZ_RENDERING__ORTHOGRAPHIC_HPP_
+#ifndef RVIZ_RENDERING__ORTHOGRAPHIC_HPP_
+#define RVIZ_RENDERING__ORTHOGRAPHIC_HPP_
 
 namespace Ogre
 {
@@ -52,4 +52,4 @@ void buildScaledOrthoMatrix(
 
 }  // namespace rviz_rendering
 
-#endif  // SRC__RVIZ_RENDERING__ORTHOGRAPHIC_HPP_
+#endif  // RVIZ_RENDERING__ORTHOGRAPHIC_HPP_
