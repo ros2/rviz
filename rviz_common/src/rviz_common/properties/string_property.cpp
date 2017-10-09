@@ -30,7 +30,7 @@
 
 #include <string>
 
-#include "./string_property.hpp"
+#include "rviz_common/properties/string_property.hpp"
 
 namespace rviz_common
 {

@@ -75,7 +75,7 @@ set(rviz_common_headers_to_moc
   ${ENV_CONFIG_HPP}
   # src/rviz_common/add_display_dialog.hpp
   # src/rviz_common/help_panel.hpp
-  src/rviz_common/properties/enum_property.hpp
+  include/rviz_common/properties/enum_property.hpp
   # src/rviz_common/properties/property_tree_widget.hpp
   # src/rviz_common/properties/splitter_handle.hpp
   # src/rviz_common/selection_panel.hpp
@@ -93,7 +93,7 @@ set(rviz_common_headers_to_moc
   src/rviz_common/panel_dock_widget.hpp
   src/rviz_common/properties/bool_property.hpp
   src/rviz_common/properties/color_editor.hpp
-  src/rviz_common/properties/color_property.hpp
+  include/rviz_common/properties/color_property.hpp
   src/rviz_common/properties/combo_box.hpp
   src/rviz_common/properties/editable_combo_box.hpp
   src/rviz_common/properties/editable_enum_property.hpp
@@ -107,7 +107,7 @@ set(rviz_common_headers_to_moc
   # src/rviz_common/properties/property_tree_with_help.hpp
   src/rviz_common/properties/status_list.hpp
   src/rviz_common/properties/status_property.hpp
-  src/rviz_common/properties/string_property.hpp
+  include/rviz_common/properties/string_property.hpp
   src/rviz_common/properties/tf_frame_property.hpp
   include/rviz_common/properties/vector_property.hpp
   src/rviz_common/render_panel.hpp

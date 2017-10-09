@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./enum_property.hpp"
+#include "rviz_common/properties/enum_property.hpp"
 
 #include <string>
 

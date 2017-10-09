@@ -37,7 +37,7 @@
 #include <QStringList>  // NOLINT: cpplint is unable to handle the include order here
 #include <QWidget>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "./string_property.hpp"
+#include "rviz_common/properties/string_property.hpp"
 
 namespace rviz_common
 {
