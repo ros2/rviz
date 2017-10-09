@@ -38,7 +38,9 @@
 
 #include "geometry_msgs/msg/pose.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
+#include "geometry_msgs/msg/transform_stamped.hpp"
 #include "std_msgs/msg/float32.hpp"
+#include "tf2/buffer_core.h"
 #include "tf2/LinearMath/Quaternion.h"
 #include "tf2/LinearMath/Vector3.h"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.h"
@@ -180,27 +182,39 @@ bool FrameManager::adjustTime(const std::string & frame, rclcpp::Time & time)
       break;
     case SyncApprox:
       {
-        // TODO(wjwwood): figureout where getLatestCommonTime went, then reenable this
-        #if 0
-        // if we don't have tf info for the given timestamp, use the latest available
-        rclcpp::Time latest_time;
-        std::string error_string;
-        int error_code;
-        error_code = tf_->getLatestCommonTime(fixed_frame_, frame, latest_time, &error_string);
-
-        if (error_code != 0) {
-          ROS_ERROR("Error getting latest time from frame '%s' to frame '%s': %s (Error code: %d)",
-            frame.c_str(), fixed_frame_.c_str(), error_string.c_str(), error_code);
+        // try to get the time from the latest available transformation
+        try {
+          auto lastAvailableTransform =
+            buffer_->lookupTransform(fixed_frame_, frame, tf2::TimePointZero);
+          if (lastAvailableTransform.header.stamp.nanosec > sync_time_.nanoseconds()) {
+            time = sync_time_;
+          }
+        } catch (const tf2::LookupException & exception) {
+          RVIZ_COMMON_LOG_ERROR_STREAM("Lookup failed while getting latest time from frame " <<
+            frame.c_str() << " to frame " <<
+            fixed_frame_.c_str() << ": " <<
+            exception.what());
+          return false;
+        } catch (const tf2::ConnectivityException & exception) {
+          RVIZ_COMMON_LOG_ERROR_STREAM("Connection exception getting latest time from frame " <<
+            frame.c_str() << " to frame " <<
+            fixed_frame_.c_str() << ": " <<
+            exception.what());
+          return false;
+        } catch (const tf2::ExtrapolationException & exception) {
+          RVIZ_COMMON_LOG_ERROR_STREAM("Extrapolation exception getting latest time from frame " <<
+            frame.c_str() << " to frame " <<
+            fixed_frame_.c_str() << ": " <<
+            exception.what());
+          return false;
+        } catch (const tf2::InvalidArgumentException & exception) {
+          RVIZ_COMMON_LOG_ERROR_STREAM("Invalid argument exception "
+            "getting latest time from frame " <<
+            frame.c_str() << " to frame " <<
+            fixed_frame_.c_str() << ": " <<
+            exception.what());
           return false;
         }
-
-        if (latest_time > sync_time_) {
-          time = sync_time_;
-        }
-        #endif
-        // until the above is restored, do something... dangerous and assume we have up-to-date tf
-        Q_UNUSED(frame);
-        time = sync_time_;
       }
       break;
   }
