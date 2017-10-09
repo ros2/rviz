@@ -31,11 +31,6 @@
 #ifndef RVIZ_RENDERING__RENDER_SYSTEM_HPP_
 #define RVIZ_RENDERING__RENDER_SYSTEM_HPP_
 
-#include <cstdint>
-#include <string>
-
-#include <QDir>
-
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Woverloaded-virtual"
@@ -53,6 +48,11 @@
 #include <OgreRoot.h>
 #include <OgreOverlaySystem.h>
 #include <RenderSystems/GL/OgreGLPlugin.h>
+
+#include <QDir>
+
+#include <cstdint>
+#include <string>
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop

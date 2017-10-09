@@ -12,6 +12,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_gtest REQUIRED)
 
 # Qt5 boilerplate options from http://doc.qt.io/qt-5/cmake-manual.html
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -47,7 +48,7 @@ endif()
 # These need to be added in the add_library() call so AUTOMOC detects them.
 set(headers_with_q_object
   include/rviz_rendering/render_window.hpp
-)
+  src/rviz_rendering/string_helper.hpp)
 
 add_library(rviz_rendering
   ${headers_with_q_object}
@@ -67,6 +68,7 @@ add_library(rviz_rendering
   src/rviz_rendering/resource_config.cpp
   src/rviz_rendering/shape.cpp
   src/rviz_rendering/grid.cpp
+  src/rviz_rendering/string_helper.cpp
 )
 target_link_libraries(rviz_rendering
   rviz_ogre_vendor::OgreMain
@@ -142,6 +144,12 @@ if(BUILD_TESTING)
     ament_cpplint()
     ament_lint_cmake()
     ament_uncrustify()
+
+    ament_add_gtest(test_rviz_rendering src/test/string_helper_test.cpp)
+    if(TARGET test_rviz_rendering)
+        target_include_directories(test_rviz_rendering PUBLIC src/rviz_rendering)
+        target_link_libraries(test_rviz_rendering ${PROJECT_NAME})
+    endif()
 endif()
 
 ament_package()

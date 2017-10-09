@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2011, Willow Garage, Inc.
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,6 +46,7 @@
 # pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
 
+#include <map>
 #include <OgreRenderWindow.h>
 
 #ifndef _WIN32
@@ -56,6 +58,7 @@
 #include "rviz_rendering/logging.hpp"
 #include "rviz_rendering/resource_config.hpp"
 
+#include "string_helper.hpp"
 #include "ogre_logging.hpp"
 
 namespace rviz_rendering
@@ -333,29 +336,25 @@ RenderSystem::setupResources()
   // }
 
   // Add paths added as "rviz_ogre_media_exports" resource to ament_index.
-  std::map<std::string,std::string> resource_locations = ament_index_cpp::get_resources("rviz_ogre_media_exports");
-  for(auto resource : resource_locations) {
+  const std::string RVIZ_OGRE_MEDIA_RESOURCE_NAME = "rviz_ogre_media_exports";
+  std::map<std::string, std::string> resource_locations = ament_index_cpp::get_resources(
+    RVIZ_OGRE_MEDIA_RESOURCE_NAME);
+  for (auto resource : resource_locations) {
     std::string content;
     std::string prefix_path;
-    if(ament_index_cpp::get_resource("rviz_ogre_media_exports", resource.first, content, &prefix_path)) {
-      std::stringstream content_stream(content);
-      std::string item;
-      std::vector<std::string> filenames;
-      while(std::getline(content_stream, item, '\n')) {
-        auto whitespace_front = std::find_if_not(item.begin(), item.end(), [](int character){return std::isspace(character);});
-        auto whitespace_back = std::find_if_not(item.rbegin(), item.rend(), [](int character){return std::isspace(character);});
-        item.erase(whitespace_back.base(), item.end());
-        item.erase(item.begin(), whitespace_front);
-        if (!item.empty()) {
-          filenames.push_back(item);
-        }
-      }
-      for(const auto &line : filenames) {
+    if (ament_index_cpp::get_resource(RVIZ_OGRE_MEDIA_RESOURCE_NAME, resource.first, content,
+      &prefix_path))
+    {
+      std::vector<std::string> filenames =
+        rviz_rendering::string_helper::splitStringIntoTrimmedItems(
+        content, '\n');
+      for (const auto & line : filenames) {
         std::string resource_path = prefix_path + "/share/" + line;
-        if(!QDir(QString::fromStdString(resource_path)).exists()) {
+        if (!QDir(QString::fromStdString(resource_path)).exists()) {
           RVIZ_RENDERING_LOG_WARNING_STREAM("Could not find folder " << resource_path);
         }
-        Ogre::ResourceGroupManager::getSingleton().addResourceLocation(resource_path, "FileSystem", "rviz_rendering");
+        Ogre::ResourceGroupManager::getSingleton().addResourceLocation(resource_path, "FileSystem",
+          "rviz_rendering");
       }
     }
   }
