@@ -26,13 +26,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#include "mock_property_change_receiver.hpp"
 
-#include <rviz/properties/property.h>
+namespace rviz_common {
 
-#include "mock_property_change_receiver.h"
-
-namespace rviz
-{
+namespace properties {
 
 MockPropertyChangeReceiver::MockPropertyChangeReceiver( Property* property )
   : property_( property )
@@ -48,4 +46,6 @@ void MockPropertyChangeReceiver::changed()
   result_ += " changed, v=" + property_->getValue().toString();
 }
 
-} // end namespace rviz
+} // end namespace properties
+
+} // end namespace rviz_common

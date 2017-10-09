@@ -290,6 +290,8 @@ install(
   DESTINATION include
 )
 
+find_package(ament_cmake_gtest REQUIRED)
+
 if(BUILD_TESTING)
     # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back
     find_package(ament_cmake_cppcheck REQUIRED)
@@ -300,6 +302,8 @@ if(BUILD_TESTING)
     ament_cpplint()
     ament_lint_cmake()
     ament_uncrustify()
+    ament_add_gtest(test_rviz_common test/property_test.cpp test/mock_property_change_receiver.cpp)
+    target_link_libraries(test_rviz_common rviz_common)
 endif()
 
 ament_package()
