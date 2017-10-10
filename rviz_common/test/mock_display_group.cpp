@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017 by Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,24 +27,24 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "rviz_common/failed_display.hpp"
+
+#include "mock_display_group.hpp"
 #include "mock_display.hpp"
 
-namespace rviz_common
+Display * MockDisplayGroup::createDisplay(const QString &class_id)
 {
-
-MockDisplay::MockDisplay()
-{
-  count_ = new properties::Property( "Count", 10, "How many?", this );
-  style_ = new properties::Property( "Style", "chunky", "What style?", this );
-  pi_ = new properties::Property( "Pi", 3.14159, "Circumference over diameter", this );
-  offset_ = new properties::VectorProperty( "Offset", Ogre::Vector3( 1, 2, 3 ), "Translation", this );
-  color_ = new properties::ColorProperty( "Color", QColor( 10, 20, 30 ), "Color", this );
+  if (class_id == "MockDisplay") {
+    return new MockDisplay;
+  }
+  if (class_id == "DisplayGroup") {
+    return new MockDisplayGroup;
+  }
+  return nullptr;
 }
 
-void MockDisplay::onEnableChanged() {}
+void MockDisplayGroup::onEnableChanged() {}
 
-void MockDisplay::initialize(DisplayContext * context) {
+void MockDisplayGroup::initialize(DisplayContext * context) {
   (void)context;
 }
-
-} // end namespace rviz

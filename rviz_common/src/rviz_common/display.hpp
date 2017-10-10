@@ -77,6 +77,7 @@ public:
   virtual ~Display();
 
   /// Main initialization, called after constructor, before load() or setEnabled().
+  virtual
   void
   initialize(DisplayContext * context);
 

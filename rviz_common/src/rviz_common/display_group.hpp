@@ -55,7 +55,7 @@ public:
   DisplayGroup();
   virtual ~DisplayGroup();
 
-  Display * createDisplay(const QString & class_id);
+  virtual Display * createDisplay(const QString & class_id);
 
   /// Return the number of child objects (Property and Display).
   /**

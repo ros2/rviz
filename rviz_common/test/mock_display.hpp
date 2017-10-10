@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017 by Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,30 +27,32 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef MOCK_DISPLAY_H
-#define MOCK_DISPLAY_H
 
-#include "rviz/display.h"
+#ifndef MOCK_DISPLAY_HPP
+#define MOCK_DISPLAY_HPP
 
-namespace rviz
-{
+#include "rviz_common/display.hpp"
 
-class VectorProperty;
-class ColorProperty;
+#include "rviz_common/properties/vector_property.hpp"
+#include "rviz_common/properties/color_property.hpp"
 
-class MockDisplay: public Display
+namespace rviz_common {
+
+class MockDisplay : public Display
 {
 Q_OBJECT
 public:
   MockDisplay();
 
-  Property* count_;
-  Property* style_;
-  Property* pi_;
-  VectorProperty* offset_;
-  ColorProperty* color_;
+  properties::Property * count_;
+  properties::Property * style_;
+  properties::Property * pi_;
+  properties::VectorProperty * offset_;
+  properties::ColorProperty * color_;
+  void onEnableChanged();
+  void initialize(DisplayContext * context);
 };
 
-} // end namespace rviz
+} // end namespace rviz_common
 
-#endif // MOCK_DISPLAY_H
+#endif // MOCK_DISPLAY_HPP
