@@ -30,9 +30,9 @@
 #include <locale>
 
 #include <gtest/gtest.h>
-#include <rviz/uniform_string_stream.h>
+#include <rviz_common/uniform_string_stream.hpp>
 
-using namespace rviz;
+using namespace rviz_common;
 
 TEST( UniformStringStream, parse_floats )
 {

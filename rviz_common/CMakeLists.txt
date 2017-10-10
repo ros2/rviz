@@ -302,8 +302,18 @@ if(BUILD_TESTING)
     ament_cpplint()
     ament_lint_cmake()
     ament_uncrustify()
-    ament_add_gtest(test_rviz_common test/property_test.cpp test/mock_property_change_receiver.cpp)
-    target_link_libraries(test_rviz_common rviz_common)
+    ament_add_gtest(rviz_common_uniform_string_stream_test
+      test/uniform_string_stream_test.cpp)
+    if(TARGET rviz_common_uniform_string_stream_test)
+      target_link_libraries(rviz_common_uniform_string_stream_test rviz_common)
+    endif()
+      
+    ament_add_gtest(rviz_common_property_test 
+      test/property_test.cpp
+      test/mock_property_change_receiver.cpp)
+    if(TARGET rviz_common_property_test)
+      target_link_libraries(rviz_common_property_test rviz_common)
+    endif()
 endif()
 
 ament_package()
