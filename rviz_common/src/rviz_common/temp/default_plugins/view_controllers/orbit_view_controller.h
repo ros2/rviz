@@ -90,7 +90,7 @@ public:
   void zoom(float amount);
   void yaw(float angle);
   void pitch(float angle);
-  void move(float x, float y, float z);
+  void move(float x, float y, float z);   // NOLINT linter wants #include <utility> for move
 
   virtual void handleMouseEvent(rviz_common::ViewportMouseEvent & evt);
 

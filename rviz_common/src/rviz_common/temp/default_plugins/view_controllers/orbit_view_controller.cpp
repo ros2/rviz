@@ -335,7 +335,8 @@ void OrbitViewController::zoom(float amount)
   updateFocalShapeSize();
 }
 
-void OrbitViewController::move(float x, float y, float z)
+// linter wants #include <utility> for move
+void OrbitViewController::move(float x, float y, float z)   // NOLINT
 {
   focal_point_property_->add(camera_->getOrientation() * Ogre::Vector3(x, y, z));
 }

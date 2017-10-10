@@ -119,7 +119,7 @@ Config::Config(NodePtr node)
 : node_(node)
 {}
 
-void Config::copy(const Config & source)
+void Config::copy(const Config & source)  // NOLINT linter wants #include <algorithm>
 {
   if (!source.isValid()) {
     node_ = NodePtr();

@@ -177,7 +177,8 @@ public:
     Ogre::Vector3 & position,
     Ogre::Quaternion & orientation)
   {
-    return transform(header.frame_id, header.stamp, pose, position, orientation);
+    return transform(header.frame_id, header.stamp, pose, position, orientation);   // NOLINT
+    // linter wants #include <algorithm> for transform
   }
 
   /// Transform a pose from a frame into the fixed frame.

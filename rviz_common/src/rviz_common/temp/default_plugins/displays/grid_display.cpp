@@ -54,7 +54,7 @@
 #include "../../../selection/selection_manager.hpp"
 
 using rviz_rendering::Grid;
-using namespace rviz_common::properties;
+using namespace rviz_common::properties;  // NOLINT revisit later on
 
 namespace rviz_common
 {
