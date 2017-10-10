@@ -55,7 +55,7 @@ class TimePanel : public Panel
   Q_OBJECT
 
 public:
-  TimePanel(QWidget * parent = 0);
+  explicit TimePanel(QWidget * parent = 0);
 
   virtual void onInitialize();
 

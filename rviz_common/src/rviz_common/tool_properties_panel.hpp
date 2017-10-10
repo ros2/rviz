@@ -45,7 +45,7 @@ class ToolPropertiesPanel : public Panel
   Q_OBJECT
 
 public:
-  ToolPropertiesPanel(QWidget * parent = 0);
+  explicit ToolPropertiesPanel(QWidget * parent = 0);
   virtual ~ToolPropertiesPanel() {}
 
   virtual void onInitialize();

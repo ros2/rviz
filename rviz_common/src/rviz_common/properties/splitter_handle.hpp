@@ -47,7 +47,7 @@ class SplitterHandle : public QWidget
   Q_OBJECT
 
 public:
-  SplitterHandle(QTreeView * parent = 0);
+  explicit SplitterHandle(QTreeView * parent = 0);
 
   /** @brief Set the ratio of the parent's left column to the parent widget width. */
   void setRatio(float ratio);

@@ -47,7 +47,7 @@ class PropertyTreeWidget : public QTreeView
   Q_OBJECT
 
 public:
-  PropertyTreeWidget(QWidget * parent = 0);
+  explicit PropertyTreeWidget(QWidget * parent = 0);
 
   /** @brief Set the data model this widget should view. */
   void setModel(PropertyTreeModel * model);

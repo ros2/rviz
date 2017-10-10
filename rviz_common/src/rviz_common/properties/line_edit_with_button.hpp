@@ -46,7 +46,7 @@ class LineEditWithButton : public QLineEdit
   Q_OBJECT
 
 public:
-  LineEditWithButton(QWidget * parent = 0);
+  explicit LineEditWithButton(QWidget * parent = 0);
 
   /** Returns the child button.  Use this to connect() something to a
    * button click. */

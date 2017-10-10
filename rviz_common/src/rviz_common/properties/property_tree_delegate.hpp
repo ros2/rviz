@@ -41,7 +41,7 @@ class PropertyTreeDelegate : public QStyledItemDelegate
   Q_OBJECT
 
 public:
-  PropertyTreeDelegate(QObject * parent_object = 0);
+  explicit PropertyTreeDelegate(QObject * parent_object = 0);
 
   virtual void paint(
     QPainter * painter,

@@ -49,7 +49,7 @@ class PropertyTreeWithHelp : public QSplitter
   Q_OBJECT
 
 public:
-  PropertyTreeWithHelp(QWidget * parent = 0);
+  explicit PropertyTreeWithHelp(QWidget * parent = 0);
 
   PropertyTreeWidget * getTree() {return property_tree_;}
 

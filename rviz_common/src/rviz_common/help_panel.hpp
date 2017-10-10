@@ -43,7 +43,7 @@ class HelpPanel : public Panel
   Q_OBJECT
 
 public:
-  HelpPanel(QWidget * parent = 0);
+  explicit HelpPanel(QWidget * parent = 0);
   virtual ~HelpPanel();
 
   virtual void onInitialize();

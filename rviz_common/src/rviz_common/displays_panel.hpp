@@ -58,7 +58,7 @@ class DisplaysPanel : public Panel
   Q_OBJECT
 
 public:
-  DisplaysPanel(QWidget * parent = 0);
+  explicit DisplaysPanel(QWidget * parent = 0);
   virtual ~DisplaysPanel();
 
   virtual void onInitialize();

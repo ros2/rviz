@@ -43,7 +43,7 @@ class ColorEditor : public LineEditWithButton
   Q_OBJECT
 
 public:
-  ColorEditor(ColorProperty * property = 0, QWidget * parent = 0);
+  explicit ColorEditor(ColorProperty * property = 0, QWidget * parent = 0);
 
   /** Static function to paint just the color box.  Paints it in the
    * left end of rect, size rect.height() by rect.height(). */

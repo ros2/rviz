@@ -144,7 +144,7 @@ class FrameInfo : public QObject
   Q_OBJECT
 
 public:
-  FrameInfo(TFDisplay * display);
+  explicit FrameInfo(TFDisplay * display);
 
   /** @brief Set this frame to be visible or invisible. */
   void setEnabled(bool enabled);

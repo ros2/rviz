@@ -90,7 +90,7 @@ namespace rviz
 class ResourceIOStream : public Assimp::IOStream
 {
 public:
-  ResourceIOStream(const resource_retriever::MemoryResource & res)
+  explicit ResourceIOStream(const resource_retriever::MemoryResource & res)
   : res_(res),
     pos_(res.data.get())
   {}

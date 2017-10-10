@@ -51,7 +51,7 @@ class ViewsPanel : public Panel
   Q_OBJECT
 
 public:
-  ViewsPanel(QWidget * parent = 0);
+  explicit ViewsPanel(QWidget * parent = 0);
   virtual ~ViewsPanel() {}
 
   /** @brief Overridden from Panel.  Just calls setViewManager() with

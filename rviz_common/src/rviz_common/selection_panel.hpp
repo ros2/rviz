@@ -42,7 +42,7 @@ class SelectionPanel : public Panel
   Q_OBJECT
 
 public:
-  SelectionPanel(QWidget * parent = 0);
+  explicit SelectionPanel(QWidget * parent = 0);
 
   virtual void onInitialize();
 
