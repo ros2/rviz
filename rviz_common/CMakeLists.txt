@@ -302,6 +302,13 @@ if(BUILD_TESTING)
     ament_cpplint()
     ament_lint_cmake()
     ament_uncrustify()
+
+    ament_add_gtest(rviz_common_config_test
+      test/config_test.cpp)
+    if(TARGET rviz_common_config_test)
+      target_link_libraries(rviz_common_config_test rviz_common)
+    endif()
+
     ament_add_gtest(rviz_common_uniform_string_stream_test
       test/uniform_string_stream_test.cpp)
     if(TARGET rviz_common_uniform_string_stream_test)

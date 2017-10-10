@@ -28,13 +28,11 @@
  */
 
 #include <gtest/gtest.h>
-#include <rviz/config.h>
-
-#include <ros/package.h> // For ros::package::getPath()
+#include <rviz_common/config.hpp>
 
 TEST( Config, set_then_get )
 {
-  rviz::Config c;
+  rviz_common::Config c;
   c.mapSetValue( "a", "1" );
   int a;
   EXPECT_TRUE( c.mapGetInt( "a", &a ));
@@ -49,7 +47,7 @@ TEST( Config, set_then_get )
 
 TEST( Config, parse_floats )
 {
-  rviz::Config c;
+  rviz_common::Config c;
   c.mapSetValue( "f", "1.1" );
   float f;
   EXPECT_TRUE( c.mapGetFloat( "f", &f ));
@@ -63,7 +61,7 @@ TEST( Config, parse_floats )
 
 TEST( Config, set_get_empty_value )
 {
-  rviz::Config c;
+  rviz_common::Config c;
   c.mapSetValue( "key", "" );
 
   QString s;
