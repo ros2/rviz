@@ -182,8 +182,10 @@ void OrbitViewController::handleMouseEvent(rviz_common::ViewportMouseEvent & eve
     int width = camera_->getViewport()->getActualWidth();
     int height = camera_->getViewport()->getActualHeight();
 
-    move(-((float)diff_x / (float)width) * distance * tan(fovX / 2.0f) * 2.0f,
-      ((float)diff_y / (float)height) * distance * tan(fovY / 2.0f) * 2.0f,
+    move(-(static_cast<float>(diff_x) / static_cast<float>(width)) *
+      distance * tan(fovX / 2.0f) * 2.0f,
+      (static_cast<float>(diff_y) / static_cast<float>(height)) *
+      distance * tan(fovY / 2.0f) * 2.0f,
       0.0f);
   } else if (event.right() ) {
     if (event.shift() ) {

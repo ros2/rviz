@@ -65,7 +65,7 @@ void SplitterHandle::updateGeometry()
 {
   int w = 7;
   int content_width = parent_->contentsRect().width();
-  int new_column_width = int(first_column_size_ratio_ * content_width);
+  int new_column_width = static_cast<int>(first_column_size_ratio_ * content_width);
   if (new_column_width != parent_->columnWidth(0) ) {
     parent_->setColumnWidth(0, new_column_width);
     parent_->setColumnWidth(1, content_width - new_column_width);
@@ -114,7 +114,8 @@ void SplitterHandle::mouseMoveEvent(QMouseEvent * event)
 
     if (new_x != x() ) {
       int new_column_width = new_x + width() / 2 - parent_->contentsRect().x();
-      first_column_size_ratio_ = new_column_width / (float) parent_->contentsRect().width();
+      first_column_size_ratio_ = new_column_width /
+        static_cast<float>(parent_->contentsRect().width());
       updateGeometry();
     }
   }

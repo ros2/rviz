@@ -81,7 +81,7 @@ struct MemoryBuffer
 
 size_t curlWriteFunc(void * buffer, size_t size, size_t nmemb, void * userp)
 {
-  MemoryBuffer * membuf = (MemoryBuffer *)userp;
+  MemoryBuffer * membuf = reinterpret_cast<MemoryBuffer *>(userp);
 
   size_t prev_size = membuf->v.size();
   membuf->v.resize(prev_size + size * nmemb);

@@ -170,32 +170,32 @@ bool STLLoader::load_binary(uint8_t * buffer)
   for (unsigned int currentTriangle = 0; currentTriangle < numTriangles; ++currentTriangle) {
     Triangle tri;
 
-    tri.normal_.x = *(float *)pos;
+    tri.normal_.x = *reinterpret_cast<float *>(pos);
     pos += 4;
-    tri.normal_.y = *(float *)pos;
+    tri.normal_.y = *reinterpret_cast<float *>(pos);
     pos += 4;
-    tri.normal_.z = *(float *)pos;
-    pos += 4;
-
-    tri.vertices_[0].x = *(float *)pos;
-    pos += 4;
-    tri.vertices_[0].y = *(float *)pos;
-    pos += 4;
-    tri.vertices_[0].z = *(float *)pos;
+    tri.normal_.z = *reinterpret_cast<float *>(pos);
     pos += 4;
 
-    tri.vertices_[1].x = *(float *)pos;
+    tri.vertices_[0].x = *reinterpret_cast<float *>(pos);
     pos += 4;
-    tri.vertices_[1].y = *(float *)pos;
+    tri.vertices_[0].y = *reinterpret_cast<float *>(pos);
     pos += 4;
-    tri.vertices_[1].z = *(float *)pos;
+    tri.vertices_[0].z = *reinterpret_cast<float *>(pos);
     pos += 4;
 
-    tri.vertices_[2].x = *(float *)pos;
+    tri.vertices_[1].x = *reinterpret_cast<float *>(pos);
     pos += 4;
-    tri.vertices_[2].y = *(float *)pos;
+    tri.vertices_[1].y = *reinterpret_cast<float *>(pos);
     pos += 4;
-    tri.vertices_[2].z = *(float *)pos;
+    tri.vertices_[1].z = *reinterpret_cast<float *>(pos);
+    pos += 4;
+
+    tri.vertices_[2].x = *reinterpret_cast<float *>(pos);
+    pos += 4;
+    tri.vertices_[2].y = *reinterpret_cast<float *>(pos);
+    pos += 4;
+    tri.vertices_[2].z = *reinterpret_cast<float *>(pos);
     pos += 4;
 
     // Blender was writing a large number into this short... am I misinterpreting what the

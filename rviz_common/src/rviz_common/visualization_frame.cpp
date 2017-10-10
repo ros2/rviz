@@ -202,7 +202,7 @@ void VisualizationFrame::updateFps()
     frame_count_ = 0;
     last_fps_calc_time_ = std::chrono::steady_clock::now();
     if (original_status_bar_ == statusBar()) {
-      fps_label_->setText(QString::number(int(fps)) + QString(" fps"));
+      fps_label_->setText(QString::number(static_cast<int>(fps)) + QString(" fps"));
     }
   }
 }

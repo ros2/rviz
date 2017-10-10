@@ -451,7 +451,7 @@ void Property::load(const Config & config)
 void Property::loadValue(const Config & config)
 {
   if (config.getType() == Config::Value) {
-    switch (int(value_.type() )) {
+    switch (static_cast<int>(value_.type() )) {
       case QVariant::Int: setValue(config.getValue().toInt() ); break;
       case QMetaType::Float:
       case QVariant::Double: setValue(config.getValue().toDouble() ); break;
@@ -459,7 +459,7 @@ void Property::loadValue(const Config & config)
       case QVariant::Bool: setValue(config.getValue().toBool() ); break;
       default:
         printf("Property::loadValue() TODO: error handling - unexpected QVariant type %d.\n",
-          int(value_.type() ));
+          static_cast<int>(value_.type() ));
         break;
     }
   }
@@ -517,7 +517,7 @@ QWidget * Property::createEditor(
 {
   Q_UNUSED(option);
 
-  switch (int(value_.type() )) {
+  switch (static_cast<int>(value_.type() )) {
     case QVariant::Int:
       {
         QSpinBox * editor = new QSpinBox(parent);
