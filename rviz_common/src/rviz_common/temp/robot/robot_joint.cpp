@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "robot_joint.h"
+#include "./robot_joint.h"  // NOLINT cpplint otherwise claims header not included
 
 #ifndef _WIN32
 # pragma GCC diagnostic push

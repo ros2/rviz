@@ -32,7 +32,7 @@
 # pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
 
-#include "robot_link.h"
+#include "./robot_link.h"  // NOLINT cpplint otherwise claims header not included
 
 #include <OgreEntity.h>
 #include <OgreMaterial.h>

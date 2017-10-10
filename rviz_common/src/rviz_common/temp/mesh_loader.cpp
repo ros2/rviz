@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "mesh_loader.h"
+#include "./mesh_loader.h"  // NOLINT cpplint otherwise claims header not included
 
 #ifndef _WIN32
 # pragma GCC diagnostic push

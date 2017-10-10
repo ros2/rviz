@@ -25,7 +25,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "retriever.h"
+#include "./retriever.h"  // NOLINT cpplint otherwise claims header not included
 
 #include <curl/curl.h>
 

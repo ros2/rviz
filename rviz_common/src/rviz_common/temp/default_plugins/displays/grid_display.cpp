@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "grid_display.h"
+#include "./grid_display.h"  // NOLINT cpplint otherwise claims header not included
 
 #include <boost/bind.hpp>
 

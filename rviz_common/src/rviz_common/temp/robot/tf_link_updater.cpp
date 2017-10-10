@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "tf_link_updater.h"
+#include "./tf_link_updater.h"  // NOLINT cpplint otherwise claims header not included
 
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>

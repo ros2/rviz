@@ -32,7 +32,7 @@
 # pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
 
-#include "robot_model_display.h"
+#include "./robot_model_display.h"  // NOLINT cpplint otherwise claims header not included
 
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
