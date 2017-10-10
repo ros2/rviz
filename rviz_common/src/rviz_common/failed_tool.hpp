@@ -26,10 +26,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef FAILED_TOOL_H
-#define FAILED_TOOL_H
+#ifndef RVIZ_COMMON__FAILED_TOOL_HPP_
+#define RVIZ_COMMON__FAILED_TOOL_HPP_
 
-#include "tool.h"
+#include "./tool.h"
 
 namespace rviz
 {
@@ -44,30 +44,30 @@ namespace rviz
  * configuration data is saved out again without modification.  This
  * ensures that running rviz with a missing plugin library won't
  * damage config files which refer to it. */
-class FailedTool: public Tool
+class FailedTool : public Tool
 {
 public:
-  FailedTool( const QString& desired_class_id, const QString& error_message );
+  FailedTool(const QString & desired_class_id, const QString & error_message);
 
   virtual QString getDescription() const;
 
   virtual void activate();
   virtual void deactivate() {}
 
-  virtual int processMouseEvent( ViewportMouseEvent& event ) { return 0; }
+  virtual int processMouseEvent(ViewportMouseEvent & event) {return 0;}
 
   /** @brief Store the given config data for later, so we can return it
    * with save() when someone writes this back to a file. */
-  virtual void load( const Config& config );
+  virtual void load(const Config & config);
 
   /** @brief Copy saved config data from last call to load() into config. */
-  virtual void save( Config config ) const;
+  virtual void save(Config config) const;
 
 private:
   Config saved_config_;
   QString error_message_;
 };
 
-} // end namespace rviz
+}  // end namespace rviz
 
-#endif // FAILED_TOOL_H
+#endif  // RVIZ_COMMON__FAILED_TOOL_HPP_

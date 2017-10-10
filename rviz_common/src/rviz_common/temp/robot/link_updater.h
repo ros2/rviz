@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_ROBOT_LINK_UPDATER_H
-#define RVIZ_ROBOT_LINK_UPDATER_H
+#ifndef RVIZ_COMMON__TEMP__ROBOT__LINK_UPDATER_H_
+#define RVIZ_COMMON__TEMP__ROBOT__LINK_UPDATER_H_
 
 #include <string>
 #include "../../properties/status_property.hpp"
@@ -47,10 +47,14 @@ using properties::StatusLevel;
 class LinkUpdater
 {
 public:
-  virtual bool getLinkTransforms(const std::string& link_name, Ogre::Vector3& visual_position, Ogre::Quaternion& visual_orientation,
-                                 Ogre::Vector3& collision_position, Ogre::Quaternion& collision_orientation) const = 0;
+  virtual bool getLinkTransforms(
+    const std::string & link_name, Ogre::Vector3 & visual_position,
+    Ogre::Quaternion & visual_orientation,
+    Ogre::Vector3 & collision_position, Ogre::Quaternion & collision_orientation) const = 0;
 
-  virtual void setLinkStatus(StatusLevel level, const std::string& link_name, const std::string& text) const
+  virtual void setLinkStatus(
+    StatusLevel level, const std::string & link_name,
+    const std::string & text) const
   {
     (void) level;
     (void) link_name;
@@ -58,6 +62,6 @@ public:
   }
 };
 
-} // namespace rviz
+}  // namespace rviz_common
 
-#endif // RVIZ_ROBOT_LINK_UPDATER_H
+#endif  // RVIZ_COMMON__TEMP__ROBOT__LINK_UPDATER_H_

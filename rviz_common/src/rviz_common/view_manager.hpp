@@ -28,8 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SRC__RVIZ_COMMON__VIEW_MANAGER_HPP_
-#define SRC__RVIZ_COMMON__VIEW_MANAGER_HPP_
+#ifndef RVIZ_COMMON__VIEW_MANAGER_HPP_
+#define RVIZ_COMMON__VIEW_MANAGER_HPP_
 
 #include <algorithm>
 
@@ -197,4 +197,4 @@ public:
 
 }  // namespace rviz_common
 
-#endif  // SRC__RVIZ_COMMON__VIEW_MANAGER_HPP_
+#endif  // RVIZ_COMMON__VIEW_MANAGER_HPP_

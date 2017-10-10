@@ -26,8 +26,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef PROPERTY_TREE_DELEGATE_H
-#define PROPERTY_TREE_DELEGATE_H
+#ifndef RVIZ_COMMON__PROPERTIES__PROPERTY_TREE_DELEGATE_HPP_
+#define RVIZ_COMMON__PROPERTIES__PROPERTY_TREE_DELEGATE_HPP_
 
 #include <QStyledItemDelegate>
 
@@ -36,22 +36,25 @@ namespace rviz_common
 namespace properties
 {
 
-class PropertyTreeDelegate: public QStyledItemDelegate
+class PropertyTreeDelegate : public QStyledItemDelegate
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  PropertyTreeDelegate( QObject* parent_object = 0 );
+  PropertyTreeDelegate(QObject * parent_object = 0);
 
-  virtual void paint( QPainter * painter,
-                      const QStyleOptionViewItem & option,
-                      const QModelIndex & index ) const;
+  virtual void paint(
+    QPainter * painter,
+    const QStyleOptionViewItem & option,
+    const QModelIndex & index) const;
 
-  virtual QWidget *createEditor( QWidget *parent,
-                                 const QStyleOptionViewItem & option,
-                                 const QModelIndex &index ) const;
+  virtual QWidget * createEditor(
+    QWidget * parent,
+    const QStyleOptionViewItem & option,
+    const QModelIndex & index) const;
 };
 
 }  // namespace properties
 }  // namespace rviz_common
 
-#endif // PROPERTY_TREE_DELEGATE_H
+#endif  // RVIZ_COMMON__PROPERTIES__PROPERTY_TREE_DELEGATE_HPP_

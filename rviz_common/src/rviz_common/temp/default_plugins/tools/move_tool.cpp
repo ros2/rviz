@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./move_tool.h"
+#include "move_tool.h"
 
 #include "../../../display_context.hpp"
 #include "../../../render_panel.hpp"
@@ -44,31 +44,29 @@ MoveTool::MoveTool()
 {
   shortcut_key_ = 'm';
   // this is needed as the move tool is instantiated by other tools
-  setIcon( loadPixmap("package://rviz/icons/classes/MoveCamera.png") );
+  setIcon(loadPixmap("package://rviz/icons/classes/MoveCamera.png") );
 }
 
-int MoveTool::processMouseEvent( ViewportMouseEvent& event )
+int MoveTool::processMouseEvent(ViewportMouseEvent & event)
 {
   // printf("in MoveTool::processMouseEvent()\n");
-  if (event.panel->getViewController())
-  {
+  if (event.panel->getViewController()) {
     event.panel->getViewController()->handleMouseEvent(event);
-    setCursor( event.panel->getViewController()->getCursor() );
+    setCursor(event.panel->getViewController()->getCursor() );
   }
   return 0;
 }
 
-int MoveTool::processKeyEvent( QKeyEvent* event, RenderPanel* panel )
+int MoveTool::processKeyEvent(QKeyEvent * event, RenderPanel * panel)
 {
   // printf("in MoveTool::processKeyEvent()\n");
-  if( context_->getViewManager()->getCurrent() )
-  {
-    context_->getViewManager()->getCurrent()->handleKeyEvent( event, panel );
+  if (context_->getViewManager()->getCurrent() ) {
+    context_->getViewManager()->getCurrent()->handleKeyEvent(event, panel);
   }
   return Render;
 }
 
-} // namespace rviz_common
+}  // namespace rviz_common
 
 // #include <pluginlib/class_list_macros.h>
 // PLUGINLIB_EXPORT_CLASS( rviz::MoveTool, rviz::Tool )

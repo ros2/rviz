@@ -26,8 +26,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef FAILED_VIEW_CONTROLLER_H
-#define FAILED_VIEW_CONTROLLER_H
+#ifndef RVIZ_COMMON__FAILED_VIEW_CONTROLLER_HPP_
+#define RVIZ_COMMON__FAILED_VIEW_CONTROLLER_HPP_
 
 #include "rviz_common/view_controller.hpp"
 
@@ -44,23 +44,23 @@ namespace rviz_common
  * configuration data is saved out again without modification.  This
  * ensures that running rviz with a missing plugin library won't
  * damage config files which refer to it. */
-class FailedViewController: public ViewController
+class FailedViewController : public ViewController
 {
 public:
-  FailedViewController( const QString& desired_class_id, const QString& error_message );
+  FailedViewController(const QString & desired_class_id, const QString & error_message);
 
   virtual QString getDescription() const;
 
   virtual void onActivate();
 
-  virtual int processMouseEvent() { return 0; }
+  virtual int processMouseEvent() {return 0;}
 
   /** @brief Store the given Config data for later, so we can return it
    * with save() when someone writes this back to a file. */
-  virtual void load( const Config& config );
+  virtual void load(const Config & config);
 
   /** @brief Write into config data equivalent to the last config sent to load(). */
-  virtual void save( Config config ) const;
+  virtual void save(Config config) const;
 
   virtual void lookAt() {}
   virtual void reset() {}
@@ -70,6 +70,6 @@ private:
   QString error_message_;
 };
 
-} // end namespace rviz_common
+}  // end namespace rviz_common
 
-#endif // FAILED_VIEW_CONTROLLER_H
+#endif  // RVIZ_COMMON__FAILED_VIEW_CONTROLLER_HPP_

@@ -28,8 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SRC__RVIZ_COMMON__PROPERTIES__INT_PROPERTY_HPP_
-#define SRC__RVIZ_COMMON__PROPERTIES__INT_PROPERTY_HPP_
+#ifndef RVIZ_COMMON__PROPERTIES__INT_PROPERTY_HPP_
+#define RVIZ_COMMON__PROPERTIES__INT_PROPERTY_HPP_
 
 #include "rviz_common/properties/property.hpp"
 
@@ -121,4 +121,4 @@ private:
 }  // namespace properties
 }  // namespace rviz_common
 
-#endif  // SRC__RVIZ_COMMON__PROPERTIES__INT_PROPERTY_HPP_
+#endif  // RVIZ_COMMON__PROPERTIES__INT_PROPERTY_HPP_

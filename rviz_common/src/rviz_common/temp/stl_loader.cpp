@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./stl_loader.h"
+#include "stl_loader.h"
 
 #ifndef _WIN32
 # pragma GCC diagnostic push
@@ -35,6 +35,9 @@
 #endif
 
 #include <OgreManualObject.h>
+
+#include <string>
+#include <vector>
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop
@@ -47,19 +50,16 @@ namespace ogre_tools
 
 STLLoader::STLLoader()
 {
-
 }
 
 STLLoader::~STLLoader()
 {
-
 }
 
-bool STLLoader::load(const std::string& path)
+bool STLLoader::load(const std::string & path)
 {
-  FILE* input = fopen( path.c_str(), "r" );
-  if ( !input )
-  {
+  FILE * input = fopen(path.c_str(), "r");
+  if (!input) {
     fprintf(stderr, "Could not open '%s' for read", path.c_str() );
     return false;
   }
@@ -79,64 +79,60 @@ bool STLLoader::load(const std::string& path)
    */
 
   // find the file size
-  fseek( input, 0, SEEK_END );
-  long fileSize = ftell( input );
-  rewind( input );
+  fseek(input, 0, SEEK_END);
+  long fileSize = ftell(input);
+  rewind(input);
 
   std::vector<uint8_t> buffer_vec(fileSize);
-  uint8_t* buffer = &buffer_vec[0];
+  uint8_t * buffer = &buffer_vec[0];
 
-  long num_bytes_read = fread( buffer, 1, fileSize, input );
-  if ( num_bytes_read != fileSize )
-  {
-    fprintf(stderr,"STLLoader::load( \"%s\" ) only read %ld bytes out of total %ld.",
-              path.c_str(), num_bytes_read, fileSize);
-    fclose( input );
+  long num_bytes_read = fread(buffer, 1, fileSize, input);
+  if (num_bytes_read != fileSize) {
+    fprintf(stderr, "STLLoader::load( \"%s\" ) only read %ld bytes out of total %ld.",
+      path.c_str(), num_bytes_read, fileSize);
+    fclose(input);
     return false;
   }
-  fclose( input );
+  fclose(input);
 
   return this->load(buffer, num_bytes_read, path);
 }
 
-bool STLLoader::load(uint8_t* buffer, const size_t num_bytes, const std::string& origin)
+bool STLLoader::load(uint8_t * buffer, const size_t num_bytes, const std::string & origin)
 {
   // check for ascii since we can only load binary types with this class
   std::string buffer_str = std::string(reinterpret_cast<char *>(buffer), num_bytes);
 
-  if (buffer_str.substr(0, 5) == std::string("solid"))
-  {
+  if (buffer_str.substr(0, 5) == std::string("solid")) {
     // file says that it is ascii, but why should we trust it?
 
     // check for "endsolid" as well
-    if (buffer_str.find("endsolid", 5) != std::string::npos)
-    {
+    if (buffer_str.find("endsolid", 5) != std::string::npos) {
       RVIZ_COMMON_LOG_ERROR_STREAM("The STL file '" << origin << "' is malformed. It "
-                       "starts with the word 'solid' and also contains the "
-                       "word 'endsolid', indicating that it's an ASCII STL "
-                       "file, but rviz can only load binary STL files so it "
-                       "will not be loaded. Please convert it to a "
-                       "binary STL file.");
+        "starts with the word 'solid' and also contains the "
+        "word 'endsolid', indicating that it's an ASCII STL "
+        "file, but rviz can only load binary STL files so it "
+        "will not be loaded. Please convert it to a "
+        "binary STL file.");
       return false;
     }
 
     // chastise the user for malformed files
     RVIZ_COMMON_LOG_WARNING_STREAM("The STL file '" << origin << "' is malformed. It starts "
-                    "with the word 'solid', indicating that it's an ASCII "
-                    "STL file, but it does not contain the word 'endsolid' so "
-                    "it is either a malformed ASCII STL file or it is actually "
-                    "a binary STL file. Trying to interpret it as a binary "
-                    "STL file instead.");
+      "with the word 'solid', indicating that it's an ASCII "
+      "STL file, but it does not contain the word 'endsolid' so "
+      "it is either a malformed ASCII STL file or it is actually "
+      "a binary STL file. Trying to interpret it as a binary "
+      "STL file instead.");
   }
 
   // make sure there's enough data for a binary STL header and triangle count
   static const size_t binary_stl_header_len = 84;
-  if (num_bytes <= binary_stl_header_len)
-  {
+  if (num_bytes <= binary_stl_header_len) {
     RVIZ_COMMON_LOG_ERROR_STREAM("The STL file '" << origin << "' is malformed. It "
-                     "appears to be a binary STL file but does not contain "
-                     "enough data for the 80 byte header and 32-bit integer "
-                     "triangle count.");
+      "appears to be a binary STL file but does not contain "
+      "enough data for the 80 byte header and 32-bit integer "
+      "triangle count.");
     return false;
   }
 
@@ -144,76 +140,72 @@ bool STLLoader::load(uint8_t* buffer, const size_t num_bytes, const std::string&
   unsigned int num_triangles = *(reinterpret_cast<uint32_t *>(buffer + 80));
   static const size_t number_of_bytes_per_triangle = 50;
   size_t expected_size = binary_stl_header_len + num_triangles * number_of_bytes_per_triangle;
-  if (num_bytes < expected_size)
-  {
+  if (num_bytes < expected_size) {
     RVIZ_COMMON_LOG_ERROR_STREAM("The STL file '" << origin << "' is malformed. According "
-                     "to the binary STL header it should have '" <<
-                     num_triangles << "' triangles, but it has too little" <<
-                     " data for that to be the case.");
+      "to the binary STL header it should have '" <<
+      num_triangles << "' triangles, but it has too little" <<
+      " data for that to be the case.");
     return false;
-  }
-  else if (num_bytes > expected_size)
-  {
+  } else if (num_bytes > expected_size) {
     RVIZ_COMMON_LOG_WARNING_STREAM("The STL file '" << origin << "' is malformed. According "
-                    "to the binary STL header it should have '" <<
-                    num_triangles << "' triangles, but it has too much" <<
-                    " data for that to be the case. The extra data will be" <<
-                    " ignored.");
+      "to the binary STL header it should have '" <<
+      num_triangles << "' triangles, but it has too much" <<
+      " data for that to be the case. The extra data will be" <<
+      " ignored.");
   }
 
   // load the binary STL data
   return this->load_binary(buffer);
 }
 
-bool STLLoader::load_binary(uint8_t* buffer)
+bool STLLoader::load_binary(uint8_t * buffer)
 {
-  uint8_t* pos = buffer;
+  uint8_t * pos = buffer;
 
-  pos += 80; // skip the 80 byte header
+  pos += 80;  // skip the 80 byte header
 
-  unsigned int numTriangles = *(unsigned int*)pos;
+  unsigned int numTriangles = *(unsigned int *)pos;
   pos += 4;
 
-  for ( unsigned int currentTriangle = 0; currentTriangle < numTriangles; ++currentTriangle )
-  {
+  for (unsigned int currentTriangle = 0; currentTriangle < numTriangles; ++currentTriangle) {
     Triangle tri;
 
-    tri.normal_.x = *(float*)pos;
+    tri.normal_.x = *(float *)pos;
     pos += 4;
-    tri.normal_.y = *(float*)pos;
+    tri.normal_.y = *(float *)pos;
     pos += 4;
-    tri.normal_.z = *(float*)pos;
-    pos += 4;
-
-    tri.vertices_[0].x = *(float*)pos;
-    pos += 4;
-    tri.vertices_[0].y = *(float*)pos;
-    pos += 4;
-    tri.vertices_[0].z = *(float*)pos;
+    tri.normal_.z = *(float *)pos;
     pos += 4;
 
-    tri.vertices_[1].x = *(float*)pos;
+    tri.vertices_[0].x = *(float *)pos;
     pos += 4;
-    tri.vertices_[1].y = *(float*)pos;
+    tri.vertices_[0].y = *(float *)pos;
     pos += 4;
-    tri.vertices_[1].z = *(float*)pos;
-    pos += 4;
-
-    tri.vertices_[2].x = *(float*)pos;
-    pos += 4;
-    tri.vertices_[2].y = *(float*)pos;
-    pos += 4;
-    tri.vertices_[2].z = *(float*)pos;
+    tri.vertices_[0].z = *(float *)pos;
     pos += 4;
 
-    // Blender was writing a large number into this short... am I misinterpreting what the attribute byte count is supposed to do?
-    //unsigned short attributeByteCount = *(unsigned short*)pos;
+    tri.vertices_[1].x = *(float *)pos;
+    pos += 4;
+    tri.vertices_[1].y = *(float *)pos;
+    pos += 4;
+    tri.vertices_[1].z = *(float *)pos;
+    pos += 4;
+
+    tri.vertices_[2].x = *(float *)pos;
+    pos += 4;
+    tri.vertices_[2].y = *(float *)pos;
+    pos += 4;
+    tri.vertices_[2].z = *(float *)pos;
+    pos += 4;
+
+    // Blender was writing a large number into this short... am I misinterpreting what the
+    // attribute byte count is supposed to do?
+    // unsigned short attributeByteCount = *(unsigned short*)pos;
     pos += 2;
 
-    //pos += attributeByteCount;
+    // pos += attributeByteCount;
 
-    if (tri.normal_.squaredLength() < 0.001)
-    {
+    if (tri.normal_.squaredLength() < 0.001) {
       Ogre::Vector3 side1 = tri.vertices_[0] - tri.vertices_[1];
       Ogre::Vector3 side2 = tri.vertices_[1] - tri.vertices_[2];
       tri.normal_ = side1.crossProduct(side2);
@@ -226,66 +218,65 @@ bool STLLoader::load_binary(uint8_t* buffer)
   return true;
 }
 
-void calculateUV(const Ogre::Vector3& vec, float& u, float& v)
+void calculateUV(const Ogre::Vector3 & vec, float & u, float & v)
 {
   Ogre::Vector3 pos(vec);
   pos.normalise();
-  u = acos( pos.y / pos.length() );
+  u = acos(pos.y / pos.length() );
 
-  float val = pos.x / ( sin( u ) );
-  v = acos( val );
+  float val = pos.x / ( sin(u) );
+  v = acos(val);
 
   u /= Ogre::Math::PI;
   v /= Ogre::Math::PI;
 }
 
 
-Ogre::MeshPtr STLLoader::toMesh(const std::string& name)
+Ogre::MeshPtr STLLoader::toMesh(const std::string & name)
 {
-  Ogre::ManualObject* object = new Ogre::ManualObject( "the one and only" );
-  object->begin( "BaseWhiteNoLighting", Ogre::RenderOperation::OT_TRIANGLE_LIST );
+  Ogre::ManualObject * object = new Ogre::ManualObject("the one and only");
+  object->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_TRIANGLE_LIST);
 
   unsigned int vertexCount = 0;
   V_Triangle::const_iterator it = triangles_.begin();
   V_Triangle::const_iterator end = triangles_.end();
-  for (; it != end; ++it )
-  {
-    if( vertexCount >= 2004 )
-    {
+  for (; it != end; ++it) {
+    if (vertexCount >= 2004) {
       // Subdivide large meshes into submeshes with at most 2004
       // vertices to prevent problems on some graphics cards.
       object->end();
-      object->begin( "BaseWhiteNoLighting", Ogre::RenderOperation::OT_TRIANGLE_LIST );
+      object->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_TRIANGLE_LIST);
       vertexCount = 0;
     }
 
-    const STLLoader::Triangle& tri = *it;
+    const STLLoader::Triangle & tri = *it;
 
     float u, v;
     u = v = 0.0f;
-    object->position( tri.vertices_[0] );
-    object->normal( tri.normal_);
-    calculateUV( tri.vertices_[0], u, v );
-    object->textureCoord( u, v );
+    object->position(tri.vertices_[0]);
+    object->normal(tri.normal_);
+    calculateUV(tri.vertices_[0], u, v);
+    object->textureCoord(u, v);
 
-    object->position( tri.vertices_[1] );
-    object->normal( tri.normal_);
-    calculateUV( tri.vertices_[1], u, v );
-    object->textureCoord( u, v );
+    object->position(tri.vertices_[1]);
+    object->normal(tri.normal_);
+    calculateUV(tri.vertices_[1], u, v);
+    object->textureCoord(u, v);
 
-    object->position( tri.vertices_[2] );
-    object->normal( tri.normal_);
-    calculateUV( tri.vertices_[2], u, v );
-    object->textureCoord( u, v );
+    object->position(tri.vertices_[2]);
+    object->normal(tri.normal_);
+    calculateUV(tri.vertices_[2], u, v);
+    object->textureCoord(u, v);
 
-    object->triangle( vertexCount + 0, vertexCount + 1, vertexCount + 2 );
+    object->triangle(vertexCount + 0, vertexCount + 1, vertexCount + 2);
 
     vertexCount += 3;
   }
 
   object->end();
 
-  Ogre::MeshPtr mesh = object->convertToMesh( name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME );
+  Ogre::MeshPtr mesh = object->convertToMesh(name,
+      Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
   mesh->buildEdgeList();
 
   delete object;
@@ -293,4 +284,4 @@ Ogre::MeshPtr STLLoader::toMesh(const std::string& name)
   return mesh;
 }
 
-}
+}  // namespace ogre_tools

@@ -27,13 +27,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_ROBOT_TF_LINK_UPDATER_H
-#define RVIZ_ROBOT_TF_LINK_UPDATER_H
+#ifndef RVIZ_COMMON__TEMP__ROBOT__TF_LINK_UPDATER_H_
+#define RVIZ_COMMON__TEMP__ROBOT__TF_LINK_UPDATER_H_
+
+#include <functional>
+#include <string>
 
 #include "./link_updater.h"
-
-#include <string>
-#include <functional>
 
 namespace tf
 {
@@ -48,21 +48,28 @@ class FrameManager;
 class TFLinkUpdater : public LinkUpdater
 {
 public:
-  typedef std::function<void(StatusLevel, const std::string&, const std::string&)> StatusCallback;
+  typedef std::function<void (StatusLevel, const std::string &,
+      const std::string &)> StatusCallback;
 
-  TFLinkUpdater(FrameManager* frame_manager, const StatusCallback& status_cb = StatusCallback(), const std::string& tf_prefix = std::string());
-  virtual bool getLinkTransforms(const std::string& link_name, Ogre::Vector3& visual_position, Ogre::Quaternion& visual_orientation,
-                                 Ogre::Vector3& collision_position, Ogre::Quaternion& collision_orientation) const;
+  TFLinkUpdater(
+    FrameManager * frame_manager,
+    const StatusCallback & status_cb = StatusCallback(),
+    const std::string & tf_prefix = std::string());
+  virtual bool getLinkTransforms(
+    const std::string & link_name, Ogre::Vector3 & visual_position,
+    Ogre::Quaternion & visual_orientation,
+    Ogre::Vector3 & collision_position, Ogre::Quaternion & collision_orientation) const;
 
-  virtual void setLinkStatus(StatusLevel level, const std::string& link_name, const std::string& text) const;
+  virtual void setLinkStatus(
+    StatusLevel level, const std::string & link_name,
+    const std::string & text) const;
 
 private:
-  FrameManager* frame_manager_;
+  FrameManager * frame_manager_;
   StatusCallback status_callback_;
   std::string tf_prefix_;
 };
 
-} // namespace rviz
+}  // namespace rviz_common
 
-#endif // RVIZ_ROBOT_TF_LINK_UPDATER_H
-
+#endif  // RVIZ_COMMON__TEMP__ROBOT__TF_LINK_UPDATER_H_

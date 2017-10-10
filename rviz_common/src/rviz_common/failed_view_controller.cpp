@@ -37,43 +37,43 @@
 namespace rviz_common
 {
 
-FailedViewController::FailedViewController( const QString& desired_class_id, const QString& error_message )
-  : error_message_( error_message )
+FailedViewController::FailedViewController(
+  const QString & desired_class_id,
+  const QString & error_message)
+: error_message_(error_message)
 {
-  setClassId( desired_class_id );
+  setClassId(desired_class_id);
 }
 
 QString FailedViewController::getDescription() const
 {
-  return "The class required for this view controller, '" + getClassId() + "', could not be loaded.<br><b>Error:</b><br>" + error_message_;
+  return "The class required for this view controller, '" + getClassId() +
+         "', could not be loaded.<br><b>Error:</b><br>" + error_message_;
 }
 
-void FailedViewController::load( const Config& config )
+void FailedViewController::load(const Config & config)
 {
   saved_config_ = config;
-  ViewController::load( config );
+  ViewController::load(config);
 }
 
-void FailedViewController::save( Config config ) const
+void FailedViewController::save(Config config) const
 {
-  if( saved_config_.isValid() )
-  {
-    config.copy( saved_config_ );
-  }
-  else
-  {
-    ViewController::save( config );
+  if (saved_config_.isValid() ) {
+    config.copy(saved_config_);
+  } else {
+    ViewController::save(config);
   }
 }
 
 void FailedViewController::onActivate()
 {
-  QWidget* parent = NULL;
-  if( context_->getWindowManager() )
-  {
+  QWidget * parent = NULL;
+  if (context_->getWindowManager() ) {
     parent = context_->getWindowManager()->getParentWindow();
   }
-  QMessageBox::critical( parent, "ViewController '" + getName() + "'unavailable.", getDescription() );
+  QMessageBox::critical(parent, "ViewController '" + getName() + "'unavailable.",
+    getDescription() );
 }
 
-} // end namespace rviz_common
+}  // end namespace rviz_common

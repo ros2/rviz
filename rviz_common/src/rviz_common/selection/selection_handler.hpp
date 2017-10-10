@@ -28,12 +28,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SRC__RVIZ_COMMON__SELECTION__SELECTION_HANDLER_HPP_
-#define SRC__RVIZ_COMMON__SELECTION__SELECTION_HANDLER_HPP_
+#ifndef RVIZ_COMMON__SELECTION__SELECTION_HANDLER_HPP_
+#define RVIZ_COMMON__SELECTION__SELECTION_HANDLER_HPP_
 
+#include <map>
 #include <memory>
 #include <set>
+#include <string>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 #include <OgreMovableObject.h>
@@ -180,7 +183,7 @@ protected:
   QList<rviz_common::properties::Property *> properties_;
 
   typedef std::map<std::pair<CollObjectHandle, uint64_t>,
-    std::pair<Ogre::SceneNode *, Ogre::WireBoundingBox *>> M_HandleToBox;
+      std::pair<Ogre::SceneNode *, Ogre::WireBoundingBox *>> M_HandleToBox;
   M_HandleToBox boxes_;
 
   DisplayContext * context_;
@@ -191,7 +194,8 @@ protected:
   // TODO(wjwwood): move implementation to cpp file.
   class Listener : public Ogre::MovableObject::Listener
   {
-public:  // TODO(wjwwood): uncrustify doesn't handle this indentation correctly.
+public:
+    // TODO(wjwwood): uncrustify doesn't handle this indentation correctly.
     explicit Listener(SelectionHandler * handler)
     : handler_(handler)
     {}
@@ -235,4 +239,4 @@ typedef std::set<SelectionHandlerPtr> S_SelectionHandler;
 }  // namespace selection
 }  // namespace rviz_common
 
-#endif  // SRC__RVIZ_COMMON__SELECTION__SELECTION_HANDLER_HPP_
+#endif  // RVIZ_COMMON__SELECTION__SELECTION_HANDLER_HPP_

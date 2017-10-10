@@ -26,8 +26,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef COMBO_BOX_H
-#define COMBO_BOX_H
+#ifndef RVIZ_COMMON__PROPERTIES__COMBO_BOX_HPP_
+#define RVIZ_COMMON__PROPERTIES__COMBO_BOX_HPP_
 
 #include <QComboBox>
 
@@ -36,15 +36,16 @@ namespace rviz_common
 namespace properties
 {
 
-class ComboBox: public QComboBox
+class ComboBox : public QComboBox
 {
-Q_OBJECT
-Q_PROPERTY(QString currentText READ currentText USER true)
+  Q_OBJECT
+  Q_PROPERTY(QString currentText READ currentText USER true)
+
 public:
-  ComboBox( QWidget* parent = 0 );
+  ComboBox(QWidget * parent = 0);
 };
 
 }  // namespace properties
 }  // namespace rviz_common
 
-#endif // COMBO_BOX_H
+#endif  // RVIZ_COMMON__PROPERTIES__COMBO_BOX_HPP_

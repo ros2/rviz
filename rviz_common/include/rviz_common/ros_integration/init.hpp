@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef INCLUDE__RVIZ_COMMON__ROS_INTEGRATION__INIT_HPP_
-#define INCLUDE__RVIZ_COMMON__ROS_INTEGRATION__INIT_HPP_
+#ifndef RVIZ_COMMON__ROS_INTEGRATION__INIT_HPP_
+#define RVIZ_COMMON__ROS_INTEGRATION__INIT_HPP_
 
 #include <string>
 
@@ -65,4 +65,4 @@ init(int argc, char ** argv, const std::string & name, bool anonymous_name = tru
 }  // namespace ros_integration
 }  // namespace rviz_common
 
-#endif  // INCLUDE__RVIZ_COMMON__ROS_INTEGRATION__INIT_HPP_
+#endif  // RVIZ_COMMON__ROS_INTEGRATION__INIT_HPP_

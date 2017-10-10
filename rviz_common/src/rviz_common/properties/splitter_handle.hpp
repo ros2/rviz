@@ -26,8 +26,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef SPLITTER_HANDLE_H
-#define SPLITTER_HANDLE_H
+#ifndef RVIZ_COMMON__PROPERTIES__SPLITTER_HANDLE_HPP_
+#define RVIZ_COMMON__PROPERTIES__SPLITTER_HANDLE_HPP_
 
 #include <QWidget>
 
@@ -42,28 +42,29 @@ namespace properties
  * column separator adjustment for a two-column QTreeView via mouse
  * drags.  Shows splitter cursor when mouse hovers over it.  Uses
  * event filtering to catch resize events for the parent. */
-class SplitterHandle: public QWidget
+class SplitterHandle : public QWidget
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  SplitterHandle( QTreeView* parent = 0 );
+  SplitterHandle(QTreeView * parent = 0);
 
   /** @brief Set the ratio of the parent's left column to the parent widget width. */
-  void setRatio( float ratio );
+  void setRatio(float ratio);
 
   /** @brief Get the ratio of the parent's left column to the parent widget width. */
   float getRatio();
 
   /** @brief Catch resize events sent to parent to update splitter's
    * geometry.  Always returns false. */
-  bool eventFilter( QObject* event_target, QEvent* event );
+  bool eventFilter(QObject * event_target, QEvent * event);
 
-  void setColor( QColor color ) { color_ = color; update(); }
-  QColor getColor() const { return color_; }
+  void setColor(QColor color) {color_ = color; update();}
+  QColor getColor() const {return color_;}
 
 protected:
-  virtual void mousePressEvent( QMouseEvent* event );
-  virtual void mouseMoveEvent( QMouseEvent* event );
+  virtual void mousePressEvent(QMouseEvent * event);
+  virtual void mouseMoveEvent(QMouseEvent * event);
   virtual void paintEvent();
 
 private:
@@ -71,7 +72,7 @@ private:
    * geometry based on first_column_size_ratio_. */
   void updateGeometry();
 
-  QTreeView* parent_;
+  QTreeView * parent_;
   int x_press_offset_;
 
   /** The ratio of the first column width to the entire widget width.
@@ -83,4 +84,4 @@ private:
 }  // namespace properties
 }  // namespace rviz_common
 
-#endif // SPLITTER_HANDLE_H
+#endif  // RVIZ_COMMON__PROPERTIES__SPLITTER_HANDLE_HPP_

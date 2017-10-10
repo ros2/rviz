@@ -28,8 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PANEL_FACTORY_H
-#define PANEL_FACTORY_H
+#ifndef RVIZ_COMMON__PANEL_FACTORY_HPP_
+#define RVIZ_COMMON__PANEL_FACTORY_HPP_
 
 #include "./panel.hpp"
 #include "./pluginlib_factory.hpp"
@@ -37,12 +37,12 @@
 namespace rviz_common
 {
 
-class PanelFactory: public PluginlibFactory<Panel>
+class PanelFactory : public PluginlibFactory<Panel>
 {
 public:
   PanelFactory();
 };
 
-} // end namespace rviz_common
+}  // end namespace rviz_common
 
-#endif // PANEL_FACTORY_H
+#endif  // RVIZ_COMMON__PANEL_FACTORY_HPP_

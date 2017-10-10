@@ -84,7 +84,8 @@ void ColorProperty::updateString()
   value_ = printColor(color_);
 }
 
-bool ColorProperty::paint(QPainter * painter,
+bool ColorProperty::paint(
+  QPainter * painter,
   const QStyleOptionViewItem & option) const
 {
   painter->save();

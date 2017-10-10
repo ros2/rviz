@@ -32,6 +32,7 @@
 #define RVIZ_COMMON__UNIFORM_STRING_STREAM_HPP_
 
 #include <sstream>
+#include <string>
 
 namespace rviz_common
 {

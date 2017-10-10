@@ -30,11 +30,12 @@
 
 #include "rviz_common/properties/property.hpp"
 
-#include <cstdio>  // for printf()
-#include <climits>  // for INT_MIN and INT_MAX
-
 #include <QLineEdit>
 #include <QSpinBox>
+
+#include <cstdio>  // for printf()
+#include <climits>  // for INT_MIN and INT_MAX
+#include <string>
 
 #include "./float_edit.hpp"
 #include "./property_tree_model.hpp"
@@ -58,7 +59,8 @@ public:
  * name is not found. */
 Property * Property::failprop_ = new FailureProperty;
 
-Property::Property(const QString & name,
+Property::Property(
+  const QString & name,
   const QVariant default_value,
   const QString & description,
   Property * parent,
@@ -258,14 +260,14 @@ QVariant Property::getViewData(int column, int role) const
   }
 
   switch (column) {
-    case 0: // left column: names
+    case 0:  // left column: names
       switch (role) {
         case Qt::DisplayRole: return getName();
         case Qt::DecorationRole: return icon_;
         default: return QVariant();
       }
       break;
-    case 1: // right column: values
+    case 1:  // right column: values
       switch (role) {
         case Qt::DisplayRole:
         case Qt::EditRole: return value_.type() == QVariant::Bool ? QVariant() : getValue();
@@ -479,7 +481,7 @@ void Property::save(Config config) const
         prop->save(config.mapMakeChild(prop->getName() ));
       }
     }
-  } else { // Else there are no child properties, so just save the value itself.
+  } else {  // Else there are no child properties, so just save the value itself.
     if (value_.isValid() ) {
       config.setValue(value_);
     } else {

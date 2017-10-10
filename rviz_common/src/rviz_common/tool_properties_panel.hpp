@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_TOOL_PROPERTIES_PANEL_H
-#define RVIZ_TOOL_PROPERTIES_PANEL_H
+#ifndef RVIZ_COMMON__TOOL_PROPERTIES_PANEL_HPP_
+#define RVIZ_COMMON__TOOL_PROPERTIES_PANEL_HPP_
 
 #include "rviz/panel.h"
 
@@ -40,26 +40,26 @@ class PropertyTreeWidget;
 
 /** A place to edit properties of all of the Tools.
  */
-class ToolPropertiesPanel: public Panel
+class ToolPropertiesPanel : public Panel
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  ToolPropertiesPanel( QWidget* parent = 0 );
+  ToolPropertiesPanel(QWidget * parent = 0);
   virtual ~ToolPropertiesPanel() {}
 
   virtual void onInitialize();
 
   /** @brief Load configuration data, specifically the PropertyTreeWidget view settings. */
-  virtual void load( const Config& config );
+  virtual void load(const Config & config);
 
   /** @brief Save configuration data, specifically the PropertyTreeWidget view settings. */
-  virtual void save( Config config ) const;
+  virtual void save(Config config) const;
 
 private:
-  PropertyTreeWidget* tree_widget_;
+  PropertyTreeWidget * tree_widget_;
 };
 
-} // namespace rviz
+}  // namespace rviz
 
-#endif
-
+#endif  // RVIZ_COMMON__TOOL_PROPERTIES_PANEL_HPP_

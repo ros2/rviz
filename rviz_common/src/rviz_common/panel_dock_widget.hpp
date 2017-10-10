@@ -28,13 +28,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SRC__RVIZ_COMMON__PANEL_DOCK_WIDGET_HPP_
-#define SRC__RVIZ_COMMON__PANEL_DOCK_WIDGET_HPP_
-
-#include "rviz_common/config.hpp"
+#ifndef RVIZ_COMMON__PANEL_DOCK_WIDGET_HPP_
+#define RVIZ_COMMON__PANEL_DOCK_WIDGET_HPP_
 
 #include <QDockWidget>
 #include <QLabel>
+
+#include "rviz_common/config.hpp"
 
 namespace rviz_common
 {
@@ -100,4 +100,4 @@ private:
 
 }  // namespace rviz_common
 
-#endif  // SRC__RVIZ_COMMON__PANEL_DOCK_WIDGET_HPP_
+#endif  // RVIZ_COMMON__PANEL_DOCK_WIDGET_HPP_

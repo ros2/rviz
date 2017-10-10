@@ -27,13 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_ROBOT_JOINT_H
-#define RVIZ_ROBOT_JOINT_H
-
-#include <string>
-#include <map>
-
-#include <QObject>
+#ifndef RVIZ_COMMON__TEMP__ROBOT__ROBOT_JOINT_H_
+#define RVIZ_COMMON__TEMP__ROBOT__ROBOT_JOINT_H_
 
 #ifndef Q_MOC_RUN
 #include <OgreVector3.h>
@@ -44,6 +39,11 @@
 
 #include <urdf/model.h>
 #include <urdf_model/pose.h>
+
+#include <QObject>
+
+#include <map>
+#include <string>
 
 #include "rviz_rendering/object.hpp"
 #include "../../selection/forwards.hpp"
@@ -58,14 +58,14 @@ class Vector3;
 class Quaternion;
 class Any;
 class RibbonTrail;
-}
+}  // namespace Ogre
 
 namespace rviz_rendering
 {
 class Shape;
 class Arrow;
 class Axes;
-}
+}  // namespace rviz_rendering
 
 namespace rviz_common
 {
@@ -78,7 +78,7 @@ class Property;
 class QuaternionProperty;
 class StringProperty;
 class VectorProperty;
-}
+}  // namespace properties
 
 class DisplayContext;
 class Robot;
@@ -90,34 +90,37 @@ class RobotJoint;
  * \struct RobotJoint
  * \brief Contains any data we need from a joint in the robot.
  */
-class RobotJoint: public QObject
+class RobotJoint : public QObject
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  RobotJoint( Robot* robot, const urdf::JointConstSharedPtr& joint );
+  RobotJoint(Robot * robot, const urdf::JointConstSharedPtr & joint);
   virtual ~RobotJoint();
 
 
-  void setTransforms(const Ogre::Vector3& parent_link_position,
-                     const Ogre::Quaternion& parent_link_orientation);
+  void setTransforms(
+    const Ogre::Vector3 & parent_link_position,
+    const Ogre::Quaternion & parent_link_orientation);
 
-  const std::string& getName() const { return name_; }
-  const std::string& getParentLinkName() const { return parent_link_name_; }
-  const std::string& getChildLinkName() const { return child_link_name_; }
-  const properties::Property* getJointProperty() const { return joint_property_; }
-  properties::Property* getJointProperty() { return joint_property_; }
-  RobotJoint* getParentJoint();
+  const std::string & getName() const {return name_;}
+  const std::string & getParentLinkName() const {return parent_link_name_;}
+  const std::string & getChildLinkName() const {return child_link_name_;}
+  const properties::Property * getJointProperty() const {return joint_property_;}
+  properties::Property * getJointProperty() {return joint_property_;}
+  RobotJoint * getParentJoint();
   void hideSubProperties(bool hide);
 
-  // Remove joint_property_ from its old parent and add to new_parent.  If new_parent==NULL then leav unparented.
-  void setParentProperty(properties::Property* new_parent);
+  // Remove joint_property_ from its old parent and add to new_parent.
+  // If new_parent==NULL then leav unparented.
+  void setParentProperty(properties::Property * new_parent);
 
   Ogre::Vector3 getPosition();
   Ogre::Quaternion getOrientation();
 
   void setRobotAlpha(float a) {(void) a;}
 
-  bool hasDescendentLinksWithGeometry() const { return has_decendent_links_with_geometry_; }
+  bool hasDescendentLinksWithGeometry() const {return has_decendent_links_with_geometry_;}
 
   // place subproperties as children of details_ or joint_property_
   void useDetailProperty(bool use_detail);
@@ -134,10 +137,9 @@ public:
   // set checkboxes based on state of descendent link enables
   // Should only be called by Robot::calculateJointCheckboxes()
   void calculateJointCheckboxesRecursive(
-      int& links_with_geom,             // returns # of children with geometry
-      int& links_with_geom_checked,     // returns # of enabled children with geometry
-      int& links_with_geom_unchecked);  // returns # of disabled children with geometry
-
+    int & links_with_geom,              // returns # of children with geometry
+    int & links_with_geom_checked,      // returns # of enabled children with geometry
+    int & links_with_geom_unchecked);   // returns # of disabled children with geometry
 
 private Q_SLOTS:
   void updateAxes();
@@ -152,33 +154,33 @@ private:
 
   // determine the state of child link(s)
   void getChildLinkState(
-      int& links_with_geom,             // returns # of children with geometry
-      int& links_with_geom_checked,     // returns # of enabled children with geometry
-      int& links_with_geom_unchecked,   // returns # of disabled children with geometry
-      bool recursive) const;            // True: all descendant links.  False: just single child link.
+    int & links_with_geom,              // returns # of children with geometry
+    int & links_with_geom_checked,      // returns # of enabled children with geometry
+    int & links_with_geom_unchecked,    // returns # of disabled children with geometry
+    bool recursive) const;              // True: all descendant links.
+  // False: just single child link.
 
   // set the value of the enable checkbox without touching child joints/links
   void setJointCheckbox(QVariant val);
 
-
 protected:
-  Robot* robot_;
+  Robot * robot_;
   std::string name_;                          ///< Name of this joint
   std::string parent_link_name_;
   std::string child_link_name_;
 
   // properties
-  properties::Property* joint_property_;
-  properties::Property* details_;
-  properties::VectorProperty* position_property_;
-  properties::QuaternionProperty* orientation_property_;
-  properties::Property* axes_property_;
+  properties::Property * joint_property_;
+  properties::Property * details_;
+  properties::VectorProperty * position_property_;
+  properties::QuaternionProperty * orientation_property_;
+  properties::Property * axes_property_;
   // The joint axis if any, as opposed to the frame in which the joint exists above
-  properties::VectorProperty* axis_property_;
-  properties::Property* show_axis_property_;
-  properties::StringProperty* type_property_;
-  properties::FloatProperty* lower_limit_property_;
-  properties::FloatProperty* upper_limit_property_;
+  properties::VectorProperty * axis_property_;
+  properties::Property * show_axis_property_;
+  properties::StringProperty * type_property_;
+  properties::FloatProperty * lower_limit_property_;
+  properties::FloatProperty * upper_limit_property_;
 
 private:
   Ogre::Vector3 joint_origin_pos_;
@@ -187,10 +189,10 @@ private:
 
   bool doing_set_checkbox_;   // prevents updateChildVisibility() from  touching children
 
-  rviz_rendering::Axes* axes_;
-  rviz_rendering::Arrow* axis_;
+  rviz_rendering::Axes * axes_;
+  rviz_rendering::Arrow * axis_;
 };
 
-} // namespace rviz
+}  // namespace rviz_common
 
-#endif // RVIZ_ROBOT_LINK_H
+#endif  // RVIZ_COMMON__TEMP__ROBOT__ROBOT_JOINT_H_

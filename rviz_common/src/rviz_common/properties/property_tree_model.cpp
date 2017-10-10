@@ -30,12 +30,12 @@
 
 #include "./property_tree_model.hpp"
 
-#include <cstdio>
+#include "rviz_common/properties/property.hpp"
 
 #include <QMimeData>
 #include <QStringList>
 
-#include "rviz_common/properties/property.hpp"
+#include <cstdio>
 
 namespace rviz_common
 {
@@ -200,7 +200,8 @@ QMimeData * PropertyTreeModel::mimeData(const QModelIndexList & indexes) const
   return data;
 }
 
-bool PropertyTreeModel::dropMimeData(const QMimeData * data,
+bool PropertyTreeModel::dropMimeData(
+  const QMimeData * data,
   Qt::DropAction action,
   int dest_row,
   int dest_column,

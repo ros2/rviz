@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DISPLAYS_PANEL_H
-#define RVIZ_DISPLAYS_PANEL_H
+#ifndef RVIZ_COMMON__DISPLAYS_PANEL_HPP_
+#define RVIZ_COMMON__DISPLAYS_PANEL_HPP_
 
 #include <boost/thread/mutex.hpp>
 
@@ -53,20 +53,21 @@ class Display;
  * \class DisplaysPanel
  *
  */
-class DisplaysPanel: public Panel
+class DisplaysPanel : public Panel
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  DisplaysPanel( QWidget* parent = 0);
+  DisplaysPanel(QWidget * parent = 0);
   virtual ~DisplaysPanel();
 
   virtual void onInitialize();
 
   /** @brief Write state to the given Config object. */
-  virtual void save( Config config ) const;
+  virtual void save(Config config) const;
 
   /** @brief Read state from the given Config. */
-  virtual void load( const Config& config );
+  virtual void load(const Config & config);
 
 protected Q_SLOTS:
   /// Called when the "Add" button is pressed
@@ -81,14 +82,14 @@ protected Q_SLOTS:
   void onSelectionChanged();
 
 protected:
-  PropertyTreeWidget* property_grid_;
+  PropertyTreeWidget * property_grid_;
 
-  QPushButton* duplicate_button_;
-  QPushButton* remove_button_;
-  QPushButton* rename_button_;
-  PropertyTreeWithHelp* tree_with_help_;
+  QPushButton * duplicate_button_;
+  QPushButton * remove_button_;
+  QPushButton * rename_button_;
+  PropertyTreeWithHelp * tree_with_help_;
 };
 
-} // namespace rviz_common
+}  // namespace rviz_common
 
-#endif
+#endif  // RVIZ_COMMON__DISPLAYS_PANEL_HPP_

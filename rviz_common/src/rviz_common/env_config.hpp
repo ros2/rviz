@@ -28,8 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SRC__RVIZ_COMMON__ENV_CONFIG_HPP_
-#define SRC__RVIZ_COMMON__ENV_CONFIG_HPP_
+#ifndef RVIZ_COMMON__ENV_CONFIG_HPP_
+#define RVIZ_COMMON__ENV_CONFIG_HPP_
 
 #include <string>
 
@@ -47,4 +47,4 @@ std::string get_ogre_plugin_path();
 
 }  // namespace rviz_common
 
-#endif  // SRC__RVIZ_COMMON__ENV_CONFIG_HPP_
+#endif  // RVIZ_COMMON__ENV_CONFIG_HPP_

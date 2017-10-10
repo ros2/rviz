@@ -30,14 +30,21 @@
 
 #include "rviz_common/visualizer_app.hpp"
 
-#include <iostream>
-
 // #include <OgreGpuProgramManager.h>
 // #include <OgreHighLevelGpuProgramManager.h>
 // #include <OgreMaterialManager.h>
 
 #include <QApplication>
 #include <QTimer>
+#include <iostream>
+
+#include "rviz_common/logging.hpp"
+#include "rviz_common/ros_integration/init.hpp"
+#include "rviz_common/ros_integration/ok.hpp"
+
+#include "./selection/selection_manager.hpp"
+#include "./visualization_frame.hpp"
+#include "./visualization_manager.hpp"
 
 // TODO(wjwwood): figure out a non-depricated way to do this
 #if 0
@@ -48,14 +55,6 @@
 #undef check
 #endif
 #endif
-
-#include "rviz_common/logging.hpp"
-#include "rviz_common/ros_integration/init.hpp"
-#include "rviz_common/ros_integration/ok.hpp"
-
-#include "./selection/selection_manager.hpp"
-#include "./visualization_frame.hpp"
-#include "./visualization_manager.hpp"
 
 // #include "rviz/env_config.h"
 // #include "rviz/ogre_helpers/ogre_logging.h"

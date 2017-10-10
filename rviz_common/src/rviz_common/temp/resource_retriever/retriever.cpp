@@ -25,13 +25,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./retriever.h"
+#include "retriever.h"
+
+#include <curl/curl.h>
 
 #include <cstring>
 #include <memory>
+#include <string>
 #include <vector>
-
-#include <curl/curl.h>
 
 namespace resource_retriever
 {
@@ -43,20 +44,16 @@ public:
   : initialized_(false)
   {
     CURLcode ret = curl_global_init(CURL_GLOBAL_ALL);
-    if (ret != 0)
-    {
+    if (ret != 0) {
       fprintf(stderr, "Error initializing libcurl! retcode = %d", ret);
-    }
-    else
-    {
+    } else {
       initialized_ = true;
     }
   }
 
   ~CURLStaticInit()
   {
-    if (initialized_)
-    {
+    if (initialized_) {
       curl_global_cleanup();
     }
   }
@@ -72,8 +69,7 @@ Retriever::Retriever()
 
 Retriever::~Retriever()
 {
-  if (curl_handle_)
-  {
+  if (curl_handle_) {
     curl_easy_cleanup(curl_handle_);
   }
 }
@@ -83,9 +79,9 @@ struct MemoryBuffer
   std::vector<uint8_t> v;
 };
 
-size_t curlWriteFunc(void* buffer, size_t size, size_t nmemb, void* userp)
+size_t curlWriteFunc(void * buffer, size_t size, size_t nmemb, void * userp)
 {
-  MemoryBuffer* membuf = (MemoryBuffer*)userp;
+  MemoryBuffer * membuf = (MemoryBuffer *)userp;
 
   size_t prev_size = membuf->v.size();
   membuf->v.resize(prev_size + size * nmemb);
@@ -94,15 +90,13 @@ size_t curlWriteFunc(void* buffer, size_t size, size_t nmemb, void* userp)
   return size * nmemb;
 }
 
-MemoryResource Retriever::get(const std::string& url)
+MemoryResource Retriever::get(const std::string & url)
 {
   std::string mod_url = url;
-  if (url.find("package://") == 0)
-  {
+  if (url.find("package://") == 0) {
     mod_url.erase(0, strlen("package://"));
     size_t pos = mod_url.find("/");
-    if (pos == std::string::npos)
-    {
+    if (pos == std::string::npos) {
       throw Exception(url, "Could not parse package:// format into file:// format");
     }
 
@@ -111,8 +105,7 @@ MemoryResource Retriever::get(const std::string& url)
     // std::string package_path = ros::package::getPath(package);
     std::string package_path = "/Users/william/hsr_ws/src/hsr_meshes";
 
-    if (package_path.empty())
-    {
+    if (package_path.empty()) {
       throw Exception(url, "Package [" + package + "] does not exist");
     }
 
@@ -123,19 +116,16 @@ MemoryResource Retriever::get(const std::string& url)
   curl_easy_setopt(curl_handle_, CURLOPT_WRITEFUNCTION, curlWriteFunc);
 
   char error_buffer[CURL_ERROR_SIZE];
-  curl_easy_setopt(curl_handle_, CURLOPT_ERRORBUFFER , error_buffer);
+  curl_easy_setopt(curl_handle_, CURLOPT_ERRORBUFFER, error_buffer);
 
   MemoryResource res;
   MemoryBuffer buf;
   curl_easy_setopt(curl_handle_, CURLOPT_WRITEDATA, &buf);
 
   CURLcode ret = curl_easy_perform(curl_handle_);
-  if (ret != 0)
-  {
+  if (ret != 0) {
     throw Exception(mod_url, error_buffer);
-  }
-  else if (!buf.v.empty())
-  {
+  } else if (!buf.v.empty()) {
     res.size = buf.v.size();
     res.data.reset(new uint8_t[res.size], std::default_delete<uint8_t[]>());
     memcpy(res.data.get(), &buf.v[0], res.size);
@@ -144,4 +134,4 @@ MemoryResource Retriever::get(const std::string& url)
   return res;
 }
 
-}
+}  // namespace resource_retriever

@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_GRID_DISPLAY_H
-#define RVIZ_GRID_DISPLAY_H
+#ifndef RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__GRID_DISPLAY_H_
+#define RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__GRID_DISPLAY_H_
 
 #include "../../../properties/color_property.hpp"
 #include "../../../properties/float_property.hpp"
@@ -54,7 +54,8 @@ namespace rviz_common
  */
 class GridDisplay : public Display
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   enum Plane
   {
@@ -81,20 +82,20 @@ private Q_SLOTS:
   void updateStyle();
 
 private:
-  rviz_rendering::Grid* grid_;            ///< Handles actually drawing the grid
+  rviz_rendering::Grid * grid_;            ///< Handles actually drawing the grid
 
-  properties::TfFrameProperty* frame_property_;
-  properties::IntProperty* cell_count_property_;
-  properties::IntProperty* height_property_;
-  properties::FloatProperty* cell_size_property_;
-  properties::FloatProperty* line_width_property_;
-  properties::EnumProperty* style_property_;
-  properties::ColorProperty* color_property_;
-  properties::FloatProperty* alpha_property_;
-  properties::EnumProperty* plane_property_;
-  properties::VectorProperty* offset_property_;
+  properties::TfFrameProperty * frame_property_;
+  properties::IntProperty * cell_count_property_;
+  properties::IntProperty * height_property_;
+  properties::FloatProperty * cell_size_property_;
+  properties::FloatProperty * line_width_property_;
+  properties::EnumProperty * style_property_;
+  properties::ColorProperty * color_property_;
+  properties::FloatProperty * alpha_property_;
+  properties::EnumProperty * plane_property_;
+  properties::VectorProperty * offset_property_;
 };
 
-} // namespace rviz
+}  // namespace rviz_common
 
-#endif
+#endif  // RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__GRID_DISPLAY_H_

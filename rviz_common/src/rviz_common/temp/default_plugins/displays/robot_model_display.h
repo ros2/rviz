@@ -27,14 +27,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_ROBOT_MODEL_DISPLAY_H
-#define RVIZ_ROBOT_MODEL_DISPLAY_H
-
-#include "../../../display.hpp"
+#ifndef RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__ROBOT_MODEL_DISPLAY_H_
+#define RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__ROBOT_MODEL_DISPLAY_H_
 
 #include <OgreVector3.h>
 
 #include <map>
+#include <string>
+
+#include "../../../display.hpp"
 
 namespace Ogre
 {
@@ -64,18 +65,20 @@ class Robot;
 
 /**
  * \class RobotModelDisplay
- * \brief Uses a robot xml description to display the pieces of a robot at the transforms broadcast by rosTF
+ * \brief Uses a robot xml description to display the pieces of a robot at the transforms
+ * broadcast by rosTF
  */
-class RobotModelDisplay: public Display
+class RobotModelDisplay : public Display
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   RobotModelDisplay();
   virtual ~RobotModelDisplay();
 
   // Overrides from Display
   virtual void onInitialize();
-  virtual void update( float wall_dt, float ros_dt );
+  virtual void update(float wall_dt, float ros_dt);
   virtual void fixedFrameChanged();
   virtual void reset();
 
@@ -98,23 +101,23 @@ protected:
   virtual void onEnable();
   virtual void onDisable();
 
-  Robot* robot_;                 ///< Handles actually drawing the robot
+  Robot * robot_;                 ///< Handles actually drawing the robot
 
-  bool has_new_transforms_;      ///< Callback sets this to tell our update function it needs to update the transforms
+  bool has_new_transforms_;      ///< Callback sets this to tell our update function
+  ///< it needs to update the transforms
 
   float time_since_last_transform_;
 
   std::string robot_description_;
 
-  properties::Property* visual_enabled_property_;
-  properties::Property* collision_enabled_property_;
-  properties::FloatProperty* update_rate_property_;
-  properties::StringProperty* robot_description_property_;
-  properties::FloatProperty* alpha_property_;
-  properties::StringProperty* tf_prefix_property_;
+  properties::Property * visual_enabled_property_;
+  properties::Property * collision_enabled_property_;
+  properties::FloatProperty * update_rate_property_;
+  properties::StringProperty * robot_description_property_;
+  properties::FloatProperty * alpha_property_;
+  properties::StringProperty * tf_prefix_property_;
 };
 
-} // namespace rviz
+}  // namespace rviz_common
 
- #endif
-
+#endif  // RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__ROBOT_MODEL_DISPLAY_H_

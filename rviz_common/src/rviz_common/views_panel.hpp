@@ -27,10 +27,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_VIEWS_PANEL_H
-#define RVIZ_VIEWS_PANEL_H
+#ifndef RVIZ_COMMON__VIEWS_PANEL_HPP_
+#define RVIZ_COMMON__VIEWS_PANEL_HPP_
 
-#include "rviz/panel.h"
+#include "rviz_common/panel.hpp"
 
 class QComboBox;
 class QModelIndex;
@@ -46,14 +46,16 @@ class PropertyTreeWidget;
  * @brief Panel for choosing the view controller and saving and restoring
  * viewpoints.
  */
-class ViewsPanel: public Panel
+class ViewsPanel : public Panel
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  ViewsPanel( QWidget* parent = 0 );
+  ViewsPanel(QWidget * parent = 0);
   virtual ~ViewsPanel() {}
 
-  /** @brief Overridden from Panel.  Just calls setViewManager() with vis_manager_->getViewManager(). */
+  /** @brief Overridden from Panel.  Just calls setViewManager() with
+   *  vis_manager_->getViewManager(). */
   virtual void onInitialize();
 
   /** @brief Set the ViewManager which this panel should display and edit.
@@ -63,33 +65,33 @@ public:
    * Panel::initialize(), either Panel::initialize() must not be
    * called or setViewManager() must be called after
    * Panel::initialize(). */
-  void setViewManager( ViewManager* view_man );
+  void setViewManager(ViewManager * view_man);
 
   /** @brief Returns the current ViewManager. */
-  ViewManager* getViewManager() const { return view_man_; }
+  ViewManager * getViewManager() const {return view_man_;}
 
   /** @brief Load configuration data, specifically the PropertyTreeWidget view settings. */
-  virtual void load( const Config& config );
+  virtual void load(const Config & config);
 
   /** @brief Save configuration data, specifically the PropertyTreeWidget view settings. */
-  virtual void save( Config config ) const;
+  virtual void save(Config config) const;
 
 private Q_SLOTS:
-  void onTypeSelectorChanged( int selected_index );
+  void onTypeSelectorChanged(int selected_index);
   void onDeleteClicked();
   void renameSelected();
   void onZeroClicked();
   void onCurrentChanged();
 
-  void setCurrentViewFromIndex( const QModelIndex& index );
+  void setCurrentViewFromIndex(const QModelIndex & index);
 
 private:
-  ViewManager* view_man_;
-  PropertyTreeWidget* properties_view_;
-  QPushButton* save_button_;
-  QComboBox* camera_type_selector_;
+  ViewManager * view_man_;
+  PropertyTreeWidget * properties_view_;
+  QPushButton * save_button_;
+  QComboBox * camera_type_selector_;
 };
 
-} // namespace rviz
+}  // namespace rviz
 
-#endif // RVIZ_VIEWS_PANEL_H
+#endif  // RVIZ_COMMON__VIEWS_PANEL_HPP_

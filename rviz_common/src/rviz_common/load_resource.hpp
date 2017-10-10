@@ -28,8 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SRC__RVIZ_COMMON__LOAD_RESOURCE_HPP_
-#define SRC__RVIZ_COMMON__LOAD_RESOURCE_HPP_
+#ifndef RVIZ_COMMON__LOAD_RESOURCE_HPP_
+#define RVIZ_COMMON__LOAD_RESOURCE_HPP_
 
 #include <QPixmap>
 #include <QCursor>
@@ -73,4 +73,4 @@ QCursor makeIconCursor(QPixmap icon, QString cache_key = "", bool fill_cache = t
 
 }  // namespace rviz_common
 
-#endif  // SRC__RVIZ_COMMON__LOAD_RESOURCE_HPP_
+#endif  // RVIZ_COMMON__LOAD_RESOURCE_HPP_

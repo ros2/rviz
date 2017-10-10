@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_MOVE_TOOL_H
-#define RVIZ_MOVE_TOOL_H
+#ifndef RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__TOOLS__MOVE_TOOL_H_
+#define RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__TOOLS__MOVE_TOOL_H_
 
 #include "../../../tool.hpp"
 
@@ -37,7 +37,7 @@ namespace rviz_common
 
 class DisplayContext;
 
-class MoveTool: public Tool
+class MoveTool : public Tool
 {
 public:
   MoveTool();
@@ -45,11 +45,10 @@ public:
   virtual void activate() {}
   virtual void deactivate() {}
 
-  virtual int processMouseEvent( ViewportMouseEvent& event );
-  virtual int processKeyEvent( QKeyEvent* event, RenderPanel* panel );
+  virtual int processMouseEvent(ViewportMouseEvent & event);
+  virtual int processKeyEvent(QKeyEvent * event, RenderPanel * panel);
 };
 
-}
+}  // namespace rviz_common
 
-#endif
-
+#endif  // RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__TOOLS__MOVE_TOOL_H_

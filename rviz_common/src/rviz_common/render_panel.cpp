@@ -32,15 +32,22 @@
 
 // #include <sstream>
 
+// #include <OgreCamera.h>
+// #include <OgreSceneManager.h>
+
 #include <QApplication>
 #include <QGridLayout>
 #include <QMenu>
 #include <QMouseEvent>
 #include <QTimer>
 #include <QWidget>
+// TODO(wjwwood): remove
+#include <QDebug>
+#include <QMetaEnum>
+#include <QMetaObject>
+#include <QTime>
 
-// #include <OgreCamera.h>
-// #include <OgreSceneManager.h>
+#include <memory>
 
 #include "rviz_rendering/render_window.hpp"
 
@@ -51,12 +58,6 @@
 
 // #include "rviz/visualization_manager.h"
 // #include "rviz/window_manager_interface.h"
-
-// TODO(wjwwood): remove
-#include <QDebug>
-#include <QMetaEnum>
-#include <QMetaObject>
-#include <QTime>
 
 namespace rviz_common
 {
@@ -81,8 +82,8 @@ RenderPanel::RenderPanel(QWidget * parent)
   this->setLayout(layout_);
   render_window_->setOnRenderWindowMouseEventsCallback(
     std::bind(&RenderPanel::onRenderWindowMouseEvents, this, std::placeholders::_1));
-    render_window_->setOnRenderWindowWheelEventsCallback(
-      std::bind(&RenderPanel::wheelEvent, this, std::placeholders::_1));
+  render_window_->setOnRenderWindowWheelEventsCallback(
+    std::bind(&RenderPanel::wheelEvent, this, std::placeholders::_1));
 }
 
 RenderPanel::~RenderPanel()

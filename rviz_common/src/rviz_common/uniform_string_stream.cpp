@@ -31,6 +31,7 @@
 #include "rviz_common/uniform_string_stream.hpp"
 
 #include <locale>
+#include <string>
 
 namespace rviz_common
 {

@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_SPLASH_SCREEN_H
-#define RVIZ_SPLASH_SCREEN_H
+#ifndef RVIZ_COMMON__SPLASH_SCREEN_HPP_
+#define RVIZ_COMMON__SPLASH_SCREEN_HPP_
 
 #include <QSplashScreen>
 
@@ -38,16 +38,17 @@ class QPainter;
 namespace rviz_common
 {
 
-class SplashScreen: public QSplashScreen
+class SplashScreen : public QSplashScreen
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  SplashScreen( const QPixmap& pixmap );
+  SplashScreen(const QPixmap & pixmap);
 
 public Q_SLOTS:
-  void showMessage( const QString& message );
+  void showMessage(const QString & message);
 };
 
-} // end namespace rviz_common
+}  // end namespace rviz_common
 
-#endif // RVIZ_SPLASH_SCREEN_H
+#endif  // RVIZ_COMMON__SPLASH_SCREEN_HPP_

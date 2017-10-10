@@ -28,8 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_FRAME_POSITION_TRACKING_VIEW_CONTROLLER_H
-#define RVIZ_FRAME_POSITION_TRACKING_VIEW_CONTROLLER_H
+#ifndef RVIZ_COMMON__FRAME_POSITION_TRACKING_VIEW_CONTROLLER_HPP_
+#define RVIZ_COMMON__FRAME_POSITION_TRACKING_VIEW_CONTROLLER_HPP_
 
 #include <OgreQuaternion.h>
 #include <OgreVector3.h>
@@ -112,6 +112,6 @@ protected:
   Ogre::Vector3 reference_position_;
 };
 
-} // end namespace rviz_common
+}  // end namespace rviz_common
 
-#endif // RVIZ_FRAME_POSITION_TRACKING_VIEW_CONTROLLER_H
+#endif  // RVIZ_COMMON__FRAME_POSITION_TRACKING_VIEW_CONTROLLER_HPP_

@@ -36,7 +36,8 @@ namespace rviz_common
 namespace properties
 {
 
-QuaternionProperty::QuaternionProperty(const QString & name,
+QuaternionProperty::QuaternionProperty(
+  const QString & name,
   const Ogre::Quaternion & default_value,
   const QString & description,
   Property * parent,

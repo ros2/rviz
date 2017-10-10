@@ -28,8 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SRC__RVIZ_COMMON__RENDER_PANEL_HPP_
-#define SRC__RVIZ_COMMON__RENDER_PANEL_HPP_
+#ifndef RVIZ_COMMON__RENDER_PANEL_HPP_
+#define RVIZ_COMMON__RENDER_PANEL_HPP_
 
 #include <map>
 #include <memory>
@@ -179,4 +179,4 @@ private:
 
 }  // namespace rviz_common
 
-#endif  // SRC__RVIZ_COMMON__RENDER_PANEL_HPP_
+#endif  // RVIZ_COMMON__RENDER_PANEL_HPP_

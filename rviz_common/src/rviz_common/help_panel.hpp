@@ -26,34 +26,35 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef HELP_PANEL_H
-#define HELP_PANEL_H
+#ifndef RVIZ_COMMON__HELP_PANEL_HPP_
+#define RVIZ_COMMON__HELP_PANEL_HPP_
 
 #include <string>
 
-#include "rviz/panel.h"
+#include "rviz_common/panel.hpp"
 
 class QTextBrowser;
 
 namespace rviz
 {
 
-class HelpPanel: public Panel
+class HelpPanel : public Panel
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  HelpPanel( QWidget* parent = 0 );
+  HelpPanel(QWidget * parent = 0);
   virtual ~HelpPanel();
 
   virtual void onInitialize();
 
   /** @brief Load the given html file. */
-  void setHelpFile( const QString& file_path );
+  void setHelpFile(const QString & file_path);
 
 private:
-  QTextBrowser* browser_;
+  QTextBrowser * browser_;
 };
 
-} // end namespace rviz
+}  // end namespace rviz
 
-#endif // HELP_PANEL_H
+#endif  // RVIZ_COMMON__HELP_PANEL_HPP_

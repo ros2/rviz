@@ -28,8 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SRC__RVIZ_COMMON__SELECTION__FORWARDS_HPP_
-#define SRC__RVIZ_COMMON__SELECTION__FORWARDS_HPP_
+#ifndef RVIZ_COMMON__SELECTION__FORWARDS_HPP_
+#define RVIZ_COMMON__SELECTION__FORWARDS_HPP_
 
 #include <map>
 #include <set>
@@ -95,4 +95,4 @@ inline CollObjectHandle colorToHandle(const Ogre::ColourValue & color)
 }  // namespace selection
 }  // namespace rviz_common
 
-#endif  // SRC__RVIZ_COMMON__SELECTION__FORWARDS_HPP_
+#endif  // RVIZ_COMMON__SELECTION__FORWARDS_HPP_

@@ -30,9 +30,9 @@
 
 #include "./editable_enum_property.hpp"
 
-#include <string>
-
 #include <QCompleter>
+
+#include <string>
 
 #include "./editable_combo_box.hpp"
 
