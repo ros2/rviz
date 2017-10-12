@@ -26,8 +26,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef RVIZ_PROPERTY_TREE_WITH_HELP_H
-#define RVIZ_PROPERTY_TREE_WITH_HELP_H
+#ifndef RVIZ_COMMON__PROPERTIES__PROPERTY_TREE_WITH_HELP_HPP_
+#define RVIZ_COMMON__PROPERTIES__PROPERTY_TREE_WITH_HELP_HPP_
 
 #include <QSplitter>
 
@@ -44,29 +44,30 @@ class Property;
 class PropertyTreeWidget;
 
 /** A PropertyTreeWidget with built-in help info display. */
-class PropertyTreeWithHelp: public QSplitter
+class PropertyTreeWithHelp : public QSplitter
 {
-Q_OBJECT
-public:
-  PropertyTreeWithHelp( QWidget* parent = 0 );
+  Q_OBJECT
 
-  PropertyTreeWidget* getTree() { return property_tree_; }
+public:
+  explicit PropertyTreeWithHelp(QWidget * parent = 0);
+
+  PropertyTreeWidget * getTree() {return property_tree_;}
 
   /** @brief Write state to the given Config. */
-  void save( Config config ) const;
+  void save(Config config) const;
 
   /** @brief Read state from the given Config. */
-  void load( const Config& config );
+  void load(const Config & config);
 
 private Q_SLOTS:
-  void showHelpForProperty( const Property* property );
+  void showHelpForProperty(const Property * property);
 
 private:
-  PropertyTreeWidget* property_tree_;
-  QTextBrowser* help_;
+  PropertyTreeWidget * property_tree_;
+  QTextBrowser * help_;
 };
 
 }  // namespace properties
 }  // namespace rviz_common
 
-#endif // RVIZ_PROPERTY_TREE_WITH_HELP_H
+#endif  // RVIZ_COMMON__PROPERTIES__PROPERTY_TREE_WITH_HELP_HPP_

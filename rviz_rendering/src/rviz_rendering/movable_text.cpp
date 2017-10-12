@@ -61,11 +61,14 @@
 #include <OgreSceneNode.h>
 #include <OgreVector3.h>
 
+#include <string>
+#include <algorithm>
+
 #ifndef _WIN32
 # pragma GCC diagnostic pop
 #endif
 
-using namespace Ogre;
+using namespace Ogre; // NOLINT
 
 #define POS_TEX_BINDING    0
 #define COLOUR_BINDING     1
@@ -75,7 +78,8 @@ using namespace Ogre;
 namespace rviz_rendering
 {
 
-MovableText::MovableText(const String & caption, const String & fontName, Real charHeight,
+MovableText::MovableText(
+  const String & caption, const String & fontName, Real charHeight,
   const ColourValue & color)
 : mFontName(fontName),
   mType("MovableText"),
@@ -118,7 +122,8 @@ MovableText::~MovableText()
 
 void MovableText::setFontName(const String & fontName)
 {
-  if (Ogre::MaterialManager::getSingletonPtr()->resourceExists(mName + "Material", MATERIAL_GROUP))
+  if (Ogre::MaterialManager::getSingletonPtr()->resourceExists(mName + "Material",
+    MATERIAL_GROUP))
   {
     Ogre::MaterialManager::getSingleton().remove(mName + "Material", MATERIAL_GROUP);
   }
@@ -126,7 +131,8 @@ void MovableText::setFontName(const String & fontName)
   if (mFontName != fontName || !mpMaterial || !mpFont) {
     mFontName = fontName;
     mpFont =
-      (Font *) FontManager::getSingleton().getByName(mFontName, MATERIAL_GROUP).get();
+      reinterpret_cast<Font *>(FontManager::getSingleton().getByName(mFontName,
+      MATERIAL_GROUP).get());
     if (!mpFont) {
       throw Exception(Exception::ERR_ITEM_NOT_FOUND, "Could not find font " +
               fontName, "MovableText::setFontName");
@@ -232,7 +238,7 @@ void MovableText::_setupGeometry()
 
   unsigned int vertexCount = 0;
 
-  //count letters to determine how many vertices are needed
+  // count letters to determine how many vertices are needed
   std::string::iterator i = mCaption.begin();
   std::string::iterator iend = mCaption.end();
   for (; i != iend; ++i) {
@@ -523,7 +529,7 @@ void MovableText::_updateColors(void)
   HardwareVertexBufferSharedPtr vbuf =
     mRenderOp.vertexData->vertexBufferBinding->getBuffer(COLOUR_BINDING);
   RGBA * pDest = static_cast<RGBA *>(vbuf->lock(HardwareBuffer::HBL_DISCARD));
-  for (int i = 0; i < (int) mRenderOp.vertexData->vertexCount; ++i) {
+  for (int i = 0; i < static_cast<int>(mRenderOp.vertexData->vertexCount); ++i) {
     *pDest++ = color;
   }
   vbuf->unlock();

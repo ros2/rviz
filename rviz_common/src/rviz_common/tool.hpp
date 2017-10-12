@@ -28,8 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SRC__RVIZ_COMMON__TOOL_HPP_
-#define SRC__RVIZ_COMMON__TOOL_HPP_
+#ifndef RVIZ_COMMON__TOOL_HPP_
+#define RVIZ_COMMON__TOOL_HPP_
 
 #include <QCursor>
 #include <QIcon>
@@ -216,4 +216,4 @@ private:
 
 }  // namespace rviz_common
 
-#endif  // SRC__RVIZ_COMMON__TOOL_HPP_
+#endif  // RVIZ_COMMON__TOOL_HPP_

@@ -27,10 +27,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_TIME_PANEL_H
-#define RVIZ_TIME_PANEL_H
+#ifndef RVIZ_COMMON__TIME_PANEL_HPP_
+#define RVIZ_COMMON__TIME_PANEL_HPP_
 
-#include "rviz/panel.h"
+#include "rviz_rendering/panel.hpp"
 #include "ros/time.h"
 
 class QLineEdit;
@@ -50,59 +50,56 @@ class Display;
  * \class TimePanel
  *
  */
-class TimePanel: public Panel
+class TimePanel : public Panel
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  TimePanel( QWidget* parent = 0 );
+  explicit TimePanel(QWidget * parent = 0);
 
   virtual void onInitialize();
 
 protected Q_SLOTS:
-
-  void pauseToggled( bool checked );
-  void syncModeSelected( int index );
-  void syncSourceSelected( int index );
-  void experimentalToggled( bool checked );
+  void pauseToggled(bool checked);
+  void syncModeSelected(int index);
+  void syncSourceSelected(int index);
+  void experimentalToggled(bool checked);
 
   /** Read time values from VisualizationManager and update displays. */
   void update();
 
-  void onDisplayAdded( rviz::Display* display );
-  void onDisplayRemoved( rviz::Display* display );
+  void onDisplayAdded(rviz::Display * display);
+  void onDisplayRemoved(rviz::Display * display);
 
-  void onTimeSignal( rviz::Display* display, ros::Time time );
+  void onTimeSignal(rviz::Display * display, ros::Time time);
 
-  virtual void load( const Config& config );
-  virtual void save( Config config ) const;
+  virtual void load(const Config & config);
+  virtual void save(Config config) const;
 
 protected:
-
   /** Create, configure, and return a single label for showing a time value. */
-  QLineEdit* makeTimeLabel();
+  QLineEdit * makeTimeLabel();
 
   /** Fill a single time label with the given time value (in seconds). */
-  void fillTimeLabel( QLineEdit* label, double time );
+  void fillTimeLabel(QLineEdit * label, double time);
 
-  QWidget* old_widget_;
-  QWidget* experimental_widget_;
+  QWidget * old_widget_;
+  QWidget * experimental_widget_;
 
   QString config_sync_source_;
 
-  QCheckBox* experimental_cb_;
+  QCheckBox * experimental_cb_;
 
-  QPushButton* pause_button_;
-  QComboBox* sync_source_selector_;
-  QComboBox* sync_mode_selector_;
+  QPushButton * pause_button_;
+  QComboBox * sync_source_selector_;
+  QComboBox * sync_mode_selector_;
 
-  QLineEdit* ros_time_label_;
-  QLineEdit* ros_elapsed_label_;
-  QLineEdit* wall_time_label_;
-  QLineEdit* wall_elapsed_label_;
+  QLineEdit * ros_time_label_;
+  QLineEdit * ros_elapsed_label_;
+  QLineEdit * wall_time_label_;
+  QLineEdit * wall_elapsed_label_;
 };
 
-} // namespace rviz
+}  // namespace rviz
 
-#endif
-
-
+#endif  // RVIZ_COMMON__TIME_PANEL_HPP_

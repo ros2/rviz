@@ -30,8 +30,6 @@
 
 #include "./selection_handler.hpp"
 
-#include <cassert>
-
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -48,6 +46,10 @@
 #ifndef _WIN32
 # pragma GCC diagnostic pop
 #endif
+
+#include <cassert>
+#include <string>
+#include <utility>
 
 #include "rviz_common/logging.hpp"
 
@@ -202,7 +204,8 @@ bool SelectionHandler::needsAdditionalRenderPass(uint32_t pass)
   return false;
 }
 
-void SelectionHandler::createBox(const std::pair<CollObjectHandle, uint64_t> & handles,
+void SelectionHandler::createBox(
+  const std::pair<CollObjectHandle, uint64_t> & handles,
   const Ogre::AxisAlignedBox & aabb,
   const std::string & material_name)
 {

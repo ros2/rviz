@@ -26,8 +26,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef RVIZ_LINE_EDIT_WITH_BUTTON_H
-#define RVIZ_LINE_EDIT_WITH_BUTTON_H
+#ifndef RVIZ_COMMON__PROPERTIES__LINE_EDIT_WITH_BUTTON_HPP_
+#define RVIZ_COMMON__PROPERTIES__LINE_EDIT_WITH_BUTTON_HPP_
 
 #include <QLineEdit>
 
@@ -41,18 +41,19 @@ namespace properties
 /**
  * A QLineEdit with a square button on the right side that says "...".
  */
-class LineEditWithButton: public QLineEdit
+class LineEditWithButton : public QLineEdit
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  LineEditWithButton( QWidget* parent = 0 );
+  explicit LineEditWithButton(QWidget * parent = 0);
 
   /** Returns the child button.  Use this to connect() something to a
    * button click. */
-  QPushButton* button() { return button_; }
+  QPushButton * button() {return button_;}
 
 protected:
-  virtual void resizeEvent( QResizeEvent* event );
+  virtual void resizeEvent(QResizeEvent * event);
 
   /** @brief Send key events to mimic the "return" key being pressed and
    * released.  Useful ending an edit session and sending the data on
@@ -64,10 +65,10 @@ protected Q_SLOTS:
   virtual void onButtonClick() {}
 
 private:
-  QPushButton* button_;
+  QPushButton * button_;
 };
 
 }  // namespace properties
 }  // namespace rviz_common
 
-#endif // RVIZ_LINE_EDIT_WITH_BUTTON_H
+#endif  // RVIZ_COMMON__PROPERTIES__LINE_EDIT_WITH_BUTTON_HPP_

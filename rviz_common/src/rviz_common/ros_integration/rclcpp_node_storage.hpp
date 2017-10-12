@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SRC__RVIZ_COMMON__ROS_INTEGRATION__RCLCPP_NODE_STORAGE_HPP_
-#define SRC__RVIZ_COMMON__ROS_INTEGRATION__RCLCPP_NODE_STORAGE_HPP_
+#ifndef RVIZ_COMMON__ROS_INTEGRATION__RCLCPP_NODE_STORAGE_HPP_
+#define RVIZ_COMMON__ROS_INTEGRATION__RCLCPP_NODE_STORAGE_HPP_
 
 #include <memory>
 #include <string>
@@ -83,4 +83,4 @@ has_rclcpp_node_by_name(const std::string & node_name);
 }  // namespace ros_integration
 }  // namespace rviz_common
 
-#endif  // SRC__RVIZ_COMMON__ROS_INTEGRATION__RCLCPP_NODE_STORAGE_HPP_
+#endif  // RVIZ_COMMON__ROS_INTEGRATION__RCLCPP_NODE_STORAGE_HPP_

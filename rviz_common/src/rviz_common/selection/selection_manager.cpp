@@ -227,7 +227,8 @@ bool SelectionManager::get3DPoint(
 }
 
 
-bool SelectionManager::getPatchDepthImage(Ogre::Viewport * viewport, int x, int y, unsigned width,
+bool SelectionManager::getPatchDepthImage(
+  Ogre::Viewport * viewport, int x, int y, unsigned width,
   unsigned height, std::vector<float> & depth_vector)
 {
   unsigned int num_pixels = width * height;
@@ -552,7 +553,8 @@ void SelectionManager::removeHighlight()
   highlight_enabled_ = false;
 }
 
-void SelectionManager::select(Ogre::Viewport * viewport, int x1, int y1, int x2, int y2,
+void SelectionManager::select(
+  Ogre::Viewport * viewport, int x1, int y1, int x2, int y2,
   SelectType type)
 {
   std::lock_guard<std::recursive_mutex> lock(global_mutex_);
@@ -608,7 +610,8 @@ void SelectionManager::unpackColors(const Ogre::PixelBox & box, V_CollObject & p
   }
 }
 
-void SelectionManager::renderAndUnpack(Ogre::Viewport * viewport, uint32_t pass, int x1, int y1,
+void SelectionManager::renderAndUnpack(
+  Ogre::Viewport * viewport, uint32_t pass, int x1, int y1,
   int x2, int y2, V_CollObject & pixels)
 {
   assert(pass < kNumRenderTextures_);
@@ -627,7 +630,8 @@ void SelectionManager::renderAndUnpack(Ogre::Viewport * viewport, uint32_t pass,
 }
 
 
-bool SelectionManager::render(Ogre::Viewport * viewport, Ogre::TexturePtr tex,
+bool SelectionManager::render(
+  Ogre::Viewport * viewport, Ogre::TexturePtr tex,
   int x1, int y1, int x2, int y2,
   Ogre::PixelBox & dst_box, std::string material_scheme,
   unsigned texture_width, unsigned texture_height)
@@ -779,7 +783,8 @@ bool SelectionManager::render(Ogre::Viewport * viewport, Ogre::TexturePtr tex,
 
 // TODO(wjwwood): determine if this is still needed.
 #if 0
-void SelectionManager::publishDebugImage(const Ogre::PixelBox & pixel_box,
+void SelectionManager::publishDebugImage(
+  const Ogre::PixelBox & pixel_box,
   const std::string & label)
 {
   ros::Publisher pub;
@@ -856,7 +861,8 @@ PropertyTreeModel * SelectionManager::getPropertyModel()
   return property_model_;
 }
 
-void SelectionManager::pick(Ogre::Viewport * viewport, int x1, int y1, int x2, int y2,
+void SelectionManager::pick(
+  Ogre::Viewport * viewport, int x1, int y1, int x2, int y2,
   M_Picked & results, bool single_render_pass)
 {
   std::lock_guard<std::recursive_mutex> lock(global_mutex_);
@@ -905,7 +911,7 @@ void SelectionManager::pick(Ogre::Viewport * viewport, int x1, int y1, int x2, i
 
       if (handler) {
         std::pair<M_Picked::iterator,
-        bool> insert_result = results.insert(std::make_pair(handle, Picked(handle)));
+          bool> insert_result = results.insert(std::make_pair(handle, Picked(handle)));
         if (insert_result.second) {
           if (handler->needsAdditionalRenderPass(1) && !single_render_pass) {
             need_additional.insert(handle);
@@ -1084,7 +1090,8 @@ void SelectionManager::setPickHandle(CollObjectHandle handle, Ogre::MovableObjec
   setPickData(handle, handleToColor(handle), object);
 }
 
-void SelectionManager::setPickData(CollObjectHandle handle, const Ogre::ColourValue & color,
+void SelectionManager::setPickData(
+  CollObjectHandle handle, const Ogre::ColourValue & color,
   Ogre::SceneNode * node)
 {
   if (!node) {
@@ -1123,7 +1130,8 @@ public:
   CollObjectHandle handle_;
 };
 
-void SelectionManager::setPickData(CollObjectHandle handle, const Ogre::ColourValue & color,
+void SelectionManager::setPickData(
+  CollObjectHandle handle, const Ogre::ColourValue & color,
   Ogre::MovableObject * object)
 {
   PickColorSetter visitor(handle, color);

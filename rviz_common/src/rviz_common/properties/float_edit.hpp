@@ -28,8 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SRC__RVIZ_COMMON__PROPERTIES__FLOAT_EDIT_HPP_
-#define SRC__RVIZ_COMMON__PROPERTIES__FLOAT_EDIT_HPP_
+#ifndef RVIZ_COMMON__PROPERTIES__FLOAT_EDIT_HPP_
+#define RVIZ_COMMON__PROPERTIES__FLOAT_EDIT_HPP_
 
 #include <QLineEdit>
 
@@ -63,4 +63,4 @@ private:
 }  // namespace properties
 }  // namespace rviz_common
 
-#endif  // SRC__RVIZ_COMMON__PROPERTIES__FLOAT_EDIT_HPP_
+#endif  // RVIZ_COMMON__PROPERTIES__FLOAT_EDIT_HPP_

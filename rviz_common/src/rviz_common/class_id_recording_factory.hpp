@@ -26,8 +26,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef CLASS_ID_RECORDING_FACTORY_H
-#define CLASS_ID_RECORDING_FACTORY_H
+#ifndef RVIZ_COMMON__CLASS_ID_RECORDING_FACTORY_HPP_
+#define RVIZ_COMMON__CLASS_ID_RECORDING_FACTORY_HPP_
 
 #include "./factory.hpp"
 
@@ -39,7 +39,7 @@ template<class Type>
 calls a setClassId() function on
  * any instances created by a protected makeRaw() function (pure
  * virtual in this class).*/
-class ClassIdRecordingFactory: public Factory
+class ClassIdRecordingFactory : public Factory
 {
 public:
   /** @brief Instantiate and return a instance of a subclass of Type using makeRaw().
@@ -52,21 +52,20 @@ public:
    * If make() returns NULL and error_return is not NULL,
    * *error_return will be set.  On success, *error_return will not be
    * changed. */
-  virtual Type* make( const QString& class_id, QString* error_return = NULL )
-    {
-      Type* obj = makeRaw( class_id, error_return );
-      if( obj != NULL )
-      {
-        obj->setClassId( class_id );
-        obj->setDescription( getClassDescription( class_id ));
-      }
-      return obj;
+  virtual Type * make(const QString & class_id, QString * error_return = NULL)
+  {
+    Type * obj = makeRaw(class_id, error_return);
+    if (obj != NULL) {
+      obj->setClassId(class_id);
+      obj->setDescription(getClassDescription(class_id));
     }
+    return obj;
+  }
 
 protected:
-  virtual Type* makeRaw( const QString& class_id, QString* error_return = NULL ) = 0;
+  virtual Type * makeRaw(const QString & class_id, QString * error_return = NULL) = 0;
 };
 
-} // end namespace rviz_common
+}  // end namespace rviz_common
 
-#endif // CLASS_ID_RECORDING_FACTORY_H
+#endif  // RVIZ_COMMON__CLASS_ID_RECORDING_FACTORY_HPP_

@@ -28,20 +28,22 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SRC__RVIZ_COMMON__FRAME_MANAGER_HPP_
-#define SRC__RVIZ_COMMON__FRAME_MANAGER_HPP_
+#ifndef RVIZ_COMMON__FRAME_MANAGER_HPP_
+#define RVIZ_COMMON__FRAME_MANAGER_HPP_
 
-#include <map>
-#include <memory>
-#include <mutex>
+#include <geometry_msgs/msg/pose.hpp>
+#include <rclcpp/time.hpp>
 
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>
 
 #include <QObject>
 
-#include <geometry_msgs/msg/pose.hpp>
-#include <rclcpp/time.hpp>
+#include <map>
+#include <memory>
+#include <mutex>
+#include <string>
+
 // TODO(wjwwood): reenable this when message_filters is ported.
 // #include <tf2_ros/message_filter.h>
 
@@ -175,7 +177,8 @@ public:
     Ogre::Vector3 & position,
     Ogre::Quaternion & orientation)
   {
-    return transform(header.frame_id, header.stamp, pose, position, orientation);
+    return transform(header.frame_id, header.stamp, pose, position, orientation);   // NOLINT
+    // linter wants #include <algorithm> for transform
   }
 
   /// Transform a pose from a frame into the fixed frame.
@@ -382,4 +385,4 @@ private:
 
 }  // namespace rviz_common
 
-#endif  // SRC__RVIZ_COMMON__FRAME_MANAGER_HPP_
+#endif  // RVIZ_COMMON__FRAME_MANAGER_HPP_

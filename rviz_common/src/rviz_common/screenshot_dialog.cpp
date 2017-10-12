@@ -50,7 +50,8 @@
 namespace rviz_common
 {
 
-ScreenshotDialog::ScreenshotDialog(QWidget * main_window, QWidget * render_window,
+ScreenshotDialog::ScreenshotDialog(
+  QWidget * main_window, QWidget * render_window,
   const QString & default_save_dir)
 : QWidget(NULL),    // This should be a top-level window to act like a dialog.
   main_window_(main_window),

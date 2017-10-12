@@ -67,7 +67,7 @@ Qt::ItemFlags DisplayGroup::getViewFlags(int column) const
 
 void DisplayGroup::load(const Config & config)
 {
-  removeAllDisplays(); // Only remove Display children, property children must stay.
+  removeAllDisplays();  // Only remove Display children, property children must stay.
 
   // Load Property values, plus name and enabled/disabled.
   Display::load(config);

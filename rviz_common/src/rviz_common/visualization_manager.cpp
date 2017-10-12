@@ -30,19 +30,6 @@
 
 #include "./visualization_manager.hpp"
 
-#include <algorithm>
-#include <chrono>
-#include <functional>
-#include <memory>
-#include <mutex>
-#include <string>
-#include <vector>
-
-#include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
-#include <QCursor>  // NOLINT: cpplint is unable to handle the include order here
-#include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
-#include <QWindow>  // NOLINT: cpplint is unable to handle the include order here
-
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -58,6 +45,19 @@
 #include <OgreSceneNode.h>
 #include <OgreSharedPtr.h>
 #include <OgreViewport.h>
+
+#include <QApplication>
+#include <QCursor>
+#include <QTimer>
+#include <QWindow>
+
+#include <algorithm>
+#include <chrono>
+#include <functional>
+#include <memory>
+#include <mutex>
+#include <string>
+#include <vector>
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop
@@ -108,11 +108,12 @@ using rviz_common::properties::TfFrameProperty;
 using rviz_common::selection::SelectionManager;
 using rviz_common::selection::M_Picked;
 
-//helper class needed to display an icon besides "Global Options"
+// helper class needed to display an icon besides "Global Options"
 class IconizedProperty : public rviz_common::properties::Property
 {
 public:
-  IconizedProperty(const QString & name = QString(),
+  IconizedProperty(
+    const QString & name = QString(),
     const QVariant default_value = QVariant(),
     const QString & description = QString(),
     Property * parent = 0,
@@ -124,7 +125,7 @@ public:
     return (column == 0 && role == Qt::DecorationRole) ?
            icon_ : Property::getViewData(column, role);
   }
-  void setIcon(const QIcon & icon) {icon_ = icon; }
+  void setIcon(const QIcon & icon) {icon_ = icon;}
 
 private:
   QIcon icon_;
@@ -156,7 +157,8 @@ VisualizationManager::VisualizationManager(
   window_manager_(wm),
   private_(new VisualizationManagerPrivate)
 {
-  // visibility_bit_allocator_ is listed after default_visibility_bit_ (and thus initialized later be default):
+  // visibility_bit_allocator_ is listed after default_visibility_bit_
+  // (and thus initialized later be default):
   default_visibility_bit_ = visibility_bit_allocator_.allocBit();
 
   frame_manager_ = new FrameManager(tf, buffer);
@@ -205,7 +207,8 @@ VisualizationManager::VisualizationManager(
       "RViz will try to render this many frames per second.",
       global_options_, SLOT(updateFps()), this);
 
-  root_display_group_->initialize(this);   // only initialize() a Display after its sub-properties are created.
+  root_display_group_->initialize(this);   // only initialize() a Display
+                                           // after its sub-properties are created.
   root_display_group_->setEnabled(true);
 
   updateFixedFrame();
@@ -243,9 +246,9 @@ VisualizationManager::VisualizationManager(
     this->createDisplay("rviz/Grid", "grid", true);
     // this->createDisplay("rviz/TF", "tf", true);
     // load later...
-    QTimer::singleShot(2000, [this](){
-      this->createDisplay("rviz/RobotModel", "tf", true);
-    });
+    QTimer::singleShot(2000, [this]() {
+        this->createDisplay("rviz/RobotModel", "tf", true);
+      });
   }
 }
 
@@ -586,7 +589,8 @@ void VisualizationManager::save(Config config) const
   view_manager_->save(config.mapMakeChild("Views"));
 }
 
-Display * VisualizationManager::createDisplay(const QString & class_lookup_name,
+Display * VisualizationManager::createDisplay(
+  const QString & class_lookup_name,
   const QString & name,
   bool enabled)
 {
@@ -600,7 +604,7 @@ Display * VisualizationManager::createDisplay(const QString & class_lookup_name,
 
 double VisualizationManager::getWallClock()
 {
-  using namespace std::chrono;
+  using namespace std::chrono;  // NOLINT
   return duration_cast<duration<double>>(system_clock::now().time_since_epoch()).count();
 }
 
@@ -611,7 +615,7 @@ double VisualizationManager::getROSTime()
 
 double VisualizationManager::getWallClockElapsed()
 {
-  using namespace std::chrono;
+  using namespace std::chrono;  // NOLINT
   return duration_cast<duration<double>>(wall_clock_elapsed_).count();
 }
 
@@ -643,7 +647,7 @@ void VisualizationManager::updateFps()
 
 void VisualizationManager::handleMouseEvent(const ViewportMouseEvent & vme)
 {
-  //process pending mouse events
+  // process pending mouse events
   Tool * current_tool = tool_manager_->getCurrentTool();
 
   int flags = 0;

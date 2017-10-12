@@ -27,29 +27,29 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_SELECTION_PANEL_H
-#define RVIZ_SELECTION_PANEL_H
+#ifndef RVIZ_COMMON__SELECTION_PANEL_HPP_
+#define RVIZ_COMMON__SELECTION_PANEL_HPP_
 
-#include "rviz/panel.h"
+#include "rviz_common/panel.hpp"
 
 namespace rviz
 {
 
 class PropertyTreeWidget;
 
-class SelectionPanel: public Panel
+class SelectionPanel : public Panel
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  SelectionPanel( QWidget* parent = 0 );
+  explicit SelectionPanel(QWidget * parent = 0);
 
   virtual void onInitialize();
 
 private:
-  PropertyTreeWidget* tree_widget_;
+  PropertyTreeWidget * tree_widget_;
 };
 
-} // namespace rviz
+}  // namespace rviz
 
-#endif
-
+#endif  // RVIZ_COMMON__SELECTION_PANEL_HPP_

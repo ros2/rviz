@@ -45,7 +45,8 @@ namespace properties
 
 const QString TfFrameProperty::FIXED_FRAME_STRING = "<Fixed Frame>";
 
-TfFrameProperty::TfFrameProperty(const QString & name,
+TfFrameProperty::TfFrameProperty(
+  const QString & name,
   const QString & default_value,
   const QString & description,
   Property * parent,

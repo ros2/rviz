@@ -30,7 +30,25 @@
 
 #include "./visualization_frame.hpp"
 
-#include <fstream>
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
+
+#include <OgreRenderWindow.h>
+#include <OgreMeshManager.h>
+
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
+
+#include <tf2_ros/buffer.h>
+#include <tf2_ros/transform_listener.h>
+
+#include <rviz_common/logging.hpp>
+// TODO(wjwwood): see if this is needed anymore
+#include <rviz_rendering/initialization.hpp>
+#include <rviz_rendering/render_window.hpp>
 
 // #include <QAction>
 #include <QApplication>
@@ -52,25 +70,10 @@
 #include <QToolButton>
 // #include <QUrl>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-
-#include <OgreRenderWindow.h>
-#include <OgreMeshManager.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
-
-#include <tf2_ros/buffer.h>
-#include <tf2_ros/transform_listener.h>
-
-#include <rviz_common/logging.hpp>
-// TODO(wjwwood): see if this is needed anymore
-#include <rviz_rendering/initialization.hpp>
-#include <rviz_rendering/render_window.hpp>
+#include <fstream>
+#include <memory>
+#include <string>
+#include <utility>
 
 // TODO(wjwwood): readd this once we have a solution for the pluginlib stuff
 // #include "./panel_factory.hpp"
@@ -199,7 +202,7 @@ void VisualizationFrame::updateFps()
     frame_count_ = 0;
     last_fps_calc_time_ = std::chrono::steady_clock::now();
     if (original_status_bar_ == statusBar()) {
-      fps_label_->setText(QString::number(int(fps)) + QString(" fps"));
+      fps_label_->setText(QString::number(static_cast<int>(fps)) + QString(" fps"));
     }
   }
 }
@@ -502,7 +505,8 @@ void VisualizationFrame::initMenus()
   QAction * fullscreen_action = view_menu_->addAction("&Fullscreen", this, SLOT(setFullScreen(
         bool)), Qt::Key_F11);
   fullscreen_action->setCheckable(true);
-  this->addAction(fullscreen_action); // Also add to window, or the shortcut doest work when the menu is hidden.
+  this->addAction(fullscreen_action);  // Also add to window, or the shortcut doest work
+                                       // when the menu is hidden.
   connect(this, SIGNAL(fullScreenChange(bool)), fullscreen_action, SLOT(setChecked(bool)));
   new QShortcut(Qt::Key_Escape, this, SLOT(exitFullScreen()));
   view_menu_->addSeparator();
@@ -546,7 +550,6 @@ void VisualizationFrame::initToolbars()
   toolbar_->addWidget(remove_tool_button);
   connect(remove_tool_menu_, SIGNAL(triggered(QAction *)), this, SLOT(onToolbarRemoveTool(
       QAction *)));
-
 }
 
 void VisualizationFrame::hideDockImpl(Qt::DockWidgetArea area, bool hide)
@@ -603,7 +606,6 @@ void VisualizationFrame::onDockPanelVisibilityChange(bool visible)
       }
     }
   }
-
 }
 
 void VisualizationFrame::openNewPanelDialog()
@@ -647,7 +649,7 @@ void VisualizationFrame::openNewToolDialog()
     tool_man->addTool(class_id);
   }
   manager_->startUpdate();
-  activateWindow(); // Force keyboard focus back on main window.
+  activateWindow();  // Force keyboard focus back on main window.
 #endif
 }
 
@@ -667,7 +669,7 @@ void VisualizationFrame::updateRecentConfigMenu()
         display_name = (
           QDir::homePath() + "/" +
           QString::fromStdString(display_name.substr(home_dir_.size()))
-        ).toStdString();
+          ).toStdString();
       }
       QString qdisplay_name = QString::fromStdString(display_name);
       QAction * action = new QAction(qdisplay_name, this);
@@ -704,7 +706,7 @@ void VisualizationFrame::loadDisplayConfig(const QString & qpath)
     if (!QDir(QString::fromStdString(actual_load_path)).exists()) {
       RVIZ_COMMON_LOG_ERROR_STREAM(
         "Default display config '" <<
-        actual_load_path.c_str() << "' not found.  RViz will be very empty at first.");
+          actual_load_path.c_str() << "' not found.  RViz will be very empty at first.");
       return;
     }
   }
@@ -900,7 +902,7 @@ void VisualizationFrame::loadPanels(const Config & config)
       // TODO(wjwwood): actually load the panels when plugin loading is fixed
       RVIZ_COMMON_LOG_WARNING_STREAM(
         "Would have loaded panel: " << name.toStdString() <<
-        " (" << class_id.toStdString() << ")");
+          " (" << class_id.toStdString() << ")");
 #if 0
       QDockWidget * dock = addPanelByName(name, class_id);
       // This is kind of ridiculous - should just be something like
@@ -967,7 +969,6 @@ bool VisualizationFrame::prepareToExit()
             default:
               return false;
           }
-
         }
       case QMessageBox::Discard:
         return true;
@@ -1276,7 +1277,8 @@ QDockWidget * VisualizationFrame::addPanelByName(
 }
 #endif
 
-PanelDockWidget * VisualizationFrame::addPane(const QString & name, QWidget * panel,
+PanelDockWidget * VisualizationFrame::addPane(
+  const QString & name, QWidget * panel,
   Qt::DockWidgetArea area, bool floating)
 {
   PanelDockWidget * dock;

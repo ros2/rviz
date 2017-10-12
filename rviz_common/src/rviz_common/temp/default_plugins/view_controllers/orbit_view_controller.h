@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_ORBIT_VIEW_CONTROLLER_H
-#define RVIZ_ORBIT_VIEW_CONTROLLER_H
+#ifndef RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__VIEW_CONTROLLERS__ORBIT_VIEW_CONTROLLER_H_
+#define RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__VIEW_CONTROLLERS__ORBIT_VIEW_CONTROLLER_H_
 
 #include <OgreVector3.h>
 
@@ -69,9 +69,10 @@ namespace rviz_default_plugins
  * theta = #yaw_<br>
  * phi = #pitch_
  */
-class OrbitViewController: public rviz_common::FramePositionTrackingViewController
+class OrbitViewController : public rviz_common::FramePositionTrackingViewController
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   OrbitViewController();
   virtual ~OrbitViewController();
@@ -83,16 +84,17 @@ public:
 
   /**
    * \brief Move in/out from the focal point, ie. adjust #distance_ by amount
-   * @param amount The distance to move.  Positive amount moves towards the focal point, negative moves away
+   * @param amount The distance to move.  Positive amount moves towards the focal point,
+   * negative moves away
    */
-  void zoom( float amount );
-  void yaw( float angle );
-  void pitch( float angle );
-  void move( float x, float y, float z );
+  void zoom(float amount);
+  void yaw(float angle);
+  void pitch(float angle);
+  void move(float x, float y, float z);   // NOLINT linter wants #include <utility> for move
 
-  virtual void handleMouseEvent(rviz_common::ViewportMouseEvent& evt);
+  virtual void handleMouseEvent(rviz_common::ViewportMouseEvent & evt);
 
-  virtual void lookAt( const Ogre::Vector3& point );
+  virtual void lookAt(const Ogre::Vector3 & point);
 
   virtual void reset();
 
@@ -101,17 +103,19 @@ public:
    * @a source_view.
    *
    * @a source_view must return a valid @c Ogre::Camera* from getCamera(). */
-  virtual void mimic( ViewController* source_view );
+  virtual void mimic(ViewController * source_view);
 
 protected:
   virtual void update(float dt, float ros_dt);
-  virtual void onTargetFrameChanged(const Ogre::Vector3& old_reference_position, const Ogre::Quaternion& old_reference_orientation);
+  virtual void onTargetFrameChanged(
+    const Ogre::Vector3 & old_reference_position,
+    const Ogre::Quaternion & old_reference_orientation);
 
   /**
    * \brief Calculates pitch and yaw values given a new position and the current focal point
    * @param position Position to calculate the pitch/yaw for
    */
-  void calculatePitchYawFromPosition( const Ogre::Vector3& position );
+  void calculatePitchYawFromPosition(const Ogre::Vector3 & position);
 
   /**
    * \brief Calculates the focal shape size and update it's geometry
@@ -120,17 +124,22 @@ protected:
 
   virtual void updateCamera();
 
-  rviz_common::properties::FloatProperty* yaw_property_;  ///< The camera's yaw (rotation around the y-axis), in radians
-  rviz_common::properties::FloatProperty* pitch_property_;  ///< The camera's pitch (rotation around the x-axis), in radians
-  rviz_common::properties::FloatProperty* distance_property_;  ///< The camera's distance from the focal point
-  rviz_common::properties::VectorProperty* focal_point_property_;  ///< The point around which the camera "orbits".
-  rviz_common::properties::BoolProperty* focal_shape_fixed_size_property_;  ///< Whether the focal shape size is fixed or not
-  rviz_common::properties::FloatProperty* focal_shape_size_property_;  ///< The focal shape size
+  rviz_common::properties::FloatProperty * yaw_property_;  ///< The camera's yaw (rotation
+///< around the y-axis), in radians
+  rviz_common::properties::FloatProperty * pitch_property_;  ///< The camera's pitch (rotation
+///< around the x-axis), in radians
+  rviz_common::properties::FloatProperty * distance_property_;  ///< The camera's distance
+///< from the focal point
+  rviz_common::properties::VectorProperty * focal_point_property_;  ///< The point around
+///< which the camera "orbits".
+  rviz_common::properties::BoolProperty * focal_shape_fixed_size_property_;  ///< Whether
+///< the focal shape size is fixed or not
+  rviz_common::properties::FloatProperty * focal_shape_size_property_;  ///< The focal shape size
 
-  rviz_rendering::Shape* focal_shape_;
+  rviz_rendering::Shape * focal_shape_;
   bool dragging_;
 };
 
-}
+}  // namespace rviz_default_plugins
 
-#endif // RVIZ_VIEW_CONTROLLER_H
+#endif  // RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__VIEW_CONTROLLERS__ORBIT_VIEW_CONTROLLER_H_

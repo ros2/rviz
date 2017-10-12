@@ -49,8 +49,8 @@
  *   RVIZ_COMMON_LOG_WARNING_STREAM("hello " << "world: " << 42)
  */
 
-#ifndef INCLUDE__RVIZ_COMMON__LOGGING_HPP_
-#define INCLUDE__RVIZ_COMMON__LOGGING_HPP_
+#ifndef RVIZ_COMMON__LOGGING_HPP_
+#define RVIZ_COMMON__LOGGING_HPP_
 
 #include <memory>
 #include <sstream>
@@ -134,4 +134,4 @@ log_error(const std::string & message, const std::string & file_name, size_t lin
 
 }  // namespace rviz_common
 
-#endif  // INCLUDE__RVIZ_COMMON__LOGGING_HPP_
+#endif  // RVIZ_COMMON__LOGGING_HPP_

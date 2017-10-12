@@ -30,6 +30,8 @@
 
 #include "./enum_property.hpp"
 
+#include <string>
+
 #include "./combo_box.hpp"
 
 namespace rviz_common
@@ -87,7 +89,7 @@ QWidget * EnumProperty::createEditor(QWidget * parent, const QStyleOptionViewIte
   QObject::connect(cb, SIGNAL(currentIndexChanged(const QString&)), this,
     SLOT(setString(const QString&)));
 
-  // TODO: need to better handle string value which is not in list.
+  // TODO(anyone): need to better handle string value which is not in list.
   return cb;
 }
 

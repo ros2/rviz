@@ -26,8 +26,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef RVIZ_COLOR_EDITOR_H
-#define RVIZ_COLOR_EDITOR_H
+#ifndef RVIZ_COMMON__PROPERTIES__COLOR_EDITOR_HPP_
+#define RVIZ_COMMON__PROPERTIES__COLOR_EDITOR_HPP_
 
 #include "./line_edit_with_button.hpp"
 
@@ -38,35 +38,36 @@ namespace properties
 
 class ColorProperty;
 
-class ColorEditor: public LineEditWithButton
+class ColorEditor : public LineEditWithButton
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  ColorEditor( ColorProperty* property = 0, QWidget* parent = 0 );
+  explicit ColorEditor(ColorProperty * property = 0, QWidget * parent = 0);
 
   /** Static function to paint just the color box.  Paints it in the
    * left end of rect, size rect.height() by rect.height(). */
-  static void paintColorBox( QPainter* painter, const QRect& rect, const QColor& color );
+  static void paintColorBox(QPainter * painter, const QRect & rect, const QColor & color);
 
 public Q_SLOTS:
-  void setColor( const QColor& color );
+  void setColor(const QColor & color);
   void parseText();
 
 protected:
   /** Call parent version then paint color swatch. */
-  virtual void paintEvent( QPaintEvent* event );
+  virtual void paintEvent(QPaintEvent * event);
 
-  virtual void resizeEvent( QResizeEvent* event );
+  virtual void resizeEvent(QResizeEvent * event);
 
 protected Q_SLOTS:
   virtual void onButtonClick();
 
 private:
   QColor color_;
-  ColorProperty* property_;
+  ColorProperty * property_;
 };
 
 }  // namespace properties
 }  // namespace rviz_common
 
-#endif // RVIZ_COLOR_EDITOR_H
+#endif  // RVIZ_COMMON__PROPERTIES__COLOR_EDITOR_HPP_

@@ -30,13 +30,6 @@
 
 #include "rviz_common/view_controller.hpp"
 
-#include <sstream>
-
-#include <QColor>
-#include <QFont>
-#include <QKeyEvent>
-#include <Qt>
-
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -49,6 +42,13 @@
 #ifndef _WIN32
 # pragma GCC diagnostic pop
 #endif
+
+#include <QColor>
+#include <QFont>
+#include <QKeyEvent>
+#include <Qt>
+
+#include <sstream>
 
 #include "rviz_rendering/render_window.hpp"
 
@@ -235,8 +235,7 @@ void ViewController::handleKeyEvent(QKeyEvent * event, RenderPanel * panel)
 {
   Ogre::Viewport * viewport =
     rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(panel->getRenderWindow());
-  if (event->key() == Qt::Key_F && viewport && context_->getSelectionManager())
-  {
+  if (event->key() == Qt::Key_F && viewport && context_->getSelectionManager()) {
     QPoint mouse_rel_panel = panel->mapFromGlobal(QCursor::pos());
     Ogre::Vector3 point_rel_world;  // output of get3DPoint().
     if (context_->getSelectionManager()->get3DPoint(viewport,

@@ -26,8 +26,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef PARSE_COLOR_H
-#define PARSE_COLOR_H
+#ifndef RVIZ_COMMON__PROPERTIES__PARSE_COLOR_HPP_
+#define RVIZ_COMMON__PROPERTIES__PARSE_COLOR_HPP_
 
 #include <QColor>
 #include <QString>
@@ -39,12 +39,12 @@ namespace rviz_common
 namespace properties
 {
 
-QColor parseColor( const QString& color_string );
-QString printColor( const QColor& color );
-QColor ogreToQt( const Ogre::ColourValue& ogre_color );
-Ogre::ColourValue qtToOgre( const QColor& qt_color );
+QColor parseColor(const QString & color_string);
+QString printColor(const QColor & color);
+QColor ogreToQt(const Ogre::ColourValue & ogre_color);
+Ogre::ColourValue qtToOgre(const QColor & qt_color);
 
 }  // namespace properties
 }  // namespace rviz_common
 
-#endif // PARSE_COLOR_H
+#endif  // RVIZ_COMMON__PROPERTIES__PARSE_COLOR_HPP_

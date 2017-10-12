@@ -37,7 +37,8 @@ namespace rviz_common
 namespace properties
 {
 
-StringProperty::StringProperty(const QString & name,
+StringProperty::StringProperty(
+  const QString & name,
   const QString & default_value,
   const QString & description,
   Property * parent,

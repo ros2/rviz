@@ -65,7 +65,8 @@ public:
    * @param length Length of the axes
    * @param radius Radius of the axes
    */
-  Axes(Ogre::SceneManager * manager, Ogre::SceneNode * parent_node = NULL, float length = 1.0f,
+  Axes(
+    Ogre::SceneManager * manager, Ogre::SceneNode * parent_node = NULL, float length = 1.0f,
     float radius = 0.1f);
   virtual ~Axes();
 
@@ -88,16 +89,16 @@ public:
    * \brief Get the scene node associated with this object
    * @return The scene node associated with this object
    */
-  Ogre::SceneNode * getSceneNode() {return scene_node_; }
+  Ogre::SceneNode * getSceneNode() {return scene_node_;}
 
   /**
    * \brief Sets user data on all ogre objects we own
    */
   void setUserData(const Ogre::Any & data);
 
-  Shape * getXShape() {return x_axis_; }
-  Shape * getYShape() {return y_axis_; }
-  Shape * getZShape() {return z_axis_; }
+  Shape * getXShape() {return x_axis_;}
+  Shape * getYShape() {return y_axis_;}
+  Shape * getZShape() {return z_axis_;}
 
   void setXColor(const Ogre::ColourValue & col);
   void setYColor(const Ogre::ColourValue & col);
@@ -110,8 +111,8 @@ public:
 private:
   // prohibit copying
   Axes(const Axes & other)
-  : Object(0) {(void) other; }
-  Axes & operator=(const Axes & other) {(void) other; return *this; }
+  : Object(0) {(void) other;}
+  Axes & operator=(const Axes & other) {(void) other; return *this;}
 
   Ogre::SceneNode * scene_node_;
 

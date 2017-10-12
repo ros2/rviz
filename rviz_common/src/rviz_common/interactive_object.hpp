@@ -28,12 +28,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SRC__RVIZ_COMMON__INTERACTIVE_OBJECT_HPP_
-#define SRC__RVIZ_COMMON__INTERACTIVE_OBJECT_HPP_
-
-#include <memory>
+#ifndef RVIZ_COMMON__INTERACTIVE_OBJECT_HPP_
+#define RVIZ_COMMON__INTERACTIVE_OBJECT_HPP_
 
 #include <QCursor>
+
+#include <memory>
 
 namespace rviz_common
 {
@@ -64,4 +64,4 @@ typedef std::weak_ptr<InteractiveObject> InteractiveObjectWPtr;
 
 }  // namespace rviz_common
 
-#endif  // SRC__RVIZ_COMMON__INTERACTIVE_OBJECT_HPP_
+#endif  // RVIZ_COMMON__INTERACTIVE_OBJECT_HPP_

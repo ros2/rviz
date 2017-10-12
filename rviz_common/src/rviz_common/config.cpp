@@ -119,7 +119,7 @@ Config::Config(NodePtr node)
 : node_(node)
 {}
 
-void Config::copy(const Config & source)
+void Config::copy(const Config & source)  // NOLINT linter wants #include <algorithm>
 {
   if (!source.isValid()) {
     node_ = NodePtr();
@@ -230,7 +230,8 @@ bool Config::mapGetFloat(const QString & key, float * value_out) const
   QVariant v;
   if (mapGetValue(key,
     &v) &&
-    (int(v.type()) == int(QMetaType::Float) || v.type() == QVariant::Double ||
+    (static_cast<int>(v.type()) == static_cast<int>(QMetaType::Float) ||
+    v.type() == QVariant::Double ||
     v.type() == QVariant::String))
   {
     bool ok;

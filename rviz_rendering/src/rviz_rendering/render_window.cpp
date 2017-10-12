@@ -156,7 +156,7 @@ RenderWindow::event(QEvent * event)
     case QEvent::Type::MouseMove:
     case QEvent::Type::MouseButtonPress:
     case QEvent::Type::MouseButtonRelease:
-    // case QEvent::Type::MouseButtonRelease:
+      // case QEvent::Type::MouseButtonRelease:
       if (on_mouse_events_callback_) {
         on_mouse_events_callback_(static_cast<QMouseEvent *>(event));
       }

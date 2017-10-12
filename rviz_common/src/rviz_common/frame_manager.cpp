@@ -387,7 +387,8 @@ std::string getTransformStatusName(const std::string & caller_id)
 }
 
 #if 0
-std::string FrameManager::discoverFailureReason(const std::string & frame_id,
+std::string FrameManager::discoverFailureReason(
+  const std::string & frame_id,
   const rclcpp::Time & stamp,
   const std::string & caller_id,
   tf::FilterFailureReason reason)

@@ -28,14 +28,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SRC__RVIZ_COMMON__PROPERTIES__EDITABLE_ENUM_PROPERTY_HPP_
-#define SRC__RVIZ_COMMON__PROPERTIES__EDITABLE_ENUM_PROPERTY_HPP_
-
-#include <string>
+#ifndef RVIZ_COMMON__PROPERTIES__EDITABLE_ENUM_PROPERTY_HPP_
+#define RVIZ_COMMON__PROPERTIES__EDITABLE_ENUM_PROPERTY_HPP_
 
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <QStringList>  // NOLINT: cpplint is unable to handle the include order here
 #include <QWidget>  // NOLINT: cpplint is unable to handle the include order here
+
+#include <string>
 
 #include "./string_property.hpp"
 
@@ -103,4 +103,4 @@ protected:
 }  // namespace properties
 }  // namespace rviz_common
 
-#endif  // SRC__RVIZ_COMMON__PROPERTIES__EDITABLE_ENUM_PROPERTY_HPP_
+#endif  // RVIZ_COMMON__PROPERTIES__EDITABLE_ENUM_PROPERTY_HPP_

@@ -29,28 +29,28 @@
 
 #include <QVBoxLayout>
 
-#include "rviz/properties/property_tree_widget.h"
-#include "rviz/selection/selection_manager.h"
-#include "rviz/visualization_manager.h"
+#include "rviz_common/properties/property_tree_widget.hpp"
+#include "rviz_common/selection/selection_manager.hpp"
+#include "rviz_common/visualization_manager.hpp"
 
-#include "rviz/selection_panel.h"
+#include "rviz_common/selection_panel.hpp"
 
 namespace rviz
 {
 
-SelectionPanel::SelectionPanel( QWidget* parent )
-  : Panel( parent )
+SelectionPanel::SelectionPanel(QWidget * parent)
+: Panel(parent)
 {
-  QVBoxLayout* layout = new QVBoxLayout();
-  layout->setContentsMargins( 0, 0, 0, 0 );
+  QVBoxLayout * layout = new QVBoxLayout();
+  layout->setContentsMargins(0, 0, 0, 0);
   tree_widget_ = new PropertyTreeWidget();
-  layout->addWidget( tree_widget_ );
-  setLayout( layout );
+  layout->addWidget(tree_widget_);
+  setLayout(layout);
 }
 
 void SelectionPanel::onInitialize()
 {
-  tree_widget_->setModel( vis_manager_->getSelectionManager()->getPropertyModel() );
+  tree_widget_->setModel(vis_manager_->getSelectionManager()->getPropertyModel() );
 }
 
-} // namespace rviz
+}  // namespace rviz

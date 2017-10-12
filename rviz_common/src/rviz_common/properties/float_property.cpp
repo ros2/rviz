@@ -30,9 +30,9 @@
 
 #include "./float_property.hpp"
 
-#include <cfloat>  // for FLT_MAX
-
 #include <QtGlobal>
+
+#include <cfloat>  // for FLT_MAX
 
 namespace rviz_common
 {
@@ -99,5 +99,5 @@ bool FloatProperty::multiply(float factor)
   return setValue(factor * getValue().toFloat());
 }
 
-} // end namespace properties
-} // end namespace rviz_common
+}  // end namespace properties
+}  // end namespace rviz_common

@@ -56,7 +56,7 @@ public:
     QObject * receiver = 0);
 
   virtual bool setQuaternion(const Ogre::Quaternion & quaternion);
-  virtual Ogre::Quaternion getQuaternion() const {return quaternion_; }
+  virtual Ogre::Quaternion getQuaternion() const {return quaternion_;}
 
   virtual bool setValue(const QVariant & new_value);
 

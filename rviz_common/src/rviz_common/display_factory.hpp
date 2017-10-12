@@ -30,8 +30,8 @@
 
 // TODO(wjwwood): revist this file when pluginlib solution found
 
-#ifndef SRC__RVIZ_COMMON__DISPLAY_FACTORY_HPP_
-#define SRC__RVIZ_COMMON__DISPLAY_FACTORY_HPP_
+#ifndef RVIZ_COMMON__DISPLAY_FACTORY_HPP_
+#define RVIZ_COMMON__DISPLAY_FACTORY_HPP_
 
 #include "./display.hpp"
 #include "./pluginlib_factory.hpp"
@@ -60,4 +60,4 @@ protected:
 
 }  // namespace rviz_common
 
-#endif  // SRC__RVIZ_COMMON__DISPLAY_FACTORY_HPP_
+#endif  // RVIZ_COMMON__DISPLAY_FACTORY_HPP_

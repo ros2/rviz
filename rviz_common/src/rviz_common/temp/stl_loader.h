@@ -27,14 +27,16 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OGRE_TOOLS_STL_LOADER_H
-#define OGRE_TOOLS_STL_LOADER_H
+#ifndef RVIZ_COMMON__TEMP__STL_LOADER_H_
+#define RVIZ_COMMON__TEMP__STL_LOADER_H_
 
 #include <OgreVector3.h>
 #include <OgreMesh.h>
 
-#include <vector>
 #include <stdint.h>
+
+#include <string>
+#include <vector>
 
 namespace ogre_tools
 {
@@ -45,10 +47,10 @@ public:
   STLLoader();
   ~STLLoader();
 
-  bool load(const std::string& path);
-  bool load(uint8_t* buffer, const size_t num_bytes, const std::string& origin);
+  bool load(const std::string & path);
+  bool load(uint8_t * buffer, const size_t num_bytes, const std::string & origin);
 
-  Ogre::MeshPtr toMesh(const std::string& name);
+  Ogre::MeshPtr toMesh(const std::string & name);
 
   struct Triangle
   {
@@ -61,9 +63,9 @@ public:
 
 protected:
   //! Load a binary STL file
-  bool load_binary(uint8_t* buffer);
+  bool load_binary(uint8_t * buffer);
 };
 
-}
+}  // namespace ogre_tools
 
-#endif // OGRE_TOOLS_STL_LOADER_H
+#endif  // RVIZ_COMMON__TEMP__STL_LOADER_H_

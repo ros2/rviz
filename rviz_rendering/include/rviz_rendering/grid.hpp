@@ -78,7 +78,8 @@ public:
    * @param g Green color component, in the range [0, 1]
    * @param b Blue color component, in the range [0, 1]
    */
-  Grid(Ogre::SceneManager * manager, Ogre::SceneNode * parent_node, Style style,
+  Grid(
+    Ogre::SceneManager * manager, Ogre::SceneNode * parent_node, Style style,
     uint32_t cell_count, float cell_length, float line_width, const Ogre::ColourValue & color);
   ~Grid();
 
@@ -89,7 +90,7 @@ public:
    *
    * @return The Ogre scene node associated with this grid
    */
-  Ogre::SceneNode * getSceneNode() {return scene_node_; }
+  Ogre::SceneNode * getSceneNode() {return scene_node_;}
 
   /**
    * \brief Sets user data on all ogre objects we own
@@ -97,22 +98,22 @@ public:
   void setUserData(const Ogre::Any & data);
 
   void setStyle(Style style);
-  Style getStyle() {return style_; }
+  Style getStyle() {return style_;}
 
   void setColor(const Ogre::ColourValue & color);
-  Ogre::ColourValue getColor() {return color_; }
+  Ogre::ColourValue getColor() {return color_;}
 
   void setCellCount(uint32_t count);
-  float getCellCount() {return cell_count_; }
+  float getCellCount() {return cell_count_;}
 
   void setCellLength(float len);
-  float getCellLength() {return cell_length_; }
+  float getCellLength() {return cell_length_;}
 
   void setLineWidth(float width);
-  float getLineWidth() {return line_width_; }
+  float getLineWidth() {return line_width_;}
 
   void setHeight(uint32_t count);
-  uint32_t getHeight() {return height_; }
+  uint32_t getHeight() {return height_;}
 
 private:
   Ogre::SceneManager * scene_manager_;

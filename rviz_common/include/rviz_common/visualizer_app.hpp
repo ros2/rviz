@@ -28,11 +28,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef INCLUDE__RVIZ_COMMON__VISUALIZER_APP_HPP_
-#define INCLUDE__RVIZ_COMMON__VISUALIZER_APP_HPP_
+#ifndef RVIZ_COMMON__VISUALIZER_APP_HPP_
+#define RVIZ_COMMON__VISUALIZER_APP_HPP_
 
 #include <QApplication>
 #include <QObject>
+
+#include <string>
 
 class QTimer;
 
@@ -72,4 +74,4 @@ private:
 
 }  // namespace rviz_common
 
-#endif  // INCLUDE__RVIZ_COMMON__VISUALIZER_APP_HPP_
+#endif  // RVIZ_COMMON__VISUALIZER_APP_HPP_

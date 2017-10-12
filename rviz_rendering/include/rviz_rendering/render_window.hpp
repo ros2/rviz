@@ -30,10 +30,10 @@
 #ifndef RVIZ_RENDERING__RENDER_WINDOW_HPP_
 #define RVIZ_RENDERING__RENDER_WINDOW_HPP_
 
-#include <functional>
-
 #include <QObject>
 #include <QWindow>
+
+#include <functional>
 
 // TODO(wjwwood): remove this when the camera can be abstracted
 namespace Ogre
@@ -77,11 +77,11 @@ public:
   void
   render();
 
-  using onRenderWindowMouseEventsCallback = std::function<void (QMouseEvent * event)>;
+  using onRenderWindowMouseEventsCallback = std::function<void(QMouseEvent * event)>;
   void
   setOnRenderWindowMouseEventsCallback(onRenderWindowMouseEventsCallback callback);
 
-  using onRenderWindowWheelEventsCallback = std::function<void (QWheelEvent * event)>;
+  using onRenderWindowWheelEventsCallback = std::function<void(QWheelEvent * event)>;
   void
   setOnRenderWindowWheelEventsCallback(onRenderWindowWheelEventsCallback callback);
 

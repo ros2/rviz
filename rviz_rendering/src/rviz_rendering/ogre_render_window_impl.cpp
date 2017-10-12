@@ -109,7 +109,8 @@ RenderWindowImpl::~RenderWindowImpl()
 void
 RenderWindowImpl::render()
 {
-  printf("in RenderWindowImpl::render(), camera pointer is: %p\n", (void *)ogre_camera_);
+  printf("in RenderWindowImpl::render(), camera pointer is: %p\n",
+    reinterpret_cast<void *>(ogre_camera_));
   // How we tied in the render function for OGre3D with QWindow's render function.
   // This is what gets call repeatedly.
   // Note that we don't call this function directly; rather we use the renderNow()
@@ -478,7 +479,8 @@ void RenderWindowImpl::setCameraAspectRatio()
   // auto height = parent_->height();
   auto height = parent_->height() ? parent_->height() : 100;
   if (ogre_camera_) {
-    printf("%f / %f = %f\n", Ogre::Real(width), Ogre::Real(height), Ogre::Real(width) / Ogre::Real(height));
+    printf("%f / %f = %f\n", Ogre::Real(width), Ogre::Real(height),
+      Ogre::Real(width) / Ogre::Real(height));
     ogre_camera_->setAspectRatio(Ogre::Real(width) / Ogre::Real(height));
     // if (right_ogre_camera_) {
     //   right_ogre_camera_->setAspectRatio(Ogre::Real(width()) / Ogre::Real(height()));

@@ -28,8 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SRC__RVIZ_COMMON__NEW_OBJECT_DIALOG_HPP_
-#define SRC__RVIZ_COMMON__NEW_OBJECT_DIALOG_HPP_
+#ifndef RVIZ_COMMON__NEW_OBJECT_DIALOG_HPP_
+#define RVIZ_COMMON__NEW_OBJECT_DIALOG_HPP_
 
 #include <QDialog>
 
@@ -117,4 +117,4 @@ private:
 
 }  // namespace rviz_common
 
-#endif  // SRC__RVIZ_COMMON__NEW_OBJECT_DIALOG_HPP_
+#endif  // RVIZ_COMMON__NEW_OBJECT_DIALOG_HPP_

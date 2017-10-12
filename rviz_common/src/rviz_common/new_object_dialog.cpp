@@ -104,12 +104,14 @@ NewObjectDialog::NewObjectDialog(
   setLayout(main_layout);
 
   //***** Connections
-  connect(tree, SIGNAL(currentItemChanged(QTreeWidgetItem *,QTreeWidgetItem *)),
+  // *INDENT-OFF* - uncrustify cannot deal with commas here
+  connect(tree, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)),
     this, SLOT(onDisplaySelected(QTreeWidgetItem *)));
-  connect(tree, SIGNAL(itemActivated(QTreeWidgetItem *,int)),
+  connect(tree, SIGNAL(itemActivated(QTreeWidgetItem *, int)),
     this, SLOT(accept()));
   connect(button_box_, SIGNAL(accepted()), this, SLOT(accept()));
   connect(button_box_, SIGNAL(rejected()), this, SLOT(reject()));
+  // *INDENT-ON*
 
   if (display_name_output_) {
     connect(name_editor_, SIGNAL(textEdited(const QString&)),
@@ -185,7 +187,6 @@ void NewObjectDialog::onDisplaySelected(QTreeWidgetItem * selected_item)
           name += QString::number(counter);
         }
         ++counter;
-
       } while (disallowed_display_names_.contains(name));
 
       name_editor_->setText(name);

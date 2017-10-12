@@ -25,8 +25,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RESOURCE_RETRIEVER_RETRIEVER_H
-#define RESOURCE_RETRIEVER_RETRIEVER_H
+#ifndef RVIZ_COMMON__TEMP__RESOURCE_RETRIEVER__RETRIEVER_H_
+#define RVIZ_COMMON__TEMP__RESOURCE_RETRIEVER__RETRIEVER_H_
 
 #include <cstdint>
 #include <memory>
@@ -41,7 +41,7 @@ namespace resource_retriever
 class Exception : public std::runtime_error
 {
 public:
-  Exception(const std::string& file, const std::string& error_msg)
+  Exception(const std::string & file, const std::string & error_msg)
   : std::runtime_error("Error retrieving file [" + file + "]: " + error_msg)
   {}
 };
@@ -75,14 +75,14 @@ public:
    * \return The file, loaded into memory
    * \throws resource_retriever::Exception if anything goes wrong.
    */
-  MemoryResource get(const std::string& url);
+  MemoryResource get(const std::string & url);
 
 private:
   Retriever(const Retriever & ret) = delete;
 
-  CURL* curl_handle_;
+  CURL * curl_handle_;
 };
 
-} // namespace resource_retriever
+}  // namespace resource_retriever
 
-#endif // RESOURCE_RETRIEVER_RETRIEVER_H
+#endif  // RVIZ_COMMON__TEMP__RESOURCE_RETRIEVER__RETRIEVER_H_

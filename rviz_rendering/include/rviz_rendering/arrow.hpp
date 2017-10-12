@@ -70,7 +70,8 @@ public:
    * @param head_length Length of the arrow's head
    * @param head_diameter Diameter of the arrow's head
    */
-  Arrow(Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node = 0,
+  Arrow(
+    Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node = 0,
     float shaft_length = 1.0f, float shaft_diameter = 0.1f,
     float head_length = 0.3f, float head_diameter = 0.2f);
   virtual ~Arrow();
@@ -142,15 +143,15 @@ public:
    * \brief Get the scene node associated with this arrow
    * @return the scene node associated with this arrow
    */
-  Ogre::SceneNode * getSceneNode() {return scene_node_; }
+  Ogre::SceneNode * getSceneNode() {return scene_node_;}
 
   /**
    * \brief Sets user data on all ogre objects we own
    */
   void setUserData(const Ogre::Any & data);
 
-  Shape * getShaft() {return shaft_; }
-  Shape * getHead() {return head_; }
+  Shape * getShaft() {return shaft_;}
+  Shape * getHead() {return head_;}
 
 private:
   Ogre::SceneNode * scene_node_;
