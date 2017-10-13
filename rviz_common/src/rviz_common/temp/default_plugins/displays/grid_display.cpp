@@ -54,7 +54,14 @@
 #include "../../../selection/selection_manager.hpp"
 
 using rviz_rendering::Grid;
-using namespace rviz_common::properties;  // NOLINT revisit later on
+using rviz_common::properties::ColorProperty;
+using rviz_common::properties::EnumProperty;
+using rviz_common::properties::FloatProperty;
+using rviz_common::properties::IntProperty;
+using rviz_common::properties::StatusProperty;
+using rviz_common::properties::TfFrameProperty;
+using rviz_common::properties::VectorProperty;
+using rviz_common::properties::qtToOgre;
 
 namespace rviz_common
 {

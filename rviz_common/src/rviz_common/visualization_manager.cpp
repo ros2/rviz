@@ -604,8 +604,8 @@ Display * VisualizationManager::createDisplay(
 
 double VisualizationManager::getWallClock()
 {
-  using namespace std::chrono;  // NOLINT
-  return duration_cast<duration<double>>(system_clock::now().time_since_epoch()).count();
+  return std::chrono::duration_cast<std::chrono::duration<double>>(
+    std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
 double VisualizationManager::getROSTime()
@@ -615,8 +615,7 @@ double VisualizationManager::getROSTime()
 
 double VisualizationManager::getWallClockElapsed()
 {
-  using namespace std::chrono;  // NOLINT
-  return duration_cast<duration<double>>(wall_clock_elapsed_).count();
+  return std::chrono::duration_cast<std::chrono::duration<double>>(wall_clock_elapsed_).count();
 }
 
 double VisualizationManager::getROSTimeElapsed()
