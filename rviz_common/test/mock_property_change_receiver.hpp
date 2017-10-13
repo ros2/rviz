@@ -33,17 +33,20 @@
 
 #include <rviz_common/properties/property.hpp>
 
-namespace rviz_common{
+namespace rviz_common
+{
 
-namespace properties {
+namespace properties
+{
 
 class MockPropertyChangeReceiver : public QObject
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   MockPropertyChangeReceiver(Property * prop);
-  void reset() { result_ = ""; }
-  QString result() { return result_; }
+  void reset() {result_ = "";}
+  QString result() {return result_;}
 
 public Q_SLOTS:
   void aboutToChange();

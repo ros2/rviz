@@ -32,7 +32,7 @@
 #include "mock_display_group.hpp"
 #include "mock_display.hpp"
 
-Display * MockDisplayGroup::createDisplay(const QString &class_id)
+Display * MockDisplayGroup::createDisplay(const QString & class_id)
 {
   if (class_id == "MockDisplay") {
     return new MockDisplay;
@@ -45,6 +45,7 @@ Display * MockDisplayGroup::createDisplay(const QString &class_id)
 
 void MockDisplayGroup::onEnableChanged() {}
 
-void MockDisplayGroup::initialize(DisplayContext * context) {
+void MockDisplayGroup::initialize(DisplayContext * context)
+{
   (void)context;
 }

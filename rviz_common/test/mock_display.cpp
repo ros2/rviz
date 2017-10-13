@@ -34,16 +34,17 @@ namespace rviz_common
 
 MockDisplay::MockDisplay()
 {
-  count_ = new properties::Property( "Count", 10, "How many?", this );
-  style_ = new properties::Property( "Style", "chunky", "What style?", this );
-  pi_ = new properties::Property( "Pi", 3.14159, "Circumference over diameter", this );
-  offset_ = new properties::VectorProperty( "Offset", Ogre::Vector3( 1, 2, 3 ), "Translation", this );
-  color_ = new properties::ColorProperty( "Color", QColor( 10, 20, 30 ), "Color", this );
+  count_ = new properties::Property("Count", 10, "How many?", this);
+  style_ = new properties::Property("Style", "chunky", "What style?", this);
+  pi_ = new properties::Property("Pi", 3.14159, "Circumference over diameter", this);
+  offset_ = new properties::VectorProperty("Offset", Ogre::Vector3(1, 2, 3), "Translation", this);
+  color_ = new properties::ColorProperty("Color", QColor(10, 20, 30), "Color", this);
 }
 
 void MockDisplay::onEnableChanged() {}
 
-void MockDisplay::initialize(DisplayContext * context) {
+void MockDisplay::initialize(DisplayContext * context)
+{
   (void)context;
 }
 

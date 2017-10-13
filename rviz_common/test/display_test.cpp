@@ -44,16 +44,15 @@
 
 using namespace rviz_common;
 
-TEST(Display, load_properties)
-{
+TEST(Display, load_properties) {
   std::stringstream input(
     "Name: sample\n"
-      "Enabled: true\n"
-      "Count: 7\n"
-      "Pi: 3.2\n"
-      "Offset: {X: -1, Y: 1.1, Z: 1.1e3}\n"
-      "Color: white\n"
-      "Style: loosey goosey\n");
+    "Enabled: true\n"
+    "Count: 7\n"
+    "Pi: 3.2\n"
+    "Offset: {X: -1, Y: 1.1, Z: 1.1e3}\n"
+    "Color: white\n"
+    "Style: loosey goosey\n");
 
   YamlConfigReader reader;
   Config config;
@@ -73,27 +72,26 @@ TEST(Display, load_properties)
   EXPECT_TRUE(d.getValue().toBool());
 }
 
-TEST(DisplayGroup, load_properties)
-{
+TEST(DisplayGroup, load_properties) {
   std::stringstream input(
     "Name: root\n"
-      "Enabled: true\n"
-      "Displays:\n"
-      " -\n"
-      "   Class: MockDisplay\n"
-      "   Name: Steven\n"
-      "   Enabled: false\n"
-      "   Count: 17\n"
-      " -\n"
-      "   Name: sub group\n"
-      "   Class: DisplayGroup\n"
-      "   Enabled: true\n"
-      "   Displays:\n"
-      "    -\n"
-      "      Class: MockDisplay\n"
-      "      Name: Curly\n"
-      "      Enabled: false\n"
-      "      Count: 900\n"
+    "Enabled: true\n"
+    "Displays:\n"
+    " -\n"
+    "   Class: MockDisplay\n"
+    "   Name: Steven\n"
+    "   Enabled: false\n"
+    "   Count: 17\n"
+    " -\n"
+    "   Name: sub group\n"
+    "   Class: DisplayGroup\n"
+    "   Enabled: true\n"
+    "   Displays:\n"
+    "    -\n"
+    "      Class: MockDisplay\n"
+    "      Name: Curly\n"
+    "      Enabled: false\n"
+    "      Count: 900\n"
   );
 
   YamlConfigReader reader;
@@ -109,8 +107,7 @@ TEST(DisplayGroup, load_properties)
   EXPECT_EQ(900, g.subProp("sub group")->subProp("Curly")->subProp("Count")->getValue().toInt());
 }
 
-TEST(Display, save_properties)
-{
+TEST(Display, save_properties) {
   MockDisplay d;
   d.setName("Steven");
   d.subProp("Count")->setValue(37);
@@ -123,7 +120,7 @@ TEST(Display, save_properties)
   // Since we instantiated the display directly instead of using the
   // DisplayFactory, it won't know its class name.
   EXPECT_EQ(std::string(
-    "Class: \"\"\n"
+      "Class: \"\"\n"
       "Color: 10; 20; 30\n"
       "Count: 37\n"
       "Enabled: false\n"
@@ -136,11 +133,10 @@ TEST(Display, save_properties)
       "Style: chunky\n"
       "Value: false\n"
 
-  ), out.toStdString());
+    ), out.toStdString());
 }
 
-TEST(DisplayGroup, save_properties)
-{
+TEST(DisplayGroup, save_properties) {
   MockDisplayGroup g;
   g.setName("Charles");
 
@@ -162,7 +158,7 @@ TEST(DisplayGroup, save_properties)
   // Since we instantiated the display directly instead of using the
   // DisplayFactory, it won't know its class name.
   EXPECT_EQ(std::string(
-    "Class: \"\"\n"
+      "Class: \"\"\n"
       "Displays:\n"
       "  - Class: \"\"\n"
       "    Color: 10; 20; 30\n"
@@ -190,7 +186,7 @@ TEST(DisplayGroup, save_properties)
       "    Value: false\n"
       "Enabled: false\n"
       "Name: Charles\n"
-  ), out.toStdString());
+    ), out.toStdString());
 }
 
 int main(int argc, char ** argv)

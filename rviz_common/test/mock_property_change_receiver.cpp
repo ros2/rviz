@@ -28,12 +28,14 @@
  */
 #include "mock_property_change_receiver.hpp"
 
-namespace rviz_common {
+namespace rviz_common
+{
 
-namespace properties {
+namespace properties
+{
 
-MockPropertyChangeReceiver::MockPropertyChangeReceiver( Property* property )
-  : property_( property )
+MockPropertyChangeReceiver::MockPropertyChangeReceiver(Property * property)
+: property_(property)
 {}
 
 void MockPropertyChangeReceiver::aboutToChange()

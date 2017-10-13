@@ -36,11 +36,13 @@
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/properties/color_property.hpp"
 
-namespace rviz_common {
+namespace rviz_common
+{
 
 class MockDisplay : public Display
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   MockDisplay();
 

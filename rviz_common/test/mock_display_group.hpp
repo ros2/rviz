@@ -38,7 +38,7 @@ class MockDisplayGroup : public DisplayGroup
 {
 
 public:
-  Display * createDisplay(const QString &class_id);
+  Display * createDisplay(const QString & class_id);
   void onEnableChanged();
   void initialize(DisplayContext * context);
 };
