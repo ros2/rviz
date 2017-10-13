@@ -49,10 +49,10 @@
 #include <OgreOverlaySystem.h>
 #include <RenderSystems/GL/OgreGLPlugin.h>
 
-#include <QDir>
-
 #include <cstdint>
 #include <string>
+
+#include <QDir> // NOLINT
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop

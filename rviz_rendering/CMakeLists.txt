@@ -48,7 +48,8 @@ endif()
 # These need to be added in the add_library() call so AUTOMOC detects them.
 set(headers_with_q_object
   include/rviz_rendering/render_window.hpp
-  src/rviz_rendering/string_helper.hpp)
+  src/rviz_rendering/string_helper.hpp
+)
 
 add_library(rviz_rendering
   ${headers_with_q_object}
@@ -128,6 +129,12 @@ if(TARGET Qt5::windeployqt)
     )
 endif()
 
+set(rviz_rendering_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/cmake")
+include(${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/register_rviz_ogre_media_exports_hook-extras.cmake)
+
+install(DIRECTORY src/cmake
+        DESTINATION share/${PROJECT_NAME})
+
 install(TARGETS rendering_example DESTINATION bin)
 
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/ogre_media"
@@ -151,5 +158,9 @@ if(BUILD_TESTING)
         target_link_libraries(test_rviz_rendering ${PROJECT_NAME})
     endif()
 endif()
+
+list(APPEND ${PROJECT_NAME}_CONFIG_EXTRAS
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/register_rviz_ogre_media_exports_hook-extras.cmake"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/register_rviz_ogre_media_exports.cmake")
 
 ament_package()

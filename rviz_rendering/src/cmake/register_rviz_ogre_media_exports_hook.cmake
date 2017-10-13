@@ -25,26 +25,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# Register ogre_media resources and install the folders
-#
-# :param DIRECTORIES: list of directories to be added as
-#   rviz_ogre_media_exports. Directories will only be
-#   added as shallow directories and must be relative
-#   to CMAKE_CURRENT_SOURCE_DIR.
-# :type DIRECTORIES: string (muliple strings possible, relative paths)
-
-function(register_rviz_ogre_media_exports)
-    cmake_parse_arguments(ARGUMENTS "" "" "DIRECTORIES" ${ARGN})
-    if(NOT PROJECT_NAME)
-        message(FATAL_ERROR "PROJECT_NAME not set. You must call project() before adding resources")
-    endif()
-
-    foreach(DIR ${ARGUMENTS_DIRECTORIES})
-        if(NOT IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${DIR}")
-            message(FATAL_ERROR "Directory ${DIR} does not exist.
-                Paths must be specified relative to CMAKE_CURRENT_SOURCE_DIR")
-        endif()
-        list(APPEND OGRE_MEDIA_RESOURCE_DIRS ${DIR})
+if(NOT "${OGRE_MEDIA_RESOURCE_DIRS}" STREQUAL "")
+    message(STATUS "Deploy OGRE media")
+    foreach(DIR ${OGRE_MEDIA_RESOURCE_DIRS})
+        set(OGRE_MEDIA_RESOURCE_FILE "${OGRE_MEDIA_RESOURCE_FILE}${PROJECT_NAME}/${DIR}\n")
     endforeach()
-    set(OGRE_MEDIA_RESOURCE_DIRS ${OGRE_MEDIA_RESOURCE_DIRS} PARENT_SCOPE)
-endfunction()
+    ament_index_register_resource(rviz_ogre_media_exports CONTENT ${OGRE_MEDIA_RESOURCE_FILE})
+
+    install(DIRECTORY ${OGRE_MEDIA_RESOURCE_DIRS}
+        DESTINATION "${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}"
+        USE_SOURCE_PERMISSIONS)
+endif()
