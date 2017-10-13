@@ -39,7 +39,7 @@
 
 #include "mock_property_change_receiver.hpp"
 
-using namespace rviz_common::properties;
+using namespace rviz_common::properties;  // NOLINT
 
 TEST(Property, name) {
   Property p;

@@ -48,6 +48,6 @@ void MockPropertyChangeReceiver::changed()
   result_ += " changed, v=" + property_->getValue().toString();
 }
 
-} // end namespace properties
+}  // end namespace properties
 
-} // end namespace rviz_common
+}  // end namespace rviz_common

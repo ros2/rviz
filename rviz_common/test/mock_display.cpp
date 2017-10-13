@@ -48,4 +48,4 @@ void MockDisplay::initialize(DisplayContext * context)
   (void)context;
 }
 
-} // end namespace rviz
+}  // end namespace rviz_common

@@ -32,17 +32,18 @@
 #include <QApplication>
 
 #include <sstream>
+#include <string>
 
-#include <rviz_common/properties/vector_property.hpp>
-#include <rviz_common/properties/color_property.hpp>
-#include <rviz_common/config.hpp>
-#include <rviz_common/yaml_config_reader.hpp>
-#include <rviz_common/yaml_config_writer.hpp>
+#include "rviz_common/properties/vector_property.hpp"
+#include "rviz_common/properties/color_property.hpp"
+#include "rviz_common/config.hpp"
+#include "rviz_common/yaml_config_reader.hpp"
+#include "rviz_common/yaml_config_writer.hpp"
 
 #include "mock_display.hpp"
 #include "mock_display_group.hpp"
 
-using namespace rviz_common;
+using namespace rviz_common;  // NOLINT
 
 TEST(Display, load_properties) {
   std::stringstream input(

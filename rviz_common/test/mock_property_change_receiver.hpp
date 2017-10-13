@@ -26,8 +26,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef MOCK_PROPERTY_CHANGE_RECEIVER_HPP
-#define MOCK_PROPERTY_CHANGE_RECEIVER_HPP
+#ifndef MOCK_PROPERTY_CHANGE_RECEIVER_HPP_
+#define MOCK_PROPERTY_CHANGE_RECEIVER_HPP_
 
 #include <QObject>
 
@@ -44,7 +44,7 @@ class MockPropertyChangeReceiver : public QObject
   Q_OBJECT
 
 public:
-  MockPropertyChangeReceiver(Property * prop);
+  explicit MockPropertyChangeReceiver(Property * prop);
   void reset() {result_ = "";}
   QString result() {return result_;}
 
@@ -57,8 +57,8 @@ private:
   Property * property_;
 };
 
-} // end namespace properties
+}  // end namespace properties
 
-} // end namespace rviz_common
+}  // end namespace rviz_common
 
-#endif // MOCK_PROPERTY_CHANGE_RECEIVER_HPP
+#endif  // MOCK_PROPERTY_CHANGE_RECEIVER_HPP_

@@ -27,20 +27,19 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON_MOCK_DISPLAY_GROUP_HPP
-#define RVIZ_COMMON_MOCK_DISPLAY_GROUP_HPP
+#ifndef MOCK_DISPLAY_GROUP_HPP_
+#define MOCK_DISPLAY_GROUP_HPP_
 
 #include "rviz_common/display_group.hpp"
 
-using namespace rviz_common;
+using namespace rviz_common;  // NOLINT
 
 class MockDisplayGroup : public DisplayGroup
 {
-
 public:
   Display * createDisplay(const QString & class_id);
   void onEnableChanged();
   void initialize(DisplayContext * context);
 };
 
-#endif //RVIZ_COMMON_MOCK_DISPLAY_GROUP_HPP
+#endif  // MOCK_DISPLAY_GROUP_HPP_

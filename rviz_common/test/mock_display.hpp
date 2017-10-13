@@ -28,8 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MOCK_DISPLAY_HPP
-#define MOCK_DISPLAY_HPP
+#ifndef MOCK_DISPLAY_HPP_
+#define MOCK_DISPLAY_HPP_
 
 #include "rviz_common/display.hpp"
 
@@ -55,6 +55,6 @@ public:
   void initialize(DisplayContext * context);
 };
 
-} // end namespace rviz_common
+}  // end namespace rviz_common
 
-#endif // MOCK_DISPLAY_HPP
+#endif  // MOCK_DISPLAY_HPP_

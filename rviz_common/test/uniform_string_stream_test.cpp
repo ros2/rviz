@@ -27,12 +27,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <gtest/gtest.h>
+
 #include <locale>
 
-#include <gtest/gtest.h>
-#include <rviz_common/uniform_string_stream.hpp>
+#include "rviz_common/uniform_string_stream.hpp"
 
-using namespace rviz_common;
+using namespace rviz_common;  // NOLINT
 
 TEST(UniformStringStream, parse_floats) {
   UniformStringStream uss("1,2 3.4 5,6e2");
