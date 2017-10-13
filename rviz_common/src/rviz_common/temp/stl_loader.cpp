@@ -80,13 +80,13 @@ bool STLLoader::load(const std::string & path)
 
   // find the file size
   fseek(input, 0, SEEK_END);
-  long fileSize = ftell(input);  // NOLINT maybe use int64 instead
+  long fileSize = ftell(input); // NOLINT ftell returns long
   rewind(input);
 
   std::vector<uint8_t> buffer_vec(fileSize);
   uint8_t * buffer = &buffer_vec[0];
 
-  long num_bytes_read = fread(buffer, 1, fileSize, input);  // NOLINT maybe use int64 instead
+  long num_bytes_read = fread(buffer, 1, fileSize, input); // NOLINT fread returns size_t, use long for comparison in next line
   if (num_bytes_read != fileSize) {
     fprintf(stderr, "STLLoader::load( \"%s\" ) only read %ld bytes out of total %ld.",
       path.c_str(), num_bytes_read, fileSize);
