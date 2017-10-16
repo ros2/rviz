@@ -30,14 +30,14 @@
 #ifndef RVIZ_COMMON__TEMP__ROBOT__ROBOT_H_
 #define RVIZ_COMMON__TEMP__ROBOT__ROBOT_H_
 
+#include <string>
+#include <map>
+
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>
 #include <OgreAny.h>
 
-#include <urdf/model.h>  // can be replaced later by urdf_model/types.h
-
-#include <string>
-#include <map>
+#include <urdf/model.h> // NOLINT: cpplint is unable to handle the include order here  // can be replaced later by urdf_model/types.h
 
 #include "./link_updater.h"
 

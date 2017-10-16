@@ -29,6 +29,10 @@
 
 #include "mesh_loader.h"  // NOLINT cpplint otherwise claims header not included
 
+#include <map>
+#include <string>
+#include <vector>
+
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -72,10 +76,6 @@
 #include <assimp/IOStream.h>
 #include <assimp/IOSystem.h>
 #endif
-
-#include <map>
-#include <string>
-#include <vector>
 
 #include "./resource_retriever/retriever.h"
 #include "./stl_loader.h"

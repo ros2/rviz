@@ -30,6 +30,11 @@
 
 #include "./visualization_frame.hpp"
 
+#include <fstream>
+#include <memory>
+#include <string>
+#include <utility>
+
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -41,14 +46,6 @@
 #ifndef _WIN32
 # pragma GCC diagnostic pop
 #endif
-
-#include <tf2_ros/buffer.h>
-#include <tf2_ros/transform_listener.h>
-
-#include <rviz_common/logging.hpp>
-// TODO(wjwwood): see if this is needed anymore
-#include <rviz_rendering/initialization.hpp>
-#include <rviz_rendering/render_window.hpp>
 
 // #include <QAction>
 #include <QApplication>
@@ -70,10 +67,13 @@
 #include <QToolButton>
 // #include <QUrl>
 
-#include <fstream>
-#include <memory>
-#include <string>
-#include <utility>
+#include <tf2_ros/buffer.h>
+#include <tf2_ros/transform_listener.h>
+
+#include <rviz_common/logging.hpp>
+// TODO(wjwwood): see if this is needed anymore
+#include <rviz_rendering/initialization.hpp>
+#include <rviz_rendering/render_window.hpp>
 
 // TODO(wjwwood): readd this once we have a solution for the pluginlib stuff
 // #include "./panel_factory.hpp"

@@ -31,9 +31,9 @@
 #ifndef RVIZ_COMMON__INTERACTIVE_OBJECT_HPP_
 #define RVIZ_COMMON__INTERACTIVE_OBJECT_HPP_
 
-#include <QCursor>
-
 #include <memory>
+
+#include <QCursor> // NOLINT: cpplint is unable to handle the include order here
 
 namespace rviz_common
 {

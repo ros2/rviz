@@ -30,12 +30,12 @@
 
 #include "rviz_common/properties/property.hpp"
 
-#include <QLineEdit>
-#include <QSpinBox>
-
 #include <cstdio>  // for printf()
 #include <climits>  // for INT_MIN and INT_MAX
 #include <string>
+
+#include <QLineEdit> // NOLINT: cpplint is unable to handle the include order here
+#include <QSpinBox> // NOLINT: cpplint is unable to handle the include order here
 
 #include "./float_edit.hpp"
 #include "./property_tree_model.hpp"

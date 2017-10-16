@@ -30,15 +30,15 @@
 #ifndef RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__TF_DISPLAY_H_
 #define RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__TF_DISPLAY_H_
 
-#include <OgreQuaternion.h>
-#include <OgreVector3.h>
-
-#include <tf2/time.h>
-
 #include <map>
 #include <memory>
 #include <set>
 #include <string>
+
+#include <OgreQuaternion.h>
+#include <OgreVector3.h>
+
+#include <tf2/time.h> // NOLINT: cpplint is unable to handle the include order here
 
 #include "../../../selection/forwards.hpp"
 #include "../../../display.hpp"

@@ -30,6 +30,8 @@
 
 #include "rviz_common/view_controller.hpp"
 
+#include <sstream>
+
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -47,8 +49,6 @@
 #include <QFont>
 #include <QKeyEvent>
 #include <Qt>
-
-#include <sstream>
 
 #include "rviz_rendering/render_window.hpp"
 

@@ -29,12 +29,12 @@
 
 #include "tf_link_updater.h"  // NOLINT cpplint otherwise claims header not included
 
+#include <string>
+
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>
 
 // #include <tf2_ors/tf.h>
-
-#include <string>
 
 #include "../../frame_manager.hpp"
 

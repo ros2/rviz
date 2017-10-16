@@ -30,10 +30,10 @@
 #ifndef RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__ROBOT_MODEL_DISPLAY_H_
 #define RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__ROBOT_MODEL_DISPLAY_H_
 
-#include <OgreVector3.h>
-
 #include <map>
 #include <string>
+
+#include <OgreVector3.h>
 
 #include "../../../display.hpp"
 

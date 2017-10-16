@@ -29,15 +29,15 @@
 
 #include "stl_loader.h"  // NOLINT cpplint otherwise claims header not included
 
+#include <string>
+#include <vector>
+
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
 
 #include <OgreManualObject.h>
-
-#include <string>
-#include <vector>
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop

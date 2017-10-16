@@ -30,13 +30,13 @@
 #ifndef RVIZ_COMMON__TEMP__STL_LOADER_H_
 #define RVIZ_COMMON__TEMP__STL_LOADER_H_
 
-#include <OgreVector3.h>
-#include <OgreMesh.h>
-
 #include <stdint.h>
 
 #include <string>
 #include <vector>
+
+#include <OgreVector3.h>
+#include <OgreMesh.h>
 
 namespace ogre_tools
 {

@@ -30,6 +30,9 @@
 #ifndef RVIZ_COMMON__TEMP__ROBOT__ROBOT_JOINT_H_
 #define RVIZ_COMMON__TEMP__ROBOT__ROBOT_JOINT_H_
 
+#include <map>
+#include <string>
+
 #ifndef Q_MOC_RUN
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>
@@ -37,13 +40,10 @@
 #include <OgreMaterial.h>
 #endif
 
-#include <urdf/model.h>
-#include <urdf_model/pose.h>
-
 #include <QObject>
 
-#include <map>
-#include <string>
+#include <urdf/model.h>
+#include <urdf_model/pose.h>
 
 #include "rviz_rendering/object.hpp"
 #include "../../selection/forwards.hpp"

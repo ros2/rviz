@@ -30,6 +30,14 @@
 
 #include "./visualization_manager.hpp"
 
+#include <algorithm>
+#include <chrono>
+#include <functional>
+#include <memory>
+#include <mutex>
+#include <string>
+#include <vector>
+
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -50,14 +58,6 @@
 #include <QCursor>
 #include <QTimer>
 #include <QWindow>
-
-#include <algorithm>
-#include <chrono>
-#include <functional>
-#include <memory>
-#include <mutex>
-#include <string>
-#include <vector>
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop

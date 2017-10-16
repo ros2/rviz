@@ -27,12 +27,16 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "robot_link.h"  // NOLINT cpplint otherwise claims header not included
+
+#include <map>
+#include <string>
+#include <vector>
+
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
-
-#include "robot_link.h"  // NOLINT cpplint otherwise claims header not included
 
 #include <OgreEntity.h>
 #include <OgreMaterial.h>
@@ -49,14 +53,11 @@
 # pragma GCC diagnostic pop
 #endif
 
+#include <QFileInfo>
+
 #include <urdf_model/model.h>
 #include <urdf_model/link.h>
 
-#include <QFileInfo>
-#include <map>
-#include <string>
-
-#include <vector>
 #include "../resource_retriever/retriever.h"
 
 #include "./robot_joint.h"

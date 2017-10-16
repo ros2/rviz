@@ -29,7 +29,8 @@
 
 #include "grid_display.h"  // NOLINT cpplint otherwise claims header not included
 
-#include <boost/bind.hpp>
+#include <stdint.h>
+#include <string>
 
 #ifndef _WIN32
 # pragma GCC diagnostic push
@@ -39,8 +40,7 @@
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 
-#include <stdint.h>
-#include <string>
+#include <boost/bind.hpp>
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop

@@ -29,11 +29,11 @@
 
 #include "./splash_screen.hpp"
 
-#include <QPainter>
-#include <QPoint>
-#include <QCoreApplication>
-
 #include <iostream>
+
+#include <QPainter> // NOLINT: cpplint is unable to handle the include order here
+#include <QPoint> // NOLINT: cpplint is unable to handle the include order here
+#include <QCoreApplication> // NOLINT: cpplint is unable to handle the include order here
 
 #include "./load_resource.hpp"
 #include "env_config.hpp"

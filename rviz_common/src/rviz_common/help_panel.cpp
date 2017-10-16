@@ -29,13 +29,13 @@
 
 #include "rviz_common/help_panel.hpp"
 
-#include <QVBoxLayout>
-#include <QTextBrowser>
-#include <QUrl>
-
-#include <boost/filesystem.hpp>
-
 #include <string>
+
+#include <QVBoxLayout> // NOLINT: cpplint is unable to handle the include order here
+#include <QTextBrowser> // NOLINT: cpplint is unable to handle the include order here
+#include <QUrl> // NOLINT: cpplint is unable to handle the include order here
+
+#include <boost/filesystem.hpp> // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/visualization_manager.hpp"
 
