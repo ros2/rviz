@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./tf_display.h"  // NOLINT cpplint otherwise claims header not included
+#include "tf_display.h"  // NOLINT cpplint otherwise claims header not included
 
 #include <algorithm>
 #include <cassert>

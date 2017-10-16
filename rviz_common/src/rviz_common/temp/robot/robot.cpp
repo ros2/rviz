@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./robot.h"  // NOLINT cpplint otherwise claims header not included
+#include "robot.h"  // NOLINT cpplint otherwise claims header not included
 
 #include <urdf_model/model.h>
 

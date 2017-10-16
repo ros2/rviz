@@ -32,7 +32,7 @@
 # pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
 
-#include "./orbit_view_controller.h"  // NOLINT cpplint otherwise claims header not included
+#include "orbit_view_controller.h"  // NOLINT cpplint otherwise claims header not included
 
 #include <stdint.h>
 
