@@ -114,21 +114,21 @@ set(rviz_common_headers_to_moc
 
 # TODO(wjwwood): remove this later
 list(APPEND rviz_common_headers_to_moc
-  src/rviz_common/temp/default_plugins/view_controllers/orbit_view_controller.h)
+  src/rviz_common/temp/default_plugins/view_controllers/orbit_view_controller.hpp)
 list(APPEND rviz_common_headers_to_moc
-  src/rviz_common/temp/default_plugins/tools/move_tool.h)
+  src/rviz_common/temp/default_plugins/tools/move_tool.hpp)
 list(APPEND rviz_common_headers_to_moc
-  src/rviz_common/temp/default_plugins/displays/grid_display.h)
+  src/rviz_common/temp/default_plugins/displays/grid_display.hpp)
 list(APPEND rviz_common_headers_to_moc
-  src/rviz_common/temp/default_plugins/displays/tf_display.h)
+  src/rviz_common/temp/default_plugins/displays/tf_display.hpp)
 list(APPEND rviz_common_headers_to_moc
-  src/rviz_common/temp/default_plugins/displays/robot_model_display.h)
+  src/rviz_common/temp/default_plugins/displays/robot_model_display.hpp)
 list(APPEND rviz_common_headers_to_moc
-  src/rviz_common/temp/robot/robot.h)
+  src/rviz_common/temp/robot/robot.hpp)
 list(APPEND rviz_common_headers_to_moc
-  src/rviz_common/temp/robot/robot_link.h)
+  src/rviz_common/temp/robot/robot_link.hpp)
 list(APPEND rviz_common_headers_to_moc
-  src/rviz_common/temp/robot/robot_joint.h)
+  src/rviz_common/temp/robot/robot_joint.hpp)
 
 set(rviz_common_source_files
   ${ENV_CONFIG_CPP}

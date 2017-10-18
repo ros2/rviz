@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "grid_display.h"  // NOLINT cpplint otherwise claims header not included
+#include "grid_display.hpp"
 
 #include <stdint.h>
 #include <string>

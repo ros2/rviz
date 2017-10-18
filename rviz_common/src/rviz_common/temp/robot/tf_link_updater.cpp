@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "tf_link_updater.h"  // NOLINT cpplint otherwise claims header not included
+#include "tf_link_updater.hpp"
 
 #include <string>
 

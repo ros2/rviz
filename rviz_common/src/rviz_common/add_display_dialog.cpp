@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./add_display_dialog.h"
+#include "add_display_dialog.hpp"
 
 #include <ros/package.h>
 #include <ros/ros.h>
@@ -50,9 +50,9 @@
 #include <map>
 #include <string>
 
-#include "rviz/load_resource.h"
+#include "load_resource.hpp"
 
-#include "./display_factory.h"
+#include "display_factory.hpp"
 
 namespace rviz
 {

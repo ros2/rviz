@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "move_tool.h"  // NOLINT cpplint otherwise claims header not included
+#include "move_tool.hpp"
 
 #include "../../../display_context.hpp"
 #include "../../../render_panel.hpp"

@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "robot.h"  // NOLINT cpplint otherwise claims header not included
+#include "robot.hpp"
 
 #include <map>
 #include <string>
@@ -51,8 +51,8 @@
 
 #include <urdf_model/model.h>
 
-#include "./robot_link.h"
-#include "./robot_joint.h"
+#include "./robot_link.hpp"
+#include "./robot_joint.hpp"
 
 #include "rviz_common/properties/property.hpp"
 #include "../../properties/enum_property.hpp"

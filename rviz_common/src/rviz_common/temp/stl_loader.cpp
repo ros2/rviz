@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "stl_loader.h"  // NOLINT cpplint otherwise claims header not included
+#include "stl_loader.hpp"
 
 #include <string>
 #include <vector>

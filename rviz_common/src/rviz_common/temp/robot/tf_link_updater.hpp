@@ -27,13 +27,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__TEMP__ROBOT__TF_LINK_UPDATER_H_
-#define RVIZ_COMMON__TEMP__ROBOT__TF_LINK_UPDATER_H_
+#ifndef RVIZ_COMMON__TEMP__ROBOT__TF_LINK_UPDATER_HPP_
+#define RVIZ_COMMON__TEMP__ROBOT__TF_LINK_UPDATER_HPP_
 
 #include <functional>
 #include <string>
 
-#include "./link_updater.h"
+#include "./link_updater.hpp"
 
 namespace tf
 {
@@ -72,4 +72,4 @@ private:
 
 }  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__TEMP__ROBOT__TF_LINK_UPDATER_H_
+#endif  // RVIZ_COMMON__TEMP__ROBOT__TF_LINK_UPDATER_HPP_

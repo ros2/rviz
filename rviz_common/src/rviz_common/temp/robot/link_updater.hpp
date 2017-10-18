@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__TEMP__ROBOT__LINK_UPDATER_H_
-#define RVIZ_COMMON__TEMP__ROBOT__LINK_UPDATER_H_
+#ifndef RVIZ_COMMON__TEMP__ROBOT__LINK_UPDATER_HPP_
+#define RVIZ_COMMON__TEMP__ROBOT__LINK_UPDATER_HPP_
 
 #include <string>
 #include "../../properties/status_property.hpp"
@@ -64,4 +64,4 @@ public:
 
 }  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__TEMP__ROBOT__LINK_UPDATER_H_
+#endif  // RVIZ_COMMON__TEMP__ROBOT__LINK_UPDATER_HPP_

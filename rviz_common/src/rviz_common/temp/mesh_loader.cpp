@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "mesh_loader.h"  // NOLINT cpplint otherwise claims header not included
+#include "mesh_loader.hpp"
 
 #include <map>
 #include <string>
@@ -77,8 +77,8 @@
 #include <assimp/IOSystem.h>
 #endif
 
-#include "./resource_retriever/retriever.h"
-#include "./stl_loader.h"
+#include "./resource_retriever/retriever.hpp"
+#include "./stl_loader.hpp"
 
 #include "rviz_common/logging.hpp"
 

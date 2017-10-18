@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__TEMP__ROBOT__ROBOT_H_
-#define RVIZ_COMMON__TEMP__ROBOT__ROBOT_H_
+#ifndef RVIZ_COMMON__TEMP__ROBOT__ROBOT_HPP_
+#define RVIZ_COMMON__TEMP__ROBOT__ROBOT_HPP_
 
 #include <string>
 #include <map>
@@ -39,7 +39,7 @@
 
 #include <urdf/model.h> // NOLINT: cpplint is unable to handle the include order here  // can be replaced later by urdf_model/types.h
 
-#include "./link_updater.h"
+#include "./link_updater.hpp"
 
 namespace Ogre
 {
@@ -294,4 +294,4 @@ protected:
 
 }  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__TEMP__ROBOT__ROBOT_H_
+#endif  // RVIZ_COMMON__TEMP__ROBOT__ROBOT_HPP_

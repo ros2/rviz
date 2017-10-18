@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__TEMP__STL_LOADER_H_
-#define RVIZ_COMMON__TEMP__STL_LOADER_H_
+#ifndef RVIZ_COMMON__TEMP__STL_LOADER_HPP_
+#define RVIZ_COMMON__TEMP__STL_LOADER_HPP_
 
 #include <stdint.h>
 
@@ -68,4 +68,4 @@ protected:
 
 }  // namespace ogre_tools
 
-#endif  // RVIZ_COMMON__TEMP__STL_LOADER_H_
+#endif  // RVIZ_COMMON__TEMP__STL_LOADER_HPP_

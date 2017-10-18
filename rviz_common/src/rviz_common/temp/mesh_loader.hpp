@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__TEMP__MESH_LOADER_H_
-#define RVIZ_COMMON__TEMP__MESH_LOADER_H_
+#ifndef RVIZ_COMMON__TEMP__MESH_LOADER_HPP_
+#define RVIZ_COMMON__TEMP__MESH_LOADER_HPP_
 
 #include <OgreMesh.h>
 #include <string>
@@ -39,4 +39,4 @@ Ogre::MeshPtr loadMeshFromResource(const std::string & resource_path);
 
 }  // namespace rviz
 
-#endif  // RVIZ_COMMON__TEMP__MESH_LOADER_H_
+#endif  // RVIZ_COMMON__TEMP__MESH_LOADER_HPP_
