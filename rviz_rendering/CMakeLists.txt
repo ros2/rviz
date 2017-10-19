@@ -81,11 +81,6 @@ target_include_directories(rviz_rendering
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
-# This will give the library a default directory to fallback to, but it should be overridden.
-target_compile_definitions(rviz_rendering
-  # TODO(wjwwood): this might not be required anymore with static linking
-  PRIVATE "-DRVIZ_RENDERING_OGRE_PLUGIN_DIR=\"${OGRE_PLUGIN_DIR}\""
-)
 
 ament_export_interfaces(rviz_rendering)
 ament_export_dependencies(rviz_ogre_vendor)
