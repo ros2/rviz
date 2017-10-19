@@ -91,13 +91,7 @@ void FrameManager::update()
       case SyncApprox:
         // adjust current time offset to sync source
         current_delta_ = 0.7 * current_delta_ + 0.3 * sync_delta_;
-        try {
-          sync_time_ = rclcpp::Time(rclcpp::Time::now().nanoseconds() - current_delta_);
-        } catch (...) {
-          // TODO(wjwwood): what? figure out what this is for... until then log it...
-          RVIZ_COMMON_LOG_ERROR("unknown exception in FrameManager::update()");
-          sync_time_ = rclcpp::Time::now();
-        }
+        sync_time_ = rclcpp::Time(rclcpp::Time::now().nanoseconds() - current_delta_);
         break;
     }
   }
