@@ -38,7 +38,7 @@
 #include <OgreQuaternion.h>
 #include <OgreVector3.h>
 
-#include <tf2/time.h> // NOLINT: cpplint is unable to handle the include order here
+#include "tf2/time.h"
 
 #include "../../../selection/forwards.hpp"
 #include "../../../display.hpp"

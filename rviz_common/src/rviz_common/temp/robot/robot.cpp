@@ -49,7 +49,7 @@
 # pragma GCC diagnostic pop
 #endif
 
-#include <urdf_model/model.h>
+#include "urdf_model/model.h"
 
 #include "./robot_link.hpp"
 #include "./robot_joint.hpp"

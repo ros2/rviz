@@ -42,8 +42,8 @@
 
 #include <QObject>
 
-#include <urdf/model.h>
-#include <urdf_model/pose.h>
+#include "urdf/model.h"
+#include "urdf_model/pose.h"
 
 #include "rviz_rendering/object.hpp"
 #include "../../selection/forwards.hpp"

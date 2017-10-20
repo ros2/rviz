@@ -42,7 +42,7 @@
 //   https://doc.qt.io/qt-5/qtgui-openglwindow-openglwindow-h.html
 //   https://doc.qt.io/qt-5/qtgui-openglwindow-openglwindow-cpp.html
 
-#include <rviz_rendering/render_window.hpp>
+#include "rviz_rendering/render_window.hpp"
 
 #include <OgreCamera.h>
 

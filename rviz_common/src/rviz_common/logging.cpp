@@ -34,7 +34,7 @@
 #include <mutex>
 #include <string>
 
-#include <rviz_rendering/logging.hpp> // NOLINT: cpplint is unable to handle the include order here
+#include "rviz_rendering/logging.hpp"
 
 namespace
 {

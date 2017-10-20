@@ -37,7 +37,7 @@
 #include <OgreQuaternion.h>
 #include <OgreAny.h>
 
-#include <urdf/model.h> // NOLINT: cpplint is unable to handle the include order here  // can be replaced later by urdf_model/types.h
+#include "urdf/model.h"  // can be replaced later by urdf_model/types.h
 
 #include "./link_updater.hpp"
 

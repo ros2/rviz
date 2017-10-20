@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./visualization_manager.hpp"
+#include "visualization_manager.hpp"
 
 #include <algorithm>
 #include <chrono>
@@ -63,7 +63,7 @@
 # pragma GCC diagnostic pop
 #endif
 
-// #include <tf/transform_listener.h>
+// #include "tf/transform_listener.h"
 #include "rclcpp/time.hpp"
 #include "rviz_rendering/render_window.hpp"
 

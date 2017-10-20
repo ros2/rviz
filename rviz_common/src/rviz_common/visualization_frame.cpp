@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./visualization_frame.hpp"
+#include "visualization_frame.hpp"
 
 #include <fstream>
 #include <memory>
@@ -67,13 +67,13 @@
 #include <QToolButton>
 // #include <QUrl>
 
-#include <tf2_ros/buffer.h>
-#include <tf2_ros/transform_listener.h>
+#include "tf2_ros/buffer.h"
+#include "tf2_ros/transform_listener.h"
 
-#include <rviz_common/logging.hpp>
+#include "rviz_common/logging.hpp"
 // TODO(wjwwood): see if this is needed anymore
-#include <rviz_rendering/initialization.hpp>
-#include <rviz_rendering/render_window.hpp>
+#include "rviz_rendering/initialization.hpp"
+#include "rviz_rendering/render_window.hpp"
 
 // TODO(wjwwood): readd this once we have a solution for the pluginlib stuff
 // #include "./panel_factory.hpp"

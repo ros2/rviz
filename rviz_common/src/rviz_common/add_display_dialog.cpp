@@ -29,26 +29,26 @@
 
 #include "add_display_dialog.hpp"
 
-#include <ros/package.h>
-#include <ros/ros.h>
-
-#include <boost/filesystem.hpp>
-
-#include <QGroupBox>
-#include <QLabel>
-#include <QLineEdit>
-#include <QTextBrowser>
-#include <QVBoxLayout>
-#include <QDialogButtonBox>
-#include <QPushButton>
-#include <QTabWidget>
-#include <QCheckBox>
-#include <QComboBox>
-#include <QHeaderView>
-
 #include <algorithm>
 #include <map>
 #include <string>
+
+#include <boost/filesystem.hpp>  // NOLINT: cpplint is unable to handle the include order here
+
+#include <QGroupBox>  // NOLINT: cpplint is unable to handle the include order here
+#include <QLabel>  // NOLINT: cpplint is unable to handle the include order here
+#include <QLineEdit>  // NOLINT: cpplint is unable to handle the include order here
+#include <QTextBrowser>  // NOLINT: cpplint is unable to handle the include order here
+#include <QVBoxLayout>  // NOLINT: cpplint is unable to handle the include order here
+#include <QDialogButtonBox>  // NOLINT: cpplint is unable to handle the include order here
+#include <QPushButton>  // NOLINT: cpplint is unable to handle the include order here
+#include <QTabWidget>  // NOLINT: cpplint is unable to handle the include order here
+#include <QCheckBox>  // NOLINT: cpplint is unable to handle the include order here
+#include <QComboBox>  // NOLINT: cpplint is unable to handle the include order here
+#include <QHeaderView>  // NOLINT: cpplint is unable to handle the include order here
+
+#include "ros/package.h"
+#include "ros/ros.h"
 
 #include "load_resource.hpp"
 

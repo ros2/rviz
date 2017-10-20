@@ -30,7 +30,7 @@
 #ifndef RVIZ_RENDERING__RVIZ_RENDERING_HPP_
 #define RVIZ_RENDERING__RVIZ_RENDERING_HPP_
 
-#include <rviz_rendering/render_system.hpp>
+#include "rviz_rendering/render_system.hpp"
 
 namespace rviz_rendering
 {

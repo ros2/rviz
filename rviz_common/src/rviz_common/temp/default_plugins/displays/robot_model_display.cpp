@@ -29,6 +29,8 @@
 
 #include "robot_model_display.hpp"
 
+#include <string>
+
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -44,11 +46,9 @@
 #include <QFile>
 
 #include <tinyxml.h>
-#include <urdf/model.h>
+#include "urdf/model.h"
 
-#include <tf2_ros/transform_listener.h>
-
-#include <string>
+#include "tf2_ros/transform_listener.h"
 
 #include "../../robot/robot.hpp"
 #include "../../robot/tf_link_updater.hpp"

@@ -41,11 +41,11 @@
 
 #include <QObject> // NOLINT: cpplint is unable to handle the include order here
 
-#include <geometry_msgs/msg/pose.hpp> // NOLINT: cpplint is unable to handle the include order here
-#include <rclcpp/time.hpp> // NOLINT: cpplint is unable to handle the include order here
+#include "geometry_msgs/msg/pose.hpp"
+#include "rclcpp/time.hpp"
 
 // TODO(wjwwood): reenable this when message_filters is ported.
-// #include <tf2_ros/message_filter.h>
+// #include "tf2_ros/message_filter.h"
 
 namespace tf2_ros
 {
