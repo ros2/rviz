@@ -180,6 +180,7 @@ RenderWindow::exposeEvent(QExposeEvent * expose_event)
   Q_UNUSED(expose_event);
 
   if (this->isExposed()) {
+    impl_->resize(this->width(), this->height());
     this->renderNow();
   }
 }
