@@ -25,14 +25,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./retriever.h"  // NOLINT cpplint otherwise claims header not included
-
-#include <curl/curl.h>
+#include "retriever.hpp"
 
 #include <cstring>
 #include <memory>
 #include <string>
 #include <vector>
+
+#include <curl/curl.h>  // NOLINT: cpplint is unable to handle the include order here
 
 namespace resource_retriever
 {

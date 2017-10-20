@@ -32,7 +32,7 @@
 #include <QTimer>
 #include <QWidget>
 
-#include <rviz_rendering/render_window.hpp>
+#include "rviz_rendering/render_window.hpp"
 
 int main(int argc, char * argv[])
 {

@@ -68,7 +68,7 @@
 # pragma GCC diagnostic pop
 #endif
 
-using namespace Ogre; // NOLINT
+using namespace Ogre;  // NOLINT
 
 #define POS_TEX_BINDING    0
 #define COLOUR_BINDING     1

@@ -27,9 +27,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./robot.h"  // NOLINT cpplint otherwise claims header not included
+#include "robot.hpp"
 
-#include <urdf_model/model.h>
+#include <map>
+#include <string>
+#include <vector>
 
 #ifndef _WIN32
 # pragma GCC diagnostic push
@@ -43,12 +45,14 @@
 #include <OgreMaterial.h>
 #include <OgreResourceGroupManager.h>
 
-#include <map>
-#include <string>
-#include <vector>
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
 
-#include "./robot_link.h"
-#include "./robot_joint.h"
+#include "urdf_model/model.h"
+
+#include "./robot_link.hpp"
+#include "./robot_joint.hpp"
 
 #include "rviz_common/properties/property.hpp"
 #include "../../properties/enum_property.hpp"
@@ -59,10 +63,6 @@
 #include "rviz_rendering/object.hpp"
 #include "rviz_rendering/shape.hpp"
 #include "rviz_rendering/axes.hpp"
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 namespace rviz_common
 {

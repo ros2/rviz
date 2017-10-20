@@ -30,12 +30,12 @@
 
 #include "./property_tree_model.hpp"
 
-#include "rviz_common/properties/property.hpp"
-
-#include <QMimeData>
-#include <QStringList>
-
 #include <cstdio>
+
+#include <QMimeData>  // NOLINT: cpplint is unable to handle the include order here
+#include <QStringList>  // NOLINT: cpplint is unable to handle the include order here
+
+#include "rviz_common/properties/property.hpp"
 
 namespace rviz_common
 {

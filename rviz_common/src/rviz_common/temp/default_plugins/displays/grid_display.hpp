@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__GRID_DISPLAY_H_
-#define RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__GRID_DISPLAY_H_
+#ifndef RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__GRID_DISPLAY_HPP_
+#define RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__GRID_DISPLAY_HPP_
 
 #include "../../../properties/color_property.hpp"
 #include "../../../properties/float_property.hpp"
@@ -98,4 +98,4 @@ private:
 
 }  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__GRID_DISPLAY_H_
+#endif  // RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__GRID_DISPLAY_HPP_

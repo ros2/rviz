@@ -54,7 +54,7 @@
 
 #include <QtWidgets/QtWidgets>
 
-#include <rviz_rendering/logging.hpp>
+#include "rviz_rendering/logging.hpp"
 
 #include "grid.hpp"
 

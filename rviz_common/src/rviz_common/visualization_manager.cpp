@@ -28,7 +28,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./visualization_manager.hpp"
+#include "visualization_manager.hpp"
+
+#include <algorithm>
+#include <chrono>
+#include <functional>
+#include <memory>
+#include <mutex>
+#include <string>
+#include <vector>
 
 #ifndef _WIN32
 # pragma GCC diagnostic push
@@ -51,19 +59,11 @@
 #include <QTimer>
 #include <QWindow>
 
-#include <algorithm>
-#include <chrono>
-#include <functional>
-#include <memory>
-#include <mutex>
-#include <string>
-#include <vector>
-
 #ifndef _WIN32
 # pragma GCC diagnostic pop
 #endif
 
-// #include <tf/transform_listener.h>
+// #include "tf/transform_listener.h"
 #include "rclcpp/time.hpp"
 #include "rviz_rendering/render_window.hpp"
 
@@ -604,8 +604,8 @@ Display * VisualizationManager::createDisplay(
 
 double VisualizationManager::getWallClock()
 {
-  using namespace std::chrono;  // NOLINT
-  return duration_cast<duration<double>>(system_clock::now().time_since_epoch()).count();
+  return std::chrono::duration_cast<std::chrono::duration<double>>(
+    std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
 double VisualizationManager::getROSTime()
@@ -615,8 +615,7 @@ double VisualizationManager::getROSTime()
 
 double VisualizationManager::getWallClockElapsed()
 {
-  using namespace std::chrono;  // NOLINT
-  return duration_cast<duration<double>>(wall_clock_elapsed_).count();
+  return std::chrono::duration_cast<std::chrono::duration<double>>(wall_clock_elapsed_).count();
 }
 
 double VisualizationManager::getROSTimeElapsed()

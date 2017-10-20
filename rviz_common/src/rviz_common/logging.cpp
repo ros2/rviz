@@ -29,12 +29,12 @@
 
 #include "rviz_common/logging.hpp"
 
-#include <rviz_rendering/logging.hpp>
-
 #include <cstdio>
 #include <memory>
 #include <mutex>
 #include <string>
+
+#include "rviz_rendering/logging.hpp"
 
 namespace
 {

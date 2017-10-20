@@ -27,8 +27,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__TEMP__ROBOT__ROBOT_JOINT_H_
-#define RVIZ_COMMON__TEMP__ROBOT__ROBOT_JOINT_H_
+#ifndef RVIZ_COMMON__TEMP__ROBOT__ROBOT_JOINT_HPP_
+#define RVIZ_COMMON__TEMP__ROBOT__ROBOT_JOINT_HPP_
+
+#include <map>
+#include <string>
 
 #ifndef Q_MOC_RUN
 #include <OgreVector3.h>
@@ -37,13 +40,10 @@
 #include <OgreMaterial.h>
 #endif
 
-#include <urdf/model.h>
-#include <urdf_model/pose.h>
-
 #include <QObject>
 
-#include <map>
-#include <string>
+#include "urdf/model.h"
+#include "urdf_model/pose.h"
 
 #include "rviz_rendering/object.hpp"
 #include "../../selection/forwards.hpp"
@@ -195,4 +195,4 @@ private:
 
 }  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__TEMP__ROBOT__ROBOT_JOINT_H_
+#endif  // RVIZ_COMMON__TEMP__ROBOT__ROBOT_JOINT_HPP_

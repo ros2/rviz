@@ -39,10 +39,6 @@
 #include <GL/glx.h>
 #endif
 
-#include <ament_index_cpp/get_resource.hpp>
-#include <rviz_rendering/logging.hpp>
-#include <rviz_rendering/resource_config.hpp>
-
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -53,6 +49,10 @@
 #ifndef _WIN32
 # pragma GCC diagnostic pop
 #endif
+
+#include "ament_index_cpp/get_resource.hpp"
+#include "rviz_rendering/logging.hpp"
+#include "rviz_rendering/resource_config.hpp"
 
 #include "ogre_logging.hpp"
 

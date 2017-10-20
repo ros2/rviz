@@ -30,13 +30,14 @@
 
 #include "rviz_common/visualizer_app.hpp"
 
+#include <iostream>
+
 // #include <OgreGpuProgramManager.h>
 // #include <OgreHighLevelGpuProgramManager.h>
 // #include <OgreMaterialManager.h>
 
-#include <QApplication>
-#include <QTimer>
-#include <iostream>
+#include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
+#include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/logging.hpp"
 #include "rviz_common/ros_integration/init.hpp"

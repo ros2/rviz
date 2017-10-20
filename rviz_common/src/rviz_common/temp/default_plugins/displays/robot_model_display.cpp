@@ -27,12 +27,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "robot_model_display.hpp"
+
+#include <string>
+
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
-
-#include "./robot_model_display.h"  // NOLINT cpplint otherwise claims header not included
 
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
@@ -44,14 +46,12 @@
 #include <QFile>
 
 #include <tinyxml.h>
-#include <urdf/model.h>
+#include "urdf/model.h"
 
-#include <tf2_ros/transform_listener.h>
+#include "tf2_ros/transform_listener.h"
 
-#include <string>
-
-#include "../../robot/robot.h"
-#include "../../robot/tf_link_updater.h"
+#include "../../robot/robot.hpp"
+#include "../../robot/tf_link_updater.hpp"
 #include "../../../display_context.hpp"
 #include "../../../properties/float_property.hpp"
 #include "rviz_common/properties/property.hpp"

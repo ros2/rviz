@@ -27,18 +27,18 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__TF_DISPLAY_H_
-#define RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__TF_DISPLAY_H_
-
-#include <OgreQuaternion.h>
-#include <OgreVector3.h>
-
-#include <tf2/time.h>
+#ifndef RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__TF_DISPLAY_HPP_
+#define RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__TF_DISPLAY_HPP_
 
 #include <map>
 #include <memory>
 #include <set>
 #include <string>
+
+#include <OgreQuaternion.h>
+#include <OgreVector3.h>
+
+#include "tf2/time.h"
 
 #include "../../../selection/forwards.hpp"
 #include "../../../display.hpp"
@@ -187,4 +187,4 @@ public:
 
 }  // end namespace rviz_common
 
-#endif  // RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__TF_DISPLAY_H_
+#endif  // RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__TF_DISPLAY_HPP_

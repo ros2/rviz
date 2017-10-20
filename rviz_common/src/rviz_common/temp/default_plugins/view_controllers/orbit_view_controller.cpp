@@ -27,12 +27,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "orbit_view_controller.hpp"
+
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
-
-#include "./orbit_view_controller.h"  // NOLINT cpplint otherwise claims header not included
 
 #include <stdint.h>
 

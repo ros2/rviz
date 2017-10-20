@@ -42,9 +42,9 @@
 #include "./properties/property_tree_model.hpp"
 #include "rviz_common/logging.hpp"
 
-#include "./temp/default_plugins/displays/grid_display.h"
-#include "./temp/default_plugins/displays/tf_display.h"
-#include "./temp/default_plugins/displays/robot_model_display.h"
+#include "./temp/default_plugins/displays/grid_display.hpp"
+#include "./temp/default_plugins/displays/tf_display.hpp"
+#include "./temp/default_plugins/displays/robot_model_display.hpp"
 
 namespace rviz_common
 {

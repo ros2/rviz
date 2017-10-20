@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./tf_display.h"  // NOLINT cpplint otherwise claims header not included
+#include "tf_display.hpp"
 
 #include <algorithm>
 #include <cassert>
@@ -49,7 +49,7 @@
 # pragma GCC diagnostic pop
 #endif
 
-#include <tf2_ros/transform_listener.h>
+#include "tf2_ros/transform_listener.h"
 
 #include "../../../display_context.hpp"
 #include "../../../frame_manager.hpp"

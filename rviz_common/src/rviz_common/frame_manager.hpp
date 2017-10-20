@@ -31,21 +31,21 @@
 #ifndef RVIZ_COMMON__FRAME_MANAGER_HPP_
 #define RVIZ_COMMON__FRAME_MANAGER_HPP_
 
-#include <geometry_msgs/msg/pose.hpp>
-#include <rclcpp/time.hpp>
-
-#include <OgreVector3.h>
-#include <OgreQuaternion.h>
-
-#include <QObject>
-
 #include <map>
 #include <memory>
 #include <mutex>
 #include <string>
 
+#include <OgreVector3.h>
+#include <OgreQuaternion.h>
+
+#include <QObject>  // NOLINT: cpplint is unable to handle the include order here
+
+#include "geometry_msgs/msg/pose.hpp"
+#include "rclcpp/time.hpp"
+
 // TODO(wjwwood): reenable this when message_filters is ported.
-// #include <tf2_ros/message_filter.h>
+// #include "tf2_ros/message_filter.h"
 
 namespace tf2_ros
 {

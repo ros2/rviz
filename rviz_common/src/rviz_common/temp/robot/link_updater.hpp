@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Willow Garage, Inc.
+ * Copyright (c) 2009, Willow Garage, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,16 +27,41 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__TEMP__MESH_LOADER_H_
-#define RVIZ_COMMON__TEMP__MESH_LOADER_H_
+#ifndef RVIZ_COMMON__TEMP__ROBOT__LINK_UPDATER_HPP_
+#define RVIZ_COMMON__TEMP__ROBOT__LINK_UPDATER_HPP_
 
-#include <OgreMesh.h>
 #include <string>
+#include "../../properties/status_property.hpp"
 
-namespace rviz
+namespace Ogre
 {
-Ogre::MeshPtr loadMeshFromResource(const std::string & resource_path);
+class Vector3;
+class Quaternion;
+}
 
-}  // namespace rviz
+namespace rviz_common
+{
 
-#endif  // RVIZ_COMMON__TEMP__MESH_LOADER_H_
+using properties::StatusLevel;
+
+class LinkUpdater
+{
+public:
+  virtual bool getLinkTransforms(
+    const std::string & link_name, Ogre::Vector3 & visual_position,
+    Ogre::Quaternion & visual_orientation,
+    Ogre::Vector3 & collision_position, Ogre::Quaternion & collision_orientation) const = 0;
+
+  virtual void setLinkStatus(
+    StatusLevel level, const std::string & link_name,
+    const std::string & text) const
+  {
+    (void) level;
+    (void) link_name;
+    (void) text;
+  }
+};
+
+}  // namespace rviz_common
+
+#endif  // RVIZ_COMMON__TEMP__ROBOT__LINK_UPDATER_HPP_

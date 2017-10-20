@@ -38,7 +38,7 @@
 #include "./render_panel.hpp"
 #include "rviz_common/logging.hpp"
 
-#include "./temp/default_plugins/view_controllers/orbit_view_controller.h"
+#include "./temp/default_plugins/view_controllers/orbit_view_controller.hpp"
 
 namespace rviz_common
 {

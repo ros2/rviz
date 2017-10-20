@@ -27,9 +27,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./grid_display.h"  // NOLINT cpplint otherwise claims header not included
+#include "grid_display.hpp"
 
-#include <boost/bind.hpp>
+#include <stdint.h>
+#include <string>
 
 #ifndef _WIN32
 # pragma GCC diagnostic push
@@ -39,8 +40,7 @@
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 
-#include <stdint.h>
-#include <string>
+#include <boost/bind.hpp>
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop
@@ -54,7 +54,14 @@
 #include "../../../selection/selection_manager.hpp"
 
 using rviz_rendering::Grid;
-using namespace rviz_common::properties;  // NOLINT revisit later on
+using rviz_common::properties::ColorProperty;
+using rviz_common::properties::EnumProperty;
+using rviz_common::properties::FloatProperty;
+using rviz_common::properties::IntProperty;
+using rviz_common::properties::StatusProperty;
+using rviz_common::properties::TfFrameProperty;
+using rviz_common::properties::VectorProperty;
+using rviz_common::properties::qtToOgre;
 
 namespace rviz_common
 {

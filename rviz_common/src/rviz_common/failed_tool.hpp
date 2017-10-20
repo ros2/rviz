@@ -29,7 +29,7 @@
 #ifndef RVIZ_COMMON__FAILED_TOOL_HPP_
 #define RVIZ_COMMON__FAILED_TOOL_HPP_
 
-#include "./tool.h"
+#include "tool.hpp"
 
 namespace rviz
 {

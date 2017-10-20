@@ -27,7 +27,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./robot_joint.h"  // NOLINT cpplint otherwise claims header not included
+#include "robot_joint.hpp"
+
+#include <string>
+#include <vector>
 
 #ifndef _WIN32
 # pragma GCC diagnostic push
@@ -40,11 +43,8 @@
 # pragma GCC diagnostic pop
 #endif
 
-#include <string>
-#include <vector>
-
-#include "./robot_link.h"
-#include "./robot.h"
+#include "./robot_link.hpp"
+#include "./robot.hpp"
 
 #include "../../properties/float_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
