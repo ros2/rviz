@@ -32,7 +32,7 @@
 #include <string>
 #include <vector>
 
-#include <curl/curl.h> // NOLINT: cpplint is unable to handle the include order here
+#include <curl/curl.h>  // NOLINT: cpplint is unable to handle the include order here
 
 namespace resource_retriever
 {

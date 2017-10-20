@@ -39,7 +39,7 @@
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>
 
-#include <QObject> // NOLINT: cpplint is unable to handle the include order here
+#include <QObject>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "geometry_msgs/msg/pose.hpp"
 #include "rclcpp/time.hpp"

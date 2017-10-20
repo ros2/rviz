@@ -33,7 +33,7 @@
 
 #include <memory>
 
-#include <QCursor> // NOLINT: cpplint is unable to handle the include order here
+#include <QCursor>  // NOLINT: cpplint is unable to handle the include order here
 
 namespace rviz_common
 {

@@ -28,11 +28,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./float_property.hpp"
+#include "float_property.hpp"
 
 #include <cfloat>  // for FLT_MAX
 
-#include <QtGlobal> // NOLINT: cpplint is unable to handle the include order here
+#include <QtGlobal>  // NOLINT: cpplint is unable to handle the include order here
 
 namespace rviz_common
 {

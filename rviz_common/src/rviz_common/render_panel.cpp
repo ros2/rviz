@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./render_panel.hpp"
+#include "render_panel.hpp"
 
 #include <memory>
 // #include <sstream>
@@ -36,17 +36,17 @@
 // #include <OgreCamera.h>
 // #include <OgreSceneManager.h>
 
-#include <QApplication> // NOLINT: cpplint is unable to handle the include order here
-#include <QGridLayout> // NOLINT: cpplint is unable to handle the include order here
-#include <QMenu> // NOLINT: cpplint is unable to handle the include order here
-#include <QMouseEvent> // NOLINT: cpplint is unable to handle the include order here
-#include <QTimer> // NOLINT: cpplint is unable to handle the include order here
-#include <QWidget> // NOLINT: cpplint is unable to handle the include order here
+#include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
+#include <QGridLayout>  // NOLINT: cpplint is unable to handle the include order here
+#include <QMenu>  // NOLINT: cpplint is unable to handle the include order here
+#include <QMouseEvent>  // NOLINT: cpplint is unable to handle the include order here
+#include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
+#include <QWidget>  // NOLINT: cpplint is unable to handle the include order here
 // TODO(wjwwood): remove
-#include <QDebug> // NOLINT: cpplint is unable to handle the include order here
-#include <QMetaEnum> // NOLINT: cpplint is unable to handle the include order here
-#include <QMetaObject> // NOLINT: cpplint is unable to handle the include order here
-#include <QTime> // NOLINT: cpplint is unable to handle the include order here
+#include <QDebug>  // NOLINT: cpplint is unable to handle the include order here
+#include <QMetaEnum>  // NOLINT: cpplint is unable to handle the include order here
+#include <QMetaObject>  // NOLINT: cpplint is unable to handle the include order here
+#include <QTime>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_rendering/render_window.hpp"
 
