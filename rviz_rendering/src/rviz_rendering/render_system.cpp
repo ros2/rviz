@@ -335,9 +335,14 @@ RenderSystem::setupResources()
   //   throw std::runtime_error(s);
   // }
 
-  // Add paths added as "rviz_ogre_media_exports" resource to ament_index.
+  addAdditionalResourcesFromAmentIndex();
+}
+
+void RenderSystem::addAdditionalResourcesFromAmentIndex() const
+{
   const std::string RVIZ_OGRE_MEDIA_RESOURCE_NAME = "rviz_ogre_media_exports";
-  std::map<std::string, std::string> resource_locations = ament_index_cpp::get_resources(
+  std::map<std::string,
+    std::string> resource_locations = ament_index_cpp::get_resources(
     RVIZ_OGRE_MEDIA_RESOURCE_NAME);
   for (auto resource : resource_locations) {
     std::string content;
@@ -346,7 +351,7 @@ RenderSystem::setupResources()
       &prefix_path))
     {
       std::vector<std::string> filenames =
-        rviz_rendering::string_helper::splitStringIntoTrimmedItems(
+        string_helper::splitStringIntoTrimmedItems(
         content, '\n');
       for (const auto & line : filenames) {
         std::string resource_path = prefix_path + "/share/" + line;

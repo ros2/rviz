@@ -36,14 +36,11 @@
 
 namespace rviz_rendering
 {
-
-class string_helper
+namespace string_helper
 {
-public:
-  static std::vector<std::string>
-  splitStringIntoTrimmedItems(const std::string &, const char);
-};
-
+std::vector<std::string>
+splitStringIntoTrimmedItems(const std::string &, const char);
+}  // namespace string_helper
 }  // namespace rviz_rendering
 
 #endif  // RVIZ_RENDERING__STRING_HELPER_HPP_

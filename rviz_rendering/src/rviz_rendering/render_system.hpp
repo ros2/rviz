@@ -31,6 +31,9 @@
 #ifndef RVIZ_RENDERING__RENDER_SYSTEM_HPP_
 #define RVIZ_RENDERING__RENDER_SYSTEM_HPP_
 
+#include <cstdint>
+#include <string>
+
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Woverloaded-virtual"
@@ -49,14 +52,11 @@
 #include <OgreOverlaySystem.h>
 #include <RenderSystems/GL/OgreGLPlugin.h>
 
-#include <cstdint>
-#include <string>
-
-#include <QDir> // NOLINT
-
 #ifndef _WIN32
 # pragma GCC diagnostic pop
 #endif
+
+#include <QDir> // NOLINT
 
 namespace rviz_rendering
 {
@@ -141,6 +141,8 @@ private:
   setResourceDirectory();
   void
   setupResources();
+  void
+  addAdditionalResourcesFromAmentIndex() const;
   void
   detectGlVersion();
 
