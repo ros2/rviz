@@ -44,8 +44,10 @@ find_library(TINYXML_LIBRARIES NAMES tinyxmld tinyxml)
 find_package(Boost REQUIRED)
 
 find_package(ASSIMP REQUIRED)
+
+# TODO(greimela): Temporary fix for Windows, remove this later
 if(WIN32)
-  set(ASSIMP_LIBRARIES "${ASSIMP_ROOT_DIR}/lib/${ASSIMP_LIBRARIES}.lib")
+  set(ASSIMP_LIBRARIES "${ASSIMP_LIBRARY_DIRS}/${ASSIMP_LIBRARIES}.lib")
 endif()
 
 include(FindCURL)
