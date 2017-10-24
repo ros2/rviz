@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "point_cloud.h"
+#include "rviz_rendering/point_cloud.hpp"
 #include <ros/assert.h>
 
 #include <OgreSceneManager.h>
