@@ -46,6 +46,8 @@
 #include "./temp/default_plugins/displays/tf_display.hpp"
 #include "./temp/default_plugins/displays/robot_model_display.hpp"
 
+#include "src/rviz_default_plugins/point_cloud_display.hpp"
+
 namespace rviz_common
 {
 
@@ -148,6 +150,10 @@ Display * DisplayGroup::createDisplay(const QString & class_id)
   }
   if (class_id == "rviz/RobotModel") {
     Display * disp = new rviz_common::RobotModelDisplay();
+    return disp;
+  }
+  if (class_id == "rviz/PointCloud") {
+    Display * disp = new rviz_default_plugins::PointCloudDisplay();
     return disp;
   }
   RVIZ_COMMON_LOG_WARNING_STREAM("would have loaded a display called " << class_id.toStdString());

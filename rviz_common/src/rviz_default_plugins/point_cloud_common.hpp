@@ -45,7 +45,7 @@
 //# include <message_filters/time_sequencer.h>
 
 //# include <pluginlib/class_loader.h>
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/time.hpp"
 
 # include <sensor_msgs/msg/point_cloud.hpp>
 # include <sensor_msgs/msg/point_cloud2.hpp>
@@ -182,6 +182,9 @@ private:
   void onTransformerOptions(V_string& ops, uint32_t mask);
 
   void loadTransformers();
+  void loadTransformer(PointCloudTransformerPtr trans,
+    std::string name,
+    const std::string& lookup_name);
 
   float getSelectionBoxSize();
   void setPropertiesHidden( const QList<rviz_common::properties::Property*>& props, bool hide );

@@ -316,6 +316,7 @@ void PointCloudSelectionHandler::onDeselect(const rviz_common::selection::Picked
 PointCloudCommon::CloudInfo::CloudInfo()
 : manager_(0)
 , scene_node_(0)
+, position_(Ogre::Vector3::ZERO)  // TODO(greimela): Why is this necessary?
 {}
 
 PointCloudCommon::CloudInfo::~CloudInfo()
@@ -349,10 +350,11 @@ PointCloudCommon::PointCloudCommon( rviz_common::Display* display )
                                       "Rendering mode to use, in order of computational complexity.",
                                       display_, SLOT( updateStyle() ), this );
   style_property_->addOption( "Points", rviz_rendering::PointCloud::RM_POINTS );
-  style_property_->addOption( "Squares", rviz_rendering::PointCloud::RM_SQUARES );
-  style_property_->addOption( "Flat Squares", rviz_rendering::PointCloud::RM_FLAT_SQUARES );
-  style_property_->addOption( "Spheres", rviz_rendering::PointCloud::RM_SPHERES );
-  style_property_->addOption( "Boxes", rviz_rendering::PointCloud::RM_BOXES );
+  // TODO(greimela): Enable as soon as shaders work again
+//  style_property_->addOption( "Squares", rviz_rendering::PointCloud::RM_SQUARES );
+//  style_property_->addOption( "Flat Squares", rviz_rendering::PointCloud::RM_FLAT_SQUARES );
+//  style_property_->addOption( "Spheres", rviz_rendering::PointCloud::RM_SPHERES );
+//  style_property_->addOption( "Boxes", rviz_rendering::PointCloud::RM_BOXES );
 
   point_world_size_property_ = new rviz_common::properties::FloatProperty( "Size (m)", 0.01,
                                                 "Point size in meters.",
@@ -378,14 +380,14 @@ PointCloudCommon::PointCloudCommon( rviz_common::Display* display )
   xyz_transformer_property_ = new rviz_common::properties::EnumProperty( "Position Transformer", "",
                                                 "Set the transformer to use to set the position of the points.",
                                                 display_, SLOT( updateXyzTransformer() ), this );
-  connect( xyz_transformer_property_, SIGNAL( requestOptions( EnumProperty* )),
-           this, SLOT( setXyzTransformerOptions( EnumProperty* )));
+  connect( xyz_transformer_property_, SIGNAL( requestOptions( rviz_common::properties::EnumProperty* )),
+           this, SLOT( setXyzTransformerOptions( rviz_common::properties::EnumProperty* )));
 
   color_transformer_property_ = new rviz_common::properties::EnumProperty( "Color Transformer", "",
                                                   "Set the transformer to use to set the color of the points.",
                                                   display_, SLOT( updateColorTransformer() ), this );
-  connect( color_transformer_property_, SIGNAL( requestOptions( EnumProperty* )),
-           this, SLOT( setColorTransformerOptions( EnumProperty* )));
+  connect( color_transformer_property_, SIGNAL( requestOptions( rviz_common::properties::EnumProperty* )),
+           this, SLOT( setColorTransformerOptions( rviz_common::properties::EnumProperty* )));
 }
 
 void PointCloudCommon::initialize( rviz_common::DisplayContext* context, Ogre::SceneNode* scene_node )
@@ -416,6 +418,13 @@ PointCloudCommon::~PointCloudCommon()
 
 void PointCloudCommon::loadTransformers()
 {
+  loadTransformer(std::make_shared<rviz_default_plugins::AxisColorPCTransformer>(), "AxisColorPCTransformer", "AxisColorPCTransformer");
+  loadTransformer(std::make_shared<rviz_default_plugins::FlatColorPCTransformer>(), "FlatColorPCTransformer", "FlatColorPCTransformer");
+  loadTransformer(std::make_shared<rviz_default_plugins::IntensityPCTransformer>(), "IntensityPCTransformer", "IntensityPCTransformer");
+  loadTransformer(std::make_shared<rviz_default_plugins::RGB8PCTransformer>(), "RGB8PCTransformer", "RGB8PCTransformer");
+  loadTransformer(std::make_shared<rviz_default_plugins::RGBF32PCTransformer>(), "RGBF32PCTransformer", "RGBF32PCTransformer");
+  loadTransformer(std::make_shared<rviz_default_plugins::XYZPCTransformer>(), "XYZPCTransformer", "XYZPCTransformer");
+
 //  std::vector<std::string> classes = transformer_class_loader_->getDeclaredClasses();
 //  std::vector<std::string>::iterator ci;
 //
@@ -447,6 +456,30 @@ void PointCloudCommon::loadTransformers()
 //
 //    transformers_[ name ] = info;
 //  }
+
+
+}
+
+void PointCloudCommon::loadTransformer(
+  PointCloudTransformerPtr trans,
+  std::string name,
+  const std::string& lookup_name) {
+
+  trans->init();
+  connect( trans.get(), SIGNAL( needRetransform() ), this, SLOT( causeRetransform() ));
+
+  TransformerInfo info;
+  info.transformer = trans;
+  info.readable_name = name;
+  info.lookup_name = lookup_name;
+
+  info.transformer->createProperties( display_, PointCloudTransformer::Support_XYZ, info.xyz_props );
+  setPropertiesHidden( info.xyz_props, true );
+
+  info.transformer->createProperties( display_, PointCloudTransformer::Support_Color, info.color_props );
+  setPropertiesHidden( info.color_props, true );
+
+  transformers_[ name ] = info;
 }
 
 void PointCloudCommon::setAutoSize( bool auto_size )
@@ -842,13 +875,13 @@ bool PointCloudCommon::transformCloud(const CloudInfoPtr& cloud_info, bool updat
 
   if ( !cloud_info->scene_node_ )
   {
-    if (!context_->getFrameManager()->getTransform(cloud_info->message_->header, cloud_info->position_, cloud_info->orientation_))
-    {
-      std::stringstream ss;
-      ss << "Failed to transform from frame [" << cloud_info->message_->header.frame_id << "] to frame [" << context_->getFrameManager()->getFixedFrame() << "]";
-      display_->setStatusStd(rviz_common::properties::StatusProperty::Error, "Message", ss.str());
-      return false;
-    }
+//    if (!context_->getFrameManager()->getTransform(cloud_info->message_->header, cloud_info->position_, cloud_info->orientation_))
+//    {
+//      std::stringstream ss;
+//      ss << "Failed to transform from frame [" << cloud_info->message_->header.frame_id << "] to frame [" << context_->getFrameManager()->getFixedFrame() << "]";
+//      display_->setStatusStd(rviz_common::properties::StatusProperty::Error, "Message", ss.str());
+//      return false;
+//    }
   }
 
   Ogre::Matrix4 transform;

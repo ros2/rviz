@@ -115,7 +115,7 @@ Q_SIGNALS:
    * addOption() as needed.  The option list in the EnumProperty will
    * not be cleared before the signal is emitted.
    */
-  void requestOptions(EnumProperty * property_in_need_of_options);
+  void requestOptions(rviz_common::properties::EnumProperty * property_in_need_of_options);
 
 private:
   QStringList strings_;

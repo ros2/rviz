@@ -244,6 +244,7 @@ VisualizationManager::VisualizationManager(
   {
     Ogre::ResourceGroupManager::getSingleton().createResourceGroup("rviz_common");
     this->createDisplay("rviz/Grid", "grid", true);
+    this->createDisplay("rviz/PointCloud", "pointcloud", true);
     // this->createDisplay("rviz/TF", "tf", true);
     // load later...
     QTimer::singleShot(2000, [this]() {

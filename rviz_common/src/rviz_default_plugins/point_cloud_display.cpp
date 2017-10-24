@@ -66,6 +66,21 @@ void PointCloudDisplay::onInitialize()
 {
   MFDClass::onInitialize();
   point_cloud_common_->initialize( context_, scene_node_ );
+
+  auto message = sensor_msgs::msg::PointCloud();
+  message.header = std_msgs::msg::Header();
+  message.header.stamp = rclcpp::Time::now();
+  message.header.frame_id = "base_link";
+
+  geometry_msgs::msg::Point32 p;
+  p.x = 1;
+  p.y = 1;
+  p.z = 1;
+
+  std::vector<geometry_msgs::msg::Point32> points{p};
+  message.points = points;
+  processMessage(std::make_shared<sensor_msgs::msg::PointCloud const>(message));
+  update(0, 0);
 }
 
 void PointCloudDisplay::updateQueueSize()
