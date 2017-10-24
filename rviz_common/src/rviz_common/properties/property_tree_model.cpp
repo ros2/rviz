@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./property_tree_model.hpp"
+#include "rviz_common/properties/property_tree_model.hpp"
 
 #include <cstdio>
 

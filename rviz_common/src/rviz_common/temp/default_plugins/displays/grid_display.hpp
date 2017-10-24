@@ -31,11 +31,11 @@
 #define RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__GRID_DISPLAY_HPP_
 
 #include "rviz_common/properties/color_property.hpp"
-#include "../../../properties/float_property.hpp"
-#include "../../../properties/int_property.hpp"
+#include "rviz_common/properties/float_property.hpp"
+#include "rviz_common/properties/int_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/properties/enum_property.hpp"
-#include "../../../properties/tf_frame_property.hpp"
+#include "rviz_common/properties/tf_frame_property.hpp"
 #include "rviz_common/display.hpp"
 
 namespace rviz_rendering

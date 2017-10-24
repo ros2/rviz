@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./int_property.hpp"
+#include "rviz_common/properties/int_property.hpp"
 
 #include <climits>  // for INT_MAX and INT_MIN
 

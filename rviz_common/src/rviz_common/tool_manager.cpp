@@ -40,7 +40,7 @@
 
 // #include "./failed_tool.hpp"
 #include "rviz_common/properties/property.hpp"
-#include "./properties/property_tree_model.hpp"
+#include "rviz_common/properties/property_tree_model.hpp"
 
 #include "./temp/default_plugins/tools/move_tool.hpp"
 

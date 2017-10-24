@@ -39,7 +39,7 @@
 // TODO(wjwwood): reenable this when pluginlib solution found
 // #include "./display_factory.hpp"
 #include "./failed_display.hpp"
-#include "./properties/property_tree_model.hpp"
+#include "rviz_common/properties/property_tree_model.hpp"
 #include "rviz_common/logging.hpp"
 
 #include "./temp/default_plugins/displays/grid_display.hpp"

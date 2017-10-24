@@ -27,11 +27,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./status_list.hpp"
+#include "rviz_common/properties/status_list.hpp"
 
 #include <cstdio>
 
-#include "./property_tree_model.hpp"
+#include "rviz_common/properties/property_tree_model.hpp"
 
 namespace rviz_common
 {

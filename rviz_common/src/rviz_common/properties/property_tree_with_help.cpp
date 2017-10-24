@@ -27,11 +27,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./property_tree_with_help.hpp"
+#include "rviz_common/properties/property_tree_with_help.hpp"
 
 #include <QTextBrowser>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "./property_tree_widget.hpp"
+#include "rviz_common/properties/property_tree_widget.hpp"
 #include "rviz_common/properties/property.hpp"
 
 namespace rviz_common

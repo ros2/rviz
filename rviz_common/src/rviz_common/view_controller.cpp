@@ -54,9 +54,9 @@
 
 #include "rviz_common/display_context.hpp"
 #include "./load_resource.hpp"
-#include "./properties/bool_property.hpp"
+#include "rviz_common/properties/bool_property.hpp"
 // #include "./properties/enum_property.hpp"
-#include "./properties/float_property.hpp"
+#include "rviz_common/properties/float_property.hpp"
 #include "./selection/selection_manager.hpp"
 #include "./render_panel.hpp"
 

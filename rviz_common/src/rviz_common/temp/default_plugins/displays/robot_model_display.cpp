@@ -53,7 +53,7 @@
 #include "../../robot/robot.hpp"
 #include "../../robot/tf_link_updater.hpp"
 #include "rviz_common/display_context.hpp"
-#include "../../../properties/float_property.hpp"
+#include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/properties/string_property.hpp"
 

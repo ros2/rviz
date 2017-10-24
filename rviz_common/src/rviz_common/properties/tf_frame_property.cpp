@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./tf_frame_property.hpp"
+#include "rviz_common/properties/tf_frame_property.hpp"
 
 #include <algorithm>  // for std::sort
 #include <string>

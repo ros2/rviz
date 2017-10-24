@@ -78,7 +78,7 @@
 // #include "../ogre_helpers/qt_ogre_render_window.hpp"
 // #include "../ogre_helpers/shape.hpp"
 #include "rviz_common/properties/property.hpp"
-#include "../properties/property_tree_model.hpp"
+#include "rviz_common/properties/property_tree_model.hpp"
 #include "../render_panel.hpp"
 // #include "../view_controller.hpp"
 #include "../view_manager.hpp"

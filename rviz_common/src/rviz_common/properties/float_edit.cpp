@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./float_edit.hpp"
+#include "rviz_common/properties/float_edit.hpp"
 
 #include <QDoubleValidator>
 #include <QLocale>

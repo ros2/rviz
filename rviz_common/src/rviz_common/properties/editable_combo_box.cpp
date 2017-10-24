@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./editable_combo_box.hpp"
+#include "rviz_common/properties/editable_combo_box.hpp"
 
 #include <cstdio>
 

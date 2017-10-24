@@ -30,9 +30,9 @@
 
 #include <QColor>
 
-#include "./property_tree_model.hpp"
+#include "rviz_common/properties/property_tree_model.hpp"
 
-#include "./status_property.hpp"
+#include "rviz_common/properties/status_property.hpp"
 #include "../load_resource.hpp"
 
 namespace rviz_common

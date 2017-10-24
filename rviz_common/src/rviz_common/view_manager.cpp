@@ -34,7 +34,7 @@
 #include <cstdio>
 #include <sstream>
 
-#include "./properties/property_tree_model.hpp"
+#include "rviz_common/properties/property_tree_model.hpp"
 #include "./render_panel.hpp"
 #include "rviz_common/logging.hpp"
 
