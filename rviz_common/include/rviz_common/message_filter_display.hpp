@@ -26,24 +26,25 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef MESSAGE_FILTER_DISPLAY_H
-#define MESSAGE_FILTER_DISPLAY_H
+#ifndef RVIZ_COMMON__MESSAGE_FILTER_DISPLAY_HPP_
+#define RVIZ_COMMON__MESSAGE_FILTER_DISPLAY_HPP_
 
 #ifndef Q_MOC_RUN
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 
-#include <message_filters/subscriber.h>
-#include <tf/message_filter.h>
+// TODO(greimela): Add again as soon as the message filter subscriber is ported to ROS 2
+//#include <message_filters/subscriber.h>
+//#include <tf/message_filter.h>
 #endif
 
-#include "rviz/display_context.h"
-#include "rviz/frame_manager.h"
-#include "rviz/properties/ros_topic_property.h"
+#include "rviz_common/display_context.hpp"
+#include "rviz_common/frame_manager.hpp"
+#include "rviz_common/properties/string_property.hpp"
 
-#include "rviz/display.h"
+#include "rviz_common/display.hpp"
 
-namespace rviz
+namespace rviz_common
 {
 
 /** @brief Helper superclass for MessageFilterDisplay, needed because
@@ -55,10 +56,8 @@ Q_OBJECT
 public:
   _RosTopicDisplay()
     {
-      topic_property_ = new RosTopicProperty( "Topic", "",
-                                              "", "",
-                                              this, SLOT( updateTopic() ));
-      unreliable_property_ = new BoolProperty( "Unreliable", false,
+      topic_property_ = new properties::StringProperty( "Topic", "", "", this, SLOT( updateTopic()));
+      unreliable_property_ = new properties::BoolProperty( "Unreliable", false,
                                                "Prefer UDP topic transport",
                                                this,
                                                SLOT( updateTopic() ));
@@ -68,8 +67,8 @@ protected Q_SLOTS:
   virtual void updateTopic() = 0;
 
 protected:
-  RosTopicProperty* topic_property_;
-  BoolProperty* unreliable_property_;
+  properties::StringProperty* topic_property_;
+  properties::BoolProperty* unreliable_property_;
 };
 
 /** @brief Display subclass using a tf::MessageFilter, templated on the ROS message type.
@@ -88,34 +87,34 @@ public:
   typedef MessageFilterDisplay<MessageType> MFDClass;
 
   MessageFilterDisplay()
-    : tf_filter_( NULL )
-    , messages_received_( 0 )
+//    : tf_filter_( NULL )
+    : messages_received_( 0 )
     {
-      QString message_type = QString::fromStdString( ros::message_traits::datatype<MessageType>() );
-      topic_property_->setMessageType( message_type );
-      topic_property_->setDescription( message_type + " topic to subscribe to." );
+//      QString message_type = QString::fromStdString( ros::message_traits::datatype<MessageType>() );
+//      topic_property_->setMessageType( message_type );
+//      topic_property_->setDescription( message_type + " topic to subscribe to." );
     }
 
   virtual void onInitialize()
     {
-      tf_filter_ = new tf::MessageFilter<MessageType>( *context_->getTFClient(),
-                                                       fixed_frame_.toStdString(), 10, update_nh_ );
-
-      tf_filter_->connectInput( sub_ );
-      tf_filter_->registerCallback( boost::bind( &MessageFilterDisplay<MessageType>::incomingMessage, this, _1 ));
-      context_->getFrameManager()->registerFilterForTransformStatusCheck( tf_filter_, this );
+//      tf_filter_ = new tf::MessageFilter<MessageType>( *context_->getTFClient(),
+//                                                       fixed_frame_.toStdString(), 10, update_nh_ );
+//
+//      tf_filter_->connectInput( sub_ );
+//      tf_filter_->registerCallback( boost::bind( &MessageFilterDisplay<MessageType>::incomingMessage, this, _1 ));
+//      context_->getFrameManager()->registerFilterForTransformStatusCheck( tf_filter_, this );
     }
 
   virtual ~MessageFilterDisplay()
     {
       unsubscribe();
-      delete tf_filter_;
+//      delete tf_filter_;
     }
 
   virtual void reset()
     {
       Display::reset();
-      tf_filter_->clear();
+//      tf_filter_->clear();
       messages_received_ = 0;
     }
 
@@ -140,26 +139,26 @@ protected:
         return;
       }
 
-      try
-      {
-        ros::TransportHints transport_hint = ros::TransportHints().reliable();
-        // Determine UDP vs TCP transport for user selection.
-        if (unreliable_property_->getBool())
-        {
-          transport_hint = ros::TransportHints().unreliable();
-        }
-        sub_.subscribe( update_nh_, topic_property_->getTopicStd(), 10, transport_hint);
-        setStatus( StatusProperty::Ok, "Topic", "OK" );
-      }
-      catch( ros::Exception& e )
-      {
-        setStatus( StatusProperty::Error, "Topic", QString( "Error subscribing: " ) + e.what() );
-      }
+//      try
+//      {
+//        ros::TransportHints transport_hint = ros::TransportHints().reliable();
+//        // Determine UDP vs TCP transport for user selection.
+//        if (unreliable_property_->getBool())
+//        {
+//          transport_hint = ros::TransportHints().unreliable();
+//        }
+//        sub_.subscribe( update_nh_, topic_property_->getTopicStd(), 10, transport_hint);
+//        setStatus( StatusProperty::Ok, "Topic", "OK" );
+//      }
+//      catch( ros::Exception& e )
+//      {
+//        setStatus( StatusProperty::Error, "Topic", QString( "Error subscribing: " ) + e.what() );
+//      }
     }
 
   virtual void unsubscribe()
     {
-      sub_.unsubscribe();
+//      sub_.unsubscribe();
     }
 
   virtual void onEnable()
@@ -175,7 +174,7 @@ protected:
 
   virtual void fixedFrameChanged()
     {
-      tf_filter_->setTargetFrame( fixed_frame_.toStdString() );
+//      tf_filter_->setTargetFrame( fixed_frame_.toStdString() );
       reset();
     }
 
@@ -190,7 +189,7 @@ protected:
       }
 
       ++messages_received_;
-      setStatus( StatusProperty::Ok, "Topic", QString::number( messages_received_ ) + " messages received" );
+//      setStatus( StatusProperty::Ok, "Topic", QString::number( messages_received_ ) + " messages received" );
 
       processMessage( msg );
     }
@@ -200,11 +199,11 @@ protected:
    * This is called by incomingMessage(). */
   virtual void processMessage( const typename MessageType::ConstPtr& msg ) = 0;
 
-  message_filters::Subscriber<MessageType> sub_;
-  tf::MessageFilter<MessageType>* tf_filter_;
+//  message_filters::Subscriber<MessageType> sub_;
+//  tf::MessageFilter<MessageType>* tf_filter_;
   uint32_t messages_received_;
 };
 
-} // end namespace rviz
+} // end namespace rviz_common
 
-#endif // MESSAGE_FILTER_DISPLAY_H
+#endif // RVIZ_COMMON__MESSAGE_FILTER_DISPLAY_HPP_
