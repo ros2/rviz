@@ -40,7 +40,7 @@
 #include "rviz/ogre_helpers/point_cloud.h"
 #include "rviz/properties/int_property.h"
 
-#include "point_cloud_display.h"
+#include "point_cloud_display.hpp"
 
 namespace rviz
 {

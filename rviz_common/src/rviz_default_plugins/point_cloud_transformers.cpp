@@ -38,7 +38,7 @@
 #include "rviz/properties/float_property.h"
 #include "rviz/validate_floats.h"
 
-#include "point_cloud_transformers.h"
+#include "point_cloud_transformers.hpp"
 
 namespace rviz
 {

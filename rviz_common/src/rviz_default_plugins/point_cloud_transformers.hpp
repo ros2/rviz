@@ -32,7 +32,7 @@
 
 #include <sensor_msgs/PointCloud2.h>
 
-#include "point_cloud_transformer.h"
+#include "point_cloud_transformer.hpp"
 
 namespace rviz
 {

@@ -40,7 +40,7 @@
 #include "rviz/properties/int_property.h"
 #include "rviz/validate_floats.h"
 
-#include "point_cloud2_display.h"
+#include "point_cloud2_display.hpp"
 
 namespace rviz
 {
