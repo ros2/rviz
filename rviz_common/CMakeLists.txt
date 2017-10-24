@@ -26,6 +26,8 @@ find_package(rclcpp REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
 
 if(NOT WIN32)
   find_package(PkgConfig)
@@ -126,6 +128,7 @@ set(rviz_common_headers_to_moc
   src/rviz_common/visualization_manager.hpp
   src/rviz_common/widget_geometry_change_detector.hpp
   src/rviz_common/window_manager_interface.hpp
+  include/rviz_common/validate_floats.hpp
 )
 
 # TODO(wjwwood): remove this later
@@ -270,11 +273,20 @@ target_link_libraries(rviz_common
   ${TINYXML_LIBRARIES}
   ${urdf_LIBRARIES}
 )
-ament_target_dependencies(rviz_common geometry_msgs rclcpp tf2 tf2_geometry_msgs tf2_ros)
+ament_target_dependencies(
+  rviz_common
+  geometry_msgs
+  rclcpp
+  tf2
+  tf2_geometry_msgs
+  tf2_ros
+  sensor_msgs
+  std_msgs
+)
 
 ament_export_interfaces(rviz_common)
 ament_export_dependencies(rviz_rendering)
-ament_export_dependencies(geometry_msgs rclcpp tf2 tf2_geometry_msgs tf2_ros)
+ament_export_dependencies(geometry_msgs rclcpp tf2 tf2_geometry_msgs tf2_ros sensor_msgs std_msgs)
 
 install(
   TARGETS rviz_common
