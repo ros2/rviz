@@ -28,14 +28,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./display_group.hpp"
+#include "display_group.hpp"
 
 #include <cstdio>  // for debug-write printf
 #include <map>
 
 #include <QColor>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "./display_context.hpp"
+#include "rviz_common/display_context.hpp"
 // TODO(wjwwood): reenable this when pluginlib solution found
 // #include "./display_factory.hpp"
 #include "./failed_display.hpp"

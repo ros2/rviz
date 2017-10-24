@@ -40,7 +40,7 @@
 
 #include "./bit_allocator.hpp"
 #include "rviz_common/config.hpp"
-#include "./display_context.hpp"
+#include "rviz_common/display_context.hpp"
 
 class QTimer;
 

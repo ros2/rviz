@@ -33,7 +33,7 @@
 #ifndef RVIZ_COMMON__DISPLAY_FACTORY_HPP_
 #define RVIZ_COMMON__DISPLAY_FACTORY_HPP_
 
-#include "./display.hpp"
+#include "rviz_common/display.hpp"
 #include "./pluginlib_factory.hpp"
 
 #include <QMap>  // NOLINT: cpplint is unable to handle the include order here

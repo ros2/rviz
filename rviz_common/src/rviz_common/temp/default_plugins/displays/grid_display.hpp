@@ -36,7 +36,7 @@
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/properties/enum_property.hpp"
 #include "../../../properties/tf_frame_property.hpp"
-#include "../../../display.hpp"
+#include "rviz_common/display.hpp"
 
 namespace rviz_rendering
 {

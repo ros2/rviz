@@ -43,7 +43,7 @@
 # pragma GCC diagnostic pop
 #endif
 
-#include "./display_context.hpp"
+#include "rviz_common/display_context.hpp"
 #include "./frame_manager.hpp"
 #include "rviz_common/properties/enum_property.hpp"
 #include "./properties/tf_frame_property.hpp"

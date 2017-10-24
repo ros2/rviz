@@ -30,7 +30,7 @@
 
 #include "./tool.hpp"
 
-#include "./display_context.hpp"
+#include "rviz_common/display_context.hpp"
 #include "./load_resource.hpp"
 #include "rviz_common/properties/property.hpp"
 

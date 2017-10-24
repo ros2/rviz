@@ -38,8 +38,8 @@
 
 #include "rclcpp/time.hpp"
 
-#include "./properties/bool_property.hpp"
-#include "./properties/status_property.hpp"
+#include "src/rviz_common/properties/bool_property.hpp"
+#include "src/rviz_common/properties/status_property.hpp"
 
 class QDockWidget;
 class QWidget;

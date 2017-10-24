@@ -46,7 +46,7 @@
 # pragma GCC diagnostic pop
 #endif
 
-#include "../../../display_context.hpp"
+#include "rviz_common/display_context.hpp"
 #include "../../../frame_manager.hpp"
 #include "rviz_rendering/grid.hpp"
 #include "../../../properties/parse_color.hpp"

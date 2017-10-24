@@ -51,7 +51,7 @@
 
 #include "tf2_ros/transform_listener.h"
 
-#include "../../../display_context.hpp"
+#include "rviz_common/display_context.hpp"
 #include "../../../frame_manager.hpp"
 #include "rviz_rendering/arrow.hpp"
 #include "rviz_rendering/axes.hpp"
