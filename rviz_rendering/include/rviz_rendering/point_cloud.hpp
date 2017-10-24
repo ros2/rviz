@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OGRE_TOOLS_OGRE_POINT_CLOUD_H
-#define OGRE_TOOLS_OGRE_POINT_CLOUD_H
+#ifndef RVIZ_RENDERING__POINT_CLOUD_HPP_
+#define RVIZ_RENDERING__POINT_CLOUD_HPP_
 
 #include <OgreSimpleRenderable.h>
 #include <OgreMovableObject.h>
@@ -43,9 +43,8 @@
 
 #include <stdint.h>
 
+#include <memory>
 #include <vector>
-
-#include <boost/shared_ptr.hpp>
 
 namespace Ogre
 {
@@ -58,7 +57,7 @@ class RenderSystem;
 class Matrix4;
 }
 
-namespace rviz
+namespace rviz_rendering
 {
 
 class PointCloud;
@@ -68,7 +67,15 @@ public:
   PointCloudRenderable(PointCloud* parent, int num_points, bool use_tex_coords);
   ~PointCloudRenderable();
 
-  Ogre::RenderOperation* getRenderOperation() { return &mRenderOp; }
+#ifdef __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Woverloaded-virtual"
+#endif
+  Ogre::RenderOperation * getRenderOperation() {return &mRenderOp;}
+#ifdef __clang__
+# pragma clang diagnostic pop
+#endif
+
   Ogre::HardwareVertexBufferSharedPtr getBuffer();
 
   virtual Ogre::Real getBoundingRadius(void) const;
@@ -82,7 +89,7 @@ private:
   Ogre::MaterialPtr material_;
   PointCloud* parent_;
 };
-typedef boost::shared_ptr<PointCloudRenderable> PointCloudRenderablePtr;
+typedef std::shared_ptr<PointCloudRenderable> PointCloudRenderablePtr;
 typedef std::vector<PointCloudRenderablePtr> V_PointCloudRenderable;
 
 /**
@@ -233,6 +240,6 @@ private:
   static Ogre::String sm_Type;              ///< The "renderable type" used by Ogre
 };
 
-} // namespace rviz
+} // namespace rviz_rendering
 
-#endif
+#endif  // RVIZ_RENDERING__POINT_CLOUD_HPP_
