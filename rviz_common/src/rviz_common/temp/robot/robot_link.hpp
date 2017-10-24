@@ -49,7 +49,7 @@
 #include <urdf_model/pose.h>
 
 #include "rviz_rendering/object.hpp"
-#include "../../selection/forwards.hpp"
+#include "rviz_common/selection/forwards.hpp"
 
 namespace Ogre
 {

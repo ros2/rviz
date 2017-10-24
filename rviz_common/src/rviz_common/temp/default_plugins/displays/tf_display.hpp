@@ -40,7 +40,7 @@
 
 #include "tf2/time.h"
 
-#include "../../../selection/forwards.hpp"
+#include "rviz_common/selection/forwards.hpp"
 #include "rviz_common/display.hpp"
 
 namespace Ogre

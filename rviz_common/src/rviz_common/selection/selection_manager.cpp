@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./selection_manager.hpp"
+#include "rviz_common/selection/selection_manager.hpp"
 
 #include <algorithm>
 #include <cassert>

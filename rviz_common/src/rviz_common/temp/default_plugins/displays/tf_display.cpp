@@ -61,8 +61,8 @@
 #include "rviz_common/properties/quaternion_property.hpp"
 #include "rviz_common/properties/string_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
-#include "../../../selection/forwards.hpp"
-#include "../../../selection/selection_manager.hpp"
+#include "rviz_common/selection/forwards.hpp"
+#include "rviz_common/selection/selection_manager.hpp"
 #include "rviz_common/logging.hpp"
 
 using rviz_common::selection::SelectionHandler;

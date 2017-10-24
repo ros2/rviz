@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./selection_handler.hpp"
+#include "rviz_common/selection/selection_handler.hpp"
 
 #ifndef _WIN32
 # pragma GCC diagnostic push
@@ -54,7 +54,7 @@
 #include "rviz_common/logging.hpp"
 
 #include "rviz_common/properties/property.hpp"
-#include "../selection/selection_manager.hpp"
+#include "include/rviz_common/selection/selection_manager.hpp"
 #include "../visualization_manager.hpp"
 
 namespace rviz_common

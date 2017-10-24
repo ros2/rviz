@@ -115,7 +115,7 @@ set(rviz_common_headers_to_moc
   src/rviz_common/render_panel.hpp
   src/rviz_common/scaled_image_widget.hpp
   src/rviz_common/screenshot_dialog.hpp
-  src/rviz_common/selection/selection_manager.hpp
+  include/rviz_common/selection/selection_manager.hpp
   src/rviz_common/splash_screen.hpp
   # src/rviz_common/time_panel.hpp
   src/rviz_common/tool.hpp

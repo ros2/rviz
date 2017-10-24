@@ -72,7 +72,7 @@
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/properties/quaternion_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
-#include "../../selection/selection_manager.hpp"
+#include "rviz_common/selection/selection_manager.hpp"
 #include "../../visualization_manager.hpp"
 #include "../../load_resource.hpp"
 

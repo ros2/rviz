@@ -84,7 +84,7 @@
 #include "rviz_common/properties/status_list.hpp"
 #include "rviz_common/properties/tf_frame_property.hpp"
 #include "./render_panel.hpp"
-#include "./selection/selection_manager.hpp"
+#include "rviz_common/selection/selection_manager.hpp"
 // #include "./tool.hpp"
 #include "./tool_manager.hpp"
 // #include "rviz_common/view_controller.hpp"
