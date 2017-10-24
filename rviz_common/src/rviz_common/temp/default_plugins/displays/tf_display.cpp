@@ -52,7 +52,7 @@
 #include "tf2_ros/transform_listener.h"
 
 #include "rviz_common/display_context.hpp"
-#include "../../../frame_manager.hpp"
+#include "rviz_common/frame_manager.hpp"
 #include "rviz_rendering/arrow.hpp"
 #include "rviz_rendering/axes.hpp"
 #include "rviz_rendering/movable_text.hpp"

@@ -71,7 +71,7 @@
 // #include "./display_factory.hpp"  // TODO(wjwwood): revisit
 #include "./display_group.hpp"
 // #include "./displays_panel.hpp"
-#include "./frame_manager.hpp"
+#include "rviz_common/frame_manager.hpp"
 #include "./load_resource.hpp"
 // #include "./ogre_helpers/ogre_render_queue_clearer.hpp"
 // #include "./ogre_helpers/qt_ogre_render_window.hpp"
