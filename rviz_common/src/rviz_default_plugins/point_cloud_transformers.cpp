@@ -31,16 +31,16 @@
 #include <OgreMatrix4.h>
 #include <OgreVector3.h>
 
-#include "rviz/properties/bool_property.h"
-#include "rviz/properties/color_property.h"
-#include "rviz/properties/editable_enum_property.h"
-#include "rviz/properties/enum_property.h"
-#include "rviz/properties/float_property.h"
-#include "rviz/validate_floats.h"
+#include "rviz_common/properties/bool_property.hpp"
+#include "rviz_common/properties/color_property.hpp"
+#include "rviz_common/properties/editable_enum_property.hpp"
+#include "rviz_common/properties/enum_property.hpp"
+#include "rviz_common/properties/float_property.hpp"
+#include "rviz_common/validate_floats.hpp"
 
 #include "point_cloud_transformers.hpp"
 
-namespace rviz
+namespace rviz_default_plugins
 {
 
 static void getRainbowColor(float value, Ogre::ColourValue& color)
@@ -63,22 +63,25 @@ static void getRainbowColor(float value, Ogre::ColourValue& color)
   else if (i >= 5) color[0] = 1, color[1] = n, color[2] = 0;
 }
 
-uint8_t IntensityPCTransformer::supports(const sensor_msgs::PointCloud2ConstPtr& cloud)
+uint8_t IntensityPCTransformer::supports(
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
 {
   updateChannels(cloud);
   return Support_Color;
 }
 
-uint8_t IntensityPCTransformer::score(const sensor_msgs::PointCloud2ConstPtr& cloud)
+uint8_t IntensityPCTransformer::score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
 {
+  (void) cloud;
   return 255;
 }
 
-bool IntensityPCTransformer::transform( const sensor_msgs::PointCloud2ConstPtr& cloud,
+bool IntensityPCTransformer::transform( const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
                                         uint32_t mask,
                                         const Ogre::Matrix4& transform,
                                         V_PointCloudPoint& points_out )
 {
+  (void) transform;
   if( !( mask & Support_Color ))
   {
     return false;
@@ -168,40 +171,43 @@ bool IntensityPCTransformer::transform( const sensor_msgs::PointCloud2ConstPtr& 
   return true;
 }
 
-void IntensityPCTransformer::createProperties( Property* parent_property, uint32_t mask, QList<Property*>& out_props )
+void IntensityPCTransformer::createProperties(
+  rviz_common::properties::Property* parent_property,
+  uint32_t mask,
+  QList<rviz_common::properties::Property*>& out_props )
 {
   if( mask & Support_Color )
   {
-    channel_name_property_ = new EditableEnumProperty( "Channel Name", "intensity",
+    channel_name_property_ = new rviz_common::properties::EditableEnumProperty( "Channel Name", "intensity",
                                                        "Select the channel to use to compute the intensity",
                                                        parent_property, SIGNAL( needRetransform() ), this );
 
-    use_rainbow_property_ = new BoolProperty( "Use rainbow", true,
+    use_rainbow_property_ = new rviz_common::properties::BoolProperty( "Use rainbow", true,
                                               "Whether to use a rainbow of colors or interpolate between two",
                                               parent_property, SLOT( updateUseRainbow() ), this );
-    invert_rainbow_property_ = new BoolProperty( "Invert Rainbow", false,
+    invert_rainbow_property_ = new rviz_common::properties::BoolProperty( "Invert Rainbow", false,
                                               "Whether to invert rainbow colors",
                                               parent_property, SLOT( updateUseRainbow() ), this );
 
-    min_color_property_ = new ColorProperty( "Min Color", Qt::black,
+    min_color_property_ = new rviz_common::properties::ColorProperty( "Min Color", Qt::black,
                                              "Color to assign the points with the minimum intensity.  "
                                              "Actual color is interpolated between this and Max Color.",
                                              parent_property, SIGNAL( needRetransform() ), this );
 
-    max_color_property_ = new ColorProperty( "Max Color", Qt::white,
+    max_color_property_ = new rviz_common::properties::ColorProperty( "Max Color", Qt::white,
                                              "Color to assign the points with the maximum intensity.  "
                                              "Actual color is interpolated between this and Min Color.",
                                              parent_property, SIGNAL( needRetransform() ), this );
 
-    auto_compute_intensity_bounds_property_ = new BoolProperty( "Autocompute Intensity Bounds", true,
+    auto_compute_intensity_bounds_property_ = new rviz_common::properties::BoolProperty( "Autocompute Intensity Bounds", true,
                                                                 "Whether to automatically compute the intensity min/max values.",
                                                                 parent_property, SLOT( updateAutoComputeIntensityBounds() ), this );
 
-    min_intensity_property_ = new FloatProperty( "Min Intensity", 0,
+    min_intensity_property_ = new rviz_common::properties::FloatProperty( "Min Intensity", 0,
                                                  "Minimum possible intensity value, used to interpolate from Min Color to Max Color for a point.",
                                                  parent_property );
 
-    max_intensity_property_ = new FloatProperty( "Max Intensity", 4096,
+    max_intensity_property_ = new rviz_common::properties::FloatProperty( "Max Intensity", 4096,
                                                  "Maximum possible intensity value, used to interpolate from Min Color to Max Color for a point.",
                                                  parent_property );
 
@@ -219,7 +225,7 @@ void IntensityPCTransformer::createProperties( Property* parent_property, uint32
   }
 }
 
-void IntensityPCTransformer::updateChannels( const sensor_msgs::PointCloud2ConstPtr& cloud )
+void IntensityPCTransformer::updateChannels( const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud )
 {
   V_string channels;
   for(size_t i = 0; i < cloud->fields.size(); ++i )
@@ -271,7 +277,7 @@ void IntensityPCTransformer::updateUseRainbow()
   Q_EMIT needRetransform();
 }
 
-uint8_t XYZPCTransformer::supports(const sensor_msgs::PointCloud2ConstPtr& cloud)
+uint8_t XYZPCTransformer::supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
 {
   int32_t xi = findChannelIndex(cloud, "x");
   int32_t yi = findChannelIndex(cloud, "y");
@@ -282,7 +288,7 @@ uint8_t XYZPCTransformer::supports(const sensor_msgs::PointCloud2ConstPtr& cloud
     return Support_None;
   }
 
-  if (cloud->fields[xi].datatype == sensor_msgs::PointField::FLOAT32)
+  if (cloud->fields[xi].datatype == sensor_msgs::msg::PointField::FLOAT32)
   {
     return Support_XYZ;
   }
@@ -290,8 +296,13 @@ uint8_t XYZPCTransformer::supports(const sensor_msgs::PointCloud2ConstPtr& cloud
   return Support_None;
 }
 
-bool XYZPCTransformer::transform(const sensor_msgs::PointCloud2ConstPtr& cloud, uint32_t mask, const Ogre::Matrix4& transform, V_PointCloudPoint& points_out)
+bool XYZPCTransformer::transform(
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
+  uint32_t mask,
+  const Ogre::Matrix4& transform,
+  V_PointCloudPoint& points_out)
 {
+  (void) transform;
   if (!(mask & Support_XYZ))
   {
     return false;
@@ -305,7 +316,7 @@ bool XYZPCTransformer::transform(const sensor_msgs::PointCloud2ConstPtr& cloud, 
   const uint32_t yoff = cloud->fields[yi].offset;
   const uint32_t zoff = cloud->fields[zi].offset;
   const uint32_t point_step = cloud->point_step;
-  const uint32_t num_points = cloud->width * cloud->height;
+//  const uint32_t num_points = cloud->width * cloud->height; // TODO(greimela): Unused?
   uint8_t const* point_x = &cloud->data.front() + xoff;
   uint8_t const* point_y = &cloud->data.front() + yoff;
   uint8_t const* point_z = &cloud->data.front() + zoff;
@@ -320,7 +331,7 @@ bool XYZPCTransformer::transform(const sensor_msgs::PointCloud2ConstPtr& cloud, 
   return true;
 }
 
-uint8_t RGB8PCTransformer::supports(const sensor_msgs::PointCloud2ConstPtr& cloud)
+uint8_t RGB8PCTransformer::supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
 {
   int32_t index = std::max(findChannelIndex(cloud, "rgb"), findChannelIndex(cloud, "rgba"));
   if (index == -1)
@@ -328,9 +339,9 @@ uint8_t RGB8PCTransformer::supports(const sensor_msgs::PointCloud2ConstPtr& clou
     return Support_None;
   }
 
-  if (cloud->fields[index].datatype == sensor_msgs::PointField::INT32 ||
-      cloud->fields[index].datatype == sensor_msgs::PointField::UINT32 ||
-      cloud->fields[index].datatype == sensor_msgs::PointField::FLOAT32)
+  if (cloud->fields[index].datatype == sensor_msgs::msg::PointField::INT32 ||
+      cloud->fields[index].datatype == sensor_msgs::msg::PointField::UINT32 ||
+      cloud->fields[index].datatype == sensor_msgs::msg::PointField::FLOAT32)
   {
     return Support_Color;
   }
@@ -338,8 +349,14 @@ uint8_t RGB8PCTransformer::supports(const sensor_msgs::PointCloud2ConstPtr& clou
   return Support_None;
 }
 
-bool RGB8PCTransformer::transform(const sensor_msgs::PointCloud2ConstPtr& cloud, uint32_t mask, const Ogre::Matrix4& transform, V_PointCloudPoint& points_out)
+bool RGB8PCTransformer::transform(
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
+  uint32_t mask,
+  const Ogre::Matrix4& transform,
+  V_PointCloudPoint& points_out)
 {
+  (void) transform;
+
   if (!(mask & Support_Color))
   {
     return false;
@@ -385,7 +402,7 @@ bool RGB8PCTransformer::transform(const sensor_msgs::PointCloud2ConstPtr& cloud,
   return true;
 }
 
-uint8_t RGBF32PCTransformer::supports(const sensor_msgs::PointCloud2ConstPtr& cloud)
+uint8_t RGBF32PCTransformer::supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
 {
   int32_t ri = findChannelIndex(cloud, "r");
   int32_t gi = findChannelIndex(cloud, "g");
@@ -395,7 +412,7 @@ uint8_t RGBF32PCTransformer::supports(const sensor_msgs::PointCloud2ConstPtr& cl
     return Support_None;
   }
 
-  if (cloud->fields[ri].datatype == sensor_msgs::PointField::FLOAT32)
+  if (cloud->fields[ri].datatype == sensor_msgs::msg::PointField::FLOAT32)
   {
     return Support_Color;
   }
@@ -403,8 +420,14 @@ uint8_t RGBF32PCTransformer::supports(const sensor_msgs::PointCloud2ConstPtr& cl
   return Support_None;
 }
 
-bool RGBF32PCTransformer::transform(const sensor_msgs::PointCloud2ConstPtr& cloud, uint32_t mask, const Ogre::Matrix4& transform, V_PointCloudPoint& points_out)
+bool RGBF32PCTransformer::transform(
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
+  uint32_t mask,
+  const Ogre::Matrix4& transform,
+  V_PointCloudPoint& points_out)
 {
+  (void) transform;
+
   if (!(mask & Support_Color))
   {
     return false;
@@ -431,21 +454,24 @@ bool RGBF32PCTransformer::transform(const sensor_msgs::PointCloud2ConstPtr& clou
   return true;
 }
 
-uint8_t FlatColorPCTransformer::supports(const sensor_msgs::PointCloud2ConstPtr& cloud)
+uint8_t FlatColorPCTransformer::supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
 {
+  (void) cloud;
   return Support_Color;
 }
 
-uint8_t FlatColorPCTransformer::score(const sensor_msgs::PointCloud2ConstPtr& cloud)
+uint8_t FlatColorPCTransformer::score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
 {
+  (void) cloud;
   return 0;
 }
 
-bool FlatColorPCTransformer::transform( const sensor_msgs::PointCloud2ConstPtr& cloud,
+bool FlatColorPCTransformer::transform( const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
                                         uint32_t mask,
                                         const Ogre::Matrix4& transform,
                                         V_PointCloudPoint& points_out )
 {
+  (void) transform;
   if( !( mask & Support_Color ))
   {
     return false;
@@ -462,28 +488,33 @@ bool FlatColorPCTransformer::transform( const sensor_msgs::PointCloud2ConstPtr& 
   return true;
 }
 
-void FlatColorPCTransformer::createProperties( Property* parent_property, uint32_t mask, QList<Property*>& out_props )
+void FlatColorPCTransformer::createProperties(
+  rviz_common::properties::Property* parent_property,
+  uint32_t mask,
+  QList<rviz_common::properties::Property*>& out_props )
 {
   if( mask & Support_Color )
   {
-    color_property_ = new ColorProperty( "Color", Qt::white,
+    color_property_ = new rviz_common::properties::ColorProperty( "Color", Qt::white,
                                          "Color to assign to every point.",
                                          parent_property, SIGNAL( needRetransform() ), this );
     out_props.push_back( color_property_ );
   }
 }
 
-uint8_t AxisColorPCTransformer::supports(const sensor_msgs::PointCloud2ConstPtr& cloud)
+uint8_t AxisColorPCTransformer::supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
 {
+  (void) cloud;
   return Support_Color;
 }
 
-uint8_t AxisColorPCTransformer::score(const sensor_msgs::PointCloud2ConstPtr& cloud)
+uint8_t AxisColorPCTransformer::score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
 {
+  (void) cloud;
   return 255;
 }
 
-bool AxisColorPCTransformer::transform( const sensor_msgs::PointCloud2ConstPtr& cloud,
+bool AxisColorPCTransformer::transform( const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
                                         uint32_t mask,
                                         const Ogre::Matrix4& transform,
                                         V_PointCloudPoint& points_out )
@@ -566,30 +597,32 @@ bool AxisColorPCTransformer::transform( const sensor_msgs::PointCloud2ConstPtr& 
   return true;
 }
 
-void AxisColorPCTransformer::createProperties( Property* parent_property, uint32_t mask, QList<Property*>& out_props )
+void AxisColorPCTransformer::createProperties( rviz_common::properties::Property* parent_property,
+  uint32_t mask,
+  QList<rviz_common::properties::Property*>& out_props )
 {
   if( mask & Support_Color )
   {
-    axis_property_ = new EnumProperty( "Axis", "Z",
+    axis_property_ = new rviz_common::properties::EnumProperty( "Axis", "Z",
                                        "The axis to interpolate the color along.",
                                        parent_property, SIGNAL( needRetransform() ), this );
     axis_property_->addOption( "X", AXIS_X );
     axis_property_->addOption( "Y", AXIS_Y );
     axis_property_->addOption( "Z", AXIS_Z );
 
-    auto_compute_bounds_property_ = new BoolProperty( "Autocompute Value Bounds", true,
+    auto_compute_bounds_property_ = new rviz_common::properties::BoolProperty( "Autocompute Value Bounds", true,
                                                       "Whether to automatically compute the value min/max values.",
                                                       parent_property, SLOT( updateAutoComputeBounds() ), this );
 
-    min_value_property_ = new FloatProperty( "Min Value", -10,
+    min_value_property_ = new rviz_common::properties::FloatProperty( "Min Value", -10,
                                              "Minimum value value, used to interpolate the color of a point.",
                                              auto_compute_bounds_property_ );
 
-    max_value_property_ = new FloatProperty( "Max Value", 10,
+    max_value_property_ = new rviz_common::properties::FloatProperty( "Max Value", 10,
                                              "Maximum value value, used to interpolate the color of a point.",
                                              auto_compute_bounds_property_ );
 
-    use_fixed_frame_property_ = new BoolProperty( "Use Fixed Frame", true,
+    use_fixed_frame_property_ = new rviz_common::properties::BoolProperty( "Use Fixed Frame", true,
                                                   "Whether to color the cloud based on its fixed frame position or its local frame position.",
                                                   parent_property, SIGNAL( needRetransform() ), this );
 
@@ -620,12 +653,12 @@ void AxisColorPCTransformer::updateAutoComputeBounds()
   Q_EMIT needRetransform();
 }
 
-} // end namespace rviz
+} // end namespace rviz_default_plugins
 
-#include <pluginlib/class_list_macros.h>
-PLUGINLIB_EXPORT_CLASS( rviz::AxisColorPCTransformer, rviz::PointCloudTransformer )
-PLUGINLIB_EXPORT_CLASS( rviz::FlatColorPCTransformer, rviz::PointCloudTransformer )
-PLUGINLIB_EXPORT_CLASS( rviz::IntensityPCTransformer, rviz::PointCloudTransformer )
-PLUGINLIB_EXPORT_CLASS(      rviz::RGB8PCTransformer,      rviz::PointCloudTransformer )
-PLUGINLIB_EXPORT_CLASS(    rviz::RGBF32PCTransformer,    rviz::PointCloudTransformer )
-PLUGINLIB_EXPORT_CLASS(       rviz::XYZPCTransformer,       rviz::PointCloudTransformer )
+//#include <pluginlib/class_list_macros.h>
+//PLUGINLIB_EXPORT_CLASS( rviz::AxisColorPCTransformer, rviz::PointCloudTransformer )
+//PLUGINLIB_EXPORT_CLASS( rviz::FlatColorPCTransformer, rviz::PointCloudTransformer )
+//PLUGINLIB_EXPORT_CLASS( rviz::IntensityPCTransformer, rviz::PointCloudTransformer )
+//PLUGINLIB_EXPORT_CLASS(      rviz::RGB8PCTransformer,      rviz::PointCloudTransformer )
+//PLUGINLIB_EXPORT_CLASS(    rviz::RGBF32PCTransformer,    rviz::PointCloudTransformer )
+//PLUGINLIB_EXPORT_CLASS(       rviz::XYZPCTransformer,       rviz::PointCloudTransformer )

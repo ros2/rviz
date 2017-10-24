@@ -120,6 +120,7 @@ public:
 
   virtual void setTopic( const QString &topic, const QString &datatype )
     {
+      (void) datatype;
       topic_property_->setString( topic );
     }
 

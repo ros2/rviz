@@ -30,25 +30,23 @@
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 
-#include <ros/time.h>
-
-#include "rviz/default_plugin/point_cloud_common.h"
-#include "rviz/default_plugin/point_cloud_transformers.h"
-#include "rviz/display_context.h"
-#include "rviz/frame_manager.h"
-#include "rviz/ogre_helpers/point_cloud.h"
-#include "rviz/properties/int_property.h"
-#include "rviz/validate_floats.h"
+#include "./point_cloud_common.hpp"
+#include "./point_cloud_transformers.hpp"
+#include "rviz_common/display_context.hpp"
+#include "rviz_common/frame_manager.hpp"
+#include "rviz_rendering/point_cloud.hpp"
+#include "rviz_common/properties/int_property.hpp"
+#include "rviz_common/validate_floats.hpp"
 
 #include "point_cloud2_display.hpp"
 
-namespace rviz
+namespace rviz_default_plugins
 {
 
 PointCloud2Display::PointCloud2Display()
   : point_cloud_common_( new PointCloudCommon( this ))
 {
-  queue_size_property_ = new IntProperty( "Queue Size", 10,
+  queue_size_property_ = new rviz_common::properties::IntProperty( "Queue Size", 10,
                                           "Advanced: set the size of the incoming PointCloud2 message queue. "
                                           " Increasing this is useful if your incoming TF data is delayed significantly "
                                           "from your PointCloud2 data, but it can greatly increase memory usage if the messages are big.",
@@ -56,7 +54,7 @@ PointCloud2Display::PointCloud2Display()
 
   // PointCloudCommon sets up a callback queue with a thread for each
   // instance.  Use that for processing incoming messages.
-  update_nh_.setCallbackQueue( point_cloud_common_->getCallbackQueue() );
+//  update_nh_.setCallbackQueue( point_cloud_common_->getCallbackQueue() );
 }
 
 PointCloud2Display::~PointCloud2Display()
@@ -72,15 +70,16 @@ void PointCloud2Display::onInitialize()
 
 void PointCloud2Display::updateQueueSize()
 {
-  tf_filter_->setQueueSize( (uint32_t) queue_size_property_->getInt() );
+//  tf_filter_->setQueueSize( (uint32_t) queue_size_property_->getInt() );
 }
 
-void PointCloud2Display::processMessage( const sensor_msgs::PointCloud2ConstPtr& cloud )
+void PointCloud2Display::processMessage( const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud )
 {
   // Filter any nan values out of the cloud.  Any nan values that make it through to PointCloudBase
   // will get their points put off in lala land, but it means they still do get processed/rendered
   // which can be a big performance hit
-  sensor_msgs::PointCloud2Ptr filtered(new sensor_msgs::PointCloud2);
+  sensor_msgs::msg::PointCloud2::SharedPtr filtered(
+    new sensor_msgs::msg::PointCloud2_<std::allocator<void>>);
   int32_t xi = findChannelIndex(cloud, "x");
   int32_t yi = findChannelIndex(cloud, "y");
   int32_t zi = findChannelIndex(cloud, "z");
@@ -101,7 +100,7 @@ void PointCloud2Display::processMessage( const sensor_msgs::PointCloud2ConstPtr&
     std::stringstream ss;
     ss << "Data size (" << cloud->data.size() << " bytes) does not match width (" << cloud->width
        << ") times height (" << cloud->height << ") times point_step (" << point_step << ").  Dropping message.";
-    setStatusStd( StatusProperty::Error, "Message", ss.str() );
+    setStatusStd( rviz_common::properties::StatusProperty::Error, "Message", ss.str() );
     return;
   }
 
@@ -119,7 +118,7 @@ void PointCloud2Display::processMessage( const sensor_msgs::PointCloud2ConstPtr&
       float x = *reinterpret_cast<const float*>(ptr + xoff);
       float y = *reinterpret_cast<const float*>(ptr + yoff);
       float z = *reinterpret_cast<const float*>(ptr + zoff);
-      if (validateFloats(x) && validateFloats(y) && validateFloats(z))
+      if (rviz_common::validateFloats(x) && rviz_common::validateFloats(y) && rviz_common::validateFloats(z))
       {
         if (points_to_copy == 0)
         {
@@ -176,7 +175,7 @@ void PointCloud2Display::reset()
   point_cloud_common_->reset();
 }
 
-} // namespace rviz
+} // namespace rviz_default_plugins
 
-#include <pluginlib/class_list_macros.h>
-PLUGINLIB_EXPORT_CLASS( rviz::PointCloud2Display, rviz::Display )
+//#include <pluginlib/class_list_macros.h>
+//PLUGINLIB_EXPORT_CLASS( rviz::PointCloud2Display, rviz::Display )

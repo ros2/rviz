@@ -35,7 +35,7 @@
 
 #include "geometry_msgs/msg/point_stamped.hpp"
 #include "geometry_msgs/msg/point32.hpp"
-#include "geometry_msgs/msg/vector3.hpp
+#include "geometry_msgs/msg/vector3.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/twist.hpp"
 #include "std_msgs/msg/color_rgba.hpp"

@@ -27,18 +27,20 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_POINT_CLOUD_TRANSFORMER_H
-#define RVIZ_POINT_CLOUD_TRANSFORMER_H
+#ifndef RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMER_HPP_
 
 #include <QObject>
 
-#include <ros/message_forward.h>
+//#include <ros/message_forward.h>
 
 #ifndef Q_MOC_RUN
 #include <OgreVector3.h>
 #include <OgreColourValue.h>
 
-#include <rviz/ogre_helpers/point_cloud.h>
+#include "sensor_msgs/msg/point_cloud2.hpp"
+
+#include "rviz_rendering/point_cloud.hpp"
 #endif
 
 namespace Ogre
@@ -46,16 +48,18 @@ namespace Ogre
 class Matrix4;
 }
 
-namespace sensor_msgs
-{
-ROS_DECLARE_MESSAGE(PointCloud2);
-}
+namespace rviz_common {
+namespace properties {
 
-namespace rviz
-{
 class Property;
 
-typedef std::vector<PointCloud::Point> V_PointCloudPoint;
+}
+}
+
+namespace rviz_default_plugins
+{
+
+typedef std::vector<rviz_rendering::PointCloud::Point> V_PointCloudPoint;
 
 class PointCloudTransformer: public QObject
 {
@@ -78,35 +82,46 @@ public:
   /**
    * \brief Returns a level of support for a specific cloud.  This level of support is a mask using the SupportLevel enum.
    */
-  virtual uint8_t supports(const sensor_msgs::PointCloud2ConstPtr& cloud) = 0;
+  virtual uint8_t supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) = 0;
   /**
    * \brief Transforms a PointCloud2 into an rviz::PointCloud.  The rviz::PointCloud is assumed to have been preallocated into the correct
    * size.  The mask determines which part of the cloud should be output (xyz or color).  This method will only be called if supports() of the same
    * cloud has returned a non-zero mask, and will only be called with masks compatible with the one returned from supports()
    */
-  virtual bool transform(const sensor_msgs::PointCloud2ConstPtr& cloud, uint32_t mask, const Ogre::Matrix4& transform, V_PointCloudPoint& out) = 0;
+  virtual bool transform(
+    const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
+    uint32_t mask,
+    const Ogre::Matrix4& transform,
+    V_PointCloudPoint& out) = 0;
 
   /**
    * \brief "Score" a message for how well supported the message is.  For example, a "flat color" transformer can support any cloud, but will
    * return a score of 0 here since it should not be preferred over others that explicitly support fields in the message.  This allows that
    * "flat color" transformer to still be selectable, but generally not chosen automatically.
    */
-  virtual uint8_t score(const sensor_msgs::PointCloud2ConstPtr& cloud) { return 0; }
+  virtual uint8_t score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &cloud) {
+    (void) cloud;
+    return 0;
+  }
 
   /**
    * \brief Create any properties necessary for this transformer.
    * Will be called once when the transformer is loaded.  All
    * properties must be added to the out_props vector.
    */
-  virtual void createProperties( Property* parent_property,
+  virtual void createProperties( rviz_common::properties::Property* parent_property,
                                  uint32_t mask,
-                                 QList<Property*>& out_props ) {}
+                                 QList<rviz_common::properties::Property*>& out_props ) {
+    (void) parent_property;
+    (void) mask;
+    (void) out_props;
+  }
 
 Q_SIGNALS:
   /** @brief Subclasses should emit this signal whenever they think the points should be re-transformed. */
   void needRetransform();
 };
 
-} // namespace rviz
+} // namespace rviz_default_plugins
 
-#endif
+#endif  // RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMER_HPP_

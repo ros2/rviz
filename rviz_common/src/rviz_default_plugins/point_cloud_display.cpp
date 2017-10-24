@@ -30,25 +30,23 @@
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 
-#include <ros/time.h>
+//#include <tf/transform_listener.h>
 
-#include <tf/transform_listener.h>
-
-#include "rviz/default_plugin/point_cloud_common.h"
-#include "rviz/display_context.h"
-#include "rviz/frame_manager.h"
-#include "rviz/ogre_helpers/point_cloud.h"
-#include "rviz/properties/int_property.h"
+#include "./point_cloud_common.hpp"
+#include "rviz_common/display_context.hpp"
+#include "rviz_common/frame_manager.hpp"
+#include "rviz_common/properties/int_property.hpp"
+#include "rviz_rendering/point_cloud.hpp"
 
 #include "point_cloud_display.hpp"
 
-namespace rviz
+namespace rviz_default_plugins
 {
 
 PointCloudDisplay::PointCloudDisplay()
   : point_cloud_common_( new PointCloudCommon( this ))
 {
-  queue_size_property_ = new IntProperty( "Queue Size", 10,
+  queue_size_property_ = new rviz_common::properties::IntProperty( "Queue Size", 10,
                                           "Advanced: set the size of the incoming PointCloud message queue. "
                                           " Increasing this is useful if your incoming TF data is delayed significantly "
                                           "from your PointCloud data, but it can greatly increase memory usage if the messages are big.",
@@ -56,7 +54,7 @@ PointCloudDisplay::PointCloudDisplay()
 
   // PointCloudCommon sets up a callback queue with a thread for each
   // instance.  Use that for processing incoming messages.
-  update_nh_.setCallbackQueue( point_cloud_common_->getCallbackQueue() );
+//  update_nh_.setCallbackQueue( point_cloud_common_->getCallbackQueue() );
 }
 
 PointCloudDisplay::~PointCloudDisplay()
@@ -72,10 +70,10 @@ void PointCloudDisplay::onInitialize()
 
 void PointCloudDisplay::updateQueueSize()
 {
-  tf_filter_->setQueueSize( (uint32_t) queue_size_property_->getInt() );
+//  tf_filter_->setQueueSize( (uint32_t) queue_size_property_->getInt() );
 }
 
-void PointCloudDisplay::processMessage( const sensor_msgs::PointCloudConstPtr& cloud )
+void PointCloudDisplay::processMessage( const sensor_msgs::msg::PointCloud::ConstSharedPtr & cloud )
 {
   point_cloud_common_->addMessage( cloud );
 }
@@ -91,7 +89,7 @@ void PointCloudDisplay::reset()
   point_cloud_common_->reset();
 }
 
-} // namespace rviz
+} // namespace rviz_default_plugins
 
-#include <pluginlib/class_list_macros.h>
-PLUGINLIB_EXPORT_CLASS( rviz::PointCloudDisplay, rviz::Display )
+//#include <pluginlib/class_list_macros.h>
+//PLUGINLIB_EXPORT_CLASS( rviz::PointCloudDisplay, rviz::Display )

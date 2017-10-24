@@ -129,6 +129,7 @@ set(rviz_common_headers_to_moc
   src/rviz_common/widget_geometry_change_detector.hpp
   src/rviz_common/window_manager_interface.hpp
   include/rviz_common/validate_floats.hpp
+  include/rviz_common/message_filter_display.hpp
 )
 
 # TODO(wjwwood): remove this later
@@ -148,6 +149,20 @@ list(APPEND rviz_common_headers_to_moc
   src/rviz_common/temp/robot/robot_link.hpp)
 list(APPEND rviz_common_headers_to_moc
   src/rviz_common/temp/robot/robot_joint.hpp)
+
+# TODO(greimela): Remove when moving the default plugins to separate package
+list(APPEND rviz_common_headers_to_moc
+  src/rviz_default_plugins/point_cloud_common.hpp)
+list(APPEND rviz_common_headers_to_moc
+  src/rviz_default_plugins/point_cloud_common.hpp)
+list(APPEND rviz_common_headers_to_moc
+  src/rviz_default_plugins/point_cloud_display.hpp)
+list(APPEND rviz_common_headers_to_moc
+  src/rviz_default_plugins/point_cloud_transformer.hpp)
+list(APPEND rviz_common_headers_to_moc
+  src/rviz_default_plugins/point_cloud_transformers.hpp)
+list(APPEND rviz_common_headers_to_moc
+  src/rviz_default_plugins/point_cloud2_display.hpp)
 
 set(rviz_common_source_files
   ${ENV_CONFIG_CPP}
@@ -249,9 +264,23 @@ list(APPEND rviz_common_headers_to_moc
 list(APPEND rviz_common_headers_to_moc
   src/rviz_common/temp/stl_loader.cpp)
 
+# TODO(greimela): Remove when moving the default plugins to separate package
+list(APPEND rviz_common_source_files
+  src/rviz_default_plugins/point_cloud_common.cpp)
+list(APPEND rviz_common_source_files
+  src/rviz_default_plugins/point_cloud_common.cpp)
+list(APPEND rviz_common_source_files
+  src/rviz_default_plugins/point_cloud_display.cpp)
+list(APPEND rviz_common_source_files
+  src/rviz_default_plugins/point_cloud_transformers.cpp)
+list(APPEND rviz_common_source_files
+  src/rviz_default_plugins/point_cloud2_display.cpp)
+
+
 add_library(rviz_common
   ${rviz_common_headers_to_moc}
   ${rviz_common_source_files}
+  ${rviz_default_plugins_source_files}
 )
 target_include_directories(rviz_common
   PUBLIC
