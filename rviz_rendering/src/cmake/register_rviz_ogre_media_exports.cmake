@@ -42,7 +42,8 @@ function(register_rviz_ogre_media_exports)
     foreach(DIR ${ARGUMENTS_DIRECTORIES})
         if(NOT IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${DIR}")
             message(FATAL_ERROR "Directory ${DIR} does not exist.
-                Paths must be specified relative to CMAKE_CURRENT_SOURCE_DIR")
+                Paths must be specified relative to CMAKE_CURRENT_SOURCE_DIR
+                ${CMAKE_CURRENT_SOURCE_DIR}")
         endif()
         list(APPEND OGRE_MEDIA_RESOURCE_DIRS ${DIR})
     endforeach()
