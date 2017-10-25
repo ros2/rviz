@@ -53,6 +53,7 @@
 #include <QWidget>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rclcpp/time.hpp"
+#include "rclcpp/rclcpp.hpp"
 #include "rviz_rendering/apply_visibility_bits.hpp"
 
 #include "rviz_common/display_context.hpp"
@@ -67,6 +68,7 @@ namespace rviz_common
 Display::Display()
 : context_(0),
   scene_node_(NULL),
+  node_(nullptr),
   status_(0),
   initialized_(false),
   visibility_bits_(0xFFFFFFFF),
@@ -89,6 +91,9 @@ Display::~Display()
   if (scene_node_) {
     scene_manager_->destroySceneNode(scene_node_);
   }
+  if (context_) {
+    context_->removeNodeFromMainExecutor(node_);
+  }
 }
 
 void Display::initialize(DisplayContext * context)
@@ -97,8 +102,10 @@ void Display::initialize(DisplayContext * context)
   scene_manager_ = context_->getSceneManager();
   scene_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
 
-  // update_nh_.setCallbackQueue(context_->getUpdateQueue());
+  // TODO(Martin-Idel-SI): Figure out whether we still need the threaded queue or executor here
   // threaded_nh_.setCallbackQueue(context_->getThreadedQueue());
+  node_ = rclcpp::Node::make_shared("display_node");
+  context_->addNodeToMainExecutor(node_);
   fixed_frame_ = context_->getFixedFrame();
 
   onInitialize();

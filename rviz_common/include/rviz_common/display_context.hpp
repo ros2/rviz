@@ -43,10 +43,12 @@ namespace Ogre
 class SceneManager;
 }  // namespace Ogre
 
-// namespace ros
-// {
-// class CallbackQueueInterface;
-// }
+namespace rclcpp
+{
+namespace node {
+class Node;
+}  // namespace rviz
+}  // namespace node
 
 // namespace tf
 // {
@@ -137,10 +139,15 @@ public:
   getDisplayFactory() const = 0;
 #endif
 
-#if 0
-  /// Return the CallbackQueue using the main GUI thread.
-  virtual ros::CallbackQueueInterface * getUpdateQueue() = 0;
-#endif
+  /// Add a node (e.g. a display) to the main executor (spin will be called in the main thread)
+  virtual
+  void
+  addNodeToMainExecutor(std::shared_ptr<rclcpp::node::Node> node) = 0;
+
+  /// Remove a node from the main executor
+  virtual
+  void
+  removeNodeFromMainExecutor(std::shared_ptr<rclcpp::node::Node> node) = 0;
 
 #if 0
   /// Return a CallbackQueue using a different thread than the main GUI one.

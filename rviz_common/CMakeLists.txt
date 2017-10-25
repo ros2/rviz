@@ -300,6 +300,7 @@ target_link_libraries(rviz_common
   ${CURL_LIBRARIES}
   ${ASSIMP_LIBRARIES}
   ${TINYXML_LIBRARIES}
+  ${rclcpp_LIBRARIES}
   ${urdf_LIBRARIES}
 )
 ament_target_dependencies(

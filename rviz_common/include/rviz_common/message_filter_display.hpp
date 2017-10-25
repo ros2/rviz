@@ -44,6 +44,9 @@
 
 #include "rviz_common/display.hpp"
 
+#include "rclcpp/rclcpp.hpp"
+#include "std_msgs/msg/string.hpp"
+
 namespace rviz_common
 {
 
@@ -96,14 +99,20 @@ public:
     }
 
   virtual void onInitialize()
-    {
+  {
+    subscription = node_->create_subscription<MessageType>("pointcloud",
+                          std::bind(&MessageFilterDisplay<MessageType>::incomingMessage,
+                              this,
+                              std::placeholders::_1));
+    // TODO(Martin-Idel-SI): revisit once MessageFilter is ported
 //      tf_filter_ = new tf::MessageFilter<MessageType>( *context_->getTFClient(),
-//                                                       fixed_frame_.toStdString(), 10, update_nh_ );
+//                                                fixed_frame_.toStdString(), 10, update_nh_ );
 //
 //      tf_filter_->connectInput( sub_ );
-//      tf_filter_->registerCallback( boost::bind( &MessageFilterDisplay<MessageType>::incomingMessage, this, _1 ));
+//      tf_filter_->registerCallback( boost::bind(
+//           &MessageFilterDisplay<MessageType>::incomingMessage, this, _1 ));
 //      context_->getFrameManager()->registerFilterForTransformStatusCheck( tf_filter_, this );
-    }
+  }
 
   virtual ~MessageFilterDisplay()
     {
@@ -182,7 +191,7 @@ protected:
   /** @brief Incoming message callback.  Checks if the message pointer
    * is valid, increments messages_received_, then calls
    * processMessage(). */
-  void incomingMessage( const typename MessageType::ConstPtr& msg )
+  void incomingMessage( const typename MessageType::SharedPtr msg )
     {
       if( !msg )
       {
@@ -198,10 +207,11 @@ protected:
   /** @brief Implement this to process the contents of a message.
    *
    * This is called by incomingMessage(). */
-  virtual void processMessage( const typename MessageType::ConstPtr& msg ) = 0;
+  virtual void processMessage( const typename MessageType::ConstSharedPtr& msg ) = 0;
 
 //  message_filters::Subscriber<MessageType> sub_;
 //  tf::MessageFilter<MessageType>* tf_filter_;
+  typename rclcpp::Subscription<MessageType>::SharedPtr subscription;
   uint32_t messages_received_;
 };
 

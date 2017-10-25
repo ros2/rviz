@@ -155,7 +155,8 @@ VisualizationManager::VisualizationManager(
   render_requested_(1),
   frame_count_(0),
   window_manager_(wm),
-  private_(new VisualizationManagerPrivate)
+  private_(new VisualizationManagerPrivate),
+  executor_(std::make_shared<rclcpp::executors::SingleThreadedExecutor>())
 {
   // visibility_bit_allocator_ is listed after default_visibility_bit_
   // (and thus initialized later be default):
@@ -310,6 +311,16 @@ void VisualizationManager::unlockRender()
   private_->render_mutex_.unlock();
 }
 
+void
+VisualizationManager::addNodeToMainExecutor(rclcpp::Node::SharedPtr node) {
+  executor_->add_node(node);
+}
+
+void
+VisualizationManager::removeNodeFromMainExecutor(rclcpp::Node::SharedPtr node) {
+  executor_->remove_node(node);
+}
+
 #if 0
 ros::CallbackQueueInterface * VisualizationManager::getUpdateQueue()
 {
@@ -419,10 +430,7 @@ void VisualizationManager::onUpdate()
     resetTime();
   }
 
-// TODO(wjwwood): replace with executor?
-#if 0
-  ros::spinOnce();
-#endif
+  executor_->spin_once(std::chrono::milliseconds(10));
 
   Q_EMIT preUpdate();
 
