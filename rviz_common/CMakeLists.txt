@@ -27,13 +27,29 @@ find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 
-find_package(PkgConfig)
-pkg_check_modules(YAMLCPP yaml-cpp>=0.5 REQUIRED)
-# if(YAMLCPP_FOUND)
-#   add_definitions(-DRVIZ_HAVE_YAMLCPP_05)
-# endif(YAMLCPP_FOUND)
+if(NOT WIN32)
+  find_package(PkgConfig)
+  pkg_check_modules(YAMLCPP yaml-cpp>=0.5 REQUIRED)
+  # if(YAMLCPP_FOUND)
+  #   add_definitions(-DRVIZ_HAVE_YAMLCPP_05)
+  # endif(YAMLCPP_FOUND)
+else()
+  find_path(YAMLCPP_INCLUDE_DIRS NAMES yaml-cpp/yaml.h)
+  find_library(YAMLCPP_LIBRARIES NAMES libyaml-cppmdd libyaml-cppmd)
+endif()
+
+find_library(TINYXML_LIBRARIES NAMES tinyxmld tinyxml)
+
+# TODO(greimela) Remove as soon as boost is not required anymore (in temp files)
+find_package(Boost REQUIRED)
 
 find_package(ASSIMP REQUIRED)
+
+# TODO(greimela): Temporary fix for Windows, remove this later
+if(WIN32)
+  set(ASSIMP_LIBRARIES "${ASSIMP_LIBRARY_DIRS}/${ASSIMP_LIBRARIES}.lib")
+endif()
+
 include(FindCURL)
 if(NOT CURL_FOUND)
   message("CURL not found!  Aborting...")
@@ -242,6 +258,8 @@ target_include_directories(rviz_common
     ${CURL_INCLUDE_DIRS}
     ${ASSIMP_INCLUDE_DIRS}
     ${urdf_INCLUDE_DIRS}
+    # TODO(greimela) Remove as soon as boost is not required anymore (in temp files)
+    ${Boost_INCLUDE_DIRS}
 )
 target_link_libraries(rviz_common
   rviz_rendering::rviz_rendering
@@ -249,7 +267,7 @@ target_link_libraries(rviz_common
   ${YAMLCPP_LIBRARIES}
   ${CURL_LIBRARIES}
   ${ASSIMP_LIBRARIES}
-  tinyxml
+  ${TINYXML_LIBRARIES}
   ${urdf_LIBRARIES}
 )
 ament_target_dependencies(rviz_common geometry_msgs rclcpp tf2 tf2_geometry_msgs tf2_ros)

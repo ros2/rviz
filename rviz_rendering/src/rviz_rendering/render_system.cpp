@@ -399,8 +399,10 @@ RenderSystem::makeRenderWindow(
 
   params["currentGLContext"] = Ogre::String("false");
 
-  // params["externalWindowHandle"] =
-  //   Ogre::StringConverter::toString(static_cast<unsigned long>(window_id));
+  // This line is needed to receive mouse events on Windows, but results in a crash on OS X
+#ifdef _WIN32
+  params["externalWindowHandle"] = Ogre::StringConverter::toString(window_id);
+#endif
   params["parentWindowHandle"] = Ogre::StringConverter::toString(window_id);
 
   // Scale rendering window correctly on Windows
