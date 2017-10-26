@@ -222,6 +222,8 @@ void PointCloudSelectionHandler::createProperties(
             prop->setReadOnly(true);
           }
         }
+        // suppressing this memleak warning from cppcheck below
+        // cppcheck-suppress memleak
       }
     }
   }
