@@ -27,11 +27,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__VALIDATE_FLOAT_HPP_
-#define RVIZ_COMMON__VALIDATE_FLOAT_HPP_
+#ifndef RVIZ_COMMON__VALIDATE_FLOATS_HPP_
+#define RVIZ_COMMON__VALIDATE_FLOATS_HPP_
 
 #include <array>
 #include <cmath>
+#include <vector>
+
+#include <OgreVector3.h>
+#include <OgreQuaternion.h>
 
 #include "geometry_msgs/msg/point_stamped.hpp"
 #include "geometry_msgs/msg/point32.hpp"
@@ -39,9 +43,6 @@
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/twist.hpp"
 #include "std_msgs/msg/color_rgba.hpp"
-
-#include <OgreVector3.h>
-#include <OgreQuaternion.h>
 
 namespace rviz_common
 {
@@ -178,6 +179,6 @@ inline bool validateFloats(const std::array<T, N> & arr)
   return true;
 }
 
-} // namespace rviz_common
+}  // namespace rviz_common
 
-#endif // RVIZ_COMMON__VALIDATE_FLOAT_HPP_
+#endif  // RVIZ_COMMON__VALIDATE_FLOATS_HPP_

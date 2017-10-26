@@ -203,7 +203,7 @@ void PointCloudSelectionHandler::createProperties(
                 message->point_step, index);
             // Convertion hack because rgb are stored int float (datatype=7) and valueFromCloud
             // can't cast float to uint32_t
-            uint32_t val = * reinterpret_cast<uint32_t *>(&float_val);
+            uint32_t val = *reinterpret_cast<uint32_t *>(&float_val);
             rviz_common::properties::ColorProperty * prop =
               new rviz_common::properties::ColorProperty(
               QString("%1: %2").arg(field).arg(QString::fromStdString(name)),

@@ -200,12 +200,12 @@ void IntensityPCTransformer::createProperties(
 
     min_intensity_property_ = new rviz_common::properties::FloatProperty("Min Intensity", 0,
         "Minimum possible intensity value, used to interpolate from Min Color "
-          "to Max Color for a point.",
+        "to Max Color for a point.",
         parent_property);
 
     max_intensity_property_ = new rviz_common::properties::FloatProperty("Max Intensity", 4096,
         "Maximum possible intensity value, used to interpolate from Min Color "
-          "to Max Color for a point.",
+        "to Max Color for a point.",
         parent_property);
 
     out_props.push_back(channel_name_property_);

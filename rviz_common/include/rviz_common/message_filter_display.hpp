@@ -34,8 +34,8 @@
 #include <OgreSceneNode.h>
 
 // TODO(greimela): Add again as soon as the message filter subscriber is ported to ROS 2
-//#include <message_filters/subscriber.h>
-//#include <tf/message_filter.h>
+// #include <message_filters/subscriber.h>
+// #include <tf/message_filter.h>
 #endif
 
 #include "rviz_common/display_context.hpp"
@@ -95,7 +95,8 @@ public:
 //    : tf_filter_( NULL )
   : messages_received_(0)
   {
-//      QString message_type = QString::fromStdString( ros::message_traits::datatype<MessageType>() );
+//      QString message_type = QString::fromStdString(
+// ros::message_traits::datatype<MessageType>() );
 //      topic_property_->setMessageType( message_type );
 //      topic_property_->setDescription( message_type + " topic to subscribe to." );
   }
@@ -199,7 +200,8 @@ protected:
     }
 
     ++messages_received_;
-//      setStatus( StatusProperty::Ok, "Topic", QString::number( messages_received_ ) + " messages received" );
+//      setStatus( StatusProperty::Ok, "Topic",
+// QString::number( messages_received_ ) + " messages received" );
 
     processMessage(msg);
   }
@@ -215,6 +217,6 @@ protected:
   uint32_t messages_received_;
 };
 
-} // end namespace rviz_common
+}  // end namespace rviz_common
 
-#endif // RVIZ_COMMON__MESSAGE_FILTER_DISPLAY_HPP_
+#endif  // RVIZ_COMMON__MESSAGE_FILTER_DISPLAY_HPP_

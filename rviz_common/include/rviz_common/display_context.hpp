@@ -32,6 +32,7 @@
 #define RVIZ_COMMON__DISPLAY_CONTEXT_HPP_
 
 #include <cstdint>
+#include <memory>
 
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
@@ -48,8 +49,8 @@ namespace rclcpp
 namespace node
 {
 class Node;
-}  // namespace rviz
 }  // namespace node
+}  // namespace rclcpp
 
 // namespace tf
 // {
