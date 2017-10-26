@@ -56,7 +56,7 @@ inline bool validateFloats(double val)
   return !(std::isnan(val) || std::isinf(val));
 }
 
-inline bool validateFloats(const Ogre::Vector3& vec)
+inline bool validateFloats(const Ogre::Vector3 & vec)
 {
   bool valid = true;
   valid = valid && validateFloats(vec.x);
@@ -65,7 +65,7 @@ inline bool validateFloats(const Ogre::Vector3& vec)
   return valid;
 }
 
-inline bool validateFloats(const Ogre::Quaternion& quat)
+inline bool validateFloats(const Ogre::Quaternion & quat)
 {
   bool valid = true;
   valid = valid && validateFloats(quat.x);
@@ -75,7 +75,7 @@ inline bool validateFloats(const Ogre::Quaternion& quat)
   return valid;
 }
 
-inline bool validateFloats(const geometry_msgs::msg::Point& msg)
+inline bool validateFloats(const geometry_msgs::msg::Point & msg)
 {
   bool valid = true;
   valid = valid && validateFloats(msg.x);
@@ -84,7 +84,7 @@ inline bool validateFloats(const geometry_msgs::msg::Point& msg)
   return valid;
 }
 
-inline bool validateFloats(const geometry_msgs::msg::Point32& msg)
+inline bool validateFloats(const geometry_msgs::msg::Point32 & msg)
 {
   bool valid = true;
   valid = valid && validateFloats(msg.x);
@@ -93,7 +93,7 @@ inline bool validateFloats(const geometry_msgs::msg::Point32& msg)
   return valid;
 }
 
-inline bool validateFloats(const geometry_msgs::msg::Vector3& msg)
+inline bool validateFloats(const geometry_msgs::msg::Vector3 & msg)
 {
   bool valid = true;
   valid = valid && validateFloats(msg.x);
@@ -102,7 +102,7 @@ inline bool validateFloats(const geometry_msgs::msg::Vector3& msg)
   return valid;
 }
 
-inline bool validateFloats(const geometry_msgs::msg::Twist& twist)
+inline bool validateFloats(const geometry_msgs::msg::Twist & twist)
 {
   bool valid = true;
   valid = valid && validateFloats(twist.linear);
@@ -110,7 +110,7 @@ inline bool validateFloats(const geometry_msgs::msg::Twist& twist)
   return valid;
 }
 
-inline bool validateFloats(const geometry_msgs::msg::Quaternion& msg)
+inline bool validateFloats(const geometry_msgs::msg::Quaternion & msg)
 {
   bool valid = true;
   valid = valid && validateFloats(msg.x);
@@ -120,7 +120,7 @@ inline bool validateFloats(const geometry_msgs::msg::Quaternion& msg)
   return valid;
 }
 
-inline bool validateFloats(const std_msgs::msg::ColorRGBA& msg)
+inline bool validateFloats(const std_msgs::msg::ColorRGBA & msg)
 {
   bool valid = true;
   valid = valid && validateFloats(msg.r);
@@ -130,12 +130,12 @@ inline bool validateFloats(const std_msgs::msg::ColorRGBA& msg)
   return valid;
 }
 
-inline bool validateFloats(const geometry_msgs::msg::PointStamped& msg)
+inline bool validateFloats(const geometry_msgs::msg::PointStamped & msg)
 {
   return validateFloats(msg.point);
 }
 
-inline bool validateFloats(const geometry_msgs::msg::Pose& msg)
+inline bool validateFloats(const geometry_msgs::msg::Pose & msg)
 {
   bool valid = true;
   valid = valid && validateFloats(msg.position);
@@ -143,21 +143,19 @@ inline bool validateFloats(const geometry_msgs::msg::Pose& msg)
   return valid;
 }
 
-inline bool validateFloats(const geometry_msgs::msg::PoseStamped& msg)
+inline bool validateFloats(const geometry_msgs::msg::PoseStamped & msg)
 {
   return validateFloats(msg.pose);
 }
 
 template<typename T>
-inline bool validateFloats(const std::vector<T>& vec)
+inline bool validateFloats(const std::vector<T> & vec)
 {
   typedef std::vector<T> VecType;
   typename VecType::const_iterator it = vec.begin();
   typename VecType::const_iterator end = vec.end();
-  for (; it != end; ++it)
-  {
-    if (!validateFloats(*it))
-    {
+  for (; it != end; ++it) {
+    if (!validateFloats(*it)) {
       return false;
     }
   }
@@ -166,15 +164,13 @@ inline bool validateFloats(const std::vector<T>& vec)
 }
 
 template<typename T, size_t N>
-inline bool validateFloats(const std::array<T, N>& arr)
+inline bool validateFloats(const std::array<T, N> & arr)
 {
   typedef std::array<T, N> ArrType;
   typename ArrType::const_iterator it = arr.begin();
   typename ArrType::const_iterator end = arr.end();
-  for (; it != end; ++it)
-  {
-    if (!validateFloats(*it))
-    {
+  for (; it != end; ++it) {
+    if (!validateFloats(*it)) {
       return false;
     }
   }

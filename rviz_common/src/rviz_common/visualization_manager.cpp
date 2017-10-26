@@ -312,12 +312,14 @@ void VisualizationManager::unlockRender()
 }
 
 void
-VisualizationManager::addNodeToMainExecutor(rclcpp::Node::SharedPtr node) {
+VisualizationManager::addNodeToMainExecutor(rclcpp::Node::SharedPtr node)
+{
   executor_->add_node(node);
 }
 
 void
-VisualizationManager::removeNodeFromMainExecutor(rclcpp::Node::SharedPtr node) {
+VisualizationManager::removeNodeFromMainExecutor(rclcpp::Node::SharedPtr node)
+{
   executor_->remove_node(node);
 }
 

@@ -53,25 +53,26 @@ namespace rviz_common
 /** @brief Helper superclass for MessageFilterDisplay, needed because
  * Qt's moc and c++ templates don't work nicely together.  Not
  * intended to be used directly. */
-class _RosTopicDisplay: public Display
+class _RosTopicDisplay : public Display
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   _RosTopicDisplay()
-    {
-      topic_property_ = new properties::StringProperty( "Topic", "", "", this, SLOT( updateTopic()));
-      unreliable_property_ = new properties::BoolProperty( "Unreliable", false,
-                                               "Prefer UDP topic transport",
-                                               this,
-                                               SLOT( updateTopic() ));
-    }
+  {
+    topic_property_ = new properties::StringProperty("Topic", "", "", this, SLOT(updateTopic()));
+    unreliable_property_ = new properties::BoolProperty("Unreliable", false,
+        "Prefer UDP topic transport",
+        this,
+        SLOT(updateTopic()));
+  }
 
 protected Q_SLOTS:
   virtual void updateTopic() = 0;
 
 protected:
-  properties::StringProperty* topic_property_;
-  properties::BoolProperty* unreliable_property_;
+  properties::StringProperty * topic_property_;
+  properties::BoolProperty * unreliable_property_;
 };
 
 /** @brief Display subclass using a tf::MessageFilter, templated on the ROS message type.
@@ -81,9 +82,10 @@ protected:
  * it handles subscribing and unsubscribing when the display is
  * enabled or disabled.  It also has an Ogre::SceneNode which  */
 template<class MessageType>
-class MessageFilterDisplay: public _RosTopicDisplay
+class MessageFilterDisplay : public _RosTopicDisplay
 {
 // No Q_OBJECT macro here, moc does not support Q_OBJECT in a templated class.
+
 public:
   /** @brief Convenience typedef so subclasses don't have to use
    * the long templated class name to refer to their super class. */
@@ -91,19 +93,19 @@ public:
 
   MessageFilterDisplay()
 //    : tf_filter_( NULL )
-    : messages_received_( 0 )
-    {
+  : messages_received_(0)
+  {
 //      QString message_type = QString::fromStdString( ros::message_traits::datatype<MessageType>() );
 //      topic_property_->setMessageType( message_type );
 //      topic_property_->setDescription( message_type + " topic to subscribe to." );
-    }
+  }
 
   virtual void onInitialize()
   {
     subscription = node_->create_subscription<MessageType>("pointcloud",
-                          std::bind(&MessageFilterDisplay<MessageType>::incomingMessage,
-                              this,
-                              std::placeholders::_1));
+        std::bind(&MessageFilterDisplay<MessageType>::incomingMessage,
+        this,
+        std::placeholders::_1));
     // TODO(Martin-Idel-SI): revisit once MessageFilter is ported
 //      tf_filter_ = new tf::MessageFilter<MessageType>( *context_->getTFClient(),
 //                                                fixed_frame_.toStdString(), 10, update_nh_ );
@@ -115,39 +117,38 @@ public:
   }
 
   virtual ~MessageFilterDisplay()
-    {
-      unsubscribe();
+  {
+    unsubscribe();
 //      delete tf_filter_;
-    }
+  }
 
   virtual void reset()
-    {
-      Display::reset();
+  {
+    Display::reset();
 //      tf_filter_->clear();
-      messages_received_ = 0;
-    }
+    messages_received_ = 0;
+  }
 
-  virtual void setTopic( const QString &topic, const QString &datatype )
-    {
-      (void) datatype;
-      topic_property_->setString( topic );
-    }
+  virtual void setTopic(const QString & topic, const QString & datatype)
+  {
+    (void) datatype;
+    topic_property_->setString(topic);
+  }
 
 protected:
   virtual void updateTopic()
-    {
-      unsubscribe();
-      reset();
-      subscribe();
-      context_->queueRender();
-    }
+  {
+    unsubscribe();
+    reset();
+    subscribe();
+    context_->queueRender();
+  }
 
   virtual void subscribe()
-    {
-      if( !isEnabled() )
-      {
-        return;
-      }
+  {
+    if (!isEnabled() ) {
+      return;
+    }
 
 //      try
 //      {
@@ -164,50 +165,49 @@ protected:
 //      {
 //        setStatus( StatusProperty::Error, "Topic", QString( "Error subscribing: " ) + e.what() );
 //      }
-    }
+  }
 
   virtual void unsubscribe()
-    {
+  {
 //      sub_.unsubscribe();
-    }
+  }
 
   virtual void onEnable()
-    {
-      subscribe();
-    }
+  {
+    subscribe();
+  }
 
   virtual void onDisable()
-    {
-      unsubscribe();
-      reset();
-    }
+  {
+    unsubscribe();
+    reset();
+  }
 
   virtual void fixedFrameChanged()
-    {
+  {
 //      tf_filter_->setTargetFrame( fixed_frame_.toStdString() );
-      reset();
-    }
+    reset();
+  }
 
   /** @brief Incoming message callback.  Checks if the message pointer
    * is valid, increments messages_received_, then calls
    * processMessage(). */
-  void incomingMessage( const typename MessageType::SharedPtr msg )
-    {
-      if( !msg )
-      {
-        return;
-      }
+  void incomingMessage(const typename MessageType::SharedPtr msg)
+  {
+    if (!msg) {
+      return;
+    }
 
-      ++messages_received_;
+    ++messages_received_;
 //      setStatus( StatusProperty::Ok, "Topic", QString::number( messages_received_ ) + " messages received" );
 
-      processMessage( msg );
-    }
+    processMessage(msg);
+  }
 
   /** @brief Implement this to process the contents of a message.
    *
    * This is called by incomingMessage(). */
-  virtual void processMessage( const typename MessageType::ConstSharedPtr& msg ) = 0;
+  virtual void processMessage(const typename MessageType::ConstSharedPtr & msg) = 0;
 
 //  message_filters::Subscriber<MessageType> sub_;
 //  tf::MessageFilter<MessageType>* tf_filter_;

@@ -45,7 +45,8 @@ class SceneManager;
 
 namespace rclcpp
 {
-namespace node {
+namespace node
+{
 class Node;
 }  // namespace rviz
 }  // namespace node
