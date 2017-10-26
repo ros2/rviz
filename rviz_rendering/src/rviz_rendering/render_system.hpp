@@ -56,7 +56,7 @@
 # pragma GCC diagnostic pop
 #endif
 
-#include <QDir> // NOLINT
+#include <QDir>  // NOLINT
 
 namespace rviz_rendering
 {

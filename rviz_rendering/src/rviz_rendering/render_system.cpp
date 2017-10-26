@@ -31,22 +31,23 @@
 
 #include "render_system.hpp"
 
+#include <map>
 #include <string>
 #include <vector>
 
 #ifdef __linux__
+
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <GL/glx.h>
-#endif
 
+#endif
 
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
 
-#include <map>
 #include <OgreRenderWindow.h>
 
 #ifndef _WIN32
@@ -133,7 +134,7 @@ RenderSystem::RenderSystem()
   setResourceDirectory();
   setupDummyWindowId();
   ogre_root_ = new Ogre::Root(get_resource_directory() + "/ogre_media/plugins.cfg");
-#if ((OGRE_VERSION_MAJOR == 1 && OGRE_VERSION_MINOR >= 9) || OGRE_VERSION_MAJOR >= 2 )
+#if ((OGRE_VERSION_MAJOR == 1 && OGRE_VERSION_MINOR >= 9) || OGRE_VERSION_MAJOR >= 2)
   ogre_overlay_system_ = new Ogre::OverlaySystem();
 #endif
   loadOgrePlugins();
@@ -148,7 +149,7 @@ RenderSystem::RenderSystem()
 void
 RenderSystem::prepareOverlays(Ogre::SceneManager * scene_manager)
 {
-#if ((OGRE_VERSION_MAJOR == 1 && OGRE_VERSION_MINOR >= 9) || OGRE_VERSION_MAJOR >= 2 )
+#if ((OGRE_VERSION_MAJOR == 1 && OGRE_VERSION_MINOR >= 9) || OGRE_VERSION_MAJOR >= 2)
   if (ogre_overlay_system_) {
     scene_manager->addRenderQueueListener(ogre_overlay_system_);
   }
@@ -351,8 +352,7 @@ void RenderSystem::addAdditionalResourcesFromAmentIndex() const
       &prefix_path))
     {
       std::vector<std::string> filenames =
-        string_helper::splitStringIntoTrimmedItems(
-        content, '\n');
+        string_helper::splitStringIntoTrimmedItems(content, '\n');
       for (const auto & line : filenames) {
         std::string resource_path = prefix_path + "/share/" + line;
         if (!QDir(QString::fromStdString(resource_path)).exists()) {
