@@ -33,8 +33,6 @@
 #include <string>
 #include <vector>
 
-namespace
-{
 TEST(String_Helper__Test, correctly_split_string) {
   std::vector<std::string> expected;
   expected.emplace_back("Test");
@@ -82,4 +80,3 @@ TEST(String_Helper__Test, correctly_split_string_with_other_whitespace) {
 
   ASSERT_EQ(expected, actual);
 }
-}  // namespace

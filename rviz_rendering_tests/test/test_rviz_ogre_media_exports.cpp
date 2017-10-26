@@ -35,9 +35,6 @@
 
 #include "ament_index_cpp/get_resource.hpp"
 
-namespace
-{
-
 TEST(CMake_Macro__Test, correctly_registers_plugin_in_ament_index) {
   std::string content;
   std::string prefix_path;
@@ -69,5 +66,3 @@ TEST(CMake_Macro__Test, folders_are_installed_to_correct_location) {
   ASSERT_EQ(stat(scripts.c_str(), &info), 0);
   ASSERT_EQ(stat(meshes.c_str(), &info), 0);
 }
-
-}  // namespace
