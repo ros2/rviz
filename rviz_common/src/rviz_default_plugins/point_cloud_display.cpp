@@ -27,10 +27,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <memory>
+#include <vector>
+
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 
-//#include <tf/transform_listener.h>
+// #include <tf/transform_listener.h>
 
 #include "./point_cloud_common.hpp"
 #include "rviz_common/display_context.hpp"
@@ -49,7 +52,8 @@ PointCloudDisplay::PointCloudDisplay()
   queue_size_property_ = new rviz_common::properties::IntProperty("Queue Size", 10,
       "Advanced: set the size of the incoming PointCloud message queue. "
       " Increasing this is useful if your incoming TF data is delayed significantly "
-      "from your PointCloud data, but it can greatly increase memory usage if the messages are big.",
+      "from your PointCloud data, but it can greatly increase memory usage if the "
+      "messages are big.",
       this, SLOT(updateQueueSize()));
 
   // PointCloudCommon sets up a callback queue with a thread for each
@@ -104,7 +108,7 @@ void PointCloudDisplay::reset()
   point_cloud_common_->reset();
 }
 
-} // namespace rviz_default_plugins
+}  // namespace rviz_default_plugins
 
-//#include <pluginlib/class_list_macros.h>
-//PLUGINLIB_EXPORT_CLASS( rviz::PointCloudDisplay, rviz::Display )
+// #include <pluginlib/class_list_macros.h>
+// PLUGINLIB_EXPORT_CLASS( rviz::PointCloudDisplay, rviz::Display )

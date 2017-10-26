@@ -27,6 +27,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "point_cloud_transformers.hpp"
+
+#include <algorithm>
+#include <string>
+#include <vector>
+
 #include <OgreColourValue.h>
 #include <OgreMatrix4.h>
 #include <OgreVector3.h>
@@ -37,8 +43,6 @@
 #include "rviz_common/properties/enum_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/validate_floats.hpp"
-
-#include "point_cloud_transformers.hpp"
 
 namespace rviz_default_plugins
 {
@@ -195,11 +199,13 @@ void IntensityPCTransformer::createProperties(
       parent_property, SLOT(updateAutoComputeIntensityBounds()), this);
 
     min_intensity_property_ = new rviz_common::properties::FloatProperty("Min Intensity", 0,
-        "Minimum possible intensity value, used to interpolate from Min Color to Max Color for a point.",
+        "Minimum possible intensity value, used to interpolate from Min Color "
+          "to Max Color for a point.",
         parent_property);
 
     max_intensity_property_ = new rviz_common::properties::FloatProperty("Max Intensity", 4096,
-        "Maximum possible intensity value, used to interpolate from Min Color to Max Color for a point.",
+        "Maximum possible intensity value, used to interpolate from Min Color "
+          "to Max Color for a point.",
         parent_property);
 
     out_props.push_back(channel_name_property_);
@@ -354,9 +360,9 @@ bool RGB8PCTransformer::transform(
   // Create a look-up table for colors
   float rgb_lut[256];
   for (int i = 0; i < 256; ++i) {
-    rgb_lut[i] = float(i) / 255.0f;
+    rgb_lut[i] = static_cast<float>(i) / 255.0f;
   }
-  if (rgb != -1) { // rgb
+  if (rgb != -1) {  // rgb
     for (V_PointCloudPoint::iterator iter = points_out.begin(); iter != points_out.end();
       ++iter, rgb_ptr += point_step)
     {
@@ -366,7 +372,7 @@ bool RGB8PCTransformer::transform(
       iter->color.b = rgb_lut[rgb & 0xff];
       iter->color.a = 1.0f;
     }
-  } else { // rgba
+  } else {  // rgba
     for (V_PointCloudPoint::iterator iter = points_out.begin(); iter != points_out.end();
       ++iter, rgb_ptr += point_step)
     {
@@ -429,7 +435,8 @@ bool RGBF32PCTransformer::transform(
   return true;
 }
 
-uint8_t FlatColorPCTransformer::supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
+uint8_t FlatColorPCTransformer::supports(
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
 {
   (void) cloud;
   return Support_Color;
@@ -475,7 +482,8 @@ void FlatColorPCTransformer::createProperties(
   }
 }
 
-uint8_t AxisColorPCTransformer::supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
+uint8_t AxisColorPCTransformer::supports(
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
 {
   (void) cloud;
   return Support_Color;
@@ -515,7 +523,7 @@ bool AxisColorPCTransformer::transform(
   Ogre::Vector3 pos;
   if (use_fixed_frame_property_->getBool() ) {
     for (uint32_t i = 0; i < num_points; ++i, point += point_step) {
-      // TODO: optimize this by only doing the multiplication needed
+      // TODO(anonymous): optimize this by only doing the multiplication needed
       // for the desired output value, instead of doing all of them
       // and then throwing most away.
       pos.x = *reinterpret_cast<const float *>(point + xoff);
@@ -613,12 +621,12 @@ void AxisColorPCTransformer::updateAutoComputeBounds()
   Q_EMIT needRetransform();
 }
 
-} // end namespace rviz_default_plugins
+}  // end namespace rviz_default_plugins
 
-//#include <pluginlib/class_list_macros.h>
-//PLUGINLIB_EXPORT_CLASS( rviz::AxisColorPCTransformer, rviz::PointCloudTransformer )
-//PLUGINLIB_EXPORT_CLASS( rviz::FlatColorPCTransformer, rviz::PointCloudTransformer )
-//PLUGINLIB_EXPORT_CLASS( rviz::IntensityPCTransformer, rviz::PointCloudTransformer )
-//PLUGINLIB_EXPORT_CLASS(      rviz::RGB8PCTransformer,      rviz::PointCloudTransformer )
-//PLUGINLIB_EXPORT_CLASS(    rviz::RGBF32PCTransformer,    rviz::PointCloudTransformer )
-//PLUGINLIB_EXPORT_CLASS(       rviz::XYZPCTransformer,       rviz::PointCloudTransformer )
+// #include <pluginlib/class_list_macros.h>
+// PLUGINLIB_EXPORT_CLASS( rviz::AxisColorPCTransformer, rviz::PointCloudTransformer )
+// PLUGINLIB_EXPORT_CLASS( rviz::FlatColorPCTransformer, rviz::PointCloudTransformer )
+// PLUGINLIB_EXPORT_CLASS( rviz::IntensityPCTransformer, rviz::PointCloudTransformer )
+// PLUGINLIB_EXPORT_CLASS(      rviz::RGB8PCTransformer,      rviz::PointCloudTransformer )
+// PLUGINLIB_EXPORT_CLASS(    rviz::RGBF32PCTransformer,    rviz::PointCloudTransformer )
+// PLUGINLIB_EXPORT_CLASS(       rviz::XYZPCTransformer,       rviz::PointCloudTransformer )

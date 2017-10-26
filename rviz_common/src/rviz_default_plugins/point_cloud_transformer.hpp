@@ -30,9 +30,11 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMER_HPP_
 
-#include <QObject>
+#include <vector>
 
-//#include <ros/message_forward.h>
+#include <QObject>  // NOLINT
+
+// #include <ros/message_forward.h>
 
 #ifndef Q_MOC_RUN
 #include <OgreVector3.h>
@@ -55,8 +57,8 @@ namespace properties
 
 class Property;
 
-}
-}
+}  // namespace properties
+}  // namespace rviz_common
 
 namespace rviz_default_plugins
 {
@@ -124,10 +126,11 @@ public:
   }
 
 Q_SIGNALS:
-  /** @brief Subclasses should emit this signal whenever they think the points should be re-transformed. */
+  /** @brief Subclasses should emit this signal whenever they think the points should be re-transformed.
+   */
   void needRetransform();
 };
 
-} // namespace rviz_default_plugins
+}  // namespace rviz_default_plugins
 
 #endif  // RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMER_HPP_

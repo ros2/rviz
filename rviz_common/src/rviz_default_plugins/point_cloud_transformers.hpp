@@ -30,8 +30,11 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS_HPP_
 #define RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS_HPP_
 
-#include <sensor_msgs/msg/point_cloud2.hpp>
-#include <rviz_common/properties/property.hpp>
+#include <vector>
+#include <string>
+
+#include "sensor_msgs/msg/point_cloud2.hpp"
+#include "rviz_common/properties/property.hpp"
 
 #include "point_cloud_transformer.hpp"
 
@@ -46,8 +49,9 @@ class EditableEnumProperty;
 class EnumProperty;
 class FloatProperty;
 
-}
-}
+}  // namespace properties
+}  // namespace rviz_common
+
 namespace rviz_default_plugins
 {
 
@@ -257,4 +261,4 @@ private:
 
 }  // end namespace rviz_default_plugins
 
-#endif // RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS_HPP_

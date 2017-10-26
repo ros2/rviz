@@ -27,14 +27,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_POINT_CLOUD_DISPLAY_H
-#define RVIZ_POINT_CLOUD_DISPLAY_H
+#ifndef RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_DISPLAY_HPP_
 
 #include <deque>
 #include <queue>
 #include <vector>
 
-#include <sensor_msgs/msg/point_cloud.hpp>
+#include "sensor_msgs/msg/point_cloud.hpp"
 
 #include "rviz_common/message_filter_display.hpp"
 
@@ -45,8 +45,8 @@ namespace properties
 
 class IntProperty;
 
-}
-}
+}  // namespace properties
+}  // namespace rviz_common
 
 namespace rviz_default_plugins
 {
@@ -88,6 +88,6 @@ protected:
   PointCloudCommon * point_cloud_common_;
 };
 
-} // namespace rviz
+}  // namespace rviz_default_plugins
 
-#endif
+#endif  // RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_DISPLAY_HPP_

@@ -27,15 +27,22 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <QColor>
+#include "point_cloud_common.hpp"
+
+#include <memory>
+#include <set>
+#include <string>
+#include <utility>
+
+#include <QColor>  // NOLINT
 
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 #include <OgreWireBoundingBox.h>
 
-//#include <tf/transform_listener.h>
+// #include <tf/transform_listener.h>
 
-//#include <pluginlib/class_loader.h>
+// #include <pluginlib/class_loader.h>
 
 #include "./point_cloud_transformer.hpp"
 #include "./point_cloud_transformers.hpp"
@@ -49,8 +56,6 @@
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
 #include "rviz_common/validate_floats.hpp"
-
-#include "./point_cloud_common.hpp"
 
 namespace rviz_default_plugins
 {
@@ -196,8 +201,9 @@ void PointCloudSelectionHandler::createProperties(
           if (name == "rgb" || name == "rgba") {
             float float_val = valueFromCloud<float>(message, f.offset, f.datatype,
                 message->point_step, index);
-            // Convertion hack because rgb are stored int float (datatype=7) and valueFromCloud can't cast float to uint32_t
-            uint32_t val = *((uint32_t *) &float_val);
+            // Convertion hack because rgb are stored int float (datatype=7) and valueFromCloud
+            // can't cast float to uint32_t
+            uint32_t val = * reinterpret_cast<uint32_t *>(&float_val);
             rviz_common::properties::ColorProperty * prop =
               new rviz_common::properties::ColorProperty(
               QString("%1: %2").arg(field).arg(QString::fromStdString(name)),
@@ -360,7 +366,8 @@ PointCloudCommon::PointCloudCommon(rviz_common::Display * display)
   point_pixel_size_property_->setMin(1);
 
   alpha_property_ = new rviz_common::properties::FloatProperty("Alpha", 1.0,
-      "Amount of transparency to apply to the points.  Note that this is experimental and does not always look correct.",
+      "Amount of transparency to apply to the points.  Note that this is experimental "
+      "and does not always look correct.",
       display_, SLOT(updateAlpha()), this);
   alpha_property_->setMin(0);
   alpha_property_->setMax(1);
@@ -389,7 +396,8 @@ void PointCloudCommon::initialize(
   rviz_common::DisplayContext * context,
   Ogre::SceneNode * scene_node)
 {
-//  transformer_class_loader_ = new pluginlib::ClassLoader<PointCloudTransformer>( "rviz", "rviz::PointCloudTransformer" );
+//  transformer_class_loader_ = new pluginlib::ClassLoader<PointCloudTransformer>( "rviz",
+// "rviz::PointCloudTransformer" );
   loadTransformers();
 
   context_ = context;
@@ -448,7 +456,8 @@ void PointCloudCommon::loadTransformers()
 //      continue;
 //    }
 //
-//    PointCloudTransformerPtr trans( transformer_class_loader_->createUnmanagedInstance( lookup_name ));
+//    PointCloudTransformerPtr trans( transformer_class_loader_
+// ->createUnmanagedInstance( lookup_name ));
 //    trans->init();
 //    connect( trans.get(), SIGNAL( needRetransform() ), this, SLOT( causeRetransform() ));
 //
@@ -457,16 +466,16 @@ void PointCloudCommon::loadTransformers()
 //    info.readable_name = name;
 //    info.lookup_name = lookup_name;
 //
-//    info.transformer->createProperties( display_, PointCloudTransformer::Support_XYZ, info.xyz_props );
+//    info.transformer->createProperties( display_, PointCloudTransformer::Support_XYZ,
+// info.xyz_props );
 //    setPropertiesHidden( info.xyz_props, true );
 //
-//    info.transformer->createProperties( display_, PointCloudTransformer::Support_Color, info.color_props );
+//    info.transformer->createProperties( display_, PointCloudTransformer::Support_Color,
+// info.color_props );
 //    setPropertiesHidden( info.color_props, true );
 //
 //    transformers_[ name ] = info;
 //  }
-
-
 }
 
 void PointCloudCommon::loadTransformer(
@@ -474,7 +483,6 @@ void PointCloudCommon::loadTransformer(
   std::string name,
   const std::string & lookup_name)
 {
-
   trans->init();
   connect(trans.get(), SIGNAL(needRetransform()), this, SLOT(causeRetransform()));
 
@@ -516,8 +524,8 @@ void PointCloudCommon::updateSelectable()
 
   if (selectable) {
     for (unsigned i = 0; i < cloud_infos_.size(); i++) {
-      cloud_infos_[i]->selection_handler_.reset(new PointCloudSelectionHandler(getSelectionBoxSize(),
-        cloud_infos_[i].get(), context_));
+      cloud_infos_[i]->selection_handler_.reset(
+        new PointCloudSelectionHandler(getSelectionBoxSize(), cloud_infos_[i].get(), context_));
       cloud_infos_[i]->cloud_->setPickColor(
         rviz_common::selection::SelectionManager::handleToColor(
           cloud_infos_[i]->selection_handler_->getHandle() ));
@@ -769,7 +777,7 @@ void PointCloudCommon::updateTransformers(
 void PointCloudCommon::updateStatus()
 {
   std::stringstream ss;
-  //ss << "Showing [" << total_point_count_ << "] points from [" << clouds_.size() << "] messages";
+  // ss << "Showing [" << total_point_count_ << "] points from [" << clouds_.size() << "] messages";
   display_->setStatusStd(rviz_common::properties::StatusProperty::Ok, "Points", ss.str());
 }
 
@@ -854,12 +862,13 @@ void PointCloudCommon::retransform()
 
 bool PointCloudCommon::transformCloud(const CloudInfoPtr & cloud_info, bool update_transformers)
 {
-
   if (!cloud_info->scene_node_) {
-//    if (!context_->getFrameManager()->getTransform(cloud_info->message_->header, cloud_info->position_, cloud_info->orientation_))
+//    if (!context_->getFrameManager()->getTransform(cloud_info->message_->header,
+// cloud_info->position_, cloud_info->orientation_))
 //    {
 //      std::stringstream ss;
-//      ss << "Failed to transform from frame [" << cloud_info->message_->header.frame_id << "] to frame [" << context_->getFrameManager()->getFixedFrame() << "]";
+//      ss << "Failed to transform from frame [" << cloud_info->message_->header.frame_id << "]
+// to frame [" << context_->getFrameManager()->getFixedFrame() << "]";
 //      display_->setStatusStd(rviz_common::properties::StatusProperty::Error, "Message", ss.str());
 //      return false;
 //    }
@@ -1023,4 +1032,4 @@ float PointCloudCommon::getSelectionBoxSize()
   }
 }
 
-} // namespace rviz_default_plugins
+}  // namespace rviz_default_plugins

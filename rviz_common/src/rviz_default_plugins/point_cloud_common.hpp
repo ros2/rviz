@@ -32,23 +32,23 @@
 
 #ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
 # include <deque>
-# include <queue>
+# include <list>
+# include <map>
 # include <memory>
+# include <queue>
 # include <vector>
+# include <string>
 
-# include <QObject>
-# include <QList>
-
-//# include <ros/spinner.h>
-//# include <ros/callback_queue.h>
+# include <QObject>  // NOLINT
+# include <QList>  // NOLINT
 
 //# include <message_filters/time_sequencer.h>
 
 //# include <pluginlib/class_loader.h>
 #include "rclcpp/time.hpp"
 
-# include <sensor_msgs/msg/point_cloud.hpp>
-# include <sensor_msgs/msg/point_cloud2.hpp>
+# include "sensor_msgs/msg/point_cloud.hpp"
+# include "sensor_msgs/msg/point_cloud2.hpp"
 
 # include "rviz_common/selection/selection_manager.hpp"
 # include "./point_cloud_transformer.hpp"
@@ -70,8 +70,8 @@ class BoolProperty;
 class EnumProperty;
 class FloatProperty;
 
-}
-}
+}  // namespace properties
+}  // namespace rviz_common
 namespace rviz_default_plugins
 {
 
@@ -126,7 +126,7 @@ public:
   typedef std::queue<CloudInfoPtr> Q_CloudInfo;
   typedef std::list<CloudInfoPtr> L_CloudInfo;
 
-  PointCloudCommon(rviz_common::Display * display);
+  explicit PointCloudCommon(rviz_common::Display * display);
   ~PointCloudCommon();
 
   void initialize(rviz_common::DisplayContext * context, Ogre::SceneNode * scene_node);
@@ -277,6 +277,6 @@ private:
   float box_size_;
 };
 
-} // namespace rviz_default_plugins
+}  // namespace rviz_default_plugins
 
-#endif // RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_COMMON_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_COMMON_HPP_

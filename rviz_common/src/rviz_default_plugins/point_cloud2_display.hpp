@@ -83,6 +83,6 @@ protected:
   PointCloudCommon * point_cloud_common_;
 };
 
-} // namespace rviz_default_plugins
+}  // namespace rviz_default_plugins
 
 #endif  // RVIZ_DEFAULT_PLUGINS__POINT_CLOUD2_DISPLAY_HPP_

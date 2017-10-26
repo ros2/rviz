@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <memory>
+
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 
@@ -49,7 +51,8 @@ PointCloud2Display::PointCloud2Display()
   queue_size_property_ = new rviz_common::properties::IntProperty("Queue Size", 10,
       "Advanced: set the size of the incoming PointCloud2 message queue. "
       " Increasing this is useful if your incoming TF data is delayed significantly "
-      "from your PointCloud2 data, but it can greatly increase memory usage if the messages are big.",
+      "from your PointCloud2 data, but it can greatly increase memory usage "
+      "if the messages are big.",
       this, SLOT(updateQueueSize()));
 
   // PointCloudCommon sets up a callback queue with a thread for each
@@ -166,7 +169,7 @@ void PointCloud2Display::reset()
   point_cloud_common_->reset();
 }
 
-} // namespace rviz_default_plugins
+}  // namespace rviz_default_plugins
 
-//#include <pluginlib/class_list_macros.h>
-//PLUGINLIB_EXPORT_CLASS( rviz::PointCloud2Display, rviz::Display )
+// #include <pluginlib/class_list_macros.h>
+// PLUGINLIB_EXPORT_CLASS( rviz::PointCloud2Display, rviz::Display )
