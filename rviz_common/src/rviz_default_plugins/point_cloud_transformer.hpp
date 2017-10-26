@@ -48,8 +48,10 @@ namespace Ogre
 class Matrix4;
 }
 
-namespace rviz_common {
-namespace properties {
+namespace rviz_common
+{
+namespace properties
+{
 
 class Property;
 
@@ -61,9 +63,10 @@ namespace rviz_default_plugins
 
 typedef std::vector<rviz_rendering::PointCloud::Point> V_PointCloudPoint;
 
-class PointCloudTransformer: public QObject
+class PointCloudTransformer : public QObject
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   virtual void init() {}
 
@@ -76,7 +79,7 @@ public:
     Support_None = 0,
     Support_XYZ = 1 << 1,
     Support_Color = 1 << 2,
-    Support_Both = Support_XYZ|Support_Color,
+    Support_Both = Support_XYZ | Support_Color,
   };
 
   /**
@@ -91,15 +94,16 @@ public:
   virtual bool transform(
     const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
     uint32_t mask,
-    const Ogre::Matrix4& transform,
-    V_PointCloudPoint& out) = 0;
+    const Ogre::Matrix4 & transform,
+    V_PointCloudPoint & out) = 0;
 
   /**
    * \brief "Score" a message for how well supported the message is.  For example, a "flat color" transformer can support any cloud, but will
    * return a score of 0 here since it should not be preferred over others that explicitly support fields in the message.  This allows that
    * "flat color" transformer to still be selectable, but generally not chosen automatically.
    */
-  virtual uint8_t score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &cloud) {
+  virtual uint8_t score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
+  {
     (void) cloud;
     return 0;
   }
@@ -109,9 +113,11 @@ public:
    * Will be called once when the transformer is loaded.  All
    * properties must be added to the out_props vector.
    */
-  virtual void createProperties( rviz_common::properties::Property* parent_property,
-                                 uint32_t mask,
-                                 QList<rviz_common::properties::Property*>& out_props ) {
+  virtual void createProperties(
+    rviz_common::properties::Property * parent_property,
+    uint32_t mask,
+    QList<rviz_common::properties::Property *> & out_props)
+  {
     (void) parent_property;
     (void) mask;
     (void) out_props;

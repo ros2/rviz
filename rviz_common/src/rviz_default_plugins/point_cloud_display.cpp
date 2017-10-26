@@ -44,13 +44,13 @@ namespace rviz_default_plugins
 {
 
 PointCloudDisplay::PointCloudDisplay()
-  : point_cloud_common_( new PointCloudCommon( this ))
+: point_cloud_common_(new PointCloudCommon(this))
 {
-  queue_size_property_ = new rviz_common::properties::IntProperty( "Queue Size", 10,
-                                          "Advanced: set the size of the incoming PointCloud message queue. "
-                                          " Increasing this is useful if your incoming TF data is delayed significantly "
-                                          "from your PointCloud data, but it can greatly increase memory usage if the messages are big.",
-                                          this, SLOT( updateQueueSize() ));
+  queue_size_property_ = new rviz_common::properties::IntProperty("Queue Size", 10,
+      "Advanced: set the size of the incoming PointCloud message queue. "
+      " Increasing this is useful if your incoming TF data is delayed significantly "
+      "from your PointCloud data, but it can greatly increase memory usage if the messages are big.",
+      this, SLOT(updateQueueSize()));
 
   // PointCloudCommon sets up a callback queue with a thread for each
   // instance.  Use that for processing incoming messages.
@@ -65,7 +65,7 @@ PointCloudDisplay::~PointCloudDisplay()
 void PointCloudDisplay::onInitialize()
 {
   MFDClass::onInitialize();
-  point_cloud_common_->initialize( context_, scene_node_ );
+  point_cloud_common_->initialize(context_, scene_node_);
 
   auto message = sensor_msgs::msg::PointCloud();
   message.header = std_msgs::msg::Header();
@@ -88,14 +88,14 @@ void PointCloudDisplay::updateQueueSize()
 //  tf_filter_->setQueueSize( (uint32_t) queue_size_property_->getInt() );
 }
 
-void PointCloudDisplay::processMessage( const sensor_msgs::msg::PointCloud::ConstSharedPtr & cloud )
+void PointCloudDisplay::processMessage(const sensor_msgs::msg::PointCloud::ConstSharedPtr & cloud)
 {
-  point_cloud_common_->addMessage( cloud );
+  point_cloud_common_->addMessage(cloud);
 }
 
-void PointCloudDisplay::update( float wall_dt, float ros_dt )
+void PointCloudDisplay::update(float wall_dt, float ros_dt)
 {
-  point_cloud_common_->update( wall_dt, ros_dt );
+  point_cloud_common_->update(wall_dt, ros_dt);
 }
 
 void PointCloudDisplay::reset()

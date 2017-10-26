@@ -38,8 +38,10 @@
 
 #include "rviz_common/message_filter_display.hpp"
 
-namespace rviz_common {
-namespace properties {
+namespace rviz_common
+{
+namespace properties
+{
 
 class IntProperty;
 
@@ -59,16 +61,17 @@ class PointCloudCommon;
  * If you set the channel's name to "rgb", it will interpret the channel as an integer rgb value, with r, g and b
  * all being 8 bits.
  */
-class PointCloudDisplay: public rviz_common::MessageFilterDisplay<sensor_msgs::msg::PointCloud>
+class PointCloudDisplay : public rviz_common::MessageFilterDisplay<sensor_msgs::msg::PointCloud>
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   PointCloudDisplay();
   ~PointCloudDisplay();
 
   virtual void reset();
 
-  virtual void update( float wall_dt, float ros_dt );
+  virtual void update(float wall_dt, float ros_dt);
 
 private Q_SLOTS:
   void updateQueueSize();
@@ -78,11 +81,11 @@ protected:
   virtual void onInitialize();
 
   /** @brief Process a single message.  Overridden from MessageFilterDisplay. */
-  virtual void processMessage( const sensor_msgs::msg::PointCloud::ConstSharedPtr & cloud );
+  virtual void processMessage(const sensor_msgs::msg::PointCloud::ConstSharedPtr & cloud);
 
-  rviz_common::properties::IntProperty* queue_size_property_;
+  rviz_common::properties::IntProperty * queue_size_property_;
 
-  PointCloudCommon* point_cloud_common_;
+  PointCloudCommon * point_cloud_common_;
 };
 
 } // namespace rviz

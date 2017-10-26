@@ -35,8 +35,10 @@
 
 #include "point_cloud_transformer.hpp"
 
-namespace rviz_common {
-namespace properties {
+namespace rviz_common
+{
+namespace properties
+{
 
 class BoolProperty;
 class ColorProperty;
@@ -53,12 +55,10 @@ typedef std::vector<std::string> V_string;
 
 inline int32_t findChannelIndex(
   const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
-  const std::string& channel)
+  const std::string & channel)
 {
-  for (size_t i = 0; i < cloud->fields.size(); ++i)
-  {
-    if (cloud->fields[i].name == channel)
-    {
+  for (size_t i = 0; i < cloud->fields.size(); ++i) {
+    if (cloud->fields[i].name == channel) {
       return i;
     }
   }
@@ -74,50 +74,49 @@ inline T valueFromCloud(
   uint32_t point_step,
   uint32_t index)
 {
-  const uint8_t* data = &cloud->data[(point_step * index) + offset];
+  const uint8_t * data = &cloud->data[(point_step * index) + offset];
   T ret = 0;
 
-  switch (type)
-  {
+  switch (type) {
     case sensor_msgs::msg::PointField::INT8:
     case sensor_msgs::msg::PointField::UINT8:
-    {
-      uint8_t val = *reinterpret_cast<const uint8_t*>(data);
-      ret = static_cast<T>(val);
-      break;
-    }
+      {
+        uint8_t val = *reinterpret_cast<const uint8_t *>(data);
+        ret = static_cast<T>(val);
+        break;
+      }
 
     case sensor_msgs::msg::PointField::INT16:
     case sensor_msgs::msg::PointField::UINT16:
-    {
-      uint16_t val = *reinterpret_cast<const uint16_t*>(data);
-      ret = static_cast<T>(val);
-      break;
-    }
+      {
+        uint16_t val = *reinterpret_cast<const uint16_t *>(data);
+        ret = static_cast<T>(val);
+        break;
+      }
 
     case sensor_msgs::msg::PointField::INT32:
     case sensor_msgs::msg::PointField::UINT32:
-    {
-      uint32_t val = *reinterpret_cast<const uint32_t*>(data);
-      ret = static_cast<T>(val);
-      break;
-    }
+      {
+        uint32_t val = *reinterpret_cast<const uint32_t *>(data);
+        ret = static_cast<T>(val);
+        break;
+      }
 
     case sensor_msgs::msg::PointField::FLOAT32:
-    {
-      float val = *reinterpret_cast<const float*>(data);
-      ret = static_cast<T>(val);
-      break;
-    }
+      {
+        float val = *reinterpret_cast<const float *>(data);
+        ret = static_cast<T>(val);
+        break;
+      }
 
     case sensor_msgs::msg::PointField::FLOAT64:
-    {
-      double val = *reinterpret_cast<const double*>(data);
-      ret = static_cast<T>(val);
+      {
+        double val = *reinterpret_cast<const double *>(data);
+        ret = static_cast<T>(val);
+        break;
+      }
+    default:
       break;
-    }
-  default:
-    break;
   }
 
   return ret;
@@ -125,18 +124,20 @@ inline T valueFromCloud(
 
 class IntensityPCTransformer : public PointCloudTransformer
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   virtual uint8_t supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud);
-  virtual bool transform(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
-                         uint32_t mask,
-                         const Ogre::Matrix4& transform,
-                         V_PointCloudPoint& points_out);
+  virtual bool transform(
+    const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
+    uint32_t mask,
+    const Ogre::Matrix4 & transform,
+    V_PointCloudPoint & points_out);
   virtual uint8_t score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud);
   virtual void createProperties(
-    rviz_common::properties::Property* parent_property,
+    rviz_common::properties::Property * parent_property,
     uint32_t mask,
-    QList<rviz_common::properties::Property*>& out_props );
+    QList<rviz_common::properties::Property *> & out_props);
   void updateChannels(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud);
 
 private Q_SLOTS:
@@ -146,93 +147,95 @@ private Q_SLOTS:
 private:
   V_string available_channels_;
 
-  rviz_common::properties::ColorProperty* min_color_property_;
-  rviz_common::properties::ColorProperty* max_color_property_;
-  rviz_common::properties::BoolProperty* auto_compute_intensity_bounds_property_;
-  rviz_common::properties::BoolProperty* use_rainbow_property_;
-  rviz_common::properties::BoolProperty* invert_rainbow_property_;
-  rviz_common::properties::FloatProperty* min_intensity_property_;
-  rviz_common::properties::FloatProperty* max_intensity_property_;
-  rviz_common::properties::EditableEnumProperty* channel_name_property_;
+  rviz_common::properties::ColorProperty * min_color_property_;
+  rviz_common::properties::ColorProperty * max_color_property_;
+  rviz_common::properties::BoolProperty * auto_compute_intensity_bounds_property_;
+  rviz_common::properties::BoolProperty * use_rainbow_property_;
+  rviz_common::properties::BoolProperty * invert_rainbow_property_;
+  rviz_common::properties::FloatProperty * min_intensity_property_;
+  rviz_common::properties::FloatProperty * max_intensity_property_;
+  rviz_common::properties::EditableEnumProperty * channel_name_property_;
 };
 
 class XYZPCTransformer : public PointCloudTransformer
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   virtual uint8_t supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud);
   virtual bool transform(
     const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
     uint32_t mask,
-    const Ogre::Matrix4& transform,
-    V_PointCloudPoint& points_out);
+    const Ogre::Matrix4 & transform,
+    V_PointCloudPoint & points_out);
 };
-
 
 
 class RGB8PCTransformer : public PointCloudTransformer
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   virtual uint8_t supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud);
   virtual bool transform(
     const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
     uint32_t mask,
-    const Ogre::Matrix4& transform,
-    V_PointCloudPoint& points_out);
+    const Ogre::Matrix4 & transform,
+    V_PointCloudPoint & points_out);
 };
-
 
 
 class RGBF32PCTransformer : public PointCloudTransformer
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   virtual uint8_t supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud);
   virtual bool transform(
     const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
     uint32_t mask,
-    const Ogre::Matrix4& transform,
-    V_PointCloudPoint& points_out);
+    const Ogre::Matrix4 & transform,
+    V_PointCloudPoint & points_out);
 };
-
 
 
 class FlatColorPCTransformer : public PointCloudTransformer
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   virtual uint8_t supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud);
   virtual bool transform(
     const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
     uint32_t mask,
-    const Ogre::Matrix4& transform,
-    V_PointCloudPoint& points_out);
+    const Ogre::Matrix4 & transform,
+    V_PointCloudPoint & points_out);
   virtual void createProperties(
-    rviz_common::properties::Property* parent_property,
+    rviz_common::properties::Property * parent_property,
     uint32_t mask,
-    QList<rviz_common::properties::Property*>& out_props );
+    QList<rviz_common::properties::Property *> & out_props);
   virtual uint8_t score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud);
 
 private:
-  rviz_common::properties::ColorProperty* color_property_;
+  rviz_common::properties::ColorProperty * color_property_;
 };
 
 class AxisColorPCTransformer : public PointCloudTransformer
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  virtual uint8_t supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr& cloud);
+  virtual uint8_t supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud);
   virtual bool transform(
-    const sensor_msgs::msg::PointCloud2::ConstSharedPtr& cloud,
+    const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
     uint32_t mask,
-    const Ogre::Matrix4& transform,
-    V_PointCloudPoint& points_out);
+    const Ogre::Matrix4 & transform,
+    V_PointCloudPoint & points_out);
   virtual void createProperties(
-    rviz_common::properties::Property* parent_property,
+    rviz_common::properties::Property * parent_property,
     uint32_t mask,
-    QList<rviz_common::properties::Property*>& out_props );
-  virtual uint8_t score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr& cloud);
+    QList<rviz_common::properties::Property *> & out_props);
+  virtual uint8_t score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud);
 
   enum Axis
   {
@@ -245,11 +248,11 @@ private Q_SLOTS:
   void updateAutoComputeBounds();
 
 private:
-  rviz_common::properties::BoolProperty* auto_compute_bounds_property_;
-  rviz_common::properties::FloatProperty* min_value_property_;
-  rviz_common::properties::FloatProperty* max_value_property_;
-  rviz_common::properties::EnumProperty* axis_property_;
-  rviz_common::properties::BoolProperty* use_fixed_frame_property_;
+  rviz_common::properties::BoolProperty * auto_compute_bounds_property_;
+  rviz_common::properties::FloatProperty * min_value_property_;
+  rviz_common::properties::FloatProperty * max_value_property_;
+  rviz_common::properties::EnumProperty * axis_property_;
+  rviz_common::properties::BoolProperty * use_fixed_frame_property_;
 };
 
 }  // end namespace rviz_default_plugins

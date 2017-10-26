@@ -44,13 +44,13 @@ namespace rviz_default_plugins
 {
 
 PointCloud2Display::PointCloud2Display()
-  : point_cloud_common_( new PointCloudCommon( this ))
+: point_cloud_common_(new PointCloudCommon(this))
 {
-  queue_size_property_ = new rviz_common::properties::IntProperty( "Queue Size", 10,
-                                          "Advanced: set the size of the incoming PointCloud2 message queue. "
-                                          " Increasing this is useful if your incoming TF data is delayed significantly "
-                                          "from your PointCloud2 data, but it can greatly increase memory usage if the messages are big.",
-                                          this, SLOT( updateQueueSize() ));
+  queue_size_property_ = new rviz_common::properties::IntProperty("Queue Size", 10,
+      "Advanced: set the size of the incoming PointCloud2 message queue. "
+      " Increasing this is useful if your incoming TF data is delayed significantly "
+      "from your PointCloud2 data, but it can greatly increase memory usage if the messages are big.",
+      this, SLOT(updateQueueSize()));
 
   // PointCloudCommon sets up a callback queue with a thread for each
   // instance.  Use that for processing incoming messages.
@@ -65,7 +65,7 @@ PointCloud2Display::~PointCloud2Display()
 void PointCloud2Display::onInitialize()
 {
   MFDClass::onInitialize();
-  point_cloud_common_->initialize( context_, scene_node_ );
+  point_cloud_common_->initialize(context_, scene_node_);
 }
 
 void PointCloud2Display::updateQueueSize()
@@ -73,7 +73,7 @@ void PointCloud2Display::updateQueueSize()
 //  tf_filter_->setQueueSize( (uint32_t) queue_size_property_->getInt() );
 }
 
-void PointCloud2Display::processMessage( const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud )
+void PointCloud2Display::processMessage(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
 {
   // Filter any nan values out of the cloud.  Any nan values that make it through to PointCloudBase
   // will get their points put off in lala land, but it means they still do get processed/rendered
@@ -84,8 +84,7 @@ void PointCloud2Display::processMessage( const sensor_msgs::msg::PointCloud2::Co
   int32_t yi = findChannelIndex(cloud, "y");
   int32_t zi = findChannelIndex(cloud, "z");
 
-  if (xi == -1 || yi == -1 || zi == -1)
-  {
+  if (xi == -1 || yi == -1 || zi == -1) {
     return;
   }
 
@@ -95,58 +94,50 @@ void PointCloud2Display::processMessage( const sensor_msgs::msg::PointCloud2::Co
   const uint32_t point_step = cloud->point_step;
   const size_t point_count = cloud->width * cloud->height;
 
-  if( point_count * point_step != cloud->data.size() )
-  {
+  if (point_count * point_step != cloud->data.size() ) {
     std::stringstream ss;
-    ss << "Data size (" << cloud->data.size() << " bytes) does not match width (" << cloud->width
-       << ") times height (" << cloud->height << ") times point_step (" << point_step << ").  Dropping message.";
-    setStatusStd( rviz_common::properties::StatusProperty::Error, "Message", ss.str() );
+    ss << "Data size (" << cloud->data.size() << " bytes) does not match width (" << cloud->width <<
+      ") times height (" << cloud->height << ") times point_step (" << point_step <<
+      ").  Dropping message.";
+    setStatusStd(rviz_common::properties::StatusProperty::Error, "Message", ss.str() );
     return;
   }
 
   filtered->data.resize(cloud->data.size());
   uint32_t output_count;
-  if (point_count == 0)
-  {
+  if (point_count == 0) {
     output_count = 0;
   } else {
-    uint8_t* output_ptr = &filtered->data.front();
-    const uint8_t* ptr = &cloud->data.front(), *ptr_end = &cloud->data.back(), *ptr_init;
+    uint8_t * output_ptr = &filtered->data.front();
+    const uint8_t * ptr = &cloud->data.front(), * ptr_end = &cloud->data.back(), * ptr_init;
     size_t points_to_copy = 0;
-    for (; ptr < ptr_end; ptr += point_step)
-    {
-      float x = *reinterpret_cast<const float*>(ptr + xoff);
-      float y = *reinterpret_cast<const float*>(ptr + yoff);
-      float z = *reinterpret_cast<const float*>(ptr + zoff);
-      if (rviz_common::validateFloats(x) && rviz_common::validateFloats(y) && rviz_common::validateFloats(z))
+    for (; ptr < ptr_end; ptr += point_step) {
+      float x = *reinterpret_cast<const float *>(ptr + xoff);
+      float y = *reinterpret_cast<const float *>(ptr + yoff);
+      float z = *reinterpret_cast<const float *>(ptr + zoff);
+      if (rviz_common::validateFloats(x) && rviz_common::validateFloats(y) &&
+        rviz_common::validateFloats(z))
       {
-        if (points_to_copy == 0)
-        {
+        if (points_to_copy == 0) {
           // Only memorize where to start copying from
           ptr_init = ptr;
           points_to_copy = 1;
-        }
-        else
-        {
+        } else {
           ++points_to_copy;
         }
-      }
-      else
-      {
-        if (points_to_copy)
-        {
+      } else {
+        if (points_to_copy) {
           // Copy all the points that need to be copied
-          memcpy(output_ptr, ptr_init, point_step*points_to_copy);
-          output_ptr += point_step*points_to_copy;
+          memcpy(output_ptr, ptr_init, point_step * points_to_copy);
+          output_ptr += point_step * points_to_copy;
           points_to_copy = 0;
         }
       }
     }
     // Don't forget to flush what needs to be copied
-    if (points_to_copy)
-    {
-      memcpy(output_ptr, ptr_init, point_step*points_to_copy);
-      output_ptr += point_step*points_to_copy;
+    if (points_to_copy) {
+      memcpy(output_ptr, ptr_init, point_step * points_to_copy);
+      output_ptr += point_step * points_to_copy;
     }
     output_count = (output_ptr - &filtered->data.front()) / point_step;
   }
@@ -160,13 +151,13 @@ void PointCloud2Display::processMessage( const sensor_msgs::msg::PointCloud2::Co
   filtered->point_step = point_step;
   filtered->row_step = output_count;
 
-  point_cloud_common_->addMessage( filtered );
+  point_cloud_common_->addMessage(filtered);
 }
 
 
-void PointCloud2Display::update( float wall_dt, float ros_dt )
+void PointCloud2Display::update(float wall_dt, float ros_dt)
 {
-  point_cloud_common_->update( wall_dt, ros_dt );
+  point_cloud_common_->update(wall_dt, ros_dt);
 }
 
 void PointCloud2Display::reset()
