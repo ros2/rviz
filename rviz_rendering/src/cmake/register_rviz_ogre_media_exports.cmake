@@ -34,18 +34,18 @@
 # :type DIRECTORIES: string (muliple strings possible, relative paths)
 
 function(register_rviz_ogre_media_exports)
-    cmake_parse_arguments(ARGUMENTS "" "" "DIRECTORIES" ${ARGN})
-    if(NOT PROJECT_NAME)
-        message(FATAL_ERROR "PROJECT_NAME not set. You must call project() before adding resources")
-    endif()
+  cmake_parse_arguments(ARGUMENTS "" "" "DIRECTORIES" ${ARGN})
+  if(NOT PROJECT_NAME)
+    message(FATAL_ERROR "PROJECT_NAME not set. You must call project() before adding resources")
+  endif()
 
-    foreach(DIR ${ARGUMENTS_DIRECTORIES})
-        if(NOT IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${DIR}")
-            message(FATAL_ERROR "Directory ${DIR} does not exist.
-                Paths must be specified relative to CMAKE_CURRENT_SOURCE_DIR
-                ${CMAKE_CURRENT_SOURCE_DIR}")
-        endif()
-        list(APPEND OGRE_MEDIA_RESOURCE_DIRS ${DIR})
-    endforeach()
-    set(OGRE_MEDIA_RESOURCE_DIRS ${OGRE_MEDIA_RESOURCE_DIRS} PARENT_SCOPE)
+  foreach(DIR ${ARGUMENTS_DIRECTORIES})
+    if(NOT IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${DIR}")
+      message(FATAL_ERROR "Directory ${DIR} does not exist.
+        Paths must be specified relative to CMAKE_CURRENT_SOURCE_DIR
+        ${CMAKE_CURRENT_SOURCE_DIR}")
+    endif()
+    list(APPEND OGRE_MEDIA_RESOURCE_DIRS ${DIR})
+  endforeach()
+  set(OGRE_MEDIA_RESOURCE_DIRS ${OGRE_MEDIA_RESOURCE_DIRS} PARENT_SCOPE)
 endfunction()

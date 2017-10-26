@@ -25,8 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-option(AMENT_RVIZ_OGRE_MEDIA
-        "Add ogre_media resources to RViz" ON)
+option(AMENT_RVIZ_OGRE_MEDIA "Add ogre_media resources to RViz" ON)
 
 ament_register_extension("ament_package" "rviz_rendering"
-        "register_rviz_ogre_media_exports_hook.cmake")
+  "register_rviz_ogre_media_exports_hook.cmake")

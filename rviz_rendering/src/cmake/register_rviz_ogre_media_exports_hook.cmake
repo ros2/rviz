@@ -26,13 +26,13 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 if(NOT "${OGRE_MEDIA_RESOURCE_DIRS}" STREQUAL "")
-    message(STATUS "Deploy OGRE media")
-    foreach(DIR ${OGRE_MEDIA_RESOURCE_DIRS})
-        set(OGRE_MEDIA_RESOURCE_FILE "${OGRE_MEDIA_RESOURCE_FILE}${PROJECT_NAME}/${DIR}\n")
-    endforeach()
-    ament_index_register_resource(rviz_ogre_media_exports CONTENT ${OGRE_MEDIA_RESOURCE_FILE})
+  message(STATUS "Deploy OGRE media")
+  foreach(DIR ${OGRE_MEDIA_RESOURCE_DIRS})
+    set(OGRE_MEDIA_RESOURCE_FILE "${OGRE_MEDIA_RESOURCE_FILE}${PROJECT_NAME}/${DIR}\n")
+  endforeach()
+  ament_index_register_resource(rviz_ogre_media_exports CONTENT ${OGRE_MEDIA_RESOURCE_FILE})
 
-    install(DIRECTORY ${OGRE_MEDIA_RESOURCE_DIRS}
-        DESTINATION "${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}"
-        USE_SOURCE_PERMISSIONS)
+  install(DIRECTORY ${OGRE_MEDIA_RESOURCE_DIRS}
+    DESTINATION "${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}"
+    USE_SOURCE_PERMISSIONS)
 endif()
