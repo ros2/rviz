@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2012, Willow Garage, Inc.
- * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2017 by Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,44 +27,19 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <string>
+#ifndef MOCK_DISPLAY_GROUP_HPP_
+#define MOCK_DISPLAY_GROUP_HPP_
 
-#include "rviz_common/properties/string_property.hpp"
+#include "rviz_common/display_group.hpp"
 
-namespace rviz_common
+using namespace rviz_common;  // NOLINT
+
+class MockDisplayGroup : public DisplayGroup
 {
-namespace properties
-{
+public:
+  Display * createDisplay(const QString & class_id);
+  void onEnableChanged();
+  void initialize(DisplayContext * context);
+};
 
-StringProperty::StringProperty(
-  const QString & name,
-  const QString & default_value,
-  const QString & description,
-  Property * parent,
-  const char * changed_slot,
-  QObject * receiver)
-: Property(name, default_value, description, parent, changed_slot, receiver)
-{}
-
-std::string StringProperty::getStdString()
-{
-  return getValue().toString().toStdString();
-}
-
-QString StringProperty::getString()
-{
-  return getValue().toString();
-}
-
-bool StringProperty::setStdString(const std::string & std_str)
-{
-  return setValue(QString::fromStdString(std_str));
-}
-
-bool StringProperty::setString(const QString & str)
-{
-  return setValue(str);
-}
-
-}  // namespace properties
-}  // namespace rviz_common
+#endif  // MOCK_DISPLAY_GROUP_HPP_

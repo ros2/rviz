@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017 by Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,75 +28,33 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <locale>
+#ifndef MOCK_DISPLAY_HPP_
+#define MOCK_DISPLAY_HPP_
 
-#include <gtest/gtest.h>
-#include <rviz/uniform_string_stream.h>
+#include "rviz_common/display.hpp"
 
-using namespace rviz;
+#include "rviz_common/properties/vector_property.hpp"
+#include "rviz_common/properties/color_property.hpp"
 
-TEST( UniformStringStream, parse_floats )
+namespace rviz_common
 {
-  UniformStringStream uss( "1,2 3.4 5,6e2" );
-  float a, b, c;
-  uss.parseFloat( a );
-  uss.parseFloat( b );
-  uss.parseFloat( c );
-  EXPECT_TRUE( !!uss );
-  EXPECT_EQ( a, 1.2f );
-  EXPECT_EQ( b, 3.4f );
-  EXPECT_EQ( c, 560.0f );
-  uss.parseFloat( a );
-  EXPECT_FALSE( !!uss );
-}
 
-TEST( UniformStringStream, parse_ints )
+class MockDisplay : public Display
 {
-  UniformStringStream uss( "1 2 -3" );
-  int a, b, c;
-  uss >> a;
-  uss >> b;
-  uss >> c;
-  EXPECT_TRUE( !!uss );
-  EXPECT_EQ( a, 1 );
-  EXPECT_EQ( b, 2 );
-  EXPECT_EQ( c, -3 );
-  uss >> a;
-  EXPECT_FALSE( !!uss );
-}
+  Q_OBJECT
 
-class CommaFloat: public std::numpunct<char>
-{
-protected:
-  virtual char do_decimal_point() const { return 'p'; }
+public:
+  MockDisplay();
+
+  properties::Property * count_;
+  properties::Property * style_;
+  properties::Property * pi_;
+  properties::VectorProperty * offset_;
+  properties::ColorProperty * color_;
+  void onEnableChanged();
+  void initialize(DisplayContext * context);
 };
 
-TEST( UniformStringStream, print_floats )
-{
-  UniformStringStream uss;
-  uss << 1.2f;
-  EXPECT_EQ( uss.str(), "1.2" );
+}  // end namespace rviz_common
 
-  CommaFloat* comma_float_facet = new CommaFloat;
-  std::locale new_locale( std::locale::classic(), comma_float_facet );
-
-  std::locale old_locale = std::locale::global( new_locale );
-
-  // Make sure the comma_float_facet is working.
-  std::stringstream ss;
-  ss << 3.4f;
-  EXPECT_EQ( ss.str(), "3p4" );
-
-  // Make sure the float facet gets clobbered within UniformStringStream.
-  UniformStringStream uss2;
-  uss2 << 3.4f;
-  EXPECT_EQ( uss2.str(), "3.4" );
-
-  // Put things back to normal so other tests don't break.
-  std::locale::global( old_locale );
-}
-
-int main(int argc, char **argv){
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
+#endif  // MOCK_DISPLAY_HPP_

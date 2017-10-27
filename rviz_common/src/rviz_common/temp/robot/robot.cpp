@@ -55,7 +55,7 @@
 #include "./robot_joint.hpp"
 
 #include "rviz_common/properties/property.hpp"
-#include "../../properties/enum_property.hpp"
+#include "rviz_common/properties/enum_property.hpp"
 #include "../../properties/bool_property.hpp"
 #include "../../display_context.hpp"
 #include "rviz_common/logging.hpp"

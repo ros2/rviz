@@ -75,7 +75,7 @@ set(rviz_common_headers_to_moc
   ${ENV_CONFIG_HPP}
   # src/rviz_common/add_display_dialog.hpp
   # src/rviz_common/help_panel.hpp
-  src/rviz_common/properties/enum_property.hpp
+  include/rviz_common/properties/enum_property.hpp
   # src/rviz_common/properties/property_tree_widget.hpp
   # src/rviz_common/properties/splitter_handle.hpp
   # src/rviz_common/selection_panel.hpp
@@ -93,7 +93,7 @@ set(rviz_common_headers_to_moc
   src/rviz_common/panel_dock_widget.hpp
   src/rviz_common/properties/bool_property.hpp
   src/rviz_common/properties/color_editor.hpp
-  src/rviz_common/properties/color_property.hpp
+  include/rviz_common/properties/color_property.hpp
   src/rviz_common/properties/combo_box.hpp
   src/rviz_common/properties/editable_combo_box.hpp
   src/rviz_common/properties/editable_enum_property.hpp
@@ -107,7 +107,7 @@ set(rviz_common_headers_to_moc
   # src/rviz_common/properties/property_tree_with_help.hpp
   src/rviz_common/properties/status_list.hpp
   src/rviz_common/properties/status_property.hpp
-  src/rviz_common/properties/string_property.hpp
+  include/rviz_common/properties/string_property.hpp
   src/rviz_common/properties/tf_frame_property.hpp
   include/rviz_common/properties/vector_property.hpp
   src/rviz_common/render_panel.hpp
@@ -290,6 +290,8 @@ install(
   DESTINATION include
 )
 
+find_package(ament_cmake_gtest REQUIRED)
+
 if(BUILD_TESTING)
     # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back
     find_package(ament_cmake_cppcheck REQUIRED)
@@ -300,6 +302,34 @@ if(BUILD_TESTING)
     ament_cpplint()
     ament_lint_cmake()
     ament_uncrustify()
+
+    ament_add_gtest(rviz_common_config_test
+      test/config_test.cpp)
+    if(TARGET rviz_common_config_test)
+      target_link_libraries(rviz_common_config_test rviz_common)
+    endif()
+
+    ament_add_gtest(rviz_common_uniform_string_stream_test
+      test/uniform_string_stream_test.cpp)
+    if(TARGET rviz_common_uniform_string_stream_test)
+      target_link_libraries(rviz_common_uniform_string_stream_test rviz_common)
+    endif()
+
+    ament_add_gtest(rviz_common_display_test
+      test/display_test.cpp
+      test/mock_display.cpp
+      test/mock_display_group.cpp)
+    if(TARGET rviz_common_display_test)
+      target_include_directories(rviz_common_display_test PUBLIC src)
+      target_link_libraries(rviz_common_display_test rviz_common)
+    endif()
+
+    ament_add_gtest(rviz_common_property_test
+      test/property_test.cpp
+      test/mock_property_change_receiver.cpp)
+    if(TARGET rviz_common_property_test)
+      target_link_libraries(rviz_common_property_test rviz_common)
+    endif()
 endif()
 
 ament_package()

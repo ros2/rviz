@@ -49,7 +49,7 @@
 #include "../../properties/float_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/properties/quaternion_property.hpp"
-#include "../../properties/string_property.hpp"
+#include "rviz_common/properties/string_property.hpp"
 #include "rviz_rendering/arrow.hpp"
 #include "rviz_rendering/axes.hpp"
 #include "../../load_resource.hpp"

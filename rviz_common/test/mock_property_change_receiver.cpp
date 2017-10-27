@@ -26,24 +26,28 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#include "mock_property_change_receiver.hpp"
 
-#include <QTimer>
-
-#include <rviz/properties/vector_property.h>
-#include <rviz/properties/color_property.h>
-
-#include "mock_display.h"
-
-namespace rviz
+namespace rviz_common
 {
 
-MockDisplay::MockDisplay()
+namespace properties
 {
-  count_ = new Property( "Count", 10, "How many?", this );
-  style_ = new Property( "Style", "chunky", "What style?", this );
-  pi_ = new Property( "Pi", 3.14159, "Circumference over diameter", this );
-  offset_ = new VectorProperty( "Offset", Ogre::Vector3( 1, 2, 3 ), "Translation", this );
-  color_ = new ColorProperty( "Color", QColor( 10, 20, 30 ), "Color", this );
+
+MockPropertyChangeReceiver::MockPropertyChangeReceiver(Property * property)
+: property_(property)
+{}
+
+void MockPropertyChangeReceiver::aboutToChange()
+{
+  result_ += " aboutToChange, v=" + property_->getValue().toString();
 }
 
-} // end namespace rviz
+void MockPropertyChangeReceiver::changed()
+{
+  result_ += " changed, v=" + property_->getValue().toString();
+}
+
+}  // end namespace properties
+
+}  // end namespace rviz_common

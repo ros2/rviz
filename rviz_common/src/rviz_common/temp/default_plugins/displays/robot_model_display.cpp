@@ -55,7 +55,7 @@
 #include "../../../display_context.hpp"
 #include "../../../properties/float_property.hpp"
 #include "rviz_common/properties/property.hpp"
-#include "../../../properties/string_property.hpp"
+#include "rviz_common/properties/string_property.hpp"
 
 #include "../../../ros_integration/rclcpp_node_storage.hpp"
 

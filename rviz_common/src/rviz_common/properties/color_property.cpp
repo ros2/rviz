@@ -33,7 +33,7 @@
 #include <QStyleOptionViewItem>
 
 #include "./parse_color.hpp"
-#include "./color_property.hpp"
+#include "rviz_common/properties/color_property.hpp"
 #include "./color_editor.hpp"
 
 namespace rviz_common

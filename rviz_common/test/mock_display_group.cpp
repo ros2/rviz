@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Willow Garage, Inc.
+ * Copyright (c) 2017 by Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,52 +27,25 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <gtest/gtest.h>
-#include <rviz/config.h>
+#include "rviz_common/failed_display.hpp"
 
-#include <ros/package.h> // For ros::package::getPath()
+#include "mock_display_group.hpp"
+#include "mock_display.hpp"
 
-TEST( Config, set_then_get )
+Display * MockDisplayGroup::createDisplay(const QString & class_id)
 {
-  rviz::Config c;
-  c.mapSetValue( "a", "1" );
-  int a;
-  EXPECT_TRUE( c.mapGetInt( "a", &a ));
-  EXPECT_EQ( a, 1 );
-  float aa;
-  EXPECT_TRUE( c.mapGetFloat( "a", &aa ));
-  EXPECT_EQ( aa, 1.0 );
-  QString aaa;
-  EXPECT_TRUE( c.mapGetString( "a", &aaa));
-  EXPECT_EQ( aaa, "1" );
+  if (class_id == "MockDisplay") {
+    return new MockDisplay;
+  }
+  if (class_id == "DisplayGroup") {
+    return new MockDisplayGroup;
+  }
+  return nullptr;
 }
 
-TEST( Config, parse_floats )
+void MockDisplayGroup::onEnableChanged() {}
+
+void MockDisplayGroup::initialize(DisplayContext * context)
 {
-  rviz::Config c;
-  c.mapSetValue( "f", "1.1" );
-  float f;
-  EXPECT_TRUE( c.mapGetFloat( "f", &f ));
-  EXPECT_EQ( f, 1.1f );
-
-  // In Europe they use "," for a decimal point.
-  c.mapSetValue( "f", "1,2" );
-  EXPECT_TRUE( c.mapGetFloat( "f", &f ));
-  EXPECT_EQ( f, 1.2f );
+  (void)context;
 }
-
-TEST( Config, set_get_empty_value )
-{
-  rviz::Config c;
-  c.mapSetValue( "key", "" );
-
-  QString s;
-  EXPECT_TRUE( c.mapGetString( "key", &s ));
-  EXPECT_EQ( "", s );
-}
-
-int main(int argc, char **argv){
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
-

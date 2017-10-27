@@ -76,7 +76,7 @@
 // #include "./ogre_helpers/ogre_render_queue_clearer.hpp"
 // #include "./ogre_helpers/qt_ogre_render_window.hpp"
 // #include "./ogre_helpers/render_system.hpp"
-#include "./properties/color_property.hpp"
+#include "rviz_common/properties/color_property.hpp"
 #include "./properties/int_property.hpp"
 #include "./properties/parse_color.hpp"
 #include "rviz_common/properties/property.hpp"

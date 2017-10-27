@@ -45,7 +45,7 @@
 
 #include "./display_context.hpp"
 #include "./frame_manager.hpp"
-#include "./properties/enum_property.hpp"
+#include "rviz_common/properties/enum_property.hpp"
 #include "./properties/tf_frame_property.hpp"
 #include "./view_manager.hpp"
 #include "./viewport_mouse_event.hpp"

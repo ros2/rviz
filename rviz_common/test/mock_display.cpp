@@ -1,6 +1,5 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
- * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,44 +27,25 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <string>
-
-#include "rviz_common/properties/string_property.hpp"
+#include "mock_display.hpp"
 
 namespace rviz_common
 {
-namespace properties
-{
 
-StringProperty::StringProperty(
-  const QString & name,
-  const QString & default_value,
-  const QString & description,
-  Property * parent,
-  const char * changed_slot,
-  QObject * receiver)
-: Property(name, default_value, description, parent, changed_slot, receiver)
-{}
-
-std::string StringProperty::getStdString()
+MockDisplay::MockDisplay()
 {
-  return getValue().toString().toStdString();
+  count_ = new properties::Property("Count", 10, "How many?", this);
+  style_ = new properties::Property("Style", "chunky", "What style?", this);
+  pi_ = new properties::Property("Pi", 3.14159, "Circumference over diameter", this);
+  offset_ = new properties::VectorProperty("Offset", Ogre::Vector3(1, 2, 3), "Translation", this);
+  color_ = new properties::ColorProperty("Color", QColor(10, 20, 30), "Color", this);
 }
 
-QString StringProperty::getString()
+void MockDisplay::onEnableChanged() {}
+
+void MockDisplay::initialize(DisplayContext * context)
 {
-  return getValue().toString();
+  (void)context;
 }
 
-bool StringProperty::setStdString(const std::string & std_str)
-{
-  return setValue(QString::fromStdString(std_str));
-}
-
-bool StringProperty::setString(const QString & str)
-{
-  return setValue(str);
-}
-
-}  // namespace properties
-}  // namespace rviz_common
+}  // end namespace rviz_common
