@@ -30,8 +30,7 @@
 #ifndef RVIZ_RENDERING__POINT_CLOUD_HPP_
 #define RVIZ_RENDERING__POINT_CLOUD_HPP_
 
-#include <stdint.h>
-
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
@@ -66,7 +65,7 @@ class PointCloudRenderable : public Ogre::SimpleRenderable
 {
 public:
   PointCloudRenderable(PointCloud * parent, int num_points, bool use_tex_coords);
-  ~PointCloudRenderable();
+  ~PointCloudRenderable() override;
 
 #ifdef __clang__
 # pragma clang diagnostic push
@@ -79,15 +78,14 @@ public:
 
   Ogre::HardwareVertexBufferSharedPtr getBuffer();
 
-  virtual Ogre::Real getBoundingRadius(void) const;
-  virtual Ogre::Real getSquaredViewDepth(const Ogre::Camera * cam) const;
-  virtual void _notifyCurrentCamera(Ogre::Camera * camera);
-  virtual uint16_t getNumWorldTransforms() const {return 1;}
-  virtual void getWorldTransforms(Ogre::Matrix4 * xform) const;
-  virtual const Ogre::LightList & getLights() const;
+  Ogre::Real getBoundingRadius() const override;
+  Ogre::Real getSquaredViewDepth(const Ogre::Camera * cam) const override;
+  void _notifyCurrentCamera(Ogre::Camera * camera) override;
+  uint16_t getNumWorldTransforms() const override {return 1;}
+  void getWorldTransforms(Ogre::Matrix4 * xform) const override;
+  const Ogre::LightList & getLights() const override;
 
 private:
-  Ogre::MaterialPtr material_;
   PointCloud * parent_;
 };
 typedef std::shared_ptr<PointCloudRenderable> PointCloudRenderablePtr;
@@ -117,7 +115,7 @@ public:
   };
 
   PointCloud();
-  ~PointCloud();
+  ~PointCloud() override;
 
   /**
    * \brief Clear all the points
@@ -153,6 +151,7 @@ public:
    */
   void popPoints(uint32_t num_points);
 
+  // TODO(Martin-Idel-SI): Check description, should be more?
   /**
    * \brief Set what type of rendering primitives should be used, currently points, billboards and boxes are supported
    */
@@ -187,16 +186,16 @@ public:
 
   void setHighlightColor(float r, float g, float b);
 
-  virtual const Ogre::String & getMovableType() const {return sm_Type;}
-  virtual const Ogre::AxisAlignedBox & getBoundingBox() const;
-  virtual float getBoundingRadius() const;
+  const Ogre::String & getMovableType() const override {return sm_Type;}
+  const Ogre::AxisAlignedBox & getBoundingBox() const override;
+  float getBoundingRadius() const override;
   virtual void getWorldTransforms(Ogre::Matrix4 * xform) const;
   virtual uint16_t getNumWorldTransforms() const {return 1;}
-  virtual void _updateRenderQueue(Ogre::RenderQueue * queue);
-  virtual void _notifyCurrentCamera(Ogre::Camera * camera);
-  virtual void _notifyAttached(Ogre::Node * parent, bool isTagPoint = false);
+  void _updateRenderQueue(Ogre::RenderQueue * queue) override;
+  void _notifyCurrentCamera(Ogre::Camera * camera) override;
+  void _notifyAttached(Ogre::Node * parent, bool isTagPoint = false) override;
 #if (OGRE_VERSION_MAJOR >= 1 && OGRE_VERSION_MINOR >= 6)
-  virtual void visitRenderables(Ogre::Renderable::Visitor * visitor, bool debugRenderables);
+  void visitRenderables(Ogre::Renderable::Visitor * visitor, bool debugRenderables) override;
 #endif
 
   virtual void setName(const std::string & name) {mName = name;}
