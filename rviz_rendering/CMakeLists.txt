@@ -12,6 +12,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_gtest REQUIRED)
 
 # Qt5 boilerplate options from http://doc.qt.io/qt-5/cmake-manual.html
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -24,29 +25,30 @@ find_package(rviz_ogre_vendor REQUIRED)
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 # TODO(wjwwood): this block is to setup the windeployqt tool, could be removed later.
 if(Qt5_FOUND AND WIN32 AND TARGET Qt5::qmake AND NOT TARGET Qt5::windeployqt)
-    get_target_property(_qt5_qmake_location Qt5::qmake IMPORTED_LOCATION)
+  get_target_property(_qt5_qmake_location Qt5::qmake IMPORTED_LOCATION)
 
-    execute_process(
-        COMMAND "${_qt5_qmake_location}" -query QT_INSTALL_PREFIX
-        RESULT_VARIABLE return_code
-        OUTPUT_VARIABLE qt5_install_prefix
-        OUTPUT_STRIP_TRAILING_WHITESPACE
+  execute_process(
+    COMMAND "${_qt5_qmake_location}" -query QT_INSTALL_PREFIX
+    RESULT_VARIABLE return_code
+    OUTPUT_VARIABLE qt5_install_prefix
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+
+  set(imported_location "${qt5_install_prefix}/bin/windeployqt.exe")
+
+  if(EXISTS ${imported_location})
+    add_executable(Qt5::windeployqt IMPORTED)
+
+    set_target_properties(Qt5::windeployqt PROPERTIES
+      IMPORTED_LOCATION ${imported_location}
     )
-
-    set(imported_location "${qt5_install_prefix}/bin/windeployqt.exe")
-
-    if(EXISTS ${imported_location})
-        add_executable(Qt5::windeployqt IMPORTED)
-
-        set_target_properties(Qt5::windeployqt PROPERTIES
-            IMPORTED_LOCATION ${imported_location}
-        )
-    endif()
+  endif()
 endif()
 
 # These need to be added in the add_library() call so AUTOMOC detects them.
 set(headers_with_q_object
   include/rviz_rendering/render_window.hpp
+  src/rviz_rendering/string_helper.hpp
 )
 
 add_library(rviz_rendering
@@ -67,6 +69,7 @@ add_library(rviz_rendering
   src/rviz_rendering/resource_config.cpp
   src/rviz_rendering/shape.cpp
   src/rviz_rendering/grid.cpp
+  src/rviz_rendering/string_helper.cpp
 )
 target_link_libraries(rviz_rendering
   rviz_ogre_vendor::OgreMain
@@ -78,8 +81,8 @@ target_link_libraries(rviz_rendering
 )
 target_include_directories(rviz_rendering
   PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
 )
 
 ament_export_interfaces(rviz_rendering)
@@ -107,41 +110,57 @@ target_link_libraries(rendering_example rviz_rendering Qt5::Widgets)
 #                see:
 # https://stackoverflow.com/questions/41193584/deploy-all-qt-dependencies-when-building#41199492
 if(TARGET Qt5::windeployqt)
-    # execute windeployqt in a tmp directory after build
-    add_custom_command(TARGET rendering_example
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
-        COMMAND set PATH=%PATH%$<SEMICOLON>${qt5_install_prefix}/bin
-        COMMAND
-          Qt5::windeployqt
-          --dir "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
-          "$<TARGET_FILE_DIR:rendering_example>/$<TARGET_FILE_NAME:rendering_example>"
-    )
+  # execute windeployqt in a tmp directory after build
+  add_custom_command(TARGET rendering_example
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
+    COMMAND set PATH=%PATH%$<SEMICOLON>${qt5_install_prefix}/bin
+    COMMAND
+    Qt5::windeployqt
+    --dir "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
+    "$<TARGET_FILE_DIR:rendering_example>/$<TARGET_FILE_NAME:rendering_example>"
+  )
 
-    # copy deployment directory during installation
-    install(
-        DIRECTORY
-        "${CMAKE_CURRENT_BINARY_DIR}/windeployqt/"
-        DESTINATION bin
-    )
+  # copy deployment directory during installation
+  install(
+    DIRECTORY
+    "${CMAKE_CURRENT_BINARY_DIR}/windeployqt/"
+    DESTINATION bin
+  )
 endif()
+
+set(rviz_rendering_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/cmake")
+include(${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/register_rviz_ogre_media_exports_hook-extras.cmake)
+
+install(DIRECTORY src/cmake
+  DESTINATION share/${PROJECT_NAME})
 
 install(TARGETS rendering_example DESTINATION bin)
 
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/ogre_media"
-        DESTINATION "share/rviz_rendering"
-        USE_SOURCE_PERMISSIONS)
+  DESTINATION "share/rviz_rendering"
+  USE_SOURCE_PERMISSIONS)
 
 if(BUILD_TESTING)
-    # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back
-    find_package(ament_cmake_cppcheck REQUIRED)
-    find_package(ament_cmake_cpplint REQUIRED)
-    find_package(ament_cmake_lint_cmake REQUIRED)
-    find_package(ament_cmake_uncrustify REQUIRED)
-    ament_cppcheck()
-    ament_cpplint()
-    ament_lint_cmake()
-    ament_uncrustify()
+  # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back
+  find_package(ament_cmake_cppcheck REQUIRED)
+  find_package(ament_cmake_cpplint REQUIRED)
+  find_package(ament_cmake_lint_cmake REQUIRED)
+  find_package(ament_cmake_uncrustify REQUIRED)
+  ament_cppcheck()
+  ament_cpplint()
+  ament_lint_cmake()
+  ament_uncrustify()
+
+  ament_add_gtest(test_rviz_rendering src/test/string_helper_test.cpp)
+  if(TARGET test_rviz_rendering)
+    target_include_directories(test_rviz_rendering PUBLIC src/rviz_rendering)
+    target_link_libraries(test_rviz_rendering ${PROJECT_NAME})
+  endif()
 endif()
+
+list(APPEND ${PROJECT_NAME}_CONFIG_EXTRAS
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/register_rviz_ogre_media_exports_hook-extras.cmake"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/register_rviz_ogre_media_exports.cmake")
 
 ament_package()

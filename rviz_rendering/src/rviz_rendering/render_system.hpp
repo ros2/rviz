@@ -56,6 +56,8 @@
 # pragma GCC diagnostic pop
 #endif
 
+#include <QDir>  // NOLINT
+
 namespace rviz_rendering
 {
 
@@ -139,6 +141,8 @@ private:
   setResourceDirectory();
   void
   setupResources();
+  void
+  addAdditionalResourcesFromAmentIndex() const;
   void
   detectGlVersion();
 

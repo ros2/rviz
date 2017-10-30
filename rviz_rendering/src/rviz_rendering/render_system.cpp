@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2011, Willow Garage, Inc.
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,13 +31,16 @@
 
 #include "render_system.hpp"
 
+#include <map>
 #include <string>
 #include <vector>
 
 #ifdef __linux__
+
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <GL/glx.h>
+
 #endif
 
 #ifndef _WIN32
@@ -51,9 +55,11 @@
 #endif
 
 #include "ament_index_cpp/get_resource.hpp"
+#include "ament_index_cpp/get_resources.hpp"
 #include "rviz_rendering/logging.hpp"
 #include "rviz_rendering/resource_config.hpp"
 
+#include "string_helper.hpp"
 #include "ogre_logging.hpp"
 
 namespace rviz_rendering
@@ -128,7 +134,7 @@ RenderSystem::RenderSystem()
   setResourceDirectory();
   setupDummyWindowId();
   ogre_root_ = new Ogre::Root(get_resource_directory() + "/ogre_media/plugins.cfg");
-#if ((OGRE_VERSION_MAJOR == 1 && OGRE_VERSION_MINOR >= 9) || OGRE_VERSION_MAJOR >= 2 )
+#if ((OGRE_VERSION_MAJOR == 1 && OGRE_VERSION_MINOR >= 9) || OGRE_VERSION_MAJOR >= 2)
   ogre_overlay_system_ = new Ogre::OverlaySystem();
 #endif
   loadOgrePlugins();
@@ -143,7 +149,7 @@ RenderSystem::RenderSystem()
 void
 RenderSystem::prepareOverlays(Ogre::SceneManager * scene_manager)
 {
-#if ((OGRE_VERSION_MAJOR == 1 && OGRE_VERSION_MINOR >= 9) || OGRE_VERSION_MAJOR >= 2 )
+#if ((OGRE_VERSION_MAJOR == 1 && OGRE_VERSION_MINOR >= 9) || OGRE_VERSION_MAJOR >= 2)
   if (ogre_overlay_system_) {
     scene_manager->addRenderQueueListener(ogre_overlay_system_);
   }
@@ -330,32 +336,33 @@ RenderSystem::setupResources()
   //   throw std::runtime_error(s);
   // }
 
-// TODO(wjwwood): figure out how to replace/port media export.
-#if 0
-  // Add paths exported to the "media_export" package.
-  std::vector<std::string> media_paths;
-  ros::package::getPlugins("media_export", "ogre_media_path", media_paths);
-  std::string delim(":");
-  for (auto iter = media_paths.begin(); iter != media_paths.end(); ++iter) {
-    if (!iter->empty()) {
-      std::string path;
-      int pos1 = 0;
-      int pos2 = iter->find(delim);
-      while (pos2 != static_cast<int>(std::string::npos)) {
-        path = iter->substr(pos1, pos2 - pos1);
-        ROS_DEBUG("adding resource location: '%s'\n", path.c_str());
-        Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-          path, "FileSystem", "rviz_rendering");
-        pos1 = pos2 + 1;
-        pos2 = iter->find(delim, pos2 + 1);
+  addAdditionalResourcesFromAmentIndex();
+}
+
+void RenderSystem::addAdditionalResourcesFromAmentIndex() const
+{
+  const std::string RVIZ_OGRE_MEDIA_RESOURCE_NAME = "rviz_ogre_media_exports";
+  std::map<std::string,
+    std::string> resource_locations = ament_index_cpp::get_resources(
+    RVIZ_OGRE_MEDIA_RESOURCE_NAME);
+  for (auto resource : resource_locations) {
+    std::string content;
+    std::string prefix_path;
+    if (ament_index_cpp::get_resource(RVIZ_OGRE_MEDIA_RESOURCE_NAME, resource.first, content,
+      &prefix_path))
+    {
+      std::vector<std::string> filenames =
+        string_helper::splitStringIntoTrimmedItems(content, '\n');
+      for (const auto & line : filenames) {
+        std::string resource_path = prefix_path + "/share/" + line;
+        if (!QDir(QString::fromStdString(resource_path)).exists()) {
+          RVIZ_RENDERING_LOG_WARNING_STREAM("Could not find folder " << resource_path);
+        }
+        Ogre::ResourceGroupManager::getSingleton().addResourceLocation(resource_path, "FileSystem",
+          "rviz_rendering");
       }
-      path = iter->substr(pos1, iter->size() - pos1);
-      ROS_DEBUG("adding resource location: '%s'\n", path.c_str());
-      Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-        path, "FileSystem", "rviz_rendering");
     }
   }
-#endif
 }
 
 // On Intel graphics chips under X11, there sometimes comes a
