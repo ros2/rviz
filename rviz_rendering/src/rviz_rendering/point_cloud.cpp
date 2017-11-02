@@ -133,9 +133,32 @@ static float g_box_vertices[6 * 6 * 3] =
 
 Ogre::String PointCloud::sm_Type = "PointCloud";
 
+uint32_t PointCloud::getVerticesPerPoint()
+{
+  if (current_mode_supports_geometry_shader_) {
+    return 1;
+  }
+  switch (render_mode_) {
+    case RM_POINTS:
+      return 1;
+    case RM_SQUARES:
+      return 6;
+    case RM_FLAT_SQUARES:
+      return 6;
+    case RM_SPHERES:
+      return 3;
+    case RM_TILES:
+      return 6;
+    case RM_BOXES:
+      return 36;
+    default:
+      // TODO(Martin-Idel-SI): This should not happen. Maybe throw?
+      return 1;
+  }
+}
+
 PointCloud::PointCloud()
-: bounding_radius_(0.0f),
-  point_count_(0),
+: point_count_(0),
   common_direction_(Ogre::Vector3::NEGATIVE_UNIT_Z),
   common_up_vector_(Ogre::Vector3::UNIT_Y),
   color_by_index_(false),
@@ -203,11 +226,12 @@ const Ogre::AxisAlignedBox & PointCloud::getBoundingBox() const
   return bounding_box_;
 }
 
-// TODO(Martin-Idel-SI): Bounding radius is the length squared in PointCloud while it is the
-// square root in PointCloudRenderable.
 float PointCloud::getBoundingRadius() const
 {
-  return bounding_radius_;
+  return bounding_box_.isNull() ?
+         0.0f :
+         Ogre::Math::Sqrt(std::max(bounding_box_.getMaximum().squaredLength(),
+           bounding_box_.getMinimum().squaredLength()));
 }
 
 void PointCloud::getWorldTransforms(Ogre::Matrix4 * xform) const
@@ -215,14 +239,10 @@ void PointCloud::getWorldTransforms(Ogre::Matrix4 * xform) const
   *xform = _getParentNodeFullTransform();
 }
 
-// TODO(Martin-Idel-SI): This is also weird: We clear, but don't clear the list of points we are
-// displaying, so they stay in memory. However, when calling regenerateAll(), they won't be
-// regenerated.
 void PointCloud::clear()
 {
   point_count_ = 0;
   bounding_box_.setNull();
-  bounding_radius_ = 0.0f;
 
   if (getParentSceneNode()) {
     for (auto const & renderable : renderables_) {
@@ -466,7 +486,6 @@ void PointCloud::addPoints(Point * points, uint32_t num_points)
   Ogre::AxisAlignedBox aabb;
   aabb.setNull();
   uint32_t current_vertex_count = 0;
-  bounding_radius_ = 0.0f;
   uint32_t vertex_size = 0;
   uint32_t buffer_size = 0;
   for (uint32_t current_point = 0; current_point < num_points; ++current_point) {
@@ -521,7 +540,6 @@ void PointCloud::addPoints(Point * points, uint32_t num_points)
     }
 
     aabb.merge(p.position);
-    bounding_radius_ = std::max(bounding_radius_, p.position.squaredLength() );
 
     float x = p.position.x;
     float y = p.position.y;
@@ -598,11 +616,9 @@ void PointCloud::popPoints(uint32_t num_points)
 
   // reset bounds
   bounding_box_.setNull();
-  bounding_radius_ = 0.0f;
   for (uint32_t i = 0; i < point_count_; ++i) {
     Point & p = points_[i];
     bounding_box_.merge(p.position);
-    bounding_radius_ = std::max(bounding_radius_, p.position.squaredLength());
   }
 
   shrinkRenderables();
@@ -640,30 +656,6 @@ void PointCloud::_updateRenderQueue(Ogre::RenderQueue * queue)
 void PointCloud::_notifyAttached(Ogre::Node * parent, bool isTagPoint)
 {
   Ogre::MovableObject::_notifyAttached(parent, isTagPoint);
-}
-
-uint32_t PointCloud::getVerticesPerPoint()
-{
-  if (current_mode_supports_geometry_shader_) {
-    return 1;
-  }
-  switch (render_mode_) {
-    case RM_POINTS:
-      return 1;
-    case RM_SQUARES:
-      return 6;
-    case RM_FLAT_SQUARES:
-      return 6;
-    case RM_SPHERES:
-      return 3;
-    case RM_TILES:
-      return 6;
-    case RM_BOXES:
-      return 36;
-    default:
-      // TODO(Martin-Idel-SI): This should not happen. Maybe throw?
-      return 1;
-  }
 }
 
 void PointCloud::setPickColor(const Ogre::ColourValue & color)

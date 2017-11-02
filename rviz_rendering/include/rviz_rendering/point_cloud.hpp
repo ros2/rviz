@@ -208,7 +208,6 @@ private:
   void shrinkRenderables();
 
   Ogre::AxisAlignedBox bounding_box_;       ///< The bounding box of this point cloud
-  float bounding_radius_;                   ///< The bounding radius of this point cloud
 
   typedef std::vector<Point> V_Point;
   ///< The list of points we're displaying. Allocates to a high-water-mark.

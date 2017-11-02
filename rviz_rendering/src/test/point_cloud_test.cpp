@@ -89,13 +89,13 @@ TEST_F(PointCloudTestFixture, addPoints_many_points_gets_a_good_bounding_box_for
   ASSERT_EQ(pointCloud->getBoundingBox().getMinimum(), Ogre::Vector3(-1, -1, 0));
 }
 
-TEST_F(PointCloudTestFixture, getBoundingRadius_returns_correct_radius_for_one_point) {
+TEST_F(PointCloudTestFixture, addPoints_gets_a_good_bounding_radius_for_one_point) {
   auto pointCloud = std::make_shared<rviz_rendering::PointCloud>();
 
   rviz_rendering::PointCloud::Point points[] = {{Ogre::Vector3(2, 0, 0), colorValue}};
   pointCloud->addPoints(points, 1);
 
-  ASSERT_EQ(pointCloud->getBoundingRadius(), 4);
+  ASSERT_EQ(pointCloud->getBoundingRadius(), Ogre::Math::Sqrt(4));
 }
 
 TEST_F(PointCloudTestFixture, clear_resets_bounding_box_bounding_radius_and_clears_points) {
@@ -116,7 +116,7 @@ TEST_F(PointCloudTestFixture,
 
   pointCloud->addPoints(squareCenteredAtZero.begin(), 4);
 
-  ASSERT_EQ(pointCloud->getBoundingRadius(), 2);
+  ASSERT_EQ(pointCloud->getBoundingRadius(), Ogre::Math::Sqrt(2));
 }
 
 TEST_F(PointCloudTestFixture,
