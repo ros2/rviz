@@ -31,6 +31,7 @@
 #define RVIZ_RENDERING__POINT_CLOUD_HPP_
 
 #include <cstdint>
+#include <deque>
 #include <memory>
 #include <string>
 #include <vector>
@@ -194,17 +195,20 @@ public:
   void _updateRenderQueue(Ogre::RenderQueue * queue) override;
   void _notifyCurrentCamera(Ogre::Camera * camera) override;
   void _notifyAttached(Ogre::Node * parent, bool isTagPoint = false) override;
-#if (OGRE_VERSION_MAJOR >= 1 && OGRE_VERSION_MINOR >= 6)
   void visitRenderables(Ogre::Renderable::Visitor * visitor, bool debugRenderables) override;
-#endif
 
   virtual void setName(const std::string & name) {mName = name;}
   V_PointCloudRenderable getRenderables();
 
 private:
   uint32_t getVerticesPerPoint();
+  float * getVertices();
+  Ogre::MaterialPtr getMaterialForRenderMode(RenderMode);
+  bool changingGeometrySupportIsNecessary(const Ogre::MaterialPtr);
   PointCloudRenderablePtr createRenderable(int num_points);
   void regenerateAll();
+  uint32_t removePointsFromRenderables(uint32_t, uint32_t);
+  void resetBoundingBoxForCurrentPoints();
   void shrinkRenderables();
 
   Ogre::AxisAlignedBox bounding_box_;       ///< The bounding box of this point cloud
@@ -215,9 +219,7 @@ private:
   uint32_t point_count_;                    ///< The number of points currently in #points_
 
   RenderMode render_mode_;
-  float width_;                             ///< width
-  float height_;                            ///< height
-  float depth_;                             ///< depth
+  Ogre::Vector4 point_extensions_;          ///< width, height, depth of particles
   Ogre::Vector3 common_direction_;          ///< See Ogre::BillboardSet::setCommonDirection
   Ogre::Vector3 common_up_vector_;          ///< See Ogre::BillboardSet::setCommonUpVector
 

@@ -152,8 +152,50 @@ uint32_t PointCloud::getVerticesPerPoint()
     case RM_BOXES:
       return 36;
     default:
-      // TODO(Martin-Idel-SI): This should not happen. Maybe throw?
-      return 1;
+      assert(false);
+  }
+}
+
+float * PointCloud::getVertices()
+{
+  if (current_mode_supports_geometry_shader_) {
+    return g_point_vertices;
+  }
+  switch (render_mode_) {
+    case RM_POINTS:
+      return g_point_vertices;
+    case RM_SQUARES:
+      return g_billboard_vertices;
+    case RM_FLAT_SQUARES:
+      return g_billboard_vertices;
+    case RM_SPHERES:
+      return g_billboard_sphere_vertices;
+    case RM_TILES:
+      return g_billboard_vertices;
+    case RM_BOXES:
+      return g_box_vertices;
+    default:
+      assert(false);
+  }
+}
+
+Ogre::MaterialPtr PointCloud::getMaterialForRenderMode(RenderMode mode)
+{
+  switch (mode) {
+    case RM_POINTS:
+      return Ogre::MaterialPtr(point_material_);
+    case RM_SQUARES:
+      return Ogre::MaterialPtr(square_material_);
+    case RM_FLAT_SQUARES:
+      return Ogre::MaterialPtr(flat_square_material_);
+    case RM_SPHERES:
+      return Ogre::MaterialPtr(sphere_material_);
+    case RM_TILES:
+      return Ogre::MaterialPtr(tile_material_);
+    case RM_BOXES:
+      return Ogre::MaterialPtr(box_material_);
+    default:
+      assert(false);
   }
 }
 
@@ -288,33 +330,26 @@ void PointCloud::setRenderMode(RenderMode mode)
 {
   render_mode_ = mode;
 
-  switch (mode) {
-    case RM_POINTS:
-      current_material_ = Ogre::MaterialPtr(point_material_);
-      break;
-    case RM_SQUARES:
-      current_material_ = Ogre::MaterialPtr(square_material_);
-      break;
-    case RM_FLAT_SQUARES:
-      current_material_ = Ogre::MaterialPtr(flat_square_material_);
-      break;
-    case RM_SPHERES:
-      current_material_ = Ogre::MaterialPtr(sphere_material_);
-      break;
-    case RM_TILES:
-      current_material_ = Ogre::MaterialPtr(tile_material_);
-      break;
-    case RM_BOXES:
-      current_material_ = Ogre::MaterialPtr(box_material_);
-      break;
-  }
-
+  current_material_ = getMaterialForRenderMode(mode);
   current_material_->load();
 
+  if (changingGeometrySupportIsNecessary(current_material_)) {
+    renderables_.clear();
+  }
+
+  for (auto & renderable : renderables_) {
+    renderable->setMaterial(current_material_);
+  }
+
+  regenerateAll();
+}
+
+bool PointCloud::changingGeometrySupportIsNecessary(Ogre::MaterialPtr const material)
+{
   bool geom_support_changed = false;
-  Ogre::Technique * best = current_material_->getBestTechnique();
+  Ogre::Technique * best = material->getBestTechnique();
   if (best) {
-    if (current_material_->getBestTechnique()->getName() == "gp") {
+    if (material->getBestTechnique()->getName() == "gp") {
       if (!current_mode_supports_geometry_shader_) {
         geom_support_changed = true;
       }
@@ -332,30 +367,17 @@ void PointCloud::setRenderMode(RenderMode mode)
     current_mode_supports_geometry_shader_ = false;
 
     RVIZ_RENDERING_LOG_ERROR_STREAM(
-      "No techniques available for material [" << current_material_->getName().c_str() << "]");
+      "No techniques available for material [" << material->getName().c_str() << "]");
   }
-
-  if (geom_support_changed) {
-    renderables_.clear();
-  }
-
-  for (auto & it : renderables_) {
-    it->setMaterial(current_material_);
-  }
-
-  regenerateAll();
+  return geom_support_changed;
 }
 
 void PointCloud::setDimensions(float width, float height, float depth)
 {
-  width_ = width;
-  height_ = height;
-  depth_ = depth;
-
-  Ogre::Vector4 size(width_, height_, depth_, 0.0f);
+  point_extensions_ = Ogre::Vector4(width, height, depth, 0.0f);
 
   for (auto & renderable : renderables_) {
-    renderable->setCustomParameter(RVIZ_RENDERING_SIZE_PARAMETER, size);
+    renderable->setCustomParameter(RVIZ_RENDERING_SIZE_PARAMETER, point_extensions_);
   }
 }
 
@@ -451,31 +473,7 @@ void PointCloud::addPoints(Point * points, uint32_t num_points)
     }
   }
 
-  float * vertices = nullptr;
-  if (current_mode_supports_geometry_shader_) {
-    vertices = g_point_vertices;
-  } else {
-    switch (render_mode_) {
-      case RM_POINTS:
-        vertices = g_point_vertices;
-        break;
-      case RM_SQUARES:
-        vertices = g_billboard_vertices;
-        break;
-      case RM_FLAT_SQUARES:
-        vertices = g_billboard_vertices;
-        break;
-      case RM_SPHERES:
-        vertices = g_billboard_sphere_vertices;
-        break;
-      case RM_TILES:
-        vertices = g_billboard_vertices;
-        break;
-      case RM_BOXES:
-        vertices = g_box_vertices;
-        break;
-    }
-  }
+  float * vertices = getVertices();
 
   PointCloudRenderablePtr rend;
   Ogre::HardwareVertexBufferSharedPtr vbuf;
@@ -486,7 +484,7 @@ void PointCloud::addPoints(Point * points, uint32_t num_points)
   Ogre::AxisAlignedBox aabb;
   aabb.setNull();
   uint32_t current_vertex_count = 0;
-  uint32_t vertex_size = 0;
+  size_t vertex_size = 0;
   uint32_t buffer_size = 0;
   for (uint32_t current_point = 0; current_point < num_points; ++current_point) {
     // if we didn't create a renderable yet,
@@ -517,7 +515,7 @@ void PointCloud::addPoints(Point * points, uint32_t num_points)
       current_vertex_count = 0;
 
       vertex_size = op->vertexData->vertexDeclaration->getVertexSize(0);
-      fptr = reinterpret_cast<float *>(reinterpret_cast<uint8_t *>(vdata));
+      fptr = reinterpret_cast<float *>(vdata);
 
       aabb.setNull();
     }
@@ -585,46 +583,55 @@ void PointCloud::addPoints(Point * points, uint32_t num_points)
 
 void PointCloud::popPoints(uint32_t num_points)
 {
-  uint32_t vpp = getVerticesPerPoint();
-
   assert(num_points <= point_count_);
-  points_.erase(points_.begin(), points_.begin() + num_points);
 
+  points_.erase(points_.begin(), points_.begin() + num_points);
   point_count_ -= num_points;
 
-  // Now clear out popped points
-  uint32_t popped_count = 0;
-  while (popped_count < num_points * vpp) {
-    PointCloudRenderablePtr rend = renderables_.front();
-    Ogre::RenderOperation * op = rend->getRenderOperation();
+  uint32_t vpp = getVerticesPerPoint();
+  uint32_t popped_count = removePointsFromRenderables(num_points, vpp);
 
-    uint32_t popped = std::min((size_t)(num_points * vpp - popped_count),
-        op->vertexData->vertexCount);
-    op->vertexData->vertexStart += popped;
-    op->vertexData->vertexCount -= popped;
-
-    popped_count += popped;
-
-    if (op->vertexData->vertexCount == 0) {
-      renderables_.erase(renderables_.begin(), renderables_.begin() + 1);
-
-      op->vertexData->vertexStart = 0;
-      renderables_.push_back(rend);
-    }
-  }
   assert(popped_count == num_points * vpp);
 
-  // reset bounds
-  bounding_box_.setNull();
-  for (uint32_t i = 0; i < point_count_; ++i) {
-    Point & p = points_[i];
-    bounding_box_.merge(p.position);
-  }
+  resetBoundingBoxForCurrentPoints();
 
   shrinkRenderables();
 
   if (getParentSceneNode()) {
     getParentSceneNode()->needUpdate();
+  }
+}
+
+uint32_t PointCloud::removePointsFromRenderables(
+  uint32_t number_of_points, uint32_t
+  vertices_per_point)
+{
+  uint32_t popped_count = 0;
+  while (popped_count < number_of_points * vertices_per_point) {
+    PointCloudRenderablePtr rend = renderables_.front();
+    Ogre::RenderOperation * op = rend->getRenderOperation();
+
+    size_t popped_in_renderable = std::min(
+      static_cast<size_t>(number_of_points * vertices_per_point - popped_count),
+      op->vertexData->vertexCount);
+    op->vertexData->vertexStart += popped_in_renderable;
+    op->vertexData->vertexCount -= popped_in_renderable;
+
+    popped_count += popped_in_renderable;
+
+    if (op->vertexData->vertexCount == 0) {
+      renderables_.erase(renderables_.begin());
+    }
+  }
+  return popped_count;
+}
+
+void PointCloud::resetBoundingBoxForCurrentPoints()
+{
+  bounding_box_.setNull();
+  for (uint32_t i = 0; i < point_count_; ++i) {
+    Point & p = points_[i];
+    bounding_box_.merge(p.position);
   }
 }
 
@@ -676,11 +683,10 @@ PointCloudRenderablePtr PointCloud::createRenderable(int num_points)
   PointCloudRenderablePtr rend(new PointCloudRenderable(this, num_points,
     !current_mode_supports_geometry_shader_));
   rend->setMaterial(current_material_);
-  Ogre::Vector4 size(width_, height_, depth_, 0.0f);
   Ogre::Vector4 alpha(alpha_, 0.0f, 0.0f, 0.0f);
   Ogre::Vector4 highlight(0.0f, 0.0f, 0.0f, 0.0f);
   Ogre::Vector4 pick_col(pick_color_.r, pick_color_.g, pick_color_.b, pick_color_.a);
-  rend->setCustomParameter(RVIZ_RENDERING_SIZE_PARAMETER, size);
+  rend->setCustomParameter(RVIZ_RENDERING_SIZE_PARAMETER, Ogre::Vector4(point_extensions_));
   rend->setCustomParameter(RVIZ_RENDERING_ALPHA_PARAMETER, alpha);
   rend->setCustomParameter(RVIZ_RENDERING_HIGHLIGHT_PARAMETER, highlight);
   rend->setCustomParameter(RVIZ_RENDERING_PICK_COLOR_PARAMETER, pick_col);
@@ -699,13 +705,11 @@ V_PointCloudRenderable PointCloud::getRenderables()
   return renderables_;
 }
 
-#if (OGRE_VERSION_MAJOR >= 1 && OGRE_VERSION_MINOR >= 6)
 void PointCloud::visitRenderables(Ogre::Renderable::Visitor * visitor, bool debugRenderables)
 {
   (void) visitor;
   (void) debugRenderables;
 }
-#endif
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
