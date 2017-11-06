@@ -200,6 +200,7 @@ public:
 #endif
 
   virtual void setName(const std::string & name) {mName = name;}
+  V_PointCloudRenderable getRenderables();
 
 private:
   uint32_t getVerticesPerPoint();

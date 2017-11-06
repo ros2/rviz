@@ -48,7 +48,7 @@ endif()
 # These need to be added in the add_library() call so AUTOMOC detects them.
 set(headers_with_q_object
   include/rviz_rendering/render_window.hpp
-  src/rviz_rendering/string_helper.hpp
+  include/rviz_rendering/point_cloud.hpp
 )
 
 add_library(rviz_rendering
@@ -157,6 +157,12 @@ if(BUILD_TESTING)
   if(TARGET test_rviz_rendering)
     target_include_directories(test_rviz_rendering PUBLIC src/rviz_rendering)
     target_link_libraries(test_rviz_rendering ${PROJECT_NAME})
+  endif()
+
+  ament_add_gtest(point_cloud_test_target
+    src/test/point_cloud_test.cpp)
+  if(TARGET point_cloud_test_target)
+    target_link_libraries(point_cloud_test_target ${PROJECT_NAME})
   endif()
 endif()
 

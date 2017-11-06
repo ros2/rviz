@@ -718,6 +718,11 @@ PointCloudRenderablePtr PointCloud::createRenderable(int num_points)
   return rend;
 }
 
+V_PointCloudRenderable PointCloud::getRenderables()
+{
+  return renderables_;
+}
+
 #if (OGRE_VERSION_MAJOR >= 1 && OGRE_VERSION_MINOR >= 6)
 void PointCloud::visitRenderables(Ogre::Renderable::Visitor * visitor, bool debugRenderables)
 {
