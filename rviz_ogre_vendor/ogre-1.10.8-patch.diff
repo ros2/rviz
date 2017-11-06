@@ -68,3 +68,33 @@ index e1481e2..ad3b92b 100644
    if(APPLE AND APPLE_IOS)
      set(OGRE_LIB_RELEASE_PATH "/Release")
    endif(APPLE AND APPLE_IOS)
+diff --git a/RenderSystems/GL/src/GLSL/include/OgreGLSLLinkProgram.h b/RenderSystems/GL/src/GLSL/include/OgreGLSLLinkProgram.h
+index 27c177d..592a38a 100644
+--- a/RenderSystems/GL/src/GLSL/include/OgreGLSLLinkProgram.h
++++ b/RenderSystems/GL/src/GLSL/include/OgreGLSLLinkProgram.h
+@@ -84,6 +84,9 @@ namespace Ogre {
+
+         void updateUniformBlocks(GpuProgramParametersSharedPtr params, uint16 mask, GpuProgramType fromProgType) {}
+
++        /// Is a non-standard attribute bound in the linked code?
++        bool isAttributeValid(VertexElementSemantic semantic, uint index);
++
+         /** Updates program object uniforms using data from pass iteration GpuProgramParameters.
+         normally called by GLSLGpuProgram::bindMultiPassParameters() just before multi pass rendering occurs.
+         */
+diff --git a/RenderSystems/GL/src/GLSL/src/OgreGLSLLinkProgram.cpp b/RenderSystems/GL/src/GLSL/src/OgreGLSLLinkProgram.cpp
+index 63514f2..b58a538 100644
+--- a/RenderSystems/GL/src/GLSL/src/OgreGLSLLinkProgram.cpp
++++ b/RenderSystems/GL/src/GLSL/src/OgreGLSLLinkProgram.cpp
+@@ -184,6 +184,11 @@ namespace Ogre {
+         }
+     }
+     //-----------------------------------------------------------------------
++    bool GLSLLinkProgram::isAttributeValid(VertexElementSemantic semantic, uint index)
++    {
++        return mValidAttributes.find(getFixedAttributeIndex(semantic, index)) != mValidAttributes.end();
++    }
++    //-----------------------------------------------------------------------
+     void GLSLLinkProgram::buildGLUniformReferences(void)
+     {
+         if (!mUniformRefsBuilt)

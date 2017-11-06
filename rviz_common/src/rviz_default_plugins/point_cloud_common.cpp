@@ -349,11 +349,10 @@ PointCloudCommon::PointCloudCommon(rviz_common::Display * display)
       "Rendering mode to use, in order of computational complexity.",
       display_, SLOT(updateStyle()), this);
   style_property_->addOption("Points", rviz_rendering::PointCloud::RM_POINTS);
-  // TODO(greimela): Enable as soon as shaders work again
-//  style_property_->addOption( "Squares", rviz_rendering::PointCloud::RM_SQUARES );
-//  style_property_->addOption( "Flat Squares", rviz_rendering::PointCloud::RM_FLAT_SQUARES );
-//  style_property_->addOption( "Spheres", rviz_rendering::PointCloud::RM_SPHERES );
-//  style_property_->addOption( "Boxes", rviz_rendering::PointCloud::RM_BOXES );
+  style_property_->addOption("Squares", rviz_rendering::PointCloud::RM_SQUARES);
+  style_property_->addOption("Flat Squares", rviz_rendering::PointCloud::RM_FLAT_SQUARES);
+  style_property_->addOption("Spheres", rviz_rendering::PointCloud::RM_SPHERES);
+  style_property_->addOption("Boxes", rviz_rendering::PointCloud::RM_BOXES);
 
   point_world_size_property_ = new rviz_common::properties::FloatProperty("Size (m)", 0.01,
       "Point size in meters.",
