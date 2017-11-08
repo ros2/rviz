@@ -90,7 +90,7 @@ private:
   PointCloud * parent_;
 };
 typedef std::shared_ptr<PointCloudRenderable> PointCloudRenderablePtr;
-typedef std::vector<PointCloudRenderablePtr> V_PointCloudRenderable;
+typedef std::deque<PointCloudRenderablePtr> PointCloudRenderableQueue;
 
 /**
  * \class PointCloud
@@ -198,7 +198,7 @@ public:
   void visitRenderables(Ogre::Renderable::Visitor * visitor, bool debugRenderables) override;
 
   virtual void setName(const std::string & name) {mName = name;}
-  V_PointCloudRenderable getRenderables();
+  PointCloudRenderableQueue getRenderables();
 
 private:
   uint32_t getVerticesPerPoint();
@@ -209,7 +209,6 @@ private:
   void regenerateAll();
   uint32_t removePointsFromRenderables(uint32_t, uint32_t);
   void resetBoundingBoxForCurrentPoints();
-  void shrinkRenderables();
 
   Ogre::AxisAlignedBox bounding_box_;       ///< The bounding box of this point cloud
 
@@ -234,7 +233,7 @@ private:
 
   bool color_by_index_;
 
-  V_PointCloudRenderable renderables_;
+  PointCloudRenderableQueue renderables_;
 
   bool current_mode_supports_geometry_shader_;
   Ogre::ColourValue pick_color_;

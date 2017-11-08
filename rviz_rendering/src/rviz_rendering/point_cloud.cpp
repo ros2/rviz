@@ -574,8 +574,6 @@ void PointCloud::addPoints(Point * points, uint32_t num_points)
 
   point_count_ += num_points;
 
-  shrinkRenderables();
-
   if (getParentSceneNode()) {
     getParentSceneNode()->needUpdate();
   }
@@ -594,8 +592,6 @@ void PointCloud::popPoints(uint32_t num_points)
   assert(popped_count == num_points * vpp);
 
   resetBoundingBoxForCurrentPoints();
-
-  shrinkRenderables();
 
   if (getParentSceneNode()) {
     getParentSceneNode()->needUpdate();
@@ -620,7 +616,7 @@ uint32_t PointCloud::removePointsFromRenderables(
     popped_count += popped_in_renderable;
 
     if (op->vertexData->vertexCount == 0) {
-      renderables_.erase(renderables_.begin());
+      renderables_.pop_front();
     }
   }
   return popped_count;
@@ -632,19 +628,6 @@ void PointCloud::resetBoundingBoxForCurrentPoints()
   for (uint32_t i = 0; i < point_count_; ++i) {
     Point & p = points_[i];
     bounding_box_.merge(p.position);
-  }
-}
-
-void PointCloud::shrinkRenderables()
-{
-  while (!renderables_.empty()) {
-    PointCloudRenderablePtr rend = renderables_.back();
-    Ogre::RenderOperation * op = rend->getRenderOperation();
-    if (op->vertexData->vertexCount == 0) {
-      renderables_.pop_back();
-    } else {
-      break;
-    }
   }
 }
 
@@ -700,7 +683,7 @@ PointCloudRenderablePtr PointCloud::createRenderable(int num_points)
   return rend;
 }
 
-V_PointCloudRenderable PointCloud::getRenderables()
+PointCloudRenderableQueue PointCloud::getRenderables()
 {
   return renderables_;
 }
