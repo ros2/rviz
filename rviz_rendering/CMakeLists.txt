@@ -48,7 +48,6 @@ endif()
 # These need to be added in the add_library() call so AUTOMOC detects them.
 set(headers_with_q_object
   include/rviz_rendering/render_window.hpp
-  include/rviz_rendering/point_cloud.hpp
 )
 
 add_library(rviz_rendering
@@ -71,6 +70,7 @@ add_library(rviz_rendering
   src/rviz_rendering/grid.cpp
   src/rviz_rendering/string_helper.cpp
   src/rviz_rendering/point_cloud.cpp
+  src/rviz_rendering/point_cloud_renderable.cpp
 )
 target_link_libraries(rviz_rendering
   rviz_ogre_vendor::OgreMain

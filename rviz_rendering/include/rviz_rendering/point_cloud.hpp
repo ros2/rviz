@@ -47,6 +47,8 @@
 #include <OgreHardwareBufferManager.h>
 #include <OgreSharedPtr.h>
 
+#include "point_cloud_renderable.hpp"
+
 namespace Ogre
 {
 class SceneManager;
@@ -60,37 +62,6 @@ class Matrix4;
 
 namespace rviz_rendering
 {
-
-class PointCloud;
-class PointCloudRenderable : public Ogre::SimpleRenderable
-{
-public:
-  PointCloudRenderable(PointCloud * parent, int num_points, bool use_tex_coords);
-  ~PointCloudRenderable() override;
-
-#ifdef __clang__
-# pragma clang diagnostic push
-# pragma clang diagnostic ignored "-Woverloaded-virtual"
-#endif
-  Ogre::RenderOperation * getRenderOperation() {return &mRenderOp;}
-#ifdef __clang__
-# pragma clang diagnostic pop
-#endif
-
-  Ogre::HardwareVertexBufferSharedPtr getBuffer();
-
-  Ogre::Real getBoundingRadius() const override;
-  Ogre::Real getSquaredViewDepth(const Ogre::Camera * cam) const override;
-  void _notifyCurrentCamera(Ogre::Camera * camera) override;
-  uint16_t getNumWorldTransforms() const override {return 1;}
-  void getWorldTransforms(Ogre::Matrix4 * xform) const override;
-  const Ogre::LightList & getLights() const override;
-
-private:
-  PointCloud * parent_;
-};
-typedef std::shared_ptr<PointCloudRenderable> PointCloudRenderablePtr;
-typedef std::deque<PointCloudRenderablePtr> PointCloudRenderableQueue;
 
 /**
  * \class PointCloud

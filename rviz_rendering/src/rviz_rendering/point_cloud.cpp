@@ -459,7 +459,7 @@ void PointCloud::addPoints(Point * points, uint32_t num_points)
   }
 
   Point * begin = &points_.front() + point_count_;
-  memcpy(begin, points, sizeof( Point ) * num_points);
+  memcpy(begin, points, sizeof(Point) * num_points);
 
   uint32_t vpp = getVerticesPerPoint();
   Ogre::RenderOperation::OperationType op_type;
@@ -692,87 +692,6 @@ void PointCloud::visitRenderables(Ogre::Renderable::Visitor * visitor, bool debu
 {
   (void) visitor;
   (void) debugRenderables;
-}
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-PointCloudRenderable::PointCloudRenderable(PointCloud * parent, int num_points, bool use_tex_coords)
-: parent_(parent)
-{
-  // Initialize render operation
-  mRenderOp.operationType = Ogre::RenderOperation::OT_POINT_LIST;
-  mRenderOp.useIndexes = false;
-  mRenderOp.vertexData = new Ogre::VertexData;
-  mRenderOp.vertexData->vertexStart = 0;
-  mRenderOp.vertexData->vertexCount = 0;
-
-  Ogre::VertexDeclaration * decl = mRenderOp.vertexData->vertexDeclaration;
-  size_t offset = 0;
-
-  decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
-  offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
-
-  if (use_tex_coords) {
-    decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_TEXTURE_COORDINATES, 0);
-    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
-  }
-
-  decl->addElement(0, offset, Ogre::VET_COLOUR, Ogre::VES_DIFFUSE);
-
-  Ogre::HardwareVertexBufferSharedPtr vbuf =
-    Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
-    mRenderOp.vertexData->vertexDeclaration->getVertexSize(0),
-    num_points,
-    Ogre::HardwareBuffer::HBU_DYNAMIC);
-
-  // Bind buffer
-  mRenderOp.vertexData->vertexBufferBinding->setBinding(0, vbuf);
-}
-
-PointCloudRenderable::~PointCloudRenderable()
-{
-  delete mRenderOp.vertexData;
-  delete mRenderOp.indexData;
-}
-
-Ogre::HardwareVertexBufferSharedPtr PointCloudRenderable::getBuffer()
-{
-  return mRenderOp.vertexData->vertexBufferBinding->getBuffer(0);
-}
-
-void PointCloudRenderable::_notifyCurrentCamera(Ogre::Camera * camera)
-{
-  Ogre::SimpleRenderable::_notifyCurrentCamera(camera);
-}
-
-Ogre::Real PointCloudRenderable::getBoundingRadius() const
-{
-  return Ogre::Math::Sqrt(std::max(mBox.getMaximum().squaredLength(),
-           mBox.getMinimum().squaredLength()));
-}
-
-Ogre::Real PointCloudRenderable::getSquaredViewDepth(const Ogre::Camera * cam) const
-{
-  Ogre::Vector3 vMin, vMax, vMid, vDist;
-  vMin = mBox.getMinimum();
-  vMax = mBox.getMaximum();
-  vMid = ((vMax - vMin) * 0.5) + vMin;
-  vDist = cam->getDerivedPosition() - vMid;
-
-  return vDist.squaredLength();
-}
-
-void PointCloudRenderable::getWorldTransforms(Ogre::Matrix4 * xform) const
-{
-  parent_->getWorldTransforms(xform);
-}
-
-const Ogre::LightList & PointCloudRenderable::getLights() const
-{
-  return parent_->queryLights();
 }
 
 }  // namespace rviz_rendering
