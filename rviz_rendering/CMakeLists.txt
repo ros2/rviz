@@ -164,6 +164,11 @@ if(BUILD_TESTING)
   if(TARGET point_cloud_test_target)
     target_link_libraries(point_cloud_test_target ${PROJECT_NAME})
   endif()
+
+  ament_add_gtest(point_cloud_renderable_test_target src/test/point_cloud_renderable_test.cpp)
+  if(TARGET point_cloud_renderable_test_target)
+    target_link_libraries(point_cloud_renderable_test_target rviz_rendering)
+  endif()
 endif()
 
 list(APPEND ${PROJECT_NAME}_CONFIG_EXTRAS
