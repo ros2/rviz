@@ -42,6 +42,7 @@
 #include "rviz_common/logging.hpp"
 #include "rviz_common/ros_integration/init.hpp"
 #include "rviz_common/ros_integration/ok.hpp"
+#include "rviz_common/ros_integration/shutdown.hpp"
 
 #include "./selection/selection_manager.hpp"
 #include "./visualization_frame.hpp"
@@ -307,6 +308,7 @@ bool VisualizerApp::init(int argc, char ** argv)
 VisualizerApp::~VisualizerApp()
 {
   delete continue_timer_;
+  rviz_common::ros_integration::shutdown();
   delete frame_;
 }
 

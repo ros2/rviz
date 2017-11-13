@@ -196,6 +196,7 @@ set(rviz_common_source_files
   src/rviz_common/render_panel.cpp
   src/rviz_common/ros_integration/init.cpp
   src/rviz_common/ros_integration/ok.cpp
+  src/rviz_common/ros_integration/shutdown.cpp
   src/rviz_common/ros_integration/rclcpp_node_storage.cpp
   src/rviz_common/scaled_image_widget.cpp
   src/rviz_common/screenshot_dialog.cpp
