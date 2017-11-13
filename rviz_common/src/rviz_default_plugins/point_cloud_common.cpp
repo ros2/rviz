@@ -623,11 +623,14 @@ void PointCloudCommon::update(float wall_dt, float ros_dt)
   // garbage-collect old point clouds that don't have an active selection
   L_CloudInfo::iterator it = obsolete_cloud_infos_.begin();
   L_CloudInfo::iterator end = obsolete_cloud_infos_.end();
-  for (; it != end; ++it) {
+  while (it != end) {
     if (!(*it)->selection_handler_.get() ||
-      !(*it)->selection_handler_->hasSelections() )
+      !(*it)->selection_handler_->hasSelections())
     {
       it = obsolete_cloud_infos_.erase(it);
+    }
+    if (it != end) {
+      ++it;
     }
   }
 
