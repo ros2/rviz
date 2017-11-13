@@ -172,6 +172,25 @@ public:
   PointCloudRenderableQueue getRenderables();
 
 private:
+  struct RenderableInternals
+  {
+    inline bool bufferIsFull()
+    {
+      return current_vertex_count >= buffer_size;
+    }
+
+    inline bool noBufferOverflowOccurred()
+    {
+      return current_vertex_count == buffer_size;
+    }
+
+    PointCloudRenderablePtr rend;
+    float * float_buffer = nullptr;
+    uint32_t buffer_size = 0;
+    Ogre::AxisAlignedBox aabb;
+    uint32_t current_vertex_count = 0;
+  };
+
   uint32_t getVerticesPerPoint();
   float * getVertices();
   Ogre::MaterialPtr getMaterialForRenderMode(RenderMode);
@@ -180,6 +199,14 @@ private:
   void regenerateAll();
   uint32_t removePointsFromRenderables(uint32_t, uint32_t);
   void resetBoundingBoxForCurrentPoints();
+
+  void insertPointsToPointList(const PointCloud::Point *, uint32_t);
+  RenderableInternals createNewRenderable(uint32_t);
+  Ogre::RenderOperation::OperationType getRenderOperationType() const;
+  void finishRenderable(RenderableInternals, uint32_t);
+  uint32_t getColorForPoint(uint32_t, const PointCloud::Point &) const;
+  RenderableInternals addPointToHardwareBuffer(RenderableInternals, const PointCloud::Point &,
+    uint32_t);
 
   Ogre::AxisAlignedBox bounding_box_;       ///< The bounding box of this point cloud
 

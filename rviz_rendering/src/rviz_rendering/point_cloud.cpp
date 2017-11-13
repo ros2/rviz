@@ -452,16 +452,62 @@ void PointCloud::addPoints(Point * points, uint32_t num_points)
   if (num_points == 0) {
     return;
   }
-  Ogre::Root * root = Ogre::Root::getSingletonPtr();
+  insertPointsToPointList(points, num_points);
 
+  RenderableInternals internals = createNewRenderable(num_points);
+
+  for (uint32_t current_point = 0; current_point < num_points; ++current_point) {
+    if (internals.bufferIsFull()) {
+      assert(internals.noBufferOverflowOccurred());
+
+      finishRenderable(internals,
+        static_cast<uint32_t>(internals.rend->getBuffer()->getNumVertices()));
+
+      internals = createNewRenderable(num_points - current_point);
+    }
+    const Point & p = points[current_point];
+    internals.aabb.merge(p.position);
+    internals = addPointToHardwareBuffer(internals, p, current_point);
+  }
+
+  finishRenderable(internals, internals.current_vertex_count);
+
+  point_count_ += num_points;
+
+  if (getParentSceneNode()) {
+    getParentSceneNode()->needUpdate();
+  }
+}
+
+void PointCloud::insertPointsToPointList(const PointCloud::Point * points, uint32_t num_points)
+{
   if (points_.size() < point_count_ + num_points) {
     points_.resize(point_count_ + num_points);
   }
 
   Point * begin = &points_.front() + point_count_;
   memcpy(begin, points, sizeof(Point) * num_points);
+}
 
-  uint32_t vpp = getVerticesPerPoint();
+PointCloud::RenderableInternals
+PointCloud::createNewRenderable(uint32_t number_of_points_to_be_added)
+{
+  RenderableInternals internals;
+  internals.buffer_size = std::min<uint32_t>(VERTEX_BUFFER_CAPACITY,
+      number_of_points_to_be_added * getVerticesPerPoint());
+
+  internals.rend = createRenderable(internals.buffer_size);
+  internals.rend->getRenderOperation()->operationType = getRenderOperationType();
+
+  internals.float_buffer = reinterpret_cast<float *>(internals.rend->getBuffer()
+    ->lock(Ogre::HardwareBuffer::HBL_NO_OVERWRITE));
+
+  internals.aabb.setNull();
+  return internals;
+}
+
+Ogre::RenderOperation::OperationType PointCloud::getRenderOperationType() const
+{
   Ogre::RenderOperation::OperationType op_type;
   if (current_mode_supports_geometry_shader_) {
     op_type = Ogre::RenderOperation::OT_POINT_LIST;
@@ -472,111 +518,80 @@ void PointCloud::addPoints(Point * points, uint32_t num_points)
       op_type = Ogre::RenderOperation::OT_TRIANGLE_LIST;
     }
   }
+  return op_type;
+}
 
-  float * vertices = getVertices();
-
-  PointCloudRenderablePtr rend;
-  Ogre::HardwareVertexBufferSharedPtr vbuf;
-  void * vdata = nullptr;
-  Ogre::RenderOperation * op = nullptr;
-  float * fptr = nullptr;
-
-  Ogre::AxisAlignedBox aabb;
-  aabb.setNull();
-  uint32_t current_vertex_count = 0;
-  size_t vertex_size = 0;
-  uint32_t buffer_size = 0;
-  for (uint32_t current_point = 0; current_point < num_points; ++current_point) {
-    // if we didn't create a renderable yet,
-    // or we've reached the vertex limit for the current renderable,
-    // create a new one.
-    while (!rend || current_vertex_count >= buffer_size) {
-      if (rend) {
-        assert(current_vertex_count == buffer_size);
-
-        op->vertexData->vertexCount = rend->getBuffer()->getNumVertices() -
-          op->vertexData->vertexStart;
-        assert(
-          op->vertexData->vertexCount + op->vertexData->vertexStart <=
-          rend->getBuffer()->getNumVertices());
-        vbuf->unlock();
-        rend->setBoundingBox(aabb);
-        bounding_box_.merge(aabb);
-      }
-
-      buffer_size = std::min<uint32_t>(VERTEX_BUFFER_CAPACITY, (num_points - current_point) * vpp);
-
-      rend = createRenderable(buffer_size);
-      vbuf = rend->getBuffer();
-      vdata = vbuf->lock(Ogre::HardwareBuffer::HBL_NO_OVERWRITE);
-
-      op = rend->getRenderOperation();
-      op->operationType = op_type;
-      current_vertex_count = 0;
-
-      vertex_size = op->vertexData->vertexDeclaration->getVertexSize(0);
-      fptr = reinterpret_cast<float *>(vdata);
-
-      aabb.setNull();
-    }
-
-    const Point & p = points[current_point];
-
-    uint32_t color;
-
-    if (color_by_index_) {
-      // convert to ColourValue, so we can then convert to the rendersystem-specific color type
-      color = (current_point + point_count_ + 1);
-      Ogre::ColourValue c;
-      c.a = 1.0f;
-      c.r = ((color >> 16) & 0xff) / 255.0f;
-      c.g = ((color >> 8) & 0xff) / 255.0f;
-      c.b = (color & 0xff) / 255.0f;
-      root->convertColourValue(c, &color);
-    } else {
-      root->convertColourValue(p.color, &color);
-    }
-
-    aabb.merge(p.position);
-
-    float x = p.position.x;
-    float y = p.position.y;
-    float z = p.position.z;
-
-    for (uint32_t j = 0; j < vpp; ++j, ++current_vertex_count) {
-      *fptr++ = x;
-      *fptr++ = y;
-      *fptr++ = z;
-
-      if (!current_mode_supports_geometry_shader_) {
-        *fptr++ = vertices[(j * 3)];
-        *fptr++ = vertices[(j * 3) + 1];
-        *fptr++ = vertices[(j * 3) + 2];
-      }
-
-      auto iptr = reinterpret_cast<uint32_t *>(fptr);
-      *iptr = color;
-      ++fptr;
-
-      assert(reinterpret_cast<uint8_t *>(fptr) <=
-        reinterpret_cast<uint8_t *>(vdata) + rend->getBuffer()->getNumVertices() * vertex_size);
-    }
-  }
-
-  op->vertexData->vertexCount = current_vertex_count - op->vertexData->vertexStart;
-  rend->setBoundingBox(aabb);
-  bounding_box_.merge(aabb);
+void
+PointCloud::finishRenderable(
+  PointCloud::RenderableInternals internals,
+  uint32_t vertex_count_of_renderable)
+{
+  Ogre::RenderOperation * op = internals.rend->getRenderOperation();
+  op->vertexData->vertexCount = vertex_count_of_renderable - op->vertexData->vertexStart;
+  internals.rend->setBoundingBox(internals.aabb);
+  bounding_box_.merge(internals.aabb);
   assert(
     op->vertexData->vertexCount + op->vertexData->vertexStart <=
-    rend->getBuffer()->getNumVertices());
+    internals.rend->getBuffer()->getNumVertices());
 
-  vbuf->unlock();
+  internals.rend->getBuffer()->unlock();
+}
 
-  point_count_ += num_points;
+uint32_t PointCloud::getColorForPoint(uint32_t current_point, const PointCloud::Point & p) const
+{
+  uint32_t color;
+  auto root = Ogre::Root::getSingletonPtr();
 
-  if (getParentSceneNode()) {
-    getParentSceneNode()->needUpdate();
+  if (color_by_index_) {
+    // convert to ColourValue, so we can then convert to the rendersystem-specific color type
+    color = (current_point + point_count_ + 1);
+    Ogre::ColourValue c;
+    c.a = 1.0f;
+    c.r = ((color >> 16) & 0xff) / 255.0f;
+    c.g = ((color >> 8) & 0xff) / 255.0f;
+    c.b = (color & 0xff) / 255.0f;
+    root->convertColourValue(c, &color);
+  } else {
+    root->convertColourValue(p.color, &color);
   }
+  return color;
+}
+
+PointCloud::RenderableInternals
+PointCloud::addPointToHardwareBuffer(
+  PointCloud::RenderableInternals internals,
+  const PointCloud::Point & p, uint32_t current_point)
+{
+  uint32_t color = getColorForPoint(current_point, p);
+  float * vertices = getVertices();
+  float * float_buffer = internals.float_buffer;
+
+  float x = p.position.x;
+  float y = p.position.y;
+  float z = p.position.z;
+
+  for (uint32_t j = 0; j < getVerticesPerPoint(); ++j, ++internals.current_vertex_count) {
+    *float_buffer++ = x;
+    *float_buffer++ = y;
+    *float_buffer++ = z;
+
+    if (!current_mode_supports_geometry_shader_) {
+      *float_buffer++ = vertices[(j * 3)];
+      *float_buffer++ = vertices[(j * 3) + 1];
+      *float_buffer++ = vertices[(j * 3) + 2];
+    }
+
+    auto iptr = reinterpret_cast<uint32_t *>(float_buffer);
+    *iptr = color;
+    ++float_buffer;
+
+    assert(reinterpret_cast<uint8_t *>(float_buffer) <=
+      reinterpret_cast<uint8_t *>(float_buffer) +
+      internals.rend->getBuffer()->getNumVertices() *
+      internals.rend->getRenderOperation()->vertexData->vertexDeclaration->getVertexSize(0));
+  }
+  internals.float_buffer = float_buffer;
+  return internals;
 }
 
 void PointCloud::popPoints(uint32_t num_points)
