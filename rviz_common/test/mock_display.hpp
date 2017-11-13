@@ -48,7 +48,7 @@ public:
 
   properties::Property * count_;
   properties::Property * style_;
-  properties::Property * pi_;
+  properties::Property * number_;
   properties::VectorProperty * offset_;
   properties::ColorProperty * color_;
   void onEnableChanged();
