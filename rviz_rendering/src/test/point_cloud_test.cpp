@@ -28,6 +28,8 @@
  */
 #include <memory>
 #include <regex>
+#include <vector>
+
 #include <gtest/gtest.h>  // NOLINT
 
 #include <QApplication>  // NOLINT
@@ -57,15 +59,15 @@ PointCloudTestFixture::testing_environment_ = nullptr;
 
 static Ogre::ColourValue colorValue = Ogre::ColourValue(0.5f, 0.5f, 0.5f, 1.0f);
 
-static std::array<rviz_rendering::PointCloud::Point, 4> squareCenteredAtZero
-{{
-    {Ogre::Vector3(1, 1, 0), colorValue},
-    {Ogre::Vector3(1, -1, 0), colorValue},
-    {Ogre::Vector3(-1, 1, 0), colorValue},
-    {Ogre::Vector3(-1, -1, 0), colorValue}
-  }};
+static std::vector<rviz_rendering::PointCloud::Point> squareCenteredAtZero
+{
+  {Ogre::Vector3(1, 1, 0), colorValue},
+  {Ogre::Vector3(1, -1, 0), colorValue},
+  {Ogre::Vector3(-1, 1, 0), colorValue},
+  {Ogre::Vector3(-1, -1, 0), colorValue}
+};
 
-static std::array<rviz_rendering::PointCloud::Point, 1> singlePointArray
+static std::vector<rviz_rendering::PointCloud::Point> singlePointArray
 {
   {Ogre::Vector3(1, 2, 3), colorValue}
 };
@@ -73,7 +75,7 @@ static std::array<rviz_rendering::PointCloud::Point, 1> singlePointArray
 TEST_F(PointCloudTestFixture, addPoints_for_the_first_time_adds_renderable) {
   auto pointCloud = std::make_shared<rviz_rendering::PointCloud>();
 
-  pointCloud->addPoints(singlePointArray.begin(), 1);
+  pointCloud->addPoints(singlePointArray.begin(), singlePointArray.end());
 
   auto renderables = pointCloud->getRenderables();
   size_t expected_size = 1;
@@ -83,25 +85,16 @@ TEST_F(PointCloudTestFixture, addPoints_for_the_first_time_adds_renderable) {
 TEST_F(PointCloudTestFixture, addPoints_many_points_gets_a_good_bounding_box_for_points) {
   auto pointCloud = std::make_shared<rviz_rendering::PointCloud>();
 
-  pointCloud->addPoints(squareCenteredAtZero.begin(), 4);
+  pointCloud->addPoints(squareCenteredAtZero.begin(), squareCenteredAtZero.end());
 
   ASSERT_EQ(pointCloud->getBoundingBox().getMaximum(), Ogre::Vector3(1, 1, 0));
   ASSERT_EQ(pointCloud->getBoundingBox().getMinimum(), Ogre::Vector3(-1, -1, 0));
 }
 
-TEST_F(PointCloudTestFixture, addPoints_gets_a_good_bounding_radius_for_one_point) {
-  auto pointCloud = std::make_shared<rviz_rendering::PointCloud>();
-
-  rviz_rendering::PointCloud::Point points[] = {{Ogre::Vector3(2, 0, 0), colorValue}};
-  pointCloud->addPoints(points, 1);
-
-  ASSERT_EQ(pointCloud->getBoundingRadius(), Ogre::Math::Sqrt(4));
-}
-
 TEST_F(PointCloudTestFixture, clear_resets_bounding_box_bounding_radius_and_clears_points) {
   auto pointCloud = std::make_shared<rviz_rendering::PointCloud>();
 
-  pointCloud->addPoints(singlePointArray.begin(), 1);
+  pointCloud->addPoints(singlePointArray.begin(), singlePointArray.end());
 
   pointCloud->clear();
 
@@ -114,7 +107,7 @@ TEST_F(PointCloudTestFixture,
   getBoundingRadius_returns_length_to_point_farthest_away_from_origin) {
   auto pointCloud = std::make_shared<rviz_rendering::PointCloud>();
 
-  pointCloud->addPoints(squareCenteredAtZero.begin(), 4);
+  pointCloud->addPoints(squareCenteredAtZero.begin(), squareCenteredAtZero.end());
 
   ASSERT_EQ(pointCloud->getBoundingRadius(), Ogre::Math::Sqrt(2));
 }
@@ -123,8 +116,8 @@ TEST_F(PointCloudTestFixture,
   for_one_point_getBoundingBox_returns_bounding_box_containing_only_one_point) {
   auto pointCloud = std::make_shared<rviz_rendering::PointCloud>();
 
-  std::array<rviz_rendering::PointCloud::Point, 1> points{{Ogre::Vector3(1, -1, 0), colorValue}};
-  pointCloud->addPoints(points.begin(), 1);
+  std::vector<rviz_rendering::PointCloud::Point> points{{Ogre::Vector3(1, -1, 0), colorValue}};
+  pointCloud->addPoints(points.begin(), points.end());
 
   ASSERT_EQ(pointCloud->getBoundingBox().getMaximum(), points[0].position);
   ASSERT_EQ(pointCloud->getBoundingBox().getMinimum(), points[0].position);
@@ -133,8 +126,8 @@ TEST_F(PointCloudTestFixture,
 TEST_F(PointCloudTestFixture, getBoundingBox_adding_points_correctly_expands_bounding_box) {
   auto pointCloud = std::make_shared<rviz_rendering::PointCloud>();
 
-  pointCloud->addPoints(squareCenteredAtZero.begin(), 4);
-  pointCloud->addPoints(singlePointArray.begin(), 1);
+  pointCloud->addPoints(squareCenteredAtZero.begin(), squareCenteredAtZero.end());
+  pointCloud->addPoints(singlePointArray.begin(), singlePointArray.end());
 
   ASSERT_EQ(pointCloud->getBoundingBox().getMaximum(), singlePointArray[0].position);
   ASSERT_EQ(pointCloud->getBoundingBox().getMinimum(), squareCenteredAtZero[3].position);
@@ -142,7 +135,7 @@ TEST_F(PointCloudTestFixture, getBoundingBox_adding_points_correctly_expands_bou
 
 TEST_F(PointCloudTestFixture, popPoints_removes_renderable_if_empty) {
   auto pointCloud = std::make_shared<rviz_rendering::PointCloud>();
-  pointCloud->addPoints(squareCenteredAtZero.begin(), 4);
+  pointCloud->addPoints(squareCenteredAtZero.begin(), squareCenteredAtZero.end());
 
   pointCloud->popPoints(4);
 
@@ -152,7 +145,7 @@ TEST_F(PointCloudTestFixture, popPoints_removes_renderable_if_empty) {
 
 TEST_F(PointCloudTestFixture, popPoints_correctly_limits_bounding_box_on_removing_points) {
   auto pointCloud = std::make_shared<rviz_rendering::PointCloud>();
-  pointCloud->addPoints(squareCenteredAtZero.begin(), 4);
+  pointCloud->addPoints(squareCenteredAtZero.begin(), squareCenteredAtZero.end());
 
   pointCloud->popPoints(2);
 
@@ -162,7 +155,7 @@ TEST_F(PointCloudTestFixture, popPoints_correctly_limits_bounding_box_on_removin
 
 TEST_F(PointCloudTestFixture, popPoints_removes_bounding_box_when_completely_empty) {
   auto pointCloud = std::make_shared<rviz_rendering::PointCloud>();
-  pointCloud->addPoints(squareCenteredAtZero.begin(), 4);
+  pointCloud->addPoints(squareCenteredAtZero.begin(), squareCenteredAtZero.end());
 
   pointCloud->popPoints(4);
 
@@ -171,7 +164,7 @@ TEST_F(PointCloudTestFixture, popPoints_removes_bounding_box_when_completely_emp
 
 TEST_F(PointCloudTestFixture, setHighlightColor_sets_correct_CustomParameter) {
   auto pointCloud = std::make_shared<rviz_rendering::PointCloud>();
-  pointCloud->addPoints(singlePointArray.begin(), 1);
+  pointCloud->addPoints(singlePointArray.begin(), singlePointArray.end());
 
   pointCloud->setHighlightColor(0.6f, 0.6f, 0.6f);
 
@@ -184,7 +177,7 @@ TEST_F(PointCloudTestFixture, setHighlightColor_sets_correct_CustomParameter) {
 
 TEST_F(PointCloudTestFixture, setDimensions_changes_dimensions_of_points_and_newly_added_points) {
   auto pointCloud = std::make_shared<rviz_rendering::PointCloud>();
-  pointCloud->addPoints(singlePointArray.begin(), 1);
+  pointCloud->addPoints(singlePointArray.begin(), singlePointArray.end());
 
   pointCloud->setDimensions(0.1f, 0.2f, 0.3f);
 
@@ -194,7 +187,7 @@ TEST_F(PointCloudTestFixture, setDimensions_changes_dimensions_of_points_and_new
       Ogre::Vector4(0.1, 0.2, 0.3, 0));
   }
 
-  pointCloud->addPoints(singlePointArray.begin(), 1);
+  pointCloud->addPoints(singlePointArray.begin(), singlePointArray.end());
 
   renderables = pointCloud->getRenderables();
   for (auto const & renderable : renderables) {
@@ -205,7 +198,7 @@ TEST_F(PointCloudTestFixture, setDimensions_changes_dimensions_of_points_and_new
 
 TEST_F(PointCloudTestFixture, setRenderMode_changes_material) {
   auto pointCloud = std::make_shared<rviz_rendering::PointCloud>();
-  pointCloud->addPoints(singlePointArray.begin(), 1);
+  pointCloud->addPoints(singlePointArray.begin(), singlePointArray.end());
 
   pointCloud->setRenderMode(rviz_rendering::PointCloud::RM_POINTS);
 
@@ -227,7 +220,7 @@ TEST_F(PointCloudTestFixture, setRenderMode_changes_material) {
 TEST_F(PointCloudTestFixture,
   setRenderMode_regenerates_renderables_with_different_size_when_geometry_support_changes) {
   auto pointCloud = std::make_shared<rviz_rendering::PointCloud>();
-  pointCloud->addPoints(singlePointArray.begin(), 1);
+  pointCloud->addPoints(singlePointArray.begin(), singlePointArray.end());
 
   pointCloud->setRenderMode(rviz_rendering::PointCloud::RM_POINTS);
 
@@ -250,8 +243,8 @@ TEST_F(PointCloudTestFixture, addPoints_adds_new_renderable_whenever_it_is_calle
   auto pointCloud = std::make_shared<rviz_rendering::PointCloud>();
   pointCloud->setRenderMode(rviz_rendering::PointCloud::RM_POINTS);
 
-  pointCloud->addPoints(singlePointArray.begin(), 1);
-  pointCloud->addPoints(squareCenteredAtZero.begin(), 4);
+  pointCloud->addPoints(singlePointArray.begin(), singlePointArray.end());
+  pointCloud->addPoints(squareCenteredAtZero.begin(), squareCenteredAtZero.end());
 
   auto renderables = pointCloud->getRenderables();
   ASSERT_EQ(renderables.size(), static_cast<size_t>(2));
@@ -263,14 +256,14 @@ TEST_F(PointCloudTestFixture, addPoints_adds_vertices_with_correct_geometry_when
   pointCloud->setRenderMode(rviz_rendering::PointCloud::RM_FLAT_SQUARES);
   size_t number_of_vertices_per_flat_square = 3 * 2;  // two triangles for one square
 
-  pointCloud->addPoints(singlePointArray.begin(), 1);
+  pointCloud->addPoints(singlePointArray.begin(), singlePointArray.end());
 
   auto renderables = pointCloud->getRenderables();
   for (auto const & renderable : renderables) {
     ASSERT_EQ(renderable->getBuffer()->getNumVertices(), number_of_vertices_per_flat_square);
   }
 
-  pointCloud->addPoints(squareCenteredAtZero.begin(), 4);
+  pointCloud->addPoints(squareCenteredAtZero.begin(), squareCenteredAtZero.end());
 
   renderables = pointCloud->getRenderables();
   size_t number_of_vertices_in_all_renderables = 0;
@@ -286,7 +279,7 @@ TEST_F(PointCloudTestFixture,
   pointCloud->setRenderMode(rviz_rendering::PointCloud::RM_BOXES);
 
   for (int i = 0; i < 1000; i++) {
-    pointCloud->addPoints(squareCenteredAtZero.begin(), 4);
+    pointCloud->addPoints(squareCenteredAtZero.begin(), squareCenteredAtZero.end());
   }
   for (int i = 0; i < 99; i++) {
     pointCloud->popPoints(40);

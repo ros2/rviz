@@ -661,7 +661,7 @@ void PointCloudCommon::update(float wall_dt, float ros_dt)
         cloud_info->cloud_.reset(new rviz_rendering::PointCloud() );
         cloud_info->cloud_->setRenderMode(mode);
         cloud_info->cloud_->addPoints(
-          &(cloud_info->transformed_points_.front()), cloud_info->transformed_points_.size() );
+          cloud_info->transformed_points_.begin(), cloud_info->transformed_points_.end() );
         cloud_info->cloud_->setAlpha(alpha_property_->getFloat(), per_point_alpha);
         cloud_info->cloud_->setDimensions(size, size, size);
         cloud_info->cloud_->setAutoSize(auto_size_);
@@ -858,7 +858,7 @@ void PointCloudCommon::retransform()
     transformCloud(cloud_info, false);
     cloud_info->cloud_->clear();
     cloud_info->cloud_->addPoints(
-      &cloud_info->transformed_points_.front(), cloud_info->transformed_points_.size());
+      cloud_info->transformed_points_.begin(), cloud_info->transformed_points_.end());
   }
 }
 

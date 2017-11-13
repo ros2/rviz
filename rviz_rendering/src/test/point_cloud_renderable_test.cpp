@@ -50,7 +50,7 @@ protected:
     cloud_ = std::make_shared<rviz_rendering::PointCloud>();
     auto points = std::vector<rviz_rendering::PointCloud::Point>(
       {{Ogre::Vector3(1, 1, 1), Ogre::ColourValue()}});
-    cloud_->addPoints(&points[0], 1);
+    cloud_->addPoints(points.begin(), points.end());
     renderable_ = cloud_->getRenderables().front();
   }
 

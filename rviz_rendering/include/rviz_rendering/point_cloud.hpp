@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -112,10 +113,12 @@ public:
   /**
    * \brief Add points to this point cloud
    *
-   * @param points An array of Point structures
-   * @param num_points The number of points in the array
+   * @param start_iterator A std::vector::iterator to the start of the point vector to be added
+   * @param end_iterator A std::vector::iterator to the end of the point vector to be added
    */
-  void addPoints(Point * points, uint32_t num_points);
+  void addPoints(
+    std::vector<Point>::iterator start_iterator,
+    std::vector<Point>::iterator end_iterator);
 
   /**
    * \brief Remove a number of points from this point cloud
@@ -200,13 +203,13 @@ private:
   uint32_t removePointsFromRenderables(uint32_t, uint32_t);
   void resetBoundingBoxForCurrentPoints();
 
-  void insertPointsToPointList(const PointCloud::Point *, uint32_t);
+  void insertPointsToPointList(std::vector<Point>::iterator, std::vector<Point>::iterator);
   RenderableInternals createNewRenderable(uint32_t);
   Ogre::RenderOperation::OperationType getRenderOperationType() const;
   void finishRenderable(RenderableInternals, uint32_t);
-  uint32_t getColorForPoint(uint32_t, const PointCloud::Point &) const;
-  RenderableInternals addPointToHardwareBuffer(RenderableInternals, const PointCloud::Point &,
-    uint32_t);
+  uint32_t getColorForPoint(uint32_t, std::vector<PointCloud::Point>::iterator) const;
+  RenderableInternals addPointToHardwareBuffer(RenderableInternals,
+    std::vector<PointCloud::Point>::iterator, uint32_t);
 
   Ogre::AxisAlignedBox bounding_box_;       ///< The bounding box of this point cloud
 

@@ -31,8 +31,9 @@
 #include "rviz_rendering/point_cloud.hpp"
 
 #include <algorithm>
-#include <sstream>
 #include <cassert>
+#include <sstream>
+#include <vector>
 
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
@@ -304,11 +305,10 @@ void PointCloud::regenerateAll()
 
   V_Point points;
   points.swap(points_);
-  uint32_t count = point_count_;
 
   clear();
 
-  addPoints(&points.front(), count);
+  addPoints(points.begin(), points.end());
 }
 
 void PointCloud::setColorByIndex(bool set)
@@ -447,27 +447,30 @@ void PointCloud::setAlpha(float alpha, bool per_point_alpha)
   }
 }
 
-void PointCloud::addPoints(Point * points, uint32_t num_points)
+void PointCloud::addPoints(
+  std::vector<Point>::iterator start_iterator,
+  std::vector<Point>::iterator stop_iterator)
 {
-  if (num_points == 0) {
+  if (stop_iterator - start_iterator <= 0) {
     return;
   }
-  insertPointsToPointList(points, num_points);
+  auto num_points = static_cast<uint32_t>(std::distance(start_iterator, stop_iterator));
+  insertPointsToPointList(start_iterator, stop_iterator);
 
   RenderableInternals internals = createNewRenderable(num_points);
 
-  for (uint32_t current_point = 0; current_point < num_points; ++current_point) {
+  for (auto current_point = start_iterator; current_point < stop_iterator; ++current_point) {
     if (internals.bufferIsFull()) {
       assert(internals.noBufferOverflowOccurred());
 
       finishRenderable(internals,
         static_cast<uint32_t>(internals.rend->getBuffer()->getNumVertices()));
 
-      internals = createNewRenderable(num_points - current_point);
+      internals = createNewRenderable(static_cast<uint32_t>(stop_iterator - current_point));
     }
-    const Point & p = points[current_point];
-    internals.aabb.merge(p.position);
-    internals = addPointToHardwareBuffer(internals, p, current_point);
+    internals.aabb.merge(current_point->position);
+    internals = addPointToHardwareBuffer(internals, current_point,
+        static_cast<uint32_t>(current_point - start_iterator));
   }
 
   finishRenderable(internals, internals.current_vertex_count);
@@ -479,14 +482,19 @@ void PointCloud::addPoints(Point * points, uint32_t num_points)
   }
 }
 
-void PointCloud::insertPointsToPointList(const PointCloud::Point * points, uint32_t num_points)
+void PointCloud::insertPointsToPointList(
+  std::vector<Point>::iterator start_iterator,
+  std::vector<Point>::iterator stop_iterator)
 {
+  assert(start_iterator < stop_iterator);
+
+  auto num_points = static_cast<uint32_t>(std::distance(start_iterator, stop_iterator));
   if (points_.size() < point_count_ + num_points) {
     points_.resize(point_count_ + num_points);
   }
 
   Point * begin = &points_.front() + point_count_;
-  memcpy(begin, points, sizeof(Point) * num_points);
+  memcpy(begin, &*start_iterator, sizeof(Point) * num_points);
 }
 
 PointCloud::RenderableInternals
@@ -537,7 +545,9 @@ PointCloud::finishRenderable(
   internals.rend->getBuffer()->unlock();
 }
 
-uint32_t PointCloud::getColorForPoint(uint32_t current_point, const PointCloud::Point & p) const
+uint32_t PointCloud::getColorForPoint(
+  uint32_t current_point,
+  std::vector<PointCloud::Point>::iterator point) const
 {
   uint32_t color;
   auto root = Ogre::Root::getSingletonPtr();
@@ -552,7 +562,7 @@ uint32_t PointCloud::getColorForPoint(uint32_t current_point, const PointCloud::
     c.b = (color & 0xff) / 255.0f;
     root->convertColourValue(c, &color);
   } else {
-    root->convertColourValue(p.color, &color);
+    root->convertColourValue(point->color, &color);
   }
   return color;
 }
@@ -560,15 +570,15 @@ uint32_t PointCloud::getColorForPoint(uint32_t current_point, const PointCloud::
 PointCloud::RenderableInternals
 PointCloud::addPointToHardwareBuffer(
   PointCloud::RenderableInternals internals,
-  const PointCloud::Point & p, uint32_t current_point)
+  std::vector<PointCloud::Point>::iterator point, uint32_t current_point)
 {
-  uint32_t color = getColorForPoint(current_point, p);
+  uint32_t color = getColorForPoint(current_point, point);
   float * vertices = getVertices();
   float * float_buffer = internals.float_buffer;
 
-  float x = p.position.x;
-  float y = p.position.y;
-  float z = p.position.z;
+  float x = point->position.x;
+  float y = point->position.y;
+  float z = point->position.z;
 
   for (uint32_t j = 0; j < getVerticesPerPoint(); ++j, ++internals.current_vertex_count) {
     *float_buffer++ = x;
