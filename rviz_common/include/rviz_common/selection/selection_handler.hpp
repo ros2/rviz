@@ -41,7 +41,7 @@
 
 #include <OgreMovableObject.h>
 
-#include "src/rviz_common/interactive_object.hpp"
+#include "rviz_common/interactive_object.hpp"
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/viewport_mouse_event.hpp"
 #include "./forwards.hpp"
