@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,67 +27,23 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__ROS_INTEGRATION__RCLCPP_NODE_STORAGE_HPP_
-#define RVIZ_COMMON__ROS_INTEGRATION__RCLCPP_NODE_STORAGE_HPP_
+#include "rviz_common/ros_integration/shutdown.hpp"
 
-#include <memory>
-#include <string>
+#include "rclcpp/rclcpp.hpp"
 
-namespace rclcpp
-{
-namespace node
-{
-
-class Node;
-
-}  // namespace node
-
-using rclcpp::node::Node;
-
-}  // namespace rclcpp
+#include "./rclcpp_node_storage.hpp"
 
 namespace rviz_common
 {
 namespace ros_integration
 {
 
-/// Store an rclcpp node shared pointer in the internal storage by a given name.
-/**
- * If the key is already in use, the new node shared pointer overwrites the
- * existing node shared pointer stored as the value for that key.
- *
- * \param node_name name to be used as the key for the rclcpp node
- * \param node the rclcpp node to be stored
- */
 void
-store_rclcpp_node_by_name(
-  const std::string & node_name,
-  const std::shared_ptr<rclcpp::Node> & node);
-
-/// Return the rclcpp node shared pointer for the given node name if found, else nullptr.
-/**
- * \param node_name the name of the rclcpp node to get
- * \returns the rclcpp node shared pointer for the given name, else nullptr
- */
-std::shared_ptr<rclcpp::Node>
-get_rclcpp_node_by_name(const std::string & node_name);
-
-/// Check if there exists an rclcpp node for the given name.
-/**
- * \param node_name the name of the node to check for
- * \return true if exists, otherwise false
- */
-bool
-has_rclcpp_node_by_name(const std::string & node_name);
-
-/// Clear the stored nodes, allowing them to go out of scope.
-/**
- * This function is primarily used by shutdown to clean up the nodes created.
- */
-void
-clear_rclcpp_nodes();
+shutdown()
+{
+  clear_rclcpp_nodes();
+  rclcpp::shutdown();
+}
 
 }  // namespace ros_integration
 }  // namespace rviz_common
-
-#endif  // RVIZ_COMMON__ROS_INTEGRATION__RCLCPP_NODE_STORAGE_HPP_

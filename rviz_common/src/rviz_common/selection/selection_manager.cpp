@@ -125,8 +125,6 @@ SelectionManager::~SelectionManager()
   }
   delete[] reinterpret_cast<uint8_t *>(depth_pixel_box_.data);
 
-  vis_manager_->getSceneManager()->destroyCamera(camera_);
-
   delete property_model_;
 }
 
