@@ -198,7 +198,7 @@ private:
   float * getVertices();
   Ogre::MaterialPtr getMaterialForRenderMode(RenderMode);
   bool changingGeometrySupportIsNecessary(const Ogre::MaterialPtr);
-  PointCloudRenderablePtr createRenderable(int num_points);
+  PointCloudRenderablePtr createRenderable(int num_points, Ogre::RenderOperation::OperationType);
   void regenerateAll();
   uint32_t removePointsFromRenderables(uint32_t, uint32_t);
   void resetBoundingBoxForCurrentPoints();

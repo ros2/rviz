@@ -39,10 +39,12 @@
 namespace rviz_rendering
 {
 
-PointCloudRenderable::PointCloudRenderable(PointCloud * parent, int num_points, bool use_tex_coords)
+PointCloudRenderable::PointCloudRenderable(
+  PointCloud * parent, int num_points, bool
+  use_tex_coords, Ogre::RenderOperation::OperationType operationType)
 : parent_(parent)
 {
-  initializeRenderOperation();
+  initializeRenderOperation(operationType);
   specifyBufferContent(use_tex_coords);
   createAndBindBuffer(num_points);
 }
@@ -90,9 +92,10 @@ const Ogre::LightList & PointCloudRenderable::getLights() const
   return parent_->queryLights();
 }
 
-void PointCloudRenderable::initializeRenderOperation()
+void PointCloudRenderable::initializeRenderOperation(
+  Ogre::RenderOperation::OperationType operation_type)
 {
-  mRenderOp.operationType = Ogre::RenderOperation::OT_POINT_LIST;
+  mRenderOp.operationType = operation_type;
   mRenderOp.useIndexes = false;
   mRenderOp.vertexData = new Ogre::VertexData;
   mRenderOp.vertexData->vertexStart = 0;
@@ -119,9 +122,9 @@ void PointCloudRenderable::createAndBindBuffer(int num_points)
 {
   Ogre::HardwareVertexBufferSharedPtr vertexBuffer =
     Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
-      mRenderOp.vertexData->vertexDeclaration->getVertexSize(0),
-      num_points,
-      Ogre::HardwareBuffer::HBU_DYNAMIC);
+    mRenderOp.vertexData->vertexDeclaration->getVertexSize(0),
+    num_points,
+    Ogre::HardwareBuffer::HBU_DYNAMIC);
 
   mRenderOp.vertexData->vertexBufferBinding->setBinding(0, vertexBuffer);
 }

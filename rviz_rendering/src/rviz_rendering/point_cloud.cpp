@@ -504,8 +504,7 @@ PointCloud::createNewRenderable(uint32_t number_of_points_to_be_added)
   internals.buffer_size = std::min<uint32_t>(VERTEX_BUFFER_CAPACITY,
       number_of_points_to_be_added * getVerticesPerPoint());
 
-  internals.rend = createRenderable(internals.buffer_size);
-  internals.rend->getRenderOperation()->operationType = getRenderOperationType();
+  internals.rend = createRenderable(internals.buffer_size, getRenderOperationType());
 
   internals.float_buffer = reinterpret_cast<float *>(internals.rend->getBuffer()
     ->lock(Ogre::HardwareBuffer::HBL_NO_OVERWRITE));
@@ -686,10 +685,12 @@ void PointCloud::setPickColor(const Ogre::ColourValue & color)
 // selection::colorToHandle( color )));
 }
 
-PointCloudRenderablePtr PointCloud::createRenderable(int num_points)
+PointCloudRenderablePtr PointCloud::createRenderable(
+  int num_points,
+  Ogre::RenderOperation::OperationType operation_type)
 {
   PointCloudRenderablePtr rend(new PointCloudRenderable(this, num_points,
-    !current_mode_supports_geometry_shader_));
+    !current_mode_supports_geometry_shader_, operation_type));
   rend->setMaterial(current_material_);
   Ogre::Vector4 alpha(alpha_, 0.0f, 0.0f, 0.0f);
   Ogre::Vector4 highlight(0.0f, 0.0f, 0.0f, 0.0f);

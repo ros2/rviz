@@ -63,7 +63,9 @@ class PointCloud;
 class PointCloudRenderable : public Ogre::SimpleRenderable
 {
 public:
-  PointCloudRenderable(PointCloud * parent, int num_points, bool use_tex_coords);
+  PointCloudRenderable(
+    PointCloud * parent, int num_points, bool use_tex_coords,
+    Ogre::RenderOperation::OperationType operationType);
   ~PointCloudRenderable() override;
 
   Ogre::RenderOperation * getRenderOperation() {return &mRenderOp;}
@@ -77,9 +79,9 @@ public:
   const Ogre::LightList & getLights() const override;
 
 private:
-  void initializeRenderOperation();
-  void specifyBufferContent(bool);
-  void createAndBindBuffer(int);
+  void initializeRenderOperation(Ogre::RenderOperation::OperationType operation_type);
+  void specifyBufferContent(bool use_tex_coords);
+  void createAndBindBuffer(int num_points);
 
   PointCloud * parent_;
 };
