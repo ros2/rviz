@@ -211,8 +211,8 @@ private:
   float bounding_radius_;                   ///< The bounding radius of this point cloud
 
   typedef std::vector<Point> V_Point;
-  V_Point points_;                          ///< The list of points we're displaying.
-  ///< Allocates to a high-water-mark.
+  ///< The list of points we're displaying. Allocates to a high-water-mark.
+  V_Point points_;
   uint32_t point_count_;                    ///< The number of points currently in #points_
 
   RenderMode render_mode_;

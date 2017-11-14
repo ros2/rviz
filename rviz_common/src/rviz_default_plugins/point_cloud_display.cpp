@@ -28,18 +28,16 @@
  */
 
 #include <memory>
-#include <vector>
 
 #include <OgreSceneNode.h>
-#include <OgreSceneManager.h>
 
+// TODO(Martin-Idel-SI): revisit when message filter is working again
 // #include <tf/transform_listener.h>
 
 #include "./point_cloud_common.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager.hpp"
 #include "rviz_common/properties/int_property.hpp"
-#include "rviz_rendering/point_cloud.hpp"
 
 #include "point_cloud_display.hpp"
 
@@ -55,10 +53,6 @@ PointCloudDisplay::PointCloudDisplay()
       "from your PointCloud data, but it can greatly increase memory usage if the "
       "messages are big.",
       this, SLOT(updateQueueSize()));
-
-  // PointCloudCommon sets up a callback queue with a thread for each
-  // instance.  Use that for processing incoming messages.
-//  update_nh_.setCallbackQueue( point_cloud_common_->getCallbackQueue() );
 }
 
 PointCloudDisplay::~PointCloudDisplay()
@@ -70,25 +64,11 @@ void PointCloudDisplay::onInitialize()
 {
   MFDClass::onInitialize();
   point_cloud_common_->initialize(context_, scene_node_);
-
-  auto message = sensor_msgs::msg::PointCloud();
-  message.header = std_msgs::msg::Header();
-  message.header.stamp = rclcpp::Time::now();
-  message.header.frame_id = "base_link";
-
-  geometry_msgs::msg::Point32 p;
-  p.x = 1;
-  p.y = 1;
-  p.z = 1;
-
-  std::vector<geometry_msgs::msg::Point32> points{p};
-  message.points = points;
-  processMessage(std::make_shared<sensor_msgs::msg::PointCloud const>(message));
-  update(0, 0);
 }
 
 void PointCloudDisplay::updateQueueSize()
 {
+  // TODO(Martin-Idel-SI): revisit when message filter is working again
 //  tf_filter_->setQueueSize( (uint32_t) queue_size_property_->getInt() );
 }
 

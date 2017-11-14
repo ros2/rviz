@@ -42,6 +42,7 @@
 
 // #include <tf/transform_listener.h>
 
+// TODO(wjwwood): revist file when pluginlib is available
 // #include <pluginlib/class_loader.h>
 
 #include "./point_cloud_transformer.hpp"
@@ -333,7 +334,6 @@ void PointCloudCommon::CloudInfo::clear()
 }
 
 PointCloudCommon::PointCloudCommon(rviz_common::Display * display)
-//: spinner_(1, &cbqueue_)
 : auto_size_(false),
   new_xyz_transformer_(false),
   new_color_transformer_(false)
@@ -396,6 +396,7 @@ void PointCloudCommon::initialize(
   rviz_common::DisplayContext * context,
   Ogre::SceneNode * scene_node)
 {
+  // TODO(Martin-Idel-SI): revisit when pluginlib is available
 //  transformer_class_loader_ = new pluginlib::ClassLoader<PointCloudTransformer>( "rviz",
 // "rviz::PointCloudTransformer" );
   loadTransformers();
@@ -407,14 +408,11 @@ void PointCloudCommon::initialize(
   updateBillboardSize();
   updateAlpha();
   updateSelectable();
-
-//  spinner_.start();
 }
 
 PointCloudCommon::~PointCloudCommon()
 {
-//  spinner_.stop();
-
+  // TODO(Martin-Idel-SI): revisit when pluginlib is available
 //  if ( transformer_class_loader_ )
 //  {
 //    delete transformer_class_loader_;
@@ -442,6 +440,7 @@ void PointCloudCommon::loadTransformers()
     std::make_shared<rviz_default_plugins::XYZPCTransformer>(), "XYZPCTransformer",
     "XYZPCTransformer");
 
+// TODO(Martin-Idel-SI): revisit when pluginlib is available
 //  std::vector<std::string> classes = transformer_class_loader_->getDeclaredClasses();
 //  std::vector<std::string>::iterator ci;
 //
@@ -780,7 +779,8 @@ void PointCloudCommon::updateTransformers(
 void PointCloudCommon::updateStatus()
 {
   std::stringstream ss;
-  // ss << "Showing [" << total_point_count_ << "] points from [" << clouds_.size() << "] messages";
+// TODO(Martin-Idel-SI): total_point_count_ is not available. Revisit during refactoring
+//   ss << "Showing [" << total_point_count_ << "] points from [" << clouds_.size() << "] messages";
   display_->setStatusStd(rviz_common::properties::StatusProperty::Ok, "Points", ss.str());
 }
 
@@ -866,12 +866,13 @@ void PointCloudCommon::retransform()
 bool PointCloudCommon::transformCloud(const CloudInfoPtr & cloud_info, bool update_transformers)
 {
   if (!cloud_info->scene_node_) {
+    // TODO(Martin-Idel-SI): Not clear why this doesn't work. Revisit during refactoring
 //    if (!context_->getFrameManager()->getTransform(cloud_info->message_->header,
 // cloud_info->position_, cloud_info->orientation_))
 //    {
 //      std::stringstream ss;
-//      ss << "Failed to transform from frame [" << cloud_info->message_->header.frame_id << "]
-// to frame [" << context_->getFrameManager()->getFixedFrame() << "]";
+//      ss << "Failed to transform from frame [" << cloud_info->message_->header.frame_id << "]to "
+//        "frame [" << context_->getFrameManager()->getFixedFrame() << "]";
 //      display_->setStatusStd(rviz_common::properties::StatusProperty::Error, "Message", ss.str());
 //      return false;
 //    }

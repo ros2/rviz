@@ -43,7 +43,7 @@
 
 #include "src/rviz_common/interactive_object.hpp"
 #include "rviz_common/properties/property.hpp"
-#include "src/rviz_common/viewport_mouse_event.hpp"
+#include "rviz_common/viewport_mouse_event.hpp"
 #include "./forwards.hpp"
 
 namespace Ogre

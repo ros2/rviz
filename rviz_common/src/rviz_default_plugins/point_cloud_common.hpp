@@ -44,6 +44,7 @@
 
 //# include <message_filters/time_sequencer.h>
 
+// TODO(wjwwood): revist file when pluginlib is available
 //# include <pluginlib/class_loader.h>
 #include "rclcpp/time.hpp"
 
@@ -138,8 +139,6 @@ public:
   void addMessage(const sensor_msgs::msg::PointCloud::ConstSharedPtr & cloud);
   void addMessage(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud);
 
-//  ros::CallbackQueueInterface* getCallbackQueue() { return &cbqueue_; }
-
   rviz_common::Display * getDisplay() {return display_;}
 
   bool auto_size_;
@@ -195,9 +194,6 @@ private:
   void setPropertiesHidden(const QList<rviz_common::properties::Property *> & props, bool hide);
   void fillTransformerOptions(rviz_common::properties::EnumProperty * prop, uint32_t mask);
 
-//  ros::AsyncSpinner spinner_;
-//  ros::CallbackQueue cbqueue_;
-
   D_CloudInfo cloud_infos_;
 
   Ogre::SceneNode * scene_node_;
@@ -224,6 +220,7 @@ private:
   bool new_color_transformer_;
   bool needs_retransform_;
 
+  // TODO(Martin-Idel-SI): revisit once pluginlib is available
 //  pluginlib::ClassLoader<PointCloudTransformer>* transformer_class_loader_;
 
   rviz_common::Display * display_;

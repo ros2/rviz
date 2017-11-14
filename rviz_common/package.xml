@@ -26,7 +26,6 @@
   <exec_depend>libqt5-gui</exec_depend>
   <exec_depend>libqt5-opengl</exec_depend>
   <exec_depend>libqt5-widgets</exec_depend>
-  <exec_depend>rcl</exec_depend>
 
   <depend>geometry_msgs</depend>
   <depend>rclcpp</depend>

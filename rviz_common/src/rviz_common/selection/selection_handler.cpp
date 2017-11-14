@@ -54,7 +54,7 @@
 #include "rviz_common/logging.hpp"
 
 #include "rviz_common/properties/property.hpp"
-#include "include/rviz_common/selection/selection_manager.hpp"
+#include "rviz_common/selection/selection_manager.hpp"
 #include "../visualization_manager.hpp"
 
 namespace rviz_common
