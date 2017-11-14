@@ -76,5 +76,12 @@ has_rclcpp_node_by_name(const std::string & node_name)
   return __has_rclcpp_node_by_name(node_name);
 }
 
+void
+clear_rclcpp_nodes()
+{
+  std::lock_guard<std::mutex> lock(__nodes_by_name_mutex);
+  __nodes_by_name.clear();
+}
+
 }  // namespace ros_integration
 }  // namespace rviz_common

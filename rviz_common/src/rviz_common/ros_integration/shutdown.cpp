@@ -31,6 +31,8 @@
 
 #include "rclcpp/rclcpp.hpp"
 
+#include "./rclcpp_node_storage.hpp"
+
 namespace rviz_common
 {
 namespace ros_integration
@@ -39,6 +41,7 @@ namespace ros_integration
 void
 shutdown()
 {
+  clear_rclcpp_nodes();
   rclcpp::shutdown();
 }
 

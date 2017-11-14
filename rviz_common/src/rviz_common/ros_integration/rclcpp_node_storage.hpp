@@ -80,6 +80,13 @@ get_rclcpp_node_by_name(const std::string & node_name);
 bool
 has_rclcpp_node_by_name(const std::string & node_name);
 
+/// Clear the stored nodes, allowing them to go out of scope.
+/**
+ * This function is primarily used by shutdown to clean up the nodes created.
+ */
+void
+clear_rclcpp_nodes();
+
 }  // namespace ros_integration
 }  // namespace rviz_common
 
