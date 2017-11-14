@@ -126,11 +126,11 @@ public:
    */
   void popPoints(uint32_t num_points);
 
-  // TODO(Martin-Idel-SI): Check description, should be more?
   /**
-   * \brief Set what type of rendering primitives should be used, currently points, billboards and boxes are supported
+   * \brief Set what type of rendering primitives should be used, currently points, billboards, spheres and boxes are supported
    */
   void setRenderMode(RenderMode mode);
+
   /**
    * \brief Set the dimensions of the billboards used to render each point
    * @param width Width
@@ -139,9 +139,10 @@ public:
    */
   void setDimensions(float width, float height, float depth);
 
-  /*
-   * If set to true, the size of each point will be multiplied by it z component.
-   * (Used for depth image based point clouds)
+  /**
+   * \brief If set to true, the size of each point will be multiplied by its z component.
+   * @param auto_size resize in shaders
+   * @note (Used for depth image based point clouds)
    */
   void setAutoSize(bool auto_size);
 
@@ -150,10 +151,11 @@ public:
   /// See Ogre::BillboardSet::setCommonUpVector
   void setCommonUpVector(const Ogre::Vector3 & vec);
 
-  /// set alpha blending
-  /// @param alpha global alpha value
-  /// @param per_point_alpha indicates that each point will have an individual alpha value.
-  ///                        if true, enables alpha blending regardless of the global alpha.
+  /**
+   * \brief Set alpha blending
+   * @param alpha global alpha value
+   * @param per_point_alpha indicates that each point will have an individual alpha value. If true, enables alpha blending regardless of the global alpha.
+   */
   void setAlpha(float alpha, bool per_point_alpha = false);
 
   void setPickColor(const Ogre::ColourValue & color);
@@ -196,20 +198,26 @@ private:
 
   uint32_t getVerticesPerPoint();
   float * getVertices();
-  Ogre::MaterialPtr getMaterialForRenderMode(RenderMode);
-  bool changingGeometrySupportIsNecessary(const Ogre::MaterialPtr);
-  PointCloudRenderablePtr createRenderable(int num_points, Ogre::RenderOperation::OperationType);
+  Ogre::MaterialPtr getMaterialForRenderMode(RenderMode render_mode);
+  bool changingGeometrySupportIsNecessary(const Ogre::MaterialPtr materialPtr);
+  PointCloudRenderablePtr createRenderable(
+    int num_points, Ogre::RenderOperation::OperationType
+    operation_type);
   void regenerateAll();
-  uint32_t removePointsFromRenderables(uint32_t, uint32_t);
+  uint32_t removePointsFromRenderables(uint32_t number_of_points, uint32_t vertices_per_point);
   void resetBoundingBoxForCurrentPoints();
 
-  void insertPointsToPointList(std::vector<Point>::iterator, std::vector<Point>::iterator);
-  RenderableInternals createNewRenderable(uint32_t);
+  void insertPointsToPointList(
+    std::vector<Point>::iterator start_iterator,
+    std::vector<Point>::iterator stop_iterator);
+  RenderableInternals createNewRenderable(uint32_t number_of_points_to_be_added);
   Ogre::RenderOperation::OperationType getRenderOperationType() const;
-  void finishRenderable(RenderableInternals, uint32_t);
-  uint32_t getColorForPoint(uint32_t, std::vector<PointCloud::Point>::iterator) const;
-  RenderableInternals addPointToHardwareBuffer(RenderableInternals,
-    std::vector<PointCloud::Point>::iterator, uint32_t);
+  void finishRenderable(RenderableInternals internals, uint32_t vertex_count_of_renderable);
+  uint32_t getColorForPoint(uint32_t current_point, std::vector<PointCloud::Point>::iterator point)
+  const;
+  RenderableInternals addPointToHardwareBuffer(
+    RenderableInternals internals,
+    std::vector<PointCloud::Point>::iterator point, uint32_t current_point);
 
   Ogre::AxisAlignedBox bounding_box_;       ///< The bounding box of this point cloud
 
