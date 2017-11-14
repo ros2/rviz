@@ -77,6 +77,10 @@ public:
   const Ogre::LightList & getLights() const override;
 
 private:
+  void initializeRenderOperation();
+  void specifyBufferContent(bool);
+  void createAndBindBuffer(int);
+
   PointCloud * parent_;
 };
 typedef std::shared_ptr<PointCloudRenderable> PointCloudRenderablePtr;

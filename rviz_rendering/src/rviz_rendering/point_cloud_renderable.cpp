@@ -42,34 +42,9 @@ namespace rviz_rendering
 PointCloudRenderable::PointCloudRenderable(PointCloud * parent, int num_points, bool use_tex_coords)
 : parent_(parent)
 {
-  // Initialize render operation
-  mRenderOp.operationType = Ogre::RenderOperation::OT_POINT_LIST;
-  mRenderOp.useIndexes = false;
-  mRenderOp.vertexData = new Ogre::VertexData;
-  mRenderOp.vertexData->vertexStart = 0;
-  mRenderOp.vertexData->vertexCount = 0;
-
-  Ogre::VertexDeclaration * decl = mRenderOp.vertexData->vertexDeclaration;
-  size_t offset = 0;
-
-  decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
-  offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
-
-  if (use_tex_coords) {
-    decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_TEXTURE_COORDINATES, 0);
-    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
-  }
-
-  decl->addElement(0, offset, Ogre::VET_COLOUR, Ogre::VES_DIFFUSE);
-
-  Ogre::HardwareVertexBufferSharedPtr vbuf =
-    Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
-    mRenderOp.vertexData->vertexDeclaration->getVertexSize(0),
-    num_points,
-    Ogre::HardwareBuffer::HBU_DYNAMIC);
-
-  // Bind buffer
-  mRenderOp.vertexData->vertexBufferBinding->setBinding(0, vbuf);
+  initializeRenderOperation();
+  specifyBufferContent(use_tex_coords);
+  createAndBindBuffer(num_points);
 }
 
 PointCloudRenderable::~PointCloudRenderable()
@@ -113,6 +88,42 @@ void PointCloudRenderable::getWorldTransforms(Ogre::Matrix4 * xform) const
 const Ogre::LightList & PointCloudRenderable::getLights() const
 {
   return parent_->queryLights();
+}
+
+void PointCloudRenderable::initializeRenderOperation()
+{
+  mRenderOp.operationType = Ogre::RenderOperation::OT_POINT_LIST;
+  mRenderOp.useIndexes = false;
+  mRenderOp.vertexData = new Ogre::VertexData;
+  mRenderOp.vertexData->vertexStart = 0;
+  mRenderOp.vertexData->vertexCount = 0;
+}
+
+void PointCloudRenderable::specifyBufferContent(bool use_tex_coords)
+{
+  Ogre::VertexDeclaration * declaration = mRenderOp.vertexData->vertexDeclaration;
+  size_t offset = 0;
+
+  declaration->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
+  offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
+
+  if (use_tex_coords) {
+    declaration->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_TEXTURE_COORDINATES, 0);
+    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
+  }
+
+  declaration->addElement(0, offset, Ogre::VET_COLOUR, Ogre::VES_DIFFUSE);
+}
+
+void PointCloudRenderable::createAndBindBuffer(int num_points)
+{
+  Ogre::HardwareVertexBufferSharedPtr vertexBuffer =
+    Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
+      mRenderOp.vertexData->vertexDeclaration->getVertexSize(0),
+      num_points,
+      Ogre::HardwareBuffer::HBU_DYNAMIC);
+
+  mRenderOp.vertexData->vertexBufferBinding->setBinding(0, vertexBuffer);
 }
 
 }  // namespace rviz_rendering
