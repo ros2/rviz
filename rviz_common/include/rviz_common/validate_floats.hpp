@@ -27,23 +27,24 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_VALIDATE_FLOAT_H
-#define RVIZ_VALIDATE_FLOAT_H
+#ifndef RVIZ_COMMON__VALIDATE_FLOATS_HPP_
+#define RVIZ_COMMON__VALIDATE_FLOATS_HPP_
 
+#include <array>
 #include <cmath>
+#include <vector>
 
-#include <geometry_msgs/PointStamped.h>
-#include <geometry_msgs/Point32.h>
-#include <geometry_msgs/Vector3.h>
-#include <geometry_msgs/PoseStamped.h>
-#include <geometry_msgs/Twist.h>
-#include <std_msgs/ColorRGBA.h>
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>
 
-#include <boost/array.hpp>
+#include "geometry_msgs/msg/point_stamped.hpp"
+#include "geometry_msgs/msg/point32.hpp"
+#include "geometry_msgs/msg/vector3.hpp"
+#include "geometry_msgs/msg/pose_stamped.hpp"
+#include "geometry_msgs/msg/twist.hpp"
+#include "std_msgs/msg/color_rgba.hpp"
 
-namespace rviz
+namespace rviz_common
 {
 
 inline bool validateFloats(float val)
@@ -56,7 +57,7 @@ inline bool validateFloats(double val)
   return !(std::isnan(val) || std::isinf(val));
 }
 
-inline bool validateFloats(const Ogre::Vector3& vec)
+inline bool validateFloats(const Ogre::Vector3 & vec)
 {
   bool valid = true;
   valid = valid && validateFloats(vec.x);
@@ -65,7 +66,7 @@ inline bool validateFloats(const Ogre::Vector3& vec)
   return valid;
 }
 
-inline bool validateFloats(const Ogre::Quaternion& quat)
+inline bool validateFloats(const Ogre::Quaternion & quat)
 {
   bool valid = true;
   valid = valid && validateFloats(quat.x);
@@ -75,7 +76,7 @@ inline bool validateFloats(const Ogre::Quaternion& quat)
   return valid;
 }
 
-inline bool validateFloats(const geometry_msgs::Point& msg)
+inline bool validateFloats(const geometry_msgs::msg::Point & msg)
 {
   bool valid = true;
   valid = valid && validateFloats(msg.x);
@@ -84,7 +85,7 @@ inline bool validateFloats(const geometry_msgs::Point& msg)
   return valid;
 }
 
-inline bool validateFloats(const geometry_msgs::Point32& msg)
+inline bool validateFloats(const geometry_msgs::msg::Point32 & msg)
 {
   bool valid = true;
   valid = valid && validateFloats(msg.x);
@@ -93,7 +94,7 @@ inline bool validateFloats(const geometry_msgs::Point32& msg)
   return valid;
 }
 
-inline bool validateFloats(const geometry_msgs::Vector3& msg)
+inline bool validateFloats(const geometry_msgs::msg::Vector3 & msg)
 {
   bool valid = true;
   valid = valid && validateFloats(msg.x);
@@ -102,7 +103,7 @@ inline bool validateFloats(const geometry_msgs::Vector3& msg)
   return valid;
 }
 
-inline bool validateFloats(const geometry_msgs::Twist& twist)
+inline bool validateFloats(const geometry_msgs::msg::Twist & twist)
 {
   bool valid = true;
   valid = valid && validateFloats(twist.linear);
@@ -110,7 +111,7 @@ inline bool validateFloats(const geometry_msgs::Twist& twist)
   return valid;
 }
 
-inline bool validateFloats(const geometry_msgs::Quaternion& msg)
+inline bool validateFloats(const geometry_msgs::msg::Quaternion & msg)
 {
   bool valid = true;
   valid = valid && validateFloats(msg.x);
@@ -120,7 +121,7 @@ inline bool validateFloats(const geometry_msgs::Quaternion& msg)
   return valid;
 }
 
-inline bool validateFloats(const std_msgs::ColorRGBA& msg)
+inline bool validateFloats(const std_msgs::msg::ColorRGBA & msg)
 {
   bool valid = true;
   valid = valid && validateFloats(msg.r);
@@ -130,12 +131,12 @@ inline bool validateFloats(const std_msgs::ColorRGBA& msg)
   return valid;
 }
 
-inline bool validateFloats(const geometry_msgs::PointStamped& msg)
+inline bool validateFloats(const geometry_msgs::msg::PointStamped & msg)
 {
   return validateFloats(msg.point);
 }
 
-inline bool validateFloats(const geometry_msgs::Pose& msg)
+inline bool validateFloats(const geometry_msgs::msg::Pose & msg)
 {
   bool valid = true;
   valid = valid && validateFloats(msg.position);
@@ -143,21 +144,19 @@ inline bool validateFloats(const geometry_msgs::Pose& msg)
   return valid;
 }
 
-inline bool validateFloats(const geometry_msgs::PoseStamped& msg)
+inline bool validateFloats(const geometry_msgs::msg::PoseStamped & msg)
 {
   return validateFloats(msg.pose);
 }
 
 template<typename T>
-inline bool validateFloats(const std::vector<T>& vec)
+inline bool validateFloats(const std::vector<T> & vec)
 {
   typedef std::vector<T> VecType;
   typename VecType::const_iterator it = vec.begin();
   typename VecType::const_iterator end = vec.end();
-  for (; it != end; ++it)
-  {
-    if (!validateFloats(*it))
-    {
+  for (; it != end; ++it) {
+    if (!validateFloats(*it)) {
       return false;
     }
   }
@@ -166,15 +165,13 @@ inline bool validateFloats(const std::vector<T>& vec)
 }
 
 template<typename T, size_t N>
-inline bool validateFloats(const boost::array<T, N>& arr)
+inline bool validateFloats(const std::array<T, N> & arr)
 {
-  typedef boost::array<T, N> ArrType;
+  typedef std::array<T, N> ArrType;
   typename ArrType::const_iterator it = arr.begin();
   typename ArrType::const_iterator end = arr.end();
-  for (; it != end; ++it)
-  {
-    if (!validateFloats(*it))
-    {
+  for (; it != end; ++it) {
+    if (!validateFloats(*it)) {
       return false;
     }
   }
@@ -182,6 +179,6 @@ inline bool validateFloats(const boost::array<T, N>& arr)
   return true;
 }
 
-} // namespace rviz
+}  // namespace rviz_common
 
-#endif // RVIZ_VALIDATE_FLOAT_H
+#endif  // RVIZ_COMMON__VALIDATE_FLOATS_HPP_

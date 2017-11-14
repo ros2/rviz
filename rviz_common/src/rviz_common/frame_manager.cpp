@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./frame_manager.hpp"
+#include "rviz_common/frame_manager.hpp"
 
 #include <algorithm>
 #include <chrono>
@@ -46,7 +46,7 @@
 #include "tf2_geometry_msgs/tf2_geometry_msgs.h"
 #include "tf2_ros/transform_listener.h"
 
-#include "./display.hpp"
+#include "rviz_common/display.hpp"
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/logging.hpp"
 

@@ -71,20 +71,20 @@
 // #include "./display_factory.hpp"  // TODO(wjwwood): revisit
 #include "./display_group.hpp"
 // #include "./displays_panel.hpp"
-#include "./frame_manager.hpp"
+#include "rviz_common/frame_manager.hpp"
 #include "./load_resource.hpp"
 // #include "./ogre_helpers/ogre_render_queue_clearer.hpp"
 // #include "./ogre_helpers/qt_ogre_render_window.hpp"
 // #include "./ogre_helpers/render_system.hpp"
 #include "rviz_common/properties/color_property.hpp"
-#include "./properties/int_property.hpp"
-#include "./properties/parse_color.hpp"
+#include "rviz_common/properties/int_property.hpp"
+#include "rviz_common/properties/parse_color.hpp"
 #include "rviz_common/properties/property.hpp"
-#include "./properties/property_tree_model.hpp"
-#include "./properties/status_list.hpp"
-#include "./properties/tf_frame_property.hpp"
+#include "rviz_common/properties/property_tree_model.hpp"
+#include "rviz_common/properties/status_list.hpp"
+#include "rviz_common/properties/tf_frame_property.hpp"
 #include "./render_panel.hpp"
-#include "./selection/selection_manager.hpp"
+#include "rviz_common/selection/selection_manager.hpp"
 // #include "./tool.hpp"
 #include "./tool_manager.hpp"
 // #include "rviz_common/view_controller.hpp"
@@ -155,7 +155,8 @@ VisualizationManager::VisualizationManager(
   render_requested_(1),
   frame_count_(0),
   window_manager_(wm),
-  private_(new VisualizationManagerPrivate)
+  private_(new VisualizationManagerPrivate),
+  executor_(std::make_shared<rclcpp::executors::SingleThreadedExecutor>())
 {
   // visibility_bit_allocator_ is listed after default_visibility_bit_
   // (and thus initialized later be default):
@@ -244,6 +245,7 @@ VisualizationManager::VisualizationManager(
   {
     Ogre::ResourceGroupManager::getSingleton().createResourceGroup("rviz_common");
     this->createDisplay("rviz/Grid", "grid", true);
+    this->createDisplay("rviz/PointCloud", "pointcloud", true);
     // this->createDisplay("rviz/TF", "tf", true);
     // load later...
     QTimer::singleShot(2000, [this]() {
@@ -307,6 +309,18 @@ void VisualizationManager::lockRender()
 void VisualizationManager::unlockRender()
 {
   private_->render_mutex_.unlock();
+}
+
+void
+VisualizationManager::addNodeToMainExecutor(rclcpp::Node::SharedPtr node)
+{
+  executor_->add_node(node);
+}
+
+void
+VisualizationManager::removeNodeFromMainExecutor(rclcpp::Node::SharedPtr node)
+{
+  executor_->remove_node(node);
 }
 
 #if 0
@@ -418,10 +432,7 @@ void VisualizationManager::onUpdate()
     resetTime();
   }
 
-// TODO(wjwwood): replace with executor?
-#if 0
-  ros::spinOnce();
-#endif
+  executor_->spin_once(std::chrono::milliseconds(10));
 
   Q_EMIT preUpdate();
 

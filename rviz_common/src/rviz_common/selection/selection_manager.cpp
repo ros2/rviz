@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./selection_manager.hpp"
+#include "rviz_common/selection/selection_manager.hpp"
 
 #include <algorithm>
 #include <cassert>
@@ -78,7 +78,7 @@
 // #include "../ogre_helpers/qt_ogre_render_window.hpp"
 // #include "../ogre_helpers/shape.hpp"
 #include "rviz_common/properties/property.hpp"
-#include "../properties/property_tree_model.hpp"
+#include "rviz_common/properties/property_tree_model.hpp"
 #include "../render_panel.hpp"
 // #include "../view_controller.hpp"
 #include "../view_manager.hpp"

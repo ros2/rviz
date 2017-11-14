@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./viewport_mouse_event.hpp"
+#include "rviz_common/viewport_mouse_event.hpp"
 
 #include <QMouseEvent>
 #include <QWheelEvent>

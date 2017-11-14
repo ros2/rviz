@@ -36,7 +36,7 @@
 
 // #include "tf2_ors/tf.h"
 
-#include "../../frame_manager.hpp"
+#include "rviz_common/frame_manager.hpp"
 
 #include "rclcpp/time.hpp"
 

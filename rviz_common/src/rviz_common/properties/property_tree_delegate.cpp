@@ -27,12 +27,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./property_tree_delegate.hpp"
+#include "rviz_common/properties/property_tree_delegate.hpp"
 
 #include <QAbstractItemView>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/properties/property.hpp"
-#include "./line_edit_with_button.hpp"
+#include "rviz_common/properties/line_edit_with_button.hpp"
 
 namespace rviz_common
 {

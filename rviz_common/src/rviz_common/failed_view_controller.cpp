@@ -29,7 +29,7 @@
 
 #include <QMessageBox>
 
-#include "./display_context.hpp"
+#include ".rviz_common/display_context.hpp"
 #include "./window_manager_interface.hpp"
 
 #include "./failed_view_controller.hpp"

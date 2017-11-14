@@ -51,9 +51,9 @@
 #include "rviz_rendering/render_window.hpp"
 
 // #include "./display.hpp"
-#include "./display_context.hpp"
+#include "rviz_common/display_context.hpp"
 #include "rviz_common/view_controller.hpp"
-#include "./viewport_mouse_event.hpp"
+#include "rviz_common/viewport_mouse_event.hpp"
 
 // #include "rviz/visualization_manager.h"
 // #include "rviz/window_manager_interface.h"

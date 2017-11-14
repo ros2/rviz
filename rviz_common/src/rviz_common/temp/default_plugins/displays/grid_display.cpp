@@ -46,12 +46,12 @@
 # pragma GCC diagnostic pop
 #endif
 
-#include "../../../display_context.hpp"
-#include "../../../frame_manager.hpp"
+#include "rviz_common/display_context.hpp"
+#include "rviz_common/frame_manager.hpp"
 #include "rviz_rendering/grid.hpp"
-#include "../../../properties/parse_color.hpp"
+#include "rviz_common/properties/parse_color.hpp"
 #include "rviz_common/properties/property.hpp"
-#include "../../../selection/selection_manager.hpp"
+#include "rviz_common/selection/selection_manager.hpp"
 
 using rviz_rendering::Grid;
 using rviz_common::properties::ColorProperty;

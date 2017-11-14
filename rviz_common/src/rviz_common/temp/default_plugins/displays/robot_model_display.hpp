@@ -35,7 +35,7 @@
 
 #include <OgreVector3.h>
 
-#include "../../../display.hpp"
+#include "rviz_common/display.hpp"
 
 namespace Ogre
 {

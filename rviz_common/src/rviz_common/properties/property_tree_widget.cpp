@@ -31,12 +31,12 @@
 #include <QHash>
 #include <QSet>
 
-#include "./property_tree_delegate.hpp"
-#include "./splitter_handle.hpp"
-#include "./status_list.hpp"
+#include "rviz_common/properties/property_tree_delegate.hpp"
+#include "rviz_common/properties/splitter_handle.hpp"
+#include "rviz_common/properties/status_list.hpp"
 #include "rviz_common/properties/property.hpp"
 
-#include "./property_tree_widget.hpp"
+#include "rviz_common/properties/property_tree_widget.hpp"
 
 namespace rviz_common
 {

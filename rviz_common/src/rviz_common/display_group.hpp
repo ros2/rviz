@@ -31,7 +31,7 @@
 #ifndef RVIZ_COMMON__DISPLAY_GROUP_HPP_
 #define RVIZ_COMMON__DISPLAY_GROUP_HPP_
 
-#include "./display.hpp"
+#include "rviz_common/display.hpp"
 
 namespace rviz_common
 {

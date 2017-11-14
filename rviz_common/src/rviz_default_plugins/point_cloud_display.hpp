@@ -27,37 +27,51 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_POINT_CLOUD2_DISPLAY_H
-#define RVIZ_POINT_CLOUD2_DISPLAY_H
+#ifndef RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_DISPLAY_HPP_
 
-#include <sensor_msgs/PointCloud2.h>
+#include <deque>
+#include <queue>
+#include <vector>
 
-#include "rviz/message_filter_display.h"
+#include "sensor_msgs/msg/point_cloud.hpp"
 
-namespace rviz
+#include "rviz_common/message_filter_display.hpp"
+
+namespace rviz_common
+{
+namespace properties
 {
 
 class IntProperty;
+
+}  // namespace properties
+}  // namespace rviz_common
+
+namespace rviz_default_plugins
+{
+
 class PointCloudCommon;
 
 /**
- * \class PointCloud2Display
- * \brief Displays a point cloud of type sensor_msgs::PointCloud2
+ * \class PointCloudDisplay
+ * \brief Displays a point cloud of type sensor_msgs::PointCloud
  *
  * By default it will assume channel 0 of the cloud is an intensity value, and will color them by intensity.
  * If you set the channel's name to "rgb", it will interpret the channel as an integer rgb value, with r, g and b
  * all being 8 bits.
  */
-class PointCloud2Display: public MessageFilterDisplay<sensor_msgs::PointCloud2>
+class PointCloudDisplay : public rviz_common::MessageFilterDisplay<sensor_msgs::msg::PointCloud>
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  PointCloud2Display();
-  ~PointCloud2Display();
+  PointCloudDisplay();
+  ~PointCloudDisplay();
 
   virtual void reset();
 
-  virtual void update( float wall_dt, float ros_dt );
+  virtual void update(float wall_dt, float ros_dt);
 
 private Q_SLOTS:
   void updateQueueSize();
@@ -67,13 +81,13 @@ protected:
   virtual void onInitialize();
 
   /** @brief Process a single message.  Overridden from MessageFilterDisplay. */
-  virtual void processMessage( const sensor_msgs::PointCloud2ConstPtr& cloud );
+  virtual void processMessage(const sensor_msgs::msg::PointCloud::ConstSharedPtr & cloud);
 
-  IntProperty* queue_size_property_;
+  rviz_common::properties::IntProperty * queue_size_property_;
 
-  PointCloudCommon* point_cloud_common_;
+  PointCloudCommon * point_cloud_common_;
 };
 
-} // namespace rviz
+}  // namespace rviz_default_plugins
 
-#endif
+#endif  // RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_DISPLAY_HPP_

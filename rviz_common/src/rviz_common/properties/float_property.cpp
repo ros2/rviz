@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "float_property.hpp"
+#include "rviz_common/properties/float_property.hpp"
 
 #include <cfloat>  // for FLT_MAX
 

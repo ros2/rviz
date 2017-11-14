@@ -70,6 +70,7 @@ add_library(rviz_rendering
   src/rviz_rendering/shape.cpp
   src/rviz_rendering/grid.cpp
   src/rviz_rendering/string_helper.cpp
+  src/rviz_rendering/point_cloud.cpp
 )
 target_link_libraries(rviz_rendering
   rviz_ogre_vendor::OgreMain

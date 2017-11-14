@@ -40,7 +40,7 @@
 
 #include "./bit_allocator.hpp"
 #include "rviz_common/config.hpp"
-#include "./display_context.hpp"
+#include "rviz_common/display_context.hpp"
 
 class QTimer;
 
@@ -240,12 +240,9 @@ public:
   /// Return the window manager, if any.
   WindowManagerInterface * getWindowManager() const override;
 
-#if 0
-  /**
-   * @brief Return the CallbackQueue using the main GUI thread.
-   */
-  ros::CallbackQueueInterface * getUpdateQueue();
-#endif
+  void addNodeToMainExecutor(rclcpp::Node::SharedPtr) override;
+
+  void removeNodeFromMainExecutor(rclcpp::Node::SharedPtr) override;
 
 #if 0
   /**
@@ -389,6 +386,7 @@ private:
   uint32_t default_visibility_bit_;
   BitAllocator visibility_bit_allocator_;
   QString help_path_;
+  rclcpp::executors::SingleThreadedExecutor::SharedPtr executor_;
 };
 
 }  // namespace rviz_common

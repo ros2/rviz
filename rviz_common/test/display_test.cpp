@@ -50,7 +50,7 @@ TEST(Display, load_properties) {
     "Name: sample\n"
     "Enabled: true\n"
     "Count: 7\n"
-    "Pi: 3.2\n"
+    "Number: 3.2\n"
     "Offset: {X: -1, Y: 1.1, Z: 1.1e3}\n"
     "Color: white\n"
     "Style: loosey goosey\n");
@@ -64,7 +64,7 @@ TEST(Display, load_properties) {
 
   EXPECT_EQ(7, d.count_->getValue().toInt());
   EXPECT_EQ("loosey goosey", d.style_->getValue().toString().toStdString());
-  EXPECT_EQ(3.2f, d.pi_->getValue().toFloat());
+  EXPECT_EQ(3.2f, d.number_->getValue().toFloat());
   Ogre::Vector3 offset = d.offset_->getVector();
   EXPECT_EQ(-1.f, offset.x);
   EXPECT_EQ(1.1f, offset.y);
@@ -126,11 +126,11 @@ TEST(Display, save_properties) {
       "Count: 37\n"
       "Enabled: false\n"
       "Name: Steven\n"
+      "Number: 1.5\n"
       "Offset:\n"
       "  X: 1\n"
       "  Y: 2\n"
       "  Z: 3\n"
-      "Pi: 3.14159\n"
       "Style: chunky\n"
       "Value: false\n"
 
@@ -148,7 +148,7 @@ TEST(DisplayGroup, save_properties) {
 
   d = new MockDisplay;
   d->setName("Katherine");
-  d->subProp("Pi")->setValue(1.1);
+  d->subProp("Number")->setValue(0.125);
   g.addChild(d);
 
   YamlConfigWriter writer;
@@ -166,11 +166,11 @@ TEST(DisplayGroup, save_properties) {
       "    Count: 101\n"
       "    Enabled: false\n"
       "    Name: Steven\n"
+      "    Number: 1.5\n"
       "    Offset:\n"
       "      X: 1\n"
       "      Y: 2\n"
       "      Z: 3\n"
-      "    Pi: 3.14159\n"
       "    Style: chunky\n"
       "    Value: false\n"
       "  - Class: \"\"\n"
@@ -178,11 +178,11 @@ TEST(DisplayGroup, save_properties) {
       "    Count: 10\n"
       "    Enabled: false\n"
       "    Name: Katherine\n"
+      "    Number: 0.125\n"
       "    Offset:\n"
       "      X: 1\n"
       "      Y: 2\n"
       "      Z: 3\n"
-      "    Pi: 1.1\n"
       "    Style: chunky\n"
       "    Value: false\n"
       "Enabled: false\n"

@@ -28,13 +28,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./editable_enum_property.hpp"
+#include "rviz_common/properties/editable_enum_property.hpp"
 
 #include <QCompleter>
 
 #include <string>
 
-#include "./editable_combo_box.hpp"
+#include "rviz_common/properties/editable_combo_box.hpp"
 
 namespace rviz_common
 {

@@ -56,8 +56,8 @@
 
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/properties/enum_property.hpp"
-#include "../../properties/bool_property.hpp"
-#include "../../display_context.hpp"
+#include "rviz_common/properties/bool_property.hpp"
+#include "rviz_common/display_context.hpp"
 #include "rviz_common/logging.hpp"
 
 #include "rviz_rendering/object.hpp"

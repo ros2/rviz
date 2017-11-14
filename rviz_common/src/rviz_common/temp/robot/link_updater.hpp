@@ -31,7 +31,7 @@
 #define RVIZ_COMMON__TEMP__ROBOT__LINK_UPDATER_HPP_
 
 #include <string>
-#include "../../properties/status_property.hpp"
+#include "rviz_common/properties/status_property.hpp"
 
 namespace Ogre
 {

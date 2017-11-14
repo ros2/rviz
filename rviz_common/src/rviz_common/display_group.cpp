@@ -28,23 +28,25 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./display_group.hpp"
+#include "display_group.hpp"
 
 #include <cstdio>  // for debug-write printf
 #include <map>
 
 #include <QColor>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "./display_context.hpp"
+#include "rviz_common/display_context.hpp"
 // TODO(wjwwood): reenable this when pluginlib solution found
 // #include "./display_factory.hpp"
 #include "./failed_display.hpp"
-#include "./properties/property_tree_model.hpp"
+#include "rviz_common/properties/property_tree_model.hpp"
 #include "rviz_common/logging.hpp"
 
 #include "./temp/default_plugins/displays/grid_display.hpp"
 #include "./temp/default_plugins/displays/tf_display.hpp"
 #include "./temp/default_plugins/displays/robot_model_display.hpp"
+
+#include "src/rviz_default_plugins/point_cloud_display.hpp"
 
 namespace rviz_common
 {
@@ -148,6 +150,10 @@ Display * DisplayGroup::createDisplay(const QString & class_id)
   }
   if (class_id == "rviz/RobotModel") {
     Display * disp = new rviz_common::RobotModelDisplay();
+    return disp;
+  }
+  if (class_id == "rviz/PointCloud") {
+    Display * disp = new rviz_default_plugins::PointCloudDisplay();
     return disp;
   }
   RVIZ_COMMON_LOG_WARNING_STREAM("would have loaded a display called " << class_id.toStdString());

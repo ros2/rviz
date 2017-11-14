@@ -32,7 +32,7 @@
 
 #include <string>
 
-#include "./combo_box.hpp"
+#include "rviz_common/properties/combo_box.hpp"
 
 namespace rviz_common
 {

@@ -46,7 +46,7 @@
 #include "./robot_link.hpp"
 #include "./robot.hpp"
 
-#include "../../properties/float_property.hpp"
+#include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/properties/quaternion_property.hpp"
 #include "rviz_common/properties/string_property.hpp"

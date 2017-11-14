@@ -307,12 +307,14 @@ RenderSystem::setupResources()
     rviz_path + "/ogre_media/models", "FileSystem", "rviz_rendering");
   Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
     rviz_path + "/ogre_media/materials", "FileSystem", "rviz_rendering");
-  // Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-  //   rviz_path + "/ogre_media/materials/scripts", "FileSystem", "rviz_rendering");
-  // Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-  //   rviz_path + "/ogre_media/materials/glsl120", "FileSystem", "rviz_rendering");
-  // Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-  //   rviz_path + "/ogre_media/materials/glsl120/nogp", "FileSystem", "rviz_rendering");
+  Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+    rviz_path + "/ogre_media/materials/scripts", "FileSystem", "rviz_rendering");
+  Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+    rviz_path + "/ogre_media/materials/glsl120", "FileSystem", "rviz_rendering");
+  Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+    rviz_path + "/ogre_media/materials/glsl120/include", "FileSystem", "rviz_rendering");
+  Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+    rviz_path + "/ogre_media/materials/glsl120/nogp", "FileSystem", "rviz_rendering");
   // Add resources that depend on a specific glsl version.
   // Unfortunately, Ogre doesn't have a notion of glsl versions so we can't go
   // the 'official' way of defining multiple schemes per material and let Ogre
@@ -324,17 +326,17 @@ RenderSystem::setupResources()
   //   Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
   //     rviz_path + "/ogre_media/materials/scripts150", "FileSystem", "rviz_rendering");
   // } else if (getGlslVersion() >= 120) {
-  // if (getGlslVersion() >= 120) {
-  //   Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-  //     rviz_path + "/ogre_media/materials/scripts120", "FileSystem", "rviz_rendering");
-  // } else {
-  //   std::string s =
-  //     "Your graphics driver does not support OpenGL 2.1. "
-  //     "Please enable software rendering before running RViz "
-  //     "(e.g. type 'export LIBGL_ALWAYS_SOFTWARE=1').";
-  //   RVIZ_RENDERING_LOG_ERROR(s);
-  //   throw std::runtime_error(s);
-  // }
+  if (getGlslVersion() >= 120) {
+    Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+      rviz_path + "/ogre_media/materials/scripts120", "FileSystem", "rviz_rendering");
+  } else {
+    std::string s =
+      "Your graphics driver does not support OpenGL 2.1. "
+      "Please enable software rendering before running RViz "
+      "(e.g. type 'export LIBGL_ALWAYS_SOFTWARE=1').";
+    RVIZ_RENDERING_LOG_ERROR(s);
+    throw std::runtime_error(s);
+  }
 
   addAdditionalResourcesFromAmentIndex();
 }

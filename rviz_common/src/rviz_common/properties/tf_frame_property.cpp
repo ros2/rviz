@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./tf_frame_property.hpp"
+#include "rviz_common/properties/tf_frame_property.hpp"
 
 #include <algorithm>  // for std::sort
 #include <string>
@@ -36,7 +36,7 @@
 
 #include "tf2_ros/transform_listener.h"
 
-#include "../frame_manager.hpp"
+#include "rviz_common/frame_manager.hpp"
 
 namespace rviz_common
 {

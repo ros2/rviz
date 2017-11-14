@@ -35,9 +35,9 @@
 #include <QColorDialog>
 
 #include "rviz_common/properties/color_property.hpp"
-#include "./parse_color.hpp"
+#include "rviz_common/properties/parse_color.hpp"
 
-#include "./color_editor.hpp"
+#include "rviz_common/properties/color_editor.hpp"
 
 namespace rviz_common
 {

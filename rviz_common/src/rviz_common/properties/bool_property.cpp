@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./bool_property.hpp"
+#include "rviz_common/properties/bool_property.hpp"
 
 #include <QColor>
 

@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./line_edit_with_button.hpp"
+#include "rviz_common/properties/line_edit_with_button.hpp"
 
 #include <QPushButton>
 #include <QLineEdit>

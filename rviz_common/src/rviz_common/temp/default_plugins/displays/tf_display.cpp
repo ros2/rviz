@@ -51,18 +51,18 @@
 
 #include "tf2_ros/transform_listener.h"
 
-#include "../../../display_context.hpp"
-#include "../../../frame_manager.hpp"
+#include "rviz_common/display_context.hpp"
+#include "rviz_common/frame_manager.hpp"
 #include "rviz_rendering/arrow.hpp"
 #include "rviz_rendering/axes.hpp"
 #include "rviz_rendering/movable_text.hpp"
-#include "../../../properties/bool_property.hpp"
-#include "../../../properties/float_property.hpp"
+#include "rviz_common/properties/bool_property.hpp"
+#include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/quaternion_property.hpp"
 #include "rviz_common/properties/string_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
-#include "../../../selection/forwards.hpp"
-#include "../../../selection/selection_manager.hpp"
+#include "rviz_common/selection/forwards.hpp"
+#include "rviz_common/selection/selection_manager.hpp"
 #include "rviz_common/logging.hpp"
 
 using rviz_common::selection::SelectionHandler;

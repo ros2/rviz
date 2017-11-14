@@ -37,11 +37,11 @@
 #include <boost/bind.hpp>
 
 #include "./display_factory.hpp"
-#include "./display.hpp"
+#include "rviz_common/display.hpp"
 #include "./add_display_dialog.hpp"
 #include "rviz_common/properties/property.hpp"
-#include "./properties/property_tree_widget.hpp"
-#include "./properties/property_tree_with_help.hpp"
+#include "rviz_common/properties/property_tree_widget.hpp"
+#include "rviz_common/properties/property_tree_with_help.hpp"
 #include "./visualization_manager.hpp"
 
 #include "./displays_panel.hpp"
