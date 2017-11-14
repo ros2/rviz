@@ -35,10 +35,13 @@ namespace rviz_common
 namespace ros_integration
 {
 
+/// Shutdown ROS.
 /**
- * \brief shutdown ROS
+ * This will also destroy any nodes which were created with
+ * ros_integration::init().
  */
-void shutdown();
+void
+shutdown();
 
 }  // namespace ros_integration
 }  // namespace rviz_common
