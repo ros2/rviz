@@ -20,7 +20,6 @@
   <depend>rviz_rendering</depend>
 
   <build_depend>qtbase5-dev</build_depend>
-  <build_depend>rcl</build_depend>
 
   <exec_depend>libqt5-core</exec_depend>
   <exec_depend>libqt5-gui</exec_depend>
