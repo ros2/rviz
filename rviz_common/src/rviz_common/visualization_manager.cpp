@@ -89,7 +89,7 @@
 // #include "rviz_common/tool.hpp"
 #include "./tool_manager.hpp"
 // #include "rviz_common/view_controller.hpp"
-#include "./view_manager.hpp"
+#include "rviz_common/view_manager.hpp"
 // #include "./viewport_mouse_event.hpp"
 
 // #include "rviz/window_manager_interface.h"
