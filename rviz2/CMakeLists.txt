@@ -26,6 +26,9 @@ find_package(Qt5 REQUIRED COMPONENTS Widgets)
 add_executable(${PROJECT_NAME}_app
   src/main.cpp
 )
+target_include_directories(${PROJECT_NAME}_app
+  PUBLIC ${Qt5Widgets_INCLUDE_DIRS}
+)
 target_link_libraries(${PROJECT_NAME}_app
   rviz_common::rviz_common
   Qt5::Widgets
