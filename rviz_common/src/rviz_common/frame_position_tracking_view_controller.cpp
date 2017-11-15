@@ -47,7 +47,7 @@
 #include "rviz_common/frame_manager.hpp"
 #include "rviz_common/properties/enum_property.hpp"
 #include "rviz_common/properties/tf_frame_property.hpp"
-#include "./view_manager.hpp"
+#include "rviz_common/view_manager.hpp"
 #include "rviz_common/viewport_mouse_event.hpp"
 
 namespace rviz_common

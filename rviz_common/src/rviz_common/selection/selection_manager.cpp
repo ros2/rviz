@@ -81,7 +81,7 @@
 #include "rviz_common/properties/property_tree_model.hpp"
 #include "rviz_common/render_panel.hpp"
 // #include "../view_controller.hpp"
-#include "../view_manager.hpp"
+#include "rviz_common/view_manager.hpp"
 #include "../visualization_manager.hpp"
 
 

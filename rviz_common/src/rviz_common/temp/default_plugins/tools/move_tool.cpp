@@ -29,12 +29,12 @@
 
 #include "move_tool.hpp"
 
-#include "../../../view_manager.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/load_resource.hpp"
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/selection/selection_manager.hpp"
 #include "rviz_common/view_controller.hpp"
+#include "rviz_common/view_manager.hpp"
 #include "rviz_common/viewport_mouse_event.hpp"
 
 namespace rviz_common
