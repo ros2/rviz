@@ -10,7 +10,7 @@ https://github.com/ros2/ros2/wiki/Installation
 
 Whether you install from source or from a binary, there will be a `setup.bash` file you can source.
 The current state of this branch requires a from-source build though.
-You might also need the following additional dependencies on Debian based systems: `liburdf-dev`, `libxaw7-dev`.
+You might also need the following additional dependency on Debian based systems: `libxaw7-dev`.
 
 Source the setup file before continuing:
 
