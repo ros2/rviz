@@ -62,19 +62,19 @@
 
 #include "./robot_joint.hpp"
 
+#include "../../visualization_manager.hpp"
 #include "../mesh_loader.hpp"
 #include "../robot/robot.hpp"
-#include "rviz_rendering/axes.hpp"
-#include "rviz_rendering/object.hpp"
-#include "rviz_rendering/shape.hpp"
-#include "rviz_common/properties/float_property.hpp"
+#include "rviz_common/load_resource.hpp"
 #include "rviz_common/properties/bool_property.hpp"
+#include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/properties/quaternion_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/selection/selection_manager.hpp"
-#include "../../visualization_manager.hpp"
-#include "../../load_resource.hpp"
+#include "rviz_rendering/axes.hpp"
+#include "rviz_rendering/object.hpp"
+#include "rviz_rendering/shape.hpp"
 
 #include "rviz_common/logging.hpp"
 

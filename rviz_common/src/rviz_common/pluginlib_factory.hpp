@@ -44,7 +44,7 @@
 #endif
 
 #include "./class_id_recording_factory.hpp"
-#include "./load_resource.hpp"
+#include "rviz_common/load_resource.hpp"
 
 namespace rviz_common
 {
