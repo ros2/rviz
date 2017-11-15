@@ -34,9 +34,9 @@
 #include <cstdio>
 #include <sstream>
 
-#include "rviz_common/properties/property_tree_model.hpp"
-#include "./render_panel.hpp"
 #include "rviz_common/logging.hpp"
+#include "rviz_common/properties/property_tree_model.hpp"
+#include "rviz_common/render_panel.hpp"
 
 #include "./temp/default_plugins/view_controllers/orbit_view_controller.hpp"
 

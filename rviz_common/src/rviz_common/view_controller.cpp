@@ -58,7 +58,7 @@
 // #include "./properties/enum_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/selection/selection_manager.hpp"
-#include "./render_panel.hpp"
+#include "rviz_common/render_panel.hpp"
 
 // #include "rviz/frame_manager.h"
 // #include "rviz/view_manager.h"

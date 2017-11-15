@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "render_panel.hpp"
+#include "rviz_common/render_panel.hpp"
 
 #include <memory>
 // #include <sstream>

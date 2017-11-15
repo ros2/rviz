@@ -112,13 +112,13 @@ set(rviz_common_headers_to_moc
   include/rviz_common/properties/string_property.hpp
   include/rviz_common/properties/tf_frame_property.hpp
   include/rviz_common/properties/vector_property.hpp
-  src/rviz_common/render_panel.hpp
+  include/rviz_common/render_panel.hpp
   src/rviz_common/scaled_image_widget.hpp
   src/rviz_common/screenshot_dialog.hpp
   include/rviz_common/selection/selection_manager.hpp
   src/rviz_common/splash_screen.hpp
   # src/rviz_common/time_panel.hpp
-  src/rviz_common/tool.hpp
+  include/rviz_common/tool.hpp
   src/rviz_common/tool_manager.hpp
   # src/rviz_common/tool_properties_panel.hpp
   include/rviz_common/view_controller.hpp
