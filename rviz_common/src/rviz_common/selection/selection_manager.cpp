@@ -79,7 +79,7 @@
 // #include "../ogre_helpers/shape.hpp"
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/properties/property_tree_model.hpp"
-#include "../render_panel.hpp"
+#include "rviz_common/render_panel.hpp"
 // #include "../view_controller.hpp"
 #include "../view_manager.hpp"
 #include "../visualization_manager.hpp"
