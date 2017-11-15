@@ -154,8 +154,6 @@ list(APPEND rviz_common_headers_to_moc
 list(APPEND rviz_common_headers_to_moc
   src/rviz_default_plugins/point_cloud_common.hpp)
 list(APPEND rviz_common_headers_to_moc
-  src/rviz_default_plugins/point_cloud_common.hpp)
-list(APPEND rviz_common_headers_to_moc
   src/rviz_default_plugins/point_cloud_display.hpp)
 list(APPEND rviz_common_headers_to_moc
   src/rviz_default_plugins/point_cloud_transformer.hpp)
@@ -276,7 +274,8 @@ list(APPEND rviz_common_source_files
   src/rviz_default_plugins/point_cloud_transformers.cpp)
 list(APPEND rviz_common_source_files
   src/rviz_default_plugins/point_cloud2_display.cpp)
-
+list(APPEND rviz_common_source_files
+  src/rviz_default_plugins/point_cloud_selection_handler.cpp)
 
 add_library(rviz_common
   ${rviz_common_headers_to_moc}

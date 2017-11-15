@@ -34,18 +34,12 @@
 #include <string>
 #include <utility>
 
-#include <QColor>  // NOLINT
-
-#include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 #include <OgreWireBoundingBox.h>
 
-// #include <tf/transform_listener.h>
-
-// TODO(wjwwood): revist file when pluginlib is available
+// TODO(wjwwood): revisit file when pluginlib is available
 // #include <pluginlib/class_loader.h>
 
-#include "./point_cloud_transformer.hpp"
 #include "./point_cloud_transformers.hpp"
 #include "rviz_common/display.hpp"
 #include "rviz_common/display_context.hpp"
@@ -61,271 +55,18 @@
 namespace rviz_default_plugins
 {
 
-struct IndexAndMessage
-{
-  IndexAndMessage(int _index, const void * _message)
-  : index(_index),
-    message( (uint64_t) _message)
-  {}
-
-  int index;
-  uint64_t message;
-};
-
-uint qHash(IndexAndMessage iam)
-{
-  return
-    ((uint) iam.index) +
-    ((uint) (iam.message >> 32)) +
-    ((uint) (iam.message & 0xffffffff));
-}
-
-bool operator==(IndexAndMessage a, IndexAndMessage b)
-{
-  return a.index == b.index && a.message == b.message;
-}
-
-PointCloudSelectionHandler::PointCloudSelectionHandler(
-  float box_size,
-  PointCloudCommon::CloudInfo * cloud_info,
-  rviz_common::DisplayContext * context)
-: SelectionHandler(context),
-  cloud_info_(cloud_info),
-  box_size_(box_size)
-{
-}
-
-PointCloudSelectionHandler::~PointCloudSelectionHandler()
-{
-  // delete all the Property objects on our way out.
-  QHash<IndexAndMessage, rviz_common::properties::Property *>::const_iterator iter;
-  for (iter = property_hash_.begin(); iter != property_hash_.end(); iter++) {
-    delete iter.value();
-  }
-}
-
-void PointCloudSelectionHandler::preRenderPass(uint32_t pass)
-{
-  rviz_common::selection::SelectionHandler::preRenderPass(pass);
-
-  switch (pass) {
-    case 0:
-      cloud_info_->cloud_->setPickColor(rviz_common::selection::SelectionManager::handleToColor(
-          getHandle() ));
-      break;
-    case 1:
-      cloud_info_->cloud_->setColorByIndex(true);
-      break;
-    default:
-      break;
-  }
-}
-
-void PointCloudSelectionHandler::postRenderPass(uint32_t pass)
-{
-  rviz_common::selection::SelectionHandler::postRenderPass(pass);
-
-  if (pass == 1) {
-    cloud_info_->cloud_->setColorByIndex(false);
-  }
-}
-
-Ogre::Vector3 pointFromCloud(
-  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
-  uint32_t index)
-{
-  int32_t xi = findChannelIndex(cloud, "x");
-  int32_t yi = findChannelIndex(cloud, "y");
-  int32_t zi = findChannelIndex(cloud, "z");
-
-  const uint32_t xoff = cloud->fields[xi].offset;
-  const uint32_t yoff = cloud->fields[yi].offset;
-  const uint32_t zoff = cloud->fields[zi].offset;
-  const uint8_t type = cloud->fields[xi].datatype;
-  const uint32_t point_step = cloud->point_step;
-  float x = valueFromCloud<float>(cloud, xoff, type, point_step, index);
-  float y = valueFromCloud<float>(cloud, yoff, type, point_step, index);
-  float z = valueFromCloud<float>(cloud, zoff, type, point_step, index);
-  return Ogre::Vector3(x, y, z);
-}
-
-void PointCloudSelectionHandler::createProperties(
-  const rviz_common::selection::Picked & obj,
-  rviz_common::properties::Property * parent_property)
-{
-  typedef std::set<int> S_int;
-  S_int indices;
-  {
-    rviz_common::selection::S_uint64::const_iterator it = obj.extra_handles.begin();
-    rviz_common::selection::S_uint64::const_iterator end = obj.extra_handles.end();
-    for (; it != end; ++it) {
-      uint64_t handle = *it;
-      indices.insert((handle & 0xffffffff) - 1);
-    }
-  }
-
-  {
-    S_int::iterator it = indices.begin();
-    S_int::iterator end = indices.end();
-    for (; it != end; ++it) {
-      int index = *it;
-      const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message = cloud_info_->message_;
-
-      IndexAndMessage hash_key(index, message.get() );
-      if (!property_hash_.contains(hash_key)) {
-        rviz_common::properties::Property * cat = new rviz_common::properties::Property(
-          QString("Point %1 [cloud 0x%2]").arg(index).arg((uint64_t) message.get()),
-          QVariant(),
-          "",
-          parent_property);
-        property_hash_.insert(hash_key, cat);
-
-        // First add the position.
-        rviz_common::properties::VectorProperty * pos_prop =
-          new rviz_common::properties::VectorProperty(
-          "Position",
-          cloud_info_->transformed_points_[index].position,
-          "",
-          cat);
-        pos_prop->setReadOnly(true);
-
-        // Then add all other fields as well.
-        for (size_t field = 0; field < message->fields.size(); ++field) {
-          const sensor_msgs::msg::PointField & f = message->fields[field];
-          const std::string & name = f.name;
-
-          if (name == "x" || name == "y" || name == "z" || name == "X" || name == "Y" ||
-            name == "Z")
-          {
-            continue;
-          }
-          if (name == "rgb" || name == "rgba") {
-            float float_val = valueFromCloud<float>(message, f.offset, f.datatype,
-                message->point_step, index);
-            // Convertion hack because rgb are stored int float (datatype=7) and valueFromCloud
-            // can't cast float to uint32_t
-            uint32_t val = *reinterpret_cast<uint32_t *>(&float_val);
-            rviz_common::properties::ColorProperty * prop =
-              new rviz_common::properties::ColorProperty(
-              QString("%1: %2").arg(field).arg(QString::fromStdString(name)),
-              QColor((val >> 16) & 0xff, (val >> 8) & 0xff, val & 0xff),
-              "",
-              cat);
-            prop->setReadOnly(true);
-
-            rviz_common::properties::FloatProperty * aprop =
-              new rviz_common::properties::FloatProperty(
-              QString("alpha"), ((val >> 24) / 255.0), "", cat);
-            aprop->setReadOnly(true);
-          } else {
-            float val = valueFromCloud<float>(message, f.offset, f.datatype, message->point_step,
-                index);
-            rviz_common::properties::FloatProperty * prop =
-              new rviz_common::properties::FloatProperty(
-              QString("%1: %2").arg(field).arg(QString::fromStdString(name)),
-              val,
-              "",
-              cat);
-            prop->setReadOnly(true);
-          }
-        }
-        // suppressing this memleak warning from cppcheck below
-        // cppcheck-suppress memleak
-      }
-    }
-  }
-}
-
-void PointCloudSelectionHandler::destroyProperties(
-  const rviz_common::selection::Picked & obj,
-  rviz_common::properties::Property * parent_property)
-{
-  (void) parent_property;
-  typedef std::set<int> S_int;
-  S_int indices;
-  {
-    rviz_common::selection::S_uint64::const_iterator it = obj.extra_handles.begin();
-    rviz_common::selection::S_uint64::const_iterator end = obj.extra_handles.end();
-    for (; it != end; ++it) {
-      uint64_t handle = *it;
-      indices.insert((handle & 0xffffffff) - 1);
-    }
-  }
-
-  {
-    S_int::iterator it = indices.begin();
-    S_int::iterator end = indices.end();
-    for (; it != end; ++it) {
-      int index = *it;
-      const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message = cloud_info_->message_;
-
-      IndexAndMessage hash_key(index, message.get() );
-
-      rviz_common::properties::Property * prop = property_hash_.take(hash_key);
-      delete prop;
-    }
-  }
-}
-
-void PointCloudSelectionHandler::getAABBs(
-  const rviz_common::selection::Picked & obj,
-  rviz_common::selection::V_AABB & aabbs)
-{
-  rviz_common::selection::S_uint64::iterator it = obj.extra_handles.begin();
-  rviz_common::selection::S_uint64::iterator end = obj.extra_handles.end();
-  for (; it != end; ++it) {
-    M_HandleToBox::iterator find_it = boxes_.find(std::make_pair(obj.handle, *it - 1));
-    if (find_it != boxes_.end()) {
-      Ogre::WireBoundingBox * box = find_it->second.second;
-
-      aabbs.push_back(box->getWorldBoundingBox());
-    }
-  }
-}
-
-void PointCloudSelectionHandler::onSelect(const rviz_common::selection::Picked & obj)
-{
-  rviz_common::selection::S_uint64::iterator it = obj.extra_handles.begin();
-  rviz_common::selection::S_uint64::iterator end = obj.extra_handles.end();
-  for (; it != end; ++it) {
-    int index = (*it & 0xffffffff) - 1;
-
-    sensor_msgs::msg::PointCloud2::ConstSharedPtr message = cloud_info_->message_;
-
-    Ogre::Vector3 pos = cloud_info_->transformed_points_[index].position;
-    pos = cloud_info_->scene_node_->convertLocalToWorldPosition(pos);
-
-    float size = box_size_ * 0.5f;
-
-    Ogre::AxisAlignedBox aabb(pos - size, pos + size);
-
-    createBox(std::make_pair(obj.handle, index), aabb, "RVIZ/Cyan");
-  }
-}
-
-void PointCloudSelectionHandler::onDeselect(const rviz_common::selection::Picked & obj)
-{
-  rviz_common::selection::S_uint64::iterator it = obj.extra_handles.begin();
-  rviz_common::selection::S_uint64::iterator end = obj.extra_handles.end();
-  for (; it != end; ++it) {
-    int global_index = (*it & 0xffffffff) - 1;
-
-    destroyBox(std::make_pair(obj.handle, global_index));
-  }
-}
-
-PointCloudCommon::CloudInfo::CloudInfo()
+CloudInfo::CloudInfo()
 : manager_(0),
   scene_node_(0),
   position_(Ogre::Vector3::ZERO)  // TODO(greimela): Why is this necessary?
 {}
 
-PointCloudCommon::CloudInfo::~CloudInfo()
+CloudInfo::~CloudInfo()
 {
   clear();
 }
 
-void PointCloudCommon::CloudInfo::clear()
+void CloudInfo::clear()
 {
   if (scene_node_) {
     manager_->destroySceneNode(scene_node_);
