@@ -71,6 +71,7 @@
 #include "tf2_ros/buffer.h"
 #include "tf2_ros/transform_listener.h"
 
+#include "rviz_common/load_resource.hpp"
 #include "rviz_common/logging.hpp"
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/tool.hpp"
@@ -83,7 +84,6 @@
 
 #include "./env_config.hpp"
 #include "./failed_panel.hpp"
-#include "./load_resource.hpp"
 #include "./loading_dialog.hpp"
 #include "./new_object_dialog.hpp"
 #include "./panel.hpp"

@@ -40,7 +40,7 @@
 #include <QTreeWidget>  // NOLINT: cpplint is unable to handle the include order here
 #include <QVBoxLayout>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "./load_resource.hpp"
+#include "rviz_common/load_resource.hpp"
 
 namespace rviz_common
 {

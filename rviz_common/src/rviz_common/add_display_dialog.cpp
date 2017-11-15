@@ -50,7 +50,7 @@
 #include "ros/package.h"
 #include "ros/ros.h"
 
-#include "load_resource.hpp"
+#include "rviz_common/load_resource.hpp"
 
 #include "display_factory.hpp"
 
