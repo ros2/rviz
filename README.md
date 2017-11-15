@@ -1,6 +1,6 @@
 # rviz
 
-This branch is still underconstruction and is targetd for ROS 2 and/or ROS 1 M-Turtle.
+This branch is still under construction and is targeted for ROS 2 and/or ROS 1 M-Turtle.
 
 # Setup
 
@@ -9,7 +9,10 @@ Install ros2 (needed for ament at least and ros2's C++ api for the version of rv
 https://github.com/ros2/ros2/wiki/Installation
 
 Whether you install from source or from a binary, there will be a `setup.bash` file you can source.
-Source that file before continuing:
+The current state of this branch requires a from-source build though.
+You might also need the following additional dependency on Debian based systems: `libxaw7-dev`.
+
+Source the setup file before continuing:
 
 ```
 $ source path/to/ros2/install/setup.bash
@@ -25,7 +28,7 @@ $ cd ~/rviz2_ws/src
 Clone this repository into the source folder:
 
 ```
-$ git clone https://github.com/ros-visualization/rviz.git -b ros2
+$ git clone https://github.com/ros2/rviz.git
 ```
 
 Then build all the packages with this command:
