@@ -1,6 +1,6 @@
 # rviz
 
-This branch is still underconstruction and is targeted for ROS 2 and/or ROS 1 M-Turtle.
+This branch is still under construction and is targeted for ROS 2 and/or ROS 1 M-Turtle.
 
 # Setup
 
