@@ -72,6 +72,7 @@
 #include "tf2_ros/transform_listener.h"
 
 #include "rviz_common/logging.hpp"
+#include "rviz_common/tool.hpp"
 // TODO(wjwwood): see if this is needed anymore
 #include "rviz_rendering/initialization.hpp"
 #include "rviz_rendering/render_window.hpp"
@@ -89,7 +90,6 @@
 #include "./render_panel.hpp"
 #include "./screenshot_dialog.hpp"
 #include "./splash_screen.hpp"
-#include "./tool.hpp"
 #include "./tool_manager.hpp"
 #include "./visualization_manager.hpp"
 #include "./widget_geometry_change_detector.hpp"

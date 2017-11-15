@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./tool.hpp"
+#include "rviz_common/tool.hpp"
 
 #include "rviz_common/display_context.hpp"
 #include "./load_resource.hpp"

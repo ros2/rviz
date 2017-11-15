@@ -30,7 +30,7 @@
 #ifndef RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__TOOLS__MOVE_TOOL_HPP_
 #define RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__TOOLS__MOVE_TOOL_HPP_
 
-#include "../../../tool.hpp"
+#include "rviz_common/tool.hpp"
 
 namespace rviz_common
 {

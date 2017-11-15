@@ -39,7 +39,7 @@
 
 // TODO(wjwwood): restore pluginlib_factory when possible
 // #include "rviz/pluginlib_factory.h"
-#include "./tool.hpp"
+#include "rviz_common/tool.hpp"
 
 class QKeyEvent;
 
