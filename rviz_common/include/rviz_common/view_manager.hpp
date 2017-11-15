@@ -37,8 +37,6 @@
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
 #include <QStringList>  // NOLINT: cpplint is unable to handle the include order here
 
-// TODO(wjwwood): replace usage of pluginlib_factory
-// #include "./pluginlib_factory.hpp"
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/view_controller.hpp"
 
@@ -156,12 +154,9 @@ private:
    */
   void setCurrent(ViewController * new_current, bool mimic_view);
 
-  DisplayContext * context_;
-  ViewControllerContainer * root_property_;
-  rviz_common::properties::PropertyTreeModel * property_model_;
-  // PluginlibFactory<ViewController> * factory_;
-  ViewController * current_;
-  RenderPanel * render_panel_;
+  struct ViewManagerImpl;
+
+  std::unique_ptr<ViewManagerImpl> impl_;
 };
 
 /// Wrapper property for view controllers.
