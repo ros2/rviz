@@ -68,6 +68,12 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
       PROPERTY
         INTERFACE_INCLUDE_DIRECTORIES ${OGRE_INCLUDE_DIRS}
     )
+    if(_ogre_main_static_library_abs)
+      set_property(TARGET rviz_ogre_vendor::OgreMain APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+    endif()
+    if(_ogre_main_static_library_debug_abs)
+      set_property(TARGET rviz_ogre_vendor::OgreMain APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
+    endif()
 
     set(_extra_interface_link_libraries)
     find_library(FREEIMAGE_LIBRARIES freeimage)
@@ -152,6 +158,12 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
       PROPERTY
         INTERFACE_INCLUDE_DIRECTORIES ${OGRE_INCLUDE_DIRS}
     )
+    if(_ogre_overlay_static_library_abs)
+      set_property(TARGET rviz_ogre_vendor::OgreOverlay APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+    endif()
+    if(_ogre_overlay_static_library_debug_abs)
+      set_property(TARGET rviz_ogre_vendor::OgreOverlay APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
+    endif()
 
     set(_extra_interface_link_libraries rviz_ogre_vendor::OgreMain)
     set_target_properties(rviz_ogre_vendor::OgreOverlay
@@ -196,6 +208,12 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
       PROPERTY
         INTERFACE_INCLUDE_DIRECTORIES ${OGRE_INCLUDE_DIRS}
     )
+    if(_render_system_gl_static_library_abs)
+      set_property(TARGET rviz_ogre_vendor::RenderSystem_GL APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+    endif()
+    if(_render_system_gl_static_library_debug_abs)
+      set_property(TARGET rviz_ogre_vendor::RenderSystem_GL APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
+    endif()
 
     set(_extra_interface_link_libraries rviz_ogre_vendor::OgreMain)
     set_target_properties(rviz_ogre_vendor::RenderSystem_GL
@@ -240,6 +258,12 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
       PROPERTY
         INTERFACE_INCLUDE_DIRECTORIES ${OGRE_INCLUDE_DIRS}
     )
+    if(_ogre_gl_support_static_library_abs)
+      set_property(TARGET rviz_ogre_vendor::OgreGLSupport APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+    endif()
+    if(_ogre_gl_support_static_library_debug_abs)
+      set_property(TARGET rviz_ogre_vendor::OgreGLSupport APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
+    endif()
 
     set(_extra_interface_link_libraries rviz_ogre_vendor::OgreMain)
     set_target_properties(rviz_ogre_vendor::OgreGLSupport
