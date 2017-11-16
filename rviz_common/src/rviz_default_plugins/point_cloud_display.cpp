@@ -28,6 +28,7 @@
  */
 
 #include <memory>
+#include <utility>
 
 #include <OgreSceneNode.h>
 
@@ -45,7 +46,7 @@ namespace rviz_default_plugins
 {
 
 PointCloudDisplay::PointCloudDisplay()
-: point_cloud_common_(new PointCloudCommon(this))
+: point_cloud_common_(std::make_unique<PointCloudCommon>(this))
 {
   queue_size_property_ = new rviz_common::properties::IntProperty("Queue Size", 10,
       "Advanced: set the size of the incoming PointCloud message queue. "
@@ -53,11 +54,6 @@ PointCloudDisplay::PointCloudDisplay()
       "from your PointCloud data, but it can greatly increase memory usage if the "
       "messages are big.",
       this, SLOT(updateQueueSize()));
-}
-
-PointCloudDisplay::~PointCloudDisplay()
-{
-  delete point_cloud_common_;
 }
 
 void PointCloudDisplay::onInitialize()

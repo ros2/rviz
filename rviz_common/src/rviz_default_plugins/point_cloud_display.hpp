@@ -31,12 +31,14 @@
 #define RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_DISPLAY_HPP_
 
 #include <deque>
+#include <memory>
 #include <queue>
 #include <vector>
 
 #include "sensor_msgs/msg/point_cloud.hpp"
 
 #include "rviz_common/message_filter_display.hpp"
+#include "point_cloud_common.hpp"
 
 namespace rviz_common
 {
@@ -50,8 +52,6 @@ class IntProperty;
 
 namespace rviz_default_plugins
 {
-
-class PointCloudCommon;
 
 /**
  * \class PointCloudDisplay
@@ -67,7 +67,6 @@ class PointCloudDisplay : public rviz_common::MessageFilterDisplay<sensor_msgs::
 
 public:
   PointCloudDisplay();
-  ~PointCloudDisplay();
 
   virtual void reset();
 
@@ -85,7 +84,7 @@ protected:
 
   rviz_common::properties::IntProperty * queue_size_property_;
 
-  PointCloudCommon * point_cloud_common_;
+  std::unique_ptr<PointCloudCommon> point_cloud_common_;
 };
 
 }  // namespace rviz_default_plugins

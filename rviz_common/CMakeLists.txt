@@ -372,6 +372,14 @@ if(BUILD_TESTING)
     if(TARGET rviz_common_property_test)
       target_link_libraries(rviz_common_property_test rviz_common)
     endif()
+
+    ament_add_gtest(point_cloud2_display_test
+      test/rviz_default_plugins/message_creators.hpp
+      test/rviz_default_plugins/message_creators.cpp
+      test/rviz_default_plugins/point_cloud2_display_test.cpp)
+    if(TARGET point_cloud2_display_test)
+      target_link_libraries(point_cloud2_display_test rviz_common)
+    endif()
 endif()
 
 ament_package()
