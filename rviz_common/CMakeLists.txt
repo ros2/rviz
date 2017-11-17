@@ -136,8 +136,6 @@ set(rviz_common_headers_to_moc
 list(APPEND rviz_common_headers_to_moc
   src/rviz_common/temp/default_plugins/view_controllers/orbit_view_controller.hpp)
 list(APPEND rviz_common_headers_to_moc
-  src/rviz_common/temp/default_plugins/tools/move_tool.hpp)
-list(APPEND rviz_common_headers_to_moc
   src/rviz_common/temp/default_plugins/displays/grid_display.hpp)
 list(APPEND rviz_common_headers_to_moc
   src/rviz_common/temp/default_plugins/displays/tf_display.hpp)
@@ -240,8 +238,6 @@ set(rviz_common_source_files
 # TODO(wjwwood): remove this later
 list(APPEND rviz_common_source_files
   src/rviz_common/temp/default_plugins/view_controllers/orbit_view_controller.cpp)
-list(APPEND rviz_common_source_files
-  src/rviz_common/temp/default_plugins/tools/move_tool.cpp)
 list(APPEND rviz_common_source_files
   src/rviz_common/temp/default_plugins/displays/grid_display.cpp)
 list(APPEND rviz_common_source_files
