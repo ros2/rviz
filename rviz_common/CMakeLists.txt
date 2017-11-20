@@ -276,6 +276,8 @@ list(APPEND rviz_common_source_files
   src/rviz_default_plugins/point_cloud2_display.cpp)
 list(APPEND rviz_common_source_files
   src/rviz_default_plugins/point_cloud_selection_handler.cpp)
+list(APPEND rviz_common_source_files
+  src/rviz_default_plugins/point_cloud_to_point_cloud2.cpp)
 
 add_library(rviz_common
   ${rviz_common_headers_to_moc}
