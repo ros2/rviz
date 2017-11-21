@@ -29,7 +29,60 @@ Source the setup file before continuing:
 $ source path/to/ros2/install/setup.bash
 ```
 
-Then create a new workspace:
+## Windows
+
+**Note** Make sure to install all dependencies in either 32 bit or 64 bit version and do not mix.
+
+This setup was tested for Windows 10 x64.
+
+#### Build Assimp 3.3.1
+* Download Assimp sources from [GitHub](https://github.com/assimp/assimp/releases/tag/v3.3.1)
+* Extract to local folder (e.g. to `C:\ros2\assimp-3.3.1`)
+* Create and change to build folder (e.g. `C:\ros2\assimp-3.3.1\build`)
+    * Configure CMake: `cmake -G "Visual Studio 15 2017 Win64" ../ -DASSIMP_BUILD_ASSIMP_TOOLS=OFF  -DASSIMP_BUILD_TESTS=OFF`
+    * Build the project: `cmake --build . --config Debug`
+    * Install to `C:\Program Files`: `cmake --build . --config Debug --target Install`
+
+#### Build CURL 7.56.0
+* Download CURL sources from [GitHub](https://github.com/curl/curl/releases/tag/curl-7_56_0)
+* Extract to local folder (e.g. to `C:\ros2\curl-7.56.0`)
+* Create and change to build folder (e.g. `C:\ros2\curl-7.56.0\build`)
+    * Configure CMake: `cmake -G "Visual Studio 15 2017 Win64" ../`
+    * Build the project: `cmake --build . --config Debug`
+    * Install to `C:\Program Files`: `cmake --build . --config Debug --target Install`
+
+#### Get Boost (No build required)
+* Download Boost sources from https://dl.bintray.com/boostorg/release/1.65.1/source/
+* Extract to local folder (e.g. to `C:\ros2\boost_1_65_1`)
+
+#### Build yaml-cpp
+* Download yaml-cpp sources from [GitHub](https://github.com/jbeder/yaml-cpp/releases/tag/yaml-cpp-0.5.3)
+* Extract to local folder (e.g. to `C:\ros2\yaml-cpp-release-0.5.3`)
+* Create and change to build folder (e.g. `C:\ros2\yaml-cpp-release-0.5.3\build`)
+    * Configure CMake: `cmake -G "cmake -G "Visual Studio 15 2017 Win64" ../ -DBoost_INCLUDE_DIR=C:\ros2\boost_1_65_1`
+    * Build the project: `cmake --build . --config Debug`
+    * Install to `C:\Program Files`: `cmake --build . --config Debug --target Install`
+
+#### Setup environment
+* add Qt binary files to PATH (e.g. `C:\Qt\5.9.1\msvc2017_64\bin`)
+* set QT_QPA_PLATFORM_PLUGIN_PATH environment variable (e.g. `C:\Qt\5.9.1\msvc2017_64\plugins\platforms`)
+* Add Curl, yaml-cpp and tinyxml to the CMAKE_PREFIX_PATH environment variable
+    * Example: `C:\Program Files\CURL;C:\Program Files\YAML_CPP;C:\ProgramData\chocolatey\lib\tinyxml-usestl`
+* Add Curl binary to PATH (e.g. `C:\Program Files\CURL\bin`)
+* Add Assimp to PATH (e.g. `C:\Program Files\Assimp\bin`)
+* Set BOOST_INCLUDEDIR environment variable to Boost include directory (e.g. `C:\ros2\boost_1_65_1`)
+* Add patch.exe to PATH (e.g. from Git Bash, `C:\Program Files\Git\usr\bin`)
+* (For Testing) Add Cppcheck binary to PATH (e.g. `C:\Program Files\Cppcheck`)
+
+Source the setup file before continuing:
+
+```
+$ call path/to/ros2/install/setup.bat
+```
+
+## Building RViz
+
+Create a new workspace:
 
 ```
 $ mkdir -p ~/rviz2_ws/src
