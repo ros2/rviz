@@ -10,7 +10,9 @@ https://github.com/ros2/ros2/wiki/Installation
 
 Currently the latest release (beta3) is not sufficient to build rviz so you need to build the ros2 master from source.
 
-## Ubuntu
+## Prerequisites
+
+### Ubuntu
 
 There will be a `setup.bash` file from your ros2 build you can source.
 The current state of this branch requires a from-source build though.
@@ -29,7 +31,7 @@ Source the setup file before continuing:
 $ source path/to/ros2/install/setup.bash
 ```
 
-## Windows
+### Windows
 
 **Note** Make sure to install all dependencies in either 32 bit or 64 bit version and do not mix.
 
