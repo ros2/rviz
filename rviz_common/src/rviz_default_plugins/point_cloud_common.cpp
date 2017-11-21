@@ -40,7 +40,6 @@
 // TODO(wjwwood): revisit file when pluginlib is available
 // #include <pluginlib/class_loader.h>
 
-#include "./point_cloud_transformers.hpp"
 #include "./point_cloud_to_point_cloud2.hpp"
 #include "rviz_common/display.hpp"
 #include "rviz_common/display_context.hpp"
@@ -52,6 +51,13 @@
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
 #include "rviz_common/validate_floats.hpp"
+
+#include "./point_cloud_transformers/rgb8_pc_transformer.hpp"
+#include "./point_cloud_transformers/intensity_pc_transformer.hpp"
+#include "./point_cloud_transformers/xyz_pc_transformer.hpp"
+#include "./point_cloud_transformers/rgbf32_pc_transformer.hpp"
+#include "./point_cloud_transformers/axis_color_pc_transformer.hpp"
+#include "./point_cloud_transformers/flat_color_pc_transformer.hpp"
 
 namespace rviz_default_plugins
 {
@@ -164,22 +170,22 @@ PointCloudCommon::~PointCloudCommon()
 void PointCloudCommon::loadTransformers()
 {
   loadTransformer(
-    std::make_shared<rviz_default_plugins::AxisColorPCTransformer>(), "AxisColorPCTransformer",
+    std::make_shared<AxisColorPCTransformer>(), "AxisColorPCTransformer",
     "AxisColorPCTransformer");
   loadTransformer(
-    std::make_shared<rviz_default_plugins::FlatColorPCTransformer>(), "FlatColorPCTransformer",
+    std::make_shared<FlatColorPCTransformer>(), "FlatColorPCTransformer",
     "FlatColorPCTransformer");
   loadTransformer(
-    std::make_shared<rviz_default_plugins::IntensityPCTransformer>(), "IntensityPCTransformer",
+    std::make_shared<IntensityPCTransformer>(), "IntensityPCTransformer",
     "IntensityPCTransformer");
   loadTransformer(
-    std::make_shared<rviz_default_plugins::RGB8PCTransformer>(), "RGB8PCTransformer",
+    std::make_shared<RGB8PCTransformer>(), "RGB8PCTransformer",
     "RGB8PCTransformer");
   loadTransformer(
-    std::make_shared<rviz_default_plugins::RGBF32PCTransformer>(), "RGBF32PCTransformer",
+    std::make_shared<RGBF32PCTransformer>(), "RGBF32PCTransformer",
     "RGBF32PCTransformer");
   loadTransformer(
-    std::make_shared<rviz_default_plugins::XYZPCTransformer>(), "XYZPCTransformer",
+    std::make_shared<XYZPCTransformer>(), "XYZPCTransformer",
     "XYZPCTransformer");
 
 // TODO(Martin-Idel-SI): revisit when pluginlib is available

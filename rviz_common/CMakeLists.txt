@@ -271,7 +271,17 @@ list(APPEND rviz_common_source_files
 list(APPEND rviz_common_source_files
   src/rviz_default_plugins/point_cloud_display.cpp)
 list(APPEND rviz_common_source_files
-  src/rviz_default_plugins/point_cloud_transformers.cpp)
+  src/rviz_default_plugins/point_cloud_transformers/axis_color_pc_transformer.cpp)
+list(APPEND rviz_common_source_files
+  src/rviz_default_plugins/point_cloud_transformers/flat_color_pc_transformer.cpp)
+list(APPEND rviz_common_source_files
+  src/rviz_default_plugins/point_cloud_transformers/intensity_pc_transformer.cpp)
+list(APPEND rviz_common_source_files
+  src/rviz_default_plugins/point_cloud_transformers/rgb8_pc_transformer.cpp)
+list(APPEND rviz_common_source_files
+  src/rviz_default_plugins/point_cloud_transformers/rgbf32_pc_transformer.cpp)
+list(APPEND rviz_common_source_files
+  src/rviz_default_plugins/point_cloud_transformers/xyz_pc_transformer.cpp)
 list(APPEND rviz_common_source_files
   src/rviz_default_plugins/point_cloud2_display.cpp)
 list(APPEND rviz_common_source_files
