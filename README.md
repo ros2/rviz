@@ -20,7 +20,7 @@ The current state of this branch requires a from-source build though.
 Install the following Ubuntu packages: 
 
 ```
-apt install libxaw7-dev libgles2-mesa-dev libglu1-mesa-dev qtbase5-dev libyaml-cpp-dev
+apt install libxaw7-dev libgles2-mesa-dev libglu1-mesa-dev qt5-default libyaml-cpp-dev libcurl4-openssl-dev
 ```
 
 Build `assimp` 3.3.1 from [source](https://github.com/assimp/assimp/archive/v3.3.1.tar.gz) (standard cmake build) as the available Ubuntu package does currently not work.
