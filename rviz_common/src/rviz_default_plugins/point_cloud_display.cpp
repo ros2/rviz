@@ -68,7 +68,7 @@ void PointCloudDisplay::updateQueueSize()
 //  tf_filter_->setQueueSize( (uint32_t) queue_size_property_->getInt() );
 }
 
-void PointCloudDisplay::processMessage(const sensor_msgs::msg::PointCloud::ConstSharedPtr & cloud)
+void PointCloudDisplay::processMessage(const sensor_msgs::msg::PointCloud::ConstSharedPtr cloud)
 {
   point_cloud_common_->addMessage(cloud);
 }

@@ -522,7 +522,7 @@ void PointCloudCommon::updateStatus()
   display_->setStatusStd(rviz_common::properties::StatusProperty::Ok, "Points", ss.str());
 }
 
-void PointCloudCommon::processMessage(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
+void PointCloudCommon::processMessage(const sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud)
 {
   CloudInfoPtr info(new CloudInfo);
   info->message_ = cloud;
@@ -674,12 +674,12 @@ void PointCloudCommon::setProblematicPointsToInfinity(V_PointCloudPoint & cloud_
   }
 }
 
-void PointCloudCommon::addMessage(const sensor_msgs::msg::PointCloud::ConstSharedPtr & cloud)
+void PointCloudCommon::addMessage(const sensor_msgs::msg::PointCloud::ConstSharedPtr cloud)
 {
   addMessage(convertPointCloudToPointCloud2(cloud));
 }
 
-void PointCloudCommon::addMessage(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
+void PointCloudCommon::addMessage(const sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud)
 {
   processMessage(cloud);
 }

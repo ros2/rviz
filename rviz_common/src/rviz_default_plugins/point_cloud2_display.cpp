@@ -70,7 +70,7 @@ void PointCloud2Display::updateQueueSize()
 //  tf_filter_->setQueueSize( (uint32_t) queue_size_property_->getInt() );
 }
 
-void PointCloud2Display::processMessage(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
+void PointCloud2Display::processMessage(const sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud)
 {
   if (!hasXYZChannels(cloud)) {
     return;
@@ -89,7 +89,7 @@ void PointCloud2Display::processMessage(const sensor_msgs::msg::PointCloud2::Con
 }
 
 bool PointCloud2Display::hasXYZChannels(
-  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) const
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const
 {
   int32_t xi = findChannelIndex(cloud, "x");
   int32_t yi = findChannelIndex(cloud, "y");
@@ -99,13 +99,13 @@ bool PointCloud2Display::hasXYZChannels(
 }
 
 bool PointCloud2Display::cloudDataMatchesDimensions(
-  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) const
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const
 {
   return cloud->width * cloud->height * cloud->point_step != cloud->data.size();
 }
 
 sensor_msgs::msg::PointCloud2::ConstSharedPtr PointCloud2Display::filterOutInvalidPoints(
-  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) const
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const
 {
   auto filtered = std::make_shared<sensor_msgs::msg::PointCloud2>();
 
@@ -159,7 +159,7 @@ PointCloud2Display::filterData(sensor_msgs::msg::PointCloud2::ConstSharedPtr clo
 }
 
 Offsets PointCloud2Display::determineOffsets(
-  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) const
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const
 {
   Offsets offsets{
     cloud->fields[findChannelIndex(cloud, "x")].offset,

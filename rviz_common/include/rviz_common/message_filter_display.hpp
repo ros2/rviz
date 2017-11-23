@@ -193,7 +193,7 @@ protected:
   /** @brief Incoming message callback.  Checks if the message pointer
    * is valid, increments messages_received_, then calls
    * processMessage(). */
-  void incomingMessage(const typename MessageType::SharedPtr msg)
+  void incomingMessage(const typename MessageType::ConstSharedPtr msg)
   {
     if (!msg) {
       return;
@@ -209,7 +209,7 @@ protected:
   /** @brief Implement this to process the contents of a message.
    *
    * This is called by incomingMessage(). */
-  virtual void processMessage(const typename MessageType::ConstSharedPtr & msg) = 0;
+  virtual void processMessage(typename MessageType::ConstSharedPtr msg) = 0;
 
 //  message_filters::Subscriber<MessageType> sub_;
 //  tf::MessageFilter<MessageType>* tf_filter_;

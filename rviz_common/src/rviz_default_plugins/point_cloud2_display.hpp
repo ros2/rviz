@@ -80,7 +80,7 @@ public:
    * @return A new cloud containing only the filtered points
    */
   sensor_msgs::msg::PointCloud2::ConstSharedPtr filterOutInvalidPoints(
-    const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) const;
+    sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
 
 private Q_SLOTS:
   void updateQueueSize();
@@ -90,15 +90,14 @@ protected:
   void onInitialize() override;
 
   /** @brief Process a single message.  Overridden from MessageFilterDisplay. */
-  void processMessage(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) override;
+  void processMessage(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) override;
 
 private:
   rviz_common::properties::IntProperty * queue_size_property_;
 
   std::unique_ptr<PointCloudCommon> point_cloud_common_;
 
-  bool cloudDataMatchesDimensions(
-    const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) const;
+  bool cloudDataMatchesDimensions(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
 
   sensor_msgs::msg::PointCloud2::_data_type
   filterData(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
@@ -106,10 +105,9 @@ private:
   bool validateFloatsAtPosition(
     sensor_msgs::msg::PointCloud2::_data_type::const_iterator position, Offsets offsets) const;
 
-  bool hasXYZChannels(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) const;
+  bool hasXYZChannels(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
 
-  Offsets determineOffsets(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) const;
-
+  Offsets determineOffsets(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
 };
 
 }  // namespace rviz_default_plugins
