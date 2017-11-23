@@ -676,10 +676,7 @@ void PointCloudCommon::setProblematicPointsToInfinity(V_PointCloudPoint & cloud_
 
 void PointCloudCommon::addMessage(const sensor_msgs::msg::PointCloud::ConstSharedPtr & cloud)
 {
-  sensor_msgs::msg::PointCloud2::SharedPtr out(
-    new sensor_msgs::msg::PointCloud2_<std::allocator<void>>());
-  convertPointCloudToPointCloud2(*cloud, *out);
-  addMessage(out);
+  addMessage(convertPointCloudToPointCloud2(cloud));
 }
 
 void PointCloudCommon::addMessage(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)

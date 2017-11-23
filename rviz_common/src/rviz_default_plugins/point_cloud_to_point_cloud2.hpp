@@ -37,9 +37,8 @@
 namespace rviz_default_plugins
 {
 
-bool convertPointCloudToPointCloud2(
-  const sensor_msgs::msg::PointCloud & input,
-  sensor_msgs::msg::PointCloud2 & output);
+sensor_msgs::msg::PointCloud2::ConstSharedPtr
+convertPointCloudToPointCloud2(sensor_msgs::msg::PointCloud::ConstSharedPtr input);
 
 }  // namespace rviz_default_plugins
 

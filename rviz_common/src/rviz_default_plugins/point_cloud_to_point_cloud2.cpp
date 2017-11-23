@@ -30,50 +30,52 @@
 
 #include "point_cloud_to_point_cloud2.hpp"
 
-#include <cstring>
+#include <memory>
 
-
-// TODO(Martin-Idel-SI): Change interface - the return boolean is never actually used.
-bool rviz_default_plugins::convertPointCloudToPointCloud2(
-  const sensor_msgs::msg::PointCloud & input,
-  sensor_msgs::msg::PointCloud2 & output)
+sensor_msgs::msg::PointCloud2::ConstSharedPtr rviz_default_plugins::convertPointCloudToPointCloud2(
+  const sensor_msgs::msg::PointCloud::ConstSharedPtr input)
 {
-  output.header = input.header;
-  output.width = input.points.size();
-  output.height = 1;
-  output.fields.resize(3 + input.channels.size());
+  sensor_msgs::msg::PointCloud2::SharedPtr output(
+    new sensor_msgs::msg::PointCloud2_<std::allocator<void>>());
+  output->header = input->header;
+  output->width = input->points.size();
+  output->height = 1;
+  output->fields.resize(3 + input->channels.size());
+
   // Convert x/y/z to fields
-  output.fields[0].name = "x"; output.fields[1].name = "y"; output.fields[2].name = "z";
-  int offset = 0;
-  // All offsets are *4, as all field data types are float32
-  for (size_t d = 0; d < output.fields.size(); ++d, offset += 4) {
-    output.fields[d].offset = offset;
-    output.fields[d].datatype = sensor_msgs::msg::PointField::FLOAT32;
+  output->fields[0].name = "x"; output->fields[1].name = "y"; output->fields[2].name = "z";
+
+  size_t offset = 0;
+  for (size_t d = 0; d < output->fields.size(); ++d, offset += sizeof(float)) {
+    output->fields[d].offset = offset;
+    output->fields[d].datatype = sensor_msgs::msg::PointField::FLOAT32;
   }
-  output.point_step = offset;
-  output.row_step = output.point_step * output.width;
+  output->point_step = offset;
+  output->row_step = output->point_step * output->width;
   // Convert the remaining of the channels to fields
-  for (size_t d = 0; d < input.channels.size(); ++d) {
-    output.fields[3 + d].name = input.channels[d].name;
+  for (size_t d = 0; d < input->channels.size(); ++d) {
+    output->fields[3 + d].name = input->channels[d].name;
   }
-  output.data.resize(input.points.size() * output.point_step);
-  output.is_bigendian = false;  // @todo ?
-  output.is_dense = false;
+  output->data.resize(input->points.size() * output->point_step);
+  output->is_bigendian = false;
+  output->is_dense = false;
 
   // Copy the data points
-  for (size_t cp = 0; cp < input.points.size(); ++cp) {
-    memcpy(&output.data[cp * output.point_step + output.fields[0].offset], &input.points[cp].x,
-      sizeof(float));
-    memcpy(&output.data[cp * output.point_step + output.fields[1].offset], &input.points[cp].y,
-      sizeof(float));
-    memcpy(&output.data[cp * output.point_step + output.fields[2].offset], &input.points[cp].z,
-      sizeof(float));
-    for (size_t d = 0; d < input.channels.size(); ++d) {
-      if (input.channels[d].values.size() == input.points.size()) {
-        memcpy(&output.data[cp * output.point_step + output.fields[3 + d].offset],
-          &input.channels[d].values[cp], sizeof(float));
+  auto floatData = reinterpret_cast<float *>(output->data.data());
+  for (size_t cp = 0; cp < input->points.size(); ++cp) {
+    floatData[(cp * output->point_step + output->fields[0].offset) / sizeof(float)] =
+      input->points[cp].x;
+    floatData[(cp * output->point_step + output->fields[1].offset) / sizeof(float)] =
+      input->points[cp].y;
+    floatData[(cp * output->point_step + output->fields[2].offset) / sizeof(float)] =
+      input->points[cp].z;
+
+    for (size_t d = 0; d < input->channels.size(); ++d) {
+      if (input->channels[d].values.size() == input->points.size()) {
+        floatData[(cp * output->point_step + output->fields[3 + d].offset) / sizeof(float)] =
+          input->channels[d].values[cp];
       }
     }
   }
-  return true;
+  return output;
 }
