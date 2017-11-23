@@ -46,6 +46,7 @@
 
 // TODO(wjwwood): revist file when pluginlib is available
 //# include <pluginlib/class_loader.h>
+#include "rclcpp/clock.hpp"
 #include "rclcpp/time.hpp"
 
 # include "sensor_msgs/msg/point_cloud.hpp"
@@ -225,6 +226,7 @@ private:
 
   rviz_common::Display * display_;
   rviz_common::DisplayContext * context_;
+  rclcpp::Clock::SharedPtr clock_;
 
   friend class PointCloudSelectionHandler;
 };

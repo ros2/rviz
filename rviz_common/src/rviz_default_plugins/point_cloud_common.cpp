@@ -39,6 +39,7 @@
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 #include <OgreWireBoundingBox.h>
+#include "rclcpp/clock.hpp"
 
 // #include <tf/transform_listener.h>
 
@@ -403,6 +404,7 @@ void PointCloudCommon::initialize(
 
   context_ = context;
   scene_node_ = scene_node;
+  clock_ = context->getClock();
 
   updateStyle();
   updateBillboardSize();
@@ -600,7 +602,7 @@ void PointCloudCommon::update(float wall_dt, float ros_dt)
   // and put them into obsolete_cloud_infos, so active selections
   // are preserved
 
-  rclcpp::Time now = rclcpp::Time::now();
+  rclcpp::Time now = clock_->now();
 
   // if decay time == 0, clear the old cloud when we get a new one
   // otherwise, clear all the outdated ones
@@ -788,7 +790,7 @@ void PointCloudCommon::processMessage(const sensor_msgs::msg::PointCloud2::Const
 {
   CloudInfoPtr info(new CloudInfo);
   info->message_ = cloud;
-  info->receive_time_ = rclcpp::Time::now();
+  info->receive_time_ = clock_->now();
 
   if (transformCloud(info, true)) {
     std::unique_lock<std::mutex> lock(new_clouds_mutex_);

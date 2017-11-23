@@ -42,6 +42,7 @@
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "geometry_msgs/msg/pose.hpp"
+#include "rclcpp/clock.hpp"
 #include "rclcpp/time.hpp"
 
 // TODO(wjwwood): reenable this when message_filters is ported.
@@ -85,7 +86,8 @@ public:
   explicit
   FrameManager(
     std::shared_ptr<tf2_ros::TransformListener> tf,
-    std::shared_ptr<tf2_ros::Buffer> buffer
+    std::shared_ptr<tf2_ros::Buffer> buffer,
+    rclcpp::Clock::SharedPtr clock
   );
 
   /// Destructor.
@@ -377,6 +379,8 @@ private:
 
   // the current synchronized time, used to overwrite ros:Time(0)
   rclcpp::Time sync_time_;
+
+  rclcpp::Clock::SharedPtr clock_;
 
   // used for approx. syncing (in nanoseconds)
   int64_t sync_delta_;

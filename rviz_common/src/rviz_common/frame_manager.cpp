@@ -39,6 +39,7 @@
 #include "geometry_msgs/msg/pose.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
+#include "rclcpp/clock.hpp"
 #include "std_msgs/msg/float32.hpp"
 #include "tf2/buffer_core.h"
 #include "tf2/LinearMath/Quaternion.h"
@@ -55,8 +56,10 @@ namespace rviz_common
 
 FrameManager::FrameManager(
   std::shared_ptr<tf2_ros::TransformListener> tf,
-  std::shared_ptr<tf2_ros::Buffer> buffer)
-: sync_time_(0)
+  std::shared_ptr<tf2_ros::Buffer> buffer,
+  rclcpp::Clock::SharedPtr clock)
+: sync_time_(0),
+  clock_(clock)
 {
   if (!tf) {
     // TODO(wjwwood): reenable this when possible (ros2 has no singleton node),
@@ -86,14 +89,14 @@ void FrameManager::update()
   if (!pause_) {
     switch (sync_mode_) {
       case SyncOff:
-        sync_time_ = rclcpp::Time::now();
+        sync_time_ = clock_->now();
         break;
       case SyncExact:
         break;
       case SyncApprox:
         // adjust current time offset to sync source
         current_delta_ = 0.7 * current_delta_ + 0.3 * sync_delta_;
-        sync_time_ = rclcpp::Time(rclcpp::Time::now().nanoseconds() - current_delta_);
+        sync_time_ = rclcpp::Time(clock_->now().nanoseconds() - current_delta_);
         break;
     }
   }
@@ -153,8 +156,8 @@ void FrameManager::syncTime(rclcpp::Time time)
         return;
       }
       // avoid exception due to negative time
-      if (rclcpp::Time::now() >= time) {
-        sync_delta_ = (rclcpp::Time::now() - time).nanoseconds();
+      if (clock_->now() >= time) {
+        sync_delta_ = (clock_->now() - time).nanoseconds();
       } else {
         setSyncMode(SyncApprox);
       }

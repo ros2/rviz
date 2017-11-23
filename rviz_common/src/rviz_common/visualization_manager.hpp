@@ -35,6 +35,7 @@
 #include <deque>
 #include <memory>
 
+#include "rclcpp/clock.hpp"
 #include "rclcpp/time.hpp"
 #include "tf2_ros/transform_listener.h"
 
@@ -100,7 +101,8 @@ public:
     RenderPanel * render_panel,
     WindowManagerInterface * wm = 0,
     std::shared_ptr<tf2_ros::TransformListener> tf = nullptr,
-    std::shared_ptr<tf2_ros::Buffer> buffer = nullptr
+    std::shared_ptr<tf2_ros::Buffer> buffer = nullptr,
+    rclcpp::Clock::SharedPtr clock = nullptr
   );
 
   /// Destructor.
@@ -292,6 +294,8 @@ public:
 
   virtual QString getHelpPath() const;
 
+  rclcpp::Clock::SharedPtr getClock() override;
+
 Q_SIGNALS:
 
   /// Emitted before updating all Displays.
@@ -374,6 +378,8 @@ protected:
   FrameManager * frame_manager_;
 
   OgreRenderQueueClearer * ogre_render_queue_clearer_;
+
+  rclcpp::Clock::SharedPtr clock_;
 
 private Q_SLOTS:
   void updateFixedFrame();
