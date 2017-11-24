@@ -57,9 +57,9 @@ namespace rviz_default_plugins
 {
 
 CloudInfo::CloudInfo()
-: manager_(0),
-  scene_node_(0),
-  position_(Ogre::Vector3::ZERO)  // TODO(greimela): Why is this necessary?
+: manager_(nullptr),
+  scene_node_(nullptr),
+  position_(Ogre::Vector3::ZERO)
 {}
 
 CloudInfo::~CloudInfo()
@@ -71,7 +71,7 @@ void CloudInfo::clear()
 {
   if (scene_node_) {
     manager_->destroySceneNode(scene_node_);
-    scene_node_ = 0;
+    scene_node_ = nullptr;
   }
 }
 
@@ -90,6 +90,7 @@ PointCloudCommon::PointCloudCommon(rviz_common::Display * display)
   style_property_ = new rviz_common::properties::EnumProperty("Style", "Flat Squares",
       "Rendering mode to use, in order of computational complexity.",
       display_, SLOT(updateStyle()), this);
+  // TODO(Martin-Idel-SI): Tiles missing?
   style_property_->addOption("Points", rviz_rendering::PointCloud::RM_POINTS);
   style_property_->addOption("Squares", rviz_rendering::PointCloud::RM_SQUARES);
   style_property_->addOption("Flat Squares", rviz_rendering::PointCloud::RM_FLAT_SQUARES);
@@ -244,17 +245,16 @@ void PointCloudCommon::loadTransformer(
 void PointCloudCommon::setAutoSize(bool auto_size)
 {
   auto_size_ = auto_size;
-  for (unsigned i = 0; i < cloud_infos_.size(); i++) {
-    cloud_infos_[i]->cloud_->setAutoSize(auto_size);
+  for (auto const & cloud_info : cloud_infos_) {
+    cloud_info->cloud_->setAutoSize(auto_size);
   }
 }
 
-
 void PointCloudCommon::updateAlpha()
 {
-  for (unsigned i = 0; i < cloud_infos_.size(); i++) {
-    bool per_point_alpha = findChannelIndex(cloud_infos_[i]->message_, "rgba") != -1;
-    cloud_infos_[i]->cloud_->setAlpha(alpha_property_->getFloat(), per_point_alpha);
+  for (auto const & cloud_info : cloud_infos_) {
+    bool per_point_alpha = findChannelIndex(cloud_info->message_, "rgba") != -1;
+    cloud_info->cloud_->setAlpha(alpha_property_->getFloat(), per_point_alpha);
   }
 }
 
@@ -263,25 +263,24 @@ void PointCloudCommon::updateSelectable()
   bool selectable = selectable_property_->getBool();
 
   if (selectable) {
-    for (unsigned i = 0; i < cloud_infos_.size(); i++) {
-      cloud_infos_[i]->selection_handler_.reset(
-        new PointCloudSelectionHandler(getSelectionBoxSize(), cloud_infos_[i].get(), context_));
-      cloud_infos_[i]->cloud_->setPickColor(
+    for (auto const & cloud_info : cloud_infos_) {
+      cloud_info->selection_handler_.reset(
+        new PointCloudSelectionHandler(getSelectionBoxSize(), cloud_info.get(), context_));
+      cloud_info->cloud_->setPickColor(
         rviz_common::selection::SelectionManager::handleToColor(
-          cloud_infos_[i]->selection_handler_->getHandle() ));
+          cloud_info->selection_handler_->getHandle()));
     }
   } else {
-    for (unsigned i = 0; i < cloud_infos_.size(); i++) {
-      cloud_infos_[i]->selection_handler_.reset();
-      cloud_infos_[i]->cloud_->setPickColor(Ogre::ColourValue(0.0f, 0.0f, 0.0f, 0.0f) );
+    for (auto const & cloud_info : cloud_infos_) {
+      cloud_info->selection_handler_.reset();
+      cloud_info->cloud_->setPickColor(Ogre::ColourValue(0.0f, 0.0f, 0.0f, 0.0f));
     }
   }
 }
 
 void PointCloudCommon::updateStyle()
 {
-  rviz_rendering::PointCloud::RenderMode mode = (rviz_rendering::PointCloud::RenderMode)
-    style_property_->getOptionInt();
+  auto mode = static_cast<rviz_rendering::PointCloud::RenderMode>(style_property_->getOptionInt());
   if (mode == rviz_rendering::PointCloud::RM_POINTS) {
     point_world_size_property_->hide();
     point_pixel_size_property_->show();
@@ -289,25 +288,24 @@ void PointCloudCommon::updateStyle()
     point_world_size_property_->show();
     point_pixel_size_property_->hide();
   }
-  for (unsigned int i = 0; i < cloud_infos_.size(); i++) {
-    cloud_infos_[i]->cloud_->setRenderMode(mode);
+  for (auto const & cloud_info : cloud_infos_) {
+    cloud_info->cloud_->setRenderMode(mode);
   }
   updateBillboardSize();
 }
 
 void PointCloudCommon::updateBillboardSize()
 {
-  rviz_rendering::PointCloud::RenderMode mode =
-    (rviz_rendering::PointCloud::RenderMode) style_property_->getOptionInt();
+  auto mode = static_cast<rviz_rendering::PointCloud::RenderMode>(style_property_->getOptionInt());
   float size;
   if (mode == rviz_rendering::PointCloud::RM_POINTS) {
     size = point_pixel_size_property_->getFloat();
   } else {
     size = point_world_size_property_->getFloat();
   }
-  for (unsigned i = 0; i < cloud_infos_.size(); i++) {
-    cloud_infos_[i]->cloud_->setDimensions(size, size, size);
-    cloud_infos_[i]->selection_handler_->setBoxSize(getSelectionBoxSize() );
+  for (auto & cloud_info : cloud_infos_) {
+    cloud_info->cloud_->setDimensions(size, size, size);
+    cloud_info->selection_handler_->setBoxSize(getSelectionBoxSize());
   }
   context_->queueRender();
 }
@@ -328,8 +326,7 @@ void PointCloudCommon::update(float wall_dt, float ros_dt)
 {
   (void) wall_dt;
   (void) ros_dt;
-  rviz_rendering::PointCloud::RenderMode mode = (rviz_rendering::PointCloud::RenderMode)
-    style_property_->getOptionInt();
+  auto mode = static_cast<rviz_rendering::PointCloud::RenderMode>(style_property_->getOptionInt());
 
   float point_decay_time = decay_time_property_->getFloat();
   if (needs_retransform_) {
@@ -347,13 +344,13 @@ void PointCloudCommon::update(float wall_dt, float ros_dt)
   // otherwise, clear all the outdated ones
   {
     std::unique_lock<std::mutex> lock(new_clouds_mutex_);
-    if (point_decay_time > 0.0 || !new_cloud_infos_.empty() ) {
+    if (point_decay_time > 0.0 || !new_cloud_infos_.empty()) {
       while (!cloud_infos_.empty() &&
         (now.nanoseconds() - cloud_infos_.front()->receive_time_.nanoseconds()) * 1000000000 >
         point_decay_time)
       {
         cloud_infos_.front()->clear();
-        obsolete_cloud_infos_.push_back(cloud_infos_.front() );
+        obsolete_cloud_infos_.push_back(cloud_infos_.front());
         cloud_infos_.pop_front();
         context_->queueRender();
       }
@@ -376,7 +373,7 @@ void PointCloudCommon::update(float wall_dt, float ros_dt)
 
   {
     std::unique_lock<std::mutex> lock(new_clouds_mutex_);
-    if (!new_cloud_infos_.empty() ) {
+    if (!new_cloud_infos_.empty()) {
       float size;
       if (mode == rviz_rendering::PointCloud::RM_POINTS) {
         size = point_pixel_size_property_->getFloat();
@@ -400,10 +397,10 @@ void PointCloudCommon::update(float wall_dt, float ros_dt)
 
         bool per_point_alpha = findChannelIndex(cloud_info->message_, "rgba") != -1;
 
-        cloud_info->cloud_.reset(new rviz_rendering::PointCloud() );
+        cloud_info->cloud_.reset(new rviz_rendering::PointCloud());
         cloud_info->cloud_->setRenderMode(mode);
         cloud_info->cloud_->addPoints(
-          cloud_info->transformed_points_.begin(), cloud_info->transformed_points_.end() );
+          cloud_info->transformed_points_.begin(), cloud_info->transformed_points_.end());
         cloud_info->cloud_->setAlpha(alpha_property_->getFloat(), per_point_alpha);
         cloud_info->cloud_->setDimensions(size, size, size);
         cloud_info->cloud_->setAutoSize(auto_size_);
@@ -413,7 +410,7 @@ void PointCloudCommon::update(float wall_dt, float ros_dt)
         cloud_info->scene_node_ = scene_node_->createChildSceneNode(cloud_info->position_,
             cloud_info->orientation_);
 
-        cloud_info->scene_node_->attachObject(cloud_info->cloud_.get() );
+        cloud_info->scene_node_->attachObject(cloud_info->cloud_.get());
 
         cloud_info->selection_handler_.reset(new PointCloudSelectionHandler(getSelectionBoxSize(),
           cloud_info.get(), context_));
@@ -428,17 +425,15 @@ void PointCloudCommon::update(float wall_dt, float ros_dt)
   {
     std::unique_lock<std::mutex> lock(new_clouds_mutex_);
 
-    if (lock.owns_lock() ) {
+    if (lock.owns_lock()) {
       if (new_xyz_transformer_ || new_color_transformer_) {
-        M_TransformerInfo::iterator it = transformers_.begin();
-        M_TransformerInfo::iterator end = transformers_.end();
-        for (; it != end; ++it) {
-          const std::string & name = it->first;
-          TransformerInfo & info = it->second;
+        for (auto transformer : transformers_) {
+          const std::string & name = transformer.first;
+          TransformerInfo & info = transformer.second;
 
-          setPropertiesHidden(info.xyz_props, name != xyz_transformer_property_->getStdString() );
+          setPropertiesHidden(info.xyz_props, name != xyz_transformer_property_->getStdString());
           setPropertiesHidden(info.color_props,
-            name != color_transformer_property_->getStdString() );
+            name != color_transformer_property_->getStdString());
         }
       }
     }
@@ -454,8 +449,8 @@ void PointCloudCommon::setPropertiesHidden(
   const QList<rviz_common::properties::Property *> & props,
   bool hide)
 {
-  for (int i = 0; i < props.size(); i++) {
-    props[i]->setHidden(hide);
+  for (auto prop : props) {
+    prop->setHidden(hide);
   }
 }
 
@@ -474,11 +469,9 @@ void PointCloudCommon::updateTransformers(
   bool cur_xyz_valid = false;
   bool cur_color_valid = false;
   bool has_rgb_transformer = false;
-  M_TransformerInfo::iterator trans_it = transformers_.begin();
-  M_TransformerInfo::iterator trans_end = transformers_.end();
-  for (; trans_it != trans_end; ++trans_it) {
-    const std::string & name = trans_it->first;
-    const PointCloudTransformerPtr & trans = trans_it->second.transformer;
+  for (auto transformer : transformers_) {
+    const std::string & name = transformer.first;
+    const PointCloudTransformerPtr & trans = transformer.second.transformer;
     uint32_t mask = trans->supports(cloud);
     if (mask & PointCloudTransformer::Support_XYZ) {
       valid_xyz.insert(std::make_pair(trans->score(cloud), name));
@@ -501,13 +494,13 @@ void PointCloudCommon::updateTransformers(
   }
 
   if (!cur_xyz_valid) {
-    if (!valid_xyz.empty() ) {
+    if (!valid_xyz.empty()) {
       xyz_transformer_property_->setStringStd(valid_xyz.rbegin()->second);
     }
   }
 
   if (!cur_color_valid) {
-    if (!valid_color.empty() ) {
+    if (!valid_color.empty()) {
       if (has_rgb_transformer) {
         color_transformer_property_->setStringStd("RGB8");
       } else {
@@ -520,8 +513,6 @@ void PointCloudCommon::updateTransformers(
 void PointCloudCommon::updateStatus()
 {
   std::stringstream ss;
-// TODO(Martin-Idel-SI): total_point_count_ is not available. Revisit during refactoring
-//   ss << "Showing [" << total_point_count_ << "] points from [" << clouds_.size() << "] messages";
   display_->setStatusStd(rviz_common::properties::StatusProperty::Ok, "Points", ss.str());
 }
 
@@ -541,7 +532,7 @@ void PointCloudCommon::processMessage(const sensor_msgs::msg::PointCloud2::Const
 void PointCloudCommon::updateXyzTransformer()
 {
   std::unique_lock<std::recursive_mutex> lock(transformers_mutex_);
-  if (transformers_.count(xyz_transformer_property_->getStdString() ) == 0) {
+  if (transformers_.count(xyz_transformer_property_->getStdString()) == 0) {
     return;
   }
   new_xyz_transformer_ = true;
@@ -551,7 +542,7 @@ void PointCloudCommon::updateXyzTransformer()
 void PointCloudCommon::updateColorTransformer()
 {
   std::unique_lock<std::recursive_mutex> lock(transformers_mutex_);
-  if (transformers_.count(color_transformer_property_->getStdString() ) == 0) {
+  if (transformers_.count(color_transformer_property_->getStdString()) == 0) {
     return;
   }
   new_color_transformer_ = true;
@@ -562,8 +553,8 @@ PointCloudTransformerPtr PointCloudCommon::getXYZTransformer(
   const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
 {
   std::unique_lock<std::recursive_mutex> lock(transformers_mutex_);
-  M_TransformerInfo::iterator it = transformers_.find(xyz_transformer_property_->getStdString() );
-  if (it != transformers_.end() ) {
+  auto it = transformers_.find(xyz_transformer_property_->getStdString());
+  if (it != transformers_.end()) {
     const PointCloudTransformerPtr & trans = it->second.transformer;
     if (trans->supports(cloud) & PointCloudTransformer::Support_XYZ) {
       return trans;
@@ -577,8 +568,8 @@ PointCloudTransformerPtr PointCloudCommon::getColorTransformer(
   const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
 {
   std::unique_lock<std::recursive_mutex> lock(transformers_mutex_);
-  M_TransformerInfo::iterator it = transformers_.find(color_transformer_property_->getStdString() );
-  if (it != transformers_.end() ) {
+  auto it = transformers_.find(color_transformer_property_->getStdString());
+  if (it != transformers_.end()) {
     const PointCloudTransformerPtr & trans = it->second.transformer;
     if (trans->supports(cloud) & PointCloudTransformer::Support_Color) {
       return trans;
@@ -593,10 +584,7 @@ void PointCloudCommon::retransform()
 {
   std::unique_lock<std::recursive_mutex> lock(transformers_mutex_);
 
-  D_CloudInfo::iterator it = cloud_infos_.begin();
-  D_CloudInfo::iterator end = cloud_infos_.end();
-  for (; it != end; ++it) {
-    const CloudInfoPtr & cloud_info = *it;
+  for (auto const & cloud_info : cloud_infos_) {
     transformCloud(cloud_info, false);
     cloud_info->cloud_->clear();
     cloud_info->cloud_->addPoints(
@@ -607,69 +595,77 @@ void PointCloudCommon::retransform()
 bool PointCloudCommon::transformCloud(const CloudInfoPtr & cloud_info, bool update_transformers)
 {
   if (!cloud_info->scene_node_) {
-    // TODO(Martin-Idel-SI): Not clear why this doesn't work. Revisit during refactoring
-//    if (!context_->getFrameManager()->getTransform(cloud_info->message_->header,
-// cloud_info->position_, cloud_info->orientation_))
-//    {
-//      std::stringstream ss;
-//      ss << "Failed to transform from frame [" << cloud_info->message_->header.frame_id << "]to "
-//        "frame [" << context_->getFrameManager()->getFixedFrame() << "]";
-//      display_->setStatusStd(rviz_common::properties::StatusProperty::Error, "Message", ss.str());
-//      return false;
-//    }
+    if (!context_->getFrameManager()->getTransform(
+        cloud_info->message_->header,
+        cloud_info->position_,
+        cloud_info->orientation_))
+    {
+      std::stringstream ss;
+      ss << "Failed to transform from frame [" << cloud_info->message_->header.frame_id << "]to "
+        "frame [" << context_->getFrameManager()->getFixedFrame() << "]";
+      display_->setStatusStd(rviz_common::properties::StatusProperty::Error, "Message", ss.str());
+      return false;
+    }
   }
-
-  Ogre::Matrix4 transform;
-  transform.makeTransform(cloud_info->position_, Ogre::Vector3(1, 1, 1), cloud_info->orientation_);
 
   V_PointCloudPoint & cloud_points = cloud_info->transformed_points_;
   cloud_points.clear();
 
   size_t size = cloud_info->message_->width * cloud_info->message_->height;
-  rviz_rendering::PointCloud::Point default_pt;
-  default_pt.color = Ogre::ColourValue(1, 1, 1);
-  default_pt.position = Ogre::Vector3::ZERO;
+  rviz_rendering::PointCloud::Point default_pt = {Ogre::Vector3::ZERO, Ogre::ColourValue(1, 1, 1)};
   cloud_points.resize(size, default_pt);
 
-  {
-    std::unique_lock<std::recursive_mutex> lock(transformers_mutex_);
-    if (update_transformers) {
-      updateTransformers(cloud_info->message_);
-    }
-    PointCloudTransformerPtr xyz_trans = getXYZTransformer(cloud_info->message_);
-    PointCloudTransformerPtr color_trans = getColorTransformer(cloud_info->message_);
-
-    if (!xyz_trans) {
-      std::stringstream ss;
-      ss << "No position transformer available for cloud";
-      display_->setStatusStd(rviz_common::properties::StatusProperty::Error, "Message", ss.str());
-      return false;
-    }
-
-    if (!color_trans) {
-      std::stringstream ss;
-      ss << "No color transformer available for cloud";
-      display_->setStatusStd(rviz_common::properties::StatusProperty::Error, "Message", ss.str());
-      return false;
-    }
-
-    xyz_trans->transform(cloud_info->message_, PointCloudTransformer::Support_XYZ, transform,
-      cloud_points);
-    color_trans->transform(cloud_info->message_, PointCloudTransformer::Support_Color, transform,
-      cloud_points);
+  if (!transformPoints(cloud_info, cloud_points, update_transformers)) {
+    return false;
   }
 
-  for (V_PointCloudPoint::iterator cloud_point = cloud_points.begin();
-    cloud_point != cloud_points.end(); ++cloud_point)
-  {
-    if (!rviz_common::validateFloats(cloud_point->position)) {
-      cloud_point->position.x = 999999.0f;
-      cloud_point->position.y = 999999.0f;
-      cloud_point->position.z = 999999.0f;
-    }
-  }
-
+  setProblematicPointsToInfinity(cloud_points);
   return true;
+}
+
+bool PointCloudCommon::transformPoints(
+  const CloudInfoPtr & cloud_info, V_PointCloudPoint & cloud_points, bool update_transformers)
+{
+  Ogre::Matrix4 transform;
+  transform.makeTransform(cloud_info->position_, Ogre::Vector3(1, 1, 1), cloud_info->orientation_);
+
+  std::unique_lock<std::recursive_mutex> lock(transformers_mutex_);
+  if (update_transformers) {
+    updateTransformers(cloud_info->message_);
+  }
+  PointCloudTransformerPtr xyz_trans = getXYZTransformer(cloud_info->message_);
+  PointCloudTransformerPtr color_trans = getColorTransformer(cloud_info->message_);
+
+  if (!xyz_trans) {
+    std::stringstream ss;
+    ss << "No position transformer available for cloud";
+    display_->setStatusStd(rviz_common::properties::StatusProperty::Error, "Message", ss.str());
+    return false;
+  }
+
+  if (!color_trans) {
+    std::stringstream ss;
+    ss << "No color transformer available for cloud";
+    display_->setStatusStd(rviz_common::properties::StatusProperty::Error, "Message", ss.str());
+    return false;
+  }
+
+  xyz_trans->transform(cloud_info->message_, PointCloudTransformer::Support_XYZ, transform,
+    cloud_points);
+  color_trans->transform(cloud_info->message_, PointCloudTransformer::Support_Color, transform,
+    cloud_points);
+  return true;
+}
+
+void PointCloudCommon::setProblematicPointsToInfinity(V_PointCloudPoint & cloud_points)
+{
+  for (auto & cloud_point : cloud_points) {
+    if (!rviz_common::validateFloats(cloud_point.position)) {
+      cloud_point.position.x = 999999.0f;
+      cloud_point.position.y = 999999.0f;
+      cloud_point.position.z = 999999.0f;
+    }
+  }
 }
 
 void PointCloudCommon::addMessage(const sensor_msgs::msg::PointCloud::ConstSharedPtr & cloud)
@@ -714,12 +710,10 @@ void PointCloudCommon::fillTransformerOptions(
 
   const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg = cloud_infos_.front()->message_;
 
-  M_TransformerInfo::iterator it = transformers_.begin();
-  M_TransformerInfo::iterator end = transformers_.end();
-  for (; it != end; ++it) {
-    const PointCloudTransformerPtr & trans = it->second.transformer;
+  for (auto transformer : transformers_) {
+    const PointCloudTransformerPtr & trans = transformer.second.transformer;
     if ((trans->supports(msg) & mask) == mask) {
-      prop->addOption(QString::fromStdString(it->first));
+      prop->addOption(QString::fromStdString(transformer.first));
     }
   }
 }

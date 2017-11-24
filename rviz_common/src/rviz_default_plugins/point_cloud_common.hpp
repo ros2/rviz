@@ -52,8 +52,8 @@
 # include "sensor_msgs/msg/point_cloud2.hpp"
 
 # include "rviz_common/selection/selection_manager.hpp"
-# include "./point_cloud_transformer.hpp"
-# include "./point_cloud_selection_handler.hpp"
+# include "point_cloud_transformer.hpp"
+# include "point_cloud_selection_handler.hpp"
 # include "rviz_common/properties/color_property.hpp"
 # include "rviz_rendering/point_cloud.hpp"
 # include "rviz_common/selection/forwards.hpp"
@@ -124,11 +124,10 @@ public:
   typedef std::shared_ptr<CloudInfo> CloudInfoPtr;
   typedef std::deque<CloudInfoPtr> D_CloudInfo;
   typedef std::vector<CloudInfoPtr> V_CloudInfo;
-  typedef std::queue<CloudInfoPtr> Q_CloudInfo;
   typedef std::list<CloudInfoPtr> L_CloudInfo;
 
   explicit PointCloudCommon(rviz_common::Display * display);
-  ~PointCloudCommon();
+  ~PointCloudCommon() override;
 
   void initialize(rviz_common::DisplayContext * context, Ogre::SceneNode * scene_node);
 
@@ -168,12 +167,11 @@ private Q_SLOTS:
   void setColorTransformerOptions(rviz_common::properties::EnumProperty * prop);
 
 private:
-  /**
-   * \brief Transforms the cloud into the correct frame, and sets up our renderable cloud
-   */
   bool transformCloud(const CloudInfoPtr & cloud, bool fully_update_transformers);
-
   void processMessage(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud);
+  bool transformPoints(
+    const CloudInfoPtr & cloud_info, V_PointCloudPoint & cloud_points, bool update_transformers);
+  void setProblematicPointsToInfinity(V_PointCloudPoint & cloud_points);
   void updateStatus();
 
   PointCloudTransformerPtr getXYZTransformer(
@@ -182,7 +180,6 @@ private:
     const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud);
   void updateTransformers(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud);
   void retransform();
-  void onTransformerOptions(V_string & ops, uint32_t mask);
 
   void loadTransformers();
   void loadTransformer(
