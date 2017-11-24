@@ -27,52 +27,55 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__MESSAGE_CREATORS_HPP_
-#define RVIZ_DEFAULT_PLUGINS__MESSAGE_CREATORS_HPP_
+#include <gtest/gtest.h>
 
-#include <cstring>
+#include <memory>
 #include <vector>
 
-#include "sensor_msgs/msg/point_cloud2.hpp"
-#include "sensor_msgs/msg/point_cloud.hpp"
+#include "../message_creators.hpp"
 
-namespace rviz_default_plugins
-{
+#include "src/rviz_default_plugins/point_cloud_transformers/rgb8_pc_transformer.hpp"
 
-struct Point
-{
-  float x, y, z;
-  Point(float x, float y, float z)
-  : x(x), y(y), z(z) {}
-};
+using namespace rviz_default_plugins; // NOLINT
 
-struct PointWithIntensity : Point
-{
-  float intensity;
-  PointWithIntensity(float x, float y, float z, float intensity)
-  : Point(x, y, z), intensity(intensity) {}
-};
+TEST(RGB8PCTransformer, transform_returns_points_colored_in_their_rgb_color) {
+  ColoredPoint p1 = {0, 0, 0, 0, 1, 0};
+  ColoredPoint p2 = {0, 0, 0, 1, 0, 1};
+  auto cloud = create8BitColoredPointCloud2(std::vector<ColoredPoint>{p1, p2});
 
-struct ColoredPoint : Point
-{
-  float r, g, b;
-  ColoredPoint(float x, float y, float z, float r, float g, float b)
-  : Point(x, y, z), r(r), g(g), b(b) {}
-};
+  V_PointCloudPoint points_out;
+  points_out.resize(2);
 
-sensor_msgs::msg::PointCloud::ConstSharedPtr createPointCloudWithSquare();
-sensor_msgs::msg::PointCloud::ConstSharedPtr createPointCloudWithPoints(std::vector<Point> points);
+  RGB8PCTransformer transformer;
+  transformer.transform(
+    cloud, PointCloudTransformer::Support_Color, Ogre::Matrix4::ZERO, points_out);
 
-sensor_msgs::msg::PointCloud2::ConstSharedPtr createPointCloud2WithSquare();
-sensor_msgs::msg::PointCloud2::SharedPtr createPointCloud2WithPoints(
-  const std::vector<Point> & points);
-sensor_msgs::msg::PointCloud2::ConstSharedPtr createF32ColoredPointCloud2(
-  const std::vector<ColoredPoint> & points);
-sensor_msgs::msg::PointCloud2::ConstSharedPtr create8BitColoredPointCloud2(
-  const std::vector<ColoredPoint> & points);
-sensor_msgs::msg::PointCloud2::ConstSharedPtr createPointCloud2WithIntensity(
-  const std::vector<PointWithIntensity> & points);
+  ASSERT_EQ(points_out.size(), (uint32_t) 2);
+  ASSERT_EQ(points_out[0].color, Ogre::ColourValue(0, 1, 0));
+  ASSERT_EQ(points_out[1].color, Ogre::ColourValue(1, 0, 1));
+}
 
-}  // namespace rviz_default_plugins
+TEST(RGBF32PCTransformer, supports_returns_color_support_for_cloud_with_rgb_field) {
+  ColoredPoint p1 = {0, 0, 0, 0, 0, 0};
+  ColoredPoint p2 = {0, 0, 0, 1, 1, 1};
+  auto cloud = create8BitColoredPointCloud2(std::vector<ColoredPoint>{p1, p2});
 
-#endif  // RVIZ_DEFAULT_PLUGINS__MESSAGE_CREATORS_HPP_
+  RGB8PCTransformer transformer;
+  uint8_t result = transformer.supports(cloud);
+
+  ASSERT_EQ(PointCloudTransformer::Support_Color, result);
+}
+
+TEST(RGBF32PCTransformer, supports_returns_no_color_support_for_cloud_without_rgb_field) {
+  auto cloud = std::make_shared<sensor_msgs::msg::PointCloud2>();
+
+  cloud->fields.resize(3);
+  cloud->fields[0].name = "a";
+  cloud->fields[1].name = "b";
+  cloud->fields[2].name = "c";
+
+  RGB8PCTransformer transformer;
+  uint8_t result = transformer.supports(cloud);
+
+  ASSERT_EQ(PointCloudTransformer::Support_None, result);
+}
