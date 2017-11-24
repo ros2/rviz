@@ -30,8 +30,6 @@
 #ifndef RVIZ_COMMON__DISPLAYS_PANEL_HPP_
 #define RVIZ_COMMON__DISPLAYS_PANEL_HPP_
 
-#include <boost/thread/mutex.hpp>
-
 #include <vector>
 #include <map>
 #include <set>
@@ -43,11 +41,13 @@ class QPushButton;
 
 namespace rviz_common
 {
-
-class PropertyTreeWidget;
-class PropertyTreeWithHelp;
 class VisualizationManager;
 class Display;
+namespace properties
+{
+class PropertyTreeWidget;
+class PropertyTreeWithHelp;
+}
 
 /**
  * \class DisplaysPanel
@@ -82,12 +82,12 @@ protected Q_SLOTS:
   void onSelectionChanged();
 
 protected:
-  PropertyTreeWidget * property_grid_;
+  properties::PropertyTreeWidget * property_grid_;
 
   QPushButton * duplicate_button_;
   QPushButton * remove_button_;
   QPushButton * rename_button_;
-  PropertyTreeWithHelp * tree_with_help_;
+  properties::PropertyTreeWithHelp * tree_with_help_;
 };
 
 }  // namespace rviz_common

@@ -78,6 +78,7 @@
 // TODO(wjwwood): readd this once we have a solution for the pluginlib stuff
 // #include "./panel_factory.hpp"
 
+#include "./displays_panel.hpp"
 #include "./env_config.hpp"
 #include "./failed_panel.hpp"
 #include "./load_resource.hpp"
@@ -374,6 +375,9 @@ void VisualizationFrame::initialize(const QString & display_config_file)
   } else {
     loadDisplayConfig(QString::fromStdString(default_display_config_file_));
   }
+
+  // TODO(greimela): Remove as soon as displays are loaded from config
+  addPanelByName("Displays", "rviz/DisplaysPanel");
 
   // Periodically process events for the splash screen.
   if (app_) {app_->processEvents();}
@@ -1246,7 +1250,6 @@ void VisualizationFrame::exitFullScreen()
   setFullScreen(false);
 }
 
-#if 0
 QDockWidget * VisualizationFrame::addPanelByName(
   const QString & name,
   const QString & class_id,
@@ -1254,10 +1257,15 @@ QDockWidget * VisualizationFrame::addPanelByName(
   bool floating)
 {
   QString error;
-  Panel * panel = panel_factory_->make(class_id, &error);
-  if (!panel) {
+
+  // TODO(greimela): Temporary workaround until pluginlib is migrated
+  Panel * panel;
+  if (class_id == "rviz/DisplaysPanel") {
+    panel = new DisplaysPanel(nullptr);
+  } else {
     panel = new FailedPanel(class_id, error);
   }
+
   panel->setName(name);
   connect(panel, SIGNAL(configChanged()), this, SLOT(setDisplayConfigModified()));
 
@@ -1271,11 +1279,11 @@ QDockWidget * VisualizationFrame::addPanelByName(
 
   record.panel->initialize(manager_);
 
-  record.dock->setIcon(panel_factory_->getIcon(class_id));
+  // TODO(greimela): Temporary workaround until pluginlib is migrated
+//  record.dock->setIcon(panel_factory_->getIcon(class_id));
 
   return record.dock;
 }
-#endif
 
 PanelDockWidget * VisualizationFrame::addPane(
   const QString & name, QWidget * panel,

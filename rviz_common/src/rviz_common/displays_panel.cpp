@@ -34,11 +34,10 @@
 #include <QInputDialog>
 #include <QApplication>
 
-#include <boost/bind.hpp>
-
-#include "./display_factory.hpp"
+// TODO(greimela): Enable button again after adding displays is possible
+// #include "./display_factory.hpp"
+// #include "./add_display_dialog.hpp"
 #include "rviz_common/display.hpp"
-#include "./add_display_dialog.hpp"
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/properties/property_tree_widget.hpp"
 #include "rviz_common/properties/property_tree_with_help.hpp"
@@ -52,12 +51,14 @@ namespace rviz_common
 DisplaysPanel::DisplaysPanel(QWidget * parent)
 : Panel(parent)
 {
-  tree_with_help_ = new PropertyTreeWithHelp;
+  tree_with_help_ = new properties::PropertyTreeWithHelp;
   property_grid_ = tree_with_help_->getTree();
 
   QPushButton * add_button = new QPushButton("Add");
   add_button->setShortcut(QKeySequence(QString("Ctrl+N")));
   add_button->setToolTip("Add a new display, Ctrl+N");
+  // TODO(greimela): Enable button again after adding displays is possible
+  add_button->setEnabled(false);
   duplicate_button_ = new QPushButton("Duplicate");
   duplicate_button_->setShortcut(QKeySequence(QString("Ctrl+D")));
   duplicate_button_->setToolTip("Duplicate a display, Ctrl+D");
@@ -85,11 +86,12 @@ DisplaysPanel::DisplaysPanel(QWidget * parent)
 
   setLayout(layout);
 
-  connect(add_button, SIGNAL(clicked(bool)), this, SLOT(onNewDisplay()));
-  connect(duplicate_button_, SIGNAL(clicked(bool)), this, SLOT(onDuplicateDisplay()));
-  connect(remove_button_, SIGNAL(clicked(bool)), this, SLOT(onDeleteDisplay()));
-  connect(rename_button_, SIGNAL(clicked(bool)), this, SLOT(onRenameDisplay()));
-  connect(property_grid_, SIGNAL(selectionHasChanged()), this, SLOT(onSelectionChanged()));
+  // TODO(greimela): Enable buttons again after adding displays is possible
+//  connect(add_button, SIGNAL(clicked(bool)), this, SLOT(onNewDisplay()));
+//  connect(duplicate_button_, SIGNAL(clicked(bool)), this, SLOT(onDuplicateDisplay()));
+//  connect(remove_button_, SIGNAL(clicked(bool)), this, SLOT(onDeleteDisplay()));
+//  connect(rename_button_, SIGNAL(clicked(bool)), this, SLOT(onRenameDisplay()));
+//  connect(property_grid_, SIGNAL(selectionHasChanged()), this, SLOT(onSelectionChanged()));
 }
 
 DisplaysPanel::~DisplaysPanel()
@@ -98,38 +100,39 @@ DisplaysPanel::~DisplaysPanel()
 
 void DisplaysPanel::onInitialize()
 {
-  property_grid_->setModel(vis_manager_->getDisplayTreeModel() );
+  property_grid_->setModel(vis_manager_->getDisplayTreeModel());
 }
 
+// TODO(greimela): Enable again after adding displays is possible
 void DisplaysPanel::onNewDisplay()
 {
-  QString lookup_name;
-  QString display_name;
-  QString topic;
-  QString datatype;
-
-  QStringList empty;
-
-  QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-  AddDisplayDialog * dialog = new AddDisplayDialog(vis_manager_->getDisplayFactory(),
-      "Display",
-      empty, empty,
-      &lookup_name,
-      &display_name,
-      &topic,
-      &datatype);
-  QApplication::restoreOverrideCursor();
-
-  vis_manager_->stopUpdate();
-  if (dialog->exec() == QDialog::Accepted) {
-    Display * disp = vis_manager_->createDisplay(lookup_name, display_name, true);
-    if (!topic.isEmpty() && !datatype.isEmpty() ) {
-      disp->setTopic(topic, datatype);
-    }
-  }
-  vis_manager_->startUpdate();
-  activateWindow();  // Force keyboard focus back on main window.
-  delete dialog;
+//  QString lookup_name;
+//  QString display_name;
+//  QString topic;
+//  QString datatype;
+//
+//  QStringList empty;
+//
+//  QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+//  AddDisplayDialog * dialog = new AddDisplayDialog(vis_manager_->getDisplayFactory(),
+//      "Display",
+//      empty, empty,
+//      &lookup_name,
+//      &display_name,
+//      &topic,
+//      &datatype);
+//  QApplication::restoreOverrideCursor();
+//
+//  vis_manager_->stopUpdate();
+//  if (dialog->exec() == QDialog::Accepted) {
+//    Display * disp = vis_manager_->createDisplay(lookup_name, display_name, true);
+//    if (!topic.isEmpty() && !datatype.isEmpty() ) {
+//      disp->setTopic(topic, datatype);
+//    }
+//  }
+//  vis_manager_->startUpdate();
+//  activateWindow();  // Force keyboard focus back on main window.
+//  delete dialog;
 }
 
 void DisplaysPanel::onDuplicateDisplay()
@@ -205,15 +208,12 @@ void DisplaysPanel::onRenameDisplay()
   Display * display_to_rename = displays[0];
 
   if (!display_to_rename) {
-    rviz
-    {
-      return;
-    }
-
-    QString old_name = display_to_rename->getName();
+    return;
   }
-  QString new_name = QInputDialog::getText(this, "Rename Display", "New Name?", QLineEdit::Normal,
-      old_name);
+
+  QString old_name = display_to_rename->getName();
+  QString new_name = QInputDialog::getText(
+    this, "Rename Display", "New Name?", QLineEdit::Normal, old_name);
 
   if (new_name.isEmpty() || new_name == old_name) {
     return;
