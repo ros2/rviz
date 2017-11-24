@@ -27,12 +27,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "src/rviz_default_plugins/point_cloud_transformers.hpp"
+#include "src/rviz_default_plugins/point_cloud_helpers.hpp"
 #include "xyz_pc_transformer.hpp"
 
-namespace rviz_default_plugins {
+namespace rviz_default_plugins
+{
 
-uint8_t XYZPCTransformer::supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &cloud)
+uint8_t XYZPCTransformer::supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
 {
   int32_t xi = rviz_default_plugins::findChannelIndex(cloud, "x");
   int32_t yi = rviz_default_plugins::findChannelIndex(cloud, "y");
@@ -50,10 +51,10 @@ uint8_t XYZPCTransformer::supports(const sensor_msgs::msg::PointCloud2::ConstSha
 }
 
 bool XYZPCTransformer::transform(
-  const sensor_msgs::msg::PointCloud2::ConstSharedPtr &cloud,
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
   uint32_t mask,
-  const Ogre::Matrix4 &transform,
-  V_PointCloudPoint &points_out)
+  const Ogre::Matrix4 & transform,
+  V_PointCloudPoint & points_out)
 {
   (void) transform;
   if (!(mask & PointCloudTransformer::Support_XYZ)) {
@@ -73,7 +74,8 @@ bool XYZPCTransformer::transform(
   uint8_t const * point_z = &cloud->data.front() + zoff;
   for (V_PointCloudPoint::iterator iter = points_out.begin(); iter != points_out.end();
     ++iter, point_x += point_step,
-            point_y += point_step, point_z += point_step) {
+    point_y += point_step, point_z += point_step)
+  {
     iter->position.x = *reinterpret_cast<const float *>(point_x);
     iter->position.y = *reinterpret_cast<const float *>(point_y);
     iter->position.z = *reinterpret_cast<const float *>(point_z);

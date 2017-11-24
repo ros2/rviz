@@ -28,18 +28,22 @@
  */
 
 
-#ifndef RVIZ_DEFAULT_PLUGINS__AXIS_COLOR_PC_TRANSFORMER_HPP
-#define RVIZ_DEFAULT_PLUGINS__AXIS_COLOR_PC_TRANSFORMER_HPP
+#ifndef RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS__AXIS_COLOR_PC_TRANSFORMER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS__AXIS_COLOR_PC_TRANSFORMER_HPP_
 
 #include <vector>
 #include <string>
 
 #include "sensor_msgs/msg/point_cloud2.hpp"
 #include "rviz_common/properties/property.hpp"
+#include "rviz_common/properties/bool_property.hpp"
+#include "rviz_common/properties/enum_property.hpp"
+#include "rviz_common/properties/float_property.hpp"
 
 #include "src/rviz_default_plugins/point_cloud_transformer.hpp"
 
-namespace rviz_default_plugins {
+namespace rviz_default_plugins
+{
 
 class AxisColorPCTransformer : public PointCloudTransformer
 {
@@ -81,4 +85,4 @@ private:
 
 }  // end namespace rviz_default_plugins
 
-#endif //RVIZ_DEFAULT_PLUGINS__AXIS_COLOR_PC_TRANSFORMER_HPP
+#endif  // RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS__AXIS_COLOR_PC_TRANSFORMER_HPP_

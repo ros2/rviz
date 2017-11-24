@@ -27,11 +27,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS_HPP_
-#define RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_HELPERS_HPP_
+#define RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_HELPERS_HPP_
 
-#include <vector>
+#include <algorithm>
 #include <string>
+#include <vector>
 
 #include "sensor_msgs/msg/point_cloud2.hpp"
 #include "rviz_common/properties/property.hpp"
@@ -141,13 +142,19 @@ inline void getRainbowColor(float value, Ogre::ColourValue & color)
   }
   float n = 1 - f;
 
-  if (i <= 1) {color[0] = n, color[1] = 0, color[2] = 1;} else if (i == 2) {
+  if (i <= 1) {
+    color[0] = n, color[1] = 0, color[2] = 1;
+  } else if (i == 2) {
     color[0] = 0, color[1] = n, color[2] = 1;
-  } else if (i == 3) {color[0] = 0, color[1] = 1, color[2] = n;} else if (i == 4) {
+  } else if (i == 3) {
+    color[0] = 0, color[1] = 1, color[2] = n;
+  } else if (i == 4) {
     color[0] = n, color[1] = 1, color[2] = 0;
-  } else if (i >= 5) {color[0] = 1, color[1] = n, color[2] = 0;}
+  } else if (i >= 5) {
+    color[0] = 1, color[1] = n, color[2] = 0;
+  }
 }
 
 }  // end namespace rviz_default_plugins
 
-#endif  // RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_HELPERS_HPP_

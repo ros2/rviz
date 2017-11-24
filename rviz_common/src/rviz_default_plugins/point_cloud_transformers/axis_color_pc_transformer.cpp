@@ -27,34 +27,39 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <algorithm>
+#include <vector>
+
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/enum_property.hpp"
 #include "rviz_common/properties/editable_enum_property.hpp"
 #include "rviz_common/properties/color_property.hpp"
 #include "rviz_common/properties/bool_property.hpp"
-#include "src/rviz_default_plugins/point_cloud_transformers.hpp"
+#include "src/rviz_default_plugins/point_cloud_helpers.hpp"
 
 #include "axis_color_pc_transformer.hpp"
 
-namespace rviz_default_plugins {
+namespace rviz_default_plugins
+{
 
-uint8_t AxisColorPCTransformer::supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &cloud)
+uint8_t AxisColorPCTransformer::supports(
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
 {
   (void) cloud;
   return PointCloudTransformer::Support_Color;
 }
 
-uint8_t AxisColorPCTransformer::score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &cloud)
+uint8_t AxisColorPCTransformer::score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
 {
   (void) cloud;
   return 255;
 }
 
 bool AxisColorPCTransformer::transform(
-  const sensor_msgs::msg::PointCloud2::ConstSharedPtr &cloud,
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
   uint32_t mask,
-  const Ogre::Matrix4 &transform,
-  V_PointCloudPoint &points_out)
+  const Ogre::Matrix4 & transform,
+  V_PointCloudPoint & points_out)
 {
   if (!(mask & PointCloudTransformer::Support_Color)) {
     return false;
@@ -125,7 +130,7 @@ bool AxisColorPCTransformer::transform(
 void AxisColorPCTransformer::createProperties(
   rviz_common::properties::Property * parent_property,
   uint32_t mask,
-  QList<rviz_common::properties::Property *> &out_props)
+  QList<rviz_common::properties::Property *> & out_props)
 {
   if (mask & Support_Color) {
     axis_property_ = new rviz_common::properties::EnumProperty(
@@ -181,4 +186,3 @@ void AxisColorPCTransformer::updateAutoComputeBounds()
 }
 
 }  // end namespace rviz_default_plugins
-

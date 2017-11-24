@@ -27,27 +27,32 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <algorithm>
+#include <string>
+
 #include "intensity_pc_transformer.hpp"
 
-namespace rviz_default_plugins {
+namespace rviz_default_plugins
+{
 
-uint8_t IntensityPCTransformer::supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &cloud)
+uint8_t IntensityPCTransformer::supports(
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
 {
   updateChannels(cloud);
   return Support_Color;
 }
 
-uint8_t IntensityPCTransformer::score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &cloud)
+uint8_t IntensityPCTransformer::score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
 {
   (void) cloud;
   return 255;
 }
 
 bool IntensityPCTransformer::transform(
-  const sensor_msgs::msg::PointCloud2::ConstSharedPtr &cloud,
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
   uint32_t mask,
-  const Ogre::Matrix4 &transform,
-  V_PointCloudPoint &points_out)
+  const Ogre::Matrix4 & transform,
+  V_PointCloudPoint & points_out)
 {
   (void) transform;
   if (!(mask & Support_Color)) {
@@ -129,7 +134,7 @@ bool IntensityPCTransformer::transform(
 void IntensityPCTransformer::createProperties(
   rviz_common::properties::Property * parent_property,
   uint32_t mask,
-  QList<rviz_common::properties::Property *> &out_props)
+  QList<rviz_common::properties::Property *> & out_props)
 {
   if (mask & Support_Color) {
     channel_name_property_ = new rviz_common::properties::EditableEnumProperty(
@@ -150,13 +155,13 @@ void IntensityPCTransformer::createProperties(
     min_color_property_ = new rviz_common::properties::ColorProperty(
       "Min Color", Qt::black,
       "Color to assign the points with the minimum intensity.  "
-        "Actual color is interpolated between this and Max Color.",
+      "Actual color is interpolated between this and Max Color.",
       parent_property, SIGNAL(needRetransform()), this);
 
     max_color_property_ = new rviz_common::properties::ColorProperty(
       "Max Color", Qt::white,
       "Color to assign the points with the maximum intensity.  "
-        "Actual color is interpolated between this and Min Color.",
+      "Actual color is interpolated between this and Min Color.",
       parent_property, SIGNAL(needRetransform()), this);
 
     auto_compute_intensity_bounds_property_ = new rviz_common::properties::BoolProperty(
@@ -167,13 +172,13 @@ void IntensityPCTransformer::createProperties(
     min_intensity_property_ = new rviz_common::properties::FloatProperty(
       "Min Intensity", 0,
       "Minimum possible intensity value, used to interpolate from Min Color "
-        "to Max Color for a point.",
+      "to Max Color for a point.",
       parent_property);
 
     max_intensity_property_ = new rviz_common::properties::FloatProperty(
       "Max Intensity", 4096,
       "Maximum possible intensity value, used to interpolate from Min Color "
-        "to Max Color for a point.",
+      "to Max Color for a point.",
       parent_property);
 
     out_props.push_back(channel_name_property_);
@@ -191,7 +196,7 @@ void IntensityPCTransformer::createProperties(
 }
 
 void IntensityPCTransformer::updateChannels(
-  const sensor_msgs::msg::PointCloud2::ConstSharedPtr &cloud)
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
 {
   V_string channels;
   for (size_t i = 0; i < cloud->fields.size(); ++i) {
@@ -202,7 +207,7 @@ void IntensityPCTransformer::updateChannels(
   if (channels != available_channels_) {
     channel_name_property_->clearOptions();
     for (V_string::const_iterator it = channels.begin(); it != channels.end(); ++it) {
-      const std::string &channel = *it;
+      const std::string & channel = *it;
       if (channel.empty()) {
         continue;
       }

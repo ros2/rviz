@@ -27,12 +27,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "src/rviz_default_plugins/point_cloud_transformers.hpp"
+#include "src/rviz_default_plugins/point_cloud_helpers.hpp"
 #include "rgbf32_pc_transformer.hpp"
 
-namespace rviz_default_plugins {
+namespace rviz_default_plugins
+{
 
-unsigned char RGBF32PCTransformer::supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
+unsigned char RGBF32PCTransformer::supports(
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
 {
   int ri = findChannelIndex(cloud, "r");
   int gi = findChannelIndex(cloud, "g");

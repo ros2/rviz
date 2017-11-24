@@ -27,12 +27,16 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "src/rviz_default_plugins/point_cloud_transformers.hpp"
+#include <algorithm>
+
+#include "src/rviz_default_plugins/point_cloud_helpers.hpp"
+
 #include "rgb8_pc_transformer.hpp"
 
-namespace rviz_default_plugins {
+namespace rviz_default_plugins
+{
 
-uint8_t RGB8PCTransformer::supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &cloud)
+uint8_t RGB8PCTransformer::supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
 {
   int32_t index = std::max(findChannelIndex(cloud, "rgb"), findChannelIndex(cloud, "rgba"));
   if (index == -1) {
@@ -41,7 +45,8 @@ uint8_t RGB8PCTransformer::supports(const sensor_msgs::msg::PointCloud2::ConstSh
 
   if (cloud->fields[index].datatype == sensor_msgs::msg::PointField::INT32 ||
     cloud->fields[index].datatype == sensor_msgs::msg::PointField::UINT32 ||
-    cloud->fields[index].datatype == sensor_msgs::msg::PointField::FLOAT32) {
+    cloud->fields[index].datatype == sensor_msgs::msg::PointField::FLOAT32)
+  {
     return Support_Color;
   }
 
@@ -49,10 +54,10 @@ uint8_t RGB8PCTransformer::supports(const sensor_msgs::msg::PointCloud2::ConstSh
 }
 
 bool RGB8PCTransformer::transform(
-  const sensor_msgs::msg::PointCloud2::ConstSharedPtr &cloud,
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
   uint32_t mask,
-  const Ogre::Matrix4 &transform,
-  V_PointCloudPoint &points_out)
+  const Ogre::Matrix4 & transform,
+  V_PointCloudPoint & points_out)
 {
   (void) transform;
 
@@ -75,7 +80,8 @@ bool RGB8PCTransformer::transform(
   }
   if (rgb != -1) {  // rgb
     for (V_PointCloudPoint::iterator iter = points_out.begin(); iter != points_out.end();
-      ++iter, rgb_ptr += point_step) {
+      ++iter, rgb_ptr += point_step)
+    {
       uint32_t rgb = *reinterpret_cast<const uint32_t *>(rgb_ptr);
       iter->color.r = rgb_lut[(rgb >> 16) & 0xff];
       iter->color.g = rgb_lut[(rgb >> 8) & 0xff];
@@ -84,7 +90,8 @@ bool RGB8PCTransformer::transform(
     }
   } else {  // rgba
     for (V_PointCloudPoint::iterator iter = points_out.begin(); iter != points_out.end();
-      ++iter, rgb_ptr += point_step) {
+      ++iter, rgb_ptr += point_step)
+    {
       uint32_t rgb = *reinterpret_cast<const uint32_t *>(rgb_ptr);
       iter->color.r = rgb_lut[(rgb >> 16) & 0xff];
       iter->color.g = rgb_lut[(rgb >> 8) & 0xff];

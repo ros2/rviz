@@ -27,35 +27,32 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz_common/properties/float_property.hpp"
-#include "rviz_common/properties/enum_property.hpp"
-#include "rviz_common/properties/editable_enum_property.hpp"
 #include "rviz_common/properties/color_property.hpp"
-#include "rviz_common/properties/bool_property.hpp"
-#include "src/rviz_default_plugins/point_cloud_transformers.hpp"
+#include "src/rviz_default_plugins/point_cloud_helpers.hpp"
 
 #include "flat_color_pc_transformer.hpp"
 
-namespace rviz_default_plugins {
+namespace rviz_default_plugins
+{
 
 uint8_t FlatColorPCTransformer::supports(
-  const sensor_msgs::msg::PointCloud2::ConstSharedPtr &cloud)
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
 {
   (void) cloud;
   return PointCloudTransformer::Support_Color;
 }
 
-uint8_t FlatColorPCTransformer::score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &cloud)
+uint8_t FlatColorPCTransformer::score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
 {
   (void) cloud;
   return 0;
 }
 
 bool FlatColorPCTransformer::transform(
-  const sensor_msgs::msg::PointCloud2::ConstSharedPtr &cloud,
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
   uint32_t mask,
-  const Ogre::Matrix4 &transform,
-  V_PointCloudPoint &points_out)
+  const Ogre::Matrix4 & transform,
+  V_PointCloudPoint & points_out)
 {
   (void) transform;
   if (!(mask & PointCloudTransformer::Support_Color)) {
@@ -75,13 +72,13 @@ bool FlatColorPCTransformer::transform(
 void FlatColorPCTransformer::createProperties(
   rviz_common::properties::Property * parent_property,
   uint32_t mask,
-  QList<rviz_common::properties::Property *> &out_props)
+  QList<rviz_common::properties::Property *> & out_props)
 {
   if (mask & PointCloudTransformer::Support_Color) {
     color_property_ = new rviz_common::properties::ColorProperty(
       "Color", Qt::white,
       "Color to assign to every point.",
-      parent_property, SIGNAL(PointCloudTransformer::needRetransform()),
+      parent_property, SIGNAL(needRetransform()),
       this);
     out_props.push_back(color_property_);
   }

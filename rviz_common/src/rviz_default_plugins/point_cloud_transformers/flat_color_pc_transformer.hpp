@@ -27,38 +27,40 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__FLAT_COLOR_PC_TRANSFORMER_HPP
-#define RVIZ_DEFAULT_PLUGINS__FLAT_COLOR_PC_TRANSFORMER_HPP
+#ifndef RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS__FLAT_COLOR_PC_TRANSFORMER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS__FLAT_COLOR_PC_TRANSFORMER_HPP_
 
 #include <vector>
 #include <string>
 
 #include "sensor_msgs/msg/point_cloud2.hpp"
 #include "rviz_common/properties/property.hpp"
+#include "rviz_common/properties/color_property.hpp"
 
 #include "src/rviz_default_plugins/point_cloud_transformer.hpp"
 
-namespace rviz_default_plugins {
+namespace rviz_default_plugins
+{
 
 class FlatColorPCTransformer : public PointCloudTransformer
 {
   Q_OBJECT
 
 public:
-  uint8_t supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &cloud) override;
+  uint8_t supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) override;
 
   bool transform(
-    const sensor_msgs::msg::PointCloud2::ConstSharedPtr &cloud,
+    const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
     uint32_t mask,
-    const Ogre::Matrix4 &transform,
-    rviz_default_plugins::V_PointCloudPoint &points_out) override;
+    const Ogre::Matrix4 & transform,
+    rviz_default_plugins::V_PointCloudPoint & points_out) override;
 
   void createProperties(
     rviz_common::properties::Property * parent_property,
     uint32_t mask,
-    QList<rviz_common::properties::Property *> &out_props) override;
+    QList<rviz_common::properties::Property *> & out_props) override;
 
-  uint8_t score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &cloud) override;
+  uint8_t score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) override;
 
 private:
   rviz_common::properties::ColorProperty * color_property_;
@@ -66,4 +68,4 @@ private:
 
 }  // end namespace rviz_default_plugins
 
-#endif //RVIZ_DEFAULT_PLUGINS__FLAT_COLOR_PC_TRANSFORMER_HPP
+#endif  // RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS__FLAT_COLOR_PC_TRANSFORMER_HPP_

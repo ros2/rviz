@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__RGB8_PC_TRANSFORMER_HPP
-#define RVIZ_DEFAULT_PLUGINS__RGB8_PC_TRANSFORMER_HPP
+#ifndef RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS__RGB8_PC_TRANSFORMER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS__RGB8_PC_TRANSFORMER_HPP_
 
 #include <vector>
 #include <string>
@@ -38,22 +38,21 @@
 
 #include "src/rviz_default_plugins/point_cloud_transformer.hpp"
 
-namespace rviz_default_plugins {
+namespace rviz_default_plugins
+{
 
 class RGB8PCTransformer : public rviz_default_plugins::PointCloudTransformer
 {
-Q_OBJECT
-
 public:
-  unsigned char supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &cloud) override;
+  unsigned char supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) override;
 
   bool transform(
-    const sensor_msgs::msg::PointCloud2::ConstSharedPtr &cloud,
+    const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
     unsigned int mask,
-    const Ogre::Matrix4 &transform,
-    rviz_default_plugins::V_PointCloudPoint &points_out) override;
+    const Ogre::Matrix4 & transform,
+    rviz_default_plugins::V_PointCloudPoint & points_out) override;
 };
 
 }  // end namespace rviz_default_plugins
 
-#endif //RVIZ_DEFAULT_PLUGINS__RGB8_PC_TRANSFORMER_HPP
+#endif  // RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS__RGB8_PC_TRANSFORMER_HPP_

@@ -28,8 +28,8 @@
  */
 
 
-#ifndef RVIZ_DEFAULT_PLUGINS__RGBF32_PC_TRANSFORMER_HPP
-#define RVIZ_DEFAULT_PLUGINS__RGBF32_PC_TRANSFORMER_HPP
+#ifndef RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS__RGBF32_PC_TRANSFORMER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS__RGBF32_PC_TRANSFORMER_HPP_
 
 #include <vector>
 #include <string>
@@ -39,22 +39,21 @@
 
 #include "src/rviz_default_plugins/point_cloud_transformer.hpp"
 
-namespace rviz_default_plugins {
+namespace rviz_default_plugins
+{
 
 class RGBF32PCTransformer : public PointCloudTransformer
 {
-Q_OBJECT
-
 public:
-  uint8_t supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &cloud) override;
+  uint8_t supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) override;
 
   bool transform(
-    const sensor_msgs::msg::PointCloud2::ConstSharedPtr &cloud,
+    const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
     uint32_t mask,
-    const Ogre::Matrix4 &transform,
-    V_PointCloudPoint &points_out) override;
+    const Ogre::Matrix4 & transform,
+    V_PointCloudPoint & points_out) override;
 };
 
 }  // end namespace rviz_default_plugins
 
-#endif //RVIZ_DEFAULT_PLUGINS__RGBF32_PC_TRANSFORMER_HPP
+#endif  // RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS__RGBF32_PC_TRANSFORMER_HPP_

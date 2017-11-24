@@ -158,7 +158,7 @@ list(APPEND rviz_common_headers_to_moc
 list(APPEND rviz_common_headers_to_moc
   src/rviz_default_plugins/point_cloud_transformer.hpp)
 list(APPEND rviz_common_headers_to_moc
-  src/rviz_default_plugins/point_cloud_transformers.hpp)
+  src/rviz_default_plugins/point_cloud_helpers.hpp)
 list(APPEND rviz_common_headers_to_moc
   src/rviz_default_plugins/point_cloud2_display.hpp)
 
