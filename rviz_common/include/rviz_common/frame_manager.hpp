@@ -149,6 +149,20 @@ public:
   /// Return the pose for a frame relative to the fixed frame, in Ogre classes, at a given time.
   /**
    * \param[in] frame The frame to find the pose of.
+   * \param[out] position The position of the frame relative to the fixed frame.
+   * \param[out] orientation The orientation of the frame relative to the
+   *   fixed frame.
+   * \return true on success, false on failure.
+   */
+  bool
+  getTransform(const std::string & frame, Ogre::Vector3 & position, Ogre::Quaternion & orientation)
+  {
+    return getTransform(frame, rclcpp::Time(0, 0, clock_->get_clock_type()), position, orientation);
+  }
+
+  /// Return the pose for a frame relative to the fixed frame, in Ogre classes, at a given time.
+  /**
+   * \param[in] frame The frame to find the pose of.
    * \param[in] time The time at which to get the pose.
    * \param[out] position The position of the frame relative to the fixed frame.
    * \param[out] orientation The orientation of the frame relative to the
@@ -208,13 +222,23 @@ public:
   /// Check to see if a frame exists in the tf::TransformListener.
   /**
    * \param[in] frame The name of the frame to check.
-   * \param[in] time Dummy parameter, not actually used.
    * \param[out] error If the frame does not exist, an error message is
    *   stored here.
    * \return true if the frame does not exist, false if it does exist.
    */
   bool
-  frameHasProblems(const std::string & frame, rclcpp::Time time, std::string & error);
+  frameHasProblems(const std::string & frame, std::string & error);
+
+  /// Check to see if a transform is known between a given frame and the fixed frame.
+  /**
+   * \param[in] frame The name of the frame to check.
+   * \param[out] error If the transform is not known, an error message is stored here.
+   * \return true if the transform is not known, false if it is. */
+  bool
+  transformHasProblems(const std::string & frame, std::string & error)
+  {
+    return transformHasProblems(frame, rclcpp::Time(0, 0, clock_->get_clock_type()), error);
+  }
 
   /// Check to see if a transform is known between a given frame and the fixed frame.
   /**

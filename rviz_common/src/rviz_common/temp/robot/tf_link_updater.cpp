@@ -67,7 +67,7 @@ bool TFLinkUpdater::getLinkTransforms(
 
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
-  if (!frame_manager_->getTransform(link_name, rclcpp::Time(), position, orientation)) {
+  if (!frame_manager_->getTransform(link_name, position, orientation)) {
     std::stringstream ss;
     ss << "No transform from [" << link_name << "] to [" << frame_manager_->getFixedFrame() << "]";
     setLinkStatus(StatusProperty::Error, link_name, ss.str());

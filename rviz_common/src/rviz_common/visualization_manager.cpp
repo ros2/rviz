@@ -508,7 +508,7 @@ void VisualizationManager::updateFrames()
 
   // Check the fixed frame to see if it's ok
   std::string error;
-  if (frame_manager_->frameHasProblems(getFixedFrame().toStdString(), rclcpp::Time(), error)) {
+  if (frame_manager_->frameHasProblems(getFixedFrame().toStdString(), error)) {
     if (frames.empty()) {
       // fixed_prop->setToWarn();
       std::stringstream ss;
@@ -542,7 +542,7 @@ void VisualizationManager::resetTime()
   root_display_group_->reset();
   frame_manager_->getTFBufferPtr()->clear();
 
-  ros_time_begin_ = rclcpp::Time();
+  ros_time_begin_ = rclcpp::Time(0, 0, clock_->get_clock_type());
   wall_clock_begin_ = std::chrono::system_clock::time_point();
 
   queueRender();

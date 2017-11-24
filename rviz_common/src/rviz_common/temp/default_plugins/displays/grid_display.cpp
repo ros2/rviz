@@ -155,13 +155,13 @@ void GridDisplay::update(float dt, float ros_dt)
 
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
-  if (context_->getFrameManager()->getTransform(frame, rclcpp::Time(), position, orientation)) {
+  if (context_->getFrameManager()->getTransform(frame, position, orientation)) {
     scene_node_->setPosition(position);
     scene_node_->setOrientation(orientation);
     setStatus(StatusProperty::Ok, "Transform", "Transform OK");
   } else {
     std::string error;
-    if (context_->getFrameManager()->transformHasProblems(frame, rclcpp::Time(), error)) {
+    if (context_->getFrameManager()->transformHasProblems(frame, error)) {
       setStatus(StatusProperty::Error, "Transform", QString::fromStdString(error));
     } else {
       setStatus(StatusProperty::Error, "Transform",
