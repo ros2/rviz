@@ -519,6 +519,12 @@ void PointCloudCommon::updateTransformers(
 void PointCloudCommon::updateStatus()
 {
   std::stringstream ss;
+  uint32_t total_point_count = 0;
+  for (const auto & cloud_info : cloud_infos_) {
+    total_point_count += cloud_info->transformed_points_.size();
+  }
+  ss << "Showing [" << total_point_count << "] points from [" << cloud_infos_.size() <<
+    "] messages";
   display_->setStatusStd(rviz_common::properties::StatusProperty::Ok, "Points", ss.str());
 }
 
@@ -607,7 +613,7 @@ bool PointCloudCommon::transformCloud(const CloudInfoPtr & cloud_info, bool upda
         cloud_info->orientation_))
     {
       std::stringstream ss;
-      ss << "Failed to transform from frame [" << cloud_info->message_->header.frame_id << "]to "
+      ss << "Failed to transform from frame [" << cloud_info->message_->header.frame_id << "] to "
         "frame [" << context_->getFrameManager()->getFixedFrame() << "]";
       display_->setStatusStd(rviz_common::properties::StatusProperty::Error, "Message", ss.str());
       return false;
