@@ -123,8 +123,7 @@ bool FramePositionTrackingViewController::getNewTransform()
   Ogre::Quaternion new_reference_orientation;
 
   bool got_transform = context_->getFrameManager()->getTransform(
-    target_frame_property_->getFrameStd(), rclcpp::Time(),
-    new_reference_position, new_reference_orientation);
+    target_frame_property_->getFrameStd(), new_reference_position, new_reference_orientation);
   if (got_transform) {
     reference_position_ = new_reference_position;
     reference_orientation_ = new_reference_orientation;

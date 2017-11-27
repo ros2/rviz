@@ -599,9 +599,7 @@ void TFDisplay::updateFrame(FrameInfo * frame)
   orientation.x = 0;
   orientation.y = 0;
   orientation.z = 0;
-  if (!context_->getFrameManager()->getTransform(frame->name_, rclcpp::Time(), position,
-    orientation))
-  {
+  if (!context_->getFrameManager()->getTransform(frame->name_, position, orientation)) {
     std::stringstream ss;
     ss << "No transform from [" << frame->name_ << "] to frame [" << fixed_frame_.toStdString() <<
       "]";
@@ -709,10 +707,7 @@ void TFDisplay::updateFrame(FrameInfo * frame)
       parent_orientation.y = 0.0;
       parent_orientation.z = 0.0;
       if (!context_->getFrameManager()->getTransform(
-          frame->parent_,
-          rclcpp::Time(),
-          parent_position,
-          parent_orientation))
+          frame->parent_, parent_position, parent_orientation))
       {
         RVIZ_COMMON_LOG_DEBUG_STREAM(
           "Error3 transforming frame '" << frame->parent_.c_str() <<

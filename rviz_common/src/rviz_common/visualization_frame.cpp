@@ -67,6 +67,7 @@
 #include <QToolButton>
 // #include <QUrl>
 
+#include "rclcpp/clock.hpp"
 #include "tf2_ros/buffer.h"
 #include "tf2_ros/transform_listener.h"
 
@@ -343,9 +344,10 @@ void VisualizationFrame::initialize(const QString & display_config_file)
   render_panel_->getRenderWindow()->initialize();
 
   auto buffer = std::make_shared<tf2_ros::Buffer>();
+  auto clock = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);
   // TODO(wjwwood): pass the rviz node so tf2 doesn't create it's own...
   auto tf_listener = std::make_shared<tf2_ros::TransformListener>(*buffer);
-  manager_ = new VisualizationManager(render_panel_, this, tf_listener, buffer);
+  manager_ = new VisualizationManager(render_panel_, this, tf_listener, buffer, clock);
   manager_->setHelpPath(help_path_);
 
   // Periodically process events for the splash screen.

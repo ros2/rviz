@@ -39,6 +39,7 @@
 #include "geometry_msgs/msg/pose.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
+#include "rclcpp/clock.hpp"
 #include "std_msgs/msg/float32.hpp"
 #include "tf2/buffer_core.h"
 #include "tf2/LinearMath/Quaternion.h"
@@ -55,8 +56,10 @@ namespace rviz_common
 
 FrameManager::FrameManager(
   std::shared_ptr<tf2_ros::TransformListener> tf,
-  std::shared_ptr<tf2_ros::Buffer> buffer)
-: sync_time_(0)
+  std::shared_ptr<tf2_ros::Buffer> buffer,
+  rclcpp::Clock::SharedPtr clock)
+: sync_time_(0),
+  clock_(clock)
 {
   if (!tf) {
     // TODO(wjwwood): reenable this when possible (ros2 has no singleton node),
@@ -86,14 +89,15 @@ void FrameManager::update()
   if (!pause_) {
     switch (sync_mode_) {
       case SyncOff:
-        sync_time_ = rclcpp::Time::now();
+        sync_time_ = clock_->now();
         break;
       case SyncExact:
         break;
       case SyncApprox:
         // adjust current time offset to sync source
-        current_delta_ = 0.7 * current_delta_ + 0.3 * sync_delta_;
-        sync_time_ = rclcpp::Time(rclcpp::Time::now().nanoseconds() - current_delta_);
+        current_delta_ = static_cast<uint64_t>(0.7 * current_delta_ + 0.3 * sync_delta_);
+        sync_time_ = rclcpp::Time(
+          clock_->now().nanoseconds() - current_delta_, clock_->get_clock_type());
         break;
     }
   }
@@ -134,7 +138,7 @@ FrameManager::SyncMode FrameManager::getSyncMode()
 void FrameManager::setSyncMode(SyncMode mode)
 {
   sync_mode_ = mode;
-  sync_time_ = rclcpp::Time(0);
+  sync_time_ = rclcpp::Time(0, 0, clock_->get_clock_type());
   current_delta_ = 0;
   sync_delta_ = 0;
 }
@@ -148,13 +152,13 @@ void FrameManager::syncTime(rclcpp::Time time)
       sync_time_ = time;
       break;
     case SyncApprox:
-      if (time == rclcpp::Time(0)) {
+      if (time == rclcpp::Time(0, 0, clock_->get_clock_type())) {
         sync_delta_ = 0;
         return;
       }
       // avoid exception due to negative time
-      if (rclcpp::Time::now() >= time) {
-        sync_delta_ = (rclcpp::Time::now() - time).nanoseconds();
+      if (clock_->now() >= time) {
+        sync_delta_ = (clock_->now() - time).nanoseconds();
       } else {
         setSyncMode(SyncApprox);
       }
@@ -170,7 +174,7 @@ rclcpp::Time FrameManager::getTime()
 bool FrameManager::adjustTime(const std::string & frame, rclcpp::Time & time)
 {
   // we only need to act if we get a zero timestamp, which means "latest"
-  if (time != rclcpp::Time()) {
+  if (time != rclcpp::Time(0, 0, clock_->get_clock_type())) {
     return true;
   }
 
@@ -321,10 +325,8 @@ bool FrameManager::transform(
 
 bool FrameManager::frameHasProblems(
   const std::string & frame,
-  rclcpp::Time time,
   std::string & error)
 {
-  Q_UNUSED(time);
   if (!buffer_->_frameExists(frame)) {
     error = "Frame [" + frame + "] does not exist";
     if (frame == fixed_frame_) {
@@ -353,8 +355,8 @@ bool FrameManager::transformHasProblems(
   }
 
   bool ok = true;
-  ok = ok && !frameHasProblems(fixed_frame_, time, error);
-  ok = ok && !frameHasProblems(frame, time, error);
+  ok = ok && !frameHasProblems(fixed_frame_, error);
+  ok = ok && !frameHasProblems(frame, error);
 
   if (ok) {
     std::stringstream ss;

@@ -42,6 +42,7 @@
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "geometry_msgs/msg/pose.hpp"
+#include "rclcpp/clock.hpp"
 #include "rclcpp/time.hpp"
 
 // TODO(wjwwood): reenable this when message_filters is ported.
@@ -85,7 +86,8 @@ public:
   explicit
   FrameManager(
     std::shared_ptr<tf2_ros::TransformListener> tf,
-    std::shared_ptr<tf2_ros::Buffer> buffer
+    std::shared_ptr<tf2_ros::Buffer> buffer,
+    rclcpp::Clock::SharedPtr clock
   );
 
   /// Destructor.
@@ -142,6 +144,20 @@ public:
   getTransform(const Header & header, Ogre::Vector3 & position, Ogre::Quaternion & orientation)
   {
     return getTransform(header.frame_id, header.stamp, position, orientation);
+  }
+
+  /// Return the pose for a frame relative to the fixed frame, in Ogre classes, at a given time.
+  /**
+   * \param[in] frame The frame to find the pose of.
+   * \param[out] position The position of the frame relative to the fixed frame.
+   * \param[out] orientation The orientation of the frame relative to the
+   *   fixed frame.
+   * \return true on success, false on failure.
+   */
+  bool
+  getTransform(const std::string & frame, Ogre::Vector3 & position, Ogre::Quaternion & orientation)
+  {
+    return getTransform(frame, rclcpp::Time(0, 0, clock_->get_clock_type()), position, orientation);
   }
 
   /// Return the pose for a frame relative to the fixed frame, in Ogre classes, at a given time.
@@ -206,13 +222,23 @@ public:
   /// Check to see if a frame exists in the tf::TransformListener.
   /**
    * \param[in] frame The name of the frame to check.
-   * \param[in] time Dummy parameter, not actually used.
    * \param[out] error If the frame does not exist, an error message is
    *   stored here.
    * \return true if the frame does not exist, false if it does exist.
    */
   bool
-  frameHasProblems(const std::string & frame, rclcpp::Time time, std::string & error);
+  frameHasProblems(const std::string & frame, std::string & error);
+
+  /// Check to see if a transform is known between a given frame and the fixed frame.
+  /**
+   * \param[in] frame The name of the frame to check.
+   * \param[out] error If the transform is not known, an error message is stored here.
+   * \return true if the transform is not known, false if it is. */
+  bool
+  transformHasProblems(const std::string & frame, std::string & error)
+  {
+    return transformHasProblems(frame, rclcpp::Time(0, 0, clock_->get_clock_type()), error);
+  }
 
   /// Check to see if a transform is known between a given frame and the fixed frame.
   /**
@@ -377,6 +403,8 @@ private:
 
   // the current synchronized time, used to overwrite ros:Time(0)
   rclcpp::Time sync_time_;
+
+  rclcpp::Clock::SharedPtr clock_;
 
   // used for approx. syncing (in nanoseconds)
   int64_t sync_delta_;

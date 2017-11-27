@@ -64,6 +64,7 @@
 #endif
 
 // #include "tf/transform_listener.h"
+#include "rclcpp/clock.hpp"
 #include "rclcpp/time.hpp"
 #include "rviz_rendering/render_window.hpp"
 
@@ -145,7 +146,8 @@ VisualizationManager::VisualizationManager(
   RenderPanel * render_panel,
   WindowManagerInterface * wm,
   std::shared_ptr<tf2_ros::TransformListener> tf,
-  std::shared_ptr<tf2_ros::Buffer> buffer)
+  std::shared_ptr<tf2_ros::Buffer> buffer,
+  rclcpp::Clock::SharedPtr clock)
 : ogre_root_(Ogre::Root::getSingletonPtr()),
   update_timer_(0),
   shutting_down_(false),
@@ -155,6 +157,7 @@ VisualizationManager::VisualizationManager(
   render_requested_(1),
   frame_count_(0),
   window_manager_(wm),
+  clock_(clock),
   private_(new VisualizationManagerPrivate),
   executor_(std::make_shared<rclcpp::executors::SingleThreadedExecutor>())
 {
@@ -162,7 +165,7 @@ VisualizationManager::VisualizationManager(
   // (and thus initialized later be default):
   default_visibility_bit_ = visibility_bit_allocator_.allocBit();
 
-  frame_manager_ = new FrameManager(tf, buffer);
+  frame_manager_ = new FrameManager(tf, buffer, clock);
 
 // TODO(wjwwood): is this needed?
 #if 0
@@ -290,7 +293,7 @@ void VisualizationManager::initialize()
   selection_manager_->initialize();
   tool_manager_->initialize();
 
-  last_update_ros_time_ = rclcpp::Time::now();
+  last_update_ros_time_ = clock_->now();
   last_update_wall_time_ = std::chrono::system_clock::now();
 }
 
@@ -423,7 +426,7 @@ void VisualizationManager::onUpdate()
   auto wall_now = std::chrono::system_clock::now();
   auto wall_diff = wall_now - last_update_wall_time_;
   uint64_t wall_dt = std::chrono::duration_cast<std::chrono::nanoseconds>(wall_diff).count();
-  auto ros_now = rclcpp::Time::now();
+  auto ros_now = clock_->now();
   uint64_t ros_dt = ros_now.nanoseconds() - last_update_ros_time_.nanoseconds();
   last_update_ros_time_ = ros_now;
   last_update_wall_time_ = wall_now;
@@ -485,10 +488,10 @@ void VisualizationManager::onUpdate()
 void VisualizationManager::updateTime()
 {
   if (ros_time_begin_.nanoseconds() == 0) {
-    ros_time_begin_ = rclcpp::Time::now();
+    ros_time_begin_ = clock_->now();
   }
 
-  ros_time_elapsed_ = (rclcpp::Time::now() - ros_time_begin_).nanoseconds();
+  ros_time_elapsed_ = (clock_->now() - ros_time_begin_).nanoseconds();
 
   if (wall_clock_begin_.time_since_epoch().count() == 0) {
     wall_clock_begin_ = std::chrono::system_clock::now();
@@ -505,7 +508,7 @@ void VisualizationManager::updateFrames()
 
   // Check the fixed frame to see if it's ok
   std::string error;
-  if (frame_manager_->frameHasProblems(getFixedFrame().toStdString(), rclcpp::Time(), error)) {
+  if (frame_manager_->frameHasProblems(getFixedFrame().toStdString(), error)) {
     if (frames.empty()) {
       // fixed_prop->setToWarn();
       std::stringstream ss;
@@ -539,7 +542,7 @@ void VisualizationManager::resetTime()
   root_display_group_->reset();
   frame_manager_->getTFBufferPtr()->clear();
 
-  ros_time_begin_ = rclcpp::Time();
+  ros_time_begin_ = rclcpp::Time(0, 0, clock_->get_clock_type());
   wall_clock_begin_ = std::chrono::system_clock::time_point();
 
   queueRender();
@@ -744,6 +747,11 @@ void VisualizationManager::setHelpPath(const QString & help_path)
 QString VisualizationManager::getHelpPath() const
 {
   return help_path_;
+}
+
+rclcpp::Clock::SharedPtr VisualizationManager::getClock()
+{
+  return clock_;
 }
 
 }  // namespace rviz_common

@@ -46,6 +46,7 @@ class SceneManager;
 
 namespace rclcpp
 {
+class Clock;
 namespace node
 {
 class Node;
@@ -195,6 +196,10 @@ public:
   virtual
   void
   setStatus(const QString & message) = 0;
+
+  virtual
+  std::shared_ptr<rclcpp::Clock>
+  getClock() = 0;
 
 public Q_SLOTS:
   /// Queue a render.
