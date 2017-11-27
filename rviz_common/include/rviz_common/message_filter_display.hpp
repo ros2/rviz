@@ -40,6 +40,7 @@
 
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager.hpp"
+#include "rviz_common/properties/status_property.hpp"
 #include "rviz_common/properties/string_property.hpp"
 
 #include "rviz_common/display.hpp"
@@ -60,11 +61,10 @@ class _RosTopicDisplay : public Display
 public:
   _RosTopicDisplay()
   {
-    topic_property_ = new properties::StringProperty("Topic", "", "", this, SLOT(updateTopic()));
-    unreliable_property_ = new properties::BoolProperty("Unreliable", false,
-        "Prefer UDP topic transport",
-        this,
-        SLOT(updateTopic()));
+    topic_property_ = new properties::StringProperty(
+      "Topic", "pointcloud", "", this, SLOT(updateTopic()));
+    unreliable_property_ = new properties::BoolProperty(
+      "Unreliable", false, "Prefer UDP topic transport", this, SLOT(updateTopic()));
   }
 
 protected Q_SLOTS:
@@ -103,10 +103,6 @@ public:
 
   virtual void onInitialize()
   {
-    subscription = node_->create_subscription<MessageType>("pointcloud",
-        std::bind(&MessageFilterDisplay<MessageType>::incomingMessage,
-        this,
-        std::placeholders::_1));
     // TODO(Martin-Idel-SI): revisit once MessageFilter is ported
 //      tf_filter_ = new tf::MessageFilter<MessageType>( *context_->getTFClient(),
 //                                                fixed_frame_.toStdString(), 10, update_nh_ );
@@ -147,10 +143,17 @@ protected:
 
   virtual void subscribe()
   {
-    if (!isEnabled() ) {
+    if (!isEnabled()) {
       return;
     }
 
+    subscription = node_->create_subscription<MessageType>(
+      topic_property_->getValue().toString().toStdString(),
+      std::bind(&MessageFilterDisplay<MessageType>::incomingMessage, this, std::placeholders::_1));
+
+    setStatus(properties::StatusProperty::Ok, "Topic", "OK");
+
+    // TODO(greimela): Revisit after MessageFilters are migrated
 //      try
 //      {
 //        ros::TransportHints transport_hint = ros::TransportHints().reliable();
@@ -170,7 +173,7 @@ protected:
 
   virtual void unsubscribe()
   {
-//      sub_.unsubscribe();
+    subscription.reset();
   }
 
   virtual void onEnable()
@@ -186,6 +189,7 @@ protected:
 
   virtual void fixedFrameChanged()
   {
+    // TODO(greimela): Revisit after MessageFilters are migrated
 //      tf_filter_->setTargetFrame( fixed_frame_.toStdString() );
     reset();
   }
@@ -193,15 +197,17 @@ protected:
   /** @brief Incoming message callback.  Checks if the message pointer
    * is valid, increments messages_received_, then calls
    * processMessage(). */
-  void incomingMessage(const typename MessageType::SharedPtr msg)
+  void incomingMessage(const typename MessageType::ConstSharedPtr msg)
   {
     if (!msg) {
       return;
     }
 
     ++messages_received_;
-//      setStatus( StatusProperty::Ok, "Topic",
-// QString::number( messages_received_ ) + " messages received" );
+    setStatus(
+      properties::StatusProperty::Ok,
+      "Topic",
+      QString::number(messages_received_) + " messages received");
 
     processMessage(msg);
   }
@@ -209,9 +215,10 @@ protected:
   /** @brief Implement this to process the contents of a message.
    *
    * This is called by incomingMessage(). */
-  virtual void processMessage(const typename MessageType::ConstSharedPtr & msg) = 0;
+  virtual void processMessage(typename MessageType::ConstSharedPtr msg) = 0;
 
-//  message_filters::Subscriber<MessageType> sub_;
+  // TODO(greimela): Revisit after MessageFilters are migrated
+  //  message_filters::Subscriber<MessageType> sub_;
 //  tf::MessageFilter<MessageType>* tf_filter_;
   typename rclcpp::Subscription<MessageType>::SharedPtr subscription;
   uint32_t messages_received_;

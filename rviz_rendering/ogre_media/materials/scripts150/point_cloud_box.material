@@ -1,8 +1,6 @@
 material rviz/PointCloudBox
 { 
-  /* This material should only be used with glsl < 1.50 */
-  
-  // the 'gp' techniques need one input vertex per box 
+  // the 'gp' techniques need one input vertex per box
   // and use geometry shaders to create the geometry
   
   technique gp

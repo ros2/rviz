@@ -314,14 +314,12 @@ void VisualizationManager::unlockRender()
   private_->render_mutex_.unlock();
 }
 
-void
-VisualizationManager::addNodeToMainExecutor(rclcpp::Node::SharedPtr node)
+void VisualizationManager::addNodeToMainExecutor(rclcpp::Node::SharedPtr node)
 {
   executor_->add_node(node);
 }
 
-void
-VisualizationManager::removeNodeFromMainExecutor(rclcpp::Node::SharedPtr node)
+void VisualizationManager::removeNodeFromMainExecutor(rclcpp::Node::SharedPtr node)
 {
   executor_->remove_node(node);
 }

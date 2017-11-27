@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2010, Willow Garage, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,66 +27,45 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_DISPLAY_HPP_
-#define RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_DISPLAY_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS__FLAT_COLOR_PC_TRANSFORMER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS__FLAT_COLOR_PC_TRANSFORMER_HPP_
 
-#include <deque>
-#include <memory>
-#include <queue>
 #include <vector>
+#include <string>
 
-#include "sensor_msgs/msg/point_cloud.hpp"
+#include "sensor_msgs/msg/point_cloud2.hpp"
+#include "rviz_common/properties/property.hpp"
+#include "rviz_common/properties/color_property.hpp"
 
-#include "rviz_common/message_filter_display.hpp"
-#include "point_cloud_common.hpp"
-
-namespace rviz_common
-{
-namespace properties
-{
-
-class IntProperty;
-
-}  // namespace properties
-}  // namespace rviz_common
+#include "src/rviz_default_plugins/point_cloud_transformer.hpp"
 
 namespace rviz_default_plugins
 {
 
-/**
- * \class PointCloudDisplay
- * \brief Displays a point cloud of type sensor_msgs::PointCloud
- *
- * By default it will assume channel 0 of the cloud is an intensity value, and will color them by intensity.
- * If you set the channel's name to "rgb", it will interpret the channel as an integer rgb value, with r, g and b
- * all being 8 bits.
- */
-class PointCloudDisplay : public rviz_common::MessageFilterDisplay<sensor_msgs::msg::PointCloud>
+class FlatColorPCTransformer : public PointCloudTransformer
 {
   Q_OBJECT
 
 public:
-  PointCloudDisplay();
+  uint8_t supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) override;
 
-  void reset() override;
+  bool transform(
+    const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
+    uint32_t mask,
+    const Ogre::Matrix4 & transform,
+    rviz_default_plugins::V_PointCloudPoint & points_out) override;
 
-  void update(float wall_dt, float ros_dt) override;
+  void createProperties(
+    rviz_common::properties::Property * parent_property,
+    uint32_t mask,
+    QList<rviz_common::properties::Property *> & out_props) override;
 
-private Q_SLOTS:
-  void updateQueueSize();
+  uint8_t score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) override;
 
-protected:
-  /** @brief Do initialization. Overridden from MessageFilterDisplay. */
-  void onInitialize() override;
-
-  /** @brief Process a single message.  Overridden from MessageFilterDisplay. */
-  void processMessage(sensor_msgs::msg::PointCloud::ConstSharedPtr cloud) override;
-
-  rviz_common::properties::IntProperty * queue_size_property_;
-
-  std::unique_ptr<PointCloudCommon> point_cloud_common_;
+private:
+  rviz_common::properties::ColorProperty * color_property_;
 };
 
-}  // namespace rviz_default_plugins
+}  // end namespace rviz_default_plugins
 
-#endif  // RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_DISPLAY_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS__FLAT_COLOR_PC_TRANSFORMER_HPP_

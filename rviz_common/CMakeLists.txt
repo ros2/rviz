@@ -154,13 +154,11 @@ list(APPEND rviz_common_headers_to_moc
 list(APPEND rviz_common_headers_to_moc
   src/rviz_default_plugins/point_cloud_common.hpp)
 list(APPEND rviz_common_headers_to_moc
-  src/rviz_default_plugins/point_cloud_common.hpp)
-list(APPEND rviz_common_headers_to_moc
   src/rviz_default_plugins/point_cloud_display.hpp)
 list(APPEND rviz_common_headers_to_moc
   src/rviz_default_plugins/point_cloud_transformer.hpp)
 list(APPEND rviz_common_headers_to_moc
-  src/rviz_default_plugins/point_cloud_transformers.hpp)
+  src/rviz_default_plugins/point_cloud_helpers.hpp)
 list(APPEND rviz_common_headers_to_moc
   src/rviz_default_plugins/point_cloud2_display.hpp)
 
@@ -273,10 +271,23 @@ list(APPEND rviz_common_source_files
 list(APPEND rviz_common_source_files
   src/rviz_default_plugins/point_cloud_display.cpp)
 list(APPEND rviz_common_source_files
-  src/rviz_default_plugins/point_cloud_transformers.cpp)
+  src/rviz_default_plugins/point_cloud_transformers/axis_color_pc_transformer.cpp)
+list(APPEND rviz_common_source_files
+  src/rviz_default_plugins/point_cloud_transformers/flat_color_pc_transformer.cpp)
+list(APPEND rviz_common_source_files
+  src/rviz_default_plugins/point_cloud_transformers/intensity_pc_transformer.cpp)
+list(APPEND rviz_common_source_files
+  src/rviz_default_plugins/point_cloud_transformers/rgb8_pc_transformer.cpp)
+list(APPEND rviz_common_source_files
+  src/rviz_default_plugins/point_cloud_transformers/rgbf32_pc_transformer.cpp)
+list(APPEND rviz_common_source_files
+  src/rviz_default_plugins/point_cloud_transformers/xyz_pc_transformer.cpp)
 list(APPEND rviz_common_source_files
   src/rviz_default_plugins/point_cloud2_display.cpp)
-
+list(APPEND rviz_common_source_files
+  src/rviz_default_plugins/point_cloud_selection_handler.cpp)
+list(APPEND rviz_common_source_files
+  src/rviz_default_plugins/point_cloud_to_point_cloud2.cpp)
 
 add_library(rviz_common
   ${rviz_common_headers_to_moc}
@@ -372,6 +383,27 @@ if(BUILD_TESTING)
       test/mock_property_change_receiver.cpp)
     if(TARGET rviz_common_property_test)
       target_link_libraries(rviz_common_property_test rviz_common)
+    endif()
+
+    ament_add_gtest(point_cloud2_display_test
+      test/rviz_default_plugins/message_creators.hpp
+      test/rviz_default_plugins/message_creators.cpp
+      test/rviz_default_plugins/point_cloud2_display_test.cpp)
+    if(TARGET point_cloud2_display_test)
+      target_link_libraries(point_cloud2_display_test rviz_common)
+    endif()
+
+    ament_add_gtest(point_cloud_transformers_test
+      test/rviz_default_plugins/message_creators.hpp
+      test/rviz_default_plugins/message_creators.cpp
+      test/rviz_default_plugins/point_cloud_transformers/axis_color_pc_transformer_test.cpp
+      test/rviz_default_plugins/point_cloud_transformers/flat_color_pc_transformer_test.cpp
+      test/rviz_default_plugins/point_cloud_transformers/intensity_pc_transformer_test.cpp
+      test/rviz_default_plugins/point_cloud_transformers/rgb8_pc_transformer_test.cpp
+      test/rviz_default_plugins/point_cloud_transformers/rgbf32_pc_transformer_test.cpp
+      test/rviz_default_plugins/point_cloud_transformers/xyz_pc_transformer_test.cpp)
+    if(TARGET point_cloud_transformers_test)
+      target_link_libraries(point_cloud_transformers_test rviz_common)
     endif()
 endif()
 

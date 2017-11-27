@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,8 +31,8 @@
 #ifndef RVIZ_RENDERING__POINT_CLOUD_HPP_
 #define RVIZ_RENDERING__POINT_CLOUD_HPP_
 
-#include <stdint.h>
-
+#include <cstdint>
+#include <deque>
 #include <memory>
 #include <string>
 #include <vector>
@@ -47,6 +48,8 @@
 #include <OgreHardwareBufferManager.h>
 #include <OgreSharedPtr.h>
 
+#include "point_cloud_renderable.hpp"
+
 namespace Ogre
 {
 class SceneManager;
@@ -60,38 +63,6 @@ class Matrix4;
 
 namespace rviz_rendering
 {
-
-class PointCloud;
-class PointCloudRenderable : public Ogre::SimpleRenderable
-{
-public:
-  PointCloudRenderable(PointCloud * parent, int num_points, bool use_tex_coords);
-  ~PointCloudRenderable();
-
-#ifdef __clang__
-# pragma clang diagnostic push
-# pragma clang diagnostic ignored "-Woverloaded-virtual"
-#endif
-  Ogre::RenderOperation * getRenderOperation() {return &mRenderOp;}
-#ifdef __clang__
-# pragma clang diagnostic pop
-#endif
-
-  Ogre::HardwareVertexBufferSharedPtr getBuffer();
-
-  virtual Ogre::Real getBoundingRadius(void) const;
-  virtual Ogre::Real getSquaredViewDepth(const Ogre::Camera * cam) const;
-  virtual void _notifyCurrentCamera(Ogre::Camera * camera);
-  virtual uint16_t getNumWorldTransforms() const {return 1;}
-  virtual void getWorldTransforms(Ogre::Matrix4 * xform) const;
-  virtual const Ogre::LightList & getLights() const;
-
-private:
-  Ogre::MaterialPtr material_;
-  PointCloud * parent_;
-};
-typedef std::shared_ptr<PointCloudRenderable> PointCloudRenderablePtr;
-typedef std::vector<PointCloudRenderablePtr> V_PointCloudRenderable;
 
 /**
  * \class PointCloud
@@ -117,7 +88,7 @@ public:
   };
 
   PointCloud();
-  ~PointCloud();
+  ~PointCloud() override;
 
   /**
    * \brief Clear all the points
@@ -142,10 +113,12 @@ public:
   /**
    * \brief Add points to this point cloud
    *
-   * @param points An array of Point structures
-   * @param num_points The number of points in the array
+   * @param start_iterator A std::vector::iterator to the start of the point vector to be added
+   * @param end_iterator A std::vector::iterator to the end of the point vector to be added
    */
-  void addPoints(Point * points, uint32_t num_points);
+  void addPoints(
+    std::vector<Point>::iterator start_iterator,
+    std::vector<Point>::iterator end_iterator);
 
   /**
    * \brief Remove a number of points from this point cloud
@@ -154,9 +127,10 @@ public:
   void popPoints(uint32_t num_points);
 
   /**
-   * \brief Set what type of rendering primitives should be used, currently points, billboards and boxes are supported
+   * \brief Set what type of rendering primitives should be used, currently points, billboards, spheres and boxes are supported
    */
   void setRenderMode(RenderMode mode);
+
   /**
    * \brief Set the dimensions of the billboards used to render each point
    * @param width Width
@@ -165,9 +139,10 @@ public:
    */
   void setDimensions(float width, float height, float depth);
 
-  /*
-   * If set to true, the size of each point will be multiplied by it z component.
-   * (Used for depth image based point clouds)
+  /**
+   * \brief If set to true, the size of each point will be multiplied by its z component.
+   * @param auto_size resize in shaders
+   * @note (Used for depth image based point clouds)
    */
   void setAutoSize(bool auto_size);
 
@@ -176,10 +151,11 @@ public:
   /// See Ogre::BillboardSet::setCommonUpVector
   void setCommonUpVector(const Ogre::Vector3 & vec);
 
-  /// set alpha blending
-  /// @param alpha global alpha value
-  /// @param per_point_alpha indicates that each point will have an individual alpha value.
-  ///                        if true, enables alpha blending regardless of the global alpha.
+  /**
+   * \brief Set alpha blending
+   * @param alpha global alpha value
+   * @param per_point_alpha indicates that each point will have an individual alpha value. If true, enables alpha blending regardless of the global alpha.
+   */
   void setAlpha(float alpha, bool per_point_alpha = false);
 
   void setPickColor(const Ogre::ColourValue & color);
@@ -187,28 +163,63 @@ public:
 
   void setHighlightColor(float r, float g, float b);
 
-  virtual const Ogre::String & getMovableType() const {return sm_Type;}
-  virtual const Ogre::AxisAlignedBox & getBoundingBox() const;
-  virtual float getBoundingRadius() const;
+  const Ogre::String & getMovableType() const override {return sm_Type;}
+  const Ogre::AxisAlignedBox & getBoundingBox() const override;
+  float getBoundingRadius() const override;
   virtual void getWorldTransforms(Ogre::Matrix4 * xform) const;
   virtual uint16_t getNumWorldTransforms() const {return 1;}
-  virtual void _updateRenderQueue(Ogre::RenderQueue * queue);
-  virtual void _notifyCurrentCamera(Ogre::Camera * camera);
-  virtual void _notifyAttached(Ogre::Node * parent, bool isTagPoint = false);
-#if (OGRE_VERSION_MAJOR >= 1 && OGRE_VERSION_MINOR >= 6)
-  virtual void visitRenderables(Ogre::Renderable::Visitor * visitor, bool debugRenderables);
-#endif
+  void _updateRenderQueue(Ogre::RenderQueue * queue) override;
+  void _notifyCurrentCamera(Ogre::Camera * camera) override;
+  void _notifyAttached(Ogre::Node * parent, bool isTagPoint = false) override;
+  void visitRenderables(Ogre::Renderable::Visitor * visitor, bool debugRenderables) override;
 
   virtual void setName(const std::string & name) {mName = name;}
+  PointCloudRenderableQueue getRenderables();
 
 private:
+  struct RenderableInternals
+  {
+    inline bool bufferIsFull()
+    {
+      return current_vertex_count >= buffer_size;
+    }
+
+    inline bool noBufferOverflowOccurred()
+    {
+      return current_vertex_count == buffer_size;
+    }
+
+    PointCloudRenderablePtr rend;
+    float * float_buffer = nullptr;
+    uint32_t buffer_size = 0;
+    Ogre::AxisAlignedBox aabb;
+    uint32_t current_vertex_count = 0;
+  };
+
   uint32_t getVerticesPerPoint();
-  PointCloudRenderablePtr createRenderable(int num_points);
+  float * getVertices();
+  Ogre::MaterialPtr getMaterialForRenderMode(RenderMode render_mode);
+  bool changingGeometrySupportIsNecessary(const Ogre::MaterialPtr materialPtr);
+  PointCloudRenderablePtr createRenderable(
+    int num_points, Ogre::RenderOperation::OperationType
+    operation_type);
   void regenerateAll();
-  void shrinkRenderables();
+  uint32_t removePointsFromRenderables(uint32_t number_of_points, uint32_t vertices_per_point);
+  void resetBoundingBoxForCurrentPoints();
+
+  void insertPointsToPointList(
+    std::vector<Point>::iterator start_iterator,
+    std::vector<Point>::iterator stop_iterator);
+  RenderableInternals createNewRenderable(uint32_t number_of_points_to_be_added);
+  Ogre::RenderOperation::OperationType getRenderOperationType() const;
+  void finishRenderable(RenderableInternals internals, uint32_t vertex_count_of_renderable);
+  uint32_t getColorForPoint(uint32_t current_point, std::vector<PointCloud::Point>::iterator point)
+  const;
+  RenderableInternals addPointToHardwareBuffer(
+    RenderableInternals internals,
+    std::vector<PointCloud::Point>::iterator point, uint32_t current_point);
 
   Ogre::AxisAlignedBox bounding_box_;       ///< The bounding box of this point cloud
-  float bounding_radius_;                   ///< The bounding radius of this point cloud
 
   typedef std::vector<Point> V_Point;
   ///< The list of points we're displaying. Allocates to a high-water-mark.
@@ -216,9 +227,7 @@ private:
   uint32_t point_count_;                    ///< The number of points currently in #points_
 
   RenderMode render_mode_;
-  float width_;                             ///< width
-  float height_;                            ///< height
-  float depth_;                             ///< depth
+  Ogre::Vector4 point_extensions_;          ///< width, height, depth of particles
   Ogre::Vector3 common_direction_;          ///< See Ogre::BillboardSet::setCommonDirection
   Ogre::Vector3 common_up_vector_;          ///< See Ogre::BillboardSet::setCommonUpVector
 
@@ -233,7 +242,7 @@ private:
 
   bool color_by_index_;
 
-  V_PointCloudRenderable renderables_;
+  PointCloudRenderableQueue renderables_;
 
   bool current_mode_supports_geometry_shader_;
   Ogre::ColourValue pick_color_;

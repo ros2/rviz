@@ -30,23 +30,28 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__POINT_CLOUD2_DISPLAY_HPP_
 #define RVIZ_DEFAULT_PLUGINS__POINT_CLOUD2_DISPLAY_HPP_
 
-#include <sensor_msgs/msg/point_cloud2.hpp>
+#include <memory>
 
+#include "sensor_msgs/msg/point_cloud2.hpp"
+
+#include "point_cloud_common.hpp"
 #include "rviz_common/message_filter_display.hpp"
 
 namespace rviz_common
 {
 namespace properties
 {
-
 class IntProperty;
+}
+}
 
-}
-}
 namespace rviz_default_plugins
 {
 
-class PointCloudCommon;
+struct Offsets
+{
+  uint32_t x, y, z;
+};
 
 /**
  * \class PointCloud2Display
@@ -62,25 +67,47 @@ class PointCloud2Display : public rviz_common::MessageFilterDisplay<sensor_msgs:
 
 public:
   PointCloud2Display();
-  ~PointCloud2Display();
 
-  virtual void reset();
+  void reset() override;
 
-  virtual void update(float wall_dt, float ros_dt);
+  void update(float wall_dt, float ros_dt) override;
+
+  /**
+   * Filter any NAN values out of the cloud.  Any NAN values that make it through to PointCloudBase
+   * will get their points put off in lala land, but it means they still do get processed/rendered
+   * which can be a big performance hit
+   * @param cloud The cloud to be filtered
+   * @return A new cloud containing only the filtered points
+   */
+  sensor_msgs::msg::PointCloud2::ConstSharedPtr filterOutInvalidPoints(
+    sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
 
 private Q_SLOTS:
   void updateQueueSize();
 
 protected:
   /** @brief Do initialization. Overridden from MessageFilterDisplay. */
-  virtual void onInitialize();
+  void onInitialize() override;
 
   /** @brief Process a single message.  Overridden from MessageFilterDisplay. */
-  virtual void processMessage(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud);
+  void processMessage(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) override;
 
+private:
   rviz_common::properties::IntProperty * queue_size_property_;
 
-  PointCloudCommon * point_cloud_common_;
+  std::unique_ptr<PointCloudCommon> point_cloud_common_;
+
+  bool cloudDataMatchesDimensions(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
+
+  sensor_msgs::msg::PointCloud2::_data_type
+  filterData(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
+
+  bool validateFloatsAtPosition(
+    sensor_msgs::msg::PointCloud2::_data_type::const_iterator position, Offsets offsets) const;
+
+  bool hasXYZChannels(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
+
+  Offsets determineOffsets(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
 };
 
 }  // namespace rviz_default_plugins

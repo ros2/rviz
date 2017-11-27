@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,64 +28,18 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <memory>
-#include <utility>
+#ifndef RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TO_POINT_CLOUD2_HPP_
+#define RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TO_POINT_CLOUD2_HPP_
 
-#include <OgreSceneNode.h>
-
-// TODO(Martin-Idel-SI): revisit when message filter is working again
-// #include <tf/transform_listener.h>
-
-#include "./point_cloud_common.hpp"
-#include "rviz_common/display_context.hpp"
-#include "rviz_common/frame_manager.hpp"
-#include "rviz_common/properties/int_property.hpp"
-
-#include "point_cloud_display.hpp"
+# include "sensor_msgs/msg/point_cloud.hpp"
+# include "sensor_msgs/msg/point_cloud2.hpp"
 
 namespace rviz_default_plugins
 {
 
-PointCloudDisplay::PointCloudDisplay()
-: point_cloud_common_(std::make_unique<PointCloudCommon>(this))
-{
-  queue_size_property_ = new rviz_common::properties::IntProperty("Queue Size", 10,
-      "Advanced: set the size of the incoming PointCloud message queue. "
-      " Increasing this is useful if your incoming TF data is delayed significantly "
-      "from your PointCloud data, but it can greatly increase memory usage if the "
-      "messages are big.",
-      this, SLOT(updateQueueSize()));
-}
-
-void PointCloudDisplay::onInitialize()
-{
-  MFDClass::onInitialize();
-  point_cloud_common_->initialize(context_, scene_node_);
-}
-
-void PointCloudDisplay::updateQueueSize()
-{
-  // TODO(Martin-Idel-SI): revisit when message filter is working again
-//  tf_filter_->setQueueSize( (uint32_t) queue_size_property_->getInt() );
-}
-
-void PointCloudDisplay::processMessage(const sensor_msgs::msg::PointCloud::ConstSharedPtr cloud)
-{
-  point_cloud_common_->addMessage(cloud);
-}
-
-void PointCloudDisplay::update(float wall_dt, float ros_dt)
-{
-  point_cloud_common_->update(wall_dt, ros_dt);
-}
-
-void PointCloudDisplay::reset()
-{
-  MFDClass::reset();
-  point_cloud_common_->reset();
-}
+sensor_msgs::msg::PointCloud2::ConstSharedPtr
+convertPointCloudToPointCloud2(sensor_msgs::msg::PointCloud::ConstSharedPtr input);
 
 }  // namespace rviz_default_plugins
 
-// #include <pluginlib/class_list_macros.h>
-// PLUGINLIB_EXPORT_CLASS( rviz::PointCloudDisplay, rviz::Display )
+#endif  // RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TO_POINT_CLOUD2_HPP_

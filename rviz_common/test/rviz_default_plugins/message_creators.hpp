@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,66 +27,52 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_DISPLAY_HPP_
-#define RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_DISPLAY_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__MESSAGE_CREATORS_HPP_
+#define RVIZ_DEFAULT_PLUGINS__MESSAGE_CREATORS_HPP_
 
-#include <deque>
-#include <memory>
-#include <queue>
+#include <cstring>
 #include <vector>
 
+#include "sensor_msgs/msg/point_cloud2.hpp"
 #include "sensor_msgs/msg/point_cloud.hpp"
-
-#include "rviz_common/message_filter_display.hpp"
-#include "point_cloud_common.hpp"
-
-namespace rviz_common
-{
-namespace properties
-{
-
-class IntProperty;
-
-}  // namespace properties
-}  // namespace rviz_common
 
 namespace rviz_default_plugins
 {
 
-/**
- * \class PointCloudDisplay
- * \brief Displays a point cloud of type sensor_msgs::PointCloud
- *
- * By default it will assume channel 0 of the cloud is an intensity value, and will color them by intensity.
- * If you set the channel's name to "rgb", it will interpret the channel as an integer rgb value, with r, g and b
- * all being 8 bits.
- */
-class PointCloudDisplay : public rviz_common::MessageFilterDisplay<sensor_msgs::msg::PointCloud>
+struct Point
 {
-  Q_OBJECT
-
-public:
-  PointCloudDisplay();
-
-  void reset() override;
-
-  void update(float wall_dt, float ros_dt) override;
-
-private Q_SLOTS:
-  void updateQueueSize();
-
-protected:
-  /** @brief Do initialization. Overridden from MessageFilterDisplay. */
-  void onInitialize() override;
-
-  /** @brief Process a single message.  Overridden from MessageFilterDisplay. */
-  void processMessage(sensor_msgs::msg::PointCloud::ConstSharedPtr cloud) override;
-
-  rviz_common::properties::IntProperty * queue_size_property_;
-
-  std::unique_ptr<PointCloudCommon> point_cloud_common_;
+  float x, y, z;
+  Point(float x, float y, float z)
+  : x(x), y(y), z(z) {}
 };
+
+struct PointWithIntensity : Point
+{
+  float intensity;
+  PointWithIntensity(float x, float y, float z, float intensity)
+  : Point(x, y, z), intensity(intensity) {}
+};
+
+struct ColoredPoint : Point
+{
+  float r, g, b;
+  ColoredPoint(float x, float y, float z, float r, float g, float b)
+  : Point(x, y, z), r(r), g(g), b(b) {}
+};
+
+sensor_msgs::msg::PointCloud::ConstSharedPtr createPointCloudWithSquare();
+sensor_msgs::msg::PointCloud::ConstSharedPtr createPointCloudWithPoints(std::vector<Point> points);
+
+sensor_msgs::msg::PointCloud2::ConstSharedPtr createPointCloud2WithSquare();
+sensor_msgs::msg::PointCloud2::SharedPtr createPointCloud2WithPoints(
+  const std::vector<Point> & points);
+sensor_msgs::msg::PointCloud2::ConstSharedPtr createF32ColoredPointCloud2(
+  const std::vector<ColoredPoint> & points);
+sensor_msgs::msg::PointCloud2::ConstSharedPtr create8BitColoredPointCloud2(
+  const std::vector<ColoredPoint> & points);
+sensor_msgs::msg::PointCloud2::ConstSharedPtr createPointCloud2WithIntensity(
+  const std::vector<PointWithIntensity> & points);
 
 }  // namespace rviz_default_plugins
 
-#endif  // RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_DISPLAY_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__MESSAGE_CREATORS_HPP_
