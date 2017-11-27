@@ -37,6 +37,11 @@
 #include <string>
 #include <vector>
 
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
+
 #include <OgreSimpleRenderable.h>
 #include <OgreMovableObject.h>
 #include <OgreString.h>
@@ -47,6 +52,10 @@
 #include <OgreRoot.h>
 #include <OgreHardwareBufferManager.h>
 #include <OgreSharedPtr.h>
+
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
 
 #include "point_cloud_renderable.hpp"
 
@@ -68,11 +77,15 @@ namespace rviz_rendering
  * \class PointCloud
  * \brief A visual representation of a set of points.
  *
- * Displays a set of points using any number of Ogre BillboardSets.  PointCloud is optimized for sets of points that change
- * rapidly, rather than for large clouds that never change.
+ * Displays a set of points using any number of Ogre BillboardSets.
+ * PointCloud is optimized for sets of points that change rapidly, rather than
+ * for large clouds that never change.
  *
- * Most of the functions in PointCloud are not safe to call from any thread but the render thread.  Exceptions are clear() and addPoints(), which
- * are safe as long as we are not in the middle of a render (ie. Ogre::Root::renderOneFrame, or Ogre::RenderWindow::update)
+ * Most of the functions in PointCloud are not safe to call from any thread but
+ * the render thread.
+ * Exceptions are clear() and addPoints(), which are safe as long as we are not
+ * in the middle of a render (ie. Ogre::Root::renderOneFrame, or
+ * Ogre::RenderWindow::update).
  */
 class PointCloud : public Ogre::MovableObject
 {
@@ -113,8 +126,8 @@ public:
   /**
    * \brief Add points to this point cloud
    *
-   * @param start_iterator A std::vector::iterator to the start of the point vector to be added
-   * @param end_iterator A std::vector::iterator to the end of the point vector to be added
+   * \param start_iterator A std::vector::iterator to the start of the point vector to be added
+   * \param end_iterator A std::vector::iterator to the end of the point vector to be added
    */
   void addPoints(
     std::vector<Point>::iterator start_iterator,
@@ -126,22 +139,18 @@ public:
    */
   void popPoints(uint32_t num_points);
 
-  /**
-   * \brief Set what type of rendering primitives should be used, currently points, billboards, spheres and boxes are supported
-   */
+  /// Set type of rendering primitive to used; supports points, billboards, spheres and boxes.
   void setRenderMode(RenderMode mode);
 
+  /// Set the dimensions of the billboards used to render each point.
   /**
-   * \brief Set the dimensions of the billboards used to render each point
-   * @param width Width
-   * @param height Height
-   * @note width/height are only applicable to billboards and boxes, depth is only applicable to boxes
+   * Width/height are only applicable to billboards and boxes, depth is only applicable to boxes.
    */
   void setDimensions(float width, float height, float depth);
 
   /**
    * \brief If set to true, the size of each point will be multiplied by its z component.
-   * @param auto_size resize in shaders
+   * \param auto_size resize in shaders
    * @note (Used for depth image based point clouds)
    */
   void setAutoSize(bool auto_size);
@@ -153,8 +162,9 @@ public:
 
   /**
    * \brief Set alpha blending
-   * @param alpha global alpha value
-   * @param per_point_alpha indicates that each point will have an individual alpha value. If true, enables alpha blending regardless of the global alpha.
+   * \param alpha global alpha value
+   * \param per_point_alpha indicates that each point will have an individual alpha value.
+   *   If true, enables alpha blending regardless of the global alpha.
    */
   void setAlpha(float alpha, bool per_point_alpha = false);
 

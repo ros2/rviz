@@ -38,11 +38,10 @@
 
 #include "rviz_common/logging.hpp"
 
-// #include "./failed_tool.hpp"
+#include "./failed_tool.hpp"
+#include "rviz_common/display_context.hpp"
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/properties/property_tree_model.hpp"
-
-#include "./temp/default_plugins/tools/move_tool.hpp"
 
 namespace rviz_common
 {
@@ -58,32 +57,41 @@ QString addSpaceToCamelCase(QString input)
 }
 
 ToolManager::ToolManager(DisplayContext * context)
-// : factory_(new PluginlibFactory<Tool>("rviz", "rviz::Tool")),
-: property_tree_model_(new PropertyTreeModel(new Property())),
+: factory_(new PluginlibFactory<Tool>("rviz_common", "rviz_common::Tool")),
+  property_tree_model_(new PropertyTreeModel(new Property())),
   context_(context),
-  current_tool_(NULL),
-  default_tool_(NULL)
+  current_tool_(nullptr),
+  default_tool_(nullptr)
 {
-  connect(property_tree_model_, SIGNAL(configChanged()), this, SIGNAL(configChanged()));
+  connect(property_tree_model_.get(), SIGNAL(configChanged()), this, SIGNAL(configChanged()));
 }
 
 ToolManager::~ToolManager()
 {
   removeAll();
-  // delete factory_;
-  delete property_tree_model_;
 }
 
 void ToolManager::initialize()
 {
-  // Possibly this should be done with a loop over
-  // factory_->getDeclaredClassIds(), but then I couldn't control the
-  // order.
-  addTool("rviz/MoveCamera");
-  addTool("rviz/Interact");
-  addTool("rviz/Select");
-  addTool("rviz/SetInitialPose");
-  addTool("rviz/SetGoal");
+  // get a list of available tool plugin class ids
+  QStringList class_ids = factory_->getDeclaredClassIds();
+  // define a list of preferred tool names (they will be listed first in the toolbar)
+  std::vector<const char *> preferred_tool_names = {
+    "rviz/MoveCamera",
+    "rviz/Interact",
+    "rviz/Select",
+    "rviz/SetInitialPose",
+    "rviz/SetGoal",
+  };
+  // attempt to load each preferred tool in order
+  for (const auto & preferred_tool_name : preferred_tool_names) {
+    for (const auto & class_id : class_ids) {
+      if (class_id.toStdString() == preferred_tool_name) {
+        addTool(class_id);
+      }
+    }
+  }
+  // other tools will need to be loaded manually by the user through the UI
 }
 
 void ToolManager::removeAll()
@@ -118,7 +126,7 @@ void ToolManager::save(Config config) const
 
 rviz_common::properties::PropertyTreeModel * ToolManager::getPropertyModel() const
 {
-  return property_tree_model_;
+  return property_tree_model_.get();
 }
 
 bool ToolManager::toKey(QString const & str, uint & key)
@@ -143,7 +151,7 @@ void ToolManager::handleChar(QKeyEvent * event, RenderPanel * panel)
   }
 
   // check if the incoming key triggers the activation of another tool
-  Tool * tool = NULL;
+  Tool * tool = nullptr;
   if (shortkey_to_tool_map_.find(event->key()) != shortkey_to_tool_map_.end()) {
     tool = shortkey_to_tool_map_[event->key()];
   }
@@ -198,7 +206,7 @@ Tool * ToolManager::getTool(int index)
   return tools_[index];
 }
 
-void ToolManager::updatePropertyVisibility(Property * container)
+void ToolManager::updatePropertyVisibility(rviz_common::properties::Property * container)
 {
   if (container->numChildren() > 0) {
     if (!property_tree_model_->getRoot()->contains(container)) {
@@ -217,9 +225,7 @@ void ToolManager::closeTool()
 
 Tool * ToolManager::addTool(const QString & class_id)
 {
-  // TODO(wjwwood): make this load a particular tool, until plugin loading is
-  //                implemented, then restore functionality.
-#if 0
+#if 1
   QString error;
   bool failed = false;
   Tool * tool = factory_->make(class_id, &error);
@@ -242,16 +248,19 @@ Tool * ToolManager::addTool(const QString & class_id)
     }
   }
 
-  Property * container = tool->getPropertyContainer();
-  connect(container, SIGNAL(childListChanged(Property *)), this,
-    SLOT(updatePropertyVisibility(Property *)));
+  rviz_common::properties::Property * container = tool->getPropertyContainer();
+  connect(
+    container,
+    SIGNAL(childListChanged(rviz_common::properties::Property *)),
+    this,
+    SLOT(updatePropertyVisibility(rviz_common::properties::Property *)));
   updatePropertyVisibility(container);
 
   Q_EMIT toolAdded(tool);
 
   // If the default tool is unset and this tool loaded correctly, set
   // it as the default and current.
-  if (default_tool_ == NULL && !failed) {
+  if (default_tool_ == nullptr && !failed) {
     setDefaultTool(tool);
     setCurrentTool(tool);
   }
@@ -261,7 +270,7 @@ Tool * ToolManager::addTool(const QString & class_id)
   Q_EMIT configChanged();
 
   return tool;
-#endif
+#else
   if (class_id == "rviz/MoveCamera") {
     Tool * tool = new rviz_common::MoveTool();
     tools_.append(tool);
@@ -300,12 +309,13 @@ Tool * ToolManager::addTool(const QString & class_id)
   }
   RVIZ_COMMON_LOG_WARNING_STREAM("would have loaded a tool called: " << class_id.toStdString());
   return nullptr;
+#endif
 }
 
 void ToolManager::removeTool(int index)
 {
   Tool * tool = tools_.takeAt(index);
-  Tool * fallback = NULL;
+  Tool * fallback = nullptr;
   if (tools_.size() > 0) {
     fallback = tools_[0];
   }
@@ -354,11 +364,9 @@ Tool * ToolManager::getDefaultTool()
   return default_tool_;
 }
 
-#if 0
 PluginlibFactory<Tool> * ToolManager::getFactory()
 {
-  return factory_;
+  return factory_.get();
 }
-#endif
 
 }  // namespace rviz_common

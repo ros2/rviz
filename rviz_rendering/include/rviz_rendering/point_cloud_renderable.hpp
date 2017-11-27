@@ -34,6 +34,11 @@
 #include <deque>
 #include <memory>
 
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
+
 #include <OgreSimpleRenderable.h>
 #include <OgreString.h>
 #include <OgreAxisAlignedBox.h>
@@ -43,6 +48,10 @@
 #include <OgreRoot.h>
 #include <OgreHardwareBufferManager.h>
 #include <OgreSharedPtr.h>
+
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
 
 namespace Ogre
 {
@@ -68,7 +77,17 @@ public:
     Ogre::RenderOperation::OperationType operationType);
   ~PointCloudRenderable() override;
 
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Woverloaded-virtual"
+#endif
+
   Ogre::RenderOperation * getRenderOperation() {return &mRenderOp;}
+
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
+
   Ogre::HardwareVertexBufferSharedPtr getBuffer();
 
   Ogre::Real getBoundingRadius() const override;

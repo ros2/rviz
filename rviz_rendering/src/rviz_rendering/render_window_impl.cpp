@@ -94,7 +94,6 @@ RenderWindowImpl::render()
 void
 RenderWindowImpl::renderLater()
 {
-  // printf("in RenderWindowImpl::renderLater()\n");
   parent_->requestUpdate();
 
   // Alternative impl?:
@@ -116,20 +115,17 @@ RenderWindowImpl::renderLater()
 void
 RenderWindowImpl::renderNow()
 {
-  // printf("in RenderWindowImpl::renderNow()\n");
   if (!parent_->isExposed()) {
     return;
   }
 
   if (!render_system_) {
-    printf("in RenderWindowImpl::renderNow() -> initialize()\n");
     this->initialize();
   }
 
   this->render();
 
   if (animating_) {
-    printf("in RenderWindowImpl::renderNow() -> renderLater() because of animating_\n");
     this->renderLater();
   }
 }
@@ -137,7 +133,6 @@ RenderWindowImpl::renderNow()
 void
 createScene(Ogre::SceneManager * ogre_scene_manager)
 {
-  printf("in RenderWindowImpl::createScene()\n");
   /*
   Example scene
   Derive this class for your own purpose and overwite this function to have a
@@ -223,7 +218,6 @@ RenderWindowImpl::initialize()
 void
 RenderWindowImpl::resize(size_t width, size_t height)
 {
-  printf("in RenderWindowImpl::resize(size_t %zu, size_t %zu)\n", width, height);
   if (ogre_render_window_) {
     ogre_render_window_->resize(width, height);
     ogre_render_window_->windowMovedOrResized();

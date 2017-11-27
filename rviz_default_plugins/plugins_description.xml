@@ -1,0 +1,26 @@
+<library path="librviz_default_plugins">
+
+  <!-- Tool plugins -->
+
+  <class
+    name="rviz/MoveCamera"
+    type="rviz_default_plugins::tools::MoveTool"
+    base_class_type="rviz_common::Tool"
+  >
+    <description>
+      Drag the mouse with left, middle, or right buttons to change your viewpoint.
+    </description>
+  </class>
+
+  <!-- View Controller plugins -->
+
+  <class
+    name="rviz/Orbit"
+    type="rviz_default_plugins::view_controllers::OrbitViewController"
+    base_class_type="rviz_common::ViewController"
+  >
+    <description>
+      Makes it easy to move around a given point in space, looking at it from any angle.
+    </description>
+  </class>
+</library>

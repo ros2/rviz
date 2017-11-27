@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,6 +27,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef RVIZ_COMMON__CLASS_ID_RECORDING_FACTORY_HPP_
 #define RVIZ_COMMON__CLASS_ID_RECORDING_FACTORY_HPP_
 
@@ -35,27 +37,31 @@ namespace rviz_common
 {
 
 template<class Type>
-/** @brief Templated factory which informs objects created by it what their class identifier string was.
-calls a setClassId() function on
- * any instances created by a protected makeRaw() function (pure
- * virtual in this class).*/
+/// Templated factory which informs objects created by it what their class identifier string was.
+/**
+ * calls a setClassId() function on any instances created by a protected
+ * makeRaw() function (pure virtual in this class).
+ */
 class ClassIdRecordingFactory : public Factory
 {
 public:
-  /** @brief Instantiate and return a instance of a subclass of Type using makeRaw().
-   * @param class_id A string identifying the class uniquely among
-   *        classes of its parent class.  rviz::GridDisplay might be
-   *        rviz/Grid, for example.
-   * @param error_return If non-NULL and there is an error, *error_return is set to a description of the problem.
-   * @return A new instance of the class identified by class_id, or NULL if there was an error.
+  /// Instantiate and return a instance of a subclass of Type using makeRaw().
+  /**
+   * If make() returns nullptr and error_return is not nullptr,
+   * *error_return will be set.
+   * On success, *error_return will not be changed.
    *
-   * If make() returns NULL and error_return is not NULL,
-   * *error_return will be set.  On success, *error_return will not be
-   * changed. */
-  virtual Type * make(const QString & class_id, QString * error_return = NULL)
+   * \param class_id A string identifying the class uniquely among classes of
+   *   its parent class, e.g. rviz::GridDisplay might be 'rviz/Grid'.
+   * \param error_return If non-nullptr and there is an error,
+   *   *error_return is set to a description of the problem.
+   * \return A new instance of the class identified by class_id, or
+   *   nullptr if there was an error.
+   */
+  virtual Type * make(const QString & class_id, QString * error_return = nullptr)
   {
     Type * obj = makeRaw(class_id, error_return);
-    if (obj != NULL) {
+    if (obj != nullptr) {
       obj->setClassId(class_id);
       obj->setDescription(getClassDescription(class_id));
     }
@@ -63,9 +69,9 @@ public:
   }
 
 protected:
-  virtual Type * makeRaw(const QString & class_id, QString * error_return = NULL) = 0;
+  virtual Type * makeRaw(const QString & class_id, QString * error_return = nullptr) = 0;
 };
 
-}  // end namespace rviz_common
+}  // namespace rviz_common
 
 #endif  // RVIZ_COMMON__CLASS_ID_RECORDING_FACTORY_HPP_

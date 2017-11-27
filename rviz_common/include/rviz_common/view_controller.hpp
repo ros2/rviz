@@ -45,10 +45,10 @@ class QKeyEvent;
 
 namespace Ogre
 {
+
 class Camera;
-// class SceneNode;
 class Vector3;
-// class Quaternion;
+
 }  // namespace Ogre
 
 namespace rviz_common

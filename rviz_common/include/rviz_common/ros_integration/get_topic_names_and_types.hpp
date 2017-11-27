@@ -1,5 +1,4 @@
 /*
- * Copyright (c) 2012, Willow Garage, Inc.
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
@@ -28,34 +27,29 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__DISPLAY_FACTORY_HPP_
-#define RVIZ_COMMON__DISPLAY_FACTORY_HPP_
+#ifndef RVIZ_COMMON__ROS_INTEGRATION__GET_TOPIC_NAME_AND_TYPES_HPP_
+#define RVIZ_COMMON__ROS_INTEGRATION__GET_TOPIC_NAME_AND_TYPES_HPP_
 
-#include <QMap>
-#include <QSet>
-#include <QString>
-
-#include "./pluginlib_factory.hpp"
-#include "rviz_common/display.hpp"
+#include <map>
+#include <string>
+#include <vector>
 
 namespace rviz_common
 {
-
-class DisplayFactory : public PluginlibFactory<Display>
+namespace ros_integration
 {
-public:
-  DisplayFactory();
 
-  /// Get all supported message types for the given class id.
-  virtual QSet<QString> getMessageTypes(const QString & class_id);
+/// Return a map with topic names mapped to a list of types for that topic. 
+/**
+ * The node name is what was given when initializing with this API.
+ *
+ * \param node_name name of the node to use when getting this information.
+ * \return map of topic names and their types
+ */
+std::map<std::string, std::vector<std::string>>
+get_topic_names_and_types(const std::string & node_name);
 
-protected:
-  /// Overridden from PluginlibFactory<Display> to set the icon of the Display.
-  Display * makeRaw(const QString & class_id, QString * error_return = nullptr) override;
-
-  QMap<QString, QSet<QString>> message_type_cache_;
-};
-
+}  // namespace ros_integration
 }  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__DISPLAY_FACTORY_HPP_
+#endif  // RVIZ_COMMON__ROS_INTEGRATION__GET_TOPIC_NAME_AND_TYPES_HPP_

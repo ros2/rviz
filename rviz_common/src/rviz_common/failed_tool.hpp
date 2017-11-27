@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,24 +27,27 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef RVIZ_COMMON__FAILED_TOOL_HPP_
 #define RVIZ_COMMON__FAILED_TOOL_HPP_
 
+#include <QString>
+
 #include "rviz_common/tool.hpp"
 
-namespace rviz
+namespace rviz_common
 {
 
-/** @brief A FailedTool instance represents a Tool class we
- * tried and failed to instantiate.
- *
+/// A FailedTool instance represents a Tool class we tried and failed to instantiate.
+/**
  * FailedTool stores the class id which it was supposed to be, and
  * an error message describing the failure.
  *
  * The load() and save() functions work together to ensure that loaded
  * configuration data is saved out again without modification.  This
  * ensures that running rviz with a missing plugin library won't
- * damage config files which refer to it. */
+ * damage config files which refer to it.
+ */
 class FailedTool : public Tool
 {
 public:
@@ -51,23 +55,22 @@ public:
 
   virtual QString getDescription() const;
 
-  virtual void activate();
-  virtual void deactivate() {}
+  void activate() override;
+  void deactivate() override;
 
-  virtual int processMouseEvent(ViewportMouseEvent & event) {return 0;}
+  int processMouseEvent(ViewportMouseEvent & event) override;
 
-  /** @brief Store the given config data for later, so we can return it
-   * with save() when someone writes this back to a file. */
-  virtual void load(const Config & config);
+  /// Store the config data for later, so we can return it with save() when written back to a file.
+  void load(const Config & config) override;
 
-  /** @brief Copy saved config data from last call to load() into config. */
-  virtual void save(Config config) const;
+  /// Copy saved config data from last call to load() into config.
+  void save(Config config) const override;
 
 private:
   Config saved_config_;
   QString error_message_;
 };
 
-}  // end namespace rviz
+}  // namespace rviz_common
 
 #endif  // RVIZ_COMMON__FAILED_TOOL_HPP_

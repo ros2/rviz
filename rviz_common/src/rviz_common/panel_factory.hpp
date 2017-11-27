@@ -40,9 +40,9 @@ namespace rviz_common
 class PanelFactory : public PluginlibFactory<Panel>
 {
 public:
-  PanelFactory();
+  PanelFactory(const std::string & node_name);
 };
 
-}  // end namespace rviz_common
+}  // namespace rviz_common
 
 #endif  // RVIZ_COMMON__PANEL_FACTORY_HPP_

@@ -55,16 +55,9 @@
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/load_resource.hpp"
 #include "rviz_common/properties/bool_property.hpp"
-// #include "./properties/enum_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/selection/selection_manager.hpp"
 #include "rviz_common/render_panel.hpp"
-
-// #include "rviz/frame_manager.h"
-// #include "rviz/view_manager.h"
-// #include "rviz/viewport_mouse_event.h"
-// #include "rviz/window_manager_interface.h"
-// #include "rviz/ogre_helpers/render_system.h"
 
 namespace rviz_common
 {

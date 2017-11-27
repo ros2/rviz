@@ -50,7 +50,7 @@ set(headers_with_q_object
   include/rviz_rendering/render_window.hpp
 )
 
-add_library(rviz_rendering
+add_library(rviz_rendering SHARED
   ${headers_with_q_object}
   src/rviz_rendering/apply_visibility_bits.cpp
   src/rviz_rendering/arrow.cpp
@@ -73,17 +73,18 @@ add_library(rviz_rendering
   src/rviz_rendering/point_cloud_renderable.cpp
 )
 target_link_libraries(rviz_rendering
-  rviz_ogre_vendor::OgreMain
-  rviz_ogre_vendor::OgreOverlay
-  rviz_ogre_vendor::RenderSystem_GL
-  rviz_ogre_vendor::OgreGLSupport
+  PRIVATE rviz_ogre_vendor::OgreMain
+  PRIVATE rviz_ogre_vendor::OgreOverlay
+  PRIVATE rviz_ogre_vendor::RenderSystem_GL
+  PRIVATE rviz_ogre_vendor::OgreGLSupport
   Qt5::Widgets
   ament_index_cpp::ament_index_cpp
 )
 target_include_directories(rviz_rendering
   PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+    ${OGRE_INCLUDE_DIRS}
 )
 
 ament_export_interfaces(rviz_rendering)
@@ -103,32 +104,32 @@ install(
   DESTINATION include
 )
 
-add_executable(rendering_example src/examples/rendering_example.cpp)
-target_link_libraries(rendering_example rviz_rendering Qt5::Widgets)
+# add_executable(rendering_example src/examples/rendering_example.cpp)
+# target_link_libraries(rendering_example rviz_rendering Qt5::Widgets)
 
-# TODO(wjwwood): find a way to make this optional or to run without "deploying" the
-#                necessary dlls and stuff to the bin folder.
-#                see:
-# https://stackoverflow.com/questions/41193584/deploy-all-qt-dependencies-when-building#41199492
-if(TARGET Qt5::windeployqt)
-  # execute windeployqt in a tmp directory after build
-  add_custom_command(TARGET rendering_example
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
-    COMMAND set PATH=%PATH%$<SEMICOLON>${qt5_install_prefix}/bin
-    COMMAND
-    Qt5::windeployqt
-    --dir "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
-    "$<TARGET_FILE_DIR:rendering_example>/$<TARGET_FILE_NAME:rendering_example>"
-  )
+# # TODO(wjwwood): find a way to make this optional or to run without "deploying" the
+# #                necessary dlls and stuff to the bin folder.
+# #                see:
+# # https://stackoverflow.com/questions/41193584/deploy-all-qt-dependencies-when-building#41199492
+# if(TARGET Qt5::windeployqt)
+#   # execute windeployqt in a tmp directory after build
+#   add_custom_command(TARGET rendering_example
+#     POST_BUILD
+#     COMMAND ${CMAKE_COMMAND} -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
+#     COMMAND set PATH=%PATH%$<SEMICOLON>${qt5_install_prefix}/bin
+#     COMMAND
+#     Qt5::windeployqt
+#     --dir "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
+#     "$<TARGET_FILE_DIR:rendering_example>/$<TARGET_FILE_NAME:rendering_example>"
+#   )
 
-  # copy deployment directory during installation
-  install(
-    DIRECTORY
-    "${CMAKE_CURRENT_BINARY_DIR}/windeployqt/"
-    DESTINATION bin
-  )
-endif()
+#   # copy deployment directory during installation
+#   install(
+#     DIRECTORY
+#     "${CMAKE_CURRENT_BINARY_DIR}/windeployqt/"
+#     DESTINATION bin
+#   )
+# endif()
 
 set(rviz_rendering_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/cmake")
 include(${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/register_rviz_ogre_media_exports_hook-extras.cmake)
@@ -136,7 +137,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/register_rviz_ogre_media_exports_h
 install(DIRECTORY src/cmake
   DESTINATION share/${PROJECT_NAME})
 
-install(TARGETS rendering_example DESTINATION bin)
+# install(TARGETS rendering_example DESTINATION bin)
 
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/ogre_media"
   DESTINATION "share/rviz_rendering"

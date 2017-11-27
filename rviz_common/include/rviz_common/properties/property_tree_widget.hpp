@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,6 +27,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef RVIZ_COMMON__PROPERTIES__PROPERTY_TREE_WIDGET_HPP_
 #define RVIZ_COMMON__PROPERTIES__PROPERTY_TREE_WIDGET_HPP_
 
@@ -49,11 +51,20 @@ class PropertyTreeWidget : public QTreeView
 public:
   explicit PropertyTreeWidget(QWidget * parent = 0);
 
-  /** @brief Set the data model this widget should view. */
+// disable the overloaded virtual warning, since this is intentional
+#ifdef __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Woverloaded-virtual"
+#endif
+  /// Set the data model this widget should view.
   void setModel(PropertyTreeModel * model);
+#ifdef __clang__
+# pragma clang diagnostic pop
+#endif
+
   PropertyTreeModel * getModel() const {return model_;}
 
-  /** @brief Return the list of objects of a given type which are currently selected. */
+  /// Return the list of objects of a given type which are currently selected.
   template<class Type>
   QList<Type *> getSelectedObjects()
   {
@@ -76,20 +87,25 @@ public:
     return objects_out;
   }
 
-  /** @brief Write state to the given Config. */
+  /// Write state to the given Config.
   void save(Config config) const;
 
-  /** @brief Read state from the given Config. */
+  /// Read state from the given Config.
   void load(const Config & config);
 
 protected:
-  /** @brief Called whenever current item changes.  Calls QTreeView
-   * implementation then emits currentPropertyChanged(). */
-  virtual void currentChanged(const QModelIndex & current, const QModelIndex & previous);
+  /// Called whenever current item changes.
+  /**
+   * Calls QTreeView implementation then emits currentPropertyChanged().
+   */
+  void currentChanged(const QModelIndex & current, const QModelIndex & previous) override;
 
-  /** @brief Called whenever selection changes.  Calls QTreeView
-   * implementation then emits selectionHasChanged(). */
-  virtual void selectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
+  /// Called whenever selection changes.
+  /**
+   * Calls QTreeView implementation then emits selectionHasChanged().
+   */
+  void selectionChanged(
+    const QItemSelection & selected, const QItemSelection & deselected) override;
 
 protected Q_SLOTS:
   virtual void propertyHiddenChanged(const Property * property);
@@ -99,13 +115,12 @@ Q_SIGNALS:
   void selectionHasChanged();
 
 private:
-  /** @brief Recursively write full names of properties which are expanded
-   * in this view to the given Config. */
+  /// Recursively write full names of properties which are expanded in this view to the Config.
   void saveExpandedEntries(
     Config config, const QModelIndex & parent_index,
     const QString & prefix) const;
 
-  /** @brief Recursively expand entries whose full names appear in expanded_full_names. */
+  /// Recursively expand entries whose full names appear in expanded_full_names.
   void expandEntries(
     const QSet<QString> & expanded_full_names,
     const QModelIndex & parent_index,

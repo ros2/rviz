@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,16 +28,16 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <QTimer>
+#include "rviz_common/properties/property_tree_widget.hpp"
+
 #include <QHash>
 #include <QSet>
+#include <QTimer>
 
+#include "rviz_common/properties/property.hpp"
 #include "rviz_common/properties/property_tree_delegate.hpp"
 #include "rviz_common/properties/splitter_handle.hpp"
 #include "rviz_common/properties/status_list.hpp"
-#include "rviz_common/properties/property.hpp"
-
-#include "rviz_common/properties/property_tree_widget.hpp"
 
 namespace rviz_common
 {

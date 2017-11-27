@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,12 +28,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "./failed_view_controller.hpp"
+
 #include <QMessageBox>
 
-#include ".rviz_common/display_context.hpp"
+#include "rviz_common/display_context.hpp"
 #include "./window_manager_interface.hpp"
-
-#include "./failed_view_controller.hpp"
 
 namespace rviz_common
 {
@@ -74,6 +75,11 @@ void FailedViewController::onActivate()
   }
   QMessageBox::critical(parent, "ViewController '" + getName() + "'unavailable.",
     getDescription() );
+}
+
+void FailedViewController::lookAt(const Ogre::Vector3 & point)
+{
+  Q_UNUSED(point);
 }
 
 }  // end namespace rviz_common

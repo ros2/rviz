@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,6 +27,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef RVIZ_COMMON__PROPERTIES__SPLITTER_HANDLE_HPP_
 #define RVIZ_COMMON__PROPERTIES__SPLITTER_HANDLE_HPP_
 
@@ -38,10 +40,13 @@ namespace rviz_common
 namespace properties
 {
 
-/** @brief A tall skinny invisible widget providing left-right sliding
- * column separator adjustment for a two-column QTreeView via mouse
- * drags.  Shows splitter cursor when mouse hovers over it.  Uses
- * event filtering to catch resize events for the parent. */
+/// Provides a sliding column separator between widgets.
+/**
+ * A tall skinny invisible widget providing left-right sliding column separator
+ * adjustment for a two-column QTreeView via mouse drags.
+ * Shows splitter cursor when mouse hovers over it.
+ * Uses event filtering to catch resize events for the parent.
+ */
 class SplitterHandle : public QWidget
 {
   Q_OBJECT
@@ -49,34 +54,40 @@ class SplitterHandle : public QWidget
 public:
   explicit SplitterHandle(QTreeView * parent = 0);
 
-  /** @brief Set the ratio of the parent's left column to the parent widget width. */
+  /// Set the ratio of the parent's left column to the parent widget width.
   void setRatio(float ratio);
 
-  /** @brief Get the ratio of the parent's left column to the parent widget width. */
+  /// Get the ratio of the parent's left column to the parent widget width.
   float getRatio();
 
-  /** @brief Catch resize events sent to parent to update splitter's
-   * geometry.  Always returns false. */
-  bool eventFilter(QObject * event_target, QEvent * event);
+  /// Catch resize events sent to parent to update splitter's geometry.
+  /**
+   * Always returns false.
+   */
+  bool eventFilter(QObject * event_target, QEvent * event) override;
 
   void setColor(QColor color) {color_ = color; update();}
+
   QColor getColor() const {return color_;}
 
 protected:
-  virtual void mousePressEvent(QMouseEvent * event);
-  virtual void mouseMoveEvent(QMouseEvent * event);
-  virtual void paintEvent();
+  void mousePressEvent(QMouseEvent * event) override;
+
+  void mouseMoveEvent(QMouseEvent * event) override;
+
+  void paintEvent(QPaintEvent * event) override;
 
 private:
-  /** @brief Update the parent's column widths and this splitter's
-   * geometry based on first_column_size_ratio_. */
+  /// Update the parent's column widths and this splitter's geometry.
   void updateGeometry();
 
   QTreeView * parent_;
   int x_press_offset_;
 
-  /** The ratio of the first column width to the entire widget width.
-   * Preserved during parent widget resize. */
+  /// The ratio of the first column width to the entire widget width.
+  /** 
+   * Preserved during parent widget resize.
+   */
   float first_column_size_ratio_;
   QColor color_;
 };

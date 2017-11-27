@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,29 +28,36 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_MOVE_TOOL_H
-#define RVIZ_MOVE_TOOL_H
+#ifndef RVIZ_DEFAULT_PLUGINS__TOOLS__MOVE_TOOL_HPP_
+#define RVIZ_DEFAULT_PLUGINS__TOOLS__MOVE_TOOL_HPP_
 
-#include "rviz/tool.h"
+#include <QKeyEvent>
 
-namespace rviz
+#include "rviz_common/render_panel.hpp"
+#include "rviz_common/tool.hpp"
+#include "rviz_common/viewport_mouse_event.hpp"
+
+namespace rviz_default_plugins
+{
+namespace tools
 {
 
 class DisplayContext;
 
-class MoveTool: public Tool
+class MoveTool : public rviz_common::Tool
 {
 public:
   MoveTool();
+  virtual ~MoveTool();
 
-  virtual void activate() {}
-  virtual void deactivate() {}
+  void activate() override;
+  void deactivate() override;
 
-  virtual int processMouseEvent( ViewportMouseEvent& event );
-  virtual int processKeyEvent( QKeyEvent* event, RenderPanel* panel );
+  int processMouseEvent(rviz_common::ViewportMouseEvent & event) override;
+  int processKeyEvent(QKeyEvent * event, rviz_common::RenderPanel * panel) override;
 };
 
-}
+}  // namespace tools
+}  // namespace rviz_default_plugins
 
-#endif
-
+#endif  // RVIZ_DEFAULT_PLUGINS__TOOLS__MOVE_TOOL_HPP_

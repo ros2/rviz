@@ -553,7 +553,7 @@ Q_SIGNALS:
 
   /// Emitted after insertions and deletions of child Properties.
   void
-  childListChanged(Property * this_property);
+  childListChanged(rviz_common::properties::Property * this_property);
 
 protected:
   /// Load the value of this property specifically, not including children.

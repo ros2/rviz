@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,99 +28,122 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_ORBIT_VIEW_CONTROLLER_H
-#define RVIZ_ORBIT_VIEW_CONTROLLER_H
+#ifndef RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__ORBIT_VIEW_CONTROLLER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__ORBIT_VIEW_CONTROLLER_HPP_
 
 #include <OgreVector3.h>
 
 #include <QCursor>
 
-#include "rviz/frame_position_tracking_view_controller.h"
+#include "rviz_common/frame_position_tracking_view_controller.hpp"
+#include "rviz_common/properties/bool_property.hpp"
+#include "rviz_common/properties/float_property.hpp"
+#include "rviz_common/properties/vector_property.hpp"
+#include "rviz_rendering/shape.hpp"
 
-namespace rviz
+namespace rviz_default_plugins
 {
-class BoolProperty;
-class FloatProperty;
-class Shape;
-class SceneNode;
-class VectorProperty;
+namespace view_controllers
+{
 
+/// An orbital camera, controlled by yaw, pitch, distance, and focal point
 /**
- * \brief An orbital camera, controlled by yaw, pitch, distance, and focal point
- *
  * This camera is based on the equation of a sphere in spherical coordinates:
- @verbatim
- x = d*cos(theta)sin(phi)
- y = d*cos(phi)
- z = d*sin(theta)sin(phi)
- @endverbatim
- * Where:<br>
- * d = #distance_<br>
- * theta = #yaw_<br>
- * phi = #pitch_
+ *
+ *   x = d * cos(theta) * sin(phi)
+ *   y = d * cos(phi)
+ *   z = d * sin(theta) * sin(phi)
+ *
+ * Where:
+ *
+ *   d = distance
+ *   theta = yaw
+ *   phi = pitch
  */
-class OrbitViewController: public FramePositionTrackingViewController
+class OrbitViewController : public rviz_common::FramePositionTrackingViewController
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   OrbitViewController();
   virtual ~OrbitViewController();
 
-  /** @brief Do subclass-specific initialization.  Called by
-   * ViewController::initialize after context_, target_scene_node_,
-   * and camera_ are set. */
-  virtual void onInitialize();
-
+  /// Do subclass-specific initialization.
   /**
-   * \brief Move in/out from the focal point, ie. adjust #distance_ by amount
-   * @param amount The distance to move.  Positive amount moves towards the focal point, negative moves away
+   * Called by ViewController::initialize after context_, target_scene_node_,
+   * and camera_ are set.
    */
-  void zoom( float amount );
-  void yaw( float angle );
-  void pitch( float angle );
-  void move( float x, float y, float z );
+  void onInitialize() override;
 
-  virtual void handleMouseEvent(ViewportMouseEvent& evt);
-
-  virtual void lookAt( const Ogre::Vector3& point );
-
-  virtual void reset();
-
-  /** @brief Configure the settings of this view controller to give,
-   * as much as possible, a similar view as that given by the
-   * @a source_view.
+  /// Move in/out from the focal point, i.e. adjust distance by amount.
+  /**
+   * Positive amount moves towards the focal point, negative moves away.
    *
-   * @a source_view must return a valid @c Ogre::Camera* from getCamera(). */
-  virtual void mimic( ViewController* source_view );
+   * \param amount The distance to move.
+   */
+  void zoom(float amount);
+
+  /// Set the yaw angle.
+  void yaw(float angle);
+
+  /// Set the pitch angle.
+  void pitch(float angle);
+
+  /// Move the focal point.
+  void move(float x, float y, float z);  // NOLINT(build/include_what_you_use): not std::move
+
+  /// Handle incoming mouse events.
+  void handleMouseEvent(rviz_common::ViewportMouseEvent & evt) override;
+
+  /// Look at a given location by changing the distance and angles.
+  void lookAt(const Ogre::Vector3 & point) override;
+
+  /// Reset the distance and angles to their default values.
+  void reset() override;
+
+  /// Configure this view controller to give a similar view to the given source_view.
+  /**
+   * \param source_view must return a valid `Ogre::Camera *` from `getCamera()`.
+   */
+  void mimic(ViewController * source_view) override;
 
 protected:
-  virtual void update(float dt, float ros_dt);
-  virtual void onTargetFrameChanged(const Ogre::Vector3& old_reference_position, const Ogre::Quaternion& old_reference_orientation);
+  void update(float dt, float ros_dt) override;
 
-  /**
-   * \brief Calculates pitch and yaw values given a new position and the current focal point
-   * @param position Position to calculate the pitch/yaw for
-   */
-  void calculatePitchYawFromPosition( const Ogre::Vector3& position );
+  void onTargetFrameChanged(
+    const Ogre::Vector3 & old_reference_position,
+    const Ogre::Quaternion & old_reference_orientation) override;
 
+  /// Calculate the pitch and yaw values given a new position and the current focal point.
   /**
-   * \brief Calculates the focal shape size and update it's geometry
+   * \param position the position from which to calculate the pitch/yaw.
    */
+  void calculatePitchYawFromPosition(const Ogre::Vector3 & position);
+
+  /// Calculate the focal shape size and update it's geometry.
   void updateFocalShapeSize();
 
   virtual void updateCamera();
 
-  FloatProperty* yaw_property_;                         ///< The camera's yaw (rotation around the y-axis), in radians
-  FloatProperty* pitch_property_;                       ///< The camera's pitch (rotation around the x-axis), in radians
-  FloatProperty* distance_property_;                    ///< The camera's distance from the focal point
-  VectorProperty* focal_point_property_; ///< The point around which the camera "orbits".
-  BoolProperty* focal_shape_fixed_size_property_;       ///< Whether the focal shape size is fixed or not
-  FloatProperty* focal_shape_size_property_;            ///< The focal shape size
+  /// The camera's yaw (rotation around the y-axis), in radians.
+  rviz_common::properties::FloatProperty * yaw_property_;
+  /// The camera's pitch (rotation around the x-axis), in radians.
+  rviz_common::properties::FloatProperty * pitch_property_;
+  /// The camera's distance from the focal point.
+  rviz_common::properties::FloatProperty * distance_property_;
+  /// The point around which the camera "orbits".
+  rviz_common::properties::VectorProperty * focal_point_property_;
+  /// Whether the focal shape size is fixed or not.
+  rviz_common::properties::BoolProperty * focal_shape_fixed_size_property_;
+  /// The focal shape size.
+  rviz_common::properties::FloatProperty * focal_shape_size_property_;
 
-  Shape* focal_shape_;
+  rviz_rendering::Shape * focal_shape_;
+
   bool dragging_;
 };
 
-}
+}  // namespace view_controllers
+}  // namespace rviz_default_plugins
 
-#endif // RVIZ_VIEW_CONTROLLER_H
+#endif  // RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__ORBIT_VIEW_CONTROLLER_HPP_
