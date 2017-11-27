@@ -22,12 +22,13 @@ find_package(rviz_rendering REQUIRED)
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
 find_package(geometry_msgs REQUIRED)
+find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
-find_package(sensor_msgs REQUIRED)
-find_package(std_msgs REQUIRED)
 
 if(NOT WIN32)
   find_package(PkgConfig)
@@ -75,18 +76,18 @@ configure_file(src/rviz_common/env_config.cpp.in ${ENV_CONFIG_CPP} @ONLY)
 # These need to be added in the add_library() call so AUTOMOC detects them.
 set(rviz_common_headers_to_moc
   ${ENV_CONFIG_HPP}
-  # src/rviz_common/add_display_dialog.hpp
+  src/rviz_common/add_display_dialog.hpp
   # src/rviz_common/help_panel.hpp
   include/rviz_common/properties/enum_property.hpp
-  # src/rviz_common/properties/property_tree_widget.hpp
-  # src/rviz_common/properties/splitter_handle.hpp
+  include/rviz_common/properties/property_tree_widget.hpp
+  include/rviz_common/properties/splitter_handle.hpp
   # src/rviz_common/selection_panel.hpp
   include/rviz_common/frame_position_tracking_view_controller.hpp
   include/rviz_common/properties/quaternion_property.hpp
   include/rviz_common/visualizer_app.hpp
   include/rviz_common/display.hpp
   include/rviz_common/display_context.hpp
-  # src/rviz_common/displays_panel.hpp
+  src/rviz_common/displays_panel.hpp
   src/rviz_common/failed_panel.hpp
   include/rviz_common/frame_manager.hpp
   src/rviz_common/loading_dialog.hpp
@@ -104,9 +105,9 @@ set(rviz_common_headers_to_moc
   include/rviz_common/properties/int_property.hpp
   include/rviz_common/properties/line_edit_with_button.hpp
   include/rviz_common/properties/property.hpp
-  # src/rviz_common/properties/property_tree_delegate.hpp
+  include/rviz_common/properties/property_tree_delegate.hpp
   include/rviz_common/properties/property_tree_model.hpp
-  # src/rviz_common/properties/property_tree_with_help.hpp
+  include/rviz_common/properties/property_tree_with_help.hpp
   include/rviz_common/properties/status_list.hpp
   include/rviz_common/properties/status_property.hpp
   include/rviz_common/properties/string_property.hpp
@@ -122,8 +123,8 @@ set(rviz_common_headers_to_moc
   src/rviz_common/tool_manager.hpp
   # src/rviz_common/tool_properties_panel.hpp
   include/rviz_common/view_controller.hpp
-  src/rviz_common/view_manager.hpp
-  # src/rviz_common/views_panel.hpp
+  include/rviz_common/view_manager.hpp
+  src/rviz_common/views_panel.hpp
   src/rviz_common/visualization_frame.hpp
   src/rviz_common/visualization_manager.hpp
   src/rviz_common/widget_geometry_change_detector.hpp
@@ -133,8 +134,6 @@ set(rviz_common_headers_to_moc
 )
 
 # TODO(wjwwood): remove this later
-list(APPEND rviz_common_headers_to_moc
-  src/rviz_common/temp/default_plugins/view_controllers/orbit_view_controller.hpp)
 list(APPEND rviz_common_headers_to_moc
   src/rviz_common/temp/default_plugins/displays/grid_display.hpp)
 list(APPEND rviz_common_headers_to_moc
@@ -162,17 +161,17 @@ list(APPEND rviz_common_headers_to_moc
 
 set(rviz_common_source_files
   ${ENV_CONFIG_CPP}
-  # src/rviz_common/add_display_dialog.cpp
+  src/rviz_common/add_display_dialog.cpp
   src/rviz_common/bit_allocator.cpp
   src/rviz_common/config.cpp
-  # src/rviz_common/display_factory.cpp
+  src/rviz_common/display_factory.cpp
   src/rviz_common/display_group.cpp
   src/rviz_common/display.cpp
-  # src/rviz_common/displays_panel.cpp
+  src/rviz_common/displays_panel.cpp
   src/rviz_common/failed_display.cpp
   src/rviz_common/failed_panel.cpp
-  # src/rviz_common/failed_tool.cpp
-  # src/rviz_common/failed_view_controller.cpp
+  src/rviz_common/failed_tool.cpp
+  src/rviz_common/failed_view_controller.cpp
   src/rviz_common/frame_manager.cpp
   src/rviz_common/frame_position_tracking_view_controller.cpp
   # src/rviz_common/help_panel.cpp
@@ -181,7 +180,7 @@ set(rviz_common_source_files
   src/rviz_common/logging.cpp
   src/rviz_common/new_object_dialog.cpp
   src/rviz_common/panel_dock_widget.cpp
-  # src/rviz_common/panel_factory.cpp
+  src/rviz_common/panel_factory.cpp
   src/rviz_common/panel.cpp
   src/rviz_common/properties/bool_property.cpp
   src/rviz_common/properties/color_editor.cpp
@@ -195,19 +194,20 @@ set(rviz_common_source_files
   src/rviz_common/properties/int_property.cpp
   src/rviz_common/properties/line_edit_with_button.cpp
   src/rviz_common/properties/parse_color.cpp
-  # src/rviz_common/properties/property_tree_delegate.cpp
+  src/rviz_common/properties/property_tree_delegate.cpp
   src/rviz_common/properties/property_tree_model.cpp
-  # src/rviz_common/properties/property_tree_widget.cpp
-  # src/rviz_common/properties/property_tree_with_help.cpp
+  src/rviz_common/properties/property_tree_widget.cpp
+  src/rviz_common/properties/property_tree_with_help.cpp
   src/rviz_common/properties/property.cpp
   src/rviz_common/properties/quaternion_property.cpp
-  # src/rviz_common/properties/splitter_handle.cpp
+  src/rviz_common/properties/splitter_handle.cpp
   src/rviz_common/properties/status_list.cpp
   src/rviz_common/properties/status_property.cpp
   src/rviz_common/properties/string_property.cpp
   src/rviz_common/properties/tf_frame_property.cpp
   src/rviz_common/properties/vector_property.cpp
   src/rviz_common/render_panel.cpp
+  src/rviz_common/ros_integration/get_topic_names_and_types.cpp
   src/rviz_common/ros_integration/init.cpp
   src/rviz_common/ros_integration/ok.cpp
   src/rviz_common/ros_integration/shutdown.cpp
@@ -225,7 +225,7 @@ set(rviz_common_source_files
   src/rviz_common/uniform_string_stream.cpp
   src/rviz_common/view_controller.cpp
   src/rviz_common/view_manager.cpp
-  # src/rviz_common/views_panel.cpp
+  src/rviz_common/views_panel.cpp
   src/rviz_common/viewport_mouse_event.cpp
   src/rviz_common/visualization_frame.cpp
   src/rviz_common/visualization_manager.cpp
@@ -236,8 +236,6 @@ set(rviz_common_source_files
 )
 
 # TODO(wjwwood): remove this later
-list(APPEND rviz_common_source_files
-  src/rviz_common/temp/default_plugins/view_controllers/orbit_view_controller.cpp)
 list(APPEND rviz_common_source_files
   src/rviz_common/temp/default_plugins/displays/grid_display.cpp)
 list(APPEND rviz_common_source_files
@@ -294,32 +292,34 @@ target_include_directories(rviz_common
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
-    ${YAMLCPP_INCLUDE_DIRS}
-    ${CURL_INCLUDE_DIRS}
     ${ASSIMP_INCLUDE_DIRS}
-    ${urdf_INCLUDE_DIRS}
+    ${CURL_INCLUDE_DIRS}
+    # ${urdf_INCLUDE_DIRS}
+    ${YAMLCPP_INCLUDE_DIRS}
     # TODO(greimela) Remove as soon as boost is not required anymore (in temp files)
     ${Boost_INCLUDE_DIRS}
 )
 target_link_libraries(rviz_common
   rviz_rendering::rviz_rendering
   Qt5::Widgets
-  ${YAMLCPP_LIBRARIES}
-  ${CURL_LIBRARIES}
   ${ASSIMP_LIBRARIES}
+  ${CURL_LIBRARIES}
+  # ${pluginlib_LIBRARIES}
+  # ${rclcpp_LIBRARIES}
   ${TINYXML_LIBRARIES}
-  ${rclcpp_LIBRARIES}
-  ${urdf_LIBRARIES}
+  # ${urdf_LIBRARIES}
+  ${YAMLCPP_LIBRARIES}
 )
-ament_target_dependencies(
-  rviz_common
+ament_target_dependencies(rviz_common
   geometry_msgs
+  pluginlib
   rclcpp
+  sensor_msgs
+  std_msgs
   tf2
   tf2_geometry_msgs
   tf2_ros
-  sensor_msgs
-  std_msgs
+  urdf
 )
 
 ament_export_interfaces(rviz_common)
@@ -343,64 +343,66 @@ install(
 find_package(ament_cmake_gtest REQUIRED)
 
 if(BUILD_TESTING)
-    # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back
-    find_package(ament_cmake_cppcheck REQUIRED)
-    find_package(ament_cmake_cpplint REQUIRED)
-    find_package(ament_cmake_lint_cmake REQUIRED)
-    find_package(ament_cmake_uncrustify REQUIRED)
-    ament_cppcheck()
-    ament_cpplint()
-    ament_lint_cmake()
-    ament_uncrustify()
+  # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back
+  find_package(ament_cmake_cppcheck REQUIRED)
+  find_package(ament_cmake_cpplint REQUIRED)
+  find_package(ament_cmake_lint_cmake REQUIRED)
+  find_package(ament_cmake_uncrustify REQUIRED)
+  ament_cppcheck()
+  ament_cpplint()
+  ament_lint_cmake()
+  ament_uncrustify()
 
-    ament_add_gtest(rviz_common_config_test
-      test/config_test.cpp)
-    if(TARGET rviz_common_config_test)
-      target_link_libraries(rviz_common_config_test rviz_common)
-    endif()
+  ament_add_gtest(rviz_common_config_test
+    test/config_test.cpp)
+  if(TARGET rviz_common_config_test)
+    target_link_libraries(rviz_common_config_test rviz_common)
+  endif()
 
-    ament_add_gtest(rviz_common_uniform_string_stream_test
-      test/uniform_string_stream_test.cpp)
-    if(TARGET rviz_common_uniform_string_stream_test)
-      target_link_libraries(rviz_common_uniform_string_stream_test rviz_common)
-    endif()
+  ament_add_gtest(rviz_common_uniform_string_stream_test
+    test/uniform_string_stream_test.cpp)
+  if(TARGET rviz_common_uniform_string_stream_test)
+    target_link_libraries(rviz_common_uniform_string_stream_test rviz_common)
+  endif()
 
-    ament_add_gtest(rviz_common_display_test
-      test/display_test.cpp
-      test/mock_display.cpp
-      test/mock_display_group.cpp)
-    if(TARGET rviz_common_display_test)
-      target_include_directories(rviz_common_display_test PUBLIC src)
-      target_link_libraries(rviz_common_display_test rviz_common)
-    endif()
+  ament_add_gtest(rviz_common_display_test
+    test/display_test.cpp
+    test/mock_display.cpp
+    test/mock_display_group.cpp)
+  if(TARGET rviz_common_display_test)
+    target_include_directories(rviz_common_display_test PUBLIC src)
+    target_link_libraries(rviz_common_display_test rviz_common)
+  endif()
 
-    ament_add_gtest(rviz_common_property_test
-      test/property_test.cpp
-      test/mock_property_change_receiver.cpp)
-    if(TARGET rviz_common_property_test)
-      target_link_libraries(rviz_common_property_test rviz_common)
-    endif()
+  ament_add_gtest(rviz_common_property_test
+    test/property_test.cpp
+    test/mock_property_change_receiver.cpp)
+  if(TARGET rviz_common_property_test)
+    target_link_libraries(rviz_common_property_test rviz_common)
+  endif()
 
-    ament_add_gtest(point_cloud2_display_test
-      test/rviz_default_plugins/message_creators.hpp
-      test/rviz_default_plugins/message_creators.cpp
-      test/rviz_default_plugins/point_cloud2_display_test.cpp)
-    if(TARGET point_cloud2_display_test)
-      target_link_libraries(point_cloud2_display_test rviz_common)
-    endif()
+  ament_add_gtest(point_cloud2_display_test
+    test/rviz_default_plugins/message_creators.hpp
+    test/rviz_default_plugins/message_creators.cpp
+    test/rviz_default_plugins/point_cloud2_display_test.cpp)
+  if(TARGET point_cloud2_display_test)
+    target_link_libraries(point_cloud2_display_test rviz_common)
+  endif()
 
-    ament_add_gtest(point_cloud_transformers_test
-      test/rviz_default_plugins/message_creators.hpp
-      test/rviz_default_plugins/message_creators.cpp
-      test/rviz_default_plugins/point_cloud_transformers/axis_color_pc_transformer_test.cpp
-      test/rviz_default_plugins/point_cloud_transformers/flat_color_pc_transformer_test.cpp
-      test/rviz_default_plugins/point_cloud_transformers/intensity_pc_transformer_test.cpp
-      test/rviz_default_plugins/point_cloud_transformers/rgb8_pc_transformer_test.cpp
-      test/rviz_default_plugins/point_cloud_transformers/rgbf32_pc_transformer_test.cpp
-      test/rviz_default_plugins/point_cloud_transformers/xyz_pc_transformer_test.cpp)
-    if(TARGET point_cloud_transformers_test)
-      target_link_libraries(point_cloud_transformers_test rviz_common)
-    endif()
+  ament_add_gtest(point_cloud_transformers_test
+    test/rviz_default_plugins/message_creators.hpp
+    test/rviz_default_plugins/message_creators.cpp
+    test/rviz_default_plugins/point_cloud_transformers/axis_color_pc_transformer_test.cpp
+    test/rviz_default_plugins/point_cloud_transformers/flat_color_pc_transformer_test.cpp
+    test/rviz_default_plugins/point_cloud_transformers/intensity_pc_transformer_test.cpp
+    test/rviz_default_plugins/point_cloud_transformers/rgb8_pc_transformer_test.cpp
+    test/rviz_default_plugins/point_cloud_transformers/rgbf32_pc_transformer_test.cpp
+    test/rviz_default_plugins/point_cloud_transformers/xyz_pc_transformer_test.cpp)
+  if(TARGET point_cloud_transformers_test)
+    target_link_libraries(point_cloud_transformers_test rviz_common)
+  endif()
 endif()
 
-ament_package()
+ament_package(
+  CONFIG_EXTRAS "rviz_common-extras.cmake"
+)

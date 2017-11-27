@@ -58,6 +58,8 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
     endif()
 
     add_library(rviz_ogre_vendor::OgreMain STATIC IMPORTED)
+    message("rviz_ogre_vendor::OgreMain for IMPORTED_LOCATION_RELEASE: ${_ogre_main_static_library_abs}")
+    message("rviz_ogre_vendor::OgreMain for IMPORTED_LOCATION_DEBUG: ${_ogre_main_static_library_debug_abs}")
     set_target_properties(rviz_ogre_vendor::OgreMain
       PROPERTIES
         IMPORTED_LOCATION_RELEASE ${_ogre_main_static_library_abs}
@@ -148,6 +150,8 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
     endif()
 
     add_library(rviz_ogre_vendor::OgreOverlay STATIC IMPORTED)
+    message("rviz_ogre_vendor::OgreOverlay for IMPORTED_LOCATION_RELEASE: ${_ogre_overlay_static_library_abs}")
+    message("rviz_ogre_vendor::OgreOverlay for IMPORTED_LOCATION_DEBUG: ${_ogre_overlay_static_library_debug_abs}")
     set_target_properties(rviz_ogre_vendor::OgreOverlay
       PROPERTIES
         IMPORTED_LOCATION_RELEASE ${_ogre_overlay_static_library_abs}
@@ -198,6 +202,8 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
     endif()
 
     add_library(rviz_ogre_vendor::RenderSystem_GL STATIC IMPORTED)
+    message("rviz_ogre_vendor::RenderSystem_GL for IMPORTED_LOCATION_RELEASE: ${_render_system_gl_static_library_abs}")
+    message("rviz_ogre_vendor::RenderSystem_GL for IMPORTED_LOCATION_DEBUG: ${_render_system_gl_static_library_debug_abs}")
     set_target_properties(rviz_ogre_vendor::RenderSystem_GL
       PROPERTIES
         IMPORTED_LOCATION_RELEASE ${_render_system_gl_static_library_abs}
@@ -248,6 +254,8 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
     endif()
 
     add_library(rviz_ogre_vendor::OgreGLSupport STATIC IMPORTED)
+    message("rviz_ogre_vendor::OgreGLSupport for IMPORTED_LOCATION_RELEASE: ${_ogre_gl_support_static_library_abs}")
+    message("rviz_ogre_vendor::OgreGLSupport for IMPORTED_LOCATION_DEBUG: ${_ogre_gl_support_static_library_debug_abs}")
     set_target_properties(rviz_ogre_vendor::OgreGLSupport
       PROPERTIES
         IMPORTED_LOCATION_RELEASE ${_ogre_gl_support_static_library_abs}

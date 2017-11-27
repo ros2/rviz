@@ -40,6 +40,7 @@
 
 // TODO(wjwwood): revisit file when pluginlib is available
 // #include <pluginlib/class_loader.h>
+#include <rclcpp/clock.hpp>
 
 #include "./point_cloud_to_point_cloud2.hpp"
 #include "rviz_common/display.hpp"
@@ -85,9 +86,8 @@ void CloudInfo::clear()
 PointCloudCommon::PointCloudCommon(rviz_common::Display * display)
 : auto_size_(false),
   new_xyz_transformer_(false),
-  new_color_transformer_(false)
-//, transformer_class_loader_(NULL)
-  , needs_retransform_(false),
+  new_color_transformer_(false),
+  needs_retransform_(false),
   display_(display)
 {
   selectable_property_ = new rviz_common::properties::BoolProperty("Selectable", true,
@@ -346,7 +346,12 @@ void PointCloudCommon::update(float wall_dt, float ros_dt)
   // and put them into obsolete_cloud_infos, so active selections
   // are preserved
 
+<<<<<<< HEAD
   rclcpp::Time now = clock_->now();
+=======
+  // TODO(wjwwood): replace with clock attached to node for ROS Time
+  rclcpp::Time now = rclcpp::Clock().now();
+>>>>>>> reenable display panel and migrate a few plugins 
 
   // if decay time == 0, clear the old cloud when we get a new one
   // otherwise, clear all the outdated ones
@@ -534,7 +539,12 @@ void PointCloudCommon::processMessage(const sensor_msgs::msg::PointCloud2::Const
 {
   CloudInfoPtr info(new CloudInfo);
   info->message_ = cloud;
+<<<<<<< HEAD
   info->receive_time_ = clock_->now();
+=======
+  // TODO(wjwwood): replace with clock attached to node for ROS Time
+  info->receive_time_ = rclcpp::Clock().now();
+>>>>>>> reenable display panel and migrate a few plugins 
 
   if (transformCloud(info, true)) {
     std::unique_lock<std::mutex> lock(new_clouds_mutex_);

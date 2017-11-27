@@ -84,14 +84,12 @@ RenderWindow::initialize()
 void
 RenderWindow::render(QPainter * painter)
 {
-  printf("in RenderWindow::render(QPainter *)\n");
   Q_UNUSED(painter);
 }
 
 void
 RenderWindow::render()
 {
-  // printf("in RenderWindow::render()\n");
   impl_->render();
 }
 
@@ -110,14 +108,12 @@ RenderWindow::setOnRenderWindowWheelEventsCallback(onRenderWindowWheelEventsCall
 void
 RenderWindow::renderLater()
 {
-  // printf("in RenderWindow::renderLater()\n");
   impl_->renderLater();
 }
 
 void
 RenderWindow::renderNow()
 {
-  // printf("in RenderWindow::renderNow()\n");
   impl_->renderNow();
 }
 
@@ -176,7 +172,6 @@ RenderWindow::event(QEvent * event)
 void
 RenderWindow::exposeEvent(QExposeEvent * expose_event)
 {
-  printf("in RenderWindow::exposeEvent(QExposeEvent *)\n");
   Q_UNUSED(expose_event);
 
   if (this->isExposed()) {

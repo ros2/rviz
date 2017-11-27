@@ -38,8 +38,8 @@
 #include "rviz_common/properties/property_tree_model.hpp"
 #include "rviz_common/render_panel.hpp"
 
+#include "./failed_view_controller.hpp"
 #include "./pluginlib_factory.hpp"
-#include "./temp/default_plugins/view_controllers/orbit_view_controller.hpp"
 
 namespace rviz_common
 {
@@ -51,7 +51,7 @@ struct ViewManager::ViewManagerImpl {
   : context(context_arg),
     root_property(new ViewControllerContainer),
     property_model(new PropertyTreeModel(root_property)),
-    factory(new PluginlibFactory<ViewController>("rviz", "rviz::ViewController")),
+    factory(new PluginlibFactory<ViewController>("rviz_common", "rviz_common::ViewController")),
     current(nullptr),
     render_panel(nullptr)
   {}
@@ -92,28 +92,18 @@ void ViewManager::update(float wall_dt, float ros_dt)
 ViewController * ViewManager::create(const QString & class_id)
 {
   QString error;
-  // TODO(wjwwood): replace this with manual loading of a particular view controller
-  //                at least until actual plugin loading is ported
-#if 0
-  ViewController * view = factory->make(class_id, &error);
+  ViewController * view = this->impl_->factory->make(class_id, &error);
   if (!view) {
-    view = new FailedViewController(class_id, error);
+    view = new rviz_common::FailedViewController(class_id, error);
   }
-  view->initialize(context);
+  view->initialize(this->impl_->context);
 
   return view;
-#endif
-  ViewController * view_controller = nullptr;
-  if (class_id == "rviz/Orbit") {
-    view_controller = new rviz_default_plugins::OrbitViewController();
-  }
-  if (view_controller) {
-    view_controller->initialize(impl_->context);
-    return view_controller;
-  }
-  RVIZ_COMMON_LOG_WARNING_STREAM(
-    "would have loaded a view controller called '" << class_id.toStdString() << "'");
-  return nullptr;
+}
+
+QStringList ViewManager::getDeclaredClassIdsFromFactory()
+{
+  return impl_->factory->getDeclaredClassIds();
 }
 
 ViewController * ViewManager::getCurrent() const
@@ -179,10 +169,7 @@ void ViewManager::copyCurrentToList()
   ViewController * current = getCurrent();
   if (current) {
     ViewController * new_copy = copy(current);
-    // TODO(wjwwood): reenable this when possible
-#if 0
-    new_copy->setName(factory->getClassName(new_copy->getClassId()));
-#endif
+    new_copy->setName(impl_->factory->getClassName(new_copy->getClassId()));
     impl_->root_property->addChild(new_copy);
   }
 }

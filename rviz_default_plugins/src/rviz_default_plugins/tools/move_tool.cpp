@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,46 +28,58 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz/display_context.h"
-#include "rviz/render_panel.h"
-#include "rviz/viewport_mouse_event.h"
-#include "rviz/selection/selection_manager.h"
-#include "rviz/view_controller.h"
-#include "rviz/view_manager.h"
-#include "rviz/load_resource.h"
+#include "./move_tool.hpp"
 
-#include "rviz/default_plugin/tools/move_tool.h"
+#include "rviz_common/display_context.hpp"
+#include "rviz_common/load_resource.hpp"
+#include "rviz_common/render_panel.hpp"
+#include "rviz_common/view_controller.hpp"
+#include "rviz_common/view_manager.hpp"
+#include "rviz_common/viewport_mouse_event.hpp"
 
-namespace rviz
+namespace rviz_default_plugins
+{
+namespace tools
 {
 
 MoveTool::MoveTool()
+: rviz_common::Tool()
 {
   shortcut_key_ = 'm';
   // this is needed as the move tool is instantiated by other tools
-  setIcon( loadPixmap("package://rviz/icons/classes/MoveCamera.png") );
+  setIcon(rviz_common::loadPixmap("package://rviz/icons/classes/MoveCamera.png"));
 }
 
-int MoveTool::processMouseEvent( ViewportMouseEvent& event )
+MoveTool::~MoveTool()
+{}
+
+void MoveTool::activate()
+{}
+
+void MoveTool::deactivate()
+{}
+
+int MoveTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
 {
-  if (event.panel->getViewController())
-  {
+  if (event.panel->getViewController()) {
     event.panel->getViewController()->handleMouseEvent(event);
-    setCursor( event.panel->getViewController()->getCursor() );
+    setCursor(event.panel->getViewController()->getCursor());
   }
   return 0;
 }
 
-int MoveTool::processKeyEvent( QKeyEvent* event, RenderPanel* panel )
+int MoveTool::processKeyEvent(QKeyEvent * event, rviz_common::RenderPanel * panel)
 {
-  if( context_->getViewManager()->getCurrent() )
-  {
-    context_->getViewManager()->getCurrent()->handleKeyEvent( event, panel );
+  Q_UNUSED(event);
+  Q_UNUSED(panel);
+  if (context_->getViewManager()->getCurrent()) {
+    context_->getViewManager()->getCurrent()->handleKeyEvent(event, panel);
   }
   return Render;
 }
 
-} // namespace rviz
+}  // namespace tools
+}  // namespace rviz_default_plugins
 
-#include <pluginlib/class_list_macros.h>
-PLUGINLIB_EXPORT_CLASS( rviz::MoveTool, rviz::Tool )
+#include <pluginlib/class_list_macros.hpp>
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::tools::MoveTool, rviz_common::Tool)

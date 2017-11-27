@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,20 +30,20 @@
 
 #include "./views_panel.hpp"
 
-#include <QLabel>
-#include <QListWidget>
 #include <QComboBox>
-#include <QPushButton>
-#include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QInputDialog>
+#include <QLabel>
+#include <QListWidget>
+#include <QPushButton>
+#include <QVBoxLayout>
 
-#include "rviz/properties/property_tree_widget.h"
-#include "rviz/view_controller.h"
-#include "rviz/view_manager.h"
-#include "rviz/visualization_manager.h"
+#include "./visualization_manager.hpp"
+#include "rviz_common/properties/property_tree_widget.hpp"
+#include "rviz_common/view_controller.hpp"
+#include "rviz_common/view_manager.hpp"
 
-namespace rviz
+namespace rviz_common
 {
 
 ViewsPanel::ViewsPanel(QWidget * parent)
@@ -50,7 +51,7 @@ ViewsPanel::ViewsPanel(QWidget * parent)
   view_man_(NULL)
 {
   camera_type_selector_ = new QComboBox;
-  properties_view_ = new PropertyTreeWidget();
+  properties_view_ = new properties::PropertyTreeWidget();
 
   save_button_ = new QPushButton("Save");
   QPushButton * remove_button = new QPushButton("Remove");
@@ -105,12 +106,11 @@ void ViewsPanel::setViewManager(ViewManager * view_man)
   if (view_man_) {
     properties_view_->setModel(view_man_->getPropertyModel() );
 
-    QStringList ids = view_man_->getFactory()->getDeclaredClassIds();
+    QStringList ids = view_man_->getDeclaredClassIdsFromFactory();
     for (int i = 0; i < ids.size(); i++) {
       const QString & id = ids[i];
-      camera_type_selector_->addItem(ViewController::formatClassId(id), id);  // send the regular-
-                                                                              // formatted id as
-                                                                              // userData.
+      // send the regular-formatted id as userData.
+      camera_type_selector_->addItem(ViewController::formatClassId(id), id);
     }
 
     connect(save_button_, SIGNAL(clicked()), view_man_, SLOT(copyCurrentToList()));
@@ -137,7 +137,7 @@ void ViewsPanel::onZeroClicked()
 
 void ViewsPanel::setCurrentViewFromIndex(const QModelIndex & index)
 {
-  Property * prop = view_man_->getPropertyModel()->getProp(index);
+  rviz_common::properties::Property * prop = view_man_->getPropertyModel()->getProp(index);
   if (ViewController * view = qobject_cast<ViewController *>(prop)) {
     view_man_->setCurrentFrom(view);
   }
@@ -209,4 +209,4 @@ void ViewsPanel::load(const Config & config)
   properties_view_->load(config);
 }
 
-}  // namespace rviz
+}  // namespace rviz_common

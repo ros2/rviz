@@ -75,6 +75,9 @@ public:
   /// Create a view controller by name.
   ViewController * create(const QString & type);
 
+  /// Return a list of the class id's for available view controllers.
+  QStringList getDeclaredClassIdsFromFactory();
+
   /// Get the number of views.
   int getNumViews() const;
 

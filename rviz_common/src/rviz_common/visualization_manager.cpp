@@ -68,10 +68,10 @@
 #include "rclcpp/time.hpp"
 #include "rviz_rendering/render_window.hpp"
 
-// #include "./display.hpp"
-// #include "./display_factory.hpp"  // TODO(wjwwood): revisit
+#include "rviz_common/display.hpp"
+#include "./display_factory.hpp"
 #include "./display_group.hpp"
-// #include "./displays_panel.hpp"
+#include "./displays_panel.hpp"
 #include "rviz_common/frame_manager.hpp"
 #include "rviz_common/load_resource.hpp"
 // #include "./ogre_helpers/ogre_render_queue_clearer.hpp"
@@ -86,16 +86,13 @@
 #include "rviz_common/properties/tf_frame_property.hpp"
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/selection/selection_manager.hpp"
-// #include "rviz_common/tool.hpp"
+#include "rviz_common/tool.hpp"
 #include "./tool_manager.hpp"
 // #include "rviz_common/view_controller.hpp"
 #include "rviz_common/view_manager.hpp"
 // #include "./viewport_mouse_event.hpp"
 
 // #include "rviz/window_manager_interface.h"
-
-// TODO(wjwwood): bring this in from the build?
-#define ROS_PACKAGE_NAME "rviz_common"
 
 namespace rviz_common
 {
@@ -230,10 +227,7 @@ VisualizationManager::VisualizationManager(
     threadedQueueThreadFunc, this));
 #endif
 
-// TODO(wjwwood): reenable when possible
-#if 0
   display_factory_ = new DisplayFactory();
-#endif
 
 // TODO(wjwwood): move this to rviz_rendering somewhere?
 #if 0
@@ -272,9 +266,7 @@ VisualizationManager::~VisualizationManager()
 
   delete display_property_tree_model_;
   delete tool_manager_;
-#if 0
   delete display_factory_;
-#endif
   delete selection_manager_;
   delete frame_manager_;
   delete private_;
@@ -391,13 +383,10 @@ uint64_t VisualizationManager::getFrameCount() const
   return frame_count_;
 }
 
-// TODO(wjwwood): reenable when display factory is fixed
-#if 0
 DisplayFactory * VisualizationManager::getDisplayFactory() const
 {
   return display_factory_;
 }
-#endif
 
 properties::PropertyTreeModel * VisualizationManager::getDisplayTreeModel() const
 {
@@ -485,6 +474,7 @@ void VisualizationManager::onUpdate()
 
 void VisualizationManager::updateTime()
 {
+  rclcpp::Clock clock;  // TODO(wjwwood): replace with clock attached to node for ROS Time
   if (ros_time_begin_.nanoseconds() == 0) {
     ros_time_begin_ = clock_->now();
   }
