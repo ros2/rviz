@@ -33,7 +33,7 @@
 #include <memory>
 #include <vector>
 
-#include "rclcpp/time.hpp"
+#include "rclcpp/clock.hpp"
 
 namespace rviz_default_plugins
 {
@@ -43,7 +43,7 @@ sensor_msgs::msg::PointCloud2::SharedPtr createPointCloud2WithPoints(
 {
   auto cloud = std::make_shared<sensor_msgs::msg::PointCloud2>();
   cloud->header = std_msgs::msg::Header();
-  cloud->header.stamp = rclcpp::Time::now();
+  cloud->header.stamp = rclcpp::Clock().now();
 
   cloud->is_bigendian = false;
   cloud->is_dense = true;
@@ -82,7 +82,7 @@ sensor_msgs::msg::PointCloud2::ConstSharedPtr createF32ColoredPointCloud2(
 {
   auto cloud = std::make_shared<sensor_msgs::msg::PointCloud2>();
   cloud->header = std_msgs::msg::Header();
-  cloud->header.stamp = rclcpp::Time::now();
+  cloud->header.stamp = rclcpp::Clock().now();
 
   cloud->is_bigendian = false;
   cloud->is_dense = true;
@@ -126,7 +126,7 @@ sensor_msgs::msg::PointCloud2::ConstSharedPtr createPointCloud2WithIntensity(
 {
   auto cloud = std::make_shared<sensor_msgs::msg::PointCloud2>();
   cloud->header = std_msgs::msg::Header();
-  cloud->header.stamp = rclcpp::Time::now();
+  cloud->header.stamp = rclcpp::Clock().now();
 
   cloud->is_bigendian = false;
   cloud->is_dense = true;
@@ -167,7 +167,7 @@ sensor_msgs::msg::PointCloud2::ConstSharedPtr create8BitColoredPointCloud2(
 {
   auto cloud = std::make_shared<sensor_msgs::msg::PointCloud2>();
   cloud->header = std_msgs::msg::Header();
-  cloud->header.stamp = rclcpp::Time::now();
+  cloud->header.stamp = rclcpp::Clock().now();
 
   cloud->is_bigendian = false;
   cloud->is_dense = true;
@@ -213,7 +213,7 @@ sensor_msgs::msg::PointCloud::ConstSharedPtr createPointCloudWithPoints(std::vec
 {
   auto message = sensor_msgs::msg::PointCloud();
   message.header = std_msgs::msg::Header();
-  message.header.stamp = rclcpp::Time::now();
+  message.header.stamp = rclcpp::Clock().now();
   message.header.frame_id = "base_link";
 
   std::vector<geometry_msgs::msg::Point32> points32;

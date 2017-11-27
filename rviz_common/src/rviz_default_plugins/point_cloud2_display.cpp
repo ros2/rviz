@@ -30,7 +30,6 @@
 #include "point_cloud2_display.hpp"
 
 #include <memory>
-#include <utility>
 
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
@@ -47,7 +46,7 @@ namespace rviz_default_plugins
 {
 
 PointCloud2Display::PointCloud2Display()
-: point_cloud_common_(std::make_unique<PointCloudCommon>(this))
+: point_cloud_common_(new PointCloudCommon(this))
 {
   queue_size_property_ = new rviz_common::properties::IntProperty(
     "Queue Size", 10,
