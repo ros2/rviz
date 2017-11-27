@@ -30,11 +30,29 @@
 
 #include <QApplication>
 
+#include "rclcpp/rclcpp.hpp"
+#include "rviz_common/logging.hpp"
 #include "rviz_common/visualizer_app.hpp"
 
 int main(int argc, char ** argv)
 {
   QApplication qapp(argc, argv);
+
+  // install logging handlers to route logging through ROS's logging system
+  rviz_common::set_logging_handlers(
+    [](const std::string & msg, const std::string &, size_t) {
+      RCLCPP_DEBUG("rviz2", msg.c_str())
+    },
+    [](const std::string & msg, const std::string &, size_t) {
+      RCLCPP_INFO("rviz2", msg.c_str())
+    },
+    [](const std::string & msg, const std::string &, size_t) {
+      RCLCPP_WARN("rviz2", msg.c_str())
+    },
+    [](const std::string & msg, const std::string &, size_t) {
+      RCLCPP_ERROR("rviz2", msg.c_str())
+    }
+  );
 
   rviz_common::VisualizerApp vapp;
   vapp.setApp(&qapp);
