@@ -35,6 +35,8 @@
 #include <QObject>  // NOLINT
 #include <QWindow>  // NOLINT
 
+#include "OgreSceneNode.h"
+
 #include "rviz_rendering/visibility_control.hpp"
 
 // TODO(wjwwood): remove this when the camera can be abstracted
@@ -86,6 +88,10 @@ public:
   using onRenderWindowWheelEventsCallback = std::function<void(QWheelEvent * event)>;
   void
   setOnRenderWindowWheelEventsCallback(onRenderWindowWheelEventsCallback callback);
+
+  using setupSceneCallback = std::function<void(Ogre::SceneNode *)>;
+  void
+  setupSceneAfterInit(setupSceneCallback setup_scene_callback);
 
 public slots:
   virtual

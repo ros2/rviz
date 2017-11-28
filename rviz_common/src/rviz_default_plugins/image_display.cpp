@@ -47,6 +47,7 @@
 #include "rviz_common/frame_manager.hpp"
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/validate_floats.hpp"
+#include "rviz_rendering/render_window.hpp"
 
 #include <sensor_msgs/image_encodings.hpp>
 
@@ -75,63 +76,44 @@ ImageDisplay::ImageDisplay()
 
 void ImageDisplay::onInitialize()
 {
-  rviz_common::ImageDisplayBase::onInitialize();
-  {
-    static uint32_t count = 0;
-    std::stringstream ss;
-    ss << "ImageDisplay" << count++;
-    img_scene_manager_ = Ogre::Root::getSingleton().createSceneManager(Ogre::ST_GENERIC, ss.str());
-  }
-
-  img_scene_node_ = img_scene_manager_->getRootSceneNode()->createChildSceneNode();
-
-  {
-    static int count = 0;
-    std::stringstream ss;
-    ss << "ImageDisplayObject" << count++;
-
-    screen_rect_ = new Ogre::Rectangle2D(true);
-    screen_rect_->setRenderQueueGroup(Ogre::RENDER_QUEUE_OVERLAY - 1);
-    screen_rect_->setCorners(-1.0f, 1.0f, 1.0f, -1.0f);
-
-    ss << "Material";
-    material_ = Ogre::MaterialManager::getSingleton().create( ss.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME );
-    material_->setSceneBlending( Ogre::SBT_REPLACE );
-    material_->setDepthWriteEnabled(false);
-    material_->setReceiveShadows(false);
-    material_->setDepthCheckEnabled(false);
-
-    material_->getTechnique(0)->setLightingEnabled(false);
-    Ogre::TextureUnitState* tu = material_->getTechnique(0)->getPass(0)->createTextureUnitState();
-    tu->setTextureName(texture_.getTexture()->getName());
-    tu->setTextureFiltering( Ogre::TFO_NONE );
-
-    material_->setCullingMode(Ogre::CULL_NONE);
-    Ogre::AxisAlignedBox aabInf;
-    aabInf.setInfinite();
-    screen_rect_->setBoundingBox(aabInf);
-    screen_rect_->setMaterial(material_);
-    img_scene_node_->attachObject(screen_rect_);
-  }
+  updateNormalizeOptions();
 
   render_panel_ = new rviz_common::RenderPanel();
-  // TODO(Martin-Idel-SI): reenable functionality
-//  render_panel_->getRenderWindow()->setAutoUpdated(false);
-//  render_panel_->getRenderWindow()->setActive( false );
-
-  render_panel_->resize( 640, 480 );
-  // TODO(Martin-Idel-SI): was also given the scene manager. This needs to change!
-  // TODO(Martin-Idel-SI): reenable functionality
+  render_panel_->resize(640, 480);
   render_panel_->initialize(context_);
+  setAssociatedWidget(render_panel_);
 
-  setAssociatedWidget( render_panel_ );
+  render_panel_->getRenderWindow()->setupSceneAfterInit(
+    [this](Ogre::SceneNode * img_scene_node_) {
+      static int count = 0;
+      std::stringstream ss;
+      ss << "ImageDisplayObject" << count++;
 
-  // TODO(Martin-Idel-SI): reenable functionality
-//  render_panel_->setAutoRender(false);
-//  render_panel_->setOverlaysEnabled(false);
-//  render_panel_->getCamera()->setNearClipDistance( 0.01f );
+      screen_rect_ = new Ogre::Rectangle2D(true);
+      screen_rect_->setRenderQueueGroup(Ogre::RENDER_QUEUE_OVERLAY - 1);
+      screen_rect_->setCorners(-1.0f, 1.0f, 1.0f, -1.0f);
 
-  updateNormalizeOptions();
+      ss << "Material";
+      material_ = Ogre::MaterialManager::getSingleton().create(
+        ss.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+      material_->setSceneBlending(Ogre::SBT_REPLACE);
+      material_->setDepthWriteEnabled(false);
+      material_->setReceiveShadows(false);
+      material_->setDepthCheckEnabled(false);
+
+      material_->getTechnique(0)->setLightingEnabled(false);
+      Ogre::TextureUnitState
+        * tu = material_->getTechnique(0)->getPass(0)->createTextureUnitState();
+      tu->setTextureName(texture_.getTexture()->getName());
+      tu->setTextureFiltering(Ogre::TFO_NONE);
+
+      material_->setCullingMode(Ogre::CULL_NONE);
+      Ogre::AxisAlignedBox aabInf;
+      aabInf.setInfinite();
+      screen_rect_->setBoundingBox(aabInf);
+      screen_rect_->setMaterial(material_);
+      img_scene_node_->attachObject(screen_rect_);
+    });
 }
 
 ImageDisplay::~ImageDisplay()
@@ -140,7 +122,6 @@ ImageDisplay::~ImageDisplay()
   {
     delete render_panel_;
     delete screen_rect_;
-    img_scene_node_->getParentSceneNode()->removeAndDestroyChild( img_scene_node_->getName() );
   }
 }
 

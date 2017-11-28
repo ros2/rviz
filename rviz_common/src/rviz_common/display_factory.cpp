@@ -43,6 +43,7 @@
 
 #include "./temp/default_plugins/displays/tf_display.hpp"
 #include "./temp/default_plugins/displays/robot_model_display.hpp"
+#include "../rviz_default_plugins/image_display.hpp"
 
 #endif
 
@@ -65,6 +66,10 @@ static Display * newRobotModelDisplay()
 {
   return new rviz_common::RobotModelDisplay();
 }
+static Display * newImageDisplay()
+{
+  return new rviz_default_plugins::ImageDisplay();
+}
 
 #endif
 
@@ -74,6 +79,7 @@ DisplayFactory::DisplayFactory()
   addBuiltInClass("rviz", "Group", "A container for Displays", &newDisplayGroup);
   addBuiltInClass("rviz", "TF", "tf display", &newTFDisplay);
   addBuiltInClass("rviz", "RobotModel", "robot model display", &newRobotModelDisplay);
+  addBuiltInClass("rviz", "Image", "image display", &newImageDisplay);
 }
 
 Display * DisplayFactory::makeRaw(const QString & class_id, QString * error_return)

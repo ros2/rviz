@@ -115,6 +115,12 @@ RenderWindow::setOnRenderWindowWheelEventsCallback(onRenderWindowWheelEventsCall
 }
 
 void
+RenderWindow::setupSceneAfterInit(setupSceneCallback setup_scene_callback)
+{
+  impl_->setupSceneAfterInit(setup_scene_callback);
+}
+
+void
 RenderWindow::renderLater()
 {
   impl_->renderLater();

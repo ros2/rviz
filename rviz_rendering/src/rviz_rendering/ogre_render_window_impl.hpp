@@ -104,6 +104,10 @@ public:
   void
   resize(size_t width, size_t height);
 
+  using setupSceneCallback = std::function<void(Ogre::SceneNode *)>;
+  void
+  setupSceneAfterInit(setupSceneCallback setup_scene_callback);
+
 #if 0
   /**
    * Set a callback which is called before each render
@@ -212,6 +216,8 @@ protected:
   // Ogre::Camera * left_camera_;
   // Ogre::Camera * right_camera_;
   // Ogre::Viewport * right_viewport_;
+
+  setupSceneCallback setup_scene_callback_;
 };
 
 }  // namespace rviz_rendering

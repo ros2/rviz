@@ -87,8 +87,6 @@ private:
   void clear();
   void updateStatus();
 
-  Ogre::SceneManager* img_scene_manager_;
-  Ogre::SceneNode* img_scene_node_;
   Ogre::Rectangle2D* screen_rect_;
   Ogre::MaterialPtr material_;
 
