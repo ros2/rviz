@@ -91,7 +91,7 @@ TEST_F(PointCloudRenderableTestFixture, renderable_contains_a_correctly_filled_b
 TEST_F(PointCloudRenderableTestFixture,
   getSquaredViewDepth_returns_squared_length_to_center_of_bounding_box_for_default_camera) {
   Ogre::Camera * camera = Ogre::Root::getSingletonPtr()
-    ->createSceneManager(Ogre::ST_GENERIC)
+    ->createSceneManager()
     ->createCamera("test_camera");
   auto boundingBox = Ogre::AxisAlignedBox(Ogre::Vector3(-1, -1, -1), Ogre::Vector3(3, 3, 1));
   renderable_->setBoundingBox(boundingBox);

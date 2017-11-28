@@ -239,7 +239,7 @@ RenderWindowImpl::initialize()
     throw std::runtime_error(msg);
   }
 
-  ogre_scene_manager_ = ogre_root->createSceneManager(Ogre::ST_GENERIC);
+  ogre_scene_manager_ = ogre_root->createSceneManager();
 
   ogre_directional_light_ = ogre_scene_manager_->createLight("MainDirectional");
   ogre_directional_light_->setType(Ogre::Light::LT_DIRECTIONAL);
