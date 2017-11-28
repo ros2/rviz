@@ -27,19 +27,21 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_ROS_IMAGE_TEXTURE_H
-#define RVIZ_ROS_IMAGE_TEXTURE_H
+#ifndef RVIZ_DEFAULT_PLUGINS__IMAGE__ROS_IMAGE_TEXTURE_HPP_
+#define RVIZ_DEFAULT_PLUGINS__IMAGE__ROS_IMAGE_TEXTURE_HPP_
 
-#include <sensor_msgs/msg/image.hpp>
+#include <deque>
+#include <memory>
+#include <mutex>
+#include <stdexcept>
+#include <string>
+#include <vector>
 
 #include <OgreTexture.h>
 #include <OgreImage.h>
 #include <OgreSharedPtr.h>
 
-// #include <ros/ros.h>
-
-#include <memory>
-#include <stdexcept>
+#include <sensor_msgs/msg/image.hpp>  // NOLINT: cpplint cannot handle include order here
 
 namespace rviz_common
 {
@@ -47,7 +49,7 @@ namespace rviz_common
 class UnsupportedImageEncoding : public std::runtime_error
 {
 public:
-  UnsupportedImageEncoding(const std::string& encoding)
+  explicit UnsupportedImageEncoding(const std::string & encoding)
   : std::runtime_error("Unsupported image encoding [" + encoding + "]")
   {}
 };
@@ -58,26 +60,25 @@ public:
   ROSImageTexture();
   ~ROSImageTexture();
 
-  void addMessage(const sensor_msgs::msg::Image::ConstSharedPtr& image);
+  void addMessage(sensor_msgs::msg::Image::ConstSharedPtr image);
   bool update();
   void clear();
 
-  const Ogre::TexturePtr& getTexture() { return texture_; }
-  const sensor_msgs::msg::Image::ConstSharedPtr& getImage();
+  const Ogre::TexturePtr & getTexture() {return texture_;}
+  const sensor_msgs::msg::Image::ConstSharedPtr getImage();
 
-  uint32_t getWidth() { return width_; }
-  uint32_t getHeight() { return height_; }
+  uint32_t getWidth() {return width_;}
+  uint32_t getHeight() {return height_;}
 
   // automatic range normalization
-  void setNormalizeFloatImage( bool normalize, double min=0.0, double max=1.0 );
-  void setMedianFrames( unsigned median_frames );
+  void setNormalizeFloatImage(bool normalize, double min = 0.0, double max = 1.0);
+  void setMedianFrames(unsigned median_frames);
 
 private:
-
-  double updateMedian( std::deque<double>& buffer, double new_value );
+  double updateMedian(std::deque<double> & buffer, double new_value);
 
   template<typename T>
-  void normalize( T* image_data, size_t image_data_size, std::vector<uint8_t> &buffer  );
+  void normalize(const T * image_data, size_t image_data_size, std::vector<uint8_t> & buffer);
 
   sensor_msgs::msg::Image::ConstSharedPtr current_image_;
   std::mutex mutex_;
@@ -98,6 +99,6 @@ private:
   std::deque<double> max_buffer_;
 };
 
-}
+}  // namespace rviz_common
 
-#endif
+#endif  // RVIZ_DEFAULT_PLUGINS__IMAGE__ROS_IMAGE_TEXTURE_HPP_

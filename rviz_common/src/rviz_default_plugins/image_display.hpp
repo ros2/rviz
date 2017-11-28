@@ -36,15 +36,15 @@
 # include <OgreMaterial.h>
 # include <OgreRenderTargetListener.h>
 # include <OgreSharedPtr.h>
-#include <include/rviz_common/ros_topic_display.hpp>
 
-# include "rviz_common/image/ros_image_texture.hpp"
+# include "rviz_common/ros_topic_display.hpp"
 # include "rviz_common/ros_topic_display.hpp"
 # include "rviz_common/render_panel.hpp"
-
 # include "rviz_common/properties/bool_property.hpp"
 # include "rviz_common/properties/float_property.hpp"
 # include "rviz_common/properties/int_property.hpp"
+
+# include "image/ros_image_texture.hpp"
 #endif
 
 

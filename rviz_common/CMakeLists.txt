@@ -159,7 +159,6 @@ set(rviz_common_source_files
   src/rviz_common/frame_manager.cpp
   src/rviz_common/frame_position_tracking_view_controller.cpp
   # src/rviz_common/help_panel.cpp
-  src/rviz_common/image/ros_image_texture.cpp
   src/rviz_common/load_resource.cpp
   src/rviz_common/loading_dialog.cpp
   src/rviz_common/logging.cpp
@@ -242,6 +241,8 @@ list(APPEND rviz_common_headers_to_moc
 # TODO(greimela): Remove when moving the default plugins to separate package
 list(APPEND rviz_common_source_files
   src/rviz_default_plugins/image_display.cpp)
+list(APPEND rviz_common_source_files
+  src/rviz_default_plugins/image/ros_image_texture.cpp)
 
 add_library(rviz_common
   ${rviz_common_headers_to_moc}
