@@ -41,7 +41,8 @@
 #include <OgreCamera.h>
 
 // TODO(Martin-Idel-SI): reenable if necessary
-//#include <tf/transform_listener.h>
+// #include <tf/transform_listener.h>
+#include "sensor_msgs/image_encodings.hpp"
 
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager.hpp"
@@ -49,26 +50,41 @@
 #include "rviz_common/validate_floats.hpp"
 #include "rviz_rendering/render_window.hpp"
 
-#include <sensor_msgs/image_encodings.hpp>
-
 #include "image_display.hpp"
 
 namespace rviz_default_plugins
 {
 
 ImageDisplay::ImageDisplay()
-  : texture_()
+: texture_()
 {
-  normalize_property_ = new rviz_common::properties::BoolProperty( "Normalize Range", true,
-                                          "If set to true, will try to estimate the range of possible values from the received images.",
-                                          this, SLOT( updateNormalizeOptions() ));
+  normalize_property_ = new rviz_common::properties::BoolProperty(
+    "Normalize Range",
+    true,
+    "If set to true, will try to estimate the range of possible values from the received images.",
+    this,
+    SLOT(updateNormalizeOptions()));
 
-  min_property_ = new rviz_common::properties::FloatProperty( "Min Value", 0.0, "Value which will be displayed as black.", this, SLOT( updateNormalizeOptions() ));
+  min_property_ = new rviz_common::properties::FloatProperty(
+    "Min Value",
+    0.0,
+    "Value which will be displayed as black.",
+    this,
+    SLOT(updateNormalizeOptions()));
 
-  max_property_ = new rviz_common::properties::FloatProperty( "Max Value", 1.0, "Value which will be displayed as white.", this, SLOT( updateNormalizeOptions() ));
+  max_property_ = new rviz_common::properties::FloatProperty(
+    "Max Value",
+    1.0,
+    "Value which will be displayed as white.",
+    this,
+    SLOT(updateNormalizeOptions()));
 
-  median_buffer_size_property_ = new rviz_common::properties::IntProperty( "Median window", 5, "Window size for median filter used for computin min/max.",
-                                                  this, SLOT( updateNormalizeOptions() ) );
+  median_buffer_size_property_ = new rviz_common::properties::IntProperty(
+    "Median window",
+    5,
+    "Window size for median filter used for computin min/max.",
+    this,
+    SLOT(updateNormalizeOptions()));
 
   got_float_image_ = false;
 }
@@ -103,8 +119,8 @@ void ImageDisplay::onInitialize()
       material_->setDepthCheckEnabled(false);
 
       material_->getTechnique(0)->setLightingEnabled(false);
-      Ogre::TextureUnitState
-        * tu = material_->getTechnique(0)->getPass(0)->createTextureUnitState();
+      Ogre::TextureUnitState * tu =
+      material_->getTechnique(0)->getPass(0)->createTextureUnitState();
       tu->setTextureName(texture_.getTexture()->getName());
       tu->setTextureFiltering(Ogre::TFO_NONE);
 
@@ -119,8 +135,7 @@ void ImageDisplay::onInitialize()
 
 ImageDisplay::~ImageDisplay()
 {
-  if ( initialized() )
-  {
+  if (initialized()) {
     delete render_panel_;
     delete screen_rect_;
   }
@@ -129,22 +144,17 @@ ImageDisplay::~ImageDisplay()
 void ImageDisplay::onEnable()
 {
   MFDClass::subscribe();
-  // TODO(Martin-Idel-SI): reenable functionality
-//  render_panel_->getRenderWindow()->setActive(true);
 }
 
 void ImageDisplay::onDisable()
 {
-  // TODO(Martin-Idel-SI): reenable functionality
-//  render_panel_->getRenderWindow()->setActive(false);
   MFDClass::unsubscribe();
   clear();
 }
 
 void ImageDisplay::updateNormalizeOptions()
 {
-  if (got_float_image_)
-  {
+  if (got_float_image_) {
     bool normalize = normalize_property_->getBool();
 
     normalize_property_->setHidden(false);
@@ -152,11 +162,10 @@ void ImageDisplay::updateNormalizeOptions()
     max_property_->setHidden(normalize);
     median_buffer_size_property_->setHidden(!normalize);
 
-    texture_.setNormalizeFloatImage( normalize, min_property_->getFloat(), max_property_->getFloat());
-    texture_.setMedianFrames( median_buffer_size_property_->getInt() );
-  }
-  else
-  {
+    texture_.setNormalizeFloatImage(
+      normalize, min_property_->getFloat(), max_property_->getFloat());
+    texture_.setMedianFrames(median_buffer_size_property_->getInt());
+  } else {
     normalize_property_->setHidden(true);
     min_property_->setHidden(true);
     max_property_->setHidden(true);
@@ -167,49 +176,35 @@ void ImageDisplay::updateNormalizeOptions()
 void ImageDisplay::clear()
 {
   texture_.clear();
-
-  // TODO(Martin-Idel-SI): reenable functionality
-//  if( render_panel_->getCamera() )
-//  {
-//    render_panel_->getCamera()->setPosition(Ogre::Vector3(999999, 999999, 999999));
-//  }
 }
 
-void ImageDisplay::update( float wall_dt, float ros_dt )
+void ImageDisplay::update(float wall_dt, float ros_dt)
 {
   (void) wall_dt;
   (void) ros_dt;
-  try
-  {
+  try {
     texture_.update();
 
-    //make sure the aspect ratio of the image is preserved
+    // make sure the aspect ratio of the image is preserved
     float win_width = render_panel_->width();
     float win_height = render_panel_->height();
 
     float img_width = texture_.getWidth();
     float img_height = texture_.getHeight();
 
-    if ( img_width != 0 && img_height != 0 && win_width !=0 && win_height != 0 )
-    {
+    if (img_width != 0 && img_height != 0 && win_width != 0 && win_height != 0) {
       float img_aspect = img_width / img_height;
       float win_aspect = win_width / win_height;
 
-      if ( img_aspect > win_aspect )
-      {
-        screen_rect_->setCorners(-1.0f, 1.0f * win_aspect/img_aspect, 1.0f, -1.0f * win_aspect/img_aspect, false);
-      }
-      else
-      {
-        screen_rect_->setCorners(-1.0f * img_aspect/win_aspect, 1.0f, 1.0f * img_aspect/win_aspect, -1.0f, false);
+      if (img_aspect > win_aspect) {
+        screen_rect_->setCorners(
+          -1.0f, 1.0f * win_aspect / img_aspect, 1.0f, -1.0f * win_aspect / img_aspect, false);
+      } else {
+        screen_rect_->setCorners(
+          -1.0f * img_aspect / win_aspect, 1.0f, 1.0f * img_aspect / win_aspect, -1.0f, false);
       }
     }
-
-    // TODO(Martin-Idel-SI): reenable functionality
-//    render_panel_->getRenderWindow()->update();
-  }
-  catch( rviz_common::UnsupportedImageEncoding& e )
-  {
+  } catch (rviz_common::UnsupportedImageEncoding & e) {
     setStatus(rviz_common::properties::StatusProperty::Error, "Image", e.what());
   }
 }
@@ -224,20 +219,19 @@ void ImageDisplay::reset()
 void ImageDisplay::processMessage(const sensor_msgs::msg::Image::ConstSharedPtr msg)
 {
   bool got_float_image = msg->encoding == sensor_msgs::image_encodings::TYPE_32FC1 ||
-      msg->encoding == sensor_msgs::image_encodings::TYPE_16UC1 ||
-      msg->encoding == sensor_msgs::image_encodings::TYPE_16SC1 ||
-      msg->encoding == sensor_msgs::image_encodings::MONO16;
+    msg->encoding == sensor_msgs::image_encodings::TYPE_16UC1 ||
+    msg->encoding == sensor_msgs::image_encodings::TYPE_16SC1 ||
+    msg->encoding == sensor_msgs::image_encodings::MONO16;
 
-  if ( got_float_image != got_float_image_ )
-  {
+  if (got_float_image != got_float_image_) {
     got_float_image_ = got_float_image;
     updateNormalizeOptions();
   }
   texture_.addMessage(msg);
 }
 
-} // namespace rviz_default_plugins
+}  // namespace rviz_default_plugins
 
 // TODO(Martin-Idel-SI): Reenable if pluginlib becomes available
-//#include <pluginlib/class_list_macros.h>
-//PLUGINLIB_EXPORT_CLASS( rviz::ImageDisplay, rviz::Display )
+// #include <pluginlib/class_list_macros.h>
+// PLUGINLIB_EXPORT_CLASS( rviz::ImageDisplay, rviz::Display )

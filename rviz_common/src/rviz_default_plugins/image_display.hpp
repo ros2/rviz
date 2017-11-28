@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_IMAGE_DISPLAY_H
-#define RVIZ_IMAGE_DISPLAY_H
+#ifndef RVIZ_DEFAULT_PLUGINS__IMAGE_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__IMAGE_DISPLAY_HPP_
 
 #ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
 # include <QObject>
@@ -61,16 +61,17 @@ namespace rviz_default_plugins
  * \class ImageDisplay
  *
  */
-class ImageDisplay: public rviz_common::MessageFilterDisplay<sensor_msgs::msg::Image>
+class ImageDisplay : public rviz_common::MessageFilterDisplay<sensor_msgs::msg::Image>
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   ImageDisplay();
   virtual ~ImageDisplay();
 
   // Overrides from Display
   virtual void onInitialize();
-  virtual void update( float wall_dt, float ros_dt );
+  virtual void update(float wall_dt, float ros_dt);
   virtual void reset();
 
 public Q_SLOTS:
@@ -88,20 +89,20 @@ private:
   void clear();
   void updateStatus();
 
-  Ogre::Rectangle2D* screen_rect_;
+  Ogre::Rectangle2D * screen_rect_;
   Ogre::MaterialPtr material_;
 
   rviz_common::ROSImageTexture texture_;
 
-  rviz_common::RenderPanel* render_panel_;
+  rviz_common::RenderPanel * render_panel_;
 
-  rviz_common::properties::BoolProperty* normalize_property_;
-  rviz_common::properties::FloatProperty* min_property_;
-  rviz_common::properties::FloatProperty* max_property_;
-  rviz_common::properties::IntProperty* median_buffer_size_property_;
+  rviz_common::properties::BoolProperty * normalize_property_;
+  rviz_common::properties::FloatProperty * min_property_;
+  rviz_common::properties::FloatProperty * max_property_;
+  rviz_common::properties::IntProperty * median_buffer_size_property_;
   bool got_float_image_;
 };
 
-} // namespace rviz
+}  // namespace rviz_default_plugins
 
-#endif
+#endif  // RVIZ_DEFAULT_PLUGINS__IMAGE_DISPLAY_HPP_
