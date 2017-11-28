@@ -57,8 +57,7 @@ namespace rviz_default_plugins
 {
 
 ImageDisplay::ImageDisplay()
-  : ImageDisplayBase()
-  , texture_()
+  : texture_()
 {
   normalize_property_ = new rviz_common::properties::BoolProperty( "Normalize Range", true,
                                           "If set to true, will try to estimate the range of possible values from the received images.",
@@ -76,6 +75,8 @@ ImageDisplay::ImageDisplay()
 
 void ImageDisplay::onInitialize()
 {
+  topic_property_->setValue("image");
+
   updateNormalizeOptions();
 
   render_panel_ = new rviz_common::RenderPanel();
@@ -127,7 +128,7 @@ ImageDisplay::~ImageDisplay()
 
 void ImageDisplay::onEnable()
 {
-  rviz_common::ImageDisplayBase::subscribe();
+  MFDClass::subscribe();
   // TODO(Martin-Idel-SI): reenable functionality
 //  render_panel_->getRenderWindow()->setActive(true);
 }
@@ -136,7 +137,7 @@ void ImageDisplay::onDisable()
 {
   // TODO(Martin-Idel-SI): reenable functionality
 //  render_panel_->getRenderWindow()->setActive(false);
-  rviz_common::ImageDisplayBase::unsubscribe();
+  MFDClass::unsubscribe();
   clear();
 }
 
@@ -215,12 +216,12 @@ void ImageDisplay::update( float wall_dt, float ros_dt )
 
 void ImageDisplay::reset()
 {
-  rviz_common::ImageDisplayBase::reset();
+  MFDClass::reset();
   clear();
 }
 
 /* This is called by incomingMessage(). */
-void ImageDisplay::processMessage(const sensor_msgs::msg::Image::ConstSharedPtr& msg)
+void ImageDisplay::processMessage(const sensor_msgs::msg::Image::ConstSharedPtr msg)
 {
   bool got_float_image = msg->encoding == sensor_msgs::image_encodings::TYPE_32FC1 ||
       msg->encoding == sensor_msgs::image_encodings::TYPE_16UC1 ||

@@ -36,9 +36,10 @@
 # include <OgreMaterial.h>
 # include <OgreRenderTargetListener.h>
 # include <OgreSharedPtr.h>
+#include <include/rviz_common/message_filter_display.hpp>
 
-# include "rviz_common/image/image_display_base.hpp"
 # include "rviz_common/image/ros_image_texture.hpp"
+# include "rviz_common/ros_topic_display.hpp"
 # include "rviz_common/render_panel.hpp"
 
 # include "rviz_common/properties/bool_property.hpp"
@@ -60,7 +61,7 @@ namespace rviz_default_plugins
  * \class ImageDisplay
  *
  */
-class ImageDisplay: public rviz_common::ImageDisplayBase
+class ImageDisplay: public rviz_common::MessageFilterDisplay<sensor_msgs::msg::Image>
 {
 Q_OBJECT
 public:
@@ -81,7 +82,7 @@ protected:
   virtual void onDisable();
 
   /* This is called by incomingMessage(). */
-  virtual void processMessage(const sensor_msgs::msg::Image::ConstSharedPtr& msg);
+  void processMessage(const sensor_msgs::msg::Image::ConstSharedPtr msg) override;
 
 private:
   void clear();
