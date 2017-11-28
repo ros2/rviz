@@ -26,11 +26,12 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef ROS_TOPIC_PROPERTY_H
-#define ROS_TOPIC_PROPERTY_H
+#ifndef RVIZ_COMMON__PROPERTIES__ROS_TOPIC_PROPERTY_HPP_
+#define RVIZ_COMMON__PROPERTIES__ROS_TOPIC_PROPERTY_HPP_
 
 #include <string>
 
+#include "rclcpp/node.hpp"
 #include "rviz_common/properties/editable_enum_property.hpp"
 
 namespace rviz_common
@@ -40,32 +41,39 @@ namespace properties
 
 class RosTopicProperty : public EditableEnumProperty
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  RosTopicProperty(const QString & name = QString(),
+  explicit RosTopicProperty(
+    const QString & name = QString(),
     const QString & default_value = QString(),
     const QString & message_type = QString(),
     const QString & description = QString(),
-    Property * parent = 0,
-    const char * changed_slot = 0,
-    QObject * receiver = 0);
+    Property * parent = nullptr,
+    const char * changed_slot = nullptr,
+    QObject * receiver = nullptr);
+
+  void initialize(rclcpp::Node::ConstSharedPtr node);
 
   void setMessageType(const QString & message_type);
 
   QString getMessageType() const
-  { return message_type_; }
+  {return message_type_;}
 
   QString getTopic() const
-  { return getValue().toString(); }
+  {return getValue().toString();}
 
   std::string getTopicStd() const
-  { return getValue().toString().toStdString(); }
+  {return getValue().toString().toStdString();}
+
+  bool isEmpty() const
+  {return getTopicStd().empty();}
 
 protected Q_SLOTS:
-
   virtual void fillTopicList();
 
 private:
+  rclcpp::Node::ConstSharedPtr node_;
   QString message_type_;
 };
 
@@ -73,4 +81,4 @@ private:
 
 }  // end namespace rviz_common
 
-#endif  // ROS_TOPIC_PROPERTY_H
+#endif  // RVIZ_COMMON__PROPERTIES__ROS_TOPIC_PROPERTY_HPP_

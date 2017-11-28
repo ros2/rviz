@@ -29,10 +29,14 @@
 #ifndef RVIZ_COMMON__MESSAGE_FILTER_DISPLAY_HPP_
 #define RVIZ_COMMON__MESSAGE_FILTER_DISPLAY_HPP_
 
+<<<<<<< 4c9290fe3ff7aadc3822f7e661ebbc75153e9e41
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
+=======
+#ifndef Q_MOC_RUN
+>>>>>>> Reintroduce RosTopicProperty to MessageFilterDisplays
 
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
@@ -48,7 +52,7 @@
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager.hpp"
 #include "rviz_common/properties/status_property.hpp"
-#include "rviz_common/properties/string_property.hpp"
+#include "rviz_common/properties/ros_topic_property.hpp"
 
 #include "rviz_common/display.hpp"
 
@@ -63,22 +67,23 @@ namespace rviz_common
  * intended to be used directly. */
 class _RosTopicDisplay : public Display
 {
-  Q_OBJECT
+Q_OBJECT
 
 public:
   _RosTopicDisplay()
   {
-    topic_property_ = new properties::StringProperty(
-      "Topic", "pointcloud", "", this, SLOT(updateTopic()));
+    topic_property_ = new properties::RosTopicProperty("Topic", "",
+      "", "", this, SLOT(updateTopic()));
     unreliable_property_ = new properties::BoolProperty(
       "Unreliable", false, "Prefer UDP topic transport", this, SLOT(updateTopic()));
   }
 
 protected Q_SLOTS:
+
   virtual void updateTopic() = 0;
 
 protected:
-  properties::StringProperty * topic_property_;
+  properties::RosTopicProperty * topic_property_;
   properties::BoolProperty * unreliable_property_;
 };
 
@@ -100,16 +105,19 @@ public:
 
   MessageFilterDisplay()
 //    : tf_filter_( NULL )
-  : messages_received_(0)
+    : messages_received_(0)
   {
-//      QString message_type = QString::fromStdString(
-// ros::message_traits::datatype<MessageType>() );
-//      topic_property_->setMessageType( message_type );
-//      topic_property_->setDescription( message_type + " topic to subscribe to." );
+    // TODO(Martin-Idel-SI): The message type should be the type of <MessageType>
+    //    Currently, we can't get the trait. Was:
+    // QString message_type = QString::fromStdString(ros::message_traits::datatype<MessageType>());
+    QString message_type = QString::fromStdString("");
+    topic_property_->setMessageType(message_type);
+    topic_property_->setDescription(message_type + " topic to subscribe to.");
   }
 
   virtual void onInitialize()
   {
+    topic_property_->initialise(node_);
     // TODO(Martin-Idel-SI): revisit once MessageFilter is ported
 //      tf_filter_ = new tf::MessageFilter<MessageType>( *context_->getTFClient(),
 //                                                fixed_frame_.toStdString(), 10, update_nh_ );
@@ -118,6 +126,7 @@ public:
 //      tf_filter_->registerCallback( boost::bind(
 //           &MessageFilterDisplay<MessageType>::incomingMessage, this, _1 ));
 //      context_->getFrameManager()->registerFilterForTransformStatusCheck( tf_filter_, this );
+    topic_property_->initialize(node_);
   }
 
   virtual ~MessageFilterDisplay()
@@ -150,32 +159,35 @@ protected:
 
   virtual void subscribe()
   {
-    if (!isEnabled()) {
+    if (!isEnabled() ) {
       return;
     }
 
-    subscription = node_->create_subscription<MessageType>(
-      topic_property_->getValue().toString().toStdString(),
-      std::bind(&MessageFilterDisplay<MessageType>::incomingMessage, this, std::placeholders::_1));
+    if (topic_property_->isEmpty()) {
+      setStatus(properties::StatusProperty::Error,
+        "Topic",
+        QString("Error subscribing: Empty topic name"));
+      return;
+    }
 
-    setStatus(properties::StatusProperty::Ok, "Topic", "OK");
-
-    // TODO(greimela): Revisit after MessageFilters are migrated
-//      try
-//      {
+    try {
+      // TODO(greimela): Revisit after MessageFilters are migrated
 //        ros::TransportHints transport_hint = ros::TransportHints().reliable();
 //        // Determine UDP vs TCP transport for user selection.
 //        if (unreliable_property_->getBool())
 //        {
 //          transport_hint = ros::TransportHints().unreliable();
 //        }
-//        sub_.subscribe( update_nh_, topic_property_->getTopicStd(), 10, transport_hint);
-//        setStatus( StatusProperty::Ok, "Topic", "OK" );
-//      }
-//      catch( ros::Exception& e )
-//      {
-//        setStatus( StatusProperty::Error, "Topic", QString( "Error subscribing: " ) + e.what() );
-//      }
+      subscription = node_->create_subscription<MessageType>(
+        topic_property_->getTopicStd(),
+        std::bind(&MessageFilterDisplay<MessageType>::incomingMessage, this,
+          std::placeholders::_1));
+      setStatus(properties::StatusProperty::Ok, "Topic", "OK");
+    }
+    catch (rclcpp::exceptions::InvalidTopicNameError & e) {
+      setStatus(properties::StatusProperty::Error, "Topic",
+        QString("Error subscribing: ") + e.what());
+    }
   }
 
   virtual void unsubscribe()
