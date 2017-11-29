@@ -27,23 +27,31 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz_common/ros_integration/shutdown.hpp"
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
-#include "rclcpp/rclcpp.hpp"
+#include <memory>
+#include <string>
+#include <utility>
 
-#include "./rclcpp_node_storage.hpp"
+#include "rviz_common/visualizer_app.hpp"
+#include "rviz_common/ros_integration/ros_abstraction_iface.hpp"
 
-namespace rviz_common
+class MockRosAbstraction : public rviz_common::ros_integration::RosAbstractionIface
 {
-namespace ros_integration
-{
+public:
+  MOCK_METHOD4(init,
+    std::string(int argc, char ** argv, const std::string & name, bool anonymous_name));
+  MOCK_METHOD1(ok, bool(const std::string & name));
+  MOCK_METHOD0(shutdown, void());
+};
 
-void
-shutdown()
-{
-  clear_rclcpp_nodes();
-  rclcpp::shutdown();
+TEST(VisualizerApp, shutdownsRosDuringExit) {
+  std::unique_ptr<rviz_common::ros_integration::RosAbstractionIface> ros_abstraction =
+    std::make_unique<MockRosAbstraction>();
+  EXPECT_CALL(*dynamic_cast<MockRosAbstraction *>(ros_abstraction.get()), shutdown()).Times(1);
+
+  {
+    rviz_common::VisualizerApp visualizer_app(std::move(ros_abstraction));
+  }
 }
-
-}  // namespace ros_integration
-}  // namespace rviz_common

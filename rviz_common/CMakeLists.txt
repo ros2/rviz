@@ -187,10 +187,8 @@ set(rviz_common_source_files
   src/rviz_common/properties/vector_property.cpp
   src/rviz_common/render_panel.cpp
   src/rviz_common/ros_integration/get_topic_names_and_types.cpp
-  src/rviz_common/ros_integration/init.cpp
-  src/rviz_common/ros_integration/ok.cpp
-  src/rviz_common/ros_integration/shutdown.cpp
   src/rviz_common/ros_integration/rclcpp_node_storage.cpp
+  src/rviz_common/ros_integration/ros_abstraction.cpp
   src/rviz_common/scaled_image_widget.cpp
   src/rviz_common/screenshot_dialog.cpp
   # src/rviz_common/selection_panel.cpp
@@ -299,6 +297,9 @@ install(FILES default.rviz
   DESTINATION share/${PROJECT_NAME}
 )
 
+find_package(ament_cmake_gtest REQUIRED)
+find_package(ament_cmake_gmock REQUIRED)
+
 # TODO(wjwwood): reenable tests for Windows after resolving building problems
 if(BUILD_TESTING AND NOT WIN32)
   # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back
@@ -339,6 +340,12 @@ if(BUILD_TESTING AND NOT WIN32)
     test/mock_property_change_receiver.cpp)
   if(TARGET rviz_common_property_test)
     target_link_libraries(rviz_common_property_test rviz_common)
+  endif()
+
+  ament_add_gmock(rviz_common_visualizer_app_test
+    test/visualizer_app_test.cpp)
+  if(TARGET rviz_common_visualizer_app_test)
+    target_link_libraries(rviz_common_visualizer_app_test rviz_common)
   endif()
 endif()
 

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,25 +28,51 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__ROS_INTEGRATION__OK_HPP_
-#define RVIZ_COMMON__ROS_INTEGRATION__OK_HPP_
+#include "rviz_common/ros_integration/ros_abstraction.hpp"
 
+#include <memory>
 #include <string>
+
+#include "rclcpp/rclcpp.hpp"
+#include "rclcpp_node_storage.hpp"
 
 namespace rviz_common
 {
 namespace ros_integration
 {
 
-/// Check if ROS is "ok" or not, usually if ROS has been shutdown or not.
-/**
- * \param node_name the name of the node returned by ros_integration::init()
- * \return true if ok, otherwise false
- */
+std::string
+RosAbstraction::init(int argc, char ** argv, const std::string & name, bool anonymous_name)
+{
+  std::string final_name = name;
+  if (anonymous_name) {
+    // TODO(wjwwood): add anonymous name feature to rclcpp or somehow make name
+    //                anonymouse here.
+    throw std::runtime_error("'anonymous_name' feature not implemented");
+    // final_name = <the full anonymous node name>;
+  }
+  // TODO(wjwwood): this will throw on repeated calls, maybe avoid that?
+  rclcpp::init(argc, argv);
+  if (has_rclcpp_node_by_name(name)) {
+    // TODO(wjwwood): make a better exception type rather than using std::runtime_error.
+    throw std::runtime_error("Node with name " + final_name + " already exists.");
+  }
+  store_rclcpp_node_by_name(name, std::make_shared<rclcpp::Node>(final_name));
+  return final_name;
+}
+
 bool
-ok(const std::string & node_name);
+RosAbstraction::ok(const std::string & node_name)
+{
+  return rclcpp::ok() && has_rclcpp_node_by_name(node_name);
+}
+
+void
+RosAbstraction::shutdown()
+{
+  clear_rclcpp_nodes();
+  rclcpp::shutdown();
+}
 
 }  // namespace ros_integration
 }  // namespace rviz_common
-
-#endif  // RVIZ_COMMON__ROS_INTEGRATION__OK_HPP_

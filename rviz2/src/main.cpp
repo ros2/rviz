@@ -28,12 +28,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <memory>
 #include <string>
 
 #include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rclcpp/rclcpp.hpp"
 #include "rviz_common/logging.hpp"
+#include "rviz_common/ros_integration/ros_abstraction.hpp"
 #include "rviz_common/visualizer_app.hpp"
 
 int main(int argc, char ** argv)
@@ -58,7 +60,7 @@ int main(int argc, char ** argv)
     }
   );
 
-  rviz_common::VisualizerApp vapp;
+  rviz_common::VisualizerApp vapp(std::make_unique<rviz_common::ros_integration::RosAbstraction>());
   vapp.setApp(&qapp);
   if (vapp.init(argc, argv)) {
     return qapp.exec();

@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
@@ -27,23 +28,58 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__ROS_INTEGRATION__SHUTDOWN_HPP_
-#define RVIZ_COMMON__ROS_INTEGRATION__SHUTDOWN_HPP_
+#ifndef RVIZ_COMMON__ROS_INTEGRATION__ROS_ABSTRACTION_IFACE_HPP_
+#define RVIZ_COMMON__ROS_INTEGRATION__ROS_ABSTRACTION_IFACE_HPP_
+
+#include <string>
 
 namespace rviz_common
 {
 namespace ros_integration
 {
 
-/// Shutdown ROS.
-/**
- * This will also destroy any nodes which were created with
- * ros_integration::init().
- */
-void
-shutdown();
+class RosAbstractionIface
+{
+public:
+  virtual ~RosAbstractionIface() = default;
+
+  /// Initialize ROS, create the ROS node, return the ROS node name.
+  /**
+   * argc and argv maybe mutate to remove any command line arguments consumed by ROS.
+   *
+   * The returned ROS node name will be used in other API calls to reference the
+   * correct node.
+   * In ROS 2, this function maybe called multiple times and so the ROS node name
+   * will be the unique "key" used to operate on the correct node indirectly.
+   * In ROS 1 this will raise an exception.
+   *
+   * \param argc number of elements in argv
+   * \param argv command line arguments as an array of c-string
+   * \param name desired node name, or base node name if using an anonymous name
+   * \param anonymous_name if true then the ROS node name will be randomized
+   * \return name of the resulting ROS node
+   */
+  virtual std::string
+  init(int argc, char ** argv, const std::string & name, bool anonymous_name = true) = 0;
+
+  /// Check if ROS is "ok" or not, usually if ROS has been shutdown or not.
+  /**
+   * \param node_name the name of the node returned by ros_integration::init()
+   * \return true if ok, otherwise false
+   */
+  virtual bool
+  ok(const std::string & node_name) = 0;
+
+  /// Shutdown ROS.
+  /**
+   * This will also destroy any nodes which were created with
+   * ros_integration::init().
+   */
+  virtual void
+  shutdown() = 0;
+};
 
 }  // namespace ros_integration
 }  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__ROS_INTEGRATION__SHUTDOWN_HPP_
+#endif  // RVIZ_COMMON__ROS_INTEGRATION__ROS_ABSTRACTION_IFACE_HPP_
