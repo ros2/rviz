@@ -61,7 +61,7 @@ PointCloud2Display::PointCloud2Display()
 
 void PointCloud2Display::onInitialize()
 {
-  MFDClass::onInitialize();
+  RTDClass::onInitialize();
   point_cloud_common_->initialize(context_, scene_node_);
 }
 
@@ -190,7 +190,7 @@ void PointCloud2Display::update(float wall_dt, float ros_dt)
 
 void PointCloud2Display::reset()
 {
-  MFDClass::reset();
+  RTDClass::reset();
   point_cloud_common_->reset();
 }
 

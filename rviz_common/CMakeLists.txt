@@ -124,7 +124,7 @@ set(rviz_common_headers_to_moc
   src/rviz_common/widget_geometry_change_detector.hpp
   src/rviz_common/window_manager_interface.hpp
   include/rviz_common/validate_floats.hpp
-  include/rviz_common/message_filter_display.hpp
+  include/rviz_common/ros_topic_display.hpp
 )
 
 # TODO(wjwwood): remove this later

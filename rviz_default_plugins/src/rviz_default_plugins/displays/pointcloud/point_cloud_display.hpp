@@ -37,7 +37,7 @@
 
 #include "sensor_msgs/msg/point_cloud.hpp"
 
-#include "rviz_common/message_filter_display.hpp"
+#include "rviz_common/ros_topic_display.hpp"
 #include "point_cloud_common.hpp"
 
 namespace rviz_common
@@ -55,6 +55,7 @@ namespace rviz_default_plugins
 namespace displays
 {
 
+// TODO(greimela) This display originally extended the MessageFilterDisplay. Revisit when available
 /**
  * \class PointCloudDisplay
  * \brief Displays a point cloud of type sensor_msgs::PointCloud
@@ -63,7 +64,7 @@ namespace displays
  * If you set the channel's name to "rgb", it will interpret the channel as an integer rgb value, with r, g and b
  * all being 8 bits.
  */
-class PointCloudDisplay : public rviz_common::MessageFilterDisplay<sensor_msgs::msg::PointCloud>
+class PointCloudDisplay : public rviz_common::RosTopicDisplay<sensor_msgs::msg::PointCloud>
 {
   Q_OBJECT
 

@@ -36,7 +36,7 @@
 # include <OgreMaterial.h>
 # include <OgreRenderTargetListener.h>
 # include <OgreSharedPtr.h>
-#include <include/rviz_common/message_filter_display.hpp>
+#include <include/rviz_common/ros_topic_display.hpp>
 
 # include "rviz_common/image/ros_image_texture.hpp"
 # include "rviz_common/ros_topic_display.hpp"
@@ -61,7 +61,7 @@ namespace rviz_default_plugins
  * \class ImageDisplay
  *
  */
-class ImageDisplay : public rviz_common::MessageFilterDisplay<sensor_msgs::msg::Image>
+class ImageDisplay : public rviz_common::RosTopicDisplay<sensor_msgs::msg::Image>
 {
   Q_OBJECT
 

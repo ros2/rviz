@@ -143,12 +143,12 @@ ImageDisplay::~ImageDisplay()
 
 void ImageDisplay::onEnable()
 {
-  MFDClass::subscribe();
+  RTDClass::subscribe();
 }
 
 void ImageDisplay::onDisable()
 {
-  MFDClass::unsubscribe();
+  RTDClass::unsubscribe();
   clear();
 }
 
@@ -211,7 +211,7 @@ void ImageDisplay::update(float wall_dt, float ros_dt)
 
 void ImageDisplay::reset()
 {
-  MFDClass::reset();
+  RTDClass::reset();
   clear();
 }
 
