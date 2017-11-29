@@ -78,14 +78,16 @@ public:
       "Unreliable", false, "Prefer UDP topic transport", this, SLOT(updateReliability()));
   }
 
+  virtual void updateQueueSize(uint32_t queue_size) = 0;
+
 protected Q_SLOTS:
   virtual void updateTopic() = 0;
   virtual void updateReliability() = 0;
 
 protected:
+  rmw_qos_profile_t qos_profile;
   properties::RosTopicProperty * topic_property_;
   properties::BoolProperty * unreliable_property_;
-  rmw_qos_profile_t qos_profile;
 };
 
 /** @brief Display subclass using a rclcpp::subscription, templated on the ROS message type.
@@ -113,30 +115,38 @@ public:
     topic_property_->setDescription(message_type + " topic to subscribe to.");
   }
 
-  virtual void onInitialize()
-  {
-    topic_property_->initialize(node_);
-  }
-
-  virtual ~RosTopicDisplay()
+  ~RosTopicDisplay() override
   {
     unsubscribe();
   }
 
-  virtual void reset()
+  void onInitialize() override
+  {
+    topic_property_->initialize(node_);
+  }
+
+  void reset() override
   {
     Display::reset();
     messages_received_ = 0;
   }
 
-  virtual void setTopic(const QString & topic, const QString & datatype)
+  void setTopic(const QString & topic, const QString & datatype) override
   {
     (void) datatype;
     topic_property_->setString(topic);
   }
 
+  void updateQueueSize(uint32_t queue_size) override
+  {
+    qos_profile.depth = queue_size;
+    if (node_) {
+      updateTopic();
+    }
+  }
+
 protected:
-  virtual void updateTopic()
+  void updateTopic() override
   {
     unsubscribe();
     reset();
@@ -144,7 +154,7 @@ protected:
     context_->queueRender();
   }
 
-  virtual void updateReliability()
+  void updateReliability() override
   {
     qos_profile.reliability = unreliable_property_->getBool() ?
       RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT :
@@ -182,18 +192,18 @@ protected:
     subscription.reset();
   }
 
-  virtual void onEnable()
+  void onEnable() override
   {
     subscribe();
   }
 
-  virtual void onDisable()
+  void onDisable() override
   {
     unsubscribe();
     reset();
   }
 
-  virtual void fixedFrameChanged()
+  void fixedFrameChanged() override
   {
     reset();
   }
