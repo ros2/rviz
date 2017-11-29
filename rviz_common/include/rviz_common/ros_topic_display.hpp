@@ -37,15 +37,26 @@
 
 #endif
 
+#include "rmw/types.h"
+
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager.hpp"
 #include "rviz_common/properties/status_property.hpp"
+
 #include "rviz_common/properties/ros_topic_property.hpp"
 
 #include "rviz_common/display.hpp"
-
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
+
+static const rmw_qos_profile_t display_default =
+{
+  RMW_QOS_POLICY_HISTORY_KEEP_LAST,
+  5,
+  RMW_QOS_POLICY_RELIABILITY_RELIABLE,
+  RMW_QOS_POLICY_DURABILITY_SYSTEM_DEFAULT,
+  false
+};
 
 namespace rviz_common
 {
@@ -55,24 +66,26 @@ namespace rviz_common
  * intended to be used directly. */
 class _RosTopicDisplay : public Display
 {
-Q_OBJECT
+  Q_OBJECT
 
 public:
   _RosTopicDisplay()
+  : qos_profile(display_default)
   {
     topic_property_ = new properties::RosTopicProperty("Topic", "",
-      "", "", this, SLOT(updateTopic()));
+        "", "", this, SLOT(updateTopic()));
     unreliable_property_ = new properties::BoolProperty(
-      "Unreliable", false, "Prefer UDP topic transport", this, SLOT(updateTopic()));
+      "Unreliable", false, "Prefer UDP topic transport", this, SLOT(updateReliability()));
   }
 
 protected Q_SLOTS:
-
   virtual void updateTopic() = 0;
+  virtual void updateReliability() = 0;
 
 protected:
   properties::RosTopicProperty * topic_property_;
   properties::BoolProperty * unreliable_property_;
+  rmw_qos_profile_t qos_profile;
 };
 
 /** @brief Display subclass using a rclcpp::subscription, templated on the ROS message type.
@@ -90,7 +103,7 @@ public:
   typedef RosTopicDisplay<MessageType> RTDClass;
 
   RosTopicDisplay()
-    : messages_received_(0)
+  : messages_received_(0)
   {
     // TODO(Martin-Idel-SI): We need a way to extract the MessageType from the template to set a
     // correct string. Previously was:
@@ -131,6 +144,14 @@ protected:
     context_->queueRender();
   }
 
+  virtual void updateReliability()
+  {
+    qos_profile.reliability = unreliable_property_->getBool() ?
+      RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT :
+      RMW_QOS_POLICY_RELIABILITY_RELIABLE;
+    updateTopic();
+  }
+
   virtual void subscribe()
   {
     if (!isEnabled() ) {
@@ -147,11 +168,10 @@ protected:
     try {
       subscription = node_->create_subscription<MessageType>(
         topic_property_->getTopicStd(),
-        std::bind(&RosTopicDisplay<MessageType>::incomingMessage, this,
-          std::placeholders::_1));
+        std::bind(&RosTopicDisplay<MessageType>::incomingMessage, this, std::placeholders::_1),
+        qos_profile);
       setStatus(properties::StatusProperty::Ok, "Topic", "OK");
-    }
-    catch (rclcpp::exceptions::InvalidTopicNameError & e) {
+    } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
       setStatus(properties::StatusProperty::Error, "Topic",
         QString("Error subscribing: ") + e.what());
     }
