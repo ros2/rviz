@@ -35,32 +35,42 @@
 
 namespace rviz_common
 {
+namespace properties
+{
 
-class RosTopicProperty: public EditableEnumProperty
+class RosTopicProperty : public EditableEnumProperty
 {
 Q_OBJECT
 public:
-  RosTopicProperty( const QString& name = QString(),
-                    const QString& default_value = QString(),
-                    const QString& message_type = QString(),
-                    const QString& description = QString(),
-                    Property* parent = 0,
-                    const char *changed_slot = 0,
-                    QObject* receiver = 0 );
+  RosTopicProperty(const QString & name = QString(),
+    const QString & default_value = QString(),
+    const QString & message_type = QString(),
+    const QString & description = QString(),
+    Property * parent = 0,
+    const char * changed_slot = 0,
+    QObject * receiver = 0);
 
-  void setMessageType( const QString& message_type );
-  QString getMessageType() const { return message_type_; }
+  void setMessageType(const QString & message_type);
 
-  QString getTopic() const { return getValue().toString(); }
-  std::string getTopicStd() const { return getValue().toString().toStdString(); }
+  QString getMessageType() const
+  { return message_type_; }
+
+  QString getTopic() const
+  { return getValue().toString(); }
+
+  std::string getTopicStd() const
+  { return getValue().toString().toStdString(); }
 
 protected Q_SLOTS:
+
   virtual void fillTopicList();
 
 private:
   QString message_type_;
 };
 
-} // end namespace rviz_common
+}  // end namespace properties
 
-#endif // ROS_TOPIC_PROPERTY_H
+}  // end namespace rviz_common
+
+#endif  // ROS_TOPIC_PROPERTY_H

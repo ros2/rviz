@@ -31,17 +31,18 @@
 #include <sstream>
 #include <algorithm>
 #include <iostream>
+#include <mutex>
 
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/foreach.hpp>
 
 #include <OgreTextureManager.h>
 
-#include <sensor_msgs/image_encodings.h>
+#include <sensor_msgs/image_encodings.hpp>
 
-#include "rviz/image/ros_image_texture.h"
+#include "rviz_common/image/ros_image_texture.hpp"
 
-namespace rviz
+namespace rviz_common
 {
 
 ROSImageTexture::ROSImageTexture()
@@ -67,7 +68,7 @@ ROSImageTexture::~ROSImageTexture()
 
 void ROSImageTexture::clear()
 {
-  boost::mutex::scoped_lock lock(mutex_);
+  std::unique_lock<std::mutex> lock(mutex_);
 
   texture_->unload();
   texture_->loadImage(empty_image_);
@@ -76,9 +77,9 @@ void ROSImageTexture::clear()
   current_image_.reset();
 }
 
-const sensor_msgs::Image::ConstPtr& ROSImageTexture::getImage()
+const sensor_msgs::msg::Image::ConstSharedPtr& ROSImageTexture::getImage()
 {
-  boost::mutex::scoped_lock lock(mutex_);
+  std::unique_lock<std::mutex> lock(mutex_);
 
   return current_image_;
 }
@@ -167,10 +168,10 @@ void ROSImageTexture::normalize( T* image_data, size_t image_data_size, std::vec
 
 bool ROSImageTexture::update()
 {
-  sensor_msgs::Image::ConstPtr image;
+  sensor_msgs::msg::Image::ConstSharedPtr image;
   bool new_image = false;
   {
-    boost::mutex::scoped_lock lock(mutex_);
+    std::unique_lock<std::mutex> lock(mutex_);
 
     image = current_image_;
     new_image = new_image_;
@@ -252,7 +253,7 @@ bool ROSImageTexture::update()
   // TODO: Support different steps/strides
 
   Ogre::DataStreamPtr pixel_stream;
-  pixel_stream.bind(new Ogre::MemoryDataStream(imageDataPtr, imageDataSize));
+  pixel_stream.reset(new Ogre::MemoryDataStream(imageDataPtr, imageDataSize));
 
   try
   {
@@ -261,7 +262,8 @@ bool ROSImageTexture::update()
   catch (Ogre::Exception& e)
   {
     // TODO: signal error better
-    ROS_ERROR("Error loading image: %s", e.what());
+    // TODO(Martin-Idel-SI): reenable functionality
+    // ROS_ERROR("Error loading image: %s", e.what());
     return false;
   }
 
@@ -271,9 +273,9 @@ bool ROSImageTexture::update()
   return true;
 }
 
-void ROSImageTexture::addMessage(const sensor_msgs::Image::ConstPtr& msg)
+void ROSImageTexture::addMessage(const sensor_msgs::msg::Image::ConstSharedPtr& msg)
 {
-  boost::mutex::scoped_lock lock(mutex_);
+  std::unique_lock<std::mutex> lock(mutex_);
   current_image_ = msg;
   new_image_ = true;
 }

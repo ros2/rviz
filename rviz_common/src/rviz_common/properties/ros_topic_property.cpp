@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "ros/master.h"
+//#include "ros/master.h"
 
 #include "rviz_common/properties/ros_topic_property.hpp"
 
@@ -35,6 +35,8 @@
 
 
 namespace rviz_common
+{
+namespace properties
 {
 
 RosTopicProperty::RosTopicProperty( const QString& name,
@@ -63,23 +65,26 @@ void RosTopicProperty::fillTopicList()
 
   std::string std_message_type = message_type_.toStdString();
 
-  ros::master::V_TopicInfo topics;
-  ros::master::getTopics( topics );
-
-  // Loop through all published topics
-  ros::master::V_TopicInfo::iterator it;
-  for( it = topics.begin(); it != topics.end(); ++it )
-  {
-    const ros::master::TopicInfo& topic = *it;
-
-    // Only add topics whose type matches.
-    if( topic.datatype == std_message_type )
-    {
-      addOptionStd( topic.name );
-    }
-  }
+  // TODO(Martin-Idel-SI): reenable functionality
+//  ros::master::V_TopicInfo topics;
+//  ros::master::getTopics( topics );
+//
+//  // Loop through all published topics
+//  ros::master::V_TopicInfo::iterator it;
+//  for( it = topics.begin(); it != topics.end(); ++it )
+//  {
+//    const ros::master::TopicInfo& topic = *it;
+//
+//    // Only add topics whose type matches.
+//    if( topic.datatype == std_message_type )
+//    {
+//      addOptionStd( topic.name );
+//    }
+//  }
   sortOptions();
   QApplication::restoreOverrideCursor();
 }
 
-} // end namespace rviz_common
+}  // end namespace properties
+
+}  // end namespace rviz_common

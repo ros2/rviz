@@ -53,14 +53,14 @@ class SceneNode;
 class Rectangle2D;
 }
 
-namespace rviz
+namespace rviz_default_plugins
 {
 
 /**
  * \class ImageDisplay
  *
  */
-class ImageDisplay: public ImageDisplayBase
+class ImageDisplay: public rviz_common::ImageDisplayBase
 {
 Q_OBJECT
 public:
@@ -81,7 +81,7 @@ protected:
   virtual void onDisable();
 
   /* This is called by incomingMessage(). */
-  virtual void processMessage(const sensor_msgs::Image::ConstPtr& msg);
+  virtual void processMessage(const sensor_msgs::msg::Image::ConstSharedPtr& msg);
 
 private:
   void clear();
@@ -92,14 +92,14 @@ private:
   Ogre::Rectangle2D* screen_rect_;
   Ogre::MaterialPtr material_;
 
-  ROSImageTexture texture_;
+  rviz_common::ROSImageTexture texture_;
 
-  RenderPanel* render_panel_;
+  rviz_common::RenderPanel* render_panel_;
 
-  BoolProperty* normalize_property_;
-  FloatProperty* min_property_;
-  FloatProperty* max_property_;
-  IntProperty* median_buffer_size_property_;
+  rviz_common::properties::BoolProperty* normalize_property_;
+  rviz_common::properties::FloatProperty* min_property_;
+  rviz_common::properties::FloatProperty* max_property_;
+  rviz_common::properties::IntProperty* median_buffer_size_property_;
   bool got_float_image_;
 };
 

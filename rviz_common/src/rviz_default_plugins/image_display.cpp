@@ -27,8 +27,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <boost/bind.hpp>
-
 #include <OgreManualObject.h>
 #include <OgreMaterialManager.h>
 #include <OgreRectangle2D.h>
@@ -42,7 +40,8 @@
 #include <OgreTechnique.h>
 #include <OgreCamera.h>
 
-#include <tf/transform_listener.h>
+// TODO(Martin-Idel-SI): reenable if necessary
+//#include <tf/transform_listener.h>
 
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager.hpp"
@@ -53,22 +52,22 @@
 
 #include "image_display.hpp"
 
-namespace rviz
+namespace rviz_default_plugins
 {
 
 ImageDisplay::ImageDisplay()
   : ImageDisplayBase()
   , texture_()
 {
-  normalize_property_ = new BoolProperty( "Normalize Range", true,
+  normalize_property_ = new rviz_common::properties::BoolProperty( "Normalize Range", true,
                                           "If set to true, will try to estimate the range of possible values from the received images.",
                                           this, SLOT( updateNormalizeOptions() ));
 
-  min_property_ = new FloatProperty( "Min Value", 0.0, "Value which will be displayed as black.", this, SLOT( updateNormalizeOptions() ));
+  min_property_ = new rviz_common::properties::FloatProperty( "Min Value", 0.0, "Value which will be displayed as black.", this, SLOT( updateNormalizeOptions() ));
 
-  max_property_ = new FloatProperty( "Max Value", 1.0, "Value which will be displayed as white.", this, SLOT( updateNormalizeOptions() ));
+  max_property_ = new rviz_common::properties::FloatProperty( "Max Value", 1.0, "Value which will be displayed as white.", this, SLOT( updateNormalizeOptions() ));
 
-  median_buffer_size_property_ = new IntProperty( "Median window", 5, "Window size for median filter used for computin min/max.",
+  median_buffer_size_property_ = new rviz_common::properties::IntProperty( "Median window", 5, "Window size for median filter used for computin min/max.",
                                                   this, SLOT( updateNormalizeOptions() ) );
 
   got_float_image_ = false;
@@ -76,7 +75,7 @@ ImageDisplay::ImageDisplay()
 
 void ImageDisplay::onInitialize()
 {
-  ImageDisplayBase::onInitialize();
+  rviz_common::ImageDisplayBase::onInitialize();
   {
     static uint32_t count = 0;
     std::stringstream ss;
@@ -111,22 +110,26 @@ void ImageDisplay::onInitialize()
     Ogre::AxisAlignedBox aabInf;
     aabInf.setInfinite();
     screen_rect_->setBoundingBox(aabInf);
-    screen_rect_->setMaterial(material_->getName());
+    screen_rect_->setMaterial(material_);
     img_scene_node_->attachObject(screen_rect_);
   }
 
-  render_panel_ = new RenderPanel();
-  render_panel_->getRenderWindow()->setAutoUpdated(false);
-  render_panel_->getRenderWindow()->setActive( false );
+  render_panel_ = new rviz_common::RenderPanel();
+  // TODO(Martin-Idel-SI): reenable functionality
+//  render_panel_->getRenderWindow()->setAutoUpdated(false);
+//  render_panel_->getRenderWindow()->setActive( false );
 
   render_panel_->resize( 640, 480 );
-  render_panel_->initialize(img_scene_manager_, context_);
+  // TODO(Martin-Idel-SI): was also given the scene manager. This needs to change!
+  // TODO(Martin-Idel-SI): reenable functionality
+  render_panel_->initialize(context_);
 
   setAssociatedWidget( render_panel_ );
 
-  render_panel_->setAutoRender(false);
-  render_panel_->setOverlaysEnabled(false);
-  render_panel_->getCamera()->setNearClipDistance( 0.01f );
+  // TODO(Martin-Idel-SI): reenable functionality
+//  render_panel_->setAutoRender(false);
+//  render_panel_->setOverlaysEnabled(false);
+//  render_panel_->getCamera()->setNearClipDistance( 0.01f );
 
   updateNormalizeOptions();
 }
@@ -143,14 +146,16 @@ ImageDisplay::~ImageDisplay()
 
 void ImageDisplay::onEnable()
 {
-  ImageDisplayBase::subscribe();
-  render_panel_->getRenderWindow()->setActive(true);
+  rviz_common::ImageDisplayBase::subscribe();
+  // TODO(Martin-Idel-SI): reenable functionality
+//  render_panel_->getRenderWindow()->setActive(true);
 }
 
 void ImageDisplay::onDisable()
 {
-  render_panel_->getRenderWindow()->setActive(false);
-  ImageDisplayBase::unsubscribe();
+  // TODO(Martin-Idel-SI): reenable functionality
+//  render_panel_->getRenderWindow()->setActive(false);
+  rviz_common::ImageDisplayBase::unsubscribe();
   clear();
 }
 
@@ -181,14 +186,17 @@ void ImageDisplay::clear()
 {
   texture_.clear();
 
-  if( render_panel_->getCamera() )
-  {
-    render_panel_->getCamera()->setPosition(Ogre::Vector3(999999, 999999, 999999));
-  }
+  // TODO(Martin-Idel-SI): reenable functionality
+//  if( render_panel_->getCamera() )
+//  {
+//    render_panel_->getCamera()->setPosition(Ogre::Vector3(999999, 999999, 999999));
+//  }
 }
 
 void ImageDisplay::update( float wall_dt, float ros_dt )
 {
+  (void) wall_dt;
+  (void) ros_dt;
   try
   {
     texture_.update();
@@ -215,22 +223,23 @@ void ImageDisplay::update( float wall_dt, float ros_dt )
       }
     }
 
-    render_panel_->getRenderWindow()->update();
+    // TODO(Martin-Idel-SI): reenable functionality
+//    render_panel_->getRenderWindow()->update();
   }
-  catch( UnsupportedImageEncoding& e )
+  catch( rviz_common::UnsupportedImageEncoding& e )
   {
-    setStatus(StatusProperty::Error, "Image", e.what());
+    setStatus(rviz_common::properties::StatusProperty::Error, "Image", e.what());
   }
 }
 
 void ImageDisplay::reset()
 {
-  ImageDisplayBase::reset();
+  rviz_common::ImageDisplayBase::reset();
   clear();
 }
 
 /* This is called by incomingMessage(). */
-void ImageDisplay::processMessage(const sensor_msgs::Image::ConstPtr& msg)
+void ImageDisplay::processMessage(const sensor_msgs::msg::Image::ConstSharedPtr& msg)
 {
   bool got_float_image = msg->encoding == sensor_msgs::image_encodings::TYPE_32FC1 ||
       msg->encoding == sensor_msgs::image_encodings::TYPE_16UC1 ||
@@ -245,7 +254,8 @@ void ImageDisplay::processMessage(const sensor_msgs::Image::ConstPtr& msg)
   texture_.addMessage(msg);
 }
 
-} // namespace rviz
+} // namespace rviz_default_plugins
 
-#include <pluginlib/class_list_macros.h>
-PLUGINLIB_EXPORT_CLASS( rviz::ImageDisplay, rviz::Display )
+// TODO(Martin-Idel-SI): Reenable if pluginlib becomes available
+//#include <pluginlib/class_list_macros.h>
+//PLUGINLIB_EXPORT_CLASS( rviz::ImageDisplay, rviz::Display )
