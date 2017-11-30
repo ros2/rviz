@@ -27,29 +27,27 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__QUEUE_SIZE_PROPERTY_HPP_
-#define RVIZ_COMMON__QUEUE_SIZE_PROPERTY_HPP_
-
-#include "rviz_common/ros_topic_display.hpp"
-#include "rviz_common/properties/int_property.hpp"
+#include "rviz_common/properties/queue_size_property.hpp"
 
 namespace rviz_common
 {
 
-class QueueSizeProperty : public QObject
+QueueSizeProperty::QueueSizeProperty(_RosTopicDisplay * display, uint32_t default_size)
+: display_(display)
 {
-  Q_OBJECT
+  queue_size_property_ = new rviz_common::properties::IntProperty(
+    "Queue Size", default_size,
+    "Advanced: set the size of the incoming message queue. Increasing this is useful if your "
+    "incoming TF data is delayed significantly from your message data, but it can greatly "
+    "increase memory usage if the messages are big.",
+    display_, SLOT(updateQueueSize()), this);
 
-public:
-  QueueSizeProperty(_RosTopicDisplay * display, uint32_t default_size);
+  display_->updateQueueSize(default_size);
+}
 
-private Q_SLOTS:
-  void updateQueueSize();
+void QueueSizeProperty::updateQueueSize()
+{
+  display_->updateQueueSize(queue_size_property_->getInt());
+}
 
-private:
-  rviz_common::properties::IntProperty * queue_size_property_;
-  rviz_common::_RosTopicDisplay * display_;
-};
 }  // namespace rviz_common
-
-#endif  // RVIZ_COMMON__QUEUE_SIZE_PROPERTY_HPP_

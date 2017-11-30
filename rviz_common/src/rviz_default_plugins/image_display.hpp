@@ -31,18 +31,20 @@
 #define RVIZ_DEFAULT_PLUGINS__IMAGE_DISPLAY_HPP_
 
 #ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
-# include <QObject>
+# include <memory>
+
+# include <QObject>  // NOLINT cpplint cannot handle include order here
 
 # include <OgreMaterial.h>
 # include <OgreRenderTargetListener.h>
 # include <OgreSharedPtr.h>
 
 # include "rviz_common/ros_topic_display.hpp"
-# include "rviz_common/ros_topic_display.hpp"
 # include "rviz_common/render_panel.hpp"
 # include "rviz_common/properties/bool_property.hpp"
 # include "rviz_common/properties/float_property.hpp"
 # include "rviz_common/properties/int_property.hpp"
+# include "rviz_common/queue_size_property.hpp"
 
 # include "image/ros_image_texture.hpp"
 #endif
@@ -88,6 +90,8 @@ protected:
 private:
   void clear();
   void updateStatus();
+
+  std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
 
   Ogre::Rectangle2D * screen_rect_;
   Ogre::MaterialPtr material_;

@@ -36,6 +36,7 @@
 
 #include "point_cloud_common.hpp"
 #include "rviz_common/ros_topic_display.hpp"
+#include "rviz_common/queue_size_property.hpp"
 
 namespace rviz_common
 {
@@ -66,8 +67,6 @@ struct Offsets
  */
 class PointCloud2Display : public rviz_common::RosTopicDisplay<sensor_msgs::msg::PointCloud2>
 {
-  Q_OBJECT
-
 public:
   PointCloud2Display();
 
@@ -85,9 +84,6 @@ public:
   sensor_msgs::msg::PointCloud2::ConstSharedPtr filterOutInvalidPoints(
     sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
 
-private Q_SLOTS:
-  void updateQueueSize();
-
 protected:
   /** @brief Do initialization. Overridden from MessageFilterDisplay. */
   void onInitialize() override;
@@ -96,7 +92,7 @@ protected:
   void processMessage(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) override;
 
 private:
-  rviz_common::properties::IntProperty * queue_size_property_;
+  std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
 
   std::unique_ptr<PointCloudCommon> point_cloud_common_;
 

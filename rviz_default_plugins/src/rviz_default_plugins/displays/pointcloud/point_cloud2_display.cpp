@@ -41,6 +41,7 @@
 #include "rviz_rendering/point_cloud.hpp"
 #include "rviz_common/properties/int_property.hpp"
 #include "rviz_common/validate_floats.hpp"
+#include "rviz_common/queue_size_property.hpp"
 
 namespace rviz_default_plugins
 {
@@ -48,27 +49,14 @@ namespace displays
 {
 
 PointCloud2Display::PointCloud2Display()
-: point_cloud_common_(new PointCloudCommon(this))
-{
-  queue_size_property_ = new rviz_common::properties::IntProperty(
-    "Queue Size", 10,
-    "Advanced: set the size of the incoming PointCloud2 message queue. "
-    " Increasing this is useful if your incoming TF data is delayed significantly "
-    "from your PointCloud2 data, but it can greatly increase memory usage "
-    "if the messages are big.",
-    this, SLOT(updateQueueSize()));
-}
+: queue_size_property_(new rviz_common::QueueSizeProperty(this, 10)),
+  point_cloud_common_(new PointCloudCommon(this))
+{}
 
 void PointCloud2Display::onInitialize()
 {
   RTDClass::onInitialize();
   point_cloud_common_->initialize(context_, scene_node_);
-}
-
-void PointCloud2Display::updateQueueSize()
-{
-  // TODO(greimela): Revisit after migrating the pluginlib
-//  tf_filter_->setQueueSize( (uint32_t) queue_size_property_->getInt() );
 }
 
 void PointCloud2Display::processMessage(const sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud)

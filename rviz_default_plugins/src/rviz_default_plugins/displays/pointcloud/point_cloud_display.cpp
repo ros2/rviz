@@ -27,20 +27,18 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "point_cloud_display.hpp"
+
 #include <memory>
 #include <utility>
 
 #include <OgreSceneNode.h>
 
-// TODO(Martin-Idel-SI): revisit when message filter is working again
-// #include <tf/transform_listener.h>
-
 #include "./point_cloud_common.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager.hpp"
 #include "rviz_common/properties/int_property.hpp"
-
-#include "point_cloud_display.hpp"
+#include "rviz_common/queue_size_property.hpp"
 
 namespace rviz_default_plugins
 {
@@ -48,26 +46,14 @@ namespace displays
 {
 
 PointCloudDisplay::PointCloudDisplay()
-: point_cloud_common_(std::make_unique<PointCloudCommon>(this))
-{
-  queue_size_property_ = new rviz_common::properties::IntProperty("Queue Size", 10,
-      "Advanced: set the size of the incoming PointCloud message queue. "
-      " Increasing this is useful if your incoming TF data is delayed significantly "
-      "from your PointCloud data, but it can greatly increase memory usage if the "
-      "messages are big.",
-      this, SLOT(updateQueueSize()));
-}
+: queue_size_property_(new rviz_common::QueueSizeProperty(this, 10)),
+  point_cloud_common_(std::make_unique<PointCloudCommon>(this))
+{}
 
 void PointCloudDisplay::onInitialize()
 {
   RTDClass::onInitialize();
   point_cloud_common_->initialize(context_, scene_node_);
-}
-
-void PointCloudDisplay::updateQueueSize()
-{
-  // TODO(Martin-Idel-SI): revisit when message filter is working again
-//  tf_filter_->setQueueSize( (uint32_t) queue_size_property_->getInt() );
 }
 
 void PointCloudDisplay::processMessage(const sensor_msgs::msg::PointCloud::ConstSharedPtr cloud)

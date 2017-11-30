@@ -56,7 +56,8 @@ namespace rviz_default_plugins
 {
 
 ImageDisplay::ImageDisplay()
-: texture_()
+: queue_size_property_(new rviz_common::QueueSizeProperty(this, 10)),
+  texture_()
 {
   normalize_property_ = new rviz_common::properties::BoolProperty(
     "Normalize Range",
