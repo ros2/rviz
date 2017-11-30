@@ -39,11 +39,13 @@
 #include <string>
 #include <vector>
 
-#include <OgreTextureManager.h>
+#include <OgreTextureManager.h> // NOLINT: cpplint cannot handle include order
 
-#include <sensor_msgs/image_encodings.hpp>  // NOLINT: cpplint cannot handle include order
+#include "sensor_msgs/image_encodings.hpp"
 
-namespace rviz_common
+#include "rviz_common/logging.hpp"
+
+namespace rviz_default_plugins
 {
 
 ROSImageTexture::ROSImageTexture()
@@ -113,11 +115,9 @@ void ROSImageTexture::setNormalizeFloatImage(bool normalize, double min, double 
   max_ = max;
 }
 
-
 template<typename T>
 void ROSImageTexture::normalize(
-  const T * image_data, size_t image_data_size,
-  std::vector<uint8_t> & buffer)
+  const T * image_data, size_t image_data_size, std::vector<uint8_t> & buffer)
 {
   // Prepare output buffer
   buffer.resize(image_data_size, 0);
@@ -214,8 +214,8 @@ bool ROSImageTexture::update()
     image->encoding == sensor_msgs::image_encodings::TYPE_16SC1 ||
     image->encoding == sensor_msgs::image_encodings::MONO16) {
     imageDataSize /= sizeof(uint16_t);
-    normalize<uint16_t>(reinterpret_cast<const uint16_t *>(image->data.data()), imageDataSize,
-      buffer);
+    normalize<uint16_t>(
+      reinterpret_cast<const uint16_t *>(image->data.data()), imageDataSize, buffer);
     format = Ogre::PF_BYTE_L;
     imageDataPtr = &buffer[0];
   } else if (image->encoding.find("bayer") == 0) {
@@ -234,22 +234,16 @@ bool ROSImageTexture::update()
   height_ = image->height;
 
   // TODO(anonymous): Support different steps/strides
-
-  // TODO(Martin-Idel-SI): this was not necessary previously because the const qualifier was
-  // silently discarded...
-  std::vector<uint8_t> imageDataCopy;
-  imageDataCopy.resize(imageDataSize);
-  memcpy(&imageDataCopy[0], imageDataPtr, imageDataSize);
-
   Ogre::DataStreamPtr pixel_stream;
-  pixel_stream.reset(new Ogre::MemoryDataStream(&imageDataCopy[0], imageDataSize));
+  // C-style cast is used to bypass the const modifier
+  pixel_stream.reset(
+    new Ogre::MemoryDataStream((uint8_t *) &imageDataPtr[0], imageDataSize));  // NOLINT
 
   try {
     ogre_image.loadRawData(pixel_stream, width_, height_, 1, format, 1, 0);
   } catch (Ogre::Exception & e) {
     // TODO(anonymous): signal error better
-    // TODO(Martin-Idel-SI): reenable functionality
-    // RVIZ_RENDERING_ERROR_STREAM("Error loading image: %s", e.what());
+    RVIZ_COMMON_LOG_ERROR_STREAM("Error loading image: " << e.what());
     return false;
   }
 
@@ -266,4 +260,4 @@ void ROSImageTexture::addMessage(sensor_msgs::msg::Image::ConstSharedPtr msg)
   new_image_ = true;
 }
 
-}  // namespace rviz_common
+}  // namespace rviz_default_plugins

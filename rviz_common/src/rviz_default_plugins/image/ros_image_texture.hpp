@@ -41,9 +41,9 @@
 #include <OgreImage.h>
 #include <OgreSharedPtr.h>
 
-#include <sensor_msgs/msg/image.hpp>  // NOLINT: cpplint cannot handle include order here
+#include "sensor_msgs/msg/image.hpp"
 
-namespace rviz_common
+namespace rviz_default_plugins
 {
 
 class UnsupportedImageEncoding : public std::runtime_error
@@ -99,6 +99,6 @@ private:
   std::deque<double> max_buffer_;
 };
 
-}  // namespace rviz_common
+}  // namespace rviz_default_plugins
 
 #endif  // RVIZ_DEFAULT_PLUGINS__IMAGE__ROS_IMAGE_TEXTURE_HPP_

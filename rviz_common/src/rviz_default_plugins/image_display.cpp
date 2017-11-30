@@ -206,7 +206,7 @@ void ImageDisplay::update(float wall_dt, float ros_dt)
           -1.0f * img_aspect / win_aspect, 1.0f, 1.0f * img_aspect / win_aspect, -1.0f, false);
       }
     }
-  } catch (rviz_common::UnsupportedImageEncoding & e) {
+  } catch (UnsupportedImageEncoding & e) {
     setStatus(rviz_common::properties::StatusProperty::Error, "Image", e.what());
   }
 }

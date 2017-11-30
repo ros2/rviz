@@ -96,7 +96,7 @@ private:
   Ogre::Rectangle2D * screen_rect_;
   Ogre::MaterialPtr material_;
 
-  rviz_common::ROSImageTexture texture_;
+  ROSImageTexture texture_;
 
   rviz_common::RenderPanel * render_panel_;
 

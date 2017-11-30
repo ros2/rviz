@@ -326,6 +326,7 @@ if(BUILD_TESTING AND NOT WIN32)
   ament_uncrustify()
 
   find_package(ament_cmake_gtest REQUIRED)
+  find_package(ament_cmake_gmock REQUIRED)
 
   ament_add_gtest(rviz_common_config_test
     test/config_test.cpp)
@@ -353,6 +354,12 @@ if(BUILD_TESTING AND NOT WIN32)
     test/mock_property_change_receiver.cpp)
   if(TARGET rviz_common_property_test)
     target_link_libraries(rviz_common_property_test rviz_common)
+  endif()
+
+  ament_add_gmock(ros_image_texture_test
+    test/rviz_default_plugins/ros_image_texture_test.cpp)
+  if(TARGET ros_image_texture_test)
+    target_link_libraries(ros_image_texture_test rviz_common)
   endif()
 endif()
 
