@@ -85,7 +85,8 @@ public:
     }
   }
 
-  virtual void updateQueueSize(uint32_t queue_size) = 0;
+  using changeQoSProfile = std::function<rmw_qos_profile_t(rmw_qos_profile_t)>;
+  virtual void updateQoSProfile(changeQoSProfile change_profile) = 0;
 
   void onInitialize() override
   {
@@ -161,9 +162,9 @@ public:
     topic_property_->setString(topic);
   }
 
-  void updateQueueSize(uint32_t queue_size) override
+  void updateQoSProfile(changeQoSProfile change_profile) override
   {
-    qos_profile.depth = queue_size;
+    qos_profile = change_profile(qos_profile);
     if (node_) {
       updateTopic();
     }

@@ -30,6 +30,8 @@
 #ifndef RVIZ_COMMON__PROPERTIES__QUEUE_SIZE_PROPERTY_HPP_
 #define RVIZ_COMMON__PROPERTIES__QUEUE_SIZE_PROPERTY_HPP_
 
+#include "rmw/types.h"
+
 #include "rviz_common/ros_topic_display.hpp"
 #include "rviz_common/properties/int_property.hpp"
 

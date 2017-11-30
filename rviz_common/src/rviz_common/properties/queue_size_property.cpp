@@ -42,12 +42,15 @@ QueueSizeProperty::QueueSizeProperty(_RosTopicDisplay * display, uint32_t defaul
     "increase memory usage if the messages are big.",
     display_, SLOT(updateQueueSize()), this);
 
-  display_->updateQueueSize(default_size);
+  updateQueueSize();
 }
 
 void QueueSizeProperty::updateQueueSize()
 {
-  display_->updateQueueSize(queue_size_property_->getInt());
+  display_->updateQoSProfile([this](rmw_qos_profile_t profile) -> rmw_qos_profile_t {
+      profile.depth = this->queue_size_property_->getInt();
+      return profile;
+    });
 }
 
 }  // namespace rviz_common
