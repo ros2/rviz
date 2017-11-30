@@ -38,7 +38,7 @@
 #include "sensor_msgs/msg/point_cloud.hpp"
 
 #include "rviz_common/ros_topic_display.hpp"
-#include "rviz_common/queue_size_property.hpp"
+#include "rviz_common/properties/queue_size_property.hpp"
 #include "point_cloud_common.hpp"
 
 namespace rviz_common

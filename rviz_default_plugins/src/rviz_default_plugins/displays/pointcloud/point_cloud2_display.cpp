@@ -41,7 +41,7 @@
 #include "rviz_rendering/point_cloud.hpp"
 #include "rviz_common/properties/int_property.hpp"
 #include "rviz_common/validate_floats.hpp"
-#include "rviz_common/queue_size_property.hpp"
+#include "rviz_common/properties/queue_size_property.hpp"
 
 namespace rviz_default_plugins
 {

@@ -38,7 +38,7 @@
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager.hpp"
 #include "rviz_common/properties/int_property.hpp"
-#include "rviz_common/queue_size_property.hpp"
+#include "rviz_common/properties/queue_size_property.hpp"
 
 namespace rviz_default_plugins
 {

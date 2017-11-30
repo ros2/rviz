@@ -92,6 +92,7 @@ ImageDisplay::ImageDisplay()
 
 void ImageDisplay::onInitialize()
 {
+  RTDClass::onInitialize();
   topic_property_->setValue("image");
 
   updateNormalizeOptions();

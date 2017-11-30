@@ -44,7 +44,7 @@
 # include "rviz_common/properties/bool_property.hpp"
 # include "rviz_common/properties/float_property.hpp"
 # include "rviz_common/properties/int_property.hpp"
-# include "rviz_common/queue_size_property.hpp"
+# include "rviz_common/properties/queue_size_property.hpp"
 
 # include "image/ros_image_texture.hpp"
 #endif
