@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OGRE_TESTING_ENVIRONMENT_HPP_
-#define OGRE_TESTING_ENVIRONMENT_HPP_
+#ifndef RVIZ_RENDERING__OGRE_TESTING_ENVIRONMENT_HPP_
+#define RVIZ_RENDERING__OGRE_TESTING_ENVIRONMENT_HPP_
 
 #include <string>
 
@@ -45,8 +45,6 @@
 #ifndef _WIN32
 # pragma GCC diagnostic pop
 #endif
-
-#include "../src/rviz_rendering/render_system.hpp"
 
 namespace rviz_rendering
 {
@@ -66,10 +64,12 @@ public:
       auto lm = new Ogre::LogManager();
       lm->createLog(name, false, debug, true);
     }
-    RenderSystem::get();
+    setUpRenderSystem();
   }
+
+  void setUpRenderSystem();
 };
 
 }  // namespace rviz_rendering
 
-#endif  // OGRE_TESTING_ENVIRONMENT_HPP_
+#endif  // RVIZ_RENDERING__OGRE_TESTING_ENVIRONMENT_HPP_

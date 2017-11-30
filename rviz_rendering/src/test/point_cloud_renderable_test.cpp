@@ -49,7 +49,7 @@
 
 #include "rviz_rendering/point_cloud.hpp"
 #include "rviz_rendering/point_cloud_renderable.hpp"
-#include "./ogre_testing_environment.hpp"
+#include "test/rviz_rendering/ogre_testing_environment.hpp"
 
 class PointCloudRenderableTestFixture : public ::testing::Test
 {
