@@ -31,9 +31,9 @@
 
 #include <string>
 
-#include "rviz/properties/editable_enum_property.h"
+#include "rviz_common/properties/editable_enum_property.hpp"
 
-namespace rviz
+namespace rviz_common
 {
 
 class RosTopicProperty: public EditableEnumProperty
@@ -61,6 +61,6 @@ private:
   QString message_type_;
 };
 
-} // end namespace rviz
+} // end namespace rviz_common
 
 #endif // ROS_TOPIC_PROPERTY_H

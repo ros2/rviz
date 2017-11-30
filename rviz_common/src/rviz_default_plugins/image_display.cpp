@@ -44,14 +44,14 @@
 
 #include <tf/transform_listener.h>
 
-#include "rviz/display_context.h"
-#include "rviz/frame_manager.h"
-#include "rviz/render_panel.h"
-#include "rviz/validate_floats.h"
+#include "rviz_common/display_context.hpp"
+#include "rviz_common/frame_manager.hpp"
+#include "rviz_common/render_panel.hpp"
+#include "rviz_common/validate_floats.hpp"
 
-#include <sensor_msgs/image_encodings.h>
+#include <sensor_msgs/image_encodings.hpp>
 
-#include "image_display.h"
+#include "image_display.hpp"
 
 namespace rviz
 {

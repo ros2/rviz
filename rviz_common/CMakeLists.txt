@@ -101,6 +101,7 @@ set(rviz_common_headers_to_moc
   include/rviz_common/properties/property_tree_delegate.hpp
   include/rviz_common/properties/property_tree_model.hpp
   include/rviz_common/properties/property_tree_with_help.hpp
+  include/rviz_common/properties/ros_topic_property.hpp
   include/rviz_common/properties/status_list.hpp
   include/rviz_common/properties/status_property.hpp
   include/rviz_common/properties/string_property.hpp
@@ -138,6 +139,10 @@ list(APPEND rviz_common_headers_to_moc
 list(APPEND rviz_common_headers_to_moc
   src/rviz_common/temp/robot/robot_joint.hpp)
 
+# TODO(greimela): Remove when moving the default plugins to separate package
+list(APPEND rviz_common_headers_to_moc
+  src/rviz_default_plugins/image_display.hpp)
+
 set(rviz_common_source_files
   ${ENV_CONFIG_CPP}
   src/rviz_common/add_display_dialog.cpp
@@ -154,6 +159,7 @@ set(rviz_common_source_files
   src/rviz_common/frame_manager.cpp
   src/rviz_common/frame_position_tracking_view_controller.cpp
   # src/rviz_common/help_panel.cpp
+  src/rviz_common/image/ros_image_texture.cpp
   src/rviz_common/load_resource.cpp
   src/rviz_common/loading_dialog.cpp
   src/rviz_common/logging.cpp
@@ -178,6 +184,7 @@ set(rviz_common_source_files
   src/rviz_common/properties/property_tree_widget.cpp
   src/rviz_common/properties/property_tree_with_help.cpp
   src/rviz_common/properties/property.cpp
+  src/rviz_common/properties/ros_topic_property.cpp
   src/rviz_common/properties/quaternion_property.cpp
   src/rviz_common/properties/splitter_handle.cpp
   src/rviz_common/properties/status_list.cpp
@@ -231,6 +238,10 @@ list(APPEND rviz_common_headers_to_moc
   src/rviz_common/temp/mesh_loader.cpp)
 list(APPEND rviz_common_headers_to_moc
   src/rviz_common/temp/stl_loader.cpp)
+
+# TODO(greimela): Remove when moving the default plugins to separate package
+list(APPEND rviz_common_source_files
+  src/rviz_default_plugins/image_display.cpp)
 
 add_library(rviz_common
   ${rviz_common_headers_to_moc}

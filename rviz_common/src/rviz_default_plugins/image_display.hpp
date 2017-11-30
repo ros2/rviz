@@ -37,13 +37,13 @@
 # include <OgreRenderTargetListener.h>
 # include <OgreSharedPtr.h>
 
-# include "rviz/image/image_display_base.h"
-# include "rviz/image/ros_image_texture.h"
-# include "rviz/render_panel.h"
+# include "rviz_common/image/image_display_base.hpp"
+# include "rviz_common/image/ros_image_texture.hpp"
+# include "rviz_common/render_panel.hpp"
 
-# include "rviz/properties/bool_property.h"
-# include "rviz/properties/float_property.h"
-# include "rviz/properties/int_property.h"
+# include "rviz_common/properties/bool_property.hpp"
+# include "rviz_common/properties/float_property.hpp"
+# include "rviz_common/properties/int_property.hpp"
 #endif
 
 

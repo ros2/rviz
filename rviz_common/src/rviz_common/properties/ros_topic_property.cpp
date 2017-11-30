@@ -29,12 +29,12 @@
 
 #include "ros/master.h"
 
-#include "rviz/properties/ros_topic_property.h"
+#include "rviz_common/properties/ros_topic_property.hpp"
 
 #include <QApplication>
 
 
-namespace rviz
+namespace rviz_common
 {
 
 RosTopicProperty::RosTopicProperty( const QString& name,
@@ -82,4 +82,4 @@ void RosTopicProperty::fillTopicList()
   QApplication::restoreOverrideCursor();
 }
 
-} // end namespace rviz
+} // end namespace rviz_common
