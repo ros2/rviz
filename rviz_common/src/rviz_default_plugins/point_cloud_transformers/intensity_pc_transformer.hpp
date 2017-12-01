@@ -34,7 +34,7 @@
 #include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/properties/color_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
-#include "src/rviz_default_plugins/point_cloud_helpers.hpp"
+#include "../src/rviz_default_plugins/point_cloud_helpers.hpp"
 
 namespace rviz_default_plugins
 {

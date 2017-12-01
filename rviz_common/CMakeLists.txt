@@ -340,6 +340,10 @@ install(
   DESTINATION include
 )
 
+install(FILES default.rviz
+  DESTINATION share/${PROJECT_NAME}
+)
+
 find_package(ament_cmake_gtest REQUIRED)
 
 if(BUILD_TESTING)

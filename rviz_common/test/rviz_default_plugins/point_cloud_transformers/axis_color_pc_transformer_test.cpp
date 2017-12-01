@@ -36,15 +36,16 @@
 #include "rviz_common/properties/property.hpp"
 #include "../message_creators.hpp"
 
-#include "src/rviz_default_plugins/point_cloud_transformers/axis_color_pc_transformer.hpp"
+#include "../src/rviz_default_plugins/point_cloud_transformers/axis_color_pc_transformer.hpp"
 
 using namespace rviz_default_plugins; // NOLINT
 
 TEST(AxisColorPCTransformer, transform_returns_points_colored_depending_on_the_z_position) {
-  Point p1 = {0, 0, 0};
-  Point p2 = {0, 0, 1};
-  Point p3 = {0, 0, 2};
-  auto cloud = createPointCloud2WithPoints(std::vector<Point>{p1, p2, p3});
+  // just plain Point is ambiguous on macOS
+  rviz_default_plugins::Point p1 = {0, 0, 0};
+  rviz_default_plugins::Point p2 = {0, 0, 1};
+  rviz_default_plugins::Point p3 = {0, 0, 2};
+  auto cloud = createPointCloud2WithPoints(std::vector<rviz_default_plugins::Point>{p1, p2, p3});
 
   V_PointCloudPoint points_out;
   points_out.resize(3);
@@ -62,10 +63,11 @@ TEST(AxisColorPCTransformer, transform_returns_points_colored_depending_on_the_z
 }
 
 TEST(AxisColorPCTransformer, transform_uses_default_min_max_if_autocomplete_value_bounds_is_false) {
-  Point p1 = {0, 0, 0};
-  Point p2 = {0, 0, 1};
-  Point p3 = {0, 0, 2};
-  auto cloud = createPointCloud2WithPoints(std::vector<Point>{p1, p2, p3});
+  // just plain Point is ambiguous on macOS
+  rviz_default_plugins::Point p1 = {0, 0, 0};
+  rviz_default_plugins::Point p2 = {0, 0, 1};
+  rviz_default_plugins::Point p3 = {0, 0, 2};
+  auto cloud = createPointCloud2WithPoints(std::vector<rviz_default_plugins::Point>{p1, p2, p3});
 
   V_PointCloudPoint points_out;
   points_out.resize(3);
@@ -87,10 +89,11 @@ TEST(AxisColorPCTransformer, transform_uses_default_min_max_if_autocomplete_valu
 }
 
 TEST(AxisColorPCTransformer, transform_should_not_transform_points_when_using_local_frame) {
-  Point p1 = {0, 0, 0};
-  Point p2 = {0, 0, 1};
-  Point p3 = {0, 0, 2};
-  auto cloud = createPointCloud2WithPoints(std::vector<Point>{p1, p2, p3});
+  // just plain Point is ambiguous on macOS
+  rviz_default_plugins::Point p1 = {0, 0, 0};
+  rviz_default_plugins::Point p2 = {0, 0, 1};
+  rviz_default_plugins::Point p3 = {0, 0, 2};
+  auto cloud = createPointCloud2WithPoints(std::vector<rviz_default_plugins::Point>{p1, p2, p3});
 
   V_PointCloudPoint points_out;
   points_out.resize(3);

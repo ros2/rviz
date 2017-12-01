@@ -163,12 +163,18 @@ if(BUILD_TESTING)
   ament_add_gtest(point_cloud_test_target
     src/test/point_cloud_test.cpp)
   if(TARGET point_cloud_test_target)
-    target_link_libraries(point_cloud_test_target ${PROJECT_NAME})
+    target_link_libraries(point_cloud_test_target
+      rviz_rendering
+      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+    )
   endif()
 
   ament_add_gtest(point_cloud_renderable_test_target src/test/point_cloud_renderable_test.cpp)
   if(TARGET point_cloud_renderable_test_target)
-    target_link_libraries(point_cloud_renderable_test_target rviz_rendering)
+    target_link_libraries(point_cloud_renderable_test_target
+      rviz_rendering
+      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+    )
   endif()
 endif()
 
