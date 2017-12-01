@@ -382,8 +382,8 @@ DisplayTypeTree::DisplayTypeTree()
   setHeaderHidden(true);
 
   connect(
-    this, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)),
-    this, SLOT(onCurrentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)));
+    this, SIGNAL(currentItemChanged(QTreeWidgetItem *,QTreeWidgetItem *)),
+    this, SLOT(onCurrentItemChanged(QTreeWidgetItem *,QTreeWidgetItem *)));
 }
 
 void DisplayTypeTree::onCurrentItemChanged(

@@ -85,7 +85,7 @@ private:
   int x_press_offset_;
 
   /// The ratio of the first column width to the entire widget width.
-  /** 
+  /**
    * Preserved during parent widget resize.
    */
   float first_column_size_ratio_;

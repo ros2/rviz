@@ -46,7 +46,8 @@ namespace rviz_common
 
 using rviz_common::properties::PropertyTreeModel;
 
-struct ViewManager::ViewManagerImpl {
+struct ViewManager::ViewManagerImpl
+{
   explicit ViewManagerImpl(DisplayContext * context_arg)
   : context(context_arg),
     root_property(new ViewControllerContainer),

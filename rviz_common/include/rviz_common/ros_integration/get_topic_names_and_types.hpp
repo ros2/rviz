@@ -39,7 +39,7 @@ namespace rviz_common
 namespace ros_integration
 {
 
-/// Return a map with topic names mapped to a list of types for that topic. 
+/// Return a map with topic names mapped to a list of types for that topic.
 /**
  * The node name is what was given when initializing with this API.
  *
