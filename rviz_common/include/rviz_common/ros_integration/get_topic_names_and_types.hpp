@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__ROS_INTEGRATION__GET_TOPIC_NAME_AND_TYPES_HPP_
-#define RVIZ_COMMON__ROS_INTEGRATION__GET_TOPIC_NAME_AND_TYPES_HPP_
+#ifndef RVIZ_COMMON__ROS_INTEGRATION__GET_TOPIC_NAMES_AND_TYPES_HPP_
+#define RVIZ_COMMON__ROS_INTEGRATION__GET_TOPIC_NAMES_AND_TYPES_HPP_
 
 #include <map>
 #include <string>
@@ -52,4 +52,4 @@ get_topic_names_and_types(const std::string & node_name);
 }  // namespace ros_integration
 }  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__ROS_INTEGRATION__GET_TOPIC_NAME_AND_TYPES_HPP_
+#endif  // RVIZ_COMMON__ROS_INTEGRATION__GET_TOPIC_NAMES_AND_TYPES_HPP_

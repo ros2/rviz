@@ -32,7 +32,8 @@
 
 #include <string>
 
-#include <tinyxml.h>
+// TODO(wjwwood): replace with tinyxml2? implicit dependency?
+#include <tinyxml.h>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "./display_group.hpp"
 #include "rviz_common/logging.hpp"

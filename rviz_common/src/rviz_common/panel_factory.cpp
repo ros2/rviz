@@ -28,6 +28,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "./panel_factory.hpp"
+
+#include <string>
+
 // TODO(wjwwood): reenable the remaining panels
 #include "./displays_panel.hpp"
 // #include "./help_panel.hpp"
@@ -35,8 +39,6 @@
 // #include "./time_panel.hpp"
 // #include "./tool_properties_panel.hpp"
 #include "./views_panel.hpp"
-
-#include "./panel_factory.hpp"
 
 namespace rviz_common
 {

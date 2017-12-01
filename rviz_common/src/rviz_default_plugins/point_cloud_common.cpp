@@ -36,11 +36,10 @@
 
 #include <OgreSceneNode.h>
 #include <OgreWireBoundingBox.h>
-#include "rclcpp/clock.hpp"
 
 // TODO(wjwwood): revisit file when pluginlib is available
 // #include <pluginlib/class_loader.h>
-#include <rclcpp/clock.hpp>
+#include "rclcpp/clock.hpp"
 
 #include "./point_cloud_to_point_cloud2.hpp"
 #include "rviz_common/display.hpp"

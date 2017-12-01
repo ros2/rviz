@@ -31,6 +31,8 @@
 #ifndef RVIZ_COMMON__PANEL_FACTORY_HPP_
 #define RVIZ_COMMON__PANEL_FACTORY_HPP_
 
+#include <string>
+
 #include "./panel.hpp"
 #include "./pluginlib_factory.hpp"
 
@@ -40,7 +42,7 @@ namespace rviz_common
 class PanelFactory : public PluginlibFactory<Panel>
 {
 public:
-  PanelFactory(const std::string & node_name);
+  explicit PanelFactory(const std::string & node_name);
 };
 
 }  // namespace rviz_common

@@ -33,6 +33,7 @@
 #include <algorithm>
 #include <map>
 #include <string>
+#include <vector>
 
 #include <QCheckBox>  // NOLINT: cpplint is unable to handle the include order here
 #include <QComboBox>  // NOLINT: cpplint is unable to handle the include order here
@@ -381,9 +382,11 @@ DisplayTypeTree::DisplayTypeTree()
 {
   setHeaderHidden(true);
 
+  // *INDENT-OFF*
   connect(
-    this, SIGNAL(currentItemChanged(QTreeWidgetItem *,QTreeWidgetItem *)),
-    this, SLOT(onCurrentItemChanged(QTreeWidgetItem *,QTreeWidgetItem *)));
+    this, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)),
+    this, SLOT(onCurrentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)));
+  // *INDENT-ON*
 }
 
 void DisplayTypeTree::onCurrentItemChanged(

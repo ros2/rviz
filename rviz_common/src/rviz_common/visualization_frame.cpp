@@ -130,7 +130,6 @@ VisualizationFrame::VisualizationFrame(const std::string & node_name, QWidget * 
   post_load_timer_(new QTimer(this)),
   frame_count_(0)
 {
-
   installEventFilter(geom_change_detector_);
   connect(geom_change_detector_, SIGNAL(changed()), this, SLOT(setDisplayConfigModified()));
 

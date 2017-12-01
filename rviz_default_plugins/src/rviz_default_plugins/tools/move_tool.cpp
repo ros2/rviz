@@ -81,5 +81,5 @@ int MoveTool::processKeyEvent(QKeyEvent * event, rviz_common::RenderPanel * pane
 }  // namespace tools
 }  // namespace rviz_default_plugins
 
-#include <pluginlib/class_list_macros.hpp>
+#include <pluginlib/class_list_macros.hpp>  // NOLINT
 PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::tools::MoveTool, rviz_common::Tool)
