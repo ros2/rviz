@@ -32,6 +32,7 @@
 
 #include <algorithm>
 #include <cstdio>
+#include <memory>
 #include <sstream>
 
 #include "rviz_common/logging.hpp"

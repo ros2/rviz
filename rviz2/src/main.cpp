@@ -28,7 +28,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <QApplication>
+#include <string>
+
+#include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rclcpp/rclcpp.hpp"
 #include "rviz_common/logging.hpp"

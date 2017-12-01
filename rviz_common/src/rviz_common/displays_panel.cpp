@@ -30,12 +30,14 @@
 
 #include "./displays_panel.hpp"
 
-#include <QApplication>
-#include <QHBoxLayout>
-#include <QInputDialog>
-#include <QPushButton>
-#include <QTimer>
-#include <QVBoxLayout>
+#include <string>
+
+#include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
+#include <QHBoxLayout>  // NOLINT: cpplint is unable to handle the include order here
+#include <QInputDialog>  // NOLINT: cpplint is unable to handle the include order here
+#include <QPushButton>  // NOLINT: cpplint is unable to handle the include order here
+#include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
+#include <QVBoxLayout>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "./display_factory.hpp"
 #include "rviz_common/display.hpp"

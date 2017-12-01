@@ -33,6 +33,7 @@
 
 #include <map>
 #include <set>
+#include <string>
 #include <vector>
 
 #include "./panel.hpp"
@@ -59,7 +60,7 @@ class DisplaysPanel : public Panel
   Q_OBJECT
 
 public:
-  DisplaysPanel(const std::string & node_name, QWidget * parent = 0);
+  explicit DisplaysPanel(const std::string & node_name, QWidget * parent = 0);
   virtual ~DisplaysPanel();
 
   void onInitialize() override;

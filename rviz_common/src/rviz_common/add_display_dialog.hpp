@@ -31,9 +31,11 @@
 #ifndef RVIZ_COMMON__ADD_DISPLAY_DIALOG_HPP_
 #define RVIZ_COMMON__ADD_DISPLAY_DIALOG_HPP_
 
-#include <QComboBox>
-#include <QDialog>
-#include <QTreeWidget>
+#include <string>
+
+#include <QComboBox>  // NOLINT: cpplint is unable to handle the include order here
+#include <QDialog>  // NOLINT: cpplint is unable to handle the include order here
+#include <QTreeWidget>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "./factory.hpp"
 
@@ -235,6 +237,6 @@ private:
   int column_;
 };
 
-}  // namespace rviz
+}  // namespace rviz_common
 
 #endif  // RVIZ_COMMON__ADD_DISPLAY_DIALOG_HPP_
