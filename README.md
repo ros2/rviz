@@ -91,10 +91,12 @@ $ mkdir -p ~/rviz2_ws/src
 $ cd ~/rviz2_ws/src
 ```
 
-Clone this repository into the source folder:
+Clone these repositories into the source folder:
 
 ```
 $ git clone https://github.com/ros2/rviz.git
+$ git clone https://github.com/ros/pluginlib.git -b ros2
+$ git clone https://github.com/ros2/tinyxml2_vendor.git
 ```
 
 Then build all the packages with this command:
