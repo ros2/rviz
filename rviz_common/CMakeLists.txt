@@ -46,12 +46,8 @@ find_library(TINYXML_LIBRARIES NAMES tinyxmld tinyxml)
 # TODO(greimela) Remove as soon as boost is not required anymore (in temp files)
 find_package(Boost REQUIRED)
 
+find_package(rviz_assimp_vendor REQUIRED)
 find_package(ASSIMP REQUIRED)
-
-# TODO(greimela): Temporary fix for Windows, remove this later
-if(WIN32)
-  set(ASSIMP_LIBRARIES "${ASSIMP_LIBRARY_DIRS}/${ASSIMP_LIBRARIES}.lib")
-endif()
 
 include(FindCURL)
 if(NOT CURL_FOUND)
@@ -292,7 +288,7 @@ target_include_directories(rviz_common
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
-    ${ASSIMP_INCLUDE_DIRS}
+    ${rviz_assimp_vendor_INCLUDE_DIRS}
     ${CURL_INCLUDE_DIRS}
     # ${urdf_INCLUDE_DIRS}
     ${YAMLCPP_INCLUDE_DIRS}
@@ -302,7 +298,7 @@ target_include_directories(rviz_common
 target_link_libraries(rviz_common
   rviz_rendering::rviz_rendering
   Qt5::Widgets
-  ${ASSIMP_LIBRARIES}
+  ${rviz_assimp_vendor_LIBRARIES}
   ${CURL_LIBRARIES}
   # ${pluginlib_LIBRARIES}
   # ${rclcpp_LIBRARIES}
@@ -310,6 +306,9 @@ target_link_libraries(rviz_common
   # ${urdf_LIBRARIES}
   ${YAMLCPP_LIBRARIES}
 )
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  target_link_libraries(rviz_common stdc++fs)
+endif()
 ament_target_dependencies(rviz_common
   geometry_msgs
   pluginlib
@@ -375,9 +374,6 @@ if(BUILD_TESTING)
     test/mock_display_group.cpp)
   if(TARGET rviz_common_display_test)
     target_link_libraries(rviz_common_display_test rviz_common)
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-      target_link_libraries(rviz_common_display_test stdc++fs)
-    endif()
   endif()
 
   ament_add_gtest(rviz_common_property_test
@@ -385,9 +381,6 @@ if(BUILD_TESTING)
     test/mock_property_change_receiver.cpp)
   if(TARGET rviz_common_property_test)
     target_link_libraries(rviz_common_property_test rviz_common)
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-      target_link_libraries(rviz_common_property_test stdc++fs)
-    endif()
   endif()
 
   ament_add_gtest(point_cloud2_display_test
@@ -396,9 +389,6 @@ if(BUILD_TESTING)
     test/rviz_default_plugins/point_cloud2_display_test.cpp)
   if(TARGET point_cloud2_display_test)
     target_link_libraries(point_cloud2_display_test rviz_common)
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-      target_link_libraries(point_cloud2_display_test stdc++fs)
-    endif()
   endif()
 
   ament_add_gtest(point_cloud_transformers_test
@@ -412,9 +402,6 @@ if(BUILD_TESTING)
     test/rviz_default_plugins/point_cloud_transformers/xyz_pc_transformer_test.cpp)
   if(TARGET point_cloud_transformers_test)
     target_link_libraries(point_cloud_transformers_test rviz_common)
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-      target_link_libraries(point_cloud_transformers_test stdc++fs)
-    endif()
   endif()
 endif()
 
