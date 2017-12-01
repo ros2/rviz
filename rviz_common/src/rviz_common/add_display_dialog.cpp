@@ -239,7 +239,7 @@ AddDisplayDialog::AddDisplayDialog(
   type_box->setLayout(type_layout);
 
   // Display Name group
-  QGroupBox * name_box;
+  QGroupBox * name_box = nullptr;
   if (display_name_output_) {
     name_box = new QGroupBox("Display Name");
     name_editor_ = new QLineEdit;
@@ -249,8 +249,8 @@ AddDisplayDialog::AddDisplayDialog(
   }
 
   // Buttons
-  button_box_ = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
-      Qt::Horizontal);
+  button_box_ =
+    new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal);
 
   QVBoxLayout * main_layout = new QVBoxLayout;
   main_layout->addWidget(type_box);
