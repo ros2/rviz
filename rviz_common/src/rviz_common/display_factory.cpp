@@ -82,7 +82,7 @@ QSet<QString> DisplayFactory::getMessageTypes(const QString & class_id)
     if (config == NULL) {
       RVIZ_COMMON_LOG_ERROR_STREAM(
         "Skipping XML Document \"" << xml_file.toStdString() << "\" which had no Root Element.  "
-        "This likely means the XML is malformed or missing.");
+          "This likely means the XML is malformed or missing.");
       return QSet<QString>();
     }
     if (config->ValueStr() != "library" &&
@@ -90,8 +90,8 @@ QSet<QString> DisplayFactory::getMessageTypes(const QString & class_id)
     {
       RVIZ_COMMON_LOG_ERROR_STREAM(
         "The XML document \"" << xml_file.toStdString() <<
-        "\" given to add must have either \"library\" or "
-        "\"class_libraries\" as the root tag");
+          "\" given to add must have either \"library\" or "
+          "\"class_libraries\" as the root tag");
       return QSet<QString>();
     }
     // Step into the filter list if necessary
@@ -113,7 +113,7 @@ QSet<QString> DisplayFactory::getMessageTypes(const QString & class_id)
         } else {
           RVIZ_COMMON_LOG_DEBUG_STREAM(
             "XML file has no lookup name (i.e. magic name) for class " << derived_class <<
-            ", assuming class_id == real class name.");
+              ", assuming class_id == real class name.");
           current_class_id = derived_class;
         }
 
