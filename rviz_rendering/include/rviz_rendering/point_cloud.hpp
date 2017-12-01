@@ -39,6 +39,7 @@
 
 #ifndef _WIN32
 # pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wpedantic"
 # pragma GCC diagnostic ignored "-Wunused-parameter"
 # ifdef __clang__
 #  pragma clang diagnostic ignored "-Wextra-semi"

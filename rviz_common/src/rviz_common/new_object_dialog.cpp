@@ -82,7 +82,7 @@ NewObjectDialog::NewObjectDialog(
   type_box->setLayout(type_layout);
 
   // Display Name group
-  QGroupBox * name_box;
+  QGroupBox * name_box = nullptr;
   if (display_name_output_) {
     name_box = new QGroupBox(object_type + " Name");
     name_editor_ = new QLineEdit;

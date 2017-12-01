@@ -32,8 +32,11 @@
 
 #ifndef _WIN32
 # pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wkeyword-macro"
-# pragma GCC diagnostic ignored "-Wextra-semi"
+# ifdef __clang__
+#  pragma clang diagnostic ignored "-Wextra-semi"
+#  pragma clang diagnostic ignored "-Wkeyword-macro"
+# endif
+# pragma GCC diagnostic ignored "-Wpedantic"
 #endif
 
 #include <OgreCamera.h>

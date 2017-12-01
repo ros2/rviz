@@ -490,6 +490,7 @@ void SelectionManager::addObject(CollObjectHandle obj, SelectionHandler * handle
   }
 
   bool inserted = objects_.insert(std::make_pair(obj, handler)).second;
+  (void) inserted;
   assert(inserted);
 }
 

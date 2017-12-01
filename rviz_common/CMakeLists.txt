@@ -374,8 +374,10 @@ if(BUILD_TESTING)
     test/mock_display.cpp
     test/mock_display_group.cpp)
   if(TARGET rviz_common_display_test)
-    target_include_directories(rviz_common_display_test PUBLIC src)
     target_link_libraries(rviz_common_display_test rviz_common)
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+      target_link_libraries(rviz_common_display_test stdc++fs)
+    endif()
   endif()
 
   ament_add_gtest(rviz_common_property_test
@@ -383,6 +385,9 @@ if(BUILD_TESTING)
     test/mock_property_change_receiver.cpp)
   if(TARGET rviz_common_property_test)
     target_link_libraries(rviz_common_property_test rviz_common)
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+      target_link_libraries(rviz_common_property_test stdc++fs)
+    endif()
   endif()
 
   ament_add_gtest(point_cloud2_display_test
@@ -391,6 +396,9 @@ if(BUILD_TESTING)
     test/rviz_default_plugins/point_cloud2_display_test.cpp)
   if(TARGET point_cloud2_display_test)
     target_link_libraries(point_cloud2_display_test rviz_common)
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+      target_link_libraries(point_cloud2_display_test stdc++fs)
+    endif()
   endif()
 
   ament_add_gtest(point_cloud_transformers_test
@@ -404,6 +412,9 @@ if(BUILD_TESTING)
     test/rviz_default_plugins/point_cloud_transformers/xyz_pc_transformer_test.cpp)
   if(TARGET point_cloud_transformers_test)
     target_link_libraries(point_cloud_transformers_test rviz_common)
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+      target_link_libraries(point_cloud_transformers_test stdc++fs)
+    endif()
   endif()
 endif()
 

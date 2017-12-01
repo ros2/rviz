@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz_common/failed_display.hpp"
+#include "../src/rviz_common/failed_display.hpp"
 
 #include "mock_display_group.hpp"
 #include "mock_display.hpp"

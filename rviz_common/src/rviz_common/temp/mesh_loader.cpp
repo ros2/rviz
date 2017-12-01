@@ -197,6 +197,7 @@ public:
   // ... and finally a method to open a custom stream
   Assimp::IOStream * Open(const char * file, const char * mode = "rb")
   {
+    (void) mode;
     assert(mode == std::string("r") || mode == std::string("rb"));
 
     // Ugly -- two retrievals where there should be one (Exists + Open)

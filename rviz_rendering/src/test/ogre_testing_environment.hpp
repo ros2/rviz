@@ -34,7 +34,10 @@
 
 #ifndef _WIN32
 # pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wextra-semi"
+# pragma GCC diagnostic ignored "-Wpedantic"
+# ifdef __clang__
+#  pragma clang diagnostic ignored "-Wextra-semi"
+# endif
 #endif
 
 #include <OgreLogManager.h>

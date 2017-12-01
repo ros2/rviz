@@ -153,7 +153,7 @@ uint32_t PointCloud::getVerticesPerPoint()
     case RM_BOXES:
       return 36;
     default:
-      assert(false);
+      throw std::runtime_error("unexpected render_mode_");
   }
 }
 
@@ -176,7 +176,7 @@ float * PointCloud::getVertices()
     case RM_BOXES:
       return g_box_vertices;
     default:
-      assert(false);
+      throw std::runtime_error("unexpected render_mode_");
   }
 }
 
@@ -196,7 +196,7 @@ Ogre::MaterialPtr PointCloud::getMaterialForRenderMode(RenderMode mode)
     case RM_BOXES:
       return Ogre::MaterialPtr(box_material_);
     default:
-      assert(false);
+      throw std::runtime_error("unexpected render_mode_");
   }
 }
 
@@ -612,6 +612,7 @@ void PointCloud::popPoints(uint32_t num_points)
 
   uint32_t vpp = getVerticesPerPoint();
   uint32_t popped_count = removePointsFromRenderables(num_points, vpp);
+  (void) popped_count;
 
   assert(popped_count == num_points * vpp);
 
