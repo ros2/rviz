@@ -30,7 +30,17 @@
 #include <vector>
 #include <gtest/gtest.h>  // NOLINT
 
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wkeyword-macro"
+# pragma GCC diagnostic ignored "-Wextra-semi"
+#endif
+
 #include <OgreCamera.h>
+
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
 
 #include "rviz_rendering/point_cloud.hpp"
 #include "rviz_rendering/point_cloud_renderable.hpp"

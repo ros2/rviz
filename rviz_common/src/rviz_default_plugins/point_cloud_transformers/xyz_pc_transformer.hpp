@@ -36,7 +36,7 @@
 #include "sensor_msgs/msg/point_cloud2.hpp"
 #include "rviz_common/properties/property.hpp"
 
-#include "src/rviz_default_plugins/point_cloud_transformer.hpp"
+#include "../src/rviz_default_plugins/point_cloud_transformer.hpp"
 
 namespace rviz_default_plugins
 {

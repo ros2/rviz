@@ -40,6 +40,10 @@
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wunused-parameter"
+# ifdef __clang__
+#  pragma clang diagnostic ignored "-Wextra-semi"
+#  pragma clang diagnostic ignored "-Wkeyword-macro"
+# endif
 #endif
 
 #include <OgreSimpleRenderable.h>
