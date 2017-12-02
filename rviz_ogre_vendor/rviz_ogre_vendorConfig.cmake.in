@@ -9,7 +9,7 @@ if(NOT @PROJECT_NAME@_FIND_QUIETLY)
   message(STATUS "Found @PROJECT_NAME@: @PACKAGE_VERSION@ (${@PROJECT_NAME@_DIR})")
 endif()
 
-# add the local Modules directory to the modules path, so FindPoco.cmake is considered.
+# add the local Modules directory to the modules path
 if(WIN32)
   set(OGRE_DIR "${@PROJECT_NAME@_DIR}/../../../opt/rviz_ogre_vendor/CMake")
   set(OGRE_CMAKE_MODULE_DIR "${@PROJECT_NAME@_DIR}/../../../opt/rviz_ogre_vendor/CMake")
@@ -24,8 +24,8 @@ set(FREETYPE_HOME "${rviz_ogre_vendor_DIR}/../../../opt/rviz_ogre_vendor")
 set(ZLIB_ROOT "${rviz_ogre_vendor_DIR}/../../../opt/rviz_ogre_vendor")
 
 find_package(OGRE REQUIRED)
-message(STATUS "OGRE_LIBRARIES: ${OGRE_LIBRARIES}")
-message(STATUS "OGRE_LIBRARY_DIRS: ${OGRE_LIBRARY_DIRS}")
+# message(STATUS "OGRE_LIBRARIES: ${OGRE_LIBRARIES}")
+# message(STATUS "OGRE_LIBRARY_DIRS: ${OGRE_LIBRARY_DIRS}")
 
 foreach(_lib IN LISTS OGRE_LIBRARIES)
   # Remove debug suffix from library name for matching
@@ -58,8 +58,8 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
     endif()
 
     add_library(rviz_ogre_vendor::OgreMain STATIC IMPORTED)
-    message("rviz_ogre_vendor::OgreMain for IMPORTED_LOCATION_RELEASE: ${_ogre_main_static_library_abs}")
-    message("rviz_ogre_vendor::OgreMain for IMPORTED_LOCATION_DEBUG: ${_ogre_main_static_library_debug_abs}")
+    # message("rviz_ogre_vendor::OgreMain for IMPORTED_LOCATION_RELEASE: ${_ogre_main_static_library_abs}")
+    # message("rviz_ogre_vendor::OgreMain for IMPORTED_LOCATION_DEBUG: ${_ogre_main_static_library_debug_abs}")
     set_target_properties(rviz_ogre_vendor::OgreMain
       PROPERTIES
         IMPORTED_LOCATION_RELEASE ${_ogre_main_static_library_abs}
@@ -150,8 +150,8 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
     endif()
 
     add_library(rviz_ogre_vendor::OgreOverlay STATIC IMPORTED)
-    message("rviz_ogre_vendor::OgreOverlay for IMPORTED_LOCATION_RELEASE: ${_ogre_overlay_static_library_abs}")
-    message("rviz_ogre_vendor::OgreOverlay for IMPORTED_LOCATION_DEBUG: ${_ogre_overlay_static_library_debug_abs}")
+    # message("rviz_ogre_vendor::OgreOverlay for IMPORTED_LOCATION_RELEASE: ${_ogre_overlay_static_library_abs}")
+    # message("rviz_ogre_vendor::OgreOverlay for IMPORTED_LOCATION_DEBUG: ${_ogre_overlay_static_library_debug_abs}")
     set_target_properties(rviz_ogre_vendor::OgreOverlay
       PROPERTIES
         IMPORTED_LOCATION_RELEASE ${_ogre_overlay_static_library_abs}
@@ -202,8 +202,8 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
     endif()
 
     add_library(rviz_ogre_vendor::RenderSystem_GL STATIC IMPORTED)
-    message("rviz_ogre_vendor::RenderSystem_GL for IMPORTED_LOCATION_RELEASE: ${_render_system_gl_static_library_abs}")
-    message("rviz_ogre_vendor::RenderSystem_GL for IMPORTED_LOCATION_DEBUG: ${_render_system_gl_static_library_debug_abs}")
+    # message("rviz_ogre_vendor::RenderSystem_GL for IMPORTED_LOCATION_RELEASE: ${_render_system_gl_static_library_abs}")
+    # message("rviz_ogre_vendor::RenderSystem_GL for IMPORTED_LOCATION_DEBUG: ${_render_system_gl_static_library_debug_abs}")
     set_target_properties(rviz_ogre_vendor::RenderSystem_GL
       PROPERTIES
         IMPORTED_LOCATION_RELEASE ${_render_system_gl_static_library_abs}
@@ -254,8 +254,8 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
     endif()
 
     add_library(rviz_ogre_vendor::OgreGLSupport STATIC IMPORTED)
-    message("rviz_ogre_vendor::OgreGLSupport for IMPORTED_LOCATION_RELEASE: ${_ogre_gl_support_static_library_abs}")
-    message("rviz_ogre_vendor::OgreGLSupport for IMPORTED_LOCATION_DEBUG: ${_ogre_gl_support_static_library_debug_abs}")
+    # message("rviz_ogre_vendor::OgreGLSupport for IMPORTED_LOCATION_RELEASE: ${_ogre_gl_support_static_library_abs}")
+    # message("rviz_ogre_vendor::OgreGLSupport for IMPORTED_LOCATION_DEBUG: ${_ogre_gl_support_static_library_debug_abs}")
     set_target_properties(rviz_ogre_vendor::OgreGLSupport
       PROPERTIES
         IMPORTED_LOCATION_RELEASE ${_ogre_gl_support_static_library_abs}

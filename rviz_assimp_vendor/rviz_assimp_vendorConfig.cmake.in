@@ -9,15 +9,19 @@ if(NOT @PROJECT_NAME@_FIND_QUIETLY)
   message(STATUS "Found @PROJECT_NAME@: @PACKAGE_VERSION@ (${@PROJECT_NAME@_DIR})")
 endif()
 
-# add the local Modules directory to the modules path, so FindPoco.cmake is considered.
-if(WIN32)
-  set(assimp_DIR "${@PROJECT_NAME@_DIR}/../../../opt/rviz_assimp_vendor/CMake")
-else()
-  set(assimp_DIR "${@PROJECT_NAME@_DIR}/../../../opt/rviz_assimp_vendor/lib/cmake/assimp-4.0")
-endif()
-message(STATUS "Setting assimp_DIR to: '${assimp_DIR}'")
+find_package(assimp QUIET)
 
-find_package(assimp REQUIRED)
+if(NOT assimp_FOUND)
+  # add the local Modules directory to the modules path
+  if(WIN32)
+    set(assimp_DIR "${@PROJECT_NAME@_DIR}/../../../opt/rviz_assimp_vendor/CMake")
+  else()
+    set(assimp_DIR "${@PROJECT_NAME@_DIR}/../../../opt/rviz_assimp_vendor/lib/cmake/assimp-4.0")
+  endif()
+  message(STATUS "Setting assimp_DIR to: '${assimp_DIR}'")
+endif()
+
+find_package(assimp REQUIRED QUIET)
 
 set(rviz_assimp_vendor_LIBRARIES)
 foreach(library IN LISTS ASSIMP_LIBRARIES)
