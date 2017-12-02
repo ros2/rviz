@@ -17,19 +17,20 @@ find_package(ament_cmake REQUIRED)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
-find_package(rviz_rendering REQUIRED)
-
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
 find_package(geometry_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(resource_retriever REQUIRED)
+find_package(rviz_assimp_vendor REQUIRED)
+find_package(rviz_rendering REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
+find_package(urdf REQUIRED)
 
 if(NOT WIN32)
   find_package(PkgConfig)
@@ -46,9 +47,6 @@ find_library(TINYXML_LIBRARIES NAMES tinyxmld tinyxml)
 
 # TODO(greimela) Remove as soon as boost is not required anymore (in temp files)
 find_package(Boost REQUIRED)
-
-find_package(rviz_assimp_vendor REQUIRED)
-find_package(ASSIMP REQUIRED)
 
 # Copy env_config.hpp so that env_config.cpp can find it
 # TODO(jsquare): Get rid of copy hpp file
@@ -279,8 +277,6 @@ target_include_directories(rviz_common
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
-    ${rviz_assimp_vendor_INCLUDE_DIRS}
-    # ${urdf_INCLUDE_DIRS}
     ${YAMLCPP_INCLUDE_DIRS}
     # TODO(greimela) Remove as soon as boost is not required anymore (in temp files)
     ${Boost_INCLUDE_DIRS}
@@ -289,21 +285,15 @@ target_link_libraries(rviz_common
   resource_retriever::resource_retriever
   rviz_rendering::rviz_rendering
   Qt5::Widgets
-  ${rviz_assimp_vendor_LIBRARIES}
-  ${CURL_LIBRARIES}
-  # ${pluginlib_LIBRARIES}
-  # ${rclcpp_LIBRARIES}
   ${TINYXML_LIBRARIES}
-  # ${urdf_LIBRARIES}
   ${YAMLCPP_LIBRARIES}
 )
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  target_link_libraries(rviz_common stdc++fs)
-endif()
 ament_target_dependencies(rviz_common
   geometry_msgs
   pluginlib
   rclcpp
+  rviz_assimp_vendor
+  rviz_libcurl_vendor
   sensor_msgs
   std_msgs
   tf2

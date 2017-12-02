@@ -38,7 +38,11 @@ macro(build_assimp)
   )
 endmacro()
 
-build_assimp()
+find_package(assimp QUIET)
+
+if(NOT assimp_FOUND)
+  build_assimp()
+endif()
 
 configure_file(rviz_assimp_vendorConfig.cmake.in
   "${PROJECT_BINARY_DIR}/rviz_assimp_vendorConfig.cmake" @ONLY)
