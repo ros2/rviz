@@ -48,15 +48,13 @@
 # pragma GCC diagnostic pop
 #endif
 
-// #include <QAction>
 #include <QApplication>
 #include <QCloseEvent>
 #include <QDesktopServices>
 #include <QDir>
-// #include <QDockWidget>
+#include <QFile>
 #include <QFileDialog>
 #include <QHBoxLayout>
-// #include <QLabel>
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
@@ -66,7 +64,6 @@
 #include <QTimer>
 #include <QToolBar>
 #include <QToolButton>
-// #include <QUrl>
 
 #include "rclcpp/clock.hpp"
 #include "tf2_ros/buffer.h"
@@ -682,7 +679,7 @@ void VisualizationFrame::loadDisplayConfig(const QString & qpath)
   std::string actual_load_path = path;
   if (!path_as_qdir.exists() || path_as_qdir.entryList(QDir::NoDotAndDotDot).size() == 0) {
     actual_load_path = package_path_ + "/default.rviz";
-    if (!QDir(QString::fromStdString(actual_load_path)).exists()) {
+    if (!QFile(QString::fromStdString(actual_load_path)).exists()) {
       RVIZ_COMMON_LOG_ERROR_STREAM(
         "Default display config '" <<
           actual_load_path.c_str() << "' not found.  RViz will be very empty at first.");
