@@ -648,7 +648,7 @@ void RobotLink::createCollision(const urdf::LinkConstSharedPtr & link)
   bool valid_collision_found = false;
 #if URDF_MAJOR_VERSION == 0 && URDF_MINOR_VERSION == 2
   std::map<std::string,
-    boost::shared_ptr<std::vector<urdf::CollisionSharedPtr>>>::const_iterator mi;
+    std::shared_ptr<std::vector<urdf::CollisionSharedPtr>>>::const_iterator mi;
   for (mi = link->collision_groups.begin(); mi != link->collision_groups.end(); mi++) {
     if (mi->second) {
       std::vector<urdf::CollisionSharedPtr>::const_iterator vi;
@@ -698,7 +698,7 @@ void RobotLink::createVisual(const urdf::LinkConstSharedPtr & link)
 {
   bool valid_visual_found = false;
 #if URDF_MAJOR_VERSION == 0 && URDF_MINOR_VERSION == 2
-  std::map<std::string, boost::shared_ptr<std::vector<urdf::VisualSharedPtr>>>::const_iterator mi;
+  std::map<std::string, std::shared_ptr<std::vector<urdf::VisualSharedPtr>>>::const_iterator mi;
   for (mi = link->visual_groups.begin(); mi != link->visual_groups.end(); mi++) {
     if (mi->second) {
       std::vector<urdf::VisualSharedPtr>::const_iterator vi;

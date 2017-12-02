@@ -45,9 +45,6 @@ endif()
 
 find_library(TINYXML_LIBRARIES NAMES tinyxmld tinyxml)
 
-# TODO(greimela) Remove as soon as boost is not required anymore (in temp files)
-find_package(Boost REQUIRED)
-
 # Copy env_config.hpp so that env_config.cpp can find it
 # TODO(jsquare): Get rid of copy hpp file
 set(ENV_CONFIG_HPP ${CMAKE_CURRENT_BINARY_DIR}/src/rviz_common/env_config.hpp)
@@ -278,8 +275,6 @@ target_include_directories(rviz_common
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
     ${YAMLCPP_INCLUDE_DIRS}
-    # TODO(greimela) Remove as soon as boost is not required anymore (in temp files)
-    ${Boost_INCLUDE_DIRS}
 )
 target_link_libraries(rviz_common
   resource_retriever::resource_retriever

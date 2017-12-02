@@ -155,7 +155,7 @@ public:
 
   /// Get the object to listen to mouse events and other interaction calls.
   /**
-   * Returns a boost::weak_ptr to the object, which may or may not
+   * Returns a weak_ptr to the object, which may or may not
    * point to something.  Do not lock() the result and hold it for
    * long periods because it may cause something visual to stick
    * around after it was meant to be destroyed.
