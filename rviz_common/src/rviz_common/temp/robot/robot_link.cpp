@@ -58,7 +58,7 @@
 #include <urdf_model/model.h>
 #include <urdf_model/link.h>
 
-#include "../resource_retriever/retriever.hpp"
+#include "resource_retriever/retriever.h"
 
 #include "./robot_joint.hpp"
 

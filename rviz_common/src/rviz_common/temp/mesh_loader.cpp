@@ -77,7 +77,7 @@
 #include <assimp/IOSystem.h>
 #endif
 
-#include "./resource_retriever/retriever.hpp"
+#include "resource_retriever/retriever.h"
 #include "./stl_loader.hpp"
 
 #include "rviz_common/logging.hpp"

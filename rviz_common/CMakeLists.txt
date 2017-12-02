@@ -24,6 +24,7 @@ find_package(Qt5 REQUIRED COMPONENTS Widgets)
 find_package(geometry_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(resource_retriever REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(tf2 REQUIRED)
@@ -48,14 +49,6 @@ find_package(Boost REQUIRED)
 
 find_package(rviz_assimp_vendor REQUIRED)
 find_package(ASSIMP REQUIRED)
-
-include(FindCURL)
-if(NOT CURL_FOUND)
-  message("CURL not found!  Aborting...")
-  fail()
-endif()
-
-find_package(urdf REQUIRED)
 
 # Copy env_config.hpp so that env_config.cpp can find it
 # TODO(jsquare): Get rid of copy hpp file
@@ -247,8 +240,6 @@ list(APPEND rviz_common_headers_to_moc
 list(APPEND rviz_common_headers_to_moc
   src/rviz_common/temp/robot/tf_link_updater.cpp)
 list(APPEND rviz_common_headers_to_moc
-  src/rviz_common/temp/resource_retriever/retriever.cpp)
-list(APPEND rviz_common_headers_to_moc
   src/rviz_common/temp/mesh_loader.cpp)
 list(APPEND rviz_common_headers_to_moc
   src/rviz_common/temp/stl_loader.cpp)
@@ -289,13 +280,13 @@ target_include_directories(rviz_common
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
     ${rviz_assimp_vendor_INCLUDE_DIRS}
-    ${CURL_INCLUDE_DIRS}
     # ${urdf_INCLUDE_DIRS}
     ${YAMLCPP_INCLUDE_DIRS}
     # TODO(greimela) Remove as soon as boost is not required anymore (in temp files)
     ${Boost_INCLUDE_DIRS}
 )
 target_link_libraries(rviz_common
+  resource_retriever::resource_retriever
   rviz_rendering::rviz_rendering
   Qt5::Widgets
   ${rviz_assimp_vendor_LIBRARIES}
@@ -323,7 +314,16 @@ ament_target_dependencies(rviz_common
 
 ament_export_interfaces(rviz_common)
 ament_export_dependencies(rviz_rendering)
-ament_export_dependencies(geometry_msgs rclcpp tf2 tf2_geometry_msgs tf2_ros sensor_msgs std_msgs)
+ament_export_dependencies(
+  geometry_msgs
+  rclcpp
+  resource_retriever
+  sensor_msgs
+  std_msgs
+  tf2
+  tf2_geometry_msgs
+  tf2_ros
+)
 
 install(
   TARGETS rviz_common
