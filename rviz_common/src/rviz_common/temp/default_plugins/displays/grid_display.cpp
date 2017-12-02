@@ -40,8 +40,6 @@
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 
-#include <boost/bind.hpp>
-
 #ifndef _WIN32
 # pragma GCC diagnostic pop
 #endif
