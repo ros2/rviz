@@ -1,0 +1,27 @@
+# prevent multiple inclusion
+if(_@PROJECT_NAME@_CONFIG_INCLUDED)
+  return()
+endif()
+set(_@PROJECT_NAME@_CONFIG_INCLUDED TRUE)
+
+# output package information
+if(NOT @PROJECT_NAME@_FIND_QUIETLY)
+  message(STATUS "Found @PROJECT_NAME@: @PACKAGE_VERSION@ (${@PROJECT_NAME@_DIR})")
+endif()
+
+find_package(yaml-cpp QUIET)
+
+if(NOT yaml_cpp_FOUND)
+  # add the local Modules directory to the modules path
+  if(WIN32)
+    set(yaml_cpp_DIR "${@PROJECT_NAME@_DIR}/../../../opt/rviz_yaml_cpp_vendor/CMake")
+  else()
+    set(yaml_cpp_DIR "${@PROJECT_NAME@_DIR}/../../../opt/rviz_yaml_cpp_vendor/lib/cmake/yaml-cpp")
+  endif()
+  message(STATUS "Setting yaml_cpp_DIR to: '${yaml_cpp_DIR}'")
+endif()
+
+find_package(yaml-cpp REQUIRED QUIET)
+
+set(rviz_yaml_cpp_vendor_LIBRARIES ${YAML_CPP_LIBRARIES})
+set(rviz_yaml_cpp_vendor_INCLUDE_DIRS ${YAML_CPP_INCLUDE_DIR})
