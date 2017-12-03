@@ -25,23 +25,13 @@ find_package(rclcpp REQUIRED)
 find_package(resource_retriever REQUIRED)
 find_package(rviz_assimp_vendor REQUIRED)
 find_package(rviz_rendering REQUIRED)
+find_package(rviz_yaml_cpp_vendor REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(urdf REQUIRED)
-
-if(NOT WIN32)
-  find_package(PkgConfig)
-  pkg_check_modules(YAMLCPP yaml-cpp>=0.5 REQUIRED)
-  # if(YAMLCPP_FOUND)
-  #   add_definitions(-DRVIZ_HAVE_YAMLCPP_05)
-  # endif(YAMLCPP_FOUND)
-else()
-  find_path(YAMLCPP_INCLUDE_DIRS NAMES yaml-cpp/yaml.h)
-  find_library(YAMLCPP_LIBRARIES NAMES libyaml-cppmdd libyaml-cppmd)
-endif()
 
 find_library(TINYXML_LIBRARIES NAMES tinyxmld tinyxml)
 
@@ -274,21 +264,19 @@ target_include_directories(rviz_common
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
-    ${YAMLCPP_INCLUDE_DIRS}
 )
 target_link_libraries(rviz_common
   resource_retriever::resource_retriever
   rviz_rendering::rviz_rendering
   Qt5::Widgets
   ${TINYXML_LIBRARIES}
-  ${YAMLCPP_LIBRARIES}
 )
 ament_target_dependencies(rviz_common
   geometry_msgs
   pluginlib
   rclcpp
   rviz_assimp_vendor
-  rviz_libcurl_vendor
+  rviz_yaml_cpp_vendor
   sensor_msgs
   std_msgs
   tf2
