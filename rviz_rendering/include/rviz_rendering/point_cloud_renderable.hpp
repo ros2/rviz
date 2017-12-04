@@ -68,7 +68,14 @@ public:
     Ogre::RenderOperation::OperationType operationType);
   ~PointCloudRenderable() override;
 
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Woverloaded-virtual"
+#endif
   Ogre::RenderOperation * getRenderOperation() {return &mRenderOp;}
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
   Ogre::HardwareVertexBufferSharedPtr getBuffer();
 
   Ogre::Real getBoundingRadius() const override;

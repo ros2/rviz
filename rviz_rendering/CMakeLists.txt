@@ -175,4 +175,6 @@ list(APPEND ${PROJECT_NAME}_CONFIG_EXTRAS
   "${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/register_rviz_ogre_media_exports_hook-extras.cmake"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/register_rviz_ogre_media_exports.cmake")
 
+set_target_properties(rendering_example PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 ament_package()
