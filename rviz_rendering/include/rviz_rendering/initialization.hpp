@@ -35,11 +35,17 @@
 #include <string>
 #include <vector>
 
+#include "rviz_rendering/visibility_control.hpp"
+
 namespace rviz_rendering
 {
 
 typedef std::vector<std::string> V_string;
+
+RVIZ_RENDERING_PUBLIC
 void cleanupOgre();
+
+RVIZ_RENDERING_PUBLIC
 void initializeResources(const V_string & resource_paths);
 
 }  // namespace rviz_rendering

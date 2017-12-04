@@ -32,10 +32,13 @@
 
 #include <string>
 
+#include "rviz_rendering/visibility_control.hpp"
+
 namespace rviz_rendering
 {
 
 /// Return the absolute path to the rviz_rendering resource directory.
+RVIZ_RENDERING_PUBLIC
 std::string
 get_resource_directory();
 
@@ -45,10 +48,12 @@ get_resource_directory();
  * is used to load configurations and other resources during setup.
  * This function is not thread-safe.
  */
+RVIZ_RENDERING_PUBLIC
 void
 set_resource_directory(const std::string & resource_directory);
 
 /// Return the absolute path to the Ogre plugin directory.
+RVIZ_RENDERING_PUBLIC
 std::string
 get_ogre_plugin_directory();
 
@@ -58,6 +63,7 @@ get_ogre_plugin_directory();
  * is used to load configurations and other resources during setup.
  * This function is not thread-safe.
  */
+RVIZ_RENDERING_PUBLIC
 void
 set_ogre_plugin_directory(const std::string & ogre_plugin_directory);
 

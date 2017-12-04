@@ -31,6 +31,8 @@
 #ifndef RVIZ_RENDERING__OBJECT_HPP_
 #define RVIZ_RENDERING__OBJECT_HPP_
 
+#include "rviz_rendering/visibility_control.hpp"
+
 namespace Ogre
 {
 class SceneManager;
@@ -47,7 +49,7 @@ namespace rviz_rendering
  * \class Object
  * \brief Base class for visible objects, providing a minimal generic interface.
  */
-class Object
+class RVIZ_RENDERING_PUBLIC Object
 {
 public:
   /**

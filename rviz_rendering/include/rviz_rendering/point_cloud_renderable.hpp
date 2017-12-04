@@ -53,6 +53,8 @@
 # pragma GCC diagnostic pop
 #endif
 
+#include "rviz_rendering/visibility_control.hpp"
+
 namespace Ogre
 {
 class SceneManager;
@@ -72,34 +74,55 @@ class PointCloud;
 class PointCloudRenderable : public Ogre::SimpleRenderable
 {
 public:
+  RVIZ_RENDERING_PUBLIC
   PointCloudRenderable(
     PointCloud * parent, int num_points, bool use_tex_coords,
     Ogre::RenderOperation::OperationType operationType);
-  ~PointCloudRenderable() override;
+
+  RVIZ_RENDERING_PUBLIC
+  virtual ~PointCloudRenderable();
 
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Woverloaded-virtual"
 #endif
 
+  RVIZ_RENDERING_PUBLIC
   Ogre::RenderOperation * getRenderOperation() {return &mRenderOp;}
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop
 #endif
 
+  RVIZ_RENDERING_PUBLIC
   Ogre::HardwareVertexBufferSharedPtr getBuffer();
 
+  RVIZ_RENDERING_PUBLIC
   Ogre::Real getBoundingRadius() const override;
+
+  RVIZ_RENDERING_PUBLIC
   Ogre::Real getSquaredViewDepth(const Ogre::Camera * cam) const override;
+
+  RVIZ_RENDERING_PUBLIC
   void _notifyCurrentCamera(Ogre::Camera * camera) override;
+
+  RVIZ_RENDERING_PUBLIC
   uint16_t getNumWorldTransforms() const override {return 1;}
+
+  RVIZ_RENDERING_PUBLIC
   void getWorldTransforms(Ogre::Matrix4 * xform) const override;
+
+  RVIZ_RENDERING_PUBLIC
   const Ogre::LightList & getLights() const override;
 
 private:
+  RVIZ_RENDERING_PUBLIC
   void initializeRenderOperation(Ogre::RenderOperation::OperationType operation_type);
+
+  RVIZ_RENDERING_PUBLIC
   void specifyBufferContent(bool use_tex_coords);
+
+  RVIZ_RENDERING_PUBLIC
   void createAndBindBuffer(int num_points);
 
   PointCloud * parent_;

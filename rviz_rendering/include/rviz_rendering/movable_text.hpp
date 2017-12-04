@@ -60,6 +60,8 @@
 # pragma GCC diagnostic pop
 #endif
 
+#include "rviz_rendering/visibility_control.hpp"
+
 namespace Ogre
 {
 class Camera;
@@ -70,7 +72,7 @@ class RenderQueue;
 namespace rviz_rendering
 {
 
-class MovableText : public Ogre::MovableObject, public Ogre::Renderable
+class RVIZ_RENDERING_PUBLIC MovableText : public Ogre::MovableObject, public Ogre::Renderable
 {
   /******************************** MovableText data ****************************/
 

@@ -58,6 +58,8 @@
 
 #include <QDir>  // NOLINT
 
+#include "rviz_rendering/visibility_control.hpp"
+
 namespace rviz_rendering
 {
 
@@ -70,6 +72,7 @@ public:
   typedef unsigned long WindowIDType;  // NOLINT: we need to use C longs here
 #endif
 
+  RVIZ_RENDERING_PUBLIC
   static
   RenderSystem *
   get();

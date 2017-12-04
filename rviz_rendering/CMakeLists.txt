@@ -86,6 +86,9 @@ target_include_directories(rviz_rendering
     $<INSTALL_INTERFACE:include>
     ${OGRE_INCLUDE_DIRS}
 )
+# Causes the visibility macros to use dllexport rather than dllimport,
+# which is appropriate when building the dll but not consuming it.
+target_compile_definitions(rviz_rendering PRIVATE "RVIZ_RENDERING_BUILDING_LIBRARY")
 
 ament_export_interfaces(rviz_rendering)
 ament_export_dependencies(rviz_ogre_vendor)
@@ -156,14 +159,14 @@ if(BUILD_TESTING)
 
   ament_add_gtest(test_rviz_rendering src/test/string_helper_test.cpp)
   if(TARGET test_rviz_rendering)
-    target_include_directories(test_rviz_rendering PUBLIC src/rviz_rendering)
-    target_link_libraries(test_rviz_rendering ${PROJECT_NAME})
+    target_link_libraries(test_rviz_rendering rviz_rendering)
   endif()
 
   ament_add_gtest(point_cloud_test_target
     src/test/point_cloud_test.cpp)
   if(TARGET point_cloud_test_target)
     target_link_libraries(point_cloud_test_target
+      rviz_ogre_vendor::OgreMain
       rviz_rendering
       Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
@@ -172,6 +175,7 @@ if(BUILD_TESTING)
   ament_add_gtest(point_cloud_renderable_test_target src/test/point_cloud_renderable_test.cpp)
   if(TARGET point_cloud_renderable_test_target)
     target_link_libraries(point_cloud_renderable_test_target
+      rviz_ogre_vendor::OgreMain
       rviz_rendering
       Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
     )

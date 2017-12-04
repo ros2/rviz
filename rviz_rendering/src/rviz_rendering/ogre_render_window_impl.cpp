@@ -40,6 +40,9 @@
 # else
 #  pragma GCC diagnostic ignored "-Wpedantic"
 # endif
+#else
+# pragma warning(push)
+# pragma warning(disable:4996)
 #endif
 
 #include <OgreCamera.h>
@@ -57,6 +60,8 @@
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop
+#else
+# pragma warning(pop)
 #endif
 
 // #include <OgreRenderTargetListener.h>
@@ -268,7 +273,10 @@ RenderWindowImpl::resize(size_t width, size_t height)
 {
   if (ogre_render_window_) {
     this->setCameraAspectRatio();
-    ogre_render_window_->resize(width, height);
+    ogre_render_window_->resize(
+      static_cast<unsigned int>(width),  // NOLINT
+      static_cast<unsigned int>(height)  // NOLINT
+    );
     ogre_render_window_->windowMovedOrResized();
   }
   this->renderLater();

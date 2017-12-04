@@ -171,7 +171,12 @@ TEST_F(PointCloudTestFixture, setHighlightColor_sets_correct_CustomParameter) {
   auto renderables = pointCloud->getRenderables();
   for (auto const & renderable : renderables) {
     ASSERT_EQ(renderable->getCustomParameter(RVIZ_RENDERING_HIGHLIGHT_PARAMETER),
-      Ogre::Vector4(0.6, 0.6, 0.6, 0));
+      Ogre::Vector4(
+        static_cast<Ogre::Real>(0.6),
+        static_cast<Ogre::Real>(0.6),
+        static_cast<Ogre::Real>(0.6),
+        static_cast<Ogre::Real>(0)
+    ));
   }
 }
 
@@ -184,7 +189,12 @@ TEST_F(PointCloudTestFixture, setDimensions_changes_dimensions_of_points_and_new
   auto renderables = pointCloud->getRenderables();
   for (auto const & renderable : renderables) {
     ASSERT_EQ(renderable->getCustomParameter(RVIZ_RENDERING_SIZE_PARAMETER),
-      Ogre::Vector4(0.1, 0.2, 0.3, 0));
+      Ogre::Vector4(
+        static_cast<Ogre::Real>(0.1),
+        static_cast<Ogre::Real>(0.2),
+        static_cast<Ogre::Real>(0.3),
+        static_cast<Ogre::Real>(0)
+    ));
   }
 
   pointCloud->addPoints(singlePointArray.begin(), singlePointArray.end());
@@ -192,7 +202,12 @@ TEST_F(PointCloudTestFixture, setDimensions_changes_dimensions_of_points_and_new
   renderables = pointCloud->getRenderables();
   for (auto const & renderable : renderables) {
     ASSERT_EQ(renderable->getCustomParameter(RVIZ_RENDERING_SIZE_PARAMETER),
-      Ogre::Vector4(0.1, 0.2, 0.3, 0));
+      Ogre::Vector4(
+        static_cast<Ogre::Real>(0.1),
+        static_cast<Ogre::Real>(0.2),
+        static_cast<Ogre::Real>(0.3),
+        static_cast<Ogre::Real>(0)
+    ));
   }
 }
 
