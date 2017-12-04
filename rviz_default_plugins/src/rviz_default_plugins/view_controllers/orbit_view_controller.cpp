@@ -97,7 +97,7 @@ OrbitViewController::OrbitViewController()
 
 void OrbitViewController::onInitialize()
 {
-  FramePositionTrackingViewController::onInitialize();
+  rviz_common::FramePositionTrackingViewController::onInitialize();
 
   camera_->setProjectionType(Ogre::PT_PERSPECTIVE);
 
@@ -210,9 +210,9 @@ void OrbitViewController::handleMouseEvent(rviz_common::ViewportMouseEvent & eve
   }
 }
 
-void OrbitViewController::mimic(ViewController * source_view)
+void OrbitViewController::mimic(rviz_common::ViewController * source_view)
 {
-  FramePositionTrackingViewController::mimic(source_view);
+  rviz_common::FramePositionTrackingViewController::mimic(source_view);
 
   Ogre::Camera * source_camera = source_view->getCamera();
   if (!source_camera) {
@@ -245,7 +245,7 @@ void OrbitViewController::mimic(ViewController * source_view)
 
 void OrbitViewController::update(float dt, float ros_dt)
 {
-  FramePositionTrackingViewController::update(dt, ros_dt);
+  rviz_common::FramePositionTrackingViewController::update(dt, ros_dt);
   updateCamera();
 }
 
@@ -297,9 +297,9 @@ void OrbitViewController::updateCamera()
   if (!camera_parent) {
     throw std::runtime_error("camera's parent scene node pointer unexpectedly nullptr");
   }
-  camera_->setPosition(pos);
+  camera_parent->setPosition(pos);
   camera_parent->setFixedYawAxis(true, target_scene_node_->getOrientation() * camera_z);
-  camera_->setDirection(target_scene_node_->getOrientation() * (focal_point - pos));
+  camera_parent->setDirection(target_scene_node_->getOrientation() * (focal_point - pos), Ogre::SceneNode::TS_PARENT);
 
   focal_shape_->setPosition(focal_point);
 }

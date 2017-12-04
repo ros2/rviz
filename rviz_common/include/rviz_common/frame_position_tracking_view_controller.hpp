@@ -110,6 +110,9 @@ protected:
   Ogre::SceneNode * target_scene_node_;
   Ogre::Quaternion reference_orientation_;
   Ogre::Vector3 reference_position_;
+
+  /// A child scene node to position and rotate the camera
+  Ogre::SceneNode * camera_scene_node_;
 };
 
 }  // end namespace rviz_common
