@@ -45,4 +45,6 @@ if(BUILD_TESTING)
     ament_uncrustify()
 endif()
 
+set_target_properties(${PROJECT_NAME}_app PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 ament_package()

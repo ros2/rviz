@@ -16,7 +16,8 @@ macro(build_ogre)
   list(APPEND extra_cmake_args "-DOGRE_BUILD_RENDERSYSTEM_D3D11:BOOL=OFF")
   list(APPEND extra_cmake_args "-DOGRE_BUILD_RENDERSYSTEM_D3D9:BOOL=OFF")
   if(APPLE)
-    list(APPEND extra_cmake_args "-DCMAKE_OSX_ARCHITECTURES='x86_64'")
+    list(APPEND extra_cmake_args "-DCMAKE_OSX_ARCHITECTURES='x86_64'"
+      "-DCMAKE_CXX_FLAGS=-std=c++14 -stdlib=libc++")
   else()
     # Uncomment this line to enable the GL3PLUS render engine
     # list(APPEND extra_cmake_args "-DOGRE_BUILD_RENDERSYSTEM_GL3PLUS:BOOL=TRUE")
