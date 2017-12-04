@@ -28,12 +28,13 @@ find_package(rviz_rendering REQUIRED)
 find_package(rviz_yaml_cpp_vendor REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(tinyxml_vendor REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(urdf REQUIRED)
 
-find_library(TINYXML_LIBRARIES NAMES tinyxmld tinyxml)
+find_package(TinyXML REQUIRED)  # provided by tinyxml_vendor
 
 # Copy env_config.hpp so that env_config.cpp can find it
 # TODO(jsquare): Get rid of copy hpp file
@@ -264,16 +265,18 @@ target_include_directories(rviz_common
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
+    ${pluginlib_INCLUDE_DIRS}
+    ${TinyXML_INCLUDE_DIRS}
 )
 target_link_libraries(rviz_common
+  ${pluginlib_LIBRARIES}
   resource_retriever::resource_retriever
   rviz_rendering::rviz_rendering
   Qt5::Widgets
-  ${TINYXML_LIBRARIES}
+  ${TinyXML_LIBRARIES}
 )
 ament_target_dependencies(rviz_common
   geometry_msgs
-  pluginlib
   rclcpp
   rviz_assimp_vendor
   rviz_yaml_cpp_vendor
@@ -284,6 +287,8 @@ ament_target_dependencies(rviz_common
   tf2_ros
   urdf
 )
+# prevent pluginlib from using boost
+target_compile_definitions(rviz_common PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
 
 ament_export_interfaces(rviz_common)
 ament_export_dependencies(rviz_rendering)
@@ -297,6 +302,7 @@ ament_export_dependencies(
   tf2_geometry_msgs
   tf2_ros
 )
+ament_export_libraries(tinyxml2)
 
 install(
   TARGETS rviz_common
