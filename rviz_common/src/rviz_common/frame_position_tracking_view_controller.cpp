@@ -70,8 +70,10 @@ void FramePositionTrackingViewController::onInitialize()
   target_frame_property_->setFrameManager(context_->getFrameManager());
 
   target_scene_node_ = context_->getSceneManager()->getRootSceneNode()->createChildSceneNode();
+  camera_scene_node_ = target_scene_node_->createChildSceneNode();
+
   camera_->detachFromParent();
-  target_scene_node_->attachObject(camera_);
+  camera_scene_node_->attachObject(camera_);
 }
 
 FramePositionTrackingViewController::~FramePositionTrackingViewController()
