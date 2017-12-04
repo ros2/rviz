@@ -118,6 +118,7 @@ install(
 
 # add_executable(rendering_example src/examples/rendering_example.cpp)
 # target_link_libraries(rendering_example rviz_rendering Qt5::Widgets)
+# set_target_properties(rendering_example PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 # # TODO(wjwwood): find a way to make this optional or to run without "deploying" the
 # #                necessary dlls and stuff to the bin folder.
@@ -194,7 +195,5 @@ endif()
 list(APPEND ${PROJECT_NAME}_CONFIG_EXTRAS
   "${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/register_rviz_ogre_media_exports_hook-extras.cmake"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/register_rviz_ogre_media_exports.cmake")
-
-set_target_properties(rendering_example PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 ament_package()
