@@ -14,8 +14,8 @@ endif()
 find_package(ament_cmake REQUIRED)
 
 # Qt5 boilerplate options from http://doc.qt.io/qt-5/cmake-manual.html
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
+# set(CMAKE_INCLUDE_CURRENT_DIR ON)
+# set(CMAKE_AUTOMOC ON)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
@@ -324,65 +324,65 @@ install(FILES default.rviz
 
 find_package(ament_cmake_gtest REQUIRED)
 
-if(BUILD_TESTING)
-  # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back
-  find_package(ament_cmake_cppcheck REQUIRED)
-  find_package(ament_cmake_cpplint REQUIRED)
-  find_package(ament_cmake_lint_cmake REQUIRED)
-  find_package(ament_cmake_uncrustify REQUIRED)
-  ament_cppcheck()
-  ament_cpplint()
-  ament_lint_cmake()
-  ament_uncrustify()
-
-  ament_add_gtest(rviz_common_config_test
-    test/config_test.cpp)
-  if(TARGET rviz_common_config_test)
-    target_link_libraries(rviz_common_config_test rviz_common)
-  endif()
-
-  ament_add_gtest(rviz_common_uniform_string_stream_test
-    test/uniform_string_stream_test.cpp)
-  if(TARGET rviz_common_uniform_string_stream_test)
-    target_link_libraries(rviz_common_uniform_string_stream_test rviz_common)
-  endif()
-
-  ament_add_gtest(rviz_common_display_test
-    test/display_test.cpp
-    test/mock_display.cpp
-    test/mock_display_group.cpp)
-  if(TARGET rviz_common_display_test)
-    target_link_libraries(rviz_common_display_test rviz_common)
-  endif()
-
-  ament_add_gtest(rviz_common_property_test
-    test/property_test.cpp
-    test/mock_property_change_receiver.cpp)
-  if(TARGET rviz_common_property_test)
-    target_link_libraries(rviz_common_property_test rviz_common)
-  endif()
-
-  ament_add_gtest(point_cloud2_display_test
-    test/rviz_default_plugins/message_creators.hpp
-    test/rviz_default_plugins/message_creators.cpp
-    test/rviz_default_plugins/point_cloud2_display_test.cpp)
-  if(TARGET point_cloud2_display_test)
-    target_link_libraries(point_cloud2_display_test rviz_common)
-  endif()
-
-  ament_add_gtest(point_cloud_transformers_test
-    test/rviz_default_plugins/message_creators.hpp
-    test/rviz_default_plugins/message_creators.cpp
-    test/rviz_default_plugins/point_cloud_transformers/axis_color_pc_transformer_test.cpp
-    test/rviz_default_plugins/point_cloud_transformers/flat_color_pc_transformer_test.cpp
-    test/rviz_default_plugins/point_cloud_transformers/intensity_pc_transformer_test.cpp
-    test/rviz_default_plugins/point_cloud_transformers/rgb8_pc_transformer_test.cpp
-    test/rviz_default_plugins/point_cloud_transformers/rgbf32_pc_transformer_test.cpp
-    test/rviz_default_plugins/point_cloud_transformers/xyz_pc_transformer_test.cpp)
-  if(TARGET point_cloud_transformers_test)
-    target_link_libraries(point_cloud_transformers_test rviz_common)
-  endif()
-endif()
+# if(BUILD_TESTING)
+#   # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back
+#   find_package(ament_cmake_cppcheck REQUIRED)
+#   find_package(ament_cmake_cpplint REQUIRED)
+#   find_package(ament_cmake_lint_cmake REQUIRED)
+#   find_package(ament_cmake_uncrustify REQUIRED)
+#   ament_cppcheck()
+#   ament_cpplint()
+#   ament_lint_cmake()
+#   ament_uncrustify()
+#
+#   ament_add_gtest(rviz_common_config_test
+#     test/config_test.cpp)
+#   if(TARGET rviz_common_config_test)
+#     target_link_libraries(rviz_common_config_test rviz_common)
+#   endif()
+#
+#   ament_add_gtest(rviz_common_uniform_string_stream_test
+#     test/uniform_string_stream_test.cpp)
+#   if(TARGET rviz_common_uniform_string_stream_test)
+#     target_link_libraries(rviz_common_uniform_string_stream_test rviz_common)
+#   endif()
+#
+#   ament_add_gtest(rviz_common_display_test
+#     test/display_test.cpp
+#     test/mock_display.cpp
+#     test/mock_display_group.cpp)
+#   if(TARGET rviz_common_display_test)
+#     target_link_libraries(rviz_common_display_test rviz_common)
+#   endif()
+#
+#   ament_add_gtest(rviz_common_property_test
+#     test/property_test.cpp
+#     test/mock_property_change_receiver.cpp)
+#   if(TARGET rviz_common_property_test)
+#     target_link_libraries(rviz_common_property_test rviz_common)
+#   endif()
+#
+#   ament_add_gtest(point_cloud2_display_test
+#     test/rviz_default_plugins/message_creators.hpp
+#     test/rviz_default_plugins/message_creators.cpp
+#     test/rviz_default_plugins/point_cloud2_display_test.cpp)
+#   if(TARGET point_cloud2_display_test)
+#     target_link_libraries(point_cloud2_display_test rviz_common)
+#   endif()
+#
+#   ament_add_gtest(point_cloud_transformers_test
+#     test/rviz_default_plugins/message_creators.hpp
+#     test/rviz_default_plugins/message_creators.cpp
+#     test/rviz_default_plugins/point_cloud_transformers/axis_color_pc_transformer_test.cpp
+#     test/rviz_default_plugins/point_cloud_transformers/flat_color_pc_transformer_test.cpp
+#     test/rviz_default_plugins/point_cloud_transformers/intensity_pc_transformer_test.cpp
+#     test/rviz_default_plugins/point_cloud_transformers/rgb8_pc_transformer_test.cpp
+#     test/rviz_default_plugins/point_cloud_transformers/rgbf32_pc_transformer_test.cpp
+#     test/rviz_default_plugins/point_cloud_transformers/xyz_pc_transformer_test.cpp)
+#   if(TARGET point_cloud_transformers_test)
+#     target_link_libraries(point_cloud_transformers_test rviz_common)
+#   endif()
+# endif()
 
 ament_package(
   CONFIG_EXTRAS "rviz_common-extras.cmake"
