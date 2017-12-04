@@ -31,10 +31,10 @@
 #include "rviz_common/ros_integration/ros_abstraction.hpp"
 
 #include <memory>
+#include <mutex>
 #include <string>
 
 #include "rclcpp/rclcpp.hpp"
-#include "rclcpp_node_storage.hpp"
 
 namespace rviz_common
 {
@@ -72,6 +72,39 @@ RosAbstraction::shutdown()
 {
   clear_rclcpp_nodes();
   rclcpp::shutdown();
+}
+
+void
+RosAbstraction::store_rclcpp_node_by_name(
+  const std::string & node_name,
+  const std::shared_ptr<rclcpp::Node> & node)
+{
+  std::lock_guard<std::mutex> lock(nodes_by_name_mutex_);
+  nodes_by_name_[node_name] = node;
+}
+
+std::shared_ptr<rclcpp::Node>
+RosAbstraction::get_rclcpp_node_by_name(const std::string & node_name)
+{
+  std::lock_guard<std::mutex> lock(nodes_by_name_mutex_);
+  if (nodes_by_name_.count(node_name) == 0) {
+    return nullptr;
+  }
+  return nodes_by_name_[node_name];
+}
+
+bool
+RosAbstraction::has_rclcpp_node_by_name(const std::string & node_name)
+{
+  std::lock_guard<std::mutex> lock(nodes_by_name_mutex_);
+  return nodes_by_name_.count(node_name) != 0;
+}
+
+void
+RosAbstraction::clear_rclcpp_nodes()
+{
+  std::lock_guard<std::mutex> lock(nodes_by_name_mutex_);
+  nodes_by_name_.clear();
 }
 
 }  // namespace ros_integration
