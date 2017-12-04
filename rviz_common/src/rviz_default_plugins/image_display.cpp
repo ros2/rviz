@@ -218,7 +218,7 @@ void ImageDisplay::reset()
 }
 
 /* This is called by incomingMessage(). */
-void ImageDisplay::processMessage(const sensor_msgs::msg::Image::ConstSharedPtr msg)
+void ImageDisplay::processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg)
 {
   bool got_float_image = msg->encoding == sensor_msgs::image_encodings::TYPE_32FC1 ||
     msg->encoding == sensor_msgs::image_encodings::TYPE_16UC1 ||
