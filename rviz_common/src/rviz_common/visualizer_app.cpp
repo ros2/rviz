@@ -113,6 +113,16 @@ void VisualizerApp::setApp(QApplication * app)
   app_ = app;
 }
 
+rviz_rendering::RenderWindow * VisualizerApp::getRenderWindow()
+{
+  return frame_->getRenderWindow();
+}
+
+void VisualizerApp::loadConfig(QString config_path)
+{
+  frame_->loadDisplayConfig(config_path);
+}
+
 bool VisualizerApp::init(int argc, char ** argv)
 {
   // TODO(wjwwood): find a way to get the versions and print them here

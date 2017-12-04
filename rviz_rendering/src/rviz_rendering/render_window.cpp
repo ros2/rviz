@@ -55,13 +55,14 @@
 # pragma GCC diagnostic pop
 #endif
 
-#include <QMouseEvent>
-#include <QTimer>
-#include <QWindow>
+#include <string>
 
-#include <QMetaEnum>
-#include <QDebug>
-#include <QTime>
+#include <QMouseEvent>  // NOLINT
+#include <QTimer>   // NOLINT
+#include <QWindow>   // NOLINT
+#include <QMetaEnum>   // NOLINT
+#include <QDebug>   // NOLINT
+#include <QTime>   // NOLINT
 
 // Use the Ogre implementation for now.
 // This header will implement the RenderWindowImpl class.
@@ -80,6 +81,11 @@ RenderWindow::RenderWindow(QWindow * parent)
 RenderWindow::~RenderWindow()
 {
   delete impl_;
+}
+
+void RenderWindow::captureScreenShot(std::string imageName)
+{
+  impl_->screenShot(imageName);
 }
 
 void

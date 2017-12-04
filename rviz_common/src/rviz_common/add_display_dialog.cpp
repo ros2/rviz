@@ -217,9 +217,11 @@ AddDisplayDialog::AddDisplayDialog(
   datatype_output_(datatype_output)
 {
   //***** Layout
+  setObjectName("AddDisplayDialog");
 
   // Display Type group
   QGroupBox * type_box = new QGroupBox("Create visualization");
+  type_box->setObjectName("AddDisplayDialog/Visualization_Typebox");
 
   QLabel * description_label = new QLabel("Description:");
   description_ = new QTextBrowser;
@@ -234,6 +236,7 @@ AddDisplayDialog::AddDisplayDialog(
   topic_widget->fill(factory);
 
   tab_widget_ = new QTabWidget;
+  tab_widget_->setObjectName("Visualization_Typebox/TabWidget");
   display_tab_ = tab_widget_->addTab(display_tree, tr("By display type"));
   topic_tab_ = tab_widget_->addTab(topic_widget, tr("By topic"));
 
@@ -257,6 +260,7 @@ AddDisplayDialog::AddDisplayDialog(
   // Buttons
   button_box_ =
     new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal);
+  button_box_->setObjectName("AddDisplayDialog/ButtonBox");
 
   QVBoxLayout * main_layout = new QVBoxLayout;
   main_layout->addWidget(type_box);

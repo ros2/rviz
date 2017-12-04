@@ -45,6 +45,7 @@ PropertyTreeWithHelp::PropertyTreeWithHelp(QWidget * parent)
   setOrientation(Qt::Vertical);
 
   property_tree_ = new PropertyTreeWidget;
+  property_tree_->setObjectName("TreeWithHelp/PropertyTree");
 
   help_ = new QTextBrowser;
   help_->setOpenExternalLinks(true);

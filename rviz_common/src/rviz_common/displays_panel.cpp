@@ -53,21 +53,27 @@ namespace rviz_common
 DisplaysPanel::DisplaysPanel(const std::string & node_name, QWidget * parent)
 : Panel(parent), node_name_(node_name)
 {
+  setObjectName("Displays/DisplayPanel");
   tree_with_help_ = new properties::PropertyTreeWithHelp;
+  tree_with_help_->setObjectName("DisplayPanel/TreeWithHelp");
   property_grid_ = tree_with_help_->getTree();
 
   QPushButton * add_button = new QPushButton("Add");
+  add_button->setObjectName("DisplayPanel/AddDisplayButton");
   add_button->setShortcut(QKeySequence(QString("Ctrl+N")));
   add_button->setToolTip("Add a new display, Ctrl+N");
   duplicate_button_ = new QPushButton("Duplicate");
+  duplicate_button_->setObjectName("DisplayPanel/DuplicateDisplayButton");
   duplicate_button_->setShortcut(QKeySequence(QString("Ctrl+D")));
   duplicate_button_->setToolTip("Duplicate a display, Ctrl+D");
   duplicate_button_->setEnabled(false);
   remove_button_ = new QPushButton("Remove");
+  remove_button_->setObjectName("DisplayPanel/RemoveDisplayButton");
   remove_button_->setShortcut(QKeySequence(QString("Ctrl+X")));
   remove_button_->setToolTip("Remove displays, Ctrl+X");
   remove_button_->setEnabled(false);
   rename_button_ = new QPushButton("Rename");
+  rename_button_->setObjectName("DisplayPanel/RenameDisplayButton");
   rename_button_->setShortcut(QKeySequence(QString("Ctrl+R")));
   rename_button_->setToolTip("Rename a display, Ctrl+R");
   rename_button_->setEnabled(false);
