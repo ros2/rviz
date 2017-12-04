@@ -29,6 +29,7 @@
  */
 
 #include "rviz_rendering/object.hpp"
+#include "rviz_rendering/visibility_control.hpp"
 
 #ifndef RVIZ_RENDERING__ARROW_HPP_
 #define RVIZ_RENDERING__ARROW_HPP_
@@ -57,7 +58,7 @@ class Shape;
  * different direction, call setOrientation() with a rotation from -Z
  * to the desired vector.
  */
-class Arrow : public Object
+class RVIZ_RENDERING_PUBLIC Arrow : public Object
 {
 public:
   /**

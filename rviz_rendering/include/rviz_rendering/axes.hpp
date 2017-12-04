@@ -36,6 +36,7 @@
 #include <vector>
 
 #include "rviz_rendering/object.hpp"
+#include "rviz_rendering/visibility_control.hpp"
 
 namespace Ogre
 {
@@ -65,6 +66,7 @@ public:
    * @param length Length of the axes
    * @param radius Radius of the axes
    */
+  RVIZ_RENDERING_PUBLIC
   Axes(
     Ogre::SceneManager * manager, Ogre::SceneNode * parent_node = NULL, float length = 1.0f,
     float radius = 0.1f);
@@ -76,13 +78,25 @@ public:
    * @param length Length of the axes
    * @param radius Radius of the axes
    */
+  RVIZ_RENDERING_PUBLIC
   void set(float length, float radius);
 
+  RVIZ_RENDERING_PUBLIC
   virtual void setOrientation(const Ogre::Quaternion & orientation);
+
+  RVIZ_RENDERING_PUBLIC
   virtual void setPosition(const Ogre::Vector3 & position);
+
+  RVIZ_RENDERING_PUBLIC
   virtual void setScale(const Ogre::Vector3 & scale);
+
+  RVIZ_RENDERING_PUBLIC
   virtual void setColor(float r, float g, float b, float a);
+
+  RVIZ_RENDERING_PUBLIC
   virtual const Ogre::Vector3 & getPosition();
+
+  RVIZ_RENDERING_PUBLIC
   virtual const Ogre::Quaternion & getOrientation();
 
   /**
@@ -94,18 +108,37 @@ public:
   /**
    * \brief Sets user data on all ogre objects we own
    */
+  RVIZ_RENDERING_PUBLIC
   void setUserData(const Ogre::Any & data);
 
+  RVIZ_RENDERING_PUBLIC
   Shape * getXShape() {return x_axis_;}
+
+  RVIZ_RENDERING_PUBLIC
   Shape * getYShape() {return y_axis_;}
+
+  RVIZ_RENDERING_PUBLIC
   Shape * getZShape() {return z_axis_;}
 
+  RVIZ_RENDERING_PUBLIC
   void setXColor(const Ogre::ColourValue & col);
+
+  RVIZ_RENDERING_PUBLIC
   void setYColor(const Ogre::ColourValue & col);
+
+  RVIZ_RENDERING_PUBLIC
   void setZColor(const Ogre::ColourValue & col);
+
+  RVIZ_RENDERING_PUBLIC
   void setToDefaultColors();
+
+  RVIZ_RENDERING_PUBLIC
   static const Ogre::ColourValue & getDefaultXColor();
+
+  RVIZ_RENDERING_PUBLIC
   static const Ogre::ColourValue & getDefaultYColor();
+
+  RVIZ_RENDERING_PUBLIC
   static const Ogre::ColourValue & getDefaultZColor();
 
 private:

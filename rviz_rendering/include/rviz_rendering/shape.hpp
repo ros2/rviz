@@ -38,6 +38,7 @@
 #include <OgreVector3.h>
 
 #include "rviz_rendering/object.hpp"
+#include "rviz_rendering/visibility_control.hpp"
 
 namespace Ogre
 {
@@ -50,8 +51,6 @@ class Entity;
 namespace rviz_rendering
 {
 
-/**
- */
 class Shape : public Object
 {
 public:
@@ -70,9 +69,13 @@ public:
    * @param scene_manager The scene manager this object is associated with
    * @param parent_node A scene node to use as the parent of this object.  If NULL, uses the root scene node.
    */
+  RVIZ_RENDERING_PUBLIC
   Shape(Type shape_type, Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node = NULL);
+
+  RVIZ_RENDERING_PUBLIC
   virtual ~Shape();
 
+  RVIZ_RENDERING_PUBLIC
   Type getType() {return type_;}
 
   /**
@@ -82,14 +85,28 @@ public:
    *
    * @param offset Amount to offset the center of the object from the pivot point
    */
+  RVIZ_RENDERING_PUBLIC
   void setOffset(const Ogre::Vector3 & offset);
 
+  RVIZ_RENDERING_PUBLIC
   virtual void setColor(float r, float g, float b, float a);
+
+  RVIZ_RENDERING_PUBLIC
   void setColor(const Ogre::ColourValue & c);
+
+  RVIZ_RENDERING_PUBLIC
   virtual void setPosition(const Ogre::Vector3 & position);
+
+  RVIZ_RENDERING_PUBLIC
   virtual void setOrientation(const Ogre::Quaternion & orientation);
+
+  RVIZ_RENDERING_PUBLIC
   virtual void setScale(const Ogre::Vector3 & scale);
+
+  RVIZ_RENDERING_PUBLIC
   virtual const Ogre::Vector3 & getPosition();
+
+  RVIZ_RENDERING_PUBLIC
   virtual const Ogre::Quaternion & getOrientation();
 
   /**
@@ -97,17 +114,22 @@ public:
    *
    * @return The root scene node of this object
    */
+  RVIZ_RENDERING_PUBLIC
   Ogre::SceneNode * getRootNode() {return scene_node_;}
 
   /**
    * \brief Sets user data on all ogre objects we own
    */
+  RVIZ_RENDERING_PUBLIC
   void setUserData(const Ogre::Any & data);
 
+  RVIZ_RENDERING_PUBLIC
   Ogre::Entity * getEntity() {return entity_;}
 
+  RVIZ_RENDERING_PUBLIC
   Ogre::MaterialPtr getMaterial() {return material_;}
 
+  RVIZ_RENDERING_PUBLIC
   static Ogre::Entity * createEntity(
     const std::string & name, Type shape_type,
     Ogre::SceneManager * scene_manager);

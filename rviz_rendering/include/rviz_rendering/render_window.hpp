@@ -30,10 +30,12 @@
 #ifndef RVIZ_RENDERING__RENDER_WINDOW_HPP_
 #define RVIZ_RENDERING__RENDER_WINDOW_HPP_
 
-#include <QObject>
-#include <QWindow>
-
 #include <functional>
+
+#include <QObject>  // NOLINT
+#include <QWindow>  // NOLINT
+
+#include "rviz_rendering/visibility_control.hpp"
 
 // TODO(wjwwood): remove this when the camera can be abstracted
 namespace Ogre
@@ -54,7 +56,7 @@ class RenderWindowImpl;
 class RenderWindowOgreAdapter;
 
 /// QWindow on which a rviz rendering system draws.
-class RenderWindow : public QWindow
+class RVIZ_RENDERING_PUBLIC RenderWindow : public QWindow
 {
   Q_OBJECT
 
@@ -135,7 +137,7 @@ protected:
 };
 
 // TODO(wjwwood): remove this when the Ogre stuff can be abstracted
-class RenderWindowOgreAdapter
+class RVIZ_RENDERING_PUBLIC RenderWindowOgreAdapter
 {
 public:
   static

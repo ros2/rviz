@@ -611,7 +611,7 @@ void PointCloud::popPoints(uint32_t num_points)
   point_count_ -= num_points;
 
   uint32_t vpp = getVerticesPerPoint();
-  uint32_t popped_count = removePointsFromRenderables(num_points, vpp);
+  size_t popped_count = removePointsFromRenderables(num_points, vpp);
   (void) popped_count;
 
   assert(popped_count == num_points * vpp);
@@ -623,11 +623,11 @@ void PointCloud::popPoints(uint32_t num_points)
   }
 }
 
-uint32_t PointCloud::removePointsFromRenderables(
+size_t PointCloud::removePointsFromRenderables(
   uint32_t number_of_points, uint32_t
   vertices_per_point)
 {
-  uint32_t popped_count = 0;
+  size_t popped_count = 0;
   while (popped_count < number_of_points * vertices_per_point) {
     PointCloudRenderablePtr rend = renderables_.front();
     Ogre::RenderOperation * op = rend->getRenderOperation();
