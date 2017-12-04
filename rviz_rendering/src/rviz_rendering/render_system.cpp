@@ -408,7 +408,9 @@ RenderSystem::makeRenderWindow(
 
   params["currentGLContext"] = Ogre::String("false");
 
+#ifdef _WIN32
   params["externalWindowHandle"] = Ogre::StringConverter::toString(window_id);
+#endif
   params["parentWindowHandle"] = Ogre::StringConverter::toString(window_id);
 
   // Scale rendering window correctly on Windows
