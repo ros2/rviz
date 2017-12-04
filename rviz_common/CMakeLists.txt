@@ -2,6 +2,15 @@ cmake_minimum_required(VERSION 3.5)
 
 project(rviz_common)
 
+# TODO(wjwood): remove when windows build is fixed
+if(DEFINED ENV{RVIZ_BUILD_ON_WINDOWS_OVERRIDE})
+  set(RVIZ_BUILD_ON_WINDOWS_OVERRIDE "$ENV{RVIZ_BUILD_ON_WINDOWS_OVERRIDE}")
+endif()
+if(WIN32 AND NOT DEFINED RVIZ_BUILD_ON_WINDOWS_OVERRIDE)
+  message(STATUS "${PROJECT_NAME} is not supported on Windows, skipping...")
+  return()
+endif()
+
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)

@@ -2,6 +2,15 @@ cmake_minimum_required(VERSION 3.5)
 
 project(rviz_ogre_vendor)
 
+# TODO(wjwood): remove when windows build is fixed
+if(DEFINED ENV{RVIZ_BUILD_ON_WINDOWS_OVERRIDE})
+  set(RVIZ_BUILD_ON_WINDOWS_OVERRIDE "$ENV{RVIZ_BUILD_ON_WINDOWS_OVERRIDE}")
+endif()
+if(WIN32 AND NOT DEFINED RVIZ_BUILD_ON_WINDOWS_OVERRIDE)
+  message(STATUS "${PROJECT_NAME} is not supported on Windows, skipping...")
+  return()
+endif()
+
 set(PACKAGE_VERSION "1.0.0")
 
 macro(build_ogre)
