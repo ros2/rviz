@@ -22,6 +22,7 @@ find_package(rviz_common REQUIRED)
 find_package(rviz_ogre_vendor REQUIRED)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
+include_directories(${Qt5Widgets_INCLUDE_DIRS})
 
 add_executable(${PROJECT_NAME}_app
   src/main.cpp
