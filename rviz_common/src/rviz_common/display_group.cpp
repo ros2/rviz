@@ -46,7 +46,7 @@
 #include "./temp/default_plugins/displays/tf_display.hpp"
 #include "./temp/default_plugins/displays/robot_model_display.hpp"
 
-#include "src/rviz_default_plugins/point_cloud_display.hpp"
+#include "../rviz_default_plugins/point_cloud_display.hpp"
 
 namespace rviz_common
 {

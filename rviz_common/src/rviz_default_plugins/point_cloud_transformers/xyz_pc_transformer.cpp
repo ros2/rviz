@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "src/rviz_default_plugins/point_cloud_helpers.hpp"
-#include "xyz_pc_transformer.hpp"
+#include "../point_cloud_helpers.hpp"
+#include "./xyz_pc_transformer.hpp"
 
 namespace rviz_default_plugins
 {
