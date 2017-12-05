@@ -19,11 +19,12 @@ macro(build_ogre)
     list(APPEND extra_cmake_args -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE})
   endif()
   if(NOT WIN32 AND NOT APPLE)
-    list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=-std=c++14")
+    list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=-std=c++14 -w")
   elseif(APPLE)
-    list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=-std=c++14 -stdlib=libc++")
+    list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=-std=c++14 -stdlib=libc++ -w")
     list(APPEND extra_cmake_args "-DCMAKE_OSX_ARCHITECTURES='x86_64'")
   endif()
+  list(APPEND extra_cmake_args "-DCMAKE_C_FLAGS=-w")
   list(APPEND extra_cmake_args "-DOGRE_BUILD_RENDERSYSTEM_GL:BOOL=TRUE")
   list(APPEND extra_cmake_args "-DOGRE_BUILD_RENDERSYSTEM_D3D11:BOOL=OFF")
   list(APPEND extra_cmake_args "-DOGRE_BUILD_RENDERSYSTEM_D3D9:BOOL=OFF")
@@ -36,6 +37,12 @@ macro(build_ogre)
   # list(APPEND extra_cmake_args "-DOGRE_BUILD_COMPONENT_HLMS:BOOL=ON")
   list(APPEND extra_cmake_args "-DOGRE_CONFIG_ENABLE_ZIP:BOOL=OFF")
 
+  if(WIN32)
+    set(patch_exe patch.exe)
+  else()
+    set(patch_exe patch)
+  endif()
+
   include(ExternalProject)
   ExternalProject_Add(ogre-master-ca665a6
     URL https://github.com/OGRECave/ogre/archive/ca665a69a5ca47608ee0ad304b2596ff866616da.zip
@@ -45,7 +52,7 @@ macro(build_ogre)
       -DOGRE_STATIC:BOOL=ON
       -DOGRE_DEPENDENCIES_DIR=${CMAKE_CURRENT_BINARY_DIR}/ogredeps
       -DOGRE_INSTALL_PDB:BOOL=OFF
-      -DOGRE_BUILD_DEPENDENCIES:BOOL=ON
+      -DOGRE_BUILD_DEPENDENCIES:BOOL=OFF
       -DOGRE_BUILD_TESTS:BOOL=OFF
       -DOGRE_INSTALL_DOCS:BOOL=FALSE
       -DOGRE_BUILD_SAMPLES:BOOL=FALSE
@@ -58,6 +65,8 @@ macro(build_ogre)
       -DOGRE_BUILD_LIBS_AS_FRAMEWORKS:BOOL=OFF
       ${extra_cmake_args}
       -Wno-dev
+    PATCH_COMMAND
+      ${patch_exe} -p1 -N < ${CMAKE_CURRENT_SOURCE_DIR}/ogre-ca665a6-patch.diff
   )
 
   # The external project will install to the build folder, but we'll install that on make install.
