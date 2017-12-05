@@ -78,15 +78,15 @@ set(rviz_common_headers_to_moc
   # src/rviz_common/add_display_dialog.hpp
   # src/rviz_common/help_panel.hpp
   include/rviz_common/properties/enum_property.hpp
-  # src/rviz_common/properties/property_tree_widget.hpp
-  # src/rviz_common/properties/splitter_handle.hpp
+  include/rviz_common/properties/property_tree_widget.hpp
+  include/rviz_common/properties/splitter_handle.hpp
   # src/rviz_common/selection_panel.hpp
   include/rviz_common/frame_position_tracking_view_controller.hpp
   include/rviz_common/properties/quaternion_property.hpp
   include/rviz_common/visualizer_app.hpp
   include/rviz_common/display.hpp
   include/rviz_common/display_context.hpp
-  # src/rviz_common/displays_panel.hpp
+  src/rviz_common/displays_panel.hpp
   src/rviz_common/failed_panel.hpp
   include/rviz_common/frame_manager.hpp
   src/rviz_common/loading_dialog.hpp
@@ -104,9 +104,9 @@ set(rviz_common_headers_to_moc
   include/rviz_common/properties/int_property.hpp
   include/rviz_common/properties/line_edit_with_button.hpp
   include/rviz_common/properties/property.hpp
-  # src/rviz_common/properties/property_tree_delegate.hpp
+  include/rviz_common/properties/property_tree_delegate.hpp
   include/rviz_common/properties/property_tree_model.hpp
-  # src/rviz_common/properties/property_tree_with_help.hpp
+  include/rviz_common/properties/property_tree_with_help.hpp
   include/rviz_common/properties/status_list.hpp
   include/rviz_common/properties/status_property.hpp
   include/rviz_common/properties/string_property.hpp
@@ -170,7 +170,7 @@ set(rviz_common_source_files
   # src/rviz_common/display_factory.cpp
   src/rviz_common/display_group.cpp
   src/rviz_common/display.cpp
-  # src/rviz_common/displays_panel.cpp
+  src/rviz_common/displays_panel.cpp
   src/rviz_common/failed_display.cpp
   src/rviz_common/failed_panel.cpp
   # src/rviz_common/failed_tool.cpp
@@ -197,13 +197,13 @@ set(rviz_common_source_files
   src/rviz_common/properties/int_property.cpp
   src/rviz_common/properties/line_edit_with_button.cpp
   src/rviz_common/properties/parse_color.cpp
-  # src/rviz_common/properties/property_tree_delegate.cpp
+  src/rviz_common/properties/property_tree_delegate.cpp
   src/rviz_common/properties/property_tree_model.cpp
-  # src/rviz_common/properties/property_tree_widget.cpp
-  # src/rviz_common/properties/property_tree_with_help.cpp
+  src/rviz_common/properties/property_tree_widget.cpp
+  src/rviz_common/properties/property_tree_with_help.cpp
   src/rviz_common/properties/property.cpp
   src/rviz_common/properties/quaternion_property.cpp
-  # src/rviz_common/properties/splitter_handle.cpp
+  src/rviz_common/properties/splitter_handle.cpp
   src/rviz_common/properties/status_list.cpp
   src/rviz_common/properties/status_property.cpp
   src/rviz_common/properties/string_property.cpp

@@ -410,8 +410,6 @@ protected:
   void
   updateRecentConfigMenu();
 
-// TODO(wjwwood): reenable when plugin loading is fixed
-#if 0
   /// Add a panel by a given name and class name.
   QDockWidget *
   addPanelByName(
@@ -419,7 +417,6 @@ protected:
     const QString & class_lookup_name,
     Qt::DockWidgetArea area = Qt::LeftDockWidgetArea,
     bool floating = true);
-#endif
 
   /// Loads custom panels from the given Config object.
   void
