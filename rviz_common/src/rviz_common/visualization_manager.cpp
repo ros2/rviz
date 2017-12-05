@@ -237,18 +237,6 @@ VisualizationManager::VisualizationManager(
 
   update_timer_ = new QTimer;
   connect(update_timer_, SIGNAL(timeout()), this, SLOT(onUpdate()));
-
-  // TODO(wjwwood): remove this, for now, manually add displays
-  {
-    Ogre::ResourceGroupManager::getSingleton().createResourceGroup("rviz_common");
-    this->createDisplay("rviz/Grid", "grid", true);
-    this->createDisplay("rviz/PointCloud", "pointcloud", true);
-    // this->createDisplay("rviz/TF", "tf", true);
-    // load later...
-    QTimer::singleShot(2000, [this]() {
-        this->createDisplay("rviz/RobotModel", "tf", true);
-      });
-  }
 }
 
 VisualizationManager::~VisualizationManager()

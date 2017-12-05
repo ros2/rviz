@@ -41,7 +41,6 @@
 // TODO(wjwwood): remove this block (within if-endif) once plugins moved to default plugins package
 #if 1
 
-#include "./temp/default_plugins/displays/grid_display.hpp"
 #include "./temp/default_plugins/displays/tf_display.hpp"
 #include "./temp/default_plugins/displays/robot_model_display.hpp"
 #include "../rviz_default_plugins/point_cloud_display.hpp"
@@ -59,10 +58,6 @@ static Display * newDisplayGroup()
 // TODO(wjwwood): remove this block (within if-endif) once plugins moved to default plugins package
 #if 1
 
-static Display * newGridDisplay()
-{
-  return new rviz_common::GridDisplay();
-}
 static Display * newTFDisplay()
 {
   return new rviz_common::TFDisplay();
@@ -82,7 +77,6 @@ DisplayFactory::DisplayFactory()
 : PluginlibFactory<Display>("rviz_common", "rviz_common::Display")
 {
   addBuiltInClass("rviz", "Group", "A container for Displays", &newDisplayGroup);
-  addBuiltInClass("rviz", "Grid", "grid display", &newGridDisplay);
   addBuiltInClass("rviz", "TF", "tf display", &newTFDisplay);
   addBuiltInClass("rviz", "RobotModel", "robot model display", &newRobotModelDisplay);
   addBuiltInClass("rviz", "PointCloud", "point cloud display", &newPointCloudDisplay);

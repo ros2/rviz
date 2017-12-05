@@ -45,7 +45,6 @@
 # pragma GCC diagnostic pop
 #endif
 
-#include "rclcpp/clock.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager.hpp"
 #include "rviz_common/properties/parse_color.hpp"
@@ -158,17 +157,13 @@ void GridDisplay::update(float dt, float ros_dt)
 
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
-  // TODO(wjwwood): restore access to ROS time
-  if (
-    context_->getFrameManager()->getTransform(frame, rclcpp::Clock().now(), position, orientation))
-  {
+  if (context_->getFrameManager()->getTransform(frame, position, orientation)) {
     scene_node_->setPosition(position);
     scene_node_->setOrientation(orientation);
     setStatus(StatusProperty::Ok, "Transform", "Transform OK");
   } else {
     std::string error;
-    // TODO(wjwwood): restore access to ROS time
-    if (context_->getFrameManager()->transformHasProblems(frame, rclcpp::Clock().now(), error)) {
+    if (context_->getFrameManager()->transformHasProblems(frame, error)) {
       setStatus(StatusProperty::Error, "Transform", QString::fromStdString(error));
     } else {
       setStatus(StatusProperty::Error, "Transform",
