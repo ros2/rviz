@@ -45,6 +45,8 @@ set(rviz_default_plugins_headers_to_moc
 set(rviz_default_plugins_source_files
   src/rviz_default_plugins/tools/move_tool.cpp
   src/rviz_default_plugins/view_controllers/orbit_view_controller.cpp
+  src/rviz_default_plugins/tools/move/move_tool.cpp
+  src/rviz_default_plugins/view_controllers/orbit/orbit_view_controller.cpp
 )
 
 add_library(rviz_default_plugins SHARED

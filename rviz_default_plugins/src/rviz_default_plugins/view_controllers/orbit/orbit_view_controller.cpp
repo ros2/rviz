@@ -299,7 +299,9 @@ void OrbitViewController::updateCamera()
   }
   camera_parent->setPosition(pos);
   camera_parent->setFixedYawAxis(true, target_scene_node_->getOrientation() * camera_z);
-  camera_parent->setDirection(target_scene_node_->getOrientation() * (focal_point - pos), Ogre::SceneNode::TS_PARENT);
+  camera_parent->setDirection(
+    target_scene_node_->getOrientation() * (focal_point - pos),
+    Ogre::SceneNode::TS_PARENT);
 
   focal_shape_->setPosition(focal_point);
 }
