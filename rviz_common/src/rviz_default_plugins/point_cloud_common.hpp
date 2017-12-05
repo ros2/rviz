@@ -49,15 +49,15 @@
 #include "rclcpp/clock.hpp"
 #include "rclcpp/time.hpp"
 
-# include "sensor_msgs/msg/point_cloud.hpp"
-# include "sensor_msgs/msg/point_cloud2.hpp"
+#include "sensor_msgs/msg/point_cloud.hpp"
+#include "sensor_msgs/msg/point_cloud2.hpp"
 
-# include "rviz_common/selection/selection_manager.hpp"
-# include "point_cloud_transformer.hpp"
-# include "point_cloud_selection_handler.hpp"
-# include "rviz_common/properties/color_property.hpp"
-# include "rviz_rendering/point_cloud.hpp"
-# include "rviz_common/selection/forwards.hpp"
+#include "rviz_common/selection/selection_manager.hpp"
+#include "point_cloud_transformer.hpp"
+#include "point_cloud_selection_handler.hpp"
+#include "rviz_common/properties/color_property.hpp"
+#include "rviz_rendering/point_cloud.hpp"
+#include "rviz_common/selection/forwards.hpp"
 
 #endif
 
@@ -75,7 +75,9 @@ class EnumProperty;
 class FloatProperty;
 
 }  // namespace properties
+
 }  // namespace rviz_common
+
 namespace rviz_default_plugins
 {
 
@@ -219,7 +221,7 @@ private:
   bool needs_retransform_;
 
   // TODO(Martin-Idel-SI): revisit once pluginlib is available
-//  pluginlib::ClassLoader<PointCloudTransformer>* transformer_class_loader_;
+  // pluginlib::ClassLoader<PointCloudTransformer> * transformer_class_loader_;
 
   rviz_common::Display * display_;
   rviz_common::DisplayContext * context_;

@@ -29,14 +29,21 @@
 #ifndef RVIZ_COMMON__MESSAGE_FILTER_DISPLAY_HPP_
 #define RVIZ_COMMON__MESSAGE_FILTER_DISPLAY_HPP_
 
-#ifndef Q_MOC_RUN
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
+
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
+
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
 
 // TODO(greimela): Add again as soon as the message filter subscriber is ported to ROS 2
 // #include <message_filters/subscriber.h>
 // #include <tf/message_filter.h>
-#endif
 
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager.hpp"

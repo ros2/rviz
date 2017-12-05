@@ -35,18 +35,11 @@
 
 #include <QColor>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "rviz_common/display_context.hpp"
-// TODO(wjwwood): reenable this when pluginlib solution found
-// #include "./display_factory.hpp"
+#include "./display_factory.hpp"
 #include "./failed_display.hpp"
-#include "rviz_common/properties/property_tree_model.hpp"
+#include "rviz_common/display_context.hpp"
 #include "rviz_common/logging.hpp"
-
-#include "./temp/default_plugins/displays/grid_display.hpp"
-#include "./temp/default_plugins/displays/tf_display.hpp"
-#include "./temp/default_plugins/displays/robot_model_display.hpp"
-
-#include "../rviz_default_plugins/point_cloud_display.hpp"
+#include "rviz_common/properties/property_tree_model.hpp"
 
 namespace rviz_common
 {
@@ -129,9 +122,6 @@ void DisplayGroup::load(const Config & config)
 
 Display * DisplayGroup::createDisplay(const QString & class_id)
 {
-  // TODO(wjwwood): reenable this when factory issues resolved.
-  //                also refactor to return a placeholder display in the meantime
-#if 0
   DisplayFactory * factory = context_->getDisplayFactory();
   QString error;
   Display * disp = factory->make(class_id, &error);
@@ -139,25 +129,6 @@ Display * DisplayGroup::createDisplay(const QString & class_id)
     return new FailedDisplay(class_id, error);
   }
   return disp;
-#endif
-  if (class_id == "rviz/Grid") {
-    Display * disp = new rviz_common::GridDisplay();
-    return disp;
-  }
-  if (class_id == "rviz/TF") {
-    Display * disp = new rviz_common::TFDisplay();
-    return disp;
-  }
-  if (class_id == "rviz/RobotModel") {
-    Display * disp = new rviz_common::RobotModelDisplay();
-    return disp;
-  }
-  if (class_id == "rviz/PointCloud") {
-    Display * disp = new rviz_default_plugins::PointCloudDisplay();
-    return disp;
-  }
-  RVIZ_COMMON_LOG_WARNING_STREAM("would have loaded a display called " << class_id.toStdString());
-  return nullptr;
 }
 
 void DisplayGroup::onEnableChanged()
