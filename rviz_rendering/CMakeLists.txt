@@ -172,24 +172,26 @@ if(BUILD_TESTING)
     target_link_libraries(test_rviz_rendering rviz_rendering)
   endif()
 
-  ament_add_gtest(point_cloud_test_target
-    src/test/point_cloud_test.cpp)
-  if(TARGET point_cloud_test_target)
-    target_link_libraries(point_cloud_test_target
-      rviz_ogre_vendor::OgreMain
-      rviz_rendering
-      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
-    )
-  endif()
+  # TODO(wjwwood): reenable this test when it can be run on CI
+  # ament_add_gtest(point_cloud_test_target
+  #   src/test/point_cloud_test.cpp)
+  # if(TARGET point_cloud_test_target)
+  #   target_link_libraries(point_cloud_test_target
+  #     rviz_ogre_vendor::OgreMain
+  #     rviz_rendering
+  #     Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+  #   )
+  # endif()
 
-  ament_add_gtest(point_cloud_renderable_test_target src/test/point_cloud_renderable_test.cpp)
-  if(TARGET point_cloud_renderable_test_target)
-    target_link_libraries(point_cloud_renderable_test_target
-      rviz_ogre_vendor::OgreMain
-      rviz_rendering
-      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
-    )
-  endif()
+  # TODO(wjwwood): reenable this test when it can be run on CI
+  # ament_add_gtest(point_cloud_renderable_test_target src/test/point_cloud_renderable_test.cpp)
+  # if(TARGET point_cloud_renderable_test_target)
+  #   target_link_libraries(point_cloud_renderable_test_target
+  #     rviz_ogre_vendor::OgreMain
+  #     rviz_rendering
+  #     Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+  #   )
+  # endif()
 endif()
 
 list(APPEND ${PROJECT_NAME}_CONFIG_EXTRAS
