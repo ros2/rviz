@@ -304,6 +304,7 @@ ament_export_interfaces(rviz_common)
 ament_export_dependencies(rviz_rendering)
 ament_export_dependencies(
   geometry_msgs
+  pluginlib
   rclcpp
   resource_retriever
   rviz_yaml_cpp_vendor
@@ -313,7 +314,6 @@ ament_export_dependencies(
   tf2_geometry_msgs
   tf2_ros
 )
-ament_export_libraries(tinyxml2)
 
 install(
   TARGETS rviz_common
