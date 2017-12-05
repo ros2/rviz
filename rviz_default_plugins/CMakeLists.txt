@@ -30,21 +30,21 @@ find_package(pluginlib REQUIRED)
 find_package(rviz_common REQUIRED)
 find_package(rviz_rendering REQUIRED)
 
-# find_package(Qt5 REQUIRED COMPONENTS Widgets)
+find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
 # find_package(geometry_msgs REQUIRED)
-# find_package(rclcpp REQUIRED)
+find_package(rclcpp REQUIRED)
 # find_package(tf2 REQUIRED)
 # find_package(tf2_geometry_msgs REQUIRED)
 # find_package(tf2_ros REQUIRED)
 
 # These need to be added in the add_library() call so AUTOMOC detects them.
 set(rviz_default_plugins_headers_to_moc
+  src/rviz_default_plugins/displays/grid/grid_display.hpp
 )
 
 set(rviz_default_plugins_source_files
-  src/rviz_default_plugins/tools/move_tool.cpp
-  src/rviz_default_plugins/view_controllers/orbit_view_controller.cpp
+  src/rviz_default_plugins/displays/grid/grid_display.cpp
   src/rviz_default_plugins/tools/move/move_tool.cpp
   src/rviz_default_plugins/view_controllers/orbit/orbit_view_controller.cpp
 )
@@ -62,7 +62,13 @@ target_link_libraries(rviz_default_plugins
   rviz_rendering::rviz_rendering
   rviz_common::rviz_common
 )
-# ament_target_dependencies(rviz_default_plugins geometry_msgs rclcpp tf2 tf2_geometry_msgs tf2_ros)
+ament_target_dependencies(rviz_default_plugins
+  # geometry_msgs
+  rclcpp
+  # tf2
+  # tf2_geometry_msgs
+  # tf2_ros
+)
 
 pluginlib_export_plugin_description_file(rviz_common plugins_description.xml)
 

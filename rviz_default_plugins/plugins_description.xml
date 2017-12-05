@@ -1,5 +1,17 @@
 <library path="librviz_default_plugins">
 
+  <!-- Displays plugins -->
+
+  <class
+    name="rviz/Grid"
+    type="rviz_default_plugins::displays::GridDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays a grid along the ground plane, centered at the origin of the target frame of reference.
+    </description>
+  </class>
+
   <!-- Tool plugins -->
 
   <class
