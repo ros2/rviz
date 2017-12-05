@@ -176,7 +176,7 @@ TEST_F(PointCloudTestFixture, setHighlightColor_sets_correct_CustomParameter) {
         static_cast<Ogre::Real>(0.6),
         static_cast<Ogre::Real>(0.6),
         static_cast<Ogre::Real>(0)
-    ));
+      ));
   }
 }
 
@@ -194,7 +194,7 @@ TEST_F(PointCloudTestFixture, setDimensions_changes_dimensions_of_points_and_new
         static_cast<Ogre::Real>(0.2),
         static_cast<Ogre::Real>(0.3),
         static_cast<Ogre::Real>(0)
-    ));
+      ));
   }
 
   pointCloud->addPoints(singlePointArray.begin(), singlePointArray.end());
@@ -207,7 +207,7 @@ TEST_F(PointCloudTestFixture, setDimensions_changes_dimensions_of_points_and_new
         static_cast<Ogre::Real>(0.2),
         static_cast<Ogre::Real>(0.3),
         static_cast<Ogre::Real>(0)
-    ));
+      ));
   }
 }
 

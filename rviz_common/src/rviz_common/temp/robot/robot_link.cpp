@@ -30,6 +30,7 @@
 #include "robot_link.hpp"
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 

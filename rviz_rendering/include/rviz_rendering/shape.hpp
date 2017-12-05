@@ -33,9 +33,18 @@
 
 #include <string>
 
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
+
 #include <OgreMaterial.h>
 #include <OgreSharedPtr.h>
 #include <OgreVector3.h>
+
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
 
 #include "rviz_rendering/object.hpp"
 #include "rviz_rendering/visibility_control.hpp"
