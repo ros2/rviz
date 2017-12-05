@@ -75,7 +75,13 @@ pluginlib_export_plugin_description_file(rviz_common plugins_description.xml)
 ament_export_interfaces(rviz_default_plugins)
 ament_export_dependencies(Qt5)
 ament_export_dependencies(rviz_rendering)
-ament_export_dependencies(geometry_msgs rclcpp tf2 tf2_geometry_msgs tf2_ros)
+ament_export_dependencies(
+  # geometry_msgs
+  rclcpp
+  # tf2
+  # tf2_geometry_msgs
+  # tf2_ros
+)
 
 install(
   TARGETS rviz_default_plugins
@@ -85,51 +91,5 @@ install(
   RUNTIME DESTINATION bin
   INCLUDES DESTINATION include
 )
-
-# install(
-#   DIRECTORY include/
-#   DESTINATION include
-# )
-
-# if(BUILD_TESTING)
-#   # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back
-#   find_package(ament_cmake_cppcheck REQUIRED)
-#   find_package(ament_cmake_cpplint REQUIRED)
-#   find_package(ament_cmake_lint_cmake REQUIRED)
-#   find_package(ament_cmake_uncrustify REQUIRED)
-#   ament_cppcheck()
-#   ament_cpplint()
-#   ament_lint_cmake()
-#   ament_uncrustify()
-
-#   find_package(ament_cmake_gtest REQUIRED)
-#   ament_add_gtest(rviz_common_config_test
-#     test/config_test.cpp)
-#   if(TARGET rviz_common_config_test)
-#     target_link_libraries(rviz_common_config_test rviz_common)
-#   endif()
-
-#   ament_add_gtest(rviz_common_uniform_string_stream_test
-#     test/uniform_string_stream_test.cpp)
-#   if(TARGET rviz_common_uniform_string_stream_test)
-#     target_link_libraries(rviz_common_uniform_string_stream_test rviz_common)
-#   endif()
-
-#   ament_add_gtest(rviz_common_display_test
-#     test/display_test.cpp
-#     test/mock_display.cpp
-#     test/mock_display_group.cpp)
-#   if(TARGET rviz_common_display_test)
-#     target_include_directories(rviz_common_display_test PUBLIC src)
-#     target_link_libraries(rviz_common_display_test rviz_common)
-#   endif()
-
-#   ament_add_gtest(rviz_common_property_test
-#     test/property_test.cpp
-#     test/mock_property_change_receiver.cpp)
-#   if(TARGET rviz_common_property_test)
-#     target_link_libraries(rviz_common_property_test rviz_common)
-#   endif()
-# endif()
 
 ament_package()

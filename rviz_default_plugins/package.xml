@@ -17,6 +17,15 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <build_depend>qtbase5-dev</build_depend>
+
+  <exec_depend>libqt5-core</exec_depend>
+  <exec_depend>libqt5-gui</exec_depend>
+  <exec_depend>libqt5-opengl</exec_depend>
+  <exec_depend>libqt5-widgets</exec_depend>
+
+  <depend>pluginlib</depend>
+  <depend>rclcpp</depend>
   <depend>rviz_common</depend>
   <depend>rviz_rendering</depend>
 
