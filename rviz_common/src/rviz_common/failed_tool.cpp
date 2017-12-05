@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,14 +28,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "./failed_tool.hpp"
+
 #include <QMessageBox>
 
-#include "rviz/display_context.h"
-#include "rviz/window_manager_interface.h"
+#include "./window_manager_interface.hpp"
+#include "rviz_common/display_context.hpp"
 
-#include "rviz/failed_tool.h"
-
-namespace rviz
+namespace rviz_common
 {
 
 FailedTool::FailedTool(const QString & desired_class_id, const QString & error_message)
@@ -56,7 +57,7 @@ void FailedTool::load(const Config & config)
 
 void FailedTool::save(Config config) const
 {
-  if (saved_config_.isValid() ) {
+  if (saved_config_.isValid()) {
     config.copy(saved_config_);
   }
 }
@@ -64,10 +65,19 @@ void FailedTool::save(Config config) const
 void FailedTool::activate()
 {
   QWidget * parent = NULL;
-  if (context_->getWindowManager() ) {
+  if (context_->getWindowManager()) {
     parent = context_->getWindowManager()->getParentWindow();
   }
-  QMessageBox::critical(parent, "Tool '" + getName() + "'unavailable.", getDescription() );
+  QMessageBox::critical(parent, "Tool '" + getName() + "'unavailable.", getDescription());
 }
 
-}  // end namespace rviz
+void FailedTool::deactivate()
+{}
+
+int FailedTool::processMouseEvent(ViewportMouseEvent & event)
+{
+  (void)event;
+  return 0;
+}
+
+}  // namespace rviz_common

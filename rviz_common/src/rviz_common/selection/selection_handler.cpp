@@ -219,6 +219,7 @@ void SelectionHandler::createBox(
     box = new Ogre::WireBoundingBox;
 
     bool inserted = boxes_.insert(std::make_pair(handles, std::make_pair(node, box))).second;
+    (void) inserted;
     assert(inserted);
   } else {
     node = it->second.first;

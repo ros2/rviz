@@ -79,9 +79,9 @@
 // #include "../ogre_helpers/shape.hpp"
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/properties/property_tree_model.hpp"
-#include "../render_panel.hpp"
+#include "rviz_common/render_panel.hpp"
 // #include "../view_controller.hpp"
-#include "../view_manager.hpp"
+#include "rviz_common/view_manager.hpp"
 #include "../visualization_manager.hpp"
 
 
@@ -490,6 +490,7 @@ void SelectionManager::addObject(CollObjectHandle obj, SelectionHandler * handle
   }
 
   bool inserted = objects_.insert(std::make_pair(obj, handler)).second;
+  (void) inserted;
   assert(inserted);
 }
 

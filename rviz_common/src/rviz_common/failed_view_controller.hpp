@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,6 +27,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef RVIZ_COMMON__FAILED_VIEW_CONTROLLER_HPP_
 #define RVIZ_COMMON__FAILED_VIEW_CONTROLLER_HPP_
 
@@ -34,36 +36,32 @@
 namespace rviz_common
 {
 
-/** @brief A FailedViewController instance represents a ViewController class we
- * tried and failed to instantiate.
- *
+/// Represents a ViewController class which tried and failed to instantiate.
+/**
  * FailedViewController stores the class id which it was supposed to be, and
  * an error message describing the failure.
  *
  * The load() and save() functions work together to ensure that loaded
  * configuration data is saved out again without modification.  This
  * ensures that running rviz with a missing plugin library won't
- * damage config files which refer to it. */
+ * damage config files which refer to it.
+ */
 class FailedViewController : public ViewController
 {
 public:
   FailedViewController(const QString & desired_class_id, const QString & error_message);
 
-  virtual QString getDescription() const;
+  QString getDescription() const override;
 
-  virtual void onActivate();
+  void onActivate() override;
 
-  virtual int processMouseEvent() {return 0;}
+  void load(const Config & config) override;
 
-  /** @brief Store the given Config data for later, so we can return it
-   * with save() when someone writes this back to a file. */
-  virtual void load(const Config & config);
+  void save(Config config) const override;
 
-  /** @brief Write into config data equivalent to the last config sent to load(). */
-  virtual void save(Config config) const;
+  void lookAt(const Ogre::Vector3 & point) override;
 
-  virtual void lookAt() {}
-  virtual void reset() {}
+  void reset() override {}
 
 private:
   Config saved_config_;

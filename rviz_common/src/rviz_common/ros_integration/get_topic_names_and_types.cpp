@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,46 +27,30 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz/display_context.h"
-#include "rviz/render_panel.h"
-#include "rviz/viewport_mouse_event.h"
-#include "rviz/selection/selection_manager.h"
-#include "rviz/view_controller.h"
-#include "rviz/view_manager.h"
-#include "rviz/load_resource.h"
+#include "rviz_common/ros_integration/get_topic_names_and_types.hpp"
 
-#include "rviz/default_plugin/tools/move_tool.h"
+#include <map>
+#include <string>
+#include <vector>
 
-namespace rviz
+#include "rclcpp/rclcpp.hpp"
+
+#include "./rclcpp_node_storage.hpp"
+
+namespace rviz_common
+{
+namespace ros_integration
 {
 
-MoveTool::MoveTool()
+std::map<std::string, std::vector<std::string>>
+get_topic_names_and_types(const std::string & node_name)
 {
-  shortcut_key_ = 'm';
-  // this is needed as the move tool is instantiated by other tools
-  setIcon( loadPixmap("package://rviz/icons/classes/MoveCamera.png") );
-}
-
-int MoveTool::processMouseEvent( ViewportMouseEvent& event )
-{
-  if (event.panel->getViewController())
-  {
-    event.panel->getViewController()->handleMouseEvent(event);
-    setCursor( event.panel->getViewController()->getCursor() );
+  rclcpp::Node::SharedPtr node = get_rclcpp_node_by_name(node_name);
+  if (!node) {
+    throw std::runtime_error("given node name '" + node_name + "' not found");
   }
-  return 0;
+  return node->get_topic_names_and_types();
 }
 
-int MoveTool::processKeyEvent( QKeyEvent* event, RenderPanel* panel )
-{
-  if( context_->getViewManager()->getCurrent() )
-  {
-    context_->getViewManager()->getCurrent()->handleKeyEvent( event, panel );
-  }
-  return Render;
-}
-
-} // namespace rviz
-
-#include <pluginlib/class_list_macros.h>
-PLUGINLIB_EXPORT_CLASS( rviz::MoveTool, rviz::Tool )
+}  // namespace ros_integration
+}  // namespace rviz_common

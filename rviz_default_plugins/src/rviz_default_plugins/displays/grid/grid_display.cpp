@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,9 +28,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "grid_display.hpp"
+#include "./grid_display.hpp"
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 
 #ifndef _WIN32
@@ -37,10 +38,8 @@
 # pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
 
-#include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
-
-#include <boost/bind.hpp>
+#include <OgreSceneNode.h>
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop
@@ -48,23 +47,25 @@
 
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager.hpp"
-#include "rviz_rendering/grid.hpp"
 #include "rviz_common/properties/parse_color.hpp"
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/selection/selection_manager.hpp"
+#include "rviz_rendering/grid.hpp"
 
-using rviz_rendering::Grid;
+namespace rviz_default_plugins
+{
+namespace displays
+{
+
 using rviz_common::properties::ColorProperty;
 using rviz_common::properties::EnumProperty;
 using rviz_common::properties::FloatProperty;
 using rviz_common::properties::IntProperty;
+using rviz_common::properties::qtToOgre;
 using rviz_common::properties::StatusProperty;
 using rviz_common::properties::TfFrameProperty;
 using rviz_common::properties::VectorProperty;
-using rviz_common::properties::qtToOgre;
-
-namespace rviz_common
-{
+using rviz_rendering::Grid;
 
 GridDisplay::GridDisplay()
 : Display()
@@ -93,7 +94,8 @@ GridDisplay::GridDisplay()
       "The rendering operation to use to draw the grid lines.",
       this, SLOT(updateStyle()));
   style_property_->addOption("Lines", Grid::Lines);
-  // style_property_->addOption( "Billboards", Grid::Billboards );
+  // TODO(wjwwood): re-enable the billboards option for the grid
+  // style_property_->addOption("Billboards", Grid::Billboards);
 
   line_width_property_ = new FloatProperty("Line Width", 0.03,
       "The width, in meters, of each grid line.",
@@ -148,8 +150,8 @@ void GridDisplay::onInitialize()
 
 void GridDisplay::update(float dt, float ros_dt)
 {
-  (void) dt;
-  (void) ros_dt;
+  Q_UNUSED(dt);
+  Q_UNUSED(ros_dt);
   QString qframe = frame_property_->getFrame();
   std::string frame = qframe.toStdString();
 
@@ -208,6 +210,7 @@ void GridDisplay::updateStyle()
   grid_->setStyle(style);
 
   switch (style) {
+    // TODO(wjwwood): re-enable billboards option
     // case Grid::Billboards:
     //   line_width_property_->show();
     //   break;
@@ -247,7 +250,8 @@ void GridDisplay::updatePlane()
   context_->queueRender();
 }
 
-}  // namespace rviz_common
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-// #include <pluginlib/class_list_macros.h>
-// PLUGINLIB_EXPORT_CLASS( rviz::GridDisplay, rviz::Display )
+#include <pluginlib/class_list_macros.hpp>  // NOLINT
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::GridDisplay, rviz_common::Display)

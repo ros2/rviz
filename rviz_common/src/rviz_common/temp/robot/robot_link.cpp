@@ -30,6 +30,7 @@
 #include "robot_link.hpp"
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -58,23 +59,23 @@
 #include <urdf_model/model.h>
 #include <urdf_model/link.h>
 
-#include "../resource_retriever/retriever.hpp"
+#include "resource_retriever/retriever.h"
 
 #include "./robot_joint.hpp"
 
+#include "../../visualization_manager.hpp"
 #include "../mesh_loader.hpp"
 #include "../robot/robot.hpp"
-#include "rviz_rendering/axes.hpp"
-#include "rviz_rendering/object.hpp"
-#include "rviz_rendering/shape.hpp"
-#include "rviz_common/properties/float_property.hpp"
+#include "rviz_common/load_resource.hpp"
 #include "rviz_common/properties/bool_property.hpp"
+#include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/properties/quaternion_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/selection/selection_manager.hpp"
-#include "../../visualization_manager.hpp"
-#include "../../load_resource.hpp"
+#include "rviz_rendering/axes.hpp"
+#include "rviz_rendering/object.hpp"
+#include "rviz_rendering/shape.hpp"
 
 #include "rviz_common/logging.hpp"
 
@@ -648,7 +649,7 @@ void RobotLink::createCollision(const urdf::LinkConstSharedPtr & link)
   bool valid_collision_found = false;
 #if URDF_MAJOR_VERSION == 0 && URDF_MINOR_VERSION == 2
   std::map<std::string,
-    boost::shared_ptr<std::vector<urdf::CollisionSharedPtr>>>::const_iterator mi;
+    std::shared_ptr<std::vector<urdf::CollisionSharedPtr>>>::const_iterator mi;
   for (mi = link->collision_groups.begin(); mi != link->collision_groups.end(); mi++) {
     if (mi->second) {
       std::vector<urdf::CollisionSharedPtr>::const_iterator vi;
@@ -698,7 +699,7 @@ void RobotLink::createVisual(const urdf::LinkConstSharedPtr & link)
 {
   bool valid_visual_found = false;
 #if URDF_MAJOR_VERSION == 0 && URDF_MINOR_VERSION == 2
-  std::map<std::string, boost::shared_ptr<std::vector<urdf::VisualSharedPtr>>>::const_iterator mi;
+  std::map<std::string, std::shared_ptr<std::vector<urdf::VisualSharedPtr>>>::const_iterator mi;
   for (mi = link->visual_groups.begin(); mi != link->visual_groups.end(); mi++) {
     if (mi->second) {
       std::vector<urdf::VisualSharedPtr>::const_iterator vi;

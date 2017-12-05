@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,45 +28,63 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "add_display_dialog.hpp"
+#include "./add_display_dialog.hpp"
 
 #include <algorithm>
 #include <map>
 #include <string>
+#include <vector>
 
-#include <boost/filesystem.hpp>  // NOLINT: cpplint is unable to handle the include order here
-
-#include <QGroupBox>  // NOLINT: cpplint is unable to handle the include order here
-#include <QLabel>  // NOLINT: cpplint is unable to handle the include order here
-#include <QLineEdit>  // NOLINT: cpplint is unable to handle the include order here
-#include <QTextBrowser>  // NOLINT: cpplint is unable to handle the include order here
-#include <QVBoxLayout>  // NOLINT: cpplint is unable to handle the include order here
-#include <QDialogButtonBox>  // NOLINT: cpplint is unable to handle the include order here
-#include <QPushButton>  // NOLINT: cpplint is unable to handle the include order here
-#include <QTabWidget>  // NOLINT: cpplint is unable to handle the include order here
 #include <QCheckBox>  // NOLINT: cpplint is unable to handle the include order here
 #include <QComboBox>  // NOLINT: cpplint is unable to handle the include order here
+#include <QDialogButtonBox>  // NOLINT: cpplint is unable to handle the include order here
+#include <QGroupBox>  // NOLINT: cpplint is unable to handle the include order here
 #include <QHeaderView>  // NOLINT: cpplint is unable to handle the include order here
+#include <QLabel>  // NOLINT: cpplint is unable to handle the include order here
+#include <QLineEdit>  // NOLINT: cpplint is unable to handle the include order here
+#include <QPushButton>  // NOLINT: cpplint is unable to handle the include order here
+#include <QTabWidget>  // NOLINT: cpplint is unable to handle the include order here
+#include <QTextBrowser>  // NOLINT: cpplint is unable to handle the include order here
+#include <QVBoxLayout>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "ros/package.h"
-#include "ros/ros.h"
+#include "rcl/validate_topic_name.h"
 
-#include "load_resource.hpp"
+#include "./display_factory.hpp"
+#include "rviz_common/load_resource.hpp"
+#include "rviz_common/logging.hpp"
+#include "rviz_common/ros_integration/get_topic_names_and_types.hpp"
 
-#include "display_factory.hpp"
-
-namespace rviz
+namespace rviz_common
 {
 
-// Utilities for grouping topics together
-
-struct LexicalTopicInfo
+bool validate_ros_topic(const std::string & topic_name, std::string & output_error)
 {
-  bool operator()(const ros::master::TopicInfo & a, const ros::master::TopicInfo & b)
-  {
-    return a.name < b.name;
+  int validation_result;
+  size_t invalid_index;
+  rcl_ret_t ret = rcl_validate_topic_name(topic_name.c_str(), &validation_result, &invalid_index);
+  if (ret != RCL_RET_OK) {
+    throw std::runtime_error("failed to call rcl_validate_topic_name()");
   }
-};
+  if (validation_result == RCL_TOPIC_NAME_VALID) {
+    return true;
+  }
+  const char * validation_error = rcl_topic_name_validation_result_string(validation_result);
+  if (!validation_error) {
+    throw std::runtime_error("failed to get the validation error reason");
+  }
+  output_error = std::string("topic '") + topic_name + "' is invalid because: " + validation_error;
+  return false;
+}
+
+// TODO(wjwwood): use an rclcpp utility to do this
+std::string get_topic_parent(const std::string & topic_name)
+{
+  const auto pos = topic_name.find_last_of('/');
+  if (pos == std::string::npos || topic_name == "/") {
+    return topic_name;
+  }
+  return topic_name.substr(0, pos);
+}
 
 /**
  * Return true if one topic is a subtopic of the other.
@@ -84,12 +103,12 @@ struct LexicalTopicInfo
 bool isSubtopic(const std::string & base, const std::string & topic)
 {
   std::string error;
-  if (!ros::names::validate(base, error) ) {
-    ROS_ERROR_STREAM("isSubtopic() Invalid basename: " << error);
+  if (!validate_ros_topic(base, error)) {
+    RVIZ_COMMON_LOG_ERROR_STREAM("isSubtopic() Invalid basename: " << error);
     return false;
   }
-  if (!ros::names::validate(topic, error) ) {
-    ROS_ERROR_STREAM("isSubtopic() Invalid topic: " << error);
+  if (!validate_ros_topic(topic, error)) {
+    RVIZ_COMMON_LOG_ERROR_STREAM("isSubtopic() Invalid topic: " << error);
     return false;
   }
 
@@ -98,7 +117,7 @@ bool isSubtopic(const std::string & base, const std::string & topic)
     if (query == base) {
       return true;
     }
-    query = ros::names::parentNamespace(query);
+    query = get_topic_parent(query);
   }
   return false;
 }
@@ -119,21 +138,33 @@ struct PluginGroup
 void getPluginGroups(
   const QMap<QString, QString> & datatype_plugins,
   QList<PluginGroup> * groups,
-  QList<ros::master::TopicInfo> * unvisualizable)
+  std::vector<std::string> * unvisualizable,
+  const std::string & node_name)
 {
-  ros::master::V_TopicInfo all_topics;
-  ros::master::getTopics(all_topics);
-  std::sort(all_topics.begin(), all_topics.end(), LexicalTopicInfo() );
-  ros::master::V_TopicInfo::iterator topic_it;
+  std::map<std::string, std::vector<std::string>> topic_names_and_types =
+    rviz_common::ros_integration::get_topic_names_and_types(node_name);
 
-  for (topic_it = all_topics.begin(); topic_it != all_topics.end(); ++topic_it) {
-    QString topic = QString::fromStdString(topic_it->name);
-    QString datatype = QString::fromStdString(topic_it->datatype);
+  for (const auto map_pair : topic_names_and_types) {
+    QString topic = QString::fromStdString(map_pair.first);
+    if (map_pair.second.empty()) {
+      throw std::runtime_error("topic '" + map_pair.first + "' unexpectedly has not types.");
+    }
+    if (map_pair.second.size() > 1) {
+      std::stringstream ss;
+      ss << "topic '" << map_pair.first <<
+        "' has more than one types associated, rviz will arbitrarily use the type '" <<
+        map_pair.second[0] << "' -- all types for the topic:";
+      for (const auto & topic_type_name : map_pair.second) {
+        ss << " '" << topic_type_name << "'";
+      }
+      RVIZ_COMMON_LOG_WARNING(ss.str().c_str());
+    }
+    QString datatype = QString::fromStdString(map_pair.second[0]);
 
-    if (datatype_plugins.contains(datatype) ) {
+    if (datatype_plugins.contains(datatype)) {
       if (groups->size() == 0 ||
         !isSubtopic(groups->back().base_topic.toStdString(),
-        topic.toStdString()) )
+        topic.toStdString()))
       {
         PluginGroup pi;
         pi.base_topic = topic;
@@ -156,7 +187,7 @@ void getPluginGroups(
         info.datatypes.append(datatype);
       }
     } else {
-      unvisualizable->append(*topic_it);
+      unvisualizable->push_back(map_pair.first);
     }
   }
 }
@@ -164,10 +195,10 @@ void getPluginGroups(
 // Dialog implementation
 AddDisplayDialog::AddDisplayDialog(
   DisplayFactory * factory,
-  const QString & object_type,
   const QStringList & disallowed_display_names,
   const QStringList & disallowed_class_lookup_names,
   QString * lookup_name_output,
+  const std::string & node_name,
   QString * display_name_output,
   QString * topic_output,
   QString * datatype_output,
@@ -194,12 +225,12 @@ AddDisplayDialog::AddDisplayDialog(
   DisplayTypeTree * display_tree = new DisplayTypeTree;
   display_tree->fillTree(factory);
 
-  TopicDisplayWidget * topic_widget = new TopicDisplayWidget;
+  TopicDisplayWidget * topic_widget = new TopicDisplayWidget(node_name);
   topic_widget->fill(factory);
 
   tab_widget_ = new QTabWidget;
-  display_tab_ = tab_widget_->addTab(display_tree, tr("By display type") );
-  topic_tab_ = tab_widget_->addTab(topic_widget, tr("By topic") );
+  display_tab_ = tab_widget_->addTab(display_tree, tr("By display type"));
+  topic_tab_ = tab_widget_->addTab(topic_widget, tr("By topic"));
 
   QVBoxLayout * type_layout = new QVBoxLayout;
   type_layout->addWidget(tab_widget_);
@@ -209,7 +240,7 @@ AddDisplayDialog::AddDisplayDialog(
   type_box->setLayout(type_layout);
 
   // Display Name group
-  QGroupBox * name_box;
+  QGroupBox * name_box = nullptr;
   if (display_name_output_) {
     name_box = new QGroupBox("Display Name");
     name_editor_ = new QLineEdit;
@@ -219,8 +250,8 @@ AddDisplayDialog::AddDisplayDialog(
   }
 
   // Buttons
-  button_box_ = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
-      Qt::Horizontal);
+  button_box_ =
+    new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal);
 
   QVBoxLayout * main_layout = new QVBoxLayout;
   main_layout->addWidget(type_box);
@@ -253,7 +284,7 @@ AddDisplayDialog::AddDisplayDialog(
   }
   // *INDENT-ON*
 
-  button_box_->button(QDialogButtonBox::Ok)->setEnabled(isValid() );
+  button_box_->button(QDialogButtonBox::Ok)->setEnabled(isValid());
 }
 
 QSize AddDisplayDialog::sizeHint() const
@@ -263,6 +294,7 @@ QSize AddDisplayDialog::sizeHint() const
 
 void AddDisplayDialog::onTabChanged(int index)
 {
+  Q_UNUSED(index);
   updateDisplay();
 }
 
@@ -286,7 +318,7 @@ void AddDisplayDialog::updateDisplay()
   } else if (tab_widget_->currentIndex() == display_tab_) {
     data = &display_data_;
   } else {
-    ROS_WARN("Unknown tab index: %i", tab_widget_->currentIndex());
+    RVIZ_COMMON_LOG_WARNING_STREAM("Unknown tab index: " << tab_widget_->currentIndex());
     return;
   }
 
@@ -301,7 +333,7 @@ void AddDisplayDialog::updateDisplay()
   *topic_output_ = data->topic;
   *datatype_output_ = data->datatype;
 
-  button_box_->button(QDialogButtonBox::Ok)->setEnabled(isValid() );
+  button_box_->button(QDialogButtonBox::Ok)->setEnabled(isValid());
 }
 
 bool AddDisplayDialog::isValid()
@@ -332,12 +364,12 @@ void AddDisplayDialog::setError(const QString & error_text)
 
 void AddDisplayDialog::onNameChanged()
 {
-  button_box_->button(QDialogButtonBox::Ok)->setEnabled(isValid() );
+  button_box_->button(QDialogButtonBox::Ok)->setEnabled(isValid());
 }
 
 void AddDisplayDialog::accept()
 {
-  if (isValid() ) {
+  if (isValid()) {
     *lookup_name_output_ = lookup_name_;
     if (display_name_output_) {
       *display_name_output_ = name_editor_->text();
@@ -348,10 +380,11 @@ void AddDisplayDialog::accept()
 
 DisplayTypeTree::DisplayTypeTree()
 {
-  // *INDENT-OFF* - uncrustify cannot deal with commas here
   setHeaderHidden(true);
 
-  connect(this, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)),
+  // *INDENT-OFF*
+  connect(
+    this, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)),
     this, SLOT(onCurrentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)));
   // *INDENT-ON*
 }
@@ -360,6 +393,7 @@ void DisplayTypeTree::onCurrentItemChanged(
   QTreeWidgetItem * curr,
   QTreeWidgetItem * prev)
 {
+  Q_UNUSED(prev);
   // If display is selected, populate selection data.  Otherwise, clear data.
   SelectionData sd;
   if (curr->parent() != NULL) {
@@ -391,7 +425,7 @@ void DisplayTypeTree::fillTree(Factory * factory)
 
     std::map<QString, QTreeWidgetItem *>::iterator mi;
     mi = package_items.find(package);
-    if (mi == package_items.end() ) {
+    if (mi == package_items.end()) {
       package_item = new QTreeWidgetItem(this);
       package_item->setText(0, package);
       package_item->setIcon(0, default_package_icon);
@@ -403,7 +437,7 @@ void DisplayTypeTree::fillTree(Factory * factory)
     }
     QTreeWidgetItem * class_item = new QTreeWidgetItem(package_item);
 
-    class_item->setIcon(0, factory->getIcon(lookup_name) );
+    class_item->setIcon(0, factory->getIcon(lookup_name));
 
     class_item->setText(0, name);
     class_item->setWhatsThis(0, description);
@@ -412,7 +446,8 @@ void DisplayTypeTree::fillTree(Factory * factory)
   }
 }
 
-TopicDisplayWidget::TopicDisplayWidget()
+TopicDisplayWidget::TopicDisplayWidget(const std::string & node_name)
+: node_name_(node_name)
 {
   tree_ = new QTreeWidget;
   tree_->setHeaderHidden(true);
@@ -429,7 +464,7 @@ TopicDisplayWidget::TopicDisplayWidget()
   enable_hidden_box_->setCheckState(Qt::Unchecked);
 
   QVBoxLayout * layout = new QVBoxLayout;
-  layout->setContentsMargins(QMargins(0, 0, 0, 0) );
+  layout->setContentsMargins(QMargins(0, 0, 0, 0));
 
   layout->addWidget(tree_);
   layout->addWidget(enable_hidden_box_);
@@ -439,12 +474,12 @@ TopicDisplayWidget::TopicDisplayWidget()
     this, SLOT(onCurrentItemChanged(QTreeWidgetItem *)));
   // Forward signals from tree_
   connect(tree_, SIGNAL(itemActivated(QTreeWidgetItem *, int)),
-    this, SIGNAL(itemActivated(QTreeWidgetItem *, int)) );
+    this, SIGNAL(itemActivated(QTreeWidgetItem *, int)));
   // *INDENT-ON*
 
   // Connect signal from checkbox
   connect(enable_hidden_box_, SIGNAL(stateChanged(int)),
-    this, SLOT(stateChanged(int)) );
+    this, SLOT(stateChanged(int)));
 
   setLayout(layout);
 }
@@ -453,7 +488,7 @@ void TopicDisplayWidget::onCurrentItemChanged(QTreeWidgetItem * curr)
 {
   // If plugin is selected, populate selection data.  Otherwise, clear data.
   SelectionData sd;
-  if (curr->data(1, Qt::UserRole).isValid() ) {
+  if (curr->data(1, Qt::UserRole).isValid()) {
     QTreeWidgetItem * parent = curr->parent();
     sd.whats_this = curr->whatsThis(0);
 
@@ -461,13 +496,13 @@ void TopicDisplayWidget::onCurrentItemChanged(QTreeWidgetItem * curr)
     sd.lookup_name = curr->data(0, Qt::UserRole).toString();
     sd.display_name = curr->text(0);
 
-    QComboBox * combo = qobject_cast<QComboBox *>(tree_->itemWidget(curr, 1) );
+    QComboBox * combo = qobject_cast<QComboBox *>(tree_->itemWidget(curr, 1));
     if (combo != NULL) {
       QString combo_text = combo->currentText();
       if (combo_text != "raw") {
         sd.topic += "/" + combo_text;
       }
-      sd.datatype = combo->itemData(combo->currentIndex() ).toString();
+      sd.datatype = combo->itemData(combo->currentIndex()).toString();
     } else {
       sd.datatype = curr->data(1, Qt::UserRole).toString();
     }
@@ -495,8 +530,8 @@ void TopicDisplayWidget::fill(DisplayFactory * factory)
   findPlugins(factory);
 
   QList<PluginGroup> groups;
-  QList<ros::master::TopicInfo> unvisualizable;
-  getPluginGroups(datatype_plugins_, &groups, &unvisualizable);
+  std::vector<std::string> unvisualizable;
+  getPluginGroups(datatype_plugins_, &groups, &unvisualizable, node_name_);
 
   // Insert visualizable topics along with their plugins
   QList<PluginGroup>::const_iterator pg_it;
@@ -512,9 +547,9 @@ void TopicDisplayWidget::fill(DisplayFactory * factory)
       const PluginGroup::Info & info = it.value();
       QTreeWidgetItem * row = new QTreeWidgetItem(item);
 
-      row->setText(0, factory->getClassName(plugin_name) );
-      row->setIcon(0, factory->getIcon(plugin_name) );
-      row->setWhatsThis(0, factory->getClassDescription(plugin_name) );
+      row->setText(0, factory->getClassName(plugin_name));
+      row->setIcon(0, factory->getIcon(plugin_name));
+      row->setWhatsThis(0, factory->getClassDescription(plugin_name));
       row->setData(0, Qt::UserRole, plugin_name);
       row->setData(1, Qt::UserRole, info.datatypes[0]);
 
@@ -527,21 +562,19 @@ void TopicDisplayWidget::fill(DisplayFactory * factory)
           box->addItem(info.topic_suffixes[i], info.datatypes[i]);
         }
         tree_->setItemWidget(row, 1, box);
-        tree_->setColumnWidth(1, std::max(tree_->columnWidth(1), box->width() ));
+        tree_->setColumnWidth(1, std::max(tree_->columnWidth(1), box->width()));
       }
       // *INDENT-ON*
     }
   }
 
   // Insert unvisualizable topics
-  for (int i = 0; i < unvisualizable.size(); ++i) {
-    const ros::master::TopicInfo & ti = unvisualizable.at(i);
-    QTreeWidgetItem * item = insertItem(QString::fromStdString(ti.name),
-        true);
+  for (const std::string & unvisualizable_topic : unvisualizable) {
+    insertItem(QString::fromStdString(unvisualizable_topic), true);
   }
 
   // Hide unvisualizable topics if necessary
-  stateChanged(enable_hidden_box_->isChecked() );
+  stateChanged(enable_hidden_box_->isChecked());
 }
 
 void TopicDisplayWidget::findPlugins(DisplayFactory * factory)
@@ -575,7 +608,7 @@ QTreeWidgetItem * TopicDisplayWidget::insertItem(
     bool match = false;
     for (int c = 0; c < current->childCount(); ++c) {
       QTreeWidgetItem * child = current->child(c);
-      if (child->text(0) == part && !child->data(1, Qt::UserRole).isValid() ) {
+      if (child->text(0) == part && !child->data(1, Qt::UserRole).isValid()) {
         match = true;
         current = child;
         break;
@@ -594,4 +627,4 @@ QTreeWidgetItem * TopicDisplayWidget::insertItem(
   return current;
 }
 
-}  // namespace rviz
+}  // namespace rviz_common

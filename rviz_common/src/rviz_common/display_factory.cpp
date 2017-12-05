@@ -28,14 +28,26 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./display_group.hpp"
-
 #include "./display_factory.hpp"
 
-#include <tinyxml.h>
 #include <string>
 
-namespace rviz
+// TODO(wjwwood): replace with tinyxml2? implicit dependency?
+#include <tinyxml.h>  // NOLINT: cpplint is unable to handle the include order here
+
+#include "./display_group.hpp"
+#include "rviz_common/logging.hpp"
+
+// TODO(wjwwood): remove this block (within if-endif) once plugins moved to default plugins package
+#if 1
+
+#include "./temp/default_plugins/displays/tf_display.hpp"
+#include "./temp/default_plugins/displays/robot_model_display.hpp"
+#include "../rviz_default_plugins/point_cloud_display.hpp"
+
+#endif
+
+namespace rviz_common
 {
 
 static Display * newDisplayGroup()
@@ -43,10 +55,31 @@ static Display * newDisplayGroup()
   return new DisplayGroup();
 }
 
+// TODO(wjwwood): remove this block (within if-endif) once plugins moved to default plugins package
+#if 1
+
+static Display * newTFDisplay()
+{
+  return new rviz_common::TFDisplay();
+}
+static Display * newRobotModelDisplay()
+{
+  return new rviz_common::RobotModelDisplay();
+}
+static Display * newPointCloudDisplay()
+{
+  return new rviz_default_plugins::PointCloudDisplay();
+}
+
+#endif
+
 DisplayFactory::DisplayFactory()
-: PluginlibFactory<Display>("rviz", "rviz::Display")
+: PluginlibFactory<Display>("rviz_common", "rviz_common::Display")
 {
   addBuiltInClass("rviz", "Group", "A container for Displays", &newDisplayGroup);
+  addBuiltInClass("rviz", "TF", "tf display", &newTFDisplay);
+  addBuiltInClass("rviz", "RobotModel", "robot model display", &newRobotModelDisplay);
+  addBuiltInClass("rviz", "PointCloud", "point cloud display", &newPointCloudDisplay);
 }
 
 Display * DisplayFactory::makeRaw(const QString & class_id, QString * error_return)
@@ -61,7 +94,7 @@ Display * DisplayFactory::makeRaw(const QString & class_id, QString * error_retu
 QSet<QString> DisplayFactory::getMessageTypes(const QString & class_id)
 {
   // lookup in cache
-  if (message_type_cache_.find(class_id) != message_type_cache_.end() ) {
+  if (message_type_cache_.find(class_id) != message_type_cache_.end()) {
     return message_type_cache_[class_id];
   }
 
@@ -72,24 +105,24 @@ QSet<QString> DisplayFactory::getMessageTypes(const QString & class_id)
   // parse xml plugin description to find out message types of all displays in it.
   QString xml_file = getPluginManifestPath(class_id);
 
-  if (!xml_file.isEmpty() ) {
-    ROS_DEBUG_STREAM("Parsing " << xml_file.toStdString());
+  if (!xml_file.isEmpty()) {
+    RVIZ_COMMON_LOG_DEBUG_STREAM("Parsing " << xml_file.toStdString());
     TiXmlDocument document;
     document.LoadFile(xml_file.toStdString());
     TiXmlElement * config = document.RootElement();
     if (config == NULL) {
-      ROS_ERROR(
-        "Skipping XML Document \"%s\" which had no Root Element.  "
-        "This likely means the XML is malformed or missing.",
-        xml_file.toStdString().c_str());
+      RVIZ_COMMON_LOG_ERROR_STREAM(
+        "Skipping XML Document \"" << xml_file.toStdString() << "\" which had no Root Element.  "
+          "This likely means the XML is malformed or missing.");
       return QSet<QString>();
     }
     if (config->ValueStr() != "library" &&
       config->ValueStr() != "class_libraries")
     {
-      ROS_ERROR("The XML document \"%s\" given to add must have either \"library\" or "
-        "\"class_libraries\" as the root tag",
-        xml_file.toStdString().c_str());
+      RVIZ_COMMON_LOG_ERROR_STREAM(
+        "The XML document \"" << xml_file.toStdString() <<
+          "\" given to add must have either \"library\" or "
+          "\"class_libraries\" as the root tag");
       return QSet<QString>();
     }
     // Step into the filter list if necessary
@@ -106,13 +139,12 @@ QSet<QString> DisplayFactory::getMessageTypes(const QString & class_id)
         std::string current_class_id;
         if (class_element->Attribute("name") != NULL) {
           current_class_id = class_element->Attribute("name");
-          ROS_DEBUG("XML file specifies lookup name (i.e. magic name) = %s.",
-            current_class_id.c_str());
+          RVIZ_COMMON_LOG_DEBUG_STREAM(
+            "XML file specifies lookup name (i.e. magic name) = " << current_class_id);
         } else {
-          ROS_DEBUG(
-            "XML file has no lookup name (i.e. magic name) for class %s, "
-            "assuming class_id == real class name.",
-            derived_class.c_str());
+          RVIZ_COMMON_LOG_DEBUG_STREAM(
+            "XML file has no lookup name (i.e. magic name) for class " << derived_class <<
+              ", assuming class_id == real class name.");
           current_class_id = derived_class;
         }
 
@@ -120,13 +152,14 @@ QSet<QString> DisplayFactory::getMessageTypes(const QString & class_id)
         TiXmlElement * message_type = class_element->FirstChildElement("message_type");
 
         while (message_type) {
-          if (message_type->GetText() ) {
+          if (message_type->GetText()) {
             const char * message_type_str = message_type->GetText();
-            ROS_DEBUG_STREAM(current_class_id << " supports message type " << message_type_str);
+            RVIZ_COMMON_LOG_DEBUG_STREAM(
+              current_class_id << " supports message type " << message_type_str);
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-            message_types.insert(QString::fromAscii(message_type_str) );
+            message_types.insert(QString::fromAscii(message_type_str));
 #else
-            message_types.insert(QString(message_type_str) );
+            message_types.insert(QString(message_type_str));
 #endif
           }
           message_type = message_type->NextSiblingElement("message_type");
@@ -142,12 +175,11 @@ QSet<QString> DisplayFactory::getMessageTypes(const QString & class_id)
   }
 
   // search cache again.
-  if (message_type_cache_.find(class_id) != message_type_cache_.end() ) {
+  if (message_type_cache_.find(class_id) != message_type_cache_.end()) {
     return message_type_cache_[class_id];
   }
 
   return QSet<QString>();
 }
 
-
-}  // end namespace rviz
+}  // namespace rviz_common

@@ -134,13 +134,10 @@ public:
   uint64_t
   getFrameCount() const = 0;
 
-// TODO(wjwwood): reenable when display factory is fixed
-#if 0
   /// Return a factory for creating Display subclasses based on a class id string.
   virtual
   DisplayFactory *
   getDisplayFactory() const = 0;
-#endif
 
   /// Add a node (e.g. a display) to the main executor (spin will be called in the main thread)
   virtual

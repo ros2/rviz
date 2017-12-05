@@ -40,7 +40,7 @@
 #include <QTreeWidget>  // NOLINT: cpplint is unable to handle the include order here
 #include <QVBoxLayout>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "./load_resource.hpp"
+#include "rviz_common/load_resource.hpp"
 
 namespace rviz_common
 {
@@ -82,7 +82,7 @@ NewObjectDialog::NewObjectDialog(
   type_box->setLayout(type_layout);
 
   // Display Name group
-  QGroupBox * name_box;
+  QGroupBox * name_box = nullptr;
   if (display_name_output_) {
     name_box = new QGroupBox(object_type + " Name");
     name_editor_ = new QLineEdit;

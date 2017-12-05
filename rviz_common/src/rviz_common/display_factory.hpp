@@ -28,17 +28,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-// TODO(wjwwood): revist this file when pluginlib solution found
-
 #ifndef RVIZ_COMMON__DISPLAY_FACTORY_HPP_
 #define RVIZ_COMMON__DISPLAY_FACTORY_HPP_
 
-#include "rviz_common/display.hpp"
-#include "./pluginlib_factory.hpp"
+#include <QMap>
+#include <QSet>
+#include <QString>
 
-#include <QMap>  // NOLINT: cpplint is unable to handle the include order here
-#include <QSet>  // NOLINT: cpplint is unable to handle the include order here
-#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+#include "./pluginlib_factory.hpp"
+#include "rviz_common/display.hpp"
 
 namespace rviz_common
 {
@@ -48,12 +46,12 @@ class DisplayFactory : public PluginlibFactory<Display>
 public:
   DisplayFactory();
 
-  /** @brief Get all supported message types for the given class id. */
+  /// Get all supported message types for the given class id.
   virtual QSet<QString> getMessageTypes(const QString & class_id);
 
 protected:
-  /** @brief Overridden from PluginlibFactory<Display> to set the icon of the Display. */
-  virtual Display * makeRaw(const QString & class_id, QString * error_return = NULL);
+  /// Overridden from PluginlibFactory<Display> to set the icon of the Display.
+  Display * makeRaw(const QString & class_id, QString * error_return = nullptr) override;
 
   QMap<QString, QSet<QString>> message_type_cache_;
 };

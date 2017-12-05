@@ -28,9 +28,9 @@
  */
 
 #include "rviz_common/properties/color_property.hpp"
-#include "src/rviz_default_plugins/point_cloud_helpers.hpp"
+#include "../point_cloud_helpers.hpp"
 
-#include "flat_color_pc_transformer.hpp"
+#include "./flat_color_pc_transformer.hpp"
 
 namespace rviz_default_plugins
 {

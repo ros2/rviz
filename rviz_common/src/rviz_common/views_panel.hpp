@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,22 +31,25 @@
 #ifndef RVIZ_COMMON__VIEWS_PANEL_HPP_
 #define RVIZ_COMMON__VIEWS_PANEL_HPP_
 
-#include "rviz_common/panel.hpp"
+#include "./panel.hpp"
 
 class QComboBox;
 class QModelIndex;
 class QPushButton;
 
-namespace rviz
+namespace rviz_common
 {
 
 class ViewManager;
+
+namespace properties
+{
+
 class PropertyTreeWidget;
 
-/**
- * @brief Panel for choosing the view controller and saving and restoring
- * viewpoints.
- */
+}  // namespace properties
+
+/// Panel for choosing the view controller and saving and restoring viewpoints.
 class ViewsPanel : public Panel
 {
   Q_OBJECT
@@ -54,27 +58,26 @@ public:
   explicit ViewsPanel(QWidget * parent = 0);
   virtual ~ViewsPanel() {}
 
-  /** @brief Overridden from Panel.  Just calls setViewManager() with
-   *  vis_manager_->getViewManager(). */
-  virtual void onInitialize();
+  /// Just calls setViewManager() with vis_manager_->getViewManager().
+  void onInitialize() override;  // Overridden from Panel.
 
-  /** @brief Set the ViewManager which this panel should display and edit.
-   *
+  /// Set the ViewManager which this panel should display and edit.
+  /**
    * If this ViewsPanel is to be used with a ViewManager other than
    * the one in the VisualizationManager sent in through
    * Panel::initialize(), either Panel::initialize() must not be
-   * called or setViewManager() must be called after
-   * Panel::initialize(). */
+   * called or setViewManager() must be called after Panel::initialize().
+   */
   void setViewManager(ViewManager * view_man);
 
-  /** @brief Returns the current ViewManager. */
+  /// Return the current ViewManager.
   ViewManager * getViewManager() const {return view_man_;}
 
-  /** @brief Load configuration data, specifically the PropertyTreeWidget view settings. */
-  virtual void load(const Config & config);
+  /// Load configuration data, specifically the PropertyTreeWidget view settings.
+  void load(const Config & config) override;
 
-  /** @brief Save configuration data, specifically the PropertyTreeWidget view settings. */
-  virtual void save(Config config) const;
+  /// Save configuration data, specifically the PropertyTreeWidget view settings.
+  void save(Config config) const override;
 
 private Q_SLOTS:
   void onTypeSelectorChanged(int selected_index);
@@ -87,11 +90,11 @@ private Q_SLOTS:
 
 private:
   ViewManager * view_man_;
-  PropertyTreeWidget * properties_view_;
+  rviz_common::properties::PropertyTreeWidget * properties_view_;
   QPushButton * save_button_;
   QComboBox * camera_type_selector_;
 };
 
-}  // namespace rviz
+}  // namespace rviz_common
 
 #endif  // RVIZ_COMMON__VIEWS_PANEL_HPP_

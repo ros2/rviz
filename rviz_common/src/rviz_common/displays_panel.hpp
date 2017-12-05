@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,44 +31,43 @@
 #ifndef RVIZ_COMMON__DISPLAYS_PANEL_HPP_
 #define RVIZ_COMMON__DISPLAYS_PANEL_HPP_
 
-#include <boost/thread/mutex.hpp>
-
-#include <vector>
 #include <map>
 #include <set>
+#include <string>
+#include <vector>
 
-#include "rviz_common/config.hpp"
 #include "./panel.hpp"
+#include "rviz_common/config.hpp"
 
 class QPushButton;
 
 namespace rviz_common
 {
 
+namespace properties
+{
+
 class PropertyTreeWidget;
 class PropertyTreeWithHelp;
+
+}  // namespace properties
+
 class VisualizationManager;
 class Display;
 
-/**
- * \class DisplaysPanel
- *
- */
 class DisplaysPanel : public Panel
 {
   Q_OBJECT
 
 public:
-  explicit DisplaysPanel(QWidget * parent = 0);
+  explicit DisplaysPanel(const std::string & node_name, QWidget * parent = 0);
   virtual ~DisplaysPanel();
 
-  virtual void onInitialize();
+  void onInitialize() override;
 
-  /** @brief Write state to the given Config object. */
-  virtual void save(Config config) const;
+  void save(Config config) const override;
 
-  /** @brief Read state from the given Config. */
-  virtual void load(const Config & config);
+  void load(const Config & config) override;
 
 protected Q_SLOTS:
   /// Called when the "Add" button is pressed
@@ -82,12 +82,13 @@ protected Q_SLOTS:
   void onSelectionChanged();
 
 protected:
-  PropertyTreeWidget * property_grid_;
+  properties::PropertyTreeWidget * property_grid_;
 
   QPushButton * duplicate_button_;
   QPushButton * remove_button_;
   QPushButton * rename_button_;
-  PropertyTreeWithHelp * tree_with_help_;
+  properties::PropertyTreeWithHelp * tree_with_help_;
+  const std::string node_name_;
 };
 
 }  // namespace rviz_common

@@ -2,6 +2,15 @@ cmake_minimum_required(VERSION 3.5)
 
 project(rviz_rendering)
 
+# TODO(wjwood): remove when windows build is fixed
+if(DEFINED ENV{RVIZ_BUILD_ON_WINDOWS_OVERRIDE})
+  set(RVIZ_BUILD_ON_WINDOWS_OVERRIDE "$ENV{RVIZ_BUILD_ON_WINDOWS_OVERRIDE}")
+endif()
+if(WIN32 AND NOT DEFINED RVIZ_BUILD_ON_WINDOWS_OVERRIDE)
+  message(STATUS "${PROJECT_NAME} is not supported on Windows, skipping...")
+  return()
+endif()
+
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)
@@ -50,7 +59,7 @@ set(headers_with_q_object
   include/rviz_rendering/render_window.hpp
 )
 
-add_library(rviz_rendering
+add_library(rviz_rendering SHARED
   ${headers_with_q_object}
   src/rviz_rendering/apply_visibility_bits.cpp
   src/rviz_rendering/arrow.cpp
@@ -73,18 +82,22 @@ add_library(rviz_rendering
   src/rviz_rendering/point_cloud_renderable.cpp
 )
 target_link_libraries(rviz_rendering
-  rviz_ogre_vendor::OgreMain
-  rviz_ogre_vendor::OgreOverlay
-  rviz_ogre_vendor::RenderSystem_GL
-  rviz_ogre_vendor::OgreGLSupport
+  PRIVATE rviz_ogre_vendor::OgreMain
+  PRIVATE rviz_ogre_vendor::OgreOverlay
+  PRIVATE rviz_ogre_vendor::RenderSystem_GL
+  PRIVATE rviz_ogre_vendor::OgreGLSupport
   Qt5::Widgets
   ament_index_cpp::ament_index_cpp
 )
 target_include_directories(rviz_rendering
   PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+    ${OGRE_INCLUDE_DIRS}
 )
+# Causes the visibility macros to use dllexport rather than dllimport,
+# which is appropriate when building the dll but not consuming it.
+target_compile_definitions(rviz_rendering PRIVATE "RVIZ_RENDERING_BUILDING_LIBRARY")
 
 ament_export_interfaces(rviz_rendering)
 ament_export_dependencies(rviz_ogre_vendor)
@@ -103,32 +116,33 @@ install(
   DESTINATION include
 )
 
-add_executable(rendering_example src/examples/rendering_example.cpp)
-target_link_libraries(rendering_example rviz_rendering Qt5::Widgets)
+# add_executable(rendering_example src/examples/rendering_example.cpp)
+# target_link_libraries(rendering_example rviz_rendering Qt5::Widgets)
+# set_target_properties(rendering_example PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-# TODO(wjwwood): find a way to make this optional or to run without "deploying" the
-#                necessary dlls and stuff to the bin folder.
-#                see:
-# https://stackoverflow.com/questions/41193584/deploy-all-qt-dependencies-when-building#41199492
-if(TARGET Qt5::windeployqt)
-  # execute windeployqt in a tmp directory after build
-  add_custom_command(TARGET rendering_example
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
-    COMMAND set PATH=%PATH%$<SEMICOLON>${qt5_install_prefix}/bin
-    COMMAND
-    Qt5::windeployqt
-    --dir "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
-    "$<TARGET_FILE_DIR:rendering_example>/$<TARGET_FILE_NAME:rendering_example>"
-  )
+# # TODO(wjwwood): find a way to make this optional or to run without "deploying" the
+# #                necessary dlls and stuff to the bin folder.
+# #                see:
+# # https://stackoverflow.com/questions/41193584/deploy-all-qt-dependencies-when-building#41199492
+# if(TARGET Qt5::windeployqt)
+#   # execute windeployqt in a tmp directory after build
+#   add_custom_command(TARGET rendering_example
+#     POST_BUILD
+#     COMMAND ${CMAKE_COMMAND} -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
+#     COMMAND set PATH=%PATH%$<SEMICOLON>${qt5_install_prefix}/bin
+#     COMMAND
+#     Qt5::windeployqt
+#     --dir "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
+#     "$<TARGET_FILE_DIR:rendering_example>/$<TARGET_FILE_NAME:rendering_example>"
+#   )
 
-  # copy deployment directory during installation
-  install(
-    DIRECTORY
-    "${CMAKE_CURRENT_BINARY_DIR}/windeployqt/"
-    DESTINATION bin
-  )
-endif()
+#   # copy deployment directory during installation
+#   install(
+#     DIRECTORY
+#     "${CMAKE_CURRENT_BINARY_DIR}/windeployqt/"
+#     DESTINATION bin
+#   )
+# endif()
 
 set(rviz_rendering_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/cmake")
 include(${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/register_rviz_ogre_media_exports_hook-extras.cmake)
@@ -136,7 +150,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/register_rviz_ogre_media_exports_h
 install(DIRECTORY src/cmake
   DESTINATION share/${PROJECT_NAME})
 
-install(TARGETS rendering_example DESTINATION bin)
+# install(TARGETS rendering_example DESTINATION bin)
 
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/ogre_media"
   DESTINATION "share/rviz_rendering"
@@ -155,26 +169,31 @@ if(BUILD_TESTING)
 
   ament_add_gtest(test_rviz_rendering src/test/string_helper_test.cpp)
   if(TARGET test_rviz_rendering)
-    target_include_directories(test_rviz_rendering PUBLIC src/rviz_rendering)
-    target_link_libraries(test_rviz_rendering ${PROJECT_NAME})
+    target_link_libraries(test_rviz_rendering rviz_rendering)
   endif()
 
   ament_add_gtest(point_cloud_test_target
     src/test/point_cloud_test.cpp)
   if(TARGET point_cloud_test_target)
-    target_link_libraries(point_cloud_test_target ${PROJECT_NAME})
+    target_link_libraries(point_cloud_test_target
+      rviz_ogre_vendor::OgreMain
+      rviz_rendering
+      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+    )
   endif()
 
   ament_add_gtest(point_cloud_renderable_test_target src/test/point_cloud_renderable_test.cpp)
   if(TARGET point_cloud_renderable_test_target)
-    target_link_libraries(point_cloud_renderable_test_target rviz_rendering)
+    target_link_libraries(point_cloud_renderable_test_target
+      rviz_ogre_vendor::OgreMain
+      rviz_rendering
+      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+    )
   endif()
 endif()
 
 list(APPEND ${PROJECT_NAME}_CONFIG_EXTRAS
   "${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/register_rviz_ogre_media_exports_hook-extras.cmake"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/register_rviz_ogre_media_exports.cmake")
-
-set_target_properties(rendering_example PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 ament_package()

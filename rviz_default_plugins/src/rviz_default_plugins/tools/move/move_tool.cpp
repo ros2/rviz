@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,28 +28,58 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__TOOLS__MOVE_TOOL_HPP_
-#define RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__TOOLS__MOVE_TOOL_HPP_
+#include "./move_tool.hpp"
 
-#include "../../../tool.hpp"
+#include "rviz_common/display_context.hpp"
+#include "rviz_common/load_resource.hpp"
+#include "rviz_common/render_panel.hpp"
+#include "rviz_common/view_controller.hpp"
+#include "rviz_common/view_manager.hpp"
+#include "rviz_common/viewport_mouse_event.hpp"
 
-namespace rviz_common
+namespace rviz_default_plugins
+{
+namespace tools
 {
 
-class DisplayContext;
-
-class MoveTool : public Tool
+MoveTool::MoveTool()
+: rviz_common::Tool()
 {
-public:
-  MoveTool();
+  shortcut_key_ = 'm';
+  // this is needed as the move tool is instantiated by other tools
+  setIcon(rviz_common::loadPixmap("package://rviz/icons/classes/MoveCamera.png"));
+}
 
-  virtual void activate() {}
-  virtual void deactivate() {}
+MoveTool::~MoveTool()
+{}
 
-  virtual int processMouseEvent(ViewportMouseEvent & event);
-  virtual int processKeyEvent(QKeyEvent * event, RenderPanel * panel);
-};
+void MoveTool::activate()
+{}
 
-}  // namespace rviz_common
+void MoveTool::deactivate()
+{}
 
-#endif  // RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__TOOLS__MOVE_TOOL_HPP_
+int MoveTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
+{
+  if (event.panel->getViewController()) {
+    event.panel->getViewController()->handleMouseEvent(event);
+    setCursor(event.panel->getViewController()->getCursor());
+  }
+  return 0;
+}
+
+int MoveTool::processKeyEvent(QKeyEvent * event, rviz_common::RenderPanel * panel)
+{
+  Q_UNUSED(event);
+  Q_UNUSED(panel);
+  if (context_->getViewManager()->getCurrent()) {
+    context_->getViewManager()->getCurrent()->handleKeyEvent(event, panel);
+  }
+  return Render;
+}
+
+}  // namespace tools
+}  // namespace rviz_default_plugins
+
+#include <pluginlib/class_list_macros.hpp>  // NOLINT
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::tools::MoveTool, rviz_common::Tool)

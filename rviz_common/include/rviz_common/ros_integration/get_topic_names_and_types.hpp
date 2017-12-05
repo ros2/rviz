@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,46 +27,29 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "move_tool.hpp"
+#ifndef RVIZ_COMMON__ROS_INTEGRATION__GET_TOPIC_NAMES_AND_TYPES_HPP_
+#define RVIZ_COMMON__ROS_INTEGRATION__GET_TOPIC_NAMES_AND_TYPES_HPP_
 
-#include "rviz_common/display_context.hpp"
-#include "../../../render_panel.hpp"
-#include "include/rviz_common/viewport_mouse_event.hpp"
-#include "rviz_common/selection/selection_manager.hpp"
-#include "rviz_common/view_controller.hpp"
-#include "../../../view_manager.hpp"
-#include "../../../load_resource.hpp"
+#include <map>
+#include <string>
+#include <vector>
 
 namespace rviz_common
 {
-
-MoveTool::MoveTool()
+namespace ros_integration
 {
-  shortcut_key_ = 'm';
-  // this is needed as the move tool is instantiated by other tools
-  setIcon(loadPixmap("package://rviz/icons/classes/MoveCamera.png") );
-}
 
-int MoveTool::processMouseEvent(ViewportMouseEvent & event)
-{
-  // printf("in MoveTool::processMouseEvent()\n");
-  if (event.panel->getViewController()) {
-    event.panel->getViewController()->handleMouseEvent(event);
-    setCursor(event.panel->getViewController()->getCursor() );
-  }
-  return 0;
-}
+/// Return a map with topic names mapped to a list of types for that topic.
+/**
+ * The node name is what was given when initializing with this API.
+ *
+ * \param node_name name of the node to use when getting this information.
+ * \return map of topic names and their types
+ */
+std::map<std::string, std::vector<std::string>>
+get_topic_names_and_types(const std::string & node_name);
 
-int MoveTool::processKeyEvent(QKeyEvent * event, RenderPanel * panel)
-{
-  // printf("in MoveTool::processKeyEvent()\n");
-  if (context_->getViewManager()->getCurrent() ) {
-    context_->getViewManager()->getCurrent()->handleKeyEvent(event, panel);
-  }
-  return Render;
-}
-
+}  // namespace ros_integration
 }  // namespace rviz_common
 
-// #include <pluginlib/class_list_macros.h>
-// PLUGINLIB_EXPORT_CLASS( rviz::MoveTool, rviz::Tool )
+#endif  // RVIZ_COMMON__ROS_INTEGRATION__GET_TOPIC_NAMES_AND_TYPES_HPP_

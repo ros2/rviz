@@ -36,10 +36,10 @@
 
 #include <OgreSceneNode.h>
 #include <OgreWireBoundingBox.h>
-#include "rclcpp/clock.hpp"
 
 // TODO(wjwwood): revisit file when pluginlib is available
 // #include <pluginlib/class_loader.h>
+#include "rclcpp/clock.hpp"
 
 #include "./point_cloud_to_point_cloud2.hpp"
 #include "rviz_common/display.hpp"
@@ -85,9 +85,8 @@ void CloudInfo::clear()
 PointCloudCommon::PointCloudCommon(rviz_common::Display * display)
 : auto_size_(false),
   new_xyz_transformer_(false),
-  new_color_transformer_(false)
-//, transformer_class_loader_(NULL)
-  , needs_retransform_(false),
+  new_color_transformer_(false),
+  needs_retransform_(false),
   display_(display)
 {
   selectable_property_ = new rviz_common::properties::BoolProperty("Selectable", true,

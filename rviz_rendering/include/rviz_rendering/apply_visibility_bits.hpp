@@ -32,6 +32,8 @@
 
 #include <cstdint>
 
+#include "rviz_rendering/visibility_control.hpp"
+
 namespace Ogre
 {
 class SceneNode;
@@ -40,6 +42,7 @@ class SceneNode;
 namespace rviz_rendering
 {
 
+RVIZ_RENDERING_PUBLIC
 void applyVisibilityBits(uint32_t bits, Ogre::SceneNode * node);
 
 }  // namespace rviz_rendering

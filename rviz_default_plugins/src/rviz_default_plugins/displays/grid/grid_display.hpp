@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,20 +28,28 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_GRID_DISPLAY_H
-#define RVIZ_GRID_DISPLAY_H
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__GRID__GRID_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__GRID__GRID_DISPLAY_HPP_
 
-#include "rviz/properties/color_property.h"
-#include "rviz/properties/float_property.h"
-#include "rviz/properties/int_property.h"
-#include "rviz/properties/vector_property.h"
-#include "rviz/properties/enum_property.h"
-#include "rviz/properties/tf_frame_property.h"
-#include "rviz/display.h"
+#include "rviz_common/display.hpp"
+#include "rviz_common/properties/color_property.hpp"
+#include "rviz_common/properties/enum_property.hpp"
+#include "rviz_common/properties/float_property.hpp"
+#include "rviz_common/properties/int_property.hpp"
+#include "rviz_common/properties/tf_frame_property.hpp"
+#include "rviz_common/properties/vector_property.hpp"
 
-namespace rviz
+namespace rviz_rendering
 {
+
 class Grid;
+
+}  // namespace rviz_rendering
+
+namespace rviz_default_plugins
+{
+namespace displays
+{
 
 /**
  * \class GridDisplay
@@ -48,9 +57,10 @@ class Grid;
  *
  * For more information see Grid
  */
-class GridDisplay : public Display
+class GridDisplay : public rviz_common::Display
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   enum Plane
   {
@@ -77,20 +87,21 @@ private Q_SLOTS:
   void updateStyle();
 
 private:
-  Grid* grid_;            ///< Handles actually drawing the grid
+  rviz_rendering::Grid * grid_;  ///< Handles actually drawing the grid
 
-  TfFrameProperty* frame_property_;
-  IntProperty* cell_count_property_;
-  IntProperty* height_property_;
-  FloatProperty* cell_size_property_;
-  FloatProperty* line_width_property_;
-  EnumProperty* style_property_;
-  ColorProperty* color_property_;
-  FloatProperty* alpha_property_;
-  EnumProperty* plane_property_;
-  VectorProperty* offset_property_;
+  rviz_common::properties::TfFrameProperty * frame_property_;
+  rviz_common::properties::IntProperty * cell_count_property_;
+  rviz_common::properties::IntProperty * height_property_;
+  rviz_common::properties::FloatProperty * cell_size_property_;
+  rviz_common::properties::FloatProperty * line_width_property_;
+  rviz_common::properties::EnumProperty * style_property_;
+  rviz_common::properties::ColorProperty * color_property_;
+  rviz_common::properties::FloatProperty * alpha_property_;
+  rviz_common::properties::EnumProperty * plane_property_;
+  rviz_common::properties::VectorProperty * offset_property_;
 };
 
-} // namespace rviz
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__GRID__GRID_DISPLAY_HPP_

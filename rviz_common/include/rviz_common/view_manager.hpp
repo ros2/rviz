@@ -32,13 +32,12 @@
 #define RVIZ_COMMON__VIEW_MANAGER_HPP_
 
 #include <algorithm>
+#include <memory>
 
 #include <QList>  // NOLINT: cpplint is unable to handle the include order here
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
 #include <QStringList>  // NOLINT: cpplint is unable to handle the include order here
 
-// TODO(wjwwood): replace usage of pluginlib_factory
-// #include "./pluginlib_factory.hpp"
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/view_controller.hpp"
 
@@ -76,6 +75,9 @@ public:
 
   /// Create a view controller by name.
   ViewController * create(const QString & type);
+
+  /// Return a list of the class id's for available view controllers.
+  QStringList getDeclaredClassIdsFromFactory();
 
   /// Get the number of views.
   int getNumViews() const;
@@ -156,12 +158,9 @@ private:
    */
   void setCurrent(ViewController * new_current, bool mimic_view);
 
-  DisplayContext * context_;
-  ViewControllerContainer * root_property_;
-  rviz_common::properties::PropertyTreeModel * property_model_;
-  // PluginlibFactory<ViewController> * factory_;
-  ViewController * current_;
-  RenderPanel * render_panel_;
+  struct ViewManagerImpl;
+
+  std::unique_ptr<ViewManagerImpl> impl_;
 };
 
 /// Wrapper property for view controllers.

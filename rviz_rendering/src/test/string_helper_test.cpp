@@ -27,11 +27,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <string_helper.hpp>
 #include <gtest/gtest.h>
 
 #include <string>
 #include <vector>
+
+#include "../rviz_rendering/string_helper.cpp"
 
 TEST(String_Helper__Test, correctly_split_string) {
   std::vector<std::string> expected;

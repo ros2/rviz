@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,13 +28,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "rviz_common/properties/splitter_handle.hpp"
+
 #include <QEvent>
 #include <QMouseEvent>
-#include <QPaintEvent>
 #include <QPainter>
+#include <QPaintEvent>
 #include <QTreeView>
-
-#include "rviz_common/properties/splitter_handle.hpp"
 
 namespace rviz_common
 {
@@ -121,8 +122,9 @@ void SplitterHandle::mouseMoveEvent(QMouseEvent * event)
   }
 }
 
-void SplitterHandle::paintEvent()
+void SplitterHandle::paintEvent(QPaintEvent * event)
 {
+  Q_UNUSED(event);
   QPainter painter(this);
   painter.setPen(color_);
   painter.drawLine(1 + width() / 2, 0, 1 + width() / 2, height() );

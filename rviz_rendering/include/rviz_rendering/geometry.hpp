@@ -31,6 +31,8 @@
 #ifndef RVIZ_RENDERING__GEOMETRY_HPP_
 #define RVIZ_RENDERING__GEOMETRY_HPP_
 
+#include "rviz_rendering/visibility_control.hpp"
+
 namespace Ogre
 {
 class Plane;
@@ -44,8 +46,9 @@ namespace rviz_rendering
 
 /// Find the point on a plane directly behind a given (x, y) position in window-pixel coordinates.
 /**
- * @return true if the intersection exists, false if it does not.
+ * \return true if the intersection exists, false if it does not.
  */
+RVIZ_RENDERING_PUBLIC
 bool
 getPointOnPlaneFromWindowXY(
   Ogre::Viewport * viewport,
@@ -54,12 +57,15 @@ getPointOnPlaneFromWindowXY(
   Ogre::Vector3 & intersection_out);
 
 /// Return the input angle mapped back to the range 0 to 2*PI.
+RVIZ_RENDERING_PUBLIC
 float
 mapAngleTo0_2Pi(float angle);
 
 /// Project a point into the view plane based on a given 3D position and a Viewport.
 /**
- * @return The 2D floating-point pixel position of the projection. */
+ * \return The 2D floating-point pixel position of the projection.
+ */
+RVIZ_RENDERING_PUBLIC
 Ogre::Vector2
 project3DPointToViewportXY(const Ogre::Viewport * view, const Ogre::Vector3 & pos);
 

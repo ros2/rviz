@@ -36,15 +36,16 @@
 #include "rviz_common/properties/property.hpp"
 #include "../message_creators.hpp"
 
-#include "src/rviz_default_plugins/point_cloud_transformers/flat_color_pc_transformer.hpp"
+#include "../src/rviz_default_plugins/point_cloud_transformers/flat_color_pc_transformer.hpp"
 
-using namespace rviz_default_plugins; // NOLINT
+using namespace rviz_default_plugins;  // NOLINT
 
 TEST(FlatColorPCTransformer, transform_colors_all_points_white_per_default) {
-  Point p1 = {0, 0, 0};
-  Point p2 = {0, 0, 1};
-  Point p3 = {0, 0, 2};
-  auto cloud = createPointCloud2WithPoints(std::vector<Point>{p1, p2, p3});
+  // just plain Point is ambiguous on macOS
+  rviz_default_plugins::Point p1 = {0, 0, 0};
+  rviz_default_plugins::Point p2 = {0, 0, 1};
+  rviz_default_plugins::Point p3 = {0, 0, 2};
+  auto cloud = createPointCloud2WithPoints(std::vector<rviz_default_plugins::Point>{p1, p2, p3});
 
   V_PointCloudPoint points_out;
   points_out.resize(3);
@@ -67,10 +68,11 @@ TEST(FlatColorPCTransformer, transform_colors_all_points_white_per_default) {
 
 
 TEST(FlatColorPCTransformer, transform_colors_all_points_in_the_given_color) {
-  Point p1 = {0, 0, 0};
-  Point p2 = {0, 0, 1};
-  Point p3 = {0, 0, 2};
-  auto cloud = createPointCloud2WithPoints(std::vector<Point>{p1, p2, p3});
+  // just plain Point is ambiguous on macOS
+  rviz_default_plugins::Point p1 = {0, 0, 0};
+  rviz_default_plugins::Point p2 = {0, 0, 1};
+  rviz_default_plugins::Point p3 = {0, 0, 2};
+  auto cloud = createPointCloud2WithPoints(std::vector<rviz_default_plugins::Point>{p1, p2, p3});
 
   V_PointCloudPoint points_out;
   points_out.resize(3);

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,29 +31,27 @@
 #ifndef RVIZ_COMMON__ADD_DISPLAY_DIALOG_HPP_
 #define RVIZ_COMMON__ADD_DISPLAY_DIALOG_HPP_
 
-#include <QDialog>
-#include <QTreeWidget>
-#include <QComboBox>
+#include <string>
 
-#include <boost/shared_ptr.hpp>
+#include <QComboBox>  // NOLINT: cpplint is unable to handle the include order here
+#include <QDialog>  // NOLINT: cpplint is unable to handle the include order here
+#include <QTreeWidget>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "rviz/factory.h"
+#include "./factory.hpp"
 
-class QTextBrowser;
-class QLineEdit;
+class QCheckBox;
 class QDialogButtonBox;
 class QLabel;
-class QCheckBox;
+class QLineEdit;
+class QTextBrowser;
 
-namespace rviz
+namespace rviz_common
 {
 
 class DisplayFactory;
 class Display;
 
-/**
- * Meta-data needed to pick a plugin and optionally a topic.
- */
+/// Meta-data needed to pick a plugin and optionally a topic.
 struct SelectionData
 {
   QString whats_this;
@@ -67,36 +66,37 @@ class AddDisplayDialog : public QDialog
   Q_OBJECT
 
 public:
-  /** Dialog for choosing a new object to load with a pluginlib ClassLoader.
-   *
-   * @param disallowed_display_names set of display names to prevent
+  ///  Dialog for choosing a new object to load with a pluginlib ClassLoader.
+  /**
+   * \param disallowed_display_names set of display names to prevent
    *        the user from using.
    *
-   * @param disallowed_class_lookup_names set of class lookup names to
+   * \param disallowed_class_lookup_names set of class lookup names to
    *        prevent the user from selecting.  Names found in the class loader
    *        which are in this list will appear disabled.
    *
-   * @param lookup_name_output Pointer to a string where dialog will
+   * \param lookup_name_output Pointer to a string where dialog will
    *        put the class lookup name chosen.
    *
-   * @param display_name_output Pointer to a string where dialog will
+   * \param display_name_output Pointer to a string where dialog will
    *        put the display name entered, or NULL (default) if display
-   *        name entry field should not be shown. */
+   *        name entry field should not be shown.
+   */
   AddDisplayDialog(
     DisplayFactory * factory,
-    const QString & object_type,
     const QStringList & disallowed_display_names,
     const QStringList & disallowed_class_lookup_names,
     QString * lookup_name_output,
+    const std::string & node_name,
     QString * display_name_output = 0,
     QString * topic_output = 0,
     QString * datatype_output = 0,
     QWidget * parent = 0);
 
-  virtual QSize sizeHint() const;
+  QSize sizeHint() const override;
 
 public Q_SLOTS:
-  virtual void accept();
+  void accept() override;
 
 private Q_SLOTS:
   void onDisplaySelected(SelectionData * data);
@@ -105,18 +105,16 @@ private Q_SLOTS:
   void onNameChanged();
 
 private:
-  /** Fill the tree widget with classes from the class loader. */
+  /// Fill the tree widget with classes from the class loader.
   void fillTree(QTreeWidget * tree);
 
-  /** Returns true if entered display name is non-empty and unique and
-   * if lookup name is non-empty. */
+  /// Return true if entered display name is non-empty and unique and if lookup name is non-empty.
   bool isValid();
 
-  /** Display an error message to the user, or clear the previous
-   * error message if error_text is empty. */
+  /// Display an error message, or clear the previous error message if error_text is empty.
   void setError(const QString & error_text);
 
-  /** Populate text boxes based on current tab and selection */
+  /// Populate text boxes based on current tab and selection.
   void updateDisplay();
 
   Factory * factory_;
@@ -128,32 +126,33 @@ private:
   QString * topic_output_;
   QString * datatype_output_;
 
-  /** Widget holding tabs */
+  /// Widget holding tabs.
   QTabWidget * tab_widget_;
-  /** Index of tab for selection by topic */
+  /// Index of tab for selection by topic.
   int topic_tab_;
-  /** Index of tab for selection by display */
+  /// Index of tab for selection by display.
   int display_tab_;
-  /** Current data for display tab */
+  /// Current data for display tab.
   SelectionData display_data_;
-  /** Current data for topic tab */
+  /// Current data for topic tab.
   SelectionData topic_data_;
 
-  /** Widget showing description of the class. */
+  /// Widget showing description of the class.
   QTextBrowser * description_;
 
   QLineEdit * name_editor_;
 
-  /** Widget with OK and CANCEL buttons. */
+  /// Widget with OK and CANCEL buttons.
   QDialogButtonBox * button_box_;
 
-  /** Current value of selected class-lookup name.  Copied to
-   * *lookup_name_output_ when "ok" is clicked. */
+  /// Current value of selected class-lookup name.
+  /**
+   * Copied to *lookup_name_output_ when "ok" is clicked.
+   */
   QString lookup_name_;
 };
 
-
-/** @brief Widget for selecting a display by display type */
+/// Widget for selecting a display by display type.
 class DisplayTypeTree : public QTreeWidget
 {
   Q_OBJECT
@@ -170,13 +169,13 @@ private Q_SLOTS:
   void onCurrentItemChanged(QTreeWidgetItem * curr, QTreeWidgetItem * prev);
 };
 
-/** @brief Widget for selecting a display by topic */
+/// Widget for selecting a display by topic.
 class TopicDisplayWidget : public QWidget
 {
   Q_OBJECT
 
 public:
-  TopicDisplayWidget();
+  explicit TopicDisplayWidget(const std::string & node_name);
   void fill(DisplayFactory * factory);
 
 Q_SIGNALS:
@@ -191,10 +190,10 @@ private Q_SLOTS:
 private:
   void findPlugins(DisplayFactory *);
 
-  /** Insert a topic into the tree
-   *
-   * @param topic Topic to be inserted
-   * @param disabled If true, set all created widgets as disabled
+  /// Insert a topic into the tree.
+  /**
+   * \param topic Topic to be inserted.
+   * \param disabled If true, set all created widgets as disabled.
    */
   QTreeWidgetItem * insertItem(const QString & topic, bool disabled);
 
@@ -204,10 +203,11 @@ private:
   // Map from ROS topic type to all displays that can visualize it.
   // One key may have multiple values.
   QMap<QString, QString> datatype_plugins_;
+  const std::string node_name_;
 };
 
-/** A combo box that can be inserted into a QTreeWidgetItem
- *
+/// A combo box that can be inserted into a QTreeWidgetItem.
+/**
  * Identical to QComboBox except that when it clicks it emits a signal
  * containing the QTreeWidgetItem that it's given at construction.
  */
@@ -228,6 +228,7 @@ Q_SIGNALS:
 private Q_SLOTS:
   void onActivated(int index)
   {
+    Q_UNUSED(index);
     Q_EMIT itemClicked(parent_, column_);
   }
 
@@ -236,6 +237,6 @@ private:
   int column_;
 };
 
-}  // namespace rviz
+}  // namespace rviz_common
 
 #endif  // RVIZ_COMMON__ADD_DISPLAY_DIALOG_HPP_

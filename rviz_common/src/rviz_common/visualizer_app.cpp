@@ -30,8 +30,6 @@
 
 #include "rviz_common/visualizer_app.hpp"
 
-#include <iostream>
-
 // #include <OgreGpuProgramManager.h>
 // #include <OgreHighLevelGpuProgramManager.h>
 // #include <OgreMaterialManager.h>
@@ -133,9 +131,6 @@ bool VisualizerApp::init(int argc, char ** argv)
 #endif
 #endif
 
-  // TODO(jsquare): remove line below after there is a implementation for
-  //                rviz_common::ros_integration::init and the include of iostream
-  std::cout << "argc/argv: " << argc << argv << std::endl;
   // TODO(wjwwood): anonymous is not working right now, reenable later
   // node_name_ = rviz_common::ros_integration::init(argc, argv, "rviz", true /* anonymous_name */);
   node_name_ = rviz_common::ros_integration::init(argc, argv, "rviz", false /* anonymous_name */);
@@ -272,7 +267,7 @@ bool VisualizerApp::init(int argc, char ** argv)
   //   RenderSystem::forceNoStereo();
   // }
 
-  frame_ = new VisualizationFrame();
+  frame_ = new VisualizationFrame(node_name_);
   frame_->setApp(this->app_);
 
   // if (help_path != "") {

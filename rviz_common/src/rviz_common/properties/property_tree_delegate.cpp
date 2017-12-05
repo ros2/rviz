@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,8 +32,8 @@
 
 #include <QAbstractItemView>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "rviz_common/properties/property.hpp"
 #include "rviz_common/properties/line_edit_with_button.hpp"
+#include "rviz_common/properties/property.hpp"
 
 namespace rviz_common
 {

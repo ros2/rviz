@@ -8,24 +8,25 @@ Panels:
         - /Status1
       Splitter Ratio: 0.5
     Tree Height: 464
-  - Class: rviz/Selection
-    Name: Selection
-  - Class: rviz/Tool Properties
-    Expanded:
-      - /2D Pose Estimate1
-      - /2D Nav Goal1
-      - /Publish Point1
-    Name: Tool Properties
-    Splitter Ratio: 0.588679
+  # TODO(wjwwood): restore these panels when ported
+  # - Class: rviz/Selection
+  #   Name: Selection
+  # - Class: rviz/Tool Properties
+  #   Expanded:
+  #     - /2D Pose Estimate1
+  #     - /2D Nav Goal1
+  #     - /Publish Point1
+  #   Name: Tool Properties
+  #   Splitter Ratio: 0.588679
   - Class: rviz/Views
     Expanded:
       - /Current View1
     Name: Views
     Splitter Ratio: 0.5
-  - Class: rviz/Time
-    Name: Time
-    SyncMode: 0
-    SyncSource: ""
+  # - Class: rviz/Time
+  #   Name: Time
+  #   SyncMode: 0
+  #   SyncSource: ""
 Visualization Manager:
   Class: ""
   Displays:
@@ -53,19 +54,20 @@ Visualization Manager:
     Fixed Frame: /map
   Name: root
   Tools:
-    - Class: rviz/Interact
-      Hide Inactive Objects: true
+    # TODO(wjwwood): restore these tools when ported
+    # - Class: rviz/Interact
+    #   Hide Inactive Objects: true
     - Class: rviz/MoveCamera
-    - Class: rviz/Select
-    - Class: rviz/FocusCamera
-    - Class: rviz/Measure
-    - Class: rviz/SetInitialPose
-      Topic: /initialpose
-    - Class: rviz/SetGoal
-      Topic: /move_base_simple/goal
-    - Class: rviz/PublishPoint
-      Single click: true
-      Topic: /clicked_point
+    # - Class: rviz/Select
+    # - Class: rviz/FocusCamera
+    # - Class: rviz/Measure
+    # - Class: rviz/SetInitialPose
+    #   Topic: /initialpose
+    # - Class: rviz/SetGoal
+    #   Topic: /move_base_simple/goal
+    # - Class: rviz/PublishPoint
+    #   Single click: true
+    #   Topic: /clicked_point
   Value: true
   Views:
     Current:

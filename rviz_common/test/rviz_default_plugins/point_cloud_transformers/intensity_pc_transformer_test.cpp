@@ -35,9 +35,9 @@
 
 #include "../message_creators.hpp"
 
-#include "src/rviz_default_plugins/point_cloud_transformers/intensity_pc_transformer.hpp"
+#include "../../../src/rviz_default_plugins/point_cloud_transformers/intensity_pc_transformer.hpp"
 
-using namespace rviz_default_plugins; // NOLINT
+using namespace rviz_default_plugins;  // NOLINT
 
 TEST(IntensityPCTransformer, transform_returns_points_colored_depending_on_the_intensity) {
   PointWithIntensity p1 = {0, 0, 0, 0};

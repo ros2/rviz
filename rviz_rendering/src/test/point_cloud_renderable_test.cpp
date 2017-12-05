@@ -26,15 +26,30 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
+#include <gtest/gtest.h>  // NOLINT
+
 #include <memory>
 #include <vector>
-#include <gtest/gtest.h>  // NOLINT
+
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# ifdef __clang__
+#  pragma clang diagnostic ignored "-Wextra-semi"
+#  pragma clang diagnostic ignored "-Wkeyword-macro"
+# endif
+# pragma GCC diagnostic ignored "-Wpedantic"
+#endif
 
 #include <OgreCamera.h>
 
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
+
 #include "rviz_rendering/point_cloud.hpp"
 #include "rviz_rendering/point_cloud_renderable.hpp"
-#include "ogre_testing_environment.hpp"
+#include "./ogre_testing_environment.hpp"
 
 class PointCloudRenderableTestFixture : public ::testing::Test
 {
@@ -61,7 +76,6 @@ protected:
 
 std::shared_ptr<rviz_rendering::OgreTestingEnvironment>
 PointCloudRenderableTestFixture::testing_environment_ = nullptr;
-
 
 TEST_F(PointCloudRenderableTestFixture, getBoundingRadius_returns_radius_from_coordinate_origin) {
   auto boundingBox = Ogre::AxisAlignedBox(Ogre::Vector3(-1, -1, -1), Ogre::Vector3(2, 2, 0));

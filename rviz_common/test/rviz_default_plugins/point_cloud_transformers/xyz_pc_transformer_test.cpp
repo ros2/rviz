@@ -34,14 +34,15 @@
 
 #include "../message_creators.hpp"
 
-#include "src/rviz_default_plugins/point_cloud_transformers/xyz_pc_transformer.hpp"
+#include "../src/rviz_default_plugins/point_cloud_transformers/xyz_pc_transformer.hpp"
 
-using namespace rviz_default_plugins; // NOLINT
+using namespace rviz_default_plugins;  // NOLINT
 
 TEST(XYZPCTransformer, transform_returns_the_point_cloud_points) {
-  Point p1 = {1, 2, 3};
-  Point p2 = {4, 5, 6};
-  auto cloud = createPointCloud2WithPoints(std::vector<Point>{p1, p2});
+  // just plain Point is ambiguous on macOS
+  rviz_default_plugins::Point p1 = {1, 2, 3};
+  rviz_default_plugins::Point p2 = {4, 5, 6};
+  auto cloud = createPointCloud2WithPoints(std::vector<rviz_default_plugins::Point>{p1, p2});
 
   V_PointCloudPoint points_out;
   points_out.resize(2);

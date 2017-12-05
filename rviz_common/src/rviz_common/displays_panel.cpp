@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,14 +28,16 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <QTimer>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QPushButton>
-#include <QInputDialog>
-#include <QApplication>
+#include "./displays_panel.hpp"
 
-#include <boost/bind.hpp>
+#include <string>
+
+#include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
+#include <QHBoxLayout>  // NOLINT: cpplint is unable to handle the include order here
+#include <QInputDialog>  // NOLINT: cpplint is unable to handle the include order here
+#include <QPushButton>  // NOLINT: cpplint is unable to handle the include order here
+#include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
+#include <QVBoxLayout>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "./display_factory.hpp"
 #include "rviz_common/display.hpp"
@@ -44,15 +47,13 @@
 #include "rviz_common/properties/property_tree_with_help.hpp"
 #include "./visualization_manager.hpp"
 
-#include "./displays_panel.hpp"
-
 namespace rviz_common
 {
 
-DisplaysPanel::DisplaysPanel(QWidget * parent)
-: Panel(parent)
+DisplaysPanel::DisplaysPanel(const std::string & node_name, QWidget * parent)
+: Panel(parent), node_name_(node_name)
 {
-  tree_with_help_ = new PropertyTreeWithHelp;
+  tree_with_help_ = new properties::PropertyTreeWithHelp;
   property_grid_ = tree_with_help_->getTree();
 
   QPushButton * add_button = new QPushButton("Add");
@@ -98,7 +99,7 @@ DisplaysPanel::~DisplaysPanel()
 
 void DisplaysPanel::onInitialize()
 {
-  property_grid_->setModel(vis_manager_->getDisplayTreeModel() );
+  property_grid_->setModel(vis_manager_->getDisplayTreeModel());
 }
 
 void DisplaysPanel::onNewDisplay()
@@ -111,19 +112,21 @@ void DisplaysPanel::onNewDisplay()
   QStringList empty;
 
   QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-  AddDisplayDialog * dialog = new AddDisplayDialog(vis_manager_->getDisplayFactory(),
-      "Display",
-      empty, empty,
-      &lookup_name,
-      &display_name,
-      &topic,
-      &datatype);
+  AddDisplayDialog * dialog = new AddDisplayDialog(
+    vis_manager_->getDisplayFactory(),
+    empty,
+    empty,
+    &lookup_name,
+    node_name_,
+    &display_name,
+    &topic,
+    &datatype);
   QApplication::restoreOverrideCursor();
 
   vis_manager_->stopUpdate();
   if (dialog->exec() == QDialog::Accepted) {
     Display * disp = vis_manager_->createDisplay(lookup_name, display_name, true);
-    if (!topic.isEmpty() && !datatype.isEmpty() ) {
+    if (!topic.isEmpty() && !datatype.isEmpty()) {
       disp->setTopic(topic, datatype);
     }
   }
@@ -205,15 +208,12 @@ void DisplaysPanel::onRenameDisplay()
   Display * display_to_rename = displays[0];
 
   if (!display_to_rename) {
-    rviz
-    {
-      return;
-    }
-
-    QString old_name = display_to_rename->getName();
+    return;
   }
-  QString new_name = QInputDialog::getText(this, "Rename Display", "New Name?", QLineEdit::Normal,
-      old_name);
+
+  QString old_name = display_to_rename->getName();
+  QString new_name = QInputDialog::getText(
+    this, "Rename Display", "New Name?", QLineEdit::Normal, old_name);
 
   if (new_name.isEmpty() || new_name == old_name) {
     return;

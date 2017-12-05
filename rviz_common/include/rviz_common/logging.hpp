@@ -111,10 +111,10 @@ using LoggingHandler = std::function<
  */
 void
 set_logging_handlers(
-  std::shared_ptr<rviz_common::LoggingHandler> debug_handler,
-  std::shared_ptr<rviz_common::LoggingHandler> info_handler,
-  std::shared_ptr<rviz_common::LoggingHandler> warning_handler,
-  std::shared_ptr<rviz_common::LoggingHandler> error_handler);
+  rviz_common::LoggingHandler debug_handler,
+  rviz_common::LoggingHandler info_handler,
+  rviz_common::LoggingHandler warning_handler,
+  rviz_common::LoggingHandler error_handler);
 
 /// Install the current logging handlers into the rviz_rendering logging system.
 void

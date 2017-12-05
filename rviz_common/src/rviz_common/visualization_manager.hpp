@@ -268,11 +268,9 @@ public:
   /// Notify this VisualizationManager that something about its display configuration has changed.
   void notifyConfigChanged();
 
-// TODO(wjwwood): reenable when display factory is fixed
-#if 0
+
   /// Return a factory for creating Display subclasses based on a class id string.
   DisplayFactory * getDisplayFactory() const override;
-#endif
 
   /// Return the display tree model.
   properties::PropertyTreeModel * getDisplayTreeModel() const;

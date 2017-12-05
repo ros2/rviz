@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./load_resource.hpp"
+#include "rviz_common/load_resource.hpp"
 
 // #include <boost/filesystem.hpp>
 // #include <ros/package.h>

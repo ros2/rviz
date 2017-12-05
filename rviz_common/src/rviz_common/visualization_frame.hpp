@@ -62,7 +62,7 @@ namespace rviz_common
 
 class Panel;
 class PanelDockWidget;
-// class PanelFactory;
+class PanelFactory;
 class RenderPanel;
 class Tool;
 class VisualizationManager;
@@ -83,7 +83,7 @@ class VisualizationFrame : public QMainWindow, public WindowManagerInterface
   Q_OBJECT
 
 public:
-  explicit VisualizationFrame(QWidget * parent = 0);
+  explicit VisualizationFrame(const std::string & node_name, QWidget * parent = 0);
   ~VisualizationFrame();
 
   /// Set the QApplication, this should be called directly after construction.
@@ -97,15 +97,12 @@ public:
   setShowChooseNewMaster(bool show);
 #endif
 
-  // TODO(wjwwood): reenable this feature
-#if 0
   /// Set the path to the html help file.
   /**
    * Default is a file within the rviz_common package.
    */
   void
   setHelpPath(const QString & help_path);
-#endif
 
   /// Set the path to the "splash" image file.
   /**
@@ -410,8 +407,6 @@ protected:
   void
   updateRecentConfigMenu();
 
-// TODO(wjwwood): reenable when plugin loading is fixed
-#if 0
   /// Add a panel by a given name and class name.
   QDockWidget *
   addPanelByName(
@@ -419,7 +414,6 @@ protected:
     const QString & class_lookup_name,
     Qt::DockWidgetArea area = Qt::LeftDockWidgetArea,
     bool floating = true);
-#endif
 
   /// Loads custom panels from the given Config object.
   void
@@ -495,10 +489,7 @@ protected:
   QToolButton * hide_left_dock_button_;
   QToolButton * hide_right_dock_button_;
 
-// TODO(wjwwood): reenable when factories are fixed
-#if 0
   PanelFactory * panel_factory_;
-#endif
 
   struct PanelRecord
   {

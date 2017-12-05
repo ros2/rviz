@@ -31,15 +31,18 @@
 #define RVIZ_RENDERING__RVIZ_RENDERING_HPP_
 
 #include "rviz_rendering/render_system.hpp"
+#include "rviz_rendering/visibility_control.hpp"
 
 namespace rviz_rendering
 {
 
 /// Return true if the render system singleton already exists, false otherwise.
+RVIZ_RENDERING_PUBLIC
 bool
 render_system_singleton_exists();
 
 /// Return, and create if necessary, a rendering system.
+RVIZ_RENDERING_PUBLIC
 rviz_rendering::RenderSystem *
 get_render_system_singleton();
 

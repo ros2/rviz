@@ -32,9 +32,21 @@
 
 #include <string>
 
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wpedantic"
+# ifdef __clang__
+#  pragma clang diagnostic ignored "-Wextra-semi"
+# endif
+#endif
+
 #include <OgreLogManager.h>
 
-#include <src/rviz_rendering/render_system.hpp>  // NOLINT: cpplint is unable to handle the include order here
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
+
+#include "../src/rviz_rendering/render_system.hpp"
 
 namespace rviz_rendering
 {

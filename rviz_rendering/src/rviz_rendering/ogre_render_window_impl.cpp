@@ -40,6 +40,9 @@
 # else
 #  pragma GCC diagnostic ignored "-Wpedantic"
 # endif
+#else
+# pragma warning(push)
+# pragma warning(disable:4996)
 #endif
 
 #include <OgreCamera.h>
@@ -57,6 +60,8 @@
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop
+#else
+# pragma warning(pop)
 #endif
 
 // #include <OgreRenderTargetListener.h>
@@ -109,8 +114,6 @@ RenderWindowImpl::~RenderWindowImpl()
 void
 RenderWindowImpl::render()
 {
-  printf("in RenderWindowImpl::render(), camera pointer is: %p\n",
-    reinterpret_cast<void *>(ogre_camera_));
   // How we tied in the render function for OGre3D with QWindow's render function.
   // This is what gets call repeatedly.
   // Note that we don't call this function directly; rather we use the renderNow()
@@ -133,7 +136,6 @@ RenderWindowImpl::render()
 void
 RenderWindowImpl::renderLater()
 {
-  // printf("in RenderWindowImpl::renderLater()\n");
   parent_->requestUpdate();
 
   // Alternative impl?:
@@ -155,20 +157,17 @@ RenderWindowImpl::renderLater()
 void
 RenderWindowImpl::renderNow()
 {
-  // printf("in RenderWindowImpl::renderNow()\n");
   if (!parent_->isExposed()) {
     return;
   }
 
   if (!render_system_ || !ogre_render_window_) {
-    printf("in RenderWindowImpl::renderNow() -> initialize()\n");
     this->initialize();
   }
 
   this->render();
 
   if (animating_) {
-    printf("in RenderWindowImpl::renderNow() -> renderLater() because of animating_\n");
     this->renderLater();
   }
 }
@@ -176,7 +175,6 @@ RenderWindowImpl::renderNow()
 void
 createScene(Ogre::SceneManager * ogre_scene_manager)
 {
-  printf("in RenderWindowImpl::createScene()\n");
   /*
   Example scene
   Derive this class for your own purpose and overwite this function to have a
@@ -273,10 +271,12 @@ RenderWindowImpl::initialize()
 void
 RenderWindowImpl::resize(size_t width, size_t height)
 {
-  printf("in RenderWindowImpl::resize(size_t %zu, size_t %zu)\n", width, height);
   if (ogre_render_window_) {
     this->setCameraAspectRatio();
-    ogre_render_window_->resize(width, height);
+    ogre_render_window_->resize(
+      static_cast<unsigned int>(width),  // NOLINT
+      static_cast<unsigned int>(height)  // NOLINT
+    );
     ogre_render_window_->windowMovedOrResized();
   }
   this->renderLater();
@@ -479,8 +479,6 @@ void RenderWindowImpl::setCameraAspectRatio()
   // auto height = parent_->height();
   auto height = parent_->height() ? parent_->height() : 100;
   if (ogre_camera_) {
-    printf("%f / %f = %f\n", Ogre::Real(width), Ogre::Real(height),
-      Ogre::Real(width) / Ogre::Real(height));
     ogre_camera_->setAspectRatio(Ogre::Real(width) / Ogre::Real(height));
     // if (right_ogre_camera_) {
     //   right_ogre_camera_->setAspectRatio(Ogre::Real(width()) / Ogre::Real(height()));

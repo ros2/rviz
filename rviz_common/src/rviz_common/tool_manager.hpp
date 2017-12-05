@@ -32,14 +32,14 @@
 #define RVIZ_COMMON__TOOL_MANAGER_HPP_
 
 #include <map>
+#include <memory>
 
 #include <QList>  // NOLINT: cpplint is unable to handle the include order here
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
 #include <QStringList>  // NOLINT: cpplint is unable to handle the include order here
 
-// TODO(wjwwood): restore pluginlib_factory when possible
-// #include "rviz/pluginlib_factory.h"
-#include "./tool.hpp"
+#include "./pluginlib_factory.hpp"
+#include "rviz_common/tool.hpp"
 
 class QKeyEvent;
 
@@ -52,9 +52,6 @@ namespace properties
 class PropertyTreeModel;
 
 }  // namespace properties
-
-// class DisplayContext;
-// class RenderPanel;
 
 class ToolManager : public QObject
 {
@@ -139,9 +136,7 @@ public:
   /// Function to handle a key event.
   void handleChar(QKeyEvent * event, RenderPanel * panel);
 
-#if 0
   PluginlibFactory<Tool> * getFactory();
-#endif
 
 Q_SIGNALS:
   /// Emitted when anything changes which will change the saved config file contents.
@@ -172,8 +167,9 @@ private:
    * Returns false if the conversion fails.
    */
   bool toKey(QString const & str, uint & key_out);
-  // PluginlibFactory<Tool> * factory_;
-  rviz_common::properties::PropertyTreeModel * property_tree_model_;
+
+  std::unique_ptr<PluginlibFactory<Tool>> factory_;
+  std::unique_ptr<rviz_common::properties::PropertyTreeModel> property_tree_model_;
   QList<Tool *> tools_;
   DisplayContext * context_;
   Tool * current_tool_;

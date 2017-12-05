@@ -31,15 +31,16 @@
 
 #include <vector>
 
-#include "src/rviz_default_plugins/point_cloud2_display.hpp"
-#include "test/rviz_default_plugins/message_creators.hpp"
+#include "../src/rviz_default_plugins/point_cloud2_display.hpp"
+#include "./message_creators.hpp"
 
 using namespace rviz_default_plugins;  // NOLINT
 
 TEST(PointCloud2Display, filter_keeps_valid_points) {
-  Point p1 = {1, 2, 3};
-  Point p2 = {4, 5, 6};
-  auto cloud = createPointCloud2WithPoints(std::vector<Point>{p1, p2});
+  // just plain Point is ambiguous on macOS
+  rviz_default_plugins::Point p1 = {1, 2, 3};
+  rviz_default_plugins::Point p2 = {4, 5, 6};
+  auto cloud = createPointCloud2WithPoints(std::vector<rviz_default_plugins::Point>{p1, p2});
 
   PointCloud2Display display;
   auto filtered = display.filterOutInvalidPoints(cloud);
@@ -57,9 +58,10 @@ TEST(PointCloud2Display, filter_keeps_valid_points) {
 }
 
 TEST(PointCloud2Display, filter_removes_invalid_point) {
-  Point p1 = {1, 2, 3};
-  Point p2 = {1, NAN, 3};
-  auto cloud = createPointCloud2WithPoints(std::vector<Point>{p1, p2});
+  // just plain Point is ambiguous on macOS
+  rviz_default_plugins::Point p1 = {1, 2, 3};
+  rviz_default_plugins::Point p2 = {1, NAN, 3};
+  auto cloud = createPointCloud2WithPoints(std::vector<rviz_default_plugins::Point>{p1, p2});
 
   PointCloud2Display display;
   auto filtered = display.filterOutInvalidPoints(cloud);
@@ -74,9 +76,10 @@ TEST(PointCloud2Display, filter_removes_invalid_point) {
 }
 
 TEST(PointCloud2Display, filter_returns_empty_cloud_if_all_points_are_invalid) {
-  Point p1 = {NAN, 2, 3};
-  Point p2 = {1, NAN, 3};
-  auto cloud = createPointCloud2WithPoints(std::vector<Point>{p1, p2});
+  // just plain Point is ambiguous on macOS
+  rviz_default_plugins::Point p1 = {NAN, 2, 3};
+  rviz_default_plugins::Point p2 = {1, NAN, 3};
+  auto cloud = createPointCloud2WithPoints(std::vector<rviz_default_plugins::Point>{p1, p2});
 
   PointCloud2Display display;
   auto filtered = display.filterOutInvalidPoints(cloud);

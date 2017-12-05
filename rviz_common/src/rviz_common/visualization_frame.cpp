@@ -42,20 +42,19 @@
 
 #include <OgreRenderWindow.h>
 #include <OgreMeshManager.h>
+#include <OgreMaterialManager.h>
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop
 #endif
 
-// #include <QAction>
 #include <QApplication>
 #include <QCloseEvent>
 #include <QDesktopServices>
 #include <QDir>
-// #include <QDockWidget>
+#include <QFile>
 #include <QFileDialog>
 #include <QHBoxLayout>
-// #include <QLabel>
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
@@ -65,31 +64,27 @@
 #include <QTimer>
 #include <QToolBar>
 #include <QToolButton>
-// #include <QUrl>
 
 #include "rclcpp/clock.hpp"
 #include "tf2_ros/buffer.h"
 #include "tf2_ros/transform_listener.h"
 
+#include "rviz_common/load_resource.hpp"
 #include "rviz_common/logging.hpp"
-// TODO(wjwwood): see if this is needed anymore
-#include "rviz_rendering/initialization.hpp"
+#include "rviz_common/render_panel.hpp"
+#include "rviz_common/tool.hpp"
+#include "rviz_rendering/initialization.hpp"  // TODO(wjwwood): see if this is needed anymore
 #include "rviz_rendering/render_window.hpp"
-
-// TODO(wjwwood): readd this once we have a solution for the pluginlib stuff
-// #include "./panel_factory.hpp"
 
 #include "./env_config.hpp"
 #include "./failed_panel.hpp"
-#include "./load_resource.hpp"
 #include "./loading_dialog.hpp"
 #include "./new_object_dialog.hpp"
 #include "./panel.hpp"
 #include "./panel_dock_widget.hpp"
-#include "./render_panel.hpp"
+#include "./panel_factory.hpp"
 #include "./screenshot_dialog.hpp"
 #include "./splash_screen.hpp"
-#include "./tool.hpp"
 #include "./tool_manager.hpp"
 #include "./visualization_manager.hpp"
 #include "./widget_geometry_change_detector.hpp"
@@ -111,7 +106,7 @@
 namespace rviz_common
 {
 
-VisualizationFrame::VisualizationFrame(QWidget * parent)
+VisualizationFrame::VisualizationFrame(const std::string & node_name, QWidget * parent)
 : QMainWindow(parent),
   app_(NULL),
   render_panel_(NULL),
@@ -123,6 +118,7 @@ VisualizationFrame::VisualizationFrame(QWidget * parent)
   splash_(NULL),
   toolbar_actions_(NULL),
   show_choose_new_master_option_(false),
+  panel_factory_(new PanelFactory(node_name)),
   add_tool_action_(NULL),
   remove_tool_menu_(NULL),
   initialized_(false),
@@ -131,23 +127,17 @@ VisualizationFrame::VisualizationFrame(QWidget * parent)
   post_load_timer_(new QTimer(this)),
   frame_count_(0)
 {
-  // panel_factory_ = new PanelFactory();
-
   installEventFilter(geom_change_detector_);
   connect(geom_change_detector_, SIGNAL(changed()), this, SLOT(setDisplayConfigModified()));
 
   post_load_timer_->setSingleShot(true);
   connect(post_load_timer_, SIGNAL(timeout()), this, SLOT(markLoadingDone()));
 
-  // TODO(wjwwood): reenable this once we can get package resources
-  // package_path_ = ros::package::getPath("rviz");
-  // help_path_ = QString::fromStdString((fs::path(
-  //       package_path_) / "help/help.html").BOOST_FILE_STRING());
-  // splash_path_ = QString::fromStdString((fs::path(
-  //       package_path_) / "images/splash.png").BOOST_FILE_STRING());
-  package_path_ = "";
-  help_path_ = "";
-  splash_path_ = "";
+  package_path_ = ament_index_cpp::get_package_share_directory("rviz_common");
+  QDir help_path(QString::fromStdString(package_path_) + "/help/help.html");
+  help_path_ = help_path.absolutePath();
+  QDir splash_path(QString::fromStdString(package_path_) + "images/splash.png");
+  splash_path_ = splash_path.absolutePath();
 
   QToolButton * reset_button = new QToolButton();
   reset_button->setText("Reset");
@@ -177,9 +167,7 @@ VisualizationFrame::~VisualizationFrame()
     delete custom_panels_[i].dock;
   }
 
-#if 0
   delete panel_factory_;
-#endif
 }
 
 void VisualizationFrame::setApp(QApplication * app)
@@ -241,13 +229,13 @@ void VisualizationFrame::setShowChooseNewMaster(bool show)
 {
   show_choose_new_master_option_ = show;
 }
+#endif
 
 void VisualizationFrame::setHelpPath(const QString & help_path)
 {
   help_path_ = help_path;
   manager_->setHelpPath(help_path_);
 }
-#endif
 
 void VisualizationFrame::setSplashPath(const QString & splash_path)
 {
@@ -260,16 +248,8 @@ void VisualizationFrame::initialize(const QString & display_config_file)
 
   loadPersistentSettings();
 
-  QString app_icon_path = "";
-  if (package_path_ != "") {
-    app_icon_path += QString::fromStdString(package_path_) + "/";
-  }
-  app_icon_path += "icons/package.png";
-  QIcon app_icon(app_icon_path);
-#if 0
-  QIcon app_icon(QString::fromStdString((fs::path(
-      package_path_) / "icons/package.png").BOOST_FILE_STRING()));
-#endif
+  QDir app_icon_path(QString::fromStdString(package_path_) + "/icons/package.png");
+  QIcon app_icon(app_icon_path.absolutePath());
   setWindowIcon(app_icon);
 
   if (splash_path_ != "") {
@@ -616,8 +596,6 @@ void VisualizationFrame::openNewPanelDialog()
   QString display_name;
   QStringList empty;
 
-// TODO(wjwwood): reenable when panel_factory_ is available.
-#if 0
   NewObjectDialog * dialog = new NewObjectDialog(panel_factory_,
       "Panel",
       empty,
@@ -630,15 +608,12 @@ void VisualizationFrame::openNewPanelDialog()
     addPanelByName(display_name, class_id);
   }
   manager_->startUpdate();
-#endif
 }
 
 void VisualizationFrame::openNewToolDialog()
 {
   QString class_id;
   QStringList empty;
-// TODO(wjwwood): reenable when the tool factory is available.
-#if 0
   ToolManager * tool_man = manager_->getToolManager();
 
   NewObjectDialog * dialog = new NewObjectDialog(tool_man->getFactory(),
@@ -652,7 +627,6 @@ void VisualizationFrame::openNewToolDialog()
   }
   manager_->startUpdate();
   activateWindow();  // Force keyboard focus back on main window.
-#endif
 }
 
 void VisualizationFrame::updateRecentConfigMenu()
@@ -705,7 +679,7 @@ void VisualizationFrame::loadDisplayConfig(const QString & qpath)
   std::string actual_load_path = path;
   if (!path_as_qdir.exists() || path_as_qdir.entryList(QDir::NoDotAndDotDot).size() == 0) {
     actual_load_path = package_path_ + "/default.rviz";
-    if (!QDir(QString::fromStdString(actual_load_path)).exists()) {
+    if (!QFile(QString::fromStdString(actual_load_path)).exists()) {
       RVIZ_COMMON_LOG_ERROR_STREAM(
         "Default display config '" <<
           actual_load_path.c_str() << "' not found.  RViz will be very empty at first.");
@@ -901,11 +875,6 @@ void VisualizationFrame::loadPanels(const Config & config)
     if (panel_config.mapGetString("Class", &class_id) &&
       panel_config.mapGetString("Name", &name))
     {
-      // TODO(wjwwood): actually load the panels when plugin loading is fixed
-      RVIZ_COMMON_LOG_WARNING_STREAM(
-        "Would have loaded panel: " << name.toStdString() <<
-          " (" << class_id.toStdString() << ")");
-#if 0
       QDockWidget * dock = addPanelByName(name, class_id);
       // This is kind of ridiculous - should just be something like
       // createPanel() and addPanel() so I can do load() without this
@@ -916,7 +885,6 @@ void VisualizationFrame::loadPanels(const Config & config)
           panel->load(panel_config);
         }
       }
-#endif
     }
   }
 }
@@ -1248,7 +1216,6 @@ void VisualizationFrame::exitFullScreen()
   setFullScreen(false);
 }
 
-#if 0
 QDockWidget * VisualizationFrame::addPanelByName(
   const QString & name,
   const QString & class_id,
@@ -1277,7 +1244,6 @@ QDockWidget * VisualizationFrame::addPanelByName(
 
   return record.dock;
 }
-#endif
 
 PanelDockWidget * VisualizationFrame::addPane(
   const QString & name, QWidget * panel,

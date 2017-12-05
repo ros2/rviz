@@ -40,7 +40,7 @@
 #include "rviz_common/properties/enum_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
 
-#include "src/rviz_default_plugins/point_cloud_transformer.hpp"
+#include "../point_cloud_transformer.hpp"
 
 namespace rviz_default_plugins
 {

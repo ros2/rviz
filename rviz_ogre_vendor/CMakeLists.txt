@@ -2,6 +2,15 @@ cmake_minimum_required(VERSION 3.5)
 
 project(rviz_ogre_vendor)
 
+# TODO(wjwood): remove when windows build is fixed
+if(DEFINED ENV{RVIZ_BUILD_ON_WINDOWS_OVERRIDE})
+  set(RVIZ_BUILD_ON_WINDOWS_OVERRIDE "$ENV{RVIZ_BUILD_ON_WINDOWS_OVERRIDE}")
+endif()
+if(WIN32 AND NOT DEFINED RVIZ_BUILD_ON_WINDOWS_OVERRIDE)
+  message(STATUS "${PROJECT_NAME} is not supported on Windows, skipping...")
+  return()
+endif()
+
 set(PACKAGE_VERSION "1.0.0")
 
 macro(build_ogre)
@@ -9,19 +18,18 @@ macro(build_ogre)
   if(DEFINED CMAKE_BUILD_TYPE)
     list(APPEND extra_cmake_args -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE})
   endif()
-  if(NOT WIN32)
+  if(NOT WIN32 AND NOT APPLE)
     list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=-std=c++14")
+  elseif(APPLE)
+    list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=-std=c++14 -stdlib=libc++")
+    list(APPEND extra_cmake_args "-DCMAKE_OSX_ARCHITECTURES='x86_64'")
   endif()
   list(APPEND extra_cmake_args "-DOGRE_BUILD_RENDERSYSTEM_GL:BOOL=TRUE")
   list(APPEND extra_cmake_args "-DOGRE_BUILD_RENDERSYSTEM_D3D11:BOOL=OFF")
   list(APPEND extra_cmake_args "-DOGRE_BUILD_RENDERSYSTEM_D3D9:BOOL=OFF")
-  if(APPLE)
-    list(APPEND extra_cmake_args "-DCMAKE_OSX_ARCHITECTURES='x86_64'"
-      "-DCMAKE_CXX_FLAGS=-std=c++14 -stdlib=libc++")
-  else()
-    # Uncomment this line to enable the GL3PLUS render engine
-    # list(APPEND extra_cmake_args "-DOGRE_BUILD_RENDERSYSTEM_GL3PLUS:BOOL=TRUE")
-  endif()
+
+  # Uncomment this line to enable the GL3PLUS render engine
+  # list(APPEND extra_cmake_args "-DOGRE_BUILD_RENDERSYSTEM_GL3PLUS:BOOL=TRUE")
 
   # These next lines can be used to disable some of the components or plugins for OGRE
   # list(APPEND extra_cmake_args "-DOGRE_BUILD_COMPONENT_BITES:BOOL=OFF")

@@ -35,6 +35,7 @@
 #include <string>
 
 #include "rviz_rendering/logging_handler.hpp"
+#include "rviz_rendering/visibility_control.hpp"
 
 #define RVIZ_RENDERING_LOG_DEBUG(msg) do { \
     rviz_rendering::log_debug(msg, __FILE__, __LINE__); \
@@ -79,6 +80,7 @@
 namespace rviz_rendering
 {
 
+RVIZ_RENDERING_PUBLIC
 void
 set_logging_handlers(
   rviz_rendering::LoggingHandler debug_handler,
@@ -86,15 +88,19 @@ set_logging_handlers(
   rviz_rendering::LoggingHandler warning_handler,
   rviz_rendering::LoggingHandler error_handler);
 
+RVIZ_RENDERING_PUBLIC
 void
 log_debug(const std::string & message, const std::string & file_name, size_t line_number);
 
+RVIZ_RENDERING_PUBLIC
 void
 log_info(const std::string & message, const std::string & file_name, size_t line_number);
 
+RVIZ_RENDERING_PUBLIC
 void
 log_warning(const std::string & message, const std::string & file_name, size_t line_number);
 
+RVIZ_RENDERING_PUBLIC
 void
 log_error(const std::string & message, const std::string & file_name, size_t line_number);
 
