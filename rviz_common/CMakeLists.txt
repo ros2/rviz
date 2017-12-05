@@ -335,8 +335,6 @@ install(FILES default.rviz
   DESTINATION share/${PROJECT_NAME}
 )
 
-find_package(ament_cmake_gtest REQUIRED)
-
 # TODO(wjwwood): reenable tests for Windows after resolving building problems
 if(BUILD_TESTING AND NOT WIN32)
   # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back
@@ -348,6 +346,8 @@ if(BUILD_TESTING AND NOT WIN32)
   ament_cpplint()
   ament_lint_cmake()
   ament_uncrustify()
+
+  find_package(ament_cmake_gtest REQUIRED)
 
   ament_add_gtest(rviz_common_config_test
     test/config_test.cpp)

@@ -6,8 +6,6 @@
   </description>
   <maintainer email="william@osrfoundation.org">William Woodall</maintainer>
   <license>BSD</license>
-  <!-- TODO(wjwwood): Is this still needed? -->
-  <!-- <license>Creative Commons</license> -->
 
   <author>Dave Hershberger</author>
   <author>David Gossow</author>
@@ -19,21 +17,22 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <build_depend>assimp-dev</build_depend>
   <build_depend>rviz_ogre_vendor</build_depend>
   <build_depend>qtbase5-dev</build_depend>
 
-  <test_depend>ament_cmake_cppcheck</test_depend>
-  <test_depend>ament_cmake_cpplint</test_depend>
-  <test_depend>ament_cmake_lint_cmake</test_depend>
-  <test_depend>ament_cmake_uncrustify</test_depend>
-
-  <!-- <exec_depend>assimp</exec_depend> -->
-  <exec_depend>rviz_ogre_vendor</exec_depend>
   <exec_depend>libqt5-core</exec_depend>
   <exec_depend>libqt5-gui</exec_depend>
   <exec_depend>libqt5-opengl</exec_depend>
   <exec_depend>libqt5-widgets</exec_depend>
+  <exec_depend>rviz_ogre_vendor</exec_depend>
+
+  <depend>ament_index_cpp</depend>
+
+  <test_depend>ament_cmake_cppcheck</test_depend>
+  <test_depend>ament_cmake_cpplint</test_depend>
+  <test_depend>ament_cmake_gtest</test_depend>
+  <test_depend>ament_cmake_lint_cmake</test_depend>
+  <test_depend>ament_cmake_uncrustify</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
