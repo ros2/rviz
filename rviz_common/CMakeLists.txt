@@ -20,7 +20,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic -Werror)
   # TODO(wjwwood): try to remove this -- currently needed to pass on CI
   include(CheckCXXCompilerFlag)
-  CHECK_CXX_COMPILER_FLAG(-Wno-gnu-zero-variadic-macro-arguments HAS_W_FLAG)
+  check_cxx_compiler_flag(-Wno-gnu-zero-variadic-macro-arguments HAS_W_FLAG)
   if(HAS_W_FLAG)
     add_compile_options(-Wno-gnu-zero-variadic-macro-arguments)
   endif()
