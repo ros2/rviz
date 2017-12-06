@@ -31,10 +31,10 @@
 
 #include <vector>
 
-#include "../src/rviz_default_plugins/point_cloud2_display.hpp"
+#include "src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp"
 #include "./message_creators.hpp"
 
-using namespace rviz_default_plugins;  // NOLINT
+using namespace rviz_default_plugins::displays;  // NOLINT
 
 TEST(PointCloud2Display, filter_keeps_valid_points) {
   // just plain Point is ambiguous on macOS
