@@ -44,6 +44,8 @@
 
 namespace rviz_default_plugins
 {
+namespace displays
+{
 
 PointCloud2Display::PointCloud2Display()
 : point_cloud_common_(new PointCloudCommon(this))
@@ -192,7 +194,8 @@ void PointCloud2Display::reset()
   point_cloud_common_->reset();
 }
 
+}  // namespace displays
 }  // namespace rviz_default_plugins
 
-// #include <pluginlib/class_list_macros.h>
-// PLUGINLIB_EXPORT_CLASS( rviz::PointCloud2Display, rviz::Display )
+#include <pluginlib/class_list_macros.hpp>  // NOLINT
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::PointCloud2Display, rviz_common::Display)
