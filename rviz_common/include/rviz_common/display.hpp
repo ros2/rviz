@@ -353,7 +353,7 @@ protected:
   /** @brief A Node which is registered with the main executor (used in the "update" thread).
    *
    * This is configured after the constructor and before onInitialize() is called. */
-  rclcpp::node::Node::SharedPtr node_;
+  rclcpp::Node::SharedPtr node_;
 
 #if 0
   /** @brief A NodeHandle whose CallbackQueue is run from a different thread than the GUI.

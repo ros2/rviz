@@ -19,7 +19,11 @@ endif()
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic -Werror)
   # TODO(wjwwood): try to remove this -- currently needed to pass on CI
-  add_compile_options(-Wno-gnu-zero-variadic-macro-arguments)
+  include(CheckCXXCompilerFlag)
+  check_cxx_compiler_flag(-Wno-gnu-zero-variadic-macro-arguments HAS_W_FLAG)
+  if(HAS_W_FLAG)
+    add_compile_options(-Wno-gnu-zero-variadic-macro-arguments)
+  endif()
 endif()
 
 find_package(ament_cmake REQUIRED)
@@ -304,6 +308,7 @@ ament_export_interfaces(rviz_common)
 ament_export_dependencies(rviz_rendering)
 ament_export_dependencies(
   geometry_msgs
+  pluginlib
   rclcpp
   resource_retriever
   rviz_yaml_cpp_vendor
@@ -313,7 +318,6 @@ ament_export_dependencies(
   tf2_geometry_msgs
   tf2_ros
 )
-ament_export_libraries(tinyxml2)
 
 install(
   TARGETS rviz_common

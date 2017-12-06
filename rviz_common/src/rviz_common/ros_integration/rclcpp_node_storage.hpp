@@ -35,14 +35,8 @@
 
 namespace rclcpp
 {
-namespace node
-{
 
 class Node;
-
-}  // namespace node
-
-using rclcpp::node::Node;
 
 }  // namespace rclcpp
 

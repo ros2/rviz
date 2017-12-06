@@ -59,12 +59,9 @@
 
 namespace rclcpp
 {
-namespace publisher
-{
 
 class PublisherBase;
 
-}
 }
 
 namespace Ogre
@@ -373,7 +370,7 @@ private:
 
   rviz_common::properties::PropertyTreeModel * property_model_;
 
-  typedef std::map<std::string, std::shared_ptr<rclcpp::publisher::PublisherBase>> PublisherMap;
+  typedef std::map<std::string, std::shared_ptr<rclcpp::PublisherBase>> PublisherMap;
   PublisherMap debug_publishers_;
 };
 
