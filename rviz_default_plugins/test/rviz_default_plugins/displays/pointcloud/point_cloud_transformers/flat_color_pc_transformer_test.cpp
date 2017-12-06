@@ -36,7 +36,7 @@
 #include "rviz_common/properties/property.hpp"
 #include "../message_creators.hpp"
 
-#include "src/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/flat_color_pc_transformer.hpp"
+#include "src/rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.hpp"
 
 using namespace rviz_default_plugins;  // NOLINT
 

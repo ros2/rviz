@@ -53,12 +53,12 @@
 #include "rviz_common/uniform_string_stream.hpp"
 #include "rviz_common/validate_floats.hpp"
 
-#include "./point_cloud_transformers/rgb8_pc_transformer.hpp"
-#include "./point_cloud_transformers/intensity_pc_transformer.hpp"
-#include "./point_cloud_transformers/xyz_pc_transformer.hpp"
-#include "./point_cloud_transformers/rgbf32_pc_transformer.hpp"
-#include "./point_cloud_transformers/axis_color_pc_transformer.hpp"
-#include "./point_cloud_transformers/flat_color_pc_transformer.hpp"
+#include "src/rviz_default_plugins/displays/pointcloud/transformers/rgb8_pc_transformer.hpp"
+#include "src/rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.hpp"
+#include "src/rviz_default_plugins/displays/pointcloud/transformers/xyz_pc_transformer.hpp"
+#include "src/rviz_default_plugins/displays/pointcloud/transformers/rgbf32_pc_transformer.hpp"
+#include "src/rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.hpp"
+#include "src/rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.hpp"
 
 namespace rviz_default_plugins
 {

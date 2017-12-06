@@ -50,12 +50,12 @@ set(rviz_default_plugins_headers_to_moc
 
 set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/grid/grid_display.cpp
-  src/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/axis_color_pc_transformer.cpp
-  src/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/flat_color_pc_transformer.cpp
-  src/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/intensity_pc_transformer.cpp
-  src/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/rgb8_pc_transformer.cpp
-  src/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/rgbf32_pc_transformer.cpp
-  src/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/xyz_pc_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/transformers/rgb8_pc_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/transformers/rgbf32_pc_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/transformers/xyz_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_common.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_to_point_cloud2.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_selection_handler.cpp
