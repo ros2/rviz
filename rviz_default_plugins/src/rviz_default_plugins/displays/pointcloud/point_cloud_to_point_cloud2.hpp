@@ -28,8 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TO_POINT_CLOUD2_HPP_
-#define RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TO_POINT_CLOUD2_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINTCLOUD__POINT_CLOUD_TO_POINT_CLOUD2_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINTCLOUD__POINT_CLOUD_TO_POINT_CLOUD2_HPP_
 
 # include "sensor_msgs/msg/point_cloud.hpp"
 # include "sensor_msgs/msg/point_cloud2.hpp"
@@ -42,4 +42,4 @@ convertPointCloudToPointCloud2(sensor_msgs::msg::PointCloud::ConstSharedPtr inpu
 
 }  // namespace rviz_default_plugins
 
-#endif  // RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TO_POINT_CLOUD2_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINTCLOUD__POINT_CLOUD_TO_POINT_CLOUD2_HPP_
