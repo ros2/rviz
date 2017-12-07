@@ -138,7 +138,8 @@ void ViewsPanel::onZeroClicked()
 void ViewsPanel::setCurrentViewFromIndex(const QModelIndex & index)
 {
   rviz_common::properties::Property * prop = view_man_->getPropertyModel()->getProp(index);
-  if (ViewController * view = qobject_cast<ViewController *>(prop)) {
+  // TODO(greimela) Figure out why qobject_cast does not work here
+  if (ViewController * view = dynamic_cast<ViewController *>(prop)) {
     view_man_->setCurrentFrom(view);
   }
 }
