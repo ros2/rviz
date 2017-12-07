@@ -95,7 +95,8 @@ Shape::createEntity(
       throw std::runtime_error("unexpected mesh entity type");
   }
 
-  return scene_manager->createEntity(name, mesh_name);
+  return scene_manager->createEntity(
+    name, mesh_name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 }
 
 Shape::Shape(Type type, Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node)
