@@ -493,8 +493,8 @@ void PointCloud::insertPointsToPointList(
     points_.resize(point_count_ + num_points);
   }
 
-  for (Point * begin = &points_.front() + point_count_; num_points--;) {
-      *(begin++) = *(start_iterator++);
+  for (Point * begin = &points_.front() + point_count_; num_points--; ) {
+    *(begin++) = *(start_iterator++);
   }
 }
 
