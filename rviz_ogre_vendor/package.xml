@@ -24,6 +24,7 @@
 
   <depend>libx11-dev</depend>
   <depend>libxaw</depend>
+  <depend>libxrandr</depend>
   <depend>opengl</depend>
 
   <export>
