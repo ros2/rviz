@@ -58,19 +58,18 @@
 #include <OgreViewport.h>
 #include <OgreWindowEventUtilities.h>
 
+// #include <OgreRenderTargetListener.h>
+
 #ifndef _WIN32
 # pragma GCC diagnostic pop
 #else
 # pragma warning(pop)
 #endif
 
-// #include <OgreRenderTargetListener.h>
-
-#include "rviz_rendering/logging.hpp"
-
 #include "./orthographic.hpp"
 #include "./render_system.hpp"
 #include "rviz_rendering/grid.hpp"
+#include "rviz_rendering/logging.hpp"
 
 namespace rviz_rendering
 {
