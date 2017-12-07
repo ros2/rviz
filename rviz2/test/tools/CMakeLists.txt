@@ -1,0 +1,6 @@
+find_package(geometry_msgs REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(sensor_msgs REQUIRED)
+
+add_executable(send_lots_of_points_node send_lots_of_points_node.cpp)
+ament_target_dependencies(send_lots_of_points_node rclcpp sensor_msgs geometry_msgs)

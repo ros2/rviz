@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2011, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,77 +28,70 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "ros/ros.h"
-#include "sensor_msgs/PointCloud.h"
-#include "math.h"
+#include <cmath>
 
-int main( int argc, char **argv )
+#include "rclcpp/rclcpp.hpp"
+#include "sensor_msgs/msg/point_cloud.hpp"
+#include "geometry_msgs/msg/point32.hpp"
+
+int main(int argc, char ** argv)
 {
-  ros::init( argc, argv, "send_lots_of_points" );
+  rclcpp::init(argc, argv);
 
   int rate = 1;
   bool moving = true;
   int size = 100;
 
-  if( argc > 1 )
-  {
-    rate = atoi( argv[1] );
+  if (argc > 1) {
+    rate = atoi(argv[1]);
   }
-  if( argc > 2 )
-  {
-    moving = bool( atoi( argv[2] ));
+  if (argc > 2) {
+    moving = static_cast<bool>(atoi(argv[2]));
   }
-  if( argc > 3 )
-  {
-    size = atoi( argv[3] );
+  if (argc > 3) {
+    size = atoi(argv[3]);
   }
 
-  ros::NodeHandle nh;
+  auto node = rclcpp::Node::make_shared("send_lots_of_points");
 
-  ros::Publisher pub = nh.advertise<sensor_msgs::PointCloud>("lots_of_points", 100);
-  ros::Rate loop_rate( rate );
+  auto pub = node->create_publisher<sensor_msgs::msg::PointCloud>("pointcloud", 100);
+  rclcpp::Rate loop_rate(rate);
 
-  sensor_msgs::PointCloud msg;
+  sensor_msgs::msg::PointCloud msg;
   int width = size;
-  int length = 2*size;
-  msg.points.resize( width * length );
-  msg.header.frame_id = "base_link";
+  int length = 2 * size;
+  msg.points.resize(width * length);
+  msg.header.frame_id = "map";
 
   int count = 0;
-  while( ros::ok() )
-  {
+  while (rclcpp::ok() ) {
     width++;
-    msg.points.resize( width * length + (count % 2) );
+    msg.points.resize(width * length + (count % 2) );
 
-    for( int x = 0; x < width; x++ )
-    {
-      for( int y = 0; y < length; y++ )
-      {
-        geometry_msgs::Point32 & point = msg.points[ x + y * width ];
-        point.x = float(x / 100.0);
-        point.y = float(y / 100.0);
+    for (int x = 0; x < width; x++) {
+      for (int y = 0; y < length; y++) {
+        geometry_msgs::msg::Point32 & point = msg.points[x + y * width];
+        point.x = static_cast<float>(x / 100.0);
+        point.y = static_cast<float>(y / 100.0);
 //        point.z = sinf( x / 100.0 + y / 100.0 + count / 100.0 );
         point.z = ((x + y + count) % 100) / 100.0;
       }
     }
-    if( count % 2 )
-    {
-      msg.points[ width * length + 1 ].x = -.1;
-      msg.points[ width * length + 1 ].y = -.1;
-      msg.points[ width * length + 1 ].z = 1.1;
+    if (count % 2) {
+      msg.points[width * length + 1].x = -.1;
+      msg.points[width * length + 1].y = -.1;
+      msg.points[width * length + 1].z = 1.1;
     }
-    msg.header.seq = count;
-    msg.header.stamp = ros::Time::now();
+    msg.header.stamp = node->now();
 
-    printf( "publishing at %d hz, %s, %d x %d points.\n",
-            rate, (moving?"moving":"static"), width, length );
+    printf("publishing at %d hz, %s, %d x %d points.\n",
+      rate, (moving ? "moving" : "static"), width, length);
 
-    pub.publish( msg );
+    pub->publish(msg);
 
-    ros::spinOnce();
+    rclcpp::spin_some(node);
     loop_rate.sleep();
-    if( moving )
-    {
+    if (moving) {
       ++count;
     }
   }
