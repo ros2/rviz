@@ -82,6 +82,8 @@ void CloudInfo::clear()
   }
 }
 
+const std::string PointCloudCommon::message_status_name_ = "Message";  // NOLINT allow std::string
+
 PointCloudCommon::PointCloudCommon(rviz_common::Display * display)
 : auto_size_(false),
   new_xyz_transformer_(false),
@@ -616,10 +618,13 @@ bool PointCloudCommon::transformCloud(const CloudInfoPtr & cloud_info, bool upda
       std::stringstream ss;
       ss << "Failed to transform from frame [" << cloud_info->message_->header.frame_id << "] to "
         "frame [" << context_->getFrameManager()->getFixedFrame() << "]";
-      display_->setStatusStd(rviz_common::properties::StatusProperty::Error, "Message", ss.str());
+      display_->setStatusStd(
+        rviz_common::properties::StatusProperty::Error, message_status_name_, ss.str());
       return false;
     }
   }
+  // Remove outdated error message
+  display_->deleteStatusStd(message_status_name_);
 
   V_PointCloudPoint & cloud_points = cloud_info->transformed_points_;
   cloud_points.clear();
@@ -652,14 +657,16 @@ bool PointCloudCommon::transformPoints(
   if (!xyz_trans) {
     std::stringstream ss;
     ss << "No position transformer available for cloud";
-    display_->setStatusStd(rviz_common::properties::StatusProperty::Error, "Message", ss.str());
+    display_->setStatusStd(
+      rviz_common::properties::StatusProperty::Error, message_status_name_, ss.str());
     return false;
   }
 
   if (!color_trans) {
     std::stringstream ss;
     ss << "No color transformer available for cloud";
-    display_->setStatusStd(rviz_common::properties::StatusProperty::Error, "Message", ss.str());
+    display_->setStatusStd(
+      rviz_common::properties::StatusProperty::Error, message_status_name_, ss.str());
     return false;
   }
 
