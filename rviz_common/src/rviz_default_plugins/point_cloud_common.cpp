@@ -353,7 +353,7 @@ void PointCloudCommon::update(float wall_dt, float ros_dt)
     std::unique_lock<std::mutex> lock(new_clouds_mutex_);
     if (point_decay_time > 0.0 || !new_cloud_infos_.empty()) {
       while (!cloud_infos_.empty() &&
-        (now.nanoseconds() - cloud_infos_.front()->receive_time_.nanoseconds()) * 1000000000 >
+        (now.nanoseconds() - cloud_infos_.front()->receive_time_.nanoseconds()) / 1000000000.0 >
         point_decay_time)
       {
         cloud_infos_.front()->clear();
@@ -396,7 +396,7 @@ void PointCloudCommon::update(float wall_dt, float ros_dt)
         V_CloudInfo::iterator next = it; next++;
         // ignore point clouds that are too old, but keep at least one
         if (next != end &&
-          (now.nanoseconds() - cloud_infos_.front()->receive_time_.nanoseconds()) * 1000000000 >
+          (now.nanoseconds() - cloud_info->receive_time_.nanoseconds()) / 1000000000.0 >
           point_decay_time)
         {
           continue;
