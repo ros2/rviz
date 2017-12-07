@@ -77,7 +77,8 @@ public:
       if (indexes[i].column() == 0) {
         Property * prop = model_->getProp(indexes[i]);
         if (prop != model_->getRoot() ) {
-          Type * obj = qobject_cast<Type *>(prop);
+          // TODO(greimela) Figure out why qobject_cast does not work here
+          Type * obj = dynamic_cast<Type *>(prop);
           if (obj) {
             objects_out.push_back(obj);
           }

@@ -82,6 +82,8 @@ void CloudInfo::clear()
   }
 }
 
+const std::string PointCloudCommon::message_status_name_ = "Message";  // NOLINT allow std::string
+
 PointCloudCommon::PointCloudCommon(rviz_common::Display * display)
 : auto_size_(false),
   new_xyz_transformer_(false),
@@ -353,7 +355,7 @@ void PointCloudCommon::update(float wall_dt, float ros_dt)
     std::unique_lock<std::mutex> lock(new_clouds_mutex_);
     if (point_decay_time > 0.0 || !new_cloud_infos_.empty()) {
       while (!cloud_infos_.empty() &&
-        (now.nanoseconds() - cloud_infos_.front()->receive_time_.nanoseconds()) * 1000000000 >
+        (now.nanoseconds() - cloud_infos_.front()->receive_time_.nanoseconds()) / 1000000000.0 >
         point_decay_time)
       {
         cloud_infos_.front()->clear();
@@ -396,7 +398,7 @@ void PointCloudCommon::update(float wall_dt, float ros_dt)
         V_CloudInfo::iterator next = it; next++;
         // ignore point clouds that are too old, but keep at least one
         if (next != end &&
-          (now.nanoseconds() - cloud_infos_.front()->receive_time_.nanoseconds()) * 1000000000 >
+          (now.nanoseconds() - cloud_info->receive_time_.nanoseconds()) / 1000000000.0 >
           point_decay_time)
         {
           continue;
@@ -616,10 +618,13 @@ bool PointCloudCommon::transformCloud(const CloudInfoPtr & cloud_info, bool upda
       std::stringstream ss;
       ss << "Failed to transform from frame [" << cloud_info->message_->header.frame_id << "] to "
         "frame [" << context_->getFrameManager()->getFixedFrame() << "]";
-      display_->setStatusStd(rviz_common::properties::StatusProperty::Error, "Message", ss.str());
+      display_->setStatusStd(
+        rviz_common::properties::StatusProperty::Error, message_status_name_, ss.str());
       return false;
     }
   }
+  // Remove outdated error message
+  display_->deleteStatusStd(message_status_name_);
 
   V_PointCloudPoint & cloud_points = cloud_info->transformed_points_;
   cloud_points.clear();
@@ -652,14 +657,16 @@ bool PointCloudCommon::transformPoints(
   if (!xyz_trans) {
     std::stringstream ss;
     ss << "No position transformer available for cloud";
-    display_->setStatusStd(rviz_common::properties::StatusProperty::Error, "Message", ss.str());
+    display_->setStatusStd(
+      rviz_common::properties::StatusProperty::Error, message_status_name_, ss.str());
     return false;
   }
 
   if (!color_trans) {
     std::stringstream ss;
     ss << "No color transformer available for cloud";
-    display_->setStatusStd(rviz_common::properties::StatusProperty::Error, "Message", ss.str());
+    display_->setStatusStd(
+      rviz_common::properties::StatusProperty::Error, message_status_name_, ss.str());
     return false;
   }
 
