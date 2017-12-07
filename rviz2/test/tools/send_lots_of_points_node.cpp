@@ -61,7 +61,7 @@ int main(int argc, char ** argv)
   int width = size;
   int length = 2 * size;
   msg.points.resize(width * length);
-  msg.header.frame_id = "map";
+  msg.header.frame_id = "world";
 
   int count = 0;
   while (rclcpp::ok() ) {
