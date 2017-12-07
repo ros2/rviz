@@ -21,6 +21,7 @@
 
   <depend>libx11-dev</depend>
   <depend>libxaw</depend>
+  <depend>opengl</depend>
 
   <export>
     <build_type>cmake</build_type>
