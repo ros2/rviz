@@ -9,7 +9,10 @@
     Wrapper around yaml-cpp, it provides a fixed CMake module and an ExternalProject build of it.
   </description>
   <maintainer email="william@osrfoundation.org">William Woodall</maintainer>
-  <license>Apache License 2.0</license>
+  <license>Apache License 2.0</license>  <!-- the contents of this package are Apache 2.0 -->
+  <license>MIT</license>  <!-- yaml-cpp is MIT -->
+
+  <url type="website">https://github.com/jbeder/yaml-cpp</url>
 
   <buildtool_depend>cmake</buildtool_depend>
 

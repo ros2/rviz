@@ -9,7 +9,10 @@
     Wrapper around ogre3d, it provides a fixed CMake module and an ExternalProject build of ogre.
   </description>
   <maintainer email="william@osrfoundation.org">William Woodall</maintainer>
-  <license>Apache License 2.0</license>
+  <license>Apache License 2.0</license>  <!-- the contents of this package are Apache 2.0 -->
+  <license>MIT</license>  <!-- ogre is MIT (https://www.ogre3d.org/licensing) -->
+
+  <url type="website">https://www.ogre3d.org/<url/>
 
   <buildtool_depend>cmake</buildtool_depend>
 
