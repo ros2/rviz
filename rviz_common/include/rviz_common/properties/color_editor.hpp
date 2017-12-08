@@ -30,6 +30,7 @@
 #define RVIZ_COMMON__PROPERTIES__COLOR_EDITOR_HPP_
 
 #include "./line_edit_with_button.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
@@ -38,7 +39,7 @@ namespace properties
 
 class ColorProperty;
 
-class ColorEditor : public LineEditWithButton
+class RVIZ_COMMON_PUBLIC ColorEditor : public LineEditWithButton
 {
   Q_OBJECT
 

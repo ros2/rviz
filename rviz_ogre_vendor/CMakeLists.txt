@@ -15,18 +15,54 @@ endif()
 
 set(PACKAGE_VERSION "1.0.0")
 
+if(WIN32)
+  set(BUILDING_FREETYPE_LOCALLY ON)
+else()
+  set(BUILDING_FREETYPE_LOCALLY OFF)
+endif()
+
+macro(build_freetype)
+  set(extra_cmake_args)
+
+  if(WIN32)
+    list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=/w")
+    list(APPEND extra_cmake_args "-DCMAKE_C_FLAGS=/w")
+  endif()
+
+  include(ExternalProject)
+  ExternalProject_Add(freetype-2.8.1
+    URL https://git.savannah.gnu.org/cgit/freetype/freetype2.git/snapshot/freetype2-VER-2-6-5.tar.gz
+    URL_MD5 0dd62a0125895431e074a3df29f94d69
+    TIMEOUT 600
+    CMAKE_ARGS
+      -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/freetype_install
+      ${extra_cmake_args}
+      -Wno-dev
+  )
+
+  install(
+    DIRECTORY
+      ${CMAKE_CURRENT_BINARY_DIR}/freetype_install/
+    DESTINATION
+      ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor
+  )
+endmacro()
+
 macro(build_ogre)
   set(extra_cmake_args)
   if(DEFINED CMAKE_BUILD_TYPE)
     list(APPEND extra_cmake_args -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE})
   endif()
-  if(NOT WIN32 AND NOT APPLE)
-    list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=-std=c++14 -w")
+  if(WIN32)
+    list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=/w /EHsc")
+    list(APPEND extra_cmake_args "-DCMAKE_C_FLAGS=/w /EHsc")
   elseif(APPLE)
     list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=-std=c++14 -stdlib=libc++ -w")
     list(APPEND extra_cmake_args "-DCMAKE_OSX_ARCHITECTURES='x86_64'")
+  else()
+    list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=-std=c++14 -w")
+    list(APPEND extra_cmake_args "-DCMAKE_C_FLAGS=-w")
   endif()
-  list(APPEND extra_cmake_args "-DCMAKE_C_FLAGS=-w")
   list(APPEND extra_cmake_args "-DOGRE_BUILD_RENDERSYSTEM_GL:BOOL=TRUE")
   list(APPEND extra_cmake_args "-DOGRE_BUILD_RENDERSYSTEM_D3D11:BOOL=OFF")
   list(APPEND extra_cmake_args "-DOGRE_BUILD_RENDERSYSTEM_D3D9:BOOL=OFF")
@@ -37,7 +73,12 @@ macro(build_ogre)
   # These next lines can be used to disable some of the components or plugins for OGRE
   # list(APPEND extra_cmake_args "-DOGRE_BUILD_COMPONENT_BITES:BOOL=OFF")
   # list(APPEND extra_cmake_args "-DOGRE_BUILD_COMPONENT_HLMS:BOOL=ON")
-  list(APPEND extra_cmake_args "-DOGRE_CONFIG_ENABLE_ZIP:BOOL=OFF")
+  list(APPEND extra_cmake_args "-DOGRE_CONFIG_ENABLE_ZIP:BOOL=ON")
+
+  if(BUILDING_FREETYPE_LOCALLY)
+    list(APPEND extra_cmake_args
+      "-DFREETYPE_HOME=${CMAKE_CURRENT_BINARY_DIR}/freetype_install")
+  endif()
 
   if(WIN32)
     set(patch_exe patch.exe)
@@ -51,7 +92,7 @@ macro(build_ogre)
     URL_MD5 a627f447d0013a9cf0889117ac76bc5f
     TIMEOUT 600
     CMAKE_ARGS
-      -DOGRE_STATIC:BOOL=ON
+      -DOGRE_STATIC:BOOL=OFF
       -DOGRE_DEPENDENCIES_DIR=${CMAKE_CURRENT_BINARY_DIR}/ogredeps
       -DOGRE_INSTALL_PDB:BOOL=OFF
       -DOGRE_BUILD_DEPENDENCIES:BOOL=OFF
@@ -71,6 +112,10 @@ macro(build_ogre)
       ${patch_exe} -p1 -N < ${CMAKE_CURRENT_SOURCE_DIR}/ogre-ca665a6-patch.diff
   )
 
+  if(BUILDING_FREETYPE_LOCALLY)
+    add_dependencies(ogre-master-ca665a6 freetype-2.8.1)
+  endif()
+
   # The external project will install to the build folder, but we'll install that on make install.
   install(
     DIRECTORY
@@ -79,6 +124,10 @@ macro(build_ogre)
       ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor
   )
 endmacro()
+
+if(BUILDING_FREETYPE_LOCALLY)
+  build_freetype()
+endif()
 
 build_ogre()
 

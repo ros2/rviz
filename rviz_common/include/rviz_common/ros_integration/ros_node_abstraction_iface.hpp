@@ -35,6 +35,8 @@
 #include <string>
 #include <vector>
 
+#include "rviz_common/visibility_control.hpp"
+
 namespace rviz_common
 {
 namespace ros_integration

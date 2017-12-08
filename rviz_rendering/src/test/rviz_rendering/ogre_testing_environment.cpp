@@ -30,10 +30,12 @@
 #include "src/rviz_rendering/render_system.hpp"
 
 #include "test/rviz_rendering/ogre_testing_environment.hpp"
+#include "rviz_rendering/visibility_control.hpp"
 
 namespace rviz_rendering
 {
 
+RVIZ_RENDERING_PUBLIC
 void OgreTestingEnvironment::setUpRenderSystem()
 {
   RenderSystem::get();

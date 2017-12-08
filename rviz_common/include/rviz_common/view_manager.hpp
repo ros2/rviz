@@ -40,6 +40,7 @@
 
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/view_controller.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace Ogre
 {
@@ -58,7 +59,7 @@ class PropertyTreeModel;
 
 class ViewControllerContainer;
 
-class ViewManager : public QObject
+class RVIZ_COMMON_PUBLIC ViewManager : public QObject
 {
   Q_OBJECT
 
@@ -168,7 +169,7 @@ private:
  * This container property for ViewControllers is need to get the drag/drop
  * right for the funky way Current-View is always the first entry.
  */
-class ViewControllerContainer : public rviz_common::properties::Property
+class RVIZ_COMMON_PUBLIC ViewControllerContainer : public rviz_common::properties::Property
 {
   Q_OBJECT
 

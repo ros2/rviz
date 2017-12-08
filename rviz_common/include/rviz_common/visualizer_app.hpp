@@ -38,6 +38,7 @@
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/ros_integration/ros_client_abstraction_iface.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 class QTimer;
 
@@ -46,7 +47,7 @@ namespace rviz_common
 
 class VisualizationFrame;
 
-class VisualizerApp : public QObject
+class RVIZ_COMMON_PUBLIC VisualizerApp : public QObject
 {
   Q_OBJECT
 

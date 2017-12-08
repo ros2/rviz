@@ -57,6 +57,7 @@
 #include <string>
 
 #include "rviz_rendering/logging_handler.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 #define RVIZ_COMMON_LOG_DEBUG(msg) do { \
     rviz_common::log_debug(msg, __FILE__, __LINE__); \
@@ -109,6 +110,7 @@ using LoggingHandler = std::function<
 /**
  * All log traffic is routed through these logging functions.
  */
+RVIZ_COMMON_PUBLIC
 void
 set_logging_handlers(
   rviz_common::LoggingHandler debug_handler,
@@ -117,18 +119,23 @@ set_logging_handlers(
   rviz_common::LoggingHandler error_handler);
 
 /// Install the current logging handlers into the rviz_rendering logging system.
+RVIZ_COMMON_PUBLIC
 void
 install_rviz_rendering_log_handlers();
 
+RVIZ_COMMON_PUBLIC
 void
 log_debug(const std::string & message, const std::string & file_name, size_t line_number);
 
+RVIZ_COMMON_PUBLIC
 void
 log_info(const std::string & message, const std::string & file_name, size_t line_number);
 
+RVIZ_COMMON_PUBLIC
 void
 log_warning(const std::string & message, const std::string & file_name, size_t line_number);
 
+RVIZ_COMMON_PUBLIC
 void
 log_error(const std::string & message, const std::string & file_name, size_t line_number);
 

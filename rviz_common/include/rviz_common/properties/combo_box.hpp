@@ -31,12 +31,14 @@
 
 #include <QComboBox>
 
+#include "rviz_common/visibility_control.hpp"
+
 namespace rviz_common
 {
 namespace properties
 {
 
-class ComboBox : public QComboBox
+class RVIZ_COMMON_PUBLIC ComboBox : public QComboBox
 {
   Q_OBJECT
   Q_PROPERTY(QString currentText READ currentText USER true)

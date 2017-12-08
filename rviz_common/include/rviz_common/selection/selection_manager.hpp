@@ -56,6 +56,7 @@
 
 #include "./forwards.hpp"
 #include "./selection_handler.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rclcpp
 {
@@ -86,7 +87,7 @@ class VisualizationManager;
 namespace selection
 {
 
-class SelectionManager
+class RVIZ_COMMON_PUBLIC SelectionManager
   : public QObject,
   public Ogre::MaterialManager::Listener,
   public Ogre::RenderQueueListener

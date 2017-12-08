@@ -32,6 +32,7 @@
 #define RVIZ_COMMON__PROPERTIES__INT_PROPERTY_HPP_
 
 #include "rviz_common/properties/property.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
@@ -39,7 +40,7 @@ namespace properties
 {
 
 /// Property specialized to provide max/min enforcement for integers.
-class IntProperty : public Property
+class RVIZ_COMMON_PUBLIC IntProperty : public Property
 {
   Q_OBJECT
 

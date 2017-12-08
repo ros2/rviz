@@ -32,13 +32,14 @@
 #define RVIZ_COMMON__PROPERTIES__EDITABLE_COMBO_BOX_HPP_
 
 #include "./combo_box.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
 namespace properties
 {
 
-class EditableComboBox : public ComboBox
+class RVIZ_COMMON_PUBLIC EditableComboBox : public ComboBox
 {
   Q_OBJECT
 

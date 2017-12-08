@@ -33,6 +33,8 @@
 
 #include <QWidget>
 
+#include "rviz_common/visibility_control.hpp"
+
 class QTreeView;
 
 namespace rviz_common
@@ -47,7 +49,7 @@ namespace properties
  * Shows splitter cursor when mouse hovers over it.
  * Uses event filtering to catch resize events for the parent.
  */
-class SplitterHandle : public QWidget
+class RVIZ_COMMON_PUBLIC SplitterHandle : public QWidget
 {
   Q_OBJECT
 

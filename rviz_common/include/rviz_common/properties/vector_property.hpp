@@ -34,13 +34,14 @@
 #include <OgreVector3.h>
 
 #include "rviz_common/properties/property.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
 namespace properties
 {
 
-class VectorProperty : public Property
+class  VectorProperty : public Property
 {
   Q_OBJECT
 
