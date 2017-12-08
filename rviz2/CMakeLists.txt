@@ -32,15 +32,15 @@ find_package(rviz_ogre_vendor REQUIRED)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
-add_executable(${PROJECT_NAME}_app
+add_executable(${PROJECT_NAME}
   src/main.cpp
 )
-target_link_libraries(${PROJECT_NAME}_app
+target_link_libraries(${PROJECT_NAME}
   rviz_common::rviz_common
   Qt5::Widgets
 )
 
-install(TARGETS ${PROJECT_NAME}_app DESTINATION bin)
+install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 
 if(BUILD_TESTING)
   # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back
@@ -56,6 +56,6 @@ if(BUILD_TESTING)
   add_subdirectory(test)
 endif()
 
-set_target_properties(${PROJECT_NAME}_app PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
+set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 ament_package()
