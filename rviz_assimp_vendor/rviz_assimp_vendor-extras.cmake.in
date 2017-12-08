@@ -1,14 +1,3 @@
-# prevent multiple inclusion
-if(_@PROJECT_NAME@_CONFIG_INCLUDED)
-  return()
-endif()
-set(_@PROJECT_NAME@_CONFIG_INCLUDED TRUE)
-
-# output package information
-if(NOT @PROJECT_NAME@_FIND_QUIETLY)
-  message(STATUS "Found @PROJECT_NAME@: @PACKAGE_VERSION@ (${@PROJECT_NAME@_DIR})")
-endif()
-
 find_package(assimp QUIET)
 
 if(NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LESS 4.0.0)
