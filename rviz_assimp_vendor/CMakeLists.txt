@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 
 project(rviz_assimp_vendor)
 
+find_package(ament_cmake REQUIRED)
+
 # TODO(wjwood): remove when windows build is fixed
 if(DEFINED ENV{RVIZ_BUILD_ON_WINDOWS_OVERRIDE})
   set(RVIZ_BUILD_ON_WINDOWS_OVERRIDE "$ENV{RVIZ_BUILD_ON_WINDOWS_OVERRIDE}")
@@ -54,14 +56,15 @@ find_package(assimp QUIET)
 
 if(NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LESS 4.0.0)
   build_assimp()
+
+  if(WIN32)
+    # TODO(wjwwood): do this for Windows too
+    # ament_environment_hooks(env_hook/rviz_assimp_vendor_library_path.bat)
+  else()
+    ament_environment_hooks(env_hook/rviz_assimp_vendor_library_path.sh)
+  endif()
 endif()
 
-configure_file(rviz_assimp_vendorConfig.cmake.in
-  "${PROJECT_BINARY_DIR}/rviz_assimp_vendorConfig.cmake" @ONLY)
-configure_file(rviz_assimp_vendorConfig-version.cmake.in
-  "${PROJECT_BINARY_DIR}/rviz_assimp_vendorConfig-version.cmake" @ONLY)
-
-install(FILES
-  "${PROJECT_BINARY_DIR}/rviz_assimp_vendorConfig.cmake"
-  "${PROJECT_BINARY_DIR}/rviz_assimp_vendorConfig-version.cmake"
-  DESTINATION share/${PROJECT_NAME}/cmake)
+ament_package(
+  CONFIG_EXTRAS "rviz_assimp_vendor-extras.cmake.in"
+)

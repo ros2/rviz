@@ -20,6 +20,9 @@
   <build_depend>qtbase5-dev</build_depend>
   <build_depend>rviz_assimp_vendor</build_depend>
 
+  <build_export_depend>qtbase5-dev</build_export_depend>
+  <build_export_depend>rviz_assimp_vendor</build_export_depend>
+
   <exec_depend>libqt5-core</exec_depend>
   <exec_depend>libqt5-gui</exec_depend>
   <exec_depend>libqt5-opengl</exec_depend>

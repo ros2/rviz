@@ -17,6 +17,8 @@
   <url type="bugtracker">https://github.com/ros-visualization/rviz/issues</url>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  
+  <build_depend>qtbase5-dev</build_depend>
 
   <depend>rviz_common</depend>
   <depend>rviz_ogre_vendor</depend>

@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 
 project(rviz_yaml_cpp_vendor)
 
+find_package(ament_cmake REQUIRED)
+
 # TODO(wjwood): remove when windows build is fixed
 if(DEFINED ENV{RVIZ_BUILD_ON_WINDOWS_OVERRIDE})
   set(RVIZ_BUILD_ON_WINDOWS_OVERRIDE "$ENV{RVIZ_BUILD_ON_WINDOWS_OVERRIDE}")
@@ -53,12 +55,13 @@ endmacro()
 
 build_yaml_cpp()
 
-configure_file(rviz_yaml_cpp_vendorConfig.cmake.in
-  "${PROJECT_BINARY_DIR}/rviz_yaml_cpp_vendorConfig.cmake" @ONLY)
-configure_file(rviz_yaml_cpp_vendorConfig-version.cmake.in
-  "${PROJECT_BINARY_DIR}/rviz_yaml_cpp_vendorConfig-version.cmake" @ONLY)
+if(WIN32)
+  # TODO(wjwwood): do this for Windows too
+  # ament_environment_hooks(env_hook/rviz_yaml_cpp_vendor_library_path.bat)
+else()
+  ament_environment_hooks(env_hook/rviz_yaml_cpp_vendor_library_path.sh)
+endif()
 
-install(FILES
-  "${PROJECT_BINARY_DIR}/rviz_yaml_cpp_vendorConfig.cmake"
-  "${PROJECT_BINARY_DIR}/rviz_yaml_cpp_vendorConfig-version.cmake"
-  DESTINATION share/${PROJECT_NAME}/cmake)
+ament_package(
+  CONFIG_EXTRAS "rviz_yaml_cpp_vendor-extras.cmake.in"
+)
