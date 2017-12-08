@@ -227,6 +227,8 @@ private:
   rviz_common::DisplayContext * context_;
   rclcpp::Clock::SharedPtr clock_;
 
+  static const std::string message_status_name_;
+
   friend class PointCloudSelectionHandler;
 };
 

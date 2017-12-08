@@ -127,9 +127,10 @@ void ViewController::initialize(DisplayContext * context)
   updateStereoProperties();
 
   // TODO(wjwwood): replace this with a call to the rviz_rendering::RenderWindow or similar
+  //                Until then, stereo is disabled per default
   // if (!RenderSystem::get()->isStereoSupported()) {
-  //   stereo_enable_->setBool(false);
-  //   stereo_enable_->hide();
+  stereo_enable_->setBool(false);
+  stereo_enable_->hide();
   // }
 }
 

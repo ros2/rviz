@@ -43,15 +43,17 @@ target_link_libraries(${PROJECT_NAME}_app
 install(TARGETS ${PROJECT_NAME}_app DESTINATION bin)
 
 if(BUILD_TESTING)
-    # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back
-    find_package(ament_cmake_cppcheck REQUIRED)
-    find_package(ament_cmake_cpplint REQUIRED)
-    find_package(ament_cmake_lint_cmake REQUIRED)
-    find_package(ament_cmake_uncrustify REQUIRED)
-    ament_cppcheck()
-    ament_cpplint()
-    ament_lint_cmake()
-    ament_uncrustify()
+  # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back
+  find_package(ament_cmake_cppcheck REQUIRED)
+  find_package(ament_cmake_cpplint REQUIRED)
+  find_package(ament_cmake_lint_cmake REQUIRED)
+  find_package(ament_cmake_uncrustify REQUIRED)
+  ament_cppcheck()
+  ament_cpplint()
+  ament_lint_cmake()
+  ament_uncrustify()
+
+  add_subdirectory(test)
 endif()
 
 set_target_properties(${PROJECT_NAME}_app PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
