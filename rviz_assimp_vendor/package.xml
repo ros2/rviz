@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<?xml-model
+  href="http://download.ros.org/schema/package_format2.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="2">
+  <name>rviz_assimp_vendor</name>
+  <version>2.0.0</version>
+  <description>
+    Wrapper around assimp, providing nothing but a dependency on assimp, on some systems.
+    On others, it provides a fixed CMake module or even an ExternalProject build of assimp.
+  </description>
+  <maintainer email="william@osrfoundation.org">William Woodall</maintainer>
+  <license>Apache License 2.0</license>  <!-- the contents of this package are Apache 2.0 -->
+  <license>BSD</license>  <!-- assimp is BSD (http://assimp.sourceforge.net/main_license.html) -->
+
+  <url type="website">http://assimp.sourceforge.net/index.html</url>
+
+  <buildtool_depend>cmake</buildtool_depend>
+
+  <depend>assimp</depend>
+
+  <export>
+    <build_type>cmake</build_type>
+  </export>
+</package>
