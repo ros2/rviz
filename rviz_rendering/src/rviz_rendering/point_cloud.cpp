@@ -493,8 +493,9 @@ void PointCloud::insertPointsToPointList(
     points_.resize(point_count_ + num_points);
   }
 
-  Point * begin = &points_.front() + point_count_;
-  memcpy(begin, &*start_iterator, sizeof(Point) * num_points);
+  for (Point * begin = &points_.front() + point_count_; num_points--; ) {
+    *(begin++) = *(start_iterator++);
+  }
 }
 
 PointCloud::RenderableInternals
