@@ -41,6 +41,7 @@
 
 #include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/properties/status_property.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 class QDockWidget;
 class QWidget;
@@ -69,7 +70,7 @@ class StatusList;
 class DisplayContext;
 class PanelDockWidget;
 
-class Display : public rviz_common::properties::BoolProperty
+class RVIZ_COMMON_PUBLIC Display : public rviz_common::properties::BoolProperty
 {
   Q_OBJECT
 

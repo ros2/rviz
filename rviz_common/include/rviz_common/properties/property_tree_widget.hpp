@@ -35,6 +35,7 @@
 
 #include "./property_tree_model.hpp"
 #include "rviz_common/config.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
@@ -44,7 +45,7 @@ namespace properties
 class Property;
 class SplitterHandle;
 
-class PropertyTreeWidget : public QTreeView
+class RVIZ_COMMON_PUBLIC PropertyTreeWidget : public QTreeView
 {
   Q_OBJECT
 

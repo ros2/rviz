@@ -35,6 +35,7 @@
 #include <OgreVector3.h>
 
 #include "rviz_common/view_controller.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
@@ -48,7 +49,7 @@ class TfFrameProperty;
 /**
  * The "Target Frame" is a TF frame whose position they track.
  */
-class FramePositionTrackingViewController : public ViewController
+class RVIZ_COMMON_PUBLIC FramePositionTrackingViewController : public ViewController
 {
   Q_OBJECT
 

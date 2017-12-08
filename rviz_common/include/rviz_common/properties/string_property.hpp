@@ -34,6 +34,7 @@
 #include <string>
 
 #include "rviz_common/properties/property.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
@@ -41,7 +42,7 @@ namespace properties
 {
 
 /// Property specialized for string values.
-class StringProperty : public Property
+class RVIZ_COMMON_PUBLIC StringProperty : public Property
 {
   Q_OBJECT
 

@@ -30,6 +30,8 @@
 #ifndef RVIZ_COMMON__ROS_INTEGRATION__SHUTDOWN_HPP_
 #define RVIZ_COMMON__ROS_INTEGRATION__SHUTDOWN_HPP_
 
+#include "rviz_common/visibility_control.hpp"
+
 namespace rviz_common
 {
 namespace ros_integration
@@ -40,6 +42,7 @@ namespace ros_integration
  * This will also destroy any nodes which were created with
  * ros_integration::init().
  */
+RVIZ_COMMON_PUBLIC
 void
 shutdown();
 

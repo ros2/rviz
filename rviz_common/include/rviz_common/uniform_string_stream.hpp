@@ -34,6 +34,8 @@
 #include <sstream>
 #include <string>
 
+#include "rviz_common/visibility_control.hpp"
+
 namespace rviz_common
 {
 
@@ -47,7 +49,7 @@ namespace rviz_common
  * parseFloat() handles "C" and also European-style floats which use the ",",
  * like "1,2" parses to 1.2f
  */
-class UniformStringStream : public std::stringstream
+class RVIZ_COMMON_PUBLIC UniformStringStream : public std::stringstream
 {
 public:
   UniformStringStream();

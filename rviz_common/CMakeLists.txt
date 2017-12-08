@@ -28,12 +28,9 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 
-# TODO(wjwwood): figure out why autogen fails on Windows, and why it isn't necessary...
-if(NOT WIN32)
-  # Qt5 boilerplate options from http://doc.qt.io/qt-5/cmake-manual.html
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  set(CMAKE_AUTOMOC ON)
-endif()
+# Qt5 boilerplate options from http://doc.qt.io/qt-5/cmake-manual.html
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOMOC ON)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
@@ -270,7 +267,7 @@ list(APPEND rviz_common_source_files
 list(APPEND rviz_common_source_files
   src/rviz_default_plugins/point_cloud_to_point_cloud2.cpp)
 
-add_library(rviz_common
+add_library(rviz_common SHARED
   ${rviz_common_headers_to_moc}
   ${rviz_common_source_files}
   ${rviz_default_plugins_source_files}
@@ -303,6 +300,9 @@ ament_target_dependencies(rviz_common
 )
 # prevent pluginlib from using boost
 target_compile_definitions(rviz_common PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
+# Causes the visibility macros to use dllexport rather than dllimport,
+# which is appropriate when building the dll but not consuming it.
+target_compile_definitions(rviz_common PRIVATE "RVIZ_COMMON_BUILDING_LIBRARY")
 
 ament_export_interfaces(rviz_common)
 ament_export_dependencies(rviz_rendering)

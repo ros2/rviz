@@ -32,6 +32,7 @@
 #define RVIZ_COMMON__PROPERTIES__BOOL_PROPERTY_HPP_
 
 #include "rviz_common/properties/property.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
@@ -39,7 +40,7 @@ namespace properties
 {
 
 /// Property specialized to provide getter for booleans.
-class BoolProperty : public Property
+class RVIZ_COMMON_PUBLIC BoolProperty : public Property
 {
   Q_OBJECT
 

@@ -34,6 +34,8 @@
 #include <QEvent>
 #include <Qt>
 
+#include "rviz_common/visibility_control.hpp"
+
 class QMouseEvent;
 class QWheelEvent;
 
@@ -42,7 +44,7 @@ namespace rviz_common
 
 class RenderPanel;
 
-class ViewportMouseEvent
+class RVIZ_COMMON_PUBLIC ViewportMouseEvent
 {
 public:
   /// Constructor for use with a QMouseEvent.

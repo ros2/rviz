@@ -32,6 +32,8 @@
 
 #include <string>
 
+#include "rviz_common/visibility_control.hpp"
+
 namespace rviz_common
 {
 namespace ros_integration
@@ -59,6 +61,7 @@ namespace ros_integration
  * \param anonymous_name if true then the ROS node name will be randomized
  * \return name of the resulting ROS node
  */
+RVIZ_COMMON_PUBLIC
 std::string
 init(int argc, char ** argv, const std::string & name, bool anonymous_name = true);
 

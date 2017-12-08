@@ -35,6 +35,8 @@
 
 #include <QCursor>  // NOLINT: cpplint is unable to handle the include order here
 
+#include "rviz_common/visibility_control.hpp"
+
 namespace rviz_common
 {
 
@@ -49,7 +51,7 @@ class ViewportMouseEvent;
  * is plugin-ized and put into the default plugin, this can probably
  * be removed.
  */
-class InteractiveObject
+class RVIZ_COMMON_PUBLIC InteractiveObject
 {
 public:
   virtual ~InteractiveObject() {}

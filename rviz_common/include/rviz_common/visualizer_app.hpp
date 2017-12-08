@@ -36,6 +36,8 @@
 
 #include <string>
 
+#include "rviz_common/visibility_control.hpp"
+
 class QTimer;
 
 namespace rviz_common
@@ -43,7 +45,7 @@ namespace rviz_common
 
 class VisualizationFrame;
 
-class VisualizerApp : public QObject
+class RVIZ_COMMON_PUBLIC VisualizerApp : public QObject
 {
   Q_OBJECT
 

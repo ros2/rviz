@@ -32,6 +32,7 @@
 #define RVIZ_COMMON__PROPERTIES__FLOAT_PROPERTY_HPP_
 
 #include "rviz_common/properties/property.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
@@ -39,7 +40,7 @@ namespace properties
 {
 
 /// Property specialized to enforce floating point max/min.
-class FloatProperty : public Property
+class RVIZ_COMMON_PUBLIC FloatProperty : public Property
 {
   Q_OBJECT
 
