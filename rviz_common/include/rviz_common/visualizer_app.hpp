@@ -37,7 +37,7 @@
 #include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "rviz_common/ros_integration/ros_abstraction_iface.hpp"
+#include "rviz_common/ros_integration/ros_client_abstraction_iface.hpp"
 
 class QTimer;
 
@@ -52,7 +52,7 @@ class VisualizerApp : public QObject
 
 public:
   explicit VisualizerApp(
-    std::unique_ptr<rviz_common::ros_integration::RosAbstractionIface> ros_abstraction);
+    std::unique_ptr<rviz_common::ros_integration::RosClientAbstractionIface> ros_client);
   ~VisualizerApp() override;
 
   void setApp(QApplication * app);
@@ -74,7 +74,7 @@ private:
   QTimer * continue_timer_;
   VisualizationFrame * frame_;
   std::string node_name_;
-  std::unique_ptr<rviz_common::ros_integration::RosAbstractionIface> ros_abstraction_;
+  std::unique_ptr<rviz_common::ros_integration::RosClientAbstractionIface> ros_client_;
 };
 
 }  // namespace rviz_common

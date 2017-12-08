@@ -187,7 +187,7 @@ set(rviz_common_source_files
   src/rviz_common/properties/vector_property.cpp
   src/rviz_common/render_panel.cpp
   src/rviz_common/ros_integration/get_topic_names_and_types.cpp
-  src/rviz_common/ros_integration/ros_abstraction.cpp
+  src/rviz_common/ros_integration/ros_client_abstraction.cpp
   src/rviz_common/scaled_image_widget.cpp
   src/rviz_common/screenshot_dialog.cpp
   # src/rviz_common/selection_panel.cpp

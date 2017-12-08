@@ -100,12 +100,12 @@ namespace rviz_common
 // }
 
 VisualizerApp::VisualizerApp(
-  std::unique_ptr<rviz_common::ros_integration::RosAbstractionIface> ros_abstraction)
+  std::unique_ptr<rviz_common::ros_integration::RosClientAbstractionIface> ros_client)
 : app_(0),
   continue_timer_(0),
   frame_(0),
   node_name_(""),
-  ros_abstraction_(std::move(ros_abstraction))
+  ros_client_(std::move(ros_client))
 {}
 
 void VisualizerApp::setApp(QApplication * app)
@@ -139,7 +139,7 @@ bool VisualizerApp::init(int argc, char ** argv)
 
   // TODO(wjwwood): anonymous is not working right now, reenable later
   // node_name_ = rviz_common::ros_integration::init(argc, argv, "rviz", true /* anonymous_name */);
-  node_name_ = ros_abstraction_->init(argc, argv, "rviz", false /* anonymous_name */);
+  node_name_ = ros_client_->init(argc, argv, "rviz", false /* anonymous_name */);
 
   startContinueChecker();
 
@@ -309,7 +309,7 @@ bool VisualizerApp::init(int argc, char ** argv)
 VisualizerApp::~VisualizerApp()
 {
   delete continue_timer_;
-  ros_abstraction_->shutdown();
+  ros_client_->shutdown();
   delete frame_;
 }
 
@@ -327,7 +327,7 @@ void VisualizerApp::checkContinue()
     // This should not happen.
     return;
   }
-  if (!ros_abstraction_->ok(node_name_)) {
+  if (!ros_client_->ok(node_name_)) {
     if (frame_) {
       // Make sure the window doesn't ask if we want to save first.
       frame_->setWindowModified(false);

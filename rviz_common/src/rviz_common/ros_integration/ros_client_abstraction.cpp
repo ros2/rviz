@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz_common/ros_integration/ros_abstraction.hpp"
+#include "rviz_common/ros_integration/ros_client_abstraction.hpp"
 
 #include <memory>
 #include <mutex>
@@ -42,7 +42,7 @@ namespace ros_integration
 {
 
 std::string
-RosAbstraction::init(int argc, char ** argv, const std::string & name, bool anonymous_name)
+RosClientAbstraction::init(int argc, char ** argv, const std::string & name, bool anonymous_name)
 {
   std::string final_name = name;
   if (anonymous_name) {
@@ -62,20 +62,20 @@ RosAbstraction::init(int argc, char ** argv, const std::string & name, bool anon
 }
 
 bool
-RosAbstraction::ok(const std::string & node_name)
+RosClientAbstraction::ok(const std::string & node_name)
 {
   return rclcpp::ok() && has_rclcpp_node_by_name(node_name);
 }
 
 void
-RosAbstraction::shutdown()
+RosClientAbstraction::shutdown()
 {
   clear_rclcpp_nodes();
   rclcpp::shutdown();
 }
 
 void
-RosAbstraction::store_rclcpp_node_by_name(
+RosClientAbstraction::store_rclcpp_node_by_name(
   const std::string & node_name,
   const std::shared_ptr<rclcpp::Node> & node)
 {
@@ -84,7 +84,7 @@ RosAbstraction::store_rclcpp_node_by_name(
 }
 
 std::shared_ptr<rclcpp::Node>
-RosAbstraction::get_rclcpp_node_by_name(const std::string & node_name)
+RosClientAbstraction::get_rclcpp_node_by_name(const std::string & node_name)
 {
   std::lock_guard<std::mutex> lock(nodes_by_name_mutex_);
   if (nodes_by_name_.count(node_name) == 0) {
@@ -94,14 +94,14 @@ RosAbstraction::get_rclcpp_node_by_name(const std::string & node_name)
 }
 
 bool
-RosAbstraction::has_rclcpp_node_by_name(const std::string & node_name)
+RosClientAbstraction::has_rclcpp_node_by_name(const std::string & node_name)
 {
   std::lock_guard<std::mutex> lock(nodes_by_name_mutex_);
   return nodes_by_name_.count(node_name) != 0;
 }
 
 void
-RosAbstraction::clear_rclcpp_nodes()
+RosClientAbstraction::clear_rclcpp_nodes()
 {
   std::lock_guard<std::mutex> lock(nodes_by_name_mutex_);
   nodes_by_name_.clear();

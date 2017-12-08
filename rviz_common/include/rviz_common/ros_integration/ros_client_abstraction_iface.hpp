@@ -28,32 +28,21 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__ROS_INTEGRATION__ROS_ABSTRACTION_HPP_
-#define RVIZ_COMMON__ROS_INTEGRATION__ROS_ABSTRACTION_HPP_
+#ifndef RVIZ_COMMON__ROS_INTEGRATION__ROS_CLIENT_ABSTRACTION_IFACE_HPP_
+#define RVIZ_COMMON__ROS_INTEGRATION__ROS_CLIENT_ABSTRACTION_IFACE_HPP_
 
-#include <map>
-#include <memory>
-#include <mutex>
 #include <string>
-
-#include "rclcpp/rclcpp.hpp"
-
-#include "ros_abstraction_iface.hpp"
 
 namespace rviz_common
 {
 namespace ros_integration
 {
 
-class RosAbstraction : public RosAbstractionIface
+class RosClientAbstractionIface
 {
 public:
-  // TODO(wjwwood): Figure out which exceptions can be raised and document them
-  //                consider consolidating all possible exceptions to a few
-  //                exceptions defined in this library, to avoid inconsistent
-  //                exceptions based on the underly ROS version.
-  //                Also define an exception for repeated calls to this function
-  //                under ROS 1, which will not be allowed.
+  virtual ~RosClientAbstractionIface() = default;
+
   /// Initialize ROS, create the ROS node, return the ROS node name.
   /**
    * argc and argv maybe mutate to remove any command line arguments consumed by ROS.
@@ -70,67 +59,27 @@ public:
    * \param anonymous_name if true then the ROS node name will be randomized
    * \return name of the resulting ROS node
    */
-  std::string
-  init(int argc, char ** argv, const std::string & name, bool anonymous_name = true) override;
+  virtual std::string
+  init(int argc, char ** argv, const std::string & name, bool anonymous_name = true) = 0;
 
   /// Check if ROS is "ok" or not, usually if ROS has been shutdown or not.
   /**
    * \param node_name the name of the node returned by ros_integration::init()
    * \return true if ok, otherwise false
    */
-  bool
-  ok(const std::string & node_name) override;
+  virtual bool
+  ok(const std::string & node_name) = 0;
 
   /// Shutdown ROS.
   /**
    * This will also destroy any nodes which were created with
    * ros_integration::init().
    */
-  void
-  shutdown() override;
-
-private:
-  /// Store an rclcpp node shared pointer in the internal storage by a given name.
-  /**
-   * If the key is already in use, the new node shared pointer overwrites the
-   * existing node shared pointer stored as the value for that key.
-   *
-   * \param node_name name to be used as the key for the rclcpp node
-   * \param node the rclcpp node to be stored
-   */
-  void
-  store_rclcpp_node_by_name(
-    const std::string & node_name,
-    const std::shared_ptr<rclcpp::Node> & node);
-
-  /// Return the rclcpp node shared pointer for the given node name if found, else nullptr.
-  /**
-   * \param node_name the name of the rclcpp node to get
-   * \returns the rclcpp node shared pointer for the given name, else nullptr
-   */
-  std::shared_ptr<rclcpp::Node>
-  get_rclcpp_node_by_name(const std::string & node_name);
-
-  /// Check if there exists an rclcpp node for the given name.
-  /**
-   * \param node_name the name of the node to check for
-   * \return true if exists, otherwise false
-   */
-  bool
-  has_rclcpp_node_by_name(const std::string & node_name);
-
-  /// Clear the stored nodes, allowing them to go out of scope.
-  /**
-   * This function is primarily used by shutdown to clean up the nodes created.
-   */
-  void
-  clear_rclcpp_nodes();
-
-  std::map<std::string, rclcpp::Node::SharedPtr> nodes_by_name_;
-  std::mutex nodes_by_name_mutex_;
+  virtual void
+  shutdown() = 0;
 };
 
 }  // namespace ros_integration
 }  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__ROS_INTEGRATION__ROS_ABSTRACTION_HPP_
+#endif  // RVIZ_COMMON__ROS_INTEGRATION__ROS_CLIENT_ABSTRACTION_IFACE_HPP_
