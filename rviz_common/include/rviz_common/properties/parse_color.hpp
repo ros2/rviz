@@ -34,14 +34,23 @@
 
 #include <OgreColourValue.h>
 
+#include "rviz_common/visibility_control.hpp"
+
 namespace rviz_common
 {
 namespace properties
 {
 
+RVIZ_COMMON_PUBLIC
 QColor parseColor(const QString & color_string);
+
+RVIZ_COMMON_PUBLIC
 QString printColor(const QColor & color);
+
+RVIZ_COMMON_PUBLIC
 QColor ogreToQt(const Ogre::ColourValue & ogre_color);
+
+RVIZ_COMMON_PUBLIC
 Ogre::ColourValue qtToOgre(const QColor & qt_color);
 
 }  // namespace properties

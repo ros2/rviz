@@ -31,6 +31,8 @@
 
 #include <QLineEdit>
 
+#include "rviz_common/visibility_control.hpp"
+
 class QPushButton;
 
 namespace rviz_common
@@ -41,7 +43,7 @@ namespace properties
 /**
  * A QLineEdit with a square button on the right side that says "...".
  */
-class LineEditWithButton : public QLineEdit
+class RVIZ_COMMON_PUBLIC LineEditWithButton : public QLineEdit
 {
   Q_OBJECT
 

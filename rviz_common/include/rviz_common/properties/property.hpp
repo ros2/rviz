@@ -39,6 +39,7 @@
 #include <QVariant>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/config.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 class QPainter;
 class QStyleOptionViewItem;
@@ -106,7 +107,7 @@ class PropertyTreeModel;
  * Property in a PropertyTreeModel and call PropertyTreeWidget::setModel()
  * with it.
  */
-class Property : public QObject
+class RVIZ_COMMON_PUBLIC Property : public QObject
 {
   Q_OBJECT
 

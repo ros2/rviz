@@ -32,6 +32,8 @@
 
 #include <string>
 
+#include "rviz_common/visibility_control.hpp"
+
 namespace rviz_common
 {
 namespace ros_integration
@@ -42,6 +44,7 @@ namespace ros_integration
  * \param node_name the name of the node returned by ros_integration::init()
  * \return true if ok, otherwise false
  */
+RVIZ_COMMON_PUBLIC
 bool
 ok(const std::string & node_name);
 

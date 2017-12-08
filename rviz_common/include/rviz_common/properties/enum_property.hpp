@@ -36,6 +36,7 @@
 #include <string>
 
 #include "rviz_common/properties/string_property.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
@@ -51,7 +52,7 @@ namespace properties
  * The integer returned will be that passed to addOption() for with the
  * string that is currently selected.
  */
-class EnumProperty : public StringProperty
+class RVIZ_COMMON_PUBLIC EnumProperty : public StringProperty
 {
   Q_OBJECT
 

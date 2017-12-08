@@ -46,11 +46,11 @@
 // #include <tf/message_filter.h>
 
 #include "rviz_common/display_context.hpp"
+#include "rviz_common/display.hpp"
 #include "rviz_common/frame_manager.hpp"
 #include "rviz_common/properties/status_property.hpp"
 #include "rviz_common/properties/string_property.hpp"
-
-#include "rviz_common/display.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
@@ -61,7 +61,7 @@ namespace rviz_common
 /** @brief Helper superclass for MessageFilterDisplay, needed because
  * Qt's moc and c++ templates don't work nicely together.  Not
  * intended to be used directly. */
-class _RosTopicDisplay : public Display
+class RVIZ_COMMON_PUBLIC _RosTopicDisplay : public Display
 {
   Q_OBJECT
 

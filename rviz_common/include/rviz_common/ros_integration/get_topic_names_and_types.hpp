@@ -34,6 +34,8 @@
 #include <string>
 #include <vector>
 
+#include "rviz_common/visibility_control.hpp"
+
 namespace rviz_common
 {
 namespace ros_integration
@@ -46,6 +48,7 @@ namespace ros_integration
  * \param node_name name of the node to use when getting this information.
  * \return map of topic names and their types
  */
+RVIZ_COMMON_PUBLIC
 std::map<std::string, std::vector<std::string>>
 get_topic_names_and_types(const std::string & node_name);
 

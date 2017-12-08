@@ -36,13 +36,14 @@
 #include <OgreQuaternion.h>
 
 #include "rviz_common/properties/property.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
 namespace properties
 {
 
-class QuaternionProperty : public Property
+class RVIZ_COMMON_PUBLIC QuaternionProperty : public Property
 {
   Q_OBJECT
 

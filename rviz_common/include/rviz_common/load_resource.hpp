@@ -35,6 +35,8 @@
 #include <QCursor>
 #include <QString>
 
+#include "rviz_common/visibility_control.hpp"
+
 namespace rviz_common
 {
 
@@ -48,12 +50,14 @@ namespace rviz_common
  * If fill_cache is set to true (default), the image will be stored in the
  * cache after loading it from disk.
  */
+RVIZ_COMMON_PUBLIC
 QPixmap loadPixmap(QString url, bool fill_cache = true);
 
 /// Load the default cursor: an arrow.
 /**
  * The fill_cache parameter is ignored.
  */
+RVIZ_COMMON_PUBLIC
 QCursor getDefaultCursor(bool fill_cache = true);
 
 /// Create a cursor using a shape in a file/url.
@@ -62,6 +66,7 @@ QCursor getDefaultCursor(bool fill_cache = true);
  * If fill_cache is set to true (default), the image will be stored in the
  * cache after loading it from disk.
  */
+RVIZ_COMMON_PUBLIC
 QCursor makeIconCursor(QString icon_url, bool fill_cache = true);
 
 /// Create a cursor using the shape in the icon QPixmap.
@@ -69,6 +74,7 @@ QCursor makeIconCursor(QString icon_url, bool fill_cache = true);
  * If fill_cache is set to true (default), the image will be stored in the
  * cache using cache_key.
  */
+RVIZ_COMMON_PUBLIC
 QCursor makeIconCursor(QPixmap icon, QString cache_key = "", bool fill_cache = true);
 
 }  // namespace rviz_common

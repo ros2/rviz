@@ -32,6 +32,7 @@
 #include <QSplitter>
 
 #include "rviz_common/config.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 class QTextBrowser;
 
@@ -44,7 +45,7 @@ class Property;
 class PropertyTreeWidget;
 
 /** A PropertyTreeWidget with built-in help info display. */
-class PropertyTreeWithHelp : public QSplitter
+class RVIZ_COMMON_PUBLIC PropertyTreeWithHelp : public QSplitter
 {
   Q_OBJECT
 

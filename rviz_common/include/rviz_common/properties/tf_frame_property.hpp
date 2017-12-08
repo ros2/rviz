@@ -34,6 +34,7 @@
 #include <string>
 
 #include "./editable_enum_property.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
@@ -43,7 +44,7 @@ class FrameManager;
 namespace properties
 {
 
-class TfFrameProperty : public EditableEnumProperty
+class  TfFrameProperty : public EditableEnumProperty
 {
   Q_OBJECT
 
