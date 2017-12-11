@@ -41,10 +41,26 @@ find_package(rclcpp REQUIRED)
 # These need to be added in the add_library() call so AUTOMOC detects them.
 set(rviz_default_plugins_headers_to_moc
   src/rviz_default_plugins/displays/grid/grid_display.hpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_display.hpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_transformer.hpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_helpers.hpp
 )
 
 set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/grid/grid_display.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/axis_color_pc_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/flat_color_pc_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/intensity_pc_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/rgb8_pc_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/rgbf32_pc_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/xyz_pc_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_common.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_to_point_cloud2.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_selection_handler.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_display.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.cpp
   src/rviz_default_plugins/tools/move/move_tool.cpp
   src/rviz_default_plugins/view_controllers/orbit/orbit_view_controller.cpp
 )
@@ -91,5 +107,41 @@ install(
   RUNTIME DESTINATION bin
   INCLUDES DESTINATION include
 )
+
+# TODO(wjwwood): reenable tests for Windows after resolving building problems
+if(BUILD_TESTING AND NOT WIN32)
+  # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back
+  find_package(ament_cmake_cppcheck REQUIRED)
+  find_package(ament_cmake_cpplint REQUIRED)
+  find_package(ament_cmake_lint_cmake REQUIRED)
+  find_package(ament_cmake_uncrustify REQUIRED)
+  ament_cppcheck()
+  ament_cpplint()
+  ament_lint_cmake()
+  ament_uncrustify()
+
+  find_package(ament_cmake_gtest REQUIRED)
+
+  ament_add_gtest(point_cloud2_display_test
+      test/rviz_default_plugins/displays/pointcloud/message_creators.hpp
+      test/rviz_default_plugins/displays/pointcloud/message_creators.cpp
+      test/rviz_default_plugins/displays/pointcloud/point_cloud2_display_test.cpp)
+  if(TARGET point_cloud2_display_test)
+    target_link_libraries(point_cloud2_display_test rviz_default_plugins)
+  endif()
+
+  ament_add_gtest(point_cloud_transformers_test
+      test/rviz_default_plugins/displays/pointcloud/message_creators.hpp
+      test/rviz_default_plugins/displays/pointcloud/message_creators.cpp
+      test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/axis_color_pc_transformer_test.cpp
+      test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/flat_color_pc_transformer_test.cpp
+      test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/intensity_pc_transformer_test.cpp
+      test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/rgb8_pc_transformer_test.cpp
+      test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/rgbf32_pc_transformer_test.cpp
+      test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/xyz_pc_transformer_test.cpp)
+  if(TARGET point_cloud_transformers_test)
+    target_link_libraries(point_cloud_transformers_test rviz_default_plugins)
+  endif()
+endif()
 
 ament_package()
