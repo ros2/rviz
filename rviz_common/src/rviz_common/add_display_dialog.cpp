@@ -52,7 +52,7 @@
 #include "./display_factory.hpp"
 #include "rviz_common/load_resource.hpp"
 #include "rviz_common/logging.hpp"
-#include "rviz_common/ros_integration/get_topic_names_and_types.hpp"
+#include "rviz_common/ros_integration/ros_node_abstraction.hpp"
 
 namespace rviz_common
 {
@@ -142,7 +142,7 @@ void getPluginGroups(
   const std::string & node_name)
 {
   std::map<std::string, std::vector<std::string>> topic_names_and_types =
-    rviz_common::ros_integration::get_topic_names_and_types(node_name);
+    rviz_common::ros_integration::RosNodeAbstraction().get_topic_names_and_types(node_name);
 
   for (const auto map_pair : topic_names_and_types) {
     QString topic = QString::fromStdString(map_pair.first);

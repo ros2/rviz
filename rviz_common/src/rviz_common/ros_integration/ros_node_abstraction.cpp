@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,29 +28,66 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__ROS_INTEGRATION__GET_TOPIC_NAMES_AND_TYPES_HPP_
-#define RVIZ_COMMON__ROS_INTEGRATION__GET_TOPIC_NAMES_AND_TYPES_HPP_
+#include "rviz_common/ros_integration/ros_node_abstraction.hpp"
 
 #include <map>
+#include <memory>
+#include <mutex>
 #include <string>
 #include <vector>
+
+#include "rclcpp/rclcpp.hpp"
 
 namespace rviz_common
 {
 namespace ros_integration
 {
 
-/// Return a map with topic names mapped to a list of types for that topic.
-/**
- * The node name is what was given when initializing with this API.
- *
- * \param node_name name of the node to use when getting this information.
- * \return map of topic names and their types
- */
+std::map<std::string, rclcpp::Node::SharedPtr> RosNodeAbstraction::nodes_by_name_;
+std::mutex RosNodeAbstraction::nodes_by_name_mutex_;
+
+void
+RosNodeAbstraction::store_rclcpp_node_by_name(
+  const std::string & node_name,
+  const std::shared_ptr<rclcpp::Node> node)
+{
+  std::lock_guard<std::mutex> lock(nodes_by_name_mutex_);
+  nodes_by_name_[node_name] = node;
+}
+
+std::shared_ptr<rclcpp::Node>
+RosNodeAbstraction::get_rclcpp_node_by_name(const std::string & node_name)
+{
+  std::lock_guard<std::mutex> lock(nodes_by_name_mutex_);
+  if (nodes_by_name_.count(node_name) == 0) {
+    return nullptr;
+  }
+  return nodes_by_name_[node_name];
+}
+
+bool
+RosNodeAbstraction::has_rclcpp_node_by_name(const std::string & node_name)
+{
+  std::lock_guard<std::mutex> lock(nodes_by_name_mutex_);
+  return nodes_by_name_.count(node_name) != 0;
+}
+
+void
+RosNodeAbstraction::clear_rclcpp_nodes()
+{
+  std::lock_guard<std::mutex> lock(nodes_by_name_mutex_);
+  nodes_by_name_.clear();
+}
+
 std::map<std::string, std::vector<std::string>>
-get_topic_names_and_types(const std::string & node_name);
+RosNodeAbstraction::get_topic_names_and_types(const std::string & node_name)
+{
+  rclcpp::Node::SharedPtr node = get_rclcpp_node_by_name(node_name);
+  if (!node) {
+    throw std::runtime_error("given node name '" + node_name + "' not found");
+  }
+  return node->get_topic_names_and_types();
+}
 
 }  // namespace ros_integration
 }  // namespace rviz_common
-
-#endif  // RVIZ_COMMON__ROS_INTEGRATION__GET_TOPIC_NAMES_AND_TYPES_HPP_

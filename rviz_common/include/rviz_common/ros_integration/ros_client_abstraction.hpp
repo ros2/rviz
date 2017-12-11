@@ -31,14 +31,13 @@
 #ifndef RVIZ_COMMON__ROS_INTEGRATION__ROS_CLIENT_ABSTRACTION_HPP_
 #define RVIZ_COMMON__ROS_INTEGRATION__ROS_CLIENT_ABSTRACTION_HPP_
 
-#include <map>
 #include <memory>
-#include <mutex>
 #include <string>
 
 #include "rclcpp/rclcpp.hpp"
 
 #include "ros_client_abstraction_iface.hpp"
+#include "ros_node_abstraction_iface.hpp"
 
 namespace rviz_common
 {
@@ -48,6 +47,8 @@ namespace ros_integration
 class RosClientAbstraction : public RosClientAbstractionIface
 {
 public:
+  RosClientAbstraction();
+
   // TODO(wjwwood): Figure out which exceptions can be raised and document them
   //                consider consolidating all possible exceptions to a few
   //                exceptions defined in this library, to avoid inconsistent
@@ -90,44 +91,7 @@ public:
   shutdown() override;
 
 private:
-  /// Store an rclcpp node shared pointer in the internal storage by a given name.
-  /**
-   * If the key is already in use, the new node shared pointer overwrites the
-   * existing node shared pointer stored as the value for that key.
-   *
-   * \param node_name name to be used as the key for the rclcpp node
-   * \param node the rclcpp node to be stored
-   */
-  void
-  store_rclcpp_node_by_name(
-    const std::string & node_name,
-    const std::shared_ptr<rclcpp::Node> & node);
-
-  /// Return the rclcpp node shared pointer for the given node name if found, else nullptr.
-  /**
-   * \param node_name the name of the rclcpp node to get
-   * \returns the rclcpp node shared pointer for the given name, else nullptr
-   */
-  std::shared_ptr<rclcpp::Node>
-  get_rclcpp_node_by_name(const std::string & node_name);
-
-  /// Check if there exists an rclcpp node for the given name.
-  /**
-   * \param node_name the name of the node to check for
-   * \return true if exists, otherwise false
-   */
-  bool
-  has_rclcpp_node_by_name(const std::string & node_name);
-
-  /// Clear the stored nodes, allowing them to go out of scope.
-  /**
-   * This function is primarily used by shutdown to clean up the nodes created.
-   */
-  void
-  clear_rclcpp_nodes();
-
-  std::map<std::string, rclcpp::Node::SharedPtr> nodes_by_name_;
-  std::mutex nodes_by_name_mutex_;
+  std::unique_ptr<rviz_common::ros_integration::RosNodeAbstractionIface> node_abstraction_;
 };
 
 }  // namespace ros_integration

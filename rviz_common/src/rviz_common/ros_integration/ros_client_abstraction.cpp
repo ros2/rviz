@@ -36,10 +36,16 @@
 
 #include "rclcpp/rclcpp.hpp"
 
+#include "rviz_common/ros_integration/ros_node_abstraction.hpp"
+
 namespace rviz_common
 {
 namespace ros_integration
 {
+
+RosClientAbstraction::RosClientAbstraction()
+: node_abstraction_(std::make_unique<rviz_common::ros_integration::RosNodeAbstraction>())
+{}
 
 std::string
 RosClientAbstraction::init(int argc, char ** argv, const std::string & name, bool anonymous_name)
@@ -53,58 +59,25 @@ RosClientAbstraction::init(int argc, char ** argv, const std::string & name, boo
   }
   // TODO(wjwwood): this will throw on repeated calls, maybe avoid that?
   rclcpp::init(argc, argv);
-  if (has_rclcpp_node_by_name(name)) {
+  if (node_abstraction_->has_rclcpp_node_by_name(name)) {
     // TODO(wjwwood): make a better exception type rather than using std::runtime_error.
     throw std::runtime_error("Node with name " + final_name + " already exists.");
   }
-  store_rclcpp_node_by_name(name, std::make_shared<rclcpp::Node>(final_name));
+  node_abstraction_->store_rclcpp_node_by_name(name, std::make_shared<rclcpp::Node>(final_name));
   return final_name;
 }
 
 bool
 RosClientAbstraction::ok(const std::string & node_name)
 {
-  return rclcpp::ok() && has_rclcpp_node_by_name(node_name);
+  return rclcpp::ok() && node_abstraction_->has_rclcpp_node_by_name(node_name);
 }
 
 void
 RosClientAbstraction::shutdown()
 {
-  clear_rclcpp_nodes();
+  node_abstraction_->clear_rclcpp_nodes();
   rclcpp::shutdown();
-}
-
-void
-RosClientAbstraction::store_rclcpp_node_by_name(
-  const std::string & node_name,
-  const std::shared_ptr<rclcpp::Node> & node)
-{
-  std::lock_guard<std::mutex> lock(nodes_by_name_mutex_);
-  nodes_by_name_[node_name] = node;
-}
-
-std::shared_ptr<rclcpp::Node>
-RosClientAbstraction::get_rclcpp_node_by_name(const std::string & node_name)
-{
-  std::lock_guard<std::mutex> lock(nodes_by_name_mutex_);
-  if (nodes_by_name_.count(node_name) == 0) {
-    return nullptr;
-  }
-  return nodes_by_name_[node_name];
-}
-
-bool
-RosClientAbstraction::has_rclcpp_node_by_name(const std::string & node_name)
-{
-  std::lock_guard<std::mutex> lock(nodes_by_name_mutex_);
-  return nodes_by_name_.count(node_name) != 0;
-}
-
-void
-RosClientAbstraction::clear_rclcpp_nodes()
-{
-  std::lock_guard<std::mutex> lock(nodes_by_name_mutex_);
-  nodes_by_name_.clear();
 }
 
 }  // namespace ros_integration
