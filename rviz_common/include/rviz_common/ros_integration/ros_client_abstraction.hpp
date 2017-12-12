@@ -72,7 +72,7 @@ public:
    * \return name of the resulting ROS node
    */
   std::string
-  init(int argc, char ** argv, const std::string & name, bool anonymous_name = true) override;
+  init(int argc, char ** argv, const std::string & name, bool anonymous_name) override;
 
   /// Check if ROS is "ok" or not, usually if ROS has been shutdown or not.
   /**
