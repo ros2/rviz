@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,7 +33,9 @@
 
 #include <algorithm>
 #include <map>
+#include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <QCheckBox>  // NOLINT: cpplint is unable to handle the include order here
@@ -139,10 +142,11 @@ void getPluginGroups(
   const QMap<QString, QString> & datatype_plugins,
   QList<PluginGroup> * groups,
   std::vector<std::string> * unvisualizable,
-  const std::string & node_name)
+  const std::string & node_name,
+  rviz_common::ros_integration::RosNodeAbstractionIface & node_abstraction)
 {
   std::map<std::string, std::vector<std::string>> topic_names_and_types =
-    rviz_common::ros_integration::RosNodeAbstraction().get_topic_names_and_types(node_name);
+    node_abstraction.get_topic_names_and_types(node_name);
 
   for (const auto map_pair : topic_names_and_types) {
     QString topic = QString::fromStdString(map_pair.first);
@@ -225,7 +229,9 @@ AddDisplayDialog::AddDisplayDialog(
   DisplayTypeTree * display_tree = new DisplayTypeTree;
   display_tree->fillTree(factory);
 
-  TopicDisplayWidget * topic_widget = new TopicDisplayWidget(node_name);
+  TopicDisplayWidget * topic_widget = new TopicDisplayWidget(
+    node_name,
+    std::make_unique<rviz_common::ros_integration::RosNodeAbstraction>());
   topic_widget->fill(factory);
 
   tab_widget_ = new QTabWidget;
@@ -446,8 +452,10 @@ void DisplayTypeTree::fillTree(Factory * factory)
   }
 }
 
-TopicDisplayWidget::TopicDisplayWidget(const std::string & node_name)
-: node_name_(node_name)
+TopicDisplayWidget::TopicDisplayWidget(
+  const std::string & node_name,
+  std::unique_ptr<rviz_common::ros_integration::RosNodeAbstractionIface> node_abstraction)
+: node_name_(node_name), node_abstraction_(std::move(node_abstraction))
 {
   tree_ = new QTreeWidget;
   tree_->setHeaderHidden(true);
@@ -531,7 +539,7 @@ void TopicDisplayWidget::fill(DisplayFactory * factory)
 
   QList<PluginGroup> groups;
   std::vector<std::string> unvisualizable;
-  getPluginGroups(datatype_plugins_, &groups, &unvisualizable, node_name_);
+  getPluginGroups(datatype_plugins_, &groups, &unvisualizable, node_name_, *node_abstraction_);
 
   // Insert visualizable topics along with their plugins
   QList<PluginGroup>::const_iterator pg_it;

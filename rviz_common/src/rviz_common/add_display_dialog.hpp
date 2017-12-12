@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,6 +32,7 @@
 #ifndef RVIZ_COMMON__ADD_DISPLAY_DIALOG_HPP_
 #define RVIZ_COMMON__ADD_DISPLAY_DIALOG_HPP_
 
+#include <memory>
 #include <string>
 
 #include <QComboBox>  // NOLINT: cpplint is unable to handle the include order here
@@ -38,6 +40,7 @@
 #include <QTreeWidget>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "./factory.hpp"
+#include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
 
 class QCheckBox;
 class QDialogButtonBox;
@@ -175,7 +178,9 @@ class TopicDisplayWidget : public QWidget
   Q_OBJECT
 
 public:
-  explicit TopicDisplayWidget(const std::string & node_name);
+  TopicDisplayWidget(
+    const std::string & node_name,
+    std::unique_ptr<rviz_common::ros_integration::RosNodeAbstractionIface> node_abstraction);
   void fill(DisplayFactory * factory);
 
 Q_SIGNALS:
@@ -204,6 +209,7 @@ private:
   // One key may have multiple values.
   QMap<QString, QString> datatype_plugins_;
   const std::string node_name_;
+  std::unique_ptr<rviz_common::ros_integration::RosNodeAbstractionIface> node_abstraction_;
 };
 
 /// A combo box that can be inserted into a QTreeWidgetItem.
