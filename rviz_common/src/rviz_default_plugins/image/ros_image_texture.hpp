@@ -74,11 +74,11 @@ public:
   void setNormalizeFloatImage(bool normalize, double min = 0.0, double max = 1.0);
   void setMedianFrames(unsigned median_frames);
 
+  template<typename T>
+  std::vector<uint8_t> normalize(const T * image_data, size_t image_data_size);
+
 private:
   double updateMedian(std::deque<double> & buffer, double new_value);
-
-  template<typename T>
-  void normalize(const T * image_data, size_t image_data_size, std::vector<uint8_t> & buffer);
 
   sensor_msgs::msg::Image::ConstSharedPtr current_image_;
   std::mutex mutex_;

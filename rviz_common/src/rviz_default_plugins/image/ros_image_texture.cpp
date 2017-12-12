@@ -116,10 +116,11 @@ void ROSImageTexture::setNormalizeFloatImage(bool normalize, double min, double 
 }
 
 template<typename T>
-void ROSImageTexture::normalize(
-  const T * image_data, size_t image_data_size, std::vector<uint8_t> & buffer)
+std::vector<uint8_t> ROSImageTexture::normalize(
+  const T * image_data, size_t image_data_size)
 {
   // Prepare output buffer
+  std::vector<uint8_t> buffer;
   buffer.resize(image_data_size, 0);
 
   T minValue;
@@ -130,7 +131,7 @@ void ROSImageTexture::normalize(
     // Find min. and max. pixel value
     minValue = std::numeric_limits<T>::max();
     maxValue = std::numeric_limits<T>::min();
-    for (unsigned i = 0; i < image_data_size; ++i) {
+    for (unsigned int i = 0; i < image_data_size; ++i) {
       minValue = std::min(minValue, *input_ptr);
       maxValue = std::max(maxValue, *input_ptr);
       input_ptr++;
@@ -162,6 +163,7 @@ void ROSImageTexture::normalize(
       *output_ptr = val * 255u;
     }
   }
+  return buffer;
 }
 
 bool ROSImageTexture::update()
@@ -214,15 +216,15 @@ bool ROSImageTexture::update()
     image->encoding == sensor_msgs::image_encodings::TYPE_16SC1 ||
     image->encoding == sensor_msgs::image_encodings::MONO16) {
     imageDataSize /= sizeof(uint16_t);
-    normalize<uint16_t>(
-      reinterpret_cast<const uint16_t *>(image->data.data()), imageDataSize, buffer);
+    buffer = normalize<uint16_t>(
+      reinterpret_cast<const uint16_t *>(image->data.data()), imageDataSize);
     format = Ogre::PF_BYTE_L;
     imageDataPtr = &buffer[0];
   } else if (image->encoding.find("bayer") == 0) {
     format = Ogre::PF_BYTE_L;
   } else if (image->encoding == sensor_msgs::image_encodings::TYPE_32FC1) {
     imageDataSize /= sizeof(float);
-    normalize<float>(reinterpret_cast<const float *>(image->data.data()), imageDataSize, buffer);
+    buffer = normalize<float>(reinterpret_cast<const float *>(image->data.data()), imageDataSize);
     format = Ogre::PF_BYTE_L;
     imageDataPtr = &buffer[0];
   } else {
