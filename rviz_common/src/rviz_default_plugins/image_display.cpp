@@ -83,7 +83,7 @@ ImageDisplay::ImageDisplay()
   median_buffer_size_property_ = new rviz_common::properties::IntProperty(
     "Median window",
     5,
-    "Window size for median filter used for computin min/max.",
+    "Window size for median filter used for computing min/max.",
     this,
     SLOT(updateNormalizeOptions()));
 
