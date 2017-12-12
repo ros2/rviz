@@ -88,6 +88,7 @@ protected:
   void processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg) override;
 
 private:
+  void setupScene(Ogre::SceneNode * scene_node);
   void clear();
 
   std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;

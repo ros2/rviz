@@ -103,36 +103,7 @@ void ImageDisplay::onInitialize()
   setAssociatedWidget(render_panel_);
 
   render_panel_->getRenderWindow()->setupSceneAfterInit(
-    [this](Ogre::SceneNode * img_scene_node_) {
-      static int count = 0;
-      std::stringstream ss;
-      ss << "ImageDisplayObject" << count++;
-
-      screen_rect_ = new Ogre::Rectangle2D(true);
-      screen_rect_->setRenderQueueGroup(Ogre::RENDER_QUEUE_OVERLAY - 1);
-      screen_rect_->setCorners(-1.0f, 1.0f, 1.0f, -1.0f);
-
-      ss << "Material";
-      material_ = Ogre::MaterialManager::getSingleton().create(
-        ss.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-      material_->setSceneBlending(Ogre::SBT_REPLACE);
-      material_->setDepthWriteEnabled(false);
-      material_->setReceiveShadows(false);
-      material_->setDepthCheckEnabled(false);
-
-      material_->getTechnique(0)->setLightingEnabled(false);
-      Ogre::TextureUnitState * tu =
-      material_->getTechnique(0)->getPass(0)->createTextureUnitState();
-      tu->setTextureName(texture_.getTexture()->getName());
-      tu->setTextureFiltering(Ogre::TFO_NONE);
-
-      material_->setCullingMode(Ogre::CULL_NONE);
-      Ogre::AxisAlignedBox aabInf;
-      aabInf.setInfinite();
-      screen_rect_->setBoundingBox(aabInf);
-      screen_rect_->setMaterial(material_);
-      img_scene_node_->attachObject(screen_rect_);
-    });
+    std::bind(&ImageDisplay::setupScene, this, std::placeholders::_1));
 }
 
 ImageDisplay::~ImageDisplay()
@@ -230,6 +201,38 @@ void ImageDisplay::processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg)
     updateNormalizeOptions();
   }
   texture_.addMessage(msg);
+}
+
+void ImageDisplay::setupScene(Ogre::SceneNode * img_scene_node)
+{
+  static int count = 0;
+  std::stringstream ss;
+  ss << "ImageDisplayObject" << count++;
+
+  screen_rect_ = new Ogre::Rectangle2D(true);
+  screen_rect_->setRenderQueueGroup(Ogre::RENDER_QUEUE_OVERLAY - 1);
+  screen_rect_->setCorners(-1.0f, 1.0f, 1.0f, -1.0f);
+
+  ss << "Material";
+  material_ = Ogre::MaterialManager::getSingleton().create(
+    ss.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+  material_->setSceneBlending(Ogre::SBT_REPLACE);
+  material_->setDepthWriteEnabled(false);
+  material_->setReceiveShadows(false);
+  material_->setDepthCheckEnabled(false);
+
+  material_->getTechnique(0)->setLightingEnabled(false);
+  Ogre::TextureUnitState * tu =
+    material_->getTechnique(0)->getPass(0)->createTextureUnitState();
+  tu->setTextureName(texture_.getTexture()->getName());
+  tu->setTextureFiltering(Ogre::TFO_NONE);
+
+  material_->setCullingMode(Ogre::CULL_NONE);
+  Ogre::AxisAlignedBox aabInf;
+  aabInf.setInfinite();
+  screen_rect_->setBoundingBox(aabInf);
+  screen_rect_->setMaterial(material_);
+  img_scene_node->attachObject(screen_rect_);
 }
 
 }  // namespace rviz_default_plugins
