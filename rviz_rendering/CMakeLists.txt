@@ -64,6 +64,7 @@ add_library(rviz_rendering SHARED
   src/rviz_rendering/apply_visibility_bits.cpp
   src/rviz_rendering/arrow.cpp
   src/rviz_rendering/axes.cpp
+  src/rviz_rendering/billboard_line.cpp
   # src/rviz_rendering/initialization.cpp
   src/rviz_rendering/logging.cpp
   src/rviz_rendering/geometry.cpp

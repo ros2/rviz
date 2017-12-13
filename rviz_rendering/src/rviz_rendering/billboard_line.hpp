@@ -27,18 +27,18 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OGRE_TOOLS_BILLBOARD_LINE_H
-#define OGRE_TOOLS_BILLBOARD_LINE_H
-
-#include "object.h"
+#ifndef RVIZ_RENDERING__BILLBOARD_LINE_HPP_
+#define RVIZ_RENDERING__BILLBOARD_LINE_HPP_
 
 #include <stdint.h>
-
 #include <vector>
+
 #include <OgreVector3.h>
 #include <OgreColourValue.h>
 #include <OgreMaterial.h>
 #include <OgreSharedPtr.h>
+
+#include "rviz_rendering/object.hpp"
 
 namespace Ogre
 {
@@ -49,7 +49,7 @@ class Any;
 class BillboardChain;
 }
 
-namespace rviz
+namespace rviz_rendering
 {
 
 /**
@@ -126,8 +126,8 @@ private:
   uint32_t elements_in_current_chain_;
 };
 
-} // namespace rviz
+} // namespace rviz_rendering
 
-#endif
+#endif  // RVIZ_RENDERING__BILLBOARD_LINE_HPP_
 
 

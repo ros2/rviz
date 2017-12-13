@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "billboard_line.h"
+#include "billboard_line.hpp"
 
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
@@ -39,11 +39,9 @@
 
 #include <sstream>
 
-#include <ros/assert.h>
-
 #define MAX_ELEMENTS (65536/4)
 
-namespace rviz
+namespace rviz_rendering
 {
 
 BillboardLine::BillboardLine( Ogre::SceneManager* scene_manager, Ogre::SceneNode* parent_node )
@@ -191,7 +189,7 @@ void BillboardLine::newLine()
 {
   ++current_line_;
 
-  ROS_ASSERT(current_line_ < num_lines_);
+  assert(current_line_ < num_lines_);
 }
 
 void BillboardLine::addPoint( const Ogre::Vector3& point )
@@ -204,7 +202,7 @@ void BillboardLine::addPoint( const Ogre::Vector3& point, const Ogre::ColourValu
   ++num_elements_[current_line_];
   ++total_elements_;
 
-  ROS_ASSERT(num_elements_[current_line_] <= max_points_per_line_);
+  assert(num_elements_[current_line_] <= max_points_per_line_);
 
   ++elements_in_current_chain_;
   if (elements_in_current_chain_ > MAX_ELEMENTS)
@@ -294,4 +292,4 @@ const Ogre::Quaternion& BillboardLine::getOrientation()
   return scene_node_->getOrientation();
 }
 
-} // namespace rviz
+} // namespace rviz_rendering
