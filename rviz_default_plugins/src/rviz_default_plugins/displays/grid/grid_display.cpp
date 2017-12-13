@@ -209,9 +209,9 @@ void GridDisplay::updateStyle()
   grid_->setStyle(style);
 
   switch (style) {
-     case Grid::Billboards:
-       line_width_property_->show();
-       break;
+    case Grid::Billboards:
+      line_width_property_->show();
+      break;
     case Grid::Lines:
     default:
       line_width_property_->hide();

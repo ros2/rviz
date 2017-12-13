@@ -151,19 +151,16 @@ void Grid::create()
 
   float extent = (cell_length_ * static_cast<float>(cell_count_)) / 2;
 
-  if (style_ == Billboards)
-  {
+  if (style_ == Billboards) {
     billboard_line_->setColor(color_.r, color_.g, color_.b, color_.a);
     billboard_line_->setLineWidth(line_width_);
     billboard_line_->setMaxPointsPerLine(2);
-    billboard_line_->setNumLines((cell_count_+1) * 2 * (height_ + 1)
-                              + ((cell_count_ + 1) * (cell_count_ + 1)) * height_);
-  }
-  else
-  {
-  manual_object_->estimateVertexCount(cell_count_ * 4 * (height_ + 1) +
-    ((cell_count_ + 1) * (cell_count_ + 1) * height_));
-  manual_object_->begin(material_->getName(), Ogre::RenderOperation::OT_LINE_LIST);
+    billboard_line_->setNumLines((cell_count_ + 1) * 2 * (height_ + 1) +
+      ((cell_count_ + 1) * (cell_count_ + 1)) * height_);
+  } else {
+    manual_object_->estimateVertexCount(cell_count_ * 4 * (height_ + 1) +
+      ((cell_count_ + 1) * (cell_count_ + 1) * height_));
+    manual_object_->begin(material_->getName(), Ogre::RenderOperation::OT_LINE_LIST);
   }
 
   for (uint32_t h = 0; h <= height_; ++h) {
@@ -176,10 +173,8 @@ void Grid::create()
       Ogre::Vector3 p3(-extent, h_real, inc);
       Ogre::Vector3 p4(extent, h_real, inc);
 
-      if (style_ == Billboards)
-      {
-        if (h != 0 || i != 0)
-        {
+      if (style_ == Billboards) {
+        if (h != 0 || i != 0) {
           billboard_line_->newLine();
         }
 
@@ -190,9 +185,7 @@ void Grid::create()
 
         billboard_line_->addPoint(p3);
         billboard_line_->addPoint(p4);
-      }
-      else
-      {
+      } else {
         manual_object_->position(p1);
         manual_object_->colour(color_);
         manual_object_->position(p2);
@@ -215,15 +208,12 @@ void Grid::create()
         float y_top = (height_ / 2.0f) * cell_length_;
         float y_bottom = -y_top;
 
-        if (style_ == Billboards)
-        {
+        if (style_ == Billboards) {
           billboard_line_->newLine();
 
-          billboard_line_->addPoint( Ogre::Vector3(x_real, y_bottom, z_real));
-          billboard_line_->addPoint( Ogre::Vector3(x_real, y_top, z_real));
-        }
-        else
-        {
+          billboard_line_->addPoint(Ogre::Vector3(x_real, y_bottom, z_real));
+          billboard_line_->addPoint(Ogre::Vector3(x_real, y_top, z_real));
+        } else {
           manual_object_->position(x_real, y_bottom, z_real);
           manual_object_->colour(color_);
           manual_object_->position(x_real, y_top, z_real);
