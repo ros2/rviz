@@ -98,13 +98,16 @@ public:
 
   Ogre::MaterialPtr getMaterial() {return material_;}
 
+  typedef std::vector<Ogre::BillboardChain *> V_Chain;
+  /// exposed for testing
+  V_Chain getChains() {return chains_;}
+
 private:
   void setupChains();
   Ogre::BillboardChain * createChain();
 
   Ogre::SceneNode * scene_node_;
 
-  typedef std::vector<Ogre::BillboardChain *> V_Chain;
   V_Chain chains_;
   Ogre::MaterialPtr material_;
 
