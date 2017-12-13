@@ -28,6 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <memory>
+#include <string>
 #include <utility>
 
 #include <OgreManualObject.h>
@@ -94,8 +96,7 @@ ImageDisplay::ImageDisplay(std::unique_ptr<ROSImageTextureIface> texture)
 
 void ImageDisplay::onInitialize()
 {
-  RTDClass::onInitialize();
-  topic_property_->setValue("image");
+  RTDClass::onInitialize("image");
 
   updateNormalizeOptions();
 

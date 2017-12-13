@@ -75,10 +75,10 @@ public:
   void update(float wall_dt, float ros_dt) override;
 
 protected:
-  /** @brief Do initialization. Overridden from MessageFilterDisplay. */
+  /** @brief Do initialization. Overridden from RosTopicDisplay. */
   void onInitialize() override;
 
-  /** @brief Process a single message.  Overridden from MessageFilterDisplay. */
+  /** @brief Process a single message.  Overridden from RosTopicDisplay. */
   void processMessage(sensor_msgs::msg::PointCloud::ConstSharedPtr cloud) override;
 
   std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;

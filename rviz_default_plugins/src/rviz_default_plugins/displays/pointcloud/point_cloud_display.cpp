@@ -52,7 +52,7 @@ PointCloudDisplay::PointCloudDisplay()
 
 void PointCloudDisplay::onInitialize()
 {
-  RTDClass::onInitialize();
+  RTDClass::onInitialize("pointcloud");
   point_cloud_common_->initialize(context_, scene_node_);
 }
 

@@ -66,7 +66,7 @@ struct ImageData
   size_t size_;
 };
 
-class ROSImageTexture: public ROSImageTextureIface
+class ROSImageTexture : public ROSImageTextureIface
 {
 public:
   ROSImageTexture();

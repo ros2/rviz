@@ -85,10 +85,10 @@ public:
     sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
 
 protected:
-  /** @brief Do initialization. Overridden from MessageFilterDisplay. */
+  /** @brief Do initialization. Overridden from RosTopicDisplay. */
   void onInitialize() override;
 
-  /** @brief Process a single message.  Overridden from MessageFilterDisplay. */
+  /** @brief Process a single message.  Overridden from RosTopicDisplay. */
   void processMessage(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) override;
 
 private:

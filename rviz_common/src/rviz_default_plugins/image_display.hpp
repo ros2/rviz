@@ -33,6 +33,7 @@
 
 #ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
 # include <memory>
+# include <string>
 
 # include <QObject>  // NOLINT cpplint cannot handle include order here
 
