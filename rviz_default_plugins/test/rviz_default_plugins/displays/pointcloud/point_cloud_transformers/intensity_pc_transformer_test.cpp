@@ -35,8 +35,7 @@
 
 #include "../message_creators.hpp"
 
-#include \
-  "../../../../../src/rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.hpp"
+#include "../../../../../src/rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.hpp"
 
 using namespace rviz_default_plugins;  // NOLINT
 
