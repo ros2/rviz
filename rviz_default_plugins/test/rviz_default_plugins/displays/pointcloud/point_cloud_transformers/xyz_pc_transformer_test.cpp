@@ -34,7 +34,9 @@
 
 #include "../message_creators.hpp"
 
+// *INDENT-OFF*
 #include "../../../../../src/rviz_default_plugins/displays/pointcloud/transformers/xyz_pc_transformer.hpp"
+// *INDENT-ON*
 
 using namespace rviz_default_plugins;  // NOLINT
 
