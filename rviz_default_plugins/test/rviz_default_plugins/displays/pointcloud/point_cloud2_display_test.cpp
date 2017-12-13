@@ -31,7 +31,7 @@
 
 #include <vector>
 
-#include "src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp"
+#include "../../../../src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp"
 #include "./message_creators.hpp"
 
 using namespace rviz_default_plugins::displays;  // NOLINT
