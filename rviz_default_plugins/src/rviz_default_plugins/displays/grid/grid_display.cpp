@@ -94,8 +94,7 @@ GridDisplay::GridDisplay()
       "The rendering operation to use to draw the grid lines.",
       this, SLOT(updateStyle()));
   style_property_->addOption("Lines", Grid::Lines);
-  // TODO(wjwwood): re-enable the billboards option for the grid
-  // style_property_->addOption("Billboards", Grid::Billboards);
+  style_property_->addOption("Billboards", Grid::Billboards);
 
   line_width_property_ = new FloatProperty("Line Width", 0.03,
       "The width, in meters, of each grid line.",
@@ -210,10 +209,9 @@ void GridDisplay::updateStyle()
   grid_->setStyle(style);
 
   switch (style) {
-    // TODO(wjwwood): re-enable billboards option
-    // case Grid::Billboards:
-    //   line_width_property_->show();
-    //   break;
+     case Grid::Billboards:
+       line_width_property_->show();
+       break;
     case Grid::Lines:
     default:
       line_width_property_->hide();

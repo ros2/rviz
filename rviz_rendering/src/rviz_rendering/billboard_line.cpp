@@ -84,7 +84,7 @@ BillboardLine::~BillboardLine()
 
   scene_manager_->destroySceneNode( scene_node_->getName() );
 
-  Ogre::MaterialManager::getSingleton().remove(material_->getName());
+  Ogre::MaterialManager::getSingleton().remove(material_);
 }
 
 Ogre::BillboardChain* BillboardLine::createChain()
@@ -250,6 +250,7 @@ void BillboardLine::setOrientation( const Ogre::Quaternion& orientation )
 void BillboardLine::setScale( const Ogre::Vector3& scale )
 {
   // Setting scale doesn't really make sense here
+  (void) scale;
 }
 
 void BillboardLine::setColor( float r, float g, float b, float a )
