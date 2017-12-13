@@ -30,6 +30,8 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__IMAGE__ROS_IMAGE_TEXTURE_HPP_
 #define RVIZ_DEFAULT_PLUGINS__IMAGE__ROS_IMAGE_TEXTURE_HPP_
 
+#include "src/rviz_default_plugins/image/ros_image_texture_iface.hpp"
+
 #include <deque>
 #include <memory>
 #include <mutex>
@@ -64,25 +66,26 @@ struct ImageData
   size_t size_;
 };
 
-class ROSImageTexture
+class ROSImageTexture: public ROSImageTextureIface
 {
 public:
   ROSImageTexture();
-  ~ROSImageTexture();
+  ~ROSImageTexture() override;
 
-  void addMessage(sensor_msgs::msg::Image::ConstSharedPtr image);
-  bool update();
-  void clear();
+  void addMessage(sensor_msgs::msg::Image::ConstSharedPtr image) override;
+  bool update() override;
+  void clear() override;
 
-  const Ogre::TexturePtr & getTexture() {return texture_;}
-  const sensor_msgs::msg::Image::ConstSharedPtr getImage();
+  const Ogre::TexturePtr & getTexture() override {return texture_;}
+  const sensor_msgs::msg::Image::ConstSharedPtr getImage() override;
 
-  uint32_t getWidth() {return width_;}
-  uint32_t getHeight() {return height_;}
+  uint32_t getWidth() override {return width_;}
+  uint32_t getHeight() override {return height_;}
 
   // automatic range normalization
-  void setNormalizeFloatImage(bool normalize, double min = 0.0, double max = 1.0);
-  void setMedianFrames(unsigned median_frames);
+  void setNormalizeFloatImage(bool normalize) override;
+  void setNormalizeFloatImage(bool normalize, double min, double max) override;
+  void setMedianFrames(unsigned median_frames) override;
 
   template<typename T>
   std::vector<uint8_t> normalize(const T * image_data, size_t image_data_size);

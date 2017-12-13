@@ -96,6 +96,11 @@ void ROSImageTexture::setMedianFrames(unsigned median_frames)
   median_frames_ = median_frames;
 }
 
+void ROSImageTexture::setNormalizeFloatImage(bool normalize)
+{
+  setNormalizeFloatImage(normalize, 0.0, 1.0);
+}
+
 void ROSImageTexture::setNormalizeFloatImage(bool normalize, double min, double max)
 {
   normalize_ = normalize;

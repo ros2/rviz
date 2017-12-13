@@ -143,6 +143,8 @@ list(APPEND rviz_common_headers_to_moc
 # TODO(greimela): Remove when moving the default plugins to separate package
 list(APPEND rviz_common_headers_to_moc
   src/rviz_default_plugins/image_display.hpp)
+list(APPEND rviz_common_headers_to_moc
+  src/rviz_default_plugins/image/ros_image_texture_iface.hpp)
 
 set(rviz_common_source_files
   ${ENV_CONFIG_CPP}

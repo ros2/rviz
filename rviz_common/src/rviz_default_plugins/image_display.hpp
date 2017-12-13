@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -68,7 +69,8 @@ class ImageDisplay : public rviz_common::RosTopicDisplay<sensor_msgs::msg::Image
   Q_OBJECT
 
 public:
-  ImageDisplay();
+  explicit ImageDisplay(
+    std::unique_ptr<ROSImageTextureIface> texture = std::make_unique<ROSImageTexture>());
   ~ImageDisplay() override;
 
   // Overrides from Display
@@ -93,12 +95,12 @@ private:
 
   std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
 
-  Ogre::Rectangle2D * screen_rect_;
+  std::unique_ptr<Ogre::Rectangle2D> screen_rect_;
   Ogre::MaterialPtr material_;
 
-  ROSImageTexture texture_;
+  std::unique_ptr<ROSImageTextureIface> texture_;
 
-  rviz_common::RenderPanel * render_panel_;
+  std::unique_ptr<rviz_common::RenderPanel> render_panel_;
 
   rviz_common::properties::BoolProperty * normalize_property_;
   rviz_common::properties::FloatProperty * min_property_;

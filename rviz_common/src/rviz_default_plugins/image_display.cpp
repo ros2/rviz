@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,13 +28,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <utility>
+
 #include <OgreManualObject.h>
 #include <OgreMaterialManager.h>
 #include <OgreRectangle2D.h>
 #include <OgreRenderSystem.h>
 #include <OgreRenderWindow.h>
 #include <OgreRoot.h>
-#include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 #include <OgreTextureManager.h>
 #include <OgreViewport.h>
@@ -55,9 +57,9 @@
 namespace rviz_default_plugins
 {
 
-ImageDisplay::ImageDisplay()
-: queue_size_property_(new rviz_common::QueueSizeProperty(this, 10)),
-  texture_()
+ImageDisplay::ImageDisplay(std::unique_ptr<ROSImageTextureIface> texture)
+: queue_size_property_(std::make_unique<rviz_common::QueueSizeProperty>(this, 10)),
+  texture_(std::move(texture))
 {
   normalize_property_ = new rviz_common::properties::BoolProperty(
     "Normalize Range",
@@ -97,22 +99,16 @@ void ImageDisplay::onInitialize()
 
   updateNormalizeOptions();
 
-  render_panel_ = new rviz_common::RenderPanel();
+  render_panel_ = std::make_unique<rviz_common::RenderPanel>();
   render_panel_->resize(640, 480);
   render_panel_->initialize(context_);
-  setAssociatedWidget(render_panel_);
+  setAssociatedWidget(render_panel_.get());
 
   render_panel_->getRenderWindow()->setupSceneAfterInit(
     std::bind(&ImageDisplay::setupScene, this, std::placeholders::_1));
 }
 
-ImageDisplay::~ImageDisplay()
-{
-  if (initialized()) {
-    delete render_panel_;
-    delete screen_rect_;
-  }
-}
+ImageDisplay::~ImageDisplay() = default;
 
 void ImageDisplay::onEnable()
 {
@@ -135,9 +131,9 @@ void ImageDisplay::updateNormalizeOptions()
     max_property_->setHidden(normalize);
     median_buffer_size_property_->setHidden(!normalize);
 
-    texture_.setNormalizeFloatImage(
+    texture_->setNormalizeFloatImage(
       normalize, min_property_->getFloat(), max_property_->getFloat());
-    texture_.setMedianFrames(median_buffer_size_property_->getInt());
+    texture_->setMedianFrames(median_buffer_size_property_->getInt());
   } else {
     normalize_property_->setHidden(true);
     min_property_->setHidden(true);
@@ -148,7 +144,7 @@ void ImageDisplay::updateNormalizeOptions()
 
 void ImageDisplay::clear()
 {
-  texture_.clear();
+  texture_->clear();
 }
 
 void ImageDisplay::update(float wall_dt, float ros_dt)
@@ -156,14 +152,14 @@ void ImageDisplay::update(float wall_dt, float ros_dt)
   (void) wall_dt;
   (void) ros_dt;
   try {
-    texture_.update();
+    texture_->update();
 
     // make sure the aspect ratio of the image is preserved
     float win_width = render_panel_->width();
     float win_height = render_panel_->height();
 
-    float img_width = texture_.getWidth();
-    float img_height = texture_.getHeight();
+    float img_width = texture_->getWidth();
+    float img_height = texture_->getHeight();
 
     if (img_width != 0 && img_height != 0 && win_width != 0 && win_height != 0) {
       float img_aspect = img_width / img_height;
@@ -200,7 +196,7 @@ void ImageDisplay::processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg)
     got_float_image_ = got_float_image;
     updateNormalizeOptions();
   }
-  texture_.addMessage(msg);
+  texture_->addMessage(msg);
 }
 
 void ImageDisplay::setupScene(Ogre::SceneNode * img_scene_node)
@@ -209,7 +205,7 @@ void ImageDisplay::setupScene(Ogre::SceneNode * img_scene_node)
   std::stringstream ss;
   ss << "ImageDisplayObject" << count++;
 
-  screen_rect_ = new Ogre::Rectangle2D(true);
+  screen_rect_ = std::make_unique<Ogre::Rectangle2D>(true);
   screen_rect_->setRenderQueueGroup(Ogre::RENDER_QUEUE_OVERLAY - 1);
   screen_rect_->setCorners(-1.0f, 1.0f, 1.0f, -1.0f);
 
@@ -224,7 +220,7 @@ void ImageDisplay::setupScene(Ogre::SceneNode * img_scene_node)
   material_->getTechnique(0)->setLightingEnabled(false);
   Ogre::TextureUnitState * tu =
     material_->getTechnique(0)->getPass(0)->createTextureUnitState();
-  tu->setTextureName(texture_.getTexture()->getName());
+  tu->setTextureName(texture_->getTexture()->getName());
   tu->setTextureFiltering(Ogre::TFO_NONE);
 
   material_->setCullingMode(Ogre::CULL_NONE);
@@ -232,7 +228,7 @@ void ImageDisplay::setupScene(Ogre::SceneNode * img_scene_node)
   aabInf.setInfinite();
   screen_rect_->setBoundingBox(aabInf);
   screen_rect_->setMaterial(material_);
-  img_scene_node->attachObject(screen_rect_);
+  img_scene_node->attachObject(screen_rect_.get());
 }
 
 }  // namespace rviz_default_plugins
