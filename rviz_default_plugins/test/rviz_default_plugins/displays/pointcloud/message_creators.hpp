@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Willow Garage, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,32 +27,52 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS__XYZ_PC_TRANSFORMER_HPP_
-#define RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS__XYZ_PC_TRANSFORMER_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINTCLOUD__MESSAGE_CREATORS_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINTCLOUD__MESSAGE_CREATORS_HPP_
 
+#include <cstring>
 #include <vector>
-#include <string>
 
 #include "sensor_msgs/msg/point_cloud2.hpp"
-#include "rviz_common/properties/property.hpp"
-
-#include "../point_cloud_transformer.hpp"
+#include "sensor_msgs/msg/point_cloud.hpp"
 
 namespace rviz_default_plugins
 {
 
-class XYZPCTransformer : public PointCloudTransformer
+struct Point
 {
-public:
-  uint8_t supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) override;
-
-  bool transform(
-    const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
-    uint32_t mask,
-    const Ogre::Matrix4 & transform,
-    V_PointCloudPoint & points_out) override;
+  float x, y, z;
+  Point(float x, float y, float z)
+  : x(x), y(y), z(z) {}
 };
 
-}  // end namespace rviz_default_plugins
+struct PointWithIntensity : Point
+{
+  float intensity;
+  PointWithIntensity(float x, float y, float z, float intensity)
+  : Point(x, y, z), intensity(intensity) {}
+};
 
-#endif  // RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS__XYZ_PC_TRANSFORMER_HPP_
+struct ColoredPoint : Point
+{
+  float r, g, b;
+  ColoredPoint(float x, float y, float z, float r, float g, float b)
+  : Point(x, y, z), r(r), g(g), b(b) {}
+};
+
+sensor_msgs::msg::PointCloud::ConstSharedPtr createPointCloudWithSquare();
+sensor_msgs::msg::PointCloud::ConstSharedPtr createPointCloudWithPoints(std::vector<Point> points);
+
+sensor_msgs::msg::PointCloud2::ConstSharedPtr createPointCloud2WithSquare();
+sensor_msgs::msg::PointCloud2::SharedPtr createPointCloud2WithPoints(
+  const std::vector<Point> & points);
+sensor_msgs::msg::PointCloud2::ConstSharedPtr createF32ColoredPointCloud2(
+  const std::vector<ColoredPoint> & points);
+sensor_msgs::msg::PointCloud2::ConstSharedPtr create8BitColoredPointCloud2(
+  const std::vector<ColoredPoint> & points);
+sensor_msgs::msg::PointCloud2::ConstSharedPtr createPointCloud2WithIntensity(
+  const std::vector<PointWithIntensity> & points);
+
+}  // namespace rviz_default_plugins
+
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINTCLOUD__MESSAGE_CREATORS_HPP_

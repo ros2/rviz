@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__POINT_CLOUD2_DISPLAY_HPP_
-#define RVIZ_DEFAULT_PLUGINS__POINT_CLOUD2_DISPLAY_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINTCLOUD__POINT_CLOUD2_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINTCLOUD__POINT_CLOUD2_DISPLAY_HPP_
 
 #include <memory>
 
@@ -46,6 +46,8 @@ class IntProperty;
 }
 
 namespace rviz_default_plugins
+{
+namespace displays
 {
 
 struct Offsets
@@ -110,6 +112,7 @@ private:
   Offsets determineOffsets(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
 };
 
+}  // namespace displays
 }  // namespace rviz_default_plugins
 
-#endif  // RVIZ_DEFAULT_PLUGINS__POINT_CLOUD2_DISPLAY_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINTCLOUD__POINT_CLOUD2_DISPLAY_HPP_

@@ -34,19 +34,21 @@
 
 #include "../message_creators.hpp"
 
-#include "src/rviz_default_plugins/point_cloud_transformers/rgbf32_pc_transformer.hpp"
+// *INDENT-OFF*
+#include "../../../../../src/rviz_default_plugins/displays/pointcloud/transformers/rgb8_pc_transformer.hpp"
+// *INDENT-ON*
 
 using namespace rviz_default_plugins; // NOLINT
 
-TEST(RGBF32PCTransformer, transform_returns_points_colored_in_their_rgb_color) {
+TEST(RGB8PCTransformer, transform_returns_points_colored_in_their_rgb_color) {
   ColoredPoint p1 = {0, 0, 0, 0, 1, 0};
   ColoredPoint p2 = {0, 0, 0, 1, 0, 1};
-  auto cloud = createF32ColoredPointCloud2(std::vector<ColoredPoint>{p1, p2});
+  auto cloud = create8BitColoredPointCloud2(std::vector<ColoredPoint>{p1, p2});
 
   V_PointCloudPoint points_out;
   points_out.resize(2);
 
-  RGBF32PCTransformer transformer;
+  RGB8PCTransformer transformer;
   transformer.transform(
     cloud, PointCloudTransformer::Support_Color, Ogre::Matrix4::ZERO, points_out);
 
@@ -55,30 +57,18 @@ TEST(RGBF32PCTransformer, transform_returns_points_colored_in_their_rgb_color) {
   ASSERT_EQ(points_out[1].color, Ogre::ColourValue(1, 0, 1));
 }
 
-TEST(RGBF32PCTransformer, transform_returns_false_if_cloud_doesnt_support_rgb) {
-  auto cloud = createPointCloud2WithSquare();
-
-  V_PointCloudPoint points_out;
-
-  RGBF32PCTransformer transformer;
-  bool result = transformer.transform(
-    cloud, PointCloudTransformer::Support_None, Ogre::Matrix4::ZERO, points_out);
-
-  ASSERT_FALSE(result);
-}
-
-TEST(RGBF32PCTransformer, supports_returns_color_support_for_cloud_with_rgb_fields) {
+TEST(RGBF32PCTransformer, supports_returns_color_support_for_cloud_with_rgb_field) {
   ColoredPoint p1 = {0, 0, 0, 0, 0, 0};
   ColoredPoint p2 = {0, 0, 0, 1, 1, 1};
-  auto cloud = createF32ColoredPointCloud2(std::vector<ColoredPoint>{p1, p2});
+  auto cloud = create8BitColoredPointCloud2(std::vector<ColoredPoint>{p1, p2});
 
-  RGBF32PCTransformer transformer;
+  RGB8PCTransformer transformer;
   uint8_t result = transformer.supports(cloud);
 
   ASSERT_EQ(PointCloudTransformer::Support_Color, result);
 }
 
-TEST(RGBF32PCTransformer, supports_returns_no_color_support_for_cloud_without_rgb_fields) {
+TEST(RGBF32PCTransformer, supports_returns_no_color_support_for_cloud_without_rgb_field) {
   auto cloud = std::make_shared<sensor_msgs::msg::PointCloud2>();
 
   cloud->fields.resize(3);
@@ -86,7 +76,7 @@ TEST(RGBF32PCTransformer, supports_returns_no_color_support_for_cloud_without_rg
   cloud->fields[1].name = "b";
   cloud->fields[2].name = "c";
 
-  RGBF32PCTransformer transformer;
+  RGB8PCTransformer transformer;
   uint8_t result = transformer.supports(cloud);
 
   ASSERT_EQ(PointCloudTransformer::Support_None, result);

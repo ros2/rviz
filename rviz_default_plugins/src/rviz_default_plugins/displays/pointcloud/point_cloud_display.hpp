@@ -1,6 +1,5 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
- * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,18 +27,69 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TO_POINT_CLOUD2_HPP_
-#define RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TO_POINT_CLOUD2_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINTCLOUD__POINT_CLOUD_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINTCLOUD__POINT_CLOUD_DISPLAY_HPP_
 
-# include "sensor_msgs/msg/point_cloud.hpp"
-# include "sensor_msgs/msg/point_cloud2.hpp"
+#include <deque>
+#include <memory>
+#include <queue>
+#include <vector>
+
+#include "sensor_msgs/msg/point_cloud.hpp"
+
+#include "rviz_common/message_filter_display.hpp"
+#include "point_cloud_common.hpp"
+
+namespace rviz_common
+{
+namespace properties
+{
+
+class IntProperty;
+
+}  // namespace properties
+}  // namespace rviz_common
 
 namespace rviz_default_plugins
 {
+namespace displays
+{
 
-sensor_msgs::msg::PointCloud2::ConstSharedPtr
-convertPointCloudToPointCloud2(sensor_msgs::msg::PointCloud::ConstSharedPtr input);
+/**
+ * \class PointCloudDisplay
+ * \brief Displays a point cloud of type sensor_msgs::PointCloud
+ *
+ * By default it will assume channel 0 of the cloud is an intensity value, and will color them by intensity.
+ * If you set the channel's name to "rgb", it will interpret the channel as an integer rgb value, with r, g and b
+ * all being 8 bits.
+ */
+class PointCloudDisplay : public rviz_common::MessageFilterDisplay<sensor_msgs::msg::PointCloud>
+{
+  Q_OBJECT
 
+public:
+  PointCloudDisplay();
+
+  void reset() override;
+
+  void update(float wall_dt, float ros_dt) override;
+
+private Q_SLOTS:
+  void updateQueueSize();
+
+protected:
+  /** @brief Do initialization. Overridden from MessageFilterDisplay. */
+  void onInitialize() override;
+
+  /** @brief Process a single message.  Overridden from MessageFilterDisplay. */
+  void processMessage(sensor_msgs::msg::PointCloud::ConstSharedPtr cloud) override;
+
+  rviz_common::properties::IntProperty * queue_size_property_;
+
+  std::unique_ptr<PointCloudCommon> point_cloud_common_;
+};
+
+}  // namespace displays
 }  // namespace rviz_default_plugins
 
-#endif  // RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TO_POINT_CLOUD2_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINTCLOUD__POINT_CLOUD_DISPLAY_HPP_

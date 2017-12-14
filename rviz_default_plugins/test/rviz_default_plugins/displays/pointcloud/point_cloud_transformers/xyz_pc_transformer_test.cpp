@@ -34,39 +34,51 @@
 
 #include "../message_creators.hpp"
 
-#include "src/rviz_default_plugins/point_cloud_transformers/rgb8_pc_transformer.hpp"
+// *INDENT-OFF*
+#include "../../../../../src/rviz_default_plugins/displays/pointcloud/transformers/xyz_pc_transformer.hpp"
+// *INDENT-ON*
 
-using namespace rviz_default_plugins; // NOLINT
+using namespace rviz_default_plugins;  // NOLINT
 
-TEST(RGB8PCTransformer, transform_returns_points_colored_in_their_rgb_color) {
-  ColoredPoint p1 = {0, 0, 0, 0, 1, 0};
-  ColoredPoint p2 = {0, 0, 0, 1, 0, 1};
-  auto cloud = create8BitColoredPointCloud2(std::vector<ColoredPoint>{p1, p2});
+TEST(XYZPCTransformer, transform_returns_the_point_cloud_points) {
+  // just plain Point is ambiguous on macOS
+  rviz_default_plugins::Point p1 = {1, 2, 3};
+  rviz_default_plugins::Point p2 = {4, 5, 6};
+  auto cloud = createPointCloud2WithPoints(std::vector<rviz_default_plugins::Point>{p1, p2});
 
   V_PointCloudPoint points_out;
   points_out.resize(2);
 
-  RGB8PCTransformer transformer;
-  transformer.transform(
-    cloud, PointCloudTransformer::Support_Color, Ogre::Matrix4::ZERO, points_out);
+  XYZPCTransformer transformer;
+  transformer.transform(cloud, PointCloudTransformer::Support_XYZ, Ogre::Matrix4::ZERO, points_out);
 
   ASSERT_EQ(points_out.size(), (uint32_t) 2);
-  ASSERT_EQ(points_out[0].color, Ogre::ColourValue(0, 1, 0));
-  ASSERT_EQ(points_out[1].color, Ogre::ColourValue(1, 0, 1));
+  ASSERT_EQ(points_out[0].position, Ogre::Vector3(1, 2, 3));
+  ASSERT_EQ(points_out[1].position, Ogre::Vector3(4, 5, 6));
 }
 
-TEST(RGBF32PCTransformer, supports_returns_color_support_for_cloud_with_rgb_field) {
-  ColoredPoint p1 = {0, 0, 0, 0, 0, 0};
-  ColoredPoint p2 = {0, 0, 0, 1, 1, 1};
-  auto cloud = create8BitColoredPointCloud2(std::vector<ColoredPoint>{p1, p2});
+TEST(XYZPCTransformer, transform_returns_false_if_cloud_doesnt_support_xyz) {
+  auto cloud = createPointCloud2WithSquare();
 
-  RGB8PCTransformer transformer;
+  V_PointCloudPoint points_out;
+
+  XYZPCTransformer transformer;
+  bool result = transformer.transform(
+    cloud, PointCloudTransformer::Support_None, Ogre::Matrix4::ZERO, points_out);
+
+  ASSERT_FALSE(result);
+}
+
+TEST(XYZPCTransformer, supports_returns_xyz_support_for_cloud_with_xyz_fields) {
+  auto cloud = createPointCloud2WithSquare();
+
+  XYZPCTransformer transformer;
   uint8_t result = transformer.supports(cloud);
 
-  ASSERT_EQ(PointCloudTransformer::Support_Color, result);
+  ASSERT_EQ(PointCloudTransformer::Support_XYZ, result);
 }
 
-TEST(RGBF32PCTransformer, supports_returns_no_color_support_for_cloud_without_rgb_field) {
+TEST(XYZPCTransformer, supports_returns_no_xyz_support_for_cloud_without_xyz_fields) {
   auto cloud = std::make_shared<sensor_msgs::msg::PointCloud2>();
 
   cloud->fields.resize(3);
@@ -74,7 +86,7 @@ TEST(RGBF32PCTransformer, supports_returns_no_color_support_for_cloud_without_rg
   cloud->fields[1].name = "b";
   cloud->fields[2].name = "c";
 
-  RGB8PCTransformer transformer;
+  XYZPCTransformer transformer;
   uint8_t result = transformer.supports(cloud);
 
   ASSERT_EQ(PointCloudTransformer::Support_None, result);

@@ -33,88 +33,88 @@
 
 #include <QList>  // NOLINT: cpplint is unable to handle the include order here
 
+#include "rviz_common/properties/property.hpp"
 #include "../message_creators.hpp"
 
-#include "../../../src/rviz_default_plugins/point_cloud_transformers/intensity_pc_transformer.hpp"
+// *INDENT-OFF*
+#include "../../../../../src/rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.hpp"
+// *INDENT-ON*
 
-using namespace rviz_default_plugins;  // NOLINT
+using namespace rviz_default_plugins; // NOLINT
 
-TEST(IntensityPCTransformer, transform_returns_points_colored_depending_on_the_intensity) {
-  PointWithIntensity p1 = {0, 0, 0, 0};
-  PointWithIntensity p2 = {0, 0, 0, 1};
-  PointWithIntensity p3 = {0, 0, 0, 2};
-  auto cloud = createPointCloud2WithIntensity(std::vector<PointWithIntensity>{p1, p2, p3});
+TEST(AxisColorPCTransformer, transform_returns_points_colored_depending_on_the_z_position) {
+  // just plain Point is ambiguous on macOS
+  rviz_default_plugins::Point p1 = {0, 0, 0};
+  rviz_default_plugins::Point p2 = {0, 0, 1};
+  rviz_default_plugins::Point p3 = {0, 0, 2};
+  auto cloud = createPointCloud2WithPoints(std::vector<rviz_default_plugins::Point>{p1, p2, p3});
 
   V_PointCloudPoint points_out;
   points_out.resize(3);
 
   QList<rviz_common::properties::Property *> out_props;
 
-  IntensityPCTransformer transformer;
+  AxisColorPCTransformer transformer;
   transformer.createProperties(nullptr, PointCloudTransformer::Support_Color, out_props);
-
   transformer.transform(
     cloud, PointCloudTransformer::Support_Color, Ogre::Matrix4::IDENTITY, points_out);
 
-  ASSERT_EQ(points_out[0].color, Ogre::ColourValue(1, 0, 0));    // 0
-  ASSERT_EQ(points_out[1].color, Ogre::ColourValue(0, 1, 0.5));  // 1/2
-  ASSERT_EQ(points_out[2].color, Ogre::ColourValue(1, 0, 1));    // 1
+  ASSERT_EQ(points_out[0].color, Ogre::ColourValue(1, 0, 0));
+  ASSERT_EQ(points_out[1].color, Ogre::ColourValue(0, 1, 0.5));
+  ASSERT_EQ(points_out[2].color, Ogre::ColourValue(1, 0, 1));
 }
 
-TEST(IntensityPCTransformer,
-  transform_interpolates_between_min_and_max_color_if_use_rainbow_is_diabled) {
-  PointWithIntensity p1 = {0, 0, 0, 0};
-  PointWithIntensity p2 = {0, 0, 0, 1};
-  PointWithIntensity p3 = {0, 0, 0, 2};
-  auto cloud = createPointCloud2WithIntensity(std::vector<PointWithIntensity>{p1, p2, p3});
+TEST(AxisColorPCTransformer, transform_uses_default_min_max_if_autocomplete_value_bounds_is_false) {
+  // just plain Point is ambiguous on macOS
+  rviz_default_plugins::Point p1 = {0, 0, 0};
+  rviz_default_plugins::Point p2 = {0, 0, 1};
+  rviz_default_plugins::Point p3 = {0, 0, 2};
+  auto cloud = createPointCloud2WithPoints(std::vector<rviz_default_plugins::Point>{p1, p2, p3});
 
   V_PointCloudPoint points_out;
   points_out.resize(3);
 
   QList<rviz_common::properties::Property *> out_props;
 
-  IntensityPCTransformer transformer;
+  AxisColorPCTransformer transformer;
   transformer.createProperties(nullptr, PointCloudTransformer::Support_Color, out_props);
 
-  ASSERT_EQ(out_props[1]->getName(), "Use rainbow");
-  out_props[1]->setValue(false);
-
-  ASSERT_EQ(out_props[3]->getName(), "Min Color");
-  out_props[3]->setValue(QColor(0, 0, 0));
-
-  ASSERT_EQ(out_props[4]->getName(), "Max Color");
-  out_props[4]->setValue(QColor(255, 0, 0));
+  ASSERT_EQ(out_props[1]->getName(), "Autocompute Value Bounds");
+  out_props[1]->setValue(QVariant(false));
 
   transformer.transform(
     cloud, PointCloudTransformer::Support_Color, Ogre::Matrix4::IDENTITY, points_out);
 
-  ASSERT_EQ(points_out[0].color, Ogre::ColourValue(0, 0, 0));    // 0
-  ASSERT_EQ(points_out[1].color, Ogre::ColourValue(0.5, 0, 0));  // 1/2
-  ASSERT_EQ(points_out[2].color, Ogre::ColourValue(1, 0, 0));    // 1
+  ASSERT_EQ(points_out[0].color, Ogre::ColourValue(0, 1, 0.5));
+  ASSERT_EQ(points_out[1].color, Ogre::ColourValue(0, 1, 0.75));
+  ASSERT_EQ(points_out[2].color, Ogre::ColourValue(0, 1, 1));
 }
 
-TEST(IntensityPCTransformer,
-  transform_uses_default_min_max_intensity_if_autocompute_bounds_is_disabled) {
-  PointWithIntensity p1 = {0, 0, 0, 0};
-  PointWithIntensity p2 = {0, 0, 0, 1024};
-  PointWithIntensity p3 = {0, 0, 0, 2048};
-  auto cloud = createPointCloud2WithIntensity(std::vector<PointWithIntensity>{p1, p2, p3});
+TEST(AxisColorPCTransformer, transform_should_not_transform_points_when_using_local_frame) {
+  // just plain Point is ambiguous on macOS
+  rviz_default_plugins::Point p1 = {0, 0, 0};
+  rviz_default_plugins::Point p2 = {0, 0, 1};
+  rviz_default_plugins::Point p3 = {0, 0, 2};
+  auto cloud = createPointCloud2WithPoints(std::vector<rviz_default_plugins::Point>{p1, p2, p3});
 
   V_PointCloudPoint points_out;
   points_out.resize(3);
 
   QList<rviz_common::properties::Property *> out_props;
 
-  IntensityPCTransformer transformer;
+  AxisColorPCTransformer transformer;
   transformer.createProperties(nullptr, PointCloudTransformer::Support_Color, out_props);
+  ASSERT_EQ(out_props[2]->getName(), "Use Fixed Frame");
 
-  ASSERT_EQ(out_props[5]->getName(), "Autocompute Intensity Bounds");
-  out_props[5]->setValue(false);
+  out_props[2]->setValue(false);
+
+  // This matrix would fail the transformation if fixed frame = true
+  Ogre::Matrix4 tranformation(Ogre::Matrix4::ZERO);
 
   transformer.transform(
-    cloud, PointCloudTransformer::Support_Color, Ogre::Matrix4::IDENTITY, points_out);
+    cloud, PointCloudTransformer::Support_Color, tranformation, points_out);
 
-  ASSERT_EQ(points_out[0].color, Ogre::ColourValue(1, 0, 0));     // 0
-  ASSERT_EQ(points_out[1].color, Ogre::ColourValue(0.75, 1, 0));  // 1/4
-  ASSERT_EQ(points_out[2].color, Ogre::ColourValue(0, 1, 0.5));   // 1/2
+  ASSERT_EQ(points_out[0].color, Ogre::ColourValue(1, 0, 0));
+  ASSERT_EQ(points_out[1].color, Ogre::ColourValue(0, 1, 0.5));
+  ASSERT_EQ(points_out[2].color, Ogre::ColourValue(1, 0, 1));
 }

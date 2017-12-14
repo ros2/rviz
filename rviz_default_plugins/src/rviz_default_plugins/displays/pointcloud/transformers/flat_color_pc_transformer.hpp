@@ -27,23 +27,25 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#ifndef RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS__RGBF32_PC_TRANSFORMER_HPP_
-#define RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS__RGBF32_PC_TRANSFORMER_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINTCLOUD__TRANSFORMERS__FLAT_COLOR_PC_TRANSFORMER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINTCLOUD__TRANSFORMERS__FLAT_COLOR_PC_TRANSFORMER_HPP_
 
 #include <vector>
 #include <string>
 
 #include "sensor_msgs/msg/point_cloud2.hpp"
 #include "rviz_common/properties/property.hpp"
+#include "rviz_common/properties/color_property.hpp"
 
 #include "../point_cloud_transformer.hpp"
 
 namespace rviz_default_plugins
 {
 
-class RGBF32PCTransformer : public PointCloudTransformer
+class FlatColorPCTransformer : public PointCloudTransformer
 {
+  Q_OBJECT
+
 public:
   uint8_t supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) override;
 
@@ -51,9 +53,19 @@ public:
     const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
     uint32_t mask,
     const Ogre::Matrix4 & transform,
-    V_PointCloudPoint & points_out) override;
+    rviz_default_plugins::V_PointCloudPoint & points_out) override;
+
+  void createProperties(
+    rviz_common::properties::Property * parent_property,
+    uint32_t mask,
+    QList<rviz_common::properties::Property *> & out_props) override;
+
+  uint8_t score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) override;
+
+private:
+  rviz_common::properties::ColorProperty * color_property_;
 };
 
 }  // end namespace rviz_default_plugins
 
-#endif  // RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS__RGBF32_PC_TRANSFORMER_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINTCLOUD__TRANSFORMERS__FLAT_COLOR_PC_TRANSFORMER_HPP_

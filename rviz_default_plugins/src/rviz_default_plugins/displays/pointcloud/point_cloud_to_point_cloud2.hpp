@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2010, Willow Garage, Inc.
+ * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,32 +28,18 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS__RGB8_PC_TRANSFORMER_HPP_
-#define RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS__RGB8_PC_TRANSFORMER_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINTCLOUD__POINT_CLOUD_TO_POINT_CLOUD2_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINTCLOUD__POINT_CLOUD_TO_POINT_CLOUD2_HPP_
 
-#include <vector>
-#include <string>
-
-#include "sensor_msgs/msg/point_cloud2.hpp"
-#include "rviz_common/properties/property.hpp"
-
-#include "../point_cloud_transformer.hpp"
+# include "sensor_msgs/msg/point_cloud.hpp"
+# include "sensor_msgs/msg/point_cloud2.hpp"
 
 namespace rviz_default_plugins
 {
 
-class RGB8PCTransformer : public rviz_default_plugins::PointCloudTransformer
-{
-public:
-  unsigned char supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) override;
+sensor_msgs::msg::PointCloud2::ConstSharedPtr
+convertPointCloudToPointCloud2(sensor_msgs::msg::PointCloud::ConstSharedPtr input);
 
-  bool transform(
-    const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
-    unsigned int mask,
-    const Ogre::Matrix4 & transform,
-    rviz_default_plugins::V_PointCloudPoint & points_out) override;
-};
+}  // namespace rviz_default_plugins
 
-}  // end namespace rviz_default_plugins
-
-#endif  // RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS__RGB8_PC_TRANSFORMER_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINTCLOUD__POINT_CLOUD_TO_POINT_CLOUD2_HPP_

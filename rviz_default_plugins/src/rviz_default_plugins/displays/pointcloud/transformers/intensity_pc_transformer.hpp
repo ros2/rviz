@@ -27,62 +27,58 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINTCLOUD__TRANSFORMERS__INTENSITY_PC_TRANSFORMER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINTCLOUD__TRANSFORMERS__INTENSITY_PC_TRANSFORMER_HPP_
 
-#ifndef RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS__AXIS_COLOR_PC_TRANSFORMER_HPP_
-#define RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS__AXIS_COLOR_PC_TRANSFORMER_HPP_
-
-#include <vector>
-#include <string>
-
-#include "sensor_msgs/msg/point_cloud2.hpp"
-#include "rviz_common/properties/property.hpp"
+#include "rviz_common/properties/editable_enum_property.hpp"
 #include "rviz_common/properties/bool_property.hpp"
-#include "rviz_common/properties/enum_property.hpp"
+#include "rviz_common/properties/color_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
-
-#include "../point_cloud_transformer.hpp"
+#include "../point_cloud_helpers.hpp"
 
 namespace rviz_default_plugins
 {
 
-class AxisColorPCTransformer : public PointCloudTransformer
+class IntensityPCTransformer : public PointCloudTransformer
 {
   Q_OBJECT
 
 public:
-  uint8_t supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) override;
+  virtual uint8_t supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud);
 
-  bool transform(
+  virtual bool transform(
     const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
     uint32_t mask,
     const Ogre::Matrix4 & transform,
-    rviz_default_plugins::V_PointCloudPoint & points_out) override;
+    V_PointCloudPoint & points_out);
 
-  void createProperties(
+  virtual uint8_t score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud);
+
+  virtual void createProperties(
     rviz_common::properties::Property * parent_property,
     uint32_t mask,
-    QList<rviz_common::properties::Property *> & out_props) override;
+    QList<rviz_common::properties::Property *> & out_props);
 
-  uint8_t score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) override;
-
-  enum Axis
-  {
-    AXIS_X,
-    AXIS_Y,
-    AXIS_Z
-  };
+  void updateChannels(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud);
 
 private Q_SLOTS:
-  void updateAutoComputeBounds();
+  void updateUseRainbow();
+
+  void updateAutoComputeIntensityBounds();
 
 private:
-  rviz_common::properties::BoolProperty * auto_compute_bounds_property_;
-  rviz_common::properties::FloatProperty * min_value_property_;
-  rviz_common::properties::FloatProperty * max_value_property_;
-  rviz_common::properties::EnumProperty * axis_property_;
-  rviz_common::properties::BoolProperty * use_fixed_frame_property_;
+  V_string available_channels_;
+
+  rviz_common::properties::ColorProperty * min_color_property_;
+  rviz_common::properties::ColorProperty * max_color_property_;
+  rviz_common::properties::BoolProperty * auto_compute_intensity_bounds_property_;
+  rviz_common::properties::BoolProperty * use_rainbow_property_;
+  rviz_common::properties::BoolProperty * invert_rainbow_property_;
+  rviz_common::properties::FloatProperty * min_intensity_property_;
+  rviz_common::properties::FloatProperty * max_intensity_property_;
+  rviz_common::properties::EditableEnumProperty * channel_name_property_;
 };
 
 }  // end namespace rviz_default_plugins
 
-#endif  // RVIZ_DEFAULT_PLUGINS__POINT_CLOUD_TRANSFORMERS__AXIS_COLOR_PC_TRANSFORMER_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINTCLOUD__TRANSFORMERS__INTENSITY_PC_TRANSFORMER_HPP_
