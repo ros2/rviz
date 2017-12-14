@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,9 +38,10 @@
 #include <OgreMaterialManager.h>
 #include <OgreTechnique.h>
 
+#include <iostream>
 #include <sstream>
 
-#define MAX_ELEMENTS (65536 / 4)
+static const uint32_t MAX_ELEMENTS = (65536 / 4);
 
 namespace rviz_rendering
 {
@@ -47,13 +49,12 @@ namespace rviz_rendering
 BillboardLine::BillboardLine(Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node)
 : Object(scene_manager),
   width_(0.1f),
-  current_line_(0),
-  total_elements_(0),
   num_lines_(1),
   max_points_per_line_(100),
-  lines_per_chain_(0),
-  current_chain_(0),
-  elements_in_current_chain_(0)
+  chains_per_container_(0),
+  current_line_(0),
+  current_chain_container_(0),
+  elements_in_current_chain_container_(0)
 {
   if (!parent_node) {
     parent_node = scene_manager_->getRootSceneNode();
@@ -75,15 +76,48 @@ BillboardLine::BillboardLine(Ogre::SceneManager * scene_manager, Ogre::SceneNode
 
 BillboardLine::~BillboardLine()
 {
-  V_Chain::iterator it = chains_.begin();
-  V_Chain::iterator end = chains_.end();
-  for (; it != end; ++it) {
-    scene_manager_->destroyBillboardChain(*it);
+  for (auto & chain : chain_containers_) {
+    scene_manager_->destroyBillboardChain(chain);
   }
 
   scene_manager_->destroySceneNode(scene_node_->getName() );
 
   Ogre::MaterialManager::getSingleton().remove(material_);
+}
+
+void BillboardLine::clear()
+{
+  for (auto & chain : chain_containers_) {
+    chain->clearAllChains();
+  }
+
+  current_line_ = 0;
+  current_chain_container_ = 0;
+  elements_in_current_chain_container_ = 0;
+
+  for (auto & num_element : num_elements_) {
+    num_element = 0;
+  }
+}
+
+void BillboardLine::setupChainContainers()
+{
+  uint32_t total_points = max_points_per_line_ * num_lines_;
+  uint32_t num_chains = total_points / MAX_ELEMENTS;
+  if (total_points % MAX_ELEMENTS != 0) {
+    ++num_chains;
+  }
+
+  for (uint32_t i = chain_containers_.size(); i < num_chains; ++i) {
+    createChain();
+  }
+
+  chains_per_container_ = max_points_per_line_ > 0 ? MAX_ELEMENTS / max_points_per_line_ : 1;
+  if (max_points_per_line_ > MAX_ELEMENTS) {
+    chains_per_container_ = 1;
+  }
+
+  setupChainsInChainContainers();
 }
 
 Ogre::BillboardChain * BillboardLine::createChain()
@@ -95,60 +129,26 @@ Ogre::BillboardChain * BillboardLine::createChain()
   chain->setMaterialName(material_->getName() );
   scene_node_->attachObject(chain);
 
-  chains_.push_back(chain);
+  chain_containers_.push_back(chain);
 
   return chain;
 }
 
-void BillboardLine::clear()
+void BillboardLine::setupChainsInChainContainers() const
 {
-  V_Chain::iterator it = chains_.begin();
-  V_Chain::iterator end = chains_.end();
-  for (; it != end; ++it) {
-    (*it)->clearAllChains();
-  }
-
-  current_line_ = 0;
-  total_elements_ = 0;
-  current_chain_ = 0;
-  elements_in_current_chain_ = 0;
-
-  for (V_uint32::iterator it = num_elements_.begin(); it != num_elements_.end(); ++it) {
-    *it = 0;
-  }
-}
-
-void BillboardLine::setupChains()
-{
-  uint32_t total_points = max_points_per_line_ * num_lines_;
-  uint32_t num_chains = total_points / MAX_ELEMENTS;
-  if (total_points % MAX_ELEMENTS != 0) {
-    ++num_chains;
-  }
-
-  for (uint32_t i = chains_.size(); i < num_chains; ++i) {
-    createChain();
-  }
-
-  lines_per_chain_ = max_points_per_line_ > 0 ? MAX_ELEMENTS / max_points_per_line_ : 1;
-
-  V_Chain::iterator it = chains_.begin();
-  V_Chain::iterator end = chains_.end();
+  auto it = chain_containers_.begin();
+  auto end = chain_containers_.end();
   for (; it != end; ++it) {
     (*it)->setMaxChainElements(max_points_per_line_);
 
     // shorten the number of chains in the last bbchain, to avoid memory wasteage
     if (it + 1 == end) {
-      uint32_t lines_left = num_lines_ % lines_per_chain_;
+      uint32_t lines_left = num_lines_ % chains_per_container_;
 
       // Handle the case where num_lines_ is a multiple of lines_per_chain
-      if (lines_left == 0) {
-        (*it)->setNumberOfChains(lines_per_chain_);
-      } else {
-        (*it)->setNumberOfChains(lines_left);
-      }
+      (*it)->setNumberOfChains((lines_left == 0) ? chains_per_container_ : lines_left);
     } else {
-      (*it)->setNumberOfChains(lines_per_chain_);
+      (*it)->setNumberOfChains(chains_per_container_);
     }
   }
 }
@@ -157,19 +157,19 @@ void BillboardLine::setMaxPointsPerLine(uint32_t max)
 {
   max_points_per_line_ = max;
 
-  setupChains();
+  setupChainContainers();
 }
 
 void BillboardLine::setNumLines(uint32_t num)
 {
   num_lines_ = num;
 
-  setupChains();
+  setupChainContainers();
 
   num_elements_.resize(num);
 
-  for (V_uint32::iterator it = num_elements_.begin(); it != num_elements_.end(); ++it) {
-    *it = 0;
+  for (auto & num_element : num_elements_) {
+    num_element = 0;
   }
 }
 
@@ -188,38 +188,36 @@ void BillboardLine::addPoint(const Ogre::Vector3 & point)
 void BillboardLine::addPoint(const Ogre::Vector3 & point, const Ogre::ColourValue & color)
 {
   ++num_elements_[current_line_];
-  ++total_elements_;
 
   assert(num_elements_[current_line_] <= max_points_per_line_);
 
-  ++elements_in_current_chain_;
-  if (elements_in_current_chain_ > MAX_ELEMENTS) {
-    ++current_chain_;
-    elements_in_current_chain_ = 1;
-  }
+  incrementChainContainerIfNecessary();
 
   Ogre::BillboardChain::Element e;
   e.position = point;
   e.width = width_;
   e.colour = color;
-  chains_[current_chain_]->addChainElement(current_line_ % lines_per_chain_, e);
+  chain_containers_[current_chain_container_]->addChainElement(
+    current_line_ % chains_per_container_, e);
+}
+
+void BillboardLine::incrementChainContainerIfNecessary()
+{
+  ++elements_in_current_chain_container_;
+  if (elements_in_current_chain_container_ > MAX_ELEMENTS) {
+    ++current_chain_container_;
+    elements_in_current_chain_container_ = 1;
+  }
 }
 
 void BillboardLine::setLineWidth(float width)
 {
   width_ = width;
 
-  for (uint32_t line = 0; line < num_lines_; ++line) {
-    uint32_t element_count = num_elements_[line];
-
-    for (uint32_t i = 0; i < element_count; ++i) {
-      Ogre::BillboardChain * c = chains_[line / lines_per_chain_];
-      Ogre::BillboardChain::Element e = c->getChainElement(line % lines_per_chain_, i);
-
-      e.width = width_;
-      c->updateChainElement(line % lines_per_chain_, i, e);
-    }
-  }
+  changeAllElements([width](Ogre::BillboardChain::Element element) {
+      element.width = width;
+      return element;
+    });
 }
 
 void BillboardLine::setPosition(const Ogre::Vector3 & position)
@@ -250,15 +248,25 @@ void BillboardLine::setColor(float r, float g, float b, float a)
 
   color_ = Ogre::ColourValue(r, g, b, a);
 
+  changeAllElements([this](Ogre::BillboardChain::Element element) {
+      element.colour = color_;
+      return element;
+    });
+}
+
+void BillboardLine::changeAllElements(
+  std::function<Ogre::BillboardChain::Element(Ogre::BillboardChain::Element)> change_element)
+{
   for (uint32_t line = 0; line < num_lines_; ++line) {
     uint32_t element_count = num_elements_[line];
 
     for (uint32_t i = 0; i < element_count; ++i) {
-      Ogre::BillboardChain * c = chains_[line / lines_per_chain_];
-      Ogre::BillboardChain::Element e = c->getChainElement(line % lines_per_chain_, i);
+      Ogre::BillboardChain * c = chain_containers_[line / chains_per_container_];
 
-      e.colour = color_;
-      c->updateChainElement(line % lines_per_chain_, i, e);
+      uint32_t chain_index = line % chains_per_container_;
+      Ogre::BillboardChain::Element element = c->getChainElement(chain_index, i);
+      Ogre::BillboardChain::Element new_element = change_element(element);
+      c->updateChainElement(chain_index, i, new_element);
     }
   }
 }
