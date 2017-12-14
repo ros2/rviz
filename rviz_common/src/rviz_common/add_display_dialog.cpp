@@ -113,7 +113,7 @@ bool isSubtopic(const std::string & base, const std::string & topic)
   }
 
   std::string query = topic;
-  while (query != "/") {
+  while (query != "" && query != "/") {
     if (query == base) {
       return true;
     }

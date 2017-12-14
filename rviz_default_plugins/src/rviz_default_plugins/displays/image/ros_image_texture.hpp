@@ -27,10 +27,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__IMAGE__ROS_IMAGE_TEXTURE_HPP_
-#define RVIZ_DEFAULT_PLUGINS__IMAGE__ROS_IMAGE_TEXTURE_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__ROS_IMAGE_TEXTURE_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__ROS_IMAGE_TEXTURE_HPP_
 
-#include "src/rviz_default_plugins/image/ros_image_texture_iface.hpp"
+#include "ros_image_texture_iface.hpp"
 
 #include <deque>
 #include <memory>
@@ -46,6 +46,8 @@
 #include "sensor_msgs/msg/image.hpp"
 
 namespace rviz_default_plugins
+{
+namespace displays
 {
 
 class UnsupportedImageEncoding : public std::runtime_error
@@ -124,6 +126,7 @@ private:
   std::deque<double> max_buffer_;
 };
 
+}  // namespace displays
 }  // namespace rviz_default_plugins
 
-#endif  // RVIZ_DEFAULT_PLUGINS__IMAGE__ROS_IMAGE_TEXTURE_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__ROS_IMAGE_TEXTURE_HPP_

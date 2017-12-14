@@ -28,8 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__IMAGE_DISPLAY_HPP_
-#define RVIZ_DEFAULT_PLUGINS__IMAGE_DISPLAY_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__IMAGE_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__IMAGE_DISPLAY_HPP_
 
 #ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
 # include <memory>
@@ -48,7 +48,7 @@
 # include "rviz_common/properties/int_property.hpp"
 # include "rviz_common/properties/queue_size_property.hpp"
 
-# include "image/ros_image_texture.hpp"
+# include "ros_image_texture.hpp"
 #endif
 
 
@@ -59,6 +59,8 @@ class Rectangle2D;
 }
 
 namespace rviz_default_plugins
+{
+namespace displays
 {
 
 /**
@@ -110,6 +112,7 @@ private:
   bool got_float_image_;
 };
 
+}  // namespace displays
 }  // namespace rviz_default_plugins
 
-#endif  // RVIZ_DEFAULT_PLUGINS__IMAGE_DISPLAY_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__IMAGE_DISPLAY_HPP_

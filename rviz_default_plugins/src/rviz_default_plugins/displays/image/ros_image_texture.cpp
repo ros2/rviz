@@ -48,6 +48,8 @@
 
 namespace rviz_default_plugins
 {
+namespace displays
+{
 
 ROSImageTexture::ROSImageTexture()
 : new_image_(false),
@@ -309,4 +311,5 @@ void ROSImageTexture::addMessage(sensor_msgs::msg::Image::ConstSharedPtr msg)
   new_image_ = true;
 }
 
+}  // namespace displays
 }  // namespace rviz_default_plugins

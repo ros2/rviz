@@ -39,9 +39,9 @@
 
 #include "test/rviz_rendering/ogre_testing_environment.hpp"
 
-#include "src/rviz_default_plugins/image/ros_image_texture.hpp"
+#include "../../../../src/rviz_default_plugins/displays/image/ros_image_texture.hpp"
 
-using namespace rviz_default_plugins;  // NOLINT
+using namespace rviz_default_plugins::displays;  // NOLINT
 
 
 class RosImageTextureTestFixture : public ::testing::Test

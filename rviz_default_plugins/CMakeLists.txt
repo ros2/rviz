@@ -41,6 +41,7 @@ find_package(rclcpp REQUIRED)
 # These need to be added in the add_library() call so AUTOMOC detects them.
 set(rviz_default_plugins_headers_to_moc
   src/rviz_default_plugins/displays/grid/grid_display.hpp
+  src/rviz_default_plugins/displays/image/image_display.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_display.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp
@@ -50,6 +51,8 @@ set(rviz_default_plugins_headers_to_moc
 
 set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/grid/grid_display.cpp
+  src/rviz_default_plugins/displays/image/image_display.cpp
+  src/rviz_default_plugins/displays/image/ros_image_texture.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.cpp
@@ -121,6 +124,7 @@ if(BUILD_TESTING AND NOT WIN32)
   ament_uncrustify()
 
   find_package(ament_cmake_gtest REQUIRED)
+  find_package(ament_cmake_gmock REQUIRED)
 
   ament_add_gtest(point_cloud2_display_test
       test/rviz_default_plugins/displays/pointcloud/message_creators.hpp
@@ -141,6 +145,12 @@ if(BUILD_TESTING AND NOT WIN32)
       test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/xyz_pc_transformer_test.cpp)
   if(TARGET point_cloud_transformers_test)
     target_link_libraries(point_cloud_transformers_test rviz_default_plugins)
+  endif()
+
+  ament_add_gmock(ros_image_texture_test
+      test/rviz_default_plugins/displays/image/ros_image_texture_test.cpp)
+  if(TARGET ros_image_texture_test)
+    target_link_libraries(ros_image_texture_test rviz_default_plugins)
   endif()
 endif()
 

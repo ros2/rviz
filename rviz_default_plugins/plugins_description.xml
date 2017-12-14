@@ -13,6 +13,17 @@
   </class>
 
   <class
+          name="rviz/Image"
+          type="rviz_default_plugins::displays::ImageDisplay"
+          base_class_type="rviz_common::Display"
+  >
+    <description>
+      The Image display creates a new rendering window with an image.
+    </description>
+    <message_type>sensor_msgs/Image</message_type>
+  </class>
+
+  <class
           name="rviz/PointCloud"
           type="rviz_default_plugins::displays::PointCloudDisplay"
           base_class_type="rviz_common::Display"

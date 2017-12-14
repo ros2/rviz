@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__IMAGE__ROS_IMAGE_TEXTURE_IFACE_HPP_
-#define RVIZ_DEFAULT_PLUGINS__IMAGE__ROS_IMAGE_TEXTURE_IFACE_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__ROS_IMAGE_TEXTURE_IFACE_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__ROS_IMAGE_TEXTURE_IFACE_HPP_
 
 #include <OgreTexture.h>
 #include <OgreSharedPtr.h>
@@ -36,6 +36,8 @@
 #include "sensor_msgs/msg/image.hpp"
 
 namespace rviz_default_plugins
+{
+namespace displays
 {
 
 class ROSImageTextureIface
@@ -60,6 +62,7 @@ public:
   virtual void setMedianFrames(unsigned median_frames) = 0;
 };
 
+}  // namespace displays
 }  // namespace rviz_default_plugins
 
-#endif  // RVIZ_DEFAULT_PLUGINS__IMAGE__ROS_IMAGE_TEXTURE_IFACE_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__ROS_IMAGE_TEXTURE_IFACE_HPP_

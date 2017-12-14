@@ -58,6 +58,8 @@
 
 namespace rviz_default_plugins
 {
+namespace displays
+{
 
 ImageDisplay::ImageDisplay(std::unique_ptr<ROSImageTextureIface> texture)
 : queue_size_property_(std::make_unique<rviz_common::QueueSizeProperty>(this, 10)),
@@ -232,8 +234,8 @@ void ImageDisplay::setupScene(Ogre::SceneNode * img_scene_node)
   img_scene_node->attachObject(screen_rect_.get());
 }
 
+}  // namespace displays
 }  // namespace rviz_default_plugins
 
-// TODO(Martin-Idel-SI): Reenable if pluginlib becomes available
-// #include <pluginlib/class_list_macros.h>
-// PLUGINLIB_EXPORT_CLASS( rviz::ImageDisplay, rviz::Display )
+#include <pluginlib/class_list_macros.hpp>  // NOLINT
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::ImageDisplay, rviz_common::Display)
