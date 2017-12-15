@@ -186,8 +186,8 @@ set(rviz_common_source_files
   src/rviz_common/properties/tf_frame_property.cpp
   src/rviz_common/properties/vector_property.cpp
   src/rviz_common/render_panel.cpp
-  src/rviz_common/ros_integration/ros_node_abstraction.cpp
   src/rviz_common/ros_integration/ros_client_abstraction.cpp
+  src/rviz_common/ros_integration/ros_node_abstraction.cpp
   src/rviz_common/scaled_image_widget.cpp
   src/rviz_common/screenshot_dialog.cpp
   # src/rviz_common/selection_panel.cpp
@@ -296,8 +296,8 @@ install(FILES default.rviz
   DESTINATION share/${PROJECT_NAME}
 )
 
-find_package(ament_cmake_gtest REQUIRED)
 find_package(ament_cmake_gmock REQUIRED)
+find_package(ament_cmake_gtest REQUIRED)
 
 # TODO(wjwwood): reenable tests for Windows after resolving building problems
 if(BUILD_TESTING AND NOT WIN32)
