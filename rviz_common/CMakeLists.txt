@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(rviz_common)
+project(rviz_common CXX)
 
 # TODO(wjwood): remove when windows build is fixed
 if(DEFINED ENV{RVIZ_BUILD_ON_WINDOWS_OVERRIDE})
