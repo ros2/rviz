@@ -81,7 +81,7 @@
 #include "./loading_dialog.hpp"
 #include "./new_object_dialog.hpp"
 #include "./panel.hpp"
-#include "./panel_dock_widget.hpp"
+#include "rviz_common/panel_dock_widget.hpp"
 #include "./panel_factory.hpp"
 #include "./screenshot_dialog.hpp"
 #include "./splash_screen.hpp"

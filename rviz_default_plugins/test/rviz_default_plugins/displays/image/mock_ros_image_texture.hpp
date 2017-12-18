@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2012, Willow Garage, Inc.
- * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,58 +27,32 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./failed_view_controller.hpp"
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__MOCK_ROS_IMAGE_TEXTURE_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__MOCK_ROS_IMAGE_TEXTURE_HPP_
 
-#include <QMessageBox>
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
-#include "rviz_common/display_context.hpp"
-#include "rviz_common/window_manager_interface.hpp"
+#include "../../../../src/rviz_default_plugins/displays/image/ros_image_texture_iface.hpp"
 
-namespace rviz_common
+class MockROSImageTexture : public rviz_default_plugins::displays::ROSImageTextureIface
 {
+public:
+  MOCK_METHOD1(addMessage, void(sensor_msgs::msg::Image::ConstSharedPtr image));
+  MOCK_METHOD0(update, bool());
+  MOCK_METHOD0(clear, void());
 
-FailedViewController::FailedViewController(
-  const QString & desired_class_id,
-  const QString & error_message)
-: error_message_(error_message)
-{
-  setClassId(desired_class_id);
-}
+  MOCK_METHOD0(getName, const Ogre::String());
+  MOCK_METHOD0(getTexture, const Ogre::TexturePtr & ());
+  MOCK_METHOD0(getImage, const sensor_msgs::msg::Image::ConstSharedPtr());
+  MOCK_METHOD0(getMaterial, Ogre::MaterialPtr());
 
-QString FailedViewController::getDescription() const
-{
-  return "The class required for this view controller, '" + getClassId() +
-         "', could not be loaded.<br><b>Error:</b><br>" + error_message_;
-}
+  MOCK_METHOD0(getWidth, uint32_t());
+  MOCK_METHOD0(getHeight, uint32_t());
 
-void FailedViewController::load(const Config & config)
-{
-  saved_config_ = config;
-  ViewController::load(config);
-}
+  MOCK_METHOD1(setNormalizeFloatImage, void(bool normalize));
+  MOCK_METHOD3(setNormalizeFloatImage, void(bool normalize, double min, double max));
+  MOCK_METHOD1(setMedianFrames, void(unsigned median_frames));
+};
 
-void FailedViewController::save(Config config) const
-{
-  if (saved_config_.isValid() ) {
-    config.copy(saved_config_);
-  } else {
-    ViewController::save(config);
-  }
-}
-
-void FailedViewController::onActivate()
-{
-  QWidget * parent = NULL;
-  if (context_->getWindowManager() ) {
-    parent = context_->getWindowManager()->getParentWindow();
-  }
-  QMessageBox::critical(parent, "ViewController '" + getName() + "'unavailable.",
-    getDescription() );
-}
-
-void FailedViewController::lookAt(const Ogre::Vector3 & point)
-{
-  Q_UNUSED(point);
-}
-
-}  // end namespace rviz_common
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__MOCK_ROS_IMAGE_TEXTURE_HPP_

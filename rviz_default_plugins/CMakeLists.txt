@@ -152,6 +152,12 @@ if(BUILD_TESTING AND NOT WIN32)
   if(TARGET ros_image_texture_test)
     target_link_libraries(ros_image_texture_test rviz_default_plugins)
   endif()
+
+  ament_add_gmock(image_display_test
+      test/rviz_default_plugins/displays/image/image_display_test.cpp)
+  if(TARGET image_display_test)
+    target_link_libraries(image_display_test rviz_default_plugins)
+  endif()
 endif()
 
 ament_package()

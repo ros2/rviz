@@ -78,6 +78,7 @@ public:
   bool update() override;
   void clear() override;
 
+  const Ogre::String getName() override {return texture_->getName();}
   const Ogre::TexturePtr & getTexture() override {return texture_;}
   const sensor_msgs::msg::Image::ConstSharedPtr getImage() override;
 

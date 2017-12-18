@@ -86,7 +86,7 @@ set(rviz_common_headers_to_moc
   src/rviz_common/loading_dialog.hpp
   src/rviz_common/new_object_dialog.hpp
   src/rviz_common/panel.hpp
-  src/rviz_common/panel_dock_widget.hpp
+  include/rviz_common/panel_dock_widget.hpp
   include/rviz_common/properties/bool_property.hpp
   include/rviz_common/properties/color_editor.hpp
   include/rviz_common/properties/color_property.hpp
@@ -123,7 +123,7 @@ set(rviz_common_headers_to_moc
   src/rviz_common/visualization_frame.hpp
   src/rviz_common/visualization_manager.hpp
   src/rviz_common/widget_geometry_change_detector.hpp
-  src/rviz_common/window_manager_interface.hpp
+  include/rviz_common/window_manager_interface.hpp
   include/rviz_common/validate_floats.hpp
   include/rviz_common/ros_topic_display.hpp
 )

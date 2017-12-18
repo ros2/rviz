@@ -101,14 +101,14 @@ void ImageDisplay::onInitialize()
   RTDClass::onInitialize("image");
 
   updateNormalizeOptions();
+  setupScreenRectangle();
 
-  render_panel_ = std::make_unique<rviz_common::RenderPanel>();
-  render_panel_->resize(640, 480);
-  render_panel_->initialize(context_);
-  setAssociatedWidget(render_panel_.get());
+  setupRenderPanel();
 
   render_panel_->getRenderWindow()->setupSceneAfterInit(
-    std::bind(&ImageDisplay::setupScene, this, std::placeholders::_1));
+    [this](Ogre::SceneNode * scene_node) {
+      scene_node->attachObject(screen_rect_.get());
+    });
 }
 
 ImageDisplay::~ImageDisplay() = default;
@@ -202,7 +202,7 @@ void ImageDisplay::processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg)
   texture_->addMessage(msg);
 }
 
-void ImageDisplay::setupScene(Ogre::SceneNode * img_scene_node)
+void ImageDisplay::setupScreenRectangle()
 {
   static int count = 0;
   std::stringstream ss;
@@ -223,7 +223,7 @@ void ImageDisplay::setupScene(Ogre::SceneNode * img_scene_node)
   material_->getTechnique(0)->setLightingEnabled(false);
   Ogre::TextureUnitState * tu =
     material_->getTechnique(0)->getPass(0)->createTextureUnitState();
-  tu->setTextureName(texture_->getTexture()->getName());
+  tu->setTextureName(texture_->getName());
   tu->setTextureFiltering(Ogre::TFO_NONE);
 
   material_->setCullingMode(Ogre::CULL_NONE);
@@ -231,7 +231,14 @@ void ImageDisplay::setupScene(Ogre::SceneNode * img_scene_node)
   aabInf.setInfinite();
   screen_rect_->setBoundingBox(aabInf);
   screen_rect_->setMaterial(material_);
-  img_scene_node->attachObject(screen_rect_.get());
+}
+
+void ImageDisplay::setupRenderPanel()
+{
+  render_panel_ = std::make_unique<rviz_common::RenderPanel>();
+  render_panel_->resize(640, 480);
+  render_panel_->initialize(context_);
+  setAssociatedWidget(render_panel_.get());
 }
 
 }  // namespace displays

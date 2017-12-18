@@ -50,6 +50,7 @@ public:
   virtual bool update() = 0;
   virtual void clear() = 0;
 
+  virtual const Ogre::String getName() = 0;
   virtual const Ogre::TexturePtr & getTexture() = 0;
   virtual const sensor_msgs::msg::Image::ConstSharedPtr getImage() = 0;
 

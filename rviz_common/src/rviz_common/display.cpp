@@ -57,10 +57,10 @@
 #include "rviz_rendering/apply_visibility_bits.hpp"
 
 #include "rviz_common/display_context.hpp"
-#include "./panel_dock_widget.hpp"
+#include "rviz_common/panel_dock_widget.hpp"
 #include "rviz_common/properties/property_tree_model.hpp"
 #include "rviz_common/properties/status_list.hpp"
-#include "./window_manager_interface.hpp"
+#include "rviz_common/window_manager_interface.hpp"
 
 namespace rviz_common
 {
@@ -96,7 +96,11 @@ void Display::initialize(DisplayContext * context)
 {
   context_ = context;
   scene_manager_ = context_->getSceneManager();
-  scene_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
+
+  // TODO(greimela) Remove check as soon as SceneManager is mockable
+  if (scene_manager_) {
+    scene_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
+  }
 
   fixed_frame_ = context_->getFixedFrame();
 

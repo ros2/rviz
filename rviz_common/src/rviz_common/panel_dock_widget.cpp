@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./panel_dock_widget.hpp"
+#include "rviz_common/panel_dock_widget.hpp"
 
 #include <QChildEvent>
 #include <QCloseEvent>
