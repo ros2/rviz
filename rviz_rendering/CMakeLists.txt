@@ -202,6 +202,15 @@ if(BUILD_TESTING)
       Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
+
+  ament_add_gtest(grid_test_target src/test/grid_test.cpp)
+  if(TARGET grid_test_target)
+    target_link_libraries(grid_test_target
+      rviz_ogre_vendor::OgreMain
+      rviz_rendering
+      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+    )
+  endif()
 endif()
 
 list(APPEND ${PROJECT_NAME}_CONFIG_EXTRAS

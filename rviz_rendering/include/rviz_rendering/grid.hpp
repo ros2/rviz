@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -70,6 +71,7 @@ public:
     Billboards,
   };
 
+  // TODO(Martin-Idel-SI): Adapt description
   /**
    * \brief Constructor
    *
@@ -116,6 +118,10 @@ public:
 
   void setHeight(uint32_t count);
   uint32_t getHeight() {return height_;}
+
+  /// Exposed for testing
+  Ogre::ManualObject * getManualObject() {return manual_object_;}
+  BillboardLine * getBillboardLine() {return billboard_line_;}
 
 private:
   Ogre::SceneManager * scene_manager_;
