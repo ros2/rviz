@@ -122,17 +122,20 @@ public:
   std::shared_ptr<BillboardLine> getBillboardLine() {return billboard_line_;}
 
 private:
-  void prepareRenderables() const;
-  void createGridPlane(float extent, uint32_t height) const;
-  void createVerticalLinesBetweenPlanes(float extent) const;
+  typedef std::function<void (const Ogre::Vector3 & p3, const Ogre::Vector3 & p4)> AddLineFunction;
+  void createBillboardGrid() const;
+  void createManualGrid() const;
+  void createLines(AddLineFunction addLine) const;
+  void createGridPlane(float extent, uint32_t height, AddLineFunction addLine) const;
+  void createVerticalLinesBetweenPlanes(float extent, AddLineFunction addLine) const;
   void addBillboardLine(const Ogre::Vector3 & p3, const Ogre::Vector3 & p4) const;
   void addManualLine(const Ogre::Vector3 & p1, const Ogre::Vector3 & p2) const;
+  uint32_t numberOfVerticalLines() const;
 
   Ogre::SceneManager * scene_manager_;
   Ogre::SceneNode * scene_node_;           ///< The scene node that this grid is attached to
   Ogre::ManualObject * manual_object_;     ///< The manual object used to draw the grid
 
-  // TODO(Martin-Idel-SI): If we didn't need to expose for testing, we could use unique_ptr
   std::shared_ptr<BillboardLine> billboard_line_;
 
   Ogre::MaterialPtr material_;

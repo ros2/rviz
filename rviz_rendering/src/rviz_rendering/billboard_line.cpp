@@ -177,7 +177,7 @@ void BillboardLine::newLine()
 {
   ++current_line_;
 
-  assert(current_line_ < num_lines_);
+  assert(current_line_ <= num_lines_);
 }
 
 void BillboardLine::addPoint(const Ogre::Vector3 & point)
@@ -189,6 +189,7 @@ void BillboardLine::addPoint(const Ogre::Vector3 & point, const Ogre::ColourValu
 {
   ++num_elements_[current_line_];
 
+  assert(current_line_ < num_lines_);
   assert(num_elements_[current_line_] <= max_points_per_line_);
 
   incrementChainContainerIfNecessary();
