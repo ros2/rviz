@@ -143,10 +143,10 @@ void getPluginGroups(
   QList<PluginGroup> * groups,
   std::vector<std::string> * unvisualizable,
   const std::string & node_name,
-  rviz_common::ros_integration::RosNodeAbstractionIface & node_abstraction)
+  rviz_common::ros_integration::RosNodeAbstractionIface & ros_node_abstraction)
 {
   std::map<std::string, std::vector<std::string>> topic_names_and_types =
-    node_abstraction.get_topic_names_and_types(node_name);
+    ros_node_abstraction.get_topic_names_and_types(node_name);
 
   for (const auto map_pair : topic_names_and_types) {
     QString topic = QString::fromStdString(map_pair.first);
@@ -454,8 +454,8 @@ void DisplayTypeTree::fillTree(Factory * factory)
 
 TopicDisplayWidget::TopicDisplayWidget(
   const std::string & node_name,
-  std::unique_ptr<rviz_common::ros_integration::RosNodeAbstractionIface> node_abstraction)
-: node_name_(node_name), node_abstraction_(std::move(node_abstraction))
+  std::unique_ptr<rviz_common::ros_integration::RosNodeAbstractionIface> ros_node_abstraction)
+: node_name_(node_name), ros_node_abstraction_(std::move(ros_node_abstraction))
 {
   tree_ = new QTreeWidget;
   tree_->setHeaderHidden(true);
@@ -539,7 +539,7 @@ void TopicDisplayWidget::fill(DisplayFactory * factory)
 
   QList<PluginGroup> groups;
   std::vector<std::string> unvisualizable;
-  getPluginGroups(datatype_plugins_, &groups, &unvisualizable, node_name_, *node_abstraction_);
+  getPluginGroups(datatype_plugins_, &groups, &unvisualizable, node_name_, *ros_node_abstraction_);
 
   // Insert visualizable topics along with their plugins
   QList<PluginGroup>::const_iterator pg_it;

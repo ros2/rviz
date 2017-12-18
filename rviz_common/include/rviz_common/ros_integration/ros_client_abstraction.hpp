@@ -91,7 +91,7 @@ public:
   shutdown() override;
 
 private:
-  std::unique_ptr<rviz_common::ros_integration::RosNodeAbstractionIface> node_abstraction_;
+  std::unique_ptr<rviz_common::ros_integration::RosNodeAbstractionIface> ros_node_abstraction_;
 };
 
 }  // namespace ros_integration

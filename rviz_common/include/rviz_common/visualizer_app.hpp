@@ -52,7 +52,8 @@ class VisualizerApp : public QObject
 
 public:
   explicit VisualizerApp(
-    std::unique_ptr<rviz_common::ros_integration::RosClientAbstractionIface> ros_client);
+    std::unique_ptr<rviz_common::ros_integration::RosClientAbstractionIface> ros_client_abstraction
+  );
   ~VisualizerApp() override;
 
   void setApp(QApplication * app);
@@ -74,7 +75,7 @@ private:
   QTimer * continue_timer_;
   VisualizationFrame * frame_;
   std::string node_name_;
-  std::unique_ptr<rviz_common::ros_integration::RosClientAbstractionIface> ros_client_;
+  std::unique_ptr<rviz_common::ros_integration::RosClientAbstractionIface> ros_client_abstraction_;
 };
 
 }  // namespace rviz_common

@@ -180,7 +180,7 @@ class TopicDisplayWidget : public QWidget
 public:
   TopicDisplayWidget(
     const std::string & node_name,
-    std::unique_ptr<rviz_common::ros_integration::RosNodeAbstractionIface> node_abstraction);
+    std::unique_ptr<rviz_common::ros_integration::RosNodeAbstractionIface> ros_node_abstraction);
   void fill(DisplayFactory * factory);
 
 Q_SIGNALS:
@@ -209,7 +209,7 @@ private:
   // One key may have multiple values.
   QMap<QString, QString> datatype_plugins_;
   const std::string node_name_;
-  std::unique_ptr<rviz_common::ros_integration::RosNodeAbstractionIface> node_abstraction_;
+  std::unique_ptr<rviz_common::ros_integration::RosNodeAbstractionIface> ros_node_abstraction_;
 };
 
 /// A combo box that can be inserted into a QTreeWidgetItem.
