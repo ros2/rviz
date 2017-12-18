@@ -28,41 +28,40 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__ROS_INTEGRATION__ROS_NODE_ABSTRACTION_HPP_
-#define RVIZ_COMMON__ROS_INTEGRATION__ROS_NODE_ABSTRACTION_HPP_
+#ifndef RVIZ_COMMON__ROS_INTEGRATION__ROS_NODE_STORAGE_IFACE_HPP_
+#define RVIZ_COMMON__ROS_INTEGRATION__ROS_NODE_STORAGE_IFACE_HPP_
 
-#include <map>
 #include <memory>
-#include <mutex>
 #include <string>
-#include <vector>
 
-#include "./ros_node_abstraction_iface.hpp"
+#include "rclcpp/rclcpp.hpp"
 
 namespace rviz_common
 {
 namespace ros_integration
 {
 
-class RosNodeAbstraction : public RosNodeAbstractionIface
+class RosNodeStorageIface
 {
 public:
+  virtual ~RosNodeStorageIface() = default;
+
+  virtual void
+  store_rclcpp_node_by_name(
     const std::string & node_name,
+    const std::shared_ptr<rclcpp::Node> node) = 0;
 
-  /// Return a map with topic names mapped to a list of types for that topic.
-  /**
-   * The node name is what was given when initializing with this API.
-   *
-   * \param node_name name of the node to use when getting this information.
-   * \return map of topic names and their types
-   */
-  std::map<std::string, std::vector<std::string>>
-  get_topic_names_and_types(const std::string & node_name) override;
+  virtual std::shared_ptr<rclcpp::Node>
+  get_rclcpp_node_by_name(const std::string & node_name) = 0;
 
-private:
+  virtual bool
+  has_rclcpp_node_by_name(const std::string & node_name) = 0;
+
+  virtual void
+  clear_rclcpp_nodes() = 0;
 };
 
 }  // namespace ros_integration
 }  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__ROS_INTEGRATION__ROS_NODE_ABSTRACTION_HPP_
+#endif  // RVIZ_COMMON__ROS_INTEGRATION__ROS_NODE_STORAGE_IFACE_HPP_

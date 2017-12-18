@@ -28,8 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__ROS_INTEGRATION__ROS_NODE_ABSTRACTION_HPP_
-#define RVIZ_COMMON__ROS_INTEGRATION__ROS_NODE_ABSTRACTION_HPP_
+#include "ros_node_storage.hpp"
 
 #include <map>
 #include <memory>
@@ -37,32 +36,48 @@
 #include <string>
 #include <vector>
 
-#include "./ros_node_abstraction_iface.hpp"
+#include "rclcpp/rclcpp.hpp"
 
 namespace rviz_common
 {
 namespace ros_integration
 {
 
-class RosNodeAbstraction : public RosNodeAbstractionIface
+std::map<std::string, rclcpp::Node::SharedPtr> RosNodeStorage::nodes_by_name_;
+std::mutex RosNodeStorage::nodes_by_name_mutex_;
+
+void
+RosNodeStorage::store_rclcpp_node_by_name(
+  const std::string & node_name,
+  const std::shared_ptr<rclcpp::Node> node)
 {
-public:
-    const std::string & node_name,
+  std::lock_guard<std::mutex> lock(nodes_by_name_mutex_);
+  nodes_by_name_[node_name] = node;
+}
 
-  /// Return a map with topic names mapped to a list of types for that topic.
-  /**
-   * The node name is what was given when initializing with this API.
-   *
-   * \param node_name name of the node to use when getting this information.
-   * \return map of topic names and their types
-   */
-  std::map<std::string, std::vector<std::string>>
-  get_topic_names_and_types(const std::string & node_name) override;
+std::shared_ptr<rclcpp::Node>
+RosNodeStorage::get_rclcpp_node_by_name(const std::string & node_name)
+{
+  std::lock_guard<std::mutex> lock(nodes_by_name_mutex_);
+  if (nodes_by_name_.count(node_name) == 0) {
+    return nullptr;
+  }
+  return nodes_by_name_[node_name];
+}
 
-private:
-};
+bool
+RosNodeStorage::has_rclcpp_node_by_name(const std::string & node_name)
+{
+  std::lock_guard<std::mutex> lock(nodes_by_name_mutex_);
+  return nodes_by_name_.count(node_name) != 0;
+}
+
+void
+RosNodeStorage::clear_rclcpp_nodes()
+{
+  std::lock_guard<std::mutex> lock(nodes_by_name_mutex_);
+  nodes_by_name_.clear();
+}
 
 }  // namespace ros_integration
 }  // namespace rviz_common
-
-#endif  // RVIZ_COMMON__ROS_INTEGRATION__ROS_NODE_ABSTRACTION_HPP_

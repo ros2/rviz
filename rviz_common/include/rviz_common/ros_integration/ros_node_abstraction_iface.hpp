@@ -37,8 +37,6 @@
 #include <string>
 #include <vector>
 
-#include "rclcpp/rclcpp.hpp"
-
 namespace rviz_common
 {
 namespace ros_integration
@@ -48,20 +46,6 @@ class RosNodeAbstractionIface
 {
 public:
   virtual ~RosNodeAbstractionIface() = default;
-
-  virtual void
-  store_rclcpp_node_by_name(
-    const std::string & node_name,
-    const std::shared_ptr<rclcpp::Node> node) = 0;
-
-  virtual std::shared_ptr<rclcpp::Node>
-  get_rclcpp_node_by_name(const std::string & node_name) = 0;
-
-  virtual bool
-  has_rclcpp_node_by_name(const std::string & node_name) = 0;
-
-  virtual void
-  clear_rclcpp_nodes() = 0;
 
   virtual std::map<std::string, std::vector<std::string>>
   get_topic_names_and_types(const std::string & node_name) = 0;

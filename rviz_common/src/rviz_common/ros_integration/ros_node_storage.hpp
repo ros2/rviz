@@ -28,41 +28,68 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__ROS_INTEGRATION__ROS_NODE_ABSTRACTION_HPP_
-#define RVIZ_COMMON__ROS_INTEGRATION__ROS_NODE_ABSTRACTION_HPP_
+#ifndef RVIZ_COMMON__ROS_INTEGRATION__ROS_NODE_STORAGE_HPP_
+#define RVIZ_COMMON__ROS_INTEGRATION__ROS_NODE_STORAGE_HPP_
 
 #include <map>
 #include <memory>
 #include <mutex>
 #include <string>
-#include <vector>
 
-#include "./ros_node_abstraction_iface.hpp"
+#include "rclcpp/rclcpp.hpp"
+
+#include "./ros_node_storage_iface.hpp"
 
 namespace rviz_common
 {
 namespace ros_integration
 {
 
-class RosNodeAbstraction : public RosNodeAbstractionIface
+class RosNodeStorage : public RosNodeStorageIface
 {
 public:
-    const std::string & node_name,
-
-  /// Return a map with topic names mapped to a list of types for that topic.
+  /// Store an rclcpp node shared pointer in the internal storage by a given name.
   /**
-   * The node name is what was given when initializing with this API.
+   * If the key is already in use, the new node shared pointer overwrites the
+   * existing node shared pointer stored as the value for that key.
    *
-   * \param node_name name of the node to use when getting this information.
-   * \return map of topic names and their types
+   * \param node_name name to be used as the key for the rclcpp node
+   * \param node the rclcpp node to be stored
    */
-  std::map<std::string, std::vector<std::string>>
-  get_topic_names_and_types(const std::string & node_name) override;
+  void
+  store_rclcpp_node_by_name(
+    const std::string & node_name,
+    const std::shared_ptr<rclcpp::Node> node) override;
+
+  /// Return the rclcpp node shared pointer for the given node name if found, else nullptr.
+  /**
+   * \param node_name the name of the rclcpp node to get
+   * \returns the rclcpp node shared pointer for the given name, else nullptr
+   */
+  std::shared_ptr<rclcpp::Node>
+  get_rclcpp_node_by_name(const std::string & node_name) override;
+
+  /// Check if there exists an rclcpp node for the given name.
+  /**
+   * \param node_name the name of the node to check for
+   * \return true if exists, otherwise false
+   */
+  bool
+  has_rclcpp_node_by_name(const std::string & node_name) override;
+
+  /// Clear the stored nodes, allowing them to go out of scope.
+  /**
+   * This function is primarily used by shutdown to clean up the nodes created.
+   */
+  void
+  clear_rclcpp_nodes() override;
 
 private:
+  static std::map<std::string, rclcpp::Node::SharedPtr> nodes_by_name_;
+  static std::mutex nodes_by_name_mutex_;
 };
 
 }  // namespace ros_integration
 }  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__ROS_INTEGRATION__ROS_NODE_ABSTRACTION_HPP_
+#endif  // RVIZ_COMMON__ROS_INTEGRATION__ROS_NODE_STORAGE_HPP_

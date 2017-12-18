@@ -188,6 +188,7 @@ set(rviz_common_source_files
   src/rviz_common/render_panel.cpp
   src/rviz_common/ros_integration/ros_client_abstraction.cpp
   src/rviz_common/ros_integration/ros_node_abstraction.cpp
+  src/rviz_common/ros_integration/ros_node_storage.cpp
   src/rviz_common/scaled_image_widget.cpp
   src/rviz_common/screenshot_dialog.cpp
   # src/rviz_common/selection_panel.cpp
