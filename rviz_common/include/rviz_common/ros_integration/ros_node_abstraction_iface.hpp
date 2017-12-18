@@ -49,49 +49,20 @@ class RosNodeAbstractionIface
 public:
   virtual ~RosNodeAbstractionIface() = default;
 
-  /// Store an rclcpp node shared pointer in the internal storage by a given name.
-  /**
-   * If the key is already in use, the new node shared pointer overwrites the
-   * existing node shared pointer stored as the value for that key.
-   *
-   * \param node_name name to be used as the key for the rclcpp node
-   * \param node the rclcpp node to be stored
-   */
   virtual void
   store_rclcpp_node_by_name(
     const std::string & node_name,
     const std::shared_ptr<rclcpp::Node> node) = 0;
 
-  /// Return the rclcpp node shared pointer for the given node name if found, else nullptr.
-  /**
-   * \param node_name the name of the rclcpp node to get
-   * \returns the rclcpp node shared pointer for the given name, else nullptr
-   */
   virtual std::shared_ptr<rclcpp::Node>
   get_rclcpp_node_by_name(const std::string & node_name) = 0;
 
-  /// Check if there exists an rclcpp node for the given name.
-  /**
-   * \param node_name the name of the node to check for
-   * \return true if exists, otherwise false
-   */
   virtual bool
   has_rclcpp_node_by_name(const std::string & node_name) = 0;
 
-  /// Clear the stored nodes, allowing them to go out of scope.
-  /**
-   * This function is primarily used by shutdown to clean up the nodes created.
-   */
   virtual void
   clear_rclcpp_nodes() = 0;
 
-  /// Return a map with topic names mapped to a list of types for that topic.
-  /**
-   * The node name is what was given when initializing with this API.
-   *
-   * \param node_name name of the node to use when getting this information.
-   * \return map of topic names and their types
-   */
   virtual std::map<std::string, std::vector<std::string>>
   get_topic_names_and_types(const std::string & node_name) = 0;
 };
