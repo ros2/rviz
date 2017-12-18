@@ -347,6 +347,12 @@ if(BUILD_TESTING AND NOT WIN32)
   if(TARGET rviz_common_visualizer_app_test)
     target_link_libraries(rviz_common_visualizer_app_test rviz_common)
   endif()
+
+  ament_add_gmock(rviz_common_ros_node_abstraction_test
+    test/ros_node_abstraction_test.cpp)
+  if(TARGET rviz_common_ros_node_abstraction_test)
+    target_link_libraries(rviz_common_ros_node_abstraction_test rviz_common)
+  endif()
 endif()
 
 ament_package(

@@ -178,8 +178,7 @@ class TopicDisplayWidget : public QWidget
   Q_OBJECT
 
 public:
-  TopicDisplayWidget(
-    const std::string & node_name,
+  explicit TopicDisplayWidget(
     std::unique_ptr<rviz_common::ros_integration::RosNodeAbstractionIface> ros_node_abstraction);
   void fill(DisplayFactory * factory);
 
@@ -208,7 +207,6 @@ private:
   // Map from ROS topic type to all displays that can visualize it.
   // One key may have multiple values.
   QMap<QString, QString> datatype_plugins_;
-  const std::string node_name_;
   std::unique_ptr<rviz_common::ros_integration::RosNodeAbstractionIface> ros_node_abstraction_;
 };
 

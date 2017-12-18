@@ -37,19 +37,19 @@
 #include "rviz_common/visualizer_app.hpp"
 #include "rviz_common/ros_integration/ros_client_abstraction_iface.hpp"
 
-class MockRosAbstraction : public rviz_common::ros_integration::RosClientAbstractionIface
+class MockRosNodeStorage : public rviz_common::ros_integration::RosClientAbstractionIface
 {
 public:
   MOCK_METHOD4(init,
     std::string(int argc, char ** argv, const std::string & name, bool anonymous_name));
-  MOCK_METHOD1(ok, bool(const std::string & name));
+  MOCK_METHOD0(ok, bool());
   MOCK_METHOD0(shutdown, void());
 };
 
 TEST(VisualizerApp, shutdownsRosDuringExit) {
   std::unique_ptr<rviz_common::ros_integration::RosClientAbstractionIface> ros_client =
-    std::make_unique<MockRosAbstraction>();
-  EXPECT_CALL(*dynamic_cast<MockRosAbstraction *>(ros_client.get()), shutdown()).Times(1);
+    std::make_unique<MockRosNodeStorage>();
+  EXPECT_CALL(*dynamic_cast<MockRosNodeStorage *>(ros_client.get()), shutdown()).Times(1);
 
   {
     rviz_common::VisualizerApp visualizer_app(std::move(ros_client));

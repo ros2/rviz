@@ -327,7 +327,7 @@ void VisualizerApp::checkContinue()
     // This should not happen.
     return;
   }
-  if (!ros_client_abstraction_->ok(node_name_)) {
+  if (!ros_client_abstraction_->ok()) {
     if (frame_) {
       // Make sure the window doesn't ask if we want to save first.
       frame_->setWindowModified(false);

@@ -33,7 +33,6 @@
 
 #include <map>
 #include <memory>
-#include <mutex>
 #include <string>
 #include <vector>
 
@@ -44,22 +43,57 @@ namespace rviz_common
 namespace ros_integration
 {
 
+// forward declaration so ros node storage headers can remain private
+class RosNodeStorageIface;
+
 class RosNodeAbstraction : public RosNodeAbstractionIface
 {
 public:
+  RosNodeAbstraction() = delete;
+
+  /// Creates a ros node with the given name
+  /**
+   * Internally a rclcpp::Node is created.
+   * If a rclcpp::Node with the given name already exists a node abstraction for this already
+   * existing node is created.
+   *
+   * \param node_name name of the node to create
+   */
+  explicit RosNodeAbstraction(const std::string & node_name);
+
+  /// Creates a ros node with the given name using a specific storage. For testing use only.
+  /**
+   * Internally a rclcpp::Node is created.
+   * If a rclcpp::Node with the given name already exists a node abstraction for this already
+   * existing node is created.
+   *
+   * \param node_name name of the node to create
+   * \param ros_node_storage storage handling for the internal rclcpp::Node
+   */
+  RosNodeAbstraction(
     const std::string & node_name,
+    std::shared_ptr<RosNodeStorageIface> ros_node_storage);
+
+  /// Returns the name of the ros node
+  /**
+   * The returned node name is what was given as constructor argument.
+   *
+   * \return the name of the node
+   */
+  std::string get_node_name() override;
 
   /// Return a map with topic names mapped to a list of types for that topic.
   /**
-   * The node name is what was given when initializing with this API.
+   * The node name is what was given when initializing this API.
    *
-   * \param node_name name of the node to use when getting this information.
    * \return map of topic names and their types
    */
   std::map<std::string, std::vector<std::string>>
-  get_topic_names_and_types(const std::string & node_name) override;
+  get_topic_names_and_types() override;
 
 private:
+  std::string node_name_;
+  std::shared_ptr<RosNodeStorageIface> ros_node_storage_;
 };
 
 }  // namespace ros_integration

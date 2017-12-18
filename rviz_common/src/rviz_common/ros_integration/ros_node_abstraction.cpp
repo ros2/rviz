@@ -38,20 +38,40 @@
 
 #include "rclcpp/rclcpp.hpp"
 
+#include "ros_node_storage_iface.hpp"
+#include "ros_node_storage.hpp"
+
 namespace rviz_common
 {
 namespace ros_integration
 {
 
+RosNodeAbstraction::RosNodeAbstraction(const std::string & node_name)
+: RosNodeAbstraction(node_name, std::make_shared<RosNodeStorage>())
+{}
+
+RosNodeAbstraction::RosNodeAbstraction(
+  const std::string & node_name, std::shared_ptr<RosNodeStorageIface> ros_node_storage)
+: node_name_(node_name), ros_node_storage_(ros_node_storage)
 {
+  if (!ros_node_storage_->has_rclcpp_node_by_name(node_name_)) {
+    ros_node_storage_->store_rclcpp_node_by_name(
+      node_name_, std::make_shared<rclcpp::Node>(node_name_));
+  }
+}
+
+std::string
+RosNodeAbstraction::get_node_name()
+{
+  return node_name_;
 }
 
 std::map<std::string, std::vector<std::string>>
-RosNodeAbstraction::get_topic_names_and_types(const std::string & node_name)
+RosNodeAbstraction::get_topic_names_and_types()
 {
-  rclcpp::Node::SharedPtr node = get_rclcpp_node_by_name(node_name);
-  if (!node) {
-    throw std::runtime_error("given node name '" + node_name + "' not found");
+  rclcpp::Node::SharedPtr node = ros_node_storage_->get_rclcpp_node_by_name(node_name_);
+  if (node == nullptr) {
+    throw std::runtime_error("given node name '" + node_name_ + "' not found");
   }
   return node->get_topic_names_and_types();
 }

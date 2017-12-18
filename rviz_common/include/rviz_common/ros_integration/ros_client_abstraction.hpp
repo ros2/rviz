@@ -34,8 +34,6 @@
 #include <memory>
 #include <string>
 
-#include "rclcpp/rclcpp.hpp"
-
 #include "ros_client_abstraction_iface.hpp"
 #include "ros_node_abstraction_iface.hpp"
 
@@ -43,6 +41,9 @@ namespace rviz_common
 {
 namespace ros_integration
 {
+
+// forward declaration so ros node storage headers can remain private
+class RosNodeStorageIface;
 
 class RosClientAbstraction : public RosClientAbstractionIface
 {
@@ -80,7 +81,7 @@ public:
    * \return true if ok, otherwise false
    */
   bool
-  ok(const std::string & node_name) override;
+  ok() override;
 
   /// Shutdown ROS.
   /**
@@ -91,7 +92,8 @@ public:
   shutdown() override;
 
 private:
-  std::unique_ptr<rviz_common::ros_integration::RosNodeAbstractionIface> ros_node_abstraction_;
+  std::unique_ptr<RosNodeAbstractionIface> ros_node_abstraction_;
+  std::shared_ptr<RosNodeStorageIface> ros_node_storage_;
 };
 
 }  // namespace ros_integration

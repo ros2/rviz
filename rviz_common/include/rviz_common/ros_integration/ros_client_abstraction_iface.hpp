@@ -47,7 +47,7 @@ public:
   init(int argc, char ** argv, const std::string & name, bool anonymous_name) = 0;
 
   virtual bool
-  ok(const std::string & node_name) = 0;
+  ok() = 0;
 
   virtual void
   shutdown() = 0;

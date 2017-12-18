@@ -32,8 +32,6 @@
 #define RVIZ_COMMON__ROS_INTEGRATION__ROS_NODE_ABSTRACTION_IFACE_HPP_
 
 #include <map>
-#include <memory>
-#include <mutex>
 #include <string>
 #include <vector>
 
@@ -47,8 +45,10 @@ class RosNodeAbstractionIface
 public:
   virtual ~RosNodeAbstractionIface() = default;
 
+  virtual std::string get_node_name() = 0;
+
   virtual std::map<std::string, std::vector<std::string>>
-  get_topic_names_and_types(const std::string & node_name) = 0;
+  get_topic_names_and_types() = 0;
 };
 
 }  // namespace ros_integration

@@ -37,6 +37,7 @@
 #include "rclcpp/rclcpp.hpp"
 
 #include "rviz_common/ros_integration/ros_node_abstraction.hpp"
+#include "./ros_node_storage.hpp"
 
 namespace rviz_common
 {
@@ -44,7 +45,7 @@ namespace ros_integration
 {
 
 RosClientAbstraction::RosClientAbstraction()
-: ros_node_abstraction_(std::make_unique<rviz_common::ros_integration::RosNodeAbstraction>())
+: ros_node_storage_(std::make_shared<RosNodeStorage>())
 {}
 
 std::string
@@ -59,25 +60,24 @@ RosClientAbstraction::init(int argc, char ** argv, const std::string & name, boo
   }
   // TODO(wjwwood): this will throw on repeated calls, maybe avoid that?
   rclcpp::init(argc, argv);
-  if (ros_node_abstraction_->has_rclcpp_node_by_name(name)) {
+  if (ros_node_storage_->has_rclcpp_node_by_name(final_name)) {
     // TODO(wjwwood): make a better exception type rather than using std::runtime_error.
     throw std::runtime_error("Node with name " + final_name + " already exists.");
   }
-  ros_node_abstraction_->store_rclcpp_node_by_name(
-    name, std::make_shared<rclcpp::Node>(final_name));
+  ros_node_abstraction_ = std::make_unique<RosNodeAbstraction>(final_name, ros_node_storage_);
   return final_name;
 }
 
 bool
-RosClientAbstraction::ok(const std::string & node_name)
+RosClientAbstraction::ok()
 {
-  return rclcpp::ok() && ros_node_abstraction_->has_rclcpp_node_by_name(node_name);
+  return rclcpp::ok() && ros_node_abstraction_ != nullptr;
 }
 
 void
 RosClientAbstraction::shutdown()
 {
-  ros_node_abstraction_->clear_rclcpp_nodes();
+  ros_node_storage_->clear_rclcpp_nodes();
   rclcpp::shutdown();
 }
 
