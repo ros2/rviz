@@ -152,12 +152,6 @@ public:
     topic_property_->initialize(node_);
   }
 
-  void onInitialize(const std::string & topic_name)
-  {
-    RosTopicDisplay::onInitialize();
-    topic_property_->setValue(QString::fromStdString(topic_name));
-  }
-
   void reset() override
   {
     Display::reset();

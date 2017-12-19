@@ -98,7 +98,8 @@ ImageDisplay::ImageDisplay(std::unique_ptr<ROSImageTextureIface> texture)
 
 void ImageDisplay::onInitialize()
 {
-  RTDClass::onInitialize("image");
+  RTDClass::onInitialize();
+  topic_property_->setValue("image");
 
   updateNormalizeOptions();
   setupScreenRectangle();
