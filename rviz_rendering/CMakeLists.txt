@@ -185,32 +185,34 @@ if(BUILD_TESTING)
   # endif()
 
   # TODO(wjwwood): reenable this test when it can be run on CI
-#   ament_add_gtest(point_cloud_renderable_test_target src/test/point_cloud_renderable_test.cpp)
-#   if(TARGET point_cloud_renderable_test_target)
-#     target_link_libraries(point_cloud_renderable_test_target
-#       rviz_ogre_vendor::OgreMain
-#       rviz_rendering
-#       Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
-#     )
-#   endif()
+  # ament_add_gtest(point_cloud_renderable_test_target src/test/point_cloud_renderable_test.cpp)
+  # if(TARGET point_cloud_renderable_test_target)
+  #   target_link_libraries(point_cloud_renderable_test_target
+  #     rviz_ogre_vendor::OgreMain
+  #     rviz_rendering
+  #     Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+  #   )
+  # endif()
 
-  ament_add_gtest(billboard_line_test_target src/test/billboard_line_test.cpp)
-  if(TARGET billboard_line_test_target)
-    target_link_libraries(billboard_line_test_target
-      rviz_ogre_vendor::OgreMain
-      rviz_rendering
-      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
-    )
-  endif()
+  # TODO(Martin-Idel-SI): reenable this test when it can be run on CI
+  # ament_add_gtest(billboard_line_test_target src/test/billboard_line_test.cpp)
+  # if(TARGET billboard_line_test_target)
+  #   target_link_libraries(billboard_line_test_target
+  #     rviz_ogre_vendor::OgreMain
+  #     rviz_rendering
+  #     Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+  # )
+  # endif()
 
-  ament_add_gtest(grid_test_target src/test/grid_test.cpp)
-  if(TARGET grid_test_target)
-    target_link_libraries(grid_test_target
-      rviz_ogre_vendor::OgreMain
-      rviz_rendering
-      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
-    )
-  endif()
+  # TODO(Martin-Idel-SI): reenable this test when it can be run on CI
+  # ament_add_gtest(grid_test_target src/test/grid_test.cpp)
+  # if(TARGET grid_test_target)
+  #   target_link_libraries(grid_test_target
+  #     rviz_ogre_vendor::OgreMain
+  #     rviz_rendering
+  #     Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+  #   )
+  # endif()
 endif()
 
 list(APPEND ${PROJECT_NAME}_CONFIG_EXTRAS
