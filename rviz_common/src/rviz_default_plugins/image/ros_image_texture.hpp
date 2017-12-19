@@ -54,6 +54,16 @@ public:
   {}
 };
 
+struct ImageData
+{
+  ImageData(std::string encoding, const uint8_t * data_ptr, size_t size);
+
+  std::string encoding_;
+  Ogre::PixelFormat pixel_format_;
+  const uint8_t * data_ptr_;
+  size_t size_;
+};
+
 class ROSImageTexture
 {
 public:
@@ -78,7 +88,19 @@ public:
   std::vector<uint8_t> normalize(const T * image_data, size_t image_data_size);
 
 private:
-  double updateMedian(std::deque<double> & buffer, double new_value);
+  template<typename T>
+  std::vector<uint8_t> createNewNormalizedBuffer(
+    const T * image_data, size_t image_data_size, T minValue, T maxValue) const;
+  double computeMedianOfSeveralFrames(std::deque<double> & buffer, double new_value);
+  void updateBuffer(std::deque<double> & buffer, double value) const;
+  double computeMedianOfBuffer(const std::deque<double> & buffer) const;
+  template<typename T>
+  void getMinimalAndMaximalValueToNormalize(
+    const T * image_data, size_t image_data_size, T & minValue, T & maxValue);
+
+  bool fillWithCurrentImage(sensor_msgs::msg::Image::ConstSharedPtr & image);
+  ImageData setFormatAndNormalizeDataIfNecessary(ImageData image_data);
+  void loadImageToOgreImage(const ImageData & image_data, Ogre::Image & ogre_image) const;
 
   sensor_msgs::msg::Image::ConstSharedPtr current_image_;
   std::mutex mutex_;

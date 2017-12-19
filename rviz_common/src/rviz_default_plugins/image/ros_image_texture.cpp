@@ -38,6 +38,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <utility>
 
 #include <OgreTextureManager.h> // NOLINT: cpplint cannot handle include order
 
@@ -74,7 +75,7 @@ ROSImageTexture::~ROSImageTexture()
 
 void ROSImageTexture::clear()
 {
-  std::unique_lock<std::mutex> lock(mutex_);
+  std::lock_guard<std::mutex> lock(mutex_);
 
   texture_->unload();
   texture_->loadImage(empty_image_);
@@ -85,7 +86,7 @@ void ROSImageTexture::clear()
 
 const sensor_msgs::msg::Image::ConstSharedPtr ROSImageTexture::getImage()
 {
-  std::unique_lock<std::mutex> lock(mutex_);
+  std::lock_guard<std::mutex> lock(mutex_);
 
   return current_image_;
 }
@@ -93,19 +94,6 @@ const sensor_msgs::msg::Image::ConstSharedPtr ROSImageTexture::getImage()
 void ROSImageTexture::setMedianFrames(unsigned median_frames)
 {
   median_frames_ = median_frames;
-}
-
-double ROSImageTexture::updateMedian(std::deque<double> & buffer, double value)
-{
-  // update buffer
-  while (buffer.size() > median_frames_ - 1) {
-    buffer.pop_back();
-  }
-  buffer.push_front(value);
-  // get median
-  std::deque<double> buffer2 = buffer;
-  std::nth_element(buffer2.begin(), buffer2.begin() + buffer2.size() / 2, buffer2.end());
-  return *(buffer2.begin() + buffer2.size() / 2);
 }
 
 void ROSImageTexture::setNormalizeFloatImage(bool normalize, double min, double max)
@@ -116,19 +104,26 @@ void ROSImageTexture::setNormalizeFloatImage(bool normalize, double min, double 
 }
 
 template<typename T>
-std::vector<uint8_t> ROSImageTexture::normalize(
-  const T * image_data, size_t image_data_size)
+std::vector<uint8_t>
+ROSImageTexture::normalize(const T * image_data, size_t image_data_size)
 {
-  // Prepare output buffer
-  std::vector<uint8_t> buffer;
-  buffer.resize(image_data_size, 0);
-
   T minValue;
   T maxValue;
 
+  getMinimalAndMaximalValueToNormalize(image_data, image_data_size, minValue, maxValue);
+
+  return createNewNormalizedBuffer(image_data, image_data_size, minValue, maxValue);
+}
+
+template<typename T>
+void
+ROSImageTexture::getMinimalAndMaximalValueToNormalize(
+  const T * image_data, size_t image_data_size,
+  T & minValue, T & maxValue)
+{
   if (normalize_) {
     const T * input_ptr = image_data;
-    // Find min. and max. pixel value
+
     minValue = std::numeric_limits<T>::max();
     maxValue = std::numeric_limits<T>::min();
     for (unsigned int i = 0; i < image_data_size; ++i) {
@@ -138,22 +133,52 @@ std::vector<uint8_t> ROSImageTexture::normalize(
     }
 
     if (median_frames_ > 1) {
-      minValue = updateMedian(min_buffer_, minValue);
-      maxValue = updateMedian(max_buffer_, maxValue);
+      minValue = computeMedianOfSeveralFrames(min_buffer_, minValue);
+      maxValue = computeMedianOfSeveralFrames(max_buffer_, maxValue);
     }
   } else {
-    // set fixed min/max
     minValue = min_;
     maxValue = max_;
   }
+}
+
+double ROSImageTexture::computeMedianOfSeveralFrames(std::deque<double> & buffer, double value)
+{
+  updateBuffer(buffer, value);
+  return computeMedianOfBuffer(buffer);
+}
+
+void ROSImageTexture::updateBuffer(std::deque<double> & buffer, double value) const
+{
+  while (buffer.size() > median_frames_ - 1) {
+    buffer.pop_back();
+  }
+  buffer.push_front(value);
+}
+
+double ROSImageTexture::computeMedianOfBuffer(const std::deque<double> & buffer) const
+{
+  std::deque<double> buffer2 = buffer;
+  nth_element(buffer2.begin(), buffer2.begin() + buffer2.size() / 2, buffer2.end());
+  return *(buffer2.begin() + buffer2.size() / 2);
+}
+
+template<typename T>
+std::vector<uint8_t>
+ROSImageTexture::createNewNormalizedBuffer(
+  const T * image_data,
+  size_t image_data_size,
+  T minValue,
+  T maxValue) const
+{
+  std::vector<uint8_t> buffer;
+  buffer.resize(image_data_size, 0);
+  uint8_t * output_ptr = &buffer[0];
 
   // Rescale floating point image and convert it to 8-bit
   double range = maxValue - minValue;
   if (range > 0.0) {
     const T * input_ptr = image_data;
-
-    // Pointer to output buffer
-    uint8_t * output_ptr = &buffer[0];
 
     // Rescale and quantize
     for (size_t i = 0; i < image_data_size; ++i, ++output_ptr, ++input_ptr) {
@@ -166,18 +191,20 @@ std::vector<uint8_t> ROSImageTexture::normalize(
   return buffer;
 }
 
+ImageData::ImageData(std::string encoding, const uint8_t * data_ptr, size_t size)
+: encoding_(std::move(encoding)),
+  pixel_format_(Ogre::PixelFormat::PF_R8G8B8),
+  data_ptr_(data_ptr),
+  size_(size)
+{
+}
+
 bool ROSImageTexture::update()
 {
   sensor_msgs::msg::Image::ConstSharedPtr image;
-  bool new_image = false;
-  {
-    std::unique_lock<std::mutex> lock(mutex_);
+  bool has_new_image = fillWithCurrentImage(image);
 
-    image = current_image_;
-    new_image = new_image_;
-  }
-
-  if (!image || !new_image) {
+  if (!image || !has_new_image) {
     return false;
   }
 
@@ -187,64 +214,16 @@ bool ROSImageTexture::update()
     return false;
   }
 
-  Ogre::PixelFormat format = Ogre::PF_R8G8B8;
-  Ogre::Image ogre_image;
-  std::vector<uint8_t> buffer;
-
-  const uint8_t * imageDataPtr = image->data.data();
-  size_t imageDataSize = image->data.size();
-
-  // TODO(Martin-Idel-SI): Uncrustify is unable to handle the else if formatting
-  /* *INDENT-OFF* */
-  if (image->encoding == sensor_msgs::image_encodings::RGB8) {
-    format = Ogre::PF_BYTE_RGB;
-  } else if (image->encoding == sensor_msgs::image_encodings::RGBA8) {
-    format = Ogre::PF_BYTE_RGBA;
-  } else if (image->encoding == sensor_msgs::image_encodings::TYPE_8UC4 ||
-    image->encoding == sensor_msgs::image_encodings::TYPE_8SC4 ||
-    image->encoding == sensor_msgs::image_encodings::BGRA8) {
-    format = Ogre::PF_BYTE_BGRA;
-  } else if (image->encoding == sensor_msgs::image_encodings::TYPE_8UC3 ||
-    image->encoding == sensor_msgs::image_encodings::TYPE_8SC3 ||
-    image->encoding == sensor_msgs::image_encodings::BGR8) {
-    format = Ogre::PF_BYTE_BGR;
-  } else if (image->encoding == sensor_msgs::image_encodings::TYPE_8UC1 ||
-    image->encoding == sensor_msgs::image_encodings::TYPE_8SC1 ||
-    image->encoding == sensor_msgs::image_encodings::MONO8) {
-    format = Ogre::PF_BYTE_L;
-  } else if (image->encoding == sensor_msgs::image_encodings::TYPE_16UC1 ||
-    image->encoding == sensor_msgs::image_encodings::TYPE_16SC1 ||
-    image->encoding == sensor_msgs::image_encodings::MONO16) {
-    imageDataSize /= sizeof(uint16_t);
-    buffer = normalize<uint16_t>(
-      reinterpret_cast<const uint16_t *>(image->data.data()), imageDataSize);
-    format = Ogre::PF_BYTE_L;
-    imageDataPtr = &buffer[0];
-  } else if (image->encoding.find("bayer") == 0) {
-    format = Ogre::PF_BYTE_L;
-  } else if (image->encoding == sensor_msgs::image_encodings::TYPE_32FC1) {
-    imageDataSize /= sizeof(float);
-    buffer = normalize<float>(reinterpret_cast<const float *>(image->data.data()), imageDataSize);
-    format = Ogre::PF_BYTE_L;
-    imageDataPtr = &buffer[0];
-  } else {
-    throw UnsupportedImageEncoding(image->encoding);
-  }
-  /* *INDENT-ON* */
+  ImageData image_data = setFormatAndNormalizeDataIfNecessary(
+    ImageData(image->encoding, image->data.data(), image->data.size()));
 
   width_ = image->width;
   height_ = image->height;
 
-  // TODO(anonymous): Support different steps/strides
-  Ogre::DataStreamPtr pixel_stream;
-  // C-style cast is used to bypass the const modifier
-  pixel_stream.reset(
-    new Ogre::MemoryDataStream((uint8_t *) &imageDataPtr[0], imageDataSize));  // NOLINT
-
+  Ogre::Image ogre_image;
   try {
-    ogre_image.loadRawData(pixel_stream, width_, height_, 1, format, 1, 0);
+    loadImageToOgreImage(image_data, ogre_image);
   } catch (Ogre::Exception & e) {
-    // TODO(anonymous): signal error better
     RVIZ_COMMON_LOG_ERROR_STREAM("Error loading image: " << e.what());
     return false;
   }
@@ -255,9 +234,72 @@ bool ROSImageTexture::update()
   return true;
 }
 
+bool ROSImageTexture::fillWithCurrentImage(sensor_msgs::msg::Image::ConstSharedPtr & image)
+{
+  std::lock_guard<std::mutex> lock(mutex_);
+
+  image = current_image_;
+  return new_image_;
+}
+
+ImageData ROSImageTexture::setFormatAndNormalizeDataIfNecessary(ImageData image_data)
+{
+  /* *INDENT-OFF* */  // Uncrustify is unable to handle the else if formatting
+  if (image_data.encoding_ == sensor_msgs::image_encodings::RGB8) {
+    image_data.pixel_format_ = Ogre::PF_BYTE_RGB;
+  } else if (image_data.encoding_ == sensor_msgs::image_encodings::RGBA8) {
+    image_data.pixel_format_ = Ogre::PF_BYTE_RGBA;
+  } else if (image_data.encoding_ == sensor_msgs::image_encodings::TYPE_8UC4 ||
+    image_data.encoding_ == sensor_msgs::image_encodings::TYPE_8SC4 ||
+    image_data.encoding_ == sensor_msgs::image_encodings::BGRA8) {
+    image_data.pixel_format_ = Ogre::PF_BYTE_BGRA;
+  } else if (image_data.encoding_ == sensor_msgs::image_encodings::TYPE_8UC3 ||
+    image_data.encoding_ == sensor_msgs::image_encodings::TYPE_8SC3 ||
+    image_data.encoding_ == sensor_msgs::image_encodings::BGR8) {
+    image_data.pixel_format_ = Ogre::PF_BYTE_BGR;
+  } else if (image_data.encoding_ == sensor_msgs::image_encodings::TYPE_8UC1 ||
+    image_data.encoding_ == sensor_msgs::image_encodings::TYPE_8SC1 ||
+    image_data.encoding_ == sensor_msgs::image_encodings::MONO8) {
+    image_data.pixel_format_ = Ogre::PF_BYTE_L;
+  } else if (image_data.encoding_ == sensor_msgs::image_encodings::TYPE_16UC1 ||
+    image_data.encoding_ == sensor_msgs::image_encodings::TYPE_16SC1 ||
+    image_data.encoding_ == sensor_msgs::image_encodings::MONO16) {
+    image_data.size_ /= sizeof(uint16_t);
+    std::vector<uint8_t> buffer = normalize<uint16_t>(
+      reinterpret_cast<const uint16_t *>(image_data.data_ptr_),
+      image_data.size_);
+    image_data.pixel_format_ = Ogre::PF_BYTE_L;
+    image_data.data_ptr_ = &buffer[0];
+  } else if (image_data.encoding_.find("bayer") == 0) {
+    image_data.pixel_format_ = Ogre::PF_BYTE_L;
+  } else if (image_data.encoding_ == sensor_msgs::image_encodings::TYPE_32FC1) {
+    image_data.size_ /= sizeof(float);
+    std::vector<uint8_t> buffer = normalize<float>(
+      reinterpret_cast<const float *>(image_data.data_ptr_),
+      image_data.size_);
+    image_data.pixel_format_ = Ogre::PF_BYTE_L;
+    image_data.data_ptr_ = &buffer[0];
+  } else {
+    throw UnsupportedImageEncoding(image_data.encoding_);
+  }
+  return image_data;
+  /* *INDENT-ON* */
+}
+
+void ROSImageTexture::loadImageToOgreImage(
+  const ImageData & image_data,
+  Ogre::Image & ogre_image) const
+{
+  Ogre::DataStreamPtr pixel_stream;
+  // C-style cast is used to bypass the const modifier
+  pixel_stream.reset(new Ogre::MemoryDataStream(
+      (uint8_t *) &image_data.data_ptr_[0], image_data.size_));  // NOLINT
+  ogre_image.loadRawData(pixel_stream, width_, height_, 1, image_data.pixel_format_, 1, 0);
+}
+
 void ROSImageTexture::addMessage(sensor_msgs::msg::Image::ConstSharedPtr msg)
 {
-  std::unique_lock<std::mutex> lock(mutex_);
+  std::lock_guard<std::mutex> lock(mutex_);
   current_image_ = msg;
   new_image_ = true;
 }
