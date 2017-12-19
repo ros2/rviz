@@ -455,7 +455,7 @@ void PointCloud::addPoints(
     return;
   }
   auto num_points = static_cast<uint32_t>(std::distance(start_iterator, stop_iterator));
-  insertPointsToPointList(start_iterator, stop_iterator);
+  points_.insert(points_.cend(), start_iterator, stop_iterator);
 
   RenderableInternals internals = createNewRenderable(num_points);
 
@@ -479,22 +479,6 @@ void PointCloud::addPoints(
 
   if (getParentSceneNode()) {
     getParentSceneNode()->needUpdate();
-  }
-}
-
-void PointCloud::insertPointsToPointList(
-  std::vector<Point>::iterator start_iterator,
-  std::vector<Point>::iterator stop_iterator)
-{
-  assert(start_iterator < stop_iterator);
-
-  auto num_points = static_cast<uint32_t>(std::distance(start_iterator, stop_iterator));
-  if (points_.size() < point_count_ + num_points) {
-    points_.resize(point_count_ + num_points);
-  }
-
-  for (Point * begin = &points_.front() + point_count_; num_points--; ) {
-    *(begin++) = *(start_iterator++);
   }
 }
 
