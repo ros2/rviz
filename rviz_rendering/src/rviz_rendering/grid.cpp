@@ -30,6 +30,7 @@
 
 #include "rviz_rendering/grid.hpp"
 
+#include <functional>
 #include <memory>
 #include <sstream>
 
@@ -157,7 +158,7 @@ void Grid::create()
 
 void Grid::createManualGrid() const
 {
-  AddLineFunction addLineFunction = bind(
+  AddLineFunction addLineFunction = std::bind(
     &Grid::addManualLine, this, std::placeholders::_1, std::placeholders::_2);
 
   const uint32_t number_of_vertices_in_plane = cell_count_ * 4 * (height_count_ + 1);
@@ -170,7 +171,7 @@ void Grid::createManualGrid() const
 
 void Grid::createBillboardGrid() const
 {
-  AddLineFunction addLineFunction = bind(
+  AddLineFunction addLineFunction = std::bind(
     &Grid::addBillboardLine, this, std::placeholders::_1, std::placeholders::_2);
 
   billboard_line_->setColor(color_.r, color_.g, color_.b, color_.a);
