@@ -205,7 +205,7 @@ RenderSystem::detectGlVersion()
     gl_version_ = force_gl_version_;
   } else {
     Ogre::RenderSystem * renderSys = ogre_root_->getRenderSystem();
-    renderSys->createRenderSystemCapabilities();
+    std::shared_ptr<Ogre::RenderSystemCapabilities>(renderSys->createRenderSystemCapabilities());
     const Ogre::RenderSystemCapabilities * caps = renderSys->getCapabilities();
     int major = caps->getDriverVersion().major;
     int minor = caps->getDriverVersion().minor;
