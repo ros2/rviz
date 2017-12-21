@@ -84,7 +84,7 @@ bool STLLoader::load(const std::string & path)
 
   // find the file size
   fseek(input, 0, SEEK_END);
-  long fileSize = ftell(input);  // NOLINT ftell returns long
+  unsigned long fileSize = ftell(input);  // NOLINT ftell returns long
   rewind(input);
 
   std::vector<uint8_t> buffer_vec(fileSize);
