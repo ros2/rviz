@@ -133,6 +133,7 @@ RenderSystem::RenderSystem()
   OgreLogging::configureLogging();
 
   setResourceDirectory();
+  setPluginDirectory();
   setupDummyWindowId();
   ogre_root_ = new Ogre::Root(get_resource_directory() + "/ogre_media/plugins.cfg");
 #if ((OGRE_VERSION_MAJOR == 1 && OGRE_VERSION_MINOR >= 9) || OGRE_VERSION_MAJOR >= 2)
@@ -185,13 +186,14 @@ RenderSystem::setupDummyWindowId()
 void
 RenderSystem::loadOgrePlugins()
 {
-  // std::string plugin_prefix = get_ogre_plugin_directory() + "/";
+  std::string plugin_prefix = get_ogre_plugin_directory();
 
-  render_system_gl_plugin_ = new Ogre::GLPlugin();
-  ogre_root_->installPlugin(render_system_gl_plugin_);
-
+#ifdef NDEBUG
+  ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL");
+#else
+  ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL_d");
+#endif
 // #if __APPLE__
-// ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL");
 // #else
 // ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL3Plus");
 // #endif
@@ -291,6 +293,19 @@ RenderSystem::setResourceDirectory()
   std::string prefix_path;
   ament_index_cpp::get_resource("packages", "rviz_rendering", content, &prefix_path);
   set_resource_directory(prefix_path + "/share/rviz_rendering");
+}
+
+void
+RenderSystem::setPluginDirectory()
+{
+  std::string content;
+  std::string prefix_path;
+  ament_index_cpp::get_resource("packages", "rviz_ogre_vendor", content, &prefix_path);
+#ifdef _WIN32
+  set_ogre_plugin_directory(prefix_path + "\\opt\\rviz_ogre_vendor\\bin\\");
+#else
+  set_ogre_plugin_directory(prefix_path + "/opt/rviz_ogre_vendor/lib/OGRE/");
+#endif
 }
 
 void

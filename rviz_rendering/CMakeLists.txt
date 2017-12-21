@@ -86,8 +86,6 @@ add_library(rviz_rendering SHARED
 target_link_libraries(rviz_rendering
   PRIVATE rviz_ogre_vendor::OgreMain
   PRIVATE rviz_ogre_vendor::OgreOverlay
-  PRIVATE rviz_ogre_vendor::RenderSystem_GL
-  # PRIVATE rviz_ogre_vendor::OgreGLSupport
   Qt5::Widgets
   ament_index_cpp::ament_index_cpp
 )
