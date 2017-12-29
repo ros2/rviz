@@ -33,9 +33,9 @@ macro(build_assimp)
   list(APPEND extra_cmake_args "-DASSIMP_BUILD_SAMPLES=OFF")
 
   include(ExternalProject)
-  ExternalProject_Add(assimp-4.0.1
-    URL https://github.com/assimp/assimp/archive/v4.0.1.tar.gz
-    URL_MD5 23a6301c728a413aafbfa1cca19ba91f
+  ExternalProject_Add(assimp-4.1.0
+    URL https://github.com/assimp/assimp/archive/v4.1.0.tar.gz
+    URL_MD5 83b53a10c38d964bd1e69da0606e2727
     TIMEOUT 600
     CMAKE_ARGS
       -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/assimp_install
@@ -54,7 +54,7 @@ endmacro()
 
 find_package(assimp QUIET)
 
-if(NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LESS 4.0.0)
+if(NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LESS 4.1.0)
   build_assimp()
 
   if(WIN32)
