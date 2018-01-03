@@ -277,11 +277,6 @@ private:
   void resetBoundingBoxForCurrentPoints();
 
   RVIZ_RENDERING_PUBLIC
-  void insertPointsToPointList(
-    std::vector<Point>::iterator start_iterator,
-    std::vector<Point>::iterator stop_iterator);
-
-  RVIZ_RENDERING_PUBLIC
   RenderableInternals createNewRenderable(uint32_t number_of_points_to_be_added);
 
   RVIZ_RENDERING_PUBLIC
