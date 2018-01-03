@@ -72,7 +72,7 @@ add_library(rviz_rendering SHARED
   src/rviz_rendering/string_helper.cpp
   src/rviz_rendering/point_cloud.cpp
   src/rviz_rendering/point_cloud_renderable.cpp
-  src/test/rviz_rendering/ogre_testing_environment.cpp
+  test/rviz_rendering/ogre_testing_environment.cpp
 )
 
 target_link_libraries(rviz_rendering
@@ -161,7 +161,7 @@ if(BUILD_TESTING)
   ament_lint_cmake()
   ament_uncrustify()
 
-  ament_add_gtest(test_rviz_rendering src/test/string_helper_test.cpp)
+  ament_add_gtest(test_rviz_rendering test/string_helper_test.cpp)
   if(TARGET test_rviz_rendering)
     target_link_libraries(test_rviz_rendering rviz_rendering)
   endif()
@@ -178,7 +178,7 @@ if(BUILD_TESTING)
   # endif()
 
   # TODO(wjwwood): reenable this test when it can be run on CI
-  # ament_add_gtest(point_cloud_renderable_test_target src/test/point_cloud_renderable_test.cpp)
+  # ament_add_gtest(point_cloud_renderable_test_target test/point_cloud_renderable_test.cpp)
   # if(TARGET point_cloud_renderable_test_target)
   #   target_link_libraries(point_cloud_renderable_test_target
   #     rviz_ogre_vendor::OgreMain
@@ -188,7 +188,7 @@ if(BUILD_TESTING)
   # endif()
 
   # TODO(Martin-Idel-SI): reenable this test when it can be run on CI
-  # ament_add_gtest(billboard_line_test_target src/test/billboard_line_test.cpp)
+  # ament_add_gtest(billboard_line_test_target test/billboard_line_test.cpp)
   # if(TARGET billboard_line_test_target)
   #   target_link_libraries(billboard_line_test_target
   #     rviz_ogre_vendor::OgreMain
@@ -198,7 +198,7 @@ if(BUILD_TESTING)
   # endif()
 
   # TODO(Martin-Idel-SI): reenable this test when it can be run on CI
-  # ament_add_gtest(grid_test_target src/test/grid_test.cpp)
+  # ament_add_gtest(grid_test_target test/grid_test.cpp)
   # if(TARGET grid_test_target)
   #   target_link_libraries(grid_test_target
   #     rviz_ogre_vendor::OgreMain
