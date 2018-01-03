@@ -251,26 +251,33 @@ bool ROSImageTexture::fillWithCurrentImage(sensor_msgs::msg::Image::ConstSharedP
 
 ImageData ROSImageTexture::setFormatAndNormalizeDataIfNecessary(ImageData image_data)
 {
-  /* *INDENT-OFF* */  // Uncrustify is unable to handle the else if formatting
   if (image_data.encoding_ == sensor_msgs::image_encodings::RGB8) {
     image_data.pixel_format_ = Ogre::PF_BYTE_RGB;
   } else if (image_data.encoding_ == sensor_msgs::image_encodings::RGBA8) {
     image_data.pixel_format_ = Ogre::PF_BYTE_RGBA;
-  } else if (image_data.encoding_ == sensor_msgs::image_encodings::TYPE_8UC4 ||
+  } else if (  // NOLINT enforces bracket on the same line, which makes code unreadable
+    image_data.encoding_ == sensor_msgs::image_encodings::TYPE_8UC4 ||
     image_data.encoding_ == sensor_msgs::image_encodings::TYPE_8SC4 ||
-    image_data.encoding_ == sensor_msgs::image_encodings::BGRA8) {
+    image_data.encoding_ == sensor_msgs::image_encodings::BGRA8)
+  {
     image_data.pixel_format_ = Ogre::PF_BYTE_BGRA;
-  } else if (image_data.encoding_ == sensor_msgs::image_encodings::TYPE_8UC3 ||
+  } else if (  // NOLINT enforces bracket on the same line, which makes code unreadable
+    image_data.encoding_ == sensor_msgs::image_encodings::TYPE_8UC3 ||
     image_data.encoding_ == sensor_msgs::image_encodings::TYPE_8SC3 ||
-    image_data.encoding_ == sensor_msgs::image_encodings::BGR8) {
+    image_data.encoding_ == sensor_msgs::image_encodings::BGR8)
+  {
     image_data.pixel_format_ = Ogre::PF_BYTE_BGR;
-  } else if (image_data.encoding_ == sensor_msgs::image_encodings::TYPE_8UC1 ||
+  } else if (  // NOLINT enforces bracket on the same line, which makes code unreadable
+    image_data.encoding_ == sensor_msgs::image_encodings::TYPE_8UC1 ||
     image_data.encoding_ == sensor_msgs::image_encodings::TYPE_8SC1 ||
-    image_data.encoding_ == sensor_msgs::image_encodings::MONO8) {
+    image_data.encoding_ == sensor_msgs::image_encodings::MONO8)
+  {
     image_data.pixel_format_ = Ogre::PF_BYTE_L;
-  } else if (image_data.encoding_ == sensor_msgs::image_encodings::TYPE_16UC1 ||
+  } else if (  // NOLINT enforces bracket on the same line, which makes code unreadable
+    image_data.encoding_ == sensor_msgs::image_encodings::TYPE_16UC1 ||
     image_data.encoding_ == sensor_msgs::image_encodings::TYPE_16SC1 ||
-    image_data.encoding_ == sensor_msgs::image_encodings::MONO16) {
+    image_data.encoding_ == sensor_msgs::image_encodings::MONO16)
+  {
     image_data.size_ /= sizeof(uint16_t);
     std::vector<uint8_t> buffer = normalize<uint16_t>(
       reinterpret_cast<const uint16_t *>(image_data.data_ptr_),
@@ -290,7 +297,6 @@ ImageData ROSImageTexture::setFormatAndNormalizeDataIfNecessary(ImageData image_
     throw UnsupportedImageEncoding(image_data.encoding_);
   }
   return image_data;
-  /* *INDENT-ON* */
 }
 
 void ROSImageTexture::loadImageToOgreImage(

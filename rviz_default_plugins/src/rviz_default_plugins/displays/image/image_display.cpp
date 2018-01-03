@@ -32,6 +32,7 @@
 #include <string>
 #include <utility>
 
+#include <OgreCamera.h>
 #include <OgreManualObject.h>
 #include <OgreMaterialManager.h>
 #include <OgreRectangle2D.h>
@@ -39,13 +40,10 @@
 #include <OgreRenderWindow.h>
 #include <OgreRoot.h>
 #include <OgreSceneNode.h>
+#include <OgreTechnique.h>
 #include <OgreTextureManager.h>
 #include <OgreViewport.h>
-#include <OgreTechnique.h>
-#include <OgreCamera.h>
 
-// TODO(Martin-Idel-SI): reenable if necessary
-// #include <tf/transform_listener.h>
 #include "sensor_msgs/image_encodings.hpp"
 
 #include "rviz_common/display_context.hpp"
