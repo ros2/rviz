@@ -31,6 +31,7 @@
 #include "./grid_display.hpp"
 
 #include <cstdint>
+#include <memory>
 #include <string>
 
 #ifndef _WIN32
@@ -68,7 +69,6 @@ using rviz_common::properties::VectorProperty;
 using rviz_rendering::Grid;
 
 GridDisplay::GridDisplay()
-: Display()
 {
   frame_property_ = new TfFrameProperty("Reference Frame", TfFrameProperty::FIXED_FRAME_STRING,
       "The TF frame this grid will use for its origin.",
@@ -94,8 +94,7 @@ GridDisplay::GridDisplay()
       "The rendering operation to use to draw the grid lines.",
       this, SLOT(updateStyle()));
   style_property_->addOption("Lines", Grid::Lines);
-  // TODO(wjwwood): re-enable the billboards option for the grid
-  // style_property_->addOption("Billboards", Grid::Billboards);
+  style_property_->addOption("Billboards", Grid::Billboards);
 
   line_width_property_ = new FloatProperty("Line Width", 0.03,
       "The width, in meters, of each grid line.",
@@ -124,20 +123,15 @@ GridDisplay::GridDisplay()
       this, SLOT(updateOffset()));
 }
 
-GridDisplay::~GridDisplay()
-{
-  if (initialized() ) {
-    delete grid_;
-  }
-}
+GridDisplay::~GridDisplay() = default;
 
 void GridDisplay::onInitialize()
 {
   QColor color = color_property_->getColor();
   color.setAlphaF(alpha_property_->getFloat() );
 
-  frame_property_->setFrameManager(context_->getFrameManager() );
-  grid_ = new Grid(scene_manager_, scene_node_,
+  frame_property_->setFrameManager(context_->getFrameManager());
+  grid_ = std::make_unique<Grid>(scene_manager_, scene_node_,
       (Grid::Style) style_property_->getOptionInt(),
       cell_count_property_->getInt(),
       cell_size_property_->getFloat(),
@@ -175,45 +169,44 @@ void GridDisplay::update(float dt, float ros_dt)
 void GridDisplay::updateColor()
 {
   QColor color = color_property_->getColor();
-  color.setAlphaF(alpha_property_->getFloat() );
+  color.setAlphaF(alpha_property_->getFloat());
   grid_->setColor(qtToOgre(color));
   context_->queueRender();
 }
 
 void GridDisplay::updateCellSize()
 {
-  grid_->setCellLength(cell_size_property_->getFloat() );
+  grid_->setCellLength(cell_size_property_->getFloat());
   context_->queueRender();
 }
 
 void GridDisplay::updateCellCount()
 {
-  grid_->setCellCount(cell_count_property_->getInt() );
+  grid_->setCellCount(cell_count_property_->getInt());
   context_->queueRender();
 }
 
 void GridDisplay::updateLineWidth()
 {
-  grid_->setLineWidth(line_width_property_->getFloat() );
+  grid_->setLineWidth(line_width_property_->getFloat());
   context_->queueRender();
 }
 
 void GridDisplay::updateHeight()
 {
-  grid_->setHeight(height_property_->getInt() );
+  grid_->setHeight(height_property_->getInt());
   context_->queueRender();
 }
 
 void GridDisplay::updateStyle()
 {
-  Grid::Style style = (Grid::Style) style_property_->getOptionInt();
+  auto style = static_cast<Grid::Style>(style_property_->getOptionInt());
   grid_->setStyle(style);
 
   switch (style) {
-    // TODO(wjwwood): re-enable billboards option
-    // case Grid::Billboards:
-    //   line_width_property_->show();
-    //   break;
+    case Grid::Billboards:
+      line_width_property_->show();
+      break;
     case Grid::Lines:
     default:
       line_width_property_->hide();
@@ -224,14 +217,14 @@ void GridDisplay::updateStyle()
 
 void GridDisplay::updateOffset()
 {
-  grid_->getSceneNode()->setPosition(offset_property_->getVector() );
+  grid_->getSceneNode()->setPosition(offset_property_->getVector());
   context_->queueRender();
 }
 
 void GridDisplay::updatePlane()
 {
   Ogre::Quaternion orient;
-  switch ( (Plane) plane_property_->getOptionInt() ) {
+  switch ( (Plane) plane_property_->getOptionInt()) {
     case XZ:
       orient = Ogre::Quaternion(1, 0, 0, 0);
       break;

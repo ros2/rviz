@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,18 +28,19 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OGRE_TOOLS_BILLBOARD_LINE_H
-#define OGRE_TOOLS_BILLBOARD_LINE_H
+#ifndef RVIZ_RENDERING__BILLBOARD_LINE_HPP_
+#define RVIZ_RENDERING__BILLBOARD_LINE_HPP_
 
-#include "object.h"
-
-#include <stdint.h>
-
+#include <cstdint>
 #include <vector>
+
+#include <OgreBillboardChain.h>
 #include <OgreVector3.h>
 #include <OgreColourValue.h>
 #include <OgreMaterial.h>
 #include <OgreSharedPtr.h>
+
+#include "rviz_rendering/object.hpp"
 
 namespace Ogre
 {
@@ -49,7 +51,7 @@ class Any;
 class BillboardChain;
 }
 
-namespace rviz
+namespace rviz_rendering
 {
 
 /**
@@ -64,70 +66,74 @@ public:
    * @param manager Scene manager this object is a part of
    * @param parent_node A scene node to use as the parent of this object.  If NULL, uses the root scene node.
    */
-  BillboardLine( Ogre::SceneManager* manager, Ogre::SceneNode* parent_node = NULL );
-  virtual ~BillboardLine();
+  explicit BillboardLine(Ogre::SceneManager * manager, Ogre::SceneNode * parent_node = nullptr);
+  ~BillboardLine() override;
 
   void clear();
   void newLine();
-  void addPoint(const Ogre::Vector3& point);
-  void addPoint(const Ogre::Vector3& point, const Ogre::ColourValue& color);
+  void addPoint(const Ogre::Vector3 & point);
+  void addPoint(const Ogre::Vector3 & point, const Ogre::ColourValue & color);
 
-  void setLineWidth( float width );
+  void setLineWidth(float width);
 
   void setMaxPointsPerLine(uint32_t max);
   void setNumLines(uint32_t num);
 
   // overrides from Object
-  virtual void setOrientation( const Ogre::Quaternion& orientation );
-  virtual void setPosition( const Ogre::Vector3& position );
-  virtual void setScale( const Ogre::Vector3& scale );
-  virtual void setColor( float r, float g, float b, float a );
-  virtual const Ogre::Vector3& getPosition();
-  virtual const Ogre::Quaternion& getOrientation();
+  void setOrientation(const Ogre::Quaternion & orientation) override;
+  void setPosition(const Ogre::Vector3 & position) override;
+  void setScale(const Ogre::Vector3 & scale) override;
+  void setColor(float r, float g, float b, float a) override;
+  const Ogre::Vector3 & getPosition() override;
+  const Ogre::Quaternion & getOrientation() override;
 
   /**
    * \brief Get the scene node associated with this object
    * @return The scene node associated with this object
    */
-  Ogre::SceneNode* getSceneNode() { return scene_node_; }
+  Ogre::SceneNode * getSceneNode() {return scene_node_;}
 
   /**
    * \brief We have no objects that we can set user data on
    */
-  void setUserData( const Ogre::Any& data ) {}
+  void setUserData(const Ogre::Any & data) override {(void) data;}
 
-  Ogre::MaterialPtr getMaterial() { return material_; }
+  Ogre::MaterialPtr getMaterial() {return material_;}
+
+  typedef std::vector<Ogre::BillboardChain *> V_ChainContainers;
+  /// exposed for testing
+  V_ChainContainers getChains() {return chain_containers_;}
 
 private:
-  void setupChains();
-  Ogre::BillboardChain* createChain();
+  void setupChainContainers();
+  Ogre::BillboardChain * createChain();
+  void changeAllElements(
+    std::function<Ogre::BillboardChain::Element(Ogre::BillboardChain::Element)> change_element);
+  void incrementChainContainerIfNecessary();
+  void setupChainsInChainContainers() const;
 
-  Ogre::SceneNode* scene_node_;
+  Ogre::SceneNode * scene_node_;
 
-  typedef std::vector<Ogre::BillboardChain*> V_Chain;
-  V_Chain chains_;
+  V_ChainContainers chain_containers_;
   Ogre::MaterialPtr material_;
 
   Ogre::ColourValue color_;
   float width_;
 
-  uint32_t current_line_;
-
-  // Ogre 1.4 doesn't have getNumChainElements()
+  // TODO(Martin-Idel-SI): Replace by using Ogre::BillboardChain::getNumberOfChains once available
+  // Current issue: https://github.com/OGRECave/ogre/issues/603
   typedef std::vector<uint32_t> V_uint32;
   V_uint32 num_elements_;
-  uint32_t total_elements_;
 
   uint32_t num_lines_;
   uint32_t max_points_per_line_;
-  uint32_t lines_per_chain_;
+  uint32_t chains_per_container_;
 
-  uint32_t current_chain_;
-  uint32_t elements_in_current_chain_;
+  uint32_t current_line_;
+  uint32_t current_chain_container_;
+  uint32_t elements_in_current_chain_container_;
 };
 
-} // namespace rviz
+}  // namespace rviz_rendering
 
-#endif
-
-
+#endif  // RVIZ_RENDERING__BILLBOARD_LINE_HPP_
