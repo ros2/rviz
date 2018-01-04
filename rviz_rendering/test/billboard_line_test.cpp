@@ -34,8 +34,9 @@
 #include <vector>
 
 #include <OgreBillboardChain.h>
+#include <OgreRoot.h>
 
-#include "ogre_testing_environment.hpp"
+#include "test/rviz_rendering/ogre_testing_environment.hpp"
 #include "../src/rviz_rendering/billboard_line.hpp"
 
 class BillboardLineTestFixture : public ::testing::Test
@@ -61,49 +62,51 @@ static std::vector<Ogre::Vector3> squareCenteredAtZero
   Ogre::Vector3(-1, -1, 0)
 };
 
-rviz_rendering::BillboardLine oneCellGrid()
+// TODO(Martin-Idel-SI): Investigate why returning a stack object here results in errors on Win32
+std::unique_ptr<rviz_rendering::BillboardLine> oneCellGrid()
 {
-  rviz_rendering::BillboardLine grid_cell(Ogre::Root::getSingletonPtr()->createSceneManager());
+  auto grid_cell = std::make_unique<rviz_rendering::BillboardLine>(
+    Ogre::Root::getSingletonPtr()->createSceneManager());
 
   std::vector<Ogre::Vector3> pts = squareCenteredAtZero;
-  grid_cell.setMaxPointsPerLine(2);
-  grid_cell.setNumLines(2 * 2);  // grid of 1 cell needs 2 vertical and 2 horizontal lines
+  grid_cell->setMaxPointsPerLine(2);
+  grid_cell->setNumLines(2 * 2);  // grid of 1 cell needs 2 vertical and 2 horizontal lines
 
-  grid_cell.addPoint(pts[0]);
-  grid_cell.addPoint(pts[1]);
-  grid_cell.newLine();
-  grid_cell.addPoint(pts[2]);
-  grid_cell.addPoint(pts[3]);
-  grid_cell.newLine();
-  grid_cell.addPoint(pts[0]);
-  grid_cell.addPoint(pts[2]);
-  grid_cell.newLine();
-  grid_cell.addPoint(pts[1]);
-  grid_cell.addPoint(pts[3]);
+  grid_cell->addPoint(pts[0]);
+  grid_cell->addPoint(pts[1]);
+  grid_cell->newLine();
+  grid_cell->addPoint(pts[2]);
+  grid_cell->addPoint(pts[3]);
+  grid_cell->newLine();
+  grid_cell->addPoint(pts[0]);
+  grid_cell->addPoint(pts[2]);
+  grid_cell->newLine();
+  grid_cell->addPoint(pts[1]);
+  grid_cell->addPoint(pts[3]);
 
   return grid_cell;
 }
 
-rviz_rendering::BillboardLine
+std::unique_ptr<rviz_rendering::BillboardLine>
 twoLines()
 {
-  rviz_rendering::BillboardLine two_lines(Ogre::Root::getSingletonPtr()->createSceneManager());
+  auto two_lines = std::make_unique<rviz_rendering::BillboardLine>(
+    Ogre::Root::getSingletonPtr()->createSceneManager());
   std::vector<Ogre::Vector3> pts = squareCenteredAtZero;
-  two_lines.setMaxPointsPerLine(2);
-  two_lines.setNumLines(2);
-  two_lines.addPoint(pts[0]);
-  two_lines.addPoint(pts[1]);
-  two_lines.newLine();
-  two_lines.addPoint(pts[2]);
-  two_lines.addPoint(pts[3]);
+  two_lines->setMaxPointsPerLine(2);
+  two_lines->setNumLines(2);
+  two_lines->addPoint(pts[0]);
+  two_lines->addPoint(pts[1]);
+  two_lines->newLine();
+  two_lines->addPoint(pts[2]);
+  two_lines->addPoint(pts[3]);
   return two_lines;
 }
 
 TEST_F(BillboardLineTestFixture, new_billboard_consumes_only_as_much_space_as_necessary) {
   auto grid_cell = oneCellGrid();
 
-  auto chains = grid_cell.getChains();
-
+  auto chains = grid_cell->getChains();
   ASSERT_EQ(chains.size(), static_cast<size_t>(1));
   ASSERT_EQ(chains[0]->getNumberOfChains(), static_cast<size_t>(2 * 2));
   // A chainElement is exactly a line
@@ -115,7 +118,7 @@ TEST_F(BillboardLineTestFixture, new_billboard_consumes_only_as_much_space_as_ne
 TEST_F(BillboardLineTestFixture, new_billboard_contains_correct_points_as_bounding_box_is_correct) {
   auto grid_cell = oneCellGrid();
 
-  auto chains = grid_cell.getChains();
+  auto chains = grid_cell->getChains();
 
   // chains are basically bounded by the square
   auto bounding_box = Ogre::AxisAlignedBox(Ogre::Vector3(-1.1f, -1.1f, -0.1f),
@@ -126,9 +129,9 @@ TEST_F(BillboardLineTestFixture, new_billboard_contains_correct_points_as_boundi
 TEST_F(BillboardLineTestFixture, setColor_results_in_change_of_color_for_all_chains) {
   auto grid_cell = twoLines();
 
-  grid_cell.setColor(0.3f, 0.4f, 0.5f, 0.2f);
+  grid_cell->setColor(0.3f, 0.4f, 0.5f, 0.2f);
 
-  auto chains = grid_cell.getChains();
+  auto chains = grid_cell->getChains();
   for (auto & chain : chains) {
     for (unsigned int i = 0; i < chain->getNumberOfChains(); i++) {
       for (unsigned int j = 0; j < chain->getNumChainElements(i); j++) {
@@ -141,9 +144,9 @@ TEST_F(BillboardLineTestFixture, setColor_results_in_change_of_color_for_all_cha
 TEST_F(BillboardLineTestFixture, setWidth_results_in_change_of_width_for_all_chains) {
   auto grid_cell = twoLines();
 
-  grid_cell.setLineWidth(0.4f);
+  grid_cell->setLineWidth(0.4f);
 
-  auto chains = grid_cell.getChains();
+  auto chains = grid_cell->getChains();
   for (auto & chain : chains) {
     for (unsigned int i = 0; i < chain->getNumberOfChains(); i++) {
       for (unsigned int j = 0; j < chain->getNumChainElements(i); j++) {
@@ -156,9 +159,9 @@ TEST_F(BillboardLineTestFixture, setWidth_results_in_change_of_width_for_all_cha
 TEST_F(BillboardLineTestFixture, clear_resets_all_chains) {
   auto grid_cell = twoLines();
 
-  grid_cell.clear();
+  grid_cell->clear();
 
-  auto chains = grid_cell.getChains();
+  auto chains = grid_cell->getChains();
   ASSERT_EQ(chains.size(), static_cast<size_t>(1));   // chains are reset, not destroyed
   ASSERT_EQ(chains[0]->getNumberOfChains(), static_cast<size_t>(2));  // reset, not destroyed
 

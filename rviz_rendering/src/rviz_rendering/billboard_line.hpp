@@ -41,6 +41,7 @@
 #include <OgreSharedPtr.h>
 
 #include "rviz_rendering/object.hpp"
+#include "rviz_rendering/visibility_control.hpp"
 
 namespace Ogre
 {
@@ -58,7 +59,7 @@ namespace rviz_rendering
  * \class BillboardLine
  * \brief An object that displays a multi-segment line strip rendered as billboards
  */
-class BillboardLine : public Object
+class RVIZ_RENDERING_PUBLIC BillboardLine : public Object
 {
 public:
   /**
