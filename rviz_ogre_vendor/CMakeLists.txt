@@ -17,8 +17,10 @@ set(PACKAGE_VERSION "1.0.0")
 
 if(WIN32)
   set(BUILDING_FREETYPE_LOCALLY ON)
+  set(BUILDING_ZLIB_LOCALLY ON)
 else()
   set(BUILDING_FREETYPE_LOCALLY OFF)
+  set(BUILDING_ZLIB_LOCALLY OFF)
 endif()
 
 macro(build_freetype)
@@ -43,6 +45,33 @@ macro(build_freetype)
   install(
     DIRECTORY
       ${CMAKE_CURRENT_BINARY_DIR}/freetype_install/
+    DESTINATION
+      ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor
+  )
+endmacro()
+
+macro(build_zlib)
+  set(extra_cmake_args)
+
+  if(WIN32)
+    list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=/w")
+    list(APPEND extra_cmake_args "-DCMAKE_C_FLAGS=/w")
+  endif()
+
+  include(ExternalProject)
+  ExternalProject_Add(zlib-1.2.11
+    URL https://www.zlib.net/fossils/zlib-1.2.11.tar.gz
+    URL_MD5 1c9f62f0778697a09d36121ead88e08e
+    TIMEOUT 600
+    CMAKE_ARGS
+      -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/zlib-install
+      ${extra_cmake_args}
+      -Wno-dev
+  )
+
+  install(
+    DIRECTORY
+      ${CMAKE_CURRENT_BINARY_DIR}/zlib-install/
     DESTINATION
       ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor
   )
@@ -78,6 +107,10 @@ macro(build_ogre)
   if(BUILDING_FREETYPE_LOCALLY)
     list(APPEND extra_cmake_args
       "-DFREETYPE_HOME=${CMAKE_CURRENT_BINARY_DIR}/freetype_install")
+  endif()
+  if(BUILDING_ZLIB_LOCALLY)
+    list(APPEND extra_cmake_args
+      "-DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/zlib_install")
   endif()
 
   if(WIN32)
@@ -115,6 +148,9 @@ macro(build_ogre)
   if(BUILDING_FREETYPE_LOCALLY)
     add_dependencies(ogre-master-ca665a6 freetype-2.8.1)
   endif()
+  if(BUILDING_ZLIB_LOCALLY)
+    add_dependencies(ogre-master-ca665a6 zlib-1.2.11)
+  endif()
 
   # The external project will install to the build folder, but we'll install that on make install.
   install(
@@ -127,6 +163,9 @@ endmacro()
 
 if(BUILDING_FREETYPE_LOCALLY)
   build_freetype()
+endif()
+if(BUILDING_ZLIB_LOCALLY)
+  build_zlib()
 endif()
 
 build_ogre()
