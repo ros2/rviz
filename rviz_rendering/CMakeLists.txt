@@ -83,12 +83,14 @@ add_library(rviz_rendering SHARED
   src/rviz_rendering/point_cloud_renderable.cpp
   src/test/rviz_rendering/ogre_testing_environment.cpp
 )
+
 target_link_libraries(rviz_rendering
   PRIVATE rviz_ogre_vendor::OgreMain
   PRIVATE rviz_ogre_vendor::OgreOverlay
   Qt5::Widgets
   ament_index_cpp::ament_index_cpp
 )
+
 target_include_directories(rviz_rendering
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

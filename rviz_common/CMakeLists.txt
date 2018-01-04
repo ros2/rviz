@@ -27,6 +27,8 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(ament_cmake REQUIRED)
+# do find_package(rviz_ogre_vendor) first to make sure the custom OGRE is found
+find_package(rviz_ogre_vendor REQUIRED)
 
 # Qt5 boilerplate options from http://doc.qt.io/qt-5/cmake-manual.html
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -243,13 +245,17 @@ target_include_directories(rviz_common
     ${pluginlib_INCLUDE_DIRS}
     ${TinyXML_INCLUDE_DIRS}
 )
+
 target_link_libraries(rviz_common
+  rviz_ogre_vendor::OgreMain
+  rviz_ogre_vendor::OgreOverlay
   ${pluginlib_LIBRARIES}
   resource_retriever::resource_retriever
   rviz_rendering::rviz_rendering
   Qt5::Widgets
   ${TinyXML_LIBRARIES}
 )
+
 ament_target_dependencies(rviz_common
   geometry_msgs
   rclcpp
@@ -269,8 +275,8 @@ target_compile_definitions(rviz_common PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTION
 target_compile_definitions(rviz_common PRIVATE "RVIZ_COMMON_BUILDING_LIBRARY")
 
 ament_export_interfaces(rviz_common)
-ament_export_dependencies(rviz_rendering)
 ament_export_dependencies(
+  rviz_rendering
   geometry_msgs
   pluginlib
   rclcpp
@@ -320,13 +326,21 @@ if(BUILD_TESTING AND NOT WIN32)
   ament_add_gtest(rviz_common_config_test
     test/config_test.cpp)
   if(TARGET rviz_common_config_test)
-    target_link_libraries(rviz_common_config_test rviz_common)
+    target_link_libraries(rviz_common_config_test
+      rviz_common
+      rviz_ogre_vendor::OgreMain
+      rviz_ogre_vendor::OgreOverlay
+    )
   endif()
 
   ament_add_gtest(rviz_common_uniform_string_stream_test
     test/uniform_string_stream_test.cpp)
   if(TARGET rviz_common_uniform_string_stream_test)
-    target_link_libraries(rviz_common_uniform_string_stream_test rviz_common)
+    target_link_libraries(rviz_common_uniform_string_stream_test
+      rviz_common
+      rviz_ogre_vendor::OgreMain
+      rviz_ogre_vendor::OgreOverlay
+    )
   endif()
 
   # TODO(wjwwood): reenable this test when it can be run on CI
