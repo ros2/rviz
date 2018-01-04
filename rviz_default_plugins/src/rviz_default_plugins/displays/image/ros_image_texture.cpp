@@ -45,6 +45,7 @@
 #include "sensor_msgs/image_encodings.hpp"
 
 #include "rviz_common/logging.hpp"
+#include "rviz_common/uniform_string_stream.hpp"
 
 namespace rviz_default_plugins
 {
@@ -60,7 +61,7 @@ ROSImageTexture::ROSImageTexture()
   empty_image_.load("no_image.png", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 
   static uint32_t count = 0;
-  std::stringstream ss;
+  rviz_common::UniformStringStream ss;
   ss << "ROSImageTexture" << count++;
   texture_ = Ogre::TextureManager::getSingleton().loadImage(
     ss.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, empty_image_,
