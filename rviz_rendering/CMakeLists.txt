@@ -168,7 +168,8 @@ if(BUILD_TESTING)
 
   # TODO(wjwwood): reenable this test when it can be run on CI
   # ament_add_gtest(point_cloud_test_target
-  #   src/test/point_cloud_test.cpp)
+  #   test/point_cloud_test.cpp
+  #   APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
   # if(TARGET point_cloud_test_target)
   #   target_link_libraries(point_cloud_test_target
   #     rviz_ogre_vendor::OgreMain
@@ -178,27 +179,30 @@ if(BUILD_TESTING)
   # endif()
 
   # TODO(wjwwood): reenable this test when it can be run on CI
-  # ament_add_gtest(point_cloud_renderable_test_target test/point_cloud_renderable_test.cpp)
+  # ament_add_gtest(point_cloud_renderable_test_target test/point_cloud_renderable_test.cpp
+  #   APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
   # if(TARGET point_cloud_renderable_test_target)
-  #   target_link_libraries(point_cloud_renderable_test_target
+  #    target_link_libraries(point_cloud_renderable_test_target
   #     rviz_ogre_vendor::OgreMain
   #     rviz_rendering
   #     Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
   #   )
   # endif()
 
-  # TODO(Martin-Idel-SI): reenable this test when it can be run on CI
-  # ament_add_gtest(billboard_line_test_target test/billboard_line_test.cpp)
+  # TODO(wjwwood): reenable this test when it can be run on CI
+  # ament_add_gtest(billboard_line_test_target test/billboard_line_test.cpp
+  #   APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
   # if(TARGET billboard_line_test_target)
   #   target_link_libraries(billboard_line_test_target
   #     rviz_ogre_vendor::OgreMain
   #     rviz_rendering
   #     Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
-  # )
+  #   )
   # endif()
 
-  # TODO(Martin-Idel-SI): reenable this test when it can be run on CI
-  # ament_add_gtest(grid_test_target test/grid_test.cpp)
+  # TODO(wjwwood): reenable this test when it can be run on CI
+  # ament_add_gtest(grid_test_target test/grid_test.cpp
+  #   APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
   # if(TARGET grid_test_target)
   #   target_link_libraries(grid_test_target
   #     rviz_ogre_vendor::OgreMain
