@@ -53,7 +53,7 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
       set(_ogre_main_static_library_debug_abs ${_ogre_main_static_library_abs})
     endif()
 
-    add_library(rviz_ogre_vendor::OgreMain SHARED IMPORTED)
+    add_library(rviz_ogre_vendor::OgreMain UNKNOWN IMPORTED)
     message("rviz_ogre_vendor::OgreMain for IMPORTED_LOCATION_RELEASE: ${_ogre_main_static_library_abs}")
     message("rviz_ogre_vendor::OgreMain for IMPORTED_LOCATION_DEBUG: ${_ogre_main_static_library_debug_abs}")
     set_target_properties(rviz_ogre_vendor::OgreMain
@@ -155,7 +155,7 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
       set(_ogre_overlay_static_library_debug_abs ${_ogre_overlay_static_library_abs})
     endif()
 
-    add_library(rviz_ogre_vendor::OgreOverlay SHARED IMPORTED)
+    add_library(rviz_ogre_vendor::OgreOverlay UNKNOWN IMPORTED)
     message("rviz_ogre_vendor::OgreOverlay for IMPORTED_LOCATION_RELEASE: ${_ogre_overlay_static_library_abs}")
     message("rviz_ogre_vendor::OgreOverlay for IMPORTED_LOCATION_DEBUG: ${_ogre_overlay_static_library_debug_abs}")
     set_target_properties(rviz_ogre_vendor::OgreOverlay
@@ -207,7 +207,7 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
       set(_render_system_gl_static_library_debug_abs ${_render_system_gl_static_library_abs})
     endif()
 
-    add_library(rviz_ogre_vendor::RenderSystem_GL SHARED IMPORTED)
+    add_library(rviz_ogre_vendor::RenderSystem_GL UNKNOWN IMPORTED)
     message("rviz_ogre_vendor::RenderSystem_GL for IMPORTED_LOCATION_RELEASE: ${_render_system_gl_static_library_abs}")
     message("rviz_ogre_vendor::RenderSystem_GL for IMPORTED_LOCATION_DEBUG: ${_render_system_gl_static_library_debug_abs}")
     set_target_properties(rviz_ogre_vendor::RenderSystem_GL
@@ -259,7 +259,7 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
       set(_ogre_gl_support_static_library_debug_abs ${_ogre_gl_support_static_library_abs})
     endif()
 
-    add_library(rviz_ogre_vendor::OgreGLSupport SHARED IMPORTED)
+    add_library(rviz_ogre_vendor::OgreGLSupport UNKNOWN IMPORTED)
     message("rviz_ogre_vendor::OgreGLSupport for IMPORTED_LOCATION_RELEASE: ${_ogre_gl_support_static_library_abs}")
     message("rviz_ogre_vendor::OgreGLSupport for IMPORTED_LOCATION_DEBUG: ${_ogre_gl_support_static_library_debug_abs}")
     set_target_properties(rviz_ogre_vendor::OgreGLSupport
