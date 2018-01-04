@@ -122,8 +122,8 @@ macro(build_ogre)
 
   include(ExternalProject)
   ExternalProject_Add(ogre-master-ca665a6
-    URL https://github.com/OGRECave/ogre/archive/ca665a69a5ca47608ee0ad304b2596ff866616da.zip
-    URL_MD5 a627f447d0013a9cf0889117ac76bc5f
+    URL https://github.com/OGRECave/ogre/archive/v1.10.11.zip
+    URL_MD5 6ffd5048fae72805e287bfc0b462b2ea
     TIMEOUT 600
     LOG_CONFIGURE ${should_log}
     LOG_BUILD ${should_log}
