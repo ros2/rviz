@@ -75,7 +75,7 @@ public:
   RVIZ_RENDERING_PUBLIC
   void clear();
   RVIZ_RENDERING_PUBLIC
-  void newLine();
+  void finishLine();
   RVIZ_RENDERING_PUBLIC
   void addPoint(const Ogre::Vector3 & point);
   RVIZ_RENDERING_PUBLIC
@@ -135,11 +135,6 @@ private:
 
   Ogre::ColourValue color_;
   float width_;
-
-  // TODO(Martin-Idel-SI): Replace by using Ogre::BillboardChain::getNumberOfChains once available
-  // Current issue: https://github.com/OGRECave/ogre/issues/603
-  typedef std::vector<uint32_t> V_uint32;
-  V_uint32 num_elements_;
 
   uint32_t num_lines_;
   uint32_t max_points_per_line_;
