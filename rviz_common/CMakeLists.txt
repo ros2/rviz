@@ -186,11 +186,9 @@ set(rviz_common_source_files
   src/rviz_common/properties/tf_frame_property.cpp
   src/rviz_common/properties/vector_property.cpp
   src/rviz_common/render_panel.cpp
-  src/rviz_common/ros_integration/get_topic_names_and_types.cpp
-  src/rviz_common/ros_integration/init.cpp
-  src/rviz_common/ros_integration/ok.cpp
-  src/rviz_common/ros_integration/shutdown.cpp
-  src/rviz_common/ros_integration/rclcpp_node_storage.cpp
+  src/rviz_common/ros_integration/ros_client_abstraction.cpp
+  src/rviz_common/ros_integration/ros_node_abstraction.cpp
+  src/rviz_common/ros_integration/ros_node_storage.cpp
   src/rviz_common/scaled_image_widget.cpp
   src/rviz_common/screenshot_dialog.cpp
   # src/rviz_common/selection_panel.cpp
@@ -306,12 +304,14 @@ if(BUILD_TESTING AND NOT WIN32)
   find_package(ament_cmake_cpplint REQUIRED)
   find_package(ament_cmake_lint_cmake REQUIRED)
   find_package(ament_cmake_uncrustify REQUIRED)
+
+  find_package(ament_cmake_gmock REQUIRED)
+  find_package(ament_cmake_gtest REQUIRED)
+
   ament_cppcheck()
   ament_cpplint()
   ament_lint_cmake()
   ament_uncrustify()
-
-  find_package(ament_cmake_gtest REQUIRED)
 
   ament_add_gtest(rviz_common_config_test
     test/config_test.cpp)
@@ -339,6 +339,18 @@ if(BUILD_TESTING AND NOT WIN32)
     test/mock_property_change_receiver.cpp)
   if(TARGET rviz_common_property_test)
     target_link_libraries(rviz_common_property_test rviz_common)
+  endif()
+
+  ament_add_gmock(rviz_common_visualizer_app_test
+    test/visualizer_app_test.cpp)
+  if(TARGET rviz_common_visualizer_app_test)
+    target_link_libraries(rviz_common_visualizer_app_test rviz_common)
+  endif()
+
+  ament_add_gmock(rviz_common_ros_node_abstraction_test
+    test/ros_node_abstraction_test.cpp)
+  if(TARGET rviz_common_ros_node_abstraction_test)
+    target_link_libraries(rviz_common_ros_node_abstraction_test rviz_common)
   endif()
 endif()
 

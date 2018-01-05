@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,25 +28,40 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz_common/ros_integration/ok.hpp"
+#ifndef RVIZ_COMMON__ROS_INTEGRATION__ROS_NODE_STORAGE_IFACE_HPP_
+#define RVIZ_COMMON__ROS_INTEGRATION__ROS_NODE_STORAGE_IFACE_HPP_
 
 #include <memory>
 #include <string>
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "./rclcpp_node_storage.hpp"
-
 namespace rviz_common
 {
 namespace ros_integration
 {
 
-bool
-ok(const std::string & node_name)
+class RosNodeStorageIface
 {
-  return rclcpp::ok() && has_rclcpp_node_by_name(node_name);
-}
+public:
+  virtual ~RosNodeStorageIface() = default;
+
+  virtual void
+  store_rclcpp_node_by_name(
+    const std::string & node_name,
+    const std::shared_ptr<rclcpp::Node> node) = 0;
+
+  virtual std::shared_ptr<rclcpp::Node>
+  get_rclcpp_node_by_name(const std::string & node_name) = 0;
+
+  virtual bool
+  has_rclcpp_node_by_name(const std::string & node_name) = 0;
+
+  virtual void
+  clear_rclcpp_nodes() = 0;
+};
 
 }  // namespace ros_integration
 }  // namespace rviz_common
+
+#endif  // RVIZ_COMMON__ROS_INTEGRATION__ROS_NODE_STORAGE_IFACE_HPP_

@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
@@ -27,23 +28,32 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz_common/ros_integration/shutdown.hpp"
+#ifndef RVIZ_COMMON__ROS_INTEGRATION__ROS_CLIENT_ABSTRACTION_IFACE_HPP_
+#define RVIZ_COMMON__ROS_INTEGRATION__ROS_CLIENT_ABSTRACTION_IFACE_HPP_
 
-#include "rclcpp/rclcpp.hpp"
-
-#include "./rclcpp_node_storage.hpp"
+#include <string>
 
 namespace rviz_common
 {
 namespace ros_integration
 {
 
-void
-shutdown()
+class RosClientAbstractionIface
 {
-  clear_rclcpp_nodes();
-  rclcpp::shutdown();
-}
+public:
+  virtual ~RosClientAbstractionIface() = default;
+
+  virtual std::string
+  init(int argc, char ** argv, const std::string & name, bool anonymous_name) = 0;
+
+  virtual bool
+  ok() = 0;
+
+  virtual void
+  shutdown() = 0;
+};
 
 }  // namespace ros_integration
 }  // namespace rviz_common
+
+#endif  // RVIZ_COMMON__ROS_INTEGRATION__ROS_CLIENT_ABSTRACTION_IFACE_HPP_

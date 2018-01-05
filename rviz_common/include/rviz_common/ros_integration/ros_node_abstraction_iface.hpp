@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
@@ -27,23 +28,30 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__ROS_INTEGRATION__SHUTDOWN_HPP_
-#define RVIZ_COMMON__ROS_INTEGRATION__SHUTDOWN_HPP_
+#ifndef RVIZ_COMMON__ROS_INTEGRATION__ROS_NODE_ABSTRACTION_IFACE_HPP_
+#define RVIZ_COMMON__ROS_INTEGRATION__ROS_NODE_ABSTRACTION_IFACE_HPP_
+
+#include <map>
+#include <string>
+#include <vector>
 
 namespace rviz_common
 {
 namespace ros_integration
 {
 
-/// Shutdown ROS.
-/**
- * This will also destroy any nodes which were created with
- * ros_integration::init().
- */
-void
-shutdown();
+class RosNodeAbstractionIface
+{
+public:
+  virtual ~RosNodeAbstractionIface() = default;
+
+  virtual std::string get_node_name() = 0;
+
+  virtual std::map<std::string, std::vector<std::string>>
+  get_topic_names_and_types() = 0;
+};
 
 }  // namespace ros_integration
 }  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__ROS_INTEGRATION__SHUTDOWN_HPP_
+#endif  // RVIZ_COMMON__ROS_INTEGRATION__ROS_NODE_ABSTRACTION_IFACE_HPP_

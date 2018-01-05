@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,29 +28,57 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz_common/ros_integration/get_topic_names_and_types.hpp"
+#include "rviz_common/ros_integration/ros_client_abstraction.hpp"
 
-#include <map>
+#include <memory>
+#include <mutex>
 #include <string>
-#include <vector>
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "./rclcpp_node_storage.hpp"
+#include "rviz_common/ros_integration/ros_node_abstraction.hpp"
+#include "./ros_node_storage.hpp"
 
 namespace rviz_common
 {
 namespace ros_integration
 {
 
-std::map<std::string, std::vector<std::string>>
-get_topic_names_and_types(const std::string & node_name)
+RosClientAbstraction::RosClientAbstraction()
+: ros_node_storage_(std::make_shared<RosNodeStorage>())
+{}
+
+std::string
+RosClientAbstraction::init(int argc, char ** argv, const std::string & name, bool anonymous_name)
 {
-  rclcpp::Node::SharedPtr node = get_rclcpp_node_by_name(node_name);
-  if (!node) {
-    throw std::runtime_error("given node name '" + node_name + "' not found");
+  std::string final_name = name;
+  if (anonymous_name) {
+    // TODO(wjwwood): add anonymous name feature to rclcpp or somehow make name
+    //                anonymouse here.
+    throw std::runtime_error("'anonymous_name' feature not implemented");
+    // final_name = <the full anonymous node name>;
   }
-  return node->get_topic_names_and_types();
+  // TODO(wjwwood): this will throw on repeated calls, maybe avoid that?
+  rclcpp::init(argc, argv);
+  if (ros_node_storage_->has_rclcpp_node_by_name(final_name)) {
+    // TODO(wjwwood): make a better exception type rather than using std::runtime_error.
+    throw std::runtime_error("Node with name " + final_name + " already exists.");
+  }
+  ros_node_abstraction_ = std::make_unique<RosNodeAbstraction>(final_name, ros_node_storage_);
+  return final_name;
+}
+
+bool
+RosClientAbstraction::ok()
+{
+  return rclcpp::ok() && ros_node_abstraction_ != nullptr;
+}
+
+void
+RosClientAbstraction::shutdown()
+{
+  ros_node_storage_->clear_rclcpp_nodes();
+  rclcpp::shutdown();
 }
 
 }  // namespace ros_integration

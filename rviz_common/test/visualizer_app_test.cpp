@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,61 +27,31 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./rclcpp_node_storage.hpp"
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
-#include <map>
 #include <memory>
-#include <mutex>
 #include <string>
+#include <utility>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rviz_common/visualizer_app.hpp"
+#include "rviz_common/ros_integration/ros_client_abstraction_iface.hpp"
 
-namespace rviz_common
+class MockRosNodeStorage : public rviz_common::ros_integration::RosClientAbstractionIface
 {
-namespace ros_integration
-{
+public:
+  MOCK_METHOD4(init,
+    std::string(int argc, char ** argv, const std::string & name, bool anonymous_name));
+  MOCK_METHOD0(ok, bool());
+  MOCK_METHOD0(shutdown, void());
+};
 
-static std::map<std::string, rclcpp::Node::SharedPtr> __nodes_by_name;
-static std::mutex __nodes_by_name_mutex;
+TEST(VisualizerApp, shutdownsRosDuringExit) {
+  std::unique_ptr<rviz_common::ros_integration::RosClientAbstractionIface> ros_client =
+    std::make_unique<MockRosNodeStorage>();
+  EXPECT_CALL(*dynamic_cast<MockRosNodeStorage *>(ros_client.get()), shutdown()).Times(1);
 
-void
-store_rclcpp_node_by_name(
-  const std::string & node_name,
-  const std::shared_ptr<rclcpp::Node> & node)
-{
-  std::lock_guard<std::mutex> lock(__nodes_by_name_mutex);
-  __nodes_by_name[node_name] = node;
-}
-
-bool
-__has_rclcpp_node_by_name(const std::string & node_name)
-{
-  return __nodes_by_name.count(node_name) != 0;
-}
-
-std::shared_ptr<rclcpp::Node>
-get_rclcpp_node_by_name(const std::string & node_name)
-{
-  std::lock_guard<std::mutex> lock(__nodes_by_name_mutex);
-  if (!__has_rclcpp_node_by_name(node_name)) {
-    return nullptr;
+  {
+    rviz_common::VisualizerApp visualizer_app(std::move(ros_client));
   }
-  return __nodes_by_name[node_name];
 }
-
-bool
-has_rclcpp_node_by_name(const std::string & node_name)
-{
-  std::lock_guard<std::mutex> lock(__nodes_by_name_mutex);
-  return __has_rclcpp_node_by_name(node_name);
-}
-
-void
-clear_rclcpp_nodes()
-{
-  std::lock_guard<std::mutex> lock(__nodes_by_name_mutex);
-  __nodes_by_name.clear();
-}
-
-}  // namespace ros_integration
-}  // namespace rviz_common
