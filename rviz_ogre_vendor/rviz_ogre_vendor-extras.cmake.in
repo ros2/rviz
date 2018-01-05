@@ -48,7 +48,7 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
       NO_CMAKE_SYSTEM_PATH
       NO_CMAKE_FIND_ROOT_PATH
     )
-    if(NOT _ogre_main_static_library_debug_abs AND APPLE)
+    if(NOT _ogre_main_static_library_debug_abs AND NOT WIN32)
       # On macOS it seems the _d is not used, so just use the normal library name.
       set(_ogre_main_static_library_debug_abs ${_ogre_main_static_library_abs})
     endif()
@@ -150,7 +150,7 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
       NO_CMAKE_SYSTEM_PATH
       NO_CMAKE_FIND_ROOT_PATH
     )
-    if(NOT _ogre_overlay_static_library_debug_abs AND APPLE)
+    if(NOT _ogre_overlay_static_library_debug_abs AND NOT WIN32)
       # On macOS it seems the _d is not used, so just use the normal library name.
       set(_ogre_overlay_static_library_debug_abs ${_ogre_overlay_static_library_abs})
     endif()
@@ -202,7 +202,7 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
       NO_CMAKE_SYSTEM_PATH
       NO_CMAKE_FIND_ROOT_PATH
     )
-    if(NOT _render_system_gl_static_library_debug_abs AND APPLE)
+    if(NOT _render_system_gl_static_library_debug_abs AND NOT WIN32)
       # On macOS it seems the _d is not used, so just use the normal library name.
       set(_render_system_gl_static_library_debug_abs ${_render_system_gl_static_library_abs})
     endif()
@@ -254,7 +254,7 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
       NO_CMAKE_SYSTEM_PATH
       NO_CMAKE_FIND_ROOT_PATH
     )
-    if(NOT _ogre_gl_support_static_library_debug_abs AND APPLE)
+    if(NOT _ogre_gl_support_static_library_debug_abs AND NOT WIN32)
       # On macOS it seems the _d is not used, so just use the normal library name.
       set(_ogre_gl_support_static_library_debug_abs ${_ogre_gl_support_static_library_abs})
     endif()
