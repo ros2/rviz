@@ -1026,7 +1026,7 @@ Ogre::Technique * SelectionManager::handleSchemeNotFound(
   }
 
   // find out if the renderable has the picking param set
-  bool has_pick_param = !rend->getUserObjectBindings().getUserAny("pick_handle").isEmpty();
+  bool has_pick_param = rend->getUserObjectBindings().getUserAny("pick_handle").has_value();
 
   // NOTE: it is important to avoid changing the culling mode of the
   // fallback techniques here, because that change then propagates to
