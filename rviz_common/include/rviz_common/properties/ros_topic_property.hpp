@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Bosch Software Innovations GmbH.
+ * Copyright (c) 2012, Willow Garage, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,50 +26,59 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
-#ifndef OGRE_TESTING_ENVIRONMENT_HPP_
-#define OGRE_TESTING_ENVIRONMENT_HPP_
+#ifndef RVIZ_COMMON__PROPERTIES__ROS_TOPIC_PROPERTY_HPP_
+#define RVIZ_COMMON__PROPERTIES__ROS_TOPIC_PROPERTY_HPP_
 
 #include <string>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wpedantic"
-# ifdef __clang__
-#  pragma clang diagnostic ignored "-Wextra-semi"
-# endif
-#endif
+#include "rclcpp/node.hpp"
+#include "rviz_common/properties/editable_enum_property.hpp"
 
-#include <OgreLogManager.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
-
-#include "../src/rviz_rendering/render_system.hpp"
-
-namespace rviz_rendering
+namespace rviz_common
 {
-class OgreTestingEnvironment
+namespace properties
 {
+
+class RosTopicProperty : public EditableEnumProperty
+{
+  Q_OBJECT
+
 public:
-  /**
-   * Set up a testing environment to run tests needing Ogre.
-   *
-   * @param: bool debug, if true, all logging of Ogre is send to std::out, if false no logging
-   * occurs. Since the logging pollutes the test output, it defaults to false
-   */
-  void setUpOgreTestEnvironment(bool debug = false)
-  {
-    if (!debug) {
-      const std::string & name = "";
-      auto lm = new Ogre::LogManager();
-      lm->createLog(name, false, debug, true);
-    }
-    RenderSystem::get();
-  }
+  explicit RosTopicProperty(
+    const QString & name = QString(),
+    const QString & default_value = QString(),
+    const QString & message_type = QString(),
+    const QString & description = QString(),
+    Property * parent = nullptr,
+    const char * changed_slot = nullptr,
+    QObject * receiver = nullptr);
+
+  void initialize(rclcpp::Node::ConstSharedPtr node);
+
+  void setMessageType(const QString & message_type);
+
+  QString getMessageType() const
+  {return message_type_;}
+
+  QString getTopic() const
+  {return getValue().toString();}
+
+  std::string getTopicStd() const
+  {return getValue().toString().toStdString();}
+
+  bool isEmpty() const
+  {return getTopicStd().empty();}
+
+protected Q_SLOTS:
+  virtual void fillTopicList();
+
+private:
+  rclcpp::Node::ConstSharedPtr node_;
+  QString message_type_;
 };
 
-}  // namespace rviz_rendering
+}  // end namespace properties
 
-#endif  // OGRE_TESTING_ENVIRONMENT_HPP_
+}  // end namespace rviz_common
+
+#endif  // RVIZ_COMMON__PROPERTIES__ROS_TOPIC_PROPERTY_HPP_

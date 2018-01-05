@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2012, Willow Garage, Inc.
- * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,58 +27,16 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./failed_view_controller.hpp"
+#include "src/rviz_rendering/render_system.hpp"
 
-#include <QMessageBox>
+#include "test/rviz_rendering/ogre_testing_environment.hpp"
 
-#include "rviz_common/display_context.hpp"
-#include "rviz_common/window_manager_interface.hpp"
-
-namespace rviz_common
+namespace rviz_rendering
 {
 
-FailedViewController::FailedViewController(
-  const QString & desired_class_id,
-  const QString & error_message)
-: error_message_(error_message)
+void OgreTestingEnvironment::setUpRenderSystem()
 {
-  setClassId(desired_class_id);
+  RenderSystem::get();
 }
 
-QString FailedViewController::getDescription() const
-{
-  return "The class required for this view controller, '" + getClassId() +
-         "', could not be loaded.<br><b>Error:</b><br>" + error_message_;
-}
-
-void FailedViewController::load(const Config & config)
-{
-  saved_config_ = config;
-  ViewController::load(config);
-}
-
-void FailedViewController::save(Config config) const
-{
-  if (saved_config_.isValid() ) {
-    config.copy(saved_config_);
-  } else {
-    ViewController::save(config);
-  }
-}
-
-void FailedViewController::onActivate()
-{
-  QWidget * parent = NULL;
-  if (context_->getWindowManager() ) {
-    parent = context_->getWindowManager()->getParentWindow();
-  }
-  QMessageBox::critical(parent, "ViewController '" + getName() + "'unavailable.",
-    getDescription() );
-}
-
-void FailedViewController::lookAt(const Ogre::Vector3 & point)
-{
-  Q_UNUSED(point);
-}
-
-}  // end namespace rviz_common
+}  // end namespace rviz_rendering

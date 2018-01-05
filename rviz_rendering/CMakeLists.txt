@@ -81,6 +81,7 @@ add_library(rviz_rendering SHARED
   src/rviz_rendering/string_helper.cpp
   src/rviz_rendering/point_cloud.cpp
   src/rviz_rendering/point_cloud_renderable.cpp
+  src/test/rviz_rendering/ogre_testing_environment.cpp
 )
 target_link_libraries(rviz_rendering
   PRIVATE rviz_ogre_vendor::OgreMain

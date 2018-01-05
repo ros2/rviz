@@ -13,9 +13,20 @@
   </class>
 
   <class
-          name="rviz/PointCloud"
-          type="rviz_default_plugins::displays::PointCloudDisplay"
-          base_class_type="rviz_common::Display"
+    name="rviz/Image"
+    type="rviz_default_plugins::displays::ImageDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      The Image display creates a new rendering window with an image.
+    </description>
+    <message_type>sensor_msgs/Image</message_type>
+  </class>
+
+  <class
+    name="rviz/PointCloud"
+    type="rviz_default_plugins::displays::PointCloudDisplay"
+    base_class_type="rviz_common::Display"
   >
     <description>
       The Point Cloud display shows data from a (legacy) sensor_msgs/PointCloud message.
@@ -24,9 +35,9 @@
   </class>
 
   <class
-          name="rviz/PointCloud2"
-          type="rviz_default_plugins::displays::PointCloud2Display"
-          base_class_type="rviz_common::Display"
+    name="rviz/PointCloud2"
+    type="rviz_default_plugins::displays::PointCloud2Display"
+    base_class_type="rviz_common::Display"
   >
     <description>
       The Point Cloud2 display shows data from a (recommended) sensor_msgs/PointCloud2 message.

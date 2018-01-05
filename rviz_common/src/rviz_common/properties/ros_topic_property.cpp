@@ -27,31 +27,41 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "ros/master.h"
+#include <map>
+#include <string>
+#include <vector>
 
-#include "rviz/properties/ros_topic_property.h"
+#include <QApplication>  // NOLINT: cpplint can't handle Qt imports
 
-#include <QApplication>
+#include "rviz_common/properties/ros_topic_property.hpp"
 
-
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
-RosTopicProperty::RosTopicProperty( const QString& name,
-                                    const QString& default_value,
-                                    const QString& message_type,
-                                    const QString& description,
-                                    Property* parent,
-                                    const char *changed_slot,
-                                    QObject* receiver )
-  : EditableEnumProperty( name, default_value, description, parent, changed_slot, receiver )
-  , message_type_( message_type )
+RosTopicProperty::RosTopicProperty(
+  const QString & name,
+  const QString & default_value,
+  const QString & message_type,
+  const QString & description,
+  Property * parent,
+  const char * changed_slot,
+  QObject * receiver)
+: EditableEnumProperty(name, default_value, description, parent, changed_slot, receiver),
+  node_(nullptr),
+  message_type_(message_type)
 {
-  connect( this, SIGNAL( requestOptions( EditableEnumProperty* )),
-           this, SLOT( fillTopicList()));
+  connect(this, SIGNAL(requestOptions(EditableEnumProperty *)),
+    this, SLOT(fillTopicList()));
 }
 
-void RosTopicProperty::setMessageType( const QString& message_type )
+void RosTopicProperty::initialize(rclcpp::Node::ConstSharedPtr node)
+{
+  node_ = node;
+}
+
+void RosTopicProperty::setMessageType(const QString & message_type)
 {
   message_type_ = message_type;
 }
@@ -62,24 +72,24 @@ void RosTopicProperty::fillTopicList()
   clearOptions();
 
   std::string std_message_type = message_type_.toStdString();
+  std::map<std::string, std::vector<std::string>> published_topics =
+    node_->get_topic_names_and_types();
 
-  ros::master::V_TopicInfo topics;
-  ros::master::getTopics( topics );
-
-  // Loop through all published topics
-  ros::master::V_TopicInfo::iterator it;
-  for( it = topics.begin(); it != topics.end(); ++it )
-  {
-    const ros::master::TopicInfo& topic = *it;
-
+  for (const auto & topic : published_topics) {
     // Only add topics whose type matches.
-    if( topic.datatype == std_message_type )
-    {
-      addOptionStd( topic.name );
+    for (const auto & type : topic.second) {
+      // TODO(Martin-Idel-SI): revisit after message_traits become available.
+      // We only want to show the types of the topic we subscribe to, however, currently we can't
+      // get the type, so std_message_type will always be empty --> show all topics instead
+      if (std_message_type.empty() || type == std_message_type) {
+        addOptionStd(topic.first);
+      }
     }
   }
   sortOptions();
   QApplication::restoreOverrideCursor();
 }
 
-} // end namespace rviz
+}  // end namespace properties
+
+}  // end namespace rviz_common

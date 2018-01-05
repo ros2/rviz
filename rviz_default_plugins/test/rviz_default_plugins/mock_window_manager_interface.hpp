@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2012, Willow Garage, Inc.
- * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,58 +27,27 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./failed_view_controller.hpp"
+#ifndef RVIZ_DEFAULT_PLUGINS__MOCK_WINDOW_MANAGER_INTERFACE_HPP_
+#define RVIZ_DEFAULT_PLUGINS__MOCK_WINDOW_MANAGER_INTERFACE_HPP_
 
-#include <QMessageBox>
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
-#include "rviz_common/display_context.hpp"
+#include "rviz_common/panel_dock_widget.hpp"
+
 #include "rviz_common/window_manager_interface.hpp"
 
-namespace rviz_common
+class MockWindowManagerInterface : public rviz_common::WindowManagerInterface
 {
+public:
+  MOCK_METHOD0(getParentWindow, QWidget * ());
 
-FailedViewController::FailedViewController(
-  const QString & desired_class_id,
-  const QString & error_message)
-: error_message_(error_message)
-{
-  setClassId(desired_class_id);
-}
+  MOCK_METHOD4(addPane,
+    rviz_common::PanelDockWidget *(
+      const QString &name, QWidget * pane, Qt::DockWidgetArea area, bool floating));
 
-QString FailedViewController::getDescription() const
-{
-  return "The class required for this view controller, '" + getClassId() +
-         "', could not be loaded.<br><b>Error:</b><br>" + error_message_;
-}
+  MOCK_METHOD1(setStatus, void(const QString &message));
+};
 
-void FailedViewController::load(const Config & config)
-{
-  saved_config_ = config;
-  ViewController::load(config);
-}
 
-void FailedViewController::save(Config config) const
-{
-  if (saved_config_.isValid() ) {
-    config.copy(saved_config_);
-  } else {
-    ViewController::save(config);
-  }
-}
-
-void FailedViewController::onActivate()
-{
-  QWidget * parent = NULL;
-  if (context_->getWindowManager() ) {
-    parent = context_->getWindowManager()->getParentWindow();
-  }
-  QMessageBox::critical(parent, "ViewController '" + getName() + "'unavailable.",
-    getDescription() );
-}
-
-void FailedViewController::lookAt(const Ogre::Vector3 & point)
-{
-  Q_UNUSED(point);
-}
-
-}  // end namespace rviz_common
+#endif  // RVIZ_DEFAULT_PLUGINS__MOCK_WINDOW_MANAGER_INTERFACE_HPP_

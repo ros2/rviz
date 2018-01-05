@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2012, Willow Garage, Inc.
- * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,58 +27,49 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./failed_view_controller.hpp"
+#ifndef RVIZ_RENDERING__OGRE_TESTING_ENVIRONMENT_HPP_
+#define RVIZ_RENDERING__OGRE_TESTING_ENVIRONMENT_HPP_
 
-#include <QMessageBox>
+#include <string>
 
-#include "rviz_common/display_context.hpp"
-#include "rviz_common/window_manager_interface.hpp"
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wpedantic"
+# ifdef __clang__
+#  pragma clang diagnostic ignored "-Wextra-semi"
+# endif
+#endif
 
-namespace rviz_common
+#include <OgreLogManager.h>
+
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
+
+namespace rviz_rendering
 {
-
-FailedViewController::FailedViewController(
-  const QString & desired_class_id,
-  const QString & error_message)
-: error_message_(error_message)
+class OgreTestingEnvironment
 {
-  setClassId(desired_class_id);
-}
-
-QString FailedViewController::getDescription() const
-{
-  return "The class required for this view controller, '" + getClassId() +
-         "', could not be loaded.<br><b>Error:</b><br>" + error_message_;
-}
-
-void FailedViewController::load(const Config & config)
-{
-  saved_config_ = config;
-  ViewController::load(config);
-}
-
-void FailedViewController::save(Config config) const
-{
-  if (saved_config_.isValid() ) {
-    config.copy(saved_config_);
-  } else {
-    ViewController::save(config);
+public:
+  /**
+   * Set up a testing environment to run tests needing Ogre.
+   *
+   * @param: bool debug, if true, all logging of Ogre is send to std::out, if false no logging
+   * occurs. Since the logging pollutes the test output, it defaults to false
+   */
+  void setUpOgreTestEnvironment(bool debug = false)
+  {
+    if (!debug) {
+      const std::string & name = "";
+      auto lm = new Ogre::LogManager();
+      lm->createLog(name, false, debug, true);
+    }
+    setUpRenderSystem();
   }
-}
 
-void FailedViewController::onActivate()
-{
-  QWidget * parent = NULL;
-  if (context_->getWindowManager() ) {
-    parent = context_->getWindowManager()->getParentWindow();
-  }
-  QMessageBox::critical(parent, "ViewController '" + getName() + "'unavailable.",
-    getDescription() );
-}
+  void setUpRenderSystem();
+};
 
-void FailedViewController::lookAt(const Ogre::Vector3 & point)
-{
-  Q_UNUSED(point);
-}
+}  // namespace rviz_rendering
 
-}  // end namespace rviz_common
+#endif  // RVIZ_RENDERING__OGRE_TESTING_ENVIRONMENT_HPP_

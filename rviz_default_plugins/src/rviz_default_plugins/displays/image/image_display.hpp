@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,23 +28,27 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_IMAGE_DISPLAY_H
-#define RVIZ_IMAGE_DISPLAY_H
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__IMAGE_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__IMAGE_DISPLAY_HPP_
 
 #ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
-# include <QObject>
+# include <memory>
+# include <string>
+
+# include <QObject>  // NOLINT cpplint cannot handle include order here
 
 # include <OgreMaterial.h>
 # include <OgreRenderTargetListener.h>
 # include <OgreSharedPtr.h>
 
-# include "rviz/image/image_display_base.h"
-# include "rviz/image/ros_image_texture.h"
-# include "rviz/render_panel.h"
+# include "rviz_common/ros_topic_display.hpp"
+# include "rviz_common/render_panel.hpp"
+# include "rviz_common/properties/bool_property.hpp"
+# include "rviz_common/properties/float_property.hpp"
+# include "rviz_common/properties/int_property.hpp"
+# include "rviz_common/properties/queue_size_property.hpp"
 
-# include "rviz/properties/bool_property.h"
-# include "rviz/properties/float_property.h"
-# include "rviz/properties/int_property.h"
+# include "ros_image_texture.hpp"
 #endif
 
 
@@ -53,56 +58,63 @@ class SceneNode;
 class Rectangle2D;
 }
 
-namespace rviz
+namespace rviz_default_plugins
+{
+namespace displays
 {
 
 /**
  * \class ImageDisplay
  *
  */
-class ImageDisplay: public ImageDisplayBase
+class ImageDisplay : public rviz_common::RosTopicDisplay<sensor_msgs::msg::Image>
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  ImageDisplay();
-  virtual ~ImageDisplay();
+  explicit ImageDisplay(
+    std::unique_ptr<ROSImageTextureIface> texture = std::make_unique<ROSImageTexture>());
+  ~ImageDisplay() override;
 
   // Overrides from Display
-  virtual void onInitialize();
-  virtual void update( float wall_dt, float ros_dt );
-  virtual void reset();
+  void onInitialize() override;
+  void update(float wall_dt, float ros_dt) override;
+  void reset() override;
 
 public Q_SLOTS:
   virtual void updateNormalizeOptions();
 
 protected:
   // overrides from Display
-  virtual void onEnable();
-  virtual void onDisable();
+  void onEnable() override;
+  void onDisable() override;
 
   /* This is called by incomingMessage(). */
-  virtual void processMessage(const sensor_msgs::Image::ConstPtr& msg);
+  void processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg) override;
 
 private:
-  void clear();
-  void updateStatus();
+  void setupScreenRectangle();
+  void setupRenderPanel();
 
-  Ogre::SceneManager* img_scene_manager_;
-  Ogre::SceneNode* img_scene_node_;
-  Ogre::Rectangle2D* screen_rect_;
+  void clear();
+
+  std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
+
+  std::unique_ptr<Ogre::Rectangle2D> screen_rect_;
   Ogre::MaterialPtr material_;
 
-  ROSImageTexture texture_;
+  std::unique_ptr<ROSImageTextureIface> texture_;
 
-  RenderPanel* render_panel_;
+  std::unique_ptr<rviz_common::RenderPanel> render_panel_;
 
-  BoolProperty* normalize_property_;
-  FloatProperty* min_property_;
-  FloatProperty* max_property_;
-  IntProperty* median_buffer_size_property_;
+  rviz_common::properties::BoolProperty * normalize_property_;
+  rviz_common::properties::FloatProperty * min_property_;
+  rviz_common::properties::FloatProperty * max_property_;
+  rviz_common::properties::IntProperty * median_buffer_size_property_;
   bool got_float_image_;
 };
 
-} // namespace rviz
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__IMAGE_DISPLAY_HPP_

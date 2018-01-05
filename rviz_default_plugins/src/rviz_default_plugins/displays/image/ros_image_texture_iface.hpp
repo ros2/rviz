@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,79 +27,43 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_ROS_IMAGE_TEXTURE_H
-#define RVIZ_ROS_IMAGE_TEXTURE_H
-
-#include <sensor_msgs/Image.h>
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__ROS_IMAGE_TEXTURE_IFACE_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__ROS_IMAGE_TEXTURE_IFACE_HPP_
 
 #include <OgreTexture.h>
-#include <OgreImage.h>
 #include <OgreSharedPtr.h>
 
-#include <boost/shared_ptr.hpp>
-#include <boost/thread/mutex.hpp>
+#include "sensor_msgs/msg/image.hpp"
 
-#include <ros/ros.h>
-
-#include <stdexcept>
-
-namespace rviz
+namespace rviz_default_plugins
+{
+namespace displays
 {
 
-class UnsupportedImageEncoding : public std::runtime_error
+class ROSImageTextureIface
 {
 public:
-  UnsupportedImageEncoding(const std::string& encoding)
-  : std::runtime_error("Unsupported image encoding [" + encoding + "]")
-  {}
-};
+  ROSImageTextureIface() = default;
+  virtual ~ROSImageTextureIface() = default;
 
-class ROSImageTexture
-{
-public:
-  ROSImageTexture();
-  ~ROSImageTexture();
+  virtual void addMessage(sensor_msgs::msg::Image::ConstSharedPtr image) = 0;
+  virtual bool update() = 0;
+  virtual void clear() = 0;
 
-  void addMessage(const sensor_msgs::Image::ConstPtr& image);
-  bool update();
-  void clear();
+  virtual const Ogre::String getName() = 0;
+  virtual const Ogre::TexturePtr & getTexture() = 0;
+  virtual const sensor_msgs::msg::Image::ConstSharedPtr getImage() = 0;
 
-  const Ogre::TexturePtr& getTexture() { return texture_; }
-  const sensor_msgs::Image::ConstPtr& getImage();
-
-  uint32_t getWidth() { return width_; }
-  uint32_t getHeight() { return height_; }
+  virtual uint32_t getWidth() = 0;
+  virtual uint32_t getHeight() = 0;
 
   // automatic range normalization
-  void setNormalizeFloatImage( bool normalize, double min=0.0, double max=1.0 );
-  void setMedianFrames( unsigned median_frames );
-
-private:
-
-  double updateMedian( std::deque<double>& buffer, double new_value );
-
-  template<typename T>
-  void normalize( T* image_data, size_t image_data_size, std::vector<uint8_t> &buffer  );
-
-  sensor_msgs::Image::ConstPtr current_image_;
-  boost::mutex mutex_;
-  bool new_image_;
-
-  Ogre::TexturePtr texture_;
-  Ogre::Image empty_image_;
-
-  uint32_t width_;
-  uint32_t height_;
-
-  // fields for float image running median computation
-  bool normalize_;
-  double min_;
-  double max_;
-  unsigned median_frames_;
-  std::deque<double> min_buffer_;
-  std::deque<double> max_buffer_;
+  virtual void setNormalizeFloatImage(bool normalize) = 0;
+  virtual void setNormalizeFloatImage(bool normalize, double min, double max) = 0;
+  virtual void setMedianFrames(unsigned median_frames) = 0;
 };
 
-}
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__ROS_IMAGE_TEXTURE_IFACE_HPP_

@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2012, Willow Garage, Inc.
- * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,58 +27,30 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./failed_view_controller.hpp"
-
-#include <QMessageBox>
-
-#include "rviz_common/display_context.hpp"
-#include "rviz_common/window_manager_interface.hpp"
+#include "rviz_common/properties/queue_size_property.hpp"
 
 namespace rviz_common
 {
 
-FailedViewController::FailedViewController(
-  const QString & desired_class_id,
-  const QString & error_message)
-: error_message_(error_message)
+QueueSizeProperty::QueueSizeProperty(_RosTopicDisplay * display, uint32_t default_size)
+: display_(display)
 {
-  setClassId(desired_class_id);
+  queue_size_property_ = new rviz_common::properties::IntProperty(
+    "Queue Size", default_size,
+    "Advanced: set the size of the incoming message queue. Increasing this is useful if your "
+    "incoming TF data is delayed significantly from your message data, but it can greatly "
+    "increase memory usage if the messages are big.",
+    display_, SLOT(updateQueueSize()), this);
+
+  updateQueueSize();
 }
 
-QString FailedViewController::getDescription() const
+void QueueSizeProperty::updateQueueSize()
 {
-  return "The class required for this view controller, '" + getClassId() +
-         "', could not be loaded.<br><b>Error:</b><br>" + error_message_;
+  display_->updateQoSProfile([this](rmw_qos_profile_t profile) -> rmw_qos_profile_t {
+      profile.depth = this->queue_size_property_->getInt();
+      return profile;
+    });
 }
 
-void FailedViewController::load(const Config & config)
-{
-  saved_config_ = config;
-  ViewController::load(config);
-}
-
-void FailedViewController::save(Config config) const
-{
-  if (saved_config_.isValid() ) {
-    config.copy(saved_config_);
-  } else {
-    ViewController::save(config);
-  }
-}
-
-void FailedViewController::onActivate()
-{
-  QWidget * parent = NULL;
-  if (context_->getWindowManager() ) {
-    parent = context_->getWindowManager()->getParentWindow();
-  }
-  QMessageBox::critical(parent, "ViewController '" + getName() + "'unavailable.",
-    getDescription() );
-}
-
-void FailedViewController::lookAt(const Ogre::Vector3 & point)
-{
-  Q_UNUSED(point);
-}
-
-}  // end namespace rviz_common
+}  // namespace rviz_common

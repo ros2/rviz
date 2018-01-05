@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,41 +26,33 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef ROS_TOPIC_PROPERTY_H
-#define ROS_TOPIC_PROPERTY_H
 
-#include <string>
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__MOCK_ROS_IMAGE_TEXTURE_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__MOCK_ROS_IMAGE_TEXTURE_HPP_
 
-#include "rviz/properties/editable_enum_property.h"
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
-namespace rviz
+#include "../../../../src/rviz_default_plugins/displays/image/ros_image_texture_iface.hpp"
+
+class MockROSImageTexture : public rviz_default_plugins::displays::ROSImageTextureIface
 {
-
-class RosTopicProperty: public EditableEnumProperty
-{
-Q_OBJECT
 public:
-  RosTopicProperty( const QString& name = QString(),
-                    const QString& default_value = QString(),
-                    const QString& message_type = QString(),
-                    const QString& description = QString(),
-                    Property* parent = 0,
-                    const char *changed_slot = 0,
-                    QObject* receiver = 0 );
+  MOCK_METHOD1(addMessage, void(sensor_msgs::msg::Image::ConstSharedPtr image));
+  MOCK_METHOD0(update, bool());
+  MOCK_METHOD0(clear, void());
 
-  void setMessageType( const QString& message_type );
-  QString getMessageType() const { return message_type_; }
+  MOCK_METHOD0(getName, const Ogre::String());
+  MOCK_METHOD0(getTexture, const Ogre::TexturePtr & ());
+  MOCK_METHOD0(getImage, const sensor_msgs::msg::Image::ConstSharedPtr());
+  MOCK_METHOD0(getMaterial, Ogre::MaterialPtr());
 
-  QString getTopic() const { return getValue().toString(); }
-  std::string getTopicStd() const { return getValue().toString().toStdString(); }
+  MOCK_METHOD0(getWidth, uint32_t());
+  MOCK_METHOD0(getHeight, uint32_t());
 
-protected Q_SLOTS:
-  virtual void fillTopicList();
-
-private:
-  QString message_type_;
+  MOCK_METHOD1(setNormalizeFloatImage, void(bool normalize));
+  MOCK_METHOD3(setNormalizeFloatImage, void(bool normalize, double min, double max));
+  MOCK_METHOD1(setMedianFrames, void(unsigned median_frames));
 };
 
-} // end namespace rviz
-
-#endif // ROS_TOPIC_PROPERTY_H
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__MOCK_ROS_IMAGE_TEXTURE_HPP_

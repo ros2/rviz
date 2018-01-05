@@ -35,7 +35,8 @@
 #include "sensor_msgs/msg/point_cloud2.hpp"
 
 #include "point_cloud_common.hpp"
-#include "rviz_common/message_filter_display.hpp"
+#include "rviz_common/ros_topic_display.hpp"
+#include "rviz_common/properties/queue_size_property.hpp"
 
 namespace rviz_common
 {
@@ -55,6 +56,7 @@ struct Offsets
   uint32_t x, y, z;
 };
 
+// TODO(greimela) This display originally extended the MessageFilterDisplay. Revisit when available
 /**
  * \class PointCloud2Display
  * \brief Displays a point cloud of type sensor_msgs::PointCloud2
@@ -63,10 +65,8 @@ struct Offsets
  * If you set the channel's name to "rgb", it will interpret the channel as an integer rgb value, with r, g and b
  * all being 8 bits.
  */
-class PointCloud2Display : public rviz_common::MessageFilterDisplay<sensor_msgs::msg::PointCloud2>
+class PointCloud2Display : public rviz_common::RosTopicDisplay<sensor_msgs::msg::PointCloud2>
 {
-  Q_OBJECT
-
 public:
   PointCloud2Display();
 
@@ -84,18 +84,15 @@ public:
   sensor_msgs::msg::PointCloud2::ConstSharedPtr filterOutInvalidPoints(
     sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
 
-private Q_SLOTS:
-  void updateQueueSize();
-
 protected:
-  /** @brief Do initialization. Overridden from MessageFilterDisplay. */
+  /** @brief Do initialization. Overridden from RosTopicDisplay. */
   void onInitialize() override;
 
-  /** @brief Process a single message.  Overridden from MessageFilterDisplay. */
+  /** @brief Process a single message.  Overridden from RosTopicDisplay. */
   void processMessage(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) override;
 
 private:
-  rviz_common::properties::IntProperty * queue_size_property_;
+  std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
 
   std::unique_ptr<PointCloudCommon> point_cloud_common_;
 

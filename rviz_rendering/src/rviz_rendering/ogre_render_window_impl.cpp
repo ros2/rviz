@@ -31,6 +31,7 @@
 #include "./ogre_render_window_impl.hpp"
 
 #include <cstdlib>
+#include <functional>
 
 #ifndef _WIN32
 # pragma GCC diagnostic push
@@ -162,6 +163,10 @@ RenderWindowImpl::renderNow()
 
   if (!render_system_ || !ogre_render_window_) {
     this->initialize();
+    if (setup_scene_callback_) {
+      setup_scene_callback_(ogre_scene_manager_->getRootSceneNode()->createChildSceneNode());
+      setup_scene_callback_ = 0;
+    }
   }
 
   this->render();
@@ -222,6 +227,16 @@ createScene(Ogre::SceneManager * ogre_scene_manager)
 }
 
 void
+RenderWindowImpl::setupSceneAfterInit(setupSceneCallback setup_scene_callback)
+{
+  if (render_system_) {
+    setup_scene_callback(ogre_scene_manager_->getRootSceneNode()->createChildSceneNode());
+  } else {
+    setup_scene_callback_ = setup_scene_callback;
+  }
+}
+
+void
 RenderWindowImpl::initialize()
 {
   render_system_ = RenderSystem::get();
@@ -253,7 +268,7 @@ RenderWindowImpl::initialize()
   camera_node_->attachObject(ogre_camera_);
 
   ogre_viewport_ = ogre_render_window_->addViewport(ogre_camera_);
-  auto bg_color = Ogre::ColourValue(1.0f, 0.0f, 1.0f);
+  auto bg_color = Ogre::ColourValue(0.937254902f, 0.921568627f, 0.905882353f);  // Qt background
   ogre_viewport_->setBackgroundColour(bg_color);
 
   ogre_camera_->setAspectRatio(

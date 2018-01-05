@@ -86,7 +86,7 @@ set(rviz_common_headers_to_moc
   src/rviz_common/loading_dialog.hpp
   src/rviz_common/new_object_dialog.hpp
   src/rviz_common/panel.hpp
-  src/rviz_common/panel_dock_widget.hpp
+  include/rviz_common/panel_dock_widget.hpp
   include/rviz_common/properties/bool_property.hpp
   include/rviz_common/properties/color_editor.hpp
   include/rviz_common/properties/color_property.hpp
@@ -101,11 +101,13 @@ set(rviz_common_headers_to_moc
   include/rviz_common/properties/property_tree_delegate.hpp
   include/rviz_common/properties/property_tree_model.hpp
   include/rviz_common/properties/property_tree_with_help.hpp
+  include/rviz_common/properties/ros_topic_property.hpp
   include/rviz_common/properties/status_list.hpp
   include/rviz_common/properties/status_property.hpp
   include/rviz_common/properties/string_property.hpp
   include/rviz_common/properties/tf_frame_property.hpp
   include/rviz_common/properties/vector_property.hpp
+  include/rviz_common/properties/queue_size_property.hpp
   include/rviz_common/render_panel.hpp
   src/rviz_common/scaled_image_widget.hpp
   src/rviz_common/screenshot_dialog.hpp
@@ -121,9 +123,9 @@ set(rviz_common_headers_to_moc
   src/rviz_common/visualization_frame.hpp
   src/rviz_common/visualization_manager.hpp
   src/rviz_common/widget_geometry_change_detector.hpp
-  src/rviz_common/window_manager_interface.hpp
+  include/rviz_common/window_manager_interface.hpp
   include/rviz_common/validate_floats.hpp
-  include/rviz_common/message_filter_display.hpp
+  include/rviz_common/ros_topic_display.hpp
 )
 
 # TODO(wjwwood): remove this later
@@ -178,6 +180,7 @@ set(rviz_common_source_files
   src/rviz_common/properties/property_tree_widget.cpp
   src/rviz_common/properties/property_tree_with_help.cpp
   src/rviz_common/properties/property.cpp
+  src/rviz_common/properties/ros_topic_property.cpp
   src/rviz_common/properties/quaternion_property.cpp
   src/rviz_common/properties/splitter_handle.cpp
   src/rviz_common/properties/status_list.cpp
@@ -185,6 +188,7 @@ set(rviz_common_source_files
   src/rviz_common/properties/string_property.cpp
   src/rviz_common/properties/tf_frame_property.cpp
   src/rviz_common/properties/vector_property.cpp
+  src/rviz_common/properties/queue_size_property.cpp
   src/rviz_common/render_panel.cpp
   src/rviz_common/ros_integration/ros_client_abstraction.cpp
   src/rviz_common/ros_integration/ros_node_abstraction.cpp

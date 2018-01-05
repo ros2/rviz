@@ -57,10 +57,10 @@
 #include "rviz_rendering/apply_visibility_bits.hpp"
 
 #include "rviz_common/display_context.hpp"
-#include "./panel_dock_widget.hpp"
+#include "rviz_common/panel_dock_widget.hpp"
 #include "rviz_common/properties/property_tree_model.hpp"
 #include "rviz_common/properties/status_list.hpp"
-#include "./window_manager_interface.hpp"
+#include "rviz_common/window_manager_interface.hpp"
 
 namespace rviz_common
 {
@@ -68,7 +68,6 @@ namespace rviz_common
 Display::Display()
 : context_(0),
   scene_node_(NULL),
-  node_(nullptr),
   status_(0),
   initialized_(false),
   visibility_bits_(0xFFFFFFFF),
@@ -91,21 +90,18 @@ Display::~Display()
   if (scene_node_) {
     scene_manager_->destroySceneNode(scene_node_);
   }
-  if (context_) {
-    context_->removeNodeFromMainExecutor(node_);
-  }
 }
 
 void Display::initialize(DisplayContext * context)
 {
   context_ = context;
   scene_manager_ = context_->getSceneManager();
-  scene_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
 
-  // TODO(Martin-Idel-SI): Figure out whether we still need the threaded queue or executor here
-  // threaded_nh_.setCallbackQueue(context_->getThreadedQueue());
-  node_ = rclcpp::Node::make_shared("display_node");
-  context_->addNodeToMainExecutor(node_);
+  // TODO(greimela) Remove check as soon as SceneManager is mockable
+  if (scene_manager_) {
+    scene_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
+  }
+
   fixed_frame_ = context_->getFixedFrame();
 
   onInitialize();
