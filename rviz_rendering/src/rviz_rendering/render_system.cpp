@@ -32,6 +32,7 @@
 #include "render_system.hpp"
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -205,7 +206,8 @@ RenderSystem::detectGlVersion()
     gl_version_ = force_gl_version_;
   } else {
     Ogre::RenderSystem * renderSys = ogre_root_->getRenderSystem();
-    renderSys->createRenderSystemCapabilities();
+    // createRenderSystemCapabilities() called for side effects only
+    std::unique_ptr<Ogre::RenderSystemCapabilities>(renderSys->createRenderSystemCapabilities());
     const Ogre::RenderSystemCapabilities * caps = renderSys->getCapabilities();
     int major = caps->getDriverVersion().major;
     int minor = caps->getDriverVersion().minor;
