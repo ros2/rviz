@@ -177,56 +177,6 @@ RenderWindowImpl::renderNow()
 }
 
 void
-createScene(Ogre::SceneManager * ogre_scene_manager)
-{
-  /*
-  Example scene
-  Derive this class for your own purpose and overwite this function to have a
-  working Ogre widget with your own content.
-  */
-
-  QColor color = Qt::gray;
-  std::shared_ptr<rviz_rendering::Grid>(new rviz_rendering::Grid(
-    ogre_scene_manager,
-    nullptr,
-    Grid::Lines,
-    10,
-    1.0f,
-    0.03f,
-    Ogre::ColourValue(color.redF(), color.greenF(), color.blueF(), color.alphaF())));
-  ogre_scene_manager->setAmbientLight(Ogre::ColourValue(1.0f, 1.0f, 1.0f));
-
-  Ogre::Entity * sphereMesh =
-    ogre_scene_manager->createEntity("mySphere", Ogre::SceneManager::PT_SPHERE);
-
-  Ogre::SceneNode * childSceneNode =
-    ogre_scene_manager->getRootSceneNode()->createChildSceneNode();
-
-  childSceneNode->attachObject(sphereMesh);
-
-  Ogre::MaterialPtr sphereMaterial = Ogre::MaterialManager::getSingleton().create(
-    "SphereMaterial",
-    Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-    true);
-
-  sphereMaterial->getTechnique(0)->getPass(0)->setAmbient(0.1f, 0.1f, 0.1f);
-  sphereMaterial->getTechnique(0)->getPass(0)->setDiffuse(0.3f, 0.3f, 0.3f, 1.0f);
-  sphereMaterial->getTechnique(0)->getPass(0)->setSpecular(0.9f, 0.9f, 0.9f, 1.0f);
-  // sphereMaterial->setAmbient(0.2f, 0.2f, 0.5f);
-  // sphereMaterial->setSelfIllumination(0.2f, 0.2f, 0.1f);
-
-  sphereMesh->setMaterialName("SphereMaterial");
-  childSceneNode->setPosition(Ogre::Vector3(0.0f, 0.0f, 0.0f));
-  childSceneNode->setScale(Ogre::Vector3(0.01f, 0.01f, 0.01f));  // Radius, in theory.
-
-  Ogre::Light * light = ogre_scene_manager->createLight("MainLight");
-  Ogre::SceneNode * light_scene_node =
-    ogre_scene_manager->getRootSceneNode()->createChildSceneNode();
-  light_scene_node->attachObject(light);
-  light_scene_node->setPosition(40.0f, 80.0f, 50.0f);
-}
-
-void
 RenderWindowImpl::setupSceneAfterInit(setupSceneCallback setup_scene_callback)
 {
   if (render_system_) {
@@ -277,9 +227,6 @@ RenderWindowImpl::initialize()
 
   Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
   Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
-
-  // Uncomment for test scene
-  // createScene(ogre_scene_manager_);
 }
 
 void
