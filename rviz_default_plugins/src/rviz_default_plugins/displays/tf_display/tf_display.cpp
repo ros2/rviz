@@ -78,22 +78,34 @@ using rviz_rendering::Axes;
 using rviz_rendering::Arrow;
 using rviz_rendering::MovableText;
 
-namespace rviz_common
+namespace rviz_default_plugins
+{
+
+namespace displays
 {
 
 class FrameSelectionHandler : public SelectionHandler
 {
 public:
-  FrameSelectionHandler(FrameInfo * frame, TFDisplay * display, DisplayContext * context);
-  virtual ~FrameSelectionHandler() {}
+  FrameSelectionHandler(
+    FrameInfo * frame, TFDisplay * display,
+    rviz_common::DisplayContext * context);
+
+  virtual ~FrameSelectionHandler()
+  {}
 
   virtual void createProperties(const Picked & obj, Property * parent_property);
+
   virtual void destroyProperties(const Picked & obj, Property * parent_property);
 
   bool getEnabled();
+
   void setEnabled(bool enabled);
+
   void setParentName(std::string parent_name);
+
   void setPosition(const Ogre::Vector3 & position);
+
   void setOrientation(const Ogre::Quaternion & orientation);
 
 private:
@@ -108,7 +120,7 @@ private:
 
 FrameSelectionHandler::FrameSelectionHandler(
   FrameInfo * frame, TFDisplay * display,
-  DisplayContext * context)
+  rviz_common::DisplayContext * context)
 : SelectionHandler(context),
   frame_(frame),
   display_(display),
@@ -237,9 +249,9 @@ TFDisplay::TFDisplay()
 
 TFDisplay::~TFDisplay()
 {
-  if (initialized() ) {
+  if (initialized()) {
     root_node_->removeAndDestroyAllChildren();
-    scene_manager_->destroySceneNode(root_node_->getName() );
+    scene_manager_->destroySceneNode(root_node_->getName());
   }
 }
 
@@ -254,18 +266,18 @@ void TFDisplay::onInitialize()
   axes_node_ = root_node_->createChildSceneNode();
 }
 
-void TFDisplay::load(const Config & config)
+void TFDisplay::load(const rviz_common::Config & config)
 {
-  Display::load(config);
+  rviz_common::Display::load(config);
 
   // Load the enabled state for all frames specified in the config, and store
   // the values in a map so that the enabled state can be properly set once
   // the frame is created
-  Config c = config.mapGetChild("Frames");
-  for (Config::MapIterator iter = c.mapIterator(); iter.isValid(); iter.advance() ) {
+  rviz_common::Config c = config.mapGetChild("Frames");
+  for (rviz_common::Config::MapIterator iter = c.mapIterator(); iter.isValid(); iter.advance()) {
     QString key = iter.currentKey();
     if (key != "All Enabled") {
-      const Config & child = iter.currentChild();
+      const rviz_common::Config & child = iter.currentChild();
       bool enabled = child.mapGetChild("Value").getValue().toBool();
 
       frame_config_enabled_state_[key.toStdString()] = enabled;
@@ -305,9 +317,9 @@ void TFDisplay::onEnable()
 {
   root_node_->setVisible(true);
 
-  names_node_->setVisible(show_names_property_->getBool() );
-  arrows_node_->setVisible(show_arrows_property_->getBool() );
-  axes_node_->setVisible(show_axes_property_->getBool() );
+  names_node_->setVisible(show_names_property_->getBool());
+  arrows_node_->setVisible(show_arrows_property_->getBool());
+  axes_node_->setVisible(show_axes_property_->getBool());
 }
 
 void TFDisplay::onDisable()
@@ -318,7 +330,7 @@ void TFDisplay::onDisable()
 
 void TFDisplay::updateShowNames()
 {
-  names_node_->setVisible(show_names_property_->getBool() );
+  names_node_->setVisible(show_names_property_->getBool());
 
   M_FrameInfo::iterator it = frames_.begin();
   M_FrameInfo::iterator end = frames_.end();
@@ -331,7 +343,7 @@ void TFDisplay::updateShowNames()
 
 void TFDisplay::updateShowAxes()
 {
-  axes_node_->setVisible(show_axes_property_->getBool() );
+  axes_node_->setVisible(show_axes_property_->getBool());
 
   M_FrameInfo::iterator it = frames_.begin();
   M_FrameInfo::iterator end = frames_.end();
@@ -344,7 +356,7 @@ void TFDisplay::updateShowAxes()
 
 void TFDisplay::updateShowArrows()
 {
-  arrows_node_->setVisible(show_arrows_property_->getBool() );
+  arrows_node_->setVisible(show_arrows_property_->getBool());
 
   M_FrameInfo::iterator it = frames_.begin();
   M_FrameInfo::iterator end = frames_.end();
@@ -386,7 +398,7 @@ void TFDisplay::update(float wall_dt, float ros_dt)
 FrameInfo * TFDisplay::getFrameInfo(const std::string & frame)
 {
   M_FrameInfo::iterator it = frames_.find(frame);
-  if (it == frames_.end() ) {
+  if (it == frames_.end()) {
     return NULL;
   }
 
@@ -408,7 +420,7 @@ void TFDisplay::updateFrames()
     for (; it != end; ++it) {
       const std::string & frame = *it;
 
-      if (frame.empty() ) {
+      if (frame.empty()) {
         continue;
       }
 
@@ -428,7 +440,7 @@ void TFDisplay::updateFrames()
     M_FrameInfo::iterator frame_it = frames_.begin();
     M_FrameInfo::iterator frame_end = frames_.end();
     for (; frame_it != frame_end; ++frame_it) {
-      if (current_frames.find(frame_it->second) == current_frames.end() ) {
+      if (current_frames.find(frame_it->second) == current_frames.end()) {
         to_delete.insert(frame_it->second);
       }
     }
@@ -449,20 +461,20 @@ static const Ogre::ColourValue ARROW_SHAFT_COLOR(0.8f, 0.8f, 0.3f, 1.0f);
 FrameInfo * TFDisplay::createFrame(const std::string & frame)
 {
   FrameInfo * info = new FrameInfo(this);
-  frames_.insert(std::make_pair(frame, info) );
+  frames_.insert(std::make_pair(frame, info));
 
   info->name_ = frame;
   info->last_update_ = tf2::get_now();
-  info->axes_ = new Axes(scene_manager_, axes_node_, 0.2f, 0.02f);
-  info->axes_->getSceneNode()->setVisible(show_axes_property_->getBool() );
+  info->axes_ = new Axes(scene_manager_, axes_node_, 0.2, 0.02);
+  info->axes_->getSceneNode()->setVisible(show_axes_property_->getBool());
   info->selection_handler_.reset(new FrameSelectionHandler(info, this, context_));
-  info->selection_handler_->addTrackedObjects(info->axes_->getSceneNode() );
+  info->selection_handler_->addTrackedObjects(info->axes_->getSceneNode());
 
   info->name_text_ = new MovableText(frame, "Liberation Sans", 0.1f);
   info->name_text_->setTextAlignment(MovableText::H_CENTER, MovableText::V_BELOW);
   info->name_node_ = names_node_->createChildSceneNode();
   info->name_node_->attachObject(info->name_text_);
-  info->name_node_->setVisible(show_names_property_->getBool() );
+  info->name_node_->setVisible(show_names_property_->getBool());
 
   info->parent_arrow_ = new Arrow(scene_manager_, arrows_node_, 1.0f, 0.01f, 1.0f, 0.08f);
   info->parent_arrow_->getSceneNode()->setVisible(false);
@@ -543,8 +555,8 @@ void TFDisplay::updateFrame(FrameInfo * frame)
     return;
   }
 
-  if (( latest_time != frame->last_time_to_fixed_ ) ||
-    ( latest_time == tf2::TimePointZero ))
+  if ((latest_time != frame->last_time_to_fixed_) ||
+    (latest_time == tf2::TimePointZero))
   {
     frame->last_update_ = tf2::get_now();
     frame->last_time_to_fixed_ = latest_time;
@@ -638,7 +650,7 @@ void TFDisplay::updateFrame(FrameInfo * frame)
     if (!frame->tree_property_ || old_parent != frame->parent_) {
       // Look up the new parent.
       M_FrameInfo::iterator parent_it = frames_.find(frame->parent_);
-      if (parent_it != frames_.end() ) {
+      if (parent_it != frames_.end()) {
         FrameInfo * parent = parent_it->second;
 
         // If the parent has a tree property, make a new tree property for this frame.
@@ -673,12 +685,14 @@ void TFDisplay::updateFrame(FrameInfo * frame)
       RVIZ_COMMON_LOG_DEBUG_STREAM(
         "Error1 transforming frame '" << frame->parent_.c_str() <<
           "' (parent of '" << frame->name_.c_str() <<
-          "') to frame '" << qPrintable(fixed_frame_) << "': " << e.what());
+          "') to frame '" << qPrintable(fixed_frame_) << "': " <<
+          e.what());
     } catch (const tf2::TransformException & e) {
       RVIZ_COMMON_LOG_DEBUG_STREAM(
         "Error2 transforming frame '" << frame->parent_.c_str() <<
           "' (parent of '" << frame->name_.c_str() <<
-          "') to frame '" << qPrintable(fixed_frame_) << "': " << e.what());
+          "') to frame '" << qPrintable(fixed_frame_) << "': " <<
+          e.what());
     }
 
     // get the position/orientation relative to the parent frame
@@ -695,7 +709,7 @@ void TFDisplay::updateFrame(FrameInfo * frame)
     frame->rel_position_property_->setVector(relative_position);
     frame->rel_orientation_property_->setQuaternion(relative_orientation);
 
-    if (show_arrows_property_->getBool() ) {
+    if (show_arrows_property_->getBool()) {
       Ogre::Vector3 parent_position;
       parent_position.x = 0;
       parent_position.y = 0;
@@ -721,7 +735,7 @@ void TFDisplay::updateFrame(FrameInfo * frame)
 
         if (!orient.isNaN()) {
           frame->distance_to_parent_ = distance;
-          float head_length = (distance < 0.1f * scale) ? (0.1f * scale * distance) : 0.1f * scale;
+          float head_length = (distance < 0.1 * scale) ? (0.1 * scale * distance) : 0.1 * scale;
           float shaft_length = distance - head_length;
           // aleeper: This was changed from 0.02 and 0.08 to 0.01 and 0.04
           // to match proper radius handling in arrow.cpp
@@ -772,7 +786,7 @@ void TFDisplay::deleteFrame(FrameInfo * frame, bool delete_properties)
   context_->getSelectionManager()->removeObject(frame->axes_coll_);
   delete frame->parent_arrow_;
   delete frame->name_text_;
-  scene_manager_->destroySceneNode(frame->name_node_->getName() );
+  scene_manager_->destroySceneNode(frame->name_node_->getName());
   if (delete_properties) {
     delete frame->enabled_property_;
     delete frame->tree_property_;
@@ -787,7 +801,7 @@ void TFDisplay::fixedFrameChanged()
 
 void TFDisplay::reset()
 {
-  Display::reset();
+  rviz_common::Display::reset();
   clear();
 }
 
@@ -850,7 +864,9 @@ void FrameInfo::setEnabled(bool enabled)
   display_->context_->queueRender();
 }
 
-}  // namespace rviz_common
+}  // namespace displays
 
-// #include <pluginlib/class_list_macros.h>
-// PLUGINLIB_EXPORT_CLASS( rviz::TFDisplay, rviz::Display )
+}  // namespace rviz_default_plugins
+
+#include <pluginlib/class_list_macros.hpp>  // NOLINT
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::TFDisplay, rviz_common::Display)

@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__TF_DISPLAY_HPP_
-#define RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__TF_DISPLAY_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__TF_DISPLAY__TF_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__TF_DISPLAY__TF_DISPLAY_HPP_
 
 #include <map>
 #include <memory>
@@ -65,19 +65,28 @@ class FloatProperty;
 class QuaternionProperty;
 class StringProperty;
 class VectorProperty;
-}
+}  // namespace properties
+}  // namespace rviz_common
+
+namespace rviz_default_plugins
+{
+namespace displays
+{
 
 class FrameInfo;
+
 class FrameSelectionHandler;
+
 typedef std::shared_ptr<FrameSelectionHandler> FrameSelectionHandlerPtr;
 
 /** @brief Displays a visual representation of the TF hierarchy. */
-class TFDisplay : public Display
+class TFDisplay : public rviz_common::Display
 {
   Q_OBJECT
 
 public:
   TFDisplay();
+
   virtual ~TFDisplay();
 
   virtual void update(float wall_dt, float ros_dt);
@@ -85,20 +94,29 @@ public:
 protected:
   // Overrides from Display
   virtual void onInitialize();
-  virtual void load(const Config & config);
+
+  virtual void load(const rviz_common::Config & config);
+
   virtual void fixedFrameChanged();
+
   virtual void reset();
 
 private Q_SLOTS:
   void updateShowAxes();
+
   void updateShowArrows();
+
   void updateShowNames();
+
   void allEnabledChanged();
 
 private:
   void updateFrames();
+
   FrameInfo * createFrame(const std::string & frame);
+
   void updateFrame(FrameInfo * frame);
+
   void deleteFrame(FrameInfo * frame, bool delete_properties);
 
   FrameInfo * getFrameInfo(const std::string & frame);
@@ -107,6 +125,7 @@ private:
 
   // overrides from Display
   virtual void onEnable();
+
   virtual void onDisable();
 
   Ogre::SceneNode * root_node_;
@@ -122,19 +141,20 @@ private:
 
   float update_timer_;
 
-  BoolProperty * show_names_property_;
-  BoolProperty * show_arrows_property_;
-  BoolProperty * show_axes_property_;
-  properties::FloatProperty * update_rate_property_;
-  properties::FloatProperty * frame_timeout_property_;
-  BoolProperty * all_enabled_property_;
+  rviz_common::properties::BoolProperty * show_names_property_;
+  rviz_common::properties::BoolProperty * show_arrows_property_;
+  rviz_common::properties::BoolProperty * show_axes_property_;
+  rviz_common::properties::FloatProperty * update_rate_property_;
+  rviz_common::properties::FloatProperty * frame_timeout_property_;
+  rviz_common::properties::BoolProperty * all_enabled_property_;
 
-  properties::FloatProperty * scale_property_;
+  rviz_common::properties::FloatProperty * scale_property_;
 
-  Property * frames_category_;
-  Property * tree_category_;
+  rviz_common::properties::Property * frames_category_;
+  rviz_common::properties::Property * tree_category_;
 
   bool changing_single_frame_enabled_state_;
+
   friend class FrameInfo;
 };
 
@@ -163,7 +183,7 @@ public:
   std::string name_;
   std::string parent_;
   rviz_rendering::Axes * axes_;
-  selection::CollObjectHandle axes_coll_;
+  rviz_common::selection::CollObjectHandle axes_coll_;
   FrameSelectionHandlerPtr selection_handler_;
   rviz_rendering::Arrow * parent_arrow_;
   rviz_rendering::MovableText * name_text_;
@@ -175,16 +195,17 @@ public:
   tf2::TimePoint last_update_;
   tf2::TimePoint last_time_to_fixed_;
 
-  properties::VectorProperty * rel_position_property_;
-  properties::QuaternionProperty * rel_orientation_property_;
-  properties::VectorProperty * position_property_;
-  properties::QuaternionProperty * orientation_property_;
-  properties::StringProperty * parent_property_;
-  properties::BoolProperty * enabled_property_;
+  rviz_common::properties::VectorProperty * rel_position_property_;
+  rviz_common::properties::QuaternionProperty * rel_orientation_property_;
+  rviz_common::properties::VectorProperty * position_property_;
+  rviz_common::properties::QuaternionProperty * orientation_property_;
+  rviz_common::properties::StringProperty * parent_property_;
+  rviz_common::properties::BoolProperty * enabled_property_;
 
-  properties::Property * tree_property_;
+  rviz_common::properties::Property * tree_property_;
 };
 
-}  // end namespace rviz_common
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif  // RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__TF_DISPLAY_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__TF_DISPLAY__TF_DISPLAY_HPP_
