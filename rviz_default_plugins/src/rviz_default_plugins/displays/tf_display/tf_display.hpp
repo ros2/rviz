@@ -158,53 +158,6 @@ private:
   friend class FrameInfo;
 };
 
-/** @brief Internal class needed only by TFDisplay. */
-class FrameInfo : public QObject
-{
-  Q_OBJECT
-
-public:
-  explicit FrameInfo(TFDisplay * display);
-
-  /** @brief Set this frame to be visible or invisible. */
-  void setEnabled(bool enabled);
-
-public Q_SLOTS:
-  /** @brief Update whether the frame is visible or not, based on the enabled_property_
-   * in this FrameInfo. */
-  void updateVisibilityFromFrame();
-
-  /** @brief Update whether the frame is visible or not, based on the enabled_property_
-   * in the selection handler. */
-  void updateVisibilityFromSelection();
-
-public:
-  TFDisplay * display_;
-  std::string name_;
-  std::string parent_;
-  rviz_rendering::Axes * axes_;
-  rviz_common::selection::CollObjectHandle axes_coll_;
-  FrameSelectionHandlerPtr selection_handler_;
-  rviz_rendering::Arrow * parent_arrow_;
-  rviz_rendering::MovableText * name_text_;
-  Ogre::SceneNode * name_node_;
-
-  float distance_to_parent_;
-  Ogre::Quaternion arrow_orientation_;
-
-  tf2::TimePoint last_update_;
-  tf2::TimePoint last_time_to_fixed_;
-
-  rviz_common::properties::VectorProperty * rel_position_property_;
-  rviz_common::properties::QuaternionProperty * rel_orientation_property_;
-  rviz_common::properties::VectorProperty * position_property_;
-  rviz_common::properties::QuaternionProperty * orientation_property_;
-  rviz_common::properties::StringProperty * parent_property_;
-  rviz_common::properties::BoolProperty * enabled_property_;
-
-  rviz_common::properties::Property * tree_property_;
-};
-
 }  // namespace displays
 }  // namespace rviz_default_plugins
 

@@ -64,6 +64,8 @@
 #include "rviz_common/selection/forwards.hpp"
 #include "rviz_common/selection/selection_manager.hpp"
 #include "rviz_common/logging.hpp"
+#include "frame_info.hpp"
+#include "frame_selection_handler.hpp"
 
 using rviz_common::selection::SelectionHandler;
 using rviz_common::properties::BoolProperty;
@@ -83,124 +85,6 @@ namespace rviz_default_plugins
 
 namespace displays
 {
-
-class FrameSelectionHandler : public SelectionHandler
-{
-public:
-  FrameSelectionHandler(
-    FrameInfo * frame, TFDisplay * display,
-    rviz_common::DisplayContext * context);
-
-  virtual ~FrameSelectionHandler()
-  {}
-
-  virtual void createProperties(const Picked & obj, Property * parent_property);
-
-  virtual void destroyProperties(const Picked & obj, Property * parent_property);
-
-  bool getEnabled();
-
-  void setEnabled(bool enabled);
-
-  void setParentName(std::string parent_name);
-
-  void setPosition(const Ogre::Vector3 & position);
-
-  void setOrientation(const Ogre::Quaternion & orientation);
-
-private:
-  FrameInfo * frame_;
-  TFDisplay * display_;
-  Property * category_property_;
-  BoolProperty * enabled_property_;
-  StringProperty * parent_property_;
-  VectorProperty * position_property_;
-  QuaternionProperty * orientation_property_;
-};
-
-FrameSelectionHandler::FrameSelectionHandler(
-  FrameInfo * frame, TFDisplay * display,
-  rviz_common::DisplayContext * context)
-: SelectionHandler(context),
-  frame_(frame),
-  display_(display),
-  category_property_(NULL),
-  enabled_property_(NULL),
-  parent_property_(NULL),
-  position_property_(NULL),
-  orientation_property_(NULL)
-{
-}
-
-void FrameSelectionHandler::createProperties(const Picked & obj, Property * parent_property)
-{
-  (void) obj;
-  (void) display_;
-  category_property_ = new Property("Frame " + QString::fromStdString(frame_->name_),
-      QVariant(), "", parent_property);
-
-  enabled_property_ =
-    new BoolProperty("Enabled", true, "", category_property_, SLOT(
-        updateVisibilityFromSelection()), frame_);
-
-  parent_property_ = new StringProperty("Parent", "", "", category_property_);
-  parent_property_->setReadOnly(true);
-
-  position_property_ = new VectorProperty("Position", Ogre::Vector3::ZERO, "", category_property_);
-  position_property_->setReadOnly(true);
-
-  orientation_property_ = new QuaternionProperty("Orientation", Ogre::Quaternion::IDENTITY, "",
-      category_property_);
-  orientation_property_->setReadOnly(true);
-}
-
-void FrameSelectionHandler::destroyProperties(const Picked & obj, Property * parent_property)
-{
-  (void) obj;
-  (void) parent_property;
-  delete category_property_;  // This deletes its children as well.
-  category_property_ = NULL;
-  enabled_property_ = NULL;
-  parent_property_ = NULL;
-  position_property_ = NULL;
-  orientation_property_ = NULL;
-}
-
-bool FrameSelectionHandler::getEnabled()
-{
-  if (enabled_property_) {
-    return enabled_property_->getBool();
-  }
-  return false;  // should never happen, but don't want to crash if it does.
-}
-
-void FrameSelectionHandler::setEnabled(bool enabled)
-{
-  if (enabled_property_) {
-    enabled_property_->setBool(enabled);
-  }
-}
-
-void FrameSelectionHandler::setParentName(std::string parent_name)
-{
-  if (parent_property_) {
-    parent_property_->setStdString(parent_name);
-  }
-}
-
-void FrameSelectionHandler::setPosition(const Ogre::Vector3 & position)
-{
-  if (position_property_) {
-    position_property_->setVector(position);
-  }
-}
-
-void FrameSelectionHandler::setOrientation(const Ogre::Quaternion & orientation)
-{
-  if (orientation_property_) {
-    orientation_property_->setQuaternion(orientation);
-  }
-}
 
 typedef std::set<FrameInfo *> S_FrameInfo;
 
@@ -803,65 +687,6 @@ void TFDisplay::reset()
 {
   rviz_common::Display::reset();
   clear();
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// FrameInfo
-
-FrameInfo::FrameInfo(TFDisplay * display)
-: display_(display),
-  axes_(NULL),
-  axes_coll_(0),
-  parent_arrow_(NULL),
-  name_text_(NULL),
-  distance_to_parent_(0.0f),
-  arrow_orientation_(Ogre::Quaternion::IDENTITY),
-  tree_property_(NULL)
-{}
-
-void FrameInfo::updateVisibilityFromFrame()
-{
-  bool enabled = enabled_property_->getBool();
-  selection_handler_->setEnabled(enabled);
-  setEnabled(enabled);
-}
-
-void FrameInfo::updateVisibilityFromSelection()
-{
-  bool enabled = selection_handler_->getEnabled();
-  enabled_property_->setBool(enabled);
-  setEnabled(enabled);
-}
-
-void FrameInfo::setEnabled(bool enabled)
-{
-  if (name_node_) {
-    name_node_->setVisible(display_->show_names_property_->getBool() && enabled);
-  }
-
-  if (axes_) {
-    axes_->getSceneNode()->setVisible(display_->show_axes_property_->getBool() && enabled);
-  }
-
-  if (parent_arrow_) {
-    if (distance_to_parent_ > 0.001f) {
-      parent_arrow_->getSceneNode()->setVisible(
-        display_->show_arrows_property_->getBool() && enabled);
-    } else {
-      parent_arrow_->getSceneNode()->setVisible(false);
-    }
-  }
-
-  if (display_->all_enabled_property_->getBool() && !enabled) {
-    display_->changing_single_frame_enabled_state_ = true;
-    display_->all_enabled_property_->setBool(false);
-    display_->changing_single_frame_enabled_state_ = false;
-  }
-
-  // Update the configuration that stores the enabled state of all frames
-  display_->frame_config_enabled_state_[this->name_] = enabled;
-
-  display_->context_->queueRender();
 }
 
 }  // namespace displays
