@@ -49,13 +49,13 @@ std::mutex RosNodeStorage::nodes_by_name_mutex_;
 void
 RosNodeStorage::store_rclcpp_node_by_name(
   const std::string & node_name,
-  std::shared_ptr<rclcpp::Node> node)
+  rclcpp::Node::SharedPtr node)
 {
   std::lock_guard<std::mutex> lock(nodes_by_name_mutex_);
   nodes_by_name_[node_name] = node;
 }
 
-std::shared_ptr<rclcpp::Node>
+rclcpp::Node::SharedPtr
 RosNodeStorage::get_rclcpp_node_by_name(const std::string & node_name)
 {
   std::lock_guard<std::mutex> lock(nodes_by_name_mutex_);

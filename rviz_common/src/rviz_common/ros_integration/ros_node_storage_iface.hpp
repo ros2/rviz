@@ -31,7 +31,6 @@
 #ifndef RVIZ_COMMON__ROS_INTEGRATION__ROS_NODE_STORAGE_IFACE_HPP_
 #define RVIZ_COMMON__ROS_INTEGRATION__ROS_NODE_STORAGE_IFACE_HPP_
 
-#include <memory>
 #include <string>
 
 #include "rclcpp/rclcpp.hpp"
@@ -47,11 +46,9 @@ public:
   virtual ~RosNodeStorageIface() = default;
 
   virtual void
-  store_rclcpp_node_by_name(
-    const std::string & node_name,
-    std::shared_ptr<rclcpp::Node> node) = 0;
+  store_rclcpp_node_by_name(const std::string & node_name, rclcpp::Node::SharedPtr node) = 0;
 
-  virtual std::shared_ptr<rclcpp::Node>
+  virtual rclcpp::Node::SharedPtr
   get_rclcpp_node_by_name(const std::string & node_name) = 0;
 
   virtual bool

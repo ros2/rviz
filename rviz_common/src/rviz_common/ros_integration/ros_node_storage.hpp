@@ -32,7 +32,6 @@
 #define RVIZ_COMMON__ROS_INTEGRATION__ROS_NODE_STORAGE_HPP_
 
 #include <map>
-#include <memory>
 #include <mutex>
 #include <string>
 
@@ -59,14 +58,14 @@ public:
   void
   store_rclcpp_node_by_name(
     const std::string & node_name,
-    std::shared_ptr<rclcpp::Node> node) override;
+    rclcpp::Node::SharedPtr node) override;
 
   /// Return the rclcpp node shared pointer for the given node name if found, else nullptr.
   /**
    * \param node_name the name of the rclcpp node to get
    * \returns the rclcpp node shared pointer for the given name, else nullptr
    */
-  std::shared_ptr<rclcpp::Node>
+  rclcpp::Node::SharedPtr
   get_rclcpp_node_by_name(const std::string & node_name) override;
 
   /// Check if there exists an rclcpp node for the given name.
