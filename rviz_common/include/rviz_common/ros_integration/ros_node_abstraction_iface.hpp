@@ -32,6 +32,7 @@
 #define RVIZ_COMMON__ROS_INTEGRATION__ROS_NODE_ABSTRACTION_IFACE_HPP_
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -45,6 +46,10 @@ namespace ros_integration
 class RosNodeAbstractionIface
 {
 public:
+  using WeakPtr = std::weak_ptr<RosNodeAbstractionIface>;
+
+  virtual ~RosNodeAbstractionIface() = default;
+
   virtual std::string get_node_name() = 0;
 
   virtual std::map<std::string, std::vector<std::string>>

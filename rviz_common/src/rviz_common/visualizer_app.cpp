@@ -107,7 +107,7 @@ VisualizerApp::VisualizerApp(
 : app_(0),
   continue_timer_(0),
   frame_(0),
-  node_name_(""),
+  node_(),
   ros_client_abstraction_(std::move(ros_client_abstraction))
 {}
 
@@ -281,9 +281,9 @@ bool VisualizerApp::init(int argc, char ** argv)
 
   // TODO(wjwwood): anonymous is not working right now, reenable later
   // node_name_ = rviz_common::ros_integration::init(argc, argv, "rviz", true /* anonymous_name */);
-  node_name_ = ros_client_abstraction_->init(argc, argv, "rviz", false /* anonymous_name */);
+  node_ = ros_client_abstraction_->init(argc, argv, "rviz", false /* anonymous_name */);
 
-  frame_ = new VisualizationFrame(node_name_);
+  frame_ = new VisualizationFrame(node_);
   frame_->setApp(this->app_);
 
   if (!help_path.isEmpty()) {
@@ -327,11 +327,6 @@ void VisualizerApp::startContinueChecker()
 
 void VisualizerApp::checkContinue()
 {
-  if (node_name_.empty()) {
-    // If true, this implies the setup of the node has not occurred yet.
-    // This should not happen.
-    return;
-  }
   if (!ros_client_abstraction_->ok()) {
     if (frame_) {
       // Make sure the window doesn't ask if we want to save first.

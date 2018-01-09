@@ -45,10 +45,10 @@ namespace ros_integration
 {
 
 RosClientAbstraction::RosClientAbstraction()
-: ros_node_storage_(std::make_shared<RosNodeStorage>())
+: ros_node_abstraction_(nullptr), ros_node_storage_(std::make_shared<RosNodeStorage>())
 {}
 
-std::string
+RosNodeAbstractionIface::WeakPtr
 RosClientAbstraction::init(int argc, char ** argv, const std::string & name, bool anonymous_name)
 {
   std::string final_name = name;
@@ -64,8 +64,8 @@ RosClientAbstraction::init(int argc, char ** argv, const std::string & name, boo
     // TODO(wjwwood): make a better exception type rather than using std::runtime_error.
     throw std::runtime_error("Node with name " + final_name + " already exists.");
   }
-  ros_node_abstraction_ = std::make_unique<RosNodeAbstraction>(final_name, ros_node_storage_);
-  return final_name;
+  ros_node_abstraction_ = std::make_shared<RosNodeAbstraction>(final_name, ros_node_storage_);
+  return ros_node_abstraction_;
 }
 
 bool

@@ -58,24 +58,21 @@ public:
   //                exceptions based on the underly ROS version.
   //                Also define an exception for repeated calls to this function
   //                under ROS 1, which will not be allowed.
-  /// Initialize ROS, create the ROS node, return the ROS node name.
+  /// Initialize ROS, create the ROS node and return it (inside a weak pointer).
   /**
    * argc and argv maybe mutate to remove any command line arguments consumed by ROS.
    *
-   * The returned ROS node name will be used in other API calls to reference the
-   * correct node.
-   * In ROS 2, this function maybe called multiple times and so the ROS node name
-   * will be the unique "key" used to operate on the correct node indirectly.
-   * In ROS 1 this will raise an exception.
+   * The returned ROS node will be used for other API calls.
+   * This function throws if called multiple times.
    *
    * \param argc number of elements in argv
    * \param argv command line arguments as an array of c-string
    * \param name desired node name, or base node name if using an anonymous name
    * \param anonymous_name if true then the ROS node name will be randomized
-   * \return name of the resulting ROS node
+   * \return weak pointer of the created ros node
    */
   RVIZ_COMMON_PUBLIC
-  std::string
+  RosNodeAbstractionIface::WeakPtr
   init(int argc, char ** argv, const std::string & name, bool anonymous_name) override;
 
   /// Check if ROS is "ok" or not, usually if ROS has been shutdown or not.
@@ -97,7 +94,7 @@ public:
   shutdown() override;
 
 private:
-  std::unique_ptr<RosNodeAbstractionIface> ros_node_abstraction_;
+  std::shared_ptr<RosNodeAbstractionIface> ros_node_abstraction_;
   std::shared_ptr<RosNodeStorageIface> ros_node_storage_;
 };
 

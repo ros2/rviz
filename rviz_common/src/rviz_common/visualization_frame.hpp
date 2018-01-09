@@ -45,6 +45,7 @@
 #include "rviz_common/config.hpp"
 #include "rviz_rendering/render_window.hpp"
 #include "rviz_common/window_manager_interface.hpp"
+#include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
 
 class QAction;
 class QActionGroup;
@@ -84,7 +85,8 @@ class VisualizationFrame : public QMainWindow, public WindowManagerInterface
   Q_OBJECT
 
 public:
-  explicit VisualizationFrame(const std::string & node_name, QWidget * parent = 0);
+  explicit VisualizationFrame(
+    ros_integration::RosNodeAbstractionIface::WeakPtr node, QWidget * parent = 0);
   ~VisualizationFrame() override;
 
   rviz_rendering::RenderWindow * getRenderWindow();
@@ -527,7 +529,7 @@ protected:
   /// Indicates if the toolbar should be visible outside of fullscreen mode.
   bool toolbar_visible_;
 
-  std::string node_name_;
+  ros_integration::RosNodeAbstractionIface::WeakPtr rviz_node_;
 };
 
 }  // namespace rviz_common

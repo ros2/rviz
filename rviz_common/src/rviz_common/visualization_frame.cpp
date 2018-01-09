@@ -99,7 +99,8 @@
 namespace rviz_common
 {
 
-VisualizationFrame::VisualizationFrame(const std::string & node_name, QWidget * parent)
+VisualizationFrame::VisualizationFrame(
+  ros_integration::RosNodeAbstractionIface::WeakPtr node, QWidget * parent)
 : QMainWindow(parent),
   app_(nullptr),
   render_panel_(nullptr),
@@ -111,7 +112,6 @@ VisualizationFrame::VisualizationFrame(const std::string & node_name, QWidget * 
   splash_(nullptr),
   toolbar_actions_(nullptr),
   show_choose_new_master_option_(false),
-  panel_factory_(nullptr),
   add_tool_action_(nullptr),
   remove_tool_menu_(nullptr),
   initialized_(false),
@@ -119,9 +119,10 @@ VisualizationFrame::VisualizationFrame(const std::string & node_name, QWidget * 
   loading_(false),
   post_load_timer_(new QTimer(this)),
   frame_count_(0),
-  node_name_(node_name)
+  rviz_node_(node)
 {
   setObjectName("VisualizationFrame");
+
   installEventFilter(geom_change_detector_);
   connect(geom_change_detector_, SIGNAL(changed()), this, SLOT(setDisplayConfigModified()));
 
@@ -329,7 +330,7 @@ void VisualizationFrame::initialize(const QString & display_config_file)
   auto tf_listener = std::make_shared<tf2_ros::TransformListener>(*buffer);
   manager_ = new VisualizationManager(render_panel_, this, tf_listener, buffer, clock);
   manager_->setHelpPath(help_path_);
-  panel_factory_ = new PanelFactory(node_name_, manager_);
+  panel_factory_ = new PanelFactory(rviz_node_.lock()->get_node_name(), manager_);
 
   // Periodically process events for the splash screen.
   if (app_) {app_->processEvents();}
