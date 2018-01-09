@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations, GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -56,6 +57,7 @@
 #include "rviz_rendering/arrow.hpp"
 #include "rviz_rendering/axes.hpp"
 #include "rviz_rendering/movable_text.hpp"
+#include "rviz_common/logging.hpp"
 #include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/quaternion_property.hpp"
@@ -63,7 +65,7 @@
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/selection/forwards.hpp"
 #include "rviz_common/selection/selection_manager.hpp"
-#include "rviz_common/logging.hpp"
+#include "rviz_common/uniform_string_stream.hpp"
 #include "frame_info.hpp"
 #include "frame_selection_handler.hpp"
 
@@ -89,8 +91,7 @@ namespace displays
 typedef std::set<FrameInfo *> S_FrameInfo;
 
 TFDisplay::TFDisplay()
-: Display(),
-  update_timer_(0.0f),
+: update_timer_(0.0f),
   changing_single_frame_enabled_state_(false)
 {
   show_names_property_ = new BoolProperty("Show Names", false,
@@ -178,16 +179,12 @@ void TFDisplay::clear()
   frames_category_->removeChildren(1);
 
   S_FrameInfo to_delete;
-  M_FrameInfo::iterator frame_it = frames_.begin();
-  M_FrameInfo::iterator frame_end = frames_.end();
-  for (; frame_it != frame_end; ++frame_it) {
-    to_delete.insert(frame_it->second);
+  for (auto & frame : frames_) {
+    to_delete.insert(frame.second);
   }
 
-  S_FrameInfo::iterator delete_it = to_delete.begin();
-  S_FrameInfo::iterator delete_end = to_delete.end();
-  for (; delete_it != delete_end; ++delete_it) {
-    deleteFrame(*delete_it, false);
+  for (auto & frame : to_delete) {
+    deleteFrame(frame, false);
   }
 
   frames_.clear();
@@ -216,12 +213,8 @@ void TFDisplay::updateShowNames()
 {
   names_node_->setVisible(show_names_property_->getBool());
 
-  M_FrameInfo::iterator it = frames_.begin();
-  M_FrameInfo::iterator end = frames_.end();
-  for (; it != end; ++it) {
-    FrameInfo * frame = it->second;
-
-    frame->updateVisibilityFromFrame();
+  for (auto & frame : frames_) {
+    frame.second->updateVisibilityFromFrame();
   }
 }
 
@@ -229,12 +222,8 @@ void TFDisplay::updateShowAxes()
 {
   axes_node_->setVisible(show_axes_property_->getBool());
 
-  M_FrameInfo::iterator it = frames_.begin();
-  M_FrameInfo::iterator end = frames_.end();
-  for (; it != end; ++it) {
-    FrameInfo * frame = it->second;
-
-    frame->updateVisibilityFromFrame();
+  for (auto & frame : frames_) {
+    frame.second->updateVisibilityFromFrame();
   }
 }
 
@@ -242,12 +231,8 @@ void TFDisplay::updateShowArrows()
 {
   arrows_node_->setVisible(show_arrows_property_->getBool());
 
-  M_FrameInfo::iterator it = frames_.begin();
-  M_FrameInfo::iterator end = frames_.end();
-  for (; it != end; ++it) {
-    FrameInfo * frame = it->second;
-
-    frame->updateVisibilityFromFrame();
+  for (auto & frame : frames_) {
+    frame.second->updateVisibilityFromFrame();
   }
 }
 
@@ -258,12 +243,8 @@ void TFDisplay::allEnabledChanged()
   }
   bool enabled = all_enabled_property_->getBool();
 
-  M_FrameInfo::iterator it = frames_.begin();
-  M_FrameInfo::iterator end = frames_.end();
-  for (; it != end; ++it) {
-    FrameInfo * frame = it->second;
-
-    frame->enabled_property_->setBool(enabled);
+  for (auto & frame : frames_) {
+    frame.second->enabled_property_->setBool(enabled);
   }
 }
 
@@ -281,9 +262,9 @@ void TFDisplay::update(float wall_dt, float ros_dt)
 
 FrameInfo * TFDisplay::getFrameInfo(const std::string & frame)
 {
-  M_FrameInfo::iterator it = frames_.find(frame);
+  auto it = frames_.find(frame);
   if (it == frames_.end()) {
-    return NULL;
+    return nullptr;
   }
 
   return it->second;
@@ -299,11 +280,7 @@ void TFDisplay::updateFrames()
   S_FrameInfo current_frames;
 
   {
-    V_string::iterator it = frames.begin();
-    V_string::iterator end = frames.end();
-    for (; it != end; ++it) {
-      const std::string & frame = *it;
-
+    for (auto & frame : frames) {
       if (frame.empty()) {
         continue;
       }
@@ -321,18 +298,14 @@ void TFDisplay::updateFrames()
 
   {
     S_FrameInfo to_delete;
-    M_FrameInfo::iterator frame_it = frames_.begin();
-    M_FrameInfo::iterator frame_end = frames_.end();
-    for (; frame_it != frame_end; ++frame_it) {
-      if (current_frames.find(frame_it->second) == current_frames.end()) {
-        to_delete.insert(frame_it->second);
+    for (auto & frame : frames_) {
+      if (current_frames.find(frame.second) == current_frames.end()) {
+        to_delete.insert(frame.second);
       }
     }
 
-    S_FrameInfo::iterator delete_it = to_delete.begin();
-    S_FrameInfo::iterator delete_end = to_delete.end();
-    for (; delete_it != delete_end; ++delete_it) {
-      deleteFrame(*delete_it, true);
+    for (auto & frame : to_delete) {
+      deleteFrame(frame, true);
     }
   }
 
@@ -344,7 +317,7 @@ static const Ogre::ColourValue ARROW_SHAFT_COLOR(0.8f, 0.8f, 0.3f, 1.0f);
 
 FrameInfo * TFDisplay::createFrame(const std::string & frame)
 {
-  FrameInfo * info = new FrameInfo(this);
+  auto info = new FrameInfo(this);
   frames_.insert(std::make_pair(frame, info));
 
   info->name_ = frame;
@@ -430,7 +403,7 @@ void TFDisplay::updateFrame(FrameInfo * frame)
       tf_buffer->_validateFrameId("get_latest_common_time", stripped_fixed_frame),
       tf_buffer->_validateFrameId("get_latest_common_time", frame->name_),
       latest_time,
-      0);
+      nullptr);
   } catch (const tf2::LookupException & e) {
     RVIZ_COMMON_LOG_DEBUG_STREAM(
       "Error transforming frame '" << frame->parent_.c_str() <<
@@ -485,23 +458,13 @@ void TFDisplay::updateFrame(FrameInfo * frame)
 
   setStatusStd(StatusProperty::Ok, frame->name_, "Transform OK");
 
-  Ogre::Vector3 position;
-  position.x = 0;
-  position.y = 0;
-  position.z = 0;
-  Ogre::Quaternion orientation;
-  orientation.w = 1.0;
-  orientation.x = 0;
-  orientation.y = 0;
-  orientation.z = 0;
+  Ogre::Vector3 position(0, 0, 0);
+  Ogre::Quaternion orientation(1.0, 0.0, 0.0, 0.0);
   if (!context_->getFrameManager()->getTransform(frame->name_, position, orientation)) {
-    std::stringstream ss;
+    rviz_common::UniformStringStream ss;
     ss << "No transform from [" << frame->name_ << "] to frame [" << fixed_frame_.toStdString() <<
       "]";
     setStatusStd(StatusProperty::Warn, frame->name_, ss.str());
-    // RVIZ_COMMON_LOG_DEBUG_STREAM(
-    //   "Error transforming frame '" << frame->name_.c_str() <<
-    //   "' to frame '" << qPrintable( fixed_frame_ ) << "'");
     frame->name_node_->setVisible(false);
     frame->axes_->getSceneNode()->setVisible(false);
     frame->parent_arrow_->getSceneNode()->setVisible(false);
@@ -533,7 +496,7 @@ void TFDisplay::updateFrame(FrameInfo * frame)
     // If this frame has no tree property or the parent has changed,
     if (!frame->tree_property_ || old_parent != frame->parent_) {
       // Look up the new parent.
-      M_FrameInfo::iterator parent_it = frames_.find(frame->parent_);
+      auto parent_it = frames_.find(frame->parent_);
       if (parent_it != frames_.end()) {
         FrameInfo * parent = parent_it->second;
 
@@ -594,15 +557,8 @@ void TFDisplay::updateFrame(FrameInfo * frame)
     frame->rel_orientation_property_->setQuaternion(relative_orientation);
 
     if (show_arrows_property_->getBool()) {
-      Ogre::Vector3 parent_position;
-      parent_position.x = 0;
-      parent_position.y = 0;
-      parent_position.z = 0;
-      Ogre::Quaternion parent_orientation;
-      parent_orientation.w = 1.0;
-      parent_orientation.x = 0.0;
-      parent_orientation.y = 0.0;
-      parent_orientation.z = 0.0;
+      Ogre::Vector3 parent_position(0, 0, 0);
+      Ogre::Quaternion parent_orientation(1.0, 0.0, 0.0, 0.0);
       if (!context_->getFrameManager()->getTransform(
           frame->parent_, parent_position, parent_orientation))
       {
@@ -619,7 +575,7 @@ void TFDisplay::updateFrame(FrameInfo * frame)
 
         if (!orient.isNaN()) {
           frame->distance_to_parent_ = distance;
-          float head_length = (distance < 0.1 * scale) ? (0.1 * scale * distance) : 0.1 * scale;
+          float head_length = (distance < 0.1f * scale) ? (0.1f * scale * distance) : 0.1f * scale;
           float shaft_length = distance - head_length;
           // aleeper: This was changed from 0.02 and 0.08 to 0.01 and 0.04
           // to match proper radius handling in arrow.cpp
@@ -661,7 +617,7 @@ void TFDisplay::updateFrame(FrameInfo * frame)
 
 void TFDisplay::deleteFrame(FrameInfo * frame, bool delete_properties)
 {
-  M_FrameInfo::iterator it = frames_.find(frame->name_);
+  auto it = frames_.find(frame->name_);
   assert(it != frames_.end());
 
   frames_.erase(it);

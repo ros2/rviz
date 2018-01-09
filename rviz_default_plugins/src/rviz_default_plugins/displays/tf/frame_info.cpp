@@ -44,13 +44,13 @@ namespace displays
 
 FrameInfo::FrameInfo(TFDisplay * display)
 : display_(display),
-  axes_(NULL),
+  axes_(nullptr),
   axes_coll_(0),
-  parent_arrow_(NULL),
-  name_text_(NULL),
+  parent_arrow_(nullptr),
+  name_text_(nullptr),
   distance_to_parent_(0.0f),
   arrow_orientation_(Ogre::Quaternion::IDENTITY),
-  tree_property_(NULL)
+  tree_property_(nullptr)
 {}
 
 void FrameInfo::updateVisibilityFromFrame()

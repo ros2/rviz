@@ -37,7 +37,6 @@
 #include "rviz_common/properties/quaternion_property.hpp"
 #include "rviz_common/properties/string_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
-#include "rviz_common/selection/selection_manager.hpp"
 
 using rviz_common::selection::SelectionHandler;
 using rviz_common::properties::BoolProperty;
@@ -55,16 +54,17 @@ namespace displays
 {
 
 FrameSelectionHandler::FrameSelectionHandler(
-  FrameInfo * frame, TFDisplay * display,
+  FrameInfo * frame,
+  TFDisplay * display,
   rviz_common::DisplayContext * context)
 : SelectionHandler(context),
   frame_(frame),
   display_(display),
-  category_property_(NULL),
-  enabled_property_(NULL),
-  parent_property_(NULL),
-  position_property_(NULL),
-  orientation_property_(NULL)
+  category_property_(nullptr),
+  enabled_property_(nullptr),
+  parent_property_(nullptr),
+  position_property_(nullptr),
+  orientation_property_(nullptr)
 {
 }
 
@@ -95,11 +95,11 @@ void FrameSelectionHandler::destroyProperties(const Picked & obj, Property * par
   (void) obj;
   (void) parent_property;
   delete category_property_;  // This deletes its children as well.
-  category_property_ = NULL;
-  enabled_property_ = NULL;
-  parent_property_ = NULL;
-  position_property_ = NULL;
-  orientation_property_ = NULL;
+  category_property_ = nullptr;
+  enabled_property_ = nullptr;
+  parent_property_ = nullptr;
+  position_property_ = nullptr;
+  orientation_property_ = nullptr;
 }
 
 bool FrameSelectionHandler::getEnabled()

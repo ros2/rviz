@@ -59,19 +59,19 @@ class FrameSelectionHandler : public rviz_common::selection::SelectionHandler
 {
 public:
   FrameSelectionHandler(
-    FrameInfo * frame, TFDisplay * display,
+    FrameInfo * frame,
+    TFDisplay * display,
     rviz_common::DisplayContext * context);
 
-  virtual ~FrameSelectionHandler()
-  {}
+  ~FrameSelectionHandler() override = default;
 
-  virtual void createProperties(
+  void createProperties(
     const rviz_common::selection::Picked & obj,
-    rviz_common::properties::Property * parent_property);
+    rviz_common::properties::Property * parent_property) override;
 
-  virtual void destroyProperties(
+  void destroyProperties(
     const rviz_common::selection::Picked & obj,
-    rviz_common::properties::Property * parent_property);
+    rviz_common::properties::Property * parent_property) override;
 
   bool getEnabled();
 
