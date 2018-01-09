@@ -21,6 +21,7 @@ find_package(resource_retriever REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rviz_common REQUIRED)
 find_package(rviz_rendering REQUIRED)
+find_package(rviz_ogre_vendor REQUIRED)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
@@ -108,10 +109,22 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/view_controllers/orbit/orbit_view_controller.cpp
 )
 
-add_library(rviz_default_plugins SHARED
+add_library(rviz_default_plugins_object OBJECT
   ${rviz_default_plugins_headers_to_moc}
   ${rviz_default_plugins_source_files}
 )
+
+set_property(TARGET rviz_default_plugins_object PROPERTY POSITION_INDEPENDENT_CODE ON)
+
+target_include_directories(rviz_default_plugins_object PUBLIC
+    ${rviz_common_INCLUDE_DIRS}
+    ${OGRE_INCLUDE_DIRS}
+    ${Qt5Widgets_INCLUDE_DIRS}
+)
+
+add_library(rviz_default_plugins SHARED $<TARGET_OBJECTS:rviz_default_plugins_object>)
+add_library(rviz_default_plugins_static STATIC $<TARGET_OBJECTS:rviz_default_plugins_object>)
+
 target_include_directories(rviz_default_plugins
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -139,13 +152,10 @@ pluginlib_export_plugin_description_file(rviz_common plugins_description.xml)
 
 # prevent pluginlib from using boost
 target_compile_definitions(rviz_default_plugins PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
-# Causes the visibility macros to use dllexport rather than dllimport,
-# which is appropriate when building the dll but not consuming it.
-target_compile_definitions(rviz_default_plugins PRIVATE "RVIZ_DEFAULT_PLUGINS_BUILDING_LIBRARY")
 
 ament_export_interfaces(rviz_default_plugins)
 ament_export_dependencies(Qt5)
-ament_export_dependencies(rviz_rendering)
+ament_export_dependencies(rviz_rendering rviz_common)
 ament_export_dependencies(
   # geometry_msgs
   rclcpp
@@ -182,106 +192,144 @@ if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_cmake_gmock REQUIRED)
 
-# TODO(greimela): reenable these tests once they can be run on the ci
-#  ament_add_gmock(point_cloud2_display_test
-#      test/rviz_default_plugins/displays/pointcloud/message_creators.hpp
-#      test/rviz_default_plugins/displays/pointcloud/message_creators.cpp
-#      test/rviz_default_plugins/displays/pointcloud/point_cloud2_display_test.cpp
-#      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-#  if(TARGET point_cloud2_display_test)
-#    target_link_libraries(point_cloud2_display_test rviz_default_plugins)
-#  endif()
+  if(DEFINED ENV{DISPLAY})
+    set(DISPLAYPRESENT TRUE)
+  endif()
 
-# TODO(greimela): reenable these tests once they can be run on the ci
-#  ament_add_gmock(point_cloud_transformers_test
-#      test/rviz_default_plugins/displays/pointcloud/message_creators.hpp
-#      test/rviz_default_plugins/displays/pointcloud/message_creators.cpp
-#      test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/axis_color_pc_transformer_test.cpp
-#      test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/flat_color_pc_transformer_test.cpp
-#      test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/intensity_pc_transformer_test.cpp
-#      test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/rgb8_pc_transformer_test.cpp
-#      test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/rgbf32_pc_transformer_test.cpp
-#      test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/xyz_pc_transformer_test.cpp
-#      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-#  if(TARGET point_cloud_transformers_test)
-#    target_link_libraries(point_cloud_transformers_test rviz_default_plugins)
-#  endif()
+  if(WIN32 OR APPLE OR DISPLAYPRESENT)
+    message(STATUS "Enabling tests requiring a display")
 
-# TODO(greimela): reenable these tests once they can be run on the ci
-#  ament_add_gmock(ros_image_texture_test
-#      test/rviz_default_plugins/displays/image/ros_image_texture_test.cpp
-#      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-#  if(TARGET ros_image_texture_test)
-#    target_link_libraries(ros_image_texture_test rviz_default_plugins)
-#  endif()
+    find_package(sensor_msgs REQUIRED)
+    find_package(visualization_msgs REQUIRED)
 
-# TODO(greimela): reenable these tests once they can be run on the ci
-#  ament_add_gmock(image_display_test
-#      test/rviz_default_plugins/displays/image/image_display_test.cpp
-#      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-#  if(TARGET image_display_test)
-#    target_link_libraries(image_display_test rviz_default_plugins)
-#  endif()
+    set(TEST_INCLUDE_DIRS
+        ${rviz_common_INCLUDE_DIRS}
+        ${rviz_rendering_INCLUDE_DIRS}
+        ${OGRE_INCLUDE_DIRS}
+        ${rclcpp_INCLUDE_DIRS}
+        ${sensor_msgs_INCLUDE_DIRS}
+        ${visualization_msgs_INCLUDE_DIRS}
+        ${Qt5Widgets_INCLUDE_DIRS})
 
-# TODO(greimela): reenable these tests once they can be run on the ci
-#  ament_add_gmock(robot_test
-#      test/rviz_default_plugins/robot/robot_test.cpp
-#      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-#  if(TARGET robot_test)
-#    target_link_libraries(robot_test rviz_default_plugins)
-#  endif()
+    set(TEST_LINK_LIBRARIES
+        rviz_default_plugins_static
+        ${rclcpp_LIBRARIES}
+        Qt5::Widgets
+        rviz_common::rviz_common)
 
-# TODO(greimela): reenable these tests once they can be run on the ci
-#  ament_add_gmock(marker_test
-#    test/rviz_default_plugins/displays/marker/markers/arrow_marker_test.cpp
-#    test/rviz_default_plugins/displays/marker/markers/line_marker_test.cpp
-#    test/rviz_default_plugins/displays/marker/markers/mesh_resource_marker_test.cpp
-#    test/rviz_default_plugins/displays/marker/markers/points_marker_test.cpp
-#    test/rviz_default_plugins/displays/marker/markers/shape_marker_test.cpp
-#    test/rviz_default_plugins/displays/marker/markers/text_view_facing_marker_test.cpp
-#    test/rviz_default_plugins/displays/marker/markers/triangle_list_marker_test.cpp
-#    test/rviz_default_plugins/displays/marker/markers/markers_test_fixture.cpp
-#    test/rviz_default_plugins/displays/display_test_fixture.cpp
-#    test/rviz_default_plugins/displays/marker/marker_messages.cpp
-#    test/rviz_default_plugins/scene_graph_introspection.cpp
-#    APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;
-#    ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-#  if(TARGET marker_test)
-#    target_link_libraries(marker_test rviz_default_plugins)
-#  endif()
+    ament_add_gtest(point_cloud2_display_test
+        test/rviz_default_plugins/displays/pointcloud/message_creators.hpp
+        test/rviz_default_plugins/displays/pointcloud/message_creators.cpp
+        test/rviz_default_plugins/displays/pointcloud/point_cloud2_display_test.cpp)
+    if(TARGET point_cloud2_display_test)
+      target_include_directories(point_cloud2_display_test PUBLIC
+        ${TEST_INCLUDE_DIRS})
+      target_link_libraries(point_cloud2_display_test
+        ${TEST_LINK_LIBRARIES})
+    endif()
 
-# TODO(greimela): reenable these tests once they can be run on the ci
-#  ament_add_gmock(marker_display_test
-#    test/rviz_default_plugins/displays/marker/marker_display_test.cpp
-#    test/rviz_default_plugins/displays/display_test_fixture.cpp
-#    test/rviz_default_plugins/displays/marker/marker_messages.cpp
-#    test/rviz_default_plugins/scene_graph_introspection.cpp
-#    APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;
-#    ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-#  if(TARGET marker_display_test)
-#    target_link_libraries(marker_display_test rviz_default_plugins)
-#  endif()
+    ament_add_gtest(point_cloud_transformers_test
+        test/rviz_default_plugins/displays/pointcloud/message_creators.hpp
+        test/rviz_default_plugins/displays/pointcloud/message_creators.cpp
+        test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/axis_color_pc_transformer_test.cpp
+        test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/flat_color_pc_transformer_test.cpp
+        test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/intensity_pc_transformer_test.cpp
+        test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/rgb8_pc_transformer_test.cpp
+        test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/rgbf32_pc_transformer_test.cpp
+        test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/xyz_pc_transformer_test.cpp
+        APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET point_cloud_transformers_test)
+      target_include_directories(point_cloud_transformers_test PUBLIC
+        ${TEST_INCLUDE_DIRS})
+      target_link_libraries(point_cloud_transformers_test
+        ${TEST_LINK_LIBRARIES})
+    endif()
 
-# TODO(greimela): reenable these tests once they can be run on the ci
-#  ament_add_gmock(pose_array_display_test
-#    test/rviz_default_plugins/displays/pose_array/pose_array_display_test.cpp
-#    test/rviz_default_plugins/displays/display_test_fixture.cpp
-#    test/rviz_default_plugins/scene_graph_introspection.cpp
-#    APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;
-#    ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-#  if(TARGET pose_array_display_test)
-#    target_link_libraries(pose_array_display_test rviz_default_plugins)
-#  endif()
+    ament_add_gmock(ros_image_texture_test
+        test/rviz_default_plugins/displays/image/ros_image_texture_test.cpp)
+    if(TARGET ros_image_texture_test)
+      target_include_directories(ros_image_texture_test PUBLIC
+        ${TEST_INCLUDE_DIRS})
+      target_link_libraries(ros_image_texture_test
+        ${TEST_LINK_LIBRARIES})
+    endif()
 
-  # TODO(greimela): reenable these tests once they can be run on the ci
-#  ament_add_gmock(path_display_test
-#    test/rviz_default_plugins/displays/path/path_display_test.cpp
-#    test/rviz_default_plugins/displays/display_test_fixture.cpp
-#    test/rviz_default_plugins/scene_graph_introspection.cpp
-#    APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-#  if(TARGET path_display_test)
-#    target_link_libraries(path_display_test rviz_default_plugins)
-#  endif()
+    ament_add_gmock(image_display_test
+        test/rviz_default_plugins/displays/image/image_display_test.cpp)
+    if(TARGET image_display_test)
+        target_include_directories(image_display_test PUBLIC
+          ${TEST_INCLUDE_DIRS})
+        target_link_libraries(image_display_test
+          ${TEST_LINK_LIBRARIES})
+    endif()
+
+    ament_add_gmock(robot_test
+        test/rviz_default_plugins/robot/robot_test.cpp
+        APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET robot_test)
+      target_include_directories(robot_test PUBLIC
+        ${TEST_INCLUDE_DIRS})
+      target_link_libraries(robot_test
+        ${TEST_LINK_LIBRARIES})
+    endif()
+
+    ament_add_gmock(marker_test
+      test/rviz_default_plugins/displays/marker/markers/arrow_marker_test.cpp
+      test/rviz_default_plugins/displays/marker/markers/line_marker_test.cpp
+      test/rviz_default_plugins/displays/marker/markers/mesh_resource_marker_test.cpp
+      test/rviz_default_plugins/displays/marker/markers/points_marker_test.cpp
+      test/rviz_default_plugins/displays/marker/markers/shape_marker_test.cpp
+      test/rviz_default_plugins/displays/marker/markers/text_view_facing_marker_test.cpp
+      test/rviz_default_plugins/displays/marker/markers/triangle_list_marker_test.cpp
+      test/rviz_default_plugins/displays/marker/markers/markers_test_fixture.cpp
+      test/rviz_default_plugins/displays/display_test_fixture.cpp
+      test/rviz_default_plugins/displays/marker/marker_messages.cpp
+      test/rviz_default_plugins/scene_graph_introspection.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET marker_test)
+      target_include_directories(marker_test PUBLIC
+        ${TEST_INCLUDE_DIRS})
+      target_link_libraries(marker_test
+        ${TEST_LINK_LIBRARIES})
+    endif()
+
+    ament_add_gmock(marker_display_test
+      test/rviz_default_plugins/displays/marker/marker_display_test.cpp
+      test/rviz_default_plugins/displays/display_test_fixture.cpp
+      test/rviz_default_plugins/displays/marker/marker_messages.cpp
+      test/rviz_default_plugins/scene_graph_introspection.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET marker_display_test)
+      target_include_directories(marker_display_test PUBLIC
+        ${TEST_INCLUDE_DIRS})
+      target_link_libraries(marker_display_test
+        ${TEST_LINK_LIBRARIES})
+    endif()
+
+    ament_add_gmock(pose_array_display_test
+      test/rviz_default_plugins/displays/pose_array/pose_array_display_test.cpp
+      test/rviz_default_plugins/displays/display_test_fixture.cpp
+      test/rviz_default_plugins/scene_graph_introspection.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET pose_array_display_test)
+      target_include_directories(pose_array_display_test PUBLIC
+        ${TEST_INCLUDE_DIRS})
+      target_link_libraries(pose_array_display_test
+        ${TEST_LINK_LIBRARIES})
+    endif()
+
+    ament_add_gmock(path_display_test
+      test/rviz_default_plugins/displays/path/path_display_test.cpp
+      test/rviz_default_plugins/displays/display_test_fixture.cpp
+      test/rviz_default_plugins/scene_graph_introspection.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET path_display_test)
+      target_include_directories(path_display_test PUBLIC
+        ${TEST_INCLUDE_DIRS})
+      target_link_libraries(path_display_test
+        ${TEST_LINK_LIBRARIES})
+    endif()
+  endif()
 endif()
 
 ament_package()

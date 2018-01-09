@@ -32,6 +32,7 @@
 #define RVIZ_COMMON__DISPLAY_GROUP_HPP_
 
 #include "rviz_common/display.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
@@ -47,7 +48,7 @@ class DisplayFactory;
  * class stores the Display objects in a separate list.
  * The separation is enforced in addChild().
  */
-class DisplayGroup : public Display
+class RVIZ_COMMON_PUBLIC DisplayGroup : public Display
 {
   Q_OBJECT
 

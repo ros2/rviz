@@ -108,6 +108,8 @@ ament_export_dependencies(rviz_ogre_vendor
   resource_retriever
   ament_index_cpp)
 
+ament_export_include_directories(include)
+
 install(
   TARGETS rviz_rendering
   EXPORT rviz_rendering
@@ -178,62 +180,60 @@ if(BUILD_TESTING)
     target_link_libraries(test_rviz_rendering rviz_rendering)
   endif()
 
-  # TODO(wjwwood): reenable this test when it can be run on CI
-  # ament_add_gtest(point_cloud_test_target
-  #   test/point_cloud_test.cpp
-  #   APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-  # if(TARGET point_cloud_test_target)
-  #   target_link_libraries(point_cloud_test_target
-  #     rviz_ogre_vendor::OgreMain
-  #     rviz_rendering
-  #     Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
-  #   )
-  # endif()
+  if(DEFINED ENV{DISPLAY})
+    set(DISPLAYPRESENT TRUE)
+  endif()
 
-  # TODO(wjwwood): reenable this test when it can be run on CI
-  # ament_add_gtest(point_cloud_renderable_test_target test/point_cloud_renderable_test.cpp
-  #   APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-  # if(TARGET point_cloud_renderable_test_target)
-  #    target_link_libraries(point_cloud_renderable_test_target
-  #     rviz_ogre_vendor::OgreMain
-  #     rviz_rendering
-  #     Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
-  #   )
-  # endif()
+  if(WIN32 OR APPLE OR DISPLAYPRESENT)
+    message(STATUS "Enabling tests requiring a display")
 
-  # TODO(wjwwood): reenable this test when it can be run on CI
-  # ament_add_gtest(billboard_line_test_target test/billboard_line_test.cpp
-  #   APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-  # if(TARGET billboard_line_test_target)
-  #   target_link_libraries(billboard_line_test_target
-  #     rviz_ogre_vendor::OgreMain
-  #     rviz_rendering
-  #     Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
-  #   )
-  # endif()
+    ament_add_gtest(point_cloud_test_target test/point_cloud_test.cpp)
+    if(TARGET point_cloud_test_target)
+      target_link_libraries(point_cloud_test_target
+        rviz_ogre_vendor::OgreMain
+        rviz_rendering
+        Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+      )
+    endif()
 
-  # TODO(wjwwood): reenable this test when it can be run on CI
-  # ament_add_gtest(grid_test_target test/grid_test.cpp
-  #   APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-  # if(TARGET grid_test_target)
-  #   target_link_libraries(grid_test_target
-  #     rviz_ogre_vendor::OgreMain
-  #     rviz_rendering
-  #     Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
-  #   )
-  # endif()
+    ament_add_gtest(point_cloud_renderable_test_target test/point_cloud_renderable_test.cpp)
+    if(TARGET point_cloud_renderable_test_target)
+      target_link_libraries(point_cloud_renderable_test_target
+        rviz_ogre_vendor::OgreMain
+        rviz_rendering
+        Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+      )
+    endif()
 
-  # TODO(wjwwood): reenable this test when it can be run on CI
-  # ament_add_gtest(movable_text_test_target test/movable_text_test.cpp
-  #   APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-  # if(TARGET movable_text_test_target)
-  #   target_link_libraries(movable_text_test_target
-  #     rviz_ogre_vendor::OgreMain
-  #     rviz_ogre_vendor::OgreOverlay
-  #     rviz_rendering
-  #     Qt5::Widgets
-  #   )
-  # endif()
+    ament_add_gtest(billboard_line_test_target test/billboard_line_test.cpp)
+    if(TARGET billboard_line_test_target)
+      target_link_libraries(billboard_line_test_target
+        rviz_ogre_vendor::OgreMain
+        rviz_rendering
+        Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+      )
+    endif()
+
+    ament_add_gtest(grid_test_target test/grid_test.cpp)
+    if(TARGET grid_test_target)
+      target_link_libraries(grid_test_target
+        rviz_ogre_vendor::OgreMain
+        rviz_rendering
+        Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+      )
+    endif()
+    ament_add_gtest(movable_text_test_target test/movable_text_test.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX}
+      PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET movable_text_test_target)
+      target_link_libraries(movable_text_test_target
+        rviz_ogre_vendor::OgreMain
+        rviz_ogre_vendor::OgreOverlay
+        rviz_rendering
+        Qt5::Widgets
+      )
+    endif()
+  endif()
 endif()
 
 list(APPEND ${PROJECT_NAME}_CONFIG_EXTRAS

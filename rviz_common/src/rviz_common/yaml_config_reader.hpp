@@ -34,6 +34,7 @@
 #include <istream>
 
 #include "rviz_common/config.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace YAML
 {
@@ -43,7 +44,7 @@ class Node;
 namespace rviz_common
 {
 
-class YamlConfigReader
+class RVIZ_COMMON_PUBLIC YamlConfigReader
 {
 public:
   /// Constructor.

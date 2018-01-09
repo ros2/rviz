@@ -257,6 +257,7 @@ ament_export_dependencies(
   tf2_geometry_msgs
   tf2_ros
 )
+ament_export_include_directories(include)
 
 install(
   TARGETS rviz_common
@@ -281,8 +282,7 @@ install(
   DESTINATION "share/${PROJECT_NAME}"
 )
 
-# TODO(wjwwood): reenable tests for Windows after resolving building problems
-if(BUILD_TESTING AND NOT WIN32)
+if(BUILD_TESTING)
   # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back
   find_package(ament_cmake_cppcheck REQUIRED)
   find_package(ament_cmake_cpplint REQUIRED)
@@ -317,15 +317,6 @@ if(BUILD_TESTING AND NOT WIN32)
     )
   endif()
 
-  # TODO(wjwwood): reenable this test when it can be run on CI
-  # ament_add_gtest(rviz_common_display_test
-  #   test/display_test.cpp
-  #   test/mock_display.cpp
-  #   test/mock_display_group.cpp)
-  # if(TARGET rviz_common_display_test)
-  #   target_link_libraries(rviz_common_display_test rviz_common)
-  # endif()
-
   ament_add_gtest(rviz_common_property_test
     test/property_test.cpp
     test/mock_property_change_receiver.cpp)
@@ -343,6 +334,26 @@ if(BUILD_TESTING AND NOT WIN32)
     test/ros_node_abstraction_test.cpp)
   if(TARGET rviz_common_ros_node_abstraction_test)
     target_link_libraries(rviz_common_ros_node_abstraction_test rviz_common)
+  endif()
+
+  if(DEFINED ENV{DISPLAY})
+    set(DISPLAYPRESENT TRUE)
+  endif()
+
+  if(WIN32 OR APPLE OR DISPLAYPRESENT)
+    message(STATUS "Enabling tests requiring a display")
+
+    ament_add_gtest(rviz_common_display_test
+      test/display_test.cpp
+      test/mock_display.cpp
+      test/mock_display_group.cpp)
+    if(TARGET rviz_common_display_test)
+      target_link_libraries(rviz_common_display_test
+        rviz_common
+        Qt5::Widgets)
+    ament_target_dependencies(rviz_common_display_test
+      rviz_yaml_cpp_vendor)
+    endif()
   endif()
 endif()
 
