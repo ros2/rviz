@@ -129,7 +129,9 @@ public:
    * things rolling.
    */
   void
-  initialize(const QString & display_config_file = "");
+  initialize(
+    ros_integration::RosNodeAbstractionIface::WeakPtr ros_node_abstraction,
+    const QString & display_config_file = "");
 
   /// Return the visualization manager.
   VisualizationManager *

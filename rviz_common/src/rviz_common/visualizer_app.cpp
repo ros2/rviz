@@ -296,7 +296,7 @@ bool VisualizerApp::init(int argc, char ** argv)
   if (!splash_path.isEmpty()) {
     frame_->setSplashPath(splash_path);
   }
-  frame_->initialize(display_config);
+  frame_->initialize(node_, display_config);
 
   if (!fixed_frame.isEmpty()) {
     frame_->getManager()->setFixedFrame(fixed_frame);

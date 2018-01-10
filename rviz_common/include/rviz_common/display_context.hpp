@@ -37,6 +37,7 @@
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
+#include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
 #include "rviz_common/visibility_control.hpp"
 #include "frame_manager_iface.hpp"
 
@@ -153,11 +154,18 @@ public:
   DisplayFactory *
   getDisplayFactory() const = 0;
 
+  /// Return a weak pointer to the ros node (abstraction) used by rviz
+  virtual
+  ros_integration::RosNodeAbstractionIface::WeakPtr
+  getRosNodeAbstraction() const = 0;
+
+  // TODO(anhosi): remove once the RosNodeAbstraction above is used
   /// Add a node (e.g. a display) to the main executor (spin will be called in the main thread)
   virtual
   void
   addNodeToMainExecutor(std::shared_ptr<rclcpp::Node> node) = 0;
 
+  // TODO(anhosi): remove once the RosNodeAbstraction above is used
   /// Remove a node from the main executor
   virtual
   void
