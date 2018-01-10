@@ -38,11 +38,12 @@
 #include "rviz_common/properties/color_property.hpp"
 
 #include "../point_cloud_transformer.hpp"
+#include "../../../visibility_control.hpp"
 
 namespace rviz_default_plugins
 {
 
-class FlatColorPCTransformer : public PointCloudTransformer
+class RVIZ_DEFAULT_PLUGINS_PUBLIC FlatColorPCTransformer : public PointCloudTransformer
 {
   Q_OBJECT
 

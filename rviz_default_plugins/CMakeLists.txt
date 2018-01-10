@@ -82,6 +82,12 @@ ament_target_dependencies(rviz_default_plugins
 
 pluginlib_export_plugin_description_file(rviz_common plugins_description.xml)
 
+# prevent pluginlib from using boost
+target_compile_definitions(rviz_default_plugins PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
+# Causes the visibility macros to use dllexport rather than dllimport,
+# which is appropriate when building the dll but not consuming it.
+target_compile_definitions(rviz_default_plugins PRIVATE "RVIZ_DEFAULT_PLUGINS_BUILDING_LIBRARY")
+
 ament_export_interfaces(rviz_default_plugins)
 ament_export_dependencies(Qt5)
 ament_export_dependencies(rviz_rendering)

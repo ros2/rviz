@@ -38,11 +38,12 @@
 #include "rviz_common/properties/property.hpp"
 
 #include "../point_cloud_transformer.hpp"
+#include "../../../visibility_control.hpp"
 
 namespace rviz_default_plugins
 {
 
-class RGBF32PCTransformer : public PointCloudTransformer
+class RVIZ_DEFAULT_PLUGINS_PUBLIC RGBF32PCTransformer : public PointCloudTransformer
 {
 public:
   uint8_t supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) override;

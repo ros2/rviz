@@ -45,6 +45,8 @@
 
 #include "sensor_msgs/msg/image.hpp"
 
+#include "../../visibility_control.hpp"
+
 namespace rviz_default_plugins
 {
 namespace displays
@@ -68,7 +70,7 @@ struct ImageData
   size_t size_;
 };
 
-class ROSImageTexture : public ROSImageTextureIface
+class RVIZ_DEFAULT_PLUGINS_PUBLIC ROSImageTexture : public ROSImageTextureIface
 {
 public:
   ROSImageTexture();

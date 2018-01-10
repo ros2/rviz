@@ -37,6 +37,7 @@
 #include "point_cloud_common.hpp"
 #include "rviz_common/ros_topic_display.hpp"
 #include "rviz_common/properties/queue_size_property.hpp"
+#include "../../visibility_control.hpp"
 
 namespace rviz_common
 {
@@ -65,7 +66,8 @@ struct Offsets
  * If you set the channel's name to "rgb", it will interpret the channel as an integer rgb value, with r, g and b
  * all being 8 bits.
  */
-class PointCloud2Display : public rviz_common::RosTopicDisplay<sensor_msgs::msg::PointCloud2>
+class RVIZ_DEFAULT_PLUGINS_PUBLIC PointCloud2Display : public
+  rviz_common::RosTopicDisplay<sensor_msgs::msg::PointCloud2>
 {
 public:
   PointCloud2Display();

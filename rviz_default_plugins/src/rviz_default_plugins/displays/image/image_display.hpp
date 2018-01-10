@@ -47,6 +47,7 @@
 # include "rviz_common/properties/float_property.hpp"
 # include "rviz_common/properties/int_property.hpp"
 # include "rviz_common/properties/queue_size_property.hpp"
+#include "../../visibility_control.hpp"
 
 # include "ros_image_texture.hpp"
 #endif
@@ -67,7 +68,8 @@ namespace displays
  * \class ImageDisplay
  *
  */
-class ImageDisplay : public rviz_common::RosTopicDisplay<sensor_msgs::msg::Image>
+class RVIZ_DEFAULT_PLUGINS_PUBLIC ImageDisplay
+  : public rviz_common::RosTopicDisplay<sensor_msgs::msg::Image>
 {
   Q_OBJECT
 
