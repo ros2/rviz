@@ -43,9 +43,6 @@ namespace rviz_common
 namespace ros_integration
 {
 
-// forward declaration so ros node storage headers can remain private
-class RosNodeStorageIface;
-
 class RosClientAbstraction : public RosClientAbstractionIface
 {
 public:
@@ -94,8 +91,7 @@ public:
   shutdown() override;
 
 private:
-  std::shared_ptr<RosNodeAbstractionIface> ros_node_abstraction_;
-  std::shared_ptr<RosNodeStorageIface> ros_node_storage_;
+  std::shared_ptr<RosNodeAbstractionIface> rviz_ros_node_;
 };
 
 }  // namespace ros_integration

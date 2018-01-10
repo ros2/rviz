@@ -36,17 +36,15 @@
 #include <string>
 #include <vector>
 
-#include "rviz_common/visibility_control.hpp"
+#include "rclcpp/rclcpp.hpp"
 
-#include "ros_node_abstraction_iface.hpp"
+#include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
 namespace ros_integration
 {
-
-// forward declaration so ros node storage headers can remain private
-class RosNodeStorageIface;
 
 class RosNodeAbstraction : public RosNodeAbstractionIface
 {
@@ -65,19 +63,14 @@ public:
   RVIZ_COMMON_PUBLIC
   explicit RosNodeAbstraction(const std::string & node_name);
 
-  /// Creates a ros node with the given name using a specific storage. For testing use only.
+  /// Adds this node to an executor
   /**
-   * Internally a rclcpp::Node is created.
-   * If a rclcpp::Node with the given name already exists a node abstraction for this already
-   * existing node is created.
+   * Adds the rclcpp::Node representation of this to the given executor.
    *
-   * \param node_name name of the node to create
-   * \param ros_node_storage storage handling for the internal rclcpp::Node
+   * \param executor executor to whom the node is added
    */
   RVIZ_COMMON_PUBLIC
-  RosNodeAbstraction(
-    const std::string & node_name,
-    std::shared_ptr<RosNodeStorageIface> ros_node_storage);
+  void add_to_executor(rclcpp::executor::Executor & executor) override;
 
   /// Returns the name of the ros node
   /**
@@ -99,8 +92,7 @@ public:
   get_topic_names_and_types() const override;
 
 private:
-  std::string node_name_;
-  std::shared_ptr<RosNodeStorageIface> ros_node_storage_;
+  rclcpp::Node::SharedPtr raw_node_;
 };
 
 }  // namespace ros_integration
