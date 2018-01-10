@@ -35,6 +35,7 @@
 #include <QLabel>
 
 #include "rviz_common/config.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
@@ -45,7 +46,7 @@ namespace rviz_common
  * want the PanelDockWidget to be destroyed when the content widget is
  * destroyed.
  */
-class PanelDockWidget : public QDockWidget
+class RVIZ_COMMON_PUBLIC PanelDockWidget : public QDockWidget
 {
   Q_OBJECT
 

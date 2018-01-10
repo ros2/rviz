@@ -33,13 +33,14 @@
 
 #include "rclcpp/node.hpp"
 #include "rviz_common/properties/editable_enum_property.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
 namespace properties
 {
 
-class RosTopicProperty : public EditableEnumProperty
+class RVIZ_COMMON_PUBLIC RosTopicProperty : public EditableEnumProperty
 {
   Q_OBJECT
 

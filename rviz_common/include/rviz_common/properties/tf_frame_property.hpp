@@ -44,7 +44,7 @@ class FrameManager;
 namespace properties
 {
 
-class  TfFrameProperty : public EditableEnumProperty
+class RVIZ_COMMON_PUBLIC TfFrameProperty : public EditableEnumProperty
 {
   Q_OBJECT
 

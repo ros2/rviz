@@ -41,7 +41,7 @@ namespace rviz_common
 namespace properties
 {
 
-class  VectorProperty : public Property
+class RVIZ_COMMON_PUBLIC VectorProperty : public Property
 {
   Q_OBJECT
 

@@ -34,11 +34,12 @@
 
 #include "rviz_common/ros_topic_display.hpp"
 #include "rviz_common/properties/int_property.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
 
-class QueueSizeProperty : public QObject
+class RVIZ_COMMON_PUBLIC QueueSizeProperty : public QObject
 {
   Q_OBJECT
 

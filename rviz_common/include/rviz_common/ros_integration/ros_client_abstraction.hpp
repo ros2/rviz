@@ -36,6 +36,7 @@
 
 #include "ros_client_abstraction_iface.hpp"
 #include "ros_node_abstraction_iface.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
@@ -45,7 +46,7 @@ namespace ros_integration
 // forward declaration so ros node storage headers can remain private
 class RosNodeStorageIface;
 
-class RosClientAbstraction : public RosClientAbstractionIface
+class RVIZ_COMMON_PUBLIC RosClientAbstraction : public RosClientAbstractionIface
 {
 public:
   RosClientAbstraction();
