@@ -92,10 +92,9 @@ public:
   void setNormalizeFloatImage(bool normalize, double min, double max) override;
   void setMedianFrames(unsigned median_frames) override;
 
+private:
   template<typename T>
   std::vector<uint8_t> normalize(const T * image_data, size_t image_data_size);
-
-private:
   template<typename T>
   std::vector<uint8_t> createNewNormalizedBuffer(
     const T * image_data, size_t image_data_size, T minValue, T maxValue) const;
