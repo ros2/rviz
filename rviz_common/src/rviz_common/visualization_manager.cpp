@@ -233,6 +233,7 @@ VisualizationManager::VisualizationManager(
   selection_manager_ = std::make_shared<SelectionManager>(this);
   view_picker_ = std::make_shared<ViewPicker>(this);
 
+  ros_node_abstraction_.lock()->add_to_executor(*executor_);
 // TODO(wjwwood): redo with executors?
 #if 0
   private_->threaded_queue_threads_.create_thread(std::bind(&VisualizationManager::
