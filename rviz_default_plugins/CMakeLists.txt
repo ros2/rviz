@@ -38,8 +38,8 @@ set(rviz_default_plugins_headers_to_moc
   src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_transformer.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_helpers.hpp
-  src/rviz_default_plugins/displays/tf_display/frame_info.hpp
-  src/rviz_default_plugins/displays/tf_display/tf_display.hpp
+  src/rviz_default_plugins/displays/tf/frame_info.hpp
+  src/rviz_default_plugins/displays/tf/tf_display.hpp
 )
 
 set(rviz_default_plugins_source_files
@@ -57,9 +57,9 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/pointcloud/point_cloud_selection_handler.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_display.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.cpp
-  src/rviz_default_plugins/displays/tf_display/frame_info.cpp
-  src/rviz_default_plugins/displays/tf_display/frame_selection_handler.cpp
-  src/rviz_default_plugins/displays/tf_display/tf_display.cpp
+  src/rviz_default_plugins/displays/tf/frame_info.cpp
+  src/rviz_default_plugins/displays/tf/frame_selection_handler.cpp
+  src/rviz_default_plugins/displays/tf/tf_display.cpp
   src/rviz_default_plugins/tools/move/move_tool.cpp
   src/rviz_default_plugins/view_controllers/orbit/orbit_view_controller.cpp
 )

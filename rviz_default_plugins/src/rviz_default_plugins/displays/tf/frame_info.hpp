@@ -27,14 +27,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__TF_DISPLAY__FRAME_SELECTION_HANDLER_HPP_
-#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__TF_DISPLAY__FRAME_SELECTION_HANDLER_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__TF__FRAME_INFO_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__TF__FRAME_INFO_HPP_
 
 #include <string>
 
-#include "rviz_common/selection/selection_handler.hpp"
+#include "tf2/time.h"
+
 #include "tf_display.hpp"
-#include "frame_info.hpp"
 
 namespace rviz_common
 {
@@ -51,50 +51,57 @@ class QuaternionProperty;
 
 namespace rviz_default_plugins
 {
-
 namespace displays
 {
 
-class FrameSelectionHandler : public rviz_common::selection::SelectionHandler
+/** @brief Internal class needed only by TFDisplay. */
+class FrameInfo : public QObject
 {
+  Q_OBJECT
+
 public:
-  FrameSelectionHandler(
-    FrameInfo * frame, TFDisplay * display,
-    rviz_common::DisplayContext * context);
+  explicit FrameInfo(TFDisplay * display);
 
-  virtual ~FrameSelectionHandler()
-  {}
-
-  virtual void createProperties(
-    const rviz_common::selection::Picked & obj,
-    rviz_common::properties::Property * parent_property);
-
-  virtual void destroyProperties(
-    const rviz_common::selection::Picked & obj,
-    rviz_common::properties::Property * parent_property);
-
-  bool getEnabled();
-
+  /** @brief Set this frame to be visible or invisible. */
   void setEnabled(bool enabled);
 
-  void setParentName(std::string parent_name);
+public Q_SLOTS:
+  /** @brief Update whether the frame is visible or not, based on the enabled_property_
+   * in this FrameInfo. */
+  void updateVisibilityFromFrame();
 
-  void setPosition(const Ogre::Vector3 & position);
+  /** @brief Update whether the frame is visible or not, based on the enabled_property_
+   * in the selection handler. */
+  void updateVisibilityFromSelection();
 
-  void setOrientation(const Ogre::Quaternion & orientation);
-
-private:
-  FrameInfo * frame_;
+public:
   TFDisplay * display_;
-  rviz_common::properties::Property * category_property_;
-  rviz_common::properties::BoolProperty * enabled_property_;
-  rviz_common::properties::StringProperty * parent_property_;
+  std::string name_;
+  std::string parent_;
+  rviz_rendering::Axes * axes_;
+  rviz_common::selection::CollObjectHandle axes_coll_;
+  FrameSelectionHandlerPtr selection_handler_;
+  rviz_rendering::Arrow * parent_arrow_;
+  rviz_rendering::MovableText * name_text_;
+  Ogre::SceneNode * name_node_;
+
+  float distance_to_parent_;
+  Ogre::Quaternion arrow_orientation_;
+
+  tf2::TimePoint last_update_;
+  tf2::TimePoint last_time_to_fixed_;
+
+  rviz_common::properties::VectorProperty * rel_position_property_;
+  rviz_common::properties::QuaternionProperty * rel_orientation_property_;
   rviz_common::properties::VectorProperty * position_property_;
   rviz_common::properties::QuaternionProperty * orientation_property_;
+  rviz_common::properties::StringProperty * parent_property_;
+  rviz_common::properties::BoolProperty * enabled_property_;
+
+  rviz_common::properties::Property * tree_property_;
 };
 
 }  // namespace displays
-
 }  // namespace rviz_default_plugins
 
-#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__TF_DISPLAY__FRAME_SELECTION_HANDLER_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__TF__FRAME_INFO_HPP_
