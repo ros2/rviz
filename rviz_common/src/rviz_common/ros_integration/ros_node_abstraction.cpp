@@ -64,14 +64,14 @@ RosNodeAbstraction::RosNodeAbstraction(
 
 RVIZ_COMMON_PUBLIC
 std::string
-RosNodeAbstraction::get_node_name()
+RosNodeAbstraction::get_node_name() const
 {
   return node_name_;
 }
 
 RVIZ_COMMON_PUBLIC
 std::map<std::string, std::vector<std::string>>
-RosNodeAbstraction::get_topic_names_and_types()
+RosNodeAbstraction::get_topic_names_and_types() const
 {
   rclcpp::Node::SharedPtr node = ros_node_storage_->get_rclcpp_node_by_name(node_name_);
   if (node == nullptr) {

@@ -50,10 +50,10 @@ public:
 
   virtual ~RosNodeAbstractionIface() = default;
 
-  virtual std::string get_node_name() = 0;
+  virtual std::string get_node_name() const = 0;
 
   virtual std::map<std::string, std::vector<std::string>>
-  get_topic_names_and_types() = 0;
+  get_topic_names_and_types() const = 0;
 };
 
 }  // namespace ros_integration

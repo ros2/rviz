@@ -38,7 +38,7 @@
 
 #include "rviz_common/visibility_control.hpp"
 
-#include "./ros_node_abstraction_iface.hpp"
+#include "ros_node_abstraction_iface.hpp"
 
 namespace rviz_common
 {
@@ -86,7 +86,7 @@ public:
    * \return the name of the node
    */
   RVIZ_COMMON_PUBLIC
-  std::string get_node_name() override;
+  std::string get_node_name() const override;
 
   /// Return a map with topic names mapped to a list of types for that topic.
   /**
@@ -96,7 +96,7 @@ public:
    */
   RVIZ_COMMON_PUBLIC
   std::map<std::string, std::vector<std::string>>
-  get_topic_names_and_types() override;
+  get_topic_names_and_types() const override;
 
 private:
   std::string node_name_;
