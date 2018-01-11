@@ -45,6 +45,7 @@
 #include "rviz_rendering/movable_text.hpp"
 
 #include <sstream>
+#include <limits>
 
 #ifndef _WIN32
 # pragma GCC diagnostic push
@@ -236,6 +237,62 @@ void MovableText::showOnTop(bool show)
   }
 }
 
+struct TextBuffer {
+  float * buffer_;
+  Ogre::Vector3 min_;
+  Ogre::Vector3 max_;
+  Ogre::Real max_squared_radius_;
+  float top_;
+  float left_;
+  Ogre::Font::UVRect text_coords_;
+
+  TextBuffer(float* buffer)
+    : buffer_(buffer),
+    min_(9999999.0f),
+    max_(-9999999.0f),
+    max_squared_radius_(0),
+    top_(0),
+    left_(0) {
+  }
+
+  void addTopLeft() {
+    addPositionToBuffer(0, 0);
+    addTextureToBuffer(text_coords_.left, text_coords_.top);
+  }
+
+  void addBottomLeft(float char_height) {
+    addPositionToBuffer(0, 2.0f * char_height);
+    addTextureToBuffer(text_coords_.left, text_coords_.bottom);
+  }
+
+  void addTopRight(float char_width) {
+    addPositionToBuffer(2.0f * char_width, 0);
+    addTextureToBuffer(text_coords_.right, text_coords_.top);
+  }
+
+  void addBottomRight(float char_widht, float char_height) {
+    addPositionToBuffer(2.0f * char_widht, 2.0f * char_height);
+    addTextureToBuffer(text_coords_.right, text_coords_.bottom);
+  }
+
+private :
+  void addPositionToBuffer(float plus_left, float minus_top) {
+    Ogre::Vector3 current_position = Ogre::Vector3(left_+plus_left, top_-minus_top, 0.0);
+    *buffer_++ = current_position.x;
+    *buffer_++ = current_position.y;
+    *buffer_++ = current_position.z;
+
+    min_.makeFloor(current_position);
+    max_.makeCeil(current_position);
+    max_squared_radius_ = std::max(max_squared_radius_, current_position.squaredLength());
+  }
+
+  void addTextureToBuffer(float texture_x, float texture_y) {
+    *buffer_++ = texture_x;
+    *buffer_++ = texture_y;
+  }
+};
+
 void MovableText::_setupGeometry()
 {
   assert(mpFont);
@@ -361,160 +418,44 @@ void MovableText::_setupGeometry()
       break;
   }
 
-  float left = starting_left;
 
-  bool newLine = true;
-  Real len = 0.0f;
-  // for calculation of AABB
-  Ogre::Vector3 min(9999999.0f), max(-9999999.0f), currPos(0.0f);
-  Ogre::Real maxSquaredRadius = -99999999.0f;
-  float largestWidth = 0.0f;
+  auto buffer = TextBuffer(pPCBuff);
+  buffer.left_ = starting_left;
+  buffer.top_ = top;
+
   for (i = mCaption.begin(); i != iend; ++i) {
-    if (newLine) {
-      len = 0.0f;
-      for (String::iterator j = i; j != iend && *j != '\n'; j++) {
-        if (*j == ' ') {
-          len += spaceWidth;
-        } else {
-          len += mpFont->getGlyphAspectRatio(*j) * mCharHeight * 2.0f;
-        }
-      }
-      newLine = false;
-    }
-
     if (*i == '\n') {
-      left = starting_left;
-      top -= mCharHeight * 2.0f;
-      newLine = true;
+      buffer.left_ = starting_left;
+      buffer.top_ -= mCharHeight * 2.0;
       continue;
     }
 
     if (*i == ' ') {
-      // Just leave a gap, no tris
-      left += spaceWidth;
+      // Just leave a gap, no triangles
+      buffer.left_ += spaceWidth;
       continue;
     }
 
-    Real horiz_height = mpFont->getGlyphAspectRatio(*i);
-    Real u1, u2, v1, v2;
-    Ogre::Font::UVRect utmp;
-    utmp = mpFont->getGlyphTexCoords(*i);
-    u1 = utmp.left;
-    u2 = utmp.right;
-    v1 = utmp.top;
-    v2 = utmp.bottom;
+    Real char_aspect_ratio = mpFont->getGlyphAspectRatio(*i);
+    buffer.text_coords_ = mpFont->getGlyphTexCoords(*i);
 
-    // each vert is (x, y, z, u, v)
-    //-------------------------------------------------------------------------------------
-    // First tri
-    //
-    // Upper left
-    currPos = Ogre::Vector3(left, top, 0.0);
+    buffer.addTopLeft();
+    buffer.addBottomLeft(mCharHeight);
+    buffer.addTopRight(char_aspect_ratio * mCharHeight);
 
-    *pPCBuff++ = currPos.x;
-    *pPCBuff++ = currPos.y;
-    *pPCBuff++ = currPos.z;
-    *pPCBuff++ = u1;
-    *pPCBuff++ = v1;
+    buffer.addTopRight(char_aspect_ratio * mCharHeight);
+    buffer.addBottomLeft(mCharHeight);
+    buffer.addBottomRight(char_aspect_ratio * mCharHeight, mCharHeight);
 
-    // Deal with bounds
-
-
-    min.makeFloor(currPos);
-    max.makeCeil(currPos);
-    maxSquaredRadius = std::max(maxSquaredRadius, currPos.squaredLength());
-
-    top -= mCharHeight * 2.0f;
-
-    // Bottom left
-    currPos = Ogre::Vector3(left, top, 0.0f);
-    *pPCBuff++ = currPos.x;
-    *pPCBuff++ = currPos.y;
-    *pPCBuff++ = currPos.z;
-    *pPCBuff++ = u1;
-    *pPCBuff++ = v2;
-
-    // Deal with bounds
-    min.makeFloor(currPos);
-    max.makeCeil(currPos);
-    maxSquaredRadius = std::max(maxSquaredRadius, currPos.squaredLength());
-
-    top += mCharHeight * 2.0f;
-    left += horiz_height * mCharHeight * 2.0f;
-
-    // Top right
-    currPos = Ogre::Vector3(left, top, 0.0f);
-    *pPCBuff++ = currPos.x;
-    *pPCBuff++ = currPos.y;
-    *pPCBuff++ = currPos.z;
-    *pPCBuff++ = u2;
-    *pPCBuff++ = v1;
-    //-------------------------------------------------------------------------------------
-
-    // Deal with bounds
-    min.makeFloor(currPos);
-    max.makeCeil(currPos);
-    maxSquaredRadius = std::max(maxSquaredRadius, currPos.squaredLength());
-
-    //-------------------------------------------------------------------------------------
-    // Second tri
-    //
-    // Top right (again)
-    currPos = Ogre::Vector3(left, top, 0.0f);
-    *pPCBuff++ = currPos.x;
-    *pPCBuff++ = currPos.y;
-    *pPCBuff++ = currPos.z;
-    *pPCBuff++ = u2;
-    *pPCBuff++ = v1;
-
-    min.makeFloor(currPos);
-    max.makeCeil(currPos);
-    maxSquaredRadius = std::max(maxSquaredRadius, currPos.squaredLength());
-
-    top -= mCharHeight * 2.0f;
-    left -= horiz_height * mCharHeight * 2.0f;
-
-    // Bottom left (again)
-    currPos = Ogre::Vector3(left, top, 0.0f);
-    *pPCBuff++ = currPos.x;
-    *pPCBuff++ = currPos.y;
-    *pPCBuff++ = currPos.z;
-    *pPCBuff++ = u1;
-    *pPCBuff++ = v2;
-
-    min.makeFloor(currPos);
-    max.makeCeil(currPos);
-    maxSquaredRadius = std::max(maxSquaredRadius, currPos.squaredLength());
-
-    left += horiz_height * mCharHeight * 2.0f;
-
-    // Bottom right
-    currPos = Ogre::Vector3(left, top, 0.0f);
-    *pPCBuff++ = currPos.x;
-    *pPCBuff++ = currPos.y;
-    *pPCBuff++ = currPos.z;
-    *pPCBuff++ = u2;
-    *pPCBuff++ = v2;
-    //-------------------------------------------------------------------------------------
-    min.makeFloor(currPos);
-    max.makeCeil(currPos);
-    maxSquaredRadius = std::max(maxSquaredRadius, currPos.squaredLength());
-
-    // Go back up with top
-    top += mCharHeight * 2.0f;
-
-    float currentWidth = (left + 1) / 2 - 0;
-    if (currentWidth > largestWidth) {
-      largestWidth = currentWidth;
-    }
+    buffer.left_ += char_aspect_ratio * mCharHeight * 2.0;
   }
 
   // Unlock vertex buffer
   ptbuf->unlock();
 
   // update AABB/Sphere radius
-  mAABB = Ogre::AxisAlignedBox(min, max);
-  mRadius = Ogre::Math::Sqrt(maxSquaredRadius);
+  mAABB = Ogre::AxisAlignedBox(buffer.min_, buffer.max_);
+  mRadius = Ogre::Math::Sqrt(buffer.max_squared_radius_);
 
   if (mUpdateColors) {
     this->_updateColors();
