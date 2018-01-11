@@ -249,7 +249,7 @@ struct TextBuffer {
   TextBuffer(float* buffer)
     : buffer_(buffer),
     min_(9999999.0f),
-    max_(-9999999.0f),
+    max_(-999999.0f),
     max_squared_radius_(0),
     top_(0),
     left_(0) {
@@ -373,35 +373,28 @@ void MovableText::_setupGeometry()
     spaceWidth = mpFont->getGlyphAspectRatio('A') * mCharHeight * 2.0f;
   }
 
-  float total_height = mCharHeight;
+  float total_height = mCharHeight * 2.0f;
   float total_width = 0.0f;
   float current_width = 0.0f;
-  i = mCaption.begin();
-  iend = mCaption.end();
-  for (; i != iend; ++i) {
-    if (*i == '\n') {
-      total_height += mCharHeight + 0.01f;
-
-      if (current_width > total_width) {
-        total_width = current_width;
-        current_width = 0.0f;
-      }
+  for (auto & iterator : mCaption) {
+    if (iterator == '\n') {
+      total_height += mCharHeight * 2.0f + mLineSpacing;
+      total_width = current_width > total_width ? current_width : total_width;
+    } else if(iterator == ' ') {
+      current_width += spaceWidth;
     } else {
-      current_width += mpFont->getGlyphAspectRatio(*i) * mCharHeight * 2.0f;
+      current_width += mpFont->getGlyphAspectRatio(iterator) * mCharHeight * 2.0f;
     }
   }
-
-  if (current_width > total_width) {
-    total_width = current_width;
-  }
+  total_width = current_width > total_width ? current_width : total_width;
 
   float top = 0.0f;
   switch (mVerticalAlignment) {
     case MovableText::V_ABOVE:
-      top = total_height * 2;
+      top = total_height;
       break;
     case MovableText::V_CENTER:
-      top = 0.5f * total_height * 2;
+      top = 0.5f * total_height;
       break;
     case MovableText::V_BELOW:
       top = 0.0f;
@@ -426,7 +419,7 @@ void MovableText::_setupGeometry()
   for (i = mCaption.begin(); i != iend; ++i) {
     if (*i == '\n') {
       buffer.left_ = starting_left;
-      buffer.top_ -= mCharHeight * 2.0;
+      buffer.top_ -= mCharHeight * 2.0f + mLineSpacing;
       continue;
     }
 
