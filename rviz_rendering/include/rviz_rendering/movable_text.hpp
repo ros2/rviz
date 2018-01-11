@@ -205,7 +205,12 @@ public:
     return mpMaterial;
   }
 
+  void getRenderOperation(Ogre::RenderOperation & op);
 
+  Ogre::Real getBoundingRadius(void) const
+  {
+    return mRadius;
+  }
   /******************************** protected methods and overload **************/
 
 protected:
@@ -215,10 +220,6 @@ protected:
 
   // from Ogre::MovableObject
   void getWorldTransforms(Ogre::Matrix4 * xform) const;
-  Ogre::Real getBoundingRadius(void) const
-  {
-    return mRadius;
-  }
   Ogre::Real getSquaredViewDepth(const Ogre::Camera * cam) const
   {
     (void) cam;
@@ -244,7 +245,6 @@ protected:
   void _updateRenderQueue(Ogre::RenderQueue * queue);
 
   // from renderable
-  void getRenderOperation(Ogre::RenderOperation & op);
   const Ogre::LightList & getLights(void) const
   {
     return mLList;
