@@ -80,6 +80,7 @@ using namespace Ogre;  // NOLINT
 #define COLOUR_BINDING     1
 
 #define MATERIAL_GROUP "rviz_rendering"
+#define EFFECTIVE_CHAR_HEIGHT_FACTOR 2
 
 namespace rviz_rendering
 {
@@ -298,37 +299,135 @@ void MovableText::_setupGeometry()
   assert(mpFont);
   assert(mpMaterial);
 
-  unsigned int vertexCount = 0;
-
-  // count letters to determine how many vertices are needed
-  std::string::iterator i = mCaption.begin();
-  std::string::iterator iend = mCaption.end();
-  for (; i != iend; ++i) {
-    if ((*i != ' ') && (*i != '\n')) {
-      vertexCount += 6;
-    }
-  }
-
-  if (mRenderOp.vertexData) {
-    delete mRenderOp.vertexData;
-    mRenderOp.vertexData = NULL;
-    mUpdateColors = true;
-  }
-
   if (mCaption.empty()) {
     return;
   }
 
-  if (!mRenderOp.vertexData) {
-    mRenderOp.vertexData = new VertexData();
+  setupRenderOperation();
+  HardwareVertexBufferSharedPtr position_and_texture_buffer = setupHardwareBuffers();
+
+  float total_height;
+  float total_width;
+  calculateTotalDimensionsForPositioning(total_height, total_width);
+
+  float starting_top = getVerticalStartFromVerticalAlignment(total_height);
+  float starting_left = getLineStartFromHorizontalAlignment(total_width);
+
+  fillVertexBuffer(position_and_texture_buffer, starting_top, starting_left);
+
+  if (mUpdateColors) {
+    this->_updateColors();
   }
 
-  mRenderOp.indexData = 0;
-  mRenderOp.vertexData->vertexStart = 0;
-  mRenderOp.vertexData->vertexCount = vertexCount;
-  mRenderOp.operationType = RenderOperation::OT_TRIANGLE_LIST;
-  mRenderOp.useIndexes = false;
+  mNeedUpdate = false;
+}
 
+Real MovableText::getNonzeroSpaceWidth(Real effective_char_height) const
+{
+  Real space_width = mSpaceWidth;
+  // TODO(Martin-Idel-SI): Investigate setting a sensible default value from the start
+  // Derive a default space_width if set to zero
+  if (space_width == 0) {
+    space_width = mpFont->getGlyphAspectRatio('A') * effective_char_height;
+  }
+  return space_width;
+}
+
+void
+MovableText::calculateTotalDimensionsForPositioning(float & total_height, float & total_width) const
+{
+  Real effective_char_height = mCharHeight * EFFECTIVE_CHAR_HEIGHT_FACTOR;
+  Real space_width = getNonzeroSpaceWidth(effective_char_height);
+
+  total_height = effective_char_height;
+  total_width = 0.0f;
+  float current_width = 0.0f;
+  for (auto & character : mCaption) {
+    if (character == '\n') {
+      total_height += effective_char_height + mLineSpacing;
+      total_width = current_width > total_width ? current_width : total_width;
+    } else if(character == ' ') {
+      current_width += space_width;
+    } else {
+      current_width += mpFont->getGlyphAspectRatio(character) * effective_char_height;
+    }
+  }
+  total_width = current_width > total_width ? current_width : total_width;
+}
+
+float MovableText::getVerticalStartFromVerticalAlignment(float total_height) const
+{
+  switch (mVerticalAlignment) {
+    case V_ABOVE:
+      return total_height;
+    case V_CENTER:
+      return 0.5f * total_height;
+    case V_BELOW:
+      return  0.0f;
+    default:
+      throw std::runtime_error("unexpected vertical alignment");
+  }
+}
+
+float MovableText::getLineStartFromHorizontalAlignment(float total_width) const
+{
+  switch (mHorizontalAlignment) {
+    case H_LEFT:
+      return 0.0f;
+    case H_CENTER:
+      return -0.5f * total_width;
+    default:
+      throw std::runtime_error("unexpected horizontal alignment");
+  }
+}
+
+void MovableText::fillVertexBuffer(HardwareVertexBufferSharedPtr & position_and_texture_buffer,
+  float top, float starting_left)
+{
+  Real effective_char_height = mCharHeight * EFFECTIVE_CHAR_HEIGHT_FACTOR;
+  Real space_width = getNonzeroSpaceWidth(effective_char_height);
+
+  float * hardware_buffer =
+    static_cast<float *>(position_and_texture_buffer->lock(HardwareBuffer::HBL_DISCARD));
+
+  auto buffer = TextBuffer(hardware_buffer);
+  buffer.left_ = starting_left;
+  buffer.top_ = top;
+
+  for (auto & character : mCaption) {
+    if (character == '\n') {
+      buffer.left_ = starting_left;
+      buffer.top_ -= effective_char_height + mLineSpacing;
+      continue;
+    }
+
+    if (character == ' ') {
+      buffer.left_ += space_width;
+      continue;
+    }
+
+    Real char_aspect_ratio = mpFont->getGlyphAspectRatio(character);
+    buffer.text_coords_ = mpFont->getGlyphTexCoords(character);
+
+    buffer.addTopLeft();
+    buffer.addBottomLeft(mCharHeight);
+    buffer.addTopRight(char_aspect_ratio * mCharHeight);
+
+    buffer.addTopRight(char_aspect_ratio * mCharHeight);
+    buffer.addBottomLeft(mCharHeight);
+    buffer.addBottomRight(char_aspect_ratio * mCharHeight, mCharHeight);
+
+    buffer.left_ += char_aspect_ratio * effective_char_height;
+  }
+
+  position_and_texture_buffer->unlock();
+
+  mAABB = AxisAlignedBox(buffer.min_, buffer.max_);
+  mRadius = Math::Sqrt(buffer.max_squared_radius_);
+}
+
+HardwareVertexBufferSharedPtr MovableText::setupHardwareBuffers() const
+{
   VertexDeclaration * decl = mRenderOp.vertexData->vertexDeclaration;
   VertexBufferBinding * bind = mRenderOp.vertexData->vertexBufferBinding;
   size_t offset = 0;
@@ -341,120 +440,61 @@ void MovableText::_setupGeometry()
   offset += VertexElement::getTypeSize(VET_FLOAT3);
 
   if (!decl->findElementBySemantic(VES_TEXTURE_COORDINATES)) {
-    decl->addElement(POS_TEX_BINDING, offset, Ogre::VET_FLOAT2,
-      Ogre::VES_TEXTURE_COORDINATES, 0);
+    decl->addElement(POS_TEX_BINDING, offset, VET_FLOAT2,
+      VES_TEXTURE_COORDINATES, 0);
   }
 
-  HardwareVertexBufferSharedPtr ptbuf =
+  HardwareVertexBufferSharedPtr position_and_texture_buffer =
     HardwareBufferManager::getSingleton().createVertexBuffer(
     decl->getVertexSize(POS_TEX_BINDING),
     mRenderOp.vertexData->vertexCount,
     HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY);
-  bind->setBinding(POS_TEX_BINDING, ptbuf);
+  bind->setBinding(POS_TEX_BINDING, position_and_texture_buffer);
 
   // Colours - store these in a separate buffer because they change less often
   if (!decl->findElementBySemantic(VES_DIFFUSE)) {
     decl->addElement(COLOUR_BINDING, 0, VET_COLOUR, VES_DIFFUSE);
   }
 
-  HardwareVertexBufferSharedPtr cbuf =
+  HardwareVertexBufferSharedPtr color_buffer =
     HardwareBufferManager::getSingleton().createVertexBuffer(
     decl->getVertexSize(COLOUR_BINDING),
     mRenderOp.vertexData->vertexCount,
     HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY);
-  bind->setBinding(COLOUR_BINDING, cbuf);
+  bind->setBinding(COLOUR_BINDING, color_buffer);
+  return position_and_texture_buffer;
+}
 
-  float * pPCBuff =
-    static_cast<float *>(ptbuf->lock(HardwareBuffer::HBL_DISCARD));
+void MovableText::setupRenderOperation()
+{
+  unsigned int vertex_count = calculateVertexCount();
 
-  Real spaceWidth = mSpaceWidth;
-  // Derive space width from a capital A
-  if (spaceWidth == 0) {
-    spaceWidth = mpFont->getGlyphAspectRatio('A') * mCharHeight * 2.0f;
+  if (mRenderOp.vertexData) {
+    delete mRenderOp.vertexData;
+    mRenderOp.vertexData = nullptr;
+    mUpdateColors = true;
   }
 
-  float total_height = mCharHeight * 2.0f;
-  float total_width = 0.0f;
-  float current_width = 0.0f;
-  for (auto & iterator : mCaption) {
-    if (iterator == '\n') {
-      total_height += mCharHeight * 2.0f + mLineSpacing;
-      total_width = current_width > total_width ? current_width : total_width;
-    } else if(iterator == ' ') {
-      current_width += spaceWidth;
-    } else {
-      current_width += mpFont->getGlyphAspectRatio(iterator) * mCharHeight * 2.0f;
+  if (!mRenderOp.vertexData) {
+    mRenderOp.vertexData = new VertexData();
+  }
+
+  mRenderOp.indexData = nullptr;
+  mRenderOp.vertexData->vertexStart = 0;
+  mRenderOp.vertexData->vertexCount = vertex_count;
+  mRenderOp.operationType = RenderOperation::OT_TRIANGLE_LIST;
+  mRenderOp.useIndexes = false;
+}
+
+unsigned int MovableText::calculateVertexCount() const
+{
+  unsigned int vertex_count = 0;
+  for (auto & character : mCaption) {
+    if ((character != ' ') && (character != '\n')) {
+      vertex_count += 6;
     }
   }
-  total_width = current_width > total_width ? current_width : total_width;
-
-  float top = 0.0f;
-  switch (mVerticalAlignment) {
-    case MovableText::V_ABOVE:
-      top = total_height;
-      break;
-    case MovableText::V_CENTER:
-      top = 0.5f * total_height;
-      break;
-    case MovableText::V_BELOW:
-      top = 0.0f;
-      break;
-  }
-
-  float starting_left = 0.0f;
-  switch (mHorizontalAlignment) {
-    case MovableText::H_LEFT:
-      starting_left = 0.0f;
-      break;
-    case MovableText::H_CENTER:
-      starting_left = -total_width / 2.0f;
-      break;
-  }
-
-
-  auto buffer = TextBuffer(pPCBuff);
-  buffer.left_ = starting_left;
-  buffer.top_ = top;
-
-  for (i = mCaption.begin(); i != iend; ++i) {
-    if (*i == '\n') {
-      buffer.left_ = starting_left;
-      buffer.top_ -= mCharHeight * 2.0f + mLineSpacing;
-      continue;
-    }
-
-    if (*i == ' ') {
-      // Just leave a gap, no triangles
-      buffer.left_ += spaceWidth;
-      continue;
-    }
-
-    Real char_aspect_ratio = mpFont->getGlyphAspectRatio(*i);
-    buffer.text_coords_ = mpFont->getGlyphTexCoords(*i);
-
-    buffer.addTopLeft();
-    buffer.addBottomLeft(mCharHeight);
-    buffer.addTopRight(char_aspect_ratio * mCharHeight);
-
-    buffer.addTopRight(char_aspect_ratio * mCharHeight);
-    buffer.addBottomLeft(mCharHeight);
-    buffer.addBottomRight(char_aspect_ratio * mCharHeight, mCharHeight);
-
-    buffer.left_ += char_aspect_ratio * mCharHeight * 2.0;
-  }
-
-  // Unlock vertex buffer
-  ptbuf->unlock();
-
-  // update AABB/Sphere radius
-  mAABB = Ogre::AxisAlignedBox(buffer.min_, buffer.max_);
-  mRadius = Ogre::Math::Sqrt(buffer.max_squared_radius_);
-
-  if (mUpdateColors) {
-    this->_updateColors();
-  }
-
-  mNeedUpdate = false;
+  return vertex_count;
 }
 
 void MovableText::_updateColors(void)

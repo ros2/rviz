@@ -249,6 +249,24 @@ protected:
   {
     return mLList;
   }
+
+  unsigned int calculateVertexCount() const;
+
+  void setupRenderOperation();
+
+  Ogre::HardwareVertexBufferSharedPtr setupHardwareBuffers() const;
+
+  void fillVertexBuffer(Ogre::HardwareVertexBufferSharedPtr & position_and_texture_buffer,
+    float top, float starting_left);
+
+  float getLineStartFromHorizontalAlignment(float total_width) const;
+
+  float getVerticalStartFromVerticalAlignment(float total_height) const;
+
+  void
+  calculateTotalDimensionsForPositioning(float & total_height, float & total_width) const;
+
+  Ogre::Real getNonzeroSpaceWidth(Ogre::Real effective_char_height) const;
 };
 
 }  // namespace rviz_rendering
