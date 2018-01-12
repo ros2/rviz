@@ -49,8 +49,7 @@ if(NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LESS 4.1.0)
   build_assimp()
 
   if(WIN32)
-    # TODO(wjwwood): do this for Windows too
-    # ament_environment_hooks(env_hook/rviz_assimp_vendor_library_path.bat)
+    ament_environment_hooks(env_hook/rviz_assimp_vendor_library_path.bat)
   else()
     ament_environment_hooks(env_hook/rviz_assimp_vendor_library_path.sh)
   endif()

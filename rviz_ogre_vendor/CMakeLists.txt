@@ -162,8 +162,7 @@ endif()
 build_ogre()
 
 if(WIN32)
-  # TODO(wjwwood): do this for Windows too
-  # ament_environment_hooks(env_hook/rviz_ogre_vendor_library_path.bat)
+  ament_environment_hooks(env_hook/rviz_ogre_vendor_library_path.bat)
 else()
   ament_environment_hooks(env_hook/rviz_ogre_vendor_library_path.sh)
 endif()
