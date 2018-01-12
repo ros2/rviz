@@ -265,8 +265,6 @@ protected:
 
   void
   calculateTotalDimensionsForPositioning(float & total_height, float & total_width) const;
-
-  Ogre::Real getNonzeroSpaceWidth(Ogre::Real effective_char_height) const;
 };
 
 }  // namespace rviz_rendering

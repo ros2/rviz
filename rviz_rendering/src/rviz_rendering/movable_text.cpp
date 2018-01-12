@@ -113,6 +113,10 @@ MovableText::MovableText(
 
   mRenderOp.vertexData = NULL;
   this->setFontName(mFontName);
+  // Set a reasonable default space width
+  if (mSpaceWidth == 0) {
+    mSpaceWidth = mpFont->getGlyphAspectRatio('A') * mCharHeight * EFFECTIVE_CHAR_HEIGHT_FACTOR;
+  }
   this->_setupGeometry();
 }
 
@@ -322,22 +326,10 @@ void MovableText::_setupGeometry()
   mNeedUpdate = false;
 }
 
-Real MovableText::getNonzeroSpaceWidth(Real effective_char_height) const
-{
-  Real space_width = mSpaceWidth;
-  // TODO(Martin-Idel-SI): Investigate setting a sensible default value from the start
-  // Derive a default space_width if set to zero
-  if (space_width == 0) {
-    space_width = mpFont->getGlyphAspectRatio('A') * effective_char_height;
-  }
-  return space_width;
-}
-
 void
 MovableText::calculateTotalDimensionsForPositioning(float & total_height, float & total_width) const
 {
   Real effective_char_height = mCharHeight * EFFECTIVE_CHAR_HEIGHT_FACTOR;
-  Real space_width = getNonzeroSpaceWidth(effective_char_height);
 
   total_height = effective_char_height;
   total_width = 0.0f;
@@ -347,7 +339,7 @@ MovableText::calculateTotalDimensionsForPositioning(float & total_height, float 
       total_height += effective_char_height + mLineSpacing;
       total_width = current_width > total_width ? current_width : total_width;
     } else if(character == ' ') {
-      current_width += space_width;
+      current_width += mSpaceWidth;
     } else {
       current_width += mpFont->getGlyphAspectRatio(character) * effective_char_height;
     }
@@ -385,7 +377,6 @@ void MovableText::fillVertexBuffer(HardwareVertexBufferSharedPtr & position_and_
   float top, float starting_left)
 {
   Real effective_char_height = mCharHeight * EFFECTIVE_CHAR_HEIGHT_FACTOR;
-  Real space_width = getNonzeroSpaceWidth(effective_char_height);
 
   float * hardware_buffer =
     static_cast<float *>(position_and_texture_buffer->lock(HardwareBuffer::HBL_DISCARD));
@@ -402,7 +393,7 @@ void MovableText::fillVertexBuffer(HardwareVertexBufferSharedPtr & position_and_
     }
 
     if (character == ' ') {
-      buffer.left_ += space_width;
+      buffer.left_ += mSpaceWidth;
       continue;
     }
 
