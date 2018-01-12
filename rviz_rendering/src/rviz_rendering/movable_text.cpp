@@ -44,6 +44,7 @@
 #include "rviz_rendering/movable_text.hpp"
 
 #include <algorithm>
+#include <limits>
 #include <sstream>
 #include <string>
 
@@ -242,8 +243,8 @@ struct TextBuffer
 
   explicit TextBuffer(float * buffer)
   : buffer_(buffer),
-    min_(9999999.0f),
-    max_(-999999.0f),
+    min_(std::numeric_limits<float>::max()),
+    max_(std::numeric_limits<float>::min()),
     max_squared_radius_(0),
     top_(0),
     left_(0)

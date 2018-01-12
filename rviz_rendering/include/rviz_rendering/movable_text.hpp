@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,7 +35,7 @@
 /*
  * File: MovableText.h
  *
- * description: This create a billboarding object that displays a text.
+ * description: This creates a billboarding object that displays a text.
  *
  * @author  2003 by cTh see gavocanov@rambler.ru
  * @update  2006 by barraq see nospam@barraquand.com
@@ -154,10 +155,10 @@ public:
     return material_;
   }
 
-  void getRenderOperation(Ogre::RenderOperation & op) override;
-
   void
   visitRenderables(Ogre::Renderable::Visitor * visitor, bool debug_renderables) override;
+
+  void update();
 
 protected:
   void setupGeometry();
@@ -197,7 +198,7 @@ protected:
 
   void fillColorBuffer(Ogre::RGBA color) const;
 
-  void update();
+  void getRenderOperation(Ogre::RenderOperation & op) override;
 
 private:
   Ogre::String font_name_;

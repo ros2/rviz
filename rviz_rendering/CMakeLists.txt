@@ -211,7 +211,8 @@ if(BUILD_TESTING)
   #   )
   # endif()
 
-  ament_add_gtest(movable_text_test_target src/test/movable_text_test.cpp)
+  ament_add_gtest(movable_text_test_target src/test/movable_text_test.cpp
+    APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
   if(TARGET movable_text_test_target)
     target_link_libraries(movable_text_test_target
       rviz_ogre_vendor::OgreMain

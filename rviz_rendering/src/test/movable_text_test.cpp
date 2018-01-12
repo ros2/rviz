@@ -56,9 +56,7 @@ protected:
 std::shared_ptr<rviz_rendering::OgreTestingEnvironment>
 MovableTextTestFixture::testing_environment_ = nullptr;
 
-float getCharWidth(
-  std::shared_ptr<rviz_rendering::MovableText> movable_text,
-  char character)
+float getCharWidth(std::shared_ptr<rviz_rendering::MovableText> movable_text, char character)
 {
   auto font =
     Ogre::FontManager::getSingleton().getByName("Liberation Sans", "rviz_rendering").get();
@@ -68,10 +66,16 @@ float getCharWidth(
   return font->getGlyphAspectRatio(character) * char_height * additional_space;
 }
 
-void update(std::shared_ptr<rviz_rendering::MovableText> movable_text)
+void assertVector3Equality(Ogre::Vector3 actual, Ogre::Vector3 expected)
 {
-  auto op = Ogre::RenderOperation();
-  movable_text->getRenderOperation(op);
+  ASSERT_NEAR(actual.x, expected.x, 0.0001);
+  ASSERT_NEAR(actual.y, expected.y, 0.0001);
+  ASSERT_NEAR(actual.z, expected.z, 0.0001);
+}
+void assertBoundingBoxEquality(Ogre::AxisAlignedBox actual, Ogre::AxisAlignedBox expected)
+{
+  assertVector3Equality(actual.getMaximum(), expected.getMaximum());
+  assertVector3Equality(actual.getMinimum(), expected.getMinimum());
 }
 
 TEST_F(MovableTextTestFixture, setCaption_changes_displayed_text) {
@@ -86,7 +90,7 @@ TEST_F(MovableTextTestFixture, bounding_box_for_one_character_text_depends_on_gl
   auto movable_text = std::make_shared<rviz_rendering::MovableText>("W");
 
   float char_width = getCharWidth(movable_text, 'W');
-  ASSERT_EQ(movable_text->getBoundingBox(),
+  assertBoundingBoxEquality(movable_text->getBoundingBox(),
     Ogre::AxisAlignedBox(Ogre::Vector3(0, -2, 0), Ogre::Vector3(char_width, 0, 0)));
 }
 
@@ -94,7 +98,7 @@ TEST_F(MovableTextTestFixture, bounding_box_space_is_given_by_bounding_box_for_A
   auto movable_text = std::make_shared<rviz_rendering::MovableText>("A A");
 
   float char_width = getCharWidth(movable_text, 'A');
-  ASSERT_EQ(movable_text->getBoundingBox(),
+  assertBoundingBoxEquality(movable_text->getBoundingBox(),
     Ogre::AxisAlignedBox(Ogre::Vector3(0, -2, 0), Ogre::Vector3(3 * char_width, 0, 0)));
 }
 
@@ -102,7 +106,7 @@ TEST_F(MovableTextTestFixture, new_line_creates_a_new_line_making_bounding_box_l
   auto movable_text = std::make_shared<rviz_rendering::MovableText>("A\nA");
 
   float char_width = getCharWidth(movable_text, 'A');
-  ASSERT_EQ(movable_text->getBoundingBox(),
+  assertBoundingBoxEquality(movable_text->getBoundingBox(),
     Ogre::AxisAlignedBox(Ogre::Vector3(0, -4 - 0.01f, 0), Ogre::Vector3(char_width, 0, 0)));
 }
 
@@ -110,7 +114,7 @@ TEST_F(MovableTextTestFixture, larger_char_height_makes_characters_wider) {
   auto movable_text = std::make_shared<rviz_rendering::MovableText>("A", "Liberation Sans", 2.0);
 
   float char_width = getCharWidth(movable_text, 'A');
-  ASSERT_EQ(movable_text->getBoundingBox(),
+  assertBoundingBoxEquality(movable_text->getBoundingBox(),
     Ogre::AxisAlignedBox(Ogre::Vector3(0, -2 * 2.0f, 0), Ogre::Vector3(char_width, 0, 0)));
 }
 
@@ -119,10 +123,10 @@ TEST_F(MovableTextTestFixture, horizontal_alignment_center_centers_x_coordinate)
 
   movable_text->setTextAlignment(rviz_rendering::MovableText::HorizontalAlignment::H_CENTER,
     rviz_rendering::MovableText::VerticalAlignment::V_BELOW);
-  update(movable_text);
+  movable_text->update();
 
   float char_width = getCharWidth(movable_text, 'W');
-  ASSERT_EQ(movable_text->getBoundingBox(),
+  assertBoundingBoxEquality(movable_text->getBoundingBox(),
     Ogre::AxisAlignedBox(Ogre::Vector3(-char_width / 2, -2, 0),
     Ogre::Vector3(char_width / 2, 0, 0)));
 }
@@ -132,10 +136,10 @@ TEST_F(MovableTextTestFixture, vertical_alignment_center_centers_y_coordinate) {
 
   movable_text->setTextAlignment(rviz_rendering::MovableText::HorizontalAlignment::H_LEFT,
     rviz_rendering::MovableText::VerticalAlignment::V_CENTER);
-  update(movable_text);
+  movable_text->update();
 
   float char_width = getCharWidth(movable_text, 'W');
-  ASSERT_EQ(movable_text->getBoundingBox(),
+  assertBoundingBoxEquality(movable_text->getBoundingBox(),
     Ogre::AxisAlignedBox(Ogre::Vector3(0, -1, 0), Ogre::Vector3(char_width, 1, 0)));
 }
 
@@ -144,23 +148,22 @@ TEST_F(MovableTextTestFixture, vertical_alignment_above_puts_y_coordinate_above_
 
   movable_text->setTextAlignment(rviz_rendering::MovableText::HorizontalAlignment::H_LEFT,
     rviz_rendering::MovableText::VerticalAlignment::V_ABOVE);
-  update(movable_text);
+  movable_text->update();
 
   float char_width = getCharWidth(movable_text, 'W');
-  ASSERT_EQ(movable_text->getBoundingBox(),
+  assertBoundingBoxEquality(movable_text->getBoundingBox(),
     Ogre::AxisAlignedBox(Ogre::Vector3(0, 0, 0), Ogre::Vector3(char_width, 2, 0)));
 }
 
-// TODO(Martin-Idel-SI): This test doesn't work, find out why
 TEST_F(MovableTextTestFixture, vertical_alignment_above_puts_y_coordinate_above) {
   auto movable_text = std::make_shared<rviz_rendering::MovableText>("W\nW");
 
   movable_text->setTextAlignment(rviz_rendering::MovableText::HorizontalAlignment::H_LEFT,
     rviz_rendering::MovableText::VerticalAlignment::V_ABOVE);
-  update(movable_text);
+  movable_text->update();
 
   float char_width = getCharWidth(movable_text, 'W');
-  ASSERT_EQ(movable_text->getBoundingBox(),
+  assertBoundingBoxEquality(movable_text->getBoundingBox(),
     Ogre::AxisAlignedBox(Ogre::Vector3(0, 0, 0), Ogre::Vector3(char_width, 4.01, 0)));
 }
 
@@ -169,10 +172,10 @@ TEST_F(MovableTextTestFixture, setSpaceWidth_changes_width_of_space_character) {
 
   float new_space_width = 0.5f;
   movable_text->setSpaceWidth(new_space_width);
-  update(movable_text);
+  movable_text->update();
 
   float char_width = getCharWidth(movable_text, 'A');
-  ASSERT_EQ(movable_text->getBoundingBox(),
+  assertBoundingBoxEquality(movable_text->getBoundingBox(),
     Ogre::AxisAlignedBox(Ogre::Vector3(0, -2, 0),
     Ogre::Vector3(2 * char_width + new_space_width, 0, 0)));
 }
@@ -182,10 +185,10 @@ TEST_F(MovableTextTestFixture, setLineSpacing_changes_space_between_lines) {
 
   float new_line_spacing = 0.5f;
   movable_text->setLineSpacing(new_line_spacing);
-  update(movable_text);
+  movable_text->update();
 
   float char_width = getCharWidth(movable_text, 'A');
-  ASSERT_EQ(movable_text->getBoundingBox(),
+  assertBoundingBoxEquality(movable_text->getBoundingBox(),
     Ogre::AxisAlignedBox(Ogre::Vector3(0, -2 * 2 - new_line_spacing, 0),
     Ogre::Vector3(char_width, 0, 0)));
 }
@@ -195,10 +198,10 @@ TEST_F(MovableTextTestFixture, horizontal_alignment_works_correctly_with_spaces)
 
   movable_text->setTextAlignment(rviz_rendering::MovableText::HorizontalAlignment::H_CENTER,
     rviz_rendering::MovableText::VerticalAlignment::V_BELOW);
-  update(movable_text);
+  movable_text->update();
 
   float char_width = getCharWidth(movable_text, 'A');
-  ASSERT_EQ(movable_text->getBoundingBox(),
+  assertBoundingBoxEquality(movable_text->getBoundingBox(),
     Ogre::AxisAlignedBox(Ogre::Vector3(-3 * char_width / 2, -2, 0),
     Ogre::Vector3(3 * char_width / 2, 0, 0)));
 }
