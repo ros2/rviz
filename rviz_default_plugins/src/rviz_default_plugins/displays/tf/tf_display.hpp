@@ -34,10 +34,14 @@
 #include <memory>
 #include <set>
 #include <string>
+#include <vector>
 
 #include <OgreQuaternion.h>
 #include <OgreVector3.h>
 
+#include "geometry_msgs/msg/transform_stamped__struct.hpp"
+#include "tf2/exceptions.h"
+#include "tf2/buffer_core.h"
 #include "tf2/time.h"
 
 #include "rviz_common/selection/forwards.hpp"
@@ -78,6 +82,7 @@ class FrameInfo;
 class FrameSelectionHandler;
 
 typedef std::shared_ptr<FrameSelectionHandler> FrameSelectionHandlerPtr;
+typedef std::set<FrameInfo *> S_FrameInfo;
 
 /** @brief Displays a visual representation of the TF hierarchy. */
 class TFDisplay : public rviz_common::Display
@@ -87,46 +92,32 @@ class TFDisplay : public rviz_common::Display
 public:
   TFDisplay();
 
-  virtual ~TFDisplay();
+  ~TFDisplay() override;
 
-  virtual void update(float wall_dt, float ros_dt);
+  void update(float wall_dt, float ros_dt) override;
 
 protected:
-  // Overrides from Display
-  virtual void onInitialize();
-
-  virtual void load(const rviz_common::Config & config);
-
-  virtual void fixedFrameChanged();
-
-  virtual void reset();
+  void onInitialize() override;
+  void load(const rviz_common::Config & config) override;
+  void fixedFrameChanged() override;
+  void reset() override;
 
 private Q_SLOTS:
   void updateShowAxes();
-
   void updateShowArrows();
-
   void updateShowNames();
-
   void allEnabledChanged();
 
 private:
   void updateFrames();
-
   FrameInfo * createFrame(const std::string & frame);
-
   void updateFrame(FrameInfo * frame);
-
   void deleteFrame(FrameInfo * frame, bool delete_properties);
-
   FrameInfo * getFrameInfo(const std::string & frame);
-
   void clear();
 
-  // overrides from Display
-  virtual void onEnable();
-
-  virtual void onDisable();
+  void onEnable() override;
+  void onDisable() override;
 
   Ogre::SceneNode * root_node_;
   Ogre::SceneNode * names_node_;
@@ -154,6 +145,34 @@ private:
   rviz_common::properties::Property * tree_category_;
 
   bool changing_single_frame_enabled_state_;
+
+  void updateParentArrow(
+    FrameInfo * frame,
+    const Ogre::Vector3 & position,
+    const Ogre::Vector3 & parent_position,
+    float scale) const;
+  geometry_msgs::msg::TransformStamped_<std::allocator<void>> setupEmptyTransform() const;
+  void updateRelativePositionAndOrientation(
+    const FrameInfo * frame,
+    std::shared_ptr<tf2::BufferCore> tf_buffer) const;
+  void updateTreeProperty(FrameInfo * frame, Property * tree_property) const;
+  void updateColorForAge(const FrameInfo * frame, double age, double frame_timeout) const;
+  void updatePositionAndOrientation(
+    const FrameInfo * frame,
+    const Ogre::Vector3 & position,
+    const Ogre::Quaternion & orientation,
+    float scale) const;
+  void hideFrame(const FrameInfo * frame) const;
+  void setLastUpdate(FrameInfo * frame, const tf2::TimePoint & latest_time) const;
+  void logTransformationException(
+    const std::string & parent_frame,
+    const std::string & child_frame,
+    const std::string & message = "") const;
+  void updateParentArrowIfTransformExists(FrameInfo * frame, const Ogre::Vector3 & position) const;
+  bool noTreePropertyOrParentChanged(const FrameInfo * frame, const std::string & old_parent) const;
+  void updateParentTreeProperty(FrameInfo * frame) const;
+  void deleteObsoleteFrames(std::set<FrameInfo *> & current_frames);
+  S_FrameInfo createOrUpdateFrames(const std::vector<std::string> & frames);
 
   friend class FrameInfo;
 };
