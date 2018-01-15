@@ -37,14 +37,15 @@
 #include <OgreRenderTargetListener.h>
 #include <OgreSharedPtr.h>
 
-# include <sensor_msgs/CameraInfo.h>
+# include <sensor_msgs/msg/camera_info.hpp>
 
-# include <message_filters/subscriber.h>
-# include <tf/message_filter.h>
+// TODO(Martin-Idel-SI): Do we need those?
+//# include <message_filters/subscriber.h>
+//# include <tf/message_filter.h>
 
-# include "rviz/image/image_display_base.h"
-# include "rviz/image/ros_image_texture.h"
-# include "rviz/render_panel.h"
+# include "rviz_common/ros_topic_display.hpp"
+# include "rviz_common/render_panel.hpp"
+# include "../image/ros_image_texture.hpp"
 #endif
 
 namespace Ogre
@@ -55,7 +56,9 @@ class Rectangle2D;
 class Camera;
 }
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 class EnumProperty;
@@ -65,26 +68,41 @@ class RenderPanel;
 class RosTopicProperty;
 class DisplayGroupVisibilityProperty;
 
+}  // namespace properties
+}  // namespace rviz_common
+
+namespace rviz_default_plugins {
+
+namespace displays
+{
+
 /**
  * \class CameraDisplay
  *
  */
-class CameraDisplay: public ImageDisplayBase, public Ogre::RenderTargetListener
+class CameraDisplay
+  : public rviz_common::RosTopicDisplay<sensor_msgs::msg::CameraInfo > ,
+    public Ogre::RenderTargetListener
 {
 Q_OBJECT
 public:
   CameraDisplay();
+
   virtual ~CameraDisplay();
 
   // Overrides from Display
   virtual void onInitialize();
+
   virtual void fixedFrameChanged();
-  virtual void update( float wall_dt, float ros_dt );
+
+  virtual void update(float wall_dt, float ros_dt);
+
   virtual void reset();
 
   // Overrides from Ogre::RenderTargetListener
-  virtual void preRenderTargetUpdate( const Ogre::RenderTargetEvent& evt );
-  virtual void postRenderTargetUpdate( const Ogre::RenderTargetEvent& evt );
+  virtual void preRenderTargetUpdate(const Ogre::RenderTargetEvent & evt);
+
+  virtual void postRenderTargetUpdate(const Ogre::RenderTargetEvent & evt);
 
   static const QString BACKGROUND;
   static const QString OVERLAY;
@@ -93,47 +111,54 @@ public:
 protected:
   // overrides from Display
   virtual void onEnable();
+
   virtual void onDisable();
 
   ROSImageTexture texture_;
-  RenderPanel* render_panel_;
+  rviz_common::RenderPanel * render_panel_;
 
 private Q_SLOTS:
+
   void forceRender();
+
   void updateAlpha();
 
   virtual void updateQueueSize();
 
 private:
   void subscribe();
+
   void unsubscribe();
 
-  virtual void processMessage(const sensor_msgs::Image::ConstPtr& msg);
-  void caminfoCallback( const sensor_msgs::CameraInfo::ConstPtr& msg );
+  virtual void processMessage(const sensor_msgs::msg::Image::ConstSharedPtr & msg);
+
+  void caminfoCallback(const sensor_msgs::msg::CameraInfo::ConstSharedPtr & msg);
 
   bool updateCamera();
 
   void clear();
+
   void updateStatus();
 
-  Ogre::SceneNode* bg_scene_node_;
-  Ogre::SceneNode* fg_scene_node_;
+  Ogre::SceneNode * bg_scene_node_;
+  Ogre::SceneNode * fg_scene_node_;
 
-  Ogre::Rectangle2D* bg_screen_rect_;
+  Ogre::Rectangle2D * bg_screen_rect_;
   Ogre::MaterialPtr bg_material_;
 
-  Ogre::Rectangle2D* fg_screen_rect_;
+  Ogre::Rectangle2D * fg_screen_rect_;
   Ogre::MaterialPtr fg_material_;
 
-  message_filters::Subscriber<sensor_msgs::CameraInfo> caminfo_sub_;
-  tf::MessageFilter<sensor_msgs::CameraInfo>* caminfo_tf_filter_;
+  // TODO(Martin-Idel-SI): See whether we still need those
+//  message_filters::Subscriber<sensor_msgs::msg::CameraInfo> caminfo_sub_;
+//  tf::MessageFilter<sensor_msgs::msg::CameraInfo>* caminfo_tf_filter_;
 
-  FloatProperty* alpha_property_;
-  EnumProperty* image_position_property_;
-  FloatProperty* zoom_property_;
-  DisplayGroupVisibilityProperty* visibility_property_;
+  rviz_common::properties::FloatProperty * alpha_property_;
+  rviz_common::properties::EnumProperty * image_position_property_;
+  rviz_common::properties::FloatProperty * zoom_property_;
+  rviz_common::properties::DisplayGroupVisibilityProperty * visibility_property_;
 
-  sensor_msgs::CameraInfo::ConstPtr current_caminfo_;
+  sensor_msgs::msg::CameraInfo::ConstSharedPtr current_caminfo_;
   boost::mutex caminfo_mutex_;
 
   bool new_caminfo_;
@@ -145,6 +170,8 @@ private:
   uint32_t vis_bit_;
 };
 
-} // namespace rviz
+}  // namespace displays
+
+}  // namespace rviz_default_plugins
 
  #endif

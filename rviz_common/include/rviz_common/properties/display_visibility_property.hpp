@@ -27,75 +27,70 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DISPLAY_GROUP_VISIBILITY_PROPERTY_H_
-#define RVIZ_DISPLAY_GROUP_VISIBILITY_PROPERTY_H_
+#ifndef RVIZ_COMMON__PROPERTIES__DISPLAY_VISIBILITY_PROPERTY_HPP_
+#define RVIZ_COMMON__PROPERTIES__DISPLAY_VISIBILITY_PROPERTY_HPP_
 
-#include "display_visibility_property.h"
-
-#include <stdint.h>
-
+#include <cstdint>
 #include <map>
 #include <string>
 
 #include <QObject>
 #include <QString>
 
-namespace rviz
+#include "rviz_common/properties/bool_property.hpp"
+
+namespace rviz_common
 {
 
 class DisplayContext;
+
+class Display;
+
+namespace properties
+{
 class Property;
+
 class BoolProperty;
-class DisplayGroup;
-class BoolProperty;
+
 class DisplayVisibilityProperty;
 
-
 /*
- * Manages the visibility of all displays in a display group
- * by switching one bit in Ogre's visibility mask.
+ * @brief Changes one visibility bit of a given Display
  */
-class DisplayGroupVisibilityProperty: public DisplayVisibilityProperty
+class DisplayVisibilityProperty : public BoolProperty
 {
-  Q_OBJECT
+Q_OBJECT
 public:
+  DisplayVisibilityProperty(
+    uint32_t vis_bit,
+    Display * display,
+    const QString & name = QString(),
+    bool default_value = false,
+    const QString & description = QString(),
+    Property * parent = 0,
+    const char * changed_slot = 0,
+    QObject * receiver = 0);
 
-  /* @param parent Parent display (will not get a visibility property)
-   * @param context The display context
-   * @param root_property Where to attach new properties to
-   */
-  DisplayGroupVisibilityProperty(
-      uint32_t vis_bit,
-      DisplayGroup* display_group,
-      Display* parent_display,
-      const QString& name = QString(),
-      bool default_value = false,
-      const QString& description = QString(),
-      Property* parent = 0,
-      const char *changed_slot = 0,
-      QObject* receiver = 0 );
-  virtual ~DisplayGroupVisibilityProperty();
+  virtual ~DisplayVisibilityProperty();
 
-  // @brief Update visibility masks of all objects in the Ogre scene
   virtual void update();
+
+  virtual bool getBool() const;
+
+  Qt::ItemFlags getViewFlags(int column) const;
 
 public Q_SLOTS:
 
-  void onDisplayAdded( rviz::Display* display );
-  void onDisplayRemoved( rviz::Display* display );
+  virtual bool setValue(const QVariant & new_value);
 
-private:
-
-  // sort the properties in the same way as in the
-  // root display group
-  void sortDisplayList();
-
-  DisplayGroup* display_group_;
-  std::map<rviz::Display*, DisplayVisibilityProperty*> disp_vis_props_;
-  Display* parent_display_;
+protected:
+  uint32_t vis_bit_;
+  Display * display_;
+  bool custom_name_;
 };
 
+}  // namespace properties
 
-}
+}  // namespace rviz_common
 
-#endif /* DISPLAY_VISIBILITY_MANAGER_H_ */
+#endif  // RVIZ_COMMON__PROPERTIES__DISPLAY_VISIBILITY_PROPERTY_HPP_

@@ -81,6 +81,8 @@ set(rviz_common_headers_to_moc
   include/rviz_common/properties/color_editor.hpp
   include/rviz_common/properties/color_property.hpp
   include/rviz_common/properties/combo_box.hpp
+  include/rviz_common/properties/display_group_visibility_property.hpp
+  include/rviz_common/properties/display_visibility_property.hpp
   include/rviz_common/properties/editable_combo_box.hpp
   include/rviz_common/properties/editable_enum_property.hpp
   include/rviz_common/properties/float_edit.hpp
@@ -155,6 +157,8 @@ set(rviz_common_source_files
   src/rviz_common/properties/color_editor.cpp
   src/rviz_common/properties/color_property.cpp
   src/rviz_common/properties/combo_box.cpp
+  src/rviz_common/properties/display_group_visibility_property.cpp
+  src/rviz_common/properties/display_visibility_property.cpp
   src/rviz_common/properties/editable_combo_box.cpp
   src/rviz_common/properties/editable_enum_property.cpp
   src/rviz_common/properties/enum_property.cpp
