@@ -65,6 +65,7 @@ set(rviz_common_headers_to_moc
   include/rviz_common/properties/property_tree_widget.hpp
   include/rviz_common/properties/splitter_handle.hpp
   # src/rviz_common/selection_panel.hpp
+  include/rviz_common/display_group.hpp
   include/rviz_common/frame_position_tracking_view_controller.hpp
   include/rviz_common/properties/quaternion_property.hpp
   include/rviz_common/visualizer_app.hpp

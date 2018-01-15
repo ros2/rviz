@@ -30,7 +30,10 @@
 #ifndef RVIZ_CAMERA_DISPLAY_H
 #define RVIZ_CAMERA_DISPLAY_H
 
-#include <QObject>
+#include <cstdint>
+#include <mutex>
+
+#include <QObject>  // NOLINT: cpplint cannot handle the include order here
 
 #ifndef Q_MOC_RUN
 #include <OgreMaterial.h>
@@ -46,6 +49,8 @@
 # include "rviz_common/ros_topic_display.hpp"
 # include "rviz_common/render_panel.hpp"
 # include "../image/ros_image_texture.hpp"
+
+#include "rviz_rendering/render_window.hpp"
 #endif
 
 namespace Ogre
@@ -81,28 +86,28 @@ namespace displays
  *
  */
 class CameraDisplay
-  : public rviz_common::RosTopicDisplay<sensor_msgs::msg::CameraInfo > ,
+  : public rviz_common::RosTopicDisplay<sensor_msgs::msg::Image> ,
     public Ogre::RenderTargetListener
 {
 Q_OBJECT
 public:
   CameraDisplay();
 
-  virtual ~CameraDisplay();
+  ~CameraDisplay() override;
 
   // Overrides from Display
-  virtual void onInitialize();
+  void onInitialize() override;
 
-  virtual void fixedFrameChanged();
+  void fixedFrameChanged() override;
 
-  virtual void update(float wall_dt, float ros_dt);
+  void update(float wall_dt, float ros_dt) override;
 
-  virtual void reset();
+  void reset() override;
 
   // Overrides from Ogre::RenderTargetListener
-  virtual void preRenderTargetUpdate(const Ogre::RenderTargetEvent & evt);
+  void preRenderTargetUpdate(const Ogre::RenderTargetEvent & evt) override;
 
-  virtual void postRenderTargetUpdate(const Ogre::RenderTargetEvent & evt);
+  void postRenderTargetUpdate(const Ogre::RenderTargetEvent & evt) override;
 
   static const QString BACKGROUND;
   static const QString OVERLAY;
@@ -110,9 +115,11 @@ public:
 
 protected:
   // overrides from Display
-  virtual void onEnable();
+  void onEnable() override;
 
-  virtual void onDisable();
+  void onDisable() override;
+
+  void processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg) override;
 
   ROSImageTexture texture_;
   rviz_common::RenderPanel * render_panel_;
@@ -130,15 +137,13 @@ private:
 
   void unsubscribe();
 
-  virtual void processMessage(const sensor_msgs::msg::Image::ConstSharedPtr & msg);
-
   void caminfoCallback(const sensor_msgs::msg::CameraInfo::ConstSharedPtr & msg);
 
   bool updateCamera();
 
   void clear();
 
-  void updateStatus();
+  // void updateStatus();
 
   Ogre::SceneNode * bg_scene_node_;
   Ogre::SceneNode * fg_scene_node_;
@@ -159,12 +164,10 @@ private:
   rviz_common::properties::DisplayGroupVisibilityProperty * visibility_property_;
 
   sensor_msgs::msg::CameraInfo::ConstSharedPtr current_caminfo_;
-  boost::mutex caminfo_mutex_;
+  std::mutex caminfo_mutex_;
 
   bool new_caminfo_;
-
   bool caminfo_ok_;
-
   bool force_render_;
 
   uint32_t vis_bit_;

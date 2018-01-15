@@ -31,6 +31,7 @@ find_package(rclcpp REQUIRED)
 
 # These need to be added in the add_library() call so AUTOMOC detects them.
 set(rviz_default_plugins_headers_to_moc
+  src/rviz_default_plugins/displays/camera/camera_display.hpp
   src/rviz_default_plugins/displays/grid/grid_display.hpp
   src/rviz_default_plugins/displays/image/image_display.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp
@@ -43,6 +44,7 @@ set(rviz_default_plugins_headers_to_moc
 )
 
 set(rviz_default_plugins_source_files
+  src/rviz_default_plugins/displays/camera/camera_display.cpp
   src/rviz_default_plugins/displays/grid/grid_display.cpp
   src/rviz_default_plugins/displays/image/image_display.cpp
   src/rviz_default_plugins/displays/image/ros_image_texture.cpp

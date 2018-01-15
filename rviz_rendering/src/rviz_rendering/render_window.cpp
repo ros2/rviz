@@ -226,6 +226,12 @@ RenderWindowOgreAdapter::setOgreCamera(RenderWindow * render_window, Ogre::Camer
   render_window->impl_->setCamera(ogre_camera);
 }
 
+Ogre::Camera*
+RenderWindowOgreAdapter::getOgreCamera(RenderWindow * render_window)
+{
+  return render_window->impl_->getCamera();
+}
+
 Ogre::Viewport *
 RenderWindowOgreAdapter::getOgreViewport(RenderWindow * render_window)
 {
