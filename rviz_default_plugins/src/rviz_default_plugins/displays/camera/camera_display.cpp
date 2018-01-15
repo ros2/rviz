@@ -138,62 +138,9 @@ void CameraDisplay::onInitialize()
 //    fixed_frame_.toStdString(),
 //    queue_size_property_->getInt(), update_nh_);
 
-  bg_scene_node_ = scene_node_->createChildSceneNode();
-  fg_scene_node_ = scene_node_->createChildSceneNode();
 
-  {
-    static int count = 0;
-    rviz_common::UniformStringStream ss;
-    ss << "CameraDisplayObject" << count++;
 
-    //background rectangle
-    bg_screen_rect_ = new Ogre::Rectangle2D(true);
-    bg_screen_rect_->setCorners(-1.0f, 1.0f, 1.0f, -1.0f);
 
-    ss << "Material";
-    bg_material_ = Ogre::MaterialManager::getSingleton().create(ss.str(),
-      Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-    bg_material_->setDepthWriteEnabled(false);
-
-    bg_material_->setReceiveShadows(false);
-    bg_material_->setDepthCheckEnabled(false);
-
-    bg_material_->getTechnique(0)->setLightingEnabled(false);
-    Ogre::TextureUnitState * tu = bg_material_->getTechnique(0)->getPass(
-      0)->createTextureUnitState();
-    tu->setTextureName(texture_.getTexture()->getName());
-    tu->setTextureFiltering(Ogre::TFO_NONE);
-    tu->setAlphaOperation(Ogre::LBX_SOURCE1, Ogre::LBS_MANUAL, Ogre::LBS_CURRENT, 0.0);
-
-    bg_material_->setCullingMode(Ogre::CULL_NONE);
-    bg_material_->setSceneBlending(Ogre::SBT_REPLACE);
-
-    Ogre::AxisAlignedBox aabInf;
-    aabInf.setInfinite();
-
-    bg_screen_rect_->setRenderQueueGroup(Ogre::RENDER_QUEUE_BACKGROUND);
-    bg_screen_rect_->setBoundingBox(aabInf);
-    bg_screen_rect_->setMaterial(bg_material_);
-
-    bg_scene_node_->attachObject(bg_screen_rect_);
-    bg_scene_node_->setVisible(false);
-
-    //overlay rectangle
-    fg_screen_rect_ = new Ogre::Rectangle2D(true);
-    fg_screen_rect_->setCorners(-1.0f, 1.0f, 1.0f, -1.0f);
-
-    fg_material_ = bg_material_->clone(ss.str() + "fg");
-    fg_screen_rect_->setBoundingBox(aabInf);
-    fg_screen_rect_->setMaterial(fg_material_);
-
-    fg_material_->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
-    fg_screen_rect_->setRenderQueueGroup(Ogre::RENDER_QUEUE_OVERLAY - 1);
-
-    fg_scene_node_->attachObject(fg_screen_rect_);
-    fg_scene_node_->setVisible(false);
-  }
-
-  updateAlpha();
 
   render_panel_ = new rviz_common::RenderPanel();
 //  render_panel_->getRenderWindow()->addListener(this);
@@ -204,6 +151,64 @@ void CameraDisplay::onInitialize()
   render_panel_->initialize(context_);
 
   setAssociatedWidget(render_panel_);
+
+  render_panel_->getRenderWindow()->setupSceneAfterInit(
+    [this](Ogre::SceneNode * scene_node) {
+      bg_scene_node_ = scene_node->createChildSceneNode();
+      fg_scene_node_ = scene_node->createChildSceneNode();
+
+      static int count = 0;
+      rviz_common::UniformStringStream ss;
+      ss << "CameraDisplayObject" << count++;
+
+      //background rectangle
+      bg_screen_rect_ = new Ogre::Rectangle2D(true);
+      bg_screen_rect_->setCorners(-1.0f, 1.0f, 1.0f, -1.0f);
+
+      ss << "Material";
+      bg_material_ = Ogre::MaterialManager::getSingleton().create(ss.str(),
+        Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+      bg_material_->setDepthWriteEnabled(false);
+
+      bg_material_->setReceiveShadows(false);
+      bg_material_->setDepthCheckEnabled(false);
+
+      bg_material_->getTechnique(0)->setLightingEnabled(false);
+      Ogre::TextureUnitState * tu = bg_material_->getTechnique(0)->getPass(
+        0)->createTextureUnitState();
+      tu->setTextureName(texture_.getTexture()->getName());
+      tu->setTextureFiltering(Ogre::TFO_NONE);
+      tu->setAlphaOperation(Ogre::LBX_SOURCE1, Ogre::LBS_MANUAL, Ogre::LBS_CURRENT, 0.0);
+
+      bg_material_->setCullingMode(Ogre::CULL_NONE);
+      bg_material_->setSceneBlending(Ogre::SBT_REPLACE);
+
+      Ogre::AxisAlignedBox aabInf;
+      aabInf.setInfinite();
+
+      bg_screen_rect_->setRenderQueueGroup(Ogre::RENDER_QUEUE_BACKGROUND);
+      bg_screen_rect_->setBoundingBox(aabInf);
+      bg_screen_rect_->setMaterial(bg_material_);
+
+      bg_scene_node_->attachObject(bg_screen_rect_);
+      bg_scene_node_->setVisible(false);
+
+      //overlay rectangle
+      fg_screen_rect_ = new Ogre::Rectangle2D(true);
+      fg_screen_rect_->setCorners(-1.0f, 1.0f, 1.0f, -1.0f);
+
+      fg_material_ = bg_material_->clone(ss.str() + "fg");
+      fg_screen_rect_->setBoundingBox(aabInf);
+      fg_screen_rect_->setMaterial(fg_material_);
+
+      fg_material_->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
+      fg_screen_rect_->setRenderQueueGroup(Ogre::RENDER_QUEUE_OVERLAY - 1);
+
+      fg_scene_node_->attachObject(fg_screen_rect_);
+      fg_scene_node_->setVisible(false);
+
+      updateAlpha();
+    });
 
   // TODO(Martin-Idel-SI): Figure out if this is still needed
 //  render_panel_->setAutoRender(false);
