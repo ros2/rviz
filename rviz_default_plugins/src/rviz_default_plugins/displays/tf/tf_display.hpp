@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -146,31 +147,20 @@ private:
 
   bool changing_single_frame_enabled_state_;
 
-  void updateParentArrow(
-    FrameInfo * frame,
-    const Ogre::Vector3 & position,
-    const Ogre::Vector3 & parent_position,
-    float scale) const;
-  geometry_msgs::msg::TransformStamped_<std::allocator<void>> setupEmptyTransform() const;
   void updateRelativePositionAndOrientation(
-    const FrameInfo * frame,
-    std::shared_ptr<tf2::BufferCore> tf_buffer) const;
-  void updateTreeProperty(FrameInfo * frame, Property * tree_property) const;
-  void updateColorForAge(const FrameInfo * frame, double age, double frame_timeout) const;
-  void updatePositionAndOrientation(
-    const FrameInfo * frame,
-    const Ogre::Vector3 & position,
-    const Ogre::Quaternion & orientation,
-    float scale) const;
-  void hideFrame(const FrameInfo * frame) const;
-  void setLastUpdate(FrameInfo * frame, const tf2::TimePoint & latest_time) const;
+    const FrameInfo * frame, std::shared_ptr<tf2::BufferCore> tf_buffer) const;
+
   void logTransformationException(
     const std::string & parent_frame,
     const std::string & child_frame,
     const std::string & message = "") const;
+
   void updateParentArrowIfTransformExists(FrameInfo * frame, const Ogre::Vector3 & position) const;
-  bool noTreePropertyOrParentChanged(const FrameInfo * frame, const std::string & old_parent) const;
+
+  bool hasNoTreePropertyOrParentChanged(
+    const FrameInfo * frame, const std::string & old_parent) const;
   void updateParentTreeProperty(FrameInfo * frame) const;
+
   void deleteObsoleteFrames(std::set<FrameInfo *> & current_frames);
   S_FrameInfo createOrUpdateFrames(const std::vector<std::string> & frames);
 

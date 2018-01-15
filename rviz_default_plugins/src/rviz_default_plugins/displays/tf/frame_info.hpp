@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -62,8 +63,27 @@ class FrameInfo : public QObject
 public:
   explicit FrameInfo(TFDisplay * display);
 
+  static const Ogre::ColourValue ARROW_HEAD_COLOR;
+  static const Ogre::ColourValue ARROW_SHAFT_COLOR;
+
   /** @brief Set this frame to be visible or invisible. */
   void setEnabled(bool enabled);
+
+  void updatePositionAndOrientation(
+    const Ogre::Vector3 & position, const Ogre::Quaternion & orientation, float scale);
+
+  void setVisible(bool show_frame);
+  void setNamesVisible(bool show_names);
+  void setAxesVisible(bool show_axes);
+  void setParentArrowVisible(bool show_parent_arrow);
+  void setLastUpdate(const tf2::TimePoint & latest_time);
+
+  void updateTreeProperty(rviz_common::properties::Property * parent);
+  void updateColorForAge(double age, double frame_timeout) const;
+  void updateParentArrow(
+    const Ogre::Vector3 & position,
+    const Ogre::Vector3 & parent_position,
+    float scale);
 
 public Q_SLOTS:
   /** @brief Update whether the frame is visible or not, based on the enabled_property_

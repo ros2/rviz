@@ -337,9 +337,6 @@ void TFDisplay::deleteObsoleteFrames(S_FrameInfo & current_frames)
   }
 }
 
-static const Ogre::ColourValue ARROW_HEAD_COLOR(1.0f, 0.1f, 0.6f, 1.0f);
-static const Ogre::ColourValue ARROW_SHAFT_COLOR(0.8f, 0.8f, 0.3f, 1.0f);
-
 FrameInfo * TFDisplay::createFrame(const std::string & frame)
 {
   auto info = new FrameInfo(this);
@@ -360,8 +357,8 @@ FrameInfo * TFDisplay::createFrame(const std::string & frame)
 
   info->parent_arrow_ = new Arrow(scene_manager_, arrows_node_, 1.0f, 0.01f, 1.0f, 0.08f);
   info->parent_arrow_->getSceneNode()->setVisible(false);
-  info->parent_arrow_->setHeadColor(ARROW_HEAD_COLOR);
-  info->parent_arrow_->setShaftColor(ARROW_SHAFT_COLOR);
+  info->parent_arrow_->setHeadColor(FrameInfo::ARROW_HEAD_COLOR);
+  info->parent_arrow_->setShaftColor(FrameInfo::ARROW_SHAFT_COLOR);
 
   info->enabled_property_ = new BoolProperty(
     QString::fromStdString(info->name_),
@@ -413,11 +410,6 @@ FrameInfo * TFDisplay::createFrame(const std::string & frame)
   return info;
 }
 
-Ogre::ColourValue lerpColor(const Ogre::ColourValue & start, const Ogre::ColourValue & end, float t)
-{
-  return start * t + end * (1 - t);
-}
-
 void TFDisplay::updateFrame(FrameInfo * frame)
 {
   std::shared_ptr<tf2::BufferCore> tf_buffer = context_->getFrameManager()->getTFBufferPtr();
@@ -436,20 +428,19 @@ void TFDisplay::updateFrame(FrameInfo * frame)
       latest_time,
       nullptr);
   } catch (const tf2::LookupException & e) {
-    logTransformationException(frame->parent_, frame->name_, e.what());
+    logTransformationException(stripped_fixed_frame, frame->name_, e.what());
     return;
   }
 
-  setLastUpdate(frame, latest_time);
+  frame->setLastUpdate(latest_time);
 
-  // Fade from color -> grey, then grey -> fully transparent
   double age = tf2::durationToSec(tf2::get_now() - frame->last_update_);
   double frame_timeout = frame_timeout_property_->getFloat();
   if (age > frame_timeout) {
-    hideFrame(frame);
+    frame->setVisible(false);
     return;
   }
-  updateColorForAge(frame, age, frame_timeout);
+  frame->updateColorForAge(age, frame_timeout);
 
   setStatusStd(StatusProperty::Ok, frame->name_, "Transform OK");
 
@@ -459,17 +450,19 @@ void TFDisplay::updateFrame(FrameInfo * frame)
     rviz_common::UniformStringStream ss;
     ss << "No transform from [" << frame->name_ << "] to [" << fixed_frame_.toStdString() << "]";
     setStatusStd(StatusProperty::Warn, frame->name_, ss.str());
-    hideFrame(frame);
+    frame->setVisible(false);
     return;
   }
 
-  updatePositionAndOrientation(frame, position, orientation, scale_property_->getFloat());
+  frame->updatePositionAndOrientation(position, orientation, scale_property_->getFloat());
+  frame->setNamesVisible(show_names_property_->getBool());
+  frame->setAxesVisible(show_axes_property_->getBool());
 
   std::string old_parent = frame->parent_;
   frame->parent_.clear();
   bool has_parent = tf_buffer->_getParent(frame->name_, tf2::TimePointZero, frame->parent_);
   if (has_parent) {
-    if (noTreePropertyOrParentChanged(frame, old_parent)) {
+    if (hasNoTreePropertyOrParentChanged(frame, old_parent)) {
       updateParentTreeProperty(frame);
     }
 
@@ -478,14 +471,14 @@ void TFDisplay::updateFrame(FrameInfo * frame)
     if (show_arrows_property_->getBool()) {
       updateParentArrowIfTransformExists(frame, position);
     } else {
-      frame->parent_arrow_->getSceneNode()->setVisible(false);
+      frame->setParentArrowVisible(false);
     }
   } else {
-    if (noTreePropertyOrParentChanged(frame, old_parent)) {
-      updateTreeProperty(frame, tree_category_);
+    if (hasNoTreePropertyOrParentChanged(frame, old_parent)) {
+      frame->updateTreeProperty(tree_category_);
     }
 
-    frame->parent_arrow_->getSceneNode()->setVisible(false);
+    frame->setParentArrowVisible(false);
   }
 
   frame->parent_property_->setStdString(frame->parent_);
@@ -501,13 +494,13 @@ void TFDisplay::updateParentTreeProperty(FrameInfo * frame) const
 
     // If the parent has a tree property, make a new tree property for this frame.
     if (parent->tree_property_) {
-      this->updateTreeProperty(frame, parent->tree_property_);
+      frame->updateTreeProperty(parent->tree_property_);
     }
   }
 }
 
 /// If this frame has no tree property or the parent has changed,
-bool TFDisplay::noTreePropertyOrParentChanged(
+bool TFDisplay::hasNoTreePropertyOrParentChanged(
   const FrameInfo * frame,
   const std::string & old_parent) const
 {
@@ -520,100 +513,20 @@ void TFDisplay::logTransformationException(
   const std::string & message) const
 {
   RVIZ_COMMON_LOG_DEBUG_STREAM(
-    "Error transforming frame '" << parent_frame.c_str() <<
-      "' (parent of '" << child_frame.c_str() <<
-      "') to frame '" << qPrintable(fixed_frame_) << "': " << message);
+    "Error transforming from frame '" << parent_frame.c_str() <<
+      "' to frame '" << child_frame.c_str() <<
+      "' with fixed frame '" << qPrintable(fixed_frame_) << "': " << message);
 }
 
-void TFDisplay::setLastUpdate(FrameInfo * frame, const tf2::TimePoint & latest_time) const
-{
-  if ((latest_time != frame->last_time_to_fixed_) || (latest_time == tf2::TimePointZero)) {
-    frame->last_update_ = tf2::get_now();
-    frame->last_time_to_fixed_ = latest_time;
-  }
-}
-
-void TFDisplay::hideFrame(const FrameInfo * frame) const
-{
-  frame->name_node_->setVisible(false);
-  frame->axes_->getSceneNode()->setVisible(false);
-  frame->parent_arrow_->getSceneNode()->setVisible(false);
-}
-
-void TFDisplay::updateColorForAge(const FrameInfo * frame, double age, double frame_timeout) const
-{
-  double one_third_timeout = frame_timeout * 0.3333333f;
-  if (age > one_third_timeout) {
-    Ogre::ColourValue grey(0.7, 0.7, 0.7, 1.0);
-
-    if (age > one_third_timeout * 2) {
-      double a = std::max(0.0, (frame_timeout - age) / one_third_timeout);
-      Ogre::ColourValue c = Ogre::ColourValue(grey.r, grey.g, grey.b, a);
-
-      frame->axes_->setXColor(c);
-      frame->axes_->setYColor(c);
-      frame->axes_->setZColor(c);
-      frame->name_text_->setColor(c);
-      frame->parent_arrow_->setColor(c.r, c.g, c.b, c.a);
-    } else {
-      double t = std::max(0.0, (one_third_timeout * 2 - age) / one_third_timeout);
-      frame->axes_->setXColor(lerpColor(frame->axes_->getDefaultXColor(), grey, t));
-      frame->axes_->setYColor(lerpColor(frame->axes_->getDefaultYColor(), grey, t));
-      frame->axes_->setZColor(lerpColor(frame->axes_->getDefaultZColor(), grey, t));
-      frame->name_text_->setColor(lerpColor(Ogre::ColourValue::White, grey, t));
-      frame->parent_arrow_->setShaftColor(lerpColor(ARROW_SHAFT_COLOR, grey, t));
-      frame->parent_arrow_->setHeadColor(lerpColor(ARROW_HEAD_COLOR, grey, t));
-    }
-  } else {
-    frame->axes_->setToDefaultColors();
-    frame->name_text_->setColor(Ogre::ColourValue::White);
-    frame->parent_arrow_->setHeadColor(ARROW_HEAD_COLOR);
-    frame->parent_arrow_->setShaftColor(ARROW_SHAFT_COLOR);
-  }
-}
-
-void TFDisplay::updatePositionAndOrientation(
-  const FrameInfo * frame,
-  const Ogre::Vector3 & position,
-  const Ogre::Quaternion & orientation,
-  float scale) const
-{
-  bool frame_enabled = frame->enabled_property_->getBool();
-
-  frame->selection_handler_->setPosition(position);
-  frame->selection_handler_->setOrientation(orientation);
-  frame->axes_->setPosition(position);
-  frame->axes_->setOrientation(orientation);
-  frame->axes_->getSceneNode()->setVisible(show_axes_property_->getBool() && frame_enabled);
-  frame->axes_->setScale(Ogre::Vector3(scale, scale, scale));
-
-  frame->name_node_->setPosition(position);
-  frame->name_node_->setVisible(show_names_property_->getBool() && frame_enabled);
-  frame->name_node_->setScale(scale, scale, scale);
-
-  frame->position_property_->setVector(position);
-  frame->orientation_property_->setQuaternion(orientation);
-}
-
-void TFDisplay::updateTreeProperty(FrameInfo * frame, Property * tree_property) const
-{
-  if (!frame->tree_property_) {
-    frame->tree_property_ = new Property(
-      QString::fromStdString(frame->name_), QVariant(), "", tree_property);
-  } else {
-    frame->tree_property_->setParent(tree_property);
-    frame->tree_property_->setName(QString::fromStdString(frame->name_));
-    frame->tree_property_->setValue(QVariant());
-    frame->tree_property_->setDescription("");
-  }
-}
-
-/// get the position/orientation relative to the parent frame
+/// set the position/orientation relative to the parent frame
 void TFDisplay::updateRelativePositionAndOrientation(
   const FrameInfo * frame,
   std::shared_ptr<tf2::BufferCore> tf_buffer) const
 {
-  geometry_msgs::msg::TransformStamped transform = setupEmptyTransform();
+  geometry_msgs::msg::TransformStamped transform;
+  transform.transform.translation = geometry_msgs::msg::Vector3();
+  transform.transform.rotation = geometry_msgs::msg::Quaternion();
+
   try {
     transform = tf_buffer->lookupTransform(frame->parent_, frame->name_, tf2::TimePointZero);
   } catch (const tf2::LookupException & e) {
@@ -636,19 +549,6 @@ void TFDisplay::updateRelativePositionAndOrientation(
   frame->rel_orientation_property_->setQuaternion(relative_orientation);
 }
 
-geometry_msgs::msg::TransformStamped TFDisplay::setupEmptyTransform() const
-{
-  geometry_msgs::msg::TransformStamped transform;
-  transform.transform.translation.x = 0;
-  transform.transform.translation.y = 0;
-  transform.transform.translation.z = 0;
-  transform.transform.rotation.w = 1.0;
-  transform.transform.rotation.x = 0;
-  transform.transform.rotation.y = 0;
-  transform.transform.rotation.z = 0;
-  return transform;
-}
-
 void TFDisplay::updateParentArrowIfTransformExists(
   FrameInfo * frame,
   const Ogre::Vector3 & position) const
@@ -660,43 +560,11 @@ void TFDisplay::updateParentArrowIfTransformExists(
   {
     logTransformationException(frame->parent_, frame->name_);
   } else {
-    this->updateParentArrow(frame, position, parent_position, scale_property_->getFloat());
+    frame->updateParentArrow(position, parent_position, scale_property_->getFloat());
+    frame->setParentArrowVisible(show_arrows_property_->getBool());
   }
 }
 
-void TFDisplay::updateParentArrow(
-  FrameInfo * frame,
-  const Ogre::Vector3 & position,
-  const Ogre::Vector3 & parent_position,
-  const float scale) const
-{
-  bool frame_enabled = frame->enabled_property_->getBool();
-
-  Ogre::Vector3 direction = parent_position - position;
-  float distance = direction.length();
-  direction.normalise();
-
-  Ogre::Quaternion orient = Ogre::Vector3::NEGATIVE_UNIT_Z.getRotationTo(direction);
-
-  if (!orient.isNaN()) {
-    frame->distance_to_parent_ = distance;
-    float head_length = (distance < 0.1f * scale) ? (0.1f * scale * distance) : 0.1f * scale;
-    float shaft_length = distance - head_length;
-    // aleeper: This was changed from 0.02 and 0.08 to 0.01 and 0.04
-    // to match proper radius handling in arrow.cpp
-    frame->parent_arrow_->set(shaft_length, 0.01f * scale, head_length, 0.04f * scale);
-
-    if (distance > 0.001f) {
-      frame->parent_arrow_->getSceneNode()->setVisible(
-        show_arrows_property_->getBool() && frame_enabled);
-    } else {
-      frame->parent_arrow_->getSceneNode()->setVisible(false);
-    }
-
-    frame->parent_arrow_->setPosition(position);
-    frame->parent_arrow_->setOrientation(orient);
-  }
-}
 
 void TFDisplay::deleteFrame(FrameInfo * frame, bool delete_properties)
 {
