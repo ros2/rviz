@@ -208,16 +208,18 @@ void CameraDisplay::onInitialize()
   // TODO(Martin-Idel-SI): Figure out if this is still needed
 //  render_panel_->setAutoRender(false);
 //  render_panel_->setOverlaysEnabled(false);
-  rviz_rendering::RenderWindowOgreAdapter::getOgreCamera(render_panel_->getRenderWindow())
-    ->setNearClipDistance(0.01f);
+  // TODO(Martin-Idel-SI): Figure out why this segfaults
+//  rviz_rendering::RenderWindowOgreAdapter::getOgreCamera(render_panel_->getRenderWindow())
+//    ->setNearClipDistance(0.1f);
 
 //  caminfo_tf_filter_->connectInput(caminfo_sub_);
 //  caminfo_tf_filter_->registerCallback(boost::bind(&CameraDisplay::caminfoCallback, this, _1));
   //context_->getFrameManager()->registerFilterForTransformStatusCheck(caminfo_tf_filter_, this);
 
   vis_bit_ = context_->visibilityBits()->allocBit();
-  rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(render_panel_->getRenderWindow())
-    ->setVisibilityMask(vis_bit_);
+  // TODO(Martin-Idel-SI): Figure out why this segfaults
+//  rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(render_panel_->getRenderWindow())
+//    ->setVisibilityMask(vis_bit_);
 
   visibility_property_ = new rviz_common::properties::DisplayGroupVisibilityProperty(
     vis_bit_, context_->getRootDisplayGroup(), this, "Visibility", true,
