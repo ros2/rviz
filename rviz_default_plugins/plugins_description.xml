@@ -45,6 +45,16 @@
     <message_type>sensor_msgs/PointCloud2</message_type>
   </class>
 
+  <class
+    name="rviz/TF"
+    type="rviz_default_plugins::displays::TFDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays the TF transform hierarchy.  &lt;a href="http://www.ros.org/wiki/rviz/DisplayTypes/TF"&gt;More Information&lt;/a&gt;.
+    </description>
+    <message_type>tf2_msgs/TFMessage</message_type>
+  </class>
   <!-- Tool plugins -->
 
   <class
