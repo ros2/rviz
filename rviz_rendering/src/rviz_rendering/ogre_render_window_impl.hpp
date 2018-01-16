@@ -46,6 +46,7 @@
 # endif
 #endif
 
+#include <OgreRenderTargetListener.h>
 #include <OgreRenderWindow.h>
 #include <OgreSceneManager.h>
 
@@ -143,6 +144,9 @@ public:
   /// Get the Ogre scene manager.
   Ogre::SceneManager * getSceneManager() const;
 
+  void setSceneManager(Ogre::SceneManager * scene_manager);
+
+  void addListener(Ogre::RenderTargetListener * listener);
 #if 0
   /**
    * \brief Set the scale of the orthographic window.  Only valid for an orthographic camera.
@@ -218,6 +222,8 @@ protected:
   // Ogre::Viewport * right_viewport_;
 
   setupSceneCallback setup_scene_callback_;
+  std::vector<Ogre::RenderTargetListener *> pending_listeners_;
+  uint32_t visibility_mask;
 };
 
 }  // namespace rviz_rendering

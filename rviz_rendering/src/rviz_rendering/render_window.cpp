@@ -258,4 +258,16 @@ RenderWindowOgreAdapter::getSceneManager(RenderWindow * render_window)
   return render_window->impl_->getSceneManager();
 }
 
+void
+RenderWindowOgreAdapter::setSceneManager(
+  RenderWindow * render_window, Ogre::SceneManager * scene_manager)
+{
+  render_window->impl_->setSceneManager(scene_manager);
+}
+
+void RenderWindowOgreAdapter::addListener(
+  RenderWindow * render_window, Ogre::RenderTargetListener * listener) {
+  render_window->impl_->addListener(listener);
+}
+
 }  // namespace rviz_rendering
