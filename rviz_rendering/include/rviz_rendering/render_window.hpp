@@ -178,6 +178,14 @@ public:
   static
   void
   addListener(RenderWindow * render_window, Ogre::RenderTargetListener * listener);
+
+  static
+  void
+  setVisibilityMask(RenderWindow * render_window, uint32_t mask);
+
+  static
+  void
+  removeListener(RenderWindow * render_window, Ogre::RenderTargetListener * listener);
 };
 
 }  // namespace rviz_rendering

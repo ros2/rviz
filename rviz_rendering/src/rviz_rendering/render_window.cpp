@@ -270,4 +270,15 @@ void RenderWindowOgreAdapter::addListener(
   render_window->impl_->addListener(listener);
 }
 
+void RenderWindowOgreAdapter::removeListener(
+  RenderWindow * render_window, Ogre::RenderTargetListener * listener) {
+  render_window->impl_->removeListener(listener);
+}
+
+void RenderWindowOgreAdapter::setVisibilityMask(
+  RenderWindow * render_window, uint32_t mask
+) {
+  render_window->impl_->setVisibilityMask(mask);
+}
+
 }  // namespace rviz_rendering

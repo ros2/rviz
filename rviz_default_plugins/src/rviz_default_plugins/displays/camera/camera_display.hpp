@@ -63,6 +63,9 @@ class Camera;
 
 namespace rviz_common
 {
+
+class QueueSizeProperty;
+
 namespace properties
 {
 
@@ -157,6 +160,8 @@ private:
   // TODO(Martin-Idel-SI): See whether we still need those
 //  message_filters::Subscriber<sensor_msgs::msg::CameraInfo> caminfo_sub_;
 //  tf::MessageFilter<sensor_msgs::msg::CameraInfo>* caminfo_tf_filter_;
+
+  std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
 
   rviz_common::properties::FloatProperty * alpha_property_;
   rviz_common::properties::EnumProperty * image_position_property_;

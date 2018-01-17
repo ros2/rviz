@@ -194,6 +194,14 @@ void RenderWindowImpl::addListener(Ogre::RenderTargetListener * listener) {
     pending_listeners_.emplace_back(listener);
   }
 }
+void RenderWindowImpl::removeListener(Ogre::RenderTargetListener * listener) {
+  if (ogre_render_window_) {
+    ogre_render_window_->removeListener(listener);
+  } else {
+    pending_listeners_.erase(
+      std::find(pending_listeners_.begin(),pending_listeners_.end(), listener));
+  }
+}
 
 void
 RenderWindowImpl::initialize()
@@ -241,9 +249,14 @@ RenderWindowImpl::initialize()
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
   }
 
-  if (pending_listeners_.size() > 0) {
+  if (!pending_listeners_.empty()) {
     for (auto listener : pending_listeners_) {
       ogre_render_window_->addListener(listener);
+    }
+  }
+  if (!pending_visibility_masks_.empty()) {
+    for (auto mask : pending_visibility_masks_) {
+      ogre_viewport_->setVisibilityMask(mask);
     }
   }
 }
@@ -434,6 +447,15 @@ Ogre::SceneManager * RenderWindowImpl::getSceneManager() const
 void RenderWindowImpl::setSceneManager(Ogre::SceneManager * scene_manager) {
   ogre_scene_manager_ = scene_manager;
 }
+
+void RenderWindowImpl::setVisibilityMask(uint32_t mask) {
+  if (ogre_viewport_) {
+    ogre_viewport_->setVisibilityMask(mask);
+  } else {
+    pending_visibility_masks_.emplace_back(mask);
+  }
+}
+
 
 #if 0
 void RenderWindowImpl::setOverlaysEnabled(bool overlays_enabled)

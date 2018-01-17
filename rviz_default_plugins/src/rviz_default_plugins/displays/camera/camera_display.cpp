@@ -52,6 +52,7 @@
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/int_property.hpp"
 #include "rviz_common/properties/ros_topic_property.hpp"
+#include "rviz_common/properties/queue_size_property.hpp"
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
 #include "rviz_common/validate_floats.hpp"
@@ -81,8 +82,9 @@ bool validateFloats(const sensor_msgs::msg::CameraInfo & msg)
 }
 
 CameraDisplay::CameraDisplay()
-  : texture_(), render_panel_(0), new_caminfo_(false),
-  caminfo_ok_(false), force_render_(false)
+  : texture_(), render_panel_(0),
+  queue_size_property_(std::make_unique<rviz_common::QueueSizeProperty>(this, 10)),
+  new_caminfo_(false),  caminfo_ok_(false), force_render_(false)
 {
   image_position_property_ = new rviz_common::properties::EnumProperty("Image Rendering", BOTH,
     "Render the image behind all other geometry or overlay it on top, or both.",
@@ -107,8 +109,7 @@ CameraDisplay::CameraDisplay()
 CameraDisplay::~CameraDisplay()
 {
   if (initialized()) {
-    // TODO(Martin-Idel-SI): Figure out whether this is still needed
-//    render_panel_->getRenderWindow()->removeListener(this);
+    rviz_rendering::RenderWindowOgreAdapter::removeListener(render_panel_->getRenderWindow(), this);
 
     unsubscribe();
 //    caminfo_tf_filter_->clear();
@@ -196,28 +197,20 @@ void CameraDisplay::onInitialize()
   updateAlpha();
 
   render_panel_ = new rviz_common::RenderPanel();
-  rviz_rendering::RenderWindowOgreAdapter::addListener(render_panel_->getRenderWindow(), this);
-  // TODO(Martin-Idel-SI): Figure out if this is still needed
-//  render_panel_->getRenderWindow()->setAutoUpdated(false);
-//  render_panel_->getRenderWindow()->setActive(false);
   render_panel_->resize(640, 480);
   render_panel_->initialize(context_, true);
 
   setAssociatedWidget(render_panel_);
-
-  // TODO(Martin-Idel-SI): Figure out if this is still needed
-//  render_panel_->setAutoRender(false);
-//  render_panel_->setOverlaysEnabled(false);
-  // TODO(Martin-Idel-SI): Figure out why this segfaults
-//  rviz_rendering::RenderWindowOgreAdapter::getOgreCamera(render_panel_->getRenderWindow())
-//    ->setNearClipDistance(0.1f);
+  rviz_rendering::RenderWindowOgreAdapter::addListener(render_panel_->getRenderWindow(), this);
 
 //  caminfo_tf_filter_->connectInput(caminfo_sub_);
 //  caminfo_tf_filter_->registerCallback(boost::bind(&CameraDisplay::caminfoCallback, this, _1));
   //context_->getFrameManager()->registerFilterForTransformStatusCheck(caminfo_tf_filter_, this);
 
   vis_bit_ = context_->visibilityBits()->allocBit();
-  // TODO(Martin-Idel-SI): Figure out why this segfaults
+  rviz_rendering::RenderWindowOgreAdapter::setVisibilityMask(
+    render_panel_->getRenderWindow(), vis_bit_);
+  // TODO(Martin-Idel-SI): Segfaults because OgreViewport is not initialized yet, fix it
 //  rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(render_panel_->getRenderWindow())
 //    ->setVisibilityMask(vis_bit_);
 
@@ -235,6 +228,7 @@ void CameraDisplay::preRenderTargetUpdate(const Ogre::RenderTargetEvent & evt)
 {
   (void) evt;
   QString image_position = image_position_property_->getString();
+  // TODO(greimela) Reenable the dependence on caminfo_ok_
   bg_scene_node_->setVisible(
     /* caminfo_ok_ && */ (image_position == BACKGROUND || image_position == BOTH));
   fg_scene_node_->setVisible(
@@ -254,13 +248,14 @@ void CameraDisplay::postRenderTargetUpdate(const Ogre::RenderTargetEvent & evt)
 void CameraDisplay::onEnable()
 {
   subscribe();
-  // TODO(Martin-Idel-SI): Probably not needed?
-//  render_panel_->getRenderWindow()->setActive(true);
+
+  // Ensures the nodes are not visible in the main window
+  bg_scene_node_->setVisible(false);
+  fg_scene_node_->setVisible(false);
 }
 
 void CameraDisplay::onDisable()
 {
-//  render_panel_->getRenderWindow()->setActive(false);
   unsubscribe();
   clear();
 }
@@ -276,6 +271,7 @@ void CameraDisplay::subscribe()
 
   RTDClass::subscribe();
 
+  // TODO(greimela) Add a subscriber for camera infos
 //  std::string topic = topic_property_->getTopicStd();
 //  std::string caminfo_topic = image_transport::getCameraInfoTopic(topic_property_->getTopicStd());
 
@@ -318,14 +314,6 @@ void CameraDisplay::forceRender()
   context_->queueRender();
 }
 
-void CameraDisplay::updateQueueSize()
-{
-
-  // TODO(Martin-Idel-SI): Introduce QueueSizeProperty
-//  caminfo_tf_filter_->setQueueSize((uint32_t) queue_size_property_->getInt());
-//  ImageDisplayBase::updateQueueSize();
-}
-
 void CameraDisplay::clear()
 {
   texture_.clear();
@@ -342,6 +330,7 @@ void CameraDisplay::clear()
       "].  Topic may not exist.");
   setStatus(rviz_common::properties::StatusProperty::Warn, "Image", "No Image received");
 
+  // TODO(greimela): Reenable resetting the camera
 //  rviz_rendering::RenderWindowOgreAdapter::getOgreCamera(render_panel_->getRenderWindow())
 //    ->setPosition(Ogre::Vector3(999999, 999999, 999999));
 }
@@ -359,9 +348,6 @@ void CameraDisplay::update(float wall_dt, float ros_dt)
   catch (UnsupportedImageEncoding & e) {
     setStatus(rviz_common::properties::StatusProperty::Error, "Image", e.what());
   }
-
-  // TODO(Martin-Idel-SI): Figure out if this is still needed
-//  render_panel_->getRenderWindow()->update();
 }
 
 bool CameraDisplay::updateCamera()
@@ -370,7 +356,22 @@ bool CameraDisplay::updateCamera()
   sensor_msgs::msg::Image::ConstSharedPtr image;
   {
     std::unique_lock<std::mutex> lock(caminfo_mutex_);
-    info = current_caminfo_;
+
+    // TODO(greimela) Only for testing, remove
+    auto caminfo = std::make_shared<sensor_msgs::msg::CameraInfo>();
+    caminfo->header = std_msgs::msg::Header();
+    caminfo->header.frame_id = "caminfo";
+    caminfo->header.stamp = rclcpp::Clock().now();
+
+    caminfo->width = 320;
+    caminfo->height = 240;
+
+    caminfo->p = {160.0f, 0.0f, 160.0f, 0.0f,
+                  0.0f, 120.0f, 120.0f, 0.0f,
+                  0.0f, 0.0f, 1.0f, 0.0f};
+
+    info = caminfo;
+//    info = current_caminfo_;
     image = texture_.getImage();
   }
 

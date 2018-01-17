@@ -147,6 +147,7 @@ public:
   void setSceneManager(Ogre::SceneManager * scene_manager);
 
   void addListener(Ogre::RenderTargetListener * listener);
+  void removeListener(Ogre::RenderTargetListener * listener);
 #if 0
   /**
    * \brief Set the scale of the orthographic window.  Only valid for an orthographic camera.
@@ -170,6 +171,8 @@ public:
   void setOverlaysEnabled(bool overlays_enabled);
 #endif
   void setBackgroundColor(Ogre::ColourValue color);
+
+  void setVisibilityMask(uint32_t mask);
 
 protected:
 #if 0
@@ -223,7 +226,7 @@ protected:
 
   setupSceneCallback setup_scene_callback_;
   std::vector<Ogre::RenderTargetListener *> pending_listeners_;
-  uint32_t visibility_mask;
+  std::vector<uint32_t> pending_visibility_masks_;
 };
 
 }  // namespace rviz_rendering
