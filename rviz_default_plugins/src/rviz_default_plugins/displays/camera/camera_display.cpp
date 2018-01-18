@@ -117,7 +117,7 @@ CameraDisplay::~CameraDisplay()
 
 //    delete caminfo_tf_filter_;
 
-//    context_->visibilityBits()->freeBits(vis_bit_);
+    context_->visibilityBits()->freeBits(vis_bit_);
   }
 }
 
@@ -197,35 +197,31 @@ void CameraDisplay::onInitialize()
 //  caminfo_tf_filter_->registerCallback(boost::bind(&CameraDisplay::caminfoCallback, this, _1));
   //context_->getFrameManager()->registerFilterForTransformStatusCheck(caminfo_tf_filter_, this);
 
-//  vis_bit_ = context_->visibilityBits()->allocBit();
-//  rviz_rendering::RenderWindowOgreAdapter::setVisibilityMask(
-//    render_panel_->getRenderWindow(), vis_bit_);
-  // TODO(Martin-Idel-SI): Segfaults because OgreViewport is not initialized yet, fix it
-//  rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(render_panel_->getRenderWindow())
-//    ->setVisibilityMask(vis_bit_);
+  vis_bit_ = context_->visibilityBits()->allocBit();
+  rviz_rendering::RenderWindowOgreAdapter::setVisibilityMask(
+    render_panel_->getRenderWindow(), vis_bit_);
 
-//  visibility_property_ = new rviz_common::properties::DisplayGroupVisibilityProperty(
-//    vis_bit_, context_->getRootDisplayGroup(), this, "Visibility", true,
-//    "Changes the visibility of other Displays in the camera view.");
-//
-//  visibility_property_->setIcon(
-//    rviz_common::loadPixmap("package://rviz/icons/visibility.svg", true));
-//
-//  this->addChild(visibility_property_, 0);
+  visibility_property_ = new rviz_common::properties::DisplayGroupVisibilityProperty(
+    vis_bit_, context_->getRootDisplayGroup(), this, "Visibility", true,
+    "Changes the visibility of other Displays in the camera view.");
+
+  visibility_property_->setIcon(
+    rviz_common::loadPixmap("package://rviz/icons/visibility.svg", true));
+
+  this->addChild(visibility_property_, 0);
 }
 
 void CameraDisplay::preRenderTargetUpdate(const Ogre::RenderTargetEvent & evt)
 {
   (void) evt;
   QString image_position = image_position_property_->getString();
-  // TODO(greimela) Reenable the dependence on caminfo_ok_
   bg_scene_node_->setVisible(
-    /* caminfo_ok_ && */ (image_position == BACKGROUND || image_position == BOTH));
+    caminfo_ok_ && (image_position == BACKGROUND || image_position == BOTH));
   fg_scene_node_->setVisible(
-    /*caminfo_ok_ && */(image_position == OVERLAY || image_position == BOTH));
+    caminfo_ok_ && (image_position == OVERLAY || image_position == BOTH));
 
   // set view flags on all displays
-//  visibility_property_->update();
+  visibility_property_->update();
 }
 
 void CameraDisplay::postRenderTargetUpdate(const Ogre::RenderTargetEvent & evt)
@@ -323,8 +319,8 @@ void CameraDisplay::clear()
   setStatus(rviz_common::properties::StatusProperty::Warn, "Image", "No Image received");
 
   // TODO(greimela): Reenable resetting the camera
-//  rviz_rendering::RenderWindowOgreAdapter::getOgreCamera(render_panel_->getRenderWindow())
-//    ->setPosition(Ogre::Vector3(999999, 999999, 999999));
+  rviz_rendering::RenderWindowOgreAdapter::getOgreCamera(render_panel_->getRenderWindow())
+    ->setPosition(Ogre::Vector3(999999, 999999, 999999));
 }
 
 void CameraDisplay::update(float wall_dt, float ros_dt)
@@ -349,21 +345,7 @@ bool CameraDisplay::updateCamera()
   {
     std::unique_lock<std::mutex> lock(caminfo_mutex_);
 
-    // TODO(greimela) Only for testing, remove
-    auto caminfo = std::make_shared<sensor_msgs::msg::CameraInfo>();
-    caminfo->header = std_msgs::msg::Header();
-    caminfo->header.frame_id = "caminfo";
-    caminfo->header.stamp = rclcpp::Clock().now();
-
-    caminfo->width = 320;
-    caminfo->height = 240;
-
-    caminfo->p = {160.0f, 0.0f, 160.0f, 0.0f,
-                  0.0f, 120.0f, 120.0f, 0.0f,
-                  0.0f, 0.0f, 1.0f, 0.0f};
-
-    info = caminfo;
-//    info = current_caminfo_;
+    info = current_caminfo_;
     image = texture_->getImage();
   }
 
@@ -512,19 +494,12 @@ void CameraDisplay::processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg)
   texture_->addMessage(msg);
 }
 
-//void CameraDisplay::caminfoCallback(const sensor_msgs::msg::CameraInfo::ConstSharedPtr & msg)
-//{
-//  std::unique_lock<std::mutex> lock(caminfo_mutex_);
-//  current_caminfo_ = msg;
-//  new_caminfo_ = true;
-//}
-
-//void CameraDisplay::fixedFrameChanged()
-//{
-//  std::string targetFrame = fixed_frame_.toStdString();
-////  caminfo_tf_filter_->setTargetFrame(targetFrame);
-//  RTDClass::fixedFrameChanged();
-//}
+void CameraDisplay::caminfoCallback(const sensor_msgs::msg::CameraInfo::ConstSharedPtr & msg)
+{
+  std::unique_lock<std::mutex> lock(caminfo_mutex_);
+  current_caminfo_ = msg;
+  new_caminfo_ = true;
+}
 
 void CameraDisplay::reset()
 {
