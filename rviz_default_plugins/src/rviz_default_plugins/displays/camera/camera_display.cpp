@@ -60,6 +60,7 @@
 #include "rviz_common/load_resource.hpp"
 
 #include "camera_display.hpp"
+#include "../image/ros_image_texture.hpp"
 
 namespace rviz_default_plugins
 {
@@ -82,8 +83,8 @@ bool validateFloats(const sensor_msgs::msg::CameraInfo & msg)
 }
 
 CameraDisplay::CameraDisplay()
-  : texture_(), render_panel_(0),
-  queue_size_property_(std::make_unique<rviz_common::QueueSizeProperty>(this, 10)),
+  : queue_size_property_(std::make_unique<rviz_common::QueueSizeProperty>(this, 10)),
+  texture_(std::make_unique<ROSImageTexture>()),
   new_caminfo_(false),  caminfo_ok_(false), force_render_(false)
 {
   image_position_property_ = new rviz_common::properties::EnumProperty("Image Rendering", BOTH,
@@ -114,20 +115,9 @@ CameraDisplay::~CameraDisplay()
     unsubscribe();
 //    caminfo_tf_filter_->clear();
 
-
-    //workaround. delete results in a later crash
-    render_panel_->hide();
-    //delete render_panel_;
-
-    delete bg_screen_rect_;
-    delete fg_screen_rect_;
-
-    bg_scene_node_->getParentSceneNode()->removeAndDestroyChild(bg_scene_node_->getName());
-    fg_scene_node_->getParentSceneNode()->removeAndDestroyChild(fg_scene_node_->getName());
-
 //    delete caminfo_tf_filter_;
 
-    context_->visibilityBits()->freeBits(vis_bit_);
+//    context_->visibilityBits()->freeBits(vis_bit_);
   }
 }
 
@@ -148,7 +138,7 @@ void CameraDisplay::onInitialize()
     ss << "CameraDisplayObject" << count++;
 
     //background rectangle
-    bg_screen_rect_ = new Ogre::Rectangle2D(true);
+    bg_screen_rect_ = std::make_unique<Ogre::Rectangle2D>(true);
     bg_screen_rect_->setCorners(-1.0f, 1.0f, 1.0f, -1.0f);
 
     ss << "Material";
@@ -162,7 +152,7 @@ void CameraDisplay::onInitialize()
     bg_material_->getTechnique(0)->setLightingEnabled(false);
     Ogre::TextureUnitState * tu = bg_material_->getTechnique(0)->getPass(
       0)->createTextureUnitState();
-    tu->setTextureName(texture_.getTexture()->getName());
+    tu->setTextureName(texture_->getTexture()->getName());
     tu->setTextureFiltering(Ogre::TFO_NONE);
     tu->setAlphaOperation(Ogre::LBX_SOURCE1, Ogre::LBS_MANUAL, Ogre::LBS_CURRENT, 0.0);
 
@@ -176,11 +166,11 @@ void CameraDisplay::onInitialize()
     bg_screen_rect_->setBoundingBox(aabInf);
     bg_screen_rect_->setMaterial(bg_material_);
 
-    bg_scene_node_->attachObject(bg_screen_rect_);
+    bg_scene_node_->attachObject(bg_screen_rect_.get());
     bg_scene_node_->setVisible(false);
 
     //overlay rectangle
-    fg_screen_rect_ = new Ogre::Rectangle2D(true);
+    fg_screen_rect_ = std::make_unique<Ogre::Rectangle2D>(true);
     fg_screen_rect_->setCorners(-1.0f, 1.0f, 1.0f, -1.0f);
 
     fg_material_ = bg_material_->clone(ss.str() + "fg");
@@ -190,38 +180,38 @@ void CameraDisplay::onInitialize()
     fg_material_->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
     fg_screen_rect_->setRenderQueueGroup(Ogre::RENDER_QUEUE_OVERLAY - 1);
 
-    fg_scene_node_->attachObject(fg_screen_rect_);
+    fg_scene_node_->attachObject(fg_screen_rect_.get());
     fg_scene_node_->setVisible(false);
   }
 
   updateAlpha();
 
-  render_panel_ = new rviz_common::RenderPanel();
+  render_panel_ = std::make_unique<rviz_common::RenderPanel>();
   render_panel_->resize(640, 480);
   render_panel_->initialize(context_, true);
 
-  setAssociatedWidget(render_panel_);
+  setAssociatedWidget(render_panel_.get());
   rviz_rendering::RenderWindowOgreAdapter::addListener(render_panel_->getRenderWindow(), this);
 
 //  caminfo_tf_filter_->connectInput(caminfo_sub_);
 //  caminfo_tf_filter_->registerCallback(boost::bind(&CameraDisplay::caminfoCallback, this, _1));
   //context_->getFrameManager()->registerFilterForTransformStatusCheck(caminfo_tf_filter_, this);
 
-  vis_bit_ = context_->visibilityBits()->allocBit();
-  rviz_rendering::RenderWindowOgreAdapter::setVisibilityMask(
-    render_panel_->getRenderWindow(), vis_bit_);
+//  vis_bit_ = context_->visibilityBits()->allocBit();
+//  rviz_rendering::RenderWindowOgreAdapter::setVisibilityMask(
+//    render_panel_->getRenderWindow(), vis_bit_);
   // TODO(Martin-Idel-SI): Segfaults because OgreViewport is not initialized yet, fix it
 //  rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(render_panel_->getRenderWindow())
 //    ->setVisibilityMask(vis_bit_);
 
-  visibility_property_ = new rviz_common::properties::DisplayGroupVisibilityProperty(
-    vis_bit_, context_->getRootDisplayGroup(), this, "Visibility", true,
-    "Changes the visibility of other Displays in the camera view.");
-
-  visibility_property_->setIcon(
-    rviz_common::loadPixmap("package://rviz/icons/visibility.svg", true));
-
-  this->addChild(visibility_property_, 0);
+//  visibility_property_ = new rviz_common::properties::DisplayGroupVisibilityProperty(
+//    vis_bit_, context_->getRootDisplayGroup(), this, "Visibility", true,
+//    "Changes the visibility of other Displays in the camera view.");
+//
+//  visibility_property_->setIcon(
+//    rviz_common::loadPixmap("package://rviz/icons/visibility.svg", true));
+//
+//  this->addChild(visibility_property_, 0);
 }
 
 void CameraDisplay::preRenderTargetUpdate(const Ogre::RenderTargetEvent & evt)
@@ -235,7 +225,7 @@ void CameraDisplay::preRenderTargetUpdate(const Ogre::RenderTargetEvent & evt)
     /*caminfo_ok_ && */(image_position == OVERLAY || image_position == BOTH));
 
   // set view flags on all displays
-  visibility_property_->update();
+//  visibility_property_->update();
 }
 
 void CameraDisplay::postRenderTargetUpdate(const Ogre::RenderTargetEvent & evt)
@@ -247,7 +237,8 @@ void CameraDisplay::postRenderTargetUpdate(const Ogre::RenderTargetEvent & evt)
 
 void CameraDisplay::onEnable()
 {
-  subscribe();
+  RTDClass::subscribe();
+//  subscribe();
 
   // Ensures the nodes are not visible in the main window
   bg_scene_node_->setVisible(false);
@@ -256,40 +247,41 @@ void CameraDisplay::onEnable()
 
 void CameraDisplay::onDisable()
 {
-  unsubscribe();
+  RTDClass::unsubscribe();
+//  unsubscribe();
   clear();
 }
 
-void CameraDisplay::subscribe()
-{
-  if ((!isEnabled()) || (topic_property_->getTopicStd().empty())) {
-    return;
-  }
-
-  std::string target_frame = fixed_frame_.toStdString();
-//  ImageDisplayBase::enableTFFilter(target_frame);
-
-  RTDClass::subscribe();
-
-  // TODO(greimela) Add a subscriber for camera infos
-//  std::string topic = topic_property_->getTopicStd();
-//  std::string caminfo_topic = image_transport::getCameraInfoTopic(topic_property_->getTopicStd());
-
-//  try {
-//    caminfo_sub_.subscribe(update_nh_, caminfo_topic, 1);
-//    setStatus(rviz_common::properties::StatusProperty::Ok, "Camera Info", "OK");
+//void CameraDisplay::subscribe()
+//{
+//  if ((!isEnabled()) || (topic_property_->getTopicStd().empty())) {
+//    return;
 //  }
-//  catch (ros::Exception & e) {
-//    setStatus(rviz_common::properties::StatusProperty::Error, "Camera Info", QString("Error subscribing: ")
-//      + e.what());
-//  }
-}
+//
+//  std::string target_frame = fixed_frame_.toStdString();
+////  ImageDisplayBase::enableTFFilter(target_frame);
+//
+//  RTDClass::subscribe();
+//
+//  // TODO(greimela) Add a subscriber for camera infos
+////  std::string topic = topic_property_->getTopicStd();
+////  std::string caminfo_topic = image_transport::getCameraInfoTopic(topic_property_->getTopicStd());
+//
+////  try {
+////    caminfo_sub_.subscribe(update_nh_, caminfo_topic, 1);
+////    setStatus(rviz_common::properties::StatusProperty::Ok, "Camera Info", "OK");
+////  }
+////  catch (ros::Exception & e) {
+////    setStatus(rviz_common::properties::StatusProperty::Error, "Camera Info", QString("Error subscribing: ")
+////      + e.what());
+////  }
+//}
 
-void CameraDisplay::unsubscribe()
-{
-  RTDClass::unsubscribe();
-//  caminfo_sub_.unsubscribe();
-}
+//void CameraDisplay::unsubscribe()
+//{
+//  RTDClass::unsubscribe();
+////  caminfo_sub_.unsubscribe();
+//}
 
 void CameraDisplay::updateAlpha()
 {
@@ -308,15 +300,15 @@ void CameraDisplay::updateAlpha()
   context_->queueRender();
 }
 
-void CameraDisplay::forceRender()
-{
-  force_render_ = true;
-  context_->queueRender();
-}
+//void CameraDisplay::forceRender()
+//{
+//  force_render_ = true;
+//  context_->queueRender();
+//}
 
 void CameraDisplay::clear()
 {
-  texture_.clear();
+  texture_->clear();
   force_render_ = true;
   context_->queueRender();
 
@@ -340,7 +332,7 @@ void CameraDisplay::update(float wall_dt, float ros_dt)
   (void) wall_dt;
   (void) ros_dt;
   try {
-    if (texture_.update() || force_render_) {
+    if (texture_->update() || force_render_) {
       caminfo_ok_ = updateCamera();
       force_render_ = false;
     }
@@ -372,7 +364,7 @@ bool CameraDisplay::updateCamera()
 
     info = caminfo;
 //    info = current_caminfo_;
-    image = texture_.getImage();
+    image = texture_->getImage();
   }
 
   if (!info || !image) {
@@ -413,13 +405,13 @@ bool CameraDisplay::updateCamera()
   if (img_width == 0) {
     RVIZ_COMMON_LOG_DEBUG_STREAM("Malformed CameraInfo on camera" << qPrintable(getName()) << ", "
       "width = 0");
-    img_width = texture_.getWidth();
+    img_width = texture_->getWidth();
   }
 
   if (img_height == 0) {
     RVIZ_COMMON_LOG_DEBUG_STREAM("Malformed CameraInfo on camera" << qPrintable(getName()) << ","
       " height = 0");
-    img_height = texture_.getHeight();
+    img_height = texture_->getHeight();
   }
 
   if (img_height == 0.0 || img_width == 0.0) {
@@ -517,22 +509,22 @@ bool CameraDisplay::updateCamera()
 
 void CameraDisplay::processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg)
 {
-  texture_.addMessage(msg);
+  texture_->addMessage(msg);
 }
 
-void CameraDisplay::caminfoCallback(const sensor_msgs::msg::CameraInfo::ConstSharedPtr & msg)
-{
-  std::unique_lock<std::mutex> lock(caminfo_mutex_);
-  current_caminfo_ = msg;
-  new_caminfo_ = true;
-}
+//void CameraDisplay::caminfoCallback(const sensor_msgs::msg::CameraInfo::ConstSharedPtr & msg)
+//{
+//  std::unique_lock<std::mutex> lock(caminfo_mutex_);
+//  current_caminfo_ = msg;
+//  new_caminfo_ = true;
+//}
 
-void CameraDisplay::fixedFrameChanged()
-{
-  std::string targetFrame = fixed_frame_.toStdString();
-//  caminfo_tf_filter_->setTargetFrame(targetFrame);
-  RTDClass::fixedFrameChanged();
-}
+//void CameraDisplay::fixedFrameChanged()
+//{
+//  std::string targetFrame = fixed_frame_.toStdString();
+////  caminfo_tf_filter_->setTargetFrame(targetFrame);
+//  RTDClass::fixedFrameChanged();
+//}
 
 void CameraDisplay::reset()
 {
