@@ -45,8 +45,10 @@ EditableComboBox::EditableComboBox(QWidget * parent)
 : ComboBox(parent)
 {
   setEditable(true);
-  completer()->setCompletionMode(QCompleter::PopupCompletion);
-  completer()->setCaseSensitivity(Qt::CaseInsensitive);
+  if (completer()) {
+    completer()->setCompletionMode(QCompleter::PopupCompletion);
+    completer()->setCaseSensitivity(Qt::CaseInsensitive);
+  }
 }
 
 QString findMaxCommonPrefix(const QStringList & strings)
@@ -89,18 +91,20 @@ bool EditableComboBox::event(QEvent * event)
     if (k->key() == Qt::Key_Tab && k->modifiers() == Qt::NoModifier) {
       QCompleter * comp = completer();
 
-      QStringList completions;
-      for (int i = 0; comp->setCurrentRow(i); i++) {
-        completions.push_back(comp->currentCompletion());
-      }
-      QString max_common_prefix = findMaxCommonPrefix(completions);
-      if (max_common_prefix.size() > currentText().size()) {
-        setEditText(max_common_prefix);
-        lineEdit()->setCursorPosition(max_common_prefix.size());
-      }
+      if (comp) {
+        QStringList completions;
+        for (int i = 0; comp->setCurrentRow(i); i++) {
+          completions.push_back(comp->currentCompletion());
+        }
+        QString max_common_prefix = findMaxCommonPrefix(completions);
+        if (max_common_prefix.size() > currentText().size()) {
+          setEditText(max_common_prefix);
+          lineEdit()->setCursorPosition(max_common_prefix.size());
+        }
 
-      event->accept();
-      return true;
+        event->accept();
+        return true;
+      }
     }
   }
   return ComboBox::event(event);
