@@ -100,8 +100,6 @@ public:
   // Overrides from Display
   void onInitialize() override;
 
-//  void fixedFrameChanged() override;
-
   void update(float wall_dt, float ros_dt) override;
 
   void reset() override;
@@ -124,23 +122,18 @@ protected:
   void processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg) override;
 
 private Q_SLOTS:
-
-//  void forceRender();
-
   void updateAlpha();
 
 private:
-//  void subscribe() override;
+  void subscribe() override;
 
-//  void unsubscribe() override;
+  void unsubscribe() override;
 
-  void caminfoCallback(const sensor_msgs::msg::CameraInfo::ConstSharedPtr & msg);
+  void caminfoCallback(const sensor_msgs::msg::CameraInfo::ConstSharedPtr msg);
 
   bool updateCamera();
 
   void clear();
-
-  // void updateStatus();
 
   Ogre::SceneNode * bg_scene_node_;
   Ogre::SceneNode * fg_scene_node_;
@@ -151,9 +144,7 @@ private:
   std::unique_ptr<Ogre::Rectangle2D> fg_screen_rect_;
   Ogre::MaterialPtr fg_material_;
 
-  // TODO(Martin-Idel-SI): See whether we still need those
-//  message_filters::Subscriber<sensor_msgs::msg::CameraInfo> caminfo_sub_;
-//  tf::MessageFilter<sensor_msgs::msg::CameraInfo>* caminfo_tf_filter_;
+  rclcpp::Subscription<sensor_msgs::msg::CameraInfo>::SharedPtr caminfo_sub_;
 
   std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
   std::unique_ptr<ROSImageTextureIface> texture_;

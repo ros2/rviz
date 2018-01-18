@@ -113,9 +113,6 @@ CameraDisplay::~CameraDisplay()
     rviz_rendering::RenderWindowOgreAdapter::removeListener(render_panel_->getRenderWindow(), this);
 
     unsubscribe();
-//    caminfo_tf_filter_->clear();
-
-//    delete caminfo_tf_filter_;
 
     context_->visibilityBits()->freeBits(vis_bit_);
   }
@@ -124,10 +121,6 @@ CameraDisplay::~CameraDisplay()
 void CameraDisplay::onInitialize()
 {
   RTDClass::onInitialize();
-
-//  caminfo_tf_filter_ = new tf::MessageFilter<sensor_msgs::CameraInfo>(*context_->getTFClient(),
-//    fixed_frame_.toStdString(),
-//    queue_size_property_->getInt(), update_nh_);
 
   bg_scene_node_ = scene_node_->createChildSceneNode();
   fg_scene_node_ = scene_node_->createChildSceneNode();
@@ -233,8 +226,7 @@ void CameraDisplay::postRenderTargetUpdate(const Ogre::RenderTargetEvent & evt)
 
 void CameraDisplay::onEnable()
 {
-  RTDClass::subscribe();
-//  subscribe();
+  subscribe();
 
   // Ensures the nodes are not visible in the main window
   bg_scene_node_->setVisible(false);
@@ -248,36 +240,32 @@ void CameraDisplay::onDisable()
   clear();
 }
 
-//void CameraDisplay::subscribe()
-//{
-//  if ((!isEnabled()) || (topic_property_->getTopicStd().empty())) {
-//    return;
-//  }
-//
-//  std::string target_frame = fixed_frame_.toStdString();
-////  ImageDisplayBase::enableTFFilter(target_frame);
-//
-//  RTDClass::subscribe();
-//
-//  // TODO(greimela) Add a subscriber for camera infos
-////  std::string topic = topic_property_->getTopicStd();
-////  std::string caminfo_topic = image_transport::getCameraInfoTopic(topic_property_->getTopicStd());
-//
-////  try {
-////    caminfo_sub_.subscribe(update_nh_, caminfo_topic, 1);
-////    setStatus(rviz_common::properties::StatusProperty::Ok, "Camera Info", "OK");
-////  }
-////  catch (ros::Exception & e) {
-////    setStatus(rviz_common::properties::StatusProperty::Error, "Camera Info", QString("Error subscribing: ")
-////      + e.what());
-////  }
-//}
+void CameraDisplay::subscribe()
+{
+  RTDClass::subscribe();
 
-//void CameraDisplay::unsubscribe()
-//{
-//  RTDClass::unsubscribe();
-////  caminfo_sub_.unsubscribe();
-//}
+  if ((!isEnabled()) || (topic_property_->getTopicStd().empty())) {
+    return;
+  }
+
+  try {
+    caminfo_sub_ = node_->create_subscription<sensor_msgs::msg::CameraInfo>(
+      topic_property_->getTopicStd() + "/camera_info",
+      std::bind(&CameraDisplay::caminfoCallback, this, std::placeholders::_1),
+      qos_profile);
+    setStatus(rviz_common::properties::StatusProperty::Ok, "Camera Info", "OK");
+  } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
+    setStatus(
+      rviz_common::properties::StatusProperty::Error, "Camera Info",
+      QString("Error subscribing: ") + e.what());
+  }
+}
+
+void CameraDisplay::unsubscribe()
+{
+  RTDClass::unsubscribe();
+  caminfo_sub_.reset();
+}
 
 void CameraDisplay::updateAlpha()
 {
@@ -296,12 +284,6 @@ void CameraDisplay::updateAlpha()
   context_->queueRender();
 }
 
-//void CameraDisplay::forceRender()
-//{
-//  force_render_ = true;
-//  context_->queueRender();
-//}
-
 void CameraDisplay::clear()
 {
   texture_->clear();
@@ -311,14 +293,10 @@ void CameraDisplay::clear()
   new_caminfo_ = false;
   current_caminfo_.reset();
 
-  // TODO(Martin-Idel-SI): Reintroduce correct topic. Was: "caminfo_sub_.getTopic()" instead of
-  // "camera"
   setStatus(rviz_common::properties::StatusProperty::Warn, "Camera Info",
-    "No CameraInfo received on [" + QString::fromStdString("camera") +
+    "No CameraInfo received on [" + topic_property_->getTopic() + "/camera_info" +
       "].  Topic may not exist.");
-  setStatus(rviz_common::properties::StatusProperty::Warn, "Image", "No Image received");
 
-  // TODO(greimela): Reenable resetting the camera
   rviz_rendering::RenderWindowOgreAdapter::getOgreCamera(render_panel_->getRenderWindow())
     ->setPosition(Ogre::Vector3(999999, 999999, 999999));
 }
@@ -494,7 +472,7 @@ void CameraDisplay::processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg)
   texture_->addMessage(msg);
 }
 
-void CameraDisplay::caminfoCallback(const sensor_msgs::msg::CameraInfo::ConstSharedPtr & msg)
+void CameraDisplay::caminfoCallback(const sensor_msgs::msg::CameraInfo::ConstSharedPtr msg)
 {
   std::unique_lock<std::mutex> lock(caminfo_mutex_);
   current_caminfo_ = msg;
