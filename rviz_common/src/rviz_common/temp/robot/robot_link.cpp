@@ -791,7 +791,7 @@ void RobotLink::updateAxes()
       static int count = 0;
       std::stringstream ss;
       ss << "Axes for link " << name_ << count++;
-      axes_ = new Axes(scene_manager_, robot_->getOtherNode(), 0.1, 0.01);
+      axes_ = new Axes(scene_manager_, robot_->getOtherNode(), 0.1f, 0.01f);
       axes_->getSceneNode()->setVisible(getEnabled() );
 
       axes_->setPosition(position_property_->getVector() );

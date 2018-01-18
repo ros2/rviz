@@ -107,7 +107,7 @@ sensor_msgs::msg::PointCloud2::ConstSharedPtr PointCloud2Display::filterOutInval
   filtered->header = cloud->header;
   filtered->fields = cloud->fields;
   filtered->height = 1;
-  filtered->width = filtered->data.size() / cloud->point_step;
+  filtered->width = static_cast<uint32_t>(filtered->data.size() / cloud->point_step);
   filtered->is_bigendian = cloud->is_bigendian;
   filtered->point_step = cloud->point_step;
   filtered->row_step = filtered->width;

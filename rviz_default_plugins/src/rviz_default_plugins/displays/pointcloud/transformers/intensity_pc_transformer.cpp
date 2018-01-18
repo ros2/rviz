@@ -100,7 +100,7 @@ bool IntensityPCTransformer::transform(
     // when we divide by it, we effectively get zero.  That way the
     // point cloud coloring will be predictably uniform when min and
     // max are equal.
-    diff_intensity = 1e20;
+    diff_intensity = 1e20f;
   }
   Ogre::ColourValue max_color = max_color_property_->getOgreColor();
   Ogre::ColourValue min_color = min_color_property_->getOgreColor();
@@ -108,9 +108,9 @@ bool IntensityPCTransformer::transform(
   if (use_rainbow_property_->getBool()) {
     for (uint32_t i = 0; i < num_points; ++i) {
       float val = valueFromCloud<float>(cloud, offset, type, point_step, i);
-      float value = 1.0 - (val - min_intensity) / diff_intensity;
+      float value = 1.0f - (val - min_intensity) / diff_intensity;
       if (invert_rainbow_property_->getBool()) {
-        value = 1.0 - value;
+        value = 1.0f - value;
       }
       getRainbowColor(value, points_out[i].color);
     }

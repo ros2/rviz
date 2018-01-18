@@ -106,7 +106,7 @@ public:
   Ogre::ColourValue getColor() {return color_;}
 
   void setCellCount(uint32_t count);
-  float getCellCount() {return cell_count_;}
+  uint32_t getCellCount() {return cell_count_;}
 
   void setCellLength(float len);
   float getCellLength() {return cell_length_;}

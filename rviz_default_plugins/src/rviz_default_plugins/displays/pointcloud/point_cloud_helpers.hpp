@@ -64,7 +64,7 @@ inline int32_t findChannelIndex(
 {
   for (size_t i = 0; i < cloud->fields.size(); ++i) {
     if (cloud->fields[i].name == channel) {
-      return i;
+      return static_cast<uint32_t>(i);
     }
   }
 

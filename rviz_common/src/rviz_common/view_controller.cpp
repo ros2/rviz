@@ -75,7 +75,7 @@ ViewController::ViewController()
     "Near Clip Distance", 0.01f,
     "Anything closer to the camera than this threshold will not get rendered.",
     this, SLOT(updateNearClipDistance()));
-  near_clip_property_->setMin(0.001);
+  near_clip_property_->setMin(0.001f);
   near_clip_property_->setMax(10000);
 
   stereo_enable_ = new BoolProperty("Enable Stereo Rendering", true,
