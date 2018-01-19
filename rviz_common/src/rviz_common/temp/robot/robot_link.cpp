@@ -39,7 +39,14 @@
 # pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
 
+#ifdef _WIN32
+#pragma warning(push)
+#pragma warning(disable : 4996)
 #include <OgreEntity.h>
+#pragma warning(pop)
+#else
+#include <OgreEntity.h>
+#endif
 #include <OgreMaterial.h>
 #include <OgreMaterialManager.h>
 #include <OgreRibbonTrail.h>
