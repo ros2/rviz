@@ -37,12 +37,11 @@
 #include "rviz_common/properties/property.hpp"
 
 #include "../point_cloud_transformer.hpp"
-#include "../../../visibility_control.hpp"
 
 namespace rviz_default_plugins
 {
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC RGB8PCTransformer : public
+class RGB8PCTransformer : public
   rviz_default_plugins::PointCloudTransformer
 {
 public:

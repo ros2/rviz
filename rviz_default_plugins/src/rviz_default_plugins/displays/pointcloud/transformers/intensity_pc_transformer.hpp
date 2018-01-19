@@ -35,12 +35,11 @@
 #include "rviz_common/properties/color_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
 #include "../point_cloud_helpers.hpp"
-#include "../../../visibility_control.hpp"
 
 namespace rviz_default_plugins
 {
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC IntensityPCTransformer : public PointCloudTransformer
+class IntensityPCTransformer : public PointCloudTransformer
 {
   Q_OBJECT
 

@@ -41,12 +41,11 @@
 #include "rviz_common/properties/float_property.hpp"
 
 #include "../point_cloud_transformer.hpp"
-#include "../../../visibility_control.hpp"
 
 namespace rviz_default_plugins
 {
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC AxisColorPCTransformer : public PointCloudTransformer
+class AxisColorPCTransformer : public PointCloudTransformer
 {
   Q_OBJECT
 
