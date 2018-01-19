@@ -14,6 +14,12 @@ else()
   set(BUILDING_ZLIB_LOCALLY OFF)
 endif()
 
+if(WIN32 AND NOT ${CMAKE_VERBOSE_MAKEFILE})
+  set(should_log ON)  # prevent warnings in Windows CI
+else()
+  set(should_log OFF)
+endif()
+
 macro(build_freetype)
   set(extra_cmake_args)
 
@@ -27,6 +33,8 @@ macro(build_freetype)
     URL https://git.savannah.gnu.org/cgit/freetype/freetype2.git/snapshot/freetype2-VER-2-6-5.tar.gz
     URL_MD5 0dd62a0125895431e074a3df29f94d69
     TIMEOUT 600
+    LOG_CONFIGURE ${should_log}
+    LOG_BUILD ${should_log}
     CMAKE_ARGS
       -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/freetype_install
       ${extra_cmake_args}
@@ -54,6 +62,8 @@ macro(build_zlib)
     URL https://www.zlib.net/fossils/zlib-1.2.11.tar.gz
     URL_MD5 1c9f62f0778697a09d36121ead88e08e
     TIMEOUT 600
+    LOG_CONFIGURE ${should_log}
+    LOG_BUILD ${should_log}
     CMAKE_ARGS
       -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/zlib-install
       ${extra_cmake_args}
@@ -115,6 +125,8 @@ macro(build_ogre)
     URL https://github.com/OGRECave/ogre/archive/ca665a69a5ca47608ee0ad304b2596ff866616da.zip
     URL_MD5 a627f447d0013a9cf0889117ac76bc5f
     TIMEOUT 600
+    LOG_CONFIGURE ${should_log}
+    LOG_BUILD ${should_log}
     CMAKE_ARGS
       -DOGRE_STATIC:BOOL=OFF
       -DOGRE_DEPENDENCIES_DIR=${CMAKE_CURRENT_BINARY_DIR}/ogredeps
