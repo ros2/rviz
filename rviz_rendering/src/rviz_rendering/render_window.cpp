@@ -226,7 +226,7 @@ RenderWindowOgreAdapter::setOgreCamera(RenderWindow * render_window, Ogre::Camer
   render_window->impl_->setCamera(ogre_camera);
 }
 
-Ogre::Camera*
+Ogre::Camera *
 RenderWindowOgreAdapter::getOgreCamera(RenderWindow * render_window)
 {
   return render_window->impl_->getCamera();
@@ -266,18 +266,21 @@ RenderWindowOgreAdapter::setSceneManager(
 }
 
 void RenderWindowOgreAdapter::addListener(
-  RenderWindow * render_window, Ogre::RenderTargetListener * listener) {
+  RenderWindow * render_window, Ogre::RenderTargetListener * listener)
+{
   render_window->impl_->addListener(listener);
 }
 
 void RenderWindowOgreAdapter::removeListener(
-  RenderWindow * render_window, Ogre::RenderTargetListener * listener) {
+  RenderWindow * render_window, Ogre::RenderTargetListener * listener)
+{
   render_window->impl_->removeListener(listener);
 }
 
 void RenderWindowOgreAdapter::setVisibilityMask(
   RenderWindow * render_window, uint32_t mask
-) {
+)
+{
   render_window->impl_->setVisibilityMask(mask);
 }
 

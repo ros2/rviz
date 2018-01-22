@@ -41,7 +41,8 @@ namespace rviz_common
 namespace properties
 {
 
-DisplayVisibilityProperty::DisplayVisibilityProperty(uint32_t vis_bit,
+DisplayVisibilityProperty::DisplayVisibilityProperty(
+  uint32_t vis_bit,
   Display * display,
   const QString & name,
   bool default_value,
@@ -49,7 +50,7 @@ DisplayVisibilityProperty::DisplayVisibilityProperty(uint32_t vis_bit,
   Property * parent,
   const char * changed_slot,
   QObject * receiver)
-  : BoolProperty(name, default_value, description, parent, changed_slot, receiver),
+: BoolProperty(name, default_value, description, parent, changed_slot, receiver),
   vis_bit_(vis_bit), display_(display)
 {
   custom_name_ = (name.size() != 0);
@@ -67,7 +68,8 @@ void DisplayVisibilityProperty::update()
     setName(display_->getName());
   }
   if (getBool() &&
-    (getViewFlags(0) & Qt::ItemIsEnabled)) {
+    (getViewFlags(0) & Qt::ItemIsEnabled))
+  {
     display_->setVisibilityBits(vis_bit_);
   } else {
     display_->unsetVisibilityBits(vis_bit_);

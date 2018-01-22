@@ -27,10 +27,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_CAMERA_DISPLAY_H
-#define RVIZ_CAMERA_DISPLAY_H
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__CAMERA__CAMERA_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__CAMERA__CAMERA_DISPLAY_HPP_
 
 #include <cstdint>
+#include <memory>
 #include <mutex>
 
 #include <QObject>  // NOLINT: cpplint cannot handle the include order here
@@ -78,7 +79,8 @@ class DisplayGroupVisibilityProperty;
 }  // namespace properties
 }  // namespace rviz_common
 
-namespace rviz_default_plugins {
+namespace rviz_default_plugins
+{
 
 namespace displays
 {
@@ -89,9 +91,10 @@ namespace displays
  */
 class CameraDisplay
   : public rviz_common::RosTopicDisplay<sensor_msgs::msg::Image>,
-    public Ogre::RenderTargetListener
+  public Ogre::RenderTargetListener
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   CameraDisplay();
 
@@ -169,4 +172,4 @@ private:
 
 }  // namespace rviz_default_plugins
 
- #endif
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__CAMERA__CAMERA_DISPLAY_HPP_

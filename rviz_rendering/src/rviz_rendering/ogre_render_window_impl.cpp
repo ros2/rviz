@@ -187,19 +187,21 @@ RenderWindowImpl::setupSceneAfterInit(setupSceneCallback setup_scene_callback)
   }
 }
 
-void RenderWindowImpl::addListener(Ogre::RenderTargetListener * listener) {
+void RenderWindowImpl::addListener(Ogre::RenderTargetListener * listener)
+{
   if (ogre_render_window_) {
     ogre_render_window_->addListener(listener);
   } else {
     pending_listeners_.emplace_back(listener);
   }
 }
-void RenderWindowImpl::removeListener(Ogre::RenderTargetListener * listener) {
+void RenderWindowImpl::removeListener(Ogre::RenderTargetListener * listener)
+{
   if (ogre_render_window_) {
     ogre_render_window_->removeListener(listener);
   } else {
     pending_listeners_.erase(
-      std::find(pending_listeners_.begin(),pending_listeners_.end(), listener));
+      std::find(pending_listeners_.begin(), pending_listeners_.end(), listener));
   }
 }
 
@@ -236,7 +238,7 @@ RenderWindowImpl::initialize()
     camera_node_->attachObject(ogre_camera_);
   }
 
-  if(ogre_camera_) {
+  if (ogre_camera_) {
     ogre_viewport_ = ogre_render_window_->addViewport(ogre_camera_);
     auto bg_color = Ogre::ColourValue(0.937254902f, 0.921568627f, 0.905882353f);  // Qt background
     ogre_viewport_->setBackgroundColour(bg_color);
@@ -444,11 +446,13 @@ Ogre::SceneManager * RenderWindowImpl::getSceneManager() const
   return ogre_scene_manager_;
 }
 
-void RenderWindowImpl::setSceneManager(Ogre::SceneManager * scene_manager) {
+void RenderWindowImpl::setSceneManager(Ogre::SceneManager * scene_manager)
+{
   ogre_scene_manager_ = scene_manager;
 }
 
-void RenderWindowImpl::setVisibilityMask(uint32_t mask) {
+void RenderWindowImpl::setVisibilityMask(uint32_t mask)
+{
   if (ogre_viewport_) {
     ogre_viewport_->setVisibilityMask(mask);
   } else {

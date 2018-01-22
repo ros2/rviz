@@ -34,8 +34,8 @@
 #include <map>
 #include <string>
 
-#include <QObject>
-#include <QString>
+#include <QObject>  // NOLINT: cpplint cannot handle the include order here
+#include <QString>  // NOLINT: cpplint cannot handle the include order here
 
 #include "rviz_common/properties/bool_property.hpp"
 
@@ -59,7 +59,8 @@ class DisplayVisibilityProperty;
  */
 class DisplayVisibilityProperty : public BoolProperty
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   DisplayVisibilityProperty(
     uint32_t vis_bit,
@@ -80,7 +81,6 @@ public:
   Qt::ItemFlags getViewFlags(int column) const;
 
 public Q_SLOTS:
-
   virtual bool setValue(const QVariant & new_value);
 
 protected:

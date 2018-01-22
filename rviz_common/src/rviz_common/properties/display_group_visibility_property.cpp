@@ -33,6 +33,8 @@
  *      Author: gossow
  */
 
+#include <map>
+
 #include "include/rviz_common/properties/display_group_visibility_property.hpp"
 
 #include "rviz_common/properties/bool_property.hpp"
@@ -57,13 +59,15 @@ DisplayGroupVisibilityProperty::DisplayGroupVisibilityProperty(
   Property * parent,
   const char * changed_slot,
   QObject * receiver)
-  : DisplayVisibilityProperty(vis_bit, display_group, name, default_value, description, parent,
-  changed_slot, receiver), display_group_(display_group), parent_display_(parent_display)
+: DisplayVisibilityProperty(
+    vis_bit, display_group, name, default_value, description, parent, changed_slot, receiver),
+  display_group_(display_group),
+  parent_display_(parent_display)
 {
-  connect(display_group, SIGNAL(displayAdded(rviz::Display * )), this,
-    SLOT(onDisplayAdded(rviz::Display * )));
-  connect(display_group, SIGNAL(displayRemoved(rviz::Display * )), this,
-    SLOT(onDisplayRemoved(rviz::Display * )));
+  connect(display_group, SIGNAL(displayAdded(rviz::Display *)), this,
+    SLOT(onDisplayAdded(rviz::Display *)));
+  connect(display_group, SIGNAL(displayRemoved(rviz::Display *)), this,
+    SLOT(onDisplayRemoved(rviz::Display *)));
 
   for (int i = 0; i < display_group->numDisplays(); i++) {
     rviz_common::Display * display = display_group->getDisplayAt(i);
@@ -78,8 +82,8 @@ DisplayGroupVisibilityProperty::DisplayGroupVisibilityProperty(
 void DisplayGroupVisibilityProperty::update()
 {
   DisplayVisibilityProperty::update();
-  std::map<rviz_common::Display *, DisplayVisibilityProperty *>::iterator it
-    = disp_vis_props_.begin();
+  std::map<rviz_common::Display *, DisplayVisibilityProperty *>::iterator it =
+    disp_vis_props_.begin();
   for (; it != disp_vis_props_.end(); it++) {
     it->second->update();
   }
@@ -91,8 +95,8 @@ void DisplayGroupVisibilityProperty::sortDisplayList()
   // in the same order as it appears in the display group
   for (int i = 0; i < display_group_->numDisplays(); i++) {
     rviz_common::Display * display = display_group_->getDisplayAt(i);
-    std::map<rviz_common::Display *, DisplayVisibilityProperty *>::iterator it
-      = disp_vis_props_.find(display);
+    std::map<rviz_common::Display *, DisplayVisibilityProperty *>::iterator it =
+      disp_vis_props_.find(display);
     if (it != disp_vis_props_.end()) {
       takeChild(it->second);
       addChild(it->second);
@@ -106,10 +110,10 @@ void DisplayGroupVisibilityProperty::onDisplayAdded(Display * display)
   DisplayVisibilityProperty * vis_prop;
   if (display_group) {
     vis_prop = new DisplayGroupVisibilityProperty(vis_bit_, display_group, parent_display_, "",
-      true, "Uncheck to hide everything in this Display Group", this);
+        true, "Uncheck to hide everything in this Display Group", this);
   } else {
     vis_prop = new DisplayVisibilityProperty(vis_bit_, display, "", true,
-      "Show or hide this Display", this);
+        "Show or hide this Display", this);
   }
   disp_vis_props_[display] = vis_prop;
   sortDisplayList();
@@ -117,8 +121,8 @@ void DisplayGroupVisibilityProperty::onDisplayAdded(Display * display)
 
 void DisplayGroupVisibilityProperty::onDisplayRemoved(Display * display)
 {
-  std::map<rviz_common::Display *, DisplayVisibilityProperty *>::iterator it
-    = disp_vis_props_.find(display);
+  std::map<rviz_common::Display *, DisplayVisibilityProperty *>::iterator it =
+    disp_vis_props_.find(display);
   if (it != disp_vis_props_.end()) {
     Property * child = takeChild(it->second);
     child->setParent(NULL);

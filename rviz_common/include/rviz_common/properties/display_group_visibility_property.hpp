@@ -37,8 +37,8 @@
 #include <map>
 #include <string>
 
-#include <QObject>
-#include <QString>
+#include <QObject>  // NOLINT: cpplint cannot handle the include order here
+#include <QString>  // NOLINT: cpplint cannot handle the include order here
 
 namespace rviz_common
 {
@@ -61,9 +61,9 @@ class DisplayVisibilityProperty;
  */
 class DisplayGroupVisibilityProperty : public DisplayVisibilityProperty
 {
-Q_OBJECT
-public:
+  Q_OBJECT
 
+public:
   /* @param parent Parent display (will not get a visibility property)
    * @param context The display context
    * @param root_property Where to attach new properties to
@@ -85,13 +85,11 @@ public:
   virtual void update();
 
 public Q_SLOTS:
-
   void onDisplayAdded(rviz_common::Display * display);
 
   void onDisplayRemoved(rviz_common::Display * display);
 
 private:
-
   // sort the properties in the same way as in the
   // root display group
   void sortDisplayList();

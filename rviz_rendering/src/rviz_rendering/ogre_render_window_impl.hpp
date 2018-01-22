@@ -58,6 +58,7 @@
 #include <QWindow>
 
 #include <functional>
+#include <vector>
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop
