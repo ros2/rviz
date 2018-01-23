@@ -32,13 +32,18 @@
 
 #include <memory>
 
+uint32_t size(size_t value)
+{
+  return static_cast<uint32_t>(value);
+}
+
 sensor_msgs::msg::PointCloud2::ConstSharedPtr rviz_default_plugins::convertPointCloudToPointCloud2(
   const sensor_msgs::msg::PointCloud::ConstSharedPtr input)
 {
   sensor_msgs::msg::PointCloud2::SharedPtr output(
     new sensor_msgs::msg::PointCloud2_<std::allocator<void>>());
   output->header = input->header;
-  output->width = input->points.size();
+  output->width = size(input->points.size());
   output->height = 1;
   output->fields.resize(3 + input->channels.size());
 
@@ -47,10 +52,10 @@ sensor_msgs::msg::PointCloud2::ConstSharedPtr rviz_default_plugins::convertPoint
 
   size_t offset = 0;
   for (size_t d = 0; d < output->fields.size(); ++d, offset += sizeof(float)) {
-    output->fields[d].offset = offset;
+    output->fields[d].offset = size(offset);
     output->fields[d].datatype = sensor_msgs::msg::PointField::FLOAT32;
   }
-  output->point_step = offset;
+  output->point_step = size(offset);
   output->row_step = output->point_step * output->width;
   // Convert the remaining of the channels to fields
   for (size_t d = 0; d < input->channels.size(); ++d) {

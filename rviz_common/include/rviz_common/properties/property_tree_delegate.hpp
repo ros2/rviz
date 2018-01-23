@@ -33,12 +33,14 @@
 
 #include <QStyledItemDelegate>
 
+#include "rviz_common/visibility_control.hpp"
+
 namespace rviz_common
 {
 namespace properties
 {
 
-class PropertyTreeDelegate : public QStyledItemDelegate
+class RVIZ_COMMON_PUBLIC PropertyTreeDelegate : public QStyledItemDelegate
 {
   Q_OBJECT
 

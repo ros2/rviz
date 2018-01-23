@@ -45,6 +45,7 @@
 #include "sensor_msgs/image_encodings.hpp"
 
 #include "rviz_common/logging.hpp"
+#include "rviz_common/uniform_string_stream.hpp"
 
 namespace rviz_default_plugins
 {
@@ -60,7 +61,7 @@ ROSImageTexture::ROSImageTexture()
   empty_image_.load("no_image.png", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 
   static uint32_t count = 0;
-  std::stringstream ss;
+  rviz_common::UniformStringStream ss;
   ss << "ROSImageTexture" << count++;
   texture_ = Ogre::TextureManager::getSingleton().loadImage(
     ss.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, empty_image_,
@@ -140,12 +141,12 @@ ROSImageTexture::getMinimalAndMaximalValueToNormalize(
     }
 
     if (median_frames_ > 1) {
-      minValue = computeMedianOfSeveralFrames(min_buffer_, minValue);
-      maxValue = computeMedianOfSeveralFrames(max_buffer_, maxValue);
+      minValue = static_cast<T>(computeMedianOfSeveralFrames(min_buffer_, minValue));
+      maxValue = static_cast<T>(computeMedianOfSeveralFrames(max_buffer_, maxValue));
     }
   } else {
-    minValue = min_;
-    maxValue = max_;
+    minValue = static_cast<T>(min_);
+    maxValue = static_cast<T>(max_);
   }
 }
 
@@ -192,7 +193,7 @@ ROSImageTexture::createNewNormalizedBuffer(
       double val = (static_cast<double>(*input_ptr - minValue) / range);
       if (val < 0) {val = 0;}
       if (val > 1) {val = 1;}
-      *output_ptr = val * 255u;
+      *output_ptr = static_cast<uint8_t>(val * 255u);
     }
   }
   return buffer;

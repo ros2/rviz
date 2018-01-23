@@ -105,17 +105,17 @@ PointCloudCommon::PointCloudCommon(rviz_common::Display * display)
   style_property_->addOption("Boxes", rviz_rendering::PointCloud::RM_BOXES);
   style_property_->addOption("Tiles", rviz_rendering::PointCloud::RM_TILES);
 
-  point_world_size_property_ = new rviz_common::properties::FloatProperty("Size (m)", 0.01,
+  point_world_size_property_ = new rviz_common::properties::FloatProperty("Size (m)", 0.01f,
       "Point size in meters.",
       display_, SLOT(updateBillboardSize()), this);
-  point_world_size_property_->setMin(0.0001);
+  point_world_size_property_->setMin(0.0001f);
 
   point_pixel_size_property_ = new rviz_common::properties::FloatProperty("Size (Pixels)", 3,
       "Point size in pixels.",
       display_, SLOT(updateBillboardSize()), this);
   point_pixel_size_property_->setMin(1);
 
-  alpha_property_ = new rviz_common::properties::FloatProperty("Alpha", 1.0,
+  alpha_property_ = new rviz_common::properties::FloatProperty("Alpha", 1.0f,
       "Amount of transparency to apply to the points.  Note that this is experimental "
       "and does not always look correct.",
       display_, SLOT(updateAlpha()), this);
@@ -522,7 +522,7 @@ void PointCloudCommon::updateTransformers(
 void PointCloudCommon::updateStatus()
 {
   std::stringstream ss;
-  uint32_t total_point_count = 0;
+  uint64_t total_point_count = 0;
   for (const auto & cloud_info : cloud_infos_) {
     total_point_count += cloud_info->transformed_points_.size();
   }
@@ -740,7 +740,7 @@ float PointCloudCommon::getSelectionBoxSize()
   if (style_property_->getOptionInt() != rviz_rendering::PointCloud::RM_POINTS) {
     return point_world_size_property_->getFloat();
   } else {
-    return 0.004;
+    return 0.004f;
   }
 }
 

@@ -41,7 +41,8 @@
 namespace rviz_default_plugins
 {
 
-class RGB8PCTransformer : public rviz_default_plugins::PointCloudTransformer
+class RGB8PCTransformer : public
+  rviz_default_plugins::PointCloudTransformer
 {
 public:
   unsigned char supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) override;

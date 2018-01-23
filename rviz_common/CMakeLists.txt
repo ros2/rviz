@@ -2,15 +2,6 @@ cmake_minimum_required(VERSION 3.5)
 
 project(rviz_common)
 
-# TODO(wjwood): remove when windows build is fixed
-if(DEFINED ENV{RVIZ_BUILD_ON_WINDOWS_OVERRIDE})
-  set(RVIZ_BUILD_ON_WINDOWS_OVERRIDE "$ENV{RVIZ_BUILD_ON_WINDOWS_OVERRIDE}")
-endif()
-if(WIN32 AND NOT DEFINED RVIZ_BUILD_ON_WINDOWS_OVERRIDE)
-  message(STATUS "${PROJECT_NAME} is not supported on Windows, skipping...")
-  return()
-endif()
-
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)
@@ -27,13 +18,12 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(ament_cmake REQUIRED)
+# do find_package(rviz_ogre_vendor) first to make sure the custom OGRE is found
+find_package(rviz_ogre_vendor REQUIRED)
 
-# TODO(wjwwood): figure out why autogen fails on Windows, and why it isn't necessary...
-if(NOT WIN32)
-  # Qt5 boilerplate options from http://doc.qt.io/qt-5/cmake-manual.html
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  set(CMAKE_AUTOMOC ON)
-endif()
+# Qt5 boilerplate options from http://doc.qt.io/qt-5/cmake-manual.html
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOMOC ON)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
@@ -234,7 +224,7 @@ list(APPEND rviz_common_headers_to_moc
 list(APPEND rviz_common_headers_to_moc
   src/rviz_common/temp/stl_loader.cpp)
 
-add_library(rviz_common
+add_library(rviz_common SHARED
   ${rviz_common_headers_to_moc}
   ${rviz_common_source_files}
   ${rviz_default_plugins_source_files}
@@ -246,13 +236,17 @@ target_include_directories(rviz_common
     ${pluginlib_INCLUDE_DIRS}
     ${TinyXML_INCLUDE_DIRS}
 )
+
 target_link_libraries(rviz_common
+  rviz_ogre_vendor::OgreMain
+  rviz_ogre_vendor::OgreOverlay
   ${pluginlib_LIBRARIES}
   resource_retriever::resource_retriever
   rviz_rendering::rviz_rendering
   Qt5::Widgets
   ${TinyXML_LIBRARIES}
 )
+
 ament_target_dependencies(rviz_common
   geometry_msgs
   rclcpp
@@ -267,10 +261,13 @@ ament_target_dependencies(rviz_common
 )
 # prevent pluginlib from using boost
 target_compile_definitions(rviz_common PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
+# Causes the visibility macros to use dllexport rather than dllimport,
+# which is appropriate when building the dll but not consuming it.
+target_compile_definitions(rviz_common PRIVATE "RVIZ_COMMON_BUILDING_LIBRARY")
 
 ament_export_interfaces(rviz_common)
-ament_export_dependencies(rviz_rendering)
 ament_export_dependencies(
+  rviz_rendering
   geometry_msgs
   pluginlib
   rclcpp
@@ -320,13 +317,21 @@ if(BUILD_TESTING AND NOT WIN32)
   ament_add_gtest(rviz_common_config_test
     test/config_test.cpp)
   if(TARGET rviz_common_config_test)
-    target_link_libraries(rviz_common_config_test rviz_common)
+    target_link_libraries(rviz_common_config_test
+      rviz_common
+      rviz_ogre_vendor::OgreMain
+      rviz_ogre_vendor::OgreOverlay
+    )
   endif()
 
   ament_add_gtest(rviz_common_uniform_string_stream_test
     test/uniform_string_stream_test.cpp)
   if(TARGET rviz_common_uniform_string_stream_test)
-    target_link_libraries(rviz_common_uniform_string_stream_test rviz_common)
+    target_link_libraries(rviz_common_uniform_string_stream_test
+      rviz_common
+      rviz_ogre_vendor::OgreMain
+      rviz_ogre_vendor::OgreOverlay
+    )
   endif()
 
   # TODO(wjwwood): reenable this test when it can be run on CI

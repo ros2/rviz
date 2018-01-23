@@ -36,6 +36,8 @@
 #include <string>
 #include <vector>
 
+#include "rviz_common/visibility_control.hpp"
+
 #include "./ros_node_abstraction_iface.hpp"
 
 namespace rviz_common
@@ -49,6 +51,7 @@ class RosNodeStorageIface;
 class RosNodeAbstraction : public RosNodeAbstractionIface
 {
 public:
+  RVIZ_COMMON_PUBLIC
   RosNodeAbstraction() = delete;
 
   /// Creates a ros node with the given name
@@ -59,6 +62,7 @@ public:
    *
    * \param node_name name of the node to create
    */
+  RVIZ_COMMON_PUBLIC
   explicit RosNodeAbstraction(const std::string & node_name);
 
   /// Creates a ros node with the given name using a specific storage. For testing use only.
@@ -70,6 +74,7 @@ public:
    * \param node_name name of the node to create
    * \param ros_node_storage storage handling for the internal rclcpp::Node
    */
+  RVIZ_COMMON_PUBLIC
   RosNodeAbstraction(
     const std::string & node_name,
     std::shared_ptr<RosNodeStorageIface> ros_node_storage);
@@ -80,6 +85,7 @@ public:
    *
    * \return the name of the node
    */
+  RVIZ_COMMON_PUBLIC
   std::string get_node_name() override;
 
   /// Return a map with topic names mapped to a list of types for that topic.
@@ -88,6 +94,7 @@ public:
    *
    * \return map of topic names and their types
    */
+  RVIZ_COMMON_PUBLIC
   std::map<std::string, std::vector<std::string>>
   get_topic_names_and_types() override;
 

@@ -15,14 +15,19 @@ set(FREETYPE_HOME "${rviz_ogre_vendor_DIR}/../../../opt/rviz_ogre_vendor")
 set(ZLIB_ROOT "${rviz_ogre_vendor_DIR}/../../../opt/rviz_ogre_vendor")
 
 find_package(OGRE REQUIRED)
-# message(STATUS "OGRE_LIBRARIES: ${OGRE_LIBRARIES}")
-# message(STATUS "OGRE_LIBRARY_DIRS: ${OGRE_LIBRARY_DIRS}")
+message(STATUS "OGRE_LIBRARIES: ${OGRE_LIBRARIES}")
+message(STATUS "OGRE_LIBRARY_DIRS: ${OGRE_LIBRARY_DIRS}")
+message(STATUS "OGRE_PLUGINS: ${OGRE_PLUGINS}")
+message(STATUS "OGRE_PLUGIN_DIR: ${OGRE_PLUGIN_DIR}")
+
+list(APPEND OGRE_LIBRARIES ${OGRE_PLUGINS})
+list(APPEND OGRE_LIBRARY_DIRS ${OGRE_PLUGIN_DIR})
 
 foreach(_lib IN LISTS OGRE_LIBRARIES)
   # Remove debug suffix from library name for matching
   string(REPLACE "_d" "" _lib ${_lib})
 
-  if("OgreMainStatic" STREQUAL ${_lib})
+  if("OgreMainStatic" STREQUAL ${_lib} OR "OgreMain" STREQUAL ${_lib})
     find_library(_ogre_main_static_library_abs ${_lib}
       PATHS
         ${OGRE_LIBRARY_DIRS}
@@ -48,9 +53,9 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
       set(_ogre_main_static_library_debug_abs ${_ogre_main_static_library_abs})
     endif()
 
-    add_library(rviz_ogre_vendor::OgreMain STATIC IMPORTED)
-    # message("rviz_ogre_vendor::OgreMain for IMPORTED_LOCATION_RELEASE: ${_ogre_main_static_library_abs}")
-    # message("rviz_ogre_vendor::OgreMain for IMPORTED_LOCATION_DEBUG: ${_ogre_main_static_library_debug_abs}")
+    add_library(rviz_ogre_vendor::OgreMain UNKNOWN IMPORTED)
+    message("rviz_ogre_vendor::OgreMain for IMPORTED_LOCATION_RELEASE: ${_ogre_main_static_library_abs}")
+    message("rviz_ogre_vendor::OgreMain for IMPORTED_LOCATION_DEBUG: ${_ogre_main_static_library_debug_abs}")
     set_target_properties(rviz_ogre_vendor::OgreMain
       PROPERTIES
         IMPORTED_LOCATION_RELEASE ${_ogre_main_static_library_abs}
@@ -76,11 +81,21 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
       list(APPEND _extra_interface_link_libraries ${FREEIMAGE_LIBRARIES})
     endif()
 
-    find_package(Freetype REQUIRED)
-    if(NOT FREETYPE_LIBRARIES)
+    find_package(Freetype QUIET)
+    if(NOT Freetype_FOUND)
+      # try newer method with exported targets
+      set(freetype_DIR
+        "${rviz_ogre_vendor_DIR}/../../../opt/rviz_ogre_vendor/lib/cmake/freetype")
+      find_package(freetype CONFIG REQUIRED)
+    endif()
+    if(FREETYPE_LIBRARIES)
+      list(APPEND _extra_interface_link_libraries ${FREETYPE_LIBRARIES})
+    elseif(TARGET freetype)
+      # newer versions of freetype provide exported cmake targets
+      list(APPEND _extra_interface_link_libraries freetype)
+    else()
       message(FATAL_ERROR "Could not find freetype package")
     endif()
-    list(APPEND _extra_interface_link_libraries ${FREETYPE_LIBRARIES})
 
     if(WIN32)
       if(_ogre_main_static_library_debug_abs)
@@ -114,7 +129,7 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
         "INTERFACE_LINK_LIBRARIES" "${_extra_interface_link_libraries}"
     )
   endif()
-  if("OgreOverlayStatic" STREQUAL ${_lib})
+  if("OgreOverlayStatic" STREQUAL ${_lib} OR "OgreOverlay" STREQUAL ${_lib})
     find_library(_ogre_overlay_static_library_abs ${_lib}
       PATHS
         ${OGRE_LIBRARY_DIRS}
@@ -140,9 +155,9 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
       set(_ogre_overlay_static_library_debug_abs ${_ogre_overlay_static_library_abs})
     endif()
 
-    add_library(rviz_ogre_vendor::OgreOverlay STATIC IMPORTED)
-    # message("rviz_ogre_vendor::OgreOverlay for IMPORTED_LOCATION_RELEASE: ${_ogre_overlay_static_library_abs}")
-    # message("rviz_ogre_vendor::OgreOverlay for IMPORTED_LOCATION_DEBUG: ${_ogre_overlay_static_library_debug_abs}")
+    add_library(rviz_ogre_vendor::OgreOverlay UNKNOWN IMPORTED)
+    message("rviz_ogre_vendor::OgreOverlay for IMPORTED_LOCATION_RELEASE: ${_ogre_overlay_static_library_abs}")
+    message("rviz_ogre_vendor::OgreOverlay for IMPORTED_LOCATION_DEBUG: ${_ogre_overlay_static_library_debug_abs}")
     set_target_properties(rviz_ogre_vendor::OgreOverlay
       PROPERTIES
         IMPORTED_LOCATION_RELEASE ${_ogre_overlay_static_library_abs}
@@ -166,7 +181,7 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
         "INTERFACE_LINK_LIBRARIES" "${_extra_interface_link_libraries}"
     )
   endif()
-  if("RenderSystem_GLStatic" STREQUAL ${_lib})
+  if("RenderSystem_GLStatic" STREQUAL ${_lib} OR "RenderSystem_GL" STREQUAL ${_lib})
     find_library(_render_system_gl_static_library_abs ${_lib}
       PATHS
         ${OGRE_LIBRARY_DIRS}
@@ -192,9 +207,9 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
       set(_render_system_gl_static_library_debug_abs ${_render_system_gl_static_library_abs})
     endif()
 
-    add_library(rviz_ogre_vendor::RenderSystem_GL STATIC IMPORTED)
-    # message("rviz_ogre_vendor::RenderSystem_GL for IMPORTED_LOCATION_RELEASE: ${_render_system_gl_static_library_abs}")
-    # message("rviz_ogre_vendor::RenderSystem_GL for IMPORTED_LOCATION_DEBUG: ${_render_system_gl_static_library_debug_abs}")
+    add_library(rviz_ogre_vendor::RenderSystem_GL UNKNOWN IMPORTED)
+    message("rviz_ogre_vendor::RenderSystem_GL for IMPORTED_LOCATION_RELEASE: ${_render_system_gl_static_library_abs}")
+    message("rviz_ogre_vendor::RenderSystem_GL for IMPORTED_LOCATION_DEBUG: ${_render_system_gl_static_library_debug_abs}")
     set_target_properties(rviz_ogre_vendor::RenderSystem_GL
       PROPERTIES
         IMPORTED_LOCATION_RELEASE ${_render_system_gl_static_library_abs}
@@ -218,7 +233,7 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
         "INTERFACE_LINK_LIBRARIES" "${_extra_interface_link_libraries}"
     )
   endif()
-  if("OgreGLSupportStatic" STREQUAL ${_lib})
+  if("OgreGLSupportStatic" STREQUAL ${_lib} OR "OgreGLSupport" STREQUAL ${_lib})
     find_library(_ogre_gl_support_static_library_abs ${_lib}
       PATHS
         ${OGRE_LIBRARY_DIRS}
@@ -244,9 +259,9 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
       set(_ogre_gl_support_static_library_debug_abs ${_ogre_gl_support_static_library_abs})
     endif()
 
-    add_library(rviz_ogre_vendor::OgreGLSupport STATIC IMPORTED)
-    # message("rviz_ogre_vendor::OgreGLSupport for IMPORTED_LOCATION_RELEASE: ${_ogre_gl_support_static_library_abs}")
-    # message("rviz_ogre_vendor::OgreGLSupport for IMPORTED_LOCATION_DEBUG: ${_ogre_gl_support_static_library_debug_abs}")
+    add_library(rviz_ogre_vendor::OgreGLSupport UNKNOWN IMPORTED)
+    message("rviz_ogre_vendor::OgreGLSupport for IMPORTED_LOCATION_RELEASE: ${_ogre_gl_support_static_library_abs}")
+    message("rviz_ogre_vendor::OgreGLSupport for IMPORTED_LOCATION_DEBUG: ${_ogre_gl_support_static_library_debug_abs}")
     set_target_properties(rviz_ogre_vendor::OgreGLSupport
       PROPERTIES
         IMPORTED_LOCATION_RELEASE ${_ogre_gl_support_static_library_abs}

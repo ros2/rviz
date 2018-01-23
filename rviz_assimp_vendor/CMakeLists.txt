@@ -4,15 +4,6 @@ project(rviz_assimp_vendor)
 
 find_package(ament_cmake REQUIRED)
 
-# TODO(wjwood): remove when windows build is fixed
-if(DEFINED ENV{RVIZ_BUILD_ON_WINDOWS_OVERRIDE})
-  set(RVIZ_BUILD_ON_WINDOWS_OVERRIDE "$ENV{RVIZ_BUILD_ON_WINDOWS_OVERRIDE}")
-endif()
-if(WIN32 AND NOT DEFINED RVIZ_BUILD_ON_WINDOWS_OVERRIDE)
-  message(STATUS "${PROJECT_NAME} is not supported on Windows, skipping...")
-  return()
-endif()
-
 set(PACKAGE_VERSION "1.0.0")
 
 macro(build_assimp)
@@ -21,7 +12,8 @@ macro(build_assimp)
     list(APPEND extra_cmake_args -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE})
   endif()
   if(WIN32)
-    list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=/w")
+    # the /EHsc flag is needed to prevent warnings within the assimp build
+    list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=/w /EHsc")
     list(APPEND extra_cmake_args "-DCMAKE_C_FLAGS=/w")
   else()
     list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=-std=c++14 -w")
@@ -32,11 +24,19 @@ macro(build_assimp)
   list(APPEND extra_cmake_args "-DASSIMP_BUILD_TESTS=OFF")
   list(APPEND extra_cmake_args "-DASSIMP_BUILD_SAMPLES=OFF")
 
+  if(WIN32 AND NOT ${CMAKE_VERBOSE_MAKEFILE})
+    set(should_log ON)  # prevent warnings in Windows CI
+  else()
+    set(should_log OFF)
+  endif()
+
   include(ExternalProject)
   ExternalProject_Add(assimp-4.1.0
     URL https://github.com/assimp/assimp/archive/v4.1.0.tar.gz
     URL_MD5 83b53a10c38d964bd1e69da0606e2727
     TIMEOUT 600
+    LOG_CONFIGURE ${should_log}
+    LOG_BUILD ${should_log}
     CMAKE_ARGS
       -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/assimp_install
       ${extra_cmake_args}
@@ -58,8 +58,7 @@ if(NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LESS 4.1.0)
   build_assimp()
 
   if(WIN32)
-    # TODO(wjwwood): do this for Windows too
-    # ament_environment_hooks(env_hook/rviz_assimp_vendor_library_path.bat)
+    ament_environment_hooks(env_hook/rviz_assimp_vendor_library_path.bat)
   else()
     ament_environment_hooks(env_hook/rviz_assimp_vendor_library_path.sh)
   endif()

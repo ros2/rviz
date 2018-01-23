@@ -759,7 +759,7 @@ bool SelectionManager::render(
 
   Ogre::PixelFormat format = pixel_buffer->getFormat();
 
-  int size = Ogre::PixelUtil::getMemorySize(render_w, render_h, 1, format);
+  int size = static_cast<int>(Ogre::PixelUtil::getMemorySize(render_w, render_h, 1, format));
   uint8_t * data = new uint8_t[size];
 
   delete[] reinterpret_cast<uint8_t *>(dst_box.data);

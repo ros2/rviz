@@ -42,13 +42,12 @@
 #include "rmw/types.h"
 #include "rclcpp/rclcpp.hpp"
 
+#include "rviz_common/display.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager.hpp"
-#include "rviz_common/properties/status_property.hpp"
-
 #include "rviz_common/properties/ros_topic_property.hpp"
-
-#include "rviz_common/display.hpp"
+#include "rviz_common/properties/status_property.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 static const rmw_qos_profile_t display_default =
 {
@@ -65,7 +64,7 @@ namespace rviz_common
 /** @brief Helper superclass for RosTopicDisplay, needed because
  * Qt's moc and c++ templates don't work nicely together.  Not
  * intended to be used directly. */
-class _RosTopicDisplay : public Display
+class RVIZ_COMMON_PUBLIC _RosTopicDisplay : public Display
 {
   Q_OBJECT
 

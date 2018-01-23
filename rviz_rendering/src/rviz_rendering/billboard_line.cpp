@@ -108,7 +108,7 @@ void BillboardLine::setupChainContainers()
     ++num_chains;
   }
 
-  for (uint32_t i = chain_containers_.size(); i < num_chains; ++i) {
+  for (uint32_t i = static_cast<uint32_t>(chain_containers_.size()); i < num_chains; ++i) {
     createChain();
   }
 

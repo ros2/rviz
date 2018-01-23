@@ -33,12 +33,14 @@
 
 #include <QLineEdit>
 
+#include "rviz_common/visibility_control.hpp"
+
 namespace rviz_common
 {
 namespace properties
 {
 
-class FloatEdit : public QLineEdit
+class RVIZ_COMMON_PUBLIC FloatEdit : public QLineEdit
 {
   Q_OBJECT
   Q_PROPERTY(float value READ getValue WRITE setValue USER true)

@@ -182,6 +182,7 @@ public:
     try {
       res = retriever_.get(file);
     } catch (resource_retriever::Exception & e) {
+      (void) e;  // do nothing on exception
       return false;
     }
 
@@ -206,6 +207,7 @@ public:
     try {
       res = retriever_.get(file);
     } catch (resource_retriever::Exception & e) {
+      (void) e;  // do nothing on exception
       return 0;
     }
 

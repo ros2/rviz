@@ -38,6 +38,7 @@
 #include <QWidget>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/properties/string_property.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
@@ -49,7 +50,7 @@ namespace properties
  * An editable enum property works like a string property, but with
  * the addition of a drop-down list of predefined choices.
  */
-class EditableEnumProperty : public StringProperty
+class RVIZ_COMMON_PUBLIC EditableEnumProperty : public StringProperty
 {
   Q_OBJECT
 

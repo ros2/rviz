@@ -67,7 +67,8 @@ namespace displays
  * \class ImageDisplay
  *
  */
-class ImageDisplay : public rviz_common::RosTopicDisplay<sensor_msgs::msg::Image>
+class ImageDisplay
+  : public rviz_common::RosTopicDisplay<sensor_msgs::msg::Image>
 {
   Q_OBJECT
 

@@ -143,6 +143,8 @@ private:
   void
   setResourceDirectory();
   void
+  setPluginDirectory();
+  void
   setupResources();
   void
   addAdditionalResourcesFromAmentIndex() const;

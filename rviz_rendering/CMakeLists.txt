@@ -2,15 +2,6 @@ cmake_minimum_required(VERSION 3.5)
 
 project(rviz_rendering)
 
-# TODO(wjwood): remove when windows build is fixed
-if(DEFINED ENV{RVIZ_BUILD_ON_WINDOWS_OVERRIDE})
-  set(RVIZ_BUILD_ON_WINDOWS_OVERRIDE "$ENV{RVIZ_BUILD_ON_WINDOWS_OVERRIDE}")
-endif()
-if(WIN32 AND NOT DEFINED RVIZ_BUILD_ON_WINDOWS_OVERRIDE)
-  message(STATUS "${PROJECT_NAME} is not supported on Windows, skipping...")
-  return()
-endif()
-
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)
@@ -81,16 +72,16 @@ add_library(rviz_rendering SHARED
   src/rviz_rendering/string_helper.cpp
   src/rviz_rendering/point_cloud.cpp
   src/rviz_rendering/point_cloud_renderable.cpp
-  src/test/rviz_rendering/ogre_testing_environment.cpp
+  test/rviz_rendering/ogre_testing_environment.cpp
 )
+
 target_link_libraries(rviz_rendering
   PRIVATE rviz_ogre_vendor::OgreMain
   PRIVATE rviz_ogre_vendor::OgreOverlay
-  PRIVATE rviz_ogre_vendor::RenderSystem_GL
-  PRIVATE rviz_ogre_vendor::OgreGLSupport
   Qt5::Widgets
   ament_index_cpp::ament_index_cpp
 )
+
 target_include_directories(rviz_rendering
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -111,6 +102,7 @@ install(
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
   INCLUDES DESTINATION include
+  RUNTIME DESTINATION bin
 )
 
 install(
@@ -169,14 +161,15 @@ if(BUILD_TESTING)
   ament_lint_cmake()
   ament_uncrustify()
 
-  ament_add_gtest(test_rviz_rendering src/test/string_helper_test.cpp)
+  ament_add_gtest(test_rviz_rendering test/string_helper_test.cpp)
   if(TARGET test_rviz_rendering)
     target_link_libraries(test_rviz_rendering rviz_rendering)
   endif()
 
   # TODO(wjwwood): reenable this test when it can be run on CI
   # ament_add_gtest(point_cloud_test_target
-  #   src/test/point_cloud_test.cpp)
+  #   test/point_cloud_test.cpp
+  #   APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
   # if(TARGET point_cloud_test_target)
   #   target_link_libraries(point_cloud_test_target
   #     rviz_ogre_vendor::OgreMain
@@ -186,27 +179,30 @@ if(BUILD_TESTING)
   # endif()
 
   # TODO(wjwwood): reenable this test when it can be run on CI
-  # ament_add_gtest(point_cloud_renderable_test_target src/test/point_cloud_renderable_test.cpp)
+  # ament_add_gtest(point_cloud_renderable_test_target test/point_cloud_renderable_test.cpp
+  #   APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
   # if(TARGET point_cloud_renderable_test_target)
-  #   target_link_libraries(point_cloud_renderable_test_target
+  #    target_link_libraries(point_cloud_renderable_test_target
   #     rviz_ogre_vendor::OgreMain
   #     rviz_rendering
   #     Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
   #   )
   # endif()
 
-  # TODO(Martin-Idel-SI): reenable this test when it can be run on CI
-  # ament_add_gtest(billboard_line_test_target src/test/billboard_line_test.cpp)
+  # TODO(wjwwood): reenable this test when it can be run on CI
+  # ament_add_gtest(billboard_line_test_target test/billboard_line_test.cpp
+  #   APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
   # if(TARGET billboard_line_test_target)
   #   target_link_libraries(billboard_line_test_target
   #     rviz_ogre_vendor::OgreMain
   #     rviz_rendering
   #     Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
-  # )
+  #   )
   # endif()
 
-  # TODO(Martin-Idel-SI): reenable this test when it can be run on CI
-  # ament_add_gtest(grid_test_target src/test/grid_test.cpp)
+  # TODO(wjwwood): reenable this test when it can be run on CI
+  # ament_add_gtest(grid_test_target test/grid_test.cpp
+  #   APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
   # if(TARGET grid_test_target)
   #   target_link_libraries(grid_test_target
   #     rviz_ogre_vendor::OgreMain

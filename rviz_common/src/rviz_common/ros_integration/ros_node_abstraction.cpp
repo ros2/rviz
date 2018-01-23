@@ -41,6 +41,8 @@
 #include "ros_node_storage_iface.hpp"
 #include "ros_node_storage.hpp"
 
+#include "rviz_common/visibility_control.hpp"
+
 namespace rviz_common
 {
 namespace ros_integration
@@ -60,12 +62,14 @@ RosNodeAbstraction::RosNodeAbstraction(
   }
 }
 
+RVIZ_COMMON_PUBLIC
 std::string
 RosNodeAbstraction::get_node_name()
 {
   return node_name_;
 }
 
+RVIZ_COMMON_PUBLIC
 std::map<std::string, std::vector<std::string>>
 RosNodeAbstraction::get_topic_names_and_types()
 {

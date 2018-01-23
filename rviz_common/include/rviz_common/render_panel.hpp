@@ -38,6 +38,8 @@
 
 #include <QWidget>  // NOLINT: cpplint is unable to handle the include order here
 
+#include "rviz_common/visibility_control.hpp"
+
 class QGridLayout;
 class QMenu;
 
@@ -61,7 +63,7 @@ class ViewController;
  * RenderPanel displays a scene and forwards mouse and key events to
  * the DisplayContext (which further forwards them to the active Tool, etc.)
  */
-class RenderPanel : public QWidget
+class RVIZ_COMMON_PUBLIC RenderPanel : public QWidget
 {
   Q_OBJECT
 

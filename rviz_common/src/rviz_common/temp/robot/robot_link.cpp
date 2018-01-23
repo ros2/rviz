@@ -39,7 +39,14 @@
 # pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
 
+#ifdef _WIN32
+#pragma warning(push)
+#pragma warning(disable : 4996)
 #include <OgreEntity.h>
+#pragma warning(pop)
+#else
+#include <OgreEntity.h>
+#endif
 #include <OgreMaterial.h>
 #include <OgreMaterialManager.h>
 #include <OgreRibbonTrail.h>
@@ -791,7 +798,7 @@ void RobotLink::updateAxes()
       static int count = 0;
       std::stringstream ss;
       ss << "Axes for link " << name_ << count++;
-      axes_ = new Axes(scene_manager_, robot_->getOtherNode(), 0.1, 0.01);
+      axes_ = new Axes(scene_manager_, robot_->getOtherNode(), 0.1f, 0.01f);
       axes_->getSceneNode()->setVisible(getEnabled() );
 
       axes_->setPosition(position_property_->getVector() );

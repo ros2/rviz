@@ -40,7 +40,7 @@
 #include "../../../../../src/rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.hpp"
 // *INDENT-ON*
 
-using namespace rviz_default_plugins; // NOLINT
+using namespace rviz_default_plugins;  // NOLINT
 
 TEST(AxisColorPCTransformer, transform_returns_points_colored_depending_on_the_z_position) {
   // just plain Point is ambiguous on macOS

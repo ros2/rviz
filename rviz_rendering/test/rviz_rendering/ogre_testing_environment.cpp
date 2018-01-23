@@ -27,12 +27,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "src/rviz_rendering/render_system.hpp"
-
 #include "test/rviz_rendering/ogre_testing_environment.hpp"
+
+#include "src/rviz_rendering/render_system.hpp"
 
 namespace rviz_rendering
 {
+
 
 void OgreTestingEnvironment::setUpRenderSystem()
 {

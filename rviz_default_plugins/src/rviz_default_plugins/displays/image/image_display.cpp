@@ -50,6 +50,7 @@
 #include "rviz_common/frame_manager.hpp"
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/validate_floats.hpp"
+#include "rviz_common/uniform_string_stream.hpp"
 #include "rviz_rendering/render_window.hpp"
 
 #include "image_display.hpp"
@@ -204,7 +205,7 @@ void ImageDisplay::processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg)
 void ImageDisplay::setupScreenRectangle()
 {
   static int count = 0;
-  std::stringstream ss;
+  rviz_common::UniformStringStream ss;
   ss << "ImageDisplayObject" << count++;
 
   screen_rect_ = std::make_unique<Ogre::Rectangle2D>(true);

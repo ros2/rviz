@@ -86,6 +86,7 @@ ImageDisplayTestFixture::testing_environment_ = nullptr;
 TEST_F(ImageDisplayTestFixture, initialize_adds_render_panel_to_window) {
   auto panelDockWidget = new rviz_common::PanelDockWidget("panelDockWidget");
   EXPECT_CALL(*window_manager_, addPane(_, _, _, _)).WillOnce(Return(panelDockWidget));
+  EXPECT_CALL(*context_, getFixedFrame()).WillOnce(Return(""));
 
   ImageDisplay imageDisplay(std::move(texture_));
   imageDisplay.initialize(context_.get());
@@ -94,6 +95,7 @@ TEST_F(ImageDisplayTestFixture, initialize_adds_render_panel_to_window) {
 TEST_F(ImageDisplayTestFixture, update_calls_texture_update) {
   auto panelDockWidget = new rviz_common::PanelDockWidget("panelDockWidget");
   EXPECT_CALL(*window_manager_, addPane(_, _, _, _)).WillOnce(Return(panelDockWidget));
+  EXPECT_CALL(*context_, getFixedFrame()).WillOnce(Return(""));
 
   EXPECT_CALL(*texture_, update()).Times(1);
 

@@ -453,18 +453,18 @@ FrameInfo * TFDisplay::createFrame(const std::string & frame)
 
   info->name_ = frame;
   info->last_update_ = tf2::get_now();
-  info->axes_ = new Axes(scene_manager_, axes_node_, 0.2, 0.02);
+  info->axes_ = new Axes(scene_manager_, axes_node_, 0.2f, 0.02f);
   info->axes_->getSceneNode()->setVisible(show_axes_property_->getBool() );
   info->selection_handler_.reset(new FrameSelectionHandler(info, this, context_));
   info->selection_handler_->addTrackedObjects(info->axes_->getSceneNode() );
 
-  info->name_text_ = new MovableText(frame, "Liberation Sans", 0.1);
+  info->name_text_ = new MovableText(frame, "Liberation Sans", 0.1f);
   info->name_text_->setTextAlignment(MovableText::H_CENTER, MovableText::V_BELOW);
   info->name_node_ = names_node_->createChildSceneNode();
   info->name_node_->attachObject(info->name_text_);
   info->name_node_->setVisible(show_names_property_->getBool() );
 
-  info->parent_arrow_ = new Arrow(scene_manager_, arrows_node_, 1.0f, 0.01, 1.0f, 0.08);
+  info->parent_arrow_ = new Arrow(scene_manager_, arrows_node_, 1.0f, 0.01f, 1.0f, 0.08f);
   info->parent_arrow_->getSceneNode()->setVisible(false);
   info->parent_arrow_->setHeadColor(ARROW_HEAD_COLOR);
   info->parent_arrow_->setShaftColor(ARROW_SHAFT_COLOR);
@@ -537,10 +537,9 @@ void TFDisplay::updateFrame(FrameInfo * frame)
       0);
   } catch (const tf2::LookupException & e) {
     RVIZ_COMMON_LOG_DEBUG_STREAM(
-      "here");
-    // "Error transforming frame '" << frame->parent_.c_str() <<
-    // "' (parent of '" << frame->name_.c_str() <<
-    // "') to frame '" << qPrintable( fixed_frame_ ) << "': " << e.what());
+      "Error transforming frame '" << frame->parent_.c_str() <<
+        "' (parent of '" << frame->name_.c_str() <<
+        "') to frame '" << qPrintable(fixed_frame_) << "': " << e.what());
     return;
   }
 
@@ -561,7 +560,7 @@ void TFDisplay::updateFrame(FrameInfo * frame)
     frame->name_node_->setVisible(false);
     return;
   } else if (age > one_third_timeout) {
-    Ogre::ColourValue grey(0.7, 0.7, 0.7, 1.0);
+    Ogre::ColourValue grey(0.7f, 0.7f, 0.7f, 1.0f);
 
     if (age > one_third_timeout * 2) {
       double a = std::max(0.0, (frame_timeout - age) / one_third_timeout);
@@ -722,11 +721,11 @@ void TFDisplay::updateFrame(FrameInfo * frame)
 
         if (!orient.isNaN()) {
           frame->distance_to_parent_ = distance;
-          float head_length = ( distance < 0.1 * scale ) ? (0.1 * scale * distance) : 0.1 * scale;
+          float head_length = (distance < 0.1f * scale) ? (0.1f * scale * distance) : 0.1f * scale;
           float shaft_length = distance - head_length;
           // aleeper: This was changed from 0.02 and 0.08 to 0.01 and 0.04
           // to match proper radius handling in arrow.cpp
-          frame->parent_arrow_->set(shaft_length, 0.01 * scale, head_length, 0.04 * scale);
+          frame->parent_arrow_->set(shaft_length, 0.01f * scale, head_length, 0.04f * scale);
 
           if (distance > 0.001f) {
             frame->parent_arrow_->getSceneNode()->setVisible(

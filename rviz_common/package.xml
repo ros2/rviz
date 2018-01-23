@@ -32,6 +32,7 @@
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
   <depend>resource_retriever</depend>
+  <depend>rviz_ogre_vendor</depend>
   <depend>rviz_rendering</depend>
   <depend>rviz_yaml_cpp_vendor</depend>
   <depend>sensor_msgs</depend>

@@ -62,7 +62,7 @@ class BillboardLine;
  *
  * Displays a grid of cells, drawn with lines.  A grid with an identity orientation is drawn along the XZ plane.
  */
-class RVIZ_RENDERING_PUBLIC Grid
+class Grid
 {
 public:
   enum Style
@@ -80,11 +80,14 @@ public:
    * @param line_width The line width of the cells if it is rendered in Billboards style
    * @param color The color of the lines
    */
+  RVIZ_RENDERING_PUBLIC
   Grid(
     Ogre::SceneManager * manager, Ogre::SceneNode * parent_node, Style style,
     uint32_t cell_count, float cell_length, float line_width, const Ogre::ColourValue & color);
+  RVIZ_RENDERING_PUBLIC
   ~Grid();
 
+  RVIZ_RENDERING_PUBLIC
   void create();
 
   /**
@@ -97,23 +100,30 @@ public:
   /**
    * \brief Sets user data on all ogre objects we own
    */
+  RVIZ_RENDERING_PUBLIC
   void setUserData(const Ogre::Any & data);
 
+  RVIZ_RENDERING_PUBLIC
   void setStyle(Style style);
   Style getStyle() {return style_;}
 
+  RVIZ_RENDERING_PUBLIC
   void setColor(const Ogre::ColourValue & color);
   Ogre::ColourValue getColor() {return color_;}
 
+  RVIZ_RENDERING_PUBLIC
   void setCellCount(uint32_t count);
-  float getCellCount() {return cell_count_;}
+  uint32_t getCellCount() {return cell_count_;}
 
+  RVIZ_RENDERING_PUBLIC
   void setCellLength(float len);
   float getCellLength() {return cell_length_;}
 
+  RVIZ_RENDERING_PUBLIC
   void setLineWidth(float width);
   float getLineWidth() {return line_width_;}
 
+  RVIZ_RENDERING_PUBLIC
   void setHeight(uint32_t count);
   uint32_t getHeight() {return height_count_;}
 

@@ -304,9 +304,11 @@ bool FrameManager::transform(
   try {
     buffer_->transform(pose_in, pose_out, stripped_fixed_frame);
   } catch (const tf2::LookupException & exec) {
+    (void) exec;
     // RVIZ_COMMON_LOG_WARNING_STREAM("tf2 lookup exception when transforming: " << exec.what());
     return false;
   } catch (const tf2::ConnectivityException & exec) {
+    (void) exec;
     return false;
   }
 

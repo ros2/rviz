@@ -32,6 +32,9 @@
 
 #include <fstream>
 
+#ifdef _WIN32
+#define YAML_CPP_DLL
+#endif
 #include "yaml-cpp/emitter.h"
 
 namespace rviz_common

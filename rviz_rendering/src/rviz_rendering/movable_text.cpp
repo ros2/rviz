@@ -49,6 +49,9 @@
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wunused-parameter"
+#else
+# pragma warning(push)
+# pragma warning(disable : 4251)
 #endif
 
 #include <OgreCamera.h>
@@ -66,6 +69,8 @@
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop
+#else
+# pragma warning(pop)
 #endif
 
 using namespace Ogre;  // NOLINT
@@ -88,13 +93,13 @@ MovableText::MovableText(
   mVerticalAlignment(V_BELOW),
   mColor(color),
   mCharHeight(charHeight),
-  mLineSpacing(0.01),
+  mLineSpacing(0.01f),
   mSpaceWidth(0),
   mUpdateColors(true),
   mOnTop(false),
   mTimeUntilNextToggle(0),
-  mGlobalTranslation(0.0),
-  mLocalTranslation(0.0),
+  mGlobalTranslation(0.0f),
+  mLocalTranslation(0.0f),
   mpCam(NULL),
   mpWin(NULL),
   mpFont(NULL)
@@ -308,7 +313,7 @@ void MovableText::_setupGeometry()
   Real spaceWidth = mSpaceWidth;
   // Derive space width from a capital A
   if (spaceWidth == 0) {
-    spaceWidth = mpFont->getGlyphAspectRatio('A') * mCharHeight * 2.0;
+    spaceWidth = mpFont->getGlyphAspectRatio('A') * mCharHeight * 2.0f;
   }
 
   float total_height = mCharHeight;
@@ -318,14 +323,14 @@ void MovableText::_setupGeometry()
   iend = mCaption.end();
   for (; i != iend; ++i) {
     if (*i == '\n') {
-      total_height += mCharHeight + 0.01;
+      total_height += mCharHeight + 0.01f;
 
       if (current_width > total_width) {
         total_width = current_width;
-        current_width = 0.0;
+        current_width = 0.0f;
       }
     } else {
-      current_width += mpFont->getGlyphAspectRatio(*i) * mCharHeight * 2.0;
+      current_width += mpFont->getGlyphAspectRatio(*i) * mCharHeight * 2.0f;
     }
   }
 
@@ -339,7 +344,7 @@ void MovableText::_setupGeometry()
       top = total_height * 2;
       break;
     case MovableText::V_CENTER:
-      top = 0.5 * total_height * 2;
+      top = 0.5f * total_height * 2;
       break;
     case MovableText::V_BELOW:
       top = 0.0f;
@@ -371,7 +376,7 @@ void MovableText::_setupGeometry()
         if (*j == ' ') {
           len += spaceWidth;
         } else {
-          len += mpFont->getGlyphAspectRatio(*j) * mCharHeight * 2.0;
+          len += mpFont->getGlyphAspectRatio(*j) * mCharHeight * 2.0f;
         }
       }
       newLine = false;
@@ -379,7 +384,7 @@ void MovableText::_setupGeometry()
 
     if (*i == '\n') {
       left = starting_left;
-      top -= mCharHeight * 2.0;
+      top -= mCharHeight * 2.0f;
       newLine = true;
       continue;
     }
@@ -419,10 +424,10 @@ void MovableText::_setupGeometry()
     max.makeCeil(currPos);
     maxSquaredRadius = std::max(maxSquaredRadius, currPos.squaredLength());
 
-    top -= mCharHeight * 2.0;
+    top -= mCharHeight * 2.0f;
 
     // Bottom left
-    currPos = Ogre::Vector3(left, top, 0.0);
+    currPos = Ogre::Vector3(left, top, 0.0f);
     *pPCBuff++ = currPos.x;
     *pPCBuff++ = currPos.y;
     *pPCBuff++ = currPos.z;
@@ -434,11 +439,11 @@ void MovableText::_setupGeometry()
     max.makeCeil(currPos);
     maxSquaredRadius = std::max(maxSquaredRadius, currPos.squaredLength());
 
-    top += mCharHeight * 2.0;
-    left += horiz_height * mCharHeight * 2.0;
+    top += mCharHeight * 2.0f;
+    left += horiz_height * mCharHeight * 2.0f;
 
     // Top right
-    currPos = Ogre::Vector3(left, top, 0.0);
+    currPos = Ogre::Vector3(left, top, 0.0f);
     *pPCBuff++ = currPos.x;
     *pPCBuff++ = currPos.y;
     *pPCBuff++ = currPos.z;
@@ -455,7 +460,7 @@ void MovableText::_setupGeometry()
     // Second tri
     //
     // Top right (again)
-    currPos = Ogre::Vector3(left, top, 0.0);
+    currPos = Ogre::Vector3(left, top, 0.0f);
     *pPCBuff++ = currPos.x;
     *pPCBuff++ = currPos.y;
     *pPCBuff++ = currPos.z;
@@ -466,11 +471,11 @@ void MovableText::_setupGeometry()
     max.makeCeil(currPos);
     maxSquaredRadius = std::max(maxSquaredRadius, currPos.squaredLength());
 
-    top -= mCharHeight * 2.0;
-    left -= horiz_height * mCharHeight * 2.0;
+    top -= mCharHeight * 2.0f;
+    left -= horiz_height * mCharHeight * 2.0f;
 
     // Bottom left (again)
-    currPos = Ogre::Vector3(left, top, 0.0);
+    currPos = Ogre::Vector3(left, top, 0.0f);
     *pPCBuff++ = currPos.x;
     *pPCBuff++ = currPos.y;
     *pPCBuff++ = currPos.z;
@@ -481,10 +486,10 @@ void MovableText::_setupGeometry()
     max.makeCeil(currPos);
     maxSquaredRadius = std::max(maxSquaredRadius, currPos.squaredLength());
 
-    left += horiz_height * mCharHeight * 2.0;
+    left += horiz_height * mCharHeight * 2.0f;
 
     // Bottom right
-    currPos = Ogre::Vector3(left, top, 0.0);
+    currPos = Ogre::Vector3(left, top, 0.0f);
     *pPCBuff++ = currPos.x;
     *pPCBuff++ = currPos.y;
     *pPCBuff++ = currPos.z;
@@ -496,7 +501,7 @@ void MovableText::_setupGeometry()
     maxSquaredRadius = std::max(maxSquaredRadius, currPos.squaredLength());
 
     // Go back up with top
-    top += mCharHeight * 2.0;
+    top += mCharHeight * 2.0f;
 
     float currentWidth = (left + 1) / 2 - 0;
     if (currentWidth > largestWidth) {

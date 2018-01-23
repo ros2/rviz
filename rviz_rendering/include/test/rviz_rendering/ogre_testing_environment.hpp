@@ -46,9 +46,11 @@
 # pragma GCC diagnostic pop
 #endif
 
+#include "rviz_rendering/visibility_control.hpp"
+
 namespace rviz_rendering
 {
-class OgreTestingEnvironment
+class RVIZ_RENDERING_PUBLIC OgreTestingEnvironment
 {
 public:
   /**

@@ -32,6 +32,7 @@
 #define RVIZ_COMMON__ROS_INTEGRATION__ROS_CLIENT_ABSTRACTION_IFACE_HPP_
 
 #include <string>
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {

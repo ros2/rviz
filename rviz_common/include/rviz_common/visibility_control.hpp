@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,49 +26,39 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef RVIZ_COMMON__PROPERTIES__COLOR_EDITOR_HPP_
-#define RVIZ_COMMON__PROPERTIES__COLOR_EDITOR_HPP_
 
-#include "./line_edit_with_button.hpp"
-#include "rviz_common/visibility_control.hpp"
+#ifndef RVIZ_COMMON__VISIBILITY_CONTROL_HPP_
+#define RVIZ_COMMON__VISIBILITY_CONTROL_HPP_
 
-namespace rviz_common
-{
-namespace properties
-{
+// This logic was borrowed (then namespaced) from the examples on the gcc wiki:
+//     https://gcc.gnu.org/wiki/Visibility
 
-class ColorProperty;
+#if defined _WIN32 || defined __CYGWIN__
+  #ifdef __GNUC__
+    #define RVIZ_COMMON_EXPORT __attribute__ ((dllexport))
+    #define RVIZ_COMMON_IMPORT __attribute__ ((dllimport))
+  #else
+    #define RVIZ_COMMON_EXPORT __declspec(dllexport)
+    #define RVIZ_COMMON_IMPORT __declspec(dllimport)
+  #endif
+  #ifdef RVIZ_COMMON_BUILDING_LIBRARY
+    #define RVIZ_COMMON_PUBLIC RVIZ_COMMON_EXPORT
+  #else
+    #define RVIZ_COMMON_PUBLIC RVIZ_COMMON_IMPORT
+  #endif
+  #define RVIZ_COMMON_PUBLIC_TYPE RVIZ_COMMON_PUBLIC
+  #define RVIZ_COMMON_LOCAL
+#else
+  #define RVIZ_COMMON_EXPORT __attribute__ ((visibility("default")))
+  #define RVIZ_COMMON_IMPORT
+  #if __GNUC__ >= 4
+    #define RVIZ_COMMON_PUBLIC __attribute__ ((visibility("default")))
+    #define RVIZ_COMMON_LOCAL  __attribute__ ((visibility("hidden")))
+  #else
+    #define RVIZ_COMMON_PUBLIC
+    #define RVIZ_COMMON_LOCAL
+  #endif
+  #define RVIZ_COMMON_PUBLIC_TYPE
+#endif
 
-class RVIZ_COMMON_PUBLIC ColorEditor : public LineEditWithButton
-{
-  Q_OBJECT
-
-public:
-  explicit ColorEditor(ColorProperty * property = 0, QWidget * parent = 0);
-
-  /** Static function to paint just the color box.  Paints it in the
-   * left end of rect, size rect.height() by rect.height(). */
-  static void paintColorBox(QPainter * painter, const QRect & rect, const QColor & color);
-
-public Q_SLOTS:
-  void setColor(const QColor & color);
-  void parseText();
-
-protected:
-  /** Call parent version then paint color swatch. */
-  virtual void paintEvent(QPaintEvent * event);
-
-  virtual void resizeEvent(QResizeEvent * event);
-
-protected Q_SLOTS:
-  virtual void onButtonClick();
-
-private:
-  QColor color_;
-  ColorProperty * property_;
-};
-
-}  // namespace properties
-}  // namespace rviz_common
-
-#endif  // RVIZ_COMMON__PROPERTIES__COLOR_EDITOR_HPP_
+#endif  // RVIZ_COMMON__VISIBILITY_CONTROL_HPP_

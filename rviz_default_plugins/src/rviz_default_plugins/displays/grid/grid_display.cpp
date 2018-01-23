@@ -88,7 +88,7 @@ GridDisplay::GridDisplay()
   cell_size_property_ = new FloatProperty("Cell Size", 1.0f,
       "The length, in meters, of the side of each cell.",
       this, SLOT(updateCellSize()));
-  cell_size_property_->setMin(0.0001);
+  cell_size_property_->setMin(0.0001f);
 
   style_property_ = new EnumProperty("Line Style", "Lines",
       "The rendering operation to use to draw the grid lines.",
@@ -96,10 +96,10 @@ GridDisplay::GridDisplay()
   style_property_->addOption("Lines", Grid::Lines);
   style_property_->addOption("Billboards", Grid::Billboards);
 
-  line_width_property_ = new FloatProperty("Line Width", 0.03,
+  line_width_property_ = new FloatProperty("Line Width", 0.03f,
       "The width, in meters, of each grid line.",
       style_property_, SLOT(updateLineWidth()), this);
-  line_width_property_->setMin(0.001);
+  line_width_property_->setMin(0.001f);
   line_width_property_->hide();
 
   color_property_ = new ColorProperty("Color", Qt::gray,

@@ -27,6 +27,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef _WIN32
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include "stl_loader.hpp"
 
 #include <string>
@@ -80,15 +84,15 @@ bool STLLoader::load(const std::string & path)
 
   // find the file size
   fseek(input, 0, SEEK_END);
-  long fileSize = ftell(input);  // NOLINT ftell returns long
+  unsigned long fileSize = ftell(input);  // NOLINT ftell returns long
   rewind(input);
 
   std::vector<uint8_t> buffer_vec(fileSize);
   uint8_t * buffer = &buffer_vec[0];
 
-  long num_bytes_read = fread(buffer, 1, fileSize, input);  // NOLINT fread returns size_t, use long for comparison in next line
+  size_t num_bytes_read = fread(buffer, 1, fileSize, input);
   if (num_bytes_read != fileSize) {
-    fprintf(stderr, "STLLoader::load( \"%s\" ) only read %ld bytes out of total %ld.",
+    fprintf(stderr, "STLLoader::load( \"%s\" ) only read %zu bytes out of total %ld.",
       path.c_str(), num_bytes_read, fileSize);
     fclose(input);
     return false;

@@ -37,13 +37,14 @@
 #include <QString>
 
 #include "rviz_common/properties/property.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
 namespace properties
 {
 
-class ColorProperty : public Property
+class RVIZ_COMMON_PUBLIC ColorProperty : public Property
 {
   Q_OBJECT
 

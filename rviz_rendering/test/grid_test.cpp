@@ -35,8 +35,9 @@
 
 #include <OgreBillboardChain.h>
 #include <OgreManualObject.h>
+#include <OgreRoot.h>
 
-#include "ogre_testing_environment.hpp"
+#include "test/rviz_rendering/ogre_testing_environment.hpp"
 #include "rviz_rendering/grid.hpp"
 #include "../src/rviz_rendering/billboard_line.hpp"
 

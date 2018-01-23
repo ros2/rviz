@@ -41,6 +41,7 @@
 #include <OgreSharedPtr.h>
 
 #include "rviz_rendering/object.hpp"
+#include "rviz_rendering/visibility_control.hpp"
 
 namespace Ogre
 {
@@ -66,25 +67,40 @@ public:
    * @param manager Scene manager this object is a part of
    * @param parent_node A scene node to use as the parent of this object.  If NULL, uses the root scene node.
    */
+  RVIZ_RENDERING_PUBLIC
   explicit BillboardLine(Ogre::SceneManager * manager, Ogre::SceneNode * parent_node = nullptr);
+  RVIZ_RENDERING_PUBLIC
   ~BillboardLine() override;
 
+  RVIZ_RENDERING_PUBLIC
   void clear();
+  RVIZ_RENDERING_PUBLIC
   void newLine();
+  RVIZ_RENDERING_PUBLIC
   void addPoint(const Ogre::Vector3 & point);
+  RVIZ_RENDERING_PUBLIC
   void addPoint(const Ogre::Vector3 & point, const Ogre::ColourValue & color);
 
+  RVIZ_RENDERING_PUBLIC
   void setLineWidth(float width);
 
+  RVIZ_RENDERING_PUBLIC
   void setMaxPointsPerLine(uint32_t max);
+  RVIZ_RENDERING_PUBLIC
   void setNumLines(uint32_t num);
 
   // overrides from Object
+  RVIZ_RENDERING_PUBLIC
   void setOrientation(const Ogre::Quaternion & orientation) override;
+  RVIZ_RENDERING_PUBLIC
   void setPosition(const Ogre::Vector3 & position) override;
+  RVIZ_RENDERING_PUBLIC
   void setScale(const Ogre::Vector3 & scale) override;
+  RVIZ_RENDERING_PUBLIC
   void setColor(float r, float g, float b, float a) override;
+  RVIZ_RENDERING_PUBLIC
   const Ogre::Vector3 & getPosition() override;
+  RVIZ_RENDERING_PUBLIC
   const Ogre::Quaternion & getOrientation() override;
 
   /**
