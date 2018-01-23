@@ -42,6 +42,8 @@ namespace ros_integration
 class RosClientAbstractionIface
 {
 public:
+  virtual ~RosClientAbstractionIface() = default;
+
   virtual std::string
   init(int argc, char ** argv, const std::string & name, bool anonymous_name) = 0;
 
