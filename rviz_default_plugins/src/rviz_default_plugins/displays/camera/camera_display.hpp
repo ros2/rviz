@@ -138,14 +138,14 @@ private:
 
   void clear();
 
-  Ogre::SceneNode * bg_scene_node_;
-  Ogre::SceneNode * fg_scene_node_;
+  Ogre::SceneNode * background_scene_node_;
+  Ogre::SceneNode * overlay_scene_node_;
 
-  std::unique_ptr<Ogre::Rectangle2D> bg_screen_rect_;
-  Ogre::MaterialPtr bg_material_;
+  std::unique_ptr<Ogre::Rectangle2D> background_screen_rect_;
+  Ogre::MaterialPtr background_material_;
 
-  std::unique_ptr<Ogre::Rectangle2D> fg_screen_rect_;
-  Ogre::MaterialPtr fg_material_;
+  std::unique_ptr<Ogre::Rectangle2D> overlay_screen_rect_;
+  Ogre::MaterialPtr overlay_material_;
 
   rclcpp::Subscription<sensor_msgs::msg::CameraInfo>::SharedPtr caminfo_sub_;
 

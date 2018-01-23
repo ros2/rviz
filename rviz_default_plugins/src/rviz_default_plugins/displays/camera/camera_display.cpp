@@ -124,59 +124,59 @@ void CameraDisplay::onInitialize()
 {
   RTDClass::onInitialize();
 
-  bg_scene_node_ = scene_node_->createChildSceneNode();
-  fg_scene_node_ = scene_node_->createChildSceneNode();
+  background_scene_node_ = scene_node_->createChildSceneNode();
+  overlay_scene_node_ = scene_node_->createChildSceneNode();
 
   {
     static int count = 0;
-    rviz_common::UniformStringStream ss;
-    ss << "CameraDisplayObject" << count++;
+    rviz_common::UniformStringStream materialName;
+    materialName << "CameraDisplayObject" << count++;
 
     // background rectangle
-    bg_screen_rect_ = std::make_unique<Ogre::Rectangle2D>(true);
-    bg_screen_rect_->setCorners(-1.0f, 1.0f, 1.0f, -1.0f);
+    background_screen_rect_ = std::make_unique<Ogre::Rectangle2D>(true);
+    background_screen_rect_->setCorners(-1.0f, 1.0f, 1.0f, -1.0f);
 
-    ss << "Material";
-    bg_material_ = Ogre::MaterialManager::getSingleton().create(
-      ss.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-    bg_material_->setDepthWriteEnabled(false);
+    materialName << "Material";
+    background_material_ = Ogre::MaterialManager::getSingleton().create(
+      materialName.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+    background_material_->setDepthWriteEnabled(false);
 
-    bg_material_->setReceiveShadows(false);
-    bg_material_->setDepthCheckEnabled(false);
+    background_material_->setReceiveShadows(false);
+    background_material_->setDepthCheckEnabled(false);
 
-    bg_material_->getTechnique(0)->setLightingEnabled(false);
-    Ogre::TextureUnitState * tu = bg_material_->getTechnique(0)->getPass(0)
+    background_material_->getTechnique(0)->setLightingEnabled(false);
+    Ogre::TextureUnitState * tu = background_material_->getTechnique(0)->getPass(0)
       ->createTextureUnitState();
     tu->setTextureName(texture_->getTexture()->getName());
     tu->setTextureFiltering(Ogre::TFO_NONE);
     tu->setAlphaOperation(Ogre::LBX_SOURCE1, Ogre::LBS_MANUAL, Ogre::LBS_CURRENT, 0.0);
 
-    bg_material_->setCullingMode(Ogre::CULL_NONE);
-    bg_material_->setSceneBlending(Ogre::SBT_REPLACE);
+    background_material_->setCullingMode(Ogre::CULL_NONE);
+    background_material_->setSceneBlending(Ogre::SBT_REPLACE);
 
     Ogre::AxisAlignedBox aabInf;
     aabInf.setInfinite();
 
-    bg_screen_rect_->setRenderQueueGroup(Ogre::RENDER_QUEUE_BACKGROUND);
-    bg_screen_rect_->setBoundingBox(aabInf);
-    bg_screen_rect_->setMaterial(bg_material_);
+    background_screen_rect_->setRenderQueueGroup(Ogre::RENDER_QUEUE_BACKGROUND);
+    background_screen_rect_->setBoundingBox(aabInf);
+    background_screen_rect_->setMaterial(background_material_);
 
-    bg_scene_node_->attachObject(bg_screen_rect_.get());
-    bg_scene_node_->setVisible(false);
+    background_scene_node_->attachObject(background_screen_rect_.get());
+    background_scene_node_->setVisible(false);
 
     // overlay rectangle
-    fg_screen_rect_ = std::make_unique<Ogre::Rectangle2D>(true);
-    fg_screen_rect_->setCorners(-1.0f, 1.0f, 1.0f, -1.0f);
+    overlay_screen_rect_ = std::make_unique<Ogre::Rectangle2D>(true);
+    overlay_screen_rect_->setCorners(-1.0f, 1.0f, 1.0f, -1.0f);
 
-    fg_material_ = bg_material_->clone(ss.str() + "fg");
-    fg_screen_rect_->setBoundingBox(aabInf);
-    fg_screen_rect_->setMaterial(fg_material_);
+    overlay_material_ = background_material_->clone(materialName.str() + "fg");
+    overlay_screen_rect_->setBoundingBox(aabInf);
+    overlay_screen_rect_->setMaterial(overlay_material_);
 
-    fg_material_->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
-    fg_screen_rect_->setRenderQueueGroup(Ogre::RENDER_QUEUE_OVERLAY - 1);
+    overlay_material_->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
+    overlay_screen_rect_->setRenderQueueGroup(Ogre::RENDER_QUEUE_OVERLAY - 1);
 
-    fg_scene_node_->attachObject(fg_screen_rect_.get());
-    fg_scene_node_->setVisible(false);
+    overlay_scene_node_->attachObject(overlay_screen_rect_.get());
+    overlay_scene_node_->setVisible(false);
   }
 
   updateAlpha();
@@ -206,9 +206,9 @@ void CameraDisplay::preRenderTargetUpdate(const Ogre::RenderTargetEvent & evt)
 {
   (void) evt;
   QString image_position = image_position_property_->getString();
-  bg_scene_node_->setVisible(
+  background_scene_node_->setVisible(
     caminfo_ok_ && (image_position == BACKGROUND || image_position == BOTH));
-  fg_scene_node_->setVisible(
+  overlay_scene_node_->setVisible(
     caminfo_ok_ && (image_position == OVERLAY || image_position == BOTH));
 
   // set view flags on all displays
@@ -218,8 +218,8 @@ void CameraDisplay::preRenderTargetUpdate(const Ogre::RenderTargetEvent & evt)
 void CameraDisplay::postRenderTargetUpdate(const Ogre::RenderTargetEvent & evt)
 {
   (void) evt;
-  bg_scene_node_->setVisible(false);
-  fg_scene_node_->setVisible(false);
+  background_scene_node_->setVisible(false);
+  overlay_scene_node_->setVisible(false);
 }
 
 void CameraDisplay::onEnable()
@@ -227,8 +227,8 @@ void CameraDisplay::onEnable()
   subscribe();
 
   // Ensures the nodes are not visible in the main window
-  bg_scene_node_->setVisible(false);
-  fg_scene_node_->setVisible(false);
+  background_scene_node_->setVisible(false);
+  overlay_scene_node_->setVisible(false);
 }
 
 void CameraDisplay::onDisable()
@@ -268,13 +268,13 @@ void CameraDisplay::updateAlpha()
 {
   float alpha = alpha_property_->getFloat();
 
-  Ogre::Pass * pass = fg_material_->getTechnique(0)->getPass(0);
+  Ogre::Pass * pass = overlay_material_->getTechnique(0)->getPass(0);
   if (pass->getNumTextureUnitStates() > 0) {
     Ogre::TextureUnitState * tex_unit = pass->getTextureUnitState(0);
     tex_unit->setAlphaOperation(Ogre::LBX_MODULATE, Ogre::LBS_MANUAL, Ogre::LBS_CURRENT, alpha);
   } else {
-    fg_material_->setAmbient(Ogre::ColourValue(0.0f, 1.0f, 1.0f, alpha));
-    fg_material_->setDiffuse(Ogre::ColourValue(0.0f, 1.0f, 1.0f, alpha));
+    overlay_material_->setAmbient(Ogre::ColourValue(0.0f, 1.0f, 1.0f, alpha));
+    overlay_material_->setDiffuse(Ogre::ColourValue(0.0f, 1.0f, 1.0f, alpha));
   }
 
   force_render_ = true;
@@ -453,13 +453,13 @@ bool CameraDisplay::updateCamera()
 #endif
 
   // adjust the image rectangles to fit the zoom & aspect ratio
-  bg_screen_rect_->setCorners(-1.0f * zoom_x, 1.0f * zoom_y, 1.0f * zoom_x, -1.0f * zoom_y);
-  fg_screen_rect_->setCorners(-1.0f * zoom_x, 1.0f * zoom_y, 1.0f * zoom_x, -1.0f * zoom_y);
+  background_screen_rect_->setCorners(-1.0f * zoom_x, 1.0f * zoom_y, 1.0f * zoom_x, -1.0f * zoom_y);
+  overlay_screen_rect_->setCorners(-1.0f * zoom_x, 1.0f * zoom_y, 1.0f * zoom_x, -1.0f * zoom_y);
 
   Ogre::AxisAlignedBox aabInf;
   aabInf.setInfinite();
-  bg_screen_rect_->setBoundingBox(aabInf);
-  fg_screen_rect_->setBoundingBox(aabInf);
+  background_screen_rect_->setBoundingBox(aabInf);
+  overlay_screen_rect_->setBoundingBox(aabInf);
 
   setStatus(rviz_common::properties::StatusProperty::Ok, "Time", "ok");
   setStatus(rviz_common::properties::StatusProperty::Ok, "Camera Info", "ok");
