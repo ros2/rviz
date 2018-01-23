@@ -84,6 +84,7 @@ public:
   Grid(
     Ogre::SceneManager * manager, Ogre::SceneNode * parent_node, Style style,
     uint32_t cell_count, float cell_length, float line_width, const Ogre::ColourValue & color);
+  RVIZ_RENDERING_PUBLIC
   ~Grid();
 
   RVIZ_RENDERING_PUBLIC

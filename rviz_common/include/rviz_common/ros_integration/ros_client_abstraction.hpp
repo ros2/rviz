@@ -46,9 +46,10 @@ namespace ros_integration
 // forward declaration so ros node storage headers can remain private
 class RosNodeStorageIface;
 
-class RVIZ_COMMON_PUBLIC RosClientAbstraction : public RosClientAbstractionIface
+class RosClientAbstraction : public RosClientAbstractionIface
 {
 public:
+  RVIZ_COMMON_PUBLIC
   RosClientAbstraction();
 
   // TODO(wjwwood): Figure out which exceptions can be raised and document them
@@ -73,6 +74,7 @@ public:
    * \param anonymous_name if true then the ROS node name will be randomized
    * \return name of the resulting ROS node
    */
+  RVIZ_COMMON_PUBLIC
   std::string
   init(int argc, char ** argv, const std::string & name, bool anonymous_name) override;
 
@@ -81,6 +83,7 @@ public:
    * \param node_name the name of the node returned by ros_integration::init()
    * \return true if ok, otherwise false
    */
+  RVIZ_COMMON_PUBLIC
   bool
   ok() override;
 
@@ -89,6 +92,7 @@ public:
    * This will also destroy any nodes which were created with
    * ros_integration::init().
    */
+  RVIZ_COMMON_PUBLIC
   void
   shutdown() override;
 

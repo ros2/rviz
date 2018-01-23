@@ -45,8 +45,6 @@ namespace ros_integration
 class RosNodeAbstractionIface
 {
 public:
-  virtual ~RosNodeAbstractionIface() = default;
-
   virtual std::string get_node_name() = 0;
 
   virtual std::map<std::string, std::vector<std::string>>

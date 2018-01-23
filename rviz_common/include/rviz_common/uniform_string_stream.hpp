@@ -49,10 +49,12 @@ namespace rviz_common
  * parseFloat() handles "C" and also European-style floats which use the ",",
  * like "1,2" parses to 1.2f
  */
-class RVIZ_COMMON_PUBLIC UniformStringStream : public std::stringstream
+class UniformStringStream : public std::stringstream
 {
 public:
+  RVIZ_COMMON_PUBLIC
   UniformStringStream();
+  RVIZ_COMMON_PUBLIC
   explicit UniformStringStream(const std::string & str);
 
   /// Parse a float, supporting both period- and comma- style floats (1,2 and 1.2).
@@ -60,6 +62,7 @@ public:
    * Uses operator>>(std::string&) internally, so consumes up to next
    * whitespace from the stream.
    */
+  RVIZ_COMMON_PUBLIC
   void parseFloat(float & f);
 };
 

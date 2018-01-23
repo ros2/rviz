@@ -39,11 +39,9 @@ namespace rviz_common
 namespace ros_integration
 {
 
-class RVIZ_COMMON_PUBLIC RosClientAbstractionIface
+class RosClientAbstractionIface
 {
 public:
-  virtual ~RosClientAbstractionIface() = default;
-
   virtual std::string
   init(int argc, char ** argv, const std::string & name, bool anonymous_name) = 0;
 
