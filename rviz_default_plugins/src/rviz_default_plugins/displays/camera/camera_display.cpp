@@ -333,16 +333,14 @@ bool CameraDisplay::updateCamera()
     return false;
   }
 
-  // TODO(Martin-Idel-SI): Reenable exact mode
-//   if we're in 'exact' time mode, only show image if the time is exactly right
-//  ros::Time rviz_time = context_->getFrameManager()->getTime();
-//  if (context_->getFrameManager()->getSyncMode() == rviz_common::FrameManager::SyncExact &&
-//    rviz_time != image->header.stamp) {
-//    std::ostringstream s;
-//    s << "Time-syncing active and no image at timestamp " << rviz_time.toSec() << ".";
-//    setStatus(rviz_common::properties::StatusProperty::Warn, "Time", s.str().c_str());
-//    return false;
-//  }
+  rclcpp::Time rviz_time = context_->getFrameManager()->getTime();
+  if (context_->getFrameManager()->getSyncMode() == rviz_common::FrameManager::SyncExact &&
+    rviz_time != image->header.stamp) {
+    std::ostringstream s;
+    s << "Time-syncing active and no image at timestamp " << rviz_time.nanoseconds() << ".";
+    setStatus(rviz_common::properties::StatusProperty::Warn, "Time", s.str().c_str());
+    return false;
+  }
 
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
