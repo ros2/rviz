@@ -72,16 +72,16 @@ class RenderQueue;
 namespace rviz_rendering
 {
 
-class RVIZ_RENDERING_PUBLIC MovableText : public Ogre::MovableObject, public Ogre::Renderable
+class MovableText : public Ogre::MovableObject, public Ogre::Renderable
 {
   /******************************** MovableText data ****************************/
 
 public:
-  enum HorizontalAlignment
+  enum RVIZ_RENDERING_PUBLIC HorizontalAlignment
   {
     H_LEFT, H_CENTER
   };
-  enum VerticalAlignment
+  enum RVIZ_RENDERING_PUBLIC VerticalAlignment
   {
     V_BELOW, V_ABOVE, V_CENTER
   };
@@ -122,29 +122,42 @@ protected:
   /******************************** public methods ******************************/
 
 public:
+  RVIZ_RENDERING_PUBLIC
   MovableText(
     const Ogre::String & caption,
     const Ogre::String & fontName = "Liberation Sans",
     Ogre::Real charHeight = 1.0,
     const Ogre::ColourValue & color = Ogre::ColourValue::White);
+  RVIZ_RENDERING_PUBLIC
   virtual ~MovableText();
 
 #if (OGRE_VERSION_MAJOR >= 1 && OGRE_VERSION_MINOR >= 6)
+  RVIZ_RENDERING_PUBLIC
   virtual void visitRenderables(Ogre::Renderable::Visitor * visitor, bool debugRenderables = false);
 #endif
 
   // Set settings
+  RVIZ_RENDERING_PUBLIC
   void setFontName(const Ogre::String & fontName);
+  RVIZ_RENDERING_PUBLIC
   void setCaption(const Ogre::String & caption);
+  RVIZ_RENDERING_PUBLIC
   void setColor(const Ogre::ColourValue & color);
+  RVIZ_RENDERING_PUBLIC
   void setCharacterHeight(Ogre::Real height);
+  RVIZ_RENDERING_PUBLIC
   void setLineSpacing(Ogre::Real height);
+  RVIZ_RENDERING_PUBLIC
   void setSpaceWidth(Ogre::Real width);
+  RVIZ_RENDERING_PUBLIC
   void setTextAlignment(
     const HorizontalAlignment & horizontalAlignment,
     const VerticalAlignment & verticalAlignment);
+  RVIZ_RENDERING_PUBLIC
   void setGlobalTranslation(Ogre::Vector3 trans);
+  RVIZ_RENDERING_PUBLIC
   void setLocalTranslation(Ogre::Vector3 trans);
+  RVIZ_RENDERING_PUBLIC
   void showOnTop(bool show = true);
 
   // Get settings
