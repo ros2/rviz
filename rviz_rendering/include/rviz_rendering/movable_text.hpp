@@ -72,7 +72,7 @@ class RenderQueue;
 namespace rviz_rendering
 {
 
-class MovableText : public Ogre::MovableObject, public Ogre::Renderable
+class RVIZ_RENDERING_LOCAL MovableText : public Ogre::MovableObject, public Ogre::Renderable
 {
   /******************************** MovableText data ****************************/
 
