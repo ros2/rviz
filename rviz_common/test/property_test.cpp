@@ -161,7 +161,7 @@ TEST(VectorProperty, set_value_events) {
   p.connect(&p, SIGNAL(aboutToChange()), &r, SLOT(aboutToChange()));
   p.connect(&p, SIGNAL(changed()), &r, SLOT(changed()));
 
-  p.setVector(Ogre::Vector3(.1, .0001, 1000));
+  p.setVector(Ogre::Vector3(.1f, .0001f, 1000));
   EXPECT_EQ(" aboutToChange, v=0; 0; 0 changed, v=0.1; 0.0001; 1000", r.result().toStdString() );
   r.reset();
 
@@ -239,7 +239,7 @@ TEST(QuaternionProperty, set_value_events) {
   p.connect(&p, SIGNAL(aboutToChange()), &r, SLOT(aboutToChange()));
   p.connect(&p, SIGNAL(changed()), &r, SLOT(changed()));
 
-  p.setQuaternion(Ogre::Quaternion(1, .1, .0001, 1000));
+  p.setQuaternion(Ogre::Quaternion(1, .1f, .0001f, 1000));
   EXPECT_EQ(" aboutToChange, v=0; 0; 0; 1 changed, v=0.1; 0.0001; 1000; 1",
     r.result().toStdString() );
   r.reset();

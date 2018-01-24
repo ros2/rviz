@@ -68,9 +68,9 @@ float getCharWidth(std::shared_ptr<rviz_rendering::MovableText> movable_text, ch
 
 void assertVector3Equality(Ogre::Vector3 actual, Ogre::Vector3 expected)
 {
-  ASSERT_NEAR(actual.x, expected.x, 0.0001);
-  ASSERT_NEAR(actual.y, expected.y, 0.0001);
-  ASSERT_NEAR(actual.z, expected.z, 0.0001);
+  ASSERT_NEAR(actual.x, expected.x, 0.0001f);
+  ASSERT_NEAR(actual.y, expected.y, 0.0001f);
+  ASSERT_NEAR(actual.z, expected.z, 0.0001f);
 }
 void assertBoundingBoxEquality(Ogre::AxisAlignedBox actual, Ogre::AxisAlignedBox expected)
 {
@@ -111,7 +111,7 @@ TEST_F(MovableTextTestFixture, new_line_creates_a_new_line_making_bounding_box_l
 }
 
 TEST_F(MovableTextTestFixture, larger_char_height_makes_characters_wider) {
-  auto movable_text = std::make_shared<rviz_rendering::MovableText>("A", "Liberation Sans", 2.0);
+  auto movable_text = std::make_shared<rviz_rendering::MovableText>("A", "Liberation Sans", 2.0f);
 
   float char_width = getCharWidth(movable_text, 'A');
   assertBoundingBoxEquality(movable_text->getBoundingBox(),

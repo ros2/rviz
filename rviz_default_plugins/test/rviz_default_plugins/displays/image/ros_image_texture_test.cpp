@@ -27,6 +27,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef _WIN32
+# pragma warning(push)
+# pragma warning(disable : 4996)
+#endif
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
@@ -40,6 +44,9 @@
 #include "test/rviz_rendering/ogre_testing_environment.hpp"
 
 #include "../../../../src/rviz_default_plugins/displays/image/ros_image_texture.hpp"
+#ifdef _WIN32
+# pragma warning(pop)
+#endif
 
 using namespace rviz_default_plugins::displays;  // NOLINT
 

@@ -46,7 +46,7 @@ class MockRosNodeStorage : public rviz_common::ros_integration::RosNodeStorageIf
 {
 public:
   MOCK_METHOD2(store_rclcpp_node_by_name,
-    void(const std::string & node_name, const rclcpp::Node::SharedPtr node));
+    void(const std::string & node_name, std::shared_ptr<rclcpp::Node> node));
   MOCK_METHOD1(get_rclcpp_node_by_name,
     rclcpp::Node::SharedPtr(const std::string & node_name));
   MOCK_METHOD1(has_rclcpp_node_by_name, bool(const std::string & node_name));
