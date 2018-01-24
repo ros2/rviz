@@ -344,7 +344,7 @@ FrameInfo * TFDisplay::createFrame(const std::string & frame)
 
   info->name_ = frame;
   info->last_update_ = tf2::get_now();
-  info->axes_ = new Axes(scene_manager_, axes_node_, 0.2, 0.02);
+  info->axes_ = new Axes(scene_manager_, axes_node_, 0.2f, 0.02f);
   info->axes_->getSceneNode()->setVisible(show_axes_property_->getBool());
   info->selection_handler_.reset(new FrameSelectionHandler(info, this, context_));
   info->selection_handler_->addTrackedObjects(info->axes_->getSceneNode());
@@ -554,7 +554,7 @@ void TFDisplay::updateParentArrowIfTransformExists(
   const Ogre::Vector3 & position) const
 {
   Ogre::Vector3 parent_position(0, 0, 0);
-  Ogre::Quaternion parent_orientation(1.0, 0.0, 0.0, 0.0);
+  Ogre::Quaternion parent_orientation(1.0f, 0.0f, 0.0f, 0.0f);
   if (!context_->getFrameManager()->getTransform(
       frame->parent_, parent_position, parent_orientation))
   {

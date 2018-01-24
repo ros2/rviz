@@ -93,13 +93,12 @@ MovableText::MovableText(
   vertical_alignment_(V_BELOW),
   color_(color),
   char_height_(charHeight),
-  line_spacing_(0.01),
+  line_spacing_(0.01f),
   space_width_(0),
   needs_color_update_(true),
   on_top_(false),
-  global_translation_(0.0),
-  local_translation_(0.0),
-  camera_(nullptr),
+  global_translation_(0.0f),
+  local_translation_(0.0f),
   font_(nullptr)
 {
   static int count = 0;
@@ -107,7 +106,7 @@ MovableText::MovableText(
   ss << "MovableText" << count++;
   name_ = ss.str();
 
-  render_operation_.vertexData = nullptr;
+  mRenderOp.vertexData = nullptr;
   this->setFontName(font_name_);
   // Set a reasonable default space width
   space_width_ = font_->getGlyphAspectRatio('A') * char_height_ * effective_char_height_factor;
@@ -116,7 +115,7 @@ MovableText::MovableText(
 
 MovableText::~MovableText()
 {
-  delete render_operation_.vertexData;
+  delete mRenderOp.vertexData;
   if (material_) {
     Ogre::MaterialManager::getSingletonPtr()->remove(material_->getName(), MATERIAL_GROUP);
   }
@@ -327,18 +326,18 @@ void MovableText::setupRenderOperation()
 {
   unsigned int vertex_count = calculateVertexCount();
 
-  if (render_operation_.vertexData) {
-    delete render_operation_.vertexData;
-    render_operation_.vertexData = nullptr;
+  if (mRenderOp.vertexData) {
+    delete mRenderOp.vertexData;
+    mRenderOp.vertexData = nullptr;
     needs_color_update_ = true;
   }
 
-  render_operation_.vertexData = new Ogre::VertexData();
-  render_operation_.indexData = nullptr;
-  render_operation_.vertexData->vertexStart = 0;
-  render_operation_.vertexData->vertexCount = vertex_count;
-  render_operation_.operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
-  render_operation_.useIndexes = false;
+  mRenderOp.vertexData = new Ogre::VertexData();
+  mRenderOp.indexData = nullptr;
+  mRenderOp.vertexData->vertexStart = 0;
+  mRenderOp.vertexData->vertexCount = vertex_count;
+  mRenderOp.operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
+  mRenderOp.useIndexes = false;
 }
 
 unsigned int MovableText::calculateVertexCount() const
@@ -354,8 +353,8 @@ unsigned int MovableText::calculateVertexCount() const
 
 Ogre::HardwareVertexBufferSharedPtr MovableText::setupHardwareBuffers() const
 {
-  Ogre::VertexDeclaration * declaration = render_operation_.vertexData->vertexDeclaration;
-  Ogre::VertexBufferBinding * bind = render_operation_.vertexData->vertexBufferBinding;
+  Ogre::VertexDeclaration * declaration = mRenderOp.vertexData->vertexDeclaration;
+  Ogre::VertexBufferBinding * bind = mRenderOp.vertexData->vertexBufferBinding;
   size_t offset = 0;
 
   // create/bind positions/texture coordinates buffer
@@ -373,7 +372,7 @@ Ogre::HardwareVertexBufferSharedPtr MovableText::setupHardwareBuffers() const
   Ogre::HardwareVertexBufferSharedPtr position_and_texture_buffer =
     Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
     declaration->getVertexSize(POS_TEX_BINDING),
-    render_operation_.vertexData->vertexCount,
+    mRenderOp.vertexData->vertexCount,
     Ogre::HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY);
   bind->setBinding(POS_TEX_BINDING, position_and_texture_buffer);
 
@@ -385,7 +384,7 @@ Ogre::HardwareVertexBufferSharedPtr MovableText::setupHardwareBuffers() const
   Ogre::HardwareVertexBufferSharedPtr color_buffer =
     Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
     declaration->getVertexSize(COLOUR_BINDING),
-    render_operation_.vertexData->vertexCount,
+    mRenderOp.vertexData->vertexCount,
     Ogre::HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY);
   bind->setBinding(COLOUR_BINDING, color_buffer);
   return position_and_texture_buffer;
@@ -479,7 +478,7 @@ void MovableText::fillVertexBuffer(
 
   position_and_texture_buffer->unlock();
 
-  bounding_box_ = Ogre::AxisAlignedBox(buffer.min_, buffer.max_);
+  mBox = Ogre::AxisAlignedBox(buffer.min_, buffer.max_);
   radius_ = Ogre::Math::Sqrt(buffer.max_squared_radius_);
 }
 
@@ -497,10 +496,10 @@ void MovableText::updateColors()
 void MovableText::fillColorBuffer(Ogre::RGBA color) const
 {
   Ogre::HardwareVertexBufferSharedPtr hardware_buffer =
-    render_operation_.vertexData->vertexBufferBinding->getBuffer(COLOUR_BINDING);
+    mRenderOp.vertexData->vertexBufferBinding->getBuffer(COLOUR_BINDING);
   auto color_buffer = static_cast<Ogre::RGBA *>(
     hardware_buffer->lock(Ogre::HardwareBuffer::HBL_DISCARD));
-  for (int i = 0; i < static_cast<int>(render_operation_.vertexData->vertexCount); ++i) {
+  for (int i = 0; i < static_cast<int>(mRenderOp.vertexData->vertexCount); ++i) {
     *color_buffer++ = color;
   }
   hardware_buffer->unlock();
@@ -508,8 +507,8 @@ void MovableText::fillColorBuffer(Ogre::RGBA color) const
 
 const Ogre::Quaternion & MovableText::getWorldOrientation() const
 {
-  assert(camera_);
-  return const_cast<Ogre::Quaternion &>(camera_->getDerivedOrientation());
+  assert(mCamera);
+  return const_cast<Ogre::Quaternion &>(mCamera->getDerivedOrientation());
 }
 
 void MovableText::visitRenderables(Ogre::Renderable::Visitor * visitor, bool debug_renderables)
@@ -525,10 +524,10 @@ const Ogre::Vector3 & MovableText::getWorldPosition() const
 
 void MovableText::getWorldTransforms(Ogre::Matrix4 * xform) const
 {
-  if (this->isVisible() && camera_) {
+  if (this->isVisible() && mCamera) {
     Ogre::Matrix3 rot3x3, scale3x3 = Ogre::Matrix3::IDENTITY;
 
-    camera_->getDerivedOrientation().ToRotationMatrix(rot3x3);
+    mCamera->getDerivedOrientation().ToRotationMatrix(rot3x3);
 
     Ogre::Vector3 parent_position = mParentNode->_getDerivedPosition() +
       Ogre::Vector3::UNIT_Y * global_translation_;
@@ -547,7 +546,7 @@ void MovableText::getRenderOperation(Ogre::RenderOperation & op)
 {
   if (isVisible()) {
     update();
-    op = render_operation_;
+    op = mRenderOp;
   }
 }
 
@@ -563,7 +562,7 @@ void MovableText::update()
 
 void MovableText::_notifyCurrentCamera(Ogre::Camera * camera)
 {
-  camera_ = camera;
+  mCamera = camera;
 }
 
 void MovableText::_updateRenderQueue(Ogre::RenderQueue * queue)

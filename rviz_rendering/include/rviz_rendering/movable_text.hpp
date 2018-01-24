@@ -53,6 +53,7 @@
 #include <OgreQuaternion.h>
 #include <OgreRenderable.h>
 #include <OgreSharedPtr.h>
+#include <OgreSimpleRenderable.h>
 #include <OgreVector3.h>
 
 #ifndef _WIN32
@@ -71,7 +72,7 @@ class RenderQueue;
 namespace rviz_rendering
 {
 
-class RVIZ_RENDERING_LOCAL MovableText : public Ogre::MovableObject, public Ogre::Renderable
+class MovableText : public Ogre::SimpleRenderable
 {
 public:
   enum RVIZ_RENDERING_PUBLIC HorizontalAlignment
@@ -84,80 +85,119 @@ public:
   };
 
 public:
+  RVIZ_RENDERING_PUBLIC
   explicit MovableText(
     const Ogre::String & caption,
     const Ogre::String & fontName = "Liberation Sans",
     Ogre::Real charHeight = 1.0,
     const Ogre::ColourValue & color = Ogre::ColourValue::White);
+  RVIZ_RENDERING_PUBLIC
   ~MovableText() override;
 
+  RVIZ_RENDERING_PUBLIC
   void setFontName(const Ogre::String & font_name);
+
+  RVIZ_RENDERING_PUBLIC
   void setCaption(const Ogre::String & caption);
+
   RVIZ_RENDERING_PUBLIC
   void setColor(const Ogre::ColourValue & color);
+
   RVIZ_RENDERING_PUBLIC
   void setCharacterHeight(Ogre::Real height);
+
   RVIZ_RENDERING_PUBLIC
   void setLineSpacing(Ogre::Real height);
+
   RVIZ_RENDERING_PUBLIC
   void setSpaceWidth(Ogre::Real width);
+
   RVIZ_RENDERING_PUBLIC
   void setTextAlignment(
     const HorizontalAlignment & horizontal_alignment,
     const VerticalAlignment & vertical_alignment);
+
+  RVIZ_RENDERING_PUBLIC
   void setGlobalTranslation(Ogre::Vector3 translation);
+
+  RVIZ_RENDERING_PUBLIC
   void setLocalTranslation(Ogre::Vector3 translation);
+
+  RVIZ_RENDERING_PUBLIC
   void showOnTop(bool show = true);
 
+  RVIZ_RENDERING_PUBLIC
   const Ogre::String & getFontName() const
   {
     return font_name_;
   }
+
+  RVIZ_RENDERING_PUBLIC
   const Ogre::String & getCaption() const
   {
     return caption_;
   }
+
+  RVIZ_RENDERING_PUBLIC
   const Ogre::ColourValue & getColor() const
   {
     return color_;
   }
+
+  RVIZ_RENDERING_PUBLIC
   Ogre::Real getCharacterHeight() const
   {
     return char_height_;
   }
+
+  RVIZ_RENDERING_PUBLIC
   Ogre::Real getSpaceWidth() const
   {
     return space_width_;
   }
+
+  RVIZ_RENDERING_PUBLIC
   Ogre::Vector3 getGlobalTranslation() const
   {
     return global_translation_;
   }
+
+  RVIZ_RENDERING_PUBLIC
   Ogre::Vector3 getLocalTranslation() const
   {
     return local_translation_;
   }
+
+  RVIZ_RENDERING_PUBLIC
   bool getShowOnTop() const
   {
     return on_top_;
   }
+
+  RVIZ_RENDERING_PUBLIC
   const Ogre::AxisAlignedBox & getBoundingBox() const override
   {
-    return bounding_box_;
+    return mBox;
   }
+
+  RVIZ_RENDERING_PUBLIC
   Ogre::Real getBoundingRadius() const override
   {
     return radius_;
   }
+
+  RVIZ_RENDERING_PUBLIC
   const Ogre::MaterialPtr & getMaterial() const override
   {
     assert(material_);
     return material_;
   }
 
+  RVIZ_RENDERING_PUBLIC
   void
   visitRenderables(Ogre::Renderable::Visitor * visitor, bool debug_renderables) override;
 
+  RVIZ_RENDERING_PUBLIC
   void update();
 
 protected:
@@ -208,8 +248,6 @@ private:
   VerticalAlignment vertical_alignment_;
 
   Ogre::ColourValue color_;
-  Ogre::RenderOperation render_operation_;
-  Ogre::AxisAlignedBox bounding_box_;
   Ogre::Real radius_;
 
   Ogre::Real char_height_;
@@ -223,7 +261,6 @@ private:
   Ogre::Vector3 global_translation_;
   Ogre::Vector3 local_translation_;
 
-  Ogre::Camera * camera_;
   Ogre::Font * font_;
   Ogre::MaterialPtr material_;
 

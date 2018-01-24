@@ -178,7 +178,7 @@ void FrameInfo::updateColorForAge(double age, double frame_timeout) const
 {
   double one_third_timeout = frame_timeout * 0.3333333f;
   if (age > one_third_timeout) {
-    Ogre::ColourValue grey(0.7, 0.7, 0.7, 1.0);
+    Ogre::ColourValue grey(0.7f, 0.7f, 0.7f, 1.0f);
 
     if (age > one_third_timeout * 2) {
       double a = std::max(0.0, (frame_timeout - age) / one_third_timeout);
