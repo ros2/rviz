@@ -38,6 +38,7 @@
 
 #ifndef Q_MOC_RUN
 #include <OgreMaterial.h>
+#include <OgrePlatform.h>
 #include <OgreRenderTargetListener.h>
 #include <OgreSharedPtr.h>
 
@@ -132,11 +133,25 @@ private:
 
   void unsubscribe() override;
 
-  void caminfoCallback(const sensor_msgs::msg::CameraInfo::ConstSharedPtr msg);
+  void createCameraInfoSubscription();
 
   bool updateCamera();
 
   void clear();
+
+  void translatePosition(
+    Ogre::Vector3 & position,
+    sensor_msgs::msg::CameraInfo::ConstSharedPtr info,
+    Ogre::Quaternion orientation);
+
+  Ogre::Vector2 getZoomFromInfo(
+    sensor_msgs::msg::CameraInfo::ConstSharedPtr info, float img_width, float img_height) const;
+
+  Ogre::Matrix4 calculateProjectionMatrix(
+    sensor_msgs::msg::CameraInfo::ConstSharedPtr info,
+    float img_width,
+    float img_height,
+    const Ogre::Vector2 & zoom) const;
 
   Ogre::SceneNode * background_scene_node_;
   Ogre::SceneNode * overlay_scene_node_;
@@ -166,6 +181,11 @@ private:
   bool force_render_;
 
   uint32_t vis_bit_;
+  Ogre::MaterialPtr createMaterial(std::string name) const;
+  std::unique_ptr<Ogre::Rectangle2D> createScreenRectangle(
+    const Ogre::AxisAlignedBox & bounding_box,
+    const Ogre::MaterialPtr & material,
+    Ogre::uint8 render_queue_group);
 };
 
 }  // namespace displays

@@ -97,26 +97,26 @@ CameraDisplay::CameraDisplay()
   image_position_property_->addOption(BOTH);
 
   alpha_property_ = new rviz_common::properties::FloatProperty(
-    "Overlay Alpha", 0.5,
+    "Overlay Alpha", 0.5f,
     "The amount of transparency to apply to the camera image when rendered as overlay.",
     this, SLOT(updateAlpha()));
-  alpha_property_->setMin(0);
-  alpha_property_->setMax(1);
+  alpha_property_->setMin(0.0f);
+  alpha_property_->setMax(1.0f);
 
   zoom_property_ = new rviz_common::properties::FloatProperty(
-    "Zoom Factor", 1.0,
+    "Zoom Factor", 1.0f,
     "Set a zoom factor below 1 to see a larger part of the world, above 1 to magnify the image.",
     this, SLOT(forceRender()));
-  zoom_property_->setMin(0.00001);
-  zoom_property_->setMax(100000);
+  zoom_property_->setMin(0.00001f);
+  zoom_property_->setMax(100000.0f);
 }
 
 CameraDisplay::~CameraDisplay()
 {
   if (initialized()) {
-    rviz_rendering::RenderWindowOgreAdapter::removeListener(render_panel_->getRenderWindow(), this);
     unsubscribe();
     context_->visibilityBits()->freeBits(vis_bit_);
+    rviz_rendering::RenderWindowOgreAdapter::removeListener(render_panel_->getRenderWindow(), this);
   }
 }
 
@@ -130,50 +130,24 @@ void CameraDisplay::onInitialize()
   {
     static int count = 0;
     rviz_common::UniformStringStream materialName;
-    materialName << "CameraDisplayObject" << count++;
-
-    // background rectangle
-    background_screen_rect_ = std::make_unique<Ogre::Rectangle2D>(true);
-    background_screen_rect_->setCorners(-1.0f, 1.0f, 1.0f, -1.0f);
-
-    materialName << "Material";
-    background_material_ = Ogre::MaterialManager::getSingleton().create(
-      materialName.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-    background_material_->setDepthWriteEnabled(false);
-
-    background_material_->setReceiveShadows(false);
-    background_material_->setDepthCheckEnabled(false);
-
-    background_material_->getTechnique(0)->setLightingEnabled(false);
-    Ogre::TextureUnitState * tu = background_material_->getTechnique(0)->getPass(0)
-      ->createTextureUnitState();
-    tu->setTextureName(texture_->getTexture()->getName());
-    tu->setTextureFiltering(Ogre::TFO_NONE);
-    tu->setAlphaOperation(Ogre::LBX_SOURCE1, Ogre::LBS_MANUAL, Ogre::LBS_CURRENT, 0.0);
-
-    background_material_->setCullingMode(Ogre::CULL_NONE);
-    background_material_->setSceneBlending(Ogre::SBT_REPLACE);
+    materialName << "CameraDisplayObject" << count++ << "Material";
 
     Ogre::AxisAlignedBox aabInf;
     aabInf.setInfinite();
 
-    background_screen_rect_->setRenderQueueGroup(Ogre::RENDER_QUEUE_BACKGROUND);
-    background_screen_rect_->setBoundingBox(aabInf);
-    background_screen_rect_->setMaterial(background_material_);
+    background_material_ = createMaterial(materialName.str());
+
+    background_screen_rect_ = createScreenRectangle(
+      aabInf, background_material_, Ogre::RENDER_QUEUE_BACKGROUND);
 
     background_scene_node_->attachObject(background_screen_rect_.get());
     background_scene_node_->setVisible(false);
 
-    // overlay rectangle
-    overlay_screen_rect_ = std::make_unique<Ogre::Rectangle2D>(true);
-    overlay_screen_rect_->setCorners(-1.0f, 1.0f, 1.0f, -1.0f);
-
     overlay_material_ = background_material_->clone(materialName.str() + "fg");
-    overlay_screen_rect_->setBoundingBox(aabInf);
-    overlay_screen_rect_->setMaterial(overlay_material_);
-
     overlay_material_->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
-    overlay_screen_rect_->setRenderQueueGroup(Ogre::RENDER_QUEUE_OVERLAY - 1);
+
+    overlay_screen_rect_ = createScreenRectangle(
+      aabInf, overlay_material_, Ogre::RENDER_QUEUE_OVERLAY - 1);
 
     overlay_scene_node_->attachObject(overlay_screen_rect_.get());
     overlay_scene_node_->setVisible(false);
@@ -200,6 +174,42 @@ void CameraDisplay::onInitialize()
     rviz_common::loadPixmap("package://rviz/icons/visibility.svg", true));
 
   this->addChild(visibility_property_, 0);
+}
+
+std::unique_ptr<Ogre::Rectangle2D> CameraDisplay::createScreenRectangle(
+  const Ogre::AxisAlignedBox & bounding_box,
+  const Ogre::MaterialPtr & material,
+  Ogre::uint8 render_queue_group)
+{
+  auto screen_rect = std::make_unique<Ogre::Rectangle2D>(true);
+  screen_rect->setCorners(-1.0f, 1.0f, 1.0f, -1.0f);
+  screen_rect->setRenderQueueGroup(render_queue_group);
+  screen_rect->setBoundingBox(bounding_box);
+  screen_rect->setMaterial(material);
+
+  return screen_rect;
+}
+
+Ogre::MaterialPtr CameraDisplay::createMaterial(std::string name) const
+{
+  auto material = Ogre::MaterialManager::getSingleton().create(
+    name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+
+  material->setDepthWriteEnabled(false);
+  material->setReceiveShadows(false);
+  material->setDepthCheckEnabled(false);
+
+  material->setCullingMode(Ogre::CULL_NONE);
+  material->setSceneBlending(Ogre::SBT_REPLACE);
+
+  material->getTechnique(0)->setLightingEnabled(false);
+  Ogre::TextureUnitState * tu =
+    material->getTechnique(0)->getPass(0)->createTextureUnitState();
+  tu->setTextureName(texture_->getTexture()->getName());
+  tu->setTextureFiltering(Ogre::TFO_NONE);
+  tu->setAlphaOperation(Ogre::LBX_SOURCE1, Ogre::LBS_MANUAL, Ogre::LBS_CURRENT, 0.0);
+
+  return material;
 }
 
 void CameraDisplay::preRenderTargetUpdate(const Ogre::RenderTargetEvent & evt)
@@ -245,10 +255,19 @@ void CameraDisplay::subscribe()
     return;
   }
 
+  createCameraInfoSubscription();
+}
+
+void CameraDisplay::createCameraInfoSubscription()
+{
   try {
     caminfo_sub_ = node_->create_subscription<sensor_msgs::msg::CameraInfo>(
       topic_property_->getTopicStd() + "/camera_info",
-      std::bind(&CameraDisplay::caminfoCallback, this, std::placeholders::_1),
+      [this](sensor_msgs::msg::CameraInfo::ConstSharedPtr msg) {
+        std::unique_lock<std::mutex> lock(caminfo_mutex_);
+        current_caminfo_ = msg;
+        new_caminfo_ = true;
+      },
       qos_profile);
     setStatus(rviz_common::properties::StatusProperty::Ok, "Camera Info", "OK");
   } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
@@ -347,9 +366,6 @@ bool CameraDisplay::updateCamera()
   context_->getFrameManager()->getTransform(
     image->header.frame_id, image->header.stamp, position, orientation);
 
-//  printf( "CameraDisplay:updateCamera(): pos = %.2f, %.2f, %.2f.\n",
-//    position.x, position.y, position.z );
-
   // convert vision (Z-forward) frame to ogre frame (Z-out)
   orientation = orientation * Ogre::Quaternion(Ogre::Degree(180), Ogre::Vector3::UNIT_X);
 
@@ -377,35 +393,9 @@ bool CameraDisplay::updateCamera()
       "(either width or height is 0)");
     return false;
   }
+  Ogre::Vector2 zoom = getZoomFromInfo(info, img_width, img_height);
 
-  double fx = info->p[0];
-  double fy = info->p[5];
-
-  float win_width = render_panel_->width();
-  float win_height = render_panel_->height();
-  float zoom_x = zoom_property_->getFloat();
-  float zoom_y = zoom_x;
-
-  // Preserve aspect ratio
-  if (win_width != 0 && win_height != 0) {
-    float img_aspect = (img_width / fx) / (img_height / fy);
-    float win_aspect = win_width / win_height;
-
-    if (img_aspect > win_aspect) {
-      zoom_y = zoom_y / img_aspect * win_aspect;
-    } else {
-      zoom_x = zoom_x / win_aspect * img_aspect;
-    }
-  }
-
-  // Add the camera's translation relative to the left camera (from P[3]);
-  double tx = -1 * (info->p[3] / fx);
-  Ogre::Vector3 right = orientation * Ogre::Vector3::UNIT_X;
-  position = position + (right * tx);
-
-  double ty = -1 * (info->p[7] / fy);
-  Ogre::Vector3 down = orientation * Ogre::Vector3::UNIT_Y;
-  position = position + (down * ty);
+  translatePosition(position, info, orientation);
 
   if (!rviz_common::validateFloats(position)) {
     setStatus(
@@ -415,46 +405,20 @@ bool CameraDisplay::updateCamera()
     return false;
   }
 
-  rviz_rendering::RenderWindowOgreAdapter::getOgreCamera(
-    render_panel_->getRenderWindow())->setPosition(position);
-  rviz_rendering::RenderWindowOgreAdapter::getOgreCamera(
-    render_panel_->getRenderWindow())->setOrientation(orientation);
+  auto render_window = render_panel_->getRenderWindow();
+  rviz_rendering::RenderWindowOgreAdapter::getOgreCamera(render_window)->setPosition(position);
+  rviz_rendering::RenderWindowOgreAdapter::getOgreCamera(render_window)->setOrientation(orientation);
 
-  // calculate the projection matrix
-  double cx = info->p[2];
-  double cy = info->p[6];
+  Ogre::Matrix4 proj_matrix = calculateProjectionMatrix(info, img_width, img_height, zoom);
 
-  double far_plane = 100;
-  double near_plane = 0.01;
-
-  Ogre::Matrix4 proj_matrix;
-  proj_matrix = Ogre::Matrix4::ZERO;
-
-  proj_matrix[0][0] = 2.0 * fx / img_width * zoom_x;
-  proj_matrix[1][1] = 2.0 * fy / img_height * zoom_y;
-
-  proj_matrix[0][2] = 2.0 * (0.5 - cx / img_width) * zoom_x;
-  proj_matrix[1][2] = 2.0 * (cy / img_height - 0.5) * zoom_y;
-
-  proj_matrix[2][2] = -(far_plane + near_plane) / (far_plane - near_plane);
-  proj_matrix[2][3] = -2.0 * far_plane * near_plane / (far_plane - near_plane);
-
-  proj_matrix[3][2] = -1;
-
-  rviz_rendering::RenderWindowOgreAdapter::getOgreCamera(
-    render_panel_->getRenderWindow())->setCustomProjectionMatrix(true, proj_matrix);
+  rviz_rendering::RenderWindowOgreAdapter::getOgreCamera(render_window)
+    ->setCustomProjectionMatrix(true, proj_matrix);
 
   setStatus(rviz_common::properties::StatusProperty::Ok, "Camera Info", "OK");
 
-#if 0
-  static Axes * debug_axes = new Axes(scene_manager_, 0, 0.2, 0.01);
-  debug_axes->setPosition(position);
-  debug_axes->setOrientation(orientation);
-#endif
-
   // adjust the image rectangles to fit the zoom & aspect ratio
-  background_screen_rect_->setCorners(-1.0f * zoom_x, 1.0f * zoom_y, 1.0f * zoom_x, -1.0f * zoom_y);
-  overlay_screen_rect_->setCorners(-1.0f * zoom_x, 1.0f * zoom_y, 1.0f * zoom_x, -1.0f * zoom_y);
+  background_screen_rect_->setCorners(-1.0f * zoom.x, 1.0f * zoom.y, 1.0f * zoom.x, -1.0f * zoom.y);
+  overlay_screen_rect_->setCorners(-1.0f * zoom.x, 1.0f * zoom.y, 1.0f * zoom.x, -1.0f * zoom.y);
 
   Ogre::AxisAlignedBox aabInf;
   aabInf.setInfinite();
@@ -467,16 +431,88 @@ bool CameraDisplay::updateCamera()
   return true;
 }
 
+Ogre::Vector2 CameraDisplay::getZoomFromInfo(
+  sensor_msgs::msg::CameraInfo::ConstSharedPtr info, float img_width, float img_height) const
+{
+  Ogre::Vector2 zoom;
+  zoom.x = zoom_property_->getFloat();
+  zoom.y = zoom.x;
+
+  auto fx = static_cast<float>(info->p[0]);
+  auto fy = static_cast<float>(info->p[5]);
+
+  float win_width = render_panel_->width();
+  float win_height = render_panel_->height();
+
+  // Preserve aspect ratio
+  if (win_width != 0 && win_height != 0) {
+    float img_aspect = (img_width / fx) / (img_height / fy);
+    float win_aspect = win_width / win_height;
+
+    if (img_aspect > win_aspect) {
+      zoom.y = zoom.y / img_aspect * win_aspect;
+    } else {
+      zoom.x = zoom.x / win_aspect * img_aspect;
+    }
+  }
+
+  return zoom;
+}
+
+/// Add the camera's translation relative to the left camera (from P[3]);
+void CameraDisplay::translatePosition(
+  Ogre::Vector3 & position,
+  sensor_msgs::msg::CameraInfo::ConstSharedPtr info,
+  Ogre::Quaternion orientation)
+{
+  double fx = info->p[0];
+  double fy = info->p[5];
+
+  double tx = -1 * (info->p[3] / fx);
+  Ogre::Vector3 right = orientation * Ogre::Vector3::UNIT_X;
+  position = position + (right * tx);
+
+  double ty = -1 * (info->p[7] / fy);
+  Ogre::Vector3 down = orientation * Ogre::Vector3::UNIT_Y;
+  position = position + (down * ty);
+}
+
+/// calculate the projection matrix
+Ogre::Matrix4 CameraDisplay::calculateProjectionMatrix(
+  const sensor_msgs::msg::CameraInfo::ConstSharedPtr info,
+  float img_width,
+  float img_height,
+  const Ogre::Vector2 & zoom) const
+{
+  auto cx = static_cast<float>(info->p[2]);
+  auto cy = static_cast<float>(info->p[6]);
+
+  auto fx = static_cast<float>(info->p[0]);
+  auto fy = static_cast<float>(info->p[5]);
+
+  float far_plane = 100.0f;
+  float near_plane = 0.01f;
+
+  Ogre::Matrix4 proj_matrix;
+  proj_matrix = Ogre::Matrix4::ZERO;
+
+  proj_matrix[0][0] = 2.0f * fx / img_width * zoom.x;
+  proj_matrix[1][1] = 2.0f * fy / img_height * zoom.y;
+
+  proj_matrix[0][2] = 2.0f * (0.5f - cx / img_width) * zoom.x;
+  proj_matrix[1][2] = 2.0f * (cy / img_height - 0.5f) * zoom.y;
+
+  proj_matrix[2][2] = -(far_plane + near_plane) / (far_plane - near_plane);
+  proj_matrix[2][3] = -2.0f * far_plane * near_plane / (far_plane - near_plane);
+
+  proj_matrix[3][2] = -1;
+
+  return proj_matrix;
+}
+
 void CameraDisplay::processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg)
 {
   texture_->addMessage(msg);
-}
-
-void CameraDisplay::caminfoCallback(const sensor_msgs::msg::CameraInfo::ConstSharedPtr msg)
-{
-  std::unique_lock<std::mutex> lock(caminfo_mutex_);
-  current_caminfo_ = msg;
-  new_caminfo_ = true;
 }
 
 void CameraDisplay::reset()
