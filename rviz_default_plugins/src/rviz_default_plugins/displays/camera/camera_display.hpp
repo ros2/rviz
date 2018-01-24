@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,6 +34,7 @@
 #include <cstdint>
 #include <memory>
 #include <mutex>
+#include <string>
 
 #include <QObject>  // NOLINT: cpplint cannot handle the include order here
 
@@ -85,6 +87,12 @@ namespace rviz_default_plugins
 
 namespace displays
 {
+
+struct ImageDimensions
+{
+  unsigned int height;
+  unsigned int width;
+};
 
 /**
  * \class CameraDisplay
@@ -139,18 +147,30 @@ private:
 
   void clear();
 
+  Ogre::MaterialPtr createMaterial(std::string name) const;
+
+  std::unique_ptr<Ogre::Rectangle2D> createScreenRectangle(
+    const Ogre::AxisAlignedBox & bounding_box,
+    const Ogre::MaterialPtr & material,
+    Ogre::uint8 render_queue_group);
+
+  bool timeDifferenceInExactSyncMode(
+    const sensor_msgs::msg::Image::ConstSharedPtr & image, rclcpp::Time & rviz_time) const;
+
   void translatePosition(
     Ogre::Vector3 & position,
     sensor_msgs::msg::CameraInfo::ConstSharedPtr info,
     Ogre::Quaternion orientation);
 
+  ImageDimensions getImageDimensions(
+    const sensor_msgs::msg::CameraInfo::ConstSharedPtr & info) const;
+
   Ogre::Vector2 getZoomFromInfo(
-    sensor_msgs::msg::CameraInfo::ConstSharedPtr info, float img_width, float img_height) const;
+    sensor_msgs::msg::CameraInfo::ConstSharedPtr info, ImageDimensions dimensions) const;
 
   Ogre::Matrix4 calculateProjectionMatrix(
     sensor_msgs::msg::CameraInfo::ConstSharedPtr info,
-    float img_width,
-    float img_height,
+    ImageDimensions dimensions,
     const Ogre::Vector2 & zoom) const;
 
   Ogre::SceneNode * background_scene_node_;
@@ -181,11 +201,6 @@ private:
   bool force_render_;
 
   uint32_t vis_bit_;
-  Ogre::MaterialPtr createMaterial(std::string name) const;
-  std::unique_ptr<Ogre::Rectangle2D> createScreenRectangle(
-    const Ogre::AxisAlignedBox & bounding_box,
-    const Ogre::MaterialPtr & material,
-    Ogre::uint8 render_queue_group);
 };
 
 }  // namespace displays

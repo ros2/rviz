@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +28,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "camera_display.hpp"
+
 #include <memory>
+#include <string>
 
 #include <OgreManualObject.h>
 #include <OgreMaterialManager.h>
@@ -59,13 +63,16 @@
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/load_resource.hpp"
 
-#include "camera_display.hpp"
-
 namespace rviz_default_plugins
 {
 
 namespace displays
 {
+
+using rviz_common::properties::StatusLevel;
+
+static const char * const CAM_INFO_STATUS = "Camera Info";
+static const char * const TIME_STATUS = "Time";
 
 const QString CameraDisplay::BACKGROUND("background");
 const QString CameraDisplay::OVERLAY("overlay");
@@ -269,11 +276,9 @@ void CameraDisplay::createCameraInfoSubscription()
         new_caminfo_ = true;
       },
       qos_profile);
-    setStatus(rviz_common::properties::StatusProperty::Ok, "Camera Info", "OK");
+    setStatus(StatusLevel::Ok, CAM_INFO_STATUS, "OK");
   } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
-    setStatus(
-      rviz_common::properties::StatusProperty::Error, "Camera Info",
-      QString("Error subscribing: ") + e.what());
+    setStatus(StatusLevel::Error, CAM_INFO_STATUS, QString("Error subscribing: ") + e.what());
   }
 }
 
@@ -309,7 +314,7 @@ void CameraDisplay::clear()
   new_caminfo_ = false;
   current_caminfo_.reset();
 
-  setStatus(rviz_common::properties::StatusProperty::Warn, "Camera Info",
+  setStatus(StatusLevel::Warn, CAM_INFO_STATUS,
     "No CameraInfo received on [" + topic_property_->getTopic() + "/camera_info" + "]. "
     "Topic may not exist.");
 
@@ -327,7 +332,7 @@ void CameraDisplay::update(float wall_dt, float ros_dt)
       force_render_ = false;
     }
   } catch (UnsupportedImageEncoding & e) {
-    setStatus(rviz_common::properties::StatusProperty::Error, "Image", e.what());
+    setStatus(StatusLevel::Error, "Image", e.what());
   }
 }
 
@@ -347,17 +352,15 @@ bool CameraDisplay::updateCamera()
   }
 
   if (!validateFloats(*info)) {
-    setStatus(rviz_common::properties::StatusProperty::Error, "Camera Info",
+    setStatus(StatusLevel::Error, CAM_INFO_STATUS,
       "Contains invalid floating point values (nans or infs)");
     return false;
   }
 
   rclcpp::Time rviz_time = context_->getFrameManager()->getTime();
-  if (context_->getFrameManager()->getSyncMode() == rviz_common::FrameManager::SyncExact &&
-    rviz_time != image->header.stamp) {
-    std::ostringstream s;
-    s << "Time-syncing active and no image at timestamp " << rviz_time.nanoseconds() << ".";
-    setStatus(rviz_common::properties::StatusProperty::Warn, "Time", s.str().c_str());
+  if (timeDifferenceInExactSyncMode(image, rviz_time)) {
+    setStatus(StatusLevel::Warn, TIME_STATUS,
+      QString("Time-syncing active and no image at timestamp ") + rviz_time.nanoseconds() + ".");
     return false;
   }
 
@@ -369,52 +372,33 @@ bool CameraDisplay::updateCamera()
   // convert vision (Z-forward) frame to ogre frame (Z-out)
   orientation = orientation * Ogre::Quaternion(Ogre::Degree(180), Ogre::Vector3::UNIT_X);
 
-  float img_width = info->width;
-  float img_height = info->height;
-
-  // If the image width is 0 due to a malformed caminfo, try to grab the width from the image.
-  if (img_width == 0) {
-    RVIZ_COMMON_LOG_DEBUG_STREAM("Malformed CameraInfo on camera" << qPrintable(getName()) << ", "
-      "width = 0");
-    img_width = texture_->getWidth();
-  }
-
-  if (img_height == 0) {
-    RVIZ_COMMON_LOG_DEBUG_STREAM("Malformed CameraInfo on camera" << qPrintable(getName()) << ","
-      " height = 0");
-    img_height = texture_->getHeight();
-  }
-
-  if (img_height == 0.0 || img_width == 0.0) {
-    setStatus(
-      rviz_common::properties::StatusProperty::Error,
-      "Camera Info",
-      "Could not determine width/height of image due to malformed CameraInfo "
-      "(either width or height is 0)");
+  auto dimensions = getImageDimensions(info);
+  if (dimensions.height == 0.0 || dimensions.width == 0.0) {
+    setStatus(StatusLevel::Error, CAM_INFO_STATUS,
+      "Could not determine width/height of image "
+      "due to malformed CameraInfo (either width or height is 0)");
     return false;
   }
-  Ogre::Vector2 zoom = getZoomFromInfo(info, img_width, img_height);
 
   translatePosition(position, info, orientation);
-
   if (!rviz_common::validateFloats(position)) {
-    setStatus(
-      rviz_common::properties::StatusProperty::Error,
-      "Camera Info",
+    setStatus(StatusLevel::Error, CAM_INFO_STATUS,
       "CameraInfo/P resulted in an invalid position calculation (nans or infs)");
     return false;
   }
 
   auto render_window = render_panel_->getRenderWindow();
   rviz_rendering::RenderWindowOgreAdapter::getOgreCamera(render_window)->setPosition(position);
-  rviz_rendering::RenderWindowOgreAdapter::getOgreCamera(render_window)->setOrientation(orientation);
+  rviz_rendering::RenderWindowOgreAdapter::getOgreCamera(render_window)
+  ->setOrientation(orientation);
 
-  Ogre::Matrix4 proj_matrix = calculateProjectionMatrix(info, img_width, img_height, zoom);
+  Ogre::Vector2 zoom = getZoomFromInfo(info, dimensions);
+  Ogre::Matrix4 proj_matrix = calculateProjectionMatrix(info, dimensions, zoom);
 
   rviz_rendering::RenderWindowOgreAdapter::getOgreCamera(render_window)
-    ->setCustomProjectionMatrix(true, proj_matrix);
+  ->setCustomProjectionMatrix(true, proj_matrix);
 
-  setStatus(rviz_common::properties::StatusProperty::Ok, "Camera Info", "OK");
+  setStatus(StatusLevel::Ok, CAM_INFO_STATUS, "OK");
 
   // adjust the image rectangles to fit the zoom & aspect ratio
   background_screen_rect_->setCorners(-1.0f * zoom.x, 1.0f * zoom.y, 1.0f * zoom.x, -1.0f * zoom.y);
@@ -425,14 +409,42 @@ bool CameraDisplay::updateCamera()
   background_screen_rect_->setBoundingBox(aabInf);
   overlay_screen_rect_->setBoundingBox(aabInf);
 
-  setStatus(rviz_common::properties::StatusProperty::Ok, "Time", "ok");
-  setStatus(rviz_common::properties::StatusProperty::Ok, "Camera Info", "ok");
+  setStatus(StatusLevel::Ok, TIME_STATUS, "ok");
+  setStatus(StatusLevel::Ok, CAM_INFO_STATUS, "ok");
 
   return true;
 }
 
+bool CameraDisplay::timeDifferenceInExactSyncMode(
+  const sensor_msgs::msg::Image::ConstSharedPtr & image, rclcpp::Time & rviz_time) const
+{
+  return context_->getFrameManager()->getSyncMode() == rviz_common::FrameManager::SyncExact &&
+         rviz_time != image->header.stamp;
+}
+
+ImageDimensions CameraDisplay::getImageDimensions(
+  const sensor_msgs::msg::CameraInfo::ConstSharedPtr & info) const
+{
+  ImageDimensions dimensions{info->height, info->width};
+
+  // If the image width is 0 due to a malformed caminfo, try to grab the width from the image.
+  if (dimensions.width == 0) {
+    RVIZ_COMMON_LOG_DEBUG_STREAM("Malformed CameraInfo on camera" << qPrintable(getName()) << ", "
+      "width = 0");
+    dimensions.width = texture_->getWidth();
+  }
+
+  if (dimensions.height == 0) {
+    RVIZ_COMMON_LOG_DEBUG_STREAM("Malformed CameraInfo on camera" << qPrintable(getName()) << ","
+      " height = 0");
+    dimensions.height = texture_->getHeight();
+  }
+
+  return dimensions;
+}
+
 Ogre::Vector2 CameraDisplay::getZoomFromInfo(
-  sensor_msgs::msg::CameraInfo::ConstSharedPtr info, float img_width, float img_height) const
+  sensor_msgs::msg::CameraInfo::ConstSharedPtr info, ImageDimensions dimensions) const
 {
   Ogre::Vector2 zoom;
   zoom.x = zoom_property_->getFloat();
@@ -446,7 +458,7 @@ Ogre::Vector2 CameraDisplay::getZoomFromInfo(
 
   // Preserve aspect ratio
   if (win_width != 0 && win_height != 0) {
-    float img_aspect = (img_width / fx) / (img_height / fy);
+    float img_aspect = (dimensions.width / fx) / (dimensions.height / fy);
     float win_aspect = win_width / win_height;
 
     if (img_aspect > win_aspect) {
@@ -480,8 +492,7 @@ void CameraDisplay::translatePosition(
 /// calculate the projection matrix
 Ogre::Matrix4 CameraDisplay::calculateProjectionMatrix(
   const sensor_msgs::msg::CameraInfo::ConstSharedPtr info,
-  float img_width,
-  float img_height,
+  ImageDimensions dimensions,
   const Ogre::Vector2 & zoom) const
 {
   auto cx = static_cast<float>(info->p[2]);
@@ -496,11 +507,11 @@ Ogre::Matrix4 CameraDisplay::calculateProjectionMatrix(
   Ogre::Matrix4 proj_matrix;
   proj_matrix = Ogre::Matrix4::ZERO;
 
-  proj_matrix[0][0] = 2.0f * fx / img_width * zoom.x;
-  proj_matrix[1][1] = 2.0f * fy / img_height * zoom.y;
+  proj_matrix[0][0] = 2.0f * fx / dimensions.width * zoom.x;
+  proj_matrix[1][1] = 2.0f * fy / dimensions.height * zoom.y;
 
-  proj_matrix[0][2] = 2.0f * (0.5f - cx / img_width) * zoom.x;
-  proj_matrix[1][2] = 2.0f * (cy / img_height - 0.5f) * zoom.y;
+  proj_matrix[0][2] = 2.0f * (0.5f - cx / dimensions.width) * zoom.x;
+  proj_matrix[1][2] = 2.0f * (cy / dimensions.height - 0.5f) * zoom.y;
 
   proj_matrix[2][2] = -(far_plane + near_plane) / (far_plane - near_plane);
   proj_matrix[2][3] = -2.0f * far_plane * near_plane / (far_plane - near_plane);
@@ -525,5 +536,5 @@ void CameraDisplay::reset()
 
 }  // namespace rviz_default_plugins
 
-#include <pluginlib/class_list_macros.hpp>
+#include <pluginlib/class_list_macros.hpp>  // NOLINT
 PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::CameraDisplay, rviz_common::Display)
