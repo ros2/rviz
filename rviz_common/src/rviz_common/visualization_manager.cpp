@@ -309,16 +309,6 @@ VisualizationManager::getRosNodeAbstraction() const
   return ros_node_abstraction_;
 }
 
-void VisualizationManager::addNodeToMainExecutor(rclcpp::Node::SharedPtr node)
-{
-  executor_->add_node(node);
-}
-
-void VisualizationManager::removeNodeFromMainExecutor(rclcpp::Node::SharedPtr node)
-{
-  executor_->remove_node(node);
-}
-
 #if 0
 ros::CallbackQueueInterface * VisualizationManager::getUpdateQueue()
 {

@@ -254,10 +254,6 @@ public:
 
   ros_integration::RosNodeAbstractionIface::WeakPtr getRosNodeAbstraction() const override;
 
-  void addNodeToMainExecutor(rclcpp::Node::SharedPtr) override;
-
-  void removeNodeFromMainExecutor(rclcpp::Node::SharedPtr) override;
-
 #if 0
   /**
    * @brief Return a CallbackQueue using a different thread than the main GUI one.

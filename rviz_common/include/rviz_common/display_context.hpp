@@ -159,18 +159,6 @@ public:
   ros_integration::RosNodeAbstractionIface::WeakPtr
   getRosNodeAbstraction() const = 0;
 
-  // TODO(anhosi): remove once the RosNodeAbstraction above is used
-  /// Add a node (e.g. a display) to the main executor (spin will be called in the main thread)
-  virtual
-  void
-  addNodeToMainExecutor(std::shared_ptr<rclcpp::Node> node) = 0;
-
-  // TODO(anhosi): remove once the RosNodeAbstraction above is used
-  /// Remove a node from the main executor
-  virtual
-  void
-  removeNodeFromMainExecutor(std::shared_ptr<rclcpp::Node> node) = 0;
-
 #if 0
   /// Return a CallbackQueue using a different thread than the main GUI one.
   virtual ros::CallbackQueueInterface * getThreadedQueue() = 0;

@@ -149,7 +149,9 @@ void MarkerDisplay::subscribe()
 void MarkerDisplay::createMarkerArraySubscription()
 {
   try {
-    array_sub_ = node_->create_subscription<visualization_msgs::msg::MarkerArray>(
+    // TODO(anhosi,wjwwood): replace with abstraction for subscriptions one available
+    array_sub_ = rviz_ros_node_.lock()->get_raw_node()->
+      template create_subscription<visualization_msgs::msg::MarkerArray>(
       topic_property_->getTopicStd() + "_array",
       [this](visualization_msgs::msg::MarkerArray::ConstSharedPtr msg) {
         incomingMarkerArray(msg);

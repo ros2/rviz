@@ -49,8 +49,6 @@ namespace tools
 {
 
 PointTool::PointTool()
-: rviz_common::Tool(),
-  node_(rclcpp::Node::make_shared("point_tool_node"))
 {
   topic_property_ = new rviz_common::properties::StringProperty(
     "Topic", "/clicked_point",
@@ -61,21 +59,14 @@ PointTool::PointTool()
     "Single click", true,
     "Switch away from this tool after one click.",
     getPropertyContainer(), SLOT(updateAutoDeactivate()), this);
-
-  updateTopic();
-}
-
-PointTool::~PointTool()
-{
-  context_->removeNodeFromMainExecutor(node_);
 }
 
 void PointTool::onInitialize()
 {
-  context_->addNodeToMainExecutor(node_);
-
   hit_cursor_ = cursor_;
   std_cursor_ = rviz_common::getDefaultCursor();
+
+  updateTopic();
 }
 
 void PointTool::activate() {}
@@ -84,8 +75,9 @@ void PointTool::deactivate() {}
 
 void PointTool::updateTopic()
 {
-  publisher_ =
-    node_->create_publisher<geometry_msgs::msg::PointStamped>(topic_property_->getStdString());
+  // TODO(anhosi,wjwwood): replace with abstraction for publishers one available
+  publisher_ = context_->getRosNodeAbstraction().lock()->get_raw_node()->
+    template create_publisher<geometry_msgs::msg::PointStamped>(topic_property_->getStdString());
 }
 
 void PointTool::updateAutoDeactivate() {}

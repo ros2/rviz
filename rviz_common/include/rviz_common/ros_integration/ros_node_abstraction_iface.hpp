@@ -36,6 +36,8 @@
 #include <string>
 #include <vector>
 
+#include "rclcpp/rclcpp.hpp"
+
 namespace rclcpp
 {
 namespace executor
@@ -62,6 +64,10 @@ public:
 
   virtual std::map<std::string, std::vector<std::string>>
   get_topic_names_and_types() const = 0;
+
+  // TODO(anhosi): remove once the RosNodeAbstraction is extended to handle subscriptions
+  virtual rclcpp::Node::SharedPtr
+  get_raw_node() = 0;
 };
 
 }  // namespace ros_integration

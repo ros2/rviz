@@ -91,6 +91,14 @@ public:
   std::map<std::string, std::vector<std::string>>
   get_topic_names_and_types() const override;
 
+  // TODO(anhosi): remove once the RosNodeAbstraction is extended to handle subscriptions
+  RVIZ_COMMON_PUBLIC
+  rclcpp::Node::SharedPtr
+  get_raw_node() override
+  {
+    return raw_node_;
+  }
+
 private:
   rclcpp::Node::SharedPtr raw_node_;
 };
