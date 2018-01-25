@@ -72,16 +72,16 @@ public:
     const char * changed_slot = 0,
     QObject * receiver = 0);
 
-  virtual ~DisplayVisibilityProperty();
+  ~DisplayVisibilityProperty() override;
 
   virtual void update();
 
-  virtual bool getBool() const;
+  bool getBool() const override;
 
-  Qt::ItemFlags getViewFlags(int column) const;
+  Qt::ItemFlags getViewFlags(int column) const override;
 
 public Q_SLOTS:
-  virtual bool setValue(const QVariant & new_value);
+  bool setValue(const QVariant & new_value) override;
 
 protected:
   uint32_t vis_bit_;

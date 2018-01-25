@@ -82,10 +82,8 @@ DisplayGroupVisibilityProperty::DisplayGroupVisibilityProperty(
 void DisplayGroupVisibilityProperty::update()
 {
   DisplayVisibilityProperty::update();
-  std::map<rviz_common::Display *, DisplayVisibilityProperty *>::iterator it =
-    disp_vis_props_.begin();
-  for (; it != disp_vis_props_.end(); it++) {
-    it->second->update();
+  for (auto const & it : disp_vis_props_) {
+    it.second->update();
   }
 }
 
@@ -95,8 +93,7 @@ void DisplayGroupVisibilityProperty::sortDisplayList()
   // in the same order as it appears in the display group
   for (int i = 0; i < display_group_->numDisplays(); i++) {
     rviz_common::Display * display = display_group_->getDisplayAt(i);
-    std::map<rviz_common::Display *, DisplayVisibilityProperty *>::iterator it =
-      disp_vis_props_.find(display);
+    auto it = disp_vis_props_.find(display);
     if (it != disp_vis_props_.end()) {
       takeChild(it->second);
       addChild(it->second);
@@ -106,7 +103,7 @@ void DisplayGroupVisibilityProperty::sortDisplayList()
 
 void DisplayGroupVisibilityProperty::onDisplayAdded(Display * display)
 {
-  DisplayGroup * display_group = qobject_cast<DisplayGroup *>(display);
+  auto display_group = qobject_cast<DisplayGroup *>(display);
   DisplayVisibilityProperty * vis_prop;
   if (display_group) {
     vis_prop = new DisplayGroupVisibilityProperty(vis_bit_, display_group, parent_display_, "",
@@ -121,20 +118,17 @@ void DisplayGroupVisibilityProperty::onDisplayAdded(Display * display)
 
 void DisplayGroupVisibilityProperty::onDisplayRemoved(Display * display)
 {
-  std::map<rviz_common::Display *, DisplayVisibilityProperty *>::iterator it =
-    disp_vis_props_.find(display);
+  auto it = disp_vis_props_.find(display);
   if (it != disp_vis_props_.end()) {
     Property * child = takeChild(it->second);
-    child->setParent(NULL);
+    child->setParent(nullptr);
     delete child;
     disp_vis_props_.erase(display);
   }
 }
 
 
-DisplayGroupVisibilityProperty::~DisplayGroupVisibilityProperty()
-{
-}
+DisplayGroupVisibilityProperty::~DisplayGroupVisibilityProperty() = default;
 
 }  // namespace properties
 

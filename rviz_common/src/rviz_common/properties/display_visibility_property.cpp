@@ -57,9 +57,7 @@ DisplayVisibilityProperty::DisplayVisibilityProperty(
   update();
 }
 
-DisplayVisibilityProperty::~DisplayVisibilityProperty()
-{
-}
+DisplayVisibilityProperty::~DisplayVisibilityProperty() = default;
 
 void DisplayVisibilityProperty::update()
 {
@@ -67,9 +65,7 @@ void DisplayVisibilityProperty::update()
   if (!custom_name_ && getName() != display_->getName()) {
     setName(display_->getName());
   }
-  if (getBool() &&
-    (getViewFlags(0) & Qt::ItemIsEnabled))
-  {
+  if (getBool() && (getViewFlags(0) & Qt::ItemIsEnabled)) {
     display_->setVisibilityBits(vis_bit_);
   } else {
     display_->unsetVisibilityBits(vis_bit_);
