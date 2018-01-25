@@ -33,11 +33,13 @@
 
 #include <cstdint>
 
+#include "rviz_common/visibility_control.hpp"
+
 namespace rviz_common
 {
 
 /// Allocation manager for bit positions within a 32-bit word.
-class BitAllocator
+class RVIZ_COMMON_PUBLIC BitAllocator
 {
 public:
   /// Constructor; all bits are free initially.

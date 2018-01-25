@@ -33,12 +33,13 @@
 #include "display_visibility_property.hpp"
 
 #include <cstdint>
-
 #include <map>
 #include <string>
 
 #include <QObject>  // NOLINT: cpplint cannot handle the include order here
 #include <QString>  // NOLINT: cpplint cannot handle the include order here
+
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
@@ -59,7 +60,7 @@ class DisplayVisibilityProperty;
  * Manages the visibility of all displays in a display group
  * by switching one bit in Ogre's visibility mask.
  */
-class DisplayGroupVisibilityProperty : public DisplayVisibilityProperty
+class RVIZ_COMMON_PUBLIC DisplayGroupVisibilityProperty : public DisplayVisibilityProperty
 {
   Q_OBJECT
 
