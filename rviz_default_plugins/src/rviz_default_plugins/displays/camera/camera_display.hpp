@@ -39,21 +39,17 @@
 #include <QObject>  // NOLINT: cpplint cannot handle the include order here
 
 #ifndef Q_MOC_RUN
-#include <OgreMaterial.h>
-#include <OgrePlatform.h>
-#include <OgreRenderTargetListener.h>
-#include <OgreSharedPtr.h>
+# include <OgreMaterial.h>
+# include <OgrePlatform.h>
+# include <OgreRenderTargetListener.h>
+# include <OgreSharedPtr.h>
 
 # include <sensor_msgs/msg/camera_info.hpp>
-
-// TODO(Martin-Idel-SI): Do we need those?
-//# include <message_filters/subscriber.h>
-//# include <tf/message_filter.h>
 
 # include "rviz_common/ros_topic_display.hpp"
 # include "../image/ros_image_texture.hpp"
 
-#include "rviz_rendering/render_window.hpp"
+# include "rviz_rendering/render_window.hpp"
 #endif
 
 namespace Ogre
@@ -201,6 +197,8 @@ private:
   bool force_render_;
 
   uint32_t vis_bit_;
+  void setupSceneNodes();
+  void setupRenderPanel();
 };
 
 }  // namespace displays

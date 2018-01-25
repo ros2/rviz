@@ -131,47 +131,14 @@ void CameraDisplay::onInitialize()
 {
   RTDClass::onInitialize();
 
-  background_scene_node_ = scene_node_->createChildSceneNode();
-  overlay_scene_node_ = scene_node_->createChildSceneNode();
+  setupSceneNodes();
+  setupRenderPanel();
 
-  {
-    static int count = 0;
-    rviz_common::UniformStringStream materialName;
-    materialName << "CameraDisplayObject" << count++ << "Material";
-
-    Ogre::AxisAlignedBox aabInf;
-    aabInf.setInfinite();
-
-    background_material_ = createMaterial(materialName.str());
-
-    background_screen_rect_ = createScreenRectangle(
-      aabInf, background_material_, Ogre::RENDER_QUEUE_BACKGROUND);
-
-    background_scene_node_->attachObject(background_screen_rect_.get());
-    background_scene_node_->setVisible(false);
-
-    overlay_material_ = background_material_->clone(materialName.str() + "fg");
-    overlay_material_->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
-
-    overlay_screen_rect_ = createScreenRectangle(
-      aabInf, overlay_material_, Ogre::RENDER_QUEUE_OVERLAY - 1);
-
-    overlay_scene_node_->attachObject(overlay_screen_rect_.get());
-    overlay_scene_node_->setVisible(false);
-  }
-
-  updateAlpha();
-
-  render_panel_ = std::make_unique<rviz_common::RenderPanel>();
-  render_panel_->resize(640, 480);
-  render_panel_->initialize(context_, true);
-
-  setAssociatedWidget(render_panel_.get());
-  rviz_rendering::RenderWindowOgreAdapter::addListener(render_panel_->getRenderWindow(), this);
+  auto render_window = render_panel_->getRenderWindow();
+  rviz_rendering::RenderWindowOgreAdapter::addListener(render_window, this);
 
   vis_bit_ = context_->visibilityBits()->allocBit();
-  rviz_rendering::RenderWindowOgreAdapter::setVisibilityMask(
-    render_panel_->getRenderWindow(), vis_bit_);
+  rviz_rendering::RenderWindowOgreAdapter::setVisibilityMask(render_window, vis_bit_);
 
   visibility_property_ = new rviz_common::properties::DisplayGroupVisibilityProperty(
     vis_bit_, context_->getRootDisplayGroup(), this, "Visibility", true,
@@ -181,6 +148,48 @@ void CameraDisplay::onInitialize()
     rviz_common::loadPixmap("package://rviz/icons/visibility.svg", true));
 
   this->addChild(visibility_property_, 0);
+}
+
+
+void CameraDisplay::setupSceneNodes()
+{
+  background_scene_node_ = scene_node_->createChildSceneNode();
+  overlay_scene_node_ = scene_node_->createChildSceneNode();
+
+  static int count = 0;
+  rviz_common::UniformStringStream materialName;
+  materialName << "CameraDisplayObject" << count++ << "Material";
+
+  Ogre::AxisAlignedBox aabInf;
+  aabInf.setInfinite();
+
+  background_material_ = createMaterial(materialName.str());
+
+  background_screen_rect_ = createScreenRectangle(
+    aabInf, background_material_, Ogre::RENDER_QUEUE_BACKGROUND);
+
+  background_scene_node_->attachObject(background_screen_rect_.get());
+  background_scene_node_->setVisible(false);
+
+  overlay_material_ = background_material_->clone(materialName.str() + "fg");
+  overlay_material_->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
+
+  overlay_screen_rect_ = createScreenRectangle(
+    aabInf, overlay_material_, Ogre::RENDER_QUEUE_OVERLAY - 1);
+
+  overlay_scene_node_->attachObject(overlay_screen_rect_.get());
+  overlay_scene_node_->setVisible(false);
+
+  updateAlpha();
+}
+
+void CameraDisplay::setupRenderPanel()
+{
+  render_panel_ = std::make_unique<rviz_common::RenderPanel>();
+  render_panel_->resize(640, 480);
+  render_panel_->initialize(context_, true);
+
+  setAssociatedWidget(render_panel_.get());
 }
 
 std::unique_ptr<Ogre::Rectangle2D> CameraDisplay::createScreenRectangle(
