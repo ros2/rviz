@@ -38,6 +38,7 @@
 #include <QString>  // NOLINT: cpplint cannot handle the include order here
 
 #include "rviz_common/properties/bool_property.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
@@ -57,7 +58,7 @@ class DisplayVisibilityProperty;
 /*
  * @brief Changes one visibility bit of a given Display
  */
-class DisplayVisibilityProperty : public BoolProperty
+class RVIZ_COMMON_PUBLIC DisplayVisibilityProperty : public BoolProperty
 {
   Q_OBJECT
 
