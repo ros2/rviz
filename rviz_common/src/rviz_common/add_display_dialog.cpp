@@ -143,10 +143,10 @@ void getPluginGroups(
   const QMap<QString, QString> & datatype_plugins,
   QList<PluginGroup> * groups,
   std::vector<std::string> * unvisualizable,
-  rviz_common::ros_integration::RosNodeAbstractionIface & ros_node_abstraction)
+  ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node)
 {
   std::map<std::string, std::vector<std::string>> topic_names_and_types =
-    ros_node_abstraction.get_topic_names_and_types();
+    rviz_ros_node.lock()->get_topic_names_and_types();
 
   for (const auto map_pair : topic_names_and_types) {
     QString topic = QString::fromStdString(map_pair.first);
@@ -202,7 +202,7 @@ AddDisplayDialog::AddDisplayDialog(
   const QStringList & disallowed_display_names,
   const QStringList & disallowed_class_lookup_names,
   QString * lookup_name_output,
-  const std::string & node_name,
+  ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
   QString * display_name_output,
   QString * topic_output,
   QString * datatype_output,
@@ -231,8 +231,7 @@ AddDisplayDialog::AddDisplayDialog(
   DisplayTypeTree * display_tree = new DisplayTypeTree;
   display_tree->fillTree(factory);
 
-  TopicDisplayWidget * topic_widget = new TopicDisplayWidget(
-    std::make_unique<rviz_common::ros_integration::RosNodeAbstraction>(node_name));
+  TopicDisplayWidget * topic_widget = new TopicDisplayWidget(rviz_ros_node);
   topic_widget->fill(factory);
 
   tab_widget_ = new QTabWidget;
@@ -456,8 +455,8 @@ void DisplayTypeTree::fillTree(Factory * factory)
 }
 
 TopicDisplayWidget::TopicDisplayWidget(
-  std::unique_ptr<rviz_common::ros_integration::RosNodeAbstractionIface> ros_node_abstraction)
-: ros_node_abstraction_(std::move(ros_node_abstraction))
+  ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node)
+: rviz_ros_node_(rviz_ros_node)
 {
   tree_ = new QTreeWidget;
   tree_->setHeaderHidden(true);
@@ -541,7 +540,7 @@ void TopicDisplayWidget::fill(DisplayFactory * factory)
 
   QList<PluginGroup> groups;
   std::vector<std::string> unvisualizable;
-  getPluginGroups(datatype_plugins_, &groups, &unvisualizable, *ros_node_abstraction_);
+  getPluginGroups(datatype_plugins_, &groups, &unvisualizable, rviz_ros_node_);
 
   // Insert visualizable topics along with their plugins
   QList<PluginGroup>::const_iterator pg_it;

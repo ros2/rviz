@@ -86,7 +86,7 @@ class VisualizationFrame : public QMainWindow, public WindowManagerInterface
 
 public:
   explicit VisualizationFrame(
-    ros_integration::RosNodeAbstractionIface::WeakPtr node, QWidget * parent = 0);
+    ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node, QWidget * parent = nullptr);
   ~VisualizationFrame() override;
 
   rviz_rendering::RenderWindow * getRenderWindow();
@@ -531,7 +531,7 @@ protected:
   /// Indicates if the toolbar should be visible outside of fullscreen mode.
   bool toolbar_visible_;
 
-  ros_integration::RosNodeAbstractionIface::WeakPtr rviz_node_;
+  ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node_;
 };
 
 }  // namespace rviz_common

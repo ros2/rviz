@@ -41,6 +41,7 @@
 #include "./tool_properties_panel.hpp"
 #include "./views_panel.hpp"
 #include "./visualization_manager.hpp"
+#include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
 
 namespace rviz_common
 {
@@ -51,13 +52,15 @@ static Panel * newSelectionPanel() {return new SelectionPanel();}
 static Panel * newToolPropertiesPanel() {return new ToolPropertiesPanel();}
 static Panel * newViewsPanel() {return new ViewsPanel();}
 
-PanelFactory::PanelFactory(const std::string & node_name, VisualizationManager * manager)
+PanelFactory::PanelFactory(
+  ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
+  VisualizationManager * manager)
 : PluginlibFactory<Panel>("rviz_common", "rviz_common::Panel")
 {
   addBuiltInClass("rviz_common", "Displays",
     "Show and edit the list of Displays",
-    [&node_name, manager]() -> Panel * {
-      return new DisplaysPanel(node_name, manager, nullptr);
+    [rviz_ros_node, manager]() -> Panel * {
+      return new DisplaysPanel(rviz_ros_node, manager, nullptr);
     });
   // addBuiltInClass("rviz_common", "Help",
   //   "Show the key and mouse bindings", &newHelpPanel);

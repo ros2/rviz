@@ -100,7 +100,7 @@ namespace rviz_common
 {
 
 VisualizationFrame::VisualizationFrame(
-  ros_integration::RosNodeAbstractionIface::WeakPtr node, QWidget * parent)
+  ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node, QWidget * parent)
 : QMainWindow(parent),
   app_(nullptr),
   render_panel_(nullptr),
@@ -119,10 +119,9 @@ VisualizationFrame::VisualizationFrame(
   loading_(false),
   post_load_timer_(new QTimer(this)),
   frame_count_(0),
-  rviz_node_(node)
+  rviz_ros_node_(rviz_ros_node)
 {
   setObjectName("VisualizationFrame");
-
   installEventFilter(geom_change_detector_);
   connect(geom_change_detector_, SIGNAL(changed()), this, SLOT(setDisplayConfigModified()));
 
@@ -159,8 +158,8 @@ VisualizationFrame::~VisualizationFrame()
   delete manager_;
   delete render_panel_;
 
-  for (int i = 0; i < custom_panels_.size(); i++) {
-    delete custom_panels_[i].dock;
+  for (auto & custom_panel : custom_panels_) {
+    delete custom_panel.dock;
   }
 
   delete panel_factory_;
@@ -333,7 +332,7 @@ void VisualizationFrame::initialize(
   manager_ = new VisualizationManager(
     render_panel_, ros_node_abstraction, this, tf_listener, buffer, clock);
   manager_->setHelpPath(help_path_);
-  panel_factory_ = new PanelFactory(rviz_node_.lock()->get_node_name(), manager_);
+  panel_factory_ = new PanelFactory(rviz_ros_node_, manager_);
 
   // Periodically process events for the splash screen.
   if (app_) {app_->processEvents();}
