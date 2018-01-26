@@ -56,7 +56,7 @@ DisplaysPanel::DisplaysPanel(
   ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
   VisualizationManager * manager,
   QWidget * parent)
-: Panel(parent), rviz_ros_node_(rviz_ros_node)
+: Panel(parent), vis_manager_(manager), rviz_ros_node_(rviz_ros_node)
 {
   setObjectName("Displays/DisplayPanel");
   tree_with_help_ = new properties::PropertyTreeWithHelp;
@@ -209,7 +209,7 @@ void DisplaysPanel::onSelectionChanged()
 void DisplaysPanel::onRenameDisplay()
 {
   QList<Display *> displays = property_grid_->getSelectedObjects<Display>();
-  if (displays.size() == 0) {
+  if (displays.isEmpty()) {
     return;
   }
   Display * display_to_rename = displays[0];

@@ -50,10 +50,7 @@ class SceneManager;
 
 namespace rclcpp
 {
-
 class Clock;
-class Node;
-
 }  // namespace rclcpp
 
 // namespace tf

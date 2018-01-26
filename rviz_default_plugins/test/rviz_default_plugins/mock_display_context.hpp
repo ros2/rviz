@@ -60,9 +60,6 @@ public:
   MOCK_CONST_METHOD0(
     getRosNodeAbstraction, rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr());
 
-  MOCK_METHOD1(addNodeToMainExecutor, void(std::shared_ptr<rclcpp::Node> node));
-  MOCK_METHOD1(removeNodeFromMainExecutor, void(std::shared_ptr<rclcpp::Node> node));
-
   MOCK_METHOD2(handleChar, void(QKeyEvent * event, rviz_common::RenderPanel * panel));
   MOCK_METHOD1(handleMouseEvent, void(const rviz_common::ViewportMouseEvent & even));
 
