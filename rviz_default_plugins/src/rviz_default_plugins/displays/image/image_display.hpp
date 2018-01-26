@@ -37,9 +37,17 @@
 
 # include <QObject>  // NOLINT cpplint cannot handle include order here
 
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+# pragma GCC diagnostic ignored "-Wpedantic"
+#endif
 # include <OgreMaterial.h>
 # include <OgreRenderTargetListener.h>
 # include <OgreSharedPtr.h>
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
 
 # include "rviz_common/ros_topic_display.hpp"
 # include "rviz_common/render_panel.hpp"

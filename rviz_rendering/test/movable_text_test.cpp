@@ -33,10 +33,22 @@
 #include <string>
 #include <vector>
 
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+#else
+# pragma warning(push)
+# pragma warning(disable : 4251)
+#endif
 #include <OgreMovableObject.h>
 #include <OgreFont.h>
 #include <OgreFontManager.h>
 #include <OgreVector3.h>
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#else
+# pragma warning(pop)
+#endif
 
 #include "test/rviz_rendering/ogre_testing_environment.hpp"
 #include "rviz_rendering/objects/movable_text.hpp"
@@ -164,7 +176,7 @@ TEST_F(MovableTextTestFixture, vertical_alignment_above_puts_y_coordinate_above)
 
   float char_width = getCharWidth(movable_text, 'W');
   assertBoundingBoxEquality(movable_text->getBoundingBox(),
-    Ogre::AxisAlignedBox(Ogre::Vector3(0, 0, 0), Ogre::Vector3(char_width, 4.01, 0)));
+    Ogre::AxisAlignedBox(Ogre::Vector3(0, 0, 0), Ogre::Vector3(char_width, 4.01f, 0)));
 }
 
 TEST_F(MovableTextTestFixture, setSpaceWidth_changes_width_of_space_character) {
