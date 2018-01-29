@@ -76,9 +76,15 @@ if(TARGET Qt5::windeployqt)
     "${CMAKE_CURRENT_BINARY_DIR}/windeployqt/"
     DESTINATION bin
   )
+  install(
+    DIRECTORY
+    "${CMAKE_CURRENT_BINARY_DIR}/windeployqt/"
+    DESTINATION lib/${PROJECT_NAME}
+  )
 endif()
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
+install(TARGETS ${PROJECT_NAME} DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back
