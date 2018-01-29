@@ -187,7 +187,8 @@ if(BUILD_TESTING)
   if(WIN32 OR APPLE OR DISPLAYPRESENT)
     message(STATUS "Enabling tests requiring a display")
 
-    ament_add_gtest(point_cloud_test_target test/point_cloud_test.cpp)
+    ament_add_gtest(point_cloud_test_target test/point_cloud_test.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
     if(TARGET point_cloud_test_target)
       target_link_libraries(point_cloud_test_target
         rviz_ogre_vendor::OgreMain
@@ -196,7 +197,8 @@ if(BUILD_TESTING)
       )
     endif()
 
-    ament_add_gtest(point_cloud_renderable_test_target test/point_cloud_renderable_test.cpp)
+    ament_add_gtest(point_cloud_renderable_test_target test/point_cloud_renderable_test.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
     if(TARGET point_cloud_renderable_test_target)
       target_link_libraries(point_cloud_renderable_test_target
         rviz_ogre_vendor::OgreMain
