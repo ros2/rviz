@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,116 +28,32 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__TF_DISPLAY_HPP_
-#define RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__TF_DISPLAY_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__TF__FRAME_INFO_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__TF__FRAME_INFO_HPP_
 
-#include <map>
-#include <memory>
-#include <set>
 #include <string>
-
-#include <OgreQuaternion.h>
-#include <OgreVector3.h>
 
 #include "tf2/time.h"
 
-#include "rviz_common/selection/forwards.hpp"
-#include "rviz_common/display.hpp"
-
-namespace Ogre
-{
-class SceneNode;
-}
-
-namespace rviz_rendering
-{
-class Arrow;
-class Axes;
-class MovableText;
-}
+#include "tf_display.hpp"
 
 namespace rviz_common
 {
 
 namespace properties
 {
+class Property;
 class BoolProperty;
-class FloatProperty;
-class QuaternionProperty;
 class StringProperty;
 class VectorProperty;
-}
+class QuaternionProperty;
+}  // namespace properties
+}  // namespace rviz_common
 
-class FrameInfo;
-class FrameSelectionHandler;
-typedef std::shared_ptr<FrameSelectionHandler> FrameSelectionHandlerPtr;
-
-/** @brief Displays a visual representation of the TF hierarchy. */
-class TFDisplay : public Display
+namespace rviz_default_plugins
 {
-  Q_OBJECT
-
-public:
-  TFDisplay();
-  virtual ~TFDisplay();
-
-  virtual void update(float wall_dt, float ros_dt);
-
-protected:
-  // Overrides from Display
-  virtual void onInitialize();
-  virtual void load(const Config & config);
-  virtual void fixedFrameChanged();
-  virtual void reset();
-
-private Q_SLOTS:
-  void updateShowAxes();
-  void updateShowArrows();
-  void updateShowNames();
-  void allEnabledChanged();
-
-private:
-  void updateFrames();
-  FrameInfo * createFrame(const std::string & frame);
-  void updateFrame(FrameInfo * frame);
-  void deleteFrame(FrameInfo * frame, bool delete_properties);
-
-  FrameInfo * getFrameInfo(const std::string & frame);
-
-  void clear();
-
-  // overrides from Display
-  virtual void onEnable();
-  virtual void onDisable();
-
-  Ogre::SceneNode * root_node_;
-  Ogre::SceneNode * names_node_;
-  Ogre::SceneNode * arrows_node_;
-  Ogre::SceneNode * axes_node_;
-
-  typedef std::map<std::string, FrameInfo *> M_FrameInfo;
-  M_FrameInfo frames_;
-
-  typedef std::map<std::string, bool> M_EnabledState;
-  M_EnabledState frame_config_enabled_state_;
-
-  float update_timer_;
-
-  BoolProperty * show_names_property_;
-  BoolProperty * show_arrows_property_;
-  BoolProperty * show_axes_property_;
-  properties::FloatProperty * update_rate_property_;
-  properties::FloatProperty * frame_timeout_property_;
-  BoolProperty * all_enabled_property_;
-
-  properties::FloatProperty * scale_property_;
-
-  Property * frames_category_;
-  Property * tree_category_;
-
-  bool changing_single_frame_enabled_state_;
-  friend class FrameInfo;
-};
+namespace displays
+{
 
 /** @brief Internal class needed only by TFDisplay. */
 class FrameInfo : public QObject
@@ -146,8 +63,27 @@ class FrameInfo : public QObject
 public:
   explicit FrameInfo(TFDisplay * display);
 
+  static const Ogre::ColourValue ARROW_HEAD_COLOR;
+  static const Ogre::ColourValue ARROW_SHAFT_COLOR;
+
   /** @brief Set this frame to be visible or invisible. */
   void setEnabled(bool enabled);
+
+  void updatePositionAndOrientation(
+    const Ogre::Vector3 & position, const Ogre::Quaternion & orientation, float scale);
+
+  void setVisible(bool show_frame);
+  void setNamesVisible(bool show_names);
+  void setAxesVisible(bool show_axes);
+  void setParentArrowVisible(bool show_parent_arrow);
+  void setLastUpdate(const tf2::TimePoint & latest_time);
+
+  void updateTreeProperty(rviz_common::properties::Property * parent);
+  void updateColorForAge(double age, double frame_timeout) const;
+  void updateParentArrow(
+    const Ogre::Vector3 & position,
+    const Ogre::Vector3 & parent_position,
+    float scale);
 
 public Q_SLOTS:
   /** @brief Update whether the frame is visible or not, based on the enabled_property_
@@ -163,7 +99,7 @@ public:
   std::string name_;
   std::string parent_;
   rviz_rendering::Axes * axes_;
-  selection::CollObjectHandle axes_coll_;
+  rviz_common::selection::CollObjectHandle axes_coll_;
   FrameSelectionHandlerPtr selection_handler_;
   rviz_rendering::Arrow * parent_arrow_;
   rviz_rendering::MovableText * name_text_;
@@ -175,16 +111,17 @@ public:
   tf2::TimePoint last_update_;
   tf2::TimePoint last_time_to_fixed_;
 
-  properties::VectorProperty * rel_position_property_;
-  properties::QuaternionProperty * rel_orientation_property_;
-  properties::VectorProperty * position_property_;
-  properties::QuaternionProperty * orientation_property_;
-  properties::StringProperty * parent_property_;
-  properties::BoolProperty * enabled_property_;
+  rviz_common::properties::VectorProperty * rel_position_property_;
+  rviz_common::properties::QuaternionProperty * rel_orientation_property_;
+  rviz_common::properties::VectorProperty * position_property_;
+  rviz_common::properties::QuaternionProperty * orientation_property_;
+  rviz_common::properties::StringProperty * parent_property_;
+  rviz_common::properties::BoolProperty * enabled_property_;
 
-  properties::Property * tree_property_;
+  rviz_common::properties::Property * tree_property_;
 };
 
-}  // end namespace rviz_common
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif  // RVIZ_COMMON__TEMP__DEFAULT_PLUGINS__DISPLAYS__TF_DISPLAY_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__TF__FRAME_INFO_HPP_

@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,15 +29,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-// TODO(wjwwood): revist style of this file.
-
 // Adapted from: http://www.ogre3d.org/wiki/index.php/MovableText
 //          now: http://www.ogre3d.org/tikiwiki/tiki-index.php?page=MovableText
 // Original authors:
 /*
  * File: MovableText.h
  *
- * description: This create create a billboarding object that display a text.
+ * description: This creates a billboarding object that displays a text.
  *
  * @author  2003 by cTh see gavocanov@rambler.ru
  * @update  2006 by barraq see nospam@barraquand.com
@@ -54,6 +53,7 @@
 #include <OgreQuaternion.h>
 #include <OgreRenderable.h>
 #include <OgreSharedPtr.h>
+#include <OgreSimpleRenderable.h>
 #include <OgreVector3.h>
 
 #ifndef _WIN32
@@ -72,10 +72,8 @@ class RenderQueue;
 namespace rviz_rendering
 {
 
-class RVIZ_RENDERING_LOCAL MovableText : public Ogre::MovableObject, public Ogre::Renderable
+class MovableText : public Ogre::SimpleRenderable
 {
-  /******************************** MovableText data ****************************/
-
 public:
   enum RVIZ_RENDERING_PUBLIC HorizontalAlignment
   {
@@ -86,169 +84,187 @@ public:
     V_BELOW, V_ABOVE, V_CENTER
   };
 
-protected:
-  Ogre::String mFontName;
-  Ogre::String mType;
-  Ogre::String mName;
-  Ogre::String mCaption;
-  HorizontalAlignment mHorizontalAlignment;
-  VerticalAlignment mVerticalAlignment;
-
-  Ogre::ColourValue mColor;
-  Ogre::RenderOperation mRenderOp;
-  Ogre::AxisAlignedBox mAABB;
-  Ogre::LightList mLList;
-
-  Ogre::Real mCharHeight;
-  Ogre::Real mLineSpacing;
-  Ogre::Real mSpaceWidth;
-
-  bool mNeedUpdate;
-  bool mUpdateColors;
-  bool mOnTop;
-
-  Ogre::Real mTimeUntilNextToggle;
-  Ogre::Real mRadius;
-
-  Ogre::Vector3 mGlobalTranslation;
-  Ogre::Vector3 mLocalTranslation;
-
-  Ogre::Camera * mpCam;
-  Ogre::RenderWindow * mpWin;
-  Ogre::Font * mpFont;
-  Ogre::MaterialPtr mpMaterial;
-  Ogre::MaterialPtr mpBackgroundMaterial;
-
-  /******************************** public methods ******************************/
-
 public:
   RVIZ_RENDERING_PUBLIC
-  MovableText(
+  explicit MovableText(
     const Ogre::String & caption,
     const Ogre::String & fontName = "Liberation Sans",
     Ogre::Real charHeight = 1.0,
     const Ogre::ColourValue & color = Ogre::ColourValue::White);
   RVIZ_RENDERING_PUBLIC
-  virtual ~MovableText();
+  ~MovableText() override;
 
-#if (OGRE_VERSION_MAJOR >= 1 && OGRE_VERSION_MINOR >= 6)
   RVIZ_RENDERING_PUBLIC
-  virtual void visitRenderables(Ogre::Renderable::Visitor * visitor, bool debugRenderables = false);
-#endif
+  void setFontName(const Ogre::String & font_name);
 
-  // Set settings
-  RVIZ_RENDERING_PUBLIC
-  void setFontName(const Ogre::String & fontName);
   RVIZ_RENDERING_PUBLIC
   void setCaption(const Ogre::String & caption);
+
   RVIZ_RENDERING_PUBLIC
   void setColor(const Ogre::ColourValue & color);
+
   RVIZ_RENDERING_PUBLIC
   void setCharacterHeight(Ogre::Real height);
+
   RVIZ_RENDERING_PUBLIC
   void setLineSpacing(Ogre::Real height);
+
   RVIZ_RENDERING_PUBLIC
   void setSpaceWidth(Ogre::Real width);
+
   RVIZ_RENDERING_PUBLIC
   void setTextAlignment(
-    const HorizontalAlignment & horizontalAlignment,
-    const VerticalAlignment & verticalAlignment);
+    const HorizontalAlignment & horizontal_alignment,
+    const VerticalAlignment & vertical_alignment);
+
   RVIZ_RENDERING_PUBLIC
-  void setGlobalTranslation(Ogre::Vector3 trans);
+  void setGlobalTranslation(Ogre::Vector3 translation);
+
   RVIZ_RENDERING_PUBLIC
-  void setLocalTranslation(Ogre::Vector3 trans);
+  void setLocalTranslation(Ogre::Vector3 translation);
+
   RVIZ_RENDERING_PUBLIC
   void showOnTop(bool show = true);
 
-  // Get settings
+  RVIZ_RENDERING_PUBLIC
   const Ogre::String & getFontName() const
   {
-    return mFontName;
+    return font_name_;
   }
+
+  RVIZ_RENDERING_PUBLIC
   const Ogre::String & getCaption() const
   {
-    return mCaption;
+    return caption_;
   }
+
+  RVIZ_RENDERING_PUBLIC
   const Ogre::ColourValue & getColor() const
   {
-    return mColor;
+    return color_;
   }
 
+  RVIZ_RENDERING_PUBLIC
   Ogre::Real getCharacterHeight() const
   {
-    return mCharHeight;
+    return char_height_;
   }
+
+  RVIZ_RENDERING_PUBLIC
   Ogre::Real getSpaceWidth() const
   {
-    return mSpaceWidth;
+    return space_width_;
   }
+
+  RVIZ_RENDERING_PUBLIC
   Ogre::Vector3 getGlobalTranslation() const
   {
-    return mGlobalTranslation;
+    return global_translation_;
   }
+
+  RVIZ_RENDERING_PUBLIC
   Ogre::Vector3 getLocalTranslation() const
   {
-    return mLocalTranslation;
+    return local_translation_;
   }
+
+  RVIZ_RENDERING_PUBLIC
   bool getShowOnTop() const
   {
-    return mOnTop;
+    return on_top_;
   }
-  Ogre::AxisAlignedBox GetAABB(void)
+
+  RVIZ_RENDERING_PUBLIC
+  const Ogre::AxisAlignedBox & getBoundingBox() const override
   {
-    return mAABB;
+    return mBox;
   }
 
-  const Ogre::MaterialPtr & getMaterial(void) const
+  RVIZ_RENDERING_PUBLIC
+  Ogre::Real getBoundingRadius() const override
   {
-    assert(mpMaterial);
-    return mpMaterial;
+    return radius_;
   }
 
+  RVIZ_RENDERING_PUBLIC
+  const Ogre::MaterialPtr & getMaterial() const override
+  {
+    assert(material_);
+    return material_;
+  }
 
-  /******************************** protected methods and overload **************/
+  RVIZ_RENDERING_PUBLIC
+  void
+  visitRenderables(Ogre::Renderable::Visitor * visitor, bool debug_renderables) override;
+
+  RVIZ_RENDERING_PUBLIC
+  void update();
 
 protected:
-  // from MovableText, create the object
-  void _setupGeometry();
-  void _updateColors();
+  void setupGeometry();
+  unsigned int calculateVertexCount() const;
+  void setupRenderOperation();
+  Ogre::HardwareVertexBufferSharedPtr setupHardwareBuffers() const;
+  void calculateTotalDimensionsForPositioning(float & total_height, float & total_width) const;
+  float getVerticalStartFromVerticalAlignment(float total_height) const;
+  float getLineStartFromHorizontalAlignment(float total_width) const;
+  void fillVertexBuffer(
+    Ogre::HardwareVertexBufferSharedPtr & position_and_texture_buffer,
+    float top, float starting_left);
 
-  // from Ogre::MovableObject
-  void getWorldTransforms(Ogre::Matrix4 * xform) const;
-  Ogre::Real getBoundingRadius(void) const
-  {
-    return mRadius;
-  }
-  Ogre::Real getSquaredViewDepth(const Ogre::Camera * cam) const
+  void updateColors();
+
+  void getWorldTransforms(Ogre::Matrix4 * xform) const override;
+  Ogre::Real getSquaredViewDepth(const Ogre::Camera * cam) const override
   {
     (void) cam;
     return 0;
   }
-  const Ogre::Quaternion & getWorldOrientation(void) const;
-  const Ogre::Vector3 & getWorldPosition(void) const;
-  const Ogre::AxisAlignedBox & getBoundingBox(void) const
-  {
-    return mAABB;
-  }
-  const Ogre::String & getName(void) const
-  {
-    return mName;
-  }
-  const Ogre::String & getMovableType(void) const
+  const Ogre::Quaternion & getWorldOrientation() const;
+  const Ogre::Vector3 & getWorldPosition() const;
+  const Ogre::String & getMovableType() const override
   {
     static Ogre::String movType = "MovableText";
     return movType;
   }
 
-  void _notifyCurrentCamera(Ogre::Camera * cam);
-  void _updateRenderQueue(Ogre::RenderQueue * queue);
+  void _notifyCurrentCamera(Ogre::Camera * camera) override;
+  void _updateRenderQueue(Ogre::RenderQueue * queue) override;
 
-  // from renderable
-  void getRenderOperation(Ogre::RenderOperation & op);
-  const Ogre::LightList & getLights(void) const
+  const Ogre::LightList & getLights() const override
   {
-    return mLList;
+    return light_list_;
   }
+
+  void fillColorBuffer(Ogre::RGBA color) const;
+
+  void getRenderOperation(Ogre::RenderOperation & op) override;
+
+private:
+  Ogre::String font_name_;
+  Ogre::String name_;
+  Ogre::String caption_;
+  HorizontalAlignment horizontal_alignment_;
+  VerticalAlignment vertical_alignment_;
+
+  Ogre::ColourValue color_;
+  Ogre::Real radius_;
+
+  Ogre::Real char_height_;
+  Ogre::Real line_spacing_;
+  Ogre::Real space_width_;
+
+  bool needs_update_;
+  bool needs_color_update_;
+  bool on_top_;
+
+  Ogre::Vector3 global_translation_;
+  Ogre::Vector3 local_translation_;
+
+  Ogre::Font * font_;
+  Ogre::MaterialPtr material_;
+
+  Ogre::LightList light_list_;
 };
 
 }  // namespace rviz_rendering

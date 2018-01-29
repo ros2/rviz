@@ -116,7 +116,8 @@ bool isSubtopic(const std::string & base, const std::string & topic)
   }
 
   std::string query = topic;
-  while (query != "/") {
+  // Both checks are required, otherwise the loop does not terminate when adding 'by topic'
+  while (query != "" && query != "/") {
     if (query == base) {
       return true;
     }

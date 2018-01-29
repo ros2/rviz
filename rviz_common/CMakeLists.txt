@@ -120,8 +120,6 @@ set(rviz_common_headers_to_moc
 
 # TODO(wjwwood): remove this later
 list(APPEND rviz_common_headers_to_moc
-  src/rviz_common/temp/default_plugins/displays/tf_display.hpp)
-list(APPEND rviz_common_headers_to_moc
   src/rviz_common/temp/default_plugins/displays/robot_model_display.hpp)
 list(APPEND rviz_common_headers_to_moc
   src/rviz_common/temp/robot/robot.hpp)
@@ -207,8 +205,6 @@ set(rviz_common_source_files
 )
 
 # TODO(wjwwood): remove this later
-list(APPEND rviz_common_source_files
-  src/rviz_common/temp/default_plugins/displays/tf_display.cpp)
 list(APPEND rviz_common_source_files
   src/rviz_common/temp/default_plugins/displays/robot_model_display.cpp)
 list(APPEND rviz_common_headers_to_moc
