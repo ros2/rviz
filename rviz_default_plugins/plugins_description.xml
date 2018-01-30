@@ -35,6 +35,17 @@
     <message_type>sensor_msgs/Image</message_type>
   </class>
 
+  <class 
+    name="rviz/LaserScan"
+    type="rviz_default_plugins::displays::LaserScanDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays the data from a sensor_msgs::LaserScan message as points in the world, drawn as points, billboards, or cubes.  &lt;a href="http://www.ros.org/wiki/rviz/DisplayTypes/LaserScan"&gt;More Information&lt;/a&gt;.
+    </description>
+    <message_type>sensor_msgs/LaserScan</message_type>
+  </class>
+
   <class
     name="rviz/PointCloud"
     type="rviz_default_plugins::displays::PointCloudDisplay"
