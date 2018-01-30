@@ -74,13 +74,13 @@ std::unique_ptr<rviz_rendering::BillboardLine> oneCellGrid()
 
   grid_cell->addPoint(pts[0]);
   grid_cell->addPoint(pts[1]);
-  grid_cell->newLine();
+  grid_cell->finishLine();
   grid_cell->addPoint(pts[2]);
   grid_cell->addPoint(pts[3]);
-  grid_cell->newLine();
+  grid_cell->finishLine();
   grid_cell->addPoint(pts[0]);
   grid_cell->addPoint(pts[2]);
-  grid_cell->newLine();
+  grid_cell->finishLine();
   grid_cell->addPoint(pts[1]);
   grid_cell->addPoint(pts[3]);
 
@@ -97,7 +97,7 @@ twoLines()
   two_lines->setNumLines(2);
   two_lines->addPoint(pts[0]);
   two_lines->addPoint(pts[1]);
-  two_lines->newLine();
+  two_lines->finishLine();
   two_lines->addPoint(pts[2]);
   two_lines->addPoint(pts[3]);
   return two_lines;
@@ -165,10 +165,7 @@ TEST_F(BillboardLineTestFixture, clear_resets_all_chains) {
   ASSERT_EQ(chains.size(), static_cast<size_t>(1));   // chains are reset, not destroyed
   ASSERT_EQ(chains[0]->getNumberOfChains(), static_cast<size_t>(2));  // reset, not destroyed
 
-  // The following shows a bug in Ogre. The chains are cleared, but still have size.
-  ASSERT_EQ(chains[0]->getNumChainElements(0), static_cast<size_t>(1));
-  ASSERT_EQ(chains[0]->getChainElement(0, 0).position, Ogre::Vector3(1, 1, 0));  // shouldn't be
-  // accessible
+  ASSERT_EQ(chains[0]->getNumChainElements(0), static_cast<size_t>(0));
 }
 
 TEST_F(BillboardLineTestFixture, create_multiple_chains) {
@@ -179,7 +176,7 @@ TEST_F(BillboardLineTestFixture, create_multiple_chains) {
 
   for (unsigned int line = 0; line < 100000; line++) {
     if (line != 0) {
-      grid_cell.newLine();
+      grid_cell.finishLine();
     }
     grid_cell.addPoint(Ogre::Vector3(0, 0, line + 0.1f));
     grid_cell.addPoint(Ogre::Vector3(0, 0, line + 0.3f));
@@ -200,7 +197,7 @@ TEST_F(BillboardLineTestFixture, create_chain_with_extremely_many_elements) {
 
   for (unsigned int line = 0; line < 2; line++) {
     if (line != 0) {
-      grid_cell.newLine();
+      grid_cell.finishLine();
     }
     for (unsigned int point = 0; point < 100000; point++) {
       grid_cell.addPoint(Ogre::Vector3(0, 0, line + point + 0.1f));

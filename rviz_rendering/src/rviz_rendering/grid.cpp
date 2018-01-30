@@ -247,7 +247,7 @@ void Grid::addBillboardLine(const Ogre::Vector3 & p1, const Ogre::Vector3 & p2) 
 {
   billboard_line_->addPoint(p1);
   billboard_line_->addPoint(p2);
-  billboard_line_->newLine();
+  billboard_line_->finishLine();
 }
 
 void Grid::setUserData(const Ogre::Any & data)

@@ -188,10 +188,10 @@ RenderSystem::loadOgrePlugins()
 {
   std::string plugin_prefix = get_ogre_plugin_directory();
 
-#ifdef NDEBUG
-  ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL");
-#else
+#if defined _WIN32 && !NDEBUG
   ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL_d");
+#else
+  ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL");
 #endif
 // #if __APPLE__
 // #else

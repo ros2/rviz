@@ -94,10 +94,6 @@ void BillboardLine::clear()
   current_line_ = 0;
   current_chain_container_ = 0;
   elements_in_current_chain_container_ = 0;
-
-  for (auto & num_element : num_elements_) {
-    num_element = 0;
-  }
 }
 
 void BillboardLine::setupChainContainers()
@@ -165,15 +161,9 @@ void BillboardLine::setNumLines(uint32_t num)
   num_lines_ = num;
 
   setupChainContainers();
-
-  num_elements_.resize(num);
-
-  for (auto & num_element : num_elements_) {
-    num_element = 0;
-  }
 }
 
-void BillboardLine::newLine()
+void BillboardLine::finishLine()
 {
   ++current_line_;
 
@@ -187,10 +177,9 @@ void BillboardLine::addPoint(const Ogre::Vector3 & point)
 
 void BillboardLine::addPoint(const Ogre::Vector3 & point, const Ogre::ColourValue & color)
 {
-  ++num_elements_[current_line_];
-
   assert(current_line_ < num_lines_);
-  assert(num_elements_[current_line_] <= max_points_per_line_);
+  assert(chain_containers_[current_chain_container_]->
+    getNumChainElements(current_line_ % chains_per_container_) <= max_points_per_line_);
 
   incrementChainContainerIfNecessary();
 
@@ -259,15 +248,14 @@ void BillboardLine::changeAllElements(
   std::function<Ogre::BillboardChain::Element(Ogre::BillboardChain::Element)> change_element)
 {
   for (uint32_t line = 0; line < num_lines_; ++line) {
-    uint32_t element_count = num_elements_[line];
+    Ogre::BillboardChain * container = chain_containers_[line / chains_per_container_];
+    uint32_t chain_index = line % chains_per_container_;
+    size_t elements_in_chain = container->getNumChainElements(chain_index);
 
-    for (uint32_t i = 0; i < element_count; ++i) {
-      Ogre::BillboardChain * c = chain_containers_[line / chains_per_container_];
-
-      uint32_t chain_index = line % chains_per_container_;
-      Ogre::BillboardChain::Element element = c->getChainElement(chain_index, i);
+    for (uint32_t i = 0; i < elements_in_chain; ++i) {
+      Ogre::BillboardChain::Element element = container->getChainElement(chain_index, i);
       Ogre::BillboardChain::Element new_element = change_element(element);
-      c->updateChainElement(chain_index, i, new_element);
+      container->updateChainElement(chain_index, i, new_element);
     }
   }
 }
