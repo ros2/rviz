@@ -27,54 +27,65 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_LASER_SCAN_DISPLAY_H
-#define RVIZ_LASER_SCAN_DISPLAY_H
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__LASER_SCAN__LASER_SCAN_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__LASER_SCAN__LASER_SCAN_DISPLAY_HPP_
 
-#include <sensor_msgs/LaserScan.h>
 
-#include "rviz/message_filter_display.h"
+#include <sensor_msgs/msg/laser_scan.hpp>
+
+#include "rviz_common/ros_topic_display.hpp"
 
 namespace laser_geometry
 {
 class LaserProjection;
 }
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
+{
+class IntProperty;
+}
+}
+namespace rviz_default_plugins
 {
 
-class IntProperty;
 class PointCloudCommon;
+namespace displays
+{
 
 /** @brief Visualizes a laser scan, received as a sensor_msgs::LaserScan. */
-class LaserScanDisplay: public MessageFilterDisplay<sensor_msgs::LaserScan>
+class LaserScanDisplay : public rviz_common::RosTopicDisplay<sensor_msgs::msg::LaserScan>
 {
-Q_OBJECT
+  Q_OBJECT
 public:
   LaserScanDisplay();
-  ~LaserScanDisplay();
+  ~LaserScanDisplay() override;
 
-  virtual void reset();
+  void reset() override;
+  void update(float wall_dt, float ros_dt) override;
 
-  virtual void update( float wall_dt, float ros_dt );
-
-private Q_SLOTS:
+private
+  Q_SLOTS:
   void updateQueueSize();
 
 protected:
   /** @brief Do initialization. Overridden from MessageFilterDisplay. */
-  virtual void onInitialize();
+  void onInitialize() override;
 
   /** @brief Process a single message.  Overridden from MessageFilterDisplay. */
-  virtual void processMessage( const sensor_msgs::LaserScanConstPtr& scan );
+  void processMessage(sensor_msgs::msg::LaserScan::ConstSharedPtr scan) override;
 
-  IntProperty* queue_size_property_;
+  rviz_common::properties::IntProperty * queue_size_property_;
 
-  PointCloudCommon* point_cloud_common_;
+  PointCloudCommon * point_cloud_common_;
 
-  laser_geometry::LaserProjection* projector_;
-  ros::Duration filter_tolerance_;
+  laser_geometry::LaserProjection * projector_;
+  // ros::Duration filter_tolerance_;
 };
 
-} // namespace rviz
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__LASER_SCAN__LASER_SCAN_DISPLAY_HPP_
+

@@ -30,27 +30,33 @@
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 
-#include <ros/time.h>
+// #include <ros/time.h>
 
 #include <laser_geometry/laser_geometry.h>
+#include <tf2/exceptions.h>
+#include <tf2_ros/buffer.h>
+#include <tf2_ros/buffer_interface.h>
 
-#include "rviz/default_plugin/point_cloud_common.h"
-#include "rviz/display_context.h"
-#include "rviz/frame_manager.h"
-#include "rviz/ogre_helpers/point_cloud.h"
-#include "rviz/properties/int_property.h"
-#include "rviz/validate_floats.h"
+#include "../pointcloud/point_cloud_common.hpp"
+#include "rviz_common/display_context.hpp"
+#include "rviz_common/frame_manager.hpp"
+#include "rviz_rendering/point_cloud.hpp"
+#include "rviz_common/properties/int_property.hpp"
+#include "rviz_common/validate_floats.hpp"
+#include "rviz_common/logging.hpp"
 
-#include "laser_scan_display.h"
+#include "laser_scan_display.hpp"
 
-namespace rviz
+namespace rviz_default_plugins
+{
+namespace displays
 {
 
 LaserScanDisplay::LaserScanDisplay()
   : point_cloud_common_( new PointCloudCommon( this ))
   , projector_( new laser_geometry::LaserProjection() )
 {
-  queue_size_property_ = new IntProperty( "Queue Size", 10,
+  queue_size_property_ = new rviz_common::properties::IntProperty( "Queue Size", 10,
                                           "Advanced: set the size of the incoming LaserScan message queue. "
                                           " Increasing this is useful if your incoming TF data is delayed significantly "
                                           "from your LaserScan data, but it can greatly increase memory usage if the messages are big.",
@@ -58,7 +64,7 @@ LaserScanDisplay::LaserScanDisplay()
 
   // PointCloudCommon sets up a callback queue with a thread for each
   // instance.  Use that for processing incoming messages.
-  update_nh_.setCallbackQueue( point_cloud_common_->getCallbackQueue() );
+  // update_nh_.setCallbackQueue( point_cloud_common_->getCallbackQueue() );
 }
 
 LaserScanDisplay::~LaserScanDisplay()
@@ -69,42 +75,45 @@ LaserScanDisplay::~LaserScanDisplay()
 
 void LaserScanDisplay::onInitialize()
 {
-  MFDClass::onInitialize();
+  RTDClass::onInitialize();
   point_cloud_common_->initialize( context_, scene_node_ );
 }
 
 void LaserScanDisplay::updateQueueSize()
 {
-  tf_filter_->setQueueSize( (uint32_t) queue_size_property_->getInt() );
+  // tf_filter_->setQueueSize( (uint32_t) queue_size_property_->getInt() );
 }
 
-void LaserScanDisplay::processMessage( const sensor_msgs::LaserScanConstPtr& scan )
+void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPtr scan)
 {
-  sensor_msgs::PointCloudPtr cloud( new sensor_msgs::PointCloud );
+  sensor_msgs::msg::PointCloud::SharedPtr cloud = std::make_shared
+  <sensor_msgs::msg::PointCloud>();
 
   std::string frame_id = scan->header.frame_id;
 
   // Compute tolerance necessary for this scan
-  ros::Duration tolerance(scan->time_increment * scan->ranges.size());
-  if (tolerance > filter_tolerance_)
-  {
-    filter_tolerance_ = tolerance;
-    tf_filter_->setTolerance(filter_tolerance_);
-  }
+//  ros::Duration tolerance(scan->time_increment * scan->ranges.size());
+//  if (tolerance > filter_tolerance_)
+//  {
+//    filter_tolerance_ = tolerance;
+//    tf_filter_->setTolerance(filter_tolerance_);
+//  }
 
   try
   {
-    projector_->transformLaserScanToPointCloud( fixed_frame_.toStdString(), *scan, *cloud, *context_->getTFClient(),
-                                                laser_geometry::channel_option::Intensity );
+    auto buffer = context_->getFrameManager()->getTFBufferPtr();
+    projector_->transformLaserScanToPointCloud( fixed_frame_.toStdString(), *scan, *cloud,
+      *buffer, laser_geometry::channel_option::Intensity );
   }
-  catch (tf::TransformException& e)
+  catch (tf2::TransformException& e)
   {
-    ROS_DEBUG( "LaserScan [%s]: failed to transform scan: %s.  This message should not repeat (tolerance should now be set on our tf::MessageFilter).",
-               qPrintable( getName() ), e.what() );
+    RVIZ_COMMON_LOG_DEBUG_STREAM( "LaserScan [" << qPrintable(getName()) << "]: "
+      "failed to transform scan:" << e.what() << ".  This message should not repeat "
+      "(tolerance should now be set on our tf::MessageFilter).");
     return;
   }
 
-  point_cloud_common_->addMessage( cloud );
+  point_cloud_common_->addMessage(cloud);
 }
 
 void LaserScanDisplay::update( float wall_dt, float ros_dt )
@@ -114,11 +123,12 @@ void LaserScanDisplay::update( float wall_dt, float ros_dt )
 
 void LaserScanDisplay::reset()
 {
-  MFDClass::reset();
+  RTDClass::reset();
   point_cloud_common_->reset();
 }
 
-} // namespace rviz
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#include <pluginlib/class_list_macros.h>
-PLUGINLIB_EXPORT_CLASS( rviz::LaserScanDisplay, rviz::Display )
+#include <pluginlib/class_list_macros.hpp>
+PLUGINLIB_EXPORT_CLASS( rviz_default_plugins::displays::LaserScanDisplay, rviz_common::Display )
