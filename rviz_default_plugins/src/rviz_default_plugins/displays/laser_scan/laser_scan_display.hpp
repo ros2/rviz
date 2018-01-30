@@ -30,10 +30,12 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__LASER_SCAN__LASER_SCAN_DISPLAY_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__LASER_SCAN__LASER_SCAN_DISPLAY_HPP_
 
+#include <memory>
 
-#include <sensor_msgs/msg/laser_scan.hpp>
+#include "sensor_msgs/msg/laser_scan.hpp"
 
 #include "rviz_common/ros_topic_display.hpp"
+#include "rviz_common/properties/queue_size_property.hpp"
 
 namespace laser_geometry
 {
@@ -57,17 +59,12 @@ namespace displays
 /** @brief Visualizes a laser scan, received as a sensor_msgs::LaserScan. */
 class LaserScanDisplay : public rviz_common::RosTopicDisplay<sensor_msgs::msg::LaserScan>
 {
-  Q_OBJECT
 public:
   LaserScanDisplay();
   ~LaserScanDisplay() override;
 
   void reset() override;
   void update(float wall_dt, float ros_dt) override;
-
-private
-  Q_SLOTS:
-  void updateQueueSize();
 
 protected:
   /** @brief Do initialization. Overridden from MessageFilterDisplay. */
@@ -76,11 +73,9 @@ protected:
   /** @brief Process a single message.  Overridden from MessageFilterDisplay. */
   void processMessage(sensor_msgs::msg::LaserScan::ConstSharedPtr scan) override;
 
-  rviz_common::properties::IntProperty * queue_size_property_;
-
-  PointCloudCommon * point_cloud_common_;
-
-  laser_geometry::LaserProjection * projector_;
+  std::unique_ptr<PointCloudCommon> point_cloud_common_;
+  std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
+  std::unique_ptr<laser_geometry::LaserProjection> projector_;
   // ros::Duration filter_tolerance_;
 };
 
@@ -88,4 +83,3 @@ protected:
 }  // namespace rviz_default_plugins
 
 #endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__LASER_SCAN__LASER_SCAN_DISPLAY_HPP_
-
