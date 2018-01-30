@@ -84,7 +84,8 @@ RenderWindowImpl::RenderWindowImpl(QWindow * parent)
   ogre_camera_(nullptr),
   animating_(false),
   ogre_viewport_(nullptr),
-  ortho_scale_(1.0f)
+  ortho_scale_(1.0f),
+  pending_listeners_()
   // auto_render_(true),
   // overlays_enabled_(true),    // matches the default of Ogre::Viewport.
   // stereo_enabled_(false),
@@ -186,6 +187,24 @@ RenderWindowImpl::setupSceneAfterInit(setupSceneCallback setup_scene_callback)
   }
 }
 
+void RenderWindowImpl::addListener(Ogre::RenderTargetListener * listener)
+{
+  if (ogre_render_window_) {
+    ogre_render_window_->addListener(listener);
+  } else {
+    pending_listeners_.emplace_back(listener);
+  }
+}
+void RenderWindowImpl::removeListener(Ogre::RenderTargetListener * listener)
+{
+  if (ogre_render_window_) {
+    ogre_render_window_->removeListener(listener);
+  } else {
+    pending_listeners_.erase(
+      std::find(pending_listeners_.begin(), pending_listeners_.end(), listener));
+  }
+}
+
 void
 RenderWindowImpl::initialize()
 {
@@ -201,32 +220,47 @@ RenderWindowImpl::initialize()
     throw std::runtime_error(msg);
   }
 
-  ogre_scene_manager_ = ogre_root->createSceneManager();
+  if (!ogre_scene_manager_) {
+    ogre_scene_manager_ = ogre_root->createSceneManager();
 
-  ogre_directional_light_ = ogre_scene_manager_->createLight("MainDirectional");
-  ogre_directional_light_->setType(Ogre::Light::LT_DIRECTIONAL);
-  ogre_directional_light_->setDirection(Ogre::Vector3(-1, 0, -1));
-  ogre_directional_light_->setDiffuseColour(Ogre::ColourValue(1.0f, 1.0f, 1.0f));
+    ogre_directional_light_ = ogre_scene_manager_->createLight("MainDirectional");
+    ogre_directional_light_->setType(Ogre::Light::LT_DIRECTIONAL);
+    ogre_directional_light_->setDirection(Ogre::Vector3(-1, 0, -1));
+    ogre_directional_light_->setDiffuseColour(Ogre::ColourValue(1.0f, 1.0f, 1.0f));
 
-  ogre_camera_ = ogre_scene_manager_->createCamera("MainCamera");
-  ogre_camera_->setNearClipDistance(0.1f);
-  ogre_camera_->setFarClipDistance(200.0f);
+    ogre_camera_ = ogre_scene_manager_->createCamera("MainCamera");
+    ogre_camera_->setNearClipDistance(0.1f);
+    ogre_camera_->setFarClipDistance(200.0f);
 
-  auto camera_node_ = ogre_scene_manager_->getRootSceneNode()->createChildSceneNode();
-  ogre_camera_->setPosition(Ogre::Vector3(0.0f, 10.0f, 10.0f));
-  ogre_camera_->lookAt(Ogre::Vector3(0.0f, 0.0f, 0.0f));
-  camera_node_->attachObject(ogre_camera_);
+    auto camera_node_ = ogre_scene_manager_->getRootSceneNode()->createChildSceneNode();
+    ogre_camera_->setPosition(Ogre::Vector3(0.0f, 10.0f, 10.0f));
+    ogre_camera_->lookAt(Ogre::Vector3(0.0f, 0.0f, 0.0f));
+    camera_node_->attachObject(ogre_camera_);
+  }
 
-  ogre_viewport_ = ogre_render_window_->addViewport(ogre_camera_);
-  auto bg_color = Ogre::ColourValue(0.937254902f, 0.921568627f, 0.905882353f);  // Qt background
-  ogre_viewport_->setBackgroundColour(bg_color);
+  if (ogre_camera_) {
+    ogre_viewport_ = ogre_render_window_->addViewport(ogre_camera_);
+    auto bg_color = Ogre::ColourValue(0.937254902f, 0.921568627f, 0.905882353f);  // Qt background
+    ogre_viewport_->setBackgroundColour(bg_color);
 
-  ogre_camera_->setAspectRatio(
-    Ogre::Real(ogre_render_window_->getWidth()) / Ogre::Real(ogre_render_window_->getHeight()));
-  ogre_camera_->setAutoAspectRatio(true);
+    ogre_camera_->setAspectRatio(
+      Ogre::Real(ogre_render_window_->getWidth()) / Ogre::Real(ogre_render_window_->getHeight()));
+    ogre_camera_->setAutoAspectRatio(true);
 
-  Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
-  Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+    Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
+    Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+  }
+
+  if (!pending_listeners_.empty()) {
+    for (auto listener : pending_listeners_) {
+      ogre_render_window_->addListener(listener);
+    }
+  }
+  if (!pending_visibility_masks_.empty()) {
+    for (auto mask : pending_visibility_masks_) {
+      ogre_viewport_->setVisibilityMask(mask);
+    }
+  }
 }
 
 void
@@ -377,9 +411,10 @@ void RenderWindowImpl::setCamera(Ogre::Camera * ogre_camera)
 {
   if (ogre_camera) {
     ogre_camera_ = ogre_camera;
-    ogre_viewport_->setCamera(ogre_camera);
-
-    this->setCameraAspectRatio();
+    if (ogre_viewport_) {
+      ogre_viewport_->setCamera(ogre_camera);
+      this->setCameraAspectRatio();
+    }
 
     // if (ogre_camera_ && rendering_stereo_ && !left_ogre_camera_) {
     //   left_ogre_camera_ =
@@ -410,6 +445,21 @@ Ogre::SceneManager * RenderWindowImpl::getSceneManager() const
 {
   return ogre_scene_manager_;
 }
+
+void RenderWindowImpl::setSceneManager(Ogre::SceneManager * scene_manager)
+{
+  ogre_scene_manager_ = scene_manager;
+}
+
+void RenderWindowImpl::setVisibilityMask(uint32_t mask)
+{
+  if (ogre_viewport_) {
+    ogre_viewport_->setVisibilityMask(mask);
+  } else {
+    pending_visibility_masks_.emplace_back(mask);
+  }
+}
+
 
 #if 0
 void RenderWindowImpl::setOverlaysEnabled(bool overlays_enabled)

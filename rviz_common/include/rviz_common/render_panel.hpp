@@ -75,7 +75,7 @@ public:
   /**
     * This sets up the Camera for this widget.
     */
-  void initialize(DisplayContext * manager);
+  void initialize(DisplayContext * manager, bool use_main_scene = false);
   // void initialize(Ogre::SceneManager * scene_manager, DisplayContext * manager);
 
   DisplayContext * getManager();

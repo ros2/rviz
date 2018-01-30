@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2012, Willow Garage, Inc.
- * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2009, Willow Garage, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,31 +27,71 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__BIT_ALLOCATOR_HPP_
-#define RVIZ_COMMON__BIT_ALLOCATOR_HPP_
+#ifndef RVIZ_COMMON__PROPERTIES__DISPLAY_VISIBILITY_PROPERTY_HPP_
+#define RVIZ_COMMON__PROPERTIES__DISPLAY_VISIBILITY_PROPERTY_HPP_
 
 #include <cstdint>
+#include <map>
+#include <string>
+
+#include <QObject>  // NOLINT: cpplint cannot handle the include order here
+#include <QString>  // NOLINT: cpplint cannot handle the include order here
+
+#include "rviz_common/properties/bool_property.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
 
-/// Allocation manager for bit positions within a 32-bit word.
-class BitAllocator
+class DisplayContext;
+
+class Display;
+
+namespace properties
 {
+class Property;
+
+class BoolProperty;
+
+class DisplayVisibilityProperty;
+
+/*
+ * @brief Changes one visibility bit of a given Display
+ */
+class RVIZ_COMMON_PUBLIC DisplayVisibilityProperty : public BoolProperty
+{
+  Q_OBJECT
+
 public:
-  /// Constructor; all bits are free initially.
-  BitAllocator();
+  DisplayVisibilityProperty(
+    uint32_t vis_bit,
+    Display * display,
+    const QString & name = QString(),
+    bool default_value = false,
+    const QString & description = QString(),
+    Property * parent = 0,
+    const char * changed_slot = 0,
+    QObject * receiver = 0);
 
-  /// Return a uint32 with a single unused bit "on", or a 0 if all bits are already allocated.
-  uint32_t allocBit();
+  ~DisplayVisibilityProperty() override;
 
-  /// Free the given bits.
-  void freeBits(uint32_t bits);
+  virtual void update();
 
-private:
-  uint32_t allocated_bits_;
+  bool getBool() const override;
+
+  Qt::ItemFlags getViewFlags(int column) const override;
+
+public Q_SLOTS:
+  bool setValue(const QVariant & new_value) override;
+
+protected:
+  uint32_t vis_bit_;
+  Display * display_;
+  bool custom_name_;
 };
+
+}  // namespace properties
 
 }  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__BIT_ALLOCATOR_HPP_
+#endif  // RVIZ_COMMON__PROPERTIES__DISPLAY_VISIBILITY_PROPERTY_HPP_

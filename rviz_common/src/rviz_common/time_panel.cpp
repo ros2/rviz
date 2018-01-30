@@ -39,7 +39,7 @@
 #include "./visualization_manager.hpp"
 #include "rviz_common/frame_manager.hpp"
 
-#include "./display_group.hpp"
+#include "include/rviz_common/display_group.hpp"
 
 #include "./time_panel.hpp"
 

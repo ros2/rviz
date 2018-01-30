@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,64 +28,33 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DISPLAY_VISIBILITY_PROPERTY_H_
-#define RVIZ_DISPLAY_VISIBILITY_PROPERTY_H_
+#ifndef RVIZ_COMMON__BIT_ALLOCATOR_HPP_
+#define RVIZ_COMMON__BIT_ALLOCATOR_HPP_
 
-#include <stdint.h>
+#include <cstdint>
 
-#include <map>
-#include <string>
+#include "rviz_common/visibility_control.hpp"
 
-#include <QObject>
-#include <QString>
-
-#include "bool_property.h"
-
-namespace rviz
+namespace rviz_common
 {
 
-class DisplayContext;
-class Property;
-class Display;
-class BoolProperty;
-class DisplayVisibilityProperty;
-
-
-/*
- * @brief Changes one visibility bit of a given Display
- */
-class DisplayVisibilityProperty : public BoolProperty
+/// Allocation manager for bit positions within a 32-bit word.
+class RVIZ_COMMON_PUBLIC BitAllocator
 {
-Q_OBJECT
 public:
-  DisplayVisibilityProperty(
-      uint32_t vis_bit,
-      Display* display,
-      const QString& name = QString(),
-      bool default_value = false,
-      const QString& description = QString(),
-      Property* parent = 0,
-      const char *changed_slot = 0,
-      QObject* receiver = 0 );
+  /// Constructor; all bits are free initially.
+  BitAllocator();
 
-  virtual ~DisplayVisibilityProperty();
+  /// Return a uint32 with a single unused bit "on", or a 0 if all bits are already allocated.
+  uint32_t allocBit();
 
-  virtual void update();
+  /// Free the given bits.
+  void freeBits(uint32_t bits);
 
-  virtual bool getBool() const;
-
-  Qt::ItemFlags getViewFlags( int column ) const;
-
-public Q_SLOTS:
-
-  virtual bool setValue( const QVariant& new_value );
-
-protected:
-  uint32_t vis_bit_;
-  Display* display_;
-  bool custom_name_;
+private:
+  uint32_t allocated_bits_;
 };
 
-}
+}  // namespace rviz_common
 
-#endif /* DISPLAY_VISIBILITY_MANAGER_H_ */
+#endif  // RVIZ_COMMON__BIT_ALLOCATOR_HPP_

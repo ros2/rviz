@@ -70,7 +70,7 @@
 
 #include "rviz_common/display.hpp"
 #include "./display_factory.hpp"
-#include "./display_group.hpp"
+#include "include/rviz_common/display_group.hpp"
 #include "./displays_panel.hpp"
 #include "rviz_common/frame_manager.hpp"
 #include "rviz_common/load_resource.hpp"

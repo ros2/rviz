@@ -65,6 +65,7 @@ set(rviz_common_headers_to_moc
   include/rviz_common/properties/property_tree_widget.hpp
   include/rviz_common/properties/splitter_handle.hpp
   # src/rviz_common/selection_panel.hpp
+  include/rviz_common/display_group.hpp
   include/rviz_common/frame_position_tracking_view_controller.hpp
   include/rviz_common/properties/quaternion_property.hpp
   include/rviz_common/visualizer_app.hpp
@@ -81,6 +82,8 @@ set(rviz_common_headers_to_moc
   include/rviz_common/properties/color_editor.hpp
   include/rviz_common/properties/color_property.hpp
   include/rviz_common/properties/combo_box.hpp
+  include/rviz_common/properties/display_group_visibility_property.hpp
+  include/rviz_common/properties/display_visibility_property.hpp
   include/rviz_common/properties/editable_combo_box.hpp
   include/rviz_common/properties/editable_enum_property.hpp
   include/rviz_common/properties/float_edit.hpp
@@ -155,6 +158,8 @@ set(rviz_common_source_files
   src/rviz_common/properties/color_editor.cpp
   src/rviz_common/properties/color_property.cpp
   src/rviz_common/properties/combo_box.cpp
+  src/rviz_common/properties/display_group_visibility_property.cpp
+  src/rviz_common/properties/display_visibility_property.cpp
   src/rviz_common/properties/editable_combo_box.cpp
   src/rviz_common/properties/editable_enum_property.cpp
   src/rviz_common/properties/enum_property.cpp

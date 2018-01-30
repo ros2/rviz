@@ -36,6 +36,7 @@
 #include <QWindow>  // NOLINT
 
 #include "OgreSceneNode.h"
+#include "OgreRenderTargetListener.h"
 
 #include "rviz_rendering/visibility_control.hpp"
 
@@ -151,6 +152,10 @@ public:
   setOgreCamera(RenderWindow * render_window, Ogre::Camera * ogre_camera);
 
   static
+  Ogre::Camera *
+  getOgreCamera(RenderWindow * render_window);
+
+  static
   Ogre::Viewport *
   getOgreViewport(RenderWindow * render_window);
 
@@ -165,6 +170,22 @@ public:
   static
   Ogre::SceneManager *
   getSceneManager(RenderWindow * render_window);
+
+  static
+  void
+  setSceneManager(RenderWindow * render_window, Ogre::SceneManager * scene_manager);
+
+  static
+  void
+  addListener(RenderWindow * render_window, Ogre::RenderTargetListener * listener);
+
+  static
+  void
+  setVisibilityMask(RenderWindow * render_window, uint32_t mask);
+
+  static
+  void
+  removeListener(RenderWindow * render_window, Ogre::RenderTargetListener * listener);
 };
 
 }  // namespace rviz_rendering

@@ -55,6 +55,19 @@
     </description>
     <message_type>tf2_msgs/TFMessage</message_type>
   </class>
+
+  <class
+    name="rviz/Camera"
+    type="rviz_default_plugins::displays::CameraDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays an image from a camera, with the visualized world rendered behind it.  &lt;a href="http://www.ros.org/wiki/rviz/DisplayTypes/Camera"&gt;More Information&lt;/a&gt;.
+    </description>
+    <message_type>sensor_msgs/Image</message_type>
+    <message_type>sensor_msgs/CompressedImage</message_type>
+  </class>
+
   <!-- Tool plugins -->
 
   <class
@@ -78,4 +91,5 @@
       Makes it easy to move around a given point in space, looking at it from any angle.
     </description>
   </class>
+
 </library>
