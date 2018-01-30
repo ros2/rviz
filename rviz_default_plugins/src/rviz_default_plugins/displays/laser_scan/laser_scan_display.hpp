@@ -76,7 +76,6 @@ protected:
   std::unique_ptr<PointCloudCommon> point_cloud_common_;
   std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
   std::unique_ptr<laser_geometry::LaserProjection> projector_;
-  // ros::Duration filter_tolerance_;
 };
 
 }  // namespace displays

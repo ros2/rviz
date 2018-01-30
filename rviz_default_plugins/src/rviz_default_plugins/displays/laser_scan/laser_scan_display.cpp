@@ -75,23 +75,13 @@ void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPt
 
   std::string frame_id = scan->header.frame_id;
 
-  // TODO(Martin-Idel-SI): Reenable once tf_filter is ported or delete if necessary
-  // Compute tolerance necessary for this scan
-//  ros::Duration tolerance(scan->time_increment * scan->ranges.size());
-//  if (tolerance > filter_tolerance_)
-//  {
-//    filter_tolerance_ = tolerance;
-//    tf_filter_->setTolerance(filter_tolerance_);
-//  }
-
   try {
     auto buffer = context_->getFrameManager()->getTFBufferPtr();
     projector_->transformLaserScanToPointCloud(fixed_frame_.toStdString(), *scan, *cloud,
       *buffer, laser_geometry::channel_option::Intensity);
   } catch (tf2::TransformException & e) {
     RVIZ_COMMON_LOG_DEBUG_STREAM("LaserScan [" << qPrintable(getName()) << "]: "
-      "failed to transform scan:" << e.what() << ".  This message should not repeat "
-      "(tolerance should now be set on our tf::MessageFilter).");
+      "failed to transform scan:" << e.what() << ".");
     return;
   }
 
