@@ -111,7 +111,7 @@ void PolygonDisplay::processMessage(geometry_msgs::msg::PolygonStamped::ConstSha
   // component of the color values we set at each point.  Need to make
   // a material and do the whole setSceneBlending() rigamarole.
 
-  uint32_t num_points = msg->polygon.points.size();
+  size_t num_points = msg->polygon.points.size();
   if (num_points > 0) {
     manual_object_->estimateVertexCount(num_points);
     manual_object_->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_LINE_STRIP);
