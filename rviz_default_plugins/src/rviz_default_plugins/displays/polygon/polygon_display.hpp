@@ -28,29 +28,37 @@
  */
 
 
-#ifndef RVIZ_POLYGON_DISPLAY_H
-#define RVIZ_POLYGON_DISPLAY_H
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__POLYGON__POLYGON_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__POLYGON__POLYGON_DISPLAY_HPP_
 
-#include <geometry_msgs/PolygonStamped.h>
+#include <geometry_msgs/msg/polygon_stamped.hpp>
 
-#include "rviz/message_filter_display.h"
+#include "rviz_common/ros_topic_display.hpp"
 
 namespace Ogre
 {
 class ManualObject;
 }
 
-namespace rviz
+namespace rviz_common
 {
-
+namespace properties
+{
 class ColorProperty;
 class FloatProperty;
+}  // namespace properties
+}  // namespace rviz_common
+
+namespace rviz_default_plugins
+{
+namespace displays
+{
 
 /**
  * \class PolygonDisplay
  * \brief Displays a geometry_msgs::PolygonStamped message
  */
-class PolygonDisplay: public MessageFilterDisplay<geometry_msgs::PolygonStamped>
+class PolygonDisplay: public rviz_common::RosTopicDisplay<geometry_msgs::msg::PolygonStamped>
 {
 Q_OBJECT
 public:
@@ -65,15 +73,16 @@ public:
 
 protected:
   /** @brief Overridden from MessageFilterDisplay. */
-  virtual void processMessage( const geometry_msgs::PolygonStamped::ConstPtr& msg );
+  virtual void processMessage(geometry_msgs::msg::PolygonStamped::ConstSharedPtr msg );
 
   Ogre::ManualObject* manual_object_;
 
-  ColorProperty* color_property_;
-  FloatProperty* alpha_property_;
+  rviz_common::properties::ColorProperty* color_property_;
+  rviz_common::properties::FloatProperty* alpha_property_;
 };
 
-} // namespace rviz
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif /* RVIZ_POLYGON_DISPLAY_H */
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__POLYGON__POLYGON_DISPLAY_HPP_
 

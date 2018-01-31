@@ -32,23 +32,26 @@
 #include <OgreManualObject.h>
 #include <OgreBillboardSet.h>
 
-#include "rviz/display_context.h"
-#include "rviz/frame_manager.h"
-#include "rviz/properties/color_property.h"
-#include "rviz/properties/float_property.h"
-#include "rviz/properties/parse_color.h"
-#include "rviz/validate_floats.h"
+#include "rviz_common/display_context.hpp"
+#include "rviz_common/frame_manager.hpp"
+#include "rviz_common/logging.hpp"
+#include "rviz_common/properties/color_property.hpp"
+#include "rviz_common/properties/float_property.hpp"
+#include "rviz_common/properties/parse_color.hpp"
+#include "rviz_common/validate_floats.hpp"
 
-#include "polygon_display.h"
+#include "polygon_display.hpp"
 
-namespace rviz
+namespace rviz_default_plugins
+{
+namespace displays
 {
 
 PolygonDisplay::PolygonDisplay()
 {
-  color_property_ = new ColorProperty( "Color", QColor( 25, 255, 0 ),
+  color_property_ = new rviz_common::properties::ColorProperty( "Color", QColor( 25, 255, 0 ),
                                        "Color to draw the polygon.", this, SLOT( queueRender() ));
-  alpha_property_ = new FloatProperty( "Alpha", 1.0,
+  alpha_property_ = new rviz_common::properties::FloatProperty( "Alpha", 1.0f,
                                        "Amount of transparency to apply to the polygon.", this, SLOT( queueRender() ));
   alpha_property_->setMin( 0 );
   alpha_property_->setMax( 1 );
@@ -64,7 +67,7 @@ PolygonDisplay::~PolygonDisplay()
 
 void PolygonDisplay::onInitialize()
 {
-  MFDClass::onInitialize();
+  RTDClass::onInitialize();
 
   manual_object_ = scene_manager_->createManualObject();
   manual_object_->setDynamic( true );
@@ -73,20 +76,21 @@ void PolygonDisplay::onInitialize()
 
 void PolygonDisplay::reset()
 {
-  MFDClass::reset();
+  RTDClass::reset();
   manual_object_->clear();
 }
 
-bool validateFloats( const geometry_msgs::PolygonStamped& msg )
+bool validateFloats(geometry_msgs::msg::PolygonStamped msg )
 {
-  return validateFloats(msg.polygon.points);
+  return rviz_common::validateFloats(msg.polygon.points);
 }
 
-void PolygonDisplay::processMessage(const geometry_msgs::PolygonStamped::ConstPtr& msg)
+void PolygonDisplay::processMessage(geometry_msgs::msg::PolygonStamped::ConstSharedPtr msg)
 {
   if( !validateFloats( *msg ))
   {
-    setStatus( StatusProperty::Error, "Topic", "Message contained invalid floating point values (nans or infs)" );
+    setStatus( rviz_common::properties::StatusProperty::Error, "Topic",
+      "Message contained invalid floating point values (nans or infs)" );
     return;
   }
 
@@ -94,8 +98,8 @@ void PolygonDisplay::processMessage(const geometry_msgs::PolygonStamped::ConstPt
   Ogre::Quaternion orientation;
   if( !context_->getFrameManager()->getTransform( msg->header, position, orientation ))
   {
-    ROS_DEBUG( "Error transforming from frame '%s' to frame '%s'",
-               msg->header.frame_id.c_str(), qPrintable( fixed_frame_ ));
+    RVIZ_COMMON_LOG_DEBUG_STREAM( "Error transforming from frame '" <<
+               msg->header.frame_id.c_str() << "' to frame '" << qPrintable( fixed_frame_ ) << "'");
   }
 
   scene_node_->setPosition( position );
@@ -103,9 +107,9 @@ void PolygonDisplay::processMessage(const geometry_msgs::PolygonStamped::ConstPt
 
   manual_object_->clear();
 
-  Ogre::ColourValue color = qtToOgre( color_property_->getColor() );
+  Ogre::ColourValue color = rviz_common::properties::qtToOgre( color_property_->getColor() );
   color.a = alpha_property_->getFloat();
-  // TODO: this does not actually support alpha as-is.  The
+  // TODO(anonymous): this does not actually support alpha as-is.  The
   // "BaseWhiteNoLighting" material ends up ignoring the alpha
   // component of the color values we set at each point.  Need to make
   // a material and do the whole setSceneBlending() rigamarole.
@@ -117,7 +121,7 @@ void PolygonDisplay::processMessage(const geometry_msgs::PolygonStamped::ConstPt
     manual_object_->begin( "BaseWhiteNoLighting", Ogre::RenderOperation::OT_LINE_STRIP );
     for( uint32_t i=0; i < num_points + 1; ++i )
     {
-      const geometry_msgs::Point32& msg_point = msg->polygon.points[ i % num_points ];
+      const geometry_msgs::msg::Point32& msg_point = msg->polygon.points[ i % num_points ];
       manual_object_->position( msg_point.x, msg_point.y, msg_point.z );
       manual_object_->colour( color );
     }
@@ -126,7 +130,8 @@ void PolygonDisplay::processMessage(const geometry_msgs::PolygonStamped::ConstPt
   }
 }
 
-} // namespace rviz
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#include <pluginlib/class_list_macros.h>
-PLUGINLIB_EXPORT_CLASS( rviz::PolygonDisplay, rviz::Display )
+#include <pluginlib/class_list_macros.hpp>
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::PolygonDisplay, rviz_common::Display)
