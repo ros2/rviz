@@ -31,6 +31,7 @@
 
 #include <memory>
 #include <utility>
+
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -40,6 +41,7 @@
 #ifndef _WIN32
 # pragma GCC diagnostic pop
 #endif
+
 #include "./point_cloud_common.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"

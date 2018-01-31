@@ -37,8 +37,15 @@
 #include <string>
 #include <vector>
 
+#ifdef __APPLE__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wkeyword-macro"
+#endif
 #include <OgreQuaternion.h>
 #include <OgreVector3.h>
+#ifdef __APPLE__
+# pragma clang diagnostic pop
+#endif
 
 #include "geometry_msgs/msg/transform_stamped__struct.hpp"
 #include "tf2/exceptions.h"

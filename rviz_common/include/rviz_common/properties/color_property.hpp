@@ -31,7 +31,14 @@
 #ifndef RVIZ_COMMON__PROPERTIES__COLOR_PROPERTY_HPP_
 #define RVIZ_COMMON__PROPERTIES__COLOR_PROPERTY_HPP_
 
+#ifdef __APPLE__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wkeyword-macro"
+#endif
 #include <OgreColourValue.h>
+#ifdef __APPLE__
+# pragma clang diagnostic pop
+#endif
 
 #include <QColor>
 #include <QString>
