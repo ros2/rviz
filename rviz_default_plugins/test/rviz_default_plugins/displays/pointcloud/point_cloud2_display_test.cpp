@@ -57,6 +57,30 @@ TEST(PointCloud2Display, filter_keeps_valid_points) {
   ASSERT_EQ(buffer[5], 6);
 }
 
+TEST(PointCloud2Display, hasXYZChannels_returns_true_for_valid_pointcloud) {
+  // just plain Point is ambiguous on macOS
+  rviz_default_plugins::Point p1 = {1, 2, 3};
+  rviz_default_plugins::Point p2 = {1, NAN, 3};
+  auto cloud = createPointCloud2WithPoints(std::vector<rviz_default_plugins::Point>{p1, p2});
+
+  PointCloud2Display display;
+  bool has_xyz = display.hasXYZChannels(cloud);
+
+  ASSERT_TRUE(has_xyz);
+}
+
+TEST(PointCloud2Display, cloudDataMatchesDimensions_returns_true_for_valid_pointcloud) {
+  // just plain Point is ambiguous on macOS
+  rviz_default_plugins::Point p1 = {1, 2, 3};
+  rviz_default_plugins::Point p2 = {1, NAN, 3};
+  auto cloud = createPointCloud2WithPoints(std::vector<rviz_default_plugins::Point>{p1, p2});
+
+  PointCloud2Display display;
+  bool matches_dimensions = display.cloudDataMatchesDimensions(cloud);
+
+  ASSERT_TRUE(matches_dimensions);
+}
+
 TEST(PointCloud2Display, filter_removes_invalid_point) {
   // just plain Point is ambiguous on macOS
   rviz_default_plugins::Point p1 = {1, 2, 3};
