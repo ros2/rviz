@@ -28,32 +28,47 @@
  */
 
 
-#ifndef RVIZ_POSE_DISPLAY_H_
-#define RVIZ_POSE_DISPLAY_H_
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__POSE__POSE_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__POSE__POSE_DISPLAY_HPP_
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
-#include <geometry_msgs/PoseStamped.h>
+#include "geometry_msgs/msg/pose_stamped.hpp"
 
-#include "rviz/message_filter_display.h"
-#include "rviz/selection/forwards.h"
+#include "rviz_common/ros_topic_display.hpp"
+#include "rviz_common/selection/forwards.hpp"
 
-namespace rviz
+namespace rviz_rendering
 {
 class Arrow;
 class Axes;
+class Shape;
+}  // namespace rviz_rendering
+
+namespace rviz_common
+{
+namespace properties
+{
 class ColorProperty;
 class EnumProperty;
 class FloatProperty;
-class Shape;
+}  // namespace properties
+}  // namespace rviz_common
+
+namespace rviz_default_plugins
+{
+namespace displays
+{
 
 class PoseDisplaySelectionHandler;
-typedef boost::shared_ptr<PoseDisplaySelectionHandler> PoseDisplaySelectionHandlerPtr;
+
+typedef std::shared_ptr<PoseDisplaySelectionHandler> PoseDisplaySelectionHandlerPtr;
 
 /** @brief Accumulates and displays the pose from a geometry_msgs::PoseStamped message. */
-class PoseDisplay: public MessageFilterDisplay<geometry_msgs::PoseStamped>
+class PoseDisplay : public rviz_common::RosTopicDisplay<geometry_msgs::msg::PoseStamped>
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   enum Shape
   {
@@ -62,13 +77,13 @@ public:
   };
 
   PoseDisplay();
-  virtual ~PoseDisplay();
 
+  virtual ~PoseDisplay();
   virtual void onInitialize();
   virtual void reset();
 
 protected:
-  /** @brief Overridden from MessageFilterDisplay to get arrow/axes visibility correct. */
+  /** @brief Overridden from RosTopicDisplay to get arrow/axes visibility correct. */
   virtual void onEnable();
 
 private Q_SLOTS:
@@ -81,29 +96,30 @@ private Q_SLOTS:
 private:
   void clear();
 
-  virtual void processMessage( const geometry_msgs::PoseStamped::ConstPtr& message );
+  virtual void processMessage(geometry_msgs::msg::PoseStamped::ConstSharedPtr message);
 
-  rviz::Arrow* arrow_;
-  rviz::Axes* axes_;
+  rviz_rendering::Arrow * arrow_;
+  rviz_rendering::Axes * axes_;
   bool pose_valid_;
   PoseDisplaySelectionHandlerPtr coll_handler_;
 
-  EnumProperty* shape_property_;
+  rviz_common::properties::EnumProperty * shape_property_;
 
-  ColorProperty* color_property_;
-  FloatProperty* alpha_property_;
+  rviz_common::properties::ColorProperty * color_property_;
+  rviz_common::properties::FloatProperty * alpha_property_;
 
-  FloatProperty* head_radius_property_;
-  FloatProperty* head_length_property_;
-  FloatProperty* shaft_radius_property_;
-  FloatProperty* shaft_length_property_;
+  rviz_common::properties::FloatProperty * head_radius_property_;
+  rviz_common::properties::FloatProperty * head_length_property_;
+  rviz_common::properties::FloatProperty * shaft_radius_property_;
+  rviz_common::properties::FloatProperty * shaft_length_property_;
 
-  FloatProperty* axes_length_property_;
-  FloatProperty* axes_radius_property_;
+  rviz_common::properties::FloatProperty * axes_length_property_;
+  rviz_common::properties::FloatProperty * axes_radius_property_;
 
   friend class PoseDisplaySelectionHandler;
 };
 
-} // namespace rviz
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif /* RVIZ_POSE_DISPLAY_H_ */
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__POSE__POSE_DISPLAY_HPP_
