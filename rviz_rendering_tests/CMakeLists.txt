@@ -73,7 +73,8 @@ if(BUILD_TESTING)
     endif()
 
     ament_add_gtest(test_rviz_rendering_tests
-      test/test_rviz_ogre_media_exports.cpp)
+      test/test_rviz_ogre_media_exports.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
     if(TARGET test_rviz_rendering_tests)
       target_include_directories(test_rviz_rendering_tests
         PUBLIC src/rviz_rendering_tests)
