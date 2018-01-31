@@ -64,17 +64,14 @@ class PolygonDisplay : public rviz_common::RosTopicDisplay<geometry_msgs::msg::P
 
 public:
   PolygonDisplay();
-  virtual ~PolygonDisplay();
+  ~PolygonDisplay() override;
 
-  /** @brief Overridden from MessageFilterDisplay. */
-  virtual void onInitialize();
+  void onInitialize() override;
 
-  /** @brief Overridden from MessageFilterDisplay. */
-  virtual void reset();
+  void reset() override;
 
 protected:
-  /** @brief Overridden from MessageFilterDisplay. */
-  virtual void processMessage(geometry_msgs::msg::PolygonStamped::ConstSharedPtr msg);
+  void processMessage(geometry_msgs::msg::PolygonStamped::ConstSharedPtr msg) override;
 
   Ogre::ManualObject * manual_object_;
 

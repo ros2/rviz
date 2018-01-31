@@ -79,14 +79,14 @@ void PolygonDisplay::reset()
   manual_object_->clear();
 }
 
-bool validateFloats(geometry_msgs::msg::PolygonStamped msg)
+bool validateFloats(geometry_msgs::msg::PolygonStamped::ConstSharedPtr msg)
 {
-  return rviz_common::validateFloats(msg.polygon.points);
+  return rviz_common::validateFloats(msg->polygon.points);
 }
 
 void PolygonDisplay::processMessage(geometry_msgs::msg::PolygonStamped::ConstSharedPtr msg)
 {
-  if (!validateFloats(*msg)) {
+  if (!validateFloats(msg)) {
     setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
       "Message contained invalid floating point values (nans or infs)");
     return;
@@ -104,14 +104,15 @@ void PolygonDisplay::processMessage(geometry_msgs::msg::PolygonStamped::ConstSha
 
   manual_object_->clear();
 
-  Ogre::ColourValue color = rviz_common::properties::qtToOgre(color_property_->getColor() );
+  Ogre::ColourValue color = rviz_common::properties::qtToOgre(color_property_->getColor());
   color.a = alpha_property_->getFloat();
   // TODO(anonymous): this does not actually support alpha as-is.  The
   // "BaseWhiteNoLighting" material ends up ignoring the alpha
   // component of the color values we set at each point.  Need to make
-  // a material and do the whole setSceneBlending() rigamarole.
+  // a material and do the whole setSceneBlending() rigmarole.
 
   size_t num_points = msg->polygon.points.size();
+
   if (num_points > 0) {
     manual_object_->estimateVertexCount(num_points);
     manual_object_->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_LINE_STRIP);
