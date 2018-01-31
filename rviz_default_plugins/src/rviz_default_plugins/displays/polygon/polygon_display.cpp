@@ -49,19 +49,18 @@ namespace displays
 
 PolygonDisplay::PolygonDisplay()
 {
-  color_property_ = new rviz_common::properties::ColorProperty( "Color", QColor( 25, 255, 0 ),
-                                       "Color to draw the polygon.", this, SLOT( queueRender() ));
-  alpha_property_ = new rviz_common::properties::FloatProperty( "Alpha", 1.0f,
-                                       "Amount of transparency to apply to the polygon.", this, SLOT( queueRender() ));
-  alpha_property_->setMin( 0 );
-  alpha_property_->setMax( 1 );
+  color_property_ = new rviz_common::properties::ColorProperty("Color", QColor(25, 255, 0),
+      "Color to draw the polygon.", this, SLOT(queueRender()));
+  alpha_property_ = new rviz_common::properties::FloatProperty("Alpha", 1.0f,
+      "Amount of transparency to apply to the polygon.", this, SLOT(queueRender()));
+  alpha_property_->setMin(0);
+  alpha_property_->setMax(1);
 }
 
 PolygonDisplay::~PolygonDisplay()
 {
-  if ( initialized() )
-  {
-    scene_manager_->destroyManualObject( manual_object_ );
+  if (initialized() ) {
+    scene_manager_->destroyManualObject(manual_object_);
   }
 }
 
@@ -70,8 +69,8 @@ void PolygonDisplay::onInitialize()
   RTDClass::onInitialize();
 
   manual_object_ = scene_manager_->createManualObject();
-  manual_object_->setDynamic( true );
-  scene_node_->attachObject( manual_object_ );
+  manual_object_->setDynamic(true);
+  scene_node_->attachObject(manual_object_);
 }
 
 void PolygonDisplay::reset()
@@ -80,34 +79,32 @@ void PolygonDisplay::reset()
   manual_object_->clear();
 }
 
-bool validateFloats(geometry_msgs::msg::PolygonStamped msg )
+bool validateFloats(geometry_msgs::msg::PolygonStamped msg)
 {
   return rviz_common::validateFloats(msg.polygon.points);
 }
 
 void PolygonDisplay::processMessage(geometry_msgs::msg::PolygonStamped::ConstSharedPtr msg)
 {
-  if( !validateFloats( *msg ))
-  {
-    setStatus( rviz_common::properties::StatusProperty::Error, "Topic",
-      "Message contained invalid floating point values (nans or infs)" );
+  if (!validateFloats(*msg)) {
+    setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
+      "Message contained invalid floating point values (nans or infs)");
     return;
   }
 
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
-  if( !context_->getFrameManager()->getTransform( msg->header, position, orientation ))
-  {
-    RVIZ_COMMON_LOG_DEBUG_STREAM( "Error transforming from frame '" <<
-               msg->header.frame_id.c_str() << "' to frame '" << qPrintable( fixed_frame_ ) << "'");
+  if (!context_->getFrameManager()->getTransform(msg->header, position, orientation)) {
+    RVIZ_COMMON_LOG_DEBUG_STREAM("Error transforming from frame '" <<
+      msg->header.frame_id.c_str() << "' to frame '" << qPrintable(fixed_frame_) << "'");
   }
 
-  scene_node_->setPosition( position );
-  scene_node_->setOrientation( orientation );
+  scene_node_->setPosition(position);
+  scene_node_->setOrientation(orientation);
 
   manual_object_->clear();
 
-  Ogre::ColourValue color = rviz_common::properties::qtToOgre( color_property_->getColor() );
+  Ogre::ColourValue color = rviz_common::properties::qtToOgre(color_property_->getColor() );
   color.a = alpha_property_->getFloat();
   // TODO(anonymous): this does not actually support alpha as-is.  The
   // "BaseWhiteNoLighting" material ends up ignoring the alpha
@@ -115,15 +112,13 @@ void PolygonDisplay::processMessage(geometry_msgs::msg::PolygonStamped::ConstSha
   // a material and do the whole setSceneBlending() rigamarole.
 
   uint32_t num_points = msg->polygon.points.size();
-  if( num_points > 0 )
-  {
-    manual_object_->estimateVertexCount( num_points );
-    manual_object_->begin( "BaseWhiteNoLighting", Ogre::RenderOperation::OT_LINE_STRIP );
-    for( uint32_t i=0; i < num_points + 1; ++i )
-    {
-      const geometry_msgs::msg::Point32& msg_point = msg->polygon.points[ i % num_points ];
-      manual_object_->position( msg_point.x, msg_point.y, msg_point.z );
-      manual_object_->colour( color );
+  if (num_points > 0) {
+    manual_object_->estimateVertexCount(num_points);
+    manual_object_->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_LINE_STRIP);
+    for (uint32_t i = 0; i < num_points + 1; ++i) {
+      const geometry_msgs::msg::Point32 & msg_point = msg->polygon.points[i % num_points];
+      manual_object_->position(msg_point.x, msg_point.y, msg_point.z);
+      manual_object_->colour(color);
     }
 
     manual_object_->end();
@@ -133,5 +128,5 @@ void PolygonDisplay::processMessage(geometry_msgs::msg::PolygonStamped::ConstSha
 }  // namespace displays
 }  // namespace rviz_default_plugins
 
-#include <pluginlib/class_list_macros.hpp>
+#include <pluginlib/class_list_macros.hpp>  // NOLINT
 PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::PolygonDisplay, rviz_common::Display)

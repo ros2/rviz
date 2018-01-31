@@ -58,9 +58,10 @@ namespace displays
  * \class PolygonDisplay
  * \brief Displays a geometry_msgs::PolygonStamped message
  */
-class PolygonDisplay: public rviz_common::RosTopicDisplay<geometry_msgs::msg::PolygonStamped>
+class PolygonDisplay : public rviz_common::RosTopicDisplay<geometry_msgs::msg::PolygonStamped>
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   PolygonDisplay();
   virtual ~PolygonDisplay();
@@ -73,16 +74,15 @@ public:
 
 protected:
   /** @brief Overridden from MessageFilterDisplay. */
-  virtual void processMessage(geometry_msgs::msg::PolygonStamped::ConstSharedPtr msg );
+  virtual void processMessage(geometry_msgs::msg::PolygonStamped::ConstSharedPtr msg);
 
-  Ogre::ManualObject* manual_object_;
+  Ogre::ManualObject * manual_object_;
 
-  rviz_common::properties::ColorProperty* color_property_;
-  rviz_common::properties::FloatProperty* alpha_property_;
+  rviz_common::properties::ColorProperty * color_property_;
+  rviz_common::properties::FloatProperty * alpha_property_;
 };
 
 }  // namespace displays
 }  // namespace rviz_default_plugins
 
 #endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__POLYGON__POLYGON_DISPLAY_HPP_
-
