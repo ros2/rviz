@@ -74,9 +74,13 @@ protected:
   void processMessage(geometry_msgs::msg::PolygonStamped::ConstSharedPtr msg) override;
 
   Ogre::ManualObject * manual_object_;
+  Ogre::MaterialPtr material_;
 
   rviz_common::properties::ColorProperty * color_property_;
   rviz_common::properties::FloatProperty * alpha_property_;
+
+private:
+  void enableBlending(const Ogre::ColourValue & color);
 };
 
 }  // namespace displays

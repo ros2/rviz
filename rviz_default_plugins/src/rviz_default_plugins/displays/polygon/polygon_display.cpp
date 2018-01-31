@@ -31,6 +31,10 @@
 #include <OgreSceneManager.h>
 #include <OgreManualObject.h>
 #include <OgreBillboardSet.h>
+#include <OgreMaterialManager.h>
+#include <OgreTechnique.h>
+
+#include <string>
 
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager.hpp"
@@ -55,6 +59,13 @@ PolygonDisplay::PolygonDisplay()
       "Amount of transparency to apply to the polygon.", this, SLOT(queueRender()));
   alpha_property_->setMin(0);
   alpha_property_->setMax(1);
+
+  static int polygon_count = 0;
+  std::string material_name = "PolygonMaterial" + std::to_string(polygon_count++);
+  material_ = Ogre::MaterialManager::getSingleton().create(
+    material_name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+  material_->setReceiveShadows(false);
+  material_->getTechnique(0)->setLightingEnabled(false);
 }
 
 PolygonDisplay::~PolygonDisplay()
@@ -106,23 +117,30 @@ void PolygonDisplay::processMessage(geometry_msgs::msg::PolygonStamped::ConstSha
 
   Ogre::ColourValue color = rviz_common::properties::qtToOgre(color_property_->getColor());
   color.a = alpha_property_->getFloat();
-  // TODO(anonymous): this does not actually support alpha as-is.  The
-  // "BaseWhiteNoLighting" material ends up ignoring the alpha
-  // component of the color values we set at each point.  Need to make
-  // a material and do the whole setSceneBlending() rigmarole.
+  enableBlending(color);
 
   size_t num_points = msg->polygon.points.size();
 
   if (num_points > 0) {
     manual_object_->estimateVertexCount(num_points);
-    manual_object_->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_LINE_STRIP);
+    manual_object_->begin(material_->getName(), Ogre::RenderOperation::OT_LINE_STRIP);
     for (uint32_t i = 0; i < num_points + 1; ++i) {
       const geometry_msgs::msg::Point32 & msg_point = msg->polygon.points[i % num_points];
       manual_object_->position(msg_point.x, msg_point.y, msg_point.z);
       manual_object_->colour(color);
     }
-
     manual_object_->end();
+  }
+}
+
+void PolygonDisplay::enableBlending(const Ogre::ColourValue & color)
+{
+  if (color.a < 0.9998) {
+    material_->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
+    material_->setDepthWriteEnabled(false);
+  } else {
+    material_->setSceneBlending(Ogre::SBT_REPLACE);
+    material_->setDepthWriteEnabled(true);
   }
 }
 
