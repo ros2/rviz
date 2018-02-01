@@ -86,9 +86,8 @@ public:
   virtual void update();
 
 public Q_SLOTS:
-  void onDisplayAdded(rviz_common::Display * display);
-
-  void onDisplayRemoved(rviz_common::Display * display);
+  void onDisplayAdded(Display * display);
+  void onDisplayRemoved(Display * display);
 
 private:
   // sort the properties in the same way as in the
@@ -96,7 +95,7 @@ private:
   void sortDisplayList();
 
   DisplayGroup * display_group_;
-  std::map<rviz_common::Display *, DisplayVisibilityProperty *> disp_vis_props_;
+  std::map<Display *, DisplayVisibilityProperty *> disp_vis_props_;
   Display * parent_display_;
 };
 

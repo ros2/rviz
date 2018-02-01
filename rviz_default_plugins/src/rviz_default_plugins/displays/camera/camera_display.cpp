@@ -98,7 +98,7 @@ CameraDisplay::CameraDisplay()
   image_position_property_ = new rviz_common::properties::EnumProperty(
     "Image Rendering", BOTH,
     "Render the image behind all other geometry or overlay it on top, or both.",
-    this, SLOT(forceRender()));
+    this);
   image_position_property_->addOption(BACKGROUND);
   image_position_property_->addOption(OVERLAY);
   image_position_property_->addOption(BOTH);
@@ -113,7 +113,7 @@ CameraDisplay::CameraDisplay()
   zoom_property_ = new rviz_common::properties::FloatProperty(
     "Zoom Factor", 1.0f,
     "Set a zoom factor below 1 to see a larger part of the world, above 1 to magnify the image.",
-    this, SLOT(forceRender()));
+    this);
   zoom_property_->setMin(0.00001f);
   zoom_property_->setMax(100000.0f);
 }
