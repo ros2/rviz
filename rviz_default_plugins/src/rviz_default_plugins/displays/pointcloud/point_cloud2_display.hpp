@@ -85,6 +85,12 @@ public:
   sensor_msgs::msg::PointCloud2::ConstSharedPtr filterOutInvalidPoints(
     sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
 
+  /// Move to public for testing
+  bool hasXYZChannels(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
+
+  /// Move to public for testing
+  bool cloudDataMatchesDimensions(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
+
 protected:
   /** @brief Do initialization. Overridden from RosTopicDisplay. */
   void onInitialize() override;
@@ -97,15 +103,11 @@ private:
 
   std::unique_ptr<PointCloudCommon> point_cloud_common_;
 
-  bool cloudDataMatchesDimensions(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
-
   sensor_msgs::msg::PointCloud2::_data_type
   filterData(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
 
   bool validateFloatsAtPosition(
     sensor_msgs::msg::PointCloud2::_data_type::const_iterator position, Offsets offsets) const;
-
-  bool hasXYZChannels(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
 
   Offsets determineOffsets(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
 };

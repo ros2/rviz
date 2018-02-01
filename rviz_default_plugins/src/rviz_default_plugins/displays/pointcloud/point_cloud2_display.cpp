@@ -86,13 +86,13 @@ bool PointCloud2Display::hasXYZChannels(
   int32_t yi = findChannelIndex(cloud, "y");
   int32_t zi = findChannelIndex(cloud, "z");
 
-  return xi == -1 || yi == -1 || zi == -1;
+  return xi != -1 && yi != -1 && zi != -1;
 }
 
 bool PointCloud2Display::cloudDataMatchesDimensions(
   const sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const
 {
-  return cloud->width * cloud->height * cloud->point_step != cloud->data.size();
+  return cloud->width * cloud->height * cloud->point_step == cloud->data.size();
 }
 
 sensor_msgs::msg::PointCloud2::ConstSharedPtr PointCloud2Display::filterOutInvalidPoints(
