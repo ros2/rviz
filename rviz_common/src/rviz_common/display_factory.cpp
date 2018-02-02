@@ -98,7 +98,7 @@ QSet<QString> DisplayFactory::getMessageTypes(const QString & class_id)
     TiXmlDocument document;
     document.LoadFile(xml_file.toStdString());
     TiXmlElement * config = document.RootElement();
-    if (config == NULL) {
+    if (config == nullptr) {
       RVIZ_COMMON_LOG_ERROR_STREAM(
         "Skipping XML Document \"" << xml_file.toStdString() << "\" which had no Root Element.  "
           "This likely means the XML is malformed or missing.");
@@ -119,13 +119,15 @@ QSet<QString> DisplayFactory::getMessageTypes(const QString & class_id)
     }
 
     TiXmlElement * library = config;
-    while (library != NULL) {
+    while (library) {
       TiXmlElement * class_element = library->FirstChildElement("class");
       while (class_element) {
-        std::string derived_class = class_element->Attribute("type");
-
+        std::string derived_class;
+        if (class_element->Attribute("type")) {
+          derived_class = class_element->Attribute("type");
+        }
         std::string current_class_id;
-        if (class_element->Attribute("name") != NULL) {
+        if (class_element->Attribute("name")) {
           current_class_id = class_element->Attribute("name");
           RVIZ_COMMON_LOG_DEBUG_STREAM(
             "XML file specifies lookup name (i.e. magic name) = " << current_class_id);

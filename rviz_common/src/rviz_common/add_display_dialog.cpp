@@ -614,7 +614,7 @@ QTreeWidgetItem * TopicDisplayWidget::insertItem(
     bool match = false;
     for (int c = 0; c < current->childCount(); ++c) {
       QTreeWidgetItem * child = current->child(c);
-      if (child->text(0) == part && !child->data(1, Qt::UserRole).isValid()) {
+      if (child && child->text(0) == part && !child->data(1, Qt::UserRole).isValid()) {
         match = true;
         current = child;
         break;

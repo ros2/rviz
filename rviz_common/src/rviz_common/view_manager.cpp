@@ -258,7 +258,9 @@ void ViewManager::save(Config config) const
 
   Config saved_views_config = config.mapMakeChild("Saved");
   for (int i = 0; i < getNumViews(); i++) {
-    getViewAt(i)->save(saved_views_config.listAppendNew());
+    if (getViewAt(i)) {
+      getViewAt(i)->save(saved_views_config.listAppendNew());
+    }
   }
 }
 
