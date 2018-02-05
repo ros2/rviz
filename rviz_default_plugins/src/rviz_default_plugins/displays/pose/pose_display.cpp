@@ -31,15 +31,6 @@
 
 #include <memory>
 
-#ifdef _WIN32
-#pragma warning(push)
-#pragma warning(disable : 4996)
-#include <OgreEntity.h>
-#pragma warning(pop)
-#else
-#include <OgreEntity.h>
-#endif
-
 #include <OgreSceneNode.h>
 
 #include "rviz_rendering/arrow.hpp"
@@ -52,88 +43,15 @@
 #include "rviz_common/properties/enum_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/quaternion_property.hpp"
-#include "rviz_common/properties/string_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/selection/selection_manager.hpp"
 #include "rviz_common/validate_floats.hpp"
+#include "pose_display_selection_handler.hpp"
 
 namespace rviz_default_plugins
 {
 namespace displays
 {
-
-class PoseDisplaySelectionHandler : public rviz_common::selection::SelectionHandler
-{
-public:
-  PoseDisplaySelectionHandler(PoseDisplay * display, rviz_common::DisplayContext * context)
-  : SelectionHandler(context),
-    display_(display),
-    frame_property_(nullptr),
-    position_property_(nullptr),
-    orientation_property_(nullptr)
-  {}
-
-  void createProperties(
-    const rviz_common::selection::Picked & obj,
-    rviz_common::properties::Property * parent_property) override
-  {
-    (void) obj;
-    rviz_common::properties::Property * cat = new rviz_common::properties::Property(
-      "Pose " + display_->getName(), QVariant(), "", parent_property);
-    properties_.push_back(cat);
-
-    frame_property_ = new rviz_common::properties::StringProperty("Frame", "", "", cat);
-    frame_property_->setReadOnly(true);
-
-    position_property_ = new rviz_common::properties::VectorProperty(
-      "Position", Ogre::Vector3::ZERO, "", cat);
-    position_property_->setReadOnly(true);
-
-    orientation_property_ = new rviz_common::properties::QuaternionProperty(
-      "Orientation", Ogre::Quaternion::IDENTITY, "", cat);
-    orientation_property_->setReadOnly(true);
-  }
-
-  void getAABBs(
-    const rviz_common::selection::Picked & obj, rviz_common::selection::V_AABB & aabbs) override
-  {
-    (void) obj;
-    if (display_->pose_valid_) {
-      if (display_->shape_property_->getOptionInt() == PoseDisplay::Arrow) {
-        aabbs.push_back(display_->arrow_->getHead()->getEntity()->getWorldBoundingBox());
-        aabbs.push_back(display_->arrow_->getShaft()->getEntity()->getWorldBoundingBox());
-      } else {
-        aabbs.push_back(display_->axes_->getXShape()->getEntity()->getWorldBoundingBox());
-        aabbs.push_back(display_->axes_->getYShape()->getEntity()->getWorldBoundingBox());
-        aabbs.push_back(display_->axes_->getZShape()->getEntity()->getWorldBoundingBox());
-      }
-    }
-  }
-
-  void setMessage(geometry_msgs::msg::PoseStamped::ConstSharedPtr message)
-  {
-    // properties_.size() should only be > 0 after createProperties()
-    // and before destroyProperties(), during which frame_property_,
-    // position_property_, and orientation_property_ should be valid
-    // pointers.
-    if (properties_.size() > 0) {
-      frame_property_->setStdString(message->header.frame_id);
-      position_property_->setVector(Ogre::Vector3(message->pose.position.x,
-        message->pose.position.y,
-        message->pose.position.z));
-      orientation_property_->setQuaternion(Ogre::Quaternion(message->pose.orientation.w,
-        message->pose.orientation.x,
-        message->pose.orientation.y,
-        message->pose.orientation.z));
-    }
-  }
-
-private:
-  PoseDisplay * display_;
-  rviz_common::properties::StringProperty * frame_property_;
-  rviz_common::properties::VectorProperty * position_property_;
-  rviz_common::properties::QuaternionProperty * orientation_property_;
-};
 
 PoseDisplay::PoseDisplay()
 : arrow_(nullptr), axes_(nullptr), pose_valid_(false)

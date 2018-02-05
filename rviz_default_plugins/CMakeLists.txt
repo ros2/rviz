@@ -63,6 +63,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.cpp
   src/rviz_default_plugins/displays/polygon/polygon_display.cpp
   src/rviz_default_plugins/displays/pose/pose_display.cpp
+  src/rviz_default_plugins/displays/pose/pose_display_selection_handler.cpp
   src/rviz_default_plugins/displays/tf/frame_info.cpp
   src/rviz_default_plugins/displays/tf/frame_selection_handler.cpp
   src/rviz_default_plugins/displays/tf/tf_display.cpp
