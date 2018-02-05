@@ -29,6 +29,8 @@
 
 #include "pose_display.hpp"
 
+#include <memory>
+
 #ifdef _WIN32
 #pragma warning(push)
 #pragma warning(disable : 4996)
@@ -64,11 +66,16 @@ class PoseDisplaySelectionHandler : public rviz_common::selection::SelectionHand
 {
 public:
   PoseDisplaySelectionHandler(PoseDisplay * display, rviz_common::DisplayContext * context)
-  : SelectionHandler(context), display_(display)
+  : SelectionHandler(context),
+    display_(display),
+    frame_property_(nullptr),
+    position_property_(nullptr),
+    orientation_property_(nullptr)
   {}
 
   void createProperties(
-    const rviz_common::selection::Picked & obj, rviz_common::properties::Property * parent_property)
+    const rviz_common::selection::Picked & obj,
+    rviz_common::properties::Property * parent_property) override
   {
     (void) obj;
     rviz_common::properties::Property * cat = new rviz_common::properties::Property(
@@ -87,7 +94,8 @@ public:
     orientation_property_->setReadOnly(true);
   }
 
-  void getAABBs(const rviz_common::selection::Picked & obj, rviz_common::selection::V_AABB & aabbs)
+  void getAABBs(
+    const rviz_common::selection::Picked & obj, rviz_common::selection::V_AABB & aabbs) override
   {
     (void) obj;
     if (display_->pose_valid_) {
@@ -128,7 +136,7 @@ private:
 };
 
 PoseDisplay::PoseDisplay()
-: pose_valid_(false)
+: arrow_(nullptr), axes_(nullptr), pose_valid_(false)
 {
   shape_property_ = new rviz_common::properties::EnumProperty(
     "Shape", "Arrow", "Shape to display the pose as.",
@@ -150,7 +158,6 @@ PoseDisplay::PoseDisplay()
     "Shaft Length", 1, "Length of the arrow's shaft, in meters.",
     this, SLOT(updateArrowGeometry()));
 
-  // aleeper: default changed from 0.1 to match change in arrow.cpp
   shaft_radius_property_ = new rviz_common::properties::FloatProperty(
     "Shaft Radius", 0.05f, "Radius of the arrow's shaft, in meters.",
     this, SLOT(updateArrowGeometry()));
@@ -159,7 +166,6 @@ PoseDisplay::PoseDisplay()
     "Head Length", 0.3f, "Length of the arrow's head, in meters.",
     this, SLOT(updateArrowGeometry()));
 
-  // aleeper: default changed from 0.2 to match change in arrow.cpp
   head_radius_property_ = new rviz_common::properties::FloatProperty(
     "Head Radius", 0.1f, "Radius of the arrow's head, in meters.",
     this, SLOT(updateArrowGeometry()));
@@ -177,7 +183,7 @@ void PoseDisplay::onInitialize()
 {
   RTDClass::onInitialize();
 
-  arrow_ = new rviz_rendering::Arrow(scene_manager_, scene_node_,
+  arrow_ = std::make_unique<rviz_rendering::Arrow>(scene_manager_, scene_node_,
       shaft_length_property_->getFloat(),
       shaft_radius_property_->getFloat(),
       head_length_property_->getFloat(),
@@ -186,25 +192,19 @@ void PoseDisplay::onInitialize()
   // TODO(anonymous): is it safe to change Arrow to point in +X direction?
   arrow_->setOrientation(Ogre::Quaternion(Ogre::Degree(-90), Ogre::Vector3::UNIT_Y));
 
-  axes_ = new rviz_rendering::Axes(scene_manager_, scene_node_,
+  axes_ = std::make_unique<rviz_rendering::Axes>(scene_manager_, scene_node_,
       axes_length_property_->getFloat(),
       axes_radius_property_->getFloat());
 
   updateShapeChoice();
   updateColorAndAlpha();
 
-  coll_handler_.reset(new PoseDisplaySelectionHandler(this, context_));
+  coll_handler_ = std::make_shared<PoseDisplaySelectionHandler>(this, context_);
   coll_handler_->addTrackedObjects(arrow_->getSceneNode());
   coll_handler_->addTrackedObjects(axes_->getSceneNode());
 }
 
-PoseDisplay::~PoseDisplay()
-{
-  if (initialized()) {
-    delete arrow_;
-    delete axes_;
-  }
-}
+PoseDisplay::~PoseDisplay() = default;
 
 void PoseDisplay::onEnable()
 {

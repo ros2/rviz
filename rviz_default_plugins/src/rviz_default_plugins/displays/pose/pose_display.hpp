@@ -78,13 +78,13 @@ public:
 
   PoseDisplay();
 
-  virtual ~PoseDisplay();
-  virtual void onInitialize();
-  virtual void reset();
+  ~PoseDisplay() override;
+  void onInitialize() override;
+  void reset() override;
 
 protected:
   /** @brief Overridden from RosTopicDisplay to get arrow/axes visibility correct. */
-  virtual void onEnable();
+  void onEnable() override;
 
 private Q_SLOTS:
   void updateShapeVisibility();
@@ -94,12 +94,10 @@ private Q_SLOTS:
   void updateArrowGeometry();
 
 private:
-  void clear();
+  void processMessage(geometry_msgs::msg::PoseStamped::ConstSharedPtr message) override;
 
-  virtual void processMessage(geometry_msgs::msg::PoseStamped::ConstSharedPtr message);
-
-  rviz_rendering::Arrow * arrow_;
-  rviz_rendering::Axes * axes_;
+  std::unique_ptr<rviz_rendering::Arrow> arrow_;
+  std::unique_ptr<rviz_rendering::Axes> axes_;
   bool pose_valid_;
   PoseDisplaySelectionHandlerPtr coll_handler_;
 
