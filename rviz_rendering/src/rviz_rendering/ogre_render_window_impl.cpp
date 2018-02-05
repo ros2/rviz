@@ -109,6 +109,8 @@ RenderWindowImpl::RenderWindowImpl(QWindow * parent)
 
 RenderWindowImpl::~RenderWindowImpl()
 {
+  Ogre::Root::getSingletonPtr()->detachRenderTarget(ogre_render_window_);
+  ogre_render_window_->destroy();
   // enableStereo(false);  // free stereo resources
 }
 
