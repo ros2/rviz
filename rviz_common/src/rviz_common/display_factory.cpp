@@ -54,7 +54,7 @@ static Display * newDisplayGroup()
 }
 
 // TODO(wjwwood): remove this block (within if-endif) once plugins moved to default plugins package
-#if 1
+#if 0
 
 static Display * newRobotModelDisplay()
 {
@@ -67,7 +67,7 @@ DisplayFactory::DisplayFactory()
 : PluginlibFactory<Display>("rviz_common", "rviz_common::Display")
 {
   addBuiltInClass("rviz", "Group", "A container for Displays", &newDisplayGroup);
-  addBuiltInClass("rviz", "RobotModel", "robot model display", &newRobotModelDisplay);
+  // addBuiltInClass("rviz", "RobotModel", "robot model display", &newRobotModelDisplay);
 }
 
 Display * DisplayFactory::makeRaw(const QString & class_id, QString * error_return)
