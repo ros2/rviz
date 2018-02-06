@@ -69,8 +69,16 @@ namespace rviz_rendering
 Ogre::GLPlugin * RenderSystem::render_system_gl_plugin_ = nullptr;
 RenderSystem * RenderSystem::instance_ = nullptr;
 int RenderSystem::force_gl_version_ = 0;
-bool RenderSystem::use_anti_aliasing_ = true;
 bool RenderSystem::force_no_stereo_ = false;
+
+// Disable anti aliasing on Windows for now,
+// since it breaks rendering as soon as two render windows are visible
+// TODO(greimela): Investigate why anti aliasing breaks rendering on Windows
+#ifndef _WIN32
+bool RenderSystem::use_anti_aliasing_ = true;
+#else
+bool RenderSystem::use_anti_aliasing_ = false;
+#endif
 
 RenderSystem *
 RenderSystem::get()
