@@ -106,9 +106,7 @@ void PoseDisplay::onInitialize()
       shaft_radius_property_->getFloat(),
       head_length_property_->getFloat(),
       head_radius_property_->getFloat());
-  // Arrow points in -Z direction, so rotate the orientation before display.
-  // TODO(anonymous): is it safe to change Arrow to point in +X direction?
-  arrow_->setOrientation(Ogre::Quaternion(Ogre::Degree(-90), Ogre::Vector3::UNIT_Y));
+  arrow_->setDirection(Ogre::Vector3::UNIT_X);
 
   axes_ = std::make_unique<rviz_rendering::Axes>(scene_manager_, scene_node_,
       axes_length_property_->getFloat(),
