@@ -26,13 +26,20 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+# pragma GCC diagnostic ignored "-Wpedantic"
+#endif
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 #include <OgreManualObject.h>
 #include <OgreBillboardSet.h>
 #include <OgreMaterialManager.h>
 #include <OgreTechnique.h>
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
 
 #include <string>
 
@@ -147,5 +154,13 @@ void PolygonDisplay::enableBlending(const Ogre::ColourValue & color)
 }  // namespace displays
 }  // namespace rviz_default_plugins
 
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+# pragma GCC diagnostic ignored "-Wpedantic"
+#endif
 #include <pluginlib/class_list_macros.hpp>  // NOLINT
 PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::PolygonDisplay, rviz_common::Display)
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
