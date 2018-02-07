@@ -31,7 +31,7 @@
 #include "rviz_common/render_panel.hpp"
 
 #include <memory>
-#include <sstream>
+#include <string>
 
 #include <OgreCamera.h>
 #include <OgreSceneManager.h>
@@ -104,12 +104,12 @@ void RenderPanel::initialize(DisplayContext * context, bool use_main_scene)
   if (use_main_scene) {
     rviz_rendering::RenderWindowOgreAdapter::setSceneManager(
       render_window_, context_->getSceneManager());
-    std::stringstream ss;
+    std::string camera_name;
     static int count = 0;
-    ss << "RenderPanelCamera" << count++;
-    auto default_camera_ = context_->getSceneManager()->createCamera(ss.str());
+    camera_name = "RenderPanelCamera" + std::to_string(count++);
+    auto default_camera_ = context_->getSceneManager()->createCamera(camera_name);
     default_camera_->setNearClipDistance(0.01f);
-    default_camera_->setPosition(Ogre::Vector3(0, 10, 15));
+    default_camera_->setPosition(default_camera_pose_);
     default_camera_->lookAt(Ogre::Vector3(0, 0, 0));
 
     rviz_rendering::RenderWindowOgreAdapter::setOgreCamera(render_window_, default_camera_);
@@ -287,6 +287,8 @@ RenderPanel::sizeHint() const
 {
   return QSize(320, 240);
 }
+
+const Ogre::Vector3 RenderPanel::default_camera_pose_ = Ogre::Vector3(999999, 999999, 999999);
 
 #if 0
 void RenderPanel::showContextMenu(std::shared_ptr<QMenu> menu)
