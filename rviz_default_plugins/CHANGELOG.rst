@@ -1,0 +1,292 @@
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Changelog for package rviz_default_plugins
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Forthcoming
+-----------
+* Numerous changes to support Windows.
+* Added camera display.
+* Moved to ogre 1.10.11.
+* (Re)migrated TF display.
+* Added image display.
+* Moved point cloud displays to rviz_default_plugins.
+* Fixed rendering of point clouds where valid points were not rendered.
+* Added polygon display.
+* Disable robot model until it is properly ported.
+* Contributors: William Woodall
+
+2.0.0 (2017-12-08)
+------------------
+* Update rviz2 packages for bloom (`#139 <https://github.com/ros2/rviz/issues/139>`_)
+  * Drop the version number to match rviz2 for bloom.
+  * update package.xml’s, versions, and disable rviz good
+  * restore version
+  * Add opengl dependency for ogre.
+  * add license info and website for vendors
+  * Add libxrandr dependency.
+  * Fix xml tag structure.
+  * missing newline EOF
+* fixup dependencies
+* Use pluginlib to reenable displays panel and load basic plugins (`#123 <https://github.com/ros2/rviz/issues/123>`_)
+  * move the source files for the move_tool plugin
+  * make tool.hpp public
+  * make rviz_common/render_panel.hpp public
+  * make load_resource.hpp public
+  * make view_manager.hpp public
+  * use PIMPL pattern in view_manager
+  This was done to avoid needing to make the header
+  pluginlib_factory.hpp public in rviz_common.
+  * move orbit_view_controller plugin files
+  * remove temporary move_tool plugin files in rviz_common
+  * enable logging via the ROS logging infrastructure
+  * reenable display panel and migrate a few plugins
+  * move default rviz file
+  * fixups
+  * fixups from building on Linux in Release mode
+  * add and utilize vendor package for assimp
+  * update readme to get pluginlib and tinyxml2_vendor
+  * uncrustify
+  * remove mention of assimp from readme, since vendored
+  * cpplint
+  * use external resource_retriever package
+  * fixups
+  * remove references to boost
+  * fix loading of default rviz configuration
+  * add and use a vendor package for yaml-cpp
+  * build assimp if version less than 4.0.0
+  This is to make sure we have valid CMake infrastructure from assimp.
+  * Fix visibility and warnings of rviz_rendering on Windows
+  * fix includes
+  * fixup linking and compiling for rviz_common
+  * disable automoc and tests for rviz_common (temporary)
+  This commit should be removed later.
+  I had to do it for now to try and make progress on Windows.
+  * Fix wrong rotation in OrbitViewController (`#129 <https://github.com/ros2/rviz/issues/129>`_)
+  * fix build on macOS (probably Linux too)
+  * disable Windows for now (with optional override)
+  * cmake fixups after merging `#127 <https://github.com/ros2/rviz/issues/127>`_
+  * revert fix in `#127 <https://github.com/ros2/rviz/issues/127>`_ because it doesn’t work on my mac
+  * fix finding ogre on Linux
+  * fixup package.xml files
+  License question was resolved in https://github.com/ros-visualization/rviz/issues/1147.
+  * fix loading of “local” displays and errors on start
+  * fixup typo in package.xml
+  * put default plugins in their own folder
+  * migrate grid display plugin to rviz_default_plugins
+  * fixups
+  * remove more temporary code and more fixups
+* more ros2 setup
+* Contributors: Steven! Ragnarök, William Woodall
+
+1.12.11 (2017-08-02)
+--------------------
+
+1.12.10 (2017-06-05 17:37)
+--------------------------
+
+1.12.9 (2017-06-05 14:23)
+-------------------------
+
+1.12.8 (2017-05-07)
+-------------------
+
+1.12.7 (2017-05-05)
+-------------------
+
+1.12.6 (2017-05-02)
+-------------------
+
+1.12.5 (2017-05-01)
+-------------------
+
+1.12.4 (2016-10-27)
+-------------------
+
+1.12.3 (2016-10-19)
+-------------------
+
+1.12.2 (2016-10-18)
+-------------------
+
+1.12.1 (2016-04-20)
+-------------------
+
+1.12.0 (2016-04-11)
+-------------------
+
+1.11.14 (2016-04-03)
+--------------------
+
+1.11.13 (2016-03-23)
+--------------------
+
+1.11.12 (2016-03-22 19:58)
+--------------------------
+
+1.11.11 (2016-03-22 18:16)
+--------------------------
+
+1.11.10 (2015-10-13)
+--------------------
+
+1.11.9 (2015-09-21)
+-------------------
+
+1.11.8 (2015-08-05)
+-------------------
+
+1.11.7 (2015-03-02)
+-------------------
+
+1.11.6 (2015-02-13)
+-------------------
+
+1.11.5 (2015-02-11)
+-------------------
+
+1.11.4 (2014-10-30)
+-------------------
+
+1.11.3 (2014-06-26)
+-------------------
+
+1.11.2 (2014-05-13)
+-------------------
+
+1.11.1 (2014-05-01)
+-------------------
+
+1.11.0 (2014-03-04 21:40)
+-------------------------
+
+1.10.14 (2014-03-04 21:35)
+--------------------------
+
+1.10.13 (2014-02-26)
+--------------------
+
+1.10.12 (2014-02-25)
+--------------------
+
+1.10.11 (2014-01-26)
+--------------------
+
+1.10.10 (2013-12-22)
+--------------------
+
+1.10.9 (2013-10-15)
+-------------------
+
+1.10.7 (2013-09-16)
+-------------------
+
+1.10.6 (2013-09-03)
+-------------------
+
+1.10.5 (2013-08-28 03:50)
+-------------------------
+
+1.10.4 (2013-08-28 03:13)
+-------------------------
+
+1.10.3 (2013-08-14)
+-------------------
+
+1.10.2 (2013-07-26)
+-------------------
+
+1.10.1 (2013-07-16)
+-------------------
+
+1.10.0 (2013-06-27)
+-------------------
+
+1.9.30 (2013-05-30)
+-------------------
+
+1.9.29 (2013-04-15)
+-------------------
+
+1.9.27 (2013-03-15 13:23)
+-------------------------
+
+1.9.26 (2013-03-15 10:38)
+-------------------------
+
+1.9.25 (2013-03-07)
+-------------------
+
+1.9.24 (2013-02-16)
+-------------------
+
+1.9.23 (2013-02-13)
+-------------------
+
+1.9.22 (2013-02-12 16:30)
+-------------------------
+
+1.9.21 (2013-02-12 14:00)
+-------------------------
+
+1.9.20 (2013-01-21)
+-------------------
+
+1.9.19 (2013-01-13)
+-------------------
+
+1.9.18 (2012-12-18)
+-------------------
+
+1.9.17 (2012-12-14)
+-------------------
+
+1.9.16 (2012-11-14 15:49)
+-------------------------
+
+1.9.15 (2012-11-13)
+-------------------
+
+1.9.14 (2012-11-14 02:20)
+-------------------------
+
+1.9.13 (2012-11-14 00:58)
+-------------------------
+
+1.9.12 (2012-11-06)
+-------------------
+
+1.9.11 (2012-11-02)
+-------------------
+
+1.9.10 (2012-11-01 11:10)
+-------------------------
+
+1.9.9 (2012-11-01 11:01)
+------------------------
+
+1.9.8 (2012-11-01 10:52)
+------------------------
+
+1.9.7 (2012-11-01 10:40)
+------------------------
+
+1.9.6 (2012-10-31)
+------------------
+
+1.9.5 (2012-10-19)
+------------------
+
+1.9.4 (2012-10-15 15:00)
+------------------------
+
+1.9.3 (2012-10-15 10:41)
+------------------------
+
+1.9.2 (2012-10-12 13:38)
+------------------------
+
+1.9.1 (2012-10-12 11:57)
+------------------------
+
+1.9.0 (2012-10-10)
+------------------
