@@ -30,11 +30,15 @@
 #ifndef RVIZ_RENDERING__MESH_LOADER_HPP_
 #define RVIZ_RENDERING__MESH_LOADER_HPP_
 
-#include <OgreMesh.h>
 #include <string>
+
+#include <OgreMesh.h>
+
+#include "rviz_rendering/visibility_control.hpp"
 
 namespace rviz
 {
+RVIZ_RENDERING_PUBLIC
 Ogre::MeshPtr loadMeshFromResource(const std::string & resource_path);
 
 }  // namespace rviz

@@ -31,7 +31,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include "rviz_rendering/stl_loader.hpp"
+#include "stl_loader.hpp"
 
 #include <string>
 #include <vector>

@@ -78,8 +78,8 @@
 #endif
 
 #include "resource_retriever/retriever.h"
-#include "rviz_rendering/stl_loader.hpp"
 
+#include "stl_loader.hpp"
 #include "rviz_rendering/logging.hpp"
 
 #define ROS_PACKAGE_NAME "rviz_rendering"
