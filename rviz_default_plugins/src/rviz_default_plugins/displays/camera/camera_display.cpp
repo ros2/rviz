@@ -45,7 +45,7 @@
 #include <OgreTechnique.h>
 #include <OgreCamera.h>
 
-#include "rviz_rendering/axes.hpp"
+#include "rviz_rendering/objects/axes.hpp"
 #include "rviz_rendering/render_window.hpp"
 
 #include "rviz_common/bit_allocator.hpp"

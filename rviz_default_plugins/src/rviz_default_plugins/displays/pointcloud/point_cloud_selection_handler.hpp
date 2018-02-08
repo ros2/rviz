@@ -39,7 +39,7 @@
 
 # include "rviz_common/selection/selection_manager.hpp"
 # include "rviz_common/properties/color_property.hpp"
-# include "rviz_rendering/point_cloud.hpp"
+# include "rviz_rendering/objects/point_cloud.hpp"
 # include "rviz_common/selection/forwards.hpp"
 #endif
 

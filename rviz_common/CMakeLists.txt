@@ -30,7 +30,6 @@ find_package(Qt5 REQUIRED COMPONENTS Widgets)
 find_package(geometry_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(resource_retriever REQUIRED)
 find_package(rviz_assimp_vendor REQUIRED)
 find_package(rviz_rendering REQUIRED)
 find_package(rviz_yaml_cpp_vendor REQUIRED)
@@ -121,16 +120,6 @@ set(rviz_common_headers_to_moc
   include/rviz_common/ros_topic_display.hpp
 )
 
-# TODO(wjwwood): remove this later
-list(APPEND rviz_common_headers_to_moc
-  src/rviz_common/temp/default_plugins/displays/robot_model_display.hpp)
-list(APPEND rviz_common_headers_to_moc
-  src/rviz_common/temp/robot/robot.hpp)
-list(APPEND rviz_common_headers_to_moc
-  src/rviz_common/temp/robot/robot_link.hpp)
-list(APPEND rviz_common_headers_to_moc
-  src/rviz_common/temp/robot/robot_joint.hpp)
-
 set(rviz_common_source_files
   ${ENV_CONFIG_CPP}
   src/rviz_common/add_display_dialog.cpp
@@ -209,22 +198,6 @@ set(rviz_common_source_files
   src/rviz_common/yaml_config_writer.cpp
 )
 
-# TODO(wjwwood): remove this later
-list(APPEND rviz_common_source_files
-  src/rviz_common/temp/default_plugins/displays/robot_model_display.cpp)
-list(APPEND rviz_common_headers_to_moc
-  src/rviz_common/temp/robot/robot.cpp)
-list(APPEND rviz_common_headers_to_moc
-  src/rviz_common/temp/robot/robot_link.cpp)
-list(APPEND rviz_common_headers_to_moc
-  src/rviz_common/temp/robot/robot_joint.cpp)
-list(APPEND rviz_common_headers_to_moc
-  src/rviz_common/temp/robot/tf_link_updater.cpp)
-list(APPEND rviz_common_headers_to_moc
-  src/rviz_common/temp/mesh_loader.cpp)
-list(APPEND rviz_common_headers_to_moc
-  src/rviz_common/temp/stl_loader.cpp)
-
 add_library(rviz_common SHARED
   ${rviz_common_headers_to_moc}
   ${rviz_common_source_files}
@@ -242,7 +215,6 @@ target_link_libraries(rviz_common
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
   ${pluginlib_LIBRARIES}
-  resource_retriever::resource_retriever
   rviz_rendering::rviz_rendering
   Qt5::Widgets
   ${TinyXML_LIBRARIES}
@@ -272,7 +244,6 @@ ament_export_dependencies(
   geometry_msgs
   pluginlib
   rclcpp
-  resource_retriever
   rviz_yaml_cpp_vendor
   sensor_msgs
   std_msgs

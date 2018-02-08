@@ -34,9 +34,9 @@
 
 #include <OgreSceneNode.h>
 
-#include "rviz_rendering/arrow.hpp"
-#include "rviz_rendering/axes.hpp"
-#include "rviz_rendering/movable_text.hpp"
+#include "rviz_rendering/objects/arrow.hpp"
+#include "rviz_rendering/objects/axes.hpp"
+#include "rviz_rendering/objects/movable_text.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/properties/quaternion_property.hpp"

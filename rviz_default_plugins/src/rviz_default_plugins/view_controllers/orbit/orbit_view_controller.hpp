@@ -39,7 +39,7 @@
 #include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
-#include "rviz_rendering/shape.hpp"
+#include "rviz_rendering/objects/shape.hpp"
 
 namespace rviz_default_plugins
 {

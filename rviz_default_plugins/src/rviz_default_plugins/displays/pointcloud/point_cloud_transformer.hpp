@@ -40,7 +40,7 @@
 
 #include "sensor_msgs/msg/point_cloud2.hpp"
 
-#include "rviz_rendering/point_cloud.hpp"
+#include "rviz_rendering/objects/point_cloud.hpp"
 #endif
 
 namespace Ogre
