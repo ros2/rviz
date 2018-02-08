@@ -81,6 +81,13 @@ class VectorProperty;
 }  // namespace properties
 
 class DisplayContext;
+}  // namespace rviz_common
+
+namespace rviz_default_plugins
+{
+namespace robot
+{
+
 class Robot;
 class RobotLinkSelectionHandler;
 class RobotJoint;
@@ -106,14 +113,14 @@ public:
   const std::string & getName() const {return name_;}
   const std::string & getParentLinkName() const {return parent_link_name_;}
   const std::string & getChildLinkName() const {return child_link_name_;}
-  const properties::Property * getJointProperty() const {return joint_property_;}
-  properties::Property * getJointProperty() {return joint_property_;}
+  const rviz_common::properties::Property * getJointProperty() const {return joint_property_;}
+  rviz_common::properties::Property * getJointProperty() {return joint_property_;}
   RobotJoint * getParentJoint();
   void hideSubProperties(bool hide);
 
   // Remove joint_property_ from its old parent and add to new_parent.
   // If new_parent==NULL then leav unparented.
-  void setParentProperty(properties::Property * new_parent);
+  void setParentProperty(rviz_common::properties::Property * new_parent);
 
   Ogre::Vector3 getPosition();
   Ogre::Quaternion getOrientation();
@@ -170,17 +177,17 @@ protected:
   std::string child_link_name_;
 
   // properties
-  properties::Property * joint_property_;
-  properties::Property * details_;
-  properties::VectorProperty * position_property_;
-  properties::QuaternionProperty * orientation_property_;
-  properties::Property * axes_property_;
+  rviz_common::properties::Property * joint_property_;
+  rviz_common::properties::Property * details_;
+  rviz_common::properties::VectorProperty * position_property_;
+  rviz_common::properties::QuaternionProperty * orientation_property_;
+  rviz_common::properties::Property * axes_property_;
   // The joint axis if any, as opposed to the frame in which the joint exists above
-  properties::VectorProperty * axis_property_;
-  properties::Property * show_axis_property_;
-  properties::StringProperty * type_property_;
-  properties::FloatProperty * lower_limit_property_;
-  properties::FloatProperty * upper_limit_property_;
+  rviz_common::properties::VectorProperty * axis_property_;
+  rviz_common::properties::Property * show_axis_property_;
+  rviz_common::properties::StringProperty * type_property_;
+  rviz_common::properties::FloatProperty * lower_limit_property_;
+  rviz_common::properties::FloatProperty * upper_limit_property_;
 
 private:
   Ogre::Vector3 joint_origin_pos_;
@@ -193,6 +200,7 @@ private:
   rviz_rendering::Arrow * axis_;
 };
 
-}  // namespace rviz_common
+}  // namespace robot
+}  // namespace rviz_default_plugins
 
 #endif  // RVIZ_DEFAULT_PLUGINS__ROBOT__ROBOT_JOINT_HPP_

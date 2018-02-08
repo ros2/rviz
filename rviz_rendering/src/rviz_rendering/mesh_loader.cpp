@@ -84,7 +84,7 @@
 
 #define ROS_PACKAGE_NAME "rviz_rendering"
 
-namespace rviz
+namespace rviz_rendering
 {
 
 class ResourceIOStream : public Assimp::IOStream
@@ -670,7 +670,7 @@ Ogre::MeshPtr loadMeshFromResource(const std::string & resource_path)
         return Ogre::MeshPtr();
       }
 
-      ogre_tools::STLLoader loader;
+      STLLoader loader;
       if (!loader.load(res.data.get(), res.size, resource_path)) {
         fprintf(stderr, "Failed to load file [%s]", resource_path.c_str());
         return Ogre::MeshPtr();
@@ -696,4 +696,4 @@ Ogre::MeshPtr loadMeshFromResource(const std::string & resource_path)
   return Ogre::MeshPtr();
 }
 
-}  // namespace rviz
+}  // namespace rviz_rendering

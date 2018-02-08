@@ -57,14 +57,17 @@
 using rviz_rendering::Axes;
 using rviz_rendering::Arrow;
 
-namespace rviz_common
+namespace rviz_default_plugins
+{
+namespace robot
 {
 
-using properties::Property;
-using properties::VectorProperty;
-using properties::QuaternionProperty;
-using properties::StringProperty;
-using properties::FloatProperty;
+
+using rviz_common::properties::Property;
+using rviz_common::properties::VectorProperty;
+using rviz_common::properties::QuaternionProperty;
+using rviz_common::properties::StringProperty;
+using rviz_common::properties::FloatProperty;
 
 RobotJoint::RobotJoint(Robot * robot, const urdf::JointConstSharedPtr & joint)
 : robot_(robot),
@@ -83,7 +86,7 @@ RobotJoint::RobotJoint(Robot * robot, const urdf::JointConstSharedPtr & joint)
     NULL,
     SLOT(updateChildVisibility()),
     this);
-  joint_property_->setIcon(loadPixmap("package://rviz/icons/classes/RobotJoint.png") );
+  joint_property_->setIcon(rviz_common::loadPixmap("package://rviz/icons/classes/RobotJoint.png") );
 
   details_ = new Property("Details", QVariant(), "", NULL);
 
@@ -521,4 +524,5 @@ void RobotJoint::expandDetails(bool expand)
   }
 }
 
-}  // namespace rviz_common
+}  // namespace robot
+}  // namespace rviz_default_plugins

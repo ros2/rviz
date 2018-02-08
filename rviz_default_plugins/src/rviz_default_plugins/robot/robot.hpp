@@ -67,18 +67,25 @@ class TransformListener;
 namespace rviz_common
 {
 
+class DisplayContext;
+
 namespace properties
 {
 class Property;
 class EnumProperty;
 class BoolProperty;
-}
+}  // namespace properties
+}  // namespace rviz_common
+
+namespace rviz_default_plugins
+{
+namespace robot
+{
 
 class Robot;
 class RobotLink;
 class RobotJoint;
 
-class DisplayContext;
 /**
  * \class Robot
  *
@@ -92,8 +99,8 @@ class Robot : public QObject
 
 public:
   Robot(
-    Ogre::SceneNode * root_node, DisplayContext * context, const std::string & name,
-    properties::Property * parent_property);
+    Ogre::SceneNode * root_node, rviz_common::DisplayContext * context, const std::string & name,
+    rviz_common::properties::Property * parent_property);
   virtual ~Robot();
 
   /**
@@ -163,7 +170,7 @@ public:
   Ogre::SceneNode * getCollisionNode() {return root_collision_node_;}
   Ogre::SceneNode * getOtherNode() {return root_other_node_;}
   Ogre::SceneManager * getSceneManager() {return scene_manager_;}
-  DisplayContext * getDisplayContext() {return context_;}
+  rviz_common::DisplayContext * getDisplayContext() {return context_;}
 
   virtual void setPosition(const Ogre::Vector3 & position);
   virtual void setOrientation(const Ogre::Quaternion & orientation);
@@ -214,7 +221,7 @@ public:
   void setLinkTreeStyle(LinkTreeStyle style);
 
   /** can be used to change the name, reparent, or add extra properties to the list of links */
-  properties::Property * getLinkTreeProperty()
+  rviz_common::properties::Property * getLinkTreeProperty()
   {
     return link_tree_;
   }
@@ -242,8 +249,12 @@ protected:
   void useDetailProperty(bool use_detail);
 
   /** used by setLinkTreeStyle() to recursively build link & joint tree. */
-  void addLinkToLinkTree(LinkTreeStyle style, properties::Property * parent, RobotLink * link);
-  void addJointToLinkTree(LinkTreeStyle style, properties::Property * parent, RobotJoint * joint);
+  void addLinkToLinkTree(
+    LinkTreeStyle style, rviz_common::properties::Property * parent,
+    RobotLink * link);
+  void addJointToLinkTree(
+    LinkTreeStyle style, rviz_common::properties::Property * parent,
+    RobotJoint * joint);
 
   // set the value of the EnableAllLinks property without affecting child links/joints.
   void setEnableAllLinksCheckbox(QVariant val);
@@ -272,13 +283,13 @@ protected:
   bool visual_visible_;                         ///< Should we show the visual representation?
   bool collision_visible_;                      ///< Should we show the collision representation?
 
-  DisplayContext * context_;
-  properties::Property * link_tree_;
-  properties::EnumProperty * link_tree_style_;
-  properties::BoolProperty * expand_tree_;
-  properties::BoolProperty * expand_link_details_;
-  properties::BoolProperty * expand_joint_details_;
-  properties::BoolProperty * enable_all_links_;
+  rviz_common::DisplayContext * context_;
+  rviz_common::properties::Property * link_tree_;
+  rviz_common::properties::EnumProperty * link_tree_style_;
+  rviz_common::properties::BoolProperty * expand_tree_;
+  rviz_common::properties::BoolProperty * expand_link_details_;
+  rviz_common::properties::BoolProperty * expand_joint_details_;
+  rviz_common::properties::BoolProperty * enable_all_links_;
   std::map<LinkTreeStyle, std::string> style_name_map_;
 
   bool doing_set_checkbox_;   // used only inside setEnableAllLinksCheckbox()
@@ -292,6 +303,7 @@ protected:
   float alpha_;
 };
 
-}  // namespace rviz_common
+}  // namespace robot
+}  // namespace rviz_default_plugins
 
 #endif  // RVIZ_DEFAULT_PLUGINS__ROBOT__ROBOT_HPP_

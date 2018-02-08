@@ -71,15 +71,16 @@
 #include "rviz_rendering/objects/shape.hpp"
 #include "rviz_rendering/objects/axes.hpp"
 
-namespace rviz_common
+namespace rviz_default_plugins
 {
-
+namespace robot
+{
 using rviz_common::properties::BoolProperty;
 using rviz_common::properties::EnumProperty;
 using rviz_common::properties::Property;
 
 Robot::Robot(
-  Ogre::SceneNode * root_node, DisplayContext * context, const std::string & name,
+  Ogre::SceneNode * root_node, rviz_common::DisplayContext * context, const std::string & name,
   Property * parent_property)
 : scene_manager_(context->getSceneManager() ),
   visible_(true),
@@ -817,4 +818,5 @@ const Ogre::Quaternion & Robot::getOrientation()
   return root_visual_node_->getOrientation();
 }
 
-}  // namespace rviz_common
+}  // namespace robot
+}  // namespace rviz_default_plugins

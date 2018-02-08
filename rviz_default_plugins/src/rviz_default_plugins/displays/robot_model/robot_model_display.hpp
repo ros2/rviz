@@ -50,25 +50,31 @@ class Axes;
 
 namespace rviz_common
 {
-
 namespace properties
 {
 class FloatProperty;
 class Property;
 class StringProperty;
+}  // namespace properties
+}  // namespace rviz_common
+
+namespace rviz_default_plugins
+{
+
+namespace robot
+{
+class Robot;
 }
 
-// namespace robot
-// {
-class Robot;
-// }
+namespace displays
+{
 
 /**
  * \class RobotModelDisplay
  * \brief Uses a robot xml description to display the pieces of a robot at the transforms
  * broadcast by rosTF
  */
-class RobotModelDisplay : public Display
+class RobotModelDisplay : public rviz_common::Display
 {
   Q_OBJECT
 
@@ -101,7 +107,7 @@ protected:
   virtual void onEnable();
   virtual void onDisable();
 
-  Robot * robot_;                 ///< Handles actually drawing the robot
+  robot::Robot * robot_;                 ///< Handles actually drawing the robot
 
   bool has_new_transforms_;      ///< Callback sets this to tell our update function
   ///< it needs to update the transforms
@@ -110,14 +116,14 @@ protected:
 
   std::string robot_description_;
 
-  properties::Property * visual_enabled_property_;
-  properties::Property * collision_enabled_property_;
-  properties::FloatProperty * update_rate_property_;
-  properties::StringProperty * robot_description_property_;
-  properties::FloatProperty * alpha_property_;
-  properties::StringProperty * tf_prefix_property_;
+  rviz_common::properties::Property * visual_enabled_property_;
+  rviz_common::properties::Property * collision_enabled_property_;
+  rviz_common::properties::FloatProperty * update_rate_property_;
+  rviz_common::properties::StringProperty * robot_description_property_;
+  rviz_common::properties::FloatProperty * alpha_property_;
+  rviz_common::properties::StringProperty * tf_prefix_property_;
 };
 
-}  // namespace rviz_common
-
+}  // namespace displays
+}  // namespace rviz_default_plugins
 #endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__ROBOT_MODEL__ROBOT_MODEL_DISPLAY_HPP_

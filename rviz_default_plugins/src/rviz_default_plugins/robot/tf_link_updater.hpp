@@ -42,8 +42,13 @@ class Transformer;
 
 namespace rviz_common
 {
-
 class FrameManager;
+}
+
+namespace rviz_default_plugins
+{
+namespace robot
+{
 
 class TFLinkUpdater : public LinkUpdater
 {
@@ -52,7 +57,7 @@ public:
       const std::string &)> StatusCallback;
 
   TFLinkUpdater(
-    FrameManager * frame_manager,
+    rviz_common::FrameManager * frame_manager,
     const StatusCallback & status_cb = StatusCallback(),
     const std::string & tf_prefix = std::string());
   virtual bool getLinkTransforms(
@@ -65,11 +70,12 @@ public:
     const std::string & text) const;
 
 private:
-  FrameManager * frame_manager_;
+  rviz_common::FrameManager * frame_manager_;
   StatusCallback status_callback_;
   std::string tf_prefix_;
 };
 
-}  // namespace rviz_common
+}  // namespace robot
+}  // namespace rviz_default_plugins
 
 #endif  // RVIZ_DEFAULT_PLUGINS__ROBOT__TF_LINK_UPDATER_HPP_

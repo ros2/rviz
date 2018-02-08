@@ -57,13 +57,15 @@
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/properties/string_property.hpp"
 
-namespace rviz_common
+namespace rviz_default_plugins
+{
+namespace displays
 {
 
-using properties::FloatProperty;
-using properties::StatusProperty;
-using properties::StringProperty;
-using properties::Property;
+using rviz_common::properties::FloatProperty;
+using rviz_common::properties::StatusProperty;
+using rviz_common::properties::StringProperty;
+using rviz_common::properties::Property;
 
 void linkUpdaterStatusFunction(
   StatusProperty::Level level,
@@ -118,7 +120,7 @@ RobotModelDisplay::~RobotModelDisplay()
 
 void RobotModelDisplay::onInitialize()
 {
-  robot_ = new Robot(scene_node_, context_, "Robot: " + getName().toStdString(), this);
+  robot_ = new robot::Robot(scene_node_, context_, "Robot: " + getName().toStdString(), this);
 
   updateVisualVisible();
   updateCollisionVisible();
@@ -213,7 +215,7 @@ void RobotModelDisplay::load_urdf()
   setStatus(StatusProperty::Ok, "URDF", "URDF parsed OK");
   robot_->load(descr);
   using namespace std::placeholders;
-  robot_->update(TFLinkUpdater(context_->getFrameManager(),
+  robot_->update(robot::TFLinkUpdater(context_->getFrameManager(),
     std::bind(linkUpdaterStatusFunction, _1, _2, _3, this),
     tf_prefix_property_->getStdString() ));
 }
@@ -240,7 +242,7 @@ void RobotModelDisplay::update(float wall_dt, float ros_dt)
 
   if (has_new_transforms_ || update) {
     using namespace std::placeholders;
-    robot_->update(TFLinkUpdater(context_->getFrameManager(),
+    robot_->update(robot::TFLinkUpdater(context_->getFrameManager(),
       std::bind(linkUpdaterStatusFunction, _1, _2, _3, this),
       tf_prefix_property_->getStdString() ));
     context_->queueRender();
@@ -264,11 +266,12 @@ void RobotModelDisplay::clear()
 
 void RobotModelDisplay::reset()
 {
-  Display::reset();
+  rviz_common::Display::reset();
   has_new_transforms_ = true;
 }
 
-}  // namespace rviz_common
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
 // #include <pluginlib/class_list_macros.h>
 // PLUGINLIB_EXPORT_CLASS( rviz::RobotModelDisplay, rviz::Display )

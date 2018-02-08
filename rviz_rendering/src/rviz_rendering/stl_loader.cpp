@@ -49,7 +49,7 @@
 
 #include "rviz_rendering/logging.hpp"
 
-namespace ogre_tools
+namespace rviz_rendering
 {
 
 STLLoader::STLLoader()
@@ -288,4 +288,4 @@ Ogre::MeshPtr STLLoader::toMesh(const std::string & name)
   return mesh;
 }
 
-}  // namespace ogre_tools
+}  // namespace rviz_rendering

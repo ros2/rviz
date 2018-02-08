@@ -38,7 +38,7 @@
 #include <OgreVector3.h>
 #include <OgreMesh.h>
 
-namespace ogre_tools
+namespace rviz_rendering
 {
 
 class STLLoader
@@ -66,6 +66,6 @@ protected:
   bool load_binary(uint8_t * buffer);
 };
 
-}  // namespace ogre_tools
+}  // namespace rviz_rendering
 
 #endif  // RVIZ_RENDERING__STL_LOADER_HPP_

@@ -92,23 +92,25 @@
 using rviz_rendering::Axes;
 using rviz_rendering::Shape;
 
-namespace rviz_common
+namespace rviz_default_plugins
+{
+namespace robot
 {
 
-using properties::Property;
-using properties::FloatProperty;
-using properties::QuaternionProperty;
-using properties::VectorProperty;
+using rviz_common::properties::Property;
+using rviz_common::properties::FloatProperty;
+using rviz_common::properties::QuaternionProperty;
+using rviz_common::properties::VectorProperty;
 
-class RobotLinkSelectionHandler : public selection::SelectionHandler
+class RobotLinkSelectionHandler : public rviz_common::selection::SelectionHandler
 {
 public:
-  RobotLinkSelectionHandler(RobotLink * link, DisplayContext * context);
+  RobotLinkSelectionHandler(RobotLink * link, rviz_common::DisplayContext * context);
   virtual ~RobotLinkSelectionHandler();
 
   virtual void createProperties(
-    const selection::Picked & obj,
-    properties::Property * parent_property);
+    const rviz_common::selection::Picked & obj,
+    Property * parent_property);
   virtual void updateProperties();
 
   virtual void preRenderPass(uint32_t pass);
@@ -116,11 +118,13 @@ public:
 
 private:
   RobotLink * link_;
-  properties::VectorProperty * position_property_;
-  properties::QuaternionProperty * orientation_property_;
+  rviz_common::properties::VectorProperty * position_property_;
+  rviz_common::properties::QuaternionProperty * orientation_property_;
 };
 
-RobotLinkSelectionHandler::RobotLinkSelectionHandler(RobotLink * link, DisplayContext * context)
+RobotLinkSelectionHandler::RobotLinkSelectionHandler(
+  RobotLink * link,
+  rviz_common::DisplayContext * context)
 : SelectionHandler(context),
   link_(link)
 {
@@ -131,8 +135,8 @@ RobotLinkSelectionHandler::~RobotLinkSelectionHandler()
 }
 
 void RobotLinkSelectionHandler::createProperties(
-  const selection::Picked & obj,
-  properties::Property * parent_property)
+  const rviz_common::selection::Picked & obj,
+  rviz_common::properties::Property * parent_property)
 {
   (void) obj;
   Property * group = new Property("Link " + QString::fromStdString(link_->getName() ),
@@ -206,7 +210,7 @@ RobotLink::RobotLink(
   using_color_(false)
 {
   link_property_ = new Property(link->name.c_str(), true, "", NULL, SLOT(updateVisibility()), this);
-  link_property_->setIcon(loadPixmap("package://rviz/icons/classes/RobotLink.png") );
+  link_property_->setIcon(rviz_common::loadPixmap("package://rviz/icons/classes/RobotLink.png") );
 
   details_ = new Property("Details", QVariant(), "", NULL);
 
@@ -306,7 +310,8 @@ RobotLink::RobotLink(
   link_property_->setDescription(desc.str().c_str());
 
   if (!hasGeometry()) {
-    link_property_->setIcon(loadPixmap("package://rviz/icons/classes/RobotLinkNoGeom.png") );
+    link_property_->setIcon(rviz_common::loadPixmap(
+        "package://rviz/icons/classes/RobotLinkNoGeom.png") );
     alpha_property_->hide();
     link_property_->setValue(QVariant());
   }
@@ -583,7 +588,7 @@ void RobotLink::createEntityForGeometryElement(
         std::string model_name = mesh.filename;
 
         try {
-          rviz::loadMeshFromResource(model_name);
+          rviz_rendering::loadMeshFromResource(model_name);
           entity = scene_manager_->createEntity(ss.str(), model_name);
         } catch (Ogre::InvalidParametersException & e) {
           fprintf(stderr,
@@ -964,4 +969,5 @@ void RobotLink::expandDetails(bool expand)
   }
 }
 
-}  // namespace rviz_common
+}  // namespace robot
+}  // namespace rviz_default_plugins

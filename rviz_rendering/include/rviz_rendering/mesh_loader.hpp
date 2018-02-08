@@ -36,11 +36,11 @@
 
 #include "rviz_rendering/visibility_control.hpp"
 
-namespace rviz
+namespace rviz_rendering
 {
 RVIZ_RENDERING_PUBLIC
 Ogre::MeshPtr loadMeshFromResource(const std::string & resource_path);
 
-}  // namespace rviz
+}  // namespace rviz_rendering
 
 #endif  // RVIZ_RENDERING__MESH_LOADER_HPP_

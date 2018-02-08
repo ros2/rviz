@@ -40,13 +40,16 @@
 
 #include "rclcpp/time.hpp"
 
-namespace rviz_common
+namespace rviz_default_plugins
+{
+namespace robot
 {
 
-using properties::StatusProperty;
+using rviz_common::properties::StatusProperty;
 
 TFLinkUpdater::TFLinkUpdater(
-  FrameManager * frame_manager, const StatusCallback & status_cb,
+  rviz_common::FrameManager * frame_manager,
+  const StatusCallback & status_cb,
   const std::string & tf_prefix)
 : frame_manager_(frame_manager),
   status_callback_(status_cb),
@@ -94,4 +97,5 @@ void TFLinkUpdater::setLinkStatus(
   }
 }
 
-}  // namespace rviz_common
+}  // namespace robot
+}  // namespace rviz_default_plugins

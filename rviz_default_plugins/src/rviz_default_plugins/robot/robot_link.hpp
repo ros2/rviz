@@ -79,8 +79,14 @@ class BoolProperty;
 class QuaternionProperty;
 class VectorProperty;
 }
-
 class DisplayContext;
+}  // namespace rviz_common
+
+namespace rviz_default_plugins
+{
+namespace robot
+{
+
 class Robot;
 class RobotLinkSelectionHandler;
 class RobotJoint;
@@ -114,14 +120,14 @@ public:
   const std::string & getName() const {return name_;}
   const std::string & getParentJointName() const {return parent_joint_name_;}
   const std::vector<std::string> & getChildJointNames() const {return child_joint_names_;}
-  properties::Property * getLinkProperty() const {return link_property_;}
+  rviz_common::properties::Property * getLinkProperty() const {return link_property_;}
   Ogre::SceneNode * getVisualNode() const {return visual_node_;}
   Ogre::SceneNode * getCollisionNode() const {return collision_node_;}
   Robot * getRobot() const {return robot_;}
 
   // Remove link_property_ from its old parent and add to new_parent.
   // If new_parent==NULL then leav unparented.
-  void setParentProperty(properties::Property * new_parent);
+  void setParentProperty(rviz_common::properties::Property * new_parent);
 
   // hide or show all sub properties (hide to make tree easier to see)
   virtual void hideSubProperties(bool hide);
@@ -187,7 +193,7 @@ private:
 protected:
   Robot * robot_;
   Ogre::SceneManager * scene_manager_;
-  DisplayContext * context_;
+  rviz_common::DisplayContext * context_;
 
   std::string name_;                          ///< Name of this link
   std::string parent_joint_name_;
@@ -195,13 +201,13 @@ protected:
 
 
   // properties
-  properties::Property * link_property_;
-  properties::Property * details_;
-  properties::VectorProperty * position_property_;
-  properties::QuaternionProperty * orientation_property_;
-  properties::Property * trail_property_;
-  properties::Property * axes_property_;
-  properties::FloatProperty * alpha_property_;
+  rviz_common::properties::Property * link_property_;
+  rviz_common::properties::Property * details_;
+  rviz_common::properties::VectorProperty * position_property_;
+  rviz_common::properties::QuaternionProperty * orientation_property_;
+  rviz_common::properties::Property * trail_property_;
+  rviz_common::properties::Property * axes_property_;
+  rviz_common::properties::FloatProperty * alpha_property_;
 
 private:
   typedef std::map<Ogre::SubEntity *, Ogre::MaterialPtr> M_SubEntityToMaterial;
@@ -242,6 +248,7 @@ private:
   friend class RobotLinkSelectionHandler;
 };
 
-}  // namespace rviz_common
+}  // namespace robot
+}  // namespace rviz_default_plugins
 
 #endif  // RVIZ_DEFAULT_PLUGINS__ROBOT__ROBOT_LINK_HPP_

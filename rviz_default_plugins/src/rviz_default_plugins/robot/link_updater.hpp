@@ -39,10 +39,11 @@ class Vector3;
 class Quaternion;
 }
 
-namespace rviz_common
+namespace rviz_default_plugins
 {
-
-using properties::StatusLevel;
+namespace robot
+{
+using rviz_common::properties::StatusLevel;
 
 class LinkUpdater
 {
@@ -62,6 +63,7 @@ public:
   }
 };
 
-}  // namespace rviz_common
+}  // namespace robot
+}  // namespace rviz_default_plugins
 
 #endif  // RVIZ_DEFAULT_PLUGINS__ROBOT__LINK_UPDATER_HPP_
