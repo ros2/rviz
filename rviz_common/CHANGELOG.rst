@@ -2,8 +2,8 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+3.0.0 (2018-02-07)
+------------------
 * Numerous changes to support Windows.
 * Fixed an issue with docking windows initially.
 * Fixed a potential memory leak.

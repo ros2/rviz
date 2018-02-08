@@ -2,8 +2,8 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+3.0.0 (2018-02-07)
+------------------
 * Numerous changes to support Windows.
 * Moved to ogre 1.10.11
 * Fixed a potential memory leak

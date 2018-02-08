@@ -2,8 +2,8 @@
 Changelog for package rviz_yaml_cpp_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+3.0.0 (2018-02-07)
+------------------
 * Numerous changes to support Windows.
 * Contributors: William Woodall
 
