@@ -7,6 +7,9 @@ if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)
 endif()
 
+option(EnableDisplayTests "EnableDisplayTests")
+set(DisplayTests "False" CACHE STRING "DisplayTestsVariable")
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 endif()
@@ -196,7 +199,7 @@ if(BUILD_TESTING)
     set(DISPLAYPRESENT TRUE)
   endif()
 
-  if(WIN32 OR APPLE OR DISPLAYPRESENT)
+  if(APPLE OR DISPLAYPRESENT OR EnableDisplayTests STREQUAL "True")
     message(STATUS "Enabling tests requiring a display")
 
     find_package(sensor_msgs REQUIRED)

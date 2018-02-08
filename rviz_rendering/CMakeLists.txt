@@ -7,6 +7,9 @@ if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)
 endif()
 
+option(EnableDisplayTests "EnableDisplayTests")
+set(DisplayTests "False" CACHE STRING "DisplayTestsVariable")
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 endif()
@@ -184,7 +187,7 @@ if(BUILD_TESTING)
     set(DISPLAYPRESENT TRUE)
   endif()
 
-  if(WIN32 OR APPLE OR DISPLAYPRESENT)
+  if(APPLE OR DISPLAYPRESENT OR EnableDisplayTests STREQUAL "TRUE")
     message(STATUS "Enabling tests requiring a display")
 
     ament_add_gtest(point_cloud_test_target test/point_cloud_test.cpp
@@ -226,6 +229,7 @@ if(BUILD_TESTING)
         Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
       )
     endif()
+
     ament_add_gtest(movable_text_test_target test/movable_text_test.cpp
       APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
     if(TARGET movable_text_test_target)

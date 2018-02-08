@@ -7,6 +7,9 @@ if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)
 endif()
 
+option(EnableDisplayTests "EnableDisplayTests")
+set(DisplayTests "False" CACHE STRING "DisplayTestsVariable")
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic -Werror)
   # TODO(wjwwood): try to remove this -- currently needed to pass on CI
@@ -340,7 +343,7 @@ if(BUILD_TESTING)
     set(DISPLAYPRESENT TRUE)
   endif()
 
-  if(WIN32 OR APPLE OR DISPLAYPRESENT)
+  if(APPLE OR DISPLAYPRESENT OR EnableDisplayTests STREQUAL "True")
     message(STATUS "Enabling tests requiring a display")
 
     ament_add_gtest(rviz_common_display_test
