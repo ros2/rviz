@@ -15,7 +15,7 @@ Forthcoming
   * make library path env hooks relocatable
 * Update rviz2 packages for bloom (`#139 <https://github.com/ros2/rviz/issues/139>`_)
   * Drop the version number to match rviz2 for bloom.
-  * update package.xml’s, versions, and disable rviz good
+  * update package.xml's, versions, and disable rviz good
   * restore version
   * Add opengl dependency for ogre.
   * add license info and website for vendors
@@ -60,7 +60,7 @@ Forthcoming
   * fix build on macOS (probably Linux too)
   * disable Windows for now (with optional override)
   * cmake fixups after merging `#127 <https://github.com/ros2/rviz/issues/127>`_
-  * revert fix in `#127 <https://github.com/ros2/rviz/issues/127>`_ because it doesn’t work on my mac
+  * revert fix in `#127 <https://github.com/ros2/rviz/issues/127>`_ because it doesn't work on my mac
   * fix finding ogre on Linux
   * fixup package.xml files
   License question was resolved in https://github.com/ros-visualization/rviz/issues/1147.
