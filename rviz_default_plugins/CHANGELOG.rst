@@ -17,65 +17,7 @@ Forthcoming
 
 2.0.0 (2017-12-08)
 ------------------
-* Update rviz2 packages for bloom (`#139 <https://github.com/ros2/rviz/issues/139>`_)
-  * Drop the version number to match rviz2 for bloom.
-  * update package.xml's, versions, and disable rviz good
-  * restore version
-  * Add opengl dependency for ogre.
-  * add license info and website for vendors
-  * Add libxrandr dependency.
-  * Fix xml tag structure.
-  * missing newline EOF
-* fixup dependencies
-* Use pluginlib to reenable displays panel and load basic plugins (`#123 <https://github.com/ros2/rviz/issues/123>`_)
-  * move the source files for the move_tool plugin
-  * make tool.hpp public
-  * make rviz_common/render_panel.hpp public
-  * make load_resource.hpp public
-  * make view_manager.hpp public
-  * use PIMPL pattern in view_manager
-  This was done to avoid needing to make the header
-  pluginlib_factory.hpp public in rviz_common.
-  * move orbit_view_controller plugin files
-  * remove temporary move_tool plugin files in rviz_common
-  * enable logging via the ROS logging infrastructure
-  * reenable display panel and migrate a few plugins
-  * move default rviz file
-  * fixups
-  * fixups from building on Linux in Release mode
-  * add and utilize vendor package for assimp
-  * update readme to get pluginlib and tinyxml2_vendor
-  * uncrustify
-  * remove mention of assimp from readme, since vendored
-  * cpplint
-  * use external resource_retriever package
-  * fixups
-  * remove references to boost
-  * fix loading of default rviz configuration
-  * add and use a vendor package for yaml-cpp
-  * build assimp if version less than 4.0.0
-  This is to make sure we have valid CMake infrastructure from assimp.
-  * Fix visibility and warnings of rviz_rendering on Windows
-  * fix includes
-  * fixup linking and compiling for rviz_common
-  * disable automoc and tests for rviz_common (temporary)
-  This commit should be removed later.
-  I had to do it for now to try and make progress on Windows.
-  * Fix wrong rotation in OrbitViewController (`#129 <https://github.com/ros2/rviz/issues/129>`_)
-  * fix build on macOS (probably Linux too)
-  * disable Windows for now (with optional override)
-  * cmake fixups after merging `#127 <https://github.com/ros2/rviz/issues/127>`_
-  * revert fix in `#127 <https://github.com/ros2/rviz/issues/127>`_ because it doesn't work on my mac
-  * fix finding ogre on Linux
-  * fixup package.xml files
-  License question was resolved in https://github.com/ros-visualization/rviz/issues/1147.
-  * fix loading of “local” displays and errors on start
-  * fixup typo in package.xml
-  * put default plugins in their own folder
-  * migrate grid display plugin to rviz_default_plugins
-  * fixups
-  * remove more temporary code and more fixups
-* more ros2 setup
+* First version for ROS 2.
 * Contributors: Steven! Ragnarok, William Woodall
 
 1.12.11 (2017-08-02)
