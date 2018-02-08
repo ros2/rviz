@@ -143,6 +143,7 @@ void Config::copy(const Config & source)  // NOLINT linter wants #include <algor
         for (int i = 0; i < num_children; i++) {
           listAppendNew().copy(source.listChildAt(i));
         }
+        break;
       }
     case Value:
       setValue(source.getValue());

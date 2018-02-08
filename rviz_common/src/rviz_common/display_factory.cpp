@@ -35,15 +35,13 @@
 // TODO(wjwwood): replace with tinyxml2? implicit dependency?
 #include <tinyxml.h>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "./display_group.hpp"
+#include "include/rviz_common/display_group.hpp"
 #include "rviz_common/logging.hpp"
 
 // TODO(wjwwood): remove this block (within if-endif) once plugins moved to default plugins package
 #if 1
 
-#include "./temp/default_plugins/displays/tf_display.hpp"
 #include "./temp/default_plugins/displays/robot_model_display.hpp"
-#include "../rviz_default_plugins/point_cloud_display.hpp"
 
 #endif
 
@@ -56,19 +54,11 @@ static Display * newDisplayGroup()
 }
 
 // TODO(wjwwood): remove this block (within if-endif) once plugins moved to default plugins package
-#if 1
+#if 0
 
-static Display * newTFDisplay()
-{
-  return new rviz_common::TFDisplay();
-}
 static Display * newRobotModelDisplay()
 {
   return new rviz_common::RobotModelDisplay();
-}
-static Display * newPointCloudDisplay()
-{
-  return new rviz_default_plugins::PointCloudDisplay();
 }
 
 #endif
@@ -77,9 +67,7 @@ DisplayFactory::DisplayFactory()
 : PluginlibFactory<Display>("rviz_common", "rviz_common::Display")
 {
   addBuiltInClass("rviz", "Group", "A container for Displays", &newDisplayGroup);
-  addBuiltInClass("rviz", "TF", "tf display", &newTFDisplay);
-  addBuiltInClass("rviz", "RobotModel", "robot model display", &newRobotModelDisplay);
-  addBuiltInClass("rviz", "PointCloud", "point cloud display", &newPointCloudDisplay);
+  // addBuiltInClass("rviz", "RobotModel", "robot model display", &newRobotModelDisplay);
 }
 
 Display * DisplayFactory::makeRaw(const QString & class_id, QString * error_return)
@@ -110,7 +98,7 @@ QSet<QString> DisplayFactory::getMessageTypes(const QString & class_id)
     TiXmlDocument document;
     document.LoadFile(xml_file.toStdString());
     TiXmlElement * config = document.RootElement();
-    if (config == NULL) {
+    if (config == nullptr) {
       RVIZ_COMMON_LOG_ERROR_STREAM(
         "Skipping XML Document \"" << xml_file.toStdString() << "\" which had no Root Element.  "
           "This likely means the XML is malformed or missing.");
@@ -131,13 +119,15 @@ QSet<QString> DisplayFactory::getMessageTypes(const QString & class_id)
     }
 
     TiXmlElement * library = config;
-    while (library != NULL) {
+    while (library) {
       TiXmlElement * class_element = library->FirstChildElement("class");
       while (class_element) {
-        std::string derived_class = class_element->Attribute("type");
-
+        std::string derived_class;
+        if (class_element->Attribute("type")) {
+          derived_class = class_element->Attribute("type");
+        }
         std::string current_class_id;
-        if (class_element->Attribute("name") != NULL) {
+        if (class_element->Attribute("name")) {
           current_class_id = class_element->Attribute("name");
           RVIZ_COMMON_LOG_DEBUG_STREAM(
             "XML file specifies lookup name (i.e. magic name) = " << current_class_id);

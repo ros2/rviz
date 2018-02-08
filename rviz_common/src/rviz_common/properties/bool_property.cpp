@@ -49,9 +49,7 @@ BoolProperty::BoolProperty(
 {
 }
 
-BoolProperty::~BoolProperty()
-{
-}
+BoolProperty::~BoolProperty() = default;
 
 bool BoolProperty::getBool() const
 {

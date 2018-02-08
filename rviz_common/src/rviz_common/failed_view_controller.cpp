@@ -33,7 +33,7 @@
 #include <QMessageBox>
 
 #include "rviz_common/display_context.hpp"
-#include "./window_manager_interface.hpp"
+#include "rviz_common/window_manager_interface.hpp"
 
 namespace rviz_common
 {

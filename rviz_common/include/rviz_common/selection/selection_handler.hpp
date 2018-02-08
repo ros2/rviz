@@ -41,10 +41,11 @@
 
 #include <OgreMovableObject.h>
 
+#include "./forwards.hpp"
 #include "rviz_common/interactive_object.hpp"
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/viewport_mouse_event.hpp"
-#include "./forwards.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace Ogre
 {
@@ -64,7 +65,7 @@ namespace selection
 
 typedef std::vector<Ogre::AxisAlignedBox> V_AABB;
 
-class SelectionHandler
+class RVIZ_COMMON_PUBLIC SelectionHandler
 {
 public:
   explicit SelectionHandler(DisplayContext * context);

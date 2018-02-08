@@ -35,13 +35,14 @@
 #include <QString>
 
 #include "./status_property.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
 namespace properties
 {
 
-class StatusList : public StatusProperty
+class RVIZ_COMMON_PUBLIC StatusList : public StatusProperty
 {
   Q_OBJECT
 

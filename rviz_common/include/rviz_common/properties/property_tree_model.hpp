@@ -33,6 +33,8 @@
 
 #include <QAbstractItemModel>
 
+#include "rviz_common/visibility_control.hpp"
+
 namespace rviz_common
 {
 namespace properties
@@ -40,7 +42,7 @@ namespace properties
 
 class Property;
 
-class PropertyTreeModel : public QAbstractItemModel
+class RVIZ_COMMON_PUBLIC PropertyTreeModel : public QAbstractItemModel
 {
   Q_OBJECT
 

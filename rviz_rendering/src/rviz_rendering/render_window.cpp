@@ -115,6 +115,12 @@ RenderWindow::setOnRenderWindowWheelEventsCallback(onRenderWindowWheelEventsCall
 }
 
 void
+RenderWindow::setupSceneAfterInit(setupSceneCallback setup_scene_callback)
+{
+  impl_->setupSceneAfterInit(setup_scene_callback);
+}
+
+void
 RenderWindow::renderLater()
 {
   impl_->renderLater();
@@ -220,6 +226,12 @@ RenderWindowOgreAdapter::setOgreCamera(RenderWindow * render_window, Ogre::Camer
   render_window->impl_->setCamera(ogre_camera);
 }
 
+Ogre::Camera *
+RenderWindowOgreAdapter::getOgreCamera(RenderWindow * render_window)
+{
+  return render_window->impl_->getCamera();
+}
+
 Ogre::Viewport *
 RenderWindowOgreAdapter::getOgreViewport(RenderWindow * render_window)
 {
@@ -244,6 +256,32 @@ Ogre::SceneManager *
 RenderWindowOgreAdapter::getSceneManager(RenderWindow * render_window)
 {
   return render_window->impl_->getSceneManager();
+}
+
+void
+RenderWindowOgreAdapter::setSceneManager(
+  RenderWindow * render_window, Ogre::SceneManager * scene_manager)
+{
+  render_window->impl_->setSceneManager(scene_manager);
+}
+
+void RenderWindowOgreAdapter::addListener(
+  RenderWindow * render_window, Ogre::RenderTargetListener * listener)
+{
+  render_window->impl_->addListener(listener);
+}
+
+void RenderWindowOgreAdapter::removeListener(
+  RenderWindow * render_window, Ogre::RenderTargetListener * listener)
+{
+  render_window->impl_->removeListener(listener);
+}
+
+void RenderWindowOgreAdapter::setVisibilityMask(
+  RenderWindow * render_window, uint32_t mask
+)
+{
+  render_window->impl_->setVisibilityMask(mask);
 }
 
 }  // namespace rviz_rendering

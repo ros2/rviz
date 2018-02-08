@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,8 +31,8 @@
 #ifndef RVIZ_RENDERING__GRID_HPP_
 #define RVIZ_RENDERING__GRID_HPP_
 
-#include <stdint.h>
-
+#include <cstdint>
+#include <memory>
 #include <vector>
 
 #include <OgreColourValue.h>
@@ -53,7 +54,7 @@ class Any;
 namespace rviz_rendering
 {
 
-// class BillboardLine;
+class BillboardLine;
 
 /**
  * \class Grid
@@ -61,13 +62,13 @@ namespace rviz_rendering
  *
  * Displays a grid of cells, drawn with lines.  A grid with an identity orientation is drawn along the XZ plane.
  */
-class RVIZ_RENDERING_PUBLIC Grid
+class Grid
 {
 public:
   enum Style
   {
     Lines,
-//    Billboards,
+    Billboards,
   };
 
   /**
@@ -76,15 +77,17 @@ public:
    * @param manager The scene manager this object is part of
    * @param cell_count The number of cells to draw
    * @param cell_length The size of each cell
-   * @param r Red color component, in the range [0, 1]
-   * @param g Green color component, in the range [0, 1]
-   * @param b Blue color component, in the range [0, 1]
+   * @param line_width The line width of the cells if it is rendered in Billboards style
+   * @param color The color of the lines
    */
+  RVIZ_RENDERING_PUBLIC
   Grid(
     Ogre::SceneManager * manager, Ogre::SceneNode * parent_node, Style style,
     uint32_t cell_count, float cell_length, float line_width, const Ogre::ColourValue & color);
+  RVIZ_RENDERING_PUBLIC
   ~Grid();
 
+  RVIZ_RENDERING_PUBLIC
   void create();
 
   /**
@@ -97,32 +100,53 @@ public:
   /**
    * \brief Sets user data on all ogre objects we own
    */
+  RVIZ_RENDERING_PUBLIC
   void setUserData(const Ogre::Any & data);
 
+  RVIZ_RENDERING_PUBLIC
   void setStyle(Style style);
   Style getStyle() {return style_;}
 
+  RVIZ_RENDERING_PUBLIC
   void setColor(const Ogre::ColourValue & color);
   Ogre::ColourValue getColor() {return color_;}
 
+  RVIZ_RENDERING_PUBLIC
   void setCellCount(uint32_t count);
-  float getCellCount() {return cell_count_;}
+  uint32_t getCellCount() {return cell_count_;}
 
+  RVIZ_RENDERING_PUBLIC
   void setCellLength(float len);
   float getCellLength() {return cell_length_;}
 
+  RVIZ_RENDERING_PUBLIC
   void setLineWidth(float width);
   float getLineWidth() {return line_width_;}
 
+  RVIZ_RENDERING_PUBLIC
   void setHeight(uint32_t count);
-  uint32_t getHeight() {return height_;}
+  uint32_t getHeight() {return height_count_;}
+
+  /// Exposed for testing
+  Ogre::ManualObject * getManualObject() {return manual_object_;}
+  std::shared_ptr<BillboardLine> getBillboardLine() {return billboard_line_;}
 
 private:
+  typedef std::function<void (const Ogre::Vector3 & p3, const Ogre::Vector3 & p4)> AddLineFunction;
+  void createBillboardGrid() const;
+  void createManualGrid() const;
+  void createLines(AddLineFunction addLine) const;
+  void createGridPlane(float extent, uint32_t height, AddLineFunction addLine) const;
+  void createVerticalLinesBetweenPlanes(float extent, AddLineFunction addLine) const;
+  void addBillboardLine(const Ogre::Vector3 & p3, const Ogre::Vector3 & p4) const;
+  void addManualLine(const Ogre::Vector3 & p1, const Ogre::Vector3 & p2) const;
+  uint32_t numberOfVerticalLines() const;
+
   Ogre::SceneManager * scene_manager_;
   Ogre::SceneNode * scene_node_;           ///< The scene node that this grid is attached to
   Ogre::ManualObject * manual_object_;     ///< The manual object used to draw the grid
 
-//  BillboardLine* billboard_line_;
+  std::shared_ptr<BillboardLine> billboard_line_;
 
   Ogre::MaterialPtr material_;
 
@@ -130,7 +154,7 @@ private:
   uint32_t cell_count_;
   float cell_length_;
   float line_width_;
-  uint32_t height_;
+  uint32_t height_count_;
   Ogre::ColourValue color_;
 };
 

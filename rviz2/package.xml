@@ -12,14 +12,17 @@
   <author>David Gossow</author>
   <author>Josh Faust</author>
 
-  <url type="website">http://ros.org/wiki/rviz2</url>
-  <url type="repository">https://github.com/ros-visualization/rviz</url>
-  <url type="bugtracker">https://github.com/ros-visualization/rviz/issues</url>
+  <!--url type="website">http://ros.org/wiki/rviz2</url-->
+  <url type="repository">https://github.com/ros2/rviz</url>
+  <url type="bugtracker">https://github.com/ros2/rviz/issues</url>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   
   <build_depend>qtbase5-dev</build_depend>
 
+  <!-- this ensures some basic plugins are available when installing just rviz2 -->
+  <exec_depend>rviz_default_plugins</exec_depend>
+  
   <depend>rviz_common</depend>
   <depend>rviz_ogre_vendor</depend>
 

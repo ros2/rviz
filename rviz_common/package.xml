@@ -11,9 +11,9 @@
   <author>David Gossow</author>
   <author>Josh Faust</author>
 
-  <url type="website">http://ros.org/wiki/rviz_common</url>
-  <url type="repository">https://github.com/ros-visualization/rviz</url>
-  <url type="bugtracker">https://github.com/ros-visualization/rviz/issues</url>
+  <!--url type="website">http://ros.org/wiki/rviz_common</url-->
+  <url type="repository">https://github.com/ros2/rviz</url>
+  <url type="bugtracker">https://github.com/ros2/rviz/issues</url>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
@@ -32,6 +32,7 @@
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
   <depend>resource_retriever</depend>
+  <depend>rviz_ogre_vendor</depend>
   <depend>rviz_rendering</depend>
   <depend>rviz_yaml_cpp_vendor</depend>
   <depend>sensor_msgs</depend>
@@ -44,6 +45,7 @@
 
   <test_depend>ament_cmake_cppcheck</test_depend>
   <test_depend>ament_cmake_cpplint</test_depend>
+  <test_depend>ament_cmake_gmock</test_depend>
   <test_depend>ament_cmake_gtest</test_depend>
   <test_depend>ament_cmake_lint_cmake</test_depend>
   <test_depend>ament_cmake_uncrustify</test_depend>

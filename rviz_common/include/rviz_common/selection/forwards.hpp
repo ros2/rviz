@@ -40,6 +40,7 @@
 #include <OgreColourValue.h>
 
 #include "rviz_common/logging.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
@@ -67,7 +68,6 @@ struct Picked
 };
 
 typedef std::unordered_map<CollObjectHandle, Picked> M_Picked;
-
 
 inline uint32_t colorToHandle(Ogre::PixelFormat fmt, uint32_t col)
 {

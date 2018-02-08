@@ -46,6 +46,7 @@
 # endif
 #endif
 
+#include <OgreRenderTargetListener.h>
 #include <OgreRenderWindow.h>
 #include <OgreSceneManager.h>
 
@@ -57,6 +58,7 @@
 #include <QWindow>
 
 #include <functional>
+#include <vector>
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop
@@ -104,6 +106,10 @@ public:
   void
   resize(size_t width, size_t height);
 
+  using setupSceneCallback = std::function<void(Ogre::SceneNode *)>;
+  void
+  setupSceneAfterInit(setupSceneCallback setup_scene_callback);
+
 #if 0
   /**
    * Set a callback which is called before each render
@@ -139,6 +145,10 @@ public:
   /// Get the Ogre scene manager.
   Ogre::SceneManager * getSceneManager() const;
 
+  void setSceneManager(Ogre::SceneManager * scene_manager);
+
+  void addListener(Ogre::RenderTargetListener * listener);
+  void removeListener(Ogre::RenderTargetListener * listener);
 #if 0
   /**
    * \brief Set the scale of the orthographic window.  Only valid for an orthographic camera.
@@ -162,6 +172,8 @@ public:
   void setOverlaysEnabled(bool overlays_enabled);
 #endif
   void setBackgroundColor(Ogre::ColourValue color);
+
+  void setVisibilityMask(uint32_t mask);
 
 protected:
 #if 0
@@ -212,6 +224,10 @@ protected:
   // Ogre::Camera * left_camera_;
   // Ogre::Camera * right_camera_;
   // Ogre::Viewport * right_viewport_;
+
+  setupSceneCallback setup_scene_callback_;
+  std::vector<Ogre::RenderTargetListener *> pending_listeners_;
+  std::vector<uint32_t> pending_visibility_masks_;
 };
 
 }  // namespace rviz_rendering

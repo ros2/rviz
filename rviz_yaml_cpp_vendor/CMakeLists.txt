@@ -4,15 +4,6 @@ project(rviz_yaml_cpp_vendor)
 
 find_package(ament_cmake REQUIRED)
 
-# TODO(wjwood): remove when windows build is fixed
-if(DEFINED ENV{RVIZ_BUILD_ON_WINDOWS_OVERRIDE})
-  set(RVIZ_BUILD_ON_WINDOWS_OVERRIDE "$ENV{RVIZ_BUILD_ON_WINDOWS_OVERRIDE}")
-endif()
-if(WIN32 AND NOT DEFINED RVIZ_BUILD_ON_WINDOWS_OVERRIDE)
-  message(STATUS "${PROJECT_NAME} is not supported on Windows, skipping...")
-  return()
-endif()
-
 set(PACKAGE_VERSION "1.0.0")
 
 macro(build_yaml_cpp)
@@ -30,6 +21,12 @@ macro(build_yaml_cpp)
   list(APPEND extra_cmake_args "-DYAML_CPP_BUILD_CONTRIB=OFF")
   list(APPEND extra_cmake_args "-DBUILD_SHARED_LIBS=ON")
 
+  if(WIN32 AND NOT ${CMAKE_VERBOSE_MAKEFILE})
+    set(should_log ON)  # prevent warnings in Windows CI
+  else()
+    set(should_log OFF)
+  endif()
+
   include(ExternalProject)
   # This specific version (past the current latest release of 0.5.3) is required to make
   # yaml-cpp relocatable, hopefully it is released again soon.
@@ -38,6 +35,8 @@ macro(build_yaml_cpp)
     URL https://github.com/jbeder/yaml-cpp/archive/86ae3a5aa7e2109d849b2df89176d6432a35265d.zip
     URL_MD5 28091f7f66086a84b14da1f5d798c6a6
     TIMEOUT 600
+    LOG_CONFIGURE ${should_log}
+    LOG_BUILD ${should_log}
     CMAKE_ARGS
       -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/yaml_cpp_install
       ${extra_cmake_args}
@@ -56,8 +55,7 @@ endmacro()
 build_yaml_cpp()
 
 if(WIN32)
-  # TODO(wjwwood): do this for Windows too
-  # ament_environment_hooks(env_hook/rviz_yaml_cpp_vendor_library_path.bat)
+  ament_environment_hooks(env_hook/rviz_yaml_cpp_vendor_library_path.bat)
 else()
   ament_environment_hooks(env_hook/rviz_yaml_cpp_vendor_library_path.sh)
 endif()

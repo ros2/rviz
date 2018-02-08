@@ -36,11 +36,11 @@
 #include <QIcon>  // NOLINT: cpplint is unable to handle the include order here
 #include <QSet>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "rclcpp/node.hpp"
 #include "rclcpp/time.hpp"
 
 #include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/properties/status_property.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 class QDockWidget;
 class QWidget;
@@ -69,7 +69,7 @@ class StatusList;
 class DisplayContext;
 class PanelDockWidget;
 
-class Display : public rviz_common::properties::BoolProperty
+class RVIZ_COMMON_PUBLIC Display : public rviz_common::properties::BoolProperty
 {
   Q_OBJECT
 
@@ -349,11 +349,6 @@ protected:
 
   /// The Ogre::SceneNode to hold all 3D scene elements shown by this Display.
   Ogre::SceneNode * scene_node_;
-
-  /** @brief A Node which is registered with the main executor (used in the "update" thread).
-   *
-   * This is configured after the constructor and before onInitialize() is called. */
-  rclcpp::Node::SharedPtr node_;
 
 #if 0
   /** @brief A NodeHandle whose CallbackQueue is run from a different thread than the GUI.

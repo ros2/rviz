@@ -28,8 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__TOOLS__MOVE_TOOL_HPP_
-#define RVIZ_DEFAULT_PLUGINS__TOOLS__MOVE_TOOL_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__TOOLS__MOVE__MOVE_TOOL_HPP_
+#define RVIZ_DEFAULT_PLUGINS__TOOLS__MOVE__MOVE_TOOL_HPP_
 
 #include <QKeyEvent>
 
@@ -60,4 +60,4 @@ public:
 }  // namespace tools
 }  // namespace rviz_default_plugins
 
-#endif  // RVIZ_DEFAULT_PLUGINS__TOOLS__MOVE_TOOL_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__TOOLS__MOVE__MOVE_TOOL_HPP_

@@ -32,6 +32,7 @@
 #include "render_system.hpp"
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -68,8 +69,16 @@ namespace rviz_rendering
 Ogre::GLPlugin * RenderSystem::render_system_gl_plugin_ = nullptr;
 RenderSystem * RenderSystem::instance_ = nullptr;
 int RenderSystem::force_gl_version_ = 0;
-bool RenderSystem::use_anti_aliasing_ = true;
 bool RenderSystem::force_no_stereo_ = false;
+
+// Disable anti aliasing on Windows for now,
+// since it breaks rendering as soon as two render windows are visible
+// TODO(greimela): Investigate why anti aliasing breaks rendering on Windows
+#ifndef _WIN32
+bool RenderSystem::use_anti_aliasing_ = true;
+#else
+bool RenderSystem::use_anti_aliasing_ = false;
+#endif
 
 RenderSystem *
 RenderSystem::get()
@@ -132,6 +141,7 @@ RenderSystem::RenderSystem()
   OgreLogging::configureLogging();
 
   setResourceDirectory();
+  setPluginDirectory();
   setupDummyWindowId();
   ogre_root_ = new Ogre::Root(get_resource_directory() + "/ogre_media/plugins.cfg");
 #if ((OGRE_VERSION_MAJOR == 1 && OGRE_VERSION_MINOR >= 9) || OGRE_VERSION_MAJOR >= 2)
@@ -184,13 +194,14 @@ RenderSystem::setupDummyWindowId()
 void
 RenderSystem::loadOgrePlugins()
 {
-  // std::string plugin_prefix = get_ogre_plugin_directory() + "/";
+  std::string plugin_prefix = get_ogre_plugin_directory();
 
-  render_system_gl_plugin_ = new Ogre::GLPlugin();
-  ogre_root_->installPlugin(render_system_gl_plugin_);
-
+#if defined _WIN32 && !NDEBUG
+  ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL_d");
+#else
+  ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL");
+#endif
 // #if __APPLE__
-// ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL");
 // #else
 // ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL3Plus");
 // #endif
@@ -205,7 +216,8 @@ RenderSystem::detectGlVersion()
     gl_version_ = force_gl_version_;
   } else {
     Ogre::RenderSystem * renderSys = ogre_root_->getRenderSystem();
-    renderSys->createRenderSystemCapabilities();
+    // createRenderSystemCapabilities() called for side effects only
+    std::unique_ptr<Ogre::RenderSystemCapabilities>(renderSys->createRenderSystemCapabilities());
     const Ogre::RenderSystemCapabilities * caps = renderSys->getCapabilities();
     int major = caps->getDriverVersion().major;
     int minor = caps->getDriverVersion().minor;
@@ -289,6 +301,19 @@ RenderSystem::setResourceDirectory()
   std::string prefix_path;
   ament_index_cpp::get_resource("packages", "rviz_rendering", content, &prefix_path);
   set_resource_directory(prefix_path + "/share/rviz_rendering");
+}
+
+void
+RenderSystem::setPluginDirectory()
+{
+  std::string content;
+  std::string prefix_path;
+  ament_index_cpp::get_resource("packages", "rviz_ogre_vendor", content, &prefix_path);
+#ifdef _WIN32
+  set_ogre_plugin_directory(prefix_path + "\\opt\\rviz_ogre_vendor\\bin\\");
+#else
+  set_ogre_plugin_directory(prefix_path + "/opt/rviz_ogre_vendor/lib/OGRE/");
+#endif
 }
 
 void

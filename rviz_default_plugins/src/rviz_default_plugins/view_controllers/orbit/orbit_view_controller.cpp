@@ -52,10 +52,10 @@
 #include "rviz_common/viewport_mouse_event.hpp"
 #include "rviz_rendering/geometry.hpp"
 
-static const float PITCH_START = Ogre::Math::HALF_PI / 2.0;
-static const float YAW_START = Ogre::Math::HALF_PI * 0.5;
+static const float PITCH_START = Ogre::Math::HALF_PI / 2.0f;
+static const float YAW_START = Ogre::Math::HALF_PI * 0.5f;
 static const float DISTANCE_START = 10;
-static const float FOCAL_SHAPE_SIZE_START = 0.05;
+static const float FOCAL_SHAPE_SIZE_START = 0.05f;
 static const bool FOCAL_SHAPE_FIXED_SIZE = true;
 
 namespace rviz_default_plugins
@@ -73,22 +73,21 @@ OrbitViewController::OrbitViewController()
 {
   distance_property_ = new FloatProperty("Distance", DISTANCE_START,
       "Distance from the focal point.", this);
-  distance_property_->setMin(0.01);
+  distance_property_->setMin(0.01f);
 
   focal_shape_size_property_ = new FloatProperty("Focal Shape Size", FOCAL_SHAPE_SIZE_START,
       "Focal shape size.", this);
-  focal_shape_size_property_->setMin(0.001);
+  focal_shape_size_property_->setMin(0.001f);
 
   focal_shape_fixed_size_property_ = new BoolProperty("Focal Shape Fixed Size",
-      FOCAL_SHAPE_FIXED_SIZE, "Focal shape size.",
-      this);
+      FOCAL_SHAPE_FIXED_SIZE, "Focal shape size.", this);
 
   yaw_property_ = new FloatProperty("Yaw", YAW_START,
       "Rotation of the camera around the Z (up) axis.", this);
 
   pitch_property_ = new FloatProperty("Pitch", PITCH_START,
       "How much the camera is tipped downward.", this);
-  pitch_property_->setMax(Ogre::Math::HALF_PI - 0.001);
+  pitch_property_->setMax(Ogre::Math::HALF_PI - 0.001f);
   pitch_property_->setMin(-pitch_property_->getMax());
 
   focal_point_property_ = new VectorProperty("Focal Point", Ogre::Vector3::ZERO,

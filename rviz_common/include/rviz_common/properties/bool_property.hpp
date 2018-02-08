@@ -32,6 +32,7 @@
 #define RVIZ_COMMON__PROPERTIES__BOOL_PROPERTY_HPP_
 
 #include "rviz_common/properties/property.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
@@ -39,23 +40,23 @@ namespace properties
 {
 
 /// Property specialized to provide getter for booleans.
-class BoolProperty : public Property
+class RVIZ_COMMON_PUBLIC BoolProperty : public Property
 {
   Q_OBJECT
 
 public:
-  BoolProperty(
+  explicit BoolProperty(
     const QString & name = QString(),
     bool default_value = false,
     const QString & description = QString(),
-    Property * parent = 0,
-    const char * changed_slot = 0,
-    QObject * receiver = 0);
+    Property * parent = nullptr,
+    const char * changed_slot = nullptr,
+    QObject * receiver = nullptr);
 
-  virtual ~BoolProperty();
+  ~BoolProperty() override;
 
   /// Return the value of this.
-  bool getBool() const;
+  virtual bool getBool() const;
 
   /// If given true, disable this properties own children when this has a value of false.
   void setDisableChildrenIfFalse(bool disable);

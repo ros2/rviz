@@ -181,7 +181,8 @@ ViewController * ViewManager::getViewAt(int index) const
   if (index < 0) {
     index = 0;
   }
-  return qobject_cast<ViewController *>(impl_->root_property->childAt(index + 1));
+  // TODO(greimela) Figure out why qobject_cast does not work here
+  return dynamic_cast<ViewController *>(impl_->root_property->childAt(index + 1));
 }
 
 int ViewManager::getNumViews() const
@@ -257,7 +258,9 @@ void ViewManager::save(Config config) const
 
   Config saved_views_config = config.mapMakeChild("Saved");
   for (int i = 0; i < getNumViews(); i++) {
-    getViewAt(i)->save(saved_views_config.listAppendNew());
+    if (getViewAt(i)) {
+      getViewAt(i)->save(saved_views_config.listAppendNew());
+    }
   }
 }
 

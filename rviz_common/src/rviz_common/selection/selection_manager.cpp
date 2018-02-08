@@ -759,7 +759,7 @@ bool SelectionManager::render(
 
   Ogre::PixelFormat format = pixel_buffer->getFormat();
 
-  int size = Ogre::PixelUtil::getMemorySize(render_w, render_h, 1, format);
+  int size = static_cast<int>(Ogre::PixelUtil::getMemorySize(render_w, render_h, 1, format));
   uint8_t * data = new uint8_t[size];
 
   delete[] reinterpret_cast<uint8_t *>(dst_box.data);
@@ -1026,7 +1026,7 @@ Ogre::Technique * SelectionManager::handleSchemeNotFound(
   }
 
   // find out if the renderable has the picking param set
-  bool has_pick_param = !rend->getUserObjectBindings().getUserAny("pick_handle").isEmpty();
+  bool has_pick_param = rend->getUserObjectBindings().getUserAny("pick_handle").has_value();
 
   // NOTE: it is important to avoid changing the culling mode of the
   // fallback techniques here, because that change then propagates to

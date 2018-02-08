@@ -389,7 +389,7 @@ void RobotJoint::updateAxes()
       static int count = 0;
       std::stringstream ss;
       ss << "Axes for joint " << name_ << count++;
-      axes_ = new Axes(robot_->getSceneManager(), robot_->getOtherNode(), 0.1, 0.01);
+      axes_ = new Axes(robot_->getSceneManager(), robot_->getOtherNode(), 0.1f, 0.01f);
       axes_->getSceneNode()->setVisible(getEnabled() );
 
       axes_->setPosition(position_property_->getVector() );
@@ -410,7 +410,8 @@ void RobotJoint::updateAxis()
       static int count = 0;
       std::stringstream ss;
       ss << "Axis for joint " << name_ << count++;
-      axis_ = new Arrow(robot_->getSceneManager(), robot_->getOtherNode(), 0.15, 0.05, 0.05, 0.08);
+      axis_ = new Arrow(robot_->getSceneManager(), robot_->getOtherNode(), 0.15f, 0.05f, 0.05f,
+          0.08f);
       axis_->getSceneNode()->setVisible(getEnabled() );
 
       axis_->setPosition(position_property_->getVector() );
@@ -418,7 +419,7 @@ void RobotJoint::updateAxis()
 
       // TODO(lucasw) store an Ogre::ColorValue and set it according to
       // joint type.
-      axis_->setColor(0.0, 0.8, 0.0, 1.0);
+      axis_->setColor(0.0f, 0.8f, 0.0f, 1.0f);
     }
   } else {
     if (axis_) {

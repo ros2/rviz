@@ -37,6 +37,7 @@
 #include <QString>
 
 #include "rviz_common/config.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 class QKeyEvent;
 
@@ -59,7 +60,7 @@ class DisplayContext;
 class RenderPanel;
 class ViewportMouseEvent;
 
-class Tool : public QObject
+class RVIZ_COMMON_PUBLIC Tool : public QObject
 {
   Q_OBJECT
 

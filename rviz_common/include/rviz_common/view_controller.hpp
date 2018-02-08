@@ -40,6 +40,7 @@
 #include <QVariant>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/properties/property.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 class QKeyEvent;
 
@@ -67,7 +68,7 @@ class BoolProperty;
 
 }  // namespace properties
 
-class ViewController : public properties::Property
+class RVIZ_COMMON_PUBLIC ViewController : public properties::Property
 {
   Q_OBJECT
 

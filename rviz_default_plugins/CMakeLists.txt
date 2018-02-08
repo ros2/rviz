@@ -2,15 +2,6 @@ cmake_minimum_required(VERSION 3.5)
 
 project(rviz_default_plugins)
 
-# TODO(wjwood): remove when windows build is fixed
-if(DEFINED ENV{RVIZ_BUILD_ON_WINDOWS_OVERRIDE})
-  set(RVIZ_BUILD_ON_WINDOWS_OVERRIDE "$ENV{RVIZ_BUILD_ON_WINDOWS_OVERRIDE}")
-endif()
-if(WIN32 AND NOT DEFINED RVIZ_BUILD_ON_WINDOWS_OVERRIDE)
-  message(STATUS "${PROJECT_NAME} is not supported on Windows, skipping...")
-  return()
-endif()
-
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)
@@ -40,11 +31,39 @@ find_package(rclcpp REQUIRED)
 
 # These need to be added in the add_library() call so AUTOMOC detects them.
 set(rviz_default_plugins_headers_to_moc
+  src/rviz_default_plugins/displays/camera/camera_display.hpp
   src/rviz_default_plugins/displays/grid/grid_display.hpp
+  src/rviz_default_plugins/displays/image/image_display.hpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_display.hpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_transformer.hpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_helpers.hpp
+  src/rviz_default_plugins/displays/polygon/polygon_display.hpp
+  src/rviz_default_plugins/displays/tf/frame_info.hpp
+  src/rviz_default_plugins/displays/tf/tf_display.hpp
 )
 
 set(rviz_default_plugins_source_files
+  src/rviz_default_plugins/displays/camera/camera_display.cpp
   src/rviz_default_plugins/displays/grid/grid_display.cpp
+  src/rviz_default_plugins/displays/image/image_display.cpp
+  src/rviz_default_plugins/displays/image/ros_image_texture.cpp
+  src/rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/transformers/rgb8_pc_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/transformers/rgbf32_pc_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/transformers/xyz_pc_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_common.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_to_point_cloud2.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_selection_handler.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_display.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.cpp
+  src/rviz_default_plugins/displays/polygon/polygon_display.cpp
+  src/rviz_default_plugins/displays/tf/frame_info.cpp
+  src/rviz_default_plugins/displays/tf/frame_selection_handler.cpp
+  src/rviz_default_plugins/displays/tf/tf_display.cpp
   src/rviz_default_plugins/tools/move/move_tool.cpp
   src/rviz_default_plugins/view_controllers/orbit/orbit_view_controller.cpp
 )
@@ -72,6 +91,12 @@ ament_target_dependencies(rviz_default_plugins
 
 pluginlib_export_plugin_description_file(rviz_common plugins_description.xml)
 
+# prevent pluginlib from using boost
+target_compile_definitions(rviz_default_plugins PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
+# Causes the visibility macros to use dllexport rather than dllimport,
+# which is appropriate when building the dll but not consuming it.
+target_compile_definitions(rviz_default_plugins PRIVATE "RVIZ_DEFAULT_PLUGINS_BUILDING_LIBRARY")
+
 ament_export_interfaces(rviz_default_plugins)
 ament_export_dependencies(Qt5)
 ament_export_dependencies(rviz_rendering)
@@ -91,5 +116,61 @@ install(
   RUNTIME DESTINATION bin
   INCLUDES DESTINATION include
 )
+
+if(BUILD_TESTING)
+  # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back
+  find_package(ament_cmake_cppcheck REQUIRED)
+  find_package(ament_cmake_cpplint REQUIRED)
+  find_package(ament_cmake_lint_cmake REQUIRED)
+  find_package(ament_cmake_uncrustify REQUIRED)
+  ament_cppcheck()
+  ament_cpplint()
+  ament_lint_cmake()
+  ament_uncrustify()
+
+  find_package(ament_cmake_gtest REQUIRED)
+  find_package(ament_cmake_gmock REQUIRED)
+
+# TODO(greimela): reenable these tests once they can be run on the ci
+#  ament_add_gtest(point_cloud2_display_test
+#      test/rviz_default_plugins/displays/pointcloud/message_creators.hpp
+#      test/rviz_default_plugins/displays/pointcloud/message_creators.cpp
+#      test/rviz_default_plugins/displays/pointcloud/point_cloud2_display_test.cpp
+#      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+#  if(TARGET point_cloud2_display_test)
+#    target_link_libraries(point_cloud2_display_test rviz_default_plugins)
+#  endif()
+
+# TODO(greimela): reenable these tests once they can be run on the ci
+#  ament_add_gtest(point_cloud_transformers_test
+#      test/rviz_default_plugins/displays/pointcloud/message_creators.hpp
+#      test/rviz_default_plugins/displays/pointcloud/message_creators.cpp
+#      test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/axis_color_pc_transformer_test.cpp
+#      test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/flat_color_pc_transformer_test.cpp
+#      test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/intensity_pc_transformer_test.cpp
+#      test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/rgb8_pc_transformer_test.cpp
+#      test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/rgbf32_pc_transformer_test.cpp
+#      test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/xyz_pc_transformer_test.cpp
+#      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+#  if(TARGET point_cloud_transformers_test)
+#    target_link_libraries(point_cloud_transformers_test rviz_default_plugins)
+#  endif()
+
+# TODO(greimela): reenable these tests once they can be run on the ci
+#  ament_add_gmock(ros_image_texture_test
+#      test/rviz_default_plugins/displays/image/ros_image_texture_test.cpp
+#      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+#  if(TARGET ros_image_texture_test)
+#    target_link_libraries(ros_image_texture_test rviz_default_plugins)
+#  endif()
+
+# TODO(greimela): reenable these tests once they can be run on the ci
+#  ament_add_gmock(image_display_test
+#      test/rviz_default_plugins/displays/image/image_display_test.cpp)
+#      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+#  if(TARGET image_display_test)
+#    target_link_libraries(image_display_test rviz_default_plugins)
+#  endif()
+endif()
 
 ament_package()

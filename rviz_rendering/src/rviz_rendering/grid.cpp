@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,17 +29,19 @@
  */
 
 #include "rviz_rendering/grid.hpp"
-// #include "billboard_line.h"
+
+#include <functional>
+#include <memory>
+#include <sstream>
 
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 #include <OgreVector3.h>
-#include <OgreQuaternion.h>
 #include <OgreManualObject.h>
 #include <OgreMaterialManager.h>
 #include <OgreTechnique.h>
 
-#include <sstream>
+#include "billboard_line.hpp"
 
 namespace rviz_rendering
 {
@@ -56,7 +59,7 @@ Grid::Grid(
   cell_count_(cell_count),
   cell_length_(cell_length),
   line_width_(line_width),
-  height_(0),
+  height_count_(0),
   color_(color)
 {
   static uint32_t gridCount = 0;
@@ -72,7 +75,7 @@ Grid::Grid(
   scene_node_ = parent_node->createChildSceneNode();
   scene_node_->attachObject(manual_object_);
 
-//  billboard_line_ = new BillboardLine(scene_manager, scene_node_);
+  billboard_line_ = std::make_shared<rviz_rendering::BillboardLine>(scene_manager, scene_node_);
 
   ss << "Material";
   material_ = Ogre::MaterialManager::getSingleton().create(
@@ -85,8 +88,6 @@ Grid::Grid(
 
 Grid::~Grid()
 {
-//  delete billboard_line_;
-
   scene_manager_->destroySceneNode(scene_node_->getName());
   scene_manager_->destroyManualObject(manual_object_);
 
@@ -138,7 +139,7 @@ void Grid::setStyle(Style style)
 
 void Grid::setHeight(uint32_t height)
 {
-  height_ = height;
+  height_count_ = height;
 
   create();
 }
@@ -146,95 +147,107 @@ void Grid::setHeight(uint32_t height)
 void Grid::create()
 {
   manual_object_->clear();
-//  billboard_line_->clear();
+  billboard_line_->clear();
 
-  float extent = (cell_length_ * static_cast<float>(cell_count_)) / 2;
+  if (style_ == Billboards) {
+    createBillboardGrid();
+  } else {
+    createManualGrid();
+  }
+}
 
-//  if (style_ == Billboards)
-//  {
-//    billboard_line_->setColor(color_.r, color_.g, color_.b, color_.a);
-//    billboard_line_->setLineWidth(line_width_);
-//    billboard_line_->setMaxPointsPerLine(2);
-//    billboard_line_->setNumLines((cell_count_+1) * 2 * (height_ + 1)
-//                              + ((cell_count_ + 1) * (cell_count_ + 1)) * height_);
-//  }
-//  else
-//  {
-  manual_object_->estimateVertexCount(cell_count_ * 4 * (height_ + 1) +
-    ((cell_count_ + 1) * (cell_count_ + 1) * height_));
+void Grid::createManualGrid() const
+{
+  AddLineFunction addLineFunction = std::bind(
+    &Grid::addManualLine, this, std::placeholders::_1, std::placeholders::_2);
+
+  const uint32_t number_of_vertices_in_plane = cell_count_ * 4 * (height_count_ + 1);
+  manual_object_->estimateVertexCount(number_of_vertices_in_plane + numberOfVerticalLines());
+
   manual_object_->begin(material_->getName(), Ogre::RenderOperation::OT_LINE_LIST);
-//  }
+  createLines(addLineFunction);
+  manual_object_->end();
+}
 
-  for (uint32_t h = 0; h <= height_; ++h) {
-    float h_real = (height_ / 2.0f - static_cast<float>(h)) * cell_length_;
-    for (uint32_t i = 0; i <= cell_count_; i++) {
-      float inc = extent - ( i * cell_length_);
+void Grid::createBillboardGrid() const
+{
+  AddLineFunction addLineFunction = std::bind(
+    &Grid::addBillboardLine, this, std::placeholders::_1, std::placeholders::_2);
 
-      Ogre::Vector3 p1(inc, h_real, -extent);
-      Ogre::Vector3 p2(inc, h_real, extent);
-      Ogre::Vector3 p3(-extent, h_real, inc);
-      Ogre::Vector3 p4(extent, h_real, inc);
+  billboard_line_->setColor(color_.r, color_.g, color_.b, color_.a);
+  billboard_line_->setLineWidth(line_width_);
+  billboard_line_->setMaxPointsPerLine(2);
+  const uint32_t number_of_lines_in_plane = (cell_count_ + 1) * 2 * (height_count_ + 1);
+  billboard_line_->setNumLines(number_of_lines_in_plane + numberOfVerticalLines());
 
-//      if (style_ == Billboards)
-//      {
-//        if (h != 0 || i != 0)
-//        {
-//          billboard_line_->newLine();
-//        }
-//
-//        billboard_line_->addPoint(p1);
-//        billboard_line_->addPoint(p2);
-//
-//        billboard_line_->newLine();
-//
-//        billboard_line_->addPoint(p3);
-//        billboard_line_->addPoint(p4);
-//      }
-//      else
-//      {
-      manual_object_->position(p1);
-      manual_object_->colour(color_);
-      manual_object_->position(p2);
-      manual_object_->colour(color_);
+  createLines(addLineFunction);
+}
 
-      manual_object_->position(p3);
-      manual_object_->colour(color_);
-      manual_object_->position(p4);
-      manual_object_->colour(color_);
-//      }
+uint32_t Grid::numberOfVerticalLines() const
+{
+  return (cell_count_ + 1) * (cell_count_ + 1) * height_count_;
+}
+
+void Grid::createLines(AddLineFunction addLine) const
+{
+  float plane_extent = (cell_length_ * static_cast<float>(cell_count_)) / 2;
+
+  for (uint32_t current_height = 0; current_height <= height_count_; ++current_height) {
+    createGridPlane(plane_extent, current_height, addLine);
+  }
+
+  if (height_count_ > 0) {
+    createVerticalLinesBetweenPlanes(plane_extent, addLine);
+  }
+}
+
+void Grid::createGridPlane(float extent, uint32_t height, AddLineFunction addLine) const
+{
+  float real_height = (height_count_ / 2.0f - static_cast<float>(height)) * cell_length_;
+  for (uint32_t i = 0; i <= cell_count_; i++) {
+    float inc = extent - ( i * cell_length_);
+
+    Ogre::Vector3 p1(inc, real_height, -extent);
+    Ogre::Vector3 p2(inc, real_height, extent);
+    Ogre::Vector3 p3(-extent, real_height, inc);
+    Ogre::Vector3 p4(extent, real_height, inc);
+
+    addLine(p1, p2);
+    addLine(p3, p4);
+  }
+}
+
+void Grid::createVerticalLinesBetweenPlanes(float extent, AddLineFunction addLine) const
+{
+  for (uint32_t x = 0; x <= cell_count_; ++x) {
+    for (uint32_t z = 0; z <= cell_count_; ++z) {
+      float x_real = extent - x * cell_length_;
+      float z_real = extent - z * cell_length_;
+
+      float y_top = (height_count_ / 2.0f) * cell_length_;
+      float y_bottom = -y_top;
+
+      Ogre::Vector3 p1(x_real, y_bottom, z_real);
+      Ogre::Vector3 p2(x_real, y_top, z_real);
+
+      addLine(p1, p2);
     }
   }
+}
 
-  if (height_ > 0) {
-    for (uint32_t x = 0; x <= cell_count_; ++x) {
-      for (uint32_t z = 0; z <= cell_count_; ++z) {
-        float x_real = extent - x * cell_length_;
-        float z_real = extent - z * cell_length_;
+void Grid::addManualLine(const Ogre::Vector3 & p1, const Ogre::Vector3 & p2) const
+{
+  manual_object_->position(p1);
+  manual_object_->colour(color_);
+  manual_object_->position(p2);
+  manual_object_->colour(color_);
+}
 
-        float y_top = (height_ / 2.0f) * cell_length_;
-        float y_bottom = -y_top;
-
-//        if (style_ == Billboards)
-//        {
-//          billboard_line_->newLine();
-//
-//          billboard_line_->addPoint( Ogre::Vector3(x_real, y_bottom, z_real));
-//          billboard_line_->addPoint( Ogre::Vector3(x_real, y_top, z_real));
-//        }
-//        else
-//        {
-        manual_object_->position(x_real, y_bottom, z_real);
-        manual_object_->colour(color_);
-        manual_object_->position(x_real, y_top, z_real);
-        manual_object_->colour(color_);
-//        }
-      }
-    }
-  }
-
-  if (style_ == Lines) {
-    manual_object_->end();
-  }
+void Grid::addBillboardLine(const Ogre::Vector3 & p1, const Ogre::Vector3 & p2) const
+{
+  billboard_line_->addPoint(p1);
+  billboard_line_->addPoint(p2);
+  billboard_line_->finishLine();
 }
 
 void Grid::setUserData(const Ogre::Any & data)

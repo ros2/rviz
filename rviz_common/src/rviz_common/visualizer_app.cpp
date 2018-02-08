@@ -30,6 +30,10 @@
 
 #include "rviz_common/visualizer_app.hpp"
 
+#include <iostream>
+#include <memory>
+#include <utility>
+
 // #include <OgreGpuProgramManager.h>
 // #include <OgreHighLevelGpuProgramManager.h>
 // #include <OgreMaterialManager.h>
@@ -38,9 +42,6 @@
 #include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/logging.hpp"
-#include "rviz_common/ros_integration/init.hpp"
-#include "rviz_common/ros_integration/ok.hpp"
-#include "rviz_common/ros_integration/shutdown.hpp"
 
 #include "rviz_common/selection/selection_manager.hpp"
 #include "./visualization_frame.hpp"
@@ -98,8 +99,13 @@ namespace rviz_common
 //   return true;
 // }
 
-VisualizerApp::VisualizerApp()
-: app_(0), continue_timer_(0), frame_(0), node_name_("")
+VisualizerApp::VisualizerApp(
+  std::unique_ptr<rviz_common::ros_integration::RosClientAbstractionIface> ros_client_abstraction)
+: app_(0),
+  continue_timer_(0),
+  frame_(0),
+  node_name_(""),
+  ros_client_abstraction_(std::move(ros_client_abstraction))
 {}
 
 void VisualizerApp::setApp(QApplication * app)
@@ -133,7 +139,7 @@ bool VisualizerApp::init(int argc, char ** argv)
 
   // TODO(wjwwood): anonymous is not working right now, reenable later
   // node_name_ = rviz_common::ros_integration::init(argc, argv, "rviz", true /* anonymous_name */);
-  node_name_ = rviz_common::ros_integration::init(argc, argv, "rviz", false /* anonymous_name */);
+  node_name_ = ros_client_abstraction_->init(argc, argv, "rviz", false /* anonymous_name */);
 
   startContinueChecker();
 
@@ -303,7 +309,7 @@ bool VisualizerApp::init(int argc, char ** argv)
 VisualizerApp::~VisualizerApp()
 {
   delete continue_timer_;
-  rviz_common::ros_integration::shutdown();
+  ros_client_abstraction_->shutdown();
   delete frame_;
 }
 
@@ -316,12 +322,12 @@ void VisualizerApp::startContinueChecker()
 
 void VisualizerApp::checkContinue()
 {
-  if (node_name_ == "") {
+  if (node_name_.empty()) {
     // If true, this implies the setup of the node has not occurred yet.
     // This should not happen.
     return;
   }
-  if (!rviz_common::ros_integration::ok(node_name_)) {
+  if (!ros_client_abstraction_->ok()) {
     if (frame_) {
       // Make sure the window doesn't ask if we want to save first.
       frame_->setWindowModified(false);

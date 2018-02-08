@@ -31,10 +31,10 @@
 #include "rviz_common/render_panel.hpp"
 
 #include <memory>
-// #include <sstream>
+#include <sstream>
 
-// #include <OgreCamera.h>
-// #include <OgreSceneManager.h>
+#include <OgreCamera.h>
+#include <OgreSceneManager.h>
 
 #include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
 #include <QGridLayout>  // NOLINT: cpplint is unable to handle the include order here
@@ -96,22 +96,26 @@ RenderPanel::~RenderPanel()
   // }
 }
 
-void RenderPanel::initialize(DisplayContext * context)
+void RenderPanel::initialize(DisplayContext * context, bool use_main_scene)
 // void RenderPanel::initialize(Ogre::SceneManager * scene_manager, DisplayContext * context)
 {
   context_ = context;
+
+  if (use_main_scene) {
+    rviz_rendering::RenderWindowOgreAdapter::setSceneManager(
+      render_window_, context_->getSceneManager());
+    std::stringstream ss;
+    static int count = 0;
+    ss << "RenderPanelCamera" << count++;
+    auto default_camera_ = context_->getSceneManager()->createCamera(ss.str());
+    default_camera_->setNearClipDistance(0.01f);
+    default_camera_->setPosition(Ogre::Vector3(0, 10, 15));
+    default_camera_->lookAt(Ogre::Vector3(0, 0, 0));
+
+    rviz_rendering::RenderWindowOgreAdapter::setOgreCamera(render_window_, default_camera_);
+  }
   // scene_manager_ = scene_manager;
   // scene_manager_->addListener(this);
-
-  // std::stringstream ss;
-  // static int count = 0;
-  // ss << "RenderPanelCamera" << count++;
-  // default_camera_ = scene_manager_->createCamera(ss.str());
-  // default_camera_->setNearClipDistance(0.01f);
-  // default_camera_->setPosition(0, 10, 15);
-  // default_camera_->lookAt(0, 0, 0);
-
-  // setCamera(default_camera_);
 
   // TODO(wjwwood) what is the purpose of this fake mouse move event?
   // connect(fake_mouse_move_event_timer_, SIGNAL(timeout()), this, SLOT(sendMouseMoveEvent()));

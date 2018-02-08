@@ -38,6 +38,9 @@
 #define RVIZ_HAVE_YAMLCPP_05 1
 
 #ifdef RVIZ_HAVE_YAMLCPP_05
+#ifdef _WIN32
+#define YAML_CPP_DLL
+#endif
 #include <yaml-cpp/yaml.h>
 #else
 #include <yaml-cpp/node.h>

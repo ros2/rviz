@@ -31,6 +31,8 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__GRID__GRID_DISPLAY_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__GRID__GRID_DISPLAY_HPP_
 
+#include <memory>
+
 #include "rviz_common/display.hpp"
 #include "rviz_common/properties/color_property.hpp"
 #include "rviz_common/properties/enum_property.hpp"
@@ -70,11 +72,11 @@ public:
   };
 
   GridDisplay();
-  virtual ~GridDisplay();
+  ~GridDisplay() override;
 
   // Overrides from Display
-  virtual void onInitialize();
-  virtual void update(float dt, float ros_dt);
+  void onInitialize() override;
+  void update(float dt, float ros_dt) override;
 
 private Q_SLOTS:
   void updateCellCount();
@@ -87,7 +89,7 @@ private Q_SLOTS:
   void updateStyle();
 
 private:
-  rviz_rendering::Grid * grid_;  ///< Handles actually drawing the grid
+  std::unique_ptr<rviz_rendering::Grid> grid_;  ///< Handles actually drawing the grid
 
   rviz_common::properties::TfFrameProperty * frame_property_;
   rviz_common::properties::IntProperty * cell_count_property_;

@@ -37,6 +37,8 @@
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
+#include "rviz_common/visibility_control.hpp"
+
 class QKeyEvent;
 
 namespace Ogre
@@ -85,7 +87,7 @@ class WindowManagerInterface;
  * It also serves to define a narrower, and more maintainable API for use in
  * the Display plugins.
  */
-class DisplayContext : public QObject
+class RVIZ_COMMON_PUBLIC DisplayContext : public QObject
 {
   Q_OBJECT
 

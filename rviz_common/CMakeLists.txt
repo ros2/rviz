@@ -2,15 +2,6 @@ cmake_minimum_required(VERSION 3.5)
 
 project(rviz_common)
 
-# TODO(wjwood): remove when windows build is fixed
-if(DEFINED ENV{RVIZ_BUILD_ON_WINDOWS_OVERRIDE})
-  set(RVIZ_BUILD_ON_WINDOWS_OVERRIDE "$ENV{RVIZ_BUILD_ON_WINDOWS_OVERRIDE}")
-endif()
-if(WIN32 AND NOT DEFINED RVIZ_BUILD_ON_WINDOWS_OVERRIDE)
-  message(STATUS "${PROJECT_NAME} is not supported on Windows, skipping...")
-  return()
-endif()
-
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)
@@ -27,13 +18,12 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(ament_cmake REQUIRED)
+# do find_package(rviz_ogre_vendor) first to make sure the custom OGRE is found
+find_package(rviz_ogre_vendor REQUIRED)
 
-# TODO(wjwwood): figure out why autogen fails on Windows, and why it isn't necessary...
-if(NOT WIN32)
-  # Qt5 boilerplate options from http://doc.qt.io/qt-5/cmake-manual.html
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  set(CMAKE_AUTOMOC ON)
-endif()
+# Qt5 boilerplate options from http://doc.qt.io/qt-5/cmake-manual.html
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOMOC ON)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
@@ -75,6 +65,7 @@ set(rviz_common_headers_to_moc
   include/rviz_common/properties/property_tree_widget.hpp
   include/rviz_common/properties/splitter_handle.hpp
   # src/rviz_common/selection_panel.hpp
+  include/rviz_common/display_group.hpp
   include/rviz_common/frame_position_tracking_view_controller.hpp
   include/rviz_common/properties/quaternion_property.hpp
   include/rviz_common/visualizer_app.hpp
@@ -86,11 +77,13 @@ set(rviz_common_headers_to_moc
   src/rviz_common/loading_dialog.hpp
   src/rviz_common/new_object_dialog.hpp
   src/rviz_common/panel.hpp
-  src/rviz_common/panel_dock_widget.hpp
+  include/rviz_common/panel_dock_widget.hpp
   include/rviz_common/properties/bool_property.hpp
   include/rviz_common/properties/color_editor.hpp
   include/rviz_common/properties/color_property.hpp
   include/rviz_common/properties/combo_box.hpp
+  include/rviz_common/properties/display_group_visibility_property.hpp
+  include/rviz_common/properties/display_visibility_property.hpp
   include/rviz_common/properties/editable_combo_box.hpp
   include/rviz_common/properties/editable_enum_property.hpp
   include/rviz_common/properties/float_edit.hpp
@@ -101,11 +94,13 @@ set(rviz_common_headers_to_moc
   include/rviz_common/properties/property_tree_delegate.hpp
   include/rviz_common/properties/property_tree_model.hpp
   include/rviz_common/properties/property_tree_with_help.hpp
+  include/rviz_common/properties/ros_topic_property.hpp
   include/rviz_common/properties/status_list.hpp
   include/rviz_common/properties/status_property.hpp
   include/rviz_common/properties/string_property.hpp
   include/rviz_common/properties/tf_frame_property.hpp
   include/rviz_common/properties/vector_property.hpp
+  include/rviz_common/properties/queue_size_property.hpp
   include/rviz_common/render_panel.hpp
   src/rviz_common/scaled_image_widget.hpp
   src/rviz_common/screenshot_dialog.hpp
@@ -121,14 +116,12 @@ set(rviz_common_headers_to_moc
   src/rviz_common/visualization_frame.hpp
   src/rviz_common/visualization_manager.hpp
   src/rviz_common/widget_geometry_change_detector.hpp
-  src/rviz_common/window_manager_interface.hpp
+  include/rviz_common/window_manager_interface.hpp
   include/rviz_common/validate_floats.hpp
-  include/rviz_common/message_filter_display.hpp
+  include/rviz_common/ros_topic_display.hpp
 )
 
 # TODO(wjwwood): remove this later
-list(APPEND rviz_common_headers_to_moc
-  src/rviz_common/temp/default_plugins/displays/tf_display.hpp)
 list(APPEND rviz_common_headers_to_moc
   src/rviz_common/temp/default_plugins/displays/robot_model_display.hpp)
 list(APPEND rviz_common_headers_to_moc
@@ -137,18 +130,6 @@ list(APPEND rviz_common_headers_to_moc
   src/rviz_common/temp/robot/robot_link.hpp)
 list(APPEND rviz_common_headers_to_moc
   src/rviz_common/temp/robot/robot_joint.hpp)
-
-# TODO(greimela): Remove when moving the default plugins to separate package
-list(APPEND rviz_common_headers_to_moc
-  src/rviz_default_plugins/point_cloud_common.hpp)
-list(APPEND rviz_common_headers_to_moc
-  src/rviz_default_plugins/point_cloud_display.hpp)
-list(APPEND rviz_common_headers_to_moc
-  src/rviz_default_plugins/point_cloud_transformer.hpp)
-list(APPEND rviz_common_headers_to_moc
-  src/rviz_default_plugins/point_cloud_helpers.hpp)
-list(APPEND rviz_common_headers_to_moc
-  src/rviz_default_plugins/point_cloud2_display.hpp)
 
 set(rviz_common_source_files
   ${ENV_CONFIG_CPP}
@@ -177,6 +158,8 @@ set(rviz_common_source_files
   src/rviz_common/properties/color_editor.cpp
   src/rviz_common/properties/color_property.cpp
   src/rviz_common/properties/combo_box.cpp
+  src/rviz_common/properties/display_group_visibility_property.cpp
+  src/rviz_common/properties/display_visibility_property.cpp
   src/rviz_common/properties/editable_combo_box.cpp
   src/rviz_common/properties/editable_enum_property.cpp
   src/rviz_common/properties/enum_property.cpp
@@ -190,6 +173,7 @@ set(rviz_common_source_files
   src/rviz_common/properties/property_tree_widget.cpp
   src/rviz_common/properties/property_tree_with_help.cpp
   src/rviz_common/properties/property.cpp
+  src/rviz_common/properties/ros_topic_property.cpp
   src/rviz_common/properties/quaternion_property.cpp
   src/rviz_common/properties/splitter_handle.cpp
   src/rviz_common/properties/status_list.cpp
@@ -197,12 +181,11 @@ set(rviz_common_source_files
   src/rviz_common/properties/string_property.cpp
   src/rviz_common/properties/tf_frame_property.cpp
   src/rviz_common/properties/vector_property.cpp
+  src/rviz_common/properties/queue_size_property.cpp
   src/rviz_common/render_panel.cpp
-  src/rviz_common/ros_integration/get_topic_names_and_types.cpp
-  src/rviz_common/ros_integration/init.cpp
-  src/rviz_common/ros_integration/ok.cpp
-  src/rviz_common/ros_integration/shutdown.cpp
-  src/rviz_common/ros_integration/rclcpp_node_storage.cpp
+  src/rviz_common/ros_integration/ros_client_abstraction.cpp
+  src/rviz_common/ros_integration/ros_node_abstraction.cpp
+  src/rviz_common/ros_integration/ros_node_storage.cpp
   src/rviz_common/scaled_image_widget.cpp
   src/rviz_common/screenshot_dialog.cpp
   # src/rviz_common/selection_panel.cpp
@@ -228,8 +211,6 @@ set(rviz_common_source_files
 
 # TODO(wjwwood): remove this later
 list(APPEND rviz_common_source_files
-  src/rviz_common/temp/default_plugins/displays/tf_display.cpp)
-list(APPEND rviz_common_source_files
   src/rviz_common/temp/default_plugins/displays/robot_model_display.cpp)
 list(APPEND rviz_common_headers_to_moc
   src/rviz_common/temp/robot/robot.cpp)
@@ -244,33 +225,7 @@ list(APPEND rviz_common_headers_to_moc
 list(APPEND rviz_common_headers_to_moc
   src/rviz_common/temp/stl_loader.cpp)
 
-# TODO(greimela): Remove when moving the default plugins to separate package
-list(APPEND rviz_common_source_files
-  src/rviz_default_plugins/point_cloud_common.cpp)
-list(APPEND rviz_common_source_files
-  src/rviz_default_plugins/point_cloud_common.cpp)
-list(APPEND rviz_common_source_files
-  src/rviz_default_plugins/point_cloud_display.cpp)
-list(APPEND rviz_common_source_files
-  src/rviz_default_plugins/point_cloud_transformers/axis_color_pc_transformer.cpp)
-list(APPEND rviz_common_source_files
-  src/rviz_default_plugins/point_cloud_transformers/flat_color_pc_transformer.cpp)
-list(APPEND rviz_common_source_files
-  src/rviz_default_plugins/point_cloud_transformers/intensity_pc_transformer.cpp)
-list(APPEND rviz_common_source_files
-  src/rviz_default_plugins/point_cloud_transformers/rgb8_pc_transformer.cpp)
-list(APPEND rviz_common_source_files
-  src/rviz_default_plugins/point_cloud_transformers/rgbf32_pc_transformer.cpp)
-list(APPEND rviz_common_source_files
-  src/rviz_default_plugins/point_cloud_transformers/xyz_pc_transformer.cpp)
-list(APPEND rviz_common_source_files
-  src/rviz_default_plugins/point_cloud2_display.cpp)
-list(APPEND rviz_common_source_files
-  src/rviz_default_plugins/point_cloud_selection_handler.cpp)
-list(APPEND rviz_common_source_files
-  src/rviz_default_plugins/point_cloud_to_point_cloud2.cpp)
-
-add_library(rviz_common
+add_library(rviz_common SHARED
   ${rviz_common_headers_to_moc}
   ${rviz_common_source_files}
   ${rviz_default_plugins_source_files}
@@ -282,13 +237,17 @@ target_include_directories(rviz_common
     ${pluginlib_INCLUDE_DIRS}
     ${TinyXML_INCLUDE_DIRS}
 )
+
 target_link_libraries(rviz_common
+  rviz_ogre_vendor::OgreMain
+  rviz_ogre_vendor::OgreOverlay
   ${pluginlib_LIBRARIES}
   resource_retriever::resource_retriever
   rviz_rendering::rviz_rendering
   Qt5::Widgets
   ${TinyXML_LIBRARIES}
 )
+
 ament_target_dependencies(rviz_common
   geometry_msgs
   rclcpp
@@ -303,10 +262,13 @@ ament_target_dependencies(rviz_common
 )
 # prevent pluginlib from using boost
 target_compile_definitions(rviz_common PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
+# Causes the visibility macros to use dllexport rather than dllimport,
+# which is appropriate when building the dll but not consuming it.
+target_compile_definitions(rviz_common PRIVATE "RVIZ_COMMON_BUILDING_LIBRARY")
 
 ament_export_interfaces(rviz_common)
-ament_export_dependencies(rviz_rendering)
 ament_export_dependencies(
+  rviz_rendering
   geometry_msgs
   pluginlib
   rclcpp
@@ -344,23 +306,33 @@ if(BUILD_TESTING AND NOT WIN32)
   find_package(ament_cmake_cpplint REQUIRED)
   find_package(ament_cmake_lint_cmake REQUIRED)
   find_package(ament_cmake_uncrustify REQUIRED)
+
+  find_package(ament_cmake_gmock REQUIRED)
+  find_package(ament_cmake_gtest REQUIRED)
+
   ament_cppcheck()
   ament_cpplint()
   ament_lint_cmake()
   ament_uncrustify()
 
-  find_package(ament_cmake_gtest REQUIRED)
-
   ament_add_gtest(rviz_common_config_test
     test/config_test.cpp)
   if(TARGET rviz_common_config_test)
-    target_link_libraries(rviz_common_config_test rviz_common)
+    target_link_libraries(rviz_common_config_test
+      rviz_common
+      rviz_ogre_vendor::OgreMain
+      rviz_ogre_vendor::OgreOverlay
+    )
   endif()
 
   ament_add_gtest(rviz_common_uniform_string_stream_test
     test/uniform_string_stream_test.cpp)
   if(TARGET rviz_common_uniform_string_stream_test)
-    target_link_libraries(rviz_common_uniform_string_stream_test rviz_common)
+    target_link_libraries(rviz_common_uniform_string_stream_test
+      rviz_common
+      rviz_ogre_vendor::OgreMain
+      rviz_ogre_vendor::OgreOverlay
+    )
   endif()
 
   # TODO(wjwwood): reenable this test when it can be run on CI
@@ -379,25 +351,16 @@ if(BUILD_TESTING AND NOT WIN32)
     target_link_libraries(rviz_common_property_test rviz_common)
   endif()
 
-  ament_add_gtest(point_cloud2_display_test
-    test/rviz_default_plugins/message_creators.hpp
-    test/rviz_default_plugins/message_creators.cpp
-    test/rviz_default_plugins/point_cloud2_display_test.cpp)
-  if(TARGET point_cloud2_display_test)
-    target_link_libraries(point_cloud2_display_test rviz_common)
+  ament_add_gmock(rviz_common_visualizer_app_test
+    test/visualizer_app_test.cpp)
+  if(TARGET rviz_common_visualizer_app_test)
+    target_link_libraries(rviz_common_visualizer_app_test rviz_common)
   endif()
 
-  ament_add_gtest(point_cloud_transformers_test
-    test/rviz_default_plugins/message_creators.hpp
-    test/rviz_default_plugins/message_creators.cpp
-    test/rviz_default_plugins/point_cloud_transformers/axis_color_pc_transformer_test.cpp
-    test/rviz_default_plugins/point_cloud_transformers/flat_color_pc_transformer_test.cpp
-    test/rviz_default_plugins/point_cloud_transformers/intensity_pc_transformer_test.cpp
-    test/rviz_default_plugins/point_cloud_transformers/rgb8_pc_transformer_test.cpp
-    test/rviz_default_plugins/point_cloud_transformers/rgbf32_pc_transformer_test.cpp
-    test/rviz_default_plugins/point_cloud_transformers/xyz_pc_transformer_test.cpp)
-  if(TARGET point_cloud_transformers_test)
-    target_link_libraries(point_cloud_transformers_test rviz_common)
+  ament_add_gmock(rviz_common_ros_node_abstraction_test
+    test/ros_node_abstraction_test.cpp)
+  if(TARGET rviz_common_ros_node_abstraction_test)
+    target_link_libraries(rviz_common_ros_node_abstraction_test rviz_common)
   endif()
 endif()
 

@@ -43,7 +43,7 @@
 
 #include "rviz_common/config.hpp"
 // #include "./panel.hpp"
-#include "./window_manager_interface.hpp"
+#include "rviz_common/window_manager_interface.hpp"
 
 class QAction;
 class QActionGroup;

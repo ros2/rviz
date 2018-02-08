@@ -40,6 +40,8 @@
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <QVariant>  // NOLINT: cpplint is unable to handle the include order here
 
+#include "rviz_common/visibility_control.hpp"
+
 namespace rviz_common
 {
 
@@ -121,7 +123,7 @@ namespace rviz_common
  * destroyed (except for child nodes which are referenced by other existing
  * Config objects).
  */
-class Config
+class RVIZ_COMMON_PUBLIC Config
 {
 private:
   class Node;
@@ -312,7 +314,7 @@ public:
    * Maps are stored in alphabetical order of their keys, and MapIterator uses
    * this same order.
    */
-  class MapIterator
+  class RVIZ_COMMON_PUBLIC MapIterator
   {
     // *INDENT-OFF*
   public:

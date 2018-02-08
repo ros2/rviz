@@ -57,8 +57,6 @@
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/properties/string_property.hpp"
 
-#include "../../../ros_integration/rclcpp_node_storage.hpp"
-
 namespace rviz_common
 {
 

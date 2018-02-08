@@ -81,7 +81,7 @@
 #include "./loading_dialog.hpp"
 #include "./new_object_dialog.hpp"
 #include "./panel.hpp"
-#include "./panel_dock_widget.hpp"
+#include "rviz_common/panel_dock_widget.hpp"
 #include "./panel_factory.hpp"
 #include "./screenshot_dialog.hpp"
 #include "./splash_screen.hpp"
@@ -388,7 +388,7 @@ void VisualizationFrame::initConfigs()
   }
   config_dir_ += ".rviz2";
   persistent_settings_file_ = config_dir_ + "/persistent_settings";
-  default_display_config_file_ = config_dir_ + "/default" CONFIG_EXTENSION;
+  default_display_config_file_ = config_dir_ + "/default." CONFIG_EXTENSION;
 
   QFile config_dir_as_file(QString::fromStdString(config_dir_));
   QDir config_dir_as_dir(QString::fromStdString(config_dir_));
@@ -675,9 +675,9 @@ void VisualizationFrame::markRecentConfig(const std::string & path)
 void VisualizationFrame::loadDisplayConfig(const QString & qpath)
 {
   std::string path = qpath.toStdString();
-  QDir path_as_qdir(qpath);
+  QFileInfo path_info(qpath);
   std::string actual_load_path = path;
-  if (!path_as_qdir.exists() || path_as_qdir.entryList(QDir::NoDotAndDotDot).size() == 0) {
+  if (!path_info.exists() || path_info.isDir()) {
     actual_load_path = package_path_ + "/default.rviz";
     if (!QFile(QString::fromStdString(actual_load_path)).exists()) {
       RVIZ_COMMON_LOG_ERROR_STREAM(
@@ -714,7 +714,7 @@ void VisualizationFrame::loadDisplayConfig(const QString & qpath)
 
   setDisplayConfigFile(path);
 
-  last_config_dir_ = path_as_qdir.dirName().toStdString();
+  last_config_dir_ = path_info.absolutePath().toStdString();
 
   delete dialog;
 

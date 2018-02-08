@@ -48,6 +48,8 @@
 // TODO(wjwwood): reenable this when message_filters is ported.
 // #include "tf2_ros/message_filter.h"
 
+#include "rviz_common/visibility_control.hpp"
+
 namespace tf2_ros
 {
 
@@ -66,7 +68,7 @@ class Display;
  * During one frame update (nominally 33ms), the tf tree stays consistent and
  * queries are cached for speedup.
  */
-class FrameManager : public QObject
+class RVIZ_COMMON_PUBLIC FrameManager : public QObject
 {
   Q_OBJECT
 

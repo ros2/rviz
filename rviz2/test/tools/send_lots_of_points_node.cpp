@@ -46,7 +46,7 @@ int main(int argc, char ** argv)
     rate = atoi(argv[1]);
   }
   if (argc > 2) {
-    moving = static_cast<bool>(atoi(argv[2]));
+    moving = (atoi(argv[2]) != 0);
   }
   if (argc > 3) {
     size = atoi(argv[3]);
@@ -74,13 +74,13 @@ int main(int argc, char ** argv)
         point.x = static_cast<float>(x / 100.0);
         point.y = static_cast<float>(y / 100.0);
 //        point.z = sinf( x / 100.0 + y / 100.0 + count / 100.0 );
-        point.z = ((x + y + count) % 100) / 100.0;
+        point.z = ((x + y + count) % 100) / 100.0f;
       }
     }
     if (count % 2) {
-      msg.points[width * length + 1].x = -.1;
-      msg.points[width * length + 1].y = -.1;
-      msg.points[width * length + 1].z = 1.1;
+      msg.points[width * length + 1].x = -.1f;
+      msg.points[width * length + 1].y = -.1f;
+      msg.points[width * length + 1].z = 1.1f;
     }
     msg.header.stamp = node->now();
 

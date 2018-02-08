@@ -102,3 +102,18 @@ $ ament build --only rviz_rendering
 ```
 
 More instructions and examples to come.
+
+# Developer Guide
+
+In addition to the [ROS 2 Developer Guide](https://github.com/ros2/ros2/wiki/Developer-Guide) we suggest the following.
+
+## Testing
+
+Main rationale here is to create code that can be well tested by avoiding highly coupled components.
+
+* Avoid free functions (cannot be mocked).
+* Create abstract base classes (interface) for dependencies.
+  (This allows for a mock to be completely independent of the actual implementing class.)
+* Use only the interface in the dependent code.
+* Specify dependencies as a constructor argument.
+* Prefer `std::unique_ptr` for storing the dependency instead of a raw pointer.

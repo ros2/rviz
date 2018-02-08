@@ -1,4 +1,4 @@
-<library path="librviz_default_plugins">
+<library path="rviz_default_plugins">
 
   <!-- Displays plugins -->
 
@@ -10,6 +10,73 @@
     <description>
       Displays a grid along the ground plane, centered at the origin of the target frame of reference.
     </description>
+  </class>
+
+  <class
+    name="rviz/Image"
+    type="rviz_default_plugins::displays::ImageDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      The Image display creates a new rendering window with an image.
+    </description>
+    <message_type>sensor_msgs/Image</message_type>
+  </class>
+
+  <class
+    name="rviz/PointCloud"
+    type="rviz_default_plugins::displays::PointCloudDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      The Point Cloud display shows data from a (legacy) sensor_msgs/PointCloud message.
+    </description>
+    <message_type>sensor_msgs/PointCloud</message_type>
+  </class>
+
+  <class
+    name="rviz/PointCloud2"
+    type="rviz_default_plugins::displays::PointCloud2Display"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      The Point Cloud2 display shows data from a (recommended) sensor_msgs/PointCloud2 message.
+    </description>
+    <message_type>sensor_msgs/PointCloud2</message_type>
+  </class>
+
+  <class
+    name="rviz/Polygon"
+    type="rviz_default_plugins::displays::PolygonDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays data from a geometry_msgs::PolygonStamped message as lines.  &lt;a href="http://www.ros.org/wiki/rviz/DisplayTypes/Polygon"&gt;More Information&lt;/a&gt;.
+    </description>
+    <message_type>geometry_msgs/PolygonStamped</message_type>
+  </class>
+
+  <class
+    name="rviz/TF"
+    type="rviz_default_plugins::displays::TFDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays the TF transform hierarchy.  &lt;a href="http://www.ros.org/wiki/rviz/DisplayTypes/TF"&gt;More Information&lt;/a&gt;.
+    </description>
+    <message_type>tf2_msgs/TFMessage</message_type>
+  </class>
+
+  <class
+    name="rviz/Camera"
+    type="rviz_default_plugins::displays::CameraDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays an image from a camera, with the visualized world rendered behind it.  &lt;a href="http://www.ros.org/wiki/rviz/DisplayTypes/Camera"&gt;More Information&lt;/a&gt;.
+    </description>
+    <message_type>sensor_msgs/Image</message_type>
+    <message_type>sensor_msgs/CompressedImage</message_type>
   </class>
 
   <!-- Tool plugins -->
@@ -35,4 +102,5 @@
       Makes it easy to move around a given point in space, looking at it from any angle.
     </description>
   </class>
+
 </library>

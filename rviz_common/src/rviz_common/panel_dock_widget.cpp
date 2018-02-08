@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./panel_dock_widget.hpp"
+#include "rviz_common/panel_dock_widget.hpp"
 
 #include <QChildEvent>
 #include <QCloseEvent>
@@ -41,7 +41,8 @@ namespace rviz_common
 
 PanelDockWidget::PanelDockWidget(const QString & name)
 : QDockWidget(name),
-  collapsed_(false)
+  collapsed_(false),
+  forced_hidden_(false)
 {
   QWidget * title_bar = new QWidget(this);
 
