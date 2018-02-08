@@ -72,7 +72,7 @@ Forthcoming
   * migrate grid display plugin to rviz_default_plugins
   * fixups
   * remove more temporary code and more fixups
-* Contributors: Steven! Ragnarök, William Woodall
+* Contributors: Steven! Ragnarok, William Woodall
 
 1.12.11 (2017-08-02)
 --------------------

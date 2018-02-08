@@ -6,7 +6,7 @@ Forthcoming
 -----------
 * Numerous changes to support Windows.
 * Make rviz runnable with ros2 run.
-* Contributors: Andreas Holzner, Hunter Allen, Steven! Ragnarök, William Woodall
+* Contributors: Andreas Holzner, Hunter Allen, Steven! Ragnarok, William Woodall
 
 1.12.11 (2017-08-02)
 --------------------

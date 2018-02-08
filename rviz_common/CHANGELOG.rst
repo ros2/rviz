@@ -8,7 +8,7 @@ Forthcoming
 * Fixed an issue with docking windows initially.
 * Fixed a potential memory leak.
 * Fixed a crash that occurred when removing a display.
-* Contributors: Andreas Greimel, Andreas Holzner, Johannes Jeising, Martin Idel, Steven! Ragnarök, William Woodall
+* Contributors: Andreas Greimel, Andreas Holzner, Johannes Jeising, Martin Idel, Steven! Ragnarok, William Woodall
 
 1.12.11 (2017-08-02)
 --------------------

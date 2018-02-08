@@ -170,7 +170,7 @@ Forthcoming
 * got it building and running on Windows, render window is still messed up
 * wip
 * adding rviz_ogre_vendor package to build ogre
-* Contributors: Andreas Greimel, Andreas Holzner, Chris Ye, Johannes Jeising, Martin Idel, Steven! Ragnarök, William Woodall
+* Contributors: Andreas Greimel, Andreas Holzner, Chris Ye, Johannes Jeising, Martin Idel, Steven! Ragnarok, William Woodall
 
 1.12.11 (2017-08-02)
 --------------------

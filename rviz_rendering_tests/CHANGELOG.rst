@@ -101,7 +101,7 @@ Forthcoming
   * Remove anonymous namespaces around tests
   - Unnecessary
   - Multiple Tests inside one namespace fail cppcheck >=1.79
-* Contributors: Martin Idel, Steven! Ragnarök, William Woodall
+* Contributors: Martin Idel, Steven! Ragnarok, William Woodall
 
 1.12.11 (2017-08-02)
 --------------------

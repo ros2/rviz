@@ -351,7 +351,7 @@ Forthcoming
 * move ogre_logging.cpp/hpp
 * move render_system.cpp/hpp
 * create some placeholders for new packages
-* Contributors: Andreas Greimel, Andreas Holzner, Hunter Allen, Johannes Jeising, Martin Idel, Steven! Ragnarök, William Woodall
+* Contributors: Andreas Greimel, Andreas Holzner, Hunter Allen, Johannes Jeising, Martin Idel, Steven! Ragnarok, William Woodall
 
 1.12.11 (2017-08-02)
 --------------------

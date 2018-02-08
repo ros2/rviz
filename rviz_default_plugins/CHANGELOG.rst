@@ -76,7 +76,7 @@ Forthcoming
   * fixups
   * remove more temporary code and more fixups
 * more ros2 setup
-* Contributors: Steven! Ragnarök, William Woodall
+* Contributors: Steven! Ragnarok, William Woodall
 
 1.12.11 (2017-08-02)
 --------------------
