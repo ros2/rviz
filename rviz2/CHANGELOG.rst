@@ -2,8 +2,8 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+3.0.0 (2018-02-07)
+------------------
 * Numerous changes to support Windows.
 * Make rviz runnable with ros2 run.
 * Contributors: Andreas Holzner, Hunter Allen, Steven! Ragnarok, William Woodall
