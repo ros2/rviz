@@ -72,7 +72,7 @@ void assertBoundingBoxEquality(Ogre::AxisAlignedBox actual, Ogre::AxisAlignedBox
 }
 
 TEST_F(MeshLoaderTestFixture, throws_reasonable_exception_for_missing_files) {
-  std::string mesh_path = "package://rviz_rendering/ogre_media/rviz_spher.mesh";
+  std::string mesh_path = "package://rviz_rendering/ogre_media/MISSING.mesh";
   testing::internal::CaptureStderr();
 
   auto mesh = rviz_rendering::loadMeshFromResource(mesh_path);

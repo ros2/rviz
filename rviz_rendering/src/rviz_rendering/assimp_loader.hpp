@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2010, Willow Garage, Inc.
  * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
@@ -11,7 +11,7 @@
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
+ *     * Neither the name of the copyright holder nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
  *
@@ -28,44 +28,55 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_RENDERING__STL_LOADER_HPP_
-#define RVIZ_RENDERING__STL_LOADER_HPP_
+#ifndef RVIZ_RENDERING__ASSIMP_LOADER_HPP_
+#define RVIZ_RENDERING__ASSIMP_LOADER_HPP_
 
-#include <stdint.h>
-
+#include <memory>
 #include <string>
-#include <vector>
 
-#include <OgreVector3.h>
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
+
 #include <OgreMesh.h>
 
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
+
+#include <QDir>
+#include <QFileInfo>
+#include <QString>
+
+#define ASSIMP_UNIFIED_HEADER_NAMES 1
+#if defined(ASSIMP_UNIFIED_HEADER_NAMES)
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#else
+#include <assimp/aiScene.h>
+#endif
+
+#include "resource_retriever/retriever.h"
+
+#include "rviz_rendering/logging.hpp"
+
+#define ROS_PACKAGE_NAME "rviz_rendering"
 namespace rviz_rendering
 {
 
-class STLLoader
+class AssimpLoader
 {
 public:
-  STLLoader() = default;
-  ~STLLoader() = default;
+  AssimpLoader();
+  Ogre::MeshPtr meshFromAssimpScene(const std::string & name, const aiScene * scene);
+  const aiScene * getScene(const std::string & resource_path);
+  std::string getErrorMessage();
 
-  bool load(uint8_t * buffer, size_t num_bytes, const std::string & origin);
-
-  Ogre::MeshPtr toMesh(const std::string & name);
-
-  struct Triangle
-  {
-    Ogre::Vector3 vertices_[3];
-    Ogre::Vector3 normal_;
-  };
-
-  typedef std::vector<Triangle> V_Triangle;
-  V_Triangle triangles_;
-
-protected:
-  //! Load a binary STL file
-  bool loadBinary(uint8_t * buffer);
+private:
+  std::unique_ptr<Assimp::Importer> importer_;
 };
 
 }  // namespace rviz_rendering
 
-#endif  // RVIZ_RENDERING__STL_LOADER_HPP_
+#endif  // RVIZ_RENDERING__ASSIMP_LOADER_HPP_

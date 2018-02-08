@@ -68,6 +68,7 @@ add_library(rviz_rendering SHARED
   src/rviz_rendering/render_window.cpp
   src/rviz_rendering/resource_config.cpp
   src/rviz_rendering/stl_loader.cpp
+  src/rviz_rendering/assimp_loader.cpp
   src/rviz_rendering/string_helper.cpp
   src/rviz_rendering/objects/arrow.cpp
   src/rviz_rendering/objects/axes.cpp

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,6 +34,7 @@
 
 #include "stl_loader.hpp"
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -51,56 +53,6 @@
 
 namespace rviz_rendering
 {
-
-STLLoader::STLLoader()
-{
-}
-
-STLLoader::~STLLoader()
-{
-}
-
-bool STLLoader::load(const std::string & path)
-{
-  FILE * input = fopen(path.c_str(), "r");
-  if (!input) {
-    fprintf(stderr, "Could not open '%s' for read", path.c_str() );
-    return false;
-  }
-
-  /* from wikipedia:
-   * Because ASCII STL files can become very large, a binary version of STL exists. A binary STL file has an 80 character header
-   * (which is generally ignored - but which should never begin with 'solid' because that will lead most software to assume that
-   * this is an ASCII STL file). Following the header is a 4 byte unsigned integer indicating the number of triangular facets in
-   * the file. Following that is data describing each triangle in turn. The file simply ends after the last triangle.
-   *
-   * Each triangle is described by twelve 32-bit-floating point numbers: three for the normal and then three for the X/Y/Z coordinate
-   * of each vertex - just as with the ASCII version of STL. After the twelve floats there is a two byte unsigned 'short' integer that
-   * is the 'attribute byte count' - in the standard format, this should be zero because most software does not understand anything else.
-   *
-   * Floating point numbers are represented as IEEE floating point numbers and the endianness is assumed to be little endian although this
-   * is not stated in documentation.
-   */
-
-  // find the file size
-  fseek(input, 0, SEEK_END);
-  unsigned long fileSize = ftell(input);  // NOLINT ftell returns long
-  rewind(input);
-
-  std::vector<uint8_t> buffer_vec(fileSize);
-  uint8_t * buffer = &buffer_vec[0];
-
-  size_t num_bytes_read = fread(buffer, 1, fileSize, input);
-  if (num_bytes_read != fileSize) {
-    fprintf(stderr, "STLLoader::load( \"%s\" ) only read %zu bytes out of total %ld.",
-      path.c_str(), num_bytes_read, fileSize);
-    fclose(input);
-    return false;
-  }
-  fclose(input);
-
-  return this->load(buffer, num_bytes_read, path);
-}
 
 bool STLLoader::load(uint8_t * buffer, const size_t num_bytes, const std::string & origin)
 {
@@ -147,76 +99,67 @@ bool STLLoader::load(uint8_t * buffer, const size_t num_bytes, const std::string
   if (num_bytes < expected_size) {
     RVIZ_RENDERING_LOG_ERROR_STREAM("The STL file '" << origin << "' is malformed. According "
       "to the binary STL header it should have '" <<
-      num_triangles << "' triangles, but it has too little" <<
-      " data for that to be the case.");
+      num_triangles << "' triangles, but it has too little data for that to be the case.");
     return false;
   } else if (num_bytes > expected_size) {
     RVIZ_RENDERING_LOG_WARNING_STREAM("The STL file '" << origin << "' is malformed. According "
       "to the binary STL header it should have '" <<
       num_triangles << "' triangles, but it has too much" <<
-      " data for that to be the case. The extra data will be" <<
-      " ignored.");
+      " data for that to be the case. The extra data will be ignored.");
   }
 
   // load the binary STL data
-  return this->load_binary(buffer);
+  return this->loadBinary(buffer);
 }
 
-bool STLLoader::load_binary(uint8_t * buffer)
+bool STLLoader::loadBinary(uint8_t * buffer)
 {
-  uint8_t * pos = buffer;
+  buffer += 80;  // skip the 80 byte header
 
-  pos += 80;  // skip the 80 byte header
-
-  unsigned int numTriangles = *(unsigned int *)pos;
-  pos += 4;
+  unsigned int numTriangles = *(unsigned int *)buffer;
+  buffer += 4;
 
   for (unsigned int currentTriangle = 0; currentTriangle < numTriangles; ++currentTriangle) {
-    Triangle tri;
+    Triangle triangle;
 
-    tri.normal_.x = *reinterpret_cast<float *>(pos);
-    pos += 4;
-    tri.normal_.y = *reinterpret_cast<float *>(pos);
-    pos += 4;
-    tri.normal_.z = *reinterpret_cast<float *>(pos);
-    pos += 4;
+    triangle.normal_.x = *reinterpret_cast<float *>(buffer);
+    buffer += 4;
+    triangle.normal_.y = *reinterpret_cast<float *>(buffer);
+    buffer += 4;
+    triangle.normal_.z = *reinterpret_cast<float *>(buffer);
+    buffer += 4;
 
-    tri.vertices_[0].x = *reinterpret_cast<float *>(pos);
-    pos += 4;
-    tri.vertices_[0].y = *reinterpret_cast<float *>(pos);
-    pos += 4;
-    tri.vertices_[0].z = *reinterpret_cast<float *>(pos);
-    pos += 4;
+    triangle.vertices_[0].x = *reinterpret_cast<float *>(buffer);
+    buffer += 4;
+    triangle.vertices_[0].y = *reinterpret_cast<float *>(buffer);
+    buffer += 4;
+    triangle.vertices_[0].z = *reinterpret_cast<float *>(buffer);
+    buffer += 4;
 
-    tri.vertices_[1].x = *reinterpret_cast<float *>(pos);
-    pos += 4;
-    tri.vertices_[1].y = *reinterpret_cast<float *>(pos);
-    pos += 4;
-    tri.vertices_[1].z = *reinterpret_cast<float *>(pos);
-    pos += 4;
+    triangle.vertices_[1].x = *reinterpret_cast<float *>(buffer);
+    buffer += 4;
+    triangle.vertices_[1].y = *reinterpret_cast<float *>(buffer);
+    buffer += 4;
+    triangle.vertices_[1].z = *reinterpret_cast<float *>(buffer);
+    buffer += 4;
 
-    tri.vertices_[2].x = *reinterpret_cast<float *>(pos);
-    pos += 4;
-    tri.vertices_[2].y = *reinterpret_cast<float *>(pos);
-    pos += 4;
-    tri.vertices_[2].z = *reinterpret_cast<float *>(pos);
-    pos += 4;
+    triangle.vertices_[2].x = *reinterpret_cast<float *>(buffer);
+    buffer += 4;
+    triangle.vertices_[2].y = *reinterpret_cast<float *>(buffer);
+    buffer += 4;
+    triangle.vertices_[2].z = *reinterpret_cast<float *>(buffer);
+    buffer += 4;
 
-    // Blender was writing a large number into this short... am I misinterpreting what the
-    // attribute byte count is supposed to do?
-    // unsigned short attributeByteCount = *(unsigned short*)pos;
-    pos += 2;
+    buffer += 2;  // 2 bytes of the attributeByteCount. It is usually 0, can be ignored.
 
-    // pos += attributeByteCount;
-
-    if (tri.normal_.squaredLength() < 0.001) {
-      Ogre::Vector3 side1 = tri.vertices_[0] - tri.vertices_[1];
-      Ogre::Vector3 side2 = tri.vertices_[1] - tri.vertices_[2];
-      tri.normal_ = side1.crossProduct(side2);
+    if (triangle.normal_.squaredLength() < 0.001) {
+      Ogre::Vector3 side1 = triangle.vertices_[0] - triangle.vertices_[1];
+      Ogre::Vector3 side2 = triangle.vertices_[1] - triangle.vertices_[2];
+      triangle.normal_ = side1.crossProduct(side2);
     }
-    tri.normal_.normalise();
+    triangle.normal_.normalise();
 
-    triangles_.push_back(tri);
+    triangles_.push_back(triangle);
   }
 
   return true;
@@ -226,25 +169,35 @@ void calculateUV(const Ogre::Vector3 & vec, float & u, float & v)
 {
   Ogre::Vector3 pos(vec);
   pos.normalise();
-  u = acos(pos.y / pos.length() );
+  u = acos(pos.y / pos.length());
 
-  float val = pos.x / ( sin(u) );
+  float val = pos.x / (sin(u));
   v = acos(val);
 
   u /= Ogre::Math::PI;
   v /= Ogre::Math::PI;
 }
 
+void addVertex(
+  std::shared_ptr<Ogre::ManualObject> object, const STLLoader::Triangle & triangle, int index)
+{
+  float u, v;
+  u = v = 0.0f;
+
+  object->position(triangle.vertices_[index]);
+  object->normal(triangle.normal_);
+  calculateUV(triangle.vertices_[index], u, v);
+  object->textureCoord(u, v);
+}
 
 Ogre::MeshPtr STLLoader::toMesh(const std::string & name)
 {
-  Ogre::ManualObject * object = new Ogre::ManualObject("the one and only");
+  std::shared_ptr<Ogre::ManualObject> object =
+    std::make_shared<Ogre::ManualObject>("the one and only");
   object->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_TRIANGLE_LIST);
 
   unsigned int vertexCount = 0;
-  V_Triangle::const_iterator it = triangles_.begin();
-  V_Triangle::const_iterator end = triangles_.end();
-  for (; it != end; ++it) {
+  for (const STLLoader::Triangle & triangle : triangles_) {
     if (vertexCount >= 2004) {
       // Subdivide large meshes into submeshes with at most 2004
       // vertices to prevent problems on some graphics cards.
@@ -253,24 +206,9 @@ Ogre::MeshPtr STLLoader::toMesh(const std::string & name)
       vertexCount = 0;
     }
 
-    const STLLoader::Triangle & tri = *it;
-
-    float u, v;
-    u = v = 0.0f;
-    object->position(tri.vertices_[0]);
-    object->normal(tri.normal_);
-    calculateUV(tri.vertices_[0], u, v);
-    object->textureCoord(u, v);
-
-    object->position(tri.vertices_[1]);
-    object->normal(tri.normal_);
-    calculateUV(tri.vertices_[1], u, v);
-    object->textureCoord(u, v);
-
-    object->position(tri.vertices_[2]);
-    object->normal(tri.normal_);
-    calculateUV(tri.vertices_[2], u, v);
-    object->textureCoord(u, v);
+    addVertex(object, triangle, 0);
+    addVertex(object, triangle, 1);
+    addVertex(object, triangle, 2);
 
     object->triangle(vertexCount + 0, vertexCount + 1, vertexCount + 2);
 
@@ -282,8 +220,6 @@ Ogre::MeshPtr STLLoader::toMesh(const std::string & name)
   Ogre::MeshPtr mesh = object->convertToMesh(name,
       Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
   mesh->buildEdgeList();
-
-  delete object;
 
   return mesh;
 }
