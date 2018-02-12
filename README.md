@@ -51,7 +51,7 @@ This setup was tested for Windows 10 x64.
 * Download yaml-cpp sources from [GitHub](https://github.com/jbeder/yaml-cpp/releases/tag/yaml-cpp-0.5.3)
 * Extract to local folder (e.g. to `C:\ros2\yaml-cpp-release-0.5.3`)
 * Create and change to build folder (e.g. `C:\ros2\yaml-cpp-release-0.5.3\build`)
-    * Configure CMake: `cmake -G "cmake -G "Visual Studio 15 2017 Win64" ../ -DBoost_INCLUDE_DIR=C:\ros2\boost_1_65_1`
+    * Configure CMake: `cmake -G "Visual Studio 15 2017 Win64" ../ -DBoost_INCLUDE_DIR=C:\ros2\boost_1_65_1`
     * Build the project: `cmake --build . --config Debug`
     * Install to `C:\Program Files`: `cmake --build . --config Debug --target Install`
 
