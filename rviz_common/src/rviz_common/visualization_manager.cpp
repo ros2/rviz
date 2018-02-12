@@ -86,6 +86,7 @@
 #include "rviz_common/properties/tf_frame_property.hpp"
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/selection/selection_manager.hpp"
+#include "rviz_common/selection/selection_manager_iface.hpp"
 #include "rviz_common/tool.hpp"
 #include "./tool_manager.hpp"
 // #include "rviz_common/view_controller.hpp"
@@ -104,6 +105,7 @@ using rviz_common::properties::StatusList;
 using rviz_common::properties::StatusProperty;
 using rviz_common::properties::TfFrameProperty;
 using rviz_common::selection::SelectionManager;
+using rviz_common::selection::SelectionManagerIface;
 using rviz_common::selection::M_Picked;
 
 // helper class needed to display an icon besides "Global Options"
@@ -524,7 +526,7 @@ void VisualizationManager::resetTime()
   queueRender();
 }
 
-SelectionManager * VisualizationManager::getSelectionManager() const
+SelectionManagerIface * VisualizationManager::getSelectionManager() const
 {
   return selection_manager_;
 }

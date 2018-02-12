@@ -28,10 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__SELECTION__SELECTION_MANAGER_HPP_
-#define RVIZ_COMMON__SELECTION__SELECTION_MANAGER_HPP_
-
-#include "selection_manager_iface.hpp"
+#ifndef RVIZ_COMMON__SELECTION__SELECTION_MANAGER_IFACE_HPP_
+#define RVIZ_COMMON__SELECTION__SELECTION_MANAGER_IFACE_HPP_
 
 #include <map>
 #include <memory>
@@ -89,49 +87,54 @@ class VisualizationManager;
 namespace selection
 {
 
-class RVIZ_COMMON_PUBLIC SelectionManager
-  : public SelectionManagerIface
+class RVIZ_COMMON_PUBLIC SelectionManagerIface
+  : public QObject,
+  public Ogre::MaterialManager::Listener,
+  public Ogre::RenderQueueListener
 {
   Q_OBJECT
 
 public:
-  explicit SelectionManager(VisualizationManager * manager);
+  enum SelectType
+  {
+    Add,
+    Remove,
+    Replace
+  };
 
-  virtual ~SelectionManager();
-
-  void
-  initialize() override;
+  virtual void
+  initialize() = 0;
 
   /// Enables or disables publishing of picking and depth rendering images.
-  void
-  setDebugMode(bool debug) override;
+  virtual void
+  setDebugMode(bool debug) = 0;
 
-  void
-  clearHandlers() override;
+  virtual void
+  clearHandlers() = 0;
 
-  void
-  addObject(CollObjectHandle obj, SelectionHandler * handler) override;
+  virtual void
+  addObject(CollObjectHandle obj, SelectionHandler * handler) = 0;
 
-  void
-  removeObject(CollObjectHandle obj) override;
+  virtual void
+  removeObject(CollObjectHandle obj) = 0;
 
   /// Control the highlight box being displayed while selecting.
-  void
-  highlight(Ogre::Viewport * viewport, int x1, int y1, int x2, int y2) override;
+  virtual void
+  highlight(Ogre::Viewport * viewport, int x1, int y1, int x2, int y2) = 0;
 
-  void
-  removeHighlight() override;
+  virtual void
+  removeHighlight() = 0;
 
   /// Select all objects in bounding box.
-  void
-  select(Ogre::Viewport * viewport, int x1, int y1, int x2, int y2, SelectType type) override;
+  virtual void
+  select(Ogre::Viewport * viewport, int x1, int y1, int x2, int y2, SelectType type) = 0;
 
   /**
    * \return handles of all objects in the given bounding box
    * \param single_render_pass only perform one rendering pass
    *   (point cloud selecting won't work)
    */
-  void
+  virtual void
   pick(
     Ogre::Viewport * viewport,
     int x1,
@@ -139,42 +142,20 @@ public:
     int x2,
     int y2,
     M_Picked & results,
-    bool single_render_pass = false) override;
+    bool single_render_pass = false) = 0;
 
-  void update() override;
+  virtual void update() = 0;
 
   /// Set the list of currently selected objects.
-  void setSelection(const M_Picked & objs) override;
+  virtual void setSelection(const M_Picked & objs) = 0;
 
-  void addSelection(const M_Picked & objs) override;
+  virtual void addSelection(const M_Picked & objs) = 0;
 
-  void removeSelection(const M_Picked & objs) override;
+  virtual void removeSelection(const M_Picked & objs) = 0;
 
-  const M_Picked & getSelection() const override;
+  virtual const M_Picked & getSelection() const = 0;
 
-  SelectionHandler * getHandler(CollObjectHandle obj) override;
-
-  static Ogre::ColourValue handleToColor(CollObjectHandle handle);
-
-  // static CollObjectHandle colourToHandle( const Ogre::ColourValue & color );
-
-  static void setPickColor(const Ogre::ColourValue & color, Ogre::SceneNode * node);
-
-  static void setPickColor(const Ogre::ColourValue & color, Ogre::MovableObject * object);
-
-  static void setPickHandle(CollObjectHandle handle, Ogre::SceneNode * node);
-
-  static void setPickHandle(CollObjectHandle handle, Ogre::MovableObject * object);
-
-  static void setPickData(
-    CollObjectHandle handle,
-    const Ogre::ColourValue & color,
-    Ogre::SceneNode * node);
-
-  static void setPickData(
-    CollObjectHandle handle,
-    const Ogre::ColourValue & color,
-    Ogre::MovableObject * object);
+  virtual SelectionHandler * getHandler(CollObjectHandle obj) = 0;
 
   /// If a material does not support the picking scheme, paint it black.
   Ogre::Technique * handleSchemeNotFound(
@@ -182,32 +163,32 @@ public:
     const Ogre::String & scheme_name,
     Ogre::Material * original_material,
     unsigned short lod_index,  // NOLINT: Ogre decides the use of unsigned short
-    const Ogre::Renderable * rend) override;
+    const Ogre::Renderable * rend) override = 0;
 
   /// Create a new unique handle.
-  CollObjectHandle createHandle() override;
+  virtual CollObjectHandle createHandle() = 0;
 
   /// Tell all handlers that interactive mode is active/inactive.
-  void enableInteraction(bool enable) override;
+  virtual void enableInteraction(bool enable) = 0;
 
-  bool getInteractionEnabled() const override;
+  virtual bool getInteractionEnabled() const = 0;
 
   /// Tell the view controller to look at the selection.
-  void focusOnSelection() override;
+  virtual void focusOnSelection() = 0;
 
   /// Change the size of the off-screen selection buffer texture.
-  void setTextureSize(unsigned size) override;
+  virtual void setTextureSize(unsigned size) = 0;
 
   /// Return true if the point at x, y in the viewport is showing an object, false otherwise.
   /**
    * If it is showing an object, result will be changed to contain the 3D point
    * corresponding to it.
    */
-  bool get3DPoint(
+  virtual bool get3DPoint(
     Ogre::Viewport * viewport,
     int x,
     int y,
-    Ogre::Vector3 & result_point) override;
+    Ogre::Vector3 & result_point) = 0;
 
   /// Gets the 3D points in a box around a point in a view port.
   /**
@@ -224,14 +205,14 @@ public:
    *   so if skip_missing is false, this will always return true if
    *   width and height are > 0.
    */
-  bool get3DPatch(
+  virtual bool get3DPatch(
     Ogre::Viewport * viewport,
     int x,
     int y,
     unsigned width,
     unsigned height,
     bool skip_missing,
-    std::vector<Ogre::Vector3> & result_points) override;
+    std::vector<Ogre::Vector3> & result_points) = 0;
 
 
   /// Renders a depth image in a box around a point in a view port.
@@ -247,128 +228,24 @@ public:
    *   texture buffer succeeds.
    *   Failure likely indicates a pretty serious problem.
    */
-  bool getPatchDepthImage(
+  virtual bool getPatchDepthImage(
     Ogre::Viewport * viewport,
     int x,
     int y,
     unsigned width,
     unsigned height,
-    std::vector<float> & depth_vector) override;
+    std::vector<float> & depth_vector) = 0;
 
   /// Implementation for Ogre::RenderQueueListener.
   void renderQueueStarted(
     uint8_t queueGroupId,
     const std::string & invocation,
-    bool & skipThisInvocation) override;
+    bool & skipThisInvocation) override = 0;
 
-  rviz_common::properties::PropertyTreeModel * getPropertyModel() override;
-
-private Q_SLOTS:
-  /// Call updateProperties() on all SelectionHandlers in the current selection.
-  void updateProperties();
-
-private:
-  void selectionAdded(const M_Picked & added);
-
-  void selectionRemoved(const M_Picked & removed);
-
-  std::pair<Picked, bool> addSelectedObject(const Picked & obj);
-
-  void removeSelectedObject(const Picked & obj);
-
-  void setHighlightRect(Ogre::Viewport * viewport, int x1, int y1, int x2, int y2);
-
-  /// Render to a texture for one of the picking passes and unpack the resulting pixels.
-  void renderAndUnpack(
-    Ogre::Viewport * viewport,
-    uint32_t pass,
-    int x1,
-    int y1,
-    int x2,
-    int y2,
-    V_CollObject & pixels);
-
-  /// Internal render function to render to a texture and read the pixels back out.
-  bool render(
-    Ogre::Viewport * viewport,
-    Ogre::TexturePtr tex,
-    int x1,
-    int y1,
-    int x2,
-    int y2,
-    Ogre::PixelBox & dst_box,
-    std::string material_scheme,
-    unsigned texture_width,
-    unsigned textured_height);
-
-  void unpackColors(const Ogre::PixelBox & box, V_CollObject & pixels);
-
-  void setDepthTextureSize(unsigned width, unsigned height);
-
-  void publishDebugImage(const Ogre::PixelBox & pixel_box, const std::string & label);
-
-  VisualizationManager * vis_manager_;
-
-  std::recursive_mutex global_mutex_;
-
-  typedef std::unordered_map<CollObjectHandle, SelectionHandler *>
-    M_CollisionObjectToSelectionHandler;
-  M_CollisionObjectToSelectionHandler objects_;
-
-  bool highlight_enabled_;
-
-  struct Highlight
-  {
-    int x1;
-    int y1;
-    int x2;
-    int y2;
-    Ogre::Viewport * viewport;
-  };
-  Highlight highlight_;
-
-  M_Picked selection_;
-
-  // If you want to change this number to something > 3 you must provide more
-  // width for extra handles in the Picked structure (currently a u64)
-  static constexpr uint32_t kNumRenderTextures_ = 2;
-  Ogre::TexturePtr render_textures_[kNumRenderTextures_];
-  Ogre::PixelBox pixel_boxes_[kNumRenderTextures_];
-
-  // Graphics card -based depth finding of clicked points.
-  Ogre::TexturePtr depth_render_texture_;
-  uint32_t depth_texture_width_, depth_texture_height_;
-  Ogre::PixelBox depth_pixel_box_;
-
-  uint32_t uid_counter_;
-
-  Ogre::Rectangle2D * highlight_rectangle_;
-  Ogre::SceneNode * highlight_node_;
-  Ogre::Camera * camera_;
-
-  V_CollObject pixel_buffer_;
-
-  bool interaction_enabled_;
-
-  bool debug_mode_;
-
-  Ogre::MaterialPtr fallback_pick_material_;
-  Ogre::Technique * fallback_pick_technique_;
-  Ogre::Technique * fallback_black_technique_;
-  Ogre::Technique * fallback_depth_technique_;
-  Ogre::Technique * fallback_pick_cull_technique_;
-  Ogre::Technique * fallback_black_cull_technique_;
-  Ogre::Technique * fallback_depth_cull_technique_;
-
-  uint32_t texture_size_;
-
-  rviz_common::properties::PropertyTreeModel * property_model_;
-
-  typedef std::map<std::string, std::shared_ptr<rclcpp::PublisherBase>> PublisherMap;
-  PublisherMap debug_publishers_;
+  virtual rviz_common::properties::PropertyTreeModel * getPropertyModel() = 0;
 };
 
 }  // namespace selection
 }  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__SELECTION__SELECTION_MANAGER_HPP_
+#endif  // RVIZ_COMMON__SELECTION__SELECTION_MANAGER_IFACE_HPP_
