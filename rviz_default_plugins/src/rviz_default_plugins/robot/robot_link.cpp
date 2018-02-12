@@ -85,10 +85,6 @@
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/selection/selection_manager.hpp"
 
-#ifndef ROS_PACKAGE_NAME
-# define ROS_PACKAGE_NAME "rviz_common"
-#endif
-
 using rviz_rendering::Axes;
 using rviz_rendering::Shape;
 
@@ -246,7 +242,10 @@ RobotLink::RobotLink(
   static int count = 1;
   ss << "robot link color material " << count++;
   auto foo = Ogre::ResourceGroupManager::getSingleton().getResourceGroups();
-  color_material_ = Ogre::MaterialManager::getSingleton().create(ss.str(), ROS_PACKAGE_NAME);
+
+  // TODO(greimela): Use different resource group?
+  color_material_ = Ogre::MaterialManager::getSingleton().create(
+    ss.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
   color_material_->setReceiveShadows(false);
   color_material_->getTechnique(0)->setLightingEnabled(true);
 
@@ -451,7 +450,9 @@ Ogre::MaterialPtr RobotLink::getMaterialForLink(
   std::stringstream ss;
   ss << "Robot Link Material" << count++;
 
-  Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().create(ss.str(), ROS_PACKAGE_NAME);
+  // TODO(greimela): Use different resource group?
+  Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().create(
+    ss.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
   mat->getTechnique(0)->setLightingEnabled(true);
 
   urdf::VisualSharedPtr visual = link->visual;

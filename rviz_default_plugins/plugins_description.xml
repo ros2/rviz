@@ -79,6 +79,16 @@
     <message_type>sensor_msgs/CompressedImage</message_type>
   </class>
 
+  <class
+    name="rviz/RobotModel"
+    type="rviz_default_plugins::displays::RobotModelDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      The Robot Model display shows links of a robot (defined by a <a href="http://wiki.ros.org/urdf">urdf</a>), in their correct poses according to the tf transform tree.
+    </description>
+  </class>
+
   <!-- Tool plugins -->
 
   <class

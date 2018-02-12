@@ -31,11 +31,13 @@
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__ROBOT_MODEL__ROBOT_MODEL_DISPLAY_HPP_
 
 #include <map>
+#include <memory>
 #include <string>
 
 #include <OgreVector3.h>
 
-#include "rviz_common/display.hpp"
+#include "std_msgs/msg/string.hpp"
+#include "rviz_common/ros_topic_display.hpp"
 
 namespace Ogre
 {
@@ -52,6 +54,7 @@ namespace rviz_common
 {
 namespace properties
 {
+class EnumProperty;
 class FloatProperty;
 class Property;
 class StringProperty;
@@ -74,19 +77,19 @@ namespace displays
  * \brief Uses a robot xml description to display the pieces of a robot at the transforms
  * broadcast by rosTF
  */
-class RobotModelDisplay : public rviz_common::Display
+class RobotModelDisplay : public rviz_common::RosTopicDisplay<std_msgs::msg::String>
 {
   Q_OBJECT
 
 public:
   RobotModelDisplay();
-  virtual ~RobotModelDisplay();
+  ~RobotModelDisplay() override;
 
   // Overrides from Display
-  virtual void onInitialize();
-  virtual void update(float wall_dt, float ros_dt);
-  virtual void fixedFrameChanged();
-  virtual void reset();
+  void onInitialize() override;
+  void update(float wall_dt, float ros_dt) override;
+  void fixedFrameChanged() override;
+  void reset() override;
 
   void clear();
 
@@ -95,19 +98,26 @@ private Q_SLOTS:
   void updateCollisionVisible();
   void updateTfPrefix();
   void updateAlpha();
+  void updatePropertyVisibility();
   void updateRobotDescription();
+
+  void updateTopic() override;
 
 protected:
   /** @brief Loads a URDF from the ros-param named by our
    * "Robot Description" property, iterates through the links, and
    * loads any necessary models. */
   virtual void load_urdf();
+  virtual void load_urdf_from(const std::string & filepath);
+  void updateRobot();
+
+  void processMessage(std_msgs::msg::String::ConstSharedPtr msg) override;
 
   // overrides from Display
-  virtual void onEnable();
-  virtual void onDisable();
+  void onEnable() override;
+  void onDisable() override;
 
-  robot::Robot * robot_;                 ///< Handles actually drawing the robot
+  std::unique_ptr<robot::Robot> robot_;                 ///< Handles actually drawing the robot
 
   bool has_new_transforms_;      ///< Callback sets this to tell our update function
   ///< it needs to update the transforms
@@ -119,7 +129,8 @@ protected:
   rviz_common::properties::Property * visual_enabled_property_;
   rviz_common::properties::Property * collision_enabled_property_;
   rviz_common::properties::FloatProperty * update_rate_property_;
-  rviz_common::properties::StringProperty * robot_description_property_;
+  rviz_common::properties::EnumProperty * description_source_property_;
+  rviz_common::properties::StringProperty * description_file_property_;
   rviz_common::properties::FloatProperty * alpha_property_;
   rviz_common::properties::StringProperty * tf_prefix_property_;
 };
