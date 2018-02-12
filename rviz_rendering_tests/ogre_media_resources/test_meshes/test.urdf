@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<robot name="test_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<link name="test_robot_link">
+    <visual>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+            <mesh filename="package://rviz_rendering_tests/test_meshes/pr2-base.dae"/>
+        </geometry>
+    </visual>
+</link>
+</robot>
