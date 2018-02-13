@@ -325,8 +325,6 @@ protected:
 
   void updateFrames();
 
-  void createColorMaterials();
-
   void threadedQueueThreadFunc();
 
   /// Ogre Root.

@@ -60,6 +60,7 @@ add_library(rviz_rendering SHARED
   # src/rviz_rendering/initialization.cpp
   src/rviz_rendering/geometry.cpp
   src/rviz_rendering/logging.cpp
+  src/rviz_rendering/material_manager.cpp
   src/rviz_rendering/mesh_loader.cpp
   src/rviz_rendering/ogre_logging.cpp
   src/rviz_rendering/ogre_render_window_impl.cpp

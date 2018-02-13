@@ -66,11 +66,12 @@
 // #include "tf/transform_listener.h"
 #include "rclcpp/clock.hpp"
 #include "rclcpp/time.hpp"
+#include "rviz_rendering/material_manager.hpp"
 #include "rviz_rendering/render_window.hpp"
 
 #include "rviz_common/display.hpp"
 #include "./display_factory.hpp"
-#include "include/rviz_common/display_group.hpp"
+#include "rviz_common/display_group.hpp"
 #include "./displays_panel.hpp"
 #include "rviz_common/frame_manager.hpp"
 #include "rviz_common/load_resource.hpp"
@@ -219,7 +220,7 @@ VisualizationManager::VisualizationManager(
 
   global_status_ = new StatusList("Global Status", root_display_group_);
 
-  createColorMaterials();
+  rviz_rendering::MaterialManager::createDefaultColorMaterials();
 
   selection_manager_ = new SelectionManager(this);
 
@@ -322,35 +323,6 @@ void VisualizationManager::startUpdate()
 void VisualizationManager::stopUpdate()
 {
   update_timer_->stop();
-}
-
-void createColorMaterial(
-  const std::string & name,
-  const Ogre::ColourValue & color,
-  bool use_self_illumination)
-{
-  // TODO(wjwwood): since this "group" is actually provided by rviz_rendering,
-  //                figure out how to abstract resource loading to an rviz_rendering API
-  Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().create(name, "rviz_rendering");
-  mat->setAmbient(color * 0.5f);
-  mat->setDiffuse(color);
-  if (use_self_illumination) {
-    mat->setSelfIllumination(color);
-  }
-  mat->setLightingEnabled(true);
-  mat->setReceiveShadows(false);
-}
-
-void VisualizationManager::createColorMaterials()
-{
-  createColorMaterial("RVIZ/Red", Ogre::ColourValue(1.0f, 0.0f, 0.0f, 1.0f), true);
-  createColorMaterial("RVIZ/Green", Ogre::ColourValue(0.0f, 1.0f, 0.0f, 1.0f), true);
-  createColorMaterial("RVIZ/Blue", Ogre::ColourValue(0.0f, 0.0f, 1.0f, 1.0f), true);
-  createColorMaterial("RVIZ/Cyan", Ogre::ColourValue(0.0f, 1.0f, 1.0f, 1.0f), true);
-  createColorMaterial("RVIZ/ShadedRed", Ogre::ColourValue(1.0f, 0.0f, 0.0f, 1.0f), false);
-  createColorMaterial("RVIZ/ShadedGreen", Ogre::ColourValue(0.0f, 1.0f, 0.0f, 1.0f), false);
-  createColorMaterial("RVIZ/ShadedBlue", Ogre::ColourValue(0.0f, 0.0f, 1.0f, 1.0f), false);
-  createColorMaterial("RVIZ/ShadedCyan", Ogre::ColourValue(0.0f, 1.0f, 1.0f, 1.0f), false);
 }
 
 void VisualizationManager::queueRender()
