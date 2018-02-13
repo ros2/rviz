@@ -101,7 +101,7 @@ public:
   Robot(
     Ogre::SceneNode * root_node, rviz_common::DisplayContext * context, const std::string & name,
     rviz_common::properties::Property * parent_property);
-  virtual ~Robot();
+  ~Robot() override;
 
   /**
    * \brief Loads meshes/primitives from a robot description.  Calls clear() before loading.
@@ -183,7 +183,7 @@ public:
   class LinkFactory
   {
 public:
-    virtual ~LinkFactory() {}
+    virtual ~LinkFactory() = default;
     virtual RobotLink * createLink(
       Robot * robot,
       const urdf::LinkConstSharedPtr & link,
@@ -297,10 +297,14 @@ protected:
 
   // true inside changedEnableAllLinks().  Prevents calculateJointCheckboxes()
   // from recalculating over and over.
-  bool inChangedEnableAllLinks;
+  bool in_changed_enable_all_links_;
 
   std::string name_;
   float alpha_;
+
+private:
+  void createLinkProperties(const urdf::ModelInterface & urdf, bool visual, bool collision);
+  void createJointProperties(const urdf::ModelInterface & urdf);
 };
 
 }  // namespace robot

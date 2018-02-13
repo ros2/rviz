@@ -108,7 +108,7 @@ public:
     const std::string & parent_joint_name,
     bool visual,
     bool collision);
-  virtual ~RobotLink();
+  ~RobotLink() override;
 
   virtual void setRobotAlpha(float a);
 
@@ -161,6 +161,10 @@ public:
   // expand all sub properties
   void expandDetails(bool expand);
 
+  // get the meshes vector to be used in robot_test.cpp
+  std::vector<Ogre::Entity *> getVisualMeshes() {return visual_meshes_;}
+  std::vector<Ogre::Entity *> getCollisionMeshes() {return collision_meshes_;}
+
 public Q_SLOTS:
   /** @brief Update the visibility of the link elements: visual mesh,
    * collision mesh, trail, and axes.
@@ -177,18 +181,76 @@ private Q_SLOTS:
 private:
   void setRenderQueueGroup(Ogre::uint8 group);
   bool getEnabled() const;
-  void createEntityForGeometryElement(
+  Ogre::Entity * createEntityForGeometryElement(
     const urdf::LinkConstSharedPtr & link,
     const urdf::Geometry & geom, const urdf::Pose & origin,
-    const std::string material_name, Ogre::SceneNode * scene_node,
-    Ogre::Entity * & entity);
+    std::string material_name, Ogre::SceneNode * scene_node);
 
   void createVisual(const urdf::LinkConstSharedPtr & link);
   void createCollision(const urdf::LinkConstSharedPtr & link);
   void createSelection();
   Ogre::MaterialPtr getMaterialForLink(
     const urdf::LinkConstSharedPtr & link,
-    const std::string material_name = "");
+    std::string material_name = "");
+  void createDescription(const urdf::LinkConstSharedPtr & link);
+  void setProperties(const urdf::LinkConstSharedPtr & link);
+  void setBlending(const Ogre::MaterialPtr & material, const Ogre::ColourValue & color);
+
+  template<typename T>
+  void createVisualizable(
+    const urdf::LinkConstSharedPtr & link,
+    std::vector<Ogre::Entity *> & meshes_vector,
+    const std::vector<T> & visualizables_array,
+    const T & visualizable_element,
+    Ogre::SceneNode * scene_node,
+    std::map<std::string, std::shared_ptr<std::vector<T>>> * groups_map = nullptr)
+  {
+    bool valid_visualizable_found = false;
+
+#if URDF_MAJOR_VERSION == 0 && URDF_MINOR_VERSION == 2
+    for (const auto & map_element : *groups_map) {
+      if (map_element.second) {
+        for (const auto & vector_element : map_element.second) {
+          T visualizable_element = vector_element;
+          if (visualizable_element && visualizable_element->geometry) {
+            Ogre::Entity * mesh = nullptr;
+            createEntityForGeometryElement(
+              link,
+              *visualizable_element->geometry,
+              visualizable_element->origin,
+              scene_node,
+              mesh);
+            if (mesh) {
+              meshes_vector.push_back(mesh);
+              valid_visualizable_found = true;
+            }
+          }
+        }
+      }
+    }
+#else
+    (void) groups_map;
+    for (const auto & vector_element : visualizables_array) {
+      T link_visual_element = vector_element;
+      if (link_visual_element && link_visual_element->geometry) {
+        Ogre::Entity * mesh = createEntityForGeometryElement(
+          link, *link_visual_element->geometry, link_visual_element->origin, "", scene_node);
+        if (mesh) {
+          meshes_vector.push_back(mesh);
+          valid_visualizable_found = true;
+        }
+      }
+    }
+#endif
+
+    if (!valid_visualizable_found && visualizable_element && visualizable_element->geometry) {
+      Ogre::Entity * mesh = createEntityForGeometryElement(
+        link, *visualizable_element->geometry, visualizable_element->origin, "", scene_node);
+      if (mesh) {
+        meshes_vector.push_back(mesh);
+      }
+    }
+  }
 
 protected:
   Robot * robot_;
@@ -198,7 +260,6 @@ protected:
   std::string name_;                          ///< Name of this link
   std::string parent_joint_name_;
   std::vector<std::string> child_joint_names_;
-
 
   // properties
   rviz_common::properties::Property * link_property_;

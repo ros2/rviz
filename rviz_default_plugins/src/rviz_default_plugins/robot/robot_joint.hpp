@@ -31,6 +31,7 @@
 #define RVIZ_DEFAULT_PLUGINS__ROBOT__ROBOT_JOINT_HPP_
 
 #include <map>
+#include <memory>
 #include <string>
 
 #ifndef Q_MOC_RUN
@@ -103,7 +104,7 @@ class RobotJoint : public QObject
 
 public:
   RobotJoint(Robot * robot, const urdf::JointConstSharedPtr & joint);
-  virtual ~RobotJoint();
+  ~RobotJoint() override;
 
 
   void setTransforms(
@@ -196,8 +197,8 @@ private:
 
   bool doing_set_checkbox_;   // prevents updateChildVisibility() from  touching children
 
-  rviz_rendering::Axes * axes_;
-  rviz_rendering::Arrow * axis_;
+  std::unique_ptr<rviz_rendering::Axes> axes_;
+  std::unique_ptr<rviz_rendering::Arrow> axis_;
 };
 
 }  // namespace robot

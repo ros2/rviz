@@ -29,6 +29,7 @@
 
 #include "robot_joint.hpp"
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -76,19 +77,19 @@ RobotJoint::RobotJoint(Robot * robot, const urdf::JointConstSharedPtr & joint)
   child_link_name_(joint->child_link_name),
   has_decendent_links_with_geometry_(true),
   doing_set_checkbox_(false),
-  axes_(NULL),
-  axis_(NULL)
+  axes_(nullptr),
+  axis_(nullptr)
 {
   joint_property_ = new Property(
     name_.c_str(),
     true,
     "",
-    NULL,
+    nullptr,
     SLOT(updateChildVisibility()),
     this);
-  joint_property_->setIcon(rviz_common::loadPixmap("package://rviz/icons/classes/RobotJoint.png") );
+  joint_property_->setIcon(rviz_common::loadPixmap("package://rviz/icons/classes/RobotJoint.png"));
 
-  details_ = new Property("Details", QVariant(), "", NULL);
+  details_ = new Property("Details", QVariant(), "", nullptr);
 
   axes_property_ = new Property(
     "Show Axes",
@@ -183,10 +184,6 @@ RobotJoint::RobotJoint(Robot * robot, const urdf::JointConstSharedPtr & joint)
 
 RobotJoint::~RobotJoint()
 {
-  delete axes_;
-  if (axis_) {
-    delete axis_;
-  }
   delete details_;
   delete joint_property_;
 }
@@ -242,12 +239,12 @@ RobotJoint * RobotJoint::getParentJoint()
 {
   RobotLink * parent_link = robot_->getLink(parent_link_name_);
   if (!parent_link) {
-    return NULL;
+    return nullptr;
   }
 
   const std::string & parent_joint_name = parent_link->getParentJointName();
   if (parent_joint_name.empty()) {
-    return NULL;
+    return nullptr;
   }
 
   return robot_->getJoint(parent_joint_name);
@@ -277,15 +274,14 @@ void RobotJoint::calculateJointCheckboxesRecursive(
     }
   }
 
-  std::vector<std::string>::const_iterator child_joint_it = link->getChildJointNames().begin();
-  std::vector<std::string>::const_iterator child_joint_end = link->getChildJointNames().end();
-  for (; child_joint_it != child_joint_end; ++child_joint_it) {
-    RobotJoint * child_joint = robot_->getJoint(*child_joint_it);
+  for (auto & child_joint_name : link->getChildJointNames()) {
+    RobotJoint * child_joint = robot_->getJoint(child_joint_name);
     if (child_joint) {
       int child_links_with_geom;
       int child_links_with_geom_checked;
       int child_links_with_geom_unchecked;
-      child_joint->calculateJointCheckboxesRecursive(child_links_with_geom,
+      child_joint->calculateJointCheckboxesRecursive(
+        child_links_with_geom,
         child_links_with_geom_checked,
         child_links_with_geom_unchecked);
       links_with_geom_checked += child_links_with_geom_checked;
@@ -302,7 +298,6 @@ void RobotJoint::calculateJointCheckboxesRecursive(
     }
   }
 }
-
 
 void RobotJoint::getChildLinkState(
   int & links_with_geom,
@@ -321,10 +316,8 @@ void RobotJoint::getChildLinkState(
   }
 
   if (recursive) {
-    std::vector<std::string>::const_iterator child_joint_it = link->getChildJointNames().begin();
-    std::vector<std::string>::const_iterator child_joint_end = link->getChildJointNames().end();
-    for (; child_joint_it != child_joint_end; ++child_joint_it) {
-      RobotJoint * child_joint = robot_->getJoint(*child_joint_it);
+    for (auto & child_joint_name : link->getChildJointNames()) {
+      RobotJoint * child_joint = robot_->getJoint(child_joint_name);
       if (child_joint) {
         int child_links_with_geom;
         int child_links_with_geom_checked;
@@ -340,7 +333,6 @@ void RobotJoint::getChildLinkState(
   links_with_geom = links_with_geom_checked + links_with_geom_unchecked;
 }
 
-
 bool RobotJoint::getEnabled() const
 {
   if (!hasDescendentLinksWithGeometry()) {
@@ -351,7 +343,7 @@ bool RobotJoint::getEnabled() const
 
 bool RobotJoint::styleIsTree() const
 {
-  return details_->getParent() != NULL;
+  return details_->getParent() != nullptr;
 }
 
 void RobotJoint::updateChildVisibility()
@@ -373,10 +365,8 @@ void RobotJoint::updateChildVisibility()
     }
 
     if (styleIsTree()) {
-      std::vector<std::string>::const_iterator child_joint_it = link->getChildJointNames().begin();
-      std::vector<std::string>::const_iterator child_joint_end = link->getChildJointNames().end();
-      for (; child_joint_it != child_joint_end; ++child_joint_it) {
-        RobotJoint * child_joint = robot_->getJoint(*child_joint_it);
+      for (auto & child_joint_name : link->getChildJointNames()) {
+        RobotJoint * child_joint = robot_->getJoint(child_joint_name);
         if (child_joint) {
           child_joint->getJointProperty()->setValue(visible);
         }
@@ -387,48 +377,36 @@ void RobotJoint::updateChildVisibility()
 
 void RobotJoint::updateAxes()
 {
-  if (axes_property_->getValue().toBool() ) {
+  if (axes_property_->getValue().toBool()) {
     if (!axes_) {
-      static int count = 0;
-      std::stringstream ss;
-      ss << "Axes for joint " << name_ << count++;
-      axes_ = new Axes(robot_->getSceneManager(), robot_->getOtherNode(), 0.1f, 0.01f);
-      axes_->getSceneNode()->setVisible(getEnabled() );
+      axes_ = std::make_unique<Axes>(
+        robot_->getSceneManager(), robot_->getOtherNode(), 0.1f, 0.01f);
+      axes_->getSceneNode()->setVisible(getEnabled());
 
-      axes_->setPosition(position_property_->getVector() );
-      axes_->setOrientation(orientation_property_->getQuaternion() );
+      axes_->setPosition(position_property_->getVector());
+      axes_->setOrientation(orientation_property_->getQuaternion());
     }
   } else {
-    if (axes_) {
-      delete axes_;
-      axes_ = NULL;
-    }
+    axes_.reset(nullptr);
   }
 }
 
 void RobotJoint::updateAxis()
 {
-  if (show_axis_property_->getValue().toBool() ) {
+  if (show_axis_property_->getValue().toBool()) {
     if (!axis_) {
-      static int count = 0;
-      std::stringstream ss;
-      ss << "Axis for joint " << name_ << count++;
-      axis_ = new Arrow(robot_->getSceneManager(), robot_->getOtherNode(), 0.15f, 0.05f, 0.05f,
-          0.08f);
-      axis_->getSceneNode()->setVisible(getEnabled() );
+      axis_ = std::make_unique<Arrow>(
+        robot_->getSceneManager(), robot_->getOtherNode(), 0.15f, 0.05f, 0.05f, 0.08f);
+      axis_->getSceneNode()->setVisible(getEnabled());
 
-      axis_->setPosition(position_property_->getVector() );
-      axis_->setOrientation(orientation_property_->getQuaternion() );
+      axis_->setPosition(position_property_->getVector());
+      axis_->setOrientation(orientation_property_->getQuaternion());
 
-      // TODO(lucasw) store an Ogre::ColorValue and set it according to
-      // joint type.
+      // TODO(lucasw) store an Ogre::ColorValue and set it according to joint type.
       axis_->setColor(0.0f, 0.8f, 0.0f, 1.0f);
     }
   } else {
-    if (axis_) {
-      delete axis_;
-      axis_ = NULL;
-    }
+    axis_.reset(nullptr);
   }
 }
 
@@ -449,7 +427,7 @@ void RobotJoint::setTransforms(
   if (axis_) {
     axis_->setPosition(position);
     axis_->setOrientation(orientation);
-    axis_->setDirection(parent_link_orientation * axis_property_->getVector() );
+    axis_->setDirection(parent_link_orientation * axis_property_->getVector());
   }
 }
 
