@@ -186,12 +186,13 @@ if(BUILD_TESTING)
 #    target_link_libraries(image_display_test rviz_default_plugins)
 #  endif()
 
-  ament_add_gmock(robot_test
-      test/rviz_default_plugins/robot/robot_test.cpp
-      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-  if(TARGET robot_test)
-    target_link_libraries(robot_test rviz_default_plugins)
-  endif()
+# TODO(greimela): reenable these tests once they can be run on the ci
+#  ament_add_gmock(robot_test
+#      test/rviz_default_plugins/robot/robot_test.cpp
+#      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+#  if(TARGET robot_test)
+#    target_link_libraries(robot_test rviz_default_plugins)
+#  endif()
 endif()
 
 ament_package()
