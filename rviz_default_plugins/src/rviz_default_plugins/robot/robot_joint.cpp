@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2013, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -63,7 +64,6 @@ namespace rviz_default_plugins
 namespace robot
 {
 
-
 using rviz_common::properties::Property;
 using rviz_common::properties::VectorProperty;
 using rviz_common::properties::QuaternionProperty;
@@ -71,23 +71,22 @@ using rviz_common::properties::StringProperty;
 using rviz_common::properties::FloatProperty;
 
 RobotJoint::RobotJoint(Robot * robot, const urdf::JointConstSharedPtr & joint)
-: robot_(robot),
-  name_(joint->name),
+: RobotElementBaseClass(robot, joint->name),
   parent_link_name_(joint->parent_link_name),
   child_link_name_(joint->child_link_name),
   has_decendent_links_with_geometry_(true),
   doing_set_checkbox_(false),
-  axes_(nullptr),
   axis_(nullptr)
 {
-  joint_property_ = new Property(
+  robot_element_property_ = new Property(
     name_.c_str(),
     true,
     "",
     nullptr,
     SLOT(updateChildVisibility()),
     this);
-  joint_property_->setIcon(rviz_common::loadPixmap("package://rviz/icons/classes/RobotJoint.png"));
+  robot_element_property_->setIcon(rviz_common::loadPixmap(
+      "package://rviz/icons/classes/RobotJoint.png"));
 
   details_ = new Property("Details", QVariant(), "", nullptr);
 
@@ -95,7 +94,7 @@ RobotJoint::RobotJoint(Robot * robot, const urdf::JointConstSharedPtr & joint)
     "Show Axes",
     false,
     "Enable/disable showing the axes of this joint.",
-    joint_property_,
+    robot_element_property_,
     SLOT(updateAxes()),
     this);
 
@@ -103,14 +102,14 @@ RobotJoint::RobotJoint(Robot * robot, const urdf::JointConstSharedPtr & joint)
     "Position",
     Ogre::Vector3::ZERO,
     "Position of this joint, in the current Fixed Frame.  (Not editable)",
-    joint_property_);
+    robot_element_property_);
   position_property_->setReadOnly(true);
 
   orientation_property_ = new QuaternionProperty(
     "Orientation",
     Ogre::Quaternion::IDENTITY,
     "Orientation of this joint, in the current Fixed Frame.  (Not editable)",
-    joint_property_);
+    robot_element_property_);
   orientation_property_->setReadOnly(true);
 
   std::string type = "";
@@ -134,7 +133,7 @@ RobotJoint::RobotJoint(Robot * robot, const urdf::JointConstSharedPtr & joint)
     "Type",
     QString::fromStdString(type),
     "Type of this joint.  (Not editable)",
-    joint_property_);
+    robot_element_property_);
   type_property_->setReadOnly(true);
 
   if (joint->limits) {
@@ -144,14 +143,14 @@ RobotJoint::RobotJoint(Robot * robot, const urdf::JointConstSharedPtr & joint)
       "Lower Limit",
       joint->limits->lower,
       "Lower limit of this joint.  (Not editable)",
-      joint_property_);
+      robot_element_property_);
     lower_limit_property_->setReadOnly(true);
 
     upper_limit_property_ = new FloatProperty(
       "Upper Limit",
       joint->limits->upper,
       "Upper limit of this joint.  (Not editable)",
-      joint_property_);
+      robot_element_property_);
     upper_limit_property_->setReadOnly(true);
   }
 
@@ -162,7 +161,7 @@ RobotJoint::RobotJoint(Robot * robot, const urdf::JointConstSharedPtr & joint)
       "Show Joint Axis",
       false,
       "Enable/disable showing the axis of this joint.",
-      joint_property_,
+      robot_element_property_,
       SLOT(updateAxis()),
       this);
 
@@ -170,11 +169,11 @@ RobotJoint::RobotJoint(Robot * robot, const urdf::JointConstSharedPtr & joint)
       "Joint Axis",
       Ogre::Vector3(joint->axis.x, joint->axis.y, joint->axis.z),
       "Axis of this joint.  (Not editable)",
-      joint_property_);
+      robot_element_property_);
     axis_property_->setReadOnly(true);
   }
 
-  joint_property_->collapse();
+  robot_element_property_->collapse();
 
   const urdf::Vector3 & pos = joint->parent_to_joint_origin_transform.position;
   const urdf::Rotation & rot = joint->parent_to_joint_origin_transform.rotation;
@@ -185,7 +184,7 @@ RobotJoint::RobotJoint(Robot * robot, const urdf::JointConstSharedPtr & joint)
 RobotJoint::~RobotJoint()
 {
   delete details_;
-  delete joint_property_;
+  delete robot_element_property_;
 }
 
 void RobotJoint::setJointPropertyDescription()
@@ -223,7 +222,7 @@ void RobotJoint::setJointPropertyDescription()
     }
   }
 
-  joint_property_->setDescription(desc.str().c_str());
+  robot_element_property_->setDescription(desc.str().c_str());
 }
 
 void RobotJoint::setJointCheckbox(QVariant val)
@@ -231,7 +230,7 @@ void RobotJoint::setJointCheckbox(QVariant val)
   // setting doing_set_checkbox_ to true prevents updateChildVisibility() from
   // updating child link enables.
   doing_set_checkbox_ = true;
-  joint_property_->setValue(val);
+  robot_element_property_->setValue(val);
   doing_set_checkbox_ = false;
 }
 
@@ -338,7 +337,7 @@ bool RobotJoint::getEnabled() const
   if (!hasDescendentLinksWithGeometry()) {
     return true;
   }
-  return joint_property_->getValue().toBool();
+  return robot_element_property_->getValue().toBool();
 }
 
 bool RobotJoint::styleIsTree() const
@@ -372,22 +371,6 @@ void RobotJoint::updateChildVisibility()
         }
       }
     }
-  }
-}
-
-void RobotJoint::updateAxes()
-{
-  if (axes_property_->getValue().toBool()) {
-    if (!axes_) {
-      axes_ = std::make_unique<Axes>(
-        robot_->getSceneManager(), robot_->getOtherNode(), 0.1f, 0.01f);
-      axes_->getSceneNode()->setVisible(getEnabled());
-
-      axes_->setPosition(position_property_->getVector());
-      axes_->setOrientation(orientation_property_->getQuaternion());
-    }
-  } else {
-    axes_.reset(nullptr);
   }
 }
 
@@ -438,68 +421,6 @@ void RobotJoint::hideSubProperties(bool hide)
   axes_property_->setHidden(hide);
   show_axis_property_->setHidden(hide);
   axis_property_->setHidden(hide);
-}
-
-Ogre::Vector3 RobotJoint::getPosition()
-{
-  return position_property_->getVector();
-}
-
-Ogre::Quaternion RobotJoint::getOrientation()
-{
-  return orientation_property_->getQuaternion();
-}
-
-void RobotJoint::setParentProperty(Property * new_parent)
-{
-  Property * old_parent = joint_property_->getParent();
-  if (old_parent) {
-    old_parent->takeChild(joint_property_);
-  }
-
-  if (new_parent) {
-    new_parent->addChild(joint_property_);
-  }
-}
-
-// if use_detail:
-//    - all sub properties become children of details_ property.
-//    - details_ property becomes a child of joint_property_
-// else (!use_detail)
-//    - all sub properties become children of joint_property_.
-//    details_ property does not have a parent.
-void RobotJoint::useDetailProperty(bool use_detail)
-{
-  Property * old_parent = details_->getParent();
-  if (old_parent) {
-    old_parent->takeChild(details_);
-  }
-
-  if (use_detail) {
-    while (joint_property_->numChildren() > 0) {
-      Property * child = joint_property_->childAt(0);
-      joint_property_->takeChild(child);
-      details_->addChild(child);
-    }
-
-    joint_property_->addChild(details_);
-  } else {
-    while (details_->numChildren() > 0) {
-      Property * child = details_->childAt(0);
-      details_->takeChild(child);
-      joint_property_->addChild(child);
-    }
-  }
-}
-
-void RobotJoint::expandDetails(bool expand)
-{
-  Property * parent = details_->getParent() ? details_ : joint_property_;
-  if (expand) {
-    parent->expand();
-  } else {
-    parent->collapse();
-  }
 }
 
 }  // namespace robot

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -62,9 +63,6 @@
 #endif
 
 #include <QFileInfo>
-
-#include <urdf_model/model.h>
-#include <urdf_model/link.h>
 
 #include "resource_retriever/retriever.h"
 
@@ -188,15 +186,13 @@ RobotLink::RobotLink(
   const std::string & parent_joint_name,
   bool visual,
   bool collision)
-: robot_(robot),
+: RobotElementBaseClass(robot, link->name),
   scene_manager_(robot->getDisplayContext()->getSceneManager()),
   context_(robot->getDisplayContext()),
-  name_(link->name),
   parent_joint_name_(parent_joint_name),
   visual_node_(nullptr),
   collision_node_(nullptr),
   trail_(nullptr),
-  axes_(nullptr),
   material_alpha_(1.0),
   robot_alpha_(1.0),
   only_render_depth_(false),
@@ -233,44 +229,45 @@ RobotLink::RobotLink(
   createDescription(link);
 
   if (!hasGeometry()) {
-    link_property_->setIcon(rviz_common::loadPixmap(
+    robot_element_property_->setIcon(rviz_common::loadPixmap(
         "package://rviz/icons/classes/RobotLinkNoGeom.png"));
     alpha_property_->hide();
-    link_property_->setValue(QVariant());
+    robot_element_property_->setValue(QVariant());
   }
 }
 
 void RobotLink::setProperties(const urdf::LinkConstSharedPtr & link)
 {
-  link_property_ = new Property(
+  robot_element_property_ = new Property(
     link->name.c_str(), true, "", nullptr, SLOT(updateVisibility()), this);
-  link_property_->setIcon(rviz_common::loadPixmap("package://rviz/icons/classes/RobotLink.png"));
+  robot_element_property_->setIcon(rviz_common::loadPixmap(
+      "package://rviz/icons/classes/RobotLink.png"));
 
   details_ = new Property("Details", QVariant(), "", nullptr);
 
   alpha_property_ = new FloatProperty("Alpha", 1,
       "Amount of transparency to apply to this link.",
-      link_property_, SLOT(updateAlpha()), this);
+      robot_element_property_, SLOT(updateAlpha()), this);
 
   trail_property_ = new Property("Show Trail", false,
       "Enable/disable a 2 meter \"ribbon\" which follows this link.",
-      link_property_, SLOT(updateTrail()), this);
+      robot_element_property_, SLOT(updateTrail()), this);
 
   axes_property_ = new Property("Show Axes", false,
       "Enable/disable showing the axes of this link.",
-      link_property_, SLOT(updateAxes()), this);
+      robot_element_property_, SLOT(updateAxes()), this);
 
   position_property_ = new VectorProperty("Position", Ogre::Vector3::ZERO,
       "Position of this link, in the current Fixed Frame.  (Not editable)",
-      link_property_);
+      robot_element_property_);
   position_property_->setReadOnly(true);
 
   orientation_property_ = new QuaternionProperty("Orientation", Ogre::Quaternion::IDENTITY,
       "Orientation of this link, in the current Fixed Frame.  (Not editable)",
-      link_property_);
+      robot_element_property_);
   orientation_property_->setReadOnly(true);
 
-  link_property_->collapse();
+  robot_element_property_->collapse();
 }
 
 void RobotLink::createDescription(const urdf::LinkConstSharedPtr & link)
@@ -315,7 +312,7 @@ void RobotLink::createDescription(const urdf::LinkConstSharedPtr & link)
     desc << "  This link has NO geometry.";
   }
 
-  link_property_->setDescription(desc.str().c_str());
+  robot_element_property_->setDescription(desc.str().c_str());
 }
 
 RobotLink::~RobotLink()
@@ -335,9 +332,8 @@ RobotLink::~RobotLink()
     scene_manager_->destroyRibbonTrail(trail_);
   }
 
-  delete axes_;
   delete details_;
-  delete link_property_;
+  delete robot_element_property_;
 }
 
 bool RobotLink::hasGeometry() const
@@ -350,7 +346,7 @@ bool RobotLink::getEnabled() const
   if (!hasGeometry()) {
     return true;
   }
-  return link_property_->getValue().toBool();
+  return robot_element_property_->getValue().toBool();
 }
 
 void RobotLink::setRobotAlpha(float a)
@@ -730,24 +726,6 @@ void RobotLink::updateTrail()
   }
 }
 
-void RobotLink::updateAxes()
-{
-  if (axes_property_->getValue().toBool()) {
-    if (!axes_) {
-      axes_ = new Axes(scene_manager_, robot_->getOtherNode(), 0.1f, 0.01f);
-      axes_->getSceneNode()->setVisible(getEnabled());
-
-      axes_->setPosition(position_property_->getVector());
-      axes_->setOrientation(orientation_property_->getQuaternion());
-    }
-  } else {
-    if (axes_) {
-      delete axes_;
-      axes_ = nullptr;
-    }
-  }
-}
-
 void RobotLink::setTransforms(
   const Ogre::Vector3 & visual_position, const Ogre::Quaternion & visual_orientation,
   const Ogre::Vector3 & collision_position, const Ogre::Quaternion & collision_orientation)
@@ -835,68 +813,6 @@ void RobotLink::hideSubProperties(bool hide)
   trail_property_->setHidden(hide);
   axes_property_->setHidden(hide);
   alpha_property_->setHidden(hide);
-}
-
-Ogre::Vector3 RobotLink::getPosition()
-{
-  return position_property_->getVector();
-}
-
-Ogre::Quaternion RobotLink::getOrientation()
-{
-  return orientation_property_->getQuaternion();
-}
-
-void RobotLink::setParentProperty(Property * new_parent)
-{
-  Property * old_parent = link_property_->getParent();
-  if (old_parent) {
-    old_parent->takeChild(link_property_);
-  }
-
-  if (new_parent) {
-    new_parent->addChild(link_property_);
-  }
-}
-
-// if use_detail:
-//    - all sub properties become children of details_ property.
-//    - details_ property becomes a child of link_property_
-// else (!use_detail)
-//    - all sub properties become children of link_property_.
-//    details_ property does not have a parent.
-void RobotLink::useDetailProperty(bool use_detail)
-{
-  Property * old_parent = details_->getParent();
-  if (old_parent) {
-    old_parent->takeChild(details_);
-  }
-
-  if (use_detail) {
-    while (link_property_->numChildren() > 0) {
-      Property * child = link_property_->childAt(0);
-      link_property_->takeChild(child);
-      details_->addChild(child);
-    }
-
-    link_property_->addChild(details_);
-  } else {
-    while (details_->numChildren() > 0) {
-      Property * child = details_->childAt(0);
-      details_->takeChild(child);
-      link_property_->addChild(child);
-    }
-  }
-}
-
-void RobotLink::expandDetails(bool expand)
-{
-  Property * parent = details_->getParent() ? details_ : link_property_;
-  if (expand) {
-    parent->expand();
-  } else {
-    parent->collapse();
-  }
 }
 
 }  // namespace robot

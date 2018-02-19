@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2013, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,24 +49,17 @@
 
 #include "rviz_rendering/objects/object.hpp"
 #include "rviz_common/selection/forwards.hpp"
+#include "robot_element_base_class.hpp"
 
 namespace Ogre
 {
-class SceneManager;
-class Entity;
-class SubEntity;
-class SceneNode;
 class Vector3;
 class Quaternion;
-class Any;
-class RibbonTrail;
 }  // namespace Ogre
 
 namespace rviz_rendering
 {
-class Shape;
 class Arrow;
-class Axes;
 }  // namespace rviz_rendering
 
 namespace rviz_common
@@ -80,25 +74,19 @@ class QuaternionProperty;
 class StringProperty;
 class VectorProperty;
 }  // namespace properties
-
-class DisplayContext;
 }  // namespace rviz_common
 
 namespace rviz_default_plugins
 {
 namespace robot
 {
-
 class Robot;
-class RobotLinkSelectionHandler;
-class RobotJoint;
-
 
 /**
  * \struct RobotJoint
  * \brief Contains any data we need from a joint in the robot.
  */
-class RobotJoint : public QObject
+class RobotJoint : public RobotElementBaseClass
 {
   Q_OBJECT
 
@@ -114,27 +102,17 @@ public:
   const std::string & getName() const {return name_;}
   const std::string & getParentLinkName() const {return parent_link_name_;}
   const std::string & getChildLinkName() const {return child_link_name_;}
-  const rviz_common::properties::Property * getJointProperty() const {return joint_property_;}
-  rviz_common::properties::Property * getJointProperty() {return joint_property_;}
+  const rviz_common::properties::Property * getJointProperty() const
+  {
+    return robot_element_property_;
+  }
+  rviz_common::properties::Property * getJointProperty() {return robot_element_property_;}
   RobotJoint * getParentJoint();
   void hideSubProperties(bool hide);
-
-  // Remove joint_property_ from its old parent and add to new_parent.
-  // If new_parent==NULL then leav unparented.
-  void setParentProperty(rviz_common::properties::Property * new_parent);
-
-  Ogre::Vector3 getPosition();
-  Ogre::Quaternion getOrientation();
 
   void setRobotAlpha(float a) {(void) a;}
 
   bool hasDescendentLinksWithGeometry() const {return has_decendent_links_with_geometry_;}
-
-  // place subproperties as children of details_ or joint_property_
-  void useDetailProperty(bool use_detail);
-
-  // expand all sub properties
-  void expandDetails(bool expand);
 
   // Set the description for the joint.
   // Also sets the checkbox.
@@ -150,12 +128,11 @@ public:
     int & links_with_geom_unchecked);   // returns # of disabled children with geometry
 
 private Q_SLOTS:
-  void updateAxes();
   void updateAxis();
   void updateChildVisibility();
 
 private:
-  bool getEnabled() const;
+  bool getEnabled() const override;
 
   // true if displaying in a tree style.  False if list style.
   bool styleIsTree() const;
@@ -172,17 +149,10 @@ private:
   void setJointCheckbox(QVariant val);
 
 protected:
-  Robot * robot_;
-  std::string name_;                          ///< Name of this joint
   std::string parent_link_name_;
   std::string child_link_name_;
 
   // properties
-  rviz_common::properties::Property * joint_property_;
-  rviz_common::properties::Property * details_;
-  rviz_common::properties::VectorProperty * position_property_;
-  rviz_common::properties::QuaternionProperty * orientation_property_;
-  rviz_common::properties::Property * axes_property_;
   // The joint axis if any, as opposed to the frame in which the joint exists above
   rviz_common::properties::VectorProperty * axis_property_;
   rviz_common::properties::Property * show_axis_property_;
@@ -197,7 +167,6 @@ private:
 
   bool doing_set_checkbox_;   // prevents updateChildVisibility() from  touching children
 
-  std::unique_ptr<rviz_rendering::Axes> axes_;
   std::unique_ptr<rviz_rendering::Arrow> axis_;
 };
 

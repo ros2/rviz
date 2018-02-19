@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,6 +49,7 @@
 #include <urdf/model.h>  // can be replaced later by urdf_model/types.h
 #include <urdf_model/pose.h>
 
+#include "robot_element_base_class.hpp"
 #include "rviz_rendering/objects/object.hpp"
 #include "rviz_common/selection/forwards.hpp"
 
@@ -67,7 +69,7 @@ namespace rviz_rendering
 {
 class Shape;
 class Axes;
-}
+}  // namespace rviz_rendering
 
 namespace rviz_common
 {
@@ -78,7 +80,7 @@ class Property;
 class BoolProperty;
 class QuaternionProperty;
 class VectorProperty;
-}
+}  // namespace properties
 class DisplayContext;
 }  // namespace rviz_common
 
@@ -97,7 +99,7 @@ typedef std::shared_ptr<RobotLinkSelectionHandler> RobotLinkSelectionHandlerPtr;
  * \struct RobotLink
  * \brief Contains any data we need from a link in the robot.
  */
-class RobotLink : public QObject
+class RobotLink : public RobotElementBaseClass
 {
   Q_OBJECT
 
@@ -120,14 +122,10 @@ public:
   const std::string & getName() const {return name_;}
   const std::string & getParentJointName() const {return parent_joint_name_;}
   const std::vector<std::string> & getChildJointNames() const {return child_joint_names_;}
-  rviz_common::properties::Property * getLinkProperty() const {return link_property_;}
+  rviz_common::properties::Property * getLinkProperty() const {return robot_element_property_;}
   Ogre::SceneNode * getVisualNode() const {return visual_node_;}
   Ogre::SceneNode * getCollisionNode() const {return collision_node_;}
   Robot * getRobot() const {return robot_;}
-
-  // Remove link_property_ from its old parent and add to new_parent.
-  // If new_parent==NULL then leav unparented.
-  void setParentProperty(rviz_common::properties::Property * new_parent);
 
   // hide or show all sub properties (hide to make tree easier to see)
   virtual void hideSubProperties(bool hide);
@@ -143,9 +141,6 @@ public:
   bool setSelectable(bool selectable);
   bool getSelectable();
 
-  Ogre::Vector3 getPosition();
-  Ogre::Quaternion getOrientation();
-
   bool hasGeometry() const;
 
   /* If set to true, the link will only render to the depth channel
@@ -154,12 +149,6 @@ public:
    */
   void setOnlyRenderDepth(bool onlyRenderDepth);
   bool getOnlyRenderDepth() const {return only_render_depth_;}
-
-  // place subproperties as children of details_ or joint_property_
-  void useDetailProperty(bool use_detail);
-
-  // expand all sub properties
-  void expandDetails(bool expand);
 
   // get the meshes vector to be used in robot_test.cpp
   std::vector<Ogre::Entity *> getVisualMeshes() {return visual_meshes_;}
@@ -176,11 +165,10 @@ public Q_SLOTS:
 private Q_SLOTS:
   void updateAlpha();
   void updateTrail();
-  void updateAxes();
 
 private:
   void setRenderQueueGroup(Ogre::uint8 group);
-  bool getEnabled() const;
+  bool getEnabled() const override;
   Ogre::Entity * createEntityForGeometryElement(
     const urdf::LinkConstSharedPtr & link,
     const urdf::Geometry & geom, const urdf::Pose & origin,
@@ -253,21 +241,14 @@ private:
   }
 
 protected:
-  Robot * robot_;
   Ogre::SceneManager * scene_manager_;
   rviz_common::DisplayContext * context_;
 
-  std::string name_;                          ///< Name of this link
   std::string parent_joint_name_;
   std::vector<std::string> child_joint_names_;
 
   // properties
-  rviz_common::properties::Property * link_property_;
-  rviz_common::properties::Property * details_;
-  rviz_common::properties::VectorProperty * position_property_;
-  rviz_common::properties::QuaternionProperty * orientation_property_;
   rviz_common::properties::Property * trail_property_;
-  rviz_common::properties::Property * axes_property_;
   rviz_common::properties::FloatProperty * alpha_property_;
 
 private:
@@ -288,8 +269,6 @@ private:
 
   Ogre::RibbonTrail * trail_;
 
-  rviz_rendering::Axes * axes_;
-
   float material_alpha_;  ///< If material is not a texture, this saves the alpha value set
 ///< in the URDF, otherwise is 1.0.
   float robot_alpha_;  ///< Alpha value from top-level robot alpha Property
@@ -297,9 +276,6 @@ private:
 
   bool only_render_depth_;
   bool is_selectable_;
-
-  // joint stuff
-  std::string joint_name_;
 
   RobotLinkSelectionHandlerPtr selection_handler_;
 

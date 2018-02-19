@@ -47,6 +47,7 @@ set(rviz_default_plugins_headers_to_moc
   src/rviz_default_plugins/robot/robot.hpp
   src/rviz_default_plugins/robot/robot_joint.hpp
   src/rviz_default_plugins/robot/robot_link.hpp
+  src/rviz_default_plugins/robot/robot_element_base_class.hpp
 )
 
 set(rviz_default_plugins_source_files
@@ -73,6 +74,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/robot/robot.cpp
   src/rviz_default_plugins/robot/robot_joint.cpp
   src/rviz_default_plugins/robot/robot_link.cpp
+  src/rviz_default_plugins/robot/robot_element_base_class.cpp
   src/rviz_default_plugins/robot/tf_link_updater.cpp
   src/rviz_default_plugins/tools/move/move_tool.cpp
   src/rviz_default_plugins/view_controllers/orbit/orbit_view_controller.cpp
