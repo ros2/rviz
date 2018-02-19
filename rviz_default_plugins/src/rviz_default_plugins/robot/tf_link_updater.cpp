@@ -35,11 +35,7 @@
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>
 
-// #include "tf2_ors/tf.h"
-
 #include "rviz_common/frame_manager.hpp"
-
-#include "rclcpp/time.hpp"
 
 namespace rviz_default_plugins
 {
@@ -55,26 +51,28 @@ TFLinkUpdater::TFLinkUpdater(
 : frame_manager_(frame_manager),
   status_callback_(status_cb),
   tf_prefix_(tf_prefix)
-{
-}
+{}
 
 bool TFLinkUpdater::getLinkTransforms(
-  const std::string & _link_name, Ogre::Vector3 & visual_position,
+  const std::string & _link_name,
+  Ogre::Vector3 & visual_position,
   Ogre::Quaternion & visual_orientation,
-  Ogre::Vector3 & collision_position, Ogre::Quaternion & collision_orientation) const
+  Ogre::Vector3 & collision_position,
+  Ogre::Quaternion & collision_orientation) const
 {
+  // Replacing tf::resolve. We know that the name has no leading "/". If we assume that the
+  // tf_prefix_ has no leading "/", this is what should happen
   std::string link_name = _link_name;
-  // if (!tf_prefix_.empty())
-  // {
-  //   link_name = tf::resolve(tf_prefix_, link_name);
-  // }
+  if (!tf_prefix_.empty()) {
+    link_name = tf_prefix_ + "/" + link_name;
+  }
 
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
   if (!frame_manager_->getTransform(link_name, position, orientation)) {
-    std::stringstream ss;
-    ss << "No transform from [" << link_name << "] to [" << frame_manager_->getFixedFrame() << "]";
-    setLinkStatus(StatusProperty::Error, link_name, ss.str());
+    std::string error_message(
+      "No transform from [" + link_name + "] to [" + frame_manager_->getFixedFrame() + "]");
+    setLinkStatus(StatusProperty::Error, link_name, error_message);
     return false;
   }
 
@@ -90,8 +88,7 @@ bool TFLinkUpdater::getLinkTransforms(
 }
 
 void TFLinkUpdater::setLinkStatus(
-  StatusLevel level, const std::string & link_name,
-  const std::string & text) const
+  StatusLevel level, const std::string & link_name, const std::string & text) const
 {
   if (status_callback_) {
     status_callback_(level, link_name, text);
