@@ -273,7 +273,7 @@ void TFDisplay::update(float wall_dt, float ros_dt)
   (void) ros_dt;
   update_timer_ += wall_dt;
   float update_rate = update_rate_property_->getFloat();
-  if (update_rate < 0.0001f || update_timer_ > update_rate) {
+  if (update_rate < 0.0001f || update_timer_ > update_rate * 1000000000) {
     updateFrames();
 
     update_timer_ = 0.0f;

@@ -122,6 +122,8 @@ RobotModelDisplay::RobotModelDisplay()
   topic_property_->setDescription("Topic where filepath to urdf is published.");
   topic_property_->setName("Description Topic");
 
+  unreliable_property_->setHidden(true);
+
   tf_prefix_property_ = new StringProperty("TF Prefix", "",
       "Robot Model normally assumes the link name is the same as the tf frame name. "
       " This option allows you to set a prefix.  Mainly useful for multi-robot situations.",
@@ -276,7 +278,7 @@ void RobotModelDisplay::update(float wall_dt, float ros_dt)
   (void) ros_dt;
   time_since_last_transform_ += wall_dt;
   float rate = update_rate_property_->getFloat();
-  bool update = rate < 0.0001f || time_since_last_transform_ >= rate;
+  bool update = rate < 0.0001f || time_since_last_transform_ >= rate * 1000000000;
 
   if (has_new_transforms_ || update) {
     updateRobot();
