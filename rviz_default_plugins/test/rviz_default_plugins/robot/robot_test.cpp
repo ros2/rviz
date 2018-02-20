@@ -58,6 +58,7 @@
 using namespace ::testing;  // NOLINT
 using namespace rviz_default_plugins::robot;  // NOLINT
 
+static const char * const details_property_name = "Details";
 
 class RobotTestFixture : public Test
 {
@@ -204,7 +205,7 @@ TEST_F(RobotTestFixture, changedLinkTreeStyle_reorders_the_properties_into_a_tre
   EXPECT_EQ("Link Tree", prop->getNameStd());
   EXPECT_EQ(6, prop->numChildren());
   EXPECT_EQ("test_robot_link", prop->childAt(5)->getNameStd());
-  EXPECT_EQ("Details", prop->childAt(5)->childAt(0)->getNameStd());
+  EXPECT_EQ(details_property_name, prop->childAt(5)->childAt(0)->getNameStd());
   EXPECT_EQ("test_robot_link_head", prop->childAt(5)->childAt(1)->getNameStd());
 }
 
@@ -326,6 +327,124 @@ TEST_F(RobotTestFixture, expand_details_in_joint_description_shows_hidden_proper
   EXPECT_EQ(6, test_robot_link_property->numChildren());
   EXPECT_EQ("Show Axes", test_robot_link_property->childAt(0)->getNameStd());
   EXPECT_EQ("Type", test_robot_link_property->childAt(3)->getNameStd());
+}
+
+TEST_F(RobotTestFixture, changedExpandTree_shows_link_and_joint_properties_and_hides_details) {
+  robot_->load(urdf_model_);
+
+  auto prop = robot_->getLinkTreeProperty();
+  prop->childAt(0)->setValue("Tree of links and joints");
+  prop->childAt(1)->setValue(true);  // Enable "Expand Tree"
+
+  EXPECT_EQ("Link/Joint Tree", prop->getNameStd());
+  EXPECT_EQ(6, prop->numChildren());
+  
+  auto test_robot_link = prop->childAt(5);
+  EXPECT_EQ("test_robot_link", test_robot_link->getNameStd());
+
+  auto test_robot_link_details = test_robot_link->childAt(0);
+  EXPECT_EQ(details_property_name, test_robot_link_details->getNameStd());
+  EXPECT_FALSE(test_robot_link_details->isExpanded());
+
+  auto test_robot_continuous = test_robot_link->childAt(1);
+  EXPECT_EQ("test_robot_continuous", test_robot_continuous->getNameStd());
+  EXPECT_TRUE(test_robot_continuous->isExpanded());
+
+  auto test_robot_continuous_details = test_robot_continuous->childAt(0);
+  EXPECT_EQ(details_property_name, test_robot_continuous_details->getNameStd());
+  EXPECT_FALSE(test_robot_continuous_details->isExpanded());
+}
+
+TEST_F(RobotTestFixture, changedExpandTree_hides_link_and_joint_properties_on_deselect) {
+  robot_->load(urdf_model_);
+
+  auto prop = robot_->getLinkTreeProperty();
+  prop->childAt(0)->setValue("Tree of links and joints");
+  prop->childAt(1)->setValue(true);  // Enable "Expand Tree"
+  prop->childAt(1)->setValue(false);  // Disable "Expand Tree"
+
+  EXPECT_EQ("Link/Joint Tree", prop->getNameStd());
+  EXPECT_EQ(6, prop->numChildren());
+
+  auto test_robot_link = prop->childAt(5);
+  EXPECT_EQ("test_robot_link", test_robot_link->getNameStd());
+  EXPECT_FALSE(test_robot_link->isExpanded());
+}
+
+
+TEST_F(RobotTestFixture, changedExpandLinkDetails_shows_link_details) {
+  robot_->load(urdf_model_);
+
+  auto prop = robot_->getLinkTreeProperty();
+  prop->childAt(0)->setValue("Tree of links and joints");
+  prop->childAt(1)->setValue(true);  // Enable "Expand Tree"
+  prop->childAt(2)->setValue(true);  // Enable "Expand Link Details"
+
+  EXPECT_EQ("Link/Joint Tree", prop->getNameStd());
+  EXPECT_EQ(6, prop->numChildren());
+
+  auto test_robot_link = prop->childAt(5);
+  EXPECT_EQ("test_robot_link", test_robot_link->getNameStd());
+
+  auto test_robot_link_details = test_robot_link->childAt(0);
+  EXPECT_EQ(details_property_name, test_robot_link_details->getNameStd());
+  EXPECT_TRUE(test_robot_link_details->isExpanded());
+
+  auto test_robot_continuous = test_robot_link->childAt(1);
+  EXPECT_EQ("test_robot_continuous", test_robot_continuous->getNameStd());
+  EXPECT_TRUE(test_robot_continuous->isExpanded());
+
+  auto test_robot_continuous_details = test_robot_continuous->childAt(0);
+  EXPECT_EQ(details_property_name, test_robot_continuous_details->getNameStd());
+  EXPECT_FALSE(test_robot_continuous_details->isExpanded());
+}
+
+TEST_F(RobotTestFixture, changedExpandJointDetails_shows_joint_details) {
+  robot_->load(urdf_model_);
+
+  auto prop = robot_->getLinkTreeProperty();
+  prop->childAt(0)->setValue("Tree of links and joints");
+  prop->childAt(1)->setValue(true);  // Enable "Expand Tree"
+  prop->childAt(3)->setValue(true);  // Enable "Expand Joint Details"
+
+  EXPECT_EQ("Link/Joint Tree", prop->getNameStd());
+  EXPECT_EQ(6, prop->numChildren());
+
+  auto test_robot_link = prop->childAt(5);
+  EXPECT_EQ("test_robot_link", test_robot_link->getNameStd());
+
+  auto test_robot_link_details = test_robot_link->childAt(0);
+  EXPECT_EQ(details_property_name, test_robot_link_details->getNameStd());
+  EXPECT_FALSE(test_robot_link_details->isExpanded());
+
+  auto test_robot_continuous_details = test_robot_link->childAt(1)->childAt(0);
+  EXPECT_EQ(details_property_name, test_robot_continuous_details->getNameStd());
+  EXPECT_TRUE(test_robot_continuous_details->isExpanded());
+}
+
+TEST_F(RobotTestFixture, changedEnableAllLinks_toggles_all_links) {
+  robot_->load(urdf_model_);
+
+  auto prop = robot_->getLinkTreeProperty();
+  EXPECT_EQ("Links", prop->getNameStd());
+
+  auto all_links_enabled = prop->childAt(4);
+  EXPECT_EQ("All Links Enabled", all_links_enabled->getNameStd());
+  EXPECT_EQ(9, prop->numChildren());
+
+  all_links_enabled->setValue(true);
+
+  EXPECT_TRUE(prop->childAt(5)->getValue().toBool());
+  EXPECT_TRUE(prop->childAt(6)->getValue().toBool());
+  EXPECT_TRUE(prop->childAt(7)->getValue().toBool());
+  EXPECT_TRUE(prop->childAt(8)->getValue().toBool());
+
+  all_links_enabled->setValue(false);
+
+  EXPECT_FALSE(prop->childAt(5)->getValue().toBool());
+  EXPECT_FALSE(prop->childAt(6)->getValue().toBool());
+  EXPECT_FALSE(prop->childAt(7)->getValue().toBool());
+  EXPECT_FALSE(prop->childAt(8)->getValue().toBool());
 }
 
 int main(int argc, char ** argv)
