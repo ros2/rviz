@@ -653,36 +653,16 @@ Ogre::Entity * RobotLink::createEntityForGeometryElement(
 
 void RobotLink::createCollision(const urdf::LinkConstSharedPtr & link)
 {
-#if URDF_MAJOR_VERSION == 0 && URDF_MINOR_VERSION == 2
-  createVisualizable<urdf::CollisionSharedPtr>(
-    link,
-    collision_meshes_,
-    link->collision_array,
-    link->collision,
-    collision_node_,
-    &collision_groups);
-#else
   createVisualizable<urdf::CollisionSharedPtr>(
     link, collision_meshes_, link->collision_array, link->collision, collision_node_);
-#endif
 
   collision_node_->setVisible(getEnabled());
 }
 
 void RobotLink::createVisual(const urdf::LinkConstSharedPtr & link)
 {
-#if URDF_MAJOR_VERSION == 0 && URDF_MINOR_VERSION == 2
-  createVisualizable<urdf::VisualSharedPtr>(
-    link,
-    visual_meshes_,
-    link->visual_array,
-    link->visual,
-    visual_node_,
-    &visual_groups);
-#else
   createVisualizable<urdf::VisualSharedPtr>(
     link, visual_meshes_, link->visual_array, link->visual, visual_node_);
-#endif
 
   visual_node_->setVisible(getEnabled());
 }

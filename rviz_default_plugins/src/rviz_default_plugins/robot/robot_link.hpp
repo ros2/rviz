@@ -190,34 +190,10 @@ private:
     std::vector<Ogre::Entity *> & meshes_vector,
     const std::vector<T> & visualizables_array,
     const T & visualizable_element,
-    Ogre::SceneNode * scene_node,
-    std::map<std::string, std::shared_ptr<std::vector<T>>> * groups_map = nullptr)
+    Ogre::SceneNode * scene_node)
   {
     bool valid_visualizable_found = false;
 
-#if URDF_MAJOR_VERSION == 0 && URDF_MINOR_VERSION == 2
-    for (const auto & map_element : *groups_map) {
-      if (map_element.second) {
-        for (const auto & vector_element : map_element.second) {
-          T visualizable_element = vector_element;
-          if (visualizable_element && visualizable_element->geometry) {
-            Ogre::Entity * mesh = nullptr;
-            createEntityForGeometryElement(
-              link,
-              *visualizable_element->geometry,
-              visualizable_element->origin,
-              scene_node,
-              mesh);
-            if (mesh) {
-              meshes_vector.push_back(mesh);
-              valid_visualizable_found = true;
-            }
-          }
-        }
-      }
-    }
-#else
-    (void) groups_map;
     for (const auto & vector_element : visualizables_array) {
       T link_visual_element = vector_element;
       if (link_visual_element && link_visual_element->geometry) {
@@ -229,7 +205,6 @@ private:
         }
       }
     }
-#endif
 
     if (!valid_visualizable_found && visualizable_element && visualizable_element->geometry) {
       Ogre::Entity * mesh = createEntityForGeometryElement(
