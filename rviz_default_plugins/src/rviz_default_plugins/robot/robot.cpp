@@ -514,19 +514,6 @@ void Robot::changedExpandTree()
   }
 }
 
-void Robot::changedHideSubProperties()
-{
-  bool hide = false;
-
-  for (auto & link : links_) {
-    link.second->hideSubProperties(hide);
-  }
-
-  for (auto & joint : joints_) {
-    joint.second->hideSubProperties(hide);
-  }
-}
-
 void Robot::changedExpandLinkDetails()
 {
   bool expand = expand_link_details_->getBool();

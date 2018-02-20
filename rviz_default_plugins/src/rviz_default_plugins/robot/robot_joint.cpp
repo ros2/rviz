@@ -175,15 +175,6 @@ RobotJoint * RobotJoint::getParentJoint()
   return robot_->getJoint(parent_joint_name);
 }
 
-void RobotJoint::hideSubProperties(bool hide)
-{
-  position_property_->setHidden(hide);
-  orientation_property_->setHidden(hide);
-  axes_property_->setHidden(hide);
-  show_axis_property_->setHidden(hide);
-  axis_property_->setHidden(hide);
-}
-
 void RobotJoint::setJointPropertyDescription()
 {
   int links_with_geom;

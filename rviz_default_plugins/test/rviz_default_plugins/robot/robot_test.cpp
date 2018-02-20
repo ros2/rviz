@@ -338,7 +338,7 @@ TEST_F(RobotTestFixture, changedExpandTree_shows_link_and_joint_properties_and_h
 
   EXPECT_EQ("Link/Joint Tree", prop->getNameStd());
   EXPECT_EQ(6, prop->numChildren());
-  
+
   auto test_robot_link = prop->childAt(5);
   EXPECT_EQ("test_robot_link", test_robot_link->getNameStd());
 

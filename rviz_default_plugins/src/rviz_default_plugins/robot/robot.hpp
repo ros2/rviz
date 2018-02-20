@@ -230,7 +230,6 @@ public:
 private Q_SLOTS:
   void changedLinkTreeStyle();
   void changedExpandTree();
-  void changedHideSubProperties();
   void changedEnableAllLinks();
   void changedExpandLinkDetails();
   void changedExpandJointDetails();

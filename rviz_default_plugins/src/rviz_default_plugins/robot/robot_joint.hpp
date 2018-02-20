@@ -108,8 +108,6 @@ public:
   rviz_common::properties::Property * getJointProperty() {return robot_element_property_;}
   RobotJoint * getParentJoint();
 
-  void hideSubProperties(bool hide);
-
   bool hasDescendentLinksWithGeometry() const {return has_decendent_links_with_geometry_;}
 
   // Set the description for the joint.

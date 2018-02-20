@@ -118,9 +118,6 @@ public:
     const Ogre::Vector3 & visual_position, const Ogre::Quaternion & visual_orientation,
     const Ogre::Vector3 & collision_position, const Ogre::Quaternion & collision_orientation);
 
-  // hide or show all sub properties (hide to make tree easier to see)
-  virtual void hideSubProperties(bool hide);
-
   void setToErrorMaterial();
   void setToNormalMaterial();
 
