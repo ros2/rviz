@@ -154,12 +154,120 @@ Robot::~Robot()
   delete link_factory_;
 }
 
-void Robot::setLinkFactory(LinkFactory * link_factory)
+void Robot::load(const urdf::ModelInterface & urdf, bool visual, bool collision)
 {
-  if (link_factory) {
-    delete link_factory_;
-    link_factory_ = link_factory;
+  link_tree_->hide();  // hide until loaded
+  robot_loaded_ = false;
+
+  // clear out any data (properties, shapes, etc) from a previously loaded robot.
+  clear();
+
+  // the root link is discovered below.  Set to nullptr until found.
+  root_link_ = nullptr;
+
+  // Properties are not added to display until changedLinkTreeStyle() is called (below).
+  createLinkProperties(urdf, visual, collision);
+  createJointProperties(urdf);
+
+  // robot is now loaded
+  robot_loaded_ = true;
+  link_tree_->show();
+
+  // set the link tree style and add link/joint properties to rviz pane.
+  setLinkTreeStyle(LinkTreeStyle(link_tree_style_->getOptionInt()));
+  changedLinkTreeStyle();
+
+  // at startup the link tree is collapsed since it is large and not often needed.
+  link_tree_->collapse();
+
+  setVisualVisible(isVisualVisible() );
+  setCollisionVisible(isCollisionVisible() );
+}
+
+void Robot::clear()
+{
+  // unparent all link and joint properties so they can be deleted in arbitrary order
+  // without being delete by their parent propeties (which vary based on style)
+  unparentLinkProperties();
+
+  for (const auto & link_entry : links_) {
+    RobotLink * link = link_entry.second;
+    delete link;
   }
+
+  for (const auto & joint_entry : joints_) {
+    RobotJoint * joint = joint_entry.second;
+    delete joint;
+  }
+
+  links_.clear();
+  joints_.clear();
+  root_visual_node_->removeAndDestroyAllChildren();
+  root_collision_node_->removeAndDestroyAllChildren();
+  root_other_node_->removeAndDestroyAllChildren();
+}
+
+void Robot::update(const LinkUpdater & updater)
+{
+  for (const auto & link_entry : links_) {
+    RobotLink * link = link_entry.second;
+
+    link->setToNormalMaterial();
+
+    Ogre::Vector3 visual_position, collision_position;
+    Ogre::Quaternion visual_orientation, collision_orientation;
+    if (updater.getLinkTransforms(
+        link->getName(),
+        visual_position,
+        visual_orientation,
+        collision_position,
+        collision_orientation))
+    {
+      // Check if visual_orientation, visual_position, collision_orientation,
+      // and collision_position are NaN.
+      if (visual_orientation.isNaN()) {
+        log_error(link, "visual", "orientation");
+        continue;
+      }
+      if (visual_position.isNaN()) {
+        log_error(link, "visual", "position");
+        continue;
+      }
+      if (collision_orientation.isNaN()) {
+        log_error(link, "collision", "orientation");
+        continue;
+      }
+      if (collision_position.isNaN()) {
+        log_error(link, "collision", "position");
+        continue;
+      }
+      link->setTransforms(visual_position, visual_orientation, collision_position,
+        collision_orientation);
+
+      for (const auto & child_joint_name : link->getChildJointNames()) {
+        RobotJoint * joint = getJoint(child_joint_name);
+        if (joint) {
+          joint->setTransforms(visual_position, visual_orientation);
+        }
+      }
+    } else {
+      link->setToErrorMaterial();
+    }
+  }
+}
+
+void Robot::log_error(
+  const RobotLink * link,
+  const std::string & visual_or_collision,
+  const std::string & position_or_orientation) const
+{
+  // TODO(wjwwood): restore throttle behavior of ROS_ERROR_THROTTLE
+  RVIZ_COMMON_LOG_ERROR_STREAM(
+    // 1.0,
+    visual_or_collision << position_or_orientation << link->getName().c_str() <<
+      " contains NaNs. Skipping render as long as the " << position_or_orientation <<
+      "is invalid.";
+  );
 }
 
 void Robot::setVisible(bool visible)
@@ -221,27 +329,96 @@ void Robot::setAlpha(float a)
   }
 }
 
-void Robot::clear()
+void Robot::setPosition(const Ogre::Vector3 & position)
 {
-  // unparent all link and joint properties so they can be deleted in arbitrary order
-  // without being delete by their parent propeties (which vary based on style)
-  unparentLinkProperties();
+  root_visual_node_->setPosition(position);
+  root_collision_node_->setPosition(position);
+}
 
-  for (const auto & link_entry : links_) {
-    RobotLink * link = link_entry.second;
-    delete link;
+void Robot::setOrientation(const Ogre::Quaternion & orientation)
+{
+  root_visual_node_->setOrientation(orientation);
+  root_collision_node_->setOrientation(orientation);
+}
+
+void Robot::setScale(const Ogre::Vector3 & scale)
+{
+  root_visual_node_->setScale(scale);
+  root_collision_node_->setScale(scale);
+}
+
+const Ogre::Vector3 & Robot::getPosition()
+{
+  return root_visual_node_->getPosition();
+}
+
+const Ogre::Quaternion & Robot::getOrientation()
+{
+  return root_visual_node_->getOrientation();
+}
+
+void Robot::setLinkTreeStyle(LinkTreeStyle style)
+{
+  std::map<LinkTreeStyle, std::string>::const_iterator style_it = style_name_map_.find(style);
+  if (style_it == style_name_map_.end()) {
+    link_tree_style_->setValue(style_name_map_[STYLE_DEFAULT].c_str());
+  } else {
+    link_tree_style_->setValue(style_it->second.c_str());
+  }
+}
+
+void Robot::calculateJointCheckboxes()
+{
+  if (in_changed_enable_all_links_ || !robot_loaded_) {
+    return;
   }
 
-  for (const auto & joint_entry : joints_) {
-    RobotJoint * joint = joint_entry.second;
-    delete joint;
+  int links_with_geom_checked = 0;
+  int links_with_geom_unchecked = 0;
+
+  // check root link
+  RobotLink * link = root_link_;
+
+  if (!link) {
+    setEnableAllLinksCheckbox(QVariant());
+    return;
   }
 
-  links_.clear();
-  joints_.clear();
-  root_visual_node_->removeAndDestroyAllChildren();
-  root_collision_node_->removeAndDestroyAllChildren();
-  root_other_node_->removeAndDestroyAllChildren();
+  if (link->hasGeometry()) {
+    bool checked = link->getLinkProperty()->getValue().toBool();
+    links_with_geom_checked += checked ? 1 : 0;
+    links_with_geom_unchecked += checked ? 0 : 1;
+  }
+
+  // check all child links and joints recursively
+  for (auto & child_joint_name : link->getChildJointNames()) {
+    RobotJoint * child_joint = getJoint(child_joint_name);
+    if (child_joint) {
+      int child_links_with_geom;
+      int child_links_with_geom_checked;
+      int child_links_with_geom_unchecked;
+      child_joint->calculateJointCheckboxesRecursive(child_links_with_geom,
+        child_links_with_geom_checked,
+        child_links_with_geom_unchecked);
+      links_with_geom_checked += child_links_with_geom_checked;
+      links_with_geom_unchecked += child_links_with_geom_unchecked;
+    }
+  }
+  int links_with_geom = links_with_geom_checked + links_with_geom_unchecked;
+
+  if (!links_with_geom) {
+    setEnableAllLinksCheckbox(QVariant());
+  } else {
+    setEnableAllLinksCheckbox(links_with_geom_unchecked == 0);
+  }
+}
+
+void Robot::setLinkFactory(LinkFactory * link_factory)
+{
+  if (link_factory) {
+    delete link_factory_;
+    link_factory_ = link_factory;
+  }
 }
 
 RobotLink * Robot::LinkFactory::createLink(
@@ -259,36 +436,6 @@ RobotJoint * Robot::LinkFactory::createJoint(
   const urdf::JointConstSharedPtr & joint)
 {
   return new RobotJoint(robot, joint);
-}
-
-void Robot::load(const urdf::ModelInterface & urdf, bool visual, bool collision)
-{
-  link_tree_->hide();  // hide until loaded
-  robot_loaded_ = false;
-
-  // clear out any data (properties, shapes, etc) from a previously loaded robot.
-  clear();
-
-  // the root link is discovered below.  Set to nullptr until found.
-  root_link_ = nullptr;
-
-  // Properties are not added to display until changedLinkTreeStyle() is called (below).
-  createLinkProperties(urdf, visual, collision);
-  createJointProperties(urdf);
-
-  // robot is now loaded
-  robot_loaded_ = true;
-  link_tree_->show();
-
-  // set the link tree style and add link/joint properties to rviz pane.
-  setLinkTreeStyle(LinkTreeStyle(link_tree_style_->getOptionInt()));
-  changedLinkTreeStyle();
-
-  // at startup the link tree is collapsed since it is large and not often needed.
-  link_tree_->collapse();
-
-  setVisualVisible(isVisualVisible() );
-  setCollisionVisible(isCollisionVisible() );
 }
 
 void Robot::createLinkProperties(const urdf::ModelInterface & urdf, bool visual, bool collision)
@@ -448,38 +595,6 @@ void Robot::initLinkTreeStyle()
   }
 }
 
-bool Robot::styleShowLink(LinkTreeStyle style)
-{
-  return
-    style == STYLE_LINK_LIST ||
-    style == STYLE_LINK_TREE ||
-    style == STYLE_JOINT_LINK_TREE;
-}
-
-bool Robot::styleShowJoint(LinkTreeStyle style)
-{
-  return
-    style == STYLE_JOINT_LIST ||
-    style == STYLE_JOINT_LINK_TREE;
-}
-
-bool Robot::styleIsTree(LinkTreeStyle style)
-{
-  return
-    style == STYLE_LINK_TREE ||
-    style == STYLE_JOINT_LINK_TREE;
-}
-
-void Robot::setLinkTreeStyle(LinkTreeStyle style)
-{
-  std::map<LinkTreeStyle, std::string>::const_iterator style_it = style_name_map_.find(style);
-  if (style_it == style_name_map_.end()) {
-    link_tree_style_->setValue(style_name_map_[STYLE_DEFAULT].c_str());
-  } else {
-    link_tree_style_->setValue(style_it->second.c_str());
-  }
-}
-
 // insert properties into link_tree_ according to style
 void Robot::changedLinkTreeStyle()
 {
@@ -560,7 +675,6 @@ void Robot::changedLinkTreeStyle()
   calculateJointCheckboxes();
 }
 
-
 // recursive helper for setLinkTreeStyle() when style is *_TREE
 void Robot::addLinkToLinkTree(LinkTreeStyle style, Property * parent, RobotLink * link)
 {
@@ -616,145 +730,26 @@ RobotJoint * Robot::getJoint(const std::string & name)
   return it->second;
 }
 
-void Robot::calculateJointCheckboxes()
+bool Robot::styleShowLink(LinkTreeStyle style)
 {
-  if (in_changed_enable_all_links_ || !robot_loaded_) {
-    return;
-  }
-
-  int links_with_geom_checked = 0;
-  int links_with_geom_unchecked = 0;
-
-  // check root link
-  RobotLink * link = root_link_;
-
-  if (!link) {
-    setEnableAllLinksCheckbox(QVariant());
-    return;
-  }
-
-  if (link->hasGeometry()) {
-    bool checked = link->getLinkProperty()->getValue().toBool();
-    links_with_geom_checked += checked ? 1 : 0;
-    links_with_geom_unchecked += checked ? 0 : 1;
-  }
-
-  // check all child links and joints recursively
-  for (auto & child_joint_name : link->getChildJointNames()) {
-    RobotJoint * child_joint = getJoint(child_joint_name);
-    if (child_joint) {
-      int child_links_with_geom;
-      int child_links_with_geom_checked;
-      int child_links_with_geom_unchecked;
-      child_joint->calculateJointCheckboxesRecursive(child_links_with_geom,
-        child_links_with_geom_checked,
-        child_links_with_geom_unchecked);
-      links_with_geom_checked += child_links_with_geom_checked;
-      links_with_geom_unchecked += child_links_with_geom_unchecked;
-    }
-  }
-  int links_with_geom = links_with_geom_checked + links_with_geom_unchecked;
-
-  if (!links_with_geom) {
-    setEnableAllLinksCheckbox(QVariant());
-  } else {
-    setEnableAllLinksCheckbox(links_with_geom_unchecked == 0);
-  }
+  return
+    style == STYLE_LINK_LIST ||
+    style == STYLE_LINK_TREE ||
+    style == STYLE_JOINT_LINK_TREE;
 }
 
-void Robot::update(const LinkUpdater & updater)
+bool Robot::styleShowJoint(LinkTreeStyle style)
 {
-  for (const auto & link_entry : links_) {
-    RobotLink * link = link_entry.second;
-
-    link->setToNormalMaterial();
-
-    Ogre::Vector3 visual_position, collision_position;
-    Ogre::Quaternion visual_orientation, collision_orientation;
-    if (updater.getLinkTransforms(link->getName(),
-      visual_position, visual_orientation,
-      collision_position, collision_orientation
-      ))
-    {
-      // Check if visual_orientation, visual_position, collision_orientation,
-      // and collision_position are NaN.
-      if (visual_orientation.isNaN()) {
-        // TODO(wjwwood): restore throttle behavior of ROS_ERROR_THROTTLE
-        RVIZ_COMMON_LOG_ERROR_STREAM(
-          // 1.0,
-          "visual orientation of " << link->getName().c_str() <<
-            " contains NaNs. Skipping render as long as the orientation is invalid."
-        );
-        continue;
-      }
-      if (visual_position.isNaN()) {
-        // TODO(wjwwood): restore throttle behavior of ROS_ERROR_THROTTLE
-        RVIZ_COMMON_LOG_ERROR_STREAM(
-          // 1.0,
-          "visual position of " << link->getName().c_str() <<
-            " contains NaNs. Skipping render as long as the position is invalid."
-        );
-        continue;
-      }
-      if (collision_orientation.isNaN()) {
-        // TODO(wjwwood): restore throttle behavior of ROS_ERROR_THROTTLE
-        RVIZ_COMMON_LOG_ERROR_STREAM(
-          // 1.0,
-          "collision orientation of " << link->getName().c_str() <<
-            " contains NaNs. Skipping render as long as the orientation is invalid."
-        );
-        continue;
-      }
-      if (collision_position.isNaN()) {
-        // TODO(wjwwood): restore throttle behavior of ROS_ERROR_THROTTLE
-        RVIZ_COMMON_LOG_ERROR_STREAM(
-          // 1.0,
-          "collision position of " << link->getName().c_str() <<
-            " contains NaNs. Skipping render as long as the position is invalid."
-        );
-        continue;
-      }
-      link->setTransforms(visual_position, visual_orientation, collision_position,
-        collision_orientation);
-
-      for (const auto & child_joint_name : link->getChildJointNames()) {
-        RobotJoint * joint = getJoint(child_joint_name);
-        if (joint) {
-          joint->setTransforms(visual_position, visual_orientation);
-        }
-      }
-    } else {
-      link->setToErrorMaterial();
-    }
-  }
+  return
+    style == STYLE_JOINT_LIST ||
+    style == STYLE_JOINT_LINK_TREE;
 }
 
-void Robot::setPosition(const Ogre::Vector3 & position)
+bool Robot::styleIsTree(LinkTreeStyle style)
 {
-  root_visual_node_->setPosition(position);
-  root_collision_node_->setPosition(position);
-}
-
-void Robot::setOrientation(const Ogre::Quaternion & orientation)
-{
-  root_visual_node_->setOrientation(orientation);
-  root_collision_node_->setOrientation(orientation);
-}
-
-void Robot::setScale(const Ogre::Vector3 & scale)
-{
-  root_visual_node_->setScale(scale);
-  root_collision_node_->setScale(scale);
-}
-
-const Ogre::Vector3 & Robot::getPosition()
-{
-  return root_visual_node_->getPosition();
-}
-
-const Ogre::Quaternion & Robot::getOrientation()
-{
-  return root_visual_node_->getOrientation();
+  return
+    style == STYLE_LINK_TREE ||
+    style == STYLE_JOINT_LINK_TREE;
 }
 
 }  // namespace robot

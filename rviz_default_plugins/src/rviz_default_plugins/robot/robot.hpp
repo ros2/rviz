@@ -222,10 +222,7 @@ public:
   void setLinkTreeStyle(LinkTreeStyle style);
 
   /** can be used to change the name, reparent, or add extra properties to the list of links */
-  rviz_common::properties::Property * getLinkTreeProperty()
-  {
-    return link_tree_;
-  }
+  rviz_common::properties::Property * getLinkTreeProperty() {return link_tree_;}
 
   // set joint checkboxes and All Links Enabled checkbox based on current link enables.
   void calculateJointCheckboxes();
@@ -306,6 +303,10 @@ protected:
 private:
   void createLinkProperties(const urdf::ModelInterface & urdf, bool visual, bool collision);
   void createJointProperties(const urdf::ModelInterface & urdf);
+  void log_error(
+    const RobotLink * link,
+    const std::string & visual_or_collision,
+    const std::string & position_or_orientation) const;
 };
 
 }  // namespace robot

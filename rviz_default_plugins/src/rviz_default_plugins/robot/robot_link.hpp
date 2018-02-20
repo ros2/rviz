@@ -118,15 +118,6 @@ public:
     const Ogre::Vector3 & visual_position, const Ogre::Quaternion & visual_orientation,
     const Ogre::Vector3 & collision_position, const Ogre::Quaternion & collision_orientation);
 
-  // access
-  const std::string & getName() const {return name_;}
-  const std::string & getParentJointName() const {return parent_joint_name_;}
-  const std::vector<std::string> & getChildJointNames() const {return child_joint_names_;}
-  rviz_common::properties::Property * getLinkProperty() const {return robot_element_property_;}
-  Ogre::SceneNode * getVisualNode() const {return visual_node_;}
-  Ogre::SceneNode * getCollisionNode() const {return collision_node_;}
-  Robot * getRobot() const {return robot_;}
-
   // hide or show all sub properties (hide to make tree easier to see)
   virtual void hideSubProperties(bool hide);
 
@@ -150,6 +141,15 @@ public:
   void setOnlyRenderDepth(bool onlyRenderDepth);
   bool getOnlyRenderDepth() const {return only_render_depth_;}
 
+  // access
+  const std::string & getName() const {return name_;}
+  const std::string & getParentJointName() const {return parent_joint_name_;}
+  const std::vector<std::string> & getChildJointNames() const {return child_joint_names_;}
+  rviz_common::properties::Property * getLinkProperty() const {return robot_element_property_;}
+  Ogre::SceneNode * getVisualNode() const {return visual_node_;}
+  Ogre::SceneNode * getCollisionNode() const {return collision_node_;}
+  Robot * getRobot() const {return robot_;}
+
   // get the meshes vector to be used in robot_test.cpp
   std::vector<Ogre::Entity *> getVisualMeshes() {return visual_meshes_;}
   std::vector<Ogre::Entity *> getCollisionMeshes() {return collision_meshes_;}
@@ -167,21 +167,28 @@ private Q_SLOTS:
   void updateTrail();
 
 private:
+  void setProperties(const urdf::LinkConstSharedPtr & link);
+  void createDescription(const urdf::LinkConstSharedPtr & link);
   void setRenderQueueGroup(Ogre::uint8 group);
   bool getEnabled() const override;
   Ogre::Entity * createEntityForGeometryElement(
     const urdf::LinkConstSharedPtr & link,
     const urdf::Geometry & geom, const urdf::Pose & origin,
     std::string material_name, Ogre::SceneNode * scene_node);
-
-  void createVisual(const urdf::LinkConstSharedPtr & link);
-  void createCollision(const urdf::LinkConstSharedPtr & link);
-  void createSelection();
-  Ogre::MaterialPtr getMaterialForLink(
+  void assignMaterialsToEntities(
     const urdf::LinkConstSharedPtr & link,
-    std::string material_name = "");
-  void createDescription(const urdf::LinkConstSharedPtr & link);
-  void setProperties(const urdf::LinkConstSharedPtr & link);
+    const std::string & material_name,
+    const Ogre::Entity * entity);
+  Ogre::MaterialPtr getMaterialForLink(
+    const urdf::LinkConstSharedPtr & link, std::string material_name = "");
+  urdf::VisualSharedPtr getVisualWithMaterial(
+    const urdf::LinkConstSharedPtr & link, const std::string & material_name) const;
+  void loadMaterialFromTexture(
+    Ogre::MaterialPtr & material_for_link, const urdf::VisualSharedPtr & visual) const;
+
+  void createCollision(const urdf::LinkConstSharedPtr & link);
+  void createVisual(const urdf::LinkConstSharedPtr & link);
+  void createSelection();
   void setBlending(const Ogre::MaterialPtr & material, const Ogre::ColourValue & color);
 
   template<typename T>

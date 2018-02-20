@@ -94,7 +94,6 @@ public:
   RobotJoint(Robot * robot, const urdf::JointConstSharedPtr & joint);
   ~RobotJoint() override;
 
-
   void setTransforms(
     const Ogre::Vector3 & parent_link_position,
     const Ogre::Quaternion & parent_link_orientation);
@@ -108,6 +107,7 @@ public:
   }
   rviz_common::properties::Property * getJointProperty() {return robot_element_property_;}
   RobotJoint * getParentJoint();
+
   void hideSubProperties(bool hide);
 
   void setRobotAlpha(float a) {(void) a;}
@@ -147,6 +147,9 @@ private:
 
   // set the value of the enable checkbox without touching child joints/links
   void setJointCheckbox(QVariant val);
+  std::string getType(const urdf::JointConstSharedPtr & joint) const;
+  void showLimitProperties(const urdf::JointConstSharedPtr & joint);
+  void showAxisForMovingJoints(const urdf::JointConstSharedPtr & joint, const std::string & type);
 
 protected:
   std::string parent_link_name_;
