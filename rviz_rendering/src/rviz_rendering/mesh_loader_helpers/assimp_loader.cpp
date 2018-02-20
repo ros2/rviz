@@ -145,19 +145,19 @@ private:
   uint8_t * pos_;
 };
 
-struct RetrieverResult
-{
-  RetrieverResult(bool resource_exists, Assimp::IOStream * resource_io_stream)
-  : resource_exists_(resource_exists),
-    resource_io_stream_(resource_io_stream) {}
-
-  bool resource_exists_;
-  Assimp::IOStream * resource_io_stream_;
-};
-
 class ResourceIOSystem : public Assimp::IOSystem
 {
 public:
+  struct RetrieverResult
+  {
+    RetrieverResult(bool resource_exists, Assimp::IOStream * resource_io_stream)
+    : resource_exists_(resource_exists),
+      resource_io_stream_(resource_io_stream) {}
+
+    bool resource_exists_;
+    Assimp::IOStream * resource_io_stream_;
+  };
+
   ResourceIOSystem() = default;
 
   ~ResourceIOSystem() override = default;
@@ -196,268 +196,99 @@ public:
     return RetrieverResult(true, new ResourceIOStream(res));
   }
 
-  void Close(Assimp::IOStream * stream) override;
+  void Close(Assimp::IOStream * stream) override
+  {
+    delete stream;
+  }
 
 private:
   mutable resource_retriever::Retriever retriever_;
 };
 
-void ResourceIOSystem::Close(Assimp::IOStream * stream)
+AssimpLoader::AssimpLoader()
 {
-  delete stream;
+  importer_ = std::make_unique<Assimp::Importer>();
+  importer_->SetIOHandler(new ResourceIOSystem());
+  // ASSIMP wants to change the orientation of the axis, but that's wrong for rviz.
+  importer_->SetPropertyBool(AI_CONFIG_IMPORT_COLLADA_IGNORE_UP_DIRECTION, true);
 }
 
-template<typename T>
-void fillIndexBuffer(const aiMesh * input_mesh, Ogre::HardwareIndexBufferSharedPtr & index_buffer)
+Ogre::MeshPtr AssimpLoader::meshFromAssimpScene(const std::string & name, const aiScene * scene)
 {
-  auto * indices =
-    static_cast<T *>(index_buffer->lock(Ogre::HardwareBuffer::HBL_DISCARD));
-
-  for (T j = 0; j < input_mesh->mNumFaces; j++) {
-    aiFace & face = input_mesh->mFaces[j];
-    for (T k = 0; k < face.mNumIndices; ++k) {
-      *indices++ = face.mIndices[k];
-    }
+  if (!scene->HasMeshes()) {
+    RVIZ_RENDERING_LOG_ERROR_STREAM("No meshes found in file [" << name.c_str() << "]");
+    return Ogre::MeshPtr();
   }
 
-  index_buffer->unlock();
+  auto material_table = loadMaterials(name, scene);
+
+  Ogre::MeshPtr mesh = Ogre::MeshManager::getSingleton().createManual(name, ROS_PACKAGE_NAME);
+
+  Ogre::AxisAlignedBox axis_aligned_box(Ogre::AxisAlignedBox::EXTENT_NULL);
+  float radius = 0.0f;
+  buildMesh(scene, scene->mRootNode, mesh, axis_aligned_box, radius, material_table);
+
+  mesh->_setBounds(axis_aligned_box);
+  mesh->_setBoundingSphereRadius(radius);
+  mesh->buildEdgeList();
+
+  mesh->load();
+
+  return mesh;
 }
 
-void createAndFillIndexBuffer(
-  const aiMesh * input_mesh, const Ogre::SubMesh * submesh, const Ogre::VertexData * vertex_data)
+const aiScene * AssimpLoader::getScene(const std::string & resource_path)
 {
-  submesh->indexData->indexCount = 0;
-  for (uint32_t j = 0; j < input_mesh->mNumFaces; j++) {
-    aiFace & face = input_mesh->mFaces[j];
-    submesh->indexData->indexCount += face.mNumIndices;
-  }
-
-  bool use_16_bits = vertex_data->vertexCount < (1 << 16);
-
-  submesh->indexData->indexBuffer =
-    Ogre::HardwareBufferManager::getSingleton().createIndexBuffer(
-    use_16_bits ? Ogre::HardwareIndexBuffer::IT_16BIT : Ogre::HardwareIndexBuffer::IT_32BIT,
-    submesh->indexData->indexCount,
-    Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY,
-    false);
-
-  Ogre::HardwareIndexBufferSharedPtr index_buffer = submesh->indexData->indexBuffer;
-
-  if (use_16_bits) {
-    fillIndexBuffer<uint16_t>(input_mesh, index_buffer);
-  } else {
-    fillIndexBuffer<uint32_t>(input_mesh, index_buffer);
-  }
+  return importer_->ReadFile(resource_path,
+           aiProcess_SortByPType | aiProcess_GenNormals | aiProcess_Triangulate |
+           aiProcess_GenUVCoords | aiProcess_FlipUVs);
 }
 
-void declareVertexBufferOrdering(const aiMesh * input_mesh, const Ogre::VertexData * vertex_data)
+std::string AssimpLoader::getErrorMessage()
 {
-  Ogre::VertexDeclaration * vertex_decl = vertex_data->vertexDeclaration;
-
-  size_t offset = 0;
-  // positions
-  vertex_decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
-  offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
-
-  // normals
-  if (input_mesh->HasNormals()) {
-    vertex_decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_NORMAL);
-    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
-  }
-
-  // texture coordinates (only support 1 for now)
-  if (input_mesh->HasTextureCoords(0)) {
-    vertex_decl->addElement(0, offset, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES, 0);
-    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT2);
-  }
-
-  // TODO(anyone): vertex colors
+  return importer_->GetErrorString();
 }
 
-aiMatrix4x4 computeTransformOverSceneGraph(const aiNode * node)
+// Mostly cribbed from gazebo
+/** @brief Load all materials needed by the given scene.
+ * @param resource_path the path to the resource from which this scene is being loaded.
+ *        loadMaterials() assumes textures for this scene are relative to the same directory that this scene is in.
+ * @param scene the assimp scene to load materials for.
+ * @param material_table_out Reference to the resultant material table, filled out by this function.  Is indexed the same as scene->mMaterials[].
+ */
+std::vector<Ogre::MaterialPtr> AssimpLoader::loadMaterials(
+  const std::string & resource_path, const aiScene * scene)
 {
-  aiMatrix4x4 transform = node->mTransformation;
-  aiNode * pnode = node->mParent;
-  while (pnode) {
-    transform = pnode->mTransformation * transform;
-    pnode = pnode->mParent;
+  std::vector<Ogre::MaterialPtr> material_table_out;
+  for (uint32_t i = 0; i < scene->mNumMaterials; i++) {
+    std::string material_name;
+    material_name = resource_path + "Material" + std::to_string(i);
+    Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().create(
+      material_name, ROS_PACKAGE_NAME, true);
+    material_table_out.push_back(mat);
+
+    aiMaterial * ai_material = scene->mMaterials[i];
+
+    MaterialInternals material_internals(
+      mat->getTechnique(0)->getPass(0),
+      Ogre::ColourValue(1.0f, 1.0f, 1.0f, 1.0f),
+      Ogre::ColourValue(1.0f, 1.0f, 1.0f, 1.0f),
+      Ogre::ColourValue(0, 0, 0, 1.0));
+
+
+    setLightColorsFromAssimp(resource_path, mat, ai_material, material_internals);
+
+    setBlending(mat, ai_material, material_internals);
+
+    mat->setAmbient(material_internals.ambient_ * 0.5);
+    mat->setDiffuse(material_internals.diffuse_);
+    material_internals.specular_.a = material_internals.diffuse_.a;
+    mat->setSpecular(material_internals.specular_);
   }
-  return transform;
+  return material_table_out;
 }
 
-Ogre::HardwareVertexBufferSharedPtr
-allocateVertexBuffer(const aiMesh * input_mesh, Ogre::VertexData * vertex_data)
-{
-  vertex_data->vertexCount = input_mesh->mNumVertices;
-  Ogre::HardwareVertexBufferSharedPtr vertex_buffer =
-    Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
-    vertex_data->vertexDeclaration->getVertexSize(0),
-    vertex_data->vertexCount,
-    Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY,
-    false);
-
-  vertex_data->vertexBufferBinding->setBinding(0, vertex_buffer);
-  return vertex_buffer;
-}
-
-struct SubMeshInternals
-{
-  Ogre::HardwareVertexBufferSharedPtr vertex_buffer_;
-  Ogre::AxisAlignedBox & axis_aligned_box_;
-  float & radius_;
-
-  SubMeshInternals(
-    Ogre::HardwareVertexBufferSharedPtr vertex_buffer, Ogre::AxisAlignedBox &
-    axis_aligned_box, float & radius)
-  : vertex_buffer_(vertex_buffer),
-    axis_aligned_box_(axis_aligned_box),
-    radius_(radius)
-  {}
-};
-
-void fillVertexBuffer(
-  const aiMatrix4x4 & transform,
-  const aiMatrix3x3 & inverse_transpose_rotation,
-  const aiMesh * input_mesh,
-  SubMeshInternals & internals)
-{
-  auto vertices = static_cast<float *>(
-    internals.vertex_buffer_->lock(Ogre::HardwareBuffer::HBL_DISCARD));
-
-  // Add the vertices
-  for (uint32_t j = 0; j < input_mesh->mNumVertices; j++) {
-    aiVector3D p = input_mesh->mVertices[j];
-    p *= transform;
-    *vertices++ = p.x;
-    *vertices++ = p.y;
-    *vertices++ = p.z;
-
-    Ogre::Vector3 vector(p.x, p.y, p.z);
-    internals.axis_aligned_box_.merge(vector);
-    float dist = vector.length();
-    if (dist > internals.radius_) {
-      internals.radius_ = dist;
-    }
-
-    if (input_mesh->HasNormals()) {
-      aiVector3D normal_vector = inverse_transpose_rotation * input_mesh->mNormals[j];
-      normal_vector.Normalize();
-      *vertices++ = normal_vector.x;
-      *vertices++ = normal_vector.y;
-      *vertices++ = normal_vector.z;
-    }
-
-    if (input_mesh->HasTextureCoords(0)) {
-      *vertices++ = input_mesh->mTextureCoords[0][j].x;
-      *vertices++ = input_mesh->mTextureCoords[0][j].y;
-    }
-  }
-
-  internals.vertex_buffer_->unlock();
-}
-
-// Mostly stolen from gazebo
-/** @brief Recursive mesh-building function.
- * @param scene is the assimp scene containing the whole mesh.
- * @param node is the current assimp node, which is part of a tree of nodes being recursed over.
- * @param material_table is indexed the same as scene->mMaterials[], and should have been filled out already by loadMaterials(). */
-void buildMesh(
-  const aiScene * scene,
-  const aiNode * node,
-  const Ogre::MeshPtr & mesh,
-  Ogre::AxisAlignedBox & axis_aligned_box,
-  float & radius,
-  std::vector<Ogre::MaterialPtr> & material_table)
-{
-  if (!node) {
-    return;
-  }
-
-  aiMatrix4x4 transform = computeTransformOverSceneGraph(node);
-
-  aiMatrix3x3 rotation(transform);
-  aiMatrix3x3 inverse_transpose_rotation(rotation);
-  inverse_transpose_rotation.Inverse();
-  inverse_transpose_rotation.Transpose();
-
-  for (uint32_t i = 0; i < node->mNumMeshes; i++) {
-    aiMesh * input_mesh = scene->mMeshes[node->mMeshes[i]];
-
-    Ogre::SubMesh * submesh = mesh->createSubMesh();
-    submesh->useSharedVertices = false;
-    submesh->vertexData = new Ogre::VertexData();
-    Ogre::VertexData * vertex_data = submesh->vertexData;
-
-    declareVertexBufferOrdering(input_mesh, vertex_data);
-
-    Ogre::HardwareVertexBufferSharedPtr vertex_buffer =
-      allocateVertexBuffer(input_mesh, vertex_data);
-
-    auto internals = SubMeshInternals(vertex_buffer, axis_aligned_box, radius);
-    fillVertexBuffer(transform, inverse_transpose_rotation, input_mesh, internals);
-
-    createAndFillIndexBuffer(input_mesh, submesh, vertex_data);
-
-    submesh->setMaterialName(material_table[input_mesh->mMaterialIndex]->getName());
-  }
-
-  for (uint32_t i = 0; i < node->mNumChildren; ++i) {
-    buildMesh(scene, node->mChildren[i], mesh, axis_aligned_box, radius, material_table);
-  }
-}
-
-void loadTexture(const std::string & resource_path)
-{
-  if (!Ogre::TextureManager::getSingleton().resourceExists(resource_path, ROS_PACKAGE_NAME)) {
-    resource_retriever::Retriever retriever;
-    resource_retriever::MemoryResource res;
-    try {
-      res = retriever.get(resource_path);
-    } catch (resource_retriever::Exception & e) {
-      RVIZ_RENDERING_LOG_ERROR(e.what());
-    }
-
-    if (res.size != 0) {
-      Ogre::DataStreamPtr stream(new Ogre::MemoryDataStream(res.data.get(), res.size));
-      Ogre::Image image;
-      QFileInfo resource_path_finfo(QString::fromStdString(resource_path));
-      std::string extension = resource_path_finfo.completeSuffix().toStdString();
-
-      if (extension[0] == '.') {
-        extension = extension.substr(1, extension.size() - 1);
-      }
-
-      try {
-        image.load(stream, extension);
-        Ogre::TextureManager::getSingleton().loadImage(resource_path, ROS_PACKAGE_NAME, image);
-      } catch (Ogre::Exception & e) {
-        RVIZ_RENDERING_LOG_ERROR_STREAM(
-          "Could not load texture [" << resource_path.c_str() << "]: " << e.what());
-      }
-    }
-  }
-}
-struct MaterialInternals
-{
-  Ogre::Pass * pass_;
-
-  Ogre::ColourValue diffuse_;
-  Ogre::ColourValue specular_;
-  Ogre::ColourValue ambient_;
-
-  MaterialInternals(
-    Ogre::Pass * pass,
-    const Ogre::ColourValue & diffuse,
-    const Ogre::ColourValue & specular,
-    const Ogre::ColourValue & ambient)
-  : pass_(pass),
-    diffuse_(diffuse),
-    specular_(specular),
-    ambient_(ambient)
-  {}
-};
-
-void setLightColorsFromAssimp(
+void AssimpLoader::setLightColorsFromAssimp(
   const std::string & resource_path,
   Ogre::MaterialPtr & mat,
   const aiMaterial * ai_material,
@@ -523,7 +354,39 @@ void setLightColorsFromAssimp(
   }
 }
 
-void setBlending(
+void AssimpLoader::loadTexture(const std::string & resource_path)
+{
+  if (!Ogre::TextureManager::getSingleton().resourceExists(resource_path, ROS_PACKAGE_NAME)) {
+    resource_retriever::Retriever retriever;
+    resource_retriever::MemoryResource res;
+    try {
+      res = retriever.get(resource_path);
+    } catch (resource_retriever::Exception & e) {
+      RVIZ_RENDERING_LOG_ERROR(e.what());
+    }
+
+    if (res.size != 0) {
+      Ogre::DataStreamPtr stream(new Ogre::MemoryDataStream(res.data.get(), res.size));
+      Ogre::Image image;
+      QFileInfo resource_path_finfo(QString::fromStdString(resource_path));
+      std::string extension = resource_path_finfo.completeSuffix().toStdString();
+
+      if (extension[0] == '.') {
+        extension = extension.substr(1, extension.size() - 1);
+      }
+
+      try {
+        image.load(stream, extension);
+        Ogre::TextureManager::getSingleton().loadImage(resource_path, ROS_PACKAGE_NAME, image);
+      } catch (Ogre::Exception & e) {
+        RVIZ_RENDERING_LOG_ERROR_STREAM(
+          "Could not load texture [" << resource_path.c_str() << "]: " << e.what());
+      }
+    }
+  }
+}
+
+void AssimpLoader::setBlending(
   Ogre::MaterialPtr & mat, const aiMaterial * ai_material,
   const MaterialInternals & material_internals)
 {
@@ -546,100 +409,174 @@ void setBlending(
   }
 }
 
-// Mostly cribbed from gazebo
-/** @brief Load all materials needed by the given scene.
- * @param resource_path the path to the resource from which this scene is being loaded.
- *        loadMaterials() assumes textures for this scene are relative to the same directory that this scene is in.
- * @param scene the assimp scene to load materials for.
- * @param material_table_out Reference to the resultant material table, filled out by this function.  Is indexed the same as scene->mMaterials[].
- */
-std::vector<Ogre::MaterialPtr> loadMaterials(
-  const std::string & resource_path,
-  const aiScene * scene)
+// Mostly stolen from gazebo
+/** @brief Recursive mesh-building function.
+ * @param scene is the assimp scene containing the whole mesh.
+ * @param node is the current assimp node, which is part of a tree of nodes being recursed over.
+ * @param material_table is indexed the same as scene->mMaterials[], and should have been filled out already by loadMaterials(). */
+void AssimpLoader::buildMesh(
+  const aiScene * scene,
+  const aiNode * node,
+  const Ogre::MeshPtr & mesh,
+  Ogre::AxisAlignedBox & axis_aligned_box,
+  float & radius,
+  std::vector<Ogre::MaterialPtr> & material_table)
 {
-  std::vector<Ogre::MaterialPtr> material_table_out;
-  for (uint32_t i = 0; i < scene->mNumMaterials; i++) {
-    std::string material_name;
-    material_name = resource_path + "Material" + std::to_string(i);
-    Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().create(
-      material_name, ROS_PACKAGE_NAME, true);
-    material_table_out.push_back(mat);
-
-    aiMaterial * ai_material = scene->mMaterials[i];
-
-    MaterialInternals material_internals(
-      mat->getTechnique(0)->getPass(0),
-      Ogre::ColourValue(1.0f, 1.0f, 1.0f, 1.0f),
-      Ogre::ColourValue(1.0f, 1.0f, 1.0f, 1.0f),
-      Ogre::ColourValue(0, 0, 0, 1.0));
-
-
-    setLightColorsFromAssimp(resource_path, mat, ai_material, material_internals);
-
-    setBlending(mat, ai_material, material_internals);
-
-    mat->setAmbient(material_internals.ambient_ * 0.5);
-    mat->setDiffuse(material_internals.diffuse_);
-    material_internals.specular_.a = material_internals.diffuse_.a;
-    mat->setSpecular(material_internals.specular_);
-  }
-  return material_table_out;
-}
-
-/*@brief - Get the scaling from units used in this mesh file to meters.
-
-  This function applies only to Collada files. It is necessary because
-  ASSIMP does not currently expose an api to retrieve the scaling factor.
-
-  @Param[in] resource_path   -   The url of a resource containing a mesh.
-
-  @Returns The scaling factor that converts the mesh to meters. Returns 1.0
-  for meshes which do not explicitly encode such a scaling.
-
-*/
-
-AssimpLoader::AssimpLoader()
-{
-  importer_ = std::make_unique<Assimp::Importer>();
-  importer_->SetIOHandler(new ResourceIOSystem());
-  // ASSIMP wants to change the orientation of the axis, but that's wrong for rviz.
-  importer_->SetPropertyBool(AI_CONFIG_IMPORT_COLLADA_IGNORE_UP_DIRECTION, true);
-}
-
-Ogre::MeshPtr AssimpLoader::meshFromAssimpScene(const std::string & name, const aiScene * scene)
-{
-  if (!scene->HasMeshes()) {
-    RVIZ_RENDERING_LOG_ERROR_STREAM("No meshes found in file [" << name.c_str() << "]");
-    return Ogre::MeshPtr();
+  if (!node) {
+    return;
   }
 
-  auto material_table = loadMaterials(name, scene);
+  aiMatrix4x4 transform = computeTransformOverSceneGraph(node);
 
-  Ogre::MeshPtr mesh = Ogre::MeshManager::getSingleton().createManual(name, ROS_PACKAGE_NAME);
+  aiMatrix3x3 rotation(transform);
+  aiMatrix3x3 inverse_transpose_rotation(rotation);
+  inverse_transpose_rotation.Inverse();
+  inverse_transpose_rotation.Transpose();
 
-  Ogre::AxisAlignedBox axis_aligned_box(Ogre::AxisAlignedBox::EXTENT_NULL);
-  float radius = 0.0f;
-  buildMesh(scene, scene->mRootNode, mesh, axis_aligned_box, radius, material_table);
+  for (uint32_t i = 0; i < node->mNumMeshes; i++) {
+    aiMesh * input_mesh = scene->mMeshes[node->mMeshes[i]];
 
-  mesh->_setBounds(axis_aligned_box);
-  mesh->_setBoundingSphereRadius(radius);
-  mesh->buildEdgeList();
+    Ogre::SubMesh * submesh = mesh->createSubMesh();
+    submesh->useSharedVertices = false;
+    submesh->vertexData = new Ogre::VertexData();
+    Ogre::VertexData * vertex_data = submesh->vertexData;
 
-  mesh->load();
+    declareVertexBufferOrdering(input_mesh, vertex_data);
 
-  return mesh;
+    Ogre::HardwareVertexBufferSharedPtr vertex_buffer =
+      allocateVertexBuffer(input_mesh, vertex_data);
+
+    auto internals = SubMeshInternals(vertex_buffer, axis_aligned_box, radius);
+    fillVertexBuffer(transform, inverse_transpose_rotation, input_mesh, internals);
+
+    createAndFillIndexBuffer(input_mesh, submesh, vertex_data);
+
+    submesh->setMaterialName(material_table[input_mesh->mMaterialIndex]->getName());
+  }
+
+  for (uint32_t i = 0; i < node->mNumChildren; ++i) {
+    buildMesh(scene, node->mChildren[i], mesh, axis_aligned_box, radius, material_table);
+  }
 }
 
-const aiScene * AssimpLoader::getScene(const std::string & resource_path)
+aiMatrix4x4 AssimpLoader::computeTransformOverSceneGraph(const aiNode * node)
 {
-  return importer_->ReadFile(resource_path,
-           aiProcess_SortByPType | aiProcess_GenNormals | aiProcess_Triangulate |
-           aiProcess_GenUVCoords | aiProcess_FlipUVs);
+  aiMatrix4x4 transform = node->mTransformation;
+  aiNode * pnode = node->mParent;
+  while (pnode) {
+    transform = pnode->mTransformation * transform;
+    pnode = pnode->mParent;
+  }
+  return transform;
 }
 
-std::string AssimpLoader::getErrorMessage()
+void AssimpLoader::declareVertexBufferOrdering(
+  const aiMesh * input_mesh, const Ogre::VertexData *
+  vertex_data)
 {
-  return importer_->GetErrorString();
+  Ogre::VertexDeclaration * vertex_decl = vertex_data->vertexDeclaration;
+
+  size_t offset = 0;
+  // positions
+  vertex_decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
+  offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
+
+  // normals
+  if (input_mesh->HasNormals()) {
+    vertex_decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_NORMAL);
+    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
+  }
+
+  // texture coordinates (only support 1 for now)
+  if (input_mesh->HasTextureCoords(0)) {
+    vertex_decl->addElement(0, offset, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES, 0);
+    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT2);
+  }
+
+  // TODO(anyone): vertex colors
+}
+
+Ogre::HardwareVertexBufferSharedPtr
+AssimpLoader::allocateVertexBuffer(const aiMesh * input_mesh, Ogre::VertexData * vertex_data)
+{
+  vertex_data->vertexCount = input_mesh->mNumVertices;
+  Ogre::HardwareVertexBufferSharedPtr vertex_buffer =
+    Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
+    vertex_data->vertexDeclaration->getVertexSize(0),
+    vertex_data->vertexCount,
+    Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY,
+    false);
+
+  vertex_data->vertexBufferBinding->setBinding(0, vertex_buffer);
+  return vertex_buffer;
+}
+
+void AssimpLoader::fillVertexBuffer(
+  const aiMatrix4x4 & transform,
+  const aiMatrix3x3 & inverse_transpose_rotation,
+  const aiMesh * input_mesh,
+  SubMeshInternals & internals)
+{
+  auto vertices = static_cast<float *>(
+    internals.vertex_buffer_->lock(Ogre::HardwareBuffer::HBL_DISCARD));
+
+  // Add the vertices
+  for (uint32_t j = 0; j < input_mesh->mNumVertices; j++) {
+    aiVector3D p = input_mesh->mVertices[j];
+    p *= transform;
+    *vertices++ = p.x;
+    *vertices++ = p.y;
+    *vertices++ = p.z;
+
+    Ogre::Vector3 vector(p.x, p.y, p.z);
+    internals.axis_aligned_box_.merge(vector);
+    float dist = vector.length();
+    if (dist > internals.radius_) {
+      internals.radius_ = dist;
+    }
+
+    if (input_mesh->HasNormals()) {
+      aiVector3D normal_vector = inverse_transpose_rotation * input_mesh->mNormals[j];
+      normal_vector.Normalize();
+      *vertices++ = normal_vector.x;
+      *vertices++ = normal_vector.y;
+      *vertices++ = normal_vector.z;
+    }
+
+    if (input_mesh->HasTextureCoords(0)) {
+      *vertices++ = input_mesh->mTextureCoords[0][j].x;
+      *vertices++ = input_mesh->mTextureCoords[0][j].y;
+    }
+  }
+
+  internals.vertex_buffer_->unlock();
+}
+
+void AssimpLoader::createAndFillIndexBuffer(
+  const aiMesh * input_mesh, const Ogre::SubMesh * submesh, const Ogre::VertexData * vertex_data)
+{
+  submesh->indexData->indexCount = 0;
+  for (uint32_t j = 0; j < input_mesh->mNumFaces; j++) {
+    aiFace & face = input_mesh->mFaces[j];
+    submesh->indexData->indexCount += face.mNumIndices;
+  }
+
+  bool use_16_bits = vertex_data->vertexCount < (1 << 16);
+
+  submesh->indexData->indexBuffer =
+    Ogre::HardwareBufferManager::getSingleton().createIndexBuffer(
+    use_16_bits ? Ogre::HardwareIndexBuffer::IT_16BIT : Ogre::HardwareIndexBuffer::IT_32BIT,
+    submesh->indexData->indexCount,
+    Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY,
+    false);
+
+  Ogre::HardwareIndexBufferSharedPtr index_buffer = submesh->indexData->indexBuffer;
+
+  if (use_16_bits) {
+    fillIndexBuffer<uint16_t>(input_mesh, index_buffer);
+  } else {
+    fillIndexBuffer<uint32_t>(input_mesh, index_buffer);
+  }
 }
 
 }  // namespace rviz_rendering
