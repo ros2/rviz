@@ -468,8 +468,6 @@ void Robot::createJointProperties(const urdf::ModelInterface & urdf)
     RobotJoint * joint = link_factory_->createJoint(this, urdf_joint);
 
     joints_[urdf_joint->name] = joint;
-
-    joint->setRobotAlpha(alpha_);
   }
 }
 

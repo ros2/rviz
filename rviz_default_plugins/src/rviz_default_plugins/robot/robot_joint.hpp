@@ -110,8 +110,6 @@ public:
 
   void hideSubProperties(bool hide);
 
-  void setRobotAlpha(float a) {(void) a;}
-
   bool hasDescendentLinksWithGeometry() const {return has_decendent_links_with_geometry_;}
 
   // Set the description for the joint.
