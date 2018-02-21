@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2008, Willow Garage, Inc.
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
@@ -28,8 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__FRAME_MANAGER_HPP_
-#define RVIZ_COMMON__FRAME_MANAGER_HPP_
+#ifndef RVIZ_COMMON__FRAME_MANAGER_IFACE_HPP_
+#define RVIZ_COMMON__FRAME_MANAGER_IFACE_HPP_
 
 #include <map>
 #include <memory>
@@ -49,7 +49,6 @@
 // #include "tf2_ros/message_filter.h"
 
 #include "rviz_common/visibility_control.hpp"
-#include "frame_manager_iface.hpp"
 
 namespace tf2_ros
 {
@@ -69,54 +68,58 @@ class Display;
  * During one frame update (nominally 33ms), the tf tree stays consistent and
  * queries are cached for speedup.
  */
-class RVIZ_COMMON_PUBLIC FrameManager : public FrameManagerIface
+class RVIZ_COMMON_PUBLIC FrameManagerIface : public QObject
 {
   Q_OBJECT
 
 public:
-  /// Constructor.
-  /**
-   * \param tf a pointer to tf::TransformListener (should not be used anywhere
-   *   else because of thread safety).
-   */
-  explicit FrameManager(
-    std::shared_ptr<tf2_ros::TransformListener> tf,
-    std::shared_ptr<tf2_ros::Buffer> buffer,
-    rclcpp::Clock::SharedPtr clock
-  );
-
-  /// Destructor.
-  /**
-   * FrameManager should not need to be destroyed by hand, just destroy the
-   * std::shared_ptr returned by instance(), and it will be deleted when the
-   * last reference is removed.
-   */
-  ~FrameManager();
+  enum SyncMode
+  {
+    SyncOff = 0,
+    SyncExact,
+    SyncApprox
+  };
 
   /// Set the frame to consider "fixed", into which incoming data is transformed.
   /**
    * The fixed frame serves as the reference for all getTransform() and
    * transform() functions in FrameManager.
    */
-  void setFixedFrame(const std::string & frame) override;
+  virtual void setFixedFrame(const std::string & frame) = 0;
 
   /// Enable/disable pause mode.
-  void setPause(bool pause) override;
+  virtual void setPause(bool pause) = 0;
 
   /// Get pause state.
-  bool getPause() override;
+  virtual bool getPause() = 0;
 
   /// Set synchronization mode (off/exact/approximate).
-  void setSyncMode(SyncMode mode) override;
+  virtual void setSyncMode(SyncMode mode) = 0;
 
   /// Get the synchronization mode.
-  SyncMode getSyncMode() override;
+  virtual SyncMode getSyncMode() = 0;
 
   /// Synchronize with given time.
-  void syncTime(rclcpp::Time time) override;
+  virtual void syncTime(rclcpp::Time time) = 0;
 
   /// Get current time, depending on the sync mode.
-  rclcpp::Time getTime() override;
+  virtual rclcpp::Time getTime() = 0;
+
+  /// Return the pose for a header, relative to the fixed frame, in Ogre classes.
+  /**
+   * \param[in] header The source of the frame name and time.
+   * \param[out] position The position of the header frame relative to the
+   *   fixed frame.
+   * \param[out] orientation The orientation of the header frame relative to
+   *   the fixed frame.
+   * \return true on success, false on failure.
+   */
+  template<typename Header>
+  bool getTransform(
+    const Header & header, Ogre::Vector3 & position, Ogre::Quaternion & orientation)
+  {
+    return getTransform(header.frame_id, header.stamp, position, orientation);
+  }
 
   /// Return the pose for a frame relative to the fixed frame, in Ogre classes, at a given time.
   /**
@@ -126,11 +129,8 @@ public:
    *   fixed frame.
    * \return true on success, false on failure.
    */
-  bool getTransform(
-    const std::string & frame, Ogre::Vector3 & position, Ogre::Quaternion & orientation) override
-  {
-    return getTransform(frame, rclcpp::Time(0, 0, clock_->get_clock_type()), position, orientation);
-  }
+  virtual bool getTransform(
+    const std::string & frame, Ogre::Vector3 & position, Ogre::Quaternion & orientation) = 0;
 
   /// Return the pose for a frame relative to the fixed frame, in Ogre classes, at a given time.
   /**
@@ -141,11 +141,31 @@ public:
    *   fixed frame.
    * \return true on success, false on failure.
    */
-  bool getTransform(
+  virtual bool getTransform(
     const std::string & frame,
     rclcpp::Time time,
     Ogre::Vector3 & position,
-    Ogre::Quaternion & orientation) override;
+    Ogre::Quaternion & orientation) = 0;
+
+  /// Transform a pose from a frame into the fixed frame.
+  /**
+   * \param[in] header The source of the input frame and time.
+   * \param[in] pose The input pose, relative to the header frame.
+   * \param[out] position Position part of pose relative to the fixed frame.
+   * \param[out] orientation: Orientation part of pose relative to the
+   *   fixed frame.
+   * \return true on success, false on failure.
+   */
+  template<typename Header>
+  bool transform(
+    const Header & header,
+    const geometry_msgs::msg::Pose & pose,
+    Ogre::Vector3 & position,
+    Ogre::Quaternion & orientation)
+  {
+    return transform(header.frame_id, header.stamp, pose, position, orientation);   // NOLINT
+    // linter wants #include <algorithm> for transform
+  }
 
   /// Transform a pose from a frame into the fixed frame.
   /**
@@ -157,15 +177,15 @@ public:
    *   frame.
    * \return true on success, false on failure.
    */
-  bool transform(
+  virtual bool transform(
     const std::string & frame,
     rclcpp::Time time,
     const geometry_msgs::msg::Pose & pose,
     Ogre::Vector3 & position,
-    Ogre::Quaternion & orientation) override;
+    Ogre::Quaternion & orientation) = 0;
 
   /// Clear the internal cache.
-  void update() override;
+  virtual void update() = 0;
 
   /// Check to see if a frame exists in the tf::TransformListener.
   /**
@@ -174,17 +194,14 @@ public:
    *   stored here.
    * \return true if the frame does not exist, false if it does exist.
    */
-  bool frameHasProblems(const std::string & frame, std::string & error) override;
+  virtual bool frameHasProblems(const std::string & frame, std::string & error) = 0;
 
   /// Check to see if a transform is known between a given frame and the fixed frame.
   /**
    * \param[in] frame The name of the frame to check.
    * \param[out] error If the transform is not known, an error message is stored here.
    * \return true if the transform is not known, false if it is. */
-  bool transformHasProblems(const std::string & frame, std::string & error) override
-  {
-    return transformHasProblems(frame, rclcpp::Time(0, 0, clock_->get_clock_type()), error);
-  }
+  virtual bool transformHasProblems(const std::string & frame, std::string & error) = 0;
 
   /// Check to see if a transform is known between a given frame and the fixed frame.
   /**
@@ -192,20 +209,41 @@ public:
    * \param[in] time The time at which the transform is desired.
    * \param[out] error If the transform is not known, an error message is stored here.
    * \return true if the transform is not known, false if it is. */
-  bool transformHasProblems(
-    const std::string & frame, rclcpp::Time time, std::string & error) override;
+  virtual bool transformHasProblems(
+    const std::string & frame, rclcpp::Time time, std::string & error) = 0;
+
+#if 0
+  /// Connect a tf::MessageFilter's callbacks to success and failure handler functions.
+  /**
+   * FrameManager has internal functions for handling success and
+   * failure of tf::MessageFilters which call Display::setStatus()
+   * based on success or failure of the filter, including appropriate
+   * error messages.
+   *
+   * \param filter The tf::MessageFilter to connect to.
+   * \param display The Display using the filter.
+   */
+  template<class M>
+  void registerFilterForTransformStatusCheck(
+    tf2_ros::MessageFilter<M> * filter, Display * display) override
+  {
+    filter->registerCallback(boost::bind(&FrameManager::messageCallback<M>, this, _1, display));
+    filter->registerFailureCallback(boost::bind(&FrameManager::failureCallback<M>, this, _1, _2,
+      display));
+  }
+#endif
 
   /// Return the current fixed frame name.
-  const std::string & getFixedFrame() override;
+  virtual const std::string & getFixedFrame() = 0;
 
   /// Return the tf::TransformListener used to receive transform data.
-  tf2_ros::TransformListener * getTFClient() override;
+  virtual tf2_ros::TransformListener * getTFClient() = 0;
 
   /// Return a shared pointer to the tf2_ros::TransformListener used to receive transform data.
-  const std::shared_ptr<tf2_ros::TransformListener> & getTFClientPtr() override;
+  virtual const std::shared_ptr<tf2_ros::TransformListener> & getTFClientPtr() = 0;
 
   /// Return a shared pointer to the tf2_ros::Buffer object.
-  const std::shared_ptr<tf2_ros::Buffer> & getTFBufferPtr() override;
+  virtual const std::shared_ptr<tf2_ros::Buffer> & getTFBufferPtr() = 0;
 
 // TODO(wjwwood): figure out how to replace FilgerFailureReason here
 #if 0
@@ -219,101 +257,18 @@ public:
    *
    * Once a problem has been detected with a given frame or transform,
    * call this to get an error message describing the problem. */
-  std::string discoverFailureReason(
+  virtual std::string discoverFailureReason(
     const std::string & frame_id,
     const rclcpp::Time & stamp,
     const std::string & caller_id,
-    tf::FilterFailureReason reason) override;
+    tf::FilterFailureReason reason) = 0;
 #endif
 
 Q_SIGNALS:
   /// Emitted whenever the fixed frame changes.
-  void fixedFrameChanged() override;
-
-private:
-  bool adjustTime(const std::string & frame, rclcpp::Time & time);
-
-#if 0
-  template<class M>
-  void messageCallback(const ros::MessageEvent<M const> & msg_evt, Display * display);
-#endif
-
-#if 0
-  template<class M>
-  void failureCallback(
-    const ros::MessageEvent<M const> & msg_evt,
-    tf::FilterFailureReason reason,
-    Display * display);
-#endif
-
-  void messageArrived(
-    const std::string & frame_id,
-    const rclcpp::Time & stamp,
-    const std::string & caller_id,
-    Display * display);
-
-#if 0
-  void messageFailed(
-    const std::string & frame_id,
-    const ros::Time & stamp,
-    const std::string & caller_id,
-    tf::FilterFailureReason reason,
-    Display * display);
-#endif
-
-  struct CacheKey
-  {
-    CacheKey(const std::string & f, rclcpp::Time t)
-    : frame(f),
-      time(t)
-    {}
-
-    bool operator<(const CacheKey & rhs) const
-    {
-      if (frame != rhs.frame) {
-        return frame < rhs.frame;
-      }
-
-      return time < rhs.time;
-    }
-
-    std::string frame;
-    rclcpp::Time time;
-  };
-
-  struct CacheEntry
-  {
-    CacheEntry(const Ogre::Vector3 & p, const Ogre::Quaternion & o)
-    : position(p),
-      orientation(o)
-    {}
-
-    Ogre::Vector3 position;
-    Ogre::Quaternion orientation;
-  };
-  typedef std::map<CacheKey, CacheEntry> M_Cache;
-
-  std::mutex cache_mutex_;
-  M_Cache cache_;
-
-  std::shared_ptr<tf2_ros::TransformListener> tf_;
-  std::shared_ptr<tf2_ros::Buffer> buffer_;
-  std::string fixed_frame_;
-
-  bool pause_;
-
-  SyncMode sync_mode_;
-
-  // the current synchronized time, used to overwrite ros:Time(0)
-  rclcpp::Time sync_time_;
-
-  rclcpp::Clock::SharedPtr clock_;
-
-  // used for approx. syncing (in nanoseconds)
-  int64_t sync_delta_;
-  int64_t current_delta_;
+  virtual void fixedFrameChanged() = 0;
 };
 
 }  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__FRAME_MANAGER_HPP_
+#endif  // RVIZ_COMMON__FRAME_MANAGER_IFACE_HPP_

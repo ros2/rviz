@@ -73,6 +73,7 @@ set(rviz_common_headers_to_moc
   src/rviz_common/displays_panel.hpp
   src/rviz_common/failed_panel.hpp
   include/rviz_common/frame_manager.hpp
+  include/rviz_common/frame_manager_iface.hpp
   src/rviz_common/loading_dialog.hpp
   src/rviz_common/new_object_dialog.hpp
   src/rviz_common/panel.hpp

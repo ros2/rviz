@@ -335,7 +335,7 @@ WindowManagerInterface * VisualizationManager::getWindowManager() const
   return window_manager_;
 }
 
-FrameManager * VisualizationManager::getFrameManager() const
+FrameManagerIface * VisualizationManager::getFrameManager() const
 {
   return frame_manager_;
 }

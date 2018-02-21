@@ -32,6 +32,7 @@
 #define RVIZ_COMMON__PROPERTIES__TF_FRAME_PROPERTY_HPP_
 
 #include <string>
+#include "rviz_common/frame_manager_iface.hpp"
 
 #include "./editable_enum_property.hpp"
 #include "rviz_common/visibility_control.hpp"
@@ -69,10 +70,10 @@ public:
   std::string getFrameStd() const;
 
   /// Set the frame manager.
-  void setFrameManager(FrameManager * frame_manager);
+  void setFrameManager(FrameManagerIface * frame_manager);
 
   /// Get the frame manager.
-  FrameManager * getFrameManager() const;
+  FrameManagerIface * getFrameManager() const;
 
   static const QString FIXED_FRAME_STRING;
 
@@ -89,7 +90,7 @@ private Q_SLOTS:
   void handleFixedFrameChange();
 
 private:
-  FrameManager * frame_manager_;
+  FrameManagerIface * frame_manager_;
   bool include_fixed_frame_string_;
 };
 
