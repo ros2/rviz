@@ -40,7 +40,7 @@
 #include <OgreMaterial.h>
 #include <OgreSharedPtr.h>
 
-#include "include/rviz_rendering/objects/object.hpp"
+#include "rviz_rendering/objects/object.hpp"
 #include "rviz_rendering/visibility_control.hpp"
 
 namespace Ogre
