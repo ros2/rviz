@@ -28,24 +28,31 @@
  */
 
 #include "points_marker.hpp"
-#include "rviz/default_plugin/marker_display.h"
-#include "rviz/display_context.h"
-#include "rviz/selection/selection_manager.h"
-#include "marker_selection_handler.hpp"
 
-#include <rviz/ogre_helpers/point_cloud.h>
+#include <vector>
 
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 
-namespace rviz
-{
+#include "../marker_display.hpp"
+#include "marker_selection_handler.hpp"
+#include "rviz_common/display_context.hpp"
+#include "rviz_common/selection/selection_manager.hpp"
+#include "rviz_common/properties/status_property.hpp"
+#include "rviz_rendering/objects/point_cloud.hpp"
 
-PointsMarker::PointsMarker(MarkerDisplay* owner, DisplayContext* context, Ogre::SceneNode* parent_node)
-: MarkerBase(owner, context, parent_node)
-, points_(0)
+namespace rviz_default_plugins
+{
+namespace displays
+{
+namespace markers
+{
+PointsMarker::PointsMarker(
+  MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node)
+: MarkerBase(owner, context, parent_node),
+  points_(0)
 {
 }
 
@@ -54,36 +61,37 @@ PointsMarker::~PointsMarker()
   delete points_;
 }
 
-void PointsMarker::onNewMessage(const MarkerConstPtr& old_message, const MarkerConstPtr& new_message)
+void PointsMarker::onNewMessage(
+  const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message)
 {
-  ROS_ASSERT(new_message->type == visualization_msgs::Marker::POINTS ||
-             new_message->type == visualization_msgs::Marker::CUBE_LIST ||
-             new_message->type == visualization_msgs::Marker::SPHERE_LIST);
+  (void) old_message;
 
-  if (!points_)
-  {
-    points_ = new PointCloud();
+  assert(new_message->type == visualization_msgs::msg::Marker::POINTS ||
+    new_message->type == visualization_msgs::msg::Marker::CUBE_LIST ||
+    new_message->type == visualization_msgs::msg::Marker::SPHERE_LIST);
+
+  if (!points_) {
+    points_ = new rviz_rendering::PointCloud();
     scene_node_->attachObject(points_);
   }
 
   Ogre::Vector3 pos, scale;
   Ogre::Quaternion orient;
-  transform(new_message, pos, orient, scale);
+  transform(new_message, pos, orient, scale);  // NOLINT: Is superclass method
 
-  switch (new_message->type)
-  {
-  case visualization_msgs::Marker::POINTS:
-    points_->setRenderMode(PointCloud::RM_SQUARES);
-    points_->setDimensions(new_message->scale.x, new_message->scale.y, 0.0f);
-    break;
-  case visualization_msgs::Marker::CUBE_LIST:
-    points_->setRenderMode(PointCloud::RM_BOXES);
-    points_->setDimensions(scale.x, scale.y, scale.z);
-    break;
-  case visualization_msgs::Marker::SPHERE_LIST:
-    points_->setRenderMode(PointCloud::RM_SPHERES);
-    points_->setDimensions(scale.x, scale.y, scale.z);
-    break;
+  switch (new_message->type) {
+    case visualization_msgs::msg::Marker::POINTS:
+      points_->setRenderMode(rviz_rendering::PointCloud::RM_SQUARES);
+      points_->setDimensions(new_message->scale.x, new_message->scale.y, 0.0f);
+      break;
+    case visualization_msgs::msg::Marker::CUBE_LIST:
+      points_->setRenderMode(rviz_rendering::PointCloud::RM_BOXES);
+      points_->setDimensions(scale.x, scale.y, scale.z);
+      break;
+    case visualization_msgs::msg::Marker::SPHERE_LIST:
+      points_->setRenderMode(rviz_rendering::PointCloud::RM_SPHERES);
+      points_->setDimensions(scale.x, scale.y, scale.z);
+      break;
   }
 
   setPosition(pos);
@@ -91,8 +99,7 @@ void PointsMarker::onNewMessage(const MarkerConstPtr& old_message, const MarkerC
 
   points_->clear();
 
-  if (new_message->points.empty())
-  {
+  if (new_message->points.empty()) {
     return;
   }
 
@@ -106,15 +113,14 @@ void PointsMarker::onNewMessage(const MarkerConstPtr& old_message, const MarkerC
   bool has_nonzero_alpha = false;
   bool has_per_point_alpha = false;
 
-  typedef std::vector< PointCloud::Point > V_Point;
+  typedef std::vector<rviz_rendering::PointCloud::Point> V_Point;
   V_Point points;
   points.resize(new_message->points.size());
-  std::vector<geometry_msgs::Point>::const_iterator it = new_message->points.begin();
-  std::vector<geometry_msgs::Point>::const_iterator end = new_message->points.end();
-  for (int i = 0; it != end; ++it, ++i)
-  {
-    const geometry_msgs::Point& p = *it;
-    PointCloud::Point& point = points[i];
+  std::vector<geometry_msgs::msg::Point>::const_iterator it = new_message->points.begin();
+  std::vector<geometry_msgs::msg::Point>::const_iterator end = new_message->points.end();
+  for (int i = 0; it != end; ++it, ++i) {
+    const geometry_msgs::msg::Point & p = *it;
+    rviz_rendering::PointCloud::Point & point = points[i];
 
     Ogre::Vector3 v(p.x, p.y, p.z);
 
@@ -122,9 +128,8 @@ void PointsMarker::onNewMessage(const MarkerConstPtr& old_message, const MarkerC
     point.position.y = v.y;
     point.position.z = v.z;
 
-    if (has_per_point_color)
-    {
-      const std_msgs::ColorRGBA& color = new_message->colors[i];
+    if (has_per_point_color) {
+      const std_msgs::msg::ColorRGBA & color = new_message->colors[i];
       r = color.r;
       g = color.g;
       b = color.b;
@@ -136,28 +141,30 @@ void PointsMarker::onNewMessage(const MarkerConstPtr& old_message, const MarkerC
     point.setColor(r, g, b, a);
   }
 
-  if (has_per_point_color)
-  {
-    if (!has_nonzero_alpha && owner_)
-    {
-      owner_->setMarkerStatus(getID(), StatusProperty::Warn, "All points have a zero alpha value.");
+  if (has_per_point_color) {
+    if (!has_nonzero_alpha && owner_) {
+      owner_->setMarkerStatus(
+        getID(), rviz_common::properties::StatusProperty::Warn,
+        "All points have a zero alpha value.");
     }
     points_->setAlpha(1.0, has_per_point_alpha);
-  }
-  else
-  {
+  } else {
     points_->setAlpha(a);
   }
 
-  points_->addPoints(&points.front(), points.size());
+  points_->addPoints(points.begin(), points.end());
 
-  handler_.reset( new MarkerSelectionHandler( this, MarkerID( new_message->ns, new_message->id ), context_ ));
-  points_->setPickColor( SelectionManager::handleToColor( handler_->getHandle() ));
+  handler_.reset(new MarkerSelectionHandler(
+      this, MarkerID(new_message->ns, new_message->id), context_));
+  points_->setPickColor(rviz_common::selection::SelectionManager::handleToColor(
+      handler_->getHandle() ));
 }
 
-void PointsMarker::setHighlightColor( float r, float g, float b )
+void PointsMarker::setHighlightColor(float r, float g, float b)
 {
-  points_->setHighlightColor( r, g, b );
+  points_->setHighlightColor(r, g, b);
 }
 
-} // end namespace rviz
+}  // namespace markers
+}  // namespace displays
+}  // namespace rviz_default_plugins

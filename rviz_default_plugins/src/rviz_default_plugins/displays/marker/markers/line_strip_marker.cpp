@@ -29,97 +29,102 @@
 
 #include "line_strip_marker.hpp"
 
-#include "marker_selection_handler.hpp"
-#include "rviz/default_plugin/marker_display.h"
-#include "rviz/display_context.h"
-
-#include <rviz/ogre_helpers/billboard_line.h>
+#include <vector>
 
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>
 #include <OgreSceneNode.h>
 
-namespace rviz
+#include "../marker_display.hpp"
+#include "marker_selection_handler.hpp"
+
+#include "rviz_common/display_context.hpp"
+#include "rviz_rendering/objects/billboard_line.hpp"
+
+namespace rviz_default_plugins
+{
+namespace displays
+{
+namespace markers
 {
 
-LineStripMarker::LineStripMarker(MarkerDisplay* owner, DisplayContext* context, Ogre::SceneNode* parent_node)
-: MarkerBase(owner, context, parent_node)
-, lines_(0)
-{
-}
+LineStripMarker::LineStripMarker(
+  MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node)
+: MarkerBase(owner, context, parent_node), lines_(0)
+{}
 
 LineStripMarker::~LineStripMarker()
 {
   delete lines_;
 }
 
-void LineStripMarker::onNewMessage(const MarkerConstPtr& old_message, const MarkerConstPtr& new_message)
+void LineStripMarker::onNewMessage(
+  const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message)
 {
-  ROS_ASSERT(new_message->type == visualization_msgs::Marker::LINE_STRIP);
+  (void) old_message;
+  assert(new_message->type == visualization_msgs::msg::Marker::LINE_STRIP);
 
-  if (!lines_)
-  {
-    lines_ = new BillboardLine(context_->getSceneManager(), scene_node_);
+  if (!lines_) {
+    lines_ = new rviz_rendering::BillboardLine(context_->getSceneManager(), scene_node_);
   }
 
   Ogre::Vector3 pos, scale;
   Ogre::Quaternion orient;
-  transform(new_message, pos, orient, scale);
+  transform(new_message, pos, orient, scale);  // NOLINT: is super class method
 
   setPosition(pos);
   setOrientation(orient);
   lines_->setScale(scale);
-  lines_->setColor(new_message->color.r, new_message->color.g, new_message->color.b, new_message->color.a);
+  lines_->setColor(new_message->color.r, new_message->color.g, new_message->color.b,
+    new_message->color.a);
 
   lines_->clear();
-  if (new_message->points.empty())
-  {
+  if (new_message->points.empty()) {
     return;
   }
 
   lines_->setLineWidth(new_message->scale.x);
-  lines_->setMaxPointsPerLine(new_message->points.size());
+  lines_->setMaxPointsPerLine(static_cast<uint32_t>(new_message->points.size()));
 
   bool has_per_point_color = new_message->colors.size() == new_message->points.size();
 
   size_t i = 0;
-  std::vector<geometry_msgs::Point>::const_iterator it = new_message->points.begin();
-  std::vector<geometry_msgs::Point>::const_iterator end = new_message->points.end();
-  for ( ; it != end; ++it, ++i )
-  {
-    const geometry_msgs::Point& p = *it;
+  std::vector<geometry_msgs::msg::Point>::const_iterator it = new_message->points.begin();
+  std::vector<geometry_msgs::msg::Point>::const_iterator end = new_message->points.end();
+  for (; it != end; ++it, ++i) {
+    const geometry_msgs::msg::Point & p = *it;
 
-    Ogre::Vector3 v( p.x, p.y, p.z );
+    Ogre::Vector3 v(p.x, p.y, p.z);
 
     Ogre::ColourValue c;
-    if (has_per_point_color)
-    {
-      const std_msgs::ColorRGBA& color = new_message->colors[i];
+    if (has_per_point_color) {
+      const std_msgs::msg::ColorRGBA & color = new_message->colors[i];
       c.r = color.r;
       c.g = color.g;
       c.b = color.b;
       c.a = color.a;
-    }
-    else
-    {
+    } else {
       c.r = new_message->color.r;
       c.g = new_message->color.g;
       c.b = new_message->color.b;
       c.a = new_message->color.a;
     }
 
-    lines_->addPoint( v, c );
+    lines_->addPoint(v, c);
   }
 
-  handler_.reset( new MarkerSelectionHandler( this, MarkerID( new_message->ns, new_message->id ), context_ ));
-  handler_->addTrackedObjects( lines_->getSceneNode() );
+  handler_.reset(new MarkerSelectionHandler(this, MarkerID(new_message->ns, new_message->id),
+    context_));
+  handler_->addTrackedObjects(lines_->getSceneNode());
 }
 
 S_MaterialPtr LineStripMarker::getMaterials()
 {
   S_MaterialPtr materials;
-  materials.insert( lines_->getMaterial() );
+  materials.insert(lines_->getMaterial());
   return materials;
 }
 
-}
+}  // namespace markers
+}  // namespace displays
+}  // namespace rviz_default_plugins

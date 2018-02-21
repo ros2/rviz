@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_TEXT_VIEW_FACING_MARKER_H
-#define RVIZ_TEXT_VIEW_FACING_MARKER_H
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__TEXT_VIEW_FACING_MARKER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__TEXT_VIEW_FACING_MARKER_HPP_
 
 #include "marker_base.hpp"
 
@@ -37,33 +37,38 @@ namespace Ogre
 class SceneNode;
 }
 
-namespace rviz
+namespace rviz_rendering
 {
 class MovableText;
 }
 
-namespace rviz
+namespace rviz_default_plugins
+{
+namespace displays
+{
+namespace markers
 {
 
 class TextViewFacingMarker : public MarkerBase
 {
 public:
-  TextViewFacingMarker(MarkerDisplay* owner, DisplayContext* context, Ogre::SceneNode* parent_node);
+  TextViewFacingMarker(
+    MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);
   ~TextViewFacingMarker();
 
-  virtual void setOrientation( const Ogre::Quaternion& orientation ) {}
+  virtual void setOrientation(const Ogre::Quaternion & orientation) {(void) orientation;}
 
   virtual S_MaterialPtr getMaterials();
 
 protected:
-  virtual void onNewMessage(const MarkerConstPtr& old_message, const MarkerConstPtr& new_message);
+  virtual void onNewMessage(
+    const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message);
 
-  MovableText* text_;
-
+  rviz_rendering::MovableText * text_;
 };
 
-}
+}  // namespace markers
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif // RVIZ_TEXT_VIEW_FACING_MARKER_H
-
-
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__TEXT_VIEW_FACING_MARKER_HPP_

@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_ARROW_MARKER_H
-#define RVIZ_ARROW_MARKER_H
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__ARROW_MARKER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__ARROW_MARKER_HPP_
 
 #include "marker_base.hpp"
 
@@ -37,29 +37,43 @@ namespace Ogre
 class SceneNode;
 }
 
-namespace rviz
+namespace rviz_rendering
 {
 class Arrow;
+}
+namespace rviz_common
+{
 class DisplayContext;
+}
 
-class ArrowMarker: public MarkerBase
+namespace rviz_default_plugins
+{
+namespace displays
+{
+namespace markers
+{
+
+class ArrowMarker : public MarkerBase
 {
 public:
-  ArrowMarker( MarkerDisplay* owner, DisplayContext* context, Ogre::SceneNode* parent_node );
+  ArrowMarker(
+    MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);
   ~ArrowMarker();
   virtual S_MaterialPtr getMaterials();
 
 protected:
-  virtual void onNewMessage(const MarkerConstPtr& old_message, const MarkerConstPtr& new_message);
+  virtual void onNewMessage(
+    const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message);
   virtual void setDefaultProportions();
 
-  Arrow *arrow_;
-  Ogre::SceneNode *child_scene_node_;
+  rviz_rendering::Arrow * arrow_;
+  Ogre::SceneNode * child_scene_node_;
 
   bool last_arrow_set_from_points_;
 };
 
-} // end namespace rviz
+}  // namespace markers
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif
-
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__ARROW_MARKER_HPP_

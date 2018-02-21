@@ -27,48 +27,57 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_MESH_RESOURCE_MARKER_H
-#define RVIZ_MESH_RESOURCE_MARKER_H
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__MESH_RESOURCE_MARKER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__MESH_RESOURCE_MARKER_HPP_
 
-#include "marker_base.hpp"
+#include <vector>
 
 #include <OgreMaterial.h>
 
-#include <vector>
+#include "marker_base.hpp"
 
 namespace Ogre
 {
 class SceneNode;
 class Entity;
-}
+}  // namespace Ogre
 
-namespace rviz
+namespace rviz_common
+{
+class DisplayContext;
+}  // namespace rviz_common
+
+namespace rviz_default_plugins
+{
+namespace displays
+{
+namespace markers
 {
 
 class MeshResourceMarker : public MarkerBase
 {
 public:
-  MeshResourceMarker(MarkerDisplay* owner, DisplayContext* context, Ogre::SceneNode* parent_node);
+  MeshResourceMarker(
+    MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);
   ~MeshResourceMarker();
 
   virtual S_MaterialPtr getMaterials();
 
 protected:
-  virtual void onNewMessage(const MarkerConstPtr& old_message, const MarkerConstPtr& new_message);
+  virtual void onNewMessage(
+    const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message);
 
   void reset();
 
-  Ogre::Entity* entity_;
+  Ogre::Entity * entity_;
   S_MaterialPtr materials_;
 
   //! Scaling factor to convert units. Currently relevant for Collada only.
   float unit_rescale_;
-
-
 };
 
-}
+}  // namespace markers
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif // RVIZ_MESH_RESOURCE_MARKER_H
-
-
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__MESH_RESOURCE_MARKER_HPP_

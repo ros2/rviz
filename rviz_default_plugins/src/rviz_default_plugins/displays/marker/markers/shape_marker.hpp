@@ -27,33 +27,40 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_SHAPE_MARKER_H
-#define RVIZ_SHAPE_MARKER_H
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__SHAPE_MARKER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__SHAPE_MARKER_HPP_
 
 #include "marker_base.hpp"
 
-namespace rviz
+namespace rviz_rendering
 {
 class Shape;
 }
 
-namespace rviz
+namespace rviz_default_plugins
+{
+namespace displays
+{
+namespace markers
 {
 
-class ShapeMarker: public MarkerBase
+class ShapeMarker : public MarkerBase
 {
 public:
-  ShapeMarker( MarkerDisplay* owner, DisplayContext* context, Ogre::SceneNode* parent_node );
+  ShapeMarker(
+    MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);
   ~ShapeMarker();
   virtual S_MaterialPtr getMaterials();
 
 protected:
-  virtual void onNewMessage( const MarkerConstPtr& old_message, const MarkerConstPtr& new_message );
+  virtual void onNewMessage(
+    const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message);
 
-  Shape* shape_;
+  rviz_rendering::Shape * shape_;
 };
 
-}
+}  // namespace markers
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif
-
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__SHAPE_MARKER_HPP_

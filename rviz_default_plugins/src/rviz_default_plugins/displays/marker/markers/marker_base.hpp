@@ -27,17 +27,18 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_MARKER_BASE_H
-#define RVIZ_MARKER_BASE_H
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__MARKER_BASE_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__MARKER_BASE_HPP_
 
-#include "rviz/selection/forwards.h"
-#include "rviz/interactive_object.h"
+#include <memory>
+#include <set>
+#include <string>
+#include <utility>
 
-#include <visualization_msgs/Marker.h>
+#include "visualization_msgs/msg/marker.hpp"
+#include "rclcpp/rclcpp.hpp"
 
-#include <ros/time.h>
-
-#include <boost/shared_ptr.hpp>
+#include "rviz_common/selection/forwards.hpp"
 
 namespace Ogre
 {
@@ -47,10 +48,19 @@ class Quaternion;
 class Entity;
 }
 
-namespace rviz
+namespace rviz_common
 {
 class DisplayContext;
+}
+
+namespace rviz_default_plugins
+{
+namespace displays
+{
 class MarkerDisplay;
+
+namespace markers
+{
 class MarkerSelectionHandler;
 
 typedef std::pair<std::string, int32_t> MarkerID;
@@ -59,22 +69,25 @@ typedef std::set<Ogre::MaterialPtr> S_MaterialPtr;
 class MarkerBase
 {
 public:
-  typedef visualization_msgs::Marker Marker;
-  typedef visualization_msgs::Marker::ConstPtr MarkerConstPtr;
+  typedef visualization_msgs::msg::Marker Marker;
+  typedef visualization_msgs::msg::Marker::ConstSharedPtr MarkerConstSharedPtr;
 
-  MarkerBase( MarkerDisplay* owner, DisplayContext* context, Ogre::SceneNode* parent_node );
+  MarkerBase(
+    MarkerDisplay * owner,
+    rviz_common::DisplayContext * context,
+    Ogre::SceneNode * parent_node);
 
   virtual ~MarkerBase();
 
-  void setMessage(const Marker& message);
-  void setMessage(const MarkerConstPtr& message);
+  void setMessage(const Marker & message);
+  void setMessage(const MarkerConstSharedPtr & message);
   bool expired();
 
   void updateFrameLocked();
 
-  const MarkerConstPtr& getMessage() const { return message_; }
+  const MarkerConstSharedPtr & getMessage() const {return message_;}
 
-  MarkerID getID() { return MarkerID(message_->ns, message_->id); }
+  MarkerID getID() {return MarkerID(message_->ns, message_->id);}
   std::string getStringID()
   {
     std::stringstream ss;
@@ -82,35 +95,42 @@ public:
     return ss.str();
   }
 
+  // TODO(Martin-Idel-SI): seems unused, needs interactive marker
   /** @brief Associate an InteractiveObject with this MarkerBase. */
-  void setInteractiveObject( InteractiveObjectWPtr object );
+  // void setInteractiveObject( InteractiveObjectWPtr object );
 
-  virtual void setPosition( const Ogre::Vector3& position );
-  virtual void setOrientation( const Ogre::Quaternion& orientation );
-  const Ogre::Vector3& getPosition();
-  const Ogre::Quaternion& getOrientation();
+  virtual void setPosition(const Ogre::Vector3 & position);
+  virtual void setOrientation(const Ogre::Quaternion & orientation);
+  const Ogre::Vector3 & getPosition();
+  const Ogre::Quaternion & getOrientation();
 
-  virtual S_MaterialPtr getMaterials() { return S_MaterialPtr(); }
+  virtual S_MaterialPtr getMaterials() {return S_MaterialPtr();}
 
 protected:
-  bool transform(const MarkerConstPtr& message, Ogre::Vector3& pos, Ogre::Quaternion& orient, Ogre::Vector3& scale);
-  virtual void onNewMessage(const MarkerConstPtr& old_message, const MarkerConstPtr& new_message) = 0;
+  bool transform(
+    const MarkerConstSharedPtr & message, Ogre::Vector3 & pos,
+    Ogre::Quaternion & orient, Ogre::Vector3 & scale);
+  virtual void onNewMessage(
+    const MarkerConstSharedPtr & old_message,
+    const MarkerConstSharedPtr & new_message) = 0;
 
-  void extractMaterials( Ogre::Entity *entity, S_MaterialPtr &materials );
+  void extractMaterials(Ogre::Entity * entity, S_MaterialPtr & materials);
 
-  MarkerDisplay* owner_;
-  DisplayContext* context_;
+  MarkerDisplay * owner_;
+  rviz_common::DisplayContext * context_;
 
-  Ogre::SceneNode* scene_node_;
+  Ogre::SceneNode * scene_node_;
 
-  MarkerConstPtr message_;
+  MarkerConstSharedPtr message_;
 
-  ros::Time expiration_;
+  rclcpp::Time expiration_;
 
-  boost::shared_ptr<MarkerSelectionHandler> handler_;
+  std::shared_ptr<MarkerSelectionHandler> handler_;
 };
-typedef boost::shared_ptr<MarkerBase> MarkerBasePtr;
+typedef std::shared_ptr<MarkerBase> MarkerBasePtr;
 
-}
+}  // namespace markers
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__MARKER_BASE_HPP_

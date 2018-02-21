@@ -27,25 +27,29 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "marker_selection_handler.hpp"
+
 #include <OgreQuaternion.h>
 #include <OgreVector3.h>
 
-#include "rviz/default_plugin/interactive_markers/interactive_marker_control.h"
-#include "rviz/default_plugin/marker_display.h"
-#include "rviz/default_plugin/markers/marker_base.h"
-#include "rviz/properties/property.h"
-#include "rviz/properties/quaternion_property.h"
-#include "rviz/properties/vector_property.h"
+#include "../marker_display.hpp"
+#include "marker_base.hpp"
+#include "rviz_common/properties/property.hpp"
+#include "rviz_common/properties/quaternion_property.hpp"
+#include "rviz_common/properties/vector_property.hpp"
 
-#include "rviz/default_plugin/markers/marker_selection_handler.h"
-
-namespace rviz
+namespace rviz_default_plugins
+{
+namespace displays
+{
+namespace markers
 {
 
-MarkerSelectionHandler::MarkerSelectionHandler( const MarkerBase* marker, MarkerID id, DisplayContext* context )
-  : SelectionHandler( context )
-  , marker_( marker )
-  , marker_id_( QString::fromStdString( id.first ) + "/" + QString::number( id.second ))
+MarkerSelectionHandler::MarkerSelectionHandler(
+  const MarkerBase * marker, MarkerID id, rviz_common::DisplayContext * context)
+: SelectionHandler(context),
+  marker_(marker),
+  marker_id_(QString::fromStdString(id.first) + "/" + QString::number(id.second))
 {
 }
 
@@ -55,37 +59,45 @@ MarkerSelectionHandler::~MarkerSelectionHandler()
 
 Ogre::Vector3 MarkerSelectionHandler::getPosition()
 {
-  return Ogre::Vector3( marker_->getMessage()->pose.position.x,
-                        marker_->getMessage()->pose.position.y,
-                        marker_->getMessage()->pose.position.z );
+  return Ogre::Vector3(marker_->getMessage()->pose.position.x,
+           marker_->getMessage()->pose.position.y,
+           marker_->getMessage()->pose.position.z);
 }
 
 Ogre::Quaternion MarkerSelectionHandler::getOrientation()
 {
-  return Ogre::Quaternion( marker_->getMessage()->pose.orientation.w,
-                           marker_->getMessage()->pose.orientation.x,
-                           marker_->getMessage()->pose.orientation.y,
-                           marker_->getMessage()->pose.orientation.z );
+  return Ogre::Quaternion(marker_->getMessage()->pose.orientation.w,
+           marker_->getMessage()->pose.orientation.x,
+           marker_->getMessage()->pose.orientation.y,
+           marker_->getMessage()->pose.orientation.z);
 }
 
-void MarkerSelectionHandler::createProperties( const Picked& obj, Property* parent_property )
+void MarkerSelectionHandler::createProperties(
+  const rviz_common::selection::Picked & obj, rviz_common::properties::Property * parent_property)
 {
-  Property* group = new Property( "Marker " + marker_id_, QVariant(), "", parent_property );
-  properties_.push_back( group );
+  (void) obj;
 
-  position_property_ = new VectorProperty( "Position", getPosition(), "", group );
-  position_property_->setReadOnly( true );
+  rviz_common::properties::Property * group = new rviz_common::properties::Property(
+    "Marker " + marker_id_, QVariant(), "", parent_property);
+  properties_.push_back(group);
 
-  orientation_property_ = new QuaternionProperty( "Orientation", getOrientation(), "", group );
-  orientation_property_->setReadOnly( true );
+  position_property_ = new rviz_common::properties::VectorProperty(
+    "Position", getPosition(), "", group);
+  position_property_->setReadOnly(true);
+
+  orientation_property_ = new rviz_common::properties::QuaternionProperty(
+    "Orientation", getOrientation(), "", group);
+  orientation_property_->setReadOnly(true);
 
   group->expand();
 }
 
 void MarkerSelectionHandler::updateProperties()
 {
-  position_property_->setVector( getPosition() );
-  orientation_property_->setQuaternion( getOrientation() );
+  position_property_->setVector(getPosition() );
+  orientation_property_->setQuaternion(getOrientation() );
 }
 
-} // end namespace rviz
+}  // namespace markers
+}  // namespace displays
+}  // namespace rviz_default_plugins

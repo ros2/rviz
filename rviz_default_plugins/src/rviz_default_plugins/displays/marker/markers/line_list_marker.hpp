@@ -27,33 +27,45 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_LINE_LIST_MARKER_H
-#define RVIZ_LINE_LIST_MARKER_H
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__LINE_LIST_MARKER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__LINE_LIST_MARKER_HPP_
 
 #include "marker_base.hpp"
 
-namespace rviz
+namespace rviz_rendering
 {
 class BillboardLine;
-}
+}  // namespace rviz_rendering
 
-namespace rviz
+namespace rviz_common
+{
+class DisplayContext;
+}  // namespace rviz_common
+
+namespace rviz_default_plugins
+{
+namespace displays
+{
+namespace markers
 {
 
 class LineListMarker : public MarkerBase
 {
 public:
-  LineListMarker(MarkerDisplay* owner, DisplayContext* context, Ogre::SceneNode* parent_node);
+  LineListMarker(
+    MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);
   ~LineListMarker();
   virtual S_MaterialPtr getMaterials();
 
 protected:
-  virtual void onNewMessage(const MarkerConstPtr& old_message, const MarkerConstPtr& new_message);
+  virtual void onNewMessage(
+    const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message);
 
-  BillboardLine* lines_;
+  rviz_rendering::BillboardLine * lines_;
 };
 
-}
+}  // namespace markers
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif
-
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__LINE_LIST_MARKER_HPP_

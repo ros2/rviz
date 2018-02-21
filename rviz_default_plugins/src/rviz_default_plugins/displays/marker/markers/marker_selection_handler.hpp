@@ -27,40 +27,58 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_MARKER_SELECTION_HANDLER_H
-#define RVIZ_MARKER_SELECTION_HANDLER_H
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__MARKER_SELECTION_HANDLER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__MARKER_SELECTION_HANDLER_HPP_
 
-#include "rviz/selection/forwards.h"
-#include "rviz/selection/selection_manager.h"
+#include <string>
+#include <utility>
 
-namespace rviz
+#include "rviz_common/selection/forwards.hpp"
+#include "rviz_common/selection/selection_manager.hpp"
+
+namespace rviz_common
+{
+namespace properties
+{
+class QuaternionProperty;
+class VectorProperty;
+}  // namespace properties
+}  // namespace rviz_common
+
+namespace rviz_default_plugins
+{
+namespace displays
+{
+namespace markers
 {
 class InteractiveMarkerControl;
 class MarkerBase;
-class QuaternionProperty;
-class VectorProperty;
 typedef std::pair<std::string, int32_t> MarkerID;
 
-class MarkerSelectionHandler: public SelectionHandler
+class MarkerSelectionHandler : public rviz_common::selection::SelectionHandler
 {
 public:
-  MarkerSelectionHandler( const MarkerBase* marker, MarkerID id, DisplayContext* context );
-  virtual ~MarkerSelectionHandler();
+  MarkerSelectionHandler(
+    const MarkerBase * marker, MarkerID id, rviz_common::DisplayContext * context);
+  ~MarkerSelectionHandler() override;
 
   Ogre::Vector3 getPosition();
   Ogre::Quaternion getOrientation();
 
-  virtual void createProperties( const Picked& obj, Property* parent_property );
-  virtual void updateProperties();
+  void createProperties(
+    const rviz_common::selection::Picked & obj,
+    rviz_common::properties::Property * parent_property) override;
+  void updateProperties() override;
 
 private:
-  const MarkerBase* marker_;
+  const MarkerBase * marker_;
   QString marker_id_;
-  VectorProperty* position_property_;
-  QuaternionProperty* orientation_property_;
+  rviz_common::properties::VectorProperty * position_property_;
+  rviz_common::properties::QuaternionProperty * orientation_property_;
 };
 
-} // end namespace rviz
+}  // namespace markers
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif
-
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__MARKER_SELECTION_HANDLER_HPP_

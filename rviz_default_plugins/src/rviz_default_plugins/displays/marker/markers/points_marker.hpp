@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_POINTS_MARKER_H
-#define RVIZ_POINTS_MARKER_H
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__POINTS_MARKER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__POINTS_MARKER_HPP_
 
 #include "marker_base.hpp"
 
@@ -37,28 +37,35 @@ namespace Ogre
 class SceneNode;
 }
 
-namespace rviz
+namespace rviz_rendering
 {
 class PointCloud;
 }
 
-namespace rviz
+namespace rviz_default_plugins
+{
+namespace displays
+{
+namespace markers
 {
 
 class PointsMarker : public MarkerBase
 {
 public:
-  PointsMarker(MarkerDisplay* owner, DisplayContext* context, Ogre::SceneNode* parent_node);
+  PointsMarker(
+    MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);
   ~PointsMarker();
-  void setHighlightColor( float r, float g, float b );
+  void setHighlightColor(float r, float g, float b);
 
 protected:
-  virtual void onNewMessage(const MarkerConstPtr& old_message, const MarkerConstPtr& new_message);
+  virtual void onNewMessage(
+    const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message);
 
-  PointCloud* points_;
+  rviz_rendering::PointCloud * points_;
 };
 
-}
+}  // namespace markers
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif
-
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__POINTS_MARKER_HPP_

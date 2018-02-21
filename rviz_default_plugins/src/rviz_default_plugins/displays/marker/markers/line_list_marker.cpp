@@ -28,119 +28,121 @@
  */
 
 #include "line_list_marker.hpp"
-#include "marker_selection_handler.hpp"
-#include "rviz/default_plugin/marker_display.h"
-#include "rviz/display_context.h"
 
-#include <rviz/ogre_helpers/billboard_line.h>
+#include <vector>
 
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>
 #include <OgreSceneNode.h>
 
-namespace rviz
+#include "../marker_display.hpp"
+#include "marker_selection_handler.hpp"
+
+#include "rviz_common/display_context.hpp"
+#include "rviz_common/properties/status_property.hpp"
+#include "rviz_rendering/objects/billboard_line.hpp"
+
+namespace rviz_default_plugins
+{
+namespace displays
+{
+namespace markers
 {
 
-LineListMarker::LineListMarker(MarkerDisplay* owner, DisplayContext* context, Ogre::SceneNode* parent_node)
-: MarkerBase(owner, context, parent_node)
-, lines_(0)
-{
-}
+LineListMarker::LineListMarker(
+  MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node)
+: MarkerBase(owner, context, parent_node), lines_(0)
+{}
 
 LineListMarker::~LineListMarker()
 {
   delete lines_;
 }
 
-void LineListMarker::onNewMessage(const MarkerConstPtr& old_message, const MarkerConstPtr& new_message)
+void LineListMarker::onNewMessage(
+  const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message)
 {
-  ROS_ASSERT(new_message->type == visualization_msgs::Marker::LINE_LIST);
+  (void) old_message;
 
-  if (!lines_)
-  {
-    lines_ = new BillboardLine(context_->getSceneManager(), scene_node_);
+  assert(new_message->type == visualization_msgs::msg::Marker::LINE_LIST);
+
+  if (!lines_) {
+    lines_ = new rviz_rendering::BillboardLine(context_->getSceneManager(), scene_node_);
   }
 
   Ogre::Vector3 pos, scale;
   Ogre::Quaternion orient;
-  transform(new_message, pos, orient, scale);
+  transform(new_message, pos, orient, scale);  // NOLINT: is super class method
 
   setPosition(pos);
   setOrientation(orient);
   lines_->setScale(scale);
-  lines_->setColor(new_message->color.r, new_message->color.g, new_message->color.b, new_message->color.a);
+  lines_->setColor(
+    new_message->color.r, new_message->color.g, new_message->color.b, new_message->color.a);
 
   lines_->clear();
 
-  if (new_message->points.empty())
-  {
+  if (new_message->points.empty()) {
     return;
   }
 
   bool has_per_point_color = new_message->colors.size() == new_message->points.size();
 
-  if (new_message->points.size() % 2 == 0)
-  {
-    lines_->setLineWidth( new_message->scale.x );
+  if (new_message->points.size() % 2 == 0) {
+    lines_->setLineWidth(new_message->scale.x);
     lines_->setMaxPointsPerLine(2);
-    lines_->setNumLines(new_message->points.size() / 2);
+    lines_->setNumLines(static_cast<uint32_t>(new_message->points.size() / 2));
 
     size_t i = 0;
-    std::vector<geometry_msgs::Point>::const_iterator it = new_message->points.begin();
-    std::vector<geometry_msgs::Point>::const_iterator end = new_message->points.end();
-    for ( ; it != end; )
-    {
-      if (it != new_message->points.begin())
-      {
-        lines_->newLine();
+    std::vector<geometry_msgs::msg::Point>::const_iterator it = new_message->points.begin();
+    std::vector<geometry_msgs::msg::Point>::const_iterator end = new_message->points.end();
+    for (; it != end; ) {
+      if (it != new_message->points.begin()) {
+        lines_->finishLine();
       }
 
-      for (uint32_t j = 0; j < 2; ++j, ++it, ++i)
-      {
-        const geometry_msgs::Point& p = *it;
+      for (uint32_t j = 0; j < 2; ++j, ++it, ++i) {
+        const geometry_msgs::msg::Point & p = *it;
 
         Ogre::ColourValue c;
-        if (has_per_point_color)
-        {
-          const std_msgs::ColorRGBA& color = new_message->colors[i];
+        if (has_per_point_color) {
+          const std_msgs::msg::ColorRGBA & color = new_message->colors[i];
           c.r = color.r;
           c.g = color.g;
           c.b = color.b;
           c.a = color.a;
-        }
-        else
-        {
+        } else {
           c.r = new_message->color.r;
           c.g = new_message->color.g;
           c.b = new_message->color.b;
           c.a = new_message->color.a;
         }
 
-        Ogre::Vector3 v( p.x, p.y, p.z );
-        lines_->addPoint( v, c );
+        Ogre::Vector3 v(p.x, p.y, p.z);
+        lines_->addPoint(v, c);
       }
     }
 
-    handler_.reset( new MarkerSelectionHandler( this, MarkerID( new_message->ns, new_message->id ), context_ ));
-    handler_->addTrackedObjects( lines_->getSceneNode() );
-  }
-  else
-  {
+    handler_.reset(new MarkerSelectionHandler(this, MarkerID(new_message->ns, new_message->id),
+      context_));
+    handler_->addTrackedObjects(lines_->getSceneNode());
+  } else {
     std::stringstream ss;
     ss << "Line list marker [" << getStringID() << "] has an odd number of points.";
-    if ( owner_ )
-    {
-      owner_->setMarkerStatus(getID(), StatusProperty::Error, ss.str());
+    if (owner_) {
+      owner_->setMarkerStatus(getID(), rviz_common::properties::StatusProperty::Error, ss.str());
     }
-    ROS_DEBUG("%s", ss.str().c_str());
+    RVIZ_COMMON_LOG_DEBUG(ss.str().c_str());
   }
 }
 
 S_MaterialPtr LineListMarker::getMaterials()
 {
   S_MaterialPtr materials;
-  materials.insert( lines_->getMaterial() );
+  materials.insert(lines_->getMaterial());
   return materials;
 }
 
-}
+}  // namespace markers
+}  // namespace displays
+}  // namespace rviz_default_plugins

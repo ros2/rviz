@@ -27,13 +27,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_TRIANGLE_LIST_MARKER_H
-#define RVIZ_TRIANGLE_LIST_MARKER_H
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__TRIANGLE_LIST_MARKER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__TRIANGLE_LIST_MARKER_HPP_
+
+#include <string>
 
 #include <OgreMaterial.h>
 #include <OgreSharedPtr.h>
 
-#include "rviz/default_plugin/markers/marker_base.h"
+#include "marker_base.hpp"
 
 namespace Ogre
 {
@@ -41,27 +43,33 @@ class SceneNode;
 class ManualObject;
 }
 
-namespace rviz
+namespace rviz_default_plugins
+{
+namespace displays
+{
+namespace markers
 {
 
 class TriangleListMarker : public MarkerBase
 {
 public:
-  TriangleListMarker(MarkerDisplay* owner, DisplayContext* context, Ogre::SceneNode* parent_node);
+  TriangleListMarker(
+    MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);
   ~TriangleListMarker();
 
   virtual S_MaterialPtr getMaterials();
 
 protected:
-  virtual void onNewMessage(const MarkerConstPtr& old_message, const MarkerConstPtr& new_message);
+  virtual void onNewMessage(
+    const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message);
 
-  Ogre::ManualObject* manual_object_;
+  Ogre::ManualObject * manual_object_;
   Ogre::MaterialPtr material_;
   std::string material_name_;
 };
 
-}
+}  // namespace markers
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif // RVIZ_TRIANGLE_LIST_MARKER_H
-
-
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__TRIANGLE_LIST_MARKER_HPP_

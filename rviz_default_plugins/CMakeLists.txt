@@ -35,6 +35,7 @@ set(rviz_default_plugins_headers_to_moc
   src/rviz_default_plugins/displays/camera/camera_display.hpp
   src/rviz_default_plugins/displays/grid/grid_display.hpp
   src/rviz_default_plugins/displays/image/image_display.hpp
+  src/rviz_default_plugins/displays/marker/marker_display.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_display.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp
@@ -56,6 +57,17 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/grid/grid_display.cpp
   src/rviz_default_plugins/displays/image/image_display.cpp
   src/rviz_default_plugins/displays/image/ros_image_texture.cpp
+  src/rviz_default_plugins/displays/marker/markers/arrow_marker.cpp
+  src/rviz_default_plugins/displays/marker/markers/line_list_marker.cpp
+  src/rviz_default_plugins/displays/marker/markers/line_strip_marker.cpp
+  src/rviz_default_plugins/displays/marker/markers/marker_base.cpp
+  src/rviz_default_plugins/displays/marker/markers/marker_selection_handler.cpp
+  src/rviz_default_plugins/displays/marker/markers/mesh_resource_marker.cpp
+  src/rviz_default_plugins/displays/marker/markers/text_view_facing_marker.cpp
+  src/rviz_default_plugins/displays/marker/markers/points_marker.cpp
+  src/rviz_default_plugins/displays/marker/markers/shape_marker.cpp
+  src/rviz_default_plugins/displays/marker/markers/triangle_list_marker.cpp
+  src/rviz_default_plugins/displays/marker/marker_display.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.cpp
