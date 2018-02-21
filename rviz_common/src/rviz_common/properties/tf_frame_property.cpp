@@ -36,7 +36,7 @@
 
 #include "tf2_ros/transform_listener.h"
 
-#include "rviz_common/frame_manager.hpp"
+#include "../frame_manager.hpp"
 
 namespace rviz_common
 {

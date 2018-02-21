@@ -44,7 +44,7 @@
 #include "./markers/text_view_facing_marker.hpp"
 #include "./markers/triangle_list_marker.hpp"
 #include "rviz_common/display_context.hpp"
-#include "rviz_common/frame_manager.hpp"
+#include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/billboard_line.hpp"
 #include "rviz_rendering/objects/shape.hpp"

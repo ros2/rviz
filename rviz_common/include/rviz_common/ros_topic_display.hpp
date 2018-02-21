@@ -44,7 +44,7 @@
 
 #include "rviz_common/display.hpp"
 #include "rviz_common/display_context.hpp"
-#include "rviz_common/frame_manager.hpp"
+#include "frame_manager_iface.hpp"
 #include "rviz_common/properties/ros_topic_property.hpp"
 #include "rviz_common/properties/status_property.hpp"
 #include "rviz_common/visibility_control.hpp"

@@ -49,7 +49,7 @@
 // #include "tf2_ros/message_filter.h"
 
 #include "rviz_common/visibility_control.hpp"
-#include "frame_manager_iface.hpp"
+#include "rviz_common/frame_manager_iface.hpp"
 
 namespace tf2_ros
 {
@@ -69,7 +69,7 @@ class Display;
  * During one frame update (nominally 33ms), the tf tree stays consistent and
  * queries are cached for speedup.
  */
-class RVIZ_COMMON_PUBLIC FrameManager : public FrameManagerIface
+class FrameManager : public FrameManagerIface
 {
   Q_OBJECT
 
@@ -91,7 +91,7 @@ public:
    * std::shared_ptr returned by instance(), and it will be deleted when the
    * last reference is removed.
    */
-  ~FrameManager();
+  ~FrameManager() override;
 
   /// Set the frame to consider "fixed", into which incoming data is transformed.
   /**

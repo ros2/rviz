@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz_common/frame_manager.hpp"
+#include "frame_manager.hpp"
 
 #include <algorithm>
 #include <chrono>
