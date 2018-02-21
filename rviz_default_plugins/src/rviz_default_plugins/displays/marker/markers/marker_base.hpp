@@ -95,7 +95,7 @@ public:
     return ss.str();
   }
 
-  // TODO(Martin-Idel-SI): seems unused, needs interactive marker
+  // TODO(Martin-Idel-SI): use again when interactive marker is ported
   /** @brief Associate an InteractiveObject with this MarkerBase. */
   // void setInteractiveObject( InteractiveObjectWPtr object );
 

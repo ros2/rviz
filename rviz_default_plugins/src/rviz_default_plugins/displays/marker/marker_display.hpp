@@ -34,6 +34,9 @@
 #include <memory>
 #include <mutex>
 #include <set>
+#include <string>
+#include <vector>
+#include <utility>
 
 #include "visualization_msgs/msg/marker.hpp"
 #include "visualization_msgs/msg/marker_array.hpp"
@@ -42,14 +45,14 @@
 #include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/ros_topic_display.hpp"
 #include "rviz_common/selection/forwards.hpp"
-#include "rviz_common/selection/forwards.hpp"
 
 namespace rviz_common
 {
+class QueueSizeProperty;
+
 namespace properties
 {
 class IntProperty;
-class QueueSizeProperty;
 }
 }
 
@@ -115,10 +118,10 @@ protected:
   void unsubscribe() override;
 
   /** @brief Process a MarkerArray message. */
-  void incomingMarkerArray(const visualization_msgs::msg::MarkerArray::ConstSharedPtr & array);
+  void incomingMarkerArray(visualization_msgs::msg::MarkerArray::ConstSharedPtr array);
 
   rclcpp::Subscription<visualization_msgs::msg::MarkerArray>::SharedPtr array_sub_;
-  std::unique_ptr<rviz_common::properties::QueueSizeProperty> queue_size_property_;
+  std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
 
 private:
   /** @brief Delete all the markers within the given namespace. */
@@ -133,33 +136,34 @@ private:
    * \brief Processes a marker message
    * @param message The message to process
    */
-  void processMessage(const visualization_msgs::msg::Marker::ConstSharedPtr & message);
+  void processMessage(visualization_msgs::msg::Marker::ConstSharedPtr message) override;
   /**
    * \brief Processes an "Add" marker message
    * @param message The message to process
    */
-  void processAdd(const visualization_msgs::msg::Marker::ConstSharedPtr & message);
+  void processAdd(visualization_msgs::msg::Marker::ConstSharedPtr message);
   /**
    * \brief Processes a "Delete" marker message
    * @param message The message to process
    */
-  void processDelete(const visualization_msgs::msg::Marker::ConstSharedPtr & message);
+  void processDelete(visualization_msgs::msg::Marker::ConstSharedPtr message);
 
   /**
    * \brief ROS callback notifying us of a new marker
    */
-  void incomingMarker(const visualization_msgs::msg::Marker::ConstSharedPtr & marker);
+  void incomingMarker(visualization_msgs::msg::Marker::ConstSharedPtr marker);
 
   void createMarkerArraySubscription();
 
   typedef std::map<MarkerID, MarkerBasePtr> M_IDToMarker;
   typedef std::set<MarkerBasePtr> S_MarkerBase;
-  M_IDToMarker markers_;                                ///< Map of marker id to the marker info structure
+  M_IDToMarker markers_;                  ///< Map of marker id to the marker info structure
   S_MarkerBase markers_with_expiration_;
   S_MarkerBase frame_locked_markers_;
   typedef std::vector<visualization_msgs::msg::Marker::ConstSharedPtr> V_MarkerMessage;
-  V_MarkerMessage message_queue_;                       ///< Marker message queue.  Messages are added to this as they are received, and then processed
+  ///< Marker message queue.  Messages are added to this as they are received, and then processed
   ///< in our update() function
+  V_MarkerMessage message_queue_;
   std::mutex queue_mutex_;
 
   typedef QHash<QString, MarkerNamespace *> M_Namespace;

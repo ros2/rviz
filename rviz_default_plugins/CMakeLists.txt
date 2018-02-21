@@ -26,6 +26,7 @@ find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
 # find_package(geometry_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(visualization_msgs REQUIRED)
 # find_package(tf2 REQUIRED)
 # find_package(tf2_geometry_msgs REQUIRED)
 # find_package(tf2_ros REQUIRED)
@@ -113,6 +114,7 @@ ament_target_dependencies(rviz_default_plugins
   # geometry_msgs
   rclcpp
   resource_retriever
+  visualization_msgs
   # tf2
   # tf2_geometry_msgs
   # tf2_ros

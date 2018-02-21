@@ -133,6 +133,7 @@ bool MarkerBase::transform(
   return true;
 }
 
+// TODO(Martin-Idel-SI): Use again when interactive markers are ported
 // void MarkerBase::setInteractiveObject( InteractiveObjectWPtr control )
 // {
 //   if( handler_ )

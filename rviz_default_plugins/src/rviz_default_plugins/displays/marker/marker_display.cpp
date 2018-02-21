@@ -27,7 +27,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <memory>
 #include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include "rclcpp/duration.hpp"
 
@@ -41,9 +45,9 @@
 #include "./markers/triangle_list_marker.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager.hpp"
-#include "rviz_rendering/arrow.hpp"
-#include "rviz_rendering/billboard_line.hpp"
-#include "rviz_rendering/shape.hpp"
+#include "rviz_rendering/objects/arrow.hpp"
+#include "rviz_rendering/objects/billboard_line.hpp"
+#include "rviz_rendering/objects/shape.hpp"
 #include "rviz_common/properties/int_property.hpp"
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/properties/queue_size_property.hpp"
@@ -140,7 +144,9 @@ void MarkerDisplay::createMarkerArraySubscription()
   try {
     array_sub_ = node_->create_subscription<visualization_msgs::msg::MarkerArray>(
       topic_property_->getTopicStd() + "_array",
-      &MarkerDisplay::incomingMarkerArray,
+      [this](visualization_msgs::msg::MarkerArray::ConstSharedPtr msg) {
+        incomingMarkerArray(msg);
+      },
       qos_profile);
     setStatus(StatusLevel::Ok, "Array Topic", "OK");
   } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
@@ -170,7 +176,7 @@ void MarkerDisplay::deleteMarkersInNamespace(const std::string & ns)
 {
   std::vector<MarkerID> to_delete;
 
-  // TODO: this is inefficient, should store every in-use id per namespace and lookup by that
+  // TODO(anon): this is inefficient, should store every in-use id per namespace and lookup by that
   M_IDToMarker::iterator marker_it = markers_.begin();
   M_IDToMarker::iterator marker_end = markers_.end();
   for (; marker_it != marker_end; ++marker_it) {
@@ -218,7 +224,7 @@ void MarkerDisplay::deleteMarkerStatus(MarkerID id)
 }
 
 void MarkerDisplay::incomingMarkerArray(
-  const visualization_msgs::msg::MarkerArray::ConstSharedPtr & array)
+  const visualization_msgs::msg::MarkerArray::ConstSharedPtr array)
 {
   std::vector<visualization_msgs::msg::Marker>::const_iterator it = array->markers.begin();
   std::vector<visualization_msgs::msg::Marker>::const_iterator end = array->markers.end();
@@ -228,7 +234,7 @@ void MarkerDisplay::incomingMarkerArray(
   }
 }
 
-void MarkerDisplay::incomingMarker(const visualization_msgs::msg::Marker::ConstSharedPtr & marker)
+void MarkerDisplay::incomingMarker(const visualization_msgs::msg::Marker::ConstSharedPtr marker)
 {
   std::unique_lock<std::mutex> lock(queue_mutex_);
 
@@ -236,18 +242,21 @@ void MarkerDisplay::incomingMarker(const visualization_msgs::msg::Marker::ConstS
 }
 
 // TODO(greimela): Revisit after MessageFilter is available in ROS2
-//void MarkerDisplay::failedMarker(const ros::MessageEvent<visualization_msgs::Marker>& marker_evt, tf::FilterFailureReason reason)
-//{
+// void MarkerDisplay::failedMarker(const ros::MessageEvent<visualization_msgs::Marker>&
+// marker_evt, tf::FilterFailureReason reason)
+// {
 //  visualization_msgs::Marker::ConstPtr marker = marker_evt.getConstMessage();
 //  if (marker->action == visualization_msgs::Marker::DELETE ||
-//      marker->action == 3)  // TODO: visualization_msgs::Marker::DELETEALL when message changes in a future version of ROS
+//      marker->action == 3)
+// TODO(anon): visualization_msgs::Marker::DELETEALL when message changes in a future version of ROS
 //  {
 //    return this->processMessage(marker);
 //  }
 //  std::string authority = marker_evt.getPublisherName();
-//  std::string error = context_->getFrameManager()->discoverFailureReason(marker->header.frame_id, marker->header.stamp, authority, reason);
+//  std::string error = context_->getFrameManager()
+//    ->discoverFailureReason(marker->header.frame_id, marker->header.stamp, authority, reason);
 //  setMarkerStatus(MarkerID(marker->ns, marker->id), StatusProperty::Error, error);
-//}
+// }
 
 bool validateFloats(const visualization_msgs::msg::Marker & msg)
 {
@@ -259,7 +268,7 @@ bool validateFloats(const visualization_msgs::msg::Marker & msg)
   return valid;
 }
 
-void MarkerDisplay::processMessage(const visualization_msgs::msg::Marker::ConstSharedPtr & message)
+void MarkerDisplay::processMessage(const visualization_msgs::msg::Marker::ConstSharedPtr message)
 {
   if (!validateFloats(*message)) {
     setMarkerStatus(
@@ -278,7 +287,8 @@ void MarkerDisplay::processMessage(const visualization_msgs::msg::Marker::ConstS
       processDelete(message);
       break;
 
-    case 3: // TODO: visualization_msgs::msg::Marker::DELETEALL when message changes in a future version of ROS
+    case 3:  // TODO(anon): visualization_msgs::msg::Marker::DELETEALL when message changes in a
+      // future version of ROS
       deleteAllMarkers();
       break;
 
@@ -287,7 +297,7 @@ void MarkerDisplay::processMessage(const visualization_msgs::msg::Marker::ConstS
   }
 }
 
-void MarkerDisplay::processAdd(const visualization_msgs::msg::Marker::ConstSharedPtr & message)
+void MarkerDisplay::processAdd(const visualization_msgs::msg::Marker::ConstSharedPtr message)
 {
   QString namespace_name = QString::fromStdString(message->ns);
   M_Namespace::iterator ns_it = namespaces_.find(namespace_name);
@@ -342,19 +352,19 @@ void MarkerDisplay::processAdd(const visualization_msgs::msg::Marker::ConstShare
 
       case visualization_msgs::msg::Marker::LINE_STRIP:
         {
-//        marker.reset(new markers::LineStripMarker(this, context_, scene_node_));
+          marker.reset(new markers::LineStripMarker(this, context_, scene_node_));
         }
         break;
       case visualization_msgs::msg::Marker::LINE_LIST:
         {
-//        marker.reset(new markers::LineListMarker(this, context_, scene_node_));
+          marker.reset(new markers::LineListMarker(this, context_, scene_node_));
         }
         break;
       case visualization_msgs::msg::Marker::SPHERE_LIST:
       case visualization_msgs::msg::Marker::CUBE_LIST:
       case visualization_msgs::msg::Marker::POINTS:
         {
-//        marker.reset(new markers::PointsMarker(this, context_, scene_node_));
+          marker.reset(new markers::PointsMarker(this, context_, scene_node_));
         }
         break;
       case visualization_msgs::msg::Marker::TEXT_VIEW_FACING:
@@ -395,7 +405,7 @@ void MarkerDisplay::processAdd(const visualization_msgs::msg::Marker::ConstShare
   }
 }
 
-void MarkerDisplay::processDelete(const visualization_msgs::msg::Marker::ConstSharedPtr & message)
+void MarkerDisplay::processDelete(const visualization_msgs::msg::Marker::ConstSharedPtr message)
 {
   deleteMarker(MarkerID(message->ns, message->id));
 
@@ -404,6 +414,9 @@ void MarkerDisplay::processDelete(const visualization_msgs::msg::Marker::ConstSh
 
 void MarkerDisplay::update(float wall_dt, float ros_dt)
 {
+  (void) wall_dt;
+  (void) ros_dt;
+
   V_MarkerMessage local_queue;
 
   {
@@ -416,7 +429,7 @@ void MarkerDisplay::update(float wall_dt, float ros_dt)
     V_MarkerMessage::iterator message_it = local_queue.begin();
     V_MarkerMessage::iterator message_end = local_queue.end();
     for (; message_it != message_end; ++message_it) {
-      visualization_msgs::msg::Marker::ConstSharedPtr & marker = *message_it;
+      visualization_msgs::msg::Marker::ConstSharedPtr marker = *message_it;
 
       processMessage(marker);
     }
@@ -483,7 +496,7 @@ void MarkerNamespace::onEnableChanged()
 }
 
 }  // namespace displays
-}  // namespace rviz_default_pluginds
+}  // namespace rviz_default_plugins
 
 #include <pluginlib/class_list_macros.hpp>  // NOLINT
 PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::MarkerDisplay, rviz_common::Display)
