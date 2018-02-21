@@ -27,35 +27,30 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_POINTS_MARKER_H
-#define RVIZ_POINTS_MARKER_H
+#ifndef RVIZ_LINE_STRIP_MARKER_H
+#define RVIZ_LINE_STRIP_MARKER_H
 
-#include "marker_base.h"
-
-namespace Ogre
-{
-class SceneNode;
-}
+#include "marker_base.hpp"
 
 namespace rviz
 {
-class PointCloud;
+class BillboardLine;
 }
 
 namespace rviz
 {
 
-class PointsMarker : public MarkerBase
+class LineStripMarker : public MarkerBase
 {
 public:
-  PointsMarker(MarkerDisplay* owner, DisplayContext* context, Ogre::SceneNode* parent_node);
-  ~PointsMarker();
-  void setHighlightColor( float r, float g, float b );
+  LineStripMarker(MarkerDisplay* owner, DisplayContext* context, Ogre::SceneNode* parent_node);
+  ~LineStripMarker();
+  virtual S_MaterialPtr getMaterials();
 
 protected:
   virtual void onNewMessage(const MarkerConstPtr& old_message, const MarkerConstPtr& new_message);
 
-  PointCloud* points_;
+  BillboardLine* lines_;
 };
 
 }

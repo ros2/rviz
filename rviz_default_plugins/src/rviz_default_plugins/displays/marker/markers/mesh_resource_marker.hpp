@@ -27,43 +27,48 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_TEXT_VIEW_FACING_MARKER_H
-#define RVIZ_TEXT_VIEW_FACING_MARKER_H
+#ifndef RVIZ_MESH_RESOURCE_MARKER_H
+#define RVIZ_MESH_RESOURCE_MARKER_H
 
-#include "marker_base.h"
+#include "marker_base.hpp"
+
+#include <OgreMaterial.h>
+
+#include <vector>
 
 namespace Ogre
 {
 class SceneNode;
+class Entity;
 }
 
 namespace rviz
 {
-class MovableText;
-}
 
-namespace rviz
-{
-
-class TextViewFacingMarker : public MarkerBase
+class MeshResourceMarker : public MarkerBase
 {
 public:
-  TextViewFacingMarker(MarkerDisplay* owner, DisplayContext* context, Ogre::SceneNode* parent_node);
-  ~TextViewFacingMarker();
-
-  virtual void setOrientation( const Ogre::Quaternion& orientation ) {}
+  MeshResourceMarker(MarkerDisplay* owner, DisplayContext* context, Ogre::SceneNode* parent_node);
+  ~MeshResourceMarker();
 
   virtual S_MaterialPtr getMaterials();
 
 protected:
   virtual void onNewMessage(const MarkerConstPtr& old_message, const MarkerConstPtr& new_message);
 
-  MovableText* text_;
+  void reset();
+
+  Ogre::Entity* entity_;
+  S_MaterialPtr materials_;
+
+  //! Scaling factor to convert units. Currently relevant for Collada only.
+  float unit_rescale_;
+
 
 };
 
 }
 
-#endif // RVIZ_TEXT_VIEW_FACING_MARKER_H
+#endif // RVIZ_MESH_RESOURCE_MARKER_H
 
 

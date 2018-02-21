@@ -27,9 +27,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "triangle_list_marker.h"
+#include "triangle_list_marker.hpp"
 
-#include "marker_selection_handler.h"
+#include "marker_selection_handler.hpp"
 #include "rviz/default_plugin/marker_display.h"
 #include "rviz/selection/selection_manager.h"
 #include "rviz/uniform_string_stream.h"

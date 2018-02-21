@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "shape_marker.h"
-#include "marker_selection_handler.h"
+#include "shape_marker.hpp"
+#include "marker_selection_handler.hpp"
 #include "rviz/default_plugin/marker_display.h"
 
 #include "rviz/display_context.h"

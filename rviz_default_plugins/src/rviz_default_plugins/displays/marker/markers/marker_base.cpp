@@ -27,11 +27,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "marker_base.h"
+#include "marker_base.hpp"
 #include "rviz/default_plugin/marker_display.h"
 #include "rviz/display_context.h"
 #include "rviz/selection/selection_manager.h"
-#include "marker_selection_handler.h"
+#include "marker_selection_handler.hpp"
 #include "rviz/frame_manager.h"
 
 #include <OgreSceneNode.h>

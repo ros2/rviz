@@ -27,11 +27,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "points_marker.h"
+#include "points_marker.hpp"
 #include "rviz/default_plugin/marker_display.h"
 #include "rviz/display_context.h"
 #include "rviz/selection/selection_manager.h"
-#include "marker_selection_handler.h"
+#include "marker_selection_handler.hpp"
 
 #include <rviz/ogre_helpers/point_cloud.h>
 

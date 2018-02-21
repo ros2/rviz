@@ -27,39 +27,33 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_ARROW_MARKER_H
-#define RVIZ_ARROW_MARKER_H
+#ifndef RVIZ_SHAPE_MARKER_H
+#define RVIZ_SHAPE_MARKER_H
 
-#include "marker_base.h"
+#include "marker_base.hpp"
 
-namespace Ogre
+namespace rviz
 {
-class SceneNode;
+class Shape;
 }
 
 namespace rviz
 {
-class Arrow;
-class DisplayContext;
 
-class ArrowMarker: public MarkerBase
+class ShapeMarker: public MarkerBase
 {
 public:
-  ArrowMarker( MarkerDisplay* owner, DisplayContext* context, Ogre::SceneNode* parent_node );
-  ~ArrowMarker();
+  ShapeMarker( MarkerDisplay* owner, DisplayContext* context, Ogre::SceneNode* parent_node );
+  ~ShapeMarker();
   virtual S_MaterialPtr getMaterials();
 
 protected:
-  virtual void onNewMessage(const MarkerConstPtr& old_message, const MarkerConstPtr& new_message);
-  virtual void setDefaultProportions();
+  virtual void onNewMessage( const MarkerConstPtr& old_message, const MarkerConstPtr& new_message );
 
-  Arrow *arrow_;
-  Ogre::SceneNode *child_scene_node_;
-
-  bool last_arrow_set_from_points_;
+  Shape* shape_;
 };
 
-} // end namespace rviz
+}
 
 #endif
 

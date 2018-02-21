@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2010, Willow Garage, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,33 +27,43 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_SHAPE_MARKER_H
-#define RVIZ_SHAPE_MARKER_H
+#ifndef RVIZ_TEXT_VIEW_FACING_MARKER_H
+#define RVIZ_TEXT_VIEW_FACING_MARKER_H
 
-#include "marker_base.h"
+#include "marker_base.hpp"
+
+namespace Ogre
+{
+class SceneNode;
+}
 
 namespace rviz
 {
-class Shape;
+class MovableText;
 }
 
 namespace rviz
 {
 
-class ShapeMarker: public MarkerBase
+class TextViewFacingMarker : public MarkerBase
 {
 public:
-  ShapeMarker( MarkerDisplay* owner, DisplayContext* context, Ogre::SceneNode* parent_node );
-  ~ShapeMarker();
+  TextViewFacingMarker(MarkerDisplay* owner, DisplayContext* context, Ogre::SceneNode* parent_node);
+  ~TextViewFacingMarker();
+
+  virtual void setOrientation( const Ogre::Quaternion& orientation ) {}
+
   virtual S_MaterialPtr getMaterials();
 
 protected:
-  virtual void onNewMessage( const MarkerConstPtr& old_message, const MarkerConstPtr& new_message );
+  virtual void onNewMessage(const MarkerConstPtr& old_message, const MarkerConstPtr& new_message);
 
-  Shape* shape_;
+  MovableText* text_;
+
 };
 
 }
 
-#endif
+#endif // RVIZ_TEXT_VIEW_FACING_MARKER_H
+
 

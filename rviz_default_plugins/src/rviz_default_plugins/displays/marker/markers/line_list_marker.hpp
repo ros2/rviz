@@ -30,7 +30,7 @@
 #ifndef RVIZ_LINE_LIST_MARKER_H
 #define RVIZ_LINE_LIST_MARKER_H
 
-#include "marker_base.h"
+#include "marker_base.hpp"
 
 namespace rviz
 {

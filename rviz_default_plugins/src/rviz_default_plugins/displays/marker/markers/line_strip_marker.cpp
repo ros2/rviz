@@ -27,9 +27,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "line_strip_marker.h"
+#include "line_strip_marker.hpp"
 
-#include "marker_selection_handler.h"
+#include "marker_selection_handler.hpp"
 #include "rviz/default_plugin/marker_display.h"
 #include "rviz/display_context.h"
 

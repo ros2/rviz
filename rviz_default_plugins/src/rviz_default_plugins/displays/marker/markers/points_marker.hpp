@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Willow Garage, Inc.
+ * Copyright (c) 2009, Willow Garage, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,48 +27,38 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_MESH_RESOURCE_MARKER_H
-#define RVIZ_MESH_RESOURCE_MARKER_H
+#ifndef RVIZ_POINTS_MARKER_H
+#define RVIZ_POINTS_MARKER_H
 
-#include "marker_base.h"
-
-#include <OgreMaterial.h>
-
-#include <vector>
+#include "marker_base.hpp"
 
 namespace Ogre
 {
 class SceneNode;
-class Entity;
+}
+
+namespace rviz
+{
+class PointCloud;
 }
 
 namespace rviz
 {
 
-class MeshResourceMarker : public MarkerBase
+class PointsMarker : public MarkerBase
 {
 public:
-  MeshResourceMarker(MarkerDisplay* owner, DisplayContext* context, Ogre::SceneNode* parent_node);
-  ~MeshResourceMarker();
-
-  virtual S_MaterialPtr getMaterials();
+  PointsMarker(MarkerDisplay* owner, DisplayContext* context, Ogre::SceneNode* parent_node);
+  ~PointsMarker();
+  void setHighlightColor( float r, float g, float b );
 
 protected:
   virtual void onNewMessage(const MarkerConstPtr& old_message, const MarkerConstPtr& new_message);
 
-  void reset();
-
-  Ogre::Entity* entity_;
-  S_MaterialPtr materials_;
-
-  //! Scaling factor to convert units. Currently relevant for Collada only.
-  float unit_rescale_;
-
-
+  PointCloud* points_;
 };
 
 }
 
-#endif // RVIZ_MESH_RESOURCE_MARKER_H
-
+#endif
 
