@@ -114,11 +114,12 @@ void TriangleListMarker::onNewMessage(
 
   Ogre::Vector3 pos, scale;
   Ogre::Quaternion orient;
-  if (!transform(new_message, pos, orient, scale)) {  // NOLINT (transform is own method)
+  if (!transform(new_message, pos, orient, scale)) {  // NOLINT: is super class method
     RVIZ_COMMON_LOG_DEBUG("Unable to transform marker message");
     scene_node_->setVisible(false);
     return;
   }
+  scene_node_->setVisible(true);
 
   if (owner_ && (new_message->scale.x * new_message->scale.y * new_message->scale.z == 0.0f) ) {
     owner_->setMarkerStatus(
@@ -130,7 +131,10 @@ void TriangleListMarker::onNewMessage(
   scene_node_->setScale(scale);
 
   // If we have the same number of tris as previously, just update the object
-  if (old_message && num_points == old_message->points.size()) {
+  if (old_message &&
+    num_points == old_message->points.size() &&
+    manual_object_->getNumSections() > 0)
+  {
     manual_object_->beginUpdate(0);
   } else {  // Otherwise clear it and begin anew
     manual_object_->clear();

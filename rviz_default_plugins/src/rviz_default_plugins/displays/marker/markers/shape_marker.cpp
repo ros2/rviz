@@ -87,7 +87,12 @@ void ShapeMarker::onNewMessage(
 
   Ogre::Vector3 pos, scale, scale_correct;
   Ogre::Quaternion orient;
-  transform(new_message, pos, orient, scale);  // NOLINT: is superclass method
+  if (!transform(new_message, pos, orient, scale)) {  // NOLINT: is super class method
+    RVIZ_COMMON_LOG_DEBUG("Unable to transform marker message");
+    scene_node_->setVisible(false);
+    return;
+  }
+  scene_node_->setVisible(true);
 
   if (owner_ && (new_message->scale.x * new_message->scale.y *
     new_message->scale.z == 0.0f))

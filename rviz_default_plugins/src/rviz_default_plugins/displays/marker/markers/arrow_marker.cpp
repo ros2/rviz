@@ -112,7 +112,13 @@ void ArrowMarker::onNewMessage(
 
   Ogre::Vector3 pos, scale;
   Ogre::Quaternion orient;
-  transform(new_message, pos, orient, scale);
+  if (!transform(new_message, pos, orient, scale)) {  // NOLINT: is super class method
+    RVIZ_COMMON_LOG_DEBUG("Unable to transform marker message");
+    scene_node_->setVisible(false);
+    return;
+  }
+  scene_node_->setVisible(true);
+
   setPosition(pos);
   setOrientation(orient);
 
