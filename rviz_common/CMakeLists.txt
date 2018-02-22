@@ -153,6 +153,8 @@ set(rviz_common_source_files
   src/rviz_common/properties/editable_combo_box.cpp
   src/rviz_common/properties/editable_enum_property.cpp
   src/rviz_common/properties/enum_property.cpp
+  src/rviz_common/properties/file_picker.cpp
+  src/rviz_common/properties/file_picker_property.cpp
   src/rviz_common/properties/float_edit.cpp
   src/rviz_common/properties/float_property.cpp
   src/rviz_common/properties/int_property.cpp
