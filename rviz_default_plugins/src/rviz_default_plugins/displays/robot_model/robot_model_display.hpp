@@ -55,6 +55,7 @@ namespace rviz_common
 namespace properties
 {
 class EnumProperty;
+class FilePickerProperty;
 class FloatProperty;
 class Property;
 class StringProperty;
@@ -130,7 +131,7 @@ protected:
   rviz_common::properties::Property * collision_enabled_property_;
   rviz_common::properties::FloatProperty * update_rate_property_;
   rviz_common::properties::EnumProperty * description_source_property_;
-  rviz_common::properties::StringProperty * description_file_property_;
+  rviz_common::properties::FilePickerProperty * description_file_property_;
   rviz_common::properties::FloatProperty * alpha_property_;
   rviz_common::properties::StringProperty * tf_prefix_property_;
 };

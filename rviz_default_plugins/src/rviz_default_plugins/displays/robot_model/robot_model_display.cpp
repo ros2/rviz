@@ -56,6 +56,7 @@
 #include "../../robot/tf_link_updater.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/properties/enum_property.hpp"
+#include "rviz_common/properties/file_picker_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/properties/string_property.hpp"
@@ -66,6 +67,7 @@ namespace displays
 {
 
 using rviz_common::properties::EnumProperty;
+using rviz_common::properties::FilePickerProperty;
 using rviz_common::properties::FloatProperty;
 using rviz_common::properties::StatusProperty;
 using rviz_common::properties::StringProperty;
@@ -114,7 +116,7 @@ RobotModelDisplay::RobotModelDisplay()
   description_source_property_->addOption("Topic", DescriptionSource::TOPIC);
   description_source_property_->addOption("File", DescriptionSource::FILE);
 
-  description_file_property_ = new StringProperty("Description File", "",
+  description_file_property_ = new FilePickerProperty("Description File", "",
       "Path to the robot description.",
       this, SLOT(updateRobotDescription()));
 
