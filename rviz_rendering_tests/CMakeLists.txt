@@ -50,18 +50,19 @@ if(BUILD_TESTING)
   find_package(ament_cmake_gmock REQUIRED)
   find_package(ament_index_cpp REQUIRED)
 
-  ament_add_gmock(mesh_loader_test_target
-    test/mesh_loader_test.cpp
-    APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-  if(TARGET mesh_loader_test_target)
-    target_link_libraries(mesh_loader_test_target
-      rviz_ogre_vendor::OgreMain
-      rviz_rendering::rviz_rendering
-      resource_retriever::resource_retriever
-    )
-    ament_target_dependencies(mesh_loader_test_target
-      rviz_assimp_vendor)
-  endif()
+  # TODO(Martin-Idel-SI): reenable when this test is can run on CI
+  # ament_add_gmock(mesh_loader_test_target
+  #   test/mesh_loader_test.cpp
+  #   APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+  # if(TARGET mesh_loader_test_target)
+  #   target_link_libraries(mesh_loader_test_target
+  #     rviz_ogre_vendor::OgreMain
+  #     rviz_rendering::rviz_rendering
+  #     resource_retriever::resource_retriever
+  #   )
+  #   ament_target_dependencies(mesh_loader_test_target
+  #     rviz_assimp_vendor)
+  # endif()
 
   # TODO(wjwwood): reenable when this test is can run on CI
   # ament_add_gtest(test_rviz_rendering_tests test/test_rviz_ogre_media_exports.cpp)
