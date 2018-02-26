@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2010, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -55,17 +56,33 @@ class TriangleListMarker : public MarkerBase
 public:
   TriangleListMarker(
     MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);
-  ~TriangleListMarker();
+  ~TriangleListMarker() override;
 
-  virtual S_MaterialPtr getMaterials();
+  S_MaterialPtr getMaterials() override;
 
 protected:
-  virtual void onNewMessage(
-    const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message);
+  void onNewMessage(
+    const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message) override;
 
   Ogre::ManualObject * manual_object_;
   Ogre::MaterialPtr material_;
   std::string material_name_;
+
+private:
+  bool wrongNumberOfPoints(const MarkerConstSharedPtr & new_message);
+
+  void initializeManualObject(const MarkerConstSharedPtr & new_message);
+  void updateManualObject(
+    const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message) const;
+
+  void beginManualObject(
+    const MarkerConstSharedPtr & old_message,
+    const MarkerConstSharedPtr & new_message) const;
+  bool fillManualObjectAndDetermineAlpha(MarkerConstSharedPtr new_message) const;
+  void updateMaterial(const MarkerConstSharedPtr & new_message, bool any_vertex_has_alpha) const;
+
+  bool hasVertexColors(MarkerConstSharedPtr new_message) const;
+  bool hasFaceColors(MarkerConstSharedPtr new_message) const;
 };
 
 }  // namespace markers

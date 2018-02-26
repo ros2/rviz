@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2010, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -57,7 +58,7 @@ namespace markers
 TriangleListMarker::TriangleListMarker(
   MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node)
 : MarkerBase(owner, context, parent_node),
-  manual_object_(0)
+  manual_object_(nullptr)
 {
 }
 
@@ -73,43 +74,13 @@ void TriangleListMarker::onNewMessage(
 {
   assert(new_message->type == visualization_msgs::msg::Marker::TRIANGLE_LIST);
 
-  size_t num_points = new_message->points.size();
-  if ( (num_points % 3) != 0 || num_points == 0) {
-    std::stringstream ss;
-    if (num_points == 0) {
-      ss << "TriMesh marker [" << getStringID() << "] has no points.";
-    } else {
-      ss << "TriMesh marker [" << getStringID() <<
-        "] has a point count which is not divisible by 3 [" << num_points << "]";
-    }
-    if (owner_) {
-      owner_->setMarkerStatus(getID(), rviz_common::properties::StatusProperty::Error, ss.str());
-    }
-    RVIZ_COMMON_LOG_DEBUG(ss.str().c_str());
-
+  if (wrongNumberOfPoints(new_message)) {
     scene_node_->setVisible(false);
     return;
-  } else {
-    scene_node_->setVisible(true);
   }
 
   if (!manual_object_) {
-    static uint32_t count = 0;
-    rviz_common::UniformStringStream ss;
-    ss << "Triangle List Marker" << count++;
-    manual_object_ = context_->getSceneManager()->createManualObject(ss.str());
-    scene_node_->attachObject(manual_object_);
-
-    ss << "Material";
-    material_name_ = ss.str();
-    // TODO(Martin-Idel-SI): "rviz_rendering" was previously "ROS_PACKAGE_NAME"
-    material_ = Ogre::MaterialManager::getSingleton().create(material_name_, "rviz_rendering");
-    material_->setReceiveShadows(false);
-    material_->getTechnique(0)->setLightingEnabled(true);
-    material_->setCullingMode(Ogre::CULL_NONE);
-
-    handler_.reset(new MarkerSelectionHandler(this, MarkerID(new_message->ns, new_message->id),
-      context_));
+    initializeManualObject(new_message);
   }
 
   Ogre::Vector3 pos, scale;
@@ -130,6 +101,70 @@ void TriangleListMarker::onNewMessage(
   setOrientation(orient);
   scene_node_->setScale(scale);
 
+  updateManualObject(old_message, new_message);
+
+  handler_->addTrackedObject(manual_object_);
+}
+
+bool TriangleListMarker::wrongNumberOfPoints(const MarkerConstSharedPtr & new_message)
+{
+  size_t num_points = new_message->points.size();
+  if ((num_points % 3) != 0 || num_points == 0) {
+    std::stringstream ss;
+    if (num_points == 0) {
+      ss << "TriMesh marker [" << getStringID() << "] has no points.";
+    } else {
+      ss << "TriMesh marker [" << getStringID() <<
+        "] has a point count which is not divisible by 3 [" << num_points << "]";
+    }
+
+    if (owner_) {
+      owner_->setMarkerStatus(getID(), rviz_common::properties::StatusProperty::Error, ss.str());
+    }
+
+    RVIZ_COMMON_LOG_DEBUG(ss.str());
+    return true;
+  }
+  return false;
+}
+
+void TriangleListMarker::initializeManualObject(
+  const MarkerBase::MarkerConstSharedPtr & new_message)
+{
+  static uint32_t count = 0;
+  rviz_common::UniformStringStream ss;
+  ss << "Triangle List Marker" << count++;
+  manual_object_ = context_->getSceneManager()->createManualObject(ss.str());
+  scene_node_->attachObject(manual_object_);
+
+  ss << "Material";
+  material_name_ = ss.str();
+  material_ = Ogre::MaterialManager::getSingleton().create(material_name_, "rviz_rendering");
+  material_->setReceiveShadows(false);
+  material_->getTechnique(0)->setLightingEnabled(true);
+  material_->setCullingMode(Ogre::CULL_NONE);
+
+  handler_.reset(new MarkerSelectionHandler(this, MarkerID(new_message->ns, new_message->id),
+    context_));
+}
+
+void TriangleListMarker::updateManualObject(
+  const MarkerBase::MarkerConstSharedPtr & old_message,
+  const MarkerBase::MarkerConstSharedPtr & new_message) const
+{
+  beginManualObject(old_message, new_message);
+  bool any_vertex_has_alpha = fillManualObjectAndDetermineAlpha(new_message);
+  manual_object_->end();
+
+  updateMaterial(new_message, any_vertex_has_alpha);
+}
+
+void TriangleListMarker::beginManualObject(
+  const MarkerBase::MarkerConstSharedPtr & old_message,
+  const MarkerBase::MarkerConstSharedPtr & new_message) const
+{
+  size_t num_points = new_message->points.size();
+
   // If we have the same number of tris as previously, just update the object
   if (old_message &&
     num_points == old_message->points.size() &&
@@ -142,16 +177,22 @@ void TriangleListMarker::onNewMessage(
     manual_object_->begin(
       material_name_, Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
   }
+}
 
-  bool has_vertex_colors = new_message->colors.size() == num_points;
-  bool has_face_colors = new_message->colors.size() == num_points / 3;
+bool TriangleListMarker::fillManualObjectAndDetermineAlpha(
+  const MarkerBase::MarkerConstSharedPtr new_message) const
+{
   bool any_vertex_has_alpha = false;
 
+  size_t num_points = new_message->points.size();
   const std::vector<geometry_msgs::msg::Point> & points = new_message->points;
   for (size_t i = 0; i < num_points; i += 3) {
     std::vector<Ogre::Vector3> corners(3);
     for (size_t c = 0; c < 3; c++) {
-      corners[c] = Ogre::Vector3(points[i + c].x, points[i + c].y, points[i + c].z);
+      corners[c] = Ogre::Vector3(
+        static_cast<const Ogre::Real>(points[i + c].x),
+        static_cast<const Ogre::Real>(points[i + c].y),
+        static_cast<const Ogre::Real>(points[i + c].z));
     }
     Ogre::Vector3 normal = (corners[1] - corners[0]).crossProduct(corners[2] - corners[0]);
     normal.normalise();
@@ -159,13 +200,13 @@ void TriangleListMarker::onNewMessage(
     for (size_t c = 0; c < 3; c++) {
       manual_object_->position(corners[c]);
       manual_object_->normal(normal);
-      if (has_vertex_colors) {
+      if (hasVertexColors(new_message)) {
         any_vertex_has_alpha = any_vertex_has_alpha || (new_message->colors[i + c].a < 0.9998);
         manual_object_->colour(new_message->colors[i + c].r,
           new_message->colors[i + c].g,
           new_message->colors[i + c].b,
           new_message->color.a * new_message->colors[i + c].a);
-      } else if (has_face_colors) {
+      } else if (hasFaceColors(new_message)) {
         any_vertex_has_alpha = any_vertex_has_alpha || (new_message->colors[i / 3].a < 0.9998);
         manual_object_->colour(new_message->colors[i / 3].r,
           new_message->colors[i / 3].g,
@@ -174,10 +215,14 @@ void TriangleListMarker::onNewMessage(
       }
     }
   }
+  return any_vertex_has_alpha;
+}
 
-  manual_object_->end();
-
-  if (has_vertex_colors || has_face_colors) {
+void TriangleListMarker::updateMaterial(
+  const MarkerBase::MarkerConstSharedPtr & new_message,
+  bool any_vertex_has_alpha) const
+{
+  if (hasVertexColors(new_message) || hasFaceColors(new_message)) {
     material_->getTechnique(0)->setLightingEnabled(false);
   } else {
     material_->getTechnique(0)->setLightingEnabled(true);
@@ -190,8 +235,8 @@ void TriangleListMarker::onNewMessage(
     material_->getTechnique(0)->setDiffuse(r, g, b, a);
   }
 
-  if ( (!has_vertex_colors && new_message->color.a < 0.9998) ||
-    (has_vertex_colors && any_vertex_has_alpha))
+  if ( (!hasVertexColors(new_message) && new_message->color.a < 0.9998) ||
+    (hasVertexColors(new_message) && any_vertex_has_alpha))
   {
     material_->getTechnique(0)->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
     material_->getTechnique(0)->setDepthWriteEnabled(false);
@@ -199,8 +244,16 @@ void TriangleListMarker::onNewMessage(
     material_->getTechnique(0)->setSceneBlending(Ogre::SBT_REPLACE);
     material_->getTechnique(0)->setDepthWriteEnabled(true);
   }
+}
 
-  handler_->addTrackedObject(manual_object_);
+bool TriangleListMarker::hasFaceColors(const MarkerBase::MarkerConstSharedPtr new_message) const
+{
+  return new_message->colors.size() == new_message->points.size() / 3;
+}
+
+bool TriangleListMarker::hasVertexColors(const MarkerBase::MarkerConstSharedPtr new_message) const
+{
+  return new_message->colors.size() == new_message->points.size();
 }
 
 S_MaterialPtr TriangleListMarker::getMaterials()
