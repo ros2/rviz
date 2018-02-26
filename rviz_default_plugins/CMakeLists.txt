@@ -69,6 +69,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/marker/markers/points_marker.cpp
   src/rviz_default_plugins/displays/marker/markers/shape_marker.cpp
   src/rviz_default_plugins/displays/marker/markers/triangle_list_marker.cpp
+  src/rviz_default_plugins/displays/marker/markers/marker_factory.cpp
   src/rviz_default_plugins/displays/marker/marker_display.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.cpp
@@ -273,14 +274,6 @@ if(BUILD_TESTING)
     target_link_libraries(triangle_list_marker_test rviz_default_plugins)
   endif()
 
-  ament_add_gmock(marker_factory_test
-    test/rviz_default_plugins/displays/marker/markers/marker_factory_test.cpp
-    APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;
-    ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-  if(TARGET marker_factory_test)
-    target_link_libraries(marker_factory_test rviz_default_plugins)
-  endif()
-
   ament_add_gmock(points_marker_test
     test/rviz_default_plugins/displays/marker/markers/points_marker_test.cpp
     test/rviz_default_plugins/displays/marker/markers/markers_test_fixture.hpp
@@ -289,6 +282,15 @@ if(BUILD_TESTING)
     ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
   if(TARGET points_marker_test)
     target_link_libraries(points_marker_test rviz_default_plugins)
+  endif()
+
+  ament_add_gmock(marker_display_test
+    test/rviz_default_plugins/displays/marker/marker_display_test.cpp
+    test/rviz_default_plugins/scene_graph_introspection.cpp
+    APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;
+    ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+  if(TARGET marker_display_test)
+    target_link_libraries(marker_display_test rviz_default_plugins)
   endif()
 
 endif()

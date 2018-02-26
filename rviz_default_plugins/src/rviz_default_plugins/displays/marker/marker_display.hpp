@@ -68,6 +68,7 @@ namespace markers
 {
 class MarkerBase;
 class MarkerSelectionHandler;
+class MarkerFactory;
 }
 
 typedef std::shared_ptr<markers::MarkerSelectionHandler> MarkerSelectionHandlerPtr;
@@ -78,13 +79,19 @@ typedef std::pair<std::string, int32_t> MarkerID;
  * \class MarkerDisplay
  * \brief Displays "markers" sent in by other ROS nodes on the "visualization_marker" topic
  *
- * Markers come in as visualization_msgs::msg::Marker messages.  See the Marker message for more information.
+ * Markers come in as visualization_msgs::msg::Marker messages.
+ * See the Marker message for more information.
  */
 class MarkerDisplay : public rviz_common::RosTopicDisplay<visualization_msgs::msg::Marker>
 {
   Q_OBJECT
 
 public:
+  // TODO(Martin-Idel-SI): Constructor for testing, remove once ros_nodes can be mocked and call
+  // initialize instead
+  explicit MarkerDisplay(
+    std::unique_ptr<markers::MarkerFactory> factory,
+    rviz_common::DisplayContext * display_context);
   MarkerDisplay();
   ~MarkerDisplay() override;
 
@@ -102,6 +109,12 @@ public:
 
   void setMarkerStatus(MarkerID id, StatusLevel level, const std::string & text);
   void deleteMarkerStatus(MarkerID id);
+
+  /**
+   * \brief Processes a marker message
+   * @param message The message to process
+   */
+  void processMessage(visualization_msgs::msg::Marker::ConstSharedPtr message) override;
 
 protected:
   void onEnable() override;
@@ -132,11 +145,6 @@ private:
    */
   void clearMarkers();
 
-  /**
-   * \brief Processes a marker message
-   * @param message The message to process
-   */
-  void processMessage(visualization_msgs::msg::Marker::ConstSharedPtr message) override;
   /**
    * \brief Processes an "Add" marker message
    * @param message The message to process
@@ -173,6 +181,8 @@ private:
 
   typedef std::map<QString, bool> M_EnabledState;
   M_EnabledState namespace_config_enabled_state_;
+
+  std::unique_ptr<markers::MarkerFactory> marker_factory_;
 
   friend class MarkerNamespace;
 };

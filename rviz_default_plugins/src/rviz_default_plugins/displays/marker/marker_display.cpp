@@ -43,6 +43,7 @@
 #include "./markers/shape_marker.hpp"
 #include "./markers/text_view_facing_marker.hpp"
 #include "./markers/triangle_list_marker.hpp"
+#include "markers/marker_factory.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_rendering/objects/arrow.hpp"
@@ -62,6 +63,14 @@ namespace rviz_default_plugins
 namespace displays
 {
 
+MarkerDisplay::MarkerDisplay(
+  std::unique_ptr<markers::MarkerFactory> factory, rviz_common::DisplayContext * display_context)
+: MarkerDisplay()
+{
+  marker_factory_ = std::move(factory);
+  context_ = display_context;
+}
+
 MarkerDisplay::MarkerDisplay()
 : queue_size_property_(std::make_unique<rviz_common::QueueSizeProperty>(this, 10))
 {
@@ -69,13 +78,16 @@ MarkerDisplay::MarkerDisplay()
     "visualization_msgs::msg::Marker topic to subscribe to. <topic>_array will also"
     " automatically be subscribed with type visualization_msgs::msg::MarkerArray.");
 
-  namespaces_category_ = new Property("Namespaces", QVariant(), "", this);
+  namespaces_category_ = new rviz_common::properties::Property("Namespaces", QVariant(), "", this);
+  marker_factory_ = std::make_unique<markers::MarkerFactory>();
 }
 
 void MarkerDisplay::onInitialize()
 {
   RTDClass::onInitialize();
   namespace_config_enabled_state_.clear();
+
+  marker_factory_->initialize(this, context_, scene_node_);
 
   // TODO(greimela): Revisit after MessageFilter is available in ROS2
 //  tf_filter_ = new tf::MessageFilter<visualization_msgs::Marker>( *context_->getTFClient(),
@@ -98,7 +110,7 @@ MarkerDisplay::~MarkerDisplay()
 
 void MarkerDisplay::load(const rviz_common::Config & config)
 {
-  Display::load(config);
+  rviz_common::Display::load(config);
 
   rviz_common::Config c = config.mapGetChild("Namespaces");
   for (rviz_common::Config::MapIterator iter = c.mapIterator(); iter.isValid(); iter.advance() ) {
@@ -335,58 +347,7 @@ void MarkerDisplay::processAdd(const visualization_msgs::msg::Marker::ConstShare
   }
 
   if (create) {
-    switch (message->type) {
-      case visualization_msgs::msg::Marker::CUBE:
-      case visualization_msgs::msg::Marker::CYLINDER:
-      case visualization_msgs::msg::Marker::SPHERE:
-        {
-          marker.reset(new markers::ShapeMarker(this, context_, scene_node_));
-        }
-        break;
-
-      case visualization_msgs::msg::Marker::ARROW:
-        {
-          marker.reset(new markers::ArrowMarker(this, context_, scene_node_));
-        }
-        break;
-
-      case visualization_msgs::msg::Marker::LINE_STRIP:
-        {
-          marker.reset(new markers::LineStripMarker(this, context_, scene_node_));
-        }
-        break;
-      case visualization_msgs::msg::Marker::LINE_LIST:
-        {
-          marker.reset(new markers::LineListMarker(this, context_, scene_node_));
-        }
-        break;
-      case visualization_msgs::msg::Marker::SPHERE_LIST:
-      case visualization_msgs::msg::Marker::CUBE_LIST:
-      case visualization_msgs::msg::Marker::POINTS:
-        {
-          marker.reset(new markers::PointsMarker(this, context_, scene_node_));
-        }
-        break;
-      case visualization_msgs::msg::Marker::TEXT_VIEW_FACING:
-        {
-          marker.reset(new markers::TextViewFacingMarker(this, context_, scene_node_));
-        }
-        break;
-      case visualization_msgs::msg::Marker::MESH_RESOURCE:
-        {
-          marker.reset(new markers::MeshResourceMarker(this, context_, scene_node_));
-        }
-        break;
-
-      case visualization_msgs::msg::Marker::TRIANGLE_LIST:
-        {
-          marker.reset(new markers::TriangleListMarker(this, context_, scene_node_));
-        }
-        break;
-      default:
-        RVIZ_COMMON_LOG_ERROR_STREAM("Unknown marker type: " << message->type);
-    }
-
+    marker = marker_factory_->createMarkerForType(message->type);
     markers_.insert(std::make_pair(MarkerID(message->ns, message->id), marker));
   }
 
@@ -475,7 +436,7 @@ void MarkerDisplay::reset()
 // MarkerNamespace
 
 MarkerNamespace::MarkerNamespace(
-  const QString & name, Property * parent_property, MarkerDisplay * owner)
+  const QString & name, rviz_common::properties::Property * parent_property, MarkerDisplay * owner)
 : BoolProperty(name, true, "Enable/disable all markers in this namespace.", parent_property),
   owner_(owner)
 {
