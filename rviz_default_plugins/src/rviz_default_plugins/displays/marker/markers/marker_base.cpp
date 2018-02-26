@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,7 +70,7 @@ MarkerBase::MarkerBase(
   Ogre::SceneNode * parent_node)
 : owner_(owner),
   context_(context),
-  scene_node_(parent_node->createChildSceneNode() )
+  scene_node_(parent_node->createChildSceneNode())
 {}
 
 MarkerBase::~MarkerBase()
@@ -80,7 +81,7 @@ MarkerBase::~MarkerBase()
 void MarkerBase::setMessage(const Marker & message)
 {
   // copy and save to shared pointer
-  MarkerConstSharedPtr message_ptr(new Marker(message) );
+  MarkerConstSharedPtr message_ptr(new Marker(message));
   setMessage(message_ptr);
 }
 
@@ -134,11 +135,11 @@ bool MarkerBase::transform(
 }
 
 // TODO(Martin-Idel-SI): Use again when interactive markers are ported
-// void MarkerBase::setInteractiveObject( InteractiveObjectWPtr control )
+// void MarkerBase::setInteractiveObject(InteractiveObjectWPtr control)
 // {
-//   if( handler_ )
+//   if(handler_)
 //   {
-//     handler_->setInteractiveObject( control );
+//     handler_->setInteractiveObject(control);
 //   }
 // }
 

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,12 +47,12 @@ class SceneNode;
 class Vector3;
 class Quaternion;
 class Entity;
-}
+}  // namespace Ogre
 
 namespace rviz_common
 {
 class DisplayContext;
-}
+}  // namespace rviz_common
 
 namespace rviz_default_plugins
 {
@@ -73,9 +74,7 @@ public:
   typedef visualization_msgs::msg::Marker::ConstSharedPtr MarkerConstSharedPtr;
 
   MarkerBase(
-    MarkerDisplay * owner,
-    rviz_common::DisplayContext * context,
-    Ogre::SceneNode * parent_node);
+    MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);
 
   virtual ~MarkerBase();
 
@@ -90,14 +89,12 @@ public:
   MarkerID getID() {return MarkerID(message_->ns, message_->id);}
   std::string getStringID()
   {
-    std::stringstream ss;
-    ss << message_->ns << "/" << message_->id;
-    return ss.str();
+    return message_->ns + "/" + std::to_string(message_->id);
   }
 
   // TODO(Martin-Idel-SI): use again when interactive marker is ported
   /** @brief Associate an InteractiveObject with this MarkerBase. */
-  // void setInteractiveObject( InteractiveObjectWPtr object );
+  // void setInteractiveObject(InteractiveObjectWPtr object);
 
   virtual void setPosition(const Ogre::Vector3 & position);
   virtual void setOrientation(const Ogre::Quaternion & orientation);
@@ -108,8 +105,10 @@ public:
 
 protected:
   bool transform(
-    const MarkerConstSharedPtr & message, Ogre::Vector3 & pos,
-    Ogre::Quaternion & orient, Ogre::Vector3 & scale);
+    const MarkerConstSharedPtr & message,
+    Ogre::Vector3 & pos,
+    Ogre::Quaternion & orient,
+    Ogre::Vector3 & scale);
   virtual void onNewMessage(
     const MarkerConstSharedPtr & old_message,
     const MarkerConstSharedPtr & new_message) = 0;
@@ -127,7 +126,6 @@ protected:
 
   std::shared_ptr<MarkerSelectionHandler> handler_;
 };
-typedef std::shared_ptr<MarkerBase> MarkerBasePtr;
 
 }  // namespace markers
 }  // namespace displays
