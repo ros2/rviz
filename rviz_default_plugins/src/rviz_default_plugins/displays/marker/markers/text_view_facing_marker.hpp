@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2010, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,15 +55,15 @@ class TextViewFacingMarker : public MarkerBase
 public:
   TextViewFacingMarker(
     MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);
-  ~TextViewFacingMarker();
+  ~TextViewFacingMarker() override;
 
-  virtual void setOrientation(const Ogre::Quaternion & orientation) {(void) orientation;}
+  void setOrientation(const Ogre::Quaternion & orientation) override {(void) orientation;}
 
-  virtual S_MaterialPtr getMaterials();
+  S_MaterialPtr getMaterials() override;
 
 protected:
-  virtual void onNewMessage(
-    const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message);
+  void onNewMessage(
+    const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message) override;
 
   rviz_rendering::MovableText * text_;
 };
