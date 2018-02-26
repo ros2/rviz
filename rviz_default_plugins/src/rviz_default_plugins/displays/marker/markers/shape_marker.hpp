@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,6 +31,8 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__SHAPE_MARKER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__SHAPE_MARKER_HPP_
 
+#include <memory>
+
 #include "marker_base.hpp"
 
 namespace rviz_rendering
@@ -49,14 +52,17 @@ class ShapeMarker : public MarkerBase
 public:
   ShapeMarker(
     MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);
-  ~ShapeMarker();
-  virtual S_MaterialPtr getMaterials();
+
+  S_MaterialPtr getMaterials() override;
 
 protected:
-  virtual void onNewMessage(
-    const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message);
+  void onNewMessage(
+    const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message) override;
 
-  rviz_rendering::Shape * shape_;
+  std::shared_ptr<rviz_rendering::Shape> shape_;
+
+private:
+  void resetShapeForMessage(const MarkerConstSharedPtr & new_message);
 };
 
 }  // namespace markers

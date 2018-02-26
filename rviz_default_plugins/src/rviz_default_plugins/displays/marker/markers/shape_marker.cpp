@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,6 +30,8 @@
 
 #include "shape_marker.hpp"
 
+#include <memory>
+
 #include <OgreSceneNode.h>
 #include <OgreMatrix3.h>
 
@@ -49,67 +52,39 @@ namespace markers
 ShapeMarker::ShapeMarker(
   MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node)
 : MarkerBase(owner, context, parent_node),
-  shape_(0)
+  shape_(nullptr)
 {}
-
-ShapeMarker::~ShapeMarker()
-{
-  delete shape_;
-}
 
 void ShapeMarker::onNewMessage(
   const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message)
 {
   if (!shape_ || old_message->type != new_message->type) {
-    delete shape_;
-    shape_ = 0;
-
-    rviz_rendering::Shape::Type shape_type = rviz_rendering::Shape::Cube;
-    switch (new_message->type) {
-      case visualization_msgs::msg::Marker::CUBE:
-        shape_type = rviz_rendering::Shape::Cube;
-        break;
-      case visualization_msgs::msg::Marker::CYLINDER:
-        shape_type = rviz_rendering::Shape::Cylinder;
-        break;
-      case visualization_msgs::msg::Marker::SPHERE:
-        shape_type = rviz_rendering::Shape::Sphere;
-        break;
-      default:
-        break;
-    }
-    shape_ = new rviz_rendering::Shape(shape_type, context_->getSceneManager(), scene_node_);
-
-    handler_.reset(new MarkerSelectionHandler(this, MarkerID(new_message->ns, new_message->id),
-      context_));
-    handler_->addTrackedObjects(shape_->getRootNode() );
+    resetShapeForMessage(new_message);
   }
 
-  Ogre::Vector3 pos, scale, scale_correct;
-  Ogre::Quaternion orient;
-  if (!transform(new_message, pos, orient, scale)) {  // NOLINT: is super class method
+  Ogre::Vector3 position, scale;
+  Ogre::Quaternion orientation;
+  if (!transform(new_message, position, orientation, scale)) {  // NOLINT: is super class method
     RVIZ_COMMON_LOG_DEBUG("Unable to transform marker message");
     scene_node_->setVisible(false);
     return;
   }
   scene_node_->setVisible(true);
 
-  if (owner_ && (new_message->scale.x * new_message->scale.y *
-    new_message->scale.z == 0.0f))
-  {
+  if (owner_ && new_message->scale.x * new_message->scale.y * new_message->scale.z == 0.0f) {
     owner_->setMarkerStatus(
       getID(), rviz_common::properties::StatusProperty::Warn, "Scale of 0 in one of x/y/z");
   }
 
-  setPosition(pos);
-  setOrientation(orient * Ogre::Quaternion(Ogre::Degree(90), Ogre::Vector3(1, 0, 0) ) );
+  auto rotate_90deg_around_x_axis = Ogre::Quaternion(Ogre::Degree(90), Ogre::Vector3(1, 0, 0));
 
-  scale_correct = Ogre::Quaternion(Ogre::Degree(90), Ogre::Vector3(1, 0, 0) ) * scale;
+  setPosition(position);
+  setOrientation(orientation * rotate_90deg_around_x_axis);
 
-  shape_->setScale(scale_correct);
+  shape_->setScale(rotate_90deg_around_x_axis * scale);
 
-  shape_->setColor(new_message->color.r, new_message->color.g,
-    new_message->color.b, new_message->color.a);
+  shape_->setColor(
+    new_message->color.r, new_message->color.g, new_message->color.b, new_message->color.a);
 }
 
 S_MaterialPtr ShapeMarker::getMaterials()
@@ -117,6 +92,30 @@ S_MaterialPtr ShapeMarker::getMaterials()
   S_MaterialPtr materials;
   extractMaterials(shape_->getEntity(), materials);
   return materials;
+}
+
+void ShapeMarker::resetShapeForMessage(const MarkerBase::MarkerConstSharedPtr & new_message)
+{
+  rviz_rendering::Shape::Type shape_type = rviz_rendering::Shape::Cube;
+  switch (new_message->type) {
+    case visualization_msgs::msg::Marker::CUBE:
+      shape_type = rviz_rendering::Shape::Cube;
+      break;
+    case visualization_msgs::msg::Marker::CYLINDER:
+      shape_type = rviz_rendering::Shape::Cylinder;
+      break;
+    case visualization_msgs::msg::Marker::SPHERE:
+      shape_type = rviz_rendering::Shape::Sphere;
+      break;
+    default:
+      break;
+  }
+  shape_ = std::make_shared<rviz_rendering::Shape>(
+    shape_type, this->context_->getSceneManager(), this->scene_node_);
+
+  handler_.reset(new MarkerSelectionHandler(
+      this, MarkerID(new_message->ns, new_message->id), context_));
+  handler_->addTrackedObjects(shape_->getRootNode());
 }
 
 }  // namespace markers
