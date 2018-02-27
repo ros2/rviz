@@ -44,8 +44,7 @@
 
 //# include <message_filters/time_sequencer.h>
 
-// TODO(wjwwood): revist file when pluginlib is available
-//# include <pluginlib/class_loader.h>
+#include "pluginlib/class_loader.hpp"
 #include "rclcpp/clock.hpp"
 #include "rclcpp/time.hpp"
 
@@ -134,7 +133,6 @@ public:
   typedef std::list<CloudInfoPtr> L_CloudInfo;
 
   explicit PointCloudCommon(rviz_common::Display * display);
-  ~PointCloudCommon() override;
 
   void initialize(rviz_common::DisplayContext * context, Ogre::SceneNode * scene_node);
 
@@ -224,8 +222,7 @@ private:
   bool new_color_transformer_;
   bool needs_retransform_;
 
-  // TODO(Martin-Idel-SI): revisit once pluginlib is available
-  // pluginlib::ClassLoader<PointCloudTransformer> * transformer_class_loader_;
+  std::unique_ptr<pluginlib::ClassLoader<PointCloudTransformer>> transformer_class_loader_;
 
   rviz_common::Display * display_;
   rviz_common::DisplayContext * context_;

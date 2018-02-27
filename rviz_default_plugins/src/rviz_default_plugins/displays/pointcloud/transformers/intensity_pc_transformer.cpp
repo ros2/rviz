@@ -242,3 +242,7 @@ void IntensityPCTransformer::updateUseRainbow()
 }
 
 }  // end namespace rviz_default_plugins
+
+#include <pluginlib/class_list_macros.hpp>  // NOLINT
+PLUGINLIB_EXPORT_CLASS(
+  rviz_default_plugins::IntensityPCTransformer, rviz_default_plugins::PointCloudTransformer)

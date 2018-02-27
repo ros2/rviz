@@ -45,11 +45,10 @@
 # pragma GCC diagnostic pop
 #endif
 
-// TODO(wjwwood): revisit file when pluginlib is available
-// #include <pluginlib/class_loader.h>
 #include "rclcpp/clock.hpp"
 
 #include "./point_cloud_to_point_cloud2.hpp"
+#include "point_cloud_helpers.hpp"
 #include "rviz_common/display.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
@@ -61,13 +60,6 @@
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
 #include "rviz_common/validate_floats.hpp"
-
-#include "src/rviz_default_plugins/displays/pointcloud/transformers/rgb8_pc_transformer.hpp"
-#include "src/rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.hpp"
-#include "src/rviz_default_plugins/displays/pointcloud/transformers/xyz_pc_transformer.hpp"
-#include "src/rviz_default_plugins/displays/pointcloud/transformers/rgbf32_pc_transformer.hpp"
-#include "src/rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.hpp"
-#include "src/rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.hpp"
 
 namespace rviz_default_plugins
 {
@@ -169,9 +161,8 @@ void PointCloudCommon::initialize(
   rviz_common::DisplayContext * context,
   Ogre::SceneNode * scene_node)
 {
-  // TODO(Martin-Idel-SI): revisit when pluginlib is available
-//  transformer_class_loader_ = new pluginlib::ClassLoader<PointCloudTransformer>( "rviz",
-// "rviz::PointCloudTransformer" );
+  transformer_class_loader_ = std::make_unique<pluginlib::ClassLoader<PointCloudTransformer>>(
+    "rviz2", "rviz_default_plugins::PointCloudTransformer");
   loadTransformers();
 
   context_ = context;
@@ -184,71 +175,26 @@ void PointCloudCommon::initialize(
   updateSelectable();
 }
 
-PointCloudCommon::~PointCloudCommon()
-{
-  // TODO(Martin-Idel-SI): revisit when pluginlib is available
-//  if ( transformer_class_loader_ )
-//  {
-//    delete transformer_class_loader_;
-//  }
-}
-
 void PointCloudCommon::loadTransformers()
 {
-  loadTransformer(
-    std::make_shared<AxisColorPCTransformer>(), "AxisColorPCTransformer",
-    "AxisColorPCTransformer");
-  loadTransformer(
-    std::make_shared<FlatColorPCTransformer>(), "FlatColorPCTransformer",
-    "FlatColorPCTransformer");
-  loadTransformer(
-    std::make_shared<IntensityPCTransformer>(), "IntensityPCTransformer",
-    "IntensityPCTransformer");
-  loadTransformer(
-    std::make_shared<RGB8PCTransformer>(), "RGB8PCTransformer",
-    "RGB8PCTransformer");
-  loadTransformer(
-    std::make_shared<RGBF32PCTransformer>(), "RGBF32PCTransformer",
-    "RGBF32PCTransformer");
-  loadTransformer(
-    std::make_shared<XYZPCTransformer>(), "XYZPCTransformer",
-    "XYZPCTransformer");
+  std::vector<std::string> classes = transformer_class_loader_->getDeclaredClasses();
+  std::vector<std::string>::iterator ci;
 
-// TODO(Martin-Idel-SI): revisit when pluginlib is available
-//  std::vector<std::string> classes = transformer_class_loader_->getDeclaredClasses();
-//  std::vector<std::string>::iterator ci;
-//
-//  for( ci = classes.begin(); ci != classes.end(); ci++ )
-//  {
-//    const std::string& lookup_name = *ci;
-//    std::string name = transformer_class_loader_->getName( lookup_name );
-//
-//    if( transformers_.count( name ) > 0 )
-//    {
-//      ROS_ERROR( "Transformer type [%s] is already loaded.", name.c_str() );
-//      continue;
-//    }
-//
-//    PointCloudTransformerPtr trans( transformer_class_loader_
-// ->createUnmanagedInstance( lookup_name ));
-//    trans->init();
-//    connect( trans.get(), SIGNAL( needRetransform() ), this, SLOT( causeRetransform() ));
-//
-//    TransformerInfo info;
-//    info.transformer = trans;
-//    info.readable_name = name;
-//    info.lookup_name = lookup_name;
-//
-//    info.transformer->createProperties( display_, PointCloudTransformer::Support_XYZ,
-// info.xyz_props );
-//    setPropertiesHidden( info.xyz_props, true );
-//
-//    info.transformer->createProperties( display_, PointCloudTransformer::Support_Color,
-// info.color_props );
-//    setPropertiesHidden( info.color_props, true );
-//
-//    transformers_[ name ] = info;
-//  }
+  for( ci = classes.begin(); ci != classes.end(); ci++ )
+  {
+    const std::string& lookup_name = *ci;
+    std::string name = transformer_class_loader_->getName( lookup_name );
+
+    if( transformers_.count( name ) > 0 )
+    {
+      RVIZ_COMMON_LOG_ERROR_STREAM("Transformer type "<< name << " is already loaded.");
+      continue;
+    }
+
+    PointCloudTransformerPtr trans(
+      transformer_class_loader_->createUnmanagedInstance( lookup_name ));
+    loadTransformer(trans, name, lookup_name);
+  }
 }
 
 void PointCloudCommon::loadTransformer(
@@ -264,11 +210,12 @@ void PointCloudCommon::loadTransformer(
   info.readable_name = name;
   info.lookup_name = lookup_name;
 
-  info.transformer->createProperties(display_, PointCloudTransformer::Support_XYZ, info.xyz_props);
+  info.transformer->createProperties(
+    display_, PointCloudTransformer::Support_XYZ, info.xyz_props);
   setPropertiesHidden(info.xyz_props, true);
 
-  info.transformer->createProperties(display_, PointCloudTransformer::Support_Color,
-    info.color_props);
+  info.transformer->createProperties(
+    display_, PointCloudTransformer::Support_Color, info.color_props);
   setPropertiesHidden(info.color_props, true);
 
   transformers_[name] = info;
