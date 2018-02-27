@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2010, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,6 +31,7 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__MESH_RESOURCE_MARKER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__MESH_RESOURCE_MARKER_HPP_
 
+#include <string>
 #include <vector>
 
 #include <OgreMaterial.h>
@@ -59,21 +61,29 @@ class MeshResourceMarker : public MarkerBase
 public:
   MeshResourceMarker(
     MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);
-  ~MeshResourceMarker();
+  ~MeshResourceMarker() override;
 
-  virtual S_MaterialPtr getMaterials();
+  S_MaterialPtr getMaterials() override;
 
 protected:
-  virtual void onNewMessage(
-    const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message);
+  void onNewMessage(
+    const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message) override;
 
   void reset();
 
   Ogre::Entity * entity_;
   S_MaterialPtr materials_;
 
-  //! Scaling factor to convert units. Currently relevant for Collada only.
-  float unit_rescale_;
+private:
+  void destroyEntity();
+  void destroyMaterials() const;
+
+  void printMeshLoadingError(const MarkerConstSharedPtr & new_message);
+  void createMeshWithMaterials(const MarkerConstSharedPtr & new_message);
+  Ogre::MaterialPtr createDefaultMaterial(const std::string & string) const;
+  void cloneMaterials(const std::string & id);
+  void useClonedMaterials(const std::string & id, const Ogre::MaterialPtr & default_material) const;
+  void updateMaterialColor(const MarkerBase::MarkerConstSharedPtr & new_message) const;
 };
 
 }  // namespace markers
