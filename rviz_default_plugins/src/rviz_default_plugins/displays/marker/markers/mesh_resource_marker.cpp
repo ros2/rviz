@@ -140,7 +140,7 @@ void MeshResourceMarker::onNewMessage(
       if (owner_) {
         owner_->setMarkerStatus(getID(), rviz_common::properties::StatusProperty::Error, ss.str());
       }
-      RVIZ_COMMON_LOG_DEBUG(ss.str().c_str());
+      RVIZ_COMMON_LOG_DEBUG(ss.str());
       return;
     }
 
@@ -192,6 +192,8 @@ void MeshResourceMarker::onNewMessage(
       entity_->setMaterial(default_material);
     }
 
+    update_color = true;
+
     handler_.reset(new MarkerSelectionHandler(this, MarkerID(new_message->ns, new_message->id),
       context_));
     handler_->addTrackedObject(entity_);
@@ -222,7 +224,7 @@ void MeshResourceMarker::onNewMessage(
     S_MaterialPtr::iterator material_it;
     for (material_it = materials_.begin(); material_it != materials_.end(); material_it++) {
       Ogre::Technique * technique = (*material_it)->getTechnique(0);
-      technique->setAmbient(r * 0.5, g * 0.5, b * 0.5);
+      technique->setAmbient(r * 0.5f, g * 0.5f, b * 0.5f);
       technique->setDiffuse(r, g, b, a);
       technique->setSceneBlending(blending);
       technique->setDepthWriteEnabled(depth_write);
