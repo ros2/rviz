@@ -70,7 +70,6 @@ void LineMarkerBase::onNewMessage(
   Ogre::Vector3 pos, scale;
   Ogre::Quaternion orient;
   if (!transform(new_message, pos, orient, scale)) {  // NOLINT: is super class method
-    RVIZ_COMMON_LOG_DEBUG("Unable to transform marker message");
     scene_node_->setVisible(false);
     return;
   }

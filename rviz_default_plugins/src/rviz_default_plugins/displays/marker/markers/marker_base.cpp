@@ -126,6 +126,7 @@ bool MarkerBase::transform(
     if (owner_) {
       owner_->setMarkerStatus(getID(), rviz_common::properties::StatusProperty::Error, error);
     }
+    RVIZ_COMMON_LOG_DEBUG("Unable to transform marker message");
     return false;
   }
 
