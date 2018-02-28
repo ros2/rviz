@@ -86,7 +86,8 @@ TEST_F(RosNodeAbstractionTestFixture,
     store_rclcpp_node_by_name(node_name_, AllOf(
       A<rclcpp::Node::SharedPtr>(),
       Pointee(Property(&rclcpp::Node::get_name, StrEq(node_name_)))
-    )))
+    ))
+  )
   .Times(1);
 
   auto node = rviz_common::ros_integration::RosNodeAbstraction(
