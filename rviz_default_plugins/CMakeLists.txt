@@ -217,6 +217,7 @@ if(BUILD_TESTING)
   ament_add_gmock(arrow_marker_test
       test/rviz_default_plugins/displays/marker/markers/arrow_marker_test.cpp
       test/rviz_default_plugins/displays/marker/markers/markers_test_fixture.hpp
+      test/rviz_default_plugins/displays/display_test_fixture.hpp
       test/rviz_default_plugins/scene_graph_introspection.cpp
       APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;
     ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
@@ -227,6 +228,7 @@ if(BUILD_TESTING)
   ament_add_gmock(shape_marker_test
     test/rviz_default_plugins/displays/marker/markers/shape_marker_test.cpp
     test/rviz_default_plugins/displays/marker/markers/markers_test_fixture.hpp
+    test/rviz_default_plugins/displays/display_test_fixture.hpp
     test/rviz_default_plugins/scene_graph_introspection.cpp
     APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;
     ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
@@ -237,6 +239,7 @@ if(BUILD_TESTING)
   ament_add_gmock(line_marker_test
     test/rviz_default_plugins/displays/marker/markers/line_marker_test.cpp
     test/rviz_default_plugins/displays/marker/markers/markers_test_fixture.hpp
+    test/rviz_default_plugins/displays/display_test_fixture.hpp
     test/rviz_default_plugins/scene_graph_introspection.cpp
     APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;
     ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
@@ -247,6 +250,7 @@ if(BUILD_TESTING)
   ament_add_gmock(mesh_resource_marker_test
     test/rviz_default_plugins/displays/marker/markers/mesh_resource_marker_test.cpp
     test/rviz_default_plugins/displays/marker/markers/markers_test_fixture.hpp
+    test/rviz_default_plugins/displays/display_test_fixture.hpp
     test/rviz_default_plugins/scene_graph_introspection.cpp
     APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;
     ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
@@ -257,6 +261,7 @@ if(BUILD_TESTING)
   ament_add_gmock(text_view_facing_marker_test
     test/rviz_default_plugins/displays/marker/markers/text_view_facing_marker_test.cpp
     test/rviz_default_plugins/displays/marker/markers/markers_test_fixture.hpp
+    test/rviz_default_plugins/displays/display_test_fixture.hpp
     test/rviz_default_plugins/scene_graph_introspection.cpp
     APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;
     ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
@@ -267,6 +272,7 @@ if(BUILD_TESTING)
   ament_add_gmock(triangle_list_marker_test
     test/rviz_default_plugins/displays/marker/markers/triangle_list_marker_test.cpp
     test/rviz_default_plugins/displays/marker/markers/markers_test_fixture.hpp
+    test/rviz_default_plugins/displays/display_test_fixture.hpp
     test/rviz_default_plugins/scene_graph_introspection.cpp
     APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;
     ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
@@ -277,6 +283,7 @@ if(BUILD_TESTING)
   ament_add_gmock(points_marker_test
     test/rviz_default_plugins/displays/marker/markers/points_marker_test.cpp
     test/rviz_default_plugins/displays/marker/markers/markers_test_fixture.hpp
+    test/rviz_default_plugins/displays/display_test_fixture.hpp
     test/rviz_default_plugins/scene_graph_introspection.cpp
     APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;
     ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
@@ -286,6 +293,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(marker_display_test
     test/rviz_default_plugins/displays/marker/marker_display_test.cpp
+    test/rviz_default_plugins/displays/display_test_fixture.hpp
     test/rviz_default_plugins/scene_graph_introspection.cpp
     APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;
     ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)

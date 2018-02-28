@@ -44,44 +44,25 @@
 #include <QApplication>  // NOLINT
 
 #include "test/rviz_rendering/ogre_testing_environment.hpp"
+#include "../../display_test_fixture.hpp"
 #include "../../../mock_display_context.hpp"
 #include "../../../mock_frame_manager.hpp"
 #include "../../../mock_selection_manager.hpp"
 #include "../../../../../src/rviz_default_plugins/displays/marker/marker_display.hpp"
 
-class MarkersTestFixture : public testing::Test
+class MarkersTestFixture : public DisplayTestFixture
 {
 public:
-  static void SetUpTestCase()
-  {
-    testing_environment_ = std::make_shared<rviz_rendering::OgreTestingEnvironment>();
-    testing_environment_->setUpOgreTestEnvironment();
-
-    scene_manager_ = Ogre::Root::getSingletonPtr()->createSceneManager();
-  }
-
   void SetUp() override
   {
-    context_ = std::make_shared<MockDisplayContext>();
-    frame_manager_ = std::make_shared<testing::NiceMock<MockFrameManager>>();
-    selection_manager_ = std::make_shared<testing::NiceMock<MockSelectionManager>>();
-
-    EXPECT_CALL(*context_, getSceneManager()).WillRepeatedly(testing::Return(scene_manager_));
-    EXPECT_CALL(*context_, getFrameManager()).WillRepeatedly(testing::Return(frame_manager_.get()));
-    EXPECT_CALL(*context_, getSelectionManager()).WillRepeatedly(
-      testing::Return(selection_manager_.get()));
-
+    DisplayTestFixture::SetUp();
     marker_display_ = std::make_shared<rviz_default_plugins::displays::MarkerDisplay>();
   }
 
   void TearDown() override
   {
-    scene_manager_->getRootSceneNode()->removeAndDestroyAllChildren();
-  }
-
-  static void TearDownTestCase()
-  {
-    Ogre::Root::getSingletonPtr()->destroySceneManager(scene_manager_);
+    marker_display_.reset();
+    DisplayTestFixture::TearDown();
   }
 
   template<typename MarkerType>
@@ -93,38 +74,8 @@ public:
       scene_manager_->getRootSceneNode()->createChildSceneNode());
   }
 
-  void mockValidTransform()
-  {
-    Ogre::Vector3 position(0, 1, 0);
-    Ogre::Quaternion orientation(0, 0, 1, 0);
-    mockValidTransform(position, orientation);
-  }
-
-  void mockValidTransform(Ogre::Vector3 position, Ogre::Quaternion orientation)
-  {
-    EXPECT_CALL(
-      *frame_manager_,
-      transform(testing::_, testing::_, testing::_, testing::_, testing::_))  // NOLINT
-    .WillRepeatedly(DoAll(
-        testing::SetArgReferee<3>(position),
-        testing::SetArgReferee<4>(orientation),
-        testing::Return(true)
-      ));
-  }
-
-  static std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
-  static Ogre::SceneManager * scene_manager_;
-
-  std::shared_ptr<MockDisplayContext> context_;
-  std::shared_ptr<MockFrameManager> frame_manager_;
-  std::shared_ptr<MockSelectionManager> selection_manager_;
-
   std::shared_ptr<rviz_default_plugins::displays::MarkerDisplay> marker_display_;
 };
-
-Ogre::SceneManager * MarkersTestFixture::scene_manager_ = nullptr;
-std::shared_ptr<rviz_rendering::OgreTestingEnvironment>
-MarkersTestFixture::testing_environment_ = nullptr;
 
 visualization_msgs::msg::Marker createDefaultMessage(int32_t type)
 {
