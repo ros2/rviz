@@ -61,6 +61,8 @@ public:
 
   void updateChannels(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud);
 
+  void hideUnusedProperties() override;
+
 private Q_SLOTS:
   void updateUseRainbow();
 

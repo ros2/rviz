@@ -185,6 +185,11 @@ void AxisColorPCTransformer::updateAutoComputeBounds()
   Q_EMIT needRetransform();
 }
 
+void AxisColorPCTransformer::hideUnusedProperties()
+{
+  updateAutoComputeBounds();
+}
+
 }  // end namespace rviz_default_plugins
 
 #include <pluginlib/class_list_macros.hpp>  // NOLINT

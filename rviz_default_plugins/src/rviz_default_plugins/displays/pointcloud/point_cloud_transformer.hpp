@@ -130,6 +130,11 @@ public:
     (void) out_props;
   }
 
+  /**
+ * \brief Hide properties that are currently not in use.
+ */
+  virtual void hideUnusedProperties() {}
+
 Q_SIGNALS:
   /** @brief Subclasses should emit this signal whenever they think the points should be re-transformed.
    */

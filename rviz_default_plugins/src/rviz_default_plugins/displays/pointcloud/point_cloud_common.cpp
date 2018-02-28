@@ -402,6 +402,12 @@ void PointCloudCommon::update(float wall_dt, float ros_dt)
           setPropertiesHidden(info.xyz_props, name != xyz_transformer_property_->getStdString());
           setPropertiesHidden(info.color_props,
             name != color_transformer_property_->getStdString());
+
+          if (name == xyz_transformer_property_->getStdString() ||
+            name == color_transformer_property_->getStdString())
+          {
+            info.transformer->hideUnusedProperties();
+          }
         }
       }
     }
