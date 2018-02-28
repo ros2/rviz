@@ -163,12 +163,25 @@ private:
 
   void createMarkerArraySubscription();
 
+  typedef std::vector<visualization_msgs::msg::Marker::ConstSharedPtr> V_MarkerMessage;
+  V_MarkerMessage takeSnapshotOfMessageQueue();
+  void processNewMessages(const V_MarkerMessage & local_queue);
+  void removeExpiredMarkers();
+
+  void updateMarkersWithLockedFrame() const;
+  QHash<QString, MarkerNamespace *>::const_iterator getMarkerNamespace(
+    const visualization_msgs::msg::Marker::ConstSharedPtr & message);
+  MarkerBasePtr createOrGetOldMarker(
+    const visualization_msgs::msg::Marker::ConstSharedPtr & message);
+  MarkerBasePtr createMarker(const visualization_msgs::msg::Marker::ConstSharedPtr & message);
+  void configureMarker(
+    const visualization_msgs::msg::Marker::ConstSharedPtr & message, MarkerBasePtr & marker);
+
   typedef std::map<MarkerID, MarkerBasePtr> M_IDToMarker;
   typedef std::set<MarkerBasePtr> S_MarkerBase;
   M_IDToMarker markers_;                  ///< Map of marker id to the marker info structure
   S_MarkerBase markers_with_expiration_;
   S_MarkerBase frame_locked_markers_;
-  typedef std::vector<visualization_msgs::msg::Marker::ConstSharedPtr> V_MarkerMessage;
   ///< Marker message queue.  Messages are added to this as they are received, and then processed
   ///< in our update() function
   V_MarkerMessage message_queue_;
@@ -188,7 +201,7 @@ private:
 };
 
 /** @brief Manager of a single marker namespace.  Keeps a hash from
- * marker IDs to MarkerBasePtr, and creates or destroys them when . */
+ * marker IDs to MarkerBasePtr, and creates or destroys them when necessary. */
 class MarkerNamespace : public rviz_common::properties::BoolProperty
 {
   Q_OBJECT

@@ -27,36 +27,32 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "marker_display.hpp"
+
 #include <memory>
-#include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "rclcpp/duration.hpp"
 
-#include "./markers/arrow_marker.hpp"
-#include "./markers/line_list_marker.hpp"
-#include "./markers/line_strip_marker.hpp"
-#include "./markers/mesh_resource_marker.hpp"
-#include "./markers/points_marker.hpp"
-#include "./markers/shape_marker.hpp"
-#include "./markers/text_view_facing_marker.hpp"
-#include "./markers/triangle_list_marker.hpp"
-#include "markers/marker_factory.hpp"
-#include "rviz_common/display_context.hpp"
-#include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/billboard_line.hpp"
 #include "rviz_rendering/objects/shape.hpp"
 #include "rviz_common/properties/int_property.hpp"
-#include "rviz_common/properties/property.hpp"
 #include "rviz_common/properties/queue_size_property.hpp"
-#include "rviz_common/properties/ros_topic_property.hpp"
 #include "rviz_common/selection/selection_manager.hpp"
 #include "rviz_common/validate_floats.hpp"
 
-#include "./marker_display.hpp"
+#include "markers/arrow_marker.hpp"
+#include "markers/line_list_marker.hpp"
+#include "markers/line_strip_marker.hpp"
+#include "markers/mesh_resource_marker.hpp"
+#include "markers/points_marker.hpp"
+#include "markers/shape_marker.hpp"
+#include "markers/text_view_facing_marker.hpp"
+#include "markers/triangle_list_marker.hpp"
+#include "markers/marker_factory.hpp"
 
 namespace rviz_default_plugins
 {
@@ -176,8 +172,8 @@ void MarkerDisplay::deleteMarker(MarkerID id)
 {
   deleteMarkerStatus(id);
 
-  M_IDToMarker::iterator it = markers_.find(id);
-  if (it != markers_.end() ) {
+  auto it = markers_.find(id);
+  if (it != markers_.end()) {
     markers_with_expiration_.erase(it->second);
     frame_locked_markers_.erase(it->second);
     markers_.erase(it);
@@ -189,59 +185,45 @@ void MarkerDisplay::deleteMarkersInNamespace(const std::string & ns)
   std::vector<MarkerID> to_delete;
 
   // TODO(anon): this is inefficient, should store every in-use id per namespace and lookup by that
-  M_IDToMarker::iterator marker_it = markers_.begin();
-  M_IDToMarker::iterator marker_end = markers_.end();
-  for (; marker_it != marker_end; ++marker_it) {
-    if (marker_it->first.first == ns) {
-      to_delete.push_back(marker_it->first);
+  for (auto const & marker : markers_) {
+    if (marker.first.first == ns) {
+      to_delete.push_back(marker.first);
     }
   }
 
-  {
-    std::vector<MarkerID>::iterator it = to_delete.begin();
-    std::vector<MarkerID>::iterator end = to_delete.end();
-    for (; it != end; ++it) {
-      deleteMarker(*it);
-    }
+  for (auto & marker : to_delete) {
+    deleteMarker(marker);
   }
 }
 
 void MarkerDisplay::deleteAllMarkers()
 {
   std::vector<MarkerID> to_delete;
-  M_IDToMarker::iterator marker_it = markers_.begin();
-  for (; marker_it != markers_.end(); ++marker_it) {
-    to_delete.push_back(marker_it->first);
+  for (auto const & marker : markers_) {
+    to_delete.push_back(marker.first);
   }
 
-  for (std::vector<MarkerID>::iterator it = to_delete.begin(); it != to_delete.end(); ++it) {
-    deleteMarker(*it);
+  for (auto & marker : to_delete) {
+    deleteMarker(marker);
   }
 }
 
 void MarkerDisplay::setMarkerStatus(MarkerID id, StatusLevel level, const std::string & text)
 {
-  std::stringstream ss;
-  ss << id.first << "/" << id.second;
-  std::string marker_name = ss.str();
+  std::string marker_name = id.first + "/" + std::to_string(id.second);
   setStatusStd(level, marker_name, text);
 }
 
 void MarkerDisplay::deleteMarkerStatus(MarkerID id)
 {
-  std::stringstream ss;
-  ss << id.first << "/" << id.second;
-  std::string marker_name = ss.str();
+  std::string marker_name = id.first + "/" + std::to_string(id.second);
   deleteStatusStd(marker_name);
 }
 
 void MarkerDisplay::incomingMarkerArray(
   const visualization_msgs::msg::MarkerArray::ConstSharedPtr array)
 {
-  std::vector<visualization_msgs::msg::Marker>::const_iterator it = array->markers.begin();
-  std::vector<visualization_msgs::msg::Marker>::const_iterator end = array->markers.end();
-  for (; it != end; ++it) {
-    const visualization_msgs::msg::Marker & marker = *it;
+  for (auto const & marker : array->markers) {
     incomingMarker(std::make_shared<visualization_msgs::msg::Marker>(marker));
   }
 }
@@ -258,9 +240,8 @@ void MarkerDisplay::incomingMarker(const visualization_msgs::msg::Marker::ConstS
 // marker_evt, tf::FilterFailureReason reason)
 // {
 //  visualization_msgs::Marker::ConstPtr marker = marker_evt.getConstMessage();
-//  if (marker->action == visualization_msgs::Marker::DELETE ||
-//      marker->action == 3)
-// TODO(anon): visualization_msgs::Marker::DELETEALL when message changes in a future version of ROS
+//  if (marker->action == visualization_msgs::msg::Marker::DELETE ||
+//      marker->action == visualization_msgs::msg::Marker::DELETEALL)
 //  {
 //    return this->processMessage(marker);
 //  }
@@ -299,8 +280,7 @@ void MarkerDisplay::processMessage(const visualization_msgs::msg::Marker::ConstS
       processDelete(message);
       break;
 
-    case 3:  // TODO(anon): visualization_msgs::msg::Marker::DELETEALL when message changes in a
-      // future version of ROS
+    case visualization_msgs::msg::Marker::DELETEALL:
       deleteAllMarkers();
       break;
 
@@ -309,14 +289,14 @@ void MarkerDisplay::processMessage(const visualization_msgs::msg::Marker::ConstS
   }
 }
 
-void MarkerDisplay::processAdd(const visualization_msgs::msg::Marker::ConstSharedPtr message)
+QHash<QString, MarkerNamespace *>::const_iterator MarkerDisplay::getMarkerNamespace(
+  const visualization_msgs::msg::Marker::ConstSharedPtr & message)
 {
   QString namespace_name = QString::fromStdString(message->ns);
-  M_Namespace::iterator ns_it = namespaces_.find(namespace_name);
+  auto ns_it = namespaces_.find(namespace_name);
   if (ns_it == namespaces_.end() ) {
-    ns_it =
-      namespaces_.insert(namespace_name,
-        new MarkerNamespace(namespace_name, namespaces_category_, this));
+    ns_it = namespaces_.insert(
+      namespace_name, new MarkerNamespace(namespace_name, namespaces_category_, this));
 
     // Adding a new namespace, determine if it's configured to be disabled
     if (namespace_config_enabled_state_.count(namespace_name) > 0 &&
@@ -325,6 +305,12 @@ void MarkerDisplay::processAdd(const visualization_msgs::msg::Marker::ConstShare
       ns_it.value()->setValue(false);  // Disable the namespace
     }
   }
+  return ns_it;
+}
+
+void MarkerDisplay::processAdd(const visualization_msgs::msg::Marker::ConstSharedPtr message)
+{
+  auto ns_it = getMarkerNamespace(message);
 
   if (!ns_it.value()->isEnabled() ) {
     return;
@@ -332,38 +318,53 @@ void MarkerDisplay::processAdd(const visualization_msgs::msg::Marker::ConstShare
 
   deleteMarkerStatus(MarkerID(message->ns, message->id));
 
-  bool create = true;
-  MarkerBasePtr marker;
-
-  M_IDToMarker::iterator it = markers_.find(MarkerID(message->ns, message->id) );
-  if (it != markers_.end() ) {
-    marker = it->second;
-    markers_with_expiration_.erase(marker);
-    if (message->type == marker->getMessage()->type) {
-      create = false;
-    } else {
-      markers_.erase(it);
-    }
-  }
-
-  if (create) {
-    marker = marker_factory_->createMarkerForType(message->type);
-    markers_.insert(std::make_pair(MarkerID(message->ns, message->id), marker));
-  }
+  MarkerBasePtr marker = createOrGetOldMarker(message);
 
   if (marker) {
-    marker->setMessage(message);
-
-    if (rclcpp::Duration(message->lifetime).nanoseconds() > 100000) {
-      markers_with_expiration_.insert(marker);
-    }
-
-    if (message->frame_locked) {
-      frame_locked_markers_.insert(marker);
-    }
-
-    context_->queueRender();
+    configureMarker(message, marker);
   }
+}
+
+MarkerBasePtr MarkerDisplay::createOrGetOldMarker(
+  const visualization_msgs::msg::Marker::ConstSharedPtr & message)
+{
+  MarkerBasePtr marker;
+  auto it = markers_.find(MarkerID(message->ns, message->id));
+  if (it != markers_.end()) {
+    marker = it->second;
+    markers_with_expiration_.erase(marker);
+    if (message->type != marker->getMessage()->type) {
+      markers_.erase(it);
+      marker = createMarker(message);
+    }
+  } else {
+    marker = createMarker(message);
+  }
+  return marker;
+}
+
+MarkerBasePtr MarkerDisplay::createMarker(
+  const visualization_msgs::msg::Marker::ConstSharedPtr & message)
+{
+  auto marker = marker_factory_->createMarkerForType(message->type);
+  markers_.insert(make_pair(MarkerID(message->ns, message->id), marker));
+  return marker;
+}
+
+void MarkerDisplay::configureMarker(
+  const visualization_msgs::msg::Marker::ConstSharedPtr & message, MarkerBasePtr & marker)
+{
+  marker->setMessage(message);
+
+  if (rclcpp::Duration(message->lifetime).nanoseconds() > 100000) {
+    markers_with_expiration_.insert(marker);
+  }
+
+  if (message->frame_locked) {
+    frame_locked_markers_.insert(marker);
+  }
+
+  context_->queueRender();
 }
 
 void MarkerDisplay::processDelete(const visualization_msgs::msg::Marker::ConstSharedPtr message)
@@ -378,45 +379,50 @@ void MarkerDisplay::update(float wall_dt, float ros_dt)
   (void) wall_dt;
   (void) ros_dt;
 
+  MarkerDisplay::V_MarkerMessage local_queue = takeSnapshotOfMessageQueue();
+  processNewMessages(local_queue);
+  removeExpiredMarkers();
+  updateMarkersWithLockedFrame();
+}
+
+MarkerDisplay::V_MarkerMessage MarkerDisplay::takeSnapshotOfMessageQueue()
+{
+  std::unique_lock<std::mutex> lock(queue_mutex_);
+
   V_MarkerMessage local_queue;
+  local_queue.swap(message_queue_);
 
-  {
-    std::unique_lock<std::mutex> lock(queue_mutex_);
+  return local_queue;
+}
 
-    local_queue.swap(message_queue_);
-  }
-
-  if (!local_queue.empty() ) {
-    V_MarkerMessage::iterator message_it = local_queue.begin();
-    V_MarkerMessage::iterator message_end = local_queue.end();
-    for (; message_it != message_end; ++message_it) {
-      visualization_msgs::msg::Marker::ConstSharedPtr marker = *message_it;
-
-      processMessage(marker);
+void MarkerDisplay::processNewMessages(const MarkerDisplay::V_MarkerMessage & local_queue)
+{
+  if (!local_queue.empty()) {
+    for (auto const & message : local_queue) {
+      processMessage(message);
     }
   }
+}
 
-  {
-    S_MarkerBase::iterator it = markers_with_expiration_.begin();
-    S_MarkerBase::iterator end = markers_with_expiration_.end();
-    for (; it != end; ) {
-      MarkerBasePtr marker = *it;
-      if (marker->expired()) {
-        ++it;
-        deleteMarker(marker->getID());
-      } else {
-        ++it;
-      }
+void MarkerDisplay::removeExpiredMarkers()
+{
+  auto marker_it = markers_with_expiration_.begin();
+  auto end = markers_with_expiration_.end();
+  for (; marker_it != end; ) {
+    MarkerBasePtr marker = *marker_it;
+    if (marker->expired()) {
+      ++marker_it;
+      deleteMarker(marker->getID());
+    } else {
+      ++marker_it;
     }
   }
+}
 
-  {
-    S_MarkerBase::iterator it = frame_locked_markers_.begin();
-    S_MarkerBase::iterator end = frame_locked_markers_.end();
-    for (; it != end; ++it) {
-      MarkerBasePtr marker = *it;
-      marker->updateFrameLocked();
-    }
+void MarkerDisplay::updateMarkersWithLockedFrame() const
+{
+  for (auto const & locked_marker : frame_locked_markers_) {
+    locked_marker->updateFrameLocked();
   }
 }
 
@@ -432,9 +438,6 @@ void MarkerDisplay::reset()
   clearMarkers();
 }
 
-/////////////////////////////////////////////////////////////////////////////////
-// MarkerNamespace
-
 MarkerNamespace::MarkerNamespace(
   const QString & name, rviz_common::properties::Property * parent_property, MarkerDisplay * owner)
 : BoolProperty(name, true, "Enable/disable all markers in this namespace.", parent_property),
@@ -448,8 +451,8 @@ MarkerNamespace::MarkerNamespace(
 
 void MarkerNamespace::onEnableChanged()
 {
-  if (!isEnabled() ) {
-    owner_->deleteMarkersInNamespace(getName().toStdString() );
+  if (!isEnabled()) {
+    owner_->deleteMarkersInNamespace(getName().toStdString());
   }
 
   // Update the configuration that stores the enabled state of all markers
