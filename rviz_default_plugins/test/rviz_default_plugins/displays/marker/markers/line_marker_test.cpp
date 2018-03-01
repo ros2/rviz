@@ -1,0 +1,256 @@
+/*
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted (subject to the limitations in the disclaimer
+ * below) provided that the following conditions are met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Neither the name of the copyright holder nor the names of its
+ *       contributors may be used to endorse or promote products derived from
+ *       this software without specific prior written permission.
+ *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
+ * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
+
+#include <memory>
+#include <string>
+
+#include <OgreBillboardChain.h>
+
+#include "visualization_msgs/msg/marker.hpp"
+#include "rviz_rendering/objects/arrow.hpp"
+#include "../../../scene_graph_introspection.hpp"
+
+#include "../../../../../src/rviz_default_plugins/displays/marker/markers/line_list_marker.hpp"
+#include "../../../../../src/rviz_default_plugins/displays/marker/markers/line_strip_marker.hpp"
+
+#include "markers_test_fixture.hpp"
+
+using namespace ::testing;  // NOLINT
+
+geometry_msgs::msg::Point point(float x, float y, float z)
+{
+  geometry_msgs::msg::Point point;
+  point.x = x;
+  point.y = y;
+  point.z = z;
+  return point;
+}
+
+std_msgs::msg::ColorRGBA color(float r, float g, float b, float a)
+{
+  std_msgs::msg::ColorRGBA color;
+  color.r = r;
+  color.g = g;
+  color.b = b;
+  color.a = a;
+  return color;
+}
+
+void assertColorEquals(
+  std_msgs::msg::ColorRGBA color, Ogre::BillboardChain * billboard_chain, int32_t element)
+{
+  EXPECT_EQ(color.r, billboard_chain->getChainElement(0, element).colour.r);
+  EXPECT_EQ(color.g, billboard_chain->getChainElement(0, element).colour.g);
+  EXPECT_EQ(color.b, billboard_chain->getChainElement(0, element).colour.b);
+  EXPECT_EQ(color.a, billboard_chain->getChainElement(0, element).colour.a);
+}
+
+TEST_F(MarkersTestFixture, setMessage_does_not_add_anything_when_no_points_are_provided) {
+  auto line_list_marker = makeMarker<rviz_default_plugins::displays::markers::LineListMarker>();
+  mockValidTransform();
+
+  line_list_marker->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::LINE_LIST));
+
+  auto billboard_chain = rviz_default_plugins::findOneBillboardChain(
+    scene_manager_->getRootSceneNode());
+  ASSERT_TRUE(billboard_chain);
+  ASSERT_TRUE(billboard_chain->isVisible());
+  EXPECT_EQ(1u, billboard_chain->getNumberOfChains());
+  EXPECT_EQ(0u, billboard_chain->getNumChainElements(0));
+}
+
+TEST_F(MarkersTestFixture, setMessage_sets_billboard_line_invisible_when_transform_fails) {
+  auto line_list_marker = makeMarker<rviz_default_plugins::displays::markers::LineListMarker>();
+
+  Ogre::Vector3 position(0, 1, 0);
+  Ogre::Quaternion orientation(0, 0, 1, 0);
+  EXPECT_CALL(*frame_manager_, transform(_, _, _, _, _)).WillOnce(Return(false));  // NOLINT
+
+  line_list_marker->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::LINE_LIST));
+
+  auto billboard_chain = rviz_default_plugins::findOneBillboardChain(
+    scene_manager_->getRootSceneNode());
+  ASSERT_TRUE(billboard_chain);
+  EXPECT_FALSE(billboard_chain->isVisible());
+}
+
+TEST_F(MarkersTestFixture, setMessage_sets_correct_position_and_orientation) {
+  auto line_list_marker = makeMarker<rviz_default_plugins::displays::markers::LineListMarker>();
+  mockValidTransform();
+
+  line_list_marker->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::LINE_LIST));
+
+  EXPECT_VECTOR3_EQ(Ogre::Vector3(0, 1, 0), line_list_marker->getPosition());
+  EXPECT_QUATERNION_EQ(Ogre::Quaternion(0, 0, 1, 0), line_list_marker->getOrientation());
+}
+
+TEST_F(MarkersTestFixture, setMessage_does_not_show_billboard_line_if_uneven_number_of_points) {
+  auto line_list_marker = makeMarker<rviz_default_plugins::displays::markers::LineListMarker>();
+  mockValidTransform();
+
+  auto message = createDefaultMessage(visualization_msgs::msg::Marker::LINE_LIST);
+  message.points.push_back(point(0, 0, 0));
+
+  line_list_marker->setMessage(message);
+
+  auto billboard_chain = rviz_default_plugins::findOneBillboardChain(
+    scene_manager_->getRootSceneNode());
+  ASSERT_TRUE(billboard_chain);
+  EXPECT_TRUE(billboard_chain->isVisible());
+  EXPECT_EQ(1u, billboard_chain->getNumberOfChains());
+  EXPECT_EQ(0u, billboard_chain->getNumChainElements(0));
+}
+
+TEST_F(MarkersTestFixture, setMessage_clears_marker_upon_new_message) {
+  auto line_list_marker = makeMarker<rviz_default_plugins::displays::markers::LineListMarker>();
+  mockValidTransform();
+
+  auto message = createDefaultMessage(visualization_msgs::msg::Marker::LINE_LIST);
+  message.points.push_back(point(0, 0, 0));
+  message.points.push_back(point(2, 1, 1));
+  line_list_marker->setMessage(message);
+
+  line_list_marker->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::LINE_LIST));
+
+  auto billboard_chain = rviz_default_plugins::findOneBillboardChain(
+    scene_manager_->getRootSceneNode());
+  ASSERT_TRUE(billboard_chain);
+  EXPECT_TRUE(billboard_chain->isVisible());
+  EXPECT_EQ(1u, billboard_chain->getNumberOfChains());
+  EXPECT_EQ(0u, billboard_chain->getNumChainElements(0));
+}
+
+TEST_F(MarkersTestFixture, setMessage_adds_billboard_line_with_one_color) {
+  auto line_list_marker = makeMarker<rviz_default_plugins::displays::markers::LineListMarker>();
+  mockValidTransform();
+
+  auto message = createDefaultMessage(visualization_msgs::msg::Marker::LINE_LIST);
+  geometry_msgs::msg::Point first_point = point(0, 0, 0);
+  geometry_msgs::msg::Point second_point = point(1, 1, 0);
+
+  message.points.push_back(first_point);
+  message.points.push_back(second_point);
+
+  line_list_marker->setMessage(message);
+
+  auto billboard_chain = rviz_default_plugins::findOneBillboardChain(
+    scene_manager_->getRootSceneNode());
+  ASSERT_TRUE(billboard_chain);
+  EXPECT_TRUE(billboard_chain->isVisible());
+  EXPECT_EQ(1u, billboard_chain->getNumberOfChains());
+  EXPECT_EQ(2u, billboard_chain->getNumChainElements(0));
+  EXPECT_VECTOR3_EQ(Ogre::Vector3(first_point.x, first_point.y, first_point.z),
+    billboard_chain->getChainElement(0, 1).position);
+  EXPECT_VECTOR3_EQ(Ogre::Vector3(second_point.x, second_point.y, second_point.z),
+    billboard_chain->getChainElement(0, 0).position);
+  assertColorEquals(message.color, billboard_chain, 0);
+  assertColorEquals(message.color, billboard_chain, 1);
+}
+
+TEST_F(MarkersTestFixture,
+  setMessage_adds_billboard_line_with_many_colors_if_all_points_have_color_information) {
+  auto line_list_marker = makeMarker<rviz_default_plugins::displays::markers::LineListMarker>();
+  mockValidTransform();
+
+  auto message = createDefaultMessage(visualization_msgs::msg::Marker::LINE_LIST);
+  geometry_msgs::msg::Point first_point = point(0, 0, 0);
+  std_msgs::msg::ColorRGBA first_point_color = color(0.5f, 0.6f, 0.7f, 0.5f);
+  message.points.push_back(first_point);
+  message.colors.push_back(first_point_color);
+
+  geometry_msgs::msg::Point second_point = point(1, 1, 0);
+  std_msgs::msg::ColorRGBA second_point_color = color(0.3f, 0.4f, 0.5f, 0.6f);
+  message.points.push_back(second_point);
+  message.colors.push_back(second_point_color);
+
+  line_list_marker->setMessage(message);
+
+  auto billboard_chain = rviz_default_plugins::findOneBillboardChain(
+    scene_manager_->getRootSceneNode());
+  ASSERT_TRUE(billboard_chain);
+  EXPECT_TRUE(billboard_chain->isVisible());
+  EXPECT_EQ(1u, billboard_chain->getNumberOfChains());
+  EXPECT_EQ(2u, billboard_chain->getNumChainElements(0));
+  EXPECT_VECTOR3_EQ(Ogre::Vector3(first_point.x, first_point.y, first_point.z),
+    billboard_chain->getChainElement(0, 1).position);
+  EXPECT_VECTOR3_EQ(Ogre::Vector3(second_point.x, second_point.y, second_point.z),
+    billboard_chain->getChainElement(0, 0).position);
+  assertColorEquals(second_point_color, billboard_chain, 0);
+  assertColorEquals(first_point_color, billboard_chain, 1);
+}
+
+TEST_F(MarkersTestFixture, setMessage_shows_billboard_strip_for_uneven_number_of_points) {
+  auto line_strip_marker = makeMarker<rviz_default_plugins::displays::markers::LineStripMarker>();
+  mockValidTransform();
+
+  auto message = createDefaultMessage(visualization_msgs::msg::Marker::LINE_STRIP);
+
+  message.points.push_back(point(0, 0, 0));
+
+  line_strip_marker->setMessage(message);
+
+  auto billboard_chain = rviz_default_plugins::findOneBillboardChain(
+    scene_manager_->getRootSceneNode());
+  ASSERT_TRUE(billboard_chain);
+  EXPECT_TRUE(billboard_chain->isVisible());
+  EXPECT_EQ(1u, billboard_chain->getNumberOfChains());
+  EXPECT_EQ(1u, billboard_chain->getNumChainElements(0));
+}
+
+TEST_F(MarkersTestFixture, setMessage_adds_many_points_into_same_chain) {
+  auto line_strip_marker = makeMarker<rviz_default_plugins::displays::markers::LineStripMarker>();
+  mockValidTransform();
+  auto message = createDefaultMessage(visualization_msgs::msg::Marker::LINE_STRIP);
+  geometry_msgs::msg::Point first_point = point(0, 0, 0);
+  geometry_msgs::msg::Point second_point = point(1, 1, 0);
+  geometry_msgs::msg::Point third_point = point(0, 1, 1);
+  message.points.push_back(first_point);
+  message.points.push_back(second_point);
+  message.points.push_back(third_point);
+
+  line_strip_marker->setMessage(message);
+
+  auto billboard_chain = rviz_default_plugins::findOneBillboardChain(
+    scene_manager_->getRootSceneNode());
+  ASSERT_TRUE(billboard_chain);
+  EXPECT_TRUE(billboard_chain->isVisible());
+  EXPECT_EQ(1u, billboard_chain->getNumberOfChains());
+  EXPECT_EQ(3u, billboard_chain->getNumChainElements(0));
+  EXPECT_VECTOR3_EQ(Ogre::Vector3(first_point.x, first_point.y, first_point.z),
+    billboard_chain->getChainElement(0, 2).position);
+  EXPECT_VECTOR3_EQ(Ogre::Vector3(second_point.x, second_point.y, second_point.z),
+    billboard_chain->getChainElement(0, 1).position);
+  EXPECT_VECTOR3_EQ(Ogre::Vector3(third_point.x, third_point.y, third_point.z),
+    billboard_chain->getChainElement(0, 0).position);
+}
