@@ -172,6 +172,7 @@ void ArrowMarker::setArrow(const MarkerConstSharedPtr & message)
   if (last_arrow_set_from_points_) {
     // Reset arrow to default proportions if we previously set it from points
     setDefaultProportions();
+    arrow_->setPosition(Ogre::Vector3(0, 0, 0));
     last_arrow_set_from_points_ = false;
   }
   if (owner_ && (message->scale.x * message->scale.y * message->scale.z == 0.0f)) {
