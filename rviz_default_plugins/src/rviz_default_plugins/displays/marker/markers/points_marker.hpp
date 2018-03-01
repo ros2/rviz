@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,15 +33,12 @@
 
 #include "marker_base.hpp"
 
+#include "rviz_rendering/objects/point_cloud.hpp"
+
 namespace Ogre
 {
 class SceneNode;
-}
-
-namespace rviz_rendering
-{
-class PointCloud;
-}
+}  // namespace Ogre
 
 namespace rviz_default_plugins
 {
@@ -54,12 +52,19 @@ class PointsMarker : public MarkerBase
 public:
   PointsMarker(
     MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);
-  ~PointsMarker();
-  void setHighlightColor(float r, float g, float b);
+  ~PointsMarker() override;
+  void setHighlightColor(float red, float green, float blue);
 
 protected:
-  virtual void onNewMessage(
-    const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message);
+  void onNewMessage(
+    const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message) override;
+  void transformAndSetVisibility(
+    const MarkerConstSharedPtr & new_message,
+    Ogre::Vector3 & position,
+    Ogre::Vector3 & scale,
+    Ogre::Quaternion & orientation);
+  void setRenderModeAndDimensions(const MarkerConstSharedPtr & new_message, Ogre::Vector3 & scale);
+  void addPointsFromMessage(const MarkerConstSharedPtr & new_message);
 
   rviz_rendering::PointCloud * points_;
 };
