@@ -70,6 +70,7 @@ protected:
 
 private:
   bool wrongNumberOfPoints(const MarkerConstSharedPtr & new_message);
+  void printWrongNumberOfPointsError(size_t num_points);
 
   void initializeManualObject(const MarkerConstSharedPtr & new_message);
   void updateManualObject(

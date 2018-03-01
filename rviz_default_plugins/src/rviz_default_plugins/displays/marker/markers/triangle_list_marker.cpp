@@ -77,6 +77,7 @@ void TriangleListMarker::onNewMessage(
   assert(new_message->type == visualization_msgs::msg::Marker::TRIANGLE_LIST);
 
   if (wrongNumberOfPoints(new_message)) {
+    printWrongNumberOfPointsError(new_message->points.size());
     scene_node_->setVisible(false);
     return;
   }
@@ -110,23 +111,24 @@ void TriangleListMarker::onNewMessage(
 bool TriangleListMarker::wrongNumberOfPoints(const MarkerConstSharedPtr & new_message)
 {
   size_t num_points = new_message->points.size();
-  if ((num_points % 3) != 0 || num_points == 0) {
-    std::stringstream ss;
-    if (num_points == 0) {
-      ss << "TriMesh marker [" << getStringID() << "] has no points.";
-    } else {
-      ss << "TriMesh marker [" << getStringID() <<
-        "] has a point count which is not divisible by 3 [" << num_points << "]";
-    }
+  return (num_points % 3) != 0 || num_points == 0;
+}
 
-    if (owner_) {
-      owner_->setMarkerStatus(getID(), rviz_common::properties::StatusProperty::Error, ss.str());
-    }
-
-    RVIZ_COMMON_LOG_DEBUG(ss.str());
-    return true;
+void TriangleListMarker::printWrongNumberOfPointsError(size_t num_points)
+{
+  std::stringstream ss;
+  if (num_points == 0) {
+    ss << "TriMesh marker [" << getStringID() << "] has no points.";
+  } else {
+    ss << "TriMesh marker [" << getStringID() <<
+      "] has a point count which is not divisible by 3 [" << num_points << "]";
   }
-  return false;
+
+  if (owner_) {
+    owner_->setMarkerStatus(getID(), rviz_common::properties::StatusProperty::Error, ss.str());
+  }
+
+  RVIZ_COMMON_LOG_DEBUG(ss.str());
 }
 
 void TriangleListMarker::initializeManualObject(
