@@ -52,10 +52,6 @@
 #include "point_cloud_helpers.hpp"
 #include "rviz_common/display.hpp"
 #include "rviz_common/display_context.hpp"
-#include "rviz_common/frame_manager_iface.hpp"
-#include "rviz_common/interaction/selection_manager.hpp"
-#include "rviz_rendering/objects/point_cloud.hpp"
-#include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/properties/enum_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
@@ -632,18 +628,16 @@ bool PointCloudCommon::transformPoints(
   PointCloudTransformerPtr color_trans = getColorTransformer(cloud_info->message_);
 
   if (!xyz_trans) {
-    std::stringstream ss;
-    ss << "No position transformer available for cloud";
+    std::string status = "No position transformer available for cloud";
     display_->setStatusStd(
-      rviz_common::properties::StatusProperty::Error, message_status_name_, ss.str());
+      rviz_common::properties::StatusProperty::Error, message_status_name_, status);
     return false;
   }
 
   if (!color_trans) {
-    std::stringstream ss;
-    ss << "No color transformer available for cloud";
+    std::string status = "No color transformer available for cloud";
     display_->setStatusStd(
-      rviz_common::properties::StatusProperty::Error, message_status_name_, ss.str());
+      rviz_common::properties::StatusProperty::Error, message_status_name_, status);
     return false;
   }
 

@@ -199,7 +199,6 @@ private:
   void insertNewClouds(float point_decay_time, const rclcpp::Time & now);
   float getSizeForRenderMode(const rviz_rendering::PointCloud::RenderMode & mode);
 
-
   void updateTransformerProperties();
 
   /**
