@@ -32,6 +32,7 @@
 #include <memory>
 #include <set>
 #include <string>
+#include <vector>
 #include <utility>
 
 #ifndef _WIN32
@@ -180,19 +181,17 @@ void PointCloudCommon::loadTransformers()
   std::vector<std::string> classes = transformer_class_loader_->getDeclaredClasses();
   std::vector<std::string>::iterator ci;
 
-  for( ci = classes.begin(); ci != classes.end(); ci++ )
-  {
-    const std::string& lookup_name = *ci;
-    std::string name = transformer_class_loader_->getName( lookup_name );
+  for (ci = classes.begin(); ci != classes.end(); ci++) {
+    const std::string & lookup_name = *ci;
+    std::string name = transformer_class_loader_->getName(lookup_name);
 
-    if( transformers_.count( name ) > 0 )
-    {
-      RVIZ_COMMON_LOG_ERROR_STREAM("Transformer type "<< name << " is already loaded.");
+    if (transformers_.count(name) > 0) {
+      RVIZ_COMMON_LOG_ERROR_STREAM("Transformer type " << name << " is already loaded.");
       continue;
     }
 
     PointCloudTransformerPtr trans(
-      transformer_class_loader_->createUnmanagedInstance( lookup_name ));
+      transformer_class_loader_->createUnmanagedInstance(lookup_name));
     loadTransformer(trans, name, lookup_name);
   }
 }

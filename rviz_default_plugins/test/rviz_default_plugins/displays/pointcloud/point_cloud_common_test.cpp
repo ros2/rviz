@@ -58,7 +58,6 @@ public:
   void TearDown() override
   {
     point_cloud_common_.reset();
-
     DisplayTestFixture::TearDown();
   }
 
