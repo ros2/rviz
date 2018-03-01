@@ -61,6 +61,13 @@ MATCHER_P(QuaternionEq, expected, "") {
          Ogre::Math::Abs(expected.w - arg.w) < 0.0001f;
 }
 
+MATCHER_P(ColourValueEq, expected, "") {
+  return Ogre::Math::Abs(expected.r - arg.r) < 0.0001f &&
+         Ogre::Math::Abs(expected.g - arg.g) < 0.0001f &&
+         Ogre::Math::Abs(expected.b - arg.b) < 0.0001f &&
+         Ogre::Math::Abs(expected.a - arg.a) < 0.0001f;
+}
+
 namespace rviz_default_plugins
 {
 bool arrowIsVisible(Ogre::SceneManager * scene_manager);

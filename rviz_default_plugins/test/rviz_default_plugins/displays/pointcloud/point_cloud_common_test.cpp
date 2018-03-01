@@ -32,6 +32,7 @@
 #include <memory>
 #include <vector>
 
+#include "rviz_common/properties/enum_property.hpp"
 #include "rviz_rendering/custom_parameter_indices.hpp"
 
 #include "../../../../src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp"
@@ -81,8 +82,8 @@ TEST_F(PointCloudCommonTestFixture, update_adds_pointcloud_to_scene_graph) {
 
   auto point_cloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
 
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(1, 2, 3), point_cloud->getPoints()[0].position);
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(4, 5, 6), point_cloud->getPoints()[1].position);
+  EXPECT_THAT(point_cloud->getPoints()[0].position, Vector3Eq(Ogre::Vector3(1, 2, 3)));
+  EXPECT_THAT(point_cloud->getPoints()[1].position, Vector3Eq(Ogre::Vector3(4, 5, 6)));
 }
 
 TEST_F(PointCloudCommonTestFixture, update_removes_old_point_clouds) {
@@ -105,9 +106,9 @@ TEST_F(PointCloudCommonTestFixture, update_removes_old_point_clouds) {
   point_cloud_common_->update(0, 0);
 
   auto point_clouds = rviz_default_plugins::findAllPointClouds(scene_manager_->getRootSceneNode());
-  ASSERT_EQ(1u, point_clouds.size());
+  ASSERT_THAT(point_clouds.size(), Eq(1u));
 
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(4, 5, 6), point_clouds[0]->getPoints()[0].position);
+  EXPECT_THAT(point_clouds[0]->getPoints()[0].position, Vector3Eq(Ogre::Vector3(4, 5, 6)));
 }
 
 TEST_F(PointCloudCommonTestFixture, update_sets_size_and_alpha_on_renderable) {
@@ -128,8 +129,8 @@ TEST_F(PointCloudCommonTestFixture, update_sets_size_and_alpha_on_renderable) {
   auto size = point_cloud->getRenderables()[0]->getCustomParameter(RVIZ_RENDERING_SIZE_PARAMETER);
   auto alpha = point_cloud->getRenderables()[0]->getCustomParameter(RVIZ_RENDERING_ALPHA_PARAMETER);
 
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(0.01, 0.01, 0.01), Ogre::Vector3(size.x, size.y, size.z));
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(1, 1, 1), Ogre::Vector3(alpha.x, alpha.y, alpha.z));
+  EXPECT_THAT(Ogre::Vector3(size.x, size.y, size.z), Vector3Eq(Ogre::Vector3(0.01, 0.01, 0.01)));
+  EXPECT_THAT(Ogre::Vector3(alpha.x, alpha.y, alpha.z), Vector3Eq(Ogre::Vector3(1, 1, 1)));
 }
 
 TEST_F(PointCloudCommonTestFixture, update_adds_nothing_if_transform_fails) {
@@ -148,4 +149,34 @@ TEST_F(PointCloudCommonTestFixture, update_adds_nothing_if_transform_fails) {
 
   auto point_cloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
   EXPECT_FALSE(point_cloud);
+}
+
+TEST_F(PointCloudCommonTestFixture, update_colors_the_points_using_the_selected_color_transformer) {
+  point_cloud_common_->initialize(
+    context_.get(), scene_manager_->getRootSceneNode()->createChildSceneNode());
+
+  // just plain Point is ambiguous on macOS
+  rviz_default_plugins::Point p1 = {1, 2, 3};
+  rviz_default_plugins::Point p2 = {4, 5, 6};
+  auto cloud = createPointCloud2WithPoints(std::vector<rviz_default_plugins::Point>{p1, p2});
+
+  mockValidTransform();
+
+  auto color_transformer_property = parent_display_->childAt(7);
+  ASSERT_THAT(color_transformer_property->getNameStd(), StrEq("Color Transformer"));
+
+  color_transformer_property->setValue("FlatColor");
+
+  auto color_property = parent_display_->childAt(11);
+  ASSERT_THAT(color_property->getNameStd(), StrEq("Color"));
+
+  color_property->setValue(QColor(255, 0, 0));
+
+  point_cloud_common_->addMessage(cloud);
+  point_cloud_common_->update(0, 0);
+
+  auto point_cloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
+
+  EXPECT_THAT(point_cloud->getPoints()[0].position, Vector3Eq(Ogre::Vector3(1, 2, 3)));
+  EXPECT_THAT(point_cloud->getPoints()[0].color, ColourValueEq(Ogre::ColourValue(1, 0, 0)));
 }
