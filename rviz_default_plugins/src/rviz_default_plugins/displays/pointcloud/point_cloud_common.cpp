@@ -375,7 +375,7 @@ void PointCloudCommon::updateTransformerProperties()
 
   if (new_xyz_transformer_ || new_color_transformer_) {
     for (auto transformer : transformers_) {
-      const std::__cxx11::string & name = transformer.first;
+      const std::string & name = transformer.first;
       TransformerInfo & info = transformer.second;
 
       setPropertiesHidden(info.xyz_props, name != xyz_transformer_property_->getStdString());
