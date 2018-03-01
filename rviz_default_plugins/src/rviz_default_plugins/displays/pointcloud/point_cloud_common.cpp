@@ -373,21 +373,19 @@ void PointCloudCommon::updateTransformerProperties()
 {
   std::unique_lock<std::mutex> lock(new_clouds_mutex_);
 
-  if (lock.owns_lock()) {
-    if (new_xyz_transformer_ || new_color_transformer_) {
-      for (auto transformer : transformers_) {
-        const std::__cxx11::string & name = transformer.first;
-        TransformerInfo & info = transformer.second;
+  if (new_xyz_transformer_ || new_color_transformer_) {
+    for (auto transformer : transformers_) {
+      const std::__cxx11::string & name = transformer.first;
+      TransformerInfo & info = transformer.second;
 
-        setPropertiesHidden(info.xyz_props, name != xyz_transformer_property_->getStdString());
-        setPropertiesHidden(info.color_props,
-          name != color_transformer_property_->getStdString());
+      setPropertiesHidden(info.xyz_props, name != xyz_transformer_property_->getStdString());
+      setPropertiesHidden(info.color_props,
+        name != color_transformer_property_->getStdString());
 
-        if (name == xyz_transformer_property_->getStdString() ||
-          name == color_transformer_property_->getStdString())
-        {
-          info.transformer->hideUnusedProperties();
-        }
+      if (name == xyz_transformer_property_->getStdString() ||
+        name == color_transformer_property_->getStdString())
+      {
+        info.transformer->hideUnusedProperties();
       }
     }
   }
