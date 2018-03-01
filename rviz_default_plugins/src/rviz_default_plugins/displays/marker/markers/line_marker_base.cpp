@@ -28,9 +28,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "line_strip_marker.hpp"
+#include "line_marker_base.hpp"
 
+#include <memory>
 #include <vector>
+#include <string>
 
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>
@@ -40,6 +42,7 @@
 #include "marker_selection_handler.hpp"
 
 #include "rviz_common/display_context.hpp"
+#include "rviz_common/properties/status_property.hpp"
 #include "rviz_rendering/objects/billboard_line.hpp"
 
 namespace rviz_default_plugins
@@ -49,22 +52,84 @@ namespace displays
 namespace markers
 {
 
-LineStripMarker::LineStripMarker(
+LineMarkerBase::LineMarkerBase(
   MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node)
-: LineMarkerBase(owner, context, parent_node)
+: MarkerBase(owner, context, parent_node), lines_(nullptr), has_per_point_color_(false)
 {}
 
-void LineStripMarker::convertNewMessageToBillboardLine(
-  const MarkerBase::MarkerConstSharedPtr & new_message)
+void LineMarkerBase::onNewMessage(
+  const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message)
 {
-  assert(new_message->type == visualization_msgs::msg::Marker::LINE_STRIP);
+  (void) old_message;
+
+  if (!lines_) {
+    lines_ = std::make_shared<rviz_rendering::BillboardLine>(
+      context_->getSceneManager(), scene_node_);
+  }
+
+  Ogre::Vector3 pos, scale;
+  Ogre::Quaternion orient;
+  if (!transform(new_message, pos, orient, scale)) {  // NOLINT: is super class method
+    RVIZ_COMMON_LOG_DEBUG("Unable to transform marker message");
+    scene_node_->setVisible(false);
+    return;
+  }
+  scene_node_->setVisible(true);
+
+  setPosition(pos);
+  setOrientation(orient);
+  lines_->setScale(scale);
+  lines_->setColor(
+    new_message->color.r, new_message->color.g, new_message->color.b, new_message->color.a);
+
+  lines_->clear();
+
+  if (new_message->points.empty()) {
+    return;
+  }
+
+  if (additionalConstraintsAreNotMet(new_message)) {
+    return;
+  }
 
   lines_->setLineWidth(new_message->scale.x);
-  lines_->setMaxPointsPerLine(static_cast<uint32_t>(new_message->points.size()));
+  has_per_point_color_ = new_message->colors.size() == new_message->points.size();
 
-  for (size_t i = 0; i < new_message->points.size(); i++) {
-    addPoint(new_message, i);
-  }
+  convertNewMessageToBillboardLine(new_message);
+
+  handler_.reset(new MarkerSelectionHandler(this, MarkerID(new_message->ns, new_message->id),
+    context_));
+  handler_->addTrackedObjects(lines_->getSceneNode());
+}
+
+void LineMarkerBase::addPoint(
+  const MarkerBase::MarkerConstSharedPtr & new_message, size_t point_number) const
+{
+  const geometry_msgs::msg::Point & p = new_message->points[point_number];
+
+  Ogre::ColourValue c = has_per_point_color_ ?
+    setColor(new_message->colors[point_number]) :
+    setColor(new_message->color);
+
+  Ogre::Vector3 v(p.x, p.y, p.z);
+  lines_->addPoint(v, c);
+}
+
+Ogre::ColourValue LineMarkerBase::setColor(const std_msgs::msg::ColorRGBA & color) const
+{
+  Ogre::ColourValue c;
+  c.r = color.r;
+  c.g = color.g;
+  c.b = color.b;
+  c.a = color.a;
+  return c;
+}
+
+S_MaterialPtr LineMarkerBase::getMaterials()
+{
+  S_MaterialPtr materials;
+  materials.insert(lines_->getMaterial());
+  return materials;
 }
 
 }  // namespace markers

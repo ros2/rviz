@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,16 +32,7 @@
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__LINE_STRIP_MARKER_HPP_
 
 #include "marker_base.hpp"
-
-namespace rviz_rendering
-{
-class BillboardLine;
-}  // namespace rviz_rendering
-
-namespace rviz_common
-{
-class DisplayContext;
-}  // namespace rviz_common
+#include "line_marker_base.hpp"
 
 namespace rviz_default_plugins
 {
@@ -49,19 +41,15 @@ namespace displays
 namespace markers
 {
 
-class LineStripMarker : public MarkerBase
+class LineStripMarker : public LineMarkerBase
 {
 public:
   LineStripMarker(
     MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);
-  ~LineStripMarker();
-  virtual S_MaterialPtr getMaterials();
+  ~LineStripMarker() override = default;
 
 protected:
-  virtual void onNewMessage(
-    const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message);
-
-  rviz_rendering::BillboardLine * lines_;
+  void convertNewMessageToBillboardLine(const MarkerConstSharedPtr & new_message) override;
 };
 
 }  // namespace markers

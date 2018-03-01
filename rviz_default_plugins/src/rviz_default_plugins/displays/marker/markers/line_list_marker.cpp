@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,16 +31,14 @@
 #include "line_list_marker.hpp"
 
 #include <vector>
+#include <string>
 
 #include <OgreVector3.h>
-#include <OgreQuaternion.h>
 #include <OgreSceneNode.h>
 
 #include "../marker_display.hpp"
 #include "marker_selection_handler.hpp"
 
-#include "rviz_common/display_context.hpp"
-#include "rviz_common/properties/status_property.hpp"
 #include "rviz_rendering/objects/billboard_line.hpp"
 
 namespace rviz_default_plugins
@@ -51,101 +50,35 @@ namespace markers
 
 LineListMarker::LineListMarker(
   MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node)
-: MarkerBase(owner, context, parent_node), lines_(0)
+: LineMarkerBase(owner, context, parent_node)
 {}
 
-LineListMarker::~LineListMarker()
+bool LineListMarker::additionalConstraintsAreNotMet(
+  const MarkerBase::MarkerConstSharedPtr & new_message)
 {
-  delete lines_;
+  if (new_message->points.size() % 2 != 0) {
+    std::string error = "Line list marker [" + getStringID() + "] has an odd number of points.";
+    if (owner_) {
+      owner_->setMarkerStatus(getID(), rviz_common::properties::StatusProperty::Error, error);
+    }
+    RVIZ_COMMON_LOG_DEBUG(error);
+    return true;
+  }
+  return false;
 }
 
-void LineListMarker::onNewMessage(
-  const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message)
+void LineListMarker::convertNewMessageToBillboardLine(const MarkerConstSharedPtr & new_message)
 {
-  (void) old_message;
-
   assert(new_message->type == visualization_msgs::msg::Marker::LINE_LIST);
 
-  if (!lines_) {
-    lines_ = new rviz_rendering::BillboardLine(context_->getSceneManager(), scene_node_);
+  lines_->setMaxPointsPerLine(2);
+  lines_->setNumLines(static_cast<uint32_t>(new_message->points.size() / 2));
+
+  for (size_t i = 0; i < new_message->points.size() / 2; i++) {
+    addPoint(new_message, 2 * i);
+    addPoint(new_message, 2 * i + 1);
+    lines_->finishLine();
   }
-
-  Ogre::Vector3 pos, scale;
-  Ogre::Quaternion orient;
-  if (!transform(new_message, pos, orient, scale)) {  // NOLINT: is super class method
-    RVIZ_COMMON_LOG_DEBUG("Unable to transform marker message");
-    scene_node_->setVisible(false);
-    return;
-  }
-  scene_node_->setVisible(true);
-
-  setPosition(pos);
-  setOrientation(orient);
-  lines_->setScale(scale);
-  lines_->setColor(
-    new_message->color.r, new_message->color.g, new_message->color.b, new_message->color.a);
-
-  lines_->clear();
-
-  if (new_message->points.empty()) {
-    return;
-  }
-
-  bool has_per_point_color = new_message->colors.size() == new_message->points.size();
-
-  if (new_message->points.size() % 2 == 0) {
-    lines_->setLineWidth(new_message->scale.x);
-    lines_->setMaxPointsPerLine(2);
-    lines_->setNumLines(static_cast<uint32_t>(new_message->points.size() / 2));
-
-    size_t i = 0;
-    std::vector<geometry_msgs::msg::Point>::const_iterator it = new_message->points.begin();
-    std::vector<geometry_msgs::msg::Point>::const_iterator end = new_message->points.end();
-    for (; it != end; ) {
-      if (it != new_message->points.begin()) {
-        lines_->finishLine();
-      }
-
-      for (uint32_t j = 0; j < 2; ++j, ++it, ++i) {
-        const geometry_msgs::msg::Point & p = *it;
-
-        Ogre::ColourValue c;
-        if (has_per_point_color) {
-          const std_msgs::msg::ColorRGBA & color = new_message->colors[i];
-          c.r = color.r;
-          c.g = color.g;
-          c.b = color.b;
-          c.a = color.a;
-        } else {
-          c.r = new_message->color.r;
-          c.g = new_message->color.g;
-          c.b = new_message->color.b;
-          c.a = new_message->color.a;
-        }
-
-        Ogre::Vector3 v(p.x, p.y, p.z);
-        lines_->addPoint(v, c);
-      }
-    }
-
-    handler_.reset(new MarkerSelectionHandler(this, MarkerID(new_message->ns, new_message->id),
-      context_));
-    handler_->addTrackedObjects(lines_->getSceneNode());
-  } else {
-    std::stringstream ss;
-    ss << "Line list marker [" << getStringID() << "] has an odd number of points.";
-    if (owner_) {
-      owner_->setMarkerStatus(getID(), rviz_common::properties::StatusProperty::Error, ss.str());
-    }
-    RVIZ_COMMON_LOG_DEBUG(ss.str().c_str());
-  }
-}
-
-S_MaterialPtr LineListMarker::getMaterials()
-{
-  S_MaterialPtr materials;
-  materials.insert(lines_->getMaterial());
-  return materials;
 }
 
 }  // namespace markers
