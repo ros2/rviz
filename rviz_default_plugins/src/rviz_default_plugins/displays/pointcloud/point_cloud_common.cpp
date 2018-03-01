@@ -293,129 +293,144 @@ void PointCloudCommon::update(float wall_dt, float ros_dt)
 {
   (void) wall_dt;
   (void) ros_dt;
-  auto mode = static_cast<rviz_rendering::PointCloud::RenderMode>(style_property_->getOptionInt());
-  bool selectable = selectable_property_->getBool();
 
   float point_decay_time = decay_time_property_->getFloat();
+  rclcpp::Time now = clock_->now();
+
   if (needs_retransform_) {
     retransform();
     needs_retransform_ = false;
   }
 
-  // instead of deleting cloud infos, we just clear them
-  // and put them into obsolete_cloud_infos, so active selections
-  // are preserved
+  collectObsoleteCloudInfos(point_decay_time, now);
+  removeObsoleteCloudInfos();
 
-  rclcpp::Time now = clock_->now();
+  insertNewClouds(point_decay_time, now);
 
-  // if decay time == 0, clear the old cloud when we get a new one
-  // otherwise, clear all the outdated ones
-  {
-    std::unique_lock<std::mutex> lock(new_clouds_mutex_);
-    if (point_decay_time > 0.0 || !new_cloud_infos_.empty()) {
-      while (!cloud_infos_.empty() &&
-        (now.nanoseconds() - cloud_infos_.front()->receive_time_.nanoseconds()) / 1000000000.0 >
-        point_decay_time)
-      {
-        cloud_infos_.front()->clear();
-        obsolete_cloud_infos_.push_back(cloud_infos_.front());
-        cloud_infos_.pop_front();
-        context_->queueRender();
+  updateTransformerProperties();
+  updateStatus();
+}
+
+void PointCloudCommon::insertNewClouds(float point_decay_time, const rclcpp::Time & now)
+{
+  auto mode = static_cast<rviz_rendering::PointCloud::RenderMode>(style_property_->getOptionInt());
+
+  std::unique_lock<std::mutex> lock(new_clouds_mutex_);
+  if (!new_cloud_infos_.empty()) {
+    float size = getSizeForRenderMode(mode);
+
+    auto it = new_cloud_infos_.begin();
+    auto end = new_cloud_infos_.end();
+    for (; it != end; ++it) {
+      CloudInfoPtr cloud_info = *it;
+
+      // ignore point clouds that are too old, but keep at least one
+      auto next = it; next++;
+      if (next != end && cloudInfoIsDecayed(cloud_info, point_decay_time, now)) {
+        continue;
+      }
+
+      bool per_point_alpha = findChannelIndex(cloud_info->message_, "rgba") != -1;
+
+      cloud_info->cloud_.reset(new rviz_rendering::PointCloud());
+      cloud_info->cloud_->setRenderMode(mode);
+      cloud_info->cloud_->addPoints(
+        cloud_info->transformed_points_.begin(), cloud_info->transformed_points_.end());
+      cloud_info->cloud_->setAlpha(alpha_property_->getFloat(), per_point_alpha);
+      cloud_info->cloud_->setDimensions(size, size, size);
+      cloud_info->cloud_->setAutoSize(auto_size_);
+
+      cloud_info->manager_ = context_->getSceneManager();
+
+      cloud_info->scene_node_ = scene_node_->createChildSceneNode(cloud_info->position_,
+          cloud_info->orientation_);
+
+      cloud_info->scene_node_->attachObject(cloud_info->cloud_.get());
+
+      cloud_info->selection_handler_.reset(new PointCloudSelectionHandler(
+          getSelectionBoxSize(),
+          cloud_info.get(), context_));
+
+      cloud_infos_.push_back(*it);
+    }
+
+    new_cloud_infos_.clear();
+  }
+}
+
+float PointCloudCommon::getSizeForRenderMode(const rviz_rendering::PointCloud::RenderMode & mode)
+{
+  float size;
+  if (mode == rviz_rendering::PointCloud::RM_POINTS) {
+    size = point_pixel_size_property_->getFloat();
+  } else {
+    size = point_world_size_property_->getFloat();
+  }
+  return size;
+}
+
+void PointCloudCommon::updateTransformerProperties()
+{
+  std::unique_lock<std::mutex> lock(new_clouds_mutex_);
+
+  if (lock.owns_lock()) {
+    if (new_xyz_transformer_ || new_color_transformer_) {
+      for (auto transformer : transformers_) {
+        const std::__cxx11::string & name = transformer.first;
+        TransformerInfo & info = transformer.second;
+
+        setPropertiesHidden(info.xyz_props, name != xyz_transformer_property_->getStdString());
+        setPropertiesHidden(info.color_props,
+          name != color_transformer_property_->getStdString());
+
+        if (name == xyz_transformer_property_->getStdString() ||
+          name == color_transformer_property_->getStdString())
+        {
+          info.transformer->hideUnusedProperties();
+        }
       }
     }
   }
 
-  // garbage-collect old point clouds that don't have an active selection
-  L_CloudInfo::iterator it = obsolete_cloud_infos_.begin();
-  L_CloudInfo::iterator end = obsolete_cloud_infos_.end();
-  while (it != end) {
-    if (!(*it)->selection_handler_.get() ||
-      !(*it)->selection_handler_->hasSelections())
+  new_xyz_transformer_ = false;
+  new_color_transformer_ = false;
+}
+
+void PointCloudCommon::collectObsoleteCloudInfos(float point_decay_time, const rclcpp::Time & now)
+{
+  std::unique_lock<std::mutex> lock(new_clouds_mutex_);
+
+  if (point_decay_time > 0.0 || !new_cloud_infos_.empty()) {
+    while (!cloud_infos_.empty() &&
+      cloudInfoIsDecayed(cloud_infos_.front(), point_decay_time, now))
     {
+      cloud_infos_.front()->clear();
+      obsolete_cloud_infos_.push_back(cloud_infos_.front());
+      cloud_infos_.pop_front();
+      context_->queueRender();
+    }
+  }
+}
+
+void PointCloudCommon::removeObsoleteCloudInfos()
+{
+  auto it = obsolete_cloud_infos_.begin();
+  auto end = obsolete_cloud_infos_.end();
+  while (it != end) {
+    if (!(*it)->selection_handler_.get() || !(*it)->selection_handler_->hasSelections()) {
       it = obsolete_cloud_infos_.erase(it);
     }
     if (it != end) {
       ++it;
     }
   }
+}
 
-  {
-    std::unique_lock<std::mutex> lock(new_clouds_mutex_);
-    if (!new_cloud_infos_.empty()) {
-      float size;
-      if (mode == rviz_rendering::PointCloud::RM_POINTS) {
-        size = point_pixel_size_property_->getFloat();
-      } else {
-        size = point_world_size_property_->getFloat();
-      }
-
-      V_CloudInfo::iterator it = new_cloud_infos_.begin();
-      V_CloudInfo::iterator end = new_cloud_infos_.end();
-      for (; it != end; ++it) {
-        CloudInfoPtr cloud_info = *it;
-
-        V_CloudInfo::iterator next = it; next++;
-        // ignore point clouds that are too old, but keep at least one
-        if (next != end &&
-          (now.nanoseconds() - cloud_info->receive_time_.nanoseconds()) / 1000000000.0 >
-          point_decay_time)
-        {
-          continue;
-        }
-
-        bool per_point_alpha = findChannelIndex(cloud_info->message_, "rgba") != -1;
-
-        cloud_info->cloud_.reset(new rviz_rendering::PointCloud());
-        cloud_info->cloud_->setRenderMode(mode);
-        cloud_info->cloud_->addPoints(
-          cloud_info->transformed_points_.begin(), cloud_info->transformed_points_.end());
-        cloud_info->cloud_->setAlpha(alpha_property_->getFloat(), per_point_alpha);
-        cloud_info->cloud_->setDimensions(size, size, size);
-        cloud_info->cloud_->setAutoSize(auto_size_);
-
-        cloud_info->manager_ = context_->getSceneManager();
-
-        cloud_info->scene_node_ = scene_node_->createChildSceneNode(cloud_info->position_,
-            cloud_info->orientation_);
-
-        cloud_info->scene_node_->attachObject(cloud_info->cloud_.get());
-
-        cloud_info->setSelectable(selectable, getSelectionBoxSize(), context_);
-
-        cloud_infos_.push_back(*it);
-      }
-
-      new_cloud_infos_.clear();
-    }
-  }
-
-  {
-    std::unique_lock<std::mutex> lock(new_clouds_mutex_);
-
-    if (lock.owns_lock()) {
-      if (new_xyz_transformer_ || new_color_transformer_) {
-        for (auto transformer : transformers_) {
-          const std::string & name = transformer.first;
-          TransformerInfo & info = transformer.second;
-
-          setPropertiesHidden(info.xyz_props, name != xyz_transformer_property_->getStdString());
-          setPropertiesHidden(info.color_props,
-            name != color_transformer_property_->getStdString());
-
-          if (name == xyz_transformer_property_->getStdString() ||
-            name == color_transformer_property_->getStdString())
-          {
-            info.transformer->hideUnusedProperties();
-          }
-        }
-      }
-    }
-
-    new_xyz_transformer_ = false;
-    new_color_transformer_ = false;
-  }
-
-  updateStatus();
+bool PointCloudCommon::cloudInfoIsDecayed(
+  CloudInfoPtr cloud_info, float point_decay_time, const rclcpp::Time & now)
+{
+  return (now.nanoseconds() - cloud_info->receive_time_.nanoseconds()) / 1000000000.0 >
+         point_decay_time;
 }
 
 void PointCloudCommon::setPropertiesHidden(

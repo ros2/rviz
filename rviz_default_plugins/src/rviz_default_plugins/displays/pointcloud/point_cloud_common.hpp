@@ -196,6 +196,27 @@ private:
   void setPropertiesHidden(const QList<rviz_common::properties::Property *> & props, bool hide);
   void fillTransformerOptions(rviz_common::properties::EnumProperty * prop, uint32_t mask);
 
+  void insertNewClouds(float point_decay_time, const rclcpp::Time & now);
+  float getSizeForRenderMode(const rviz_rendering::PointCloud::RenderMode & mode);
+
+
+  void updateTransformerProperties();
+
+  /**
+   * Instead of deleting obsolete cloud infos, we just clear them
+   * and put them into obsolete_cloud_infos, so active selections are preserved
+   *
+   * If decay time == 0, clear the old cloud when we get a new one.
+   * Otherwise, clear all the outdated ones
+   */
+  void collectObsoleteCloudInfos(float point_decay_time, const rclcpp::Time & now);
+
+  /// Garbage-collect old point clouds that don't have an active selection
+  void removeObsoleteCloudInfos();
+
+  bool cloudInfoIsDecayed(
+    CloudInfoPtr cloud_info, float point_decay_time, const rclcpp::Time & now);
+
   D_CloudInfo cloud_infos_;
 
   Ogre::SceneNode * scene_node_;
