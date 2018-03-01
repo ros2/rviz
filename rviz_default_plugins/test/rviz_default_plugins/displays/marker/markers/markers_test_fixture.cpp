@@ -29,46 +29,20 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__MARKERS_TEST_FIXTURE_HPP_
-#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__MARKERS_TEST_FIXTURE_HPP_
-
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
+#include "markers_test_fixture.hpp"
 
 #include <memory>
 #include <string>
 
-#include <OgreMath.h>
-#include <OgreRoot.h>
-
-#include <QApplication>  // NOLINT
-
-#include "test/rviz_rendering/ogre_testing_environment.hpp"
-#include "../../display_test_fixture.hpp"
-#include "../../../mock_display_context.hpp"
-#include "../../../mock_frame_manager.hpp"
-#include "../../../mock_selection_manager.hpp"
-#include "../../../../../src/rviz_default_plugins/displays/marker/marker_display.hpp"
-#include "../../../../../src/rviz_default_plugins/displays/marker/markers/marker_base.hpp"
-
-class MarkersTestFixture : public DisplayTestFixture
+void MarkersTestFixture::SetUp()
 {
-public:
-  void SetUp() override;
+  DisplayTestFixture::SetUp();
+  marker_display_ = std::make_shared<rviz_default_plugins::displays::MarkerDisplay>();
+}
 
-  void TearDown() override;
-
-  template<typename MarkerType>
-  std::unique_ptr<MarkerType> makeMarker()
-  {
-    return std::make_unique<MarkerType>(
-      marker_display_.get(),
-      context_.get(),
-      scene_manager_->getRootSceneNode()->createChildSceneNode());
-  }
-
-  std::shared_ptr<rviz_default_plugins::displays::MarkerDisplay> marker_display_;
-  std::shared_ptr<rviz_default_plugins::displays::markers::MarkerBase> marker_;
-};
-
-#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__MARKERS_TEST_FIXTURE_HPP_
+void MarkersTestFixture::TearDown()
+{
+  marker_display_.reset();
+  marker_.reset();
+  DisplayTestFixture::TearDown();
+}

@@ -51,61 +51,50 @@
 #include "../../../../../src/rviz_default_plugins/displays/marker/markers/triangle_list_marker.hpp"
 
 #include "markers_test_fixture.hpp"
+#include "../marker_messages.hpp"
 
 using namespace ::testing;  // NOLINT
 
-geometry_msgs::msg::Point point(float x, float y, float z)
-{
-  geometry_msgs::msg::Point point;
-  point.x = x;
-  point.y = y;
-  point.z = z;
-  return point;
-}
-
 TEST_F(MarkersTestFixture, setMessage_does_nothing_on_wrong_number_of_points) {
-  auto triangle_list_marker =
-    makeMarker<rviz_default_plugins::displays::markers::TriangleListMarker>();
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::TriangleListMarker>();
 
   auto message = createDefaultMessage(visualization_msgs::msg::Marker::TRIANGLE_LIST);
-  message.points.push_back(point(0, 0, 0));
-  message.points.push_back(point(1, 0, 0));
+  message.points.push_back(create_point(0, 0, 0));
+  message.points.push_back(create_point(1, 0, 0));
 
-  triangle_list_marker->setMessage(message);
+  marker_->setMessage(message);
 
   auto object = rviz_default_plugins::findOneMovableObject(scene_manager_->getRootSceneNode());
   ASSERT_FALSE(object);
 }
 
 TEST_F(MarkersTestFixture, setMessage_does_not_set_scene_node_without_transform) {
-  auto triangle_list_marker =
-    makeMarker<rviz_default_plugins::displays::markers::TriangleListMarker>();
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::TriangleListMarker>();
 
   EXPECT_CALL(*frame_manager_, transform(_, _, _, _, _)).WillOnce(Return(false));  // NOLINT
 
   auto message = createDefaultMessage(visualization_msgs::msg::Marker::TRIANGLE_LIST);
-  message.points.push_back(point(0, 0, 0));
-  message.points.push_back(point(1, 0, 0));
-  message.points.push_back(point(2, 0, 0));
+  message.points.push_back(create_point(0, 0, 0));
+  message.points.push_back(create_point(1, 0, 0));
+  message.points.push_back(create_point(2, 0, 0));
 
-  triangle_list_marker->setMessage(message);
+  marker_->setMessage(message);
 
   auto object = rviz_default_plugins::findOneMovableObject(scene_manager_->getRootSceneNode());
   ASSERT_FALSE(object->isVisible());
 }
 
-TEST_F(MarkersTestFixture, setMessage_does_something) {
-  auto triangle_list_marker =
-    makeMarker<rviz_default_plugins::displays::markers::TriangleListMarker>();
+TEST_F(MarkersTestFixture, setMessage_adds_new_object_on_correct_message) {
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::TriangleListMarker>();
 
   mockValidTransform();
 
   auto message = createDefaultMessage(visualization_msgs::msg::Marker::TRIANGLE_LIST);
-  message.points.push_back(point(0, 0, 0));
-  message.points.push_back(point(1, 0, 0));
-  message.points.push_back(point(2, 0, 0));
+  message.points.push_back(create_point(0, 0, 0));
+  message.points.push_back(create_point(1, 0, 0));
+  message.points.push_back(create_point(2, 0, 0));
 
-  triangle_list_marker->setMessage(message);
+  marker_->setMessage(message);
 
   auto object = rviz_default_plugins::findOneMovableObject(scene_manager_->getRootSceneNode());
   ASSERT_TRUE(object);

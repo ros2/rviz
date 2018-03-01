@@ -48,68 +48,12 @@
 #include "../../../../../src/rviz_default_plugins/displays/marker/markers/points_marker.hpp"
 
 #include "markers_test_fixture.hpp"
-
-class PointsMarkerFixture : public MarkersTestFixture
-{
-public:
-  void SetUp() override
-  {
-    MarkersTestFixture::SetUp();
-    marker_ = makeMarker<rviz_default_plugins::displays::markers::PointsMarker>();
-  }
-
-  void TearDown() override
-  {
-    marker_.reset(nullptr);
-    MarkersTestFixture::TearDown();
-  }
-
-  std::unique_ptr<rviz_default_plugins::displays::markers::PointsMarker> marker_;
-};
+#include "../marker_messages.hpp"
 
 using namespace ::testing;  // NOLINT
 
-visualization_msgs::msg::Marker createMessageWithPoints(int32_t type)
-{
-  geometry_msgs::msg::Point first_point;
-  geometry_msgs::msg::Point second_point;
-
-  first_point.x = 2;
-  first_point.y = 0;
-  first_point.z = 0;
-  second_point.x = 1;
-  second_point.y = 1;
-  second_point.z = 0;
-
-  auto marker = createDefaultMessage(type);
-  marker.points.push_back(first_point);
-  marker.points.push_back(second_point);
-
-  return marker;
-}
-
-visualization_msgs::msg::Marker createMessageWithColorPerPoint(int32_t type)
-{
-  std_msgs::msg::ColorRGBA first_color;
-  std_msgs::msg::ColorRGBA second_color;
-
-  first_color.r = 1.0f;
-  first_color.g = 0.0f;
-  first_color.b = 0.5f;
-  first_color.a = 0.5f;
-  second_color.r = 0.5f;
-  second_color.g = 0.6f;
-  second_color.b = 0.0f;
-  second_color.a = 0.3f;
-
-  auto marker = createMessageWithPoints(type);
-  marker.colors.push_back(first_color);
-  marker.colors.push_back(second_color);
-
-  return marker;
-}
-
-TEST_F(PointsMarkerFixture, setMessage_makes_the_scene_node_invisible_if_invalid_transform) {
+TEST_F(MarkersTestFixture, setMessage_makes_the_point_cloud_node_invisible_if_invalid_transform) {
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::PointsMarker>();
   EXPECT_CALL(*frame_manager_, transform(_, _, _, _, _)).WillOnce(Return(false));  // NOLINT
 
   marker_->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::POINTS));
@@ -118,7 +62,8 @@ TEST_F(PointsMarkerFixture, setMessage_makes_the_scene_node_invisible_if_invalid
   EXPECT_FALSE(point_cloud->isVisible());
 }
 
-TEST_F(PointsMarkerFixture, setMessage_sets_points_correctly) {
+TEST_F(MarkersTestFixture, setMessage_sets_points_correctly) {
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::PointsMarker>();
   mockValidTransform();
 
   marker_->setMessage(createMessageWithPoints(visualization_msgs::msg::Marker::SPHERE_LIST));
@@ -129,7 +74,8 @@ TEST_F(PointsMarkerFixture, setMessage_sets_points_correctly) {
   EXPECT_FLOAT_EQ(expected_bounding_radius, point_cloud->getBoundingRadius());
 }
 
-TEST_F(PointsMarkerFixture, setMessage_sets_position_and_orientation_correctly) {
+TEST_F(MarkersTestFixture, setMessage_sets_position_and_orientation_correctly) {
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::PointsMarker>();
   mockValidTransform();
 
   marker_->setMessage(createMessageWithPoints(visualization_msgs::msg::Marker::CUBE_LIST));
@@ -138,7 +84,8 @@ TEST_F(PointsMarkerFixture, setMessage_sets_position_and_orientation_correctly) 
   EXPECT_QUATERNION_EQ(Ogre::Quaternion(0, 0, 1, 0), marker_->getOrientation());
 }
 
-TEST_F(PointsMarkerFixture, setMessage_sets_single_color_correctly) {
+TEST_F(MarkersTestFixture, setMessage_sets_single_color_correctly) {
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::PointsMarker>();
   mockValidTransform();
 
   marker_->setMessage(createMessageWithPoints(visualization_msgs::msg::Marker::SPHERE_LIST));
@@ -149,7 +96,8 @@ TEST_F(PointsMarkerFixture, setMessage_sets_single_color_correctly) {
   EXPECT_EQ(expected_color, point_cloud->getPoints()[1].color);
 }
 
-TEST_F(PointsMarkerFixture, setMessage_sets_per_point_color_correctly) {
+TEST_F(MarkersTestFixture, setMessage_sets_per_point_color_correctly) {
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::PointsMarker>();
   mockValidTransform();
 
   marker_->setMessage(createMessageWithColorPerPoint(visualization_msgs::msg::Marker::POINTS));

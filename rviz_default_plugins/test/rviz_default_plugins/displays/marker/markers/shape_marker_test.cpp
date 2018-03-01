@@ -52,15 +52,16 @@
 #include "../../../../../src/rviz_default_plugins/displays/marker/markers/shape_marker.hpp"
 
 #include "markers_test_fixture.hpp"
+#include "../marker_messages.hpp"
 
 using namespace ::testing;  // NOLINT
 
 TEST_F(MarkersTestFixture, no_transform_does_not_try_to_set_scene_node) {
-  auto shape_marker = makeMarker<rviz_default_plugins::displays::markers::ShapeMarker>();
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::ShapeMarker>();
 
   EXPECT_CALL(*frame_manager_, transform(_, _, _, _, _)).WillOnce(Return(false));  // NOLINT
 
-  shape_marker->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::CUBE));
+  marker_->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::CUBE));
 
   auto entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), "rviz_cube.mesh");
@@ -68,16 +69,16 @@ TEST_F(MarkersTestFixture, no_transform_does_not_try_to_set_scene_node) {
 }
 
 TEST_F(MarkersTestFixture, positions_and_orientations_are_set_correctly) {
-  auto shape_marker = makeMarker<rviz_default_plugins::displays::markers::ShapeMarker>();
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::ShapeMarker>();
 
   Ogre::Vector3 position(0, 1, 0);
   Ogre::Quaternion orientation(0, 0, 1, 0);
   mockValidTransform(position, orientation);
 
-  shape_marker->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::CUBE));
+  marker_->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::CUBE));
 
-  EXPECT_VECTOR3_EQ(position, shape_marker->getPosition());
-  EXPECT_QUATERNION_EQ(Ogre::Quaternion(0, 0, 0.7071f, -0.7071f), shape_marker->getOrientation());
+  EXPECT_VECTOR3_EQ(position, marker_->getPosition());
+  EXPECT_QUATERNION_EQ(Ogre::Quaternion(0, 0, 0.7071f, -0.7071f), marker_->getOrientation());
 
   auto entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), "rviz_cube.mesh");
@@ -91,10 +92,10 @@ TEST_F(MarkersTestFixture, positions_and_orientations_are_set_correctly) {
 }
 
 TEST_F(MarkersTestFixture, different_types_result_in_different_meshes) {
-  auto shape_marker = makeMarker<rviz_default_plugins::displays::markers::ShapeMarker>();
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::ShapeMarker>();
   mockValidTransform();
 
-  shape_marker->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::SPHERE));
+  marker_->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::SPHERE));
 
   auto cylinder_entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), "rviz_cylinder.mesh");
@@ -103,7 +104,7 @@ TEST_F(MarkersTestFixture, different_types_result_in_different_meshes) {
   EXPECT_FALSE(cylinder_entity);
   EXPECT_TRUE(sphere_entity);
 
-  shape_marker->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::CYLINDER));
+  marker_->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::CYLINDER));
 
   cylinder_entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), "rviz_cylinder.mesh");

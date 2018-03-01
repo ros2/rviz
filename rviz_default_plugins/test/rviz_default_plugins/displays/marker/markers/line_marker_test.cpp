@@ -45,27 +45,9 @@
 #include "../../../../../src/rviz_default_plugins/displays/marker/markers/line_strip_marker.hpp"
 
 #include "markers_test_fixture.hpp"
+#include "../marker_messages.hpp"
 
 using namespace ::testing;  // NOLINT
-
-geometry_msgs::msg::Point point(float x, float y, float z)
-{
-  geometry_msgs::msg::Point point;
-  point.x = x;
-  point.y = y;
-  point.z = z;
-  return point;
-}
-
-std_msgs::msg::ColorRGBA color(float r, float g, float b, float a)
-{
-  std_msgs::msg::ColorRGBA color;
-  color.r = r;
-  color.g = g;
-  color.b = b;
-  color.a = a;
-  return color;
-}
 
 void assertColorEquals(
   std_msgs::msg::ColorRGBA color, Ogre::BillboardChain * billboard_chain, int32_t element)
@@ -77,10 +59,10 @@ void assertColorEquals(
 }
 
 TEST_F(MarkersTestFixture, setMessage_does_not_add_anything_when_no_points_are_provided) {
-  auto line_list_marker = makeMarker<rviz_default_plugins::displays::markers::LineListMarker>();
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::LineListMarker>();
   mockValidTransform();
 
-  line_list_marker->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::LINE_LIST));
+  marker_->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::LINE_LIST));
 
   auto billboard_chain = rviz_default_plugins::findOneBillboardChain(
     scene_manager_->getRootSceneNode());
@@ -91,13 +73,13 @@ TEST_F(MarkersTestFixture, setMessage_does_not_add_anything_when_no_points_are_p
 }
 
 TEST_F(MarkersTestFixture, setMessage_sets_billboard_line_invisible_when_transform_fails) {
-  auto line_list_marker = makeMarker<rviz_default_plugins::displays::markers::LineListMarker>();
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::LineListMarker>();
 
   Ogre::Vector3 position(0, 1, 0);
   Ogre::Quaternion orientation(0, 0, 1, 0);
   EXPECT_CALL(*frame_manager_, transform(_, _, _, _, _)).WillOnce(Return(false));  // NOLINT
 
-  line_list_marker->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::LINE_LIST));
+  marker_->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::LINE_LIST));
 
   auto billboard_chain = rviz_default_plugins::findOneBillboardChain(
     scene_manager_->getRootSceneNode());
@@ -106,23 +88,23 @@ TEST_F(MarkersTestFixture, setMessage_sets_billboard_line_invisible_when_transfo
 }
 
 TEST_F(MarkersTestFixture, setMessage_sets_correct_position_and_orientation) {
-  auto line_list_marker = makeMarker<rviz_default_plugins::displays::markers::LineListMarker>();
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::LineListMarker>();
   mockValidTransform();
 
-  line_list_marker->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::LINE_LIST));
+  marker_->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::LINE_LIST));
 
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(0, 1, 0), line_list_marker->getPosition());
-  EXPECT_QUATERNION_EQ(Ogre::Quaternion(0, 0, 1, 0), line_list_marker->getOrientation());
+  EXPECT_VECTOR3_EQ(Ogre::Vector3(0, 1, 0), marker_->getPosition());
+  EXPECT_QUATERNION_EQ(Ogre::Quaternion(0, 0, 1, 0), marker_->getOrientation());
 }
 
 TEST_F(MarkersTestFixture, setMessage_does_not_show_billboard_line_if_uneven_number_of_points) {
-  auto line_list_marker = makeMarker<rviz_default_plugins::displays::markers::LineListMarker>();
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::LineListMarker>();
   mockValidTransform();
 
   auto message = createDefaultMessage(visualization_msgs::msg::Marker::LINE_LIST);
-  message.points.push_back(point(0, 0, 0));
+  message.points.push_back(create_point(0, 0, 0));
 
-  line_list_marker->setMessage(message);
+  marker_->setMessage(message);
 
   auto billboard_chain = rviz_default_plugins::findOneBillboardChain(
     scene_manager_->getRootSceneNode());
@@ -133,15 +115,15 @@ TEST_F(MarkersTestFixture, setMessage_does_not_show_billboard_line_if_uneven_num
 }
 
 TEST_F(MarkersTestFixture, setMessage_clears_marker_upon_new_message) {
-  auto line_list_marker = makeMarker<rviz_default_plugins::displays::markers::LineListMarker>();
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::LineListMarker>();
   mockValidTransform();
 
   auto message = createDefaultMessage(visualization_msgs::msg::Marker::LINE_LIST);
-  message.points.push_back(point(0, 0, 0));
-  message.points.push_back(point(2, 1, 1));
-  line_list_marker->setMessage(message);
+  message.points.push_back(create_point(0, 0, 0));
+  message.points.push_back(create_point(2, 1, 1));
+  marker_->setMessage(message);
 
-  line_list_marker->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::LINE_LIST));
+  marker_->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::LINE_LIST));
 
   auto billboard_chain = rviz_default_plugins::findOneBillboardChain(
     scene_manager_->getRootSceneNode());
@@ -152,17 +134,17 @@ TEST_F(MarkersTestFixture, setMessage_clears_marker_upon_new_message) {
 }
 
 TEST_F(MarkersTestFixture, setMessage_adds_billboard_line_with_one_color) {
-  auto line_list_marker = makeMarker<rviz_default_plugins::displays::markers::LineListMarker>();
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::LineListMarker>();
   mockValidTransform();
 
   auto message = createDefaultMessage(visualization_msgs::msg::Marker::LINE_LIST);
-  geometry_msgs::msg::Point first_point = point(0, 0, 0);
-  geometry_msgs::msg::Point second_point = point(1, 1, 0);
+  geometry_msgs::msg::Point first_point = create_point(0, 0, 0);
+  geometry_msgs::msg::Point second_point = create_point(1, 1, 0);
 
   message.points.push_back(first_point);
   message.points.push_back(second_point);
 
-  line_list_marker->setMessage(message);
+  marker_->setMessage(message);
 
   auto billboard_chain = rviz_default_plugins::findOneBillboardChain(
     scene_manager_->getRootSceneNode());
@@ -180,21 +162,21 @@ TEST_F(MarkersTestFixture, setMessage_adds_billboard_line_with_one_color) {
 
 TEST_F(MarkersTestFixture,
   setMessage_adds_billboard_line_with_many_colors_if_all_points_have_color_information) {
-  auto line_list_marker = makeMarker<rviz_default_plugins::displays::markers::LineListMarker>();
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::LineListMarker>();
   mockValidTransform();
 
   auto message = createDefaultMessage(visualization_msgs::msg::Marker::LINE_LIST);
-  geometry_msgs::msg::Point first_point = point(0, 0, 0);
+  geometry_msgs::msg::Point first_point = create_point(0, 0, 0);
   std_msgs::msg::ColorRGBA first_point_color = color(0.5f, 0.6f, 0.7f, 0.5f);
   message.points.push_back(first_point);
   message.colors.push_back(first_point_color);
 
-  geometry_msgs::msg::Point second_point = point(1, 1, 0);
+  geometry_msgs::msg::Point second_point = create_point(1, 1, 0);
   std_msgs::msg::ColorRGBA second_point_color = color(0.3f, 0.4f, 0.5f, 0.6f);
   message.points.push_back(second_point);
   message.colors.push_back(second_point_color);
 
-  line_list_marker->setMessage(message);
+  marker_->setMessage(message);
 
   auto billboard_chain = rviz_default_plugins::findOneBillboardChain(
     scene_manager_->getRootSceneNode());
@@ -211,14 +193,14 @@ TEST_F(MarkersTestFixture,
 }
 
 TEST_F(MarkersTestFixture, setMessage_shows_billboard_strip_for_uneven_number_of_points) {
-  auto line_strip_marker = makeMarker<rviz_default_plugins::displays::markers::LineStripMarker>();
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::LineStripMarker>();
   mockValidTransform();
 
   auto message = createDefaultMessage(visualization_msgs::msg::Marker::LINE_STRIP);
 
-  message.points.push_back(point(0, 0, 0));
+  message.points.push_back(create_point(0, 0, 0));
 
-  line_strip_marker->setMessage(message);
+  marker_->setMessage(message);
 
   auto billboard_chain = rviz_default_plugins::findOneBillboardChain(
     scene_manager_->getRootSceneNode());
@@ -229,17 +211,17 @@ TEST_F(MarkersTestFixture, setMessage_shows_billboard_strip_for_uneven_number_of
 }
 
 TEST_F(MarkersTestFixture, setMessage_adds_many_points_into_same_chain) {
-  auto line_strip_marker = makeMarker<rviz_default_plugins::displays::markers::LineStripMarker>();
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::LineStripMarker>();
   mockValidTransform();
   auto message = createDefaultMessage(visualization_msgs::msg::Marker::LINE_STRIP);
-  geometry_msgs::msg::Point first_point = point(0, 0, 0);
-  geometry_msgs::msg::Point second_point = point(1, 1, 0);
-  geometry_msgs::msg::Point third_point = point(0, 1, 1);
+  geometry_msgs::msg::Point first_point = create_point(0, 0, 0);
+  geometry_msgs::msg::Point second_point = create_point(1, 1, 0);
+  geometry_msgs::msg::Point third_point = create_point(0, 1, 1);
   message.points.push_back(first_point);
   message.points.push_back(second_point);
   message.points.push_back(third_point);
 
-  line_strip_marker->setMessage(message);
+  marker_->setMessage(message);
 
   auto billboard_chain = rviz_default_plugins::findOneBillboardChain(
     scene_manager_->getRootSceneNode());

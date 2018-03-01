@@ -44,7 +44,6 @@
 #include <OgreEntity.h>
 #endif
 #include <OgreMesh.h>
-#include <OgreMovableObject.h>
 
 #include "visualization_msgs/msg/marker.hpp"
 #include "rviz_rendering/objects/arrow.hpp"
@@ -54,28 +53,9 @@
 #include "../../../../../src/rviz_default_plugins/displays/marker/markers/arrow_marker.hpp"
 
 #include "markers_test_fixture.hpp"
+#include "../marker_messages.hpp"
 
 using namespace ::testing;  // NOLINT
-
-visualization_msgs::msg::Marker createArrowMessageFromPoints()
-{
-  geometry_msgs::msg::Point first_arrow_point;
-  geometry_msgs::msg::Point second_arrow_point;
-
-  first_arrow_point.x = 0;
-  first_arrow_point.y = 0;
-  first_arrow_point.z = 0;
-
-  second_arrow_point.x = 1;
-  second_arrow_point.y = 1;
-  second_arrow_point.z = 0;
-
-  auto marker = createDefaultMessage(visualization_msgs::msg::Marker::ARROW);
-  marker.points.push_back(first_arrow_point);
-  marker.points.push_back(second_arrow_point);
-
-  return marker;
-}
 
 void assertArrowIsNotVisible()
 {
@@ -107,44 +87,44 @@ const auto default_arrow_position_ = Ogre::Vector3(0, 0, 0);
 const auto default_arrow_scale_ = Ogre::Vector3(1, 0.2f, 0.2f);
 
 TEST_F(MarkersTestFixture, setMessage_makes_the_scene_node_invisible_if_invalid_transform) {
-  auto arrow_marker = makeMarker<rviz_default_plugins::displays::markers::ArrowMarker>();
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::ArrowMarker>();
   EXPECT_CALL(*frame_manager_, transform(_, _, _, _, _)).WillOnce(Return(false));  // NOLINT
 
-  arrow_marker->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::ARROW));
+  marker_->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::ARROW));
 
   assertArrowIsNotVisible();
 }
 
 TEST_F(MarkersTestFixture, incomplete_message_sets_scene_node_to_not_visible) {
-  auto arrow_marker = makeMarker<rviz_default_plugins::displays::markers::ArrowMarker>();
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::ArrowMarker>();
 
-  auto incomplete_message = createArrowMessageFromPoints();
+  auto incomplete_message = createMessageWithPoints(visualization_msgs::msg::Marker::ARROW);
   incomplete_message.points.pop_back();
 
-  arrow_marker->setMessage(incomplete_message);
+  marker_->setMessage(incomplete_message);
 
   assertArrowIsNotVisible();
 }
 
 TEST_F(MarkersTestFixture, setMessage_sets_positions_and_orientations_correctly) {
-  auto arrow_marker = makeMarker<rviz_default_plugins::displays::markers::ArrowMarker>();
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::ArrowMarker>();
   mockValidTransform();
 
-  arrow_marker->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::ARROW));
+  marker_->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::ARROW));
 
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(0, 1, 0), arrow_marker->getPosition());
-  EXPECT_QUATERNION_EQ(Ogre::Quaternion(0, 0, 1, 0), arrow_marker->getOrientation());
+  EXPECT_VECTOR3_EQ(Ogre::Vector3(0, 1, 0), marker_->getPosition());
+  EXPECT_QUATERNION_EQ(Ogre::Quaternion(0, 0, 1, 0), marker_->getOrientation());
 
   assertArrowWithTransform(
     scene_manager_, default_arrow_position_, default_arrow_scale_, default_arrow_orientation_);
 }
 
 TEST_F(MarkersTestFixture, setMessage_sets_positions_and_orientations_from_points_correctly) {
-  auto arrow_marker = makeMarker<rviz_default_plugins::displays::markers::ArrowMarker>();
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::ArrowMarker>();
   mockValidTransform();
 
-  auto message = createArrowMessageFromPoints();
-  arrow_marker->setMessage(message);
+  auto message = createMessageWithPoints(visualization_msgs::msg::Marker::ARROW);
+  marker_->setMessage(message);
 
   auto first_point = Ogre::Vector3(
     message.points[0].x, message.points[0].y, message.points[0].z);
@@ -156,33 +136,33 @@ TEST_F(MarkersTestFixture, setMessage_sets_positions_and_orientations_from_point
     Ogre::Quaternion(Ogre::Degree(-90), Ogre::Vector3::UNIT_X);
   Ogre::Vector3 expected_arrow_scale(1, 1, 1);
 
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(0, 1, 0), arrow_marker->getPosition());
-  EXPECT_QUATERNION_EQ(Ogre::Quaternion(0, 0, 1, 0), arrow_marker->getOrientation());
+  EXPECT_VECTOR3_EQ(Ogre::Vector3(0, 1, 0), marker_->getPosition());
+  EXPECT_QUATERNION_EQ(Ogre::Quaternion(0, 0, 1, 0), marker_->getOrientation());
 
   assertArrowWithTransform(
     scene_manager_, first_point, expected_arrow_scale, expected_arrow_orientation);
 }
 
 TEST_F(MarkersTestFixture, setMessage_ignores_points_if_thery_are_more_than_two) {
-  auto arrow_marker = makeMarker<rviz_default_plugins::displays::markers::ArrowMarker>();
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::ArrowMarker>();
   mockValidTransform();
 
   geometry_msgs::msg::Point point;
-  auto message = createArrowMessageFromPoints();
+  auto message = createMessageWithPoints(visualization_msgs::msg::Marker::ARROW);
   message.points.push_back(point);
 
-  arrow_marker->setMessage(message);
+  marker_->setMessage(message);
 
   assertArrowWithTransform(
     scene_manager_, default_arrow_position_, default_arrow_scale_, default_arrow_orientation_);
 }
 
 TEST_F(MarkersTestFixture, setMessage_ignores_old_message) {
-  auto arrow_marker = makeMarker<rviz_default_plugins::displays::markers::ArrowMarker>();
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::ArrowMarker>();
   mockValidTransform();
 
-  arrow_marker->setMessage(createArrowMessageFromPoints());
-  arrow_marker->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::ARROW));
+  marker_->setMessage(createMessageWithPoints(visualization_msgs::msg::Marker::ARROW));
+  marker_->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::ARROW));
 
   assertArrowWithTransform(
     scene_manager_, default_arrow_position_, default_arrow_scale_, default_arrow_orientation_);

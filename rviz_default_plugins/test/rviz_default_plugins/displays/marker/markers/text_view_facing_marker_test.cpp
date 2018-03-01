@@ -53,14 +53,15 @@
   "../../../../../src/rviz_default_plugins/displays/marker/markers/text_view_facing_marker.hpp"
 
 #include "markers_test_fixture.hpp"
+#include "../marker_messages.hpp"
 
 using namespace ::testing;  // NOLINT
 
 TEST_F(MarkersTestFixture, setMessage_sets_object_invisible_when_transform_fails) {
-  auto text_marker = makeMarker<rviz_default_plugins::displays::markers::TextViewFacingMarker>();
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::TextViewFacingMarker>();
   EXPECT_CALL(*frame_manager_, transform(_, _, _, _, _)).WillOnce(Return(false));  // NOLINT
 
-  text_marker->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::TEXT_VIEW_FACING));
+  marker_->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::TEXT_VIEW_FACING));
 
   auto movable_text = rviz_default_plugins::findOneMovableText(scene_manager_->getRootSceneNode());
   ASSERT_TRUE(movable_text);
@@ -69,12 +70,12 @@ TEST_F(MarkersTestFixture, setMessage_sets_object_invisible_when_transform_fails
 }
 
 TEST_F(MarkersTestFixture, setMessage_sets_correct_caption_for_valid_message) {
-  auto text_marker = makeMarker<rviz_default_plugins::displays::markers::TextViewFacingMarker>();
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::TextViewFacingMarker>();
   mockValidTransform();
 
   auto message = createDefaultMessage(visualization_msgs::msg::Marker::TEXT_VIEW_FACING);
   message.text = "Message to display";
-  text_marker->setMessage(message);
+  marker_->setMessage(message);
 
   auto movable_text = rviz_default_plugins::findOneMovableText(scene_manager_->getRootSceneNode());
   ASSERT_TRUE(movable_text);
@@ -83,12 +84,12 @@ TEST_F(MarkersTestFixture, setMessage_sets_correct_caption_for_valid_message) {
 }
 
 TEST_F(MarkersTestFixture, setMessage_sets_correct_transformation_for_valid_message) {
-  auto text_marker = makeMarker<rviz_default_plugins::displays::markers::TextViewFacingMarker>();
+  marker_ = makeMarker<rviz_default_plugins::displays::markers::TextViewFacingMarker>();
   mockValidTransform();
 
   auto message = createDefaultMessage(visualization_msgs::msg::Marker::TEXT_VIEW_FACING);
   message.text = "Message to display";
-  text_marker->setMessage(message);
+  marker_->setMessage(message);
 
   auto movable_text = rviz_default_plugins::findOneMovableText(scene_manager_->getRootSceneNode());
   ASSERT_TRUE(movable_text);

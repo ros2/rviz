@@ -29,46 +29,22 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__MARKERS_TEST_FIXTURE_HPP_
-#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__MARKERS_TEST_FIXTURE_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKER_MESSAGES_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKER_MESSAGES_HPP_
 
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
+#include "visualization_msgs/msg/marker.hpp"
 
-#include <memory>
-#include <string>
-
-#include <OgreMath.h>
-#include <OgreRoot.h>
-
-#include <QApplication>  // NOLINT
-
-#include "test/rviz_rendering/ogre_testing_environment.hpp"
-#include "../../display_test_fixture.hpp"
-#include "../../../mock_display_context.hpp"
-#include "../../../mock_frame_manager.hpp"
-#include "../../../mock_selection_manager.hpp"
-#include "../../../../../src/rviz_default_plugins/displays/marker/marker_display.hpp"
-#include "../../../../../src/rviz_default_plugins/displays/marker/markers/marker_base.hpp"
-
-class MarkersTestFixture : public DisplayTestFixture
+namespace testing
 {
-public:
-  void SetUp() override;
+geometry_msgs::msg::Point create_point(float x, float y, float z);
 
-  void TearDown() override;
+std_msgs::msg::ColorRGBA color(float r, float g, float b, float a);
 
-  template<typename MarkerType>
-  std::unique_ptr<MarkerType> makeMarker()
-  {
-    return std::make_unique<MarkerType>(
-      marker_display_.get(),
-      context_.get(),
-      scene_manager_->getRootSceneNode()->createChildSceneNode());
-  }
+visualization_msgs::msg::Marker createDefaultMessage(int32_t type);
 
-  std::shared_ptr<rviz_default_plugins::displays::MarkerDisplay> marker_display_;
-  std::shared_ptr<rviz_default_plugins::displays::markers::MarkerBase> marker_;
-};
+visualization_msgs::msg::Marker createMessageWithPoints(int32_t type);
 
-#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__MARKERS_TEST_FIXTURE_HPP_
+visualization_msgs::msg::Marker createMessageWithColorPerPoint(int32_t type);
+}  // namespace testing
+
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKER_MESSAGES_HPP_

@@ -53,67 +53,17 @@
 class DisplayTestFixture : public testing::Test
 {
 public:
-  static void SetUpTestCase()
-  {
-    testing_environment_ = std::make_shared<rviz_rendering::OgreTestingEnvironment>();
-    testing_environment_->setUpOgreTestEnvironment();
+  static void SetUpTestCase();
 
-    scene_manager_ = Ogre::Root::getSingletonPtr()->createSceneManager();
-  }
+  void SetUp() override;
 
-  void SetUp() override
-  {
-    context_ = std::make_shared<testing::NiceMock<MockDisplayContext>>();
-    frame_manager_ = std::make_shared<testing::NiceMock<MockFrameManager>>();
-    selection_manager_ = std::make_shared<testing::NiceMock<MockSelectionManager>>();
-    clock_ = std::make_shared<rclcpp::Clock>();
+  void TearDown() override;
 
-    EXPECT_CALL(*frame_manager_, getFixedFrame()).WillRepeatedly(testing::ReturnRef(fixed_frame));
+  static void TearDownTestCase();
 
-    EXPECT_CALL(*context_, getClock()).WillRepeatedly(testing::Return(clock_));
-    EXPECT_CALL(*context_, getSceneManager()).WillRepeatedly(testing::Return(scene_manager_));
-    EXPECT_CALL(*context_, getFrameManager()).WillRepeatedly(testing::Return(frame_manager_.get()));
-    EXPECT_CALL(*context_, getSelectionManager()).WillRepeatedly(
-      testing::Return(selection_manager_.get()));
-  }
+  void mockValidTransform();
 
-  void TearDown() override
-  {
-    scene_manager_->getRootSceneNode()->removeAndDestroyAllChildren();
-  }
-
-  static void TearDownTestCase()
-  {
-    Ogre::Root::getSingletonPtr()->destroySceneManager(scene_manager_);
-  }
-
-  void mockValidTransform()
-  {
-    Ogre::Vector3 position(0, 1, 0);
-    Ogre::Quaternion orientation(0, 0, 1, 0);
-    mockValidTransform(position, orientation);
-  }
-
-  void mockValidTransform(Ogre::Vector3 position, Ogre::Quaternion orientation)
-  {
-    EXPECT_CALL(
-      *frame_manager_,
-      transform(::testing::_, ::testing::_, ::testing::_, ::testing::_, ::testing::_))  // NOLINT
-    .WillRepeatedly(::testing::DoAll(    // NOLINT
-        ::testing::SetArgReferee<3>(position),
-        ::testing::SetArgReferee<4>(orientation),
-        ::testing::Return(true)
-      ));
-
-    EXPECT_CALL(
-      *frame_manager_,
-      getTransform(::testing::_, ::testing::_, ::testing::_, ::testing::_))
-    .WillRepeatedly(::testing::DoAll(    // NOLINT
-        ::testing::SetArgReferee<2>(position),
-        ::testing::SetArgReferee<3>(orientation),
-        ::testing::Return(true)
-      ));
-  }
+  void mockValidTransform(Ogre::Vector3 position, Ogre::Quaternion orientation);
 
   static std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
   static Ogre::SceneManager * scene_manager_;
@@ -126,8 +76,5 @@ public:
   std::string fixed_frame = "fixed_frame";
 };
 
-Ogre::SceneManager * DisplayTestFixture::scene_manager_ = nullptr;
-std::shared_ptr<rviz_rendering::OgreTestingEnvironment>
-DisplayTestFixture::testing_environment_ = nullptr;
 
 #endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__DISPLAY_TEST_FIXTURE_HPP_

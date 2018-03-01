@@ -53,17 +53,18 @@
 #include "../../../../../src/rviz_default_plugins/displays/marker/markers/mesh_resource_marker.hpp"
 
 #include "markers_test_fixture.hpp"
+#include "../marker_messages.hpp"
 
 using namespace ::testing;  // NOLINT
 
 TEST_F(MarkersTestFixture, setMessage_with_no_transform_makes_node_invisible) {
-  auto mesh_resource_marker =
+  marker_ =
     makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
 
   EXPECT_CALL(*frame_manager_, transform(_, _, _, _, _)).WillOnce(Return(false));  // NOLINT
   auto message = createDefaultMessage(visualization_msgs::msg::Marker::MESH_RESOURCE);
 
-  mesh_resource_marker->setMessage(message);
+  marker_->setMessage(message);
 
   auto entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), message.mesh_resource);
@@ -72,12 +73,12 @@ TEST_F(MarkersTestFixture, setMessage_with_no_transform_makes_node_invisible) {
 }
 
 TEST_F(MarkersTestFixture, setMessage_with_transform_sets_position_and_orientation) {
-  auto mesh_resource_marker =
+  marker_ =
     makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
   mockValidTransform();
   auto message = createDefaultMessage(visualization_msgs::msg::Marker::MESH_RESOURCE);
 
-  mesh_resource_marker->setMessage(message);
+  marker_->setMessage(message);
 
   auto entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), message.mesh_resource);
@@ -89,14 +90,14 @@ TEST_F(MarkersTestFixture, setMessage_with_transform_sets_position_and_orientati
 }
 
 TEST_F(MarkersTestFixture, setMessage_does_not_attach_entity_when_mesh_is_missing) {
-  auto mesh_resource_marker =
+  marker_ =
     makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
   mockValidTransform();
 
   auto message = createDefaultMessage(visualization_msgs::msg::Marker::MESH_RESOURCE);
   message.mesh_resource = "package://missing_resource.dae";
 
-  mesh_resource_marker->setMessage(message);
+  marker_->setMessage(message);
 
   auto entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), message.mesh_resource);
@@ -104,14 +105,14 @@ TEST_F(MarkersTestFixture, setMessage_does_not_attach_entity_when_mesh_is_missin
 }
 
 TEST_F(MarkersTestFixture, setMessage_does_not_attache_entity_when_no_mesh_attached) {
-  auto mesh_resource_marker =
+  marker_ =
     makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
   mockValidTransform();
 
   auto message = createDefaultMessage(visualization_msgs::msg::Marker::MESH_RESOURCE);
   message.mesh_resource = "";
 
-  mesh_resource_marker->setMessage(message);
+  marker_->setMessage(message);
 
   auto entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), message.mesh_resource);
@@ -119,14 +120,14 @@ TEST_F(MarkersTestFixture, setMessage_does_not_attache_entity_when_no_mesh_attac
 }
 
 TEST_F(MarkersTestFixture, setMessage_attaches_default_material_to_correct_mesh) {
-  auto mesh_resource_marker =
+  marker_ =
     makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
   mockValidTransform();
 
   auto message = createDefaultMessage(visualization_msgs::msg::Marker::MESH_RESOURCE);
   message.mesh_use_embedded_materials = false;
 
-  mesh_resource_marker->setMessage(message);
+  marker_->setMessage(message);
 
   auto entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), message.mesh_resource);
@@ -138,14 +139,14 @@ TEST_F(MarkersTestFixture, setMessage_attaches_default_material_to_correct_mesh)
 }
 
 TEST_F(MarkersTestFixture, setMessage_initially_sets_color_correctly) {
-  auto mesh_resource_marker =
+  marker_ =
     makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
   mockValidTransform();
 
   auto message = createDefaultMessage(visualization_msgs::msg::Marker::MESH_RESOURCE);
   message.mesh_use_embedded_materials = false;
 
-  mesh_resource_marker->setMessage(message);
+  marker_->setMessage(message);
 
   auto entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), message.mesh_resource);
@@ -156,16 +157,16 @@ TEST_F(MarkersTestFixture, setMessage_initially_sets_color_correctly) {
 }
 
 TEST_F(MarkersTestFixture, setMessage_changes_color_on_new_message_changing_color) {
-  auto mesh_resource_marker =
+  marker_ =
     makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
   mockValidTransform();
 
   auto message = createDefaultMessage(visualization_msgs::msg::Marker::MESH_RESOURCE);
   message.mesh_use_embedded_materials = false;
 
-  mesh_resource_marker->setMessage(message);
+  marker_->setMessage(message);
   message.color.b = 0.0f;
-  mesh_resource_marker->setMessage(message);
+  marker_->setMessage(message);
 
   auto entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), message.mesh_resource);
@@ -176,12 +177,12 @@ TEST_F(MarkersTestFixture, setMessage_changes_color_on_new_message_changing_colo
 }
 
 TEST_F(MarkersTestFixture, setMessage_uses_cloned_materials_to_make_selection_work) {
-  auto mesh_resource_marker =
+  marker_ =
     makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
   mockValidTransform();
   auto message = createDefaultMessage(visualization_msgs::msg::Marker::MESH_RESOURCE);
 
-  mesh_resource_marker->setMessage(message);
+  marker_->setMessage(message);
 
   auto entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), message.mesh_resource);
@@ -193,23 +194,23 @@ TEST_F(MarkersTestFixture, setMessage_uses_cloned_materials_to_make_selection_wo
 }
 
 TEST_F(MarkersTestFixture, setMessage_with_new_object_clears_old_entities_and_materials) {
-  auto mesh_resource_marker =
+  marker_ =
     makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
   mockValidTransform();
   auto message = createDefaultMessage(visualization_msgs::msg::Marker::MESH_RESOURCE);
 
-  mesh_resource_marker->setMessage(message);
+  marker_->setMessage(message);
 
   // get everything that needs to be deleted later on
   auto entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), message.mesh_resource);
   ASSERT_TRUE(entity);
-  EXPECT_EQ(1u, mesh_resource_marker->getMaterials().size());
+  EXPECT_EQ(1u, marker_->getMaterials().size());
   auto material_name = entity->getSubEntity(0)->getMaterialName();
   EXPECT_TRUE(Ogre::MaterialManager::getSingletonPtr()->getByName(material_name, "rviz_rendering"));
 
   message.mesh_resource = "package://rviz_rendering_tests/test_meshes/pr2-base_large.dae";
-  mesh_resource_marker->setMessage(message);
+  marker_->setMessage(message);
 
   // entity and material are cleaned up
   auto deleted_entity = rviz_default_plugins::findEntityByMeshName(

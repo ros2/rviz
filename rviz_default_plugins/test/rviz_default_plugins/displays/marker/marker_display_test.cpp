@@ -52,6 +52,7 @@
 #include "src/rviz_default_plugins/displays/marker/markers/mesh_resource_marker.hpp"
 #include "src/rviz_default_plugins/displays/marker/markers/triangle_list_marker.hpp"
 
+#include "marker_messages.hpp"
 #include "../display_test_fixture.hpp"
 #include "../../scene_graph_introspection.hpp"
 
@@ -85,54 +86,9 @@ public:
 visualization_msgs::msg::Marker::SharedPtr createSharedPtrMessage(
   int32_t action, int32_t type, int id = 0)
 {
-  std::string ns = "test_ns";
-
-  auto marker = visualization_msgs::msg::Marker();
-  marker.header = std_msgs::msg::Header();
-  marker.header.frame_id = "marker_frame";
-  marker.header.stamp = rclcpp::Clock().now();
-  marker.ns = ns;
-  marker.id = id;
-
-  marker.type = type;
+  auto marker = createMessageWithPoints(type);
   marker.action = action;
-
-  marker.scale.x = 1;
-  marker.scale.y = 0.2f;
-  marker.scale.z = 0.2f;
-
-  marker.color.a = 1.0f;
-  marker.color.r = 0.0f;
-  marker.color.g = 1.0f;
-  marker.color.b = 1.0f;
-
-  marker.pose.position.x = cos(Ogre::Math::PI / 2);
-  marker.pose.position.y = sin(Ogre::Math::PI / 2);
-  marker.pose.position.z = 5.0f;
-
-  marker.pose.orientation.x = 1.0f;
-  marker.pose.orientation.y = 1.0f;
-  marker.pose.orientation.z = 1.0f;
-  marker.pose.orientation.w = 1.0f;
-
-  geometry_msgs::msg::Point first_point;
-  geometry_msgs::msg::Point second_point;
-
-  first_point.x = 0;
-  first_point.y = 0;
-  first_point.z = 0;
-
-  second_point.x = 1;
-  second_point.y = 1;
-  second_point.z = 0;
-
-  marker.points.push_back(first_point);
-  marker.points.push_back(second_point);
-
-  marker.text = "Displaytext";
-
-  marker.mesh_resource = "package://rviz_rendering_tests/test_meshes/pr2-base.dae";
-  marker.mesh_use_embedded_materials = true;
+  marker.id = id;
   return std::make_shared<visualization_msgs::msg::Marker>(marker);
 }
 
