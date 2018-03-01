@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,21 +31,20 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__ARROW_MARKER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__ARROW_MARKER_HPP_
 
+#include <memory>
+
 #include "marker_base.hpp"
+
+#include "rviz_rendering/objects/arrow.hpp"
 
 namespace Ogre
 {
 class SceneNode;
-}
-
-namespace rviz_rendering
-{
-class Arrow;
-}
+}  // namespace Ogre
 namespace rviz_common
 {
 class DisplayContext;
-}
+}  // namespace rviz_common
 
 namespace rviz_default_plugins
 {
@@ -58,18 +58,20 @@ class ArrowMarker : public MarkerBase
 public:
   ArrowMarker(
     MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);
-  ~ArrowMarker();
-  virtual S_MaterialPtr getMaterials();
+  ~ArrowMarker() override = default;
+  S_MaterialPtr getMaterials() override;
 
 protected:
-  virtual void onNewMessage(
-    const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message);
-  virtual void setDefaultProportions();
-
-  rviz_rendering::Arrow * arrow_;
-  Ogre::SceneNode * child_scene_node_;
-
+  void onNewMessage(
+    const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message) override;
+  std::unique_ptr<rviz_rendering::Arrow> arrow_;
   bool last_arrow_set_from_points_;
+
+private:
+  void printErrorMessage();
+  virtual void setDefaultProportions();
+  void setArrowFromPoints(const MarkerConstSharedPtr & message);
+  void setArrow(const MarkerConstSharedPtr & message);
 };
 
 }  // namespace markers
