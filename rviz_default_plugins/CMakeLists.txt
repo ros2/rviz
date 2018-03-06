@@ -24,6 +24,8 @@ find_package(rviz_rendering REQUIRED)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
+find_package(laser_geometry REQUIRED)
+
 # find_package(geometry_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(visualization_msgs REQUIRED)
@@ -113,6 +115,7 @@ target_link_libraries(rviz_default_plugins
   rviz_rendering::rviz_rendering
   rviz_common::rviz_common
   resource_retriever::resource_retriever
+  laser_geometry::laser_geometry
 )
 ament_target_dependencies(rviz_default_plugins
   # geometry_msgs
