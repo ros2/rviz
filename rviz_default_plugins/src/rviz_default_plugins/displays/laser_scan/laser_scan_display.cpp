@@ -35,7 +35,7 @@
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 
-#include "laser_geometry/laser_geometry.h"
+#include "laser_geometry/laser_geometry.hpp"
 #include "tf2/exceptions.h"
 #include "tf2_ros/buffer.h"
 #include "tf2_ros/buffer_interface.h"
@@ -71,7 +71,7 @@ void LaserScanDisplay::onInitialize()
 
 void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPtr scan)
 {
-  sensor_msgs::msg::PointCloud::SharedPtr cloud = std::make_shared<sensor_msgs::msg::PointCloud>();
+  auto cloud = std::make_shared<sensor_msgs::msg::PointCloud2>();
 
   std::string frame_id = scan->header.frame_id;
 
