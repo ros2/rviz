@@ -246,8 +246,8 @@ void PoseArrayDisplay::updateArrows3d()
   Ogre::Quaternion adjust_orientation( Ogre::Degree(-90), Ogre::Vector3::UNIT_Y );
   for (std::size_t i = 0; i < poses_.size(); ++i)
   {
-    arrows3d_[i].setPosition( poses_[i].position );
-    arrows3d_[i].setOrientation( poses_[i].orientation * adjust_orientation );
+    arrows3d_[i]->setPosition( poses_[i].position );
+    arrows3d_[i]->setOrientation( poses_[i].orientation * adjust_orientation );
   }
 }
 
@@ -259,17 +259,17 @@ void PoseArrayDisplay::updateAxes()
     axes_.pop_back();
   for (std::size_t i = 0; i < poses_.size(); ++i)
   {
-    axes_[i].setPosition( poses_[i].position );
-    axes_[i].setOrientation( poses_[i].orientation );
+    axes_[i]->setPosition( poses_[i].position );
+    axes_[i]->setOrientation( poses_[i].orientation );
   }
 }
 
-rviz_rendering::Arrow * PoseArrayDisplay::makeArrow3d()
+std::unique_ptr<rviz_rendering::Arrow> PoseArrayDisplay::makeArrow3d()
 {
   Ogre::ColourValue color = arrow_color_property_->getOgreColor();
   color.a = arrow_alpha_property_->getFloat();
 
-  rviz_rendering::Arrow * arrow = new rviz_rendering::Arrow(
+  auto arrow = std::make_unique<rviz_rendering::Arrow>(
     scene_manager_,
     arrow_node_,
     arrow3d_shaft_length_property_->getFloat(),
@@ -282,9 +282,9 @@ rviz_rendering::Arrow * PoseArrayDisplay::makeArrow3d()
   return arrow;
 }
 
-rviz_rendering::Axes * PoseArrayDisplay::makeAxes()
+std::unique_ptr<rviz_rendering::Axes> PoseArrayDisplay::makeAxes()
 {
-  return new rviz_rendering::Axes(
+  return std::make_unique<rviz_rendering::Axes>(
     scene_manager_,
     axes_node_,
     axes_length_property_->getFloat(),
@@ -340,7 +340,7 @@ void PoseArrayDisplay::updateArrowColor()
   {
     for (std::size_t i = 0; i < arrows3d_.size(); ++i)
     {
-      arrows3d_[i].setColor( color );
+      arrows3d_[i]->setColor( color );
     }
   }
   context_->queueRender();
@@ -355,7 +355,7 @@ void PoseArrayDisplay::updateArrow2dGeometry()
 void PoseArrayDisplay::updateArrow3dGeometry()
 {
   for (std::size_t i = 0; i < poses_.size(); ++i) {
-    arrows3d_[i].set(
+    arrows3d_[i]->set(
       arrow3d_shaft_length_property_->getFloat(),
       arrow3d_shaft_radius_property_->getFloat(),
       arrow3d_head_length_property_->getFloat(),
@@ -369,7 +369,7 @@ void PoseArrayDisplay::updateAxesGeometry()
 {
   for (
     std::size_t i = 0; i < poses_.size(); ++i) {
-    axes_[i].set(
+    axes_[i]->set(
       axes_length_property_->getFloat(),
       axes_radius_property_->getFloat()
     );

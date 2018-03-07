@@ -30,14 +30,15 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__POSE_ARRAY__POSE_ARRAY_DISPLAY_HPP
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__POSE_ARRAY__POSE_ARRAY_DISPLAY_HPP
 
-#include <geometry_msgs/msg/pose_array.hpp>
+#include <memory>
+
+#include "geometry_msgs/msg/pose_array.hpp"
+
 #include "rviz_common/ros_topic_display.hpp"
 
 // TODO(botteroa-si): This display originally extended the MessageFilterDisplay. Revisit when
 // available
 // #include "rviz_common/message_filter_display.hpp"
-
-#include <boost/ptr_container/ptr_vector.hpp>
 
 namespace Ogre
 {
@@ -80,8 +81,8 @@ private:
   void updateArrows3d();
   void updateAxes();
   void updateDisplay();
-  rviz_rendering::Axes * makeAxes();
-  rviz_rendering::Arrow * makeArrow3d();
+  std::unique_ptr<rviz_rendering::Axes> makeAxes();
+  std::unique_ptr<rviz_rendering::Arrow> makeArrow3d();
 
   struct OgrePose
   {
@@ -90,8 +91,8 @@ private:
   };
 
   std::vector<OgrePose> poses_;
-  boost::ptr_vector<rviz_rendering::Arrow> arrows3d_;
-  boost::ptr_vector<rviz_rendering::Axes> axes_;
+  std::vector<std::unique_ptr<rviz_rendering::Arrow> > arrows3d_;
+  std::vector<std::unique_ptr<rviz_rendering::Axes> > axes_;
 
   Ogre::SceneNode * arrow_node_;
   Ogre::SceneNode * axes_node_;
