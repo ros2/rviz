@@ -29,6 +29,8 @@
 
 #include "pose_array_display.hpp"
 
+#include <memory>
+
 #include <OgreManualObject.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
@@ -44,34 +46,36 @@
 #include "rviz_rendering/arrow.hpp"
 #include "rviz_rendering/axes.hpp"
 
-namespace rviz_default_plugins {
-namespace displays {
+namespace rviz_default_plugins
+{
+namespace displays
+{
 
 namespace
 {
-  struct ShapeType
+struct ShapeType
+{
+  enum
   {
-    enum
-    {
-      Arrow2d,
-      Arrow3d,
-      Axes,
-    };
+    Arrow2d,
+    Arrow3d,
+    Axes,
   };
+};
 
-  Ogre::Vector3 vectorRosToOgre( geometry_msgs::msg::Point const & point )
-  {
-    return Ogre::Vector3( point.x, point.y, point.z );
-  }
-
-  Ogre::Quaternion quaternionRosToOgre( geometry_msgs::msg::Quaternion const & quaternion )
-  {
-    return Ogre::Quaternion( quaternion.w, quaternion.x, quaternion.y, quaternion.z );
-  }
+Ogre::Vector3 vectorRosToOgre(geometry_msgs::msg::Point const & point)
+{
+  return Ogre::Vector3(point.x, point.y, point.z);
 }
 
+Ogre::Quaternion quaternionRosToOgre(geometry_msgs::msg::Quaternion const & quaternion)
+{
+  return Ogre::Quaternion(quaternion.w, quaternion.x, quaternion.y, quaternion.z);
+}
+}  // namespace
+
 PoseArrayDisplay::PoseArrayDisplay()
-  : manual_object_( NULL )
+: manual_object_(NULL)
 {
   shape_property_ = new rviz_common::properties::EnumProperty(
     "Shape", "Arrow (Flat)", "Shape to display the pose as.", this, SLOT(updateShapeChoice()));
@@ -112,11 +116,11 @@ PoseArrayDisplay::PoseArrayDisplay()
     "Axes Radius", 0.01, "Radius of each axis, in meters.",
     this, SLOT(updateAxesGeometry()));
 
-  shape_property_->addOption( "Arrow (Flat)", ShapeType::Arrow2d );
-  shape_property_->addOption( "Arrow (3D)", ShapeType::Arrow3d );
-  shape_property_->addOption( "Axes", ShapeType::Axes );
-  arrow_alpha_property_->setMin( 0 );
-  arrow_alpha_property_->setMax( 1 );
+  shape_property_->addOption("Arrow (Flat)", ShapeType::Arrow2d);
+  shape_property_->addOption("Arrow (3D)", ShapeType::Arrow3d);
+  shape_property_->addOption("Axes", ShapeType::Axes);
+  arrow_alpha_property_->setMin(0);
+  arrow_alpha_property_->setMax(1);
 }
 
 PoseArrayDisplay::~PoseArrayDisplay()
@@ -130,14 +134,14 @@ void PoseArrayDisplay::onInitialize()
 {
   RTDClass::onInitialize();
   manual_object_ = scene_manager_->createManualObject();
-  manual_object_->setDynamic( true );
-  scene_node_->attachObject( manual_object_ );
+  manual_object_->setDynamic(true);
+  scene_node_->attachObject(manual_object_);
   arrow_node_ = scene_node_->createChildSceneNode();
   axes_node_ = scene_node_->createChildSceneNode();
   updateShapeChoice();
 }
 
-bool validateFloats(const geometry_msgs::msg::PoseArray &msg)
+bool validateFloats(const geometry_msgs::msg::PoseArray & msg)
 {
   return rviz_common::validateFloats(msg.poses);
 }
@@ -145,30 +149,29 @@ bool validateFloats(const geometry_msgs::msg::PoseArray &msg)
 void PoseArrayDisplay::processMessage(
   const geometry_msgs::msg::PoseArray::ConstSharedPtr msg)
 {
-  if( !validateFloats( *msg ))
-  {
-    setStatus( rviz_common::properties::StatusProperty::Error, "Topic",
-               "Message contained invalid floating point values (nans or infs)" );
+  if (!validateFloats(*msg)) {
+    setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
+      "Message contained invalid floating point values (nans or infs)");
     return;
   }
 
   if (!setTransform(msg->header)) {
-    setStatus(rviz_common::properties::StatusProperty::Error, "Topic", "Failed to look up transform");
+    setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
+      "Failed to look up transform");
     return;
   }
 
-  poses_.resize( msg->poses.size() );
-  for (std::size_t i = 0; i < msg->poses.size(); ++i)
-  {
-    poses_[i].position = vectorRosToOgre( msg->poses[i].position );
-    poses_[i].orientation = quaternionRosToOgre( msg->poses[i].orientation );
+  poses_.resize(msg->poses.size() );
+  for (std::size_t i = 0; i < msg->poses.size(); ++i) {
+    poses_[i].position = vectorRosToOgre(msg->poses[i].position);
+    poses_[i].orientation = quaternionRosToOgre(msg->poses[i].orientation);
   }
 
   updateDisplay();
   context_->queueRender();
 }
 
-bool PoseArrayDisplay::setTransform(std_msgs::msg::Header const &header)
+bool PoseArrayDisplay::setTransform(std_msgs::msg::Header const & header)
 {
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
@@ -178,8 +181,8 @@ bool PoseArrayDisplay::setTransform(std_msgs::msg::Header const &header)
         .c_str() << "' to frame '" << qPrintable(fixed_frame_) << "'");
     return false;
   }
-  scene_node_->setPosition( position );
-  scene_node_->setOrientation( orientation );
+  scene_node_->setPosition(position);
+  scene_node_->setOrientation(orientation);
   return true;
 }
 
@@ -191,24 +194,22 @@ void PoseArrayDisplay::updateArrows2d()
   color.a = arrow_alpha_property_->getFloat();
   float length = arrow2d_length_property_->getFloat();
   size_t num_poses = poses_.size();
-  manual_object_->estimateVertexCount( num_poses * 6 );
-  manual_object_->begin( "BaseWhiteNoLighting", Ogre::RenderOperation::OT_LINE_LIST );
-  for( size_t i=0; i < num_poses; ++i )
-  {
+  manual_object_->estimateVertexCount(num_poses * 6);
+  manual_object_->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_LINE_LIST);
+  for (size_t i = 0; i < num_poses; ++i) {
     const Ogre::Vector3 & pos = poses_[i].position;
     const Ogre::Quaternion & orient = poses_[i].orientation;
     Ogre::Vector3 vertices[6];
-    vertices[0] = pos; // back of arrow
-    vertices[1] = pos + orient * Ogre::Vector3( length, 0, 0 ); // tip of arrow
-    vertices[2] = vertices[ 1 ];
-    vertices[3] = pos + orient * Ogre::Vector3( 0.75*length, 0.2*length, 0 );
-    vertices[4] = vertices[ 1 ];
-    vertices[5] = pos + orient * Ogre::Vector3( 0.75*length, -0.2*length, 0 );
+    vertices[0] = pos;  // back of arrow
+    vertices[1] = pos + orient * Ogre::Vector3(length, 0, 0);  // tip of arrow
+    vertices[2] = vertices[1];
+    vertices[3] = pos + orient * Ogre::Vector3(0.75 * length, 0.2 * length, 0);
+    vertices[4] = vertices[1];
+    vertices[5] = pos + orient * Ogre::Vector3(0.75 * length, -0.2 * length, 0);
 
-    for( int i = 0; i < 6; ++i )
-    {
-      manual_object_->position( vertices[i] );
-      manual_object_->colour( color );
+    for (int i = 0; i < 6; ++i) {
+      manual_object_->position(vertices[i]);
+      manual_object_->colour(color);
     }
   }
   manual_object_->end();
@@ -218,49 +219,51 @@ void PoseArrayDisplay::updateDisplay()
 {
   int shape = shape_property_->getOptionInt();
   switch (shape) {
-  case ShapeType::Arrow2d:
-    updateArrows2d();
-    arrows3d_.clear();
-    axes_.clear();
-    break;
-  case ShapeType::Arrow3d:
-    updateArrows3d();
-    manual_object_->clear();
-    axes_.clear();
-    break;
-  case ShapeType::Axes:
-    updateAxes();
-    manual_object_->clear();
-    arrows3d_.clear();
-    break;
+    case ShapeType::Arrow2d:
+      updateArrows2d();
+      arrows3d_.clear();
+      axes_.clear();
+      break;
+    case ShapeType::Arrow3d:
+      updateArrows3d();
+      manual_object_->clear();
+      axes_.clear();
+      break;
+    case ShapeType::Axes:
+      updateAxes();
+      manual_object_->clear();
+      arrows3d_.clear();
+      break;
   }
 }
 
 void PoseArrayDisplay::updateArrows3d()
 {
-  while (arrows3d_.size() < poses_.size())
+  while (arrows3d_.size() < poses_.size()) {
     arrows3d_.push_back(makeArrow3d());
-  while (arrows3d_.size() > poses_.size())
+  }
+  while (arrows3d_.size() > poses_.size()) {
     arrows3d_.pop_back();
+  }
 
-  Ogre::Quaternion adjust_orientation( Ogre::Degree(-90), Ogre::Vector3::UNIT_Y );
-  for (std::size_t i = 0; i < poses_.size(); ++i)
-  {
-    arrows3d_[i]->setPosition( poses_[i].position );
-    arrows3d_[i]->setOrientation( poses_[i].orientation * adjust_orientation );
+  Ogre::Quaternion adjust_orientation(Ogre::Degree(-90), Ogre::Vector3::UNIT_Y);
+  for (std::size_t i = 0; i < poses_.size(); ++i) {
+    arrows3d_[i]->setPosition(poses_[i].position);
+    arrows3d_[i]->setOrientation(poses_[i].orientation * adjust_orientation);
   }
 }
 
 void PoseArrayDisplay::updateAxes()
 {
-  while (axes_.size() < poses_.size())
+  while (axes_.size() < poses_.size()) {
     axes_.push_back(makeAxes());
-  while (axes_.size() > poses_.size())
+  }
+  while (axes_.size() > poses_.size()) {
     axes_.pop_back();
-  for (std::size_t i = 0; i < poses_.size(); ++i)
-  {
-    axes_[i]->setPosition( poses_[i].position );
-    axes_[i]->setOrientation( poses_[i].orientation );
+  }
+  for (std::size_t i = 0; i < poses_.size(); ++i) {
+    axes_[i]->setPosition(poses_[i].position);
+    axes_[i]->setOrientation(poses_[i].orientation);
   }
 }
 
@@ -276,7 +279,7 @@ std::unique_ptr<rviz_rendering::Arrow> PoseArrayDisplay::makeArrow3d()
     arrow3d_shaft_radius_property_->getFloat(),
     arrow3d_head_length_property_->getFloat(),
     arrow3d_head_radius_property_->getFloat()
-  );
+    );
 
   arrow->setColor(color);
   return arrow;
@@ -310,21 +313,22 @@ void PoseArrayDisplay::updateShapeChoice()
   bool use_arrow = use_arrow2d || use_arrow3d;
   bool use_axes = shape == ShapeType::Axes;
 
-  arrow_color_property_->setHidden( !use_arrow );
-  arrow_alpha_property_->setHidden( !use_arrow );
+  arrow_color_property_->setHidden(!use_arrow);
+  arrow_alpha_property_->setHidden(!use_arrow);
 
   arrow2d_length_property_->setHidden(!use_arrow2d);
 
-  arrow3d_shaft_length_property_->setHidden( !use_arrow3d );
-  arrow3d_shaft_radius_property_->setHidden( !use_arrow3d );
-  arrow3d_head_length_property_->setHidden( !use_arrow3d );
-  arrow3d_head_radius_property_->setHidden( !use_arrow3d );
+  arrow3d_shaft_length_property_->setHidden(!use_arrow3d);
+  arrow3d_shaft_radius_property_->setHidden(!use_arrow3d);
+  arrow3d_head_length_property_->setHidden(!use_arrow3d);
+  arrow3d_head_radius_property_->setHidden(!use_arrow3d);
 
-  axes_length_property_->setHidden( !use_axes );
-  axes_radius_property_->setHidden( !use_axes );
+  axes_length_property_->setHidden(!use_axes);
+  axes_radius_property_->setHidden(!use_axes);
 
-  if (initialized())
+  if (initialized()) {
     updateDisplay();
+  }
 }
 
 void PoseArrayDisplay::updateArrowColor()
@@ -335,12 +339,9 @@ void PoseArrayDisplay::updateArrowColor()
 
   if (shape == ShapeType::Arrow2d) {
     updateArrows2d();
-  }
-  else if (shape == ShapeType::Arrow3d)
-  {
-    for (std::size_t i = 0; i < arrows3d_.size(); ++i)
-    {
-      arrows3d_[i]->setColor( color );
+  } else if (shape == ShapeType::Arrow3d) {
+    for (std::size_t i = 0; i < arrows3d_.size(); ++i) {
+      arrows3d_[i]->setColor(color);
     }
   }
   context_->queueRender();
@@ -368,7 +369,8 @@ void PoseArrayDisplay::updateArrow3dGeometry()
 void PoseArrayDisplay::updateAxesGeometry()
 {
   for (
-    std::size_t i = 0; i < poses_.size(); ++i) {
+    std::size_t i = 0; i < poses_.size(); ++i)
+  {
     axes_[i]->set(
       axes_length_property_->getFloat(),
       axes_radius_property_->getFloat()
@@ -380,5 +382,5 @@ void PoseArrayDisplay::updateAxesGeometry()
 }  // namespace displays
 }  // namespace rviz_default_plugins
 
-//#include <pluginlib/class_list_macros.hpp>  // NOLINT
-//PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::PoseArrayDisplay, rviz_common::Display)
+// #include <pluginlib/class_list_macros.hpp>  // NOLINT
+// PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::PoseArrayDisplay, rviz_common::Display)

@@ -27,17 +27,17 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__POSE_ARRAY__POSE_ARRAY_DISPLAY_HPP
-#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__POSE_ARRAY__POSE_ARRAY_DISPLAY_HPP
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__POSE_ARRAY__POSE_ARRAY_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__POSE_ARRAY__POSE_ARRAY_DISPLAY_HPP_
 
 #include <memory>
+#include <vector>
 
 #include "geometry_msgs/msg/pose_array.hpp"
 
 #include "rviz_common/ros_topic_display.hpp"
 
-// TODO(botteroa-si): This display originally extended the MessageFilterDisplay. Revisit when
-// available
+// TODO(botteroa): Originally the display extended the MessageFilterDisplay. Revisit when available.
 // #include "rviz_common/message_filter_display.hpp"
 
 namespace Ogre
@@ -45,8 +45,10 @@ namespace Ogre
 class ManualObject;
 }  // namespace Ogre
 
-namespace rviz_common {
-namespace properties {
+namespace rviz_common
+{
+namespace properties
+{
 
 class EnumProperty;
 class ColorProperty;
@@ -54,18 +56,22 @@ class FloatProperty;
 }  // namespace properties
 }  // namespace rviz_common
 
-namespace rviz_rendering {
+namespace rviz_rendering
+{
 class Arrow;
 class Axes;
 }  // namespace rviz_rendering
 
-namespace rviz_default_plugins {
-namespace displays {
+namespace rviz_default_plugins
+{
+namespace displays
+{
 
 /** @brief Displays a geometry_msgs/PoseArray message as a bunch of line-drawn arrows. */
 class PoseArrayDisplay : public rviz_common::RosTopicDisplay<geometry_msgs::msg::PoseArray>
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   PoseArrayDisplay();
   ~PoseArrayDisplay() override;
@@ -76,7 +82,7 @@ protected:
   void processMessage(geometry_msgs::msg::PoseArray::ConstSharedPtr msg) override;
 
 private:
-  bool setTransform(std_msgs::msg::Header const &header);
+  bool setTransform(std_msgs::msg::Header const & header);
   void updateArrows2d();
   void updateArrows3d();
   void updateAxes();
@@ -91,12 +97,12 @@ private:
   };
 
   std::vector<OgrePose> poses_;
-  std::vector<std::unique_ptr<rviz_rendering::Arrow> > arrows3d_;
-  std::vector<std::unique_ptr<rviz_rendering::Axes> > axes_;
+  std::vector<std::unique_ptr<rviz_rendering::Arrow>> arrows3d_;
+  std::vector<std::unique_ptr<rviz_rendering::Axes>> axes_;
 
   Ogre::SceneNode * arrow_node_;
   Ogre::SceneNode * axes_node_;
-  Ogre::ManualObject* manual_object_;
+  Ogre::ManualObject * manual_object_;
 
   rviz_common::properties::EnumProperty * shape_property_;
   rviz_common::properties::ColorProperty * arrow_color_property_;
@@ -132,4 +138,4 @@ private Q_SLOTS:
 }  // namespace displays
 }  // namespace rviz_default_plugins
 
-#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__POSE_ARRAY__POSE_ARRAY_DISPLAY_HPP
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__POSE_ARRAY__POSE_ARRAY_DISPLAY_HPP_
