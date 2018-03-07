@@ -159,7 +159,7 @@ void PointCloudCommon::initialize(
   Ogre::SceneNode * scene_node)
 {
   transformer_class_loader_ = std::make_unique<pluginlib::ClassLoader<PointCloudTransformer>>(
-    "rviz2", "rviz_default_plugins::PointCloudTransformer");
+    "rviz_default_plugins", "rviz_default_plugins::PointCloudTransformer");
   loadTransformers();
 
   context_ = context;
