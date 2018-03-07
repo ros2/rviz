@@ -27,23 +27,25 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "pose_array_display.hpp"
+
 #include <OgreManualObject.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 
-#include "rviz/display_context.h"
-#include "rviz/frame_manager.h"
-#include "rviz/properties/enum_property.h"
-#include "rviz/properties/color_property.h"
-#include "rviz/properties/float_property.h"
-#include "rviz/validate_floats.h"
-#include "rviz/ogre_helpers/arrow.h"
-#include "rviz/ogre_helpers/axes.h"
+#include "rviz_common/display_context.hpp"
+#include "rviz_common/frame_manager.hpp"
+#include "rviz_common/logging.hpp"
+#include "rviz_common/properties/enum_property.hpp"
+#include "rviz_common/properties/color_property.hpp"
+#include "rviz_common/properties/float_property.hpp"
+#include "rviz_common/validate_floats.hpp"
 
-#include "rviz/default_plugin/pose_array_display.h"
+#include "rviz_rendering/arrow.hpp"
+#include "rviz_rendering/axes.hpp"
 
-namespace rviz
-{
+namespace rviz_default_plugins {
+namespace displays {
 
 namespace
 {
@@ -57,12 +59,12 @@ namespace
     };
   };
 
-  Ogre::Vector3 vectorRosToOgre( geometry_msgs::Point const & point )
+  Ogre::Vector3 vectorRosToOgre( geometry_msgs::msg::Point const & point )
   {
     return Ogre::Vector3( point.x, point.y, point.z );
   }
 
-  Ogre::Quaternion quaternionRosToOgre( geometry_msgs::Quaternion const & quaternion )
+  Ogre::Quaternion quaternionRosToOgre( geometry_msgs::msg::Quaternion const & quaternion )
   {
     return Ogre::Quaternion( quaternion.w, quaternion.x, quaternion.y, quaternion.z );
   }
@@ -71,35 +73,44 @@ namespace
 PoseArrayDisplay::PoseArrayDisplay()
   : manual_object_( NULL )
 {
-  shape_property_ = new EnumProperty( "Shape", "Arrow (Flat)", "Shape to display the pose as.",
-                                       this, SLOT( updateShapeChoice() ) );
+  shape_property_ = new rviz_common::properties::EnumProperty(
+    "Shape", "Arrow (Flat)", "Shape to display the pose as.", this, SLOT(updateShapeChoice()));
 
-  arrow_color_property_  = new ColorProperty(  "Color", QColor( 255, 25, 0 ), "Color to draw the arrows.",
-                                                this, SLOT( updateArrowColor() ) );
+  arrow_color_property_ = new rviz_common::properties::ColorProperty(
+    "Color", QColor(255, 25, 0), "Color to draw the arrows.",
+    this, SLOT(updateArrowColor()));
 
-  arrow_alpha_property_ = new FloatProperty( "Alpha", 1, "Amount of transparency to apply to the displayed poses.",
-                                             this, SLOT( updateArrowColor() ) );
+  arrow_alpha_property_ = new rviz_common::properties::FloatProperty(
+    "Alpha", 1, "Amount of transparency to apply to the displayed poses.",
+    this, SLOT(updateArrowColor()));
 
-  arrow2d_length_property_ = new FloatProperty( "Arrow Length", 0.3, "Length of the arrows.",
-                                                 this, SLOT( updateArrow2dGeometry() ) );
+  arrow2d_length_property_ = new rviz_common::properties::FloatProperty(
+    "Arrow Length", 0.3, "Length of the arrows.",
+    this, SLOT(updateArrow2dGeometry()));
 
-  arrow3d_head_radius_property_ = new FloatProperty( "Head Radius", 0.03, "Radius of the arrow's head, in meters.",
-                                                     this, SLOT( updateArrow3dGeometry() ) );
+  arrow3d_head_radius_property_ = new rviz_common::properties::FloatProperty(
+    "Head Radius", 0.03, "Radius of the arrow's head, in meters.",
+    this, SLOT(updateArrow3dGeometry()));
 
-  arrow3d_head_length_property_ = new FloatProperty( "Head Length", 0.07, "Length of the arrow's head, in meters.",
-                                                     this, SLOT( updateArrow3dGeometry() ) );
+  arrow3d_head_length_property_ = new rviz_common::properties::FloatProperty(
+    "Head Length", 0.07, "Length of the arrow's head, in meters.",
+    this, SLOT(updateArrow3dGeometry()));
 
-  arrow3d_shaft_radius_property_ = new FloatProperty( "Shaft Radius", 0.01, "Radius of the arrow's shaft, in meters.",
-                                                      this, SLOT( updateArrow3dGeometry() ) );
+  arrow3d_shaft_radius_property_ = new rviz_common::properties::FloatProperty(
+    "Shaft Radius", 0.01, "Radius of the arrow's shaft, in meters.",
+    this, SLOT(updateArrow3dGeometry()));
 
-  arrow3d_shaft_length_property_ = new FloatProperty( "Shaft Length", 0.23, "Length of the arrow's shaft, in meters.",
-                                                      this, SLOT( updateArrow3dGeometry() ) );
+  arrow3d_shaft_length_property_ = new rviz_common::properties::FloatProperty(
+    "Shaft Length", 0.23, "Length of the arrow's shaft, in meters.",
+    this, SLOT(updateArrow3dGeometry()));
 
-  axes_length_property_ = new FloatProperty( "Axes Length", 0.3, "Length of each axis, in meters.",
-                                             this, SLOT( updateAxesGeometry() ) );
+  axes_length_property_ = new rviz_common::properties::FloatProperty(
+    "Axes Length", 0.3, "Length of each axis, in meters.",
+    this, SLOT(updateAxesGeometry()));
 
-  axes_radius_property_ = new FloatProperty( "Axes Radius", 0.01, "Radius of each axis, in meters.",
-                                             this, SLOT( updateAxesGeometry() ) );
+  axes_radius_property_ = new rviz_common::properties::FloatProperty(
+    "Axes Radius", 0.01, "Radius of each axis, in meters.",
+    this, SLOT(updateAxesGeometry()));
 
   shape_property_->addOption( "Arrow (Flat)", ShapeType::Arrow2d );
   shape_property_->addOption( "Arrow (3D)", ShapeType::Arrow3d );
@@ -110,15 +121,14 @@ PoseArrayDisplay::PoseArrayDisplay()
 
 PoseArrayDisplay::~PoseArrayDisplay()
 {
-  if ( initialized() )
-  {
-    scene_manager_->destroyManualObject( manual_object_ );
+  if (initialized()) {
+    scene_manager_->destroyManualObject(manual_object_);
   }
 }
 
 void PoseArrayDisplay::onInitialize()
 {
-  MFDClass::onInitialize();
+  RTDClass::onInitialize();
   manual_object_ = scene_manager_->createManualObject();
   manual_object_->setDynamic( true );
   scene_node_->attachObject( manual_object_ );
@@ -127,23 +137,23 @@ void PoseArrayDisplay::onInitialize()
   updateShapeChoice();
 }
 
-bool validateFloats( const geometry_msgs::PoseArray& msg )
+bool validateFloats(const geometry_msgs::msg::PoseArray &msg)
 {
-  return validateFloats( msg.poses );
+  return rviz_common::validateFloats(msg.poses);
 }
 
-void PoseArrayDisplay::processMessage( const geometry_msgs::PoseArray::ConstPtr& msg )
+void PoseArrayDisplay::processMessage(
+  const geometry_msgs::msg::PoseArray::ConstSharedPtr msg)
 {
   if( !validateFloats( *msg ))
   {
-    setStatus( StatusProperty::Error, "Topic",
+    setStatus( rviz_common::properties::StatusProperty::Error, "Topic",
                "Message contained invalid floating point values (nans or infs)" );
     return;
   }
 
-  if( !setTransform( msg->header ) )
-  {
-    setStatus( StatusProperty::Error, "Topic", "Failed to look up transform" );
+  if (!setTransform(msg->header)) {
+    setStatus(rviz_common::properties::StatusProperty::Error, "Topic", "Failed to look up transform");
     return;
   }
 
@@ -158,15 +168,14 @@ void PoseArrayDisplay::processMessage( const geometry_msgs::PoseArray::ConstPtr&
   context_->queueRender();
 }
 
-bool PoseArrayDisplay::setTransform( std_msgs::Header const & header )
+bool PoseArrayDisplay::setTransform(std_msgs::msg::Header const &header)
 {
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
-  if( !context_->getFrameManager()->getTransform( header, position, orientation ) )
-  {
-    ROS_ERROR( "Error transforming pose '%s' from frame '%s' to frame '%s'",
-               qPrintable( getName() ), header.frame_id.c_str(),
-               qPrintable( fixed_frame_ ) );
+  if (!context_->getFrameManager()->getTransform(header, position, orientation)) {
+    RVIZ_COMMON_LOG_ERROR_STREAM(
+      "Error transforming pose '" << qPrintable(getName()) << "' from frame '" << header.frame_id
+        .c_str() << "' to frame '" << qPrintable(fixed_frame_) << "'");
     return false;
   }
   scene_node_->setPosition( position );
@@ -179,7 +188,7 @@ void PoseArrayDisplay::updateArrows2d()
   manual_object_->clear();
 
   Ogre::ColourValue color = arrow_color_property_->getOgreColor();
-  color.a                 = arrow_alpha_property_->getFloat();
+  color.a = arrow_alpha_property_->getFloat();
   float length = arrow2d_length_property_->getFloat();
   size_t num_poses = poses_.size();
   manual_object_->estimateVertexCount( num_poses * 6 );
@@ -255,12 +264,12 @@ void PoseArrayDisplay::updateAxes()
   }
 }
 
-Arrow * PoseArrayDisplay::makeArrow3d()
+rviz_rendering::Arrow * PoseArrayDisplay::makeArrow3d()
 {
   Ogre::ColourValue color = arrow_color_property_->getOgreColor();
-  color.a                 = arrow_alpha_property_->getFloat();
+  color.a = arrow_alpha_property_->getFloat();
 
-  Arrow * arrow = new Arrow(
+  rviz_rendering::Arrow * arrow = new rviz_rendering::Arrow(
     scene_manager_,
     arrow_node_,
     arrow3d_shaft_length_property_->getFloat(),
@@ -273,9 +282,9 @@ Arrow * PoseArrayDisplay::makeArrow3d()
   return arrow;
 }
 
-Axes * PoseArrayDisplay::makeAxes()
+rviz_rendering::Axes * PoseArrayDisplay::makeAxes()
 {
-  return new Axes(
+  return new rviz_rendering::Axes(
     scene_manager_,
     axes_node_,
     axes_length_property_->getFloat(),
@@ -285,9 +294,8 @@ Axes * PoseArrayDisplay::makeAxes()
 
 void PoseArrayDisplay::reset()
 {
-  MFDClass::reset();
-  if( manual_object_ )
-  {
+  RTDClass::reset();
+  if (manual_object_) {
     manual_object_->clear();
   }
   arrows3d_.clear();
@@ -299,8 +307,8 @@ void PoseArrayDisplay::updateShapeChoice()
   int shape = shape_property_->getOptionInt();
   bool use_arrow2d = shape == ShapeType::Arrow2d;
   bool use_arrow3d = shape == ShapeType::Arrow3d;
-  bool use_arrow   = use_arrow2d || use_arrow3d;
-  bool use_axes    = shape == ShapeType::Axes;
+  bool use_arrow = use_arrow2d || use_arrow3d;
+  bool use_axes = shape == ShapeType::Axes;
 
   arrow_color_property_->setHidden( !use_arrow );
   arrow_alpha_property_->setHidden( !use_arrow );
@@ -323,10 +331,9 @@ void PoseArrayDisplay::updateArrowColor()
 {
   int shape = shape_property_->getOptionInt();
   Ogre::ColourValue color = arrow_color_property_->getOgreColor();
-  color.a                 = arrow_alpha_property_->getFloat();
+  color.a = arrow_alpha_property_->getFloat();
 
-  if (shape == ShapeType::Arrow2d)
-  {
+  if (shape == ShapeType::Arrow2d) {
     updateArrows2d();
   }
   else if (shape == ShapeType::Arrow3d)
@@ -347,8 +354,7 @@ void PoseArrayDisplay::updateArrow2dGeometry()
 
 void PoseArrayDisplay::updateArrow3dGeometry()
 {
-  for (std::size_t i = 0; i < poses_.size(); ++i)
-  {
+  for (std::size_t i = 0; i < poses_.size(); ++i) {
     arrows3d_[i].set(
       arrow3d_shaft_length_property_->getFloat(),
       arrow3d_shaft_radius_property_->getFloat(),
@@ -361,8 +367,8 @@ void PoseArrayDisplay::updateArrow3dGeometry()
 
 void PoseArrayDisplay::updateAxesGeometry()
 {
-  for (std::size_t i = 0; i < poses_.size(); ++i)
-  {
+  for (
+    std::size_t i = 0; i < poses_.size(); ++i) {
     axes_[i].set(
       axes_length_property_->getFloat(),
       axes_radius_property_->getFloat()
@@ -371,7 +377,8 @@ void PoseArrayDisplay::updateAxesGeometry()
   context_->queueRender();
 }
 
-} // namespace rviz
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#include <pluginlib/class_list_macros.h>
-PLUGINLIB_EXPORT_CLASS( rviz::PoseArrayDisplay, rviz::Display )
+//#include <pluginlib/class_list_macros.hpp>  // NOLINT
+//PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::PoseArrayDisplay, rviz_common::Display)

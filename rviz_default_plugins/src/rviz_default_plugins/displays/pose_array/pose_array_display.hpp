@@ -27,77 +27,89 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_POSE_ARRAY_DISPLAY_H_
-#define RVIZ_POSE_ARRAY_DISPLAY_H_
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__POSE_ARRAY__POSE_ARRAY_DISPLAY_HPP
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__POSE_ARRAY__POSE_ARRAY_DISPLAY_HPP
 
-#include <geometry_msgs/PoseArray.h>
+#include <geometry_msgs/msg/pose_array.hpp>
+#include "rviz_common/ros_topic_display.hpp"
 
-#include "rviz/message_filter_display.h"
+// TODO(botteroa-si): This display originally extended the MessageFilterDisplay. Revisit when
+// available
+// #include "rviz_common/message_filter_display.hpp"
 
 #include <boost/ptr_container/ptr_vector.hpp>
 
 namespace Ogre
 {
 class ManualObject;
-}
+}  // namespace Ogre
 
-namespace rviz
-{
+namespace rviz_common {
+namespace properties {
 
 class EnumProperty;
 class ColorProperty;
 class FloatProperty;
+}  // namespace properties
+}  // namespace rviz_common
+
+namespace rviz_rendering {
 class Arrow;
 class Axes;
+}  // namespace rviz_rendering
+
+namespace rviz_default_plugins {
+namespace displays {
 
 /** @brief Displays a geometry_msgs/PoseArray message as a bunch of line-drawn arrows. */
-class PoseArrayDisplay: public MessageFilterDisplay<geometry_msgs::PoseArray>
+class PoseArrayDisplay : public rviz_common::RosTopicDisplay<geometry_msgs::msg::PoseArray>
 {
 Q_OBJECT
 public:
   PoseArrayDisplay();
-  virtual ~PoseArrayDisplay();
+  ~PoseArrayDisplay() override;
 
 protected:
-  virtual void onInitialize();
-  virtual void reset();
-  virtual void processMessage( const geometry_msgs::PoseArray::ConstPtr& msg );
+  void onInitialize() override;
+  void reset() override;
+  void processMessage(geometry_msgs::msg::PoseArray::ConstSharedPtr msg) override;
 
 private:
-  bool setTransform(std_msgs::Header const & header);
+  bool setTransform(std_msgs::msg::Header const &header);
   void updateArrows2d();
   void updateArrows3d();
   void updateAxes();
   void updateDisplay();
-  Axes * makeAxes();
-  Arrow * makeArrow3d();
+  rviz_rendering::Axes * makeAxes();
+  rviz_rendering::Arrow * makeArrow3d();
 
-  struct OgrePose {
+  struct OgrePose
+  {
     Ogre::Vector3 position;
     Ogre::Quaternion orientation;
   };
 
   std::vector<OgrePose> poses_;
-  boost::ptr_vector<Arrow> arrows3d_;
-  boost::ptr_vector<Axes> axes_;
+  boost::ptr_vector<rviz_rendering::Arrow> arrows3d_;
+  boost::ptr_vector<rviz_rendering::Axes> axes_;
 
   Ogre::SceneNode * arrow_node_;
   Ogre::SceneNode * axes_node_;
   Ogre::ManualObject* manual_object_;
 
-  EnumProperty* shape_property_;
-  ColorProperty* arrow_color_property_;
-  FloatProperty* arrow_alpha_property_;
+  rviz_common::properties::EnumProperty * shape_property_;
+  rviz_common::properties::ColorProperty * arrow_color_property_;
+  rviz_common::properties::FloatProperty * arrow_alpha_property_;
 
-  FloatProperty* arrow2d_length_property_;
+  rviz_common::properties::FloatProperty * arrow2d_length_property_;
 
-  FloatProperty* arrow3d_head_radius_property_;
-  FloatProperty* arrow3d_head_length_property_;
-  FloatProperty* arrow3d_shaft_radius_property_;
-  FloatProperty* arrow3d_shaft_length_property_;
+  rviz_common::properties::FloatProperty * arrow3d_head_radius_property_;
+  rviz_common::properties::FloatProperty * arrow3d_head_length_property_;
+  rviz_common::properties::FloatProperty * arrow3d_shaft_radius_property_;
+  rviz_common::properties::FloatProperty * arrow3d_shaft_length_property_;
 
-  FloatProperty* axes_length_property_;
-  FloatProperty* axes_radius_property_;
+  rviz_common::properties::FloatProperty * axes_length_property_;
+  rviz_common::properties::FloatProperty * axes_radius_property_;
 
 private Q_SLOTS:
   /// Update the interface and visible shapes based on the selected shape type.
@@ -116,6 +128,7 @@ private Q_SLOTS:
   void updateAxesGeometry();
 };
 
-} // namespace rviz
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif /* RVIZ_POSE_ARRAY_DISPLAY_H_ */
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__POSE_ARRAY__POSE_ARRAY_DISPLAY_HPP
