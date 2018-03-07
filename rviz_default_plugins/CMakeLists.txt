@@ -246,6 +246,15 @@ if(BUILD_TESTING)
 #    target_link_libraries(marker_display_test rviz_default_plugins)
 #  endif()
 
+  ament_add_gmock(pose_array_display_test
+    test/rviz_default_plugins/displays/pose_array/pose_array_display_test.cpp
+    test/rviz_default_plugins/displays/display_test_fixture.cpp
+    test/rviz_default_plugins/scene_graph_introspection.cpp
+    APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;
+    ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+  if(TARGET pose_array_display_test)
+    target_link_libraries(pose_array_display_test rviz_default_plugins)
+  endif()
 endif()
 
 ament_package()
