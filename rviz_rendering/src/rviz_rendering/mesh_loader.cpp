@@ -55,7 +55,6 @@
 #include <QFileInfo>
 #include <QString>
 
-
 #define ASSIMP_UNIFIED_HEADER_NAMES 1
 #if defined(ASSIMP_UNIFIED_HEADER_NAMES)
 #include <assimp/Importer.hpp>
