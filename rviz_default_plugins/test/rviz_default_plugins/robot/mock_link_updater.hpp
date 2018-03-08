@@ -42,7 +42,6 @@
 
 #include "../../../src/rviz_default_plugins/robot/link_updater.hpp"
 
-
 class MockLinkUpdater : public rviz_default_plugins::robot::LinkUpdater
 {
 public:
