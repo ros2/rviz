@@ -178,8 +178,6 @@ if(BUILD_TESTING)
     target_link_libraries(test_rviz_rendering rviz_rendering)
   endif()
 
-
-
   # TODO(wjwwood): reenable this test when it can be run on CI
   # ament_add_gtest(point_cloud_test_target
   #   test/point_cloud_test.cpp
