@@ -54,7 +54,6 @@
 #include "../../../src/rviz_default_plugins/robot/robot_joint.hpp"
 #include "../../../src/rviz_default_plugins/robot/robot_link.hpp"
 
-
 using namespace ::testing;  // NOLINT
 using namespace rviz_default_plugins::robot;  // NOLINT
 
