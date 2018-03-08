@@ -36,7 +36,7 @@
 #include <OgreSceneNode.h>
 
 #include "rviz_common/display_context.hpp"
-#include "rviz_common/frame_manager.hpp"
+#include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/logging.hpp"
 #include "rviz_common/properties/enum_property.hpp"
 #include "rviz_common/properties/color_property.hpp"
@@ -73,6 +73,24 @@ Ogre::Quaternion quaternionRosToOgre(geometry_msgs::msg::Quaternion const & quat
   return Ogre::Quaternion(quaternion.w, quaternion.x, quaternion.y, quaternion.z);
 }
 }  // namespace
+
+PoseArrayDisplay::PoseArrayDisplay(
+  rviz_common::DisplayContext * display_context,
+  Ogre::SceneNode * scene_node,
+  Ogre::ManualObject * manual_object)
+: PoseArrayDisplay()
+{
+  context_ = display_context;
+  scene_node_ = scene_node;
+  scene_manager_ = context_->getSceneManager();
+
+  manual_object_ = manual_object;
+  manual_object_->setDynamic(true);
+  scene_node_->attachObject(manual_object_);
+  arrow_node_ = scene_node_->createChildSceneNode();
+  axes_node_ = scene_node_->createChildSceneNode();
+  updateShapeChoice();
+}
 
 PoseArrayDisplay::PoseArrayDisplay()
 : manual_object_(NULL)
@@ -146,8 +164,7 @@ bool validateFloats(const geometry_msgs::msg::PoseArray & msg)
   return rviz_common::validateFloats(msg.poses);
 }
 
-void PoseArrayDisplay::processMessage(
-  const geometry_msgs::msg::PoseArray::ConstSharedPtr msg)
+void PoseArrayDisplay::processMessage(const geometry_msgs::msg::PoseArray::ConstSharedPtr msg)
 {
   if (!validateFloats(*msg)) {
     setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
@@ -161,7 +178,7 @@ void PoseArrayDisplay::processMessage(
     return;
   }
 
-  poses_.resize(msg->poses.size() );
+  poses_.resize(msg->poses.size());
   for (std::size_t i = 0; i < msg->poses.size(); ++i) {
     poses_[i].position = vectorRosToOgre(msg->poses[i].position);
     poses_[i].orientation = quaternionRosToOgre(msg->poses[i].orientation);
@@ -377,6 +394,11 @@ void PoseArrayDisplay::updateAxesGeometry()
     );
   }
   context_->queueRender();
+}
+
+void PoseArrayDisplay::setShape(QString shape)
+{
+  shape_property_->setValue(shape);
 }
 
 }  // namespace displays

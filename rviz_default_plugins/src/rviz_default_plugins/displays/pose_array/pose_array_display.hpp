@@ -73,13 +73,21 @@ class PoseArrayDisplay : public rviz_common::RosTopicDisplay<geometry_msgs::msg:
   Q_OBJECT
 
 public:
+  // TODO(botteroa-si): Constructor for testing, remove once ros_nodes can be mocked and call
+  // initialize instead
+  PoseArrayDisplay(
+    rviz_common::DisplayContext * display_context,
+    Ogre::SceneNode * scene_node,
+    Ogre::ManualObject * manual_object);
   PoseArrayDisplay();
   ~PoseArrayDisplay() override;
+
+  void processMessage(geometry_msgs::msg::PoseArray::ConstSharedPtr msg) override;
+  void setShape(QString shape);  // for testing
 
 protected:
   void onInitialize() override;
   void reset() override;
-  void processMessage(geometry_msgs::msg::PoseArray::ConstSharedPtr msg) override;
 
 private:
   bool setTransform(std_msgs::msg::Header const & header);

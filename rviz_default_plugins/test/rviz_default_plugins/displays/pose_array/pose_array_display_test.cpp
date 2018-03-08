@@ -35,6 +35,7 @@
 #include <memory>
 
 #include <OgreRoot.h>
+#include <OgreEntity.h>
 
 #include "../../../../src/rviz_default_plugins/displays/pose_array/pose_array_display.hpp"
 
@@ -52,14 +53,113 @@ public:
   void SetUp() override
   {
     DisplayTestFixture::SetUp();
-    display_ = std::make_unique<rviz_default_plugins::displays::PoseArrayDisplay>();
+
+    manual_object_ = scene_manager_->createManualObject();
+    display_ = std::make_unique<rviz_default_plugins::displays::PoseArrayDisplay>(
+      context_.get(),
+      scene_manager_->getRootSceneNode()->createChildSceneNode(),
+      manual_object_);
   }
 
   void TearDown() override
   {
-    display_.reset(nullptr);
+    scene_manager_->destroyManualObject(manual_object_);
+    display_.reset();
     DisplayTestFixture::TearDown();
   }
 
+  void expectArrowIsVisible()
+  {
+    auto arrow_head = rviz_default_plugins::findEntityByMeshName(
+      scene_manager_->getRootSceneNode(), "rviz_cone" ".mesh");
+    auto arrow_shaft = rviz_default_plugins::findEntityByMeshName(
+      scene_manager_->getRootSceneNode(), "rviz_cylinder.mesh");
+
+    EXPECT_TRUE(arrow_head->isVisible() && arrow_shaft->isVisible());
+  }
+
+  void expectAxesAreVisible(Ogre::SceneNode * node)
+  {
+    for (uint16_t i = 0; i < 3; ++i) {
+      auto child_node = dynamic_cast<Ogre::SceneNode *>(node->getChild(i)->getChild(0));
+      auto entity = dynamic_cast<Ogre::Entity *>(child_node->getAttachedObject(0));
+      ASSERT_TRUE(entity);
+      EXPECT_TRUE(entity->isVisible());
+    }
+  }
+
   std::unique_ptr<rviz_default_plugins::displays::PoseArrayDisplay> display_;
+  Ogre::ManualObject * manual_object_;
 };
+
+geometry_msgs::msg::PoseArray::ConstSharedPtr createMessageWithOnePose()
+{
+  auto message = std::make_shared<geometry_msgs::msg::PoseArray>();
+  message->header = std_msgs::msg::Header();
+  message->header.frame_id = "pose_array_frame";
+  message->header.stamp = rclcpp::Clock().now();
+
+  geometry_msgs::msg::Pose pose;
+  pose.position.x = 1;
+  pose.position.y = 2;
+  pose.position.z = 3;
+  pose.orientation.x = 1;
+  pose.orientation.y = 0;
+  pose.orientation.z = 1;
+  pose.orientation.w = 0;
+
+  message->poses.push_back(pose);
+
+  return message;
+}
+
+TEST_F(PoseArrayDisplayFixture, setTransform_set_node_position_and_orientation_correctly) {
+  mockValidTransform();
+  auto msg = createMessageWithOnePose();
+  display_->processMessage(msg);
+
+  EXPECT_EQ(Ogre::Vector3(0, 1, 0), display_->getSceneNode()->getPosition());
+  EXPECT_EQ(Ogre::Quaternion(0, 0, 1, 0), display_->getSceneNode()->getOrientation());
+}
+
+TEST_F(PoseArrayDisplayFixture, processMessage_sets_arrows3d_correctly) {
+  mockValidTransform();
+  auto msg = createMessageWithOnePose();
+
+  display_->setShape("Arrow (3D)");
+  display_->processMessage(msg);
+
+  auto arrows = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
+
+  size_t expected_number_of_arrows = 1;
+  // The orientation is manipulated by the display and then in setOrientation() (see arrow.cpp)
+  auto expected_orientation =
+    Ogre::Quaternion(0, 1, 0, 1) *
+    Ogre::Quaternion(Ogre::Degree(-90), Ogre::Vector3::UNIT_Y) *
+    Ogre::Quaternion(Ogre::Degree(-90), Ogre::Vector3::UNIT_X);
+  expected_orientation.normalise();
+
+  EXPECT_EQ(expected_number_of_arrows, arrows.size());
+  expectArrowIsVisible();
+  EXPECT_VECTOR3_EQ(Ogre::Vector3(1, 2, 3), arrows[0]->getPosition());
+  EXPECT_QUATERNION_EQ(expected_orientation, arrows[0]->getOrientation());
+}
+
+TEST_F(PoseArrayDisplayFixture, processMessage_sets_axes_correctly) {
+  mockValidTransform();
+  auto msg = createMessageWithOnePose();
+
+  display_->setShape("Axes");
+  display_->processMessage(msg);
+
+  auto frames = rviz_default_plugins::findAllAxes(scene_manager_->getRootSceneNode());
+
+  size_t expected_number_of_frames = 1;
+  auto expected_orientation = Ogre::Quaternion(0, 1, 0, 1);
+  expected_orientation.normalise();
+
+  EXPECT_EQ(expected_number_of_frames, frames.size());
+  expectAxesAreVisible(frames[0]);
+  EXPECT_VECTOR3_EQ(Ogre::Vector3(1, 2, 3), frames[0]->getPosition());
+  EXPECT_QUATERNION_EQ(expected_orientation, frames[0]->getOrientation());
+}

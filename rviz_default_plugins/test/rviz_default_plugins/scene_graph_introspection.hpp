@@ -67,6 +67,8 @@ bool vector3NearlyEqual(Ogre::Vector3 expected, Ogre::Vector3 actual);
 std::vector<Ogre::SceneNode *> findAllArrows(Ogre::SceneNode * scene_node);
 Ogre::SceneNode * findOneArrow(Ogre::SceneNode * scene_node);
 
+std::vector<Ogre::SceneNode *> findAllAxes(Ogre::SceneNode * scene_node);
+
 std::vector<Ogre::Entity *> findAllEntitiesByMeshName(
   Ogre::SceneNode * scene_node, const Ogre::String & resource_name);
 Ogre::Entity * findEntityByMeshName(

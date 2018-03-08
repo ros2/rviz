@@ -144,6 +144,41 @@ std::vector<Ogre::SceneNode *> findAllArrows(Ogre::SceneNode * scene_node)
   return arrows;
 }
 
+std::vector<Ogre::SceneNode *> findAllAxes(Ogre::SceneNode * scene_node)
+{
+  std::vector<Ogre::SceneNode *> axes;
+  auto all_cylinders = findAllEntitiesByMeshName(scene_node, "rviz_cylinder.mesh");
+  if (!all_cylinders.empty()) {
+    for (size_t i = 0; i < all_cylinders.size(); i++) {
+      auto first_axis_node = all_cylinders[i]
+        ->getParentSceneNode()  // OffsetNode from shape
+        ->getParentSceneNode()  // SceneNode from shape
+        ->getParentSceneNode();  // SceneNode from axes
+      if (first_axis_node) {
+        for (size_t j = i + 1; j < all_cylinders.size(); j++) {
+          auto second_axis_node = all_cylinders[j]
+            ->getParentSceneNode()
+            ->getParentSceneNode()
+            ->getParentSceneNode();
+          if (second_axis_node && second_axis_node == first_axis_node) {
+            for (size_t k = j + 1; k < all_cylinders.size(); k++) {
+              auto third_axis_node = all_cylinders[k]
+                ->getParentSceneNode()
+                ->getParentSceneNode()
+                ->getParentSceneNode();
+              if (third_axis_node && third_axis_node == first_axis_node) {
+                axes.push_back(first_axis_node);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return axes;
+}
+
 Ogre::SceneNode * findOneArrow(Ogre::SceneNode * scene_node)
 {
   auto arrows = findAllArrows(scene_node);
