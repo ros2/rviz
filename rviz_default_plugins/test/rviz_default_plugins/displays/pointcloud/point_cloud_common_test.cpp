@@ -130,7 +130,7 @@ TEST_F(PointCloudCommonTestFixture, update_sets_size_and_alpha_on_renderable) {
   auto alpha =
     point_cloud->getRenderables()[0] -> getCustomParameter(RVIZ_RENDERING_ALPHA_PARAMETER);
 
-  EXPECT_THAT(Ogre::Vector3(size.x, size.y, size.z), Vector3Eq(Ogre::Vector3(0.01, 0.01, 0.01)));
+  EXPECT_THAT(Ogre::Vector3(size.x, size.y, size.z), Vector3Eq(Ogre::Vector3(0.01f, 0.01f, 0.01f)));
   EXPECT_THAT(Ogre::Vector3(alpha.x, alpha.y, alpha.z), Vector3Eq(Ogre::Vector3(1, 1, 1)));
 }
 
