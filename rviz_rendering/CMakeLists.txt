@@ -18,11 +18,15 @@ find_package(ament_cmake_gtest REQUIRED)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
-find_package(ament_index_cpp REQUIRED)
 # do find_package(rviz_ogre_vendor) first to make sure the custom OGRE is found
 find_package(rviz_ogre_vendor REQUIRED)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
+
+find_package(ament_index_cpp REQUIRED)
+find_package(resource_retriever REQUIRED)
+find_package(rviz_assimp_vendor REQUIRED)
+
 # TODO(wjwwood): this block is to setup the windeployqt tool, could be removed later.
 if(Qt5_FOUND AND WIN32 AND TARGET Qt5::qmake AND NOT TARGET Qt5::windeployqt)
   get_target_property(_qt5_qmake_location Qt5::qmake IMPORTED_LOCATION)
@@ -53,33 +57,38 @@ set(headers_with_q_object
 add_library(rviz_rendering SHARED
   ${headers_with_q_object}
   src/rviz_rendering/apply_visibility_bits.cpp
-  src/rviz_rendering/arrow.cpp
-  src/rviz_rendering/axes.cpp
-  src/rviz_rendering/billboard_line.cpp
   # src/rviz_rendering/initialization.cpp
-  src/rviz_rendering/logging.cpp
   src/rviz_rendering/geometry.cpp
-  src/rviz_rendering/movable_text.cpp
-  src/rviz_rendering/object.cpp
+  src/rviz_rendering/logging.cpp
+  src/rviz_rendering/material_manager.cpp
+  src/rviz_rendering/mesh_loader.cpp
   src/rviz_rendering/ogre_logging.cpp
+  src/rviz_rendering/ogre_render_window_impl.cpp
   src/rviz_rendering/orthographic.cpp
   src/rviz_rendering/render_system.cpp
   src/rviz_rendering/render_window.cpp
-  src/rviz_rendering/ogre_render_window_impl.cpp
   src/rviz_rendering/resource_config.cpp
-  src/rviz_rendering/shape.cpp
-  src/rviz_rendering/grid.cpp
+  src/rviz_rendering/mesh_loader_helpers/stl_loader.cpp
+  src/rviz_rendering/mesh_loader_helpers/assimp_loader.cpp
   src/rviz_rendering/string_helper.cpp
-  src/rviz_rendering/point_cloud.cpp
-  src/rviz_rendering/point_cloud_renderable.cpp
+  src/rviz_rendering/objects/arrow.cpp
+  src/rviz_rendering/objects/axes.cpp
+  src/rviz_rendering/objects/billboard_line.cpp
+  src/rviz_rendering/objects/grid.cpp
+  src/rviz_rendering/objects/movable_text.cpp
+  src/rviz_rendering/objects/object.cpp
+  src/rviz_rendering/objects/point_cloud.cpp
+  src/rviz_rendering/objects/point_cloud_renderable.cpp
+  src/rviz_rendering/objects/shape.cpp
   test/rviz_rendering/ogre_testing_environment.cpp
 )
 
 target_link_libraries(rviz_rendering
-  PRIVATE rviz_ogre_vendor::OgreMain
-  PRIVATE rviz_ogre_vendor::OgreOverlay
+  rviz_ogre_vendor::OgreMain
+  rviz_ogre_vendor::OgreOverlay
   Qt5::Widgets
   ament_index_cpp::ament_index_cpp
+  resource_retriever::resource_retriever
 )
 
 target_include_directories(rviz_rendering
@@ -91,10 +100,13 @@ target_include_directories(rviz_rendering
 # Causes the visibility macros to use dllexport rather than dllimport,
 # which is appropriate when building the dll but not consuming it.
 target_compile_definitions(rviz_rendering PRIVATE "RVIZ_RENDERING_BUILDING_LIBRARY")
+ament_target_dependencies(rviz_rendering
+  rviz_assimp_vendor)
 
 ament_export_interfaces(rviz_rendering)
-ament_export_dependencies(rviz_ogre_vendor)
-ament_export_dependencies(ament_index_cpp)
+ament_export_dependencies(rviz_ogre_vendor
+  resource_retriever
+  ament_index_cpp)
 
 install(
   TARGETS rviz_rendering

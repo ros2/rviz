@@ -54,9 +54,9 @@
 
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager.hpp"
-#include "rviz_rendering/arrow.hpp"
-#include "rviz_rendering/axes.hpp"
-#include "rviz_rendering/movable_text.hpp"
+#include "rviz_rendering/objects/arrow.hpp"
+#include "rviz_rendering/objects/axes.hpp"
+#include "rviz_rendering/objects/movable_text.hpp"
 #include "rviz_common/logging.hpp"
 #include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
@@ -273,7 +273,7 @@ void TFDisplay::update(float wall_dt, float ros_dt)
   (void) ros_dt;
   update_timer_ += wall_dt;
   float update_rate = update_rate_property_->getFloat();
-  if (update_rate < 0.0001f || update_timer_ > update_rate) {
+  if (update_rate < 0.0001f || update_timer_ > update_rate * 1000000000) {
     updateFrames();
 
     update_timer_ = 0.0f;

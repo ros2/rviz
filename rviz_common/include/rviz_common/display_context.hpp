@@ -65,7 +65,7 @@ namespace rviz_common
 namespace selection
 {
 
-class SelectionManager;
+class SelectionManagerIface;
 
 }  // namespace selection
 
@@ -111,7 +111,7 @@ public:
 
   /// Return a pointer to the SelectionManager.
   virtual
-  rviz_common::selection::SelectionManager *
+  rviz_common::selection::SelectionManagerIface *
   getSelectionManager() const = 0;
 
   /// Return the FrameManager instance.

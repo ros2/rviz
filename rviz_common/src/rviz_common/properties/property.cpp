@@ -73,6 +73,7 @@ Property::Property(
   description_(description),
   hidden_(false),
   is_read_only_(false),
+  is_expanded_(false),
   save_(true)
 {
   setName(name);
@@ -566,8 +567,14 @@ bool Property::getReadOnly()
   return is_read_only_;
 }
 
+bool Property::isExpanded()
+{
+  return is_expanded_;
+}
+
 void Property::expand()
 {
+  is_expanded_ = true;
   if (model_) {
     model_->expandProperty(this);
   }
@@ -575,6 +582,7 @@ void Property::expand()
 
 void Property::collapse()
 {
+  is_expanded_ = false;
   if (model_) {
     model_->collapseProperty(this);
   }

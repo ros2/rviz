@@ -13,16 +13,29 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 
-find_package(rviz_rendering REQUIRED)
-# Adds shallow folders containing ogre_media such as meshes and scripts to Rviz
-# so that they can be found at runtime. Requires rviz_rendering.
-register_rviz_ogre_media_exports(
-  DIRECTORIES
+if(BUILD_TESTING)
+  # Qt5 boilerplate options from http://doc.qt.io/qt-5/cmake-manual.html
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
+  set(CMAKE_AUTOMOC ON)
+
+  # do find_package(rviz_ogre_vendor) first to make sure the custom OGRE is found
+  find_package(rviz_ogre_vendor REQUIRED)
+  find_package(Qt5 REQUIRED COMPONENTS Widgets)
+  find_package(rviz_rendering REQUIRED)
+  find_package(resource_retriever REQUIRED)
+
+  # Adds shallow folders containing ogre_media such as meshes and scripts to Rviz
+  # so that they can be found at runtime. Requires rviz_rendering.
+  register_rviz_ogre_media_exports(
+    DIRECTORIES
     "ogre_media_resources/scripts"
     "ogre_media_resources/meshes"
-)
+  )
 
-if(BUILD_TESTING)
+  install(DIRECTORY "${CMAKE_SOURCE_DIR}/ogre_media_resources/test_meshes"
+    DESTINATION "share/rviz_rendering_tests"
+    USE_SOURCE_PERMISSIONS)
+
   # TODO(Martin-Idel-SI): replace this with ament_lint_auto() and/or add the copyright linter back
   find_package(ament_cmake_cppcheck REQUIRED)
   find_package(ament_cmake_cpplint REQUIRED)
@@ -34,7 +47,22 @@ if(BUILD_TESTING)
   ament_uncrustify()
 
   find_package(ament_cmake_gtest REQUIRED)
+  find_package(ament_cmake_gmock REQUIRED)
   find_package(ament_index_cpp REQUIRED)
+
+  # TODO(Martin-Idel-SI): reenable when this test is can run on CI
+  # ament_add_gmock(mesh_loader_test_target
+  #   test/mesh_loader_test.cpp
+  #   APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+  # if(TARGET mesh_loader_test_target)
+  #   target_link_libraries(mesh_loader_test_target
+  #     rviz_ogre_vendor::OgreMain
+  #     rviz_rendering::rviz_rendering
+  #     resource_retriever::resource_retriever
+  #   )
+  #   ament_target_dependencies(mesh_loader_test_target
+  #     rviz_assimp_vendor)
+  # endif()
 
   # TODO(wjwwood): reenable when this test is can run on CI
   # ament_add_gtest(test_rviz_rendering_tests test/test_rviz_ogre_media_exports.cpp)

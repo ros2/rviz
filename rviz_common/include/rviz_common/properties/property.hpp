@@ -518,6 +518,11 @@ public:
   bool
   getReadOnly();
 
+  /// Return whether this property is expanded or collapsed.
+  virtual
+  bool
+  isExpanded();
+
   /// Collapse (hide the children of) this Property.
   /**
    * \note Properties start out collapsed by default.
@@ -614,6 +619,7 @@ private:
 
   int row_number_within_parent_;
   bool is_read_only_;
+  bool is_expanded_;
   bool save_;
 };
 

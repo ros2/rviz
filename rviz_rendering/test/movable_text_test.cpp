@@ -39,7 +39,7 @@
 #include <OgreVector3.h>
 
 #include "test/rviz_rendering/ogre_testing_environment.hpp"
-#include "rviz_rendering/movable_text.hpp"
+#include "rviz_rendering/objects/movable_text.hpp"
 
 class MovableTextTestFixture : public ::testing::Test
 {
