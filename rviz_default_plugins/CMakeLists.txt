@@ -17,6 +17,7 @@ find_package(ament_cmake REQUIRED)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
+find_package(resource_retriever REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rviz_common REQUIRED)
 find_package(rviz_rendering REQUIRED)
@@ -41,8 +42,13 @@ set(rviz_default_plugins_headers_to_moc
   src/rviz_default_plugins/displays/pointcloud/point_cloud_helpers.hpp
   src/rviz_default_plugins/displays/polygon/polygon_display.hpp
   src/rviz_default_plugins/displays/pose/pose_display.hpp
+  src/rviz_default_plugins/displays/robot_model/robot_model_display.hpp
   src/rviz_default_plugins/displays/tf/frame_info.hpp
   src/rviz_default_plugins/displays/tf/tf_display.hpp
+  src/rviz_default_plugins/robot/robot.hpp
+  src/rviz_default_plugins/robot/robot_joint.hpp
+  src/rviz_default_plugins/robot/robot_link.hpp
+  src/rviz_default_plugins/robot/robot_element_base_class.hpp
 )
 
 set(rviz_default_plugins_source_files
@@ -64,9 +70,15 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/polygon/polygon_display.cpp
   src/rviz_default_plugins/displays/pose/pose_display.cpp
   src/rviz_default_plugins/displays/pose/pose_display_selection_handler.cpp
+  src/rviz_default_plugins/displays/robot_model/robot_model_display.cpp
   src/rviz_default_plugins/displays/tf/frame_info.cpp
   src/rviz_default_plugins/displays/tf/frame_selection_handler.cpp
   src/rviz_default_plugins/displays/tf/tf_display.cpp
+  src/rviz_default_plugins/robot/robot.cpp
+  src/rviz_default_plugins/robot/robot_joint.cpp
+  src/rviz_default_plugins/robot/robot_link.cpp
+  src/rviz_default_plugins/robot/robot_element_base_class.cpp
+  src/rviz_default_plugins/robot/tf_link_updater.cpp
   src/rviz_default_plugins/tools/move/move_tool.cpp
   src/rviz_default_plugins/view_controllers/orbit/orbit_view_controller.cpp
 )
@@ -83,10 +95,12 @@ target_include_directories(rviz_default_plugins
 target_link_libraries(rviz_default_plugins
   rviz_rendering::rviz_rendering
   rviz_common::rviz_common
+  resource_retriever::resource_retriever
 )
 ament_target_dependencies(rviz_default_plugins
   # geometry_msgs
   rclcpp
+  resource_retriever
   # tf2
   # tf2_geometry_msgs
   # tf2_ros
@@ -169,10 +183,18 @@ if(BUILD_TESTING)
 
 # TODO(greimela): reenable these tests once they can be run on the ci
 #  ament_add_gmock(image_display_test
-#      test/rviz_default_plugins/displays/image/image_display_test.cpp)
+#      test/rviz_default_plugins/displays/image/image_display_test.cpp
 #      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
 #  if(TARGET image_display_test)
 #    target_link_libraries(image_display_test rviz_default_plugins)
+#  endif()
+
+# TODO(greimela): reenable these tests once they can be run on the ci
+#  ament_add_gmock(robot_test
+#      test/rviz_default_plugins/robot/robot_test.cpp
+#      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+#  if(TARGET robot_test)
+#    target_link_libraries(robot_test rviz_default_plugins)
 #  endif()
 endif()
 

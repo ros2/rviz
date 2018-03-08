@@ -69,7 +69,7 @@
 
 #include "./orthographic.hpp"
 #include "./render_system.hpp"
-#include "rviz_rendering/grid.hpp"
+#include "rviz_rendering/objects/grid.hpp"
 #include "rviz_rendering/logging.hpp"
 
 namespace rviz_rendering

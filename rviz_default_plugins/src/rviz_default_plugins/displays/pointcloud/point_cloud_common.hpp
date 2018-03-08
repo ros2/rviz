@@ -56,7 +56,7 @@
 #include "point_cloud_transformer.hpp"
 #include "point_cloud_selection_handler.hpp"
 #include "rviz_common/properties/color_property.hpp"
-#include "rviz_rendering/point_cloud.hpp"
+#include "rviz_rendering/objects/point_cloud.hpp"
 #include "rviz_common/selection/forwards.hpp"
 
 #endif

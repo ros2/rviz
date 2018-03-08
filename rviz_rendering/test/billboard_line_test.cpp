@@ -37,7 +37,7 @@
 #include <OgreRoot.h>
 
 #include "test/rviz_rendering/ogre_testing_environment.hpp"
-#include "../src/rviz_rendering/billboard_line.hpp"
+#include "rviz_rendering/objects/billboard_line.hpp"
 
 class BillboardLineTestFixture : public ::testing::Test
 {

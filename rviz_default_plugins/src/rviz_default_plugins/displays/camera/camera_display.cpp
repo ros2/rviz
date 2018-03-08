@@ -45,7 +45,7 @@
 #include <OgreTechnique.h>
 #include <OgreCamera.h>
 
-#include "rviz_rendering/axes.hpp"
+#include "rviz_rendering/objects/axes.hpp"
 #include "rviz_rendering/render_window.hpp"
 
 #include "rviz_common/bit_allocator.hpp"
@@ -328,7 +328,7 @@ void CameraDisplay::clear()
     "Topic may not exist.");
 
   rviz_rendering::RenderWindowOgreAdapter::getOgreCamera(
-    render_panel_->getRenderWindow())->setPosition(Ogre::Vector3(999999, 999999, 999999));
+    render_panel_->getRenderWindow())->setPosition(rviz_common::RenderPanel::default_camera_pose_);
 }
 
 void CameraDisplay::update(float wall_dt, float ros_dt)

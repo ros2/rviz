@@ -29,7 +29,7 @@
 #ifndef RVIZ_COMMON__PROPERTIES__COLOR_EDITOR_HPP_
 #define RVIZ_COMMON__PROPERTIES__COLOR_EDITOR_HPP_
 
-#include "./line_edit_with_button.hpp"
+#include "rviz_common/properties/line_edit_with_button.hpp"
 #include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common

@@ -217,7 +217,7 @@ public:
   void resetTime();
 
   /// Return a pointer to the SelectionManager.
-  rviz_common::selection::SelectionManager * getSelectionManager() const override;
+  rviz_common::selection::SelectionManagerIface * getSelectionManager() const override;
 
   /// Return a pointer to the ToolManager.
   ToolManager * getToolManager() const override;
@@ -325,8 +325,6 @@ protected:
 
   void updateFrames();
 
-  void createColorMaterials();
-
   void threadedQueueThreadFunc();
 
   /// Ogre Root.
@@ -366,7 +364,7 @@ protected:
   float time_update_timer_;
   float frame_update_timer_;
 
-  rviz_common::selection::SelectionManager * selection_manager_;
+  rviz_common::selection::SelectionManagerIface * selection_manager_;
 
   uint32_t render_requested_;
   uint64_t frame_count_;

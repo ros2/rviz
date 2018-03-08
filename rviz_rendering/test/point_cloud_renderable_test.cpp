@@ -47,8 +47,8 @@
 # pragma GCC diagnostic pop
 #endif
 
-#include "rviz_rendering/point_cloud.hpp"
-#include "rviz_rendering/point_cloud_renderable.hpp"
+#include "rviz_rendering/objects/point_cloud.hpp"
+#include "rviz_rendering/objects/point_cloud_renderable.hpp"
 #include "test/rviz_rendering/ogre_testing_environment.hpp"
 
 class PointCloudRenderableTestFixture : public ::testing::Test

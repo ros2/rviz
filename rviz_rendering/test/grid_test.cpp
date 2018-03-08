@@ -39,7 +39,7 @@
 
 #include "test/rviz_rendering/ogre_testing_environment.hpp"
 #include "rviz_rendering/grid.hpp"
-#include "../src/rviz_rendering/billboard_line.hpp"
+#include "rviz_rendering/objects/billboard_line.hpp"
 
 class GridTestFixture : public ::testing::Test
 {
