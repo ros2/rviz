@@ -32,10 +32,11 @@
 #include <memory>
 #include <vector>
 
+#include "rviz_common/display.hpp"
 #include "rviz_common/properties/enum_property.hpp"
 #include "rviz_rendering/custom_parameter_indices.hpp"
 
-#include "../../../../src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp"
+#include "../../../../src/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
 
 #include "./message_creators.hpp"
 #include "../display_test_fixture.hpp"
