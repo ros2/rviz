@@ -73,7 +73,7 @@ bool vector3NearlyEqual(Ogre::Vector3 expected, Ogre::Vector3 actual)
 bool arrowIsVisible(Ogre::SceneManager * scene_manager)
 {
   auto arrow_head = rviz_default_plugins::findEntityByMeshName(
-    scene_manager->getRootSceneNode(), "rviz_cone" ".mesh");
+    scene_manager->getRootSceneNode(), "rviz_cone.mesh");
   auto arrow_shaft = rviz_default_plugins::findEntityByMeshName(
     scene_manager->getRootSceneNode(), "rviz_cylinder.mesh");
 
