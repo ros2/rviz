@@ -214,34 +214,35 @@ if(BUILD_TESTING)
 #  endif()
 
 # TODO(greimela): reenable these tests once they can be run on the ci
-  ament_add_gmock(marker_test
-    test/rviz_default_plugins/displays/marker/markers/arrow_marker_test.cpp
-    test/rviz_default_plugins/displays/marker/markers/line_marker_test.cpp
-    test/rviz_default_plugins/displays/marker/markers/mesh_resource_marker_test.cpp
-    test/rviz_default_plugins/displays/marker/markers/points_marker_test.cpp
-    test/rviz_default_plugins/displays/marker/markers/shape_marker_test.cpp
-    test/rviz_default_plugins/displays/marker/markers/text_view_facing_marker_test.cpp
-    test/rviz_default_plugins/displays/marker/markers/triangle_list_marker_test.cpp
-    test/rviz_default_plugins/displays/marker/markers/markers_test_fixture.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
-    test/rviz_default_plugins/displays/marker/marker_messages.cpp
-    test/rviz_default_plugins/scene_graph_introspection.cpp
-    APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;
-    ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-  if(TARGET marker_test)
-    target_link_libraries(marker_test rviz_default_plugins)
-  endif()
+#  ament_add_gmock(marker_test
+#    test/rviz_default_plugins/displays/marker/markers/arrow_marker_test.cpp
+#    test/rviz_default_plugins/displays/marker/markers/line_marker_test.cpp
+#    test/rviz_default_plugins/displays/marker/markers/mesh_resource_marker_test.cpp
+#    test/rviz_default_plugins/displays/marker/markers/points_marker_test.cpp
+#    test/rviz_default_plugins/displays/marker/markers/shape_marker_test.cpp
+#    test/rviz_default_plugins/displays/marker/markers/text_view_facing_marker_test.cpp
+#    test/rviz_default_plugins/displays/marker/markers/triangle_list_marker_test.cpp
+#    test/rviz_default_plugins/displays/marker/markers/markers_test_fixture.cpp
+#    test/rviz_default_plugins/displays/display_test_fixture.cpp
+#    test/rviz_default_plugins/displays/marker/marker_messages.cpp
+#    test/rviz_default_plugins/scene_graph_introspection.cpp
+#    APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;
+#    ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+#  if(TARGET marker_test)
+#    target_link_libraries(marker_test rviz_default_plugins)
+#  endif()
 
-  ament_add_gmock(marker_display_test
-    test/rviz_default_plugins/displays/marker/marker_display_test.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
-    test/rviz_default_plugins/displays/marker/marker_messages.cpp
-    test/rviz_default_plugins/scene_graph_introspection.cpp
-    APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;
-    ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-  if(TARGET marker_display_test)
-    target_link_libraries(marker_display_test rviz_default_plugins)
-  endif()
+# TODO(greimela): reenable these tests once they can be run on the ci
+#  ament_add_gmock(marker_display_test
+#    test/rviz_default_plugins/displays/marker/marker_display_test.cpp
+#    test/rviz_default_plugins/displays/display_test_fixture.cpp
+#    test/rviz_default_plugins/displays/marker/marker_messages.cpp
+#    test/rviz_default_plugins/scene_graph_introspection.cpp
+#    APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;
+#    ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+#  if(TARGET marker_display_test)
+#    target_link_libraries(marker_display_test rviz_default_plugins)
+#  endif()
 
 endif()
 
