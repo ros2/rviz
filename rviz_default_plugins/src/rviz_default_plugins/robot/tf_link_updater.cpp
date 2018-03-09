@@ -33,7 +33,6 @@
 #include <string>
 
 #include <OgreVector3.h>
-#include <OgreQuaternion.h>
 
 #include "rviz_common/frame_manager_iface.hpp"
 
