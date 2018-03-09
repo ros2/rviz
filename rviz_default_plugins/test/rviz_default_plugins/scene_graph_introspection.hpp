@@ -64,6 +64,13 @@ namespace rviz_default_plugins
 bool quaternionNearlyEqual(Ogre::Quaternion expected, Ogre::Quaternion actual);
 bool vector3NearlyEqual(Ogre::Vector3 expected, Ogre::Vector3 actual);
 
+bool arrowIsVisible(Ogre::SceneManager * scene_manager);
+void assertArrowWithTransform(
+  Ogre::SceneManager * scene_manager,
+  Ogre::Vector3 position,
+  Ogre::Vector3 scale,
+  Ogre::Quaternion orientation);
+
 std::vector<Ogre::SceneNode *> findAllArrows(Ogre::SceneNode * scene_node);
 Ogre::SceneNode * findOneArrow(Ogre::SceneNode * scene_node);
 
