@@ -20,11 +20,14 @@ find_package(ament_cmake REQUIRED)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
-find_package(resource_retriever REQUIRED)
 find_package(pluginlib REQUIRED)
+find_package(resource_retriever REQUIRED)
 find_package(rviz_common REQUIRED)
 find_package(rviz_rendering REQUIRED)
 find_package(rviz_ogre_vendor REQUIRED)
+find_package(tinyxml_vendor REQUIRED)
+find_package(TinyXML REQUIRED)  # provided by tinyxml_vendor
+find_package(urdf REQUIRED)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
@@ -120,9 +123,20 @@ add_library(rviz_default_plugins_object OBJECT
 set_property(TARGET rviz_default_plugins_object PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 target_include_directories(rviz_default_plugins_object PUBLIC
-    ${rviz_common_INCLUDE_DIRS}
-    ${OGRE_INCLUDE_DIRS}
-    ${Qt5Widgets_INCLUDE_DIRS}
+  ${rviz_rendering_INCLUDE_DIRS}
+  ${rviz_common_INCLUDE_DIRS}
+  ${OGRE_INCLUDE_DIRS}
+  ${Qt5Widgets_INCLUDE_DIRS}
+  ${resource_retriever_INCLUDE_DIRS}
+  ${TinyXML_INCLUDE_DIRS}
+  ${urdf_INCLUDE_DIRS}
+  ${visualization_msgs_INCLUDE_DIRS}
+)
+
+target_include_directories(rviz_default_plugins_object
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
 )
 
 add_library(rviz_default_plugins SHARED $<TARGET_OBJECTS:rviz_default_plugins_object>)
@@ -132,6 +146,13 @@ target_include_directories(rviz_default_plugins
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
+
+target_include_directories(rviz_default_plugins_static
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
 target_link_libraries(rviz_default_plugins
   laser_geometry::laser_geometry
   resource_retriever::resource_retriever
@@ -206,19 +227,22 @@ if(BUILD_TESTING)
     find_package(visualization_msgs REQUIRED)
 
     set(TEST_INCLUDE_DIRS
-        ${rviz_common_INCLUDE_DIRS}
-        ${rviz_rendering_INCLUDE_DIRS}
-        ${OGRE_INCLUDE_DIRS}
-        ${rclcpp_INCLUDE_DIRS}
-        ${sensor_msgs_INCLUDE_DIRS}
-        ${visualization_msgs_INCLUDE_DIRS}
-        ${Qt5Widgets_INCLUDE_DIRS})
+      ${rviz_common_INCLUDE_DIRS}
+      ${rviz_rendering_INCLUDE_DIRS}
+      ${OGRE_INCLUDE_DIRS}
+      ${rclcpp_INCLUDE_DIRS}
+      ${sensor_msgs_INCLUDE_DIRS}
+      ${visualization_msgs_INCLUDE_DIRS}
+      ${Qt5Widgets_INCLUDE_DIRS}
+      ${urdf_INCLUDE_DIRS}
+    )
 
     set(TEST_LINK_LIBRARIES
-        rviz_default_plugins_static
-        ${rclcpp_LIBRARIES}
-        Qt5::Widgets
-        rviz_common::rviz_common)
+      rviz_default_plugins_static
+      ${rclcpp_LIBRARIES}
+      Qt5::Widgets
+      rviz_common::rviz_common
+    )
 
     ament_add_gtest(point_cloud2_display_test
         test/rviz_default_plugins/displays/pointcloud/message_creators.hpp
