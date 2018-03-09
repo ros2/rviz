@@ -41,6 +41,7 @@ set(rviz_default_plugins_headers_to_moc
   src/rviz_default_plugins/displays/pointcloud/point_cloud_transformer.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_helpers.hpp
   src/rviz_default_plugins/displays/polygon/polygon_display.hpp
+  src/rviz_default_plugins/displays/pose/pose_display.hpp
   src/rviz_default_plugins/displays/robot_model/robot_model_display.hpp
   src/rviz_default_plugins/displays/tf/frame_info.hpp
   src/rviz_default_plugins/displays/tf/tf_display.hpp
@@ -67,6 +68,8 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/pointcloud/point_cloud_display.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.cpp
   src/rviz_default_plugins/displays/polygon/polygon_display.cpp
+  src/rviz_default_plugins/displays/pose/pose_display.cpp
+  src/rviz_default_plugins/displays/pose/pose_display_selection_handler.cpp
   src/rviz_default_plugins/displays/robot_model/robot_model_display.cpp
   src/rviz_default_plugins/displays/tf/frame_info.cpp
   src/rviz_default_plugins/displays/tf/frame_selection_handler.cpp

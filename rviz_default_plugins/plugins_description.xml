@@ -69,6 +69,17 @@
   </class>
 
   <class
+    name="rviz/Pose"
+    type="rviz_default_plugins::displays::PoseDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays a geometry_msgs::PoseStamped message.  &lt;a href="http://www.ros.org/wiki/rviz/DisplayTypes/Pose"&gt;More Information&lt;/a&gt;.
+    </description>
+    <message_type>geometry_msgs/PoseStamped</message_type>
+  </class>
+  
+  <class
     name="rviz/RobotModel"
     type="rviz_default_plugins::displays::RobotModelDisplay"
     base_class_type="rviz_common::Display"
