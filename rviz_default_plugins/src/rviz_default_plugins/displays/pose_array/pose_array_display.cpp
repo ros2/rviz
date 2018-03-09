@@ -43,8 +43,8 @@
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/validate_floats.hpp"
 
-#include "rviz_rendering/arrow.hpp"
-#include "rviz_rendering/axes.hpp"
+#include "rviz_rendering/objects/arrow.hpp"
+#include "rviz_rendering/objects/axes.hpp"
 
 namespace rviz_default_plugins
 {
