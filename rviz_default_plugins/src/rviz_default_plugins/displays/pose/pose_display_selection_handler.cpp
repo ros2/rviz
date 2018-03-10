@@ -39,9 +39,9 @@
 #include <OgreEntity.h>
 #endif
 
-#include "rviz_rendering/axes.hpp"
-#include "rviz_rendering/arrow.hpp"
-#include "rviz_rendering/shape.hpp"
+#include "rviz_rendering/objects/axes.hpp"
+#include "rviz_rendering/objects/arrow.hpp"
+#include "rviz_rendering/objects/shape.hpp"
 #include "rviz_common/selection/selection_handler.hpp"
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/properties/string_property.hpp"

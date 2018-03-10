@@ -33,9 +33,9 @@
 
 #include <OgreSceneNode.h>
 
-#include "rviz_rendering/arrow.hpp"
-#include "rviz_rendering/axes.hpp"
-#include "rviz_rendering/shape.hpp"
+#include "rviz_rendering/objects/arrow.hpp"
+#include "rviz_rendering/objects/axes.hpp"
+#include "rviz_rendering/objects/shape.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager.hpp"
 #include "rviz_common/logging.hpp"
