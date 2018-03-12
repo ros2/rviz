@@ -30,10 +30,13 @@
 #include "pose_array_display.hpp"
 
 #include <memory>
+#include <string>
 
 #include <OgreManualObject.h>
+#include <OgreMaterialManager.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
+#include <OgreTechnique.h>
 
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
@@ -93,52 +96,76 @@ PoseArrayDisplay::PoseArrayDisplay(
 }
 
 PoseArrayDisplay::PoseArrayDisplay()
-: manual_object_(NULL)
+: manual_object_(nullptr)
 {
-  shape_property_ = new rviz_common::properties::EnumProperty(
-    "Shape", "Arrow (Flat)", "Shape to display the pose as.", this, SLOT(updateShapeChoice()));
-
-  arrow_color_property_ = new rviz_common::properties::ColorProperty(
-    "Color", QColor(255, 25, 0), "Color to draw the arrows.",
-    this, SLOT(updateArrowColor()));
-
-  arrow_alpha_property_ = new rviz_common::properties::FloatProperty(
-    "Alpha", 1, "Amount of transparency to apply to the displayed poses.",
-    this, SLOT(updateArrowColor()));
-
-  arrow2d_length_property_ = new rviz_common::properties::FloatProperty(
-    "Arrow Length", 0.3, "Length of the arrows.",
-    this, SLOT(updateArrow2dGeometry()));
-
-  arrow3d_head_radius_property_ = new rviz_common::properties::FloatProperty(
-    "Head Radius", 0.03, "Radius of the arrow's head, in meters.",
-    this, SLOT(updateArrow3dGeometry()));
-
-  arrow3d_head_length_property_ = new rviz_common::properties::FloatProperty(
-    "Head Length", 0.07, "Length of the arrow's head, in meters.",
-    this, SLOT(updateArrow3dGeometry()));
-
-  arrow3d_shaft_radius_property_ = new rviz_common::properties::FloatProperty(
-    "Shaft Radius", 0.01, "Radius of the arrow's shaft, in meters.",
-    this, SLOT(updateArrow3dGeometry()));
-
-  arrow3d_shaft_length_property_ = new rviz_common::properties::FloatProperty(
-    "Shaft Length", 0.23, "Length of the arrow's shaft, in meters.",
-    this, SLOT(updateArrow3dGeometry()));
-
-  axes_length_property_ = new rviz_common::properties::FloatProperty(
-    "Axes Length", 0.3, "Length of each axis, in meters.",
-    this, SLOT(updateAxesGeometry()));
-
-  axes_radius_property_ = new rviz_common::properties::FloatProperty(
-    "Axes Radius", 0.01, "Radius of each axis, in meters.",
-    this, SLOT(updateAxesGeometry()));
+  initializeProperties();
 
   shape_property_->addOption("Arrow (Flat)", ShapeType::Arrow2d);
   shape_property_->addOption("Arrow (3D)", ShapeType::Arrow3d);
   shape_property_->addOption("Axes", ShapeType::Axes);
   arrow_alpha_property_->setMin(0);
   arrow_alpha_property_->setMax(1);
+}
+
+void PoseArrayDisplay::initializeProperties()
+{
+  shape_property_ = new rviz_common::properties::EnumProperty(
+    "Shape", "Arrow (Flat)", "Shape to display the pose as.", this, SLOT(updateShapeChoice()));
+
+  arrow_color_property_ = new rviz_common::properties::ColorProperty(
+    "Color", QColor(255, 25, 0), "Color to draw the arrows.", this, SLOT(updateArrowColor()));
+
+  arrow_alpha_property_ = new rviz_common::properties::FloatProperty(
+    "Alpha",
+    1,
+    "Amount of transparency to apply to the displayed poses.",
+    this,
+    SLOT(updateArrowColor()));
+
+  arrow2d_length_property_ = new rviz_common::properties::FloatProperty(
+    "Arrow Length", 0.3, "Length of the arrows.", this, SLOT(updateArrow2dGeometry()));
+
+  arrow3d_head_radius_property_ = new rviz_common::properties::FloatProperty(
+    "Head Radius",
+    0.03,
+    "Radius of the arrow's head, in meters.",
+    this,
+    SLOT(updateArrow3dGeometry()));
+
+  arrow3d_head_length_property_ = new rviz_common::properties::FloatProperty(
+    "Head Length",
+    0.07,
+    "Length of the arrow's head, in meters.",
+    this,
+    SLOT(updateArrow3dGeometry()));
+
+  arrow3d_shaft_radius_property_ = new rviz_common::properties::FloatProperty(
+    "Shaft Radius",
+    0.01,
+    "Radius of the arrow's shaft, in meters.",
+    this,
+    SLOT(updateArrow3dGeometry()));
+
+  arrow3d_shaft_length_property_ = new rviz_common::properties::FloatProperty(
+    "Shaft Length",
+    0.23,
+    "Length of the arrow's shaft, in meters.",
+    this,
+    SLOT(updateArrow3dGeometry()));
+
+  axes_length_property_ = new rviz_common::properties::FloatProperty(
+    "Axes Length",
+    0.3,
+    "Length of each axis, in meters.",
+    this,
+    SLOT(updateAxesGeometry()));
+
+  axes_radius_property_ = new rviz_common::properties::FloatProperty(
+    "Axes Radius",
+    0.01,
+    "Radius of each axis, in meters.",
+    this,
+    SLOT(updateAxesGeometry()));
 }
 
 PoseArrayDisplay::~PoseArrayDisplay()
@@ -159,33 +186,37 @@ void PoseArrayDisplay::onInitialize()
   updateShapeChoice();
 }
 
-bool validateFloats(const geometry_msgs::msg::PoseArray & msg)
-{
-  return rviz_common::validateFloats(msg.poses);
-}
-
 void PoseArrayDisplay::processMessage(const geometry_msgs::msg::PoseArray::ConstSharedPtr msg)
 {
   if (!validateFloats(*msg)) {
-    setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
+    setStatus(
+      rviz_common::properties::StatusProperty::Error,
+      "Topic",
       "Message contained invalid floating point values (nans or infs)");
     return;
   }
 
   if (!setTransform(msg->header)) {
-    setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
-      "Failed to look up transform");
+    setStatus(
+      rviz_common::properties::StatusProperty::Error, "Topic", "Failed to look up transform");
     return;
   }
 
   poses_.resize(msg->poses.size());
+
   for (std::size_t i = 0; i < msg->poses.size(); ++i) {
     poses_[i].position = vectorRosToOgre(msg->poses[i].position);
     poses_[i].orientation = quaternionRosToOgre(msg->poses[i].orientation);
   }
 
   updateDisplay();
+
   context_->queueRender();
+}
+
+bool PoseArrayDisplay::validateFloats(const geometry_msgs::msg::PoseArray & msg)
+{
+  return rviz_common::validateFloats(msg.poses);
 }
 
 bool PoseArrayDisplay::setTransform(std_msgs::msg::Header const & header)
@@ -194,8 +225,8 @@ bool PoseArrayDisplay::setTransform(std_msgs::msg::Header const & header)
   Ogre::Quaternion orientation;
   if (!context_->getFrameManager()->getTransform(header, position, orientation)) {
     RVIZ_COMMON_LOG_ERROR_STREAM(
-      "Error transforming pose '" << qPrintable(getName()) << "' from frame '" << header.frame_id
-        .c_str() << "' to frame '" << qPrintable(fixed_frame_) << "'");
+      "Error transforming pose '" << qPrintable(getName()) << "' from frame '" <<
+        header.frame_id.c_str() << "' to frame '" << qPrintable(fixed_frame_) << "'");
     return false;
   }
   scene_node_->setPosition(position);
@@ -209,48 +240,49 @@ void PoseArrayDisplay::updateArrows2d()
 
   Ogre::ColourValue color = arrow_color_property_->getOgreColor();
   color.a = arrow_alpha_property_->getFloat();
+  setManualObjectMaterialAndEnableBlending(color);
+
+  manual_object_->begin(manual_object_material_->getName(), Ogre::RenderOperation::OT_LINE_LIST);
+  setManualObjectVertices(color);
+  manual_object_->end();
+}
+
+void PoseArrayDisplay::setManualObjectMaterialAndEnableBlending(const Ogre::ColourValue & color)
+{
+  static int material_count = 0;
+  std::string material_name = "Arrows2dMaterial" + std::to_string(material_count++);
+  manual_object_material_ = Ogre::MaterialManager::getSingleton().create(
+    material_name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+  manual_object_material_->setReceiveShadows(false);
+  manual_object_material_->getTechnique(0)->setLightingEnabled(false);
+
+  if (color.a < 0.9998) {
+    manual_object_material_->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
+    manual_object_material_->setDepthWriteEnabled(false);
+  } else {
+    manual_object_material_->setSceneBlending(Ogre::SBT_REPLACE);
+    manual_object_material_->setDepthWriteEnabled(true);
+  }
+}
+
+void PoseArrayDisplay::setManualObjectVertices(const Ogre::ColourValue & color)
+{
+  manual_object_->estimateVertexCount(poses_.size() * 6);
   float length = arrow2d_length_property_->getFloat();
-  size_t num_poses = poses_.size();
-  manual_object_->estimateVertexCount(num_poses * 6);
-  manual_object_->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_LINE_LIST);
-  for (size_t i = 0; i < num_poses; ++i) {
-    const Ogre::Vector3 & pos = poses_[i].position;
-    const Ogre::Quaternion & orient = poses_[i].orientation;
+
+  for (const auto & pose : poses_) {
     Ogre::Vector3 vertices[6];
-    vertices[0] = pos;  // back of arrow
-    vertices[1] = pos + orient * Ogre::Vector3(length, 0, 0);  // tip of arrow
+    vertices[0] = pose.position;  // back of arrow
+    vertices[1] = pose.position + pose.orientation * Ogre::Vector3(length, 0, 0);  // tip of arrow
     vertices[2] = vertices[1];
-    vertices[3] = pos + orient * Ogre::Vector3(0.75 * length, 0.2 * length, 0);
+    vertices[3] = pose.position + pose.orientation * Ogre::Vector3(0.75 * length, 0.2 * length, 0);
     vertices[4] = vertices[1];
-    vertices[5] = pos + orient * Ogre::Vector3(0.75 * length, -0.2 * length, 0);
+    vertices[5] = pose.position + pose.orientation * Ogre::Vector3(0.75 * length, -0.2 * length, 0);
 
     for (int i = 0; i < 6; ++i) {
       manual_object_->position(vertices[i]);
       manual_object_->colour(color);
     }
-  }
-  manual_object_->end();
-}
-
-void PoseArrayDisplay::updateDisplay()
-{
-  int shape = shape_property_->getOptionInt();
-  switch (shape) {
-    case ShapeType::Arrow2d:
-      updateArrows2d();
-      arrows3d_.clear();
-      axes_.clear();
-      break;
-    case ShapeType::Arrow3d:
-      updateArrows3d();
-      manual_object_->clear();
-      axes_.clear();
-      break;
-    case ShapeType::Axes:
-      updateAxes();
-      manual_object_->clear();
-      arrows3d_.clear();
-      break;
   }
 }
 
@@ -281,6 +313,28 @@ void PoseArrayDisplay::updateAxes()
   for (std::size_t i = 0; i < poses_.size(); ++i) {
     axes_[i]->setPosition(poses_[i].position);
     axes_[i]->setOrientation(poses_[i].orientation);
+  }
+}
+
+void PoseArrayDisplay::updateDisplay()
+{
+  int shape = shape_property_->getOptionInt();
+  switch (shape) {
+    case ShapeType::Arrow2d:
+      updateArrows2d();
+      arrows3d_.clear();
+      axes_.clear();
+      break;
+    case ShapeType::Arrow3d:
+      updateArrows3d();
+      manual_object_->clear();
+      axes_.clear();
+      break;
+    case ShapeType::Axes:
+      updateAxes();
+      manual_object_->clear();
+      arrows3d_.clear();
+      break;
   }
 }
 
@@ -327,11 +381,10 @@ void PoseArrayDisplay::updateShapeChoice()
   int shape = shape_property_->getOptionInt();
   bool use_arrow2d = shape == ShapeType::Arrow2d;
   bool use_arrow3d = shape == ShapeType::Arrow3d;
-  bool use_arrow = use_arrow2d || use_arrow3d;
   bool use_axes = shape == ShapeType::Axes;
 
-  arrow_color_property_->setHidden(!use_arrow);
-  arrow_alpha_property_->setHidden(!use_arrow);
+  arrow_color_property_->setHidden(use_axes);
+  arrow_alpha_property_->setHidden(use_axes);
 
   arrow2d_length_property_->setHidden(!use_arrow2d);
 
@@ -357,8 +410,8 @@ void PoseArrayDisplay::updateArrowColor()
   if (shape == ShapeType::Arrow2d) {
     updateArrows2d();
   } else if (shape == ShapeType::Arrow3d) {
-    for (std::size_t i = 0; i < arrows3d_.size(); ++i) {
-      arrows3d_[i]->setColor(color);
+    for (const auto & arrow : arrows3d_) {
+      arrow->setColor(color);
     }
   }
   context_->queueRender();
@@ -372,8 +425,8 @@ void PoseArrayDisplay::updateArrow2dGeometry()
 
 void PoseArrayDisplay::updateArrow3dGeometry()
 {
-  for (std::size_t i = 0; i < poses_.size(); ++i) {
-    arrows3d_[i]->set(
+  for (const auto & arrow : arrows3d_) {
+    arrow->set(
       arrow3d_shaft_length_property_->getFloat(),
       arrow3d_shaft_radius_property_->getFloat(),
       arrow3d_head_length_property_->getFloat(),
@@ -385,10 +438,8 @@ void PoseArrayDisplay::updateArrow3dGeometry()
 
 void PoseArrayDisplay::updateAxesGeometry()
 {
-  for (
-    std::size_t i = 0; i < poses_.size(); ++i)
-  {
-    axes_[i]->set(
+  for (const auto & axis : axes_) {
+    axis->set(
       axes_length_property_->getFloat(),
       axes_radius_property_->getFloat()
     );

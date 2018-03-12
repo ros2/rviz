@@ -35,6 +35,7 @@
 
 #include "geometry_msgs/msg/pose_array.hpp"
 
+#include "rviz_rendering/objects/shape.hpp"
 #include "rviz_common/ros_topic_display.hpp"
 
 // TODO(botteroa): Originally the display extended the MessageFilterDisplay. Revisit when available.
@@ -90,8 +91,12 @@ protected:
   void reset() override;
 
 private:
+  void initializeProperties();
+  bool validateFloats(const geometry_msgs::msg::PoseArray & msg);
   bool setTransform(std_msgs::msg::Header const & header);
   void updateArrows2d();
+  void setManualObjectMaterialAndEnableBlending(const Ogre::ColourValue & color);
+  void setManualObjectVertices(const Ogre::ColourValue & color);
   void updateArrows3d();
   void updateAxes();
   void updateDisplay();
@@ -111,6 +116,7 @@ private:
   Ogre::SceneNode * arrow_node_;
   Ogre::SceneNode * axes_node_;
   Ogre::ManualObject * manual_object_;
+  Ogre::MaterialPtr manual_object_material_;
 
   rviz_common::properties::EnumProperty * shape_property_;
   rviz_common::properties::ColorProperty * arrow_color_property_;
