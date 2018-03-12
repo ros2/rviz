@@ -34,12 +34,8 @@
 
 #include <OgreManualObject.h>
 #include <OgreMaterialManager.h>
-#include <OgreSceneManager.h>
-#include <OgreSceneNode.h>
 #include <OgreTechnique.h>
 
-#include "rviz_common/display_context.hpp"
-#include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/logging.hpp"
 #include "rviz_common/properties/enum_property.hpp"
 #include "rviz_common/properties/color_property.hpp"
@@ -439,10 +435,7 @@ void PoseArrayDisplay::updateArrow3dGeometry()
 void PoseArrayDisplay::updateAxesGeometry()
 {
   for (const auto & axis : axes_) {
-    axis->set(
-      axes_length_property_->getFloat(),
-      axes_radius_property_->getFloat()
-    );
+    axis->set(axes_length_property_->getFloat(), axes_radius_property_->getFloat());
   }
   context_->queueRender();
 }
