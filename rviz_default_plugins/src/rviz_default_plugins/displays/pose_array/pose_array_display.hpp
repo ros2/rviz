@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,7 +51,6 @@ namespace rviz_common
 {
 namespace properties
 {
-
 class EnumProperty;
 class ColorProperty;
 class FloatProperty;
@@ -90,16 +90,33 @@ protected:
   void onInitialize() override;
   void reset() override;
 
+private Q_SLOTS:
+  /// Update the interface and visible shapes based on the selected shape type.
+  void updateShapeChoice();
+
+  /// Update the arrow color.
+  void updateArrowColor();
+
+  /// Update the flat arrow geometry.
+  void updateArrow2dGeometry();
+
+  /// Update the 3D arrow geometry.
+  void updateArrow3dGeometry();
+
+  /// Update the axes geometry.
+  void updateAxesGeometry();
+
 private:
   void initializeProperties();
   bool validateFloats(const geometry_msgs::msg::PoseArray & msg);
   bool setTransform(std_msgs::msg::Header const & header);
+  void updateDisplay();
   void updateArrows2d();
-  void setManualObjectMaterialAndEnableBlending(const Ogre::ColourValue & color);
+  void setManualObjectMaterial();
+  void EnableBlending(const Ogre::ColourValue & color);
   void setManualObjectVertices(const Ogre::ColourValue & color);
   void updateArrows3d();
   void updateAxes();
-  void updateDisplay();
   std::unique_ptr<rviz_rendering::Axes> makeAxes();
   std::unique_ptr<rviz_rendering::Arrow> makeArrow3d();
 
@@ -131,22 +148,6 @@ private:
 
   rviz_common::properties::FloatProperty * axes_length_property_;
   rviz_common::properties::FloatProperty * axes_radius_property_;
-
-private Q_SLOTS:
-  /// Update the interface and visible shapes based on the selected shape type.
-  void updateShapeChoice();
-
-  /// Update the arrow color.
-  void updateArrowColor();
-
-  /// Update the flat arrow geometry.
-  void updateArrow2dGeometry();
-
-  /// Update the 3D arrow geometry.
-  void updateArrow3dGeometry();
-
-  /// Update the axes geometry.
-  void updateAxesGeometry();
 };
 
 }  // namespace displays

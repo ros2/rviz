@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,7 +50,6 @@ namespace rviz_default_plugins
 {
 namespace displays
 {
-
 namespace
 {
 struct ShapeType
@@ -230,28 +230,54 @@ bool PoseArrayDisplay::setTransform(std_msgs::msg::Header const & header)
   return true;
 }
 
+void PoseArrayDisplay::updateDisplay()
+{
+  int shape = shape_property_->getOptionInt();
+  switch (shape) {
+    case ShapeType::Arrow2d:
+      updateArrows2d();
+      arrows3d_.clear();
+      axes_.clear();
+      break;
+    case ShapeType::Arrow3d:
+      updateArrows3d();
+      manual_object_->clear();
+      axes_.clear();
+      break;
+    case ShapeType::Axes:
+      updateAxes();
+      manual_object_->clear();
+      arrows3d_.clear();
+      break;
+  }
+}
+
 void PoseArrayDisplay::updateArrows2d()
 {
   manual_object_->clear();
 
   Ogre::ColourValue color = arrow_color_property_->getOgreColor();
   color.a = arrow_alpha_property_->getFloat();
-  setManualObjectMaterialAndEnableBlending(color);
+  setManualObjectMaterial();
+  EnableBlending(color);
 
   manual_object_->begin(manual_object_material_->getName(), Ogre::RenderOperation::OT_LINE_LIST);
   setManualObjectVertices(color);
   manual_object_->end();
 }
 
-void PoseArrayDisplay::setManualObjectMaterialAndEnableBlending(const Ogre::ColourValue & color)
+void PoseArrayDisplay::setManualObjectMaterial()
 {
   static int material_count = 0;
   std::string material_name = "Arrows2dMaterial" + std::to_string(material_count++);
-  manual_object_material_ = Ogre::MaterialManager::getSingleton().create(
-    material_name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+  manual_object_material_ =
+    Ogre::MaterialManager::getSingleton().create(material_name, "rviz_rendering");
   manual_object_material_->setReceiveShadows(false);
   manual_object_material_->getTechnique(0)->setLightingEnabled(false);
+}
 
+void PoseArrayDisplay::EnableBlending(const Ogre::ColourValue & color)
+{
   if (color.a < 0.9998) {
     manual_object_material_->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
     manual_object_material_->setDepthWriteEnabled(false);
@@ -271,12 +297,14 @@ void PoseArrayDisplay::setManualObjectVertices(const Ogre::ColourValue & color)
     vertices[0] = pose.position;  // back of arrow
     vertices[1] = pose.position + pose.orientation * Ogre::Vector3(length, 0, 0);  // tip of arrow
     vertices[2] = vertices[1];
-    vertices[3] = pose.position + pose.orientation * Ogre::Vector3(0.75 * length, 0.2 * length, 0);
+    vertices[3] =
+      pose.position + pose.orientation * Ogre::Vector3(0.75f * length, 0.2f * length, 0);
     vertices[4] = vertices[1];
-    vertices[5] = pose.position + pose.orientation * Ogre::Vector3(0.75 * length, -0.2 * length, 0);
+    vertices[5] = pose.position + pose.orientation * Ogre::Vector3(0.75f * length, -0.2f * length,
+        0);
 
-    for (int i = 0; i < 6; ++i) {
-      manual_object_->position(vertices[i]);
+    for (const auto & vertex : vertices) {
+      manual_object_->position(vertex);
       manual_object_->colour(color);
     }
   }
@@ -309,28 +337,6 @@ void PoseArrayDisplay::updateAxes()
   for (std::size_t i = 0; i < poses_.size(); ++i) {
     axes_[i]->setPosition(poses_[i].position);
     axes_[i]->setOrientation(poses_[i].orientation);
-  }
-}
-
-void PoseArrayDisplay::updateDisplay()
-{
-  int shape = shape_property_->getOptionInt();
-  switch (shape) {
-    case ShapeType::Arrow2d:
-      updateArrows2d();
-      arrows3d_.clear();
-      axes_.clear();
-      break;
-    case ShapeType::Arrow3d:
-      updateArrows3d();
-      manual_object_->clear();
-      axes_.clear();
-      break;
-    case ShapeType::Axes:
-      updateAxes();
-      manual_object_->clear();
-      arrows3d_.clear();
-      break;
   }
 }
 

@@ -60,6 +60,18 @@ public:
       context_.get(),
       scene_manager_->getRootSceneNode()->createChildSceneNode(),
       manual_object_);
+
+    arrow_2d_length_property_ = display_->childAt(5);
+
+    for (int i = 3; i < 5; i++) {
+      common_arrow_properties_.push_back(display_->childAt(i));
+    }
+    for (int i = 6; i < 10; i++) {
+      arrow_3d_properties_.push_back(display_->childAt(i));
+    }
+    for (int i = 10; i < 12; i++) {
+      axes_properties_.push_back(display_->childAt(i));
+    }
   }
 
   void TearDown() override
@@ -69,18 +81,13 @@ public:
     DisplayTestFixture::TearDown();
   }
 
-  void expectAxesAreVisible(Ogre::SceneNode * node)
-  {
-    for (uint16_t i = 0; i < 3; ++i) {
-      auto child_node = dynamic_cast<Ogre::SceneNode *>(node->getChild(i)->getChild(0));
-      auto entity = dynamic_cast<Ogre::Entity *>(child_node->getAttachedObject(0));
-      ASSERT_TRUE(entity);
-      EXPECT_TRUE(entity->isVisible());
-    }
-  }
-
   std::unique_ptr<rviz_default_plugins::displays::PoseArrayDisplay> display_;
   Ogre::ManualObject * manual_object_;
+
+  rviz_common::properties::Property * arrow_2d_length_property_;
+  std::vector<rviz_common::properties::Property *> common_arrow_properties_;
+  std::vector<rviz_common::properties::Property *> arrow_3d_properties_;
+  std::vector<rviz_common::properties::Property *> axes_properties_;
 };
 
 geometry_msgs::msg::PoseArray::SharedPtr createMessageWithOnePose()
@@ -104,6 +111,79 @@ geometry_msgs::msg::PoseArray::SharedPtr createMessageWithOnePose()
   return message;
 }
 
+void expectAxesAreVisible(Ogre::SceneNode * node)
+{
+  for (uint16_t i = 0; i < 3; ++i) {
+    auto child_node = dynamic_cast<Ogre::SceneNode *>(node->getChild(i)->getChild(0));
+    auto entity = dynamic_cast<Ogre::Entity *>(child_node->getAttachedObject(0));
+    ASSERT_TRUE(entity);
+    EXPECT_TRUE(entity->isVisible());
+  }
+}
+
+TEST_F(PoseArrayDisplayFixture, constructor_set_all_the_properties_in_the_right_order) {
+  EXPECT_EQ("Color", display_->childAt(3)->getNameStd());
+  EXPECT_EQ("Alpha", display_->childAt(4)->getNameStd());
+  EXPECT_EQ("Arrow Length", display_->childAt(5)->getNameStd());
+  EXPECT_EQ("Head Radius", display_->childAt(6)->getNameStd());
+  EXPECT_EQ("Head Length", display_->childAt(7)->getNameStd());
+  EXPECT_EQ("Shaft Radius", display_->childAt(8)->getNameStd());
+  EXPECT_EQ("Shaft Length", display_->childAt(9)->getNameStd());
+  EXPECT_EQ("Axes Length", display_->childAt(10)->getNameStd());
+  EXPECT_EQ("Axes Radius", display_->childAt(11)->getNameStd());
+}
+
+TEST_F(PoseArrayDisplayFixture, at_startup_only_flat_arrows_propertie_are_visible) {
+  for (const auto & property : common_arrow_properties_) {
+    EXPECT_FALSE(property->getHidden());
+  }
+  for (const auto & property : arrow_3d_properties_) {
+    EXPECT_TRUE(property->getHidden());
+  }
+  for (const auto & property : axes_properties_) {
+    EXPECT_TRUE(property->getHidden());
+  }
+  EXPECT_FALSE(arrow_2d_length_property_->getHidden());
+}
+
+TEST_F(PoseArrayDisplayFixture,
+  processMessage_corrctly_manages_property_visibility_from_arrow2d_to_arrow3d) {
+  mockValidTransform();
+  auto msg = createMessageWithOnePose();
+  display_->setShape("Arrow (3D)");
+  display_->processMessage(msg);
+
+  for (const auto & property : common_arrow_properties_) {
+    EXPECT_FALSE(property->getHidden());
+  }
+  for (const auto & property : arrow_3d_properties_) {
+    EXPECT_FALSE(property->getHidden());
+  }
+  for (const auto & property : axes_properties_) {
+    EXPECT_TRUE(property->getHidden());
+  }
+  EXPECT_TRUE(arrow_2d_length_property_->getHidden());
+}
+
+TEST_F(PoseArrayDisplayFixture,
+  processMessage_corrctly_manages_property_visibility_from_arrow2d_to_axes) {
+  mockValidTransform();
+  auto msg = createMessageWithOnePose();
+  display_->setShape("Axes");
+  display_->processMessage(msg);
+
+  for (const auto & property : common_arrow_properties_) {
+    EXPECT_TRUE(property->getHidden());
+  }
+  for (const auto & property : arrow_3d_properties_) {
+    EXPECT_TRUE(property->getHidden());
+  }
+  for (const auto & property : axes_properties_) {
+    EXPECT_FALSE(property->getHidden());
+  }
+  EXPECT_TRUE(arrow_2d_length_property_->getHidden());
+}
+
 TEST_F(PoseArrayDisplayFixture, setTransform_with_invalid_message_returns_early) {
   mockValidTransform();
   auto msg = createMessageWithOnePose();
@@ -114,11 +194,11 @@ TEST_F(PoseArrayDisplayFixture, setTransform_with_invalid_message_returns_early)
   auto axes = rviz_default_plugins::findAllAxes(scene_manager_->getRootSceneNode());
 
   // the default position and orientation of the scene node are (0, 0, 0) and (1, 0, 0, 0)
-  EXPECT_EQ(Ogre::Vector3(0, 0, 0), display_->getSceneNode()->getPosition());
-  EXPECT_EQ(Ogre::Quaternion(1, 0, 0, 0), display_->getSceneNode()->getOrientation());
+  EXPECT_VECTOR3_EQ(Ogre::Vector3(0, 0, 0), display_->getSceneNode()->getPosition());
+  EXPECT_QUATERNION_EQ(Ogre::Quaternion(1, 0, 0, 0), display_->getSceneNode()->getOrientation());
   EXPECT_FLOAT_EQ(0, manual_object_->getBoundingRadius());
-  EXPECT_TRUE(arrows_3d.empty());
-  EXPECT_TRUE(axes.empty());
+  EXPECT_THAT(arrows_3d, SizeIs(0));
+  EXPECT_THAT(axes, SizeIs(0));
 }
 
 TEST_F(PoseArrayDisplayFixture, setTransform_with_invalid_transform_returns_early) {
@@ -131,11 +211,11 @@ TEST_F(PoseArrayDisplayFixture, setTransform_with_invalid_transform_returns_earl
   auto axes = rviz_default_plugins::findAllAxes(scene_manager_->getRootSceneNode());
 
   // the default position and orientation of the scene node are (0, 0, 0) and (1, 0, 0, 0)
-  EXPECT_EQ(Ogre::Vector3(0, 0, 0), display_->getSceneNode()->getPosition());
-  EXPECT_EQ(Ogre::Quaternion(1, 0, 0, 0), display_->getSceneNode()->getOrientation());
+  EXPECT_VECTOR3_EQ(Ogre::Vector3(0, 0, 0), display_->getSceneNode()->getPosition());
+  EXPECT_QUATERNION_EQ(Ogre::Quaternion(1, 0, 0, 0), display_->getSceneNode()->getOrientation());
   EXPECT_FLOAT_EQ(0, manual_object_->getBoundingRadius());
-  EXPECT_TRUE(arrows_3d.empty());
-  EXPECT_TRUE(axes.empty());
+  EXPECT_THAT(arrows_3d, SizeIs(0));
+  EXPECT_THAT(axes, SizeIs(0));
 }
 
 TEST_F(PoseArrayDisplayFixture, setTransform_sets_node_position_and_orientation_correctly) {
@@ -143,8 +223,8 @@ TEST_F(PoseArrayDisplayFixture, setTransform_sets_node_position_and_orientation_
   auto msg = createMessageWithOnePose();
   display_->processMessage(msg);
 
-  EXPECT_EQ(Ogre::Vector3(0, 1, 0), display_->getSceneNode()->getPosition());
-  EXPECT_EQ(Ogre::Quaternion(0, 0, 1, 0), display_->getSceneNode()->getOrientation());
+  EXPECT_VECTOR3_EQ(Ogre::Vector3(0, 1, 0), display_->getSceneNode()->getPosition());
+  EXPECT_QUATERNION_EQ(Ogre::Quaternion(0, 0, 1, 0), display_->getSceneNode()->getOrientation());
 }
 
 TEST_F(PoseArrayDisplayFixture, processMessage_sets_manualObject_correctly) {
@@ -166,7 +246,6 @@ TEST_F(PoseArrayDisplayFixture, processMessage_sets_arrows3d_correctly) {
 
   auto arrows = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
 
-  size_t expected_number_of_arrows = 1;
   // The orientation is first manipulated by the display and then in setOrientation() in arrow.cpp
   auto expected_orientation =
     Ogre::Quaternion(0, 1, 0, 1) *
@@ -175,7 +254,7 @@ TEST_F(PoseArrayDisplayFixture, processMessage_sets_arrows3d_correctly) {
   expected_orientation.normalise();
 
   EXPECT_TRUE(rviz_default_plugins::arrowIsVisible(scene_manager_));
-  EXPECT_EQ(expected_number_of_arrows, arrows.size());
+  EXPECT_THAT(arrows, SizeIs(1));
   rviz_default_plugins::assertArrowWithTransform(
     scene_manager_, Ogre::Vector3(1, 2, 3), Ogre::Vector3(1, 1, 1), expected_orientation);
 }
@@ -189,104 +268,32 @@ TEST_F(PoseArrayDisplayFixture, processMessage_sets_axes_correctly) {
 
   auto frames = rviz_default_plugins::findAllAxes(scene_manager_->getRootSceneNode());
 
-  size_t expected_number_of_frames = 1;
   auto expected_orientation = Ogre::Quaternion(0, 1, 0, 1);
   expected_orientation.normalise();
 
   expectAxesAreVisible(frames[0]);
-  EXPECT_EQ(expected_number_of_frames, frames.size());
+  EXPECT_THAT(frames, SizeIs(1));
   EXPECT_VECTOR3_EQ(Ogre::Vector3(1, 2, 3), frames[0]->getPosition());
   EXPECT_QUATERNION_EQ(expected_orientation, frames[0]->getOrientation());
 }
 
-TEST_F(PoseArrayDisplayFixture, processeMessage_updates_correctly_the_display_after_shape_change) {
+TEST_F(PoseArrayDisplayFixture, processMessage_updates_the_display_correctly_after_shape_change) {
   mockValidTransform();
   auto msg = createMessageWithOnePose();
   display_->setShape("Arrow (3D)");
   display_->processMessage(msg);
 
-  size_t expected_size = 1;
-
   auto arrows = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
   auto frames = rviz_default_plugins::findAllAxes(scene_manager_->getRootSceneNode());
-  EXPECT_EQ(expected_size, arrows.size());
+  EXPECT_THAT(arrows, SizeIs(1));
   EXPECT_EQ(0, manual_object_->getBoundingRadius());
-  EXPECT_TRUE(frames.empty());
+  EXPECT_THAT(frames, SizeIs(0));
 
   display_->setShape("Axes");
   display_->processMessage(msg);
   auto post_update_arrows = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
   auto post_update_frames = rviz_default_plugins::findAllAxes(scene_manager_->getRootSceneNode());
-  EXPECT_EQ(expected_size, post_update_frames.size());
+  EXPECT_THAT(post_update_frames, SizeIs(1));
   EXPECT_EQ(0, manual_object_->getBoundingRadius());
-  EXPECT_TRUE(post_update_arrows.empty());
-}
-
-TEST_F(PoseArrayDisplayFixture, processMessage_makes_only_relevant_properties_visible) {
-  mockValidTransform();
-  auto msg = createMessageWithOnePose();
-
-  // first check properties are where the're supposed to be
-  EXPECT_EQ("Color", display_->childAt(3)->getNameStd());
-  EXPECT_EQ("Alpha", display_->childAt(4)->getNameStd());
-  EXPECT_EQ("Arrow Length", display_->childAt(5)->getNameStd());
-  EXPECT_EQ("Head Radius", display_->childAt(6)->getNameStd());
-  EXPECT_EQ("Head Length", display_->childAt(7)->getNameStd());
-  EXPECT_EQ("Shaft Radius", display_->childAt(8)->getNameStd());
-  EXPECT_EQ("Shaft Length", display_->childAt(9)->getNameStd());
-  EXPECT_EQ("Axes Length", display_->childAt(10)->getNameStd());
-  EXPECT_EQ("Axes Radius", display_->childAt(11)->getNameStd());
-
-  std::vector<rviz_common::properties::Property *> common_arrow_properties;
-  std::vector<rviz_common::properties::Property *> arrow_3d_properties;
-  std::vector<rviz_common::properties::Property *> axes_properties;
-  auto arrow_2d_length_property = display_->childAt(5);
-  for (int i = 3; i < 5; i++) {
-    common_arrow_properties.push_back(display_->childAt(i));
-  }
-  for (int i = 6; i < 10; i++) {
-    arrow_3d_properties.push_back(display_->childAt(i));
-  }
-  for (int i = 10; i < 12; i++) {
-    axes_properties.push_back(display_->childAt(i));
-  }
-
-  for (const auto & property : common_arrow_properties) {
-    EXPECT_FALSE(property->getHidden());
-  }
-  for (const auto & property : arrow_3d_properties) {
-    EXPECT_TRUE(property->getHidden());
-  }
-  for (const auto & property : axes_properties) {
-    EXPECT_TRUE(property->getHidden());
-  }
-  EXPECT_FALSE(arrow_2d_length_property->getHidden());
-
-  display_->setShape("Arrow (3D)");
-  display_->processMessage(msg);
-
-  for (const auto & property : common_arrow_properties) {
-    EXPECT_FALSE(property->getHidden());
-  }
-  for (const auto & property : arrow_3d_properties) {
-    EXPECT_FALSE(property->getHidden());
-  }
-  for (const auto & property : axes_properties) {
-    EXPECT_TRUE(property->getHidden());
-  }
-  EXPECT_TRUE(arrow_2d_length_property->getHidden());
-
-  display_->setShape("Axes");
-  display_->processMessage(msg);
-
-  for (const auto & property : common_arrow_properties) {
-    EXPECT_TRUE(property->getHidden());
-  }
-  for (const auto & property : arrow_3d_properties) {
-    EXPECT_TRUE(property->getHidden());
-  }
-  for (const auto & property : axes_properties) {
-    EXPECT_FALSE(property->getHidden());
-  }
-  EXPECT_TRUE(arrow_2d_length_property->getHidden());
+  EXPECT_THAT(post_update_arrows, SizeIs(0));
 }
