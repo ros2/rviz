@@ -113,52 +113,52 @@ void PoseArrayDisplay::initializeProperties()
 
   arrow_alpha_property_ = new rviz_common::properties::FloatProperty(
     "Alpha",
-    1,
+    1.0f,
     "Amount of transparency to apply to the displayed poses.",
     this,
     SLOT(updateArrowColor()));
 
   arrow2d_length_property_ = new rviz_common::properties::FloatProperty(
-    "Arrow Length", 0.3, "Length of the arrows.", this, SLOT(updateArrow2dGeometry()));
+    "Arrow Length", 0.3f, "Length of the arrows.", this, SLOT(updateArrow2dGeometry()));
 
   arrow3d_head_radius_property_ = new rviz_common::properties::FloatProperty(
     "Head Radius",
-    0.03,
+    0.03f,
     "Radius of the arrow's head, in meters.",
     this,
     SLOT(updateArrow3dGeometry()));
 
   arrow3d_head_length_property_ = new rviz_common::properties::FloatProperty(
     "Head Length",
-    0.07,
+    0.07f,
     "Length of the arrow's head, in meters.",
     this,
     SLOT(updateArrow3dGeometry()));
 
   arrow3d_shaft_radius_property_ = new rviz_common::properties::FloatProperty(
     "Shaft Radius",
-    0.01,
+    0.01f,
     "Radius of the arrow's shaft, in meters.",
     this,
     SLOT(updateArrow3dGeometry()));
 
   arrow3d_shaft_length_property_ = new rviz_common::properties::FloatProperty(
     "Shaft Length",
-    0.23,
+    0.23f,
     "Length of the arrow's shaft, in meters.",
     this,
     SLOT(updateArrow3dGeometry()));
 
   axes_length_property_ = new rviz_common::properties::FloatProperty(
     "Axes Length",
-    0.3,
+    0.3f,
     "Length of each axis, in meters.",
     this,
     SLOT(updateAxesGeometry()));
 
   axes_radius_property_ = new rviz_common::properties::FloatProperty(
     "Axes Radius",
-    0.01,
+    0.01f,
     "Radius of each axis, in meters.",
     this,
     SLOT(updateAxesGeometry()));
