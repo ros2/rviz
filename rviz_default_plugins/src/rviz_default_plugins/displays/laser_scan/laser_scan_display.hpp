@@ -35,23 +35,22 @@
 #include "sensor_msgs/msg/laser_scan.hpp"
 
 #include "rviz_common/ros_topic_display.hpp"
-#include "rviz_common/properties/queue_size_property.hpp"
 
 namespace laser_geometry
 {
 class LaserProjection;
-}
+}  // namespace laser_geometry
 
 namespace rviz_common
 {
+class QueueSizeProperty;
 namespace properties
 {
 class IntProperty;
-}
-}
+}  // namespace properties
+}  // namespace rviz_common
 namespace rviz_default_plugins
 {
-
 class PointCloudCommon;
 namespace displays
 {
@@ -61,7 +60,7 @@ class LaserScanDisplay : public rviz_common::RosTopicDisplay<sensor_msgs::msg::L
 {
 public:
   LaserScanDisplay();
-  ~LaserScanDisplay() override;
+  ~LaserScanDisplay() override = default;
 
   void reset() override;
   void update(float wall_dt, float ros_dt) override;

@@ -32,22 +32,13 @@
 #include <memory>
 #include <string>
 
-#include <OgreSceneNode.h>
-#include <OgreSceneManager.h>
-
 #include "laser_geometry/laser_geometry.hpp"
-#include "tf2/exceptions.h"
 #include "tf2_ros/buffer.h"
-#include "tf2_ros/buffer_interface.h"
 
 #include "src/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
-#include "rviz_rendering/point_cloud.hpp"
-#include "rviz_common/display_context.hpp"
-#include "rviz_common/frame_manager.hpp"
 #include "rviz_common/properties/int_property.hpp"
 #include "rviz_common/properties/queue_size_property.hpp"
 #include "rviz_common/validate_floats.hpp"
-#include "rviz_common/logging.hpp"
 
 namespace rviz_default_plugins
 {
@@ -58,9 +49,6 @@ LaserScanDisplay::LaserScanDisplay()
 : point_cloud_common_(std::make_unique<rviz_default_plugins::PointCloudCommon>(this)),
   queue_size_property_(std::make_unique<rviz_common::QueueSizeProperty>(this, 10)),
   projector_(std::make_unique<laser_geometry::LaserProjection>())
-{}
-
-LaserScanDisplay::~LaserScanDisplay()
 {}
 
 void LaserScanDisplay::onInitialize()
