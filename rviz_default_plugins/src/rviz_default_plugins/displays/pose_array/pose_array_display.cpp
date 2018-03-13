@@ -75,24 +75,21 @@ Ogre::Quaternion quaternionRosToOgre(geometry_msgs::msg::Quaternion const & quat
 
 PoseArrayDisplay::PoseArrayDisplay(
   rviz_common::DisplayContext * display_context,
-  Ogre::SceneNode * scene_node,
-  Ogre::ManualObject * manual_object)
+  Ogre::SceneNode * scene_node)
 : PoseArrayDisplay()
 {
   context_ = display_context;
   scene_node_ = scene_node;
   scene_manager_ = context_->getSceneManager();
 
-  manual_object_ = manual_object;
-  manual_object_->setDynamic(true);
-  scene_node_->attachObject(manual_object_);
+  arrows2d_ = std::make_unique<FlatArrowsArray>(scene_manager_);
+  arrows2d_->createAndAttachManualObject(scene_node);
   arrow_node_ = scene_node_->createChildSceneNode();
   axes_node_ = scene_node_->createChildSceneNode();
   updateShapeChoice();
 }
 
 PoseArrayDisplay::PoseArrayDisplay()
-: manual_object_(nullptr)
 {
   initializeProperties();
 
@@ -166,17 +163,15 @@ void PoseArrayDisplay::initializeProperties()
 
 PoseArrayDisplay::~PoseArrayDisplay()
 {
-  if (initialized()) {
-    scene_manager_->destroyManualObject(manual_object_);
-  }
+  // because of forward declaration of arrow and axes, destructor cannot be declared in .hpp as
+  // default
 }
 
 void PoseArrayDisplay::onInitialize()
 {
   RTDClass::onInitialize();
-  manual_object_ = scene_manager_->createManualObject();
-  manual_object_->setDynamic(true);
-  scene_node_->attachObject(manual_object_);
+  arrows2d_ = std::make_unique<FlatArrowsArray>(scene_manager_);
+  arrows2d_->createAndAttachManualObject(scene_node_);
   arrow_node_ = scene_node_->createChildSceneNode();
   axes_node_ = scene_node_->createChildSceneNode();
   updateShapeChoice();
@@ -241,12 +236,12 @@ void PoseArrayDisplay::updateDisplay()
       break;
     case ShapeType::Arrow3d:
       updateArrows3d();
-      manual_object_->clear();
+      arrows2d_->clear();
       axes_.clear();
       break;
     case ShapeType::Axes:
       updateAxes();
-      manual_object_->clear();
+      arrows2d_->clear();
       arrows3d_.clear();
       break;
   }
@@ -254,60 +249,11 @@ void PoseArrayDisplay::updateDisplay()
 
 void PoseArrayDisplay::updateArrows2d()
 {
-  manual_object_->clear();
-
-  Ogre::ColourValue color = arrow_color_property_->getOgreColor();
-  color.a = arrow_alpha_property_->getFloat();
-  setManualObjectMaterial();
-  EnableBlending(color);
-
-  manual_object_->begin(manual_object_material_->getName(), Ogre::RenderOperation::OT_LINE_LIST);
-  setManualObjectVertices(color);
-  manual_object_->end();
-}
-
-void PoseArrayDisplay::setManualObjectMaterial()
-{
-  static int material_count = 0;
-  std::string material_name = "Arrows2dMaterial" + std::to_string(material_count++);
-  manual_object_material_ =
-    Ogre::MaterialManager::getSingleton().create(material_name, "rviz_rendering");
-  manual_object_material_->setReceiveShadows(false);
-  manual_object_material_->getTechnique(0)->setLightingEnabled(false);
-}
-
-void PoseArrayDisplay::EnableBlending(const Ogre::ColourValue & color)
-{
-  if (color.a < 0.9998) {
-    manual_object_material_->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
-    manual_object_material_->setDepthWriteEnabled(false);
-  } else {
-    manual_object_material_->setSceneBlending(Ogre::SBT_REPLACE);
-    manual_object_material_->setDepthWriteEnabled(true);
-  }
-}
-
-void PoseArrayDisplay::setManualObjectVertices(const Ogre::ColourValue & color)
-{
-  manual_object_->estimateVertexCount(poses_.size() * 6);
-  float length = arrow2d_length_property_->getFloat();
-
-  for (const auto & pose : poses_) {
-    Ogre::Vector3 vertices[6];
-    vertices[0] = pose.position;  // back of arrow
-    vertices[1] = pose.position + pose.orientation * Ogre::Vector3(length, 0, 0);  // tip of arrow
-    vertices[2] = vertices[1];
-    vertices[3] =
-      pose.position + pose.orientation * Ogre::Vector3(0.75f * length, 0.2f * length, 0);
-    vertices[4] = vertices[1];
-    vertices[5] = pose.position + pose.orientation * Ogre::Vector3(0.75f * length, -0.2f * length,
-        0);
-
-    for (const auto & vertex : vertices) {
-      manual_object_->position(vertex);
-      manual_object_->colour(color);
-    }
-  }
+  arrows2d_->updateManualObject(
+    arrow_color_property_->getOgreColor(),
+    arrow_alpha_property_->getFloat(),
+    arrow2d_length_property_->getFloat(),
+    poses_);
 }
 
 void PoseArrayDisplay::updateArrows3d()
@@ -371,9 +317,7 @@ std::unique_ptr<rviz_rendering::Axes> PoseArrayDisplay::makeAxes()
 void PoseArrayDisplay::reset()
 {
   RTDClass::reset();
-  if (manual_object_) {
-    manual_object_->clear();
-  }
+  arrows2d_->clear();
   arrows3d_.clear();
   axes_.clear();
 }

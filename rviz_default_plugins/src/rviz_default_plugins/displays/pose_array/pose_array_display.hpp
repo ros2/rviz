@@ -38,6 +38,7 @@
 
 #include "rviz_rendering/objects/shape.hpp"
 #include "rviz_common/ros_topic_display.hpp"
+#include "flat_arrows_array.hpp"
 
 // TODO(botteroa): Originally the display extended the MessageFilterDisplay. Revisit when available.
 // #include "rviz_common/message_filter_display.hpp"
@@ -67,6 +68,12 @@ namespace rviz_default_plugins
 {
 namespace displays
 {
+class FlatArrowsArray;
+struct OgrePose
+{
+  Ogre::Vector3 position;
+  Ogre::Quaternion orientation;
+};
 
 /** @brief Displays a geometry_msgs/PoseArray message as a bunch of line-drawn arrows. */
 class PoseArrayDisplay : public rviz_common::RosTopicDisplay<geometry_msgs::msg::PoseArray>
@@ -78,8 +85,7 @@ public:
   // initialize instead
   PoseArrayDisplay(
     rviz_common::DisplayContext * display_context,
-    Ogre::SceneNode * scene_node,
-    Ogre::ManualObject * manual_object);
+    Ogre::SceneNode * scene_node);
   PoseArrayDisplay();
   ~PoseArrayDisplay() override;
 
@@ -112,28 +118,18 @@ private:
   bool setTransform(std_msgs::msg::Header const & header);
   void updateDisplay();
   void updateArrows2d();
-  void setManualObjectMaterial();
-  void EnableBlending(const Ogre::ColourValue & color);
-  void setManualObjectVertices(const Ogre::ColourValue & color);
   void updateArrows3d();
   void updateAxes();
   std::unique_ptr<rviz_rendering::Axes> makeAxes();
   std::unique_ptr<rviz_rendering::Arrow> makeArrow3d();
 
-  struct OgrePose
-  {
-    Ogre::Vector3 position;
-    Ogre::Quaternion orientation;
-  };
-
   std::vector<OgrePose> poses_;
+  std::unique_ptr<FlatArrowsArray> arrows2d_;
   std::vector<std::unique_ptr<rviz_rendering::Arrow>> arrows3d_;
   std::vector<std::unique_ptr<rviz_rendering::Axes>> axes_;
 
   Ogre::SceneNode * arrow_node_;
   Ogre::SceneNode * axes_node_;
-  Ogre::ManualObject * manual_object_;
-  Ogre::MaterialPtr manual_object_material_;
 
   rviz_common::properties::EnumProperty * shape_property_;
   rviz_common::properties::ColorProperty * arrow_color_property_;
