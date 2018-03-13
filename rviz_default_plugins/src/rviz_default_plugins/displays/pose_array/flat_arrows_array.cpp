@@ -122,9 +122,7 @@ void FlatArrowsArray::setManualObjectVertices(
       0.75f * length, -0.2f * length,
       0);
 
-    for (
-      const auto & vertex : vertices)
-    {
+    for (const auto & vertex : vertices) {
       manual_object_->position(vertex);
       manual_object_->colour(color);
     }
