@@ -59,6 +59,15 @@ void LaserScanDisplay::onInitialize()
 
 void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPtr scan)
 {
+  // TODO(Martin-Idel-SI): Reenable once tf_filter is ported or delete if necessary
+//  Compute tolerance necessary for this scan
+//  ros::Duration tolerance(scan->time_increment * scan->ranges.size());
+//  if (tolerance > filter_tolerance_)
+//  {
+//    filter_tolerance_ = tolerance;
+//    tf_filter_->setTolerance(filter_tolerance_);
+//  }
+
   auto cloud = std::make_shared<sensor_msgs::msg::PointCloud2>();
 
   try {

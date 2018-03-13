@@ -56,6 +56,8 @@ namespace displays
 {
 
 /** @brief Visualizes a laser scan, received as a sensor_msgs::LaserScan. */
+// TODO(botteroa-si): This display originally extended the MessageFilterDisplay. Revisit when
+// available
 class LaserScanDisplay : public rviz_common::RosTopicDisplay<sensor_msgs::msg::LaserScan>
 {
 public:
