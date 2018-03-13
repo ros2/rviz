@@ -61,15 +61,17 @@ void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPt
 {
   auto cloud = std::make_shared<sensor_msgs::msg::PointCloud2>();
 
-  std::string frame_id = scan->header.frame_id;
-
   try {
     auto buffer = context_->getFrameManager()->getTFBufferPtr();
-    projector_->transformLaserScanToPointCloud(fixed_frame_.toStdString(), *scan, *cloud,
-      *buffer, laser_geometry::channel_option::Intensity);
+    projector_->transformLaserScanToPointCloud(
+      fixed_frame_.toStdString(),
+      *scan,
+      *cloud,
+      *buffer,
+      laser_geometry::channel_option::Intensity);
   } catch (tf2::TransformException & e) {
-    RVIZ_COMMON_LOG_DEBUG_STREAM("LaserScan [" << qPrintable(getName()) << "]: "
-      "failed to transform scan:" << e.what() << ".");
+    RVIZ_COMMON_LOG_DEBUG_STREAM(
+      "LaserScan [" << qPrintable(getName()) << "]: failed to transform scan:" << e.what() << ".");
     return;
   }
 
