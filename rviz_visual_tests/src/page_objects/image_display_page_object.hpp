@@ -30,22 +30,17 @@
 #ifndef PAGE_OBJECTS__IMAGE_DISPLAY_PAGE_OBJECT_HPP_
 #define PAGE_OBJECTS__IMAGE_DISPLAY_PAGE_OBJECT_HPP_
 
-#include <string>
+#include "page_object_with_window.hpp"
 
-#include "src/page_objects/base_page_object.hpp"
-
-class ImageDisplayPageObject : public BasePageObject
+class ImageDisplayPageObject : public PageObjectWithWindow
 {
 public:
   explicit ImageDisplayPageObject(int display_id);
 
-  void captureDisplayRenderWindow(std::string name) override;
+  void setRenderWindow() override;
   void setTopic(QString topic);
   void setUnreliable(bool unreliable);
   void setQueueSize(QString queue_size);
-
-private:
-  int image_display_index_;
 };
 
 #endif  // PAGE_OBJECTS__IMAGE_DISPLAY_PAGE_OBJECT_HPP_

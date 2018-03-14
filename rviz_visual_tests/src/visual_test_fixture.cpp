@@ -35,7 +35,7 @@
 
 #include <QTimer>  // NOLINT
 
-#include "src/internal/test_helpers.hpp"
+#include "internal/test_helpers.hpp"
 #include "rviz_common/ros_integration/ros_client_abstraction.hpp"
 
 void VisualTestFixture::SetUpTestCase()
@@ -110,7 +110,7 @@ void VisualTestFixture::captureMainWindow(Ogre::String image_name)
 }
 
 void VisualTestFixture::captureRenderWindow(
-  std::shared_ptr<BasePageObject> display, Ogre::String name)
+  std::shared_ptr<PageObjectWithWindow> display, Ogre::String name)
 {
   static int count = 0;
   Ogre::String image_name = name + "_secondary_window" + Ogre::StringConverter::toString(count++);
@@ -139,7 +139,7 @@ void VisualTestFixture::assertMainWindowIdentity(Ogre::String image_name)
 
 void VisualTestFixture::startApplication()
 {
-  QTimer::singleShot(total_delay_ + 100, this, [this] {
+  QTimer::singleShot(total_delay_ + 123, this, [this] {
       qapp_->quit();
     });
   qapp_->exec();
@@ -147,7 +147,7 @@ void VisualTestFixture::startApplication()
 
 QApplication * VisualTestFixture::qapp_ = nullptr;
 rviz_common::VisualizerApp * VisualTestFixture::visualizer_app_ = nullptr;
-Ogre::String VisualTestFixture::test_name_ = "";
+Ogre::String VisualTestFixture::test_name_;
 std::unique_ptr<VisualTest> VisualTestFixture::visual_test_ = nullptr;
 std::unique_ptr<DisplayHandler> VisualTestFixture::display_handler_ = nullptr;
 int VisualTestFixture::total_delay_;

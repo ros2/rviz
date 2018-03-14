@@ -30,20 +30,19 @@
 #ifndef PAGE_OBJECTS__CAMERA_DISPLAY_PAGE_OBJECT_HPP_
 #define PAGE_OBJECTS__CAMERA_DISPLAY_PAGE_OBJECT_HPP_
 
-#include <string>
+#include "page_object_with_window.hpp"
 
-#include "src/page_objects/base_page_object.hpp"
-
-class CameraDisplayPageObject : public BasePageObject
+class CameraDisplayPageObject : public PageObjectWithWindow
 {
 public:
   explicit CameraDisplayPageObject(int display_id);
 
-  /* @param name Name of the sub-property to change (i.e. one of the other displays currently used)
+  /* @param display_name Name of the display whose visibility must be changed
    * @param relative_row_index Sub-property index relative to the parent property (i.e. Visibility)
-   * @param sub_property_visibility the value to set for the sub-property
+   * @param display_visibility the value to set for the sub-property
    */
-  void setVisibilitySubProperty(QString name, int relative_row_index, bool sub_property_visibility);
+  void setDisplayVisibilityInRenderWindow(
+    QString display_name, int relative_row_index, bool display_visibility);
   void setTopic(QString topic);
   void setUnreliable(bool unreliable);
   void setQueueSize(QString queue_size);
@@ -52,10 +51,7 @@ public:
   void setZoomFacor(QString zoom_factor);
   void setVisibility(bool visibility);
 
-  void captureDisplayRenderWindow(std::string name) override;
-
-private:
-  int camera_display_index_;
+  void setRenderWindow() override;
 };
 
 #endif  // PAGE_OBJECTS__CAMERA_DISPLAY_PAGE_OBJECT_HPP_

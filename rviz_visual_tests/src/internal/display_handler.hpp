@@ -33,7 +33,7 @@
 
 #include <memory>
 #include <vector>
-#include "src/page_objects/base_page_object.hpp"
+#include "../page_objects/base_page_object.hpp"
 
 class DisplayHandler : public QObject
 {

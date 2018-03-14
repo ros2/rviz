@@ -36,7 +36,7 @@
 #include <QTimer>  // NOLINT
 
 #include "test_helpers.hpp"
-#include "src/visual_test_fixture.hpp"
+#include "../visual_test_fixture.hpp"
 
 DisplayHandler::DisplayHandler()
 {

@@ -34,7 +34,7 @@
 
 #include <QtWidgets>  // NOLINT
 
-#include "src/page_objects/base_page_object.hpp"
+#include "base_page_object.hpp"
 
 class PointCloudDisplayPageObject : public BasePageObject
 {

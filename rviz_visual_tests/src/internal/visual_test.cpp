@@ -67,7 +67,7 @@ void VisualTest::setCamLookAt(Ogre::Vector3 look_at_vector)
 }
 
 void VisualTest::takeReferenceScreenShot(
-  Ogre::String screenshot_name, std::shared_ptr<BasePageObject> display)
+  Ogre::String screenshot_name, std::shared_ptr<PageObjectWithWindow> display)
 {
   std::string images_name = QDir::toNativeSeparators(
     QString::fromStdString(source_directory_path_ + reference_images_path_suffix_ +
@@ -81,7 +81,7 @@ void VisualTest::takeReferenceScreenShot(
 }
 
 void VisualTest::takeTestScreenShot(
-  Ogre::String screenshot_name, std::shared_ptr<BasePageObject> display)
+  Ogre::String screenshot_name, std::shared_ptr<PageObjectWithWindow> display)
 {
   std::string images_name = QDir::toNativeSeparators(
     QString::fromStdString(build_directory_path_ + test_images_path_suffix_ +
@@ -106,7 +106,7 @@ void VisualTest::assertVisualIdentity(Ogre::String name)
   }
 }
 
-void VisualTest::takeScreenShot(Ogre::String name, std::shared_ptr<BasePageObject> display)
+void VisualTest::takeScreenShot(Ogre::String name, std::shared_ptr<PageObjectWithWindow> display)
 {
   if (directoriesDoNotExist()) {
     GTEST_FAIL() << "[  ERROR   ] at least one of test_images and reference_images directories "

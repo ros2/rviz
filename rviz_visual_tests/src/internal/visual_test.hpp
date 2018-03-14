@@ -43,7 +43,7 @@
 
 #include "rviz_scene_test.hpp"
 #include "image_tester.hpp"
-#include "../page_objects/base_page_object.hpp"
+#include "../page_objects/page_object_with_window.hpp"
 
 class VisualTest
 {
@@ -69,7 +69,7 @@ public:
       and saves it into [...]/rviz_ws/build/test_framework/reference_images as name_ref.png, or
       into [...]/rviz_ws/build/test_framework/test_images as name.png.
   */
-  void takeScreenShot(Ogre::String name, std::shared_ptr<BasePageObject> display);
+  void takeScreenShot(Ogre::String name, std::shared_ptr<PageObjectWithWindow> display);
 
   /** Reset the scene to the default settings. i.e. repositions the camera, its lookAt vector and
       deletes all the renderables (a part the grid).
@@ -80,9 +80,9 @@ public:
 
 private:
   void takeReferenceScreenShot(
-    Ogre::String screenshot_name, std::shared_ptr<BasePageObject> display);
+    Ogre::String screenshot_name, std::shared_ptr<PageObjectWithWindow> display);
   void takeTestScreenShot(
-    Ogre::String screenshot_name, std::shared_ptr<BasePageObject> display);
+    Ogre::String screenshot_name, std::shared_ptr<PageObjectWithWindow> display);
   bool checkImageExists(std::string & name);
   bool directoriesDoNotExist();
 

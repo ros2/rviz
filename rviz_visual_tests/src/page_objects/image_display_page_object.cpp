@@ -29,29 +29,21 @@
 
 #include "image_display_page_object.hpp"
 
-#include <string>
-
 #include <QTest>  // NOLINT
 
-#include "src/internal/test_helpers.hpp"
-#include "src/visual_test_fixture.hpp"
+#include "../internal/test_helpers.hpp"
 
 ImageDisplayPageObject::ImageDisplayPageObject(int display_id)
-: BasePageObject(display_id, 0, 2)
+: PageObjectWithWindow(display_id, 0, 2)
 {
   static int image_displays_number = 0;
-  image_display_index_ = image_displays_number++;
+  display_with_window_index_ = image_displays_number++;
 }
 
-void ImageDisplayPageObject::captureDisplayRenderWindow(std::string name)
+void ImageDisplayPageObject::setRenderWindow()
 {
-  QTimer::singleShot(VisualTestFixture::total_delay_, this, [this, name] {
-      auto render_window =
-      helpers::findWindow("ImageDisplayRenderWindow" + QString::number(image_display_index_));
-      if (render_window) {
-        render_window->captureScreenShot(name);
-      }
-    });
+  render_window_ =
+    helpers::findWindow("ImageDisplayRenderWindow" + QString::number(display_with_window_index_));
 }
 
 void ImageDisplayPageObject::setTopic(QString topic)

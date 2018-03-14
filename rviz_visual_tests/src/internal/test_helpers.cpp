@@ -33,7 +33,7 @@
 
 #include <QApplication>  // NOLINT
 
-#include "src/visual_test_fixture.hpp"
+#include "../visual_test_fixture.hpp"
 
 namespace helpers
 {

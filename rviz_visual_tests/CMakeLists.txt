@@ -3,13 +3,11 @@ cmake_minimum_required(VERSION 3.5)
 project(rviz_visual_tests)
 
 # Options to decide whether or not the visual test will run and in which modality (TEST or REF)
-option(EnableVisualTests "EnableVisualTests")
-set(VisualTests "TRUE" CACHE STRING "VisualTestsVariable")
-option(GenerateReferenceImages "GenerateReferenceImages")
-set(GenerateReferenceImages "FALSE" CACHE STRING "GenerateReferenceImages")
+option(EnableVisualTests "decides wheter or not enable the tests")
+option(GenerateReferenceImages "decides wheter the reference images are updated")
 
 # Option to set a non null threshold in the image comparison (in case of unidentical images).
-option(ComparisonThreshold "Threshold")
+option(ComparisonThreshold "The threshold")
 add_definitions(-D_COMPARISON_THRESHOLD="${ComparisonThreshold}")
 
 # Path variables needed to save and find screenshots for image comparison.
@@ -69,6 +67,8 @@ if(BUILD_TESTING)
         src/page_objects/camera_display_page_object.cpp
         src/page_objects/image_display_page_object.hpp
         src/page_objects/image_display_page_object.cpp
+        src/page_objects/page_object_with_window.hpp
+        src/page_objects/page_object_with_window.cpp
         src/page_objects/point_cloud_display_page_object.hpp
         src/page_objects/point_cloud_display_page_object.cpp
         src/page_objects/grid_display_page_object.hpp

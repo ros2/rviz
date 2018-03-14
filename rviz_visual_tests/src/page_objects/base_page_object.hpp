@@ -46,8 +46,7 @@ public:
   int getDisplayId() const;
   int getDisplayCategory() const;
   int getDisplayNameIndex() const;
-
-  virtual void captureDisplayRenderWindow(std::string image_name);
+  void collapse();
 
 protected:
   void setString(QString property_name, QString value_to_set, int property_row_index);
@@ -64,8 +63,9 @@ private:
     QString expected_property_name, int property_row_index, QModelIndex display_index);
   void failIfPropertyIsAbsent(
     QString property_name, int property_row_index, QModelIndex parent_index);
-  void clickOnProperty(QModelIndex property_index);
-  QModelIndex getRelativeIndexAndExpandDisplay() const;
+  void clickOnTreeItem(QModelIndex item_index) const;
+  void doubleClickOnTreeItem(QModelIndex item_index) const;
+  QModelIndex getRelativeIndexAndExpandDisplay();
   QModelIndex getValueToChangeIndex(
     int property_row_index, const QModelIndex & parent_index) const;
   QModelIndex getPropertyToChangeIndex(
@@ -77,6 +77,7 @@ private:
     int main_property_index,
     int sub_property_index,
     QModelIndex display_index);
+  void setExpanded(QModelIndex display_index, bool expanded);
 
   int default_first_display_index_;
 };

@@ -34,22 +34,22 @@
 
 #include <QtWidgets>  // NOLINT
 
-#include "src/page_objects/base_page_object.hpp"
+#include "base_page_object.hpp"
 
 class GridDisplayPageObject : public BasePageObject
 {
 public:
   explicit GridDisplayPageObject(int display_id);
 
-  void setReferenceFrame(QString line_style);
+  void setReferenceFrame(QString reference_frame);
   void setPlaneCellCount(QString plane_cell_count);
   void setNormalCellCount(QString normal_cell_count);
   void setCellSize(QString cell_size);
-  void setLineStyle(QString plane);
+  void setLineStyle(QString line_style);
   void setColor(int red, int green, int blue);
   void setAlpha(QString alpha);
   void setPlane(QString plane);
-  void setOffSet(float x, float y, float z);
+  void setOffset(float x, float y, float z);
 };
 
 #endif  // PAGE_OBJECTS__GRID_DISPLAY_PAGE_OBJECT_HPP_

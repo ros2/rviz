@@ -29,26 +29,23 @@
 
 #include "camera_display_page_object.hpp"
 
-#include <string>
-
 #include <QTest>  // NOLINT
 
-#include "src/internal/test_helpers.hpp"
-#include "src/visual_test_fixture.hpp"
+#include "../internal/test_helpers.hpp"
 
 CameraDisplayPageObject::CameraDisplayPageObject(int display_id)
-: BasePageObject(display_id, 0, 0)
+: PageObjectWithWindow(display_id, 0, 0)
 {
   static int camera_displays_number = 0;
-  camera_display_index_ = camera_displays_number++;
+  display_with_window_index_ = camera_displays_number++;
 }
 
-void CameraDisplayPageObject::setVisibilitySubProperty(
-  QString name, int relative_row_index, bool sub_property_visibility)
+void CameraDisplayPageObject::setDisplayVisibilityInRenderWindow(
+  QString display_name, int relative_row_index, bool display_visibility)
 {
   int property_row_index = 1;
 
-  setBool(name, sub_property_visibility, property_row_index, relative_row_index);
+  setBool(display_name, display_visibility, property_row_index, relative_row_index);
 }
 
 void CameraDisplayPageObject::setTopic(QString topic)
@@ -100,13 +97,8 @@ void CameraDisplayPageObject::setVisibility(bool visibility)
   setBool("Visibility", visibility, property_row_index);
 }
 
-void CameraDisplayPageObject::captureDisplayRenderWindow(std::string name)
+void CameraDisplayPageObject::setRenderWindow()
 {
-  QTimer::singleShot(VisualTestFixture::total_delay_, this, [this, name] {
-      auto render_window =
-      helpers::findWindow("CameraDisplayRenderWindow" + QString::number(camera_display_index_));
-      if (render_window) {
-        render_window->captureScreenShot(name);
-      }
-    });
+  render_window_ =
+    helpers::findWindow("CameraDisplayRenderWindow" + QString::number(display_with_window_index_));
 }

@@ -97,7 +97,7 @@ void GridDisplayPageObject::setPlane(QString plane)
   setComboBox("Plane", plane, property_row_index);
 }
 
-void GridDisplayPageObject::setOffSet(float x, float y, float z)
+void GridDisplayPageObject::setOffset(float x, float y, float z)
 {
   int property_row_index = 9;
 

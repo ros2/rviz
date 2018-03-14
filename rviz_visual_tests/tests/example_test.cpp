@@ -31,53 +31,49 @@
 #include <memory>
 #include <string>
 
-#include "src/visual_test_fixture.hpp"
-#include "src/page_objects/point_cloud_display_page_object.hpp"
-#include "src/page_objects/grid_display_page_object.hpp"
-#include "src/page_objects/polygon_display_page_object.hpp"
-
+#include "../src/visual_test_fixture.hpp"
+#include "../src/page_objects/camera_display_page_object.hpp"
+#include "../src/page_objects/grid_display_page_object.hpp"
+#include "../src/page_objects/image_display_page_object.hpp"
+#include "../src/page_objects/point_cloud_display_page_object.hpp"
+#include "../src/page_objects/polygon_display_page_object.hpp"
 
 TEST_F(VisualTestFixture, example_test_structure) {
-  /// Set the position of the camera and its sight vector.
+  /// Set the position of the camera and its sight vector:
   setCamPose(Ogre::Vector3(0, 3, 16));
   setCamLookAt(Ogre::Vector3(0, 2, 0));
 
-  /// Add the desired displays and set their properties. For example:
-
-  /// Add a PointCloud display and change points style, size and alpha:
-  auto point_cloud_display = addDisplay<PointCloudDisplayPageObject>();
-  point_cloud_display->setStyle("Spheres");
-  point_cloud_display->setSize("1");
-  point_cloud_display->setAlpha("0,5");
-
-  /// Add a Grid display and modify its offset:
+  /// Add displays:
+  auto pointcloud_display = addDisplay<PointCloudDisplayPageObject>();
   auto grid_display = addDisplay<GridDisplayPageObject>();
-  grid_display->setOffSet(1, 2, 5);
+  auto image_display = addDisplay<ImageDisplayPageObject>();
 
-  auto second_grid_display = addDisplay<GridDisplayPageObject>();
-  removeDisplay(grid_display);
+  /// Modify their properties:
+  pointcloud_display->setSize("3");
+  pointcloud_display->collapse();
+  grid_display->setOffset(0.3, 2, 0.4);
+  grid_display->setColor(0, 255, 0);
+  grid_display->collapse();
+  image_display->setQueueSize("10");
 
-  /// Take a screenshot (reference or test), and compare to the reference image (if in TEST mode).
-  assertImageIdentity();
+  /// Take the screenshots of the desired render windows:
+  captureRenderWindow(image_display);
+  captureMainWindow();
+
+  /// Compare test screenshots with the reference ones (if in TEST mode):
+  assertScreenShotsIdentity();
 }
 
-TEST_F(VisualTestFixture, example_test_structure2) {
-  /// Set the position of the camera and its sight vector.
-  setCamPose(Ogre::Vector3(0, 3, 15));
-  setCamLookAt(Ogre::Vector3(0, 2, 0));
-
-  /// Add the desired displays and set their properties. For example:
-
-  /// Add a PointCloud display and change points style, size and alpha:
+TEST_F(VisualTestFixture, second_example) {
+  /// Add displays:
   auto grid_display = addDisplay<GridDisplayPageObject>();
-  grid_display->setAlpha("0,4");
 
-  auto grid_display2 = addDisplay<GridDisplayPageObject>();
-  grid_display2->setOffSet(1.2f, 3, 4.5f);
-  grid_display2->setColor(255, 0, 0);
-  auto poligon_display = addDisplay<PolygonDisplayPageObject>();
+  /// Modify their properties:
+  grid_display->setOffset(0.3, 2, 0.4);
+  grid_display->setColor(255, 255, 0);
+  grid_display->setPlaneCellCount("30");
 
-
-  /// Take a screenshot (reference or test), and compare to the reference image (if in TEST mode).
-  assertImageIdentity();
+  // If only the main window is of interest, the method 'assertMainWindowIdentity()' can instead be
+  // used, which both captures the screenshot and compares it to the reference:
+  assertMainWindowIdentity();
 }

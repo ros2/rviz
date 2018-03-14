@@ -35,8 +35,8 @@
 #include <QTest>  // NOLINT
 #include <QTimer>  // NOLINT
 
-#include "src/internal/test_helpers.hpp"
-#include "src/visual_test_fixture.hpp"
+#include "../internal/test_helpers.hpp"
+#include "../visual_test_fixture.hpp"
 
 BasePageObject::BasePageObject(
   int display_id, int display_category, int display_name_index)
@@ -56,8 +56,8 @@ void BasePageObject::setString(
 
       failIfPropertyIsAbsent(property_name, property_row_index, relative_display_index);
 
-      clickOnProperty(getPropertyToChangeIndex(property_row_index, relative_display_index));
-      clickOnProperty(getValueToChangeIndex(property_row_index, relative_display_index));
+      clickOnTreeItem(getPropertyToChangeIndex(property_row_index, relative_display_index));
+      clickOnTreeItem(getValueToChangeIndex(property_row_index, relative_display_index));
       QTest::keyClicks(helpers::getDisplaysTreeView()->focusWidget(), value_to_set);
       QTest::keyClick(helpers::getDisplaysTreeView()->focusWidget(), Qt::Key_Enter);
     });
@@ -129,7 +129,6 @@ QModelIndex BasePageObject::getSubPropertyIndex(
   auto relative_property_index = helpers::getDisplaysTreeView()
     ->model()
     ->index(main_property_index, 0, display_index);
-  helpers::getDisplaysTreeView()->setExpanded(relative_property_index, true);
   failIfPropertyIsAbsent(property_name, sub_property_index, relative_property_index);
 
   return getValueToChangeIndex(sub_property_index, relative_property_index);
@@ -151,12 +150,12 @@ QModelIndex BasePageObject::getValueToChangeIndex(
          ->index(property_row_index, 1, parent_index);
 }
 
-QModelIndex BasePageObject::getRelativeIndexAndExpandDisplay() const
+QModelIndex BasePageObject::getRelativeIndexAndExpandDisplay()
 {
   int display_index = helpers::findIndex(display_id_, VisualTestFixture::all_display_ids_vector_);
   auto relative_display_index =
     helpers::getDisplaysTreeView()->model()->index(default_first_display_index_ + display_index, 0);
-  helpers::getDisplaysTreeView()->setExpanded(relative_display_index, true);
+  setExpanded(relative_display_index, true);
   return relative_display_index;
 }
 
@@ -186,12 +185,23 @@ void BasePageObject::failIfPropertyIsAbsent(
   }
 }
 
-void BasePageObject::clickOnProperty(QModelIndex property_index)
+void BasePageObject::clickOnTreeItem(QModelIndex item_index) const
 {
   auto viewport = helpers::getDisplaysTreeView()->viewport();
-  auto property_rect = helpers::getDisplaysTreeView()->visualRect(property_index);
-  QTest::mouseClick(
-    viewport, Qt::MouseButton::LeftButton, Qt::KeyboardModifiers(), property_rect.center());
+  auto item_rect = helpers::getDisplaysTreeView()->visualRect(item_index);
+  QTest::mouseClick(viewport, Qt::MouseButton::LeftButton, Qt::NoModifier, item_rect.center());
+}
+
+void BasePageObject::doubleClickOnTreeItem(QModelIndex item_index) const
+{
+  auto viewport = helpers::getDisplaysTreeView()->viewport();
+  auto item_rect = helpers::getDisplaysTreeView()->visualRect(item_index);
+  // TODO(botteroa-si): for some reason, QTest::mouseDClick() doesn't perform as expected (i.e.
+  // simulating a double click). Neither is this result achieved with two consecutive
+  // QTest::mouseClick(). With two consecutive mouseDClick() it works. Update this if/when the
+  // issue with mouseDClick() is fixed.
+  QTest::mouseDClick(viewport, Qt::MouseButton::LeftButton, Qt::NoModifier, item_rect.center());
+  QTest::mouseDClick(viewport, Qt::MouseButton::LeftButton, Qt::NoModifier, item_rect.center());
 }
 
 int BasePageObject::getDisplayId() const
@@ -209,10 +219,27 @@ int BasePageObject::getDisplayNameIndex() const
   return display_name_index_;
 }
 
-void BasePageObject::captureDisplayRenderWindow(std::string image_name)
+void BasePageObject::collapse()
 {
-  (void) image_name;
-  std::cout << "\n [WARNING]: the dispaly doesn't have a render window!\n";
+  QTimer::singleShot(
+    VisualTestFixture::total_delay_, this, [this] {
+      int display_index =
+      helpers::findIndex(display_id_, VisualTestFixture::all_display_ids_vector_);
+      auto relative_display_index = helpers::getDisplaysTreeView()->model()->index(
+        default_first_display_index_ + display_index, 0);
+      setExpanded(relative_display_index, false);
+    });
+
+  helpers::increaseTotalDelay();
+}
+
+void BasePageObject::setExpanded(QModelIndex display_index, bool expanded)
+{
+  if (expanded == helpers::getDisplaysTreeView()->isExpanded(display_index)) {
+    return;
+  }
+
+  doubleClickOnTreeItem(display_index);
 }
 
 QString format(float number)
