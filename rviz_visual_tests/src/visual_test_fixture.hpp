@@ -32,11 +32,11 @@
 
 #include <memory>
 #include <vector>
+
 #include "src/internal/display_handler.hpp"
-#include "src/page_objects/base_page_object.hpp"
 #include "src/internal/visual_test.hpp"
 
-class VisualTestFixture : public testing::Test
+class VisualTestFixture : public testing::Test, QObject
 {
 public:
   static void SetUpTestCase();
@@ -53,7 +53,14 @@ public:
   }
   void removeDisplay(std::shared_ptr<BasePageObject> display);
 
-  void assertImageIdentity(Ogre::String image_name = test_name_);
+  void captureMainWindow(Ogre::String image_name = test_name_);
+  void captureRenderWindow(
+    std::shared_ptr<BasePageObject> display, Ogre::String name = test_name_);
+
+  void assertScreenShotsIdentity();
+  void assertMainWindowIdentity(Ogre::String image_name = test_name_);
+
+  void startApplication();
 
   static int getDefaultDelayValue();
 
@@ -65,7 +72,7 @@ public:
   static int total_delay_;
   static std::vector<int> all_display_ids_vector_;
   static const int default_delay_value_;
+  static std::vector<Ogre::String> screen_shots_;
 };
-
 
 #endif  // VISUAL_TEST_FIXTURE_HPP_

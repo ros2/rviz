@@ -27,11 +27,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "rviz_scene_test.hpp"
+
 #include <iostream>
 #include <string>
 #include <thread>
 
-#include "rviz_scene_test.hpp"
+#include "../visual_test_fixture.hpp"
 
 
 RvizTestScene::RvizTestScene(
@@ -76,23 +78,21 @@ void RvizTestScene::installCamera()
   rviz_rendering::RenderWindowOgreAdapter::setOgreCamera(render_window_, camera_);
 }
 
-void RvizTestScene::takeReferenceShot(Ogre::String name, uint64_t delay)
+void RvizTestScene::takeReferenceShot(Ogre::String name)
 {
-  takeScreenShot(name + "_ref.png", delay);
+  takeScreenShot(name + "_ref.png");
 }
 
-void RvizTestScene::takeTestShot(Ogre::String name, uint64_t delay)
+void RvizTestScene::takeTestShot(Ogre::String name)
 {
-  takeScreenShot(name + ".png", delay);
+  takeScreenShot(name + ".png");
 }
 
-void RvizTestScene::takeScreenShot(Ogre::String name, uint64_t delay)
+void RvizTestScene::takeScreenShot(Ogre::String name)
 {
-  QTimer::singleShot(delay, this, [this, name] {
-      qapp_->quit();
+  QTimer::singleShot(VisualTestFixture::total_delay_, this, [this, name] {
       render_window_->captureScreenShot(name);
     });
-  qapp_->exec();
 }
 
 void RvizTestScene::setCamPose(Ogre::Vector3 pose)

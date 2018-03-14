@@ -34,12 +34,15 @@
 
 #include <QTreeView>  // NOLINT
 
+#include "rviz_rendering/render_window.hpp"
+
 namespace helpers
 {
 
 int findIndex(int display_id, const std::vector<int> & displays_ids_vector);
 QTreeView * getDisplaysTreeView();
 void increaseTotalDelay();
+rviz_rendering::RenderWindow * findWindow(const QString & window_name);
 
 }  // namespace helpers
 

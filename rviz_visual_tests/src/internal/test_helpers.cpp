@@ -62,4 +62,17 @@ void increaseTotalDelay()
   VisualTestFixture::total_delay_ += VisualTestFixture::getDefaultDelayValue();
 }
 
+rviz_rendering::RenderWindow * findWindow(const QString & window_name)
+{
+  auto all_windows = QApplication::allWindows();
+  for (auto & window : all_windows) {
+    if (window->objectName() == window_name) {
+      rviz_rendering::RenderWindow * render_window =
+        qobject_cast<rviz_rendering::RenderWindow *>(window);
+      return render_window;
+    }
+  }
+  return nullptr;
+}
+
 }  // namespace helpers

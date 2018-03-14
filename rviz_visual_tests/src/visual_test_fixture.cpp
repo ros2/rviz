@@ -33,6 +33,9 @@
 #include <string>
 #include <vector>
 
+#include <QTimer>  // NOLINT
+
+#include "src/internal/test_helpers.hpp"
 #include "rviz_common/ros_integration/ros_client_abstraction.hpp"
 
 void VisualTestFixture::SetUpTestCase()
@@ -59,6 +62,7 @@ void VisualTestFixture::TearDown()
   display_handler_->removeAllDisplays();
   visual_test_->reset();
   total_delay_ = getDefaultDelayValue();
+  screen_shots_.clear();
 }
 
 void VisualTestFixture::TearDownTestCase()
@@ -99,11 +103,46 @@ int VisualTestFixture::getDefaultDelayValue()
   return default_delay_value_;
 }
 
-void VisualTestFixture::assertImageIdentity(Ogre::String image_name)
+void VisualTestFixture::captureMainWindow(Ogre::String image_name)
 {
-  visual_test_->takeScreenShot(
-    image_name, total_delay_ + getDefaultDelayValue());
+  screen_shots_.push_back(image_name);
+  visual_test_->takeScreenShot(image_name, nullptr);
+}
+
+void VisualTestFixture::captureRenderWindow(
+  std::shared_ptr<BasePageObject> display, Ogre::String name)
+{
+  static int count = 0;
+  Ogre::String image_name = name + "_secondary_window" + Ogre::StringConverter::toString(count++);
+  screen_shots_.push_back(image_name);
+
+  visual_test_->takeScreenShot(image_name, display);
+}
+
+void VisualTestFixture::assertScreenShotsIdentity()
+{
+  startApplication();
+
+  for (const auto & image_name : screen_shots_) {
+    visual_test_->assertVisualIdentity(image_name);
+  }
+  helpers::increaseTotalDelay();
+}
+
+void VisualTestFixture::assertMainWindowIdentity(Ogre::String image_name)
+{
+  captureMainWindow(image_name);
+  startApplication();
   visual_test_->assertVisualIdentity(image_name);
+  helpers::increaseTotalDelay();
+}
+
+void VisualTestFixture::startApplication()
+{
+  QTimer::singleShot(total_delay_ + 100, this, [this] {
+      qapp_->quit();
+    });
+  qapp_->exec();
 }
 
 QApplication * VisualTestFixture::qapp_ = nullptr;
@@ -114,3 +153,4 @@ std::unique_ptr<DisplayHandler> VisualTestFixture::display_handler_ = nullptr;
 int VisualTestFixture::total_delay_;
 std::vector<int> VisualTestFixture::all_display_ids_vector_;
 const int VisualTestFixture::default_delay_value_ = 2000;
+std::vector<Ogre::String> VisualTestFixture::screen_shots_;

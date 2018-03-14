@@ -29,6 +29,8 @@
 #include "visual_test.hpp"
 
 #include <gtest/gtest.h>
+
+#include <memory>
 #include <string>
 
 #include <QDir>  // NOLINT
@@ -64,22 +66,32 @@ void VisualTest::setCamLookAt(Ogre::Vector3 look_at_vector)
   scene_.setLookAt(look_at_vector);
 }
 
-void VisualTest::takeReferenceScreenShot(Ogre::String screenshot_name, uint64_t delay)
+void VisualTest::takeReferenceScreenShot(
+  Ogre::String screenshot_name, std::shared_ptr<BasePageObject> display)
 {
   std::string images_name = QDir::toNativeSeparators(
     QString::fromStdString(source_directory_path_ + reference_images_path_suffix_ +
     screenshot_name)).toStdString();
 
-  scene_.takeReferenceShot(images_name, delay);
+  if (display) {
+    display->captureDisplayRenderWindow(images_name + "_ref.png");
+    return;
+  }
+  scene_.takeReferenceShot(images_name);
 }
 
-void VisualTest::takeTestScreenShot(Ogre::String screenshot_name, uint64_t delay)
+void VisualTest::takeTestScreenShot(
+  Ogre::String screenshot_name, std::shared_ptr<BasePageObject> display)
 {
   std::string images_name = QDir::toNativeSeparators(
     QString::fromStdString(build_directory_path_ + test_images_path_suffix_ +
     screenshot_name)).toStdString();
 
-  scene_.takeTestShot(images_name, delay);
+  if (display) {
+    display->captureDisplayRenderWindow(images_name + ".png");
+    return;
+  }
+  scene_.takeTestShot(images_name);
 }
 
 void VisualTest::assertVisualIdentity(Ogre::String name)
@@ -94,7 +106,7 @@ void VisualTest::assertVisualIdentity(Ogre::String name)
   }
 }
 
-void VisualTest::takeScreenShot(Ogre::String name, uint64_t delay)
+void VisualTest::takeScreenShot(Ogre::String name, std::shared_ptr<BasePageObject> display)
 {
   if (directoriesDoNotExist()) {
     GTEST_FAIL() << "[  ERROR   ] at least one of test_images and reference_images directories "
@@ -102,9 +114,9 @@ void VisualTest::takeScreenShot(Ogre::String name, uint64_t delay)
   }
 
   if (_REF_IMAGES) {
-    takeReferenceScreenShot(name, delay);
+    takeReferenceScreenShot(name, display);
   } else {
-    takeTestScreenShot(name, delay);
+    takeTestScreenShot(name, display);
   }
 }
 

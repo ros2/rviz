@@ -47,6 +47,9 @@ public:
   int getDisplayCategory() const;
   int getDisplayNameIndex() const;
 
+  virtual void captureDisplayRenderWindow(std::string image_name);
+  virtual void setRenderWindow() {}
+
 protected:
   void setString(
     QString property_name, QString value_to_set, int property_row_index);

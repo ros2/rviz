@@ -188,6 +188,12 @@ int BasePageObject::getDisplayNameIndex() const
   return display_name_index_;
 }
 
+void BasePageObject::captureDisplayRenderWindow(std::string image_name)
+{
+  (void) image_name;
+  std::cout << "\n [ERROR]: the dispaly doesn't have a render window!\n";
+}
+
 QString format(float number)
 {
   return QLocale(QLocale::Language::English).toString(number);

@@ -51,11 +51,13 @@ class RvizTestScene : public QObject
 {
 public:
   RvizTestScene(
-    QApplication * qapp, rviz_common::VisualizerApp * vapp,
-    Ogre::Vector3 pose, Ogre::Vector3 look_at);
+    QApplication * qapp,
+    rviz_common::VisualizerApp * vapp,
+    Ogre::Vector3 pose,
+    Ogre::Vector3 look_at);
 
-  void takeReferenceShot(Ogre::String name, uint64_t delay);
-  void takeTestShot(Ogre::String name, uint64_t delay);
+  void takeReferenceShot(Ogre::String name);
+  void takeTestShot(Ogre::String name);
   void setCamPose(Ogre::Vector3 pose);
   void setLookAt(Ogre::Vector3 look_at);
   void setUpCamera();
@@ -63,7 +65,7 @@ public:
 
 private:
   void setUp();
-  void takeScreenShot(Ogre::String name, uint64_t delay);
+  void takeScreenShot(Ogre::String name);
 
   rviz_rendering::RenderWindow * render_window_;
   Ogre::SceneManager * manager_;
