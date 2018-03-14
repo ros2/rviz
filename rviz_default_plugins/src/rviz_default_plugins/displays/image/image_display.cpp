@@ -239,6 +239,10 @@ void ImageDisplay::setupRenderPanel()
   render_panel_->resize(640, 480);
   render_panel_->initialize(context_);
   setAssociatedWidget(render_panel_.get());
+
+  static int count = 0;
+  render_panel_->getRenderWindow()->setObjectName(
+    "ImageDisplayRenderWindow" + QString::number(count++));
 }
 
 }  // namespace displays
