@@ -65,6 +65,10 @@ if(BUILD_TESTING)
         tests/example_test.cpp
         src/page_objects/base_page_object.hpp
         src/page_objects/base_page_object.cpp
+        src/page_objects/camera_display_page_object.hpp
+        src/page_objects/camera_display_page_object.cpp
+        src/page_objects/image_display_page_object.hpp
+        src/page_objects/image_display_page_object.cpp
         src/page_objects/point_cloud_display_page_object.hpp
         src/page_objects/point_cloud_display_page_object.cpp
         src/page_objects/grid_display_page_object.hpp

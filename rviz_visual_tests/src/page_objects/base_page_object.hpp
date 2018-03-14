@@ -48,15 +48,12 @@ public:
   int getDisplayNameIndex() const;
 
   virtual void captureDisplayRenderWindow(std::string image_name);
-  virtual void setRenderWindow() {}
 
 protected:
-  void setString(
-    QString property_name, QString value_to_set, int property_row_index);
-  void setComboBox(
-    QString property_name, QString value_to_set, int property_row_index);
+  void setString(QString property_name, QString value_to_set, int property_row_index);
+  void setComboBox(QString property_name, QString value_to_set, int property_row_index);
   void setBool(
-    QString property_name, bool value_to_set, int property_row_index);
+    QString property_name, bool value_to_set, int property_row_index, int sub_property_index = -1);
 
   int display_id_;
   int display_category_;
@@ -66,13 +63,20 @@ private:
   bool checkPropertyName(
     QString expected_property_name, int property_row_index, QModelIndex display_index);
   void failIfPropertyIsAbsent(
-    QString property_name, int property_row_index, QModelIndex relative_display_index);
+    QString property_name, int property_row_index, QModelIndex parent_index);
   void clickOnProperty(QModelIndex property_index);
-  QModelIndex getRelativeIndexAndExpand() const;
+  QModelIndex getRelativeIndexAndExpandDisplay() const;
   QModelIndex getValueToChangeIndex(
-    int property_row_index, const QModelIndex & relative_display_index) const;
+    int property_row_index, const QModelIndex & parent_index) const;
   QModelIndex getPropertyToChangeIndex(
-    int property_row_index, const QModelIndex & relative_display_index) const;
+    int property_row_index, const QModelIndex & parent_index) const;
+  QModelIndex getMainPropertyIndex(
+    QString property_name, int property_row_index, QModelIndex display_index);
+  QModelIndex getSubPropertyIndex(
+    QString property_name,
+    int main_property_index,
+    int sub_property_index,
+    QModelIndex display_index);
 
   int default_first_display_index_;
 };
