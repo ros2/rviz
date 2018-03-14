@@ -319,13 +319,5 @@ void RobotModelDisplay::processMessage(std_msgs::msg::String::ConstSharedPtr msg
 }  // namespace displays
 }  // namespace rviz_default_plugins
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#endif
 #include <pluginlib/class_list_macros.hpp>  // NOLINT
 PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::RobotModelDisplay, rviz_common::Display)
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
