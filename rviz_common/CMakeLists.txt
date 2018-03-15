@@ -27,6 +27,7 @@ set(CMAKE_AUTOMOC ON)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
+find_package(ament_index_cpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
@@ -225,6 +226,7 @@ target_link_libraries(rviz_common
 )
 
 ament_target_dependencies(rviz_common
+  ament_index_cpp
   geometry_msgs
   rclcpp
   rviz_assimp_vendor

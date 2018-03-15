@@ -30,65 +30,65 @@
 
 #include "rviz_common/load_resource.hpp"
 
-// #include <boost/filesystem.hpp>
-// #include <ros/package.h>
-// #include <ros/ros.h>
+#include <string>
 
-#include <QPixmapCache>
-#include <QPainter>
+#include <QFile>  // NOLINT: cpplint cannot handle the include order here
+#include <QPainter>  // NOLINT: cpplint cannot handle the include order here
+#include <QPixmapCache>  // NOLINT: cpplint cannot handle the include order here
+
+#include "ament_index_cpp/get_package_share_directory.hpp"
+#include "ament_index_cpp/get_package_prefix.hpp"
 
 #include "rviz_common/logging.hpp"
 
 namespace rviz_common
 {
 
-// TODO(wjwwood): replace this with ROS 2 and boost-free version
-// boost::filesystem::path getPath(QString url)
-// {
-//   boost::filesystem::path path;
-
-//   if (url.indexOf("package://", 0, Qt::CaseInsensitive) == 0) {
-//     QString package_name = url.section('/', 2, 2);
-//     QString file_name = url.section('/', 3);
-//     path = ros::package::getPath(package_name.toStdString());
-//     path = path / file_name.toStdString();
-//   } else if (url.indexOf("file://", 0, Qt::CaseInsensitive) == 0) {
-//     path = url.section('/', 2).toStdString();
-//   } else {
-//     ROS_ERROR("Invalid or unsupported URL: '%s'", url.toStdString().c_str() );
-//   }
-
-//   return path;
-// }
-
+QString getFilePath(const QString & url)
+{
+  QString file_path = "";
+  if (url.indexOf("package://", 0, Qt::CaseInsensitive) == 0) {
+    QString package_name = url.section('/', 2, 2);
+    QString file_name = url.section('/', 3);
+    try {
+      std::string package_prefix =
+        ament_index_cpp::get_package_share_directory(package_name.toStdString());
+      file_path = QString::fromStdString(package_prefix) + "/" + file_name;
+    } catch (const ament_index_cpp::PackageNotFoundError & error) {
+      RVIZ_COMMON_LOG_ERROR("Package not found: " + package_name.toStdString());
+    }
+  } else if (url.indexOf("file://", 0, Qt::CaseInsensitive) == 0) {
+    file_path = url.section('/', 2);
+  } else {
+    RVIZ_COMMON_LOG_ERROR("Invalid or unsupported URL: " + url.toStdString());
+  }
+  return file_path;
+}
 
 QPixmap loadPixmap(QString url, bool fill_cache)
 {
   QPixmap pixmap;
 
-  // TODO(wjwwood): reenable this, or in the meantime add a placeholder pixmap
-  Q_UNUSED(url);
-  Q_UNUSED(fill_cache);
-  // RVIZ_COMMON_LOG_WARNING_STREAM("did not load pixmap at " << url.toStdString());
-  // // if it's in the cache, no need to locate
-  // if (QPixmapCache::find(url, &pixmap) ) {
-  //   return pixmap;
-  // }
+  // if it's in the cache, no need to locate
+  if (QPixmapCache::find(url, &pixmap) ) {
+    return pixmap;
+  }
 
-  // boost::filesystem::path path = getPath(url);
+  QString file_path = getFilePath(url);
+  RVIZ_COMMON_LOG_DEBUG("Load pixmap at " + file_path.toStdString());
+  QFile file(file_path);
 
-  // // If something goes wrong here, we go on and store the empty pixmap,
-  // // so the error won't appear again anytime soon.
-  // if (boost::filesystem::exists(path) ) {
-  //   ROS_DEBUG_NAMED("load_resource", "Loading '%s'", path.string().c_str() );
-  //   if (!pixmap.load(QString::fromStdString(path.string() ) ) ) {
-  //     ROS_ERROR("Could not load pixmap '%s'", path.string().c_str() );
-  //   }
-  // }
+  // If something goes wrong here, we go on and store the empty pixmap,
+  // so the error won't appear again anytime soon.
+  if (file.exists()) {
+    if (!pixmap.load(file_path)) {
+      RVIZ_COMMON_LOG_ERROR("Could not load pixmap " + file_path.toStdString());
+    }
+  }
 
-  // if (fill_cache) {
-  //   QPixmapCache::insert(url, pixmap);
-  // }
+  if (fill_cache) {
+    QPixmapCache::insert(url, pixmap);
+  }
 
   return pixmap;
 }
@@ -133,7 +133,7 @@ QCursor makeIconCursor(QPixmap icon, QString cache_key, bool fill_cache)
     return QCursor(cursor_img, 0, 0);
   }
 
-  QPixmap base_cursor = loadPixmap("package://rviz/icons/cursor.svg", fill_cache);
+  QPixmap base_cursor = loadPixmap("package://rviz_common/icons/cursor.svg", fill_cache);
 
   const int cursor_size = 32;
 
