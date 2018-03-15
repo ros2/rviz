@@ -476,4 +476,15 @@ void Display::setName(const QString & name)
   }
 }
 
+properties::Property * Display::findProperty(const QString & name)
+{
+  for (int i = 0; i < numChildren(); i++) {
+    auto property = childAt(i);
+    if (property->getName() == name) {
+      return property;
+    }
+  }
+  return nullptr;
+}
+
 }  // namespace rviz_common

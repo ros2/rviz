@@ -38,7 +38,7 @@
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
 #include <QStringList>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "./pluginlib_factory.hpp"
+#include "rviz_common/factory/pluginlib_factory.hpp"
 #include "rviz_common/tool.hpp"
 
 class QKeyEvent;

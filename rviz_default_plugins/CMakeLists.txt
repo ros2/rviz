@@ -61,6 +61,7 @@ set(rviz_default_plugins_headers_to_moc
   src/rviz_default_plugins/displays/pointcloud/point_cloud_display.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_transformer.hpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_transformer_factory.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_helpers.hpp
   src/rviz_default_plugins/displays/polygon/polygon_display.hpp
   src/rviz_default_plugins/displays/pose/pose_display.hpp
@@ -102,6 +103,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/pointcloud/transformers/xyz_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_common.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_to_point_cloud2.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_transformer_factory.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_selection_handler.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_display.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.cpp

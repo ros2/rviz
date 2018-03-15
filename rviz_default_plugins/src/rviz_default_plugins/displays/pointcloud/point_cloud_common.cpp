@@ -101,6 +101,7 @@ PointCloudCommon::PointCloudCommon(rviz_common::Display * display)
   new_xyz_transformer_(false),
   new_color_transformer_(false),
   needs_retransform_(false),
+  transformer_factory_(std::make_unique<PointCloudTransformerFactory>()),
   display_(display)
 {
   selectable_property_ = new rviz_common::properties::BoolProperty("Selectable", true,
@@ -158,8 +159,6 @@ void PointCloudCommon::initialize(
   rviz_common::DisplayContext * context,
   Ogre::SceneNode * scene_node)
 {
-  transformer_class_loader_ = std::make_unique<pluginlib::ClassLoader<PointCloudTransformer>>(
-    "rviz_default_plugins", "rviz_default_plugins::PointCloudTransformer");
   loadTransformers();
 
   context_ = context;
@@ -174,21 +173,17 @@ void PointCloudCommon::initialize(
 
 void PointCloudCommon::loadTransformers()
 {
-  std::vector<std::string> classes = transformer_class_loader_->getDeclaredClasses();
-  std::vector<std::string>::iterator ci;
-
-  for (ci = classes.begin(); ci != classes.end(); ci++) {
-    const std::string & lookup_name = *ci;
-    std::string name = transformer_class_loader_->getName(lookup_name);
+  QStringList classes = transformer_factory_->getDeclaredClassIds();
+  for (auto const & class_id : classes) {
+    std::string name = transformer_factory_->getClassName(class_id).toStdString();
 
     if (transformers_.count(name) > 0) {
       RVIZ_COMMON_LOG_ERROR_STREAM("Transformer type " << name << " is already loaded.");
       continue;
     }
 
-    PointCloudTransformerPtr trans(
-      transformer_class_loader_->createUnmanagedInstance(lookup_name));
-    loadTransformer(trans, name, lookup_name);
+    PointCloudTransformerPtr trans(transformer_factory_->make(class_id));
+    loadTransformer(trans, name, class_id.toStdString());
   }
 }
 

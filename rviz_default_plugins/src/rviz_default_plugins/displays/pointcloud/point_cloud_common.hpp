@@ -59,6 +59,10 @@
 #include "point_cloud_transformer.hpp"
 #include "point_cloud_selection_handler.hpp"
 
+#include "./point_cloud_selection_handler.hpp"
+#include "./point_cloud_transformer.hpp"
+#include "./point_cloud_transformer_factory.hpp"
+
 #endif
 
 namespace rviz_common
@@ -242,7 +246,7 @@ private:
   bool new_color_transformer_;
   bool needs_retransform_;
 
-  std::unique_ptr<pluginlib::ClassLoader<PointCloudTransformer>> transformer_class_loader_;
+  std::unique_ptr<PointCloudTransformerFactory> transformer_factory_;
 
   rviz_common::Display * display_;
   rviz_common::DisplayContext * context_;

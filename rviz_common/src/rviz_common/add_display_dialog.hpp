@@ -39,7 +39,7 @@
 #include <QDialog>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTreeWidget>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "./factory.hpp"
+#include "rviz_common/factory/factory.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
 
 class QCheckBox;

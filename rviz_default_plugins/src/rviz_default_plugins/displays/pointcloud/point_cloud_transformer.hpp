@@ -135,10 +135,21 @@ public:
  */
   virtual void hideUnusedProperties() {}
 
+  // class_id and description are required to be used with rviz_common::PluginlibFactory
+  QString getClassId() const {return class_id_;}
+  QString getDescription() const {return description_;}
+  void setClassId(const QString & class_id) {class_id_ = class_id;}
+  void setDescription(const QString & description) {description_ = description;}
+
 Q_SIGNALS:
   /** @brief Subclasses should emit this signal whenever they think the points should be re-transformed.
    */
   void needRetransform();
+
+protected:
+  // class_id and description are required to be used with rviz_common::PluginlibFactory
+  QString class_id_;
+  QString description_;
 };
 
 }  // namespace rviz_default_plugins
