@@ -274,6 +274,11 @@ install(FILES default.rviz
   DESTINATION share/${PROJECT_NAME}
 )
 
+install(
+  DIRECTORY "${CMAKE_SOURCE_DIR}/icons"
+  DESTINATION "share/${PROJECT_NAME}"
+)
+
 # TODO(wjwwood): reenable tests for Windows after resolving building problems
 if(BUILD_TESTING AND NOT WIN32)
   # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back
