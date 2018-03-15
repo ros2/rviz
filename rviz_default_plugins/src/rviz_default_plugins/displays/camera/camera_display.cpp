@@ -145,7 +145,7 @@ void CameraDisplay::onInitialize()
     "Changes the visibility of other Displays in the camera view.");
 
   visibility_property_->setIcon(
-    rviz_common::loadPixmap("package://rviz/icons/visibility.svg", true));
+    rviz_common::loadPixmap("package://rviz_default_plugins/icons/visibility.svg", true));
 
   this->addChild(visibility_property_, 0);
 }

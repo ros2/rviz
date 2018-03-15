@@ -3,7 +3,7 @@
   <!-- Displays plugins -->
 
   <class
-    name="rviz/Camera"
+    name="rviz_default_plugins/Camera"
     type="rviz_default_plugins::displays::CameraDisplay"
     base_class_type="rviz_common::Display"
   >
@@ -15,7 +15,7 @@
   </class>
 
   <class
-    name="rviz/Grid"
+    name="rviz_default_plugins/Grid"
     type="rviz_default_plugins::displays::GridDisplay"
     base_class_type="rviz_common::Display"
   >
@@ -25,7 +25,7 @@
   </class>
 
   <class
-    name="rviz/Image"
+    name="rviz_default_plugins/Image"
     type="rviz_default_plugins::displays::ImageDisplay"
     base_class_type="rviz_common::Display"
   >
@@ -36,7 +36,7 @@
   </class>
 
   <class
-    name="rviz/PointCloud"
+    name="rviz_default_plugins/PointCloud"
     type="rviz_default_plugins::displays::PointCloudDisplay"
     base_class_type="rviz_common::Display"
   >
@@ -47,7 +47,7 @@
   </class>
 
   <class
-    name="rviz/PointCloud2"
+    name="rviz_default_plugins/PointCloud2"
     type="rviz_default_plugins::displays::PointCloud2Display"
     base_class_type="rviz_common::Display"
   >
@@ -58,7 +58,7 @@
   </class>
 
   <class
-    name="rviz/Polygon"
+    name="rviz_default_plugins/Polygon"
     type="rviz_default_plugins::displays::PolygonDisplay"
     base_class_type="rviz_common::Display"
   >
@@ -69,7 +69,7 @@
   </class>
 
   <class
-    name="rviz/Pose"
+    name="rviz_default_plugins/Pose"
     type="rviz_default_plugins::displays::PoseDisplay"
     base_class_type="rviz_common::Display"
   >
@@ -80,7 +80,7 @@
   </class>
   
   <class
-    name="rviz/RobotModel"
+    name="rviz_default_plugins/RobotModel"
     type="rviz_default_plugins::displays::RobotModelDisplay"
     base_class_type="rviz_common::Display"
   >
@@ -90,7 +90,7 @@
   </class>
 
   <class
-    name="rviz/TF"
+    name="rviz_default_plugins/TF"
     type="rviz_default_plugins::displays::TFDisplay"
     base_class_type="rviz_common::Display"
   >
@@ -101,9 +101,9 @@
   </class>
 
   <class
-          name="rviz/Marker"
-          type="rviz_default_plugins::displays::MarkerDisplay"
-          base_class_type="rviz_common::Display"
+    name="rviz_default_plugins/Marker"
+    type="rviz_default_plugins::displays::MarkerDisplay"
+    base_class_type="rviz_common::Display"
   >
     <description>
       Displays visualization_msgs::Marker messages. &lt;a href="http://www.ros.org/wiki/rviz/DisplayTypes/Marker"&gt;More Information&lt;/a&gt;.
@@ -111,9 +111,9 @@
   </class>
 
   <class
-          name="rviz/PoseArray"
-          type="rviz_default_plugins::displays::PoseArrayDisplay"
-          base_class_type="rviz_common::Display"
+    name="rviz_default_plugins/PoseArray"
+    type="rviz_default_plugins::displays::PoseArrayDisplay"
+    base_class_type="rviz_common::Display"
   >
     <description>
       The Pose Array display shows a geometry_msgs/PoseArray message, as a collection of arrows.  &lt;a href="http://www.ros.org/wiki/rviz/DisplayTypes/PoseArray"&gt;More Information&lt;/a&gt;.
@@ -124,7 +124,7 @@
   <!-- Tool plugins -->
 
   <class
-    name="rviz/MoveCamera"
+    name="rviz_default_plugins/MoveCamera"
     type="rviz_default_plugins::tools::MoveTool"
     base_class_type="rviz_common::Tool"
   >
@@ -136,7 +136,7 @@
   <!-- View Controller plugins -->
 
   <class
-    name="rviz/Orbit"
+    name="rviz_default_plugins/Orbit"
     type="rviz_default_plugins::view_controllers::OrbitViewController"
     base_class_type="rviz_common::ViewController"
   >
