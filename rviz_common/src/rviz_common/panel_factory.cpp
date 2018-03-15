@@ -52,20 +52,20 @@ static Panel * newViewsPanel() {return new ViewsPanel();}
 PanelFactory::PanelFactory(const std::string & node_name)
 : PluginlibFactory<Panel>("rviz_common", "rviz_common::Panel")
 {
-  addBuiltInClass("rviz", "Displays",
+  addBuiltInClass("rviz_common", "Displays",
     "Show and edit the list of Displays",
     [&node_name]() -> Panel * {
       return new DisplaysPanel(node_name, nullptr);
     });
-  // addBuiltInClass("rviz", "Help",
+  // addBuiltInClass("rviz_common", "Help",
   //   "Show the key and mouse bindings", &newHelpPanel);
-  // addBuiltInClass("rviz", "Selection",
+  // addBuiltInClass("rviz_common", "Selection",
   //   "Show properties of selected objects", &newSelectionPanel);
-  // addBuiltInClass("rviz", "Time",
+  // addBuiltInClass("rviz_common", "Time",
   //   "Show the current time", &newTimePanel);
-  // addBuiltInClass("rviz", "Tool Properties",
+  // addBuiltInClass("rviz_common", "Tool Properties",
   //   "Show and edit properties of tools", &newToolPropertiesPanel);
-  addBuiltInClass("rviz", "Views",
+  addBuiltInClass("rviz_common", "Views",
     "Show and edit viewpoints", &newViewsPanel);
 }
 

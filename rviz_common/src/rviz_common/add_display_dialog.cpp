@@ -412,7 +412,7 @@ void DisplayTypeTree::onCurrentItemChanged(
 
 void DisplayTypeTree::fillTree(Factory * factory)
 {
-  QIcon default_package_icon = loadPixmap("package://rviz/icons/default_package_icon.png");
+  QIcon default_package_icon = loadPixmap("package://rviz_common/icons/default_package_icon.png");
 
   QStringList classes = factory->getDeclaredClassIds();
   classes.sort();

@@ -51,9 +51,9 @@ StatusProperty::StatusProperty(
   level_(level)
 {
   setShouldBeSaved(false);
-  status_icons_[0] = loadPixmap("package://rviz/icons/ok.png");
-  status_icons_[1] = loadPixmap("package://rviz/icons/warning.png");
-  status_icons_[2] = loadPixmap("package://rviz/icons/error.png");
+  status_icons_[0] = loadPixmap("package://rviz_common/icons/ok.png");
+  status_icons_[1] = loadPixmap("package://rviz_common/icons/warning.png");
+  status_icons_[2] = loadPixmap("package://rviz_common/icons/error.png");
 }
 
 bool StatusProperty::setValue(const QVariant & new_value)

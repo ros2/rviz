@@ -126,7 +126,7 @@ QSize NewObjectDialog::sizeHint() const
 
 void NewObjectDialog::fillTree(QTreeWidget * tree)
 {
-  QIcon default_package_icon = loadPixmap("package://rviz/icons/default_package_icon.png");
+  QIcon default_package_icon = loadPixmap("package://rviz_common/icons/default_package_icon.png");
 
   QStringList classes = factory_->getDeclaredClassIds();
   classes.sort();
