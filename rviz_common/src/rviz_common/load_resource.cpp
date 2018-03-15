@@ -55,7 +55,7 @@ QString getFilePath(const QString & url)
         ament_index_cpp::get_package_share_directory(package_name.toStdString());
       file_path = QString::fromStdString(package_prefix) + "/" + file_name;
     } catch (const ament_index_cpp::PackageNotFoundError & error) {
-      RVIZ_COMMON_LOG_ERROR("Package not found: " + package_name.toStdString());
+      RVIZ_COMMON_LOG_ERROR_STREAM("Package not found: " << error.what());
     }
   } else if (url.indexOf("file://", 0, Qt::CaseInsensitive) == 0) {
     file_path = url.section('/', 2);
