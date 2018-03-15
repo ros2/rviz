@@ -78,11 +78,11 @@ void ToolManager::initialize()
   QStringList class_ids = factory_->getDeclaredClassIds();
   // define a list of preferred tool names (they will be listed first in the toolbar)
   std::vector<const char *> preferred_tool_names = {
-    "rviz/MoveCamera",
-    "rviz/Interact",
-    "rviz/Select",
-    "rviz/SetInitialPose",
-    "rviz/SetGoal",
+    "rviz_default_plugins/MoveCamera",
+    "rviz_default_plugins/Interact",
+    "rviz_default_plugins/Select",
+    "rviz_default_plugins/SetInitialPose",
+    "rviz_default_plugins/SetGoal",
   };
   // attempt to load each preferred tool in order
   for (const auto & preferred_tool_name : preferred_tool_names) {
@@ -272,7 +272,7 @@ Tool * ToolManager::addTool(const QString & class_id)
 
   return tool;
 #else
-  if (class_id == "rviz/MoveCamera") {
+  if (class_id == "rviz_default_plugins/MoveCamera") {
     Tool * tool = new rviz_common::MoveTool();
     tools_.append(tool);
     tool->setName(addSpaceToCamelCase("MoveTool"));

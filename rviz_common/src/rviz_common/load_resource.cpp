@@ -70,7 +70,7 @@ QPixmap loadPixmap(QString url, bool fill_cache)
   QPixmap pixmap;
 
   // if it's in the cache, no need to locate
-  if (QPixmapCache::find(url, &pixmap) ) {
+  if (QPixmapCache::find(url, &pixmap)) {
     return pixmap;
   }
 
@@ -101,32 +101,18 @@ QCursor getDefaultCursor(bool fill_cache)
 
 QCursor makeIconCursor(QString url, bool fill_cache)
 {
-  // TODO(wjwwood): reenable this
-  Q_UNUSED(url);
-  Q_UNUSED(fill_cache);
-  // RVIZ_COMMON_LOG_WARNING_STREAM("did not load icon as cursor at " << url.toStdString());
-  return QCursor(Qt::ArrowCursor);
-#if 0
   QPixmap icon = loadPixmap(url, fill_cache);
   if (icon.width() == 0 || icon.height() == 0) {
-    ROS_ERROR("Could not load pixmap '%s' -- using default cursor instead.",
-      url.toStdString().c_str() );
+    RVIZ_COMMON_LOG_ERROR_STREAM("Could not load pixmap " << url.toStdString() << " -- "
+      "using default cursor instead.");
     return getDefaultCursor();
   }
   QString cache_key = url + ".cursor";
   return makeIconCursor(icon, cache_key, fill_cache);
-#endif
 }
 
 QCursor makeIconCursor(QPixmap icon, QString cache_key, bool fill_cache)
 {
-  // TODO(wjwwood): reenable this
-  Q_UNUSED(icon);
-  Q_UNUSED(cache_key);
-  Q_UNUSED(fill_cache);
-  // RVIZ_COMMON_LOG_WARNING_STREAM("did not make icon into cursor at " << cache_key.toStdString());
-  return QCursor(Qt::ArrowCursor);
-#if 0
   // if it's in the cache, no need to locate
   QPixmap cursor_img;
   if (QPixmapCache::find(cache_key, &cursor_img) ) {
@@ -162,7 +148,6 @@ QCursor makeIconCursor(QPixmap icon, QString cache_key, bool fill_cache)
   }
 
   return QCursor(cursor_img, 1, 1);
-#endif
 }
 
 }  // namespace rviz_common
