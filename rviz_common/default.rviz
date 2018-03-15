@@ -1,5 +1,5 @@
 Panels:
-  - Class: rviz/Displays
+  - Class: rviz_common/Displays
     Help Height: 78
     Name: Displays
     Property Tree Widget:
@@ -18,7 +18,7 @@ Panels:
   #     - /Publish Point1
   #   Name: Tool Properties
   #   Splitter Ratio: 0.588679
-  - Class: rviz/Views
+  - Class: rviz_common/Views
     Expanded:
       - /Current View1
     Name: Views
@@ -32,7 +32,7 @@ Visualization Manager:
   Displays:
     - Alpha: 0.5
       Cell Size: 1
-      Class: rviz/Grid
+      Class: rviz_default_plugins/Grid
       Color: 160; 160; 164
       Enabled: true
       Line Style:
@@ -57,7 +57,7 @@ Visualization Manager:
     # TODO(wjwwood): restore these tools when ported
     # - Class: rviz/Interact
     #   Hide Inactive Objects: true
-    - Class: rviz/MoveCamera
+    - Class: rviz_default_plugins/MoveCamera
     # - Class: rviz/Select
     # - Class: rviz/FocusCamera
     # - Class: rviz/Measure
@@ -71,7 +71,7 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Class: rviz/Orbit
+      Class: rviz_default_plugins/Orbit
       Distance: 10
       Focal Point:
         X: 0
