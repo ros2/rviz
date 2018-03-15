@@ -32,7 +32,14 @@
 
 #include <string>
 
+#ifdef __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wkeyword-macro"
+#endif
 #include <OgreVector3.h>
+#ifdef __clang__
+# pragma clang diagnostic pop
+#endif
 
 #include "rviz_common/frame_manager_iface.hpp"
 
