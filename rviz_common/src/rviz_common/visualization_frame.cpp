@@ -160,8 +160,8 @@ VisualizationFrame::VisualizationFrame(const std::string & node_name, QWidget * 
 
 VisualizationFrame::~VisualizationFrame()
 {
-  delete render_panel_;
   delete manager_;
+  delete render_panel_;
 
   for (int i = 0; i < custom_panels_.size(); i++) {
     delete custom_panels_[i].dock;

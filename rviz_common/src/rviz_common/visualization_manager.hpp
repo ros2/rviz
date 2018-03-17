@@ -39,9 +39,10 @@
 #include "rclcpp/time.hpp"
 #include "tf2_ros/transform_listener.h"
 
-#include "include/rviz_common/bit_allocator.hpp"
+#include "rviz_common/bit_allocator.hpp"
 #include "rviz_common/config.hpp"
 #include "rviz_common/display_context.hpp"
+#include "rviz_common/frame_manager_iface.hpp"
 
 class QTimer;
 
@@ -254,7 +255,7 @@ public:
 #endif
 
   /// Return the FrameManager instance.
-  FrameManager * getFrameManager() const override;
+  FrameManagerIface * getFrameManager() const override;
 
   /// Return the current value of the frame count.
   /**

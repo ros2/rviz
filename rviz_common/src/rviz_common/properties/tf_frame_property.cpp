@@ -36,7 +36,7 @@
 
 #include "tf2_ros/transform_listener.h"
 
-#include "rviz_common/frame_manager.hpp"
+#include "../frame_manager.hpp"
 
 namespace rviz_common
 {
@@ -75,7 +75,7 @@ bool TfFrameProperty::setValue(const QVariant & new_value)
   return result;
 }
 
-void TfFrameProperty::setFrameManager(FrameManager * frame_manager)
+void TfFrameProperty::setFrameManager(FrameManagerIface * frame_manager)
 {
   if (frame_manager_ && include_fixed_frame_string_) {
     disconnect(frame_manager_, SIGNAL(fixedFrameChanged()),
@@ -88,7 +88,7 @@ void TfFrameProperty::setFrameManager(FrameManager * frame_manager)
   }
 }
 
-FrameManager * TfFrameProperty::getFrameManager() const
+FrameManagerIface * TfFrameProperty::getFrameManager() const
 {
   return frame_manager_;
 }

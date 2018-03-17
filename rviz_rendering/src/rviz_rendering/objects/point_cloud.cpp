@@ -608,6 +608,11 @@ void PointCloud::popPoints(uint32_t num_points)
   }
 }
 
+std::vector<PointCloud::Point> PointCloud::getPoints()
+{
+  return points_;
+}
+
 size_t PointCloud::removePointsFromRenderables(
   uint32_t number_of_points, uint32_t
   vertices_per_point)

@@ -100,6 +100,16 @@
     <message_type>tf2_msgs/TFMessage</message_type>
   </class>
 
+  <class
+          name="rviz/Marker"
+          type="rviz_default_plugins::displays::MarkerDisplay"
+          base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays visualization_msgs::Marker messages. &lt;a href="http://www.ros.org/wiki/rviz/DisplayTypes/Marker"&gt;More Information&lt;/a&gt;.
+    </description>
+  </class>
+
   <!-- Tool plugins -->
 
   <class

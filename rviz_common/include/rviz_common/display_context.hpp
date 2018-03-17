@@ -38,6 +38,7 @@
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/visibility_control.hpp"
+#include "frame_manager_iface.hpp"
 
 class QKeyEvent;
 
@@ -116,7 +117,7 @@ public:
 
   /// Return the FrameManager instance.
   virtual
-  FrameManager *
+  FrameManagerIface *
   getFrameManager() const = 0;
 
   /// Return the fixed frame name.

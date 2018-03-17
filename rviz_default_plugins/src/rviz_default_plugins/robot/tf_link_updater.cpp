@@ -35,7 +35,7 @@
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>
 
-#include "rviz_common/frame_manager.hpp"
+#include "rviz_common/frame_manager_iface.hpp"
 
 namespace rviz_default_plugins
 {
@@ -45,7 +45,7 @@ namespace robot
 using rviz_common::properties::StatusProperty;
 
 TFLinkUpdater::TFLinkUpdater(
-  rviz_common::FrameManager * frame_manager,
+  rviz_common::FrameManagerIface * frame_manager,
   const StatusCallback & status_cb,
   const std::string & tf_prefix)
 : frame_manager_(frame_manager),

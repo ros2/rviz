@@ -73,7 +73,7 @@
 #include "./display_factory.hpp"
 #include "rviz_common/display_group.hpp"
 #include "./displays_panel.hpp"
-#include "rviz_common/frame_manager.hpp"
+#include "frame_manager.hpp"
 #include "rviz_common/load_resource.hpp"
 // #include "./ogre_helpers/ogre_render_queue_clearer.hpp"
 // #include "./ogre_helpers/qt_ogre_render_window.hpp"
@@ -335,7 +335,7 @@ WindowManagerInterface * VisualizationManager::getWindowManager() const
   return window_manager_;
 }
 
-FrameManager * VisualizationManager::getFrameManager() const
+FrameManagerIface * VisualizationManager::getFrameManager() const
 {
   return frame_manager_;
 }

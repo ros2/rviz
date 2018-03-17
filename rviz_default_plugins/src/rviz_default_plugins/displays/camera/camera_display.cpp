@@ -49,7 +49,7 @@
 #include "rviz_rendering/render_window.hpp"
 
 #include "rviz_common/bit_allocator.hpp"
-#include "rviz_common/frame_manager.hpp"
+#include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/logging.hpp"
 #include "rviz_common/properties/display_group_visibility_property.hpp"
 #include "rviz_common/properties/enum_property.hpp"
@@ -427,7 +427,7 @@ bool CameraDisplay::updateCamera()
 bool CameraDisplay::timeDifferenceInExactSyncMode(
   const sensor_msgs::msg::Image::ConstSharedPtr & image, rclcpp::Time & rviz_time) const
 {
-  return context_->getFrameManager()->getSyncMode() == rviz_common::FrameManager::SyncExact &&
+  return context_->getFrameManager()->getSyncMode() == rviz_common::FrameManagerIface::SyncExact &&
          rviz_time != image->header.stamp;
 }
 

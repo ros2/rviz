@@ -43,7 +43,7 @@ class Transformer;
 
 namespace rviz_common
 {
-class FrameManager;
+class FrameManagerIface;
 }
 
 namespace rviz_default_plugins
@@ -58,7 +58,7 @@ public:
     StatusCallback;
 
   explicit TFLinkUpdater(
-    rviz_common::FrameManager * frame_manager,
+    rviz_common::FrameManagerIface * frame_manager,
     const StatusCallback & status_cb = StatusCallback(),
     const std::string & tf_prefix = std::string());
 
@@ -73,7 +73,7 @@ public:
     StatusLevel level, const std::string & link_name, const std::string & text) const override;
 
 private:
-  rviz_common::FrameManager * frame_manager_;
+  rviz_common::FrameManagerIface * frame_manager_;
   StatusCallback status_callback_;
   std::string tf_prefix_;
 };

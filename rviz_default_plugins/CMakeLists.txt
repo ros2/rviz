@@ -26,6 +26,7 @@ find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
 # find_package(geometry_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(visualization_msgs REQUIRED)
 # find_package(tf2 REQUIRED)
 # find_package(tf2_geometry_msgs REQUIRED)
 # find_package(tf2_ros REQUIRED)
@@ -35,6 +36,7 @@ set(rviz_default_plugins_headers_to_moc
   src/rviz_default_plugins/displays/camera/camera_display.hpp
   src/rviz_default_plugins/displays/grid/grid_display.hpp
   src/rviz_default_plugins/displays/image/image_display.hpp
+  src/rviz_default_plugins/displays/marker/marker_display.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_display.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp
@@ -56,6 +58,19 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/grid/grid_display.cpp
   src/rviz_default_plugins/displays/image/image_display.cpp
   src/rviz_default_plugins/displays/image/ros_image_texture.cpp
+  src/rviz_default_plugins/displays/marker/markers/arrow_marker.cpp
+  src/rviz_default_plugins/displays/marker/markers/line_list_marker.cpp
+  src/rviz_default_plugins/displays/marker/markers/line_marker_base.cpp
+  src/rviz_default_plugins/displays/marker/markers/line_strip_marker.cpp
+  src/rviz_default_plugins/displays/marker/markers/marker_base.cpp
+  src/rviz_default_plugins/displays/marker/markers/marker_selection_handler.cpp
+  src/rviz_default_plugins/displays/marker/markers/mesh_resource_marker.cpp
+  src/rviz_default_plugins/displays/marker/markers/text_view_facing_marker.cpp
+  src/rviz_default_plugins/displays/marker/markers/points_marker.cpp
+  src/rviz_default_plugins/displays/marker/markers/shape_marker.cpp
+  src/rviz_default_plugins/displays/marker/markers/triangle_list_marker.cpp
+  src/rviz_default_plugins/displays/marker/markers/marker_factory.cpp
+  src/rviz_default_plugins/displays/marker/marker_display.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.cpp
@@ -101,6 +116,7 @@ ament_target_dependencies(rviz_default_plugins
   # geometry_msgs
   rclcpp
   resource_retriever
+  visualization_msgs
   # tf2
   # tf2_geometry_msgs
   # tf2_ros
@@ -196,6 +212,38 @@ if(BUILD_TESTING)
 #  if(TARGET robot_test)
 #    target_link_libraries(robot_test rviz_default_plugins)
 #  endif()
+
+# TODO(greimela): reenable these tests once they can be run on the ci
+#  ament_add_gmock(marker_test
+#    test/rviz_default_plugins/displays/marker/markers/arrow_marker_test.cpp
+#    test/rviz_default_plugins/displays/marker/markers/line_marker_test.cpp
+#    test/rviz_default_plugins/displays/marker/markers/mesh_resource_marker_test.cpp
+#    test/rviz_default_plugins/displays/marker/markers/points_marker_test.cpp
+#    test/rviz_default_plugins/displays/marker/markers/shape_marker_test.cpp
+#    test/rviz_default_plugins/displays/marker/markers/text_view_facing_marker_test.cpp
+#    test/rviz_default_plugins/displays/marker/markers/triangle_list_marker_test.cpp
+#    test/rviz_default_plugins/displays/marker/markers/markers_test_fixture.cpp
+#    test/rviz_default_plugins/displays/display_test_fixture.cpp
+#    test/rviz_default_plugins/displays/marker/marker_messages.cpp
+#    test/rviz_default_plugins/scene_graph_introspection.cpp
+#    APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;
+#    ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+#  if(TARGET marker_test)
+#    target_link_libraries(marker_test rviz_default_plugins)
+#  endif()
+
+# TODO(greimela): reenable these tests once they can be run on the ci
+#  ament_add_gmock(marker_display_test
+#    test/rviz_default_plugins/displays/marker/marker_display_test.cpp
+#    test/rviz_default_plugins/displays/display_test_fixture.cpp
+#    test/rviz_default_plugins/displays/marker/marker_messages.cpp
+#    test/rviz_default_plugins/scene_graph_introspection.cpp
+#    APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;
+#    ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+#  if(TARGET marker_display_test)
+#    target_link_libraries(marker_display_test rviz_default_plugins)
+#  endif()
+
 endif()
 
 ament_package()
