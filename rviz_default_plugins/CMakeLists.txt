@@ -25,6 +25,7 @@ find_package(rviz_rendering REQUIRED)
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
 # find_package(geometry_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(visualization_msgs REQUIRED)
 # find_package(tf2 REQUIRED)
@@ -38,6 +39,7 @@ set(rviz_default_plugins_headers_to_moc
   src/rviz_default_plugins/displays/grid/grid_display.hpp
   src/rviz_default_plugins/displays/image/image_display.hpp
   src/rviz_default_plugins/displays/marker/marker_display.hpp
+  src/rviz_default_plugins/displays/path/path_display.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_display.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp
@@ -73,6 +75,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/marker/markers/triangle_list_marker.cpp
   src/rviz_default_plugins/displays/marker/markers/marker_factory.cpp
   src/rviz_default_plugins/displays/marker/marker_display.cpp
+  src/rviz_default_plugins/displays/path/path_display.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.cpp
@@ -118,6 +121,7 @@ target_link_libraries(rviz_default_plugins
 )
 ament_target_dependencies(rviz_default_plugins
   # geometry_msgs
+  nav_msgs
   rclcpp
   resource_retriever
   urdf

@@ -28,36 +28,42 @@
  */
 
 
-#ifndef RVIZ_PATH_DISPLAY_H
-#define RVIZ_PATH_DISPLAY_H
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__PATH_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__PATH_DISPLAY_HPP_
 
-#include <nav_msgs/Path.h>
+#include "nav_msgs/msg/path.hpp"
 
-#include "rviz/message_filter_display.h"
-#include <rviz/ogre_helpers/arrow.h>
-#include <rviz/ogre_helpers/axes.h>
+#include "rviz_common/ros_topic_display.hpp"
+#include "rviz_rendering/objects/arrow.hpp"
+#include "rviz_rendering/objects/axes.hpp"
+#include "rviz_rendering/objects/billboard_line.hpp"
 
 namespace Ogre
 {
 class ManualObject;
 }
 
-namespace rviz
+namespace rviz_common
 {
-
+namespace properties
+{
 class ColorProperty;
 class FloatProperty;
 class IntProperty;
 class EnumProperty;
-class BillboardLine;
 class VectorProperty;
+}
+}
 
-
+namespace rviz_default_plugins
+{
+namespace displays
+{
 /**
  * \class PathDisplay
- * \brief Displays a nav_msgs::Path message
+ * \brief Displays a nav_msgs::msg::Path message
  */
-class PathDisplay: public MessageFilterDisplay<nav_msgs::Path>
+class PathDisplay: public rviz_common::RosTopicDisplay<nav_msgs::msg::Path>
 {
 Q_OBJECT
 public:
@@ -72,7 +78,7 @@ protected:
   virtual void onInitialize();
 
   /** @brief Overridden from MessageFilterDisplay. */
-  void processMessage( const nav_msgs::Path::ConstPtr& msg );
+  void processMessage(nav_msgs::msg::Path::ConstSharedPtr msg );
 
 private Q_SLOTS:
   void updateBufferLength();
@@ -86,22 +92,22 @@ private Q_SLOTS:
 
 private:
   void destroyObjects();
-  void allocateArrowVector(std::vector<rviz::Arrow*>& arrow_vect, int num);
-  void allocateAxesVector(std::vector<rviz::Axes*>& axes_vect, int num);
+  void allocateArrowVector(std::vector<rviz_rendering::Arrow*>& arrow_vect, size_t num);
+  void allocateAxesVector(std::vector<rviz_rendering::Axes*>& axes_vect, size_t num);
   void destroyPoseAxesChain();
   void destroyPoseArrowChain();
 
   std::vector<Ogre::ManualObject*> manual_objects_;
-  std::vector<rviz::BillboardLine*> billboard_lines_;
-  std::vector<std::vector<rviz::Axes*> >axes_chain_;
-  std::vector<std::vector<rviz::Arrow*> >arrow_chain_;
+  std::vector<rviz_rendering::BillboardLine*> billboard_lines_;
+  std::vector<std::vector<rviz_rendering::Axes*> >axes_chain_;
+  std::vector<std::vector<rviz_rendering::Arrow*> >arrow_chain_;
 
-  EnumProperty* style_property_;
-  ColorProperty* color_property_;
-  FloatProperty* alpha_property_;
-  FloatProperty* line_width_property_;
-  IntProperty* buffer_length_property_;
-  VectorProperty* offset_property_;
+  rviz_common::properties::EnumProperty* style_property_;
+  rviz_common::properties::ColorProperty* color_property_;
+  rviz_common::properties::FloatProperty* alpha_property_;
+  rviz_common::properties::FloatProperty* line_width_property_;
+  rviz_common::properties::IntProperty* buffer_length_property_;
+  rviz_common::properties::VectorProperty* offset_property_;
 
   enum LineStyle {
     LINES,
@@ -109,14 +115,14 @@ private:
   };
 
   // pose marker property
-  EnumProperty* pose_style_property_;
-  FloatProperty* pose_axes_length_property_;
-  FloatProperty* pose_axes_radius_property_;
-  ColorProperty* pose_arrow_color_property_;
-  FloatProperty* pose_arrow_shaft_length_property_;
-  FloatProperty* pose_arrow_head_length_property_;
-  FloatProperty* pose_arrow_shaft_diameter_property_;
-  FloatProperty* pose_arrow_head_diameter_property_;
+  rviz_common::properties::EnumProperty* pose_style_property_;
+  rviz_common::properties::FloatProperty* pose_axes_length_property_;
+  rviz_common::properties::FloatProperty* pose_axes_radius_property_;
+  rviz_common::properties::ColorProperty* pose_arrow_color_property_;
+  rviz_common::properties::FloatProperty* pose_arrow_shaft_length_property_;
+  rviz_common::properties::FloatProperty* pose_arrow_head_length_property_;
+  rviz_common::properties::FloatProperty* pose_arrow_shaft_diameter_property_;
+  rviz_common::properties::FloatProperty* pose_arrow_head_diameter_property_;
 
   enum PoseStyle
   {
@@ -127,7 +133,8 @@ private:
 
 };
 
-} // namespace rviz
+} // namespace displays
+} // namespace rviz_default_plugins
 
-#endif /* RVIZ_PATH_DISPLAY_H */
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__PATH_DISPLAY_HPP_
 
