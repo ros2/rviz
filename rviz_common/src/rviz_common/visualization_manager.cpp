@@ -628,6 +628,7 @@ void VisualizationManager::handleMouseEvent(const ViewportMouseEvent & vme)
 #endif
     flags = current_tool->processMouseEvent(_vme);
     vme.panel->setCursor(current_tool->getCursor());
+    vme.panel->getRenderWindow()->setCursor(current_tool->getCursor());
   } else {
     vme.panel->setCursor(QCursor(Qt::ArrowCursor));
   }
