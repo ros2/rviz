@@ -30,6 +30,7 @@
 
 #include "visualization_frame.hpp"
 
+#include <exception>
 #include <fstream>
 #include <memory>
 #include <string>
@@ -707,7 +708,11 @@ void VisualizationFrame::loadDisplayConfig(const QString & qpath)
   Config config;
   reader.readFile(config, QString::fromStdString(actual_load_path));
   if (!reader.error()) {
-    load(config);
+    try {
+      load(config);
+    } catch (const std::exception & e) {
+      RVIZ_COMMON_LOG_ERROR_STREAM("Could not load display config: " << e.what());
+    }
   }
 
   markRecentConfig(path);
