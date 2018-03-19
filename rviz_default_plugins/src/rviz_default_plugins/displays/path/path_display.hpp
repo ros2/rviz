@@ -63,9 +63,10 @@ namespace displays
  * \class PathDisplay
  * \brief Displays a nav_msgs::msg::Path message
  */
-class PathDisplay: public rviz_common::RosTopicDisplay<nav_msgs::msg::Path>
+class PathDisplay : public rviz_common::RosTopicDisplay<nav_msgs::msg::Path>
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   PathDisplay();
   virtual ~PathDisplay();
@@ -78,7 +79,7 @@ protected:
   virtual void onInitialize();
 
   /** @brief Overridden from MessageFilterDisplay. */
-  void processMessage(nav_msgs::msg::Path::ConstSharedPtr msg );
+  void processMessage(nav_msgs::msg::Path::ConstSharedPtr msg);
 
 private Q_SLOTS:
   void updateBufferLength();
@@ -92,37 +93,38 @@ private Q_SLOTS:
 
 private:
   void destroyObjects();
-  void allocateArrowVector(std::vector<rviz_rendering::Arrow*>& arrow_vect, size_t num);
-  void allocateAxesVector(std::vector<rviz_rendering::Axes*>& axes_vect, size_t num);
+  void allocateArrowVector(std::vector<rviz_rendering::Arrow *> & arrow_vect, size_t num);
+  void allocateAxesVector(std::vector<rviz_rendering::Axes *> & axes_vect, size_t num);
   void destroyPoseAxesChain();
   void destroyPoseArrowChain();
 
-  std::vector<Ogre::ManualObject*> manual_objects_;
-  std::vector<rviz_rendering::BillboardLine*> billboard_lines_;
-  std::vector<std::vector<rviz_rendering::Axes*> >axes_chain_;
-  std::vector<std::vector<rviz_rendering::Arrow*> >arrow_chain_;
+  std::vector<Ogre::ManualObject *> manual_objects_;
+  std::vector<rviz_rendering::BillboardLine *> billboard_lines_;
+  std::vector<std::vector<rviz_rendering::Axes *>> axes_chain_;
+  std::vector<std::vector<rviz_rendering::Arrow *>> arrow_chain_;
 
-  rviz_common::properties::EnumProperty* style_property_;
-  rviz_common::properties::ColorProperty* color_property_;
-  rviz_common::properties::FloatProperty* alpha_property_;
-  rviz_common::properties::FloatProperty* line_width_property_;
-  rviz_common::properties::IntProperty* buffer_length_property_;
-  rviz_common::properties::VectorProperty* offset_property_;
+  rviz_common::properties::EnumProperty * style_property_;
+  rviz_common::properties::ColorProperty * color_property_;
+  rviz_common::properties::FloatProperty * alpha_property_;
+  rviz_common::properties::FloatProperty * line_width_property_;
+  rviz_common::properties::IntProperty * buffer_length_property_;
+  rviz_common::properties::VectorProperty * offset_property_;
 
-  enum LineStyle {
+  enum LineStyle
+  {
     LINES,
     BILLBOARDS
   };
 
   // pose marker property
-  rviz_common::properties::EnumProperty* pose_style_property_;
-  rviz_common::properties::FloatProperty* pose_axes_length_property_;
-  rviz_common::properties::FloatProperty* pose_axes_radius_property_;
-  rviz_common::properties::ColorProperty* pose_arrow_color_property_;
-  rviz_common::properties::FloatProperty* pose_arrow_shaft_length_property_;
-  rviz_common::properties::FloatProperty* pose_arrow_head_length_property_;
-  rviz_common::properties::FloatProperty* pose_arrow_shaft_diameter_property_;
-  rviz_common::properties::FloatProperty* pose_arrow_head_diameter_property_;
+  rviz_common::properties::EnumProperty * pose_style_property_;
+  rviz_common::properties::FloatProperty * pose_axes_length_property_;
+  rviz_common::properties::FloatProperty * pose_axes_radius_property_;
+  rviz_common::properties::ColorProperty * pose_arrow_color_property_;
+  rviz_common::properties::FloatProperty * pose_arrow_shaft_length_property_;
+  rviz_common::properties::FloatProperty * pose_arrow_head_length_property_;
+  rviz_common::properties::FloatProperty * pose_arrow_shaft_diameter_property_;
+  rviz_common::properties::FloatProperty * pose_arrow_head_diameter_property_;
 
   enum PoseStyle
   {
@@ -137,4 +139,3 @@ private:
 } // namespace rviz_default_plugins
 
 #endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__PATH_DISPLAY_HPP_
-
