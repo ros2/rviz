@@ -476,7 +476,7 @@ void PathDisplay::processMessage(nav_msgs::msg::Path::ConstSharedPtr msg)
 
   switch (pose_style) {
     case AXES:
-      allocateAxesVector(axes_vect, num_points);
+      allocateAxesVector(axes_vect, static_cast<int>(num_points));
       for (size_t i = 0; i < num_points; ++i) {
         const geometry_msgs::msg::Point & pos = msg->poses[i].pose.position;
         Ogre::Vector3 xpos = transform * Ogre::Vector3(pos.x, pos.y, pos.z);
@@ -490,7 +490,7 @@ void PathDisplay::processMessage(nav_msgs::msg::Path::ConstSharedPtr msg)
       break;
 
     case ARROWS:
-      allocateArrowVector(arrow_vect, num_points);
+      allocateArrowVector(arrow_vect, static_cast<int>(num_points));
       for (size_t i = 0; i < num_points; ++i) {
         const geometry_msgs::msg::Point & pos = msg->poses[i].pose.position;
         Ogre::Vector3 xpos = transform * Ogre::Vector3(pos.x, pos.y, pos.z);
