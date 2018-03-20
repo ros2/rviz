@@ -57,11 +57,11 @@ PathDisplay::PathDisplay()
   style_property_->addOption("Lines", LINES);
   style_property_->addOption("Billboards", BILLBOARDS);
 
-  line_width_property_ = new rviz_common::properties::FloatProperty("Line Width", 0.03,
+  line_width_property_ = new rviz_common::properties::FloatProperty("Line Width", 0.03f,
       "The width, in meters, of each path line."
       "Only works with the 'Billboards' style.",
       this, SLOT(updateLineWidth()), this);
-  line_width_property_->setMin(0.001);
+  line_width_property_->setMin(0.001f);
   line_width_property_->hide();
 
   color_property_ = new rviz_common::properties::ColorProperty("Color", QColor(25, 255, 0),
@@ -86,10 +86,10 @@ PathDisplay::PathDisplay()
   pose_style_property_->addOption("Axes", AXES);
   pose_style_property_->addOption("Arrows", ARROWS);
 
-  pose_axes_length_property_ = new rviz_common::properties::FloatProperty("Length", 0.3,
+  pose_axes_length_property_ = new rviz_common::properties::FloatProperty("Length", 0.3f,
       "Length of the axes.",
       this, SLOT(updatePoseAxisGeometry()) );
-  pose_axes_radius_property_ = new rviz_common::properties::FloatProperty("Radius", 0.03,
+  pose_axes_radius_property_ = new rviz_common::properties::FloatProperty("Radius", 0.03f,
       "Radius of the axes.",
       this, SLOT(updatePoseAxisGeometry()) );
 
@@ -98,21 +98,21 @@ PathDisplay::PathDisplay()
       "Color to draw the poses.",
       this, SLOT(updatePoseArrowColor()));
   pose_arrow_shaft_length_property_ = new rviz_common::properties::FloatProperty("Shaft Length",
-      0.1,
+      0.1f,
       "Length of the arrow shaft.",
       this,
       SLOT(updatePoseArrowGeometry()));
-  pose_arrow_head_length_property_ = new rviz_common::properties::FloatProperty("Head Length", 0.2,
+  pose_arrow_head_length_property_ = new rviz_common::properties::FloatProperty("Head Length", 0.2f,
       "Length of the arrow head.",
       this,
       SLOT(updatePoseArrowGeometry()));
   pose_arrow_shaft_diameter_property_ = new rviz_common::properties::FloatProperty("Shaft Diameter",
-      0.1,
+      0.1f,
       "Diameter of the arrow shaft.",
       this,
       SLOT(updatePoseArrowGeometry()));
   pose_arrow_head_diameter_property_ = new rviz_common::properties::FloatProperty("Head Diameter",
-      0.3,
+      0.3f,
       "Diameter of the arrow head.",
       this,
       SLOT(updatePoseArrowGeometry()));
@@ -418,14 +418,14 @@ void PathDisplay::processMessage(nav_msgs::msg::Path::ConstSharedPtr msg)
   Ogre::ColourValue color = color_property_->getOgreColor();
   color.a = alpha_property_->getFloat();
 
-  uint32_t num_points = msg->poses.size();
+  size_t num_points = msg->poses.size();
   float line_width = line_width_property_->getFloat();
 
   switch (style) {
     case LINES:
       manual_object->estimateVertexCount(num_points);
       manual_object->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_LINE_STRIP);
-      for (uint32_t i = 0; i < num_points; ++i) {
+      for (size_t i = 0; i < num_points; ++i) {
         const geometry_msgs::msg::Point & pos = msg->poses[i].pose.position;
         Ogre::Vector3 xpos = transform * Ogre::Vector3(pos.x, pos.y, pos.z);
         manual_object->position(xpos.x, xpos.y, xpos.z);
@@ -437,10 +437,10 @@ void PathDisplay::processMessage(nav_msgs::msg::Path::ConstSharedPtr msg)
 
     case BILLBOARDS:
       billboard_line->setNumLines(1);
-      billboard_line->setMaxPointsPerLine(num_points);
+      billboard_line->setMaxPointsPerLine(static_cast<uint32_t>(num_points));
       billboard_line->setLineWidth(line_width);
 
-      for (uint32_t i = 0; i < num_points; ++i) {
+      for (size_t i = 0; i < num_points; ++i) {
         const geometry_msgs::msg::Point & pos = msg->poses[i].pose.position;
         Ogre::Vector3 xpos = transform * Ogre::Vector3(pos.x, pos.y, pos.z);
         billboard_line->addPoint(xpos, color);
@@ -457,7 +457,7 @@ void PathDisplay::processMessage(nav_msgs::msg::Path::ConstSharedPtr msg)
   switch (pose_style) {
     case AXES:
       allocateAxesVector(axes_vect, num_points);
-      for (uint32_t i = 0; i < num_points; ++i) {
+      for (size_t i = 0; i < num_points; ++i) {
         const geometry_msgs::msg::Point & pos = msg->poses[i].pose.position;
         Ogre::Vector3 xpos = transform * Ogre::Vector3(pos.x, pos.y, pos.z);
         axes_vect[i]->setPosition(xpos);
@@ -471,7 +471,7 @@ void PathDisplay::processMessage(nav_msgs::msg::Path::ConstSharedPtr msg)
 
     case ARROWS:
       allocateArrowVector(arrow_vect, num_points);
-      for (uint32_t i = 0; i < num_points; ++i) {
+      for (size_t i = 0; i < num_points; ++i) {
         const geometry_msgs::msg::Point & pos = msg->poses[i].pose.position;
         Ogre::Vector3 xpos = transform * Ogre::Vector3(pos.x, pos.y, pos.z);
 
