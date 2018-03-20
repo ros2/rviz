@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,8 +29,10 @@
  */
 
 
-#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__PATH_DISPLAY_HPP_
-#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__PATH_DISPLAY_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__PATH__PATH_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__PATH__PATH_DISPLAY_HPP_
+
+#include <vector>
 
 #include "nav_msgs/msg/path.hpp"
 
@@ -53,7 +56,7 @@ class IntProperty;
 class EnumProperty;
 class VectorProperty;
 }
-}
+}  // namespace rviz_common
 
 namespace rviz_default_plugins
 {
@@ -132,10 +135,9 @@ private:
     AXES,
     ARROWS,
   };
-
 };
 
-} // namespace displays
-} // namespace rviz_default_plugins
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__PATH_DISPLAY_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__PATH__PATH_DISPLAY_HPP_

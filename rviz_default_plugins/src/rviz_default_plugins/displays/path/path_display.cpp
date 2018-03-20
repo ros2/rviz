@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,6 +29,9 @@
  */
 
 #include "path_display.hpp"
+
+#include <algorithm>
+#include <vector>
 
 #include <OgreManualObject.h>
 #include <OgreBillboardSet.h>
@@ -306,7 +310,7 @@ void PathDisplay::destroyObjects()
     if (manual_object) {
       manual_object->clear();
       scene_manager_->destroyManualObject(manual_object);
-      manual_object = nullptr; // ensure it doesn't get destroyed again
+      manual_object = nullptr;  // ensure it doesn't get destroyed again
     }
   }
 
@@ -314,8 +318,8 @@ void PathDisplay::destroyObjects()
   for (size_t i = 0; i < billboard_lines_.size(); i++) {
     rviz_rendering::BillboardLine * & billboard_line = billboard_lines_[i];
     if (billboard_line) {
-      delete billboard_line; // also destroys the corresponding scene node
-      billboard_line = nullptr; // ensure it doesn't get destroyed again
+      delete billboard_line;  // also destroys the corresponding scene node
+      billboard_line = nullptr;  // ensure it doesn't get destroyed again
     }
   }
 }
@@ -335,7 +339,7 @@ void PathDisplay::updateBufferLength()
 
   // Create new path objects
   switch (style) {
-    case LINES: // simple lines with fixed width of 1px
+    case LINES:  // simple lines with fixed width of 1px
       manual_objects_.resize(buffer_length);
       for (size_t i = 0; i < manual_objects_.size(); i++) {
         Ogre::ManualObject * manual_object = scene_manager_->createManualObject();
@@ -346,7 +350,7 @@ void PathDisplay::updateBufferLength()
       }
       break;
 
-    case BILLBOARDS: // billboards with configurable width
+    case BILLBOARDS:  // billboards with configurable width
       billboard_lines_.resize(buffer_length);
       for (size_t i = 0; i < billboard_lines_.size(); i++) {
         auto * billboard_line = new rviz_rendering::BillboardLine(scene_manager_, scene_node_);
@@ -356,8 +360,6 @@ void PathDisplay::updateBufferLength()
   }
   axes_chain_.resize(buffer_length);
   arrow_chain_.resize(buffer_length);
-
-
 }
 
 bool validateFloats(const nav_msgs::msg::Path & msg)
@@ -496,10 +498,9 @@ void PathDisplay::processMessage(nav_msgs::msg::Path::ConstSharedPtr msg)
       break;
   }
   context_->queueRender();
-
 }
 
-}  // namespace displaysW
+}  // namespace displays
 }  // namespace rviz_default_plugins
 
 #include <pluginlib/class_list_macros.hpp>  // NOLINT
