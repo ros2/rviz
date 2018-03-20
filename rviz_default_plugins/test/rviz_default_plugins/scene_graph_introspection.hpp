@@ -75,6 +75,7 @@ std::vector<Ogre::SceneNode *> findAllArrows(Ogre::SceneNode * scene_node);
 Ogre::SceneNode * findOneArrow(Ogre::SceneNode * scene_node);
 
 std::vector<Ogre::SceneNode *> findAllAxes(Ogre::SceneNode * scene_node);
+Ogre::SceneNode * findOneAxes(Ogre::SceneNode * scene_node);
 
 std::vector<Ogre::Entity *> findAllEntitiesByMeshName(
   Ogre::SceneNode * scene_node, const Ogre::String & resource_name);
@@ -88,7 +89,7 @@ Ogre::BillboardChain * findOneBillboardChain(Ogre::SceneNode * scene_node);
 
 rviz_rendering::MovableText * findOneMovableText(Ogre::SceneNode * scene_node);
 
-Ogre::MovableObject * findOneMovableObject(Ogre::SceneNode * scene_node);
+Ogre::ManualObject * findOneManualObject(Ogre::SceneNode * scene_node);
 
 template<typename OgreType>
 void findAllObjectsAttached(

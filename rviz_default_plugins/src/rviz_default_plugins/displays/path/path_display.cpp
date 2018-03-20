@@ -51,6 +51,16 @@ namespace rviz_default_plugins
 {
 namespace displays
 {
+
+PathDisplay::PathDisplay(rviz_common::DisplayContext * context)
+: PathDisplay()
+{
+  context_ = context;
+  scene_manager_ = context->getSceneManager();
+  scene_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
+  updateBufferLength();
+}
+
 PathDisplay::PathDisplay()
 {
   style_property_ = new rviz_common::properties::EnumProperty("Line Style", "Lines",
@@ -417,13 +427,12 @@ void PathDisplay::processMessage(nav_msgs::msg::Path::ConstSharedPtr msg)
       "Error transforming from frame '" << msg->header.frame_id.c_str() << "' to frame '" <<
         qPrintable(fixed_frame_) << "'";
     );
+    // TODO(greimela): Show status message on transformation error
+    return;
   }
 
   Ogre::Matrix4 transform(orientation);
   transform.setTrans(position);
-
-//  scene_node_->setPosition( position );
-//  scene_node_->setOrientation( orientation );
 
   Ogre::ColourValue color = color_property_->getOgreColor();
   color.a = alpha_property_->getFloat();

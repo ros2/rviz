@@ -71,18 +71,21 @@ class PathDisplay : public rviz_common::RosTopicDisplay<nav_msgs::msg::Path>
   Q_OBJECT
 
 public:
+  // TODO(Martin-Idel-SI): Constructor for testing, remove once ros_nodes can be mocked and call
+  // initialize() instead
+  explicit PathDisplay(rviz_common::DisplayContext * context);
   PathDisplay();
   ~PathDisplay() override;
 
   /** @brief Overridden from Display. */
   void reset() override;
 
+  /** @brief Overridden from MessageFilterDisplay. */
+  void processMessage(nav_msgs::msg::Path::ConstSharedPtr msg) override;
+
 protected:
   /** @brief Overridden from Display. */
   void onInitialize() override;
-
-  /** @brief Overridden from MessageFilterDisplay. */
-  void processMessage(nav_msgs::msg::Path::ConstSharedPtr msg) override;
 
 private Q_SLOTS:
   void updateBufferLength();
