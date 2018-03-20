@@ -100,11 +100,13 @@ private:
   void allocateAxesVector(std::vector<rviz_rendering::Axes *> & axes_vect, int num);
   void destroyPoseAxesChain();
   void destroyPoseArrowChain();
+  void enableBlending(const Ogre::ColourValue & color);
 
   std::vector<Ogre::ManualObject *> manual_objects_;
   std::vector<rviz_rendering::BillboardLine *> billboard_lines_;
   std::vector<std::vector<rviz_rendering::Axes *>> axes_chain_;
   std::vector<std::vector<rviz_rendering::Arrow *>> arrow_chain_;
+  Ogre::MaterialPtr lines_material_;
 
   rviz_common::properties::EnumProperty * style_property_;
   rviz_common::properties::ColorProperty * color_property_;

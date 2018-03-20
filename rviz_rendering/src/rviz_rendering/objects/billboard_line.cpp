@@ -183,12 +183,25 @@ void BillboardLine::addPoint(const Ogre::Vector3 & point, const Ogre::ColourValu
 
   incrementChainContainerIfNecessary();
 
+  enableAlphaBlending(color.a);
+
   Ogre::BillboardChain::Element e;
   e.position = point;
   e.width = width_;
   e.colour = color;
   chain_containers_[current_chain_container_]->addChainElement(
     current_line_ % chains_per_container_, e);
+}
+
+void BillboardLine::enableAlphaBlending(float alpha)
+{
+  if (alpha < 0.9998) {
+    material_->getTechnique(0)->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
+    material_->getTechnique(0)->setDepthWriteEnabled(false);
+  } else {
+    material_->getTechnique(0)->setSceneBlending(Ogre::SBT_REPLACE);
+    material_->getTechnique(0)->setDepthWriteEnabled(true);
+  }
 }
 
 void BillboardLine::incrementChainContainerIfNecessary()
@@ -228,13 +241,7 @@ void BillboardLine::setScale(const Ogre::Vector3 & scale)
 
 void BillboardLine::setColor(float r, float g, float b, float a)
 {
-  if (a < 0.9998) {
-    material_->getTechnique(0)->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
-    material_->getTechnique(0)->setDepthWriteEnabled(false);
-  } else {
-    material_->getTechnique(0)->setSceneBlending(Ogre::SBT_REPLACE);
-    material_->getTechnique(0)->setDepthWriteEnabled(true);
-  }
+  enableAlphaBlending(a);
 
   color_ = Ogre::ColourValue(r, g, b, a);
 

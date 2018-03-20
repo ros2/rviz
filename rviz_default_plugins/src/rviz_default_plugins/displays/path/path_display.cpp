@@ -31,10 +31,13 @@
 #include "path_display.hpp"
 
 #include <algorithm>
+#include <string>
 #include <vector>
 
-#include <OgreManualObject.h>
 #include <OgreBillboardSet.h>
+#include <OgreManualObject.h>
+#include <OgreMaterialManager.h>
+#include <OgreTechnique.h>
 
 #include "rviz_common/logging.hpp"
 #include "rviz_common/properties/enum_property.hpp"
@@ -123,6 +126,13 @@ PathDisplay::PathDisplay()
   pose_arrow_head_length_property_->hide();
   pose_arrow_shaft_diameter_property_->hide();
   pose_arrow_head_diameter_property_->hide();
+
+  static int count = 0;
+  std::string material_name = "LinesMaterial" + std::to_string(count++);
+  lines_material_ = Ogre::MaterialManager::getSingleton().create(
+    material_name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+  lines_material_->setReceiveShadows(false);
+  lines_material_->getTechnique(0)->setLightingEnabled(false);
 }
 
 PathDisplay::~PathDisplay()
@@ -145,8 +155,7 @@ void PathDisplay::reset()
 }
 
 
-void PathDisplay::allocateAxesVector(
-  std::vector<rviz_rendering::Axes *> & axes_vect, int num)
+void PathDisplay::allocateAxesVector(std::vector<rviz_rendering::Axes *> & axes_vect, int num)
 {
   auto vector_size = static_cast<int>(axes_vect.size());
   if (num > vector_size) {
@@ -164,8 +173,7 @@ void PathDisplay::allocateAxesVector(
   }
 }
 
-void PathDisplay::allocateArrowVector(
-  std::vector<rviz_rendering::Arrow *> & arrow_vect, int num)
+void PathDisplay::allocateArrowVector(std::vector<rviz_rendering::Arrow *> & arrow_vect, int num)
 {
   auto vector_size = static_cast<int>(arrow_vect.size());
   if (num > vector_size) {
@@ -426,11 +434,12 @@ void PathDisplay::processMessage(nav_msgs::msg::Path::ConstSharedPtr msg)
   switch (style) {
     case LINES:
       manual_object->estimateVertexCount(num_points);
-      manual_object->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_LINE_STRIP);
+      manual_object->begin(lines_material_->getName(), Ogre::RenderOperation::OT_LINE_STRIP);
       for (size_t i = 0; i < num_points; ++i) {
         const geometry_msgs::msg::Point & pos = msg->poses[i].pose.position;
         Ogre::Vector3 xpos = transform * Ogre::Vector3(pos.x, pos.y, pos.z);
         manual_object->position(xpos.x, xpos.y, xpos.z);
+        enableBlending(color);
         manual_object->colour(color);
       }
 
@@ -500,6 +509,17 @@ void PathDisplay::processMessage(nav_msgs::msg::Path::ConstSharedPtr msg)
       break;
   }
   context_->queueRender();
+}
+
+void PathDisplay::enableBlending(const Ogre::ColourValue & color)
+{
+  if (color.a < 0.9998) {
+    lines_material_->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
+    lines_material_->setDepthWriteEnabled(false);
+  } else {
+    lines_material_->setSceneBlending(Ogre::SBT_REPLACE);
+    lines_material_->setDepthWriteEnabled(true);
+  }
 }
 
 }  // namespace displays
