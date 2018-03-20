@@ -29,14 +29,9 @@
 
 #include "path_display.hpp"
 
-#include <OgreSceneNode.h>
-#include <OgreSceneManager.h>
 #include <OgreManualObject.h>
 #include <OgreBillboardSet.h>
-#include <OgreMatrix4.h>
 
-#include "rviz_common/display_context.hpp"
-#include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/logging.hpp"
 #include "rviz_common/properties/enum_property.hpp"
 #include "rviz_common/properties/color_property.hpp"
@@ -151,7 +146,7 @@ void PathDisplay::allocateAxesVector(
 {
   if (num > axes_vect.size()) {
     for (size_t i = axes_vect.size(); i < num; i++) {
-      rviz_rendering::Axes * axes = new rviz_rendering::Axes(scene_manager_, scene_node_,
+      auto * axes = new rviz_rendering::Axes(scene_manager_, scene_node_,
           pose_axes_length_property_->getFloat(),
           pose_axes_radius_property_->getFloat());
       axes_vect.push_back(axes);
@@ -169,7 +164,7 @@ void PathDisplay::allocateArrowVector(
 {
   if (num > arrow_vect.size()) {
     for (size_t i = arrow_vect.size(); i < num; i++) {
-      rviz_rendering::Arrow * arrow = new rviz_rendering::Arrow(scene_manager_, scene_node_);
+      auto * arrow = new rviz_rendering::Arrow(scene_manager_, scene_node_);
       arrow_vect.push_back(arrow);
     }
   } else if (num < arrow_vect.size()) {
@@ -182,23 +177,23 @@ void PathDisplay::allocateArrowVector(
 
 void PathDisplay::destroyPoseAxesChain()
 {
-  for (size_t i = 0; i < axes_chain_.size(); i++) {
-    allocateAxesVector(axes_chain_[i], 0);
+  for (auto & axes_vect : axes_chain_) {
+    allocateAxesVector(axes_vect, 0);
   }
   axes_chain_.resize(0);
 }
 
 void PathDisplay::destroyPoseArrowChain()
 {
-  for (size_t i = 0; i < arrow_chain_.size(); i++) {
-    allocateArrowVector(arrow_chain_[i], 0);
+  for (auto & arrow_vect : arrow_chain_) {
+    allocateArrowVector(arrow_vect, 0);
   }
   arrow_chain_.resize(0);
 }
 
 void PathDisplay::updateStyle()
 {
-  LineStyle style = (LineStyle) style_property_->getOptionInt();
+  auto style = static_cast<LineStyle>(style_property_->getOptionInt());
 
   switch (style) {
     case LINES:
@@ -216,12 +211,11 @@ void PathDisplay::updateStyle()
 
 void PathDisplay::updateLineWidth()
 {
-  LineStyle style = (LineStyle) style_property_->getOptionInt();
+  auto style = static_cast<LineStyle>(style_property_->getOptionInt());
   float line_width = line_width_property_->getFloat();
 
   if (style == BILLBOARDS) {
-    for (size_t i = 0; i < billboard_lines_.size(); i++) {
-      rviz_rendering::BillboardLine * billboard_line = billboard_lines_[i];
+    for (auto billboard_line : billboard_lines_) {
       if (billboard_line) {billboard_line->setLineWidth(line_width);}
     }
   }
@@ -236,7 +230,7 @@ void PathDisplay::updateOffset()
 
 void PathDisplay::updatePoseStyle()
 {
-  PoseStyle pose_style = (PoseStyle) pose_style_property_->getOptionInt();
+  auto pose_style = static_cast<PoseStyle>(pose_style_property_->getOptionInt());
   switch (pose_style) {
     case AXES:
       pose_axes_length_property_->show();
@@ -270,10 +264,9 @@ void PathDisplay::updatePoseStyle()
 
 void PathDisplay::updatePoseAxisGeometry()
 {
-  for (size_t i = 0; i < axes_chain_.size(); i++) {
-    std::vector<rviz_rendering::Axes *> & axes_vect = axes_chain_[i];
-    for (size_t j = 0; j < axes_vect.size(); j++) {
-      axes_vect[j]->set(pose_axes_length_property_->getFloat(),
+  for (auto & axes_vect : axes_chain_) {
+    for (auto & axes : axes_vect) {
+      axes->set(pose_axes_length_property_->getFloat(),
         pose_axes_radius_property_->getFloat() );
     }
   }
@@ -284,10 +277,9 @@ void PathDisplay::updatePoseArrowColor()
 {
   QColor color = pose_arrow_color_property_->getColor();
 
-  for (size_t i = 0; i < arrow_chain_.size(); i++) {
-    std::vector<rviz_rendering::Arrow *> & arrow_vect = arrow_chain_[i];
-    for (size_t j = 0; j < arrow_vect.size(); j++) {
-      arrow_vect[j]->setColor(color.redF(), color.greenF(), color.blueF(), 1.0f);
+  for (auto & arrow_vect : arrow_chain_) {
+    for (auto & arrow : arrow_vect) {
+      arrow->setColor(color.redF(), color.greenF(), color.blueF(), 1.0f);
     }
   }
   context_->queueRender();
@@ -295,10 +287,9 @@ void PathDisplay::updatePoseArrowColor()
 
 void PathDisplay::updatePoseArrowGeometry()
 {
-  for (size_t i = 0; i < arrow_chain_.size(); i++) {
-    std::vector<rviz_rendering::Arrow *> & arrow_vect = arrow_chain_[i];
-    for (size_t j = 0; j < arrow_vect.size(); j++) {
-      arrow_vect[j]->set(pose_arrow_shaft_length_property_->getFloat(),
+  for (auto & arrow_vect : arrow_chain_) {
+    for (auto & arrow : arrow_vect) {
+      arrow->set(pose_arrow_shaft_length_property_->getFloat(),
         pose_arrow_shaft_diameter_property_->getFloat(),
         pose_arrow_head_length_property_->getFloat(),
         pose_arrow_head_diameter_property_->getFloat());
@@ -315,7 +306,7 @@ void PathDisplay::destroyObjects()
     if (manual_object) {
       manual_object->clear();
       scene_manager_->destroyManualObject(manual_object);
-      manual_object = NULL; // ensure it doesn't get destroyed again
+      manual_object = nullptr; // ensure it doesn't get destroyed again
     }
   }
 
@@ -324,7 +315,7 @@ void PathDisplay::destroyObjects()
     rviz_rendering::BillboardLine * & billboard_line = billboard_lines_[i];
     if (billboard_line) {
       delete billboard_line; // also destroys the corresponding scene node
-      billboard_line = NULL; // ensure it doesn't get destroyed again
+      billboard_line = nullptr; // ensure it doesn't get destroyed again
     }
   }
 }
@@ -340,7 +331,7 @@ void PathDisplay::updateBufferLength()
 
   // Read options
   int buffer_length = buffer_length_property_->getInt();
-  LineStyle style = (LineStyle) style_property_->getOptionInt();
+  auto style = static_cast<LineStyle>(style_property_->getOptionInt());
 
   // Create new path objects
   switch (style) {
@@ -358,8 +349,7 @@ void PathDisplay::updateBufferLength()
     case BILLBOARDS: // billboards with configurable width
       billboard_lines_.resize(buffer_length);
       for (size_t i = 0; i < billboard_lines_.size(); i++) {
-        rviz_rendering::BillboardLine * billboard_line =
-          new rviz_rendering::BillboardLine(scene_manager_, scene_node_);
+        auto * billboard_line = new rviz_rendering::BillboardLine(scene_manager_, scene_node_);
         billboard_lines_[i] = billboard_line;
       }
       break;
@@ -382,9 +372,9 @@ void PathDisplay::processMessage(nav_msgs::msg::Path::ConstSharedPtr msg)
   // Calculate index of oldest element in cyclic buffer
   size_t bufferIndex = messages_received_ % buffer_length_property_->getInt();
 
-  LineStyle style = (LineStyle) style_property_->getOptionInt();
-  Ogre::ManualObject * manual_object = NULL;
-  rviz_rendering::BillboardLine * billboard_line = NULL;
+  auto style = static_cast<LineStyle>(style_property_->getOptionInt());
+  Ogre::ManualObject * manual_object = nullptr;
+  rviz_rendering::BillboardLine * billboard_line = nullptr;
 
   // Delete oldest element
   switch (style) {
@@ -458,7 +448,7 @@ void PathDisplay::processMessage(nav_msgs::msg::Path::ConstSharedPtr msg)
   }
 
   // process pose markers
-  PoseStyle pose_style = (PoseStyle) pose_style_property_->getOptionInt();
+  auto pose_style = static_cast<PoseStyle>(pose_style_property_->getOptionInt());
   std::vector<rviz_rendering::Arrow *> & arrow_vect = arrow_chain_[bufferIndex];
   std::vector<rviz_rendering::Axes *> & axes_vect = axes_chain_[bufferIndex];
 

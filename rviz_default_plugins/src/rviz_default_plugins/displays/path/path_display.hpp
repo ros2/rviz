@@ -69,17 +69,17 @@ class PathDisplay : public rviz_common::RosTopicDisplay<nav_msgs::msg::Path>
 
 public:
   PathDisplay();
-  virtual ~PathDisplay();
+  ~PathDisplay() override;
 
   /** @brief Overridden from Display. */
-  virtual void reset();
+  void reset() override;
 
 protected:
   /** @brief Overridden from Display. */
-  virtual void onInitialize();
+  void onInitialize() override;
 
   /** @brief Overridden from MessageFilterDisplay. */
-  void processMessage(nav_msgs::msg::Path::ConstSharedPtr msg);
+  void processMessage(nav_msgs::msg::Path::ConstSharedPtr msg) override;
 
 private Q_SLOTS:
   void updateBufferLength();
