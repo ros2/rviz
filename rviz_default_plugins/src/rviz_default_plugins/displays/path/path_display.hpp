@@ -96,8 +96,8 @@ private Q_SLOTS:
 
 private:
   void destroyObjects();
-  void allocateArrowVector(std::vector<rviz_rendering::Arrow *> & arrow_vect, size_t num);
-  void allocateAxesVector(std::vector<rviz_rendering::Axes *> & axes_vect, size_t num);
+  void allocateArrowVector(std::vector<rviz_rendering::Arrow *> & arrow_vect, int num);
+  void allocateAxesVector(std::vector<rviz_rendering::Axes *> & axes_vect, int num);
   void destroyPoseAxesChain();
   void destroyPoseArrowChain();
 

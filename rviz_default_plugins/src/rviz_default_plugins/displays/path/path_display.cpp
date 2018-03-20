@@ -146,17 +146,18 @@ void PathDisplay::reset()
 
 
 void PathDisplay::allocateAxesVector(
-  std::vector<rviz_rendering::Axes *> & axes_vect, size_t num)
+  std::vector<rviz_rendering::Axes *> & axes_vect, int num)
 {
-  if (num > axes_vect.size()) {
-    for (size_t i = axes_vect.size(); i < num; i++) {
+  auto vector_size = static_cast<int>(axes_vect.size());
+  if (num > vector_size) {
+    for (int i = vector_size; i < num; i++) {
       auto * axes = new rviz_rendering::Axes(scene_manager_, scene_node_,
           pose_axes_length_property_->getFloat(),
           pose_axes_radius_property_->getFloat());
       axes_vect.push_back(axes);
     }
-  } else if (num < axes_vect.size()) {
-    for (size_t i = axes_vect.size() - 1; num <= i; i--) {
+  } else if (num < vector_size) {
+    for (int i = vector_size - 1; num <= i; i--) {
       delete axes_vect[i];
     }
     axes_vect.resize(num);
@@ -164,15 +165,16 @@ void PathDisplay::allocateAxesVector(
 }
 
 void PathDisplay::allocateArrowVector(
-  std::vector<rviz_rendering::Arrow *> & arrow_vect, size_t num)
+  std::vector<rviz_rendering::Arrow *> & arrow_vect, int num)
 {
-  if (num > arrow_vect.size()) {
-    for (size_t i = arrow_vect.size(); i < num; i++) {
+  auto vector_size = static_cast<int>(arrow_vect.size());
+  if (num > vector_size) {
+    for (int i = vector_size; i < num; i++) {
       auto * arrow = new rviz_rendering::Arrow(scene_manager_, scene_node_);
       arrow_vect.push_back(arrow);
     }
-  } else if (num < arrow_vect.size()) {
-    for (size_t i = arrow_vect.size() - 1; num <= i; i--) {
+  } else if (num < vector_size) {
+    for (int i = vector_size - 1; num <= i; --i) {
       delete arrow_vect[i];
     }
     arrow_vect.resize(num);
