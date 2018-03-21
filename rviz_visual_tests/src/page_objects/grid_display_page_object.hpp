@@ -30,6 +30,7 @@
 #ifndef PAGE_OBJECTS__GRID_DISPLAY_PAGE_OBJECT_HPP_
 #define PAGE_OBJECTS__GRID_DISPLAY_PAGE_OBJECT_HPP_
 
+#include <memory>
 #include <vector>
 
 #include <QtWidgets>  // NOLINT
@@ -39,7 +40,10 @@
 class GridDisplayPageObject : public BasePageObject
 {
 public:
-  explicit GridDisplayPageObject(int display_id);
+  GridDisplayPageObject(
+    int display_id,
+    std::shared_ptr<Executor> executor,
+    std::shared_ptr<std::vector<int>> all_displays_ids);
 
   void setReferenceFrame(QString reference_frame);
   void setPlaneCellCount(QString plane_cell_count);

@@ -30,6 +30,7 @@
 #ifndef PAGE_OBJECTS__POLYGON_DISPLAY_PAGE_OBJECT_HPP_
 #define PAGE_OBJECTS__POLYGON_DISPLAY_PAGE_OBJECT_HPP_
 
+#include <memory>
 #include <vector>
 
 #include <QtWidgets>  // NOLINT
@@ -39,7 +40,10 @@
 class PolygonDisplayPageObject : public BasePageObject
 {
 public:
-  explicit PolygonDisplayPageObject(int display_id);
+  explicit PolygonDisplayPageObject(
+    int display_id,
+    std::shared_ptr<Executor> executor,
+    std::shared_ptr<std::vector<int>> all_displays_ids);
 
   void setTopic(QString topic);
   void setUnreliable(bool unreliable);

@@ -30,21 +30,24 @@
 #include "rviz_scene_test.hpp"
 
 #include <iostream>
+#include <memory>
 #include <string>
 #include <thread>
 
-#include "../visual_test_fixture.hpp"
-
-
 RvizTestScene::RvizTestScene(
-  QApplication * qapp, rviz_common::VisualizerApp * vapp, Ogre::Vector3 pose, Ogre::Vector3 look_at)
+  QApplication * qapp,
+  rviz_common::VisualizerApp * vapp,
+  Ogre::Vector3 pose,
+  Ogre::Vector3 look_at,
+  std::shared_ptr<Executor> executor)
 : render_window_(nullptr),
   manager_(nullptr),
   camera_(nullptr),
   cam_pose_(pose),
   cam_look_at_vector_(look_at),
   qapp_(qapp),
-  visualizer_app_(vapp)
+  visualizer_app_(vapp),
+  executor_(executor)
 {
   setUp();
 }
@@ -90,9 +93,10 @@ void RvizTestScene::takeTestShot(Ogre::String name)
 
 void RvizTestScene::takeScreenShot(Ogre::String name)
 {
-  QTimer::singleShot(VisualTestFixture::total_delay_, this, [this, name] {
+  executor_->queueAction([this, name] {
       render_window_->captureScreenShot(name);
-    });
+    }
+  );
 }
 
 void RvizTestScene::setCamPose(Ogre::Vector3 pose)

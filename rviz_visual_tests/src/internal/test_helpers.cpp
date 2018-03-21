@@ -33,8 +33,6 @@
 
 #include <QApplication>  // NOLINT
 
-#include "../visual_test_fixture.hpp"
-
 namespace helpers
 {
 
@@ -55,11 +53,6 @@ QTreeView * getDisplaysTreeView()
          ->findChild<QWidget *>("Displays/DisplayPanel")
          ->findChild<QWidget *>("DisplayPanel/TreeWithHelp")
          ->findChild<QTreeView *>("TreeWithHelp/PropertyTree");
-}
-
-void increaseTotalDelay()
-{
-  VisualTestFixture::total_delay_ += VisualTestFixture::getDefaultDelayValue();
 }
 
 rviz_rendering::RenderWindow * findWindow(const QString & window_name)

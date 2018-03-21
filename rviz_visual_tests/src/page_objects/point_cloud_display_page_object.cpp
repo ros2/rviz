@@ -29,13 +29,17 @@
 
 #include "point_cloud_display_page_object.hpp"
 
+#include <memory>
 #include <iostream>
 #include <vector>
 
 #include <QTest>  // NOLINT
 
-PointCloudDisplayPageObject::PointCloudDisplayPageObject(int display_id)
-: BasePageObject(display_id, 0, 3)
+PointCloudDisplayPageObject::PointCloudDisplayPageObject(
+  int display_id,
+  std::shared_ptr<Executor> executor,
+  std::shared_ptr<std::vector<int>> all_displays_ids)
+: BasePageObject(display_id, 0, 3, executor, all_displays_ids)
 {}
 
 void PointCloudDisplayPageObject::setSize(QString points_size)

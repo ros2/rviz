@@ -33,9 +33,6 @@
 #include <string>
 #include <vector>
 
-#include <QTimer>  // NOLINT
-
-#include "internal/test_helpers.hpp"
 #include "rviz_common/ros_integration/ros_client_abstraction.hpp"
 
 void VisualTestFixture::SetUpTestCase()
@@ -44,9 +41,10 @@ void VisualTestFixture::SetUpTestCase()
   visualizer_app_ = new rviz_common::VisualizerApp(
     std::make_unique<rviz_common::ros_integration::RosClientAbstraction>());
   qapp_ = new QApplication(argc, nullptr);
-  visual_test_ = std::make_unique<VisualTest>(qapp_, visualizer_app_);
-  display_handler_ = std::make_unique<DisplayHandler>();
-  total_delay_ = getDefaultDelayValue();
+  executor_ = std::make_shared<Executor>();
+  visual_test_ = std::make_unique<VisualTest>(qapp_, visualizer_app_, executor_);
+  all_display_ids_vector_ = std::make_shared<std::vector<int>>();
+  display_handler_ = std::make_unique<DisplayHandler>(executor_, all_display_ids_vector_);
   visualizer_app_->loadConfig(QDir::toNativeSeparators(
       QString::fromStdString(std::string(_SRC_DIR_PATH) + "/visual_tests_default_config.rviz")));
   visual_test_->setCamera();
@@ -61,7 +59,7 @@ void VisualTestFixture::TearDown()
 {
   display_handler_->removeAllDisplays();
   visual_test_->reset();
-  total_delay_ = getDefaultDelayValue();
+  executor_->reset();
   screen_shots_.clear();
 }
 
@@ -98,11 +96,6 @@ void VisualTestFixture::removeDisplay(std::shared_ptr<BasePageObject> display)
   display_handler_->removeDisplay(display);
 }
 
-int VisualTestFixture::getDefaultDelayValue()
-{
-  return default_delay_value_;
-}
-
 void VisualTestFixture::captureMainWindow(Ogre::String image_name)
 {
   screen_shots_.push_back(image_name);
@@ -126,7 +119,6 @@ void VisualTestFixture::assertScreenShotsIdentity()
   for (const auto & image_name : screen_shots_) {
     visual_test_->assertVisualIdentity(image_name);
   }
-  helpers::increaseTotalDelay();
 }
 
 void VisualTestFixture::assertMainWindowIdentity(Ogre::String image_name)
@@ -134,23 +126,19 @@ void VisualTestFixture::assertMainWindowIdentity(Ogre::String image_name)
   captureMainWindow(image_name);
   startApplication();
   visual_test_->assertVisualIdentity(image_name);
-  helpers::increaseTotalDelay();
 }
 
 void VisualTestFixture::startApplication()
 {
-  QTimer::singleShot(total_delay_ + 123, this, [this] {
-      qapp_->quit();
-    });
+  executor_->queueAction([this] {qapp_->quit();});
   qapp_->exec();
 }
 
 QApplication * VisualTestFixture::qapp_ = nullptr;
 rviz_common::VisualizerApp * VisualTestFixture::visualizer_app_ = nullptr;
 Ogre::String VisualTestFixture::test_name_;
+std::shared_ptr<Executor> VisualTestFixture::executor_ = nullptr;
 std::unique_ptr<VisualTest> VisualTestFixture::visual_test_ = nullptr;
+std::shared_ptr<std::vector<int>> VisualTestFixture::all_display_ids_vector_ = nullptr;
 std::unique_ptr<DisplayHandler> VisualTestFixture::display_handler_ = nullptr;
-int VisualTestFixture::total_delay_;
-std::vector<int> VisualTestFixture::all_display_ids_vector_;
-const int VisualTestFixture::default_delay_value_ = 2000;
 std::vector<Ogre::String> VisualTestFixture::screen_shots_;

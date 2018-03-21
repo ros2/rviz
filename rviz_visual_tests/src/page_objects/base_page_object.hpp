@@ -33,15 +33,23 @@
 #include <gtest/gtest.h>
 
 #include <string>
+#include <memory>
 #include <vector>
 
 #include <QString>  // NOLINT
 #include <QtWidgets>  // NOLINT
 
+#include "src/internal/executor.hpp"
+
 class BasePageObject : public QObject
 {
 public:
-  BasePageObject(int display_id, int display_category, int display_name_index);
+  BasePageObject(
+    int display_id,
+    int display_category,
+    int display_name_index,
+    std::shared_ptr<Executor> executor,
+    std::shared_ptr<std::vector<int>> all_displays_ids);
 
   int getDisplayId() const;
   int getDisplayCategory() const;
@@ -57,6 +65,7 @@ protected:
   int display_id_;
   int display_category_;
   int display_name_index_;
+  std::shared_ptr<Executor> executor_;
 
 private:
   bool checkPropertyName(
@@ -80,6 +89,7 @@ private:
   void setExpanded(QModelIndex display_index, bool expanded);
 
   int default_first_display_index_;
+  std::shared_ptr<std::vector<int>> all_display_ids_vector_;
 };
 
 QString format(float number);

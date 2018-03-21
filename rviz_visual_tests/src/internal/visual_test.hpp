@@ -43,6 +43,7 @@
 
 #include "rviz_scene_test.hpp"
 #include "image_tester.hpp"
+#include "executor.hpp"
 #include "../page_objects/page_object_with_window.hpp"
 
 class VisualTest
@@ -51,7 +52,8 @@ public:
   /// Initializes the scene and sets the path to the image directories.
   VisualTest(
     QApplication * qapp,
-    rviz_common::VisualizerApp * vapp);
+    rviz_common::VisualizerApp * vapp,
+    std::shared_ptr<Executor> executor);
 
   ///  Sets the position of the camera.
   void setCamPose(Ogre::Vector3 camera_pose);

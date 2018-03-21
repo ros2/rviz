@@ -30,12 +30,18 @@
 #ifndef PAGE_OBJECTS__CAMERA_DISPLAY_PAGE_OBJECT_HPP_
 #define PAGE_OBJECTS__CAMERA_DISPLAY_PAGE_OBJECT_HPP_
 
+#include <memory>
+#include <vector>
+
 #include "page_object_with_window.hpp"
 
 class CameraDisplayPageObject : public PageObjectWithWindow
 {
 public:
-  explicit CameraDisplayPageObject(int display_id);
+  CameraDisplayPageObject(
+    int display_id,
+    std::shared_ptr<Executor> executor,
+    std::shared_ptr<std::vector<int>> all_displays_ids);
 
   /* @param display_name Name of the display whose visibility must be changed
    * @param relative_row_index Sub-property index relative to the parent property (i.e. Visibility)

@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 3.5)
 project(rviz_visual_tests)
 
 # Options to decide whether or not the visual test will run and in which modality (TEST or REF)
-option(EnableVisualTests "decides wheter or not enable the tests")
-option(GenerateReferenceImages "decides wheter the reference images are updated")
+option(EnableVisualTests "decides whether or not enable the tests")
+option(GenerateReferenceImages "decides whether the reference images are updated")
 
 # Option to set a non null threshold in the image comparison (in case of unidentical images).
 option(ComparisonThreshold "The threshold")
@@ -83,6 +83,8 @@ if(BUILD_TESTING)
         src/internal/image_tester.hpp
         src/internal/test_helpers.hpp
         src/internal/test_helpers.cpp
+        src/internal/executor.hpp
+        src/internal/executor.cpp
         src/internal/visual_test.hpp
         src/internal/visual_test.cpp
         src/visual_test_fixture.hpp

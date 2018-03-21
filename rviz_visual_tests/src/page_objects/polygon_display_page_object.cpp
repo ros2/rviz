@@ -29,8 +29,14 @@
 
 #include "polygon_display_page_object.hpp"
 
-PolygonDisplayPageObject::PolygonDisplayPageObject(int display_id)
-: BasePageObject(display_id, 0, 5)
+#include <memory>
+#include <vector>
+
+PolygonDisplayPageObject::PolygonDisplayPageObject(
+  int display_id,
+  std::shared_ptr<Executor> executor,
+  std::shared_ptr<std::vector<int>> all_displays_ids)
+: BasePageObject(display_id, 0, 5, executor, all_displays_ids)
 {}
 
 void PolygonDisplayPageObject::setTopic(QString topic)

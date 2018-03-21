@@ -44,13 +44,10 @@ TEST_F(VisualTestFixture, example_test_structure) {
   setCamLookAt(Ogre::Vector3(0, 2, 0));
 
   /// Add displays:
-  auto pointcloud_display = addDisplay<PointCloudDisplayPageObject>();
   auto grid_display = addDisplay<GridDisplayPageObject>();
   auto image_display = addDisplay<ImageDisplayPageObject>();
 
   /// Modify their properties:
-  pointcloud_display->setSize("3");
-  pointcloud_display->collapse();
   grid_display->setOffset(0.3, 2, 0.4);
   grid_display->setColor(0, 255, 0);
   grid_display->collapse();

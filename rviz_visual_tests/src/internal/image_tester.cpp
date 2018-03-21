@@ -87,12 +87,15 @@ void ImageTester::assertImageIdentity(
     double difference_image_intensity = computeDifferenceImageAverageIntensity(
       image_name, reference_image_width, reference_image_height);
     if (difference_image_intensity <= threshold) {
-      std::cout << "\n[   INFO:   ] Images are not pixelwise identical, but most probably they are "
+      std::cout << "\n[   INFO:   ] Images are not pixel-wise identical, but most probably they "
+        "are "
         "the same\n";
       SUCCEED();
     } else {
-      GTEST_FAIL() << "\n[  ERROR   ]  The test image is different from the reference one. The "
-        "image difference has been computed and saved in test_images.\n";
+      GTEST_FAIL() << "\n[  ERROR   ] The test image '" << image_name + ".png" << "' is different "
+        "from the reference one. The image difference has been computed and saved in test_images."
+                   <<
+        std::endl;
     }
   }
 }

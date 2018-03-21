@@ -30,12 +30,18 @@
 #ifndef PAGE_OBJECTS__IMAGE_DISPLAY_PAGE_OBJECT_HPP_
 #define PAGE_OBJECTS__IMAGE_DISPLAY_PAGE_OBJECT_HPP_
 
+#include <memory>
+#include <vector>
+
 #include "page_object_with_window.hpp"
 
 class ImageDisplayPageObject : public PageObjectWithWindow
 {
 public:
-  explicit ImageDisplayPageObject(int display_id);
+  ImageDisplayPageObject(
+    int display_id,
+    std::shared_ptr<Executor> executor,
+    std::shared_ptr<std::vector<int>> all_displays_ids);
 
   void setRenderWindow() override;
   void setTopic(QString topic);

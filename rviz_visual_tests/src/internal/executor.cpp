@@ -27,30 +27,28 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "page_object_with_window.hpp"
+#include "executor.hpp"
 
-#include <memory>
-#include <string>
-#include <vector>
+#include <QTimer>  // NOLINT
 
-PageObjectWithWindow::PageObjectWithWindow(
-  int display_id,
-  int display_category,
-  int display_name_index,
-  std::shared_ptr<Executor> executor,
-  std::shared_ptr<std::vector<int>> all_displays_ids)
-: BasePageObject(display_id, display_category, display_name_index, executor, all_displays_ids),
-  render_window_(nullptr),
-  display_with_window_index_(0)
+Executor::Executor()
+: total_delay_(default_delay_interval_)
 {}
 
-void PageObjectWithWindow::captureDisplayRenderWindow(std::string image_name)
+void Executor::queueAction(std::function<void(void)> action)
 {
-  executor_->queueAction([this, image_name] {
-      if (!render_window_) {
-        setRenderWindow();
-      }
-      render_window_->captureScreenShot(image_name);
-    }
-  );
+  QTimer::singleShot(total_delay_, this, action);
+  increaseTotalDelay();
 }
+
+void Executor::reset()
+{
+  total_delay_ = default_delay_interval_;
+}
+
+void Executor::increaseTotalDelay()
+{
+  total_delay_ += default_delay_interval_;
+}
+
+const int Executor::default_delay_interval_ = 2000;

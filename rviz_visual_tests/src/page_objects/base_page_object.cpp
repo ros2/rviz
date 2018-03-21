@@ -29,20 +29,25 @@
 #include "base_page_object.hpp"
 
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include <QTest>  // NOLINT
-#include <QTimer>  // NOLINT
 
 #include "../internal/test_helpers.hpp"
-#include "../visual_test_fixture.hpp"
 
 BasePageObject::BasePageObject(
-  int display_id, int display_category, int display_name_index)
+  int display_id,
+  int display_category,
+  int display_name_index,
+  std::shared_ptr<Executor> executor,
+  std::shared_ptr<std::vector<int>> display_ids_vector)
 : display_category_(display_category),
   display_name_index_(display_name_index),
-  default_first_display_index_(3)
+  executor_(executor),
+  default_first_display_index_(3),
+  all_display_ids_vector_(display_ids_vector)
 {
   display_id_ = display_id;
 }
@@ -50,8 +55,7 @@ BasePageObject::BasePageObject(
 void BasePageObject::setString(
   QString property_name, QString value_to_set, int property_row_index)
 {
-  QTimer::singleShot(
-    VisualTestFixture::total_delay_, this, [this, value_to_set, property_row_index, property_name] {
+  executor_->queueAction([this, value_to_set, property_row_index, property_name] {
       auto relative_display_index = getRelativeIndexAndExpandDisplay();
 
       failIfPropertyIsAbsent(property_name, property_row_index, relative_display_index);
@@ -60,16 +64,14 @@ void BasePageObject::setString(
       clickOnTreeItem(getValueToChangeIndex(property_row_index, relative_display_index));
       QTest::keyClicks(helpers::getDisplaysTreeView()->focusWidget(), value_to_set);
       QTest::keyClick(helpers::getDisplaysTreeView()->focusWidget(), Qt::Key_Enter);
-    });
-
-  helpers::increaseTotalDelay();
+    }
+  );
 }
 
 void BasePageObject::setComboBox(
   QString property_name, QString value_to_set, int property_row_index)
 {
-  QTimer::singleShot(
-    VisualTestFixture::total_delay_, this, [this, value_to_set, property_row_index, property_name] {
+  executor_->queueAction([this, value_to_set, property_row_index, property_name] {
       auto relative_display_index = getRelativeIndexAndExpandDisplay();
 
       auto value_to_change_index =
@@ -86,17 +88,14 @@ void BasePageObject::setComboBox(
         GTEST_FAIL() << "\n[  ERROR   ]  The given property value does not exist!\n";
       }
       property_combo_box->setCurrentIndex(style_index);
-    });
-
-  helpers::increaseTotalDelay();
+    }
+  );
 }
 
 void BasePageObject::setBool(
   QString property_name, bool value_to_set, int property_row_index, int sub_property_index)
 {
-  QTimer::singleShot(
-    VisualTestFixture::total_delay_,
-    this,
+  executor_->queueAction(
     [this, value_to_set, property_row_index, property_name, sub_property_index] {
       auto relative_display_index = getRelativeIndexAndExpandDisplay();
 
@@ -108,9 +107,8 @@ void BasePageObject::setBool(
       auto checked_status = value_to_set ? Qt::Checked : Qt::Unchecked;
       helpers::getDisplaysTreeView()->model()->setData(
         value_to_change_index, checked_status, Qt::CheckStateRole);
-    });
-
-  helpers::increaseTotalDelay();
+    }
+  );
 }
 
 QModelIndex BasePageObject::getMainPropertyIndex(
@@ -152,7 +150,7 @@ QModelIndex BasePageObject::getValueToChangeIndex(
 
 QModelIndex BasePageObject::getRelativeIndexAndExpandDisplay()
 {
-  int display_index = helpers::findIndex(display_id_, VisualTestFixture::all_display_ids_vector_);
+  int display_index = helpers::findIndex(display_id_, *all_display_ids_vector_);
   auto relative_display_index =
     helpers::getDisplaysTreeView()->model()->index(default_first_display_index_ + display_index, 0);
   setExpanded(relative_display_index, true);
@@ -221,16 +219,14 @@ int BasePageObject::getDisplayNameIndex() const
 
 void BasePageObject::collapse()
 {
-  QTimer::singleShot(
-    VisualTestFixture::total_delay_, this, [this] {
+  executor_->queueAction([this] {
       int display_index =
-      helpers::findIndex(display_id_, VisualTestFixture::all_display_ids_vector_);
+      helpers::findIndex(display_id_, *all_display_ids_vector_);
       auto relative_display_index = helpers::getDisplaysTreeView()->model()->index(
         default_first_display_index_ + display_index, 0);
       setExpanded(relative_display_index, false);
-    });
-
-  helpers::increaseTotalDelay();
+    }
+  );
 }
 
 void BasePageObject::setExpanded(QModelIndex display_index, bool expanded)

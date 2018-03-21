@@ -27,30 +27,26 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "page_object_with_window.hpp"
+#ifndef INTERNAL__EXECUTOR_HPP_
+#define INTERNAL__EXECUTOR_HPP_
 
-#include <memory>
-#include <string>
-#include <vector>
+#include <functional>
 
-PageObjectWithWindow::PageObjectWithWindow(
-  int display_id,
-  int display_category,
-  int display_name_index,
-  std::shared_ptr<Executor> executor,
-  std::shared_ptr<std::vector<int>> all_displays_ids)
-: BasePageObject(display_id, display_category, display_name_index, executor, all_displays_ids),
-  render_window_(nullptr),
-  display_with_window_index_(0)
-{}
+#include <QObject>  // NOLINT
 
-void PageObjectWithWindow::captureDisplayRenderWindow(std::string image_name)
+class Executor : public QObject
 {
-  executor_->queueAction([this, image_name] {
-      if (!render_window_) {
-        setRenderWindow();
-      }
-      render_window_->captureScreenShot(image_name);
-    }
-  );
-}
+public:
+  Executor();
+
+  void queueAction(std::function<void(void)> action);
+  void reset();
+
+private:
+  void increaseTotalDelay();
+
+  int total_delay_;
+  static const int default_delay_interval_;
+};
+
+#endif  // INTERNAL__EXECUTOR_HPP_

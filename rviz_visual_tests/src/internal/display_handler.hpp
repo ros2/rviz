@@ -33,16 +33,20 @@
 
 #include <memory>
 #include <vector>
-#include "../page_objects/base_page_object.hpp"
 
-class DisplayHandler : public QObject
+#include "../page_objects/base_page_object.hpp"
+#include "executor.hpp"
+
+class DisplayHandler
 {
 public:
-  DisplayHandler();
+  DisplayHandler(
+    std::shared_ptr<Executor> executor, std::shared_ptr<std::vector<int>> all_displays_ids);
   template<typename T>
   std::shared_ptr<T> addDisplay()
   {
-    auto page_object = std::make_shared<T>(absolute_displays_number_);
+    auto page_object =
+      std::make_shared<T>(absolute_displays_number_, executor_, all_display_ids_vector_);
 
     openAddDisplayDialog();
     selectDisplayAndConfirm(page_object);
@@ -66,6 +70,8 @@ private:
   void addDisplayToIdsVector();
 
   static int absolute_displays_number_;
+  std::shared_ptr<Executor> executor_;
+  static std::shared_ptr<std::vector<int>> all_display_ids_vector_;
 };
 
 #endif  // INTERNAL__DISPLAY_HANDLER_HPP_

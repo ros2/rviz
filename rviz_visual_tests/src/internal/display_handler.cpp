@@ -33,14 +33,15 @@
 #include <vector>
 
 #include <QTest>  // NOLINT
-#include <QTimer>  // NOLINT
 
 #include "test_helpers.hpp"
-#include "../visual_test_fixture.hpp"
 
-DisplayHandler::DisplayHandler()
+DisplayHandler::DisplayHandler(
+  std::shared_ptr<Executor> executor, std::shared_ptr<std::vector<int>> all_displays_ids)
+: executor_(executor)
 {
   absolute_displays_number_ = 0;
+  all_display_ids_vector_ = all_displays_ids;
 }
 
 QPushButton * DisplayHandler::getAddDisplayButton()
@@ -80,7 +81,7 @@ QPushButton * DisplayHandler::getDisplayActionButton(QString button_name)
 
 void DisplayHandler::removeDisplayWithoutDelay(int display_id)
 {
-  int display_index = helpers::findIndex(display_id, VisualTestFixture::all_display_ids_vector_);
+  int display_index = helpers::findIndex(display_id, *all_display_ids_vector_);
 
   if (display_index >= 0) {
     auto remove_display_button = getRemoveDisplayButton();
@@ -95,48 +96,44 @@ void DisplayHandler::removeDisplayWithoutDelay(int display_id)
 
     QTest::mouseClick(remove_display_button, Qt::MouseButton::LeftButton);
 
-    VisualTestFixture::all_display_ids_vector_.erase(
-      VisualTestFixture::all_display_ids_vector_.begin() + display_index);
+    all_display_ids_vector_->erase(all_display_ids_vector_->begin() + display_index);
   }
 }
 
 void DisplayHandler::removeAllDisplays()
 {
-  std::vector<int> current_displays = VisualTestFixture::all_display_ids_vector_;
+  std::vector<int> current_displays = *all_display_ids_vector_;
   if (current_displays.size() > 0) {
     auto remove_display_button = getRemoveDisplayButton();
     removeDisplayWithoutDelay(current_displays[current_displays.size() - 1]);
     for (size_t i = 0; i < current_displays.size() - 1; ++i) {
       QTest::mouseClick(remove_display_button, Qt::MouseButton::LeftButton);
-      VisualTestFixture::all_display_ids_vector_.erase(
-        VisualTestFixture::all_display_ids_vector_.end() - 1);
+      all_display_ids_vector_->erase(all_display_ids_vector_->end() - 1);
     }
   }
 }
 
 void DisplayHandler::removeDisplay(std::shared_ptr<BasePageObject> display)
 {
-  QTimer::singleShot(VisualTestFixture::total_delay_, this, [this, display]() {
+  executor_->queueAction([this, display]() {
       removeDisplayWithoutDelay(display->getDisplayId());
-    });
-
-  helpers::increaseTotalDelay();
+    }
+  );
 }
 
 void DisplayHandler::openAddDisplayDialog()
 {
-  QTimer::singleShot(VisualTestFixture::total_delay_, this, [this]() {
+  executor_->queueAction([this]() {
       auto add_display_button = getAddDisplayButton();
 
       QTest::mouseClick(add_display_button, Qt::MouseButton::LeftButton);
-    });
-
-  helpers::increaseTotalDelay();
+    }
+  );
 }
 
 void DisplayHandler::selectDisplayAndConfirm(std::shared_ptr<BasePageObject> page_object)
 {
-  QTimer::singleShot(VisualTestFixture::total_delay_, this, [this, page_object]() {
+  executor_->queueAction([this, page_object]() {
       auto add_display_dialog_window = QApplication::activeWindow();
 
       auto create_visualization_type_box = add_display_dialog_window->findChild<QWidget *>(
@@ -167,14 +164,14 @@ void DisplayHandler::selectDisplayAndConfirm(std::shared_ptr<BasePageObject> pag
 
       QWidget * ok_button = add_display_dialog_buttons->button(QDialogButtonBox::Ok);
       QTest::mouseClick(ok_button, Qt::MouseButton::LeftButton);
-    });
-
-  helpers::increaseTotalDelay();
+    }
+  );
 }
 
 void DisplayHandler::addDisplayToIdsVector()
 {
-  VisualTestFixture::all_display_ids_vector_.push_back(absolute_displays_number_);
+  all_display_ids_vector_->push_back(absolute_displays_number_);
 }
 
 int DisplayHandler::absolute_displays_number_ = 0;
+std::shared_ptr<std::vector<int>> DisplayHandler::all_display_ids_vector_;

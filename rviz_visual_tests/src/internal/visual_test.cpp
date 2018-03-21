@@ -37,10 +37,11 @@
 
 VisualTest::VisualTest(
   QApplication * qapp,
-  rviz_common::VisualizerApp * vapp)
+  rviz_common::VisualizerApp * vapp,
+  std::shared_ptr<Executor> executor)
 : default_cam_pose_(Ogre::Vector3(0, 0, 15)),
   default_cam_look_at_(Ogre::Vector3(0, 0, 0)),
-  scene_(qapp, vapp, default_cam_pose_, default_cam_look_at_),
+  scene_(qapp, vapp, default_cam_pose_, default_cam_look_at_, executor),
   tester_("", ""),
   build_directory_path_(_BUILD_DIR_PATH),
   source_directory_path_(_SRC_DIR_PATH)

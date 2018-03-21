@@ -30,8 +30,7 @@
 #ifndef INTERNAL__RVIZ_SCENE_TEST_HPP_
 #define INTERNAL__RVIZ_SCENE_TEST_HPP_
 
-#include <QApplication>
-#include <QTimer>
+#include <memory>
 
 #ifdef _WIN32
 # pragma warning(push)
@@ -47,14 +46,17 @@
 #include "rviz_rendering/render_window.hpp"
 #include "rviz_common/visualizer_app.hpp"
 
-class RvizTestScene : public QObject
+#include "executor.hpp"
+
+class RvizTestScene
 {
 public:
   RvizTestScene(
     QApplication * qapp,
     rviz_common::VisualizerApp * vapp,
     Ogre::Vector3 pose,
-    Ogre::Vector3 look_at);
+    Ogre::Vector3 look_at,
+    std::shared_ptr<Executor> executor);
 
   void takeReferenceShot(Ogre::String name);
   void takeTestShot(Ogre::String name);
@@ -75,6 +77,7 @@ private:
   Ogre::Vector3 cam_look_at_vector_;
   QApplication * qapp_;
   rviz_common::VisualizerApp * visualizer_app_;
+  std::shared_ptr<Executor> executor_;
 };
 
 #endif  // INTERNAL__RVIZ_SCENE_TEST_HPP_

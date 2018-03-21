@@ -30,7 +30,9 @@
 #ifndef PAGE_OBJECTS__PAGE_OBJECT_WITH_WINDOW_HPP_
 #define PAGE_OBJECTS__PAGE_OBJECT_WITH_WINDOW_HPP_
 
+#include <memory>
 #include <string>
+#include <vector>
 
 #include "base_page_object.hpp"
 
@@ -39,7 +41,12 @@
 class PageObjectWithWindow : public BasePageObject
 {
 public:
-  PageObjectWithWindow(int display_id, int display_category, int display_name_index);
+  PageObjectWithWindow(
+    int display_id,
+    int display_category,
+    int display_name_index,
+    std::shared_ptr<Executor> executor,
+    std::shared_ptr<std::vector<int>> all_displays_ids);
 
   void captureDisplayRenderWindow(std::string image_name);
 

@@ -34,10 +34,11 @@
 #include <vector>
 
 #include "internal/display_handler.hpp"
+#include "src/internal/executor.hpp"
 #include "internal/visual_test.hpp"
 #include "page_objects/page_object_with_window.hpp"
 
-class VisualTestFixture : public testing::Test, QObject
+class VisualTestFixture : public testing::Test
 {
 public:
   static void SetUpTestCase();
@@ -63,17 +64,14 @@ public:
 
   void startApplication();
 
-  static int getDefaultDelayValue();
-
   static QApplication * qapp_;
   static rviz_common::VisualizerApp * visualizer_app_;
   static Ogre::String test_name_;
   static std::unique_ptr<VisualTest> visual_test_;
   static std::unique_ptr<DisplayHandler> display_handler_;
-  static int total_delay_;
-  static std::vector<int> all_display_ids_vector_;
-  static const int default_delay_value_;
+  static std::shared_ptr<std::vector<int>> all_display_ids_vector_;
   static std::vector<Ogre::String> screen_shots_;
+  static std::shared_ptr<Executor> executor_;
 };
 
 #endif  // VISUAL_TEST_FIXTURE_HPP_

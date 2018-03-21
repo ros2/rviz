@@ -29,12 +29,18 @@
 
 #include "image_display_page_object.hpp"
 
+#include <memory>
+#include <vector>
+
 #include <QTest>  // NOLINT
 
 #include "../internal/test_helpers.hpp"
 
-ImageDisplayPageObject::ImageDisplayPageObject(int display_id)
-: PageObjectWithWindow(display_id, 0, 2)
+ImageDisplayPageObject::ImageDisplayPageObject(
+  int display_id,
+  std::shared_ptr<Executor> executor,
+  std::shared_ptr<std::vector<int>> all_displays_ids)
+: PageObjectWithWindow(display_id, 0, 2, executor, all_displays_ids)
 {
   static int image_displays_number = 0;
   display_with_window_index_ = image_displays_number++;
