@@ -28,6 +28,7 @@
   <depend>rclcpp</depend>
   <depend>rviz_common</depend>
   <depend>rviz_rendering</depend>
+  <depend>urdf</depend>
   <depend>visualization_msgs</depend>
 
   <test_depend>ament_cmake_cppcheck</test_depend>
