@@ -30,6 +30,7 @@ find_package(visualization_msgs REQUIRED)
 # find_package(tf2 REQUIRED)
 # find_package(tf2_geometry_msgs REQUIRED)
 # find_package(tf2_ros REQUIRED)
+find_package(urdf REQUIRED)
 
 # These need to be added in the add_library() call so AUTOMOC detects them.
 set(rviz_default_plugins_headers_to_moc
@@ -116,6 +117,7 @@ ament_target_dependencies(rviz_default_plugins
   # geometry_msgs
   rclcpp
   resource_retriever
+  urdf
   visualization_msgs
   # tf2
   # tf2_geometry_msgs
