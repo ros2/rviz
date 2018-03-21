@@ -70,6 +70,30 @@ bool vector3NearlyEqual(Ogre::Vector3 expected, Ogre::Vector3 actual)
          Ogre::Math::Abs(expected.z - actual.z) < 0.0001f;
 }
 
+bool arrowIsVisible(Ogre::SceneManager * scene_manager)
+{
+  auto arrow_head = rviz_default_plugins::findEntityByMeshName(
+    scene_manager->getRootSceneNode(), "rviz_cone.mesh");
+  auto arrow_shaft = rviz_default_plugins::findEntityByMeshName(
+    scene_manager->getRootSceneNode(), "rviz_cylinder.mesh");
+
+  return arrow_head->isVisible() && arrow_shaft->isVisible();
+}
+
+void assertArrowWithTransform(
+  Ogre::SceneManager * scene_manager,
+  Ogre::Vector3 position,
+  Ogre::Vector3 scale,
+  Ogre::Quaternion orientation)
+{
+  auto arrow_scene_node = rviz_default_plugins::findOneArrow(scene_manager->getRootSceneNode());
+  ASSERT_TRUE(arrow_scene_node);
+  EXPECT_VECTOR3_EQ(position, arrow_scene_node->getPosition());
+  // Have to mangle the scale because of the default orientation of the cylinders (see arrow.cpp).
+  EXPECT_VECTOR3_EQ(Ogre::Vector3(scale.z, scale.x, scale.y), arrow_scene_node->getScale());
+  EXPECT_QUATERNION_EQ(orientation, arrow_scene_node->getOrientation());
+}
+
 std::vector<Ogre::Entity *> findAllEntitiesByMeshName(
   Ogre::SceneNode * scene_node, const Ogre::String & resource_name)
 {
@@ -77,9 +101,9 @@ std::vector<Ogre::Entity *> findAllEntitiesByMeshName(
     findAllOgreObjectByType<Ogre::Entity>(scene_node, "Entity");
 
   std::vector<Ogre::Entity *> correct_entities;
-  for (size_t i = 0; i < all_entities.size(); ++i) {
-    if (all_entities[i]->getMesh() && all_entities[i]->getMesh()->getName() == resource_name) {
-      correct_entities.push_back(all_entities[i]);
+  for (const auto & entity : all_entities) {
+    if (entity->getMesh() && entity->getMesh()->getName() == resource_name) {
+      correct_entities.push_back(entity);
     }
   }
 
@@ -142,6 +166,41 @@ std::vector<Ogre::SceneNode *> findAllArrows(Ogre::SceneNode * scene_node)
     }
   }
   return arrows;
+}
+
+std::vector<Ogre::SceneNode *> findAllAxes(Ogre::SceneNode * scene_node)
+{
+  std::vector<Ogre::SceneNode *> axes;
+  auto all_cylinders = findAllEntitiesByMeshName(scene_node, "rviz_cylinder.mesh");
+  if (!all_cylinders.empty()) {
+    for (size_t i = 0; i < all_cylinders.size(); i++) {
+      auto first_axis_node = all_cylinders[i]
+        ->getParentSceneNode()  // OffsetNode from shape
+        ->getParentSceneNode()  // SceneNode from shape
+        ->getParentSceneNode();  // SceneNode from axes
+      if (first_axis_node) {
+        for (size_t j = i + 1; j < all_cylinders.size(); j++) {
+          auto second_axis_node = all_cylinders[j]
+            ->getParentSceneNode()
+            ->getParentSceneNode()
+            ->getParentSceneNode();
+          if (second_axis_node && second_axis_node == first_axis_node) {
+            for (size_t k = j + 1; k < all_cylinders.size(); k++) {
+              auto third_axis_node = all_cylinders[k]
+                ->getParentSceneNode()
+                ->getParentSceneNode()
+                ->getParentSceneNode();
+              if (third_axis_node && third_axis_node == first_axis_node) {
+                axes.push_back(first_axis_node);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return axes;
 }
 
 Ogre::SceneNode * findOneArrow(Ogre::SceneNode * scene_node)

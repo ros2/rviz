@@ -45,6 +45,7 @@ set(rviz_default_plugins_headers_to_moc
   src/rviz_default_plugins/displays/pointcloud/point_cloud_helpers.hpp
   src/rviz_default_plugins/displays/polygon/polygon_display.hpp
   src/rviz_default_plugins/displays/pose/pose_display.hpp
+  src/rviz_default_plugins/displays/pose_array/pose_array_display.hpp
   src/rviz_default_plugins/displays/robot_model/robot_model_display.hpp
   src/rviz_default_plugins/displays/tf/frame_info.hpp
   src/rviz_default_plugins/displays/tf/tf_display.hpp
@@ -86,6 +87,8 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/polygon/polygon_display.cpp
   src/rviz_default_plugins/displays/pose/pose_display.cpp
   src/rviz_default_plugins/displays/pose/pose_display_selection_handler.cpp
+  src/rviz_default_plugins/displays/pose_array/pose_array_display.cpp
+  src/rviz_default_plugins/displays/pose_array/flat_arrows_array.cpp
   src/rviz_default_plugins/displays/robot_model/robot_model_display.cpp
   src/rviz_default_plugins/displays/tf/frame_info.cpp
   src/rviz_default_plugins/displays/tf/frame_selection_handler.cpp
@@ -246,6 +249,16 @@ if(BUILD_TESTING)
 #    target_link_libraries(marker_display_test rviz_default_plugins)
 #  endif()
 
+# TODO(greimela): reenable these tests once they can be run on the ci
+#  ament_add_gmock(pose_array_display_test
+#    test/rviz_default_plugins/displays/pose_array/pose_array_display_test.cpp
+#    test/rviz_default_plugins/displays/display_test_fixture.cpp
+#    test/rviz_default_plugins/scene_graph_introspection.cpp
+#    APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;
+#    ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+#  if(TARGET pose_array_display_test)
+#    target_link_libraries(pose_array_display_test rviz_default_plugins)
+#  endif()
 endif()
 
 ament_package()
