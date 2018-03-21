@@ -197,7 +197,7 @@ TEST_F(MarkerDisplayFixture, proccesMessage_add_all_markers_correctly) {
   marker->type = visualization_msgs::msg::Marker::TRIANGLE_LIST;
   marker->points.push_back(point);
   display_->processMessage(marker);
-  ASSERT_TRUE(rviz_default_plugins::findOneMovableObject(scene_manager_->getRootSceneNode()));
+  ASSERT_TRUE(rviz_default_plugins::findOneManualObject(scene_manager_->getRootSceneNode()));
 
   display_->deleteAllMarkers();
 }
