@@ -77,6 +77,10 @@ Ogre::SceneNode * findOneArrow(Ogre::SceneNode * scene_node);
 std::vector<Ogre::SceneNode *> findAllAxes(Ogre::SceneNode * scene_node);
 Ogre::SceneNode * findOneAxes(Ogre::SceneNode * scene_node);
 
+std::vector<Ogre::Vector3> getPositionsFromNodes(const std::vector<Ogre::SceneNode *> & nodes);
+std::vector<Ogre::Quaternion>
+getOrientationsFromNodes(const std::vector<Ogre::SceneNode *> & nodes);
+
 std::vector<Ogre::Entity *> findAllEntitiesByMeshName(
   Ogre::SceneNode * scene_node, const Ogre::String & resource_name);
 Ogre::Entity * findEntityByMeshName(
@@ -128,5 +132,12 @@ std::vector<OgreType *> findAllOgreObjectByType(Ogre::SceneNode * scene_node, Og
 
 }  // namespace rviz_default_plugins
 
+MATCHER_P(EqVector3, vec, "") {
+  return rviz_default_plugins::vector3NearlyEqual(vec, arg);
+}
+
+MATCHER_P(EqQuaternion, quat, "") {
+  return rviz_default_plugins::quaternionNearlyEqual(quat, arg);
+}
 
 #endif  // RVIZ_DEFAULT_PLUGINS__SCENE_GRAPH_INTROSPECTION_HPP_

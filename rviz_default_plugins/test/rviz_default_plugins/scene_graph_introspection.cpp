@@ -198,10 +198,27 @@ std::vector<Ogre::SceneNode *> findAllAxes(Ogre::SceneNode * scene_node)
   }
   return axes;
 }
+
 Ogre::SceneNode * findOneAxes(Ogre::SceneNode * scene_node)
 {
   auto axes = findAllAxes(scene_node);
   return axes.empty() ? nullptr : axes[0];
+}
+
+std::vector<Ogre::Vector3> getPositionsFromNodes(const std::vector<Ogre::SceneNode *> & nodes)
+{
+  std::vector<Ogre::Vector3> positions(nodes.size(), Ogre::Vector3::ZERO);
+  std::transform(nodes.cbegin(), nodes.cend(), positions.begin(),[](auto node) { return
+    node->getPosition(); });
+  return positions;
+}
+
+std::vector<Ogre::Quaternion> getOrientationsFromNodes(const std::vector<Ogre::SceneNode *> & nodes)
+{
+  std::vector<Ogre::Quaternion> orientations(nodes.size(), Ogre::Quaternion::IDENTITY);
+  std::transform(nodes.cbegin(), nodes.cend(), orientations.begin(),[](auto node) { return
+    node->getOrientation(); });
+  return orientations;
 }
 
 }  // namespace rviz_default_plugins

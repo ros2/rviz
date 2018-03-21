@@ -201,10 +201,11 @@ TEST_F(PathTestFixture, processMessage_adds_axes_to_scene) {
 
   auto axes = rviz_default_plugins::findAllAxes(scene_manager_->getRootSceneNode());
   EXPECT_EQ(2u, axes.size());
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(4, 2, 0), axes[0]->getPosition());
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(1, 1, 1), axes[1]->getPosition());
-}
 
+  auto axes_positions = rviz_default_plugins::getPositionsFromNodes(axes);
+  EXPECT_THAT(axes_positions, Contains(EqVector3(Ogre::Vector3(4, 2, 0))));
+  EXPECT_THAT(axes_positions, Contains(EqVector3(Ogre::Vector3(1, 1, 1))));
+}
 
 TEST_F(PathTestFixture, processMessage_adds_arrows_to_scene) {
   ASSERT_EQ("Pose Style", path_display_->childAt(8)->getNameStd());
@@ -217,12 +218,14 @@ TEST_F(PathTestFixture, processMessage_adds_arrows_to_scene) {
   path_display_->processMessage(createPathMessage());
 
   auto arrows = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
-  EXPECT_EQ(2u, arrows.size());
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(1, 1, 1), arrows[0]->getPosition());
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(4, 2, 0), arrows[1]->getPosition());
+  EXPECT_THAT(arrows.size(), Eq(2u));
+
+  auto arrow_positions = rviz_default_plugins::getPositionsFromNodes(arrows);
+  EXPECT_THAT(arrow_positions, Contains(EqVector3(Ogre::Vector3(1, 1, 1))));
+  EXPECT_THAT(arrow_positions, Contains(EqVector3(Ogre::Vector3(4, 2, 0))));
 
   // default orientation is set to (0.5, -0.5, -0.5, -0.5) by arrow
   auto default_orientation = Ogre::Quaternion(0.5f, -0.5f, -0.5f, -0.5f);
-  EXPECT_QUATERNION_EQ(default_orientation, arrows[0]->getOrientation());
-  EXPECT_QUATERNION_EQ(default_orientation, arrows[1]->getOrientation());
+  auto arrow_orientations = rviz_default_plugins::getOrientationsFromNodes(arrows);
+  EXPECT_THAT(arrow_orientations, Each(EqQuaternion(default_orientation)));
 }
