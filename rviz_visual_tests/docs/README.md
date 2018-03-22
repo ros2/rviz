@@ -1,6 +1,6 @@
 # A quick start guide: how to write and run RViz visual tests
 A deeper explanination on what this testing framework is about and on how it works can be found 
-in [this document](in_depth_explaination.md).  
+in [this document](documentation.md).  
 The following serves as a quick introduction to the framework.
  
 ## Writing a test
@@ -62,8 +62,11 @@ secondary render windows belonging to the displays (with the method
 
 - At this point, we have the screenshots that we wanted and all it's left to do is to compare 
 them with the reference images. To do so, we call the method `assertScreenShotsIdentity()`.  
-It is very important that this is the last thing done in the test, and that it is done. In other 
-words, this method MUST be called in every test, ant that must be done at the very end of it.
+It is very important that this method (or the other assert method `assertMainWindowIdentity()`) 
+is called in each test. After this method has been called (and it MUST be called once and only 
+once in every test), interaction with RViz is no longer possible, so that every following call to 
+GUI interaction methods will not perform as one would expect, and will possibly result in a 
+segfault.
 
 ## Running the tests
 
@@ -77,7 +80,7 @@ used:
 
     ament test --cmake-args -DEnableVisualTests=TRUE -DGenerateReferenceImages=TRUE
     
-N.B. cmake will cache the flags values, so that after setting them to `TRUE` or `FALSE`,  the 
+NB: cmake will cache the flags values, so that after setting them to `TRUE` or `FALSE`,  the 
 following time `ament test` is run without specifying any cmake flag, the previoulsy set values 
 will be used.
 
@@ -85,4 +88,4 @@ will be used.
 
 As said above, this is only a quick start guide on how to write an RViz visual test. In order to 
 have a deeper insight about the framework and its functionality, we suggest to read also this 
-[further explaination](in_depth_explaination.md).
+[further explaination](documentation.md).

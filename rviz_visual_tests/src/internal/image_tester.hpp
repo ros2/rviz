@@ -47,8 +47,7 @@ public:
   void computeImageDifference(
     Ogre::Image test_image, Ogre::Image reference_image, Ogre::String image_name);
 
-  double computeDifferenceImageAverageIntensity(
-    Ogre::String image_name, size_t image_width, size_t image_height);
+  double computeMseIndex(Ogre::String image_name, size_t image_width, size_t image_height);
 
 private:
   Ogre::Image loadImage(Ogre::String image_name, Ogre::String image_directory_path);

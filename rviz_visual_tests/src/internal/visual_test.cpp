@@ -101,8 +101,10 @@ void VisualTest::assertVisualIdentity(Ogre::String name)
     tester_.compare(name);
   } else if (!_REF_IMAGES && !checkImageExists(name)) {
     GTEST_FAIL() << "\n[  ERROR   ] Reference image does not exist, or its name is incorrect (it "
-      "should be \"<test_image_name>_ref.png\").\n";
+      "should be: '" << name << "_ref.png'.)\n";
   } else {
+    std::cout << "\n[   INFO:  ] The reference image '" << name << "_ref.png' has been updated "
+      "correctly.\n\n";
     SUCCEED();
   }
 }

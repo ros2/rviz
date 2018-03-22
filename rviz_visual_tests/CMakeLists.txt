@@ -7,8 +7,8 @@ option(EnableVisualTests "decides whether or not enable the tests")
 option(GenerateReferenceImages "decides whether the reference images are updated")
 
 # Option to set a non null threshold in the image comparison (in case of unidentical images).
-option(ComparisonThreshold "The threshold")
-add_definitions(-D_COMPARISON_THRESHOLD="${ComparisonThreshold}")
+option(MseThreshold "The MSE index threshold")
+add_definitions(-D_MSE_THRESHOLD="${MSEThreshold}")
 
 # Path variables needed to save and find screenshots for image comparison.
 add_definitions(-D_BUILD_DIR_PATH="${CMAKE_CURRENT_BINARY_DIR}")

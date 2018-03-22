@@ -29,8 +29,8 @@
 
 #include "image_tester.hpp"
 
+#include <QLocale>  // NOLIT
 #include <gtest/gtest.h>
-
 
 ImageTester::ImageTester(Ogre::String reference_directory_path, Ogre::String test_directory_path)
 : reference_directory_path_(reference_directory_path), test_directory_path_(test_directory_path) {}
@@ -72,8 +72,8 @@ void ImageTester::assertImageIdentity(
     test_image.resize(
       static_cast<uint16_t>(reference_image_width), static_cast<uint16_t>(reference_image_height));
     test_image.save(test_directory_path_ + image_name + ".png");
-    std::cout << "[   INFO:  ] The test image has been resized to match the reference image size"
-      ".\n";
+    std::cout << "[   INFO:  ] The test image '" << image_name + ".png" << "' has been resized to "
+      "match the reference image size.\n\n";
   }
 
   size_t different_pixels_number = pixelDifference(
@@ -82,20 +82,20 @@ void ImageTester::assertImageIdentity(
   if (different_pixels_number == 0) {
     SUCCEED();
   } else {
-    double threshold = atof(_COMPARISON_THRESHOLD);  // _COMPARISON_THRESHOLD is set in CMakeList
+    // _MSE_THRESHOLD is set in CMakeList
+    double threshold = QLocale(QLocale::English).toDouble(_MSE_THRESHOLD);
     computeImageDifference(test_image, reference_image, image_name);
-    double difference_image_intensity = computeDifferenceImageAverageIntensity(
-      image_name, reference_image_width, reference_image_height);
-    if (difference_image_intensity <= threshold) {
-      std::cout << "\n[   INFO:   ] Images are not pixel-wise identical, but most probably they "
-        "are "
-        "the same\n";
+    double mse_index = computeMseIndex(image_name, reference_image_width, reference_image_height);
+    if (mse_index <= threshold) {
+      std::cout << "\n[   INFO:   ] The test image '" << image_name + ".png" << "' is not "
+        "pixel-wise identical to its reference, but the MSE index is " << mse_index <<
+        ", which is not bigger than the set threshold of " << threshold << "\n\n";
       SUCCEED();
     } else {
       GTEST_FAIL() << "\n[  ERROR   ] The test image '" << image_name + ".png" << "' is different "
-        "from the reference one. The image difference has been computed and saved in test_images."
-                   <<
-        std::endl;
+        "from the reference one. The image difference has been computed and saved in test_images"
+        ". The MSE index is equal to " << mse_index << ", which is bigger than the set threshold "
+        "of " << threshold << ".\n";
     }
   }
 }
@@ -144,17 +144,19 @@ void ImageTester::computeImageDifference(
   image_difference.save(test_directory_path_ + image_name + "_diff.png");
 }
 
-double ImageTester::computeDifferenceImageAverageIntensity(
+double ImageTester::computeMseIndex(
   Ogre::String image_name, size_t image_width, size_t image_height)
 {
   Ogre::Image diff_image = loadImage(image_name + "_diff.png", test_directory_path_);
-  double average_intensity = 0;
+  auto averaged_colour = Ogre::ColourValue(0, 0, 0, 0);
 
   for (size_t i = 0; i < image_width; ++i) {
     for (size_t j = 0; j < image_height; ++j) {
-      Ogre::ColourValue colour = diff_image.getColourAt(i, j, 0);
-      average_intensity += colour.r + colour.g + colour.b;
+      auto colour = diff_image.getColourAt(i, j, 0);
+      averaged_colour += (colour * colour);
     }
   }
-  return average_intensity / (image_width * image_height);
+  averaged_colour /= image_width * image_height;
+
+  return (averaged_colour.r + averaged_colour.g + averaged_colour.b) / 3.f;
 }
