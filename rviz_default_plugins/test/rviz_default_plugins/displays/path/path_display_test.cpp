@@ -132,6 +132,30 @@ TEST_F(PathTestFixture, processMessage_adds_vertices_to_scene) {
   EXPECT_THAT(object->getSection(0)->getRenderOperation()->vertexData->vertexCount, Eq(2u));
 }
 
+TEST_F(PathTestFixture, reset_clears_the_scene) {
+  auto position = Ogre::Vector3::ZERO;
+  auto orientation = Ogre::Quaternion::IDENTITY;
+  mockValidTransform(position, orientation);
+
+  path_display_->processMessage(createPathMessage());
+  path_display_->reset();
+
+  auto object = rviz_default_plugins::findOneManualObject(scene_manager_->getRootSceneNode());
+  EXPECT_THAT(object->getNumSections(), Eq(0u));
+}
+
+TEST_F(PathTestFixture, reset_is_idempotent) {
+  auto position = Ogre::Vector3::ZERO;
+  auto orientation = Ogre::Quaternion::IDENTITY;
+  mockValidTransform(position, orientation);
+  path_display_->processMessage(createPathMessage());
+
+  path_display_->reset();
+  path_display_->reset();
+
+  ASSERT_TRUE(1);
+}
+
 TEST_F(PathTestFixture, processMessage_transforms_the_vertices_correctly) {
   auto position = Ogre::Vector3(1, 2, 3);
   auto orientation = Ogre::Quaternion::IDENTITY;

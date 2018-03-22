@@ -165,34 +165,35 @@ void PathDisplay::reset()
 }
 
 
-void PathDisplay::allocateAxesVector(std::vector<rviz_rendering::Axes *> & axes_vect, int num)
+void PathDisplay::allocateAxesVector(std::vector<rviz_rendering::Axes *> & axes_vect, size_t num)
 {
-  auto vector_size = static_cast<int>(axes_vect.size());
+  auto vector_size = axes_vect.size();
   if (num > vector_size) {
-    for (int i = vector_size; i < num; i++) {
-      auto * axes = new rviz_rendering::Axes(scene_manager_, scene_node_,
-          pose_axes_length_property_->getFloat(),
-          pose_axes_radius_property_->getFloat());
-      axes_vect.push_back(axes);
+    axes_vect.reserve(num);
+    for (auto i = vector_size; i < num; ++i) {
+      axes_vect.push_back(
+        new rviz_rendering::Axes(scene_manager_, scene_node_,
+        pose_axes_length_property_->getFloat(),
+        pose_axes_radius_property_->getFloat()));
     }
   } else if (num < vector_size) {
-    for (int i = vector_size - 1; num <= i; i--) {
+    for (auto i = num; i < vector_size; --i) {
       delete axes_vect[i];
     }
     axes_vect.resize(num);
   }
 }
 
-void PathDisplay::allocateArrowVector(std::vector<rviz_rendering::Arrow *> & arrow_vect, int num)
+void PathDisplay::allocateArrowVector(std::vector<rviz_rendering::Arrow *> & arrow_vect, size_t num)
 {
-  auto vector_size = static_cast<int>(arrow_vect.size());
+  auto vector_size = arrow_vect.size();
   if (num > vector_size) {
-    for (int i = vector_size; i < num; i++) {
-      auto * arrow = new rviz_rendering::Arrow(scene_manager_, scene_node_);
-      arrow_vect.push_back(arrow);
+    arrow_vect.reserve(num);
+    for (auto i = vector_size; i < num; ++i) {
+      arrow_vect.push_back(new rviz_rendering::Arrow(scene_manager_, scene_node_));
     }
   } else if (num < vector_size) {
-    for (int i = vector_size - 1; num <= i; --i) {
+    for (auto i = num; i < vector_size; --i) {
       delete arrow_vect[i];
     }
     arrow_vect.resize(num);
@@ -204,7 +205,7 @@ void PathDisplay::destroyPoseAxesChain()
   for (auto & axes_vect : axes_chain_) {
     allocateAxesVector(axes_vect, 0);
   }
-  axes_chain_.resize(0);
+  axes_chain_.clear();
 }
 
 void PathDisplay::destroyPoseArrowChain()
@@ -212,22 +213,17 @@ void PathDisplay::destroyPoseArrowChain()
   for (auto & arrow_vect : arrow_chain_) {
     allocateArrowVector(arrow_vect, 0);
   }
-  arrow_chain_.resize(0);
+  arrow_chain_.clear();
 }
 
 void PathDisplay::updateStyle()
 {
   auto style = static_cast<LineStyle>(style_property_->getOptionInt());
 
-  switch (style) {
-    case LINES:
-    default:
-      line_width_property_->hide();
-      break;
-
-    case BILLBOARDS:
-      line_width_property_->show();
-      break;
+  if (style == BILLBOARDS) {
+    line_width_property_->show();
+  } else {
+    line_width_property_->hide();
   }
 
   updateBufferLength();
@@ -240,7 +236,9 @@ void PathDisplay::updateLineWidth()
 
   if (style == BILLBOARDS) {
     for (auto billboard_line : billboard_lines_) {
-      if (billboard_line) {billboard_line->setLineWidth(line_width);}
+      if (billboard_line) {
+        billboard_line->setLineWidth(line_width);
+      }
     }
   }
   context_->queueRender();
@@ -325,28 +323,22 @@ void PathDisplay::updatePoseArrowGeometry()
 void PathDisplay::destroyObjects()
 {
   // Destroy all simple lines, if any
-  for (size_t i = 0; i < manual_objects_.size(); i++) {
-    Ogre::ManualObject * & manual_object = manual_objects_[i];
-    if (manual_object) {
-      manual_object->clear();
-      scene_manager_->destroyManualObject(manual_object);
-      manual_object = nullptr;  // ensure it doesn't get destroyed again
-    }
+  for (auto manual_object : manual_objects_) {
+    manual_object->clear();
+    scene_manager_->destroyManualObject(manual_object);
   }
+  manual_objects_.clear();
 
   // Destroy all billboards, if any
-  for (size_t i = 0; i < billboard_lines_.size(); i++) {
-    rviz_rendering::BillboardLine * & billboard_line = billboard_lines_[i];
-    if (billboard_line) {
-      delete billboard_line;  // also destroys the corresponding scene node
-      billboard_line = nullptr;  // ensure it doesn't get destroyed again
-    }
+  for (auto billboard_line : billboard_lines_) {
+    delete billboard_line;  // also destroys the corresponding scene node
   }
+  billboard_lines_.clear();
 }
 
 void PathDisplay::updateBufferLength()
 {
-  // Delete old path objects
+  // Destroy all path objects
   destroyObjects();
 
   // Destroy all axes and arrows
@@ -354,27 +346,27 @@ void PathDisplay::updateBufferLength()
   destroyPoseArrowChain();
 
   // Read options
-  int buffer_length = buffer_length_property_->getInt();
+  auto buffer_length = static_cast<size_t>(buffer_length_property_->getInt());
   auto style = static_cast<LineStyle>(style_property_->getOptionInt());
 
   // Create new path objects
   switch (style) {
     case LINES:  // simple lines with fixed width of 1px
-      manual_objects_.resize(buffer_length);
-      for (size_t i = 0; i < manual_objects_.size(); i++) {
-        Ogre::ManualObject * manual_object = scene_manager_->createManualObject();
+      manual_objects_.reserve(buffer_length);
+      for (size_t i = 0; i < buffer_length; i++) {
+        auto manual_object = scene_manager_->createManualObject();
         manual_object->setDynamic(true);
         scene_node_->attachObject(manual_object);
 
-        manual_objects_[i] = manual_object;
+        manual_objects_.push_back(manual_object);
       }
       break;
 
     case BILLBOARDS:  // billboards with configurable width
-      billboard_lines_.resize(buffer_length);
-      for (size_t i = 0; i < billboard_lines_.size(); i++) {
-        auto * billboard_line = new rviz_rendering::BillboardLine(scene_manager_, scene_node_);
-        billboard_lines_[i] = billboard_line;
+      billboard_lines_.reserve(buffer_length);
+      for (size_t i = 0; i < buffer_length; i++) {
+        auto billboard_line = new rviz_rendering::BillboardLine(scene_manager_, scene_node_);
+        billboard_lines_.push_back(billboard_line);
       }
       break;
   }
@@ -434,90 +426,116 @@ void PathDisplay::processMessage(nav_msgs::msg::Path::ConstSharedPtr msg)
   Ogre::Matrix4 transform(orientation);
   transform.setTrans(position);
 
-  Ogre::ColourValue color = color_property_->getOgreColor();
-  color.a = alpha_property_->getFloat();
-
-  size_t num_points = msg->poses.size();
-  float line_width = line_width_property_->getFloat();
-
   switch (style) {
     case LINES:
-      manual_object->estimateVertexCount(num_points);
-      manual_object->begin(lines_material_->getName(), Ogre::RenderOperation::OT_LINE_STRIP);
-      for (size_t i = 0; i < num_points; ++i) {
-        const geometry_msgs::msg::Point & pos = msg->poses[i].pose.position;
-        Ogre::Vector3 xpos = transform * Ogre::Vector3(pos.x, pos.y, pos.z);
-        manual_object->position(xpos.x, xpos.y, xpos.z);
-        enableBlending(color);
-        manual_object->colour(color);
-      }
-
-      manual_object->end();
+      updateManualObject(manual_object, msg, transform);
       break;
 
     case BILLBOARDS:
-      billboard_line->setNumLines(1);
-      billboard_line->setMaxPointsPerLine(static_cast<uint32_t>(num_points));
-      billboard_line->setLineWidth(line_width);
-
-      for (size_t i = 0; i < num_points; ++i) {
-        const geometry_msgs::msg::Point & pos = msg->poses[i].pose.position;
-        Ogre::Vector3 xpos = transform * Ogre::Vector3(pos.x, pos.y, pos.z);
-        billboard_line->addPoint(xpos, color);
-      }
-
+      updateBillBoardLine(billboard_line, msg, transform);
       break;
   }
+  updatePoseMarkers(bufferIndex, msg, transform);
 
-  // process pose markers
-  auto pose_style = static_cast<PoseStyle>(pose_style_property_->getOptionInt());
-  std::vector<rviz_rendering::Arrow *> & arrow_vect = arrow_chain_[bufferIndex];
-  std::vector<rviz_rendering::Axes *> & axes_vect = axes_chain_[bufferIndex];
-
-  switch (pose_style) {
-    case AXES:
-      allocateAxesVector(axes_vect, static_cast<int>(num_points));
-      for (size_t i = 0; i < num_points; ++i) {
-        const geometry_msgs::msg::Point & pos = msg->poses[i].pose.position;
-        Ogre::Vector3 xpos = transform * Ogre::Vector3(pos.x, pos.y, pos.z);
-        axes_vect[i]->setPosition(xpos);
-        Ogre::Quaternion orientation(msg->poses[i].pose.orientation.w,
-          msg->poses[i].pose.orientation.x,
-          msg->poses[i].pose.orientation.y,
-          msg->poses[i].pose.orientation.z);
-        axes_vect[i]->setOrientation(orientation);
-      }
-      break;
-
-    case ARROWS:
-      allocateArrowVector(arrow_vect, static_cast<int>(num_points));
-      for (size_t i = 0; i < num_points; ++i) {
-        const geometry_msgs::msg::Point & pos = msg->poses[i].pose.position;
-        Ogre::Vector3 xpos = transform * Ogre::Vector3(pos.x, pos.y, pos.z);
-
-        QColor color = pose_arrow_color_property_->getColor();
-        arrow_vect[i]->setColor(color.redF(), color.greenF(), color.blueF(), 1.0f);
-
-        arrow_vect[i]->set(pose_arrow_shaft_length_property_->getFloat(),
-          pose_arrow_shaft_diameter_property_->getFloat(),
-          pose_arrow_head_length_property_->getFloat(),
-          pose_arrow_head_diameter_property_->getFloat());
-        arrow_vect[i]->setPosition(xpos);
-        Ogre::Quaternion orientation(msg->poses[i].pose.orientation.w,
-          msg->poses[i].pose.orientation.x,
-          msg->poses[i].pose.orientation.y,
-          msg->poses[i].pose.orientation.z);
-
-        Ogre::Vector3 dir(1, 0, 0);
-        dir = orientation * dir;
-        arrow_vect[i]->setDirection(dir);
-      }
-      break;
-
-    default:
-      break;
-  }
   context_->queueRender();
+}
+
+void PathDisplay::updateManualObject(
+  Ogre::ManualObject * manual_object, nav_msgs::msg::Path::ConstSharedPtr msg,
+  const Ogre::Matrix4 & transform)
+{
+  auto color = color_property_->getOgreColor();
+  color.a = alpha_property_->getFloat();
+
+  manual_object->estimateVertexCount(msg->poses.size());
+  manual_object->begin(lines_material_->getName(), Ogre::RenderOperation::OT_LINE_STRIP);
+
+  for (auto pose_stamped : msg->poses) {
+    const auto & pos = pose_stamped.pose.position;
+    manual_object->position(transform * Ogre::Vector3(pos.x, pos.y, pos.z));
+    enableBlending(color);
+    manual_object->colour(color);
+  }
+
+  manual_object->end();
+}
+
+void PathDisplay::updateBillBoardLine(
+  rviz_rendering::BillboardLine * billboard_line, nav_msgs::msg::Path::ConstSharedPtr msg,
+  const Ogre::Matrix4 & transform)
+{
+  auto color = color_property_->getOgreColor();
+  color.a = alpha_property_->getFloat();
+
+  billboard_line->setNumLines(1);
+  billboard_line->setMaxPointsPerLine(static_cast<uint32_t>(msg->poses.size()));
+  billboard_line->setLineWidth(line_width_property_->getFloat());
+
+  for (auto pose_stamped : msg->poses) {
+    const auto & pos = pose_stamped.pose.position;
+    Ogre::Vector3 xpos = transform * Ogre::Vector3(pos.x, pos.y, pos.z);
+    billboard_line->addPoint(xpos, color);
+  }
+}
+
+void PathDisplay::updatePoseMarkers(
+  size_t buffer_index, nav_msgs::msg::Path::ConstSharedPtr msg, const Ogre::Matrix4 & transform)
+{
+  auto pose_style = static_cast<PoseStyle>(pose_style_property_->getOptionInt());
+  auto & arrow_vect = arrow_chain_[buffer_index];
+  auto & axes_vect = axes_chain_[buffer_index];
+
+  if (pose_style == AXES) {
+    updateAxesMarkers(axes_vect, msg, transform);
+  }
+  if (pose_style == ARROWS) {
+    updateArrowMarkers(arrow_vect, msg, transform);
+  }
+}
+
+void PathDisplay::updateAxesMarkers(
+  std::vector<rviz_rendering::Axes *> & axes_vect, nav_msgs::msg::Path::ConstSharedPtr msg,
+  const Ogre::Matrix4 & transform)
+{
+  auto num_points = msg->poses.size();
+  allocateAxesVector(axes_vect, num_points);
+  for (size_t i = 0; i < num_points; ++i) {
+    const geometry_msgs::msg::Point & pos = msg->poses[i].pose.position;
+    axes_vect[i]->setPosition(transform * Ogre::Vector3(pos.x, pos.y, pos.z));
+    Ogre::Quaternion orientation(msg->poses[i].pose.orientation.w,
+      msg->poses[i].pose.orientation.x,
+      msg->poses[i].pose.orientation.y,
+      msg->poses[i].pose.orientation.z);
+    axes_vect[i]->setOrientation(orientation);
+  }
+}
+
+void PathDisplay::updateArrowMarkers(
+  std::vector<rviz_rendering::Arrow *> & arrow_vect, nav_msgs::msg::Path::ConstSharedPtr msg,
+  const Ogre::Matrix4 & transform)
+{
+  auto num_points = msg->poses.size();
+  allocateArrowVector(arrow_vect, num_points);
+  for (size_t i = 0; i < num_points; ++i) {
+    const geometry_msgs::msg::Point & pos = msg->poses[i].pose.position;
+
+    QColor color = pose_arrow_color_property_->getColor();
+    arrow_vect[i]->setColor(color.redF(), color.greenF(), color.blueF(), 1.0f);
+
+    arrow_vect[i]->set(pose_arrow_shaft_length_property_->getFloat(),
+      pose_arrow_shaft_diameter_property_->getFloat(),
+      pose_arrow_head_length_property_->getFloat(),
+      pose_arrow_head_diameter_property_->getFloat());
+    arrow_vect[i]->setPosition(transform * Ogre::Vector3(pos.x, pos.y, pos.z));
+    Ogre::Quaternion orientation(msg->poses[i].pose.orientation.w,
+      msg->poses[i].pose.orientation.x,
+      msg->poses[i].pose.orientation.y,
+      msg->poses[i].pose.orientation.z);
+
+    Ogre::Vector3 dir(1, 0, 0);
+    dir = orientation * dir;
+    arrow_vect[i]->setDirection(dir);
+  }
 }
 
 void PathDisplay::enableBlending(const Ogre::ColourValue & color)

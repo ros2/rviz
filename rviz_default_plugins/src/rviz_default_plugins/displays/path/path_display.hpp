@@ -99,11 +99,25 @@ private Q_SLOTS:
 
 private:
   void destroyObjects();
-  void allocateArrowVector(std::vector<rviz_rendering::Arrow *> & arrow_vect, int num);
-  void allocateAxesVector(std::vector<rviz_rendering::Axes *> & axes_vect, int num);
+  void allocateArrowVector(std::vector<rviz_rendering::Arrow *> & arrow_vect, size_t num);
+  void allocateAxesVector(std::vector<rviz_rendering::Axes *> & axes_vect, size_t num);
   void destroyPoseAxesChain();
   void destroyPoseArrowChain();
   void enableBlending(const Ogre::ColourValue & color);
+  void updateManualObject(
+    Ogre::ManualObject * manual_object, nav_msgs::msg::Path::ConstSharedPtr msg,
+    const Ogre::Matrix4 & transform);
+  void updateBillBoardLine(
+    rviz_rendering::BillboardLine * billboard_line, nav_msgs::msg::Path::ConstSharedPtr msg,
+    const Ogre::Matrix4 & transform);
+  void updatePoseMarkers(
+    size_t buffer_index, nav_msgs::msg::Path::ConstSharedPtr msg, const Ogre::Matrix4 & transform);
+  void updateAxesMarkers(
+    std::vector<rviz_rendering::Axes *> & axes_vect, nav_msgs::msg::Path::ConstSharedPtr msg,
+    const Ogre::Matrix4 & transform);
+  void updateArrowMarkers(
+    std::vector<rviz_rendering::Arrow *> & arrow_vect, nav_msgs::msg::Path::ConstSharedPtr msg,
+    const Ogre::Matrix4 & transform);
 
   std::vector<Ogre::ManualObject *> manual_objects_;
   std::vector<rviz_rendering::BillboardLine *> billboard_lines_;
