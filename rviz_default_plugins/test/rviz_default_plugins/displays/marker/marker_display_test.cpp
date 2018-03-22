@@ -318,15 +318,15 @@ TEST_F(MarkerDisplayFixture, update_retransforms_frame_locked_messages) {
 
   auto pointCloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
   ASSERT_TRUE(pointCloud);
-  EXPECT_THAT(pointCloud->getParentSceneNode()->getPosition(), EqVector3(starting_position));
+  EXPECT_THAT(pointCloud->getParentSceneNode()->getPosition(), Vector3Eq(starting_position));
   EXPECT_THAT(pointCloud->getParentSceneNode()->getOrientation(),
-    EqQuaternion(starting_orientation));
+    QuaternionEq(starting_orientation));
 
   display_->update(0, 0);
 
-  EXPECT_THAT(pointCloud->getParentSceneNode()->getPosition(), EqVector3(next_position));
+  EXPECT_THAT(pointCloud->getParentSceneNode()->getPosition(), Vector3Eq(next_position));
   EXPECT_THAT(pointCloud->getParentSceneNode()->getOrientation(),
-    EqQuaternion(next_orientation));
+    QuaternionEq(next_orientation));
 }
 
 TEST_F(MarkerDisplayFixture, update_does_not_retransform_normal_messages) {
@@ -349,15 +349,15 @@ TEST_F(MarkerDisplayFixture, update_does_not_retransform_normal_messages) {
 
   auto pointCloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
   ASSERT_TRUE(pointCloud);
-  EXPECT_THAT(pointCloud->getParentSceneNode()->getPosition(), EqVector3(starting_position));
+  EXPECT_THAT(pointCloud->getParentSceneNode()->getPosition(), Vector3Eq(starting_position));
   EXPECT_THAT(pointCloud->getParentSceneNode()->getOrientation(),
-    EqQuaternion(starting_orientation));
+    QuaternionEq(starting_orientation));
 
   display_->update(0, 0);
 
-  EXPECT_THAT(pointCloud->getParentSceneNode()->getPosition(), EqVector3(starting_position));
+  EXPECT_THAT(pointCloud->getParentSceneNode()->getPosition(), Vector3Eq(starting_position));
   EXPECT_THAT(pointCloud->getParentSceneNode()->getOrientation(),
-    EqQuaternion(starting_orientation));
+    QuaternionEq(starting_orientation));
 }
 
 TEST_F(MarkerDisplayFixture, processMessage_adds_new_namespace_for_message) {

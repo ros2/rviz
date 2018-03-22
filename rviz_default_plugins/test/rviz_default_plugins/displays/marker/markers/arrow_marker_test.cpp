@@ -88,8 +88,8 @@ TEST_F(MarkersTestFixture, setMessage_sets_positions_and_orientations_correctly)
 
   marker_->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::ARROW));
 
-  EXPECT_THAT(marker_->getPosition(), EqVector3(Ogre::Vector3(0, 1, 0)));
-  EXPECT_THAT(marker_->getOrientation(), EqQuaternion(Ogre::Quaternion(0, 0, 1, 0)));
+  EXPECT_THAT(marker_->getPosition(), Vector3Eq(Ogre::Vector3(0, 1, 0)));
+  EXPECT_THAT(marker_->getOrientation(), QuaternionEq(Ogre::Quaternion(0, 0, 1, 0)));
 
   rviz_default_plugins::assertArrowWithTransform(
     scene_manager_, default_arrow_position_, default_arrow_scale_, default_arrow_orientation_);
@@ -112,8 +112,8 @@ TEST_F(MarkersTestFixture, setMessage_sets_positions_and_orientations_from_point
     Ogre::Quaternion(Ogre::Degree(-90), Ogre::Vector3::UNIT_X);
   Ogre::Vector3 expected_arrow_scale(1, 1, 1);
 
-  EXPECT_THAT(marker_->getPosition(), EqVector3(Ogre::Vector3(0, 1, 0)));
-  EXPECT_THAT(marker_->getOrientation(), EqQuaternion(Ogre::Quaternion(0, 0, 1, 0)));
+  EXPECT_THAT(marker_->getPosition(), Vector3Eq(Ogre::Vector3(0, 1, 0)));
+  EXPECT_THAT(marker_->getOrientation(), QuaternionEq(Ogre::Quaternion(0, 0, 1, 0)));
 
   rviz_default_plugins::assertArrowWithTransform(
     scene_manager_, first_point, expected_arrow_scale, expected_arrow_orientation);

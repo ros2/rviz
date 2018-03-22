@@ -80,8 +80,8 @@ TEST_F(MarkersTestFixture, setMessage_sets_position_and_orientation_correctly) {
 
   marker_->setMessage(createMessageWithPoints(visualization_msgs::msg::Marker::CUBE_LIST));
 
-  EXPECT_THAT(marker_->getPosition(), EqVector3(Ogre::Vector3(0, 1, 0)));
-  EXPECT_THAT(marker_->getOrientation(), EqQuaternion(Ogre::Quaternion(0, 0, 1, 0)));
+  EXPECT_THAT(marker_->getPosition(), Vector3Eq(Ogre::Vector3(0, 1, 0)));
+  EXPECT_THAT(marker_->getOrientation(), QuaternionEq(Ogre::Quaternion(0, 0, 1, 0)));
 }
 
 TEST_F(MarkersTestFixture, setMessage_sets_single_color_correctly) {

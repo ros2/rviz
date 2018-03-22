@@ -48,13 +48,13 @@
 #include "rviz_rendering/objects/point_cloud.hpp"
 #include "rviz_rendering/objects/movable_text.hpp"
 
-MATCHER_P(EqVector3, expected, "") {
+MATCHER_P(Vector3Eq, expected, "") {
   return Ogre::Math::Abs(expected.x - arg.x) < 0.0001f &&
          Ogre::Math::Abs(expected.y - arg.y) < 0.0001f &&
          Ogre::Math::Abs(expected.z - arg.z) < 0.0001f;
 }
 
-MATCHER_P(EqQuaternion, expected, "") {
+MATCHER_P(QuaternionEq, expected, "") {
   return Ogre::Math::Abs(expected.x - arg.x) < 0.0001f &&
          Ogre::Math::Abs(expected.y - arg.y) < 0.0001f &&
          Ogre::Math::Abs(expected.z - arg.z) < 0.0001f &&

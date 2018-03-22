@@ -120,17 +120,17 @@ TEST_F(RobotTestFixture, load_creates_links_and_sets_the_scene_node_positions) {
   robot_->load(urdf_model_);
 
   auto link1 = robot_->getLink("test_robot_link");
-  EXPECT_THAT(link1->getVisualNode()->getChild(0)->getPosition(), EqVector3(Ogre::Vector3::ZERO));
-  EXPECT_THAT(link1->getVisualNode()->getChild(0)->getScale(), EqVector3(Ogre::Vector3(1, 1, 1)));
+  EXPECT_THAT(link1->getVisualNode()->getChild(0)->getPosition(), Vector3Eq(Ogre::Vector3::ZERO));
+  EXPECT_THAT(link1->getVisualNode()->getChild(0)->getScale(), Vector3Eq(Ogre::Vector3(1, 1, 1)));
   EXPECT_THAT(link1->getCollisionNode()->getChild(0)->getPosition(),
-    EqVector3(Ogre::Vector3::ZERO));
+    Vector3Eq(Ogre::Vector3::ZERO));
   EXPECT_THAT(link1->getCollisionNode()->getChild(0)->getScale(),
-    EqVector3(Ogre::Vector3(1, 1, 1)));
+    Vector3Eq(Ogre::Vector3(1, 1, 1)));
 
   auto link3 = robot_->getLink("test_robot_link_head");
   EXPECT_THAT(link3->getVisualNode()->getChild(0)->getPosition(),
-    EqVector3(Ogre::Vector3(0, 0, 2)));
-  EXPECT_THAT(link3->getVisualNode()->getChild(0)->getScale(), EqVector3(Ogre::Vector3(2, 2, 2)));
+    Vector3Eq(Ogre::Vector3(0, 0, 2)));
+  EXPECT_THAT(link3->getVisualNode()->getChild(0)->getScale(), Vector3Eq(Ogre::Vector3(2, 2, 2)));
   EXPECT_THAT(link3->getCollisionNode()->numChildren(), Eq(0u));
 }
 
@@ -250,14 +250,14 @@ TEST_F(RobotTestFixture, update_sets_position_and_orientation_in_links_and_joint
   robot_->update(link_updater);
 
   auto link1 = robot_->getLink("test_robot_link");
-  EXPECT_THAT(link1->getVisualNode()->getPosition(), EqVector3(visual_position));
-  EXPECT_THAT(link1->getVisualNode()->getOrientation(), EqQuaternion(visual_orientation));
-  EXPECT_THAT(link1->getCollisionNode()->getPosition(), EqVector3(collision_position));
-  EXPECT_THAT(link1->getCollisionNode()->getOrientation(), EqQuaternion(collision_orientation));
+  EXPECT_THAT(link1->getVisualNode()->getPosition(), Vector3Eq(visual_position));
+  EXPECT_THAT(link1->getVisualNode()->getOrientation(), QuaternionEq(visual_orientation));
+  EXPECT_THAT(link1->getCollisionNode()->getPosition(), Vector3Eq(collision_position));
+  EXPECT_THAT(link1->getCollisionNode()->getOrientation(), QuaternionEq(collision_orientation));
 
   auto joint1 = robot_->getJoint("test_robot_fixed1");
-  EXPECT_THAT(joint1->getPosition(), EqVector3(visual_position));
-  EXPECT_THAT(joint1->getOrientation(), EqQuaternion(visual_orientation));
+  EXPECT_THAT(joint1->getPosition(), Vector3Eq(visual_position));
+  EXPECT_THAT(joint1->getOrientation(), QuaternionEq(visual_orientation));
 }
 
 TEST_F(RobotTestFixture, link_descriptions_show_correct_hierarchy) {

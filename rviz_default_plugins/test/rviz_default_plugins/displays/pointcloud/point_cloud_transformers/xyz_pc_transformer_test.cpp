@@ -57,8 +57,8 @@ TEST(XYZPCTransformer, transform_returns_the_point_cloud_points) {
   transformer.transform(cloud, PointCloudTransformer::Support_XYZ, Ogre::Matrix4::ZERO, points_out);
 
   ASSERT_THAT(points_out, SizeIs(2));
-  ASSERT_THAT(points_out[0].position, EqVector3(Ogre::Vector3(1, 2, 3)));
-  ASSERT_THAT(points_out[1].position, EqVector3(Ogre::Vector3(4, 5, 6)));
+  ASSERT_THAT(points_out[0].position, Vector3Eq(Ogre::Vector3(1, 2, 3)));
+  ASSERT_THAT(points_out[1].position, Vector3Eq(Ogre::Vector3(4, 5, 6)));
 }
 
 TEST(XYZPCTransformer, transform_returns_false_if_cloud_doesnt_support_xyz) {

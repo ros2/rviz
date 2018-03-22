@@ -93,8 +93,8 @@ TEST_F(MarkersTestFixture, setMessage_sets_correct_position_and_orientation) {
 
   marker_->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::LINE_LIST));
 
-  EXPECT_THAT(marker_->getPosition(), EqVector3(Ogre::Vector3(0, 1, 0)));
-  EXPECT_THAT(marker_->getOrientation(), EqQuaternion(Ogre::Quaternion(0, 0, 1, 0)));
+  EXPECT_THAT(marker_->getPosition(), Vector3Eq(Ogre::Vector3(0, 1, 0)));
+  EXPECT_THAT(marker_->getOrientation(), QuaternionEq(Ogre::Quaternion(0, 0, 1, 0)));
 }
 
 TEST_F(MarkersTestFixture, setMessage_does_not_show_billboard_line_if_uneven_number_of_points) {
@@ -153,9 +153,9 @@ TEST_F(MarkersTestFixture, setMessage_adds_billboard_line_with_one_color) {
   EXPECT_THAT(billboard_chain->getNumberOfChains(), Eq(1u));
   EXPECT_THAT(billboard_chain->getNumChainElements(0), Eq(2u));
   EXPECT_THAT(billboard_chain->getChainElement(0, 1).position,
-    EqVector3(Ogre::Vector3(first_point.x, first_point.y, first_point.z)));
+    Vector3Eq(Ogre::Vector3(first_point.x, first_point.y, first_point.z)));
   EXPECT_THAT(billboard_chain->getChainElement(0, 0).position,
-    EqVector3(Ogre::Vector3(second_point.x, second_point.y, second_point.z)));
+    Vector3Eq(Ogre::Vector3(second_point.x, second_point.y, second_point.z)));
   assertColorEquals(message.color, billboard_chain, 0);
   assertColorEquals(message.color, billboard_chain, 1);
 }
@@ -185,9 +185,9 @@ TEST_F(MarkersTestFixture,
   EXPECT_THAT(billboard_chain->getNumberOfChains(), Eq(1u));
   EXPECT_THAT(billboard_chain->getNumChainElements(0), Eq(2u));
   EXPECT_THAT(billboard_chain->getChainElement(0, 1).position,
-    EqVector3(Ogre::Vector3(first_point.x, first_point.y, first_point.z)));
+    Vector3Eq(Ogre::Vector3(first_point.x, first_point.y, first_point.z)));
   EXPECT_THAT(billboard_chain->getChainElement(0, 0).position,
-    EqVector3(Ogre::Vector3(second_point.x, second_point.y, second_point.z)));
+    Vector3Eq(Ogre::Vector3(second_point.x, second_point.y, second_point.z)));
   assertColorEquals(second_point_color, billboard_chain, 0);
   assertColorEquals(first_point_color, billboard_chain, 1);
 }
@@ -230,9 +230,9 @@ TEST_F(MarkersTestFixture, setMessage_adds_many_points_into_same_chain) {
   EXPECT_THAT(billboard_chain->getNumberOfChains(), Eq(1u));
   EXPECT_THAT(billboard_chain->getNumChainElements(0), Eq(3u));
   EXPECT_THAT(billboard_chain->getChainElement(0, 2).position,
-    EqVector3(Ogre::Vector3(first_point.x, first_point.y, first_point.z)));
+    Vector3Eq(Ogre::Vector3(first_point.x, first_point.y, first_point.z)));
   EXPECT_THAT(billboard_chain->getChainElement(0, 1).position,
-    EqVector3(Ogre::Vector3(second_point.x, second_point.y, second_point.z)));
+    Vector3Eq(Ogre::Vector3(second_point.x, second_point.y, second_point.z)));
   EXPECT_THAT(billboard_chain->getChainElement(0, 0).position,
-    EqVector3(Ogre::Vector3(third_point.x, third_point.y, third_point.z)));
+    Vector3Eq(Ogre::Vector3(third_point.x, third_point.y, third_point.z)));
 }

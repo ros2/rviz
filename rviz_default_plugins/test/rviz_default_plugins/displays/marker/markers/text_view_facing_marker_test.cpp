@@ -93,6 +93,6 @@ TEST_F(MarkersTestFixture, setMessage_sets_correct_transformation_for_valid_mess
 
   auto movable_text = rviz_default_plugins::findOneMovableText(scene_manager_->getRootSceneNode());
   ASSERT_TRUE(movable_text);
-  EXPECT_THAT(movable_text->getParentSceneNode()->getPosition(), EqVector3(Ogre::Vector3(0, 1, 0)));
+  EXPECT_THAT(movable_text->getParentSceneNode()->getPosition(), Vector3Eq(Ogre::Vector3(0, 1, 0)));
   EXPECT_THAT(movable_text->getCharacterHeight(), Eq(message.scale.z));
 }

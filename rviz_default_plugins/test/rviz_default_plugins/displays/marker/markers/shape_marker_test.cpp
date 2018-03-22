@@ -77,8 +77,8 @@ TEST_F(MarkersTestFixture, positions_and_orientations_are_set_correctly) {
 
   marker_->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::CUBE));
 
-  EXPECT_THAT(marker_->getPosition(), EqVector3(position));
-  EXPECT_THAT(marker_->getOrientation(), EqQuaternion(Ogre::Quaternion(0, 0, 0.7071f, -0.7071f)));
+  EXPECT_THAT(marker_->getPosition(), Vector3Eq(position));
+  EXPECT_THAT(marker_->getOrientation(), QuaternionEq(Ogre::Quaternion(0, 0, 0.7071f, -0.7071f)));
 
   auto entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), "rviz_cube.mesh");
@@ -87,8 +87,8 @@ TEST_F(MarkersTestFixture, positions_and_orientations_are_set_correctly) {
     ->getParentSceneNode()  // OffsetNode
     ->getParentSceneNode();  // SceneNode
 
-  EXPECT_THAT(shape_scene_node->getPosition(), EqVector3(Ogre::Vector3::ZERO));
-  EXPECT_THAT(shape_scene_node->getScale(), EqVector3(Ogre::Vector3(1, -0.2f, 0.2f)));
+  EXPECT_THAT(shape_scene_node->getPosition(), Vector3Eq(Ogre::Vector3::ZERO));
+  EXPECT_THAT(shape_scene_node->getScale(), Vector3Eq(Ogre::Vector3(1, -0.2f, 0.2f)));
 }
 
 TEST_F(MarkersTestFixture, different_types_result_in_different_meshes) {

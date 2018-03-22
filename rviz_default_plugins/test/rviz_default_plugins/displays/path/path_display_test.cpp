@@ -143,8 +143,8 @@ TEST_F(PathTestFixture, processMessage_transforms_the_vertices_correctly) {
   EXPECT_THAT(object->getSection(0)->getRenderOperation()->vertexData->vertexCount, Eq(2u));
 
   // Use bounding box to indirectly assert the vertices
-  EXPECT_THAT(object->getBoundingBox().getMinimum(), EqVector3(Ogre::Vector3(2, 3, 3)));
-  EXPECT_THAT(object->getBoundingBox().getMaximum(), EqVector3(Ogre::Vector3(5, 4, 4)));
+  EXPECT_THAT(object->getBoundingBox().getMinimum(), Vector3Eq(Ogre::Vector3(2, 3, 3)));
+  EXPECT_THAT(object->getBoundingBox().getMaximum(), Vector3Eq(Ogre::Vector3(5, 4, 4)));
 }
 
 TEST_F(PathTestFixture, processMessage_adds_billboard_line_to_scene) {
@@ -162,8 +162,8 @@ TEST_F(PathTestFixture, processMessage_adds_billboard_line_to_scene) {
   EXPECT_THAT(object->getNumberOfChains(), Eq(1u));
   EXPECT_THAT(object->getNumChainElements(0), Eq(2u));
 
-  EXPECT_THAT(object->getChainElement(0, 0).position, EqVector3(Ogre::Vector3(4, 2, 0)));
-  EXPECT_THAT(object->getChainElement(0, 1).position, EqVector3(Ogre::Vector3(1, 1, 1)));
+  EXPECT_THAT(object->getChainElement(0, 0).position, Vector3Eq(Ogre::Vector3(4, 2, 0)));
+  EXPECT_THAT(object->getChainElement(0, 1).position, Vector3Eq(Ogre::Vector3(1, 1, 1)));
 }
 
 TEST_F(PathTestFixture, processMessage_adds_axes_to_scene) {
@@ -181,8 +181,8 @@ TEST_F(PathTestFixture, processMessage_adds_axes_to_scene) {
   EXPECT_THAT(axes, SizeIs(2));
 
   auto axes_positions = rviz_default_plugins::getPositionsFromNodes(axes);
-  EXPECT_THAT(axes_positions, Contains(EqVector3(Ogre::Vector3(4, 2, 0))));
-  EXPECT_THAT(axes_positions, Contains(EqVector3(Ogre::Vector3(1, 1, 1))));
+  EXPECT_THAT(axes_positions, Contains(Vector3Eq(Ogre::Vector3(4, 2, 0))));
+  EXPECT_THAT(axes_positions, Contains(Vector3Eq(Ogre::Vector3(1, 1, 1))));
 }
 
 TEST_F(PathTestFixture, processMessage_adds_arrows_to_scene) {
@@ -199,11 +199,11 @@ TEST_F(PathTestFixture, processMessage_adds_arrows_to_scene) {
   EXPECT_THAT(arrows, SizeIs(2));
 
   auto arrow_positions = rviz_default_plugins::getPositionsFromNodes(arrows);
-  EXPECT_THAT(arrow_positions, Contains(EqVector3(Ogre::Vector3(1, 1, 1))));
-  EXPECT_THAT(arrow_positions, Contains(EqVector3(Ogre::Vector3(4, 2, 0))));
+  EXPECT_THAT(arrow_positions, Contains(Vector3Eq(Ogre::Vector3(1, 1, 1))));
+  EXPECT_THAT(arrow_positions, Contains(Vector3Eq(Ogre::Vector3(4, 2, 0))));
 
   // default orientation is set to (0.5, -0.5, -0.5, -0.5) by arrow
   auto default_orientation = Ogre::Quaternion(0.5f, -0.5f, -0.5f, -0.5f);
   auto arrow_orientations = rviz_default_plugins::getOrientationsFromNodes(arrows);
-  EXPECT_THAT(arrow_orientations, Each(EqQuaternion(default_orientation)));
+  EXPECT_THAT(arrow_orientations, Each(QuaternionEq(default_orientation)));
 }

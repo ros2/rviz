@@ -74,10 +74,10 @@ void assertArrowWithTransform(
 {
   auto arrow_scene_node = rviz_default_plugins::findOneArrow(scene_manager->getRootSceneNode());
   ASSERT_TRUE(arrow_scene_node);
-  EXPECT_THAT(arrow_scene_node->getPosition(), EqVector3(position));
+  EXPECT_THAT(arrow_scene_node->getPosition(), Vector3Eq(position));
   // Have to mangle the scale because of the default orientation of the cylinders (see arrow.cpp).
-  EXPECT_THAT(arrow_scene_node->getScale(), EqVector3(Ogre::Vector3(scale.z, scale.x, scale.y)));
-  EXPECT_THAT(arrow_scene_node->getOrientation(), EqQuaternion(orientation));
+  EXPECT_THAT(arrow_scene_node->getScale(), Vector3Eq(Ogre::Vector3(scale.z, scale.x, scale.y)));
+  EXPECT_THAT(arrow_scene_node->getOrientation(), QuaternionEq(orientation));
 }
 
 std::vector<Ogre::Entity *> findAllEntitiesByMeshName(
