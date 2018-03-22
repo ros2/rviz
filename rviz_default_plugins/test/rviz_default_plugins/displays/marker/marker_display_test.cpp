@@ -100,7 +100,7 @@ TEST_F(MarkerDisplayFixture, processMessage_creates_correct_marker_on_add_type) 
 
   auto text = rviz_default_plugins::findOneMovableText(scene_manager_->getRootSceneNode());
   ASSERT_TRUE(text);
-  EXPECT_EQ("Displaytext", text->getCaption());
+  EXPECT_THAT(text->getCaption(), StrEq("Displaytext"));
 }
 
 
@@ -264,14 +264,14 @@ TEST_F(MarkerDisplayFixture, processMessage_updates_modified_marker) {
 
   auto before_update = rviz_default_plugins::findOneMovableText(scene_manager_->getRootSceneNode());
   ASSERT_TRUE(before_update);
-  EXPECT_EQ(marker->text, before_update->getCaption());
+  EXPECT_THAT(before_update->getCaption(), StrEq(marker->text));
 
   marker->text = "New text";
   display_->processMessage(marker);
 
   auto after_update = rviz_default_plugins::findOneMovableText(scene_manager_->getRootSceneNode());
   ASSERT_TRUE(after_update);
-  EXPECT_EQ("New text", after_update->getCaption());
+  EXPECT_THAT(after_update->getCaption(), StrEq("New text"));
 }
 
 TEST_F(MarkerDisplayFixture, processMessage_using_modify_works_like_add) {
@@ -316,15 +316,17 @@ TEST_F(MarkerDisplayFixture, update_retransforms_frame_locked_messages) {
 
   display_->processMessage(marker);
 
-  auto before_update = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
-  ASSERT_TRUE(before_update);
-  EXPECT_VECTOR3_EQ(starting_position, before_update->getParentSceneNode()->getPosition());
-  EXPECT_QUATERNION_EQ(starting_orientation, before_update->getParentSceneNode()->getOrientation());
+  auto pointCloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
+  ASSERT_TRUE(pointCloud);
+  EXPECT_THAT(pointCloud->getParentSceneNode()->getPosition(), EqVector3(starting_position));
+  EXPECT_THAT(pointCloud->getParentSceneNode()->getOrientation(),
+    EqQuaternion(starting_orientation));
 
   display_->update(0, 0);
 
-  EXPECT_VECTOR3_EQ(next_position, before_update->getParentSceneNode()->getPosition());
-  EXPECT_QUATERNION_EQ(next_orientation, before_update->getParentSceneNode()->getOrientation());
+  EXPECT_THAT(pointCloud->getParentSceneNode()->getPosition(), EqVector3(next_position));
+  EXPECT_THAT(pointCloud->getParentSceneNode()->getOrientation(),
+    EqQuaternion(next_orientation));
 }
 
 TEST_F(MarkerDisplayFixture, update_does_not_retransform_normal_messages) {
@@ -345,28 +347,30 @@ TEST_F(MarkerDisplayFixture, update_does_not_retransform_normal_messages) {
 
   display_->processMessage(marker);
 
-  auto before_update = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
-  ASSERT_TRUE(before_update);
-  EXPECT_VECTOR3_EQ(starting_position, before_update->getParentSceneNode()->getPosition());
-  EXPECT_QUATERNION_EQ(starting_orientation, before_update->getParentSceneNode()->getOrientation());
+  auto pointCloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
+  ASSERT_TRUE(pointCloud);
+  EXPECT_THAT(pointCloud->getParentSceneNode()->getPosition(), EqVector3(starting_position));
+  EXPECT_THAT(pointCloud->getParentSceneNode()->getOrientation(),
+    EqQuaternion(starting_orientation));
 
   display_->update(0, 0);
 
-  EXPECT_VECTOR3_EQ(starting_position, before_update->getParentSceneNode()->getPosition());
-  EXPECT_QUATERNION_EQ(starting_orientation, before_update->getParentSceneNode()->getOrientation());
+  EXPECT_THAT(pointCloud->getParentSceneNode()->getPosition(), EqVector3(starting_position));
+  EXPECT_THAT(pointCloud->getParentSceneNode()->getOrientation(),
+    EqQuaternion(starting_orientation));
 }
 
 TEST_F(MarkerDisplayFixture, processMessage_adds_new_namespace_for_message) {
   mockValidTransform();
 
-  ASSERT_EQ(0, display_->childAt(3)->numChildren());
+  ASSERT_THAT(display_->childAt(3)->numChildren(), Eq(0));
 
   auto marker = createSharedPtrMessage(
     visualization_msgs::msg::Marker::ADD, visualization_msgs::msg::Marker::POINTS);
 
   display_->processMessage(marker);
 
-  ASSERT_EQ("test_ns", display_->childAt(3)->childAt(0)->getName());
+  ASSERT_THAT(display_->childAt(3)->childAt(0)->getName().toStdString(), StrEq("test_ns"));
 }
 
 TEST_F(MarkerDisplayFixture, processMessage_does_not_add_new_namespace_if_already_present) {
@@ -375,14 +379,14 @@ TEST_F(MarkerDisplayFixture, processMessage_does_not_add_new_namespace_if_alread
   display_->processMessage(createSharedPtrMessage(
       visualization_msgs::msg::Marker::ADD, visualization_msgs::msg::Marker::POINTS));
 
-  ASSERT_EQ(1, display_->childAt(3)->numChildren());
-  ASSERT_EQ("test_ns", display_->childAt(3)->childAt(0)->getName());
+  ASSERT_THAT(display_->childAt(3)->numChildren(), Eq(1));
+  ASSERT_THAT(display_->childAt(3)->childAt(0)->getName().toStdString(), StrEq("test_ns"));
 
   display_->processMessage(createSharedPtrMessage(
       visualization_msgs::msg::Marker::ADD, visualization_msgs::msg::Marker::TEXT_VIEW_FACING));
 
-  ASSERT_EQ(1, display_->childAt(3)->numChildren());
-  ASSERT_EQ("test_ns", display_->childAt(3)->childAt(0)->getName());
+  ASSERT_THAT(display_->childAt(3)->numChildren(), Eq(1));
+  ASSERT_THAT(display_->childAt(3)->childAt(0)->getName().toStdString(), StrEq("test_ns"));
 }
 
 TEST_F(MarkerDisplayFixture, onEnableChanged_in_namespace_removes_all_markers_in_that_namespace) {

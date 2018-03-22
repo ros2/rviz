@@ -174,7 +174,7 @@ if(BUILD_TESTING)
   find_package(ament_cmake_gmock REQUIRED)
 
 # TODO(greimela): reenable these tests once they can be run on the ci
-#  ament_add_gtest(point_cloud2_display_test
+#  ament_add_gmock(point_cloud2_display_test
 #      test/rviz_default_plugins/displays/pointcloud/message_creators.hpp
 #      test/rviz_default_plugins/displays/pointcloud/message_creators.cpp
 #      test/rviz_default_plugins/displays/pointcloud/point_cloud2_display_test.cpp
@@ -184,7 +184,7 @@ if(BUILD_TESTING)
 #  endif()
 
 # TODO(greimela): reenable these tests once they can be run on the ci
-#  ament_add_gtest(point_cloud_transformers_test
+#  ament_add_gmock(point_cloud_transformers_test
 #      test/rviz_default_plugins/displays/pointcloud/message_creators.hpp
 #      test/rviz_default_plugins/displays/pointcloud/message_creators.cpp
 #      test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/axis_color_pc_transformer_test.cpp

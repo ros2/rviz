@@ -48,22 +48,21 @@
 #include "rviz_rendering/objects/point_cloud.hpp"
 #include "rviz_rendering/objects/movable_text.hpp"
 
-#define EXPECT_QUATERNION_EQ(expected, actual) \
-  EXPECT_PRED2(rviz_default_plugins::quaternionNearlyEqual, expected, actual)
-#define ASSERT_QUATERNION_EQ(expected, actual) \
-  ASSERT_PRED2(rviz_default_plugins::quaternionNearlyEqual, expected, actual)
+MATCHER_P(EqVector3, expected, "") {
+  return Ogre::Math::Abs(expected.x - arg.x) < 0.0001f &&
+         Ogre::Math::Abs(expected.y - arg.y) < 0.0001f &&
+         Ogre::Math::Abs(expected.z - arg.z) < 0.0001f;
+}
 
-#define EXPECT_VECTOR3_EQ(expected, actual) \
-  EXPECT_PRED2(rviz_default_plugins::vector3NearlyEqual, expected, actual)
-#define ASSERT_VECTOR3_EQ(expected, actual) \
-  ASSERT_PRED2(rviz_default_plugins::vector3NearlyEqual, expected, actual)
+MATCHER_P(EqQuaternion, expected, "") {
+  return Ogre::Math::Abs(expected.x - arg.x) < 0.0001f &&
+         Ogre::Math::Abs(expected.y - arg.y) < 0.0001f &&
+         Ogre::Math::Abs(expected.z - arg.z) < 0.0001f &&
+         Ogre::Math::Abs(expected.w - arg.w) < 0.0001f;
+}
 
 namespace rviz_default_plugins
 {
-// Used in MACRO
-bool quaternionNearlyEqual(Ogre::Quaternion expected, Ogre::Quaternion actual);
-bool vector3NearlyEqual(Ogre::Vector3 expected, Ogre::Vector3 actual);
-
 bool arrowIsVisible(Ogre::SceneManager * scene_manager);
 void assertArrowWithTransform(
   Ogre::SceneManager * scene_manager,
@@ -131,13 +130,5 @@ std::vector<OgreType *> findAllOgreObjectByType(Ogre::SceneNode * scene_node, Og
 }
 
 }  // namespace rviz_default_plugins
-
-MATCHER_P(EqVector3, vec, "") {
-  return rviz_default_plugins::vector3NearlyEqual(vec, arg);
-}
-
-MATCHER_P(EqQuaternion, quat, "") {
-  return rviz_default_plugins::quaternionNearlyEqual(quat, arg);
-}
 
 #endif  // RVIZ_DEFAULT_PLUGINS__SCENE_GRAPH_INTROSPECTION_HPP_

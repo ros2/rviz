@@ -39,9 +39,11 @@
 #pragma warning(push)
 #pragma warning(disable : 4996)
 #include <OgreEntity.h>
+#include <OgreManualObject.h>
 #pragma warning(pop)
 #else
 #include <OgreEntity.h>
+#include <OgreManualObject.h>
 #endif
 
 #include "visualization_msgs/msg/marker.hpp"

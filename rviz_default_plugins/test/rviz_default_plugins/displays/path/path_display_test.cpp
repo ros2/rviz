@@ -112,37 +112,13 @@ nav_msgs::msg::Path::ConstSharedPtr createPathMessage()
   return message;
 }
 
-void assertArrowIsNotVisible()
-{
-  auto arrow_head = rviz_default_plugins::findEntityByMeshName(
-    PathTestFixture::scene_manager_->getRootSceneNode(), "rviz_cone" ".mesh");
-  auto arrow_shaft = rviz_default_plugins::findEntityByMeshName(
-    PathTestFixture::scene_manager_->getRootSceneNode(), "rviz_cylinder.mesh");
-
-  ASSERT_TRUE(!arrow_head->isVisible() && !arrow_shaft->isVisible());
-}
-
-void assertArrowWithTransform(
-  Ogre::SceneManager * scene_manager,
-  Ogre::Vector3 position,
-  Ogre::Vector3 scale,
-  Ogre::Quaternion orientation)
-{
-  auto arrow_scene_node = rviz_default_plugins::findOneArrow(scene_manager->getRootSceneNode());
-  ASSERT_TRUE(arrow_scene_node);
-  EXPECT_VECTOR3_EQ(position, arrow_scene_node->getPosition());
-  // Have to mangle the scale because of the default orientation of the cylinders (see arrow.cpp).
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(scale.z, scale.x, scale.y), arrow_scene_node->getScale());
-  EXPECT_QUATERNION_EQ(orientation, arrow_scene_node->getOrientation());
-}
-
 TEST_F(PathTestFixture, processMessage_adds_nothing_to_scene_if_invalid_transformation) {
   EXPECT_CALL(*frame_manager_, getTransform(_, _, _, _)).WillOnce(Return(false));  // NOLINT
 
   path_display_->processMessage(createPathMessage());
 
   auto object = rviz_default_plugins::findOneManualObject(scene_manager_->getRootSceneNode());
-  EXPECT_EQ(0u, object->getNumSections());
+  EXPECT_THAT(object->getNumSections(), Eq(0u));
 }
 
 TEST_F(PathTestFixture, processMessage_adds_vertices_to_scene) {
@@ -153,7 +129,7 @@ TEST_F(PathTestFixture, processMessage_adds_vertices_to_scene) {
   path_display_->processMessage(createPathMessage());
 
   auto object = rviz_default_plugins::findOneManualObject(scene_manager_->getRootSceneNode());
-  EXPECT_EQ(2u, object->getSection(0)->getRenderOperation()->vertexData->vertexCount);
+  EXPECT_THAT(object->getSection(0)->getRenderOperation()->vertexData->vertexCount, Eq(2u));
 }
 
 TEST_F(PathTestFixture, processMessage_transforms_the_vertices_correctly) {
@@ -164,16 +140,17 @@ TEST_F(PathTestFixture, processMessage_transforms_the_vertices_correctly) {
   path_display_->processMessage(createPathMessage());
 
   auto object = rviz_default_plugins::findOneManualObject(scene_manager_->getRootSceneNode());
-  EXPECT_EQ(2u, object->getSection(0)->getRenderOperation()->vertexData->vertexCount);
+  EXPECT_THAT(object->getSection(0)->getRenderOperation()->vertexData->vertexCount, Eq(2u));
 
   // Use bounding box to indirectly assert the vertices
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(2, 3, 3), object->getBoundingBox().getMinimum());
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(5, 4, 4), object->getBoundingBox().getMaximum());
+  EXPECT_THAT(object->getBoundingBox().getMinimum(), EqVector3(Ogre::Vector3(2, 3, 3)));
+  EXPECT_THAT(object->getBoundingBox().getMaximum(), EqVector3(Ogre::Vector3(5, 4, 4)));
 }
 
 TEST_F(PathTestFixture, processMessage_adds_billboard_line_to_scene) {
-  ASSERT_EQ("Line Style", path_display_->childAt(2)->getNameStd());
-  path_display_->childAt(2)->setValue("Billboards");
+  auto line_style_widget_index = 2;
+  ASSERT_THAT(path_display_->childAt(line_style_widget_index)->getNameStd(), StrEq("Line Style"));
+  path_display_->childAt(line_style_widget_index)->setValue("Billboards");
 
   auto position = Ogre::Vector3::ZERO;
   auto orientation = Ogre::Quaternion::IDENTITY;
@@ -182,16 +159,17 @@ TEST_F(PathTestFixture, processMessage_adds_billboard_line_to_scene) {
   path_display_->processMessage(createPathMessage());
 
   auto object = rviz_default_plugins::findOneBillboardChain(scene_manager_->getRootSceneNode());
-  EXPECT_EQ(1u, object->getNumberOfChains());
-  EXPECT_EQ(2u, object->getNumChainElements(0));
+  EXPECT_THAT(object->getNumberOfChains(), Eq(1u));
+  EXPECT_THAT(object->getNumChainElements(0), Eq(2u));
 
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(4, 2, 0), object->getChainElement(0, 0).position);
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(1, 1, 1), object->getChainElement(0, 1).position);
+  EXPECT_THAT(object->getChainElement(0, 0).position, EqVector3(Ogre::Vector3(4, 2, 0)));
+  EXPECT_THAT(object->getChainElement(0, 1).position, EqVector3(Ogre::Vector3(1, 1, 1)));
 }
 
 TEST_F(PathTestFixture, processMessage_adds_axes_to_scene) {
-  ASSERT_EQ("Pose Style", path_display_->childAt(8)->getNameStd());
-  path_display_->childAt(8)->setValue("Axes");
+  auto pose_style_widget_index = 8;
+  ASSERT_THAT(path_display_->childAt(pose_style_widget_index)->getNameStd(), StrEq("Pose Style"));
+  path_display_->childAt(pose_style_widget_index)->setValue("Axes");
 
   auto position = Ogre::Vector3::ZERO;
   auto orientation = Ogre::Quaternion::IDENTITY;
@@ -200,7 +178,7 @@ TEST_F(PathTestFixture, processMessage_adds_axes_to_scene) {
   path_display_->processMessage(createPathMessage());
 
   auto axes = rviz_default_plugins::findAllAxes(scene_manager_->getRootSceneNode());
-  EXPECT_EQ(2u, axes.size());
+  EXPECT_THAT(axes, SizeIs(2));
 
   auto axes_positions = rviz_default_plugins::getPositionsFromNodes(axes);
   EXPECT_THAT(axes_positions, Contains(EqVector3(Ogre::Vector3(4, 2, 0))));
@@ -218,7 +196,7 @@ TEST_F(PathTestFixture, processMessage_adds_arrows_to_scene) {
   path_display_->processMessage(createPathMessage());
 
   auto arrows = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
-  EXPECT_THAT(arrows.size(), Eq(2u));
+  EXPECT_THAT(arrows, SizeIs(2));
 
   auto arrow_positions = rviz_default_plugins::getPositionsFromNodes(arrows);
   EXPECT_THAT(arrow_positions, Contains(EqVector3(Ogre::Vector3(1, 1, 1))));

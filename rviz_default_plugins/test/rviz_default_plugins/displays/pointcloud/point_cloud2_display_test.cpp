@@ -28,12 +28,14 @@
  */
 
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 #include <vector>
 
 #include "../../../../src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp"
 #include "./message_creators.hpp"
 
+using namespace ::testing;  // NOLINT
 using namespace rviz_default_plugins::displays;  // NOLINT
 
 TEST(PointCloud2Display, filter_keeps_valid_points) {
@@ -45,16 +47,16 @@ TEST(PointCloud2Display, filter_keeps_valid_points) {
   PointCloud2Display display;
   auto filtered = display.filterOutInvalidPoints(cloud);
 
-  ASSERT_EQ(filtered->width, (uint) 2);
-  ASSERT_EQ(filtered->data.size(), (uint) sizeof(float) * 3 * 2);
+  ASSERT_THAT(filtered->width, Eq(2u));
+  ASSERT_THAT(filtered->data, SizeIs(sizeof(float) * 3 * 2));
 
   auto buffer = reinterpret_cast<const float *>(filtered->data.data());
-  ASSERT_EQ(buffer[0], 1);
-  ASSERT_EQ(buffer[1], 2);
-  ASSERT_EQ(buffer[2], 3);
-  ASSERT_EQ(buffer[3], 4);
-  ASSERT_EQ(buffer[4], 5);
-  ASSERT_EQ(buffer[5], 6);
+  ASSERT_THAT(buffer[0], Eq(1));
+  ASSERT_THAT(buffer[1], Eq(2));
+  ASSERT_THAT(buffer[2], Eq(3));
+  ASSERT_THAT(buffer[3], Eq(4));
+  ASSERT_THAT(buffer[4], Eq(5));
+  ASSERT_THAT(buffer[5], Eq(6));
 }
 
 TEST(PointCloud2Display, hasXYZChannels_returns_true_for_valid_pointcloud) {
@@ -90,13 +92,13 @@ TEST(PointCloud2Display, filter_removes_invalid_point) {
   PointCloud2Display display;
   auto filtered = display.filterOutInvalidPoints(cloud);
 
-  ASSERT_EQ(filtered->width, (uint) 1);
-  ASSERT_EQ(filtered->data.size(), (uint) sizeof(float) * 3 * 1);
+  ASSERT_THAT(filtered->width, Eq(1u));
+  ASSERT_THAT(filtered->data, SizeIs(sizeof(float) * 3 * 1));
 
   auto buffer = reinterpret_cast<const float *>(filtered->data.data());
-  ASSERT_EQ(buffer[0], 1);
-  ASSERT_EQ(buffer[1], 2);
-  ASSERT_EQ(buffer[2], 3);
+  ASSERT_THAT(buffer[0], Eq(1));
+  ASSERT_THAT(buffer[1], Eq(2));
+  ASSERT_THAT(buffer[2], Eq(3));
 }
 
 TEST(PointCloud2Display, filter_returns_empty_cloud_if_all_points_are_invalid) {
@@ -108,6 +110,6 @@ TEST(PointCloud2Display, filter_returns_empty_cloud_if_all_points_are_invalid) {
   PointCloud2Display display;
   auto filtered = display.filterOutInvalidPoints(cloud);
 
-  ASSERT_EQ(filtered->width, (uint) 0);
-  ASSERT_EQ(filtered->data.size(), (uint) 0);
+  ASSERT_THAT(filtered->width, Eq(0u));
+  ASSERT_THAT(filtered->data, IsEmpty());
 }

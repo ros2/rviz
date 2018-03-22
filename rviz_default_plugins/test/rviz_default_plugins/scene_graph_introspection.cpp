@@ -32,6 +32,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>
@@ -55,21 +56,6 @@
 namespace rviz_default_plugins
 {
 
-bool quaternionNearlyEqual(Ogre::Quaternion expected, Ogre::Quaternion actual)
-{
-  return Ogre::Math::Abs(expected.x - actual.x) < 0.0001f &&
-         Ogre::Math::Abs(expected.y - actual.y) < 0.0001f &&
-         Ogre::Math::Abs(expected.z - actual.z) < 0.0001f &&
-         Ogre::Math::Abs(expected.w - actual.w) < 0.0001f;
-}
-
-bool vector3NearlyEqual(Ogre::Vector3 expected, Ogre::Vector3 actual)
-{
-  return Ogre::Math::Abs(expected.x - actual.x) < 0.0001f &&
-         Ogre::Math::Abs(expected.y - actual.y) < 0.0001f &&
-         Ogre::Math::Abs(expected.z - actual.z) < 0.0001f;
-}
-
 bool arrowIsVisible(Ogre::SceneManager * scene_manager)
 {
   auto arrow_head = rviz_default_plugins::findEntityByMeshName(
@@ -88,10 +74,10 @@ void assertArrowWithTransform(
 {
   auto arrow_scene_node = rviz_default_plugins::findOneArrow(scene_manager->getRootSceneNode());
   ASSERT_TRUE(arrow_scene_node);
-  EXPECT_VECTOR3_EQ(position, arrow_scene_node->getPosition());
+  EXPECT_THAT(arrow_scene_node->getPosition(), EqVector3(position));
   // Have to mangle the scale because of the default orientation of the cylinders (see arrow.cpp).
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(scale.z, scale.x, scale.y), arrow_scene_node->getScale());
-  EXPECT_QUATERNION_EQ(orientation, arrow_scene_node->getOrientation());
+  EXPECT_THAT(arrow_scene_node->getScale(), EqVector3(Ogre::Vector3(scale.z, scale.x, scale.y)));
+  EXPECT_THAT(arrow_scene_node->getOrientation(), EqQuaternion(orientation));
 }
 
 std::vector<Ogre::Entity *> findAllEntitiesByMeshName(
@@ -208,16 +194,18 @@ Ogre::SceneNode * findOneAxes(Ogre::SceneNode * scene_node)
 std::vector<Ogre::Vector3> getPositionsFromNodes(const std::vector<Ogre::SceneNode *> & nodes)
 {
   std::vector<Ogre::Vector3> positions(nodes.size(), Ogre::Vector3::ZERO);
-  std::transform(nodes.cbegin(), nodes.cend(), positions.begin(),[](auto node) { return
-    node->getPosition(); });
+  std::transform(nodes.cbegin(), nodes.cend(), positions.begin(), [](auto node) {
+      return node->getPosition();
+    });
   return positions;
 }
 
 std::vector<Ogre::Quaternion> getOrientationsFromNodes(const std::vector<Ogre::SceneNode *> & nodes)
 {
   std::vector<Ogre::Quaternion> orientations(nodes.size(), Ogre::Quaternion::IDENTITY);
-  std::transform(nodes.cbegin(), nodes.cend(), orientations.begin(),[](auto node) { return
-    node->getOrientation(); });
+  std::transform(nodes.cbegin(), nodes.cend(), orientations.begin(), [](auto node) {
+      return node->getOrientation();
+    });
   return orientations;
 }
 

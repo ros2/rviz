@@ -28,6 +28,7 @@
  */
 
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 #include <vector>
 
@@ -39,6 +40,7 @@
 #include "../../../../../src/rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.hpp"
 // *INDENT-ON*
 
+using namespace ::testing;  // NOLINT
 using namespace rviz_default_plugins;  // NOLINT
 
 TEST(IntensityPCTransformer, transform_returns_points_colored_depending_on_the_intensity) {
@@ -58,9 +60,9 @@ TEST(IntensityPCTransformer, transform_returns_points_colored_depending_on_the_i
   transformer.transform(
     cloud, PointCloudTransformer::Support_Color, Ogre::Matrix4::IDENTITY, points_out);
 
-  ASSERT_EQ(points_out[0].color, Ogre::ColourValue(1, 0, 0));    // 0
-  ASSERT_EQ(points_out[1].color, Ogre::ColourValue(0, 1, 0.5));  // 1/2
-  ASSERT_EQ(points_out[2].color, Ogre::ColourValue(1, 0, 1));    // 1
+  ASSERT_THAT(points_out[0].color, Eq(Ogre::ColourValue(1, 0, 0)));  // 0
+  ASSERT_THAT(points_out[1].color, Eq(Ogre::ColourValue(0, 1, 0.5)));  // 1/2
+  ASSERT_THAT(points_out[2].color, Eq(Ogre::ColourValue(1, 0, 1)));  // 1
 }
 
 TEST(IntensityPCTransformer,
@@ -78,21 +80,21 @@ TEST(IntensityPCTransformer,
   IntensityPCTransformer transformer;
   transformer.createProperties(nullptr, PointCloudTransformer::Support_Color, out_props);
 
-  ASSERT_EQ(out_props[1]->getName(), "Use rainbow");
+  ASSERT_THAT(out_props[1]->getNameStd(), StrEq("Use rainbow"));
   out_props[1]->setValue(false);
 
-  ASSERT_EQ(out_props[3]->getName(), "Min Color");
+  ASSERT_THAT(out_props[3]->getNameStd(), StrEq("Min Color"));
   out_props[3]->setValue(QColor(0, 0, 0));
 
-  ASSERT_EQ(out_props[4]->getName(), "Max Color");
+  ASSERT_THAT(out_props[4]->getNameStd(), StrEq("Max Color"));
   out_props[4]->setValue(QColor(255, 0, 0));
 
   transformer.transform(
     cloud, PointCloudTransformer::Support_Color, Ogre::Matrix4::IDENTITY, points_out);
 
-  ASSERT_EQ(points_out[0].color, Ogre::ColourValue(0, 0, 0));    // 0
-  ASSERT_EQ(points_out[1].color, Ogre::ColourValue(0.5, 0, 0));  // 1/2
-  ASSERT_EQ(points_out[2].color, Ogre::ColourValue(1, 0, 0));    // 1
+  ASSERT_THAT(points_out[0].color, Eq(Ogre::ColourValue(0, 0, 0)));  // 0
+  ASSERT_THAT(points_out[1].color, Eq(Ogre::ColourValue(0.5, 0, 0)));  // 1/2
+  ASSERT_THAT(points_out[2].color, Eq(Ogre::ColourValue(1, 0, 0)));  // 1
 }
 
 TEST(IntensityPCTransformer,
@@ -110,13 +112,13 @@ TEST(IntensityPCTransformer,
   IntensityPCTransformer transformer;
   transformer.createProperties(nullptr, PointCloudTransformer::Support_Color, out_props);
 
-  ASSERT_EQ(out_props[5]->getName(), "Autocompute Intensity Bounds");
+  ASSERT_THAT(out_props[5]->getNameStd(), StrEq("Autocompute Intensity Bounds"));
   out_props[5]->setValue(false);
 
   transformer.transform(
     cloud, PointCloudTransformer::Support_Color, Ogre::Matrix4::IDENTITY, points_out);
 
-  ASSERT_EQ(points_out[0].color, Ogre::ColourValue(1, 0, 0));     // 0
-  ASSERT_EQ(points_out[1].color, Ogre::ColourValue(0.75, 1, 0));  // 1/4
-  ASSERT_EQ(points_out[2].color, Ogre::ColourValue(0, 1, 0.5));   // 1/2
+  ASSERT_THAT(points_out[0].color, Eq(Ogre::ColourValue(1, 0, 0)));  // 0
+  ASSERT_THAT(points_out[1].color, Eq(Ogre::ColourValue(0.75, 1, 0)));  // 1/4
+  ASSERT_THAT(points_out[2].color, Eq(Ogre::ColourValue(0, 1, 0.5)));  // 1/2
 }
