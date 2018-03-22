@@ -240,6 +240,7 @@ if(BUILD_TESTING)
     set(TEST_LINK_LIBRARIES
       rviz_default_plugins_static
       ${rclcpp_LIBRARIES}
+      ${visualization_msgs_LIBRARIES}
       Qt5::Widgets
       rviz_common::rviz_common
     )

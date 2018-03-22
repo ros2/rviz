@@ -35,9 +35,24 @@
 #include <memory>
 #include <vector>
 
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+# pragma GCC diagnostic ignored "-Wpedantic"
+#else
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#endif
+
 #include <OgreRoot.h>
 #include <OgreEntity.h>
 #include <OgreManualObject.h>
+
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#else
+# pragma warning(pop)
+#endif
 
 #include "rviz_common/properties/float_property.hpp"
 
@@ -235,7 +250,7 @@ TEST_F(PoseArrayDisplayFixture, processMessage_sets_manualObject_correctly) {
     rviz_default_plugins::findOneMovableObject(scene_manager_->getRootSceneNode());
   auto manual_objectbounding_radius = 4.17732;
   EXPECT_FLOAT_EQ(manual_objectbounding_radius, manual_object->getBoundingRadius());
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(0.85, 2, 3.3), manual_object->getBoundingBox().getCenter());
+  EXPECT_VECTOR3_EQ(Ogre::Vector3(0.85f, 2, 3.3f), manual_object->getBoundingBox().getCenter());
 }
 
 TEST_F(PoseArrayDisplayFixture, processMessage_sets_arrows3d_correctly) {

@@ -32,8 +32,6 @@
 
 #include <vector>
 
-#include <OgreSceneNode.h>
-
 #include "../marker_display.hpp"
 #include "marker_selection_handler.hpp"
 
