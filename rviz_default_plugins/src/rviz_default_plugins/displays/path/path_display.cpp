@@ -45,6 +45,7 @@
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/int_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
+#include "rviz_common/uniform_string_stream.hpp"
 #include "rviz_common/validate_floats.hpp"
 
 namespace rviz_default_plugins
@@ -415,11 +416,10 @@ void PathDisplay::processMessage(nav_msgs::msg::Path::ConstSharedPtr msg)
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
   if (!context_->getFrameManager()->getTransform(msg->header, position, orientation)) {
-    RVIZ_COMMON_LOG_ERROR_STREAM(
-      "Error transforming from frame '" << msg->header.frame_id.c_str() << "' to frame '" <<
-        qPrintable(fixed_frame_) << "'";
-    );
-    // TODO(greimela): Show status message on transformation error
+    rviz_common::UniformStringStream ss;
+    ss << "Error transforming from frame '" << msg->header.frame_id << "' to frame '" <<
+      qPrintable(fixed_frame_) << "'";
+    setStatusStd(rviz_common::properties::StatusProperty::Error, "Message", ss.str());
     return;
   }
 
