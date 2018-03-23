@@ -7,8 +7,7 @@ option(EnableVisualTests "decides whether or not enable the tests")
 option(GenerateReferenceImages "decides whether the reference images are updated")
 
 # Option to set a non null threshold in the image comparison (in case of unidentical images).
-option(MseThreshold "The MSE index threshold")
-set(MSEThreshold "0.0005" CACHE STRING "default value of the threshold")
+set(MSEThreshold "0.01" CACHE STRING "default value of the threshold")
 add_definitions(-D_MSE_THRESHOLD="${MSEThreshold}")
 
 # Path variables needed to save and find screenshots for image comparison.
@@ -62,6 +61,7 @@ if(BUILD_TESTING)
       ament_add_gtest(
         example_test
         tests/example_test.cpp
+        tests/example_nodes.hpp
         src/page_objects/base_page_object.hpp
         src/page_objects/base_page_object.cpp
         src/page_objects/camera_display_page_object.hpp

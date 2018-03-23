@@ -27,9 +27,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <atomic>
 #include <vector>
 #include <memory>
 #include <string>
+#include <thread>
+
+#include "tf2_ros/static_transform_broadcaster.h"
 
 #include "../src/visual_test_fixture.hpp"
 #include "../src/page_objects/camera_display_page_object.hpp"
@@ -37,40 +41,58 @@
 #include "../src/page_objects/image_display_page_object.hpp"
 #include "../src/page_objects/point_cloud_display_page_object.hpp"
 #include "../src/page_objects/polygon_display_page_object.hpp"
+#include "example_nodes.hpp"
 
-TEST_F(VisualTestFixture, example_test_structure) {
-  /// Set the position of the camera and its sight vector:
-  setCamPose(Ogre::Vector3(0, 3, 16));
-  setCamLookAt(Ogre::Vector3(0, 2, 0));
+std::atomic<bool> nodes_spinning;
 
-  /// Add displays:
-  auto grid_display = addDisplay<GridDisplayPageObject>();
-  auto image_display = addDisplay<ImageDisplayPageObject>();
+geometry_msgs::msg::Point32 createPoint(float x, float y, float z)
+{
+  geometry_msgs::msg::Point32 point;
+  point.x = x;
+  point.y = y;
+  point.z = z;
 
-  /// Modify their properties:
-  grid_display->setOffset(0.3, 2, 0.4);
-  grid_display->setColor(0, 255, 0);
-  grid_display->collapse();
-  image_display->setQueueSize("10");
+  return point;
+}
 
+void publishPointCloud(std::vector<geometry_msgs::msg::Point32> points)
+{
+  auto point_cloud_publisher_node = std::make_shared<nodes::PointCloudPublisher>(points);
+  auto transformer_publisher_node = std::make_shared<rclcpp::Node>("static_transform_publisher");
+  tf2_ros::StaticTransformBroadcaster broadcaster(transformer_publisher_node);
+
+  rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_node(point_cloud_publisher_node);
+  executor.add_node(transformer_publisher_node);
+
+  rclcpp::WallRate loop_rate(0.2);
+  auto msg = nodes::createStaticTransformMessage("map", "pointcloud_frame");
+  while (nodes_spinning) {
+    broadcaster.sendTransform(msg);
+    executor.spin_some();
+    loop_rate.sleep();
+  }
+}
+
+TEST_F(VisualTestFixture, example_test_with_pointcloud) {
+  nodes_spinning = true;
+  std::vector<geometry_msgs::msg::Point32> points{createPoint(0, 0, 0)};
+  std::thread publishers(publishPointCloud, points);
+
+  // Set the position of the camera and its sight vector:
+  setCamPose(Ogre::Vector3(0, 0, 16));
+  setCamLookAt(Ogre::Vector3(0, 0, 0));
+
+  auto pointcloud_display = addDisplay<PointCloudDisplayPageObject>();
+  pointcloud_display->setStyle("Spheres");
+  pointcloud_display->setSizeMeters("11");
+  pointcloud_display->setColor(0, 255, 0);
   /// Take the screenshots of the desired render windows:
-  captureRenderWindow(image_display);
   captureMainWindow();
 
   /// Compare test screenshots with the reference ones (if in TEST mode):
   assertScreenShotsIdentity();
-}
 
-TEST_F(VisualTestFixture, second_example) {
-  /// Add displays:
-  auto grid_display = addDisplay<GridDisplayPageObject>();
-
-  /// Modify their properties:
-  grid_display->setOffset(0.3, 2, 0.4);
-  grid_display->setColor(255, 255, 0);
-  grid_display->setPlaneCellCount("30");
-
-  // If only the main window is of interest, the method 'assertMainWindowIdentity()' can instead be
-  // used, which both captures the screenshot and compares it to the reference:
-  assertMainWindowIdentity();
+  nodes_spinning = false;
+  publishers.join();
 }
