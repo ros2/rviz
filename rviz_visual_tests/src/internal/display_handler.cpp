@@ -87,7 +87,7 @@ void DisplayHandler::removeDisplayWithoutDelay(int display_id)
     auto remove_display_button = getRemoveDisplayButton();
 
     auto relative_display_index =
-      helpers::getDisplaysTreeView()->model()->index(3 + display_index, 0);
+      helpers::getDisplaysTreeView()->model()->index(2 + display_index, 0);
     auto viewport = helpers::getDisplaysTreeView()->viewport();
     auto rect = helpers::getDisplaysTreeView()->visualRect(relative_display_index);
     QTest::mouseClick(

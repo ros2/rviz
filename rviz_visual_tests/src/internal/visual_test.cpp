@@ -35,13 +35,10 @@
 
 #include <QDir>  // NOLINT
 
-VisualTest::VisualTest(
-  QApplication * qapp,
-  rviz_common::VisualizerApp * vapp,
-  std::shared_ptr<Executor> executor)
+VisualTest::VisualTest(rviz_common::VisualizerApp * vapp, std::shared_ptr<Executor> executor)
 : default_cam_pose_(Ogre::Vector3(0, 0, 15)),
   default_cam_look_at_(Ogre::Vector3(0, 0, 0)),
-  scene_(qapp, vapp, default_cam_pose_, default_cam_look_at_, executor),
+  scene_(vapp, default_cam_pose_, default_cam_look_at_, executor),
   tester_("", ""),
   build_directory_path_(_BUILD_DIR_PATH),
   source_directory_path_(_SRC_DIR_PATH)
@@ -55,6 +52,11 @@ VisualTest::VisualTest(
     QString::fromStdString(build_directory_path_ + test_images_path_suffix_)).toStdString();
 
   tester_ = ImageTester(reference_images_path, test_images_path);
+}
+
+VisualTest::~VisualTest()
+{
+  reset();
 }
 
 void VisualTest::setCamPose(Ogre::Vector3 camera_pose)
@@ -123,13 +125,6 @@ void VisualTest::takeScreenShot(Ogre::String name, std::shared_ptr<PageObjectWit
   }
 }
 
-void VisualTest::reset()
-{
-  Ogre::MeshManager::getSingleton().removeAll();
-  setCamPose(default_cam_pose_);
-  setCamLookAt(default_cam_look_at_);
-}
-
 void VisualTest::setCamera()
 {
   scene_.setUpCamera();
@@ -161,4 +156,11 @@ bool VisualTest::directoriesDoNotExist()
   bool reference_images_directory_exists = stat(reference_directory.c_str(), &buffer) == 0;
 
   return !(test_images_directory_exists && reference_images_directory_exists);
+}
+
+void VisualTest::reset()
+{
+  Ogre::MeshManager::getSingleton().removeAll();
+  setCamPose(default_cam_pose_);
+  setCamLookAt(default_cam_look_at_);
 }

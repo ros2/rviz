@@ -45,7 +45,8 @@ public:
     std::shared_ptr<Executor> executor,
     std::shared_ptr<std::vector<int>> all_displays_ids);
 
-  void setSize(QString points_size);
+  void setSizeMeters(QString meters_size);
+  void setSizePixels(QString pixels_size);
   void setStyle(QString points_style);
   void setSelectable(bool selectable);
   void setAlpha(QString alpha);
@@ -54,6 +55,7 @@ public:
   void setUnreliable(bool unreliable);
   void setPositionTransformer(QString position_transformer);
   void setColorTransformer(QString color_transformer);
+  void setColor(int red, int green, int blue);
 };
 
 #endif  // PAGE_OBJECTS__POINT_CLOUD_DISPLAY_PAGE_OBJECT_HPP_

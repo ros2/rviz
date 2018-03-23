@@ -38,15 +38,13 @@ class Executor : public QObject
 {
 public:
   Executor();
-
   void queueAction(std::function<void(void)> action);
-  void reset();
 
 private:
   void increaseTotalDelay();
 
   int total_delay_;
-  static const int default_delay_interval_;
+  const int default_delay_interval_;
 };
 
 #endif  // INTERNAL__EXECUTOR_HPP_

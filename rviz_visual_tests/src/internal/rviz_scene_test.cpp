@@ -35,7 +35,6 @@
 #include <thread>
 
 RvizTestScene::RvizTestScene(
-  QApplication * qapp,
   rviz_common::VisualizerApp * vapp,
   Ogre::Vector3 pose,
   Ogre::Vector3 look_at,
@@ -45,7 +44,6 @@ RvizTestScene::RvizTestScene(
   camera_(nullptr),
   cam_pose_(pose),
   cam_look_at_vector_(look_at),
-  qapp_(qapp),
   visualizer_app_(vapp),
   executor_(executor)
 {
@@ -54,9 +52,6 @@ RvizTestScene::RvizTestScene(
 
 void RvizTestScene::setUp()
 {
-  visualizer_app_->setApp(qapp_);
-  visualizer_app_->init(0, nullptr);
-
   render_window_ = visualizer_app_->getRenderWindow();
   manager_ = rviz_rendering::RenderWindowOgreAdapter::getSceneManager(render_window_);
 }

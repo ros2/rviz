@@ -18,13 +18,15 @@ build folder, in a directory called test_images, generated automatically at buil
 - The user will be able to do both of the following: either take/update reference images, or take
 test images and compare them with existing references.
 
-- By default the comparison will be performed pixel wise, leading to a failure of the test if the
-two images are not identical. In case of non identical pictures, the MSE index of the difference 
-image will be calculated and compared to a threshold value that the user can set (by default it 
-is 0): if the computed MSE index (whose value will be between 0 and 1) is lower that this 
-threshold, then the test will pass, if not it will fail. In both cases the user will be notified 
-about the actual value of the MSE index. In the future, a more sophisticated comparison method may
-be provided.
+- By default the comparison will be performed pixel wise. In case of non identical pictures, the 
+difference image will be generated (the color value of each pixel of such image is, i.e., the 
+absolute value of the difference between the respective pixels of the test and the reference 
+images).
+At this point the MSE (Mean Square Error) index is calculated using the difference image and 
+compared to a threshold value that the user can set: if the computed MSE index is lower that 
+this threshold, then the test will pass, if not it will fail. In both cases the user will be 
+notified about the actual value of the MSE index. In the future, a more sophisticated comparison
+ method may be provided.
 
 - If the dimensions of the test image are different from the ones of the reference picture, then 
 the test screenshot will be resized to match the reference one before the comparison is performed. 
@@ -35,15 +37,15 @@ the test screenshot will be resized to match the reference one before the compar
 For RViz itself: the CMake flag `EnableVisualTests` is provided to enable visual tests and the flag
 `GenerateReferenceImages` to choose between the two possible behaviours:
 
+- with the option `GenerateReferenceImages` set to `FALSE` (which is the default setting), the test 
+screenshots will be taken and compared to existing reference ones:
+
+        ament test --cmake-args -DEnableVisualTests=TRUE DGenerateReferenceImages=FALSE
+        
 - if the option `GenerateReferenceImages` is set to `TRUE`, the reference screenshots will be
 taken/updated and no comparison performed:
 
-        ament test --cmake-args -DEnableVisualTests=TRUE -DGenerateReferenceImages=TRUE
-
-- with the option `GenerateReferenceImages` set to `FALSE`, the test screenshots will be taken and
-compared to existing reference ones:
-
-        ament test --cmake-args -DEnableVisualTests=TRUE DGenerateReferenceImages=FALSE
+        ament test --cmake-args -DEnableVisualTests=TRUE -DGenerateReferenceImages=TRUE        
 
 As anticipated above, if the tests run (i.e. if `EnableVisualTests` is set to `TRUE` and 
 `GenerateReferenceImages` to `FALSE`), by default each test will succeed if both the test images
@@ -66,9 +68,11 @@ machines. If the images are taken on different screens, in fact, they will almos
 be pixel-wise identical, so that the pixel-by-pixel comparison will fail even if the test
 should pass.  
 For the moment this issue is addressed by computing the MSE (Mean Square Error) for the two 
-pictures and comparing it to a threshold value that can be set by the user and (by default
-equal to 0). NB: the MSE is a value between 0 (if the images are identical) and 1 (if the 
-difference image is completely white).  
+pictures and comparing it to a threshold value that can be set by the user (by default it is
+equal to 0.0005, to take in account small fluctuations due to different screens).  
+NB: the MSE is a value between 0 (if the images are identical) and 1 (if the difference image is
+completely white, which would happen if for each pixel the color difference is equal to 1 - i.e. 
+maximal: each channel of an `Ogre::ColorValue` is between 0 and 1 - for every channel).  
 If the computed MSE is found to be bigger than the set threshold, then the test will fail, 
 otherwise it will pass. To set the threshold value, another CMake flag is provided: 
 `MSEThreshold`, and the user can set it via command line when starting the tests:
@@ -109,7 +113,6 @@ to remove them.
 functionality for the tests (see relative paragraph below).
 
 ## Writing tests
-
 An example of how tests are written and how they work is provided by the `example_test.cpp` file in
 rviz_visual_tests/tests. In the following the most important points relative to the tests are 
 summarized:
@@ -127,8 +130,8 @@ summarized:
     * set the position of the camera and its sight vector: `setCamPose(Ogre::Vector3 pose)` and 
     `setCamLookAt(Ogre::Vector3 look_at)`.
 
-- A custom RViz configuration is loaded right after the application starts. It is the default 
-RViz config, with a Grid display and with the help panel hidden.
+- A custom RViz configuration is loaded right after the application starts. It correspond to an 
+empty scene, with the help panel hidden.
 
 - In writing the test it is important to take care that the display property that one wants to 
 change is visible when the relative display menu is expanded (i.e. there must be enough free 
@@ -148,6 +151,24 @@ property is changed. On the other hand, in order to collapse them one can use th
 
 - At the end of each test, the scene is cleaned, the application reset and all the present 
 displays removed, before the following test begins.
+
+## Making tests stable
+
+As already anticipated above, visual tests are very sensible to the the machine (graphic card, 
+screen, settings, etc.) on which they run. Screenshots taken on different screens, in
+fact, will not be pixel-wise identical, so that a pixel-by-pixel comparison will result is a 
+failure of the test.  
+As said, for the moment this issue is addressed by omputing the MSE index and comparing it to a 
+threshold value set by the user. This tool can be used to obtain tests which are sufficiently 
+stable with respect to the machine they run on, together with a couple of expedients:
+
+- write tests cases that examin the presence of big objects, preferably close to the center of the 
+screen;
+
+- don't focus on details: they can hardly be tested in a stable way across different screens;
+
+- choose the MSE index threshold carefully and adjust its value according to the context and goals.
+    
 
 ## How tests work
 

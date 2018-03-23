@@ -42,11 +42,18 @@ PointCloudDisplayPageObject::PointCloudDisplayPageObject(
 : BasePageObject(display_id, 0, 3, executor, all_displays_ids)
 {}
 
-void PointCloudDisplayPageObject::setSize(QString points_size)
+void PointCloudDisplayPageObject::setSizeMeters(QString meters_size)
 {
   int property_row_index = 6;
 
-  setString("Size (m)", points_size, property_row_index);
+  setString("Size (m)", meters_size, property_row_index);
+}
+
+void PointCloudDisplayPageObject::setSizePixels(QString pixels_size)
+{
+  int property_row_index = 7;
+
+  setString("Size (Pixels)", pixels_size, property_row_index);
 }
 
 void PointCloudDisplayPageObject::setStyle(QString points_style)
@@ -103,4 +110,16 @@ void PointCloudDisplayPageObject::setColorTransformer(QString color_transformer)
 {
   int property_row_index = 11;
   setComboBox("Color Transformer", color_transformer, property_row_index);
+}
+
+void PointCloudDisplayPageObject::setColor(int red, int green, int blue)
+{
+  setColorTransformer("FlatColorPCTransformer");
+
+  int property_row_index = 15;
+
+  QString color_code = QString::fromStdString(
+    std::to_string(red) + "; " + std::to_string(green) + "; " + std::to_string(blue));
+
+  setString("Color", color_code, property_row_index);
 }

@@ -50,10 +50,9 @@ class VisualTest
 {
 public:
   /// Initializes the scene and sets the path to the image directories.
-  VisualTest(
-    QApplication * qapp,
-    rviz_common::VisualizerApp * vapp,
-    std::shared_ptr<Executor> executor);
+  VisualTest(rviz_common::VisualizerApp * vapp, std::shared_ptr<Executor> executor);
+
+  ~VisualTest();
 
   ///  Sets the position of the camera.
   void setCamPose(Ogre::Vector3 camera_pose);
@@ -73,11 +72,6 @@ public:
   */
   void takeScreenShot(Ogre::String name, std::shared_ptr<PageObjectWithWindow> display);
 
-  /** Reset the scene to the default settings. i.e. repositions the camera, its lookAt vector and
-      deletes all the renderables (a part the grid).
-  */
-  void reset();
-
   void setCamera();
 
 private:
@@ -87,6 +81,7 @@ private:
     Ogre::String screenshot_name, std::shared_ptr<PageObjectWithWindow> display);
   bool checkImageExists(std::string & name);
   bool directoriesDoNotExist();
+  void reset();
 
   Ogre::Vector3 default_cam_pose_;
   Ogre::Vector3 default_cam_look_at_;

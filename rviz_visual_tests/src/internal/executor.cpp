@@ -32,8 +32,10 @@
 #include <QTimer>  // NOLINT
 
 Executor::Executor()
-: total_delay_(default_delay_interval_)
-{}
+: default_delay_interval_(2000)
+{
+  total_delay_ = default_delay_interval_;
+}
 
 void Executor::queueAction(std::function<void(void)> action)
 {
@@ -41,14 +43,7 @@ void Executor::queueAction(std::function<void(void)> action)
   increaseTotalDelay();
 }
 
-void Executor::reset()
-{
-  total_delay_ = default_delay_interval_;
-}
-
 void Executor::increaseTotalDelay()
 {
   total_delay_ += default_delay_interval_;
 }
-
-const int Executor::default_delay_interval_ = 2000;

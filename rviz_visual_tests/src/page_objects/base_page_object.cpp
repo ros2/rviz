@@ -46,7 +46,7 @@ BasePageObject::BasePageObject(
 : display_category_(display_category),
   display_name_index_(display_name_index),
   executor_(executor),
-  default_first_display_index_(3),
+  default_first_display_index_(2),
   all_display_ids_vector_(display_ids_vector)
 {
   display_id_ = display_id;

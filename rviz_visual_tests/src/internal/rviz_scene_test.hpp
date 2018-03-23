@@ -52,7 +52,6 @@ class RvizTestScene
 {
 public:
   RvizTestScene(
-    QApplication * qapp,
     rviz_common::VisualizerApp * vapp,
     Ogre::Vector3 pose,
     Ogre::Vector3 look_at,
@@ -75,7 +74,6 @@ private:
   Ogre::SceneNode * cam_node_;
   Ogre::Vector3 cam_pose_;
   Ogre::Vector3 cam_look_at_vector_;
-  QApplication * qapp_;
   rviz_common::VisualizerApp * visualizer_app_;
   std::shared_ptr<Executor> executor_;
 };

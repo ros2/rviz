@@ -35,32 +35,33 @@
 
 #include "rviz_common/ros_integration/ros_client_abstraction.hpp"
 
+VisualTestFixture::VisualTestFixture()
+{
+  test_name_ = ::testing::UnitTest::GetInstance()->current_test_info()->name();
+  executor_ = std::make_shared<Executor>();
+  visual_test_ = std::make_unique<VisualTest>(visualizer_app_, executor_);
+  all_display_ids_vector_ = std::make_shared<std::vector<int>>();
+  display_handler_ = std::make_unique<DisplayHandler>(executor_, all_display_ids_vector_);
+
+  visual_test_->setCamera();
+}
+
 void VisualTestFixture::SetUpTestCase()
 {
   int argc = 0;
   visualizer_app_ = new rviz_common::VisualizerApp(
     std::make_unique<rviz_common::ros_integration::RosClientAbstraction>());
   qapp_ = new QApplication(argc, nullptr);
-  executor_ = std::make_shared<Executor>();
-  visual_test_ = std::make_unique<VisualTest>(qapp_, visualizer_app_, executor_);
-  all_display_ids_vector_ = std::make_shared<std::vector<int>>();
-  display_handler_ = std::make_unique<DisplayHandler>(executor_, all_display_ids_vector_);
+
+  visualizer_app_->setApp(qapp_);
+  visualizer_app_->init(0, nullptr);
   visualizer_app_->loadConfig(QDir::toNativeSeparators(
       QString::fromStdString(std::string(_SRC_DIR_PATH) + "/visual_tests_default_config.rviz")));
-  visual_test_->setCamera();
-}
-
-void VisualTestFixture::SetUp()
-{
-  test_name_ = ::testing::UnitTest::GetInstance()->current_test_info()->name();
 }
 
 void VisualTestFixture::TearDown()
 {
   display_handler_->removeAllDisplays();
-  visual_test_->reset();
-  executor_->reset();
-  screen_shots_.clear();
 }
 
 void VisualTestFixture::TearDownTestCase()
@@ -98,6 +99,7 @@ void VisualTestFixture::removeDisplay(std::shared_ptr<BasePageObject> display)
 
 void VisualTestFixture::captureMainWindow(Ogre::String image_name)
 {
+  setNameIfEmpty(image_name);
   screen_shots_.push_back(image_name);
   visual_test_->takeScreenShot(image_name, nullptr);
 }
@@ -105,6 +107,7 @@ void VisualTestFixture::captureMainWindow(Ogre::String image_name)
 void VisualTestFixture::captureRenderWindow(
   std::shared_ptr<PageObjectWithWindow> display, Ogre::String name)
 {
+  setNameIfEmpty(name);
   static int count = 0;
   Ogre::String image_name = name + "_secondary_window" + Ogre::StringConverter::toString(count++);
   screen_shots_.push_back(image_name);
@@ -123,6 +126,7 @@ void VisualTestFixture::assertScreenShotsIdentity()
 
 void VisualTestFixture::assertMainWindowIdentity(Ogre::String image_name)
 {
+  setNameIfEmpty(image_name);
   captureMainWindow(image_name);
   startApplication();
   visual_test_->assertVisualIdentity(image_name);
@@ -134,11 +138,12 @@ void VisualTestFixture::startApplication()
   qapp_->exec();
 }
 
+void VisualTestFixture::setNameIfEmpty(Ogre::String & name)
+{
+  if (name.empty()) {
+    name = test_name_;
+  }
+}
+
 QApplication * VisualTestFixture::qapp_ = nullptr;
 rviz_common::VisualizerApp * VisualTestFixture::visualizer_app_ = nullptr;
-Ogre::String VisualTestFixture::test_name_;
-std::shared_ptr<Executor> VisualTestFixture::executor_ = nullptr;
-std::unique_ptr<VisualTest> VisualTestFixture::visual_test_ = nullptr;
-std::shared_ptr<std::vector<int>> VisualTestFixture::all_display_ids_vector_ = nullptr;
-std::unique_ptr<DisplayHandler> VisualTestFixture::display_handler_ = nullptr;
-std::vector<Ogre::String> VisualTestFixture::screen_shots_;

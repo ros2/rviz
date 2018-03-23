@@ -15,25 +15,7 @@ Panels:
     Splitter Ratio: 0.5
 Visualization Manager:
   Class: ""
-  Displays:
-    - Alpha: 0.5
-      Cell Size: 1
-      Class: rviz/Grid
-      Color: 160; 160; 164
-      Enabled: true
-      Line Style:
-        Line Width: 0.0299999993
-        Value: Lines
-      Name: Grid
-      Normal Cell Count: 0
-      Offset:
-        X: 0
-        Y: 0
-        Z: 0
-      Plane: XY
-      Plane Cell Count: 10
-      Reference Frame: <Fixed Frame>
-      Value: true
+  Displays: ~
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48

@@ -41,8 +41,8 @@
 class VisualTestFixture : public testing::Test
 {
 public:
+  VisualTestFixture();
   static void SetUpTestCase();
-  void SetUp() override;
   void TearDown() override;
   static void TearDownTestCase();
 
@@ -55,23 +55,25 @@ public:
   }
   void removeDisplay(std::shared_ptr<BasePageObject> display);
 
-  void captureMainWindow(Ogre::String image_name = test_name_);
+  void captureMainWindow(Ogre::String image_name = "");
   void captureRenderWindow(
-    std::shared_ptr<PageObjectWithWindow> display, Ogre::String name = test_name_);
+    std::shared_ptr<PageObjectWithWindow> display, Ogre::String name = "");
 
   void assertScreenShotsIdentity();
-  void assertMainWindowIdentity(Ogre::String image_name = test_name_);
+  void assertMainWindowIdentity(Ogre::String image_name = "");
 
-  void startApplication();
-
+  Ogre::String test_name_;
+  std::unique_ptr<VisualTest> visual_test_;
+  std::unique_ptr<DisplayHandler> display_handler_;
+  std::shared_ptr<std::vector<int>> all_display_ids_vector_;
+  std::vector<Ogre::String> screen_shots_;
+  std::shared_ptr<Executor> executor_;
   static QApplication * qapp_;
   static rviz_common::VisualizerApp * visualizer_app_;
-  static Ogre::String test_name_;
-  static std::unique_ptr<VisualTest> visual_test_;
-  static std::unique_ptr<DisplayHandler> display_handler_;
-  static std::shared_ptr<std::vector<int>> all_display_ids_vector_;
-  static std::vector<Ogre::String> screen_shots_;
-  static std::shared_ptr<Executor> executor_;
+
+private:
+  void startApplication();
+  void setNameIfEmpty(Ogre::String & name);
 };
 
 #endif  // VISUAL_TEST_FIXTURE_HPP_
