@@ -1,8 +1,7 @@
 # RViz 3D Visual Testing Framework
 
-This is a testing framework which allows the user to take screenshots of the main 3D rendered 
-scene and possibly of other secondary render windows, and to compare them with previously captured 
-reference screenshots.
+This testing framework allows users to take screenshots of the main 3D scene and/or secondary render 
+windows, and to compare them with previously captured reference screenshots.
 
 
 ## Assumptions and Settings
@@ -10,23 +9,22 @@ reference screenshots.
 - Visual tests are located in the folder rviz_visual_tests.
 
 - The reference screenshots are located in the rviz_visual_tests/tests source folder, in a
-directory called reference_images. The test images are, instead, located in the rviz_visual_tests
-build folder, in a directory called test_images, generated automatically at build system generation.
+directory called reference_images. The test images will be generated in the rviz_visual_tests
+build folder at build time.
 
-- Visual tests are especially useful for regression testing.
+- The purpose of this framework is to have visual *smoke* tests serving as regression tests.
 
 - The user will be able to do both of the following: either take/update reference images, or take
 test images and compare them with existing references.
 
-- By default the comparison will be performed pixel wise. In case of non identical pictures, the 
-difference image will be generated (the color value of each pixel of such image is, i.e., the 
-absolute value of the difference between the respective pixels of the test and the reference 
-images).
+- By default the comparison will be performed pixelwise. In case of non identical pictures, the 
+difference image will be generated (the color value of each pixel of such image is the absolute 
+value of the difference between the respective pixels of the test and the reference images).
 At this point the MSE (Mean Square Error) index is calculated using the difference image and 
-compared to a threshold value that the user can set: if the computed MSE index is lower that 
+compared to a threshold value that the user can set: if the computed MSE index is lower than 
 this threshold, then the test will pass, if not it will fail. In both cases the user will be 
-notified about the actual value of the MSE index. In the future, a more sophisticated comparison
- method may be provided.
+notified about the actual value of the MSE index. In the future, a more sophisticated comparison 
+method may be provided.
 
 - If the dimensions of the test image are different from the ones of the reference picture, then 
 the test screenshot will be resized to match the reference one before the comparison is performed. 
@@ -41,7 +39,7 @@ For RViz itself: the CMake flag `EnableVisualTests` is provided to enable visual
 screenshots will be taken and compared to existing reference ones:
 
         ament test --cmake-args -DEnableVisualTests=TRUE DGenerateReferenceImages=FALSE
-        
+
 - if the option `GenerateReferenceImages` is set to `TRUE`, the reference screenshots will be
 taken/updated and no comparison performed:
 
@@ -49,12 +47,11 @@ taken/updated and no comparison performed:
 
 As anticipated above, if the tests run (i.e. if `EnableVisualTests` is set to `TRUE` and 
 `GenerateReferenceImages` to `FALSE`), by default each test will succeed if both the test images
-and the relative reference images exist and they are pixel-wise identical. It will fail if either 
-the two sets of images exist but they are not identical, or if at least one of the reference images 
-does not exist.
+and the relative reference images exist and they are within an MSE threshold. It will fail if either 
+the two sets of images exist but they are not identical or within this threshold, or if at least
+one of the reference images does not exist.
 
-Always by default, the images are named after the test they belong to. In particular the 
-reference image
+By default, the images are named after the test they belong to. In particular the reference image
 relative to the main render window will be called `<test_name>_ref.png` and the corresponding test 
 image will be `<test_name>.png`. For what concerns the secondary windows, they will be named 
 similarly: `<test_name>_secondary_window#_ref.png` and `<test_name>_secondary_window#.png`,
@@ -62,28 +59,28 @@ where `#` is the number of the secondary window. These names can be changed by p
 desired name as an argument to the capture methods (i.e. `captureRenderWindow()`, 
 `captureMainWindow()` or `assertMainWindowIdentity()`).
 
-Given that we want image references to be provided to the user in the source directory, it is
+Given that we want reference images to be provided to the user in the source directory, it is
 important for the tests to be stable when it comes to comparing screenshots taken on different
 machines. If the images are taken on different screens, in fact, they will almost certainly not
-be pixel-wise identical, so that the pixel-by-pixel comparison will fail even if the test
+be pixelwise identical, so that the pixel-by-pixel comparison will fail even if the test
 should pass.  
 For the moment this issue is addressed by computing the MSE (Mean Square Error) for the two 
 pictures and comparing it to a threshold value that can be set by the user (by default it is
-equal to 0.0005, to take in account small fluctuations due to different screens).  
-NB: the MSE is a value between 0 (if the images are identical) and 1 (if the difference image is
-completely white, which would happen if for each pixel the color difference is equal to 1 - i.e. 
+equal to 0.01, to take in account small fluctuations due to different screens).  
+**NB**: the MSE is a value between 0 (if the images are identical) and 1 (if the difference image
+is completely white, which would happen if for each pixel the color difference is equal to 1 - i.e. 
 maximal: each channel of an `Ogre::ColorValue` is between 0 and 1 - for every channel).  
 If the computed MSE is found to be bigger than the set threshold, then the test will fail, 
 otherwise it will pass. To set the threshold value, another CMake flag is provided: 
 `MSEThreshold`, and the user can set it via command line when starting the tests:
 
         ament test --cmake-args -DEnableVisualTests=TRUE  -DMSEThreshold=0.001
-    
+
 Because of the heuristic nature of this method, the appropriate threshold value will depend on the 
 single test and on the context.  
 
-NB: all the three cmake flags values are automatically cached by cmake, meaning that if they are 
-not specified, the last set values will be used. 
+**NB**: all the three CMake flag values are automatically cached by CMake, meaning that if they are 
+not specified, the values used for the last run will be used.
 
 
 ## GUI interaction
@@ -91,14 +88,13 @@ not specified, the last set values will be used.
 In order to be able to set the scene in the desired way before taking the screenshots (e.g.
 add one or more displays, modify their properties, etc.), one would like to be able to
 automatise the interaction with the RViz GUI. In the future, on top of being the most sensible and 
-effective way to prepare the 3D scene for the visual tests, this functionality may also allow GUI
-tests to be performed. This can be achieved with the help of the QTest framework. So 
-far the Visual Testing framework offers the possibility to add and interact with most of the 
-available displays (Grid, PointCloud, Camera, Image and Polygon), and the addition of more 
-displays in the future is made straightforward by the use of a base class from which all
-the displays page objects derive:
+effective way to prepare the 3D scene for the visual tests, this functionality may also allow pure 
+GUI tests. This can be achieved with the help of the QTest framework. So far the Visual Testing 
+framework offers the possibility to add and interact with most of the available displays (Grid, 
+PointCloud, Camera, Image and Polygon), and the addition of displays in the future is made 
+straightforward by the use of a base class from which all display page objects derive:
 
-- The class `BasePageObject` is provided, as the base class for every display page object. It
+- The class `BasePageObject` is provided, as the base class for every display page object. It 
 implements all the basic methods to modify the various kind of display properties (QString, 
 boolean, QComboBox, etc.)
 
@@ -110,12 +106,15 @@ specific properties of the relative displays.
 to remove them. 
 
 - We provide a test environment, in the form of a TestFixture which offers all the relevant 
-functionality for the tests (see relative paragraph below).
+functionality for the tests (see paragraph below).
 
 ## Writing tests
+
+### How to write a test
+
 An example of how tests are written and how they work is provided by the `example_test.cpp` file in
-rviz_visual_tests/tests. In the following the most important points relative to the tests are 
-summarized:
+rviz_visual_tests/tests or in the [quick start guide](README.md). In the following the most 
+important points with respect to the tests are summarized:
 
 * As said, the `VisualTestFixture` offers convenience methods to:
     * add a new display: `addDisplay<display type>()`, which creates an instance of the desired 
@@ -124,13 +123,13 @@ summarized:
     * capture a screen shot of the main render window: `captureMainWindow()` or of a secondary 
     window: `captureRenderWindow(std::shared_ptr<PageObjectWithWindow> display)`.
     * assert the identity of test and reference images: `assertScreenShotsIdentity()`.
-    * both take a screenshot of the main render window and assert its identity to the relative 
-    reference image (which can be used if one is not interested in secondary windows): 
+    * both take a screenshot of the main render window and assert its identity to the reference 
+    image (which can be used if one is not interested in secondary windows): 
     `assertMainWindowIdentity()`.
     * set the position of the camera and its sight vector: `setCamPose(Ogre::Vector3 pose)` and 
     `setCamLookAt(Ogre::Vector3 look_at)`.
 
-- A custom RViz configuration is loaded right after the application starts. It correspond to an 
+- A custom RViz configuration is loaded right after the application starts. It corresponds to an 
 empty scene, with the help panel hidden.
 
 - In writing the test it is important to take care that the display property that one wants to 
@@ -143,36 +142,68 @@ correspond to the desired one). Note that displays menus are automatically expan
 property is changed. On the other hand, in order to collapse them one can use the 
 `BasePageObject` class method `collapse()`.
 
-- For reasons that will become clear later, in each test one and only one of the two methods 
-`assertScreenShotsIdentity()` and `assertMainWindowIdentity()` must be called, and after that has
- been done, interaction with RViz is no longer possible for the current test. Any attempt to 
- interact with the GUI after one of those methods has been called will not produce the expected 
- results and will possibly result in a segfault.
+- For reasons that will become clear, in each test one and only one of the two methods 
+`assertScreenShotsIdentity()` and `assertMainWindowIdentity()` must be called. After such call,
+interaction with RViz is no longer possible for the current test, and any attempt to interact with 
+the GUI from this point on will not produce the expected behaviour and will possibly result in a 
+segfault.
 
 - At the end of each test, the scene is cleaned, the application reset and all the present 
 displays removed, before the following test begins.
 
-## Making tests stable
+### How to have stable tests
 
-As already anticipated above, visual tests are very sensible to the the machine (graphic card, 
-screen, settings, etc.) on which they run. Screenshots taken on different screens, in
-fact, will not be pixel-wise identical, so that a pixel-by-pixel comparison will result is a 
-failure of the test.  
-As said, for the moment this issue is addressed by omputing the MSE index and comparing it to a 
-threshold value set by the user. This tool can be used to obtain tests which are sufficiently 
-stable with respect to the machine they run on, together with a couple of expedients:
+As already anticipated above, visual tests are very sensitive to the the machine (graphic card, 
+screen, settings, etc.) on which they run. Screenshots taken on different screens will in general 
+not be pixelwise identical, so that a pixel-by-pixel comparison will result in a failure of the 
+test, even though it should pass.  
+For the moment this issue is addressed by computing the MSE index between test and reference image 
+and comparing it to a threshold value that can be set by the user. This tool can be used to obtain 
+robust tests which are sufficiently stable with respect to the machine they run on. In order to 
+do so, keep in mind the following points:
 
-- write tests cases that examin the presence of big objects, preferably close to the center of the 
-screen;
+- the tests are not effective when it comes to small details, e.g. taking the case of a 
+pointcloud, a test won't be able to consistently detect the presence (or absence) of small 
+points in the scene, or of other small objects which may or may not be rendered. Each test, 
+therefore, has to concentrate on a few (at best just one) rendered objects, which have to almost 
+fill the scene.
 
-- don't focus on details: they can hardly be tested in a stable way across different screens;
+- as a consequence, it is suggested to write test cases that examine the presence and the aspect
+of big objects, possibly centered in the scene and occupying most of it. For example, if the 
+goal of the current test is to check that pointclouds are rendered correctly, then the camera and
+the pointcloud have to be set so that this fills most of the scene, all other details being 
+irrelevant; 
 
-- choose the MSE index threshold carefully and adjust its value according to the context and goals.
-    
+- choose the MSE index threshold wisely and adjust its value according to the context and goals.
+For now, the suggestion is to write test which would generate an MSE value of around 0.1 or 
+greater in case of failure (i.e. the object is not rendered, it has a wrong color, etc). 
+With this goal in mind, the default MSE threshold has been set to 0.01, one order of 
+magnitude lower than the failing one and bigger than the expected fluctuations due to
+differences in the systems. This should result in robust and stable tests.
+
+As an example, let's take a look at the following images: 
+
+<p float="left">
+  <img src="ref_sphere.png" width="282" alt title="reference image" />
+  <img src="test_sphere.png" width="282" alt title="test image"/>
+  <img src="spheres_diff.png" width="282" alt title="image difference"/>
+</p>
+
+They correspond to a test for the PointCloud display, in which one big green sphere point is 
+rendered in the center of the scene. The first image is the reference screenshot, the second one 
+is the test image, taken on a different machine. Finally, the third picture is the image difference, 
+which shows that the two screenshots, even though they look identical, have actually quite a few 
+different pixels.  
+For this set of images, the MSE index is ~0.0011, which is lower than the chosen default value of 
+0.01, and two orders of magnitude smaller than the failing reference value of ~0.1.  
+For reference, if the test image for this test didn't show any sphere (i.e. the pointcloud is not 
+rendered in the scene), then the MSE would be slightly bigger than 0.1, while if the color were 
+wrong it would be approximately between 0.05 (slightly different shade of green) 
+and 0.44 (white sphere in the difference image). 
 
 ## How tests work
 
-Given their nature, the visual tests need an actual running RViz in order to work.
+Given their nature, the visual tests need a running instance of RViz in order to work.
 This means that one needs to have an instance of an `rviz_common::VisualizerApp` and one of an 
 associated `QApplication`. The QApplication must then be started and all the interactions with the 
 application must be performed while the QApplication is in the main event loop. Unfortunately, 
@@ -201,7 +232,7 @@ interested also (or only) in secondary render windows and, therefore, screenshot
 main and secondary windows (or only of secondary windows) have been taken, while 
 `assertMainWindowIdentity()` can be used if only the main render window is of interest: it will,
 in fact, both capture a screenshot of the main render window and perform the image comparison.  
-If the method `assertMainWindowIdentity()` is called, there is, therefore, no need to use the 
+Therefore, if the method `assertMainWindowIdentity()` is called, there is no need to use the 
 method `captureMainWindow()` before.
 
 ## Test Fixture
