@@ -156,6 +156,38 @@ TEST_F(PathTestFixture, reset_is_idempotent) {
   ASSERT_TRUE(1);
 }
 
+TEST_F(PathTestFixture, reset_removes_all_axes) {
+  auto pose_style_widget_index = 8;
+  ASSERT_THAT(path_display_->childAt(pose_style_widget_index)->getNameStd(), StrEq("Pose Style"));
+  path_display_->childAt(pose_style_widget_index)->setValue("Axes");
+
+  auto position = Ogre::Vector3::ZERO;
+  auto orientation = Ogre::Quaternion::IDENTITY;
+  mockValidTransform(position, orientation);
+
+  path_display_->processMessage(createPathMessage());
+  EXPECT_THAT(rviz_default_plugins::findAllAxes(scene_manager_->getRootSceneNode()), SizeIs(2));
+
+  path_display_->reset();
+  EXPECT_THAT(rviz_default_plugins::findAllAxes(scene_manager_->getRootSceneNode()), SizeIs(0));
+}
+
+TEST_F(PathTestFixture, reset_removes_all_arrows) {
+  auto pose_style_widget_index = 8;
+  ASSERT_THAT(path_display_->childAt(pose_style_widget_index)->getNameStd(), StrEq("Pose Style"));
+  path_display_->childAt(pose_style_widget_index)->setValue("Arrows");
+
+  auto position = Ogre::Vector3::ZERO;
+  auto orientation = Ogre::Quaternion::IDENTITY;
+  mockValidTransform(position, orientation);
+
+  path_display_->processMessage(createPathMessage());
+  EXPECT_THAT(rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode()), SizeIs(2));
+
+  path_display_->reset();
+  EXPECT_THAT(rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode()), SizeIs(0));
+}
+
 TEST_F(PathTestFixture, processMessage_transforms_the_vertices_correctly) {
   auto position = Ogre::Vector3(1, 2, 3);
   auto orientation = Ogre::Quaternion::IDENTITY;

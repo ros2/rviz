@@ -178,7 +178,7 @@ void PathDisplay::allocateAxesVector(std::vector<rviz_rendering::Axes *> & axes_
         pose_axes_radius_property_->getFloat()));
     }
   } else if (num < vector_size) {
-    for (auto i = num; i < vector_size; --i) {
+    for (auto i = num; i < vector_size; ++i) {
       delete axes_vect[i];
     }
     axes_vect.resize(num);
@@ -194,7 +194,7 @@ void PathDisplay::allocateArrowVector(std::vector<rviz_rendering::Arrow *> & arr
       arrow_vect.push_back(new rviz_rendering::Arrow(scene_manager_, scene_node_));
     }
   } else if (num < vector_size) {
-    for (auto i = num; i < vector_size; --i) {
+    for (auto i = num; i < vector_size; ++i) {
       delete arrow_vect[i];
     }
     arrow_vect.resize(num);
