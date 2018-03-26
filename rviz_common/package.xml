@@ -28,7 +28,6 @@
   <exec_depend>libqt5-opengl</exec_depend>
   <exec_depend>libqt5-widgets</exec_depend>
 
-  <depend>ament_index_cpp</depend>
   <depend>geometry_msgs</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>

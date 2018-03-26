@@ -38,31 +38,25 @@
 
 #include "ament_index_cpp/get_package_share_directory.hpp"
 #include "ament_index_cpp/get_package_prefix.hpp"
+#include "resource_retriever/retriever.h"
 
 #include "rviz_common/logging.hpp"
 
 namespace rviz_common
 {
 
-QString getFilePath(const QString & url)
+resource_retriever::MemoryResource getResource(const std::string & resource_path)
 {
-  QString file_path = "";
-  if (url.indexOf("package://", 0, Qt::CaseInsensitive) == 0) {
-    QString package_name = url.section('/', 2, 2);
-    QString file_name = url.section('/', 3);
-    try {
-      std::string package_prefix =
-        ament_index_cpp::get_package_share_directory(package_name.toStdString());
-      file_path = QString::fromStdString(package_prefix) + "/" + file_name;
-    } catch (const ament_index_cpp::PackageNotFoundError & error) {
-      RVIZ_COMMON_LOG_ERROR_STREAM("Package not found: " << error.what());
-    }
-  } else if (url.indexOf("file://", 0, Qt::CaseInsensitive) == 0) {
-    file_path = url.section('/', 2);
-  } else {
-    RVIZ_COMMON_LOG_ERROR("Invalid or unsupported URL: " + url.toStdString());
+  resource_retriever::Retriever retriever;
+  resource_retriever::MemoryResource res;
+  try {
+    res = retriever.get(resource_path);
+  } catch (resource_retriever::Exception & e) {
+    RVIZ_COMMON_LOG_DEBUG(e.what());
+    return resource_retriever::MemoryResource();
   }
-  return file_path;
+
+  return res;
 }
 
 QPixmap loadPixmap(QString url, bool fill_cache)
@@ -74,15 +68,12 @@ QPixmap loadPixmap(QString url, bool fill_cache)
     return pixmap;
   }
 
-  QString file_path = getFilePath(url);
-  RVIZ_COMMON_LOG_DEBUG("Load pixmap at " + file_path.toStdString());
-  QFile file(file_path);
+  RVIZ_COMMON_LOG_DEBUG("Load pixmap at " + url.toStdString());
 
-  // If something goes wrong here, we go on and store the empty pixmap,
-  // so the error won't appear again anytime soon.
-  if (file.exists()) {
-    if (!pixmap.load(file_path)) {
-      RVIZ_COMMON_LOG_ERROR("Could not load pixmap " + file_path.toStdString());
+  auto image = getResource(url.toStdString());
+  if (image.size != 0) {
+    if (!pixmap.loadFromData(image.data.get(), static_cast<uint32_t>(image.size))) {
+      RVIZ_COMMON_LOG_ERROR("Could not load pixmap " + url.toStdString());
     }
   }
 
