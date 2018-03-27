@@ -156,7 +156,7 @@
   </class>
 
   <class
-    name="rviz/Select"
+    name="rviz_default_plugins/Select"
     type="rviz_default_plugins::tools::SelectionTool"
     base_class_type="rviz_common::Tool"
   >

@@ -30,26 +30,28 @@
 #ifndef RVIZ_COMMON__SELECTION_PANEL_HPP_
 #define RVIZ_COMMON__SELECTION_PANEL_HPP_
 
-#include "rviz_common/panel.hpp"
+#include "panel.hpp"
 
-namespace rviz
+namespace rviz_common
 {
-
+namespace properties
+{
 class PropertyTreeWidget;
+}
 
 class SelectionPanel : public Panel
 {
   Q_OBJECT
 
 public:
-  explicit SelectionPanel(QWidget * parent = 0);
+  explicit SelectionPanel(QWidget * parent = nullptr);
 
-  virtual void onInitialize();
+  void onInitialize() override;
 
 private:
-  PropertyTreeWidget * tree_widget_;
+  properties::PropertyTreeWidget * tree_widget_;
 };
 
-}  // namespace rviz
+}  // namespace rviz_common
 
 #endif  // RVIZ_COMMON__SELECTION_PANEL_HPP_
