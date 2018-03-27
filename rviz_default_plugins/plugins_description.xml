@@ -155,6 +155,16 @@
     </description>
   </class>
 
+  <class
+    name="rviz/Select"
+    type="rviz_default_plugins::tools::SelectionTool"
+    base_class_type="rviz_common::Tool"
+  >
+    <description>
+      Drag with the left button to select objects in the 3D scene.
+      Hold the Alt key to change viewpoint as in the Move tool.
+    </description>
+  </class>
   <!-- View Controller plugins -->
 
   <class

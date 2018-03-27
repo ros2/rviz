@@ -27,25 +27,27 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_SELECTION_TOOL_H
-#define RVIZ_SELECTION_TOOL_H
-
-#include "rviz/tool.h"
-#include "rviz/selection/forwards.h"
+#ifndef RVIZ_DEFAULT_PLUGINS__TOOLS__SELECT__SELECTION_TOOL_HPP_
+#define RVIZ_DEFAULT_PLUGINS__TOOLS__SELECT__SELECTION_TOOL_HPP_
 
 #include <vector>
+
+#include "rviz_common/tool.hpp"
+#include "rviz_common/selection/forwards.hpp"
 
 namespace Ogre
 {
 class Viewport;
 }
 
-namespace rviz
+namespace rviz_default_plugins
+{
+namespace tools
 {
 
 class MoveTool;
 
-class SelectionTool : public Tool
+class SelectionTool : public rviz_common::Tool
 {
 public:
   SelectionTool();
@@ -56,25 +58,24 @@ public:
   virtual void activate();
   virtual void deactivate();
 
-  virtual int processMouseEvent( ViewportMouseEvent& event );
-  virtual int processKeyEvent( QKeyEvent* event, RenderPanel* panel );
+  virtual int processMouseEvent(rviz_common::ViewportMouseEvent & event);
+  virtual int processKeyEvent(QKeyEvent * event, rviz_common::RenderPanel * panel);
 
   virtual void update(float wall_dt, float ros_dt);
 
 private:
-
-  MoveTool* move_tool_;
+  MoveTool * move_tool_;
 
   bool selecting_;
   int sel_start_x_;
   int sel_start_y_;
 
-  M_Picked highlight_;
+  rviz_common::selection::M_Picked highlight_;
 
   bool moving_;
 };
 
-}
+}  // namespace tools
+}  // namespace rviz_default_plugins
 
-#endif
-
+#endif  // RVIZ_DEFAULT_PLUGINS__TOOLS__SELECT__SELECTION_TOOL_HPP_

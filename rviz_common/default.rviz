@@ -9,8 +9,8 @@ Panels:
       Splitter Ratio: 0.5
     Tree Height: 464
   # TODO(wjwwood): restore these panels when ported
-  # - Class: rviz/Selection
-  #   Name: Selection
+  - Class: rviz/Selection
+    Name: Selection
   # - Class: rviz/Tool Properties
   #   Expanded:
   #     - /2D Pose Estimate1
@@ -58,7 +58,7 @@ Visualization Manager:
     # - Class: rviz/Interact
     #   Hide Inactive Objects: true
     - Class: rviz_default_plugins/MoveCamera
-    # - Class: rviz/Select
+    - Class: rviz/Select
     # - Class: rviz/FocusCamera
     # - Class: rviz/Measure
     # - Class: rviz/SetInitialPose

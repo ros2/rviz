@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <QKeyEvent>
+#include "selection_tool.hpp"
 
 #include <OgreRay.h>
 #include <OgreSceneManager.h>
@@ -40,31 +40,32 @@
 #include <OgreTexture.h>
 #include <OgreTextureManager.h>
 
-#include <ros/time.h>
+#include <QKeyEvent>  // NOLINT cpplint cannot handle include order
 
-#include "move_tool.h"
+#include "../move/move_tool.hpp"
 
-#include "rviz/ogre_helpers/camera_base.h"
-#include "rviz/ogre_helpers/qt_ogre_render_window.h"
-#include "rviz/selection/selection_manager.h"
-#include "rviz/visualization_manager.h"
-#include "rviz/render_panel.h"
-#include "rviz/display.h"
-#include "rviz/viewport_mouse_event.h"
-#include "rviz/load_resource.h"
+#include "rviz_rendering/render_window.hpp"
+#include "rviz_common/selection/selection_manager.hpp"
+#include "rviz_common/display_context.hpp"
+#include "rviz_common/render_panel.hpp"
+#include "rviz_common/display.hpp"
+#include "rviz_common/tool.hpp"
+#include "rviz_common/viewport_mouse_event.hpp"
+#include "rviz_common/load_resource.hpp"
 
-#include "selection_tool.h"
-
-namespace rviz
+namespace rviz_default_plugins
+{
+namespace tools
 {
 
+
 SelectionTool::SelectionTool()
-  : Tool()
-  , move_tool_( new MoveTool() )
-  , selecting_( false )
-  , sel_start_x_( 0 )
-  , sel_start_y_( 0 )
-  , moving_( false )
+: Tool(),
+  move_tool_(new MoveTool() ),
+  selecting_(false),
+  sel_start_x_(0),
+  sel_start_y_(0),
+  moving_(false)
 {
   shortcut_key_ = 's';
   access_all_keys_ = true;
@@ -77,12 +78,12 @@ SelectionTool::~SelectionTool()
 
 void SelectionTool::onInitialize()
 {
-  move_tool_->initialize( context_ );
+  move_tool_->initialize(context_);
 }
 
 void SelectionTool::activate()
 {
-  setStatus( "Click and drag to select objects on the screen." );
+  setStatus("Click and drag to select objects on the screen.");
   context_->getSelectionManager()->setTextureSize(512);
   selecting_ = false;
   moving_ = false;
@@ -96,31 +97,28 @@ void SelectionTool::deactivate()
 
 void SelectionTool::update(float wall_dt, float ros_dt)
 {
-  SelectionManager* sel_manager = context_->getSelectionManager();
+  (void) wall_dt;
+  (void) ros_dt;
+  rviz_common::selection::SelectionManagerIface * sel_manager = context_->getSelectionManager();
 
-  if (!selecting_)
-  {
+  if (!selecting_) {
     sel_manager->removeHighlight();
   }
 }
 
-int SelectionTool::processMouseEvent( ViewportMouseEvent& event )
+int SelectionTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
 {
-  SelectionManager* sel_manager = context_->getSelectionManager();
+  rviz_common::selection::SelectionManagerIface * sel_manager = context_->getSelectionManager();
 
   int flags = 0;
 
-  if( event.alt() )
-  {
+  if (event.alt() ) {
     moving_ = true;
     selecting_ = false;
-  }
-  else
-  {
+  } else {
     moving_ = false;
 
-    if( event.leftDown() )
-    {
+    if (event.leftDown() ) {
       selecting_ = true;
 
       sel_start_x_ = event.x;
@@ -128,64 +126,72 @@ int SelectionTool::processMouseEvent( ViewportMouseEvent& event )
     }
   }
 
-  if( selecting_ )
-  {
-    sel_manager->highlight( event.viewport, sel_start_x_, sel_start_y_, event.x, event.y );
+  if (selecting_) {
+    sel_manager->highlight(
+      rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(event.panel->getRenderWindow()),
+      sel_start_x_,
+      sel_start_y_,
+      event.x,
+      event.y);
 
-    if( event.leftUp() )
-    {
-      SelectionManager::SelectType type = SelectionManager::Replace;
+    if (event.leftUp() ) {
+      rviz_common::selection::SelectionManager::SelectType type =
+        rviz_common::selection::SelectionManager::Replace;
 
-      M_Picked selection;
+      rviz_common::selection::M_Picked selection;
 
-      if( event.shift() )
-      {
-        type = SelectionManager::Add;
+      if (event.shift() ) {
+        type = rviz_common::selection::SelectionManager::Add;
+      } else if (event.control() ) {
+        type = rviz_common::selection::SelectionManager::Remove;
       }
-      else if( event.control() )
-      {
-        type = SelectionManager::Remove;
-      }
 
-      sel_manager->select( event.viewport, sel_start_x_, sel_start_y_, event.x, event.y, type );
+      sel_manager->select(
+        rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(event.panel->getRenderWindow()),
+        sel_start_x_,
+        sel_start_y_,
+        event.x,
+        event.y,
+        type);
 
       selecting_ = false;
     }
 
     flags |= Render;
-  }
-  else if( moving_ )
-  {
+  } else if (moving_) {
     sel_manager->removeHighlight();
 
-    flags = move_tool_->processMouseEvent( event );
+    flags = move_tool_->processMouseEvent(event);
 
-    if( event.type == QEvent::MouseButtonRelease )
-    {
+    if (event.type == QEvent::MouseButtonRelease) {
       moving_ = false;
     }
-  }
-  else
-  {
-    sel_manager->highlight( event.viewport, event.x, event.y, event.x, event.y );
+  } else {
+    sel_manager->highlight(
+      rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(event.panel->getRenderWindow()),
+      event.x,
+      event.y,
+      event.x,
+      event.y);
   }
 
   return flags;
 }
 
-int SelectionTool::processKeyEvent( QKeyEvent* event, RenderPanel* panel )
+int SelectionTool::processKeyEvent(QKeyEvent * event, rviz_common::RenderPanel * panel)
 {
-  SelectionManager* sel_manager = context_->getSelectionManager();
+  (void) panel;
+  rviz_common::selection::SelectionManagerIface * sel_manager = context_->getSelectionManager();
 
-  if( event->key() == Qt::Key_F )
-  {
+  if (event->key() == Qt::Key_F) {
     sel_manager->focusOnSelection();
   }
 
   return Render;
 }
 
-} // end namespace rviz
+}  // namespace tools
+}  // namespace rviz_default_plugins
 
-#include <pluginlib/class_list_macros.h>
-PLUGINLIB_EXPORT_CLASS( rviz::SelectionTool, rviz::Tool )
+#include <pluginlib/class_list_macros.hpp>  // NOLINT
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::tools::SelectionTool, rviz_common::Tool)
