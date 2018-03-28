@@ -50,7 +50,6 @@ class MockSelectionManager : public rviz_common::selection::SelectionManagerIfac
 {
 public:
   MOCK_METHOD0(createHandle, rviz_common::selection::CollObjectHandle());
-  MOCK_METHOD3(renderQueueStarted, void(uint8_t, const std::string &, bool &));
 
   MOCK_METHOD0(initialize, void());
   MOCK_METHOD1(setDebugMode, void(bool));
@@ -70,12 +69,6 @@ public:
   MOCK_CONST_METHOD0(getSelection, const M_Picked &());
 
   MOCK_METHOD1(getHandler, SelectionHandler * (CollObjectHandle));
-  MOCK_METHOD5(handleSchemeNotFound, Ogre::Technique *(
-      unsigned short int, // NOLINT: Ogre decides the use of unsigned short
-      const Ogre::String &,
-      Ogre::Material *,
-      unsigned short int, // NOLINT: Ogre decides the use of unsigned short
-      const Ogre::Renderable *));
 
   MOCK_METHOD1(enableInteraction, void(bool));
   MOCK_CONST_METHOD0(getInteractionEnabled, bool());

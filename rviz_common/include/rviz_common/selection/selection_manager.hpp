@@ -56,8 +56,6 @@
 #endif
 
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
-#include <rclcpp/node.hpp>
-#include <sensor_msgs/msg/image.hpp>
 
 #include "./forwards.hpp"
 #include "./selection_handler.hpp"
@@ -84,6 +82,7 @@ class VisualizationManager;
 
 namespace selection
 {
+class SelectionRenderer;
 
 class RVIZ_COMMON_PUBLIC SelectionManager
   : public SelectionManagerIface
@@ -91,7 +90,7 @@ class RVIZ_COMMON_PUBLIC SelectionManager
   Q_OBJECT
 
 public:
-  explicit SelectionManager(VisualizationManager * manager);
+  explicit SelectionManager(DisplayContext * manager);
 
   virtual ~SelectionManager();
 
@@ -180,14 +179,6 @@ public:
     const Ogre::ColourValue & color,
     Ogre::MovableObject * object);
 
-  /// If a material does not support the picking scheme, paint it black.
-  Ogre::Technique * handleSchemeNotFound(
-    unsigned short scheme_index,  // NOLINT: Ogre decides the use of unsigned short
-    const Ogre::String & scheme_name,
-    Ogre::Material * original_material,
-    unsigned short lod_index,  // NOLINT: Ogre decides the use of unsigned short
-    const Ogre::Renderable * rend) override;
-
   /// Create a new unique handle.
   CollObjectHandle createHandle() override;
 
@@ -259,12 +250,6 @@ public:
     unsigned height,
     std::vector<float> & depth_vector) override;
 
-  /// Implementation for Ogre::RenderQueueListener.
-  void renderQueueStarted(
-    uint8_t queueGroupId,
-    const std::string & invocation,
-    bool & skipThisInvocation) override;
-
   rviz_common::properties::PropertyTreeModel * getPropertyModel() override;
 
 private Q_SLOTS:
@@ -323,9 +308,7 @@ private:
 
   void setDepthTextureSize(unsigned width, unsigned height);
 
-  void publishDebugImage(const Ogre::PixelBox & pixel_box, const std::string & label);
-
-  VisualizationManager * vis_manager_;
+  DisplayContext * context_;
 
   std::recursive_mutex global_mutex_;
 
@@ -368,24 +351,11 @@ private:
 
   bool interaction_enabled_;
 
-  bool debug_mode_;
-
-  Ogre::MaterialPtr fallback_pick_material_;
-  Ogre::Technique * fallback_pick_technique_;
-  Ogre::Technique * fallback_black_technique_;
-  Ogre::Technique * fallback_depth_technique_;
-  Ogre::Technique * fallback_pick_cull_technique_;
-  Ogre::Technique * fallback_black_cull_technique_;
-  Ogre::Technique * fallback_depth_cull_technique_;
-
   uint32_t texture_size_;
 
   rviz_common::properties::PropertyTreeModel * property_model_;
 
-  rclcpp::Node debug_publisher_node_;
-  typedef std::map<std::string, std::shared_ptr<rclcpp::Publisher<sensor_msgs::msg::Image>>>
-    PublisherMap;
-  PublisherMap debug_publishers_;
+  std::unique_ptr<rviz_common::selection::SelectionRenderer> renderer_;
 };
 
 }  // namespace selection

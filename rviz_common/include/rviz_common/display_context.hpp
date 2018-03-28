@@ -200,6 +200,21 @@ public:
   std::shared_ptr<rclcpp::Clock>
   getClock() = 0;
 
+  // TODO(Martin-Idel-SI): Needed in SelectionManager: Evaluate alternatives
+  virtual
+  void
+  lockRender() = 0;
+
+  // TODO(Martin-Idel-SI): Needed in SelectionManager: Evaluate alternatives
+  virtual
+  void
+  unlockRender() = 0;
+
+  // TODO(Martin-Idel-SI): Needed in SelectionManager: Evaluate alternatives (maybe unnecessary)
+  virtual
+  RenderPanel *
+  getRenderPanel() const = 0;
+
 public Q_SLOTS:
   /// Queue a render.
   /**

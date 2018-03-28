@@ -188,6 +188,7 @@ set(rviz_common_source_files
   src/rviz_common/selection_panel.cpp
   src/rviz_common/selection/selection_handler.cpp
   src/rviz_common/selection/selection_manager.cpp
+  src/rviz_common/selection/selection_renderer.cpp
   src/rviz_common/splash_screen.cpp
   # src/rviz_common/time_panel.cpp
   src/rviz_common/tool_manager.cpp

@@ -40,19 +40,6 @@
 #include <utility>
 #include <vector>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#endif
-
-#include <OgreMaterialManager.h>
-#include <OgreRenderQueueListener.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
-
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "./forwards.hpp"
@@ -76,15 +63,13 @@ namespace properties
 class PropertyTreeModel;
 }
 
-class VisualizationManager;
+class DisplayContext;
 
 namespace selection
 {
 
 class RVIZ_COMMON_PUBLIC SelectionManagerIface
-  : public QObject,
-  public Ogre::MaterialManager::Listener,
-  public Ogre::RenderQueueListener
+  : public QObject
 {
   Q_OBJECT
 
@@ -151,14 +136,6 @@ public:
   virtual const M_Picked & getSelection() const = 0;
 
   virtual SelectionHandler * getHandler(CollObjectHandle obj) = 0;
-
-  /// If a material does not support the picking scheme, paint it black.
-  Ogre::Technique * handleSchemeNotFound(
-    unsigned short scheme_index,  // NOLINT: Ogre decides the use of unsigned short
-    const Ogre::String & scheme_name,
-    Ogre::Material * original_material,
-    unsigned short lod_index,  // NOLINT: Ogre decides the use of unsigned short
-    const Ogre::Renderable * rend) override = 0;
 
   /// Create a new unique handle.
   virtual CollObjectHandle createHandle() = 0;
@@ -231,11 +208,6 @@ public:
     unsigned height,
     std::vector<float> & depth_vector) = 0;
 
-  /// Implementation for Ogre::RenderQueueListener.
-  void renderQueueStarted(
-    uint8_t queueGroupId,
-    const std::string & invocation,
-    bool & skipThisInvocation) override = 0;
 
   virtual rviz_common::properties::PropertyTreeModel * getPropertyModel() = 0;
 };

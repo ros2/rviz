@@ -185,7 +185,7 @@ public:
   Ogre::SceneManager * getSceneManager() const override;
 
   /// Return the main RenderPanel.
-  RenderPanel * getRenderPanel() const;
+  RenderPanel * getRenderPanel() const override;
 
   /// Return the wall clock time, in seconds since 1970.
   double getWallClock();
@@ -227,10 +227,10 @@ public:
   ViewManager * getViewManager() const override;
 
   /// Lock a mutex to delay calls to Ogre::Root::renderOneFrame().
-  void lockRender();
+  void lockRender() override;
 
   /// Unlock a mutex, allowing calls to Ogre::Root::renderOneFrame().
-  void unlockRender();
+  void unlockRender() override;
 
   /// Queues a render.
   /**
