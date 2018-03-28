@@ -44,7 +44,6 @@
 
 #include "../move/move_tool.hpp"
 
-#include "rviz_rendering/render_window.hpp"
 #include "rviz_common/selection/selection_manager.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/render_panel.hpp"
@@ -128,7 +127,7 @@ int SelectionTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
 
   if (selecting_) {
     sel_manager->highlight(
-      rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(event.panel->getRenderWindow()),
+      event.panel->getRenderWindow(),
       sel_start_x_,
       sel_start_y_,
       event.x,
@@ -147,7 +146,7 @@ int SelectionTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
       }
 
       sel_manager->select(
-        rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(event.panel->getRenderWindow()),
+        event.panel->getRenderWindow(),
         sel_start_x_,
         sel_start_y_,
         event.x,
@@ -168,7 +167,7 @@ int SelectionTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
     }
   } else {
     sel_manager->highlight(
-      rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(event.panel->getRenderWindow()),
+      event.panel->getRenderWindow(),
       event.x,
       event.y,
       event.x,

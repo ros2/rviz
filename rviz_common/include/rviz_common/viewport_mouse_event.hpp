@@ -88,14 +88,6 @@ public:
   bool rightDown();
 
   RenderPanel * panel;
-  // TODO(wjwwood): this object did have a Ogre::Viewport as a member, but
-  //                I think this needs to be encapsulated into some rviz_rendering
-  //                construct.
-  //                It is fairly commonly used, as an argument to get a 3D point
-  //                based on a mouse event, but I think that can be moved into
-  //                a function on the RenderPanel which can in turn ask a
-  //                rviz_rendering class to get the info.
-  // Ogre::Viewport * viewport;
   QEvent::Type type;
   int x;
   int y;

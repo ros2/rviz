@@ -58,10 +58,10 @@ public:
 
   MOCK_METHOD2(addObject, void(CollObjectHandle, SelectionHandler *));
   MOCK_METHOD1(removeObject, void(rviz_common::selection::CollObjectHandle));
-  MOCK_METHOD5(highlight, void(Ogre::Viewport *, int, int, int, int));
+  MOCK_METHOD5(highlight, void(rviz_rendering::RenderWindow *, int, int, int, int));
   MOCK_METHOD0(removeHighlight, void());
-  MOCK_METHOD6(select, void(Ogre::Viewport *, int, int, int, int, SelectType));
-  MOCK_METHOD7(pick, void(Ogre::Viewport *, int, int, int, int, M_Picked &, bool));
+  MOCK_METHOD6(select, void(rviz_rendering::RenderWindow *, int, int, int, int, SelectType));
+  MOCK_METHOD7(pick, void(rviz_rendering::RenderWindow *, int, int, int, int, M_Picked &, bool));
 
   MOCK_METHOD0(update, void());
   MOCK_METHOD1(setSelection, void(const M_Picked &));

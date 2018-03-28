@@ -1315,6 +1315,32 @@ void SelectionManager::updateProperties()
   }
 }
 
+void
+SelectionManager::highlight(rviz_rendering::RenderWindow * window, int x1, int y1, int x2, int y2)
+{
+  Ogre::Viewport * viewport = rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(window);
+  highlight(viewport, x1, y1, x2, y2);
+}
+
+void SelectionManager::select(
+  rviz_rendering::RenderWindow * window, int x1, int y1, int x2, int y2, SelectType type)
+{
+  Ogre::Viewport * viewport = rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(window);
+  select(viewport, x1, y1, x2, y2, type);
+}
+
+void SelectionManager::pick(
+  rviz_rendering::RenderWindow * window,
+  int x1,
+  int y1,
+  int x2,
+  int y2,
+  M_Picked & results,
+  bool single_render_pass)
+{
+  Ogre::Viewport * viewport = rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(window);
+  pick(viewport, x1, y1, x2, y2, results, single_render_pass);
+}
 
 }  // namespace selection
 }  // namespace rviz_common

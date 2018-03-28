@@ -113,14 +113,21 @@ public:
 
   /// Control the highlight box being displayed while selecting.
   void
-  highlight(Ogre::Viewport * viewport, int x1, int y1, int x2, int y2) override;
+  highlight(rviz_rendering::RenderWindow * window, int x1, int y1, int x2, int y2) override;
 
   void
   removeHighlight() override;
 
   /// Select all objects in bounding box.
   void
-  select(Ogre::Viewport * viewport, int x1, int y1, int x2, int y2, SelectType type) override;
+  select(
+    rviz_rendering::RenderWindow * window,
+    int x1,
+    int y1,
+    int x2,
+    int y2,
+    SelectType type) override;
+
 
   /**
    * \return handles of all objects in the given bounding box
@@ -129,13 +136,14 @@ public:
    */
   void
   pick(
-    Ogre::Viewport * viewport,
+    rviz_rendering::RenderWindow * window,
     int x1,
     int y1,
     int x2,
     int y2,
     M_Picked & results,
     bool single_render_pass = false) override;
+
 
   void update() override;
 
@@ -264,6 +272,20 @@ private Q_SLOTS:
   void updateProperties();
 
 private:
+  void highlight(Ogre::Viewport * viewport, int x1, int y1, int x2, int y2);
+
+  void select(Ogre::Viewport * viewport, int x1, int y1, int x2, int y2, SelectType type);
+
+  void
+  pick(
+    Ogre::Viewport * viewport,
+    int x1,
+    int y1,
+    int x2,
+    int y2,
+    M_Picked & results,
+    bool single_render_pass = false);
+
   void selectionAdded(const M_Picked & added);
 
   void selectionRemoved(const M_Picked & removed);

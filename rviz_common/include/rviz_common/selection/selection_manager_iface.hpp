@@ -61,19 +61,19 @@
 
 namespace Ogre
 {
-
 class Rectangle2D;
-
 }  // namespace Ogre
+
+namespace rviz_rendering
+{
+class RenderWindow;
+}  // namespace rviz_rendering
 
 namespace rviz_common
 {
-
 namespace properties
 {
-
 class PropertyTreeModel;
-
 }
 
 class VisualizationManager;
@@ -114,14 +114,15 @@ public:
 
   /// Control the highlight box being displayed while selecting.
   virtual void
-  highlight(Ogre::Viewport * viewport, int x1, int y1, int x2, int y2) = 0;
+  highlight(rviz_rendering::RenderWindow * window, int x1, int y1, int x2, int y2) = 0;
 
   virtual void
   removeHighlight() = 0;
 
   /// Select all objects in bounding box.
   virtual void
-  select(Ogre::Viewport * viewport, int x1, int y1, int x2, int y2, SelectType type) = 0;
+  select(
+    rviz_rendering::RenderWindow * window, int x1, int y1, int x2, int y2, SelectType type) = 0;
 
   /**
    * \return handles of all objects in the given bounding box
@@ -130,7 +131,7 @@ public:
    */
   virtual void
   pick(
-    Ogre::Viewport * viewport,
+    rviz_rendering::RenderWindow * window,
     int x1,
     int y1,
     int x2,
