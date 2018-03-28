@@ -46,14 +46,48 @@
 # pragma GCC diagnostic pop
 #endif
 
-#include <rclcpp/node.hpp>
-#include <sensor_msgs/msg/image.hpp>
 #include <src/rviz_common/visualization_manager.hpp>
 
 namespace rviz_common
 {
 namespace selection
 {
+
+struct SelectionRectangle
+{
+  SelectionRectangle(Ogre::Viewport * viewport, int x1, int x2, int y1, int y2)
+  : viewport_(viewport), x1_(x1), x2_(x2), y1_(y1), y2_(y2)
+  {}
+
+  ~SelectionRectangle() = default;
+
+  Ogre::Viewport * viewport_;
+  int x1_;
+  int x2_;
+  int y1_;
+  int y2_;
+};
+
+struct RenderTexture
+{
+  RenderTexture(
+    const Ogre::TexturePtr & tex,
+    unsigned int texture_width,
+    unsigned int texture_height,
+    const std::string & material_scheme)
+  : tex_(tex),
+    texture_width_(texture_width),
+    texture_height_(texture_height),
+    material_scheme_(material_scheme)
+  {}
+
+  ~RenderTexture() {}
+
+  Ogre::TexturePtr tex_;
+  unsigned int texture_width_;
+  unsigned int texture_height_;
+  std::string material_scheme_;
+};
 
 class SelectionRenderer
   : public Ogre::MaterialManager::Listener, public Ogre::RenderQueueListener
@@ -68,16 +102,9 @@ public:
   bool render(
     rviz_common::DisplayContext * vis_manager,
     Ogre::Camera * camera,
-    Ogre::Viewport * viewport,
-    Ogre::TexturePtr tex,
-    int x1,
-    int y1,
-    int x2,
-    int y2,
-    Ogre::PixelBox & dst_box,
-    std::string material_scheme,
-    unsigned texture_width,
-    unsigned texture_height);
+    SelectionRectangle rectangle,
+    RenderTexture texture,
+    Ogre::PixelBox & dst_box);
 
   /// Implementation for Ogre::RenderQueueListener.
   void renderQueueStarted(
@@ -97,7 +124,7 @@ public:
   void setDebugMode(bool debug);
 
 private:
-  void publishDebugImage(const Ogre::PixelBox & pixel_box, const std::string & label);
+  // void publishDebugImage(const Ogre::PixelBox & pixel_box, const std::string & label);
 
   Ogre::MaterialPtr fallback_pick_material_;
   Ogre::Technique * fallback_pick_technique_;
@@ -108,10 +135,6 @@ private:
   Ogre::Technique * fallback_depth_cull_technique_;
 
   bool debug_mode_;
-  rclcpp::Node debug_publisher_node_;
-  typedef std::map<std::string, std::shared_ptr<rclcpp::Publisher<sensor_msgs::msg::Image>>>
-    PublisherMap;
-  PublisherMap debug_publishers_;
 };
 
 }  // namespace selection

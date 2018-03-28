@@ -90,6 +90,8 @@ class RVIZ_COMMON_PUBLIC SelectionManager
   Q_OBJECT
 
 public:
+  SelectionManager(DisplayContext * manager, std::shared_ptr<SelectionRenderer> renderer);
+
   explicit SelectionManager(DisplayContext * manager);
 
   virtual ~SelectionManager();
@@ -252,15 +254,16 @@ public:
 
   rviz_common::properties::PropertyTreeModel * getPropertyModel() override;
 
-private Q_SLOTS:
-  /// Call updateProperties() on all SelectionHandlers in the current selection.
-  void updateProperties();
-
-private:
+  // TODO(Martin-Idel-SI): This should be private. The best way is to probably expose
+  // SelectionRectangle
   void highlight(Ogre::Viewport * viewport, int x1, int y1, int x2, int y2);
 
+  // TODO(Martin-Idel-SI): This should be private. The best way is to probably expose
+  // SelectionRectangle
   void select(Ogre::Viewport * viewport, int x1, int y1, int x2, int y2, SelectType type);
 
+  // TODO(Martin-Idel-SI): This should be private. The best way is to probably expose
+  // SelectionRectangle
   void
   pick(
     Ogre::Viewport * viewport,
@@ -271,6 +274,11 @@ private:
     M_Picked & results,
     bool single_render_pass = false);
 
+private Q_SLOTS:
+  /// Call updateProperties() on all SelectionHandlers in the current selection.
+  void updateProperties();
+
+private:
   void selectionAdded(const M_Picked & added);
 
   void selectionRemoved(const M_Picked & removed);
@@ -307,6 +315,8 @@ private:
   void unpackColors(const Ogre::PixelBox & box, V_CollObject & pixels);
 
   void setDepthTextureSize(unsigned width, unsigned height);
+
+  void setUpSlots();
 
   DisplayContext * context_;
 
@@ -355,7 +365,7 @@ private:
 
   rviz_common::properties::PropertyTreeModel * property_model_;
 
-  std::unique_ptr<rviz_common::selection::SelectionRenderer> renderer_;
+  std::shared_ptr<rviz_common::selection::SelectionRenderer> renderer_;
 };
 
 }  // namespace selection

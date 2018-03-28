@@ -31,7 +31,6 @@
 #include "rviz_common/selection/selection_manager.hpp"
 
 #include <algorithm>
-#include <cassert>
 #include <memory>
 #include <string>
 #include <utility>
@@ -43,22 +42,14 @@
 #endif
 
 #include <OgreCamera.h>
-// #include <OgreEntity.h>
 #include <OgreHardwarePixelBuffer.h>
-// #include <OgreManualObject.h>
-// #include <OgreMaterialManager.h>
 #include <OgreRectangle2D.h>
-// #include <OgreRenderSystem.h>
 #include <OgreRenderTexture.h>
-// #include <OgreRoot.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
-// #include <OgreSharedPtr.h>
-// #include <OgreSubEntity.h>
 #include <OgreTechnique.h>
 #include <OgreTextureManager.h>
 #include <OgreViewport.h>
-// #include <OgreWireBoundingBox.h>
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop
@@ -71,14 +62,9 @@
 
 #include "rviz_common/logging.hpp"
 
-// #include "../ogre_helpers/arrow.hpp"
-// #include "../ogre_helpers/axes.hpp"
-// #include "../ogre_helpers/qt_ogre_render_window.hpp"
-// #include "../ogre_helpers/shape.hpp"
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/properties/property_tree_model.hpp"
 #include "rviz_common/render_panel.hpp"
-// #include "../view_controller.hpp"
 #include "rviz_common/view_manager.hpp"
 #include "rviz_common/display_context.hpp"
 #include "selection_renderer.hpp"
@@ -92,6 +78,23 @@ namespace selection
 using rviz_common::properties::Property;
 using rviz_common::properties::PropertyTreeModel;
 
+SelectionManager::SelectionManager(
+  DisplayContext * context, std::shared_ptr<SelectionRenderer> renderer)
+: context_(context),
+  highlight_enabled_(false),
+  uid_counter_(0),
+  interaction_enabled_(false),
+  property_model_(new PropertyTreeModel(new Property("root"))),
+  renderer_(renderer)
+{
+  // TODO(Martin-Idel-SI): I would like to just use setUpSlots(), but timer needs a QThread,
+  // which is not easily available in tests
+  for (uint32_t i = 0; i < kNumRenderTextures_; ++i) {
+    pixel_boxes_[i].data = 0;
+  }
+  depth_pixel_box_.data = 0;
+}
+
 SelectionManager::SelectionManager(DisplayContext * context)
 : context_(context),
   highlight_enabled_(false),
@@ -99,6 +102,11 @@ SelectionManager::SelectionManager(DisplayContext * context)
   interaction_enabled_(false),
   property_model_(new PropertyTreeModel(new Property("root"))),
   renderer_(std::make_unique<rviz_common::selection::SelectionRenderer>())
+{
+  setUpSlots();
+}
+
+void SelectionManager::setUpSlots()
 {
   for (uint32_t i = 0; i < kNumRenderTextures_; ++i) {
     pixel_boxes_[i].data = 0;
@@ -116,7 +124,7 @@ SelectionManager::~SelectionManager()
 
   setSelection(M_Picked());
 
-  highlight_node_->getParentSceneNode()->removeAndDestroyChild(highlight_node_->getName());
+  highlight_node_->getParentSceneNode()->removeAndDestroyChild(highlight_node_);
   delete highlight_rectangle_;
 
   for (uint32_t i = 0; i < kNumRenderTextures_; ++i) {
@@ -619,13 +627,9 @@ bool SelectionManager::render(
   return renderer_->render(
     context_,
     camera_,
-    viewport,
-    tex,
-    x1, y1, x2, y2,
-    dst_box,
-    material_scheme,
-    texture_width,
-    texture_height);
+    rviz_common::selection::SelectionRectangle(viewport, x1, x2, y1, y2),
+    rviz_common::selection::RenderTexture(tex, texture_width, texture_height, material_scheme),
+    dst_box);
 }
 
 PropertyTreeModel * SelectionManager::getPropertyModel()

@@ -78,24 +78,51 @@ namespace rviz_common
 namespace selection
 {
 SelectionRenderer::SelectionRenderer()
-: debug_mode_(false),
-  debug_publisher_node_("publisher_node")
+: debug_mode_(false)
 {}
 
+void SelectionRenderer::initialize()
+{
+  fallback_pick_material_ = Ogre::MaterialManager::getSingleton().getByName(
+    "rviz/DefaultPickAndDepth");
+  // TODO(wjwwood): see why this fails to load
+  if (fallback_pick_material_) {
+    fallback_pick_material_->load();
+
+    fallback_pick_cull_technique_ = fallback_pick_material_->getTechnique("PickCull");
+    fallback_black_cull_technique_ = fallback_pick_material_->getTechnique("BlackCull");
+    fallback_depth_cull_technique_ = fallback_pick_material_->getTechnique("DepthCull");
+
+    fallback_pick_technique_ = fallback_pick_material_->getTechnique("Pick");
+    fallback_black_technique_ = fallback_pick_material_->getTechnique("Black");
+    fallback_depth_technique_ = fallback_pick_material_->getTechnique("Depth");
+  } else {
+    RVIZ_COMMON_LOG_ERROR("failed to load material 'rviz/DefaultPickAndDepth'");
+  }
+}
+
+// TODO(Martin-Idel-SI): It seems that rendering cannot return false (I deleted the only "false"
+// path because it was irrelevant). In that case, I'd much rather not have an output parameter.
 bool SelectionRenderer::render(
   rviz_common::DisplayContext * vis_manager,
   Ogre::Camera * camera,
-  Ogre::Viewport * viewport,
-  Ogre::TexturePtr tex,
-  int x1,
-  int y1,
-  int x2,
-  int y2,
-  Ogre::PixelBox & dst_box,
-  std::string material_scheme,
-  unsigned texture_width,
-  unsigned texture_height)
+  SelectionRectangle rectangle,
+  RenderTexture texture,
+  Ogre::PixelBox & dst_box)
 {
+  // TODO(Martin-Idel-SI): This is just a quick fix to be able to write tests.
+  // Refactoring necessary
+  Ogre::Viewport * viewport = rectangle.viewport_;
+  int x1 = rectangle.x1_;
+  int x2 = rectangle.x2_;
+  int y1 = rectangle.y1_;
+  int y2 = rectangle.y2_;
+
+  Ogre::TexturePtr tex = texture.tex_;
+  unsigned int texture_width = texture.texture_width_;
+  unsigned int texture_height = texture.texture_height_;
+  std::string material_scheme = texture.material_scheme_;
+
   vis_manager->lockRender();
 
   if (x1 > x2) {std::swap(x1, x2);}
@@ -222,67 +249,14 @@ bool SelectionRenderer::render(
 
   vis_manager->unlockRender();
 
-  // TODO(Martin-Idel-SI): With better tests, this may be irrelevant
   if (debug_mode_) {
-    publishDebugImage(dst_box, material_scheme);
+    Ogre::Image image;
+    image.loadDynamicImage(static_cast<uint8_t *>(dst_box.data),
+      dst_box.getWidth(), dst_box.getHeight(), 1, format);
+    image.save("select" + material_scheme + ".png");
   }
 
   return true;
-}
-
-// TODO(Martin-Idel-SI): With better tests, this may be irrelevant
-void SelectionRenderer::publishDebugImage(
-  const Ogre::PixelBox & pixel_box,
-  const std::string & label)
-{
-  std::shared_ptr<rclcpp::Publisher<sensor_msgs::msg::Image>> pub;
-  PublisherMap::const_iterator iter = debug_publishers_.find(label);
-  if (iter == debug_publishers_.end()) {
-    pub = debug_publisher_node_.create_publisher<sensor_msgs::msg::Image>("rviz_debug/" + label, 2);
-    debug_publishers_[label] = pub;
-  } else {
-    pub = iter->second;
-  }
-
-  sensor_msgs::msg::Image msg;
-  msg.header.stamp = rclcpp::Clock().now();
-  msg.width = pixel_box.getWidth();
-  msg.height = pixel_box.getHeight();
-  msg.encoding = sensor_msgs::image_encodings::RGB8;
-  msg.is_bigendian = false;
-  msg.step = msg.width * 3;
-  int dest_byte_count = msg.width * msg.height * 3;
-  msg.data.resize(dest_byte_count);
-  int dest_index = 0;
-  uint8_t * source_ptr = reinterpret_cast<uint8_t *>(pixel_box.data);
-  int pre_pixel_padding = 0;
-  int post_pixel_padding = 0;
-  switch (pixel_box.format) {
-    case Ogre::PF_A8R8G8B8:
-    case Ogre::PF_X8R8G8B8:
-      post_pixel_padding = 1;
-      break;
-    case Ogre::PF_R8G8B8A8:
-      pre_pixel_padding = 1;
-      break;
-    default:
-      RVIZ_COMMON_LOG_ERROR("SelectionManager::publishDebugImage(): Incompatible pixel format " +
-        std::to_string(pixel_box.format));
-      return;
-  }
-  uint8_t r, g, b;
-  while (dest_index < dest_byte_count) {
-    source_ptr += pre_pixel_padding;
-    b = *source_ptr++;
-    g = *source_ptr++;
-    r = *source_ptr++;
-    source_ptr += post_pixel_padding;
-    msg.data[dest_index++] = r;
-    msg.data[dest_index++] = g;
-    msg.data[dest_index++] = b;
-  }
-
-  pub->publish(msg);
 }
 
 void SelectionRenderer::renderQueueStarted(
@@ -346,26 +320,6 @@ Ogre::Technique * SelectionRenderer::handleSchemeNotFound(
     } else {
       return NULL;
     }
-  }
-}
-
-void SelectionRenderer::initialize()
-{
-  fallback_pick_material_ = Ogre::MaterialManager::getSingleton().getByName(
-    "rviz/DefaultPickAndDepth");
-  // TODO(wjwwood): see why this fails to load
-  if (fallback_pick_material_) {
-    fallback_pick_material_->load();
-
-    fallback_pick_cull_technique_ = fallback_pick_material_->getTechnique("PickCull");
-    fallback_black_cull_technique_ = fallback_pick_material_->getTechnique("BlackCull");
-    fallback_depth_cull_technique_ = fallback_pick_material_->getTechnique("DepthCull");
-
-    fallback_pick_technique_ = fallback_pick_material_->getTechnique("Pick");
-    fallback_black_technique_ = fallback_pick_material_->getTechnique("Black");
-    fallback_depth_technique_ = fallback_pick_material_->getTechnique("Depth");
-  } else {
-    RVIZ_COMMON_LOG_ERROR("failed to load material 'rviz/DefaultPickAndDepth'");
   }
 }
 
