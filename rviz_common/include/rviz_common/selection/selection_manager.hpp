@@ -56,17 +56,12 @@
 #endif
 
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
+#include <rclcpp/node.hpp>
+#include <sensor_msgs/msg/image.hpp>
 
 #include "./forwards.hpp"
 #include "./selection_handler.hpp"
 #include "rviz_common/visibility_control.hpp"
-
-namespace rclcpp
-{
-
-class PublisherBase;
-
-}
 
 namespace Ogre
 {
@@ -365,7 +360,9 @@ private:
 
   rviz_common::properties::PropertyTreeModel * property_model_;
 
-  typedef std::map<std::string, std::shared_ptr<rclcpp::PublisherBase>> PublisherMap;
+  rclcpp::Node debug_publisher_node_;
+  typedef std::map<std::string, std::shared_ptr<rclcpp::Publisher<sensor_msgs::msg::Image>>>
+    PublisherMap;
   PublisherMap debug_publishers_;
 };
 

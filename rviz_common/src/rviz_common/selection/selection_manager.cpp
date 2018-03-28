@@ -32,6 +32,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
@@ -67,6 +68,7 @@
 
 #include <sensor_msgs/image_encodings.hpp>
 #include <sensor_msgs/msg/image.hpp>
+#include "rclcpp/publisher.hpp"
 
 #include "rviz_rendering/custom_parameter_indices.hpp"
 #include "rviz_rendering/render_window.hpp"
@@ -98,8 +100,9 @@ SelectionManager::SelectionManager(VisualizationManager * manager)
   highlight_enabled_(false),
   uid_counter_(0),
   interaction_enabled_(false),
-  debug_mode_(false),
-  property_model_(new PropertyTreeModel(new Property("root")))
+  debug_mode_(true),
+  property_model_(new PropertyTreeModel(new Property("root"))),
+  debug_publisher_node_("publisher_node")
 {
   for (uint32_t i = 0; i < kNumRenderTextures_; ++i) {
     pixel_boxes_[i].data = 0;
@@ -423,7 +426,7 @@ void SelectionManager::setTextureSize(unsigned size)
       // create new texture
       render_textures_[pass] = Ogre::TextureManager::getSingleton().createManual(tex_name,
           Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D, size, size, 0,
-          Ogre::PF_R8G8B8, Ogre::TU_STATIC | Ogre::TU_RENDERTARGET);
+          Ogre::PF_R8G8B8A8, Ogre::TU_STATIC | Ogre::TU_RENDERTARGET);
 
       Ogre::RenderTexture * render_texture = render_textures_[pass]->getBuffer()->getRenderTarget();
       render_texture->setAutoUpdated(false);
@@ -652,12 +655,6 @@ bool SelectionManager::render(
   if (x2 == x1) {x2++;}
   if (y2 == y1) {y2++;}
 
-  if (x2 == x1 || y2 == y1) {
-    RVIZ_COMMON_LOG_WARNING("SelectionManager::render(): not rendering 0 size area.");
-    vis_manager_->unlockRender();
-    return false;
-  }
-
   unsigned w = x2 - x1;
   unsigned h = y2 - y1;
 
@@ -769,35 +766,30 @@ bool SelectionManager::render(
 
   vis_manager_->unlockRender();
 
+  // TODO(Martin-Idel-SI): With better tests, this may be irrelevant
   if (debug_mode_) {
-    // TODO(wjwwood): determine if this is still needed.
-#if 0
     publishDebugImage(dst_box, material_scheme);
-#endif
-    RVIZ_COMMON_LOG_ERROR("publishDebugImage not implemented");
   }
 
   return true;
 }
 
-// TODO(wjwwood): determine if this is still needed.
-#if 0
+// TODO(Martin-Idel-SI): With better tests, this may be irrelevant
 void SelectionManager::publishDebugImage(
   const Ogre::PixelBox & pixel_box,
   const std::string & label)
 {
-  ros::Publisher pub;
-  ros::NodeHandle nh;
+  std::shared_ptr<rclcpp::Publisher<sensor_msgs::msg::Image>> pub;
   PublisherMap::const_iterator iter = debug_publishers_.find(label);
   if (iter == debug_publishers_.end()) {
-    pub = nh.advertise<sensor_msgs::Image>("/rviz_debug/" + label, 2);
+    pub = debug_publisher_node_.create_publisher<sensor_msgs::msg::Image>("rviz_debug/" + label, 2);
     debug_publishers_[label] = pub;
   } else {
     pub = iter->second;
   }
 
-  sensor_msgs::Image msg;
-  msg.header.stamp = ros::Time::now();
+  sensor_msgs::msg::Image msg;
+  msg.header.stamp = rclcpp::Clock().now();
   msg.width = pixel_box.getWidth();
   msg.height = pixel_box.getHeight();
   msg.encoding = sensor_msgs::image_encodings::RGB8;
@@ -818,8 +810,8 @@ void SelectionManager::publishDebugImage(
       pre_pixel_padding = 1;
       break;
     default:
-      ROS_ERROR("SelectionManager::publishDebugImage(): Incompatible pixel format [%d]",
-        pixel_box.format);
+      RVIZ_COMMON_LOG_ERROR("SelectionManager::publishDebugImage(): Incompatible pixel format " +
+        std::to_string(pixel_box.format));
       return;
   }
   uint8_t r, g, b;
@@ -834,9 +826,8 @@ void SelectionManager::publishDebugImage(
     msg.data[dest_index++] = b;
   }
 
-  pub.publish(msg);
+  pub->publish(msg);
 }
-#endif
 
 void SelectionManager::renderQueueStarted(
   uint8_t queueGroupId,

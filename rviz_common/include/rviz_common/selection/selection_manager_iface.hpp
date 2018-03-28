@@ -59,13 +59,6 @@
 #include "./selection_handler.hpp"
 #include "rviz_common/visibility_control.hpp"
 
-namespace rclcpp
-{
-
-class PublisherBase;
-
-}
-
 namespace Ogre
 {
 
