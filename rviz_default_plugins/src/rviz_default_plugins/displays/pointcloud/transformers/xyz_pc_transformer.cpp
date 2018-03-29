@@ -85,7 +85,3 @@ bool XYZPCTransformer::transform(
 }
 
 }  // end namespace rviz_default_plugins
-
-#include <pluginlib/class_list_macros.hpp>  // NOLINT
-PLUGINLIB_EXPORT_CLASS(
-  rviz_default_plugins::XYZPCTransformer, rviz_default_plugins::PointCloudTransformer)
