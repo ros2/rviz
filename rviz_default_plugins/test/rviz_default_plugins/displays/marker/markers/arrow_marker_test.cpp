@@ -57,30 +57,6 @@
 
 using namespace ::testing;  // NOLINT
 
-void assertArrowIsNotVisible()
-{
-  auto arrow_head = rviz_default_plugins::findEntityByMeshName(
-    MarkersTestFixture::scene_manager_->getRootSceneNode(), "rviz_cone" ".mesh");
-  auto arrow_shaft = rviz_default_plugins::findEntityByMeshName(
-    MarkersTestFixture::scene_manager_->getRootSceneNode(), "rviz_cylinder.mesh");
-
-  ASSERT_TRUE(!arrow_head->isVisible() && !arrow_shaft->isVisible());
-}
-
-void assertArrowWithTransform(
-  Ogre::SceneManager * scene_manager,
-  Ogre::Vector3 position,
-  Ogre::Vector3 scale,
-  Ogre::Quaternion orientation)
-{
-  auto arrow_scene_node = rviz_default_plugins::findOneArrow(scene_manager->getRootSceneNode());
-  ASSERT_TRUE(arrow_scene_node);
-  EXPECT_VECTOR3_EQ(position, arrow_scene_node->getPosition());
-  // Have to mangle the scale because of the default orientation of the cylinders (see arrow.cpp).
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(scale.z, scale.x, scale.y), arrow_scene_node->getScale());
-  EXPECT_QUATERNION_EQ(orientation, arrow_scene_node->getOrientation());
-}
-
 // default orientation is set to (0.5, -0.5, -0.5, -0.5) by arrow marker and arrow.
 const auto default_arrow_orientation_ = Ogre::Quaternion(0.5f, -0.5f, -0.5f, -0.5f);
 const auto default_arrow_position_ = Ogre::Vector3(0, 0, 0);
@@ -92,7 +68,7 @@ TEST_F(MarkersTestFixture, setMessage_makes_the_scene_node_invisible_if_invalid_
 
   marker_->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::ARROW));
 
-  assertArrowIsNotVisible();
+  EXPECT_FALSE(rviz_default_plugins::arrowIsVisible(scene_manager_));
 }
 
 TEST_F(MarkersTestFixture, incomplete_message_sets_scene_node_to_not_visible) {
@@ -103,7 +79,7 @@ TEST_F(MarkersTestFixture, incomplete_message_sets_scene_node_to_not_visible) {
 
   marker_->setMessage(incomplete_message);
 
-  assertArrowIsNotVisible();
+  EXPECT_FALSE(rviz_default_plugins::arrowIsVisible(scene_manager_));
 }
 
 TEST_F(MarkersTestFixture, setMessage_sets_positions_and_orientations_correctly) {
@@ -112,10 +88,10 @@ TEST_F(MarkersTestFixture, setMessage_sets_positions_and_orientations_correctly)
 
   marker_->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::ARROW));
 
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(0, 1, 0), marker_->getPosition());
-  EXPECT_QUATERNION_EQ(Ogre::Quaternion(0, 0, 1, 0), marker_->getOrientation());
+  EXPECT_THAT(marker_->getPosition(), Vector3Eq(Ogre::Vector3(0, 1, 0)));
+  EXPECT_THAT(marker_->getOrientation(), QuaternionEq(Ogre::Quaternion(0, 0, 1, 0)));
 
-  assertArrowWithTransform(
+  rviz_default_plugins::assertArrowWithTransform(
     scene_manager_, default_arrow_position_, default_arrow_scale_, default_arrow_orientation_);
 }
 
@@ -136,10 +112,10 @@ TEST_F(MarkersTestFixture, setMessage_sets_positions_and_orientations_from_point
     Ogre::Quaternion(Ogre::Degree(-90), Ogre::Vector3::UNIT_X);
   Ogre::Vector3 expected_arrow_scale(1, 1, 1);
 
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(0, 1, 0), marker_->getPosition());
-  EXPECT_QUATERNION_EQ(Ogre::Quaternion(0, 0, 1, 0), marker_->getOrientation());
+  EXPECT_THAT(marker_->getPosition(), Vector3Eq(Ogre::Vector3(0, 1, 0)));
+  EXPECT_THAT(marker_->getOrientation(), QuaternionEq(Ogre::Quaternion(0, 0, 1, 0)));
 
-  assertArrowWithTransform(
+  rviz_default_plugins::assertArrowWithTransform(
     scene_manager_, first_point, expected_arrow_scale, expected_arrow_orientation);
 }
 
@@ -153,7 +129,7 @@ TEST_F(MarkersTestFixture, setMessage_ignores_points_if_thery_are_more_than_two)
 
   marker_->setMessage(message);
 
-  assertArrowWithTransform(
+  rviz_default_plugins::assertArrowWithTransform(
     scene_manager_, default_arrow_position_, default_arrow_scale_, default_arrow_orientation_);
 }
 
@@ -164,6 +140,6 @@ TEST_F(MarkersTestFixture, setMessage_ignores_old_message) {
   marker_->setMessage(createMessageWithPoints(visualization_msgs::msg::Marker::ARROW));
   marker_->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::ARROW));
 
-  assertArrowWithTransform(
+  rviz_default_plugins::assertArrowWithTransform(
     scene_manager_, default_arrow_position_, default_arrow_scale_, default_arrow_orientation_);
 }

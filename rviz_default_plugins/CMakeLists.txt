@@ -24,14 +24,15 @@ find_package(rviz_rendering REQUIRED)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
+find_package(geometry_msgs REQUIRED)
 find_package(laser_geometry REQUIRED)
-
-# find_package(geometry_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(visualization_msgs REQUIRED)
 # find_package(tf2 REQUIRED)
 # find_package(tf2_geometry_msgs REQUIRED)
 # find_package(tf2_ros REQUIRED)
+find_package(urdf REQUIRED)
+find_package(visualization_msgs REQUIRED)
 
 # These need to be added in the add_library() call so AUTOMOC detects them.
 set(rviz_default_plugins_headers_to_moc
@@ -40,6 +41,7 @@ set(rviz_default_plugins_headers_to_moc
   src/rviz_default_plugins/displays/image/image_display.hpp
   src/rviz_default_plugins/displays/laser_scan/laser_scan_display.hpp
   src/rviz_default_plugins/displays/marker/marker_display.hpp
+  src/rviz_default_plugins/displays/path/path_display.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_display.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp
@@ -47,6 +49,7 @@ set(rviz_default_plugins_headers_to_moc
   src/rviz_default_plugins/displays/pointcloud/point_cloud_helpers.hpp
   src/rviz_default_plugins/displays/polygon/polygon_display.hpp
   src/rviz_default_plugins/displays/pose/pose_display.hpp
+  src/rviz_default_plugins/displays/pose_array/pose_array_display.hpp
   src/rviz_default_plugins/displays/robot_model/robot_model_display.hpp
   src/rviz_default_plugins/displays/tf/frame_info.hpp
   src/rviz_default_plugins/displays/tf/tf_display.hpp
@@ -75,6 +78,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/marker/markers/triangle_list_marker.cpp
   src/rviz_default_plugins/displays/marker/markers/marker_factory.cpp
   src/rviz_default_plugins/displays/marker/marker_display.cpp
+  src/rviz_default_plugins/displays/path/path_display.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.cpp
@@ -89,6 +93,8 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/polygon/polygon_display.cpp
   src/rviz_default_plugins/displays/pose/pose_display.cpp
   src/rviz_default_plugins/displays/pose/pose_display_selection_handler.cpp
+  src/rviz_default_plugins/displays/pose_array/pose_array_display.cpp
+  src/rviz_default_plugins/displays/pose_array/flat_arrows_array.cpp
   src/rviz_default_plugins/displays/robot_model/robot_model_display.cpp
   src/rviz_default_plugins/displays/tf/frame_info.cpp
   src/rviz_default_plugins/displays/tf/frame_selection_handler.cpp
@@ -109,7 +115,6 @@ add_library(rviz_default_plugins SHARED
 target_include_directories(rviz_default_plugins
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    # $<INSTALL_INTERFACE:include>
 )
 target_link_libraries(rviz_default_plugins
   rviz_rendering::rviz_rendering
@@ -118,9 +123,12 @@ target_link_libraries(rviz_default_plugins
   laser_geometry::laser_geometry
 )
 ament_target_dependencies(rviz_default_plugins
-  # geometry_msgs
+  geometry_msgs
+  laser_geometry
+  nav_msgs
   rclcpp
   resource_retriever
+  urdf
   visualization_msgs
   # tf2
   # tf2_geometry_msgs
@@ -170,7 +178,7 @@ if(BUILD_TESTING)
   find_package(ament_cmake_gmock REQUIRED)
 
 # TODO(greimela): reenable these tests once they can be run on the ci
-#  ament_add_gtest(point_cloud2_display_test
+#  ament_add_gmock(point_cloud2_display_test
 #      test/rviz_default_plugins/displays/pointcloud/message_creators.hpp
 #      test/rviz_default_plugins/displays/pointcloud/message_creators.cpp
 #      test/rviz_default_plugins/displays/pointcloud/point_cloud2_display_test.cpp
@@ -180,7 +188,7 @@ if(BUILD_TESTING)
 #  endif()
 
 # TODO(greimela): reenable these tests once they can be run on the ci
-#  ament_add_gtest(point_cloud_transformers_test
+#  ament_add_gmock(point_cloud_transformers_test
 #      test/rviz_default_plugins/displays/pointcloud/message_creators.hpp
 #      test/rviz_default_plugins/displays/pointcloud/message_creators.cpp
 #      test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/axis_color_pc_transformer_test.cpp
@@ -249,6 +257,26 @@ if(BUILD_TESTING)
 #    target_link_libraries(marker_display_test rviz_default_plugins)
 #  endif()
 
+# TODO(greimela): reenable these tests once they can be run on the ci
+#  ament_add_gmock(pose_array_display_test
+#    test/rviz_default_plugins/displays/pose_array/pose_array_display_test.cpp
+#    test/rviz_default_plugins/displays/display_test_fixture.cpp
+#    test/rviz_default_plugins/scene_graph_introspection.cpp
+#    APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;
+#    ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+#  if(TARGET pose_array_display_test)
+#    target_link_libraries(pose_array_display_test rviz_default_plugins)
+#  endif()
+
+  # TODO(greimela): reenable these tests once they can be run on the ci
+#  ament_add_gmock(path_display_test
+#    test/rviz_default_plugins/displays/path/path_display_test.cpp
+#    test/rviz_default_plugins/displays/display_test_fixture.cpp
+#    test/rviz_default_plugins/scene_graph_introspection.cpp
+#    APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+#  if(TARGET path_display_test)
+#    target_link_libraries(path_display_test rviz_default_plugins)
+#  endif()
 endif()
 
 ament_package()

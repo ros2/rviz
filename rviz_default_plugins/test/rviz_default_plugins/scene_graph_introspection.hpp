@@ -48,24 +48,37 @@
 #include "rviz_rendering/objects/point_cloud.hpp"
 #include "rviz_rendering/objects/movable_text.hpp"
 
-#define EXPECT_QUATERNION_EQ(expected, actual) \
-  EXPECT_PRED2(rviz_default_plugins::quaternionNearlyEqual, expected, actual)
-#define ASSERT_QUATERNION_EQ(expected, actual) \
-  ASSERT_PRED2(rviz_default_plugins::quaternionNearlyEqual, expected, actual)
+MATCHER_P(Vector3Eq, expected, "") {
+  return Ogre::Math::Abs(expected.x - arg.x) < 0.0001f &&
+         Ogre::Math::Abs(expected.y - arg.y) < 0.0001f &&
+         Ogre::Math::Abs(expected.z - arg.z) < 0.0001f;
+}
 
-#define EXPECT_VECTOR3_EQ(expected, actual) \
-  EXPECT_PRED2(rviz_default_plugins::vector3NearlyEqual, expected, actual)
-#define ASSERT_VECTOR3_EQ(expected, actual) \
-  ASSERT_PRED2(rviz_default_plugins::vector3NearlyEqual, expected, actual)
+MATCHER_P(QuaternionEq, expected, "") {
+  return Ogre::Math::Abs(expected.x - arg.x) < 0.0001f &&
+         Ogre::Math::Abs(expected.y - arg.y) < 0.0001f &&
+         Ogre::Math::Abs(expected.z - arg.z) < 0.0001f &&
+         Ogre::Math::Abs(expected.w - arg.w) < 0.0001f;
+}
 
 namespace rviz_default_plugins
 {
-// Used in MACRO
-bool quaternionNearlyEqual(Ogre::Quaternion expected, Ogre::Quaternion actual);
-bool vector3NearlyEqual(Ogre::Vector3 expected, Ogre::Vector3 actual);
+bool arrowIsVisible(Ogre::SceneManager * scene_manager);
+void assertArrowWithTransform(
+  Ogre::SceneManager * scene_manager,
+  Ogre::Vector3 position,
+  Ogre::Vector3 scale,
+  Ogre::Quaternion orientation);
 
 std::vector<Ogre::SceneNode *> findAllArrows(Ogre::SceneNode * scene_node);
 Ogre::SceneNode * findOneArrow(Ogre::SceneNode * scene_node);
+
+std::vector<Ogre::SceneNode *> findAllAxes(Ogre::SceneNode * scene_node);
+Ogre::SceneNode * findOneAxes(Ogre::SceneNode * scene_node);
+
+std::vector<Ogre::Vector3> getPositionsFromNodes(const std::vector<Ogre::SceneNode *> & nodes);
+std::vector<Ogre::Quaternion>
+getOrientationsFromNodes(const std::vector<Ogre::SceneNode *> & nodes);
 
 std::vector<Ogre::Entity *> findAllEntitiesByMeshName(
   Ogre::SceneNode * scene_node, const Ogre::String & resource_name);
@@ -79,7 +92,7 @@ Ogre::BillboardChain * findOneBillboardChain(Ogre::SceneNode * scene_node);
 
 rviz_rendering::MovableText * findOneMovableText(Ogre::SceneNode * scene_node);
 
-Ogre::MovableObject * findOneMovableObject(Ogre::SceneNode * scene_node);
+Ogre::ManualObject * findOneManualObject(Ogre::SceneNode * scene_node);
 
 template<typename OgreType>
 void findAllObjectsAttached(
@@ -117,6 +130,5 @@ std::vector<OgreType *> findAllOgreObjectByType(Ogre::SceneNode * scene_node, Og
 }
 
 }  // namespace rviz_default_plugins
-
 
 #endif  // RVIZ_DEFAULT_PLUGINS__SCENE_GRAPH_INTROSPECTION_HPP_

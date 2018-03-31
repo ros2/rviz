@@ -28,16 +28,20 @@
  */
 
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 #include <memory>
 #include <vector>
 
 #include "../message_creators.hpp"
 
+#include "../../../scene_graph_introspection.hpp"
+
 // *INDENT-OFF*
 #include "../../../../../src/rviz_default_plugins/displays/pointcloud/transformers/xyz_pc_transformer.hpp"
 // *INDENT-ON*
 
+using namespace ::testing;  // NOLINT
 using namespace rviz_default_plugins;  // NOLINT
 
 TEST(XYZPCTransformer, transform_returns_the_point_cloud_points) {
@@ -52,9 +56,9 @@ TEST(XYZPCTransformer, transform_returns_the_point_cloud_points) {
   XYZPCTransformer transformer;
   transformer.transform(cloud, PointCloudTransformer::Support_XYZ, Ogre::Matrix4::ZERO, points_out);
 
-  ASSERT_EQ(points_out.size(), (uint32_t) 2);
-  ASSERT_EQ(points_out[0].position, Ogre::Vector3(1, 2, 3));
-  ASSERT_EQ(points_out[1].position, Ogre::Vector3(4, 5, 6));
+  ASSERT_THAT(points_out, SizeIs(2));
+  ASSERT_THAT(points_out[0].position, Vector3Eq(Ogre::Vector3(1, 2, 3)));
+  ASSERT_THAT(points_out[1].position, Vector3Eq(Ogre::Vector3(4, 5, 6)));
 }
 
 TEST(XYZPCTransformer, transform_returns_false_if_cloud_doesnt_support_xyz) {
@@ -75,7 +79,7 @@ TEST(XYZPCTransformer, supports_returns_xyz_support_for_cloud_with_xyz_fields) {
   XYZPCTransformer transformer;
   uint8_t result = transformer.supports(cloud);
 
-  ASSERT_EQ(PointCloudTransformer::Support_XYZ, result);
+  ASSERT_THAT(result, Eq(PointCloudTransformer::Support_XYZ));
 }
 
 TEST(XYZPCTransformer, supports_returns_no_xyz_support_for_cloud_without_xyz_fields) {
@@ -89,5 +93,5 @@ TEST(XYZPCTransformer, supports_returns_no_xyz_support_for_cloud_without_xyz_fie
   XYZPCTransformer transformer;
   uint8_t result = transformer.supports(cloud);
 
-  ASSERT_EQ(PointCloudTransformer::Support_None, result);
+  ASSERT_THAT(result, Eq(PointCloudTransformer::Support_None));
 }

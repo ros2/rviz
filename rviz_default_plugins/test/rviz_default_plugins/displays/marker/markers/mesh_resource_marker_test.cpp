@@ -84,9 +84,9 @@ TEST_F(MarkersTestFixture, setMessage_with_transform_sets_position_and_orientati
     scene_manager_->getRootSceneNode(), message.mesh_resource);
   ASSERT_TRUE(entity);
   EXPECT_TRUE(entity->isVisible());
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(0, 1, 0), entity->getParentSceneNode()->getPosition());
-  EXPECT_QUATERNION_EQ(
-    Ogre::Quaternion(0, 0, 1, 0), entity->getParentSceneNode()->getOrientation());
+  EXPECT_THAT(entity->getParentSceneNode()->getPosition(), Vector3Eq(Ogre::Vector3(0, 1, 0)));
+  EXPECT_THAT(entity->getParentSceneNode()->getOrientation(),
+    QuaternionEq(Ogre::Quaternion(0, 0, 1, 0)));
 }
 
 TEST_F(MarkersTestFixture, setMessage_does_not_attach_entity_when_mesh_is_missing) {
@@ -132,7 +132,7 @@ TEST_F(MarkersTestFixture, setMessage_attaches_default_material_to_correct_mesh)
   auto entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), message.mesh_resource);
   ASSERT_TRUE(entity);
-  EXPECT_EQ(message.mesh_resource, entity->getMesh()->getName());
+  EXPECT_THAT(entity->getMesh()->getName(), StrEq(message.mesh_resource));
   EXPECT_THAT(
     entity->getSubEntity(0)->getMaterial()->getName(),
     MatchesRegex("mesh_resource_marker_.Material"));
@@ -151,9 +151,9 @@ TEST_F(MarkersTestFixture, setMessage_initially_sets_color_correctly) {
   auto entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), message.mesh_resource);
   ASSERT_TRUE(entity);
-  EXPECT_EQ(
-    Ogre::ColourValue(0, 1, 1, 1),
-    entity->getSubEntity(0)->getMaterial()->getTechnique(0)->getPass(0)->getDiffuse());
+  EXPECT_THAT(
+    entity->getSubEntity(0)->getMaterial()->getTechnique(0)->getPass(0)->getDiffuse(),
+    Eq(Ogre::ColourValue(0, 1, 1, 1)));
 }
 
 TEST_F(MarkersTestFixture, setMessage_changes_color_on_new_message_changing_color) {
@@ -171,9 +171,9 @@ TEST_F(MarkersTestFixture, setMessage_changes_color_on_new_message_changing_colo
   auto entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), message.mesh_resource);
   ASSERT_TRUE(entity);
-  EXPECT_EQ(
-    Ogre::ColourValue(0, 1, 0, 1),
-    entity->getSubEntity(0)->getMaterial()->getTechnique(0)->getPass(0)->getDiffuse());
+  EXPECT_THAT(
+    entity->getSubEntity(0)->getMaterial()->getTechnique(0)->getPass(0)->getDiffuse(),
+    Eq(Ogre::ColourValue(0, 1, 0, 1)));
 }
 
 TEST_F(MarkersTestFixture, setMessage_uses_cloned_materials_to_make_selection_work) {

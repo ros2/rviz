@@ -28,6 +28,7 @@
  */
 
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 #include <memory>
 #include <vector>
@@ -38,6 +39,7 @@
 #include "../../../../../src/rviz_default_plugins/displays/pointcloud/transformers/rgbf32_pc_transformer.hpp"
 // *INDENT-ON*
 
+using namespace ::testing;  // NOLINT
 using namespace rviz_default_plugins; // NOLINT
 
 TEST(RGBF32PCTransformer, transform_returns_points_colored_in_their_rgb_color) {
@@ -52,9 +54,9 @@ TEST(RGBF32PCTransformer, transform_returns_points_colored_in_their_rgb_color) {
   transformer.transform(
     cloud, PointCloudTransformer::Support_Color, Ogre::Matrix4::ZERO, points_out);
 
-  ASSERT_EQ(points_out.size(), (uint32_t) 2);
-  ASSERT_EQ(points_out[0].color, Ogre::ColourValue(0, 1, 0));
-  ASSERT_EQ(points_out[1].color, Ogre::ColourValue(1, 0, 1));
+  ASSERT_THAT(points_out, SizeIs(2));
+  ASSERT_THAT(points_out[0].color, Eq(Ogre::ColourValue(0, 1, 0)));
+  ASSERT_THAT(points_out[1].color, Eq(Ogre::ColourValue(1, 0, 1)));
 }
 
 TEST(RGBF32PCTransformer, transform_returns_false_if_cloud_doesnt_support_rgb) {
@@ -77,7 +79,7 @@ TEST(RGBF32PCTransformer, supports_returns_color_support_for_cloud_with_rgb_fiel
   RGBF32PCTransformer transformer;
   uint8_t result = transformer.supports(cloud);
 
-  ASSERT_EQ(PointCloudTransformer::Support_Color, result);
+  ASSERT_THAT(result, Eq(PointCloudTransformer::Support_Color));
 }
 
 TEST(RGBF32PCTransformer, supports_returns_no_color_support_for_cloud_without_rgb_fields) {
@@ -91,5 +93,5 @@ TEST(RGBF32PCTransformer, supports_returns_no_color_support_for_cloud_without_rg
   RGBF32PCTransformer transformer;
   uint8_t result = transformer.supports(cloud);
 
-  ASSERT_EQ(PointCloudTransformer::Support_None, result);
+  ASSERT_THAT(result, Eq(PointCloudTransformer::Support_None));
 }
