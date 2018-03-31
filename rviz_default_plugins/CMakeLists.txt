@@ -27,11 +27,11 @@ find_package(Qt5 REQUIRED COMPONENTS Widgets)
 find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(visualization_msgs REQUIRED)
 # find_package(tf2 REQUIRED)
 # find_package(tf2_geometry_msgs REQUIRED)
 # find_package(tf2_ros REQUIRED)
 find_package(urdf REQUIRED)
+find_package(visualization_msgs REQUIRED)
 
 # These need to be added in the add_library() call so AUTOMOC detects them.
 set(rviz_default_plugins_headers_to_moc
@@ -112,7 +112,6 @@ add_library(rviz_default_plugins SHARED
 target_include_directories(rviz_default_plugins
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    # $<INSTALL_INTERFACE:include>
 )
 target_link_libraries(rviz_default_plugins
   rviz_rendering::rviz_rendering
@@ -120,7 +119,7 @@ target_link_libraries(rviz_default_plugins
   resource_retriever::resource_retriever
 )
 ament_target_dependencies(rviz_default_plugins
-  # geometry_msgs
+  geometry_msgs
   nav_msgs
   rclcpp
   resource_retriever
