@@ -80,7 +80,7 @@ TEST_F(MarkersTestFixture, setMessage_sets_correct_caption_for_valid_message) {
   auto movable_text = rviz_default_plugins::findOneMovableText(scene_manager_->getRootSceneNode());
   ASSERT_TRUE(movable_text);
   EXPECT_TRUE(movable_text->isVisible());
-  EXPECT_EQ(message.text, movable_text->getCaption());
+  EXPECT_THAT(movable_text->getCaption(), StrEq(message.text));
 }
 
 TEST_F(MarkersTestFixture, setMessage_sets_correct_transformation_for_valid_message) {
@@ -93,6 +93,6 @@ TEST_F(MarkersTestFixture, setMessage_sets_correct_transformation_for_valid_mess
 
   auto movable_text = rviz_default_plugins::findOneMovableText(scene_manager_->getRootSceneNode());
   ASSERT_TRUE(movable_text);
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(0, 1, 0), movable_text->getParentSceneNode()->getPosition());
-  EXPECT_EQ(message.scale.z, movable_text->getCharacterHeight());
+  EXPECT_THAT(movable_text->getParentSceneNode()->getPosition(), Vector3Eq(Ogre::Vector3(0, 1, 0)));
+  EXPECT_THAT(movable_text->getCharacterHeight(), Eq(message.scale.z));
 }

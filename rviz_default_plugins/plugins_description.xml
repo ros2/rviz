@@ -121,6 +121,17 @@
     <message_type>geometry_msgs/PoseArray</message_type>
   </class>
 
+  <class
+    name="rviz/Path"
+    type="rviz_default_plugins::displays::PathDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays data from a nav_msgs::Path message as lines. &lt;a href="http://www.ros.org/wiki/rviz/DisplayTypes/Path"&gt;More Information&lt;/a&gt;.
+    </description>
+    <message_type>nav_msgs/Path</message_type>
+  </class>
+
   <!-- Tool plugins -->
 
   <class

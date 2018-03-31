@@ -39,9 +39,11 @@
 #pragma warning(push)
 #pragma warning(disable : 4996)
 #include <OgreEntity.h>
+#include <OgreManualObject.h>
 #pragma warning(pop)
 #else
 #include <OgreEntity.h>
+#include <OgreManualObject.h>
 #endif
 
 #include "visualization_msgs/msg/marker.hpp"
@@ -64,7 +66,7 @@ TEST_F(MarkersTestFixture, setMessage_does_nothing_on_wrong_number_of_points) {
 
   marker_->setMessage(message);
 
-  auto object = rviz_default_plugins::findOneMovableObject(scene_manager_->getRootSceneNode());
+  auto object = rviz_default_plugins::findOneManualObject(scene_manager_->getRootSceneNode());
   ASSERT_FALSE(object);
 }
 
@@ -80,7 +82,7 @@ TEST_F(MarkersTestFixture, setMessage_does_not_set_scene_node_without_transform)
 
   marker_->setMessage(message);
 
-  auto object = rviz_default_plugins::findOneMovableObject(scene_manager_->getRootSceneNode());
+  auto object = rviz_default_plugins::findOneManualObject(scene_manager_->getRootSceneNode());
   ASSERT_FALSE(object->isVisible());
 }
 
@@ -96,6 +98,6 @@ TEST_F(MarkersTestFixture, setMessage_adds_new_object_on_correct_message) {
 
   marker_->setMessage(message);
 
-  auto object = rviz_default_plugins::findOneMovableObject(scene_manager_->getRootSceneNode());
+  auto object = rviz_default_plugins::findOneManualObject(scene_manager_->getRootSceneNode());
   ASSERT_TRUE(object);
 }

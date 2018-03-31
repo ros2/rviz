@@ -47,6 +47,7 @@
 #include "./mock_link_updater.hpp"
 #include "../mock_display_context.hpp"
 #include "../mock_selection_manager.hpp"
+#include "../scene_graph_introspection.hpp"
 
 #include "rviz_common/properties/property.hpp"
 #include "rviz_rendering/material_manager.hpp"
@@ -111,59 +112,66 @@ RobotTestFixture::testing_environment_ = nullptr;
 TEST_F(RobotTestFixture, load_gets_the_correct_link_and_joint_count) {
   robot_->load(urdf_model_);
 
-  EXPECT_EQ(4u, robot_->getLinks().size());
-  EXPECT_EQ(3u, robot_->getJoints().size());
+  EXPECT_THAT(robot_->getLinks(), SizeIs(4));
+  EXPECT_THAT(robot_->getJoints(), SizeIs(3));
 }
 
 TEST_F(RobotTestFixture, load_creates_links_and_sets_the_scene_node_positions) {
   robot_->load(urdf_model_);
 
   auto link1 = robot_->getLink("test_robot_link");
-  EXPECT_EQ(Ogre::Vector3(0, 0, 0), link1->getVisualNode()->getChild(0)->getPosition());
-  EXPECT_EQ(Ogre::Vector3(1, 1, 1), link1->getVisualNode()->getChild(0)->getScale());
-  EXPECT_EQ(Ogre::Vector3(0, 0, 0), link1->getCollisionNode()->getChild(0)->getPosition());
-  EXPECT_EQ(Ogre::Vector3(1, 1, 1), link1->getCollisionNode()->getChild(0)->getScale());
+  EXPECT_THAT(link1->getVisualNode()->getChild(0)->getPosition(), Vector3Eq(Ogre::Vector3::ZERO));
+  EXPECT_THAT(link1->getVisualNode()->getChild(0)->getScale(), Vector3Eq(Ogre::Vector3(1, 1, 1)));
+  EXPECT_THAT(link1->getCollisionNode()->getChild(0)->getPosition(),
+    Vector3Eq(Ogre::Vector3::ZERO));
+  EXPECT_THAT(link1->getCollisionNode()->getChild(0)->getScale(),
+    Vector3Eq(Ogre::Vector3(1, 1, 1)));
 
   auto link3 = robot_->getLink("test_robot_link_head");
-  EXPECT_EQ(Ogre::Vector3(0, 0, 2), link3->getVisualNode()->getChild(0)->getPosition());
-  EXPECT_EQ(Ogre::Vector3(2, 2, 2), link3->getVisualNode()->getChild(0)->getScale());
-  EXPECT_EQ(0u, link3->getCollisionNode()->numChildren());
+  EXPECT_THAT(link3->getVisualNode()->getChild(0)->getPosition(),
+    Vector3Eq(Ogre::Vector3(0, 0, 2)));
+  EXPECT_THAT(link3->getVisualNode()->getChild(0)->getScale(), Vector3Eq(Ogre::Vector3(2, 2, 2)));
+  EXPECT_THAT(link3->getCollisionNode()->numChildren(), Eq(0u));
 }
 
 TEST_F(RobotTestFixture, load_sets_joint_parents_and_children) {
   robot_->load(urdf_model_);
 
-  EXPECT_EQ("test_robot_link", robot_->getJoint("test_robot_fixed1")->getParentLinkName());
-  EXPECT_EQ("test_robot_link_right_arm", robot_->getJoint("test_robot_fixed1")->getChildLinkName());
+  EXPECT_THAT(robot_->getJoint("test_robot_fixed1")->getParentLinkName(), StrEq("test_robot_link"));
+  EXPECT_THAT(robot_->getJoint("test_robot_fixed1")->getChildLinkName(),
+    StrEq("test_robot_link_right_arm"));
 
-  EXPECT_EQ("test_robot_link", robot_->getJoint("test_robot_fixed2")->getParentLinkName());
-  EXPECT_EQ("test_robot_link_left_arm", robot_->getJoint("test_robot_fixed2")->getChildLinkName());
+  EXPECT_THAT(robot_->getJoint("test_robot_fixed2")->getParentLinkName(), StrEq("test_robot_link"));
+  EXPECT_THAT(robot_->getJoint("test_robot_fixed2")->getChildLinkName(),
+    StrEq("test_robot_link_left_arm"));
 
-  EXPECT_EQ("test_robot_link", robot_->getJoint("test_robot_continuous")->getParentLinkName());
-  EXPECT_EQ("test_robot_link_head", robot_->getJoint("test_robot_continuous")->getChildLinkName());
+  EXPECT_THAT(robot_->getJoint("test_robot_continuous")->getParentLinkName(),
+    StrEq("test_robot_link"));
+  EXPECT_THAT(robot_->getJoint("test_robot_continuous")->getChildLinkName(),
+    StrEq("test_robot_link_head"));
 }
 
 TEST_F(RobotTestFixture, load_creates_the_link_property_list) {
   robot_->load(urdf_model_);
 
   auto prop = robot_->getLinkTreeProperty();
-  EXPECT_EQ("Links", prop->getNameStd());
+  EXPECT_THAT(prop->getNameStd(), StrEq("Links"));
 
   // The first 5 children are fixed, some are hidden
-  EXPECT_EQ("test_robot_link", prop->childAt(5)->getNameStd());
-  EXPECT_EQ("test_robot_link_head", prop->childAt(6)->getNameStd());
+  EXPECT_THAT(prop->childAt(5)->getNameStd(), StrEq("test_robot_link"));
+  EXPECT_THAT(prop->childAt(6)->getNameStd(), StrEq("test_robot_link_head"));
 }
 
 TEST_F(RobotTestFixture, changedLinkTreeStyle_hides_joint_properties_in_link_list_mode) {
   robot_->load(urdf_model_);
 
   auto prop = robot_->getLinkTreeProperty();
-  EXPECT_EQ("Links", prop->getNameStd());
+  EXPECT_THAT(prop->getNameStd(), StrEq("Links"));
 
-  EXPECT_EQ("Expand Link Details", prop->childAt(2)->getNameStd());
+  EXPECT_THAT(prop->childAt(2)->getNameStd(), StrEq("Expand Link Details"));
   EXPECT_FALSE(prop->childAt(2)->getHidden());
 
-  EXPECT_EQ("Expand Joint Details", prop->childAt(3)->getNameStd());
+  EXPECT_THAT(prop->childAt(3)->getNameStd(), StrEq("Expand Joint Details"));
   EXPECT_TRUE(prop->childAt(3)->getHidden());
 }
 
@@ -173,12 +181,12 @@ TEST_F(RobotTestFixture, changedLinkTreeStyle_hides_link_properties_in_joint_lis
   auto prop = robot_->getLinkTreeProperty();
   prop->childAt(0)->setValue("Joints in Alphabetic Order");
 
-  EXPECT_EQ("Joints", prop->getNameStd());
+  EXPECT_THAT(prop->getNameStd(), StrEq("Joints"));
 
-  EXPECT_EQ("Expand Link Details", prop->childAt(2)->getNameStd());
+  EXPECT_THAT(prop->childAt(2)->getNameStd(), StrEq("Expand Link Details"));
   EXPECT_TRUE(prop->childAt(2)->getHidden());
 
-  EXPECT_EQ("Expand Joint Details", prop->childAt(3)->getNameStd());
+  EXPECT_THAT(prop->childAt(3)->getNameStd(), StrEq("Expand Joint Details"));
   EXPECT_FALSE(prop->childAt(3)->getHidden());
 }
 
@@ -188,11 +196,11 @@ TEST_F(RobotTestFixture, changedLinkTreeStyle_reorders_the_properties_into_a_joi
   auto prop = robot_->getLinkTreeProperty();
   prop->childAt(0)->setValue("Joints in Alphabetic Order");
 
-  EXPECT_EQ("Joints", prop->getNameStd());
+  EXPECT_THAT(prop->getNameStd(), StrEq("Joints"));
 
   // The first 5 children are fixed, some are hidden
-  EXPECT_EQ("test_robot_continuous", prop->childAt(5)->getNameStd());
-  EXPECT_EQ("test_robot_fixed1", prop->childAt(6)->getNameStd());
+  EXPECT_THAT(prop->childAt(5)->getNameStd(), StrEq("test_robot_continuous"));
+  EXPECT_THAT(prop->childAt(6)->getNameStd(), StrEq("test_robot_fixed1"));
 }
 
 TEST_F(RobotTestFixture, changedLinkTreeStyle_reorders_the_properties_into_a_tree) {
@@ -201,11 +209,11 @@ TEST_F(RobotTestFixture, changedLinkTreeStyle_reorders_the_properties_into_a_tre
   auto prop = robot_->getLinkTreeProperty();
   prop->childAt(0)->setValue("Tree of links");
 
-  EXPECT_EQ("Link Tree", prop->getNameStd());
-  EXPECT_EQ(6, prop->numChildren());
-  EXPECT_EQ("test_robot_link", prop->childAt(5)->getNameStd());
-  EXPECT_EQ(details_property_name, prop->childAt(5)->childAt(0)->getNameStd());
-  EXPECT_EQ("test_robot_link_head", prop->childAt(5)->childAt(1)->getNameStd());
+  EXPECT_THAT(prop->getNameStd(), StrEq("Link Tree"));
+  EXPECT_THAT(prop->numChildren(), Eq(6));
+  EXPECT_THAT(prop->childAt(5)->getNameStd(), StrEq("test_robot_link"));
+  EXPECT_THAT(prop->childAt(5)->childAt(0)->getNameStd(), StrEq(details_property_name));
+  EXPECT_THAT(prop->childAt(5)->childAt(1)->getNameStd(), StrEq("test_robot_link_head"));
 }
 
 TEST_F(RobotTestFixture, clear_removes_all_joints_and_links) {
@@ -213,8 +221,8 @@ TEST_F(RobotTestFixture, clear_removes_all_joints_and_links) {
 
   robot_->clear();
 
-  EXPECT_EQ(0u, robot_->getLinks().size());
-  EXPECT_EQ(0u, robot_->getJoints().size());
+  EXPECT_THAT(robot_->getLinks(), SizeIs(0));
+  EXPECT_THAT(robot_->getJoints(), SizeIs(0));
 }
 
 TEST_F(RobotTestFixture, update_sets_position_and_orientation_in_links_and_joints) {
@@ -242,14 +250,14 @@ TEST_F(RobotTestFixture, update_sets_position_and_orientation_in_links_and_joint
   robot_->update(link_updater);
 
   auto link1 = robot_->getLink("test_robot_link");
-  EXPECT_EQ(visual_position, link1->getVisualNode()->getPosition());
-  EXPECT_EQ(visual_orientation, link1->getVisualNode()->getOrientation());
-  EXPECT_EQ(collision_position, link1->getCollisionNode()->getPosition());
-  EXPECT_EQ(collision_orientation, link1->getCollisionNode()->getOrientation());
+  EXPECT_THAT(link1->getVisualNode()->getPosition(), Vector3Eq(visual_position));
+  EXPECT_THAT(link1->getVisualNode()->getOrientation(), QuaternionEq(visual_orientation));
+  EXPECT_THAT(link1->getCollisionNode()->getPosition(), Vector3Eq(collision_position));
+  EXPECT_THAT(link1->getCollisionNode()->getOrientation(), QuaternionEq(collision_orientation));
 
   auto joint1 = robot_->getJoint("test_robot_fixed1");
-  EXPECT_EQ(visual_position, joint1->getPosition());
-  EXPECT_EQ(visual_orientation, joint1->getOrientation());
+  EXPECT_THAT(joint1->getPosition(), Vector3Eq(visual_position));
+  EXPECT_THAT(joint1->getOrientation(), QuaternionEq(visual_orientation));
 }
 
 TEST_F(RobotTestFixture, link_descriptions_show_correct_hierarchy) {
@@ -258,13 +266,15 @@ TEST_F(RobotTestFixture, link_descriptions_show_correct_hierarchy) {
   auto prop = robot_->getLinkTreeProperty();
   prop->childAt(0)->setValue("Links in Alphabetic Order");
 
-  EXPECT_EQ(9, prop->numChildren());
-  EXPECT_EQ("Link Tree Style", prop->childAt(0)->getNameStd());
-  EXPECT_EQ("test_robot_link", prop->childAt(5)->getNameStd());
-  EXPECT_EQ("Root Link <b>test_robot_link</b> has 3 child joints: "
+  EXPECT_THAT(prop->numChildren(), Eq(9));
+  EXPECT_THAT(prop->childAt(0)->getNameStd(), StrEq("Link Tree Style"));
+  EXPECT_THAT(prop->childAt(5)->getNameStd(), StrEq("test_robot_link"));
+  EXPECT_THAT(prop->childAt(5)->getDescription().toStdString(),
+    StrEq("Root Link <b>test_robot_link</b> has 3 child joints: "
     "<b>test_robot_continuous</b>, <b>test_robot_fixed1</b>, <b>test_robot_fixed2</b>.  "
-    "Check/uncheck to show/hide this link in the display.",
-    prop->childAt(5)->getDescription().toStdString());
+    "Check/uncheck to show/hide this link in the display."
+    )
+  );
 }
 
 TEST_F(RobotTestFixture, joint_descriptions_show_correct_hierarchy) {
@@ -273,13 +283,15 @@ TEST_F(RobotTestFixture, joint_descriptions_show_correct_hierarchy) {
   auto prop = robot_->getLinkTreeProperty();
   prop->childAt(0)->setValue("Joints in Alphabetic Order");
 
-  EXPECT_EQ(8, prop->numChildren());
-  EXPECT_EQ("Link Tree Style", prop->childAt(0)->getNameStd());
-  EXPECT_EQ("test_robot_continuous", prop->childAt(5)->getNameStd());
-  EXPECT_EQ("Joint <b>test_robot_continuous</b> with parent link <b>test_robot_link</b> "
+  EXPECT_THAT(prop->numChildren(), Eq(8));
+  EXPECT_THAT(prop->childAt(0)->getNameStd(), StrEq("Link Tree Style"));
+  EXPECT_THAT(prop->childAt(5)->getNameStd(), StrEq("test_robot_continuous"));
+  EXPECT_THAT(prop->childAt(5)->getDescription().toStdString(),
+    StrEq("Joint <b>test_robot_continuous</b> with parent link <b>test_robot_link</b> "
     "and child link <b>test_robot_link_head</b>.  "
-    "Check/uncheck to show/hide this joint's child link.",
-    prop->childAt(5)->getDescription().toStdString());
+    "Check/uncheck to show/hide this joint's child link."
+    )
+  );
 }
 
 TEST_F(RobotTestFixture, robot_model_link_contains_right_number_meshes) {
@@ -288,10 +300,10 @@ TEST_F(RobotTestFixture, robot_model_link_contains_right_number_meshes) {
   auto body_link = robot_->getLink("test_robot_link");
   auto right_arm_link = robot_->getLink("test_robot_link_right_arm");
 
-  EXPECT_EQ(1u, body_link->getCollisionMeshes().size());
-  EXPECT_EQ(1u, body_link->getVisualMeshes().size());
-  EXPECT_EQ(0u, right_arm_link->getCollisionMeshes().size());
-  EXPECT_EQ(1u, right_arm_link->getVisualMeshes().size());
+  EXPECT_THAT(body_link->getCollisionMeshes(), SizeIs(1));
+  EXPECT_THAT(body_link->getVisualMeshes(), SizeIs(1));
+  EXPECT_THAT(right_arm_link->getCollisionMeshes(), IsEmpty());
+  EXPECT_THAT(right_arm_link->getVisualMeshes(), SizeIs(1));
 }
 
 TEST_F(RobotTestFixture, expand_details_in_link_description_shows_hidden_properties) {
@@ -300,15 +312,15 @@ TEST_F(RobotTestFixture, expand_details_in_link_description_shows_hidden_propert
   auto prop = robot_->getLinkTreeProperty();
   prop->childAt(0)->setValue("Links in Alphabetic Order");
 
-  EXPECT_EQ(9, prop->numChildren());
-  EXPECT_EQ("Link Tree Style", prop->childAt(0)->getNameStd());
+  EXPECT_THAT(prop->numChildren(), Eq(9));
+  EXPECT_THAT(prop->childAt(0)->getNameStd(), StrEq("Link Tree Style"));
 
   auto test_robot_link_property = prop->childAt(5);
   EXPECT_FALSE(test_robot_link_property->getHidden());
-  EXPECT_EQ("test_robot_link", test_robot_link_property->getNameStd());
-  EXPECT_EQ(5, test_robot_link_property->numChildren());
-  EXPECT_EQ("Alpha", test_robot_link_property->childAt(0)->getNameStd());
-  EXPECT_EQ("Position", test_robot_link_property->childAt(3)->getNameStd());
+  EXPECT_THAT(test_robot_link_property->getNameStd(), StrEq("test_robot_link"));
+  EXPECT_THAT(test_robot_link_property->numChildren(), Eq(5));
+  EXPECT_THAT(test_robot_link_property->childAt(0)->getNameStd(), StrEq("Alpha"));
+  EXPECT_THAT(test_robot_link_property->childAt(3)->getNameStd(), StrEq("Position"));
 }
 
 TEST_F(RobotTestFixture, expand_details_in_joint_description_shows_hidden_properties) {
@@ -317,15 +329,15 @@ TEST_F(RobotTestFixture, expand_details_in_joint_description_shows_hidden_proper
   auto prop = robot_->getLinkTreeProperty();
   prop->childAt(0)->setValue("Joints in Alphabetic Order");
 
-  EXPECT_EQ(8, prop->numChildren());
-  EXPECT_EQ("Link Tree Style", prop->childAt(0)->getNameStd());
+  EXPECT_THAT(prop->numChildren(), Eq(8));
+  EXPECT_THAT(prop->childAt(0)->getNameStd(), StrEq("Link Tree Style"));
 
   auto test_robot_link_property = prop->childAt(5);
   EXPECT_FALSE(test_robot_link_property->getHidden());
-  EXPECT_EQ("test_robot_continuous", test_robot_link_property->getNameStd());
-  EXPECT_EQ(6, test_robot_link_property->numChildren());
-  EXPECT_EQ("Show Axes", test_robot_link_property->childAt(0)->getNameStd());
-  EXPECT_EQ("Type", test_robot_link_property->childAt(3)->getNameStd());
+  EXPECT_THAT(test_robot_link_property->getNameStd(), StrEq("test_robot_continuous"));
+  EXPECT_THAT(test_robot_link_property->numChildren(), Eq(6));
+  EXPECT_THAT(test_robot_link_property->childAt(0)->getNameStd(), StrEq("Show Axes"));
+  EXPECT_THAT(test_robot_link_property->childAt(3)->getNameStd(), StrEq("Type"));
 }
 
 TEST_F(RobotTestFixture, changedExpandTree_shows_link_and_joint_properties_and_hides_details) {
@@ -335,22 +347,22 @@ TEST_F(RobotTestFixture, changedExpandTree_shows_link_and_joint_properties_and_h
   prop->childAt(0)->setValue("Tree of links and joints");
   prop->childAt(1)->setValue(true);  // Enable "Expand Tree"
 
-  EXPECT_EQ("Link/Joint Tree", prop->getNameStd());
-  EXPECT_EQ(6, prop->numChildren());
+  EXPECT_THAT(prop->getNameStd(), StrEq("Link/Joint Tree"));
+  EXPECT_THAT(prop->numChildren(), Eq(6));
 
   auto test_robot_link = prop->childAt(5);
-  EXPECT_EQ("test_robot_link", test_robot_link->getNameStd());
+  EXPECT_THAT(test_robot_link->getNameStd(), StrEq("test_robot_link"));
 
   auto test_robot_link_details = test_robot_link->childAt(0);
-  EXPECT_EQ(details_property_name, test_robot_link_details->getNameStd());
+  EXPECT_THAT(test_robot_link_details->getNameStd(), StrEq(details_property_name));
   EXPECT_FALSE(test_robot_link_details->isExpanded());
 
   auto test_robot_continuous = test_robot_link->childAt(1);
-  EXPECT_EQ("test_robot_continuous", test_robot_continuous->getNameStd());
+  EXPECT_THAT(test_robot_continuous->getNameStd(), StrEq("test_robot_continuous"));
   EXPECT_TRUE(test_robot_continuous->isExpanded());
 
   auto test_robot_continuous_details = test_robot_continuous->childAt(0);
-  EXPECT_EQ(details_property_name, test_robot_continuous_details->getNameStd());
+  EXPECT_THAT(test_robot_continuous_details->getNameStd(), StrEq(details_property_name));
   EXPECT_FALSE(test_robot_continuous_details->isExpanded());
 }
 
@@ -362,11 +374,11 @@ TEST_F(RobotTestFixture, changedExpandTree_hides_link_and_joint_properties_on_de
   prop->childAt(1)->setValue(true);  // Enable "Expand Tree"
   prop->childAt(1)->setValue(false);  // Disable "Expand Tree"
 
-  EXPECT_EQ("Link/Joint Tree", prop->getNameStd());
-  EXPECT_EQ(6, prop->numChildren());
+  EXPECT_THAT(prop->getNameStd(), StrEq("Link/Joint Tree"));
+  EXPECT_THAT(prop->numChildren(), Eq(6));
 
   auto test_robot_link = prop->childAt(5);
-  EXPECT_EQ("test_robot_link", test_robot_link->getNameStd());
+  EXPECT_THAT(test_robot_link->getNameStd(), StrEq("test_robot_link"));
   EXPECT_FALSE(test_robot_link->isExpanded());
 }
 
@@ -379,22 +391,22 @@ TEST_F(RobotTestFixture, changedExpandLinkDetails_shows_link_details) {
   prop->childAt(1)->setValue(true);  // Enable "Expand Tree"
   prop->childAt(2)->setValue(true);  // Enable "Expand Link Details"
 
-  EXPECT_EQ("Link/Joint Tree", prop->getNameStd());
-  EXPECT_EQ(6, prop->numChildren());
+  EXPECT_THAT(prop->getNameStd(), StrEq("Link/Joint Tree"));
+  EXPECT_THAT(prop->numChildren(), Eq(6));
 
   auto test_robot_link = prop->childAt(5);
-  EXPECT_EQ("test_robot_link", test_robot_link->getNameStd());
+  EXPECT_THAT(test_robot_link->getNameStd(), StrEq("test_robot_link"));
 
   auto test_robot_link_details = test_robot_link->childAt(0);
-  EXPECT_EQ(details_property_name, test_robot_link_details->getNameStd());
+  EXPECT_THAT(test_robot_link_details->getNameStd(), StrEq(details_property_name));
   EXPECT_TRUE(test_robot_link_details->isExpanded());
 
   auto test_robot_continuous = test_robot_link->childAt(1);
-  EXPECT_EQ("test_robot_continuous", test_robot_continuous->getNameStd());
+  EXPECT_THAT(test_robot_continuous->getNameStd(), StrEq("test_robot_continuous"));
   EXPECT_TRUE(test_robot_continuous->isExpanded());
 
   auto test_robot_continuous_details = test_robot_continuous->childAt(0);
-  EXPECT_EQ(details_property_name, test_robot_continuous_details->getNameStd());
+  EXPECT_THAT(test_robot_continuous_details->getNameStd(), StrEq(details_property_name));
   EXPECT_FALSE(test_robot_continuous_details->isExpanded());
 }
 
@@ -406,18 +418,18 @@ TEST_F(RobotTestFixture, changedExpandJointDetails_shows_joint_details) {
   prop->childAt(1)->setValue(true);  // Enable "Expand Tree"
   prop->childAt(3)->setValue(true);  // Enable "Expand Joint Details"
 
-  EXPECT_EQ("Link/Joint Tree", prop->getNameStd());
-  EXPECT_EQ(6, prop->numChildren());
+  EXPECT_THAT(prop->getNameStd(), StrEq("Link/Joint Tree"));
+  EXPECT_THAT(prop->numChildren(), Eq(6));
 
   auto test_robot_link = prop->childAt(5);
-  EXPECT_EQ("test_robot_link", test_robot_link->getNameStd());
+  EXPECT_THAT(test_robot_link->getNameStd(), StrEq("test_robot_link"));
 
   auto test_robot_link_details = test_robot_link->childAt(0);
-  EXPECT_EQ(details_property_name, test_robot_link_details->getNameStd());
+  EXPECT_THAT(test_robot_link_details->getNameStd(), StrEq(details_property_name));
   EXPECT_FALSE(test_robot_link_details->isExpanded());
 
   auto test_robot_continuous_details = test_robot_link->childAt(1)->childAt(0);
-  EXPECT_EQ(details_property_name, test_robot_continuous_details->getNameStd());
+  EXPECT_THAT(test_robot_continuous_details->getNameStd(), StrEq(details_property_name));
   EXPECT_TRUE(test_robot_continuous_details->isExpanded());
 }
 
@@ -425,11 +437,11 @@ TEST_F(RobotTestFixture, changedEnableAllLinks_toggles_all_links) {
   robot_->load(urdf_model_);
 
   auto prop = robot_->getLinkTreeProperty();
-  EXPECT_EQ("Links", prop->getNameStd());
+  EXPECT_THAT(prop->getNameStd(), StrEq("Links"));
 
   auto all_links_enabled = prop->childAt(4);
-  EXPECT_EQ("All Links Enabled", all_links_enabled->getNameStd());
-  EXPECT_EQ(9, prop->numChildren());
+  EXPECT_THAT(all_links_enabled->getNameStd(), StrEq("All Links Enabled"));
+  EXPECT_THAT(prop->numChildren(), Eq(9));
 
   all_links_enabled->setValue(true);
 

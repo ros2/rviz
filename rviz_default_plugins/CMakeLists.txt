@@ -24,13 +24,14 @@ find_package(rviz_rendering REQUIRED)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
-# find_package(geometry_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(visualization_msgs REQUIRED)
 # find_package(tf2 REQUIRED)
 # find_package(tf2_geometry_msgs REQUIRED)
 # find_package(tf2_ros REQUIRED)
 find_package(urdf REQUIRED)
+find_package(visualization_msgs REQUIRED)
 
 # These need to be added in the add_library() call so AUTOMOC detects them.
 set(rviz_default_plugins_headers_to_moc
@@ -38,6 +39,7 @@ set(rviz_default_plugins_headers_to_moc
   src/rviz_default_plugins/displays/grid/grid_display.hpp
   src/rviz_default_plugins/displays/image/image_display.hpp
   src/rviz_default_plugins/displays/marker/marker_display.hpp
+  src/rviz_default_plugins/displays/path/path_display.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_display.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp
@@ -73,6 +75,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/marker/markers/triangle_list_marker.cpp
   src/rviz_default_plugins/displays/marker/markers/marker_factory.cpp
   src/rviz_default_plugins/displays/marker/marker_display.cpp
+  src/rviz_default_plugins/displays/path/path_display.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.cpp
@@ -109,7 +112,6 @@ add_library(rviz_default_plugins SHARED
 target_include_directories(rviz_default_plugins
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    # $<INSTALL_INTERFACE:include>
 )
 target_link_libraries(rviz_default_plugins
   rviz_rendering::rviz_rendering
@@ -117,7 +119,8 @@ target_link_libraries(rviz_default_plugins
   resource_retriever::resource_retriever
 )
 ament_target_dependencies(rviz_default_plugins
-  # geometry_msgs
+  geometry_msgs
+  nav_msgs
   rclcpp
   resource_retriever
   urdf
@@ -170,7 +173,7 @@ if(BUILD_TESTING)
   find_package(ament_cmake_gmock REQUIRED)
 
 # TODO(greimela): reenable these tests once they can be run on the ci
-#  ament_add_gtest(point_cloud2_display_test
+#  ament_add_gmock(point_cloud2_display_test
 #      test/rviz_default_plugins/displays/pointcloud/message_creators.hpp
 #      test/rviz_default_plugins/displays/pointcloud/message_creators.cpp
 #      test/rviz_default_plugins/displays/pointcloud/point_cloud2_display_test.cpp
@@ -180,7 +183,7 @@ if(BUILD_TESTING)
 #  endif()
 
 # TODO(greimela): reenable these tests once they can be run on the ci
-#  ament_add_gtest(point_cloud_transformers_test
+#  ament_add_gmock(point_cloud_transformers_test
 #      test/rviz_default_plugins/displays/pointcloud/message_creators.hpp
 #      test/rviz_default_plugins/displays/pointcloud/message_creators.cpp
 #      test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/axis_color_pc_transformer_test.cpp
@@ -258,6 +261,16 @@ if(BUILD_TESTING)
 #    ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
 #  if(TARGET pose_array_display_test)
 #    target_link_libraries(pose_array_display_test rviz_default_plugins)
+#  endif()
+
+  # TODO(greimela): reenable these tests once they can be run on the ci
+#  ament_add_gmock(path_display_test
+#    test/rviz_default_plugins/displays/path/path_display_test.cpp
+#    test/rviz_default_plugins/displays/display_test_fixture.cpp
+#    test/rviz_default_plugins/scene_graph_introspection.cpp
+#    APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+#  if(TARGET path_display_test)
+#    target_link_libraries(path_display_test rviz_default_plugins)
 #  endif()
 endif()
 

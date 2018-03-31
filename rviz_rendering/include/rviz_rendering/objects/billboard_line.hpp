@@ -127,6 +127,7 @@ private:
     std::function<Ogre::BillboardChain::Element(Ogre::BillboardChain::Element)> change_element);
   void incrementChainContainerIfNecessary();
   void setupChainsInChainContainers() const;
+  void enableAlphaBlending(float alpha);
 
   Ogre::SceneNode * scene_node_;
 

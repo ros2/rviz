@@ -28,6 +28,7 @@
  */
 
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 #include <vector>
 
@@ -40,6 +41,7 @@
 #include "../../../../../src/rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.hpp"
 // *INDENT-ON*
 
+using namespace ::testing;  // NOLINT
 using namespace rviz_default_plugins;  // NOLINT
 
 TEST(AxisColorPCTransformer, transform_returns_points_colored_depending_on_the_z_position) {
@@ -59,9 +61,9 @@ TEST(AxisColorPCTransformer, transform_returns_points_colored_depending_on_the_z
   transformer.transform(
     cloud, PointCloudTransformer::Support_Color, Ogre::Matrix4::IDENTITY, points_out);
 
-  ASSERT_EQ(points_out[0].color, Ogre::ColourValue(1, 0, 0));
-  ASSERT_EQ(points_out[1].color, Ogre::ColourValue(0, 1, 0.5));
-  ASSERT_EQ(points_out[2].color, Ogre::ColourValue(1, 0, 1));
+  ASSERT_THAT(points_out[0].color, Eq(Ogre::ColourValue(1, 0, 0)));
+  ASSERT_THAT(points_out[1].color, Eq(Ogre::ColourValue(0, 1, 0.5)));
+  ASSERT_THAT(points_out[2].color, Eq(Ogre::ColourValue(1, 0, 1)));
 }
 
 TEST(AxisColorPCTransformer, transform_uses_default_min_max_if_autocomplete_value_bounds_is_false) {
@@ -79,15 +81,15 @@ TEST(AxisColorPCTransformer, transform_uses_default_min_max_if_autocomplete_valu
   AxisColorPCTransformer transformer;
   transformer.createProperties(nullptr, PointCloudTransformer::Support_Color, out_props);
 
-  ASSERT_EQ(out_props[1]->getName(), "Autocompute Value Bounds");
+  ASSERT_THAT(out_props[1]->getNameStd(), StrEq("Autocompute Value Bounds"));
   out_props[1]->setValue(QVariant(false));
 
   transformer.transform(
     cloud, PointCloudTransformer::Support_Color, Ogre::Matrix4::IDENTITY, points_out);
 
-  ASSERT_EQ(points_out[0].color, Ogre::ColourValue(0, 1, 0.5));
-  ASSERT_EQ(points_out[1].color, Ogre::ColourValue(0, 1, 0.75));
-  ASSERT_EQ(points_out[2].color, Ogre::ColourValue(0, 1, 1));
+  ASSERT_THAT(points_out[0].color, Eq(Ogre::ColourValue(0, 1, 0.5)));
+  ASSERT_THAT(points_out[1].color, Eq(Ogre::ColourValue(0, 1, 0.75)));
+  ASSERT_THAT(points_out[2].color, Eq(Ogre::ColourValue(0, 1, 1)));
 }
 
 TEST(AxisColorPCTransformer, transform_should_not_transform_points_when_using_local_frame) {
@@ -104,7 +106,7 @@ TEST(AxisColorPCTransformer, transform_should_not_transform_points_when_using_lo
 
   AxisColorPCTransformer transformer;
   transformer.createProperties(nullptr, PointCloudTransformer::Support_Color, out_props);
-  ASSERT_EQ(out_props[2]->getName(), "Use Fixed Frame");
+  ASSERT_THAT(out_props[2]->getNameStd(), StrEq("Use Fixed Frame"));
 
   out_props[2]->setValue(false);
 
@@ -114,7 +116,7 @@ TEST(AxisColorPCTransformer, transform_should_not_transform_points_when_using_lo
   transformer.transform(
     cloud, PointCloudTransformer::Support_Color, tranformation, points_out);
 
-  ASSERT_EQ(points_out[0].color, Ogre::ColourValue(1, 0, 0));
-  ASSERT_EQ(points_out[1].color, Ogre::ColourValue(0, 1, 0.5));
-  ASSERT_EQ(points_out[2].color, Ogre::ColourValue(1, 0, 1));
+  ASSERT_THAT(points_out[0].color, Eq(Ogre::ColourValue(1, 0, 0)));
+  ASSERT_THAT(points_out[1].color, Eq(Ogre::ColourValue(0, 1, 0.5)));
+  ASSERT_THAT(points_out[2].color, Eq(Ogre::ColourValue(1, 0, 1)));
 }
