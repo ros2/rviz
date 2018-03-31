@@ -132,7 +132,7 @@ public:
     if (icon.isNull()) {
       icon = loadPixmap("package://" + package + "/icons/classes/" + class_name + ".png");
       if (icon.isNull()) {
-        icon = loadPixmap("package://rviz/icons/default_class_icon.png");
+        icon = loadPixmap("package://rviz_common/icons/default_class_icon.png");
       }
     }
     return icon;

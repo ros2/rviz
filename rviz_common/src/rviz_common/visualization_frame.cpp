@@ -30,6 +30,7 @@
 
 #include "visualization_frame.hpp"
 
+#include <exception>
 #include <fstream>
 #include <memory>
 #include <string>
@@ -519,7 +520,7 @@ void VisualizationFrame::initToolbars()
 
   add_tool_action_ = new QAction("", toolbar_actions_);
   add_tool_action_->setToolTip("Add a new tool");
-  add_tool_action_->setIcon(loadPixmap("package://rviz/icons/plus.png"));
+  add_tool_action_->setIcon(loadPixmap("package://rviz_common/icons/plus.png"));
   toolbar_->addAction(add_tool_action_);
   connect(add_tool_action_, SIGNAL(triggered()), this, SLOT(openNewToolDialog()));
 
@@ -528,7 +529,7 @@ void VisualizationFrame::initToolbars()
   remove_tool_button->setMenu(remove_tool_menu_);
   remove_tool_button->setPopupMode(QToolButton::InstantPopup);
   remove_tool_button->setToolTip("Remove a tool from the toolbar");
-  remove_tool_button->setIcon(loadPixmap("package://rviz/icons/minus.png"));
+  remove_tool_button->setIcon(loadPixmap("package://rviz_common/icons/minus.png"));
   toolbar_->addWidget(remove_tool_button);
   connect(remove_tool_menu_, SIGNAL(triggered(QAction *)), this, SLOT(onToolbarRemoveTool(
       QAction *)));
@@ -707,7 +708,11 @@ void VisualizationFrame::loadDisplayConfig(const QString & qpath)
   Config config;
   reader.readFile(config, QString::fromStdString(actual_load_path));
   if (!reader.error()) {
-    load(config);
+    try {
+      load(config);
+    } catch (const std::exception & e) {
+      RVIZ_COMMON_LOG_ERROR_STREAM("Could not load display config: " << e.what());
+    }
   }
 
   markRecentConfig(path);

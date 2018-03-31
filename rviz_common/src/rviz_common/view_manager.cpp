@@ -81,7 +81,7 @@ ViewManager::~ViewManager()
 
 void ViewManager::initialize()
 {
-  setCurrent(create("rviz/Orbit"), false);
+  setCurrent(create("rviz_default_plugins/Orbit"), false);
 }
 
 void ViewManager::update(float wall_dt, float ros_dt)

@@ -224,7 +224,7 @@ void OrbitViewController::mimic(rviz_common::ViewController * source_view)
   Ogre::Vector3 position = camera_parent->getPosition();
   Ogre::Quaternion orientation = camera_parent->getOrientation();
 
-  if (source_view->getClassId() == "rviz/Orbit") {
+  if (source_view->getClassId() == "rviz_default_plugin/Orbit") {
     // If I'm initializing from another instance of this same class, get the distance exactly.
     distance_property_->setFloat(source_view->subProp("Distance")->getValue().toFloat());
     updateFocalShapeSize();

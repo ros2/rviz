@@ -86,7 +86,7 @@ RobotJoint::RobotJoint(Robot * robot, const urdf::JointConstSharedPtr & joint)
     SLOT(updateChildVisibility()),
     this);
   robot_element_property_->setIcon(rviz_common::loadPixmap(
-      "package://rviz/icons/classes/RobotJoint.png"));
+      "package://rviz_default_plugins/icons/classes/RobotJoint.png"));
 
   details_ = new Property("Details", QVariant(), "", nullptr);
 

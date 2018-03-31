@@ -159,7 +159,7 @@ install(DIRECTORY src/cmake
 # install(TARGETS rendering_example DESTINATION bin)
 
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/ogre_media"
-  DESTINATION "share/rviz_rendering"
+  DESTINATION "share/${PROJECT_NAME}"
   USE_SOURCE_PERMISSIONS)
 
 if(BUILD_TESTING)

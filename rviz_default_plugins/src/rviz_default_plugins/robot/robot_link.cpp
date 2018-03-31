@@ -230,7 +230,7 @@ RobotLink::RobotLink(
 
   if (!hasGeometry()) {
     robot_element_property_->setIcon(rviz_common::loadPixmap(
-        "package://rviz/icons/classes/RobotLinkNoGeom.png"));
+        "package://rviz_default_plugins/icons/classes/RobotLinkNoGeom.png"));
     alpha_property_->hide();
     robot_element_property_->setValue(QVariant());
   }
@@ -241,7 +241,7 @@ void RobotLink::setProperties(const urdf::LinkConstSharedPtr & link)
   robot_element_property_ = new Property(
     link->name.c_str(), true, "", nullptr, SLOT(updateVisibility()), this);
   robot_element_property_->setIcon(rviz_common::loadPixmap(
-      "package://rviz/icons/classes/RobotLink.png"));
+      "package://rviz_default_plugins/icons/classes/RobotLink.png"));
 
   details_ = new Property("Details", QVariant(), "", nullptr);
 

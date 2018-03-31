@@ -116,12 +116,12 @@ void ViewController::initialize(DisplayContext * context)
   cursor_ = getDefaultCursor();
 
   standard_cursors_[Default] = getDefaultCursor();
-  standard_cursors_[Rotate2D] = makeIconCursor("package://rviz/icons/rotate.svg");
-  standard_cursors_[Rotate3D] = makeIconCursor("package://rviz/icons/rotate_cam.svg");
-  standard_cursors_[MoveXY] = makeIconCursor("package://rviz/icons/move2d.svg");
-  standard_cursors_[MoveZ] = makeIconCursor("package://rviz/icons/move_z.svg");
-  standard_cursors_[Zoom] = makeIconCursor("package://rviz/icons/zoom.svg");
-  standard_cursors_[Crosshair] = makeIconCursor("package://rviz/icons/crosshair.svg");
+  standard_cursors_[Rotate2D] = makeIconCursor("package://rviz_common/icons/rotate.svg");
+  standard_cursors_[Rotate3D] = makeIconCursor("package://rviz_common/icons/rotate_cam.svg");
+  standard_cursors_[MoveXY] = makeIconCursor("package://rviz_common/icons/move2d.svg");
+  standard_cursors_[MoveZ] = makeIconCursor("package://rviz_common/icons/move_z.svg");
+  standard_cursors_[Zoom] = makeIconCursor("package://rviz_common/icons/zoom.svg");
+  standard_cursors_[Crosshair] = makeIconCursor("package://rviz_common/icons/crosshair.svg");
 
   updateNearClipDistance();
   updateStereoProperties();

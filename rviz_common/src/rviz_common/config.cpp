@@ -32,6 +32,8 @@
 
 #include <QLocale>
 
+#include "rviz_common/logging.hpp"
+
 namespace rviz_common
 {
 
@@ -285,11 +287,30 @@ bool Config::isValid() const
   return node_.get() != NULL;
 }
 
+// TODO(Martin-Idel-SI): This is just a temporary helper to convert old rviz2 configs.
+// Remove after next release.
+QVariant correctClassNames(const QVariant & value)
+{
+  auto string_representation = value.toString();
+  if (string_representation.contains(QString("rviz/"))) {
+    RVIZ_COMMON_LOG_WARNING("Your config contains obsolete class name " +
+      value.toString().toStdString() + ". Please save your config to correct it.");
+    if (string_representation == "rviz/Displays" ||
+      string_representation == "rviz/Views" ||
+      string_representation == "rviz/DisplayGroup")
+    {
+      return string_representation.replace(0, 4, "rviz_common");
+    }
+    return string_representation.replace(0, 4, "rviz_default_plugins");
+  }
+  return value;
+}
+
 void Config::setValue(const QVariant & value)
 {
   makeValid();
   node_->setType(Value);
-  *node_->data_.value = value;
+  *node_->data_.value = correctClassNames(value);
 }
 
 QVariant Config::getValue() const

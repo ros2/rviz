@@ -30,6 +30,7 @@ find_package(Qt5 REQUIRED COMPONENTS Widgets)
 find_package(geometry_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(resource_retriever REQUIRED)
 find_package(rviz_assimp_vendor REQUIRED)
 find_package(rviz_rendering REQUIRED)
 find_package(rviz_yaml_cpp_vendor REQUIRED)
@@ -227,6 +228,7 @@ target_link_libraries(rviz_common
 ament_target_dependencies(rviz_common
   geometry_msgs
   rclcpp
+  resource_retriever
   rviz_assimp_vendor
   rviz_yaml_cpp_vendor
   sensor_msgs
@@ -272,6 +274,11 @@ install(
 
 install(FILES default.rviz
   DESTINATION share/${PROJECT_NAME}
+)
+
+install(
+  DIRECTORY "${CMAKE_SOURCE_DIR}/icons"
+  DESTINATION "share/${PROJECT_NAME}"
 )
 
 # TODO(wjwwood): reenable tests for Windows after resolving building problems

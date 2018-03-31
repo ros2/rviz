@@ -30,65 +30,56 @@
 
 #include "rviz_common/load_resource.hpp"
 
-// #include <boost/filesystem.hpp>
-// #include <ros/package.h>
-// #include <ros/ros.h>
+#include <string>
 
-#include <QPixmapCache>
-#include <QPainter>
+#include <QFile>  // NOLINT: cpplint cannot handle the include order here
+#include <QPainter>  // NOLINT: cpplint cannot handle the include order here
+#include <QPixmapCache>  // NOLINT: cpplint cannot handle the include order here
+
+#include "ament_index_cpp/get_package_share_directory.hpp"
+#include "ament_index_cpp/get_package_prefix.hpp"
+#include "resource_retriever/retriever.h"
 
 #include "rviz_common/logging.hpp"
 
 namespace rviz_common
 {
 
-// TODO(wjwwood): replace this with ROS 2 and boost-free version
-// boost::filesystem::path getPath(QString url)
-// {
-//   boost::filesystem::path path;
+resource_retriever::MemoryResource getResource(const std::string & resource_path)
+{
+  resource_retriever::Retriever retriever;
+  resource_retriever::MemoryResource res;
+  try {
+    res = retriever.get(resource_path);
+  } catch (resource_retriever::Exception & e) {
+    RVIZ_COMMON_LOG_DEBUG(e.what());
+    return resource_retriever::MemoryResource();
+  }
 
-//   if (url.indexOf("package://", 0, Qt::CaseInsensitive) == 0) {
-//     QString package_name = url.section('/', 2, 2);
-//     QString file_name = url.section('/', 3);
-//     path = ros::package::getPath(package_name.toStdString());
-//     path = path / file_name.toStdString();
-//   } else if (url.indexOf("file://", 0, Qt::CaseInsensitive) == 0) {
-//     path = url.section('/', 2).toStdString();
-//   } else {
-//     ROS_ERROR("Invalid or unsupported URL: '%s'", url.toStdString().c_str() );
-//   }
-
-//   return path;
-// }
-
+  return res;
+}
 
 QPixmap loadPixmap(QString url, bool fill_cache)
 {
   QPixmap pixmap;
 
-  // TODO(wjwwood): reenable this, or in the meantime add a placeholder pixmap
-  Q_UNUSED(url);
-  Q_UNUSED(fill_cache);
-  // RVIZ_COMMON_LOG_WARNING_STREAM("did not load pixmap at " << url.toStdString());
-  // // if it's in the cache, no need to locate
-  // if (QPixmapCache::find(url, &pixmap) ) {
-  //   return pixmap;
-  // }
+  // if it's in the cache, no need to locate
+  if (QPixmapCache::find(url, &pixmap)) {
+    return pixmap;
+  }
 
-  // boost::filesystem::path path = getPath(url);
+  RVIZ_COMMON_LOG_DEBUG("Load pixmap at " + url.toStdString());
 
-  // // If something goes wrong here, we go on and store the empty pixmap,
-  // // so the error won't appear again anytime soon.
-  // if (boost::filesystem::exists(path) ) {
-  //   ROS_DEBUG_NAMED("load_resource", "Loading '%s'", path.string().c_str() );
-  //   if (!pixmap.load(QString::fromStdString(path.string() ) ) ) {
-  //     ROS_ERROR("Could not load pixmap '%s'", path.string().c_str() );
-  //   }
-  // }
+  auto image = getResource(url.toStdString());
+  if (image.size != 0) {
+    if (!pixmap.loadFromData(image.data.get(), static_cast<uint32_t>(image.size))) {
+      RVIZ_COMMON_LOG_ERROR("Could not load pixmap " + url.toStdString());
+    }
+  }
 
-  // if (fill_cache) {
-  //   QPixmapCache::insert(url, pixmap);
-  // }
+  if (fill_cache) {
+    QPixmapCache::insert(url, pixmap);
+  }
 
   return pixmap;
 }
@@ -101,39 +92,25 @@ QCursor getDefaultCursor(bool fill_cache)
 
 QCursor makeIconCursor(QString url, bool fill_cache)
 {
-  // TODO(wjwwood): reenable this
-  Q_UNUSED(url);
-  Q_UNUSED(fill_cache);
-  // RVIZ_COMMON_LOG_WARNING_STREAM("did not load icon as cursor at " << url.toStdString());
-  return QCursor(Qt::ArrowCursor);
-#if 0
   QPixmap icon = loadPixmap(url, fill_cache);
   if (icon.width() == 0 || icon.height() == 0) {
-    ROS_ERROR("Could not load pixmap '%s' -- using default cursor instead.",
-      url.toStdString().c_str() );
+    RVIZ_COMMON_LOG_ERROR_STREAM("Could not load pixmap " << url.toStdString() << " -- "
+      "using default cursor instead.");
     return getDefaultCursor();
   }
   QString cache_key = url + ".cursor";
   return makeIconCursor(icon, cache_key, fill_cache);
-#endif
 }
 
 QCursor makeIconCursor(QPixmap icon, QString cache_key, bool fill_cache)
 {
-  // TODO(wjwwood): reenable this
-  Q_UNUSED(icon);
-  Q_UNUSED(cache_key);
-  Q_UNUSED(fill_cache);
-  // RVIZ_COMMON_LOG_WARNING_STREAM("did not make icon into cursor at " << cache_key.toStdString());
-  return QCursor(Qt::ArrowCursor);
-#if 0
   // if it's in the cache, no need to locate
   QPixmap cursor_img;
   if (QPixmapCache::find(cache_key, &cursor_img) ) {
     return QCursor(cursor_img, 0, 0);
   }
 
-  QPixmap base_cursor = loadPixmap("package://rviz/icons/cursor.svg", fill_cache);
+  QPixmap base_cursor = loadPixmap("package://rviz_common/icons/cursor.svg", fill_cache);
 
   const int cursor_size = 32;
 
@@ -162,7 +139,6 @@ QCursor makeIconCursor(QPixmap icon, QString cache_key, bool fill_cache)
   }
 
   return QCursor(cursor_img, 1, 1);
-#endif
 }
 
 }  // namespace rviz_common

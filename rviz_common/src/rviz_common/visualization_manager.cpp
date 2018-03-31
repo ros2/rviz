@@ -195,7 +195,7 @@ VisualizationManager::VisualizationManager(
 
   IconizedProperty * ip =
     new IconizedProperty("Global Options", QVariant(), "", root_display_group_);
-  ip->setIcon(loadPixmap("package://rviz/icons/options.png"));
+  ip->setIcon(loadPixmap("package://rviz_common/icons/options.png"));
   global_options_ = ip;
 
   fixed_frame_property_ = new TfFrameProperty("Fixed Frame", "base_link",
@@ -628,6 +628,7 @@ void VisualizationManager::handleMouseEvent(const ViewportMouseEvent & vme)
 #endif
     flags = current_tool->processMouseEvent(_vme);
     vme.panel->setCursor(current_tool->getCursor());
+    vme.panel->getRenderWindow()->setCursor(current_tool->getCursor());
   } else {
     vme.panel->setCursor(QCursor(Qt::ArrowCursor));
   }

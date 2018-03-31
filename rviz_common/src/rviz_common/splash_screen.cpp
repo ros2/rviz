@@ -52,7 +52,7 @@ SplashScreen::SplashScreen(const QPixmap & pixmap)
 
   painter.drawPixmap(QPoint(0, 0), pixmap);
 
-  QPixmap overlay = loadPixmap("package://rviz/images/splash_overlay.png");
+  QPixmap overlay = loadPixmap("package://rviz_common/images/splash_overlay.png");
   painter.drawTiledPixmap(QRect(0, pixmap.height() - overlay.height(), pixmap.width(),
     pixmap.height() ), overlay);
 
