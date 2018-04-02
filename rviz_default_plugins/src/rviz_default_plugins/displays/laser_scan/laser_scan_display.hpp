@@ -27,54 +27,59 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_LASER_SCAN_DISPLAY_H
-#define RVIZ_LASER_SCAN_DISPLAY_H
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__LASER_SCAN__LASER_SCAN_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__LASER_SCAN__LASER_SCAN_DISPLAY_HPP_
 
-#include <sensor_msgs/LaserScan.h>
+#include <memory>
 
-#include "rviz/message_filter_display.h"
+#include "sensor_msgs/msg/laser_scan.hpp"
+
+#include "rviz_common/ros_topic_display.hpp"
 
 namespace laser_geometry
 {
 class LaserProjection;
-}
+}  // namespace laser_geometry
 
-namespace rviz
+namespace rviz_common
 {
-
+class QueueSizeProperty;
+namespace properties
+{
 class IntProperty;
+}  // namespace properties
+}  // namespace rviz_common
+namespace rviz_default_plugins
+{
 class PointCloudCommon;
+namespace displays
+{
 
 /** @brief Visualizes a laser scan, received as a sensor_msgs::LaserScan. */
-class LaserScanDisplay: public MessageFilterDisplay<sensor_msgs::LaserScan>
+// TODO(botteroa-si): This display originally extended the MessageFilterDisplay. Revisit when
+// available
+class LaserScanDisplay : public rviz_common::RosTopicDisplay<sensor_msgs::msg::LaserScan>
 {
-Q_OBJECT
 public:
   LaserScanDisplay();
-  ~LaserScanDisplay();
+  ~LaserScanDisplay() override = default;
 
-  virtual void reset();
-
-  virtual void update( float wall_dt, float ros_dt );
-
-private Q_SLOTS:
-  void updateQueueSize();
+  void reset() override;
+  void update(float wall_dt, float ros_dt) override;
 
 protected:
   /** @brief Do initialization. Overridden from MessageFilterDisplay. */
-  virtual void onInitialize();
+  void onInitialize() override;
 
   /** @brief Process a single message.  Overridden from MessageFilterDisplay. */
-  virtual void processMessage( const sensor_msgs::LaserScanConstPtr& scan );
+  void processMessage(sensor_msgs::msg::LaserScan::ConstSharedPtr scan) override;
 
-  IntProperty* queue_size_property_;
-
-  PointCloudCommon* point_cloud_common_;
-
-  laser_geometry::LaserProjection* projector_;
-  ros::Duration filter_tolerance_;
+  std::unique_ptr<PointCloudCommon> point_cloud_common_;
+  std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
+  std::unique_ptr<laser_geometry::LaserProjection> projector_;
 };
 
-} // namespace rviz
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__LASER_SCAN__LASER_SCAN_DISPLAY_HPP_

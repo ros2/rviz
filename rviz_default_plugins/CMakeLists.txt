@@ -25,6 +25,7 @@ find_package(rviz_rendering REQUIRED)
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
 find_package(geometry_msgs REQUIRED)
+find_package(laser_geometry REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 # find_package(tf2 REQUIRED)
@@ -38,6 +39,7 @@ set(rviz_default_plugins_headers_to_moc
   src/rviz_default_plugins/displays/camera/camera_display.hpp
   src/rviz_default_plugins/displays/grid/grid_display.hpp
   src/rviz_default_plugins/displays/image/image_display.hpp
+  src/rviz_default_plugins/displays/laser_scan/laser_scan_display.hpp
   src/rviz_default_plugins/displays/marker/marker_display.hpp
   src/rviz_default_plugins/displays/path/path_display.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp
@@ -62,6 +64,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/grid/grid_display.cpp
   src/rviz_default_plugins/displays/image/image_display.cpp
   src/rviz_default_plugins/displays/image/ros_image_texture.cpp
+  src/rviz_default_plugins/displays/laser_scan/laser_scan_display.cpp
   src/rviz_default_plugins/displays/marker/markers/arrow_marker.cpp
   src/rviz_default_plugins/displays/marker/markers/line_list_marker.cpp
   src/rviz_default_plugins/displays/marker/markers/line_marker_base.cpp
@@ -114,12 +117,14 @@ target_include_directories(rviz_default_plugins
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
 target_link_libraries(rviz_default_plugins
-  rviz_rendering::rviz_rendering
-  rviz_common::rviz_common
+  laser_geometry::laser_geometry
   resource_retriever::resource_retriever
+  rviz_common::rviz_common
+  rviz_rendering::rviz_rendering
 )
 ament_target_dependencies(rviz_default_plugins
   geometry_msgs
+  laser_geometry
   nav_msgs
   rclcpp
   resource_retriever
