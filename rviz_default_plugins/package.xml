@@ -25,6 +25,7 @@
   <exec_depend>libqt5-widgets</exec_depend>
 
   <depend>geometry_msgs</depend>
+  <depend>laser_geometry</depend>
   <depend>nav_msgs</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
@@ -32,7 +33,6 @@
   <depend>rviz_rendering</depend>
   <depend>urdf</depend>
   <depend>visualization_msgs</depend>
-  <depend>laser_geometry</depend>
 
   <test_depend>ament_cmake_cppcheck</test_depend>
   <test_depend>ament_cmake_cpplint</test_depend>

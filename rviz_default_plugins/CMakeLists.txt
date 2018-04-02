@@ -117,10 +117,10 @@ target_include_directories(rviz_default_plugins
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
 target_link_libraries(rviz_default_plugins
-  rviz_rendering::rviz_rendering
-  rviz_common::rviz_common
-  resource_retriever::resource_retriever
   laser_geometry::laser_geometry
+  resource_retriever::resource_retriever
+  rviz_common::rviz_common
+  rviz_rendering::rviz_rendering
 )
 ament_target_dependencies(rviz_default_plugins
   geometry_msgs
