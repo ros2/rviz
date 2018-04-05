@@ -126,6 +126,7 @@ target_include_directories(rviz_default_plugins_object PUBLIC
   ${rviz_rendering_INCLUDE_DIRS}
   ${rviz_common_INCLUDE_DIRS}
   ${laser_geometry_INCLUDE_DIRS}
+  ${nav_msgs_INCLUDE_DIRS}
   ${OGRE_INCLUDE_DIRS}
   ${Qt5Widgets_INCLUDE_DIRS}
   ${resource_retriever_INCLUDE_DIRS}
