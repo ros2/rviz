@@ -4,10 +4,10 @@
   <description>
     3D testing framework for RViz.
   </description>
-  <maintainer email="empty@empty.com">empty</maintainer>
+  <maintainer email="william@openrobotics.org">William Woodall</maintainer>
   <license>BSD</license>
 
-  <author></author>
+  <author>Alessandro Bottero</author>
 
   <url type="website">http://ros.org/wiki/rviz2</url>
   <url type="repository">https://github.com/ros-visualization/rviz</url>
