@@ -83,7 +83,6 @@ int MoveTool::processKeyEvent(QKeyEvent * event, rviz_common::RenderPanel * pane
 
 #ifndef _WIN32
 # pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
 # pragma GCC diagnostic ignored "-Wpedantic"
 #endif
 #include <pluginlib/class_list_macros.hpp>  // NOLINT
