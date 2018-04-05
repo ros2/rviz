@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PAGE_OBJECTS__BASE_PAGE_OBJECT_HPP_
-#define PAGE_OBJECTS__BASE_PAGE_OBJECT_HPP_
+#ifndef RVIZ_VISUAL_TESTS__PAGE_OBJECTS__BASE_PAGE_OBJECT_HPP_
+#define RVIZ_VISUAL_TESTS__PAGE_OBJECTS__BASE_PAGE_OBJECT_HPP_
 
 #include <gtest/gtest.h>
 
@@ -39,7 +39,7 @@
 #include <QString>  // NOLINT
 #include <QtWidgets>  // NOLINT
 
-#include "src/internal/executor.hpp"
+#include "rviz_visual_tests/internal/executor.hpp"
 
 class BasePageObject : public QObject
 {
@@ -94,4 +94,4 @@ private:
 
 QString format(float number);
 
-#endif  // PAGE_OBJECTS__BASE_PAGE_OBJECT_HPP_
+#endif  // RVIZ_VISUAL_TESTS__PAGE_OBJECTS__BASE_PAGE_OBJECT_HPP_

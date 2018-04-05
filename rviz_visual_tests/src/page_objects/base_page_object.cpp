@@ -26,7 +26,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "base_page_object.hpp"
+#include "rviz_visual_tests/page_objects/base_page_object.hpp"
 
 #include <iostream>
 #include <memory>
@@ -35,7 +35,7 @@
 
 #include <QTest>  // NOLINT
 
-#include "../internal/test_helpers.hpp"
+#include "rviz_visual_tests/internal/test_helpers.hpp"
 
 BasePageObject::BasePageObject(
   int display_id,

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Bosch Software Innovations GmbH.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,26 +27,36 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PAGE_OBJECTS__IMAGE_DISPLAY_PAGE_OBJECT_HPP_
-#define PAGE_OBJECTS__IMAGE_DISPLAY_PAGE_OBJECT_HPP_
+#ifndef RVIZ_VISUAL_TESTS__INTERNAL__IMAGE_TESTER_HPP_
+#define RVIZ_VISUAL_TESTS__INTERNAL__IMAGE_TESTER_HPP_
 
-#include <memory>
-#include <vector>
+#ifdef _WIN32
+# pragma warning(push)
+# pragma warning(disable : 4996)
+#endif
+#include <Ogre.h>
+#ifdef _WIN32
+# pragma warning(pop)
+#endif
 
-#include "page_object_with_window.hpp"
-
-class ImageDisplayPageObject : public PageObjectWithWindow
+class ImageTester
 {
 public:
-  ImageDisplayPageObject(
-    int display_id,
-    std::shared_ptr<Executor> executor,
-    std::shared_ptr<std::vector<int>> all_displays_ids);
+  ImageTester(Ogre::String reference_directory_path, Ogre::String test_directory_path);
+  void compare(Ogre::String image_name);
+  void computeImageDifference(
+    Ogre::Image test_image, Ogre::Image reference_image, Ogre::String image_name);
 
-  void setRenderWindow() override;
-  void setTopic(QString topic);
-  void setUnreliable(bool unreliable);
-  void setQueueSize(QString queue_size);
+  double computeMseIndex(Ogre::String image_name, size_t image_width, size_t image_height);
+
+private:
+  Ogre::Image loadImage(Ogre::String image_name, Ogre::String image_directory_path);
+  size_t pixelDifference(
+    Ogre::Image reference_image, Ogre::Image test_image, size_t width, size_t height);
+  void assertImageIdentity(
+    Ogre::String image_name, Ogre::Image reference_image, Ogre::Image test_image);
+
+  Ogre::String reference_directory_path_;
+  Ogre::String test_directory_path_;
 };
-
-#endif  // PAGE_OBJECTS__IMAGE_DISPLAY_PAGE_OBJECT_HPP_
+#endif  // RVIZ_VISUAL_TESTS__INTERNAL__IMAGE_TESTER_HPP_

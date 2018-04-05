@@ -27,37 +27,28 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PAGE_OBJECTS__CAMERA_DISPLAY_PAGE_OBJECT_HPP_
-#define PAGE_OBJECTS__CAMERA_DISPLAY_PAGE_OBJECT_HPP_
+#ifndef RVIZ_VISUAL_TESTS__PAGE_OBJECTS__POLYGON_DISPLAY_PAGE_OBJECT_HPP_
+#define RVIZ_VISUAL_TESTS__PAGE_OBJECTS__POLYGON_DISPLAY_PAGE_OBJECT_HPP_
 
 #include <memory>
 #include <vector>
 
-#include "page_object_with_window.hpp"
+#include <QtWidgets>  // NOLINT
 
-class CameraDisplayPageObject : public PageObjectWithWindow
+#include "rviz_visual_tests/page_objects/base_page_object.hpp"
+
+class PolygonDisplayPageObject : public BasePageObject
 {
 public:
-  CameraDisplayPageObject(
+  explicit PolygonDisplayPageObject(
     int display_id,
     std::shared_ptr<Executor> executor,
     std::shared_ptr<std::vector<int>> all_displays_ids);
 
-  /* @param display_name Name of the display whose visibility must be changed
-   * @param relative_row_index Sub-property index relative to the parent property (i.e. Visibility)
-   * @param display_visibility the value to set for the sub-property
-   */
-  void setDisplayVisibilityInRenderWindow(
-    QString display_name, int relative_row_index, bool display_visibility);
   void setTopic(QString topic);
   void setUnreliable(bool unreliable);
-  void setQueueSize(QString queue_size);
-  void setImageRendering(QString image_rendering);
-  void setOverlayAlpha(QString overlay_alpha);
-  void setZoomFacor(QString zoom_factor);
-  void setVisibility(bool visibility);
-
-  void setRenderWindow() override;
+  void setColor(int red, int green, int blue);
+  void setAlpha(QString alpha);
 };
 
-#endif  // PAGE_OBJECTS__CAMERA_DISPLAY_PAGE_OBJECT_HPP_
+#endif  // RVIZ_VISUAL_TESTS__PAGE_OBJECTS__POLYGON_DISPLAY_PAGE_OBJECT_HPP_

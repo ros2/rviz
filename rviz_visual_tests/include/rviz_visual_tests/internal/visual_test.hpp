@@ -26,8 +26,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef INTERNAL__VISUAL_TEST_HPP_
-#define INTERNAL__VISUAL_TEST_HPP_
+#ifndef RVIZ_VISUAL_TESTS__INTERNAL__VISUAL_TEST_HPP_
+#define RVIZ_VISUAL_TESTS__INTERNAL__VISUAL_TEST_HPP_
 
 #include <memory>
 #include <string>
@@ -41,10 +41,10 @@
 # pragma warning(pop)
 #endif
 
-#include "rviz_scene_test.hpp"
-#include "image_tester.hpp"
-#include "executor.hpp"
-#include "../page_objects/page_object_with_window.hpp"
+#include "rviz_visual_tests/internal/rviz_scene_test.hpp"
+#include "rviz_visual_tests/internal/image_tester.hpp"
+#include "rviz_visual_tests/internal/executor.hpp"
+#include "rviz_visual_tests/page_objects/page_object_with_window.hpp"
 
 class VisualTest
 {
@@ -93,4 +93,4 @@ private:
   std::string source_directory_path_;
 };
 
-#endif  // INTERNAL__VISUAL_TEST_HPP_
+#endif  // RVIZ_VISUAL_TESTS__INTERNAL__VISUAL_TEST_HPP_

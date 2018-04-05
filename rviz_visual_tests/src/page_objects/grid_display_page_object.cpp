@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "grid_display_page_object.hpp"
+#include "rviz_visual_tests/page_objects/grid_display_page_object.hpp"
 
 #include <memory>
 #include <string>

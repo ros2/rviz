@@ -35,12 +35,12 @@
 
 #include "tf2_ros/static_transform_broadcaster.h"
 
-#include "../src/visual_test_fixture.hpp"
-#include "../src/page_objects/camera_display_page_object.hpp"
-#include "../src/page_objects/grid_display_page_object.hpp"
-#include "../src/page_objects/image_display_page_object.hpp"
-#include "../src/page_objects/point_cloud_display_page_object.hpp"
-#include "../src/page_objects/polygon_display_page_object.hpp"
+#include "rviz_visual_tests/visual_test_fixture.hpp"
+#include "rviz_visual_tests/page_objects/camera_display_page_object.hpp"
+#include "rviz_visual_tests/page_objects/grid_display_page_object.hpp"
+#include "rviz_visual_tests/page_objects/image_display_page_object.hpp"
+#include "rviz_visual_tests/page_objects/point_cloud_display_page_object.hpp"
+#include "rviz_visual_tests/page_objects/polygon_display_page_object.hpp"
 #include "example_nodes.hpp"
 
 std::atomic<bool> nodes_spinning;

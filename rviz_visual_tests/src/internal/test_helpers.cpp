@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "test_helpers.hpp"
+#include "rviz_visual_tests/internal/test_helpers.hpp"
 
 #include <vector>
 

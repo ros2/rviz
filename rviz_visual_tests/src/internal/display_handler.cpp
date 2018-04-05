@@ -27,14 +27,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "display_handler.hpp"
+#include "rviz_visual_tests/internal/display_handler.hpp"
 
 #include <memory>
 #include <vector>
 
 #include <QTest>  // NOLINT
 
-#include "test_helpers.hpp"
+#include "include/rviz_visual_tests/internal/test_helpers.hpp"
 
 DisplayHandler::DisplayHandler(
   std::shared_ptr<Executor> executor, std::shared_ptr<std::vector<int>> all_displays_ids)

@@ -27,34 +27,26 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PAGE_OBJECTS__PAGE_OBJECT_WITH_WINDOW_HPP_
-#define PAGE_OBJECTS__PAGE_OBJECT_WITH_WINDOW_HPP_
+#ifndef RVIZ_VISUAL_TESTS__PAGE_OBJECTS__IMAGE_DISPLAY_PAGE_OBJECT_HPP_
+#define RVIZ_VISUAL_TESTS__PAGE_OBJECTS__IMAGE_DISPLAY_PAGE_OBJECT_HPP_
 
 #include <memory>
-#include <string>
 #include <vector>
 
-#include "base_page_object.hpp"
+#include "rviz_visual_tests/page_objects/page_object_with_window.hpp"
 
-#include "rviz_rendering/render_window.hpp"
-
-class PageObjectWithWindow : public BasePageObject
+class ImageDisplayPageObject : public PageObjectWithWindow
 {
 public:
-  PageObjectWithWindow(
+  ImageDisplayPageObject(
     int display_id,
-    int display_category,
-    int display_name_index,
     std::shared_ptr<Executor> executor,
     std::shared_ptr<std::vector<int>> all_displays_ids);
 
-  void captureDisplayRenderWindow(std::string image_name);
-
-protected:
-  virtual void setRenderWindow() = 0;
-
-  rviz_rendering::RenderWindow * render_window_;
-  int display_with_window_index_;
+  void setRenderWindow() override;
+  void setTopic(QString topic);
+  void setUnreliable(bool unreliable);
+  void setQueueSize(QString queue_size);
 };
 
-#endif  // PAGE_OBJECTS__PAGE_OBJECT_WITH_WINDOW_HPP_
+#endif  // RVIZ_VISUAL_TESTS__PAGE_OBJECTS__IMAGE_DISPLAY_PAGE_OBJECT_HPP_

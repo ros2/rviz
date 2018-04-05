@@ -26,7 +26,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "visual_test.hpp"
+#include "rviz_visual_tests/internal/visual_test.hpp"
 
 #include <gtest/gtest.h>
 

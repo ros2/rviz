@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "polygon_display_page_object.hpp"
+#include "rviz_visual_tests/page_objects/polygon_display_page_object.hpp"
 
 #include <memory>
 #include <vector>
@@ -36,7 +36,7 @@ PolygonDisplayPageObject::PolygonDisplayPageObject(
   int display_id,
   std::shared_ptr<Executor> executor,
   std::shared_ptr<std::vector<int>> all_displays_ids)
-: BasePageObject(display_id, 0, 5, executor, all_displays_ids)
+: BasePageObject(display_id, 0, 6, executor, all_displays_ids)
 {}
 
 void PolygonDisplayPageObject::setTopic(QString topic)

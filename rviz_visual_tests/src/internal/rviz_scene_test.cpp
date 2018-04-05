@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz_scene_test.hpp"
+#include "rviz_visual_tests/internal/rviz_scene_test.hpp"
 
 #include <iostream>
 #include <memory>

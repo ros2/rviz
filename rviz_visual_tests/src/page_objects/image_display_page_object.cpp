@@ -27,14 +27,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "image_display_page_object.hpp"
+#include "rviz_visual_tests/page_objects/image_display_page_object.hpp"
 
 #include <memory>
 #include <vector>
 
 #include <QTest>  // NOLINT
 
-#include "../internal/test_helpers.hpp"
+#include "rviz_visual_tests/internal/test_helpers.hpp"
 
 ImageDisplayPageObject::ImageDisplayPageObject(
   int display_id,

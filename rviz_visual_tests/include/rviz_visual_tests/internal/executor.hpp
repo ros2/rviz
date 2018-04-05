@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef INTERNAL__EXECUTOR_HPP_
-#define INTERNAL__EXECUTOR_HPP_
+#ifndef RVIZ_VISUAL_TESTS__INTERNAL__EXECUTOR_HPP_
+#define RVIZ_VISUAL_TESTS__INTERNAL__EXECUTOR_HPP_
 
 #include <functional>
 
@@ -47,4 +47,4 @@ private:
   const int default_delay_interval_;
 };
 
-#endif  // INTERNAL__EXECUTOR_HPP_
+#endif  // RVIZ_VISUAL_TESTS__INTERNAL__EXECUTOR_HPP_

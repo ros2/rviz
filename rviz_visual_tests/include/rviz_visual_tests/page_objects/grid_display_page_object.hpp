@@ -27,51 +27,33 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#ifndef INTERNAL__DISPLAY_HANDLER_HPP_
-#define INTERNAL__DISPLAY_HANDLER_HPP_
+#ifndef RVIZ_VISUAL_TESTS__PAGE_OBJECTS__GRID_DISPLAY_PAGE_OBJECT_HPP_
+#define RVIZ_VISUAL_TESTS__PAGE_OBJECTS__GRID_DISPLAY_PAGE_OBJECT_HPP_
 
 #include <memory>
 #include <vector>
 
-#include "../page_objects/base_page_object.hpp"
-#include "executor.hpp"
+#include <QtWidgets>  // NOLINT
 
-class DisplayHandler
+#include "rviz_visual_tests/page_objects/base_page_object.hpp"
+
+class GridDisplayPageObject : public BasePageObject
 {
 public:
-  DisplayHandler(
-    std::shared_ptr<Executor> executor, std::shared_ptr<std::vector<int>> all_displays_ids);
-  template<typename T>
-  std::shared_ptr<T> addDisplay()
-  {
-    auto page_object =
-      std::make_shared<T>(absolute_displays_number_, executor_, all_display_ids_vector_);
+  GridDisplayPageObject(
+    int display_id,
+    std::shared_ptr<Executor> executor,
+    std::shared_ptr<std::vector<int>> all_displays_ids);
 
-    openAddDisplayDialog();
-    selectDisplayAndConfirm(page_object);
-
-    addDisplayToIdsVector();
-    absolute_displays_number_++;
-
-    return page_object;
-  }
-
-  void removeAllDisplays();
-  void removeDisplay(std::shared_ptr<BasePageObject> display);
-
-private:
-  static QPushButton * getDisplayActionButton(QString button_name);
-  static QPushButton * getAddDisplayButton();
-  static QPushButton * getRemoveDisplayButton();
-  static void removeDisplayWithoutDelay(int display_id);
-  void openAddDisplayDialog();
-  void selectDisplayAndConfirm(std::shared_ptr<BasePageObject> page_object);
-  void addDisplayToIdsVector();
-
-  static int absolute_displays_number_;
-  std::shared_ptr<Executor> executor_;
-  static std::shared_ptr<std::vector<int>> all_display_ids_vector_;
+  void setReferenceFrame(QString reference_frame);
+  void setPlaneCellCount(QString plane_cell_count);
+  void setNormalCellCount(QString normal_cell_count);
+  void setCellSize(QString cell_size);
+  void setLineStyle(QString line_style);
+  void setColor(int red, int green, int blue);
+  void setAlpha(QString alpha);
+  void setPlane(QString plane);
+  void setOffset(float x, float y, float z);
 };
 
-#endif  // INTERNAL__DISPLAY_HANDLER_HPP_
+#endif  // RVIZ_VISUAL_TESTS__PAGE_OBJECTS__GRID_DISPLAY_PAGE_OBJECT_HPP_

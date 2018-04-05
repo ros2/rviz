@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Bosch Software Innovations GmbH.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,53 +27,51 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VISUAL_TEST_FIXTURE_HPP_
-#define VISUAL_TEST_FIXTURE_HPP_
+
+#ifndef RVIZ_VISUAL_TESTS__INTERNAL__DISPLAY_HANDLER_HPP_
+#define RVIZ_VISUAL_TESTS__INTERNAL__DISPLAY_HANDLER_HPP_
 
 #include <memory>
 #include <vector>
 
-#include "internal/display_handler.hpp"
-#include "src/internal/executor.hpp"
-#include "internal/visual_test.hpp"
-#include "page_objects/page_object_with_window.hpp"
+#include "rviz_visual_tests/page_objects/base_page_object.hpp"
+#include "rviz_visual_tests/internal/executor.hpp"
 
-class VisualTestFixture : public testing::Test
+class DisplayHandler
 {
 public:
-  VisualTestFixture();
-  static void SetUpTestCase();
-  void TearDown() override;
-  static void TearDownTestCase();
-
-  void setCamPose(Ogre::Vector3 camera_pose);
-  void setCamLookAt(Ogre::Vector3 camera_look_at_vector);
+  DisplayHandler(
+    std::shared_ptr<Executor> executor, std::shared_ptr<std::vector<int>> all_displays_ids);
   template<typename T>
   std::shared_ptr<T> addDisplay()
   {
-    return display_handler_->addDisplay<T>();
+    auto page_object =
+      std::make_shared<T>(absolute_displays_number_, executor_, all_display_ids_vector_);
+
+    openAddDisplayDialog();
+    selectDisplayAndConfirm(page_object);
+
+    addDisplayToIdsVector();
+    absolute_displays_number_++;
+
+    return page_object;
   }
+
+  void removeAllDisplays();
   void removeDisplay(std::shared_ptr<BasePageObject> display);
 
-  void captureMainWindow(Ogre::String image_name = "");
-  void captureRenderWindow(
-    std::shared_ptr<PageObjectWithWindow> display, Ogre::String name = "");
-
-  void assertScreenShotsIdentity();
-  void assertMainWindowIdentity(Ogre::String image_name = "");
-
-  Ogre::String test_name_;
-  std::unique_ptr<VisualTest> visual_test_;
-  std::unique_ptr<DisplayHandler> display_handler_;
-  std::shared_ptr<std::vector<int>> all_display_ids_vector_;
-  std::vector<Ogre::String> screen_shots_;
-  std::shared_ptr<Executor> executor_;
-  static QApplication * qapp_;
-  static rviz_common::VisualizerApp * visualizer_app_;
-
 private:
-  void startApplication();
-  void setNameIfEmpty(Ogre::String & name);
+  static QPushButton * getDisplayActionButton(QString button_name);
+  static QPushButton * getAddDisplayButton();
+  static QPushButton * getRemoveDisplayButton();
+  static void removeDisplayWithoutDelay(int display_id);
+  void openAddDisplayDialog();
+  void selectDisplayAndConfirm(std::shared_ptr<BasePageObject> page_object);
+  void addDisplayToIdsVector();
+
+  static int absolute_displays_number_;
+  std::shared_ptr<Executor> executor_;
+  static std::shared_ptr<std::vector<int>> all_display_ids_vector_;
 };
 
-#endif  // VISUAL_TEST_FIXTURE_HPP_
+#endif  // RVIZ_VISUAL_TESTS__INTERNAL__DISPLAY_HANDLER_HPP_

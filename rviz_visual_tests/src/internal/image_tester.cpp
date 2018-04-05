@@ -27,9 +27,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "image_tester.hpp"
+#include "rviz_visual_tests/internal/image_tester.hpp"
 
-#include <QLocale>  // NOLIT
+#include <QLocale>  // NOLINT
+
 #include <gtest/gtest.h>
 
 ImageTester::ImageTester(Ogre::String reference_directory_path, Ogre::String test_directory_path)

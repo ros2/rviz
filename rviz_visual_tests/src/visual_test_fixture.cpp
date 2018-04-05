@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "visual_test_fixture.hpp"
+#include "rviz_visual_tests/visual_test_fixture.hpp"
 
 #include <memory>
 #include <string>

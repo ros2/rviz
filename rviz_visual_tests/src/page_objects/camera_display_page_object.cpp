@@ -27,14 +27,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "camera_display_page_object.hpp"
+#include "rviz_visual_tests/page_objects/camera_display_page_object.hpp"
 
 #include <memory>
 #include <vector>
 
 #include <QTest>  // NOLINT
 
-#include "../internal/test_helpers.hpp"
+#include "rviz_visual_tests/internal/test_helpers.hpp"
 
 CameraDisplayPageObject::CameraDisplayPageObject(
   int display_id,

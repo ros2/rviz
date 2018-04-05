@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "page_object_with_window.hpp"
+#include "rviz_visual_tests/page_objects/page_object_with_window.hpp"
 
 #include <memory>
 #include <string>

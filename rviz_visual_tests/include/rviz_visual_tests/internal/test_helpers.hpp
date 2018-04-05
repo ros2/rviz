@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Bosch Software Innovations GmbH.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,55 +27,22 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef INTERNAL__RVIZ_SCENE_TEST_HPP_
-#define INTERNAL__RVIZ_SCENE_TEST_HPP_
+#ifndef RVIZ_VISUAL_TESTS__INTERNAL__TEST_HELPERS_HPP_
+#define RVIZ_VISUAL_TESTS__INTERNAL__TEST_HELPERS_HPP_
 
-#include <memory>
+#include <vector>
 
-#ifdef _WIN32
-# pragma warning(push)
-# pragma warning(disable : 4996)
-#endif
-#include <Ogre.h>
-#include <OgreSceneManager.h>
-#include <OgreCamera.h>
-#ifdef _WIN32
-# pragma warning(pop)
-#endif
+#include <QTreeView>  // NOLINT
 
 #include "rviz_rendering/render_window.hpp"
-#include "rviz_common/visualizer_app.hpp"
 
-#include "executor.hpp"
-
-class RvizTestScene
+namespace helpers
 {
-public:
-  RvizTestScene(
-    rviz_common::VisualizerApp * vapp,
-    Ogre::Vector3 pose,
-    Ogre::Vector3 look_at,
-    std::shared_ptr<Executor> executor);
 
-  void takeReferenceShot(Ogre::String name);
-  void takeTestShot(Ogre::String name);
-  void setCamPose(Ogre::Vector3 pose);
-  void setLookAt(Ogre::Vector3 look_at);
-  void setUpCamera();
-  void installCamera();
+int findIndex(int display_id, const std::vector<int> & displays_ids_vector);
+QTreeView * getDisplaysTreeView();
+rviz_rendering::RenderWindow * findWindow(const QString & window_name);
 
-private:
-  void setUp();
-  void takeScreenShot(Ogre::String name);
+}  // namespace helpers
 
-  rviz_rendering::RenderWindow * render_window_;
-  Ogre::SceneManager * manager_;
-  Ogre::Camera * camera_;
-  Ogre::SceneNode * cam_node_;
-  Ogre::Vector3 cam_pose_;
-  Ogre::Vector3 cam_look_at_vector_;
-  rviz_common::VisualizerApp * visualizer_app_;
-  std::shared_ptr<Executor> executor_;
-};
-
-#endif  // INTERNAL__RVIZ_SCENE_TEST_HPP_
+#endif  // RVIZ_VISUAL_TESTS__INTERNAL__TEST_HELPERS_HPP_

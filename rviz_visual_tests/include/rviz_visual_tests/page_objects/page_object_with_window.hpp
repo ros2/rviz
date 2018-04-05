@@ -27,28 +27,34 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PAGE_OBJECTS__POLYGON_DISPLAY_PAGE_OBJECT_HPP_
-#define PAGE_OBJECTS__POLYGON_DISPLAY_PAGE_OBJECT_HPP_
+#ifndef RVIZ_VISUAL_TESTS__PAGE_OBJECTS__PAGE_OBJECT_WITH_WINDOW_HPP_
+#define RVIZ_VISUAL_TESTS__PAGE_OBJECTS__PAGE_OBJECT_WITH_WINDOW_HPP_
 
 #include <memory>
+#include <string>
 #include <vector>
 
-#include <QtWidgets>  // NOLINT
+#include "rviz_visual_tests/page_objects/base_page_object.hpp"
 
-#include "base_page_object.hpp"
+#include "rviz_rendering/render_window.hpp"
 
-class PolygonDisplayPageObject : public BasePageObject
+class PageObjectWithWindow : public BasePageObject
 {
 public:
-  explicit PolygonDisplayPageObject(
+  PageObjectWithWindow(
     int display_id,
+    int display_category,
+    int display_name_index,
     std::shared_ptr<Executor> executor,
     std::shared_ptr<std::vector<int>> all_displays_ids);
 
-  void setTopic(QString topic);
-  void setUnreliable(bool unreliable);
-  void setColor(int red, int green, int blue);
-  void setAlpha(QString alpha);
+  void captureDisplayRenderWindow(std::string image_name);
+
+protected:
+  virtual void setRenderWindow() = 0;
+
+  rviz_rendering::RenderWindow * render_window_;
+  int display_with_window_index_;
 };
 
-#endif  // PAGE_OBJECTS__POLYGON_DISPLAY_PAGE_OBJECT_HPP_
+#endif  // RVIZ_VISUAL_TESTS__PAGE_OBJECTS__PAGE_OBJECT_WITH_WINDOW_HPP_

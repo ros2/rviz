@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "executor.hpp"
+#include "rviz_visual_tests/internal/executor.hpp"
 
 #include <QTimer>  // NOLINT
 

@@ -27,33 +27,35 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PAGE_OBJECTS__GRID_DISPLAY_PAGE_OBJECT_HPP_
-#define PAGE_OBJECTS__GRID_DISPLAY_PAGE_OBJECT_HPP_
+#ifndef RVIZ_VISUAL_TESTS__PAGE_OBJECTS__POINT_CLOUD_DISPLAY_PAGE_OBJECT_HPP_
+#define RVIZ_VISUAL_TESTS__PAGE_OBJECTS__POINT_CLOUD_DISPLAY_PAGE_OBJECT_HPP_
 
 #include <memory>
 #include <vector>
 
 #include <QtWidgets>  // NOLINT
 
-#include "base_page_object.hpp"
+#include "rviz_visual_tests/page_objects/base_page_object.hpp"
 
-class GridDisplayPageObject : public BasePageObject
+class PointCloudDisplayPageObject : public BasePageObject
 {
 public:
-  GridDisplayPageObject(
+  PointCloudDisplayPageObject(
     int display_id,
     std::shared_ptr<Executor> executor,
     std::shared_ptr<std::vector<int>> all_displays_ids);
 
-  void setReferenceFrame(QString reference_frame);
-  void setPlaneCellCount(QString plane_cell_count);
-  void setNormalCellCount(QString normal_cell_count);
-  void setCellSize(QString cell_size);
-  void setLineStyle(QString line_style);
-  void setColor(int red, int green, int blue);
+  void setSizeMeters(QString meters_size);
+  void setSizePixels(QString pixels_size);
+  void setStyle(QString points_style);
+  void setSelectable(bool selectable);
   void setAlpha(QString alpha);
-  void setPlane(QString plane);
-  void setOffset(float x, float y, float z);
+  void setDecayTime(QString decay_time);
+  void setQueueSize(QString queue_size);
+  void setUnreliable(bool unreliable);
+  void setPositionTransformer(QString position_transformer);
+  void setColorTransformer(QString color_transformer);
+  void setColor(int red, int green, int blue);
 };
 
-#endif  // PAGE_OBJECTS__GRID_DISPLAY_PAGE_OBJECT_HPP_
+#endif  // RVIZ_VISUAL_TESTS__PAGE_OBJECTS__POINT_CLOUD_DISPLAY_PAGE_OBJECT_HPP_
