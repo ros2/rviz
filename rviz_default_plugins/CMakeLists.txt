@@ -231,6 +231,7 @@ if(BUILD_TESTING)
       ${rviz_rendering_INCLUDE_DIRS}
       ${OGRE_INCLUDE_DIRS}
       ${rclcpp_INCLUDE_DIRS}
+      ${nav_msgs_INCLUDE_DIRS}
       ${sensor_msgs_INCLUDE_DIRS}
       ${visualization_msgs_INCLUDE_DIRS}
       ${Qt5Widgets_INCLUDE_DIRS}
@@ -240,12 +241,13 @@ if(BUILD_TESTING)
     set(TEST_LINK_LIBRARIES
       rviz_default_plugins_static
       ${rclcpp_LIBRARIES}
+      ${nav_msgs_LIBRARIES}
       ${visualization_msgs_LIBRARIES}
       Qt5::Widgets
       rviz_common::rviz_common
     )
 
-    ament_add_gtest(point_cloud2_display_test
+    ament_add_gmock(point_cloud2_display_test
         test/rviz_default_plugins/displays/pointcloud/message_creators.hpp
         test/rviz_default_plugins/displays/pointcloud/message_creators.cpp
         test/rviz_default_plugins/displays/pointcloud/point_cloud2_display_test.cpp)
@@ -256,7 +258,7 @@ if(BUILD_TESTING)
         ${TEST_LINK_LIBRARIES})
     endif()
 
-    ament_add_gtest(point_cloud_transformers_test
+    ament_add_gmock(point_cloud_transformers_test
         test/rviz_default_plugins/displays/pointcloud/message_creators.hpp
         test/rviz_default_plugins/displays/pointcloud/message_creators.cpp
         test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/axis_color_pc_transformer_test.cpp
