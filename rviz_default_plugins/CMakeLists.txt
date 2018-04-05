@@ -125,6 +125,7 @@ set_property(TARGET rviz_default_plugins_object PROPERTY POSITION_INDEPENDENT_CO
 target_include_directories(rviz_default_plugins_object PUBLIC
   ${rviz_rendering_INCLUDE_DIRS}
   ${rviz_common_INCLUDE_DIRS}
+  ${laser_geometry_INCLUDE_DIRS}
   ${OGRE_INCLUDE_DIRS}
   ${Qt5Widgets_INCLUDE_DIRS}
   ${resource_retriever_INCLUDE_DIRS}
