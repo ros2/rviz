@@ -5,10 +5,11 @@ This testing framework allows users to take screenshots of the main 3D scene and
 
 ## Assumptions and Settings
 
-- Visual tests are located in the folder rviz_visual_tests.
+- The package `rviz_visual_testing_framework` provides a library which allows users to write visual tests in any desired rviz package (e.g. rviz_default_plugins).
 
-- The reference screenshots are located in the rviz_visual_tests/tests source folder, in adirectory called reference_images.
-The test images will be generated in the rviz_visual_tests build folder at build time.
+- Being `rviz_package/` the source folder of the rviz package where the tests are written, the reference screenshots will be located in `rviz_package/test/reference_images`.
+The test images will be, instead, saved in the corresponding build folder, in a directory called: `test_images`.
+Both directories, if not already existing, will be generated at build time.
 
 - The purpose of this framework is to have visual *smoke* tests serving as regression tests.
 
@@ -17,25 +18,25 @@ The test images will be generated in the rviz_visual_tests build folder at build
 - By default the comparison will be performed pixelwise.
 In case of non identical pictures, the difference image will be generated (the color value of each pixel of such image is the absolute value of the difference between the respective pixels of the test and the reference images).
 At this point the MSE (Mean Square Error) index is calculated using the difference image and compared to a threshold value that the user can set.
-If the computed MSE index is lower than this threshold, then the test will pass, if not it will fail.
-In both cases the user will be notified about the actual value of the MSE index. In the future, a more sophisticated comparisonmethod may be provided.
+If the computed MSE index is lower than this threshold, then the test will pass, otherwise it will fail.
+In both cases the user will be notified about the actual value of the MSE index. In the future, a more sophisticated comparison method may be provided.
 
 - If the dimensions of the test image are different from the ones of the reference picture, then the test screenshot will be resized to match the reference one before the comparison is performed.
-Either of the dimensions of the test screenshot could both be bigger or smaller than the reference one.
+Either of the dimensions of the test screenshot could be both bigger or smaller than the reference one.
 The resizing, therefore, consists of a simple scaling which brings the test image to have the same dimensions as the reference picture.
 
 
 ## Interface
 
-For RViz itself: the CMake flag `EnableVisualTests` is provided to enable visual tests and the flag `GenerateReferenceImages` to choose between the two possible behaviours:
+For RViz itself: the CMake flag `EnableVisualTests` is provided to enable visual tests:
 
-- with the option `GenerateReferenceImages` set to `FALSE` (which is the default setting), the test screenshots will be taken and compared to existing reference ones:
+        ament test --cmake-args -DEnableVisualTests=TRUE
 
-        ament test --cmake-args -DEnableVisualTests=TRUE DGenerateReferenceImages=FALSE
+This will make the tests run and the screenshots will be compared to the existing reference images.
 
-- if the option `GenerateReferenceImages` is set to `TRUE`, the reference screenshots will be taken/updated and no comparison performed:
-
-        ament test --cmake-args -DEnableVisualTests=TRUE -DGenerateReferenceImages=TRUE        
+Furthermore, the reference images can be updated by running the tests after setting the environmental variable `GenerateReferenceImages` to `TRUE`.
+    
+**NB**: the `EnableVisualTests` flag value is automatically cached by CMake, meaning that if it's not specified, the value used for the last run will be used.
 
 As anticipated above, if the tests run, by default each test will succeed if both the test images and the relative reference images exist and they are within an MSE threshold.
 It will fail if either the two sets of images exist but they are not identical or within this threshold, or if at least one of the reference images does not exist.
@@ -50,13 +51,11 @@ If the images are taken on different screens, in fact, they will almost certainl
 For the moment this issue is addressed by computing the MSE (Mean Square Error) for the two pictures and comparing it to a threshold value that can be set by the user (by default it is equal to 0.01, to take in account small fluctuations due to different screens).
 **NB**: the MSE is a value between 0 (if the images are identical) and 1 (if the difference image is completely white, which would happen if for each pixel the color difference is equal to 1 - i.e. maximal: each channel of an `Ogre::ColorValue` is between 0 and 1 - for every channel).
 If the computed MSE is found to be bigger than the set threshold, then the test will fail, otherwise it will pass.
-To set the threshold value, another CMake flag is provided: `MSEThreshold`, and the user can set it via command line when starting the tests:
 
-        ament test --cmake-args -DEnableVisualTests=TRUE  -DMSEThreshold=0.001
+As said, the user can specify a different threshold value for each test, should the default value of 0.01 not be the optimal one.
+This is done via the `VisualTestFixture` method `setTesterThreshold(double threshold)`, which can easily be called directly in the tests (before calling one of the comparison methods).
 
 Because of the heuristic nature of this method, the appropriate threshold value will depend on the single test and on the context.
-
-**NB**: all the three CMake flag values are automatically cached by CMake, meaning that if they are not specified, the values used for the last run will be used.
 
 
 ## GUI interaction
@@ -78,30 +77,56 @@ It implements all the basic methods to modify the various kind of display proper
 
 ## Writing tests
 
+### Additions to the CMakeLists.txt file
+
+In order for visual tests to work correctly, some additions need to be made to the `CMakeLists.txt` file of the rviz package where the tests are written.
+Specifically, the following code must be added:
+
+    option(EnableVisualTests "decides whether or not to enable the tests")
+
+    add_definitions(-D_BUILD_DIR_PATH="${CMAKE_CURRENT_BINARY_DIR}")
+    add_definitions(-D_SRC_DIR_PATH="${CMAKE_CURRENT_SOURCE_DIR}")
+
+    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_images)
+    file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/test/reference_images)
+
+which has the following purpose:
+
+- the line `option(EnableVisualTests "decides whether or not enable the tests")` allows us to use the CMake flag `EnableVisualTests` to decide whether or not the visual tests will run.
+In particular, for this mechanism to work, we also need to wrap the `ament_add_gtest(visual_test [...])` block in an `if(EnableVisualTests STREQUAL "TRUE")` condition.
+
+- the second and third line are used to code the path to the build and source directories of the current rviz package. These paths are then passed to the testing framework via the test fixture.
+
+- finally, the last two lines generate the directories where the test images and the reference ones are saved, should they not be already existing.
+
+Moreover, should it not already be present, the following should also be included:
+
+    find_package(Qt5 REQUIRED COMPONENTS Widgets Test)
+
 ### How to write a test
 
-An example of how tests are written and how they work is provided by the `example_test.cpp` file in rviz_visual_tests/tests or in the [quick start guide](README.md).
+An example of how tests are written and how they work is provided by the `example_test.cpp` file in `rviz_visual_testing_framework/test` or in the [quick start guide](README.md).
 In the following the most important points with respect to the tests are summarized:
 
 * As said, the `VisualTestFixture` offers convenience methods to:
-    * add a new display: `addDisplay<display type>()`, which creates an instance of the desired page object and returns a shared pointer to it.
-    * remove a display: `removeDisplay(std::shared_ptr<BasePageObject> display)`.
-    * capture a screen shot of the main render window: `captureMainWindow()` or of a secondary window: `captureRenderWindow(std::shared_ptr<PageObjectWithWindow> display)`.
-    * assert the identity of test and reference images: `assertScreenShotsIdentity()`.
-    * both take a screenshot of the main render window and assert its identity to the reference image (which can be used if one is not interested in secondary windows): `assertMainWindowIdentity()`.
-    * set the position of the camera and its sight vector: `setCamPose(Ogre::Vector3 pose)` and `setCamLookAt(Ogre::Vector3 look_at)`.
+    * add a new display: `addDisplay<display type>()`, which creates an instance of the desired page object and returns a shared pointer to it;
+    * remove a display: `removeDisplay(std::shared_ptr<BasePageObject> display)`;
+    * capture a screen shot of the main render window: `captureMainWindow()` or of a secondary window: `captureRenderWindow(std::shared_ptr<PageObjectWithWindow> display)`;
+    * assert the identity of test and reference images: `assertScreenShotsIdentity()`;
+    * both take a screenshot of the main render window and assert its identity to the reference image (which can be used if one is not interested in secondary windows): `assertMainWindowIdentity()`;
+    * set the position of the camera and its sight vector: `setCamPose(Ogre::Vector3 pose)` and `setCamLookAt(Ogre::Vector3 look_at)`;
+    * change the MSE threshold value: `setTesterThreshold(double threshold)`.
 
 - A custom RViz configuration is loaded right after the application starts.
 It corresponds to an empty scene, with the help panel hidden.
 
-- In writing the test it is important to take care that the display property that one wants to 
-change is visible when the relative display menu is expanded.
+- In writing the test it is important to take care that the display property that one wants to change is visible when the relative display menu is expanded.
 That means that there must be enough free place in the display panel so that when the display is expanded the desired property row is still visible on screen.
 This is because, in order to set properties, mouse events (in particular mouse clicks) are simulated by `QTest`, and if the point we want to click on is not visible on screen, then the simulated mouse click will fail (or, rather, the clicked screen area won't correspond to the desired one).
 Note that displays menus are automatically expanded before a property is changed.
-On the other hand, in order to collapse them one can use the `BasePageObject` class method `collapse()`.
+On the other hand, in order to collapse them, one can use the `BasePageObject` class method `collapse()`.
 
-- For reasons that will become clear, in each test one and only one of the two methods `assertScreenShotsIdentity()` and `assertMainWindowIdentity()` must be called.
+- For reasons that will become clear later, in each test one and only one of the two methods `assertScreenShotsIdentity()` and `assertMainWindowIdentity()` must be called.
 After such call, interaction with RViz is no longer possible for the current test, and any attempt to interact with the GUI from this point on will not produce the expected behaviour and will possibly result in a segfault.
 
 - At the end of each test, the scene is cleaned, the application reset and all the present displays removed, before the following test begins.

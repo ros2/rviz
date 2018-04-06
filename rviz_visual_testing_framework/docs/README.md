@@ -29,7 +29,7 @@ TEST_F(VisualTestFixture, example_test_structure) {
 
   /// Compare test screenshots with the reference ones:
   assertScreenShotsIdentity();
-    }
+}
 ```
 
 Let us have a look at what happens:
@@ -40,7 +40,8 @@ This fixture provides convenience methods needed for the tests.
 - We first change the camera position and its sight vector with the two methods `setCamPose(Ogre::Vector3 pose)` and `setCamLookAt(Ogre::Vector3 look_at)`.
 This is only necessary if the default position and sight vector are insufficient.
 
-- To add an RViz display call the method `addDisplay()`, which is templated on the type of the desired display.  In the example above, we first add a Grid display and then an Image display.
+- To add an RViz display call the method `addDisplay()`, which is templated on the type of the desired display.
+In the example above, we first add a Grid display and then an Image display.
 The `addDisplay()` method returns a `std::shared_ptr` pointing to the just created display object.
 This pointer can be stored locally and used to interact with the display.
 
@@ -63,12 +64,10 @@ In order to run tests, use the following command:
 
     ament test --cmake-args -DEnableVisualTests=TRUE
 
-This will make the tests run and the screenshots will be compared to the existing reference images.
-To update the referencce pictures, use the following command:
+This will make the tests run and the screenshots will be compared to the existing reference images.  
+**NB**: CMake will cache the flag value, so that after setting them to `TRUE` or `FALSE`, the following time `ament test` is run without specifying the flag, the previously set value will be used.
 
-    ament test --cmake-args -DEnableVisualTests=TRUE -DGenerateReferenceImages=TRUE
-
-**NB**: CMake will cache the flag values, so that after setting them to `TRUE` or `FALSE`, the following time `ament test` is run without specifying any CMake flag, the previously set values will be used.
+Furthermore, the reference images can be updated by running the tests after setting the environmental variable `GenerateReferenceImages` to `TRUE`.
 
 ## Further reading
 
