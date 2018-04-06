@@ -2,28 +2,16 @@ cmake_minimum_required(VERSION 3.5)
 
 project(rviz_visual_testing_framework)
 
-# Options to decide whether or not the visual test will run and in which modality (TEST or REF)
+# Options to decide whether or not the visual test will run.
 option(EnableVisualTests "decides whether or not enable the tests")
-option(GenerateReferenceImages "decides whether the reference images are updated")
-
-# Option to set a non null threshold in the image comparison (in case of unidentical images).
-set(MSEThreshold "0.01" CACHE STRING "default value of the threshold")
-add_definitions(-D_MSE_THRESHOLD="${MSEThreshold}")
 
 # Path variables needed to save and find screenshots for image comparison.
 add_definitions(-D_BUILD_DIR_PATH="${CMAKE_CURRENT_BINARY_DIR}")
 add_definitions(-D_SRC_DIR_PATH="${CMAKE_CURRENT_SOURCE_DIR}")
 
-# Creates a directory where the test screenshots will be saved.
-file(REMOVE_RECURSE ${CMAKE_CURRENT_BINARY_DIR}/test_images)
+# Creates a directory where the test and reference screenshots will be saved.
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_images)
-
-# Decides whether the test or the reference screenshots will be taken.
-if(GenerateReferenceImages STREQUAL "TRUE")
-  add_definitions(-D_REF_IMAGES=1)
-else()
-  add_definitions(-D_REF_IMAGES=0)
-endif()
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/test/reference_images)
 
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
@@ -50,7 +38,7 @@ find_package(ament_cmake_gtest REQUIRED)
 ament_find_gtest()
 
 set(visual_test_framework_source_files
-  tests/example_nodes.hpp
+  test/example_nodes.hpp
   include/rviz_visual_testing_framework/page_objects/base_page_object.hpp
   src/page_objects/base_page_object.cpp
   include/rviz_visual_testing_framework/page_objects/camera_display_page_object.hpp
@@ -128,7 +116,7 @@ if(BUILD_TESTING)
   if(EnableVisualTests STREQUAL "TRUE")
     ament_add_gtest(
       example_test
-      tests/example_test.cpp)
+      test/example_test.cpp)
     if(TARGET example_test)
       target_link_libraries(
         example_test

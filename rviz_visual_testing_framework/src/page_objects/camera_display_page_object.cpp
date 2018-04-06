@@ -40,7 +40,7 @@ CameraDisplayPageObject::CameraDisplayPageObject(
   int display_id,
   std::shared_ptr<Executor> executor,
   std::shared_ptr<std::vector<int>> all_displays_ids)
-: PageObjectWithWindow(display_id, 0, 0, executor, all_displays_ids)
+: PageObjectWithWindow(display_id, 0, "Camera", executor, all_displays_ids)
 {
   static int camera_displays_number = 0;
   display_with_window_index_ = camera_displays_number++;

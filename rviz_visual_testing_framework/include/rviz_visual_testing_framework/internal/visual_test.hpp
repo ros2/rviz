@@ -50,7 +50,11 @@ class VisualTest
 {
 public:
   /// Initializes the scene and sets the path to the image directories.
-  VisualTest(rviz_common::VisualizerApp * vapp, std::shared_ptr<Executor> executor);
+  VisualTest(
+    rviz_common::VisualizerApp * vapp,
+    std::shared_ptr<Executor> executor,
+    std::string src_dir_path,
+    std::string build_dir_path);
 
   ~VisualTest();
 
@@ -74,6 +78,9 @@ public:
 
   void setCamera();
 
+  /// Sets the MSE threshold in tester_, for the comparison.
+  void setTesterThreshold(double threshold);
+
 private:
   void takeReferenceScreenShot(
     Ogre::String screenshot_name, std::shared_ptr<PageObjectWithWindow> display);
@@ -82,6 +89,7 @@ private:
   bool checkImageExists(std::string & name);
   bool directoriesDoNotExist();
   void reset();
+  bool generateReferenceImages();
 
   Ogre::Vector3 default_cam_pose_;
   Ogre::Vector3 default_cam_look_at_;

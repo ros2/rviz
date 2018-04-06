@@ -35,15 +35,19 @@
 
 #include <QDir>  // NOLINT
 
-VisualTest::VisualTest(rviz_common::VisualizerApp * vapp, std::shared_ptr<Executor> executor)
+VisualTest::VisualTest(
+  rviz_common::VisualizerApp * vapp,
+  std::shared_ptr<Executor> executor,
+  std::string src_dir_path,
+  std::string build_dir_path)
 : default_cam_pose_(Ogre::Vector3(0, 0, 15)),
   default_cam_look_at_(Ogre::Vector3(0, 0, 0)),
   scene_(vapp, default_cam_pose_, default_cam_look_at_, executor),
   tester_("", ""),
-  build_directory_path_(_BUILD_DIR_PATH),
-  source_directory_path_(_SRC_DIR_PATH)
+  build_directory_path_(build_dir_path),
+  source_directory_path_(src_dir_path)
 {
-  reference_images_path_suffix_ = "/tests/reference_images/";
+  reference_images_path_suffix_ = "/test/reference_images/";
   test_images_path_suffix_ = "/test_images/";
 
   std::string reference_images_path = QDir::toNativeSeparators(
@@ -99,15 +103,17 @@ void VisualTest::takeTestScreenShot(
 
 void VisualTest::assertVisualIdentity(Ogre::String name)
 {
-  if (!_REF_IMAGES && checkImageExists(name)) {
-    tester_.compare(name);
-  } else if (!_REF_IMAGES && !checkImageExists(name)) {
-    GTEST_FAIL() << "\n[  ERROR   ] Reference image does not exist, or its name is incorrect (it "
-      "should be: '" << name << "_ref.png'.)\n";
-  } else {
+  if (generateReferenceImages()) {
     std::cout << "\n[   INFO:  ] The reference image '" << name << "_ref.png' has been updated "
       "correctly.\n\n";
     SUCCEED();
+  } else {
+    if (checkImageExists(name)) {
+      tester_.compare(name);
+    } else {
+      GTEST_FAIL() << "\n[  ERROR   ] Reference image does not exist, or its name is incorrect (it "
+        "should be: '" << name << "_ref.png'.)\n";
+    }
   }
 }
 
@@ -118,7 +124,7 @@ void VisualTest::takeScreenShot(Ogre::String name, std::shared_ptr<PageObjectWit
       "doesn't exist. Make sure that both directory are correctly placed and try again. \n";
   }
 
-  if (_REF_IMAGES) {
+  if (generateReferenceImages()) {
     takeReferenceScreenShot(name, display);
   } else {
     takeTestScreenShot(name, display);
@@ -131,11 +137,15 @@ void VisualTest::setCamera()
   scene_.installCamera();
 }
 
+void VisualTest::setTesterThreshold(double threshold)
+{
+  tester_.setThreshold(threshold);
+}
+
 bool VisualTest::checkImageExists(std::string & name)
 {
-  const std::string source_path = _SRC_DIR_PATH;
   const std::string reference_image_name = QDir::toNativeSeparators(
-    QString::fromStdString(source_path + reference_images_path_suffix_ +
+    QString::fromStdString(source_directory_path_ + reference_images_path_suffix_ +
     name + "_ref.png")).toStdString();
   struct stat buffer;
 
@@ -144,12 +154,10 @@ bool VisualTest::checkImageExists(std::string & name)
 
 bool VisualTest::directoriesDoNotExist()
 {
-  const std::string source_path = _SRC_DIR_PATH;
-  const std::string build_path = _BUILD_DIR_PATH;
   const std::string reference_directory = QDir::toNativeSeparators(QString::fromStdString(
-        source_path + reference_images_path_suffix_)).toStdString();
-  const std::string test_directory = QDir::toNativeSeparators(QString::fromStdString(build_path +
-      test_images_path_suffix_)).toStdString();
+        source_directory_path_ + reference_images_path_suffix_)).toStdString();
+  const std::string test_directory = QDir::toNativeSeparators(
+    QString::fromStdString(build_directory_path_ + test_images_path_suffix_)).toStdString();
   struct stat buffer;
 
   bool test_images_directory_exists = stat(test_directory.c_str(), &buffer) == 0;
@@ -163,4 +171,14 @@ void VisualTest::reset()
   Ogre::MeshManager::getSingleton().removeAll();
   setCamPose(default_cam_pose_);
   setCamLookAt(default_cam_look_at_);
+}
+
+bool VisualTest::generateReferenceImages()
+{
+  if (!std::getenv("GenerateReferenceImages")) {
+    return false;
+  }
+
+  std::string generate_references = std::getenv("GenerateReferenceImages");
+  return generate_references == "TRUE";
 }

@@ -44,7 +44,7 @@ public:
   PageObjectWithWindow(
     int display_id,
     int display_category,
-    int display_name_index,
+    QString display_name,
     std::shared_ptr<Executor> executor,
     std::shared_ptr<std::vector<int>> all_displays_ids);
 

@@ -39,7 +39,7 @@ GridDisplayPageObject::GridDisplayPageObject(
   int display_id,
   std::shared_ptr<Executor> executor,
   std::shared_ptr<std::vector<int>> all_displays_ids)
-: BasePageObject(display_id, 0, 1, executor, all_displays_ids)
+: BasePageObject(display_id, 0, "Grid", executor, all_displays_ids)
 {}
 
 void GridDisplayPageObject::setReferenceFrame(QString reference_frame)

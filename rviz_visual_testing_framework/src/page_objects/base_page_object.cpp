@@ -40,11 +40,11 @@
 BasePageObject::BasePageObject(
   int display_id,
   int display_category,
-  int display_name_index,
+  QString display_name,
   std::shared_ptr<Executor> executor,
   std::shared_ptr<std::vector<int>> display_ids_vector)
 : display_category_(display_category),
-  display_name_index_(display_name_index),
+  display_name_(display_name),
   executor_(executor),
   default_first_display_index_(2),
   all_display_ids_vector_(display_ids_vector)
@@ -212,9 +212,9 @@ int BasePageObject::getDisplayCategory() const
   return display_category_;
 }
 
-int BasePageObject::getDisplayNameIndex() const
+QString BasePageObject::getDisplayName() const
 {
-  return display_name_index_;
+  return display_name_;
 }
 
 void BasePageObject::collapse()

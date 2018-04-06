@@ -48,6 +48,7 @@ public:
     Ogre::Image test_image, Ogre::Image reference_image, Ogre::String image_name);
 
   double computeMseIndex(Ogre::String image_name, size_t image_width, size_t image_height);
+  void setThreshold(double threshold);
 
 private:
   Ogre::Image loadImage(Ogre::String image_name, Ogre::String image_directory_path);
@@ -58,5 +59,6 @@ private:
 
   Ogre::String reference_directory_path_;
   Ogre::String test_directory_path_;
+  double threshold_;
 };
 #endif  // RVIZ_VISUAL_TESTING_FRAMEWORK__INTERNAL__IMAGE_TESTER_HPP_

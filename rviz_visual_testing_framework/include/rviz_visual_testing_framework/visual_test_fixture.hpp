@@ -31,6 +31,7 @@
 #define RVIZ_VISUAL_TESTING_FRAMEWORK__VISUAL_TEST_FIXTURE_HPP_
 
 #include <memory>
+#include <string>
 #include <vector>
 
 #include "rviz_visual_testing_framework/internal/display_handler.hpp"
@@ -41,13 +42,27 @@
 class VisualTestFixture : public testing::Test
 {
 public:
-  VisualTestFixture();
+  VisualTestFixture()
+  {
+    test_name_ = ::testing::UnitTest::GetInstance()->current_test_info()->name();
+    executor_ = std::make_shared<Executor>();
+    src_directory_path_ = std::string(_SRC_DIR_PATH);
+    build_directory_path_ = std::string(_BUILD_DIR_PATH);
+    visual_test_ = std::make_unique<VisualTest>(
+      visualizer_app_, executor_, src_directory_path_, build_directory_path_);
+    all_display_ids_vector_ = std::make_shared<std::vector<int>>();
+    display_handler_ = std::make_unique<DisplayHandler>(executor_, all_display_ids_vector_);
+
+    visual_test_->setCamera();
+  }
+
   static void SetUpTestCase();
   void TearDown() override;
   static void TearDownTestCase();
 
   void setCamPose(Ogre::Vector3 camera_pose);
   void setCamLookAt(Ogre::Vector3 camera_look_at_vector);
+  void setTesterThreshold(double threshold);
   template<typename T>
   std::shared_ptr<T> addDisplay()
   {
@@ -70,6 +85,8 @@ public:
   std::shared_ptr<Executor> executor_;
   static QApplication * qapp_;
   static rviz_common::VisualizerApp * visualizer_app_;
+  static std::string src_directory_path_;
+  static std::string build_directory_path_;
 
 private:
   void startApplication();

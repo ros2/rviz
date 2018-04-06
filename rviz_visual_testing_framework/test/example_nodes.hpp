@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_VISUAL_TESTING_FRAMEWORK__TESTS__EXAMPLE_NODES_HPP_
-#define RVIZ_VISUAL_TESTING_FRAMEWORK__TESTS__EXAMPLE_NODES_HPP_
+#ifndef EXAMPLE_NODES_HPP_
+#define EXAMPLE_NODES_HPP_
 
 #include <string>
 #include <vector>
@@ -97,4 +97,4 @@ geometry_msgs::msg::TransformStamped createStaticTransformMessage(
 
 }  // namespace nodes
 
-#endif  // RVIZ_VISUAL_TESTING_FRAMEWORK__TESTS__EXAMPLE_NODES_HPP_
+#endif  // EXAMPLE_NODES_HPP_

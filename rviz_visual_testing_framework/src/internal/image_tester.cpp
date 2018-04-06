@@ -29,12 +29,13 @@
 
 #include "rviz_visual_testing_framework/internal/image_tester.hpp"
 
-#include <QLocale>  // NOLINT
-
 #include <gtest/gtest.h>
 
 ImageTester::ImageTester(Ogre::String reference_directory_path, Ogre::String test_directory_path)
-: reference_directory_path_(reference_directory_path), test_directory_path_(test_directory_path) {}
+: reference_directory_path_(reference_directory_path),
+  test_directory_path_(test_directory_path),
+  threshold_(0.01)
+{}
 
 void ImageTester::compare(Ogre::String image_name)
 {
@@ -83,20 +84,18 @@ void ImageTester::assertImageIdentity(
   if (different_pixels_number == 0) {
     SUCCEED();
   } else {
-    // _MSE_THRESHOLD is set in CMakeList
-    double threshold = QLocale(QLocale::English).toDouble(_MSE_THRESHOLD);
     computeImageDifference(test_image, reference_image, image_name);
     double mse_index = computeMseIndex(image_name, reference_image_width, reference_image_height);
-    if (mse_index <= threshold) {
+    if (mse_index <= threshold_) {
       std::cout << "\n[   INFO:   ] The test image '" << image_name + ".png" << "' is not "
         "pixel-wise identical to its reference, but the MSE index is " << mse_index <<
-        ", which is not bigger than the set threshold of " << threshold << "\n\n";
+        ", which is not bigger than the set threshold of " << threshold_ << "\n\n";
       SUCCEED();
     } else {
       GTEST_FAIL() << "\n[  ERROR   ] The test image '" << image_name + ".png" << "' is different "
         "from the reference one. The image difference has been computed and saved in test_images"
         ". The MSE index is equal to " << mse_index << ", which is bigger than the set threshold "
-        "of " << threshold << ".\n";
+        "of " << threshold_ << ".\n";
     }
   }
 }
@@ -160,4 +159,10 @@ double ImageTester::computeMseIndex(
   averaged_colour /= image_width * image_height;
 
   return (averaged_colour.r + averaged_colour.g + averaged_colour.b) / 3.f;
+}
+
+
+void ImageTester::setThreshold(double threshold)
+{
+  threshold_ = threshold;
 }

@@ -35,17 +35,6 @@
 
 #include "rviz_common/ros_integration/ros_client_abstraction.hpp"
 
-VisualTestFixture::VisualTestFixture()
-{
-  test_name_ = ::testing::UnitTest::GetInstance()->current_test_info()->name();
-  executor_ = std::make_shared<Executor>();
-  visual_test_ = std::make_unique<VisualTest>(visualizer_app_, executor_);
-  all_display_ids_vector_ = std::make_shared<std::vector<int>>();
-  display_handler_ = std::make_unique<DisplayHandler>(executor_, all_display_ids_vector_);
-
-  visual_test_->setCamera();
-}
-
 void VisualTestFixture::SetUpTestCase()
 {
   int argc = 0;
@@ -72,10 +61,10 @@ void VisualTestFixture::TearDownTestCase()
   VisualTestFixture::qapp_ = nullptr;
 
   std::string reference_images_path = QDir::toNativeSeparators(
-    QString::fromStdString(std::string(_SRC_DIR_PATH) + "/tests/reference_images/"))
+    QString::fromStdString(src_directory_path_ + "/test/reference_images/"))
     .toStdString();
   std::string test_images_path = QDir::toNativeSeparators(
-    QString::fromStdString(std::string(_BUILD_DIR_PATH) + "/test_images/")).toStdString();
+    QString::fromStdString(build_directory_path_ + "/test_images/")).toStdString();
 
   std::cout << "\n[   INFO   ] The reference images are located in: " <<
     reference_images_path << "\n[   INFO   ] The test images are located in: " <<
@@ -90,6 +79,11 @@ void VisualTestFixture::setCamPose(Ogre::Vector3 camera_pose)
 void VisualTestFixture::setCamLookAt(Ogre::Vector3 camera_look_at_vector)
 {
   visual_test_->setCamLookAt(camera_look_at_vector);
+}
+
+void VisualTestFixture::setTesterThreshold(double threshold)
+{
+  visual_test_->setTesterThreshold(threshold);
 }
 
 void VisualTestFixture::removeDisplay(std::shared_ptr<BasePageObject> display)
@@ -147,3 +141,5 @@ void VisualTestFixture::setNameIfEmpty(Ogre::String & name)
 
 QApplication * VisualTestFixture::qapp_ = nullptr;
 rviz_common::VisualizerApp * VisualTestFixture::visualizer_app_ = nullptr;
+std::string VisualTestFixture::src_directory_path_;  // NOLINT
+std::string VisualTestFixture::build_directory_path_;  // NOLINT

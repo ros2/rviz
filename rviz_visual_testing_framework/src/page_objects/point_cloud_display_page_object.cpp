@@ -39,7 +39,7 @@ PointCloudDisplayPageObject::PointCloudDisplayPageObject(
   int display_id,
   std::shared_ptr<Executor> executor,
   std::shared_ptr<std::vector<int>> all_displays_ids)
-: BasePageObject(display_id, 0, 4, executor, all_displays_ids)
+: BasePageObject(display_id, 0, "PointCloud", executor, all_displays_ids)
 {}
 
 void PointCloudDisplayPageObject::setSizeMeters(QString meters_size)

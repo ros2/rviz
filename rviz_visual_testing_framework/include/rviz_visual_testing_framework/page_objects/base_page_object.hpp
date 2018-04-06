@@ -47,13 +47,13 @@ public:
   BasePageObject(
     int display_id,
     int display_category,
-    int display_name_index,
+    QString display_name_,
     std::shared_ptr<Executor> executor,
     std::shared_ptr<std::vector<int>> all_displays_ids);
 
   int getDisplayId() const;
   int getDisplayCategory() const;
-  int getDisplayNameIndex() const;
+  QString getDisplayName() const;
   void collapse();
 
 protected:
@@ -64,7 +64,7 @@ protected:
 
   int display_id_;
   int display_category_;
-  int display_name_index_;
+  QString display_name_;
   std::shared_ptr<Executor> executor_;
 
 private:

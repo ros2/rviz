@@ -144,14 +144,15 @@ void DisplayHandler::selectDisplayAndConfirm(std::shared_ptr<BasePageObject> pag
       QTreeWidget * add_by_name_tree = qobject_cast<QTreeWidget *>(
         select_display_tab_widget->currentWidget());
 
-      // N.B. when updating to a new master, the position of the various displays in the QWidgetTree
-      // may be changed. After updating check it.
-      QTreeWidgetItem * display =
-      add_by_name_tree
-      ->topLevelItem(page_object->getDisplayCategory())
-      ->child(page_object->getDisplayNameIndex());
+      auto items = add_by_name_tree->findItems(page_object->getDisplayName(), Qt::MatchRecursive);
 
-      QRect display_element_bounding_box = add_by_name_tree->visualItemRect(display);
+      if (items.empty()) {
+        std::cout << "\n[  ERROR   ] The display with name '" <<
+        page_object->getDisplayName().toStdString() << "' does not exist!\n";
+        return;
+      }
+
+      QRect display_element_bounding_box = add_by_name_tree->visualItemRect(items.at(0));
 
       QTest::mouseClick(
         add_by_name_tree->viewport(),
