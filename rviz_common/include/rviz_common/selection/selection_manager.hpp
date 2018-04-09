@@ -254,26 +254,6 @@ public:
 
   rviz_common::properties::PropertyTreeModel * getPropertyModel() override;
 
-  // TODO(Martin-Idel-SI): This should be private. The best way is to probably expose
-  // SelectionRectangle
-  void highlight(Ogre::Viewport * viewport, int x1, int y1, int x2, int y2);
-
-  // TODO(Martin-Idel-SI): This should be private. The best way is to probably expose
-  // SelectionRectangle
-  void select(Ogre::Viewport * viewport, int x1, int y1, int x2, int y2, SelectType type);
-
-  // TODO(Martin-Idel-SI): This should be private. The best way is to probably expose
-  // SelectionRectangle
-  void
-  pick(
-    Ogre::Viewport * viewport,
-    int x1,
-    int y1,
-    int x2,
-    int y2,
-    M_Picked & results,
-    bool single_render_pass = false);
-
 private Q_SLOTS:
   /// Call updateProperties() on all SelectionHandlers in the current selection.
   void updateProperties();

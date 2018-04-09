@@ -522,45 +522,11 @@ void SelectionManager::update()
   }
 }
 
-void SelectionManager::highlight(Ogre::Viewport * viewport, int x1, int y1, int x2, int y2)
-{
-  std::lock_guard<std::recursive_mutex> lock(global_mutex_);
-
-  highlight_enabled_ = true;
-
-  highlight_.viewport = viewport;
-  highlight_.x1 = x1;
-  highlight_.y1 = y1;
-  highlight_.x2 = x2;
-  highlight_.y2 = y2;
-}
-
 void SelectionManager::removeHighlight()
 {
   std::lock_guard<std::recursive_mutex> lock(global_mutex_);
 
   highlight_enabled_ = false;
-}
-
-void SelectionManager::select(
-  Ogre::Viewport * viewport, int x1, int y1, int x2, int y2,
-  SelectType type)
-{
-  std::lock_guard<std::recursive_mutex> lock(global_mutex_);
-
-  highlight_enabled_ = false;
-  highlight_node_->setVisible(false);
-
-  M_Picked results;
-  pick(viewport, x1, y1, x2, y2, results);
-
-  if (type == Add) {
-    addSelection(results);
-  } else if (type == Remove) {
-    removeSelection(results);
-  } else if (type == Replace) {
-    setSelection(results);
-  }
 }
 
 void SelectionManager::setHighlightRect(Ogre::Viewport * viewport, int x1, int y1, int x2, int y2)
@@ -635,155 +601,6 @@ bool SelectionManager::render(
 PropertyTreeModel * SelectionManager::getPropertyModel()
 {
   return property_model_;
-}
-
-void SelectionManager::pick(
-  Ogre::Viewport * viewport, int x1, int y1, int x2, int y2,
-  M_Picked & results, bool single_render_pass)
-{
-  std::lock_guard<std::recursive_mutex> lock(global_mutex_);
-
-  bool need_additional_render = false;
-
-  V_CollObject handles_by_pixel;
-  S_CollObject need_additional;
-
-  V_CollObject & pixels = pixel_buffer_;
-
-  // First render is special... does the initial object picking, determines
-  // which objects have been selected.
-  // After that, individual handlers can specify that they need additional
-  // renders (max # defined in kNumRenderTextures_).
-  {
-    M_CollisionObjectToSelectionHandler::iterator handler_it = objects_.begin();
-    M_CollisionObjectToSelectionHandler::iterator handler_end = objects_.end();
-    for (; handler_it != handler_end; ++handler_it) {
-      handler_it->second->preRenderPass(0);
-    }
-
-    renderAndUnpack(viewport, 0, x1, y1, x2, y2, pixels);
-
-    handler_it = objects_.begin();
-    handler_end = objects_.end();
-    for (; handler_it != handler_end; ++handler_it) {
-      handler_it->second->postRenderPass(0);
-    }
-
-    handles_by_pixel.reserve(pixels.size());
-    V_CollObject::iterator it = pixels.begin();
-    V_CollObject::iterator end = pixels.end();
-    for (; it != end; ++it) {
-      const CollObjectHandle & p = *it;
-
-      CollObjectHandle handle = p;
-
-      handles_by_pixel.push_back(handle);
-
-      if (handle == 0) {
-        continue;
-      }
-
-      SelectionHandler * handler = getHandler(handle);
-
-      if (handler) {
-        std::pair<M_Picked::iterator,
-          bool> insert_result = results.insert(std::make_pair(handle, Picked(handle)));
-        if (insert_result.second) {
-          if (handler->needsAdditionalRenderPass(1) && !single_render_pass) {
-            need_additional.insert(handle);
-            need_additional_render = true;
-          }
-        } else {
-          insert_result.first->second.pixel_count++;
-        }
-      }
-    }
-  }
-
-  uint32_t pass = 1;
-
-  V_uint64 extra_by_pixel;
-  extra_by_pixel.resize(handles_by_pixel.size());
-  while (need_additional_render && pass < kNumRenderTextures_) {
-    {
-      S_CollObject::iterator need_it = need_additional.begin();
-      S_CollObject::iterator need_end = need_additional.end();
-      for (; need_it != need_end; ++need_it) {
-        SelectionHandler * handler = getHandler(*need_it);
-        assert(handler);
-
-        handler->preRenderPass(pass);
-      }
-    }
-
-    renderAndUnpack(viewport, pass, x1, y1, x2, y2, pixels);
-
-    {
-      S_CollObject::iterator need_it = need_additional.begin();
-      S_CollObject::iterator need_end = need_additional.end();
-      for (; need_it != need_end; ++need_it) {
-        SelectionHandler * handler = getHandler(*need_it);
-        assert(handler);
-
-        handler->postRenderPass(pass);
-      }
-    }
-
-    int i = 0;
-    V_CollObject::iterator pix_it = pixels.begin();
-    V_CollObject::iterator pix_end = pixels.end();
-    for (; pix_it != pix_end; ++pix_it, ++i) {
-      const CollObjectHandle & p = *pix_it;
-
-      CollObjectHandle handle = handles_by_pixel[i];
-
-      if (pass == 1) {
-        extra_by_pixel[i] = 0;
-      }
-
-      if (need_additional.find(handle) != need_additional.end()) {
-        CollObjectHandle extra_handle = p;
-        extra_by_pixel[i] |= extra_handle << (32 * (pass - 1));
-      } else {
-        extra_by_pixel[i] = 0;
-      }
-    }
-
-    need_additional_render = false;
-    need_additional.clear();
-    M_Picked::iterator handle_it = results.begin();
-    M_Picked::iterator handle_end = results.end();
-    for (; handle_it != handle_end; ++handle_it) {
-      CollObjectHandle handle = handle_it->first;
-
-      if (getHandler(handle)->needsAdditionalRenderPass(pass + 1)) {
-        need_additional_render = true;
-        need_additional.insert(handle);
-      }
-    }
-  }
-
-  int i = 0;
-  V_uint64::iterator pix_2_it = extra_by_pixel.begin();
-  V_uint64::iterator pix_2_end = extra_by_pixel.end();
-  for (; pix_2_it != pix_2_end; ++pix_2_it, ++i) {
-    CollObjectHandle handle = handles_by_pixel[i];
-
-    if (handle == 0) {
-      continue;
-    }
-
-    M_Picked::iterator picked_it = results.find(handle);
-    if (picked_it == results.end()) {
-      continue;
-    }
-
-    Picked & picked = picked_it->second;
-
-    if (*pix_2_it) {
-      picked.extra_handles.insert(*pix_2_it);
-    }
-  }
 }
 
 Ogre::ColourValue SelectionManager::handleToColor(CollObjectHandle handle)
@@ -1053,14 +870,35 @@ void
 SelectionManager::highlight(rviz_rendering::RenderWindow * window, int x1, int y1, int x2, int y2)
 {
   Ogre::Viewport * viewport = rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(window);
-  highlight(viewport, x1, y1, x2, y2);
+  std::lock_guard<std::recursive_mutex> lock(global_mutex_);
+
+  highlight_enabled_ = true;
+
+  highlight_.viewport = viewport;
+  highlight_.x1 = x1;
+  highlight_.y1 = y1;
+  highlight_.x2 = x2;
+  highlight_.y2 = y2;
 }
 
 void SelectionManager::select(
   rviz_rendering::RenderWindow * window, int x1, int y1, int x2, int y2, SelectType type)
 {
-  Ogre::Viewport * viewport = rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(window);
-  select(viewport, x1, y1, x2, y2, type);
+  std::lock_guard<std::recursive_mutex> lock(global_mutex_);
+
+  highlight_enabled_ = false;
+  highlight_node_->setVisible(false);
+
+  M_Picked results;
+  pick(window, x1, y1, x2, y2, results);
+
+  if (type == Add) {
+    addSelection(results);
+  } else if (type == Remove) {
+    removeSelection(results);
+  } else if (type == Replace) {
+    setSelection(results);
+  }
 }
 
 void SelectionManager::pick(
@@ -1073,7 +911,149 @@ void SelectionManager::pick(
   bool single_render_pass)
 {
   Ogre::Viewport * viewport = rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(window);
-  pick(viewport, x1, y1, x2, y2, results, single_render_pass);
+  std::lock_guard<std::recursive_mutex> lock(global_mutex_);
+
+  bool need_additional_render = false;
+
+  V_CollObject handles_by_pixel;
+  S_CollObject need_additional;
+
+  V_CollObject & pixels = pixel_buffer_;
+
+  // First render is special... does the initial object picking, determines
+  // which objects have been selected.
+  // After that, individual handlers can specify that they need additional
+  // renders (max # defined in kNumRenderTextures_).
+  {
+    M_CollisionObjectToSelectionHandler::iterator handler_it = objects_.begin();
+    M_CollisionObjectToSelectionHandler::iterator handler_end = objects_.end();
+    for (; handler_it != handler_end; ++handler_it) {
+      handler_it->second->preRenderPass(0);
+    }
+
+    renderAndUnpack(viewport, 0, x1, y1, x2, y2, pixels);
+
+    handler_it = objects_.begin();
+    handler_end = objects_.end();
+    for (; handler_it != handler_end; ++handler_it) {
+      handler_it->second->postRenderPass(0);
+    }
+
+    handles_by_pixel.reserve(pixels.size());
+    V_CollObject::iterator it = pixels.begin();
+    V_CollObject::iterator end = pixels.end();
+    for (; it != end; ++it) {
+      const CollObjectHandle & p = *it;
+
+      CollObjectHandle handle = p;
+
+      handles_by_pixel.push_back(handle);
+
+      if (handle == 0) {
+        continue;
+      }
+
+      SelectionHandler * handler = getHandler(handle);
+
+      if (handler) {
+        std::pair<M_Picked::iterator,
+          bool> insert_result = results.insert(std::make_pair(handle, Picked(handle)));
+        if (insert_result.second) {
+          if (handler->needsAdditionalRenderPass(1) && !single_render_pass) {
+            need_additional.insert(handle);
+            need_additional_render = true;
+          }
+        } else {
+          insert_result.first->second.pixel_count++;
+        }
+      }
+    }
+  }
+
+  uint32_t pass = 1;
+
+  V_uint64 extra_by_pixel;
+  extra_by_pixel.resize(handles_by_pixel.size());
+  while (need_additional_render && pass < kNumRenderTextures_) {
+    {
+      S_CollObject::iterator need_it = need_additional.begin();
+      S_CollObject::iterator need_end = need_additional.end();
+      for (; need_it != need_end; ++need_it) {
+        SelectionHandler * handler = getHandler(*need_it);
+        assert(handler);
+
+        handler->preRenderPass(pass);
+      }
+    }
+
+    renderAndUnpack(viewport, pass, x1, y1, x2, y2, pixels);
+
+    {
+      S_CollObject::iterator need_it = need_additional.begin();
+      S_CollObject::iterator need_end = need_additional.end();
+      for (; need_it != need_end; ++need_it) {
+        SelectionHandler * handler = getHandler(*need_it);
+        assert(handler);
+
+        handler->postRenderPass(pass);
+      }
+    }
+
+    int i = 0;
+    V_CollObject::iterator pix_it = pixels.begin();
+    V_CollObject::iterator pix_end = pixels.end();
+    for (; pix_it != pix_end; ++pix_it, ++i) {
+      const CollObjectHandle & p = *pix_it;
+
+      CollObjectHandle handle = handles_by_pixel[i];
+
+      if (pass == 1) {
+        extra_by_pixel[i] = 0;
+      }
+
+      if (need_additional.find(handle) != need_additional.end()) {
+        CollObjectHandle extra_handle = p;
+        extra_by_pixel[i] |= extra_handle << (32 * (pass - 1));
+      } else {
+        extra_by_pixel[i] = 0;
+      }
+    }
+
+    need_additional_render = false;
+    need_additional.clear();
+    M_Picked::iterator handle_it = results.begin();
+    M_Picked::iterator handle_end = results.end();
+    for (; handle_it != handle_end; ++handle_it) {
+      CollObjectHandle handle = handle_it->first;
+
+      if (getHandler(handle)->needsAdditionalRenderPass(pass + 1)) {
+        need_additional_render = true;
+        need_additional.insert(handle);
+      }
+    }
+  }
+
+  int i = 0;
+  V_uint64::iterator pix_2_it = extra_by_pixel.begin();
+  V_uint64::iterator pix_2_end = extra_by_pixel.end();
+  for (; pix_2_it != pix_2_end; ++pix_2_it, ++i) {
+    CollObjectHandle handle = handles_by_pixel[i];
+
+    if (handle == 0) {
+      continue;
+    }
+
+    M_Picked::iterator picked_it = results.find(handle);
+    if (picked_it == results.end()) {
+      continue;
+    }
+
+    Picked & picked = picked_it->second;
+
+    if (*pix_2_it) {
+      picked.extra_handles.insert(*pix_2_it);
+    }
+  }
 }
 
 }  // namespace selection

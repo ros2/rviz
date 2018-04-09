@@ -75,9 +75,9 @@ TEST_F(SelectionManagerTestFixture, pick_returns_empty_if_rendering_fails_for_so
   auto selection_handler = std::make_shared<rviz_common::selection::SelectionHandler>(
     context_.get());
 
-  Ogre::Viewport * viewport = nullptr;
+  rviz_rendering::RenderWindow * render_window = nullptr;
   rviz_common::selection::M_Picked picked;
-  selection_manager_->pick(viewport, 0, 300, 0, 300, picked);
+  selection_manager_->pick(render_window, 0, 300, 0, 300, picked);
 
   ASSERT_THAT(picked, IsEmpty());
 }
@@ -88,9 +88,9 @@ TEST_F(SelectionManagerTestFixture, pick_picks_an_object_from_scene_if_rendered)
   auto selection_handler = std::make_shared<rviz_common::selection::SelectionHandler>(
     context_.get());
 
-  Ogre::Viewport * viewport = nullptr;
+  rviz_rendering::RenderWindow * render_window = nullptr;
   rviz_common::selection::M_Picked picked;
-  selection_manager_->pick(viewport, 0, 300, 0, 300, picked);
+  selection_manager_->pick(render_window, 0, 300, 0, 300, picked);
 
   ASSERT_THAT(picked, Contains(Key(selection_handler->getHandle())));
 }
@@ -104,9 +104,9 @@ TEST_F(SelectionManagerTestFixture, pick_does_not_pick_non_rendered_objects) {
   auto selection_handler2 = std::make_shared<rviz_common::selection::SelectionHandler>(
     context_.get());
 
-  Ogre::Viewport * viewport = nullptr;
+  rviz_rendering::RenderWindow * render_window = nullptr;
   rviz_common::selection::M_Picked picked;
-  selection_manager_->pick(viewport, 0, 300, 0, 300, picked);
+  selection_manager_->pick(render_window, 0, 300, 0, 300, picked);
 
   ASSERT_THAT(picked, Contains(Key(selection_handler->getHandle())));
   ASSERT_THAT(picked, Not(Contains(Key(selection_handler2->getHandle()))));
