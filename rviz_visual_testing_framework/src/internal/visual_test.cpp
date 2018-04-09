@@ -31,6 +31,9 @@
 #include <gtest/gtest.h>
 
 #include <memory>
+#ifdef _WIN32
+#include <stdlib.h>
+#endif
 #include <string>
 
 #include <QDir>  // NOLINT
@@ -175,10 +178,23 @@ void VisualTest::reset()
 
 bool VisualTest::generateReferenceImages()
 {
+#ifdef _WIN32
+  char * buffer = nullptr;
+  size_t size = 0;
+  if (_dupenv_s(&buffer, &size, "GenerateReferenceImages") == 0 && buffer != nullptr) {
+    std::string generate_references(buffer);
+    free(buffer);
+
+    return generate_references == "TRUE";
+  }
+
+  return false;
+#else
   if (!std::getenv("GenerateReferenceImages")) {
     return false;
   }
 
   std::string generate_references = std::getenv("GenerateReferenceImages");
   return generate_references == "TRUE";
+#endif
 }

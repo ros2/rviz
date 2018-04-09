@@ -73,6 +73,18 @@ set(visual_tests_target_libaries
   Qt5::Widgets
   Qt5::Test)
 
+# TODO(wjwwood): this block is to setup the windeployqt tool, could be removed later.
+if(Qt5_FOUND AND WIN32 AND TARGET Qt5::qmake AND NOT TARGET Qt5::windeployqt)
+  get_target_property(_qt5_qmake_location Qt5::qmake IMPORTED_LOCATION)
+
+  execute_process(
+    COMMAND "${_qt5_qmake_location}" -query QT_INSTALL_PREFIX
+    RESULT_VARIABLE return_code
+    OUTPUT_VARIABLE qt5_install_prefix
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+endif()
+
 add_library(rviz_visual_testing_framework STATIC ${visual_test_framework_source_files})
 
 target_include_directories(rviz_visual_testing_framework
@@ -87,6 +99,8 @@ target_link_libraries(rviz_visual_testing_framework
 ament_export_interfaces(rviz_visual_testing_framework)
 ament_export_dependencies(Qt5)
 ament_export_dependencies(rviz_common)
+
+
 
 install(
   TARGETS rviz_visual_testing_framework
@@ -121,6 +135,12 @@ if(BUILD_TESTING)
       target_link_libraries(
         example_test
         rviz_visual_testing_framework)
+      if(EXISTS ${qt5_install_prefix})
+        add_custom_command(TARGET example_test
+          POST_BUILD
+          COMMAND
+          bash -c "${qt5_install_prefix}/bin/windeployqt.exe ${CMAKE_CURRENT_BINARY_DIR}/Release")
+      endif()
     endif()
   endif()
 endif()

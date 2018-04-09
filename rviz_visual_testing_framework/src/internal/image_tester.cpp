@@ -156,7 +156,7 @@ double ImageTester::computeMseIndex(
       averaged_colour += (colour * colour);
     }
   }
-  averaged_colour /= image_width * image_height;
+  averaged_colour /= static_cast<float>(image_width * image_height);
 
   return (averaged_colour.r + averaged_colour.g + averaged_colour.b) / 3.f;
 }
