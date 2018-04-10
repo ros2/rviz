@@ -43,6 +43,7 @@
 #else
 #include <OgreEntity.h>
 #endif
+#include <OgreMaterialManager.h>
 #include <OgreMesh.h>
 #include <OgreSubEntity.h>
 #include <OgreTechnique.h>

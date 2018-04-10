@@ -29,6 +29,15 @@
 
 #include "selection_tool.hpp"
 
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+# pragma GCC diagnostic ignored "-Wpedantic"
+#else
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#endif
+
 #include <OgreRay.h>
 #include <OgreSceneManager.h>
 #include <OgreCamera.h>
@@ -39,6 +48,12 @@
 #include <OgreMaterialManager.h>
 #include <OgreTexture.h>
 #include <OgreTextureManager.h>
+
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#else
+# pragma warning(pop)
+#endif
 
 #include <QKeyEvent>  // NOLINT cpplint cannot handle include order
 
@@ -60,7 +75,7 @@ namespace tools
 
 SelectionTool::SelectionTool()
 : Tool(),
-  move_tool_(new MoveTool() ),
+  move_tool_(new MoveTool()),
   selecting_(false),
   sel_start_x_(0),
   sel_start_y_(0),
@@ -111,13 +126,13 @@ int SelectionTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
 
   int flags = 0;
 
-  if (event.alt() ) {
+  if (event.alt()) {
     moving_ = true;
     selecting_ = false;
   } else {
     moving_ = false;
 
-    if (event.leftDown() ) {
+    if (event.leftDown()) {
       selecting_ = true;
 
       sel_start_x_ = event.x;
@@ -133,15 +148,15 @@ int SelectionTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
       event.x,
       event.y);
 
-    if (event.leftUp() ) {
+    if (event.leftUp()) {
       rviz_common::selection::SelectionManager::SelectType type =
         rviz_common::selection::SelectionManager::Replace;
 
       rviz_common::selection::M_Picked selection;
 
-      if (event.shift() ) {
+      if (event.shift()) {
         type = rviz_common::selection::SelectionManager::Add;
-      } else if (event.control() ) {
+      } else if (event.control()) {
         type = rviz_common::selection::SelectionManager::Remove;
       }
 

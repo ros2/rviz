@@ -362,6 +362,14 @@ if(BUILD_TESTING)
       target_link_libraries(path_display_test
         ${TEST_LINK_LIBRARIES})
     endif()
+
+    ament_add_gmock(selection_tool_test
+      test/rviz_default_plugins/tools/select/selection_tool_test.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET selection_tool_test)
+      target_include_directories(selection_tool_test PUBLIC ${TEST_INCLUDE_DIRS})
+      target_link_libraries(selection_tool_test ${TEST_LINK_LIBRARIES})
+    endif()
   endif()
 endif()
 
