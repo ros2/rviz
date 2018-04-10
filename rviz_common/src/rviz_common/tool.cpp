@@ -62,10 +62,6 @@ void Tool::initialize(DisplayContext * context)
   onInitialize();
 }
 
-void Tool::onInitialize()
-{
-}
-
 rviz_common::properties::Property * Tool::getPropertyContainer() const
 {
   return property_container_;

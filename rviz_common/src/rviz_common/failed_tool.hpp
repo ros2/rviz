@@ -53,18 +53,17 @@ class FailedTool : public Tool
 public:
   FailedTool(const QString & desired_class_id, const QString & error_message);
 
-  virtual QString getDescription() const;
-
   void activate() override;
   void deactivate() override;
-
-  int processMouseEvent(ViewportMouseEvent & event) override;
 
   /// Store the config data for later, so we can return it with save() when written back to a file.
   void load(const Config & config) override;
 
   /// Copy saved config data from last call to load() into config.
   void save(Config config) const override;
+
+protected:
+  void onInitialize() override;
 
 private:
   Config saved_config_;

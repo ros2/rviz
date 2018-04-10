@@ -44,12 +44,6 @@ FailedTool::FailedTool(const QString & desired_class_id, const QString & error_m
   setClassId(desired_class_id);
 }
 
-QString FailedTool::getDescription() const
-{
-  return "The class required for this tool, '" + getClassId() +
-         "', could not be loaded.<br><b>Error:</b><br>" + error_message_;
-}
-
 void FailedTool::load(const Config & config)
 {
   saved_config_ = config;
@@ -64,7 +58,7 @@ void FailedTool::save(Config config) const
 
 void FailedTool::activate()
 {
-  QWidget * parent = NULL;
+  QWidget * parent = nullptr;
   if (context_->getWindowManager()) {
     parent = context_->getWindowManager()->getParentWindow();
   }
@@ -74,10 +68,10 @@ void FailedTool::activate()
 void FailedTool::deactivate()
 {}
 
-int FailedTool::processMouseEvent(ViewportMouseEvent & event)
+void FailedTool::onInitialize()
 {
-  (void)event;
-  return 0;
+  setDescription("The class required for this tool, '" + getClassId() +
+    "', could not be loaded.<br><b>Error:</b><br>" + error_message_);
 }
 
 }  // namespace rviz_common
