@@ -34,6 +34,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "rviz_common/selection/selection_manager.hpp"
 #include "rviz_common/selection/selection_handler.hpp"
@@ -60,54 +61,44 @@ public:
 
   void TearDown() override
   {
+    renderer_.reset();  // necessary for correct order of deleting node
     selection_manager_.reset();  // necessary for correct order of deleting node
     DisplayContextFixture::TearDown();
+  }
+
+  VisibleObject addVisibleObject(int x, int y)
+  {
+    VisibleObject object(x, y, context_.get());
+    renderer_->addVisibleObject(object);
+    return object;
   }
 
   std::shared_ptr<MockSelectionRenderer> renderer_;
   std::unique_ptr<rviz_common::selection::SelectionManager> selection_manager_;
 };
 
-TEST_F(SelectionManagerTestFixture, pick_returns_empty_if_rendering_fails_for_some_reason) {
-  renderer_->setFileName("single_point_Pick.png");
-  renderer_->isRendering(false);
+TEST_F(SelectionManagerTestFixture, pick_picks_objects_from_scene) {
+  auto o1 = addVisibleObject(10, 10);
+  auto o2 = addVisibleObject(40, 50);
 
-  auto selection_handler = std::make_shared<rviz_common::selection::SelectionHandler>(
-    context_.get());
+  selection_manager_->select(
+    nullptr, 0, 0, 100, 100, rviz_common::selection::SelectionManager::Replace);
 
-  rviz_rendering::RenderWindow * render_window = nullptr;
-  rviz_common::selection::M_Picked picked;
-  selection_manager_->pick(render_window, 0, 300, 0, 300, picked);
-
-  ASSERT_THAT(picked, IsEmpty());
+  auto picked = selection_manager_->getSelection();
+  EXPECT_THAT(picked.size(), Eq(2u));
+  EXPECT_THAT(picked, Contains(Key(o1.getHandle())));
+  EXPECT_THAT(picked, Contains(Key(o2.getHandle())));
 }
 
-TEST_F(SelectionManagerTestFixture, pick_picks_an_object_from_scene_if_rendered) {
-  renderer_->setFileName("single_point_Pick.png");
+TEST_F(SelectionManagerTestFixture, pick_does_not_pick_objects_outside_selection) {
+  auto o1 = addVisibleObject(10, 10);
+  auto o2 = addVisibleObject(150, 150);
 
-  auto selection_handler = std::make_shared<rviz_common::selection::SelectionHandler>(
-    context_.get());
+  selection_manager_->select(
+    nullptr, 0, 0, 100, 100, rviz_common::selection::SelectionManager::Replace);
 
-  rviz_rendering::RenderWindow * render_window = nullptr;
-  rviz_common::selection::M_Picked picked;
-  selection_manager_->pick(render_window, 0, 300, 0, 300, picked);
-
-  ASSERT_THAT(picked, Contains(Key(selection_handler->getHandle())));
-}
-
-TEST_F(SelectionManagerTestFixture, pick_does_not_pick_non_rendered_objects) {
-  renderer_->setFileName("single_point_Pick.png");
-
-  auto selection_handler = std::make_shared<rviz_common::selection::SelectionHandler>(
-    context_.get());
-
-  auto selection_handler2 = std::make_shared<rviz_common::selection::SelectionHandler>(
-    context_.get());
-
-  rviz_rendering::RenderWindow * render_window = nullptr;
-  rviz_common::selection::M_Picked picked;
-  selection_manager_->pick(render_window, 0, 300, 0, 300, picked);
-
-  ASSERT_THAT(picked, Contains(Key(selection_handler->getHandle())));
-  ASSERT_THAT(picked, Not(Contains(Key(selection_handler2->getHandle()))));
+  auto picked = selection_manager_->getSelection();
+  EXPECT_THAT(picked.size(), Eq(1u));
+  EXPECT_THAT(picked, Contains(Key(o1.getHandle())));
+  EXPECT_THAT(picked, Not(Contains(Key(o2.getHandle()))));
 }

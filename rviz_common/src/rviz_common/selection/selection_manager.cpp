@@ -101,7 +101,7 @@ SelectionManager::SelectionManager(DisplayContext * context)
   uid_counter_(0),
   interaction_enabled_(false),
   property_model_(new PropertyTreeModel(new Property("root"))),
-  renderer_(std::make_unique<rviz_common::selection::SelectionRenderer>())
+  renderer_(std::make_shared<rviz_common::selection::SelectionRenderer>())
 {
   setUpSlots();
 }

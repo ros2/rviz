@@ -344,6 +344,7 @@ if(BUILD_TESTING)
   add_definitions(-D_SRC_DIR_PATH="${CMAKE_CURRENT_SOURCE_DIR}")
   ament_add_gmock(selection_manager_test
     test/selection/selection_manager_test.cpp
+    test/selection/mock_selection_renderer.hpp
     test/display_context_fixture.cpp)
   if(TARGET selection_manager_test)
     target_link_libraries(selection_manager_test rviz_common)
