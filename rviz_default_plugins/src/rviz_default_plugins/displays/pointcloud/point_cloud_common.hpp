@@ -95,6 +95,9 @@ struct CloudInfo
   // clear the point cloud, but keep selection handler around
   void clear();
 
+  void setSelectable(
+    bool selectable, float selection_box_size, rviz_common::DisplayContext * context);
+
   rclcpp::Time receive_time_;
 
   Ogre::SceneManager * manager_;
