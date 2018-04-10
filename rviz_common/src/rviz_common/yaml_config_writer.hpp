@@ -34,6 +34,7 @@
 #include <ostream>
 
 #include "rviz_common/config.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace YAML
 {
@@ -43,7 +44,7 @@ class Emitter;
 namespace rviz_common
 {
 
-class YamlConfigWriter
+class RVIZ_COMMON_PUBLIC YamlConfigWriter
 {
 public:
   /// Constructor.

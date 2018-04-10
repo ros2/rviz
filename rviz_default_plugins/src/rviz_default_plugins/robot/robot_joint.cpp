@@ -34,17 +34,6 @@
 #include <string>
 #include <vector>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-
-#include <OgreSceneNode.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
-
 #include "./robot_link.hpp"
 #include "robot.hpp"
 

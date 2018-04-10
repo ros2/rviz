@@ -34,8 +34,16 @@
 
 #include <string>
 
-#include <OgreSceneManager.h>
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+# pragma GCC diagnostic ignored "-Wpedantic"
+#endif
 #include <OgreSceneNode.h>
+#include <OgreSceneManager.h>
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
 
 #endif
 

@@ -32,7 +32,15 @@
 
 #include <algorithm>
 
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+# pragma GCC diagnostic ignored "-Wpedantic"
+#endif
 #include <OgreSceneNode.h>
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
 
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/axes.hpp"

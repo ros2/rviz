@@ -59,7 +59,7 @@ public:
   void
   store_rclcpp_node_by_name(
     const std::string & node_name,
-    const std::shared_ptr<rclcpp::Node> node) override;
+    std::shared_ptr<rclcpp::Node> node) override;
 
   /// Return the rclcpp node shared pointer for the given node name if found, else nullptr.
   /**

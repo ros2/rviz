@@ -34,7 +34,14 @@
 #include <memory>
 #include <string>
 
+#ifdef __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wkeyword-macro"
+#endif
 #include <OgreVector3.h>
+#ifdef __clang__
+# pragma clang diagnostic pop
+#endif
 
 #include "std_msgs/msg/string.hpp"
 #include "rviz_common/ros_topic_display.hpp"

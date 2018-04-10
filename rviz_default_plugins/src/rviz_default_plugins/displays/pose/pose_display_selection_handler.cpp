@@ -30,13 +30,21 @@
 
 #include "pose_display_selection_handler.hpp"
 
-#ifdef _WIN32
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+# pragma GCC diagnostic ignored "-Wpedantic"
+#else
 #pragma warning(push)
 #pragma warning(disable : 4996)
+#endif
+
 #include <OgreEntity.h>
-#pragma warning(pop)
+
+#ifndef _WIN32
+# pragma GCC diagnostic pop
 #else
-#include <OgreEntity.h>
+# pragma warning(pop)
 #endif
 
 #include "rviz_rendering/objects/axes.hpp"

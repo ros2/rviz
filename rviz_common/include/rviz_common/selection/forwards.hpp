@@ -36,8 +36,15 @@
 #include <unordered_map>
 #include <vector>
 
+#ifdef __APPLE__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wkeyword-macro"
+#endif
 #include <OgrePixelFormat.h>
 #include <OgreColourValue.h>
+#ifdef __APPLE__
+# pragma clang diagnostic pop
+#endif
 
 #include "rviz_common/logging.hpp"
 #include "rviz_common/visibility_control.hpp"

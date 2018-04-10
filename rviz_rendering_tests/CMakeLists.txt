@@ -7,6 +7,9 @@ if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)
 endif()
 
+option(EnableDisplayTests "EnableDisplayTests")
+set(DisplayTests "False" CACHE STRING "DisplayTestsVariable")
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 endif()
@@ -50,26 +53,38 @@ if(BUILD_TESTING)
   find_package(ament_cmake_gmock REQUIRED)
   find_package(ament_index_cpp REQUIRED)
 
-  # TODO(Martin-Idel-SI): reenable when this test is can run on CI
-  # ament_add_gmock(mesh_loader_test_target
-  #   test/mesh_loader_test.cpp
-  #   APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-  # if(TARGET mesh_loader_test_target)
-  #   target_link_libraries(mesh_loader_test_target
-  #     rviz_ogre_vendor::OgreMain
-  #     rviz_rendering::rviz_rendering
-  #     resource_retriever::resource_retriever
-  #   )
-  #   ament_target_dependencies(mesh_loader_test_target
-  #     rviz_assimp_vendor)
-  # endif()
+  if($ENV{DISPLAY})
+    set(DISPLAYPRESENT TRUE)
+  else()
+    set(DISPLAYPRESENT FALSE)
+  endif()
 
-  # TODO(wjwwood): reenable when this test is can run on CI
-  # ament_add_gtest(test_rviz_rendering_tests test/test_rviz_ogre_media_exports.cpp)
-  # if(TARGET test_rviz_rendering_tests)
-  #   target_include_directories(test_rviz_rendering_tests PUBLIC src/rviz_rendering_tests)
-  #   target_link_libraries(test_rviz_rendering_tests ament_index_cpp::ament_index_cpp)
-  # endif()
+  if(APPLE OR DISPLAYPRESENT OR EnableDisplayTests STREQUAL "True")
+    message(STATUS "Enabling tests requiring a display")
+
+    ament_add_gmock(mesh_loader_test_target
+      test/mesh_loader_test.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET mesh_loader_test_target)
+      target_link_libraries(mesh_loader_test_target
+        rviz_ogre_vendor::OgreMain
+        rviz_rendering::rviz_rendering
+        resource_retriever::resource_retriever
+      )
+      ament_target_dependencies(mesh_loader_test_target
+        rviz_assimp_vendor)
+    endif()
+
+    ament_add_gtest(test_rviz_rendering_tests
+      test/test_rviz_ogre_media_exports.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET test_rviz_rendering_tests)
+      target_include_directories(test_rviz_rendering_tests
+        PUBLIC src/rviz_rendering_tests)
+      target_link_libraries(test_rviz_rendering_tests
+        ament_index_cpp::ament_index_cpp)
+    endif()
+  endif()
 endif()
 
 ament_package()

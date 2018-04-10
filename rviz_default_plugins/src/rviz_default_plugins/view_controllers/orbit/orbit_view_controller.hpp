@@ -31,7 +31,17 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__ORBIT__ORBIT_VIEW_CONTROLLER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__ORBIT__ORBIT_VIEW_CONTROLLER_HPP_
 
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+# pragma GCC diagnostic ignored "-Wpedantic"
+#endif
+
 #include <OgreVector3.h>
+
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
 
 #include <QCursor>
 

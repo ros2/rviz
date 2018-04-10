@@ -33,10 +33,22 @@
 #include <string>
 #include <vector>
 
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+#else
+# pragma warning(push)
+# pragma warning(disable : 4251)
+#endif
 #include <OgreMovableObject.h>
 #include <OgreFont.h>
 #include <OgreFontManager.h>
 #include <OgreVector3.h>
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#else
+# pragma warning(pop)
+#endif
 
 #include "test/rviz_rendering/ogre_testing_environment.hpp"
 #include "rviz_rendering/objects/movable_text.hpp"
@@ -68,9 +80,9 @@ float getCharWidth(std::shared_ptr<rviz_rendering::MovableText> movable_text, ch
 
 void assertVector3Equality(Ogre::Vector3 actual, Ogre::Vector3 expected)
 {
-  ASSERT_NEAR(actual.x, expected.x, 0.0001);
-  ASSERT_NEAR(actual.y, expected.y, 0.0001);
-  ASSERT_NEAR(actual.z, expected.z, 0.0001);
+  ASSERT_NEAR(actual.x, expected.x, 0.0001f);
+  ASSERT_NEAR(actual.y, expected.y, 0.0001f);
+  ASSERT_NEAR(actual.z, expected.z, 0.0001f);
 }
 void assertBoundingBoxEquality(Ogre::AxisAlignedBox actual, Ogre::AxisAlignedBox expected)
 {
@@ -111,7 +123,7 @@ TEST_F(MovableTextTestFixture, new_line_creates_a_new_line_making_bounding_box_l
 }
 
 TEST_F(MovableTextTestFixture, larger_char_height_makes_characters_wider) {
-  auto movable_text = std::make_shared<rviz_rendering::MovableText>("A", "Liberation Sans", 2.0);
+  auto movable_text = std::make_shared<rviz_rendering::MovableText>("A", "Liberation Sans", 2.0f);
 
   float char_width = getCharWidth(movable_text, 'A');
   assertBoundingBoxEquality(movable_text->getBoundingBox(),
@@ -164,7 +176,7 @@ TEST_F(MovableTextTestFixture, vertical_alignment_above_puts_y_coordinate_above)
 
   float char_width = getCharWidth(movable_text, 'W');
   assertBoundingBoxEquality(movable_text->getBoundingBox(),
-    Ogre::AxisAlignedBox(Ogre::Vector3(0, 0, 0), Ogre::Vector3(char_width, 4.01, 0)));
+    Ogre::AxisAlignedBox(Ogre::Vector3(0, 0, 0), Ogre::Vector3(char_width, 4.01f, 0)));
 }
 
 TEST_F(MovableTextTestFixture, setSpaceWidth_changes_width_of_space_character) {

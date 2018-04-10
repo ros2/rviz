@@ -36,10 +36,20 @@
 #include <string>
 
 #ifndef Q_MOC_RUN
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+# pragma GCC diagnostic ignored "-Wpedantic"
+#endif
+
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>
 #include <OgreAny.h>
 #include <OgreMaterial.h>
+
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
 #endif
 
 #include <QObject>

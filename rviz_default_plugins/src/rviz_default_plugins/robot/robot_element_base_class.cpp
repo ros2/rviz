@@ -35,11 +35,6 @@
 #include <vector>
 #include <utility>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-
 #include "robot.hpp"
 
 #include "rviz_common/load_resource.hpp"

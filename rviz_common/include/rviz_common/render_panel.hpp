@@ -36,7 +36,15 @@
 #include <mutex>
 #include <vector>
 
+#ifdef __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wkeyword-macro"
+#endif
 #include <OgreVector3.h>
+#ifdef __clang__
+# pragma clang diagnostic pop
+#endif
+
 #include <QWidget>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/visibility_control.hpp"

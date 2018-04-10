@@ -49,7 +49,7 @@ public:
   virtual void
   store_rclcpp_node_by_name(
     const std::string & node_name,
-    const std::shared_ptr<rclcpp::Node> node) = 0;
+    std::shared_ptr<rclcpp::Node> node) = 0;
 
   virtual std::shared_ptr<rclcpp::Node>
   get_rclcpp_node_by_name(const std::string & node_name) = 0;

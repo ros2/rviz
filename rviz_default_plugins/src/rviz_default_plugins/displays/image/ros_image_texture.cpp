@@ -40,7 +40,15 @@
 #include <vector>
 #include <utility>
 
-#include <OgreTextureManager.h> // NOLINT: cpplint cannot handle include order
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+# pragma GCC diagnostic ignored "-Wpedantic"
+#endif
+#include <OgreTextureManager.h>  // NOLINT: cpplint cannot handle include order
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
 
 #include "sensor_msgs/image_encodings.hpp"
 

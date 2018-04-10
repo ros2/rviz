@@ -35,9 +35,24 @@
 #include <memory>
 #include <vector>
 
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+# pragma GCC diagnostic ignored "-Wpedantic"
+#else
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#endif
+
 #include <OgreRoot.h>
 #include <OgreEntity.h>
 #include <OgreManualObject.h>
+
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#else
+# pragma warning(pop)
+#endif
 
 #include "rviz_common/properties/float_property.hpp"
 
@@ -117,15 +132,15 @@ void expectAxesAreVisible(Ogre::SceneNode * node)
 }
 
 TEST_F(PoseArrayDisplayFixture, constructor_set_all_the_properties_in_the_right_order) {
-  EXPECT_EQ("Color", display_->childAt(3)->getNameStd());
-  EXPECT_EQ("Alpha", display_->childAt(4)->getNameStd());
-  EXPECT_EQ("Arrow Length", display_->childAt(5)->getNameStd());
-  EXPECT_EQ("Head Radius", display_->childAt(6)->getNameStd());
-  EXPECT_EQ("Head Length", display_->childAt(7)->getNameStd());
-  EXPECT_EQ("Shaft Radius", display_->childAt(8)->getNameStd());
-  EXPECT_EQ("Shaft Length", display_->childAt(9)->getNameStd());
-  EXPECT_EQ("Axes Length", display_->childAt(10)->getNameStd());
-  EXPECT_EQ("Axes Radius", display_->childAt(11)->getNameStd());
+  EXPECT_THAT(display_->childAt(3)->getNameStd(), Eq("Color"));
+  EXPECT_THAT(display_->childAt(4)->getNameStd(), Eq("Alpha"));
+  EXPECT_THAT(display_->childAt(5)->getNameStd(), Eq("Arrow Length"));
+  EXPECT_THAT(display_->childAt(6)->getNameStd(), Eq("Head Radius"));
+  EXPECT_THAT(display_->childAt(7)->getNameStd(), Eq("Head Length"));
+  EXPECT_THAT(display_->childAt(8)->getNameStd(), Eq("Shaft Radius"));
+  EXPECT_THAT(display_->childAt(9)->getNameStd(), Eq("Shaft Length"));
+  EXPECT_THAT(display_->childAt(10)->getNameStd(), Eq("Axes Length"));
+  EXPECT_THAT(display_->childAt(11)->getNameStd(), Eq("Axes Radius"));
 }
 
 TEST_F(PoseArrayDisplayFixture, at_startup_only_flat_arrows_propertie_are_visible) {
@@ -188,12 +203,13 @@ TEST_F(PoseArrayDisplayFixture, setTransform_with_invalid_message_returns_early)
   auto arrows_3d = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
   auto axes = rviz_default_plugins::findAllAxes(scene_manager_->getRootSceneNode());
   auto manual_object =
-    rviz_default_plugins::findOneMovableObject(scene_manager_->getRootSceneNode());
+    rviz_default_plugins::findOneManualObject(scene_manager_->getRootSceneNode());
 
   // the default position and orientation of the scene node are (0, 0, 0) and (1, 0, 0, 0)
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(0, 0, 0), display_->getSceneNode()->getPosition());
-  EXPECT_QUATERNION_EQ(Ogre::Quaternion(1, 0, 0, 0), display_->getSceneNode()->getOrientation());
-  EXPECT_FLOAT_EQ(0, manual_object->getBoundingRadius());
+  EXPECT_THAT(display_->getSceneNode()->getPosition(), Vector3Eq(Ogre::Vector3(0, 0, 0)));
+  EXPECT_THAT(
+    display_->getSceneNode()->getOrientation(), QuaternionEq(Ogre::Quaternion(1, 0, 0, 0)));
+  EXPECT_THAT(manual_object->getBoundingRadius(), FloatEq(0));
   EXPECT_THAT(arrows_3d, SizeIs(0));
   EXPECT_THAT(axes, SizeIs(0));
 }
@@ -207,12 +223,13 @@ TEST_F(PoseArrayDisplayFixture, setTransform_with_invalid_transform_returns_earl
   auto arrows_3d = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
   auto axes = rviz_default_plugins::findAllAxes(scene_manager_->getRootSceneNode());
   auto manual_object =
-    rviz_default_plugins::findOneMovableObject(scene_manager_->getRootSceneNode());
+    rviz_default_plugins::findOneManualObject(scene_manager_->getRootSceneNode());
 
   // the default position and orientation of the scene node are (0, 0, 0) and (1, 0, 0, 0)
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(0, 0, 0), display_->getSceneNode()->getPosition());
-  EXPECT_QUATERNION_EQ(Ogre::Quaternion(1, 0, 0, 0), display_->getSceneNode()->getOrientation());
-  EXPECT_FLOAT_EQ(0, manual_object->getBoundingRadius());
+  EXPECT_THAT(display_->getSceneNode()->getPosition(), Vector3Eq(Ogre::Vector3(0, 0, 0)));
+  EXPECT_THAT(
+    display_->getSceneNode()->getOrientation(), QuaternionEq(Ogre::Quaternion(1, 0, 0, 0)));
+  EXPECT_THAT(manual_object->getBoundingRadius(), FloatEq(0));
   EXPECT_THAT(arrows_3d, SizeIs(0));
   EXPECT_THAT(axes, SizeIs(0));
 }
@@ -222,8 +239,9 @@ TEST_F(PoseArrayDisplayFixture, setTransform_sets_node_position_and_orientation_
   auto msg = createMessageWithOnePose();
   display_->processMessage(msg);
 
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(0, 1, 0), display_->getSceneNode()->getPosition());
-  EXPECT_QUATERNION_EQ(Ogre::Quaternion(0, 0, 1, 0), display_->getSceneNode()->getOrientation());
+  EXPECT_THAT(display_->getSceneNode()->getPosition(), Vector3Eq(Ogre::Vector3(0, 1, 0)));
+  EXPECT_THAT(
+    display_->getSceneNode()->getOrientation(), QuaternionEq(Ogre::Quaternion(0, 0, 1, 0)));
 }
 
 TEST_F(PoseArrayDisplayFixture, processMessage_sets_manualObject_correctly) {
@@ -232,10 +250,11 @@ TEST_F(PoseArrayDisplayFixture, processMessage_sets_manualObject_correctly) {
   display_->processMessage(msg);
 
   auto manual_object =
-    rviz_default_plugins::findOneMovableObject(scene_manager_->getRootSceneNode());
+    rviz_default_plugins::findOneManualObject(scene_manager_->getRootSceneNode());
   auto manual_objectbounding_radius = 4.17732;
-  EXPECT_FLOAT_EQ(manual_objectbounding_radius, manual_object->getBoundingRadius());
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(0.85, 2, 3.3), manual_object->getBoundingBox().getCenter());
+  EXPECT_THAT(manual_object->getBoundingRadius(), FloatEq(manual_objectbounding_radius));
+  EXPECT_THAT(
+    manual_object->getBoundingBox().getCenter(), Vector3Eq(Ogre::Vector3(0.85f, 2, 3.3f)));
 }
 
 TEST_F(PoseArrayDisplayFixture, processMessage_sets_arrows3d_correctly) {
@@ -274,8 +293,8 @@ TEST_F(PoseArrayDisplayFixture, processMessage_sets_axes_correctly) {
 
   expectAxesAreVisible(frames[0]);
   EXPECT_THAT(frames, SizeIs(1));
-  EXPECT_VECTOR3_EQ(Ogre::Vector3(1, 2, 3), frames[0]->getPosition());
-  EXPECT_QUATERNION_EQ(expected_orientation, frames[0]->getOrientation());
+  EXPECT_THAT(frames[0]->getPosition(), Vector3Eq(Ogre::Vector3(1, 2, 3)));
+  EXPECT_THAT(frames[0]->getOrientation(), QuaternionEq(expected_orientation));
 }
 
 TEST_F(PoseArrayDisplayFixture, processMessage_updates_the_display_correctly_after_shape_change) {
@@ -287,9 +306,9 @@ TEST_F(PoseArrayDisplayFixture, processMessage_updates_the_display_correctly_aft
   auto arrows = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
   auto frames = rviz_default_plugins::findAllAxes(scene_manager_->getRootSceneNode());
   auto manual_object =
-    rviz_default_plugins::findOneMovableObject(scene_manager_->getRootSceneNode());
+    rviz_default_plugins::findOneManualObject(scene_manager_->getRootSceneNode());
   EXPECT_THAT(arrows, SizeIs(1));
-  EXPECT_EQ(0, manual_object->getBoundingRadius());
+  EXPECT_THAT(manual_object->getBoundingRadius(), FloatEq(0));
   EXPECT_THAT(frames, SizeIs(0));
 
   display_->setShape("Axes");
@@ -297,6 +316,6 @@ TEST_F(PoseArrayDisplayFixture, processMessage_updates_the_display_correctly_aft
   auto post_update_arrows = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
   auto post_update_frames = rviz_default_plugins::findAllAxes(scene_manager_->getRootSceneNode());
   EXPECT_THAT(post_update_frames, SizeIs(1));
-  EXPECT_EQ(0, manual_object->getBoundingRadius());
+  EXPECT_THAT(manual_object->getBoundingRadius(), FloatEq(0));
   EXPECT_THAT(post_update_arrows, SizeIs(0));
 }

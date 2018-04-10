@@ -33,6 +33,11 @@
 #include <memory>
 #include <string>
 
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+# pragma GCC diagnostic ignored "-Wpedantic"
+#endif
 #include <OgreManualObject.h>
 #include <OgreMaterialManager.h>
 #include <OgreRectangle2D.h>
@@ -44,6 +49,9 @@
 #include <OgreViewport.h>
 #include <OgreTechnique.h>
 #include <OgreCamera.h>
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
 
 #include "rviz_rendering/objects/axes.hpp"
 #include "rviz_rendering/render_window.hpp"

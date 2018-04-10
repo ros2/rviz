@@ -34,9 +34,16 @@
 #include <string>
 #include <map>
 
+#ifdef __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wkeyword-macro"
+#endif
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>
 #include <OgreAny.h>
+#ifdef __clang__
+# pragma clang diagnostic pop
+#endif
 
 #include "urdf/model.h"  // can be replaced later by urdf_model/types.h
 

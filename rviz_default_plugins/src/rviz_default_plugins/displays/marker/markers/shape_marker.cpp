@@ -32,9 +32,6 @@
 
 #include <memory>
 
-#include <OgreSceneNode.h>
-#include <OgreMatrix3.h>
-
 #include "marker_selection_handler.hpp"
 #include "../marker_display.hpp"
 #include "rviz_common/display_context.hpp"

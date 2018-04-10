@@ -35,8 +35,15 @@
 #include <QObject>  // NOLINT
 
 #ifndef Q_MOC_RUN
+#ifdef __APPLE__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wkeyword-macro"
+#endif
 #include <OgreVector3.h>
 #include <OgreColourValue.h>
+#ifdef __APPLE__
+# pragma clang diagnostic pop
+#endif
 
 #include "sensor_msgs/msg/point_cloud2.hpp"
 

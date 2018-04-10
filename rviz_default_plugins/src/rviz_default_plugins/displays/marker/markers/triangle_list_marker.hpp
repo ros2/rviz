@@ -33,8 +33,23 @@
 
 #include <string>
 
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+# pragma GCC diagnostic ignored "-Wpedantic"
+#else
+# pragma warning(push)
+# pragma warning(disable : 4996)
+#endif
+
 #include <OgreMaterial.h>
 #include <OgreSharedPtr.h>
+
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#else
+# pragma warning(pop)
+#endif
 
 #include "marker_base.hpp"
 
