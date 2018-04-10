@@ -1,5 +1,5 @@
 Panels:
-  - Class: rviz/Displays
+  - Class: rviz_common/Displays
     Help Height: 0
     Name: Displays
     Property Tree Widget:
@@ -8,7 +8,7 @@ Panels:
         - /Status1
       Splitter Ratio: 0.5
     Tree Height: 632
-  - Class: rviz/Views
+  - Class: rviz_common/Views
     Expanded:
       - /Current View1
     Name: Views
@@ -23,11 +23,11 @@ Visualization Manager:
     Frame Rate: 30
   Name: root
   Tools:
-    - Class: rviz/MoveCamera
+    - Class: rviz_default_plugins/MoveCamera
   Value: true
   Views:
     Current:
-      Class: rviz/Orbit
+      Class: rviz_default_plugins/Orbit
       Distance: 10
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
