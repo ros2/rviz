@@ -130,6 +130,8 @@ add_library(rviz_default_plugins_object OBJECT
   ${rviz_default_plugins_headers_to_moc}
   ${rviz_default_plugins_source_files}
 )
+# prevent pluginlib from using boost
+target_compile_definitions(rviz_default_plugins_object PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
 
 set_property(TARGET rviz_default_plugins_object PROPERTY POSITION_INDEPENDENT_CODE ON)
 
@@ -186,9 +188,6 @@ ament_target_dependencies(rviz_default_plugins
 )
 
 pluginlib_export_plugin_description_file(rviz_common plugins_description.xml)
-
-# prevent pluginlib from using boost
-target_compile_definitions(rviz_default_plugins PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
 
 ament_export_interfaces(rviz_default_plugins)
 ament_export_dependencies(Qt5)
