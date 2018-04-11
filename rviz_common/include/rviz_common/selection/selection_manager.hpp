@@ -94,7 +94,7 @@ public:
 
   explicit SelectionManager(DisplayContext * manager);
 
-  virtual ~SelectionManager();
+  ~SelectionManager() override;
 
   void
   initialize() override;
@@ -102,9 +102,6 @@ public:
   /// Enables or disables publishing of picking and depth rendering images.
   void
   setDebugMode(bool debug) override;
-
-  void
-  clearHandlers() override;
 
   void
   addObject(CollObjectHandle obj, SelectionHandler * handler) override;
@@ -129,35 +126,9 @@ public:
     int y2,
     SelectType type) override;
 
-
-  /**
-   * \return handles of all objects in the given bounding box
-   * \param single_render_pass only perform one rendering pass
-   *   (point cloud selecting won't work)
-   */
-  void
-  pick(
-    rviz_rendering::RenderWindow * window,
-    int x1,
-    int y1,
-    int x2,
-    int y2,
-    M_Picked & results,
-    bool single_render_pass = false) override;
-
-
   void update() override;
 
-  /// Set the list of currently selected objects.
-  void setSelection(const M_Picked & objs) override;
-
-  void addSelection(const M_Picked & objs) override;
-
-  void removeSelection(const M_Picked & objs) override;
-
   const M_Picked & getSelection() const override;
-
-  SelectionHandler * getHandler(CollObjectHandle obj) override;
 
   static Ogre::ColourValue handleToColor(CollObjectHandle handle);
 
@@ -206,52 +177,6 @@ public:
     int y,
     Ogre::Vector3 & result_point) override;
 
-  /// Gets the 3D points in a box around a point in a view port.
-  /**
-   * \param[in] viewport Rendering area clicked on.
-   * \param[in] x x coordinate of upper-left corner of box.
-   * \param[in] y y coordinate of upper-left corner of box.
-   * \param[in] width The width of the rendered box in pixels.
-   * \param[in] height The height of the rendered box in pixels.
-   * \param[in] skip_missing Whether to skip non-existing points or insert
-   *   NaNs for them
-   * \param[out] result_points The vector of output points.
-   *
-   * \returns True if any valid point is rendered in the box. NaN points count,
-   *   so if skip_missing is false, this will always return true if
-   *   width and height are > 0.
-   */
-  bool get3DPatch(
-    Ogre::Viewport * viewport,
-    int x,
-    int y,
-    unsigned width,
-    unsigned height,
-    bool skip_missing,
-    std::vector<Ogre::Vector3> & result_points) override;
-
-
-  /// Renders a depth image in a box around a point in a view port.
-  /**
-   * \param[in] viewport Rendering area clicked on.
-   * \param[in] x x coordinate of upper-left corner of box.
-   * \param[in] y y coordinate of upper-left corner of box.
-   * \param[in] width The width of the rendered box in pixels.
-   * \param[in] height The height of the rendered box in pixels.
-   * \param[out] depth_vector The vector of depth values.
-   *
-   * \returns True if rendering operation to render depth data to the depth
-   *   texture buffer succeeds.
-   *   Failure likely indicates a pretty serious problem.
-   */
-  bool getPatchDepthImage(
-    Ogre::Viewport * viewport,
-    int x,
-    int y,
-    unsigned width,
-    unsigned height,
-    std::vector<float> & depth_vector) override;
-
   rviz_common::properties::PropertyTreeModel * getPropertyModel() override;
 
 private Q_SLOTS:
@@ -259,6 +184,28 @@ private Q_SLOTS:
   void updateProperties();
 
 private:
+  /**
+   * \return handles of all objects in the given bounding box
+   * \param single_render_pass only perform one rendering pass
+   *   (point cloud selecting won't work)
+   */
+  void
+  pick(
+    rviz_rendering::RenderWindow * window,
+    int x1,
+    int y1,
+    int x2,
+    int y2,
+    M_Picked & results,
+    bool single_render_pass = false);
+
+  /// Set the list of currently selected objects.
+  void setSelection(const M_Picked & objs);
+
+  void addSelection(const M_Picked & objs);
+
+  void removeSelection(const M_Picked & objs);
+
   void selectionAdded(const M_Picked & added);
 
   void selectionRemoved(const M_Picked & removed);
@@ -266,6 +213,8 @@ private:
   std::pair<Picked, bool> addSelectedObject(const Picked & obj);
 
   void removeSelectedObject(const Picked & obj);
+
+  SelectionHandler * getHandler(CollObjectHandle obj);
 
   void setHighlightRect(Ogre::Viewport * viewport, int x1, int y1, int x2, int y2);
 
@@ -297,6 +246,51 @@ private:
   void setDepthTextureSize(unsigned width, unsigned height);
 
   void setUpSlots();
+
+  /// Gets the 3D points in a box around a point in a view port.
+  /**
+   * \param[in] viewport Rendering area clicked on.
+   * \param[in] x x coordinate of upper-left corner of box.
+   * \param[in] y y coordinate of upper-left corner of box.
+   * \param[in] width The width of the rendered box in pixels.
+   * \param[in] height The height of the rendered box in pixels.
+   * \param[in] skip_missing Whether to skip non-existing points or insert
+   *   NaNs for them
+   * \param[out] result_points The vector of output points.
+   *
+   * \returns True if any valid point is rendered in the box. NaN points count,
+   *   so if skip_missing is false, this will always return true if
+   *   width and height are > 0.
+   */
+  bool get3DPatch(
+    Ogre::Viewport * viewport,
+    int x,
+    int y,
+    unsigned width,
+    unsigned height,
+    bool skip_missing,
+    std::vector<Ogre::Vector3> & result_points);
+
+  /// Renders a depth image in a box around a point in a view port.
+  /**
+   * \param[in] viewport Rendering area clicked on.
+   * \param[in] x x coordinate of upper-left corner of box.
+   * \param[in] y y coordinate of upper-left corner of box.
+   * \param[in] width The width of the rendered box in pixels.
+   * \param[in] height The height of the rendered box in pixels.
+   * \param[out] depth_vector The vector of depth values.
+   *
+   * \returns True if rendering operation to render depth data to the depth
+   *   texture buffer succeeds.
+   *   Failure likely indicates a pretty serious problem.
+   */
+  bool getPatchDepthImage(
+    Ogre::Viewport * viewport,
+    int x,
+    int y,
+    unsigned width,
+    unsigned height,
+    std::vector<float> & depth_vector);
 
   DisplayContext * context_;
 

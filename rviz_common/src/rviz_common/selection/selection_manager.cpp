@@ -421,13 +421,6 @@ void SelectionManager::setTextureSize(unsigned size)
   }
 }
 
-void SelectionManager::clearHandlers()
-{
-  std::lock_guard<std::recursive_mutex> lock(global_mutex_);
-
-  objects_.clear();
-}
-
 void SelectionManager::enableInteraction(bool enable)
 {
   interaction_enabled_ = enable;

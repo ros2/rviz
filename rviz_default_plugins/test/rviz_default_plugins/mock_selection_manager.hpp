@@ -53,22 +53,15 @@ public:
 
   MOCK_METHOD0(initialize, void());
   MOCK_METHOD1(setDebugMode, void(bool));
-  MOCK_METHOD0(clearHandlers, void());
 
   MOCK_METHOD2(addObject, void(CollObjectHandle, SelectionHandler *));
   MOCK_METHOD1(removeObject, void(rviz_common::selection::CollObjectHandle));
   MOCK_METHOD5(highlight, void(rviz_rendering::RenderWindow *, int, int, int, int));
   MOCK_METHOD0(removeHighlight, void());
   MOCK_METHOD6(select, void(rviz_rendering::RenderWindow *, int, int, int, int, SelectType));
-  MOCK_METHOD7(pick, void(rviz_rendering::RenderWindow *, int, int, int, int, M_Picked &, bool));
 
   MOCK_METHOD0(update, void());
-  MOCK_METHOD1(setSelection, void(const M_Picked &));
-  MOCK_METHOD1(addSelection, void(const M_Picked &));
-  MOCK_METHOD1(removeSelection, void(const M_Picked &));
   MOCK_CONST_METHOD0(getSelection, const M_Picked &());
-
-  MOCK_METHOD1(getHandler, SelectionHandler * (CollObjectHandle));
 
   MOCK_METHOD1(enableInteraction, void(bool));
   MOCK_CONST_METHOD0(getInteractionEnabled, bool());
@@ -76,10 +69,6 @@ public:
   MOCK_METHOD1(setTextureSize, void(unsigned int));
 
   MOCK_METHOD4(get3DPoint, bool(Ogre::Viewport *, int, int, Ogre::Vector3 &));
-  MOCK_METHOD7(get3DPatch, bool(Ogre::Viewport *, int, int, unsigned int, unsigned int, bool,
-    std::vector<Ogre::Vector3>&));
-  MOCK_METHOD6(getPatchDepthImage, bool(Ogre::Viewport *, int, int, unsigned int, unsigned int,
-    std::vector<float, std::allocator<float>>&));
   MOCK_METHOD0(getPropertyModel, rviz_common::properties::PropertyTreeModel *());
 };
 

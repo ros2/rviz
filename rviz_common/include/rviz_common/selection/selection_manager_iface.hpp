@@ -89,9 +89,6 @@ public:
   setDebugMode(bool debug) = 0;
 
   virtual void
-  clearHandlers() = 0;
-
-  virtual void
   addObject(CollObjectHandle obj, SelectionHandler * handler) = 0;
 
   virtual void
@@ -109,33 +106,9 @@ public:
   select(
     rviz_rendering::RenderWindow * window, int x1, int y1, int x2, int y2, SelectType type) = 0;
 
-  /**
-   * \return handles of all objects in the given bounding box
-   * \param single_render_pass only perform one rendering pass
-   *   (point cloud selecting won't work)
-   */
-  virtual void
-  pick(
-    rviz_rendering::RenderWindow * window,
-    int x1,
-    int y1,
-    int x2,
-    int y2,
-    M_Picked & results,
-    bool single_render_pass = false) = 0;
-
   virtual void update() = 0;
 
-  /// Set the list of currently selected objects.
-  virtual void setSelection(const M_Picked & objs) = 0;
-
-  virtual void addSelection(const M_Picked & objs) = 0;
-
-  virtual void removeSelection(const M_Picked & objs) = 0;
-
   virtual const M_Picked & getSelection() const = 0;
-
-  virtual SelectionHandler * getHandler(CollObjectHandle obj) = 0;
 
   /// Create a new unique handle.
   virtual CollObjectHandle createHandle() = 0;
@@ -161,53 +134,6 @@ public:
     int x,
     int y,
     Ogre::Vector3 & result_point) = 0;
-
-  /// Gets the 3D points in a box around a point in a view port.
-  /**
-   * \param[in] viewport Rendering area clicked on.
-   * \param[in] x x coordinate of upper-left corner of box.
-   * \param[in] y y coordinate of upper-left corner of box.
-   * \param[in] width The width of the rendered box in pixels.
-   * \param[in] height The height of the rendered box in pixels.
-   * \param[in] skip_missing Whether to skip non-existing points or insert
-   *   NaNs for them
-   * \param[out] result_points The vector of output points.
-   *
-   * \returns True if any valid point is rendered in the box. NaN points count,
-   *   so if skip_missing is false, this will always return true if
-   *   width and height are > 0.
-   */
-  virtual bool get3DPatch(
-    Ogre::Viewport * viewport,
-    int x,
-    int y,
-    unsigned width,
-    unsigned height,
-    bool skip_missing,
-    std::vector<Ogre::Vector3> & result_points) = 0;
-
-
-  /// Renders a depth image in a box around a point in a view port.
-  /**
-   * \param[in] viewport Rendering area clicked on.
-   * \param[in] x x coordinate of upper-left corner of box.
-   * \param[in] y y coordinate of upper-left corner of box.
-   * \param[in] width The width of the rendered box in pixels.
-   * \param[in] height The height of the rendered box in pixels.
-   * \param[out] depth_vector The vector of depth values.
-   *
-   * \returns True if rendering operation to render depth data to the depth
-   *   texture buffer succeeds.
-   *   Failure likely indicates a pretty serious problem.
-   */
-  virtual bool getPatchDepthImage(
-    Ogre::Viewport * viewport,
-    int x,
-    int y,
-    unsigned width,
-    unsigned height,
-    std::vector<float> & depth_vector) = 0;
-
 
   virtual rviz_common::properties::PropertyTreeModel * getPropertyModel() = 0;
 };

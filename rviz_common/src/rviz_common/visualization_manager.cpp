@@ -251,10 +251,6 @@ VisualizationManager::~VisualizationManager()
   private_->threaded_queue_threads_.join_all();
 #endif
 
-  if (selection_manager_) {
-    selection_manager_->setSelection(M_Picked());
-  }
-
   delete display_property_tree_model_;
   delete tool_manager_;
   delete display_factory_;
