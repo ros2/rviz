@@ -31,6 +31,7 @@
 #define RVIZ_RENDERING__RENDER_WINDOW_HPP_
 
 #include <functional>
+#include <string>
 
 #include <QObject>  // NOLINT
 #include <QWindow>  // NOLINT
@@ -68,6 +69,9 @@ public:
 
   explicit RenderWindow(QWindow * parent = Q_NULLPTR);
   virtual ~RenderWindow();
+
+  void
+  captureScreenShot(std::string imageName);
 
   /// Call after adding this class to a layout.
   virtual

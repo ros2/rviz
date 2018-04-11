@@ -117,6 +117,12 @@ RenderWindowImpl::~RenderWindowImpl()
 }
 
 void
+RenderWindowImpl::screenShot(Ogre::String imageName)
+{
+  ogre_render_window_->writeContentsToFile(imageName);
+}
+
+void
 RenderWindowImpl::render()
 {
   // How we tied in the render function for OGre3D with QWindow's render function.

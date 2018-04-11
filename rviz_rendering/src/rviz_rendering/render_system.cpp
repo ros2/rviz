@@ -195,7 +195,6 @@ void
 RenderSystem::loadOgrePlugins()
 {
   std::string plugin_prefix = get_ogre_plugin_directory();
-
 #if defined _WIN32 && !NDEBUG
   ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL_d");
 #else

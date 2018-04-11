@@ -92,6 +92,9 @@ public:
   virtual ~RenderWindowImpl();
 
   void
+  screenShot(Ogre::String imageName);
+
+  void
   initialize();
 
   void

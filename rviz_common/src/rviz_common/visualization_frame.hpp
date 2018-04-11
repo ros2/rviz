@@ -42,6 +42,7 @@
 #include <Qt>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/config.hpp"
+#include "rviz_rendering/render_window.hpp"
 // #include "./panel.hpp"
 #include "rviz_common/window_manager_interface.hpp"
 
@@ -85,6 +86,8 @@ class VisualizationFrame : public QMainWindow, public WindowManagerInterface
 public:
   explicit VisualizationFrame(const std::string & node_name, QWidget * parent = 0);
   ~VisualizationFrame();
+
+  rviz_rendering::RenderWindow * getRenderWindow();
 
   /// Set the QApplication, this should be called directly after construction.
   void

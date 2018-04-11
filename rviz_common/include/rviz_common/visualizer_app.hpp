@@ -40,6 +40,8 @@
 #include "rviz_common/ros_integration/ros_client_abstraction_iface.hpp"
 #include "rviz_common/visibility_control.hpp"
 
+#include "rviz_rendering/render_window.hpp"
+
 class QTimer;
 
 namespace rviz_common
@@ -58,6 +60,10 @@ public:
   ~VisualizerApp() override;
 
   void setApp(QApplication * app);
+
+  rviz_rendering::RenderWindow * getRenderWindow();
+
+  void loadConfig(QString config_path);
 
   /// Initialize the Visualizer App given the command line arguments.
   /**

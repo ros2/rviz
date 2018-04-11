@@ -128,6 +128,7 @@ VisualizationFrame::VisualizationFrame(const std::string & node_name, QWidget * 
   post_load_timer_(new QTimer(this)),
   frame_count_(0)
 {
+  setObjectName("VisualizationFrame");
   installEventFilter(geom_change_detector_);
   connect(geom_change_detector_, SIGNAL(changed()), this, SLOT(setDisplayConfigModified()));
 
@@ -169,6 +170,11 @@ VisualizationFrame::~VisualizationFrame()
   }
 
   delete panel_factory_;
+}
+
+rviz_rendering::RenderWindow * VisualizationFrame::getRenderWindow()
+{
+  return render_panel_->getRenderWindow();
 }
 
 void VisualizationFrame::setApp(QApplication * app)
@@ -964,7 +970,7 @@ void VisualizationFrame::onOpen()
   manager_->startUpdate();
 
   if (!filename.isEmpty()) {
-    if (!QDir(filename).exists()) {
+    if (!QFile(filename).exists()) {
       QString message = filename + " does not exist!";
       QMessageBox::critical(this, "Config file does not exist", message);
       return;
