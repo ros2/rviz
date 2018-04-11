@@ -60,7 +60,7 @@ namespace Ogre
 class WireBoundingBox;
 class SceneNode;
 class MovableObject;
-}
+}  // namespace Ogre
 
 namespace rviz_common
 {
@@ -79,16 +79,11 @@ public:
   explicit SelectionHandler(DisplayContext * context);
   virtual ~SelectionHandler();
 
-  void
-  addTrackedObjects(Ogre::SceneNode * node);
-  void
-  addTrackedObject(Ogre::MovableObject * object);
-  void
-  removeTrackedObject(Ogre::MovableObject * object);
+  void addTrackedObjects(Ogre::SceneNode * node);
+  void addTrackedObject(Ogre::MovableObject * object);
+  void removeTrackedObject(Ogre::MovableObject * object);
 
-  virtual
-  void
-  updateTrackedBoxes();
+  virtual void updateTrackedBoxes();
 
   /// Override to create properties of the given picked object(s).
   /**
@@ -97,9 +92,8 @@ public:
    *
    * This base implementation does nothing.
    */
-  virtual
-  void
-  createProperties(const Picked & obj, rviz_common::properties::Property * parent_property);
+  virtual void createProperties(
+    const Picked & obj, rviz_common::properties::Property * parent_property);
 
   /// Destroy all properties for the given picked object(s).
   /**
@@ -108,9 +102,8 @@ public:
    * If createProperties() adds all the top-level properties to properties_,
    * there is no need to override this in a subclass.
    */
-  virtual
-  void
-  destroyProperties(const Picked & obj, rviz_common::properties::Property * parent_property);
+  virtual void destroyProperties(
+    const Picked & obj, rviz_common::properties::Property * parent_property);
 
   /** @brief Override to update property values.
    *
@@ -122,45 +115,31 @@ public:
    *
    * This base implementation does nothing.
    */
-  virtual
-  void
-  updateProperties();
+  virtual void updateProperties();
 
   /// Override to indicate if an additional render pass is required.
   virtual bool needsAdditionalRenderPass(uint32_t pass);
 
   /// Override to hook before a render pass.
-  virtual
-  void
-  preRenderPass(uint32_t pass);
+  virtual void preRenderPass(uint32_t pass);
 
   /// Override to hook after a render pass.
-  virtual
-  void
-  postRenderPass(uint32_t pass);
+  virtual void postRenderPass(uint32_t pass);
 
   /// Get the AABBs.
-  virtual
-  void
-  getAABBs(const Picked & obj, V_AABB & aabbs);
+  virtual void getAABBs(const Picked & obj, V_AABB & aabbs);
 
   /// Override to get called on selection.
-  virtual
-  void
-  onSelect(const Picked & obj);
+  virtual void onSelect(const Picked & obj);
 
   /// Override to get called on deselection.
-  virtual
-  void
-  onDeselect(const Picked & obj);
+  virtual void onDeselect(const Picked & obj);
 
   /// Set an object to listen to mouse events and other interaction calls.
   /**
    * Events occur during use of the 'interact' tool.
    */
-  virtual
-  void
-  setInteractiveObject(InteractiveObjectWPtr object);
+  virtual void setInteractiveObject(InteractiveObjectWPtr object);
 
   /// Get the object to listen to mouse events and other interaction calls.
   /**
@@ -169,25 +148,22 @@ public:
    * long periods because it may cause something visual to stick
    * around after it was meant to be destroyed.
    */
-  virtual
-  InteractiveObjectWPtr
-  getInteractiveObject();
+  virtual InteractiveObjectWPtr getInteractiveObject();
 
   /// Get CollObjectHandle.
-  CollObjectHandle
-  getHandle() const;
+  CollObjectHandle getHandle() const;
 
 protected:
   /// Create or update a box for the given handle-int pair, with the box specified by aabb.
-  void
-  createBox(
+  void createBox(
     const std::pair<CollObjectHandle, uint64_t> & handles,
     const Ogre::AxisAlignedBox & aabb,
     const std::string & material_name);
 
   /// Destroy the box associated with the given handle-int pair, if there is one.
-  void
-  destroyBox(const std::pair<CollObjectHandle, uint64_t> & handles);
+  void destroyBox(const std::pair<CollObjectHandle, uint64_t> & handles);
+
+  void setBoxVisibility(bool visible);
 
   QList<rviz_common::properties::Property *> properties_;
 
@@ -200,29 +176,15 @@ protected:
   typedef std::set<Ogre::MovableObject *> S_Movable;
   S_Movable tracked_objects_;
 
-  // TODO(wjwwood): move implementation to cpp file.
   class Listener : public Ogre::MovableObject::Listener
   {
 public:
     // TODO(wjwwood): uncrustify doesn't handle this indentation correctly.
-    explicit Listener(SelectionHandler * handler)
-    : handler_(handler)
-    {}
+    explicit Listener(SelectionHandler * handler);
 
-    virtual
-    void
-    objectMoved(Ogre::MovableObject * object)
-    {
-      Q_UNUSED(object);
-      handler_->updateTrackedBoxes();
-    }
+    void objectMoved(Ogre::MovableObject * object) override;
 
-    virtual
-    void
-    objectDestroyed(Ogre::MovableObject * object)
-    {
-      handler_->removeTrackedObject(object);
-    }
+    void objectDestroyed(Ogre::MovableObject * object) override;
 
     SelectionHandler * handler_;
   };

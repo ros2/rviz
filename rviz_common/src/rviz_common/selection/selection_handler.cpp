@@ -81,11 +81,8 @@ SelectionHandler::SelectionHandler(DisplayContext * context)
 
 SelectionHandler::~SelectionHandler()
 {
-  S_Movable::iterator it = tracked_objects_.begin();
-  S_Movable::iterator end = tracked_objects_.end();
-  for (; it != end; ++it) {
-    Ogre::MovableObject * m = *it;
-    m->setListener(0);
+  for (const auto & object : tracked_objects_) {
+    object->setListener(nullptr);
   }
 
   while (!boxes_.empty()) {
@@ -97,25 +94,21 @@ SelectionHandler::~SelectionHandler()
 void SelectionHandler::preRenderPass(uint32_t pass)
 {
   Q_UNUSED(pass);
-  M_HandleToBox::iterator it = boxes_.begin();
-  M_HandleToBox::iterator end = boxes_.end();
-  for (; it != end; ++it) {
-    Ogre::WireBoundingBox * box = it->second.second;
-    box->setVisible(false);
-  }
+  setBoxVisibility(false);
 }
 
 void SelectionHandler::postRenderPass(uint32_t pass)
 {
   Q_UNUSED(pass);
-  M_HandleToBox::iterator it = boxes_.begin();
-  M_HandleToBox::iterator end = boxes_.end();
-  for (; it != end; ++it) {
-    Ogre::WireBoundingBox * box = it->second.second;
-    box->setVisible(true);
-  }
+  setBoxVisibility(true);
 }
 
+void SelectionHandler::setBoxVisibility(bool visible)
+{
+  for (const auto & handle_to_box : boxes_) {
+    handle_to_box.second.second->setVisible(visible);
+  }
+}
 
 void SelectionHandler::addTrackedObjects(Ogre::SceneNode * node)
 {
@@ -131,7 +124,7 @@ void SelectionHandler::addTrackedObjects(Ogre::SceneNode * node)
   // Loop over and recurse into all child nodes.
   Ogre::SceneNode::ChildNodeIterator child_it = node->getChildIterator();
   while (child_it.hasMoreElements() ) {
-    Ogre::SceneNode * child = dynamic_cast<Ogre::SceneNode *>( child_it.getNext() );
+    auto child = dynamic_cast<Ogre::SceneNode *>( child_it.getNext() );
     addTrackedObjects(child);
   }
 }
@@ -147,30 +140,26 @@ void SelectionHandler::addTrackedObject(Ogre::MovableObject * object)
 void SelectionHandler::removeTrackedObject(Ogre::MovableObject * object)
 {
   tracked_objects_.erase(object);
-  object->setListener(0);
+  object->setListener(nullptr);
 
   updateTrackedBoxes();
 }
 
 void SelectionHandler::updateTrackedBoxes()
 {
-  M_HandleToBox::iterator it = boxes_.begin();
-  M_HandleToBox::iterator end = boxes_.end();
-  for (; it != end; ++it) {
+  for (const auto & handle_to_box : boxes_) {
     V_AABB aabbs;
-    Picked p(it->first.first);
-    p.extra_handles.insert(it->first.second);
-    getAABBs(Picked(it->first.first), aabbs);
+    Picked p(handle_to_box.first.first);
+    p.extra_handles.insert(handle_to_box.first.second);
+    getAABBs(Picked(handle_to_box.first.first), aabbs);
 
     if (!aabbs.empty()) {
       Ogre::AxisAlignedBox combined;
-      V_AABB::iterator aabb_it = aabbs.begin();
-      V_AABB::iterator aabb_end = aabbs.end();
-      for (; aabb_it != aabb_end; ++aabb_it) {
-        combined.merge(*aabb_it);
+      for (const auto & aabb : aabbs) {
+        combined.merge(aabb);
       }
 
-      createBox(std::make_pair(p.handle, it->first.second), combined, "RVIZ/Cyan");
+      createBox(std::make_pair(p.handle, handle_to_box.first.second), combined, "RVIZ/Cyan");
     }
   }
 }
@@ -184,10 +173,8 @@ void SelectionHandler::createProperties(const Picked & obj, Property * parent_pr
 void SelectionHandler::getAABBs(const Picked & obj, V_AABB & aabbs)
 {
   Q_UNUSED(obj);
-  S_Movable::iterator it = tracked_objects_.begin();
-  S_Movable::iterator end = tracked_objects_.end();
-  for (; it != end; ++it) {
-    aabbs.push_back((*it)->getWorldBoundingBox());
+  for (const auto & tracked_object : tracked_objects_) {
+    aabbs.push_back(tracked_object->getWorldBoundingBox());
   }
 }
 
@@ -202,8 +189,7 @@ void SelectionHandler::destroyProperties(const Picked & obj, Property * parent_p
 }
 
 void SelectionHandler::updateProperties()
-{
-}
+{}
 
 bool SelectionHandler::needsAdditionalRenderPass(uint32_t pass)
 {
@@ -216,11 +202,11 @@ void SelectionHandler::createBox(
   const Ogre::AxisAlignedBox & aabb,
   const std::string & material_name)
 {
-  Ogre::WireBoundingBox * box = 0;
-  Ogre::SceneNode * node = 0;
+  Ogre::WireBoundingBox * box = nullptr;
+  Ogre::SceneNode * node = nullptr;
 
-  M_HandleToBox::iterator it = boxes_.find(handles);
-  if (it == boxes_.end()) {
+  auto handle_to_box_iterator = boxes_.find(handles);
+  if (handle_to_box_iterator == boxes_.end()) {
     Ogre::SceneManager * scene_manager = context_->getSceneManager();
     node = scene_manager->getRootSceneNode()->createChildSceneNode();
     box = new Ogre::WireBoundingBox;
@@ -229,8 +215,8 @@ void SelectionHandler::createBox(
     (void) inserted;
     assert(inserted);
   } else {
-    node = it->second.first;
-    box = it->second.second;
+    node = handle_to_box_iterator->second.first;
+    box = handle_to_box_iterator->second.second;
   }
 
   auto material = Ogre::MaterialManager::getSingleton().getByName(material_name);
@@ -240,7 +226,6 @@ void SelectionHandler::createBox(
   }
 
   box->setMaterial(material);
-
   box->setupBoundingBox(aabb);
   node->detachAllObjects();
   node->attachObject(box);
@@ -248,17 +233,17 @@ void SelectionHandler::createBox(
 
 void SelectionHandler::destroyBox(const std::pair<CollObjectHandle, uint64_t> & handles)
 {
-  M_HandleToBox::iterator it = boxes_.find(handles);
-  if (it != boxes_.end()) {
-    Ogre::SceneNode * node = it->second.first;
-    Ogre::WireBoundingBox * box = it->second.second;
+  auto handle_to_box_iterator = boxes_.find(handles);
+  if (handle_to_box_iterator != boxes_.end()) {
+    Ogre::SceneNode * node = handle_to_box_iterator->second.first;
+    Ogre::WireBoundingBox * box = handle_to_box_iterator->second.second;
 
     node->detachAllObjects();
     node->getParentSceneNode()->removeAndDestroyChild(node->getName());
 
     delete box;
-
-    boxes_.erase(it);
+    box = nullptr;
+    boxes_.erase(handle_to_box_iterator);
   }
 }
 
@@ -269,10 +254,8 @@ void SelectionHandler::onSelect(const Picked & obj)
 
   if (!aabbs.empty()) {
     Ogre::AxisAlignedBox combined;
-    V_AABB::iterator it = aabbs.begin();
-    V_AABB::iterator end = aabbs.end();
-    for (; it != end; ++it) {
-      combined.merge(*it);
+    for (const auto & aabb : aabbs) {
+      combined.merge(aabb);
     }
 
     createBox(std::make_pair(obj.handle, 0ULL), combined, "RVIZ/Cyan");
@@ -297,6 +280,21 @@ InteractiveObjectWPtr SelectionHandler::getInteractiveObject()
 CollObjectHandle SelectionHandler::getHandle() const
 {
   return pick_handle_;
+}
+
+SelectionHandler::Listener::Listener(SelectionHandler * handler)
+: handler_(handler)
+{}
+
+void SelectionHandler::Listener::objectMoved(Ogre::MovableObject * object)
+{
+  Q_UNUSED(object);
+  handler_->updateTrackedBoxes();
+}
+
+void SelectionHandler::Listener::objectDestroyed(Ogre::MovableObject * object)
+{
+  handler_->removeTrackedObject(object);
 }
 
 }  // namespace selection
