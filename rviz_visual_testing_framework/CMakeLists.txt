@@ -139,7 +139,7 @@ if(BUILD_TESTING)
         add_custom_command(TARGET example_test
           POST_BUILD
           COMMAND
-          bash -c "${qt5_install_prefix}/bin/windeployqt.exe ${CMAKE_CURRENT_BINARY_DIR}/Release")
+          cmd /C "${qt5_install_prefix}/bin/windeployqt.exe ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
       endif()
     endif()
   endif()
