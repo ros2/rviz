@@ -229,6 +229,7 @@ if(BUILD_TESTING)
     find_package(visualization_msgs REQUIRED)
 
     set(TEST_INCLUDE_DIRS
+      ${urdf_INCLUDE_DIRS}
       ${rviz_common_INCLUDE_DIRS}
       ${rviz_rendering_INCLUDE_DIRS}
       ${OGRE_INCLUDE_DIRS}
@@ -237,7 +238,6 @@ if(BUILD_TESTING)
       ${sensor_msgs_INCLUDE_DIRS}
       ${visualization_msgs_INCLUDE_DIRS}
       ${Qt5Widgets_INCLUDE_DIRS}
-      ${urdf_INCLUDE_DIRS}
     )
 
     set(TEST_LINK_LIBRARIES
