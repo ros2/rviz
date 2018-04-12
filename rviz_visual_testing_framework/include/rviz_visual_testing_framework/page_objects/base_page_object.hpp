@@ -57,10 +57,16 @@ public:
   void collapse();
 
 protected:
-  void setString(QString property_name, QString value_to_set, int property_row_index);
-  void setComboBox(QString property_name, QString value_to_set, int property_row_index);
+  int findPropertyRowIndexByName(
+    const QString & property_name, QModelIndex relative_display_index);
+
+  void setString(const QString & property_name, const QString & value_to_set);
+  void setComboBox(const QString & property_name, const QString & value_to_set);
   void setBool(
-    QString property_name, bool value_to_set, int property_row_index, int sub_property_index = -1);
+    const QString & main_property_name,
+    bool value_to_set,
+    int sub_property_index = -1,
+    const QString & sub_property_name = "");
 
   int display_id_;
   int display_category_;
@@ -68,10 +74,7 @@ protected:
   std::shared_ptr<Executor> executor_;
 
 private:
-  bool checkPropertyName(
-    QString expected_property_name, int property_row_index, QModelIndex display_index);
-  void failIfPropertyIsAbsent(
-    QString property_name, int property_row_index, QModelIndex parent_index);
+  void failForAbsentProperty(const QString & property_name);
   void clickOnTreeItem(QModelIndex item_index) const;
   void doubleClickOnTreeItem(QModelIndex item_index) const;
   QModelIndex getRelativeIndexAndExpandDisplay();
@@ -80,7 +83,7 @@ private:
   QModelIndex getPropertyToChangeIndex(
     int property_row_index, const QModelIndex & parent_index) const;
   QModelIndex getMainPropertyIndex(
-    QString property_name, int property_row_index, QModelIndex display_index);
+    const QString & property_name, int property_row_index, QModelIndex display_index);
   QModelIndex getSubPropertyIndex(
     QString property_name,
     int main_property_index,

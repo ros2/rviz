@@ -52,13 +52,15 @@ BasePageObject::BasePageObject(
   display_id_ = display_id;
 }
 
-void BasePageObject::setString(
-  QString property_name, QString value_to_set, int property_row_index)
+void BasePageObject::setString(const QString & property_name, const QString & value_to_set)
 {
-  executor_->queueAction([this, value_to_set, property_row_index, property_name] {
+  executor_->queueAction([this, value_to_set, property_name] {
       auto relative_display_index = getRelativeIndexAndExpandDisplay();
+      int property_row_index = findPropertyRowIndexByName(property_name, relative_display_index);
 
-      failIfPropertyIsAbsent(property_name, property_row_index, relative_display_index);
+      if (property_row_index < 0) {
+        failForAbsentProperty(property_name);
+      }
 
       clickOnTreeItem(getPropertyToChangeIndex(property_row_index, relative_display_index));
       clickOnTreeItem(getValueToChangeIndex(property_row_index, relative_display_index));
@@ -68,12 +70,12 @@ void BasePageObject::setString(
   );
 }
 
-void BasePageObject::setComboBox(
-  QString property_name, QString value_to_set, int property_row_index)
+void BasePageObject::setComboBox(const QString & property_name, const QString & value_to_set)
 {
-  executor_->queueAction([this, value_to_set, property_row_index, property_name] {
+  executor_->queueAction([this, value_to_set, property_name] {
       auto relative_display_index = getRelativeIndexAndExpandDisplay();
 
+      int property_row_index = findPropertyRowIndexByName(property_name, relative_display_index);
       auto value_to_change_index =
       getMainPropertyIndex(property_name, property_row_index, relative_display_index);
 
@@ -82,27 +84,33 @@ void BasePageObject::setComboBox(
       QComboBox * property_combo_box =
       qobject_cast<QComboBox *>(helpers::getDisplaysTreeView()->focusWidget());
 
-      auto style_index = property_combo_box->findText(value_to_set);
+      auto value_index = property_combo_box->findText(value_to_set);
 
-      if (style_index == -1) {
-        GTEST_FAIL() << "\n[  ERROR   ]  The given property value does not exist!\n";
+      if (value_index == -1) {
+        GTEST_FAIL() << "\n[  ERROR   ]  The value '" << value_to_set.toStdString() << "' does "
+        "not exist!\n";
       }
-      property_combo_box->setCurrentIndex(style_index);
+      property_combo_box->setCurrentIndex(value_index);
     }
   );
 }
 
 void BasePageObject::setBool(
-  QString property_name, bool value_to_set, int property_row_index, int sub_property_index)
+  const QString & main_property_name,
+  bool value_to_set,
+  int sub_property_index,
+  const QString & sub_property_name)
 {
   executor_->queueAction(
-    [this, value_to_set, property_row_index, property_name, sub_property_index] {
+    [this, value_to_set, main_property_name, sub_property_index, sub_property_name] {
       auto relative_display_index = getRelativeIndexAndExpandDisplay();
+      int property_row_index =
+      findPropertyRowIndexByName(main_property_name, relative_display_index);
 
       auto value_to_change_index = sub_property_index < 0 ?
-      getMainPropertyIndex(property_name, property_row_index, relative_display_index) :
+      getMainPropertyIndex(main_property_name, property_row_index, relative_display_index) :
       getSubPropertyIndex(
-        property_name, property_row_index, sub_property_index, relative_display_index);
+        sub_property_name, property_row_index, sub_property_index, relative_display_index);
 
       auto checked_status = value_to_set ? Qt::Checked : Qt::Unchecked;
       helpers::getDisplaysTreeView()->model()->setData(
@@ -112,9 +120,12 @@ void BasePageObject::setBool(
 }
 
 QModelIndex BasePageObject::getMainPropertyIndex(
-  QString property_name, int property_row_index, QModelIndex display_index)
+  const QString & property_name, int property_row_index, QModelIndex display_index)
 {
-  failIfPropertyIsAbsent(property_name, property_row_index, display_index);
+  if (property_row_index < 0) {
+    failForAbsentProperty(property_name);
+    return {};
+  }
   return getValueToChangeIndex(property_row_index, display_index);
 }
 
@@ -124,10 +135,25 @@ QModelIndex BasePageObject::getSubPropertyIndex(
   int sub_property_index,
   QModelIndex display_index)
 {
-  auto relative_property_index = helpers::getDisplaysTreeView()
+  auto display_tree_view = helpers::getDisplaysTreeView();
+  auto relative_property_index = display_tree_view
     ->model()
     ->index(main_property_index, 0, display_index);
-  failIfPropertyIsAbsent(property_name, sub_property_index, relative_property_index);
+
+  QString actual_property_name = display_tree_view->model()->data(
+    display_tree_view->model()->index(sub_property_index, 0, relative_property_index)).toString();
+
+  if (actual_property_name != property_name) {
+    sub_property_index = findPropertyRowIndexByName(property_name, relative_property_index);
+
+    if (sub_property_index < 0) {
+      failForAbsentProperty(property_name);
+      return {};
+    }
+
+    std::cout << "\n[  INFO   ]  The Sub-property '" << property_name.toStdString() << "' is "
+      "not where expected. The first row with this name will be modified instead.\n";
+  }
 
   return getValueToChangeIndex(sub_property_index, relative_property_index);
 }
@@ -157,30 +183,12 @@ QModelIndex BasePageObject::getRelativeIndexAndExpandDisplay()
   return relative_display_index;
 }
 
-bool BasePageObject::checkPropertyName(
-  QString expected_property_name, int property_row_index, QModelIndex relative_display_index)
+void BasePageObject::failForAbsentProperty(const QString & property_name)
 {
-  auto display_tree_model = helpers::getDisplaysTreeView()->model();
-  QString actual_property_name =
-    display_tree_model->data(
-    display_tree_model->index(property_row_index, 0, relative_display_index)).toString();
+  std::cout << "\n[  ERROR   ]  The Property '" << property_name.toStdString() << "' does not "
+    "exist.\n";
 
-  if (expected_property_name != actual_property_name) {
-    std::cout << "\n[  ERROR   ]  The seleced property is not where supposed to: expected "
-      "property = " << expected_property_name.toStdString() << ", actual property = " <<
-      actual_property_name.toStdString() << ".\n";
-    return false;
-  }
-
-  return true;
-}
-
-void BasePageObject::failIfPropertyIsAbsent(
-  QString property_name, int property_row_index, QModelIndex parent_index)
-{
-  if (!checkPropertyName(property_name, property_row_index, parent_index)) {
-    GTEST_FAIL();
-  }
+  GTEST_FAIL();
 }
 
 void BasePageObject::clickOnTreeItem(QModelIndex item_index) const
@@ -236,6 +244,23 @@ void BasePageObject::setExpanded(QModelIndex display_index, bool expanded)
   }
 
   doubleClickOnTreeItem(display_index);
+}
+
+int BasePageObject::findPropertyRowIndexByName(
+  const QString & property_name, QModelIndex relative_display_index)
+{
+  auto display_tree_model = helpers::getDisplaysTreeView()->model();
+  auto rows_number = display_tree_model->rowCount(relative_display_index);
+
+  for (int i = 0; i < rows_number; ++i) {
+    QString current_row_property = display_tree_model->data(
+      display_tree_model->index(i, 0, relative_display_index)).toString();
+    if (current_row_property == property_name) {
+      return i;
+    }
+  }
+
+  return -1;
 }
 
 QString format(float number)
