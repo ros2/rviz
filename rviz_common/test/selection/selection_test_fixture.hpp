@@ -29,55 +29,45 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef SELECTION__SELECTION_TEST_FIXTURE_HPP_
+#define SELECTION__SELECTION_TEST_FIXTURE_HPP_
+
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
 #include <memory>
-#include <string>
-#include <vector>
 
-#include "rviz_common/selection/selection_manager.hpp"
-#include "rviz_common/selection/selection_handler.hpp"
 #include "rviz_common/display_context.hpp"
+#include "rviz_common/selection/selection_manager.hpp"
 
-#include "selection_test_fixture.hpp"
+#include "../display_context_fixture.hpp"
 #include "mock_selection_renderer.hpp"
 
 using namespace ::testing;  // NOLINT
 
-class SelectionManagerTestFixture : public SelectionTestFixture
+class SelectionTestFixture : public DisplayContextFixture
 {
 public:
-  VisibleObject addVisibleObject(int x, int y)
+  void SetUp() override
   {
-    VisibleObject object(x, y, context_.get());
-    renderer_->addVisibleObject(object);
-    return object;
+    DisplayContextFixture::SetUp();
+    renderer_ = std::make_shared<MockSelectionRenderer>();
+    selection_manager_ = std::make_unique<rviz_common::selection::SelectionManager>(
+      context_.get(), renderer_);
+    selection_manager_->initialize();
+    EXPECT_CALL(*context_, getSelectionManager()).WillRepeatedly(
+      testing::Return(selection_manager_.get()));
   }
+
+  void TearDown() override
+  {
+    renderer_.reset();  // necessary for correct order of deleting node
+    selection_manager_.reset();  // necessary for correct order of deleting node
+    DisplayContextFixture::TearDown();
+  }
+
+  std::shared_ptr<MockSelectionRenderer> renderer_;
+  std::unique_ptr<rviz_common::selection::SelectionManager> selection_manager_;
 };
 
-TEST_F(SelectionManagerTestFixture, pick_picks_objects_from_scene) {
-  auto o1 = addVisibleObject(10, 10);
-  auto o2 = addVisibleObject(40, 50);
-
-  selection_manager_->select(
-    nullptr, 0, 0, 100, 100, rviz_common::selection::SelectionManager::Replace);
-
-  auto picked = selection_manager_->getSelection();
-  EXPECT_THAT(picked.size(), Eq(2u));
-  EXPECT_THAT(picked, Contains(Key(o1.getHandle())));
-  EXPECT_THAT(picked, Contains(Key(o2.getHandle())));
-}
-
-TEST_F(SelectionManagerTestFixture, pick_does_not_pick_objects_outside_selection) {
-  auto o1 = addVisibleObject(10, 10);
-  auto o2 = addVisibleObject(150, 150);
-
-  selection_manager_->select(
-    nullptr, 0, 0, 100, 100, rviz_common::selection::SelectionManager::Replace);
-
-  auto picked = selection_manager_->getSelection();
-  EXPECT_THAT(picked.size(), Eq(1u));
-  EXPECT_THAT(picked, Contains(Key(o1.getHandle())));
-  EXPECT_THAT(picked, Not(Contains(Key(o2.getHandle()))));
-}
+#endif  // SELECTION__SELECTION_TEST_FIXTURE_HPP_

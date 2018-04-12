@@ -345,9 +345,18 @@ if(BUILD_TESTING)
   ament_add_gmock(selection_manager_test
     test/selection/selection_manager_test.cpp
     test/selection/mock_selection_renderer.hpp
+    test/selection/selection_test_fixture.hpp
     test/display_context_fixture.cpp)
   if(TARGET selection_manager_test)
     target_link_libraries(selection_manager_test rviz_common)
+  endif()
+
+  ament_add_gmock(selection_handler_test
+    test/selection/selection_handler_test.cpp
+    test/selection/selection_test_fixture.hpp
+    test/display_context_fixture.cpp)
+  if(TARGET selection_handler_test)
+    target_link_libraries(selection_handler_test rviz_common)
   endif()
 
   if(DEFINED ENV{DISPLAY})

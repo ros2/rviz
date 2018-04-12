@@ -32,52 +32,62 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <OgreManualObject.h>
+#include <OgreSceneNode.h>
+#include <OgreMaterialManager.h>
+#include <OgreWireBoundingBox.h>
+
 #include <memory>
-#include <string>
 #include <vector>
 
-#include "rviz_common/selection/selection_manager.hpp"
 #include "rviz_common/selection/selection_handler.hpp"
 #include "rviz_common/display_context.hpp"
 
 #include "selection_test_fixture.hpp"
-#include "mock_selection_renderer.hpp"
 
-using namespace ::testing;  // NOLINT
-
-class SelectionManagerTestFixture : public SelectionTestFixture
+class SelectionHandlerFixture : public SelectionTestFixture
 {
 public:
-  VisibleObject addVisibleObject(int x, int y)
+  void SetUp() override
   {
-    VisibleObject object(x, y, context_.get());
-    renderer_->addVisibleObject(object);
+    SelectionTestFixture::SetUp();
+    handler_ = std::make_shared<rviz_common::selection::SelectionHandler>(context_.get());
+  }
+
+  void TearDown() override
+  {
+    handler_.reset();
+    SelectionTestFixture::TearDown();
+  }
+
+  Ogre::ManualObject * createManualObject()
+  {
+    static int count = 0;
+    auto object = scene_manager_->createManualObject("ManualObject" + std::to_string(count++));
+
+    object->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_LINE_STRIP);
+    object->position(-1.0f, -1.0f, 0.0f);
+    object->position(1.0f, -1.0f, 0.0f);
+    object->position(1.0f, 1.0f, 0.0f);
+    object->position(-1.0f, 1.0f, 0.0f);
+    object->position(-1.0f, -1.0f, 0.0f);
+    object->end();
+
     return object;
   }
+
+  std::shared_ptr<rviz_common::selection::SelectionHandler> handler_;
 };
 
-TEST_F(SelectionManagerTestFixture, pick_picks_objects_from_scene) {
-  auto o1 = addVisibleObject(10, 10);
-  auto o2 = addVisibleObject(40, 50);
+TEST_F(SelectionHandlerFixture, addTrackedObject_works_correctly) {
+  auto manual_object = createManualObject();
+  scene_manager_->getRootSceneNode()->createChildSceneNode()->attachObject(manual_object);
 
-  selection_manager_->select(
-    nullptr, 0, 0, 100, 100, rviz_common::selection::SelectionManager::Replace);
+  handler_->addTrackedObjects(scene_manager_->getRootSceneNode());
+  handler_->addTrackedObject(manual_object);
 
-  auto picked = selection_manager_->getSelection();
-  EXPECT_THAT(picked.size(), Eq(2u));
-  EXPECT_THAT(picked, Contains(Key(o1.getHandle())));
-  EXPECT_THAT(picked, Contains(Key(o2.getHandle())));
-}
-
-TEST_F(SelectionManagerTestFixture, pick_does_not_pick_objects_outside_selection) {
-  auto o1 = addVisibleObject(10, 10);
-  auto o2 = addVisibleObject(150, 150);
-
-  selection_manager_->select(
-    nullptr, 0, 0, 100, 100, rviz_common::selection::SelectionManager::Replace);
-
-  auto picked = selection_manager_->getSelection();
-  EXPECT_THAT(picked.size(), Eq(1u));
-  EXPECT_THAT(picked, Contains(Key(o1.getHandle())));
-  EXPECT_THAT(picked, Not(Contains(Key(o2.getHandle()))));
+  rviz_common::selection::Picked object(handler_->getHandle());
+  std::vector<Ogre::AxisAlignedBox> aabbs;
+  handler_->getAABBs(object, aabbs);
+  EXPECT_THAT(aabbs, SizeIs(2));
 }
