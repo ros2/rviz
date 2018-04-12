@@ -49,26 +49,24 @@ class VisibleObject
 {
 public:
   VisibleObject(int x, int y, rviz_common::DisplayContext * context)
-  : x(x), y(y)
-  {
-    handler = std::make_shared<rviz_common::selection::SelectionHandler>(context);
-  }
+  : x(x), y(y), handler_(std::make_shared<rviz_common::selection::SelectionHandler>(context))
+  {}
 
   uint32_t getARGBColor()
   {
-    return handler->getHandle() & 0xFFFFFFFF;
+    return handler_->getHandle() & 0xFFFFFFFF;
   }
 
   rviz_common::selection::CollObjectHandle getHandle()
   {
-    return handler->getHandle();
+    return handler_->getHandle();
   }
 
   int x;
   int y;
 
 private:
-  rviz_common::selection::SelectionHandlerPtr handler;
+  rviz_common::selection::SelectionHandlerPtr handler_;
 };
 
 class MockSelectionRenderer : public rviz_common::selection::SelectionRenderer

@@ -55,8 +55,7 @@ public:
     selection_manager_ = std::make_unique<rviz_common::selection::SelectionManager>(
       context_.get(), renderer_);
     selection_manager_->initialize();
-    EXPECT_CALL(*context_, getSelectionManager()).WillRepeatedly(
-      testing::Return(selection_manager_.get()));
+    EXPECT_CALL(*context_, getSelectionManager()).WillRepeatedly(Return(selection_manager_.get()));
   }
 
   void TearDown() override

@@ -88,7 +88,9 @@ SelectionHandler::~SelectionHandler()
   while (!boxes_.empty()) {
     destroyBox(boxes_.begin()->first);
   }
-  context_->getSelectionManager()->removeObject(pick_handle_);
+  if (context_->getSelectionManager()) {
+    context_->getSelectionManager()->removeObject(pick_handle_);
+  }
 }
 
 void SelectionHandler::preRenderPass(uint32_t pass)

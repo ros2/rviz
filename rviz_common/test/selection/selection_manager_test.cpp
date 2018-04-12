@@ -54,30 +54,61 @@ public:
     renderer_->addVisibleObject(object);
     return object;
   }
+
+  rviz_rendering::RenderWindow * render_window_ = nullptr;
 };
 
-TEST_F(SelectionManagerTestFixture, pick_picks_objects_from_scene) {
-  auto o1 = addVisibleObject(10, 10);
-  auto o2 = addVisibleObject(40, 50);
-
-  selection_manager_->select(
-    nullptr, 0, 0, 100, 100, rviz_common::selection::SelectionManager::Replace);
-
-  auto picked = selection_manager_->getSelection();
-  EXPECT_THAT(picked.size(), Eq(2u));
-  EXPECT_THAT(picked, Contains(Key(o1.getHandle())));
-  EXPECT_THAT(picked, Contains(Key(o2.getHandle())));
-}
-
-TEST_F(SelectionManagerTestFixture, pick_does_not_pick_objects_outside_selection) {
+TEST_F(SelectionManagerTestFixture, select_selects_objects_inside_selection) {
   auto o1 = addVisibleObject(10, 10);
   auto o2 = addVisibleObject(150, 150);
 
   selection_manager_->select(
-    nullptr, 0, 0, 100, 100, rviz_common::selection::SelectionManager::Replace);
+    render_window_, 0, 0, 100, 100, rviz_common::selection::SelectionManager::Replace);
 
-  auto picked = selection_manager_->getSelection();
-  EXPECT_THAT(picked.size(), Eq(1u));
-  EXPECT_THAT(picked, Contains(Key(o1.getHandle())));
-  EXPECT_THAT(picked, Not(Contains(Key(o2.getHandle()))));
+  auto selection = selection_manager_->getSelection();
+  EXPECT_THAT(selection, SizeIs(1));
+  EXPECT_THAT(selection, Contains(Key(o1.getHandle())));
+  EXPECT_THAT(selection, Not(Contains(Key(o2.getHandle()))));
+}
+
+TEST_F(SelectionManagerTestFixture, adds_a_new_selection) {
+  auto o1 = addVisibleObject(10, 10);
+  auto o2 = addVisibleObject(20, 20);
+  selection_manager_->select(
+    render_window_, 0, 0, 15, 15, rviz_common::selection::SelectionManager::Replace);
+
+  selection_manager_->select(
+    render_window_, 15, 15, 25, 25, rviz_common::selection::SelectionManager::Add);
+
+  auto selection = selection_manager_->getSelection();
+  EXPECT_THAT(selection, SizeIs(2));
+  EXPECT_THAT(selection, Contains(Key(o1.getHandle())));
+  EXPECT_THAT(selection, Contains(Key(o2.getHandle())));
+}
+
+TEST_F(SelectionManagerTestFixture, adding_an_exising_selection_has_no_effect) {
+  auto o1 = addVisibleObject(10, 10);
+  selection_manager_->select(
+    render_window_, 0, 0, 15, 15, rviz_common::selection::SelectionManager::Replace);
+
+  selection_manager_->select(
+    render_window_, 0, 0, 15, 15, rviz_common::selection::SelectionManager::Add);
+
+  auto selection = selection_manager_->getSelection();
+  EXPECT_THAT(selection, SizeIs(1));
+  EXPECT_THAT(selection, Contains(Key(o1.getHandle())));
+}
+
+TEST_F(SelectionManagerTestFixture, subtracts_from_a_selection) {
+  auto o1 = addVisibleObject(10, 10);
+  auto o2 = addVisibleObject(20, 20);
+  selection_manager_->select(
+    render_window_, 0, 0, 25, 25, rviz_common::selection::SelectionManager::Replace);
+
+  selection_manager_->select(
+    render_window_, 0, 0, 15, 15, rviz_common::selection::SelectionManager::Remove);
+
+  auto selection = selection_manager_->getSelection();
+  EXPECT_THAT(selection, SizeIs(1));
+  EXPECT_THAT(selection, Contains(Key(o2.getHandle())));
 }

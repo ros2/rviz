@@ -340,31 +340,35 @@ if(BUILD_TESTING)
     target_link_libraries(rviz_common_ros_node_abstraction_test rviz_common)
   endif()
 
-  # Variable needed to find test_resources
-  add_definitions(-D_SRC_DIR_PATH="${CMAKE_CURRENT_SOURCE_DIR}")
-  ament_add_gmock(selection_manager_test
-    test/selection/selection_manager_test.cpp
-    test/selection/mock_selection_renderer.hpp
-    test/selection/selection_test_fixture.hpp
-    test/display_context_fixture.cpp)
-  if(TARGET selection_manager_test)
-    target_link_libraries(selection_manager_test rviz_common)
-  endif()
-
-  ament_add_gmock(selection_handler_test
-    test/selection/selection_handler_test.cpp
-    test/selection/selection_test_fixture.hpp
-    test/display_context_fixture.cpp)
-  if(TARGET selection_handler_test)
-    target_link_libraries(selection_handler_test rviz_common)
-  endif()
-
   if(DEFINED ENV{DISPLAY})
     set(DISPLAYPRESENT TRUE)
   endif()
 
   if((APPLE AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug") OR DISPLAYPRESENT OR EnableDisplayTests STREQUAL "True")
     message(STATUS "Enabling tests requiring a display")
+
+    ament_add_gmock(selection_manager_test
+      test/selection/selection_manager_test.cpp
+      test/selection/mock_selection_renderer.hpp
+      test/selection/selection_test_fixture.hpp
+      test/display_context_fixture.cpp)
+    if(TARGET selection_manager_test)
+      target_link_libraries(selection_manager_test
+        rviz_common
+        rviz_ogre_vendor::OgreMain
+        rviz_ogre_vendor::OgreOverlay)
+    endif()
+
+    ament_add_gmock(selection_handler_test
+      test/selection/selection_handler_test.cpp
+      test/selection/selection_test_fixture.hpp
+      test/display_context_fixture.cpp)
+    if(TARGET selection_handler_test)
+      target_link_libraries(selection_handler_test
+        rviz_common
+        rviz_ogre_vendor::OgreMain
+        rviz_ogre_vendor::OgreOverlay)
+    endif()
 
     ament_add_gtest(rviz_common_display_test
       test/display_test.cpp
