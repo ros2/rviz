@@ -44,68 +44,50 @@ GridDisplayPageObject::GridDisplayPageObject(
 
 void GridDisplayPageObject::setReferenceFrame(QString reference_frame)
 {
-  int property_row_index = 1;
-
-  setComboBox("Reference Frame", reference_frame, property_row_index);
+  setComboBox("Reference Frame", reference_frame);
 }
 
 void GridDisplayPageObject::setPlaneCellCount(QString plane_cell_count)
 {
-  int property_row_index = 2;
-
-  setString("Plane Cell Count", plane_cell_count, property_row_index);
+  setString("Plane Cell Count", plane_cell_count);
 }
 
 void GridDisplayPageObject::setNormalCellCount(QString normal_cell_count)
 {
-  int property_row_index = 3;
-
-  setString("Normal Cell Count", normal_cell_count, property_row_index);
+  setString("Normal Cell count", normal_cell_count);
 }
 
 void GridDisplayPageObject::setCellSize(QString cell_size)
 {
-  int property_row_index = 4;
-
-  setString("Cell Size", cell_size, property_row_index);
+  setString("Cell Size", cell_size);
 }
 
 void GridDisplayPageObject::setLineStyle(QString line_style)
 {
-  int property_row_index = 5;
-
-  setComboBox("Line Style", line_style, property_row_index);
+  setComboBox("Line Style", line_style);
 }
 
 void GridDisplayPageObject::setColor(int red, int green, int blue)
 {
-  int property_row_index = 6;
-
   QString color_code = QString::fromStdString(
     std::to_string(red) + "; " + std::to_string(green) + "; " + std::to_string(blue));
 
-  setString("Color", color_code, property_row_index);
+  setString("Color", color_code);
 }
 
 void GridDisplayPageObject::setAlpha(QString alpha)
 {
-  int property_row_index = 7;
-
-  setString("Alpha", alpha, property_row_index);
+  setString("Alpha", alpha);
 }
 
 void GridDisplayPageObject::setPlane(QString plane)
 {
-  int property_row_index = 8;
-
-  setComboBox("Plane", plane, property_row_index);
+  setComboBox("Plane", plane);
 }
 
 void GridDisplayPageObject::setOffset(float x, float y, float z)
 {
-  int property_row_index = 9;
-
   QString offset_triple = format(x) + "; " + format(y) + "; " + format(z);
 
-  setString("Offset", offset_triple, property_row_index);
+  setString("Offset", offset_triple);
 }

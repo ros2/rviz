@@ -23,7 +23,6 @@
   <test_depend>ament_cmake_gmock</test_depend>
   <test_depend>ament_cmake_lint_cmake</test_depend>
   <test_depend>ament_cmake_uncrustify</test_depend>
-  <test_depend>rviz_default_plugins</test_depend>  <!-- Make displays available in example test -->
 
   <export>
     <build_type>ament_cmake</build_type>

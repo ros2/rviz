@@ -54,21 +54,15 @@ void ImageDisplayPageObject::setRenderWindow()
 
 void ImageDisplayPageObject::setTopic(QString topic)
 {
-  int property_row_index = 1;
-
-  setComboBox("Topic", topic, property_row_index);
+  setComboBox("Topic", topic);
 }
 
 void ImageDisplayPageObject::setUnreliable(bool unreliable)
 {
-  int property_row_index = 2;
-
-  setBool("Unreliable", unreliable, property_row_index);
+  setBool("Unreliable", unreliable);
 }
 
 void ImageDisplayPageObject::setQueueSize(QString queue_size)
 {
-  int property_row_index = 3;
-
-  setString("Queue Size", queue_size, property_row_index);
+  setString("Queue Size", queue_size);
 }

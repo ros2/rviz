@@ -44,82 +44,60 @@ PointCloudDisplayPageObject::PointCloudDisplayPageObject(
 
 void PointCloudDisplayPageObject::setSizeMeters(QString meters_size)
 {
-  int property_row_index = 6;
-
-  setString("Size (m)", meters_size, property_row_index);
+  setString("Size (m)", meters_size);
 }
 
 void PointCloudDisplayPageObject::setSizePixels(QString pixels_size)
 {
-  int property_row_index = 7;
-
-  setString("Size (Pixels)", pixels_size, property_row_index);
+  setString("Size (Pixels)", pixels_size);
 }
 
 void PointCloudDisplayPageObject::setStyle(QString points_style)
 {
-  int property_row_index = 5;
-
-  setComboBox("Style", points_style, property_row_index);
+  setComboBox("Style", points_style);
 }
 
 void PointCloudDisplayPageObject::setAlpha(QString alpha)
 {
-  int property_row_index = 8;
-
-  setString("Alpha", alpha, property_row_index);
+  setString("Alpha", alpha);
 }
 
 void PointCloudDisplayPageObject::setDecayTime(QString decay_time)
 {
-  int property_row_index = 9;
-
-  setString("Decay Time", decay_time, property_row_index);
+  setString("Decay Time", decay_time);
 }
 
 void PointCloudDisplayPageObject::setQueueSize(QString queue_size)
 {
-  int property_row_index = 3;
-
-  setString("Queue Size", queue_size, property_row_index);
+  setString("Queue Size", queue_size);
 }
 
 void PointCloudDisplayPageObject::setSelectable(bool selectable)
 {
-  int property_row_index = 4;
-
-  setBool("Selectable", selectable, property_row_index);
+  setBool("Selectable", selectable);
 }
 
 void PointCloudDisplayPageObject::setUnreliable(bool unreliable)
 {
-  int property_row_index = 2;
-
-  setBool("Unreliable", unreliable, property_row_index);
+  setBool("Unreliable", unreliable);
 }
 
 void PointCloudDisplayPageObject::setPositionTransformer(QString position_transformer)
 {
-  int property_row_index = 10;
-
-  setComboBox(
-    "Position Transformer", position_transformer, property_row_index);
+  setComboBox("Position Transformer", position_transformer);
 }
 
 void PointCloudDisplayPageObject::setColorTransformer(QString color_transformer)
 {
-  int property_row_index = 11;
-  setComboBox("Color Transformer", color_transformer, property_row_index);
+  setComboBox("Color Transformer", color_transformer);
 }
 
 void PointCloudDisplayPageObject::setColor(int red, int green, int blue)
 {
   setColorTransformer("FlatColorPCTransformer");
 
-  int property_row_index = 15;
-
   QString color_code = QString::fromStdString(
     std::to_string(red) + "; " + std::to_string(green) + "; " + std::to_string(blue));
 
-  setString("Color", color_code, property_row_index);
+  setString("Color", color_code);
 }
