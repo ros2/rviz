@@ -30,13 +30,16 @@
 #ifndef RVIZ_COMMON__TOOL_PROPERTIES_PANEL_HPP_
 #define RVIZ_COMMON__TOOL_PROPERTIES_PANEL_HPP_
 
-#include "rviz/panel.h"
+#include "panel.hpp"
 
-namespace rviz
+namespace rviz_common
 {
+namespace properties
+{
+class PropertyTreeWidget;
+}
 
 class DisplayContext;
-class PropertyTreeWidget;
 
 /** A place to edit properties of all of the Tools.
  */
@@ -57,9 +60,9 @@ public:
   virtual void save(Config config) const;
 
 private:
-  PropertyTreeWidget * tree_widget_;
+  rviz_common::properties::PropertyTreeWidget * tree_widget_;
 };
 
-}  // namespace rviz
+}  // namespace rviz_common
 
 #endif  // RVIZ_COMMON__TOOL_PROPERTIES_PANEL_HPP_

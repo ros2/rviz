@@ -115,7 +115,7 @@ set(rviz_common_headers_to_moc
   # src/rviz_common/time_panel.hpp
   include/rviz_common/tool.hpp
   src/rviz_common/tool_manager.hpp
-  # src/rviz_common/tool_properties_panel.hpp
+  src/rviz_common/tool_properties_panel.hpp
   include/rviz_common/view_controller.hpp
   include/rviz_common/view_manager.hpp
   src/rviz_common/views_panel.hpp
@@ -195,7 +195,7 @@ set(rviz_common_source_files
   src/rviz_common/splash_screen.cpp
   # src/rviz_common/time_panel.cpp
   src/rviz_common/tool_manager.cpp
-  # src/rviz_common/tool_properties_panel.cpp
+  src/rviz_common/tool_properties_panel.cpp
   src/rviz_common/tool.cpp
   src/rviz_common/uniform_string_stream.cpp
   src/rviz_common/view_controller.cpp
