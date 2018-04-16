@@ -60,8 +60,7 @@ public:
     const rviz_common::selection::Picked & obj,
     rviz_common::properties::Property * parent_property) override;
 
-  void getAABBs(
-    const rviz_common::selection::Picked & obj, rviz_common::selection::V_AABB & aabbs) override;
+  rviz_common::selection::V_AABB getAABBs(const rviz_common::selection::Picked & obj) override;
 
   void setMessage(geometry_msgs::msg::PoseStamped::ConstSharedPtr message);
 

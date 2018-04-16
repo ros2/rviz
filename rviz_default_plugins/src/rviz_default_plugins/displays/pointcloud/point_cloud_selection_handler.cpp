@@ -263,20 +263,21 @@ void PointCloudSelectionHandler::destroyProperties(
   }
 }
 
-void PointCloudSelectionHandler::getAABBs(
-  const rviz_common::selection::Picked & obj,
-  rviz_common::selection::V_AABB & aabbs)
+rviz_common::selection::V_AABB PointCloudSelectionHandler::getAABBs(
+  const rviz_common::selection::Picked & obj)
 {
+  rviz_common::selection::V_AABB aabbs;
   rviz_common::selection::S_uint64::iterator it = obj.extra_handles.begin();
   rviz_common::selection::S_uint64::iterator end = obj.extra_handles.end();
   for (; it != end; ++it) {
-    M_HandleToBox::iterator find_it = boxes_.find(std::make_pair(obj.handle, *it - 1));
+    M_HandleToBox::iterator find_it = boxes_.find(Handles(obj.handle, *it - 1));
     if (find_it != boxes_.end()) {
-      Ogre::WireBoundingBox * box = find_it->second.second;
+      Ogre::WireBoundingBox * box = find_it->second.box;
 
       aabbs.push_back(box->getWorldBoundingBox());
     }
   }
+  return aabbs;
 }
 
 void PointCloudSelectionHandler::onSelect(const rviz_common::selection::Picked & obj)
@@ -295,7 +296,7 @@ void PointCloudSelectionHandler::onSelect(const rviz_common::selection::Picked &
 
     Ogre::AxisAlignedBox aabb(pos - size, pos + size);
 
-    createBox(std::make_pair(obj.handle, index), aabb, "RVIZ/Cyan");
+    createBox(Handles(obj.handle, index), aabb, "RVIZ/Cyan");
   }
 }
 
@@ -306,7 +307,7 @@ void PointCloudSelectionHandler::onDeselect(const rviz_common::selection::Picked
   for (; it != end; ++it) {
     int global_index = (*it & 0xffffffff) - 1;
 
-    destroyBox(std::make_pair(obj.handle, global_index));
+    destroyBox(Handles(obj.handle, global_index));
   }
 }
 

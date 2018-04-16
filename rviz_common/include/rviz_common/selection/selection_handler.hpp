@@ -49,11 +49,12 @@
 # pragma GCC diagnostic pop
 #endif
 
-#include "./forwards.hpp"
 #include "rviz_common/interactive_object.hpp"
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/viewport_mouse_event.hpp"
 #include "rviz_common/visibility_control.hpp"
+
+#include "./forwards.hpp"
 
 namespace Ogre
 {
@@ -71,7 +72,7 @@ class ViewportMouseEvent;
 namespace selection
 {
 
-typedef std::vector<Ogre::AxisAlignedBox> V_AABB;
+using V_AABB = std::vector<Ogre::AxisAlignedBox>;
 
 class RVIZ_COMMON_PUBLIC SelectionHandler
 {
@@ -127,7 +128,7 @@ public:
   virtual void postRenderPass(uint32_t pass);
 
   /// Get the AABBs.
-  virtual void getAABBs(const Picked & obj, V_AABB & aabbs);
+  virtual V_AABB getAABBs(const Picked & obj);
 
   /// Override to get called on selection.
   virtual void onSelect(const Picked & obj);
@@ -153,27 +154,66 @@ public:
   /// Get CollObjectHandle.
   CollObjectHandle getHandle() const;
 
+  struct Handles
+  {
+    Handles(CollObjectHandle _handle, uint64_t _extra_handle)
+    : handle(_handle), extra_handle(_extra_handle) {}
+
+    bool operator==(const Handles & rhs) const
+    {
+      return handle == rhs.handle && extra_handle == rhs.extra_handle;
+    }
+
+    bool operator<(const Handles & rhs) const
+    {
+      if (handle < rhs.handle) {
+        return true;
+      } else if (handle > rhs.handle) {
+        return false;
+      } else if (extra_handle < rhs.extra_handle) {
+        return true;
+      }
+      return false;
+    }
+
+    bool operator<=(const Handles & rhs) const
+    {
+      return *this == rhs || *this < rhs;
+    }
+
+    CollObjectHandle handle;
+    uint64_t extra_handle;
+  };
+
+  struct SelectionBox
+  {
+    SelectionBox(Ogre::SceneNode * _node, Ogre::WireBoundingBox * _box)
+    : scene_node(_node), box(_box) {}
+
+    Ogre::SceneNode * scene_node;
+    Ogre::WireBoundingBox * box;
+  };
+
 protected:
   /// Create or update a box for the given handle-int pair, with the box specified by aabb.
   void createBox(
-    const std::pair<CollObjectHandle, uint64_t> & handles,
+    const Handles & handles,
     const Ogre::AxisAlignedBox & aabb,
     const std::string & material_name);
 
   /// Destroy the box associated with the given handle-int pair, if there is one.
-  void destroyBox(const std::pair<CollObjectHandle, uint64_t> & handles);
+  void destroyBox(const Handles & handles);
 
   void setBoxVisibility(bool visible);
 
   QList<rviz_common::properties::Property *> properties_;
 
-  typedef std::map<std::pair<CollObjectHandle, uint64_t>,
-      std::pair<Ogre::SceneNode *, Ogre::WireBoundingBox *>> M_HandleToBox;
+  using M_HandleToBox = std::map<Handles, SelectionBox>;
   M_HandleToBox boxes_;
 
   DisplayContext * context_;
 
-  typedef std::set<Ogre::MovableObject *> S_Movable;
+  using S_Movable = std::set<Ogre::MovableObject *>;
   S_Movable tracked_objects_;
 
   class Listener : public Ogre::MovableObject::Listener
@@ -189,7 +229,7 @@ public:
     SelectionHandler * handler_;
   };
 
-  typedef std::shared_ptr<Listener> ListenerPtr;
+  using ListenerPtr = std::shared_ptr<Listener>;
   ListenerPtr listener_;
 
   InteractiveObjectWPtr interactive_object_;
@@ -203,9 +243,9 @@ private:
   friend class SelectionManager;
 };
 
-typedef std::shared_ptr<SelectionHandler> SelectionHandlerPtr;
-typedef std::vector<SelectionHandlerPtr> V_SelectionHandler;
-typedef std::set<SelectionHandlerPtr> S_SelectionHandler;
+using SelectionHandlerPtr = std::shared_ptr<SelectionHandler>;
+using V_SelectionHandler = std::vector<SelectionHandlerPtr>;
+using S_SelectionHandler = std::set<SelectionHandlerPtr>;
 
 }  // namespace selection
 }  // namespace rviz_common

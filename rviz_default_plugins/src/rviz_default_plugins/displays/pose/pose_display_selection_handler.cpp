@@ -93,10 +93,11 @@ void PoseDisplaySelectionHandler::createProperties(
   orientation_property_->setReadOnly(true);
 }
 
-void PoseDisplaySelectionHandler::getAABBs(
-  const rviz_common::selection::Picked & obj, rviz_common::selection::V_AABB & aabbs)
+rviz_common::selection::V_AABB PoseDisplaySelectionHandler::getAABBs(
+  const rviz_common::selection::Picked & obj)
 {
   (void) obj;
+  rviz_common::selection::V_AABB aabbs;
   if (display_->pose_valid_) {
     if (display_->shape_property_->getOptionInt() == PoseDisplay::Arrow) {
       aabbs.push_back(display_->arrow_->getHead()->getEntity()->getWorldBoundingBox());
@@ -107,6 +108,7 @@ void PoseDisplaySelectionHandler::getAABBs(
       aabbs.push_back(display_->axes_->getZShape()->getEntity()->getWorldBoundingBox());
     }
   }
+  return aabbs;
 }
 
 void PoseDisplaySelectionHandler::setMessage(

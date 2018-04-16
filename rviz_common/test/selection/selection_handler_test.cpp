@@ -87,7 +87,6 @@ TEST_F(SelectionHandlerFixture, addTrackedObject_works_correctly) {
   handler_->addTrackedObject(manual_object);
 
   rviz_common::selection::Picked object(handler_->getHandle());
-  std::vector<Ogre::AxisAlignedBox> aabbs;
-  handler_->getAABBs(object, aabbs);
+  auto aabbs = handler_->getAABBs(object);
   EXPECT_THAT(aabbs, SizeIs(2));
 }

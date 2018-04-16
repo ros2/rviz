@@ -90,9 +90,7 @@ public:
   virtual void onSelect(const rviz_common::selection::Picked & obj);
   virtual void onDeselect(const rviz_common::selection::Picked & obj);
 
-  virtual void getAABBs(
-    const rviz_common::selection::Picked & obj,
-    rviz_common::selection::V_AABB & aabbs);
+  virtual rviz_common::selection::V_AABB getAABBs(const rviz_common::selection::Picked & obj);
 
   void setBoxSize(float size) {box_size_ = size;}
 
