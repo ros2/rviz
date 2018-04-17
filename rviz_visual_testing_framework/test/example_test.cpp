@@ -36,6 +36,7 @@
 #include "tf2_ros/static_transform_broadcaster.h"
 
 #include "rviz_visual_testing_framework/visual_test_fixture.hpp"
+#include "rviz_visual_testing_framework/visual_test_publisher.hpp"
 #include "rviz_visual_testing_framework/page_objects/camera_display_page_object.hpp"
 #include "rviz_visual_testing_framework/page_objects/grid_display_page_object.hpp"
 #include "rviz_visual_testing_framework/page_objects/image_display_page_object.hpp"
@@ -45,39 +46,11 @@
 
 std::atomic<bool> nodes_spinning;
 
-geometry_msgs::msg::Point32 createPoint(float x, float y, float z)
-{
-  geometry_msgs::msg::Point32 point;
-  point.x = x;
-  point.y = y;
-  point.z = z;
-
-  return point;
-}
-
-void publishPointCloud(std::vector<geometry_msgs::msg::Point32> points)
-{
-  auto point_cloud_publisher_node = std::make_shared<nodes::PointCloudPublisher>(points);
-  auto transformer_publisher_node = std::make_shared<rclcpp::Node>("static_transform_publisher");
-  tf2_ros::StaticTransformBroadcaster broadcaster(transformer_publisher_node);
-
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(point_cloud_publisher_node);
-  executor.add_node(transformer_publisher_node);
-
-  rclcpp::WallRate loop_rate(0.2);
-  auto msg = nodes::createStaticTransformMessage("map", "pointcloud_frame");
-  while (nodes_spinning) {
-    broadcaster.sendTransform(msg);
-    executor.spin_some();
-    loop_rate.sleep();
-  }
-}
 
 TEST_F(VisualTestFixture, example_test_with_pointcloud) {
-  nodes_spinning = true;
-  std::vector<geometry_msgs::msg::Point32> points{createPoint(0, 0, 0)};
-  std::thread publishers(publishPointCloud, points);
+  auto pointcloud_publisher =
+    std::make_unique<VisualTestPublisher>(
+    std::make_shared<nodes::PointCloudPublisher>(), "pointcloud_frame");
 
   // Set the position of the camera and its sight vector:
   setCamPose(Ogre::Vector3(0, 0, 16));
@@ -92,7 +65,4 @@ TEST_F(VisualTestFixture, example_test_with_pointcloud) {
 
   /// Compare test screenshots with the reference ones (if in TEST mode):
   assertScreenShotsIdentity();
-
-  nodes_spinning = false;
-  publishers.join();
 }

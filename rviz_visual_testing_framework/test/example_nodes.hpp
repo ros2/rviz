@@ -44,13 +44,23 @@ using namespace std::chrono_literals;  // NOLINT
 namespace nodes
 {
 
+geometry_msgs::msg::Point32 createPoint(float x, float y, float z)
+{
+  geometry_msgs::msg::Point32 point;
+  point.x = x;
+  point.y = y;
+  point.z = z;
+
+  return point;
+}
+
 class PointCloudPublisher : public rclcpp::Node
 {
 public:
-  explicit PointCloudPublisher(std::vector<geometry_msgs::msg::Point32> points)
-  : Node("pointcloud_publisher"),
-    points_(points)
+  PointCloudPublisher()
+  : Node("pointcloud_publisher")
   {
+    points_ = {createPoint(0, 0, 0)};
     publisher_ = this->create_publisher<sensor_msgs::msg::PointCloud>("pointcloud");
     timer_ = this->create_wall_timer(500ms, std::bind(&PointCloudPublisher::timer_callback, this));
   }

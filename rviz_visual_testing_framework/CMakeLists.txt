@@ -65,10 +65,14 @@ set(visual_test_framework_source_files
   src/internal/test_helpers.cpp
   include/rviz_visual_testing_framework/internal/executor.hpp
   src/internal/executor.cpp
+  include/rviz_visual_testing_framework/internal/transform_publisher.hpp
+  src/internal/transform_publisher.cpp
   include/rviz_visual_testing_framework/internal/visual_test.hpp
   src/internal/visual_test.cpp
   include/rviz_visual_testing_framework/visual_test_fixture.hpp
-  src/visual_test_fixture.cpp)
+  src/visual_test_fixture.cpp
+  include/rviz_visual_testing_framework/visual_test_publisher.hpp
+)
 
 set(visual_tests_target_libaries
   rviz_common::rviz_common
@@ -102,7 +106,7 @@ ament_export_interfaces(rviz_visual_testing_framework)
 ament_export_dependencies(Qt5)
 ament_export_dependencies(rviz_common)
 
-
+ament_export_include_directories(include)
 
 install(
   TARGETS rviz_visual_testing_framework
@@ -129,22 +133,22 @@ if(BUILD_TESTING)
   ament_lint_cmake()
   ament_uncrustify()
 
-  if(EnableVisualTests STREQUAL "TRUE")
-    ament_add_gtest(
-      example_test
-      test/example_test.cpp)
-    if(TARGET example_test)
-      target_link_libraries(
-        example_test
-        rviz_visual_testing_framework)
-      if(EXISTS ${qt5_install_prefix})
-        add_custom_command(TARGET example_test
-          POST_BUILD
-          COMMAND
-          cmd /C "${qt5_install_prefix}/bin/windeployqt.exe $<TARGET_FILE_DIR:example_test>")
-      endif()
-    endif()
-  endif()
+#   if(EnableVisualTests STREQUAL "TRUE")
+#     ament_add_gtest(
+#       example_test
+#       test/example_test.cpp)
+#     if(TARGET example_test)
+#       target_link_libraries(
+#        example_test
+#        rviz_visual_testing_framework)
+#      if(EXISTS ${qt5_install_prefix})
+#        add_custom_command(TARGET example_test
+#          POST_BUILD
+#          COMMAND
+#          cmd /C "${qt5_install_prefix}/bin/windeployqt.exe $<TARGET_FILE_DIR:example_test>")
+#      endif()
+#    endif()
+#  endif()
 endif()
 
 ament_package()

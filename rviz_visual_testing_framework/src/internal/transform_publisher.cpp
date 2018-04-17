@@ -27,41 +27,33 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_VISUAL_TESTING_FRAMEWORK__PAGE_OBJECTS__PATH_DISPLAY_PAGE_OBJECT_HPP_
-#define RVIZ_VISUAL_TESTING_FRAMEWORK__PAGE_OBJECTS__PATH_DISPLAY_PAGE_OBJECT_HPP_
+#include "rviz_visual_testing_framework/internal/transform_publisher.hpp"
 
-#include <memory>
-#include <vector>
+#include <string>
 
-#include <QtWidgets>  // NOLINT
+#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/clock.hpp"
+#include "tf2/LinearMath/Quaternion.h"
 
-#include "rviz_visual_testing_framework/page_objects/base_page_object.hpp"
-
-class PathDisplayPageObject : public BasePageObject
+geometry_msgs::msg::TransformStamped createStaticTransformMessageFor(
+  std::string header_frame_id, std::string child_frame_id)
 {
-public:
-  PathDisplayPageObject(
-    int display_id,
-    std::shared_ptr<Executor> executor,
-    std::shared_ptr<std::vector<int>> all_displays_ids);
+  geometry_msgs::msg::TransformStamped message;
 
-  void setTopic(QString topic);
+  message.transform.translation.x = 0;
+  message.transform.translation.y = 0;
+  message.transform.translation.z = 0;
 
-  void setLineStyleForPath(QString line_style);
-  void setLineWidthForPath(float width);
-  void setPathColor(int red, int green, int blue);
-  void setAlpha(float alpha);
-  void setLengthOfBuffer(int buffer_length);
-  void setOffsetFromOrigin(float x, float y, float z);
+  tf2::Quaternion quat;
+  quat.setRPY(0, 0, 0);
+  message.transform.rotation.x = quat.x();
+  message.transform.rotation.y = quat.y();
+  message.transform.rotation.z = quat.z();
+  message.transform.rotation.w = quat.w();
 
-  void setStyleOfPose(QString pose_style);
-  void setPoseAxesLength(float length);
-  void setPoseAxesRadius(float radius);
-  void setPoseArrowColorProperty(int red, int green, int blue);
-  void setPoseArrowShaftLength(float length);
-  void setPoseArrowHeadLength(float length);
-  void setPoseArrowShaftDiameter(float diameter);
-  void setPoseArrowHeadDiameter(float diameter);
-};
+  message.header.stamp = rclcpp::Clock().now();
+  message.header.frame_id = header_frame_id;
+  message.child_frame_id = child_frame_id;
 
-#endif  // RVIZ_VISUAL_TESTING_FRAMEWORK__PAGE_OBJECTS__PATH_DISPLAY_PAGE_OBJECT_HPP_
+  return message;
+}

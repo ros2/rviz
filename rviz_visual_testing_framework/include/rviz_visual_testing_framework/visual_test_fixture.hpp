@@ -34,6 +34,13 @@
 #include <string>
 #include <vector>
 
+#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/clock.hpp"
+#include "std_msgs/msg/header.hpp"
+#include "geometry_msgs/msg/transform_stamped.hpp"
+#include "tf2/LinearMath/Quaternion.h"
+#include "tf2_ros/static_transform_broadcaster.h"
+
 #include "rviz_visual_testing_framework/internal/display_handler.hpp"
 #include "rviz_visual_testing_framework/internal/executor.hpp"
 #include "rviz_visual_testing_framework/internal/visual_test.hpp"

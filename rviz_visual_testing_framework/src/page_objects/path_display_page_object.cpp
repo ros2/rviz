@@ -36,10 +36,16 @@
 
 #include "rviz_visual_testing_framework/internal/test_helpers.hpp"
 
-PathDisplayPageObject::PathDisplayPageObject(int display_id, std::shared_ptr<Executor> executor,
+PathDisplayPageObject::PathDisplayPageObject(
+  int display_id, std::shared_ptr<Executor> executor,
   std::shared_ptr<std::vector<int>> all_displays_ids)
 : BasePageObject(display_id, 0, "Path", executor, all_displays_ids)
 {}
+
+void PathDisplayPageObject::setTopic(QString topic)
+{
+  setComboBox("Topic", topic);
+}
 
 void PathDisplayPageObject::setLineStyleForPath(QString line_style)
 {

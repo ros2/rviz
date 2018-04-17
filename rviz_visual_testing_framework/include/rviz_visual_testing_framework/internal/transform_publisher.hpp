@@ -27,41 +27,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_VISUAL_TESTING_FRAMEWORK__PAGE_OBJECTS__PATH_DISPLAY_PAGE_OBJECT_HPP_
-#define RVIZ_VISUAL_TESTING_FRAMEWORK__PAGE_OBJECTS__PATH_DISPLAY_PAGE_OBJECT_HPP_
+#ifndef RVIZ_VISUAL_TESTING_FRAMEWORK__INTERNAL__TRANSFORM_PUBLISHER_HPP_
+#define RVIZ_VISUAL_TESTING_FRAMEWORK__INTERNAL__TRANSFORM_PUBLISHER_HPP_
 
-#include <memory>
-#include <vector>
+#include <string>
 
-#include <QtWidgets>  // NOLINT
+#include "geometry_msgs/msg/transform_stamped.hpp"
 
-#include "rviz_visual_testing_framework/page_objects/base_page_object.hpp"
+geometry_msgs::msg::TransformStamped createStaticTransformMessageFor(
+  std::string header_frame_id, std::string child_frame_id);
 
-class PathDisplayPageObject : public BasePageObject
-{
-public:
-  PathDisplayPageObject(
-    int display_id,
-    std::shared_ptr<Executor> executor,
-    std::shared_ptr<std::vector<int>> all_displays_ids);
-
-  void setTopic(QString topic);
-
-  void setLineStyleForPath(QString line_style);
-  void setLineWidthForPath(float width);
-  void setPathColor(int red, int green, int blue);
-  void setAlpha(float alpha);
-  void setLengthOfBuffer(int buffer_length);
-  void setOffsetFromOrigin(float x, float y, float z);
-
-  void setStyleOfPose(QString pose_style);
-  void setPoseAxesLength(float length);
-  void setPoseAxesRadius(float radius);
-  void setPoseArrowColorProperty(int red, int green, int blue);
-  void setPoseArrowShaftLength(float length);
-  void setPoseArrowHeadLength(float length);
-  void setPoseArrowShaftDiameter(float diameter);
-  void setPoseArrowHeadDiameter(float diameter);
-};
-
-#endif  // RVIZ_VISUAL_TESTING_FRAMEWORK__PAGE_OBJECTS__PATH_DISPLAY_PAGE_OBJECT_HPP_
+#endif  // RVIZ_VISUAL_TESTING_FRAMEWORK__INTERNAL__TRANSFORM_PUBLISHER_HPP_
