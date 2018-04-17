@@ -232,8 +232,10 @@ bool SelectionManager::getPatchDepthImage(
     handler_it->second->preRenderPass(0);
   }
 
-  if (render(viewport, depth_render_texture_, x, y, x + width,
-    y + height, depth_pixel_box_, "Depth", depth_texture_width_, depth_texture_height_))
+  if (render(
+      SelectionRectangle(viewport, x, y, x + width, y + height),
+      RenderTexture(depth_render_texture_, depth_texture_width_, depth_texture_height_, "Depth"),
+      depth_pixel_box_))
   {
     uint8_t * data_ptr = reinterpret_cast<uint8_t *>(depth_pixel_box_.data);
 
@@ -570,25 +572,23 @@ void SelectionManager::renderAndUnpack(
     scheme << pass;
   }
 
-  if (render(viewport, render_textures_[pass], x1, y1, x2, y2, pixel_boxes_[pass], scheme.str(),
-    texture_size_, texture_size_))
-  {
+  auto rect = SelectionRectangle(viewport, x1, y1, x2, y2);
+  auto tex = RenderTexture(
+    render_textures_[pass],
+    texture_size_,
+    texture_size_,
+    scheme.str());
+  if (render(rect, tex, pixel_boxes_[pass])) {
     unpackColors(pixel_boxes_[pass], pixels);
   }
 }
 
 bool SelectionManager::render(
-  Ogre::Viewport * viewport, Ogre::TexturePtr tex,
-  int x1, int y1, int x2, int y2,
-  Ogre::PixelBox & dst_box, std::string material_scheme,
-  unsigned texture_width, unsigned texture_height)
+  const SelectionRectangle & selection_rectangle,
+  const RenderTexture & render_texture,
+  Ogre::PixelBox & dst_box)
 {
-  return renderer_->render(
-    context_,
-    camera_,
-    rviz_common::selection::SelectionRectangle(viewport, x1, x2, y1, y2),
-    rviz_common::selection::RenderTexture(tex, texture_width, texture_height, material_scheme),
-    dst_box);
+  return renderer_->render(context_, camera_, selection_rectangle, render_texture, dst_box);
 }
 
 PropertyTreeModel * SelectionManager::getPropertyModel()

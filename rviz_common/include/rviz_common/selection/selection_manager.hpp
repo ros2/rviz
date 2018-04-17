@@ -83,6 +83,8 @@ class VisualizationManager;
 namespace selection
 {
 class SelectionRenderer;
+struct SelectionRectangle;
+struct RenderTexture;
 
 class RVIZ_COMMON_PUBLIC SelectionManager
   : public SelectionManagerIface
@@ -230,16 +232,9 @@ private:
 
   /// Internal render function to render to a texture and read the pixels back out.
   bool render(
-    Ogre::Viewport * viewport,
-    Ogre::TexturePtr tex,
-    int x1,
-    int y1,
-    int x2,
-    int y2,
-    Ogre::PixelBox & dst_box,
-    std::string material_scheme,
-    unsigned texture_width,
-    unsigned textured_height);
+    const SelectionRectangle & selection_rectangle,
+    const RenderTexture & render_texture,
+    Ogre::PixelBox & dst_box);
 
   void unpackColors(const Ogre::PixelBox & box, V_CollObject & pixels);
 
@@ -296,8 +291,8 @@ private:
 
   std::recursive_mutex global_mutex_;
 
-  typedef std::unordered_map<CollObjectHandle, SelectionHandler *>
-    M_CollisionObjectToSelectionHandler;
+  using M_CollisionObjectToSelectionHandler =
+    std::unordered_map<CollObjectHandle, SelectionHandler *>;
   M_CollisionObjectToSelectionHandler objects_;
 
   bool highlight_enabled_;

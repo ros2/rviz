@@ -54,13 +54,13 @@ namespace rviz_common
 namespace selection
 {
 
-typedef uint32_t CollObjectHandle;
-typedef std::vector<CollObjectHandle> V_CollObject;
-typedef std::vector<V_CollObject> VV_CollObject;
-typedef std::set<CollObjectHandle> S_CollObject;
+using CollObjectHandle = uint32_t;
+using V_CollObject = std::vector<CollObjectHandle>;
+using VV_CollObject = std::vector<V_CollObject>;
+using S_CollObject = std::set<CollObjectHandle>;
 
-typedef std::set<uint64_t> S_uint64;
-typedef std::vector<uint64_t> V_uint64;
+using S_uint64 = std::set<uint64_t>;
+using V_uint64 = std::vector<uint64_t>;
 
 struct Picked
 {
@@ -74,7 +74,7 @@ struct Picked
   S_uint64 extra_handles;
 };
 
-typedef std::unordered_map<CollObjectHandle, Picked> M_Picked;
+using M_Picked = std::unordered_map<CollObjectHandle, Picked>;
 
 inline uint32_t colorToHandle(Ogre::PixelFormat fmt, uint32_t col)
 {

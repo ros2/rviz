@@ -55,7 +55,7 @@ namespace selection
 
 struct SelectionRectangle
 {
-  SelectionRectangle(Ogre::Viewport * viewport, int x1, int x2, int y1, int y2)
+  SelectionRectangle(Ogre::Viewport * viewport, int x1, int y1, int x2, int y2)
   : viewport_(viewport), x1_(x1), x2_(x2), y1_(y1), y2_(y2)
   {}
 
@@ -71,7 +71,7 @@ struct SelectionRectangle
 struct RenderTexture
 {
   RenderTexture(
-    const Ogre::TexturePtr & tex,
+    Ogre::TexturePtr tex,
     unsigned int texture_width,
     unsigned int texture_height,
     const std::string & material_scheme)
