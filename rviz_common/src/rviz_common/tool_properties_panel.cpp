@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +42,7 @@ namespace rviz_common
 ToolPropertiesPanel::ToolPropertiesPanel(QWidget * parent)
 : Panel(parent)
 {
-  QVBoxLayout * layout = new QVBoxLayout();
+  auto layout = new QVBoxLayout();
   layout->setContentsMargins(0, 0, 0, 0);
   tree_widget_ = new rviz_common::properties::PropertyTreeWidget();
   layout->addWidget(tree_widget_);

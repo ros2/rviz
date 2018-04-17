@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,15 +50,15 @@ class ToolPropertiesPanel : public Panel
 
 public:
   explicit ToolPropertiesPanel(QWidget * parent = 0);
-  virtual ~ToolPropertiesPanel() {}
+  ~ToolPropertiesPanel() override = default;
 
-  virtual void onInitialize();
+  void onInitialize() override;
 
   /** @brief Load configuration data, specifically the PropertyTreeWidget view settings. */
-  virtual void load(const Config & config);
+  void load(const Config & config) override;
 
   /** @brief Save configuration data, specifically the PropertyTreeWidget view settings. */
-  virtual void save(Config config) const;
+  void save(Config config) const override;
 
 private:
   rviz_common::properties::PropertyTreeWidget * tree_widget_;

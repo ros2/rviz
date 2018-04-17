@@ -46,7 +46,7 @@ namespace properties
 
 PropertyTreeWidget::PropertyTreeWidget(QWidget * parent)
 : QTreeView(parent),
-  model_(NULL),
+  model_(nullptr),
   splitter_handle_(new SplitterHandle(this))
 {
   setItemDelegateForColumn(1, new PropertyTreeDelegate(this));
@@ -60,7 +60,7 @@ PropertyTreeWidget::PropertyTreeWidget(QWidget * parent)
   setEditTriggers(QAbstractItemView::AllEditTriggers);
   setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-  QTimer * timer = new QTimer(this);
+  auto timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), this, SLOT(update()));
   timer->start(100);
 }
