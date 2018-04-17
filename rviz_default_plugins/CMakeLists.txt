@@ -9,6 +9,13 @@ endif()
 
 option(EnableDisplayTests "EnableDisplayTests")
 set(DisplayTests "False" CACHE STRING "DisplayTestsVariable")
+option(EnableVisualTests "decides whether or not to enable the tests")
+
+add_definitions(-D_BUILD_DIR_PATH="${CMAKE_CURRENT_BINARY_DIR}")
+add_definitions(-D_SRC_DIR_PATH="${CMAKE_CURRENT_SOURCE_DIR}")
+
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_images)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/test/reference_images)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic -Werror)
@@ -25,11 +32,12 @@ find_package(resource_retriever REQUIRED)
 find_package(rviz_common REQUIRED)
 find_package(rviz_rendering REQUIRED)
 find_package(rviz_ogre_vendor REQUIRED)
+find_package(rviz_visual_testing_framework REQUIRED)
 find_package(tinyxml_vendor REQUIRED)
 find_package(TinyXML REQUIRED)  # provided by tinyxml_vendor
 find_package(urdf REQUIRED)
 
-find_package(Qt5 REQUIRED COMPONENTS Widgets)
+find_package(Qt5 REQUIRED COMPONENTS Widgets Test)
 
 find_package(geometry_msgs REQUIRED)
 find_package(laser_geometry REQUIRED)

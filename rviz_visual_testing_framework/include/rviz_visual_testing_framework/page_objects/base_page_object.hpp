@@ -67,6 +67,10 @@ protected:
     bool value_to_set,
     int sub_property_index = -1,
     const QString & sub_property_name = "");
+  void setInt(const QString & property_name, int value_to_set);
+  void setFloat(const QString & property_name, float value_to_set);
+  void setColor(const QString & property_name, int red, int green, int blue);
+  void setVector(const QString & property_name, float x, float y, float z);
 
   int display_id_;
   int display_category_;

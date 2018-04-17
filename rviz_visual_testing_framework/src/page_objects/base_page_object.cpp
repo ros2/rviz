@@ -119,6 +119,31 @@ void BasePageObject::setBool(
   );
 }
 
+void BasePageObject::setInt(const QString & property_name, int value_to_set)
+{
+  setString(property_name, QString(value_to_set));
+}
+
+void BasePageObject::setFloat(const QString & property_name, float value_to_set)
+{
+  setString(property_name, format(value_to_set));
+}
+
+void BasePageObject::setColor(const QString & property_name, int red, int green, int blue)
+{
+  QString color_code = QString::fromStdString(
+    std::to_string(red) + "; " + std::to_string(green) + "; " + std::to_string(blue));
+
+  setString(property_name, color_code);
+}
+
+void BasePageObject::setVector(const QString & property_name, float x, float y, float z)
+{
+  QString formatted_vector = format(x) + "; " + format(y) + "; " + format(z);
+
+  setString(property_name, formatted_vector);
+}
+
 QModelIndex BasePageObject::getMainPropertyIndex(
   const QString & property_name, int property_row_index, QModelIndex display_index)
 {

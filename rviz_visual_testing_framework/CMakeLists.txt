@@ -49,6 +49,8 @@ set(visual_test_framework_source_files
   src/page_objects/image_display_page_object.cpp
   include/rviz_visual_testing_framework/page_objects/page_object_with_window.hpp
   src/page_objects/page_object_with_window.cpp
+  include/rviz_visual_testing_framework/page_objects/path_display_page_object.hpp
+  src/page_objects/path_display_page_object.cpp
   include/rviz_visual_testing_framework/page_objects/point_cloud_display_page_object.hpp
   src/page_objects/point_cloud_display_page_object.cpp
   include/rviz_visual_testing_framework/page_objects/polygon_display_page_object.hpp
