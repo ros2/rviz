@@ -172,6 +172,7 @@ void SelectionHandler::createProperties(const Picked & obj, Property * parent_pr
   Q_UNUSED(parent_property);
 }
 
+//TODO return aabbs
 void SelectionHandler::getAABBs(const Picked & obj, V_AABB & aabbs)
 {
   Q_UNUSED(obj);

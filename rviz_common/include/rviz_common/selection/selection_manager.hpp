@@ -312,8 +312,8 @@ private:
   // If you want to change this number to something > 3 you must provide more
   // width for extra handles in the Picked structure (currently a u64)
   static constexpr uint32_t kNumRenderTextures_ = 2;
-  Ogre::TexturePtr render_textures_[kNumRenderTextures_];
-  Ogre::PixelBox pixel_boxes_[kNumRenderTextures_];
+  std::array<Ogre::TexturePtr, kNumRenderTextures_> render_textures_;
+  std::array<Ogre::PixelBox, kNumRenderTextures_> pixel_boxes_;
 
   // Graphics card -based depth finding of clicked points.
   Ogre::TexturePtr depth_render_texture_;

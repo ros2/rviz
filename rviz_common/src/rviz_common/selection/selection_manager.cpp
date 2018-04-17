@@ -89,10 +89,10 @@ SelectionManager::SelectionManager(
 {
   // TODO(Martin-Idel-SI): I would like to just use setUpSlots(), but timer needs a QThread,
   // which is not easily available in tests
-  for (uint32_t i = 0; i < kNumRenderTextures_; ++i) {
-    pixel_boxes_[i].data = 0;
+  for (auto & pixel_box : pixel_boxes_) {
+    pixel_box.data = nullptr;
   }
-  depth_pixel_box_.data = 0;
+  depth_pixel_box_.data = nullptr;
 }
 
 SelectionManager::SelectionManager(DisplayContext * context)
@@ -108,10 +108,10 @@ SelectionManager::SelectionManager(DisplayContext * context)
 
 void SelectionManager::setUpSlots()
 {
-  for (uint32_t i = 0; i < kNumRenderTextures_; ++i) {
-    pixel_boxes_[i].data = 0;
+  for (auto & pixel_box : pixel_boxes_) {
+    pixel_box.data = nullptr;
   }
-  depth_pixel_box_.data = 0;
+  depth_pixel_box_.data = nullptr;
 
   QTimer * timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), this, SLOT(updateProperties()));
@@ -127,8 +127,8 @@ SelectionManager::~SelectionManager()
   highlight_node_->getParentSceneNode()->removeAndDestroyChild(highlight_node_);
   delete highlight_rectangle_;
 
-  for (uint32_t i = 0; i < kNumRenderTextures_; ++i) {
-    delete[] reinterpret_cast<uint8_t *>(pixel_boxes_[i].data);
+  for (auto & pixel_box : pixel_boxes_) {
+    delete[] reinterpret_cast<uint8_t *>(pixel_box.data);
   }
   delete[] reinterpret_cast<uint8_t *>(depth_pixel_box_.data);
 
@@ -150,9 +150,9 @@ void SelectionManager::initialize()
   Ogre::SceneManager * scene_manager = context_->getSceneManager();
   highlight_node_ = scene_manager->getRootSceneNode()->createChildSceneNode();
 
-  std::stringstream ss;
+  std::string name("SelectionRect");
   static int count = 0;
-  ss << "SelectionRect" << count++;
+  name += std::to_string(count++);
   highlight_rectangle_ = new Ogre::Rectangle2D(true);
 
   static const uint32_t texture_data[1] = {0xffff0080};
@@ -163,7 +163,7 @@ void SelectionManager::initialize()
     ));
 
   Ogre::TexturePtr tex = Ogre::TextureManager::getSingleton().loadRawData(
-    ss.str() + "Texture",
+    name + "Texture",
     Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
     pixel_stream,
     1,
@@ -174,7 +174,7 @@ void SelectionManager::initialize()
     );
 
   Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().create(
-    ss.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+    name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
   material->setLightingEnabled(false);
   // material->getTechnique(0)->getPass(0)->setPolygonMode(Ogre::PM_WIREFRAME);
   highlight_rectangle_->setMaterial(material);
@@ -193,7 +193,7 @@ void SelectionManager::initialize()
   highlight_node_->attachObject(highlight_rectangle_);
 
   // create picking camera
-  camera_ = scene_manager->createCamera(ss.str() + "_camera");
+  camera_ = scene_manager->createCamera(name + "_camera");
 }
 
 
@@ -205,7 +205,7 @@ bool SelectionManager::get3DPoint(
 {
   std::vector<Ogre::Vector3> result_points_temp;
   bool success = get3DPatch(viewport, x, y, 1, 1, true, result_points_temp);
-  if (result_points_temp.size() == 0) {
+  if (result_points_temp.empty()) {
     // return result_point unmodified if get point fails.
     return false;
   }
@@ -224,12 +224,8 @@ bool SelectionManager::getPatchDepthImage(
 
   setDepthTextureSize(width, height);
 
-
-  M_CollisionObjectToSelectionHandler::iterator handler_it = objects_.begin();
-  M_CollisionObjectToSelectionHandler::iterator handler_end = objects_.end();
-
-  for (; handler_it != handler_end; ++handler_it) {
-    handler_it->second->preRenderPass(0);
+  for (auto & obj : objects_) {
+    obj.second->preRenderPass(0);
   }
 
   if (render(
@@ -237,7 +233,7 @@ bool SelectionManager::getPatchDepthImage(
       RenderTexture(depth_render_texture_, depth_texture_width_, depth_texture_height_, "Depth"),
       depth_pixel_box_))
   {
-    uint8_t * data_ptr = reinterpret_cast<uint8_t *>(depth_pixel_box_.data);
+    auto data_ptr = reinterpret_cast<uint8_t *>(depth_pixel_box_.data);
 
     for (uint32_t pixel = 0; pixel < num_pixels; ++pixel) {
       uint8_t a = data_ptr[4 * pixel];
@@ -253,10 +249,8 @@ bool SelectionManager::getPatchDepthImage(
     return false;
   }
 
-  handler_it = objects_.begin();
-  handler_end = objects_.end();
-  for (; handler_it != handler_end; ++handler_it) {
-    handler_it->second->postRenderPass(0);
+  for (auto & obj : objects_) {
+    obj.second->postRenderPass(0);
   }
 
   return true;
@@ -330,7 +324,7 @@ bool SelectionManager::get3DPatch(
     }
   }
 
-  return result_points.size() > 0;
+  return !result_points.empty();
 }
 
 
@@ -380,8 +374,7 @@ void SelectionManager::setDepthTextureSize(unsigned width, unsigned height)
         Ogre::PF_R8G8B8,
         Ogre::TU_RENDERTARGET);
 
-    Ogre::RenderTexture * render_texture = depth_render_texture_->getBuffer()->getRenderTarget();
-    render_texture->setAutoUpdated(false);
+    depth_render_texture_->getBuffer()->getRenderTarget()->setAutoUpdated(false);
   }
 }
 
@@ -394,31 +387,28 @@ void SelectionManager::setTextureSize(unsigned size)
 
   texture_size_ = size;
 
-  for (uint32_t pass = 0; pass < kNumRenderTextures_; ++pass) {
+  for (auto & render_texture : render_textures_) {
     // check if we need to change the texture size
-    if (!render_textures_[pass].get() || render_textures_[pass]->getWidth() != size) {
+    if (!render_texture.get() || render_texture->getWidth() != size) {
       std::string tex_name;
-      if (render_textures_[pass].get()) {
-        tex_name = render_textures_[pass]->getName();
+      if (render_texture.get()) {
+        tex_name = render_texture->getName();
 
         // destroy old
         Ogre::TextureManager::getSingleton().remove(
           tex_name,
           Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
       } else {
-        std::stringstream ss;
         static int count = 0;
-        ss << "SelectionTexture" << count++;
-        tex_name = ss.str();
+        tex_name = "SelectionTexture" + std::to_string(count++);
       }
 
       // create new texture
-      render_textures_[pass] = Ogre::TextureManager::getSingleton().createManual(tex_name,
+      render_texture = Ogre::TextureManager::getSingleton().createManual(tex_name,
           Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D, size, size, 0,
           Ogre::PF_R8G8B8A8, Ogre::TU_STATIC | Ogre::TU_RENDERTARGET);
 
-      Ogre::RenderTexture * render_texture = render_textures_[pass]->getBuffer()->getRenderTarget();
-      render_texture->setAutoUpdated(false);
+      render_texture->getBuffer()->getRenderTarget()->setAutoUpdated(false);
     }
   }
 }
@@ -426,10 +416,8 @@ void SelectionManager::setTextureSize(unsigned size)
 void SelectionManager::enableInteraction(bool enable)
 {
   interaction_enabled_ = enable;
-  M_CollisionObjectToSelectionHandler::iterator handler_it = objects_.begin();
-  M_CollisionObjectToSelectionHandler::iterator handler_end = objects_.end();
-  for (; handler_it != handler_end; ++handler_it) {
-    if (InteractiveObjectPtr object = handler_it->second->getInteractiveObject().lock()) {
+  for (auto & registered_object : objects_) {
+    if (InteractiveObjectPtr object = registered_object.second->getInteractiveObject().lock()) {
       object->enableInteraction(enable);
     }
   }
@@ -487,7 +475,7 @@ void SelectionManager::removeObject(CollObjectHandle obj)
 
   std::lock_guard<std::recursive_mutex> lock(global_mutex_);
 
-  M_Picked::iterator it = selection_.find(obj);
+  auto it = selection_.find(obj);
   if (it != selection_.end()) {
     M_Picked objs;
     objs.insert(std::make_pair(it->first, it->second));
@@ -541,18 +529,17 @@ void SelectionManager::setHighlightRect(Ogre::Viewport * viewport, int x1, int y
 
 void SelectionManager::unpackColors(const Ogre::PixelBox & box, V_CollObject & pixels)
 {
-  int w = box.getWidth();
-  int h = box.getHeight();
+  auto w = box.getWidth();
+  auto h = box.getHeight();
 
   pixels.clear();
   pixels.reserve(w * h);
 
-  for (int y = 0; y < h; y++) {
-    for (int x = 0; x < w; x++) {
+  for (uint32_t y = 0; y < h; y++) {
+    for (uint32_t x = 0; x < w; x++) {
       uint32_t pos = (x + y * w) * 4;
 
-      uint32_t pix_val =
-        *reinterpret_cast<uint32_t *>(reinterpret_cast<uint8_t *>(box.data) + pos);
+      uint32_t pix_val = *reinterpret_cast<uint32_t *>(reinterpret_cast<uint8_t *>(box.data) + pos);
       uint32_t handle = colorToHandle(box.format, pix_val);
 
       pixels.push_back(handle);
@@ -560,16 +547,16 @@ void SelectionManager::unpackColors(const Ogre::PixelBox & box, V_CollObject & p
   }
 }
 
+//TODO SelectionRectangle
 void SelectionManager::renderAndUnpack(
   Ogre::Viewport * viewport, uint32_t pass, int x1, int y1,
   int x2, int y2, V_CollObject & pixels)
 {
-  assert(pass < kNumRenderTextures_);
+  assert(pass < render_textures_.size());
 
-  std::stringstream scheme;
-  scheme << "Pick";
+  std::string scheme("Pick");
   if (pass > 0) {
-    scheme << pass;
+    scheme += std::to_string(pass);
   }
 
   auto rect = SelectionRectangle(viewport, x1, y1, x2, y2);
@@ -577,7 +564,7 @@ void SelectionManager::renderAndUnpack(
     render_textures_[pass],
     texture_size_,
     texture_size_,
-    scheme.str());
+    scheme);
   if (render(rect, tex, pixel_boxes_[pass])) {
     unpackColors(pixel_boxes_[pass], pixels);
   }
@@ -632,15 +619,15 @@ void SelectionManager::setPickData(
     return;
   }
   // Loop over all objects attached to this node.
-  Ogre::SceneNode::ObjectIterator obj_it = node->getAttachedObjectIterator();
+  auto obj_it = node->getAttachedObjectIterator();
   while (obj_it.hasMoreElements()) {
-    Ogre::MovableObject * obj = obj_it.getNext();
+    auto obj = obj_it.getNext();
     setPickData(handle, color, obj);
   }
   // Loop over and recurse into all child nodes.
-  Ogre::SceneNode::ChildNodeIterator child_it = node->getChildIterator();
+  auto child_it = node->getChildIterator();
   while (child_it.hasMoreElements()) {
-    Ogre::SceneNode * child = dynamic_cast<Ogre::SceneNode *>( child_it.getNext());
+    auto child = dynamic_cast<Ogre::SceneNode *>(child_it.getNext());
     setPickData(handle, color, child);
   }
 }
@@ -651,7 +638,7 @@ public:
   PickColorSetter(CollObjectHandle handle, const Ogre::ColourValue & color)
   : color_vector_(color.r, color.g, color.b, 1.0), handle_(handle) {}
 
-  virtual void visit(Ogre::Renderable * rend, ushort lodIndex, bool isDebug, Ogre::Any * pAny = 0)
+  void visit(Ogre::Renderable * rend, ushort lodIndex, bool isDebug, Ogre::Any * pAny = 0) override
   {
     Q_UNUSED(lodIndex);
     Q_UNUSED(isDebug);
@@ -677,22 +664,20 @@ SelectionHandler * SelectionManager::getHandler(CollObjectHandle obj)
 {
   std::lock_guard<std::recursive_mutex> lock(global_mutex_);
 
-  M_CollisionObjectToSelectionHandler::iterator it = objects_.find(obj);
+  auto it = objects_.find(obj);
   if (it != objects_.end()) {
     return it->second;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 void SelectionManager::removeSelection(const M_Picked & objs)
 {
   std::lock_guard<std::recursive_mutex> lock(global_mutex_);
 
-  M_Picked::const_iterator it = objs.begin();
-  M_Picked::const_iterator end = objs.end();
-  for (; it != end; ++it) {
-    removeSelectedObject(it->second);
+  for (const auto & obj : objs) {
+    removeSelectedObject(obj.second);
   }
 
   selectionRemoved(objs);
@@ -708,12 +693,10 @@ void SelectionManager::addSelection(const M_Picked & objs)
   std::lock_guard<std::recursive_mutex> lock(global_mutex_);
 
   M_Picked added;
-  M_Picked::const_iterator it = objs.begin();
-  M_Picked::const_iterator end = objs.end();
-  for (; it != end; ++it) {
-    std::pair<Picked, bool> ppb = addSelectedObject(it->second);
+  for (const auto & obj : objs) {
+    auto ppb = addSelectedObject(obj.second);
     if (ppb.second) {
-      added.insert(std::make_pair(it->first, ppb.first));
+      added.insert(std::make_pair(obj.first, ppb.first));
     }
   }
 
@@ -745,11 +728,9 @@ std::pair<Picked, bool> SelectionManager::addSelectedObject(const Picked & obj)
     Picked & cur = pib.first->second;
     Picked added(cur.handle);
 
-    S_uint64::iterator it = obj.extra_handles.begin();
-    S_uint64::iterator end = obj.extra_handles.end();
-    for (; it != end; ++it) {
-      if (cur.extra_handles.insert(*it).second) {
-        added.extra_handles.insert(*it);
+    for (const auto & extra_handle  : obj.extra_handles) {
+      if (cur.extra_handles.insert(extra_handle).second) {
+        added.extra_handles.insert(extra_handle);
       }
     }
 
@@ -767,12 +748,10 @@ void SelectionManager::removeSelectedObject(const Picked & obj)
 {
   std::lock_guard<std::recursive_mutex> lock(global_mutex_);
 
-  M_Picked::iterator sel_it = selection_.find(obj.handle);
+  auto sel_it = selection_.find(obj.handle);
   if (sel_it != selection_.end()) {
-    S_uint64::iterator extra_it = obj.extra_handles.begin();
-    S_uint64::iterator extra_end = obj.extra_handles.end();
-    for (; extra_it != extra_end; ++extra_it) {
-      sel_it->second.extra_handles.erase(*extra_it);
+    for (const auto & extra_handle : obj.extra_handles) {
+      sel_it->second.extra_handles.erase(extra_handle);
     }
 
     if (sel_it->second.extra_handles.empty()) {
@@ -780,8 +759,7 @@ void SelectionManager::removeSelectedObject(const Picked & obj)
     }
   }
 
-  SelectionHandler * handler = getHandler(obj.handle);
-  handler->onDeselect(obj);
+  getHandler(obj.handle)->onDeselect(obj);
 }
 
 void SelectionManager::focusOnSelection()
@@ -794,20 +772,16 @@ void SelectionManager::focusOnSelection()
 
   Ogre::AxisAlignedBox combined;
 
-  M_Picked::iterator it = selection_.begin();
-  M_Picked::iterator end = selection_.end();
-  for (; it != end; ++it) {
-    const Picked & p = it->second;
+  for (const auto & selection_item : selection_) {
+    const Picked & p = selection_item.second;
 
     SelectionHandler * handler = getHandler(p.handle);
 
     V_AABB aabbs;
     handler->getAABBs(p, aabbs);
 
-    V_AABB::iterator aabb_it = aabbs.begin();
-    V_AABB::iterator aabb_end = aabbs.end();
-    for (; aabb_it != aabb_end; ++aabb_it) {
-      combined.merge(*aabb_it);
+    for (const auto & aabb : aabbs) {
+      combined.merge(aabb);
     }
   }
 
@@ -822,10 +796,8 @@ void SelectionManager::focusOnSelection()
 
 void SelectionManager::selectionRemoved(const M_Picked & removed)
 {
-  M_Picked::const_iterator it = removed.begin();
-  M_Picked::const_iterator end = removed.end();
-  for (; it != end; ++it) {
-    const Picked & picked = it->second;
+  for (const auto & removed_item : removed) {
+    const Picked & picked = removed_item.second;
     SelectionHandler * handler = getHandler(picked.handle);
     assert(handler);
 
@@ -835,10 +807,8 @@ void SelectionManager::selectionRemoved(const M_Picked & removed)
 
 void SelectionManager::selectionAdded(const M_Picked & added)
 {
-  M_Picked::const_iterator it = added.begin();
-  M_Picked::const_iterator end = added.end();
-  for (; it != end; ++it) {
-    const Picked & picked = it->second;
+  for (const auto & added_item : added) {
+    const Picked & picked = added_item.second;
     SelectionHandler * handler = getHandler(picked.handle);
     assert(handler);
 
@@ -849,13 +819,8 @@ void SelectionManager::selectionAdded(const M_Picked & added)
 
 void SelectionManager::updateProperties()
 {
-  M_Picked::const_iterator it = selection_.begin();
-  M_Picked::const_iterator end = selection_.end();
-  for (; it != end; ++it) {
-    CollObjectHandle handle = it->first;
-    SelectionHandler * handler = getHandler(handle);
-
-    handler->updateProperties();
+  for (const auto & selection_item : selection_) {
+    getHandler(selection_item.first)->updateProperties();
   }
 }
 
@@ -911,35 +876,23 @@ void SelectionManager::pick(
   V_CollObject handles_by_pixel;
   S_CollObject need_additional;
 
-  V_CollObject & pixels = pixel_buffer_;
-
   // First render is special... does the initial object picking, determines
   // which objects have been selected.
   // After that, individual handlers can specify that they need additional
   // renders (max # defined in kNumRenderTextures_).
   {
-    M_CollisionObjectToSelectionHandler::iterator handler_it = objects_.begin();
-    M_CollisionObjectToSelectionHandler::iterator handler_end = objects_.end();
-    for (; handler_it != handler_end; ++handler_it) {
-      handler_it->second->preRenderPass(0);
+    for (auto & obj : objects_) {
+      obj.second->preRenderPass(0);
     }
 
-    renderAndUnpack(viewport, 0, x1, y1, x2, y2, pixels);
+    renderAndUnpack(viewport, 0, x1, y1, x2, y2, pixel_buffer_);
 
-    handler_it = objects_.begin();
-    handler_end = objects_.end();
-    for (; handler_it != handler_end; ++handler_it) {
-      handler_it->second->postRenderPass(0);
+    for (auto & obj : objects_) {
+      obj.second->postRenderPass(0);
     }
 
-    handles_by_pixel.reserve(pixels.size());
-    V_CollObject::iterator it = pixels.begin();
-    V_CollObject::iterator end = pixels.end();
-    for (; it != end; ++it) {
-      const CollObjectHandle & p = *it;
-
-      CollObjectHandle handle = p;
-
+    handles_by_pixel.reserve(pixel_buffer_.size());
+    for (const auto & handle : pixel_buffer_) {
       handles_by_pixel.push_back(handle);
 
       if (handle == 0) {
@@ -967,45 +920,24 @@ void SelectionManager::pick(
 
   V_uint64 extra_by_pixel;
   extra_by_pixel.resize(handles_by_pixel.size());
-  while (need_additional_render && pass < kNumRenderTextures_) {
-    {
-      S_CollObject::iterator need_it = need_additional.begin();
-      S_CollObject::iterator need_end = need_additional.end();
-      for (; need_it != need_end; ++need_it) {
-        SelectionHandler * handler = getHandler(*need_it);
-        assert(handler);
-
-        handler->preRenderPass(pass);
-      }
+  while (need_additional_render && pass < render_textures_.size()) {
+    for (const auto & handle : need_additional) {
+      getHandler(handle)->preRenderPass(pass);
     }
 
-    renderAndUnpack(viewport, pass, x1, y1, x2, y2, pixels);
+    renderAndUnpack(viewport, pass, x1, y1, x2, y2, pixel_buffer_);
 
-    {
-      S_CollObject::iterator need_it = need_additional.begin();
-      S_CollObject::iterator need_end = need_additional.end();
-      for (; need_it != need_end; ++need_it) {
-        SelectionHandler * handler = getHandler(*need_it);
-        assert(handler);
-
-        handler->postRenderPass(pass);
-      }
+    for (const auto & handle : need_additional) {
+      getHandler(handle)->postRenderPass(pass);
     }
 
-    int i = 0;
-    V_CollObject::iterator pix_it = pixels.begin();
-    V_CollObject::iterator pix_end = pixels.end();
-    for (; pix_it != pix_end; ++pix_it, ++i) {
-      const CollObjectHandle & p = *pix_it;
-
-      CollObjectHandle handle = handles_by_pixel[i];
-
+    for (size_t i = 0; i != handles_by_pixel.size(); ++i) {
       if (pass == 1) {
         extra_by_pixel[i] = 0;
       }
 
-      if (need_additional.find(handle) != need_additional.end()) {
-        CollObjectHandle extra_handle = p;
+      if (need_additional.find(handles_by_pixel[i]) != need_additional.end()) {
+        auto extra_handle = pixel_buffer_[i];
         extra_by_pixel[i] |= extra_handle << (32 * (pass - 1));
       } else {
         extra_by_pixel[i] = 0;
@@ -1014,10 +946,8 @@ void SelectionManager::pick(
 
     need_additional_render = false;
     need_additional.clear();
-    M_Picked::iterator handle_it = results.begin();
-    M_Picked::iterator handle_end = results.end();
-    for (; handle_it != handle_end; ++handle_it) {
-      CollObjectHandle handle = handle_it->first;
+    for (const auto & result : results) {
+      CollObjectHandle handle = result.first;
 
       if (getHandler(handle)->needsAdditionalRenderPass(pass + 1)) {
         need_additional_render = true;
@@ -1026,25 +956,22 @@ void SelectionManager::pick(
     }
   }
 
-  int i = 0;
-  V_uint64::iterator pix_2_it = extra_by_pixel.begin();
-  V_uint64::iterator pix_2_end = extra_by_pixel.end();
-  for (; pix_2_it != pix_2_end; ++pix_2_it, ++i) {
-    CollObjectHandle handle = handles_by_pixel[i];
+  for (size_t i = 0; i != handles_by_pixel.size(); ++i) {
+    auto handle = handles_by_pixel[i];
 
     if (handle == 0) {
       continue;
     }
 
-    M_Picked::iterator picked_it = results.find(handle);
+    auto picked_it = results.find(handle);
     if (picked_it == results.end()) {
       continue;
     }
 
     Picked & picked = picked_it->second;
 
-    if (*pix_2_it) {
-      picked.extra_handles.insert(*pix_2_it);
+    if (extra_by_pixel[i]) {
+      picked.extra_handles.insert(extra_by_pixel[i]);
     }
   }
 }
