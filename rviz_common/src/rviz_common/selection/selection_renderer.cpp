@@ -28,7 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "selection_renderer.hpp"
+#include "rviz_common/selection/selection_renderer.hpp"
+
 #include <algorithm>
 #include <cassert>
 #include <memory>
@@ -104,7 +105,7 @@ void SelectionRenderer::initialize()
 // TODO(Martin-Idel-SI): It seems that rendering cannot return false (I deleted the only "false"
 // path because it was irrelevant). In that case, I'd much rather not have an output parameter.
 bool SelectionRenderer::render(
-  rviz_common::DisplayContext * vis_manager,
+  rviz_common::DisplayContext * context,
   Ogre::Camera * camera,
   SelectionRectangle rectangle,
   RenderTexture texture,
@@ -123,7 +124,7 @@ bool SelectionRenderer::render(
   unsigned int texture_height = texture.texture_height_;
   std::string material_scheme = texture.material_scheme_;
 
-  vis_manager->lockRender();
+  context->lockRender();
 
   if (x1 > x2) {std::swap(x1, x2);}
   if (y1 > y2) {std::swap(y1, y2);}
@@ -227,10 +228,10 @@ bool SelectionRenderer::render(
   // TODO(unknown): find out what part of _renderScene() actually makes this work.
   using rviz_rendering::RenderWindowOgreAdapter;
   Ogre::Viewport * main_view =
-    RenderWindowOgreAdapter::getOgreViewport(vis_manager->getRenderPanel()->getRenderWindow());
-  vis_manager->getSceneManager()->addRenderQueueListener(this);
-  vis_manager->getSceneManager()->_renderScene(main_view->getCamera(), main_view, false);
-  vis_manager->getSceneManager()->removeRenderQueueListener(this);
+    RenderWindowOgreAdapter::getOgreViewport(context->getRenderPanel()->getRenderWindow());
+  context->getSceneManager()->addRenderQueueListener(this);
+  context->getSceneManager()->_renderScene(main_view->getCamera(), main_view, false);
+  context->getSceneManager()->removeRenderQueueListener(this);
 
   Ogre::MaterialManager::getSingleton().removeListener(this);
 
@@ -247,7 +248,7 @@ bool SelectionRenderer::render(
 
   pixel_buffer->blitToMemory(dst_box, dst_box);
 
-  vis_manager->unlockRender();
+  context->unlockRender();
 
   if (debug_mode_) {
     Ogre::Image image;

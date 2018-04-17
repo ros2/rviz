@@ -46,10 +46,12 @@
 # pragma GCC diagnostic pop
 #endif
 
-#include <src/rviz_common/visualization_manager.hpp>
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
+class DisplayContext;
+
 namespace selection
 {
 
@@ -93,20 +95,22 @@ class SelectionRenderer
   : public Ogre::MaterialManager::Listener, public Ogre::RenderQueueListener
 {
 public:
-  SelectionRenderer();
+  RVIZ_COMMON_PUBLIC SelectionRenderer();
   ~SelectionRenderer() override = default;
 
+  RVIZ_COMMON_PUBLIC
   virtual void initialize();
 
-  virtual
-  bool render(
-    rviz_common::DisplayContext * vis_manager,
+  RVIZ_COMMON_PUBLIC
+  virtual bool render(
+    rviz_common::DisplayContext * context,
     Ogre::Camera * camera,
     SelectionRectangle rectangle,
     RenderTexture texture,
     Ogre::PixelBox & dst_box);
 
   /// Implementation for Ogre::RenderQueueListener.
+  RVIZ_COMMON_PUBLIC
   void renderQueueStarted(
     uint8_t queueGroupId,
     const std::string & invocation,
@@ -114,6 +118,7 @@ public:
 
   /// Implementation for Ogre::MaterialManager::Listener
   /// If a material does not support the picking scheme, paint it black.
+  RVIZ_COMMON_PUBLIC
   Ogre::Technique * handleSchemeNotFound(
     unsigned short scheme_index,  // NOLINT: Ogre decides the use of unsigned short
     const Ogre::String & scheme_name,
@@ -121,6 +126,7 @@ public:
     unsigned short lod_index,  // NOLINT: Ogre decides the use of unsigned short
     const Ogre::Renderable * rend) override;
 
+  RVIZ_COMMON_PUBLIC
   void setDebugMode(bool debug);
 
 private:

@@ -41,7 +41,7 @@
 #include <OgreCamera.h>
 
 #include "rviz_common/selection/selection_manager.hpp"
-#include "../../src/rviz_common/selection/selection_renderer.hpp"
+#include "rviz_common/selection/selection_renderer.hpp"
 
 #include "../display_context_fixture.hpp"
 

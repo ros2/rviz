@@ -67,7 +67,7 @@
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/view_manager.hpp"
 #include "rviz_common/display_context.hpp"
-#include "selection_renderer.hpp"
+#include "rviz_common/selection/selection_renderer.hpp"
 
 
 namespace rviz_common
