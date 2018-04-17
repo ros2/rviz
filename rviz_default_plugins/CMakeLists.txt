@@ -262,7 +262,8 @@ if(BUILD_TESTING)
     ament_add_gmock(point_cloud2_display_test
       test/rviz_default_plugins/pointcloud_messages.hpp
       test/rviz_default_plugins/pointcloud_messages.cpp
-        test/rviz_default_plugins/displays/pointcloud/point_cloud2_display_test.cpp)
+      test/rviz_default_plugins/displays/pointcloud/point_cloud2_display_test.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
     if(TARGET point_cloud2_display_test)
       target_include_directories(point_cloud2_display_test PUBLIC
         ${TEST_INCLUDE_DIRS})
