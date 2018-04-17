@@ -110,6 +110,7 @@ set(rviz_common_headers_to_moc
   src/rviz_common/screenshot_dialog.hpp
   include/rviz_common/selection/selection_manager.hpp
   include/rviz_common/selection/selection_manager_iface.hpp
+  include/rviz_common/selection/selection_renderer.hpp
   src/rviz_common/splash_screen.hpp
   # src/rviz_common/time_panel.hpp
   include/rviz_common/tool.hpp

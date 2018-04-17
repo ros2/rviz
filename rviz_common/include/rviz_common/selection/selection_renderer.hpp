@@ -70,6 +70,15 @@ struct SelectionRectangle
   int y2_;
 };
 
+struct Dimensions
+{
+  Dimensions(): width(0), height(0) {}
+  Dimensions(float width, float height): width(width), height(height) {}
+
+  float width;
+  float height;
+};
+
 struct RenderTexture
 {
   RenderTexture(
@@ -95,7 +104,7 @@ class SelectionRenderer
   : public Ogre::MaterialManager::Listener, public Ogre::RenderQueueListener
 {
 public:
-  RVIZ_COMMON_PUBLIC SelectionRenderer();
+  RVIZ_COMMON_PUBLIC explicit SelectionRenderer(rviz_common::DisplayContext * context);
   ~SelectionRenderer() override = default;
 
   RVIZ_COMMON_PUBLIC
@@ -103,7 +112,6 @@ public:
 
   RVIZ_COMMON_PUBLIC
   virtual bool render(
-    rviz_common::DisplayContext * context,
     Ogre::Camera * camera,
     SelectionRectangle rectangle,
     RenderTexture texture,
@@ -131,6 +139,19 @@ public:
 
 private:
   // void publishDebugImage(const Ogre::PixelBox & pixel_box, const std::string & label);
+  float calculateRelativeCoordinate(float coord, int width_height) const;
+
+  int clamp(int value, int min, int max) const;
+  float clamp(float value, float min, float max) const;
+
+  Ogre::Viewport * setupViewport(
+    Ogre::RenderTexture * render_texture,
+    const SelectionRectangle & rectangle,
+    Dimensions texture_dimensions);
+
+  void renderToTexture(Ogre::RenderTexture * render_texture);
+
+  rviz_common::DisplayContext * context_;
 
   Ogre::MaterialPtr fallback_pick_material_;
   Ogre::Technique * fallback_pick_technique_;
@@ -141,6 +162,11 @@ private:
   Ogre::Technique * fallback_depth_cull_technique_;
 
   bool debug_mode_;
+  Dimensions getRenderDimensions(
+    const SelectionRectangle & rectangle,
+    const Dimensions & texture_dim) const;
+  void sanitizeRectangle(SelectionRectangle & rectangle) const;
+  void configureCamera(Ogre::Camera * camera, const SelectionRectangle & rectangle) const;
 };
 
 }  // namespace selection

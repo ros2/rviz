@@ -101,7 +101,7 @@ SelectionManager::SelectionManager(DisplayContext * context)
   uid_counter_(0),
   interaction_enabled_(false),
   property_model_(new PropertyTreeModel(new Property("root"))),
-  renderer_(std::make_shared<rviz_common::selection::SelectionRenderer>())
+  renderer_(std::make_shared<rviz_common::selection::SelectionRenderer>(context))
 {
   setUpSlots();
 }
@@ -575,7 +575,7 @@ bool SelectionManager::render(
   const RenderTexture & render_texture,
   Ogre::PixelBox & dst_box)
 {
-  return renderer_->render(context_, camera_, selection_rectangle, render_texture, dst_box);
+  return renderer_->render(camera_, selection_rectangle, render_texture, dst_box);
 }
 
 PropertyTreeModel * SelectionManager::getPropertyModel()

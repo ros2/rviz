@@ -72,14 +72,15 @@ private:
 class MockSelectionRenderer : public rviz_common::selection::SelectionRenderer
 {
 public:
+  explicit MockSelectionRenderer(rviz_common::DisplayContext * context)
+    : SelectionRenderer(context) {}
+
   bool render(
-    rviz_common::DisplayContext * vis_manager,
     Ogre::Camera * camera,
     rviz_common::selection::SelectionRectangle rectangle,
     rviz_common::selection::RenderTexture texture,
     Ogre::PixelBox & dst_box) override
   {
-    (void) vis_manager;
     (void) camera;
     (void) texture;
 

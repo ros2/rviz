@@ -51,7 +51,7 @@ public:
   void SetUp() override
   {
     DisplayContextFixture::SetUp();
-    renderer_ = std::make_shared<MockSelectionRenderer>();
+    renderer_ = std::make_shared<MockSelectionRenderer>(context_.get());
     selection_manager_ = std::make_unique<rviz_common::selection::SelectionManager>(
       context_.get(), renderer_);
     selection_manager_->initialize();
