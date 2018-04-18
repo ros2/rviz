@@ -220,15 +220,9 @@ private:
 
   void setHighlightRect(Ogre::Viewport * viewport, int x1, int y1, int x2, int y2);
 
-  /// Render to a texture for one of the picking passes and unpack the resulting pixels.
-  void renderAndUnpack(
-    Ogre::Viewport * viewport,
-    uint32_t pass,
-    int x1,
-    int y1,
-    int x2,
-    int y2,
-    V_CollObject & pixels);
+  /// Render to a texture for one of the picking passes and unpack the resulting pixels into
+  // pixel_buffer_.
+  void renderAndUnpack(const SelectionRectangle & selection_rectangle, uint32_t pass);
 
   /// Internal render function to render to a texture and read the pixels back out.
   bool render(
@@ -236,7 +230,8 @@ private:
     const RenderTexture & render_texture,
     Ogre::PixelBox & dst_box);
 
-  void unpackColors(const Ogre::PixelBox & box, V_CollObject & pixels);
+  /// Unpacks a pixelbox into pixel_buffer_
+  void unpackColors(const Ogre::PixelBox & box);
 
   void setDepthTextureSize(unsigned width, unsigned height);
 

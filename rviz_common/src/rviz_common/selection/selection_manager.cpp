@@ -527,46 +527,44 @@ void SelectionManager::setHighlightRect(Ogre::Viewport * viewport, int x1, int y
   highlight_rectangle_->setCorners(nx1, ny1, nx2, ny2);
 }
 
-void SelectionManager::unpackColors(const Ogre::PixelBox & box, V_CollObject & pixels)
+void SelectionManager::unpackColors(const Ogre::PixelBox & box)
 {
   auto w = box.getWidth();
   auto h = box.getHeight();
 
-  pixels.clear();
-  pixels.reserve(w * h);
+  pixel_buffer_.clear();
+  pixel_buffer_.reserve(w * h);
 
-  for (uint32_t y = 0; y < h; y++) {
-    for (uint32_t x = 0; x < w; x++) {
+  for (uint32_t y = 0; y < h; ++y) {
+    for (uint32_t x = 0; x < w; ++x) {
       uint32_t pos = (x + y * w) * 4;
 
       uint32_t pix_val = *reinterpret_cast<uint32_t *>(reinterpret_cast<uint8_t *>(box.data) + pos);
       uint32_t handle = colorToHandle(box.format, pix_val);
 
-      pixels.push_back(handle);
+      pixel_buffer_.push_back(handle);
     }
   }
 }
 
-//TODO SelectionRectangle
 void SelectionManager::renderAndUnpack(
-  Ogre::Viewport * viewport, uint32_t pass, int x1, int y1,
-  int x2, int y2, V_CollObject & pixels)
+  const SelectionRectangle & selection_rectangle, uint32_t pass)
 {
   assert(pass < render_textures_.size());
 
-  std::string scheme("Pick");
+  std::stringstream scheme;
+  scheme << "Pick";
   if (pass > 0) {
-    scheme += std::to_string(pass);
+    scheme << pass;
   }
 
-  auto rect = SelectionRectangle(viewport, x1, y1, x2, y2);
   auto tex = RenderTexture(
     render_textures_[pass],
     texture_size_,
     texture_size_,
-    scheme);
-  if (render(rect, tex, pixel_boxes_[pass])) {
-    unpackColors(pixel_boxes_[pass], pixels);
+    scheme.str());
+  if (render(selection_rectangle, tex, pixel_boxes_[pass])) {
+    unpackColors(pixel_boxes_[pass]);
   }
 }
 
@@ -876,6 +874,7 @@ void SelectionManager::pick(
   V_CollObject handles_by_pixel;
   S_CollObject need_additional;
 
+  auto rectangle = SelectionRectangle(viewport, x1, y1, x2, y2);
   // First render is special... does the initial object picking, determines
   // which objects have been selected.
   // After that, individual handlers can specify that they need additional
@@ -885,7 +884,7 @@ void SelectionManager::pick(
       obj.second->preRenderPass(0);
     }
 
-    renderAndUnpack(viewport, 0, x1, y1, x2, y2, pixel_buffer_);
+    renderAndUnpack(rectangle, 0);
 
     for (auto & obj : objects_) {
       obj.second->postRenderPass(0);
@@ -925,7 +924,7 @@ void SelectionManager::pick(
       getHandler(handle)->preRenderPass(pass);
     }
 
-    renderAndUnpack(viewport, pass, x1, y1, x2, y2, pixel_buffer_);
+    renderAndUnpack(rectangle, pass);
 
     for (const auto & handle : need_additional) {
       getHandler(handle)->postRenderPass(pass);
