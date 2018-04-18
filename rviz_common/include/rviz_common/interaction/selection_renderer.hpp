@@ -84,20 +84,17 @@ struct RenderTexture
 {
   RenderTexture(
     Ogre::TexturePtr tex,
-    unsigned int texture_width,
-    unsigned int texture_height,
-    const std::string & material_scheme)
+    Dimensions dimensions,
+    std::string material_scheme)
   : tex_(tex),
-    texture_width_(texture_width),
-    texture_height_(texture_height),
+    dimensions_(dimensions),
     material_scheme_(material_scheme)
   {}
 
-  ~RenderTexture() {}
+  ~RenderTexture() = default;
 
   Ogre::TexturePtr tex_;
-  unsigned int texture_width_;
-  unsigned int texture_height_;
+  Dimensions dimensions_;
   std::string material_scheme_;
 };
 
@@ -140,17 +137,34 @@ public:
 
 private:
   // void publishDebugImage(const Ogre::PixelBox & pixel_box, const std::string & label);
-  float calculateRelativeCoordinate(float coord, int width_height) const;
 
-  int clamp(int value, int min, int max) const;
-  float clamp(float value, float min, float max) const;
+  void sanitizeRectangle(SelectionRectangle & rectangle) const;
+
+  void configureCamera(Ogre::Camera * camera, const SelectionRectangle & rectangle) const;
+  float getRelativeCoordinate(float coord, int dimension) const;
+
+  template<typename T> T clamp(T value, T min, T max) const;
+
+  Ogre::RenderTexture * setupRenderTexture(
+    Ogre::HardwarePixelBufferSharedPtr pixel_buffer,
+    Ogre::Camera * camera,
+    RenderTexture texture) const;
 
   Ogre::Viewport * setupViewport(
     Ogre::RenderTexture * render_texture,
     const SelectionRectangle & rectangle,
     Dimensions texture_dimensions);
 
+  Dimensions getRenderDimensions(
+    const SelectionRectangle & rectangle,
+    const Dimensions & texture_dim) const;
+
   void renderToTexture(Ogre::RenderTexture * render_texture);
+
+  void blitToMemory(
+    Ogre::HardwarePixelBufferSharedPtr & pixel_buffer,
+    const Ogre::Viewport * render_viewport,
+    Ogre::PixelBox & dst_box) const;
 
   rviz_common::DisplayContext * context_;
 
@@ -163,11 +177,6 @@ private:
   Ogre::Technique * fallback_depth_cull_technique_;
 
   bool debug_mode_;
-  Dimensions getRenderDimensions(
-    const SelectionRectangle & rectangle,
-    const Dimensions & texture_dim) const;
-  void sanitizeRectangle(SelectionRectangle & rectangle) const;
-  void configureCamera(Ogre::Camera * camera, const SelectionRectangle & rectangle) const;
 };
 
 }  // namespace interaction

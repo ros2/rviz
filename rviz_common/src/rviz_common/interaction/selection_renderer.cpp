@@ -117,65 +117,65 @@ bool SelectionRenderer::render(
 
   configureCamera(camera, rectangle);
 
-  Ogre::TexturePtr tex = texture.tex_;
-  std::string material_scheme = texture.material_scheme_;
-  Ogre::HardwarePixelBufferSharedPtr pixel_buffer = tex->getBuffer();
-  Ogre::RenderTexture * render_texture = pixel_buffer->getRenderTarget();
-
-  // create a viewport if there is none
-  if (render_texture->getNumViewports() == 0) {
-    render_texture->removeAllViewports();
-    render_texture->addViewport(camera);
-    Ogre::Viewport * render_viewport = render_texture->getViewport(0);
-    render_viewport->setClearEveryFrame(true);
-    render_viewport->setBackgroundColour(Ogre::ColourValue::Black);
-    render_viewport->setOverlaysEnabled(false);
-    render_viewport->setMaterialScheme(material_scheme);
-  }
-
-  Dimensions texture_dimensions(texture.texture_width_, texture.texture_height_);
-  Ogre::Viewport * render_viewport = setupViewport(render_texture, rectangle, texture_dimensions);
+  Ogre::HardwarePixelBufferSharedPtr pixel_buffer = texture.tex_->getBuffer();
+  auto render_texture = setupRenderTexture(pixel_buffer, camera, texture);
+  auto render_viewport = setupViewport(render_texture, rectangle, texture.dimensions_);
 
   renderToTexture(render_texture);
 
-  auto viewport_w = static_cast<unsigned>(render_viewport->getActualWidth());
-  auto viewport_h = static_cast<unsigned>(render_viewport->getActualHeight());
-
-  Ogre::PixelFormat format = pixel_buffer->getFormat();
-
-  auto size = Ogre::PixelUtil::getMemorySize(viewport_w, viewport_h, 1, format);
-  auto data = new uint8_t[size];
-
-  delete[] reinterpret_cast<uint8_t *>(dst_box.data);
-  dst_box = Ogre::PixelBox(viewport_w, viewport_h, 1, format, data);
-
-  pixel_buffer->blitToMemory(dst_box, dst_box);
+  blitToMemory(pixel_buffer, render_viewport, dst_box);
 
   context_->unlockRender();
 
   if (debug_mode_) {
     Ogre::Image image;
     image.loadDynamicImage(static_cast<uint8_t *>(dst_box.data),
-      dst_box.getWidth(), dst_box.getHeight(), 1, format);
-    image.save("select" + material_scheme + ".png");
+      dst_box.getWidth(), dst_box.getHeight(), 1, pixel_buffer->getFormat());
+    image.save("select" + texture.material_scheme_ + ".png");
   }
 
   return true;
 }
 
+
+void SelectionRenderer::sanitizeRectangle(SelectionRectangle & rectangle) const
+{
+  int & x1 = rectangle.x1_;
+  int & x2 = rectangle.x2_;
+  int & y1 = rectangle.y1_;
+  int & y2 = rectangle.y2_;
+
+  if (x1 > x2) { std::swap(x1, x2);}
+  if (y1 > y2) { std::swap(y1, y2);}
+
+  x1 = clamp(x1, 0, rectangle.viewport_->getActualWidth() - 2);
+  x2 = clamp(x2, 0, rectangle.viewport_->getActualWidth() - 2);
+  y1 = clamp(y1, 0, rectangle.viewport_->getActualHeight() - 2);
+  y2 = clamp(y2, 0, rectangle.viewport_->getActualHeight() - 2);
+
+  if (x2 == x1) {x2++;}
+  if (y2 == y1) {y2++;}
+}
+
+template<typename T> T SelectionRenderer::clamp(T value, T min, T max) const
+{
+  if (value < min) { value = min;}
+  else if (value > max) { value = max;}
+  return value;
+}
+
 void SelectionRenderer::configureCamera(
-  Ogre::Camera * camera,
-  const SelectionRectangle & rectangle) const
+  Ogre::Camera * camera, const SelectionRectangle & rectangle) const
 {
   Ogre::Viewport * viewport = rectangle.viewport_;
   Ogre::Matrix4 proj_matrix = viewport->getCamera()->getProjectionMatrix();
   Ogre::Matrix4 scale_matrix = Ogre::Matrix4::IDENTITY;
   Ogre::Matrix4 trans_matrix = Ogre::Matrix4::IDENTITY;
 
-  float x1_rel = calculateRelativeCoordinate(rectangle.x1_, viewport->getActualWidth());
-  float y1_rel = calculateRelativeCoordinate(rectangle.y1_, viewport->getActualHeight());
-  float x2_rel = calculateRelativeCoordinate(rectangle.x2_, viewport->getActualWidth());
-  float y2_rel = calculateRelativeCoordinate(rectangle.y2_, viewport->getActualHeight());
+  float x1_rel = getRelativeCoordinate(rectangle.x1_, viewport->getActualWidth());
+  float y1_rel = getRelativeCoordinate(rectangle.y1_, viewport->getActualHeight());
+  float x2_rel = getRelativeCoordinate(rectangle.x2_, viewport->getActualWidth());
+  float y2_rel = getRelativeCoordinate(rectangle.y2_, viewport->getActualHeight());
 
   scale_matrix[0][0] = 1.f / (x2_rel - x1_rel);
   scale_matrix[1][1] = 1.f / (y2_rel - y1_rel);
@@ -187,6 +187,31 @@ void SelectionRenderer::configureCamera(
 
   camera->setPosition(viewport->getCamera()->getDerivedPosition());
   camera->setOrientation(viewport->getCamera()->getDerivedOrientation());
+}
+
+float SelectionRenderer::getRelativeCoordinate(float coordinate, int dimension) const
+{
+  return coordinate / static_cast<float>(dimension - 1) - 0.5f;
+}
+
+Ogre::RenderTexture * SelectionRenderer::setupRenderTexture(
+  Ogre::HardwarePixelBufferSharedPtr pixel_buffer,
+  Ogre::Camera * camera,
+  RenderTexture texture) const
+{
+  Ogre::RenderTexture * render_texture = pixel_buffer->getRenderTarget();
+
+  // create a viewport if there is none
+  if (render_texture->getNumViewports() == 0) {
+    render_texture->removeAllViewports();
+    render_texture->addViewport(camera);
+    Ogre::Viewport * render_viewport = render_texture->getViewport(0);
+    render_viewport->setClearEveryFrame(true);
+    render_viewport->setBackgroundColour(Ogre::ColourValue::Black);
+    render_viewport->setOverlaysEnabled(false);
+    render_viewport->setMaterialScheme(texture.material_scheme_);
+  }
+  return render_texture;
 }
 
 Ogre::Viewport * SelectionRenderer::setupViewport(
@@ -214,62 +239,29 @@ Dimensions SelectionRenderer::getRenderDimensions(
   const SelectionRectangle & rectangle,
   const Dimensions & texture_dim) const
 {
-  Dimensions screen_dim (
+  Dimensions selection (
     rectangle.x2_ - rectangle.x1_,
     rectangle.y2_ - rectangle.y1_
   );
 
-  Dimensions render_dim = screen_dim;
+  Dimensions render_dimensions = selection;
 
-  if (screen_dim.width > screen_dim.height) {
-    if (render_dim.width > texture_dim.width) {
-      render_dim.width = texture_dim.width;
-      render_dim.height = round(screen_dim.height * texture_dim.width / screen_dim.width);
+  if (selection.width > selection.height) {
+    if (render_dimensions.width > texture_dim.width) {
+      render_dimensions.width = texture_dim.width;
+      render_dimensions.height = round(selection.height * texture_dim.width / selection.width);
     }
   } else {
-    if (render_dim.height > texture_dim.height) {
-      render_dim.height = texture_dim.height;
-      render_dim.width = round(screen_dim.width * texture_dim.height / screen_dim.height);
+    if (render_dimensions.height > texture_dim.height) {
+      render_dimensions.height = texture_dim.height;
+      render_dimensions.width = round(selection.width * texture_dim.height / selection.height);
     }
   }
 
   // safety clamping in case of rounding errors
-  render_dim.width = clamp(render_dim.width, 0.f, texture_dim.width);
-  render_dim.height = clamp(render_dim.height, 0.f, texture_dim.height);
-  return render_dim;
-}
-
-void SelectionRenderer::sanitizeRectangle(SelectionRectangle & rectangle) const
-{
-  int & x1 = rectangle.x1_;
-  int & x2 = rectangle.x2_;
-  int & y1 = rectangle.y1_;
-  int & y2 = rectangle.y2_;
-
-  if (x1 > x2) { std::swap(x1, x2);}
-  if (y1 > y2) { std::swap(y1, y2);}
-
-  x1 = clamp(x1, 0, rectangle.viewport_->getActualWidth() - 2);
-  x2 = clamp(x2, 0, rectangle.viewport_->getActualWidth() - 2);
-  y1 = clamp(y1, 0, rectangle.viewport_->getActualHeight() - 2);
-  y2 = clamp(y2, 0, rectangle.viewport_->getActualHeight() - 2);
-
-  if (x2 == x1) {x2++;}
-  if (y2 == y1) {y2++;}
-}
-
-int SelectionRenderer::clamp(int value, int min, int max) const
-{
-  if (value < min) { value = min;}
-  else if (value > max) { value = max;}
-  return value;
-}
-
-float SelectionRenderer::clamp(float value, float min, float max) const
-{
-  if (value < min) { value = min;}
-  else if (value > max) { value = max;}
-  return value;
+  render_dimensions.width = clamp(render_dimensions.width, 0.f, texture_dim.width);
+  render_dimensions.height = clamp(render_dimensions.height, 0.f, texture_dim.height);
+  return render_dimensions;
 }
 
 void SelectionRenderer::renderToTexture(Ogre::RenderTexture * render_texture)
@@ -296,9 +288,22 @@ void SelectionRenderer::renderToTexture(Ogre::RenderTexture * render_texture)
   Ogre::MaterialManager::getSingleton().removeListener(this);
 }
 
-float SelectionRenderer::calculateRelativeCoordinate(float coordinate, int width_height) const
+void SelectionRenderer::blitToMemory(
+  Ogre::HardwarePixelBufferSharedPtr & pixel_buffer,
+  const Ogre::Viewport * render_viewport,
+  Ogre::PixelBox & dst_box) const
 {
-  return coordinate / static_cast<float>(width_height - 1) - 0.5f;
+  auto viewport_w = static_cast<unsigned>(render_viewport->getActualWidth());
+  auto viewport_h = static_cast<unsigned>(render_viewport->getActualHeight());
+
+  auto format = pixel_buffer->getFormat();
+  auto size = Ogre::PixelUtil::getMemorySize(viewport_w, viewport_h, 1, format);
+  auto data = new uint8_t[size];
+
+  delete[] reinterpret_cast<uint8_t *>(dst_box.data);
+  dst_box = Ogre::PixelBox(viewport_w, viewport_h, 1, format, data);
+
+  pixel_buffer->blitToMemory(dst_box, dst_box);
 }
 
 void SelectionRenderer::renderQueueStarted(

@@ -231,7 +231,8 @@ bool SelectionManager::getPatchDepthImage(
 
   if (render(
       SelectionRectangle(viewport, x, y, x + width, y + height),
-      RenderTexture(depth_render_texture_, depth_texture_width_, depth_texture_height_, "Depth"),
+      RenderTexture(
+        depth_render_texture_, Dimensions(depth_texture_width_, depth_texture_height_), "Depth"),
       depth_pixel_box_))
   {
     auto data_ptr = reinterpret_cast<uint8_t *>(depth_pixel_box_.data);
@@ -561,8 +562,7 @@ void SelectionManager::renderAndUnpack(
 
   auto tex = RenderTexture(
     render_textures_[pass],
-    texture_size_,
-    texture_size_,
+    Dimensions(texture_size_, texture_size_),
     scheme.str());
   if (render(selection_rectangle, tex, pixel_boxes_[pass])) {
     unpackColors(pixel_boxes_[pass]);
