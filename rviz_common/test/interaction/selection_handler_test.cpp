@@ -76,17 +76,74 @@ public:
     return object;
   }
 
+  void findObjectsAttachedByType(
+    Ogre::SceneNode * scene_node,
+    const Ogre::String & object_type,
+    int & found_objects)
+  {
+    auto it = scene_node->getAttachedObjectIterator();
+    while (it.hasMoreElements()) {
+      auto movable_object = it.getNext();
+      if (movable_object->getMovableType() == object_type) {
+        found_objects++;
+      }
+    }
+  }
+
+  int foundObjectsByType(Ogre::SceneNode * scene_node, const Ogre::String & object_name)
+  {
+    int found_objects = 0;
+    findObjectsAttachedByType(scene_node, object_name, found_objects);
+
+    auto child_it = scene_node->getChildIterator();
+    while (child_it.hasMoreElements()) {
+      auto child_node = child_it.getNext();
+      auto child_scene_node = dynamic_cast<Ogre::SceneNode *>(child_node);
+      findObjectsAttachedByType(child_scene_node, object_name, found_objects);
+    }
+
+    return found_objects;
+  }
+
   std::shared_ptr<rviz_common::interaction::SelectionHandler> handler_;
 };
 
-TEST_F(SelectionHandlerFixture, addTrackedObject_works_correctly) {
+TEST_F(SelectionHandlerFixture, addTrackedObject_adds_object_correctly) {
   auto manual_object = createManualObject();
   scene_manager_->getRootSceneNode()->createChildSceneNode()->attachObject(manual_object);
 
-  handler_->addTrackedObjects(scene_manager_->getRootSceneNode());
   handler_->addTrackedObject(manual_object);
 
   rviz_common::interaction::Picked object(handler_->getHandle());
   auto aabbs = handler_->getAABBs(object);
-  EXPECT_THAT(aabbs, SizeIs(2));
+  EXPECT_THAT(aabbs, SizeIs(1));
+}
+
+TEST_F(SelectionHandlerFixture, createBox_creates_and_attaches_wiredbox_correctly) {
+  auto manual_object = createManualObject();
+  scene_manager_->getRootSceneNode()->createChildSceneNode()->attachObject(manual_object);
+
+  handler_->addTrackedObject(manual_object);
+
+  rviz_common::interaction::Picked object(handler_->getHandle());
+
+  Ogre::MaterialManager::getSingletonPtr()->load("RVIZ/Cyan", "rviz_rendering");
+
+  handler_->onSelect(object);
+  EXPECT_THAT(foundObjectsByType(scene_manager_->getRootSceneNode(), "SimpleRenderable"), Eq(2));
+}
+
+TEST_F(SelectionHandlerFixture, destroyBox_destroys_wiredbox_correctly) {
+  auto manual_object = createManualObject();
+  scene_manager_->getRootSceneNode()->createChildSceneNode()->attachObject(manual_object);
+
+  handler_->addTrackedObject(manual_object);
+
+  rviz_common::interaction::Picked object(handler_->getHandle());
+
+  Ogre::MaterialManager::getSingletonPtr()->load("RVIZ/Cyan", "rviz_rendering");
+
+  handler_->onSelect(object);
+  handler_->onDeselect(object);
+  EXPECT_THAT(foundObjectsByType(scene_manager_->getRootSceneNode(), "SimpleRenderable"), Eq(1));
 }

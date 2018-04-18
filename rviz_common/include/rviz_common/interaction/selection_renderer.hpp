@@ -73,8 +73,10 @@ struct SelectionRectangle
 
 struct Dimensions
 {
-  Dimensions(): width(0), height(0) {}
-  Dimensions(float width, float height): width(width), height(height) {}
+  Dimensions()
+  : width(0), height(0) {}
+  Dimensions(float width, float height)
+  : width(width), height(height) {}
 
   float width;
   float height;
@@ -143,7 +145,8 @@ private:
   void configureCamera(Ogre::Camera * camera, const SelectionRectangle & rectangle) const;
   float getRelativeCoordinate(float coord, int dimension) const;
 
-  template<typename T> T clamp(T value, T min, T max) const;
+  template<typename T>
+  T clamp(T value, T min, T max) const;
 
   Ogre::RenderTexture * setupRenderTexture(
     Ogre::HardwarePixelBufferSharedPtr pixel_buffer,

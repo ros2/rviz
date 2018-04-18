@@ -79,7 +79,7 @@ namespace rviz_common
 namespace interaction
 {
 SelectionRenderer::SelectionRenderer(rviz_common::DisplayContext * context)
-: context_(context), 
+: context_(context),
   debug_mode_(false)
 {}
 
@@ -145,8 +145,8 @@ void SelectionRenderer::sanitizeRectangle(SelectionRectangle & rectangle) const
   int & y1 = rectangle.y1_;
   int & y2 = rectangle.y2_;
 
-  if (x1 > x2) { std::swap(x1, x2);}
-  if (y1 > y2) { std::swap(y1, y2);}
+  if (x1 > x2) {std::swap(x1, x2);}
+  if (y1 > y2) {std::swap(y1, y2);}
 
   x1 = clamp(x1, 0, rectangle.viewport_->getActualWidth() - 2);
   x2 = clamp(x2, 0, rectangle.viewport_->getActualWidth() - 2);
@@ -157,10 +157,10 @@ void SelectionRenderer::sanitizeRectangle(SelectionRectangle & rectangle) const
   if (y2 == y1) {y2++;}
 }
 
-template<typename T> T SelectionRenderer::clamp(T value, T min, T max) const
+template<typename T>
+T SelectionRenderer::clamp(T value, T min, T max) const
 {
-  if (value < min) { value = min;}
-  else if (value > max) { value = max;}
+  if (value < min) {value = min;} else if (value > max) {value = max;}
   return value;
 }
 
@@ -239,7 +239,7 @@ Dimensions SelectionRenderer::getRenderDimensions(
   const SelectionRectangle & rectangle,
   const Dimensions & texture_dim) const
 {
-  Dimensions selection (
+  Dimensions selection(
     rectangle.x2_ - rectangle.x1_,
     rectangle.y2_ - rectangle.y1_
   );

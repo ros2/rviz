@@ -29,8 +29,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SELECTION__MOCK_SELECTION_RENDERER_HPP_
-#define SELECTION__MOCK_SELECTION_RENDERER_HPP_
+#ifndef INTERACTION__MOCK_SELECTION_RENDERER_HPP_
+#define INTERACTION__MOCK_SELECTION_RENDERER_HPP_
 
 #include <memory>
 #include <string>
@@ -73,7 +73,7 @@ class MockSelectionRenderer : public rviz_common::interaction::SelectionRenderer
 {
 public:
   explicit MockSelectionRenderer(rviz_common::DisplayContext * context)
-    : SelectionRenderer(context) {}
+  : SelectionRenderer(context) {}
 
   bool render(
     Ogre::Camera * camera,
@@ -109,4 +109,4 @@ public:
   std::vector<VisibleObject> objects_;
 };
 
-#endif  // SELECTION__MOCK_SELECTION_RENDERER_HPP_
+#endif  // INTERACTION__MOCK_SELECTION_RENDERER_HPP_

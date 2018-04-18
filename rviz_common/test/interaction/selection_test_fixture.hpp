@@ -29,8 +29,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SELECTION__SELECTION_TEST_FIXTURE_HPP_
-#define SELECTION__SELECTION_TEST_FIXTURE_HPP_
+#ifndef INTERACTION__SELECTION_TEST_FIXTURE_HPP_
+#define INTERACTION__SELECTION_TEST_FIXTURE_HPP_
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
@@ -69,4 +69,4 @@ public:
   std::unique_ptr<rviz_common::interaction::SelectionManager> selection_manager_;
 };
 
-#endif  // SELECTION__SELECTION_TEST_FIXTURE_HPP_
+#endif  // INTERACTION__SELECTION_TEST_FIXTURE_HPP_
