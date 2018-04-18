@@ -34,8 +34,8 @@
 #include <string>
 #include <utility>
 
-#include "rviz_common/selection/forwards.hpp"
-#include "rviz_common/selection/selection_manager.hpp"
+#include "rviz_common/interaction/forwards.hpp"
+#include "rviz_common/interaction/selection_manager.hpp"
 
 namespace rviz_common
 {
@@ -56,7 +56,7 @@ class InteractiveMarkerControl;
 class MarkerBase;
 typedef std::pair<std::string, int32_t> MarkerID;
 
-class MarkerSelectionHandler : public rviz_common::selection::SelectionHandler
+class MarkerSelectionHandler : public rviz_common::interaction::SelectionHandler
 {
 public:
   MarkerSelectionHandler(
@@ -67,7 +67,7 @@ public:
   Ogre::Quaternion getOrientation();
 
   void createProperties(
-    const rviz_common::selection::Picked & obj,
+    const rviz_common::interaction::Picked & obj,
     rviz_common::properties::Property * parent_property) override;
   void updateProperties() override;
 

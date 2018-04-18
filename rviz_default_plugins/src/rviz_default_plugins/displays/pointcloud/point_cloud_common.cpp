@@ -53,6 +53,7 @@
 #include "rviz_common/display.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
+#include "rviz_common/interaction/selection_manager.hpp"
 #include "rviz_rendering/objects/point_cloud.hpp"
 #include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/properties/enum_property.hpp"
@@ -96,7 +97,7 @@ void CloudInfo::setSelectable(
   if (selectable) {
     selection_handler_.reset(
       new PointCloudSelectionHandler(selection_box_size, this, context));
-    cloud_->setPickColor(rviz_common::selection::SelectionManager::handleToColor(
+    cloud_->setPickColor(rviz_common::interaction::SelectionManager::handleToColor(
         selection_handler_->getHandle()));
   } else {
     selection_handler_.reset();

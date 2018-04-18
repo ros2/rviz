@@ -29,64 +29,44 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef SELECTION__SELECTION_TEST_FIXTURE_HPP_
+#define SELECTION__SELECTION_TEST_FIXTURE_HPP_
+
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <OgreManualObject.h>
-#include <OgreSceneNode.h>
-#include <OgreMaterialManager.h>
-#include <OgreWireBoundingBox.h>
-
 #include <memory>
-#include <vector>
 
-#include "rviz_common/selection/selection_handler.hpp"
 #include "rviz_common/display_context.hpp"
+#include "rviz_common/interaction/selection_manager.hpp"
 
-#include "selection_test_fixture.hpp"
+#include "../display_context_fixture.hpp"
+#include "mock_selection_renderer.hpp"
 
-class SelectionHandlerFixture : public SelectionTestFixture
+using namespace ::testing;  // NOLINT
+
+class SelectionTestFixture : public DisplayContextFixture
 {
 public:
   void SetUp() override
   {
-    SelectionTestFixture::SetUp();
-    handler_ = std::make_shared<rviz_common::selection::SelectionHandler>(context_.get());
+    DisplayContextFixture::SetUp();
+    renderer_ = std::make_shared<MockSelectionRenderer>(context_.get());
+    selection_manager_ = std::make_unique<rviz_common::interaction::SelectionManager>(
+      context_.get(), renderer_);
+    selection_manager_->initialize();
+    EXPECT_CALL(*context_, getSelectionManager()).WillRepeatedly(Return(selection_manager_.get()));
   }
 
   void TearDown() override
   {
-    handler_.reset();
-    SelectionTestFixture::TearDown();
+    renderer_.reset();  // necessary for correct order of deleting node
+    selection_manager_.reset();  // necessary for correct order of deleting node
+    DisplayContextFixture::TearDown();
   }
 
-  Ogre::ManualObject * createManualObject()
-  {
-    static int count = 0;
-    auto object = scene_manager_->createManualObject("ManualObject" + std::to_string(count++));
-
-    object->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_LINE_STRIP);
-    object->position(-1.0f, -1.0f, 0.0f);
-    object->position(1.0f, -1.0f, 0.0f);
-    object->position(1.0f, 1.0f, 0.0f);
-    object->position(-1.0f, 1.0f, 0.0f);
-    object->position(-1.0f, -1.0f, 0.0f);
-    object->end();
-
-    return object;
-  }
-
-  std::shared_ptr<rviz_common::selection::SelectionHandler> handler_;
+  std::shared_ptr<MockSelectionRenderer> renderer_;
+  std::unique_ptr<rviz_common::interaction::SelectionManager> selection_manager_;
 };
 
-TEST_F(SelectionHandlerFixture, addTrackedObject_works_correctly) {
-  auto manual_object = createManualObject();
-  scene_manager_->getRootSceneNode()->createChildSceneNode()->attachObject(manual_object);
-
-  handler_->addTrackedObjects(scene_manager_->getRootSceneNode());
-  handler_->addTrackedObject(manual_object);
-
-  rviz_common::selection::Picked object(handler_->getHandle());
-  auto aabbs = handler_->getAABBs(object);
-  EXPECT_THAT(aabbs, SizeIs(2));
-}
+#endif  // SELECTION__SELECTION_TEST_FIXTURE_HPP_

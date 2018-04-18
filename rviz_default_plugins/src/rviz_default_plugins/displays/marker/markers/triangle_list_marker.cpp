@@ -56,7 +56,6 @@
 
 #include "marker_selection_handler.hpp"
 #include "../marker_display.hpp"
-#include "rviz_common/selection/selection_manager.hpp"
 #include "rviz_common/properties/status_property.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
 #include "rviz_common/display_context.hpp"

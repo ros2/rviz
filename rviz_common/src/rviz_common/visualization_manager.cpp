@@ -86,8 +86,8 @@
 #include "rviz_common/properties/status_list.hpp"
 #include "rviz_common/properties/tf_frame_property.hpp"
 #include "rviz_common/render_panel.hpp"
-#include "rviz_common/selection/selection_manager.hpp"
-#include "rviz_common/selection/selection_manager_iface.hpp"
+#include "rviz_common/interaction/selection_manager.hpp"
+#include "rviz_common/interaction/selection_manager_iface.hpp"
 #include "rviz_common/tool.hpp"
 #include "./tool_manager.hpp"
 // #include "rviz_common/view_controller.hpp"
@@ -105,9 +105,9 @@ using rviz_common::properties::PropertyTreeModel;
 using rviz_common::properties::StatusList;
 using rviz_common::properties::StatusProperty;
 using rviz_common::properties::TfFrameProperty;
-using rviz_common::selection::SelectionManager;
-using rviz_common::selection::SelectionManagerIface;
-using rviz_common::selection::M_Picked;
+using rviz_common::interaction::SelectionManager;
+using rviz_common::interaction::SelectionManagerIface;
+using rviz_common::interaction::M_Picked;
 
 // helper class needed to display an icon besides "Global Options"
 class IconizedProperty : public rviz_common::properties::Property

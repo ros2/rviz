@@ -43,7 +43,7 @@
 
 #include "rviz_common/logging.hpp"
 
-#include "rviz_common/selection/selection_manager.hpp"
+#include "rviz_common/interaction/selection_manager.hpp"
 #include "./visualization_frame.hpp"
 #include "./visualization_manager.hpp"
 

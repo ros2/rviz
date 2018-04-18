@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz_common/selection/selection_handler.hpp"
+#include "rviz_common/interaction/selection_handler.hpp"
 
 #ifndef _WIN32
 # pragma GCC diagnostic push
@@ -63,12 +63,12 @@
 #include "rviz_common/logging.hpp"
 
 #include "rviz_common/properties/property.hpp"
-#include "rviz_common/selection/selection_manager.hpp"
+#include "rviz_common/interaction/selection_manager.hpp"
 #include "../visualization_manager.hpp"
 
 namespace rviz_common
 {
-namespace selection
+namespace interaction
 {
 
 using rviz_common::properties::Property;
@@ -302,5 +302,5 @@ void SelectionHandler::Listener::objectDestroyed(Ogre::MovableObject * object)
   handler_->removeTrackedObject(object);
 }
 
-}  // namespace selection
+}  // namespace interaction
 }  // namespace rviz_common

@@ -135,7 +135,7 @@ TEST_F(SelectionToolTestFixture, processMouseEvent_replaces_selection_on_mouse_r
       _,
       click_event.x, click_event.y,
       release_event.x, release_event.y,
-      rviz_common::selection::SelectionManagerIface::Replace));
+      rviz_common::interaction::SelectionManagerIface::Replace));
   selection_tool_->processMouseEvent(release_event);
 }
 
@@ -148,7 +148,7 @@ TEST_F(SelectionToolTestFixture, processMouseEvent_adds_to_selection_when_holdin
       _,
       click_event.x, click_event.y,
       release_event.x, release_event.y,
-      rviz_common::selection::SelectionManagerIface::Add));
+      rviz_common::interaction::SelectionManagerIface::Add));
   selection_tool_->processMouseEvent(release_event);
 }
 
@@ -161,7 +161,7 @@ TEST_F(SelectionToolTestFixture, processMouseEvent_removes_from_selection_when_h
       _,
       click_event.x, click_event.y,
       release_event.x, release_event.y,
-      rviz_common::selection::SelectionManagerIface::Remove));
+      rviz_common::interaction::SelectionManagerIface::Remove));
   selection_tool_->processMouseEvent(release_event);
 }
 

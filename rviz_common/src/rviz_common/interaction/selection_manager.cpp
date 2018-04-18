@@ -29,7 +29,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz_common/selection/selection_manager.hpp"
+#include "rviz_common/interaction/selection_manager.hpp"
 
 #include <algorithm>
 #include <memory>
@@ -68,12 +68,12 @@
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/view_manager.hpp"
 #include "rviz_common/display_context.hpp"
-#include "rviz_common/selection/selection_renderer.hpp"
+#include "rviz_common/interaction/selection_renderer.hpp"
 
 
 namespace rviz_common
 {
-namespace selection
+namespace interaction
 {
 
 using rviz_common::properties::Property;
@@ -102,7 +102,7 @@ SelectionManager::SelectionManager(DisplayContext * context)
   uid_counter_(0),
   interaction_enabled_(false),
   property_model_(new PropertyTreeModel(new Property("root"))),
-  renderer_(std::make_shared<rviz_common::selection::SelectionRenderer>(context))
+  renderer_(std::make_shared<rviz_common::interaction::SelectionRenderer>(context))
 {
   setUpSlots();
 }
@@ -975,5 +975,5 @@ void SelectionManager::pick(
   }
 }
 
-}  // namespace selection
+}  // namespace interaction
 }  // namespace rviz_common

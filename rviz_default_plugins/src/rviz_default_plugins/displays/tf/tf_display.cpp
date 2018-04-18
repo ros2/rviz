@@ -62,13 +62,13 @@
 #include "rviz_common/properties/quaternion_property.hpp"
 #include "rviz_common/properties/string_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
-#include "rviz_common/selection/forwards.hpp"
-#include "rviz_common/selection/selection_manager.hpp"
+#include "rviz_common/interaction/forwards.hpp"
+#include "rviz_common/interaction/selection_manager.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
 #include "frame_info.hpp"
 #include "frame_selection_handler.hpp"
 
-using rviz_common::selection::SelectionHandler;
+using rviz_common::interaction::SelectionHandler;
 using rviz_common::properties::BoolProperty;
 using rviz_common::properties::FloatProperty;
 using rviz_common::properties::StatusProperty;
@@ -76,7 +76,7 @@ using rviz_common::properties::StringProperty;
 using rviz_common::properties::Property;
 using rviz_common::properties::QuaternionProperty;
 using rviz_common::properties::VectorProperty;
-using rviz_common::selection::Picked;
+using rviz_common::interaction::Picked;
 using rviz_rendering::Axes;
 using rviz_rendering::Arrow;
 using rviz_rendering::MovableText;

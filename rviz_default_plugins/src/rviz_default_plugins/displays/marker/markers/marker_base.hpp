@@ -39,7 +39,7 @@
 #include "visualization_msgs/msg/marker.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-#include "rviz_common/selection/forwards.hpp"
+#include "rviz_common/interaction/forwards.hpp"
 
 namespace Ogre
 {

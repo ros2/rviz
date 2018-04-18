@@ -41,6 +41,8 @@
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 #include <OgreWireBoundingBox.h>
+#include <rviz_common/interaction/forwards.hpp>
+
 #ifndef _WIN32
 # pragma GCC diagnostic pop
 #endif
@@ -101,11 +103,11 @@ PointCloudSelectionHandler::~PointCloudSelectionHandler()
 
 void PointCloudSelectionHandler::preRenderPass(uint32_t pass)
 {
-  rviz_common::selection::SelectionHandler::preRenderPass(pass);
+  rviz_common::interaction::SelectionHandler::preRenderPass(pass);
 
   switch (pass) {
     case 0:
-      cloud_info_->cloud_->setPickColor(rviz_common::selection::SelectionManager::handleToColor(
+      cloud_info_->cloud_->setPickColor(rviz_common::interaction::SelectionManager::handleToColor(
           getHandle()));
       break;
     case 1:
@@ -118,7 +120,7 @@ void PointCloudSelectionHandler::preRenderPass(uint32_t pass)
 
 void PointCloudSelectionHandler::postRenderPass(uint32_t pass)
 {
-  rviz_common::selection::SelectionHandler::postRenderPass(pass);
+  rviz_common::interaction::SelectionHandler::postRenderPass(pass);
 
   if (pass == 1) {
     cloud_info_->cloud_->setColorByIndex(false);
@@ -145,14 +147,14 @@ Ogre::Vector3 pointFromCloud(
 }
 
 void PointCloudSelectionHandler::createProperties(
-  const rviz_common::selection::Picked & obj,
+  const rviz_common::interaction::Picked & obj,
   rviz_common::properties::Property * parent_property)
 {
   typedef std::set<int> S_int;
   S_int indices;
   {
-    rviz_common::selection::S_uint64::const_iterator it = obj.extra_handles.begin();
-    rviz_common::selection::S_uint64::const_iterator end = obj.extra_handles.end();
+    rviz_common::interaction::S_uint64::const_iterator it = obj.extra_handles.begin();
+    rviz_common::interaction::S_uint64::const_iterator end = obj.extra_handles.end();
     for (; it != end; ++it) {
       uint64_t handle = *it;
       indices.insert((handle & 0xffffffff) - 1);
@@ -233,15 +235,15 @@ void PointCloudSelectionHandler::createProperties(
 }
 
 void PointCloudSelectionHandler::destroyProperties(
-  const rviz_common::selection::Picked & obj,
+  const rviz_common::interaction::Picked & obj,
   rviz_common::properties::Property * parent_property)
 {
   (void) parent_property;
   typedef std::set<int> S_int;
   S_int indices;
   {
-    rviz_common::selection::S_uint64::const_iterator it = obj.extra_handles.begin();
-    rviz_common::selection::S_uint64::const_iterator end = obj.extra_handles.end();
+    auto it = obj.extra_handles.cbegin();
+    auto end = obj.extra_handles.cend();
     for (; it != end; ++it) {
       uint64_t handle = *it;
       indices.insert((handle & 0xffffffff) - 1);
@@ -263,14 +265,14 @@ void PointCloudSelectionHandler::destroyProperties(
   }
 }
 
-rviz_common::selection::V_AABB PointCloudSelectionHandler::getAABBs(
-  const rviz_common::selection::Picked & obj)
+rviz_common::interaction::V_AABB PointCloudSelectionHandler::getAABBs(
+  const rviz_common::interaction::Picked & obj)
 {
-  rviz_common::selection::V_AABB aabbs;
-  rviz_common::selection::S_uint64::iterator it = obj.extra_handles.begin();
-  rviz_common::selection::S_uint64::iterator end = obj.extra_handles.end();
+  rviz_common::interaction::V_AABB aabbs;
+  auto it = obj.extra_handles.begin();
+  auto end = obj.extra_handles.end();
   for (; it != end; ++it) {
-    M_HandleToBox::iterator find_it = boxes_.find(Handles(obj.handle, *it - 1));
+    auto find_it = boxes_.find(Handles(obj.handle, *it - 1));
     if (find_it != boxes_.end()) {
       Ogre::WireBoundingBox * box = find_it->second.box;
 
@@ -280,10 +282,10 @@ rviz_common::selection::V_AABB PointCloudSelectionHandler::getAABBs(
   return aabbs;
 }
 
-void PointCloudSelectionHandler::onSelect(const rviz_common::selection::Picked & obj)
+void PointCloudSelectionHandler::onSelect(const rviz_common::interaction::Picked & obj)
 {
-  rviz_common::selection::S_uint64::iterator it = obj.extra_handles.begin();
-  rviz_common::selection::S_uint64::iterator end = obj.extra_handles.end();
+  auto it = obj.extra_handles.cbegin();
+  auto end = obj.extra_handles.cend();
   for (; it != end; ++it) {
     int index = (*it & 0xffffffff) - 1;
 
@@ -300,10 +302,10 @@ void PointCloudSelectionHandler::onSelect(const rviz_common::selection::Picked &
   }
 }
 
-void PointCloudSelectionHandler::onDeselect(const rviz_common::selection::Picked & obj)
+void PointCloudSelectionHandler::onDeselect(const rviz_common::interaction::Picked & obj)
 {
-  rviz_common::selection::S_uint64::iterator it = obj.extra_handles.begin();
-  rviz_common::selection::S_uint64::iterator end = obj.extra_handles.end();
+  auto it = obj.extra_handles.cbegin();
+  auto end = obj.extra_handles.cend();
   for (; it != end; ++it) {
     int global_index = (*it & 0xffffffff) - 1;
 

@@ -59,7 +59,7 @@
 
 #include "../move/move_tool.hpp"
 
-#include "rviz_common/selection/selection_manager.hpp"
+#include "rviz_common/interaction/selection_manager.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/display.hpp"
@@ -113,7 +113,7 @@ void SelectionTool::update(float wall_dt, float ros_dt)
 {
   (void) wall_dt;
   (void) ros_dt;
-  rviz_common::selection::SelectionManagerIface * sel_manager = context_->getSelectionManager();
+  rviz_common::interaction::SelectionManagerIface * sel_manager = context_->getSelectionManager();
 
   if (!selecting_) {
     sel_manager->removeHighlight();
@@ -122,7 +122,7 @@ void SelectionTool::update(float wall_dt, float ros_dt)
 
 int SelectionTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
 {
-  rviz_common::selection::SelectionManagerIface * sel_manager = context_->getSelectionManager();
+  rviz_common::interaction::SelectionManagerIface * sel_manager = context_->getSelectionManager();
 
   int flags = 0;
 
@@ -149,15 +149,15 @@ int SelectionTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
       event.y);
 
     if (event.leftUp()) {
-      rviz_common::selection::SelectionManager::SelectType type =
-        rviz_common::selection::SelectionManager::Replace;
+      rviz_common::interaction::SelectionManager::SelectType type =
+        rviz_common::interaction::SelectionManager::Replace;
 
-      rviz_common::selection::M_Picked selection;
+      rviz_common::interaction::M_Picked selection;
 
       if (event.shift()) {
-        type = rviz_common::selection::SelectionManager::Add;
+        type = rviz_common::interaction::SelectionManager::Add;
       } else if (event.control()) {
-        type = rviz_common::selection::SelectionManager::Remove;
+        type = rviz_common::interaction::SelectionManager::Remove;
       }
 
       sel_manager->select(
@@ -195,7 +195,7 @@ int SelectionTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
 int SelectionTool::processKeyEvent(QKeyEvent * event, rviz_common::RenderPanel * panel)
 {
   (void) panel;
-  rviz_common::selection::SelectionManagerIface * sel_manager = context_->getSelectionManager();
+  rviz_common::interaction::SelectionManagerIface * sel_manager = context_->getSelectionManager();
 
   if (event->key() == Qt::Key_F) {
     sel_manager->focusOnSelection();

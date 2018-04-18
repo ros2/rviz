@@ -45,7 +45,7 @@ class MockDisplayContext : public rviz_common::DisplayContext
 public:
   MOCK_CONST_METHOD0(getSceneManager, Ogre::SceneManager * ());
   MOCK_CONST_METHOD0(getWindowManager, rviz_common::WindowManagerInterface * ());
-  MOCK_CONST_METHOD0(getSelectionManager, rviz_common::selection::SelectionManagerIface * ());
+  MOCK_CONST_METHOD0(getSelectionManager, rviz_common::interaction::SelectionManagerIface * ());
   MOCK_CONST_METHOD0(getFrameManager, rviz_common::FrameManagerIface * ());
   MOCK_CONST_METHOD0(getFixedFrame, QString());
   MOCK_CONST_METHOD0(getFrameCount, uint64_t());

@@ -63,12 +63,12 @@ class Node;
 namespace rviz_common
 {
 
-namespace selection
+namespace interaction
 {
 
 class SelectionManagerIface;
 
-}  // namespace selection
+}  // namespace interaction
 
 class BitAllocator;
 class DisplayFactory;
@@ -112,7 +112,7 @@ public:
 
   /// Return a pointer to the SelectionManager.
   virtual
-  rviz_common::selection::SelectionManagerIface *
+  rviz_common::interaction::SelectionManagerIface *
   getSelectionManager() const = 0;
 
   /// Return the FrameManager instance.

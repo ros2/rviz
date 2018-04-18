@@ -36,7 +36,6 @@
 #include "../marker_display.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/properties/status_property.hpp"
-#include "rviz_common/selection/selection_manager.hpp"
 #include "rviz_rendering/objects/shape.hpp"
 
 namespace rviz_default_plugins

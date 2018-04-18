@@ -56,7 +56,7 @@
 #include "rviz_common/load_resource.hpp"
 #include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
-#include "rviz_common/selection/selection_manager.hpp"
+#include "rviz_common/interaction/selection_manager.hpp"
 #include "rviz_common/render_panel.hpp"
 
 namespace rviz_common

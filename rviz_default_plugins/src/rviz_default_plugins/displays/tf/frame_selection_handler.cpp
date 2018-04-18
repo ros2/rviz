@@ -38,7 +38,7 @@
 #include "rviz_common/properties/string_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
 
-using rviz_common::selection::SelectionHandler;
+using rviz_common::interaction::SelectionHandler;
 using rviz_common::properties::BoolProperty;
 using rviz_common::properties::FloatProperty;
 using rviz_common::properties::StatusProperty;
@@ -46,7 +46,7 @@ using rviz_common::properties::StringProperty;
 using rviz_common::properties::Property;
 using rviz_common::properties::QuaternionProperty;
 using rviz_common::properties::VectorProperty;
-using rviz_common::selection::Picked;
+using rviz_common::interaction::Picked;
 
 namespace rviz_default_plugins
 {

@@ -29,8 +29,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__SELECTION__SELECTION_MANAGER_HPP_
-#define RVIZ_COMMON__SELECTION__SELECTION_MANAGER_HPP_
+#ifndef RVIZ_COMMON__INTERACTION__SELECTION_MANAGER_HPP_
+#define RVIZ_COMMON__INTERACTION__SELECTION_MANAGER_HPP_
 
 #include "selection_manager_iface.hpp"
 
@@ -82,7 +82,7 @@ class PropertyTreeModel;
 
 class VisualizationManager;
 
-namespace selection
+namespace interaction
 {
 class SelectionRenderer;
 struct SelectionRectangle;
@@ -331,10 +331,10 @@ private:
 
   rviz_common::properties::PropertyTreeModel * property_model_;
 
-  std::shared_ptr<rviz_common::selection::SelectionRenderer> renderer_;
+  std::shared_ptr<rviz_common::interaction::SelectionRenderer> renderer_;
 };
 
-}  // namespace selection
+}  // namespace interaction
 }  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__SELECTION__SELECTION_MANAGER_HPP_
+#endif  // RVIZ_COMMON__INTERACTION__SELECTION_MANAGER_HPP_

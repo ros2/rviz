@@ -41,7 +41,6 @@
 #include "rviz_rendering/objects/shape.hpp"
 #include "rviz_common/properties/int_property.hpp"
 #include "rviz_common/properties/queue_size_property.hpp"
-#include "rviz_common/selection/selection_manager.hpp"
 #include "rviz_common/validate_floats.hpp"
 
 #include "markers/arrow_marker.hpp"

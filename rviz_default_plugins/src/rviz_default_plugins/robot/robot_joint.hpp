@@ -58,7 +58,7 @@
 #include "urdf_model/pose.h"
 
 #include "rviz_rendering/objects/object.hpp"
-#include "rviz_common/selection/forwards.hpp"
+#include "rviz_common/interaction/forwards.hpp"
 #include "robot_element_base_class.hpp"
 
 namespace Ogre

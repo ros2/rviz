@@ -37,10 +37,10 @@
 # include "sensor_msgs/msg/point_cloud.hpp"
 # include "sensor_msgs/msg/point_cloud2.hpp"
 
-# include "rviz_common/selection/selection_manager.hpp"
+# include "rviz_common/interaction/forwards.hpp"
+# include "rviz_common/interaction/selection_manager.hpp"
 # include "rviz_common/properties/color_property.hpp"
 # include "rviz_rendering/objects/point_cloud.hpp"
-# include "rviz_common/selection/forwards.hpp"
 #endif
 
 namespace rviz_default_plugins
@@ -59,7 +59,7 @@ struct IndexAndMessage
   uint64_t message;
 };
 
-class PointCloudSelectionHandler : public rviz_common::selection::SelectionHandler
+class PointCloudSelectionHandler : public rviz_common::interaction::SelectionHandler
 {
 public:
   PointCloudSelectionHandler(
@@ -69,10 +69,10 @@ public:
   virtual ~PointCloudSelectionHandler();
 
   virtual void createProperties(
-    const rviz_common::selection::Picked & obj,
+    const rviz_common::interaction::Picked & obj,
     rviz_common::properties::Property * parent_property);
   virtual void destroyProperties(
-    const rviz_common::selection::Picked & obj,
+    const rviz_common::interaction::Picked & obj,
     rviz_common::properties::Property * parent_property);
 
   virtual bool needsAdditionalRenderPass(uint32_t pass)
@@ -87,10 +87,10 @@ public:
   virtual void preRenderPass(uint32_t pass);
   virtual void postRenderPass(uint32_t pass);
 
-  virtual void onSelect(const rviz_common::selection::Picked & obj);
-  virtual void onDeselect(const rviz_common::selection::Picked & obj);
+  virtual void onSelect(const rviz_common::interaction::Picked & obj);
+  virtual void onDeselect(const rviz_common::interaction::Picked & obj);
 
-  virtual rviz_common::selection::V_AABB getAABBs(const rviz_common::selection::Picked & obj);
+  virtual rviz_common::interaction::V_AABB getAABBs(const rviz_common::interaction::Picked & obj);
 
   void setBoxSize(float size) {box_size_ = size;}
 

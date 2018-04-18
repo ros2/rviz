@@ -33,7 +33,7 @@
 #include <vector>
 
 #include "rviz_common/tool.hpp"
-#include "rviz_common/selection/forwards.hpp"
+#include "rviz_common/interaction/forwards.hpp"
 
 namespace Ogre
 {
@@ -70,7 +70,7 @@ private:
   int sel_start_x_;
   int sel_start_y_;
 
-  rviz_common::selection::M_Picked highlight_;
+  rviz_common::interaction::M_Picked highlight_;
 
   bool moving_;
 };

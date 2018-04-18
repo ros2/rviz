@@ -33,7 +33,7 @@
 
 #include "geometry_msgs/msg/pose_stamped.hpp"
 
-#include "rviz_common/selection/selection_handler.hpp"
+#include "rviz_common/interaction/selection_handler.hpp"
 #include "pose_display.hpp"
 
 namespace rviz_common
@@ -51,16 +51,16 @@ namespace rviz_default_plugins
 namespace displays
 {
 
-class PoseDisplaySelectionHandler : public rviz_common::selection::SelectionHandler
+class PoseDisplaySelectionHandler : public rviz_common::interaction::SelectionHandler
 {
 public:
   PoseDisplaySelectionHandler(PoseDisplay * display, rviz_common::DisplayContext * context);
 
   void createProperties(
-    const rviz_common::selection::Picked & obj,
+    const rviz_common::interaction::Picked & obj,
     rviz_common::properties::Property * parent_property) override;
 
-  rviz_common::selection::V_AABB getAABBs(const rviz_common::selection::Picked & obj) override;
+  rviz_common::interaction::V_AABB getAABBs(const rviz_common::interaction::Picked & obj) override;
 
   void setMessage(geometry_msgs::msg::PoseStamped::ConstSharedPtr message);
 

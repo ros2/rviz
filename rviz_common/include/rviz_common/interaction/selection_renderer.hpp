@@ -28,8 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__SELECTION__SELECTION_RENDERER_HPP_
-#define RVIZ_COMMON__SELECTION__SELECTION_RENDERER_HPP_
+#ifndef RVIZ_COMMON__INTERACTION__SELECTION_RENDERER_HPP_
+#define RVIZ_COMMON__INTERACTION__SELECTION_RENDERER_HPP_
 
 #include <map>
 #include <memory>
@@ -53,7 +53,7 @@ namespace rviz_common
 {
 class DisplayContext;
 
-namespace selection
+namespace interaction
 {
 
 struct SelectionRectangle
@@ -170,7 +170,7 @@ private:
   void configureCamera(Ogre::Camera * camera, const SelectionRectangle & rectangle) const;
 };
 
-}  // namespace selection
+}  // namespace interaction
 }  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__SELECTION__SELECTION_RENDERER_HPP_
+#endif  // RVIZ_COMMON__INTERACTION__SELECTION_RENDERER_HPP_

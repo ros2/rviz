@@ -94,7 +94,7 @@
 
 // #include "./displays_panel.hpp"
 // #include "./help_panel.hpp"
-// #include "./selection/selection_manager.hpp"
+// #include "./interaction/selection_manager.hpp"
 // #include "./selection_panel.hpp"
 // #include "./time_panel.hpp"
 // #include "./tool_properties_panel.hpp"

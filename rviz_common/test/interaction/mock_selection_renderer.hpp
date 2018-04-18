@@ -40,8 +40,8 @@
 #include <OgreHardwarePixelBuffer.h>
 #include <OgreCamera.h>
 
-#include "rviz_common/selection/selection_manager.hpp"
-#include "rviz_common/selection/selection_renderer.hpp"
+#include "rviz_common/interaction/selection_manager.hpp"
+#include "rviz_common/interaction/selection_renderer.hpp"
 
 #include "../display_context_fixture.hpp"
 
@@ -49,7 +49,7 @@ class VisibleObject
 {
 public:
   VisibleObject(int x, int y, rviz_common::DisplayContext * context)
-  : x(x), y(y), handler_(std::make_shared<rviz_common::selection::SelectionHandler>(context))
+  : x(x), y(y), handler_(std::make_shared<rviz_common::interaction::SelectionHandler>(context))
   {}
 
   uint32_t getARGBColor()
@@ -57,7 +57,7 @@ public:
     return handler_->getHandle() & 0xFFFFFFFF;
   }
 
-  rviz_common::selection::CollObjectHandle getHandle()
+  rviz_common::interaction::CollObjectHandle getHandle()
   {
     return handler_->getHandle();
   }
@@ -66,10 +66,10 @@ public:
   int y;
 
 private:
-  rviz_common::selection::SelectionHandlerPtr handler_;
+  rviz_common::interaction::SelectionHandlerPtr handler_;
 };
 
-class MockSelectionRenderer : public rviz_common::selection::SelectionRenderer
+class MockSelectionRenderer : public rviz_common::interaction::SelectionRenderer
 {
 public:
   explicit MockSelectionRenderer(rviz_common::DisplayContext * context)
@@ -77,8 +77,8 @@ public:
 
   bool render(
     Ogre::Camera * camera,
-    rviz_common::selection::SelectionRectangle rectangle,
-    rviz_common::selection::RenderTexture texture,
+    rviz_common::interaction::SelectionRectangle rectangle,
+    rviz_common::interaction::RenderTexture texture,
     Ogre::PixelBox & dst_box) override
   {
     (void) camera;

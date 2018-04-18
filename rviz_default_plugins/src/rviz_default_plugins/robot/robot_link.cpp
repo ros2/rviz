@@ -80,7 +80,7 @@
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/properties/quaternion_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
-#include "rviz_common/selection/selection_manager.hpp"
+#include "rviz_common/interaction/selection_manager.hpp"
 
 using rviz_rendering::Axes;
 using rviz_rendering::Shape;
@@ -95,14 +95,14 @@ using rviz_common::properties::FloatProperty;
 using rviz_common::properties::QuaternionProperty;
 using rviz_common::properties::VectorProperty;
 
-class RobotLinkSelectionHandler : public rviz_common::selection::SelectionHandler
+class RobotLinkSelectionHandler : public rviz_common::interaction::SelectionHandler
 {
 public:
   RobotLinkSelectionHandler(RobotLink * link, rviz_common::DisplayContext * context);
   ~RobotLinkSelectionHandler() override;
 
   void createProperties(
-    const rviz_common::selection::Picked & obj,
+    const rviz_common::interaction::Picked & obj,
     Property * parent_property) override;
   void updateProperties() override;
 
@@ -127,7 +127,7 @@ RobotLinkSelectionHandler::RobotLinkSelectionHandler(
 RobotLinkSelectionHandler::~RobotLinkSelectionHandler() = default;
 
 void RobotLinkSelectionHandler::createProperties(
-  const rviz_common::selection::Picked & obj,
+  const rviz_common::interaction::Picked & obj,
   rviz_common::properties::Property * parent_property)
 {
   (void) obj;

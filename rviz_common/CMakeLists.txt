@@ -108,9 +108,9 @@ set(rviz_common_headers_to_moc
   include/rviz_common/render_panel.hpp
   src/rviz_common/scaled_image_widget.hpp
   src/rviz_common/screenshot_dialog.hpp
-  include/rviz_common/selection/selection_manager.hpp
-  include/rviz_common/selection/selection_manager_iface.hpp
-  include/rviz_common/selection/selection_renderer.hpp
+  include/rviz_common/interaction/selection_manager.hpp
+  include/rviz_common/interaction/selection_manager_iface.hpp
+  include/rviz_common/interaction/selection_renderer.hpp
   src/rviz_common/splash_screen.hpp
   # src/rviz_common/time_panel.hpp
   include/rviz_common/tool.hpp
@@ -187,9 +187,9 @@ set(rviz_common_source_files
   src/rviz_common/scaled_image_widget.cpp
   src/rviz_common/screenshot_dialog.cpp
   src/rviz_common/selection_panel.cpp
-  src/rviz_common/selection/selection_handler.cpp
-  src/rviz_common/selection/selection_manager.cpp
-  src/rviz_common/selection/selection_renderer.cpp
+  src/rviz_common/interaction/selection_handler.cpp
+  src/rviz_common/interaction/selection_manager.cpp
+  src/rviz_common/interaction/selection_renderer.cpp
   src/rviz_common/splash_screen.cpp
   # src/rviz_common/time_panel.cpp
   src/rviz_common/tool_manager.cpp
@@ -349,9 +349,9 @@ if(BUILD_TESTING)
     message(STATUS "Enabling tests requiring a display")
 
     ament_add_gmock(selection_manager_test
-      test/selection/selection_manager_test.cpp
-      test/selection/mock_selection_renderer.hpp
-      test/selection/selection_test_fixture.hpp
+      test/interaction/selection_manager_test.cpp
+      test/interaction/mock_selection_renderer.hpp
+      test/interaction/selection_test_fixture.hpp
       test/display_context_fixture.cpp)
     if(TARGET selection_manager_test)
       target_link_libraries(selection_manager_test
@@ -361,8 +361,8 @@ if(BUILD_TESTING)
     endif()
 
     ament_add_gmock(selection_handler_test
-      test/selection/selection_handler_test.cpp
-      test/selection/selection_test_fixture.hpp
+      test/interaction/selection_handler_test.cpp
+      test/interaction/selection_test_fixture.hpp
       test/display_context_fixture.cpp)
     if(TARGET selection_handler_test)
       target_link_libraries(selection_handler_test

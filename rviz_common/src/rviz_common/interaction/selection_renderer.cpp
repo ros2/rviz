@@ -29,7 +29,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz_common/selection/selection_renderer.hpp"
+#include "rviz_common/interaction/selection_renderer.hpp"
 
 #include <algorithm>
 #include <cassert>
@@ -76,7 +76,7 @@
 
 namespace rviz_common
 {
-namespace selection
+namespace interaction
 {
 SelectionRenderer::SelectionRenderer(rviz_common::DisplayContext * context)
 : context_(context), 
@@ -370,5 +370,5 @@ void SelectionRenderer::setDebugMode(bool debug)
   debug_mode_ = debug;
 }
 
-}  // namespace selection
+}  // namespace interaction
 }  // namespace rviz_common

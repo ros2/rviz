@@ -28,8 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__SELECTION__SELECTION_HANDLER_HPP_
-#define RVIZ_COMMON__SELECTION__SELECTION_HANDLER_HPP_
+#ifndef RVIZ_COMMON__INTERACTION__SELECTION_HANDLER_HPP_
+#define RVIZ_COMMON__INTERACTION__SELECTION_HANDLER_HPP_
 
 #include <map>
 #include <memory>
@@ -69,7 +69,7 @@ namespace rviz_common
 class DisplayContext;
 class ViewportMouseEvent;
 
-namespace selection
+namespace interaction
 {
 
 using V_AABB = std::vector<Ogre::AxisAlignedBox>;
@@ -247,7 +247,7 @@ using SelectionHandlerPtr = std::shared_ptr<SelectionHandler>;
 using V_SelectionHandler = std::vector<SelectionHandlerPtr>;
 using S_SelectionHandler = std::set<SelectionHandlerPtr>;
 
-}  // namespace selection
+}  // namespace interaction
 }  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__SELECTION__SELECTION_HANDLER_HPP_
+#endif  // RVIZ_COMMON__INTERACTION__SELECTION_HANDLER_HPP_

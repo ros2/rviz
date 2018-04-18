@@ -28,8 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__SELECTION__SELECTION_MANAGER_IFACE_HPP_
-#define RVIZ_COMMON__SELECTION__SELECTION_MANAGER_IFACE_HPP_
+#ifndef RVIZ_COMMON__INTERACTION__SELECTION_MANAGER_IFACE_HPP_
+#define RVIZ_COMMON__INTERACTION__SELECTION_MANAGER_IFACE_HPP_
 
 #include <map>
 #include <memory>
@@ -65,7 +65,7 @@ class PropertyTreeModel;
 
 class DisplayContext;
 
-namespace selection
+namespace interaction
 {
 
 class RVIZ_COMMON_PUBLIC SelectionManagerIface
@@ -138,7 +138,7 @@ public:
   virtual rviz_common::properties::PropertyTreeModel * getPropertyModel() = 0;
 };
 
-}  // namespace selection
+}  // namespace interaction
 }  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__SELECTION__SELECTION_MANAGER_IFACE_HPP_
+#endif  // RVIZ_COMMON__INTERACTION__SELECTION_MANAGER_IFACE_HPP_

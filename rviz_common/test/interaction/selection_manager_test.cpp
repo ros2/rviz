@@ -36,8 +36,8 @@
 #include <string>
 #include <vector>
 
-#include "rviz_common/selection/selection_manager.hpp"
-#include "rviz_common/selection/selection_handler.hpp"
+#include "rviz_common/interaction/selection_manager.hpp"
+#include "rviz_common/interaction/selection_handler.hpp"
 #include "rviz_common/display_context.hpp"
 
 #include "selection_test_fixture.hpp"
@@ -63,7 +63,7 @@ TEST_F(SelectionManagerTestFixture, select_selects_objects_inside_selection) {
   auto o2 = addVisibleObject(150, 150);
 
   selection_manager_->select(
-    render_window_, 0, 0, 100, 100, rviz_common::selection::SelectionManager::Replace);
+    render_window_, 0, 0, 100, 100, rviz_common::interaction::SelectionManager::Replace);
 
   auto selection = selection_manager_->getSelection();
   EXPECT_THAT(selection, SizeIs(1));
@@ -75,10 +75,10 @@ TEST_F(SelectionManagerTestFixture, adds_a_new_selection) {
   auto o1 = addVisibleObject(10, 10);
   auto o2 = addVisibleObject(20, 20);
   selection_manager_->select(
-    render_window_, 0, 0, 15, 15, rviz_common::selection::SelectionManager::Replace);
+    render_window_, 0, 0, 15, 15, rviz_common::interaction::SelectionManager::Replace);
 
   selection_manager_->select(
-    render_window_, 15, 15, 25, 25, rviz_common::selection::SelectionManager::Add);
+    render_window_, 15, 15, 25, 25, rviz_common::interaction::SelectionManager::Add);
 
   auto selection = selection_manager_->getSelection();
   EXPECT_THAT(selection, SizeIs(2));
@@ -89,10 +89,10 @@ TEST_F(SelectionManagerTestFixture, adds_a_new_selection) {
 TEST_F(SelectionManagerTestFixture, adding_an_exising_selection_has_no_effect) {
   auto o1 = addVisibleObject(10, 10);
   selection_manager_->select(
-    render_window_, 0, 0, 15, 15, rviz_common::selection::SelectionManager::Replace);
+    render_window_, 0, 0, 15, 15, rviz_common::interaction::SelectionManager::Replace);
 
   selection_manager_->select(
-    render_window_, 0, 0, 15, 15, rviz_common::selection::SelectionManager::Add);
+    render_window_, 0, 0, 15, 15, rviz_common::interaction::SelectionManager::Add);
 
   auto selection = selection_manager_->getSelection();
   EXPECT_THAT(selection, SizeIs(1));
@@ -103,10 +103,10 @@ TEST_F(SelectionManagerTestFixture, subtracts_from_a_selection) {
   auto o1 = addVisibleObject(10, 10);
   auto o2 = addVisibleObject(20, 20);
   selection_manager_->select(
-    render_window_, 0, 0, 25, 25, rviz_common::selection::SelectionManager::Replace);
+    render_window_, 0, 0, 25, 25, rviz_common::interaction::SelectionManager::Replace);
 
   selection_manager_->select(
-    render_window_, 0, 0, 15, 15, rviz_common::selection::SelectionManager::Remove);
+    render_window_, 0, 0, 15, 15, rviz_common::interaction::SelectionManager::Remove);
 
   auto selection = selection_manager_->getSelection();
   EXPECT_THAT(selection, SizeIs(1));

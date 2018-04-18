@@ -39,23 +39,23 @@
 #include <string>
 #include <vector>
 
-#include "rviz_common/selection/forwards.hpp"
-#include "rviz_common/selection/selection_manager_iface.hpp"
+#include "rviz_common/interaction/forwards.hpp"
+#include "rviz_common/interaction/selection_manager_iface.hpp"
 
-using rviz_common::selection::CollObjectHandle;
-using rviz_common::selection::M_Picked;
-using rviz_common::selection::SelectionHandler;
+using rviz_common::interaction::CollObjectHandle;
+using rviz_common::interaction::M_Picked;
+using rviz_common::interaction::SelectionHandler;
 
-class MockSelectionManager : public rviz_common::selection::SelectionManagerIface
+class MockSelectionManager : public rviz_common::interaction::SelectionManagerIface
 {
 public:
-  MOCK_METHOD0(createHandle, rviz_common::selection::CollObjectHandle());
+  MOCK_METHOD0(createHandle, rviz_common::interaction::CollObjectHandle());
 
   MOCK_METHOD0(initialize, void());
   MOCK_METHOD1(setDebugMode, void(bool));
 
   MOCK_METHOD2(addObject, void(CollObjectHandle, SelectionHandler *));
-  MOCK_METHOD1(removeObject, void(rviz_common::selection::CollObjectHandle));
+  MOCK_METHOD1(removeObject, void(rviz_common::interaction::CollObjectHandle));
   MOCK_METHOD5(highlight, void(rviz_rendering::RenderWindow *, int, int, int, int));
   MOCK_METHOD0(removeHighlight, void());
   MOCK_METHOD6(select, void(rviz_rendering::RenderWindow *, int, int, int, int, SelectType));

@@ -89,7 +89,7 @@ Ogre::Quaternion MarkerSelectionHandler::getOrientation()
 }
 
 void MarkerSelectionHandler::createProperties(
-  const rviz_common::selection::Picked & obj, rviz_common::properties::Property * parent_property)
+  const rviz_common::interaction::Picked & obj, rviz_common::properties::Property * parent_property)
 {
   (void) obj;
 

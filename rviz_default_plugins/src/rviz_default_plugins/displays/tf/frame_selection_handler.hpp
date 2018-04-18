@@ -32,7 +32,7 @@
 
 #include <string>
 
-#include "rviz_common/selection/selection_handler.hpp"
+#include "rviz_common/interaction/selection_handler.hpp"
 #include "tf_display.hpp"
 #include "frame_info.hpp"
 
@@ -55,7 +55,7 @@ namespace rviz_default_plugins
 namespace displays
 {
 
-class FrameSelectionHandler : public rviz_common::selection::SelectionHandler
+class FrameSelectionHandler : public rviz_common::interaction::SelectionHandler
 {
 public:
   FrameSelectionHandler(
@@ -66,11 +66,11 @@ public:
   ~FrameSelectionHandler() override = default;
 
   void createProperties(
-    const rviz_common::selection::Picked & obj,
+    const rviz_common::interaction::Picked & obj,
     rviz_common::properties::Property * parent_property) override;
 
   void destroyProperties(
-    const rviz_common::selection::Picked & obj,
+    const rviz_common::interaction::Picked & obj,
     rviz_common::properties::Property * parent_property) override;
 
   bool getEnabled();
