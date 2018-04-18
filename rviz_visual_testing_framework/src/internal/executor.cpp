@@ -43,6 +43,11 @@ void Executor::queueAction(std::function<void(void)> action)
   increaseTotalDelay();
 }
 
+void Executor::wait(int milliseconds_to_wait)
+{
+  total_delay_ += milliseconds_to_wait;
+}
+
 void Executor::increaseTotalDelay()
 {
   total_delay_ += default_delay_interval_;
