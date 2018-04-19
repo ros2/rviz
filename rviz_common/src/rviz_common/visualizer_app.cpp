@@ -39,6 +39,8 @@
 // #include <OgreMaterialManager.h>
 
 #include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
+#include <QCommandLineParser>  // NOLINT: cpplint is unable to handle the include order here
+#include <QCommandLineOption>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/logging.hpp"
@@ -155,100 +157,113 @@ bool VisualizerApp::init(int argc, char ** argv)
 
   rviz_common::install_rviz_rendering_log_handlers();
 
-  // TODO(wjwwood): restore the program options without using Boost
-  // po::options_description options;
-  // options.add_options()
-  //   ("help,h", "Produce this help message")
-  //   ("splash-screen,s", po::value<std::string>(), "A custom splash-screen image to display")
-  //   ("help-file", po::value<std::string>(), "A custom html file to show as the help screen")
-  //   ("display-config,d", po::value<std::string>(), "A display config file (.rviz) to load")
-  //   ("fixed-frame,f", po::value<std::string>(), "Set the fixed frame")
-  //   ("ogre-log,l", "Enable the Ogre.log file (output in cwd) and console output.")
-  //   ("in-mc-wrapper", "Signal that this is running inside a master-chooser wrapper")
-  //   ("opengl", po::value<int>(),
-  //   "Force OpenGL version (use '--opengl 210' for OpenGL 2.1 compatibility mode)")
-  //   ("disable-anti-aliasing", "Prevent rviz from trying to use anti-aliasing when rendering.")
-  //   ("no-stereo", "Disable the use of stereo rendering.")
-  //   ("log-level-debug", "Sets the ROS logger level to debug.");
-  // po::variables_map vm;
-  // std::string display_config, fixed_frame, splash_path, help_path;
-  // bool enable_ogre_log = false;
-  // bool in_mc_wrapper = false;
-  // int force_gl_version = 0;
-  // bool disable_anti_aliasing = false;
-  // bool disable_stereo = false;
-  // try {
-  //   po::store(po::parse_command_line(argc, argv, options), vm);
-  //   po::notify(vm);
-  //
-  //   if (vm.count("help")) {
-  //     std::cout << "rviz command line options:\n" << options;
-  //     return false;
-  //   }
-  //
-  //   if (vm.count("in-mc-wrapper")) {
-  //     in_mc_wrapper = true;
-  //   }
-  //
-  //   if (vm.count("display-config")) {
-  //     display_config = vm["display-config"].as<std::string>();
-  //     if (display_config.substr(display_config.size() - 4, 4) == ".vcg") {
-  //       std::cerr << "ERROR: the config file '" << display_config <<
-  //         "' is a .vcg file, which is the old rviz config format." << std::endl;
-  //       std::cerr <<
-  //         "       New config files have a .rviz extension and use YAML formatting.  "
-  //         "The format changed"
-  //                 <<
-  //         std::endl;
-  //       std::cerr <<
-  //         "       between Fuerte and Groovy.  "
-  //         "There is not (yet) an automated conversion program."
-  //                 <<
-  //         std::endl;
-  //       return false;
-  //     }
-  //   }
-  //
-  //   if (vm.count("splash-screen")) {
-  //     splash_path = vm["splash-screen"].as<std::string>();
-  //   }
-  //
-  //   if (vm.count("help-file")) {
-  //     help_path = vm["help-file"].as<std::string>();
-  //   }
-  //
-  //   if (vm.count("fixed-frame")) {
-  //     fixed_frame = vm["fixed-frame"].as<std::string>();
-  //   }
-  //
-  //   if (vm.count("ogre-log")) {
-  //     enable_ogre_log = true;
-  //   }
-  //
-  //   if (vm.count("no-stereo")) {
-  //     disable_stereo = true;
-  //   }
-  //
-  //   if (vm.count("opengl")) {
-  //     //std::cout << vm["opengl"].as<std::string>() << std::endl;
-  //     force_gl_version = vm["opengl"].as<int>();
-  //   }
-  //
-  //   if (vm.count("disable-anti-aliasing")) {
-  //     disable_anti_aliasing = true;
-  //   }
-  //
-  //   if (vm.count("log-level-debug")) {
-  //     if (
-  //       ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug))
-  //     {
-  //       ros::console::notifyLoggerLevelsChanged();
-  //     }
-  //   }
-  // } catch (std::exception & e) {
-  //   ROS_ERROR("Error parsing command line: %s", e.what());
-  //   return false;
-  // }
+  QCommandLineParser parser;
+  parser.setApplicationDescription("3D visualization tool for ROS2");
+  parser.addHelpOption();
+
+  QCommandLineOption display_config_option(
+    QStringList() << "d" << "display-config",
+      "A display config file (.rviz) to load",
+      "display_config");
+  parser.addOption(display_config_option);
+
+  QCommandLineOption fixed_frame_option(
+    QStringList() << "f" << "fixed-frame", "Set the fixed frame", "fixed_frame");
+  parser.addOption(fixed_frame_option);
+
+  QCommandLineOption verbose_option(
+    QStringList() << "v" << "verbose", "Enable debug visualizations");
+  parser.addOption(verbose_option);
+
+  // TODO(botteroa-si): enable when possible
+//  QCommandLineOption splash_screen_option(
+//    QStringList() << "s" << "splash-screen",
+//    "A custom splash-screen image to display",
+//    "splash_path");
+//  parser.addOption(splash_screen_option);
+//
+//  QCommandLineOption help_file_option(
+//    "help-file", "A custom html file to show as the help screen", "help_path");
+//  parser.addOption(help_file_option);
+//
+//  QCommandLineOption ogre_log_option(
+//    QStringList() << "l" << "ogre-log",
+//    "Enable the Ogre.log file (output in cwd) and console output.");
+//  parser.addOption(ogre_log_option);
+//
+//  QCommandLineOption open_gl_option(
+//    "opengl",
+//    "Force OpenGL version (use '--opengl 210' for OpenGL 2.1 compatibility mode)",
+//    "version");
+//  parser.addOption(open_gl_option);
+//
+//  QCommandLineOption disable_anti_aliasing_option(
+//    "disable-anti-aliasing", "Prevent rviz from trying to use anti-aliasing when rendering.");
+//  parser.addOption(disable_anti_aliasing_option);
+//
+//  QCommandLineOption no_stereo_option("no-stereo", "Disable the use of stereo rendering.");
+//  parser.addOption(no_stereo_option);
+//
+//  QCommandLineOption log_level_debug_option(
+//    "log-level-debug", "Sets the ROS logger level to debug.");
+//  parser.addOption(log_level_debug_option);
+
+//   ("in-mc-wrapper", "Signal that this is running inside a master-chooser wrapper")
+
+  QString display_config, fixed_frame, splash_path, help_path;
+  bool verbose = false;
+  // TODO(botteroa-si): enable when possible
+//  bool enable_ogre_log = false;
+//  bool in_mc_wrapper = false;
+//  int force_gl_version = 0;
+//  bool disable_anti_aliasing = false;
+//  bool disable_stereo = false;
+
+  try {
+    parser.process(*app_);
+//    enable_ogre_log = parser.isSet(ogre_log_option);
+//    disable_stereo = parser.isSet(no_stereo_option);
+//    disable_anti_aliasing = parser.isSet(disable_anti_aliasing_option);
+    verbose = parser.isSet(verbose_option);
+
+    if (parser.isSet(display_config_option)) {
+      display_config = parser.value(display_config_option);
+    }
+    if (parser.isSet(fixed_frame_option)) {
+      fixed_frame = parser.value(fixed_frame_option);
+    }
+
+    // TODO(botteroa-si): enable when possible
+//    if (parser.isSet(splash_screen_option)) {
+//      splash_path = parser.value(splash_screen_option);
+//    }
+//    if (parser.isSet(help_file_option)) {
+//      help_path = parser.value(help_file_option);
+//    }
+//    if (parser.isSet(splash_screen_option)) {
+//      splash_path = parser.value(splash_screen_option);
+//    }
+//    if (parser.isSet(open_gl_option)) {
+//      force_gl_version = parser.value(open_gl_option).toInt();
+//    }
+
+//   if (vm.count("in-mc-wrapper")) {
+//     in_mc_wrapper = true;
+//   }
+//
+//
+//   if (vm.count("log-level-debug")) {
+//     if (
+//       ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug))
+//     {
+//       ros::console::notifyLoggerLevelsChanged();
+//     }
+//   }
+  } catch (std::exception & e) {
+    RVIZ_COMMON_LOG_ERROR_STREAM("Error parsing command line:" << e.what());
+    return false;
+  }
+  
   //
   // if (!ros::master::check() ) {
   // TODO(wjwwood): figure out how to support the "wait for master" functionality
@@ -280,24 +295,26 @@ bool VisualizerApp::init(int argc, char ** argv)
   frame_ = new VisualizationFrame(node_name_);
   frame_->setApp(this->app_);
 
-  // if (help_path != "") {
-  //   frame_->setHelpPath(QString::fromStdString(help_path));
-  // }
+  if (!help_path.isEmpty()) {
+    frame_->setHelpPath(help_path);
+  }
 
   // TODO(wjwwood): figure out how to preserve the "choost new master" feature
   // frame_->setShowChooseNewMaster(in_mc_wrapper);
 
-  // if (vm.count("splash-screen") ) {
-  //   frame_->setSplashPath(QString::fromStdString(splash_path));
-  // }
+  if (!splash_path.isEmpty()) {
+    frame_->setSplashPath(splash_path);
+  }
+  frame_->initialize(display_config);
 
-  // frame_->initialize(QString::fromStdString(display_config));
-  frame_->initialize();
+<<<<<<< d49b17db4cf9ab1fe890fb74be239201d246e98c
+=======
+  if (!fixed_frame.isEmpty()) {
+    frame_->getManager()->setFixedFrame(fixed_frame);
+  }
+  frame_->getManager()->getSelectionManager()->setDebugMode(verbose);
 
-  // if (!fixed_frame.empty() ) {
-  //   frame_->getManager()->setFixedFrame(QString::fromStdString(fixed_frame));
-  // }
-
+>>>>>>> Restore working program options
   frame_->show();
 
   // TODO(wjwwood): reenable the ROS service to reload the shaders via the ros_integration API
