@@ -71,6 +71,7 @@ namespace interaction
 {
 class HandlerManagerIface;
 class SelectionManagerIface;
+class ViewPickerIface;
 }
 
 class Display;
@@ -229,6 +230,9 @@ public:
   /// Return a pointer to the SelectionManager.
   rviz_common::interaction::SelectionManagerIface * getSelectionManager() const override;
 
+  /// Return a pointer to the ViewPicker.
+  rviz_common::interaction::ViewPickerIface * getViewPicker() const override;
+
   /// Return a pointer to the ToolManager.
   ToolManager * getToolManager() const override;
 
@@ -376,6 +380,7 @@ protected:
 
   rviz_common::interaction::HandlerManagerIface * handler_manager_;
   rviz_common::interaction::SelectionManagerIface * selection_manager_;
+  rviz_common::interaction::ViewPickerIface * view_picker_;
 
   uint32_t render_requested_;
   uint64_t frame_count_;

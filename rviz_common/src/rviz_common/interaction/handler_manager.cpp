@@ -42,9 +42,8 @@ namespace rviz_common
 namespace interaction
 {
 
-HandlerManager::HandlerManager(DisplayContext * context)
-: context_(context),
-  uid_counter_(0),
+HandlerManager::HandlerManager()
+: uid_counter_(0),
   interaction_enabled_(false)
 {}
 
@@ -103,7 +102,7 @@ SelectionHandlerPtr HandlerManager::getHandler(CollObjectHandle handle)
 
 std::unique_lock<std::recursive_mutex> HandlerManager::lock()
 {
-  return std::move(std::unique_lock<std::recursive_mutex>(handlers_mutex_));
+  return std::unique_lock<std::recursive_mutex>(handlers_mutex_);
 }
 
 CollObjectHandle HandlerManager::createHandle()

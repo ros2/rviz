@@ -53,7 +53,7 @@ public:
   {
     DisplayContextFixture::SetUp();
     renderer_ = std::make_shared<MockSelectionRenderer>(context_.get());
-    handler_manager_ = std::make_unique<rviz_common::interaction::HandlerManager>(context_.get());
+    handler_manager_ = std::make_unique<rviz_common::interaction::HandlerManager>();
     selection_manager_ = std::make_unique<rviz_common::interaction::SelectionManager>(
       context_.get(), renderer_);
     EXPECT_CALL(*context_, getHandlerManager()).WillRepeatedly(Return(handler_manager_.get()));

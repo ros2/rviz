@@ -1,7 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
- * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12,8 +11,8 @@
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the copyright holder nor the names of its contributors
- *       may be used to endorse or promote products derived from
+ *     * Neither the name of the Willow Garage, Inc. nor the names of its
+ *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -29,60 +28,45 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__INTERACTION__HANDLER_MANAGER_HPP_
-#define RVIZ_COMMON__INTERACTION__HANDLER_MANAGER_HPP_
+#ifndef RVIZ_COMMON__INTERACTION__VIEW_PICKER_IFACE_HPP_
+#define RVIZ_COMMON__INTERACTION__VIEW_PICKER_IFACE_HPP_
 
-#include "handler_manager_iface.hpp"
-
-#include <mutex>
-
-#include "./forwards.hpp"
-#include "./selection_handler.hpp"
 #include "rviz_common/visibility_control.hpp"
+
+namespace Ogre
+{
+class Viewport;
+class Vector3;
+}  // namespace Ogre
 
 
 namespace rviz_common
 {
-
-class DisplayContext;
-
 namespace interaction
 {
 
-class RVIZ_COMMON_PUBLIC HandlerManager
-  : public HandlerManagerIface
+class RVIZ_COMMON_PUBLIC ViewPickerIface
 {
 public:
-  HandlerManager();
+  virtual ~ViewPickerIface() = default;
 
-  ~HandlerManager() override;
+  virtual void initialize() = 0;
 
-  void addHandler(CollObjectHandle handle, SelectionHandlerWeakPtr handler) override;
+  virtual void setDebugMode(bool debug) = 0;
 
-  void removeHandler(CollObjectHandle handle) override;
-
-  SelectionHandlerPtr getHandler(CollObjectHandle handle) override;
-
-  std::unique_lock<std::recursive_mutex> lock() override;
-
-  /// Create a new unique handle.
-  CollObjectHandle createHandle() override;
-
-  /// Tell all handlers that interactive mode is active/inactive.
-  void enableInteraction(bool enable) override;
-
-  bool getInteractionEnabled() const override;
-
-private:
-  uint32_t uid_counter_;
-
-  bool interaction_enabled_;
-
-  std::recursive_mutex handlers_mutex_;
-  std::recursive_mutex uid_mutex_;
+  /// Return true if the point at x, y in the viewport is showing an object, false otherwise.
+  /**
+   * If it is showing an object, result will be changed to contain the 3D point
+   * corresponding to it.
+   */
+  virtual bool get3DPoint(
+    Ogre::Viewport * viewport,
+    int x,
+    int y,
+    Ogre::Vector3 & result_point) = 0;
 };
 
 }  // namespace interaction
 }  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__INTERACTION__HANDLER_MANAGER_HPP_
+#endif  // RVIZ_COMMON__INTERACTION__VIEW_PICKER_IFACE_HPP_

@@ -90,6 +90,8 @@
 #include "rviz_common/interaction/handler_manager_iface.hpp"
 #include "rviz_common/interaction/selection_manager.hpp"
 #include "rviz_common/interaction/selection_manager_iface.hpp"
+#include "rviz_common/interaction/view_picker.hpp"
+#include "rviz_common/interaction/view_picker_iface.hpp"
 #include "rviz_common/tool.hpp"
 #include "./tool_manager.hpp"
 // #include "rviz_common/view_controller.hpp"
@@ -111,6 +113,8 @@ using rviz_common::interaction::HandlerManager;
 using rviz_common::interaction::HandlerManagerIface;
 using rviz_common::interaction::SelectionManager;
 using rviz_common::interaction::SelectionManagerIface;
+using rviz_common::interaction::ViewPicker;
+using rviz_common::interaction::ViewPickerIface;
 using rviz_common::interaction::M_Picked;
 
 // helper class needed to display an icon besides "Global Options"
@@ -226,8 +230,9 @@ VisualizationManager::VisualizationManager(
 
   rviz_rendering::MaterialManager::createDefaultColorMaterials();
 
-  handler_manager_ = new HandlerManager(this);
+  handler_manager_ = new HandlerManager();
   selection_manager_ = new SelectionManager(this);
+  view_picker_ = new ViewPicker(this);
 
 // TODO(wjwwood): redo with executors?
 #if 0
@@ -259,6 +264,7 @@ VisualizationManager::~VisualizationManager()
   delete display_property_tree_model_;
   delete tool_manager_;
   delete display_factory_;
+  delete view_picker_;
   delete selection_manager_;
   delete handler_manager_;
   delete frame_manager_;
@@ -276,6 +282,7 @@ void VisualizationManager::initialize()
 
   view_manager_->initialize();
   selection_manager_->initialize();
+  view_picker_->initialize();
   tool_manager_->initialize();
 
   last_update_ros_time_ = clock_->now();
@@ -508,6 +515,11 @@ HandlerManagerIface * VisualizationManager::getHandlerManager() const
 SelectionManagerIface * VisualizationManager::getSelectionManager() const
 {
   return selection_manager_;
+}
+
+ViewPickerIface * VisualizationManager::getViewPicker() const
+{
+  return view_picker_;
 }
 
 ToolManager * VisualizationManager::getToolManager() const

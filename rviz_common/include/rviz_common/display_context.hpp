@@ -68,6 +68,7 @@ namespace interaction
 
 class SelectionManagerIface;
 class HandlerManagerIface;
+class ViewPickerIface;
 
 }  // namespace interaction
 
@@ -120,6 +121,11 @@ public:
   virtual
   rviz_common::interaction::HandlerManagerIface *
   getHandlerManager() const = 0;
+
+  /// Return a pointer to the ViewPicker.
+  virtual
+  rviz_common::interaction::ViewPickerIface *
+  getViewPicker() const = 0;
 
   /// Return the FrameManager instance.
   virtual

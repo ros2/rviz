@@ -46,11 +46,6 @@
 #include "./selection_handler.hpp"
 #include "rviz_common/visibility_control.hpp"
 
-namespace Ogre
-{
-class Rectangle2D;
-}  // namespace Ogre
-
 namespace rviz_rendering
 {
 class RenderWindow;
@@ -109,17 +104,6 @@ public:
 
   /// Change the size of the off-screen selection buffer texture.
   virtual void setTextureSize(unsigned size) = 0;
-
-  /// Return true if the point at x, y in the viewport is showing an object, false otherwise.
-  /**
-   * If it is showing an object, result will be changed to contain the 3D point
-   * corresponding to it.
-   */
-  virtual bool get3DPoint(
-    Ogre::Viewport * viewport,
-    int x,
-    int y,
-    Ogre::Vector3 & result_point) = 0;
 
   virtual rviz_common::properties::PropertyTreeModel * getPropertyModel() = 0;
 };
