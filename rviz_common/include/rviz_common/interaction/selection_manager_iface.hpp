@@ -88,12 +88,6 @@ public:
   virtual void
   setDebugMode(bool debug) = 0;
 
-  virtual void
-  addObject(CollObjectHandle obj, SelectionHandler * handler) = 0;
-
-  virtual void
-  removeObject(CollObjectHandle obj) = 0;
-
   /// Control the highlight box being displayed while selecting.
   virtual void
   highlight(rviz_rendering::RenderWindow * window, int x1, int y1, int x2, int y2) = 0;
@@ -109,14 +103,6 @@ public:
   virtual void update() = 0;
 
   virtual const M_Picked & getSelection() const = 0;
-
-  /// Create a new unique handle.
-  virtual CollObjectHandle createHandle() = 0;
-
-  /// Tell all handlers that interactive mode is active/inactive.
-  virtual void enableInteraction(bool enable) = 0;
-
-  virtual bool getInteractionEnabled() const = 0;
 
   /// Tell the view controller to look at the selection.
   virtual void focusOnSelection() = 0;

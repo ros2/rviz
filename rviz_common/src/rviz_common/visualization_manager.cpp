@@ -86,6 +86,8 @@
 #include "rviz_common/properties/status_list.hpp"
 #include "rviz_common/properties/tf_frame_property.hpp"
 #include "rviz_common/render_panel.hpp"
+#include "rviz_common/interaction/handler_manager.hpp"
+#include "rviz_common/interaction/handler_manager_iface.hpp"
 #include "rviz_common/interaction/selection_manager.hpp"
 #include "rviz_common/interaction/selection_manager_iface.hpp"
 #include "rviz_common/tool.hpp"
@@ -105,6 +107,8 @@ using rviz_common::properties::PropertyTreeModel;
 using rviz_common::properties::StatusList;
 using rviz_common::properties::StatusProperty;
 using rviz_common::properties::TfFrameProperty;
+using rviz_common::interaction::HandlerManager;
+using rviz_common::interaction::HandlerManagerIface;
 using rviz_common::interaction::SelectionManager;
 using rviz_common::interaction::SelectionManagerIface;
 using rviz_common::interaction::M_Picked;
@@ -222,6 +226,7 @@ VisualizationManager::VisualizationManager(
 
   rviz_rendering::MaterialManager::createDefaultColorMaterials();
 
+  handler_manager_ = new HandlerManager(this);
   selection_manager_ = new SelectionManager(this);
 
 // TODO(wjwwood): redo with executors?
@@ -255,6 +260,7 @@ VisualizationManager::~VisualizationManager()
   delete tool_manager_;
   delete display_factory_;
   delete selection_manager_;
+  delete handler_manager_;
   delete frame_manager_;
   delete private_;
 
@@ -492,6 +498,11 @@ void VisualizationManager::resetTime()
   wall_clock_begin_ = std::chrono::system_clock::time_point();
 
   queueRender();
+}
+
+HandlerManagerIface * VisualizationManager::getHandlerManager() const
+{
+  return handler_manager_;
 }
 
 SelectionManagerIface * VisualizationManager::getSelectionManager() const

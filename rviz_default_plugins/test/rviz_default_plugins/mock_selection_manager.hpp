@@ -49,13 +49,9 @@ using rviz_common::interaction::SelectionHandler;
 class MockSelectionManager : public rviz_common::interaction::SelectionManagerIface
 {
 public:
-  MOCK_METHOD0(createHandle, rviz_common::interaction::CollObjectHandle());
-
   MOCK_METHOD0(initialize, void());
   MOCK_METHOD1(setDebugMode, void(bool));
 
-  MOCK_METHOD2(addObject, void(CollObjectHandle, SelectionHandler *));
-  MOCK_METHOD1(removeObject, void(rviz_common::interaction::CollObjectHandle));
   MOCK_METHOD5(highlight, void(rviz_rendering::RenderWindow *, int, int, int, int));
   MOCK_METHOD0(removeHighlight, void());
   MOCK_METHOD6(select, void(rviz_rendering::RenderWindow *, int, int, int, int, SelectType));
@@ -63,8 +59,6 @@ public:
   MOCK_METHOD0(update, void());
   MOCK_CONST_METHOD0(getSelection, const M_Picked &());
 
-  MOCK_METHOD1(enableInteraction, void(bool));
-  MOCK_CONST_METHOD0(getInteractionEnabled, bool());
   MOCK_METHOD0(focusOnSelection, void());
   MOCK_METHOD1(setTextureSize, void(unsigned int));
 

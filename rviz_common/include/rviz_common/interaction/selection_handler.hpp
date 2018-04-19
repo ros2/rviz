@@ -74,7 +74,12 @@ namespace interaction
 
 using V_AABB = std::vector<Ogre::AxisAlignedBox>;
 
-class RVIZ_COMMON_PUBLIC SelectionHandler
+template<class T> std::weak_ptr<T> weak_from_this(T * pointer)
+{
+  return {pointer->shared_from_this()};
+}
+
+class RVIZ_COMMON_PUBLIC SelectionHandler : public std::enable_shared_from_this<SelectionHandler>
 {
 public:
   explicit SelectionHandler(DisplayContext * context);
@@ -244,6 +249,7 @@ private:
 };
 
 using SelectionHandlerPtr = std::shared_ptr<SelectionHandler>;
+using SelectionHandlerWeakPtr = std::weak_ptr<SelectionHandler>;
 using V_SelectionHandler = std::vector<SelectionHandlerPtr>;
 using S_SelectionHandler = std::set<SelectionHandlerPtr>;
 

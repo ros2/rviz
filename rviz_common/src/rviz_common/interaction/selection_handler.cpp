@@ -64,6 +64,7 @@
 
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/interaction/selection_manager.hpp"
+#include "rviz_common/interaction/handler_manager_iface.hpp"
 #include "../visualization_manager.hpp"
 
 namespace rviz_common
@@ -77,8 +78,8 @@ SelectionHandler::SelectionHandler(DisplayContext * context)
 : context_(context),
   listener_(new Listener(this))
 {
-  pick_handle_ = context_->getSelectionManager()->createHandle();
-  context_->getSelectionManager()->addObject(pick_handle_, this);
+  pick_handle_ = context_->getHandlerManager()->createHandle();
+  context_->getHandlerManager()->addHandler(pick_handle_, weak_from_this(this));
 }
 
 SelectionHandler::~SelectionHandler()
@@ -90,8 +91,8 @@ SelectionHandler::~SelectionHandler()
   while (!boxes_.empty()) {
     destroyBox(boxes_.begin()->first);
   }
-  if (context_->getSelectionManager()) {
-    context_->getSelectionManager()->removeObject(pick_handle_);
+  if (context_->getHandlerManager()) {
+    context_->getHandlerManager()->removeHandler(pick_handle_);
   }
 }
 

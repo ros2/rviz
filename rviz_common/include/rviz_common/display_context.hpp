@@ -67,6 +67,7 @@ namespace interaction
 {
 
 class SelectionManagerIface;
+class HandlerManagerIface;
 
 }  // namespace interaction
 
@@ -114,6 +115,11 @@ public:
   virtual
   rviz_common::interaction::SelectionManagerIface *
   getSelectionManager() const = 0;
+
+  /// Return a pointer to the HandlerManager.
+  virtual
+  rviz_common::interaction::HandlerManagerIface *
+  getHandlerManager() const = 0;
 
   /// Return the FrameManager instance.
   virtual

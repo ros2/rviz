@@ -68,6 +68,7 @@
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/view_manager.hpp"
 #include "rviz_common/display_context.hpp"
+#include "rviz_common/interaction/handler_manager_iface.hpp"
 #include "rviz_common/interaction/selection_renderer.hpp"
 
 
@@ -83,8 +84,6 @@ SelectionManager::SelectionManager(
   DisplayContext * context, std::shared_ptr<SelectionRenderer> renderer)
 : context_(context),
   highlight_enabled_(false),
-  uid_counter_(0),
-  interaction_enabled_(false),
   property_model_(new PropertyTreeModel(new Property("root"))),
   renderer_(renderer)
 {
@@ -99,8 +98,6 @@ SelectionManager::SelectionManager(
 SelectionManager::SelectionManager(DisplayContext * context)
 : context_(context),
   highlight_enabled_(false),
-  uid_counter_(0),
-  interaction_enabled_(false),
   property_model_(new PropertyTreeModel(new Property("root"))),
   renderer_(std::make_shared<rviz_common::interaction::SelectionRenderer>(context))
 {
@@ -121,7 +118,7 @@ void SelectionManager::setUpSlots()
 
 SelectionManager::~SelectionManager()
 {
-  std::lock_guard<std::recursive_mutex> lock(global_mutex_);
+  std::lock_guard<std::recursive_mutex> lock(selection_mutex_);
 
   setSelection(M_Picked());
 
@@ -195,6 +192,8 @@ void SelectionManager::initialize()
 
   // create picking camera
   camera_ = scene_manager->createCamera(name + "_camera");
+
+  handler_manager_ = context_->getHandlerManager();
 }
 
 
@@ -225,8 +224,8 @@ bool SelectionManager::getPatchDepthImage(
 
   setDepthTextureSize(width, height);
 
-  for (auto & obj : objects_) {
-    obj.second->preRenderPass(0);
+  for (auto handler : handler_manager_->handlers_) {
+    handler.second.lock()->preRenderPass(0);
   }
 
   if (render(
@@ -251,8 +250,8 @@ bool SelectionManager::getPatchDepthImage(
     return false;
   }
 
-  for (auto & obj : objects_) {
-    obj.second->postRenderPass(0);
+  for (auto handler : handler_manager_->handlers_) {
+    handler.second.lock()->postRenderPass(0);
   }
 
   return true;
@@ -268,7 +267,7 @@ bool SelectionManager::get3DPatch(
   bool skip_missing,
   std::vector<Ogre::Vector3> & result_points)
 {
-  std::lock_guard<std::recursive_mutex> lock(global_mutex_);
+  auto handler_lock = handler_manager_->lock();
 
   std::vector<float> depth_vector;
 
@@ -415,82 +414,9 @@ void SelectionManager::setTextureSize(unsigned size)
   }
 }
 
-void SelectionManager::enableInteraction(bool enable)
-{
-  interaction_enabled_ = enable;
-  for (auto & registered_object : objects_) {
-    if (InteractiveObjectPtr object = registered_object.second->getInteractiveObject().lock()) {
-      object->enableInteraction(enable);
-    }
-  }
-}
-
-bool SelectionManager::getInteractionEnabled() const
-{
-  return interaction_enabled_;
-}
-
-CollObjectHandle SelectionManager::createHandle()
-{
-  uid_counter_++;
-  if (uid_counter_ > 0x00ffffff) {
-    uid_counter_ = 0;
-  }
-
-  uint32_t handle = 0;
-
-  // shuffle around the bits so we get lots of colors
-  // when we're displaying the selection buffer
-  for (unsigned int i = 0; i < 24; i++) {
-    uint32_t shift = (((23 - i) % 3) * 8) + (23 - i) / 3;
-    uint32_t bit = ( (uint32_t)(uid_counter_ >> i) & (uint32_t)1) << shift;
-    handle |= bit;
-  }
-
-  return handle;
-}
-
-void SelectionManager::addObject(CollObjectHandle obj, SelectionHandler * handler)
-{
-  if (!obj) {
-//    ROS_BREAK();
-    return;
-  }
-
-  std::lock_guard<std::recursive_mutex> lock(global_mutex_);
-
-  InteractiveObjectPtr object = handler->getInteractiveObject().lock();
-  if (object) {
-    object->enableInteraction(interaction_enabled_);
-  }
-
-  bool inserted = objects_.insert(std::make_pair(obj, handler)).second;
-  (void) inserted;
-  assert(inserted);
-}
-
-void SelectionManager::removeObject(CollObjectHandle obj)
-{
-  if (!obj) {
-    return;
-  }
-
-  std::lock_guard<std::recursive_mutex> lock(global_mutex_);
-
-  auto it = selection_.find(obj);
-  if (it != selection_.end()) {
-    M_Picked objs;
-    objs.insert(std::make_pair(it->first, it->second));
-
-    removeSelection(objs);
-  }
-
-  objects_.erase(obj);
-}
-
 void SelectionManager::update()
 {
-  std::lock_guard<std::recursive_mutex> lock(global_mutex_);
+  std::lock_guard<std::recursive_mutex> lock(selection_mutex_);
 
   highlight_node_->setVisible(highlight_enabled_);
 
@@ -509,7 +435,7 @@ void SelectionManager::update()
 
 void SelectionManager::removeHighlight()
 {
-  std::lock_guard<std::recursive_mutex> lock(global_mutex_);
+  std::lock_guard<std::recursive_mutex> lock(selection_mutex_);
 
   highlight_enabled_ = false;
 }
@@ -659,21 +585,9 @@ void SelectionManager::setPickData(
   object->getUserObjectBindings().setUserAny("pick_handle", Ogre::Any(handle));
 }
 
-SelectionHandler * SelectionManager::getHandler(CollObjectHandle obj)
-{
-  std::lock_guard<std::recursive_mutex> lock(global_mutex_);
-
-  auto it = objects_.find(obj);
-  if (it != objects_.end()) {
-    return it->second;
-  }
-
-  return nullptr;
-}
-
 void SelectionManager::removeSelection(const M_Picked & objs)
 {
-  std::lock_guard<std::recursive_mutex> lock(global_mutex_);
+  std::lock_guard<std::recursive_mutex> lock(selection_mutex_);
 
   for (const auto & obj : objs) {
     removeSelectedObject(obj.second);
@@ -689,7 +603,7 @@ const M_Picked & SelectionManager::getSelection() const
 
 void SelectionManager::addSelection(const M_Picked & objs)
 {
-  std::lock_guard<std::recursive_mutex> lock(global_mutex_);
+  std::lock_guard<std::recursive_mutex> lock(selection_mutex_);
 
   M_Picked added;
   for (const auto & obj : objs) {
@@ -704,7 +618,7 @@ void SelectionManager::addSelection(const M_Picked & objs)
 
 void SelectionManager::setSelection(const M_Picked & objs)
 {
-  std::lock_guard<std::recursive_mutex> lock(global_mutex_);
+  std::lock_guard<std::recursive_mutex> lock(selection_mutex_);
 
   M_Picked original(selection_.begin(), selection_.end());
 
@@ -714,11 +628,11 @@ void SelectionManager::setSelection(const M_Picked & objs)
 
 std::pair<Picked, bool> SelectionManager::addSelectedObject(const Picked & obj)
 {
-  std::lock_guard<std::recursive_mutex> lock(global_mutex_);
+  std::lock_guard<std::recursive_mutex> lock(selection_mutex_);
 
   std::pair<M_Picked::iterator, bool> pib = selection_.insert(std::make_pair(obj.handle, obj));
 
-  SelectionHandler * handler = getHandler(obj.handle);
+  auto handler = handler_manager_->getHandler(obj.handle);
 
   if (pib.second) {
     handler->onSelect(obj);
@@ -745,7 +659,7 @@ std::pair<Picked, bool> SelectionManager::addSelectedObject(const Picked & obj)
 
 void SelectionManager::removeSelectedObject(const Picked & obj)
 {
-  std::lock_guard<std::recursive_mutex> lock(global_mutex_);
+  std::lock_guard<std::recursive_mutex> lock(selection_mutex_);
 
   auto sel_it = selection_.find(obj.handle);
   if (sel_it != selection_.end()) {
@@ -758,12 +672,12 @@ void SelectionManager::removeSelectedObject(const Picked & obj)
     }
   }
 
-  getHandler(obj.handle)->onDeselect(obj);
+  handler_manager_->getHandler(obj.handle)->onDeselect(obj);
 }
 
 void SelectionManager::focusOnSelection()
 {
-  std::lock_guard<std::recursive_mutex> lock(global_mutex_);
+  std::lock_guard<std::recursive_mutex> lock(selection_mutex_);
 
   if (selection_.empty()) {
     return;
@@ -774,7 +688,7 @@ void SelectionManager::focusOnSelection()
   for (const auto & selection_item : selection_) {
     const Picked & p = selection_item.second;
 
-    SelectionHandler * handler = getHandler(p.handle);
+    auto handler = handler_manager_->getHandler(p.handle);
 
     auto aabbs = handler->getAABBs(p);
 
@@ -796,7 +710,7 @@ void SelectionManager::selectionRemoved(const M_Picked & removed)
 {
   for (const auto & removed_item : removed) {
     const Picked & picked = removed_item.second;
-    SelectionHandler * handler = getHandler(picked.handle);
+    auto handler = handler_manager_->getHandler(picked.handle);
     assert(handler);
 
     handler->destroyProperties(picked, property_model_->getRoot());
@@ -807,7 +721,7 @@ void SelectionManager::selectionAdded(const M_Picked & added)
 {
   for (const auto & added_item : added) {
     const Picked & picked = added_item.second;
-    SelectionHandler * handler = getHandler(picked.handle);
+    auto handler = handler_manager_->getHandler(picked.handle);
     assert(handler);
 
     handler->createProperties(picked, property_model_->getRoot());
@@ -817,8 +731,10 @@ void SelectionManager::selectionAdded(const M_Picked & added)
 
 void SelectionManager::updateProperties()
 {
+  std::lock_guard<std::recursive_mutex> lock(selection_mutex_);
+
   for (const auto & selection_item : selection_) {
-    getHandler(selection_item.first)->updateProperties();
+    handler_manager_->getHandler(selection_item.first)->updateProperties();
   }
 }
 
@@ -826,7 +742,7 @@ void
 SelectionManager::highlight(rviz_rendering::RenderWindow * window, int x1, int y1, int x2, int y2)
 {
   Ogre::Viewport * viewport = rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(window);
-  std::lock_guard<std::recursive_mutex> lock(global_mutex_);
+  std::lock_guard<std::recursive_mutex> lock(selection_mutex_);
 
   highlight_enabled_ = true;
 
@@ -840,7 +756,7 @@ SelectionManager::highlight(rviz_rendering::RenderWindow * window, int x1, int y
 void SelectionManager::select(
   rviz_rendering::RenderWindow * window, int x1, int y1, int x2, int y2, SelectType type)
 {
-  std::lock_guard<std::recursive_mutex> lock(global_mutex_);
+  std::lock_guard<std::recursive_mutex> lock(selection_mutex_);
 
   highlight_enabled_ = false;
   highlight_node_->setVisible(false);
@@ -867,7 +783,10 @@ void SelectionManager::pick(
   bool single_render_pass)
 {
   Ogre::Viewport * viewport = rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(window);
-  std::lock_guard<std::recursive_mutex> lock(global_mutex_);
+  std::lock_guard<std::recursive_mutex> lock(selection_mutex_);
+  // TODO(anhosi) use defered to lock at once with selection_mutex_
+  auto handler_lock = handler_manager_->lock();
+
 
   bool need_additional_render = false;
 
@@ -880,14 +799,14 @@ void SelectionManager::pick(
   // After that, individual handlers can specify that they need additional
   // renders (max # defined in kNumRenderTextures_).
   {
-    for (auto & obj : objects_) {
-      obj.second->preRenderPass(0);
+    for (const auto & handler : handler_manager_->handlers_) {
+      handler.second.lock()->preRenderPass(0);
     }
 
     renderAndUnpack(rectangle, 0);
 
-    for (auto & obj : objects_) {
-      obj.second->postRenderPass(0);
+    for (const auto & handler : handler_manager_->handlers_) {
+      handler.second.lock()->postRenderPass(0);
     }
 
     handles_by_pixel.reserve(pixel_buffer_.size());
@@ -898,7 +817,7 @@ void SelectionManager::pick(
         continue;
       }
 
-      SelectionHandler * handler = getHandler(handle);
+      auto handler = handler_manager_->getHandler(handle);
 
       if (handler) {
         std::pair<M_Picked::iterator,
@@ -921,13 +840,13 @@ void SelectionManager::pick(
   extra_by_pixel.resize(handles_by_pixel.size());
   while (need_additional_render && pass < render_textures_.size()) {
     for (const auto & handle : need_additional) {
-      getHandler(handle)->preRenderPass(pass);
+      handler_manager_->getHandler(handle)->preRenderPass(pass);
     }
 
     renderAndUnpack(rectangle, pass);
 
     for (const auto & handle : need_additional) {
-      getHandler(handle)->postRenderPass(pass);
+      handler_manager_->getHandler(handle)->postRenderPass(pass);
     }
 
     for (size_t i = 0; i != handles_by_pixel.size(); ++i) {
@@ -948,7 +867,8 @@ void SelectionManager::pick(
     for (const auto & result : results) {
       CollObjectHandle handle = result.first;
 
-      if (getHandler(handle)->needsAdditionalRenderPass(pass + 1)) {
+      if (handler_manager_->getHandler(handle)->needsAdditionalRenderPass(pass +
+        1)) {
         need_additional_render = true;
         need_additional.insert(handle);
       }

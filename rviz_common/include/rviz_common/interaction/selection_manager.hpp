@@ -62,6 +62,7 @@
 #include "./forwards.hpp"
 #include "./selection_handler.hpp"
 #include "rviz_common/visibility_control.hpp"
+#include "handler_manager_iface.hpp"
 
 namespace Ogre
 {
@@ -107,12 +108,6 @@ public:
   void
   setDebugMode(bool debug) override;
 
-  void
-  addObject(CollObjectHandle obj, SelectionHandler * handler) override;
-
-  void
-  removeObject(CollObjectHandle obj) override;
-
   /// Control the highlight box being displayed while selecting.
   void
   highlight(rviz_rendering::RenderWindow * window, int x1, int y1, int x2, int y2) override;
@@ -138,6 +133,7 @@ public:
 
   // static CollObjectHandle colourToHandle( const Ogre::ColourValue & color );
 
+  // TODO(Martin-Idel-SI): maybe move those methods to SelectionRenderer
   static void setPickColor(const Ogre::ColourValue & color, Ogre::SceneNode * node);
 
   static void setPickColor(const Ogre::ColourValue & color, Ogre::MovableObject * object);
@@ -155,14 +151,6 @@ public:
     CollObjectHandle handle,
     const Ogre::ColourValue & color,
     Ogre::MovableObject * object);
-
-  /// Create a new unique handle.
-  CollObjectHandle createHandle() override;
-
-  /// Tell all handlers that interactive mode is active/inactive.
-  void enableInteraction(bool enable) override;
-
-  bool getInteractionEnabled() const override;
 
   /// Tell the view controller to look at the selection.
   void focusOnSelection() override;
@@ -217,8 +205,6 @@ private:
   std::pair<Picked, bool> addSelectedObject(const Picked & obj);
 
   void removeSelectedObject(const Picked & obj);
-
-  SelectionHandler * getHandler(CollObjectHandle obj);
 
   void setHighlightRect(Ogre::Viewport * viewport, int x1, int y1, int x2, int y2);
 
@@ -285,12 +271,9 @@ private:
     std::vector<float> & depth_vector);
 
   DisplayContext * context_;
+  HandlerManagerIface * handler_manager_;
 
-  std::recursive_mutex global_mutex_;
-
-  using M_CollisionObjectToSelectionHandler =
-    std::unordered_map<CollObjectHandle, SelectionHandler *>;
-  M_CollisionObjectToSelectionHandler objects_;
+  std::recursive_mutex selection_mutex_;
 
   bool highlight_enabled_;
 
@@ -317,15 +300,11 @@ private:
   uint32_t depth_texture_width_, depth_texture_height_;
   Ogre::PixelBox depth_pixel_box_;
 
-  uint32_t uid_counter_;
-
   Ogre::Rectangle2D * highlight_rectangle_;
   Ogre::SceneNode * highlight_node_;
   Ogre::Camera * camera_;
 
   V_CollObject pixel_buffer_;
-
-  bool interaction_enabled_;
 
   uint32_t texture_size_;
 
