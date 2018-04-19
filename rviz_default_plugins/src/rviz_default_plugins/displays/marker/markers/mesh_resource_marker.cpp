@@ -126,8 +126,8 @@ void MeshResourceMarker::onNewMessage(
 
     createMeshWithMaterials(new_message);
 
-    handler_.reset(new MarkerSelectionHandler(this, MarkerID(new_message->ns, new_message->id),
-      context_));
+    handler_ = rviz_common::interaction::createSelectionHandler<MarkerSelectionHandler>(
+      this, MarkerID(new_message->ns, new_message->id), context_);
     handler_->addTrackedObject(entity_);
   } else {
     // underlying mesh resource has not changed but if the color has then we need to update the

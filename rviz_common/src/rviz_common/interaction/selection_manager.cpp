@@ -867,8 +867,7 @@ void SelectionManager::pick(
     for (const auto & result : results) {
       CollObjectHandle handle = result.first;
 
-      if (handler_manager_->getHandler(handle)->needsAdditionalRenderPass(pass +
-        1)) {
+      if (handler_manager_->getHandler(handle)->needsAdditionalRenderPass(pass + 1)) {
         need_additional_render = true;
         need_additional.insert(handle);
       }

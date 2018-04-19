@@ -77,7 +77,7 @@ inline T valueFromCloud(
   uint32_t offset,
   uint8_t type,
   uint32_t point_step,
-  uint32_t index)
+  uint64_t index)
 {
   const uint8_t * data = &cloud->data[(point_step * index) + offset];
   T ret = 0;

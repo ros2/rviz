@@ -93,8 +93,8 @@ void ArrowMarker::onNewMessage(
   if (!arrow_) {
     arrow_ = std::make_unique<rviz_rendering::Arrow>(context_->getSceneManager(), scene_node_);
     setDefaultProportions();
-    handler_.reset(
-      new MarkerSelectionHandler(this, MarkerID(new_message->ns, new_message->id), context_));
+    handler_ = rviz_common::interaction::createSelectionHandler<MarkerSelectionHandler>(
+      this, MarkerID(new_message->ns, new_message->id), context_);
     handler_->addTrackedObjects(arrow_->getSceneNode());
   }
 

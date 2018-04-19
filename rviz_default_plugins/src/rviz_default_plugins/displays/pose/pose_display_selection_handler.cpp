@@ -99,9 +99,16 @@ rviz_common::interaction::V_AABB PoseDisplaySelectionHandler::getAABBs(
   (void) obj;
   rviz_common::interaction::V_AABB aabbs;
   if (display_->pose_valid_) {
+    /** with 'derive_world_bounding_box' set to 'true', the WorldBoundingBox is derived each time.
+        setting it to 'false' results in the wire box not properly following the pose arrow, but it
+        would be less computationally expensive.
+     */
+    bool derive_world_bounding_box = true;
     if (display_->shape_property_->getOptionInt() == PoseDisplay::Arrow) {
-      aabbs.push_back(display_->arrow_->getHead()->getEntity()->getWorldBoundingBox());
-      aabbs.push_back(display_->arrow_->getShaft()->getEntity()->getWorldBoundingBox());
+      aabbs.push_back(
+        display_->arrow_->getHead()->getEntity()->getWorldBoundingBox(derive_world_bounding_box));
+      aabbs.push_back(
+        display_->arrow_->getShaft()->getEntity()->getWorldBoundingBox(derive_world_bounding_box));
     } else {
       aabbs.push_back(display_->axes_->getXShape()->getEntity()->getWorldBoundingBox());
       aabbs.push_back(display_->axes_->getYShape()->getEntity()->getWorldBoundingBox());

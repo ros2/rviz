@@ -95,8 +95,8 @@ void CloudInfo::setSelectable(
   bool selectable, float selection_box_size, rviz_common::DisplayContext * context)
 {
   if (selectable) {
-    selection_handler_.reset(
-      new PointCloudSelectionHandler(selection_box_size, this, context));
+    selection_handler_ = rviz_common::interaction::createSelectionHandler
+      <PointCloudSelectionHandler>(selection_box_size, this, context);
     cloud_->setPickColor(rviz_common::interaction::SelectionManager::handleToColor(
         selection_handler_->getHandle()));
   } else {

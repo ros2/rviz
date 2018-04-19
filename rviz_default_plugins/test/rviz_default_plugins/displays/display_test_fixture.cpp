@@ -48,6 +48,7 @@ void DisplayTestFixture::SetUp()
   context_ = std::make_shared<testing::NiceMock<MockDisplayContext>>();
   frame_manager_ = std::make_shared<testing::NiceMock<MockFrameManager>>();
   selection_manager_ = std::make_shared<testing::NiceMock<MockSelectionManager>>();
+  handler_manager_ = std::make_shared<testing::NiceMock<MockHandlerManager>>();
   clock_ = std::make_shared<rclcpp::Clock>();
 
   EXPECT_CALL(*frame_manager_, getFixedFrame()).WillRepeatedly(testing::ReturnRef(fixed_frame));
@@ -57,6 +58,8 @@ void DisplayTestFixture::SetUp()
   EXPECT_CALL(*context_, getFrameManager()).WillRepeatedly(testing::Return(frame_manager_.get()));
   EXPECT_CALL(*context_, getSelectionManager()).WillRepeatedly(
     testing::Return(selection_manager_.get()));
+  EXPECT_CALL(*context_, getHandlerManager()).WillRepeatedly(
+    testing::Return(handler_manager_.get()));
 }
 
 void DisplayTestFixture::TearDown()

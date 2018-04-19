@@ -74,15 +74,36 @@ namespace interaction
 
 using V_AABB = std::vector<Ogre::AxisAlignedBox>;
 
-template<class T> std::weak_ptr<T> weak_from_this(T * pointer)
+template<class T>
+std::weak_ptr<T> weak_from_this(T * pointer)
 {
-  return {pointer->shared_from_this()};
+  return pointer->shared_from_this();
+}
+
+/// Use this function to create a SelectionHandler
+/**
+ * This function creates a shared_ptr for any SelectionHandler, registering a handle with the
+ * HandlerManager.
+ *
+ * Note: When migrating from rviz to rviz2, use this function to create a SelectionHandler
+ * instead of constructors.
+ *
+ * @tparam T template type of SelectionHandler to be created
+ * @tparam Args placeholder types for constructor parameter types
+ * @param arguments arguments used in the constructor of the SelectionHandler to be created
+ * @return
+ */
+template<typename T, typename ... Args>
+std::shared_ptr<T> createSelectionHandler(Args ... arguments)
+{
+  auto selection_handler = std::shared_ptr<T>(new T(arguments ...));
+  selection_handler->registerHandle();
+  return selection_handler;
 }
 
 class RVIZ_COMMON_PUBLIC SelectionHandler : public std::enable_shared_from_this<SelectionHandler>
 {
 public:
-  explicit SelectionHandler(DisplayContext * context);
   virtual ~SelectionHandler();
 
   void addTrackedObjects(Ogre::SceneNode * node);
@@ -200,6 +221,10 @@ public:
   };
 
 protected:
+  explicit SelectionHandler(DisplayContext * context);
+
+  void registerHandle();
+
   /// Create or update a box for the given handle-int pair, with the box specified by aabb.
   void createBox(
     const Handles & handles,
@@ -246,6 +271,9 @@ private:
   CollObjectHandle pick_handle_;
 
   friend class SelectionManager;
+  template<typename T, typename ... Args>
+  friend typename std::shared_ptr<T>  // typename is used only to make uncrustify happy
+  rviz_common::interaction::createSelectionHandler(Args ... arguments);
 };
 
 using SelectionHandlerPtr = std::shared_ptr<SelectionHandler>;

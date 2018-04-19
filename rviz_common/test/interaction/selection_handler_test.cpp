@@ -51,7 +51,8 @@ public:
   void SetUp() override
   {
     SelectionTestFixture::SetUp();
-    handler_ = std::make_shared<rviz_common::interaction::SelectionHandler>(context_.get());
+    using rviz_common::interaction::SelectionHandler;
+    handler_ = rviz_common::interaction::createSelectionHandler<SelectionHandler>(context_.get());
   }
 
   void TearDown() override

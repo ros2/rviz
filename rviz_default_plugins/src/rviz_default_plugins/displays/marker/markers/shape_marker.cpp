@@ -108,8 +108,8 @@ void ShapeMarker::resetShapeForMessage(const MarkerBase::MarkerConstSharedPtr & 
   shape_ = std::make_shared<rviz_rendering::Shape>(
     shape_type, this->context_->getSceneManager(), this->scene_node_);
 
-  handler_.reset(new MarkerSelectionHandler(
-      this, MarkerID(new_message->ns, new_message->id), context_));
+  handler_ = rviz_common::interaction::createSelectionHandler<MarkerSelectionHandler>(
+    this, MarkerID(new_message->ns, new_message->id), context_);
   handler_->addTrackedObjects(shape_->getRootNode());
 }
 

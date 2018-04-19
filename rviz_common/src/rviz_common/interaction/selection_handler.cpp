@@ -77,10 +77,7 @@ using rviz_common::properties::Property;
 SelectionHandler::SelectionHandler(DisplayContext * context)
 : context_(context),
   listener_(new Listener(this))
-{
-  pick_handle_ = context_->getHandlerManager()->createHandle();
-  context_->getHandlerManager()->addHandler(pick_handle_, weak_from_this(this));
-}
+{}
 
 SelectionHandler::~SelectionHandler()
 {
@@ -94,6 +91,12 @@ SelectionHandler::~SelectionHandler()
   if (context_->getHandlerManager()) {
     context_->getHandlerManager()->removeHandler(pick_handle_);
   }
+}
+
+void SelectionHandler::registerHandle()
+{
+  pick_handle_ = context_->getHandlerManager()->createHandle();
+  context_->getHandlerManager()->addHandler(pick_handle_, weak_from_this(this));
 }
 
 void SelectionHandler::preRenderPass(uint32_t pass)
@@ -178,8 +181,14 @@ V_AABB SelectionHandler::getAABBs(const Picked & obj)
 {
   Q_UNUSED(obj);
   V_AABB aabbs;
+
+  /** with 'derive_world_bounding_box' set to 'true', the WorldBoundingBox is derived each time.
+      setting it to 'false' may result in the wire box not properly following the tracked object,
+      but would be less computationally expensive.
+  */
+  bool derive_world_bounding_box = true;
   for (const auto & tracked_object : tracked_objects_) {
-    aabbs.push_back(tracked_object->getWorldBoundingBox());
+    aabbs.push_back(tracked_object->getWorldBoundingBox(derive_world_bounding_box));
   }
 
   return aabbs;

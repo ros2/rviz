@@ -46,6 +46,7 @@
 #include "test/rviz_rendering/ogre_testing_environment.hpp"
 #include "./mock_link_updater.hpp"
 #include "../mock_display_context.hpp"
+#include "../mock_handler_manager.hpp"
 #include "../mock_selection_manager.hpp"
 #include "../scene_graph_introspection.hpp"
 
@@ -75,10 +76,12 @@ public:
   void SetUp() override
   {
     selection_manager_ = std::make_shared<NiceMock<MockSelectionManager>>();
+    handle_manager_ = std::make_unique<NiceMock<MockHandlerManager>>();
 
     context_ = std::make_shared<NiceMock<MockDisplayContext>>();
     EXPECT_CALL(*context_, getSceneManager()).WillRepeatedly(Return(scene_manager_));
     EXPECT_CALL(*context_, getSelectionManager()).WillRepeatedly(Return(selection_manager_.get()));
+    EXPECT_CALL(*context_, getHandlerManager()).WillRepeatedly(Return(handle_manager_.get()));
 
     resource_retriever::Retriever retriever;
     auto file = retriever.get("package://rviz_rendering_tests/test_meshes/test.urdf");
@@ -99,6 +102,7 @@ public:
   static Ogre::SceneManager * scene_manager_;
 
   urdf::Model urdf_model_;
+  std::shared_ptr<MockHandlerManager> handle_manager_;
   std::shared_ptr<MockDisplayContext> context_;
   std::shared_ptr<MockSelectionManager> selection_manager_;
 

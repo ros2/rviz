@@ -115,7 +115,8 @@ void PoseDisplay::onInitialize()
   updateShapeChoice();
   updateColorAndAlpha();
 
-  coll_handler_ = std::make_shared<PoseDisplaySelectionHandler>(this, context_);
+  coll_handler_ = rviz_common::interaction::createSelectionHandler
+    <PoseDisplaySelectionHandler>(this, context_);
   coll_handler_->addTrackedObjects(arrow_->getSceneNode());
   coll_handler_->addTrackedObjects(axes_->getSceneNode());
 }

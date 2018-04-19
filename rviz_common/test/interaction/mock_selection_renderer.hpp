@@ -49,7 +49,9 @@ class VisibleObject
 {
 public:
   VisibleObject(int x, int y, rviz_common::DisplayContext * context)
-  : x(x), y(y), handler_(std::make_shared<rviz_common::interaction::SelectionHandler>(context))
+  : x(x), y(y), handler_(
+      rviz_common::interaction::createSelectionHandler
+      <rviz_common::interaction::SelectionHandler>(context))
   {}
 
   uint32_t getARGBColor()

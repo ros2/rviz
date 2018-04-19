@@ -31,6 +31,7 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__MARKER_SELECTION_HANDLER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__MARKER_SELECTION_HANDLER_HPP_
 
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -76,6 +77,10 @@ private:
   QString marker_id_;
   rviz_common::properties::VectorProperty * position_property_;
   rviz_common::properties::QuaternionProperty * orientation_property_;
+
+  template<typename T, typename ... Args>
+  friend typename std::shared_ptr<T>
+  rviz_common::interaction::createSelectionHandler(Args ... arguments);
 };
 
 }  // namespace markers

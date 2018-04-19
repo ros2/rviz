@@ -29,54 +29,35 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__DISPLAY_TEST_FIXTURE_HPP_
-#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__DISPLAY_TEST_FIXTURE_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__MOCK_HANDLER_MANAGER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__MOCK_HANDLER_MANAGER_HPP_
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
 #include <memory>
 #include <string>
+#include <vector>
 
-#include <QApplication>  // NOLINT
+#include "rviz_common/interaction/forwards.hpp"
+#include "rviz_common/interaction/handler_manager_iface.hpp"
+#include "rviz_common/interaction/selection_handler.hpp"
 
-#include <OgreRoot.h>
-
-#include "rclcpp/clock.hpp"
-
-#include "test/rviz_rendering/ogre_testing_environment.hpp"
-
-#include "../mock_display_context.hpp"
-#include "../mock_frame_manager.hpp"
-#include "../mock_selection_manager.hpp"
-#include "../mock_handler_manager.hpp"
-
-class DisplayTestFixture : public testing::Test
+class MockHandlerManager : public rviz_common::interaction::HandlerManagerIface
 {
 public:
-  static void SetUpTestCase();
+  MOCK_METHOD0(createHandle, rviz_common::interaction::CollObjectHandle());
 
-  void SetUp() override;
+  MOCK_METHOD2(addHandler, void(rviz_common::interaction::CollObjectHandle,
+    rviz_common::interaction::SelectionHandlerWeakPtr));
+  MOCK_METHOD1(removeHandler, void(rviz_common::interaction::CollObjectHandle));
+  MOCK_METHOD1(getHandler,
+    rviz_common::interaction::SelectionHandlerPtr(rviz_common::interaction::CollObjectHandle));
 
-  void TearDown() override;
+  MOCK_METHOD1(enableInteraction, void(bool));
+  MOCK_CONST_METHOD0(getInteractionEnabled, bool());
 
-  static void TearDownTestCase();
-
-  void mockValidTransform();
-
-  void mockValidTransform(Ogre::Vector3 position, Ogre::Quaternion orientation);
-
-  static std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
-  static Ogre::SceneManager * scene_manager_;
-
-  std::shared_ptr<MockDisplayContext> context_;
-  std::shared_ptr<MockFrameManager> frame_manager_;
-  std::shared_ptr<MockSelectionManager> selection_manager_;
-  std::shared_ptr<MockHandlerManager> handler_manager_;
-  std::shared_ptr<rclcpp::Clock> clock_;
-
-  std::string fixed_frame = "fixed_frame";
+  MOCK_METHOD0(lock, std::unique_lock<std::recursive_mutex>());
 };
 
-
-#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__DISPLAY_TEST_FIXTURE_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__MOCK_HANDLER_MANAGER_HPP_

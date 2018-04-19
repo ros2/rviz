@@ -39,6 +39,7 @@
 
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/interaction/selection_manager.hpp"
+#include "rviz_common/interaction/handler_manager.hpp"
 
 #include "../display_context_fixture.hpp"
 #include "mock_selection_renderer.hpp"
@@ -52,21 +53,25 @@ public:
   {
     DisplayContextFixture::SetUp();
     renderer_ = std::make_shared<MockSelectionRenderer>(context_.get());
+    handler_manager_ = std::make_unique<rviz_common::interaction::HandlerManager>(context_.get());
     selection_manager_ = std::make_unique<rviz_common::interaction::SelectionManager>(
       context_.get(), renderer_);
-    selection_manager_->initialize();
+    EXPECT_CALL(*context_, getHandlerManager()).WillRepeatedly(Return(handler_manager_.get()));
     EXPECT_CALL(*context_, getSelectionManager()).WillRepeatedly(Return(selection_manager_.get()));
+    selection_manager_->initialize();
   }
 
   void TearDown() override
   {
     renderer_.reset();  // necessary for correct order of deleting node
     selection_manager_.reset();  // necessary for correct order of deleting node
+    handler_manager_.reset();  // necessary for correct order of deleting node
     DisplayContextFixture::TearDown();
   }
 
   std::shared_ptr<MockSelectionRenderer> renderer_;
   std::unique_ptr<rviz_common::interaction::SelectionManager> selection_manager_;
+  std::unique_ptr<rviz_common::interaction::HandlerManagerIface> handler_manager_;
 };
 
 #endif  // INTERACTION__SELECTION_TEST_FIXTURE_HPP_

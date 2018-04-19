@@ -113,6 +113,10 @@ private:
   RobotLink * link_;
   rviz_common::properties::VectorProperty * position_property_;
   rviz_common::properties::QuaternionProperty * orientation_property_;
+
+  template<typename T, typename ... Args>
+  friend typename std::shared_ptr<T> rviz_common::interaction::createSelectionHandler(
+    Args ... arguments);
 };
 
 RobotLinkSelectionHandler::RobotLinkSelectionHandler(
@@ -785,7 +789,8 @@ void RobotLink::createVisual(const urdf::LinkConstSharedPtr & link)
 
 void RobotLink::createSelection()
 {
-  selection_handler_.reset(new RobotLinkSelectionHandler(this, context_));
+  selection_handler_ = rviz_common::interaction::createSelectionHandler<RobotLinkSelectionHandler>(
+    this, context_);
   for (auto & visual_mesh : visual_meshes_) {
     selection_handler_->addTrackedObject(visual_mesh);
   }
