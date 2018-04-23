@@ -132,14 +132,8 @@ SelectionManager::~SelectionManager()
   handler_manager_->removeListener(this);
 }
 
-void SelectionManager::setDebugMode(bool debug)
-{
-  renderer_->setDebugMode(debug);
-}
-
 void SelectionManager::initialize()
 {
-  renderer_->initialize();
   // Create our render textures
   setTextureSize(1);
 
@@ -191,6 +185,8 @@ void SelectionManager::initialize()
 
   // create picking camera
   camera_ = scene_manager->createCamera(name + "_camera");
+
+  renderer_->initialize(camera_, scene_manager);
 
   handler_manager_ = context_->getHandlerManager();
   handler_manager_->addListener(this);
@@ -292,7 +288,9 @@ void SelectionManager::unpackColors(const Ogre::PixelBox & box)
 }
 
 void SelectionManager::renderAndUnpack(
-  const SelectionRectangle & selection_rectangle, uint32_t pass)
+  rviz_rendering::RenderWindow * window,
+  const SelectionRectangle & selection_rectangle,
+  uint32_t pass)
 {
   assert(pass < render_textures_.size());
 
@@ -306,17 +304,18 @@ void SelectionManager::renderAndUnpack(
     render_textures_[pass],
     Dimensions(texture_size_, texture_size_),
     scheme.str());
-  if (render(selection_rectangle, tex, pixel_boxes_[pass])) {
-    unpackColors(pixel_boxes_[pass]);
-  }
+
+  render(window, selection_rectangle, tex, pixel_boxes_[pass]);
+  unpackColors(pixel_boxes_[pass]);
 }
 
-bool SelectionManager::render(
+void SelectionManager::render(
+  rviz_rendering::RenderWindow * window,
   const SelectionRectangle & selection_rectangle,
   const RenderTexture & render_texture,
   Ogre::PixelBox & dst_box)
 {
-  return renderer_->render(camera_, selection_rectangle, render_texture, dst_box);
+  renderer_->render(window, selection_rectangle, render_texture, dst_box);
 }
 
 PropertyTreeModel * SelectionManager::getPropertyModel()
@@ -598,7 +597,6 @@ void SelectionManager::pick(
   M_Picked & results,
   bool single_render_pass)
 {
-  Ogre::Viewport * viewport = rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(window);
   std::lock_guard<std::recursive_mutex> lock(selection_mutex_);
   // TODO(anhosi) use defered to lock at once with selection_mutex_
   auto handler_lock = handler_manager_->lock();
@@ -609,7 +607,7 @@ void SelectionManager::pick(
   V_CollObject handles_by_pixel;
   S_CollObject need_additional;
 
-  auto rectangle = SelectionRectangle(viewport, x1, y1, x2, y2);
+  auto rectangle = SelectionRectangle(x1, y1, x2, y2);
   // First render is special... does the initial object picking, determines
   // which objects have been selected.
   // After that, individual handlers can specify that they need additional
@@ -619,7 +617,7 @@ void SelectionManager::pick(
       handler.second.lock()->preRenderPass(0);
     }
 
-    renderAndUnpack(rectangle, 0);
+    renderAndUnpack(window, rectangle, 0);
 
     for (const auto & handler : handler_manager_->handlers_) {
       handler.second.lock()->postRenderPass(0);
@@ -659,7 +657,7 @@ void SelectionManager::pick(
       handler_manager_->getHandler(handle)->preRenderPass(pass);
     }
 
-    renderAndUnpack(rectangle, pass);
+    renderAndUnpack(window, rectangle, pass);
 
     for (const auto & handle : need_additional) {
       handler_manager_->getHandler(handle)->postRenderPass(pass);

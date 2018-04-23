@@ -47,6 +47,7 @@
 # pragma GCC diagnostic pop
 #endif
 
+#include "rviz_rendering/render_window.hpp"
 #include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
@@ -58,17 +59,16 @@ namespace interaction
 
 struct SelectionRectangle
 {
-  SelectionRectangle(Ogre::Viewport * viewport, int x1, int y1, int x2, int y2)
-  : viewport_(viewport), x1_(x1), x2_(x2), y1_(y1), y2_(y2)
+  SelectionRectangle(int x1, int y1, int x2, int y2)
+  : x1(x1), x2(x2), y1(y1), y2(y2)
   {}
 
   ~SelectionRectangle() = default;
 
-  Ogre::Viewport * viewport_;
-  int x1_;
-  int x2_;
-  int y1_;
-  int y2_;
+  int x1;
+  int x2;
+  int y1;
+  int y2;
 };
 
 struct Dimensions
@@ -88,16 +88,16 @@ struct RenderTexture
     Ogre::TexturePtr tex,
     Dimensions dimensions,
     std::string material_scheme)
-  : tex_(tex),
-    dimensions_(dimensions),
-    material_scheme_(material_scheme)
+  : tex(tex),
+    dimensions(dimensions),
+    material_scheme(material_scheme)
   {}
 
   ~RenderTexture() = default;
 
-  Ogre::TexturePtr tex_;
-  Dimensions dimensions_;
-  std::string material_scheme_;
+  Ogre::TexturePtr tex;
+  Dimensions dimensions;
+  std::string material_scheme;
 };
 
 class SelectionRenderer
@@ -108,11 +108,11 @@ public:
   ~SelectionRenderer() override = default;
 
   RVIZ_COMMON_PUBLIC
-  virtual void initialize();
+  virtual void initialize(Ogre::Camera * camera, Ogre::SceneManager * scene_manager);
 
   RVIZ_COMMON_PUBLIC
-  virtual bool render(
-    Ogre::Camera * camera,
+  virtual void render(
+    rviz_rendering::RenderWindow * window,
     SelectionRectangle rectangle,
     RenderTexture texture,
     Ogre::PixelBox & dst_box);
@@ -134,15 +134,10 @@ public:
     unsigned short lod_index,  // NOLINT: Ogre decides the use of unsigned short
     const Ogre::Renderable * rend) override;
 
-  RVIZ_COMMON_PUBLIC
-  void setDebugMode(bool debug);
-
 private:
-  // void publishDebugImage(const Ogre::PixelBox & pixel_box, const std::string & label);
+  void sanitizeRectangle(Ogre::Viewport * viewport, SelectionRectangle & rectangle);
 
-  void sanitizeRectangle(SelectionRectangle & rectangle) const;
-
-  void configureCamera(Ogre::Camera * camera, const SelectionRectangle & rectangle) const;
+  void configureCamera(Ogre::Viewport * viewport, const SelectionRectangle & rectangle) const;
   float getRelativeCoordinate(float coord, int dimension) const;
 
   template<typename T>
@@ -150,11 +145,11 @@ private:
 
   Ogre::RenderTexture * setupRenderTexture(
     Ogre::HardwarePixelBufferSharedPtr pixel_buffer,
-    Ogre::Camera * camera,
     RenderTexture texture) const;
 
-  Ogre::Viewport * setupViewport(
+  Ogre::Viewport * setupRenderViewport(
     Ogre::RenderTexture * render_texture,
+    Ogre::Viewport * viewport,
     const SelectionRectangle & rectangle,
     Dimensions texture_dimensions);
 
@@ -162,7 +157,7 @@ private:
     const SelectionRectangle & rectangle,
     const Dimensions & texture_dim) const;
 
-  void renderToTexture(Ogre::RenderTexture * render_texture);
+  void renderToTexture(Ogre::RenderTexture * render_texture, Ogre::Viewport * window_viewport);
 
   void blitToMemory(
     Ogre::HardwarePixelBufferSharedPtr & pixel_buffer,
@@ -171,6 +166,9 @@ private:
 
   rviz_common::DisplayContext * context_;
 
+  Ogre::Camera * camera_;
+  Ogre::SceneManager * scene_manager_;
+
   Ogre::MaterialPtr fallback_pick_material_;
   Ogre::Technique * fallback_pick_technique_;
   Ogre::Technique * fallback_black_technique_;
@@ -178,8 +176,6 @@ private:
   Ogre::Technique * fallback_pick_cull_technique_;
   Ogre::Technique * fallback_black_cull_technique_;
   Ogre::Technique * fallback_depth_cull_technique_;
-
-  bool debug_mode_;
 };
 
 }  // namespace interaction

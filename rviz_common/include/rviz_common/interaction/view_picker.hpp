@@ -63,6 +63,13 @@ class Rectangle2D;
 
 }  // namespace Ogre
 
+namespace rviz_rendering
+{
+
+class RenderWindow;
+
+}  // namespace rviz_rendering
+
 namespace rviz_common
 {
 
@@ -89,28 +96,18 @@ public:
   void
   initialize() override;
 
-  /// Enables or disables publishing of picking and depth rendering images.
-  void
-  setDebugMode(bool debug) override;
-
   /// Return true if the point at x, y in the viewport is showing an object, false otherwise.
   /**
    * If it is showing an object, result will be changed to contain the 3D point
    * corresponding to it.
    */
   bool get3DPoint(
-    Ogre::Viewport * viewport,
+    RenderPanel * panel,
     int x,
     int y,
     Ogre::Vector3 & result_point) override;
 
 private:
-  /// Internal render function to render to a texture and read the pixels back out.
-  bool render(
-    const SelectionRectangle & selection_rectangle,
-    const RenderTexture & render_texture,
-    Ogre::PixelBox & dst_box);
-
   void setDepthTextureSize(unsigned width, unsigned height);
 
   /// Gets the 3D points in a box around a point in a view port.
@@ -129,7 +126,7 @@ private:
    *   width and height are > 0.
    */
   bool get3DPatch(
-    Ogre::Viewport * viewport,
+    RenderPanel * panel,
     int x,
     int y,
     unsigned width,
@@ -139,7 +136,7 @@ private:
 
   /// Renders a depth image in a box around a point in a view port.
   /**
-   * \param[in] viewport Rendering area clicked on.
+   * \param[in] panel Rendering area clicked on.
    * \param[in] x x coordinate of upper-left corner of box.
    * \param[in] y y coordinate of upper-left corner of box.
    * \param[in] width The width of the rendered box in pixels.
@@ -150,13 +147,20 @@ private:
    *   texture buffer succeeds.
    *   Failure likely indicates a pretty serious problem.
    */
-  bool getPatchDepthImage(
-    Ogre::Viewport * viewport,
+  void getPatchDepthImage(
+    RenderPanel * panel,
     int x,
     int y,
     unsigned width,
     unsigned height,
     std::vector<float> & depth_vector);
+
+  /// Internal render function to render to a texture and read the pixels back out.
+  void render(
+    rviz_rendering::RenderWindow * window,
+    const SelectionRectangle & selection_rectangle,
+    const RenderTexture & render_texture,
+    Ogre::PixelBox & dst_box);
 
   DisplayContext * context_;
   HandlerManagerIface * handler_manager_;

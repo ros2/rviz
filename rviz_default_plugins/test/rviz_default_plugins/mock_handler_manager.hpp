@@ -51,6 +51,8 @@ public:
   MOCK_METHOD2(addHandler, void(rviz_common::interaction::CollObjectHandle,
     rviz_common::interaction::SelectionHandlerWeakPtr));
   MOCK_METHOD1(removeHandler, void(rviz_common::interaction::CollObjectHandle));
+  MOCK_METHOD1(addListener, void(rviz_common::interaction::HandlerManagerListener *));
+  MOCK_METHOD1(removeListener, void(rviz_common::interaction::HandlerManagerListener *));
   MOCK_METHOD1(getHandler,
     rviz_common::interaction::SelectionHandlerPtr(rviz_common::interaction::CollObjectHandle));
 

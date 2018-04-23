@@ -35,6 +35,7 @@
 #include "handler_manager_iface.hpp"
 
 #include <mutex>
+#include <vector>
 
 #include "rviz_common/interaction/handler_manager_listener.hpp"
 #include "rviz_common/visibility_control.hpp"
@@ -66,9 +67,9 @@ public:
 
   std::unique_lock<std::recursive_mutex> lock() override;
 
-  virtual void addListener(HandlerManagerListener * listener);
+  void addListener(HandlerManagerListener * listener);
 
-  virtual void removeListener(HandlerManagerListener * listener);
+  void removeListener(HandlerManagerListener * listener);
 
   /// Create a new unique handle.
   CollObjectHandle createHandle() override;

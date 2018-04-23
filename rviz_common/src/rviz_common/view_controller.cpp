@@ -227,12 +227,10 @@ void ViewController::save(Config config) const
 
 void ViewController::handleKeyEvent(QKeyEvent * event, RenderPanel * panel)
 {
-  Ogre::Viewport * viewport =
-    rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(panel->getRenderWindow());
-  if (event->key() == Qt::Key_F && viewport && context_->getViewPicker()) {
+  if (event->key() == Qt::Key_F && context_->getViewPicker()) {
     QPoint mouse_rel_panel = panel->mapFromGlobal(QCursor::pos());
     Ogre::Vector3 point_rel_world;  // output of get3DPoint().
-    if (context_->getViewPicker()->get3DPoint(viewport,
+    if (context_->getViewPicker()->get3DPoint(panel,
       mouse_rel_panel.x(), mouse_rel_panel.y(),
       point_rel_world))
     {

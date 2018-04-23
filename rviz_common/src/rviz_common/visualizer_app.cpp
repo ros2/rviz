@@ -169,13 +169,11 @@ bool VisualizerApp::init(int argc, char ** argv)
   //   "Force OpenGL version (use '--opengl 210' for OpenGL 2.1 compatibility mode)")
   //   ("disable-anti-aliasing", "Prevent rviz from trying to use anti-aliasing when rendering.")
   //   ("no-stereo", "Disable the use of stereo rendering.")
-  //   ("verbose,v", "Enable debug visualizations")
   //   ("log-level-debug", "Sets the ROS logger level to debug.");
   // po::variables_map vm;
   // std::string display_config, fixed_frame, splash_path, help_path;
   // bool enable_ogre_log = false;
   // bool in_mc_wrapper = false;
-  // bool verbose = false;
   // int force_gl_version = 0;
   // bool disable_anti_aliasing = false;
   // bool disable_stereo = false;
@@ -240,10 +238,6 @@ bool VisualizerApp::init(int argc, char ** argv)
   //     disable_anti_aliasing = true;
   //   }
   //
-  //   if (vm.count("verbose")) {
-  //     verbose = true;
-  //   }
-  //
   //   if (vm.count("log-level-debug")) {
   //     if (
   //       ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug))
@@ -303,9 +297,6 @@ bool VisualizerApp::init(int argc, char ** argv)
   // if (!fixed_frame.empty() ) {
   //   frame_->getManager()->setFixedFrame(QString::fromStdString(fixed_frame));
   // }
-
-  // frame_->getManager()->getSelectionManager()->setDebugMode(verbose);
-  frame_->getManager()->getSelectionManager()->setDebugMode(false);
 
   frame_->show();
 

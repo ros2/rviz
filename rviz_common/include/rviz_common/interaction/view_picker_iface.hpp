@@ -42,6 +42,8 @@ class Vector3;
 
 namespace rviz_common
 {
+class RenderPanel;
+
 namespace interaction
 {
 
@@ -52,15 +54,13 @@ public:
 
   virtual void initialize() = 0;
 
-  virtual void setDebugMode(bool debug) = 0;
-
   /// Return true if the point at x, y in the viewport is showing an object, false otherwise.
   /**
    * If it is showing an object, result will be changed to contain the 3D point
    * corresponding to it.
    */
   virtual bool get3DPoint(
-    Ogre::Viewport * viewport,
+    RenderPanel * panel,
     int x,
     int y,
     Ogre::Vector3 & result_point) = 0;

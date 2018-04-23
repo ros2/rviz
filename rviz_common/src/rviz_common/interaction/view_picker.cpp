@@ -58,6 +58,7 @@
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/interaction/handler_manager_iface.hpp"
 #include "rviz_common/interaction/selection_renderer.hpp"
+#include "rviz_common/render_panel.hpp"
 
 
 namespace rviz_common
@@ -82,42 +83,37 @@ ViewPicker::~ViewPicker()
   delete[] reinterpret_cast<uint8_t *>(depth_pixel_box_.data);
 }
 
-void ViewPicker::setDebugMode(bool debug)
-{
-  renderer_->setDebugMode(debug);
-}
-
 void ViewPicker::initialize()
 {
-  renderer_->initialize();
-  // Create our render textures
-  Ogre::SceneManager * scene_manager = context_->getSceneManager();
+  auto scene_manager = context_->getSceneManager();
 
   // create picking camera
   camera_ = scene_manager->createCamera("ViewPicker_camera");
+
+  renderer_->initialize(camera_, scene_manager);
 
   handler_manager_ = context_->getHandlerManager();
 }
 
 bool ViewPicker::get3DPoint(
-  Ogre::Viewport * viewport,
+  RenderPanel * panel,
   int x,
   int y,
   Ogre::Vector3 & result_point)
 {
   std::vector<Ogre::Vector3> result_points_temp;
-  bool success = get3DPatch(viewport, x, y, 1, 1, true, result_points_temp);
+  get3DPatch(panel, x, y, 1, 1, true, result_points_temp);
   if (result_points_temp.empty()) {
     // return result_point unmodified if get point fails.
     return false;
   }
   result_point = result_points_temp[0];
 
-  return success;
+  return true;
 }
 
-bool ViewPicker::getPatchDepthImage(
-  Ogre::Viewport * viewport, int x, int y, unsigned width,
+void ViewPicker::getPatchDepthImage(
+  RenderPanel * panel, int x, int y, unsigned width,
   unsigned height, std::vector<float> & depth_vector)
 {
   unsigned int num_pixels = width * height;
@@ -129,38 +125,33 @@ bool ViewPicker::getPatchDepthImage(
     handler.second.lock()->preRenderPass(0);
   }
 
-  if (render(
-      SelectionRectangle(viewport, x, y, x + width, y + height),
-      RenderTexture(
-        depth_render_texture_, Dimensions(depth_texture_width_, depth_texture_height_), "Depth"),
-      depth_pixel_box_))
-  {
-    auto data_ptr = reinterpret_cast<uint8_t *>(depth_pixel_box_.data);
+  render(
+    panel->getRenderWindow(),
+    SelectionRectangle(x, y, x + width, y + height),
+    RenderTexture(
+      depth_render_texture_, Dimensions(depth_texture_width_, depth_texture_height_), "Depth"),
+    depth_pixel_box_);
 
-    for (uint32_t pixel = 0; pixel < num_pixels; ++pixel) {
-      uint8_t a = data_ptr[4 * pixel];
-      uint8_t b = data_ptr[4 * pixel + 1];
-      uint8_t c = data_ptr[4 * pixel + 2];
+  auto data_ptr = reinterpret_cast<uint8_t *>(depth_pixel_box_.data);
 
-      int int_depth = (c << 16) | (b << 8) | a;
-      float normalized_depth = (static_cast<float>(int_depth)) / static_cast<float>(0xffffff);
-      depth_vector.push_back(normalized_depth * camera_->getFarClipDistance());
-    }
-  } else {
-    RVIZ_COMMON_LOG_WARNING("Failed to render depth patch\n");
-    return false;
+  for (uint32_t pixel = 0; pixel < num_pixels; ++pixel) {
+    uint8_t a = data_ptr[4 * pixel];
+    uint8_t b = data_ptr[4 * pixel + 1];
+    uint8_t c = data_ptr[4 * pixel + 2];
+
+    int int_depth = (c << 16) | (b << 8) | a;
+    float normalized_depth = (static_cast<float>(int_depth)) / static_cast<float>(0xffffff);
+    depth_vector.push_back(normalized_depth * camera_->getFarClipDistance());
   }
 
   for (auto handler : handler_manager_->handlers_) {
     handler.second.lock()->postRenderPass(0);
   }
-
-  return true;
 }
 
 
 bool ViewPicker::get3DPatch(
-  Ogre::Viewport * viewport,
+  RenderPanel * panel,
   int x,
   int y,
   unsigned int width,
@@ -172,9 +163,7 @@ bool ViewPicker::get3DPatch(
 
   std::vector<float> depth_vector;
 
-  if (!getPatchDepthImage(viewport, x, y, width, height, depth_vector)) {
-    return false;
-  }
+  getPatchDepthImage(panel, x, y, width, height, depth_vector);
 
   unsigned int pixel_counter = 0;
   Ogre::Matrix4 projection = camera_->getProjectionMatrix();
@@ -278,12 +267,13 @@ void ViewPicker::setDepthTextureSize(unsigned width, unsigned height)
   }
 }
 
-bool ViewPicker::render(
+void ViewPicker::render(
+  rviz_rendering::RenderWindow * window,
   const SelectionRectangle & selection_rectangle,
   const RenderTexture & render_texture,
   Ogre::PixelBox & dst_box)
 {
-  return renderer_->render(camera_, selection_rectangle, render_texture, dst_box);
+  return renderer_->render(window, selection_rectangle, render_texture, dst_box);
 }
 
 }  // namespace interaction

@@ -106,10 +106,6 @@ public:
   void
   initialize() override;
 
-  /// Enables or disables publishing of picking and depth rendering images.
-  void
-  setDebugMode(bool debug) override;
-
   /// Control the highlight box being displayed while selecting.
   void
   highlight(rviz_rendering::RenderWindow * window, int x1, int y1, int x2, int y2) override;
@@ -203,10 +199,14 @@ private:
 
   /// Render to a texture for one of the picking passes and unpack the resulting pixels into
   // pixel_buffer_.
-  void renderAndUnpack(const SelectionRectangle & selection_rectangle, uint32_t pass);
+  void renderAndUnpack(
+    rviz_rendering::RenderWindow * window,
+    const SelectionRectangle & selection_rectangle,
+    uint32_t pass);
 
   /// Internal render function to render to a texture and read the pixels back out.
-  bool render(
+  void render(
+    rviz_rendering::RenderWindow * window,
     const SelectionRectangle & selection_rectangle,
     const RenderTexture & render_texture,
     Ogre::PixelBox & dst_box);

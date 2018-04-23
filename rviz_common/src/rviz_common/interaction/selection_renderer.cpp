@@ -80,11 +80,15 @@ namespace interaction
 {
 SelectionRenderer::SelectionRenderer(rviz_common::DisplayContext * context)
 : context_(context),
-  debug_mode_(false)
+  camera_(nullptr),
+  scene_manager_(nullptr)
 {}
 
-void SelectionRenderer::initialize()
+void SelectionRenderer::initialize(Ogre::Camera * camera, Ogre::SceneManager * scene_manager)
 {
+  camera_ = camera;
+  scene_manager_ = scene_manager;
+
   fallback_pick_material_ = Ogre::MaterialManager::getSingleton().getByName(
     "rviz/DefaultPickAndDepth");
   // TODO(wjwwood): see why this fails to load
@@ -103,55 +107,47 @@ void SelectionRenderer::initialize()
   }
 }
 
-// TODO(Martin-Idel-SI): It seems that rendering cannot return false (I deleted the only "false"
-// path because it was irrelevant). In that case, I'd much rather not have an output parameter.
-bool SelectionRenderer::render(
-  Ogre::Camera * camera,
+void SelectionRenderer::render(
+  rviz_rendering::RenderWindow * window,
   SelectionRectangle rectangle,
   RenderTexture texture,
   Ogre::PixelBox & dst_box)
 {
   context_->lockRender();
 
-  sanitizeRectangle(rectangle);
+  auto window_viewport = rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(window);
 
-  configureCamera(camera, rectangle);
+  sanitizeRectangle(window_viewport, rectangle);
 
-  Ogre::HardwarePixelBufferSharedPtr pixel_buffer = texture.tex_->getBuffer();
-  auto render_texture = setupRenderTexture(pixel_buffer, camera, texture);
-  auto render_viewport = setupViewport(render_texture, rectangle, texture.dimensions_);
+  configureCamera(window_viewport, rectangle);
 
-  renderToTexture(render_texture);
+  Ogre::HardwarePixelBufferSharedPtr pixel_buffer = texture.tex->getBuffer();
+  auto render_texture = setupRenderTexture(pixel_buffer, texture);
+  auto render_viewport =
+    setupRenderViewport(render_texture, window_viewport, rectangle, texture.dimensions);
+
+  renderToTexture(render_texture, window_viewport);
 
   blitToMemory(pixel_buffer, render_viewport, dst_box);
 
   context_->unlockRender();
-
-  if (debug_mode_) {
-    Ogre::Image image;
-    image.loadDynamicImage(static_cast<uint8_t *>(dst_box.data),
-      dst_box.getWidth(), dst_box.getHeight(), 1, pixel_buffer->getFormat());
-    image.save("select" + texture.material_scheme_ + ".png");
-  }
-
-  return true;
 }
 
 
-void SelectionRenderer::sanitizeRectangle(SelectionRectangle & rectangle) const
+void SelectionRenderer::sanitizeRectangle(Ogre::Viewport * viewport, SelectionRectangle & rectangle)
 {
-  int & x1 = rectangle.x1_;
-  int & x2 = rectangle.x2_;
-  int & y1 = rectangle.y1_;
-  int & y2 = rectangle.y2_;
+  int & x1 = rectangle.x1;
+  int & x2 = rectangle.x2;
+  int & y1 = rectangle.y1;
+  int & y2 = rectangle.y2;
 
   if (x1 > x2) {std::swap(x1, x2);}
   if (y1 > y2) {std::swap(y1, y2);}
 
-  x1 = clamp(x1, 0, rectangle.viewport_->getActualWidth() - 2);
-  x2 = clamp(x2, 0, rectangle.viewport_->getActualWidth() - 2);
-  y1 = clamp(y1, 0, rectangle.viewport_->getActualHeight() - 2);
-  y2 = clamp(y2, 0, rectangle.viewport_->getActualHeight() - 2);
+  x1 = clamp(x1, 0, viewport->getActualWidth() - 2);
+  x2 = clamp(x2, 0, viewport->getActualWidth() - 2);
+  y1 = clamp(y1, 0, viewport->getActualHeight() - 2);
+  y2 = clamp(y2, 0, viewport->getActualHeight() - 2);
 
   if (x2 == x1) {x2++;}
   if (y2 == y1) {y2++;}
@@ -165,17 +161,16 @@ T SelectionRenderer::clamp(T value, T min, T max) const
 }
 
 void SelectionRenderer::configureCamera(
-  Ogre::Camera * camera, const SelectionRectangle & rectangle) const
+  Ogre::Viewport * viewport, const SelectionRectangle & rectangle) const
 {
-  Ogre::Viewport * viewport = rectangle.viewport_;
   Ogre::Matrix4 proj_matrix = viewport->getCamera()->getProjectionMatrix();
   Ogre::Matrix4 scale_matrix = Ogre::Matrix4::IDENTITY;
   Ogre::Matrix4 trans_matrix = Ogre::Matrix4::IDENTITY;
 
-  float x1_rel = getRelativeCoordinate(rectangle.x1_, viewport->getActualWidth());
-  float y1_rel = getRelativeCoordinate(rectangle.y1_, viewport->getActualHeight());
-  float x2_rel = getRelativeCoordinate(rectangle.x2_, viewport->getActualWidth());
-  float y2_rel = getRelativeCoordinate(rectangle.y2_, viewport->getActualHeight());
+  float x1_rel = getRelativeCoordinate(rectangle.x1, viewport->getActualWidth());
+  float y1_rel = getRelativeCoordinate(rectangle.y1, viewport->getActualHeight());
+  float x2_rel = getRelativeCoordinate(rectangle.x2, viewport->getActualWidth());
+  float y2_rel = getRelativeCoordinate(rectangle.y2, viewport->getActualHeight());
 
   scale_matrix[0][0] = 1.f / (x2_rel - x1_rel);
   scale_matrix[1][1] = 1.f / (y2_rel - y1_rel);
@@ -183,10 +178,10 @@ void SelectionRenderer::configureCamera(
   trans_matrix[0][3] -= x1_rel + x2_rel;
   trans_matrix[1][3] += y1_rel + y2_rel;
 
-  camera->setCustomProjectionMatrix(true, scale_matrix * trans_matrix * proj_matrix);
+  camera_->setCustomProjectionMatrix(true, scale_matrix * trans_matrix * proj_matrix);
 
-  camera->setPosition(viewport->getCamera()->getDerivedPosition());
-  camera->setOrientation(viewport->getCamera()->getDerivedOrientation());
+  camera_->setPosition(viewport->getCamera()->getDerivedPosition());
+  camera_->setOrientation(viewport->getCamera()->getDerivedOrientation());
 }
 
 float SelectionRenderer::getRelativeCoordinate(float coordinate, int dimension) const
@@ -196,7 +191,6 @@ float SelectionRenderer::getRelativeCoordinate(float coordinate, int dimension) 
 
 Ogre::RenderTexture * SelectionRenderer::setupRenderTexture(
   Ogre::HardwarePixelBufferSharedPtr pixel_buffer,
-  Ogre::Camera * camera,
   RenderTexture texture) const
 {
   Ogre::RenderTexture * render_texture = pixel_buffer->getRenderTarget();
@@ -204,18 +198,19 @@ Ogre::RenderTexture * SelectionRenderer::setupRenderTexture(
   // create a viewport if there is none
   if (render_texture->getNumViewports() == 0) {
     render_texture->removeAllViewports();
-    render_texture->addViewport(camera);
+    render_texture->addViewport(camera_);
     Ogre::Viewport * render_viewport = render_texture->getViewport(0);
     render_viewport->setClearEveryFrame(true);
     render_viewport->setBackgroundColour(Ogre::ColourValue::Black);
     render_viewport->setOverlaysEnabled(false);
-    render_viewport->setMaterialScheme(texture.material_scheme_);
+    render_viewport->setMaterialScheme(texture.material_scheme);
   }
   return render_texture;
 }
 
-Ogre::Viewport * SelectionRenderer::setupViewport(
+Ogre::Viewport * SelectionRenderer::setupRenderViewport(
   Ogre::RenderTexture * render_texture,
+  Ogre::Viewport * viewport,
   const SelectionRectangle & rectangle,
   Dimensions texture_dimensions)
 {
@@ -231,7 +226,7 @@ Ogre::Viewport * SelectionRenderer::setupViewport(
   );
 
   // make sure the same objects are visible as in the original viewport
-  render_viewport->setVisibilityMask(rectangle.viewport_->getVisibilityMask());
+  render_viewport->setVisibilityMask(viewport->getVisibilityMask());
   return render_viewport;
 }
 
@@ -240,8 +235,8 @@ Dimensions SelectionRenderer::getRenderDimensions(
   const Dimensions & texture_dim) const
 {
   Dimensions selection(
-    rectangle.x2_ - rectangle.x1_,
-    rectangle.y2_ - rectangle.y1_
+    rectangle.x2 - rectangle.x1,
+    rectangle.y2 - rectangle.y1
   );
 
   Dimensions render_dimensions = selection;
@@ -264,7 +259,8 @@ Dimensions SelectionRenderer::getRenderDimensions(
   return render_dimensions;
 }
 
-void SelectionRenderer::renderToTexture(Ogre::RenderTexture * render_texture)
+void SelectionRenderer::renderToTexture(
+  Ogre::RenderTexture * render_texture, Ogre::Viewport * window_viewport)
 {
   // update & force ogre to render the scene
   Ogre::MaterialManager::getSingleton().addListener(this);
@@ -279,11 +275,9 @@ void SelectionRenderer::renderToTexture(Ogre::RenderTexture * render_texture)
   // render step, so nothing actually gets drawn.
   //
   // TODO(unknown): find out what part of _renderScene() actually makes this work.
-  Ogre::Viewport * main_view = rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(
-    context_->getRenderPanel()->getRenderWindow());
-  context_->getSceneManager()->addRenderQueueListener(this);
-  context_->getSceneManager()->_renderScene(main_view->getCamera(), main_view, false);
-  context_->getSceneManager()->removeRenderQueueListener(this);
+  scene_manager_->addRenderQueueListener(this);
+  scene_manager_->_renderScene(window_viewport->getCamera(), window_viewport, false);
+  scene_manager_->removeRenderQueueListener(this);
 
   Ogre::MaterialManager::getSingleton().removeListener(this);
 }
@@ -368,11 +362,6 @@ Ogre::Technique * SelectionRenderer::handleSchemeNotFound(
       return nullptr;
     }
   }
-}
-
-void SelectionRenderer::setDebugMode(bool debug)
-{
-  debug_mode_ = debug;
 }
 
 }  // namespace interaction

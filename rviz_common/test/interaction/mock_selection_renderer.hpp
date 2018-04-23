@@ -77,30 +77,29 @@ public:
   explicit MockSelectionRenderer(rviz_common::DisplayContext * context)
   : SelectionRenderer(context) {}
 
-  bool render(
-    Ogre::Camera * camera,
+  void render(
+    rviz_rendering::RenderWindow * window,
     rviz_common::interaction::SelectionRectangle rectangle,
     rviz_common::interaction::RenderTexture texture,
     Ogre::PixelBox & dst_box) override
   {
-    (void) camera;
+    (void) window;
     (void) texture;
 
-    auto width = static_cast<uint32_t>(rectangle.x2_ - rectangle.x1_);
-    auto height = static_cast<uint32_t>(rectangle.y2_ - rectangle.y1_);
+    auto width = static_cast<uint32_t>(rectangle.x2 - rectangle.x1);
+    auto height = static_cast<uint32_t>(rectangle.y2 - rectangle.y1);
 
     auto data = new uint8_t[Ogre::PixelUtil::getMemorySize(width, height, 1, Ogre::PF_A8R8G8B8)]();
     dst_box = Ogre::PixelBox(width, height, 1, Ogre::PF_A8R8G8B8, data);
 
     auto dstptr = static_cast<uint32_t *>(dst_box.data);
     for (auto & object : objects_) {
-      int x = object.x - rectangle.x1_;
-      int y = object.y - rectangle.y1_;
-      if (x < rectangle.x2_ && y < rectangle.y2_) {
+      int x = object.x - rectangle.x1;
+      int y = object.y - rectangle.y1;
+      if (x < rectangle.x2 && y < rectangle.y2) {
         dstptr[y * dst_box.rowPitch + x] = object.getARGBColor();
       }
     }
-    return true;
   }
 
   void addVisibleObject(VisibleObject object)

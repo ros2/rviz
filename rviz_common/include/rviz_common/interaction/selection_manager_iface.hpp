@@ -79,10 +79,6 @@ public:
   virtual void
   initialize() = 0;
 
-  /// Enables or disables publishing of picking and depth rendering images.
-  virtual void
-  setDebugMode(bool debug) = 0;
-
   /// Control the highlight box being displayed while selecting.
   virtual void
   highlight(rviz_rendering::RenderWindow * window, int x1, int y1, int x2, int y2) = 0;

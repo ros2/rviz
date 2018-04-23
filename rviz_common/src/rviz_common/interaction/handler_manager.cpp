@@ -33,7 +33,6 @@
 
 #include <mutex>
 #include <utility>
-#include <iostream>
 
 #include "rviz_common/display_context.hpp"
 
