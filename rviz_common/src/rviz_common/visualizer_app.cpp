@@ -43,9 +43,10 @@
 #include <QCommandLineOption>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "rviz_common/logging.hpp"
-
 #include "rviz_common/interaction/selection_manager.hpp"
+#include "rviz_common/logging.hpp"
+#include "rviz_rendering/ogre_logging.hpp"
+
 #include "./visualization_frame.hpp"
 #include "./visualization_manager.hpp"
 
@@ -175,6 +176,11 @@ bool VisualizerApp::init(int argc, char ** argv)
     QStringList() << "v" << "verbose", "Enable debug visualizations");
   parser.addOption(verbose_option);
 
+  QCommandLineOption ogre_log_option(
+    QStringList() << "l" << "ogre-log",
+    "Enable the Ogre.log file (output in cwd) and console output.");
+  parser.addOption(ogre_log_option);
+
   // TODO(botteroa-si): enable when possible
 //  QCommandLineOption splash_screen_option(
 //    QStringList() << "s" << "splash-screen",
@@ -185,11 +191,6 @@ bool VisualizerApp::init(int argc, char ** argv)
 //  QCommandLineOption help_file_option(
 //    "help-file", "A custom html file to show as the help screen", "help_path");
 //  parser.addOption(help_file_option);
-//
-//  QCommandLineOption ogre_log_option(
-//    QStringList() << "l" << "ogre-log",
-//    "Enable the Ogre.log file (output in cwd) and console output.");
-//  parser.addOption(ogre_log_option);
 //
 //  QCommandLineOption open_gl_option(
 //    "opengl",
@@ -211,9 +212,9 @@ bool VisualizerApp::init(int argc, char ** argv)
 //   ("in-mc-wrapper", "Signal that this is running inside a master-chooser wrapper")
 
   QString display_config, fixed_frame, splash_path, help_path;
-  bool verbose = false;
+  bool verbose;
+  bool enable_ogre_log;
   // TODO(botteroa-si): enable when possible
-//  bool enable_ogre_log = false;
 //  bool in_mc_wrapper = false;
 //  int force_gl_version = 0;
 //  bool disable_anti_aliasing = false;
@@ -221,7 +222,7 @@ bool VisualizerApp::init(int argc, char ** argv)
 
   try {
     parser.process(*app_);
-//    enable_ogre_log = parser.isSet(ogre_log_option);
+    enable_ogre_log = parser.isSet(ogre_log_option);
 //    disable_stereo = parser.isSet(no_stereo_option);
 //    disable_anti_aliasing = parser.isSet(disable_anti_aliasing_option);
     verbose = parser.isSet(verbose_option);
@@ -276,9 +277,9 @@ bool VisualizerApp::init(int argc, char ** argv)
   //
   // nh_.reset(new ros::NodeHandle);
   //
-  // if (enable_ogre_log) {
-  //   OgreLogging::useRosLog();
-  // }
+   if (enable_ogre_log) {
+     rviz_rendering::OgreLogging::useLogFileAndStandardOut();
+   }
   //
   // if (force_gl_version) {
   //   RenderSystem::forceGlVersion(force_gl_version);

@@ -58,10 +58,10 @@
 #include "ament_index_cpp/get_resource.hpp"
 #include "ament_index_cpp/get_resources.hpp"
 #include "rviz_rendering/logging.hpp"
+#include "rviz_rendering/ogre_logging.hpp"
 #include "rviz_rendering/resource_config.hpp"
 
 #include "string_helper.hpp"
-#include "ogre_logging.hpp"
 
 namespace rviz_rendering
 {
