@@ -33,6 +33,8 @@
 
 #include <string>
 
+#include "rviz_rendering/visibility_control.hpp"
+
 namespace rviz_rendering
 {
 
@@ -66,6 +68,7 @@ public:
    * is "Ogre.log".
    */
   static
+  RVIZ_RENDERING_PUBLIC
   void
   useLogFileAndStandardOut(const std::string & filename = "Ogre.log");
 

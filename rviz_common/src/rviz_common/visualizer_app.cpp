@@ -178,7 +178,7 @@ bool VisualizerApp::init(int argc, char ** argv)
 
   QCommandLineOption ogre_log_option(
     QStringList() << "l" << "ogre-log",
-    "Enable the Ogre.log file (output in cwd) and console output.");
+      "Enable the Ogre.log file (output in cwd) and console output.");
   parser.addOption(ogre_log_option);
 
   // TODO(botteroa-si): enable when possible
@@ -277,9 +277,9 @@ bool VisualizerApp::init(int argc, char ** argv)
   //
   // nh_.reset(new ros::NodeHandle);
   //
-   if (enable_ogre_log) {
-     rviz_rendering::OgreLogging::useLogFileAndStandardOut();
-   }
+  if (enable_ogre_log) {
+    rviz_rendering::OgreLogging::useLogFileAndStandardOut();
+  }
   //
   // if (force_gl_version) {
   //   RenderSystem::forceGlVersion(force_gl_version);
