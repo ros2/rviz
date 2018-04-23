@@ -45,6 +45,15 @@
 
 #include "selection_test_fixture.hpp"
 
+MATCHER_P(ContainsWireBoxWithBoundingBox, AABB, "") {
+  for (const auto & box : arg) {
+    if (box->getBoundingBox() == AABB) {
+      return true;
+    }
+  }
+  return false;
+}
+
 class SelectionHandlerFixture : public SelectionTestFixture
 {
 public:
@@ -67,43 +76,41 @@ public:
     auto object = scene_manager_->createManualObject("ManualObject" + std::to_string(count++));
 
     object->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_LINE_STRIP);
-    object->position(-1.0f, -1.0f, 0.0f);
-    object->position(1.0f, -1.0f, 0.0f);
-    object->position(1.0f, 1.0f, 0.0f);
-    object->position(-1.0f, 1.0f, 0.0f);
-    object->position(-1.0f, -1.0f, 0.0f);
+    object->position(-2.0f, -2.0f, 0.0f);
+    object->position(2.0f, -2.0f, 0.0f);
+    object->position(2.0f, 2.0f, 0.0f);
+    object->position(-2.0f, 2.0f, 0.0f);
+    object->position(-2.0f, -2.0f, 0.0f);
     object->end();
 
     return object;
   }
 
-  void findObjectsAttachedByType(
-    Ogre::SceneNode * scene_node,
-    const Ogre::String & object_type,
-    int & found_objects)
+  void findSimpleRenderablesAttached(
+    Ogre::SceneNode * scene_node, std::vector<Ogre::MovableObject *> & objects)
   {
     auto it = scene_node->getAttachedObjectIterator();
     while (it.hasMoreElements()) {
       auto movable_object = it.getNext();
-      if (movable_object->getMovableType() == object_type) {
-        found_objects++;
+      if (movable_object->getMovableType() == "SimpleRenderable") {
+        objects.push_back(movable_object);
       }
     }
   }
 
-  int foundObjectsByType(Ogre::SceneNode * scene_node, const Ogre::String & object_name)
+  std::vector<Ogre::MovableObject *> findAllSimpleRenderables(Ogre::SceneNode * scene_node)
   {
-    int found_objects = 0;
-    findObjectsAttachedByType(scene_node, object_name, found_objects);
+    std::vector<Ogre::MovableObject *> objects;
+    findSimpleRenderablesAttached(scene_node, objects);
 
     auto child_it = scene_node->getChildIterator();
     while (child_it.hasMoreElements()) {
       auto child_node = child_it.getNext();
       auto child_scene_node = dynamic_cast<Ogre::SceneNode *>(child_node);
-      findObjectsAttachedByType(child_scene_node, object_name, found_objects);
+      findSimpleRenderablesAttached(child_scene_node, objects);
     }
 
-    return found_objects;
+    return objects;
   }
 
   std::shared_ptr<rviz_common::interaction::SelectionHandler> handler_;
@@ -120,7 +127,7 @@ TEST_F(SelectionHandlerFixture, addTrackedObject_adds_object_correctly) {
   EXPECT_THAT(aabbs, SizeIs(1));
 }
 
-TEST_F(SelectionHandlerFixture, createBox_creates_and_attaches_wiredbox_correctly) {
+TEST_F(SelectionHandlerFixture, onSelect_draws_wirebox_around_selected_object) {
   auto manual_object = createManualObject();
   scene_manager_->getRootSceneNode()->createChildSceneNode()->attachObject(manual_object);
 
@@ -131,10 +138,14 @@ TEST_F(SelectionHandlerFixture, createBox_creates_and_attaches_wiredbox_correctl
   Ogre::MaterialManager::getSingletonPtr()->load("RVIZ/Cyan", "rviz_rendering");
 
   handler_->onSelect(object);
-  EXPECT_THAT(foundObjectsByType(scene_manager_->getRootSceneNode(), "SimpleRenderable"), Eq(2));
+
+  auto found_objects = findAllSimpleRenderables(scene_manager_->getRootSceneNode());
+  EXPECT_THAT(
+    found_objects,
+    ContainsWireBoxWithBoundingBox(Ogre::AxisAlignedBox(-2.0f, -2.0f, 0.0f, 2.0f, 2.0f, 0.0f)));
 }
 
-TEST_F(SelectionHandlerFixture, destroyBox_destroys_wiredbox_correctly) {
+TEST_F(SelectionHandlerFixture, onDeselect_removes_wirebox_around_object) {
   auto manual_object = createManualObject();
   scene_manager_->getRootSceneNode()->createChildSceneNode()->attachObject(manual_object);
 
@@ -146,5 +157,10 @@ TEST_F(SelectionHandlerFixture, destroyBox_destroys_wiredbox_correctly) {
 
   handler_->onSelect(object);
   handler_->onDeselect(object);
-  EXPECT_THAT(foundObjectsByType(scene_manager_->getRootSceneNode(), "SimpleRenderable"), Eq(1));
+
+  auto found_objects = findAllSimpleRenderables(scene_manager_->getRootSceneNode());
+  EXPECT_THAT(
+    found_objects,
+    Not(
+      ContainsWireBoxWithBoundingBox(Ogre::AxisAlignedBox(-2.0f, -2.0f, 0.0f, 2.0f, 2.0f, 0.0f))));
 }
