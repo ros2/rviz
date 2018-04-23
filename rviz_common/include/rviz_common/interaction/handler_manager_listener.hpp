@@ -1,6 +1,4 @@
 /*
- * Copyright (c) 2008, Willow Garage, Inc.
- * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
@@ -29,58 +27,28 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__INTERACTION__HANDLER_MANAGER_IFACE_HPP_
-#define RVIZ_COMMON__INTERACTION__HANDLER_MANAGER_IFACE_HPP_
+#ifndef RVIZ_COMMON__INTERACTION__HANDLER_MANAGER_LISTENER_HPP_
+#define RVIZ_COMMON__INTERACTION__HANDLER_MANAGER_LISTENER_HPP_
 
-#include <mutex>
-#include <unordered_map>
-
-#include "rviz_common/interaction/handler_manager_listener.hpp"
 #include "rviz_common/visibility_control.hpp"
 
-#include "./selection_handler.hpp"
-
+#include "./forwards.hpp"
 
 namespace rviz_common
 {
 
-class DisplayContext;
-
 namespace interaction
 {
 
-using M_ObjectHandleToSelectionHandler =
-  std::unordered_map<CollObjectHandle, SelectionHandlerWeakPtr>;
-
-class RVIZ_COMMON_PUBLIC HandlerManagerIface
+class RVIZ_COMMON_PUBLIC HandlerManagerListener
 {
 public:
-  virtual ~HandlerManagerIface() = default;
+  virtual ~HandlerManagerListener() = default;
 
-  virtual void addHandler(CollObjectHandle handle, SelectionHandlerWeakPtr handler) = 0;
-
-  virtual void removeHandler(CollObjectHandle handle) = 0;
-
-  virtual SelectionHandlerPtr getHandler(CollObjectHandle handle) = 0;
-
-  virtual std::unique_lock<std::recursive_mutex> lock() = 0;
-
-  virtual void addListener(HandlerManagerListener * listener) = 0;
-
-  virtual void removeListener(HandlerManagerListener * listener) = 0;
-
-  /// Create a new unique handle.
-  virtual CollObjectHandle createHandle() = 0;
-
-  /// Tell all handlers that interactive mode is active/inactive.
-  virtual void enableInteraction(bool enable) = 0;
-
-  virtual bool getInteractionEnabled() const = 0;
-
-  M_ObjectHandleToSelectionHandler handlers_;
+  virtual void onHandlerRemoved(CollObjectHandle handle) = 0;
 };
 
 }  // namespace interaction
 }  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__INTERACTION__HANDLER_MANAGER_IFACE_HPP_
+#endif  // RVIZ_COMMON__INTERACTION__HANDLER_MANAGER_LISTENER_HPP_

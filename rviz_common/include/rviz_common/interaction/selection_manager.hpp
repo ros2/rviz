@@ -59,10 +59,12 @@
 
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
 
+#include "rviz_common/interaction/handler_manager_iface.hpp"
+#include "rviz_common/interaction/handler_manager_listener.hpp"
+#include "rviz_common/visibility_control.hpp"
+
 #include "./forwards.hpp"
 #include "./selection_handler.hpp"
-#include "rviz_common/visibility_control.hpp"
-#include "handler_manager_iface.hpp"
 
 namespace Ogre
 {
@@ -90,7 +92,7 @@ struct SelectionRectangle;
 struct RenderTexture;
 
 class RVIZ_COMMON_PUBLIC SelectionManager
-  : public SelectionManagerIface
+  : public SelectionManagerIface, public HandlerManagerListener
 {
   Q_OBJECT
 
@@ -159,6 +161,8 @@ public:
   void setTextureSize(unsigned size) override;
 
   rviz_common::properties::PropertyTreeModel * getPropertyModel() override;
+
+  void onHandlerRemoved(CollObjectHandle handle) override;
 
 private Q_SLOTS:
   /// Call updateProperties() on all SelectionHandlers in the current selection.

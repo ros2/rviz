@@ -36,10 +36,11 @@
 
 #include <mutex>
 
-#include "./forwards.hpp"
-#include "./selection_handler.hpp"
+#include "rviz_common/interaction/handler_manager_listener.hpp"
 #include "rviz_common/visibility_control.hpp"
 
+#include "./forwards.hpp"
+#include "./selection_handler.hpp"
 
 namespace rviz_common
 {
@@ -65,6 +66,10 @@ public:
 
   std::unique_lock<std::recursive_mutex> lock() override;
 
+  virtual void addListener(HandlerManagerListener * listener);
+
+  virtual void removeListener(HandlerManagerListener * listener);
+
   /// Create a new unique handle.
   CollObjectHandle createHandle() override;
 
@@ -80,6 +85,8 @@ private:
 
   std::recursive_mutex handlers_mutex_;
   std::recursive_mutex uid_mutex_;
+
+  std::vector<HandlerManagerListener *> listeners_;
 };
 
 }  // namespace interaction

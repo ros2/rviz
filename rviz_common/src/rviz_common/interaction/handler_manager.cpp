@@ -33,6 +33,7 @@
 
 #include <mutex>
 #include <utility>
+#include <iostream>
 
 #include "rviz_common/display_context.hpp"
 
@@ -80,16 +81,21 @@ void HandlerManager::removeHandler(CollObjectHandle handle)
 
   std::lock_guard<std::recursive_mutex> lock(handlers_mutex_);
 
-  /* TODO(holznera)
-  auto it = selection_.find(handle);
-  if (it != selection_.end()) {
-    M_Picked objs;
-    objs.insert(std::make_pair(it->first, it->second));
-
-    removeSelection(objs);
-  } */
-
   handlers_.erase(handle);
+
+  for (const auto & listener : listeners_) {
+    listener->onHandlerRemoved(handle);
+  }
+}
+
+void HandlerManager::addListener(HandlerManagerListener * listener)
+{
+  listeners_.emplace_back(listener);
+}
+
+void HandlerManager::removeListener(HandlerManagerListener * listener)
+{
+  listeners_.erase(std::remove(listeners_.begin(), listeners_.end(), listener), listeners_.end());
 }
 
 SelectionHandlerPtr HandlerManager::getHandler(CollObjectHandle handle)

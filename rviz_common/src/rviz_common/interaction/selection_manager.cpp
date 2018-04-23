@@ -128,6 +128,8 @@ SelectionManager::~SelectionManager()
   }
 
   delete property_model_;
+
+  handler_manager_->removeListener(this);
 }
 
 void SelectionManager::setDebugMode(bool debug)
@@ -191,6 +193,7 @@ void SelectionManager::initialize()
   camera_ = scene_manager->createCamera(name + "_camera");
 
   handler_manager_ = context_->getHandlerManager();
+  handler_manager_->addListener(this);
 }
 
 void SelectionManager::setTextureSize(unsigned size)
@@ -704,6 +707,16 @@ void SelectionManager::pick(
     if (extra_by_pixel[i]) {
       picked.extra_handles.insert(extra_by_pixel[i]);
     }
+  }
+}
+
+void SelectionManager::onHandlerRemoved(CollObjectHandle handle)
+{
+  std::lock_guard<std::recursive_mutex> lock(selection_mutex_);
+
+  auto it = selection_.find(handle);
+  if (it != selection_.end()) {
+    selection_.erase(it);
   }
 }
 
