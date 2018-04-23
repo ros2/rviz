@@ -315,7 +315,12 @@ void SelectionManager::render(
   const RenderTexture & render_texture,
   Ogre::PixelBox & dst_box)
 {
-  renderer_->render(window, selection_rectangle, render_texture, dst_box);
+  auto handler_lock = handler_manager_->lock();
+  renderer_->render(
+    window, selection_rectangle,
+    render_texture,
+    handler_manager_->handlers_,
+    dst_box);
 }
 
 PropertyTreeModel * SelectionManager::getPropertyModel()
@@ -601,7 +606,6 @@ void SelectionManager::pick(
   // TODO(anhosi) use defered to lock at once with selection_mutex_
   auto handler_lock = handler_manager_->lock();
 
-
   bool need_additional_render = false;
 
   V_CollObject handles_by_pixel;
@@ -613,15 +617,7 @@ void SelectionManager::pick(
   // After that, individual handlers can specify that they need additional
   // renders (max # defined in kNumRenderTextures_).
   {
-    for (const auto & handler : handler_manager_->handlers_) {
-      handler.second.lock()->preRenderPass(0);
-    }
-
     renderAndUnpack(window, rectangle, 0);
-
-    for (const auto & handler : handler_manager_->handlers_) {
-      handler.second.lock()->postRenderPass(0);
-    }
 
     handles_by_pixel.reserve(pixel_buffer_.size());
     for (const auto & handle : pixel_buffer_) {

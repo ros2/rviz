@@ -59,6 +59,7 @@
 #endif
 
 #include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
+#include <include/rviz_common/interaction/handler_manager_iface.hpp>
 
 #include "rclcpp/publisher.hpp"
 #include "sensor_msgs/image_encodings.hpp"
@@ -111,9 +112,13 @@ void SelectionRenderer::render(
   rviz_rendering::RenderWindow * window,
   SelectionRectangle rectangle,
   RenderTexture texture,
+  M_ObjectHandleToSelectionHandler handlers,
   Ogre::PixelBox & dst_box)
 {
   context_->lockRender();
+  for (const auto & handler : handlers) {
+    handler.second.lock()->preRenderPass(0);
+  }
 
   auto window_viewport = rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(window);
 
@@ -131,6 +136,9 @@ void SelectionRenderer::render(
   blitToMemory(pixel_buffer, render_viewport, dst_box);
 
   context_->unlockRender();
+  for (const auto & handler : handlers) {
+    handler.second.lock()->postRenderPass(0);
+  }
 }
 
 

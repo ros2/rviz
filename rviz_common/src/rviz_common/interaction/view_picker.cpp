@@ -121,10 +121,6 @@ void ViewPicker::getPatchDepthImage(
 
   setDepthTextureSize(width, height);
 
-  for (auto handler : handler_manager_->handlers_) {
-    handler.second.lock()->preRenderPass(0);
-  }
-
   render(
     panel->getRenderWindow(),
     SelectionRectangle(x, y, x + width, y + height),
@@ -142,10 +138,6 @@ void ViewPicker::getPatchDepthImage(
     int int_depth = (c << 16) | (b << 8) | a;
     float normalized_depth = (static_cast<float>(int_depth)) / static_cast<float>(0xffffff);
     depth_vector.push_back(normalized_depth * camera_->getFarClipDistance());
-  }
-
-  for (auto handler : handler_manager_->handlers_) {
-    handler.second.lock()->postRenderPass(0);
   }
 }
 
@@ -273,7 +265,12 @@ void ViewPicker::render(
   const RenderTexture & render_texture,
   Ogre::PixelBox & dst_box)
 {
-  return renderer_->render(window, selection_rectangle, render_texture, dst_box);
+  auto handler_lock = handler_manager_->lock();
+  return renderer_->render(
+    window, selection_rectangle,
+    render_texture,
+    handler_manager_->handlers_,
+    dst_box);
 }
 
 }  // namespace interaction

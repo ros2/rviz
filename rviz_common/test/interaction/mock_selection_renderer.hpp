@@ -81,10 +81,12 @@ public:
     rviz_rendering::RenderWindow * window,
     rviz_common::interaction::SelectionRectangle rectangle,
     rviz_common::interaction::RenderTexture texture,
+    rviz_common::interaction::M_ObjectHandleToSelectionHandler handlers,
     Ogre::PixelBox & dst_box) override
   {
     (void) window;
     (void) texture;
+    (void) handlers;
 
     auto width = static_cast<uint32_t>(rectangle.x2 - rectangle.x1);
     auto height = static_cast<uint32_t>(rectangle.y2 - rectangle.y1);
