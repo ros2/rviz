@@ -69,9 +69,9 @@ public:
 
   std::unique_lock<std::recursive_mutex> lock(std::defer_lock_t defer_lock) override;
 
-  void addListener(HandlerManagerListener * listener);
+  void addListener(HandlerManagerListener * listener) override;
 
-  void removeListener(HandlerManagerListener * listener);
+  void removeListener(HandlerManagerListener * listener) override;
 
   CollObjectHandle createHandle() override;
 

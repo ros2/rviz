@@ -62,15 +62,14 @@
 #include "rviz_rendering/custom_parameter_indices.hpp"
 #include "rviz_rendering/render_window.hpp"
 
+#include "rviz_common/display_context.hpp"
 #include "rviz_common/logging.hpp"
-
-#include "rviz_common/properties/property.hpp"
-#include "rviz_common/properties/property_tree_model.hpp"
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/view_manager.hpp"
-#include "rviz_common/display_context.hpp"
 #include "rviz_common/interaction/handler_manager_iface.hpp"
 #include "rviz_common/interaction/selection_renderer.hpp"
+#include "rviz_common/properties/property.hpp"
+#include "rviz_common/properties/property_tree_model.hpp"
 
 
 namespace rviz_common
@@ -110,7 +109,7 @@ void SelectionManager::setUpSlots()
     pixel_box.data = nullptr;
   }
 
-  QTimer * timer = new QTimer(this);
+  auto timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), this, SLOT(updateProperties()));
   timer->start(200);
 }
@@ -139,7 +138,7 @@ void SelectionManager::initialize()
   setTextureSize(1);
 
   // Create our highlight rectangle
-  Ogre::SceneManager * scene_manager = context_->getSceneManager();
+  auto scene_manager = context_->getSceneManager();
   highlight_node_ = scene_manager->getRootSceneNode()->createChildSceneNode();
 
   std::string name("SelectionRect");
@@ -234,8 +233,8 @@ void SelectionManager::update()
   highlight_node_->setVisible(highlight_enabled_);
 
   if (highlight_enabled_) {
-    setHighlightRect(highlight_.viewport, highlight_.x1, highlight_.y1, highlight_.x2,
-      highlight_.y2);
+    setHighlightRect(
+      highlight_.viewport, highlight_.x1, highlight_.y1, highlight_.x2, highlight_.y2);
 
 #if 0
     M_Picked results;
@@ -358,8 +357,7 @@ void SelectionManager::setPickHandle(CollObjectHandle handle, Ogre::MovableObjec
 }
 
 void SelectionManager::setPickData(
-  CollObjectHandle handle, const Ogre::ColourValue & color,
-  Ogre::SceneNode * node)
+  CollObjectHandle handle, const Ogre::ColourValue & color, Ogre::SceneNode * node)
 {
   if (!node) {
     return;
@@ -398,8 +396,7 @@ public:
 };
 
 void SelectionManager::setPickData(
-  CollObjectHandle handle, const Ogre::ColourValue & color,
-  Ogre::MovableObject * object)
+  CollObjectHandle handle, const Ogre::ColourValue & color, Ogre::MovableObject * object)
 {
   PickColorSetter visitor(handle, color);
   object->visitRenderables(&visitor);
@@ -559,8 +556,8 @@ void SelectionManager::updateProperties()
   }
 }
 
-void
-SelectionManager::highlight(rviz_rendering::RenderWindow * window, int x1, int y1, int x2, int y2)
+void SelectionManager::highlight(
+  rviz_rendering::RenderWindow * window, int x1, int y1, int x2, int y2)
 {
   Ogre::Viewport * viewport = rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(window);
   std::lock_guard<std::recursive_mutex> lock(selection_mutex_);
@@ -631,8 +628,8 @@ void SelectionManager::pick(
       auto handler = handler_manager_->getHandler(handle);
 
       if (handler) {
-        std::pair<M_Picked::iterator,
-          bool> insert_result = results.insert(std::make_pair(handle, Picked(handle)));
+        std::pair<M_Picked::iterator, bool> insert_result =
+          results.insert(std::make_pair(handle, Picked(handle)));
         if (insert_result.second) {
           if (handler->needsAdditionalRenderPass(1) && !single_render_pass) {
             need_additional.insert(handle);

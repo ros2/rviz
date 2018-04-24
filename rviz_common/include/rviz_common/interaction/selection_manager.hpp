@@ -59,28 +59,23 @@
 
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
 
+#include "rviz_common/interaction/forwards.hpp"
 #include "rviz_common/interaction/handler_manager_iface.hpp"
 #include "rviz_common/interaction/handler_manager_listener.hpp"
-#include "rviz_common/visibility_control.hpp"
-
-#include "rviz_common/interaction/forwards.hpp"
 #include "rviz_common/interaction/selection_handler.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace Ogre
 {
-
 class Rectangle2D;
-
-}  // namespace Ogre
+}
 
 namespace rviz_common
 {
 
 namespace properties
 {
-
 class PropertyTreeModel;
-
 }
 
 class VisualizationManager;
@@ -103,19 +98,15 @@ public:
 
   ~SelectionManager() override;
 
-  void
-  initialize() override;
+  void initialize() override;
 
   /// Control the highlight box being displayed while selecting.
-  void
-  highlight(rviz_rendering::RenderWindow * window, int x1, int y1, int x2, int y2) override;
+  void highlight(rviz_rendering::RenderWindow * window, int x1, int y1, int x2, int y2) override;
 
-  void
-  removeHighlight() override;
+  void removeHighlight() override;
 
   /// Select all objects in bounding box.
-  void
-  select(
+  void select(
     rviz_rendering::RenderWindow * window,
     int x1,
     int y1,
@@ -170,8 +161,7 @@ private:
    * \param single_render_pass only perform one rendering pass
    *   (point cloud selecting won't work)
    */
-  void
-  pick(
+  void pick(
     rviz_rendering::RenderWindow * window,
     int x1,
     int y1,

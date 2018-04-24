@@ -71,7 +71,7 @@ TEST_F(SelectionManagerTestFixture, select_selects_objects_inside_selection) {
   EXPECT_THAT(selection, Not(Contains(Key(o2.getHandle()))));
 }
 
-TEST_F(SelectionManagerTestFixture, adds_a_new_selection) {
+TEST_F(SelectionManagerTestFixture, adding_a_new_selection) {
   auto o1 = addVisibleObject(10, 10);
   auto o2 = addVisibleObject(20, 20);
   selection_manager_->select(
@@ -99,7 +99,7 @@ TEST_F(SelectionManagerTestFixture, adding_an_exising_selection_has_no_effect) {
   EXPECT_THAT(selection, Contains(Key(o1.getHandle())));
 }
 
-TEST_F(SelectionManagerTestFixture, subtracts_from_a_selection) {
+TEST_F(SelectionManagerTestFixture, subtracting_from_a_selection) {
   auto o1 = addVisibleObject(10, 10);
   auto o2 = addVisibleObject(20, 20);
   selection_manager_->select(

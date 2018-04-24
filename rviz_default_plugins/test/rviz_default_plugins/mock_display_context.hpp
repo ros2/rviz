@@ -75,7 +75,6 @@ public:
 
   MOCK_METHOD0(lockRender, void());
   MOCK_METHOD0(unlockRender, void());
-  MOCK_CONST_METHOD0(getRenderPanel, rviz_common::RenderPanel * ());
 };
 
 #endif  // RVIZ_DEFAULT_PLUGINS__MOCK_DISPLAY_CONTEXT_HPP_

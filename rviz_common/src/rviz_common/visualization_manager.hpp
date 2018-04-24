@@ -192,7 +192,7 @@ public:
   Ogre::SceneManager * getSceneManager() const override;
 
   /// Return the main RenderPanel.
-  RenderPanel * getRenderPanel() const override;
+  RenderPanel * getRenderPanel() const;
 
   /// Return the wall clock time, in seconds since 1970.
   double getWallClock();

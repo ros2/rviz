@@ -49,7 +49,7 @@
 namespace rviz_rendering
 {
 class RenderWindow;
-}  // namespace rviz_rendering
+}
 
 namespace rviz_common
 {
@@ -63,8 +63,7 @@ class DisplayContext;
 namespace interaction
 {
 
-class RVIZ_COMMON_PUBLIC SelectionManagerIface
-  : public QObject
+class RVIZ_COMMON_PUBLIC SelectionManagerIface : public QObject
 {
   Q_OBJECT
 
@@ -76,19 +75,16 @@ public:
     Replace
   };
 
-  virtual void
-  initialize() = 0;
+  virtual void initialize() = 0;
 
   /// Control the highlight box being displayed while selecting.
   virtual void
   highlight(rviz_rendering::RenderWindow * window, int x1, int y1, int x2, int y2) = 0;
 
-  virtual void
-  removeHighlight() = 0;
+  virtual void removeHighlight() = 0;
 
   /// Select all objects in bounding box.
-  virtual void
-  select(
+  virtual void select(
     rviz_rendering::RenderWindow * window, int x1, int y1, int x2, int y2, SelectType type) = 0;
 
   virtual void update() = 0;
