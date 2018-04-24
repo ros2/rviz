@@ -80,8 +80,8 @@ public:
 
     context_ = std::make_shared<NiceMock<MockDisplayContext>>();
     EXPECT_CALL(*context_, getSceneManager()).WillRepeatedly(Return(scene_manager_));
-    EXPECT_CALL(*context_, getSelectionManager()).WillRepeatedly(Return(selection_manager_.get()));
-    EXPECT_CALL(*context_, getHandlerManager()).WillRepeatedly(Return(handle_manager_.get()));
+    EXPECT_CALL(*context_, getSelectionManager()).WillRepeatedly(Return(selection_manager_));
+    EXPECT_CALL(*context_, getHandlerManager()).WillRepeatedly(Return(handle_manager_));
 
     resource_retriever::Retriever retriever;
     auto file = retriever.get("package://rviz_rendering_tests/test_meshes/test.urdf");

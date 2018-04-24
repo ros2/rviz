@@ -67,13 +67,6 @@ class TfFrameProperty;
 
 }  // namespace properties
 
-namespace interaction
-{
-class HandlerManagerIface;
-class SelectionManagerIface;
-class ViewPickerIface;
-}
-
 class Display;
 class Tool;
 class OgreRenderQueueClearer;
@@ -225,13 +218,14 @@ public:
   void resetTime();
 
   /// Return a pointer to the HandlerManager
-  rviz_common::interaction::HandlerManagerIface * getHandlerManager() const override;
+  std::shared_ptr<rviz_common::interaction::HandlerManagerIface> getHandlerManager() const override;
 
   /// Return a pointer to the SelectionManager.
-  rviz_common::interaction::SelectionManagerIface * getSelectionManager() const override;
+  std::shared_ptr<rviz_common::interaction::SelectionManagerIface>
+  getSelectionManager() const override;
 
   /// Return a pointer to the ViewPicker.
-  rviz_common::interaction::ViewPickerIface * getViewPicker() const override;
+  std::shared_ptr<rviz_common::interaction::ViewPickerIface> getViewPicker() const override;
 
   /// Return a pointer to the ToolManager.
   ToolManager * getToolManager() const override;
@@ -378,9 +372,9 @@ protected:
   float time_update_timer_;
   float frame_update_timer_;
 
-  rviz_common::interaction::HandlerManagerIface * handler_manager_;
-  rviz_common::interaction::SelectionManagerIface * selection_manager_;
-  rviz_common::interaction::ViewPickerIface * view_picker_;
+  std::shared_ptr<rviz_common::interaction::HandlerManagerIface> handler_manager_;
+  std::shared_ptr<rviz_common::interaction::SelectionManagerIface> selection_manager_;
+  std::shared_ptr<rviz_common::interaction::ViewPickerIface> view_picker_;
 
   uint32_t render_requested_;
   uint64_t frame_count_;

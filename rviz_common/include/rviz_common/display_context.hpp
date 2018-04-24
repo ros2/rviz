@@ -114,17 +114,17 @@ public:
 
   /// Return a pointer to the SelectionManager.
   virtual
-  rviz_common::interaction::SelectionManagerIface *
+  std::shared_ptr<rviz_common::interaction::SelectionManagerIface>
   getSelectionManager() const = 0;
 
   /// Return a pointer to the HandlerManager.
   virtual
-  rviz_common::interaction::HandlerManagerIface *
+  std::shared_ptr<rviz_common::interaction::HandlerManagerIface>
   getHandlerManager() const = 0;
 
   /// Return a pointer to the ViewPicker.
   virtual
-  rviz_common::interaction::ViewPickerIface *
+  std::shared_ptr<rviz_common::interaction::ViewPickerIface>
   getViewPicker() const = 0;
 
   /// Return the FrameManager instance.

@@ -57,9 +57,9 @@ void DisplayTestFixture::SetUp()
   EXPECT_CALL(*context_, getSceneManager()).WillRepeatedly(testing::Return(scene_manager_));
   EXPECT_CALL(*context_, getFrameManager()).WillRepeatedly(testing::Return(frame_manager_.get()));
   EXPECT_CALL(*context_, getSelectionManager()).WillRepeatedly(
-    testing::Return(selection_manager_.get()));
+    testing::Return(selection_manager_));
   EXPECT_CALL(*context_, getHandlerManager()).WillRepeatedly(
-    testing::Return(handler_manager_.get()));
+    testing::Return(handler_manager_));
 }
 
 void DisplayTestFixture::TearDown()

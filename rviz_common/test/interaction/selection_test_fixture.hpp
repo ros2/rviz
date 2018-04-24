@@ -53,11 +53,17 @@ public:
   {
     DisplayContextFixture::SetUp();
     renderer_ = std::make_shared<MockSelectionRenderer>(context_.get());
-    handler_manager_ = std::make_unique<rviz_common::interaction::HandlerManager>();
-    selection_manager_ = std::make_unique<rviz_common::interaction::SelectionManager>(
+    handler_manager_ = std::make_shared<rviz_common::interaction::HandlerManager>();
+    std::weak_ptr<rviz_common::interaction::HandlerManagerIface>
+    handler_manager_weak_ptr(handler_manager_);
+    selection_manager_ = std::make_shared<rviz_common::interaction::SelectionManager>(
       context_.get(), renderer_);
-    EXPECT_CALL(*context_, getHandlerManager()).WillRepeatedly(Return(handler_manager_.get()));
-    EXPECT_CALL(*context_, getSelectionManager()).WillRepeatedly(Return(selection_manager_.get()));
+    std::weak_ptr<rviz_common::interaction::SelectionManagerIface>
+    selection_manager_weak_ptr(selection_manager_);
+    EXPECT_CALL(*context_, getHandlerManager()).WillRepeatedly(
+      Invoke([handler_manager_weak_ptr]() {return handler_manager_weak_ptr.lock();}));
+    EXPECT_CALL(*context_, getSelectionManager()).WillRepeatedly(
+      Invoke([selection_manager_weak_ptr]() {return selection_manager_weak_ptr.lock();}));
     selection_manager_->initialize();
   }
 
@@ -70,8 +76,8 @@ public:
   }
 
   std::shared_ptr<MockSelectionRenderer> renderer_;
-  std::unique_ptr<rviz_common::interaction::SelectionManager> selection_manager_;
-  std::unique_ptr<rviz_common::interaction::HandlerManagerIface> handler_manager_;
+  std::shared_ptr<rviz_common::interaction::SelectionManagerIface> selection_manager_;
+  std::shared_ptr<rviz_common::interaction::HandlerManagerIface> handler_manager_;
 };
 
 #endif  // INTERACTION__SELECTION_TEST_FIXTURE_HPP_

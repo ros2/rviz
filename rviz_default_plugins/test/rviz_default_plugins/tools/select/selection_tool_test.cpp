@@ -60,7 +60,7 @@ public:
     context_ = std::make_shared<NiceMock<MockDisplayContext>>();
     selection_manager_ = std::make_shared<NiceMock<MockSelectionManager>>();
 
-    EXPECT_CALL(*context_, getSelectionManager()).WillRepeatedly(Return(selection_manager_.get()));
+    EXPECT_CALL(*context_, getSelectionManager()).WillRepeatedly(Return(selection_manager_));
 
     selection_tool_ = std::make_shared<rviz_default_plugins::tools::SelectionTool>();
     selection_tool_->initialize(context_.get());

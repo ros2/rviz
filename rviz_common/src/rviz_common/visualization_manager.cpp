@@ -110,11 +110,8 @@ using rviz_common::properties::StatusList;
 using rviz_common::properties::StatusProperty;
 using rviz_common::properties::TfFrameProperty;
 using rviz_common::interaction::HandlerManager;
-using rviz_common::interaction::HandlerManagerIface;
 using rviz_common::interaction::SelectionManager;
-using rviz_common::interaction::SelectionManagerIface;
 using rviz_common::interaction::ViewPicker;
-using rviz_common::interaction::ViewPickerIface;
 using rviz_common::interaction::M_Picked;
 
 // helper class needed to display an icon besides "Global Options"
@@ -230,9 +227,9 @@ VisualizationManager::VisualizationManager(
 
   rviz_rendering::MaterialManager::createDefaultColorMaterials();
 
-  handler_manager_ = new HandlerManager();
-  selection_manager_ = new SelectionManager(this);
-  view_picker_ = new ViewPicker(this);
+  handler_manager_ = std::make_shared<HandlerManager>();
+  selection_manager_ = std::make_shared<SelectionManager>(this);
+  view_picker_ = std::make_shared<ViewPicker>(this);
 
 // TODO(wjwwood): redo with executors?
 #if 0
@@ -264,9 +261,6 @@ VisualizationManager::~VisualizationManager()
   delete display_property_tree_model_;
   delete tool_manager_;
   delete display_factory_;
-  delete view_picker_;
-  delete selection_manager_;
-  delete handler_manager_;
   delete frame_manager_;
   delete private_;
 
@@ -507,17 +501,20 @@ void VisualizationManager::resetTime()
   queueRender();
 }
 
-HandlerManagerIface * VisualizationManager::getHandlerManager() const
+std::shared_ptr<rviz_common::interaction::HandlerManagerIface>
+VisualizationManager::getHandlerManager() const
 {
   return handler_manager_;
 }
 
-SelectionManagerIface * VisualizationManager::getSelectionManager() const
+std::shared_ptr<rviz_common::interaction::SelectionManagerIface>
+VisualizationManager::getSelectionManager() const
 {
   return selection_manager_;
 }
 
-ViewPickerIface * VisualizationManager::getViewPicker() const
+std::shared_ptr<rviz_common::interaction::ViewPickerIface>
+VisualizationManager::getViewPicker() const
 {
   return view_picker_;
 }

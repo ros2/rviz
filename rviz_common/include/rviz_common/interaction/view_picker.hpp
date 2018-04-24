@@ -170,7 +170,8 @@ private:
     Ogre::PixelBox & dst_box);
 
   DisplayContext * context_;
-  HandlerManagerIface * handler_manager_;
+  std::shared_ptr<HandlerManagerIface> handler_manager_;
+
   // Graphics card -based depth finding of clicked points.
   Ogre::TexturePtr depth_render_texture_;
   uint32_t depth_texture_width_, depth_texture_height_;

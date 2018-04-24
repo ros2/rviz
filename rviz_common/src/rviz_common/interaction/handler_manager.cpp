@@ -34,8 +34,6 @@
 #include <mutex>
 #include <utility>
 
-#include "rviz_common/display_context.hpp"
-
 
 namespace rviz_common
 {

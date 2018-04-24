@@ -33,6 +33,7 @@
 #define RVIZ_COMMON__INTERACTION__HANDLER_MANAGER_IFACE_HPP_
 
 #include <iterator>
+#include <memory>
 #include <mutex>
 #include <unordered_map>
 
@@ -185,6 +186,8 @@ public:
    */
   virtual HandlerRange handlers() = 0;
 };
+
+using HandlerManagerIfacePtr = std::shared_ptr<HandlerManagerIface>;
 
 }  // namespace interaction
 }  // namespace rviz_common

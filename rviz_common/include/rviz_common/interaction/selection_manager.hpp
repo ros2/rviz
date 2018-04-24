@@ -35,14 +35,9 @@
 #include "selection_manager_iface.hpp"
 
 #include <array>
-#include <map>
 #include <memory>
 #include <mutex>
-#include <set>
-#include <string>
-#include <unordered_map>
 #include <utility>
-#include <vector>
 
 #ifndef _WIN32
 # pragma GCC diagnostic push
@@ -208,7 +203,7 @@ private:
 
 
   DisplayContext * context_;
-  HandlerManagerIface * handler_manager_;
+  std::shared_ptr<HandlerManagerIface> handler_manager_;
 
   std::recursive_mutex selection_mutex_;
 

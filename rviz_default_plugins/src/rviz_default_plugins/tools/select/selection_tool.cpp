@@ -113,7 +113,7 @@ void SelectionTool::update(float wall_dt, float ros_dt)
 {
   (void) wall_dt;
   (void) ros_dt;
-  rviz_common::interaction::SelectionManagerIface * sel_manager = context_->getSelectionManager();
+  auto sel_manager = context_->getSelectionManager();
 
   if (!selecting_) {
     sel_manager->removeHighlight();
@@ -122,7 +122,7 @@ void SelectionTool::update(float wall_dt, float ros_dt)
 
 int SelectionTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
 {
-  rviz_common::interaction::SelectionManagerIface * sel_manager = context_->getSelectionManager();
+  auto sel_manager = context_->getSelectionManager();
 
   int flags = 0;
 
@@ -195,7 +195,7 @@ int SelectionTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
 int SelectionTool::processKeyEvent(QKeyEvent * event, rviz_common::RenderPanel * panel)
 {
   (void) panel;
-  rviz_common::interaction::SelectionManagerIface * sel_manager = context_->getSelectionManager();
+  auto sel_manager = context_->getSelectionManager();
 
   if (event->key() == Qt::Key_F) {
     sel_manager->focusOnSelection();
