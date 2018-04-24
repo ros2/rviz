@@ -63,8 +63,8 @@
 #include "rviz_common/interaction/handler_manager_listener.hpp"
 #include "rviz_common/visibility_control.hpp"
 
-#include "./forwards.hpp"
-#include "./selection_handler.hpp"
+#include "rviz_common/interaction/forwards.hpp"
+#include "rviz_common/interaction/selection_handler.hpp"
 
 namespace Ogre
 {

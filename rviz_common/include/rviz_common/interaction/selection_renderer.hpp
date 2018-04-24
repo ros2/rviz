@@ -48,8 +48,8 @@
 #endif
 
 #include "rviz_rendering/render_window.hpp"
+#include "rviz_common/interaction/handler_manager_iface.hpp"
 #include "rviz_common/visibility_control.hpp"
-#include "handler_manager_iface.hpp"
 
 namespace rviz_common
 {

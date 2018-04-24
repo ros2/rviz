@@ -32,7 +32,7 @@
 #ifndef RVIZ_COMMON__INTERACTION__VIEW_PICKER_HPP_
 #define RVIZ_COMMON__INTERACTION__VIEW_PICKER_HPP_
 
-#include "./view_picker_iface.hpp"
+#include "rviz_common/interaction/view_picker_iface.hpp"
 
 #include <memory>
 #include <vector>
@@ -52,8 +52,8 @@
 
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "./forwards.hpp"
-#include "./selection_handler.hpp"
+#include "rviz_common/interaction/forwards.hpp"
+#include "rviz_common/interaction/selection_handler.hpp"
 #include "rviz_common/visibility_control.hpp"
 
 namespace Ogre

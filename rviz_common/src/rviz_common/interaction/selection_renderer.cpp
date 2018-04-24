@@ -31,12 +31,8 @@
 
 #include "rviz_common/interaction/selection_renderer.hpp"
 
-#include <algorithm>
-#include <cassert>
-#include <memory>
 #include <string>
 #include <utility>
-#include <vector>
 
 #ifndef _WIN32
 # pragma GCC diagnostic push
@@ -59,20 +55,11 @@
 #endif
 
 #include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
-#include <include/rviz_common/interaction/handler_manager_iface.hpp>
 
-#include "rclcpp/publisher.hpp"
-#include "sensor_msgs/image_encodings.hpp"
-#include "sensor_msgs/msg/image.hpp"
-
-#include "rviz_rendering/custom_parameter_indices.hpp"
 #include "rviz_rendering/render_window.hpp"
 
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/logging.hpp"
-#include "rviz_common/properties/property.hpp"
-#include "rviz_common/properties/property_tree_model.hpp"
-#include "rviz_common/render_panel.hpp"
 #include "rviz_common/view_manager.hpp"
 
 namespace rviz_common
@@ -92,7 +79,6 @@ void SelectionRenderer::initialize(Ogre::Camera * camera, Ogre::SceneManager * s
 
   fallback_pick_material_ = Ogre::MaterialManager::getSingleton().getByName(
     "rviz/DefaultPickAndDepth");
-  // TODO(wjwwood): see why this fails to load
   if (fallback_pick_material_) {
     fallback_pick_material_->load();
 

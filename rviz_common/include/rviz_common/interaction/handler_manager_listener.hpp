@@ -30,9 +30,8 @@
 #ifndef RVIZ_COMMON__INTERACTION__HANDLER_MANAGER_LISTENER_HPP_
 #define RVIZ_COMMON__INTERACTION__HANDLER_MANAGER_LISTENER_HPP_
 
+#include "rviz_common/interaction/forwards.hpp"
 #include "rviz_common/visibility_control.hpp"
-
-#include "./forwards.hpp"
 
 namespace rviz_common
 {

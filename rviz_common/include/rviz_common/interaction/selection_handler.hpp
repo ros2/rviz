@@ -49,12 +49,12 @@
 # pragma GCC diagnostic pop
 #endif
 
+#include "rviz_common/interaction/forwards.hpp"
 #include "rviz_common/interactive_object.hpp"
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/viewport_mouse_event.hpp"
 #include "rviz_common/visibility_control.hpp"
 
-#include "./forwards.hpp"
 
 namespace Ogre
 {

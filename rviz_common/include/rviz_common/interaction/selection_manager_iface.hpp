@@ -42,8 +42,8 @@
 
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "./forwards.hpp"
-#include "./selection_handler.hpp"
+#include "rviz_common/interaction/forwards.hpp"
+#include "rviz_common/interaction/selection_handler.hpp"
 #include "rviz_common/visibility_control.hpp"
 
 namespace rviz_rendering
