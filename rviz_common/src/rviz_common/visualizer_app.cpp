@@ -150,12 +150,6 @@ bool VisualizerApp::init(int argc, char ** argv)
 #endif
 #endif
 
-  // TODO(wjwwood): anonymous is not working right now, reenable later
-  // node_name_ = rviz_common::ros_integration::init(argc, argv, "rviz", true /* anonymous_name */);
-  node_name_ = ros_client_abstraction_->init(argc, argv, "rviz", false /* anonymous_name */);
-
-  startContinueChecker();
-
   rviz_common::install_rviz_rendering_log_handlers();
 
   QCommandLineParser parser;
@@ -222,6 +216,7 @@ bool VisualizerApp::init(int argc, char ** argv)
 
   try {
     parser.process(*app_);
+
     enable_ogre_log = parser.isSet(ogre_log_option);
 //    disable_stereo = parser.isSet(no_stereo_option);
 //    disable_anti_aliasing = parser.isSet(disable_anti_aliasing_option);
@@ -292,6 +287,12 @@ bool VisualizerApp::init(int argc, char ** argv)
   // if (disable_stereo) {
   //   RenderSystem::forceNoStereo();
   // }
+
+  startContinueChecker();
+
+  // TODO(wjwwood): anonymous is not working right now, reenable later
+  // node_name_ = rviz_common::ros_integration::init(argc, argv, "rviz", true /* anonymous_name */);
+  node_name_ = ros_client_abstraction_->init(argc, argv, "rviz", false /* anonymous_name */);
 
   frame_ = new VisualizationFrame(node_name_);
   frame_->setApp(this->app_);
