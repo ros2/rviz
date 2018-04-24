@@ -116,7 +116,7 @@ public:
     rviz_rendering::RenderWindow * window,
     SelectionRectangle rectangle,
     RenderTexture texture,
-    M_ObjectHandleToSelectionHandler handlers,
+    HandlerRange handlers,
     Ogre::PixelBox & dst_box);
 
   /// Implementation for Ogre::RenderQueueListener.

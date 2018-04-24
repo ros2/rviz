@@ -33,6 +33,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <utility>
 #include <vector>
@@ -319,7 +320,7 @@ void SelectionManager::render(
   renderer_->render(
     window, selection_rectangle,
     render_texture,
-    handler_manager_->handlers_,
+    handler_manager_->handlers(),
     dst_box);
 }
 
@@ -602,9 +603,9 @@ void SelectionManager::pick(
   M_Picked & results,
   bool single_render_pass)
 {
-  std::lock_guard<std::recursive_mutex> lock(selection_mutex_);
-  // TODO(anhosi) use defered to lock at once with selection_mutex_
-  auto handler_lock = handler_manager_->lock();
+  auto handler_lock = handler_manager_->lock(std::defer_lock);
+  std::lock(selection_mutex_, handler_lock);
+  std::lock_guard<std::recursive_mutex> lock(selection_mutex_, std::adopt_lock);
 
   bool need_additional_render = false;
 

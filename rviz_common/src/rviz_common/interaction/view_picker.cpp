@@ -269,7 +269,7 @@ void ViewPicker::render(
   return renderer_->render(
     window, selection_rectangle,
     render_texture,
-    handler_manager_->handlers_,
+    handler_manager_->handlers(),
     dst_box);
 }
 

@@ -36,6 +36,7 @@
 #include <gmock/gmock.h>
 
 #include <memory>
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -58,8 +59,10 @@ public:
 
   MOCK_METHOD1(enableInteraction, void(bool));
   MOCK_CONST_METHOD0(getInteractionEnabled, bool());
+  MOCK_METHOD0(handlers, rviz_common::interaction::HandlerRange());
 
   MOCK_METHOD0(lock, std::unique_lock<std::recursive_mutex>());
+  MOCK_METHOD1(lock, std::unique_lock<std::recursive_mutex>(std::defer_lock_t));
 };
 
 #endif  // RVIZ_DEFAULT_PLUGINS__MOCK_HANDLER_MANAGER_HPP_

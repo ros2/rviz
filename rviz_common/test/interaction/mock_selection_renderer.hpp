@@ -81,7 +81,7 @@ public:
     rviz_rendering::RenderWindow * window,
     rviz_common::interaction::SelectionRectangle rectangle,
     rviz_common::interaction::RenderTexture texture,
-    rviz_common::interaction::M_ObjectHandleToSelectionHandler handlers,
+    rviz_common::interaction::HandlerRange handlers,
     Ogre::PixelBox & dst_box) override
   {
     (void) window;

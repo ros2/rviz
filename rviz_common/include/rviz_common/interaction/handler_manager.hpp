@@ -67,17 +67,19 @@ public:
 
   std::unique_lock<std::recursive_mutex> lock() override;
 
+  std::unique_lock<std::recursive_mutex> lock(std::defer_lock_t defer_lock) override;
+
   void addListener(HandlerManagerListener * listener);
 
   void removeListener(HandlerManagerListener * listener);
 
-  /// Create a new unique handle.
   CollObjectHandle createHandle() override;
 
-  /// Tell all handlers that interactive mode is active/inactive.
   void enableInteraction(bool enable) override;
 
   bool getInteractionEnabled() const override;
+
+  HandlerRange handlers() override;
 
 private:
   uint32_t uid_counter_;
@@ -87,6 +89,7 @@ private:
   std::recursive_mutex handlers_mutex_;
   std::recursive_mutex uid_mutex_;
 
+  M_ObjectHandleToSelectionHandler handlers_;
   std::vector<HandlerManagerListener *> listeners_;
 };
 

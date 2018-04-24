@@ -112,12 +112,12 @@ void SelectionRenderer::render(
   rviz_rendering::RenderWindow * window,
   SelectionRectangle rectangle,
   RenderTexture texture,
-  M_ObjectHandleToSelectionHandler handlers,
+  HandlerRange handlers,
   Ogre::PixelBox & dst_box)
 {
   context_->lockRender();
   for (const auto & handler : handlers) {
-    handler.second.lock()->preRenderPass(0);
+    handler.lock()->preRenderPass(0);
   }
 
   auto window_viewport = rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(window);
@@ -137,7 +137,7 @@ void SelectionRenderer::render(
 
   context_->unlockRender();
   for (const auto & handler : handlers) {
-    handler.second.lock()->postRenderPass(0);
+    handler.lock()->postRenderPass(0);
   }
 }
 

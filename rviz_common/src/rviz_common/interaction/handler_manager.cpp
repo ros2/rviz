@@ -110,6 +110,11 @@ std::unique_lock<std::recursive_mutex> HandlerManager::lock()
   return std::unique_lock<std::recursive_mutex>(handlers_mutex_);
 }
 
+std::unique_lock<std::recursive_mutex> HandlerManager::lock(std::defer_lock_t defer_lock)
+{
+  return std::unique_lock<std::recursive_mutex>(handlers_mutex_, defer_lock);
+}
+
 CollObjectHandle HandlerManager::createHandle()
 {
   std::lock_guard<std::recursive_mutex> lock(uid_mutex_);
@@ -146,6 +151,11 @@ void HandlerManager::enableInteraction(bool enable)
 bool HandlerManager::getInteractionEnabled() const
 {
   return interaction_enabled_;
+}
+
+HandlerRange HandlerManager::handlers()
+{
+  return HandlerRange(handlers_);
 }
 
 }  // namespace interaction
