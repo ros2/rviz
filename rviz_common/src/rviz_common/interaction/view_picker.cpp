@@ -87,7 +87,6 @@ void ViewPicker::initialize()
 {
   auto scene_manager = context_->getSceneManager();
 
-  // create picking camera
   camera_ = scene_manager->createCamera("ViewPicker_camera");
 
   renderer_->initialize(camera_, scene_manager);
@@ -104,12 +103,61 @@ bool ViewPicker::get3DPoint(
   std::vector<Ogre::Vector3> result_points_temp;
   get3DPatch(panel, x, y, 1, 1, true, result_points_temp);
   if (result_points_temp.empty()) {
-    // return result_point unmodified if get point fails.
     return false;
   }
   result_point = result_points_temp[0];
 
   return true;
+}
+
+bool ViewPicker::get3DPatch(
+  RenderPanel * panel,
+  int x,
+  int y,
+  unsigned int width,
+  unsigned int height,
+  bool skip_missing,
+  std::vector<Ogre::Vector3> & result_points)
+{
+  auto handler_lock = handler_manager_->lock();
+
+  std::vector<float> depth_vector;
+
+  getPatchDepthImage(panel, x, y, width, height, depth_vector);
+
+  unsigned int pixel_counter = 0;
+  Ogre::Matrix4 projection = camera_->getProjectionMatrix();
+  float depth;
+
+  for (unsigned int y_iter = 0; y_iter < height; ++y_iter) {
+    for (unsigned int x_iter = 0; x_iter < width; ++x_iter) {
+      depth = depth_vector[pixel_counter];
+
+      // Deal with missing or invalid points
+      if ((depth > camera_->getFarClipDistance()) || (depth == 0)) {
+        ++pixel_counter;
+        if (!skip_missing) {
+          result_points.emplace_back(NAN, NAN, NAN);
+        }
+        continue;
+      }
+
+      Ogre::Vector3 result_point;
+      // We want to shoot rays through the center of pixels, not the corners,
+      // so add .5 pixels to the x and y coordinate to get to the center
+      // instead of the top left of the pixel.
+      Ogre::Real screenx = static_cast<float>(x_iter + .5) / static_cast<float>(width);
+      Ogre::Real screeny = static_cast<float>(y_iter + .5) / static_cast<float>(height);
+      result_point = projection[3][3] == 0.0 ?
+        computeForPerspectiveProjection(depth, screenx, screeny) :
+        computeForOrthogonalProjection(depth, screenx, screeny);
+
+      result_points.push_back(result_point);
+      ++pixel_counter;
+    }
+  }
+
+  return !result_points.empty();
 }
 
 void ViewPicker::getPatchDepthImage(
@@ -141,99 +189,37 @@ void ViewPicker::getPatchDepthImage(
   }
 }
 
-
-bool ViewPicker::get3DPatch(
-  RenderPanel * panel,
-  int x,
-  int y,
-  unsigned int width,
-  unsigned int height,
-  bool skip_missing,
-  std::vector<Ogre::Vector3> & result_points)
+Ogre::Vector3
+ViewPicker::computeForOrthogonalProjection(
+  float depth, Ogre::Real screenx, Ogre::Real screeny) const
 {
-  auto handler_lock = handler_manager_->lock();
+  Ogre::Ray ray;
+  camera_->getCameraToViewportRay(screenx, screeny, &ray);
 
-  std::vector<float> depth_vector;
+  return ray.getPoint(depth);
+}
 
-  getPatchDepthImage(panel, x, y, width, height, depth_vector);
+Ogre::Vector3
+ViewPicker::computeForPerspectiveProjection(
+  float depth, Ogre::Real screenx, Ogre::Real screeny) const
+{
+  // get world-space ray from camera & mouse coord
+  Ogre::Ray vp_ray = camera_->getCameraToViewportRay(screenx, screeny);
 
-  unsigned int pixel_counter = 0;
-  Ogre::Matrix4 projection = camera_->getProjectionMatrix();
-  float depth;
+  // transform ray direction back into camera coords
+  Ogre::Vector3 dir_cam = camera_->getDerivedOrientation().Inverse() * vp_ray.getDirection();
 
-  for (unsigned int y_iter = 0; y_iter < height; ++y_iter) {
-    for (unsigned int x_iter = 0; x_iter < width; ++x_iter) {
-      depth = depth_vector[pixel_counter];
+  // normalize, so dir_cam.z == -depth
+  dir_cam = dir_cam / dir_cam.z * depth * -1;
 
-      // Deal with missing or invalid points
-      if ( ( depth > camera_->getFarClipDistance()) || ( depth == 0)) {
-        ++pixel_counter;
-        if (!skip_missing) {
-          result_points.emplace_back(NAN, NAN, NAN);
-        }
-        continue;
-      }
-
-      Ogre::Vector3 result_point;
-      // We want to shoot rays through the center of pixels, not the corners,
-      // so add .5 pixels to the x and y coordinate to get to the center
-      // instead of the top left of the pixel.
-      Ogre::Real screenx = static_cast<float>(x_iter + .5) / static_cast<float>(width);
-      Ogre::Real screeny = static_cast<float>(y_iter + .5) / static_cast<float>(height);
-      if (projection[3][3] == 0.0) {  // If this is a perspective projection
-        // get world-space ray from camera & mouse coord
-        Ogre::Ray vp_ray = camera_->getCameraToViewportRay(screenx, screeny);
-
-        // transform ray direction back into camera coords
-        Ogre::Vector3 dir_cam = camera_->getDerivedOrientation().Inverse() * vp_ray.getDirection();
-
-        // normalize, so dir_cam.z == -depth
-        dir_cam = dir_cam / dir_cam.z * depth * -1;
-
-        // compute 3d point from camera origin and direction*/
-        result_point = camera_->getDerivedPosition() + camera_->getDerivedOrientation() * dir_cam;
-      } else { // else this must be an orthographic projection.
-               // For orthographic projection, getCameraToViewportRay() does
-               // the right thing for us, and the above math does not work.
-        Ogre::Ray ray;
-        camera_->getCameraToViewportRay(screenx, screeny, &ray);
-
-        result_point = ray.getPoint(depth);
-      }
-
-      result_points.push_back(result_point);
-      ++pixel_counter;
-    }
-  }
-
-  return !result_points.empty();
+  // compute 3d point from camera origin and direction*/
+  return camera_->getDerivedPosition() + camera_->getDerivedOrientation() * dir_cam;
 }
 
 void ViewPicker::setDepthTextureSize(unsigned width, unsigned height)
 {
-  // Cap and store requested texture size
-  // It's probably an error if an invalid size is requested.
-  if (width > 1024) {
-    width = 1024;
-    RVIZ_COMMON_LOG_ERROR_STREAM(
-      "SelectionManager::setDepthTextureSize invalid width requested. "
-      "Max Width: 1024 -- Width requested: " << width << ".  Capping Width at 1024.");
-  }
-
-  if (depth_texture_width_ != width) {
-    depth_texture_width_ = width;
-  }
-
-  if (height > 1024) {
-    height = 1024;
-    RVIZ_COMMON_LOG_ERROR_STREAM(
-      "SelectionManager::setDepthTextureSize invalid height requested. "
-      "Max Height: 1024 -- Height requested: " << width << ".  Capping Height at 1024.");
-  }
-
-  if (depth_texture_height_ != height) {
-    depth_texture_height_ = height;
-  }
+  // Cap and store requested texture sizecapTextureSize(width, height);
+  capTextureSize(width, height);
 
   if (!depth_render_texture_.get() || depth_render_texture_->getWidth() != width ||
     depth_render_texture_->getHeight() != height)
@@ -256,6 +242,32 @@ void ViewPicker::setDepthTextureSize(unsigned width, unsigned height)
         Ogre::TU_RENDERTARGET);
 
     depth_render_texture_->getBuffer()->getRenderTarget()->setAutoUpdated(false);
+  }
+}
+
+void ViewPicker::capTextureSize(unsigned int & width, unsigned int & height)
+{
+  // It's probably an error if an invalid size is requested.
+  if (width > 1024) {
+    width = 1024;
+    RVIZ_COMMON_LOG_ERROR_STREAM(
+      "SelectionManager::setDepthTextureSize invalid width requested. "
+      "Max Width: 1024 -- Width requested: " << width << ".  Capping Width at 1024.");
+  }
+
+  if (depth_texture_width_ != width) {
+    depth_texture_width_ = width;
+  }
+
+  if (height > 1024) {
+    height = 1024;
+    RVIZ_COMMON_LOG_ERROR_STREAM(
+      "SelectionManager::setDepthTextureSize invalid height requested. "
+      "Max Height: 1024 -- Height requested: " << height << ".  Capping Height at 1024.");
+  }
+
+  if (depth_texture_height_ != height) {
+    depth_texture_height_ = height;
   }
 }
 

@@ -110,6 +110,8 @@ public:
 private:
   void setDepthTextureSize(unsigned width, unsigned height);
 
+  void capTextureSize(unsigned int & width, unsigned int & height);
+
   /// Gets the 3D points in a box around a point in a view port.
   /**
    * \param[in] viewport Rendering area clicked on.
@@ -134,7 +136,6 @@ private:
     bool skip_missing,
     std::vector<Ogre::Vector3> & result_points);
 
-  /// Renders a depth image in a box around a point in a view port.
   /**
    * \param[in] panel Rendering area clicked on.
    * \param[in] x x coordinate of upper-left corner of box.
@@ -155,6 +156,12 @@ private:
     unsigned height,
     std::vector<float> & depth_vector);
 
+  Ogre::Vector3
+  computeForOrthogonalProjection(float depth, Ogre::Real screenx, Ogre::Real screeny) const;
+
+  Ogre::Vector3 computeForPerspectiveProjection(
+    float depth, Ogre::Real screenx, Ogre::Real screeny) const;
+  /// Renders a depth image in a box around a point in a view port.
   /// Internal render function to render to a texture and read the pixels back out.
   void render(
     rviz_rendering::RenderWindow * window,
@@ -164,11 +171,12 @@ private:
 
   DisplayContext * context_;
   HandlerManagerIface * handler_manager_;
-
   // Graphics card -based depth finding of clicked points.
   Ogre::TexturePtr depth_render_texture_;
   uint32_t depth_texture_width_, depth_texture_height_;
+
   Ogre::PixelBox depth_pixel_box_;
+
   Ogre::Camera * camera_;
 
   std::shared_ptr<rviz_common::interaction::SelectionRenderer> renderer_;
