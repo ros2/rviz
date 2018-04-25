@@ -96,7 +96,8 @@ SelectionHandler::~SelectionHandler()
 void SelectionHandler::registerHandle()
 {
   pick_handle_ = context_->getHandlerManager()->createHandle();
-  context_->getHandlerManager()->addHandler(pick_handle_, weak_from_this(this));
+  context_->getHandlerManager()->addHandler(
+    pick_handle_, rviz_common::interaction::weak_from_this(this));
 }
 
 void SelectionHandler::preRenderPass(uint32_t pass)
