@@ -290,5 +290,5 @@ int BasePageObject::findPropertyRowIndexByName(
 
 QString format(float number)
 {
-  return QLocale(QLocale::Language::English).toString(number);
+  return QLocale().toString(number);
 }

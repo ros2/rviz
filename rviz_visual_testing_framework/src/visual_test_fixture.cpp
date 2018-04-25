@@ -37,6 +37,7 @@
 
 void VisualTestFixture::SetUpTestCase()
 {
+  QLocale::setDefault(QLocale::English);
   int argc = 0;
   visualizer_app_ = new rviz_common::VisualizerApp(
     std::make_unique<rviz_common::ros_integration::RosClientAbstraction>());
