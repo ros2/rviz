@@ -55,7 +55,7 @@ public:
     render_panel_ = new rviz_common::RenderPanel(nullptr);
   }
 
-  void SetUp() override
+  SelectionToolTestFixture()
   {
     context_ = std::make_shared<NiceMock<MockDisplayContext>>();
     selection_manager_ = std::make_shared<NiceMock<MockSelectionManager>>();
@@ -64,11 +64,6 @@ public:
 
     selection_tool_ = std::make_shared<rviz_default_plugins::tools::SelectionTool>();
     selection_tool_->initialize(context_.get());
-  }
-
-  void TearDown() override
-  {
-    selection_tool_.reset();
   }
 
   static void TearDownTestCase()

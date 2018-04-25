@@ -56,9 +56,9 @@ class DisplayTestFixture : public testing::Test
 public:
   static void SetUpTestCase();
 
-  void SetUp() override;
+  DisplayTestFixture();
 
-  void TearDown() override;
+  ~DisplayTestFixture();
 
   static void TearDownTestCase();
 

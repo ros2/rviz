@@ -73,7 +73,8 @@ public:
 
     rviz_rendering::MaterialManager::createDefaultColorMaterials();
   }
-  void SetUp() override
+
+  RobotTestFixture()
   {
     selection_manager_ = std::make_shared<NiceMock<MockSelectionManager>>();
     handle_manager_ = std::make_unique<NiceMock<MockHandlerManager>>();

@@ -61,7 +61,7 @@ public:
     testing_environment_->setUpOgreTestEnvironment();
   }
 
-  void SetUp() override
+  ImageDisplayTestFixture()
   {
     texture_ = std::make_unique<MockROSImageTexture>();
     ON_CALL(*texture_, getName()).WillByDefault(Return("texture"));

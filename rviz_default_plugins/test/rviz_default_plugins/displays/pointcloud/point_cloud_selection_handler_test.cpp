@@ -86,9 +86,8 @@ MATCHER_P(HasIntensityProperty, intensity, "") {
 class PointCloudSelectionHandlerFixture : public DisplayTestFixture
 {
 public:
-  void SetUp() override
+  PointCloudSelectionHandlerFixture()
   {
-    DisplayTestFixture::SetUp();
     Ogre::MaterialManager::getSingletonPtr()->load("RVIZ/Cyan", "rviz_rendering");
   }
 };

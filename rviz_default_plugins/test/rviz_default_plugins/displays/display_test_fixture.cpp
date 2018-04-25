@@ -43,7 +43,7 @@ void DisplayTestFixture::SetUpTestCase()
   scene_manager_ = Ogre::Root::getSingletonPtr()->createSceneManager();
 }
 
-void DisplayTestFixture::SetUp()
+DisplayTestFixture::DisplayTestFixture()
 {
   context_ = std::make_shared<testing::NiceMock<MockDisplayContext>>();
   frame_manager_ = std::make_shared<testing::NiceMock<MockFrameManager>>();
@@ -62,7 +62,7 @@ void DisplayTestFixture::SetUp()
     testing::Return(handler_manager_));
 }
 
-void DisplayTestFixture::TearDown()
+DisplayTestFixture::~DisplayTestFixture()
 {
   scene_manager_->getRootSceneNode()->removeAndDestroyAllChildren();
 }
