@@ -49,9 +49,8 @@ using namespace ::testing;  // NOLINT
 class SelectionTestFixture : public DisplayContextFixture
 {
 public:
-  void SetUp() override
+  SelectionTestFixture()
   {
-    DisplayContextFixture::SetUp();
     renderer_ = std::make_shared<MockSelectionRenderer>(context_.get());
     handler_manager_ = std::make_shared<rviz_common::interaction::HandlerManager>();
     std::weak_ptr<rviz_common::interaction::HandlerManagerIface>
@@ -65,14 +64,6 @@ public:
     EXPECT_CALL(*context_, getSelectionManager()).WillRepeatedly(
       Invoke([selection_manager_weak_ptr]() {return selection_manager_weak_ptr.lock();}));
     selection_manager_->initialize();
-  }
-
-  void TearDown() override
-  {
-    renderer_.reset();  // necessary for correct order of deleting node
-    selection_manager_.reset();  // necessary for correct order of deleting node
-    handler_manager_.reset();  // necessary for correct order of deleting node
-    DisplayContextFixture::TearDown();
   }
 
   std::shared_ptr<MockSelectionRenderer> renderer_;

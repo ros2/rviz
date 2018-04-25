@@ -54,9 +54,9 @@ class DisplayContextFixture : public testing::Test
 public:
   static void SetUpTestCase();
 
-  void SetUp() override;
+  DisplayContextFixture();
 
-  void TearDown() override;
+  ~DisplayContextFixture();
 
   static void TearDownTestCase();
 

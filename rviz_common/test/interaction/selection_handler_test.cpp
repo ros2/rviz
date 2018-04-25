@@ -57,17 +57,10 @@ MATCHER_P(ContainsWireBoxWithBoundingBox, AABB, "") {
 class SelectionHandlerFixture : public SelectionTestFixture
 {
 public:
-  void SetUp() override
+  SelectionHandlerFixture()
   {
-    SelectionTestFixture::SetUp();
     using rviz_common::interaction::SelectionHandler;
     handler_ = rviz_common::interaction::createSelectionHandler<SelectionHandler>(context_.get());
-  }
-
-  void TearDown() override
-  {
-    handler_.reset();
-    SelectionTestFixture::TearDown();
   }
 
   Ogre::ManualObject * createManualObject()

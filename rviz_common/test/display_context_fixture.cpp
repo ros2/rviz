@@ -43,7 +43,7 @@ void DisplayContextFixture::SetUpTestCase()
   scene_manager_ = Ogre::Root::getSingletonPtr()->createSceneManager();
 }
 
-void DisplayContextFixture::SetUp()
+DisplayContextFixture::DisplayContextFixture()
 {
   context_ = std::make_shared<testing::NiceMock<MockDisplayContext>>();
   window_manager_ = std::make_shared<testing::NiceMock<MockWindowManagerInterface>>();
@@ -54,7 +54,7 @@ void DisplayContextFixture::SetUp()
   EXPECT_CALL(*context_, getSceneManager()).WillRepeatedly(testing::Return(scene_manager_));
 }
 
-void DisplayContextFixture::TearDown()
+DisplayContextFixture::~DisplayContextFixture()
 {
   scene_manager_->getRootSceneNode()->removeAndDestroyAllChildren();
 }

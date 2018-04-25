@@ -66,7 +66,7 @@ protected:
     rclcpp::shutdown();
   }
 
-  void SetUp() override
+  RosNodeAbstractionTestFixture()
   {
     ros_node_storage_ = std::make_unique<MockRosNodeStorage>();
   }
