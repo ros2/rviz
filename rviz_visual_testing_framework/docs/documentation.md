@@ -21,9 +21,9 @@ At this point the MSE (Mean Square Error) index is calculated using the differen
 If the computed MSE index is lower than this threshold, then the test will pass, otherwise it will fail.
 In both cases the user will be notified about the actual value of the MSE index. In the future, a more sophisticated comparison method may be provided.
 
-- If the dimensions of the test image are different from the ones of the reference picture, then the test screenshot will be resized to match the reference one before the comparison is performed.
-Either of the dimensions of the test screenshot could be both bigger or smaller than the reference one.
-The resizing, therefore, consists of a simple scaling which brings the test image to have the same dimensions as the reference picture.
+- The dimensions of the different render windows are not fixed by RViz' config. Therefore screenshots will be different of different systems. To compensate for this, test images have to be resized.
+This is done in the same way as RViz resizes render windows: Vertical resizing is done by resizing the image keeping proportions, while horizontal resizing is cropping the image equally on the left and right. This ensures maximum compatibility between the test image and the reference image.
+To ensure that such resizing is always possible, test images are a lot wider than reference images.
 
 
 ## Interface

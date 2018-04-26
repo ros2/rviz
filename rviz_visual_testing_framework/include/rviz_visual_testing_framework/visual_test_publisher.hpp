@@ -52,6 +52,11 @@ struct PublisherWithFrame
   std::string frame_name_;
 };
 
+/**
+ * This class is used internally to set up publishers and automatically publish simple static
+ * transformations. You can use this class in your test with the frame_name of your publisher to
+ * make sure that tf2 transformations are valid.
+ */
 class VisualTestPublisher
 {
 public:

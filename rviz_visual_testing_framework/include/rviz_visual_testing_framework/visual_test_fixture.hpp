@@ -67,26 +67,98 @@ public:
   void TearDown() override;
   static void TearDownTestCase();
 
+  /**
+   * Change the pose of the camera, i.e. the position in the scene.
+   * Note that the camera of the scene is not the default camera of RViz, hence move tools will
+   * not work
+   * @param camera_pose The new position of the camera
+   */
   void setCamPose(Ogre::Vector3 camera_pose);
+
+  /**
+   * Change where the camera should look, makes the point the center of the rendering window
+   * Note that the camera of the scene is not the default camera of RViz, hence move tools will
+   * not work
+   * @param camera_look_at_vector The new position in the center of the screen
+   */
   void setCamLookAt(Ogre::Vector3 camera_look_at_vector);
+
+  /**
+   * Combine functions for setCamPose and setCamLookAt
+   */
   void updateCamWithDelay(Ogre::Vector3 new_pose, Ogre::Vector3 new_look_at);
+
+  /**
+   * Set the image comparison threshold, if the default is not good enough. The default threshold
+   * used otherwise is 0.01. The default value is chosen for stability. Comparison happens using a
+   * mean squared distance between the image colors at every pixel. The lower the threshold, the
+   * less reference and test images may differ before the test is marked as a failure.
+   * @param threshold new threshold for this test
+   */
   void setTesterThreshold(double threshold);
+
+  /**
+   * Add a display associated with the given PageObject from RViz.
+   * @tparam T The type of the page object
+   * @return
+   */
   template<typename T>
   std::shared_ptr<T> addDisplay()
   {
     return display_handler_->addDisplay<T>();
   }
+
+  /**
+   * Removes the display associated with the given PageObject from RViz
+   * @param display PageObject derived from the BasePageObject class.
+   */
   void removeDisplay(std::shared_ptr<BasePageObject> display);
 
+  /**
+   * Manually take a screenshot of the main render window to compare it later on.
+   * N.B: When only the main render window should be captured, use assertMainWindowIdentity()
+   * instead, which will automatically call this function for you.
+   * @param image_name Name of the reference or test screenshot. If empty, the test name will be
+   * used.
+   */
   void captureMainWindow(Ogre::String image_name = "");
+
+  /**
+   * Take a screenshot of an additional render window. The corresponding display must derive from
+   * the class "PageObjectWithWindow", which ensures that the render window can be found.
+   * @param display Instance of a derived class from PageObjectWithWindow, an object containing a
+   * render window to take screenshots from.
+   * @param name Name of the reference or test screenshot. If empty, the test name will be
+   * used.
+   */
   void captureRenderWindow(
     std::shared_ptr<PageObjectWithWindow> display, Ogre::String name = "");
 
+  /**
+   * Assert the identity of all screenshots taken during the test.
+   * N.B: When only the main render window should be captured, use assertMainWindowIdentity()
+   * instead, which will automatically call this function for you.
+   */
   void assertScreenShotsIdentity();
+
+  /**
+   * Take a screenshot of the main render window and compare it to the reference window.
+   * If you need to take screenshots of additional render windows, use the functions
+   * captureRenderWindow(...) and assertScreenShotsIdentity() instead.
+   * @param image_name Name of the reference or test screenshot. If empty, the test name will be
+   * used.
+   */
   void assertMainWindowIdentity(Ogre::String image_name = "");
 
+  /**
+   * Wait for a specified amount in milliseconds. This may be relevant if messages get published
+   * and don't appear on screen fast enough.
+   * @param milliseconds_to_wait number of milliseconds to wait
+   */
   void wait(int milliseconds_to_wait);
 
+  // Variables need to be public for internal reasons, but it should rarely be necessary to use
+  // them in tests.
   Ogre::String test_name_;
   std::unique_ptr<VisualTest> visual_test_;
   std::unique_ptr<DisplayHandler> display_handler_;

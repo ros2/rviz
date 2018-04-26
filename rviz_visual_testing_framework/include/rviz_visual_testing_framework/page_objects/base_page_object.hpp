@@ -44,6 +44,19 @@
 class BasePageObject : public QObject
 {
 public:
+  /**
+   * Constructor of a BasePageObject. Most of the fields will get added automatically when adding
+   * a display. When deriving from this class, please specify the parameters display_category and
+   * display_name such that the constructor of your PageObject has exactly three parameters -
+   * the display_id, the executor and the all_dipslays_ids. These will be handles by the visual
+   * test itself.
+   * @param display_id Handled internally, please pass through when deriving
+   * @param display_category The display category of this display. This is the number of the
+   * folder in the "Add Display" dialog (0 for rviz_default_plugins)
+   * @param display_name_ The name of the display in the "Add Display" dialog
+   * @param executor Handled internally, please pass through when deriving
+   * @param all_displays_ids Handled internally, please pass through when deriving
+   */
   BasePageObject(
     int display_id,
     int display_category,
@@ -60,24 +73,69 @@ protected:
   int findPropertyRowIndexByName(
     const QString & property_name, QModelIndex relative_display_index);
 
+  /**
+   * Set a String into a property in the displays panel
+   * @param main_property_name Name of the Property in the left row of the displays panel
+   * @param value_to_set String to set for this property
+   * @param sub_property_index Optional: Index of a subproperty to work on
+   * @param sub_property_name Optional: Name of said subproperty
+   */
   void setString(
     const QString & main_property_name,
     const QString & value_to_set,
     int sub_property_index = -1,
     const QString & sub_property_name = "");
+
+  /**
+   * Set an item of a ComboBox property in the display panel
+   * @param main_property_name Name of the Property in the left row of the displays panel
+   * @param value_to_set String representation of the value to set for this property
+   */
   void setComboBox(const QString & property_name, const QString & value_to_set);
+
+  /**
+   * Set a boolean property (represented by a checkbox in the display panel)
+   * @param main_property_name Name of the Property in the left row of the displays panel
+   * @param value_to_set Boolean value to set for this property
+   * @param sub_property_index Optional: Index of a subproperty to work on
+   * @param sub_property_name Optional: Name of said subproperty
+   */
   void setBool(
     const QString & main_property_name,
     bool value_to_set,
     int sub_property_index = -1,
     const QString & sub_property_name = "");
+
+  /**
+  * Set an integer property in the display panel
+  * @param main_property_name Name of the Property in the left row of the displays panel
+  * @param value_to_set Integer to set for this property
+  */
   void setInt(const QString & property_name, int value_to_set);
+
+  /**
+  * Set a float property in the display panel
+  * @param main_property_name Name of the Property in the left row of the displays panel
+  * @param value_to_set Float to set for this property. Locales will be handled by the visual test
+  */
   void setFloat(
     const QString & main_property_name,
     float value_to_set,
     int sub_property_index = -1,
     const QString & sub_property_name = "");
+
+  /**
+  * Set a color property in the display panel
+  * @param main_property_name Name of the Property in the left row of the displays panel
+  * @param red, blue, green Color values in rgb (between 0 and 255) to set for this property
+  */
   void setColorCode(const QString & property_name, int red, int green, int blue);
+
+  /**
+  * Set a vector property in the display panel
+  * @param main_property_name Name of the Property in the left row of the displays panel
+  * @param x, y, z coordinates of the Vector to set into this property as float values
+  */
   void setVector(const QString & property_name, float x, float y, float z);
 
   int display_id_;
