@@ -26,46 +26,56 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
- /*
+/*
  * measure_tool.h
  *
  *  Created on: Aug 8, 2012
  *      Author: gossow
  */
 
-#ifndef MEASURE_TOOL_H_
-#define MEASURE_TOOL_H_
+#ifndef RVIZ_DEFAULT_PLUGINS__TOOLS__MEASURE__MEASURE_TOOL_HPP_
+#define RVIZ_DEFAULT_PLUGINS__TOOLS__MEASURE__MEASURE_TOOL_HPP_
 
-#include "rviz/tool.h"
+#include <QCursor>
 
 #include <OgreVector3.h>
 
-namespace rviz
+#include "rviz_common/tool.hpp"
+
+namespace rviz_rendering
+{
+class Line;
+}
+
+namespace rviz_default_plugins
+{
+namespace tools
 {
 
-class Line;
-
-class MeasureTool : public Tool
+class MeasureTool : public rviz_common::Tool
 {
 public:
   MeasureTool();
-  virtual
-  ~MeasureTool();
 
-  virtual void onInitialize();
+  ~MeasureTool() override;
 
-  virtual void activate();
-  virtual void deactivate();
+  void onInitialize() override;
 
-  virtual int processMouseEvent( ViewportMouseEvent& event );
+  void activate() override;
+
+  void deactivate() override;
+
+  int processMouseEvent(rviz_common::ViewportMouseEvent & event) override;
+
 private:
 
-  enum {
+  enum
+  {
     START,
     END
   } state_;
 
-  Line* line_;
+  rviz_rendering::Line * line_;
   Ogre::Vector3 start_;
   Ogre::Vector3 end_;
   float length_;
@@ -74,5 +84,7 @@ private:
   QCursor hit_cursor_;
 };
 
-} /* namespace rviz */
-#endif /* MEASURE_TOOL_H_ */
+}  // namespace tools
+}  // namespace rviz_default_plugins
+
+#endif  // RVIZ_DEFAULT_PLUGINS__TOOLS__MEASURE__MEASURE_TOOL_HPP_

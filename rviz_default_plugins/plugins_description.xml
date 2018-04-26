@@ -165,6 +165,18 @@
       Hold the Alt key to change viewpoint as in the Move tool.
     </description>
   </class>
+
+  <class
+          name="rviz_default_plugins/Measure"
+          type="rviz_default_plugins::tools::MeasureTool"
+          base_class_type="rviz_common::Tool"
+  >
+    <description>
+      Click onto two locations to measure their distance.
+    </description>
+  </class>
+
+
   <!-- View Controller plugins -->
 
   <class

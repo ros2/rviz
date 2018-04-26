@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "line.h"
+#include "rviz_rendering/objects/line.hpp"
 
 #include <sstream>
 
@@ -37,7 +37,7 @@
 #include <OgreMaterialManager.h>
 #include <OgreTechnique.h>
 
-namespace rviz
+namespace rviz_rendering
 {
 
 Line::Line( Ogre::SceneManager* manager, Ogre::SceneNode* parent_node )
@@ -56,7 +56,8 @@ Line::Line( Ogre::SceneManager* manager, Ogre::SceneNode* parent_node )
 
   // NOTE: The second parameter to the create method is the resource group the material will be added to.
   // If the group you name does not exist (in your resources.cfg file) the library will assert() and your program will crash
-  manual_object_material_ = Ogre::MaterialManager::getSingleton().create(ss.str(),"rviz");
+  manual_object_material_ = Ogre::MaterialManager::getSingleton().create(ss.str(),
+    "rviz_rendering");
   manual_object_material_->setReceiveShadows(false);
   manual_object_material_->getTechnique(0)->setLightingEnabled(true);
   manual_object_material_->getTechnique(0)->getPass(0)->setDiffuse(0,0,0,0);
@@ -73,7 +74,7 @@ Line::~Line()
   }
   scene_manager_->destroySceneNode(scene_node_);
   scene_manager_->destroyManualObject( manual_object_ );
-  Ogre::MaterialManager::getSingleton().remove(manual_object_material_->getName());
+  manual_object_material_->unload();
 }
 
 void Line::setPoints( Ogre::Vector3 start, Ogre::Vector3 end )
@@ -148,5 +149,4 @@ void Line::setUserData( const Ogre::Any& data )
   manual_object_->getUserObjectBindings().setUserAny( data );
 }
 
-
-}
+}  // namespace rviz_rendering

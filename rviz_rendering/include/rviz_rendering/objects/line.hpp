@@ -27,14 +27,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LINE_H_
-#define LINE_H_
-
-#include "object.h"
+#ifndef RVIZ_RENDERING__OBJECTS__LINE_HPP_
+#define RVIZ_RENDERING__OBJECTS__LINE_HPP_
 
 #include <OgreSceneNode.h>
 #include <OgreMaterial.h>
 #include <OgreSharedPtr.h>
+
+#include "rviz_rendering/objects/object.hpp"
+#include "rviz_rendering/visibility_control.hpp"
 
 namespace Ogre
 {
@@ -46,11 +47,11 @@ class Any;
 class ColourValue;
 }
 
-namespace rviz
+namespace rviz_rendering
 {
 
 /* Represents a straight wireframe line between two points. */
-class Line: public Object
+class RVIZ_RENDERING_PUBLIC Line : public Object
 {
 public:
   /**
@@ -128,6 +129,6 @@ protected:
   Ogre::MaterialPtr manual_object_material_;
 };
 
-}
+}  // namespace rviz_rendering
 
-#endif /* LINE_H_ */
+#endif  // RVIZ_RENDERING__OBJECTS__LINE_HPP_

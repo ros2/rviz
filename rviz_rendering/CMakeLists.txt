@@ -78,6 +78,7 @@ add_library(rviz_rendering SHARED
   src/rviz_rendering/objects/axes.cpp
   src/rviz_rendering/objects/billboard_line.cpp
   src/rviz_rendering/objects/grid.cpp
+  src/rviz_rendering/objects/line.cpp
   src/rviz_rendering/objects/movable_text.cpp
   src/rviz_rendering/objects/object.cpp
   src/rviz_rendering/objects/point_cloud.cpp

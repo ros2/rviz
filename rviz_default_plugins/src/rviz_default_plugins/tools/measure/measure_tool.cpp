@@ -26,31 +26,49 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
- /*
+/*
  * measure_tool.cpp
  *
  *  Created on: Aug 8, 2012
  *      Author: gossow
  */
 
-#include "measure_tool.h"
-
-#include "rviz/ogre_helpers/line.h"
-#include "rviz/viewport_mouse_event.h"
-#include "rviz/display_context.h"
-#include "rviz/selection/selection_manager.h"
-#include "rviz/load_resource.h"
-
-#include <OgreSceneNode.h>
+#include "measure_tool.hpp"
 
 #include <sstream>
 
-namespace rviz
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+# pragma GCC diagnostic ignored "-Wpedantic"
+#else
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#endif
+
+#include <OgreSceneNode.h>
+
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#else
+# pragma warning(pop)
+#endif
+
+#include "rviz_rendering/objects/line.hpp"
+
+#include "rviz_common/display_context.hpp"
+#include "rviz_common/load_resource.hpp"
+#include "rviz_common/viewport_mouse_event.hpp"
+#include "rviz_common/interaction/view_picker_iface.hpp"
+
+namespace rviz_default_plugins
+{
+namespace tools
 {
 
 MeasureTool::MeasureTool() :
-    state_(START),
-    length_(-1)
+  state_(START),
+  length_(-1)
 {
 }
 
@@ -61,10 +79,10 @@ MeasureTool::~MeasureTool()
 
 void MeasureTool::onInitialize()
 {
-  line_ = new Line(context_->getSceneManager());
+  line_ = new rviz_rendering::Line(context_->getSceneManager());
 
-  std_cursor_ = getDefaultCursor();
-  hit_cursor_ = makeIconCursor( "package://rviz/icons/crosshair.svg" );
+  std_cursor_ = rviz_common::getDefaultCursor();
+  hit_cursor_ = rviz_common::makeIconCursor("package://rviz_common/icons/crosshair.svg");
 }
 
 void MeasureTool::activate()
@@ -76,7 +94,7 @@ void MeasureTool::deactivate()
 {
 }
 
-int MeasureTool::processMouseEvent( ViewportMouseEvent& event )
+int MeasureTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
 {
   int flags = 0;
 
@@ -84,34 +102,29 @@ int MeasureTool::processMouseEvent( ViewportMouseEvent& event )
 
   std::stringstream ss;
 
-  bool success = context_->getSelectionManager()->get3DPoint( event.viewport, event.x, event.y, pos );
-  setCursor( success ? hit_cursor_ : std_cursor_ );
+  bool success = context_->getViewPicker()->get3DPoint(event.panel, event.x, event.y, pos);
+  setCursor(success ? hit_cursor_ : std_cursor_);
 
-  switch ( state_ )
-  {
+  switch (state_) {
     case START:
       break;
     case END:
-      if ( success )
-      {
-        line_->setPoints(start_,pos);
-        length_ = (start_-pos).length();
+      if (success) {
+        line_->setPoints(start_, pos);
+        length_ = (start_ - pos).length();
       }
       break;
   }
 
-  if ( length_ > 0.0 )
-  {
+  if (length_ > 0.0) {
     ss << "[Length: " << length_ << "m] ";
   }
 
   ss << "Click on two points to measure their distance. Right-click to reset.";
-  setStatus( QString( ss.str().c_str() ) );
+  setStatus(QString(ss.str().c_str()));
 
-  if( event.leftUp() && success )
-  {
-    switch ( state_ )
-    {
+  if (event.leftUp() && success) {
+    switch (state_) {
       case START:
         start_ = pos;
         state_ = END;
@@ -119,15 +132,14 @@ int MeasureTool::processMouseEvent( ViewportMouseEvent& event )
       case END:
         end_ = pos;
         state_ = START;
-        line_->setPoints(start_,end_);
+        line_->setPoints(start_, end_);
         break;
     }
 
     flags |= Render;
   }
 
-  if ( event.rightUp() )
-  {
+  if (event.rightUp()) {
     state_ = START;
     line_->setVisible(false);
   }
@@ -135,8 +147,8 @@ int MeasureTool::processMouseEvent( ViewportMouseEvent& event )
   return flags;
 }
 
-} /* namespace rviz */
+}  // namespace tools
+}  // namespace rviz_default_plugins
 
-
-#include <pluginlib/class_list_macros.h>
-PLUGINLIB_EXPORT_CLASS( rviz::MeasureTool, rviz::Tool )
+#include <pluginlib/class_list_macros.hpp>  // NOLINT
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::tools::MeasureTool, rviz_common::Tool)
