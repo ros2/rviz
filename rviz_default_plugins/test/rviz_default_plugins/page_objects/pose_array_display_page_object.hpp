@@ -38,10 +38,7 @@
 class PoseArrayDisplayPageObject : public PoseDisplayPageObject
 {
 public:
-  PoseArrayDisplayPageObject(
-    int display_id,
-    std::shared_ptr<Executor> executor,
-    std::shared_ptr<std::vector<int>> all_displays_ids);
+  PoseArrayDisplayPageObject();
 
   void setFlatArrowsLength(float flat_arrows_length);
 };

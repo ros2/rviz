@@ -88,7 +88,7 @@ void ImageTester::assertImageIdentity(
     computeImageDifference(test_image, reference_image, image_name);
     double mse_index = computeMseIndex(image_name, reference_image_width, reference_image_height);
     if (mse_index <= threshold_) {
-      std::cout << "\n[   INFO:   ] The test image '" << image_name + ".png" << "' is not "
+      std::cout << "\n[   INFO:  ] The test image '" << image_name + ".png" << "' is not "
         "pixel-wise identical to its reference, but the MSE index is " << mse_index <<
         ", which is not bigger than the set threshold of " << threshold_ << "\n\n";
       SUCCEED();

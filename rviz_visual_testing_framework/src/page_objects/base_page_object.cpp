@@ -37,19 +37,24 @@
 
 #include "rviz_visual_testing_framework/test_helpers.hpp"
 
-BasePageObject::BasePageObject(
-  int display_id,
-  int display_category,
-  QString display_name,
-  std::shared_ptr<Executor> executor,
-  std::shared_ptr<std::vector<int>> display_ids_vector)
-: display_category_(display_category),
+BasePageObject::BasePageObject(int display_category, QString display_name)
+: display_id_(0),
+  display_category_(display_category),
   display_name_(display_name),
-  executor_(executor),
+  executor_(nullptr),
   default_first_display_index_(2),
-  all_display_ids_vector_(display_ids_vector)
+  all_display_ids_vector_(nullptr)
+{
+}
+
+void BasePageObject::initialize(
+  int display_id,
+  std::shared_ptr<Executor> executor,
+  std::shared_ptr<std::vector<int>> all_displays_ids)
 {
   display_id_ = display_id;
+  executor_ = executor;
+  all_display_ids_vector_ = all_displays_ids;
 }
 
 void BasePageObject::setString(

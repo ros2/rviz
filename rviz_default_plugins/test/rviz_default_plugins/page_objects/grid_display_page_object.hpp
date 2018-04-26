@@ -40,10 +40,7 @@
 class GridDisplayPageObject : public BasePageObject
 {
 public:
-  GridDisplayPageObject(
-    int display_id,
-    std::shared_ptr<Executor> executor,
-    std::shared_ptr<std::vector<int>> all_displays_ids);
+  GridDisplayPageObject();
 
   void setReferenceFrame(QString reference_frame);
   void setPlaneCellCount(int plane_cell_count);

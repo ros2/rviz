@@ -36,10 +36,8 @@
 
 #include "rviz_visual_testing_framework/test_helpers.hpp"
 
-PathDisplayPageObject::PathDisplayPageObject(
-  int display_id, std::shared_ptr<Executor> executor,
-  std::shared_ptr<std::vector<int>> all_displays_ids)
-: BasePageObject(display_id, 0, "Path", executor, all_displays_ids)
+PathDisplayPageObject::PathDisplayPageObject()
+: BasePageObject(0, "Path")
 {}
 
 void PathDisplayPageObject::setTopic(QString topic)

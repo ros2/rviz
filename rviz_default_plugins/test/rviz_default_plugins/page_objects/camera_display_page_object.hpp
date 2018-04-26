@@ -38,10 +38,7 @@
 class CameraDisplayPageObject : public PageObjectWithWindow
 {
 public:
-  CameraDisplayPageObject(
-    int display_id,
-    std::shared_ptr<Executor> executor,
-    std::shared_ptr<std::vector<int>> all_displays_ids);
+  CameraDisplayPageObject();
 
   /* @param display_name Name of the display whose visibility must be changed
    * @param relative_row_index Sub-property index relative to the parent property (i.e. Visibility)

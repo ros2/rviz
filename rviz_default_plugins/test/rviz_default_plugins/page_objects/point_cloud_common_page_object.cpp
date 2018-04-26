@@ -34,12 +34,8 @@
 
 #include <QTest>  // NOLINT
 
-PointCloudCommonPageObject::PointCloudCommonPageObject(
-  int display_id,
-  std::shared_ptr<Executor> executor,
-  QString display_name,
-  std::shared_ptr<std::vector<int>> all_displays_ids)
-: BasePageObject(display_id, 0, display_name, executor, all_displays_ids)
+PointCloudCommonPageObject::PointCloudCommonPageObject(QString display_name)
+: BasePageObject(0, display_name)
 {}
 
 void PointCloudCommonPageObject::setSizeMeters(float meters_size)

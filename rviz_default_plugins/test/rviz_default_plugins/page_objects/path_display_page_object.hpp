@@ -40,10 +40,7 @@
 class PathDisplayPageObject : public BasePageObject
 {
 public:
-  PathDisplayPageObject(
-    int display_id,
-    std::shared_ptr<Executor> executor,
-    std::shared_ptr<std::vector<int>> all_displays_ids);
+  PathDisplayPageObject();
 
   void setTopic(QString topic);
 

@@ -32,11 +32,8 @@
 #include <memory>
 #include <vector>
 
-PoseDisplayPageObject::PoseDisplayPageObject(
-  int display_id,
-  std::shared_ptr<Executor> executor,
-  std::shared_ptr<std::vector<int>> all_displays_ids)
-: BasePageObject(display_id, 0, "Pose", executor, all_displays_ids)
+PoseDisplayPageObject::PoseDisplayPageObject()
+: BasePageObject(0, "Pose")
 {}
 
 void PoseDisplayPageObject::setTopic(QString topic)

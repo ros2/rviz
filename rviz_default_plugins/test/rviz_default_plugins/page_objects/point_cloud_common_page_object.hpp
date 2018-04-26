@@ -40,11 +40,7 @@
 class PointCloudCommonPageObject : public BasePageObject
 {
 public:
-  PointCloudCommonPageObject(
-    int display_id,
-    std::shared_ptr<Executor> executor,
-    QString display_name,
-    std::shared_ptr<std::vector<int>> all_displays_ids);
+  explicit PointCloudCommonPageObject(QString display_name);
 
   void setSizeMeters(float meters_size);
   void setSizePixels(float pixels_size);

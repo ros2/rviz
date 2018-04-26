@@ -32,11 +32,8 @@
 #include <memory>
 #include <vector>
 
-MarkerDisplayPageObject::MarkerDisplayPageObject(
-  int display_id,
-  std::shared_ptr<Executor> executor,
-  std::shared_ptr<std::vector<int>> all_displays_ids)
-: BasePageObject(display_id, 0, "Marker", executor, all_displays_ids)
+MarkerDisplayPageObject::MarkerDisplayPageObject()
+: BasePageObject(0, "Marker")
 {}
 
 void MarkerDisplayPageObject::setTopic(QString topic)

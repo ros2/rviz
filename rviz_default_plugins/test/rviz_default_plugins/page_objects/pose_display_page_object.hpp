@@ -38,10 +38,7 @@
 class PoseDisplayPageObject : public BasePageObject
 {
 public:
-  PoseDisplayPageObject(
-    int display_id,
-    std::shared_ptr<Executor> executor,
-    std::shared_ptr<std::vector<int>> all_displays_ids);
+  PoseDisplayPageObject();
 
   void setTopic(QString topic);
   void setUnreliable(bool unreliable);

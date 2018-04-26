@@ -38,10 +38,7 @@
 class ImageDisplayPageObject : public PageObjectWithWindow
 {
 public:
-  ImageDisplayPageObject(
-    int display_id,
-    std::shared_ptr<Executor> executor,
-    std::shared_ptr<std::vector<int>> all_displays_ids);
+  ImageDisplayPageObject();
 
   void setRenderWindow() override;
   void setTopic(QString topic);

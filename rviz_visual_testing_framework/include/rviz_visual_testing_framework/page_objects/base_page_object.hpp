@@ -45,22 +45,18 @@ class BasePageObject : public QObject
 {
 public:
   /**
-   * Constructor of a BasePageObject. Most of the fields will get added automatically when adding
-   * a display. When deriving from this class, please specify the parameters display_category and
-   * display_name such that the constructor of your PageObject has exactly three parameters -
-   * the display_id, the executor and the all_dipslays_ids. These will be handles by the visual
-   * test itself.
-   * @param display_id Handled internally, please pass through when deriving
+   * Constructor of a BasePageObject.
+   * N.B: When deriving from this class, you need to specify a zero argument constructor setting
+   * the parameters in this constructor explicitly so that the "addDisplay" method in
+   * VisualTestVixture can work correctly.
    * @param display_category The display category of this display. This is the number of the
    * folder in the "Add Display" dialog (0 for rviz_default_plugins)
    * @param display_name_ The name of the display in the "Add Display" dialog
-   * @param executor Handled internally, please pass through when deriving
-   * @param all_displays_ids Handled internally, please pass through when deriving
    */
-  BasePageObject(
+  BasePageObject(int display_category, QString display_name_);
+
+  void initialize(
     int display_id,
-    int display_category,
-    QString display_name_,
     std::shared_ptr<Executor> executor,
     std::shared_ptr<std::vector<int>> all_displays_ids);
 

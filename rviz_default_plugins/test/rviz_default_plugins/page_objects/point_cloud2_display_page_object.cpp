@@ -34,11 +34,8 @@
 
 #include <QTest>  // NOLINT
 
-PointCloud2DisplayPageObject::PointCloud2DisplayPageObject(
-  int display_id,
-  std::shared_ptr<Executor> executor,
-  std::shared_ptr<std::vector<int>> all_displays_ids)
-: PointCloudCommonPageObject(display_id, executor, "PointCloud2", all_displays_ids)
+PointCloud2DisplayPageObject::PointCloud2DisplayPageObject()
+: PointCloudCommonPageObject("PointCloud2")
 {}
 
 void PointCloud2DisplayPageObject::setQueueSize(int queue_size)

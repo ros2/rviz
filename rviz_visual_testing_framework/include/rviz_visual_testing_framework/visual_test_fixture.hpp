@@ -98,9 +98,12 @@ public:
   void setTesterThreshold(double threshold);
 
   /**
-   * Add a display associated with the given PageObject from RViz.
-   * @tparam T The type of the page object
-   * @return
+   * Add a display from the "Add Display" dialog and return a shared_ptr to the corresponding page
+   * object. In order to work with a display, you need to construct a page object deriving from
+   * the base_page_object class.
+   * @tparam T Name of the PageObject of the display
+   * @return A shared pointer to an instance of the PageObject for the display for further
+   * interaction.
    */
   template<typename T>
   std::shared_ptr<T> addDisplay()

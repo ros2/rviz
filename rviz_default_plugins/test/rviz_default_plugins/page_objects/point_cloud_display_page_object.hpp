@@ -42,10 +42,7 @@
 class PointCloudDisplayPageObject : public PointCloudCommonPageObject
 {
 public:
-  PointCloudDisplayPageObject(
-    int display_id,
-    std::shared_ptr<Executor> executor,
-    std::shared_ptr<std::vector<int>> all_displays_ids);
+  PointCloudDisplayPageObject();
 
   void setQueueSize(int queue_size);
 };

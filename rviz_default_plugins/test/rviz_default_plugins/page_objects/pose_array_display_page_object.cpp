@@ -32,11 +32,8 @@
 #include <memory>
 #include <vector>
 
-PoseArrayDisplayPageObject::PoseArrayDisplayPageObject(
-  int display_id,
-  std::shared_ptr<Executor> executor,
-  std::shared_ptr<std::vector<int>> all_displays_ids)
-: PoseDisplayPageObject(display_id, executor, all_displays_ids)
+PoseArrayDisplayPageObject::PoseArrayDisplayPageObject()
+: PoseDisplayPageObject()
 {
   display_name_ = "PoseArray";
 }
