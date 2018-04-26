@@ -48,8 +48,8 @@ set(visual_test_framework_source_files
   src/internal/display_handler.cpp
   src/internal/image_tester.cpp
   include/rviz_visual_testing_framework/internal/image_tester.hpp
-  include/rviz_visual_testing_framework/internal/test_helpers.hpp
-  src/internal/test_helpers.cpp
+  include/rviz_visual_testing_framework/test_helpers.hpp
+  src/test_helpers.cpp
   include/rviz_visual_testing_framework/internal/executor.hpp
   src/internal/executor.cpp
   include/rviz_visual_testing_framework/internal/transform_publisher.hpp

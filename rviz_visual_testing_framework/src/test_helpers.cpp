@@ -27,22 +27,45 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_VISUAL_TESTING_FRAMEWORK__INTERNAL__TEST_HELPERS_HPP_
-#define RVIZ_VISUAL_TESTING_FRAMEWORK__INTERNAL__TEST_HELPERS_HPP_
+#include "rviz_visual_testing_framework/test_helpers.hpp"
 
 #include <vector>
 
-#include <QTreeView>  // NOLINT
-
-#include "rviz_rendering/render_window.hpp"
+#include <QApplication>  // NOLINT
 
 namespace helpers
 {
 
-int findIndex(int display_id, const std::vector<int> & displays_ids_vector);
-QTreeView * getDisplaysTreeView();
-rviz_rendering::RenderWindow * findWindow(const QString & window_name);
+int findIndex(int display_id, const std::vector<int> & displays_ids_vector)
+{
+  auto iterator_to_id = std::find(
+    displays_ids_vector.begin(), displays_ids_vector.end(), display_id);
+
+  return iterator_to_id != displays_ids_vector.end() ?
+         static_cast<int>(std::distance(displays_ids_vector.begin(), iterator_to_id)) :
+         -1;
+}
+
+QTreeView * getDisplaysTreeView()
+{
+  return QApplication::activeWindow()
+         ->findChild<QWidget *>("Displays")
+         ->findChild<QWidget *>("Displays/DisplayPanel")
+         ->findChild<QWidget *>("DisplayPanel/TreeWithHelp")
+         ->findChild<QTreeView *>("TreeWithHelp/PropertyTree");
+}
+
+rviz_rendering::RenderWindow * findWindow(const QString & window_name)
+{
+  auto all_windows = QApplication::allWindows();
+  for (auto & window : all_windows) {
+    if (window->objectName() == window_name) {
+      rviz_rendering::RenderWindow * render_window =
+        qobject_cast<rviz_rendering::RenderWindow *>(window);
+      return render_window;
+    }
+  }
+  return nullptr;
+}
 
 }  // namespace helpers
-
-#endif  // RVIZ_VISUAL_TESTING_FRAMEWORK__INTERNAL__TEST_HELPERS_HPP_

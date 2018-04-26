@@ -34,7 +34,7 @@
 
 #include <QTest>  // NOLINT
 
-#include "rviz_visual_testing_framework/internal/test_helpers.hpp"
+#include "rviz_visual_testing_framework/test_helpers.hpp"
 
 CameraDisplayPageObject::CameraDisplayPageObject(
   int display_id,
