@@ -66,11 +66,9 @@ namespace rviz_default_plugins
 namespace tools
 {
 
-MeasureTool::MeasureTool() :
-  state_(START),
-  length_(-1)
-{
-}
+MeasureTool::MeasureTool()
+: state_(START), length_(-1)
+{}
 
 MeasureTool::~MeasureTool()
 {

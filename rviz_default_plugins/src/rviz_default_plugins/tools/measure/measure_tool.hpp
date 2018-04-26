@@ -68,7 +68,6 @@ public:
   int processMouseEvent(rviz_common::ViewportMouseEvent & event) override;
 
 private:
-
   enum
   {
     START,
