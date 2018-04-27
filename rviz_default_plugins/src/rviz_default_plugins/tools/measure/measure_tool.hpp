@@ -36,7 +36,9 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__TOOLS__MEASURE__MEASURE_TOOL_HPP_
 #define RVIZ_DEFAULT_PLUGINS__TOOLS__MEASURE__MEASURE_TOOL_HPP_
 
-#include <QCursor>
+#include <memory>
+
+#include <QCursor>  // NOLINT cpplint cannot handle include order
 
 #include <OgreVector3.h>
 
@@ -57,8 +59,6 @@ class MeasureTool : public rviz_common::Tool
 public:
   MeasureTool();
 
-  ~MeasureTool() override;
-
   void onInitialize() override;
 
   void activate() override;
@@ -68,15 +68,14 @@ public:
   int processMouseEvent(rviz_common::ViewportMouseEvent & event) override;
 
 private:
-  enum
-  {
-    START,
-    END
-  } state_;
+  void setStatusMessage();
+  void processLeftButton(const Ogre::Vector3 & pos);
+  void processRightButton();
 
-  rviz_rendering::Line * line_;
+  std::shared_ptr<rviz_rendering::Line> line_;
   Ogre::Vector3 start_;
   Ogre::Vector3 end_;
+  bool is_line_started_;
   float length_;
 
   QCursor std_cursor_;

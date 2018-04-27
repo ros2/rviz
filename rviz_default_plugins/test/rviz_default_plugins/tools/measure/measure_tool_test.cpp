@@ -101,9 +101,9 @@ TEST_F(MeasureToolTestFixture, hovering_over_a_second_object_updates_the_line_an
 
   auto click = generateMouseLeftClick(obj1.x, obj1.y);
   measure_tool_->processMouseEvent(click);
-  click = generateMouseMoveEvent(obj2.x, obj2.y);
+  auto move = generateMouseMoveEvent(obj2.x, obj2.y);
   EXPECT_CALL(*context_, setStatus(_)).WillOnce(SaveArg<0>(&status));
-  measure_tool_->processMouseEvent(click);
+  measure_tool_->processMouseEvent(move);
 
   auto line = rviz_default_plugins::findOneManualObject(scene_manager_->getRootSceneNode());
   // Use bounding box to indirectly assert the vertices

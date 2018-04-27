@@ -35,6 +35,7 @@
 
 #include "measure_tool.hpp"
 
+#include <memory>
 #include <sstream>
 
 #ifndef _WIN32
@@ -67,17 +68,12 @@ namespace tools
 {
 
 MeasureTool::MeasureTool()
-: state_(START), length_(-1)
+: is_line_started_(false), length_(-1)
 {}
-
-MeasureTool::~MeasureTool()
-{
-  delete line_;
-}
 
 void MeasureTool::onInitialize()
 {
-  line_ = new rviz_rendering::Line(context_->getSceneManager());
+  line_ = std::make_shared<rviz_rendering::Line>(context_->getSceneManager());
 
   std_cursor_ = rviz_common::getDefaultCursor();
   hit_cursor_ = rviz_common::makeIconCursor("package://rviz_common/icons/crosshair.svg");
@@ -85,7 +81,7 @@ void MeasureTool::onInitialize()
 
 void MeasureTool::activate()
 {
-  state_ = START;
+  is_line_started_ = false;
 }
 
 void MeasureTool::deactivate()
@@ -94,55 +90,55 @@ void MeasureTool::deactivate()
 
 int MeasureTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
 {
-  int flags = 0;
-
   Ogre::Vector3 pos;
-
-  std::stringstream ss;
-
   bool success = context_->getViewPicker()->get3DPoint(event.panel, event.x, event.y, pos);
   setCursor(success ? hit_cursor_ : std_cursor_);
 
-  switch (state_) {
-    case START:
-      break;
-    case END:
-      if (success) {
-        line_->setPoints(start_, pos);
-        length_ = (start_ - pos).length();
-      }
-      break;
+  if (is_line_started_ && success) {
+    line_->setPoints(start_, pos);
+    length_ = (start_ - pos).length();
   }
 
+  setStatusMessage();
+
+  if (event.leftUp() && success) {
+    processLeftButton(pos);
+    return Render;
+  }
+  if (event.rightUp()) {
+    processRightButton();
+  }
+
+  return 0;
+}
+
+void MeasureTool::setStatusMessage()
+{
+  std::stringstream ss;
   if (length_ > 0.0) {
     ss << "[Length: " << length_ << "m] ";
   }
 
   ss << "Click on two points to measure their distance. Right-click to reset.";
   setStatus(QString(ss.str().c_str()));
+}
 
-  if (event.leftUp() && success) {
-    switch (state_) {
-      case START:
-        start_ = pos;
-        state_ = END;
-        break;
-      case END:
-        end_ = pos;
-        state_ = START;
-        line_->setPoints(start_, end_);
-        break;
-    }
-
-    flags |= Render;
+void MeasureTool::processLeftButton(const Ogre::Vector3 & pos)
+{
+  if (is_line_started_) {
+    end_ = pos;
+    line_->setPoints(start_, end_);
+    is_line_started_ = false;
+  } else {
+    start_ = pos;
+    is_line_started_ = true;
   }
+}
 
-  if (event.rightUp()) {
-    state_ = START;
-    line_->setVisible(false);
-  }
-
-  return flags;
+void MeasureTool::processRightButton()
+{
+  is_line_started_ = false;
+  line_->setVisible(false);
 }
 
 }  // namespace tools
