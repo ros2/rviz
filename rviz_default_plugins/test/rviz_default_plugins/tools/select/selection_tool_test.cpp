@@ -34,27 +34,17 @@
 
 #include <memory>
 
-#include <QApplication>  // NOLINT cpplint cannot handle include order
-#include <QKeyEvent>  // NOLINT cpplint cannot handle include order
-
-#include "rviz_common/render_panel.hpp"
-#include "rviz_common/tool.hpp"
-
 #include "../../../../src/rviz_default_plugins/tools/select/selection_tool.hpp"
 
+#include "../tool_test_fixture.hpp"
 #include "../../mock_display_context.hpp"
 #include "../../mock_selection_manager.hpp"
 
 using namespace ::testing;  // NOLINT
 
-class SelectionToolTestFixture : public Test
+class SelectionToolTestFixture : public ToolTestFixture, public Test
 {
 public:
-  static void SetUpTestCase()
-  {
-    render_panel_ = new rviz_common::RenderPanel(nullptr);
-  }
-
   SelectionToolTestFixture()
   {
     context_ = std::make_shared<NiceMock<MockDisplayContext>>();
@@ -66,44 +56,12 @@ public:
     selection_tool_->initialize(context_.get());
   }
 
-  static void TearDownTestCase()
-  {
-    delete render_panel_;
-    render_panel_ = nullptr;
-  }
-
-  rviz_common::ViewportMouseEvent generateMouseMoveEvent(int x, int y)
-  {
-    return generateMouseEvent(x, y, QMouseEvent::MouseMove, Qt::NoButton, Qt::NoModifier);
-  }
-
-  rviz_common::ViewportMouseEvent generateMousePressEvent(int x, int y)
-  {
-    return generateMouseEvent(x, y, QMouseEvent::MouseButtonPress, Qt::LeftButton, Qt::NoModifier);
-  }
-
-  rviz_common::ViewportMouseEvent generateMouseReleaseEvent(
-    int x, int y, Qt::KeyboardModifiers modifiers = Qt::NoModifier)
-  {
-    return generateMouseEvent(x, y, QMouseEvent::MouseButtonRelease, Qt::LeftButton, modifiers);
-  }
-
-  rviz_common::ViewportMouseEvent generateMouseEvent(
-    int x, int y, QMouseEvent::Type type, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
-  {
-    auto mouseEvent = new QMouseEvent(type, QPointF(x, y), button, button, modifiers);
-    return {render_panel_, mouseEvent, x, y};
-  }
-
   std::shared_ptr<MockDisplayContext> context_;
   std::shared_ptr<MockSelectionManager> selection_manager_;
 
   std::shared_ptr<rviz_default_plugins::tools::SelectionTool> selection_tool_;
-
-  static rviz_common::RenderPanel * render_panel_;
 };
 
-rviz_common::RenderPanel * SelectionToolTestFixture::render_panel_ = nullptr;
 
 TEST_F(SelectionToolTestFixture, processMouseEvent_does_not_render_on_mouse_move) {
   auto event = generateMouseMoveEvent(10, 20);

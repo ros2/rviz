@@ -36,14 +36,11 @@
 
 #include <OgreManualObject.h>
 
-#include <QApplication>  // NOLINT cpplint cannot handle include order
-#include <QKeyEvent>  // NOLINT cpplint cannot handle include order
-
-#include "rviz_common/render_panel.hpp"
 #include "rviz_common/tool.hpp"
 
 #include "../../../../src/rviz_default_plugins/tools/measure/measure_tool.hpp"
 
+#include "../tool_test_fixture.hpp"
 #include "../../displays/display_test_fixture.hpp"
 #include "../../scene_graph_introspection.hpp"
 #include "../../mock_display_context.hpp"
@@ -51,15 +48,9 @@
 
 using namespace ::testing;  // NOLINT
 
-class MeasureToolTestFixture : public DisplayTestFixture
+class MeasureToolTestFixture : public ToolTestFixture, public DisplayTestFixture
 {
 public:
-  static void SetUpTestCase()
-  {
-    DisplayTestFixture::SetUpTestCase();
-    render_panel_ = new rviz_common::RenderPanel(nullptr);
-  }
-
   MeasureToolTestFixture()
   {
     view_picker_ = std::make_shared<MockViewPicker>();
@@ -70,12 +61,6 @@ public:
     measure_tool_->initialize(context_.get());
   }
 
-  static void TearDownTestCase()
-  {
-    delete render_panel_;
-    render_panel_ = nullptr;
-  }
-
   Visible3DObject addVisible3DObject(int x, int y, Ogre::Vector3 pos)
   {
     Visible3DObject object(x, y, pos);
@@ -83,33 +68,10 @@ public:
     return object;
   }
 
-  rviz_common::ViewportMouseEvent generateMouseLeftClick(int x, int y)
-  {
-    return generateMouseEvent(
-      x, y, QMouseEvent::MouseButtonRelease, Qt::LeftButton, Qt::NoModifier);
-  }
-
-  rviz_common::ViewportMouseEvent generateMouseRightClick(int x, int y)
-  {
-    return generateMouseEvent(
-      x, y, QMouseEvent::MouseButtonRelease, Qt::RightButton, Qt::NoModifier);
-  }
-
-  rviz_common::ViewportMouseEvent generateMouseEvent(
-    int x, int y, QMouseEvent::Type type, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
-  {
-    auto mouseEvent = new QMouseEvent(type, QPointF(x, y), button, button, modifiers);
-    return {render_panel_, mouseEvent, x, y};
-  }
-
   std::shared_ptr<MockViewPicker> view_picker_;
 
   std::shared_ptr<rviz_default_plugins::tools::MeasureTool> measure_tool_;
-
-  static rviz_common::RenderPanel * render_panel_;
 };
-
-rviz_common::RenderPanel * MeasureToolTestFixture::render_panel_ = nullptr;
 
 
 TEST_F(MeasureToolTestFixture, choosing_to_objects_shows_a_line_and_the_distance) {

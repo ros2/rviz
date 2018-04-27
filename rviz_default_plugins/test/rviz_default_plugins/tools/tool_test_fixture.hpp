@@ -29,58 +29,61 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__MOCK_VIEW_PICKER_HPP_
-#define RVIZ_DEFAULT_PLUGINS__MOCK_VIEW_PICKER_HPP_
-
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
+#ifndef RVIZ_DEFAULT_PLUGINS__TOOLS__TOOL_TEST_FIXTURE_HPP_
+#define RVIZ_DEFAULT_PLUGINS__TOOLS__TOOL_TEST_FIXTURE_HPP_
 
 #include <memory>
-#include <string>
-#include <vector>
 
-#include <OgreVector3.h>
+#include <QApplication>  // NOLINT cpplint cannot handle include order
+#include <QKeyEvent>  // NOLINT cpplint cannot handle include order
 
-#include "rviz_common/interaction/forwards.hpp"
-#include "rviz_common/interaction/view_picker_iface.hpp"
 #include "rviz_common/render_panel.hpp"
+#include "rviz_common/viewport_mouse_event.hpp"
 
-
-struct Visible3DObject
-{
-  Visible3DObject(int x, int y, const Ogre::Vector3 & pos)
-  : x(x), y(y), position(pos)
-  {}
-
-  int x;
-  int y;
-  Ogre::Vector3 position;
-};
-
-class MockViewPicker : public rviz_common::interaction::ViewPickerIface
+class ToolTestFixture
 {
 public:
-  void initialize() override {}
+  ToolTestFixture()
+  : render_panel_(std::make_shared<rviz_common::RenderPanel>(nullptr))
+  {}
 
-  bool get3DPoint(rviz_common::RenderPanel * panel, int x, int y, Ogre::Vector3 & pos) override
+  rviz_common::ViewportMouseEvent generateMouseMoveEvent(int x, int y)
   {
-    (void) panel;
-    for (const auto & object : view_objects) {
-      if (object.x == x && object.y == y) {
-        pos = object.position;
-        return true;
-      }
-    }
-    return false;
+    return generateMouseEvent(x, y, QMouseEvent::MouseMove, Qt::NoButton, Qt::NoModifier);
   }
 
-  void registerObject(const Visible3DObject & object)
+  rviz_common::ViewportMouseEvent generateMouseLeftClick(int x, int y)
   {
-    view_objects.push_back(object);
+    return generateMouseEvent(
+      x, y, QMouseEvent::MouseButtonRelease, Qt::LeftButton, Qt::NoModifier);
+  }
+
+  rviz_common::ViewportMouseEvent generateMouseRightClick(int x, int y)
+  {
+    return generateMouseEvent(
+      x, y, QMouseEvent::MouseButtonRelease, Qt::RightButton, Qt::NoModifier);
+  }
+
+  rviz_common::ViewportMouseEvent generateMousePressEvent(int x, int y)
+  {
+    return generateMouseEvent(x, y, QMouseEvent::MouseButtonPress, Qt::LeftButton, Qt::NoModifier);
+  }
+
+  rviz_common::ViewportMouseEvent generateMouseReleaseEvent(
+    int x, int y, Qt::KeyboardModifiers modifiers = Qt::NoModifier)
+  {
+    return generateMouseEvent(x, y, QMouseEvent::MouseButtonRelease, Qt::LeftButton, modifiers);
   }
 
 private:
-  std::vector<Visible3DObject> view_objects;
+  rviz_common::ViewportMouseEvent generateMouseEvent(
+    int x, int y, QMouseEvent::Type type, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
+  {
+    auto mouseEvent = new QMouseEvent(type, QPointF(x, y), button, button, modifiers);
+    return {render_panel_.get(), mouseEvent, x, y};
+  }
+
+  std::shared_ptr<rviz_common::RenderPanel> render_panel_;
 };
 
-#endif  // RVIZ_DEFAULT_PLUGINS__MOCK_VIEW_PICKER_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__TOOLS__TOOL_TEST_FIXTURE_HPP_

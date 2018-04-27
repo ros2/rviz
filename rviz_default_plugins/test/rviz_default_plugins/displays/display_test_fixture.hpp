@@ -58,7 +58,7 @@ public:
 
   DisplayTestFixture();
 
-  ~DisplayTestFixture();
+  ~DisplayTestFixture() override;
 
   static void TearDownTestCase();
 
