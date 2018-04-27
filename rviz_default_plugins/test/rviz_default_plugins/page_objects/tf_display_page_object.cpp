@@ -27,14 +27,47 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_VISUAL_TESTING_FRAMEWORK__INTERNAL__TRANSFORM_PUBLISHER_HPP_
-#define RVIZ_VISUAL_TESTING_FRAMEWORK__INTERNAL__TRANSFORM_PUBLISHER_HPP_
+#include "tf_display_page_object.hpp"
 
-#include <string>
+#include <memory>
+#include <vector>
 
-#include "geometry_msgs/msg/transform_stamped.hpp"
+TFDisplayPageObject::TFDisplayPageObject()
+: BasePageObject(0, "TF")
+{}
 
-geometry_msgs::msg::TransformStamped createStaticTransformMessageFor(
-  std::string header_frame_id, std::string child_frame_id);
+void TFDisplayPageObject::setShowNames(bool show_names)
+{
+  setBool("Show Names", show_names);
+}
 
-#endif  // RVIZ_VISUAL_TESTING_FRAMEWORK__INTERNAL__TRANSFORM_PUBLISHER_HPP_
+void TFDisplayPageObject::setShowAxes(bool show_axes)
+{
+  setBool("Show Axes", show_axes);
+}
+
+void TFDisplayPageObject::setShowArrows(bool show_arrows)
+{
+  setBool("Show Arrows", show_arrows);
+}
+
+void TFDisplayPageObject::setMarkerScale(float scale)
+{
+  setFloat("Marker Scale", scale);
+}
+
+void TFDisplayPageObject::setUpdateInterval(float interval)
+{
+  setFloat("Update Interval", interval);
+}
+
+void TFDisplayPageObject::setFrameTimeout(float timeout)
+{
+  setFloat("Frame Timeout", timeout);
+}
+
+void TFDisplayPageObject::setFrameVisible(
+  int frame_index, const QString & frame_name, bool visible)
+{
+  setBool("Frames", visible, frame_index, frame_name);
+}

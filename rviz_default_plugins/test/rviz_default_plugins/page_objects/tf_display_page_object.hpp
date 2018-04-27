@@ -27,33 +27,26 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz_visual_testing_framework/internal/transform_publisher.hpp"
+#ifndef RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__TF_DISPLAY_PAGE_OBJECT_HPP_
+#define RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__TF_DISPLAY_PAGE_OBJECT_HPP_
 
-#include <string>
+#include <memory>
+#include <vector>
 
-#include "rclcpp/rclcpp.hpp"
-#include "rclcpp/clock.hpp"
-#include "tf2/LinearMath/Quaternion.h"
+#include "rviz_visual_testing_framework/page_objects/base_page_object.hpp"
 
-geometry_msgs::msg::TransformStamped createStaticTransformMessageFor(
-  std::string header_frame_id, std::string child_frame_id)
+class TFDisplayPageObject : public BasePageObject
 {
-  geometry_msgs::msg::TransformStamped message;
+public:
+  TFDisplayPageObject();
 
-  message.transform.translation.x = 0;
-  message.transform.translation.y = 0;
-  message.transform.translation.z = 0;
+  void setShowNames(bool show_names);
+  void setShowAxes(bool show_axes);
+  void setShowArrows(bool show_arrows);
+  void setMarkerScale(float scale);
+  void setUpdateInterval(float interval);
+  void setFrameTimeout(float timeout);
+  void setFrameVisible(int frame_index, const QString & frame_name, bool visible);
+};
 
-  tf2::Quaternion quat;
-  quat.setRPY(0, 0, 0);
-  message.transform.rotation.x = quat.x();
-  message.transform.rotation.y = quat.y();
-  message.transform.rotation.z = quat.z();
-  message.transform.rotation.w = quat.w();
-
-  message.header.stamp = rclcpp::Clock().now();
-  message.header.frame_id = header_frame_id;
-  message.child_frame_id = child_frame_id;
-
-  return message;
-}
+#endif  // RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__TF_DISPLAY_PAGE_OBJECT_HPP_

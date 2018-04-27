@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_VISUAL_TESTING_FRAMEWORK__VISUAL_TEST_PUBLISHER_HPP_
-#define RVIZ_VISUAL_TESTING_FRAMEWORK__VISUAL_TEST_PUBLISHER_HPP_
+#ifndef RVIZ_VISUAL_TESTING_FRAMEWORK__TRANSFORM_PUBLISHER_HPP_
+#define RVIZ_VISUAL_TESTING_FRAMEWORK__TRANSFORM_PUBLISHER_HPP_
 
 #include <memory>
 #include <string>
@@ -39,49 +39,27 @@
 #include "rclcpp/clock.hpp"
 #include "std_msgs/msg/header.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
-#include "tf2/LinearMath/Quaternion.h"
 #include "tf2_ros/static_transform_broadcaster.h"
 #include "internal/transform_message_creator.hpp"
 
-struct PublisherWithFrame
-{
-  PublisherWithFrame(std::shared_ptr<rclcpp::Node> publisher_node, std::string frame_name)
-  : publisher_node_(publisher_node), frame_name_(frame_name) {}
-
-  std::shared_ptr<rclcpp::Node> publisher_node_;
-  std::string frame_name_;
-};
-
-/**
- * This class is used internally to set up publishers and automatically publish simple static
- * transformations. You can use this class in your test with the frame_name of your publisher to
- * make sure that tf2 transformations are valid.
- */
-class VisualTestPublisher
+class TransformPublisher
 {
 public:
-  VisualTestPublisher(std::shared_ptr<rclcpp::Node> publisher_node, std::string frame_name)
+  TransformPublisher(std::string frame_name, int x, int y, int z, int roll, int pitch, int yaw)
   {
     nodes_spinning_ = true;
-    std::vector<PublisherWithFrame> publishers = {PublisherWithFrame(publisher_node, frame_name)};
     publisher_thread_ = std::thread(
-      &VisualTestPublisher::publishOnFrame, this, publishers);
+      &TransformPublisher::publishOnFrame, this, frame_name, x, y, z, roll, pitch, yaw);
   }
 
-  explicit VisualTestPublisher(std::vector<PublisherWithFrame> publishers)
-  {
-    nodes_spinning_ = true;
-    publisher_thread_ = std::thread(&VisualTestPublisher::publishOnFrame, this, publishers);
-  }
-
-  ~VisualTestPublisher()
+  ~TransformPublisher()
   {
     nodes_spinning_ = false;
     publisher_thread_.join();
   }
 
 private:
-  void publishOnFrame(std::vector<PublisherWithFrame> publishers)
+  void publishOnFrame(std::string frame_name, int x, int y, int z, int roll, int pitch, int yaw)
   {
     auto transformer_publisher_node = std::make_shared<rclcpp::Node>("static_transform_publisher");
     tf2_ros::StaticTransformBroadcaster broadcaster(transformer_publisher_node);
@@ -90,16 +68,9 @@ private:
     rclcpp::executors::SingleThreadedExecutor executor;
     executor.add_node(transformer_publisher_node);
 
-    std::vector<geometry_msgs::msg::TransformStamped> transform_messages;
-    for (auto publisherWithFrame : publishers) {
-      executor.add_node(publisherWithFrame.publisher_node_);
-      transform_messages.push_back(
-        createStaticTransformMessageFor("map", publisherWithFrame.frame_name_));
-    }
     while (nodes_spinning_) {
-      for (const auto & msg : transform_messages) {
-        broadcaster.sendTransform(msg);
-      }
+      broadcaster.sendTransform(
+        createStaticTransformMessageFor("map", frame_name, x, y, z, roll, pitch, yaw));
       executor.spin_some();
       loop_rate.sleep();
     }
@@ -109,4 +80,4 @@ private:
   std::thread publisher_thread_;
 };
 
-#endif  // RVIZ_VISUAL_TESTING_FRAMEWORK__VISUAL_TEST_PUBLISHER_HPP_
+#endif  // RVIZ_VISUAL_TESTING_FRAMEWORK__TRANSFORM_PUBLISHER_HPP_

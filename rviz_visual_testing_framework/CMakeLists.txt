@@ -52,8 +52,8 @@ set(visual_test_framework_source_files
   src/test_helpers.cpp
   include/rviz_visual_testing_framework/internal/executor.hpp
   src/internal/executor.cpp
-  include/rviz_visual_testing_framework/internal/transform_publisher.hpp
-  src/internal/transform_publisher.cpp
+  include/rviz_visual_testing_framework/internal/transform_message_creator.hpp
+  src/internal/transform_message_creator.cpp
   include/rviz_visual_testing_framework/internal/visual_test.hpp
   src/internal/visual_test.cpp
   include/rviz_visual_testing_framework/visual_test_fixture.hpp

@@ -501,6 +501,18 @@ if(BUILD_TESTING)
           ${TEST_LINK_LIBRARIES}
           rviz_visual_testing_framework::rviz_visual_testing_framework)
       endif()
+
+      ament_add_gtest(tf_display_visual_test
+        test/rviz_default_plugins/displays/tf/tf_display_visual_test.cpp
+        test/rviz_default_plugins/page_objects/tf_display_page_object.cpp)
+      if(TARGET tf_display_visual_test)
+        target_include_directories(tf_display_visual_test PUBLIC
+          ${TEST_INCLUDE_DIRS}
+          ${rviz_visual_testing_framework_INCLUDE_DIRS})
+        target_link_libraries(tf_display_visual_test
+          ${TEST_LINK_LIBRARIES}
+          rviz_visual_testing_framework::rviz_visual_testing_framework)
+      endif()
     endif()
   endif()
 endif()
