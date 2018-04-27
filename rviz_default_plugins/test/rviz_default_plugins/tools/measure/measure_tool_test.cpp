@@ -74,7 +74,7 @@ public:
 };
 
 
-TEST_F(MeasureToolTestFixture, choosing_to_objects_shows_a_line_and_the_distance) {
+TEST_F(MeasureToolTestFixture, choosing_two_objects_shows_a_line_and_the_distance) {
   auto obj1 = addVisible3DObject(10, 10, {1.0, 1.0, 0.0});
   auto obj2 = addVisible3DObject(20, 10, {2.0, 1.0, 0.0});
   QString status;
@@ -82,6 +82,26 @@ TEST_F(MeasureToolTestFixture, choosing_to_objects_shows_a_line_and_the_distance
   auto click = generateMouseLeftClick(obj1.x, obj1.y);
   measure_tool_->processMouseEvent(click);
   click = generateMouseLeftClick(obj2.x, obj2.y);
+  EXPECT_CALL(*context_, setStatus(_)).WillOnce(SaveArg<0>(&status));
+  measure_tool_->processMouseEvent(click);
+
+  auto line = rviz_default_plugins::findOneManualObject(scene_manager_->getRootSceneNode());
+  // Use bounding box to indirectly assert the vertices
+  ASSERT_TRUE(line->isVisible());
+  EXPECT_THAT(line->getBoundingBox().getMinimum(), Vector3Eq(obj1.position));
+  EXPECT_THAT(line->getBoundingBox().getMaximum(), Vector3Eq(obj2.position));
+
+  EXPECT_THAT(status.toStdString(), StartsWith("[Length: 1m]"));
+}
+
+TEST_F(MeasureToolTestFixture, hovering_over_a_second_object_updates_the_line_and_status) {
+  auto obj1 = addVisible3DObject(10, 10, {1.0, 1.0, 0.0});
+  auto obj2 = addVisible3DObject(20, 10, {2.0, 1.0, 0.0});
+  QString status;
+
+  auto click = generateMouseLeftClick(obj1.x, obj1.y);
+  measure_tool_->processMouseEvent(click);
+  click = generateMouseMoveEvent(obj2.x, obj2.y);
   EXPECT_CALL(*context_, setStatus(_)).WillOnce(SaveArg<0>(&status));
   measure_tool_->processMouseEvent(click);
 
