@@ -28,56 +28,51 @@
  */
 
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 #include <string>
 #include <vector>
 
 #include "../../src/rviz_rendering/string_helper.cpp"
 
+using namespace ::testing;  // NOLINT
+
 TEST(String_Helper__Test, correctly_split_string) {
-  std::vector<std::string> expected;
-  expected.emplace_back("Test");
-  expected.emplace_back("Test2");
+  std::vector<std::string> expected {"Test", "Test2"};
 
   std::string test_string("Test \n Test2");
   std::vector<std::string> actual = rviz_rendering::string_helper::splitStringIntoTrimmedItems(
     test_string, '\n');
 
-  ASSERT_EQ(expected, actual);
+  ASSERT_THAT(expected, Eq(actual));
 }
 
 TEST(String_Helper__Test, correctly_split_string_with_whitespace) {
-  std::vector<std::string> expected;
-  expected.emplace_back("Test");
-  expected.emplace_back("Test2");
+  std::vector<std::string> expected {"Test", "Test2"};
 
   std::string test_string(" Test  \n \tTest2 ");
   std::vector<std::string> actual = rviz_rendering::string_helper::splitStringIntoTrimmedItems(
     test_string, '\n');
 
-  ASSERT_EQ(expected, actual);
+  ASSERT_THAT(expected, Eq(actual));
 }
 
 TEST(String_Helper__Test, correctly_split_string_at_line_breaks_with_whitespace_in_between) {
-  std::vector<std::string> expected;
-  expected.emplace_back("Test 1");
-  expected.emplace_back("Test 2");
+  std::vector<std::string> expected {"Test 1", "Test 2"};
 
   std::string test_string("Test 1 \n Test 2");
   std::vector<std::string> actual = rviz_rendering::string_helper::splitStringIntoTrimmedItems(
     test_string, '\n');
 
-  ASSERT_EQ(expected, actual);
+  ASSERT_THAT(expected, Eq(actual));
 }
 
 TEST(String_Helper__Test, correctly_split_string_with_other_whitespace) {
-  std::vector<std::string> expected;
-  expected.emplace_back("Test");
-  expected.emplace_back("More");
+  std::vector<std::string> expected {"Test", "More"};
 
   std::string test_string("Test More");
   std::vector<std::string> actual = rviz_rendering::string_helper::splitStringIntoTrimmedItems(
     test_string, ' ');
 
-  ASSERT_EQ(expected, actual);
+  ASSERT_THAT(expected, Eq(actual));
 }

@@ -28,6 +28,7 @@
  */
 
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 #include <memory>
 #include <string>
@@ -38,6 +39,8 @@
 
 #include "test/rviz_rendering/ogre_testing_environment.hpp"
 #include "rviz_rendering/objects/billboard_line.hpp"
+
+using namespace ::testing;  // NOLINT
 
 class BillboardLineTestFixture : public ::testing::Test
 {
@@ -107,11 +110,11 @@ TEST_F(BillboardLineTestFixture, new_billboard_consumes_only_as_much_space_as_ne
   auto grid_cell = oneCellGrid();
 
   auto chains = grid_cell->getChains();
-  ASSERT_EQ(chains.size(), static_cast<size_t>(1));
-  ASSERT_EQ(chains[0]->getNumberOfChains(), static_cast<size_t>(2 * 2));
+  ASSERT_THAT(chains, SizeIs(1));
+  ASSERT_THAT(chains[0]->getNumberOfChains(), Eq(2u * 2u));
   // A chainElement is exactly a line
   for (unsigned int i = 0; i < chains[0]->getNumberOfChains(); i++) {
-    ASSERT_EQ(chains[0]->getNumChainElements(i), static_cast<size_t>(2));
+    ASSERT_THAT(chains[0]->getNumChainElements(i), Eq(2u));
   }
 }
 
@@ -123,7 +126,7 @@ TEST_F(BillboardLineTestFixture, new_billboard_contains_correct_points_as_boundi
   // chains are basically bounded by the square
   auto bounding_box = Ogre::AxisAlignedBox(Ogre::Vector3(-1.1f, -1.1f, -0.1f),
       Ogre::Vector3(1.1f, 1.1f, 0.1f));
-  ASSERT_EQ(chains[0]->getBoundingBox(), bounding_box);
+  ASSERT_THAT(chains[0]->getBoundingBox(), Eq(bounding_box));
 }
 
 TEST_F(BillboardLineTestFixture, setColor_results_in_change_of_color_for_all_chains) {
@@ -135,7 +138,8 @@ TEST_F(BillboardLineTestFixture, setColor_results_in_change_of_color_for_all_cha
   for (auto & chain : chains) {
     for (unsigned int i = 0; i < chain->getNumberOfChains(); i++) {
       for (unsigned int j = 0; j < chain->getNumChainElements(i); j++) {
-        ASSERT_EQ(chain->getChainElement(i, j).colour, Ogre::ColourValue(0.3f, 0.4f, 0.5f, 0.2f));
+        ASSERT_THAT(
+          chain->getChainElement(i, j).colour, Eq(Ogre::ColourValue(0.3f, 0.4f, 0.5f, 0.2f)));
       }
     }
   }
@@ -150,7 +154,7 @@ TEST_F(BillboardLineTestFixture, setWidth_results_in_change_of_width_for_all_cha
   for (auto & chain : chains) {
     for (unsigned int i = 0; i < chain->getNumberOfChains(); i++) {
       for (unsigned int j = 0; j < chain->getNumChainElements(i); j++) {
-        ASSERT_EQ(chain->getChainElement(i, j).width, 0.4f);
+        ASSERT_THAT(chain->getChainElement(i, j).width, FloatEq(0.4f));
       }
     }
   }
@@ -162,10 +166,10 @@ TEST_F(BillboardLineTestFixture, clear_resets_all_chains) {
   grid_cell->clear();
 
   auto chains = grid_cell->getChains();
-  ASSERT_EQ(chains.size(), static_cast<size_t>(1));   // chains are reset, not destroyed
-  ASSERT_EQ(chains[0]->getNumberOfChains(), static_cast<size_t>(2));  // reset, not destroyed
+  ASSERT_THAT(chains, SizeIs(1));   // chains are reset, not destroyed
+  ASSERT_THAT(chains[0]->getNumberOfChains(), Eq(2u));  // reset, not destroyed
 
-  ASSERT_EQ(chains[0]->getNumChainElements(0), static_cast<size_t>(0));
+  ASSERT_THAT(chains[0]->getNumChainElements(0), Eq(0u));
 }
 
 TEST_F(BillboardLineTestFixture, create_multiple_chains) {
@@ -184,9 +188,9 @@ TEST_F(BillboardLineTestFixture, create_multiple_chains) {
 
   auto chains = grid_cell.getChains();
   // maximal no of elements per chain: 16384 (defined in billboard_line.cpp)
-  ASSERT_EQ(chains.size(), static_cast<size_t>(200000 / 16384 + 1));  // +1 to accomodate rest
-  ASSERT_EQ(chains[0]->getNumberOfChains(), static_cast<size_t>(16384 / 2));  // 2 lines per chain
-  ASSERT_EQ(chains[0]->getNumChainElements(0), static_cast<size_t>(2));
+  ASSERT_THAT(chains, SizeIs(200000 / 16384 + 1));  // +1 to accomodate rest
+  ASSERT_THAT(chains[0]->getNumberOfChains(), Eq(16384u / 2u));  // 2 lines per chain
+  ASSERT_THAT(chains[0]->getNumChainElements(0), Eq(2u));
 }
 
 TEST_F(BillboardLineTestFixture, create_chain_with_extremely_many_elements) {
@@ -205,6 +209,6 @@ TEST_F(BillboardLineTestFixture, create_chain_with_extremely_many_elements) {
   }
 
   auto chains = grid_cell.getChains();
-  ASSERT_EQ(chains.size(), static_cast<size_t>(200000 / 16384 + 1));
-  ASSERT_EQ(chains[0]->getNumberOfChains(), static_cast<size_t>(1));
+  ASSERT_THAT(chains, SizeIs(200000 / 16384 + 1));
+  ASSERT_THAT(chains[0]->getNumberOfChains(), Eq(1u));
 }

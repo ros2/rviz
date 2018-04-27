@@ -180,9 +180,9 @@ if(BUILD_TESTING)
   ament_lint_cmake()
   ament_uncrustify()
 
-  ament_add_gtest(test_rviz_rendering test/rviz_rendering/string_helper_test.cpp)
-  if(TARGET test_rviz_rendering)
-    target_link_libraries(test_rviz_rendering rviz_rendering)
+  ament_add_gmock(string_helper_test test/rviz_rendering/string_helper_test.cpp)
+  if(TARGET string_helper_test)
+    target_link_libraries(string_helper_test rviz_rendering)
   endif()
 
   if(DEFINED ENV{DISPLAY})
@@ -192,7 +192,7 @@ if(BUILD_TESTING)
   if(APPLE OR DISPLAYPRESENT OR EnableDisplayTests STREQUAL "TRUE")
     message(STATUS "Enabling tests requiring a display")
 
-    ament_add_gtest(point_cloud_test_target
+    ament_add_gmock(point_cloud_test_target
       test/rviz_rendering/objects/point_cloud_test.cpp
       APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
     if(TARGET point_cloud_test_target)
@@ -203,7 +203,7 @@ if(BUILD_TESTING)
       )
     endif()
 
-    ament_add_gtest(point_cloud_renderable_test_target
+    ament_add_gmock(point_cloud_renderable_test_target
       test/rviz_rendering/objects/point_cloud_renderable_test.cpp
       APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
     if(TARGET point_cloud_renderable_test_target)
@@ -214,7 +214,7 @@ if(BUILD_TESTING)
       )
     endif()
 
-    ament_add_gtest(billboard_line_test_target
+    ament_add_gmock(billboard_line_test_target
       test/rviz_rendering/objects/billboard_line_test.cpp
       APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
     if(TARGET billboard_line_test_target)
@@ -225,7 +225,7 @@ if(BUILD_TESTING)
       )
     endif()
 
-    ament_add_gtest(grid_test_target
+    ament_add_gmock(grid_test_target
       test/rviz_rendering/objects/grid_test.cpp
       APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
     if(TARGET grid_test_target)
@@ -236,7 +236,7 @@ if(BUILD_TESTING)
       )
     endif()
 
-    ament_add_gtest(movable_text_test_target
+    ament_add_gmock(movable_text_test_target
       test/rviz_rendering/objects/movable_text_test.cpp
       APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
     if(TARGET movable_text_test_target)

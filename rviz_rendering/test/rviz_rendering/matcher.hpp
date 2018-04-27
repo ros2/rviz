@@ -1,4 +1,5 @@
-/*
+/**
+ *
  * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
@@ -29,44 +30,35 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <gtest/gtest.h>  // NOLINT
-#include <gmock/gmock.h>  // NOLINT
+#ifndef RVIZ_RENDERING__MATCHER_HPP_
+#define RVIZ_RENDERING__MATCHER_HPP_
 
-#include <memory>
-#include <vector>
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
-#include <Ogre.h>
-
-#include "rviz_rendering/objects/line.hpp"
-#include "test/rviz_rendering/ogre_testing_environment.hpp"
-
-#include "../matcher.hpp"
-
-class LineTestFixture : public ::testing::Test
-{
-protected:
-  static void SetUpTestCase()
-  {
-    testing_environment_ = std::make_shared<rviz_rendering::OgreTestingEnvironment>();
-    testing_environment_->setUpOgreTestEnvironment();
-  }
-
-  static std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
-};
-
-std::shared_ptr<rviz_rendering::OgreTestingEnvironment> LineTestFixture::testing_environment_ =
-  nullptr;
-
-TEST_F(LineTestFixture, setPoints_sets_the_line_position_and_size) {
-  auto scene_manager = Ogre::Root::getSingletonPtr()->createSceneManager();
-  auto root_node = scene_manager->getRootSceneNode();
-
-  auto line = new rviz_rendering::Line(scene_manager, root_node);
-  line->setPoints(Ogre::Vector3(-5, -5, -5), Ogre::Vector3(3, 3, 3));
-
-  auto line_node = dynamic_cast<Ogre::SceneNode *>(root_node->getChild(0));
-  auto aabb = line_node->getAttachedObject(0)->getBoundingBox();
-
-  ASSERT_THAT(aabb.getMinimum(), Vector3Eq(Ogre::Vector3(-5, -5, -5)));
-  ASSERT_THAT(aabb.getMaximum(), Vector3Eq(Ogre::Vector3(3, 3, 3)));
+MATCHER_P(Vector3Eq, expected, "") {
+  return Ogre::Math::Abs(expected.x - arg.x) < 0.0001f &&
+         Ogre::Math::Abs(expected.y - arg.y) < 0.0001f &&
+         Ogre::Math::Abs(expected.z - arg.z) < 0.0001f;
 }
+
+MATCHER_P(Vector4Eq, expected, "") {
+  return Ogre::Math::Abs(expected.x - arg.x) < 0.0001f &&
+         Ogre::Math::Abs(expected.y - arg.y) < 0.0001f &&
+         Ogre::Math::Abs(expected.z - arg.z) < 0.0001f &&
+         Ogre::Math::Abs(expected.w - arg.w) < 0.0001f;
+}
+
+MATCHER_P(HasMinimum, expected, "") {
+  return Ogre::Math::Abs(expected.x - arg.getMinimum().x) < 0.0001f &&
+         Ogre::Math::Abs(expected.y - arg.getMinimum().y) < 0.0001f &&
+         Ogre::Math::Abs(expected.z - arg.getMinimum().z) < 0.0001f;
+}
+
+MATCHER_P(HasMaximum, expected, "") {
+  return Ogre::Math::Abs(expected.x - arg.getMaximum().x) < 0.0001f &&
+         Ogre::Math::Abs(expected.y - arg.getMaximum().y) < 0.0001f &&
+         Ogre::Math::Abs(expected.z - arg.getMaximum().z) < 0.0001f;
+}
+
+#endif  // RVIZ_RENDERING__MATCHER_HPP_
