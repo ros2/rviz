@@ -187,7 +187,7 @@ if(BUILD_TESTING)
     set(DISPLAYPRESENT TRUE)
   endif()
 
-  if(APPLE OR DISPLAYPRESENT OR EnableDisplayTests STREQUAL "TRUE")
+  if((APPLE AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug") OR DISPLAYPRESENT OR EnableDisplayTests STREQUAL "TRUE")
     message(STATUS "Enabling tests requiring a display")
 
     ament_add_gtest(point_cloud_test_target test/point_cloud_test.cpp

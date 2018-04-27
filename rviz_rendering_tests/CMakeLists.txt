@@ -59,7 +59,7 @@ if(BUILD_TESTING)
     set(DISPLAYPRESENT FALSE)
   endif()
 
-  if(APPLE OR DISPLAYPRESENT OR EnableDisplayTests STREQUAL "True")
+  if((APPLE AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug") OR DISPLAYPRESENT OR EnableDisplayTests STREQUAL "True")
     message(STATUS "Enabling tests requiring a display")
 
     ament_add_gmock(mesh_loader_test_target
