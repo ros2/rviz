@@ -131,6 +131,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/robot/robot_element_base_class.cpp
   src/rviz_default_plugins/robot/tf_link_updater.cpp
   src/rviz_default_plugins/tools/measure/measure_tool.cpp
+  src/rviz_default_plugins/tools/focus/focus_tool.cpp
   src/rviz_default_plugins/tools/move/move_tool.cpp
   src/rviz_default_plugins/tools/point/point_tool.cpp
   src/rviz_default_plugins/tools/select/selection_tool.cpp

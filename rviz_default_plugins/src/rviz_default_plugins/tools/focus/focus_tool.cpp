@@ -27,38 +27,56 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <sstream>
+
+
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+# pragma GCC diagnostic ignored "-Wpedantic"
+#else
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#endif
+
+#include <OgreCamera.h>
 #include <OgreRay.h>
 #include <OgreVector3.h>
 #include <OgreViewport.h>
-#include <OgreCamera.h>
+#include <rviz_rendering/render_window.hpp>
 
-#include "rviz/viewport_mouse_event.h"
-#include "rviz/load_resource.h"
-#include "rviz/render_panel.h"
-#include "rviz/display_context.h"
-#include "rviz/selection/selection_manager.h"
-#include "rviz/view_controller.h"
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#else
+# pragma warning(pop)
+#endif
 
-#include "rviz/default_plugin/tools/focus_tool.h"
+#include "rviz_common/display_context.hpp"
+#include "rviz_common/interaction/view_picker_iface.hpp"
+#include "rviz_common/load_resource.hpp"
+#include "rviz_common/render_panel.hpp"
+#include "rviz_common/viewport_mouse_event.hpp"
+#include "rviz_common/view_controller.hpp"
 
-#include <sstream>
+#include "./focus_tool.hpp"
 
-namespace rviz
+
+namespace rviz_default_plugins
+{
+namespace tools
 {
 
 FocusTool::FocusTool()
-  : Tool()
+: Tool()
 {
 }
 
-FocusTool::~FocusTool()
-{
-}
+FocusTool::~FocusTool() = default;
 
 void FocusTool::onInitialize()
 {
-  std_cursor_ = getDefaultCursor();
-  hit_cursor_ = makeIconCursor( "package://rviz/icons/crosshair.svg" );
+  std_cursor_ = rviz_common::getDefaultCursor();
+  hit_cursor_ = rviz_common::makeIconCursor("package://rviz_common/icons/crosshair.svg");
 }
 
 void FocusTool::activate()
@@ -69,37 +87,34 @@ void FocusTool::deactivate()
 {
 }
 
-int FocusTool::processMouseEvent( ViewportMouseEvent& event )
+int FocusTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
 {
   int flags = 0;
 
   Ogre::Vector3 pos;
-  bool success = context_->getSelectionManager()->get3DPoint( event.viewport, event.x, event.y, pos );
-  setCursor( success ? hit_cursor_ : std_cursor_ );
+  bool success = context_->getViewPicker()->get3DPoint(event.panel, event.x, event.y, pos);
+  setCursor(success ? hit_cursor_ : std_cursor_);
 
-  if ( !success )
-  {
-    Ogre::Ray mouse_ray = event.viewport->getCamera()->getCameraToViewportRay(
-        (float)event.x / (float)event.viewport->getActualWidth(),
-        (float)event.y / (float)event.viewport->getActualHeight() );
+  if (!success) {
+    auto viewport =
+      rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(event.panel->getRenderWindow());
+    Ogre::Ray mouse_ray = viewport->getCamera()->getCameraToViewportRay(
+      static_cast<float>(event.x) / static_cast<float>(viewport->getActualWidth()),
+      static_cast<float>(event.y) / static_cast<float>(viewport->getActualHeight()));
 
     pos = mouse_ray.getPoint(1.0);
-    setStatus( "<b>Left-Click:</b> Look in this direction." );
-  }
-  else
-  {
+    setStatus("<b>Left-Click:</b> Look in this direction.");
+  } else {
     std::ostringstream s;
     s << "<b>Left-Click:</b> Focus on this point.";
     s.precision(3);
     s << " [" << pos.x << "," << pos.y << "," << pos.z << "]";
-    setStatus( s.str().c_str() );
+    setStatus(s.str().c_str() );
   }
 
-  if( event.leftUp() )
-  {
-    if ( event.panel->getViewController() )
-    {
-      event.panel->getViewController()->lookAt( pos );
+  if (event.leftUp() ) {
+    if (event.panel->getViewController() ) {
+      event.panel->getViewController()->lookAt(pos);
     }
     flags |= Finished;
   }
@@ -107,7 +122,15 @@ int FocusTool::processMouseEvent( ViewportMouseEvent& event )
   return flags;
 }
 
-}
+}  // namespace tools
+}  // namespace rviz_default_plugins
 
-#include <pluginlib/class_list_macros.h>
-PLUGINLIB_EXPORT_CLASS( rviz::FocusTool, rviz::Tool )
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wpedantic"
+#endif
+#include <pluginlib/class_list_macros.hpp>  // NOLINT
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::tools::FocusTool, rviz_common::Tool)
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif

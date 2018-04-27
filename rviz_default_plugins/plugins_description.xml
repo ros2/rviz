@@ -187,6 +187,15 @@
     </description>
   </class>
 
+  <class
+    name="rviz_default_plugins/FocusCamera"
+    type="rviz_default_plugins::tools::FocusTool"
+    base_class_type="rviz_common::Tool"
+  >
+    <description>
+      Click onto any object to focus the camera there.
+    </description>
+  </class>
 
   <!-- View Controller plugins -->
 
