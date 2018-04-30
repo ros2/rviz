@@ -29,7 +29,6 @@
 
 #include <sstream>
 
-
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -68,8 +67,7 @@ namespace tools
 
 FocusTool::FocusTool()
 : Tool()
-{
-}
+{}
 
 FocusTool::~FocusTool() = default;
 
@@ -80,41 +78,26 @@ void FocusTool::onInitialize()
 }
 
 void FocusTool::activate()
-{
-}
+{}
 
 void FocusTool::deactivate()
-{
-}
+{}
 
 int FocusTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
 {
   int flags = 0;
 
-  Ogre::Vector3 pos;
-  bool success = context_->getViewPicker()->get3DPoint(event.panel, event.x, event.y, pos);
-  setCursor(success ? hit_cursor_ : std_cursor_);
+  Ogre::Vector3 position;
 
-  if (!success) {
-    auto viewport =
-      rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(event.panel->getRenderWindow());
-    Ogre::Ray mouse_ray = viewport->getCamera()->getCameraToViewportRay(
-      static_cast<float>(event.x) / static_cast<float>(viewport->getActualWidth()),
-      static_cast<float>(event.y) / static_cast<float>(viewport->getActualHeight()));
-
-    pos = mouse_ray.getPoint(1.0);
-    setStatus("<b>Left-Click:</b> Look in this direction.");
+  if (pointBelowCursorToLookAt(event, position)) {
+    notifyUserToLookAtPoint(position);
   } else {
-    std::ostringstream s;
-    s << "<b>Left-Click:</b> Focus on this point.";
-    s.precision(3);
-    s << " [" << pos.x << "," << pos.y << "," << pos.z << "]";
-    setStatus(s.str().c_str() );
+    computePositionToLookAtFromRay(event, position);
   }
 
-  if (event.leftUp() ) {
-    if (event.panel->getViewController() ) {
-      event.panel->getViewController()->lookAt(pos);
+  if (event.leftUp()) {
+    if (event.panel->getViewController()) {
+      event.panel->getViewController()->lookAt(position);
     }
     flags |= Finished;
   }
@@ -122,15 +105,39 @@ int FocusTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
   return flags;
 }
 
+bool FocusTool::pointBelowCursorToLookAt(
+  const rviz_common::ViewportMouseEvent & event,
+  Ogre::Vector3 & position)
+{
+  bool success = context_->getViewPicker()->get3DPoint(event.panel, event.x, event.y, position);
+  setCursor(success ? hit_cursor_ : std_cursor_);
+  return success;
+}
+
+void FocusTool::notifyUserToLookAtPoint(const Ogre::Vector3 & position)
+{
+  std::ostringstream s;
+  s << "<b>Left-Click:</b> Focus on this point.";
+  s.precision(3);
+  s << " [" << position.x << "," << position.y << "," << position.z << "]";
+  setStatus(s.str().c_str());
+}
+
+void FocusTool::computePositionToLookAtFromRay(
+  const rviz_common::ViewportMouseEvent & event, Ogre::Vector3 & position)
+{
+  auto viewport =
+    rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(event.panel->getRenderWindow());
+  Ogre::Ray mouse_ray = viewport->getCamera()->getCameraToViewportRay(
+    static_cast<float>(event.x) / static_cast<float>(viewport->getActualWidth()),
+    static_cast<float>(event.y) / static_cast<float>(viewport->getActualHeight()));
+
+  position = mouse_ray.getPoint(1.0);
+  setStatus("<b>Left-Click:</b> Look in this direction.");
+}
+
 }  // namespace tools
 }  // namespace rviz_default_plugins
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wpedantic"
-#endif
 #include <pluginlib/class_list_macros.hpp>  // NOLINT
 PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::tools::FocusTool, rviz_common::Tool)
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
