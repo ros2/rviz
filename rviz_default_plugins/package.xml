@@ -42,6 +42,7 @@
   <test_depend>ament_cmake_gtest</test_depend>
   <test_depend>ament_cmake_lint_cmake</test_depend>
   <test_depend>ament_cmake_uncrustify</test_depend>
+  <test_depend>ament_index_cpp</test_depend>
   <test_depend>rviz_rendering_tests</test_depend>
   <test_depend>rviz_visual_testing_framework</test_depend>
   <test_depend>libopencv-dev</test_depend>

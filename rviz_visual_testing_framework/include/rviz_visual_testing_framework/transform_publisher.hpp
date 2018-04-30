@@ -42,14 +42,50 @@
 #include "tf2_ros/static_transform_broadcaster.h"
 #include "internal/transform_message_creator.hpp"
 
+struct StaticTransform
+{
+  StaticTransform(
+    std::string origin_frame, std::string destination_frame,
+    int x, int y, int z, int roll, int pitch, int yaw)
+  : origin_frame(origin_frame),
+    destination_frame(destination_frame),
+    x(x),
+    y(y),
+    z(z),
+    roll(roll),
+    pitch(pitch),
+    yaw(yaw)
+  {}
+
+  std::string origin_frame;
+  std::string destination_frame;
+  int x;
+  int y;
+  int z;
+  int roll;
+  int pitch;
+  int yaw;
+
+  geometry_msgs::msg::TransformStamped createStaticTransformMessage()
+  {
+    return createStaticTransformMessageFor(
+      origin_frame, destination_frame, x, y, z, roll, pitch, yaw);
+  }
+};
+
 class TransformPublisher
 {
 public:
   TransformPublisher(std::string frame_name, int x, int y, int z, int roll, int pitch, int yaw)
+  : TransformPublisher({StaticTransform("map", frame_name, x, y, z, roll, pitch, yaw)})
+  {}
+
+  explicit TransformPublisher(std::vector<StaticTransform> transforms)
   {
     nodes_spinning_ = true;
+    transforms_ = transforms;
     publisher_thread_ = std::thread(
-      &TransformPublisher::publishOnFrame, this, frame_name, x, y, z, roll, pitch, yaw);
+      &TransformPublisher::publishOnFrame, this);
   }
 
   ~TransformPublisher()
@@ -59,7 +95,7 @@ public:
   }
 
 private:
-  void publishOnFrame(std::string frame_name, int x, int y, int z, int roll, int pitch, int yaw)
+  void publishOnFrame()
   {
     auto transformer_publisher_node = std::make_shared<rclcpp::Node>("static_transform_publisher");
     tf2_ros::StaticTransformBroadcaster broadcaster(transformer_publisher_node);
@@ -69,13 +105,15 @@ private:
     executor.add_node(transformer_publisher_node);
 
     while (nodes_spinning_) {
-      broadcaster.sendTransform(
-        createStaticTransformMessageFor("map", frame_name, x, y, z, roll, pitch, yaw));
+      for (auto transform : transforms_) {
+        broadcaster.sendTransform(transform.createStaticTransformMessage());
+      }
       executor.spin_some();
       loop_rate.sleep();
     }
   }
 
+  std::vector<StaticTransform> transforms_;
   std::atomic<bool> nodes_spinning_;
   std::thread publisher_thread_;
 };

@@ -373,6 +373,7 @@ if(BUILD_TESTING)
 
     if(EnableVisualTests STREQUAL "TRUE")
       find_package(OpenCV REQUIRED)
+      find_package(ament_index_cpp REQUIRED)
 
       ament_add_gtest(camera_display_visual_test
         test/rviz_default_plugins/displays/camera/camera_display_visual_test.cpp
@@ -499,6 +500,19 @@ if(BUILD_TESTING)
           ${rviz_visual_testing_framework_INCLUDE_DIRS})
         target_link_libraries(pose_display_visual_test
           ${TEST_LINK_LIBRARIES}
+          rviz_visual_testing_framework::rviz_visual_testing_framework)
+      endif()
+
+      ament_add_gtest(robot_model_display_visual_test
+        test/rviz_default_plugins/displays/robot_model/robot_model_display_visual_test.cpp
+        test/rviz_default_plugins/page_objects/robot_model_display_page_object.cpp)
+      if(TARGET robot_model_display_visual_test)
+        target_include_directories(robot_model_display_visual_test PUBLIC
+          ${TEST_INCLUDE_DIRS}
+          ${rviz_visual_testing_framework_INCLUDE_DIRS})
+        target_link_libraries(robot_model_display_visual_test
+          ${TEST_LINK_LIBRARIES}
+          ament_index_cpp::ament_index_cpp
           rviz_visual_testing_framework::rviz_visual_testing_framework)
       endif()
 
