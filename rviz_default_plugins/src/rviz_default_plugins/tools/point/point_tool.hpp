@@ -27,42 +27,49 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_POINT_TOOL_H
-#define RVIZ_POINT_TOOL_H
+#ifndef RVIZ_DEFAULT_PLUGINS__TOOLS__POINT__POINT_TOOL_HPP_
+#define RVIZ_DEFAULT_PLUGINS__TOOLS__POINT__POINT_TOOL_HPP_
 
-#ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
-# include <ros/node_handle.h>
-# include <ros/publisher.h>
+#include <QCursor>
+#include <QObject>
 
-# include "rviz/tool.h"
+#include "geometry_msgs/msg/point_stamped.hpp"
+#include "rclcpp/rclcpp.hpp"
 
-# include <QCursor>
-# include <QObject>
-#endif
+#include "rviz_common/tool.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 class StringProperty;
 class BoolProperty;
+}
+}
+
+namespace rviz_default_plugins
+{
+namespace tools
+{
 
 //! The Point Tool allows the user to click on a point which
 //! gets published as a PointStamped message.
-class PointTool: public Tool
+class PointTool : public rviz_common::Tool
 {
   Q_OBJECT
+
 public:
   PointTool();
-  virtual ~PointTool();
+  ~PointTool() override;
 
-  virtual void onInitialize();
+  void onInitialize() override;
 
-  virtual void activate();
-  virtual void deactivate();
+  void activate() override;
+  void deactivate() override;
 
-  virtual int processMouseEvent( ViewportMouseEvent& event );
+  int processMouseEvent(rviz_common::ViewportMouseEvent & event) override;
 
 public Q_SLOTS:
-
   void updateTopic();
   void updateAutoDeactivate();
 
@@ -70,15 +77,14 @@ protected:
   QCursor std_cursor_;
   QCursor hit_cursor_;
 
-  ros::NodeHandle nh_;
-  ros::Publisher pub_;
+  rclcpp::Node::SharedPtr node_;
+  rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr publisher_;
 
-  StringProperty* topic_property_;
-  BoolProperty* auto_deactivate_property_;
+  rviz_common::properties::StringProperty * topic_property_;
+  rviz_common::properties::BoolProperty * auto_deactivate_property_;
 };
 
-}
+}  // namespace tools
+}  // namespace rviz_default_plugins
 
-#endif
-
-
+#endif  // RVIZ_DEFAULT_PLUGINS__TOOLS__POINT__POINT_TOOL_HPP_

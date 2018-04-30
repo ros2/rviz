@@ -27,110 +27,103 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <OgreRay.h>
-#include <OgreVector3.h>
-
-#include "rviz/viewport_mouse_event.h"
-#include "rviz/load_resource.h"
-#include "rviz/render_panel.h"
-#include "rviz/display_context.h"
-#include "rviz/selection/selection_manager.h"
-#include "rviz/view_controller.h"
-
-#include "rviz/default_plugin/tools/point_tool.h"
-
-#include "rviz/properties/bool_property.h"
-#include "rviz/properties/string_property.h"
-
-#include <geometry_msgs/PointStamped.h>
+#include "./point_tool.hpp"
 
 #include <sstream>
 
-namespace rviz
+#include <OgreRay.h>
+#include <OgreVector3.h>
+
+#include "rviz_common/display_context.hpp"
+#include "rviz_common/interaction/view_picker_iface.hpp"
+#include "rviz_common/load_resource.hpp"
+#include "rviz_common/properties/bool_property.hpp"
+#include "rviz_common/properties/string_property.hpp"
+#include "rviz_common/render_panel.hpp"
+#include "rviz_common/viewport_mouse_event.hpp"
+#include "rviz_common/view_controller.hpp"
+
+
+namespace rviz_default_plugins
+{
+namespace tools
 {
 
 PointTool::PointTool()
-  : Tool()
+: rviz_common::Tool(),
+  node_(rclcpp::Node::make_shared("point_tool_node"))
 {
-  topic_property_ = new StringProperty( "Topic", "/clicked_point",
-                                        "The topic on which to publish points.",
-                                        getPropertyContainer(), SLOT( updateTopic() ), this );
+  topic_property_ = new rviz_common::properties::StringProperty(
+    "Topic", "/clicked_point",
+    "The topic on which to publish points.",
+    getPropertyContainer(), SLOT(updateTopic()), this);
 
-  auto_deactivate_property_ = new BoolProperty( "Single click", true,
-                                                "Switch away from this tool after one click.",
-                                                getPropertyContainer(), SLOT( updateAutoDeactivate() ), this );
+  auto_deactivate_property_ = new rviz_common::properties::BoolProperty(
+    "Single click", true,
+    "Switch away from this tool after one click.",
+    getPropertyContainer(), SLOT(updateAutoDeactivate()), this);
 
   updateTopic();
 }
 
-PointTool::~PointTool()
-{
-}
+PointTool::~PointTool() = default;
 
 void PointTool::onInitialize()
 {
   hit_cursor_ = cursor_;
-  std_cursor_ = getDefaultCursor();
+  std_cursor_ = rviz_common::getDefaultCursor();
+  context_->addNodeToMainExecutor(node_);
 }
 
-void PointTool::activate()
-{
-}
+void PointTool::activate() {}
 
-void PointTool::deactivate()
-{
-}
+void PointTool::deactivate() {}
 
 void PointTool::updateTopic()
 {
-  pub_ = nh_.advertise<geometry_msgs::PointStamped>( topic_property_->getStdString(), 1 );
+  publisher_ =
+    node_->create_publisher<geometry_msgs::msg::PointStamped>(topic_property_->getStdString());
 }
 
-void PointTool::updateAutoDeactivate()
-{
-}
+void PointTool::updateAutoDeactivate() {}
 
-int PointTool::processMouseEvent( ViewportMouseEvent& event )
+int PointTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
 {
   int flags = 0;
 
   Ogre::Vector3 pos;
-  bool success = context_->getSelectionManager()->get3DPoint( event.viewport, event.x, event.y, pos );
-  setCursor( success ? hit_cursor_ : std_cursor_ );
+  bool success = context_->getViewPicker()->get3DPoint(event.panel, event.x, event.y, pos);
+  setCursor(success ? hit_cursor_ : std_cursor_);
 
-  if ( success )
-  {
+  if (success) {
     std::ostringstream s;
     s << "<b>Left-Click:</b> Select this point.";
     s.precision(3);
     s << " [" << pos.x << "," << pos.y << "," << pos.z << "]";
-    setStatus( s.str().c_str() );
+    setStatus(s.str().c_str());
 
-    if( event.leftUp() )
-    {
-      geometry_msgs::PointStamped ps;
+    if (event.leftUp()) {
+      geometry_msgs::msg::PointStamped ps;
       ps.point.x = pos.x;
       ps.point.y = pos.y;
       ps.point.z = pos.z;
       ps.header.frame_id = context_->getFixedFrame().toStdString();
-      ps.header.stamp = ros::Time::now();
-      pub_.publish( ps );
+      ps.header.stamp = rclcpp::Clock().now();
+      publisher_->publish(ps);
 
-      if ( auto_deactivate_property_->getBool() )
-      {
+      if (auto_deactivate_property_->getBool()) {
         flags |= Finished;
       }
     }
-  }
-  else
-  {
-    setStatus( "Move over an object to select the target point." );
+  } else {
+    setStatus("Move over an object to select the target point.");
   }
 
   return flags;
 }
 
-}
+}  // namespace tools
+}  // namespace rviz_default_plugins
 
-#include <pluginlib/class_list_macros.h>
-PLUGINLIB_EXPORT_CLASS( rviz::PointTool, rviz::Tool )
+#include <pluginlib/class_list_macros.hpp>  // NOLINT
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::tools::PointTool, rviz_common::Tool)
