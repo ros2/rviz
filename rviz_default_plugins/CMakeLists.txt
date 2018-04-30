@@ -527,6 +527,19 @@ if(BUILD_TESTING)
           ${TEST_LINK_LIBRARIES}
           rviz_visual_testing_framework::rviz_visual_testing_framework)
       endif()
+
+      ament_add_gtest(laser_scan_display_visual_test
+        test/rviz_default_plugins/displays/laser_scan/laser_scan_display_visual_test.cpp
+        test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
+        test/rviz_default_plugins/page_objects/laser_scan_display_page_object.cpp)
+      if(TARGET laser_scan_display_visual_test)
+        target_include_directories(laser_scan_display_visual_test PUBLIC
+          ${TEST_INCLUDE_DIRS}
+          ${rviz_visual_testing_framework_INCLUDE_DIRS})
+        target_link_libraries(laser_scan_display_visual_test
+          ${TEST_LINK_LIBRARIES}
+          rviz_visual_testing_framework::rviz_visual_testing_framework)
+      endif()
     endif()
   endif()
 endif()
