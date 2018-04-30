@@ -30,8 +30,17 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__TOOLS__POINT__POINT_TOOL_HPP_
 #define RVIZ_DEFAULT_PLUGINS__TOOLS__POINT__POINT_TOOL_HPP_
 
-#include <QCursor>
-#include <QObject>
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wkeyword-macro"
+#endif
+#include <OgreVector3.h>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+
+#include <QCursor>  // NOLINT cpplint cannot handle the include order here
+#include <QObject>  // NOLINT cpplint cannot handle the include order here
 
 #include "geometry_msgs/msg/point_stamped.hpp"
 #include "rclcpp/rclcpp.hpp"
@@ -82,6 +91,8 @@ protected:
 
   rviz_common::properties::StringProperty * topic_property_;
   rviz_common::properties::BoolProperty * auto_deactivate_property_;
+  void publishPosition(const Ogre::Vector3 & position) const;
+  void setStatusForPosition(const Ogre::Vector3 & position);
 };
 
 }  // namespace tools

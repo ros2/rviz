@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2013, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,7 +32,6 @@
 
 #include <sstream>
 
-#include <OgreRay.h>
 #include <OgreVector3.h>
 
 #include "rviz_common/display_context.hpp"
@@ -42,7 +42,6 @@
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/viewport_mouse_event.hpp"
 #include "rviz_common/view_controller.hpp"
-
 
 namespace rviz_default_plugins
 {
@@ -66,13 +65,17 @@ PointTool::PointTool()
   updateTopic();
 }
 
-PointTool::~PointTool() = default;
+PointTool::~PointTool()
+{
+  context_->removeNodeFromMainExecutor(node_);
+}
 
 void PointTool::onInitialize()
 {
+  context_->addNodeToMainExecutor(node_);
+
   hit_cursor_ = cursor_;
   std_cursor_ = rviz_common::getDefaultCursor();
-  context_->addNodeToMainExecutor(node_);
 }
 
 void PointTool::activate() {}
@@ -91,25 +94,15 @@ int PointTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
 {
   int flags = 0;
 
-  Ogre::Vector3 pos;
-  bool success = context_->getViewPicker()->get3DPoint(event.panel, event.x, event.y, pos);
+  Ogre::Vector3 position;
+  bool success = context_->getViewPicker()->get3DPoint(event.panel, event.x, event.y, position);
   setCursor(success ? hit_cursor_ : std_cursor_);
 
   if (success) {
-    std::ostringstream s;
-    s << "<b>Left-Click:</b> Select this point.";
-    s.precision(3);
-    s << " [" << pos.x << "," << pos.y << "," << pos.z << "]";
-    setStatus(s.str().c_str());
+    setStatusForPosition(position);
 
     if (event.leftUp()) {
-      geometry_msgs::msg::PointStamped ps;
-      ps.point.x = pos.x;
-      ps.point.y = pos.y;
-      ps.point.z = pos.z;
-      ps.header.frame_id = context_->getFixedFrame().toStdString();
-      ps.header.stamp = rclcpp::Clock().now();
-      publisher_->publish(ps);
+      publishPosition(position);
 
       if (auto_deactivate_property_->getBool()) {
         flags |= Finished;
@@ -120,6 +113,26 @@ int PointTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
   }
 
   return flags;
+}
+
+void PointTool::setStatusForPosition(const Ogre::Vector3 & position)
+{
+  std::ostringstream s;
+  s << "<b>Left-Click:</b> Select this point.";
+  s.precision(3);
+  s << " [" << position.x << "," << position.y << "," << position.z << "]";
+  setStatus(s.str().c_str());
+}
+
+void PointTool::publishPosition(const Ogre::Vector3 & position) const
+{
+  geometry_msgs::msg::PointStamped ps;
+  ps.point.x = position.x;
+  ps.point.y = position.y;
+  ps.point.z = position.z;
+  ps.header.frame_id = context_->getFixedFrame().toStdString();
+  ps.header.stamp = rclcpp::Clock().now();
+  publisher_->publish(ps);
 }
 
 }  // namespace tools
