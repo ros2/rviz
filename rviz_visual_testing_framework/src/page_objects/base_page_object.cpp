@@ -104,8 +104,8 @@ void BasePageObject::setComboBox(const QString & property_name, const QString & 
       auto value_index = property_combo_box->findText(value_to_set);
 
       if (value_index == -1) {
-        GTEST_FAIL() << "\n[  ERROR   ]  The value '" << value_to_set.toStdString() << "' does "
-        "not exist!\n";
+        GTEST_FAIL() << "[  ERROR   ]  The value '" << value_to_set.toStdString() << "' does "
+        "not exist!";
       }
       property_combo_box->setCurrentIndex(value_index);
     }
@@ -197,7 +197,7 @@ QModelIndex BasePageObject::getSubPropertyIndex(
       return {};
     }
 
-    std::cout << "\n[  INFO   ]  The Sub-property '" << property_name.toStdString() << "' is "
+    std::cout << "[  INFO   ]  The Sub-property '" << property_name.toStdString() << "' is "
       "not where expected. The first row with this name will be modified instead.\n";
   }
 
@@ -233,7 +233,7 @@ QModelIndex BasePageObject::getRelativeIndexAndExpandDisplay()
 void BasePageObject::failForAbsentProperty(const QString & property_name)
 {
   std::cout << "\n[  ERROR   ]  The Property '" << property_name.toStdString() << "' does not "
-    "exist.\n";
+    "exist.";
 
   GTEST_FAIL();
 }

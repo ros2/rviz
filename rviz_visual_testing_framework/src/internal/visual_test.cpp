@@ -107,15 +107,15 @@ void VisualTest::takeTestScreenShot(
 void VisualTest::assertVisualIdentity(Ogre::String name)
 {
   if (generateReferenceImages()) {
-    std::cout << "\n[   INFO:  ] The reference image '" << name << "_ref.png' has been updated "
-      "correctly.\n\n";
+    std::cout << "[   INFO   ] The reference image '" << name << "_ref.png' has been updated "
+      "correctly.\n";
     SUCCEED();
   } else {
     if (checkImageExists(name)) {
       tester_.compare(name);
     } else {
-      GTEST_FAIL() << "\n[  ERROR   ] Reference image does not exist, or its name is incorrect (it "
-        "should be: '" << name << "_ref.png'.)\n";
+      GTEST_FAIL() << "[  ERROR   ] Reference image does not exist, or its name is incorrect (it "
+        "should be: '" << name << "_ref.png'.)";
     }
   }
 }
@@ -124,7 +124,7 @@ void VisualTest::takeScreenShot(Ogre::String name, std::shared_ptr<PageObjectWit
 {
   if (directoriesDoNotExist()) {
     GTEST_FAIL() << "[  ERROR   ] at least one of test_images and reference_images directories "
-      "doesn't exist. Make sure that both directory are correctly placed and try again. \n";
+      "doesn't exist. Make sure that both directory are correctly placed and try again.";
   }
 
   if (generateReferenceImages()) {

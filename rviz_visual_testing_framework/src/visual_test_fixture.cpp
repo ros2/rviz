@@ -73,9 +73,9 @@ void VisualTestFixture::TearDownTestCase()
   std::string test_images_path = QDir::toNativeSeparators(
     QString::fromStdString(build_directory_path_ + "/test_images/")).toStdString();
 
-  std::cout << "\n[   INFO   ] The reference images are located in: " <<
+  std::cout << "[   INFO   ] The reference images are located in: " <<
     reference_images_path << "\n[   INFO   ] The test images are located in: " <<
-    test_images_path << "\n\n";
+    test_images_path << "\n";
 }
 
 void VisualTestFixture::setCamPose(Ogre::Vector3 camera_pose)
