@@ -55,14 +55,10 @@ public:
   int processMouseEvent(rviz_common::ViewportMouseEvent & event) override;
 
 private:
-  void computePositionToLookAtFromRay(
+  void computePositionForDirection(
     const rviz_common::ViewportMouseEvent & event, Ogre::Vector3 & position);
 
-  void notifyUserToLookAtPoint(const Ogre::Vector3 & position);
-
-  bool pointBelowCursorToLookAt(
-    const rviz_common::ViewportMouseEvent & event,
-    Ogre::Vector3 & position);
+  void setStatusFrom(const Ogre::Vector3 & position);
 
 protected:
   QCursor std_cursor_;

@@ -89,10 +89,14 @@ int FocusTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
 
   Ogre::Vector3 position;
 
-  if (pointBelowCursorToLookAt(event, position)) {
-    notifyUserToLookAtPoint(position);
+  bool success = context_->getViewPicker()->get3DPoint(event.panel, event.x, event.y, position);
+  setCursor(success ? hit_cursor_ : std_cursor_);
+
+  if (!success) {
+    computePositionForDirection(event, position);
+    setStatus("<b>Left-Click:</b> Look in this direction.");
   } else {
-    computePositionToLookAtFromRay(event, position);
+    setStatusFrom(position);
   }
 
   if (event.leftUp()) {
@@ -105,16 +109,7 @@ int FocusTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
   return flags;
 }
 
-bool FocusTool::pointBelowCursorToLookAt(
-  const rviz_common::ViewportMouseEvent & event,
-  Ogre::Vector3 & position)
-{
-  bool success = context_->getViewPicker()->get3DPoint(event.panel, event.x, event.y, position);
-  setCursor(success ? hit_cursor_ : std_cursor_);
-  return success;
-}
-
-void FocusTool::notifyUserToLookAtPoint(const Ogre::Vector3 & position)
+void FocusTool::setStatusFrom(const Ogre::Vector3 & position)
 {
   std::ostringstream s;
   s << "<b>Left-Click:</b> Focus on this point.";
@@ -123,7 +118,7 @@ void FocusTool::notifyUserToLookAtPoint(const Ogre::Vector3 & position)
   setStatus(s.str().c_str());
 }
 
-void FocusTool::computePositionToLookAtFromRay(
+void FocusTool::computePositionForDirection(
   const rviz_common::ViewportMouseEvent & event, Ogre::Vector3 & position)
 {
   auto viewport =
@@ -133,7 +128,6 @@ void FocusTool::computePositionToLookAtFromRay(
     static_cast<float>(event.y) / static_cast<float>(viewport->getActualHeight()));
 
   position = mouse_ray.getPoint(1.0);
-  setStatus("<b>Left-Click:</b> Look in this direction.");
 }
 
 }  // namespace tools
