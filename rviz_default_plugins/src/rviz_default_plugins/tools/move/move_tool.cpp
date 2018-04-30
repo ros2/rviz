@@ -50,8 +50,7 @@ MoveTool::MoveTool()
   setIcon(rviz_common::loadPixmap("package://rviz_default_plugins/icons/classes/MoveCamera.png"));
 }
 
-MoveTool::~MoveTool()
-{}
+MoveTool::~MoveTool() = default;
 
 void MoveTool::activate()
 {}
@@ -81,12 +80,5 @@ int MoveTool::processKeyEvent(QKeyEvent * event, rviz_common::RenderPanel * pane
 }  // namespace tools
 }  // namespace rviz_default_plugins
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wpedantic"
-#endif
 #include <pluginlib/class_list_macros.hpp>  // NOLINT
 PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::tools::MoveTool, rviz_common::Tool)
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif

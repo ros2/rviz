@@ -44,13 +44,11 @@ namespace rviz_default_plugins
 namespace tools
 {
 
-class DisplayContext;
-
 class RVIZ_DEFAULT_PLUGINS_PUBLIC MoveTool : public rviz_common::Tool
 {
 public:
   MoveTool();
-  virtual ~MoveTool();
+  ~MoveTool() override;
 
   void activate() override;
   void deactivate() override;
