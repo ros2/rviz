@@ -52,6 +52,7 @@ void ImageDisplayPageObject::setRenderWindow()
 void ImageDisplayPageObject::setTopic(QString topic)
 {
   setComboBox("Topic", topic);
+  waitForFirstMessage();
 }
 
 void ImageDisplayPageObject::setUnreliable(bool unreliable)

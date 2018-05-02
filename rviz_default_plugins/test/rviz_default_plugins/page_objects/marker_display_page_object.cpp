@@ -39,7 +39,7 @@ MarkerDisplayPageObject::MarkerDisplayPageObject()
 void MarkerDisplayPageObject::setTopic(QString topic)
 {
   setComboBox("Topic", topic);
-  executor_->wait(1500);
+  waitForFirstMessage();
 }
 
 void MarkerDisplayPageObject::setUnreliable(bool unreliable)

@@ -43,6 +43,7 @@ PathDisplayPageObject::PathDisplayPageObject()
 void PathDisplayPageObject::setTopic(QString topic)
 {
   setComboBox("Topic", topic);
+  waitForFirstMessage();
 }
 
 void PathDisplayPageObject::setLineStyleForPath(QString line_style)

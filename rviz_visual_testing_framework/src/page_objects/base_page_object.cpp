@@ -310,6 +310,11 @@ int BasePageObject::findPropertyRowIndexByName(
   return -1;
 }
 
+void BasePageObject::waitForFirstMessage()
+{
+  executor_->wait(1500);
+}
+
 QString format(float number)
 {
   return QLocale().toString(number);

@@ -39,9 +39,3 @@ void LaserScanDisplayPageObject::setQueueSize(int queue_size)
 {
   setInt("Queue Size", queue_size);
 }
-
-void LaserScanDisplayPageObject::setTopic(const QString & topic_name)
-{
-  setComboBox("Topic", topic_name);
-  executor_->wait(1500);
-}

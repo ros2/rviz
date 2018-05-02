@@ -134,6 +134,8 @@ protected:
   */
   void setVector(const QString & property_name, float x, float y, float z);
 
+  void waitForFirstMessage();
+
   int display_id_;
   int display_category_;
   QString display_name_;

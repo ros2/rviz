@@ -52,6 +52,7 @@ void CameraDisplayPageObject::setDisplayVisibilityInRenderWindow(
 void CameraDisplayPageObject::setTopic(QString topic)
 {
   setComboBox("Topic", topic);
+  waitForFirstMessage();
 }
 
 void CameraDisplayPageObject::setUnreliable(bool unreliable)

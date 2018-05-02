@@ -38,6 +38,12 @@ PointCloudCommonPageObject::PointCloudCommonPageObject(QString display_name)
 : BasePageObject(0, display_name)
 {}
 
+void PointCloudCommonPageObject::setTopic(QString topic_name)
+{
+  setComboBox("Topic", topic_name);
+  waitForFirstMessage();
+}
+
 void PointCloudCommonPageObject::setSizeMeters(float meters_size)
 {
   setFloat("Size (m)", meters_size);

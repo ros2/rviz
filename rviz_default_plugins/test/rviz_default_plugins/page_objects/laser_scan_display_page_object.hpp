@@ -42,8 +42,6 @@ public:
   LaserScanDisplayPageObject();
 
   void setQueueSize(int queue_size);
-
-  void setTopic(const QString & topic_name);
 };
 
 #endif  // RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__LASER_SCAN_DISPLAY_PAGE_OBJECT_HPP_

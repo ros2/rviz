@@ -42,6 +42,7 @@ class PointCloudCommonPageObject : public BasePageObject
 public:
   explicit PointCloudCommonPageObject(QString display_name);
 
+  void setTopic(QString topic_name);
   void setSizeMeters(float meters_size);
   void setSizePixels(float pixels_size);
   void setStyle(QString points_style);

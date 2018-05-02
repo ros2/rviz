@@ -46,6 +46,7 @@ TEST_F(VisualTestFixture, pointcloud_containing_one_big_point) {
   setCamLookAt(Ogre::Vector3(0, 0, 0));
 
   auto pointcloud_display = addDisplay<PointCloudDisplayPageObject>();
+  pointcloud_display->setTopic("/pointcloud");
   pointcloud_display->setStyle("Spheres");
   pointcloud_display->setSizeMeters(11);
   pointcloud_display->setColor(0, 255, 0);
