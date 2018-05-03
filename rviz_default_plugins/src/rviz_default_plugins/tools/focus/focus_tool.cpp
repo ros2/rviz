@@ -42,7 +42,6 @@
 #include <OgreRay.h>
 #include <OgreVector3.h>
 #include <OgreViewport.h>
-#include <rviz_rendering/render_window.hpp>
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop
@@ -56,6 +55,7 @@
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/viewport_mouse_event.hpp"
 #include "rviz_common/view_controller.hpp"
+#include "rviz_rendering/render_window.hpp"
 
 #include "./focus_tool.hpp"
 

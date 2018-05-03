@@ -33,6 +33,7 @@
 #include <QCursor>
 
 #include "rviz_common/tool.hpp"
+#include "rviz_common/viewport_mouse_event.hpp"
 
 namespace rviz_default_plugins
 {
