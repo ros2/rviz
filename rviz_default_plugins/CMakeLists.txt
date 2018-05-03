@@ -382,7 +382,8 @@ if(BUILD_TESTING)
         test/rviz_default_plugins/page_objects/point_cloud_display_page_object.cpp
         test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
         test/rviz_default_plugins/publishers/image_publisher.hpp
-        test/rviz_default_plugins/publishers/point_cloud_publisher.hpp)
+        test/rviz_default_plugins/publishers/point_cloud_publisher.hpp
+        TIMEOUT 180)
       if(TARGET camera_display_visual_test)
         target_include_directories(camera_display_visual_test PUBLIC
           ${TEST_INCLUDE_DIRS}
@@ -396,7 +397,8 @@ if(BUILD_TESTING)
 
       ament_add_gtest(grid_display_visual_test
         test/rviz_default_plugins/displays/grid/grid_display_visual_test.cpp
-        test/rviz_default_plugins/page_objects/grid_display_page_object.cpp)
+        test/rviz_default_plugins/page_objects/grid_display_page_object.cpp
+        TIMEOUT 180)
       if(TARGET grid_display_visual_test)
         target_include_directories(grid_display_visual_test PUBLIC
           ${TEST_INCLUDE_DIRS}
@@ -409,7 +411,8 @@ if(BUILD_TESTING)
       ament_add_gtest(image_display_visual_test
         test/rviz_default_plugins/displays/image/image_display_visual_test.cpp
         test/rviz_default_plugins/page_objects/image_display_page_object.cpp
-        test/rviz_default_plugins/publishers/image_publisher.hpp)
+        test/rviz_default_plugins/publishers/image_publisher.hpp
+        TIMEOUT 180)
       if(TARGET image_display_visual_test)
         target_include_directories(image_display_visual_test PUBLIC
           ${TEST_INCLUDE_DIRS}
@@ -424,7 +427,8 @@ if(BUILD_TESTING)
       ament_add_gtest(marker_display_visual_test
         test/rviz_default_plugins/displays/marker/marker_display_visual_test.cpp
         test/rviz_default_plugins/page_objects/marker_display_page_object.cpp
-        test/rviz_default_plugins/publishers/marker_publisher.hpp)
+        test/rviz_default_plugins/publishers/marker_publisher.hpp
+        TIMEOUT 180)
       if(TARGET marker_display_visual_test)
         target_include_directories(marker_display_visual_test PUBLIC
           ${TEST_INCLUDE_DIRS}
@@ -437,7 +441,8 @@ if(BUILD_TESTING)
       ament_add_gtest(path_display_visual_test
         test/rviz_default_plugins/displays/path/path_display_visual_test.cpp
         test/rviz_default_plugins/page_objects/path_display_page_object.cpp
-        test/rviz_default_plugins/publishers/path_publisher.hpp)
+        test/rviz_default_plugins/publishers/path_publisher.hpp
+        TIMEOUT 180)
       if(TARGET path_display_visual_test)
         target_include_directories(path_display_visual_test PUBLIC
           ${TEST_INCLUDE_DIRS}
@@ -451,7 +456,8 @@ if(BUILD_TESTING)
         test/rviz_default_plugins/displays/pointcloud/point_cloud_display_visual_test.cpp
         test/rviz_default_plugins/page_objects/point_cloud_display_page_object.cpp
         test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
-        test/rviz_default_plugins/publishers/point_cloud_publisher.hpp)
+        test/rviz_default_plugins/publishers/point_cloud_publisher.hpp
+        TIMEOUT 180)
       if(TARGET point_cloud_display_visual_test)
         target_include_directories(point_cloud_display_visual_test PUBLIC
           ${TEST_INCLUDE_DIRS}
@@ -466,7 +472,8 @@ if(BUILD_TESTING)
         test/rviz_default_plugins/page_objects/point_cloud2_display_page_object.cpp
         test/rviz_default_plugins/publishers/point_cloud2_publisher.hpp
         test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
-        test/rviz_default_plugins/pointcloud_messages.cpp)
+        test/rviz_default_plugins/pointcloud_messages.cpp
+        TIMEOUT 180)
       if(TARGET point_cloud2_display_visual_test)
         target_include_directories(point_cloud2_display_visual_test PUBLIC
           ${TEST_INCLUDE_DIRS}
@@ -480,7 +487,8 @@ if(BUILD_TESTING)
         test/rviz_default_plugins/displays/pose_array/pose_array_display_visual_test.cpp
         test/rviz_default_plugins/page_objects/pose_array_display_page_object.cpp
         test/rviz_default_plugins/page_objects/pose_display_page_object.cpp
-        test/rviz_default_plugins/publishers/pose_array_publisher.hpp)
+        test/rviz_default_plugins/publishers/pose_array_publisher.hpp
+        TIMEOUT 180)
       if(TARGET pose_array_display_visual_test)
         target_include_directories(pose_array_display_visual_test PUBLIC
           ${TEST_INCLUDE_DIRS}
@@ -493,7 +501,8 @@ if(BUILD_TESTING)
       ament_add_gtest(pose_display_visual_test
         test/rviz_default_plugins/displays/pose/pose_display_visual_test.cpp
         test/rviz_default_plugins/page_objects/pose_display_page_object.cpp
-        test/rviz_default_plugins/publishers/pose_publisher.hpp)
+        test/rviz_default_plugins/publishers/pose_publisher.hpp
+        TIMEOUT 180)
       if(TARGET pose_display_visual_test)
         target_include_directories(pose_display_visual_test PUBLIC
           ${TEST_INCLUDE_DIRS}
@@ -505,7 +514,8 @@ if(BUILD_TESTING)
 
       ament_add_gtest(robot_model_display_visual_test
         test/rviz_default_plugins/displays/robot_model/robot_model_display_visual_test.cpp
-        test/rviz_default_plugins/page_objects/robot_model_display_page_object.cpp)
+        test/rviz_default_plugins/page_objects/robot_model_display_page_object.cpp
+        TIMEOUT 180)
       if(TARGET robot_model_display_visual_test)
         target_include_directories(robot_model_display_visual_test PUBLIC
           ${TEST_INCLUDE_DIRS}
@@ -518,7 +528,8 @@ if(BUILD_TESTING)
 
       ament_add_gtest(tf_display_visual_test
         test/rviz_default_plugins/displays/tf/tf_display_visual_test.cpp
-        test/rviz_default_plugins/page_objects/tf_display_page_object.cpp)
+        test/rviz_default_plugins/page_objects/tf_display_page_object.cpp
+        TIMEOUT 180)
       if(TARGET tf_display_visual_test)
         target_include_directories(tf_display_visual_test PUBLIC
           ${TEST_INCLUDE_DIRS}
@@ -531,7 +542,8 @@ if(BUILD_TESTING)
       ament_add_gtest(laser_scan_display_visual_test
         test/rviz_default_plugins/displays/laser_scan/laser_scan_display_visual_test.cpp
         test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
-        test/rviz_default_plugins/page_objects/laser_scan_display_page_object.cpp)
+        test/rviz_default_plugins/page_objects/laser_scan_display_page_object.cpp
+        TIMEOUT 180)
       if(TARGET laser_scan_display_visual_test)
         target_include_directories(laser_scan_display_visual_test PUBLIC
           ${TEST_INCLUDE_DIRS}
