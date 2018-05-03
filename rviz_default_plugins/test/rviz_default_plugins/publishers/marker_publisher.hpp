@@ -37,6 +37,12 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/header.hpp"
+
+// TODO(greimela): Workaround for duplicate constant definition
+// compare https://github.com/ros2/common_interfaces/issues/44
+#if defined(_WIN32) && defined(DELETE)
+# undef DELETE
+#endif
 #include "visualization_msgs/msg/marker.hpp"
 
 using namespace std::chrono_literals;  // NOLINT
