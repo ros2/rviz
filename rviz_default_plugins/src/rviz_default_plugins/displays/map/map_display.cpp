@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <boost/bind.hpp>
+#include "map_display.hpp"
 
 #include <OgreManualObject.h>
 #include <OgreMaterialManager.h>
@@ -54,7 +54,6 @@
 #include "rviz/validate_floats.h"
 #include "rviz/display_context.h"
 
-#include "map_display.h"
 
 namespace rviz
 {
