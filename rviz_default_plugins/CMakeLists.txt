@@ -95,6 +95,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/image/image_display.cpp
   src/rviz_default_plugins/displays/image/ros_image_texture.cpp
   src/rviz_default_plugins/displays/laser_scan/laser_scan_display.cpp
+  src/rviz_default_plugins/displays/map/map_display.cpp
   src/rviz_default_plugins/displays/marker/markers/arrow_marker.cpp
   src/rviz_default_plugins/displays/marker/markers/line_list_marker.cpp
   src/rviz_default_plugins/displays/marker/markers/line_marker_base.cpp

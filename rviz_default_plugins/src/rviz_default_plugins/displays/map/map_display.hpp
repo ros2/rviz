@@ -27,32 +27,48 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_MAP_DISPLAY_H
-#define RVIZ_MAP_DISPLAY_H
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__MAP__MAP_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MAP__MAP_DISPLAY_HPP_
+
+#include <string>
+#include <vector>
 
 #ifndef Q_MOC_RUN
-#include <boost/thread/thread.hpp>
+
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+# pragma GCC diagnostic ignored "-Wpedantic"
+#endif
 
 #include <OgreTexture.h>
 #include <OgreMaterial.h>
 #include <OgreVector3.h>
 #include <OgreSharedPtr.h>
+
+#ifndef _WIN32
+# pragma GCC diagnostic pop
 #endif
 
-#include <nav_msgs/MapMetaData.h>
-#include <ros/time.h>
+#endif  // Q_MOC_RUN
 
-#include <nav_msgs/OccupancyGrid.h>
-#include <map_msgs/OccupancyGridUpdate.h>
+#include <nav_msgs/msg/map_meta_data.hpp>
+#include <nav_msgs/msg/occupancy_grid.hpp>
 
-#include "rviz/display.h"
+// TODO(Martin-Idel-SI): use again when available.
+// #include <map_msgs/OccupancyGridUpdate.hpp>
+#include "rclcpp/time.hpp"
+
+#include "rviz_common/ros_topic_display.hpp"
 
 namespace Ogre
 {
 class ManualObject;
 }
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 
 class EnumProperty;
@@ -60,28 +76,37 @@ class FloatProperty;
 class IntProperty;
 class Property;
 class QuaternionProperty;
-class RosTopicProperty;
 class VectorProperty;
 
+}  // namespace properties
+}  // namespace rviz_common
+
+namespace rviz_default_plugins
+{
+namespace displays
+{
 class MapDisplay;
 class AlphaSetter;
 
 class Swatch
 {
-friend class MapDisplay;
-  public:
-    Swatch(MapDisplay* parent, unsigned int x, unsigned int y, unsigned int width, unsigned int height, float resolution);
-    ~Swatch();
-    void updateAlpha(const Ogre::SceneBlendType sceneBlending, bool depthWrite, AlphaSetter* alpha_setter);
-    void updateData();
+  friend class MapDisplay;
 
-  protected:
-    MapDisplay* parent_;
-    Ogre::ManualObject* manual_object_;
-    Ogre::TexturePtr texture_;
-    Ogre::MaterialPtr material_;
-    Ogre::SceneNode* scene_node_;
-    unsigned int x_,y_,width_,height_;
+public:
+  Swatch(
+    MapDisplay * parent, size_t x, size_t y, size_t width, size_t height, float resolution);
+  ~Swatch();
+  void updateAlpha(
+    const Ogre::SceneBlendType sceneBlending, bool depthWrite, AlphaSetter * alpha_setter);
+  void updateData();
+
+protected:
+  MapDisplay * parent_;
+  Ogre::ManualObject * manual_object_;
+  Ogre::TexturePtr texture_;
+  Ogre::MaterialPtr material_;
+  Ogre::SceneNode * scene_node_;
+  size_t x_, y_, width_, height_;
 };
 
 
@@ -89,24 +114,23 @@ friend class MapDisplay;
  * \class MapDisplay
  * \brief Displays a map along the XY plane.
  */
-class MapDisplay: public Display
+class MapDisplay : public rviz_common::RosTopicDisplay<nav_msgs::msg::OccupancyGrid>
 {
-friend class Swatch;
-Q_OBJECT
+  friend class Swatch;
+  Q_OBJECT
+
 public:
   MapDisplay();
-  virtual ~MapDisplay();
+  ~MapDisplay() override;
 
   // Overrides from Display
-  virtual void onInitialize();
-  virtual void fixedFrameChanged();
-  virtual void reset();
+  void onInitialize() override;
+  void fixedFrameChanged() override;
+  void reset() override;
 
-  float getResolution() { return resolution_; }
-  int getWidth() { return width_; }
-  int getHeight() { return height_; }
-
-  virtual void setTopic( const QString &topic, const QString &datatype );
+  float getResolution() {return resolution_;}
+  size_t getWidth() {return width_;}
+  size_t getHeight() {return height_;}
 
 Q_SIGNALS:
   /** @brief Emitted when a new map is received*/
@@ -114,7 +138,6 @@ Q_SIGNALS:
 
 protected Q_SLOTS:
   void updateAlpha();
-  void updateTopic();
   void updateDrawUnder();
   void updatePalette();
   /** @brief Show current_map_ in the scene. */
@@ -122,53 +145,47 @@ protected Q_SLOTS:
   void transformMap();
 
 protected:
-  // overrides from Display
-  virtual void onEnable();
-  virtual void onDisable();
-
-  virtual void subscribe();
-  virtual void unsubscribe();
-  virtual void update( float wall_dt, float ros_dt );
+  void update(float wall_dt, float ros_dt) override;
 
   /** @brief Copy msg into current_map_ and call showMap(). */
-  void incomingMap(const nav_msgs::OccupancyGrid::ConstPtr& msg);
+  void processMessage(nav_msgs::msg::OccupancyGrid::ConstSharedPtr msg) override;
 
+  // TODO(Martin-Idel-SI): Use again when available.
   /** @brief Copy update's data into current_map_ and call showMap(). */
-  void incomingUpdate(const map_msgs::OccupancyGridUpdate::ConstPtr& update);
+  // void incomingUpdate(const map_msgs::OccupancyGridUpdate::ConstPtr& update);
 
   void clear();
 
   void createSwatches();
 
-  std::vector<Swatch*> swatches;
+  std::vector<Swatch *> swatches;
   std::vector<Ogre::TexturePtr> palette_textures_;
   std::vector<bool> color_scheme_transparency_;
   bool loaded_;
 
-  std::string topic_;
   float resolution_;
-  int width_;
-  int height_;
+  size_t width_;
+  size_t height_;
   std::string frame_;
-  nav_msgs::OccupancyGrid current_map_;
+  nav_msgs::msg::OccupancyGrid current_map_;
 
-  ros::Subscriber map_sub_;
-  ros::Subscriber update_sub_;
+  // TODO(Martin-Idel-SI): Reevaluate when map updates can be sent
+  // ros::Subscriber map_sub_;
+  // ros::Subscriber update_sub_;
 
-  RosTopicProperty* topic_property_;
-  FloatProperty* resolution_property_;
-  IntProperty* width_property_;
-  IntProperty* height_property_;
-  VectorProperty* position_property_;
-  QuaternionProperty* orientation_property_;
-  FloatProperty* alpha_property_;
-  Property* draw_under_property_;
-  EnumProperty* color_scheme_property_;
+  rviz_common::properties::FloatProperty * resolution_property_;
+  rviz_common::properties::IntProperty * width_property_;
+  rviz_common::properties::IntProperty * height_property_;
+  rviz_common::properties::VectorProperty * position_property_;
+  rviz_common::properties::QuaternionProperty * orientation_property_;
+  rviz_common::properties::FloatProperty * alpha_property_;
+  rviz_common::properties::Property * draw_under_property_;
+  rviz_common::properties::EnumProperty * color_scheme_property_;
 
-  BoolProperty* unreliable_property_;
-  BoolProperty* transform_timestamp_property_;
+  rviz_common::properties::BoolProperty * transform_timestamp_property_;
 };
 
-} // namespace rviz
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
- #endif
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__MAP__MAP_DISPLAY_HPP_
