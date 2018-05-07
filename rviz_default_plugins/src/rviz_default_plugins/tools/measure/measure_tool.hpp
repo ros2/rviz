@@ -40,7 +40,14 @@
 
 #include <QCursor>  // NOLINT cpplint cannot handle include order
 
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wkeyword-macro"
+#endif
 #include <OgreVector3.h>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
 #include "rviz_common/tool.hpp"
 
