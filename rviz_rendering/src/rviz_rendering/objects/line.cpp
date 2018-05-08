@@ -79,7 +79,8 @@ Line::~Line()
 void Line::setPoints(Ogre::Vector3 start, Ogre::Vector3 end)
 {
   manual_object_->clear();
-  manual_object_->begin(manual_object_material_->getName(), Ogre::RenderOperation::OT_LINE_LIST);
+  manual_object_->begin(
+    manual_object_material_->getName(), Ogre::RenderOperation::OT_LINE_LIST, "rviz_rendering");
   manual_object_->position(start);
   manual_object_->position(end);
   manual_object_->end();
@@ -90,7 +91,6 @@ void Line::setVisible(bool visible)
 {
   scene_node_->setVisible(visible, true);
 }
-
 
 void Line::setPosition(const Ogre::Vector3 & position)
 {
@@ -127,8 +127,6 @@ void Line::setColor(float r, float g, float b, float a)
 {
   setColor(Ogre::ColourValue(r, g, b, a));
 }
-
-// where are the void Line::setColour(...) convenience methods??? ;)
 
 const Ogre::Vector3 & Line::getPosition()
 {
