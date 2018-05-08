@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,6 +46,7 @@
 #pragma clang diagnostic ignored "-Wkeyword-macro"
 #endif
 #include <OgreVector3.h>
+
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
@@ -56,6 +58,14 @@ namespace rviz_rendering
 class Line;
 }
 
+namespace rviz_common
+{
+namespace properties
+{
+class ColorProperty;
+}
+}
+
 namespace rviz_default_plugins
 {
 namespace tools
@@ -63,6 +73,8 @@ namespace tools
 
 class MeasureTool : public rviz_common::Tool
 {
+  Q_OBJECT
+
 public:
   MeasureTool();
 
@@ -74,10 +86,15 @@ public:
 
   int processMouseEvent(rviz_common::ViewportMouseEvent & event) override;
 
+public Q_SLOTS:
+  void updateLineColor();
+
 private:
   void setStatusMessage();
   void processLeftButton(const Ogre::Vector3 & pos);
   void processRightButton();
+
+  rviz_common::properties::ColorProperty * color_property_;
 
   std::shared_ptr<rviz_rendering::Line> line_;
   Ogre::Vector3 start_;

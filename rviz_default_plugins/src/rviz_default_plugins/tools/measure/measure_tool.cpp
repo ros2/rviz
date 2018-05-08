@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -61,6 +62,8 @@
 #include "rviz_common/load_resource.hpp"
 #include "rviz_common/viewport_mouse_event.hpp"
 #include "rviz_common/interaction/view_picker_iface.hpp"
+#include "rviz_common/properties/color_property.hpp"
+#include "rviz_common/properties/parse_color.hpp"
 
 namespace rviz_default_plugins
 {
@@ -69,11 +72,17 @@ namespace tools
 
 MeasureTool::MeasureTool()
 : is_line_started_(false), length_(-1)
-{}
+{
+  color_property_ = new rviz_common::properties::ColorProperty(
+    "Line color", Qt::darkYellow,
+    "The topic on which to publish points.",
+    getPropertyContainer(), SLOT(updateLineColor()), this);
+}
 
 void MeasureTool::onInitialize()
 {
   line_ = std::make_shared<rviz_rendering::Line>(context_->getSceneManager());
+  updateLineColor();
 
   std_cursor_ = rviz_common::getDefaultCursor();
   hit_cursor_ = rviz_common::makeIconCursor("package://rviz_common/icons/crosshair.svg");
@@ -110,6 +119,12 @@ int MeasureTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
   }
 
   return 0;
+}
+
+void MeasureTool::updateLineColor()
+{
+  Ogre::ColourValue color = rviz_common::properties::qtToOgre(color_property_->getColor());
+  line_->setColor(color);
 }
 
 void MeasureTool::setStatusMessage()

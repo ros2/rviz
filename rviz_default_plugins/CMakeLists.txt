@@ -72,6 +72,7 @@ set(rviz_default_plugins_headers_to_moc
   src/rviz_default_plugins/robot/robot_joint.hpp
   src/rviz_default_plugins/robot/robot_link.hpp
   src/rviz_default_plugins/robot/robot_element_base_class.hpp
+  src/rviz_default_plugins/tools/measure/measure_tool.hpp
 )
 
 set(rviz_default_plugins_source_files
