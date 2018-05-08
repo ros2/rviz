@@ -371,7 +371,7 @@ if(BUILD_TESTING)
         ${TEST_LINK_LIBRARIES})
     endif()
 
-    if(EnableVisualTests STREQUAL "TRUE")
+    if(EnableVisualTests STREQUAL "True")
       find_package(OpenCV REQUIRED)
       find_package(ament_index_cpp REQUIRED)
 

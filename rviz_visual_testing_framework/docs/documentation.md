@@ -30,11 +30,11 @@ To ensure that such resizing is always possible, test images are a lot wider tha
 
 For RViz itself: the CMake flag `EnableVisualTests` is provided to enable visual tests:
 
-        ament test --cmake-args -DEnableVisualTests=TRUE
+        ament test --cmake-args -DEnableVisualTests=True
 
 This will make the tests run and the screenshots will be compared to the existing reference images.
 
-Furthermore, the reference images can be updated by running the tests after setting the environmental variable `GenerateReferenceImages` to `TRUE`.
+Furthermore, the reference images can be updated by running the tests after setting the environmental variable `GenerateReferenceImages` to `True`.
     
 **NB**: the `EnableVisualTests` flag value is automatically cached by CMake, meaning that if it's not specified, the value used for the last run will be used.
 
@@ -93,7 +93,7 @@ Specifically, the following code must be added:
 which has the following purpose:
 
 - the line `option(EnableVisualTests "decides whether or not enable the tests")` allows us to use the CMake flag `EnableVisualTests` to decide whether or not the visual tests will run.
-In particular, for this mechanism to work, we also need to wrap the `ament_add_gtest(visual_test [...])` block in an `if(EnableVisualTests STREQUAL "TRUE")` condition.
+In particular, for this mechanism to work, we also need to wrap the `ament_add_gtest(visual_test [...])` block in an `if(EnableVisualTests STREQUAL "True")` condition.
 
 - the second and third line are used to code the path to the build and source directories of the current rviz package. These paths are then passed to the testing framework via the test fixture.
 

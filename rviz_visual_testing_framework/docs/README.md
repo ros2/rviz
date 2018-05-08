@@ -62,12 +62,12 @@ After this method has been called in a test, interaction with RViz is no longer 
 
 In order to run tests, use the following command:
 
-    ament test --cmake-args -DEnableVisualTests=TRUE
+    ament test --cmake-args -DEnableVisualTests=True
 
 This will make the tests run and the screenshots will be compared to the existing reference images.  
-**NB**: CMake will cache the flag value, so that after setting them to `TRUE` or `FALSE`, the following time `ament test` is run without specifying the flag, the previously set value will be used.
+**NB**: CMake will cache the flag value, so that after setting them to `True` or `False`, the following time `ament test` is run without specifying the flag, the previously set value will be used.
 
-Furthermore, the reference images can be updated by running the tests after setting the environmental variable `GenerateReferenceImages` to `TRUE`.
+Furthermore, the reference images can be updated by running the tests after setting the environmental variable `GenerateReferenceImages` to `True`.
 
 ## Further reading
 

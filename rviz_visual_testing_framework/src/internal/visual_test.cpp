@@ -185,7 +185,7 @@ bool VisualTest::generateReferenceImages()
     std::string generate_references(buffer);
     free(buffer);
 
-    return generate_references == "TRUE";
+    return generate_references == "True";
   }
 
   return false;
@@ -195,6 +195,6 @@ bool VisualTest::generateReferenceImages()
   }
 
   std::string generate_references = std::getenv("GenerateReferenceImages");
-  return generate_references == "TRUE";
+  return generate_references == "True";
 #endif
 }
