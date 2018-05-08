@@ -432,7 +432,9 @@ RenderSystem::makeRenderWindow(
 
   params["currentGLContext"] = Ogre::String("false");
 
-  params["externalWindowHandle"] = Ogre::StringConverter::toString(window_id);
+  if (window_id != 0) {
+    params["externalWindowHandle"] = Ogre::StringConverter::toString(window_id);
+  }
   params["parentWindowHandle"] = Ogre::StringConverter::toString(window_id);
 
   // Scale rendering window correctly on Windows
