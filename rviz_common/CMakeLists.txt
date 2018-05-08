@@ -343,7 +343,7 @@ if(BUILD_TESTING)
     set(DISPLAYPRESENT TRUE)
   endif()
 
-  if((APPLE AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug") OR DISPLAYPRESENT OR EnableDisplayTests STREQUAL "True")
+  if(APPLE OR DISPLAYPRESENT OR EnableDisplayTests STREQUAL "True")
     message(STATUS "Enabling tests requiring a display")
 
     ament_add_gtest(rviz_common_display_test
