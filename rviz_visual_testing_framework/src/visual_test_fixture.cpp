@@ -45,8 +45,14 @@ void VisualTestFixture::SetUpTestCase()
 
   visualizer_app_->setApp(qapp_);
   visualizer_app_->init(0, nullptr);
-  visualizer_app_->loadConfig(QDir::toNativeSeparators(
-      QString::fromStdString(std::string(_SRC_DIR_PATH) + "/visual_tests_default_config.rviz")));
+  if (VisualTest::generateReferenceImages()) {
+    visualizer_app_->loadConfig(QDir::toNativeSeparators(
+        QString::fromStdString(std::string(_SRC_DIR_PATH) + "/visual_tests_default_config.rviz")));
+  } else {
+    visualizer_app_->loadConfig(QDir::toNativeSeparators(
+        QString::fromStdString(std::string(_SRC_DIR_PATH) +
+        "/visual_tests_test_image_config.rviz")));
+  }
 }
 
 void VisualTestFixture::TearDown()
@@ -80,6 +86,14 @@ void VisualTestFixture::setCamPose(Ogre::Vector3 camera_pose)
 void VisualTestFixture::setCamLookAt(Ogre::Vector3 camera_look_at_vector)
 {
   visual_test_->setCamLookAt(camera_look_at_vector);
+}
+
+void VisualTestFixture::updateCamWithDelay(Ogre::Vector3 new_pose, Ogre::Vector3 new_look_at)
+{
+  executor_->queueAction([this, new_pose, new_look_at] {
+      visual_test_->setCamPose(new_pose);
+      visual_test_->setCamLookAt(new_look_at);
+    });
 }
 
 void VisualTestFixture::setTesterThreshold(double threshold)
@@ -138,6 +152,11 @@ void VisualTestFixture::setNameIfEmpty(Ogre::String & name)
   if (name.empty()) {
     name = test_name_;
   }
+}
+
+void VisualTestFixture::wait(int milliseconds_to_wait)
+{
+  executor_->wait(milliseconds_to_wait);
 }
 
 QApplication * VisualTestFixture::qapp_ = nullptr;

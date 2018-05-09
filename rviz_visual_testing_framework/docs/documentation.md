@@ -105,7 +105,7 @@ Moreover, should it not already be present, the following should also be include
 
 ### How to write a test
 
-An example of how tests are written and how they work is provided by the `example_test.cpp` file in `rviz_visual_testing_framework/test` or in the [quick start guide](README.md).
+An example of how tests are written and how they work is provided by the `pointcloud_visual_test.cpp` file in `rviz_default_plugins/test/visual_tests` or in the [quick start guide](README.md).
 In the following the most important points with respect to the tests are summarized:
 
 * As said, the `VisualTestFixture` offers convenience methods to:

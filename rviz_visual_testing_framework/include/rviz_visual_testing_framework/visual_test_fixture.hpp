@@ -69,6 +69,7 @@ public:
 
   void setCamPose(Ogre::Vector3 camera_pose);
   void setCamLookAt(Ogre::Vector3 camera_look_at_vector);
+  void updateCamWithDelay(Ogre::Vector3 new_pose, Ogre::Vector3 new_look_at);
   void setTesterThreshold(double threshold);
   template<typename T>
   std::shared_ptr<T> addDisplay()
@@ -83,6 +84,8 @@ public:
 
   void assertScreenShotsIdentity();
   void assertMainWindowIdentity(Ogre::String image_name = "");
+
+  void wait(int milliseconds_to_wait);
 
   Ogre::String test_name_;
   std::unique_ptr<VisualTest> visual_test_;
