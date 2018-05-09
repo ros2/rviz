@@ -33,7 +33,7 @@
 #include <memory>
 #include <vector>
 
-#include "../message_creators.hpp"
+#include "test/rviz_default_plugins/pointcloud_messages.hpp"
 
 // *INDENT-OFF*
 #include "../../../../../src/rviz_default_plugins/displays/pointcloud/transformers/rgbf32_pc_transformer.hpp"

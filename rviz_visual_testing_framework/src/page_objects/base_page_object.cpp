@@ -52,18 +52,30 @@ BasePageObject::BasePageObject(
   display_id_ = display_id;
 }
 
-void BasePageObject::setString(const QString & property_name, const QString & value_to_set)
+void BasePageObject::setString(
+  const QString & main_property_name,
+  const QString & value_to_set,
+  int sub_property_index,
+  const QString & sub_property_name)
 {
-  executor_->queueAction([this, value_to_set, property_name] {
+  executor_->queueAction(
+    [this, value_to_set, main_property_name, sub_property_index, sub_property_name] {
       auto relative_display_index = getRelativeIndexAndExpandDisplay();
-      int property_row_index = findPropertyRowIndexByName(property_name, relative_display_index);
+      int main_property_row_index =
+      findPropertyRowIndexByName(main_property_name, relative_display_index);
 
-      if (property_row_index < 0) {
-        failForAbsentProperty(property_name);
+      if (main_property_row_index < 0) {
+        failForAbsentProperty(main_property_name);
       }
+      doubleClickOnTreeItem(
+        getPropertyToChangeIndex(main_property_row_index, relative_display_index));
 
-      clickOnTreeItem(getPropertyToChangeIndex(property_row_index, relative_display_index));
-      clickOnTreeItem(getValueToChangeIndex(property_row_index, relative_display_index));
+      auto index_to_change = sub_property_index < 0 ?
+      getValueToChangeIndex(main_property_row_index, relative_display_index) :
+      getSubPropertyIndex(
+        sub_property_name, main_property_row_index, sub_property_index, relative_display_index);
+
+      clickOnTreeItem(index_to_change);
       QTest::keyClicks(helpers::getDisplaysTreeView()->focusWidget(), value_to_set);
       QTest::keyClick(helpers::getDisplaysTreeView()->focusWidget(), Qt::Key_Enter);
     }
@@ -121,15 +133,19 @@ void BasePageObject::setBool(
 
 void BasePageObject::setInt(const QString & property_name, int value_to_set)
 {
-  setString(property_name, QString(value_to_set));
+  setString(property_name, QString::number(value_to_set));
 }
 
-void BasePageObject::setFloat(const QString & property_name, float value_to_set)
+void BasePageObject::setFloat(
+  const QString & main_property_name,
+  float value_to_set,
+  int sub_property_index,
+  const QString & sub_property_name)
 {
-  setString(property_name, format(value_to_set));
+  setString(main_property_name, format(value_to_set), sub_property_index, sub_property_name);
 }
 
-void BasePageObject::setColor(const QString & property_name, int red, int green, int blue)
+void BasePageObject::setColorCode(const QString & property_name, int red, int green, int blue)
 {
   QString color_code = QString::fromStdString(
     std::to_string(red) + "; " + std::to_string(green) + "; " + std::to_string(blue));
@@ -180,6 +196,7 @@ QModelIndex BasePageObject::getSubPropertyIndex(
       "not where expected. The first row with this name will be modified instead.\n";
   }
 
+  clickOnTreeItem(getPropertyToChangeIndex(sub_property_index, relative_property_index));
   return getValueToChangeIndex(sub_property_index, relative_property_index);
 }
 

@@ -60,7 +60,11 @@ protected:
   int findPropertyRowIndexByName(
     const QString & property_name, QModelIndex relative_display_index);
 
-  void setString(const QString & property_name, const QString & value_to_set);
+  void setString(
+    const QString & main_property_name,
+    const QString & value_to_set,
+    int sub_property_index = -1,
+    const QString & sub_property_name = "");
   void setComboBox(const QString & property_name, const QString & value_to_set);
   void setBool(
     const QString & main_property_name,
@@ -68,8 +72,12 @@ protected:
     int sub_property_index = -1,
     const QString & sub_property_name = "");
   void setInt(const QString & property_name, int value_to_set);
-  void setFloat(const QString & property_name, float value_to_set);
-  void setColor(const QString & property_name, int red, int green, int blue);
+  void setFloat(
+    const QString & main_property_name,
+    float value_to_set,
+    int sub_property_index = -1,
+    const QString & sub_property_name = "");
+  void setColorCode(const QString & property_name, int red, int green, int blue);
   void setVector(const QString & property_name, float x, float y, float z);
 
   int display_id_;
@@ -81,11 +89,13 @@ private:
   void failForAbsentProperty(const QString & property_name);
   void clickOnTreeItem(QModelIndex item_index) const;
   void doubleClickOnTreeItem(QModelIndex item_index) const;
+
   QModelIndex getRelativeIndexAndExpandDisplay();
   QModelIndex getValueToChangeIndex(
     int property_row_index, const QModelIndex & parent_index) const;
   QModelIndex getPropertyToChangeIndex(
     int property_row_index, const QModelIndex & parent_index) const;
+
   QModelIndex getMainPropertyIndex(
     const QString & property_name, int property_row_index, QModelIndex display_index);
   QModelIndex getSubPropertyIndex(
@@ -93,6 +103,7 @@ private:
     int main_property_index,
     int sub_property_index,
     QModelIndex display_index);
+
   void setExpanded(QModelIndex display_index, bool expanded);
 
   int default_first_display_index_;
