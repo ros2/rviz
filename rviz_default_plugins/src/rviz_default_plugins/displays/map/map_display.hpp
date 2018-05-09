@@ -61,6 +61,8 @@
 
 #include "rviz_common/ros_topic_display.hpp"
 
+#include "swatch.hpp"
+
 namespace Ogre
 {
 class ManualObject;
@@ -85,29 +87,7 @@ namespace rviz_default_plugins
 {
 namespace displays
 {
-class MapDisplay;
 class AlphaSetter;
-
-class Swatch
-{
-  friend class MapDisplay;
-
-public:
-  Swatch(
-    MapDisplay * parent, size_t x, size_t y, size_t width, size_t height, float resolution);
-  ~Swatch();
-  void updateAlpha(
-    const Ogre::SceneBlendType sceneBlending, bool depthWrite, AlphaSetter * alpha_setter);
-  void updateData();
-
-protected:
-  MapDisplay * parent_;
-  Ogre::ManualObject * manual_object_;
-  Ogre::TexturePtr texture_;
-  Ogre::MaterialPtr material_;
-  Ogre::SceneNode * scene_node_;
-  size_t x_, y_, width_, height_;
-};
 
 
 /**
