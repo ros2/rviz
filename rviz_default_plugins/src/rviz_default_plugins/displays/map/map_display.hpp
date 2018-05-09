@@ -120,6 +120,9 @@ class MapDisplay : public rviz_common::RosTopicDisplay<nav_msgs::msg::OccupancyG
   Q_OBJECT
 
 public:
+  // TODO(botteroa-si): Constructor for testing, remove once ros_nodes can be mocked and call
+  // initialize() instead
+  explicit MapDisplay(rviz_common::DisplayContext * context);
   MapDisplay();
   ~MapDisplay() override;
 
@@ -132,6 +135,12 @@ public:
   size_t getWidth() {return width_;}
   size_t getHeight() {return height_;}
 
+  /** @brief Copy msg into current_map_ and call showMap(). */
+  void processMessage(nav_msgs::msg::OccupancyGrid::ConstSharedPtr msg) override;
+
+public Q_SLOTS:
+  void showMap();
+
 Q_SIGNALS:
   /** @brief Emitted when a new map is received*/
   void mapUpdated();
@@ -141,14 +150,10 @@ protected Q_SLOTS:
   void updateDrawUnder();
   void updatePalette();
   /** @brief Show current_map_ in the scene. */
-  void showMap();
   void transformMap();
 
 protected:
   void update(float wall_dt, float ros_dt) override;
-
-  /** @brief Copy msg into current_map_ and call showMap(). */
-  void processMessage(nav_msgs::msg::OccupancyGrid::ConstSharedPtr msg) override;
 
   // TODO(Martin-Idel-SI): Use again when available.
   /** @brief Copy update's data into current_map_ and call showMap(). */

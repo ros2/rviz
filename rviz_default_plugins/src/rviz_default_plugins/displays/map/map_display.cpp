@@ -231,7 +231,6 @@ void Swatch::updateData()
   delete[] pixels;
 }
 
-
 MapDisplay::MapDisplay()
 : loaded_(false), resolution_(0.0f), width_(0), height_(0)
 {
@@ -405,6 +404,21 @@ Ogre::TexturePtr makePaletteTexture(unsigned char * palette_bytes)
   return Ogre::TextureManager::getSingleton().loadRawData(ss.str(),
            "rviz_rendering",
            palette_stream, 256, 1, Ogre::PF_BYTE_RGBA, Ogre::TEX_TYPE_1D, 0);
+}
+
+MapDisplay::MapDisplay(rviz_common::DisplayContext * context)
+: MapDisplay()
+{
+  context_ = context;
+  scene_manager_ = context->getSceneManager();
+  scene_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
+
+  palette_textures_.push_back(makePaletteTexture(makeMapPalette()));
+  color_scheme_transparency_.push_back(false);
+  palette_textures_.push_back(makePaletteTexture(makeCostmapPalette()));
+  color_scheme_transparency_.push_back(true);
+  palette_textures_.push_back(makePaletteTexture(makeRawPalette()));
+  color_scheme_transparency_.push_back(true);
 }
 
 void MapDisplay::onInitialize()
