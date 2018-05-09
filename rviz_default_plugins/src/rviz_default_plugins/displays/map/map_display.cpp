@@ -503,6 +503,15 @@ void MapDisplay::showMap()
   size_t width = current_map_.info.width;
   size_t height = current_map_.info.height;
 
+  if (width * height != current_map_.data.size()) {
+    std::stringstream ss;
+    ss << "Data size doesn't match width*height: width = " << width << ", height = " << height <<
+      ", data size = " << current_map_.data.size();
+    setStatus(
+      rviz_common::properties::StatusProperty::Error, "Map", QString::fromStdString(ss.str()));
+    return;
+  }
+
   if (width != width_ || height != height_ || resolution_ != resolution) {
     createSwatches();
     width_ = width;
@@ -522,16 +531,6 @@ void MapDisplay::showMap()
     frame_ = "/map";
   }
 
-  bool map_status_set = false;
-  if (width * height != current_map_.data.size()) {
-    std::stringstream ss;
-    ss << "Data size doesn't match width*height: width = " << width << ", height = " << height <<
-      ", data size = " << current_map_.data.size();
-    setStatus(
-      rviz_common::properties::StatusProperty::Error, "Map", QString::fromStdString(ss.str()));
-    map_status_set = true;
-  }
-
   for (size_t i = 0; i < swatches.size(); i++) {
     swatches[i]->updateData(this->current_map_);
 
@@ -549,9 +548,7 @@ void MapDisplay::showMap()
   }
 
 
-  if (!map_status_set) {
-    setStatus(rviz_common::properties::StatusProperty::Ok, "Map", "Map OK");
-  }
+  setStatus(rviz_common::properties::StatusProperty::Ok, "Map", "Map OK");
   updatePalette();
 
   resolution_property_->setValue(resolution);
@@ -608,6 +605,7 @@ void MapDisplay::transformMap()
 
     setStatus(rviz_common::properties::StatusProperty::Error, "Transform",
       "No transform from [" + QString::fromStdString(frame_) + "] to [" + fixed_frame_ + "]");
+    scene_node_->setVisible(false);
   } else {
     setStatus(rviz_common::properties::StatusProperty::Ok, "Transform", "Transform OK");
   }
