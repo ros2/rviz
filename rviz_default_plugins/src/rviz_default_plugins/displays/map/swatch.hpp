@@ -76,11 +76,22 @@ public:
   ~Swatch();
 
   void updateAlpha(
-    const Ogre::SceneBlendType sceneBlending, bool depthWrite, float alpha);
+    const Ogre::SceneBlendType & sceneBlending, bool depth_write, float alpha);
 
   void updateData(const nav_msgs::msg::OccupancyGrid & map);
 
-protected:
+private:
+  void setupMaterial();
+  void resetTexture(Ogre::DataStreamPtr & pixel_stream);
+  void setupSceneNodeWithManualObject();
+  void setupSquareManualObject();
+  void addPointWithPlaneCoordinates(float x, float y);
+
+  static size_t material_count_;
+  static size_t map_count_;
+  static size_t node_count_;
+  static size_t texture_count_;
+
   Ogre::SceneManager * scene_manager_;
   Ogre::SceneNode * parent_scene_node_;
   Ogre::SceneNode * scene_node_;

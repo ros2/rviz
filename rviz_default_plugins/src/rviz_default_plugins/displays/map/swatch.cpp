@@ -31,6 +31,7 @@
 #include "swatch.hpp"
 
 #include <algorithm>
+#include <vector>
 
 #ifndef _WIN32
 # pragma GCC diagnostic push
@@ -58,7 +59,7 @@ namespace rviz_default_plugins
 namespace displays
 {
 
-// helper class to set alpha parameter on all renderables.
+// Helper class to set alpha parameter on all renderables.
 class AlphaSetter : public Ogre::Renderable::Visitor
 {
 public:
@@ -80,80 +81,23 @@ private:
   Ogre::Vector4 alpha_vec_;
 };
 
+size_t Swatch::material_count_ = 0;
+size_t Swatch::map_count_ = 0;
+size_t Swatch::node_count_ = 0;
+size_t Swatch::texture_count_ = 0;
 
 Swatch::Swatch(
   Ogre::SceneManager * scene_manager,
   Ogre::SceneNode * parent_scene_node,
   size_t x, size_t y, size_t width, size_t height,
   float resolution, bool draw_under)
-: scene_manager_(scene_manager), parent_scene_node_(parent_scene_node), manual_object_(nullptr),
+: scene_manager_(scene_manager),
+  parent_scene_node_(parent_scene_node),
+  manual_object_(nullptr),
   x_(x), y_(y), width_(width), height_(height)
 {
-  // Set up map material
-  static int material_count = 0;
-  std::stringstream ss;
-  ss << "MapMaterial" << material_count++;
-  material_ = Ogre::MaterialManager::getSingleton().getByName("rviz/Indexed8BitImage");
-  material_ = material_->clone(ss.str());
-
-  material_->setReceiveShadows(false);
-  material_->getTechnique(0)->setLightingEnabled(false);
-  material_->setDepthBias(-16.0f, 0.0f);
-  material_->setCullingMode(Ogre::CULL_NONE);
-  material_->setDepthWriteEnabled(false);
-
-  static int map_count = 0;
-  std::stringstream ss2;
-  ss2 << "MapObject" << map_count++;
-  manual_object_ = scene_manager_->createManualObject(ss2.str());
-
-  static int node_count = 0;
-  std::stringstream ss3;
-  ss3 << "NodeObject" << node_count++;
-
-  scene_node_ = parent_scene_node_->createChildSceneNode(ss3.str());
-  scene_node_->attachObject(manual_object_);
-
-  manual_object_->begin(
-    material_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
-  {
-    // First triangle
-    {
-      // Bottom left
-      manual_object_->position(0.0f, 0.0f, 0.0f);
-      manual_object_->textureCoord(0.0f, 0.0f);
-      manual_object_->normal(0.0f, 0.0f, 1.0f);
-
-      // Top right
-      manual_object_->position(1.0f, 1.0f, 0.0f);
-      manual_object_->textureCoord(1.0f, 1.0f);
-      manual_object_->normal(0.0f, 0.0f, 1.0f);
-
-      // Top left
-      manual_object_->position(0.0f, 1.0f, 0.0f);
-      manual_object_->textureCoord(0.0f, 1.0f);
-      manual_object_->normal(0.0f, 0.0f, 1.0f);
-    }
-
-    // Second triangle
-    {
-      // Bottom left
-      manual_object_->position(0.0f, 0.0f, 0.0f);
-      manual_object_->textureCoord(0.0f, 0.0f);
-      manual_object_->normal(0.0f, 0.0f, 1.0f);
-
-      // Bottom right
-      manual_object_->position(1.0f, 0.0f, 0.0f);
-      manual_object_->textureCoord(1.0f, 0.0f);
-      manual_object_->normal(0.0f, 0.0f, 1.0f);
-
-      // Top right
-      manual_object_->position(1.0f, 1.0f, 0.0f);
-      manual_object_->textureCoord(1.0f, 1.0f);
-      manual_object_->normal(0.0f, 0.0f, 1.0f);
-    }
-  }
-  manual_object_->end();
+  setupMaterial();
+  setupSceneNodeWithManualObject();
 
   scene_node_->setPosition(x * resolution, y * resolution, 0);
   scene_node_->setScale(width * resolution, height * resolution, 1.0);
@@ -172,17 +116,12 @@ Swatch::~Swatch()
 }
 
 void Swatch::updateAlpha(
-  const Ogre::SceneBlendType sceneBlending, bool depthWrite, float alpha)
+  const Ogre::SceneBlendType & sceneBlending, bool depth_write, float alpha)
 {
-// TODO(holznera) figure out purpose of this.
-//  Ogre::Pass * pass = material_->getTechnique(0)->getPass(0);
-//  Ogre::TextureUnitState * tex_unit = NULL;
-
-  AlphaSetter alpha_setter(alpha);
-
   material_->setSceneBlending(sceneBlending);
-  material_->setDepthWriteEnabled(depthWrite);
+  material_->setDepthWriteEnabled(depth_write);
   if (manual_object_) {
+    AlphaSetter alpha_setter(alpha);
     manual_object_->visitRenderables(&alpha_setter);
   }
 }
@@ -190,39 +129,90 @@ void Swatch::updateAlpha(
 void Swatch::updateData(const nav_msgs::msg::OccupancyGrid & map)
 {
   size_t pixels_size = width_ * height_;
-  auto pixels = new unsigned char[pixels_size];
-  memset(pixels, 255, pixels_size);
-  unsigned char * ptr = pixels;
-  size_t N = map.data.size();
-  size_t fw = map.info.width;
+  size_t map_size = map.data.size();
+  size_t map_width = map.info.width;
 
-  for (size_t yy = y_; yy < y_ + height_; yy++) {
-    size_t index = yy * fw + x_;
-    size_t pixels_to_copy = std::min(width_, N - index);
-    memcpy(ptr, &map.data[index], pixels_to_copy);
-    ptr += pixels_to_copy;
-    if (index + pixels_to_copy >= N) {
+  auto pixels = std::vector<unsigned char>(pixels_size, 255);
+
+  auto pixel_data = pixels.begin();
+  for (size_t map_row = y_; map_row < y_ + height_; map_row++) {
+    size_t pixel_index = map_row * map_width + x_;
+    size_t pixels_to_copy = std::min(width_, map_size - pixel_index);
+
+    auto row_start = map.data.begin() + pixel_index;
+    std::copy(row_start, row_start + pixels_to_copy, pixel_data);
+    pixel_data += pixels_to_copy;
+    if (pixel_index + pixels_to_copy >= map_size) {
       break;
     }
   }
 
-  Ogre::DataStreamPtr pixel_stream;
-  pixel_stream.reset(new Ogre::MemoryDataStream(pixels, pixels_size));
+  Ogre::DataStreamPtr pixel_stream(new Ogre::MemoryDataStream(pixels.data(), pixels_size));
 
+  resetTexture(pixel_stream);
+}
+
+void Swatch::resetTexture(Ogre::DataStreamPtr & pixel_stream)
+{
   if (texture_) {
     Ogre::TextureManager::getSingleton().remove(texture_);
     texture_.reset();
   }
 
-  static int tex_count = 0;
-  std::stringstream ss;
-  ss << "MapTexture" << tex_count++;
-  texture_ = Ogre::TextureManager::getSingleton().loadRawData(ss.str(),
-      "rviz_rendering",
-      pixel_stream, static_cast<uint8_t>(width_), static_cast<uint8_t>(height_),
-      Ogre::PF_L8, Ogre::TEX_TYPE_2D, 0);
+  texture_ = Ogre::TextureManager::getSingleton().loadRawData(
+    "MapTexture" + std::to_string(texture_count_++),
+    "rviz_rendering",
+    pixel_stream,
+    static_cast<uint8_t>(width_), static_cast<uint8_t>(height_),
+    Ogre::PF_L8, Ogre::TEX_TYPE_2D, 0);
+}
 
-  delete[] pixels;
+void Swatch::setupMaterial()
+{
+  material_ = Ogre::MaterialManager::getSingleton().getByName("rviz/Indexed8BitImage");
+  material_ = material_->clone("MapMaterial" + std::to_string(material_count_++));
+
+  material_->setReceiveShadows(false);
+  material_->getTechnique(0)->setLightingEnabled(false);
+  material_->setDepthBias(-16.0f, 0.0f);
+  material_->setCullingMode(Ogre::CULL_NONE);
+  material_->setDepthWriteEnabled(false);
+}
+
+void Swatch::setupSceneNodeWithManualObject()
+{
+  manual_object_ = scene_manager_->createManualObject("MapObject" + std::to_string(map_count_++));
+
+  scene_node_ = parent_scene_node_->createChildSceneNode(
+    "NodeObject" + std::to_string(node_count_++));
+  scene_node_->attachObject(manual_object_);
+
+  setupSquareManualObject();
+}
+
+void Swatch::setupSquareManualObject()
+{
+  manual_object_->begin(
+    material_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
+
+  // first triangle
+  addPointWithPlaneCoordinates(0.0f, 0.0f);
+  addPointWithPlaneCoordinates(1.0f, 1.0f);
+  addPointWithPlaneCoordinates(0.0f, 1.0f);
+
+  // second triangle
+  addPointWithPlaneCoordinates(0.0f, 0.0f);
+  addPointWithPlaneCoordinates(1.0f, 0.0f);
+  addPointWithPlaneCoordinates(1.0f, 1.0f);
+
+  manual_object_->end();
+}
+
+void Swatch::addPointWithPlaneCoordinates(float x, float y)
+{
+  manual_object_->position(x, y, 0.0f);
+  manual_object_->textureCoord(x, y);
+  manual_object_->normal(0.0f, 0.0f, 1.0f);
 }
 
 }  // namespace displays
