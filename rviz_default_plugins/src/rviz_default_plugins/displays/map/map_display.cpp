@@ -76,7 +76,7 @@ namespace displays
 {
 
 MapDisplay::MapDisplay()
-: loaded_(false), resolution_(0.0f), width_(0), height_(0)
+: loaded_(false), resolution_(0.0f), width_(0), height_(0), update_messages_received_(0)
 {
   connect(this, SIGNAL(mapUpdated()), this, SLOT(showMap()));
 
@@ -170,46 +170,42 @@ void MapDisplay::onInitialize()
   color_scheme_transparency_.push_back(true);
 }
 
-// TODO(Martin-Idel-SI): Old subscription method to subscribe to two different topics
-//   Currently, this display uses the subscription via RosTopicDisplay (only possible for one topic)
-//  void MapDisplay::subscribe()
-//  {
-//    if (!isEnabled()) {
-//      return;
-//    }
-//
-//    if (!topic_property_->getTopic().isEmpty()) {
-//      try {
-//        if (unreliable_property_->getBool()) {
-//          map_sub_ = update_nh_.subscribe(topic_property_->getTopicStd(), 1,
-//            &MapDisplay::incomingMap, this, ros::TransportHints().unreliable());
-//        } else {
-//          map_sub_ = update_nh_.subscribe(topic_property_->getTopicStd(), 1,
-//            &MapDisplay::incomingMap, this, ros::TransportHints().reliable());
-//        }
-//        setStatus(StatusProperty::Ok, "Topic", "OK");
-//      }
-//      catch (ros::Exception & e) {
-//        setStatus(StatusProperty::Error, "Topic", QString("Error subscribing: ") + e.what());
-//      }
-//
-//      try {
-//        update_sub_ = update_nh_.subscribe(topic_property_->getTopicStd() + "_updates", 1,
-//          &MapDisplay::incomingUpdate, this);
-//        setStatus(StatusProperty::Ok, "Update Topic", "OK");
-//      }
-//      catch (ros::Exception & e) {
-//        setStatus(StatusProperty::Error, "Update Topic", QString("Error subscribing: ")
-//        + e.what());
-//      }
-//    }
-//  }
-//
-//  void MapDisplay::unsubscribe()
-//  {
-//    map_sub_.shutdown();
-//    update_sub_.shutdown();
-//  }
+void MapDisplay::subscribe()
+{
+  if (!isEnabled()) {
+    return;
+  }
+
+  if (topic_property_->isEmpty()) {
+    setStatus(rviz_common::properties::StatusProperty::Error,
+      "Topic",
+      QString("Error subscribing: Empty topic name"));
+    return;
+  }
+
+  RTDClass::subscribe();
+
+  try {
+    update_subscription_ = rviz_ros_node_.lock()->get_raw_node()->
+      template create_subscription<map_msgs::msg::OccupancyGridUpdate>(
+      topic_property_->getTopicStd() + "_updates",
+      [this](const map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr message) {
+        incomingUpdate(message);
+      },
+      qos_profile);
+    setStatus(rviz_common::properties::StatusProperty::Ok, "Update Topic", "OK");
+  } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
+    setStatus(
+      rviz_common::properties::StatusProperty::Error, "Update Topic",
+      QString("Error subscribing: ") + e.what());
+  }
+}
+
+void MapDisplay::unsubscribe()
+{
+  RTDClass::unsubscribe();
+  update_subscription_.reset();
+}
 
 void MapDisplay::updateAlpha()
 {
@@ -284,33 +280,52 @@ void MapDisplay::processMessage(nav_msgs::msg::OccupancyGrid::ConstSharedPtr msg
   Q_EMIT mapUpdated();
 }
 
-// TODO(Martin-Idel-SI): Port when map_msgs is ported to ROS2
-//  void MapDisplay::incomingUpdate(const map_msgs::OccupancyGridUpdate::ConstPtr & update)
-//  {
-//    // Only update the map if we have gotten a full one first.
-//    if (!loaded_) {
-//      return;
-//    }
-//
-//    // Reject updates which have any out-of-bounds data.
-//    if (update->x < 0 ||
-//      update->y < 0 ||
-//      current_map_.info.width < update->x + update->width ||
-//      current_map_.info.height < update->y + update->height) {
-//      setStatus(rviz_common::properties::StatusProperty::Error,
-//        "Update", "Update area outside of original map area.");
-//      return;
-//    }
-//
-//    // Copy the incoming data into current_map_'s data.
-//    for (size_t y = 0; y < update->height; y++) {
-//      memcpy(&current_map_.data[(update->y + y) * current_map_.info.width + update->x],
-//        &update->data[y * update->width],
-//        update->width);
-//    }
-//    // updated via signal in case ros spinner is in a different thread
-//    Q_EMIT mapUpdated();
-//  }
+// TODO(wjwwood): Use again once map_msgs are ported
+void MapDisplay::incomingUpdate(const map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr update)
+{
+  // Only update the map if we have gotten a full one first.
+  if (!loaded_) {
+    return;
+  }
+
+  ++update_messages_received_;
+  setStatus(
+    rviz_common::properties::StatusProperty::Ok,
+    "Topic",
+    QString::number(update_messages_received_) + " update messages received");
+
+  if (updateDataOutOfBounds(update)) {
+    setStatus(rviz_common::properties::StatusProperty::Error,
+      "Update", "Update area outside of original map area.");
+    return;
+  }
+
+  updateMapDataInMemory(update);
+  setStatus(rviz_common::properties::StatusProperty::Ok, "Update", "Update OK");
+
+  // updated via signal in case ros spinner is in a different thread
+  Q_EMIT mapUpdated();
+}
+
+bool MapDisplay::updateDataOutOfBounds(
+  const map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr update) const
+{
+  return update->x < 0 ||
+         update->y < 0 ||
+         current_map_.info.width < update->x + update->width ||
+         current_map_.info.height < update->y + update->height;
+}
+
+void MapDisplay::updateMapDataInMemory(
+  const map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr update)
+{
+  for (size_t y = 0; y < update->height; y++) {
+    std::copy(
+      update->data.begin(),
+      update->data.begin() + update->width,
+      &current_map_.data[(update->y + y) * current_map_.info.width + update->x]);
+  }
+}
 
 void MapDisplay::createSwatches()
 {
@@ -555,10 +570,8 @@ void MapDisplay::fixedFrameChanged()
 void MapDisplay::reset()
 {
   RosTopicDisplay::reset();
+  update_messages_received_ = 0;
   clear();
-  // TODO(Martin-Idel-SI): We can't force resubscription this way anymore.
-  // Force resubscription so that the map will be re-sent
-  // updateTopic();
 }
 
 void MapDisplay::update(float wall_dt, float ros_dt)

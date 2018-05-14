@@ -54,11 +54,9 @@
 
 #endif  // Q_MOC_RUN
 
-#include <nav_msgs/msg/map_meta_data.hpp>
-#include <nav_msgs/msg/occupancy_grid.hpp>
-
-// TODO(Martin-Idel-SI): use again when available.
-// #include <map_msgs/OccupancyGridUpdate.hpp>
+#include "nav_msgs/msg/map_meta_data.hpp"
+#include "nav_msgs/msg/occupancy_grid.hpp"
+#include "map_msgs/msg/occupancy_grid_update.hpp"
 #include "rclcpp/time.hpp"
 
 #include "rviz_common/ros_topic_display.hpp"
@@ -108,7 +106,6 @@ public:
   MapDisplay();
   ~MapDisplay() override;
 
-  // Overrides from Display
   void onInitialize() override;
   void fixedFrameChanged() override;
   void reset() override;
@@ -137,15 +134,23 @@ protected Q_SLOTS:
 protected:
   void update(float wall_dt, float ros_dt) override;
 
-  // TODO(Martin-Idel-SI): Use again when available.
+  void subscribe() override;
+  void unsubscribe() override;
+
   /** @brief Copy update's data into current_map_ and call showMap(). */
-  // void incomingUpdate(const map_msgs::OccupancyGridUpdate::ConstPtr& update);
+  void incomingUpdate(map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr update);
+
+  bool updateDataOutOfBounds(map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr update) const;
+  void updateMapDataInMemory(map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr update);
 
   void clear();
 
   void showValidMap();
   void resetSwatchesIfNecessary(size_t width, size_t height, float resolution);
   void createSwatches();
+  void doubleSwatchNumber(
+    size_t & swatch_width, size_t & swatch_height,
+    int & number_swatches) const;
   void tryCreateSwatches(
     size_t width,
     size_t height,
@@ -167,9 +172,7 @@ protected:
   std::string frame_;
   nav_msgs::msg::OccupancyGrid current_map_;
 
-  // TODO(Martin-Idel-SI): Reevaluate when map updates can be sent
-  // ros::Subscriber map_sub_;
-  // ros::Subscriber update_sub_;
+  rclcpp::Subscription<map_msgs::msg::OccupancyGridUpdate>::SharedPtr update_subscription_;
 
   rviz_common::properties::FloatProperty * resolution_property_;
   rviz_common::properties::IntProperty * width_property_;
@@ -179,11 +182,9 @@ protected:
   rviz_common::properties::FloatProperty * alpha_property_;
   rviz_common::properties::Property * draw_under_property_;
   rviz_common::properties::EnumProperty * color_scheme_property_;
-
   rviz_common::properties::BoolProperty * transform_timestamp_property_;
-  void doubleSwatchNumber(
-    size_t & swatch_width, size_t & swatch_height,
-    int & number_swatches) const;
+
+  uint32_t update_messages_received_;
 };
 
 }  // namespace displays

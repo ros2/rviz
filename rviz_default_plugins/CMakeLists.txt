@@ -42,6 +42,7 @@ find_package(Qt5 REQUIRED COMPONENTS Widgets Test)
 find_package(geometry_msgs REQUIRED)
 find_package(laser_geometry REQUIRED)
 find_package(nav_msgs REQUIRED)
+find_package(map_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 # find_package(tf2 REQUIRED)
 # find_package(tf2_geometry_msgs REQUIRED)
@@ -166,6 +167,7 @@ target_include_directories(rviz_default_plugins PUBLIC
   ${rviz_common_INCLUDE_DIRS}
   ${laser_geometry_INCLUDE_DIRS}
   ${nav_msgs_INCLUDE_DIRS}
+  ${map_msgs_INCLUDE_DIRS}
   ${OGRE_INCLUDE_DIRS}
   ${Qt5Widgets_INCLUDE_DIRS}
   ${resource_retriever_INCLUDE_DIRS}
@@ -188,6 +190,7 @@ ament_target_dependencies(rviz_default_plugins
   geometry_msgs
   laser_geometry
   nav_msgs
+  map_msgs
   rclcpp
   resource_retriever
   urdf
@@ -258,6 +261,7 @@ if(BUILD_TESTING)
       ${OGRE_INCLUDE_DIRS}
       ${rclcpp_INCLUDE_DIRS}
       ${nav_msgs_INCLUDE_DIRS}
+      ${map_msgs_INCLUDE_DIRS}
       ${sensor_msgs_INCLUDE_DIRS}
       ${visualization_msgs_INCLUDE_DIRS}
       ${Qt5Widgets_INCLUDE_DIRS}
@@ -267,6 +271,7 @@ if(BUILD_TESTING)
       rviz_default_plugins
       ${rclcpp_LIBRARIES}
       ${nav_msgs_LIBRARIES}
+      ${map_msgs_LIBRARIES}
       ${visualization_msgs_LIBRARIES}
       Qt5::Widgets
       rviz_common::rviz_common
