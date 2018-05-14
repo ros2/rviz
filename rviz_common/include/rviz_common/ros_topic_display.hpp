@@ -80,16 +80,34 @@ public:
   }
 
   using changeQoSProfile = std::function<rmw_qos_profile_t(rmw_qos_profile_t)>;
-  virtual void updateQoSProfile(changeQoSProfile change_profile) = 0;
 
+  virtual void updateQoSProfile(changeQoSProfile change_profile)
+  {
+    qos_profile = change_profile(qos_profile);
+    if (!rviz_ros_node_.expired()) {
+      updateTopic();
+    }
+  }
+
+  /**
+   * When overriding this method, the onInitialize() method of this superclass has to be called.
+   * Otherwise, the ros node will not be initialized.
+   */
   void onInitialize() override
   {
     rviz_ros_node_ = context_->getRosNodeAbstraction();
+    topic_property_->initialize(rviz_ros_node_);
   }
 
 protected Q_SLOTS:
   virtual void updateTopic() = 0;
-  virtual void updateReliability() = 0;
+  virtual void updateReliability()
+  {
+    qos_profile.reliability = unreliable_property_->getBool() ?
+      RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT :
+      RMW_QOS_POLICY_RELIABILITY_RELIABLE;
+    updateTopic();
+  }
 
 protected:
   /** @brief A Node which is registered with the main executor (used in the "update" thread).
@@ -131,16 +149,6 @@ public:
     unsubscribe();
   }
 
-  /**
-   * When overriding this method, the onInitialize() method of this superclass has to be called.
-   * Otherwise, the ros node will not be initialized.
-   */
-  void onInitialize() override
-  {
-    _RosTopicDisplay::onInitialize();
-    topic_property_->initialize(rviz_ros_node_);
-  }
-
   void reset() override
   {
     Display::reset();
@@ -153,14 +161,6 @@ public:
     topic_property_->setString(topic);
   }
 
-  void updateQoSProfile(changeQoSProfile change_profile) override
-  {
-    qos_profile = change_profile(qos_profile);
-    if (!rviz_ros_node_.expired()) {
-      updateTopic();
-    }
-  }
-
 protected:
   void updateTopic() override
   {
@@ -168,14 +168,6 @@ protected:
     reset();
     subscribe();
     context_->queueRender();
-  }
-
-  void updateReliability() override
-  {
-    qos_profile.reliability = unreliable_property_->getBool() ?
-      RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT :
-      RMW_QOS_POLICY_RELIABILITY_RELIABLE;
-    updateTopic();
   }
 
   virtual void subscribe()
@@ -193,10 +185,10 @@ protected:
 
     try {
       // TODO(anhosi,wjwwood): replace with abstraction for subscriptions once available
-      subscription =
+      subscription_ =
         rviz_ros_node_.lock()->get_raw_node()->template create_subscription<MessageType>(
         topic_property_->getTopicStd(),
-        std::bind(&RosTopicDisplay<MessageType>::incomingMessage, this, std::placeholders::_1),
+        [this](const typename MessageType::ConstSharedPtr message) {incomingMessage(message);},
         qos_profile);
       setStatus(properties::StatusProperty::Ok, "Topic", "OK");
     } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
@@ -207,7 +199,7 @@ protected:
 
   virtual void unsubscribe()
   {
-    subscription.reset();
+    subscription_.reset();
   }
 
   void onEnable() override
@@ -249,7 +241,7 @@ protected:
    * This is called by incomingMessage(). */
   virtual void processMessage(typename MessageType::ConstSharedPtr msg) = 0;
 
-  typename rclcpp::Subscription<MessageType>::SharedPtr subscription;
+  typename rclcpp::Subscription<MessageType>::SharedPtr subscription_;
   uint32_t messages_received_;
 };
 
