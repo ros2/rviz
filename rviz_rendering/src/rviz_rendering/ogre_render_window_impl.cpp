@@ -67,7 +67,7 @@
 # pragma warning(pop)
 #endif
 
-#include "./orthographic.hpp"
+#include "rviz_rendering/orthographic.hpp"
 #include "./render_system.hpp"
 #include "rviz_rendering/objects/grid.hpp"
 #include "rviz_rendering/logging.hpp"

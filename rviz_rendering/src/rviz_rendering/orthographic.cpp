@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./orthographic.hpp"
+#include "rviz_rendering/orthographic.hpp"
 
 #include <OgreMatrix4.h>
 
