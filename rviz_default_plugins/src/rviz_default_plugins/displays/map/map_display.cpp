@@ -228,15 +228,13 @@ void MapDisplay::updateDrawUnder()
 
   if (alpha_property_->getFloat() >= rviz_rendering::unit_alpha_threshold) {
     for (const auto & swatch : swatches_) {
-      swatch->material_->setDepthWriteEnabled(!draw_under);
+      swatch->setDepthWriteEnabled(!draw_under);
     }
   }
 
   uint8_t group = draw_under ? Ogre::RENDER_QUEUE_4 : Ogre::RENDER_QUEUE_MAIN;
   for (const auto & swatch : swatches_) {
-    if (swatch->manual_object_) {
-      swatch->manual_object_->setRenderQueueGroup(group);
-    }
+    swatch->setRenderQueueGroup(group);
   }
 }
 
@@ -249,14 +247,8 @@ void MapDisplay::clear()
   }
 
   for (const auto & swatch : swatches_) {
-    if (swatch->manual_object_) {
-      swatch->manual_object_->setVisible(false);
-    }
-
-    if (!swatch->texture_) {
-      Ogre::TextureManager::getSingleton().remove(swatch->texture_);
-      swatch->texture_.reset();
-    }
+    swatch->setVisible(false);
+    swatch->resetTexture();
   }
 
   loaded_ = false;
@@ -492,7 +484,7 @@ void MapDisplay::updateSwatches() const
   for (const auto & swatch : swatches_) {
     swatch->updateData(current_map_);
 
-    Ogre::Pass * pass = swatch->material_->getTechnique(0)->getPass(0);
+    Ogre::Pass * pass = swatch->getTechniquePass();
     Ogre::TextureUnitState * tex_unit = nullptr;
     if (pass->getNumTextureUnitStates() > 0) {
       tex_unit = pass->getTextureUnitState(0);
@@ -500,9 +492,9 @@ void MapDisplay::updateSwatches() const
       tex_unit = pass->createTextureUnitState();
     }
 
-    tex_unit->setTextureName(swatch->texture_->getName());
+    tex_unit->setTextureName(swatch->getTextureName());
     tex_unit->setTextureFiltering(Ogre::TFO_NONE);
-    swatch->manual_object_->setVisible(true);
+    swatch->setVisible(true);
   }
 }
 
@@ -511,7 +503,7 @@ void MapDisplay::updatePalette()
   int palette_index = color_scheme_property_->getOptionInt();
 
   for (const auto & swatch : swatches_) {
-    Ogre::Pass * pass = swatch->material_->getTechnique(0)->getPass(0);
+    Ogre::Pass * pass = swatch->getTechniquePass();
     Ogre::TextureUnitState * palette_tex_unit = nullptr;
     if (pass->getNumTextureUnitStates() > 1) {
       palette_tex_unit = pass->getTextureUnitState(1);

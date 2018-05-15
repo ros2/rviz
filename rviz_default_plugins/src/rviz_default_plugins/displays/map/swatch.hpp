@@ -32,6 +32,7 @@
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MAP__SWATCH_HPP_
 
 #include <cstddef>
+#include <string>
 
 #ifndef _WIN32
 # pragma GCC diagnostic push
@@ -64,8 +65,6 @@ class MapDisplay;
 
 class Swatch
 {
-  friend class MapDisplay;
-
 public:
   Swatch(
     Ogre::SceneManager * scene_manager,
@@ -79,6 +78,13 @@ public:
     const Ogre::SceneBlendType & sceneBlending, bool depth_write, float alpha);
 
   void updateData(const nav_msgs::msg::OccupancyGrid & map);
+
+  void setVisible(bool visible);
+  void resetTexture();
+  void setRenderQueueGroup(uint8_t group);
+  void setDepthWriteEnabled(bool depth_write_enabled);
+  Ogre::Pass * getTechniquePass();
+  std::string getTextureName();
 
 private:
   void setupMaterial();

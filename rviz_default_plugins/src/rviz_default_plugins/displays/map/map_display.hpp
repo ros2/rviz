@@ -96,7 +96,6 @@ class AlphaSetter;
  */
 class MapDisplay : public rviz_common::RosTopicDisplay<nav_msgs::msg::OccupancyGrid>
 {
-  friend class Swatch;
   Q_OBJECT
 
 public:

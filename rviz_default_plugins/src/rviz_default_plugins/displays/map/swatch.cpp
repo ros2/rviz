@@ -31,6 +31,7 @@
 #include "swatch.hpp"
 
 #include <algorithm>
+#include <string>
 #include <vector>
 
 #ifndef _WIN32
@@ -150,6 +151,51 @@ void Swatch::updateData(const nav_msgs::msg::OccupancyGrid & map)
   Ogre::DataStreamPtr pixel_stream(new Ogre::MemoryDataStream(pixels.data(), pixels_size));
 
   resetTexture(pixel_stream);
+}
+
+void Swatch::setVisible(bool visible)
+{
+  if (manual_object_) {
+    manual_object_->setVisible(visible);
+  }
+}
+
+void Swatch::resetTexture()
+{
+  if (texture_) {
+    Ogre::TextureManager::getSingleton().remove(texture_);
+    texture_.reset();
+  }
+}
+
+void Swatch::setRenderQueueGroup(uint8_t group)
+{
+  if (manual_object_) {
+    manual_object_->setRenderQueueGroup(group);
+  }
+}
+
+void Swatch::setDepthWriteEnabled(bool depth_write_enabled)
+{
+  if (material_) {
+    material_->setDepthWriteEnabled(depth_write_enabled);
+  }
+}
+
+Ogre::Pass * Swatch::getTechniquePass()
+{
+  if (material_) {
+    return material_->getTechnique(0)->getPass(0);
+  }
+  return nullptr;
+}
+
+std::string Swatch::getTextureName()
+{
+  if (texture_) {
+    return texture_->getName();
+  }
+  return "";
 }
 
 void Swatch::resetTexture(Ogre::DataStreamPtr & pixel_stream)
