@@ -216,7 +216,7 @@ void MapDisplay::updateAlpha()
 
   rviz_rendering::MaterialManager::enableAlphaBlending(scene_blending, depth_write, alpha);
 
-  for (auto swatch : swatches_) {
+  for (const auto & swatch : swatches_) {
     swatch->updateAlpha(scene_blending, depth_write, alpha);
   }
 }
@@ -226,13 +226,13 @@ void MapDisplay::updateDrawUnder()
   bool draw_under = draw_under_property_->getValue().toBool();
 
   if (alpha_property_->getFloat() >= rviz_rendering::unit_alpha_threshold) {
-    for (auto swatch : swatches_) {
+    for (const auto & swatch : swatches_) {
       swatch->material_->setDepthWriteEnabled(!draw_under);
     }
   }
 
   uint8_t group = draw_under ? Ogre::RENDER_QUEUE_4 : Ogre::RENDER_QUEUE_MAIN;
-  for (auto swatch : swatches_) {
+  for (const auto & swatch : swatches_) {
     if (swatch->manual_object_) {
       swatch->manual_object_->setRenderQueueGroup(group);
     }
@@ -247,7 +247,7 @@ void MapDisplay::clear()
     return;
   }
 
-  for (auto swatch : swatches_) {
+  for (const auto & swatch : swatches_) {
     if (swatch->manual_object_) {
       swatch->manual_object_->setVisible(false);
     }
@@ -488,7 +488,7 @@ void MapDisplay::resetSwatchesIfNecessary(size_t width, size_t height, float res
 
 void MapDisplay::updateSwatches() const
 {
-  for (auto swatch : swatches_) {
+  for (const auto & swatch : swatches_) {
     swatch->updateData(current_map_);
 
     Ogre::Pass * pass = swatch->material_->getTechnique(0)->getPass(0);
@@ -509,7 +509,7 @@ void MapDisplay::updatePalette()
 {
   int palette_index = color_scheme_property_->getOptionInt();
 
-  for (auto swatch : swatches_) {
+  for (const auto & swatch : swatches_) {
     Ogre::Pass * pass = swatch->material_->getTechnique(0)->getPass(0);
     Ogre::TextureUnitState * palette_tex_unit = nullptr;
     if (pass->getNumTextureUnitStates() > 1) {
