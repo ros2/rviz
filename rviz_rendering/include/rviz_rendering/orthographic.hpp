@@ -31,6 +31,8 @@
 #ifndef RVIZ_RENDERING__ORTHOGRAPHIC_HPP_
 #define RVIZ_RENDERING__ORTHOGRAPHIC_HPP_
 
+#include "rviz_rendering/visibility_control.hpp"
+
 namespace Ogre
 {
 
@@ -41,6 +43,7 @@ class Matrix4;
 namespace rviz_rendering
 {
 
+RVIZ_RENDERING_PUBLIC
 void buildScaledOrthoMatrix(
   Ogre::Matrix4 & proj,
   float left,

@@ -27,60 +27,96 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_FIXED_ORIENTATION_ORTHO_VIEW_CONTROLLER_H
-#define RVIZ_FIXED_ORIENTATION_ORTHO_VIEW_CONTROLLER_H
+#ifndef RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__ORTHO__FIXED_ORIENTATION_ORTHO_VIEW_CONTROLLER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__ORTHO__FIXED_ORIENTATION_ORTHO_VIEW_CONTROLLER_HPP_
 
-#include "rviz/frame_position_tracking_view_controller.h"
+#include <utility>
+
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+# pragma GCC diagnostic ignored "-Wpedantic"
+#endif
 
 #include <OgreQuaternion.h>
 
-namespace rviz
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
+
+#include "rviz_common/frame_position_tracking_view_controller.hpp"
+
+namespace rviz_rendering
+{
+class Shape;
+}
+
+namespace rviz_common
+{
+class ViewportMouseEvent;
+namespace properties
 {
 class FloatProperty;
-class SceneNode;
-class Shape;
+}
+}
 
-class FixedOrientationOrthoViewController : public FramePositionTrackingViewController
+namespace Ogre
 {
-Q_OBJECT
+class SceneNode;
+}
+
+namespace rviz_default_plugins
+{
+namespace view_controllers
+{
+
+class FixedOrientationOrthoViewController : public rviz_common::FramePositionTrackingViewController
+{
+  Q_OBJECT
+
 public:
   FixedOrientationOrthoViewController();
-  virtual ~FixedOrientationOrthoViewController();
+  ~FixedOrientationOrthoViewController() override = default;
 
-  virtual void onInitialize();
+  void onInitialize() override;
 
-  virtual void handleMouseEvent(ViewportMouseEvent& evt);
+  void handleMouseEvent(rviz_common::ViewportMouseEvent & evt) override;
 
-  virtual void lookAt( const Ogre::Vector3& point_rel_world );
+  void lookAt(const Ogre::Vector3 & point_rel_world) override;
 
-  virtual void reset();
+  void reset() override;
 
   /** @brief Configure the settings of this view controller to give,
    * as much as possible, a similar view as that given by the
    * @a source_view.
    *
    * @a source_view must return a valid @c Ogre::Camera* from getCamera(). */
-  virtual void mimic( ViewController* source_view );
+  void mimic(ViewController * source_view) override;
 
-  virtual void update(float dt, float ros_dt);
+  void update(float dt, float ros_dt) override;
 
 protected:
-  virtual void onTargetFrameChanged(const Ogre::Vector3& old_reference_position, const Ogre::Quaternion& old_reference_orientation);
+  void onTargetFrameChanged(
+    const Ogre::Vector3 & old_reference_position,
+    const Ogre::Quaternion & old_reference_orientation)
+  override;
 
   /** Set the camera orientation based on angle_. */
   void orientCamera();
 
-  void setPosition( const Ogre::Vector3& pos_rel_target );
-  void move( float x, float y );
+  void setPosition(const Ogre::Vector3 & pos_rel_target);
+  void move(float x, float y);
   void updateCamera();
 
-  FloatProperty* scale_property_;
-  FloatProperty* angle_property_;
-  FloatProperty* x_property_;
-  FloatProperty* y_property_;
+  rviz_common::properties::FloatProperty * scale_property_;
+  rviz_common::properties::FloatProperty * angle_property_;
+  rviz_common::properties::FloatProperty * x_property_;
+  rviz_common::properties::FloatProperty * y_property_;
   bool dragging_;
 };
 
-} // end namespace rviz
+}  // namespace view_controllers
+}  // namespace rviz_default_plugins
 
-#endif // RVIZ_VIEW_CONTROLLER_H
+#endif  // NOLINT
+// RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__ORTHO__FIXED_ORIENTATION_ORTHO_VIEW_CONTROLLER_HPP_
