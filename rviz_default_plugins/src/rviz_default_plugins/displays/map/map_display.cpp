@@ -32,6 +32,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 #ifndef _WIN32
 # pragma GCC diagnostic push
