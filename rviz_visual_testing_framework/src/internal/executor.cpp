@@ -45,7 +45,7 @@ void Executor::queueAction(std::function<void(void)> action)
 
 void Executor::wait(size_t milliseconds_to_wait)
 {
-  total_delay_ += milliseconds_to_wait;
+  total_delay_ += static_cast<int>(milliseconds_to_wait);
 }
 
 void Executor::increaseTotalDelay()
