@@ -166,10 +166,6 @@ bool VisualizerApp::init(int argc, char ** argv)
     QStringList() << "f" << "fixed-frame", "Set the fixed frame", "fixed_frame");
   parser.addOption(fixed_frame_option);
 
-  QCommandLineOption verbose_option(
-    QStringList() << "v" << "verbose", "Enable debug visualizations");
-  parser.addOption(verbose_option);
-
   QCommandLineOption ogre_log_option(
     QStringList() << "l" << "ogre-log",
       "Enable the Ogre.log file (output in cwd) and console output.");
@@ -206,7 +202,6 @@ bool VisualizerApp::init(int argc, char ** argv)
 //   ("in-mc-wrapper", "Signal that this is running inside a master-chooser wrapper")
 
   QString display_config, fixed_frame, splash_path, help_path;
-  bool verbose;
   bool enable_ogre_log;
   // TODO(botteroa-si): enable when possible
 //  bool in_mc_wrapper = false;
@@ -220,7 +215,6 @@ bool VisualizerApp::init(int argc, char ** argv)
     enable_ogre_log = parser.isSet(ogre_log_option);
 //    disable_stereo = parser.isSet(no_stereo_option);
 //    disable_anti_aliasing = parser.isSet(disable_anti_aliasing_option);
-    verbose = parser.isSet(verbose_option);
 
     if (parser.isSet(display_config_option)) {
       display_config = parser.value(display_config_option);
@@ -259,7 +253,7 @@ bool VisualizerApp::init(int argc, char ** argv)
     RVIZ_COMMON_LOG_ERROR_STREAM("Error parsing command line:" << e.what());
     return false;
   }
-  
+
   //
   // if (!ros::master::check() ) {
   // TODO(wjwwood): figure out how to support the "wait for master" functionality
@@ -309,14 +303,10 @@ bool VisualizerApp::init(int argc, char ** argv)
   }
   frame_->initialize(display_config);
 
-<<<<<<< d49b17db4cf9ab1fe890fb74be239201d246e98c
-=======
   if (!fixed_frame.isEmpty()) {
     frame_->getManager()->setFixedFrame(fixed_frame);
   }
-  frame_->getManager()->getSelectionManager()->setDebugMode(verbose);
 
->>>>>>> Restore working program options
   frame_->show();
 
   // TODO(wjwwood): reenable the ROS service to reload the shaders via the ros_integration API
