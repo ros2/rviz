@@ -40,7 +40,7 @@ namespace rviz_common
 
 class VisualizationManager;
 
-class Panel : public QWidget
+class RVIZ_COMMON_PUBLIC Panel : public QWidget
 {
   Q_OBJECT
 
