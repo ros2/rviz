@@ -372,7 +372,6 @@ if(BUILD_TESTING)
     endif()
 
     if(EnableVisualTests STREQUAL "True")
-      find_package(OpenCV REQUIRED)
       find_package(ament_index_cpp REQUIRED)
 
       ament_add_gtest(camera_display_visual_test
@@ -387,11 +386,9 @@ if(BUILD_TESTING)
       if(TARGET camera_display_visual_test)
         target_include_directories(camera_display_visual_test PUBLIC
           ${TEST_INCLUDE_DIRS}
-          ${OpenCV_INCLUDE_DIRS}
           ${rviz_visual_testing_framework_INCLUDE_DIRS})
         target_link_libraries(camera_display_visual_test
           ${TEST_LINK_LIBRARIES}
-          ${OpenCV_LIBRARIES}
           rviz_visual_testing_framework::rviz_visual_testing_framework)
       endif()
 
@@ -416,11 +413,9 @@ if(BUILD_TESTING)
       if(TARGET image_display_visual_test)
         target_include_directories(image_display_visual_test PUBLIC
           ${TEST_INCLUDE_DIRS}
-          ${rviz_visual_testing_framework_INCLUDE_DIRS}
-          ${OpenCV_INCLUDE_DIRS})
+          ${rviz_visual_testing_framework_INCLUDE_DIRS})
         target_link_libraries(image_display_visual_test
           ${TEST_LINK_LIBRARIES}
-          ${OpenCV_LIBRARIES}
           rviz_visual_testing_framework::rviz_visual_testing_framework)
       endif()
 

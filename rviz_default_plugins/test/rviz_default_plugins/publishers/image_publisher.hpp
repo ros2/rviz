@@ -34,14 +34,22 @@
 #include <iostream>
 #include <vector>
 
-#include "opencv2/core/core.hpp"
-
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp/clock.hpp"
 #include "sensor_msgs/msg/image.hpp"
 #include "std_msgs/msg/header.hpp"
 
 using namespace std::chrono_literals;  // NOLINT
+
+std::vector<uint8_t> greenImageData(size_t size)
+{
+  std::vector<uint8_t> pixels(size, 0);
+
+  for (size_t i = 1; i < size; i += 4) {
+    pixels[i] = 200;
+  }
+  return pixels;
+}
 
 namespace nodes
 {
@@ -50,7 +58,7 @@ class ImagePublisher : public rclcpp::Node
 {
 public:
   ImagePublisher()
-  : Node("path_publisher")
+  : Node("image_publisher")
   {
     publisher = this->create_publisher<sensor_msgs::msg::Image>("image");
     timer = this->create_wall_timer(100ms, std::bind(&ImagePublisher::timer_callback, this));
@@ -64,14 +72,14 @@ private:
     message.header.frame_id = "image_frame";
     message.header.stamp = rclcpp::Clock().now();
 
-    cv::Mat image(200, 300, CV_8UC4, cv::Scalar(0, 200, 0));
-    message.height = image.rows;
-    message.width = image.cols;
+
     message.encoding = "rgba8";
-    message.step = static_cast<sensor_msgs::msg::Image::_step_type>(image.step);
-    size_t size = image.step * image.rows;
+    message.height = static_cast<sensor_msgs::msg::Image::_height_type>(200);
+    message.width = static_cast<sensor_msgs::msg::Image::_width_type>(300);
+    message.step = static_cast<sensor_msgs::msg::Image::_step_type>(1200);
+    size_t size = message.step * message.height;
     message.data.resize(size);
-    memcpy(&message.data[0], image.data, size);
+    message.data = greenImageData(size);
 
     publisher->publish(message);
   }
