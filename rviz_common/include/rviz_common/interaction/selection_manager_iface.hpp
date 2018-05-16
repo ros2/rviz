@@ -28,78 +28,79 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__SELECTION__FORWARDS_HPP_
-#define RVIZ_COMMON__SELECTION__FORWARDS_HPP_
+#ifndef RVIZ_COMMON__INTERACTION__SELECTION_MANAGER_IFACE_HPP_
+#define RVIZ_COMMON__INTERACTION__SELECTION_MANAGER_IFACE_HPP_
 
 #include <map>
+#include <memory>
+#include <mutex>
 #include <set>
+#include <string>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
-#ifdef __APPLE__
-# pragma clang diagnostic push
-# pragma clang diagnostic ignored "-Wkeyword-macro"
-#endif
-#include <OgrePixelFormat.h>
-#include <OgreColourValue.h>
-#ifdef __APPLE__
-# pragma clang diagnostic pop
-#endif
+#include <QObject>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "rviz_common/logging.hpp"
+#include "rviz_common/interaction/forwards.hpp"
+#include "rviz_common/interaction/selection_handler.hpp"
 #include "rviz_common/visibility_control.hpp"
+
+namespace rviz_rendering
+{
+class RenderWindow;
+}
 
 namespace rviz_common
 {
-namespace selection
+namespace properties
+{
+class PropertyTreeModel;
+}
+
+class DisplayContext;
+
+namespace interaction
 {
 
-typedef uint32_t CollObjectHandle;
-typedef std::vector<CollObjectHandle> V_CollObject;
-typedef std::vector<V_CollObject> VV_CollObject;
-typedef std::set<CollObjectHandle> S_CollObject;
-
-typedef std::set<uint64_t> S_uint64;
-typedef std::vector<uint64_t> V_uint64;
-
-struct Picked
+class RVIZ_COMMON_PUBLIC SelectionManagerIface : public QObject
 {
-  explicit Picked(CollObjectHandle _handle = 0)
-  : handle(_handle), pixel_count(1)
+  Q_OBJECT
+
+public:
+  enum SelectType
   {
-  }
+    Add,
+    Remove,
+    Replace
+  };
 
-  CollObjectHandle handle;
-  int pixel_count;
-  S_uint64 extra_handles;
+  virtual void initialize() = 0;
+
+  /// Control the highlight box being displayed while selecting.
+  virtual void
+  highlight(rviz_rendering::RenderWindow * window, int x1, int y1, int x2, int y2) = 0;
+
+  virtual void removeHighlight() = 0;
+
+  /// Select all objects in bounding box.
+  virtual void select(
+    rviz_rendering::RenderWindow * window, int x1, int y1, int x2, int y2, SelectType type) = 0;
+
+  virtual void update() = 0;
+
+  virtual const M_Picked & getSelection() const = 0;
+
+  /// Tell the view controller to look at the selection.
+  virtual void focusOnSelection() = 0;
+
+  /// Change the size of the off-screen selection buffer texture.
+  virtual void setTextureSize(unsigned size) = 0;
+
+  virtual rviz_common::properties::PropertyTreeModel * getPropertyModel() = 0;
 };
 
-typedef std::unordered_map<CollObjectHandle, Picked> M_Picked;
-
-inline uint32_t colorToHandle(Ogre::PixelFormat fmt, uint32_t col)
-{
-  uint32_t handle = 0;
-  if (fmt == Ogre::PF_A8R8G8B8 || fmt == Ogre::PF_X8R8G8B8) {
-    handle = col & 0x00ffffff;
-  } else if (fmt == Ogre::PF_R8G8B8A8) {
-    handle = col >> 8;
-  } else {
-    RVIZ_COMMON_LOG_DEBUG_STREAM("Incompatible pixel format [" << fmt << "]");
-  }
-
-  return handle;
-}
-
-inline CollObjectHandle colorToHandle(const Ogre::ColourValue & color)
-{
-  return
-    (static_cast<int>(color.r * 255) << 16) |
-    (static_cast<int>(color.g * 255) << 8) |
-    static_cast<int>(color.b * 255);
-}
-
-
-}  // namespace selection
+}  // namespace interaction
 }  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__SELECTION__FORWARDS_HPP_
+#endif  // RVIZ_COMMON__INTERACTION__SELECTION_MANAGER_IFACE_HPP_

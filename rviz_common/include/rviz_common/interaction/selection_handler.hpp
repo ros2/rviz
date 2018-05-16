@@ -28,8 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__SELECTION__SELECTION_HANDLER_HPP_
-#define RVIZ_COMMON__SELECTION__SELECTION_HANDLER_HPP_
+#ifndef RVIZ_COMMON__INTERACTION__SELECTION_HANDLER_HPP_
+#define RVIZ_COMMON__INTERACTION__SELECTION_HANDLER_HPP_
 
 #include <map>
 #include <memory>
@@ -49,18 +49,19 @@
 # pragma GCC diagnostic pop
 #endif
 
-#include "./forwards.hpp"
+#include "rviz_common/interaction/forwards.hpp"
 #include "rviz_common/interactive_object.hpp"
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/viewport_mouse_event.hpp"
 #include "rviz_common/visibility_control.hpp"
+
 
 namespace Ogre
 {
 class WireBoundingBox;
 class SceneNode;
 class MovableObject;
-}
+}  // namespace Ogre
 
 namespace rviz_common
 {
@@ -68,27 +69,48 @@ namespace rviz_common
 class DisplayContext;
 class ViewportMouseEvent;
 
-namespace selection
+namespace interaction
 {
 
-typedef std::vector<Ogre::AxisAlignedBox> V_AABB;
+using V_AABB = std::vector<Ogre::AxisAlignedBox>;
 
-class RVIZ_COMMON_PUBLIC SelectionHandler
+template<class T>
+std::weak_ptr<T> weak_from_this(T * pointer)
+{
+  return pointer->shared_from_this();
+}
+
+/// Use this function to create a SelectionHandler
+/**
+ * This function creates a shared_ptr for any SelectionHandler, registering a handle with the
+ * HandlerManager.
+ *
+ * Note: When migrating from rviz to rviz2, use this function to create a SelectionHandler
+ * instead of constructors.
+ *
+ * @tparam T template type of SelectionHandler to be created
+ * @tparam Args placeholder types for constructor parameter types
+ * @param arguments arguments used in the constructor of the SelectionHandler to be created
+ * @return
+ */
+template<typename T, typename ... Args>
+std::shared_ptr<T> createSelectionHandler(Args ... arguments)
+{
+  auto selection_handler = std::shared_ptr<T>(new T(arguments ...));
+  selection_handler->registerHandle();
+  return selection_handler;
+}
+
+class RVIZ_COMMON_PUBLIC SelectionHandler : public std::enable_shared_from_this<SelectionHandler>
 {
 public:
-  explicit SelectionHandler(DisplayContext * context);
   virtual ~SelectionHandler();
 
-  void
-  addTrackedObjects(Ogre::SceneNode * node);
-  void
-  addTrackedObject(Ogre::MovableObject * object);
-  void
-  removeTrackedObject(Ogre::MovableObject * object);
+  void addTrackedObjects(Ogre::SceneNode * node);
+  void addTrackedObject(Ogre::MovableObject * object);
+  void removeTrackedObject(Ogre::MovableObject * object);
 
-  virtual
-  void
-  updateTrackedBoxes();
+  virtual void updateTrackedBoxes();
 
   /// Override to create properties of the given picked object(s).
   /**
@@ -97,9 +119,8 @@ public:
    *
    * This base implementation does nothing.
    */
-  virtual
-  void
-  createProperties(const Picked & obj, rviz_common::properties::Property * parent_property);
+  virtual void createProperties(
+    const Picked & obj, rviz_common::properties::Property * parent_property);
 
   /// Destroy all properties for the given picked object(s).
   /**
@@ -108,9 +129,8 @@ public:
    * If createProperties() adds all the top-level properties to properties_,
    * there is no need to override this in a subclass.
    */
-  virtual
-  void
-  destroyProperties(const Picked & obj, rviz_common::properties::Property * parent_property);
+  virtual void destroyProperties(
+    const Picked & obj, rviz_common::properties::Property * parent_property);
 
   /** @brief Override to update property values.
    *
@@ -122,45 +142,31 @@ public:
    *
    * This base implementation does nothing.
    */
-  virtual
-  void
-  updateProperties();
+  virtual void updateProperties();
 
   /// Override to indicate if an additional render pass is required.
   virtual bool needsAdditionalRenderPass(uint32_t pass);
 
   /// Override to hook before a render pass.
-  virtual
-  void
-  preRenderPass(uint32_t pass);
+  virtual void preRenderPass(uint32_t pass);
 
   /// Override to hook after a render pass.
-  virtual
-  void
-  postRenderPass(uint32_t pass);
+  virtual void postRenderPass(uint32_t pass);
 
   /// Get the AABBs.
-  virtual
-  void
-  getAABBs(const Picked & obj, V_AABB & aabbs);
+  virtual V_AABB getAABBs(const Picked & obj);
 
   /// Override to get called on selection.
-  virtual
-  void
-  onSelect(const Picked & obj);
+  virtual void onSelect(const Picked & obj);
 
   /// Override to get called on deselection.
-  virtual
-  void
-  onDeselect(const Picked & obj);
+  virtual void onDeselect(const Picked & obj);
 
   /// Set an object to listen to mouse events and other interaction calls.
   /**
    * Events occur during use of the 'interact' tool.
    */
-  virtual
-  void
-  setInteractiveObject(InteractiveObjectWPtr object);
+  virtual void setInteractiveObject(InteractiveObjectWPtr object);
 
   /// Get the object to listen to mouse events and other interaction calls.
   /**
@@ -169,65 +175,91 @@ public:
    * long periods because it may cause something visual to stick
    * around after it was meant to be destroyed.
    */
-  virtual
-  InteractiveObjectWPtr
-  getInteractiveObject();
+  virtual InteractiveObjectWPtr getInteractiveObject();
 
   /// Get CollObjectHandle.
-  CollObjectHandle
-  getHandle() const;
+  CollObjectHandle getHandle() const;
+
+  struct Handles
+  {
+    Handles(CollObjectHandle _handle, uint64_t _extra_handle)
+    : handle(_handle), extra_handle(_extra_handle) {}
+
+    bool operator==(const Handles & rhs) const
+    {
+      return handle == rhs.handle && extra_handle == rhs.extra_handle;
+    }
+
+    bool operator<(const Handles & rhs) const
+    {
+      if (handle < rhs.handle) {
+        return true;
+      } else if (handle > rhs.handle) {
+        return false;
+      } else if (extra_handle < rhs.extra_handle) {
+        return true;
+      }
+      return false;
+    }
+
+    bool operator<=(const Handles & rhs) const
+    {
+      return *this == rhs || *this < rhs;
+    }
+
+    CollObjectHandle handle;
+    uint64_t extra_handle;
+  };
+
+  struct SelectionBox
+  {
+    SelectionBox(Ogre::SceneNode * _node, Ogre::WireBoundingBox * _box)
+    : scene_node(_node), box(_box) {}
+
+    Ogre::SceneNode * scene_node;
+    Ogre::WireBoundingBox * box;
+  };
 
 protected:
+  explicit SelectionHandler(DisplayContext * context);
+
+  void registerHandle();
+
   /// Create or update a box for the given handle-int pair, with the box specified by aabb.
-  void
-  createBox(
-    const std::pair<CollObjectHandle, uint64_t> & handles,
+  void createBox(
+    const Handles & handles,
     const Ogre::AxisAlignedBox & aabb,
     const std::string & material_name);
 
   /// Destroy the box associated with the given handle-int pair, if there is one.
-  void
-  destroyBox(const std::pair<CollObjectHandle, uint64_t> & handles);
+  void destroyBox(const Handles & handles);
+
+  void setBoxVisibility(bool visible);
 
   QList<rviz_common::properties::Property *> properties_;
 
-  typedef std::map<std::pair<CollObjectHandle, uint64_t>,
-      std::pair<Ogre::SceneNode *, Ogre::WireBoundingBox *>> M_HandleToBox;
+  using M_HandleToBox = std::map<Handles, SelectionBox>;
   M_HandleToBox boxes_;
 
   DisplayContext * context_;
 
-  typedef std::set<Ogre::MovableObject *> S_Movable;
+  using S_Movable = std::set<Ogre::MovableObject *>;
   S_Movable tracked_objects_;
 
-  // TODO(wjwwood): move implementation to cpp file.
   class Listener : public Ogre::MovableObject::Listener
   {
 public:
     // TODO(wjwwood): uncrustify doesn't handle this indentation correctly.
-    explicit Listener(SelectionHandler * handler)
-    : handler_(handler)
-    {}
+    explicit Listener(SelectionHandler * handler);
 
-    virtual
-    void
-    objectMoved(Ogre::MovableObject * object)
-    {
-      Q_UNUSED(object);
-      handler_->updateTrackedBoxes();
-    }
+    void objectMoved(Ogre::MovableObject * object) override;
 
-    virtual
-    void
-    objectDestroyed(Ogre::MovableObject * object)
-    {
-      handler_->removeTrackedObject(object);
-    }
+    void objectDestroyed(Ogre::MovableObject * object) override;
 
     SelectionHandler * handler_;
   };
 
-  typedef std::shared_ptr<Listener> ListenerPtr;
+  using ListenerPtr = std::shared_ptr<Listener>;
   ListenerPtr listener_;
 
   InteractiveObjectWPtr interactive_object_;
@@ -239,13 +271,17 @@ private:
   CollObjectHandle pick_handle_;
 
   friend class SelectionManager;
+  template<typename T, typename ... Args>
+  friend typename std::shared_ptr<T>  // typename is used only to make uncrustify happy
+  rviz_common::interaction::createSelectionHandler(Args ... arguments);
 };
 
-typedef std::shared_ptr<SelectionHandler> SelectionHandlerPtr;
-typedef std::vector<SelectionHandlerPtr> V_SelectionHandler;
-typedef std::set<SelectionHandlerPtr> S_SelectionHandler;
+using SelectionHandlerPtr = std::shared_ptr<SelectionHandler>;
+using SelectionHandlerWeakPtr = std::weak_ptr<SelectionHandler>;
+using V_SelectionHandler = std::vector<SelectionHandlerPtr>;
+using S_SelectionHandler = std::set<SelectionHandlerPtr>;
 
-}  // namespace selection
+}  // namespace interaction
 }  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__SELECTION__SELECTION_HANDLER_HPP_
+#endif  // RVIZ_COMMON__INTERACTION__SELECTION_HANDLER_HPP_

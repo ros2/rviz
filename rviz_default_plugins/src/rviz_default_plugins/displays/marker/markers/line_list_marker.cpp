@@ -52,7 +52,6 @@
 #endif
 
 #include "../marker_display.hpp"
-#include "marker_selection_handler.hpp"
 
 #include "rviz_rendering/objects/billboard_line.hpp"
 

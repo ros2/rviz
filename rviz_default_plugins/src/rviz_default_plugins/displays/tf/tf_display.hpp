@@ -52,7 +52,7 @@
 #include "tf2/buffer_core.h"
 #include "tf2/time.h"
 
-#include "rviz_common/selection/forwards.hpp"
+#include "rviz_common/interaction/forwards.hpp"
 #include "rviz_common/display.hpp"
 
 namespace Ogre

@@ -54,9 +54,7 @@
 class MarkersTestFixture : public DisplayTestFixture
 {
 public:
-  void SetUp() override;
-
-  void TearDown() override;
+  MarkersTestFixture();
 
   template<typename MarkerType>
   std::unique_ptr<MarkerType> makeMarker()

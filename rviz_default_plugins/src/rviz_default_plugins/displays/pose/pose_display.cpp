@@ -44,7 +44,7 @@
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/quaternion_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
-#include "rviz_common/selection/selection_manager.hpp"
+#include "rviz_common/interaction/selection_manager.hpp"
 #include "rviz_common/validate_floats.hpp"
 #include "pose_display_selection_handler.hpp"
 
@@ -115,7 +115,8 @@ void PoseDisplay::onInitialize()
   updateShapeChoice();
   updateColorAndAlpha();
 
-  coll_handler_ = std::make_shared<PoseDisplaySelectionHandler>(this, context_);
+  coll_handler_ = rviz_common::interaction::createSelectionHandler
+    <PoseDisplaySelectionHandler>(this, context_);
   coll_handler_->addTrackedObjects(arrow_->getSceneNode());
   coll_handler_->addTrackedObjects(axes_->getSceneNode());
 }

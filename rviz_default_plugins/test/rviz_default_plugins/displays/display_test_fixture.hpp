@@ -49,15 +49,16 @@
 #include "../mock_display_context.hpp"
 #include "../mock_frame_manager.hpp"
 #include "../mock_selection_manager.hpp"
+#include "../mock_handler_manager.hpp"
 
 class DisplayTestFixture : public testing::Test
 {
 public:
   static void SetUpTestCase();
 
-  void SetUp() override;
+  DisplayTestFixture();
 
-  void TearDown() override;
+  ~DisplayTestFixture();
 
   static void TearDownTestCase();
 
@@ -71,6 +72,7 @@ public:
   std::shared_ptr<MockDisplayContext> context_;
   std::shared_ptr<MockFrameManager> frame_manager_;
   std::shared_ptr<MockSelectionManager> selection_manager_;
+  std::shared_ptr<MockHandlerManager> handler_manager_;
   std::shared_ptr<rclcpp::Clock> clock_;
 
   std::string fixed_frame = "fixed_frame";

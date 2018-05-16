@@ -241,7 +241,7 @@ RenderWindowOgreAdapter::getOgreCamera(RenderWindow * render_window)
 Ogre::Viewport *
 RenderWindowOgreAdapter::getOgreViewport(RenderWindow * render_window)
 {
-  return render_window->impl_->getViewport();
+  return render_window ? render_window->impl_->getViewport() : nullptr;
 }
 
 void

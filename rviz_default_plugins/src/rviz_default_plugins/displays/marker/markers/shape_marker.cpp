@@ -36,7 +36,6 @@
 #include "../marker_display.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/properties/status_property.hpp"
-#include "rviz_common/selection/selection_manager.hpp"
 #include "rviz_rendering/objects/shape.hpp"
 
 namespace rviz_default_plugins
@@ -109,8 +108,8 @@ void ShapeMarker::resetShapeForMessage(const MarkerBase::MarkerConstSharedPtr & 
   shape_ = std::make_shared<rviz_rendering::Shape>(
     shape_type, this->context_->getSceneManager(), this->scene_node_);
 
-  handler_.reset(new MarkerSelectionHandler(
-      this, MarkerID(new_message->ns, new_message->id), context_));
+  handler_ = rviz_common::interaction::createSelectionHandler<MarkerSelectionHandler>(
+    this, MarkerID(new_message->ns, new_message->id), context_);
   handler_->addTrackedObjects(shape_->getRootNode());
 }
 

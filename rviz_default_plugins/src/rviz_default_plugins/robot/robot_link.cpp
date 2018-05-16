@@ -80,7 +80,7 @@
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/properties/quaternion_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
-#include "rviz_common/selection/selection_manager.hpp"
+#include "rviz_common/interaction/selection_manager.hpp"
 
 using rviz_rendering::Axes;
 using rviz_rendering::Shape;
@@ -95,14 +95,14 @@ using rviz_common::properties::FloatProperty;
 using rviz_common::properties::QuaternionProperty;
 using rviz_common::properties::VectorProperty;
 
-class RobotLinkSelectionHandler : public rviz_common::selection::SelectionHandler
+class RobotLinkSelectionHandler : public rviz_common::interaction::SelectionHandler
 {
 public:
   RobotLinkSelectionHandler(RobotLink * link, rviz_common::DisplayContext * context);
   ~RobotLinkSelectionHandler() override;
 
   void createProperties(
-    const rviz_common::selection::Picked & obj,
+    const rviz_common::interaction::Picked & obj,
     Property * parent_property) override;
   void updateProperties() override;
 
@@ -113,6 +113,10 @@ private:
   RobotLink * link_;
   rviz_common::properties::VectorProperty * position_property_;
   rviz_common::properties::QuaternionProperty * orientation_property_;
+
+  template<typename T, typename ... Args>
+  friend typename std::shared_ptr<T> rviz_common::interaction::createSelectionHandler(
+    Args ... arguments);
 };
 
 RobotLinkSelectionHandler::RobotLinkSelectionHandler(
@@ -127,7 +131,7 @@ RobotLinkSelectionHandler::RobotLinkSelectionHandler(
 RobotLinkSelectionHandler::~RobotLinkSelectionHandler() = default;
 
 void RobotLinkSelectionHandler::createProperties(
-  const rviz_common::selection::Picked & obj,
+  const rviz_common::interaction::Picked & obj,
   rviz_common::properties::Property * parent_property)
 {
   (void) obj;
@@ -785,7 +789,8 @@ void RobotLink::createVisual(const urdf::LinkConstSharedPtr & link)
 
 void RobotLink::createSelection()
 {
-  selection_handler_.reset(new RobotLinkSelectionHandler(this, context_));
+  selection_handler_ = rviz_common::interaction::createSelectionHandler<RobotLinkSelectionHandler>(
+    this, context_);
   for (auto & visual_mesh : visual_meshes_) {
     selection_handler_->addTrackedObject(visual_mesh);
   }

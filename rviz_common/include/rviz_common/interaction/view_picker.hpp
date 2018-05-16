@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,16 +29,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__SELECTION__SELECTION_MANAGER_IFACE_HPP_
-#define RVIZ_COMMON__SELECTION__SELECTION_MANAGER_IFACE_HPP_
+#ifndef RVIZ_COMMON__INTERACTION__VIEW_PICKER_HPP_
+#define RVIZ_COMMON__INTERACTION__VIEW_PICKER_HPP_
 
-#include <map>
+#include "rviz_common/interaction/view_picker_iface.hpp"
+
 #include <memory>
-#include <mutex>
-#include <set>
-#include <string>
-#include <unordered_map>
-#include <utility>
 #include <vector>
 
 #ifndef _WIN32
@@ -55,16 +52,9 @@
 
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "./forwards.hpp"
-#include "./selection_handler.hpp"
+#include "rviz_common/interaction/forwards.hpp"
+#include "rviz_common/interaction/selection_handler.hpp"
 #include "rviz_common/visibility_control.hpp"
-
-namespace rclcpp
-{
-
-class PublisherBase;
-
-}
 
 namespace Ogre
 {
@@ -73,123 +63,54 @@ class Rectangle2D;
 
 }  // namespace Ogre
 
+namespace rviz_rendering
+{
+
+class RenderWindow;
+
+}  // namespace rviz_rendering
+
 namespace rviz_common
 {
 
-namespace properties
+class DisplayContext;
+
+namespace interaction
 {
 
-class PropertyTreeModel;
+class HandlerManagerIface;
+class SelectionRenderer;
+struct SelectionRectangle;
+struct RenderTexture;
 
-}
-
-class VisualizationManager;
-
-namespace selection
+class RVIZ_COMMON_PUBLIC ViewPicker
+  : public ViewPickerIface
 {
-
-class RVIZ_COMMON_PUBLIC SelectionManagerIface
-  : public QObject,
-  public Ogre::MaterialManager::Listener,
-  public Ogre::RenderQueueListener
-{
-  Q_OBJECT
-
 public:
-  enum SelectType
-  {
-    Add,
-    Remove,
-    Replace
-  };
+  ViewPicker(DisplayContext * manager, std::shared_ptr<SelectionRenderer> renderer);
 
-  virtual void
-  initialize() = 0;
+  explicit ViewPicker(DisplayContext * manager);
 
-  /// Enables or disables publishing of picking and depth rendering images.
-  virtual void
-  setDebugMode(bool debug) = 0;
+  ~ViewPicker() override;
 
-  virtual void
-  clearHandlers() = 0;
-
-  virtual void
-  addObject(CollObjectHandle obj, SelectionHandler * handler) = 0;
-
-  virtual void
-  removeObject(CollObjectHandle obj) = 0;
-
-  /// Control the highlight box being displayed while selecting.
-  virtual void
-  highlight(Ogre::Viewport * viewport, int x1, int y1, int x2, int y2) = 0;
-
-  virtual void
-  removeHighlight() = 0;
-
-  /// Select all objects in bounding box.
-  virtual void
-  select(Ogre::Viewport * viewport, int x1, int y1, int x2, int y2, SelectType type) = 0;
-
-  /**
-   * \return handles of all objects in the given bounding box
-   * \param single_render_pass only perform one rendering pass
-   *   (point cloud selecting won't work)
-   */
-  virtual void
-  pick(
-    Ogre::Viewport * viewport,
-    int x1,
-    int y1,
-    int x2,
-    int y2,
-    M_Picked & results,
-    bool single_render_pass = false) = 0;
-
-  virtual void update() = 0;
-
-  /// Set the list of currently selected objects.
-  virtual void setSelection(const M_Picked & objs) = 0;
-
-  virtual void addSelection(const M_Picked & objs) = 0;
-
-  virtual void removeSelection(const M_Picked & objs) = 0;
-
-  virtual const M_Picked & getSelection() const = 0;
-
-  virtual SelectionHandler * getHandler(CollObjectHandle obj) = 0;
-
-  /// If a material does not support the picking scheme, paint it black.
-  Ogre::Technique * handleSchemeNotFound(
-    unsigned short scheme_index,  // NOLINT: Ogre decides the use of unsigned short
-    const Ogre::String & scheme_name,
-    Ogre::Material * original_material,
-    unsigned short lod_index,  // NOLINT: Ogre decides the use of unsigned short
-    const Ogre::Renderable * rend) override = 0;
-
-  /// Create a new unique handle.
-  virtual CollObjectHandle createHandle() = 0;
-
-  /// Tell all handlers that interactive mode is active/inactive.
-  virtual void enableInteraction(bool enable) = 0;
-
-  virtual bool getInteractionEnabled() const = 0;
-
-  /// Tell the view controller to look at the selection.
-  virtual void focusOnSelection() = 0;
-
-  /// Change the size of the off-screen selection buffer texture.
-  virtual void setTextureSize(unsigned size) = 0;
+  void
+  initialize() override;
 
   /// Return true if the point at x, y in the viewport is showing an object, false otherwise.
   /**
    * If it is showing an object, result will be changed to contain the 3D point
    * corresponding to it.
    */
-  virtual bool get3DPoint(
-    Ogre::Viewport * viewport,
+  bool get3DPoint(
+    RenderPanel * panel,
     int x,
     int y,
-    Ogre::Vector3 & result_point) = 0;
+    Ogre::Vector3 & result_point) override;
+
+private:
+  void setDepthTextureSize(unsigned width, unsigned height);
+
+  void capTextureSize(unsigned int & width, unsigned int & height);
 
   /// Gets the 3D points in a box around a point in a view port.
   /**
@@ -206,19 +127,17 @@ public:
    *   so if skip_missing is false, this will always return true if
    *   width and height are > 0.
    */
-  virtual bool get3DPatch(
-    Ogre::Viewport * viewport,
+  bool get3DPatch(
+    RenderPanel * panel,
     int x,
     int y,
     unsigned width,
     unsigned height,
     bool skip_missing,
-    std::vector<Ogre::Vector3> & result_points) = 0;
+    std::vector<Ogre::Vector3> & result_points);
 
-
-  /// Renders a depth image in a box around a point in a view port.
   /**
-   * \param[in] viewport Rendering area clicked on.
+   * \param[in] panel Rendering area clicked on.
    * \param[in] x x coordinate of upper-left corner of box.
    * \param[in] y y coordinate of upper-left corner of box.
    * \param[in] width The width of the rendered box in pixels.
@@ -229,24 +148,42 @@ public:
    *   texture buffer succeeds.
    *   Failure likely indicates a pretty serious problem.
    */
-  virtual bool getPatchDepthImage(
-    Ogre::Viewport * viewport,
+  void getPatchDepthImage(
+    RenderPanel * panel,
     int x,
     int y,
     unsigned width,
     unsigned height,
-    std::vector<float> & depth_vector) = 0;
+    std::vector<float> & depth_vector);
 
-  /// Implementation for Ogre::RenderQueueListener.
-  void renderQueueStarted(
-    uint8_t queueGroupId,
-    const std::string & invocation,
-    bool & skipThisInvocation) override = 0;
+  Ogre::Vector3
+  computeForOrthogonalProjection(float depth, Ogre::Real screenx, Ogre::Real screeny) const;
 
-  virtual rviz_common::properties::PropertyTreeModel * getPropertyModel() = 0;
+  Ogre::Vector3 computeForPerspectiveProjection(
+    float depth, Ogre::Real screenx, Ogre::Real screeny) const;
+  /// Renders a depth image in a box around a point in a view port.
+  /// Internal render function to render to a texture and read the pixels back out.
+  void render(
+    rviz_rendering::RenderWindow * window,
+    const SelectionRectangle & selection_rectangle,
+    const RenderTexture & render_texture,
+    Ogre::PixelBox & dst_box);
+
+  DisplayContext * context_;
+  std::shared_ptr<HandlerManagerIface> handler_manager_;
+
+  // Graphics card -based depth finding of clicked points.
+  Ogre::TexturePtr depth_render_texture_;
+  uint32_t depth_texture_width_, depth_texture_height_;
+
+  Ogre::PixelBox depth_pixel_box_;
+
+  Ogre::Camera * camera_;
+
+  std::shared_ptr<rviz_common::interaction::SelectionRenderer> renderer_;
 };
 
-}  // namespace selection
+}  // namespace interaction
 }  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__SELECTION__SELECTION_MANAGER_IFACE_HPP_
+#endif  // RVIZ_COMMON__INTERACTION__VIEW_PICKER_HPP_

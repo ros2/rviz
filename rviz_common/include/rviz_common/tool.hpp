@@ -77,7 +77,7 @@ public:
    */
   Tool();
 
-  virtual ~Tool();
+  ~Tool() override;
 
   /// Initialize the tool.
   /**
@@ -134,13 +134,13 @@ public:
    */
   void setName(const QString & name);
 
+  /// Get the description.
+  QString getDescription() const;
+
   /// Set the description of the tool.
   /**
    * This is called by ToolManager during tool initialization.
    */
-  QString getDescription() const;
-
-  /// Set the description.
   void setDescription(const QString & description);
 
   /// Return the class identifier which was used to create this instance.
@@ -194,9 +194,8 @@ protected:
   /// Override onInitialize to do any setup needed after the DisplayContext has been set.
   /**
    * This is called by Tool::initialize().
-   * The base implementation here does nothing.
    */
-  virtual void onInitialize();
+  virtual void onInitialize() {}
 
   Ogre::SceneManager * scene_manager_;
   DisplayContext * context_;

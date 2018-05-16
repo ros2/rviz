@@ -60,7 +60,7 @@ protected:
     testing_environment_->setUpOgreTestEnvironment();
   }
 
-  void SetUp() override
+  PointCloudRenderableTestFixture()
   {
     cloud_ = std::make_shared<rviz_rendering::PointCloud>();
     auto points = std::vector<rviz_rendering::PointCloud::Point>(

@@ -61,22 +61,14 @@ using namespace ::testing;  // NOLINT
 class MarkerDisplayFixture : public DisplayTestFixture
 {
 public:
-  void SetUp() override
+  MarkerDisplayFixture()
   {
-    DisplayTestFixture::SetUp();
-
     factory_ = std::make_unique<rviz_default_plugins::displays::markers::MarkerFactory>();
     factory_->initialize(
       nullptr, context_.get(), scene_manager_->getRootSceneNode()->createChildSceneNode());
 
     display_ = std::make_unique<rviz_default_plugins::displays::MarkerDisplay>(
       std::move(factory_), context_.get());
-  }
-
-  void TearDown() override
-  {
-    display_.reset(nullptr);
-    DisplayTestFixture::TearDown();
   }
 
   std::unique_ptr<rviz_default_plugins::displays::markers::MarkerFactory> factory_;

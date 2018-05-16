@@ -99,7 +99,7 @@ public:
   std::string name_;
   std::string parent_;
   rviz_rendering::Axes * axes_;
-  rviz_common::selection::CollObjectHandle axes_coll_;
+  rviz_common::interaction::CollObjectHandle axes_coll_;
   FrameSelectionHandlerPtr selection_handler_;
   rviz_rendering::Arrow * parent_arrow_;
   rviz_rendering::MovableText * name_text_;

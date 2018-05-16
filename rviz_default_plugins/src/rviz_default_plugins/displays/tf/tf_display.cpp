@@ -62,13 +62,13 @@
 #include "rviz_common/properties/quaternion_property.hpp"
 #include "rviz_common/properties/string_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
-#include "rviz_common/selection/forwards.hpp"
-#include "rviz_common/selection/selection_manager.hpp"
+#include "rviz_common/interaction/forwards.hpp"
+#include "rviz_common/interaction/selection_manager.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
 #include "frame_info.hpp"
 #include "frame_selection_handler.hpp"
 
-using rviz_common::selection::SelectionHandler;
+using rviz_common::interaction::SelectionHandler;
 using rviz_common::properties::BoolProperty;
 using rviz_common::properties::FloatProperty;
 using rviz_common::properties::StatusProperty;
@@ -76,7 +76,7 @@ using rviz_common::properties::StringProperty;
 using rviz_common::properties::Property;
 using rviz_common::properties::QuaternionProperty;
 using rviz_common::properties::VectorProperty;
-using rviz_common::selection::Picked;
+using rviz_common::interaction::Picked;
 using rviz_rendering::Axes;
 using rviz_rendering::Arrow;
 using rviz_rendering::MovableText;
@@ -345,7 +345,8 @@ FrameInfo * TFDisplay::createFrame(const std::string & frame)
   info->last_update_ = tf2::get_now();
   info->axes_ = new Axes(scene_manager_, axes_node_, 0.2f, 0.02f);
   info->axes_->getSceneNode()->setVisible(show_axes_property_->getBool());
-  info->selection_handler_.reset(new FrameSelectionHandler(info, this, context_));
+  info->selection_handler_ =
+    rviz_common::interaction::createSelectionHandler<FrameSelectionHandler>(info, this, context_);
   info->selection_handler_->addTrackedObjects(info->axes_->getSceneNode());
 
   info->name_text_ = new MovableText(frame, "Liberation Sans", 0.1f);
@@ -573,7 +574,7 @@ void TFDisplay::deleteFrame(FrameInfo * frame, bool delete_properties)
   frames_.erase(it);
 
   delete frame->axes_;
-  context_->getSelectionManager()->removeObject(frame->axes_coll_);
+  context_->getHandlerManager()->removeHandler(frame->axes_coll_);
   delete frame->parent_arrow_;
   delete frame->name_text_;
   scene_manager_->destroySceneNode(frame->name_node_->getName());

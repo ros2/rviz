@@ -84,8 +84,8 @@ void TextViewFacingMarker::onNewMessage(
       rviz_rendering::MovableText::H_CENTER, rviz_rendering::MovableText::V_CENTER);
     scene_node_->attachObject(text_);
 
-    handler_.reset(
-      new MarkerSelectionHandler(this, MarkerID(new_message->ns, new_message->id), context_));
+    handler_ = rviz_common::interaction::createSelectionHandler<MarkerSelectionHandler>(
+      this, MarkerID(new_message->ns, new_message->id), context_);
     handler_->addTrackedObject(text_);
   }
 

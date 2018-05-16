@@ -63,12 +63,14 @@ class Node;
 namespace rviz_common
 {
 
-namespace selection
+namespace interaction
 {
 
 class SelectionManagerIface;
+class HandlerManagerIface;
+class ViewPickerIface;
 
-}  // namespace selection
+}  // namespace interaction
 
 class BitAllocator;
 class DisplayFactory;
@@ -112,8 +114,18 @@ public:
 
   /// Return a pointer to the SelectionManager.
   virtual
-  rviz_common::selection::SelectionManagerIface *
+  std::shared_ptr<rviz_common::interaction::SelectionManagerIface>
   getSelectionManager() const = 0;
+
+  /// Return a pointer to the HandlerManager.
+  virtual
+  std::shared_ptr<rviz_common::interaction::HandlerManagerIface>
+  getHandlerManager() const = 0;
+
+  /// Return a pointer to the ViewPicker.
+  virtual
+  std::shared_ptr<rviz_common::interaction::ViewPickerIface>
+  getViewPicker() const = 0;
 
   /// Return the FrameManager instance.
   virtual
@@ -199,6 +211,14 @@ public:
   virtual
   std::shared_ptr<rclcpp::Clock>
   getClock() = 0;
+
+  virtual
+  void
+  lockRender() = 0;
+
+  virtual
+  void
+  unlockRender() = 0;
 
 public Q_SLOTS:
   /// Queue a render.

@@ -30,9 +30,10 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__TF__FRAME_SELECTION_HANDLER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__TF__FRAME_SELECTION_HANDLER_HPP_
 
+#include <memory>
 #include <string>
 
-#include "rviz_common/selection/selection_handler.hpp"
+#include "rviz_common/interaction/selection_handler.hpp"
 #include "tf_display.hpp"
 #include "frame_info.hpp"
 
@@ -55,22 +56,17 @@ namespace rviz_default_plugins
 namespace displays
 {
 
-class FrameSelectionHandler : public rviz_common::selection::SelectionHandler
+class FrameSelectionHandler : public rviz_common::interaction::SelectionHandler
 {
 public:
-  FrameSelectionHandler(
-    FrameInfo * frame,
-    TFDisplay * display,
-    rviz_common::DisplayContext * context);
-
   ~FrameSelectionHandler() override = default;
 
   void createProperties(
-    const rviz_common::selection::Picked & obj,
+    const rviz_common::interaction::Picked & obj,
     rviz_common::properties::Property * parent_property) override;
 
   void destroyProperties(
-    const rviz_common::selection::Picked & obj,
+    const rviz_common::interaction::Picked & obj,
     rviz_common::properties::Property * parent_property) override;
 
   bool getEnabled();
@@ -84,6 +80,11 @@ public:
   void setOrientation(const Ogre::Quaternion & orientation);
 
 private:
+  FrameSelectionHandler(
+    FrameInfo * frame,
+    TFDisplay * display,
+    rviz_common::DisplayContext * context);
+
   FrameInfo * frame_;
   TFDisplay * display_;
   rviz_common::properties::Property * category_property_;
@@ -91,6 +92,10 @@ private:
   rviz_common::properties::StringProperty * parent_property_;
   rviz_common::properties::VectorProperty * position_property_;
   rviz_common::properties::QuaternionProperty * orientation_property_;
+
+  template<typename T, typename ... Args>
+  friend typename std::shared_ptr<T>
+  rviz_common::interaction::createSelectionHandler(Args ... arguments);
 };
 
 }  // namespace displays

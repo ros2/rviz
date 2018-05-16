@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,54 +28,45 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_SELECTION_TOOL_H
-#define RVIZ_SELECTION_TOOL_H
+#ifndef RVIZ_COMMON__INTERACTION__VIEW_PICKER_IFACE_HPP_
+#define RVIZ_COMMON__INTERACTION__VIEW_PICKER_IFACE_HPP_
 
-#include "rviz/tool.h"
-#include "rviz/selection/forwards.h"
-
-#include <vector>
+#include "rviz_common/visibility_control.hpp"
 
 namespace Ogre
 {
 class Viewport;
-}
+class Vector3;
+}  // namespace Ogre
 
-namespace rviz
+
+namespace rviz_common
+{
+class RenderPanel;
+
+namespace interaction
 {
 
-class MoveTool;
-
-class SelectionTool : public Tool
+class RVIZ_COMMON_PUBLIC ViewPickerIface
 {
 public:
-  SelectionTool();
-  virtual ~SelectionTool();
+  virtual ~ViewPickerIface() = default;
 
-  virtual void onInitialize();
+  virtual void initialize() = 0;
 
-  virtual void activate();
-  virtual void deactivate();
-
-  virtual int processMouseEvent( ViewportMouseEvent& event );
-  virtual int processKeyEvent( QKeyEvent* event, RenderPanel* panel );
-
-  virtual void update(float wall_dt, float ros_dt);
-
-private:
-
-  MoveTool* move_tool_;
-
-  bool selecting_;
-  int sel_start_x_;
-  int sel_start_y_;
-
-  M_Picked highlight_;
-
-  bool moving_;
+  /// Return true if the point at x, y in the viewport is showing an object, false otherwise.
+  /**
+   * If it is showing an object, result will be changed to contain the 3D point
+   * corresponding to it.
+   */
+  virtual bool get3DPoint(
+    RenderPanel * panel,
+    int x,
+    int y,
+    Ogre::Vector3 & result_point) = 0;
 };
 
-}
+}  // namespace interaction
+}  // namespace rviz_common
 
-#endif
-
+#endif  // RVIZ_COMMON__INTERACTION__VIEW_PICKER_IFACE_HPP_

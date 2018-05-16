@@ -52,12 +52,13 @@
 #include "sensor_msgs/msg/point_cloud.hpp"
 #include "sensor_msgs/msg/point_cloud2.hpp"
 
-#include "rviz_common/selection/selection_manager.hpp"
-#include "point_cloud_transformer.hpp"
-#include "point_cloud_selection_handler.hpp"
+#include "rviz_common/interaction/forwards.hpp"
+#include "rviz_common/interaction/selection_manager.hpp"
 #include "rviz_common/properties/color_property.hpp"
 #include "rviz_rendering/objects/point_cloud.hpp"
-#include "rviz_common/selection/forwards.hpp"
+
+#include "point_cloud_transformer.hpp"
+#include "point_cloud_selection_handler.hpp"
 
 #endif
 
@@ -94,6 +95,9 @@ struct CloudInfo
 
   // clear the point cloud, but keep selection handler around
   void clear();
+
+  void setSelectable(
+    bool selectable, float selection_box_size, rviz_common::DisplayContext * context);
 
   rclcpp::Time receive_time_;
 

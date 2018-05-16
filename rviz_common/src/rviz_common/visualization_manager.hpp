@@ -80,7 +80,7 @@ class VisualizationManagerPrivate;
  * It keeps the current view controller for the main render window.
  * It has a timer which calls update() on all the displays.
  * It creates and holds pointers to the other manager objects:
- * SelectionManager, FrameManager, the PropertyManagers, and Ogre::SceneManager.
+ * HandlerManager, SelectionManager, FrameManager, the PropertyManagers, and Ogre::SceneManager.
  *
  * The "protected" members should probably all be "private", as
  * VisualizationManager is not intended to be subclassed.
@@ -110,7 +110,7 @@ public:
   /**
    * Stops the update of timers and destroys all displays, tools, and managers.
    */
-  virtual ~VisualizationManager();
+  ~VisualizationManager() override;
 
   /// Do initialization that was not done in constructor.
   /**
@@ -217,8 +217,15 @@ public:
   /// Resets the wall and ROS elapsed time to zero and calls resetDisplays().
   void resetTime();
 
+  /// Return a pointer to the HandlerManager
+  std::shared_ptr<rviz_common::interaction::HandlerManagerIface> getHandlerManager() const override;
+
   /// Return a pointer to the SelectionManager.
-  rviz_common::selection::SelectionManagerIface * getSelectionManager() const override;
+  std::shared_ptr<rviz_common::interaction::SelectionManagerIface>
+  getSelectionManager() const override;
+
+  /// Return a pointer to the ViewPicker.
+  std::shared_ptr<rviz_common::interaction::ViewPickerIface> getViewPicker() const override;
 
   /// Return a pointer to the ToolManager.
   ToolManager * getToolManager() const override;
@@ -227,10 +234,10 @@ public:
   ViewManager * getViewManager() const override;
 
   /// Lock a mutex to delay calls to Ogre::Root::renderOneFrame().
-  void lockRender();
+  void lockRender() override;
 
   /// Unlock a mutex, allowing calls to Ogre::Root::renderOneFrame().
-  void unlockRender();
+  void unlockRender() override;
 
   /// Queues a render.
   /**
@@ -365,7 +372,9 @@ protected:
   float time_update_timer_;
   float frame_update_timer_;
 
-  rviz_common::selection::SelectionManagerIface * selection_manager_;
+  std::shared_ptr<rviz_common::interaction::HandlerManagerIface> handler_manager_;
+  std::shared_ptr<rviz_common::interaction::SelectionManagerIface> selection_manager_;
+  std::shared_ptr<rviz_common::interaction::ViewPickerIface> view_picker_;
 
   uint32_t render_requested_;
   uint64_t frame_count_;

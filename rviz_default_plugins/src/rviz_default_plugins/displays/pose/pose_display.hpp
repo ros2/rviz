@@ -36,7 +36,7 @@
 #include "geometry_msgs/msg/pose_stamped.hpp"
 
 #include "rviz_common/ros_topic_display.hpp"
-#include "rviz_common/selection/forwards.hpp"
+#include "rviz_common/interaction/forwards.hpp"
 
 namespace rviz_rendering
 {

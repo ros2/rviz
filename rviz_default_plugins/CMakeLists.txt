@@ -112,6 +112,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/robot/robot_element_base_class.cpp
   src/rviz_default_plugins/robot/tf_link_updater.cpp
   src/rviz_default_plugins/tools/move/move_tool.cpp
+  src/rviz_default_plugins/tools/select/selection_tool.cpp
   src/rviz_default_plugins/view_controllers/orbit/orbit_view_controller.cpp
 )
 
@@ -360,6 +361,25 @@ if(BUILD_TESTING)
         ${TEST_INCLUDE_DIRS})
       target_link_libraries(path_display_test
         ${TEST_LINK_LIBRARIES})
+    endif()
+
+    ament_add_gmock(pointcloud_selection_handler_test
+      test/rviz_default_plugins/displays/pointcloud/point_cloud_selection_handler_test.cpp
+      test/rviz_default_plugins/displays/pointcloud/message_creators.cpp
+      test/rviz_default_plugins/displays/display_test_fixture.cpp
+      test/rviz_default_plugins/scene_graph_introspection.hpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET pointcloud_selection_handler_test)
+      target_include_directories(pointcloud_selection_handler_test PUBLIC ${TEST_INCLUDE_DIRS})
+      target_link_libraries(pointcloud_selection_handler_test ${TEST_LINK_LIBRARIES})
+    endif()
+
+    ament_add_gmock(selection_tool_test
+      test/rviz_default_plugins/tools/select/selection_tool_test.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET selection_tool_test)
+      target_include_directories(selection_tool_test PUBLIC ${TEST_INCLUDE_DIRS})
+      target_link_libraries(selection_tool_test ${TEST_LINK_LIBRARIES})
     endif()
   endif()
 endif()

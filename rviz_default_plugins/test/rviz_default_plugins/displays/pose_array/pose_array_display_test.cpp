@@ -66,10 +66,8 @@ using namespace ::testing;  // NOLINT
 class PoseArrayDisplayFixture : public DisplayTestFixture
 {
 public:
-  void SetUp() override
+  PoseArrayDisplayFixture()
   {
-    DisplayTestFixture::SetUp();
-
     display_ = std::make_unique<rviz_default_plugins::displays::PoseArrayDisplay>(
       context_.get(),
       scene_manager_->getRootSceneNode()->createChildSceneNode());
@@ -85,12 +83,6 @@ public:
     for (int i = 10; i < 12; i++) {
       axes_properties_.push_back(display_->childAt(i));
     }
-  }
-
-  void TearDown() override
-  {
-    display_.reset();
-    DisplayTestFixture::TearDown();
   }
 
   std::unique_ptr<rviz_default_plugins::displays::PoseArrayDisplay> display_;

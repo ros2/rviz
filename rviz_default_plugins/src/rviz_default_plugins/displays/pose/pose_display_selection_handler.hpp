@@ -31,9 +31,11 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__POSE__POSE_DISPLAY_SELECTION_HANDLER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__POSE__POSE_DISPLAY_SELECTION_HANDLER_HPP_
 
+#include <memory>
+
 #include "geometry_msgs/msg/pose_stamped.hpp"
 
-#include "rviz_common/selection/selection_handler.hpp"
+#include "rviz_common/interaction/selection_handler.hpp"
 #include "pose_display.hpp"
 
 namespace rviz_common
@@ -51,25 +53,28 @@ namespace rviz_default_plugins
 namespace displays
 {
 
-class PoseDisplaySelectionHandler : public rviz_common::selection::SelectionHandler
+class PoseDisplaySelectionHandler : public rviz_common::interaction::SelectionHandler
 {
 public:
-  PoseDisplaySelectionHandler(PoseDisplay * display, rviz_common::DisplayContext * context);
-
   void createProperties(
-    const rviz_common::selection::Picked & obj,
+    const rviz_common::interaction::Picked & obj,
     rviz_common::properties::Property * parent_property) override;
 
-  void getAABBs(
-    const rviz_common::selection::Picked & obj, rviz_common::selection::V_AABB & aabbs) override;
+  rviz_common::interaction::V_AABB getAABBs(const rviz_common::interaction::Picked & obj) override;
 
   void setMessage(geometry_msgs::msg::PoseStamped::ConstSharedPtr message);
 
 private:
+  PoseDisplaySelectionHandler(PoseDisplay * display, rviz_common::DisplayContext * context);
+
   PoseDisplay * display_;
   rviz_common::properties::StringProperty * frame_property_;
   rviz_common::properties::VectorProperty * position_property_;
   rviz_common::properties::QuaternionProperty * orientation_property_;
+
+  template<typename T, typename ... Args>
+  friend typename std::shared_ptr<T>
+  rviz_common::interaction::createSelectionHandler(Args ... arguments);
 };
 
 }  // namespace displays

@@ -53,6 +53,7 @@
 #include "rviz_common/display.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
+#include "rviz_common/interaction/selection_manager.hpp"
 #include "rviz_rendering/objects/point_cloud.hpp"
 #include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/properties/enum_property.hpp"
@@ -87,6 +88,20 @@ void CloudInfo::clear()
   if (scene_node_) {
     manager_->destroySceneNode(scene_node_);
     scene_node_ = nullptr;
+  }
+}
+
+void CloudInfo::setSelectable(
+  bool selectable, float selection_box_size, rviz_common::DisplayContext * context)
+{
+  if (selectable) {
+    selection_handler_ = rviz_common::interaction::createSelectionHandler
+      <PointCloudSelectionHandler>(selection_box_size, this, context);
+    cloud_->setPickColor(rviz_common::interaction::SelectionManager::handleToColor(
+        selection_handler_->getHandle()));
+  } else {
+    selection_handler_.reset();
+    cloud_->setPickColor(Ogre::ColourValue(0.0f, 0.0f, 0.0f, 0.0f));
   }
 }
 
@@ -279,19 +294,8 @@ void PointCloudCommon::updateSelectable()
 {
   bool selectable = selectable_property_->getBool();
 
-  if (selectable) {
-    for (auto const & cloud_info : cloud_infos_) {
-      cloud_info->selection_handler_.reset(
-        new PointCloudSelectionHandler(getSelectionBoxSize(), cloud_info.get(), context_));
-      cloud_info->cloud_->setPickColor(
-        rviz_common::selection::SelectionManager::handleToColor(
-          cloud_info->selection_handler_->getHandle()));
-    }
-  } else {
-    for (auto const & cloud_info : cloud_infos_) {
-      cloud_info->selection_handler_.reset();
-      cloud_info->cloud_->setPickColor(Ogre::ColourValue(0.0f, 0.0f, 0.0f, 0.0f));
-    }
+  for (auto const & cloud_info : cloud_infos_) {
+    cloud_info->setSelectable(selectable, getSelectionBoxSize(), context_);
   }
 }
 
@@ -344,6 +348,7 @@ void PointCloudCommon::update(float wall_dt, float ros_dt)
   (void) wall_dt;
   (void) ros_dt;
   auto mode = static_cast<rviz_rendering::PointCloud::RenderMode>(style_property_->getOptionInt());
+  bool selectable = selectable_property_->getBool();
 
   float point_decay_time = decay_time_property_->getFloat();
   if (needs_retransform_) {
@@ -429,8 +434,7 @@ void PointCloudCommon::update(float wall_dt, float ros_dt)
 
         cloud_info->scene_node_->attachObject(cloud_info->cloud_.get());
 
-        cloud_info->selection_handler_.reset(new PointCloudSelectionHandler(getSelectionBoxSize(),
-          cloud_info.get(), context_));
+        cloud_info->setSelectable(selectable, getSelectionBoxSize(), context_);
 
         cloud_infos_.push_back(*it);
       }

@@ -39,13 +39,19 @@
 #include "rviz_common/panel_dock_widget.hpp"
 #include "rviz_common/viewport_mouse_event.hpp"
 #include "rviz_common/window_manager_interface.hpp"
+#include "rviz_common/interaction/handler_manager_iface.hpp"
+#include "rviz_common/interaction/selection_manager_iface.hpp"
 
 class MockDisplayContext : public rviz_common::DisplayContext
 {
 public:
   MOCK_CONST_METHOD0(getSceneManager, Ogre::SceneManager * ());
   MOCK_CONST_METHOD0(getWindowManager, rviz_common::WindowManagerInterface * ());
-  MOCK_CONST_METHOD0(getSelectionManager, rviz_common::selection::SelectionManagerIface * ());
+  MOCK_CONST_METHOD0(
+    getHandlerManager, std::shared_ptr<rviz_common::interaction::HandlerManagerIface>());
+  MOCK_CONST_METHOD0(
+    getSelectionManager, std::shared_ptr<rviz_common::interaction::SelectionManagerIface>());
+  MOCK_CONST_METHOD0(getViewPicker, std::shared_ptr<rviz_common::interaction::ViewPickerIface>());
   MOCK_CONST_METHOD0(getFrameManager, rviz_common::FrameManagerIface * ());
   MOCK_CONST_METHOD0(getFixedFrame, QString());
   MOCK_CONST_METHOD0(getFrameCount, uint64_t());
@@ -68,6 +74,9 @@ public:
   MOCK_METHOD0(getClock, std::shared_ptr<rclcpp::Clock>());
 
   MOCK_METHOD0(queueRender, void());
+
+  MOCK_METHOD0(lockRender, void());
+  MOCK_METHOD0(unlockRender, void());
 };
 
 #endif  // RVIZ_DEFAULT_PLUGINS__MOCK_DISPLAY_CONTEXT_HPP_

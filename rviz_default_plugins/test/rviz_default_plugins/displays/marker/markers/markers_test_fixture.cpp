@@ -34,15 +34,7 @@
 #include <memory>
 #include <string>
 
-void MarkersTestFixture::SetUp()
+MarkersTestFixture::MarkersTestFixture()
 {
-  DisplayTestFixture::SetUp();
   marker_display_ = std::make_shared<rviz_default_plugins::displays::MarkerDisplay>();
-}
-
-void MarkersTestFixture::TearDown()
-{
-  marker_display_.reset();
-  marker_.reset();
-  DisplayTestFixture::TearDown();
 }

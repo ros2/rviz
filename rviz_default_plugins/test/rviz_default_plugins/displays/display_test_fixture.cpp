@@ -43,11 +43,12 @@ void DisplayTestFixture::SetUpTestCase()
   scene_manager_ = Ogre::Root::getSingletonPtr()->createSceneManager();
 }
 
-void DisplayTestFixture::SetUp()
+DisplayTestFixture::DisplayTestFixture()
 {
   context_ = std::make_shared<testing::NiceMock<MockDisplayContext>>();
   frame_manager_ = std::make_shared<testing::NiceMock<MockFrameManager>>();
   selection_manager_ = std::make_shared<testing::NiceMock<MockSelectionManager>>();
+  handler_manager_ = std::make_shared<testing::NiceMock<MockHandlerManager>>();
   clock_ = std::make_shared<rclcpp::Clock>();
 
   EXPECT_CALL(*frame_manager_, getFixedFrame()).WillRepeatedly(testing::ReturnRef(fixed_frame));
@@ -56,10 +57,12 @@ void DisplayTestFixture::SetUp()
   EXPECT_CALL(*context_, getSceneManager()).WillRepeatedly(testing::Return(scene_manager_));
   EXPECT_CALL(*context_, getFrameManager()).WillRepeatedly(testing::Return(frame_manager_.get()));
   EXPECT_CALL(*context_, getSelectionManager()).WillRepeatedly(
-    testing::Return(selection_manager_.get()));
+    testing::Return(selection_manager_));
+  EXPECT_CALL(*context_, getHandlerManager()).WillRepeatedly(
+    testing::Return(handler_manager_));
 }
 
-void DisplayTestFixture::TearDown()
+DisplayTestFixture::~DisplayTestFixture()
 {
   scene_manager_->getRootSceneNode()->removeAndDestroyAllChildren();
 }

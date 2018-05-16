@@ -32,6 +32,8 @@
 
 #include <vector>
 
+#include "rviz_common/interaction/selection_manager.hpp"
+
 #include "../marker_display.hpp"
 #include "marker_selection_handler.hpp"
 
@@ -67,10 +69,10 @@ void PointsMarker::onNewMessage(
     points_ = new rviz_rendering::PointCloud();
     scene_node_->attachObject(points_);
 
-    handler_.reset(
-      new MarkerSelectionHandler(this, MarkerID(new_message->ns, new_message->id), context_));
+    handler_ = rviz_common::interaction::createSelectionHandler<MarkerSelectionHandler>(
+      this, MarkerID(new_message->ns, new_message->id), context_);
     points_->setPickColor(
-      rviz_common::selection::SelectionManager::handleToColor(handler_->getHandle()));
+      rviz_common::interaction::SelectionManager::handleToColor(handler_->getHandle()));
   }
 
   Ogre::Vector3 pose, scale;

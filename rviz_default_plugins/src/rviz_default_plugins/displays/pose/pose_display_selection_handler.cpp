@@ -50,7 +50,7 @@
 #include "rviz_rendering/objects/axes.hpp"
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/shape.hpp"
-#include "rviz_common/selection/selection_handler.hpp"
+#include "rviz_common/interaction/selection_handler.hpp"
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/properties/string_property.hpp"
 #include "rviz_common/properties/quaternion_property.hpp"
@@ -73,7 +73,7 @@ PoseDisplaySelectionHandler::PoseDisplaySelectionHandler(
 {}
 
 void PoseDisplaySelectionHandler::createProperties(
-  const rviz_common::selection::Picked & obj,
+  const rviz_common::interaction::Picked & obj,
   rviz_common::properties::Property * parent_property)
 {
   (void) obj;
@@ -93,20 +93,29 @@ void PoseDisplaySelectionHandler::createProperties(
   orientation_property_->setReadOnly(true);
 }
 
-void PoseDisplaySelectionHandler::getAABBs(
-  const rviz_common::selection::Picked & obj, rviz_common::selection::V_AABB & aabbs)
+rviz_common::interaction::V_AABB PoseDisplaySelectionHandler::getAABBs(
+  const rviz_common::interaction::Picked & obj)
 {
   (void) obj;
+  rviz_common::interaction::V_AABB aabbs;
   if (display_->pose_valid_) {
+    /** with 'derive_world_bounding_box' set to 'true', the WorldBoundingBox is derived each time.
+        setting it to 'false' results in the wire box not properly following the pose arrow, but it
+        would be less computationally expensive.
+     */
+    bool derive_world_bounding_box = true;
     if (display_->shape_property_->getOptionInt() == PoseDisplay::Arrow) {
-      aabbs.push_back(display_->arrow_->getHead()->getEntity()->getWorldBoundingBox());
-      aabbs.push_back(display_->arrow_->getShaft()->getEntity()->getWorldBoundingBox());
+      aabbs.push_back(
+        display_->arrow_->getHead()->getEntity()->getWorldBoundingBox(derive_world_bounding_box));
+      aabbs.push_back(
+        display_->arrow_->getShaft()->getEntity()->getWorldBoundingBox(derive_world_bounding_box));
     } else {
       aabbs.push_back(display_->axes_->getXShape()->getEntity()->getWorldBoundingBox());
       aabbs.push_back(display_->axes_->getYShape()->getEntity()->getWorldBoundingBox());
       aabbs.push_back(display_->axes_->getZShape()->getEntity()->getWorldBoundingBox());
     }
   }
+  return aabbs;
 }
 
 void PoseDisplaySelectionHandler::setMessage(

@@ -61,16 +61,9 @@ using namespace ::testing;  // NOLINT
 class PathTestFixture : public DisplayTestFixture
 {
 public:
-  void SetUp() override
+  PathTestFixture()
   {
-    DisplayTestFixture::SetUp();
     path_display_ = std::make_shared<rviz_default_plugins::displays::PathDisplay>(context_.get());
-  }
-
-  void TearDown() override
-  {
-    path_display_.reset();
-    DisplayTestFixture::TearDown();
   }
 
   std::shared_ptr<rviz_default_plugins::displays::PathDisplay> path_display_;

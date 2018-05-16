@@ -56,7 +56,6 @@
 
 #include "marker_selection_handler.hpp"
 #include "../marker_display.hpp"
-#include "rviz_common/selection/selection_manager.hpp"
 #include "rviz_common/properties/status_property.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
 #include "rviz_common/display_context.hpp"
@@ -161,9 +160,8 @@ void TriangleListMarker::initializeManualObject(
   material_->setReceiveShadows(false);
   material_->getTechnique(0)->setLightingEnabled(true);
   material_->setCullingMode(Ogre::CULL_NONE);
-
-  handler_.reset(new MarkerSelectionHandler(this, MarkerID(new_message->ns, new_message->id),
-    context_));
+  handler_ = rviz_common::interaction::createSelectionHandler<MarkerSelectionHandler>(
+    this, MarkerID(new_message->ns, new_message->id), context_);
 }
 
 void TriangleListMarker::updateManualObject(

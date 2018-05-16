@@ -27,30 +27,30 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "selection_panel.hpp"
+
 #include <QVBoxLayout>
 
 #include "rviz_common/properties/property_tree_widget.hpp"
-#include "rviz_common/selection/selection_manager.hpp"
-#include "rviz_common/visualization_manager.hpp"
+#include "rviz_common/interaction/selection_manager.hpp"
+#include "visualization_manager.hpp"
 
-#include "rviz_common/selection_panel.hpp"
-
-namespace rviz
+namespace rviz_common
 {
 
 SelectionPanel::SelectionPanel(QWidget * parent)
-: Panel(parent)
+: rviz_common::Panel(parent)
 {
-  QVBoxLayout * layout = new QVBoxLayout();
+  auto layout = new QVBoxLayout();
   layout->setContentsMargins(0, 0, 0, 0);
-  tree_widget_ = new PropertyTreeWidget();
+  tree_widget_ = new properties::PropertyTreeWidget();
   layout->addWidget(tree_widget_);
   setLayout(layout);
 }
 
 void SelectionPanel::onInitialize()
 {
-  tree_widget_->setModel(vis_manager_->getSelectionManager()->getPropertyModel() );
+  tree_widget_->setModel(vis_manager_->getSelectionManager()->getPropertyModel());
 }
 
-}  // namespace rviz
+}  // namespace rviz_common
