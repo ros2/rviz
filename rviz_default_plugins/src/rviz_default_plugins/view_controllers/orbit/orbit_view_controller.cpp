@@ -70,7 +70,7 @@ using rviz_common::properties::VectorProperty;
 using rviz_rendering::Shape;
 
 OrbitViewController::OrbitViewController()
-: dragging_(false)
+: focal_shape_(nullptr), dragging_(false)
 {
   distance_property_ = new FloatProperty("Distance", DISTANCE_START,
       "Distance from the focal point.", this);
@@ -225,7 +225,7 @@ void OrbitViewController::mimic(rviz_common::ViewController * source_view)
   Ogre::Vector3 position = camera_parent->getPosition();
   Ogre::Quaternion orientation = camera_parent->getOrientation();
 
-  if (source_view->getClassId() == "rviz_default_plugin/Orbit") {
+  if (source_view->getClassId() == "rviz_default_plugins/Orbit") {
     // If I'm initializing from another instance of this same class, get the distance exactly.
     distance_property_->setFloat(source_view->subProp("Distance")->getValue().toFloat());
     updateFocalShapeSize();
