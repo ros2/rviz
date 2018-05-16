@@ -49,58 +49,42 @@ CameraDisplayPageObject::CameraDisplayPageObject(
 void CameraDisplayPageObject::setDisplayVisibilityInRenderWindow(
   QString display_name, int relative_row_index, bool display_visibility)
 {
-  int property_row_index = 1;
-
-  setBool(display_name, display_visibility, property_row_index, relative_row_index);
+  setBool("Visibility", display_visibility, relative_row_index, display_name);
 }
 
 void CameraDisplayPageObject::setTopic(QString topic)
 {
-  int property_row_index = 2;
-
-  setComboBox("Topic", topic, property_row_index);
+  setComboBox("Topic", topic);
 }
 
 void CameraDisplayPageObject::setUnreliable(bool unreliable)
 {
-  int property_row_index = 3;
-
-  setBool("Unreliable", unreliable, property_row_index);
+  setBool("Unreliable", unreliable);
 }
 
 void CameraDisplayPageObject::setQueueSize(QString queue_size)
 {
-  int property_row_index = 4;
-
-  setString("Queue Size", queue_size, property_row_index);
+  setString("Queue Size", queue_size);
 }
 
 void CameraDisplayPageObject::setImageRendering(QString image_rendering)
 {
-  int property_row_index = 5;
-
-  setComboBox("Image Rendering", image_rendering, property_row_index);
+  setComboBox("Image Rendering", image_rendering);
 }
 
 void CameraDisplayPageObject::setOverlayAlpha(QString overlay_alpha)
 {
-  int property_row_index = 6;
-
-  setString("Overlay Alpha", overlay_alpha, property_row_index);
+  setString("Overlay Alpha", overlay_alpha);
 }
 
 void CameraDisplayPageObject::setZoomFacor(QString zoom_factor)
 {
-  int property_row_index = 7;
-
-  setString("Zoom Factor", zoom_factor, property_row_index);
+  setString("Zoom Factor", zoom_factor);
 }
 
 void CameraDisplayPageObject::setVisibility(bool visibility)
 {
-  int property_row_index = 1;
-
-  setBool("Visibility", visibility, property_row_index);
+  setBool("Visibility", visibility);
 }
 
 void CameraDisplayPageObject::setRenderWindow()

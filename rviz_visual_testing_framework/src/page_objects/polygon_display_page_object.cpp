@@ -41,31 +41,23 @@ PolygonDisplayPageObject::PolygonDisplayPageObject(
 
 void PolygonDisplayPageObject::setTopic(QString topic)
 {
-  int property_row_index = 1;
-
-  setString("Topic", topic, property_row_index);
+  setString("Topic", topic);
 }
 
 void PolygonDisplayPageObject::setUnreliable(bool unreliable)
 {
-  int property_row_index = 2;
-
-  setBool("Unreliable", unreliable, property_row_index);
+  setBool("Unreliable", unreliable);
 }
 
 void PolygonDisplayPageObject::setColor(int red, int green, int blue)
 {
-  int property_row_index = 3;
-
   QString color_code = QString::fromStdString(
     std::to_string(red) + "; " + std::to_string(green) + "; " + std::to_string(blue));
 
-  setString("Color", color_code, property_row_index);
+  setString("Color", color_code);
 }
 
 void PolygonDisplayPageObject::setAlpha(QString alpha)
 {
-  int property_row_index = 4;
-
-  setString("Alpha", alpha, property_row_index);
+  setString("Alpha", alpha);
 }
