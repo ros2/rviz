@@ -44,8 +44,7 @@ namespace rviz_rendering
 {
 
 RVIZ_RENDERING_PUBLIC
-void buildScaledOrthoMatrix(
-  Ogre::Matrix4 & proj,
+Ogre::Matrix4 buildScaledOrthoMatrix(
   float left,
   float right,
   float bottom,

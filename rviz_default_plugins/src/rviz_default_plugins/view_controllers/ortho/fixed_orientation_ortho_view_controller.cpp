@@ -198,9 +198,8 @@ void FixedOrientationOrthoViewController::updateCamera()
   float height = camera_->getViewport()->getActualHeight();
 
   float scale = scale_property_->getFloat();
-  Ogre::Matrix4 proj;
-  rviz_rendering::buildScaledOrthoMatrix(
-    proj, -width / scale / 2, width / scale / 2, -height / scale / 2, height / scale / 2,
+  Ogre::Matrix4 proj = rviz_rendering::buildScaledOrthoMatrix(
+    -width / scale / 2, width / scale / 2, -height / scale / 2, height / scale / 2,
     camera_->getNearClipDistance(), camera_->getFarClipDistance());
   camera_->setCustomProjectionMatrix(true, proj);
 
