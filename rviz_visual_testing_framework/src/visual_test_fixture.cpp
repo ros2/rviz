@@ -154,7 +154,7 @@ void VisualTestFixture::setNameIfEmpty(Ogre::String & name)
   }
 }
 
-void VisualTestFixture::wait(int milliseconds_to_wait)
+void VisualTestFixture::wait(size_t milliseconds_to_wait)
 {
   executor_->wait(milliseconds_to_wait);
 }

@@ -158,7 +158,7 @@ public:
    * and don't appear on screen fast enough.
    * @param milliseconds_to_wait number of milliseconds to wait
    */
-  void wait(int milliseconds_to_wait);
+  void wait(size_t milliseconds_to_wait);
 
   // Variables need to be public for internal reasons, but it should rarely be necessary to use
   // them in tests.
