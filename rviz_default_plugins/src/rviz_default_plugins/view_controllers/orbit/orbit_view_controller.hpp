@@ -56,6 +56,22 @@ namespace rviz_default_plugins
 namespace view_controllers
 {
 
+struct ViewConfig
+{
+  ViewConfig(float d, float y, float p)
+  : distance_(d), yaw_(y), pitch_(p) {}
+  void setConfig(float d, float y, float p)
+  {
+    distance_ = d;
+    yaw_ = y;
+    pitch_ = p;
+  }
+
+  float distance_;
+  float yaw_;
+  float pitch_;
+};
+
 /// An orbital camera, controlled by yaw, pitch, distance, and focal point
 /**
  * This camera is based on the equation of a sphere in spherical coordinates:
@@ -117,6 +133,8 @@ public:
    */
   void mimic(ViewController * source_view) override;
 
+  rviz_common::FocalPointStatus getFocalPointStatus() override;
+
 protected:
   void update(float dt, float ros_dt) override;
 
@@ -151,6 +169,8 @@ protected:
   rviz_rendering::Shape * focal_shape_;
 
   bool dragging_;
+
+  static ViewConfig view_config_;
 };
 
 }  // namespace view_controllers

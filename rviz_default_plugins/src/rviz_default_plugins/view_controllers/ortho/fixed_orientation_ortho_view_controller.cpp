@@ -153,17 +153,24 @@ void FixedOrientationOrthoViewController::mimic(ViewController * source_view)
 {
   FramePositionTrackingViewController::mimic(source_view);
 
-  if (FixedOrientationOrthoViewController * source_ortho =
-    qobject_cast<FixedOrientationOrthoViewController *>(source_view))
-  {
+  auto previous_focal_point =
+    qobject_cast<FramePositionTrackingViewController *>(source_view)->getFocalPointStatus();
+
+  if (source_view->getClassId() == "rviz_default_plugins/TopDownOrtho") {
+    auto source_ortho = qobject_cast<FixedOrientationOrthoViewController *>(source_view);
     scale_property_->setFloat(source_ortho->scale_property_->getFloat());
     angle_property_->setFloat(source_ortho->angle_property_->getFloat());
     x_property_->setFloat(source_ortho->x_property_->getFloat());
     y_property_->setFloat(source_ortho->y_property_->getFloat());
+  } else if (previous_focal_point.exists_) {
+    // if the previous view has a focal point, the camera is placed above it (at z = 500).
+    setPosition(previous_focal_point.value_);
   } else {
+    // if the previous view does not have a focal point, the camera is placed at (x, y, 500),
+    // where x and y are first two coordinates of the previous camera position.
     Ogre::Camera * source_camera = source_view->getCamera();
     // TODO(botteroa-si): getPosition() is deprecated. Make sure which method we want
-    // between getRealPosition() and getDerivedPosition()
+    // between getRealPosition() and getDerivedPosition() (or a composition of them).
 //    setPosition(source_camera->getPosition());
     setPosition(source_camera->getRealPosition());
   }
