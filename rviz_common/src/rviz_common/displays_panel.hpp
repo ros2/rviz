@@ -36,8 +36,8 @@
 #include <string>
 #include <vector>
 
-#include "./panel.hpp"
 #include "rviz_common/config.hpp"
+#include "rviz_common/panel.hpp"
 
 class QPushButton;
 

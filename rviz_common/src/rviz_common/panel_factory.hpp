@@ -33,8 +33,8 @@
 
 #include <string>
 
-#include "./panel.hpp"
 #include "rviz_common/factory/pluginlib_factory.hpp"
+#include "rviz_common/panel.hpp"
 #include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common

@@ -33,7 +33,7 @@
 
 #include <memory>
 
-#include "./panel.hpp"
+#include "rviz_common/panel.hpp"
 
 namespace rviz_common
 {
