@@ -37,6 +37,7 @@
 
 void VisualTestFixture::SetUpTestCase()
 {
+  QLocale::setDefault(QLocale::English);
   int argc = 0;
   visualizer_app_ = new rviz_common::VisualizerApp(
     std::make_unique<rviz_common::ros_integration::RosClientAbstraction>());
@@ -44,8 +45,14 @@ void VisualTestFixture::SetUpTestCase()
 
   visualizer_app_->setApp(qapp_);
   visualizer_app_->init(0, nullptr);
-  visualizer_app_->loadConfig(QDir::toNativeSeparators(
-      QString::fromStdString(std::string(_SRC_DIR_PATH) + "/visual_tests_default_config.rviz")));
+  if (VisualTest::generateReferenceImages()) {
+    visualizer_app_->loadConfig(QDir::toNativeSeparators(
+        QString::fromStdString(std::string(_SRC_DIR_PATH) + "/visual_tests_default_config.rviz")));
+  } else {
+    visualizer_app_->loadConfig(QDir::toNativeSeparators(
+        QString::fromStdString(std::string(_SRC_DIR_PATH) +
+        "/visual_tests_test_image_config.rviz")));
+  }
 }
 
 void VisualTestFixture::TearDown()
@@ -66,9 +73,9 @@ void VisualTestFixture::TearDownTestCase()
   std::string test_images_path = QDir::toNativeSeparators(
     QString::fromStdString(build_directory_path_ + "/test_images/")).toStdString();
 
-  std::cout << "\n[   INFO   ] The reference images are located in: " <<
+  std::cout << "[   INFO   ] The reference images are located in: " <<
     reference_images_path << "\n[   INFO   ] The test images are located in: " <<
-    test_images_path << "\n\n";
+    test_images_path << "\n";
 }
 
 void VisualTestFixture::setCamPose(Ogre::Vector3 camera_pose)
@@ -79,6 +86,14 @@ void VisualTestFixture::setCamPose(Ogre::Vector3 camera_pose)
 void VisualTestFixture::setCamLookAt(Ogre::Vector3 camera_look_at_vector)
 {
   visual_test_->setCamLookAt(camera_look_at_vector);
+}
+
+void VisualTestFixture::updateCamWithDelay(Ogre::Vector3 new_pose, Ogre::Vector3 new_look_at)
+{
+  executor_->queueAction([this, new_pose, new_look_at] {
+      visual_test_->setCamPose(new_pose);
+      visual_test_->setCamLookAt(new_look_at);
+    });
 }
 
 void VisualTestFixture::setTesterThreshold(double threshold)
@@ -137,6 +152,11 @@ void VisualTestFixture::setNameIfEmpty(Ogre::String & name)
   if (name.empty()) {
     name = test_name_;
   }
+}
+
+void VisualTestFixture::wait(size_t milliseconds_to_wait)
+{
+  executor_->wait(milliseconds_to_wait);
 }
 
 QApplication * VisualTestFixture::qapp_ = nullptr;

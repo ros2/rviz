@@ -33,13 +33,8 @@
 #include <string>
 #include <vector>
 
-PageObjectWithWindow::PageObjectWithWindow(
-  int display_id,
-  int display_category,
-  QString display_name,
-  std::shared_ptr<Executor> executor,
-  std::shared_ptr<std::vector<int>> all_displays_ids)
-: BasePageObject(display_id, display_category, display_name, executor, all_displays_ids),
+PageObjectWithWindow::PageObjectWithWindow(int display_category, QString display_name)
+: BasePageObject(display_category, display_name),
   render_window_(nullptr),
   display_with_window_index_(0)
 {}

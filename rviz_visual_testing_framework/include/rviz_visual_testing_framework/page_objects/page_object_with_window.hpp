@@ -41,16 +41,19 @@
 class PageObjectWithWindow : public BasePageObject
 {
 public:
-  PageObjectWithWindow(
-    int display_id,
-    int display_category,
-    QString display_name,
-    std::shared_ptr<Executor> executor,
-    std::shared_ptr<std::vector<int>> all_displays_ids);
+  PageObjectWithWindow(int display_category, QString display_name);
 
+  /// Used internally to make a screenshot.
   void captureDisplayRenderWindow(std::string image_name);
 
 protected:
+  /**
+   * Abstract function: Implement to capture the correct render window and save it to the member
+   * variable render_window_. This will then be used to make a screenshot.
+   *
+   * Use test_helpers::findWindow(window_name) to find the corresponding render window (note that
+   * the window needs to have its Qt object_name set to the name of the window).
+   */
   virtual void setRenderWindow() = 0;
 
   rviz_rendering::RenderWindow * render_window_;

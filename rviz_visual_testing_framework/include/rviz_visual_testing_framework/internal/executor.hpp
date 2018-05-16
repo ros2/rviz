@@ -39,6 +39,7 @@ class Executor : public QObject
 public:
   Executor();
   void queueAction(std::function<void(void)> action);
+  void wait(size_t milliseconds_to_wait);
 
 private:
   void increaseTotalDelay();

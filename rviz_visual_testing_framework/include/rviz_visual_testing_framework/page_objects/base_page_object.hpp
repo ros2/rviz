@@ -44,10 +44,19 @@
 class BasePageObject : public QObject
 {
 public:
-  BasePageObject(
+  /**
+   * Constructor of a BasePageObject.
+   * N.B: When deriving from this class, you need to specify a zero argument constructor setting
+   * the parameters in this constructor explicitly so that the "addDisplay" method in
+   * VisualTestVixture can work correctly.
+   * @param display_category The display category of this display. This is the number of the
+   * folder in the "Add Display" dialog (0 for rviz_default_plugins)
+   * @param display_name_ The name of the display in the "Add Display" dialog
+   */
+  BasePageObject(int display_category, QString display_name_);
+
+  void initialize(
     int display_id,
-    int display_category,
-    QString display_name_,
     std::shared_ptr<Executor> executor,
     std::shared_ptr<std::vector<int>> all_displays_ids);
 
@@ -57,10 +66,75 @@ public:
   void collapse();
 
 protected:
-  void setString(QString property_name, QString value_to_set, int property_row_index);
-  void setComboBox(QString property_name, QString value_to_set, int property_row_index);
+  int findPropertyRowIndexByName(
+    const QString & property_name, QModelIndex relative_display_index);
+
+  /**
+   * Set a String into a property in the displays panel
+   * @param main_property_name Name of the Property in the left row of the displays panel
+   * @param value_to_set String to set for this property
+   * @param sub_property_index Optional: Index of a subproperty to work on
+   * @param sub_property_name Optional: Name of said subproperty
+   */
+  void setString(
+    const QString & main_property_name,
+    const QString & value_to_set,
+    int sub_property_index = -1,
+    const QString & sub_property_name = "");
+
+  /**
+   * Set an item of a ComboBox property in the display panel
+   * @param main_property_name Name of the Property in the left row of the displays panel
+   * @param value_to_set String representation of the value to set for this property
+   */
+  void setComboBox(const QString & property_name, const QString & value_to_set);
+
+  /**
+   * Set a boolean property (represented by a checkbox in the display panel)
+   * @param main_property_name Name of the Property in the left row of the displays panel
+   * @param value_to_set Boolean value to set for this property
+   * @param sub_property_index Optional: Index of a subproperty to work on
+   * @param sub_property_name Optional: Name of said subproperty
+   */
   void setBool(
-    QString property_name, bool value_to_set, int property_row_index, int sub_property_index = -1);
+    const QString & main_property_name,
+    bool value_to_set,
+    int sub_property_index = -1,
+    const QString & sub_property_name = "");
+
+  /**
+  * Set an integer property in the display panel
+  * @param main_property_name Name of the Property in the left row of the displays panel
+  * @param value_to_set Integer to set for this property
+  */
+  void setInt(const QString & property_name, int value_to_set);
+
+  /**
+  * Set a float property in the display panel
+  * @param main_property_name Name of the Property in the left row of the displays panel
+  * @param value_to_set Float to set for this property. Locales will be handled by the visual test
+  */
+  void setFloat(
+    const QString & main_property_name,
+    float value_to_set,
+    int sub_property_index = -1,
+    const QString & sub_property_name = "");
+
+  /**
+  * Set a color property in the display panel
+  * @param main_property_name Name of the Property in the left row of the displays panel
+  * @param red, blue, green Color values in rgb (between 0 and 255) to set for this property
+  */
+  void setColorCode(const QString & property_name, int red, int green, int blue);
+
+  /**
+  * Set a vector property in the display panel
+  * @param main_property_name Name of the Property in the left row of the displays panel
+  * @param x, y, z coordinates of the Vector to set into this property as float values
+  */
+  void setVector(const QString & property_name, float x, float y, float z);
+
+  void waitForFirstMessage();
 
   int display_id_;
   int display_category_;
@@ -68,24 +142,24 @@ protected:
   std::shared_ptr<Executor> executor_;
 
 private:
-  bool checkPropertyName(
-    QString expected_property_name, int property_row_index, QModelIndex display_index);
-  void failIfPropertyIsAbsent(
-    QString property_name, int property_row_index, QModelIndex parent_index);
+  void failForAbsentProperty(const QString & property_name);
   void clickOnTreeItem(QModelIndex item_index) const;
   void doubleClickOnTreeItem(QModelIndex item_index) const;
+
   QModelIndex getRelativeIndexAndExpandDisplay();
   QModelIndex getValueToChangeIndex(
     int property_row_index, const QModelIndex & parent_index) const;
   QModelIndex getPropertyToChangeIndex(
     int property_row_index, const QModelIndex & parent_index) const;
+
   QModelIndex getMainPropertyIndex(
-    QString property_name, int property_row_index, QModelIndex display_index);
+    const QString & property_name, int property_row_index, QModelIndex display_index);
   QModelIndex getSubPropertyIndex(
     QString property_name,
     int main_property_index,
     int sub_property_index,
     QModelIndex display_index);
+
   void setExpanded(QModelIndex display_index, bool expanded);
 
   int default_first_display_index_;

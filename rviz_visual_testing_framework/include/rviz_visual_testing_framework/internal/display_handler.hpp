@@ -45,8 +45,8 @@ public:
   template<typename T>
   std::shared_ptr<T> addDisplay()
   {
-    auto page_object =
-      std::make_shared<T>(absolute_displays_number_, executor_, all_display_ids_vector_);
+    auto page_object = std::make_shared<T>();
+    page_object->initialize(absolute_displays_number_, executor_, all_display_ids_vector_);
 
     openAddDisplayDialog();
     selectDisplayAndConfirm(page_object);

@@ -70,13 +70,14 @@ void ImageTester::assertImageIdentity(
   size_t test_image_width = test_image.getWidth();
   size_t test_image_height = test_image.getHeight();
 
-  if (reference_image_height != test_image_height || reference_image_width != test_image_width) {
-    test_image.resize(
-      static_cast<uint16_t>(reference_image_width), static_cast<uint16_t>(reference_image_height));
-    test_image.save(test_directory_path_ + image_name + ".png");
-    std::cout << "[   INFO:  ] The test image '" << image_name + ".png" << "' has been resized to "
-      "match the reference image size.\n\n";
+  if (reference_image_height * test_image_width < test_image_height * reference_image_width) {
+    GTEST_FAIL() << "[  ERROR   ] The test image '" << image_name + ".png" << "' is different "
+      "from the reference one. The test image is not wide enough and cannot be cropped correctly" <<
+      ".\n";
   }
+
+  resizeAndCropImage(image_name, test_image, reference_image_width,
+    reference_image_height, test_image_width, test_image_height);
 
   size_t different_pixels_number = pixelDifference(
     reference_image, test_image, reference_image_width, reference_image_height);
@@ -87,17 +88,78 @@ void ImageTester::assertImageIdentity(
     computeImageDifference(test_image, reference_image, image_name);
     double mse_index = computeMseIndex(image_name, reference_image_width, reference_image_height);
     if (mse_index <= threshold_) {
-      std::cout << "\n[   INFO:   ] The test image '" << image_name + ".png" << "' is not "
+      std::cout << "[   INFO   ] The test image '" << image_name + ".png" << "' is not "
         "pixel-wise identical to its reference, but the MSE index is " << mse_index <<
-        ", which is not bigger than the set threshold of " << threshold_ << "\n\n";
+        ", which is not bigger than the set threshold of " << threshold_ << ".\n";
       SUCCEED();
     } else {
-      GTEST_FAIL() << "\n[  ERROR   ] The test image '" << image_name + ".png" << "' is different "
+      GTEST_FAIL() << "[  ERROR   ] The test image '" << image_name + ".png" << "' is different "
         "from the reference one. The image difference has been computed and saved in test_images"
         ". The MSE index is equal to " << mse_index << ", which is bigger than the set threshold "
         "of " << threshold_ << ".\n";
     }
   }
+}
+
+void ImageTester::resizeAndCropImage(
+  const Ogre::String & image_name,
+  Ogre::Image & test_image,
+  size_t reference_image_width,
+  size_t reference_image_height,
+  size_t test_image_width,
+  size_t test_image_height)
+{
+  resizeImageKeepingProportions(
+    test_image, reference_image_height, test_image_width, test_image_height);
+
+  cropImageWidthToFitReference(test_image, reference_image_width);
+
+  test_image.save(test_directory_path_ + image_name + ".png");
+}
+
+void ImageTester::resizeImageKeepingProportions(
+  Ogre::Image & test_image,
+  size_t reference_image_height,
+  size_t test_image_width,
+  size_t test_image_height) const
+{
+  if (reference_image_height != test_image_height) {
+    auto same_ratio_test_width = static_cast<uint64_t>(
+      floor(1.0 * test_image_width * reference_image_height / test_image_height));
+
+    test_image.resize(
+      static_cast<uint16_t>(same_ratio_test_width), static_cast<uint16_t>(reference_image_height));
+  }
+}
+
+void ImageTester::cropImageWidthToFitReference(
+  Ogre::Image & test_image, size_t reference_image_width)
+{
+  if (test_image.getWidth() != reference_image_width) {
+    // The test config is wider than the reference config s.th. the test image is always wider
+    assert(test_image.getWidth() >= reference_image_width);
+
+    auto crop_left = static_cast<uint64_t>(
+      floor(1.0 * (test_image.getWidth() - reference_image_width) / 2));
+    test_image = cropImage(test_image, crop_left, reference_image_width);
+  }
+}
+
+Ogre::Image ImageTester::cropImage(
+  const Ogre::Image & source, size_t offset, size_t cropped_width)
+{
+  Ogre::Image cropped_image = Ogre::Image(source);
+  cropped_image.resize(
+    static_cast<uint16_t>(cropped_width), static_cast<uint16_t>(source.getHeight()));
+
+  for (size_t row = 0; row < source.getHeight(); row++) {
+    for (size_t col = 0; col < cropped_width; col++) {
+      Ogre::ColourValue color = source.getColourAt(offset + col, row, 0);
+      cropped_image.setColourAt(color, col, row, 0);
+    }
+  }
+
+  return cropped_image;
 }
 
 size_t ImageTester::pixelDifference(

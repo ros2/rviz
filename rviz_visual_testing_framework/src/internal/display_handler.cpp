@@ -34,7 +34,7 @@
 
 #include <QTest>  // NOLINT
 
-#include "rviz_visual_testing_framework/internal/test_helpers.hpp"
+#include "rviz_visual_testing_framework/test_helpers.hpp"
 
 DisplayHandler::DisplayHandler(
   std::shared_ptr<Executor> executor, std::shared_ptr<std::vector<int>> all_displays_ids)
@@ -74,7 +74,7 @@ QPushButton * DisplayHandler::getDisplayActionButton(QString button_name)
     return display_panel->findChild<QPushButton *>(
       "DisplayPanel/RenameDisplayButton");
   } else {
-    std::cout << "\n[  ERROR  ] the button doesn't exists, make sure the name is correct!\n";
+    std::cout << "[  ERROR  ] the button doesn't exists, make sure the name is correct!\n";
     return nullptr;
   }
 }
@@ -147,7 +147,7 @@ void DisplayHandler::selectDisplayAndConfirm(std::shared_ptr<BasePageObject> pag
       auto items = add_by_name_tree->findItems(page_object->getDisplayName(), Qt::MatchRecursive);
 
       if (items.empty()) {
-        std::cout << "\n[  ERROR   ] The display with name '" <<
+        std::cout << "[  ERROR   ] The display with name '" <<
         page_object->getDisplayName().toStdString() << "' does not exist!\n";
         return;
       }

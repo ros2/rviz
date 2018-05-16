@@ -21,20 +21,20 @@ At this point the MSE (Mean Square Error) index is calculated using the differen
 If the computed MSE index is lower than this threshold, then the test will pass, otherwise it will fail.
 In both cases the user will be notified about the actual value of the MSE index. In the future, a more sophisticated comparison method may be provided.
 
-- If the dimensions of the test image are different from the ones of the reference picture, then the test screenshot will be resized to match the reference one before the comparison is performed.
-Either of the dimensions of the test screenshot could be both bigger or smaller than the reference one.
-The resizing, therefore, consists of a simple scaling which brings the test image to have the same dimensions as the reference picture.
+- The dimensions of the different render windows are not fixed by RViz' config. Therefore screenshots will be different of different systems. To compensate for this, test images have to be resized.
+This is done in the same way as RViz resizes render windows: Vertical resizing is done by resizing the image keeping proportions, while horizontal resizing is cropping the image equally on the left and right. This ensures maximum compatibility between the test image and the reference image.
+To ensure that such resizing is always possible, test images are a lot wider than reference images.
 
 
 ## Interface
 
 For RViz itself: the CMake flag `EnableVisualTests` is provided to enable visual tests:
 
-        ament test --cmake-args -DEnableVisualTests=TRUE
+        ament test --cmake-args -DEnableVisualTests=True
 
 This will make the tests run and the screenshots will be compared to the existing reference images.
 
-Furthermore, the reference images can be updated by running the tests after setting the environmental variable `GenerateReferenceImages` to `TRUE`.
+Furthermore, the reference images can be updated by running the tests after setting the environmental variable `GenerateReferenceImages` to `True`.
     
 **NB**: the `EnableVisualTests` flag value is automatically cached by CMake, meaning that if it's not specified, the value used for the last run will be used.
 
@@ -93,7 +93,7 @@ Specifically, the following code must be added:
 which has the following purpose:
 
 - the line `option(EnableVisualTests "decides whether or not enable the tests")` allows us to use the CMake flag `EnableVisualTests` to decide whether or not the visual tests will run.
-In particular, for this mechanism to work, we also need to wrap the `ament_add_gtest(visual_test [...])` block in an `if(EnableVisualTests STREQUAL "TRUE")` condition.
+In particular, for this mechanism to work, we also need to wrap the `ament_add_gtest(visual_test [...])` block in an `if(EnableVisualTests STREQUAL "True")` condition.
 
 - the second and third line are used to code the path to the build and source directories of the current rviz package. These paths are then passed to the testing framework via the test fixture.
 
@@ -105,7 +105,7 @@ Moreover, should it not already be present, the following should also be include
 
 ### How to write a test
 
-An example of how tests are written and how they work is provided by the `example_test.cpp` file in `rviz_visual_testing_framework/test` or in the [quick start guide](README.md).
+An example of how tests are written and how they work is provided by the `pointcloud_visual_test.cpp` file in `rviz_default_plugins/test/visual_tests` or in the [quick start guide](README.md).
 In the following the most important points with respect to the tests are summarized:
 
 * As said, the `VisualTestFixture` offers convenience methods to:

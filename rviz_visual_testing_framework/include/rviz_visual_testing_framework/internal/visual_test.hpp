@@ -64,15 +64,12 @@ public:
   /// Sets the look direction of the camera.
   void setCamLookAt(Ogre::Vector3 look_at_vector);
 
-  /** If the command line option VisualTests is set to TEST, it performs a pixel-by-pixel
-      comparison of the test image with name.png and the reference image name_ref.png. It will
-      fail if either the reference image does not exist or if the two images are not identical.
-  */
+  /// Performs the comparison between the reference image and the test image with name 'name.png'.
   void assertVisualIdentity(Ogre::String name);
 
-  /** Depending on the value of the command line option VisualTests, it either takes a screenshot
-      and saves it into [...]/rviz_ws/build/test_framework/reference_images as name_ref.png, or
-      into [...]/rviz_ws/build/test_framework/test_images as name.png.
+  /** Depending on the value of the environmental variable 'GenerateReferenceImages',
+      it either takes a screenshot and saves it into <workspace>/build/<rviz_package>/test_images
+      or into <workspace>/src/<rviz_package>/test/test_images.
   */
   void takeScreenShot(Ogre::String name, std::shared_ptr<PageObjectWithWindow> display);
 
@@ -80,6 +77,8 @@ public:
 
   /// Sets the MSE threshold in tester_, for the comparison.
   void setTesterThreshold(double threshold);
+
+  static bool generateReferenceImages();
 
 private:
   void takeReferenceScreenShot(
@@ -89,7 +88,6 @@ private:
   bool checkImageExists(std::string & name);
   bool directoriesDoNotExist();
   void reset();
-  bool generateReferenceImages();
 
   Ogre::Vector3 default_cam_pose_;
   Ogre::Vector3 default_cam_look_at_;

@@ -51,6 +51,15 @@ public:
   void setThreshold(double threshold);
 
 private:
+  void resizeAndCropImage(
+    const Ogre::String & image_name, Ogre::Image & test_image,
+    size_t reference_image_width, size_t reference_image_height, size_t test_image_width,
+    size_t test_image_height);
+  void cropImageWidthToFitReference(Ogre::Image & test_image, size_t reference_image_width);
+  void resizeImageKeepingProportions(
+    Ogre::Image & test_image, size_t reference_image_height,
+    size_t test_image_width, size_t test_image_height) const;
+  Ogre::Image cropImage(const Ogre::Image & source, size_t offset, size_t cropped_width);
   Ogre::Image loadImage(Ogre::String image_name, Ogre::String image_directory_path);
   size_t pixelDifference(
     Ogre::Image reference_image, Ogre::Image test_image, size_t width, size_t height);
