@@ -206,9 +206,9 @@ bool TriangleListMarker::fillManualObjectAndDetermineAlpha(
     std::vector<Ogre::Vector3> corners(3);
     for (size_t c = 0; c < 3; c++) {
       corners[c] = Ogre::Vector3(
-        static_cast<const Ogre::Real>(points[i + c].x),
-        static_cast<const Ogre::Real>(points[i + c].y),
-        static_cast<const Ogre::Real>(points[i + c].z));
+        static_cast<Ogre::Real>(points[i + c].x),
+        static_cast<Ogre::Real>(points[i + c].y),
+        static_cast<Ogre::Real>(points[i + c].z));
     }
     Ogre::Vector3 normal = (corners[1] - corners[0]).crossProduct(corners[2] - corners[0]);
     normal.normalise();
