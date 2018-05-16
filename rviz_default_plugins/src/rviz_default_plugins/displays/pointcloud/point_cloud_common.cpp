@@ -211,13 +211,14 @@ void PointCloudCommon::loadTransformer(
   transformers_[name] = info;
 }
 
-void PointCloudCommon::setAutoSize(bool auto_size)
-{
-  auto_size_ = auto_size;
-  for (auto const & cloud_info : cloud_infos_) {
-    cloud_info->cloud_->setAutoSize(auto_size);
-  }
-}
+// TODO(anhosi): check if still needed when migrating DepthCloud
+// void PointCloudCommon::setAutoSize(bool auto_size)
+// {
+//   auto_size_ = auto_size;
+//   for (auto const & cloud_info : cloud_infos_) {
+//     cloud_info->cloud_->setAutoSize(auto_size);
+//   }
+// }
 
 void PointCloudCommon::updateAlpha()
 {
@@ -662,11 +663,6 @@ void PointCloudCommon::addMessage(const sensor_msgs::msg::PointCloud::ConstShare
 void PointCloudCommon::addMessage(const sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud)
 {
   processMessage(cloud);
-}
-
-void PointCloudCommon::fixedFrameChanged()
-{
-  reset();
 }
 
 void PointCloudCommon::setXyzTransformerOptions(rviz_common::properties::EnumProperty * prop)

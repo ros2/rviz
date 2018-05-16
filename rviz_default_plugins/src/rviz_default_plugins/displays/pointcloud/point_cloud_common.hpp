@@ -140,7 +140,6 @@ public:
 
   void initialize(rviz_common::DisplayContext * context, Ogre::SceneNode * scene_node);
 
-  void fixedFrameChanged();
   void reset();
   void update(float wall_dt, float ros_dt);
 
@@ -160,7 +159,8 @@ public:
   rviz_common::properties::EnumProperty * style_property_;
   rviz_common::properties::FloatProperty * decay_time_property_;
 
-  void setAutoSize(bool auto_size);
+// TODO(anhosi): check if still needed when migrating DepthCloud
+//  void setAutoSize(bool auto_size);
 
 public Q_SLOTS:
   void causeRetransform();
