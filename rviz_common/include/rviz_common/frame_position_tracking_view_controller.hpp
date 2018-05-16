@@ -69,7 +69,7 @@ class RVIZ_COMMON_PUBLIC FramePositionTrackingViewController : public ViewContro
 public:
   FramePositionTrackingViewController();
 
-  virtual ~FramePositionTrackingViewController();
+  ~FramePositionTrackingViewController() override;
 
   /// Do subclass-specific initialization.
   /**
@@ -77,24 +77,24 @@ public:
    * and camera_ are set.
    * This version calls updateTargetSceneNode().
    */
-  virtual void onInitialize();
+  void onInitialize() override;
 
   /// Called by activate().
   /**
    * Override to implement view-specific activation.
    * This version calls updateTargetSceneNode().
    */
-  virtual void onActivate();
+  void onActivate() override;
 
-  virtual void update(float dt, float ros_dt);
+  void update(float dt, float ros_dt) override;
 
   /// Configure the settings of this view controller to give a similar view as the source_view.
   /**
    * source_view must return a valid Ogre::Camera* from getCamera().
    *
-   * This base class implementation does nothing.
+   * This implementation sets the target frame property.
    */
-  virtual void mimic(ViewController * source_view);
+  void mimic(ViewController * source_view) override;
 
   virtual FocalPointStatus getFocalPointStatus() {return {false, Ogre::Vector3(0, 0, 0)};}
 

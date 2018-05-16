@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,14 +55,14 @@ namespace rviz_common
 {
 
 FramePositionTrackingViewController::FramePositionTrackingViewController()
-: target_scene_node_(NULL)
+: target_scene_node_(nullptr), camera_scene_node_(nullptr)
 {
   target_frame_property_ = new rviz_common::properties::TfFrameProperty(
     "Target Frame",
     rviz_common::properties::TfFrameProperty::FIXED_FRAME_STRING,
     "TF frame whose motion this view will follow.",
     this,
-    NULL,
+    nullptr,
     true);
 }
 
