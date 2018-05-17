@@ -60,7 +60,8 @@ public:
     DisplayTestFixture::TearDown();
   }
 
-  nav_msgs::msg::OccupancyGrid::SharedPtr createMapMessage(int width = 50, int height = 50)
+  nav_msgs::msg::OccupancyGrid::SharedPtr createMapMessage(
+    uint32_t width = 50, uint32_t height = 50)
   {
     auto header = std_msgs::msg::Header();
     header.frame_id = "map_frame";
@@ -82,8 +83,8 @@ public:
     meta_data.origin.orientation.w = 1;
 
     auto new_data = std::vector<int8_t>();
-    for (int i = 0; i < width; i++) {
-      for (int j = 0; j < height; j++) {
+    for (uint32_t i = 0; i < width; i++) {
+      for (uint32_t j = 0; j < height; j++) {
         new_data.emplace_back((i + j) % 101);
       }
     }

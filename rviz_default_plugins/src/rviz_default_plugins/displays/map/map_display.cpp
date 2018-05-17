@@ -97,7 +97,7 @@ MapDisplay::MapDisplay()
   color_scheme_property_->addOption("costmap", 1);
   color_scheme_property_->addOption("raw", 2);
 
-  draw_under_property_ = new Property("Draw Behind", false,
+  draw_under_property_ = new rviz_common::properties::BoolProperty("Draw Behind", false,
       "Rendering option, controls whether or not the map is always"
       " drawn behind everything else.",
       this, SLOT(updateDrawUnder()));

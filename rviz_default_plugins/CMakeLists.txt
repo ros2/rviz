@@ -583,6 +583,22 @@ if(EnableVisualTests STREQUAL "True")
           rviz_visual_testing_framework::rviz_visual_testing_framework)
       endif()
 
+      ament_add_gtest(map_display_visual_test
+        test/rviz_default_plugins/displays/map/map_display_visual_test.cpp
+        test/rviz_default_plugins/page_objects/map_display_page_object.cpp
+        test/rviz_default_plugins/page_objects/marker_display_page_object.cpp
+        test/rviz_default_plugins/publishers/map_publisher.hpp
+        test/rviz_default_plugins/publishers/single_marker_publisher.hpp
+        TIMEOUT 180)
+      if(TARGET map_display_visual_test)
+        target_include_directories(map_display_visual_test PUBLIC
+          ${TEST_INCLUDE_DIRS}
+          ${rviz_visual_testing_framework_INCLUDE_DIRS})
+        target_link_libraries(map_display_visual_test
+          ${TEST_LINK_LIBRARIES}
+          rviz_visual_testing_framework::rviz_visual_testing_framework)
+      endif()
+
       ament_add_gtest(marker_display_visual_test
         test/rviz_default_plugins/displays/marker/marker_display_visual_test.cpp
         test/rviz_default_plugins/page_objects/marker_display_page_object.cpp
