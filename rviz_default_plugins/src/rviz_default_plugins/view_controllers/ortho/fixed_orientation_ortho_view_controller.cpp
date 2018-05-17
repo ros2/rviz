@@ -76,9 +76,8 @@ void FixedOrientationOrthoViewController::onInitialize()
   FramePositionTrackingViewController::onInitialize();
 
   camera_->setProjectionType(Ogre::PT_ORTHOGRAPHIC);
-  // TODO(botteroa-si): this method is deprecated. Figure out if we still need it and, in case,
-  // what can be used inn its place.
-//  camera_->setFixedYawAxis(false);
+  auto camera_parent = getCameraParent(camera_);
+  camera_parent->setFixedYawAxis(false);
   invert_z_->hide();
 }
 
@@ -145,7 +144,8 @@ void FixedOrientationOrthoViewController::handleMouseEvent(rviz_common::Viewport
 
 void FixedOrientationOrthoViewController::orientCamera()
 {
-  camera_->setOrientation(
+  auto camera_parent = getCameraParent(camera_);
+  camera_parent->setOrientation(
     Ogre::Quaternion(Ogre::Radian(angle_property_->getFloat()), Ogre::Vector3::UNIT_Z));
 }
 
@@ -166,13 +166,10 @@ void FixedOrientationOrthoViewController::mimic(ViewController * source_view)
     // if the previous view has a focal point, the camera is placed above it (at z = 500).
     setPosition(previous_focal_point.value_);
   } else {
-    // if the previous view does not have a focal point, the camera is placed at (x, y, 500),
-    // where x and y are first two coordinates of the previous camera position.
-    Ogre::Camera * source_camera = source_view->getCamera();
-    // TODO(botteroa-si): getPosition() is deprecated. Make sure which method we want
-    // between getRealPosition() and getDerivedPosition() (or a composition of them).
-//    setPosition(source_camera->getPosition());
-    setPosition(source_camera->getRealPosition());
+    // if the previous view does not have a focal point and is not the same as this, the camera is
+    // placed at (x, y, 500), where x and y are first two coordinates of the old camera position.
+    auto source_camera_parent = getCameraParent(source_view->getCamera());
+    setPosition(source_camera_parent->getPosition());
   }
 }
 
@@ -213,7 +210,18 @@ void FixedOrientationOrthoViewController::updateCamera()
   // For Z, we use half of the far-clip distance set in
   // selection_context.cpp, so that the shader program which computes
   // depth can see equal distances above and below the Z=0 plane.
-  camera_->setPosition(Ogre::Vector3(x_property_->getFloat(), y_property_->getFloat(), 500));
+  auto camera_parent = getCameraParent(camera_);
+  camera_parent->setPosition(Ogre::Vector3(x_property_->getFloat(), y_property_->getFloat(), 500));
+}
+
+Ogre::SceneNode * FixedOrientationOrthoViewController::getCameraParent(Ogre::Camera * camera)
+{
+  auto camera_parent = camera->getParentSceneNode();
+
+  if (!camera_parent) {
+    throw std::runtime_error("camera's parent scene node pointer unexpectedly nullptr");
+  }
+  return camera_parent;
 }
 
 void FixedOrientationOrthoViewController::setPosition(const Ogre::Vector3 & pos_rel_target)

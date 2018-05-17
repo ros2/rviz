@@ -107,6 +107,7 @@ protected:
   void setPosition(const Ogre::Vector3 & pos_rel_target);
   void move(float x, float y);
   void updateCamera();
+  Ogre::SceneNode * getCameraParent(Ogre::Camera * camera);
 
   rviz_common::properties::FloatProperty * scale_property_;
   rviz_common::properties::FloatProperty * angle_property_;
