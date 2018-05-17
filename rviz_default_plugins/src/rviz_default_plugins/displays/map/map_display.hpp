@@ -125,7 +125,7 @@ Q_SIGNALS:
 
 protected Q_SLOTS:
   void updateAlpha();
-  void updateDrawUnder();
+  void updateDrawUnder() const;
   void updatePalette();
   /** @brief Show current_map_ in the scene. */
   void transformMap();

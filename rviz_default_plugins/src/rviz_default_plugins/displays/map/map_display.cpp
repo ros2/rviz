@@ -222,7 +222,7 @@ void MapDisplay::updateAlpha()
   }
 }
 
-void MapDisplay::updateDrawUnder()
+void MapDisplay::updateDrawUnder() const
 {
   bool draw_under = draw_under_property_->getValue().toBool();
 
@@ -339,6 +339,7 @@ void MapDisplay::createSwatches()
       doubleSwatchNumber(swatch_width, swatch_height, number_swatches);
     }
   }
+  updateDrawUnder();
 }
 
 void MapDisplay::doubleSwatchNumber(
@@ -466,6 +467,8 @@ void MapDisplay::showValidMap()
 
   transformMap();
 
+  updateDrawUnder();
+
   context_->queueRender();
 }
 
@@ -515,6 +518,7 @@ void MapDisplay::updatePalette()
   }
 
   updateAlpha();
+  updateDrawUnder();
 }
 
 void MapDisplay::transformMap()
