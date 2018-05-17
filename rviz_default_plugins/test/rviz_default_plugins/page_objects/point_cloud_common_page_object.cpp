@@ -91,7 +91,7 @@ void PointCloudCommonPageObject::setColorTransformer(QString color_transformer)
 
 void PointCloudCommonPageObject::setColor(int red, int green, int blue)
 {
-  setColorTransformer("FlatColorPCTransformer");
+  setColorTransformer("FlatColor");
 
   QString color_code = QString::fromStdString(
     std::to_string(red) + "; " + std::to_string(green) + "; " + std::to_string(blue));
