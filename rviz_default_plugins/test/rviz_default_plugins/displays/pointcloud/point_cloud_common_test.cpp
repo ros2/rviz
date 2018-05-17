@@ -40,7 +40,7 @@
 
 #include "../../../../src/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
 
-#include "./message_creators.hpp"
+#include "../../pointcloud_messages.hpp"
 #include "../display_test_fixture.hpp"
 #include "../../scene_graph_introspection.hpp"
 

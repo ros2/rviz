@@ -272,8 +272,8 @@ if(BUILD_TESTING)
     endif()
 
     ament_add_gmock(point_cloud_common_test
-      test/rviz_default_plugins/displays/pointcloud/message_creators.hpp
-      test/rviz_default_plugins/displays/pointcloud/message_creators.cpp
+      test/rviz_default_plugins/pointcloud_messages.hpp
+      test/rviz_default_plugins/pointcloud_messages.cpp
       test/rviz_default_plugins/displays/pointcloud/point_cloud_common_test.cpp
       test/rviz_default_plugins/displays/display_test_fixture.cpp
       test/rviz_default_plugins/scene_graph_introspection.cpp
@@ -286,8 +286,8 @@ if(BUILD_TESTING)
     endif()
 
     ament_add_gmock(point_cloud_transformers_test
-      test/rviz_default_plugins/pointcloud_messages.hpp
-      test/rviz_default_plugins/pointcloud_messages.cpp
+        test/rviz_default_plugins/pointcloud_messages.hpp
+        test/rviz_default_plugins/pointcloud_messages.cpp
         test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/axis_color_pc_transformer_test.cpp
         test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/flat_color_pc_transformer_test.cpp
         test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/intensity_pc_transformer_test.cpp
