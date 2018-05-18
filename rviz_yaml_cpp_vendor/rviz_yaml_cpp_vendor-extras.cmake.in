@@ -1,6 +1,8 @@
-find_package(yaml-cpp QUIET)
+## mjbogusz: find_package() and if() disabled until ament can handle complex paths resolving to /usr/include
+## always use locally built yaml-cpp for now
+# find_package(yaml-cpp QUIET)
 
-if(NOT yaml-cpp_FOUND)
+# if(NOT yaml-cpp_FOUND)
   # add the local Modules directory to the modules path
   if(WIN32)
     set(yaml-cpp_DIR "${@PROJECT_NAME@_DIR}/../../../opt/rviz_yaml_cpp_vendor/CMake")
@@ -8,7 +10,7 @@ if(NOT yaml-cpp_FOUND)
     set(yaml-cpp_DIR "${@PROJECT_NAME@_DIR}/../../../opt/rviz_yaml_cpp_vendor/lib/cmake/yaml-cpp")
   endif()
   message(STATUS "Setting yaml-cpp_DIR to: '${yaml-cpp_DIR}'")
-endif()
+# endif()
 
 find_package(yaml-cpp CONFIG REQUIRED QUIET)
 
