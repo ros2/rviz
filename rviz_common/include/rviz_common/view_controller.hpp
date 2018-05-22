@@ -74,7 +74,7 @@ class RVIZ_COMMON_PUBLIC ViewController : public properties::Property
 
 public:
   ViewController();
-  virtual ~ViewController();
+  ~ViewController() override;
 
   /// Do all setup that can't be done in the constructor.
   /**

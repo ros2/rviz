@@ -50,7 +50,6 @@
 #include   "../../../../src/rviz_default_plugins/view_controllers/orbit/orbit_view_controller.hpp"
 #include "../../displays/display_test_fixture.hpp"
 #include "../../scene_graph_introspection.hpp"
-#include "../../mock_display_context.hpp"
 
 using namespace ::testing;  // NOLINT
 

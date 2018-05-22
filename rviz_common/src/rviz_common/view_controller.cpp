@@ -30,7 +30,7 @@
 
 #include "rviz_common/view_controller.hpp"
 
-#include <sstream>
+#include <string>
 
 #ifndef _WIN32
 # pragma GCC diagnostic push
@@ -45,10 +45,8 @@
 # pragma GCC diagnostic pop
 #endif
 
-#include <QColor>
 #include <QFont>
 #include <QKeyEvent>
-#include <Qt>
 
 #include "rviz_rendering/render_window.hpp"
 
@@ -66,10 +64,10 @@ using properties::BoolProperty;
 using properties::FloatProperty;
 
 ViewController::ViewController()
-: context_(NULL),
-  camera_(NULL),
+: context_(nullptr),
+  camera_(nullptr),
   is_active_(false),
-  type_property_(NULL)
+  type_property_(nullptr)
 {
   near_clip_property_ = new FloatProperty(
     "Near Clip Distance", 0.01f,
@@ -101,10 +99,9 @@ void ViewController::initialize(DisplayContext * context)
 {
   context_ = context;
 
-  std::stringstream ss;
   static int count = 0;
-  ss << "ViewControllerCamera" << count++;
-  camera_ = context_->getSceneManager()->createCamera(ss.str());
+  camera_ = context_->getSceneManager()->createCamera(
+    "ViewControllerCamera" + std::to_string(count++));
   context_->getSceneManager()->getRootSceneNode()->attachObject(camera_);
 
   setValue(formatClassId(getClassId()));
@@ -298,8 +295,7 @@ void ViewController::setStatus(const QString & message)
 
 void ViewController::updateNearClipDistance()
 {
-  float n = near_clip_property_->getFloat();
-  camera_->setNearClipDistance(n);
+  camera_->setNearClipDistance(near_clip_property_->getFloat());
 }
 
 void ViewController::updateStereoProperties()
