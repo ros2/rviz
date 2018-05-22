@@ -292,98 +292,43 @@ if(BUILD_TESTING)
       rviz_common::rviz_common
     )
 
+    ament_add_gmock(fps_view_controller_test
+      test/rviz_default_plugins/view_controllers/fps/fps_view_controller_test.cpp
+      test/rviz_default_plugins/view_controllers/view_controller_test_fixture.hpp
+      test/rviz_default_plugins/displays/display_test_fixture.cpp
+      test/rviz_default_plugins/scene_graph_introspection_helper.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET fps_view_controller_test)
+      target_include_directories(fps_view_controller_test PUBLIC ${TEST_INCLUDE_DIRS})
+      target_link_libraries(fps_view_controller_test ${TEST_LINK_LIBRARIES})
+    endif()
+
     ament_add_gmock(grid_cells_display_test
       test/rviz_default_plugins/displays/grid_cells/grid_cells_display_test.cpp
       test/rviz_default_plugins/displays/display_test_fixture.cpp
-      test/rviz_default_plugins/scene_graph_introspection_helper.cpp
+      test/rviz_default_plugins/scene_graph_introspection.cpp
       APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
     if(TARGET grid_cells_display_test)
-      target_include_directories(grid_cells_display_test PUBLIC
-        ${TEST_INCLUDE_DIRS})
-      target_link_libraries(grid_cells_display_test
-        ${TEST_LINK_LIBRARIES})
-    endif()
-
-    ament_add_gmock(point_cloud2_display_test
-      test/rviz_default_plugins/pointcloud_messages.hpp
-      test/rviz_default_plugins/pointcloud_messages.cpp
-      test/rviz_default_plugins/displays/pointcloud/point_cloud2_display_test.cpp
-      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-    if(TARGET point_cloud2_display_test)
-      target_include_directories(point_cloud2_display_test PUBLIC
-        ${TEST_INCLUDE_DIRS})
-      target_link_libraries(point_cloud2_display_test
-        ${TEST_LINK_LIBRARIES})
-    endif()
-
-    ament_add_gmock(point_cloud_common_test
-      test/rviz_default_plugins/pointcloud_messages.hpp
-      test/rviz_default_plugins/pointcloud_messages.cpp
-      test/rviz_default_plugins/displays/pointcloud/point_cloud_common_test.cpp
-      test/rviz_default_plugins/displays/display_test_fixture.cpp
-      test/rviz_default_plugins/scene_graph_introspection_helper.cpp
-      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-    if(TARGET point_cloud_common_test)
-      target_include_directories(point_cloud_common_test PUBLIC
-        ${TEST_INCLUDE_DIRS})
-      target_link_libraries(point_cloud_common_test
-        ${TEST_LINK_LIBRARIES})
-    endif()
-
-    ament_add_gmock(point_cloud_transformers_test
-        test/rviz_default_plugins/pointcloud_messages.hpp
-        test/rviz_default_plugins/pointcloud_messages.cpp
-        test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/axis_color_pc_transformer_test.cpp
-        test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/flat_color_pc_transformer_test.cpp
-        test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/intensity_pc_transformer_test.cpp
-        test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/rgb8_pc_transformer_test.cpp
-        test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/rgbf32_pc_transformer_test.cpp
-        test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/xyz_pc_transformer_test.cpp
-        APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-    if(TARGET point_cloud_transformers_test)
-      target_include_directories(point_cloud_transformers_test PUBLIC
-        ${TEST_INCLUDE_DIRS})
-      target_link_libraries(point_cloud_transformers_test
-        ${TEST_LINK_LIBRARIES})
-    endif()
-
-    ament_add_gmock(point_display_test
-      test/rviz_default_plugins/displays/point/point_stamped_display_test.cpp
-      test/rviz_default_plugins/displays/display_test_fixture.cpp
-      test/rviz_default_plugins/scene_graph_introspection_helper.cpp)
-    if(TARGET point_display_test)
-      target_include_directories(point_display_test PUBLIC
-        ${TEST_INCLUDE_DIRS})
-      target_link_libraries(point_display_test
-        ${TEST_LINK_LIBRARIES})
-    endif()
-
-    ament_add_gmock(ros_image_texture_test
-        test/rviz_default_plugins/displays/image/ros_image_texture_test.cpp)
-    if(TARGET ros_image_texture_test)
-      target_include_directories(ros_image_texture_test PUBLIC
-        ${TEST_INCLUDE_DIRS})
-      target_link_libraries(ros_image_texture_test
-        ${TEST_LINK_LIBRARIES})
+      target_include_directories(grid_cells_display_test PUBLIC ${TEST_INCLUDE_DIRS})
+      target_link_libraries(grid_cells_display_test ${TEST_LINK_LIBRARIES})
     endif()
 
     ament_add_gmock(image_display_test
-        test/rviz_default_plugins/displays/image/image_display_test.cpp)
+      test/rviz_default_plugins/displays/image/image_display_test.cpp)
     if(TARGET image_display_test)
-        target_include_directories(image_display_test PUBLIC
-          ${TEST_INCLUDE_DIRS})
-        target_link_libraries(image_display_test
-          ${TEST_LINK_LIBRARIES})
+      target_include_directories(image_display_test PUBLIC ${TEST_INCLUDE_DIRS})
+      target_link_libraries(image_display_test ${TEST_LINK_LIBRARIES})
     endif()
 
-    ament_add_gmock(robot_test
-        test/rviz_default_plugins/robot/robot_test.cpp
-        APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-    if(TARGET robot_test)
-      target_include_directories(robot_test PUBLIC
-        ${TEST_INCLUDE_DIRS})
-      target_link_libraries(robot_test
-        ${TEST_LINK_LIBRARIES})
+    ament_add_gmock(marker_display_test
+      test/rviz_default_plugins/displays/marker/marker_display_test.cpp
+      test/rviz_default_plugins/displays/display_test_fixture.cpp
+      test/rviz_default_plugins/displays/marker/marker_messages.cpp
+      test/rviz_default_plugins/scene_graph_introspection.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET marker_display_test)
+      target_include_directories(marker_display_test PUBLIC ${TEST_INCLUDE_DIRS})
+      target_link_libraries(marker_display_test ${TEST_LINK_LIBRARIES})
     endif()
 
     ament_add_gmock(marker_test
@@ -400,23 +345,18 @@ if(BUILD_TESTING)
       test/rviz_default_plugins/scene_graph_introspection_helper.cpp
       APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
     if(TARGET marker_test)
-      target_include_directories(marker_test PUBLIC
-        ${TEST_INCLUDE_DIRS})
-      target_link_libraries(marker_test
-        ${TEST_LINK_LIBRARIES})
+      target_include_directories(marker_test PUBLIC ${TEST_INCLUDE_DIRS})
+      target_link_libraries(marker_test ${TEST_LINK_LIBRARIES})
     endif()
 
     ament_add_gmock(marker_common_test
       test/rviz_default_plugins/displays/marker/marker_common_test.cpp
       test/rviz_default_plugins/displays/display_test_fixture.cpp
-      test/rviz_default_plugins/displays/marker/marker_messages.cpp
       test/rviz_default_plugins/scene_graph_introspection_helper.cpp
       APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
     if(TARGET marker_common_test)
-      target_include_directories(marker_common_test PUBLIC
-        ${TEST_INCLUDE_DIRS})
-      target_link_libraries(marker_common_test
-        ${TEST_LINK_LIBRARIES})
+      target_include_directories(marker_common_test PUBLIC ${TEST_INCLUDE_DIRS})
+      target_link_libraries(marker_common_test ${TEST_LINK_LIBRARIES})
     endif()
 
     ament_add_gmock(map_display_test
@@ -425,10 +365,18 @@ if(BUILD_TESTING)
       test/rviz_default_plugins/scene_graph_introspection_helper.cpp
       APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
     if(TARGET map_display_test)
-      target_include_directories(map_display_test PUBLIC
-        ${TEST_INCLUDE_DIRS})
-      target_link_libraries(map_display_test
-        ${TEST_LINK_LIBRARIES})
+      target_include_directories(map_display_test PUBLIC ${TEST_INCLUDE_DIRS})
+      target_link_libraries(map_display_test ${TEST_LINK_LIBRARIES})
+    endif()
+
+    ament_add_gmock(measure_tool_test
+      test/rviz_default_plugins/tools/measure/measure_tool_test.cpp
+      test/rviz_default_plugins/displays/display_test_fixture.cpp
+      test/rviz_default_plugins/scene_graph_introspection_helper.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET measure_tool_test)
+      target_include_directories(measure_tool_test PUBLIC ${TEST_INCLUDE_DIRS})
+      target_link_libraries(measure_tool_test ${TEST_LINK_LIBRARIES})
     endif()
 
     ament_add_gmock(odometry_display_test
@@ -437,56 +385,15 @@ if(BUILD_TESTING)
       test/rviz_default_plugins/scene_graph_introspection_helper.cpp
       APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
     if(TARGET odometry_display_test)
-      target_include_directories(odometry_display_test PUBLIC
-        ${TEST_INCLUDE_DIRS})
-      target_link_libraries(odometry_display_test
-        ${TEST_LINK_LIBRARIES})
+      target_include_directories(odometry_display_test PUBLIC ${TEST_INCLUDE_DIRS})
+      target_link_libraries(odometry_display_test ${TEST_LINK_LIBRARIES})
     endif()
 
     ament_add_gmock(odometry_ogre_helper_test
       test/rviz_default_plugins/displays/odometry/quaternion_helper_test.cpp)
     if(TARGET odometry_ogre_helper_test)
-      target_include_directories(odometry_ogre_helper_test PUBLIC
-        ${TEST_INCLUDE_DIRS})
-      target_link_libraries(odometry_ogre_helper_test
-        ${TEST_LINK_LIBRARIES})
-    endif()
-
-    ament_add_gmock(pose_array_display_test
-      test/rviz_default_plugins/displays/pose_array/pose_array_display_test.cpp
-      test/rviz_default_plugins/displays/display_test_fixture.cpp
-      test/rviz_default_plugins/scene_graph_introspection_helper.cpp
-      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-    if(TARGET pose_array_display_test)
-      target_include_directories(pose_array_display_test PUBLIC
-        ${TEST_INCLUDE_DIRS})
-      target_link_libraries(pose_array_display_test
-        ${TEST_LINK_LIBRARIES})
-    endif()
-
-    ament_add_gmock(path_display_test
-      test/rviz_default_plugins/displays/path/path_display_test.cpp
-      test/rviz_default_plugins/displays/display_test_fixture.cpp
-      test/rviz_default_plugins/scene_graph_introspection_helper.cpp
-      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-    if(TARGET path_display_test)
-      target_include_directories(path_display_test PUBLIC
-        ${TEST_INCLUDE_DIRS})
-      target_link_libraries(path_display_test
-        ${TEST_LINK_LIBRARIES})
-    endif()
-
-    ament_add_gmock(ortho_view_controller_test
-      test/rviz_default_plugins/view_controllers/ortho/ortho_view_controller_test.cpp
-      test/rviz_default_plugins/view_controllers/view_controller_test_fixture.hpp
-      test/rviz_default_plugins/displays/display_test_fixture.cpp
-      test/rviz_default_plugins/scene_graph_introspection_helper.cpp
-      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-    if(TARGET ortho_view_controller_test)
-      target_include_directories(ortho_view_controller_test PUBLIC
-        ${TEST_INCLUDE_DIRS})
-      target_link_libraries(ortho_view_controller_test
-        ${TEST_LINK_LIBRARIES})
+      target_include_directories(odometry_ogre_helper_test PUBLIC ${TEST_INCLUDE_DIRS})
+      target_link_libraries(odometry_ogre_helper_test ${TEST_LINK_LIBRARIES})
     endif()
 
     ament_add_gmock(orbit_view_controller_test
@@ -496,10 +403,117 @@ if(BUILD_TESTING)
       test/rviz_default_plugins/scene_graph_introspection_helper.cpp
       APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
     if(TARGET orbit_view_controller_test)
-      target_include_directories(orbit_view_controller_test PUBLIC
-        ${TEST_INCLUDE_DIRS})
-      target_link_libraries(orbit_view_controller_test
-        ${TEST_LINK_LIBRARIES})
+      target_include_directories(orbit_view_controller_test PUBLIC ${TEST_INCLUDE_DIRS})
+      target_link_libraries(orbit_view_controller_test ${TEST_LINK_LIBRARIES})
+    endif()
+
+    ament_add_gmock(ortho_view_controller_test
+      test/rviz_default_plugins/view_controllers/ortho/ortho_view_controller_test.cpp
+      test/rviz_default_plugins/view_controllers/view_controller_test_fixture.hpp
+      test/rviz_default_plugins/displays/display_test_fixture.cpp
+      test/rviz_default_plugins/scene_graph_introspection_helper.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET ortho_view_controller_test)
+      target_include_directories(ortho_view_controller_test PUBLIC ${TEST_INCLUDE_DIRS})
+      target_link_libraries(ortho_view_controller_test ${TEST_LINK_LIBRARIES})
+    endif()
+
+    ament_add_gmock(palette_builder_test
+      test/rviz_default_plugins/displays/map/palette_builder_test.cpp)
+    if(TARGET palette_builder_test)
+      target_include_directories(palette_builder_test PUBLIC ${TEST_INCLUDE_DIRS})
+      target_link_libraries(palette_builder_test ${TEST_LINK_LIBRARIES})
+    endif()
+
+    ament_add_gmock(path_display_test
+      test/rviz_default_plugins/displays/path/path_display_test.cpp
+      test/rviz_default_plugins/displays/display_test_fixture.cpp
+      test/rviz_default_plugins/scene_graph_introspection.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET path_display_test)
+      target_include_directories(path_display_test PUBLIC ${TEST_INCLUDE_DIRS})
+      target_link_libraries(path_display_test ${TEST_LINK_LIBRARIES})
+    endif()
+
+    ament_add_gmock(point_cloud2_display_test
+      test/rviz_default_plugins/pointcloud_messages.hpp
+      test/rviz_default_plugins/pointcloud_messages.cpp
+      test/rviz_default_plugins/displays/pointcloud/point_cloud2_display_test.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET point_cloud2_display_test)
+      target_include_directories(point_cloud2_display_test PUBLIC ${TEST_INCLUDE_DIRS})
+      target_link_libraries(point_cloud2_display_test ${TEST_LINK_LIBRARIES})
+    endif()
+
+    ament_add_gmock(point_cloud_common_test
+      test/rviz_default_plugins/pointcloud_messages.hpp
+      test/rviz_default_plugins/pointcloud_messages.cpp
+      test/rviz_default_plugins/displays/pointcloud/point_cloud_common_test.cpp
+      test/rviz_default_plugins/displays/display_test_fixture.cpp
+      test/rviz_default_plugins/scene_graph_introspection_helper.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET point_cloud_common_test)
+      target_include_directories(point_cloud_common_test PUBLIC ${TEST_INCLUDE_DIRS})
+      target_link_libraries(point_cloud_common_test ${TEST_LINK_LIBRARIES})
+    endif()
+
+    ament_add_gmock(point_cloud_transformers_test
+      test/rviz_default_plugins/pointcloud_messages.hpp
+      test/rviz_default_plugins/pointcloud_messages.cpp
+      test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/axis_color_pc_transformer_test.cpp
+      test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/flat_color_pc_transformer_test.cpp
+      test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/intensity_pc_transformer_test.cpp
+      test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/rgb8_pc_transformer_test.cpp
+      test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/rgbf32_pc_transformer_test.cpp
+      test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/xyz_pc_transformer_test.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET point_cloud_transformers_test)
+      target_include_directories(point_cloud_transformers_test PUBLIC ${TEST_INCLUDE_DIRS})
+      target_link_libraries(point_cloud_transformers_test ${TEST_LINK_LIBRARIES})
+    endif()
+
+    ament_add_gmock(point_display_test
+      test/rviz_default_plugins/displays/point/point_stamped_display_test.cpp
+      test/rviz_default_plugins/displays/display_test_fixture.cpp
+      test/rviz_default_plugins/scene_graph_introspection.cpp)
+    if(TARGET point_display_test)
+      target_include_directories(point_display_test PUBLIC ${TEST_INCLUDE_DIRS})
+      target_link_libraries(point_display_test ${TEST_LINK_LIBRARIES})
+    endif()
+
+    ament_add_gmock(pose_array_display_test
+      test/rviz_default_plugins/displays/pose_array/pose_array_display_test.cpp
+      test/rviz_default_plugins/displays/display_test_fixture.cpp
+      test/rviz_default_plugins/scene_graph_introspection_helper.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET pose_array_display_test)
+      target_include_directories(pose_array_display_test PUBLIC ${TEST_INCLUDE_DIRS})
+      target_link_libraries(pose_array_display_test ${TEST_LINK_LIBRARIES})
+    endif()
+
+    ament_add_gmock(pose_tool_test
+      test/rviz_default_plugins/tools/pose/pose_tool_test.cpp
+      test/rviz_default_plugins/displays/display_test_fixture.cpp
+      test/rviz_default_plugins/scene_graph_introspection_helper.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET pose_tool_test)
+      target_include_directories(pose_tool_test PUBLIC ${TEST_INCLUDE_DIRS})
+      target_link_libraries(pose_tool_test ${TEST_LINK_LIBRARIES})
+    endif()
+
+    ament_add_gmock(robot_test
+      test/rviz_default_plugins/robot/robot_test.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET robot_test)
+      target_include_directories(robot_test PUBLIC ${TEST_INCLUDE_DIRS})
+      target_link_libraries(robot_test ${TEST_LINK_LIBRARIES})
+    endif()
+
+    ament_add_gmock(ros_image_texture_test
+      test/rviz_default_plugins/displays/image/ros_image_texture_test.cpp)
+    if(TARGET ros_image_texture_test)
+      target_include_directories(ros_image_texture_test PUBLIC ${TEST_INCLUDE_DIRS})
+      target_link_libraries(ros_image_texture_test ${TEST_LINK_LIBRARIES})
     endif()
 
     ament_add_gmock(xy_orbit_view_controller_test
@@ -509,35 +523,11 @@ if(BUILD_TESTING)
       test/rviz_default_plugins/scene_graph_introspection_helper.cpp
       APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
     if(TARGET xy_orbit_view_controller_test)
-      target_include_directories(xy_orbit_view_controller_test PUBLIC
-        ${TEST_INCLUDE_DIRS})
-      target_link_libraries(xy_orbit_view_controller_test
-        ${TEST_LINK_LIBRARIES})
+      target_include_directories(xy_orbit_view_controller_test PUBLIC ${TEST_INCLUDE_DIRS})
+      target_link_libraries(xy_orbit_view_controller_test ${TEST_LINK_LIBRARIES})
     endif()
 
-    ament_add_gmock(fps_view_controller_test
-      test/rviz_default_plugins/view_controllers/fps/fps_view_controller_test.cpp
-      test/rviz_default_plugins/view_controllers/view_controller_test_fixture.hpp
-      test/rviz_default_plugins/displays/display_test_fixture.cpp
-      test/rviz_default_plugins/scene_graph_introspection_helper.cpp
-      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-    if(TARGET fps_view_controller_test)
-      target_include_directories(fps_view_controller_test PUBLIC
-        ${TEST_INCLUDE_DIRS})
-      target_link_libraries(fps_view_controller_test
-        ${TEST_LINK_LIBRARIES})
-    endif()
-
-    ament_add_gmock(palette_builder_test
-      test/rviz_default_plugins/displays/map/palette_builder_test.cpp)
-    if(TARGET palette_builder_test)
-      target_include_directories(palette_builder_test PUBLIC
-        ${TEST_INCLUDE_DIRS})
-      target_link_libraries(palette_builder_test
-        ${TEST_LINK_LIBRARIES})
-    endif()
-
-if(EnableVisualTests STREQUAL "True")
+    if(EnableVisualTests STREQUAL "True")
       find_package(ament_index_cpp REQUIRED)
 
       ament_add_gtest(camera_display_visual_test
@@ -610,6 +600,20 @@ if(EnableVisualTests STREQUAL "True")
           ${TEST_INCLUDE_DIRS}
           ${rviz_visual_testing_framework_INCLUDE_DIRS})
         target_link_libraries(map_display_visual_test
+          ${TEST_LINK_LIBRARIES}
+          rviz_visual_testing_framework::rviz_visual_testing_framework)
+      endif()
+
+      ament_add_gtest(laser_scan_display_visual_test
+        test/rviz_default_plugins/displays/laser_scan/laser_scan_display_visual_test.cpp
+        test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
+        test/rviz_default_plugins/page_objects/laser_scan_display_page_object.cpp
+        TIMEOUT 180)
+      if(TARGET laser_scan_display_visual_test)
+        target_include_directories(laser_scan_display_visual_test PUBLIC
+          ${TEST_INCLUDE_DIRS}
+          ${rviz_visual_testing_framework_INCLUDE_DIRS})
+        target_link_libraries(laser_scan_display_visual_test
           ${TEST_LINK_LIBRARIES}
           rviz_visual_testing_framework::rviz_visual_testing_framework)
       endif()
@@ -771,41 +775,6 @@ if(EnableVisualTests STREQUAL "True")
           ${TEST_LINK_LIBRARIES}
           rviz_visual_testing_framework::rviz_visual_testing_framework)
       endif()
-
-      ament_add_gtest(laser_scan_display_visual_test
-        test/rviz_default_plugins/displays/laser_scan/laser_scan_display_visual_test.cpp
-        test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
-        test/rviz_default_plugins/page_objects/laser_scan_display_page_object.cpp
-        TIMEOUT 180)
-      if(TARGET laser_scan_display_visual_test)
-        target_include_directories(laser_scan_display_visual_test PUBLIC
-          ${TEST_INCLUDE_DIRS}
-          ${rviz_visual_testing_framework_INCLUDE_DIRS})
-        target_link_libraries(laser_scan_display_visual_test
-          ${TEST_LINK_LIBRARIES}
-          rviz_visual_testing_framework::rviz_visual_testing_framework)
-      endif()
-    endif()
-
-    ament_add_gmock(measure_tool_test
-      test/rviz_default_plugins/tools/measure/measure_tool_test.cpp
-      test/rviz_default_plugins/displays/display_test_fixture.cpp
-      test/rviz_default_plugins/scene_graph_introspection_helper.cpp
-      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-    if(TARGET measure_tool_test)
-      target_include_directories(measure_tool_test PUBLIC ${TEST_INCLUDE_DIRS})
-      target_link_libraries(measure_tool_test ${TEST_LINK_LIBRARIES})
-    endif()
-
-    ament_add_gmock(pose_tool_test
-      test/rviz_default_plugins/tools/pose/pose_tool_test.cpp
-      test/rviz_default_plugins/displays/display_test_fixture.cpp
-      test/rviz_default_plugins/scene_graph_introspection_helper.cpp
-      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-    if(TARGET pose_tool_test)
-      target_include_directories(pose_tool_test PUBLIC ${TEST_INCLUDE_DIRS})
-      target_link_libraries(pose_tool_test ${TEST_LINK_LIBRARIES})
-
     endif()
   endif()
 endif()
