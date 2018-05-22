@@ -45,19 +45,6 @@ namespace properties
 class TfFrameProperty;
 }  // namespace properties
 
-
-struct FocalPointStatus
-{
-  FocalPointStatus(bool has_focal_point, Ogre::Vector3 focal_point)
-  {
-    exists_ = has_focal_point;
-    value_ = focal_point;
-  }
-
-  bool exists_;
-  Ogre::Vector3 value_;
-};
-
 /// Base class of ViewControllers which have a "Target Frame".
 /**
  * The "Target Frame" is a TF frame whose position they track.
@@ -95,8 +82,6 @@ public:
    * This implementation sets the target frame property.
    */
   void mimic(ViewController * source_view) override;
-
-  virtual FocalPointStatus getFocalPointStatus() {return {false, Ogre::Vector3(0, 0, 0)};}
 
 protected Q_SLOTS:
   /// Called when Target Frame property changes while view is active.

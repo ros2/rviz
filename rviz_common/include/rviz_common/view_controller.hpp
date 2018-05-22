@@ -33,6 +33,17 @@
 
 #include <string>
 
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
+
+#include <OgreVector3.h>
+
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
+
 #include <QCursor>  // NOLINT: cpplint is unable to handle the include order here
 #include <QMap>  // NOLINT: cpplint is unable to handle the include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
@@ -48,7 +59,6 @@ namespace Ogre
 {
 
 class Camera;
-class Vector3;
 
 }  // namespace Ogre
 
@@ -67,6 +77,24 @@ class FloatProperty;
 class BoolProperty;
 
 }  // namespace properties
+
+struct FocalPointStatus
+{
+  FocalPointStatus()
+  {
+    exists_ = false;
+    value_ = Ogre::Vector3(0, 0, 0);
+  }
+
+  FocalPointStatus(bool has_focal_point, Ogre::Vector3 focal_point)
+  {
+    exists_ = has_focal_point;
+    value_ = focal_point;
+  }
+
+  bool exists_;
+  Ogre::Vector3 value_;
+};
 
 class RVIZ_COMMON_PUBLIC ViewController : public properties::Property
 {
@@ -189,6 +217,8 @@ public:
 
   /// Return a mouse cursor representing the current state.
   virtual QCursor getCursor();
+
+  virtual FocalPointStatus getFocalPointStatus();
 
 Q_SIGNALS:
   void configChanged();

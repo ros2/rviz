@@ -286,6 +286,11 @@ QCursor ViewController::getCursor()
   return cursor_;
 }
 
+FocalPointStatus ViewController::getFocalPointStatus()
+{
+  return FocalPointStatus();
+}
+
 void ViewController::setStatus(const QString & message)
 {
   if (context_) {
