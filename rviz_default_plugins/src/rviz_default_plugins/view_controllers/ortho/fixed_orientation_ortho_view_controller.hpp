@@ -93,6 +93,8 @@ public:
    * @a source_view must return a valid @c Ogre::Camera* from getCamera(). */
   void mimic(ViewController * source_view) override;
 
+  void move(float x, float y);
+
   void update(float dt, float ros_dt) override;
 
 protected:
@@ -105,7 +107,6 @@ protected:
   void orientCamera();
 
   void setPosition(const Ogre::Vector3 & pos_rel_target);
-  void move(float x, float y);
   void updateCamera();
   Ogre::SceneNode * getCameraParent(Ogre::Camera * camera);
 
