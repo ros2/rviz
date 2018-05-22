@@ -116,7 +116,7 @@ void FixedOrientationOrthoViewController::handleMouseEvent(rviz_common::Viewport
 
   if (event.left() && !event.shift()) {
     setCursor(Rotate2D);
-    angle_property_->add(diff_x * 0.005);
+    angle_property_->add(diff_x * 0.005f);
     orientCamera();
   } else if (event.middle() || (event.shift() && event.left())) {
     setCursor(MoveXY);
@@ -124,14 +124,14 @@ void FixedOrientationOrthoViewController::handleMouseEvent(rviz_common::Viewport
     move(-diff_x / scale, diff_y / scale);
   } else if (event.right()) {
     setCursor(Zoom);
-    scale_property_->multiply(1.0 - diff_y * 0.01);
+    scale_property_->multiply(1.0f - diff_y * 0.01f);
   } else {
     setCursor(event.shift() ? MoveXY : Rotate2D);
   }
 
   if (event.wheel_delta != 0) {
     int diff = event.wheel_delta;
-    scale_property_->multiply(1.0 - (-diff) * 0.001);
+    scale_property_->multiply(1.0f - (-diff) * 0.001f);
 
     moved = true;
   }
@@ -153,24 +153,29 @@ void FixedOrientationOrthoViewController::mimic(ViewController * source_view)
 {
   FramePositionTrackingViewController::mimic(source_view);
 
-  auto previous_focal_point =
-    qobject_cast<FramePositionTrackingViewController *>(source_view)->getFocalPointStatus();
-
   if (source_view->getClassId() == "rviz_default_plugins/TopDownOrtho") {
     auto source_ortho = qobject_cast<FixedOrientationOrthoViewController *>(source_view);
     scale_property_->setFloat(source_ortho->scale_property_->getFloat());
     angle_property_->setFloat(source_ortho->angle_property_->getFloat());
     x_property_->setFloat(source_ortho->x_property_->getFloat());
     y_property_->setFloat(source_ortho->y_property_->getFloat());
-  } else if (previous_focal_point.exists_) {
-    // if the previous view has a focal point, the camera is placed above it (at z = 500).
-    setPosition(previous_focal_point.value_);
-  } else {
-    // if the previous view does not have a focal point and is not the same as this, the camera is
-    // placed at (x, y, 500), where x and y are first two coordinates of the old camera position.
-    auto source_camera_parent = getCameraParent(source_view->getCamera());
-    setPosition(source_camera_parent->getPosition());
+    return;
   }
+
+  auto frame_position_view_controller =
+    dynamic_cast<FramePositionTrackingViewController *>(source_view);
+  if (frame_position_view_controller != nullptr &&
+    frame_position_view_controller->getFocalPointStatus().exists_)
+  {
+    // if the previous view has a focal point, the camera is placed above it (at z = 500).
+    setPosition(frame_position_view_controller->getFocalPointStatus().value_);
+    return;
+  }
+
+  // if the previous view does not have a focal point and is not the same as this, the camera is
+  // placed at (x, y, 500), where x and y are first two coordinates of the old camera position.
+  auto source_camera_parent = getCameraParent(source_view->getCamera());
+  setPosition(source_camera_parent->getPosition());
 }
 
 void FixedOrientationOrthoViewController::update(float dt, float ros_dt)
