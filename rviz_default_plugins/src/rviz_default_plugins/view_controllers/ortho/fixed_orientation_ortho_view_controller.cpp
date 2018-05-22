@@ -58,6 +58,8 @@ namespace rviz_default_plugins
 namespace view_controllers
 {
 
+static const float ORTHO_VIEW_CONTROLLER_CAMERA_Z = 500;
+
 FixedOrientationOrthoViewController::FixedOrientationOrthoViewController()
 : dragging_(false)
 {
@@ -99,8 +101,6 @@ void FixedOrientationOrthoViewController::handleMouseEvent(rviz_common::Viewport
       " <b>Right-Click:</b>: Zoom.  <b>Shift</b>: More options.");
   }
 
-  bool moved = false;
-
   int32_t diff_x = 0;
   int32_t diff_y = 0;
 
@@ -111,7 +111,7 @@ void FixedOrientationOrthoViewController::handleMouseEvent(rviz_common::Viewport
   } else if (dragging_ && event.type == QEvent::MouseMove) {
     diff_x = event.x - event.last_x;
     diff_y = event.y - event.last_y;
-    moved = true;
+    renderOnMove();
   }
 
   if (event.left() && !event.shift()) {
@@ -132,14 +132,14 @@ void FixedOrientationOrthoViewController::handleMouseEvent(rviz_common::Viewport
   if (event.wheel_delta != 0) {
     int diff = event.wheel_delta;
     scale_property_->multiply(1.0f - (-diff) * 0.001f);
-
-    moved = true;
+    renderOnMove();
   }
+}
 
-  if (moved) {
-    context_->queueRender();
-    emitConfigChanged();
-  }
+void FixedOrientationOrthoViewController::renderOnMove()
+{
+  context_->queueRender();
+  emitConfigChanged();
 }
 
 void FixedOrientationOrthoViewController::orientCamera()
@@ -159,23 +159,15 @@ void FixedOrientationOrthoViewController::mimic(ViewController * source_view)
     angle_property_->setFloat(source_ortho->angle_property_->getFloat());
     x_property_->setFloat(source_ortho->x_property_->getFloat());
     y_property_->setFloat(source_ortho->y_property_->getFloat());
-    return;
+  } else if (source_view->getFocalPointStatus().exists_) {
+    setPosition(source_view->getFocalPointStatus().value_);
+  } else {
+    // if the previous view does not have a focal point and is not the same as this, the camera is
+    // placed at (x, y, ORTHO_VIEW_CONTROLLER_CAMERA_Z), where x and y are first two coordinates of
+    // the old camera position.
+    auto source_camera_parent = getCameraParent(source_view->getCamera());
+    setPosition(source_camera_parent->getPosition());
   }
-
-  auto frame_position_view_controller =
-    dynamic_cast<FramePositionTrackingViewController *>(source_view);
-  if (frame_position_view_controller != nullptr &&
-    frame_position_view_controller->getFocalPointStatus().exists_)
-  {
-    // if the previous view has a focal point, the camera is placed above it (at z = 500).
-    setPosition(frame_position_view_controller->getFocalPointStatus().value_);
-    return;
-  }
-
-  // if the previous view does not have a focal point and is not the same as this, the camera is
-  // placed at (x, y, 500), where x and y are first two coordinates of the old camera position.
-  auto source_camera_parent = getCameraParent(source_view->getCamera());
-  setPosition(source_camera_parent->getPosition());
 }
 
 void FixedOrientationOrthoViewController::update(float dt, float ros_dt)
@@ -192,7 +184,6 @@ void FixedOrientationOrthoViewController::lookAt(const Ogre::Vector3 & point)
 void FixedOrientationOrthoViewController::onTargetFrameChanged(
   const Ogre::Vector3 & old_reference_position, const Ogre::Quaternion & old_reference_orientation)
 {
-  // TODO(botteroa-si): make sure we really don't need to use old_reference_orientation.
   (void) old_reference_orientation;
 
   move(old_reference_position.x - reference_position_.x,
@@ -207,16 +198,18 @@ void FixedOrientationOrthoViewController::updateCamera()
   float height = camera_->getViewport()->getActualHeight();
 
   float scale = scale_property_->getFloat();
-  Ogre::Matrix4 proj = rviz_rendering::buildScaledOrthoMatrix(
-    -width / scale / 2, width / scale / 2, -height / scale / 2, height / scale / 2,
+  float ortho_width = width / scale / 2;
+  float ortho_height = height / scale / 2;
+  Ogre::Matrix4 projection = rviz_rendering::buildScaledOrthoMatrix(
+    -ortho_width, ortho_width, -ortho_height, ortho_height,
     camera_->getNearClipDistance(), camera_->getFarClipDistance());
-  camera_->setCustomProjectionMatrix(true, proj);
+  camera_->setCustomProjectionMatrix(true, projection);
 
-  // For Z, we use half of the far-clip distance set in
-  // selection_context.cpp, so that the shader program which computes
-  // depth can see equal distances above and below the Z=0 plane.
+  // For Z, we use a value that seems to work very well in the past. It once was connected to
+  // half the far_clip_distance.
   auto camera_parent = getCameraParent(camera_);
-  camera_parent->setPosition(Ogre::Vector3(x_property_->getFloat(), y_property_->getFloat(), 500));
+  camera_parent->setPosition(Ogre::Vector3(
+      x_property_->getFloat(), y_property_->getFloat(), ORTHO_VIEW_CONTROLLER_CAMERA_Z));
 }
 
 Ogre::SceneNode * FixedOrientationOrthoViewController::getCameraParent(Ogre::Camera * camera)

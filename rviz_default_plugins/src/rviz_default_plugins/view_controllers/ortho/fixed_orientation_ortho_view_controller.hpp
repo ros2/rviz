@@ -100,8 +100,7 @@ public:
 protected:
   void onTargetFrameChanged(
     const Ogre::Vector3 & old_reference_position,
-    const Ogre::Quaternion & old_reference_orientation)
-  override;
+    const Ogre::Quaternion & old_reference_orientation) override;
 
   /** Set the camera orientation based on angle_. */
   void orientCamera();
@@ -109,6 +108,7 @@ protected:
   void setPosition(const Ogre::Vector3 & pos_rel_target);
   void updateCamera();
   Ogre::SceneNode * getCameraParent(Ogre::Camera * camera);
+  void renderOnMove();
 
   rviz_common::properties::FloatProperty * scale_property_;
   rviz_common::properties::FloatProperty * angle_property_;
