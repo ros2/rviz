@@ -52,6 +52,7 @@ public:
 
     EXPECT_CALL(*context_, getSelectionManager()).WillRepeatedly(Return(selection_manager_));
 
+    render_panel_ = std::make_shared<rviz_common::RenderPanel>(nullptr);
     selection_tool_ = std::make_shared<rviz_default_plugins::tools::SelectionTool>();
     selection_tool_->initialize(context_.get());
   }
@@ -60,8 +61,8 @@ public:
   std::shared_ptr<MockSelectionManager> selection_manager_;
 
   std::shared_ptr<rviz_default_plugins::tools::SelectionTool> selection_tool_;
+  std::shared_ptr<rviz_common::RenderPanel> render_panel_;
 };
-
 
 TEST_F(SelectionToolTestFixture, processMouseEvent_does_not_render_on_mouse_move) {
   auto event = generateMouseMoveEvent(10, 20);
