@@ -51,7 +51,7 @@ ToolPropertiesPanel::ToolPropertiesPanel(QWidget * parent)
 
 void ToolPropertiesPanel::onInitialize()
 {
-  tree_widget_->setModel(vis_manager_->getToolManager()->getPropertyModel() );
+  tree_widget_->setModel(getDisplayContext()->getToolManager()->getPropertyModel() );
 }
 
 void ToolPropertiesPanel::save(Config config) const

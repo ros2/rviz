@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,8 +61,9 @@ class DisplaysPanel : public Panel
   Q_OBJECT
 
 public:
-  explicit DisplaysPanel(const std::string & node_name, QWidget * parent = 0);
-  virtual ~DisplaysPanel();
+  explicit DisplaysPanel(
+    const std::string & node_name, VisualizationManager * manager, QWidget * parent = nullptr);
+  ~DisplaysPanel() override;
 
   void onInitialize() override;
 
@@ -82,13 +84,14 @@ protected Q_SLOTS:
   void onSelectionChanged();
 
 protected:
+  const std::string node_name_;
+  VisualizationManager * vis_manager_;
   properties::PropertyTreeWidget * property_grid_;
 
   QPushButton * duplicate_button_;
   QPushButton * remove_button_;
   QPushButton * rename_button_;
   properties::PropertyTreeWithHelp * tree_with_help_;
-  const std::string node_name_;
 };
 
 }  // namespace rviz_common
