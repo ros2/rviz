@@ -38,13 +38,19 @@
 void VisualTestFixture::SetUpTestCase()
 {
   QLocale::setDefault(QLocale::English);
-  int argc = 0;
+
+  int argc = 1;
+  char first_argument[6] = "rviz2";
+  char * argv[] = {first_argument, nullptr};
+
   visualizer_app_ = new rviz_common::VisualizerApp(
     std::make_unique<rviz_common::ros_integration::RosClientAbstraction>());
-  qapp_ = new QApplication(argc, nullptr);
+  qapp_ = new QApplication(argc, argv);
+
 
   visualizer_app_->setApp(qapp_);
-  visualizer_app_->init(0, nullptr);
+
+  visualizer_app_->init(argc, argv);
   if (VisualTest::generateReferenceImages()) {
     visualizer_app_->loadConfig(QDir::toNativeSeparators(
         QString::fromStdString(std::string(_SRC_DIR_PATH) + "/visual_tests_default_config.rviz")));

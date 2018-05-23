@@ -33,6 +33,8 @@
 
 #include <string>
 
+#include "rviz_rendering/visibility_control.hpp"
+
 namespace rviz_rendering
 {
 
@@ -58,6 +60,17 @@ public:
   static
   void
   useLogFile(const std::string & filename = "Ogre.log");
+
+  /// Configure Ogre to write output to stdout and to the given log file name.
+  /**
+   * If file name is a relative path, it will be relative to
+   * the directory which is current when the program is run.  Default
+   * is "Ogre.log".
+   */
+  static
+  RVIZ_RENDERING_PUBLIC
+  void
+  useLogFileAndStandardOut(const std::string & filename = "Ogre.log");
 
   /// Disable Ogre logging entirely, this is the default.
   static
