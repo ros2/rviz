@@ -119,6 +119,7 @@
     <description>
       Displays visualization_msgs::Marker messages. &lt;a href="http://www.ros.org/wiki/rviz/DisplayTypes/Marker"&gt;More Information&lt;/a&gt;.
     </description>
+    <message_type>visualization_msgs/Marker</message_type>
   </class>
 
   <class
