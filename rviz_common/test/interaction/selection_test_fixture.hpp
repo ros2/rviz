@@ -32,7 +32,6 @@
 #ifndef INTERACTION__SELECTION_TEST_FIXTURE_HPP_
 #define INTERACTION__SELECTION_TEST_FIXTURE_HPP_
 
-#include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
 #include <memory>

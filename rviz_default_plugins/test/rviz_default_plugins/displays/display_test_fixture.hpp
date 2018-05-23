@@ -32,7 +32,6 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__DISPLAY_TEST_FIXTURE_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__DISPLAY_TEST_FIXTURE_HPP_
 
-#include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
 #include <memory>

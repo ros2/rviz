@@ -30,7 +30,6 @@
 #ifndef MOCK_DISPLAY_CONTEXT_HPP_
 #define MOCK_DISPLAY_CONTEXT_HPP_
 
-#include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
 #include <memory>

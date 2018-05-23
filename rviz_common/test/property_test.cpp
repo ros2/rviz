@@ -31,11 +31,11 @@
 
 #include <gtest/gtest.h>
 
-#include <rviz_common/properties/property.hpp>
-#include <rviz_common/properties/color_property.hpp>
-#include <rviz_common/properties/vector_property.hpp>
-#include <rviz_common/properties/quaternion_property.hpp>
-#include <rviz_common/properties/enum_property.hpp>
+#include "rviz_common/properties/property.hpp"
+#include "rviz_common/properties/color_property.hpp"
+#include "rviz_common/properties/vector_property.hpp"
+#include "rviz_common/properties/quaternion_property.hpp"
+#include "rviz_common/properties/enum_property.hpp"
 
 #include "mock_property_change_receiver.hpp"
 
