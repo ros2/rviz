@@ -157,6 +157,16 @@
   </class>
 
   <class
+    name="rviz_default_plugins/PublishPoint"
+    type="rviz_default_plugins::tools::PointTool"
+    base_class_type="rviz_common::Tool"
+  >
+    <description>
+      Allows you to click on a point and publish it as a PointStamped message.
+    </description>
+  </class>
+
+  <class
     name="rviz_default_plugins/Select"
     type="rviz_default_plugins::tools::SelectionTool"
     base_class_type="rviz_common::Tool"
