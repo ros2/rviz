@@ -257,7 +257,7 @@ void VisualizationFrame::initialize(const QString & display_config_file)
 
   QDir app_icon_path(QString::fromStdString(package_path_) + "/icons/package.png");
   QIcon app_icon(app_icon_path.absolutePath());
-  setWindowIcon(app_icon);
+  app_->setWindowIcon(app_icon);
 
   if (splash_path_ != "") {
     QPixmap splash_image(splash_path_);
