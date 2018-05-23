@@ -40,9 +40,7 @@ void VisualTestFixture::SetUpTestCase()
   QLocale::setDefault(QLocale::English);
 
   int argc = 1;
-  std::string application_name = "rviz2";
-  auto first_argument = new char[application_name.length() + 1];
-  strcpy(first_argument, application_name.c_str());  // NOLINT (cpplint doesn't like strcpy())
+  char first_argument[6] = "rviz2";
   char * argv[] = {first_argument, nullptr};
 
   visualizer_app_ = new rviz_common::VisualizerApp(
@@ -61,7 +59,6 @@ void VisualTestFixture::SetUpTestCase()
         QString::fromStdString(std::string(_SRC_DIR_PATH) +
         "/visual_tests_test_image_config.rviz")));
   }
-  delete[] first_argument;
 }
 
 void VisualTestFixture::TearDown()
