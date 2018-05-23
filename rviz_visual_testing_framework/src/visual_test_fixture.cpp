@@ -39,7 +39,10 @@ void VisualTestFixture::SetUpTestCase()
 {
   QLocale::setDefault(QLocale::English);
   int argc = 1;
-  char * argv[] = {const_cast<char *>("rviz2"), nullptr};
+
+  auto first_argument = new char[6];
+  snprintf(first_argument, sizeof(first_argument), "rviz2");
+  char * argv[] = {first_argument, nullptr};
 
   visualizer_app_ = new rviz_common::VisualizerApp(
     std::make_unique<rviz_common::ros_integration::RosClientAbstraction>());
@@ -57,6 +60,7 @@ void VisualTestFixture::SetUpTestCase()
         QString::fromStdString(std::string(_SRC_DIR_PATH) +
         "/visual_tests_test_image_config.rviz")));
   }
+  delete[] first_argument;
 }
 
 void VisualTestFixture::TearDown()
