@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,13 +31,16 @@
 #ifndef RVIZ_COMMON__TOOL_PROPERTIES_PANEL_HPP_
 #define RVIZ_COMMON__TOOL_PROPERTIES_PANEL_HPP_
 
-#include "rviz/panel.h"
+#include "panel.hpp"
 
-namespace rviz
+namespace rviz_common
 {
+namespace properties
+{
+class PropertyTreeWidget;
+}
 
 class DisplayContext;
-class PropertyTreeWidget;
 
 /** A place to edit properties of all of the Tools.
  */
@@ -46,20 +50,20 @@ class ToolPropertiesPanel : public Panel
 
 public:
   explicit ToolPropertiesPanel(QWidget * parent = 0);
-  virtual ~ToolPropertiesPanel() {}
+  ~ToolPropertiesPanel() override = default;
 
-  virtual void onInitialize();
+  void onInitialize() override;
 
   /** @brief Load configuration data, specifically the PropertyTreeWidget view settings. */
-  virtual void load(const Config & config);
+  void load(const Config & config) override;
 
   /** @brief Save configuration data, specifically the PropertyTreeWidget view settings. */
-  virtual void save(Config config) const;
+  void save(Config config) const override;
 
 private:
-  PropertyTreeWidget * tree_widget_;
+  rviz_common::properties::PropertyTreeWidget * tree_widget_;
 };
 
-}  // namespace rviz
+}  // namespace rviz_common
 
 #endif  // RVIZ_COMMON__TOOL_PROPERTIES_PANEL_HPP_
