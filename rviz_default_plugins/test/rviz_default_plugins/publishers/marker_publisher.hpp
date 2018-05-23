@@ -56,16 +56,16 @@ public:
   MarkerPublisher()
   : Node("marker_publisher")
   {
-    publisher = this->create_publisher<visualization_msgs::msg::Marker>("marker");
-    timer = this->create_wall_timer(200ms, std::bind(&MarkerPublisher::timer_callback, this));
+    publisher_ = this->create_publisher<visualization_msgs::msg::Marker>("marker");
+    timer_ = this->create_wall_timer(200ms, std::bind(&MarkerPublisher::timer_callback, this));
   }
 
   // Convenience constructor for by MarkerArrayPublisher
   explicit MarkerPublisher(std::string node_name)
   : Node(node_name)
   {
-    timer = this->create_wall_timer(200ms, std::bind(&MarkerPublisher::timer_callback, this));
-    publisher = this->create_publisher<visualization_msgs::msg::Marker>("marker");
+    timer_ = this->create_wall_timer(200ms, std::bind(&MarkerPublisher::timer_callback, this));
+    publisher_ = this->create_publisher<visualization_msgs::msg::Marker>("marker");
   }
 
 protected:
@@ -192,6 +192,155 @@ protected:
     return marker;
   }
 
+  visualization_msgs::msg::Marker createMeshMarker(
+    std_msgs::msg::Header header, const std::string & ns, int id)
+  {
+    auto marker = visualization_msgs::msg::Marker();
+    marker.header = header;
+    marker.ns = ns;
+    marker.id = id;
+
+    marker.type = visualization_msgs::msg::Marker::MESH_RESOURCE;
+    marker.action = visualization_msgs::msg::Marker::ADD;
+
+    marker.scale.x = 5;
+    marker.scale.y = 5;
+    marker.scale.z = 5;
+
+    marker.pose.position.x = 0;
+    marker.pose.position.y = 5;
+    marker.pose.position.z = 0;
+
+    marker.pose.orientation.x = 0.0f;
+    marker.pose.orientation.y = 0.0f;
+    marker.pose.orientation.z = 0.0f;
+    marker.pose.orientation.w = 1.0f;
+
+    marker.mesh_resource = "package://rviz_rendering_tests/test_meshes/pr2-base.dae";
+    marker.mesh_use_embedded_materials = true;
+    return marker;
+  }
+
+  visualization_msgs::msg::Marker createArrowMarker(
+    std_msgs::msg::Header header, const std::string & ns, int id)
+  {
+    auto marker = visualization_msgs::msg::Marker();
+    marker.header = header;
+    marker.ns = ns;
+    marker.id = id;
+
+    marker.type = visualization_msgs::msg::Marker::ARROW;
+    marker.action = visualization_msgs::msg::Marker::ADD;
+
+    marker.scale.x = 5;
+    marker.scale.y = 5;
+    marker.scale.z = 5;
+
+    marker.color.a = 1.0f;
+    marker.color.r = 0.0f;
+    marker.color.g = 0.0f;
+    marker.color.b = 1.0f;
+
+    marker.pose.position.x = 0;
+    marker.pose.position.y = -4;
+    marker.pose.position.z = 0;
+
+    marker.pose.orientation.x = 0.0f;
+    marker.pose.orientation.y = 0.0f;
+    marker.pose.orientation.z = 0.0f;
+    marker.pose.orientation.w = 1.0f;
+
+    auto p1 = geometry_msgs::msg::Point();
+    p1.x = 5;
+    p1.y = 0;
+    p1.z = 0;
+
+    auto p2 = geometry_msgs::msg::Point();
+    p2.x = -5;
+    p2.y = 0;
+    p2.z = 0;
+
+    marker.points = std::vector<geometry_msgs::msg::Point>();
+    marker.points.push_back(p1);
+    marker.points.push_back(p2);
+
+    return marker;
+  }
+
+  visualization_msgs::msg::Marker createTriangleListMarker(
+    std_msgs::msg::Header header, const std::string & ns, int id)
+  {
+    auto marker = visualization_msgs::msg::Marker();
+    marker.header = header;
+    marker.ns = ns;
+    marker.id = id;
+
+    marker.type = visualization_msgs::msg::Marker::TRIANGLE_LIST;
+    marker.action = visualization_msgs::msg::Marker::ADD;
+
+    marker.scale.x = 5;
+    marker.scale.y = 5;
+    marker.scale.z = 5;
+
+    marker.color.a = 0.0f;
+    marker.color.r = 0.0f;
+    marker.color.g = 0.0f;
+    marker.color.b = 1.0f;
+
+    marker.pose.position.x = -6;
+    marker.pose.position.y = -1;
+    marker.pose.position.z = 1;
+
+    marker.pose.orientation.x = 0.0f;
+    marker.pose.orientation.y = 0.0f;
+    marker.pose.orientation.z = 0.0f;
+    marker.pose.orientation.w = 1.0f;
+
+    auto p1 = geometry_msgs::msg::Point();
+    p1.x = 1;
+    p1.y = 0;
+    p1.z = 0;
+
+    auto p2 = geometry_msgs::msg::Point();
+    p2.x = 1;
+    p2.y = 1;
+    p2.z = 0;
+
+    auto p3 = geometry_msgs::msg::Point();
+    p2.x = 0;
+    p2.y = 1;
+    p2.z = 0;
+
+    marker.points = std::vector<geometry_msgs::msg::Point>();
+    marker.points.push_back(p1);
+    marker.points.push_back(p2);
+    marker.points.push_back(p3);
+
+    auto c1 = std_msgs::msg::ColorRGBA();
+    c1.a = 1.0;
+    c1.r = 1.0;
+    c1.g = 0.0;
+    c1.b = 0.0;
+
+    auto c2 = std_msgs::msg::ColorRGBA();
+    c2.a = 1.0;
+    c2.r = 0.0;
+    c2.g = 1.0;
+    c2.b = 0.0;
+
+    auto c3 = std_msgs::msg::ColorRGBA();
+    c3.a = 1.0;
+    c3.r = 0.0;
+    c3.g = 0.0;
+    c3.b = 1.0;
+
+    marker.colors = std::vector<std_msgs::msg::ColorRGBA>();
+    marker.colors.push_back(c1);
+    marker.colors.push_back(c2);
+    marker.colors.push_back(c3);
+    return marker;
+  }
+
 private:
   virtual void timer_callback()
   {
@@ -203,17 +352,26 @@ private:
     int id = 0;
 
     auto sphere_marker = createSphereMarker(header, ns, ++id);
-    publisher->publish(sphere_marker);
+    publisher_->publish(sphere_marker);
 
     auto line_strip_marker = createLineStripMarker(header, ns, ++id);
-    publisher->publish(line_strip_marker);
+    publisher_->publish(line_strip_marker);
 
     auto cube_list_marker = createCubeListMarker(header, ns, ++id);
-    publisher->publish(cube_list_marker);
+    publisher_->publish(cube_list_marker);
+
+    auto mesh_marker = createMeshMarker(header, ns, ++id);
+    publisher_->publish(mesh_marker);
+
+    auto arrow_marker = createArrowMarker(header, ns, ++id);
+    publisher_->publish(arrow_marker);
+
+    auto triangle_list_marker = createTriangleListMarker(header, ns, ++id);
+    publisher_->publish(triangle_list_marker);
   }
 
-  rclcpp::TimerBase::SharedPtr timer;
-  rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr publisher;
+  rclcpp::TimerBase::SharedPtr timer_;
+  rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr publisher_;
 };
 
 }  // namespace nodes
