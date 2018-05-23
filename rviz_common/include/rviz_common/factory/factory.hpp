@@ -28,8 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__FACTORY_HPP_
-#define RVIZ_COMMON__FACTORY_HPP_
+#ifndef RVIZ_COMMON__FACTORY__FACTORY_HPP_
+#define RVIZ_COMMON__FACTORY__FACTORY_HPP_
 
 #include <QIcon>
 #include <QString>
@@ -59,4 +59,4 @@ public:
 
 }  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__FACTORY_HPP_
+#endif  // RVIZ_COMMON__FACTORY__FACTORY_HPP_

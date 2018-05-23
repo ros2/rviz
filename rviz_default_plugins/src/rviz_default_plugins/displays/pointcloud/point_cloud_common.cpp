@@ -32,6 +32,7 @@
 #include <memory>
 #include <set>
 #include <string>
+#include <vector>
 #include <utility>
 
 #ifndef _WIN32
@@ -45,29 +46,17 @@
 # pragma GCC diagnostic pop
 #endif
 
-// TODO(wjwwood): revisit file when pluginlib is available
-// #include <pluginlib/class_loader.h>
 #include "rclcpp/clock.hpp"
 
 #include "./point_cloud_to_point_cloud2.hpp"
+#include "point_cloud_helpers.hpp"
 #include "rviz_common/display.hpp"
 #include "rviz_common/display_context.hpp"
-#include "rviz_common/frame_manager_iface.hpp"
-#include "rviz_common/interaction/selection_manager.hpp"
-#include "rviz_rendering/objects/point_cloud.hpp"
-#include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/properties/enum_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
 #include "rviz_common/validate_floats.hpp"
-
-#include "src/rviz_default_plugins/displays/pointcloud/transformers/rgb8_pc_transformer.hpp"
-#include "src/rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.hpp"
-#include "src/rviz_default_plugins/displays/pointcloud/transformers/xyz_pc_transformer.hpp"
-#include "src/rviz_default_plugins/displays/pointcloud/transformers/rgbf32_pc_transformer.hpp"
-#include "src/rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.hpp"
-#include "src/rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.hpp"
 
 namespace rviz_default_plugins
 {
@@ -112,6 +101,7 @@ PointCloudCommon::PointCloudCommon(rviz_common::Display * display)
   new_xyz_transformer_(false),
   new_color_transformer_(false),
   needs_retransform_(false),
+  transformer_factory_(std::make_unique<PointCloudTransformerFactory>()),
   display_(display)
 {
   selectable_property_ = new rviz_common::properties::BoolProperty("Selectable", true,
@@ -169,9 +159,6 @@ void PointCloudCommon::initialize(
   rviz_common::DisplayContext * context,
   Ogre::SceneNode * scene_node)
 {
-  // TODO(Martin-Idel-SI): revisit when pluginlib is available
-//  transformer_class_loader_ = new pluginlib::ClassLoader<PointCloudTransformer>( "rviz",
-// "rviz::PointCloudTransformer" );
   loadTransformers();
 
   context_ = context;
@@ -184,71 +171,20 @@ void PointCloudCommon::initialize(
   updateSelectable();
 }
 
-PointCloudCommon::~PointCloudCommon()
-{
-  // TODO(Martin-Idel-SI): revisit when pluginlib is available
-//  if ( transformer_class_loader_ )
-//  {
-//    delete transformer_class_loader_;
-//  }
-}
-
 void PointCloudCommon::loadTransformers()
 {
-  loadTransformer(
-    std::make_shared<AxisColorPCTransformer>(), "AxisColorPCTransformer",
-    "AxisColorPCTransformer");
-  loadTransformer(
-    std::make_shared<FlatColorPCTransformer>(), "FlatColorPCTransformer",
-    "FlatColorPCTransformer");
-  loadTransformer(
-    std::make_shared<IntensityPCTransformer>(), "IntensityPCTransformer",
-    "IntensityPCTransformer");
-  loadTransformer(
-    std::make_shared<RGB8PCTransformer>(), "RGB8PCTransformer",
-    "RGB8PCTransformer");
-  loadTransformer(
-    std::make_shared<RGBF32PCTransformer>(), "RGBF32PCTransformer",
-    "RGBF32PCTransformer");
-  loadTransformer(
-    std::make_shared<XYZPCTransformer>(), "XYZPCTransformer",
-    "XYZPCTransformer");
+  QStringList classes = transformer_factory_->getDeclaredClassIds();
+  for (auto const & class_id : classes) {
+    std::string name = transformer_factory_->getClassName(class_id).toStdString();
 
-// TODO(Martin-Idel-SI): revisit when pluginlib is available
-//  std::vector<std::string> classes = transformer_class_loader_->getDeclaredClasses();
-//  std::vector<std::string>::iterator ci;
-//
-//  for( ci = classes.begin(); ci != classes.end(); ci++ )
-//  {
-//    const std::string& lookup_name = *ci;
-//    std::string name = transformer_class_loader_->getName( lookup_name );
-//
-//    if( transformers_.count( name ) > 0 )
-//    {
-//      ROS_ERROR( "Transformer type [%s] is already loaded.", name.c_str() );
-//      continue;
-//    }
-//
-//    PointCloudTransformerPtr trans( transformer_class_loader_
-// ->createUnmanagedInstance( lookup_name ));
-//    trans->init();
-//    connect( trans.get(), SIGNAL( needRetransform() ), this, SLOT( causeRetransform() ));
-//
-//    TransformerInfo info;
-//    info.transformer = trans;
-//    info.readable_name = name;
-//    info.lookup_name = lookup_name;
-//
-//    info.transformer->createProperties( display_, PointCloudTransformer::Support_XYZ,
-// info.xyz_props );
-//    setPropertiesHidden( info.xyz_props, true );
-//
-//    info.transformer->createProperties( display_, PointCloudTransformer::Support_Color,
-// info.color_props );
-//    setPropertiesHidden( info.color_props, true );
-//
-//    transformers_[ name ] = info;
-//  }
+    if (transformers_.count(name) > 0) {
+      RVIZ_COMMON_LOG_ERROR_STREAM("Transformer type " << name << " is already loaded.");
+      continue;
+    }
+
+    PointCloudTransformerPtr trans(transformer_factory_->make(class_id));
+    loadTransformer(trans, name, class_id.toStdString());
+  }
 }
 
 void PointCloudCommon::loadTransformer(
@@ -264,23 +200,25 @@ void PointCloudCommon::loadTransformer(
   info.readable_name = name;
   info.lookup_name = lookup_name;
 
-  info.transformer->createProperties(display_, PointCloudTransformer::Support_XYZ, info.xyz_props);
+  info.transformer->createProperties(
+    display_, PointCloudTransformer::Support_XYZ, info.xyz_props);
   setPropertiesHidden(info.xyz_props, true);
 
-  info.transformer->createProperties(display_, PointCloudTransformer::Support_Color,
-    info.color_props);
+  info.transformer->createProperties(
+    display_, PointCloudTransformer::Support_Color, info.color_props);
   setPropertiesHidden(info.color_props, true);
 
   transformers_[name] = info;
 }
 
-void PointCloudCommon::setAutoSize(bool auto_size)
-{
-  auto_size_ = auto_size;
-  for (auto const & cloud_info : cloud_infos_) {
-    cloud_info->cloud_->setAutoSize(auto_size);
-  }
-}
+// TODO(anhosi): check if still needed when migrating DepthCloud
+// void PointCloudCommon::setAutoSize(bool auto_size)
+// {
+//   auto_size_ = auto_size;
+//   for (auto const & cloud_info : cloud_infos_) {
+//     cloud_info->cloud_->setAutoSize(auto_size);
+//   }
+// }
 
 void PointCloudCommon::updateAlpha()
 {
@@ -347,123 +285,142 @@ void PointCloudCommon::update(float wall_dt, float ros_dt)
 {
   (void) wall_dt;
   (void) ros_dt;
-  auto mode = static_cast<rviz_rendering::PointCloud::RenderMode>(style_property_->getOptionInt());
-  bool selectable = selectable_property_->getBool();
 
   float point_decay_time = decay_time_property_->getFloat();
+  rclcpp::Time now = clock_->now();
+
   if (needs_retransform_) {
     retransform();
     needs_retransform_ = false;
   }
 
-  // instead of deleting cloud infos, we just clear them
-  // and put them into obsolete_cloud_infos, so active selections
-  // are preserved
+  collectObsoleteCloudInfos(point_decay_time, now);
+  removeObsoleteCloudInfos();
 
-  rclcpp::Time now = clock_->now();
+  insertNewClouds(point_decay_time, now);
 
-  // if decay time == 0, clear the old cloud when we get a new one
-  // otherwise, clear all the outdated ones
-  {
-    std::unique_lock<std::mutex> lock(new_clouds_mutex_);
-    if (point_decay_time > 0.0 || !new_cloud_infos_.empty()) {
-      while (!cloud_infos_.empty() &&
-        (now.nanoseconds() - cloud_infos_.front()->receive_time_.nanoseconds()) / 1000000000.0 >
-        point_decay_time)
+  updateTransformerProperties();
+  updateStatus();
+}
+
+void PointCloudCommon::insertNewClouds(float point_decay_time, const rclcpp::Time & now)
+{
+  auto mode = static_cast<rviz_rendering::PointCloud::RenderMode>(style_property_->getOptionInt());
+
+  std::unique_lock<std::mutex> lock(new_clouds_mutex_);
+  if (!new_cloud_infos_.empty()) {
+    float size = getSizeForRenderMode(mode);
+
+    auto it = new_cloud_infos_.begin();
+    auto end = new_cloud_infos_.end();
+    for (; it != end; ++it) {
+      CloudInfoPtr cloud_info = *it;
+
+      // ignore point clouds that are too old, but keep at least one
+      auto next = it; next++;
+      if (next != end && cloudInfoIsDecayed(cloud_info, point_decay_time, now)) {
+        continue;
+      }
+
+      bool per_point_alpha = findChannelIndex(cloud_info->message_, "rgba") != -1;
+
+      cloud_info->cloud_.reset(new rviz_rendering::PointCloud());
+      cloud_info->cloud_->setRenderMode(mode);
+      cloud_info->cloud_->addPoints(
+        cloud_info->transformed_points_.begin(), cloud_info->transformed_points_.end());
+      cloud_info->cloud_->setAlpha(alpha_property_->getFloat(), per_point_alpha);
+      cloud_info->cloud_->setDimensions(size, size, size);
+      cloud_info->cloud_->setAutoSize(auto_size_);
+
+      cloud_info->manager_ = context_->getSceneManager();
+
+      cloud_info->scene_node_ = scene_node_->createChildSceneNode(cloud_info->position_,
+          cloud_info->orientation_);
+
+      cloud_info->scene_node_->attachObject(cloud_info->cloud_.get());
+
+      cloud_info->selection_handler_.reset(new PointCloudSelectionHandler(
+          getSelectionBoxSize(),
+          cloud_info.get(), context_));
+
+      cloud_infos_.push_back(*it);
+    }
+
+    new_cloud_infos_.clear();
+  }
+}
+
+float PointCloudCommon::getSizeForRenderMode(const rviz_rendering::PointCloud::RenderMode & mode)
+{
+  float size;
+  if (mode == rviz_rendering::PointCloud::RM_POINTS) {
+    size = point_pixel_size_property_->getFloat();
+  } else {
+    size = point_world_size_property_->getFloat();
+  }
+  return size;
+}
+
+void PointCloudCommon::updateTransformerProperties()
+{
+  std::unique_lock<std::mutex> lock(new_clouds_mutex_);
+
+  if (new_xyz_transformer_ || new_color_transformer_) {
+    for (auto transformer : transformers_) {
+      const std::string & name = transformer.first;
+      TransformerInfo & info = transformer.second;
+
+      setPropertiesHidden(info.xyz_props, name != xyz_transformer_property_->getStdString());
+      setPropertiesHidden(info.color_props,
+        name != color_transformer_property_->getStdString());
+
+      if (name == xyz_transformer_property_->getStdString() ||
+        name == color_transformer_property_->getStdString())
       {
-        cloud_infos_.front()->clear();
-        obsolete_cloud_infos_.push_back(cloud_infos_.front());
-        cloud_infos_.pop_front();
-        context_->queueRender();
+        info.transformer->hideUnusedProperties();
       }
     }
   }
 
-  // garbage-collect old point clouds that don't have an active selection
-  L_CloudInfo::iterator it = obsolete_cloud_infos_.begin();
-  L_CloudInfo::iterator end = obsolete_cloud_infos_.end();
-  while (it != end) {
-    if (!(*it)->selection_handler_.get() ||
-      !(*it)->selection_handler_->hasSelections())
+  new_xyz_transformer_ = false;
+  new_color_transformer_ = false;
+}
+
+void PointCloudCommon::collectObsoleteCloudInfos(float point_decay_time, const rclcpp::Time & now)
+{
+  std::unique_lock<std::mutex> lock(new_clouds_mutex_);
+
+  if (point_decay_time > 0.0 || !new_cloud_infos_.empty()) {
+    while (!cloud_infos_.empty() &&
+      cloudInfoIsDecayed(cloud_infos_.front(), point_decay_time, now))
     {
+      cloud_infos_.front()->clear();
+      obsolete_cloud_infos_.push_back(cloud_infos_.front());
+      cloud_infos_.pop_front();
+      context_->queueRender();
+    }
+  }
+}
+
+void PointCloudCommon::removeObsoleteCloudInfos()
+{
+  auto it = obsolete_cloud_infos_.begin();
+  auto end = obsolete_cloud_infos_.end();
+  while (it != end) {
+    if (!(*it)->selection_handler_.get() || !(*it)->selection_handler_->hasSelections()) {
       it = obsolete_cloud_infos_.erase(it);
     }
     if (it != end) {
       ++it;
     }
   }
+}
 
-  {
-    std::unique_lock<std::mutex> lock(new_clouds_mutex_);
-    if (!new_cloud_infos_.empty()) {
-      float size;
-      if (mode == rviz_rendering::PointCloud::RM_POINTS) {
-        size = point_pixel_size_property_->getFloat();
-      } else {
-        size = point_world_size_property_->getFloat();
-      }
-
-      V_CloudInfo::iterator it = new_cloud_infos_.begin();
-      V_CloudInfo::iterator end = new_cloud_infos_.end();
-      for (; it != end; ++it) {
-        CloudInfoPtr cloud_info = *it;
-
-        V_CloudInfo::iterator next = it; next++;
-        // ignore point clouds that are too old, but keep at least one
-        if (next != end &&
-          (now.nanoseconds() - cloud_info->receive_time_.nanoseconds()) / 1000000000.0 >
-          point_decay_time)
-        {
-          continue;
-        }
-
-        bool per_point_alpha = findChannelIndex(cloud_info->message_, "rgba") != -1;
-
-        cloud_info->cloud_.reset(new rviz_rendering::PointCloud());
-        cloud_info->cloud_->setRenderMode(mode);
-        cloud_info->cloud_->addPoints(
-          cloud_info->transformed_points_.begin(), cloud_info->transformed_points_.end());
-        cloud_info->cloud_->setAlpha(alpha_property_->getFloat(), per_point_alpha);
-        cloud_info->cloud_->setDimensions(size, size, size);
-        cloud_info->cloud_->setAutoSize(auto_size_);
-
-        cloud_info->manager_ = context_->getSceneManager();
-
-        cloud_info->scene_node_ = scene_node_->createChildSceneNode(cloud_info->position_,
-            cloud_info->orientation_);
-
-        cloud_info->scene_node_->attachObject(cloud_info->cloud_.get());
-
-        cloud_info->setSelectable(selectable, getSelectionBoxSize(), context_);
-
-        cloud_infos_.push_back(*it);
-      }
-
-      new_cloud_infos_.clear();
-    }
-  }
-
-  {
-    std::unique_lock<std::mutex> lock(new_clouds_mutex_);
-
-    if (lock.owns_lock()) {
-      if (new_xyz_transformer_ || new_color_transformer_) {
-        for (auto transformer : transformers_) {
-          const std::string & name = transformer.first;
-          TransformerInfo & info = transformer.second;
-
-          setPropertiesHidden(info.xyz_props, name != xyz_transformer_property_->getStdString());
-          setPropertiesHidden(info.color_props,
-            name != color_transformer_property_->getStdString());
-        }
-      }
-    }
-
-    new_xyz_transformer_ = false;
-    new_color_transformer_ = false;
-  }
-
-  updateStatus();
+bool PointCloudCommon::cloudInfoIsDecayed(
+  CloudInfoPtr cloud_info, float point_decay_time, const rclcpp::Time & now)
+{
+  return (now.nanoseconds() - cloud_info->receive_time_.nanoseconds()) / 1000000000.0 >
+         point_decay_time;
 }
 
 void PointCloudCommon::setPropertiesHidden(
@@ -667,18 +624,16 @@ bool PointCloudCommon::transformPoints(
   PointCloudTransformerPtr color_trans = getColorTransformer(cloud_info->message_);
 
   if (!xyz_trans) {
-    std::stringstream ss;
-    ss << "No position transformer available for cloud";
+    std::string status = "No position transformer available for cloud";
     display_->setStatusStd(
-      rviz_common::properties::StatusProperty::Error, message_status_name_, ss.str());
+      rviz_common::properties::StatusProperty::Error, message_status_name_, status);
     return false;
   }
 
   if (!color_trans) {
-    std::stringstream ss;
-    ss << "No color transformer available for cloud";
+    std::string status = "No color transformer available for cloud";
     display_->setStatusStd(
-      rviz_common::properties::StatusProperty::Error, message_status_name_, ss.str());
+      rviz_common::properties::StatusProperty::Error, message_status_name_, status);
     return false;
   }
 
@@ -708,11 +663,6 @@ void PointCloudCommon::addMessage(const sensor_msgs::msg::PointCloud::ConstShare
 void PointCloudCommon::addMessage(const sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud)
 {
   processMessage(cloud);
-}
-
-void PointCloudCommon::fixedFrameChanged()
-{
-  reset();
 }
 
 void PointCloudCommon::setXyzTransformerOptions(rviz_common::properties::EnumProperty * prop)

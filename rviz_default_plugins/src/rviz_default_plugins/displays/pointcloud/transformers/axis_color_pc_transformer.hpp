@@ -65,6 +65,8 @@ public:
 
   uint8_t score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) override;
 
+  void hideUnusedProperties() override;
+
   enum Axis
   {
     AXIS_X,

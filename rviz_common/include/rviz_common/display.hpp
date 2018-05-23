@@ -266,6 +266,10 @@ public:
   void
   emitTimeSignal(rclcpp::Time time);
 
+  virtual
+  properties::Property *
+  findProperty(const QString & name);
+
 Q_SIGNALS:
   void
   timeSignal(rviz_common::Display * display, rclcpp::Time time);

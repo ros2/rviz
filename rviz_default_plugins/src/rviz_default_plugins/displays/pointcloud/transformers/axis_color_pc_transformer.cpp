@@ -185,4 +185,9 @@ void AxisColorPCTransformer::updateAutoComputeBounds()
   Q_EMIT needRetransform();
 }
 
+void AxisColorPCTransformer::hideUnusedProperties()
+{
+  updateAutoComputeBounds();
+}
+
 }  // end namespace rviz_default_plugins

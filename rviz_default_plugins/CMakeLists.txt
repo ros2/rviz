@@ -61,6 +61,7 @@ set(rviz_default_plugins_headers_to_moc
   src/rviz_default_plugins/displays/pointcloud/point_cloud_display.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_transformer.hpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_transformer_factory.hpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_helpers.hpp
   src/rviz_default_plugins/displays/polygon/polygon_display.hpp
   src/rviz_default_plugins/displays/pose/pose_display.hpp
@@ -102,6 +103,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/pointcloud/transformers/xyz_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_common.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_to_point_cloud2.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_transformer_factory.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_selection_handler.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_display.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.cpp
@@ -128,6 +130,8 @@ add_library(rviz_default_plugins_object OBJECT
   ${rviz_default_plugins_headers_to_moc}
   ${rviz_default_plugins_source_files}
 )
+# prevent pluginlib from using boost
+target_compile_definitions(rviz_default_plugins_object PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
 
 set_property(TARGET rviz_default_plugins_object PROPERTY POSITION_INDEPENDENT_CODE ON)
 
@@ -184,9 +188,6 @@ ament_target_dependencies(rviz_default_plugins
 )
 
 pluginlib_export_plugin_description_file(rviz_common plugins_description.xml)
-
-# prevent pluginlib from using boost
-target_compile_definitions(rviz_default_plugins PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
 
 ament_export_interfaces(rviz_default_plugins)
 ament_export_dependencies(Qt5)
@@ -261,7 +262,8 @@ if(BUILD_TESTING)
     ament_add_gmock(point_cloud2_display_test
       test/rviz_default_plugins/pointcloud_messages.hpp
       test/rviz_default_plugins/pointcloud_messages.cpp
-        test/rviz_default_plugins/displays/pointcloud/point_cloud2_display_test.cpp)
+      test/rviz_default_plugins/displays/pointcloud/point_cloud2_display_test.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
     if(TARGET point_cloud2_display_test)
       target_include_directories(point_cloud2_display_test PUBLIC
         ${TEST_INCLUDE_DIRS})
@@ -269,9 +271,23 @@ if(BUILD_TESTING)
         ${TEST_LINK_LIBRARIES})
     endif()
 
-    ament_add_gmock(point_cloud_transformers_test
+    ament_add_gmock(point_cloud_common_test
       test/rviz_default_plugins/pointcloud_messages.hpp
       test/rviz_default_plugins/pointcloud_messages.cpp
+      test/rviz_default_plugins/displays/pointcloud/point_cloud_common_test.cpp
+      test/rviz_default_plugins/displays/display_test_fixture.cpp
+      test/rviz_default_plugins/scene_graph_introspection.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET point_cloud_common_test)
+      target_include_directories(point_cloud_common_test PUBLIC
+        ${TEST_INCLUDE_DIRS})
+      target_link_libraries(point_cloud_common_test
+        ${TEST_LINK_LIBRARIES})
+    endif()
+
+    ament_add_gmock(point_cloud_transformers_test
+        test/rviz_default_plugins/pointcloud_messages.hpp
+        test/rviz_default_plugins/pointcloud_messages.cpp
         test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/axis_color_pc_transformer_test.cpp
         test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/flat_color_pc_transformer_test.cpp
         test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/intensity_pc_transformer_test.cpp

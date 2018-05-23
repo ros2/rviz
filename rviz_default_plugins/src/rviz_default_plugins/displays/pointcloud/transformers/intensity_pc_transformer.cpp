@@ -217,6 +217,12 @@ void IntensityPCTransformer::updateChannels(
   }
 }
 
+void IntensityPCTransformer::hideUnusedProperties()
+{
+  updateAutoComputeIntensityBounds();
+  updateUseRainbow();
+}
+
 void IntensityPCTransformer::updateAutoComputeIntensityBounds()
 {
   bool auto_compute = auto_compute_intensity_bounds_property_->getBool();

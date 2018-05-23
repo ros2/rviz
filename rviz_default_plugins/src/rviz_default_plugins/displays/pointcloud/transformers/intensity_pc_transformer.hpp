@@ -44,22 +44,24 @@ class IntensityPCTransformer : public PointCloudTransformer
   Q_OBJECT
 
 public:
-  virtual uint8_t supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud);
+  uint8_t supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) override;
 
-  virtual bool transform(
+  bool transform(
     const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
     uint32_t mask,
     const Ogre::Matrix4 & transform,
-    V_PointCloudPoint & points_out);
+    V_PointCloudPoint & points_out) override;
 
-  virtual uint8_t score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud);
+  uint8_t score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) override;
 
-  virtual void createProperties(
+  void createProperties(
     rviz_common::properties::Property * parent_property,
     uint32_t mask,
-    QList<rviz_common::properties::Property *> & out_props);
+    QList<rviz_common::properties::Property *> & out_props) override;
 
   void updateChannels(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud);
+
+  void hideUnusedProperties() override;
 
 private Q_SLOTS:
   void updateUseRainbow();
