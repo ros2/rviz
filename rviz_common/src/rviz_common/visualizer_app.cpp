@@ -209,21 +209,20 @@ bool VisualizerApp::init(int argc, char ** argv)
 //  bool disable_anti_aliasing = false;
 //  bool disable_stereo = false;
 
-  try {
-    parser.process(*app_);
+  parser.process(*app_);
 
-    enable_ogre_log = parser.isSet(ogre_log_option);
+  enable_ogre_log = parser.isSet(ogre_log_option);
 //    disable_stereo = parser.isSet(no_stereo_option);
 //    disable_anti_aliasing = parser.isSet(disable_anti_aliasing_option);
 
-    if (parser.isSet(display_config_option)) {
-      display_config = parser.value(display_config_option);
-    }
-    if (parser.isSet(fixed_frame_option)) {
-      fixed_frame = parser.value(fixed_frame_option);
-    }
+  if (parser.isSet(display_config_option)) {
+    display_config = parser.value(display_config_option);
+  }
+  if (parser.isSet(fixed_frame_option)) {
+    fixed_frame = parser.value(fixed_frame_option);
+  }
 
-    // TODO(botteroa-si): enable when possible
+  // TODO(botteroa-si): enable when possible
 //    if (parser.isSet(splash_screen_option)) {
 //      splash_path = parser.value(splash_screen_option);
 //    }
@@ -249,10 +248,6 @@ bool VisualizerApp::init(int argc, char ** argv)
 //       ros::console::notifyLoggerLevelsChanged();
 //     }
 //   }
-  } catch (std::exception & e) {
-    RVIZ_COMMON_LOG_ERROR_STREAM("Error parsing command line:" << e.what());
-    return false;
-  }
 
   //
   // if (!ros::master::check() ) {
