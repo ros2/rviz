@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "line.h"
+#include "rviz_rendering/objects/line.hpp"
 
 #include <sstream>
 
@@ -37,116 +37,110 @@
 #include <OgreMaterialManager.h>
 #include <OgreTechnique.h>
 
-namespace rviz
+namespace rviz_rendering
 {
 
-Line::Line( Ogre::SceneManager* manager, Ogre::SceneNode* parent_node )
-  : Object( manager )
+Line::Line(Ogre::SceneManager * manager, Ogre::SceneNode * parent_node)
+: Object(manager)
 {
-  if (!parent_node)
-  {
+  if (!parent_node) {
     parent_node = manager->getRootSceneNode();
   }
-  manual_object_ =  manager->createManualObject();
+  manual_object_ = manager->createManualObject();
   scene_node_ = parent_node->createChildSceneNode();
 
   static int count = 0;
   std::stringstream ss;
   ss << "LineMaterial" << count++;
 
-  // NOTE: The second parameter to the create method is the resource group the material will be added to.
-  // If the group you name does not exist (in your resources.cfg file) the library will assert() and your program will crash
-  manual_object_material_ = Ogre::MaterialManager::getSingleton().create(ss.str(),"rviz");
+  // NOTE: The second parameter to the create method is the resource group the material will be
+  // added to. If the group you name does not exist (in your resources.cfg file) the library will
+  // assert() and your program will crash
+  manual_object_material_ = Ogre::MaterialManager::getSingleton().create(
+    ss.str(), "rviz_rendering");
   manual_object_material_->setReceiveShadows(false);
   manual_object_material_->getTechnique(0)->setLightingEnabled(true);
-  manual_object_material_->getTechnique(0)->getPass(0)->setDiffuse(0,0,0,0);
-  manual_object_material_->getTechnique(0)->getPass(0)->setAmbient(1,1,1);
+  manual_object_material_->getTechnique(0)->getPass(0)->setDiffuse(0, 0, 0, 0);
+  manual_object_material_->getTechnique(0)->getPass(0)->setAmbient(1, 1, 1);
 
   scene_node_->attachObject(manual_object_);
 }
 
 Line::~Line()
 {
-  if ( scene_node_->getParentSceneNode() )
-  {
+  if (scene_node_->getParentSceneNode()) {
     scene_node_->getParentSceneNode()->removeChild(scene_node_);
   }
   scene_manager_->destroySceneNode(scene_node_);
-  scene_manager_->destroyManualObject( manual_object_ );
-  Ogre::MaterialManager::getSingleton().remove(manual_object_material_->getName());
+  scene_manager_->destroyManualObject(manual_object_);
+  manual_object_material_->unload();
 }
 
-void Line::setPoints( Ogre::Vector3 start, Ogre::Vector3 end )
+void Line::setPoints(Ogre::Vector3 start, Ogre::Vector3 end)
 {
   manual_object_->clear();
-  manual_object_->begin(manual_object_material_->getName(), Ogre::RenderOperation::OT_LINE_LIST);
+  manual_object_->begin(
+    manual_object_material_->getName(), Ogre::RenderOperation::OT_LINE_LIST, "rviz_rendering");
   manual_object_->position(start);
   manual_object_->position(end);
   manual_object_->end();
   setVisible(true);
 }
 
-void Line::setVisible( bool visible )
+void Line::setVisible(bool visible)
 {
-  scene_node_->setVisible(visible,true);
+  scene_node_->setVisible(visible, true);
 }
 
-
-void Line::setPosition( const Ogre::Vector3& position )
+void Line::setPosition(const Ogre::Vector3 & position)
 {
-  scene_node_->setPosition( position );
+  scene_node_->setPosition(position);
 }
 
-void Line::setOrientation( const Ogre::Quaternion& orientation )
+void Line::setOrientation(const Ogre::Quaternion & orientation)
 {
-  scene_node_->setOrientation( orientation );
+  scene_node_->setOrientation(orientation);
 }
 
-void Line::setScale( const Ogre::Vector3& scale )
+void Line::setScale(const Ogre::Vector3 & scale)
 {
-  scene_node_->setScale( scale );
+  scene_node_->setScale(scale);
 }
 
-void Line::setColor( const Ogre::ColourValue& c )
+void Line::setColor(const Ogre::ColourValue & c)
 {
   // this is consistent with the behaviour in the Shape class.
 
-  manual_object_material_->getTechnique(0)->setAmbient( c * 0.5 );
-  manual_object_material_->getTechnique(0)->setDiffuse( c );
+  manual_object_material_->getTechnique(0)->setAmbient(c * 0.5);
+  manual_object_material_->getTechnique(0)->setDiffuse(c);
 
-  if ( c.a < 0.9998 )
-  {
-    manual_object_material_->getTechnique(0)->setSceneBlending( Ogre::SBT_TRANSPARENT_ALPHA );
-    manual_object_material_->getTechnique(0)->setDepthWriteEnabled( false );
-  }
-  else
-  {
-    manual_object_material_->getTechnique(0)->setSceneBlending( Ogre::SBT_REPLACE );
-    manual_object_material_->getTechnique(0)->setDepthWriteEnabled( true );
+  if (c.a < 0.9998) {
+    manual_object_material_->getTechnique(0)->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
+    manual_object_material_->getTechnique(0)->setDepthWriteEnabled(false);
+  } else {
+    manual_object_material_->getTechnique(0)->setSceneBlending(Ogre::SBT_REPLACE);
+    manual_object_material_->getTechnique(0)->setDepthWriteEnabled(true);
   }
 }
 
-void Line::setColor( float r, float g, float b, float a )
+void Line::setColor(float r, float g, float b, float a)
 {
   setColor(Ogre::ColourValue(r, g, b, a));
 }
 
-// where are the void Line::setColour(...) convenience methods??? ;)
-
-const Ogre::Vector3& Line::getPosition()
+const Ogre::Vector3 & Line::getPosition()
 {
   return scene_node_->getPosition();
 }
 
-const Ogre::Quaternion& Line::getOrientation()
+const Ogre::Quaternion & Line::getOrientation()
 {
   return scene_node_->getOrientation();
 }
 
-void Line::setUserData( const Ogre::Any& data )
+void Line::setUserData(const Ogre::Any & data)
 {
-  manual_object_->getUserObjectBindings().setUserAny( data );
+  manual_object_->getUserObjectBindings().setUserAny(data);
 }
 
-
-}
+}  // namespace rviz_rendering

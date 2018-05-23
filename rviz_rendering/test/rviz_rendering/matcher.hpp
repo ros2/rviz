@@ -1,4 +1,5 @@
-/*
+/**
+ *
  * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
@@ -29,54 +30,35 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__DISPLAY_TEST_FIXTURE_HPP_
-#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__DISPLAY_TEST_FIXTURE_HPP_
+#ifndef RVIZ_RENDERING__MATCHER_HPP_
+#define RVIZ_RENDERING__MATCHER_HPP_
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <memory>
-#include <string>
+MATCHER_P(Vector3Eq, expected, "") {
+  return Ogre::Math::Abs(expected.x - arg.x) < 0.0001f &&
+         Ogre::Math::Abs(expected.y - arg.y) < 0.0001f &&
+         Ogre::Math::Abs(expected.z - arg.z) < 0.0001f;
+}
 
-#include <QApplication>  // NOLINT
+MATCHER_P(Vector4Eq, expected, "") {
+  return Ogre::Math::Abs(expected.x - arg.x) < 0.0001f &&
+         Ogre::Math::Abs(expected.y - arg.y) < 0.0001f &&
+         Ogre::Math::Abs(expected.z - arg.z) < 0.0001f &&
+         Ogre::Math::Abs(expected.w - arg.w) < 0.0001f;
+}
 
-#include <OgreRoot.h>
+MATCHER_P(HasMinimum, expected, "") {
+  return Ogre::Math::Abs(expected.x - arg.getMinimum().x) < 0.0001f &&
+         Ogre::Math::Abs(expected.y - arg.getMinimum().y) < 0.0001f &&
+         Ogre::Math::Abs(expected.z - arg.getMinimum().z) < 0.0001f;
+}
 
-#include "rclcpp/clock.hpp"
+MATCHER_P(HasMaximum, expected, "") {
+  return Ogre::Math::Abs(expected.x - arg.getMaximum().x) < 0.0001f &&
+         Ogre::Math::Abs(expected.y - arg.getMaximum().y) < 0.0001f &&
+         Ogre::Math::Abs(expected.z - arg.getMaximum().z) < 0.0001f;
+}
 
-#include "test/rviz_rendering/ogre_testing_environment.hpp"
-
-#include "../mock_display_context.hpp"
-#include "../mock_frame_manager.hpp"
-#include "../mock_selection_manager.hpp"
-#include "../mock_handler_manager.hpp"
-
-class DisplayTestFixture : public testing::Test
-{
-public:
-  static void SetUpTestCase();
-
-  DisplayTestFixture();
-
-  ~DisplayTestFixture() override;
-
-  static void TearDownTestCase();
-
-  void mockValidTransform();
-
-  void mockValidTransform(Ogre::Vector3 position, Ogre::Quaternion orientation);
-
-  static std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
-  static Ogre::SceneManager * scene_manager_;
-
-  std::shared_ptr<MockDisplayContext> context_;
-  std::shared_ptr<MockFrameManager> frame_manager_;
-  std::shared_ptr<MockSelectionManager> selection_manager_;
-  std::shared_ptr<MockHandlerManager> handler_manager_;
-  std::shared_ptr<rclcpp::Clock> clock_;
-
-  std::string fixed_frame = "fixed_frame";
-};
-
-
-#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__DISPLAY_TEST_FIXTURE_HPP_
+#endif  // RVIZ_RENDERING__MATCHER_HPP_

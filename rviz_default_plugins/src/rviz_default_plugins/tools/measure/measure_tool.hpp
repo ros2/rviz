@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,53 +27,86 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
- /*
+/*
  * measure_tool.h
  *
  *  Created on: Aug 8, 2012
  *      Author: gossow
  */
 
-#ifndef MEASURE_TOOL_H_
-#define MEASURE_TOOL_H_
+#ifndef RVIZ_DEFAULT_PLUGINS__TOOLS__MEASURE__MEASURE_TOOL_HPP_
+#define RVIZ_DEFAULT_PLUGINS__TOOLS__MEASURE__MEASURE_TOOL_HPP_
 
-#include "rviz/tool.h"
+#include <memory>
 
+#include <QCursor>  // NOLINT cpplint cannot handle include order
+
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wkeyword-macro"
+#endif
 #include <OgreVector3.h>
 
-namespace rviz
-{
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
+#include "rviz_common/tool.hpp"
+
+namespace rviz_rendering
+{
 class Line;
+}
 
-class MeasureTool : public Tool
+namespace rviz_common
 {
+namespace properties
+{
+class ColorProperty;
+}
+}
+
+namespace rviz_default_plugins
+{
+namespace tools
+{
+
+class MeasureTool : public rviz_common::Tool
+{
+  Q_OBJECT
+
 public:
   MeasureTool();
-  virtual
-  ~MeasureTool();
 
-  virtual void onInitialize();
+  void onInitialize() override;
 
-  virtual void activate();
-  virtual void deactivate();
+  void activate() override;
 
-  virtual int processMouseEvent( ViewportMouseEvent& event );
+  void deactivate() override;
+
+  int processMouseEvent(rviz_common::ViewportMouseEvent & event) override;
+
+public Q_SLOTS:
+  void updateLineColor();
+
 private:
+  void setStatusMessage();
+  void processLeftButton(const Ogre::Vector3 & pos);
+  void processRightButton();
 
-  enum {
-    START,
-    END
-  } state_;
+  rviz_common::properties::ColorProperty * color_property_;
 
-  Line* line_;
+  std::shared_ptr<rviz_rendering::Line> line_;
   Ogre::Vector3 start_;
   Ogre::Vector3 end_;
+  bool is_line_started_;
   float length_;
 
   QCursor std_cursor_;
   QCursor hit_cursor_;
 };
 
-} /* namespace rviz */
-#endif /* MEASURE_TOOL_H_ */
+}  // namespace tools
+}  // namespace rviz_default_plugins
+
+#endif  // RVIZ_DEFAULT_PLUGINS__TOOLS__MEASURE__MEASURE_TOOL_HPP_

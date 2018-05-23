@@ -29,54 +29,58 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__DISPLAY_TEST_FIXTURE_HPP_
-#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__DISPLAY_TEST_FIXTURE_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__MOCK_VIEW_PICKER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__MOCK_VIEW_PICKER_HPP_
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
 #include <memory>
 #include <string>
+#include <vector>
 
-#include <QApplication>  // NOLINT
+#include <OgreVector3.h>
 
-#include <OgreRoot.h>
+#include "rviz_common/interaction/forwards.hpp"
+#include "rviz_common/interaction/view_picker_iface.hpp"
+#include "rviz_common/render_panel.hpp"
 
-#include "rclcpp/clock.hpp"
 
-#include "test/rviz_rendering/ogre_testing_environment.hpp"
-
-#include "../mock_display_context.hpp"
-#include "../mock_frame_manager.hpp"
-#include "../mock_selection_manager.hpp"
-#include "../mock_handler_manager.hpp"
-
-class DisplayTestFixture : public testing::Test
+struct Visible3DObject
 {
-public:
-  static void SetUpTestCase();
+  Visible3DObject(int x, int y, const Ogre::Vector3 & pos)
+  : x(x), y(y), position(pos)
+  {}
 
-  DisplayTestFixture();
-
-  ~DisplayTestFixture() override;
-
-  static void TearDownTestCase();
-
-  void mockValidTransform();
-
-  void mockValidTransform(Ogre::Vector3 position, Ogre::Quaternion orientation);
-
-  static std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
-  static Ogre::SceneManager * scene_manager_;
-
-  std::shared_ptr<MockDisplayContext> context_;
-  std::shared_ptr<MockFrameManager> frame_manager_;
-  std::shared_ptr<MockSelectionManager> selection_manager_;
-  std::shared_ptr<MockHandlerManager> handler_manager_;
-  std::shared_ptr<rclcpp::Clock> clock_;
-
-  std::string fixed_frame = "fixed_frame";
+  int x;
+  int y;
+  Ogre::Vector3 position;
 };
 
+class MockViewPicker : public rviz_common::interaction::ViewPickerIface
+{
+public:
+  void initialize() override {}
 
-#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__DISPLAY_TEST_FIXTURE_HPP_
+  bool get3DPoint(rviz_common::RenderPanel * panel, int x, int y, Ogre::Vector3 & pos) override
+  {
+    (void) panel;
+    for (const auto & object : view_objects) {
+      if (object.x == x && object.y == y) {
+        pos = object.position;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  void registerObject(const Visible3DObject & object)
+  {
+    view_objects.push_back(object);
+  }
+
+private:
+  std::vector<Visible3DObject> view_objects;
+};
+
+#endif  // RVIZ_DEFAULT_PLUGINS__MOCK_VIEW_PICKER_HPP_

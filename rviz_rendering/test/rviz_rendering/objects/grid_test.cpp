@@ -28,6 +28,7 @@
  */
 
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 #include <memory>
 #include <string>
@@ -40,6 +41,8 @@
 #include "test/rviz_rendering/ogre_testing_environment.hpp"
 #include "rviz_rendering/objects/grid.hpp"
 #include "rviz_rendering/objects/billboard_line.hpp"
+
+using namespace ::testing;  // NOLINT
 
 class GridTestFixture : public ::testing::Test
 {
@@ -98,7 +101,7 @@ TEST_F(GridTestFixture, createGrid_returns_object_with_bounding_box_bounding_cel
 
   auto manual_object = grid.getManualObject();
   auto expected_bounding_box = expectedBoxForLines(cell_count, 0, cell_length);
-  ASSERT_EQ(manual_object->getBoundingBox(), expected_bounding_box);
+  ASSERT_THAT(manual_object->getBoundingBox(), Eq(expected_bounding_box));
 }
 
 TEST_F(GridTestFixture, setHeight_creates_object_with_correct_height_in_bounding_box) {
@@ -112,7 +115,7 @@ TEST_F(GridTestFixture, setHeight_creates_object_with_correct_height_in_bounding
 
   auto manual_object = grid.getManualObject();
   auto expected_bounding_box = expectedBoxForLines(cell_count, height_count, cell_length);
-  ASSERT_EQ(manual_object->getBoundingBox(), expected_bounding_box);
+  ASSERT_THAT(manual_object->getBoundingBox(), Eq(expected_bounding_box));
 }
 
 TEST_F(GridTestFixture,
@@ -128,7 +131,7 @@ TEST_F(GridTestFixture,
 
   auto billboard_object = grid.getBillboardLine();
   auto expected_bounding_box = expectedBoxForBillboards(cell_count, 0, cell_length, line_width);
-  ASSERT_EQ(billboard_object->getChains()[0]->getBoundingBox(), expected_bounding_box);
+  ASSERT_THAT(billboard_object->getChains()[0]->getBoundingBox(), Eq(expected_bounding_box));
 }
 
 TEST_F(GridTestFixture, setStyle_creates_a_new_grid_with_new_style) {
@@ -144,7 +147,7 @@ TEST_F(GridTestFixture, setStyle_creates_a_new_grid_with_new_style) {
 
   auto billboard_object = grid.getBillboardLine();
   auto expected_bounding_box = expectedBoxForBillboards(cell_count, 0, cell_length, line_width);
-  ASSERT_EQ(billboard_object->getChains()[0]->getBoundingBox(), expected_bounding_box);
+  ASSERT_THAT(billboard_object->getChains()[0]->getBoundingBox(), Eq(expected_bounding_box));
   auto manual_object = grid.getManualObject();
-  ASSERT_EQ(manual_object->getBoundingBox(), Ogre::AxisAlignedBox());
+  ASSERT_THAT(manual_object->getBoundingBox(), Eq(Ogre::AxisAlignedBox()));
 }

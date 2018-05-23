@@ -27,7 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <gtest/gtest.h>  // NOLINT
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 #include <memory>
 #include <vector>
@@ -50,6 +51,8 @@
 #include "rviz_rendering/objects/point_cloud.hpp"
 #include "rviz_rendering/objects/point_cloud_renderable.hpp"
 #include "test/rviz_rendering/ogre_testing_environment.hpp"
+
+using namespace ::testing;  // NOLINT
 
 class PointCloudRenderableTestFixture : public ::testing::Test
 {
@@ -81,12 +84,12 @@ TEST_F(PointCloudRenderableTestFixture, getBoundingRadius_returns_radius_from_co
   auto boundingBox = Ogre::AxisAlignedBox(Ogre::Vector3(-1, -1, -1), Ogre::Vector3(2, 2, 0));
   renderable_->setBoundingBox(boundingBox);
 
-  ASSERT_EQ(renderable_->getBoundingRadius(), Ogre::Math::Sqrt(8));
+  ASSERT_THAT(renderable_->getBoundingRadius(), FloatEq(Ogre::Math::Sqrt(8)));
 
   boundingBox.setMinimum(-2, -2, -2);
   renderable_->setBoundingBox(boundingBox);
 
-  ASSERT_EQ(renderable_->getBoundingRadius(), Ogre::Math::Sqrt(12));
+  ASSERT_THAT(renderable_->getBoundingRadius(), FloatEq(Ogre::Math::Sqrt(12)));
 }
 
 TEST_F(PointCloudRenderableTestFixture, renderable_contains_a_correctly_filled_buffer) {
@@ -96,10 +99,10 @@ TEST_F(PointCloudRenderableTestFixture, renderable_contains_a_correctly_filled_b
   size_t size_of_single_vertex = 3 * 8 + 4;  // three floats + 4 bytes for color
   size_t vertices_added = 3 * 1;  // three vertices per point
 
-  ASSERT_EQ(vertex_size, size_of_single_vertex);
-  ASSERT_EQ(number_of_vertices, vertices_added);
-  ASSERT_EQ(renderable_->getRenderOperation()->operationType,
-    Ogre::RenderOperation::OT_TRIANGLE_LIST);
+  ASSERT_THAT(vertex_size, Eq(size_of_single_vertex));
+  ASSERT_THAT(number_of_vertices, Eq(vertices_added));
+  ASSERT_THAT(
+    renderable_->getRenderOperation()->operationType, Eq(Ogre::RenderOperation::OT_TRIANGLE_LIST));
 }
 
 TEST_F(PointCloudRenderableTestFixture,
@@ -110,5 +113,5 @@ TEST_F(PointCloudRenderableTestFixture,
   auto boundingBox = Ogre::AxisAlignedBox(Ogre::Vector3(-1, -1, -1), Ogre::Vector3(3, 3, 1));
   renderable_->setBoundingBox(boundingBox);
 
-  ASSERT_EQ(renderable_->getSquaredViewDepth(camera), 2);
+  ASSERT_THAT(renderable_->getSquaredViewDepth(camera), Eq(2));
 }

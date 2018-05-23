@@ -27,14 +27,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LINE_H_
-#define LINE_H_
-
-#include "object.h"
+#ifndef RVIZ_RENDERING__OBJECTS__LINE_HPP_
+#define RVIZ_RENDERING__OBJECTS__LINE_HPP_
 
 #include <OgreSceneNode.h>
 #include <OgreMaterial.h>
 #include <OgreSharedPtr.h>
+
+#include "rviz_rendering/objects/object.hpp"
+#include "rviz_rendering/visibility_control.hpp"
 
 namespace Ogre
 {
@@ -46,20 +47,23 @@ class Any;
 class ColourValue;
 }
 
-namespace rviz
+namespace rviz_rendering
 {
 
 /* Represents a straight wireframe line between two points. */
-class Line: public Object
+class Line : public Object
 {
 public:
   /**
    * \brief Constructor
    * @param manager Scene manager this object is a part of
-   * @param parent_node A scene node to use as the parent of this object.  If NULL, uses the root scene node.
+   * @param parent_node A scene node to use as the parent of this object. Uses the root scene
+   * node if null.
    */
-  Line( Ogre::SceneManager* manager, Ogre::SceneNode* parent_node = NULL );
+  RVIZ_RENDERING_PUBLIC
+  explicit Line(Ogre::SceneManager * manager, Ogre::SceneNode * parent_node = nullptr);
 
+  RVIZ_RENDERING_PUBLIC
   virtual ~Line();
 
   /**
@@ -67,27 +71,32 @@ public:
    * @param start The start point.
    * @param end The end point.
    */
-  void setPoints( Ogre::Vector3 start, Ogre::Vector3 end );
+  RVIZ_RENDERING_PUBLIC
+  void setPoints(Ogre::Vector3 start, Ogre::Vector3 end);
 
-  void setVisible( bool visible );
+  RVIZ_RENDERING_PUBLIC
+  void setVisible(bool visible);
 
   /**
    * \brief Set the position of this object
    * @param Position vector position to set to.
    */
-  virtual void setPosition( const Ogre::Vector3& position );
+  RVIZ_RENDERING_PUBLIC
+  void setPosition(const Ogre::Vector3 & position) override;
 
   /**
    * \brief Set the orientation of the object
    * @param Orientation quaternion orientation to set to.
    */
-  virtual void setOrientation( const Ogre::Quaternion& orientation );
+  RVIZ_RENDERING_PUBLIC
+  void setOrientation(const Ogre::Quaternion & orientation) override;
 
   /**
    * \brief Set the scale of the object.  Always relative to the identity orientation of the object.
    * @param Scale vector scale to set to.
    */
-  virtual void setScale( const Ogre::Vector3& scale );
+  RVIZ_RENDERING_PUBLIC
+  void setScale(const Ogre::Vector3 & scale) override;
 
   /**
    * \brief Set the color of the object.  Values are in the range [0, 1]
@@ -95,39 +104,44 @@ public:
    * @param g Green component
    * @param b Blue component
    */
-  virtual void setColor( float r, float g, float b, float a );
+  RVIZ_RENDERING_PUBLIC
+  void setColor(float r, float g, float b, float a) override;
 
   /**
    * \brief Set the color of the object using ogre colour definitions.
    *
    * @param c : ogre colour type.
    */
-  virtual void setColor( const Ogre::ColourValue& c );
+  RVIZ_RENDERING_PUBLIC
+  virtual void setColor(const Ogre::ColourValue & c);
 
   /**
    * \brief Get the local position of this object
    * @return The position
    */
-  virtual const Ogre::Vector3& getPosition();
+  RVIZ_RENDERING_PUBLIC
+  const Ogre::Vector3 & getPosition() override;
+
   /**
    * \brief Get the local orientation of this object
    * @return The orientation
    */
-  virtual const Ogre::Quaternion& getOrientation();
+  RVIZ_RENDERING_PUBLIC
+  const Ogre::Quaternion & getOrientation() override;
 
   /**
    * \brief Set the user data on this object
    * @param data
    */
-  virtual void setUserData( const Ogre::Any& data );
+  RVIZ_RENDERING_PUBLIC
+  void setUserData(const Ogre::Any & data) override;
 
 protected:
-
-  Ogre::SceneNode* scene_node_;
-  Ogre::ManualObject* manual_object_;
+  Ogre::SceneNode * scene_node_;
+  Ogre::ManualObject * manual_object_;
   Ogre::MaterialPtr manual_object_material_;
 };
 
-}
+}  // namespace rviz_rendering
 
-#endif /* LINE_H_ */
+#endif  // RVIZ_RENDERING__OBJECTS__LINE_HPP_

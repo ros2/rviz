@@ -16,6 +16,7 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_gtest REQUIRED)
+find_package(ament_cmake_gmock REQUIRED)
 
 # Qt5 boilerplate options from http://doc.qt.io/qt-5/cmake-manual.html
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -78,6 +79,7 @@ add_library(rviz_rendering SHARED
   src/rviz_rendering/objects/axes.cpp
   src/rviz_rendering/objects/billboard_line.cpp
   src/rviz_rendering/objects/grid.cpp
+  src/rviz_rendering/objects/line.cpp
   src/rviz_rendering/objects/movable_text.cpp
   src/rviz_rendering/objects/object.cpp
   src/rviz_rendering/objects/point_cloud.cpp
@@ -178,9 +180,9 @@ if(BUILD_TESTING)
   ament_lint_cmake()
   ament_uncrustify()
 
-  ament_add_gtest(test_rviz_rendering test/string_helper_test.cpp)
-  if(TARGET test_rviz_rendering)
-    target_link_libraries(test_rviz_rendering rviz_rendering)
+  ament_add_gmock(string_helper_test test/rviz_rendering/string_helper_test.cpp)
+  if(TARGET string_helper_test)
+    target_link_libraries(string_helper_test rviz_rendering)
   endif()
 
   if(DEFINED ENV{DISPLAY})
@@ -190,7 +192,8 @@ if(BUILD_TESTING)
   if(APPLE OR DISPLAYPRESENT OR EnableDisplayTests STREQUAL "TRUE")
     message(STATUS "Enabling tests requiring a display")
 
-    ament_add_gtest(point_cloud_test_target test/point_cloud_test.cpp
+    ament_add_gmock(point_cloud_test_target
+      test/rviz_rendering/objects/point_cloud_test.cpp
       APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
     if(TARGET point_cloud_test_target)
       target_link_libraries(point_cloud_test_target
@@ -200,7 +203,8 @@ if(BUILD_TESTING)
       )
     endif()
 
-    ament_add_gtest(point_cloud_renderable_test_target test/point_cloud_renderable_test.cpp
+    ament_add_gmock(point_cloud_renderable_test_target
+      test/rviz_rendering/objects/point_cloud_renderable_test.cpp
       APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
     if(TARGET point_cloud_renderable_test_target)
       target_link_libraries(point_cloud_renderable_test_target
@@ -210,7 +214,8 @@ if(BUILD_TESTING)
       )
     endif()
 
-    ament_add_gtest(billboard_line_test_target test/billboard_line_test.cpp
+    ament_add_gmock(billboard_line_test_target
+      test/rviz_rendering/objects/billboard_line_test.cpp
       APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
     if(TARGET billboard_line_test_target)
       target_link_libraries(billboard_line_test_target
@@ -220,7 +225,8 @@ if(BUILD_TESTING)
       )
     endif()
 
-    ament_add_gtest(grid_test_target test/grid_test.cpp
+    ament_add_gmock(grid_test_target
+      test/rviz_rendering/objects/grid_test.cpp
       APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
     if(TARGET grid_test_target)
       target_link_libraries(grid_test_target
@@ -230,7 +236,8 @@ if(BUILD_TESTING)
       )
     endif()
 
-    ament_add_gtest(movable_text_test_target test/movable_text_test.cpp
+    ament_add_gmock(movable_text_test_target
+      test/rviz_rendering/objects/movable_text_test.cpp
       APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
     if(TARGET movable_text_test_target)
       target_link_libraries(movable_text_test_target
@@ -238,6 +245,17 @@ if(BUILD_TESTING)
         rviz_ogre_vendor::OgreOverlay
         rviz_rendering
         Qt5::Widgets
+      )
+    endif()
+
+    ament_add_gmock(line_test_target
+      test/rviz_rendering/objects/line_test.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET line_test_target)
+      target_link_libraries(line_test_target
+        rviz_ogre_vendor::OgreMain
+        rviz_rendering
+        Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
       )
     endif()
   endif()

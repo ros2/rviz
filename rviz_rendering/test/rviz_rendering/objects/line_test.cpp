@@ -29,54 +29,44 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__DISPLAY_TEST_FIXTURE_HPP_
-#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__DISPLAY_TEST_FIXTURE_HPP_
-
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
+#include <gtest/gtest.h>  // NOLINT
+#include <gmock/gmock.h>  // NOLINT
 
 #include <memory>
-#include <string>
+#include <vector>
 
-#include <QApplication>  // NOLINT
+#include <Ogre.h>
 
-#include <OgreRoot.h>
-
-#include "rclcpp/clock.hpp"
-
+#include "rviz_rendering/objects/line.hpp"
 #include "test/rviz_rendering/ogre_testing_environment.hpp"
 
-#include "../mock_display_context.hpp"
-#include "../mock_frame_manager.hpp"
-#include "../mock_selection_manager.hpp"
-#include "../mock_handler_manager.hpp"
+#include "../matcher.hpp"
 
-class DisplayTestFixture : public testing::Test
+class LineTestFixture : public ::testing::Test
 {
-public:
-  static void SetUpTestCase();
-
-  DisplayTestFixture();
-
-  ~DisplayTestFixture() override;
-
-  static void TearDownTestCase();
-
-  void mockValidTransform();
-
-  void mockValidTransform(Ogre::Vector3 position, Ogre::Quaternion orientation);
+protected:
+  static void SetUpTestCase()
+  {
+    testing_environment_ = std::make_shared<rviz_rendering::OgreTestingEnvironment>();
+    testing_environment_->setUpOgreTestEnvironment();
+  }
 
   static std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
-  static Ogre::SceneManager * scene_manager_;
-
-  std::shared_ptr<MockDisplayContext> context_;
-  std::shared_ptr<MockFrameManager> frame_manager_;
-  std::shared_ptr<MockSelectionManager> selection_manager_;
-  std::shared_ptr<MockHandlerManager> handler_manager_;
-  std::shared_ptr<rclcpp::Clock> clock_;
-
-  std::string fixed_frame = "fixed_frame";
 };
 
+std::shared_ptr<rviz_rendering::OgreTestingEnvironment> LineTestFixture::testing_environment_ =
+  nullptr;
 
-#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__DISPLAY_TEST_FIXTURE_HPP_
+TEST_F(LineTestFixture, setPoints_sets_the_line_position_and_size) {
+  auto scene_manager = Ogre::Root::getSingletonPtr()->createSceneManager();
+  auto root_node = scene_manager->getRootSceneNode();
+
+  auto line = new rviz_rendering::Line(scene_manager, root_node);
+  line->setPoints(Ogre::Vector3(-5, -5, -5), Ogre::Vector3(3, 3, 3));
+
+  auto line_node = dynamic_cast<Ogre::SceneNode *>(root_node->getChild(0));
+  auto aabb = line_node->getAttachedObject(0)->getBoundingBox();
+
+  ASSERT_THAT(aabb.getMinimum(), Vector3Eq(Ogre::Vector3(-5, -5, -5)));
+  ASSERT_THAT(aabb.getMaximum(), Vector3Eq(Ogre::Vector3(3, 3, 3)));
+}
