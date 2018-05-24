@@ -24,7 +24,6 @@
   <exec_depend>libqt5-opengl</exec_depend>
   <exec_depend>libqt5-widgets</exec_depend>
 
-  <depend>Eigen3</depend>
   <depend>geometry_msgs</depend>
   <depend>laser_geometry</depend>
   <depend>nav_msgs</depend>

@@ -33,8 +33,6 @@
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 
-#include <Eigen/Dense>
-
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/axes.hpp"
 #include "rviz_rendering/objects/covariance_visual.hpp"
@@ -268,6 +266,14 @@ bool validateQuaternion(nav_msgs::msg::Odometry msg)
   return valid;
 }
 
+float ogreQuaterionAngularDistance(Ogre::Quaternion first, Ogre::Quaternion second)
+{
+  auto product = first * Ogre::Quaternion(second.w, -second.x, -second.y, -second.z);
+  auto imaginary_norm = sqrt(pow(product.x, 2) + pow(product.y, 2) + pow(product.z, 2));
+
+  return 2 * atan2(imaginary_norm, sqrt(pow(product.w, 2)));
+}
+
 void OdometryDisplay::processMessage(nav_msgs::msg::Odometry::ConstSharedPtr message)
 {
   typedef rviz_common::properties::CovarianceProperty::CovarianceVisualPtr CovarianceVisualPtr;
@@ -285,22 +291,29 @@ void OdometryDisplay::processMessage(nav_msgs::msg::Odometry::ConstSharedPtr mes
   }
 
   if (last_used_message_) {
-    Ogre::Vector3 last_position(last_used_message_->pose.pose.position.x,
-      last_used_message_->pose.pose.position.y, last_used_message_->pose.pose.position.z);
-    Ogre::Vector3 current_position(message->pose.pose.position.x, message->pose.pose.position.y,
+    Ogre::Vector3 last_position(
+      last_used_message_->pose.pose.position.x,
+      last_used_message_->pose.pose.position.y,
+      last_used_message_->pose.pose.position.z);
+    Ogre::Vector3 current_position(
+      message->pose.pose.position.x,
+      message->pose.pose.position.y,
       message->pose.pose.position.z);
 
-    // TODO(Martin-Idel-SI): Replace by Ogre::Quaternion calculations
-    Eigen::Quaternionf last_orientation(last_used_message_->pose.pose.orientation.w,
-      last_used_message_->pose.pose.orientation.x, last_used_message_->pose.pose.orientation.y,
+    auto last_orientation = Ogre::Quaternion(
+      last_used_message_->pose.pose.orientation.w,
+      last_used_message_->pose.pose.orientation.x,
+      last_used_message_->pose.pose.orientation.y,
       last_used_message_->pose.pose.orientation.z);
-    Eigen::Quaternionf current_orientation(message->pose.pose.orientation.w,
-      message->pose.pose.orientation.x, message->pose.pose.orientation.y,
+    auto current_orientation = Ogre::Quaternion(
+      message->pose.pose.orientation.w,
+      message->pose.pose.orientation.x,
+      message->pose.pose.orientation.y,
       message->pose.pose.orientation.z);
 
     if ((last_position - current_position).length() < position_tolerance_property_->getFloat() &&
-      last_orientation.angularDistance(current_orientation) <
-      angle_tolerance_property_->getFloat())
+      ogreQuaterionAngularDistance(
+        last_orientation, current_orientation) < angle_tolerance_property_->getFloat())
     {
       return;
     }

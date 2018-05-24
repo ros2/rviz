@@ -27,8 +27,6 @@ find_package(ament_cmake REQUIRED)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
-# TODO(Martin-Idel-SI): Replace by pure ogre
-find_package(Eigen3 REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(resource_retriever REQUIRED)
 find_package(rviz_common REQUIRED)
@@ -177,7 +175,6 @@ target_link_libraries(rviz_default_plugins
   rviz_rendering::rviz_rendering
 )
 ament_target_dependencies(rviz_default_plugins
-  Eigen
   geometry_msgs
   laser_geometry
   nav_msgs
