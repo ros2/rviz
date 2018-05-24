@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2017, Ellon Paiva Mendes @ LAAS-CNRS
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,18 +28,19 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz_common/covariance_visual.hpp"
+#include "rviz_rendering/objects/covariance_visual.hpp"
 
+#include <array>
 #include <sstream>
 
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 #include <OgreQuaternion.h>
 
-#include "rviz_common/logging.hpp"
+#include "rviz_rendering/logging.hpp"
 #include "rviz_rendering/objects/shape.hpp"
 
-namespace rviz_common
+namespace rviz_rendering
 {
 
 namespace
@@ -295,18 +297,20 @@ CovarianceVisual::~CovarianceVisual()
   scene_manager_->destroySceneNode(root_node_->getName() );
 }
 
-void CovarianceVisual::setCovariance(const geometry_msgs::msg::PoseWithCovariance & pose)
+void CovarianceVisual::setCovariance(
+  Ogre::Quaternion pose_orientation,
+  std::array<double, 36> covariances)
 {
   // check for NaN in covariance
   for (unsigned i = 0; i < 3; ++i) {
-    if (std::isnan(pose.covariance[i])) {
+    if (std::isnan(covariances[i])) {
       // TODO(Martin-Idel-SI): Replace with error or delete
       // ROS_WARN_THROTTLE(1, "covariance contains NaN");
       return;
     }
   }
 
-  if (pose.covariance[14] <= 0 && pose.covariance[21] <= 0 && pose.covariance[28] <= 0) {
+  if (covariances[14] <= 0 && covariances[21] <= 0 && covariances[28] <= 0) {
     pose_2d_ = true;
   } else {
     pose_2d_ = false;
@@ -315,13 +319,11 @@ void CovarianceVisual::setCovariance(const geometry_msgs::msg::PoseWithCovarianc
   updateOrientationVisibility();
 
   // store orientation in Ogre structure
-  Ogre::Quaternion ori(pose.pose.orientation.w, pose.pose.orientation.x,
-    pose.pose.orientation.y, pose.pose.orientation.z);
   // Set the orientation of the fixed node. Since this node is attached to the root node,
   // it's orientation will be the inverse of pose's orientation.
-  fixed_orientation_node_->setOrientation(ori.Inverse());
+  fixed_orientation_node_->setOrientation(pose_orientation.Inverse());
   // Map covariance to a Eigen::Matrix
-  Eigen::Map<const Eigen::Matrix<double, 6, 6>> covariance(pose.covariance.data());
+  Eigen::Map<const Eigen::Matrix<double, 6, 6>> covariance(covariances.data());
 
   updatePosition(covariance);
   if (!pose_2d_) {
@@ -352,7 +354,7 @@ void CovarianceVisual::updatePosition(const Eigen::Matrix6d & covariance)
   if (!shape_scale.isNaN()) {
     position_node_->setScale(shape_scale);
   } else {
-    RVIZ_COMMON_LOG_WARNING_STREAM("position shape_scale contains NaN: " << shape_scale);
+    RVIZ_RENDERING_LOG_WARNING_STREAM("position shape_scale contains NaN: " << shape_scale);
   }
 }
 
@@ -413,7 +415,7 @@ void CovarianceVisual::updateOrientation(const Eigen::Matrix6d & covariance, Sha
   if (!shape_scale.isNaN()) {
     orientation_shape_[index]->setScale(shape_scale);
   } else {
-    RVIZ_COMMON_LOG_WARNING_STREAM("orientation shape_scale contains NaN: " << shape_scale);
+    RVIZ_RENDERING_LOG_WARNING_STREAM("orientation shape_scale contains NaN: " << shape_scale);
   }
 }
 
@@ -595,4 +597,4 @@ rviz_rendering::Shape * CovarianceVisual::getOrientationShape(ShapeIndex index)
   return orientation_shape_[index];
 }
 
-}  // namespace rviz_common
+}  // namespace rviz_rendering

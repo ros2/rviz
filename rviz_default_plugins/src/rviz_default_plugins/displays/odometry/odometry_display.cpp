@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,6 +37,7 @@
 
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/axes.hpp"
+#include "rviz_rendering/objects/covariance_visual.hpp"
 #include "rviz_common/logging.hpp"
 #include "rviz_common/properties/covariance_property.hpp"
 #include "rviz_common/properties/enum_property.hpp"
@@ -43,7 +45,6 @@
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/int_property.hpp"
 #include "rviz_common/validate_floats.hpp"
-#include "rviz_common/covariance_visual.hpp"
 
 namespace rviz_default_plugins
 {
@@ -351,7 +352,9 @@ void OdometryDisplay::processMessage(nav_msgs::msg::Odometry::ConstSharedPtr mes
   arrow->setColor(color.redF(), color.greenF(), color.blueF(), alpha);
 
   // Set up the covariance based on the message
-  cov->setCovariance(message->pose);
+  auto quaternion = message->pose.pose.orientation;
+  cov->setCovariance(Ogre::Quaternion(quaternion.w, quaternion.x, quaternion.y, quaternion.y),
+    message->pose.covariance);
 
   // Show/Hide things based on current properties
   bool use_arrow = (shape_property_->getOptionInt() == ArrowShape);

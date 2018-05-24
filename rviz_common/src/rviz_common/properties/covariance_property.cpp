@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2017, Ellon Paiva Mendes @ LAAS-CNRS
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,14 +28,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "rviz_common/properties/covariance_property.hpp"
 
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 
 #include <QColor>  // NOLINT cpplint cannot handle include order here
 
-#include "rviz_common/properties/covariance_property.hpp"
-#include "rviz_common/covariance_visual.hpp"
+#include "rviz_rendering/objects/covariance_visual.hpp"
 
 #include "rviz_common/properties/color_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
@@ -230,7 +231,8 @@ CovarianceProperty::CovarianceVisualPtr CovarianceProperty::createAndPushBackVis
   Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node)
 {
   bool use_rotating_frame = ( orientation_frame_property_->getOptionInt() == Local );
-  CovarianceVisualPtr visual(new CovarianceVisual(scene_manager, parent_node, use_rotating_frame));
+  CovarianceVisualPtr visual(new rviz_rendering::CovarianceVisual(
+      scene_manager, parent_node, use_rotating_frame));
   updateVisibility(visual);
   updateOrientationFrame(visual);
   updateColorAndAlphaAndScaleAndOffset(visual);

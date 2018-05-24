@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2017, Ellon Paiva Mendes @ LAAS-CNRS
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,9 +47,13 @@ class SceneManager;
 class SceneNode;
 }
 
-namespace rviz_common
+namespace rviz_rendering
 {
 class CovarianceVisual;
+}
+
+namespace rviz_common
+{
 namespace properties
 {
 class Property;
@@ -62,7 +67,7 @@ class RVIZ_COMMON_PUBLIC CovarianceProperty : public rviz_common::properties::Bo
   Q_OBJECT
 
 public:
-  typedef std::shared_ptr<rviz_common::CovarianceVisual> CovarianceVisualPtr;
+  typedef std::shared_ptr<rviz_rendering::CovarianceVisual> CovarianceVisualPtr;
 
   enum Frame
   {

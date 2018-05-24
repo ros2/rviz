@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2017, Ellon Paiva Mendes @ LAAS-CNRS
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,8 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__COVARIANCE_VISUAL_HPP_
-#define RVIZ_COMMON__COVARIANCE_VISUAL_HPP_
+#ifndef RVIZ_RENDERING__OBJECTS__COVARIANCE_VISUAL_HPP_
+#define RVIZ_RENDERING__OBJECTS__COVARIANCE_VISUAL_HPP_
 
 #include <cmath>
 
@@ -37,10 +38,8 @@
 
 #include <Eigen/Dense>  // NOLINT cpplint cannot handle include order here
 
-#include "geometry_msgs/msg/pose_with_covariance.hpp"
-
 #include "rviz_rendering/objects/object.hpp"
-#include "visibility_control.hpp"
+#include "rviz_rendering/visibility_control.hpp"
 
 namespace Ogre
 {
@@ -57,21 +56,12 @@ typedef Matrix<double, 6, 6> Matrix6d;
 namespace rviz_rendering
 {
 class Shape;
-}
-
-namespace rviz_common
-{
-
-namespace properties
-{
-class CovarianceProperty;
-}
 
 /**
  * \class CovarianceVisual
  * \brief CovarianceVisual consisting in a ellipse for position and 2D ellipses along the axis for orientation.
  */
-class RVIZ_COMMON_PUBLIC CovarianceVisual : public rviz_rendering::Object
+class RVIZ_RENDERING_PUBLIC CovarianceVisual : public rviz_rendering::Object
 {
 public:
   enum ShapeIndex
@@ -83,11 +73,9 @@ public:
     kNumOriShapes
   };
 
-private:
   /**
-   * \brief Private Constructor
+   * \brief Constructor - should be used via covariance property
    *
-   * CovarianceVisual can only be constructed by friend class CovarianceProperty.
    *
    * @param scene_manager The scene manager to use to construct any necessary objects
    * @param parent_object A rviz object that this covariance will be attached.
@@ -147,7 +135,9 @@ public:
    * This effectively changes the orientation and scale of position and orientation
    * covariance shapes
    */
-  virtual void setCovariance(const geometry_msgs::msg::PoseWithCovariance & pose);
+  virtual void setCovariance(
+    Ogre::Quaternion pose_orientation,
+    std::array<double, 36> covariances);
 
   virtual const Ogre::Vector3 & getPositionCovarianceScale();
 
@@ -264,11 +254,8 @@ private:
   virtual const Ogre::Vector3 & getPosition();
 
   virtual const Ogre::Quaternion & getOrientation();
-
-  // Make CovarianceProperty friend class so it creates CovarianceVisual objects
-  friend class rviz_common::properties::CovarianceProperty;
 };
 
-}  // namespace rviz_common
+}  // namespace rviz_rendering
 
-#endif  // RVIZ_COMMON__COVARIANCE_VISUAL_HPP_
+#endif  // RVIZ_RENDERING__OBJECTS__COVARIANCE_VISUAL_HPP_

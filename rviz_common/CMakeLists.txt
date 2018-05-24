@@ -30,7 +30,6 @@ set(CMAKE_AUTOMOC ON)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
-find_package(Eigen3 REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
@@ -134,7 +133,6 @@ set(rviz_common_source_files
   src/rviz_common/add_display_dialog.cpp
   src/rviz_common/bit_allocator.cpp
   src/rviz_common/config.cpp
-  src/rviz_common/covariance_visual.cpp
   src/rviz_common/display_factory.cpp
   src/rviz_common/display_group.cpp
   src/rviz_common/display.cpp
@@ -236,7 +234,6 @@ target_link_libraries(rviz_common
 )
 
 ament_target_dependencies(rviz_common
-  Eigen3
   geometry_msgs
   rclcpp
   resource_retriever
