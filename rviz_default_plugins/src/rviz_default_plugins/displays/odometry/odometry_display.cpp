@@ -38,7 +38,7 @@
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 
-#include "odometry_display.h"
+#include "odometry_display.hpp"
 #include "covariance_property.h"
 #include "covariance_visual.h"
 
