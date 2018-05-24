@@ -28,40 +28,50 @@
  */
 
 
-#ifndef RVIZ_ODOMETRY_DISPLAY_H_
-#define RVIZ_ODOMETRY_DISPLAY_H_
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__ODOMETRY__ODOMETRY_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__ODOMETRY__ODOMETRY_DISPLAY_HPP_
 
 #include <deque>
 
-#include <boost/shared_ptr.hpp>
-#include <boost/thread/mutex.hpp>
-
 #ifndef Q_MOC_RUN
-#include <message_filters/subscriber.h>
-#include <tf/message_filter.h>
+
+// TODO(Martin-Idel-SI): Reenable once available
+// #include <tf/message_filter.h>
+#include "nav_msgs/msg/odometry.hpp"
 #endif
 
-#include "rviz/message_filter_display.h"
-#include <nav_msgs/Odometry.h>
+#include "rviz_common/ros_topic_display.hpp"
 
-namespace rviz
+namespace rviz_rendering
 {
 class Arrow;
 class Axes;
+}  // namespace rviz_rendering
+
+namespace rviz_common
+{
+namespace properties
+{
 class ColorProperty;
 class FloatProperty;
 class IntProperty;
 class EnumProperty;
-
 class CovarianceProperty;
+}  // namespace properties
+}  // namespace rviz_common
 
+namespace rviz_default_plugins
+{
+namespace displays
+{
 /**
  * \class OdometryDisplay
  * \brief Accumulates and displays the pose from a nav_msgs::Odometry message
  */
-class OdometryDisplay: public rviz::MessageFilterDisplay<nav_msgs::Odometry>
+class OdometryDisplay : public rviz_common::RosTopicDisplay<nav_msgs::msg::Odometry>
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   enum Shape
   {
@@ -70,59 +80,72 @@ public:
   };
 
   OdometryDisplay();
+
   virtual ~OdometryDisplay();
 
   // Overides of MessageFilterDisplay
   virtual void onInitialize();
+
   virtual void reset();
+
   // Overides of Display
-  virtual void update( float wall_dt, float ros_dt );
+  virtual void update(float wall_dt, float ros_dt);
 
 protected:
   /** @brief Overridden from MessageFilterDisplay to get Arrow/Axes visibility correct. */
   virtual void onEnable();
 
-private Q_SLOTS:
-  void updateShapeChoice();
+private
+  Q_SLOTS:
+  void
+
+  updateShapeChoice();
+
   void updateShapeVisibility();
+
   void updateColorAndAlpha();
+
   void updateArrowsGeometry();
+
   void updateAxisGeometry();
 
 private:
-  void updateGeometry( rviz::Arrow* arrow );
-  void updateGeometry( rviz::Axes* axes );
+  void updateGeometry(rviz_rendering::Arrow * arrow);
+
+  void updateGeometry(rviz_rendering::Axes * axes);
+
   void clear();
 
-  virtual void processMessage( const nav_msgs::Odometry::ConstPtr& message );
+  virtual void processMessage(nav_msgs::msg::Odometry::ConstSharedPtr message);
 
-  typedef std::deque<rviz::Arrow*> D_Arrow;
-  typedef std::deque<rviz::Axes*> D_Axes;
+  typedef std::deque<rviz_rendering::Arrow *> D_Arrow;
+  typedef std::deque<rviz_rendering::Axes *> D_Axes;
 
   D_Arrow arrows_;
   D_Axes axes_;
 
-  nav_msgs::Odometry::ConstPtr last_used_message_;
+  nav_msgs::msg::Odometry::ConstSharedPtr last_used_message_;
 
-  rviz::EnumProperty* shape_property_;
+  rviz_common::properties::EnumProperty * shape_property_;
 
-  rviz::ColorProperty* color_property_;
-  rviz::FloatProperty* alpha_property_;
-  rviz::FloatProperty* position_tolerance_property_;
-  rviz::FloatProperty* angle_tolerance_property_;
-  rviz::IntProperty* keep_property_;
+  rviz_common::properties::ColorProperty * color_property_;
+  rviz_common::properties::FloatProperty * alpha_property_;
+  rviz_common::properties::FloatProperty * position_tolerance_property_;
+  rviz_common::properties::FloatProperty * angle_tolerance_property_;
+  rviz_common::properties::IntProperty * keep_property_;
 
-  rviz::FloatProperty* head_radius_property_;
-  rviz::FloatProperty* head_length_property_;
-  rviz::FloatProperty* shaft_radius_property_;
-  rviz::FloatProperty* shaft_length_property_;
+  rviz_common::properties::FloatProperty * head_radius_property_;
+  rviz_common::properties::FloatProperty * head_length_property_;
+  rviz_common::properties::FloatProperty * shaft_radius_property_;
+  rviz_common::properties::FloatProperty * shaft_length_property_;
 
-  rviz::FloatProperty* axes_length_property_;
-  rviz::FloatProperty* axes_radius_property_;
+  rviz_common::properties::FloatProperty * axes_length_property_;
+  rviz_common::properties::FloatProperty * axes_radius_property_;
 
-  CovarianceProperty* covariance_property_;
+  rviz_common::properties::CovarianceProperty * covariance_property_;
 };
 
-} // namespace rviz
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif /* RVIZ_ODOMETRY_DISPLAY_H_ */
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__ODOMETRY__ODOMETRY_DISPLAY_HPP_

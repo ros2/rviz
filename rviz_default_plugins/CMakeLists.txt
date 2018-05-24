@@ -27,6 +27,8 @@ find_package(ament_cmake REQUIRED)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
+# TODO(Martin-Idel-SI): Replace by pure ogre
+find_package(Eigen3 REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(resource_retriever REQUIRED)
 find_package(rviz_common REQUIRED)
@@ -103,6 +105,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/marker/markers/triangle_list_marker.cpp
   src/rviz_default_plugins/displays/marker/markers/marker_factory.cpp
   src/rviz_default_plugins/displays/marker/marker_display.cpp
+  src/rviz_default_plugins/displays/odometry/odometry_display.cpp
   src/rviz_default_plugins/displays/path/path_display.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.cpp
@@ -174,6 +177,7 @@ target_link_libraries(rviz_default_plugins
   rviz_rendering::rviz_rendering
 )
 ament_target_dependencies(rviz_default_plugins
+  Eigen
   geometry_msgs
   laser_geometry
   nav_msgs

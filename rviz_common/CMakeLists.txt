@@ -30,6 +30,7 @@ set(CMAKE_AUTOMOC ON)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
+find_package(Eigen3 REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
@@ -85,6 +86,7 @@ set(rviz_common_headers_to_moc
   include/rviz_common/properties/bool_property.hpp
   include/rviz_common/properties/color_editor.hpp
   include/rviz_common/properties/color_property.hpp
+  include/rviz_common/properties/covariance_property.hpp
   include/rviz_common/properties/combo_box.hpp
   include/rviz_common/properties/display_group_visibility_property.hpp
   include/rviz_common/properties/display_visibility_property.hpp
@@ -132,6 +134,7 @@ set(rviz_common_source_files
   src/rviz_common/add_display_dialog.cpp
   src/rviz_common/bit_allocator.cpp
   src/rviz_common/config.cpp
+  src/rviz_common/covariance_visual.cpp
   src/rviz_common/display_factory.cpp
   src/rviz_common/display_group.cpp
   src/rviz_common/display.cpp
@@ -154,6 +157,7 @@ set(rviz_common_source_files
   src/rviz_common/properties/color_editor.cpp
   src/rviz_common/properties/color_property.cpp
   src/rviz_common/properties/combo_box.cpp
+  src/rviz_common/properties/covariance_property.cpp
   src/rviz_common/properties/display_group_visibility_property.cpp
   src/rviz_common/properties/display_visibility_property.cpp
   src/rviz_common/properties/editable_combo_box.cpp
@@ -232,6 +236,7 @@ target_link_libraries(rviz_common
 )
 
 ament_target_dependencies(rviz_common
+  Eigen3
   geometry_msgs
   rclcpp
   resource_retriever

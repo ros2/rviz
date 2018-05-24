@@ -27,36 +27,42 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef COVARIANCE_PROPERTY_H
-#define COVARIANCE_PROPERTY_H
+#ifndef RVIZ_COMMON__PROPERTIES__COVARIANCE_PROPERTY_HPP_
+#define RVIZ_COMMON__PROPERTIES__COVARIANCE_PROPERTY_HPP_
 
-#include <QColor>
+#include <deque>
+#include <memory>
 
 #include <OgreColourValue.h>
 
-#include "rviz/properties/bool_property.h"
+#include <QColor>  // NOLINT cpplint cannot handle include order here
+
+#include "rviz_common/properties/bool_property.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace Ogre
 {
-  class SceneManager;
-  class SceneNode;
+class SceneManager;
+class SceneNode;
 }
 
-namespace rviz
+namespace rviz_common
 {
-
+class CovarianceVisual;
+namespace properties
+{
 class Property;
 class ColorProperty;
 class FloatProperty;
 class EnumProperty;
-class CovarianceVisual;
 
 /** @brief Property specialized to provide getter for booleans. */
-class CovarianceProperty: public rviz::BoolProperty
+class RVIZ_COMMON_PUBLIC CovarianceProperty : public rviz_common::properties::BoolProperty
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  typedef boost::shared_ptr<CovarianceVisual> CovarianceVisualPtr;
+  typedef std::shared_ptr<rviz_common::CovarianceVisual> CovarianceVisualPtr;
 
   enum Frame
   {
@@ -70,12 +76,13 @@ public:
     RGB,
   };
 
-  CovarianceProperty( const QString& name = "Covariance",
-                bool default_value = false,
-                const QString& description = QString(),
-                rviz::Property* parent = 0,
-                const char *changed_slot = 0,
-                QObject* receiver = 0 );
+  CovarianceProperty(
+    const QString & name = "Covariance",
+    bool default_value = false,
+    const QString & description = QString(),
+    Property * parent = 0,
+    const char * changed_slot = 0,
+    QObject * receiver = 0);
 
   virtual ~CovarianceProperty();
 
@@ -83,7 +90,9 @@ public:
   bool getOrientationBool();
 
   // Methods to manage the deque of Covariance Visuals
-  CovarianceVisualPtr createAndPushBackVisual(Ogre::SceneManager* scene_manager, Ogre::SceneNode* parent_node);
+  CovarianceVisualPtr createAndPushBackVisual(
+    Ogre::SceneManager * scene_manager,
+    Ogre::SceneNode * parent_node);
   void popFrontVisual();
   void clearVisual();
   size_t sizeVisual();
@@ -97,26 +106,28 @@ private Q_SLOTS:
   void updateColorStyleChoice();
 
 private:
-  void updateColorAndAlphaAndScaleAndOffset( const CovarianceVisualPtr& visual );
-  void updateOrientationFrame( const CovarianceVisualPtr& visual );
-  void updateVisibility( const CovarianceVisualPtr& visual );
+  void updateColorAndAlphaAndScaleAndOffset(const CovarianceVisualPtr & visual);
+  void updateOrientationFrame(const CovarianceVisualPtr & visual);
+  void updateVisibility(const CovarianceVisualPtr & visual);
 
   typedef std::deque<CovarianceVisualPtr> D_Covariance;
   D_Covariance covariances_;
 
-  rviz::BoolProperty*  position_property_;
-  rviz::ColorProperty* position_color_property_;
-  rviz::FloatProperty* position_alpha_property_;
-  rviz::FloatProperty* position_scale_property_;
-  rviz::BoolProperty*  orientation_property_;
-  rviz::EnumProperty*  orientation_frame_property_;
-  rviz::EnumProperty*  orientation_colorstyle_property_;
-  rviz::ColorProperty* orientation_color_property_;
-  rviz::FloatProperty* orientation_alpha_property_;
-  rviz::FloatProperty* orientation_offset_property_;
-  rviz::FloatProperty* orientation_scale_property_;
+  BoolProperty * position_property_;
+  ColorProperty * position_color_property_;
+  FloatProperty * position_alpha_property_;
+  FloatProperty * position_scale_property_;
+  BoolProperty * orientation_property_;
+  EnumProperty * orientation_frame_property_;
+  EnumProperty * orientation_colorstyle_property_;
+  ColorProperty * orientation_color_property_;
+  FloatProperty * orientation_alpha_property_;
+  FloatProperty * orientation_offset_property_;
+  FloatProperty * orientation_scale_property_;
 };
 
-} // end namespace rviz
 
-#endif // COVARIANCE_PROPERTY_H
+}  // namespace properties
+}  // namespace rviz_common
+
+#endif  // RVIZ_COMMON__PROPERTIES__COVARIANCE_PROPERTY_HPP_
