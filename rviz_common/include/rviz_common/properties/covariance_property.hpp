@@ -11,7 +11,7 @@
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
+ *     * Neither the name of the copyright holders nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
  *
@@ -61,7 +61,7 @@ class ColorProperty;
 class FloatProperty;
 class EnumProperty;
 
-/** @brief Property specialized to provide getter for booleans. */
+/** @brief Property specialized to provide getter for covariances. */
 class RVIZ_COMMON_PUBLIC CovarianceProperty : public rviz_common::properties::BoolProperty
 {
   Q_OBJECT
@@ -81,23 +81,21 @@ public:
     RGB,
   };
 
-  CovarianceProperty(
+  explicit CovarianceProperty(
     const QString & name = "Covariance",
     bool default_value = false,
     const QString & description = QString(),
-    Property * parent = 0,
-    const char * changed_slot = 0,
-    QObject * receiver = 0);
+    Property * parent = nullptr,
+    const char * changed_slot = nullptr,
+    QObject * receiver = nullptr);
 
-  virtual ~CovarianceProperty();
+  ~CovarianceProperty() override = default;
 
   bool getPositionBool();
   bool getOrientationBool();
 
-  // Methods to manage the deque of Covariance Visuals
   CovarianceVisualPtr createAndPushBackVisual(
-    Ogre::SceneManager * scene_manager,
-    Ogre::SceneNode * parent_node);
+    Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node);
   void popFrontVisual();
   void clearVisual();
   size_t sizeVisual();
@@ -115,8 +113,7 @@ private:
   void updateOrientationFrame(const CovarianceVisualPtr & visual);
   void updateVisibility(const CovarianceVisualPtr & visual);
 
-  typedef std::deque<CovarianceVisualPtr> D_Covariance;
-  D_Covariance covariances_;
+  std::deque<CovarianceVisualPtr> covariances_;
 
   BoolProperty * position_property_;
   ColorProperty * position_color_property_;

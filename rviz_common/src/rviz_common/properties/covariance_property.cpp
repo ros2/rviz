@@ -11,7 +11,7 @@
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
+ *     * Neither the name of the copyright holder nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
  *
@@ -29,6 +29,8 @@
  */
 
 #include "rviz_common/properties/covariance_property.hpp"
+
+#include <memory>
 
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
@@ -53,8 +55,6 @@ CovarianceProperty::CovarianceProperty(
   Property * parent,
   const char * changed_slot,
   QObject * receiver)
-// NOTE: changed_slot and receiver aren't passed to BoolProperty here,
-// but initialized at the end of this constructor
 : BoolProperty(name, default_value, description, parent)
 {
   position_property_ = new BoolProperty("Position", true,
@@ -84,7 +84,7 @@ CovarianceProperty::CovarianceProperty(
   orientation_property_->setDisableChildrenIfFalse(true);
 
   orientation_frame_property_ = new EnumProperty("Frame", "Local",
-      "The frame used to display the orientation covariance.",
+      "Frame used to display the orientation covariance.",
       orientation_property_, SLOT(updateOrientationFrame()), this);
   orientation_frame_property_->addOption("Local", Local);
   orientation_frame_property_->addOption("Fixed", Fixed);
@@ -107,9 +107,9 @@ CovarianceProperty::CovarianceProperty(
   orientation_alpha_property_->setMax(1);
 
   orientation_offset_property_ = new FloatProperty("Offset", 1.0f,
-      "For 3D poses is the distance where to position the ellipses representing "
+      "For 3D poses: the distance where to position the ellipses representing "
       "orientation covariance. "
-      "For 2D poses is the height of the triangle representing the variance on yaw",
+      "For 2D poses: the height of the triangle representing the variance on yaw",
       orientation_property_, SLOT(updateColorAndAlphaAndScaleAndOffset()), this);
   orientation_offset_property_->setMin(0);
 
@@ -134,23 +134,17 @@ CovarianceProperty::CovarianceProperty(
   setDisableChildrenIfFalse(true);
 }
 
-CovarianceProperty::~CovarianceProperty()
-{
-}
-
 void CovarianceProperty::updateColorStyleChoice()
 {
-  bool use_unique_color = ( orientation_colorstyle_property_->getOptionInt() == Unique );
+  bool use_unique_color = (orientation_colorstyle_property_->getOptionInt() == Unique);
   orientation_color_property_->setHidden(!use_unique_color);
   updateColorAndAlphaAndScaleAndOffset();
 }
 
 void CovarianceProperty::updateColorAndAlphaAndScaleAndOffset()
 {
-  D_Covariance::iterator it_cov = covariances_.begin();
-  D_Covariance::iterator end_cov = covariances_.end();
-  for (; it_cov != end_cov; ++it_cov) {
-    updateColorAndAlphaAndScaleAndOffset(*it_cov);
+  for (const auto & covariance : covariances_) {
+    updateColorAndAlphaAndScaleAndOffset(covariance);
   }
 }
 
@@ -177,10 +171,8 @@ void CovarianceProperty::updateColorAndAlphaAndScaleAndOffset(const CovarianceVi
 
 void CovarianceProperty::updateVisibility()
 {
-  D_Covariance::iterator it_cov = covariances_.begin();
-  D_Covariance::iterator end_cov = covariances_.end();
-  for (; it_cov != end_cov; ++it_cov) {
-    updateVisibility(*it_cov);
+  for (const auto & covariance : covariances_) {
+    updateVisibility(covariance);
   }
 }
 
@@ -190,25 +182,21 @@ void CovarianceProperty::updateVisibility(const CovarianceVisualPtr & visual)
   if (!show_covariance) {
     visual->setVisible(false);
   } else {
-    bool show_position_covariance = position_property_->getBool();
-    bool show_orientation_covariance = orientation_property_->getBool();
-    visual->setPositionVisible(show_position_covariance);
-    visual->setOrientationVisible(show_orientation_covariance);
+    visual->setPositionVisible(position_property_->getBool());
+    visual->setOrientationVisible(orientation_property_->getBool());
   }
 }
 
 void CovarianceProperty::updateOrientationFrame()
 {
-  D_Covariance::iterator it_cov = covariances_.begin();
-  D_Covariance::iterator end_cov = covariances_.end();
-  for (; it_cov != end_cov; ++it_cov) {
-    updateOrientationFrame(*it_cov);
+  for (const auto & covariance : covariances_) {
+    updateOrientationFrame(covariance);
   }
 }
 
 void CovarianceProperty::updateOrientationFrame(const CovarianceVisualPtr & visual)
 {
-  bool use_rotating_frame = ( orientation_frame_property_->getOptionInt() == Local );
+  bool use_rotating_frame = (orientation_frame_property_->getOptionInt() == Local);
   visual->setRotatingFrame(use_rotating_frame);
 }
 
@@ -230,9 +218,9 @@ size_t CovarianceProperty::sizeVisual()
 CovarianceProperty::CovarianceVisualPtr CovarianceProperty::createAndPushBackVisual(
   Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node)
 {
-  bool use_rotating_frame = ( orientation_frame_property_->getOptionInt() == Local );
-  CovarianceVisualPtr visual(new rviz_rendering::CovarianceVisual(
-      scene_manager, parent_node, use_rotating_frame));
+  bool use_rotating_frame = (orientation_frame_property_->getOptionInt() == Local);
+  auto visual = std::make_shared<rviz_rendering::CovarianceVisual>(
+    scene_manager, parent_node, use_rotating_frame);
   updateVisibility(visual);
   updateOrientationFrame(visual);
   updateColorAndAlphaAndScaleAndOffset(visual);
