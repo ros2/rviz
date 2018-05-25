@@ -39,8 +39,10 @@
 #include "rviz_rendering/objects/covariance_visual.hpp"
 #include "test/rviz_rendering/matcher.hpp"
 #include "test/rviz_rendering/ogre_testing_environment.hpp"
+#include "test/rviz_rendering/scene_graph_introspection.hpp"
 
 using namespace ::testing;  // NOLINT
+using rviz_rendering::findAllEntitiesByMeshName;
 
 class CovarianceVisualTestFixture : public ::testing::Test
 {
@@ -83,56 +85,6 @@ std::array<double, 36> getCovariances2D()
 }
 // *INDENT-ON*
 
-template<typename OgreType>
-void findAllObjectsAttached(
-  Ogre::SceneNode * scene_node, Ogre::String type, std::vector<OgreType *> & objects)
-{
-  auto it = scene_node->getAttachedObjectIterator();
-  while (it.hasMoreElements()) {
-    auto movable_object = it.getNext();
-    if (movable_object->getMovableType() == type) {
-      auto entity = dynamic_cast<OgreType *>(movable_object);
-      if (entity) {
-        objects.push_back(entity);
-      }
-    }
-  }
-}
-
-template<typename OgreType>
-std::vector<OgreType *> findAllOgreObjectByType(Ogre::SceneNode * scene_node, Ogre::String type)
-{
-  std::vector<OgreType *> objects_vector;
-  findAllObjectsAttached(scene_node, type, objects_vector);
-  auto child_it = scene_node->getChildIterator();
-  while (child_it.hasMoreElements()) {
-    auto child_node = child_it.getNext();
-    auto child_scene_node = dynamic_cast<Ogre::SceneNode *>(child_node);
-    if (child_scene_node != nullptr) {
-      auto child_objects_vector = findAllOgreObjectByType<OgreType>(child_scene_node, type);
-      objects_vector.insert(
-        objects_vector.cend(), child_objects_vector.begin(), child_objects_vector.end());
-    }
-  }
-
-  return objects_vector;
-}
-
-std::vector<Ogre::Entity *> findAllEntitiesByMeshName(
-  Ogre::SceneNode * scene_node, const Ogre::String & resource_name)
-{
-  std::vector<Ogre::Entity *> all_entities =
-    findAllOgreObjectByType<Ogre::Entity>(scene_node, "Entity");
-
-  std::vector<Ogre::Entity *> correct_entities;
-  for (const auto & entity : all_entities) {
-    if (entity->getMesh() && entity->getMesh()->getName() == resource_name) {
-      correct_entities.push_back(entity);
-    }
-  }
-
-  return correct_entities;
-}
 
 void assertCovarianceOrientationOffset(
   Ogre::Entity * entity, Ogre::Vector3 direction, double length)

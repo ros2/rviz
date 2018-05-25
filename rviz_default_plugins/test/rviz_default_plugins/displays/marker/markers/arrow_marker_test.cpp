@@ -48,10 +48,10 @@
 #include "visualization_msgs/msg/marker.hpp"
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/shape.hpp"
-#include "../../../scene_graph_introspection.hpp"
 
 #include "rviz_default_plugins/displays/marker/markers/arrow_marker.hpp"
 
+#include "../../../scene_graph_introspection_helper.hpp"
 #include "markers_test_fixture.hpp"
 #include "../marker_messages.hpp"
 

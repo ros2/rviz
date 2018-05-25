@@ -35,7 +35,7 @@
 
 #include "test/rviz_default_plugins/pointcloud_messages.hpp"
 
-#include "../../../scene_graph_introspection.hpp"
+#include "../../../scene_graph_introspection_helper.hpp"
 
 #include "rviz_default_plugins/displays/pointcloud/transformers/xyz_pc_transformer.hpp"
 

@@ -40,9 +40,10 @@
 
 #include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
 
+#include "test/rviz_rendering/scene_graph_introspection.hpp"
+#include "../../scene_graph_introspection_helper.hpp"
 #include "../../pointcloud_messages.hpp"
 #include "../display_test_fixture.hpp"
-#include "../../scene_graph_introspection.hpp"
 
 using namespace rviz_default_plugins;  // NOLINT
 using namespace ::testing;  // NOLINT
@@ -83,7 +84,7 @@ TEST_F(PointCloudCommonTestFixture, update_adds_pointcloud_to_scene_graph) {
   point_cloud_common_->addMessage(cloud);
   point_cloud_common_->update(0, 0);
 
-  auto point_cloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
+  auto point_cloud = rviz_rendering::findOnePointCloud(scene_manager_->getRootSceneNode());
 
   EXPECT_THAT(point_cloud->getPoints()[0].position, Vector3Eq(Ogre::Vector3(1, 2, 3)));
   EXPECT_THAT(point_cloud->getPoints()[1].position, Vector3Eq(Ogre::Vector3(4, 5, 6)));
@@ -108,7 +109,7 @@ TEST_F(PointCloudCommonTestFixture, update_removes_old_point_clouds) {
   point_cloud_common_->addMessage(cloud);
   point_cloud_common_->update(0, 0);
 
-  auto point_clouds = rviz_default_plugins::findAllPointClouds(scene_manager_->getRootSceneNode());
+  auto point_clouds = rviz_rendering::findAllPointClouds(scene_manager_->getRootSceneNode());
   ASSERT_THAT(point_clouds.size(), Eq(1u));
 
   EXPECT_THAT(point_clouds[0]->getPoints()[0].position, Vector3Eq(Ogre::Vector3(4, 5, 6)));
@@ -128,7 +129,7 @@ TEST_F(PointCloudCommonTestFixture, update_sets_size_and_alpha_on_renderable) {
   point_cloud_common_->addMessage(cloud);
   point_cloud_common_->update(0, 0);
 
-  auto point_cloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
+  auto point_cloud = rviz_rendering::findOnePointCloud(scene_manager_->getRootSceneNode());
   auto size = point_cloud->getRenderables()[0] -> getCustomParameter(RVIZ_RENDERING_SIZE_PARAMETER);
   auto alpha =
     point_cloud->getRenderables()[0] -> getCustomParameter(RVIZ_RENDERING_ALPHA_PARAMETER);
@@ -151,7 +152,7 @@ TEST_F(PointCloudCommonTestFixture, update_adds_nothing_if_transform_fails) {
   point_cloud_common_->addMessage(cloud);
   point_cloud_common_->update(0, 0);
 
-  auto point_cloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
+  auto point_cloud = rviz_rendering::findOnePointCloud(scene_manager_->getRootSceneNode());
   EXPECT_FALSE(point_cloud);
 }
 
@@ -177,7 +178,7 @@ TEST_F(PointCloudCommonTestFixture, update_colors_the_points_using_the_selected_
   point_cloud_common_->addMessage(cloud);
   point_cloud_common_->update(0, 0);
 
-  auto point_cloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
+  auto point_cloud = rviz_rendering::findOnePointCloud(scene_manager_->getRootSceneNode());
 
   EXPECT_THAT(point_cloud->getPoints()[0].position, Vector3Eq(Ogre::Vector3(1, 2, 3)));
   EXPECT_THAT(point_cloud->getPoints()[0].color, ColourValueEq(Ogre::ColourValue(1, 0, 0)));

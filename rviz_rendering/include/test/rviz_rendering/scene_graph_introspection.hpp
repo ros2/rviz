@@ -29,11 +29,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__SCENE_GRAPH_INTROSPECTION_HPP_
-#define RVIZ_DEFAULT_PLUGINS__SCENE_GRAPH_INTROSPECTION_HPP_
-
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
+#ifndef RVIZ_RENDERING__SCENE_GRAPH_INTROSPECTION_HPP_
+#define RVIZ_RENDERING__SCENE_GRAPH_INTROSPECTION_HPP_
 
 #include <functional>
 #include <vector>
@@ -47,59 +44,52 @@
 
 #include "rviz_rendering/objects/point_cloud.hpp"
 #include "rviz_rendering/objects/movable_text.hpp"
+#include "rviz_rendering/visibility_control.hpp"
 
-MATCHER_P(Vector3Eq, expected, "") {
-  return Ogre::Math::Abs(expected.x - arg.x) < 0.0001f &&
-         Ogre::Math::Abs(expected.y - arg.y) < 0.0001f &&
-         Ogre::Math::Abs(expected.z - arg.z) < 0.0001f;
-}
-
-MATCHER_P(QuaternionEq, expected, "") {
-  return Ogre::Math::Abs(expected.x - arg.x) < 0.0001f &&
-         Ogre::Math::Abs(expected.y - arg.y) < 0.0001f &&
-         Ogre::Math::Abs(expected.z - arg.z) < 0.0001f &&
-         Ogre::Math::Abs(expected.w - arg.w) < 0.0001f;
-}
-
-MATCHER_P(ColourValueEq, expected, "") {
-  return Ogre::Math::Abs(expected.r - arg.r) < 0.0001f &&
-         Ogre::Math::Abs(expected.g - arg.g) < 0.0001f &&
-         Ogre::Math::Abs(expected.b - arg.b) < 0.0001f &&
-         Ogre::Math::Abs(expected.a - arg.a) < 0.0001f;
-}
-
-namespace rviz_default_plugins
+namespace rviz_rendering
 {
-bool arrowIsVisible(Ogre::SceneNode * scene_node);
-bool axesAreVisible(Ogre::SceneNode * scene_node);
-void assertArrowWithTransform(
-  Ogre::SceneManager * scene_manager,
-  Ogre::Vector3 position,
-  Ogre::Vector3 scale,
-  Ogre::Quaternion orientation);
-
+RVIZ_RENDERING_PUBLIC
 std::vector<Ogre::SceneNode *> findAllArrows(Ogre::SceneNode * scene_node);
+RVIZ_RENDERING_PUBLIC
 Ogre::SceneNode * findOneArrow(Ogre::SceneNode * scene_node);
 
+RVIZ_RENDERING_PUBLIC
 std::vector<Ogre::SceneNode *> findAllAxes(Ogre::SceneNode * scene_node);
+RVIZ_RENDERING_PUBLIC
 Ogre::SceneNode * findOneAxes(Ogre::SceneNode * scene_node);
 
+RVIZ_RENDERING_PUBLIC
 std::vector<Ogre::Vector3> getPositionsFromNodes(const std::vector<Ogre::SceneNode *> & nodes);
+RVIZ_RENDERING_PUBLIC
 std::vector<Ogre::Quaternion>
 getOrientationsFromNodes(const std::vector<Ogre::SceneNode *> & nodes);
 
+RVIZ_RENDERING_PUBLIC
 std::vector<Ogre::Entity *> findAllEntitiesByMeshName(
   Ogre::SceneNode * scene_node, const Ogre::String & resource_name);
+RVIZ_RENDERING_PUBLIC
 Ogre::Entity * findEntityByMeshName(
   Ogre::SceneNode * scene_node, const Ogre::String & resource_name);
 
+RVIZ_RENDERING_PUBLIC
+std::vector<Ogre::Entity *> findAllSpheres(Ogre::SceneNode * scene_node);
+RVIZ_RENDERING_PUBLIC
+std::vector<Ogre::Entity *> findAllCones(Ogre::SceneNode * scene_node);
+RVIZ_RENDERING_PUBLIC
+std::vector<Ogre::Entity *> findAllCylinders(Ogre::SceneNode * scene_node);
+
+RVIZ_RENDERING_PUBLIC
 std::vector<rviz_rendering::PointCloud *> findAllPointClouds(Ogre::SceneNode * scene_node);
+RVIZ_RENDERING_PUBLIC
 rviz_rendering::PointCloud * findOnePointCloud(Ogre::SceneNode * scene_node);
 
+RVIZ_RENDERING_PUBLIC
 Ogre::BillboardChain * findOneBillboardChain(Ogre::SceneNode * scene_node);
 
+RVIZ_RENDERING_PUBLIC
 rviz_rendering::MovableText * findOneMovableText(Ogre::SceneNode * scene_node);
 
+RVIZ_RENDERING_PUBLIC
 Ogre::ManualObject * findOneManualObject(Ogre::SceneNode * scene_node);
 
 template<typename OgreType>
@@ -137,6 +127,6 @@ std::vector<OgreType *> findAllOgreObjectByType(Ogre::SceneNode * scene_node, Og
   return objects_vector;
 }
 
-}  // namespace rviz_default_plugins
+}  // namespace rviz_rendering
 
-#endif  // RVIZ_DEFAULT_PLUGINS__SCENE_GRAPH_INTROSPECTION_HPP_
+#endif  // RVIZ_RENDERING__SCENE_GRAPH_INTROSPECTION_HPP_

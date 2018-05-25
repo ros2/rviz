@@ -55,7 +55,8 @@
 
 #include "../../../../src/rviz_default_plugins/displays/odometry/odometry_display.hpp"
 #include "../display_test_fixture.hpp"
-#include "../../scene_graph_introspection.hpp"
+#include "../../scene_graph_introspection_helper.hpp"
+#include "test/rviz_rendering/scene_graph_introspection.hpp"
 
 using namespace ::testing;  // NOLINT
 
@@ -98,16 +99,16 @@ TEST_F(OdometryDisplayFixture, processMessage_returns_early_if_message_has_inval
   auto invalid_pose_message = createOdometryMessage();
   invalid_pose_message->pose.pose.position.x = nan("NaN");
   display_->processMessage(invalid_pose_message);
-  auto arrows = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
-  auto axes = rviz_default_plugins::findAllAxes(scene_manager_->getRootSceneNode());
+  auto arrows = rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode());
+  auto axes = rviz_rendering::findAllAxes(scene_manager_->getRootSceneNode());
   EXPECT_THAT(arrows, IsEmpty());
   EXPECT_THAT(axes, IsEmpty());
 
   auto invalide_orientation_message = createOdometryMessage();
   invalide_orientation_message->pose.pose.orientation.w = 33;
   display_->processMessage(invalide_orientation_message);
-  arrows = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
-  axes = rviz_default_plugins::findAllAxes(scene_manager_->getRootSceneNode());
+  arrows = rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode());
+  axes = rviz_rendering::findAllAxes(scene_manager_->getRootSceneNode());
   EXPECT_THAT(arrows, IsEmpty());
   EXPECT_THAT(axes, IsEmpty());
 }
@@ -117,8 +118,8 @@ TEST_F(OdometryDisplayFixture, processMessage_returns_early_if_transform_is_miss
 
   auto odometry_message = createOdometryMessage();
   display_->processMessage(odometry_message);
-  auto arrows = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
-  auto axes = rviz_default_plugins::findAllAxes(scene_manager_->getRootSceneNode());
+  auto arrows = rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode());
+  auto axes = rviz_rendering::findAllAxes(scene_manager_->getRootSceneNode());
   EXPECT_THAT(arrows, IsEmpty());
   EXPECT_THAT(axes, IsEmpty());
 }
@@ -129,16 +130,16 @@ TEST_F(OdometryDisplayFixture,
 
   auto odometry_message = createOdometryMessage();
   display_->processMessage(odometry_message);
-  auto arrows = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
-  auto axes = rviz_default_plugins::findAllAxes(scene_manager_->getRootSceneNode());
+  auto arrows = rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode());
+  auto axes = rviz_rendering::findAllAxes(scene_manager_->getRootSceneNode());
   ASSERT_THAT(arrows, SizeIs(1));
   ASSERT_THAT(axes, SizeIs(1));
   arrows[0]->removeAndDestroyAllChildren();
   axes[0]->removeAndDestroyAllChildren();
   display_->processMessage(odometry_message);
 
-  auto new_arrows = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
-  auto new_axes = rviz_default_plugins::findAllAxes(scene_manager_->getRootSceneNode());
+  auto new_arrows = rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode());
+  auto new_axes = rviz_rendering::findAllAxes(scene_manager_->getRootSceneNode());
   EXPECT_THAT(new_arrows, IsEmpty());
   EXPECT_THAT(new_axes, IsEmpty());
 }
@@ -148,8 +149,8 @@ TEST_F(OdometryDisplayFixture, processMessage_sets_arrow_and_axes_correctly) {
 
   auto odometry_message = createOdometryMessage();
   display_->processMessage(odometry_message);
-  auto arrows = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
-  auto axes = rviz_default_plugins::findAllAxes(scene_manager_->getRootSceneNode());
+  auto arrows = rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode());
+  auto axes = rviz_rendering::findAllAxes(scene_manager_->getRootSceneNode());
   ASSERT_THAT(arrows, SizeIs(1));
   ASSERT_THAT(axes, SizeIs(1));
 
@@ -172,15 +173,15 @@ TEST_F(OdometryDisplayFixture, processMessage_handles_arrow_and_axes_visibility_
   ASSERT_THAT(shape_property->getNameStd(), StrEq("Shape"));
 
   EXPECT_TRUE(rviz_default_plugins::arrowIsVisible(
-      rviz_default_plugins::findOneArrow(scene_manager_->getRootSceneNode())));
+      rviz_rendering::findOneArrow(scene_manager_->getRootSceneNode())));
   EXPECT_FALSE(rviz_default_plugins::axesAreVisible(
-      rviz_default_plugins::findOneAxes(scene_manager_->getRootSceneNode())));
+      rviz_rendering::findOneAxes(scene_manager_->getRootSceneNode())));
 
   shape_property->setString("Axes");
   odometry_message->pose.pose.position.x = 35;
   display_->processMessage(odometry_message);
   EXPECT_FALSE(rviz_default_plugins::arrowIsVisible(
-      rviz_default_plugins::findOneArrow(scene_manager_->getRootSceneNode())));
+      rviz_rendering::findOneArrow(scene_manager_->getRootSceneNode())));
   EXPECT_TRUE(rviz_default_plugins::axesAreVisible(
-      rviz_default_plugins::findOneAxes(scene_manager_->getRootSceneNode())));
+      rviz_rendering::findOneAxes(scene_manager_->getRootSceneNode())));
 }
