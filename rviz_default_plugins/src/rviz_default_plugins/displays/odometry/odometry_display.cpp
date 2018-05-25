@@ -45,6 +45,8 @@
 #include "rviz_common/properties/int_property.hpp"
 #include "rviz_common/validate_floats.hpp"
 
+#include "./quaternion_helper.hpp"
+
 namespace rviz_default_plugins
 {
 namespace displays
@@ -280,14 +282,6 @@ bool validateQuaternion(nav_msgs::msg::Odometry msg)
   return valid;
 }
 
-float ogreQuaterionAngularDistance(Ogre::Quaternion first, Ogre::Quaternion second)
-{
-  auto product = first * Ogre::Quaternion(second.w, -second.x, -second.y, -second.z);
-  auto imaginary_norm = sqrt(pow(product.x, 2) + pow(product.y, 2) + pow(product.z, 2));
-
-  return 2 * atan2(imaginary_norm, sqrt(pow(product.w, 2)));
-}
-
 void OdometryDisplay::processMessage(nav_msgs::msg::Odometry::ConstSharedPtr message)
 {
   typedef rviz_common::properties::CovarianceProperty::CovarianceVisualPtr CovarianceVisualPtr;
@@ -326,7 +320,7 @@ void OdometryDisplay::processMessage(nav_msgs::msg::Odometry::ConstSharedPtr mes
       message->pose.pose.orientation.z);
 
     if ((last_position - current_position).length() < position_tolerance_property_->getFloat() &&
-      ogreQuaterionAngularDistance(
+      ogreQuaternionAngularDistance(
         last_orientation, current_orientation) < angle_tolerance_property_->getFloat())
     {
       return;

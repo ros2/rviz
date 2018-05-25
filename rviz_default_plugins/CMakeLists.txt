@@ -378,6 +378,15 @@ if(BUILD_TESTING)
         ${TEST_LINK_LIBRARIES})
     endif()
 
+    ament_add_gmock(odometry_ogre_helper_test
+      test/rviz_default_plugins/displays/odometry/quaternion_helper_test.cpp)
+    if(TARGET odometry_ogre_helper_test)
+      target_include_directories(odometry_ogre_helper_test PUBLIC
+        ${TEST_INCLUDE_DIRS})
+      target_link_libraries(odometry_ogre_helper_test
+        ${TEST_LINK_LIBRARIES})
+    endif()
+
     ament_add_gmock(pose_array_display_test
       test/rviz_default_plugins/displays/pose_array/pose_array_display_test.cpp
       test/rviz_default_plugins/displays/display_test_fixture.cpp
