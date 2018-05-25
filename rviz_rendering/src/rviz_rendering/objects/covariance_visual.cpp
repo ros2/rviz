@@ -98,10 +98,10 @@ void computeShapeScaleAndOrientation3D(
   if (eigensolver.info() == Eigen::Success) {
     eigenvalues = eigensolver.eigenvalues();
     eigenvectors = eigensolver.eigenvectors();
+    // TODO(anhosi) Check for positivity of eigenvalues?
   } else {
-    // TODO(Martin-Idel-SI): Replace with error or delete
-    // ROS_WARN_THROTTLE(1, "failed to compute eigen vectors/values for position. Is the covariance"
-    //                      " matrix correct?");
+    RVIZ_RENDERING_LOG_WARNING("failed to compute eigen vectors/values for position. Is the "
+      "covariance matrix correct?");
     eigenvalues = Eigen::Vector3d::Zero();  // Setting the scale to zero will hide it on the screen
     eigenvectors = Eigen::Matrix3d::Identity();
   }
@@ -146,10 +146,10 @@ void computeShapeScaleAndOrientation2D(
   if (eigensolver.info() == Eigen::Success) {
     eigenvalues = eigensolver.eigenvalues();
     eigenvectors = eigensolver.eigenvectors();
+    // TODO(anhosi) Check for positivity of eigenvalues?
   } else {
-    // TODO(Martin-Idel-SI): Replace with error or delete
-    // ROS_WARN_THROTTLE(1, "failed to compute eigen vectors/values for position. Is the covariance"
-    //                      " matrix correct?");
+    RVIZ_RENDERING_LOG_WARNING("failed to compute eigen vectors/values for position. Is the "
+      "covariance matrix correct?");
     eigenvalues = Eigen::Vector2d::Zero();      // Setting the scale to zero will hide it on screen
     eigenvectors = Eigen::Matrix2d::Identity();
   }

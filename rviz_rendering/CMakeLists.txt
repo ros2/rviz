@@ -230,6 +230,17 @@ if(BUILD_TESTING)
       )
     endif()
 
+    ament_add_gmock(covariance_visual_test_target
+      test/rviz_rendering/objects/covariance_visual_test.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET covariance_visual_test_target)
+      target_link_libraries(covariance_visual_test_target
+        rviz_ogre_vendor::OgreMain
+        rviz_rendering
+        Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+      )
+    endif()
+
     ament_add_gmock(grid_test_target
       test/rviz_rendering/objects/grid_test.cpp
       APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
