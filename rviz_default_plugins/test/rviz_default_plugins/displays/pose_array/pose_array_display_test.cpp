@@ -107,16 +107,6 @@ geometry_msgs::msg::PoseArray::SharedPtr createMessageWithOnePose()
   return message;
 }
 
-void expectAxesAreVisible(Ogre::SceneNode * node)
-{
-  for (uint16_t i = 0; i < 3; ++i) {
-    auto child_node = dynamic_cast<Ogre::SceneNode *>(node->getChild(i)->getChild(0));
-    auto entity = dynamic_cast<Ogre::Entity *>(child_node->getAttachedObject(0));
-    ASSERT_TRUE(entity);
-    EXPECT_TRUE(entity->isVisible());
-  }
-}
-
 TEST_F(PoseArrayDisplayFixture, constructor_set_all_the_properties_in_the_right_order) {
   EXPECT_THAT(display_->childAt(3)->getNameStd(), Eq("Color"));
   EXPECT_THAT(display_->childAt(4)->getNameStd(), Eq("Alpha"));
@@ -259,7 +249,7 @@ TEST_F(PoseArrayDisplayFixture, processMessage_sets_arrows3d_correctly) {
     Ogre::Quaternion(Ogre::Degree(-90), Ogre::Vector3::UNIT_X);
   expected_orientation.normalise();
 
-  EXPECT_TRUE(rviz_default_plugins::arrowIsVisible(scene_manager_));
+  EXPECT_TRUE(rviz_default_plugins::arrowIsVisible(scene_manager_->getRootSceneNode()));
   EXPECT_THAT(arrows, SizeIs(1));
   rviz_default_plugins::assertArrowWithTransform(
     scene_manager_, Ogre::Vector3(1, 2, 3), Ogre::Vector3(1, 1, 1), expected_orientation);
@@ -277,7 +267,7 @@ TEST_F(PoseArrayDisplayFixture, processMessage_sets_axes_correctly) {
   auto expected_orientation = Ogre::Quaternion(0, 1, 0, 1);
   expected_orientation.normalise();
 
-  expectAxesAreVisible(frames[0]);
+  EXPECT_TRUE(rviz_default_plugins::axesAreVisible(frames[0]));
   EXPECT_THAT(frames, SizeIs(1));
   EXPECT_THAT(frames[0]->getPosition(), Vector3Eq(Ogre::Vector3(1, 2, 3)));
   EXPECT_THAT(frames[0]->getOrientation(), QuaternionEq(expected_orientation));

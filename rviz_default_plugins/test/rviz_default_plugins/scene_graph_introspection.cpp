@@ -57,14 +57,26 @@
 namespace rviz_default_plugins
 {
 
-bool arrowIsVisible(Ogre::SceneManager * scene_manager)
+bool arrowIsVisible(Ogre::SceneNode * scene_node)
 {
   auto arrow_head = rviz_default_plugins::findEntityByMeshName(
-    scene_manager->getRootSceneNode(), "rviz_cone.mesh");
+    scene_node, "rviz_cone.mesh");
   auto arrow_shaft = rviz_default_plugins::findEntityByMeshName(
-    scene_manager->getRootSceneNode(), "rviz_cylinder.mesh");
+    scene_node, "rviz_cylinder.mesh");
 
   return arrow_head->isVisible() && arrow_shaft->isVisible();
+}
+
+bool axesAreVisible(Ogre::SceneNode * scene_node)
+{
+  bool axes_are_visible = true;
+  for (uint16_t i = 0; i < 3; ++i) {
+    auto child_node = dynamic_cast<Ogre::SceneNode *>(scene_node->getChild(i)->getChild(0));
+    auto entity = dynamic_cast<Ogre::Entity *>(child_node->getAttachedObject(0));
+    axes_are_visible = entity ? axes_are_visible && entity->isVisible() : false;
+  }
+
+  return axes_are_visible;
 }
 
 void assertArrowWithTransform(

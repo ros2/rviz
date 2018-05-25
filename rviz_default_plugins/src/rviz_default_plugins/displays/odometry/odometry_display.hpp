@@ -80,6 +80,12 @@ public:
     AxesShape,
   };
 
+  // TODO(Martin-Idel-SI): Constructor for testing, remove once ros_nodes can be mocked and call
+  // initialize instead
+  OdometryDisplay(
+    rviz_common::DisplayContext * display_context,
+    Ogre::SceneNode * scene_node);
+
   OdometryDisplay();
 
   virtual ~OdometryDisplay();
@@ -91,6 +97,8 @@ public:
 
   // Overides of Display
   virtual void update(float wall_dt, float ros_dt);
+
+  virtual void processMessage(nav_msgs::msg::Odometry::ConstSharedPtr message);
 
 protected:
   /** @brief Overridden from MessageFilterDisplay to get Arrow/Axes visibility correct. */
@@ -111,13 +119,13 @@ private
   void updateAxisGeometry();
 
 private:
+  void setupProperties();
+
   void updateGeometry(rviz_rendering::Arrow * arrow);
 
   void updateGeometry(rviz_rendering::Axes * axes);
 
   void clear();
-
-  virtual void processMessage(nav_msgs::msg::Odometry::ConstSharedPtr message);
 
   typedef std::deque<rviz_rendering::Arrow *> D_Arrow;
   typedef std::deque<rviz_rendering::Axes *> D_Axes;

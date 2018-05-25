@@ -70,7 +70,8 @@ MATCHER_P(ColourValueEq, expected, "") {
 
 namespace rviz_default_plugins
 {
-bool arrowIsVisible(Ogre::SceneManager * scene_manager);
+bool arrowIsVisible(Ogre::SceneNode * scene_node);
+bool axesAreVisible(Ogre::SceneNode * scene_node);
 void assertArrowWithTransform(
   Ogre::SceneManager * scene_manager,
   Ogre::Vector3 position,

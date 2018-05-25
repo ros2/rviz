@@ -36,6 +36,7 @@
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/axes.hpp"
 #include "rviz_rendering/objects/covariance_visual.hpp"
+
 #include "rviz_common/logging.hpp"
 #include "rviz_common/properties/covariance_property.hpp"
 #include "rviz_common/properties/enum_property.hpp"
@@ -48,8 +49,21 @@ namespace rviz_default_plugins
 {
 namespace displays
 {
+OdometryDisplay::OdometryDisplay(
+  rviz_common::DisplayContext * display_context, Ogre::SceneNode * scene_node)
+{
+  setupProperties();
+  context_ = display_context;
+  scene_node_ = scene_node;
+  scene_manager_ = context_->getSceneManager();
+}
 
 OdometryDisplay::OdometryDisplay()
+{
+  setupProperties();
+}
+
+void OdometryDisplay::setupProperties()
 {
   position_tolerance_property_ = new rviz_common::properties::FloatProperty(
     "Position Tolerance", .1f,
