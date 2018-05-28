@@ -48,97 +48,32 @@
 
 #include "rviz_default_plugins/view_controllers/orbit/orbit_view_controller.hpp"
 #include "../../displays/display_test_fixture.hpp"
+#include "../view_controller_test_fixture.hpp"
 #include "../../scene_graph_introspection.hpp"
 
 using namespace ::testing;  // NOLINT
 
-class OrthoViewControllerTestFixture : public DisplayTestFixture
+class OrthoViewControllerTestFixture : public ViewControllerTestFixture
 {
 public:
-  static void SetUpTestCase()
-  {
-    DisplayTestFixture::SetUpTestCase();
-  }
-
   OrthoViewControllerTestFixture()
   {
-    render_panel_ = std::make_shared<rviz_common::RenderPanel>(nullptr);
     ortho_view_ = std::make_shared<
       rviz_default_plugins::view_controllers::FixedOrientationOrthoViewController>();
     ortho_view_->initialize(context_.get());
     testing_environment_->createOgreRenderWindow()->addViewport(ortho_view_->getCamera());
   }
 
-  static void TearDownTestCase()
-  {
-    DisplayTestFixture::TearDownTestCase();
-  }
-
-  void TearDown() override
-  {
-    render_panel_.reset();
-  }
-
   void dragMouse(
     int to_x, int to_y, int from_x, int from_y,
     Qt::MouseButton button, Qt::KeyboardModifiers modifiers = Qt::NoModifier)
   {
-    auto click = generateMousePressEvent(from_x, from_y, button, modifiers);
-    ortho_view_->handleMouseEvent(click);
-    auto move = generateMouseMoveEvent(to_x, to_y, from_x, from_y, button, modifiers);
-    ortho_view_->handleMouseEvent(move);
-    auto release = generateMouseReleaseEvent(to_x, to_y, button, modifiers);
-    ortho_view_->handleMouseEvent(release);
-  }
-
-  rviz_common::ViewportMouseEvent generateMouseMoveEvent(
-    int to_x, int to_y, int from_x, int from_y,
-    Qt::MouseButton button, Qt::KeyboardModifiers modifiers = Qt::NoModifier)
-  {
-    auto mouseEvent = new QMouseEvent(
-      QMouseEvent::MouseMove, QPointF(to_x, to_y), Qt::LeftButton, button, modifiers);
-    return {render_panel_.get(), mouseEvent, from_x, from_y};
-  }
-
-  rviz_common::ViewportMouseEvent generateMousePressEvent(
-    int x, int y, Qt::MouseButton button, Qt::KeyboardModifiers modifiers = Qt::NoModifier)
-  {
-    return generateMouseEvent(x, y, QMouseEvent::MouseButtonPress, button, modifiers);
-  }
-
-  rviz_common::ViewportMouseEvent generateMouseReleaseEvent(
-    int x, int y, Qt::MouseButton button, Qt::KeyboardModifiers modifiers = Qt::NoModifier)
-  {
-    return generateMouseEvent(x, y, QMouseEvent::MouseButtonRelease, button, modifiers);
-  }
-
-  rviz_common::ViewportMouseEvent generateMouseWheelEvent(int delta)
-  {
-    auto point = QPointF();
-    auto mouseEvent = new QWheelEvent(
-      point, delta, Qt::NoButton, Qt::NoModifier, Qt::Orientation::Horizontal);
-    return {render_panel_.get(), mouseEvent, 0, 0};
-  }
-
-private:
-  rviz_common::ViewportMouseEvent generateMouseEvent(
-    int x, int y, QMouseEvent::Type type, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
-  {
-    auto mouseEvent = new QMouseEvent(type, QPointF(x, y), button, button, modifiers);
-    return {render_panel_.get(), mouseEvent, x, y};
+    dragMouseInViewport(ortho_view_, to_x, to_y, from_x, from_y, button, modifiers);
   }
 
 public:
-  std::shared_ptr<rviz_common::RenderPanel> render_panel_;
   std::shared_ptr<rviz_default_plugins::view_controllers::FixedOrientationOrthoViewController>
   ortho_view_;
-};
-
-class MockViewController : public rviz_common::ViewController
-{
-public:
-  MOCK_METHOD1(lookAt, void(const Ogre::Vector3 &));
-  MOCK_METHOD0(reset, void());
 };
 
 TEST_F(OrthoViewControllerTestFixture, moving_the_mouse_with_left_click_rotates_the_view) {
