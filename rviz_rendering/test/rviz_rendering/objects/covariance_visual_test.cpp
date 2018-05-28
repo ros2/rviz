@@ -32,6 +32,7 @@
 #include <array>
 #include <memory>
 #include <string>
+#include <tuple>
 #include <vector>
 
 #include <Ogre.h>
@@ -42,7 +43,9 @@
 #include "test/rviz_rendering/scene_graph_introspection.hpp"
 
 using namespace ::testing;  // NOLINT
-using rviz_rendering::findAllEntitiesByMeshName;
+using rviz_rendering::findAllCones;
+using rviz_rendering::findAllCylinders;
+using rviz_rendering::findAllSpheres;
 
 class CovarianceVisualTestFixture : public ::testing::Test
 {
@@ -53,7 +56,29 @@ protected:
     testing_environment_->setUpOgreTestEnvironment();
   }
 
+  std::tuple<Ogre::Vector3, Ogre::Real>
+  setupCovarianceVisual(std::array<double, 36> covariances)
+  {
+    Ogre::Vector3 position(7.0, 3.0, 0.0);
+    Ogre::Real offset = 2.0f;
+    auto scene_manager = Ogre::Root::getSingletonPtr()->createSceneManager();
+    auto root_node = scene_manager->getRootSceneNode();
+
+    covariance_visual_ =
+      std::make_unique<rviz_rendering::CovarianceVisual>(scene_manager, root_node, false);
+    covariance_visual_->setPosition(position);
+    covariance_visual_->setOrientationOffset(offset);
+    covariance_visual_->setCovariance(Ogre::Quaternion(1.57, 0.0, 0.0, 1.0), covariances);
+
+    covariance_visual_node_ = dynamic_cast<Ogre::SceneNode *>(root_node->getChild(0));
+
+    return std::make_tuple(position, offset);
+  }
+
   static std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
+
+  std::unique_ptr<rviz_rendering::CovarianceVisual> covariance_visual_;
+  Ogre::SceneNode * covariance_visual_node_;
 };
 
 std::shared_ptr<rviz_rendering::OgreTestingEnvironment>
@@ -86,82 +111,74 @@ std::array<double, 36> getCovariances2D()
 // *INDENT-ON*
 
 
-void assertCovarianceOrientationOffset(
-  Ogre::Entity * entity, Ogre::Vector3 direction, double length)
+void assertCovarianceOrientationOffsetIsPresent(
+  std::vector<Ogre::Entity *> entities, Ogre::Vector3 direction, Ogre::Real length)
 {
-  EXPECT_THAT(entity->getParentSceneNode()->getParentSceneNode()->getParentSceneNode()
-    ->getPosition(), Vector3Eq(direction));
-  ASSERT_THAT(entity->getParentSceneNode()->getParentSceneNode()->getParentSceneNode()
-    ->getParentSceneNode()->getScale(), Vector3Eq(Ogre::Vector3(length, length, length)));
+  bool found = false;
+  for (auto entity : entities) {
+    if (Matches(Vector3Eq(direction))(entity->getParentSceneNode()->getParentSceneNode()
+      ->getParentSceneNode()->getPosition()) &&
+      Matches(Vector3Eq(Ogre::Vector3(length, length, length)))(entity->getParentSceneNode()
+      ->getParentSceneNode()->getParentSceneNode()->getParentSceneNode()->getScale()))
+    {
+      found = true;
+    }
+  }
+  ASSERT_TRUE(found);
 }
 
 TEST_F(CovarianceVisualTestFixture, covariance_visual_3D)
 {
-  auto scene_manager = Ogre::Root::getSingletonPtr()->createSceneManager();
-  auto root_node = scene_manager->getRootSceneNode();
+  Ogre::Vector3 position;
+  Ogre::Real offset;
+  std::tie(position, offset) = setupCovarianceVisual(getCovariances3D());
 
-  auto covariance_visual =
-    std::make_unique<rviz_rendering::CovarianceVisual>(scene_manager, root_node, false);
-  covariance_visual->setPosition(Ogre::Vector3(7.0, 3.0, 0.0));
-  covariance_visual->setOrientationOffset(2.0);
-  covariance_visual->setCovariance(Ogre::Quaternion(1.57, 0.0, 0.0, 1.0), getCovariances3D());
-
-  auto covariance_visual_node = dynamic_cast<Ogre::SceneNode *>(root_node->getChild(0));
-
-  ASSERT_THAT(covariance_visual_node->getPosition(), Vector3Eq(Ogre::Vector3(7.0, 3.0, 0.0)));
-  auto all_spheres = findAllEntitiesByMeshName(covariance_visual_node, "rviz_sphere.mesh");
+  EXPECT_THAT(covariance_visual_node_->getPosition(), Vector3Eq(position));
+  auto all_spheres = findAllSpheres(covariance_visual_node_);
   ASSERT_THAT(all_spheres, SizeIs(1));
-  ASSERT_THAT(all_spheres[0]->getParentSceneNode()->getPosition(),
+  EXPECT_THAT(all_spheres[0]->getParentSceneNode()->getPosition(),
     Vector3Eq(Ogre::Vector3(0.0, 0.0, 0.0)));
-  ASSERT_TRUE(all_spheres[0]->isVisible());
+  EXPECT_TRUE(all_spheres[0]->isVisible());
 
-  auto all_orientation_uncertainties = findAllEntitiesByMeshName(
-    covariance_visual_node, "rviz_cylinder.mesh");
+  auto all_orientation_uncertainties = findAllCylinders(covariance_visual_node_);
   ASSERT_THAT(all_orientation_uncertainties, SizeIs(3));
-  assertCovarianceOrientationOffset(all_orientation_uncertainties[0], Ogre::Vector3::UNIT_Y, 2);
-  ASSERT_TRUE(all_orientation_uncertainties[0]->isVisible());
-  assertCovarianceOrientationOffset(all_orientation_uncertainties[1], Ogre::Vector3::UNIT_X, 2);
-  ASSERT_TRUE(all_orientation_uncertainties[1]->isVisible());
-  assertCovarianceOrientationOffset(all_orientation_uncertainties[2], Ogre::Vector3::UNIT_Z, 2);
-  ASSERT_TRUE(all_orientation_uncertainties[2]->isVisible());
+  assertCovarianceOrientationOffsetIsPresent(all_orientation_uncertainties,
+    Ogre::Vector3::UNIT_Y, offset);
+  EXPECT_TRUE(all_orientation_uncertainties[0]->isVisible());
+  assertCovarianceOrientationOffsetIsPresent(all_orientation_uncertainties,
+    Ogre::Vector3::UNIT_X, offset);
+  EXPECT_TRUE(all_orientation_uncertainties[1]->isVisible());
+  assertCovarianceOrientationOffsetIsPresent(all_orientation_uncertainties,
+    Ogre::Vector3::UNIT_Z, offset);
+  EXPECT_TRUE(all_orientation_uncertainties[2]->isVisible());
 
-  all_orientation_uncertainties = findAllEntitiesByMeshName(
-    covariance_visual_node, "rviz_cone.mesh");
+  all_orientation_uncertainties = findAllCones(covariance_visual_node_);
   ASSERT_THAT(all_orientation_uncertainties, SizeIs(1));
-  ASSERT_FALSE(all_orientation_uncertainties[0]->isVisible());
+  EXPECT_FALSE(all_orientation_uncertainties[0]->isVisible());
 }
 
 TEST_F(CovarianceVisualTestFixture, covariance_visual_2D)
 {
-  auto scene_manager = Ogre::Root::getSingletonPtr()->createSceneManager();
-  auto root_node = scene_manager->getRootSceneNode();
+  Ogre::Vector3 position;
+  Ogre::Real offset;
+  std::tie(position, offset) = setupCovarianceVisual(getCovariances2D());
 
-  auto covariance_visual =
-    std::make_unique<rviz_rendering::CovarianceVisual>(scene_manager, root_node, false);
-  covariance_visual->setPosition(Ogre::Vector3(7.0, 3.0, 0.0));
-  covariance_visual->setOrientationOffset(2.0);
-  covariance_visual->setCovariance(Ogre::Quaternion(1.57, 0.0, 0.0, 1.0), getCovariances2D());
-
-  auto covariance_visual_node = dynamic_cast<Ogre::SceneNode *>(root_node->getChild(0));
-
-  ASSERT_THAT(covariance_visual_node->getPosition(), Vector3Eq(Ogre::Vector3(7.0, 3.0, 0.0)));
-  auto all_spheres = findAllEntitiesByMeshName(covariance_visual_node, "rviz_sphere.mesh");
+  EXPECT_THAT(covariance_visual_node_->getPosition(), Vector3Eq(position));
+  auto all_spheres = findAllSpheres(covariance_visual_node_);
   ASSERT_THAT(all_spheres, SizeIs(1));
-  ASSERT_THAT(all_spheres[0]->getParentSceneNode()->getPosition(),
+  EXPECT_THAT(all_spheres[0]->getParentSceneNode()->getPosition(),
     Vector3Eq(Ogre::Vector3(0.0, 0.0, 0.0)));
-  ASSERT_TRUE(all_spheres[0]->isVisible());
+  EXPECT_TRUE(all_spheres[0]->isVisible());
 
-  auto all_orientation_uncertainties = findAllEntitiesByMeshName(
-    covariance_visual_node, "rviz_cone.mesh");
+  auto all_orientation_uncertainties = findAllCones(covariance_visual_node_);
   ASSERT_THAT(all_orientation_uncertainties, SizeIs(1));
-  assertCovarianceOrientationOffset(
-    all_orientation_uncertainties[0], Ogre::Vector3(0.49115, 0, 0), 2);
-  ASSERT_TRUE(all_orientation_uncertainties[0]->isVisible());
+  assertCovarianceOrientationOffsetIsPresent(
+    all_orientation_uncertainties, Ogre::Vector3(0.49115, 0, 0), offset);
+  EXPECT_TRUE(all_orientation_uncertainties[0]->isVisible());
 
-  all_orientation_uncertainties = findAllEntitiesByMeshName(
-    covariance_visual_node, "rviz_cylinder.mesh");
+  all_orientation_uncertainties = findAllCylinders(covariance_visual_node_);
   ASSERT_THAT(all_orientation_uncertainties, SizeIs(3));
-  ASSERT_FALSE(all_orientation_uncertainties[0]->isVisible());
-  ASSERT_FALSE(all_orientation_uncertainties[1]->isVisible());
-  ASSERT_FALSE(all_orientation_uncertainties[2]->isVisible());
+  EXPECT_FALSE(all_orientation_uncertainties[0]->isVisible());
+  EXPECT_FALSE(all_orientation_uncertainties[1]->isVisible());
+  EXPECT_FALSE(all_orientation_uncertainties[2]->isVisible());
 }
