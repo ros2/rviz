@@ -210,4 +210,13 @@
     </description>
   </class>
 
+  <class
+    name="rviz_default_plugins/XYOrbit"
+    type="rviz_default_plugins::view_controllers::XYOrbitViewController"
+    base_class_type="rviz_common::ViewController"
+  >
+    <description>
+      Makes it easy to move around a given point on the XY plane, looking at it from any angle.
+    </description>
+  </class>
 </library>
