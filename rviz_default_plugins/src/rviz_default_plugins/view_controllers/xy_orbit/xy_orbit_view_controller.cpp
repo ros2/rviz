@@ -132,21 +132,13 @@ void XYOrbitViewController::handleMouseEvent(rviz_common::ViewportMouseEvent & e
   } else if (event.middle() || (event.left() && event.shift())) {
     setCursor(MoveXY);
     // handle mouse movement
-    int width =
-      rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(event.panel->getRenderWindow())
-      ->getActualWidth();
-    int height =
-      rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(event.panel->getRenderWindow())
-      ->getActualHeight();
+    int width = camera_->getViewport()->getActualWidth();
+    int height = camera_->getViewport()->getActualHeight();
 
-    Ogre::Ray mouse_ray =
-      rviz_rendering::RenderWindowOgreAdapter::getOgreCamera(event.panel->getRenderWindow())
-      ->getCameraToViewportRay(
+    Ogre::Ray mouse_ray = camera_->getCameraToViewportRay(
       event.x / static_cast<float>(width), event.y / static_cast<float>(height));
 
-    Ogre::Ray last_mouse_ray =
-      rviz_rendering::RenderWindowOgreAdapter::getOgreCamera(event.panel->getRenderWindow())
-      ->getCameraToViewportRay(
+    Ogre::Ray last_mouse_ray = camera_->getCameraToViewportRay(
       event.last_x / static_cast<float>(width), event.last_y / static_cast<float>(height));
 
     Ogre::Vector3 last_intersect, intersect;
