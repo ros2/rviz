@@ -30,9 +30,6 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__TF_DISPLAY_PAGE_OBJECT_HPP_
 #define RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__TF_DISPLAY_PAGE_OBJECT_HPP_
 
-#include <memory>
-#include <vector>
-
 #include "rviz_visual_testing_framework/page_objects/base_page_object.hpp"
 
 class TFDisplayPageObject : public BasePageObject
@@ -46,7 +43,7 @@ public:
   void setMarkerScale(float scale);
   void setUpdateInterval(float interval);
   void setFrameTimeout(float timeout);
-  void setFrameVisible(int frame_index, const QString & frame_name, bool visible);
+  void setFrameVisible(const QString & frame_name, bool visible);
 };
 
 #endif  // RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__TF_DISPLAY_PAGE_OBJECT_HPP_

@@ -66,8 +66,7 @@ void TFDisplayPageObject::setFrameTimeout(float timeout)
   setFloat("Frame Timeout", timeout);
 }
 
-void TFDisplayPageObject::setFrameVisible(
-  int frame_index, const QString & frame_name, bool visible)
+void TFDisplayPageObject::setFrameVisible(const QString & frame_name, bool visible)
 {
-  setBool("Frames", visible, frame_index, frame_name);
+  setBool(frame_name, visible, {"Frames"});
 }

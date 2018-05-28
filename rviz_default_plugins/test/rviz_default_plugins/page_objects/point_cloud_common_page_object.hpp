@@ -30,11 +30,6 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__POINT_CLOUD_COMMON_PAGE_OBJECT_HPP_
 #define RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__POINT_CLOUD_COMMON_PAGE_OBJECT_HPP_
 
-#include <memory>
-#include <vector>
-
-#include <QtWidgets>  // NOLINT
-
 #include "rviz_visual_testing_framework/page_objects/base_page_object.hpp"
 
 class PointCloudCommonPageObject : public BasePageObject

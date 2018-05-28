@@ -30,9 +30,6 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__CAMERA_DISPLAY_PAGE_OBJECT_HPP_
 #define RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__CAMERA_DISPLAY_PAGE_OBJECT_HPP_
 
-#include <memory>
-#include <vector>
-
 #include "rviz_visual_testing_framework/page_objects/page_object_with_window.hpp"
 
 class CameraDisplayPageObject : public PageObjectWithWindow
@@ -44,8 +41,7 @@ public:
    * @param relative_row_index Sub-property index relative to the parent property (i.e. Visibility)
    * @param display_visibility the value to set for the sub-property
    */
-  void setDisplayVisibilityInRenderWindow(
-    QString display_name, int relative_row_index, bool display_visibility);
+  void setDisplayVisibilityInRenderWindow(QString display_name, bool display_visibility);
   void setTopic(QString topic);
   void setUnreliable(bool unreliable);
   void setQueueSize(int queue_size);

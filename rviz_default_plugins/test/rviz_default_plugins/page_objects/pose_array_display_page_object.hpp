@@ -30,9 +30,6 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__POSE_ARRAY_DISPLAY_PAGE_OBJECT_HPP_
 #define RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__POSE_ARRAY_DISPLAY_PAGE_OBJECT_HPP_
 
-#include <memory>
-#include <vector>
-
 #include "pose_display_page_object.hpp"
 
 class PoseArrayDisplayPageObject : public PoseDisplayPageObject

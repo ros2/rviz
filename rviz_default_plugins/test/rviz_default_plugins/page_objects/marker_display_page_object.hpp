@@ -30,9 +30,6 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__MARKER_DISPLAY_PAGE_OBJECT_HPP_
 #define RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__MARKER_DISPLAY_PAGE_OBJECT_HPP_
 
-#include <memory>
-#include <vector>
-
 #include "rviz_visual_testing_framework/page_objects/base_page_object.hpp"
 
 class MarkerDisplayPageObject : public BasePageObject
@@ -43,7 +40,7 @@ public:
   void setTopic(QString topic);
   void setUnreliable(bool unreliable);
   void setQueueSize(int queue_size);
-  void setNamespaceVisibility(QString name_space, int relative_row_index, bool visible);
+  void setNamespaceVisibility(QString name_space, bool visible);
 };
 
 #endif  // RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__MARKER_DISPLAY_PAGE_OBJECT_HPP_

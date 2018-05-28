@@ -29,9 +29,6 @@
 
 #include "marker_display_page_object.hpp"
 
-#include <memory>
-#include <vector>
-
 MarkerDisplayPageObject::MarkerDisplayPageObject()
 : BasePageObject(0, "Marker")
 {}
@@ -52,8 +49,7 @@ void MarkerDisplayPageObject::setQueueSize(int queue_size)
   setInt("Queue Size", queue_size);
 }
 
-void MarkerDisplayPageObject::setNamespaceVisibility(
-  QString name_space, int relative_row_index, bool visible)
+void MarkerDisplayPageObject::setNamespaceVisibility(QString name_space, bool visible)
 {
-  setBool("Namespaces", visible, relative_row_index, name_space);
+  setBool(name_space, visible, {"Namespaces"});
 }

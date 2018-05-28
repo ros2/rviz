@@ -71,68 +71,94 @@ protected:
 
   /**
    * Set a String into a property in the displays panel
-   * @param main_property_name Name of the Property in the left row of the displays panel
+   * @param property_to_change Name of the Property in the left row of the displays panel
    * @param value_to_set String to set for this property
-   * @param sub_property_index Optional: Index of a subproperty to work on
-   * @param sub_property_name Optional: Name of said subproperty
+   * @param super_properties Specifies all parent properties of property_to_change starting
+   * with the root property below the display's property. Empty if the property is a top-level
+   * property.
    */
   void setString(
-    const QString & main_property_name,
+    const QString & property_to_change,
     const QString & value_to_set,
-    int sub_property_index = -1,
-    const QString & sub_property_name = "");
+    std::vector<QString> super_properties = {});
 
   /**
    * Set an item of a ComboBox property in the display panel
    * @param main_property_name Name of the Property in the left row of the displays panel
    * @param value_to_set String representation of the value to set for this property
+   * @param super_properties Specifies all parent properties of property_to_change starting
+   * with the root property below the display's property. Empty if the property is a top-level
+   * property.
    */
-  void setComboBox(const QString & property_name, const QString & value_to_set);
+  void setComboBox(
+    const QString & property_to_change,
+    const QString & value_to_set,
+    std::vector<QString> super_properties = {});
 
   /**
    * Set a boolean property (represented by a checkbox in the display panel)
-   * @param main_property_name Name of the Property in the left row of the displays panel
+   * @param property_to_change Name of the Property in the left row of the displays panel
    * @param value_to_set Boolean value to set for this property
-   * @param sub_property_index Optional: Index of a subproperty to work on
-   * @param sub_property_name Optional: Name of said subproperty
+   * @param super_properties Specifies all parent properties of property_to_change starting
+   * with the root property below the display's property. Empty if the property is a top-level
+   * property.
    */
   void setBool(
-    const QString & main_property_name,
+    const QString & property_to_change,
     bool value_to_set,
-    int sub_property_index = -1,
-    const QString & sub_property_name = "");
+    std::vector<QString> super_properties = {});
 
   /**
-  * Set an integer property in the display panel
-  * @param main_property_name Name of the Property in the left row of the displays panel
-  * @param value_to_set Integer to set for this property
-  */
-  void setInt(const QString & property_name, int value_to_set);
+   * Set an integer property in the display panel
+   * @param property_to_change Name of the Property in the left row of the displays panel
+   * @param value_to_set Integer to set for this property
+   * @param super_properties Specifies all parent properties of property_to_change starting
+   * with the root property below the display's property. Empty if the property is a top-level
+   * property.
+   */
+  void setInt(
+    const QString & property_to_change,
+    int value_to_set,
+    std::vector<QString> super_properties = {});
 
   /**
-  * Set a float property in the display panel
-  * @param main_property_name Name of the Property in the left row of the displays panel
-  * @param value_to_set Float to set for this property. Locales will be handled by the visual test
-  */
+   * Set a float property in the display panel
+   * @param property_to_change Name of the Property in the left row of the displays panel
+   * @param value_to_set Float to set for this property. Locales will be handled by the visual test
+   * @param super_properties Specifies all parent properties of property_to_change starting
+   * with the root property below the display's property. Empty if the property is a top-level
+   * property.
+   */
   void setFloat(
-    const QString & main_property_name,
+    const QString & property_to_change,
     float value_to_set,
-    int sub_property_index = -1,
-    const QString & sub_property_name = "");
+    std::initializer_list<QString> super_properties = {});
 
   /**
-  * Set a color property in the display panel
-  * @param main_property_name Name of the Property in the left row of the displays panel
-  * @param red, blue, green Color values in rgb (between 0 and 255) to set for this property
-  */
-  void setColorCode(const QString & property_name, int red, int green, int blue);
+   * Set a color property in the display panel
+   * @param property_to_change Name of the Property in the left row of the displays panel
+   * @param red, blue, green Color values in rgb (between 0 and 255) to set for this property
+   * @param super_properties Specifies all parent properties of property_to_change starting
+   * with the root property below the display's property. Empty if the property is a top-level
+   * property.
+   */
+  void setColorCode(
+    const QString & property_to_change,
+    int red, int green, int blue,
+    std::vector<QString> super_properties = {});
 
   /**
-  * Set a vector property in the display panel
-  * @param main_property_name Name of the Property in the left row of the displays panel
-  * @param x, y, z coordinates of the Vector to set into this property as float values
-  */
-  void setVector(const QString & property_name, float x, float y, float z);
+   * Set a vector property in the display panel
+   * @param property_to_change Name of the Property in the left row of the displays panel
+   * @param x, y, z coordinates of the Vector to set into this property as float values
+   * @param super_properties Specifies all parent properties of property_to_change starting
+   * with the root property below the display's property. Empty if the property is a top-level
+   * property.
+   */
+  void setVector(
+    const QString & property_to_change,
+    float x, float y, float z,
+    std::vector<QString> super_properties = {});
 
   void waitForFirstMessage();
 
@@ -142,23 +168,19 @@ protected:
   std::shared_ptr<Executor> executor_;
 
 private:
-  void failForAbsentProperty(const QString & property_name);
-  void clickOnTreeItem(QModelIndex item_index) const;
-  void doubleClickOnTreeItem(QModelIndex item_index) const;
-
+  QModelIndex getValueToChangeFromAllProperties(
+    const QString & property_to_change, std::vector<QString> super_properties);
+  QModelIndex findSubPropertyParentIndex(
+    const std::vector<QString> & super_properties, QModelIndex parent_index);
   QModelIndex getRelativeIndexAndExpandDisplay();
   QModelIndex getValueToChangeIndex(
     int property_row_index, const QModelIndex & parent_index) const;
   QModelIndex getPropertyToChangeIndex(
     int property_row_index, const QModelIndex & parent_index) const;
 
-  QModelIndex getMainPropertyIndex(
-    const QString & property_name, int property_row_index, QModelIndex display_index);
-  QModelIndex getSubPropertyIndex(
-    QString property_name,
-    int main_property_index,
-    int sub_property_index,
-    QModelIndex display_index);
+  void failForAbsentProperty(const QString & property_name);
+  void clickOnTreeItem(QModelIndex item_index) const;
+  void doubleClickOnTreeItem(QModelIndex item_index) const;
 
   void setExpanded(QModelIndex display_index, bool expanded);
 
