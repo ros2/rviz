@@ -390,6 +390,7 @@ if(BUILD_TESTING)
 
     ament_add_gmock(ortho_view_controller_test
       test/rviz_default_plugins/view_controllers/ortho/ortho_view_controller_test.cpp
+      test/rviz_default_plugins/view_controllers/view_controller_test_fixture.hpp
       test/rviz_default_plugins/displays/display_test_fixture.cpp
       test/rviz_default_plugins/scene_graph_introspection.cpp
       APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
@@ -397,6 +398,19 @@ if(BUILD_TESTING)
       target_include_directories(ortho_view_controller_test PUBLIC
         ${TEST_INCLUDE_DIRS})
       target_link_libraries(ortho_view_controller_test
+        ${TEST_LINK_LIBRARIES})
+    endif()
+
+    ament_add_gmock(xy_orbit_view_controller_test
+      test/rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller_test.cpp
+      test/rviz_default_plugins/view_controllers/view_controller_test_fixture.hpp
+      test/rviz_default_plugins/displays/display_test_fixture.cpp
+      test/rviz_default_plugins/scene_graph_introspection.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET xy_orbit_view_controller_test)
+      target_include_directories(xy_orbit_view_controller_test PUBLIC
+        ${TEST_INCLUDE_DIRS})
+      target_link_libraries(xy_orbit_view_controller_test
         ${TEST_LINK_LIBRARIES})
     endif()
 
