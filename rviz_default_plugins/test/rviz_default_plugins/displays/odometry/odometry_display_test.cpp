@@ -41,9 +41,9 @@
 #pragma warning(disable : 4996)
 #endif
 
-#include <OgreRoot.h>
 #include <OgreEntity.h>
 #include <OgreManualObject.h>
+#include <OgreRoot.h>
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop
@@ -69,6 +69,20 @@ public:
       context_.get(), scene_manager_->getRootSceneNode()->createChildSceneNode());
   }
 
+// *INDENT-OFF* - uncrustify cannot deal with layout of matrices here
+std::array<double, 36> getCovariances3D()
+{
+  return std::array<double, 36>{{
+    0.75, 0.04, 0.1,  0,    0,    0,
+    0.04, 0.7,  0.4,  0,    0,    0,
+    0.1,  0.4,  0.5,  0,    0,    0,
+    0,    0,    0,    0.8,  0.25, 0.06,
+    0,    0,    0,    0.25, 0.3,  0.22,
+    0,    0,    0,    0.06, 0.22, 0.6
+  }};
+}
+// *INDENT-ON*
+
   nav_msgs::msg::Odometry::SharedPtr createOdometryMessage()
   {
     auto odometry_msg = std::make_shared<nav_msgs::msg::Odometry>();
@@ -79,45 +93,63 @@ public:
     odometry_msg->pose.pose.position.x = 1;
     odometry_msg->pose.pose.position.y = 2;
     odometry_msg->pose.pose.position.z = 3;
-    odometry_msg->pose.pose.orientation.x = 1;
-    odometry_msg->pose.pose.orientation.y = 0;
-    odometry_msg->pose.pose.orientation.z = 0;
     odometry_msg->pose.pose.orientation.w = 0;
+    odometry_msg->pose.pose.orientation.x = 0;
+    odometry_msg->pose.pose.orientation.y = 1;
+    odometry_msg->pose.pose.orientation.z = 0;
+    odometry_msg->pose.covariance = getCovariances3D();
 
     odometry_msg->twist.twist.linear.x = 3;
 
     return odometry_msg;
   }
 
+  Ogre::SceneNode * getParentAt(size_t n, Ogre::SceneNode * child_node)
+  {
+    auto parent_node = child_node;
+    for (size_t i = 0; i < n; ++i) {
+      parent_node = parent_node->getParentSceneNode();
+    }
+    return parent_node;
+  }
+
   std::unique_ptr<rviz_default_plugins::displays::OdometryDisplay> display_;
 };
 
-TEST_F(OdometryDisplayFixture, processMessage_returns_early_if_message_has_invalid_content) {
+TEST_F(OdometryDisplayFixture, processMessage_returns_early_if_message_has_invalid_floats) {
   // to be sure that the early return is due to the message and not to the missing transform
   mockValidTransform();
-
   auto invalid_pose_message = createOdometryMessage();
   invalid_pose_message->pose.pose.position.x = nan("NaN");
+
   display_->processMessage(invalid_pose_message);
+
   auto arrows = rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode());
   auto axes = rviz_rendering::findAllAxes(scene_manager_->getRootSceneNode());
   EXPECT_THAT(arrows, IsEmpty());
   EXPECT_THAT(axes, IsEmpty());
+}
 
-  auto invalide_orientation_message = createOdometryMessage();
-  invalide_orientation_message->pose.pose.orientation.w = 33;
-  display_->processMessage(invalide_orientation_message);
-  arrows = rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode());
-  axes = rviz_rendering::findAllAxes(scene_manager_->getRootSceneNode());
+TEST_F(OdometryDisplayFixture, processMessage_returns_early_if_message_has_invalid_quaternions) {
+  // to be sure that the early return is due to the message and not to the missing transform
+  mockValidTransform();
+  auto invalid_orientation_message = createOdometryMessage();
+  invalid_orientation_message->pose.pose.orientation.w = 33;
+
+  display_->processMessage(invalid_orientation_message);
+
+  auto arrows = rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode());
+  auto axes = rviz_rendering::findAllAxes(scene_manager_->getRootSceneNode());
   EXPECT_THAT(arrows, IsEmpty());
   EXPECT_THAT(axes, IsEmpty());
 }
 
 TEST_F(OdometryDisplayFixture, processMessage_returns_early_if_transform_is_missing) {
   EXPECT_CALL(*frame_manager_, transform(_, _, _, _, _)).WillOnce(Return(false));  // NOLINT
-
   auto odometry_message = createOdometryMessage();
+
   display_->processMessage(odometry_message);
+
   auto arrows = rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode());
   auto axes = rviz_rendering::findAllAxes(scene_manager_->getRootSceneNode());
   EXPECT_THAT(arrows, IsEmpty());
@@ -127,50 +159,51 @@ TEST_F(OdometryDisplayFixture, processMessage_returns_early_if_transform_is_miss
 TEST_F(OdometryDisplayFixture,
   processMessage_returns_early_if_message_position_and_orientation_are_close_to_previous_ones) {
   mockValidTransform();
-
   auto odometry_message = createOdometryMessage();
   display_->processMessage(odometry_message);
   auto arrows = rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode());
   auto axes = rviz_rendering::findAllAxes(scene_manager_->getRootSceneNode());
   ASSERT_THAT(arrows, SizeIs(1));
   ASSERT_THAT(axes, SizeIs(1));
-  arrows[0]->removeAndDestroyAllChildren();
-  axes[0]->removeAndDestroyAllChildren();
+  arrows[0]->removeAllChildren();
+  axes[0]->removeAllChildren();
+
   display_->processMessage(odometry_message);
 
-  auto new_arrows = rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode());
-  auto new_axes = rviz_rendering::findAllAxes(scene_manager_->getRootSceneNode());
-  EXPECT_THAT(new_arrows, IsEmpty());
-  EXPECT_THAT(new_axes, IsEmpty());
+  arrows = rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode());
+  axes = rviz_rendering::findAllAxes(scene_manager_->getRootSceneNode());
+  EXPECT_THAT(arrows, IsEmpty());
+  EXPECT_THAT(axes, IsEmpty());
 }
 
-TEST_F(OdometryDisplayFixture, processMessage_sets_arrow_and_axes_correctly) {
+TEST_F(OdometryDisplayFixture, processMessage_sets_arrow_and_axes_according_to_message) {
   mockValidTransform();
-
-  auto odometry_message = createOdometryMessage();
-  display_->processMessage(odometry_message);
-  auto arrows = rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode());
-  auto axes = rviz_rendering::findAllAxes(scene_manager_->getRootSceneNode());
-  ASSERT_THAT(arrows, SizeIs(1));
-  ASSERT_THAT(axes, SizeIs(1));
-
   auto effective_arrow_orientation =
     Ogre::Quaternion(0, 0, 1, 0) *
     Ogre::Quaternion(Ogre::Degree(-90), Ogre::Vector3::UNIT_Y) *
     Ogre::Quaternion(Ogre::Degree(-90), Ogre::Vector3::UNIT_X);
+  auto odometry_message = createOdometryMessage();
+
+  display_->processMessage(odometry_message);
+
+  auto arrows = rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode());
+  auto axes = rviz_rendering::findAllAxes(scene_manager_->getRootSceneNode());
+  ASSERT_THAT(arrows, SizeIs(1));
+  ASSERT_THAT(axes, SizeIs(1));
   EXPECT_THAT(arrows[0]->getPosition(), Vector3Eq(Ogre::Vector3(0, 1, 0)));
   EXPECT_THAT(arrows[0]->getOrientation(), QuaternionEq(effective_arrow_orientation));
   EXPECT_THAT(axes[0]->getPosition(), Vector3Eq(Ogre::Vector3(0, 1, 0)));
   EXPECT_THAT(axes[0]->getOrientation(), QuaternionEq(Ogre::Quaternion(0, 0, 1, 0)));
 }
 
-TEST_F(OdometryDisplayFixture, processMessage_handles_arrow_and_axes_visibility_correctly) {
+TEST_F(
+  OdometryDisplayFixture, processMessage_handles_arrow_and_axes_visibility_according_to_message) {
   mockValidTransform();
-
   auto odometry_message = createOdometryMessage();
-  display_->processMessage(odometry_message);
   auto shape_property = static_cast<rviz_common::properties::EnumProperty *>(display_->childAt(5));
   ASSERT_THAT(shape_property->getNameStd(), StrEq("Shape"));
+
+  display_->processMessage(odometry_message);
 
   EXPECT_TRUE(rviz_default_plugins::arrowIsVisible(
       rviz_rendering::findOneArrow(scene_manager_->getRootSceneNode())));
@@ -180,8 +213,41 @@ TEST_F(OdometryDisplayFixture, processMessage_handles_arrow_and_axes_visibility_
   shape_property->setString("Axes");
   odometry_message->pose.pose.position.x = 35;
   display_->processMessage(odometry_message);
+
   EXPECT_FALSE(rviz_default_plugins::arrowIsVisible(
       rviz_rendering::findOneArrow(scene_manager_->getRootSceneNode())));
   EXPECT_TRUE(rviz_default_plugins::axesAreVisible(
       rviz_rendering::findOneAxes(scene_manager_->getRootSceneNode())));
+}
+
+TEST_F(OdometryDisplayFixture, processMessage_sets_covariance_visual_according_to_message) {
+  mockValidTransform();
+  auto odometry_message = createOdometryMessage();
+  auto cov_position = Ogre::Vector3(0, 1, 0);
+  auto cov_orientation = Ogre::Quaternion(0, 0, 1, 0);
+
+  display_->processMessage(odometry_message);
+
+  auto all_spheres = rviz_rendering::findAllSpheres(scene_manager_->getRootSceneNode());
+  ASSERT_THAT(all_spheres, SizeIs(1));
+  auto sphere_scene_node = all_spheres[0]->getParentSceneNode();
+  auto cov_node_with_position_and_orientation = getParentAt(5, sphere_scene_node);
+  EXPECT_THAT(cov_node_with_position_and_orientation->getPosition(), cov_position);
+  EXPECT_THAT(cov_node_with_position_and_orientation->getOrientation(), cov_orientation);
+  EXPECT_THAT(getParentAt(4, sphere_scene_node)->getOrientation(), cov_orientation.Inverse());
+}
+
+TEST_F(OdometryDisplayFixture, reset_clears_all_objects) {
+  mockValidTransform();
+  auto odometry_message = createOdometryMessage();
+
+  display_->processMessage(odometry_message);
+  display_->reset();
+
+  auto all_spheres = rviz_rendering::findAllSpheres(scene_manager_->getRootSceneNode());
+  auto all_cylynders = rviz_rendering::findAllCylinders(scene_manager_->getRootSceneNode());
+  auto all_cones = rviz_rendering::findAllCones(scene_manager_->getRootSceneNode());
+  EXPECT_THAT(all_spheres, SizeIs(0));
+  EXPECT_THAT(all_cylynders, SizeIs(0));
+  EXPECT_THAT(all_cones, SizeIs(0));
 }
