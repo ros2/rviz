@@ -30,17 +30,16 @@
 
 #include "odometry_display.hpp"
 
-#include <OgreSceneManager.h>
-#include <OgreSceneNode.h>
+#include <memory>
 
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/axes.hpp"
 #include "rviz_rendering/objects/covariance_visual.hpp"
 
 #include "rviz_common/logging.hpp"
+#include "rviz_common/properties/color_property.hpp"
 #include "rviz_common/properties/covariance_property.hpp"
 #include "rviz_common/properties/enum_property.hpp"
-#include "rviz_common/properties/color_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/int_property.hpp"
 #include "rviz_common/validate_floats.hpp"
@@ -68,13 +67,13 @@ OdometryDisplay::OdometryDisplay()
 void OdometryDisplay::setupProperties()
 {
   position_tolerance_property_ = new rviz_common::properties::FloatProperty(
-    "Position Tolerance", .1f,
+    "Position Tolerance", 0.1f,
     "Distance, in meters from the last arrow dropped, "
     "that will cause a new arrow to drop.",
     this);
   position_tolerance_property_->setMin(0);
 
-  angle_tolerance_property_ = new rviz_common::properties::FloatProperty("Angle Tolerance", .1f,
+  angle_tolerance_property_ = new rviz_common::properties::FloatProperty("Angle Tolerance", 0.1f,
       "Angular distance from the last arrow dropped, "
       "that will cause a new arrow to drop.",
       this);
@@ -105,7 +104,6 @@ void OdometryDisplay::setupProperties()
       "Length of the each arrow's shaft, in meters.",
       shape_property_, SLOT(updateArrowsGeometry()), this);
 
-  // aleeper: default changed from 0.1 to match change in arrow.cpp
   shaft_radius_property_ = new rviz_common::properties::FloatProperty("Shaft Radius", 0.05f,
       "Radius of the each arrow's shaft, in meters.",
       shape_property_, SLOT(updateArrowsGeometry()), this);
@@ -114,7 +112,6 @@ void OdometryDisplay::setupProperties()
       "Length of the each arrow's head, in meters.",
       shape_property_, SLOT(updateArrowsGeometry()), this);
 
-  // aleeper: default changed from 0.2 to match change in arrow.cpp
   head_radius_property_ = new rviz_common::properties::FloatProperty("Head Radius", 0.1f,
       "Radius of the each arrow's head, in meters.",
       shape_property_, SLOT(updateArrowsGeometry()), this);
@@ -134,9 +131,8 @@ void OdometryDisplay::setupProperties()
 
 OdometryDisplay::~OdometryDisplay()
 {
-  if (initialized()) {
-    clear();
-  }
+  // because of forward declaration of arrow and axes, destructor cannot be declared in .hpp as
+  // default
 }
 
 void OdometryDisplay::onInitialize()
@@ -153,22 +149,10 @@ void OdometryDisplay::onEnable()
 
 void OdometryDisplay::clear()
 {
-  D_Arrow::iterator it = arrows_.begin();
-  D_Arrow::iterator end = arrows_.end();
-  for (; it != end; ++it) {
-    delete *it;
-  }
   arrows_.clear();
-
+  axes_.clear();
   // covariances are stored in covariance_property_
   covariance_property_->clearVisual();
-
-  D_Axes::iterator it_axes = axes_.begin();
-  D_Axes::iterator end_axes = axes_.end();
-  for (; it_axes != end_axes; ++it_axes) {
-    delete *it_axes;
-  }
-  axes_.clear();
 
   if (last_used_message_) {
     last_used_message_.reset();
@@ -183,10 +167,7 @@ void OdometryDisplay::updateColorAndAlpha()
   float blue = color.blueF();
   float alpha = alpha_property_->getFloat();
 
-  D_Arrow::iterator it = arrows_.begin();
-  D_Arrow::iterator end = arrows_.end();
-  for (; it != end; ++it) {
-    rviz_rendering::Arrow * arrow = *it;
+  for (const auto & arrow : arrows_) {
     arrow->setColor(red, green, blue, alpha);
   }
   context_->queueRender();
@@ -194,33 +175,29 @@ void OdometryDisplay::updateColorAndAlpha()
 
 void OdometryDisplay::updateArrowsGeometry()
 {
-  D_Arrow::iterator it = arrows_.begin();
-  D_Arrow::iterator end = arrows_.end();
-  for (; it != end; ++it) {
-    updateGeometry(*it);
+  for (const auto & arrow : arrows_) {
+    updateArrow(arrow);
   }
   context_->queueRender();
 }
 
 void OdometryDisplay::updateAxisGeometry()
 {
-  D_Axes::iterator it = axes_.begin();
-  D_Axes::iterator end = axes_.end();
-  for (; it != end; ++it) {
-    updateGeometry(*it);
+  for (const auto & axes : axes_) {
+    updateAxes(axes);
   }
   context_->queueRender();
 }
 
-void OdometryDisplay::updateGeometry(rviz_rendering::Axes * axes)
+void OdometryDisplay::updateAxes(const std::unique_ptr<rviz_rendering::Axes> & axes)
 {
-  axes->set(axes_length_property_->getFloat(),
-    axes_radius_property_->getFloat());
+  axes->set(axes_length_property_->getFloat(), axes_radius_property_->getFloat());
 }
 
-void OdometryDisplay::updateGeometry(rviz_rendering::Arrow * arrow)
+void OdometryDisplay::updateArrow(const std::unique_ptr<rviz_rendering::Arrow> & arrow)
 {
-  arrow->set(shaft_length_property_->getFloat(),
+  arrow->set(
+    shaft_length_property_->getFloat(),
     shaft_radius_property_->getFloat(),
     head_length_property_->getFloat(),
     head_radius_property_->getFloat());
@@ -249,16 +226,12 @@ void OdometryDisplay::updateShapeVisibility()
 {
   bool use_arrow = (shape_property_->getOptionInt() == ArrowShape);
 
-  D_Arrow::iterator it = arrows_.begin();
-  D_Arrow::iterator end = arrows_.end();
-  for (; it != end; ++it) {
-    (*it)->getSceneNode()->setVisible(use_arrow);
+  for (const auto & arrow : arrows_) {
+    arrow->getSceneNode()->setVisible(use_arrow);
   }
 
-  D_Axes::iterator it_axes = axes_.begin();
-  D_Axes::iterator end_axes = axes_.end();
-  for (; it_axes != end_axes; ++it_axes) {
-    (*it_axes)->getSceneNode()->setVisible(!use_arrow);
+  for (const auto & axes : axes_) {
+    axes->getSceneNode()->setVisible(!use_arrow);
   }
 }
 
@@ -267,70 +240,28 @@ bool validateFloats(nav_msgs::msg::Odometry msg)
   bool valid = true;
   valid = valid && rviz_common::validateFloats(msg.pose.pose);
   valid = valid && rviz_common::validateFloats(msg.pose.covariance);
-  valid = valid && rviz_common::validateFloats(msg.twist.twist);
-  // TODO(Martin-Idel-SI): Can this be deleted?
-  // valid = valid && rviz_common::validateFloats(msg.twist.covariance);
+  // msg.twist is not validated because is never used.
   return valid;
 }
 
 bool validateQuaternion(nav_msgs::msg::Odometry msg)
 {
-  bool valid = std::abs((msg.pose.pose.orientation.x * msg.pose.pose.orientation.x +
-      msg.pose.pose.orientation.y * msg.pose.pose.orientation.y +
-      msg.pose.pose.orientation.z * msg.pose.pose.orientation.z +
-      msg.pose.pose.orientation.w * msg.pose.pose.orientation.w) - 1.0f) < 10e-3;
-  return valid;
+  return std::abs((msg.pose.pose.orientation.x * msg.pose.pose.orientation.x +
+           msg.pose.pose.orientation.y * msg.pose.pose.orientation.y +
+           msg.pose.pose.orientation.z * msg.pose.pose.orientation.z +
+           msg.pose.pose.orientation.w * msg.pose.pose.orientation.w) - 1.0f) < 10e-3;
 }
 
 void OdometryDisplay::processMessage(nav_msgs::msg::Odometry::ConstSharedPtr message)
 {
-  typedef rviz_common::properties::CovarianceProperty::CovarianceVisualPtr CovarianceVisualPtr;
-
-  if (!validateFloats(*message)) {
-    setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
-      "Message contained invalid floating point values (nans or infs)");
+  if (!messageIsValid(message) || messageIsSimilarToPrevious(message)) {
     return;
-  }
-
-  if (!validateQuaternion(*message)) {
-    setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
-      "Message contained unnormalized quaternion (squares of values don't add to 1)");
-    return;
-  }
-
-  if (last_used_message_) {
-    Ogre::Vector3 last_position(
-      last_used_message_->pose.pose.position.x,
-      last_used_message_->pose.pose.position.y,
-      last_used_message_->pose.pose.position.z);
-    Ogre::Vector3 current_position(
-      message->pose.pose.position.x,
-      message->pose.pose.position.y,
-      message->pose.pose.position.z);
-
-    auto last_orientation = Ogre::Quaternion(
-      last_used_message_->pose.pose.orientation.w,
-      last_used_message_->pose.pose.orientation.x,
-      last_used_message_->pose.pose.orientation.y,
-      last_used_message_->pose.pose.orientation.z);
-    auto current_orientation = Ogre::Quaternion(
-      message->pose.pose.orientation.w,
-      message->pose.pose.orientation.x,
-      message->pose.pose.orientation.y,
-      message->pose.pose.orientation.z);
-
-    if ((last_position - current_position).length() < position_tolerance_property_->getFloat() &&
-      ogreQuaternionAngularDistance(
-        last_orientation, current_orientation) < angle_tolerance_property_->getFloat())
-    {
-      return;
-    }
   }
 
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
-  if (!context_->getFrameManager()->transform(message->header, message->pose.pose, position,
-    orientation))
+  if (!context_->getFrameManager()->transform(
+      message->header, message->pose.pose, position, orientation))
   {
     RVIZ_COMMON_LOG_ERROR_STREAM("Error transforming odometry '" << getName().toStdString() <<
       "' from frame '" << message->header.frame_id << "' to frame '" <<
@@ -338,56 +269,117 @@ void OdometryDisplay::processMessage(nav_msgs::msg::Odometry::ConstSharedPtr mes
     return;
   }
 
-  // If we arrive here, we're good. Continue...
+  bool use_arrow = (shape_property_->getOptionInt() == ArrowShape);
+  arrows_.push_back(createAndSetArrow(position, orientation, use_arrow));
+  axes_.push_back(createAndSetAxes(position, orientation, !use_arrow));
+  createAndSetCovarianceVisual(position, orientation, message);
 
-  // Create a scene node, and attach the arrow and the covariance to it
-  rviz_rendering::Axes * axes = new rviz_rendering::Axes(
-    scene_manager_, scene_node_,
-    axes_length_property_->getFloat(),
-    axes_radius_property_->getFloat());
-  rviz_rendering::Arrow * arrow = new rviz_rendering::Arrow(
-    scene_manager_, scene_node_,
+  last_used_message_ = message;
+  context_->queueRender();
+}
+
+bool OdometryDisplay::messageIsValid(nav_msgs::msg::Odometry::ConstSharedPtr message)
+{
+  // if both invalid values and unnormalized quaternion are present, both messages are printed.
+  bool message_is_valid = true;
+  if (!validateFloats(*message)) {
+    setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
+      "Message contained invalid floating point values (nans or infs)");
+    message_is_valid = false;
+  }
+
+  if (!validateQuaternion(*message)) {
+    setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
+      "Message contained unnormalized quaternion (squares of values don't add to 1)");
+    message_is_valid = false;
+  }
+
+  return message_is_valid;
+}
+
+bool OdometryDisplay::messageIsSimilarToPrevious(nav_msgs::msg::Odometry::ConstSharedPtr message)
+{
+  if (!last_used_message_) {
+    return false;
+  }
+
+  Ogre::Vector3 last_position(
+    last_used_message_->pose.pose.position.x,
+    last_used_message_->pose.pose.position.y,
+    last_used_message_->pose.pose.position.z);
+  Ogre::Vector3 current_position(
+    message->pose.pose.position.x,
+    message->pose.pose.position.y,
+    message->pose.pose.position.z);
+
+  auto last_orientation = Ogre::Quaternion(
+    last_used_message_->pose.pose.orientation.w,
+    last_used_message_->pose.pose.orientation.x,
+    last_used_message_->pose.pose.orientation.y,
+    last_used_message_->pose.pose.orientation.z);
+  auto current_orientation = Ogre::Quaternion(
+    message->pose.pose.orientation.w,
+    message->pose.pose.orientation.x,
+    message->pose.pose.orientation.y,
+    message->pose.pose.orientation.z);
+
+  bool position_difference_is_within_tolerance =
+    (last_position - current_position).length() < position_tolerance_property_->getFloat();
+  bool angle_difference_is_within_tolerance =
+    ogreQuaternionAngularDistance(last_orientation, current_orientation) <
+    angle_tolerance_property_->getFloat();
+
+  return position_difference_is_within_tolerance && angle_difference_is_within_tolerance;
+}
+
+std::unique_ptr<rviz_rendering::Arrow> OdometryDisplay::createAndSetArrow(
+  const Ogre::Vector3 & position, const Ogre::Quaternion & orientation, bool use_arrow)
+{
+  QColor color = color_property_->getColor();
+  float alpha = alpha_property_->getFloat();
+
+  auto arrow = std::make_unique<rviz_rendering::Arrow>(
+    scene_manager_, scene_node_->createChildSceneNode(),
     shaft_length_property_->getFloat(),
     shaft_radius_property_->getFloat(),
     head_length_property_->getFloat(),
     head_radius_property_->getFloat());
-  CovarianceVisualPtr cov = covariance_property_->createAndPushBackVisual(
-    scene_manager_, scene_node_);
+  arrow->setPosition(position);
+  // Remember the arrow points in -Z direction, so rotate the orientation before display.
+  arrow->setOrientation(orientation * Ogre::Quaternion(Ogre::Degree(-90), Ogre::Vector3::UNIT_Y));
+  arrow->setColor(color.redF(), color.greenF(), color.blueF(), alpha);
+  arrow->getSceneNode()->setVisible(use_arrow);
 
-  // Position the axes
+  return arrow;
+}
+
+std::unique_ptr<rviz_rendering::Axes> OdometryDisplay::createAndSetAxes(
+  const Ogre::Vector3 & position, const Ogre::Quaternion & orientation, bool use_axes)
+{
+  auto axes = std::make_unique<rviz_rendering::Axes>(
+    scene_manager_, scene_node_->createChildSceneNode(),
+    axes_length_property_->getFloat(),
+    axes_radius_property_->getFloat());
   axes->setPosition(position);
   axes->setOrientation(orientation);
+  axes->getSceneNode()->setVisible(use_axes);
 
-  // Position the arrow. Remember the arrow points in -Z direction,
-  // so rotate the orientation before display.
-  arrow->setPosition(position);
-  arrow->setOrientation(orientation * Ogre::Quaternion(Ogre::Degree(-90), Ogre::Vector3::UNIT_Y));
+  return axes;
+}
 
-  // Position the frame where the covariance is attached covariance
-  cov->setPosition(position);
-  cov->setOrientation(orientation);
-
-  // Set up arrow color
-  QColor color = color_property_->getColor();
-  float alpha = alpha_property_->getFloat();
-  arrow->setColor(color.redF(), color.greenF(), color.blueF(), alpha);
-
-  // Set up the covariance based on the message
+void OdometryDisplay::createAndSetCovarianceVisual(
+  const Ogre::Vector3 & position,
+  const Ogre::Quaternion & orientation,
+  nav_msgs::msg::Odometry::ConstSharedPtr message)
+{
+  rviz_common::properties::CovarianceProperty::CovarianceVisualPtr covariance_visual =
+    covariance_property_->createAndPushBackVisual(scene_manager_,
+      scene_node_->createChildSceneNode());
+  covariance_visual->setPosition(position);
+  covariance_visual->setOrientation(orientation);
   auto quaternion = message->pose.pose.orientation;
-  cov->setCovariance(Ogre::Quaternion(quaternion.w, quaternion.x, quaternion.y, quaternion.y),
-    message->pose.covariance);
-
-  // Show/Hide things based on current properties
-  bool use_arrow = (shape_property_->getOptionInt() == ArrowShape);
-  arrow->getSceneNode()->setVisible(use_arrow);
-  axes->getSceneNode()->setVisible(!use_arrow);
-
-  // store everything
-  axes_.push_back(axes);
-  arrows_.push_back(arrow);
-
-  last_used_message_ = message;
-  context_->queueRender();
+  covariance_visual->setCovariance(Ogre::Quaternion(
+      quaternion.w, quaternion.x, quaternion.y, quaternion.z), message->pose.covariance);
 }
 
 void OdometryDisplay::update(float wall_dt, float ros_dt)
@@ -398,13 +390,9 @@ void OdometryDisplay::update(float wall_dt, float ros_dt)
   size_t keep = keep_property_->getInt();
   if (keep > 0) {
     while (arrows_.size() > keep) {
-      delete arrows_.front();
       arrows_.pop_front();
-
       // covariance visuals are stored into covariance_property_
       covariance_property_->popFrontVisual();
-
-      delete axes_.front();
       axes_.pop_front();
     }
   }

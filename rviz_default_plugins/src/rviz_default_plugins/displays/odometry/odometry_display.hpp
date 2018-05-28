@@ -33,6 +33,7 @@
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__ODOMETRY__ODOMETRY_DISPLAY_HPP_
 
 #include <deque>
+#include <memory>
 
 #ifndef Q_MOC_RUN
 
@@ -82,33 +83,27 @@ public:
 
   // TODO(Martin-Idel-SI): Constructor for testing, remove once ros_nodes can be mocked and call
   // initialize instead
-  OdometryDisplay(
-    rviz_common::DisplayContext * display_context,
-    Ogre::SceneNode * scene_node);
+  OdometryDisplay(rviz_common::DisplayContext * display_context, Ogre::SceneNode * scene_node);
 
   OdometryDisplay();
 
-  virtual ~OdometryDisplay();
+  ~OdometryDisplay() override;
 
-  // Overides of MessageFilterDisplay
-  virtual void onInitialize();
+  void onInitialize() override;
 
-  virtual void reset();
+  void reset() override;
 
   // Overides of Display
-  virtual void update(float wall_dt, float ros_dt);
+  void update(float wall_dt, float ros_dt) override;
 
-  virtual void processMessage(nav_msgs::msg::Odometry::ConstSharedPtr message);
+  void processMessage(nav_msgs::msg::Odometry::ConstSharedPtr message) override;
 
 protected:
-  /** @brief Overridden from MessageFilterDisplay to get Arrow/Axes visibility correct. */
-  virtual void onEnable();
+  /** @brief Overridden from RosTopicDisplay to get Arrow/Axes visibility correct. */
+  void onEnable() override;
 
-private
-  Q_SLOTS:
-  void
-
-  updateShapeChoice();
+private Q_SLOTS:
+  void updateShapeChoice();
 
   void updateShapeVisibility();
 
@@ -121,17 +116,29 @@ private
 private:
   void setupProperties();
 
-  void updateGeometry(rviz_rendering::Arrow * arrow);
+  void updateArrow(const std::unique_ptr<rviz_rendering::Arrow> & arrow);
 
-  void updateGeometry(rviz_rendering::Axes * axes);
+  void updateAxes(const std::unique_ptr<rviz_rendering::Axes> & axes);
+
+  bool messageIsValid(nav_msgs::msg::Odometry::ConstSharedPtr message);
+
+  bool messageIsSimilarToPrevious(nav_msgs::msg::Odometry::ConstSharedPtr message);
+
+  std::unique_ptr<rviz_rendering::Arrow> createAndSetArrow(
+    const Ogre::Vector3 & position, const Ogre::Quaternion & orientation, bool use_arrow);
+
+  std::unique_ptr<rviz_rendering::Axes> createAndSetAxes(
+    const Ogre::Vector3 & position, const Ogre::Quaternion & orientation, bool use_axes);
+
+  void createAndSetCovarianceVisual(
+    const Ogre::Vector3 & position,
+    const Ogre::Quaternion & orientation,
+    nav_msgs::msg::Odometry::ConstSharedPtr message);
 
   void clear();
 
-  typedef std::deque<rviz_rendering::Arrow *> D_Arrow;
-  typedef std::deque<rviz_rendering::Axes *> D_Axes;
-
-  D_Arrow arrows_;
-  D_Axes axes_;
+  std::deque<std::unique_ptr<rviz_rendering::Arrow>> arrows_;
+  std::deque<std::unique_ptr<rviz_rendering::Axes>> axes_;
 
   nav_msgs::msg::Odometry::ConstSharedPtr last_used_message_;
 
