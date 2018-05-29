@@ -29,7 +29,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
 #include <memory>
@@ -71,9 +70,119 @@ public:
     dragMouseInViewport(xy_orbit_, to_x, to_y, from_x, from_y, button, modifiers);
   }
 
+  void setCameraToZeroYawPitch()
+  {
+    auto yaw_property = xy_orbit_->childAt(7);
+    auto pitch_property = xy_orbit_->childAt(8);
+    yaw_property->setValue(0);  // set to zero to make result easier to check
+    pitch_property->setValue(0);  // set to zero to make result easier to check
+    xy_orbit_->updateCamera();
+  }
+
   std::shared_ptr<rviz_default_plugins::view_controllers::XYOrbitViewController>
   xy_orbit_;
 };
+
+TEST_F(XYOrbitViewControllerTestFixture, moving_the_mouse_to_the_left_rotates_left)
+{
+  setCameraToZeroYawPitch();
+
+  auto yaw_property = xy_orbit_->childAt(7);
+  auto pitch_property = xy_orbit_->childAt(8);
+
+  EXPECT_THAT(yaw_property->getNameStd(), StrEq("Yaw"));
+  EXPECT_THAT(pitch_property->getNameStd(), StrEq("Pitch"));
+  EXPECT_THAT(yaw_property->getValue().toFloat(), FloatNear(0, 0.001f));
+  EXPECT_THAT(pitch_property->getValue().toFloat(), FloatNear(0, 0.001f));
+
+  dragMouse(0, 10, 10, 10, Qt::LeftButton);
+
+  EXPECT_THAT(yaw_property->getValue().toFloat(), FloatNear(0.05f, 0.001f));
+  EXPECT_THAT(pitch_property->getValue().toFloat(), FloatNear(0, 0.001f));
+}
+
+TEST_F(XYOrbitViewControllerTestFixture, moving_the_mouse_up_rotates_up)
+{
+  setCameraToZeroYawPitch();
+
+  auto yaw_property = xy_orbit_->childAt(7);
+  auto pitch_property = xy_orbit_->childAt(8);
+
+  EXPECT_THAT(yaw_property->getNameStd(), StrEq("Yaw"));
+  EXPECT_THAT(pitch_property->getNameStd(), StrEq("Pitch"));
+  EXPECT_THAT(yaw_property->getValue().toFloat(), FloatNear(0, 0.001f));
+  EXPECT_THAT(pitch_property->getValue().toFloat(), FloatNear(0, 0.001f));
+
+  dragMouse(10, 20, 10, 10, Qt::LeftButton);
+
+  EXPECT_THAT(yaw_property->getValue().toFloat(), FloatNear(0, 0.001f));
+  EXPECT_THAT(pitch_property->getValue().toFloat(), FloatNear(0.05f, 0.001f));
+}
+
+TEST_F(XYOrbitViewControllerTestFixture, moving_the_wheel_zooms) {
+  auto distance_property = xy_orbit_->childAt(4);
+  EXPECT_THAT(distance_property->getNameStd(), StrEq("Distance"));
+  EXPECT_THAT(distance_property->getValue().toFloat(), FloatNear(10, 0.001f));
+
+  auto event = generateMouseWheelEvent(100);
+  xy_orbit_->handleMouseEvent(event);
+
+  EXPECT_THAT(distance_property->getValue().toFloat(), FloatNear(9, 0.001f));
+}
+
+TEST_F(XYOrbitViewControllerTestFixture, moving_the_mouse_with_right_button_zooms) {
+  auto distance_property = xy_orbit_->childAt(4);
+  EXPECT_THAT(distance_property->getNameStd(), StrEq("Distance"));
+  EXPECT_THAT(distance_property->getValue().toFloat(), FloatNear(10, 0.001f));
+
+  dragMouse(10, 20, 10, 10, Qt::RightButton);
+
+  EXPECT_THAT(distance_property->getValue().toFloat(), FloatNear(11, 0.001f));
+}
+
+TEST_F(XYOrbitViewControllerTestFixture, moving_the_focal_point_does_not_move_z_direction) {
+  setCameraToZeroYawPitch();
+  auto x_property = xy_orbit_->childAt(9)->childAt(0);
+  EXPECT_THAT(x_property->getNameStd(), StrEq("X"));
+  auto y_property = xy_orbit_->childAt(9)->childAt(1);
+  EXPECT_THAT(y_property->getNameStd(), StrEq("Y"));
+  auto z_property = xy_orbit_->childAt(9)->childAt(2);
+  EXPECT_THAT(z_property->getNameStd(), StrEq("Z"));
+  EXPECT_THAT(x_property->getValue().toFloat(), FloatNear(0.0f, 0.001f));
+  EXPECT_THAT(y_property->getValue().toFloat(), FloatNear(0.0f, 0.001f));
+  EXPECT_THAT(z_property->getValue().toFloat(), FloatNear(0.0f, 0.001f));
+
+  dragMouse(30, 30, 10, 10, Qt::LeftButton, Qt::ShiftModifier);
+
+  EXPECT_THAT(x_property->getValue().toFloat(), FloatNear(-1, 0.001f));
+  EXPECT_THAT(y_property->getValue().toFloat(), FloatNear(0, 0.001f));
+  EXPECT_THAT(z_property->getValue().toFloat(), FloatNear(0, 0.001f));
+}
+
+TEST_F(XYOrbitViewControllerTestFixture, moving_the_focal_point_from_above_moves_point) {
+  auto yaw_property = xy_orbit_->childAt(7);
+  auto pitch_property = xy_orbit_->childAt(8);
+  yaw_property->setValue(0);
+  float pi_half = 1.57079632679f;
+  pitch_property->setValue(pi_half);  // set camera above view
+  xy_orbit_->updateCamera();
+
+  auto x_property = xy_orbit_->childAt(9)->childAt(0);
+  EXPECT_THAT(x_property->getNameStd(), StrEq("X"));
+  auto y_property = xy_orbit_->childAt(9)->childAt(1);
+  EXPECT_THAT(y_property->getNameStd(), StrEq("Y"));
+  auto z_property = xy_orbit_->childAt(9)->childAt(2);
+  EXPECT_THAT(z_property->getNameStd(), StrEq("Z"));
+  EXPECT_THAT(x_property->getValue().toFloat(), FloatNear(0.0f, 0.001f));
+  EXPECT_THAT(y_property->getValue().toFloat(), FloatNear(0.0f, 0.001f));
+  EXPECT_THAT(z_property->getValue().toFloat(), FloatNear(0.0f, 0.001f));
+
+  dragMouse(30, 30, 10, 10, Qt::LeftButton, Qt::ShiftModifier);
+
+  EXPECT_THAT(x_property->getValue().toFloat(), FloatNear(-0.6, 0.001f));
+  EXPECT_THAT(y_property->getValue().toFloat(), FloatNear(-0.8, 0.001f));
+  EXPECT_THAT(z_property->getValue().toFloat(), FloatNear(0, 0.001f));
+}
 
 int main(int argc, char ** argv)
 {
