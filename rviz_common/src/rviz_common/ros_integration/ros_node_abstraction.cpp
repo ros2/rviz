@@ -47,11 +47,6 @@ RosNodeAbstraction::RosNodeAbstraction(const std::string & node_name)
 : raw_node_(rclcpp::Node::make_shared(node_name))
 {}
 
-void RosNodeAbstraction::add_to_executor(rclcpp::executor::Executor & executor)
-{
-  return executor.add_node(raw_node_);
-}
-
 std::string
 RosNodeAbstraction::get_node_name() const
 {

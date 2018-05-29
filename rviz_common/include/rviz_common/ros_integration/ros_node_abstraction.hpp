@@ -63,15 +63,6 @@ public:
   RVIZ_COMMON_PUBLIC
   explicit RosNodeAbstraction(const std::string & node_name);
 
-  /// Adds this node to an executor
-  /**
-   * Adds the rclcpp::Node representation of this to the given executor.
-   *
-   * \param executor executor to whom the node is added
-   */
-  RVIZ_COMMON_PUBLIC
-  void add_to_executor(rclcpp::executor::Executor & executor) override;
-
   /// Returns the name of the ros node
   /**
    * The returned node name is what was given as constructor argument.
@@ -91,7 +82,7 @@ public:
   std::map<std::string, std::vector<std::string>>
   get_topic_names_and_types() const override;
 
-  // TODO(anhosi): remove once the RosNodeAbstraction is extended to handle subscriptions
+  // TODO(wjwwood): think about a suitable way to extend the abstraction to also cover subscriptions
   RVIZ_COMMON_PUBLIC
   rclcpp::Node::SharedPtr
   get_raw_node() override

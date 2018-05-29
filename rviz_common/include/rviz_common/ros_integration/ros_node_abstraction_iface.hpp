@@ -58,8 +58,6 @@ public:
 
   virtual ~RosNodeAbstractionIface() = default;
 
-  virtual void add_to_executor(rclcpp::executor::Executor & executor) = 0;
-
   virtual std::string get_node_name() const = 0;
 
   virtual std::map<std::string, std::vector<std::string>>
