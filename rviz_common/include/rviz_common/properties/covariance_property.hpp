@@ -49,7 +49,7 @@ class SceneNode;
 
 namespace rviz_rendering
 {
-class CovarianceVisual;
+struct CovarianceUserData;
 }
 
 namespace rviz_common
@@ -61,60 +61,31 @@ class ColorProperty;
 class FloatProperty;
 class EnumProperty;
 
-/** @brief Property specialized to provide getter for covariances. */
+
+/** @brief Property specialized for covariance visuals. */
 class RVIZ_COMMON_PUBLIC CovarianceProperty : public rviz_common::properties::BoolProperty
 {
   Q_OBJECT
 
 public:
-  typedef std::shared_ptr<rviz_rendering::CovarianceVisual> CovarianceVisualPtr;
-
-  enum Frame
-  {
-    Local,
-    Fixed,
-  };
-
-  enum ColorStyle
-  {
-    Unique,
-    RGB,
-  };
-
   explicit CovarianceProperty(
     const QString & name = "Covariance",
     bool default_value = false,
     const QString & description = QString(),
     Property * parent = nullptr,
-    const char * changed_slot = nullptr,
-    QObject * receiver = nullptr);
+    const char * changed_slot = nullptr);
 
   ~CovarianceProperty() override = default;
 
-  bool getPositionBool();
-  bool getOrientationBool();
-
-  CovarianceVisualPtr createAndPushBackVisual(
-    Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node);
-  void popFrontVisual();
-  void clearVisual();
-  size_t sizeVisual();
-
-public Q_SLOTS:
-  void updateVisibility();
+  /**
+   * @brief Return all property data in an object understood by covariance_visual
+   */
+  rviz_rendering::CovarianceUserData getUserData();
 
 private Q_SLOTS:
-  void updateColorAndAlphaAndScaleAndOffset();
-  void updateOrientationFrame();
   void updateColorStyleChoice();
 
 private:
-  void updateColorAndAlphaAndScaleAndOffset(const CovarianceVisualPtr & visual);
-  void updateOrientationFrame(const CovarianceVisualPtr & visual);
-  void updateVisibility(const CovarianceVisualPtr & visual);
-
-  std::deque<CovarianceVisualPtr> covariances_;
-
   BoolProperty * position_property_;
   ColorProperty * position_color_property_;
   FloatProperty * position_alpha_property_;

@@ -64,10 +64,9 @@ protected:
     auto scene_manager = Ogre::Root::getSingletonPtr()->createSceneManager();
     auto root_node = scene_manager->getRootSceneNode();
 
-    covariance_visual_ =
-      std::make_unique<rviz_rendering::CovarianceVisual>(scene_manager, root_node, false);
+    covariance_visual_ = std::make_unique<rviz_rendering::CovarianceVisual>(
+      scene_manager, root_node, false, true, .1f, .1f, offset);
     covariance_visual_->setPosition(position);
-    covariance_visual_->setOrientationOffset(offset);
     covariance_visual_->setCovariance(Ogre::Quaternion(1.57, 0.0, 0.0, 1.0), covariances);
 
     covariance_visual_node_ = dynamic_cast<Ogre::SceneNode *>(root_node->getChild(0));

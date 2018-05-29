@@ -101,6 +101,9 @@ The following is an incomplete list of changes (to be expanded when porting more
 
 - `BillboardLine: newLine()` → `finishLine()` (identical functionality, but `finishLine()` can be called exactly `n` times, where `n` is the number of lines in the billboard line, whereas `newLine()` could only be called `n-1` times)
 - `PointCloud: addPoints(...)` now takes vector iterators as arguments instead of pointer and size.
+- `CovarianceVisual`: Does not inherit from `rviz_rendering::Object` anymore and has a much restricted interface.
+Previously, this was only used by `rviz_common::properties::CovarianceProperty`.
+To streamline interfaces, handling of visuals now needs to be done in the display: Set up a slot fetching data from the covariance property handing it over to CovarianceVisual (see OdometryDisplay for an example).
 
 ## rviz_common
 
@@ -114,3 +117,5 @@ For an example of how to do this, see PointCloudSelectionHandler.
 Then the function can be used for handler creation and the SelectionHandler works as previously.
 - In general, several functions within `SelectionManager` and `ViewPicker` have been moved to private API.
   If they are needed, please provide a pull request to the RViz repository explaining why this functionality is needed.
+- `CovarianceProperty`: Previously used CovarianceVisual, now contains only a number of properties.
+See `rviz_rendering::CovarianceVisual` for further information and OdometryDisplay in `rviz_default_plugins` for an example usage.

@@ -34,7 +34,6 @@
 
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/axes.hpp"
-#include "rviz_rendering/objects/covariance_visual.hpp"
 
 #include "rviz_common/logging.hpp"
 #include "rviz_common/properties/color_property.hpp"
@@ -126,14 +125,10 @@ void OdometryDisplay::setupProperties()
 
   covariance_property_ = new rviz_common::properties::CovarianceProperty("Covariance", true,
       "Whether or not the covariances of the messages should be shown.",
-      this, SLOT(queueRender()));
+      this, SLOT(updateCovariances()));
 }
 
-OdometryDisplay::~OdometryDisplay()
-{
-  // because of forward declaration of arrow and axes, destructor cannot be declared in .hpp as
-  // default
-}
+OdometryDisplay::~OdometryDisplay() = default;
 
 void OdometryDisplay::onInitialize()
 {
@@ -151,8 +146,7 @@ void OdometryDisplay::clear()
 {
   arrows_.clear();
   axes_.clear();
-  // covariances are stored in covariance_property_
-  covariance_property_->clearVisual();
+  covariances_.clear();
 
   if (last_used_message_) {
     last_used_message_.reset();
@@ -170,7 +164,7 @@ void OdometryDisplay::updateColorAndAlpha()
   for (const auto & arrow : arrows_) {
     arrow->setColor(red, green, blue, alpha);
   }
-  context_->queueRender();
+  queueRender();
 }
 
 void OdometryDisplay::updateArrowsGeometry()
@@ -178,7 +172,7 @@ void OdometryDisplay::updateArrowsGeometry()
   for (const auto & arrow : arrows_) {
     updateArrow(arrow);
   }
-  context_->queueRender();
+  queueRender();
 }
 
 void OdometryDisplay::updateAxisGeometry()
@@ -186,7 +180,15 @@ void OdometryDisplay::updateAxisGeometry()
   for (const auto & axes : axes_) {
     updateAxes(axes);
   }
-  context_->queueRender();
+  queueRender();
+}
+
+void OdometryDisplay::updateCovariances()
+{
+  for (const auto & covariance : covariances_) {
+    covariance->updateUserData(covariance_property_->getUserData());
+  }
+  queueRender();
 }
 
 void OdometryDisplay::updateAxes(const std::unique_ptr<rviz_rendering::Axes> & axes)
@@ -219,7 +221,7 @@ void OdometryDisplay::updateShapeChoice()
 
   updateShapeVisibility();
 
-  context_->queueRender();
+  queueRender();
 }
 
 void OdometryDisplay::updateShapeVisibility()
@@ -240,7 +242,7 @@ bool validateFloats(nav_msgs::msg::Odometry msg)
   bool valid = true;
   valid = valid && rviz_common::validateFloats(msg.pose.pose);
   valid = valid && rviz_common::validateFloats(msg.pose.covariance);
-  // msg.twist is not validated because is never used.
+  // msg.twist is not validated because it is never used.
   return valid;
 }
 
@@ -272,10 +274,10 @@ void OdometryDisplay::processMessage(nav_msgs::msg::Odometry::ConstSharedPtr mes
   bool use_arrow = (shape_property_->getOptionInt() == ArrowShape);
   arrows_.push_back(createAndSetArrow(position, orientation, use_arrow));
   axes_.push_back(createAndSetAxes(position, orientation, !use_arrow));
-  createAndSetCovarianceVisual(position, orientation, message);
+  covariances_.push_back(createAndSetCovarianceVisual(position, orientation, msg));
 
-  last_used_message_ = message;
-  context_->queueRender();
+  last_used_message_ = msg;
+  queueRender();
 }
 
 bool OdometryDisplay::messageIsValid(nav_msgs::msg::Odometry::ConstSharedPtr message)
@@ -367,19 +369,21 @@ std::unique_ptr<rviz_rendering::Axes> OdometryDisplay::createAndSetAxes(
   return axes;
 }
 
-void OdometryDisplay::createAndSetCovarianceVisual(
+std::unique_ptr<rviz_rendering::CovarianceVisual> OdometryDisplay::createAndSetCovarianceVisual(
   const Ogre::Vector3 & position,
   const Ogre::Quaternion & orientation,
   nav_msgs::msg::Odometry::ConstSharedPtr message)
 {
-  rviz_common::properties::CovarianceProperty::CovarianceVisualPtr covariance_visual =
-    covariance_property_->createAndPushBackVisual(scene_manager_,
-      scene_node_->createChildSceneNode());
+  auto covariance_visual = std::make_unique<rviz_rendering::CovarianceVisual>(
+    scene_manager_, scene_node_->createChildSceneNode());
   covariance_visual->setPosition(position);
   covariance_visual->setOrientation(orientation);
   auto quaternion = message->pose.pose.orientation;
   covariance_visual->setCovariance(Ogre::Quaternion(
       quaternion.w, quaternion.x, quaternion.y, quaternion.z), message->pose.covariance);
+  covariance_visual->updateUserData(covariance_property_->getUserData());
+
+  return covariance_visual;
 }
 
 void OdometryDisplay::update(float wall_dt, float ros_dt)
@@ -391,14 +395,13 @@ void OdometryDisplay::update(float wall_dt, float ros_dt)
   if (keep > 0) {
     while (arrows_.size() > keep) {
       arrows_.pop_front();
-      // covariance visuals are stored into covariance_property_
-      covariance_property_->popFrontVisual();
+      covariances_.pop_front();
       axes_.pop_front();
     }
   }
 
   assert(arrows_.size() == axes_.size());
-  assert(axes_.size() == covariance_property_->sizeVisual());
+  assert(axes_.size() == covariances_.size());
 }
 
 void OdometryDisplay::reset()
@@ -406,6 +409,7 @@ void OdometryDisplay::reset()
   RTDClass::reset();
   clear();
 }
+
 }  // namespace displays
 }  // namespace rviz_default_plugins
 

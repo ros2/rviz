@@ -36,10 +36,18 @@
 
 #include <Eigen/Dense>  // NOLINT: cpplint cannot handle correct include here
 
+#ifdef __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wkeyword-macro"
+#endif
+
 #include <OgreVector3.h>
+
+#ifdef __clang__
+# pragma clang diagnostic pop
+#endif
 #include <OgreColourValue.h>
 
-#include "rviz_rendering/objects/object.hpp"
 #include "rviz_rendering/objects/shape.hpp"
 #include "rviz_rendering/visibility_control.hpp"
 
@@ -58,11 +66,39 @@ using Matrix6d = Matrix<double, 6, 6>;
 namespace rviz_rendering
 {
 
+enum RVIZ_RENDERING_PUBLIC Frame
+{
+  Local,
+  Fixed,
+};
+
+enum RVIZ_RENDERING_PUBLIC ColorStyle
+{
+  Unique,
+  RGB,
+};
+
+struct RVIZ_RENDERING_PUBLIC CovarianceUserData
+{
+  bool visible;
+
+  bool position_visible;
+  Ogre::ColourValue position_color;
+  float position_scale;
+
+  bool orientation_visible;
+  Frame orientation_frame;
+  ColorStyle orientation_color_style;
+  Ogre::ColourValue orientation_color;
+  float orientation_offset;
+  float orientation_scale;
+};
+
 /**
  * \class CovarianceVisual
  * \brief CovarianceVisual consisting in a ellipse for position and 2D ellipses along the axis for orientation.
  */
-class CovarianceVisual : public rviz_rendering::Object
+class CovarianceVisual
 {
 public:
   enum ShapeIndex
@@ -87,60 +123,20 @@ public:
    */
   RVIZ_RENDERING_PUBLIC
   CovarianceVisual(
-    Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node,
-    bool is_local_rotation, bool is_visible = true, float pos_scale = 1.0f, float ori_scale = 0.1f,
+    Ogre::SceneManager * scene_manager,
+    Ogre::SceneNode * parent_node,
+    bool is_local_rotation = false,
+    bool is_visible = true,
+    float pos_scale = 1.0f,
+    float ori_scale = 0.1f,
     float ori_offset = 0.1f);
 
 public:
   RVIZ_RENDERING_PUBLIC
-  ~CovarianceVisual() override;
-
-  /**
-   * \brief Set the position and orientation scales for this covariance
-   *
-   * @param pos_scale Scale of the position covariance
-   * @param ori_scale Scale of the orientation covariance
-   */
-  RVIZ_RENDERING_PUBLIC
-  void setScales(float pos_scale, float ori_scale);
+  virtual ~CovarianceVisual();
 
   RVIZ_RENDERING_PUBLIC
-  void setPositionScale(float pos_scale);
-
-  RVIZ_RENDERING_PUBLIC
-  void setOrientationOffset(float ori_offset);
-
-  RVIZ_RENDERING_PUBLIC
-  void setOrientationScale(float ori_scale);
-
-  /**
-   * \brief Set the color of the position covariance. Values are in the range [0, 1]
-   *
-   * @param r Red component
-   * @param g Green component
-   * @param b Blue component
-   */
-  RVIZ_RENDERING_PUBLIC
-  virtual void setPositionColor(float r, float g, float b, float a);
-
-  RVIZ_RENDERING_PUBLIC
-  void setPositionColor(const Ogre::ColourValue & color);
-
-  /**
-   * \brief Set the color of the orientation covariance. Values are in the range [0, 1]
-   *
-   * @param r Red component
-   * @param g Green component
-   * @param b Blue component
-   */
-  RVIZ_RENDERING_PUBLIC
-  virtual void setOrientationColor(float r, float g, float b, float a);
-
-  RVIZ_RENDERING_PUBLIC
-  void setOrientationColor(const Ogre::ColourValue & color);
-
-  RVIZ_RENDERING_PUBLIC
-  void setOrientationColorToRGB(float alpha);
+  void updateUserData(CovarianceUserData user_data);
 
   /** @brief Set the covariance.
    *
@@ -152,90 +148,86 @@ public:
     const Ogre::Quaternion & pose_orientation,
     const std::array<double, 36> & covariances);
 
+  /**
+   * \brief Sets position of the frame this covariance is attached
+   */
   RVIZ_RENDERING_PUBLIC
-  virtual const Ogre::Vector3 & getPositionCovarianceScale();
+  void setPosition(const Ogre::Vector3 & position);
 
+  /**
+   * \brief Sets orientation of the frame this covariance is attached
+   */
   RVIZ_RENDERING_PUBLIC
-  virtual const Ogre::Quaternion & getPositionCovarianceOrientation();
+  void setOrientation(const Ogre::Quaternion & orientation);
+
+private:
+  /**
+   * \brief Set the position and orientation scales for this covariance
+   *
+   * @param pos_scale Scale of the position covariance
+   * @param ori_scale Scale of the orientation covariance
+   */
+  void setScales(float pos_scale, float ori_scale);
+
+  void setPositionScale(float pos_scale);
+
+  void setOrientationOffset(float ori_offset);
+
+  void setOrientationScale(float ori_scale);
+
+  void setPositionColor(const Ogre::ColourValue & color);
+
+  void setOrientationColor(const Ogre::ColourValue & color);
+
+  void setOrientationColorToRGB(float alpha);
 
   /**
    * \brief Get the root scene node of the position part of this covariance
    * @return the root scene node of the position part of this covariance
    */
-  RVIZ_RENDERING_PUBLIC
   Ogre::SceneNode * getPositionSceneNode() {return position_scale_node_;}
 
   /**
    * \brief Get the root scene node of the orientation part of this covariance
    * @return the root scene node of the orientation part of this covariance
    */
-  RVIZ_RENDERING_PUBLIC
   Ogre::SceneNode * getOrientationSceneNode() {return orientation_root_node_;}
 
   /**
    * \brief Get the shape used to display position covariance
    * @return the shape used to display position covariance
    */
-  RVIZ_RENDERING_PUBLIC
   std::shared_ptr<rviz_rendering::Shape> getPositionShape() {return position_shape_;}
-
-  /**
-   * \brief Get the shape used to display orientation covariance in an especific axis
-   * @return the shape used to display orientation covariance in an especific axis
-   */
-  RVIZ_RENDERING_PUBLIC
-  std::shared_ptr<rviz_rendering::Shape> getOrientationShape(ShapeIndex index);
-
-  /**
-   * \brief Sets user data on all ogre objects we own
-   */
-  RVIZ_RENDERING_PUBLIC
-  void setUserData(const Ogre::Any & data) override;
 
   /**
    * \brief Sets visibility of this covariance
    *
    * Convenience method that sets visibility of both position and orientation parts.
    */
-  RVIZ_RENDERING_PUBLIC
   virtual void setVisible(bool visible);
 
   /**
    * \brief Sets visibility of the position part of this covariance
    */
-  RVIZ_RENDERING_PUBLIC
   virtual void setPositionVisible(bool visible);
 
   /**
    * \brief Sets visibility of the orientation part of this covariance
    */
-  RVIZ_RENDERING_PUBLIC
   virtual void setOrientationVisible(bool visible);
-
-  /**
-   * \brief Sets position of the frame this covariance is attached
-   */
-  RVIZ_RENDERING_PUBLIC
-  void setPosition(const Ogre::Vector3 & position) override;
-
-  /**
-   * \brief Sets orientation of the frame this covariance is attached
-   */
-  RVIZ_RENDERING_PUBLIC
-  void setOrientation(const Ogre::Quaternion & orientation) override;
 
   /**
    * \brief Sets which frame to attach the covariance of the orientation
    */
-  RVIZ_RENDERING_PUBLIC
   virtual void setRotatingFrame(bool use_rotating_frame);
 
-private:
   void updatePosition(const Eigen::Matrix6d & covariance);
 
   void updateOrientation(const Eigen::Matrix6d & covariance, ShapeIndex index);
 
   void updateOrientationVisibility();
+
+  Ogre::SceneManager * scene_manager_;
 
   Ogre::SceneNode * root_node_;
   Ogre::SceneNode * fixed_orientation_node_;
@@ -260,26 +252,6 @@ private:
   float current_orientation_scale_factor_;
 
   static constexpr float kMaxDegrees = 89.0f;
-
-private:
-  // Hide Object methods we don't want to expose
-  // NOTE: Apparently we still need to define them...
-  void setScale(const Ogre::Vector3 & scale) override
-  {
-    (void) scale;
-  }
-
-  void setColor(float r, float g, float b, float a) override
-  {
-    (void) r;
-    (void) g;
-    (void) b;
-    (void) a;
-  }
-
-  const Ogre::Vector3 & getPosition() override;
-
-  const Ogre::Quaternion & getOrientation() override;
 };
 
 }  // namespace rviz_rendering

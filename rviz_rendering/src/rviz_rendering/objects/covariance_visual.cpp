@@ -35,7 +35,6 @@
 #include <sstream>
 #include <tuple>
 
-#include <OgreQuaternion.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 
@@ -243,8 +242,10 @@ Ogre::Real radianScaleToMetricScaleBounded(Ogre::Real radian_scale, float max_de
 CovarianceVisual::CovarianceVisual(
   Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node,
   bool is_local_rotation, bool is_visible, float pos_scale, float ori_scale, float ori_offset)
-: Object(scene_manager), local_rotation_(is_local_rotation),
-  pose_2d_(false), orientation_visible_(is_visible)
+: scene_manager_(scene_manager),
+  local_rotation_(is_local_rotation),
+  pose_2d_(false),
+  orientation_visible_(is_visible)
 {
   // Main node of the visual
   root_node_ = parent_node->createChildSceneNode();
@@ -334,6 +335,29 @@ CovarianceVisual::~CovarianceVisual()
   scene_manager_->destroySceneNode(position_scale_node_->getName() );
   scene_manager_->destroySceneNode(fixed_orientation_node_->getName() );
   scene_manager_->destroySceneNode(root_node_->getName() );
+}
+
+void CovarianceVisual::updateUserData(CovarianceUserData user_data)
+{
+  setPositionColor(user_data.position_color);
+  setPositionScale(user_data.position_scale);
+
+  if (user_data.orientation_color_style == Unique) {
+    setOrientationColor(user_data.orientation_color);
+  } else {
+    setOrientationColorToRGB(user_data.orientation_color.a);
+  }
+  setOrientationOffset(user_data.orientation_offset);
+  setOrientationScale(user_data.orientation_scale);
+
+  if (!user_data.visible) {
+    setVisible(false);
+  } else {
+    setPositionVisible(user_data.position_visible);
+    setOrientationVisible(user_data.orientation_visible);
+  }
+
+  setRotatingFrame(user_data.orientation_frame == Local);
 }
 
 void CovarianceVisual::setCovariance(
@@ -539,34 +563,6 @@ void CovarianceVisual::setOrientationColorToRGB(float alpha)
   orientation_shapes_[kYaw2D]->setColor(Ogre::ColourValue(0.0, 0.0, 1.0, alpha));
 }
 
-void CovarianceVisual::setPositionColor(float r, float g, float b, float a)
-{
-  setPositionColor(Ogre::ColourValue(r, g, b, a));
-}
-
-void CovarianceVisual::setOrientationColor(float r, float g, float b, float a)
-{
-  setOrientationColor(Ogre::ColourValue(r, g, b, a));
-}
-
-const Ogre::Vector3 & CovarianceVisual::getPositionCovarianceScale()
-{
-  return position_node_->getScale();
-}
-
-const Ogre::Quaternion & CovarianceVisual::getPositionCovarianceOrientation()
-{
-  return position_node_->getOrientation();
-}
-
-void CovarianceVisual::setUserData(const Ogre::Any & data)
-{
-  position_shape_->setUserData(data);
-  for (auto orientation_shape : orientation_shapes_) {
-    orientation_shape->setUserData(data);
-  }
-}
-
 void CovarianceVisual::setVisible(bool visible)
 {
   setPositionVisible(visible);
@@ -592,17 +588,6 @@ void CovarianceVisual::updateOrientationVisibility()
   orientation_offset_nodes_[kYaw2D]->setVisible(orientation_visible_ && pose_2d_);
 }
 
-
-const Ogre::Vector3 & CovarianceVisual::getPosition()
-{
-  return position_node_->getPosition();
-}
-
-const Ogre::Quaternion & CovarianceVisual::getOrientation()
-{
-  return position_node_->getOrientation();
-}
-
 void CovarianceVisual::setPosition(const Ogre::Vector3 & position)
 {
   root_node_->setPosition(position);
@@ -626,11 +611,6 @@ void CovarianceVisual::setRotatingFrame(bool is_local_rotation)
   } else {
     fixed_orientation_node_->addChild(root_node_->removeChild(orientation_root_node_->getName()));
   }
-}
-
-std::shared_ptr<rviz_rendering::Shape> CovarianceVisual::getOrientationShape(ShapeIndex index)
-{
-  return orientation_shapes_[index];
 }
 
 }  // namespace rviz_rendering

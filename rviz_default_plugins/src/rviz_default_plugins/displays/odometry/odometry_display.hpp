@@ -42,6 +42,7 @@
 #include "nav_msgs/msg/odometry.hpp"
 #endif
 
+#include "rviz_rendering/objects/covariance_visual.hpp"
 #include "rviz_common/ros_topic_display.hpp"
 
 namespace rviz_rendering
@@ -102,6 +103,9 @@ protected:
   /** @brief Overridden from RosTopicDisplay to get Arrow/Axes visibility correct. */
   void onEnable() override;
 
+public Q_SLOTS:
+  void updateCovariances();
+
 private Q_SLOTS:
   void updateShapeChoice();
 
@@ -130,7 +134,7 @@ private:
   std::unique_ptr<rviz_rendering::Axes> createAndSetAxes(
     const Ogre::Vector3 & position, const Ogre::Quaternion & orientation, bool use_axes);
 
-  void createAndSetCovarianceVisual(
+  std::unique_ptr<rviz_rendering::CovarianceVisual> createAndSetCovarianceVisual(
     const Ogre::Vector3 & position,
     const Ogre::Quaternion & orientation,
     nav_msgs::msg::Odometry::ConstSharedPtr message);
@@ -139,6 +143,7 @@ private:
 
   std::deque<std::unique_ptr<rviz_rendering::Arrow>> arrows_;
   std::deque<std::unique_ptr<rviz_rendering::Axes>> axes_;
+  std::deque<std::unique_ptr<rviz_rendering::CovarianceVisual>> covariances_;
 
   nav_msgs::msg::Odometry::ConstSharedPtr last_used_message_;
 
