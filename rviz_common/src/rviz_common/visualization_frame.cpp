@@ -243,7 +243,7 @@ void VisualizationFrame::setSplashPath(const QString & splash_path)
 }
 
 void VisualizationFrame::initialize(
-  ros_integration::RosNodeAbstractionIface::WeakPtr ros_node_abstraction,
+  ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
   const QString & display_config_file)
 {
   initConfigs();
@@ -330,7 +330,7 @@ void VisualizationFrame::initialize(
   // TODO(wjwwood): pass the rviz node so tf2 doesn't create it's own...
   auto tf_listener = std::make_shared<tf2_ros::TransformListener>(*buffer);
   manager_ = new VisualizationManager(
-    render_panel_, ros_node_abstraction, this, tf_listener, buffer, clock);
+    render_panel_, rviz_ros_node, this, tf_listener, buffer, clock);
   manager_->setHelpPath(help_path_);
   panel_factory_ = new PanelFactory(rviz_ros_node_, manager_);
 

@@ -130,7 +130,7 @@ public:
    */
   void
   initialize(
-    ros_integration::RosNodeAbstractionIface::WeakPtr ros_node_abstraction,
+    ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
     const QString & display_config_file = "");
 
   /// Return the visualization manager.

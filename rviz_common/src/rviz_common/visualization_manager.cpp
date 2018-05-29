@@ -166,7 +166,7 @@ VisualizationManager::VisualizationManager(
   clock_(clock),
   private_(new VisualizationManagerPrivate),
   executor_(std::make_shared<rclcpp::executors::SingleThreadedExecutor>()),
-  ros_node_abstraction_(ros_node_abstraction)
+  rviz_ros_node_(ros_node_abstraction)
 {
   // visibility_bit_allocator_ is listed after default_visibility_bit_
   // (and thus initialized later be default):
@@ -233,7 +233,7 @@ VisualizationManager::VisualizationManager(
   selection_manager_ = std::make_shared<SelectionManager>(this);
   view_picker_ = std::make_shared<ViewPicker>(this);
 
-  executor_->add_node(ros_node_abstraction_.lock()->get_raw_node());
+  executor_->add_node(rviz_ros_node_.lock()->get_raw_node());
 // TODO(wjwwood): redo with executors?
 #if 0
   private_->threaded_queue_threads_.create_thread(std::bind(&VisualizationManager::
@@ -306,7 +306,7 @@ void VisualizationManager::unlockRender()
 ros_integration::RosNodeAbstractionIface::WeakPtr
 VisualizationManager::getRosNodeAbstraction() const
 {
-  return ros_node_abstraction_;
+  return rviz_ros_node_;
 }
 
 #if 0

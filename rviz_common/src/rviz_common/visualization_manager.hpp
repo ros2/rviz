@@ -399,7 +399,7 @@ private:
   BitAllocator visibility_bit_allocator_;
   QString help_path_;
   rclcpp::executors::SingleThreadedExecutor::SharedPtr executor_;
-  ros_integration::RosNodeAbstractionIface::WeakPtr ros_node_abstraction_;
+  ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node_;
 };
 
 }  // namespace rviz_common
