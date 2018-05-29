@@ -31,6 +31,7 @@
 #include "odometry_display.hpp"
 
 #include <memory>
+#include <string>
 
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/axes.hpp"
@@ -254,22 +255,21 @@ bool validateQuaternion(nav_msgs::msg::Odometry msg)
            msg.pose.pose.orientation.w * msg.pose.pose.orientation.w) - 1.0f) < 10e-3;
 }
 
-void OdometryDisplay::processMessage(nav_msgs::msg::Odometry::ConstSharedPtr message)
+void OdometryDisplay::processMessage(nav_msgs::msg::Odometry::ConstSharedPtr msg)
 {
-  if (!messageIsValid(message) || messageIsSimilarToPrevious(message)) {
+  if (!messageIsValid(msg) || messageIsSimilarToPrevious(msg)) {
     return;
   }
 
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
-  if (!context_->getFrameManager()->transform(
-      message->header, message->pose.pose, position, orientation))
-  {
-    RVIZ_COMMON_LOG_ERROR_STREAM("Error transforming odometry '" << getName().toStdString() <<
-      "' from frame '" << message->header.frame_id << "' to frame '" <<
-      fixed_frame_.toStdString() << "'");
+  if (!context_->getFrameManager()->transform(msg->header, msg->pose.pose, position, orientation)) {
+    std::string error_message = "Error transforming odometry '" + getName().toStdString() +
+      "' from frame '" + msg->header.frame_id + "' to frame '" + fixed_frame_.toStdString() + "'";
+    setStatusStd(rviz_common::properties::StatusProperty::Error, "Transform", error_message);
     return;
   }
+  setStatus(rviz_common::properties::StatusProperty::Ok, "Transform", "Transform OK");
 
   bool use_arrow = (shape_property_->getOptionInt() == ArrowShape);
   arrows_.push_back(createAndSetArrow(position, orientation, use_arrow));

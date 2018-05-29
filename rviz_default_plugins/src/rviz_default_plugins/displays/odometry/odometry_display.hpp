@@ -97,7 +97,7 @@ public:
   // Overides of Display
   void update(float wall_dt, float ros_dt) override;
 
-  void processMessage(nav_msgs::msg::Odometry::ConstSharedPtr message) override;
+  void processMessage(nav_msgs::msg::Odometry::ConstSharedPtr msg) override;
 
 protected:
   /** @brief Overridden from RosTopicDisplay to get Arrow/Axes visibility correct. */
