@@ -70,22 +70,21 @@ public:
     dragMouseInViewport(orbit_, to_x, to_y, from_x, from_y, button, modifiers);
   }
 
-  void setCameraToZeroYawPitch()
+  void setCameraToDefaultYawPitch()
   {
     auto yaw_property = orbit_->childAt(7);
     auto pitch_property = orbit_->childAt(8);
     yaw_property->setValue(0);  // set to zero to make result easier to check
-    pitch_property->setValue(0);  // set to zero to make result easier to check
+    pitch_property->setValue(0.5f);  // set to 0.5, because setting it to 0 can cause problems
     orbit_->updateCamera();
   }
 
-  std::shared_ptr<rviz_default_plugins::view_controllers::OrbitViewController>
-  orbit_;
+  std::shared_ptr<rviz_default_plugins::view_controllers::OrbitViewController> orbit_;
 };
 
 TEST_F(OrbitViewControllerTestFixture, moving_the_mouse_to_the_left_rotates_left)
 {
-  setCameraToZeroYawPitch();
+  setCameraToDefaultYawPitch();
 
   auto yaw_property = orbit_->childAt(7);
   auto pitch_property = orbit_->childAt(8);
@@ -93,17 +92,17 @@ TEST_F(OrbitViewControllerTestFixture, moving_the_mouse_to_the_left_rotates_left
   EXPECT_THAT(yaw_property->getNameStd(), StrEq("Yaw"));
   EXPECT_THAT(pitch_property->getNameStd(), StrEq("Pitch"));
   EXPECT_THAT(yaw_property->getValue().toFloat(), FloatNear(0, 0.001f));
-  EXPECT_THAT(pitch_property->getValue().toFloat(), FloatNear(0, 0.001f));
+  EXPECT_THAT(pitch_property->getValue().toFloat(), FloatNear(0.5, 0.001f));
 
   dragMouse(0, 10, 10, 10, Qt::LeftButton);
 
   EXPECT_THAT(yaw_property->getValue().toFloat(), FloatNear(0.05f, 0.001f));
-  EXPECT_THAT(pitch_property->getValue().toFloat(), FloatNear(0, 0.001f));
+  EXPECT_THAT(pitch_property->getValue().toFloat(), FloatNear(0.5, 0.001f));
 }
 
 TEST_F(OrbitViewControllerTestFixture, moving_the_mouse_up_rotates_up)
 {
-  setCameraToZeroYawPitch();
+  setCameraToDefaultYawPitch();
 
   auto yaw_property = orbit_->childAt(7);
   auto pitch_property = orbit_->childAt(8);
@@ -111,12 +110,12 @@ TEST_F(OrbitViewControllerTestFixture, moving_the_mouse_up_rotates_up)
   EXPECT_THAT(yaw_property->getNameStd(), StrEq("Yaw"));
   EXPECT_THAT(pitch_property->getNameStd(), StrEq("Pitch"));
   EXPECT_THAT(yaw_property->getValue().toFloat(), FloatNear(0, 0.001f));
-  EXPECT_THAT(pitch_property->getValue().toFloat(), FloatNear(0, 0.001f));
+  EXPECT_THAT(pitch_property->getValue().toFloat(), FloatNear(0.5, 0.001f));
 
   dragMouse(10, 20, 10, 10, Qt::LeftButton);
 
   EXPECT_THAT(yaw_property->getValue().toFloat(), FloatNear(0, 0.001f));
-  EXPECT_THAT(pitch_property->getValue().toFloat(), FloatNear(0.05f, 0.001f));
+  EXPECT_THAT(pitch_property->getValue().toFloat(), FloatNear(0.55f, 0.001f));
 }
 
 TEST_F(OrbitViewControllerTestFixture, moving_the_wheel_zooms) {
@@ -141,7 +140,7 @@ TEST_F(OrbitViewControllerTestFixture, moving_the_mouse_with_right_button_zooms)
 }
 
 TEST_F(OrbitViewControllerTestFixture, moving_the_mouse_with_shift_and_left_moves_position) {
-  setCameraToZeroYawPitch();
+  setCameraToDefaultYawPitch();
 
   auto x_property = orbit_->childAt(9)->childAt(0);
   EXPECT_THAT(x_property->getNameStd(), StrEq("X"));
@@ -155,9 +154,9 @@ TEST_F(OrbitViewControllerTestFixture, moving_the_mouse_with_shift_and_left_move
 
   dragMouse(10, 10, 0, 0, Qt::LeftButton, Qt::ShiftModifier);
 
-  EXPECT_THAT(x_property->getValue().toFloat(), FloatNear(0, 0.001f));
-  EXPECT_THAT(y_property->getValue().toFloat(), FloatNear(-11.0457f, 0.001f));
-  EXPECT_THAT(z_property->getValue().toFloat(), FloatNear(8.28427f, 0.001f));
+  EXPECT_THAT(x_property->getValue().toFloat(), FloatNear(-0.248f, 0.001f));
+  EXPECT_THAT(y_property->getValue().toFloat(), FloatNear(-0.690f, 0.001f));
+  EXPECT_THAT(z_property->getValue().toFloat(), FloatNear(0.454f, 0.001f));
 }
 
 int main(int argc, char ** argv)
