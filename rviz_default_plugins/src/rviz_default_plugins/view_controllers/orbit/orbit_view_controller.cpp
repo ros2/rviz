@@ -31,10 +31,11 @@
 
 #include "rviz_default_plugins/view_controllers/orbit/orbit_view_controller.hpp"
 
-#include <cstdint>
-#include <ctgmath>
 #include <cmath>
 #include <complex>
+#include <cstdint>
+#include <ctgmath>
+#include <memory>
 #include <valarray>
 
 #include <OgreCamera.h>
@@ -53,6 +54,7 @@ static const float YAW_START = Ogre::Math::HALF_PI * 0.5f;
 static const float DISTANCE_START = 10;
 static const float FOCAL_SHAPE_SIZE_START = 0.05f;
 static const bool FOCAL_SHAPE_FIXED_SIZE = true;
+static const float ROTATION_SPEED = 0.005f;
 
 namespace rviz_default_plugins
 {
@@ -96,7 +98,8 @@ void OrbitViewController::onInitialize()
 
   camera_->setProjectionType(Ogre::PT_PERSPECTIVE);
 
-  focal_shape_ = new Shape(Shape::Sphere, context_->getSceneManager(), target_scene_node_);
+  focal_shape_ = std::make_unique<rviz_rendering::Shape>(
+    Shape::Sphere, context_->getSceneManager(), target_scene_node_);
   updateFocalShapeSize();
   focal_shape_->setColor(1.0f, 1.0f, 0.0f, 0.5f);
   focal_shape_->getRootNode()->setVisible(false);
@@ -190,8 +193,8 @@ bool OrbitViewController::setMouseMovementFromEvent(
 void OrbitViewController::rotateCamera(int32_t diff_x, int32_t diff_y)
 {
   setCursor(Rotate3D);
-  yaw(diff_x * 0.005f);
-  pitch(-diff_y * 0.005f);
+  yaw(diff_x * ROTATION_SPEED);
+  pitch(-diff_y * ROTATION_SPEED);
 }
 
 void OrbitViewController::moveFocalPoint(
@@ -207,10 +210,8 @@ void OrbitViewController::moveFocalPoint(
   int height = camera_->getViewport()->getActualHeight();
 
   move(
-    -(static_cast<float>(diff_x) / static_cast<float>(width)) *
-    distance * tan(fovX / 2.0f) * 2.0f,
-    (static_cast<float>(diff_y) / static_cast<float>(height)) *
-    distance * tan(fovY / 2.0f) * 2.0f,
+    -(static_cast<float>(diff_x) / static_cast<float>(width)) * distance * tan(fovX / 2.0f) * 2.0f,
+    (static_cast<float>(diff_y) / static_cast<float>(height)) * distance * tan(fovY / 2.0f) * 2.0f,
     0.0f
   );
 }
@@ -278,9 +279,6 @@ void OrbitViewController::update(float dt, float ros_dt)
 void OrbitViewController::lookAt(const Ogre::Vector3 & point)
 {
   Ogre::SceneNode * camera_parent = camera_->getParentSceneNode();
-  if (!camera_parent) {
-    throw std::runtime_error("camera's parent scene node pointer unexpectedly nullptr");
-  }
   Ogre::Vector3 camera_position = camera_parent->getPosition();
   focal_point_property_->setVector(target_scene_node_->getOrientation().Inverse() *
     (point - target_scene_node_->getPosition()));
@@ -290,8 +288,7 @@ void OrbitViewController::lookAt(const Ogre::Vector3 & point)
 }
 
 void OrbitViewController::onTargetFrameChanged(
-  const Ogre::Vector3 & old_reference_position,
-  const Ogre::Quaternion & old_reference_orientation)
+  const Ogre::Vector3 & old_reference_position, const Ogre::Quaternion & old_reference_orientation)
 {
   Q_UNUSED(old_reference_orientation);
   focal_point_property_->add(old_reference_position - reference_position_);
@@ -326,8 +323,7 @@ void OrbitViewController::updateCamera()
   camera_parent->setPosition(pos);
   camera_parent->setFixedYawAxis(true, target_scene_node_->getOrientation() * camera_z);
   camera_parent->setDirection(
-    target_scene_node_->getOrientation() * (focal_point - pos),
-    Ogre::SceneNode::TS_PARENT);
+    target_scene_node_->getOrientation() * (focal_point - pos), Ogre::SceneNode::TS_PARENT);
 
   focal_shape_->setPosition(focal_point);
 }
@@ -357,9 +353,10 @@ void OrbitViewController::updateFocalShapeSize()
     distance_property = 1;
   }
 
-  focal_shape_->setScale(Ogre::Vector3(fshape_size * distance_property,
-    fshape_size * distance_property,
-    fshape_size * distance_property / 5.0f));
+  focal_shape_->setScale(Ogre::Vector3(
+      fshape_size * distance_property,
+      fshape_size * distance_property,
+      fshape_size * distance_property / 5.0f));
 }
 
 void OrbitViewController::zoom(float amount)
@@ -372,9 +369,6 @@ void OrbitViewController::zoom(float amount)
 void OrbitViewController::move(float x, float y, float z)  // NOLINT(build/include_what_you_use)
 {
   Ogre::SceneNode * camera_parent = camera_->getParentSceneNode();
-  if (!camera_parent) {
-    throw std::runtime_error("camera's parent scene node pointer unexpectedly nullptr");
-  }
   focal_point_property_->add(camera_parent->getOrientation() * Ogre::Vector3(x, y, z));
 }
 
@@ -383,5 +377,4 @@ void OrbitViewController::move(float x, float y, float z)  // NOLINT(build/inclu
 
 #include <pluginlib/class_list_macros.hpp>  // NOLINT(build/include_order)
 PLUGINLIB_EXPORT_CLASS(
-  rviz_default_plugins::view_controllers::OrbitViewController,
-  rviz_common::ViewController)
+  rviz_default_plugins::view_controllers::OrbitViewController, rviz_common::ViewController)

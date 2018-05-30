@@ -32,6 +32,8 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__ORBIT__ORBIT_VIEW_CONTROLLER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__ORBIT__ORBIT_VIEW_CONTROLLER_HPP_
 
+#include <memory>
+
 #include <OgreVector3.h>
 
 #include <QCursor>
@@ -52,15 +54,11 @@ namespace view_controllers
 /**
  * This camera is based on the equation of a sphere in spherical coordinates:
  *
- *   x = d * cos(theta) * sin(phi)
- *   y = d * cos(phi)
- *   z = d * sin(theta) * sin(phi)
+ *   x = distance * cos(yaw) * sin(pitch)
+ *   y = distance * cos(pitch)
+ *   z = distance * sin(yaw) * sin(pitch)
  *
- * Where:
- *
- *   d = distance
- *   theta = yaw
- *   phi = pitch
+ * The coordinates are then offset by the focal point
  */
 class RVIZ_DEFAULT_PLUGINS_PUBLIC OrbitViewController : public
   rviz_common::FramePositionTrackingViewController
@@ -69,7 +67,7 @@ class RVIZ_DEFAULT_PLUGINS_PUBLIC OrbitViewController : public
 
 public:
   OrbitViewController();
-  virtual ~OrbitViewController();
+  ~OrbitViewController() override;
 
   /// Do subclass-specific initialization.
   /**
@@ -160,8 +158,9 @@ protected:
   /// The focal shape size.
   rviz_common::properties::FloatProperty * focal_shape_size_property_;
 
-  rviz_rendering::Shape * focal_shape_;
+  std::unique_ptr<rviz_rendering::Shape> focal_shape_;
 
+private:
   bool dragging_;
 };
 
