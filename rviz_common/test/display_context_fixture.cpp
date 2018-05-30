@@ -51,7 +51,8 @@ DisplayContextFixture::DisplayContextFixture()
 
   EXPECT_CALL(*context_, getClock()).WillRepeatedly(testing::Return(clock_));
   EXPECT_CALL(*context_, getWindowManager()).WillRepeatedly(testing::Return(window_manager_.get()));
-  EXPECT_CALL(*context_, getSceneManager()).WillRepeatedly(testing::Return(scene_manager_));
+  EXPECT_CALL(*context_, getSceneManager()).WillRepeatedly(
+    testing::Invoke([]() {return scene_manager_;}));
 }
 
 DisplayContextFixture::~DisplayContextFixture()
