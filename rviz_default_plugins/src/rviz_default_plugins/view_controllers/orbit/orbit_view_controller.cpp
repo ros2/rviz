@@ -102,12 +102,7 @@ void OrbitViewController::onInitialize()
   focal_shape_->getRootNode()->setVisible(false);
 }
 
-OrbitViewController::~OrbitViewController()
-{
-  delete focal_shape_;
-  view_config_.setConfig(
-    distance_property_->getFloat(), yaw_property_->getFloat(), pitch_property_->getFloat());
-}
+OrbitViewController::~OrbitViewController() = default;
 
 void OrbitViewController::reset()
 {
@@ -247,37 +242,26 @@ void OrbitViewController::mimic(rviz_common::ViewController * source_view)
   rviz_common::FramePositionTrackingViewController::mimic(source_view);
 
   Ogre::Camera * source_camera = source_view->getCamera();
-  if (!source_camera) {
-    throw std::runtime_error("camera pointer unexpectedly nullptr");
-  }
   Ogre::SceneNode * camera_parent = source_camera->getParentSceneNode();
-  if (!camera_parent) {
-    throw std::runtime_error("camera's parent scene node pointer unexpectedly nullptr");
-  }
+
   Ogre::Vector3 position = camera_parent->getPosition();
   Ogre::Quaternion orientation = camera_parent->getOrientation();
 
-  // TODO(botteroa-si): make sure that these two cases suffice also when more view controllers are
-  // available.
   if (source_view->getClassId() == "rviz_default_plugins/Orbit") {
-    // If I'm initializing from another instance of this same class, get the distance exactly.
-    distance_property_->setFloat(source_view->subProp("Distance")->getValue().toFloat());
+    const auto source_orbit_view = dynamic_cast<OrbitViewController *>(source_view);
+    distance_property_->setFloat(source_orbit_view->distance_property_->getFloat());
+    focal_point_property_->setVector(source_orbit_view->focal_point_property_->getVector());
     updateFocalShapeSize();
-    auto direction =
-      orientation * (Ogre::Vector3::NEGATIVE_UNIT_Z * distance_property_->getFloat());
-    focal_point_property_->setVector(position + direction);
-    calculatePitchYawFromPosition(position);
   } else {
-    // If coming from a different view controller, the distance, yaw and pitch are set from the
-    // last used view controller of type orbit (i.e. orit itself, or third person or orbitXY).
-    // If this is the first time an orbit view is used, then the default start values will be used.
-    distance_property_->setFloat(view_config_.distance_);
-    yaw_property_->setFloat(view_config_.yaw_);
-    pitch_property_->setFloat(view_config_.pitch_);
+    // Determine the distance from here to the reference frame, and use
+    // that as the distance our focal point should be at.
+    distance_property_->setFloat(position.length());
     updateFocalShapeSize();
     auto direction = orientation * (Ogre::Vector3::NEGATIVE_UNIT_Z * position.length());
     focal_point_property_->setVector(position + direction);
   }
+
+  calculatePitchYawFromPosition(position);
 }
 
 rviz_common::FocalPointStatus OrbitViewController::getFocalPointStatus()
@@ -393,8 +377,6 @@ void OrbitViewController::move(float x, float y, float z)  // NOLINT(build/inclu
   }
   focal_point_property_->add(camera_parent->getOrientation() * Ogre::Vector3(x, y, z));
 }
-
-ViewConfig OrbitViewController::view_config_ = ViewConfig(DISTANCE_START, YAW_START, PITCH_START);
 
 }  // namespace view_controllers
 }  // namespace rviz_default_plugins

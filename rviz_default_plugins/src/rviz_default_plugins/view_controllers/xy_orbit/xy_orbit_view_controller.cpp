@@ -84,30 +84,53 @@ void XYOrbitViewController::mimic(ViewController * source_view)
 
   Ogre::Camera * source_camera = source_view->getCamera();
   Ogre::SceneNode * source_camera_node = source_camera->getParentSceneNode();
-  // do some trigonometry
+
+  setNewFocalPointKeepingViewIfPossible(source_camera, source_camera_node);
+}
+
+void XYOrbitViewController::setNewFocalPointKeepingViewIfPossible(
+  const Ogre::Camera * source_camera, const Ogre::SceneNode * source_camera_node)
+{
   Ogre::Ray camera_dir_ray(source_camera->getRealPosition(), source_camera->getRealDirection());
   Ogre::Ray camera_down_ray(source_camera->getRealPosition(), -1.0 * source_camera->getRealUp());
+  Ogre::Ray camera_up_ray(source_camera->getRealPosition(), source_camera->getRealUp());
 
   Ogre::Vector3 a, b;
+  Ogre::Vector3 new_focal_point = Ogre::Vector3::ZERO;
 
-  if (intersectGroundPlane(camera_dir_ray, b) &&
-    intersectGroundPlane(camera_down_ray, a))
-  {
-    float l_a = source_camera_node->getPosition().distance(b);
-    float l_b = source_camera_node->getPosition().distance(a);
+  if (intersectGroundPlane(camera_dir_ray, b) && intersectGroundPlane(camera_down_ray, a)) {
+    // Set a focal point by intersecting with the ground plane from above. This will be possible
+    // if some part of the ground plane is visible in the view and the camera is above the z-plane.
+    float l_a = source_camera_node->getPosition().distance(a);
+    float l_b = source_camera_node->getPosition().distance(b);
 
-    distance_property_->setFloat((l_a * l_b) / (CAMERA_OFFSET * l_a + l_b));
-    float distance = distance_property_->getFloat();
+    // TODO(Martin-Idel-SI): Where does this formula come from?
+    distance_property_->setFloat((l_b * l_a) / (CAMERA_OFFSET * l_b + l_a));
+    Ogre::Vector3 position_offset =
+      source_camera->getRealUp() * distance_property_->getFloat() * CAMERA_OFFSET;
 
-    camera_dir_ray.setOrigin(
-      source_camera->getRealPosition() - source_camera->getRealUp() * distance * CAMERA_OFFSET);
-    Ogre::Vector3 new_focal_point;
+    camera_dir_ray.setOrigin(source_camera->getRealPosition() - position_offset);
     intersectGroundPlane(camera_dir_ray, new_focal_point);
     focal_point_property_->setVector(new_focal_point);
 
-    calculatePitchYawFromPosition(
-      source_camera_node->getPosition() -
-      source_camera_node->getLocalAxes() * Ogre::Vector3::UNIT_Y * distance * CAMERA_OFFSET);
+    calculatePitchYawFromPosition(source_camera->getRealPosition() - position_offset);
+  } else if (intersectGroundPlane(camera_dir_ray, b) && intersectGroundPlane(camera_up_ray, a)) {
+    // TODO(Martin-Idel-SI): This doesn't really work, but I have no idea how to make it work
+    // Set a focal point by intersecting with the ground plane from below. This will be possible
+    // if some part of the ground plane is visible in the view and the camera is below the z-plane.
+    float l_a = source_camera_node->getPosition().distance(a);
+    float l_b = source_camera_node->getPosition().distance(b);
+
+    // TODO(Martin-Idel-SI): Where does this formula come from?
+    distance_property_->setFloat(l_b * (CAMERA_OFFSET * l_b + l_a) / l_a);
+    Ogre::Vector3 position_offset =
+      source_camera->getRealUp() * distance_property_->getFloat() * CAMERA_OFFSET;
+
+    camera_dir_ray.setOrigin(source_camera->getRealPosition() - position_offset);
+    intersectGroundPlane(camera_dir_ray, new_focal_point);
+    focal_point_property_->setVector(new_focal_point);
+
+    calculatePitchYawFromPosition(source_camera->getRealPosition() - position_offset);
   }
 }
 

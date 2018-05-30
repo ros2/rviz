@@ -79,6 +79,9 @@ protected:
     rviz_common::ViewportMouseEvent & event, float distance, int32_t diff_y) override;
 
   void setShiftOrbitStatus() override;
+
+  void setNewFocalPointKeepingViewIfPossible(
+    const Ogre::Camera * source_camera, const Ogre::SceneNode * source_camera_node);
 };
 
 
