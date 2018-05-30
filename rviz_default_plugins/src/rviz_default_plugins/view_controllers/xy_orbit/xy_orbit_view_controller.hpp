@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,7 +61,8 @@ public:
    * as much as possible, a similar view as that given by the
    * @a source_view.
    *
-   * @a source_view must return a valid @c Ogre::Camera* from getCamera(). */
+   * @a source_view must return a valid Ogre::Camera* from getCamera().
+   */
   void mimic(ViewController * source_view) override;
 
 protected:
@@ -69,14 +71,14 @@ protected:
   void moveFocalPoint(
     float distance, int32_t diff_x, int32_t diff_y, int32_t last_x, int32_t last_y) override;
 
+  bool intersectGroundPlane(Ogre::Ray mouse_ray, Ogre::Vector3 & intersection_3d);
+
   void handleWheelEvent(rviz_common::ViewportMouseEvent & event, float distance) override;
 
   void handleRightClick(
     rviz_common::ViewportMouseEvent & event, float distance, int32_t diff_y) override;
 
   void setShiftOrbitStatus() override;
-
-  bool intersectGroundPlane(Ogre::Ray mouse_ray, Ogre::Vector3 & intersection_3d);
 };
 
 

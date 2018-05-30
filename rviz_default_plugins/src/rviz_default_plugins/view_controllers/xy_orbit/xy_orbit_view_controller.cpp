@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -75,26 +76,6 @@ void XYOrbitViewController::onInitialize()
 {
   OrbitViewController::onInitialize();
   focal_shape_->setColor(0.0f, 1.0f, 1.0f, 0.5f);
-}
-
-bool
-XYOrbitViewController::intersectGroundPlane(Ogre::Ray mouse_ray, Ogre::Vector3 & intersection_3d)
-{
-  // convert rays into reference frame
-  mouse_ray.setOrigin(target_scene_node_->convertWorldToLocalPosition(mouse_ray.getOrigin()));
-  mouse_ray.setDirection(
-    target_scene_node_->convertWorldToLocalOrientation(Ogre::Quaternion::IDENTITY) *
-    mouse_ray.getDirection());
-
-  Ogre::Plane ground_plane(Ogre::Vector3::UNIT_Z, 0);
-
-  std::pair<bool, Ogre::Real> intersection = mouse_ray.intersects(ground_plane);
-  if (!intersection.first) {
-    return false;
-  }
-
-  intersection_3d = mouse_ray.getPoint(intersection.second);
-  return true;
 }
 
 void XYOrbitViewController::mimic(ViewController * source_view)
@@ -190,6 +171,26 @@ void XYOrbitViewController::moveFocalPoint(
     focal_point_property_->add(motion);
     emitConfigChanged();
   }
+}
+
+bool
+XYOrbitViewController::intersectGroundPlane(Ogre::Ray mouse_ray, Ogre::Vector3 & intersection_3d)
+{
+  // convert rays into reference frame
+  mouse_ray.setOrigin(target_scene_node_->convertWorldToLocalPosition(mouse_ray.getOrigin()));
+  mouse_ray.setDirection(
+    target_scene_node_->convertWorldToLocalOrientation(Ogre::Quaternion::IDENTITY) *
+    mouse_ray.getDirection());
+
+  Ogre::Plane ground_plane(Ogre::Vector3::UNIT_Z, 0);
+
+  std::pair<bool, Ogre::Real> intersection = mouse_ray.intersects(ground_plane);
+  if (!intersection.first) {
+    return false;
+  }
+
+  intersection_3d = mouse_ray.getPoint(intersection.second);
+  return true;
 }
 
 void XYOrbitViewController::handleRightClick(
