@@ -31,6 +31,10 @@
 #include "rviz_default_plugins/view_controllers/orbit/orbit_view_controller.hpp"
 
 #include <cstdint>
+#include <ctgmath>
+#include <cmath>
+#include <complex>
+#include <valarray>
 
 #include <OgreCamera.h>
 #include <OgreQuaternion.h>
@@ -119,86 +123,121 @@ void OrbitViewController::reset()
 void OrbitViewController::handleMouseEvent(rviz_common::ViewportMouseEvent & event)
 {
   if (event.shift()) {
-    setStatus(
-      "<b>Left-Click:</b> Move X/Y.  <b>Right-Click:</b>: Move Z.  <b>Mouse Wheel:</b>: Zoom.");
+    setShiftOrbitStatus();
   } else {
-    setStatus(
-      "<b>Left-Click:</b> Rotate.  <b>Middle-Click:</b> Move X/Y.  "
-      "<b>Right-Click/Mouse Wheel:</b>: Zoom.  <b>Shift</b>: More options.");
+    setDefaultOrbitStatus();
   }
 
-  float distance = distance_property_->getFloat();
   updateFocalShapeSize();
 
   int32_t diff_x = 0;
   int32_t diff_y = 0;
 
-  bool moved = false;
+  bool moved = setMouseMovementFromEvent(event, diff_x, diff_y);
 
-  if (event.type == QEvent::MouseButtonPress) {
-    focal_shape_->getRootNode()->setVisible(true);
-    moved = true;
-    dragging_ = true;
-  } else if (event.type == QEvent::MouseButtonRelease) {
-    focal_shape_->getRootNode()->setVisible(false);
-    moved = true;
-    dragging_ = false;
-  } else if (dragging_ && event.type == QEvent::MouseMove) {
-    diff_x = event.x - event.last_x;
-    diff_y = event.y - event.last_y;
-    moved = true;
-  }
-
-  // regular left-button drag
+  float distance = distance_property_->getFloat();
   if (event.left() && !event.shift()) {
-    setCursor(Rotate3D);
-    yaw(diff_x * 0.005);
-    pitch(-diff_y * 0.005);
-    // middle or shift-left drag
+    rotateCamera(diff_x, diff_y);
   } else if (event.middle() || (event.shift() && event.left())) {
-    setCursor(MoveXY);
-    float fovY = camera_->getFOVy().valueRadians();
-    float fovX = 2.0f * atan(tan(fovY / 2.0f) * camera_->getAspectRatio());
-
-    int width = camera_->getViewport()->getActualWidth();
-    int height = camera_->getViewport()->getActualHeight();
-
-    move(
-      -(static_cast<float>(diff_x) / static_cast<float>(width)) *
-      distance * tan(fovX / 2.0f) * 2.0f,
-      (static_cast<float>(diff_y) / static_cast<float>(height)) *
-      distance * tan(fovY / 2.0f) * 2.0f,
-      0.0f
-    );
+    moveFocalPoint(distance, diff_x, diff_y, 0, 0);
   } else if (event.right()) {
-    if (event.shift()) {
-      // move in z direction
-      setCursor(MoveZ);
-      move(0.0f, 0.0f, diff_y * 0.1 * (distance / 10.0f));
-    } else {
-      // zoom
-      setCursor(Zoom);
-      zoom(-diff_y * 0.1 * (distance / 10.0f));
-    }
+    handleRightClick(event, distance, diff_y);
   } else {
     setCursor(event.shift() ? MoveXY : Rotate3D);
   }
 
-  moved = true;
-
   if (event.wheel_delta != 0) {
-    int diff = event.wheel_delta;
-    if (event.shift()) {
-      move(0, 0, -diff * 0.001 * distance);
-    } else {
-      zoom(diff * 0.001 * distance);
-    }
-
+    handleWheelEvent(event, distance);
     moved = true;
   }
 
   if (moved) {
     context_->queueRender();
+  }
+}
+
+void OrbitViewController::setShiftOrbitStatus()
+{
+  setStatus("<b>Left-Click:</b> Move X/Y.  "
+    "<b>Right-Click:</b>: Move Z.  "
+    "<b>Mouse Wheel:</b>: Zoom.");
+}
+
+void OrbitViewController::setDefaultOrbitStatus()
+{
+  setStatus(
+    "<b>Left-Click:</b> Rotate.  "
+    "<b>Middle-Click:</b> Move X/Y.  "
+    "<b>Right-Click/Mouse Wheel:</b>: Zoom.  "
+    "<b>Shift</b>: More options.");
+}
+
+bool OrbitViewController::setMouseMovementFromEvent(
+  const rviz_common::ViewportMouseEvent & event, int32_t & diff_x, int32_t & diff_y)
+{
+  if (event.type == QEvent::MouseButtonPress) {
+    focal_shape_->getRootNode()->setVisible(true);
+    dragging_ = true;
+    return true;
+  } else if (event.type == QEvent::MouseButtonRelease) {
+    focal_shape_->getRootNode()->setVisible(false);
+    dragging_ = false;
+    return true;
+  } else if (dragging_ && event.type == QEvent::MouseMove) {
+    diff_x = event.x - event.last_x;
+    diff_y = event.y - event.last_y;
+    return true;
+  }
+  return false;
+}
+
+void OrbitViewController::rotateCamera(int32_t diff_x, int32_t diff_y)
+{
+  setCursor(Rotate3D);
+  yaw(diff_x * 0.005f);
+  pitch(-diff_y * 0.005f);
+}
+
+void OrbitViewController::moveFocalPoint(
+  float distance, int32_t diff_x, int32_t diff_y, int32_t last_x, int32_t last_y)
+{
+  (void) last_x;
+  (void) last_y;
+  setCursor(MoveXY);
+  float fovY = camera_->getFOVy().valueRadians();
+  float fovX = 2.0f * atan(tan(fovY / 2.0f) * camera_->getAspectRatio());
+
+  int width = camera_->getViewport()->getActualWidth();
+  int height = camera_->getViewport()->getActualHeight();
+
+  move(
+    -(static_cast<float>(diff_x) / static_cast<float>(width)) *
+    distance * tan(fovX / 2.0f) * 2.0f,
+    (static_cast<float>(diff_y) / static_cast<float>(height)) *
+    distance * tan(fovY / 2.0f) * 2.0f,
+    0.0f
+  );
+}
+
+void OrbitViewController::handleRightClick(
+  rviz_common::ViewportMouseEvent & event, float distance, int32_t diff_y)
+{
+  if (event.shift()) {
+    setCursor(MoveZ);
+    move(0.0f, 0.0f, diff_y * 0.1f * (distance / 10.0f));
+  } else {
+    setCursor(Zoom);
+    zoom(-diff_y * 0.1f * (distance / 10.0f));
+  }
+}
+
+void OrbitViewController::handleWheelEvent(rviz_common::ViewportMouseEvent & event, float distance)
+{
+  int diff = event.wheel_delta;
+  if (event.shift()) {
+    move(0, 0, -diff * 0.001f * distance);
+  } else {
+    zoom(diff * 0.001f * distance);
   }
 }
 
@@ -327,15 +366,15 @@ void OrbitViewController::calculatePitchYawFromPosition(const Ogre::Vector3 & po
 
 void OrbitViewController::updateFocalShapeSize()
 {
-  const double fshape_size(focal_shape_size_property_->getFloat());
-  double distance_property(distance_property_->getFloat());
+  const float fshape_size(focal_shape_size_property_->getFloat());
+  float distance_property(distance_property_->getFloat());
   if (focal_shape_fixed_size_property_->getBool()) {
     distance_property = 1;
   }
 
   focal_shape_->setScale(Ogre::Vector3(fshape_size * distance_property,
     fshape_size * distance_property,
-    fshape_size * distance_property / 5.0));
+    fshape_size * distance_property / 5.0f));
 }
 
 void OrbitViewController::zoom(float amount)

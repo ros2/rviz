@@ -130,6 +130,22 @@ public:
   void update(float dt, float ros_dt) override;
 
 protected:
+  bool setMouseMovementFromEvent(
+    const rviz_common::ViewportMouseEvent & event, int32_t & diff_x, int32_t & diff_y);
+
+  void rotateCamera(int32_t diff_x, int32_t diff_y);
+
+  virtual void moveFocalPoint(
+    float distance, int32_t diff_x, int32_t diff_y, int32_t last_x, int32_t last_y);
+
+  virtual void handleWheelEvent(rviz_common::ViewportMouseEvent & event, float distance);
+
+  virtual void handleRightClick(
+    rviz_common::ViewportMouseEvent & event, float distance, int32_t diff_y);
+
+  virtual void setShiftOrbitStatus();
+
+  void setDefaultOrbitStatus();
 
   void onTargetFrameChanged(
     const Ogre::Vector3 & old_reference_position,

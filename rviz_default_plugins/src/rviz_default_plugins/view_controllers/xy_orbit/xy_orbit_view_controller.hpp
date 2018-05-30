@@ -52,21 +52,29 @@ class XYOrbitViewController : public OrbitViewController
   Q_OBJECT
 
 public:
-  virtual void onInitialize();
+  void onInitialize() override;
 
-  virtual void handleMouseEvent(rviz_common::ViewportMouseEvent & evt);
-
-  virtual void lookAt(const Ogre::Vector3 & point);
+  void lookAt(const Ogre::Vector3 & point) override;
 
   /** @brief Configure the settings of this view controller to give,
    * as much as possible, a similar view as that given by the
    * @a source_view.
    *
    * @a source_view must return a valid @c Ogre::Camera* from getCamera(). */
-  virtual void mimic(ViewController * source_view);
+  void mimic(ViewController * source_view) override;
 
 protected:
-  virtual void updateCamera();
+  void updateCamera() override;
+
+  void moveFocalPoint(
+    float distance, int32_t diff_x, int32_t diff_y, int32_t last_x, int32_t last_y) override;
+
+  void handleWheelEvent(rviz_common::ViewportMouseEvent & event, float distance) override;
+
+  void handleRightClick(
+    rviz_common::ViewportMouseEvent & event, float distance, int32_t diff_y) override;
+
+  void setShiftOrbitStatus() override;
 
   bool intersectGroundPlane(Ogre::Ray mouse_ray, Ogre::Vector3 & intersection_3d);
 };

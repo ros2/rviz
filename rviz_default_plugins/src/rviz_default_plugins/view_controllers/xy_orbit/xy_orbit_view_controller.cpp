@@ -97,87 +97,6 @@ XYOrbitViewController::intersectGroundPlane(Ogre::Ray mouse_ray, Ogre::Vector3 &
   return true;
 }
 
-void XYOrbitViewController::handleMouseEvent(rviz_common::ViewportMouseEvent & event)
-{
-  if (event.shift()) {
-    setStatus("<b>Left-Click:</b> Move X/Y.  <b>Right-Click:</b>: Zoom.");
-  } else {
-    setStatus(
-      "<b>Left-Click:</b> Rotate.  "
-      "<b>Middle-Click:</b> Move X/Y.  "
-      "<b>Right-Click:</b>: Move Z.  "
-      "<b>Shift</b>: More options.");
-  }
-
-  int32_t diff_x = 0;
-  int32_t diff_y = 0;
-
-  bool moved = false;
-  if (event.type == QEvent::MouseButtonPress) {
-    focal_shape_->getRootNode()->setVisible(true);
-    moved = true;
-  } else if (event.type == QEvent::MouseButtonRelease) {
-    focal_shape_->getRootNode()->setVisible(false);
-    moved = true;
-  } else if (event.type == QEvent::MouseMove) {
-    diff_x = event.x - event.last_x;
-    diff_y = event.y - event.last_y;
-    moved = true;
-  }
-
-  if (event.left() && !event.shift()) {
-    setCursor(Rotate3D);
-    yaw(diff_x * 0.005f);
-    pitch(-diff_y * 0.005f);
-  } else if (event.middle() || (event.left() && event.shift())) {
-    setCursor(MoveXY);
-    // handle mouse movement
-    int width = camera_->getViewport()->getActualWidth();
-    int height = camera_->getViewport()->getActualHeight();
-
-    Ogre::Ray mouse_ray = camera_->getCameraToViewportRay(
-      event.x / static_cast<float>(width), event.y / static_cast<float>(height));
-
-    Ogre::Ray last_mouse_ray = camera_->getCameraToViewportRay(
-      event.last_x / static_cast<float>(width), event.last_y / static_cast<float>(height));
-
-    Ogre::Vector3 last_intersect, intersect;
-
-    if (intersectGroundPlane(last_mouse_ray, last_intersect) &&
-      intersectGroundPlane(mouse_ray, intersect))
-    {
-      Ogre::Vector3 motion = last_intersect - intersect;
-
-      // When dragging near the horizon, the motion can get out of
-      // control.  This throttles it to an arbitrary limit per mouse
-      // event.
-      float motion_distance_limit = 1; /*meter*/
-      if (motion.length() > motion_distance_limit) {
-        motion.normalise();
-        motion *= motion_distance_limit;
-      }
-
-      focal_point_property_->add(motion);
-      emitConfigChanged();
-    }
-  } else if (event.right()) {
-    setCursor(Zoom);
-    zoom(-diff_y * 0.1f * (distance_property_->getFloat() / 10.0f));
-  } else {
-    setCursor(event.shift() ? MoveXY : Rotate3D);
-  }
-
-  if (event.wheel_delta != 0) {
-    int diff = event.wheel_delta;
-    zoom(diff * 0.001f * distance_property_->getFloat());
-    moved = true;
-  }
-
-  if (moved) {
-    context_->queueRender();
-  }
-}
-
 void XYOrbitViewController::mimic(ViewController * source_view)
 {
   FramePositionTrackingViewController::mimic(source_view);
@@ -230,6 +149,62 @@ void XYOrbitViewController::lookAt(const Ogre::Vector3 & point)
   focal_point_property_->setVector(new_focal_point);
 
   calculatePitchYawFromPosition(camera_position);
+}
+
+void XYOrbitViewController::setShiftOrbitStatus()
+{
+  setStatus("<b>Left-Click:</b> Move X/Y.  <b>Right-Click:</b>: Zoom.");
+}
+
+void XYOrbitViewController::moveFocalPoint(
+  float distance, int32_t diff_x, int32_t diff_y, int32_t last_x, int32_t last_y)
+{
+  (void) distance;
+
+  setCursor(MoveXY);
+  int width = camera_->getViewport()->getActualWidth();
+  int height = camera_->getViewport()->getActualHeight();
+
+  Ogre::Ray mouse_ray = camera_->getCameraToViewportRay(
+    (last_x + diff_x) / static_cast<float>(width), (last_y + diff_y) / static_cast<float>(height));
+
+  Ogre::Ray last_mouse_ray = camera_->getCameraToViewportRay(
+    last_x / static_cast<float>(width), last_y / static_cast<float>(height));
+
+  Ogre::Vector3 last_intersect, intersect;
+
+  if (intersectGroundPlane(last_mouse_ray, last_intersect) &&
+    intersectGroundPlane(mouse_ray, intersect))
+  {
+    Ogre::Vector3 motion = last_intersect - intersect;
+
+    // When dragging near the horizon, the motion can get out of
+    // control.  This throttles it to an arbitrary limit per mouse
+    // event.
+    float motion_distance_limit = 1; /*meter*/
+    if (motion.length() > motion_distance_limit) {
+      motion.normalise();
+      motion *= motion_distance_limit;
+    }
+
+    focal_point_property_->add(motion);
+    emitConfigChanged();
+  }
+}
+
+void XYOrbitViewController::handleRightClick(
+  rviz_common::ViewportMouseEvent & event, float distance, int32_t diff_y)
+{
+  (void) event;
+  setCursor(Zoom);
+  zoom(-diff_y * 0.1f * (distance / 10.0f));
+}
+
+void XYOrbitViewController::handleWheelEvent(
+  rviz_common::ViewportMouseEvent & event, float distance)
+{
+  int diff = event.wheel_delta;
+  zoom(diff * 0.001f * distance);
 }
 
 }  // namespace view_controllers
