@@ -10,7 +10,7 @@
 
 #include "point_visual.h"
 
-#include "point_display.h"
+#include "point_display.hpp"
 
 namespace rviz
 {
