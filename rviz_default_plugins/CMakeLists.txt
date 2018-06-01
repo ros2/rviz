@@ -57,6 +57,7 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/laser_scan/laser_scan_display.hpp
   include/rviz_default_plugins/displays/marker/marker_display.hpp
   include/rviz_default_plugins/displays/path/path_display.hpp
+  include/rviz_default_plugins/displays/point/point_display.hpp
   include/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp
   include/rviz_default_plugins/displays/pointcloud/point_cloud_display.hpp
   include/rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp
@@ -104,6 +105,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/marker/markers/marker_factory.cpp
   src/rviz_default_plugins/displays/marker/marker_display.cpp
   src/rviz_default_plugins/displays/path/path_display.cpp
+  src/rviz_default_plugins/displays/point/point_display.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.cpp

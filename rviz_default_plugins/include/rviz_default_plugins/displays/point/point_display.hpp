@@ -30,67 +30,74 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef POINT_DISPLAY_H
-#define POINT_DISPLAY_H
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINT__POINT_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINT__POINT_DISPLAY_HPP_
 
-#ifndef Q_MOC_RUN
-#include <boost/circular_buffer.hpp>
-#endif
+#include <deque>
+#include <memory>
 
-#include <geometry_msgs/PointStamped.h>
-#include <rviz/message_filter_display.h>
+#include <QtCore>  // NOLINT cpplint cannot handle include order here
+
+#include "geometry_msgs/msg/point_stamped.hpp"
+
+// TODO(Martin-Idel-SI): Add again when available
+// #include <rviz/message_filter_display.h>
+#include "rviz_common/ros_topic_display.hpp"
 
 
 namespace Ogre
 {
-    class SceneNode;
+class SceneNode;
 }
 
-namespace rviz
+namespace rviz_rendering
 {
-    class ColorProperty;
-    class FloatProperty;
-    class IntProperty;
+class Shape;
 }
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
+{
+class ColorProperty;
+class FloatProperty;
+class IntProperty;
+}  // namespace properties
+}  // namespace rviz_common
+
+namespace rviz_default_plugins
+{
+namespace displays
 {
 
-    class PointStampedVisual;
+class PointStampedDisplay : public rviz_common::RosTopicDisplay<geometry_msgs::msg::PointStamped>
+{
+  Q_OBJECT
 
-    class PointStampedDisplay: public rviz::MessageFilterDisplay<geometry_msgs::PointStamped>
-    {
-    Q_OBJECT
-    public:
-	// Constructor.  pluginlib::ClassLoader creates instances by calling
-	// the default constructor, so make sure you have one.
-	PointStampedDisplay();
-	virtual ~PointStampedDisplay();
+public:
+  PointStampedDisplay();
 
-    protected:
-	// Overrides of public virtual functions from the Display class.
-	virtual void onInitialize();
-	virtual void reset();
+  ~PointStampedDisplay() override;
 
-     private Q_SLOTS:
-	// Helper function to apply color and alpha to all visuals.
-	void updateColorAndAlpha();
-        void updateHistoryLength();
+  void processMessage(geometry_msgs::msg::PointStamped::ConstSharedPtr msg) override;
 
-	// Function to handle an incoming ROS message.
-    private:
-	void processMessage( const geometry_msgs::PointStamped::ConstPtr& msg );
+protected:
+  void reset() override;
 
-        // Storage for the list of visuals.  It is a circular buffer where
-        // data gets popped from the front (oldest) and pushed to the back (newest)
-        boost::circular_buffer<boost::shared_ptr<PointStampedVisual> > visuals_;
+private Q_SLOTS:
+  void updateColorAndAlpha();
 
-	// Property objects for user-editable properties.
-	rviz::ColorProperty *color_property_;
-        rviz::FloatProperty *alpha_property_, *radius_property_;
-	rviz::IntProperty *history_length_property_;
+  void updateHistoryLength();
 
-    };
-} // end namespace rviz_plugin_tutorials
+private:
+  std::deque<std::shared_ptr<rviz_rendering::Shape>> visuals_;
 
-#endif // POINT_DISPLAY_H
+  rviz_common::properties::ColorProperty * color_property_;
+  rviz_common::properties::FloatProperty * alpha_property_, * radius_property_;
+  rviz_common::properties::IntProperty * history_length_property_;
+};
+
+}  // namespace displays
+}  // namespace rviz_default_plugins
+
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINT__POINT_DISPLAY_HPP_

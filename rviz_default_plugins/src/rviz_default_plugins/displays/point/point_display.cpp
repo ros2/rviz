@@ -30,142 +30,114 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "point_display.hpp"
+
+#include <deque>
+#include <memory>
+
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 
-#include <rviz/visualization_manager.h>
-#include <rviz/properties/color_property.h>
-#include <rviz/properties/float_property.h>
-#include <rviz/properties/int_property.h>
-#include <rviz/frame_manager.h>
-#include <rviz/validate_floats.h>
+#include "rviz_rendering/objects/shape.hpp"
 
-#include "point_visual.h"
+#include "rviz_common/display_context.hpp"
+#include "rviz_common/properties/color_property.hpp"
+#include "rviz_common/properties/float_property.hpp"
+#include "rviz_common/properties/int_property.hpp"
+#include "rviz_common/frame_manager_iface.hpp"
+#include "rviz_common/validate_floats.hpp"
+#include "rviz_common/logging.hpp"
 
-#include "point_display.hpp"
-
-namespace rviz
+namespace rviz_default_plugins
+{
+namespace displays
 {
 
-    PointStampedDisplay::PointStampedDisplay()
-    {
-	color_property_ =
-	    new rviz::ColorProperty( "Color", QColor(204, 41, 204),
-                                     "Color of a point",
-                                     this, SLOT( updateColorAndAlpha() ));
+PointStampedDisplay::PointStampedDisplay()
+{
+  color_property_ = new rviz_common::properties::ColorProperty(
+    "Color", QColor(204, 41, 204), "Color of a point", this, SLOT(updateColorAndAlpha()));
 
-	alpha_property_ =
-	    new rviz::FloatProperty( "Alpha", 1.0,
-                                     "0 is fully transparent, 1.0 is fully opaque.",
-                                     this, SLOT( updateColorAndAlpha() ));
+  alpha_property_ = new rviz_common::properties::FloatProperty(
+    "Alpha", 1.0f, "0 is fully transparent, 1.0 is fully opaque.",
+    this, SLOT(updateColorAndAlpha()));
 
-	radius_property_ =
-	    new rviz::FloatProperty( "Radius", 0.2,
-                                     "Radius of a point",
-                                     this, SLOT( updateColorAndAlpha() ));
+  radius_property_ = new rviz_common::properties::FloatProperty(
+    "Radius", 0.2f, "Radius of a point", this, SLOT(updateColorAndAlpha()));
 
-	history_length_property_ =
-	    new rviz::IntProperty( "History Length", 1,
-                                   "Number of prior measurements to display.",
-                                   this, SLOT( updateHistoryLength() ));
-        history_length_property_->setMin( 1 );
-        history_length_property_->setMax( 100000 );
-    }
+  history_length_property_ = new rviz_common::properties::IntProperty(
+    "History Length", 1, "Number of prior measurements to display.",
+    this, SLOT(updateHistoryLength()));
+  history_length_property_->setMin(1);
+  history_length_property_->setMax(100000);
+}
 
-    void PointStampedDisplay::onInitialize()
-    {
-        MFDClass::onInitialize();
-        updateHistoryLength();
-    }
+PointStampedDisplay::~PointStampedDisplay() = default;
 
-    PointStampedDisplay::~PointStampedDisplay()
-    {
-    }
+void PointStampedDisplay::reset()
+{
+  RTDClass::reset();
+  visuals_.clear();
+}
 
-    // Clear the visuals by deleting their objects.
-    void PointStampedDisplay::reset()
-    {
-        MFDClass::reset();
-        visuals_.clear();
-    }
+void PointStampedDisplay::updateColorAndAlpha()
+{
+  float alpha = alpha_property_->getFloat();
+  float radius = radius_property_->getFloat();
+  Ogre::ColourValue color = color_property_->getOgreColor();
 
-    // Set the current color and alpha values for each visual.
-    void PointStampedDisplay::updateColorAndAlpha()
-    {
-        float alpha = alpha_property_->getFloat();
-        float radius = radius_property_->getFloat();
-        Ogre::ColourValue color = color_property_->getOgreColor();
+  for (auto visual : visuals_) {
+    visual->setColor(color.r, color.g, color.b, alpha);
+    visual->setScale(Ogre::Vector3(radius, radius, radius));
+  }
+}
 
-        for( size_t i = 0; i < visuals_.size(); i++ )
-	{
-            visuals_[i]->setColor( color.r, color.g, color.b, alpha );
-            visuals_[i]->setRadius( radius );
-        }
-    }
+void PointStampedDisplay::updateHistoryLength()
+{
+  while (visuals_.size() >= static_cast<size_t>(history_length_property_->getInt())) {
+    visuals_.pop_front();
+  }
+}
 
-    // Set the number of past visuals to show.
-    void PointStampedDisplay::updateHistoryLength()
-    {
-        visuals_.rset_capacity(history_length_property_->getInt());
-    }
+void PointStampedDisplay::processMessage(geometry_msgs::msg::PointStamped::ConstSharedPtr msg)
+{
+  if (!rviz_common::validateFloats(msg->point)) {
+    setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
+      "Message contained invalid floating point values (nans or infs)");
+    return;
+  }
 
-    // This is our callback to handle an incoming message.
-    void PointStampedDisplay::processMessage( const geometry_msgs::PointStamped::ConstPtr& msg )
-    {
+  Ogre::Quaternion orientation;
+  Ogre::Vector3 position;
+  if (!context_->getFrameManager()->getTransform(
+      msg->header.frame_id, msg->header.stamp, position, orientation))
+  {
+    RVIZ_COMMON_LOG_DEBUG_STREAM("Error transforming from frame '" <<
+      msg->header.frame_id << "' to frame '" << fixed_frame_.toStdString() << "'");
+    return;
+  }
 
-        if( !rviz::validateFloats( msg->point ))
-            {
-                setStatus( rviz::StatusProperty::Error, "Topic", "Message contained invalid floating point values (nans or infs)" );
-                return;
-            }
+  if (visuals_.size() >= static_cast<size_t>(history_length_property_->getInt())) {
+    visuals_.pop_front();
+  }
 
-        // Here we call the rviz::FrameManager to get the transform from the
-        // fixed frame to the frame in the header of this Point message.  If
-        // it fails, we can't do anything else so we return.
-        Ogre::Quaternion orientation;
-        Ogre::Vector3 position;
-        if( !context_->getFrameManager()->getTransform( msg->header.frame_id,
-                                                        msg->header.stamp,
-                                                        position, orientation ))
-        {
-	    ROS_DEBUG( "Error transforming from frame '%s' to frame '%s'",
-		       msg->header.frame_id.c_str(), qPrintable( fixed_frame_ ) );
-            return;
-        }
+  std::shared_ptr<rviz_rendering::Shape> visual = std::make_shared<rviz_rendering::Shape>(
+    rviz_rendering::Shape::Sphere, context_->getSceneManager(), scene_node_);
 
-        // We are keeping a circular buffer of visual pointers.  This gets
-        // the next one, or creates and stores it if the buffer is not full
-        boost::shared_ptr<PointStampedVisual> visual;
-        if( visuals_.full() )
-            {
-                visual = visuals_.front();
-            }
-        else
-            {
-                visual.reset(new PointStampedVisual( context_->getSceneManager(), scene_node_ ));
-            }
+  scene_node_->setPosition(position);
+  scene_node_->setOrientation(orientation);
+  float alpha = alpha_property_->getFloat();
+  float radius = radius_property_->getFloat();
+  Ogre::ColourValue color = color_property_->getOgreColor();
+  visual->setColor(color.r, color.g, color.b, alpha);
+  visual->setPosition(Ogre::Vector3(msg->point.x, msg->point.y, msg->point.z));
+  visual->setScale(Ogre::Vector3(radius, radius, radius));
 
+  visuals_.push_back(visual);
+}
 
-        // Now set or update the contents of the chosen visual.
-        visual->setMessage( msg );
-        visual->setFramePosition( position );
-        visual->setFrameOrientation( orientation );
-        float alpha = alpha_property_->getFloat();
-        float radius = radius_property_->getFloat();
-        Ogre::ColourValue color = color_property_->getOgreColor();
-        visual->setColor( color.r,  color.g,  color.b, alpha);
-        visual->setRadius( radius );
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-
-        // And send it to the end of the circular buffer
-        visuals_.push_back(visual);
-    }
-
-} // end namespace rviz
-
-// Tell pluginlib about this class.  It is important to do this in
-// global scope, outside our package's namespace.
-#include <pluginlib/class_list_macros.h>
-PLUGINLIB_EXPORT_CLASS( rviz::PointStampedDisplay, rviz::Display )
-
-
+#include <pluginlib/class_list_macros.hpp>  // NOLINT
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::PointStampedDisplay, rviz_common::Display)

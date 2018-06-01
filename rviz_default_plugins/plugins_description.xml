@@ -144,6 +144,17 @@
     <message_type>nav_msgs/Path</message_type>
   </class>
 
+  <class
+    name="rviz_default_plugins/PointStamped"
+    type="rviz_default_plugins::displays::PointStampedDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays from geometry_msgs/PointStamped message
+    </description>
+    <message_type>geometry_msgs/PointStamped</message_type>
+  </class>
+
   <!-- Tool plugins -->
 
   <class
