@@ -429,7 +429,20 @@ if(BUILD_TESTING)
         ${TEST_LINK_LIBRARIES})
     endif()
 
-    if(EnableVisualTests STREQUAL "True")
+    ament_add_gmock(fps_view_controller_test
+      test/rviz_default_plugins/view_controllers/fps/fps_view_controller_test.cpp
+      test/rviz_default_plugins/view_controllers/view_controller_test_fixture.hpp
+      test/rviz_default_plugins/displays/display_test_fixture.cpp
+      test/rviz_default_plugins/scene_graph_introspection.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET fps_view_controller_test)
+      target_include_directories(fps_view_controller_test PUBLIC
+        ${TEST_INCLUDE_DIRS})
+      target_link_libraries(fps_view_controller_test
+        ${TEST_LINK_LIBRARIES})
+    endif()
+
+if(EnableVisualTests STREQUAL "True")
       find_package(ament_index_cpp REQUIRED)
 
       ament_add_gtest(camera_display_visual_test
