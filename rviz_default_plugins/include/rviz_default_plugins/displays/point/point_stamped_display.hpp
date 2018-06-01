@@ -30,8 +30,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINT__POINT_DISPLAY_HPP_
-#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINT__POINT_DISPLAY_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINT__POINT_STAMPED_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINT__POINT_STAMPED_DISPLAY_HPP_
 
 #include <deque>
 #include <memory>
@@ -57,6 +57,8 @@ class Shape;
 
 namespace rviz_common
 {
+class DisplayContext;
+
 namespace properties
 {
 class ColorProperty;
@@ -75,6 +77,9 @@ class PointStampedDisplay : public rviz_common::RosTopicDisplay<geometry_msgs::m
   Q_OBJECT
 
 public:
+  // TODO(Martin-Idel-SI): Exposed for testing, remove when nodes can be mocked
+  explicit PointStampedDisplay(rviz_common::DisplayContext * context);
+
   PointStampedDisplay();
 
   ~PointStampedDisplay() override;
@@ -87,17 +92,21 @@ protected:
 private Q_SLOTS:
   void updateColorAndAlpha();
 
-  void updateHistoryLength();
+  void onlyKeepHistoryLengthNumberOfVisuals();
 
 private:
+  void setUpProperties();
+  void createNewSphereVisual(const geometry_msgs::msg::PointStamped::ConstSharedPtr & msg);
+
   std::deque<std::shared_ptr<rviz_rendering::Shape>> visuals_;
 
   rviz_common::properties::ColorProperty * color_property_;
-  rviz_common::properties::FloatProperty * alpha_property_, * radius_property_;
+  rviz_common::properties::FloatProperty * alpha_property_;
+  rviz_common::properties::FloatProperty * radius_property_;
   rviz_common::properties::IntProperty * history_length_property_;
 };
 
 }  // namespace displays
 }  // namespace rviz_default_plugins
 
-#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINT__POINT_DISPLAY_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINT__POINT_STAMPED_DISPLAY_HPP_

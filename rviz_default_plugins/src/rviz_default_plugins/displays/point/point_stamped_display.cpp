@@ -30,7 +30,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "point_display.hpp"
+#include "rviz_default_plugins/displays/point/point_stamped_display.hpp"
 
 #include <deque>
 #include <memory>
@@ -53,7 +53,20 @@ namespace rviz_default_plugins
 namespace displays
 {
 
+PointStampedDisplay::PointStampedDisplay(rviz_common::DisplayContext * context)
+{
+  context_ = context;
+  scene_manager_ = context_->getSceneManager();
+  scene_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
+  setUpProperties();
+}
+
 PointStampedDisplay::PointStampedDisplay()
+{
+  setUpProperties();
+}
+
+void PointStampedDisplay::setUpProperties()
 {
   color_property_ = new rviz_common::properties::ColorProperty(
     "Color", QColor(204, 41, 204), "Color of a point", this, SLOT(updateColorAndAlpha()));
@@ -67,7 +80,7 @@ PointStampedDisplay::PointStampedDisplay()
 
   history_length_property_ = new rviz_common::properties::IntProperty(
     "History Length", 1, "Number of prior measurements to display.",
-    this, SLOT(updateHistoryLength()));
+    this, SLOT(onlyKeepHistoryLengthNumberOfVisuals()));
   history_length_property_->setMin(1);
   history_length_property_->setMax(100000);
 }
@@ -92,9 +105,9 @@ void PointStampedDisplay::updateColorAndAlpha()
   }
 }
 
-void PointStampedDisplay::updateHistoryLength()
+void PointStampedDisplay::onlyKeepHistoryLengthNumberOfVisuals()
 {
-  while (visuals_.size() >= static_cast<size_t>(history_length_property_->getInt())) {
+  while (visuals_.size() > static_cast<size_t>(history_length_property_->getInt())) {
     visuals_.pop_front();
   }
 }
@@ -121,11 +134,18 @@ void PointStampedDisplay::processMessage(geometry_msgs::msg::PointStamped::Const
     visuals_.pop_front();
   }
 
+  scene_node_->setPosition(position);
+  scene_node_->setOrientation(orientation);
+
+  createNewSphereVisual(msg);
+}
+
+void PointStampedDisplay::createNewSphereVisual(
+  const geometry_msgs::msg::PointStamped::ConstSharedPtr & msg)
+{
   std::shared_ptr<rviz_rendering::Shape> visual = std::make_shared<rviz_rendering::Shape>(
     rviz_rendering::Shape::Sphere, context_->getSceneManager(), scene_node_);
 
-  scene_node_->setPosition(position);
-  scene_node_->setOrientation(orientation);
   float alpha = alpha_property_->getFloat();
   float radius = radius_property_->getFloat();
   Ogre::ColourValue color = color_property_->getOgreColor();
