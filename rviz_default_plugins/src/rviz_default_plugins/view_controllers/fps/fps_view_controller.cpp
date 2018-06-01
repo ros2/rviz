@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,6 +41,7 @@
 #include <OgreSceneManager.h>
 #include <OgreVector3.h>
 #include <OgreViewport.h>
+
 #ifndef _WIN32
 # pragma GCC diagnostic pop
 #endif
@@ -47,12 +49,12 @@
 #include "rviz_rendering/geometry.hpp"
 #include "rviz_rendering/objects/shape.hpp"
 
-#include "rviz_common/uniform_string_stream.hpp"
 #include "rviz_common/display_context.hpp"
-#include "rviz_common/viewport_mouse_event.hpp"
 #include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
+#include "rviz_common/viewport_mouse_event.hpp"
+#include "rviz_common/uniform_string_stream.hpp"
 
 namespace rviz_default_plugins
 {
@@ -66,6 +68,8 @@ static const Ogre::Quaternion ROBOT_TO_CAMERA_ROTATION =
 static const float PITCH_LIMIT_LOW = -Ogre::Math::HALF_PI + 0.001f;
 static const float PITCH_LIMIT_HIGH = Ogre::Math::HALF_PI - 0.001f;
 
+static const Ogre::Vector3 DEFAULT_FPS_POSITION = Ogre::Vector3(5, 5, 10);
+
 FPSViewController::FPSViewController()
 {
   yaw_property_ = new rviz_common::properties::FloatProperty(
@@ -73,11 +77,11 @@ FPSViewController::FPSViewController()
 
   pitch_property_ = new rviz_common::properties::FloatProperty(
     "Pitch", 0, "How much the camera is tipped downward.", this);
-  pitch_property_->setMax(Ogre::Math::HALF_PI - 0.001f);
-  pitch_property_->setMin(-pitch_property_->getMax());
+  pitch_property_->setMax(PITCH_LIMIT_HIGH);
+  pitch_property_->setMin(PITCH_LIMIT_LOW);
 
   position_property_ = new rviz_common::properties::VectorProperty(
-    "Position", Ogre::Vector3(5, 5, 10), "Position of the camera.", this);
+    "Position", DEFAULT_FPS_POSITION, "Position of the camera.", this);
 }
 
 FPSViewController::~FPSViewController() = default;
@@ -91,7 +95,7 @@ void FPSViewController::onInitialize()
 
 void FPSViewController::reset()
 {
-  camera_scene_node_->setPosition(Ogre::Vector3(5, 5, 10));
+  camera_scene_node_->setPosition(DEFAULT_FPS_POSITION);
   camera_scene_node_->lookAt(Ogre::Vector3::ZERO, Ogre::Node::TransformSpace::TS_WORLD);
   setPropertiesFromCamera(camera_);
 
@@ -105,6 +109,23 @@ void FPSViewController::reset()
 
 void FPSViewController::handleMouseEvent(rviz_common::ViewportMouseEvent & event)
 {
+  setCursorStatus(event);
+
+  int32_t diff_x = 0;
+  int32_t diff_y = 0;
+  bool mouse_moved = extractMouseMoveDifference(event, diff_x, diff_y);
+
+  moveCamera(event, diff_x, diff_y);
+
+  bool wheel_moved = handleMouseWheelMovement(event);
+
+  if (mouse_moved || wheel_moved) {
+    context_->queueRender();
+  }
+}
+
+void FPSViewController::setCursorStatus(rviz_common::ViewportMouseEvent & event)
+{
   if (event.shift()) {
     setStatus("<b>Left-Click:</b> Move X/Y.  <b>Right-Click:</b>: Move Z.");
   } else {
@@ -114,54 +135,68 @@ void FPSViewController::handleMouseEvent(rviz_common::ViewportMouseEvent & event
       "<b>Right-Click:</b>: Zoom.  "
       "<b>Shift</b>: More options.");
   }
+}
 
-  bool moved = false;
-
-  int32_t diff_x = 0;
-  int32_t diff_y = 0;
-
+bool FPSViewController::extractMouseMoveDifference(
+  const rviz_common::ViewportMouseEvent & event, int32_t & diff_x, int32_t & diff_y) const
+{
   if (event.type == QEvent::MouseMove) {
     diff_x = event.x - event.last_x;
     diff_y = event.y - event.last_y;
-    moved = true;
+    return true;
   }
+  return false;
+}
 
+void FPSViewController::moveCamera(
+  rviz_common::ViewportMouseEvent & event, int32_t diff_x, int32_t diff_y)
+{
   if (event.left() && !event.shift()) {
     setCursor(Rotate3D);
     yaw(-diff_x * 0.005f);
     pitch(diff_y * 0.005f);
   } else if (event.middle() || (event.shift() && event.left())) {
     setCursor(MoveXY);
-    move(diff_x * 0.01f, -diff_y * 0.01f, 0.0f);
+    move(diff_x * 0.01f, -diff_y * 0.01f, 0);
   } else if (event.right()) {
     setCursor(MoveZ);
-    move(0.0f, 0.0f, diff_y * 0.1f);
+    move(0, 0, diff_y * 0.1f);
   } else {
     setCursor(event.shift() ? MoveXY : Rotate3D);
   }
+}
 
+bool FPSViewController::handleMouseWheelMovement(const rviz_common::ViewportMouseEvent & event)
+{
   if (event.wheel_delta != 0) {
     int diff = event.wheel_delta;
-    move(0.0f, 0.0f, -diff * 0.01f);
+    move(0, 0, -diff * 0.01f);
 
-    moved = true;
+    return true;
   }
-
-  if (moved) {
-    context_->queueRender();
-  }
+  return false;
 }
 
 void FPSViewController::setPropertiesFromCamera(Ogre::Camera * source_camera)
 {
   auto source_parent = source_camera->getParentSceneNode();
   Ogre::Quaternion quat = source_parent->getOrientation() * ROBOT_TO_CAMERA_ROTATION.Inverse();
-  float yaw = quat.getRoll(false).valueRadians();  // OGRE camera frame looks along -Z, so they
-  // call rotation around Z "roll".
-  float pitch = quat.getYaw(false).valueRadians();  // OGRE camera frame has +Y as "up", so they
-  // call rotation around Y "yaw".
+  // OGRE camera frame looks along -Z, so they call rotation around Z "roll".
+  float yaw = quat.getRoll(false).valueRadians();
+  // OGRE camera frame has +Y as "up", so they call rotation around Y "yaw".
+  float pitch = quat.getYaw(false).valueRadians();
 
-  Ogre::Vector3 direction = quat * Ogre::Vector3::NEGATIVE_UNIT_Z;
+  handleQuaternionOrientationAmbiguity(quat, yaw, pitch);
+
+  pitch_property_->setFloat(pitch);
+  yaw_property_->setFloat(rviz_rendering::mapAngleTo0_2Pi(yaw));
+  position_property_->setVector(source_parent->getPosition());
+}
+
+void FPSViewController::handleQuaternionOrientationAmbiguity(
+  const Ogre::Quaternion & quaternion, float & yaw, float & pitch) const
+{
+  Ogre::Vector3 direction = quaternion * Ogre::Vector3::NEGATIVE_UNIT_Z;
 
   if (direction.dotProduct(Ogre::Vector3::NEGATIVE_UNIT_Z) < 0) {
     if (pitch > Ogre::Math::HALF_PI) {
@@ -171,17 +206,8 @@ void FPSViewController::setPropertiesFromCamera(Ogre::Camera * source_camera)
     }
 
     yaw = -yaw;
-
-    if (direction.dotProduct(Ogre::Vector3::UNIT_X) < 0) {
-      yaw -= Ogre::Math::PI;
-    } else {
-      yaw += Ogre::Math::PI;
-    }
+    yaw += direction.dotProduct(Ogre::Vector3::UNIT_X) < 0 ? -Ogre::Math::PI : Ogre::Math::PI;
   }
-
-  pitch_property_->setFloat(pitch);
-  yaw_property_->setFloat(rviz_rendering::mapAngleTo0_2Pi(yaw));
-  position_property_->setVector(source_parent->getPosition());
 }
 
 void FPSViewController::mimic(rviz_common::ViewController * source_view)
@@ -245,5 +271,4 @@ void FPSViewController::move(float x, float y, float z)  // NOLINT (this is not 
 
 #include <pluginlib/class_list_macros.hpp>  // NOLINT(build/include_order)
 PLUGINLIB_EXPORT_CLASS(
-  rviz_default_plugins::view_controllers::FPSViewController,
-  rviz_common::ViewController)
+  rviz_default_plugins::view_controllers::FPSViewController, rviz_common::ViewController)

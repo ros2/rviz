@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,8 +31,17 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__FPS__FPS_VIEW_CONTROLLER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__FPS__FPS_VIEW_CONTROLLER_HPP_
 
-#include <OgreQuaternion.h>
+#ifdef __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wkeyword-macro"
+#endif
+
 #include <OgreVector3.h>
+#include <OgreQuaternion.h>
+
+#ifdef __clang__
+# pragma clang diagnostic pop
+#endif
 
 #include "rviz_common/frame_position_tracking_view_controller.hpp"
 
@@ -73,9 +83,9 @@ public:
 
   /** @brief Configure the settings of this view controller to give,
    * as much as possible, a similar view as that given by the
-   * @a source_view.
+   * @param source_view.
    *
-   * @a source_view must return a valid @c Ogre::Camera* from getCamera(). */
+   * @param source_view must return a valid @c Ogre::Camera* from getCamera(). */
   void mimic(rviz_common::ViewController * source_view) override;
 
   void update(float dt, float ros_dt) override;
@@ -86,14 +96,19 @@ protected:
     const Ogre::Quaternion & old_reference_orientation) override;
 
   void setPropertiesFromCamera(Ogre::Camera * source_camera);
-
   void updateCamera();
 
-  Ogre::Quaternion getOrientation();  ///< Return quaternion based on the yaw and pitch properties.
+  void setCursorStatus(rviz_common::ViewportMouseEvent & event);
+  bool extractMouseMoveDifference(
+    const rviz_common::ViewportMouseEvent & event, int32_t & diff_x, int32_t & diff_y) const;
+  void moveCamera(rviz_common::ViewportMouseEvent & event, int32_t diff_x, int32_t diff_y);
+  bool handleMouseWheelMovement(const rviz_common::ViewportMouseEvent & event);
+  void handleQuaternionOrientationAmbiguity(
+    const Ogre::Quaternion & quaternion, float & yaw, float & pitch) const;
 
-  ///< The camera's yaw (rotation around the y-axis), in radians
+  Ogre::Quaternion getOrientation();
+
   rviz_common::properties::FloatProperty * yaw_property_;
-  ///< The camera's pitch (rotation around the x-axis), in radians
   rviz_common::properties::FloatProperty * pitch_property_;
   rviz_common::properties::VectorProperty * position_property_;
 };
