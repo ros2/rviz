@@ -43,7 +43,7 @@
 #include "rviz/properties/float_property.h"
 #include "rviz/properties/vector_property.h"
 
-#include "fps_view_controller.h"
+#include "fps_view_controller.hpp"
 
 namespace rviz
 {
