@@ -34,6 +34,7 @@
 
 #include <deque>
 #include <memory>
+#include <string>
 
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
@@ -125,10 +126,10 @@ void PointStampedDisplay::processMessage(geometry_msgs::msg::PointStamped::Const
   if (!context_->getFrameManager()->getTransform(
       msg->header.frame_id, msg->header.stamp, position, orientation))
   {
-    RVIZ_COMMON_LOG_DEBUG_STREAM("Error transforming from frame '" <<
-      msg->header.frame_id << "' to frame '" << fixed_frame_.toStdString() << "'");
+    setMissingTransformToFixedFrame(msg->header.frame_id);
     return;
   }
+  setTransformOk();
 
   if (visuals_.size() >= static_cast<size_t>(history_length_property_->getInt())) {
     visuals_.pop_front();
