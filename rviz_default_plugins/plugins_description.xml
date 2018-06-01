@@ -198,6 +198,15 @@
   </class>
 
   <!-- View Controller plugins -->
+  <class
+    name="rviz_default_plugins/FPS"
+    type="rviz_default_plugins::view_controllers::FPSViewController"
+    base_class_type="rviz_common::ViewController"
+  >
+    <description>
+      Control the camera like in a First Person Shooter game: drag left to look left, etc.
+    </description>
+  </class>
 
   <class
     name="rviz_default_plugins/Orbit"
