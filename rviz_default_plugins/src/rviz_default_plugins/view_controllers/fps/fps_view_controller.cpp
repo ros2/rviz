@@ -91,17 +91,15 @@ void FPSViewController::onInitialize()
 
 void FPSViewController::reset()
 {
-  // TODO(Martin-Idel-SI): Redo...
   camera_scene_node_->setPosition(Ogre::Vector3(5, 5, 10));
-  // camera_scene_node_->lookAt(0, 0, 0);
+  camera_scene_node_->lookAt(Ogre::Vector3::ZERO, Ogre::Node::TransformSpace::TS_WORLD);
   setPropertiesFromCamera(camera_);
 
-  // Hersh says: why is the following junk necessary?  I don't know.
-  // However, without this you need to call reset() twice after
-  // switching from TopDownOrtho to FPS.  After the first call the
-  // camera is in the right position but pointing the wrong way.
+  // The following is necessary due to gimbal lock and/or fixed axis problems of yaw/pitch axis.
+  // This happens for instance when changing from the TopDownOrthoViewController to
+  // FPSViewController.
   updateCamera();
-  // camera_scene_node_->lookAt(Ogre::Vector3::ZERO, Ogre::TransformSpace::Local);
+  camera_scene_node_->lookAt(Ogre::Vector3::ZERO, Ogre::Node::TransformSpace::TS_WORLD);
   setPropertiesFromCamera(camera_);
 }
 

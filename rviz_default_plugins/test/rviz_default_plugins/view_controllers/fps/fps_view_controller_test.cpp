@@ -38,7 +38,6 @@
 
 #include <OgreCamera.h>
 #include <OgreRoot.h>
-#include <OgreSceneManager.h>
 
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/viewport_mouse_event.hpp"
@@ -58,8 +57,7 @@ class FPSViewControllerTestFixture : public ViewControllerTestFixture
 public:
   FPSViewControllerTestFixture()
   {
-    fps_ = std::make_shared<
-      rviz_default_plugins::view_controllers::FPSViewController>();
+    fps_ = std::make_shared<rviz_default_plugins::view_controllers::FPSViewController>();
     fps_->initialize(context_.get());
     testing_environment_->createOgreRenderWindow()->addViewport(fps_->getCamera());
   }
@@ -153,7 +151,7 @@ TEST_F(FPSViewControllerTestFixture,
   EXPECT_THAT(z_position->getValue().toFloat(), FloatNear(0, 0.001f));
 }
 
-TEST_F(FPSViewControllerTestFixture, moving_the_mouse_moves_camera_in_xy_camera_plane) {
+TEST_F(FPSViewControllerTestFixture, moving_the_mouse_with_shift_moves_camera_in_xy_plane) {
   setCameraToDefaultPosition();
 
   dragMouse(10, 10, 0, 0, Qt::LeftButton, Qt::ShiftModifier);
@@ -185,9 +183,7 @@ TEST_F(FPSViewControllerTestFixture, reset_sets_to_some_point_looking_at_origin)
   EXPECT_THAT(z_position->getValue().toFloat(), FloatNear(10, 0.001f));
 }
 
-TEST_F(FPSViewControllerTestFixture,
-  mimic_does_not_change_view_when_given_any_view_controller)
-{
+TEST_F(FPSViewControllerTestFixture, mimic_does_not_change_view_when_given_any_view_controller) {
   auto orbit_view =
     std::make_shared<rviz_default_plugins::view_controllers::OrbitViewController>();
   orbit_view->setClassId("rviz_default_plugins/XYOrbit");
