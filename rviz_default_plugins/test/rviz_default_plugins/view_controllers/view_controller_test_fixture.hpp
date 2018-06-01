@@ -32,6 +32,8 @@
 
 #include <memory>
 
+#include <OgreViewport.h>
+
 #include "../displays/display_test_fixture.hpp"
 
 using namespace ::testing;  // NOLINT
@@ -99,6 +101,17 @@ public:
     auto mouseEvent = new QWheelEvent(
       point, delta, Qt::NoButton, Qt::NoModifier, Qt::Orientation::Horizontal);
     return {render_panel_.get(), mouseEvent, 0, 0};
+  }
+
+protected:
+  // This function call is necessary as on different systems the render window may have different
+  // "real" dimensions. This function corrects this behaviour for testing
+  void setOSIndependentDimensions(
+    Ogre::Viewport * viewport, float actual_width, float actual_height)
+  {
+    auto width = viewport->getActualHeight();
+    auto height = viewport->getActualWidth();
+    viewport->setDimensions(0, 0, actual_width / width, actual_height / height);
   }
 
 private:

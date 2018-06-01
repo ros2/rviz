@@ -66,6 +66,7 @@ public:
     orbit_ = std::make_shared<rviz_default_plugins::view_controllers::OrbitViewController>();
     orbit_->initialize(context_.get());
     testing_environment_->createOgreRenderWindow()->addViewport(orbit_->getCamera());
+    setOSIndependentDimensions(orbit_->getCamera()->getViewport(), 10, 10);
   }
 
   void dragMouse(
@@ -144,7 +145,6 @@ TEST_F(OrbitViewControllerTestFixture, moving_the_mouse_with_right_button_zooms)
   EXPECT_THAT(distance_property->getValue().toFloat(), FloatNear(11, 0.001f));
 }
 
-#if 0
 TEST_F(OrbitViewControllerTestFixture, moving_the_mouse_with_shift_and_left_moves_position) {
   setCameraToDefaultYawPitch();
 
@@ -160,11 +160,10 @@ TEST_F(OrbitViewControllerTestFixture, moving_the_mouse_with_shift_and_left_move
 
   dragMouse(10, 10, 0, 0, Qt::LeftButton, Qt::ShiftModifier);
 
-  EXPECT_THAT(x_property->getValue().toFloat(), FloatNear(-0.248f, 0.001f));
-  EXPECT_THAT(y_property->getValue().toFloat(), FloatNear(-0.690f, 0.001f));
-  EXPECT_THAT(z_property->getValue().toFloat(), FloatNear(0.454f, 0.001f));
+  EXPECT_THAT(x_property->getValue().toFloat(), FloatNear(-3.97168f, 0.001f));
+  EXPECT_THAT(y_property->getValue().toFloat(), FloatNear(-11.0457f, 0.001f));
+  EXPECT_THAT(z_property->getValue().toFloat(), FloatNear(7.27013f, 0.001f));
 }
-#endif
 
 TEST_F(OrbitViewControllerTestFixture,
   mimic_does_not_change_view_when_given_any_orbit_view_controller)
