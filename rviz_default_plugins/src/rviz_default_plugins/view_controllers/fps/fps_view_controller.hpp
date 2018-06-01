@@ -27,64 +27,78 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_FPS_VIEW_CONTROLLER_H
-#define RVIZ_FPS_VIEW_CONTROLLER_H
+#ifndef RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__FPS__FPS_VIEW_CONTROLLER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__FPS__FPS_VIEW_CONTROLLER_HPP_
 
-#include <OgreVector3.h>
 #include <OgreQuaternion.h>
+#include <OgreVector3.h>
 
-#include "rviz/frame_position_tracking_view_controller.h"
+#include "rviz_common/frame_position_tracking_view_controller.hpp"
 
-namespace rviz
+namespace rviz_common
+{
+namespace properties
 {
 class FloatProperty;
-class SceneNode;
 class Shape;
 class VectorProperty;
+}  // namespace properties
+}  // namespace rviz_common
 
-/** @brief A first-person camera, controlled by yaw, pitch, and position. */
-class FPSViewController : public FramePositionTrackingViewController
+namespace rviz_default_plugins
 {
-Q_OBJECT
+namespace view_controllers
+{
+/** @brief A first-person camera, controlled by yaw, pitch, and position. */
+class FPSViewController : public rviz_common::FramePositionTrackingViewController
+{
 public:
   FPSViewController();
-  virtual ~FPSViewController();
 
-  virtual void onInitialize();
+  ~FPSViewController() override;
 
-  void yaw( float angle );
-  void pitch( float angle );
-  void move( float x, float y, float z );
+  void onInitialize() override;
 
-  virtual void handleMouseEvent(ViewportMouseEvent& evt);
+  void yaw(float angle);
 
-  virtual void lookAt( const Ogre::Vector3& point );
+  void pitch(float angle);
 
-  virtual void reset();
+  void move(float x, float y, float z);  // NOLINT (this is not std::move)
+
+  void handleMouseEvent(rviz_common::ViewportMouseEvent & evt) override;
+
+  void lookAt(const Ogre::Vector3 & point) override;
+
+  void reset() override;
 
   /** @brief Configure the settings of this view controller to give,
    * as much as possible, a similar view as that given by the
    * @a source_view.
    *
    * @a source_view must return a valid @c Ogre::Camera* from getCamera(). */
-  virtual void mimic( ViewController* source_view );
+  void mimic(rviz_common::ViewController * source_view) override;
 
-  virtual void update(float dt, float ros_dt);
+  void update(float dt, float ros_dt) override;
 
 protected:
-  virtual void onTargetFrameChanged(const Ogre::Vector3& old_reference_position, const Ogre::Quaternion& old_reference_orientation);
+  void onTargetFrameChanged(
+    const Ogre::Vector3 & old_reference_position,
+    const Ogre::Quaternion & old_reference_orientation) override;
 
-  void setPropertiesFromCamera( Ogre::Camera* source_camera );
+  void setPropertiesFromCamera(Ogre::Camera * source_camera);
 
   void updateCamera();
 
-  Ogre::Quaternion getOrientation(); ///< Return a Quaternion based on the yaw and pitch properties.
+  Ogre::Quaternion getOrientation();  ///< Return quaternion based on the yaw and pitch properties.
 
-  FloatProperty* yaw_property_;                         ///< The camera's yaw (rotation around the y-axis), in radians
-  FloatProperty* pitch_property_;                       ///< The camera's pitch (rotation around the x-axis), in radians
-  VectorProperty* position_property_;
+  ///< The camera's yaw (rotation around the y-axis), in radians
+  rviz_common::properties::FloatProperty * yaw_property_;
+  ///< The camera's pitch (rotation around the x-axis), in radians
+  rviz_common::properties::FloatProperty * pitch_property_;
+  rviz_common::properties::VectorProperty * position_property_;
 };
 
-} // end namespace rviz
+}  // namespace view_controllers
+}  // namespace rviz_default_plugins
 
-#endif // RVIZ_VIEW_CONTROLLER_H
+#endif  // RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__FPS__FPS_VIEW_CONTROLLER_HPP_

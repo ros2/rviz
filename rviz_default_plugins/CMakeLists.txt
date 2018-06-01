@@ -135,6 +135,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/tools/move/move_tool.cpp
   src/rviz_default_plugins/tools/point/point_tool.cpp
   src/rviz_default_plugins/tools/select/selection_tool.cpp
+  src/rviz_default_plugins/view_controllers/fps/fps_view_controller.cpp
   src/rviz_default_plugins/view_controllers/orbit/orbit_view_controller.cpp
   src/rviz_default_plugins/view_controllers/ortho/fixed_orientation_ortho_view_controller.cpp
   src/rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller.cpp
