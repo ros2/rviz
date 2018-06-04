@@ -31,10 +31,9 @@
 
 #include <string>
 
-#include <QDir>
-#include <QVBoxLayout>  // NOLINT: cpplint is unable to handle the include order here
+#include <QDir>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTextBrowser>  // NOLINT: cpplint is unable to handle the include order here
-#include <QUrl>  // NOLINT: cpplint is unable to handle the include order here
+#include <QVBoxLayout>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "./visualization_manager.hpp"
 
@@ -43,9 +42,9 @@ namespace rviz_common
 
 HelpPanel::HelpPanel(QWidget * parent)
 : Panel(parent),
-  browser_(NULL)
+  browser_(nullptr)
 {
-  QVBoxLayout * layout = new QVBoxLayout(this);
+  const auto layout = new QVBoxLayout(this);
   browser_ = new QTextBrowser();
   layout->addWidget(browser_);
 }
@@ -54,7 +53,7 @@ HelpPanel::~HelpPanel() = default;
 
 void HelpPanel::onInitialize()
 {
-  setHelpFile(vis_manager_->getHelpPath() );
+  setHelpFile(vis_manager_->getHelpPath());
 }
 
 void HelpPanel::setHelpFile(const QString & qfile_path)

@@ -112,6 +112,7 @@ VisualizationFrame::VisualizationFrame(
   splash_(nullptr),
   toolbar_actions_(nullptr),
   show_choose_new_master_option_(false),
+  panel_factory_(nullptr),
   add_tool_action_(nullptr),
   remove_tool_menu_(nullptr),
   initialized_(false),
@@ -700,7 +701,7 @@ void VisualizationFrame::loadDisplayConfig(const QString & qpath)
   setWindowModified(false);
   loading_ = true;
 
-  LoadingDialog * dialog = NULL;
+  LoadingDialog * dialog = nullptr;
   if (initialized_) {
     dialog = new LoadingDialog(this);
     dialog->show();
@@ -1127,18 +1128,13 @@ void VisualizationFrame::showHelpPanel()
     show_help_action_ = dock->toggleViewAction();
     connect(dock, SIGNAL(destroyed(QObject *)), this, SLOT(onHelpDestroyed()));
   } else {
-    // TODO(wjwwood): figure out if this is needed
-    // show_help_action_ is a toggle action, so trigger() changes its
-    // state.  Therefore we must force it to the opposite state from
-    // what we want before we call trigger().  (I think.)
-    show_help_action_->setChecked(false);
     show_help_action_->trigger();
   }
 }
 
 void VisualizationFrame::onHelpDestroyed()
 {
-  show_help_action_ = NULL;
+  show_help_action_ = nullptr;
 }
 
 void VisualizationFrame::onHelpWiki()
