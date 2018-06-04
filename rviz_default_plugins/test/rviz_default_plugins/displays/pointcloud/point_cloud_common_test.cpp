@@ -167,9 +167,7 @@ TEST_F(PointCloudCommonTestFixture, update_colors_the_points_using_the_selected_
 
   mockValidTransform();
 
-  auto color_transformer_property = parent_display_->childAt(7);
-  ASSERT_THAT(color_transformer_property->getNameStd(), StrEq("Color Transformer"));
-
+  auto color_transformer_property = parent_display_->findProperty("Color Transformer");
   color_transformer_property->setValue("FlatColor");
 
   auto color_property = parent_display_->findProperty("Color");

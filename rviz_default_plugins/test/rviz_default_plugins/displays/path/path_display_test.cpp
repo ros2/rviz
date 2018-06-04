@@ -149,9 +149,7 @@ TEST_F(PathTestFixture, reset_is_idempotent) {
 }
 
 TEST_F(PathTestFixture, reset_removes_all_axes) {
-  auto pose_style_widget_index = 8;
-  ASSERT_THAT(path_display_->childAt(pose_style_widget_index)->getNameStd(), StrEq("Pose Style"));
-  path_display_->childAt(pose_style_widget_index)->setValue("Axes");
+  path_display_->findProperty("Pose Style")->setValue("Axes");
 
   auto position = Ogre::Vector3::ZERO;
   auto orientation = Ogre::Quaternion::IDENTITY;
@@ -165,9 +163,7 @@ TEST_F(PathTestFixture, reset_removes_all_axes) {
 }
 
 TEST_F(PathTestFixture, reset_removes_all_arrows) {
-  auto pose_style_widget_index = 8;
-  ASSERT_THAT(path_display_->childAt(pose_style_widget_index)->getNameStd(), StrEq("Pose Style"));
-  path_display_->childAt(pose_style_widget_index)->setValue("Arrows");
+  path_display_->findProperty("Pose Style")->setValue("Arrows");
 
   auto position = Ogre::Vector3::ZERO;
   auto orientation = Ogre::Quaternion::IDENTITY;
@@ -196,9 +192,7 @@ TEST_F(PathTestFixture, processMessage_transforms_the_vertices_correctly) {
 }
 
 TEST_F(PathTestFixture, processMessage_adds_billboard_line_to_scene) {
-  auto line_style_widget_index = 2;
-  ASSERT_THAT(path_display_->childAt(line_style_widget_index)->getNameStd(), StrEq("Line Style"));
-  path_display_->childAt(line_style_widget_index)->setValue("Billboards");
+  path_display_->findProperty("Line Style")->setValue("Billboards");
 
   auto position = Ogre::Vector3::ZERO;
   auto orientation = Ogre::Quaternion::IDENTITY;
@@ -215,9 +209,7 @@ TEST_F(PathTestFixture, processMessage_adds_billboard_line_to_scene) {
 }
 
 TEST_F(PathTestFixture, processMessage_adds_axes_to_scene) {
-  auto pose_style_widget_index = 8;
-  ASSERT_THAT(path_display_->childAt(pose_style_widget_index)->getNameStd(), StrEq("Pose Style"));
-  path_display_->childAt(pose_style_widget_index)->setValue("Axes");
+  path_display_->findProperty("Pose Style")->setValue("Axes");
 
   auto position = Ogre::Vector3::ZERO;
   auto orientation = Ogre::Quaternion::IDENTITY;
@@ -234,8 +226,7 @@ TEST_F(PathTestFixture, processMessage_adds_axes_to_scene) {
 }
 
 TEST_F(PathTestFixture, processMessage_adds_arrows_to_scene) {
-  ASSERT_EQ("Pose Style", path_display_->childAt(8)->getNameStd());
-  path_display_->childAt(8)->setValue("Arrows");
+  path_display_->findProperty("Pose Style")->setValue("Arrows");
 
   auto position = Ogre::Vector3::ZERO;
   auto orientation = Ogre::Quaternion::IDENTITY;
