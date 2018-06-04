@@ -288,6 +288,11 @@ install(
   DESTINATION "share/${PROJECT_NAME}"
 )
 
+install(
+  DIRECTORY "${CMAKE_SOURCE_DIR}/images"
+  DESTINATION "share/${PROJECT_NAME}"
+)
+
 if(BUILD_TESTING)
   # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back
   find_package(ament_cmake_cppcheck REQUIRED)

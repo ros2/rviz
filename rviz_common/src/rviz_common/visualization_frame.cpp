@@ -131,7 +131,7 @@ VisualizationFrame::VisualizationFrame(
   package_path_ = ament_index_cpp::get_package_share_directory("rviz_common");
   QDir help_path(QString::fromStdString(package_path_) + "/help/help.html");
   help_path_ = help_path.absolutePath();
-  QDir splash_path(QString::fromStdString(package_path_) + "images/splash.png");
+  QDir splash_path(QString::fromStdString(package_path_) + "/images/splash.png");
   splash_path_ = splash_path.absolutePath();
 
   auto * reset_button = new QToolButton();
@@ -365,7 +365,7 @@ void VisualizationFrame::initialize(
   if (app_) {app_->processEvents();}
 
   delete splash_;
-  splash_ = 0;
+  splash_ = nullptr;
 
   manager_->startUpdate();
   initialized_ = true;
