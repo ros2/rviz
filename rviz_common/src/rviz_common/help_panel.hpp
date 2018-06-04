@@ -31,11 +31,11 @@
 
 #include <string>
 
-#include "rviz_common/panel.hpp"
+#include "./panel.hpp"
 
 class QTextBrowser;
 
-namespace rviz
+namespace rviz_common
 {
 
 class HelpPanel : public Panel
@@ -55,6 +55,6 @@ private:
   QTextBrowser * browser_;
 };
 
-}  // end namespace rviz
+}  // namespace rviz_common
 
 #endif  // RVIZ_COMMON__HELP_PANEL_HPP_

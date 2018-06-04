@@ -41,8 +41,6 @@ class PropertyTreeWidget;
 
 class SelectionPanel : public Panel
 {
-  Q_OBJECT
-
 public:
   explicit SelectionPanel(QWidget * parent = nullptr);
 

@@ -63,11 +63,10 @@ configure_file(src/rviz_common/env_config.cpp.in ${ENV_CONFIG_CPP} @ONLY)
 set(rviz_common_headers_to_moc
   ${ENV_CONFIG_HPP}
   src/rviz_common/add_display_dialog.hpp
-  # src/rviz_common/help_panel.hpp
+  src/rviz_common/help_panel.hpp
   include/rviz_common/properties/enum_property.hpp
   include/rviz_common/properties/property_tree_widget.hpp
   include/rviz_common/properties/splitter_handle.hpp
-  # src/rviz_common/selection_panel.hpp
   include/rviz_common/display_group.hpp
   include/rviz_common/frame_position_tracking_view_controller.hpp
   include/rviz_common/properties/quaternion_property.hpp
@@ -142,7 +141,7 @@ set(rviz_common_source_files
   src/rviz_common/failed_view_controller.cpp
   src/rviz_common/frame_manager.cpp
   src/rviz_common/frame_position_tracking_view_controller.cpp
-  # src/rviz_common/help_panel.cpp
+  src/rviz_common/help_panel.cpp
   src/rviz_common/load_resource.cpp
   src/rviz_common/loading_dialog.cpp
   src/rviz_common/logging.cpp
@@ -290,6 +289,11 @@ install(
 
 install(
   DIRECTORY "${CMAKE_SOURCE_DIR}/images"
+  DESTINATION "share/${PROJECT_NAME}"
+)
+
+install(
+  DIRECTORY "${CMAKE_SOURCE_DIR}/help"
   DESTINATION "share/${PROJECT_NAME}"
 )
 

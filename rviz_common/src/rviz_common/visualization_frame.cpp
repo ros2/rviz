@@ -85,7 +85,7 @@
 #include "./yaml_config_writer.hpp"
 
 // #include "./displays_panel.hpp"
-// #include "./help_panel.hpp"
+#include "./help_panel.hpp"
 // #include "./interaction/selection_manager.hpp"
 // #include "./selection_panel.hpp"
 // #include "./time_panel.hpp"
@@ -1123,12 +1123,9 @@ void VisualizationFrame::indicateToolIsCurrent(Tool * tool)
 void VisualizationFrame::showHelpPanel()
 {
   if (!show_help_action_) {
-    // TODO(wjwwood): reenable this when plugin loading is fixed.
-#if 0
-    QDockWidget * dock = addPanelByName("Help", "rviz/Help");
+    QDockWidget * dock = addPanelByName("Help", "rviz_common/Help");
     show_help_action_ = dock->toggleViewAction();
     connect(dock, SIGNAL(destroyed(QObject *)), this, SLOT(onHelpDestroyed()));
-#endif
   } else {
     // TODO(wjwwood): figure out if this is needed
     // show_help_action_ is a toggle action, so trigger() changes its

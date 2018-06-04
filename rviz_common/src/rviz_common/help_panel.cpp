@@ -27,21 +27,18 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz_common/help_panel.hpp"
+#include "./help_panel.hpp"
 
 #include <string>
 
+#include <QDir>
 #include <QVBoxLayout>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTextBrowser>  // NOLINT: cpplint is unable to handle the include order here
 #include <QUrl>  // NOLINT: cpplint is unable to handle the include order here
 
-#include <boost/filesystem.hpp>  // NOLINT: cpplint is unable to handle the include order here
+#include "./visualization_manager.hpp"
 
-#include "rviz_common/visualization_manager.hpp"
-
-namespace fs = boost::filesystem;
-
-namespace rviz
+namespace rviz_common
 {
 
 HelpPanel::HelpPanel(QWidget * parent)
@@ -53,9 +50,7 @@ HelpPanel::HelpPanel(QWidget * parent)
   layout->addWidget(browser_);
 }
 
-HelpPanel::~HelpPanel()
-{
-}
+HelpPanel::~HelpPanel() = default;
 
 void HelpPanel::onInitialize()
 {
@@ -64,11 +59,11 @@ void HelpPanel::onInitialize()
 
 void HelpPanel::setHelpFile(const QString & qfile_path)
 {
-  std::string file_path = qfile_path.toStdString();
+  QFileInfo path_info(qfile_path);
 
-  if (!fs::exists(file_path)) {
+  if (!path_info.exists()) {
     browser_->setText("Help file '" + qfile_path + "' does not exist.");
-  } else if (fs::is_directory(file_path)) {
+  } else if (path_info.isDir()) {
     browser_->setText("Help file '" + qfile_path + "' is a directory, not a file.");
   } else {
     QUrl url = QUrl::fromLocalFile(qfile_path);
@@ -80,4 +75,4 @@ void HelpPanel::setHelpFile(const QString & qfile_path)
   }
 }
 
-}  // end namespace rviz
+}  // namespace rviz_common
