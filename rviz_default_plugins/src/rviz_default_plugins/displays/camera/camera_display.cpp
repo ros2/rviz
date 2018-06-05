@@ -380,8 +380,13 @@ bool CameraDisplay::updateCamera()
 
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
-  context_->getFrameManager()->getTransform(
-    image->header.frame_id, image->header.stamp, position, orientation);
+  if (!context_->getFrameManager()->getTransform(
+      image->header.frame_id, image->header.stamp, position, orientation))
+  {
+    setMissingTransformToFixedFrame(image->header.frame_id);
+    return false;
+  }
+  setTransformOk();
 
   // convert vision (Z-forward) frame to ogre frame (Z-out)
   orientation = orientation * Ogre::Quaternion(Ogre::Degree(180), Ogre::Vector3::UNIT_X);

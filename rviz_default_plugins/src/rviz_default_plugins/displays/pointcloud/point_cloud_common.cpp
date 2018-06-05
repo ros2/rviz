@@ -576,13 +576,10 @@ bool PointCloudCommon::transformCloud(const CloudInfoPtr & cloud_info, bool upda
         cloud_info->position_,
         cloud_info->orientation_))
     {
-      std::stringstream ss;
-      ss << "Failed to transform from frame [" << cloud_info->message_->header.frame_id << "] to "
-        "frame [" << context_->getFrameManager()->getFixedFrame() << "]";
-      display_->setStatusStd(
-        rviz_common::properties::StatusProperty::Error, message_status_name_, ss.str());
+      display_->setMissingTransformToFixedFrame(cloud_info->message_->header.frame_id);
       return false;
     }
+    display_->setTransformOk();
   }
   // Remove outdated error message
   display_->deleteStatusStd(message_status_name_);
