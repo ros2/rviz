@@ -87,6 +87,7 @@ set(rviz_default_plugins_headers_to_moc
 set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/camera/camera_display.cpp
   src/rviz_default_plugins/displays/grid/grid_display.cpp
+  src/rviz_default_plugins/displays/grid_cells/grid_cells_display.cpp
   src/rviz_default_plugins/displays/image/image_display.cpp
   src/rviz_default_plugins/displays/image/ros_image_texture.cpp
   src/rviz_default_plugins/displays/laser_scan/laser_scan_display.cpp

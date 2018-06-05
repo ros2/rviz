@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,80 +29,68 @@
  */
 
 
-#ifndef RVIZ_GRID_CELLS_DISPLAY_H
-#define RVIZ_GRID_CELLS_DISPLAY_H
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__GRID_CELLS__GRID_CELLS_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__GRID_CELLS__GRID_CELLS_DISPLAY_HPP_
 
-#include "rviz/display.h"
+#include "rviz_common/display.hpp"
 
-#include <nav_msgs/GridCells.h>
-#include <nav_msgs/MapMetaData.h>
+#include "nav_msgs/msg/grid_cells.hpp"
+#include "nav_msgs/msg/map_meta_data.hpp"
 
-#ifndef Q_MOC_RUN
-#include <message_filters/subscriber.h>
-#include <tf/message_filter.h>
-#endif
+#include "rviz_common/ros_topic_display.hpp"
 
-#include <boost/shared_ptr.hpp>
-
-namespace Ogre
+namespace rviz_rendering
 {
-class ManualObject;
+class PointCloud;
 }
 
-namespace rviz
+namespace rviz_common
 {
-
+namespace properties
+{
 class ColorProperty;
 class FloatProperty;
-class PointCloud;
-class RosTopicProperty;
+}  // properties
+}  // rviz_common
 
+namespace rviz_default_plugins
+{
+namespace displays
+{
+
+// TODO(Martin-Idel-SI): This display previously used tf message filter. Use again once available.
 /**
  * \class GridCellsDisplay
  * \brief Displays a nav_msgs::GridCells message
  */
-class GridCellsDisplay : public Display
+class GridCellsDisplay : public rviz_common::RosTopicDisplay<nav_msgs::msg::GridCells>
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   GridCellsDisplay();
+
   virtual ~GridCellsDisplay();
 
   virtual void onInitialize();
 
-  // Overrides from Display
-  virtual void fixedFrameChanged();
   virtual void reset();
 
-protected:
-  // overrides from Display
-  virtual void onEnable();
-  virtual void onDisable();
+  void processMessage(nav_msgs::msg::GridCells::ConstSharedPtr msg);
 
 private Q_SLOTS:
   void updateAlpha();
-  void updateTopic();
 
 private:
-  void subscribe();
-  void unsubscribe();
-  void clear();
-  void incomingMessage( const nav_msgs::GridCells::ConstPtr& msg );
+  rviz_rendering::PointCloud * cloud_;
 
-  PointCloud* cloud_;
+  rviz_common::properties::ColorProperty * color_property_;
+  rviz_common::properties::FloatProperty * alpha_property_;
 
-  message_filters::Subscriber<nav_msgs::GridCells> sub_;
-  tf::MessageFilter<nav_msgs::GridCells>* tf_filter_;
-
-  ColorProperty* color_property_;
-  RosTopicProperty* topic_property_;
-  FloatProperty* alpha_property_;
-
-  uint32_t messages_received_;
   uint64_t last_frame_count_;
 };
 
-} // namespace rviz
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif /* RVIZ_GRID_CELLS_DISPLAY_H */
-
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__GRID_CELLS__GRID_CELLS_DISPLAY_HPP_

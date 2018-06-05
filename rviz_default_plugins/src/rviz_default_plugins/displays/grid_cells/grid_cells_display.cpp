@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,209 +28,128 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <boost/bind.hpp>
+#include "grid_cells_display.hpp"
+
+#include <string>
+#include <vector>
 
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 #include <OgreManualObject.h>
 #include <OgreBillboardSet.h>
 
-#include <tf/transform_listener.h>
+#include "rviz_rendering/objects/arrow.hpp"
+#include "rviz_rendering/objects/point_cloud.hpp"
+#include "rviz_common/logging.hpp"
+#include "rviz_common/frame_manager_iface.hpp"
+#include "rviz_common/properties/color_property.hpp"
+#include "rviz_common/properties/float_property.hpp"
+#include "rviz_common/properties/parse_color.hpp"
+#include "rviz_common/properties/ros_topic_property.hpp"
+#include "rviz_common/validate_floats.hpp"
+#include "rviz_common/display_context.hpp"
 
-#include "rviz/frame_manager.h"
-#include "rviz/ogre_helpers/arrow.h"
-#include "rviz/ogre_helpers/point_cloud.h"
-#include "rviz/properties/color_property.h"
-#include "rviz/properties/float_property.h"
-#include "rviz/properties/parse_color.h"
-#include "rviz/properties/ros_topic_property.h"
-#include "rviz/validate_floats.h"
-#include "rviz/display_context.h"
-
-#include "grid_cells_display.h"
-
-namespace rviz
+namespace rviz_default_plugins
+{
+namespace displays
 {
 
 GridCellsDisplay::GridCellsDisplay()
-  : Display()
-  , messages_received_(0)
-  , last_frame_count_( uint64_t( -1 ))
+: last_frame_count_(uint64_t(-1))
 {
-  color_property_ = new ColorProperty( "Color", QColor( 25, 255, 0 ),
-                                       "Color of the grid cells.", this );
+  color_property_ = new rviz_common::properties::ColorProperty("Color", QColor(25, 255, 0),
+      "Color of the grid cells.", this);
 
-  alpha_property_ = new FloatProperty( "Alpha", 1.0,
-                                       "Amount of transparency to apply to the cells.",
-                                       this, SLOT( updateAlpha() ));
-  alpha_property_->setMin( 0 );
-  alpha_property_->setMax( 1 );
-
-  topic_property_ = new RosTopicProperty( "Topic", "",
-                                          QString::fromStdString( ros::message_traits::datatype<nav_msgs::GridCells>() ),
-                                          "nav_msgs::GridCells topic to subscribe to.",
-                                          this, SLOT( updateTopic() ));
+  alpha_property_ = new rviz_common::properties::FloatProperty("Alpha", 1.0f,
+      "Amount of transparency to apply to the cells.",
+      this, SLOT(updateAlpha()));
+  alpha_property_->setMin(0);
+  alpha_property_->setMax(1);
 }
 
 void GridCellsDisplay::onInitialize()
 {
-  tf_filter_ = new tf::MessageFilter<nav_msgs::GridCells>( *context_->getTFClient(), fixed_frame_.toStdString(),
-                                                           10, update_nh_ );
-  static int count = 0;
-  std::stringstream ss;
-  ss << "PolyLine" << count++;
+  RTDClass::onInitialize();
 
-  cloud_ = new PointCloud();
-  cloud_->setRenderMode( PointCloud::RM_TILES );
-  cloud_->setCommonDirection( Ogre::Vector3::UNIT_Z );
-  cloud_->setCommonUpVector( Ogre::Vector3::UNIT_Y );
-  scene_node_->attachObject( cloud_ );
+  cloud_ = new rviz_rendering::PointCloud();
+  cloud_->setRenderMode(rviz_rendering::PointCloud::RM_TILES);
+  cloud_->setCommonDirection(Ogre::Vector3::UNIT_Z);
+  cloud_->setCommonUpVector(Ogre::Vector3::UNIT_Y);
+  scene_node_->attachObject(cloud_);
   updateAlpha();
-
-  tf_filter_->connectInput( sub_ );
-  tf_filter_->registerCallback( boost::bind( &GridCellsDisplay::incomingMessage, this, _1 ));
-  context_->getFrameManager()->registerFilterForTransformStatusCheck( tf_filter_, this );
 }
 
 GridCellsDisplay::~GridCellsDisplay()
 {
-  if ( initialized() )
-  {
-    unsubscribe();
-    clear();
-    scene_node_->detachObject( cloud_ );
+  if (initialized()) {
+    scene_node_->detachObject(cloud_);
     delete cloud_;
-    delete tf_filter_;
   }
-}
-
-void GridCellsDisplay::clear()
-{
-  cloud_->clear();
-
-  messages_received_ = 0;
-  setStatus( StatusProperty::Warn, "Topic", "No messages received" );
-}
-
-void GridCellsDisplay::updateTopic()
-{
-  unsubscribe();
-  subscribe();
-  context_->queueRender();
 }
 
 void GridCellsDisplay::updateAlpha()
 {
-  cloud_->setAlpha( alpha_property_->getFloat() );
+  cloud_->setAlpha(alpha_property_->getFloat());
   context_->queueRender();
 }
 
-void GridCellsDisplay::subscribe()
-{
-  if ( !isEnabled() )
-  {
-    return;
-  }
-
-  try
-  {
-    sub_.subscribe( update_nh_, topic_property_->getTopicStd(), 10 );
-    setStatus( StatusProperty::Ok, "Topic", "OK" );
-  }
-  catch( ros::Exception& e )
-  {
-    setStatus( StatusProperty::Error, "Topic", QString("Error subscribing: ") + e.what() );
-  }
-}
-
-void GridCellsDisplay::unsubscribe()
-{
-  sub_.unsubscribe();
-}
-
-void GridCellsDisplay::onEnable()
-{
-  subscribe();
-}
-
-void GridCellsDisplay::onDisable()
-{
-  unsubscribe();
-  clear();
-}
-
-void GridCellsDisplay::fixedFrameChanged()
-{
-  clear();
-
-  tf_filter_->setTargetFrame( fixed_frame_.toStdString() );
-}
-
-bool validateFloats(const nav_msgs::GridCells& msg)
+bool validateFloats(const nav_msgs::msg::GridCells & msg)
 {
   bool valid = true;
-  valid = valid && validateFloats( msg.cell_width );
-  valid = valid && validateFloats( msg.cell_height );
-  valid = valid && validateFloats( msg.cells );
+  valid = valid && rviz_common::validateFloats(msg.cell_width);
+  valid = valid && rviz_common::validateFloats(msg.cell_height);
+  valid = valid && rviz_common::validateFloats(msg.cells);
   return valid;
 }
 
-void GridCellsDisplay::incomingMessage( const nav_msgs::GridCells::ConstPtr& msg )
+void GridCellsDisplay::processMessage(nav_msgs::msg::GridCells::ConstSharedPtr msg)
 {
-  if( !msg )
-  {
-    return;
-  }
-
-  ++messages_received_;
-
-  if( context_->getFrameCount() == last_frame_count_ )
-  {
+  if (context_->getFrameCount() == last_frame_count_) {
     return;
   }
   last_frame_count_ = context_->getFrameCount();
 
   cloud_->clear();
 
-  if( !validateFloats( *msg ))
-  {
-    setStatus( StatusProperty::Error, "Topic", "Message contained invalid floating point values (nans or infs)" );
+  if (!validateFloats(*msg)) {
+    setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
+      "Message contained invalid floating point values (nans or infs)");
     return;
   }
 
-  setStatus( StatusProperty::Ok, "Topic", QString::number( messages_received_ ) + " messages received" );
+  setStatus(rviz_common::properties::StatusProperty::Ok, "Topic",
+    QString::number(messages_received_) + " messages received");
 
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
-  if( !context_->getFrameManager()->getTransform( msg->header, position, orientation ))
-  {
-    ROS_DEBUG( "Error transforming from frame '%s' to frame '%s'",
-               msg->header.frame_id.c_str(), qPrintable( fixed_frame_ ));
+  if (!context_->getFrameManager()->getTransform(msg->header, position, orientation)) {
+    std::string error = "Error transforming from frame '" + msg->header.frame_id +
+      "' to frame '" + fixed_frame_.toStdString() + "'";
+    setStatusStd(rviz_common::properties::StatusProperty::Error, "Transform", error);
+    RVIZ_COMMON_LOG_DEBUG(error);
   }
 
-  scene_node_->setPosition( position );
-  scene_node_->setOrientation( orientation );
+  scene_node_->setPosition(position);
+  scene_node_->setOrientation(orientation);
 
-  if( msg->cell_width == 0 )
-  {
-    setStatus(StatusProperty::Error, "Topic", "Cell width is zero, cells will be invisible.");
+  if (msg->cell_width == 0) {
+    setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
+      "Cell width is zero, cells will be invisible.");
+  } else if (msg->cell_height == 0) {
+    setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
+      "Cell height is zero, cells will be invisible.");
   }
-  else if( msg->cell_height == 0 )
-  {
-    setStatus(StatusProperty::Error, "Topic", "Cell height is zero, cells will be invisible.");
-  }
 
-  cloud_->setDimensions(msg->cell_width, msg->cell_height, 0.0);
+  cloud_->setDimensions(msg->cell_width, msg->cell_height, 0.0f);
 
-  Ogre::ColourValue color_int = qtToOgre( color_property_->getColor() );
+  Ogre::ColourValue color_int = rviz_common::properties::qtToOgre(color_property_->getColor());
   uint32_t num_points = msg->cells.size();
 
-  typedef std::vector< PointCloud::Point > V_Point;
+  typedef std::vector<rviz_rendering::PointCloud::Point> V_Point;
   V_Point points;
-  points.resize( num_points );
-  for(uint32_t i = 0; i < num_points; i++)
-  {
-    PointCloud::Point& current_point = points[ i ];
+  points.resize(num_points);
+  for (uint32_t i = 0; i < num_points; i++) {
+    rviz_rendering::PointCloud::Point & current_point = points[i];
     current_point.position.x = msg->cells[i].x;
     current_point.position.y = msg->cells[i].y;
     current_point.position.z = msg->cells[i].z;
@@ -238,19 +158,18 @@ void GridCellsDisplay::incomingMessage( const nav_msgs::GridCells::ConstPtr& msg
 
   cloud_->clear();
 
-  if ( !points.empty() )
-  {
-    cloud_->addPoints( &points.front(), points.size() );
+  if (!points.empty()) {
+    cloud_->addPoints(points.begin(), points.end());
   }
 }
 
 void GridCellsDisplay::reset()
 {
   Display::reset();
-  clear();
 }
 
-} // namespace rviz
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#include <pluginlib/class_list_macros.h>
-PLUGINLIB_EXPORT_CLASS( rviz::GridCellsDisplay, rviz::Display )
+#include <pluginlib/class_list_macros.hpp>  // NOLINT
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::GridCellsDisplay, rviz_common::Display)

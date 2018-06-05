@@ -25,6 +25,17 @@
   </class>
 
   <class
+    name="rviz_default_plugins/GridCells"
+    type="rviz_default_plugins::displays::GridCellsDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays data from a nav_msgs::GridCells message as billboards.  &lt;a href="http://www.ros.org/wiki/rviz/DisplayTypes/GridCells"&gt;More Information&lt;/a&gt;.
+    </description>
+    <message_type>nav_msgs/GridCells</message_type>
+  </class>
+
+  <class
     name="rviz_default_plugins/Image"
     type="rviz_default_plugins::displays::ImageDisplay"
     base_class_type="rviz_common::Display"
