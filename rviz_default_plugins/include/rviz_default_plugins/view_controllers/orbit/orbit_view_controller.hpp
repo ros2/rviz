@@ -145,6 +145,8 @@ protected:
 
   virtual void updateCamera();
 
+  Ogre::Vector3 mimicTopDownViewController(rviz_common::ViewController * view_controller);
+
   /// The camera's yaw (rotation around the y-axis), in radians.
   rviz_common::properties::FloatProperty * yaw_property_;
   /// The camera's pitch (rotation around the x-axis), in radians.

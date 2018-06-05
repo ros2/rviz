@@ -253,6 +253,8 @@ void OrbitViewController::mimic(rviz_common::ViewController * source_view)
     distance_property_->setFloat(source_orbit_view->distance_property_->getFloat());
     focal_point_property_->setVector(source_orbit_view->focal_point_property_->getVector());
     updateFocalShapeSize();
+  } else if (source_view->getClassId() == "rviz_default_plugins/TopDownOrtho") {
+    position = mimicTopDownViewController(source_view);
   } else {
     // Determine the distance from here to the reference frame, and use
     // that as the distance our focal point should be at.
@@ -263,6 +265,19 @@ void OrbitViewController::mimic(rviz_common::ViewController * source_view)
   }
 
   calculatePitchYawFromPosition(position);
+}
+
+Ogre::Vector3 OrbitViewController::mimicTopDownViewController(
+  rviz_common::ViewController * view_controller)
+{
+  float focal_point_x = view_controller->subProp("X")->getValue().toFloat();
+  float focal_point_y = view_controller->subProp("Y")->getValue().toFloat();
+  distance_property_->setFloat(100);
+  focal_point_property_->setVector(Ogre::Vector3(focal_point_x, focal_point_y, 0));
+  updateFocalShapeSize();
+
+  // Substract a tiny bit in the y-direction to resolve pitch/yaw ambiguity.
+  return Ogre::Vector3(focal_point_x, focal_point_y - 0.0001f, 100);
 }
 
 rviz_common::FocalPointStatus OrbitViewController::getFocalPointStatus()

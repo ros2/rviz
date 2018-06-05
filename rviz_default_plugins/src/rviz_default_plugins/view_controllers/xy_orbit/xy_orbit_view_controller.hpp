@@ -31,10 +31,21 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__XY_ORBIT__XY_ORBIT_VIEW_CONTROLLER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__XY_ORBIT__XY_ORBIT_VIEW_CONTROLLER_HPP_
 
-#include "../orbit/orbit_view_controller.hpp"
+#include <utility>
+
+#ifdef __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wkeyword-macro"
+#endif
 
 #include <OgreRay.h>
 #include <OgreVector3.h>
+
+#ifdef __clang__
+# pragma clang diagnostic pop
+#endif
+
+#include "../orbit/orbit_view_controller.hpp"
 
 namespace Ogre
 {
@@ -59,9 +70,9 @@ public:
 
   /** @brief Configure the settings of this view controller to give,
    * as much as possible, a similar view as that given by the
-   * @a source_view.
+   * @param source_view.
    *
-   * @a source_view must return a valid Ogre::Camera* from getCamera().
+   * @param source_view must return a valid Ogre::Camera* from getCamera().
    */
   void mimic(ViewController * source_view) override;
 
@@ -71,7 +82,7 @@ protected:
   void moveFocalPoint(
     float distance, int32_t diff_x, int32_t diff_y, int32_t last_x, int32_t last_y) override;
 
-  bool intersectGroundPlane(Ogre::Ray mouse_ray, Ogre::Vector3 & intersection_3d);
+  std::pair<bool, Ogre::Vector3> intersectGroundPlane(Ogre::Ray mouse_ray);
 
   void handleWheelEvent(rviz_common::ViewportMouseEvent & event, float distance) override;
 
@@ -80,8 +91,11 @@ protected:
 
   void setShiftOrbitStatus() override;
 
-  void setNewFocalPointKeepingViewIfPossible(
-    const Ogre::Camera * source_camera, const Ogre::SceneNode * source_camera_node);
+  void setNewFocalPointKeepingViewIfPossible(ViewController * source_view);
+
+  void calculateNewCameraPositionAndOrientation(
+    const Ogre::Camera * source_camera,
+    Ogre::Ray & camera_dir_ray);
 };
 
 

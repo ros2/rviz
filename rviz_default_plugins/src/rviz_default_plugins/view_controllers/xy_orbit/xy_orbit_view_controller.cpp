@@ -43,11 +43,7 @@
 #endif
 
 #include <OgreCamera.h>
-#include <OgrePlane.h>
-#include <OgreQuaternion.h>
-#include <OgreRay.h>
 #include <OgreSceneNode.h>
-#include <OgreVector3.h>
 #include <OgreViewport.h>
 
 #ifndef _WIN32
@@ -82,56 +78,53 @@ void XYOrbitViewController::mimic(ViewController * source_view)
 {
   FramePositionTrackingViewController::mimic(source_view);
 
+  setNewFocalPointKeepingViewIfPossible(source_view);
+}
+
+void XYOrbitViewController::setNewFocalPointKeepingViewIfPossible(ViewController * source_view)
+{
+  if (source_view->getClassId() == "rviz_default_plugins/TopDownOrtho") {
+    Ogre::Vector3 position = mimicTopDownViewController(source_view);
+    calculatePitchYawFromPosition(position);
+    return;
+  }
+
   Ogre::Camera * source_camera = source_view->getCamera();
   Ogre::SceneNode * source_camera_node = source_camera->getParentSceneNode();
 
-  setNewFocalPointKeepingViewIfPossible(source_camera, source_camera_node);
-}
-
-void XYOrbitViewController::setNewFocalPointKeepingViewIfPossible(
-  const Ogre::Camera * source_camera, const Ogre::SceneNode * source_camera_node)
-{
   Ogre::Ray camera_dir_ray(source_camera->getRealPosition(), source_camera->getRealDirection());
-  Ogre::Ray camera_down_ray(source_camera->getRealPosition(), -1.0 * source_camera->getRealUp());
-  Ogre::Ray camera_up_ray(source_camera->getRealPosition(), source_camera->getRealUp());
+  Ogre::Ray camera_down_ray(source_camera->getRealPosition(), -1.0f * source_camera->getRealUp());
 
-  Ogre::Vector3 a, b;
-  Ogre::Vector3 new_focal_point = Ogre::Vector3::ZERO;
+  auto camera_intersection = intersectGroundPlane(camera_dir_ray);
+  auto camera_down_intersection = intersectGroundPlane(camera_down_ray);
 
-  if (intersectGroundPlane(camera_dir_ray, b) && intersectGroundPlane(camera_down_ray, a)) {
+  if (camera_intersection.first && camera_down_intersection.first) {
     // Set a focal point by intersecting with the ground plane from above. This will be possible
     // if some part of the ground plane is visible in the view and the camera is above the z-plane.
-    float l_a = source_camera_node->getPosition().distance(a);
-    float l_b = source_camera_node->getPosition().distance(b);
+    float l_b = source_camera_node->getPosition().distance(camera_intersection.second);
+    float l_a = source_camera_node->getPosition().distance(camera_down_intersection.second);
 
-    // TODO(Martin-Idel-SI): Where does this formula come from?
     distance_property_->setFloat((l_b * l_a) / (CAMERA_OFFSET * l_b + l_a));
-    Ogre::Vector3 position_offset =
-      source_camera->getRealUp() * distance_property_->getFloat() * CAMERA_OFFSET;
-
-    camera_dir_ray.setOrigin(source_camera->getRealPosition() - position_offset);
-    intersectGroundPlane(camera_dir_ray, new_focal_point);
-    focal_point_property_->setVector(new_focal_point);
-
-    calculatePitchYawFromPosition(source_camera->getRealPosition() - position_offset);
-  } else if (intersectGroundPlane(camera_dir_ray, b) && intersectGroundPlane(camera_up_ray, a)) {
-    // TODO(Martin-Idel-SI): This doesn't really work, but I have no idea how to make it work
-    // Set a focal point by intersecting with the ground plane from below. This will be possible
-    // if some part of the ground plane is visible in the view and the camera is below the z-plane.
-    float l_a = source_camera_node->getPosition().distance(a);
-    float l_b = source_camera_node->getPosition().distance(b);
-
-    // TODO(Martin-Idel-SI): Where does this formula come from?
-    distance_property_->setFloat(l_b * (CAMERA_OFFSET * l_b + l_a) / l_a);
-    Ogre::Vector3 position_offset =
-      source_camera->getRealUp() * distance_property_->getFloat() * CAMERA_OFFSET;
-
-    camera_dir_ray.setOrigin(source_camera->getRealPosition() - position_offset);
-    intersectGroundPlane(camera_dir_ray, new_focal_point);
-    focal_point_property_->setVector(new_focal_point);
-
-    calculatePitchYawFromPosition(source_camera->getRealPosition() - position_offset);
+    calculateNewCameraPositionAndOrientation(source_camera, camera_dir_ray);
   }
+  // If the camera is below the plane, directly above the scene (TopDownOrtho), the z plane is not
+  // visible or the camera is located on the z-plane, reset to the default view, as no sensible
+  // focal point can be set that "mimics" such a camera.
+}
+
+void
+XYOrbitViewController::calculateNewCameraPositionAndOrientation(
+  const Ogre::Camera * source_camera,
+  Ogre::Ray & camera_dir_ray)
+{
+  Ogre::Vector3 position_offset =
+    source_camera->getRealUp() * distance_property_->getFloat() * CAMERA_OFFSET;
+
+  camera_dir_ray.setOrigin(source_camera->getRealPosition() - position_offset);
+  auto new_focal_point = intersectGroundPlane(camera_dir_ray);
+  focal_point_property_->setVector(new_focal_point.second);
+
+  calculatePitchYawFromPosition(source_camera->getRealPosition() - position_offset);
 }
 
 void XYOrbitViewController::updateCamera()
@@ -175,17 +168,14 @@ void XYOrbitViewController::moveFocalPoint(
   Ogre::Ray last_mouse_ray = camera_->getCameraToViewportRay(
     last_x / static_cast<float>(width), last_y / static_cast<float>(height));
 
-  Ogre::Vector3 last_intersect, intersect;
+  auto last_intersect = intersectGroundPlane(last_mouse_ray);
+  auto intersect = intersectGroundPlane(mouse_ray);
+  if (last_intersect.first && intersect.first) {
+    Ogre::Vector3 motion = last_intersect.second - intersect.second;
 
-  if (intersectGroundPlane(last_mouse_ray, last_intersect) &&
-    intersectGroundPlane(mouse_ray, intersect))
-  {
-    Ogre::Vector3 motion = last_intersect - intersect;
-
-    // When dragging near the horizon, the motion can get out of
-    // control.  This throttles it to an arbitrary limit per mouse
-    // event.
-    float motion_distance_limit = 1; /*meter*/
+    // When dragging near the horizon, the motion can get out of control.
+    // This throttles it to an arbitrary limit per mouse event.
+    float motion_distance_limit = 1;  /*meter*/
     if (motion.length() > motion_distance_limit) {
       motion.normalise();
       motion *= motion_distance_limit;
@@ -196,8 +186,7 @@ void XYOrbitViewController::moveFocalPoint(
   }
 }
 
-bool
-XYOrbitViewController::intersectGroundPlane(Ogre::Ray mouse_ray, Ogre::Vector3 & intersection_3d)
+std::pair<bool, Ogre::Vector3> XYOrbitViewController::intersectGroundPlane(Ogre::Ray mouse_ray)
 {
   // convert rays into reference frame
   mouse_ray.setOrigin(target_scene_node_->convertWorldToLocalPosition(mouse_ray.getOrigin()));
@@ -208,12 +197,7 @@ XYOrbitViewController::intersectGroundPlane(Ogre::Ray mouse_ray, Ogre::Vector3 &
   Ogre::Plane ground_plane(Ogre::Vector3::UNIT_Z, 0);
 
   std::pair<bool, Ogre::Real> intersection = mouse_ray.intersects(ground_plane);
-  if (!intersection.first) {
-    return false;
-  }
-
-  intersection_3d = mouse_ray.getPoint(intersection.second);
-  return true;
+  return std::make_pair(intersection.first, mouse_ray.getPoint(intersection.second));
 }
 
 void XYOrbitViewController::handleRightClick(
