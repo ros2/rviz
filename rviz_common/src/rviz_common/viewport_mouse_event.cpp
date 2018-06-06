@@ -32,34 +32,39 @@
 #include <QMouseEvent>
 #include <QWheelEvent>
 
+#include "rviz_common/render_panel.hpp"
+#include "rviz_rendering/render_window.hpp"
+
 namespace rviz_common
 {
 
 ViewportMouseEvent::ViewportMouseEvent(RenderPanel * p, QMouseEvent * e, int lx, int ly)
 : panel(p),
   type(e->type()),
-  x(e->x()),
-  y(e->y()),
+  device_pixel_ratio(static_cast<int>(panel->getRenderWindow()->devicePixelRatio())),
+  x(e->x() * device_pixel_ratio),
+  y(e->y() * device_pixel_ratio),
   wheel_delta(0),
   acting_button(e->button()),
   buttons_down(e->buttons()),
   modifiers(e->modifiers()),
-  last_x(lx),
-  last_y(ly)
+  last_x(lx * device_pixel_ratio),
+  last_y(ly * device_pixel_ratio)
 {
 }
 
 ViewportMouseEvent::ViewportMouseEvent(RenderPanel * p, QWheelEvent * e, int lx, int ly)
 : panel(p),
   type(e->type()),
-  x(e->x()),
-  y(e->y()),
+  device_pixel_ratio(static_cast<int>(panel->getRenderWindow()->devicePixelRatio())),
+  x(e->x() * device_pixel_ratio),
+  y(e->y() * device_pixel_ratio),
   wheel_delta(e->delta()),
   acting_button(Qt::NoButton),
   buttons_down(e->buttons()),
   modifiers(e->modifiers()),
-  last_x(lx),
-  last_y(ly)
+  last_x(lx * device_pixel_ratio),
+  last_y(ly * device_pixel_ratio)
 {
 }
 

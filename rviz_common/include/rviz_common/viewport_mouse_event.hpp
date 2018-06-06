@@ -89,6 +89,7 @@ public:
 
   RenderPanel * panel;
   QEvent::Type type;
+  int device_pixel_ratio;
   int x;
   int y;
   int wheel_delta;
