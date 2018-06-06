@@ -161,6 +161,10 @@ target_include_directories(rviz_default_plugins_object
 add_library(rviz_default_plugins SHARED $<TARGET_OBJECTS:rviz_default_plugins_object>)
 add_library(rviz_default_plugins_static STATIC $<TARGET_OBJECTS:rviz_default_plugins_object>)
 
+# Causes the visibility macros to use dllexport rather than dllimport,
+# which is appropriate when building the dll but not consuming it.
+target_compile_definitions(rviz_default_plugins PRIVATE "RVIZ_DEFAULT_PLUGINS_BUILDING_LIBRARY")
+
 target_include_directories(rviz_default_plugins
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -211,6 +215,11 @@ install(
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
   INCLUDES DESTINATION include
+)
+
+install(
+  DIRECTORY include/
+  DESTINATION include
 )
 
 install(
