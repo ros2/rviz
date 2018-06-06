@@ -459,8 +459,7 @@ RenderSystem::makeRenderWindow(
   params["macAPICocoaUseNSView"] = "true";
 #endif
   // The parameter 'contentScalingFactor' is declared iOS specific, therefore useless at the moment.
-  (void) pixel_ratio;
-//  params["contentScalingFactor"] = std::to_string(pixel_ratio);
+  params["contentScalingFactor"] = std::to_string(pixel_ratio);
 
   std::ostringstream stream;
   stream << "OgreWindow(" << window_counter++ << ")";
