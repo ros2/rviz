@@ -67,7 +67,7 @@
 # pragma warning(pop)
 #endif
 
-#include "./orthographic.hpp"
+#include "rviz_rendering/orthographic.hpp"
 #include "./render_system.hpp"
 #include "rviz_rendering/objects/grid.hpp"
 #include "rviz_rendering/logging.hpp"
@@ -506,8 +506,7 @@ void RenderWindowImpl::setCameraAspectRatio()
     // }
 
     if (ogre_camera_->getProjectionType() == Ogre::PT_ORTHOGRAPHIC) {
-      Ogre::Matrix4 proj;
-      buildScaledOrthoMatrix(proj,
+      Ogre::Matrix4 proj = buildScaledOrthoMatrix(
         -width / ortho_scale_ / 2, width / ortho_scale_ / 2,
         -height / ortho_scale_ / 2, height / ortho_scale_ / 2,
         ogre_camera_->getNearClipDistance(), ogre_camera_->getFarClipDistance());

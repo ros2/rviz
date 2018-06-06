@@ -28,15 +28,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./orthographic.hpp"
+#include "rviz_rendering/orthographic.hpp"
 
 #include <OgreMatrix4.h>
 
 namespace rviz_rendering
 {
 
-void buildScaledOrthoMatrix(
-  Ogre::Matrix4 & proj,
+Ogre::Matrix4 buildScaledOrthoMatrix(
   float left,
   float right,
   float bottom,
@@ -44,18 +43,19 @@ void buildScaledOrthoMatrix(
   float near,
   float far)
 {
-  float invw = 1 / (right - left);
-  float invh = 1 / (top - bottom);
-  float invd = 1 / (far - near);
+  float inverse_width = 1 / (right - left);
+  float inverse_height = 1 / (top - bottom);
+  float inverse_distance = 1 / (far - near);
 
-  proj = Ogre::Matrix4::ZERO;
-  proj[0][0] = 2 * invw;
-  proj[0][3] = -(right + left) * invw;
-  proj[1][1] = 2 * invh;
-  proj[1][3] = -(top + bottom) * invh;
-  proj[2][2] = -2 * invd;
-  proj[2][3] = -(far + near) * invd;
+  auto proj = Ogre::Matrix4::ZERO;
+  proj[0][0] = 2 * inverse_width;
+  proj[0][3] = -(right + left) * inverse_width;
+  proj[1][1] = 2 * inverse_height;
+  proj[1][3] = -(top + bottom) * inverse_height;
+  proj[2][2] = -2 * inverse_distance;
+  proj[2][3] = -(far + near) * inverse_distance;
   proj[3][3] = 1;
+  return proj;
 }
 
 }  // namespace rviz_rendering

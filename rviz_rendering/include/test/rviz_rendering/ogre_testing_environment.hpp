@@ -41,6 +41,7 @@
 #endif
 
 #include <OgreLogManager.h>
+#include <OgreRenderWindow.h>
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop
@@ -70,6 +71,8 @@ public:
   }
 
   void setUpRenderSystem();
+
+  Ogre::RenderWindow * createOgreRenderWindow();
 };
 
 }  // namespace rviz_rendering

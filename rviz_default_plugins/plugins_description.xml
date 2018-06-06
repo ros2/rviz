@@ -200,4 +200,14 @@
     </description>
   </class>
 
+  <class
+    name="rviz_default_plugins/TopDownOrtho"
+    type="rviz_default_plugins::view_controllers::FixedOrientationOrthoViewController"
+    base_class_type="rviz_common::ViewController"
+  >
+    <description>
+      Orthographic projection, seen from the top.
+    </description>
+  </class>
+
 </library>
