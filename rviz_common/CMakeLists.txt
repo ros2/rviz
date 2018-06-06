@@ -213,8 +213,8 @@ set(rviz_common_source_files
 add_library(rviz_common SHARED
   ${rviz_common_headers_to_moc}
   ${rviz_common_source_files}
-  ${rviz_default_plugins_source_files}
 )
+
 target_include_directories(rviz_common
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
