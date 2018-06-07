@@ -138,6 +138,11 @@ TEST_F(GridCellsDisplayFixture, processMessage_fills_pointcloud_with_correct_gri
   auto point_clouds = rviz_default_plugins::findAllPointClouds(scene_manager_->getRootSceneNode());
   EXPECT_THAT(point_clouds.size(), Eq(1u));
   EXPECT_THAT(point_clouds[0]->getPoints().size(), Eq(2u));
+  EXPECT_THAT(
+    point_clouds[0]->getParentSceneNode()->getPosition(), Vector3Eq(Ogre::Vector3(0, 1, 0)));
+  EXPECT_THAT(
+    point_clouds[0]->getParentSceneNode()->getOrientation(),
+    QuaternionEq(Ogre::Quaternion(0, 0, 1, 0)));
 }
 
 TEST_F(GridCellsDisplayFixture, processMessage_clears_cloud_on_new_message) {
