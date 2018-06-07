@@ -67,9 +67,9 @@ class GridCellsDisplayFixture : public DisplayTestFixture
 public:
   GridCellsDisplayFixture()
   {
-    EXPECT_CALL(*context_,getFrameCount())
-      .WillOnce(Return(0))
-      .WillRepeatedly(Return(1));
+    EXPECT_CALL(*context_, getFrameCount())
+    .WillOnce(Return(0))
+    .WillRepeatedly(Return(1));
     display_ = std::make_unique<rviz_default_plugins::displays::GridCellsDisplay>(context_.get());
     display_->setupCloud();
   }
@@ -77,7 +77,8 @@ public:
   std::unique_ptr<rviz_default_plugins::displays::GridCellsDisplay> display_;
 };
 
-geometry_msgs::msg::Point point(float x, float y, float z) {
+geometry_msgs::msg::Point point(float x, float y, float z)
+{
   auto point = geometry_msgs::msg::Point();
   point.x = x;
   point.y = y;

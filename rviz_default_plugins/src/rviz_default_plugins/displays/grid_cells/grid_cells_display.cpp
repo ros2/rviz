@@ -62,11 +62,11 @@ GridCellsDisplay::GridCellsDisplay(rviz_common::DisplayContext * context)
   scene_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
 
   color_property_ = new rviz_common::properties::ColorProperty("Color", QColor(25, 255, 0),
-    "Color of the grid cells.", this);
+      "Color of the grid cells.", this);
 
   alpha_property_ = new rviz_common::properties::FloatProperty("Alpha", 1.0f,
-    "Amount of transparency to apply to the cells.",
-    this, SLOT(updateAlpha()));
+      "Amount of transparency to apply to the cells.",
+      this, SLOT(updateAlpha()));
   alpha_property_->setMin(0);
   alpha_property_->setMax(1);
 }
