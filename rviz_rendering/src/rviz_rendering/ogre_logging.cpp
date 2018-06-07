@@ -32,22 +32,8 @@
 
 #include <string>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# ifdef __clang__
-#  pragma clang diagnostic ignored "-Wextra-semi"
-#  pragma clang diagnostic ignored "-Wkeyword-macro"
-# else
-#  pragma GCC diagnostic ignored "-Wpedantic"
-# endif
-#endif
-
 #include <OgreLogManager.h>
 #include <OgreLog.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #include "rviz_rendering/logging.hpp"
 

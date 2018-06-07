@@ -34,11 +34,6 @@
 #include <string>
 #include <vector>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-
 #include <OgreHardwareBufferManager.h>
 #include <OgreMaterial.h>
 #include <OgreMaterialManager.h>
@@ -51,10 +46,6 @@
 #include <OgreTexture.h>
 #include <OgreTextureManager.h>
 #include <OgreTextureUnitState.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #define ASSIMP_UNIFIED_HEADER_NAMES 1
 #if defined(ASSIMP_UNIFIED_HEADER_NAMES)

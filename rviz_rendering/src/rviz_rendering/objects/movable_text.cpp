@@ -48,16 +48,18 @@
 #include <sstream>
 #include <string>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-#else
+#ifdef _WIN32
 # pragma warning(push)
-# pragma warning(disable : 4251)
+# pragma warning(disable:4251)
+#endif
+
+#include <OgreFont.h>
+
+#ifdef _WIN32
+# pragma warning(pop)
 #endif
 
 #include <OgreCamera.h>
-#include <OgreFont.h>
 #include <OgreFontManager.h>
 #include <OgreHardwareBufferManager.h>
 #include <OgreMaterialManager.h>
@@ -65,12 +67,6 @@
 #include <OgreRoot.h>
 #include <OgreSceneNode.h>
 #include <OgreVector3.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#else
-# pragma warning(pop)
-#endif
 
 #define POS_TEX_BINDING    0
 #define COLOUR_BINDING     1

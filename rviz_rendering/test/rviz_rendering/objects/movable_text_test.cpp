@@ -34,22 +34,10 @@
 #include <string>
 #include <vector>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-#else
-# pragma warning(push)
-# pragma warning(disable : 4251)
-#endif
 #include <OgreMovableObject.h>
 #include <OgreFont.h>
 #include <OgreFontManager.h>
 #include <OgreVector3.h>
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#else
-# pragma warning(pop)
-#endif
 
 #include "rviz_rendering/objects/movable_text.hpp"
 #include "test/rviz_rendering/ogre_testing_environment.hpp"

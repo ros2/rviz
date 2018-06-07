@@ -44,21 +44,12 @@
 #ifndef RVIZ_RENDERING__OBJECTS__MOVABLE_TEXT_HPP_
 #define RVIZ_RENDERING__OBJECTS__MOVABLE_TEXT_HPP_
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-
 #include <OgreMovableObject.h>
 #include <OgreQuaternion.h>
 #include <OgreRenderable.h>
 #include <OgreSharedPtr.h>
 #include <OgreSimpleRenderable.h>
 #include <OgreVector3.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #include "rviz_rendering/visibility_control.hpp"
 

@@ -32,11 +32,6 @@
 
 #include <string>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-
 #include <OgreHardwareBufferManager.h>
 #include <OgreMaterial.h>
 #include <OgreMaterialManager.h>
@@ -47,13 +42,9 @@
 #include <OgreTechnique.h>
 #include <OgreTextureManager.h>
 
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
-
-#include <QDir>
-#include <QFileInfo>
-#include <QString>
+#include <QDir>  // NOLINT cpplint cannot handle include order here
+#include <QFileInfo>  // NOLINT cpplint cannot handle include order here
+#include <QString>  // NOLINT cpplint cannot handle include order here
 
 #define ASSIMP_UNIFIED_HEADER_NAMES 1
 #if defined(ASSIMP_UNIFIED_HEADER_NAMES)

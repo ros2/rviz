@@ -44,16 +44,7 @@
 
 #endif
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-
 #include <OgreRenderWindow.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #include "ament_index_cpp/get_resource.hpp"
 #include "ament_index_cpp/get_resources.hpp"

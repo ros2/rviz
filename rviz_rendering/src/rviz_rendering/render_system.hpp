@@ -34,29 +34,11 @@
 #include <cstdint>
 #include <string>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Woverloaded-virtual"
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# ifdef __clang__
-#  pragma clang diagnostic ignored "-Wdeprecated-register"
-#  pragma clang diagnostic ignored "-Wextra-semi"
-#  pragma clang diagnostic ignored "-Wkeyword-macro"
-# else
-#  pragma GCC diagnostic ignored "-Wunused-but-set-parameter"
-#  pragma GCC diagnostic ignored "-Wpedantic"
-# endif
-#endif
-
 #include <OgreRoot.h>
 #include <OgreOverlaySystem.h>
-#include <RenderSystems/GL/OgreGLPlugin.h>
+#include <RenderSystems/GL/OgreGLPlugin.h>  // NOLINT cpplint cannot handle include order here
 
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
-
-#include <QDir>  // NOLINT
+#include <QDir>  // NOLINT cpplint cannot handle include order here
 
 #include "rviz_rendering/visibility_control.hpp"
 

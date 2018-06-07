@@ -37,16 +37,6 @@
 #include <string>
 #include <vector>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wpedantic"
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# ifdef __clang__
-#  pragma clang diagnostic ignored "-Wextra-semi"
-#  pragma clang diagnostic ignored "-Wkeyword-macro"
-# endif
-#endif
-
 #include <OgreSimpleRenderable.h>
 #include <OgreMovableObject.h>
 #include <OgreString.h>
@@ -57,10 +47,6 @@
 #include <OgreRoot.h>
 #include <OgreHardwareBufferManager.h>
 #include <OgreSharedPtr.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #include "point_cloud_renderable.hpp"
 #include "rviz_rendering/visibility_control.hpp"

@@ -34,11 +34,6 @@
 #include <deque>
 #include <memory>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-
 #include <OgreSimpleRenderable.h>
 #include <OgreString.h>
 #include <OgreAxisAlignedBox.h>
@@ -48,10 +43,6 @@
 #include <OgreRoot.h>
 #include <OgreHardwareBufferManager.h>
 #include <OgreSharedPtr.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #include "rviz_rendering/visibility_control.hpp"
 
