@@ -131,7 +131,7 @@ void GridCellsDisplay::processMessage(nav_msgs::msg::GridCells::ConstSharedPtr m
   }
   last_frame_count_ = context_->getFrameCount();
 
-  cloud_->clear();
+  cloud_->clearAndRemoveAllPoints();
 
   if (!validateFloats(*msg)) {
     setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
@@ -181,7 +181,7 @@ void GridCellsDisplay::processMessage(nav_msgs::msg::GridCells::ConstSharedPtr m
     current_point.color = color_int;
   }
 
-  cloud_->clear();
+  cloud_->clearAndRemoveAllPoints();
 
   if (!points.empty()) {
     cloud_->addPoints(points.begin(), points.end());
