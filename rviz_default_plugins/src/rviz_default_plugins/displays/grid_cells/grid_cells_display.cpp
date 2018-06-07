@@ -168,12 +168,12 @@ void GridCellsDisplay::processMessage(nav_msgs::msg::GridCells::ConstSharedPtr m
   cloud_->setDimensions(msg->cell_width, msg->cell_height, 0.0f);
 
   Ogre::ColourValue color_int = rviz_common::properties::qtToOgre(color_property_->getColor());
-  uint32_t num_points = msg->cells.size();
+  auto num_points = msg->cells.size();
 
   typedef std::vector<rviz_rendering::PointCloud::Point> V_Point;
   V_Point points;
   points.resize(num_points);
-  for (uint32_t i = 0; i < num_points; i++) {
+  for (size_t i = 0; i < num_points; i++) {
     rviz_rendering::PointCloud::Point & current_point = points[i];
     current_point.position.x = msg->cells[i].x;
     current_point.position.y = msg->cells[i].y;
