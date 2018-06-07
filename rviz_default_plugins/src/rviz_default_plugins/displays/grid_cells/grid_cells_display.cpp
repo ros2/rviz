@@ -30,24 +30,20 @@
 
 #include "grid_cells_display.hpp"
 
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <OgreSceneNode.h>
-#include <OgreSceneManager.h>
-#include <OgreManualObject.h>
 #include <OgreBillboardSet.h>
+#include <OgreManualObject.h>
 
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/point_cloud.hpp"
 #include "rviz_common/logging.hpp"
-#include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/properties/color_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/parse_color.hpp"
-#include "rviz_common/properties/ros_topic_property.hpp"
 #include "rviz_common/validate_floats.hpp"
-#include "rviz_common/display_context.hpp"
 
 namespace rviz_default_plugins
 {
@@ -55,20 +51,11 @@ namespace displays
 {
 
 GridCellsDisplay::GridCellsDisplay(rviz_common::DisplayContext * context)
-: last_frame_count_(uint64_t(-1))
+: GridCellsDisplay()
 {
   context_ = context;
   scene_manager_ = context->getSceneManager();
   scene_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
-
-  color_property_ = new rviz_common::properties::ColorProperty("Color", QColor(25, 255, 0),
-      "Color of the grid cells.", this);
-
-  alpha_property_ = new rviz_common::properties::FloatProperty("Alpha", 1.0f,
-      "Amount of transparency to apply to the cells.",
-      this, SLOT(updateAlpha()));
-  alpha_property_->setMin(0);
-  alpha_property_->setMax(1);
 }
 
 GridCellsDisplay::GridCellsDisplay()
@@ -94,18 +81,17 @@ void GridCellsDisplay::onInitialize()
 
 void GridCellsDisplay::setupCloud()
 {
-  cloud_ = new rviz_rendering::PointCloud();
+  cloud_ = std::make_shared<rviz_rendering::PointCloud>();
   cloud_->setRenderMode(rviz_rendering::PointCloud::RM_TILES);
   cloud_->setCommonDirection(Ogre::Vector3::UNIT_Z);
   cloud_->setCommonUpVector(Ogre::Vector3::UNIT_Y);
-  scene_node_->attachObject(cloud_);
+  scene_node_->attachObject(cloud_.get());
 }
 
 GridCellsDisplay::~GridCellsDisplay()
 {
   if (initialized()) {
-    scene_node_->detachObject(cloud_);
-    delete cloud_;
+    scene_node_->detachObject(cloud_.get());
   }
 }
 
@@ -113,15 +99,6 @@ void GridCellsDisplay::updateAlpha()
 {
   cloud_->setAlpha(alpha_property_->getFloat());
   context_->queueRender();
-}
-
-bool validateFloats(const nav_msgs::msg::GridCells & msg)
-{
-  bool valid = true;
-  valid = valid && rviz_common::validateFloats(msg.cell_width);
-  valid = valid && rviz_common::validateFloats(msg.cell_height);
-  valid = valid && rviz_common::validateFloats(msg.cells);
-  return valid;
 }
 
 void GridCellsDisplay::processMessage(nav_msgs::msg::GridCells::ConstSharedPtr msg)
@@ -133,9 +110,7 @@ void GridCellsDisplay::processMessage(nav_msgs::msg::GridCells::ConstSharedPtr m
 
   cloud_->clearAndRemoveAllPoints();
 
-  if (!validateFloats(*msg)) {
-    setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
-      "Message contained invalid floating point values (nans or infs)");
+  if (!messageIsValid(msg)) {
     return;
   }
 
@@ -151,46 +126,63 @@ void GridCellsDisplay::processMessage(nav_msgs::msg::GridCells::ConstSharedPtr m
     RVIZ_COMMON_LOG_DEBUG(error);
     return;
   }
+  setStatusStd(rviz_common::properties::StatusProperty::Ok, "Transform", "Ok");
 
   scene_node_->setPosition(position);
   scene_node_->setOrientation(orientation);
 
-  if (msg->cell_width == 0) {
+  convertMessageToCloud(msg);
+}
+
+bool validateFloats(const nav_msgs::msg::GridCells & msg)
+{
+  bool valid = true;
+  valid = valid && rviz_common::validateFloats(msg.cell_width);
+  valid = valid && rviz_common::validateFloats(msg.cell_height);
+  valid = valid && rviz_common::validateFloats(msg.cells);
+  return valid;
+}
+
+bool GridCellsDisplay::messageIsValid(nav_msgs::msg::GridCells::ConstSharedPtr msg)
+{
+  if (!validateFloats(*msg)) {
     setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
-      "Cell width is zero, cells will be invisible.");
-    return;
-  } else if (msg->cell_height == 0) {
-    setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
-      "Cell height is zero, cells will be invisible.");
-    return;
+      "Message contained invalid floating point values (nans or infs)");
+    return false;
   }
 
+  if (msg->cell_width == 0 || msg->cell_height == 0) {
+    setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
+      "One of the Cell's dimension is zero, cells will be invisible.");
+    return false;
+  }
+
+  if (msg->cells.empty()) {
+    setStatus(rviz_common::properties::StatusProperty::Warn, "Topic",
+      "Message is empty: there are no cells to be shown.");
+    return false;
+  }
+
+  return true;
+}
+
+void GridCellsDisplay::convertMessageToCloud(nav_msgs::msg::GridCells::ConstSharedPtr msg)
+{
   cloud_->setDimensions(msg->cell_width, msg->cell_height, 0.0f);
 
   Ogre::ColourValue color_int = rviz_common::properties::qtToOgre(color_property_->getColor());
-  auto num_points = msg->cells.size();
 
-  typedef std::vector<rviz_rendering::PointCloud::Point> V_Point;
-  V_Point points;
-  points.resize(num_points);
-  for (size_t i = 0; i < num_points; i++) {
-    rviz_rendering::PointCloud::Point & current_point = points[i];
-    current_point.position.x = msg->cells[i].x;
-    current_point.position.y = msg->cells[i].y;
-    current_point.position.z = msg->cells[i].z;
-    current_point.color = color_int;
+  std::vector<rviz_rendering::PointCloud::Point> points;
+  for (const auto & point : msg->cells) {
+    rviz_rendering::PointCloud::Point rendering_point;
+    rendering_point.position.x = point.x;
+    rendering_point.position.y = point.y;
+    rendering_point.position.z = point.z;
+    rendering_point.color = color_int;
+    points.push_back(rendering_point);
   }
 
-  cloud_->clearAndRemoveAllPoints();
-
-  if (!points.empty()) {
-    cloud_->addPoints(points.begin(), points.end());
-  }
-}
-
-void GridCellsDisplay::reset()
-{
-  Display::reset();
+  cloud_->addPoints(points.begin(), points.end());
 }
 
 }  // namespace displays

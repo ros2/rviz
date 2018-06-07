@@ -34,24 +34,7 @@
 #include <memory>
 #include <vector>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#else
-#pragma warning(push)
-#pragma warning(disable : 4996)
-#endif
-
 #include <OgreRoot.h>
-#include <OgreEntity.h>
-#include <OgreManualObject.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#else
-# pragma warning(pop)
-#endif
 
 #include "rviz_common/properties/float_property.hpp"
 
@@ -120,7 +103,6 @@ TEST_F(GridCellsDisplayFixture, processMessage_with_invalid_transform_returns_ea
 
 TEST_F(GridCellsDisplayFixture, processMessage_with_zero_size_does_not_add_messages) {
   mockValidTransform();
-  EXPECT_CALL(*frame_manager_, getTransform(_, _, _, _)).WillOnce(Return(false));
 
   auto msg = createGridCellsMessageWithTwoCells(0, 1);
   display_->processMessage(msg);

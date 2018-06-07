@@ -32,11 +32,12 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__GRID_CELLS__GRID_CELLS_DISPLAY_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__GRID_CELLS__GRID_CELLS_DISPLAY_HPP_
 
-#include "rviz_common/display.hpp"
+#include <memory>
 
 #include "nav_msgs/msg/grid_cells.hpp"
 #include "nav_msgs/msg/map_meta_data.hpp"
 
+#include "rviz_common/display.hpp"
 #include "rviz_common/ros_topic_display.hpp"
 #include "rviz_common/display_context.hpp"
 
@@ -75,13 +76,11 @@ public:
 
   GridCellsDisplay();
 
-  virtual ~GridCellsDisplay();
+  ~GridCellsDisplay() override;
 
-  virtual void onInitialize();
+  void onInitialize() override;
 
-  virtual void reset();
-
-  void processMessage(nav_msgs::msg::GridCells::ConstSharedPtr msg);
+  void processMessage(nav_msgs::msg::GridCells::ConstSharedPtr msg) override;
 
   void setupCloud();
 
@@ -89,7 +88,10 @@ private Q_SLOTS:
   void updateAlpha();
 
 private:
-  rviz_rendering::PointCloud * cloud_;
+  bool messageIsValid(nav_msgs::msg::GridCells::ConstSharedPtr msg);
+  void convertMessageToCloud(nav_msgs::msg::GridCells::ConstSharedPtr msg);
+
+  std::shared_ptr<rviz_rendering::PointCloud> cloud_;
 
   rviz_common::properties::ColorProperty * color_property_;
   rviz_common::properties::FloatProperty * alpha_property_;
