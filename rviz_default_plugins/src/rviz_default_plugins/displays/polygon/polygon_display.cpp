@@ -29,20 +29,12 @@
 
 #include "rviz_default_plugins/displays/polygon/polygon_display.hpp"
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#endif
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 #include <OgreManualObject.h>
 #include <OgreBillboardSet.h>
 #include <OgreMaterialManager.h>
 #include <OgreTechnique.h>
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #include <string>
 

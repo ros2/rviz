@@ -32,11 +32,6 @@
 #include <string>
 #include <utility>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#endif
 #include <OgreCamera.h>
 #include <OgreManualObject.h>
 #include <OgreMaterialManager.h>
@@ -48,9 +43,6 @@
 #include <OgreTechnique.h>
 #include <OgreTextureManager.h>
 #include <OgreViewport.h>
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #include "sensor_msgs/image_encodings.hpp"
 

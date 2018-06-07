@@ -30,23 +30,8 @@
 
 #include "rviz_default_plugins/displays/marker/markers/marker_selection_handler.hpp"
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#else
-# pragma warning(push)
-# pragma warning(disable : 4996)
-#endif
-
 #include <OgreQuaternion.h>
 #include <OgreVector3.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#else
-# pragma warning(pop)
-#endif
 
 #include "rviz_default_plugins/displays/marker/marker_display.hpp"
 #include "rviz_default_plugins/displays/marker/markers/marker_base.hpp"

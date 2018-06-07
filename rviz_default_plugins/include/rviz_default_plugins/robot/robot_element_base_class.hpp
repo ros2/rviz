@@ -36,26 +36,14 @@
 #include <string>
 #include <vector>
 
-#ifndef Q_MOC_RUN
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#endif
-
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>
 #include <OgreSceneNode.h>
 
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
-#endif
+#include <QObject>  // NOLINT cpplint cannot handle include order here
 
-#include <QObject>
-
-#include <urdf/model.h>  // can be replaced later by urdf_model/types.h
-#include <urdf_model/pose.h>
+#include "urdf/model.h"  // can be replaced later by urdf_model/types.h
+#include "urdf_model/pose.h"
 
 #include "rviz_rendering/objects/object.hpp"
 #include "rviz_common/interaction/forwards.hpp"

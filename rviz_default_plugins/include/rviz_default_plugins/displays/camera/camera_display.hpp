@@ -40,18 +40,10 @@
 
 #ifndef Q_MOC_RUN
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#endif
 # include <OgreMaterial.h>
 # include <OgrePlatform.h>
 # include <OgreRenderTargetListener.h>
 # include <OgreSharedPtr.h>
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 # include "sensor_msgs/msg/camera_info.hpp"
 

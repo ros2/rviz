@@ -32,17 +32,7 @@
 
 #include <utility>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#endif
-
 #include <OgreQuaternion.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #include "rviz_common/frame_position_tracking_view_controller.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"

@@ -34,26 +34,21 @@
 #include <memory>
 #include <string>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#else
+#ifdef _WIN32
 # pragma warning(push)
-# pragma warning(disable : 4996)
+# pragma warning(disable:4996)
 #endif
 
 #include <OgreEntity.h>
+
+#ifdef _WIN32
+# pragma warning(pop)
+#endif
+
 #include <OgreQuaternion.h>
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 #include <OgreVector3.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#else
-# pragma warning(pop)
-#endif
 
 #include "rviz_default_plugins/displays/marker/marker_display.hpp"
 #include "rviz_default_plugins/displays/marker/markers/marker_selection_handler.hpp"

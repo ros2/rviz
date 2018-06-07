@@ -39,17 +39,9 @@
 #include <string>
 #include <vector>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#endif
 #include <OgreTexture.h>
 #include <OgreImage.h>
 #include <OgreSharedPtr.h>
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #include "sensor_msgs/msg/image.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"

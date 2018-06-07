@@ -35,11 +35,7 @@
 #include <memory>
 #include <vector>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#else
+#ifdef _WIN32
 #pragma warning(push)
 #pragma warning(disable : 4996)
 #endif
@@ -48,9 +44,7 @@
 #include <OgreEntity.h>
 #include <OgreManualObject.h>
 
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#else
+#ifdef _WIN32
 # pragma warning(pop)
 #endif
 

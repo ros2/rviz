@@ -34,25 +34,20 @@
 #include <string>
 #include <vector>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#else
-#pragma warning(push)
-#pragma warning(disable : 4996)
+#ifdef _WIN32
+# pragma warning(push)
+# pragma warning(disable:4996)
 #endif
 
 #include <OgreEntity.h>
+
+#ifdef _WIN32
+# pragma warning(pop)
+#endif
+
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 #include <OgreMaterialManager.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#else
-# pragma warning(pop)
-#endif
 
 #include "urdf_model/model.h"
 
