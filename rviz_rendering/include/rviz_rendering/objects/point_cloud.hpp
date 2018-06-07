@@ -105,6 +105,12 @@ public:
   void clear();
 
   /**
+   * \brief calls clear() and removes all elements from points_
+   */
+  RVIZ_RENDERING_PUBLIC
+  void clearAndRemoveAllPoints();
+
+  /**
    * \struct Point
    * \brief Representation of a point, with x/y/z position and r/g/b color
    */
