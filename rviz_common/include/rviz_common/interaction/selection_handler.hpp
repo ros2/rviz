@@ -39,15 +39,7 @@
 #include <utility>
 #include <vector>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#endif
 #include <OgreMovableObject.h>
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #include "rviz_common/interaction/forwards.hpp"
 #include "rviz_common/interactive_object.hpp"

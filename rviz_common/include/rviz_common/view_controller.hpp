@@ -33,16 +33,7 @@
 
 #include <string>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-
 #include <OgreVector3.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #include <QCursor>  // NOLINT: cpplint is unable to handle the include order here
 #include <QMap>  // NOLINT: cpplint is unable to handle the include order here

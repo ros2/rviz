@@ -35,17 +35,8 @@
 #include <memory>
 #include <string>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-
 #include <OgreMaterialManager.h>
 #include <OgreRenderQueueListener.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #include "rviz_rendering/render_window.hpp"
 #include "rviz_common/interaction/handler_manager_iface.hpp"

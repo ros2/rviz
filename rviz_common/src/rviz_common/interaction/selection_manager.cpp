@@ -38,11 +38,6 @@
 #include <utility>
 #include <vector>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-
 #include <OgreCamera.h>
 #include <OgreHardwarePixelBuffer.h>
 #include <OgreRectangle2D.h>
@@ -52,10 +47,6 @@
 #include <OgreTechnique.h>
 #include <OgreTextureManager.h>
 #include <OgreViewport.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
 
