@@ -69,6 +69,7 @@ public:
   {
     EXPECT_CALL(*context_, getFrameCount())
     .WillOnce(Return(0))
+    .WillOnce(Return(0))
     .WillRepeatedly(Return(1));
     display_ = std::make_unique<rviz_default_plugins::displays::GridCellsDisplay>(context_.get());
     display_->setupCloud();
@@ -141,7 +142,6 @@ TEST_F(GridCellsDisplayFixture, processMessage_fills_pointcloud_with_correct_gri
 
 TEST_F(GridCellsDisplayFixture, processMessage_clears_cloud_on_new_message) {
   mockValidTransform();
-
 
   auto msg = createGridCellsMessageWithTwoCells();
   display_->processMessage(msg);
