@@ -54,6 +54,23 @@ namespace rviz_default_plugins
 namespace displays
 {
 
+GridCellsDisplay::GridCellsDisplay(rviz_common::DisplayContext * context)
+: last_frame_count_(uint64_t(-1))
+{
+  context_ = context;
+  scene_manager_ = context->getSceneManager();
+  scene_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
+
+  color_property_ = new rviz_common::properties::ColorProperty("Color", QColor(25, 255, 0),
+    "Color of the grid cells.", this);
+
+  alpha_property_ = new rviz_common::properties::FloatProperty("Alpha", 1.0f,
+    "Amount of transparency to apply to the cells.",
+    this, SLOT(updateAlpha()));
+  alpha_property_->setMin(0);
+  alpha_property_->setMax(1);
+}
+
 GridCellsDisplay::GridCellsDisplay()
 : last_frame_count_(uint64_t(-1))
 {
@@ -71,12 +88,17 @@ void GridCellsDisplay::onInitialize()
 {
   RTDClass::onInitialize();
 
+  setupCloud();
+  updateAlpha();
+}
+
+void GridCellsDisplay::setupCloud()
+{
   cloud_ = new rviz_rendering::PointCloud();
   cloud_->setRenderMode(rviz_rendering::PointCloud::RM_TILES);
   cloud_->setCommonDirection(Ogre::Vector3::UNIT_Z);
   cloud_->setCommonUpVector(Ogre::Vector3::UNIT_Y);
   scene_node_->attachObject(cloud_);
-  updateAlpha();
 }
 
 GridCellsDisplay::~GridCellsDisplay()
@@ -127,6 +149,7 @@ void GridCellsDisplay::processMessage(nav_msgs::msg::GridCells::ConstSharedPtr m
       "' to frame '" + fixed_frame_.toStdString() + "'";
     setStatusStd(rviz_common::properties::StatusProperty::Error, "Transform", error);
     RVIZ_COMMON_LOG_DEBUG(error);
+    return;
   }
 
   scene_node_->setPosition(position);
@@ -135,9 +158,11 @@ void GridCellsDisplay::processMessage(nav_msgs::msg::GridCells::ConstSharedPtr m
   if (msg->cell_width == 0) {
     setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
       "Cell width is zero, cells will be invisible.");
+    return;
   } else if (msg->cell_height == 0) {
     setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
       "Cell height is zero, cells will be invisible.");
+    return;
   }
 
   cloud_->setDimensions(msg->cell_width, msg->cell_height, 0.0f);

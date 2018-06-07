@@ -38,6 +38,7 @@
 #include "nav_msgs/msg/map_meta_data.hpp"
 
 #include "rviz_common/ros_topic_display.hpp"
+#include "rviz_common/display_context.hpp"
 
 namespace rviz_rendering
 {
@@ -68,6 +69,10 @@ class GridCellsDisplay : public rviz_common::RosTopicDisplay<nav_msgs::msg::Grid
   Q_OBJECT
 
 public:
+  // TODO(Martin-Idel-SI): Constructor for testing. Remove once ros nodes can be mocked and
+  // initialize() can be called
+  explicit GridCellsDisplay(rviz_common::DisplayContext * display_context);
+
   GridCellsDisplay();
 
   virtual ~GridCellsDisplay();
@@ -77,6 +82,8 @@ public:
   virtual void reset();
 
   void processMessage(nav_msgs::msg::GridCells::ConstSharedPtr msg);
+
+  void setupCloud();
 
 private Q_SLOTS:
   void updateAlpha();
