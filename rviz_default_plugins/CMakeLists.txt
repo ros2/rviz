@@ -475,6 +475,19 @@ if(BUILD_TESTING)
           rviz_visual_testing_framework::rviz_visual_testing_framework)
       endif()
 
+      ament_add_gtest(grid_cells_display_visual_test
+        test/rviz_default_plugins/displays/grid_cells/grid_cells_display_visual_test.cpp
+        test/rviz_default_plugins/page_objects/grid_cells_display_page_object.cpp
+        TIMEOUT 180)
+      if(TARGET grid_cells_display_visual_test)
+        target_include_directories(grid_cells_display_visual_test PUBLIC
+          ${TEST_INCLUDE_DIRS}
+          ${rviz_visual_testing_framework_INCLUDE_DIRS})
+        target_link_libraries(grid_cells_display_visual_test
+          ${TEST_LINK_LIBRARIES}
+          rviz_visual_testing_framework::rviz_visual_testing_framework)
+      endif()
+
       ament_add_gtest(image_display_visual_test
         test/rviz_default_plugins/displays/image/image_display_visual_test.cpp
         test/rviz_default_plugins/page_objects/image_display_page_object.cpp

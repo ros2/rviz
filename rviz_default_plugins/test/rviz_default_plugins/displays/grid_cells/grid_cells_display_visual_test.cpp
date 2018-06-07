@@ -10,8 +10,8 @@
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the copyright holder nor the names of its contributors
- *       may be used to endorse or promote products derived from
+ *     * Neither the name of the copyright holders nor the names of its
+ *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -27,34 +27,30 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "grid_cells_display_page_object.hpp"
-
 #include <memory>
-#include <vector>
+#include <string>
 
-#include "rviz_visual_testing_framework/test_helpers.hpp"
+#include "rviz_visual_testing_framework/visual_test_fixture.hpp"
+#include "rviz_visual_testing_framework/visual_test_publisher.hpp"
 
-GridCellsDisplayPageObject::GridCellsDisplayPageObject()
-: BasePageObject(0, "GridCells")
-{}
+#include "../../page_objects/grid_cells_display_page_object.hpp"
+#include "../../publishers/grid_cells_publisher.hpp"
 
-void GridCellsDisplayPageObject::setTopic(QString topic)
-{
-  setComboBox("Topic", topic);
-  waitForFirstMessage();
-}
+TEST_F(VisualTestFixture, grid_cells_display_visual_test) {
+  auto grid_cells_publisher = std::make_unique<VisualTestPublisher>(
+    std::make_shared<nodes::GridCellsPublisher>(), "grid_cells_frame");
 
-void GridCellsDisplayPageObject::setUnreliable(bool unreliable)
-{
-  setBool("Unreliable", unreliable);
-}
+  setCamPose(Ogre::Vector3(0, 0, 10));
+  setCamLookAt(Ogre::Vector3(0, 0, 0));
 
-void GridCellsDisplayPageObject::setColor(int red, int green, int blue)
-{
-  setColorCode("Color", red, green, blue);
-}
+  auto grid_display = addDisplay<GridCellsDisplayPageObject>();
+  grid_display->setTopic("/grid_cells");
+  grid_display->setColor(255, 255, 200);
+  grid_display->setAlpha(1.0f);
+  captureMainWindow();
 
-void GridCellsDisplayPageObject::setAlpha(float alpha)
-{
-  setFloat("Alpha", alpha);
+  grid_display->setAlpha(0.0f);
+  captureMainWindow("empty_scene");
+
+  assertScreenShotsIdentity();
 }

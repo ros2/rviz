@@ -27,34 +27,65 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "grid_cells_display_page_object.hpp"
+#ifndef RVIZ_DEFAULT_PLUGINS__PUBLISHERS__GRID_CELLS_PUBLISHER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__PUBLISHERS__GRID_CELLS_PUBLISHER_HPP_
 
-#include <memory>
 #include <vector>
 
-#include "rviz_visual_testing_framework/test_helpers.hpp"
+#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/clock.hpp"
+#include "std_msgs/msg/header.hpp"
+#include "nav_msgs/msg/grid_cells.hpp"
+#include "geometry_msgs/msg/point.hpp"
 
-GridCellsDisplayPageObject::GridCellsDisplayPageObject()
-: BasePageObject(0, "GridCells")
-{}
+using namespace std::chrono_literals;  // NOLINT
 
-void GridCellsDisplayPageObject::setTopic(QString topic)
+namespace nodes
 {
-  setComboBox("Topic", topic);
-  waitForFirstMessage();
-}
 
-void GridCellsDisplayPageObject::setUnreliable(bool unreliable)
+class GridCellsPublisher : public rclcpp::Node
 {
-  setBool("Unreliable", unreliable);
-}
+public:
+  GridCellsPublisher()
+  : Node("grid_cells_publisher")
+  {
+    publisher = this->create_publisher<nav_msgs::msg::GridCells>("grid_cells");
+    timer = this->create_wall_timer(500ms, std::bind(&GridCellsPublisher::timer_callback, this));
+  }
 
-void GridCellsDisplayPageObject::setColor(int red, int green, int blue)
-{
-  setColorCode("Color", red, green, blue);
-}
+private:
+  void timer_callback()
+  {
+    auto message = nav_msgs::msg::GridCells();
+    message.header = std_msgs::msg::Header();
+    message.header.frame_id = "grid_cells_frame";
+    message.header.stamp = rclcpp::Clock().now();
 
-void GridCellsDisplayPageObject::setAlpha(float alpha)
-{
-  setFloat("Alpha", alpha);
-}
+    message.cell_width = 6;
+    message.cell_height = 5;
+
+    std::vector<geometry_msgs::msg::Point> points;
+    points.push_back(point(0, -1, 0));
+    points.push_back(point(3, 1, 0));
+    points.push_back(point(-3, 1, 0));
+    message.cells = points;
+
+    publisher->publish(message);
+  }
+
+  geometry_msgs::msg::Point point(float x, float y, float z)
+  {
+    auto point = geometry_msgs::msg::Point();
+    point.x = x;
+    point.y = y;
+    point.z = z;
+    return point;
+  }
+
+  rclcpp::TimerBase::SharedPtr timer;
+  rclcpp::Publisher<nav_msgs::msg::GridCells>::SharedPtr publisher;
+};
+
+}  // namespace nodes
+
+#endif  // RVIZ_DEFAULT_PLUGINS__PUBLISHERS__GRID_CELLS_PUBLISHER_HPP_
