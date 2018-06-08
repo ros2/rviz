@@ -88,8 +88,8 @@ void GoalTool::onPoseSet(double x, double y, double theta)
   // https://github.com/ros/geometry/blob/melodic-devel/tf/include/tf/LinearMath/Quaternion.h
   goal.pose.orientation.x = 0.0;
   goal.pose.orientation.y = 0.0;
-  goal.pose.orientation.z = sin(theta);
-  goal.pose.orientation.w = cos(theta);
+  goal.pose.orientation.z = sin(theta) / (2 * cos(theta / 2));
+  goal.pose.orientation.w = cos(theta / 2);
 
   RVIZ_COMMON_LOG_INFO_STREAM("Setting goal: Frame:" << fixed_frame << ", Position(" <<
     goal.pose.position.x << ", " << goal.pose.position.y << ", " << goal.pose.position.z <<
