@@ -70,7 +70,7 @@ public:
   virtual int processMouseEvent(rviz_common::ViewportMouseEvent & event);
 
 protected:
-  virtual void onPoseSet(double x, double y, double theta) = 0;
+  virtual void onPoseSet(double x, double y, double theta);
 
   rviz_rendering::Arrow * arrow_;
 

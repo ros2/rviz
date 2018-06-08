@@ -154,5 +154,13 @@ int PoseTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
   return flags;
 }
 
+void PoseTool::onPoseSet(double x, double y, double theta)
+{
+  // this method must be implemented (even if empty) in order to be able to test the clas
+  (void) x;
+  (void) y;
+  (void) theta;
+}
+
 }  // namespace tools
 }  // namespace rviz_default_plugins
