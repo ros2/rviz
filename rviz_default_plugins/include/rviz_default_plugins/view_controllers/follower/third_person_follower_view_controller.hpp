@@ -27,51 +27,29 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_THIRD_PERSON_VIEW_CONTROLLER_H
-#define RVIZ_THIRD_PERSON_VIEW_CONTROLLER_H
-
-#include "rviz/default_plugin/view_controllers/orbit_view_controller.h"
+#ifndef RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__FOLLOWER__THIRD_PERSON_FOLLOWER_VIEW_CONTROLLER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__FOLLOWER__THIRD_PERSON_FOLLOWER_VIEW_CONTROLLER_HPP_
 
 #include <OgreVector3.h>
+#include <OgreRay.h>
 
-namespace Ogre
+#include "../xy_orbit/xy_orbit_view_controller.hpp"
+
+namespace rviz_default_plugins
 {
-class SceneNode;
-}
-
-namespace rviz
+namespace view_controllers
 {
-
-class TfFrameProperty;
 
 /**
  * \brief Like the orbit view controller, but focal point moves only in the x-y plane.
  */
-class ThirdPersonFollowerViewController : public OrbitViewController
+class ThirdPersonFollowerViewController : public XYOrbitViewController
 {
-Q_OBJECT
-public:
-  virtual void onInitialize();
-
-  virtual void handleMouseEvent(ViewportMouseEvent& evt);
-
-  virtual void lookAt( const Ogre::Vector3& point );
-
-  /** @brief Configure the settings of this view controller to give,
-   * as much as possible, a similar view as that given by the
-   * @a source_view.
-   *
-   * @a source_view must return a valid @c Ogre::Camera* from getCamera(). */
-  virtual void mimic( ViewController* source_view );
-
 protected:
-  virtual void updateCamera();
-
-  virtual void updateTargetSceneNode();
-
-  bool intersectGroundPlane( Ogre::Ray mouse_ray, Ogre::Vector3 &intersection_3d );
+  void updateTargetSceneNode() override;
 };
 
 }
+}
 
-#endif // RVIZ_VIEW_CONTROLLER_H
+#endif  // RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__FOLLOWER__THIRD_PERSON_FOLLOWER_VIEW_CONTROLLER_HPP_
