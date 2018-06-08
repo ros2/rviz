@@ -33,7 +33,7 @@
 #include <OgreVector3.h>
 #include <OgreRay.h>
 
-#include "../xy_orbit/xy_orbit_view_controller.hpp"
+#include "rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller.hpp"
 
 namespace rviz_default_plugins
 {

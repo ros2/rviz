@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./third_person_follower_view_controller.hpp"
+#include "rviz_default_plugins/view_controllers/follower/third_person_follower_view_controller.hpp"
 
 #include <cstdint>
 
@@ -73,7 +73,7 @@ void ThirdPersonFollowerViewController::updateTargetSceneNode()
 
     // OGRE camera frame looks along -Z, so they call rotation around Z "roll".
     Ogre::Radian ref_yaw = reference_orientation_.getRoll(false);
-    Ogre::Quaternion ref_yaw_quat(Ogre::Math::Cos(ref_yaw / 2), 0, 0, Ogre::Math::Sin(ref_yaw / 2));
+    Ogre::Quaternion ref_yaw_quat(ref_yaw, Ogre::Vector3::UNIT_Z);
     target_scene_node_->setOrientation(ref_yaw_quat);
 
     context_->queueRender();

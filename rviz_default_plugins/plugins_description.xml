@@ -270,4 +270,12 @@
       Makes it easy to move around a given point on the XY plane, looking at it from any angle.
     </description>
   </class>
+  <class
+    name="rviz_default_plugins/ThirdPersonFollower"
+    type="rviz_default_plugins::view_controllers::ThirdPersonFollowerViewController"
+    base_class_type="rviz_common::ViewController">
+    <description>
+      Follow a target frame and turn the viewing direction with the yaw of the target frame.
+    </description>
+  </class>
 </library>
