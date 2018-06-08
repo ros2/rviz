@@ -49,7 +49,7 @@ protected:
   void updateTargetSceneNode() override;
 };
 
-}
-}
+}  // namespace view_controllers
+}  // namespace rviz_default_plugins
 
 #endif  // RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__FOLLOWER__THIRD_PERSON_FOLLOWER_VIEW_CONTROLLER_HPP_
