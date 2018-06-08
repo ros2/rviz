@@ -90,7 +90,6 @@ void XYOrbitViewController::setNewFocalPointKeepingViewIfPossible(ViewController
   }
 
   Ogre::Camera * source_camera = source_view->getCamera();
-  Ogre::SceneNode * source_camera_node = source_camera->getParentSceneNode();
 
   Ogre::Ray camera_dir_ray(source_camera->getRealPosition(), source_camera->getRealDirection());
   Ogre::Ray camera_down_ray(source_camera->getRealPosition(), -1.0f * source_camera->getRealUp());
@@ -101,8 +100,8 @@ void XYOrbitViewController::setNewFocalPointKeepingViewIfPossible(ViewController
   if (camera_intersection.first && camera_down_intersection.first) {
     // Set a focal point by intersecting with the ground plane from above. This will be possible
     // if some part of the ground plane is visible in the view and the camera is above the z-plane.
-    float l_b = source_camera_node->getPosition().distance(camera_intersection.second);
-    float l_a = source_camera_node->getPosition().distance(camera_down_intersection.second);
+    float l_b = source_camera->getRealPosition().distance(camera_intersection.second);
+    float l_a = source_camera->getRealPosition().distance(camera_down_intersection.second);
 
     distance_property_->setFloat((l_b * l_a) / (CAMERA_OFFSET * l_b + l_a));
     calculateNewCameraPositionAndOrientation(source_camera, camera_dir_ray);
@@ -122,9 +121,10 @@ XYOrbitViewController::calculateNewCameraPositionAndOrientation(
 
   camera_dir_ray.setOrigin(source_camera->getRealPosition() - position_offset);
   auto new_focal_point = intersectGroundPlane(camera_dir_ray);
-  focal_point_property_->setVector(new_focal_point.second);
+  focal_point_property_->setVector(new_focal_point.second - reference_position_);
 
-  calculatePitchYawFromPosition(source_camera->getRealPosition() - position_offset);
+  calculatePitchYawFromPosition(
+    source_camera->getParentSceneNode()->getPosition() - position_offset);
 }
 
 void XYOrbitViewController::updateCamera()

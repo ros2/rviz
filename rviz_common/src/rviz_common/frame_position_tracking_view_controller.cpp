@@ -148,6 +148,7 @@ void FramePositionTrackingViewController::mimic(ViewController * source_view)
   QVariant target_frame = source_view->subProp("Target Frame")->getValue();
   if (target_frame.isValid()) {
     target_frame_property_->setValue(target_frame);
+    getNewTransform();
   }
 }
 
