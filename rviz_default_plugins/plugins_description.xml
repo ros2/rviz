@@ -211,6 +211,16 @@
   </class>
 
   <class
+    name="rviz_default_plugins/SetGoal"
+    type="rviz_default_plugins::tools::GoalTool"
+    base_class_type="rviz_common::Tool"
+  >
+    <description>
+      Publish a goal pose for the robot.  After one use, reverts to default tool.
+    </description>
+  </class>
+
+  <class
     name="rviz_default_plugins/Measure"
     type="rviz_default_plugins::tools::MeasureTool"
     base_class_type="rviz_common::Tool"

@@ -27,29 +27,40 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_GOAL_TOOL_H
-#define RVIZ_GOAL_TOOL_H
+#ifndef RVIZ_DEFAULT_PLUGINS__TOOLS__NAV_GOAL__GOAL_TOOL_HPP_
+#define RVIZ_DEFAULT_PLUGINS__TOOLS__NAV_GOAL__GOAL_TOOL_HPP_
 
 #ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
 # include <QObject>
 
-# include <ros/ros.h>
+# include "rclcpp/node.hpp"
+# include "geometry_msgs/msg/pose_stamped.hpp"
 
-# include "rviz/default_plugin/tools/pose_tool.h"
+# include "../pose/pose_tool.hpp"
 #endif
 
-namespace rviz
+namespace rviz_common
 {
-class Arrow;
 class DisplayContext;
-class StringProperty;
-
-class GoalTool: public PoseTool
+namespace properties
 {
-Q_OBJECT
+class StringProperty;
+}  // namespace properties
+}  // namespace rviz_common
+namespace rviz_default_plugins
+{
+namespace tools
+{
+
+class GoalTool : public PoseTool
+{
+  Q_OBJECT
+
 public:
   GoalTool();
-  virtual ~GoalTool() {}
+
+  virtual ~GoalTool();
+
   virtual void onInitialize();
 
 protected:
@@ -59,14 +70,13 @@ private Q_SLOTS:
   void updateTopic();
 
 private:
-  ros::NodeHandle nh_;
-  ros::Publisher pub_;
+  rclcpp::Node::SharedPtr node_;
+  rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr publisher_;
 
-  StringProperty* topic_property_;
+  rviz_common::properties::StringProperty * topic_property_;
 };
 
-}
+}  // namespace tools
+}  // namespace rviz_default_plugins
 
-#endif
-
-
+#endif  // RVIZ_DEFAULT_PLUGINS__TOOLS__NAV_GOAL__GOAL_TOOL_HPP_

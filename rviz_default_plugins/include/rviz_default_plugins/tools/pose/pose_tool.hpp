@@ -27,39 +27,43 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_POSE_TOOL_H
-#define RVIZ_POSE_TOOL_H
+#ifndef RVIZ_DEFAULT_PLUGINS__TOOLS__POSE__POSE_TOOL_HPP_
+#define RVIZ_DEFAULT_PLUGINS__TOOLS__POSE__POSE_TOOL_HPP_
 
 #include <OgreVector3.h>
 
-#include <QCursor>
+#include <QCursor>  // NOLINT cpplint cannot handle include order here
 
-#include <ros/ros.h>
+#include "rviz_common/tool.hpp"
 
-#include "rviz/tool.h"
-
-namespace rviz
+namespace rviz_rendering
 {
 class Arrow;
-class DisplayContext;
+}  // namespace rviz_rendering
 
-class PoseTool: public Tool
+namespace rviz_default_plugins
+{
+namespace tools
+{
+class PoseTool : public rviz_common::Tool
 {
 public:
   PoseTool();
+
   virtual ~PoseTool();
 
   virtual void onInitialize();
 
   virtual void activate();
+
   virtual void deactivate();
 
-  virtual int processMouseEvent( ViewportMouseEvent& event );
+  virtual int processMouseEvent(rviz_common::ViewportMouseEvent & event);
 
 protected:
-  virtual void onPoseSet( double x, double y, double theta ) = 0;
+  virtual void onPoseSet(double x, double y, double theta) = 0;
 
-  Arrow* arrow_;
+  rviz_rendering::Arrow * arrow_;
 
   enum State
   {
@@ -71,8 +75,7 @@ protected:
   Ogre::Vector3 pos_;
 };
 
-}
+}  // namespace tools
+}  // namespace rviz_default_plugins
 
-#endif
-
-
+#endif  // RVIZ_DEFAULT_PLUGINS__TOOLS__POSE__POSE_TOOL_HPP_

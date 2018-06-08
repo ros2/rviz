@@ -27,54 +27,79 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <tf/transform_listener.h>
+#include "rviz_default_plugins/tools/nav_goal/goal_tool.hpp"
 
-#include <geometry_msgs/PoseStamped.h>
+#include <string>
 
-#include "rviz/display_context.h"
-#include "rviz/properties/string_property.h"
+#include "geometry_msgs/msg/pose_stamped.hpp"
 
-#include "rviz/default_plugin/tools/goal_tool.h"
+#include "rviz_common/display_context.hpp"
+#include "rviz_common/logging.hpp"
+#include "rviz_common/properties/string_property.hpp"
 
-namespace rviz
+namespace rviz_default_plugins
+{
+namespace tools
 {
 
 GoalTool::GoalTool()
+: rviz_default_plugins::tools::PoseTool(),
+  node_(rclcpp::Node::make_shared("set_goal_tool_node"))
 {
   shortcut_key_ = 'g';
 
-  topic_property_ = new StringProperty( "Topic", "goal",
-                                        "The topic on which to publish navigation goals.",
-                                        getPropertyContainer(), SLOT( updateTopic() ), this );
+  topic_property_ = new rviz_common::properties::StringProperty("Topic", "goal",
+      "The topic on which to publish navigation goals.",
+      getPropertyContainer(), SLOT(updateTopic()), this);
+}
+
+GoalTool::~GoalTool()
+{
+  context_->removeNodeFromMainExecutor(node_);
 }
 
 void GoalTool::onInitialize()
 {
+  context_->addNodeToMainExecutor(node_);
+
   PoseTool::onInitialize();
-  setName( "2D Nav Goal" );
+  setName("2D Nav Goal");
   updateTopic();
 }
 
 void GoalTool::updateTopic()
 {
-  pub_ = nh_.advertise<geometry_msgs::PoseStamped>( topic_property_->getStdString(), 1 );
+  publisher_ =
+    node_->create_publisher<geometry_msgs::msg::PoseStamped>(topic_property_->getStdString(), 1);
 }
 
 void GoalTool::onPoseSet(double x, double y, double theta)
 {
   std::string fixed_frame = context_->getFixedFrame().toStdString();
-  tf::Quaternion quat;
-  quat.setRPY(0.0, 0.0, theta);
-  tf::Stamped<tf::Pose> p = tf::Stamped<tf::Pose>(tf::Pose(quat, tf::Point(x, y, 0.0)), ros::Time::now(), fixed_frame);
-  geometry_msgs::PoseStamped goal;
-  tf::poseStampedTFToMsg(p, goal);
-  ROS_INFO("Setting goal: Frame:%s, Position(%.3f, %.3f, %.3f), Orientation(%.3f, %.3f, %.3f, %.3f) = Angle: %.3f\n", fixed_frame.c_str(),
-      goal.pose.position.x, goal.pose.position.y, goal.pose.position.z,
-      goal.pose.orientation.x, goal.pose.orientation.y, goal.pose.orientation.z, goal.pose.orientation.w, theta);
-  pub_.publish(goal);
+
+  geometry_msgs::msg::PoseStamped goal;
+  goal.header.stamp = rclcpp::Clock().now();
+  goal.header.frame_id = fixed_frame;
+  goal.pose.position.x = x;
+  goal.pose.position.y = y;
+  goal.pose.position.z = 0.0;
+
+  // previously was tf: quat.setRPY(0, 0, theta). See
+  // https://github.com/ros/geometry/blob/melodic-devel/tf/include/tf/LinearMath/Quaternion.h
+  goal.pose.orientation.x = 0.0;
+  goal.pose.orientation.y = 0.0;
+  goal.pose.orientation.z = sin(theta);
+  goal.pose.orientation.w = cos(theta);
+
+  RVIZ_COMMON_LOG_INFO_STREAM("Setting goal: Frame:" << fixed_frame << ", Position(" <<
+    goal.pose.position.x << ", " << goal.pose.position.y << ", " << goal.pose.position.z <<
+    "), Orientation(" << goal.pose.orientation.x << ", " << goal.pose.orientation.y << ", " <<
+    goal.pose.orientation.z << ", " << goal.pose.orientation.w << ") = Angle: " << theta);
+  publisher_->publish(goal);
 }
 
-} // end namespace rviz
+}  // namespace tools
+}  // namespace rviz_default_plugins
 
-#include <pluginlib/class_list_macros.h>
-PLUGINLIB_EXPORT_CLASS( rviz::GoalTool, rviz::Tool )
+#include <pluginlib/class_list_macros.hpp>  // NOLINT
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::tools::GoalTool, rviz_common::Tool)
