@@ -30,7 +30,16 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__TOOLS__POSE__POSE_TOOL_HPP_
 #define RVIZ_DEFAULT_PLUGINS__TOOLS__POSE__POSE_TOOL_HPP_
 
+#ifdef __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wkeyword-macro"
+#endif
+
 #include <OgreVector3.h>
+
+#ifdef __clang__
+# pragma clang diagnostic pop
+#endif
 
 #include <QCursor>  // NOLINT cpplint cannot handle include order here
 
