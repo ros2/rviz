@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "camera_display.hpp"
+#include "rviz_default_plugins/displays/camera/camera_display.hpp"
 
 #include <memory>
 #include <string>
@@ -70,6 +70,8 @@
 #include "rviz_common/validate_floats.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/load_resource.hpp"
+
+#include "rviz_default_plugins/displays/image/ros_image_texture.hpp"
 
 namespace rviz_default_plugins
 {

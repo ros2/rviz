@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "laser_scan_display.hpp"
+#include "rviz_default_plugins/displays/laser_scan/laser_scan_display.hpp"
 
 #include <memory>
 #include <string>
@@ -35,7 +35,7 @@
 #include "laser_geometry/laser_geometry.hpp"
 #include "tf2_ros/buffer.h"
 
-#include "src/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
+#include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
 #include "rviz_common/properties/int_property.hpp"
 #include "rviz_common/properties/queue_size_property.hpp"
 #include "rviz_common/validate_floats.hpp"

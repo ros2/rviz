@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "point_cloud_display.hpp"
+#include "rviz_default_plugins/displays/pointcloud/point_cloud_display.hpp"
 
 #include <memory>
 #include <utility>
@@ -42,7 +42,7 @@
 # pragma GCC diagnostic pop
 #endif
 
-#include "./point_cloud_common.hpp"
+#include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/properties/int_property.hpp"

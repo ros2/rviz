@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "robot_link.hpp"
+#include "rviz_default_plugins/robot/robot_link.hpp"
 
 #include <map>
 #include <memory>
@@ -65,8 +65,8 @@
 
 #include "resource_retriever/retriever.h"
 
-#include "robot_joint.hpp"
-#include "robot.hpp"
+#include "rviz_default_plugins/robot/robot_joint.hpp"
+#include "rviz_default_plugins/robot/robot.hpp"
 
 #include "rviz_rendering/mesh_loader.hpp"
 #include "rviz_rendering/objects/axes.hpp"

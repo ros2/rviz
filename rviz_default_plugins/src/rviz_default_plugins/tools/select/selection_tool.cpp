@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "selection_tool.hpp"
+#include "rviz_default_plugins/tools/select/selection_tool.hpp"
 
 #ifndef _WIN32
 # pragma GCC diagnostic push
@@ -57,7 +57,7 @@
 
 #include <QKeyEvent>  // NOLINT cpplint cannot handle include order
 
-#include "../move/move_tool.hpp"
+#include "rviz_default_plugins/tools/move/move_tool.hpp"
 
 #include "rviz_common/interaction/selection_manager.hpp"
 #include "rviz_common/display_context.hpp"

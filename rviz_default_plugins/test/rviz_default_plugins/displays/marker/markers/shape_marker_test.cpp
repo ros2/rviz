@@ -49,7 +49,7 @@
 #include "rviz_rendering/objects/shape.hpp"
 #include "../../../scene_graph_introspection.hpp"
 
-#include "../../../../../src/rviz_default_plugins/displays/marker/markers/shape_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/shape_marker.hpp"
 
 #include "markers_test_fixture.hpp"
 #include "../marker_messages.hpp"

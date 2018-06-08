@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "path_display.hpp"
+#include "rviz_default_plugins/displays/path/path_display.hpp"
 
 #include <algorithm>
 #include <string>

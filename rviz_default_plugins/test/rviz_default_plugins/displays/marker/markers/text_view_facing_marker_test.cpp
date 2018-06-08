@@ -49,8 +49,7 @@
 #include "rviz_rendering/objects/movable_text.hpp"
 #include "../../../scene_graph_introspection.hpp"
 
-#include \
-  "../../../../../src/rviz_default_plugins/displays/marker/markers/text_view_facing_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/text_view_facing_marker.hpp"
 
 #include "markers_test_fixture.hpp"
 #include "../marker_messages.hpp"

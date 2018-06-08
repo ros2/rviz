@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "point_cloud_selection_handler.hpp"
+#include "rviz_default_plugins/displays/pointcloud/point_cloud_selection_handler.hpp"
 
 #include <memory>
 #include <set>
@@ -56,8 +56,8 @@
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
 
-#include "./point_cloud_helpers.hpp"
-#include "./point_cloud_common.hpp"
+#include "rviz_default_plugins/displays/pointcloud/point_cloud_helpers.hpp"
+#include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
 
 namespace rviz_default_plugins
 {

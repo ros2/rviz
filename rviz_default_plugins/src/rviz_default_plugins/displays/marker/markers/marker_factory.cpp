@@ -32,7 +32,7 @@
  * DAMAGE.
  */
 
-#include "marker_factory.hpp"
+#include "rviz_default_plugins/displays/marker/markers/marker_factory.hpp"
 
 #include <memory>
 
@@ -58,15 +58,15 @@
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/logging.hpp"
 
-#include "marker_base.hpp"
-#include "arrow_marker.hpp"
-#include "line_list_marker.hpp"
-#include "line_strip_marker.hpp"
-#include "mesh_resource_marker.hpp"
-#include "points_marker.hpp"
-#include "shape_marker.hpp"
-#include "text_view_facing_marker.hpp"
-#include "triangle_list_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/marker_base.hpp"
+#include "rviz_default_plugins/displays/marker/markers/arrow_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/line_list_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/line_strip_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/mesh_resource_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/points_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/shape_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/text_view_facing_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/triangle_list_marker.hpp"
 
 namespace rviz_default_plugins
 {

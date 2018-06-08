@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./grid_display.hpp"
+#include "rviz_default_plugins/displays/grid/grid_display.hpp"
 
 #include <cstdint>
 #include <memory>

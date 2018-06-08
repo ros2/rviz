@@ -28,14 +28,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "robot_element_base_class.hpp"
+#include "rviz_default_plugins/robot/robot_element_base_class.hpp"
 
 #include <memory>
 #include <string>
 #include <vector>
 #include <utility>
 
-#include "robot.hpp"
+#include "rviz_default_plugins/robot/robot.hpp"
 
 #include "rviz_common/load_resource.hpp"
 #include "rviz_common/properties/quaternion_property.hpp"

@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "frame_info.hpp"
+#include "include/rviz_default_plugins/displays/tf/frame_info.hpp"
 
 #include <algorithm>
 
@@ -48,7 +48,7 @@
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/properties/quaternion_property.hpp"
-#include "frame_selection_handler.hpp"
+#include "include/rviz_default_plugins/displays/tf/frame_selection_handler.hpp"
 
 namespace rviz_default_plugins
 {

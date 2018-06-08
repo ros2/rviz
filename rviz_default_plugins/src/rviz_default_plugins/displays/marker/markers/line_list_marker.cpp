@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "line_list_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/line_list_marker.hpp"
 
 #include <vector>
 #include <string>
@@ -51,7 +51,7 @@
 # pragma warning(pop)
 #endif
 
-#include "../marker_display.hpp"
+#include "rviz_default_plugins/displays/marker/marker_display.hpp"
 
 #include "rviz_rendering/objects/billboard_line.hpp"
 

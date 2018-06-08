@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./point_tool.hpp"
+#include "rviz_default_plugins/tools/point/point_tool.hpp"
 
 #include <sstream>
 

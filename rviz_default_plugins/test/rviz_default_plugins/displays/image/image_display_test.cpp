@@ -47,7 +47,7 @@
 #include "../../mock_display_context.hpp"
 #include "../../mock_window_manager_interface.hpp"
 
-#include "../../../../src/rviz_default_plugins/displays/image/image_display.hpp"
+#include "rviz_default_plugins/displays/image/image_display.hpp"
 
 using namespace ::testing;  // NOLINT
 using namespace rviz_default_plugins::displays;  // NOLINT

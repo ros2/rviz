@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "marker_selection_handler.hpp"
+#include "rviz_default_plugins/displays/marker/markers/marker_selection_handler.hpp"
 
 #ifndef _WIN32
 # pragma GCC diagnostic push
@@ -48,8 +48,8 @@
 # pragma warning(pop)
 #endif
 
-#include "../marker_display.hpp"
-#include "marker_base.hpp"
+#include "rviz_default_plugins/displays/marker/marker_display.hpp"
+#include "rviz_default_plugins/displays/marker/markers/marker_base.hpp"
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/properties/quaternion_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"

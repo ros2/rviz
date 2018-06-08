@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "robot.hpp"
+#include "rviz_default_plugins/robot/robot.hpp"
 
 #include <map>
 #include <string>
@@ -56,8 +56,8 @@
 
 #include "urdf_model/model.h"
 
-#include "./robot_link.hpp"
-#include "./robot_joint.hpp"
+#include "rviz_default_plugins/robot/robot_link.hpp"
+#include "rviz_default_plugins/robot/robot_joint.hpp"
 
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/properties/enum_property.hpp"

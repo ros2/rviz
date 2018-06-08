@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "../point_cloud_helpers.hpp"
-#include "./rgbf32_pc_transformer.hpp"
+#include "rviz_default_plugins/displays/pointcloud/point_cloud_helpers.hpp"
+#include "rviz_default_plugins/displays/pointcloud/transformers/rgbf32_pc_transformer.hpp"
 
 namespace rviz_default_plugins
 {

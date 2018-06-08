@@ -37,9 +37,7 @@
 
 #include "../../../scene_graph_introspection.hpp"
 
-// *INDENT-OFF*
-#include "../../../../../src/rviz_default_plugins/displays/pointcloud/transformers/xyz_pc_transformer.hpp"
-// *INDENT-ON*
+#include "rviz_default_plugins/displays/pointcloud/transformers/xyz_pc_transformer.hpp"
 
 using namespace ::testing;  // NOLINT
 using namespace rviz_default_plugins;  // NOLINT

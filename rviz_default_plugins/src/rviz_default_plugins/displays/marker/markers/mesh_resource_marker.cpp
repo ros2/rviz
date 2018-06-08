@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "mesh_resource_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/mesh_resource_marker.hpp"
 
 #include <string>
 
@@ -55,8 +55,8 @@
 # pragma warning(pop)
 #endif
 
-#include "../marker_display.hpp"
-#include "marker_selection_handler.hpp"
+#include "rviz_default_plugins/displays/marker/marker_display.hpp"
+#include "rviz_default_plugins/displays/marker/markers/marker_selection_handler.hpp"
 #include "rviz_rendering/mesh_loader.hpp"
 
 namespace rviz_default_plugins

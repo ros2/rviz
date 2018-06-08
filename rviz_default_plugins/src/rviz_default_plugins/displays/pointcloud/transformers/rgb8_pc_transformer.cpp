@@ -29,9 +29,9 @@
 
 #include <algorithm>
 
-#include "../point_cloud_helpers.hpp"
+#include "rviz_default_plugins/displays/pointcloud/point_cloud_helpers.hpp"
 
-#include "./rgb8_pc_transformer.hpp"
+#include "rviz_default_plugins/displays/pointcloud/transformers/rgb8_pc_transformer.hpp"
 
 namespace rviz_default_plugins
 {

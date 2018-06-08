@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "marker_base.hpp"
+#include "rviz_default_plugins/displays/marker/markers/marker_base.hpp"
 
 #include <memory>
 #include <string>
@@ -56,8 +56,8 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "../marker_display.hpp"
-#include "marker_selection_handler.hpp"
+#include "rviz_default_plugins/displays/marker/marker_display.hpp"
+#include "rviz_default_plugins/displays/marker/markers/marker_selection_handler.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/properties/status_property.hpp"

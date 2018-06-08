@@ -52,9 +52,9 @@
 
 #include "rviz_common/properties/property.hpp"
 #include "rviz_rendering/material_manager.hpp"
-#include "../../../src/rviz_default_plugins/robot/robot.hpp"
-#include "../../../src/rviz_default_plugins/robot/robot_joint.hpp"
-#include "../../../src/rviz_default_plugins/robot/robot_link.hpp"
+#include "rviz_default_plugins/robot/robot.hpp"
+#include "rviz_default_plugins/robot/robot_joint.hpp"
+#include "rviz_default_plugins/robot/robot_link.hpp"
 
 using namespace ::testing;  // NOLINT
 using namespace rviz_default_plugins::robot;  // NOLINT
@@ -89,9 +89,9 @@ public:
     std::string string(reinterpret_cast<char *>(file.data.get()), file.size);
     urdf_model_.initString(string);
 
-    rviz_common::properties::Property * parent = new rviz_common::properties::Property();
+    parent_ = std::make_shared<rviz_common::properties::Property>();
     robot_ = std::make_shared<Robot>(
-      scene_manager_->getRootSceneNode(), context_.get(), "robot", parent);
+      scene_manager_->getRootSceneNode(), context_.get(), "robot", parent_.get());
   }
 
   static void TearDownTestCase()
@@ -106,6 +106,7 @@ public:
   std::shared_ptr<MockHandlerManager> handle_manager_;
   std::shared_ptr<MockDisplayContext> context_;
   std::shared_ptr<MockSelectionManager> selection_manager_;
+  std::shared_ptr<rviz_common::properties::Property> parent_;
 
   std::shared_ptr<Robot> robot_;
 };

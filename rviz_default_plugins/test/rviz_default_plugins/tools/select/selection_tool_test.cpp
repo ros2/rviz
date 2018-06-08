@@ -34,7 +34,7 @@
 
 #include <memory>
 
-#include "../../../../src/rviz_default_plugins/tools/select/selection_tool.hpp"
+#include "rviz_default_plugins/tools/select/selection_tool.hpp"
 
 #include "../tool_test_fixture.hpp"
 #include "../../mock_display_context.hpp"

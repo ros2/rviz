@@ -34,7 +34,7 @@
  *      Author: gossow
  */
 
-#include "measure_tool.hpp"
+#include "rviz_default_plugins/tools/measure/measure_tool.hpp"
 
 #include <memory>
 #include <sstream>

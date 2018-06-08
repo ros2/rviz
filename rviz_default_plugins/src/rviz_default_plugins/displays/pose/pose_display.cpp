@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "pose_display.hpp"
+#include "rviz_default_plugins/displays/pose/pose_display.hpp"
 
 #include <memory>
 
@@ -46,7 +46,7 @@
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/interaction/selection_manager.hpp"
 #include "rviz_common/validate_floats.hpp"
-#include "pose_display_selection_handler.hpp"
+#include "rviz_default_plugins/displays/pose/pose_display_selection_handler.hpp"
 
 namespace rviz_default_plugins
 {

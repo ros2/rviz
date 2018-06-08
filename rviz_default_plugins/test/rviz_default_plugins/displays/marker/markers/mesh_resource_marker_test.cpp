@@ -51,7 +51,7 @@
 #include "visualization_msgs/msg/marker.hpp"
 #include "../../../scene_graph_introspection.hpp"
 
-#include "../../../../../src/rviz_default_plugins/displays/marker/markers/mesh_resource_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/mesh_resource_marker.hpp"
 
 #include "markers_test_fixture.hpp"
 #include "../marker_messages.hpp"

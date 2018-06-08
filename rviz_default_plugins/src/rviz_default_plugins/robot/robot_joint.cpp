@@ -28,14 +28,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "robot_joint.hpp"
+#include "rviz_default_plugins/robot/robot_joint.hpp"
 
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "./robot_link.hpp"
-#include "robot.hpp"
+#include "rviz_default_plugins/robot/robot_link.hpp"
+#include "rviz_default_plugins/robot/robot.hpp"
 
 #include "rviz_common/load_resource.hpp"
 #include "rviz_common/properties/float_property.hpp"

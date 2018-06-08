@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "fixed_orientation_ortho_view_controller.hpp"
+#include "rviz_default_plugins/view_controllers/ortho/fixed_orientation_ortho_view_controller.hpp"
 
 #include <utility>
 

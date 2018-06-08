@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "tf_link_updater.hpp"
+#include "rviz_default_plugins/robot/tf_link_updater.hpp"
 
 #include <string>
 

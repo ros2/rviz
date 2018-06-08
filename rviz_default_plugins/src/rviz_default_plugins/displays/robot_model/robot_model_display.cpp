@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "robot_model_display.hpp"
+#include "rviz_default_plugins/displays/robot_model/robot_model_display.hpp"
 
 #include <memory>
 #include <string>
@@ -53,14 +53,15 @@
 
 #include "tf2_ros/transform_listener.h"
 
-#include "../../robot/robot.hpp"
-#include "../../robot/tf_link_updater.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/properties/enum_property.hpp"
 #include "rviz_common/properties/file_picker_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/properties/string_property.hpp"
+
+#include "rviz_default_plugins/robot/robot.hpp"
+#include "rviz_default_plugins/robot/tf_link_updater.hpp"
 
 namespace rviz_default_plugins
 {

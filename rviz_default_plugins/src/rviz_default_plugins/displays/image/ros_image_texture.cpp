@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "ros_image_texture.hpp"
+#include "include/rviz_default_plugins/displays/image/ros_image_texture.hpp"
 
 #include <algorithm>
 #include <deque>

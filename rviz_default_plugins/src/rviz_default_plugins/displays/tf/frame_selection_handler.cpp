@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "frame_selection_handler.hpp"
+#include "include/rviz_default_plugins/displays/tf/frame_selection_handler.hpp"
 
 #include <string>
 

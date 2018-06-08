@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "pose_array_display.hpp"
+#include "rviz_default_plugins/displays/pose_array/pose_array_display.hpp"
 
 #include <memory>
 #include <string>
@@ -60,6 +60,8 @@
 
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/axes.hpp"
+
+#include "rviz_default_plugins/displays/pose_array/flat_arrows_array.hpp"
 
 namespace rviz_default_plugins
 {

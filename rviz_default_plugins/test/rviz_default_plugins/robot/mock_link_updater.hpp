@@ -40,7 +40,7 @@
 #include <OgreQuaternion.h>
 #include <OgreVector3.h>
 
-#include "../../../src/rviz_default_plugins/robot/link_updater.hpp"
+#include "rviz_default_plugins/robot/link_updater.hpp"
 
 class MockLinkUpdater : public rviz_default_plugins::robot::LinkUpdater
 {

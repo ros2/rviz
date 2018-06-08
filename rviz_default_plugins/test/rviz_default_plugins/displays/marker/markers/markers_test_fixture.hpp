@@ -48,8 +48,8 @@
 #include "../../../mock_display_context.hpp"
 #include "../../../mock_frame_manager.hpp"
 #include "../../../mock_selection_manager.hpp"
-#include "../../../../../src/rviz_default_plugins/displays/marker/marker_display.hpp"
-#include "../../../../../src/rviz_default_plugins/displays/marker/markers/marker_base.hpp"
+#include "rviz_default_plugins/displays/marker/marker_display.hpp"
+#include "rviz_default_plugins/displays/marker/markers/marker_base.hpp"
 
 class MarkersTestFixture : public DisplayTestFixture
 {

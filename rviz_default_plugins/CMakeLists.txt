@@ -18,7 +18,7 @@ file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_images)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/test/reference_images)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+  add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
 find_package(ament_cmake REQUIRED)
@@ -51,29 +51,29 @@ find_package(visualization_msgs REQUIRED)
 
 # These need to be added in the add_library() call so AUTOMOC detects them.
 set(rviz_default_plugins_headers_to_moc
-  src/rviz_default_plugins/displays/camera/camera_display.hpp
-  src/rviz_default_plugins/displays/grid/grid_display.hpp
-  src/rviz_default_plugins/displays/image/image_display.hpp
-  src/rviz_default_plugins/displays/laser_scan/laser_scan_display.hpp
-  src/rviz_default_plugins/displays/marker/marker_display.hpp
-  src/rviz_default_plugins/displays/path/path_display.hpp
-  src/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp
-  src/rviz_default_plugins/displays/pointcloud/point_cloud_display.hpp
-  src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp
-  src/rviz_default_plugins/displays/pointcloud/point_cloud_transformer.hpp
-  src/rviz_default_plugins/displays/pointcloud/point_cloud_transformer_factory.hpp
-  src/rviz_default_plugins/displays/pointcloud/point_cloud_helpers.hpp
-  src/rviz_default_plugins/displays/polygon/polygon_display.hpp
-  src/rviz_default_plugins/displays/pose/pose_display.hpp
-  src/rviz_default_plugins/displays/pose_array/pose_array_display.hpp
-  src/rviz_default_plugins/displays/robot_model/robot_model_display.hpp
-  src/rviz_default_plugins/displays/tf/frame_info.hpp
-  src/rviz_default_plugins/displays/tf/tf_display.hpp
-  src/rviz_default_plugins/robot/robot.hpp
-  src/rviz_default_plugins/robot/robot_joint.hpp
-  src/rviz_default_plugins/robot/robot_link.hpp
-  src/rviz_default_plugins/robot/robot_element_base_class.hpp
-  src/rviz_default_plugins/tools/measure/measure_tool.hpp
+  include/rviz_default_plugins/displays/camera/camera_display.hpp
+  include/rviz_default_plugins/displays/grid/grid_display.hpp
+  include/rviz_default_plugins/displays/image/image_display.hpp
+  include/rviz_default_plugins/displays/laser_scan/laser_scan_display.hpp
+  include/rviz_default_plugins/displays/marker/marker_display.hpp
+  include/rviz_default_plugins/displays/path/path_display.hpp
+  include/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp
+  include/rviz_default_plugins/displays/pointcloud/point_cloud_display.hpp
+  include/rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp
+  include/rviz_default_plugins/displays/pointcloud/point_cloud_transformer.hpp
+  include/rviz_default_plugins/displays/pointcloud/point_cloud_transformer_factory.hpp
+  include/rviz_default_plugins/displays/pointcloud/point_cloud_helpers.hpp
+  include/rviz_default_plugins/displays/polygon/polygon_display.hpp
+  include/rviz_default_plugins/displays/pose/pose_display.hpp
+  include/rviz_default_plugins/displays/pose_array/pose_array_display.hpp
+  include/rviz_default_plugins/displays/robot_model/robot_model_display.hpp
+  include/rviz_default_plugins/displays/tf/frame_info.hpp
+  include/rviz_default_plugins/displays/tf/tf_display.hpp
+  include/rviz_default_plugins/robot/robot.hpp
+  include/rviz_default_plugins/robot/robot_joint.hpp
+  include/rviz_default_plugins/robot/robot_link.hpp
+  include/rviz_default_plugins/robot/robot_element_base_class.hpp
+  include/rviz_default_plugins/tools/measure/measure_tool.hpp
 )
 
 set(rviz_default_plugins_source_files
@@ -195,7 +195,7 @@ ament_target_dependencies(rviz_default_plugins
   # tf2_ros
 )
 
-pluginlib_export_plugin_description_file(rviz_common plugins_description.xml)
+pluginlib_export_plugin_description_file(rviz_default_plugins plugins_description.xml)
 
 ament_export_interfaces(rviz_default_plugins)
 ament_export_dependencies(Qt5)

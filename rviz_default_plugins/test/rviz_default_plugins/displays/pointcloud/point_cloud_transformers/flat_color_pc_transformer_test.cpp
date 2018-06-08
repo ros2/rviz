@@ -37,9 +37,7 @@
 #include "rviz_common/properties/property.hpp"
 #include "test/rviz_default_plugins/pointcloud_messages.hpp"
 
-// *INDENT-OFF*
-#include "../../../../../src/rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.hpp"
-// *INDENT-ON*
+#include "rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.hpp"
 
 using namespace ::testing;  // NOLINT
 using namespace rviz_default_plugins;  // NOLINT

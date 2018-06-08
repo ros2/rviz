@@ -56,7 +56,7 @@
 
 #include "rviz_common/properties/float_property.hpp"
 
-#include "../../../../src/rviz_default_plugins/displays/pose_array/pose_array_display.hpp"
+#include "rviz_default_plugins/displays/pose_array/pose_array_display.hpp"
 
 #include "../display_test_fixture.hpp"
 #include "../../scene_graph_introspection.hpp"
