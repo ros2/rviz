@@ -29,6 +29,8 @@
 
 #include "rviz_default_plugins/tools/pose/pose_tool.hpp"
 
+#include <utility>
+
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -62,7 +64,9 @@ namespace tools
 {
 PoseTool::PoseTool()
 : rviz_common::Tool(), arrow_(nullptr)
-{}
+{
+  projection_finder_ = std::make_shared<rviz_rendering::ViewportProjectionFinder>();
+}
 
 PoseTool::~PoseTool()
 {
@@ -91,17 +95,14 @@ int PoseTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
 {
   int flags = 0;
 
+  auto point_projection_on_xy_plane = projection_finder_->getViewportPointProjectionOnXYPlane(
+    event.panel->getRenderWindow(), event.x, event.y);
+
   if (event.leftDown()) {
     assert(state_ == Position);
-
-    Ogre::Vector3 intersection;
-    Ogre::Plane ground_plane(Ogre::Vector3::UNIT_Z, 0.0f);
-    if (rviz_rendering::getPointOnPlaneFromWindowXY(
-        rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(event.panel->getRenderWindow()),
-        ground_plane,
-        event.x, event.y, intersection))
+    if (point_projection_on_xy_plane.first)
     {
-      pos_ = intersection;
+      pos_ = point_projection_on_xy_plane.second;
       arrow_->setPosition(pos_);
 
       state_ = Orientation;
@@ -110,13 +111,9 @@ int PoseTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
   } else if (event.type == QEvent::MouseMove && event.left()) {
     if (state_ == Orientation) {
       // compute angle in x-y plane
-      Ogre::Vector3 cur_pos;
-      Ogre::Plane ground_plane(Ogre::Vector3::UNIT_Z, 0.0f);
-      if (rviz_rendering::getPointOnPlaneFromWindowXY(
-          rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(event.panel->getRenderWindow()),
-          ground_plane,
-          event.x, event.y, cur_pos))
+      if (point_projection_on_xy_plane.first)
       {
+        auto cur_pos = point_projection_on_xy_plane.second;
         double angle = atan2(cur_pos.y - pos_.y, cur_pos.x - pos_.x);
 
         arrow_->getSceneNode()->setVisible(true);
@@ -135,13 +132,9 @@ int PoseTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
   } else if (event.leftUp()) {
     if (state_ == Orientation) {
       // compute angle in x-y plane
-      Ogre::Vector3 cur_pos;
-      Ogre::Plane ground_plane(Ogre::Vector3::UNIT_Z, 0.0f);
-      if (rviz_rendering::getPointOnPlaneFromWindowXY(
-          rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(event.panel->getRenderWindow()),
-          ground_plane,
-          event.x, event.y, cur_pos))
+      if (point_projection_on_xy_plane.first)
       {
+        auto cur_pos = point_projection_on_xy_plane.second;
         double angle = atan2(cur_pos.y - pos_.y, cur_pos.x - pos_.x);
 
         onPoseSet(pos_.x, pos_.y, angle);
@@ -152,14 +145,6 @@ int PoseTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
   }
 
   return flags;
-}
-
-void PoseTool::onPoseSet(double x, double y, double theta)
-{
-  // this method must be implemented (even if empty) in order to be able to test the clas
-  (void) x;
-  (void) y;
-  (void) theta;
 }
 
 }  // namespace tools

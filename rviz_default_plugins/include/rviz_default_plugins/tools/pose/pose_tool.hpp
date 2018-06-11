@@ -44,6 +44,7 @@
 #include <QCursor>  // NOLINT cpplint cannot handle include order here
 
 #include "rviz_common/tool.hpp"
+#include "rviz_rendering/viewport_projection_finder.hpp"
 
 namespace rviz_rendering
 {
@@ -70,7 +71,7 @@ public:
   virtual int processMouseEvent(rviz_common::ViewportMouseEvent & event);
 
 protected:
-  virtual void onPoseSet(double x, double y, double theta);
+  virtual void onPoseSet(double x, double y, double theta) = 0;
 
   rviz_rendering::Arrow * arrow_;
 
@@ -82,6 +83,7 @@ protected:
   State state_;
 
   Ogre::Vector3 pos_;
+  std::shared_ptr<rviz_rendering::ViewportProjectionFinder> projection_finder_;
 };
 
 }  // namespace tools
