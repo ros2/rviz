@@ -36,7 +36,7 @@
   </class>
 
   <class 
-    name="rviz/LaserScan"
+    name="rviz_default_plugins/LaserScan"
     type="rviz_default_plugins::displays::LaserScanDisplay"
     base_class_type="rviz_common::Display"
   >
@@ -134,7 +134,7 @@
   </class>
 
   <class
-    name="rviz/Path"
+    name="rviz_default_plugins/Path"
     type="rviz_default_plugins::displays::PathDisplay"
     base_class_type="rviz_common::Display"
   >
@@ -178,9 +178,9 @@
   </class>
 
   <class
-          name="rviz_default_plugins/Measure"
-          type="rviz_default_plugins::tools::MeasureTool"
-          base_class_type="rviz_common::Tool"
+    name="rviz_default_plugins/Measure"
+    type="rviz_default_plugins::tools::MeasureTool"
+    base_class_type="rviz_common::Tool"
   >
     <description>
       Click onto two locations to measure their distance.
