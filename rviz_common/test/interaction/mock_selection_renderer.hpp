@@ -98,7 +98,7 @@ public:
     for (auto & object : objects_) {
       int x = object.x - rectangle.x1;
       int y = object.y - rectangle.y1;
-      if (x < rectangle.x2 && y < rectangle.y2) {
+      if (x < rectangle.x2 && y < rectangle.y2 && x >= 0 && y >= 0) {
         dstptr[y * dst_box.rowPitch + x] = object.getARGBColor();
       }
     }

@@ -67,8 +67,8 @@ public:
   }
 
   std::shared_ptr<MockSelectionRenderer> renderer_;
-  std::shared_ptr<rviz_common::interaction::SelectionManagerIface> selection_manager_;
   std::shared_ptr<rviz_common::interaction::HandlerManagerIface> handler_manager_;
+  std::shared_ptr<rviz_common::interaction::SelectionManagerIface> selection_manager_;
 };
 
 #endif  // INTERACTION__SELECTION_TEST_FIXTURE_HPP_
