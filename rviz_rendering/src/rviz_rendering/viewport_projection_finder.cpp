@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,35 +29,45 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_RENDERING__GEOMETRY_HPP_
-#define RVIZ_RENDERING__GEOMETRY_HPP_
+#include "rviz_rendering/viewport_projection_finder.hpp"
 
-#include "rviz_rendering/visibility_control.hpp"
+#include <utility>
 
-namespace Ogre
-{
-class Plane;
-class Vector2;
-class Vector3;
-class Viewport;
-}  // namespace Ogre
+#include <OgreCamera.h>
+#include <OgrePlane.h>
+#include <OgreRay.h>
+#include <OgreVector3.h>
+#include <OgreViewport.h>
+
+#include "include/rviz_rendering/render_window.hpp"
 
 namespace rviz_rendering
 {
 
-/// Return the input angle mapped back to the range 0 to 2*PI.
-RVIZ_RENDERING_PUBLIC
-float
-mapAngleTo0_2Pi(float angle);
+std::pair<bool, Ogre::Vector3> ViewportProjectionFinder::getViewportPointProjectionOnXYPlane(
+  RenderWindow * render_window, int x, int y)
+{
+  auto xy_plane = Ogre::Plane(Ogre::Vector3::UNIT_Z, 0.0f);
+  return getViewportProjectionOnPlane(render_window, x, y, xy_plane);
+}
 
-/// Project a point into the view plane based on a given 3D position and a Viewport.
-/**
- * \return The 2D floating-point pixel position of the projection.
- */
-RVIZ_RENDERING_PUBLIC
-Ogre::Vector2
-project3DPointToViewportXY(const Ogre::Viewport * view, const Ogre::Vector3 & pos);
+std::pair<bool, Ogre::Vector3> ViewportProjectionFinder::getViewportProjectionOnPlane(
+  RenderWindow * render_window, int x, int y, Ogre::Plane & plane)
+{
+  auto viewport = RenderWindowOgreAdapter::getOgreViewport(render_window);
+  int width = viewport->getActualWidth();
+  int height = viewport->getActualHeight();
+  Ogre::Ray mouse_ray = viewport->getCamera()->getCameraToViewportRay(
+    static_cast<float>(x) / static_cast<float>(width),
+    static_cast<float>(y) / static_cast<float>(height));
+
+  auto intersection = mouse_ray.intersects(plane);
+  if (!intersection.first) {
+    return {false, Ogre::Vector3()};
+  }
+
+  auto intersection_point = mouse_ray.getPoint(intersection.second);
+  return {true, intersection_point};
+}
 
 }  // namespace rviz_rendering
-
-#endif  // RVIZ_RENDERING__GEOMETRY_HPP_

@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,35 +29,38 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_RENDERING__GEOMETRY_HPP_
-#define RVIZ_RENDERING__GEOMETRY_HPP_
+#ifndef RVIZ_RENDERING__VIEWPORT_PROJECTION_FINDER_HPP_
+#define RVIZ_RENDERING__VIEWPORT_PROJECTION_FINDER_HPP_
+
+#include <utility>
 
 #include "rviz_rendering/visibility_control.hpp"
 
 namespace Ogre
 {
 class Plane;
-class Vector2;
 class Vector3;
 class Viewport;
-}  // namespace Ogre
+}
 
 namespace rviz_rendering
 {
 
-/// Return the input angle mapped back to the range 0 to 2*PI.
-RVIZ_RENDERING_PUBLIC
-float
-mapAngleTo0_2Pi(float angle);
+class RenderWindow;
 
-/// Project a point into the view plane based on a given 3D position and a Viewport.
-/**
- * \return The 2D floating-point pixel position of the projection.
- */
-RVIZ_RENDERING_PUBLIC
-Ogre::Vector2
-project3DPointToViewportXY(const Ogre::Viewport * view, const Ogre::Vector3 & pos);
+class RVIZ_RENDERING_PUBLIC ViewportProjectionFinder
+{
+public:
+  ViewportProjectionFinder() = default;
+
+  virtual std::pair<bool, Ogre::Vector3> getViewportPointProjectionOnXYPlane(
+    RenderWindow * render_window, int x, int y);
+
+private:
+  virtual std::pair<bool, Ogre::Vector3> getViewportProjectionOnPlane(
+    RenderWindow * render_window, int x, int y, Ogre::Plane & plane);
+};
 
 }  // namespace rviz_rendering
 
-#endif  // RVIZ_RENDERING__GEOMETRY_HPP_
+#endif  // RVIZ_RENDERING__VIEWPORT_PROJECTION_FINDER_HPP_
