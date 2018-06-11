@@ -8,7 +8,8 @@ endif()
 
 find_package(assimp REQUIRED QUIET)
 
-# workaround bug in Ubuntu package libassimp-dev 4.1.0~dfsg-3
+# workaround bug in Assimp 4.1.0 https://github.com/assimp/assimp/issues/1914
+# Affecting Ubuntu package: libassimp-dev 4.1.0~dfsg-3, Brew: assimp 4.1.0
 string(REPLACE "/lib/lib/" "/lib/" ASSIMP_LIBRARY_DIRS "${ASSIMP_LIBRARY_DIRS}")
 
 set(rviz_assimp_vendor_LIBRARIES)
