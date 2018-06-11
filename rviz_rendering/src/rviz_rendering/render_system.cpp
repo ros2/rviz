@@ -449,6 +449,7 @@ RenderSystem::makeRenderWindow(
   params["macAPI"] = "cocoa";
   params["macAPICocoaUseNSView"] = "true";
 #endif
+  // The parameter 'contentScalingFactor' is declared iOS specific, therefore useless at the moment.
   params["contentScalingFactor"] = std::to_string(pixel_ratio);
 
   std::ostringstream stream;
