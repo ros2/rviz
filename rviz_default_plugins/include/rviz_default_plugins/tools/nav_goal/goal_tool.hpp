@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,14 +31,12 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__TOOLS__NAV_GOAL__GOAL_TOOL_HPP_
 #define RVIZ_DEFAULT_PLUGINS__TOOLS__NAV_GOAL__GOAL_TOOL_HPP_
 
-#ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
-# include <QObject>
+#include <QObject>
 
-# include "rclcpp/node.hpp"
-# include "geometry_msgs/msg/pose_stamped.hpp"
+#include "geometry_msgs/msg/pose_stamped.hpp"
+#include "rclcpp/node.hpp"
 
-# include "../pose/pose_tool.hpp"
-#endif
+#include "../pose/pose_tool.hpp"
 
 namespace rviz_common
 {
@@ -59,12 +58,12 @@ class GoalTool : public PoseTool
 public:
   GoalTool();
 
-  virtual ~GoalTool();
+  ~GoalTool() override;
 
-  virtual void onInitialize();
+  void onInitialize() override;
 
 protected:
-  virtual void onPoseSet(double x, double y, double theta);
+  void onPoseSet(double x, double y, double theta) override;
 
 private Q_SLOTS:
   void updateTopic();

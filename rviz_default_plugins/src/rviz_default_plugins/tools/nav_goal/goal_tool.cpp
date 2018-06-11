@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -80,12 +81,12 @@ void GoalTool::onPoseSet(double x, double y, double theta)
   geometry_msgs::msg::PoseStamped goal;
   goal.header.stamp = rclcpp::Clock().now();
   goal.header.frame_id = fixed_frame;
+
   goal.pose.position.x = x;
   goal.pose.position.y = y;
   goal.pose.position.z = 0.0;
 
-  // previously was tf: quat.setRPY(0, 0, theta). See
-  // https://github.com/ros/geometry/blob/melodic-devel/tf/include/tf/LinearMath/Quaternion.h
+  // set quaternion from yaw only
   goal.pose.orientation.x = 0.0;
   goal.pose.orientation.y = 0.0;
   goal.pose.orientation.z = sin(theta) / (2 * cos(theta / 2));
@@ -95,6 +96,7 @@ void GoalTool::onPoseSet(double x, double y, double theta)
     goal.pose.position.x << ", " << goal.pose.position.y << ", " << goal.pose.position.z <<
     "), Orientation(" << goal.pose.orientation.x << ", " << goal.pose.orientation.y << ", " <<
     goal.pose.orientation.z << ", " << goal.pose.orientation.w << ") = Angle: " << theta);
+
   publisher_->publish(goal);
 }
 
