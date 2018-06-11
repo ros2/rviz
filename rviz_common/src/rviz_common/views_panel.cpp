@@ -90,7 +90,7 @@ ViewsPanel::ViewsPanel(QWidget * parent)
 
 void ViewsPanel::onInitialize()
 {
-  setViewManager(vis_manager_->getViewManager() );
+  setViewManager(getDisplayContext()->getViewManager() );
 }
 
 void ViewsPanel::setViewManager(ViewManager * view_man)

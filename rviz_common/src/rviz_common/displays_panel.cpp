@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,8 +51,9 @@
 namespace rviz_common
 {
 
-DisplaysPanel::DisplaysPanel(const std::string & node_name, QWidget * parent)
-: Panel(parent), node_name_(node_name)
+DisplaysPanel::DisplaysPanel(
+  const std::string & node_name, VisualizationManager * manager, QWidget * parent)
+: Panel(parent), node_name_(node_name), vis_manager_(manager)
 {
   setObjectName("Displays/DisplayPanel");
   tree_with_help_ = new properties::PropertyTreeWithHelp;
@@ -78,14 +80,14 @@ DisplaysPanel::DisplaysPanel(const std::string & node_name, QWidget * parent)
   rename_button_->setToolTip("Rename a display, Ctrl+R");
   rename_button_->setEnabled(false);
 
-  QHBoxLayout * button_layout = new QHBoxLayout;
+  auto * button_layout = new QHBoxLayout;
   button_layout->addWidget(add_button);
   button_layout->addWidget(duplicate_button_);
   button_layout->addWidget(remove_button_);
   button_layout->addWidget(rename_button_);
   button_layout->setContentsMargins(2, 0, 2, 2);
 
-  QVBoxLayout * layout = new QVBoxLayout;
+  auto * layout = new QVBoxLayout;
   layout->setContentsMargins(0, 0, 0, 2);
   layout->addWidget(tree_with_help_);
   layout->addLayout(button_layout);
@@ -99,9 +101,7 @@ DisplaysPanel::DisplaysPanel(const std::string & node_name, QWidget * parent)
   connect(property_grid_, SIGNAL(selectionHasChanged()), this, SLOT(onSelectionChanged()));
 }
 
-DisplaysPanel::~DisplaysPanel()
-{
-}
+DisplaysPanel::~DisplaysPanel() = default;
 
 void DisplaysPanel::onInitialize()
 {

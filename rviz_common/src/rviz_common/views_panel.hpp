@@ -31,7 +31,7 @@
 #ifndef RVIZ_COMMON__VIEWS_PANEL_HPP_
 #define RVIZ_COMMON__VIEWS_PANEL_HPP_
 
-#include "./panel.hpp"
+#include "rviz_common/panel.hpp"
 
 class QComboBox;
 class QModelIndex;

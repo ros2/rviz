@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -72,6 +73,8 @@
 
 #include "rviz_common/load_resource.hpp"
 #include "rviz_common/logging.hpp"
+#include "rviz_common/panel.hpp"
+#include "rviz_common/panel_dock_widget.hpp"
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/tool.hpp"
 #include "rviz_rendering/initialization.hpp"  // TODO(wjwwood): see if this is needed anymore
@@ -81,8 +84,6 @@
 #include "./failed_panel.hpp"
 #include "./loading_dialog.hpp"
 #include "./new_object_dialog.hpp"
-#include "./panel.hpp"
-#include "rviz_common/panel_dock_widget.hpp"
 #include "./panel_factory.hpp"
 #include "./screenshot_dialog.hpp"
 #include "./splash_screen.hpp"
@@ -109,24 +110,25 @@ namespace rviz_common
 
 VisualizationFrame::VisualizationFrame(const std::string & node_name, QWidget * parent)
 : QMainWindow(parent),
-  app_(NULL),
-  render_panel_(NULL),
-  show_help_action_(NULL),
-  file_menu_(NULL),
-  recent_configs_menu_(NULL),
-  toolbar_(NULL),
-  manager_(NULL),
-  splash_(NULL),
-  toolbar_actions_(NULL),
+  app_(nullptr),
+  render_panel_(nullptr),
+  show_help_action_(nullptr),
+  file_menu_(nullptr),
+  recent_configs_menu_(nullptr),
+  toolbar_(nullptr),
+  manager_(nullptr),
+  splash_(nullptr),
+  toolbar_actions_(nullptr),
   show_choose_new_master_option_(false),
-  panel_factory_(new PanelFactory(node_name)),
-  add_tool_action_(NULL),
-  remove_tool_menu_(NULL),
+  panel_factory_(nullptr),
+  add_tool_action_(nullptr),
+  remove_tool_menu_(nullptr),
   initialized_(false),
   geom_change_detector_(new WidgetGeometryChangeDetector(this)),
   loading_(false),
   post_load_timer_(new QTimer(this)),
-  frame_count_(0)
+  frame_count_(0),
+  node_name_(node_name)
 {
   setObjectName("VisualizationFrame");
   installEventFilter(geom_change_detector_);
@@ -141,7 +143,7 @@ VisualizationFrame::VisualizationFrame(const std::string & node_name, QWidget * 
   QDir splash_path(QString::fromStdString(package_path_) + "images/splash.png");
   splash_path_ = splash_path.absolutePath();
 
-  QToolButton * reset_button = new QToolButton();
+  auto * reset_button = new QToolButton();
   reset_button->setText("Reset");
   reset_button->setContentsMargins(0, 0, 0, 0);
   statusBar()->addPermanentWidget(reset_button, 0);
@@ -336,6 +338,7 @@ void VisualizationFrame::initialize(const QString & display_config_file)
   auto tf_listener = std::make_shared<tf2_ros::TransformListener>(*buffer);
   manager_ = new VisualizationManager(render_panel_, this, tf_listener, buffer, clock);
   manager_->setHelpPath(help_path_);
+  panel_factory_ = new PanelFactory(node_name_, manager_);
 
   // Periodically process events for the splash screen.
   if (app_) {app_->processEvents();}

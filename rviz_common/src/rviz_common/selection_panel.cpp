@@ -50,7 +50,7 @@ SelectionPanel::SelectionPanel(QWidget * parent)
 
 void SelectionPanel::onInitialize()
 {
-  tree_widget_->setModel(vis_manager_->getSelectionManager()->getPropertyModel());
+  tree_widget_->setModel(getDisplayContext()->getSelectionManager()->getPropertyModel());
 }
 
 }  // namespace rviz_common

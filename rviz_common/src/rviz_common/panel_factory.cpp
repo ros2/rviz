@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,12 +34,13 @@
 #include <string>
 
 // TODO(wjwwood): reenable the remaining panels
-#include "displays_panel.hpp"
+#include "./displays_panel.hpp"
 // #include "./help_panel.hpp"
-#include "selection_panel.hpp"
+#include "./selection_panel.hpp"
 // #include "./time_panel.hpp"
 #include "./tool_properties_panel.hpp"
 #include "./views_panel.hpp"
+#include "./visualization_manager.hpp"
 
 namespace rviz_common
 {
@@ -49,13 +51,13 @@ static Panel * newSelectionPanel() {return new SelectionPanel();}
 static Panel * newToolPropertiesPanel() {return new ToolPropertiesPanel();}
 static Panel * newViewsPanel() {return new ViewsPanel();}
 
-PanelFactory::PanelFactory(const std::string & node_name)
+PanelFactory::PanelFactory(const std::string & node_name, VisualizationManager * manager)
 : PluginlibFactory<Panel>("rviz_common", "rviz_common::Panel")
 {
   addBuiltInClass("rviz_common", "Displays",
     "Show and edit the list of Displays",
-    [&node_name]() -> Panel * {
-      return new DisplaysPanel(node_name, nullptr);
+    [&node_name, manager]() -> Panel * {
+      return new DisplaysPanel(node_name, manager, nullptr);
     });
   // addBuiltInClass("rviz_common", "Help",
   //   "Show the key and mouse bindings", &newHelpPanel);

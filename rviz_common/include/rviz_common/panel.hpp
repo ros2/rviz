@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,26 +39,25 @@
 namespace rviz_common
 {
 
-class VisualizationManager;
+class DisplayContext;
 
-class Panel : public QWidget
+class RVIZ_COMMON_PUBLIC Panel : public QWidget
 {
   Q_OBJECT
 
 public:
-  explicit Panel(QWidget * parent = 0);
-  virtual ~Panel();
+  explicit Panel(QWidget * parent = nullptr);
+  ~Panel() override;
 
-  /// Initialize the panel with a VisualizationManager.
+  /// Initialize the panel with a DisplayContext.
   /**
    * Called by VisualizationFrame during setup.
    */
-  void initialize(VisualizationManager * manager);
+  void initialize(DisplayContext * context);
 
   /// Override-able function to do initialization.
   /**
-   * Override to do initialization which depends on the VisualizationManager
-   * being available.
+   * Override to do initialization which depends on the DisplayContext being available.
    * The default implementation does nothing.
    */
   virtual void onInitialize();
@@ -110,9 +110,10 @@ Q_SIGNALS:
   void configChanged();
 
 protected:
-  VisualizationManager * vis_manager_;
+  DisplayContext * getDisplayContext() const;
 
 private:
+  DisplayContext * context_;
   QString class_id_;
   QString name_;
   QString description_;

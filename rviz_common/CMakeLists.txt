@@ -80,7 +80,7 @@ set(rviz_common_headers_to_moc
   include/rviz_common/frame_manager_iface.hpp
   src/rviz_common/loading_dialog.hpp
   src/rviz_common/new_object_dialog.hpp
-  src/rviz_common/panel.hpp
+  include/rviz_common/panel.hpp
   include/rviz_common/panel_dock_widget.hpp
   include/rviz_common/properties/bool_property.hpp
   include/rviz_common/properties/color_editor.hpp

@@ -30,7 +30,7 @@
 #ifndef RVIZ_COMMON__SELECTION_PANEL_HPP_
 #define RVIZ_COMMON__SELECTION_PANEL_HPP_
 
-#include "panel.hpp"
+#include "rviz_common/panel.hpp"
 
 namespace rviz_common
 {

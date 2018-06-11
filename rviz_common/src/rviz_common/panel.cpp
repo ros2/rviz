@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2011, Willow Garage, Inc.
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,25 +29,22 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <cstdio>
-
-#include "./panel.hpp"
+#include "rviz_common/panel.hpp"
+#include "rviz_common/display_context.hpp"
 
 namespace rviz_common
 {
 
 Panel::Panel(QWidget * parent)
-: QWidget(parent), vis_manager_(nullptr)
+: QWidget(parent), context_(nullptr)
 {
 }
 
-Panel::~Panel()
-{
-}
+Panel::~Panel() = default;
 
-void Panel::initialize(VisualizationManager * manager)
+void Panel::initialize(DisplayContext * context)
 {
-  vis_manager_ = manager;
+  context_ = context;
   onInitialize();
 }
 
@@ -94,6 +92,11 @@ void Panel::load(const Config & config)
   if (config.mapGetString("Name", &name)) {
     setName(name);
   }
+}
+
+DisplayContext * Panel::getDisplayContext() const
+{
+  return context_;
 }
 
 }  // namespace rviz_common

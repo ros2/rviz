@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,7 +44,6 @@
 
 #include "rviz_common/config.hpp"
 #include "rviz_rendering/render_window.hpp"
-// #include "./panel.hpp"
 #include "rviz_common/window_manager_interface.hpp"
 
 class QAction;
@@ -85,7 +85,7 @@ class VisualizationFrame : public QMainWindow, public WindowManagerInterface
 
 public:
   explicit VisualizationFrame(const std::string & node_name, QWidget * parent = 0);
-  ~VisualizationFrame();
+  ~VisualizationFrame() override;
 
   rviz_rendering::RenderWindow * getRenderWindow();
 
@@ -526,6 +526,8 @@ protected:
 
   /// Indicates if the toolbar should be visible outside of fullscreen mode.
   bool toolbar_visible_;
+
+  std::string node_name_;
 };
 
 }  // namespace rviz_common
