@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,7 +32,6 @@
 #define RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__FOLLOWER__THIRD_PERSON_FOLLOWER_VIEW_CONTROLLER_HPP_
 
 #include <OgreVector3.h>
-#include <OgreRay.h>
 
 #include "rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller.hpp"
 
@@ -41,7 +41,7 @@ namespace view_controllers
 {
 
 /**
- * \brief Like the orbit view controller, but focal point moves only in the x-y plane.
+ * \brief Like the XY orbit view controller, but turns when the target frame yaws.
  */
 class ThirdPersonFollowerViewController : public XYOrbitViewController
 {

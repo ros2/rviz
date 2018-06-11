@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,8 +30,6 @@
 
 #include "rviz_default_plugins/view_controllers/follower/third_person_follower_view_controller.hpp"
 
-#include <cstdint>
-
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -40,13 +39,8 @@
 # pragma warning(disable : 4996)
 #endif
 
-#include <OgreCamera.h>
-#include <OgrePlane.h>
 #include <OgreQuaternion.h>
-#include <OgreRay.h>
 #include <OgreSceneNode.h>
-#include <OgreVector3.h>
-#include <OgreViewport.h>
 #include <OgreMath.h>
 
 #ifndef _WIN32
@@ -56,10 +50,6 @@
 #endif
 
 #include "rviz_common/display_context.hpp"
-#include "rviz_rendering/objects/shape.hpp"
-#include "rviz_common/properties/float_property.hpp"
-#include "rviz_common/properties/vector_property.hpp"
-#include "rviz_common/viewport_mouse_event.hpp"
 
 namespace rviz_default_plugins
 {
