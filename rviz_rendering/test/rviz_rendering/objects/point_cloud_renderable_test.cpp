@@ -33,20 +33,7 @@
 #include <memory>
 #include <vector>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# ifdef __clang__
-#  pragma clang diagnostic ignored "-Wextra-semi"
-#  pragma clang diagnostic ignored "-Wkeyword-macro"
-# endif
-# pragma GCC diagnostic ignored "-Wpedantic"
-#endif
-
 #include <OgreCamera.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #include "rviz_rendering/objects/point_cloud.hpp"
 #include "rviz_rendering/objects/point_cloud_renderable.hpp"

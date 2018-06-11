@@ -28,23 +28,24 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "robot_link.hpp"
+#include "rviz_default_plugins/robot/robot_link.hpp"
 
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#else
-#pragma warning(push)
-#pragma warning(disable : 4996)
+#ifdef _WIN32
+# pragma warning(push)
+# pragma warning(disable:4996)
 #endif
 
 #include <OgreEntity.h>
+
+#ifdef _WIN32
+# pragma warning(pop)
+#endif
+
 #include <OgreMaterial.h>
 #include <OgreMaterialManager.h>
 #include <OgreRibbonTrail.h>
@@ -55,18 +56,12 @@
 #include <OgreSharedPtr.h>
 #include <OgreTechnique.h>
 
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#else
-# pragma warning(pop)
-#endif
-
-#include <QFileInfo>
+#include <QFileInfo>  // NOLINT cpplint cannot handle include order here
 
 #include "resource_retriever/retriever.h"
 
-#include "robot_joint.hpp"
-#include "robot.hpp"
+#include "rviz_default_plugins/robot/robot_joint.hpp"
+#include "rviz_default_plugins/robot/robot.hpp"
 
 #include "rviz_rendering/mesh_loader.hpp"
 #include "rviz_rendering/objects/axes.hpp"

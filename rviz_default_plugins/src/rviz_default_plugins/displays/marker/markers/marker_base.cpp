@@ -28,36 +28,31 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "marker_base.hpp"
+#include "rviz_default_plugins/displays/marker/markers/marker_base.hpp"
 
 #include <memory>
 #include <string>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#else
+#ifdef _WIN32
 # pragma warning(push)
-# pragma warning(disable : 4996)
+# pragma warning(disable:4996)
+#endif
+
+#include <OgreEntity.h>
+#include <OgreSubEntity.h>
+
+#ifdef _WIN32
+# pragma warning(pop)
 #endif
 
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
-#include <OgreEntity.h>
-#include <OgreSubEntity.h>
 #include <OgreSharedPtr.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#else
-# pragma warning(pop)
-#endif
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "../marker_display.hpp"
-#include "marker_selection_handler.hpp"
+#include "rviz_default_plugins/displays/marker/marker_display.hpp"
+#include "rviz_default_plugins/displays/marker/markers/marker_selection_handler.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/properties/status_property.hpp"

@@ -40,17 +40,16 @@
 
 #include "visualization_msgs/msg/marker.hpp"
 
-#include "../../../../src/rviz_default_plugins/displays/marker/marker_display.hpp"
-#include "src/rviz_default_plugins/displays/marker/markers/marker_factory.hpp"
-#include "src/rviz_default_plugins/displays/marker/markers/arrow_marker.hpp"
-#include "src/rviz_default_plugins/displays/marker/markers/shape_marker.hpp"
-#include "src/rviz_default_plugins/displays/marker/markers/line_strip_marker.hpp"
-#include "src/rviz_default_plugins/displays/marker/markers/line_list_marker.hpp"
-#include "src/rviz_default_plugins/displays/marker/markers/points_marker.hpp"
-#include \
-  "src/rviz_default_plugins/displays/marker/markers/text_view_facing_marker.hpp"
-#include "src/rviz_default_plugins/displays/marker/markers/mesh_resource_marker.hpp"
-#include "src/rviz_default_plugins/displays/marker/markers/triangle_list_marker.hpp"
+#include "rviz_default_plugins/displays/marker/marker_display.hpp"
+#include "rviz_default_plugins/displays/marker/markers/marker_factory.hpp"
+#include "rviz_default_plugins/displays/marker/markers/arrow_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/shape_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/line_strip_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/line_list_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/points_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/text_view_facing_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/mesh_resource_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/triangle_list_marker.hpp"
 
 #include "marker_messages.hpp"
 #include "../display_test_fixture.hpp"

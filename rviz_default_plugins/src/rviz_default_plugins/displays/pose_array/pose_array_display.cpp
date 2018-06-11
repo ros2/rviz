@@ -28,29 +28,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "pose_array_display.hpp"
+#include "rviz_default_plugins/displays/pose_array/pose_array_display.hpp"
 
 #include <memory>
 #include <string>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#else
-# pragma warning(push)
-# pragma warning(disable : 4996)
-#endif
-
 #include <OgreManualObject.h>
 #include <OgreMaterialManager.h>
 #include <OgreTechnique.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#else
-# pragma warning(pop)
-#endif
 
 #include "rviz_common/logging.hpp"
 #include "rviz_common/properties/enum_property.hpp"
@@ -60,6 +45,8 @@
 
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/axes.hpp"
+
+#include "rviz_default_plugins/displays/pose_array/flat_arrows_array.hpp"
 
 namespace rviz_default_plugins
 {

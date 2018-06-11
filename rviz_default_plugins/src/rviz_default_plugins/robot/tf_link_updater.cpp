@@ -28,18 +28,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "tf_link_updater.hpp"
+#include "rviz_default_plugins/robot/tf_link_updater.hpp"
 
 #include <string>
 
-#ifdef __clang__
-# pragma clang diagnostic push
-# pragma clang diagnostic ignored "-Wkeyword-macro"
-#endif
 #include <OgreVector3.h>
-#ifdef __clang__
-# pragma clang diagnostic pop
-#endif
 
 #include "rviz_common/frame_manager_iface.hpp"
 

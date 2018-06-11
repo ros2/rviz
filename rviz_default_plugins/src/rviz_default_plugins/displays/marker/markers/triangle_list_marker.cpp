@@ -28,18 +28,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "triangle_list_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/triangle_list_marker.hpp"
 
 #include <vector>
-
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#else
-# pragma warning(push)
-# pragma warning(disable : 4996)
-#endif
 
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
@@ -48,14 +39,8 @@
 #include <OgreTextureManager.h>
 #include <OgreTechnique.h>
 
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#else
-# pragma warning(pop)
-#endif
-
-#include "marker_selection_handler.hpp"
-#include "../marker_display.hpp"
+#include "rviz_default_plugins/displays/marker/markers/marker_selection_handler.hpp"
+#include "rviz_default_plugins/displays/marker/marker_display.hpp"
 #include "rviz_common/properties/status_property.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
 #include "rviz_common/display_context.hpp"

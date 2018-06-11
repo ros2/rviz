@@ -38,7 +38,7 @@
 
 #include "rviz_common/tool.hpp"
 
-#include "../../../../src/rviz_default_plugins/tools/measure/measure_tool.hpp"
+#include "rviz_default_plugins/tools/measure/measure_tool.hpp"
 
 #include "../tool_test_fixture.hpp"
 #include "../../displays/display_test_fixture.hpp"

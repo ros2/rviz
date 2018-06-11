@@ -32,20 +32,8 @@
 
 #include <string>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wpedantic"
-# ifdef __clang__
-#  pragma clang diagnostic ignored "-Wextra-semi"
-# endif
-#endif
-
 #include <OgreLogManager.h>
 #include <OgreRenderWindow.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #include "rviz_rendering/visibility_control.hpp"
 

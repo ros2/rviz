@@ -51,29 +51,37 @@ find_package(visualization_msgs REQUIRED)
 
 # These need to be added in the add_library() call so AUTOMOC detects them.
 set(rviz_default_plugins_headers_to_moc
-  src/rviz_default_plugins/displays/camera/camera_display.hpp
-  src/rviz_default_plugins/displays/grid/grid_display.hpp
-  src/rviz_default_plugins/displays/image/image_display.hpp
-  src/rviz_default_plugins/displays/laser_scan/laser_scan_display.hpp
-  src/rviz_default_plugins/displays/marker/marker_display.hpp
-  src/rviz_default_plugins/displays/path/path_display.hpp
-  src/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp
-  src/rviz_default_plugins/displays/pointcloud/point_cloud_display.hpp
-  src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp
-  src/rviz_default_plugins/displays/pointcloud/point_cloud_transformer.hpp
-  src/rviz_default_plugins/displays/pointcloud/point_cloud_transformer_factory.hpp
-  src/rviz_default_plugins/displays/pointcloud/point_cloud_helpers.hpp
-  src/rviz_default_plugins/displays/polygon/polygon_display.hpp
-  src/rviz_default_plugins/displays/pose/pose_display.hpp
-  src/rviz_default_plugins/displays/pose_array/pose_array_display.hpp
-  src/rviz_default_plugins/displays/robot_model/robot_model_display.hpp
-  src/rviz_default_plugins/displays/tf/frame_info.hpp
-  src/rviz_default_plugins/displays/tf/tf_display.hpp
-  src/rviz_default_plugins/robot/robot.hpp
-  src/rviz_default_plugins/robot/robot_joint.hpp
-  src/rviz_default_plugins/robot/robot_link.hpp
-  src/rviz_default_plugins/robot/robot_element_base_class.hpp
-  src/rviz_default_plugins/tools/measure/measure_tool.hpp
+  include/rviz_default_plugins/displays/camera/camera_display.hpp
+  include/rviz_default_plugins/displays/grid/grid_display.hpp
+  include/rviz_default_plugins/displays/image/image_display.hpp
+  include/rviz_default_plugins/displays/laser_scan/laser_scan_display.hpp
+  include/rviz_default_plugins/displays/marker/marker_display.hpp
+  include/rviz_default_plugins/displays/path/path_display.hpp
+  include/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp
+  include/rviz_default_plugins/displays/pointcloud/point_cloud_display.hpp
+  include/rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp
+  include/rviz_default_plugins/displays/pointcloud/point_cloud_transformer.hpp
+  include/rviz_default_plugins/displays/pointcloud/point_cloud_transformer_factory.hpp
+  include/rviz_default_plugins/displays/pointcloud/point_cloud_helpers.hpp
+  include/rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.hpp
+  include/rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.hpp
+  include/rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.hpp
+  include/rviz_default_plugins/displays/pointcloud/transformers/rgb8_pc_transformer.hpp
+  include/rviz_default_plugins/displays/pointcloud/transformers/rgbf32_pc_transformer.hpp
+  include/rviz_default_plugins/displays/polygon/polygon_display.hpp
+  include/rviz_default_plugins/displays/pose/pose_display.hpp
+  include/rviz_default_plugins/displays/pose_array/pose_array_display.hpp
+  include/rviz_default_plugins/displays/robot_model/robot_model_display.hpp
+  include/rviz_default_plugins/displays/tf/frame_info.hpp
+  include/rviz_default_plugins/displays/tf/tf_display.hpp
+  include/rviz_default_plugins/robot/robot.hpp
+  include/rviz_default_plugins/robot/robot_joint.hpp
+  include/rviz_default_plugins/robot/robot_link.hpp
+  include/rviz_default_plugins/robot/robot_element_base_class.hpp
+  include/rviz_default_plugins/tools/measure/measure_tool.hpp
+  include/rviz_default_plugins/tools/point/point_tool.hpp
+  include/rviz_default_plugins/view_controllers/orbit/orbit_view_controller.hpp
+  include/rviz_default_plugins/view_controllers/ortho/fixed_orientation_ortho_view_controller.hpp
 )
 
 set(rviz_default_plugins_source_files
@@ -130,16 +138,17 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/view_controllers/ortho/fixed_orientation_ortho_view_controller.cpp
 )
 
-add_library(rviz_default_plugins_object OBJECT
+add_library(rviz_default_plugins SHARED
   ${rviz_default_plugins_headers_to_moc}
   ${rviz_default_plugins_source_files}
 )
+
 # prevent pluginlib from using boost
-target_compile_definitions(rviz_default_plugins_object PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
+target_compile_definitions(rviz_default_plugins PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
 
-set_property(TARGET rviz_default_plugins_object PROPERTY POSITION_INDEPENDENT_CODE ON)
-
-target_include_directories(rviz_default_plugins_object PUBLIC
+target_include_directories(rviz_default_plugins PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
   ${rviz_rendering_INCLUDE_DIRS}
   ${rviz_common_INCLUDE_DIRS}
   ${laser_geometry_INCLUDE_DIRS}
@@ -152,29 +161,9 @@ target_include_directories(rviz_default_plugins_object PUBLIC
   ${visualization_msgs_INCLUDE_DIRS}
 )
 
-target_include_directories(rviz_default_plugins_object
-  PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
-
-add_library(rviz_default_plugins SHARED $<TARGET_OBJECTS:rviz_default_plugins_object>)
-add_library(rviz_default_plugins_static STATIC $<TARGET_OBJECTS:rviz_default_plugins_object>)
-
 # Causes the visibility macros to use dllexport rather than dllimport,
 # which is appropriate when building the dll but not consuming it.
 target_compile_definitions(rviz_default_plugins PRIVATE "RVIZ_DEFAULT_PLUGINS_BUILDING_LIBRARY")
-
-target_include_directories(rviz_default_plugins
-  PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-)
-
-target_include_directories(rviz_default_plugins_static
-  PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
 
 target_link_libraries(rviz_default_plugins
   laser_geometry::laser_geometry
@@ -253,8 +242,6 @@ if(BUILD_TESTING)
 
     set(TEST_INCLUDE_DIRS
       ${urdf_INCLUDE_DIRS}
-      ${rviz_common_INCLUDE_DIRS}
-      ${rviz_rendering_INCLUDE_DIRS}
       ${OGRE_INCLUDE_DIRS}
       ${rclcpp_INCLUDE_DIRS}
       ${nav_msgs_INCLUDE_DIRS}
@@ -264,7 +251,7 @@ if(BUILD_TESTING)
     )
 
     set(TEST_LINK_LIBRARIES
-      rviz_default_plugins_static
+      rviz_default_plugins
       ${rclcpp_LIBRARIES}
       ${nav_msgs_LIBRARIES}
       ${visualization_msgs_LIBRARIES}

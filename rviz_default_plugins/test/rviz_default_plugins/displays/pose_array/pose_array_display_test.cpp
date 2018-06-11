@@ -35,11 +35,7 @@
 #include <memory>
 #include <vector>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#else
+#ifdef _WIN32
 #pragma warning(push)
 #pragma warning(disable : 4996)
 #endif
@@ -48,15 +44,13 @@
 #include <OgreEntity.h>
 #include <OgreManualObject.h>
 
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#else
+#ifdef _WIN32
 # pragma warning(pop)
 #endif
 
 #include "rviz_common/properties/float_property.hpp"
 
-#include "../../../../src/rviz_default_plugins/displays/pose_array/pose_array_display.hpp"
+#include "rviz_default_plugins/displays/pose_array/pose_array_display.hpp"
 
 #include "../display_test_fixture.hpp"
 #include "../../scene_graph_introspection.hpp"

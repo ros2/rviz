@@ -29,14 +29,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./point_cloud_transformer_factory.hpp"
+#include "rviz_default_plugins/displays/pointcloud/point_cloud_transformer_factory.hpp"
 
-#include "./transformers/xyz_pc_transformer.hpp"
-#include "./transformers/intensity_pc_transformer.hpp"
-#include "./transformers/rgb8_pc_transformer.hpp"
-#include "./transformers/rgbf32_pc_transformer.hpp"
-#include "./transformers/axis_color_pc_transformer.hpp"
-#include "./transformers/flat_color_pc_transformer.hpp"
+#include "rviz_default_plugins/displays/pointcloud/transformers/xyz_pc_transformer.hpp"
+#include "rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.hpp"
+#include "rviz_default_plugins/displays/pointcloud/transformers/rgb8_pc_transformer.hpp"
+#include "rviz_default_plugins/displays/pointcloud/transformers/rgbf32_pc_transformer.hpp"
+#include "rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.hpp"
+#include "rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.hpp"
 
 namespace rviz_default_plugins
 {

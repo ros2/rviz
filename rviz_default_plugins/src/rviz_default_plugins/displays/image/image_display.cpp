@@ -32,11 +32,6 @@
 #include <string>
 #include <utility>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#endif
 #include <OgreCamera.h>
 #include <OgreManualObject.h>
 #include <OgreMaterialManager.h>
@@ -48,9 +43,6 @@
 #include <OgreTechnique.h>
 #include <OgreTextureManager.h>
 #include <OgreViewport.h>
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #include "sensor_msgs/image_encodings.hpp"
 
@@ -61,12 +53,17 @@
 #include "rviz_common/uniform_string_stream.hpp"
 #include "rviz_rendering/render_window.hpp"
 
-#include "image_display.hpp"
+#include "rviz_default_plugins/displays/image/ros_image_texture.hpp"
+#include "rviz_default_plugins/displays/image/image_display.hpp"
+#include "rviz_default_plugins/displays/image/ros_image_texture_iface.hpp"
 
 namespace rviz_default_plugins
 {
 namespace displays
 {
+
+ImageDisplay::ImageDisplay()
+: ImageDisplay(std::make_unique<ROSImageTexture>()) {}
 
 ImageDisplay::ImageDisplay(std::unique_ptr<ROSImageTextureIface> texture)
 : queue_size_property_(std::make_unique<rviz_common::QueueSizeProperty>(this, 10)),

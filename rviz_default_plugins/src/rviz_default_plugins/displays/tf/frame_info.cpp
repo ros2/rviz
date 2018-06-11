@@ -28,19 +28,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "frame_info.hpp"
+#include "include/rviz_default_plugins/displays/tf/frame_info.hpp"
 
 #include <algorithm>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#endif
 #include <OgreSceneNode.h>
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/axes.hpp"
@@ -48,7 +40,7 @@
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/properties/quaternion_property.hpp"
-#include "frame_selection_handler.hpp"
+#include "include/rviz_default_plugins/displays/tf/frame_selection_handler.hpp"
 
 namespace rviz_default_plugins
 {

@@ -27,16 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "selection_tool.hpp"
-
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#else
-#pragma warning(push)
-#pragma warning(disable : 4996)
-#endif
+#include "rviz_default_plugins/tools/select/selection_tool.hpp"
 
 #include <OgreRay.h>
 #include <OgreSceneManager.h>
@@ -49,15 +40,9 @@
 #include <OgreTexture.h>
 #include <OgreTextureManager.h>
 
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#else
-# pragma warning(pop)
-#endif
-
 #include <QKeyEvent>  // NOLINT cpplint cannot handle include order
 
-#include "../move/move_tool.hpp"
+#include "rviz_default_plugins/tools/move/move_tool.hpp"
 
 #include "rviz_common/interaction/selection_manager.hpp"
 #include "rviz_common/display_context.hpp"

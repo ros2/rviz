@@ -37,35 +37,26 @@
 #include <string>
 #include <utility>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-
 #include <OgreRenderWindow.h>
 #include <OgreMeshManager.h>
 #include <OgreMaterialManager.h>
 
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
-
-#include <QApplication>
-#include <QCloseEvent>
-#include <QDesktopServices>
-#include <QDir>
-#include <QFile>
-#include <QFileDialog>
-#include <QHBoxLayout>
-#include <QMenu>
-#include <QMenuBar>
-#include <QMessageBox>
-#include <QShortcut>
-#include <QSplashScreen>
-#include <QStatusBar>
-#include <QTimer>
-#include <QToolBar>
-#include <QToolButton>
+#include <QApplication>  // NOLINT cpplint cannot handle include order here
+#include <QCloseEvent>  // NOLINT cpplint cannot handle include order here
+#include <QDesktopServices>  // NOLINT cpplint cannot handle include order here
+#include <QDir>  // NOLINT cpplint cannot handle include order here
+#include <QFile>  // NOLINT cpplint cannot handle include order here
+#include <QFileDialog>  // NOLINT cpplint cannot handle include order here
+#include <QHBoxLayout>  // NOLINT cpplint cannot handle include order here
+#include <QMenu>  // NOLINT cpplint cannot handle include order here
+#include <QMenuBar>  // NOLINT cpplint cannot handle include order here
+#include <QMessageBox>  // NOLINT cpplint cannot handle include order here
+#include <QShortcut>  // NOLINT cpplint cannot handle include order here
+#include <QSplashScreen>  // NOLINT cpplint cannot handle include order here
+#include <QStatusBar>  // NOLINT cpplint cannot handle include order here
+#include <QTimer>  // NOLINT cpplint cannot handle include order here
+#include <QToolBar>  // NOLINT cpplint cannot handle include order here
+#include <QToolButton>  // NOLINT cpplint cannot handle include order here
 
 #include "rclcpp/clock.hpp"
 #include "tf2_ros/buffer.h"

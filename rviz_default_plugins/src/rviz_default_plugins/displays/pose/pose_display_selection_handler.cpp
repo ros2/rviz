@@ -28,22 +28,16 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "pose_display_selection_handler.hpp"
+#include "rviz_default_plugins/displays/pose/pose_display_selection_handler.hpp"
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#else
-#pragma warning(push)
-#pragma warning(disable : 4996)
+#ifdef _WIN32
+# pragma warning(push)
+# pragma warning(disable:4996)
 #endif
 
 #include <OgreEntity.h>
 
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#else
+#ifdef _WIN32
 # pragma warning(pop)
 #endif
 
@@ -56,7 +50,7 @@
 #include "rviz_common/properties/quaternion_property.hpp"
 #include "rviz_common/properties/enum_property.hpp"
 #include "rviz_common/display_context.hpp"
-#include "pose_display.hpp"
+#include "rviz_default_plugins/displays/pose/pose_display.hpp"
 
 namespace rviz_default_plugins
 {

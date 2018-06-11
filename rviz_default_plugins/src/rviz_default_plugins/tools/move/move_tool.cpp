@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./move_tool.hpp"
+#include "rviz_default_plugins/tools/move/move_tool.hpp"
 
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/load_resource.hpp"

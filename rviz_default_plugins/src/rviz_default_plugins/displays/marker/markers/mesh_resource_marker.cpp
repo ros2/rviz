@@ -28,35 +28,30 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "mesh_resource_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/mesh_resource_marker.hpp"
 
 #include <string>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#else
+#ifdef _WIN32
 # pragma warning(push)
-# pragma warning(disable : 4996)
+# pragma warning(disable:4996)
 #endif
 
 #include <OgreEntity.h>
-#include <OgreMaterialManager.h>
-#include <OgreSceneNode.h>
-#include <OgreSceneManager.h>
 #include <OgreSubEntity.h>
-#include <OgreTechnique.h>
-#include <OgreTextureManager.h>
 
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#else
+#ifdef _WIN32
 # pragma warning(pop)
 #endif
 
-#include "../marker_display.hpp"
-#include "marker_selection_handler.hpp"
+#include <OgreMaterialManager.h>
+#include <OgreSceneNode.h>
+#include <OgreSceneManager.h>
+#include <OgreTechnique.h>
+#include <OgreTextureManager.h>
+
+#include "rviz_default_plugins/displays/marker/marker_display.hpp"
+#include "rviz_default_plugins/displays/marker/markers/marker_selection_handler.hpp"
 #include "rviz_rendering/mesh_loader.hpp"
 
 namespace rviz_default_plugins

@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "point_cloud_to_point_cloud2.hpp"
+#include "rviz_default_plugins/displays/pointcloud/point_cloud_to_point_cloud2.hpp"
 
 #include <memory>
 

@@ -27,25 +27,16 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "point_cloud_selection_handler.hpp"
+#include "rviz_default_plugins/displays/pointcloud/point_cloud_selection_handler.hpp"
 
 #include <memory>
 #include <set>
 #include <string>
 #include <utility>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#endif
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 #include <OgreWireBoundingBox.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #include "rviz_rendering/objects/point_cloud.hpp"
 #include "rviz_common/display.hpp"
@@ -56,8 +47,8 @@
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
 
-#include "./point_cloud_helpers.hpp"
-#include "./point_cloud_common.hpp"
+#include "rviz_default_plugins/displays/pointcloud/point_cloud_helpers.hpp"
+#include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
 
 namespace rviz_default_plugins
 {

@@ -28,15 +28,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./orbit_view_controller.hpp"
+#include "rviz_default_plugins/view_controllers/orbit/orbit_view_controller.hpp"
 
 #include <cstdint>
-
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#endif
 
 #include <OgreCamera.h>
 #include <OgreQuaternion.h>
@@ -44,10 +38,6 @@
 #include <OgreSceneNode.h>
 #include <OgreVector3.h>
 #include <OgreViewport.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/viewport_mouse_event.hpp"

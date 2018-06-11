@@ -52,7 +52,7 @@
 #include "rviz_rendering/objects/shape.hpp"
 #include "../../scene_graph_introspection.hpp"
 
-#include "../../../../src/rviz_default_plugins/displays/path/path_display.hpp"
+#include "rviz_default_plugins/displays/path/path_display.hpp"
 
 #include "../display_test_fixture.hpp"
 

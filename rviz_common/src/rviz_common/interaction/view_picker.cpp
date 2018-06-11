@@ -35,11 +35,6 @@
 #include <string>
 #include <vector>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-
 #include <OgreCamera.h>
 #include <OgreHardwarePixelBuffer.h>
 #include <OgreRectangle2D.h>
@@ -48,10 +43,6 @@
 #include <OgreSceneNode.h>
 #include <OgreTextureManager.h>
 #include <OgreViewport.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #include "rviz_common/logging.hpp"
 

@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "tf_display.hpp"
+#include "rviz_default_plugins/displays/tf/tf_display.hpp"
 
 #include <algorithm>
 #include <cassert>
@@ -38,16 +38,8 @@
 #include <vector>
 #include <utility>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#endif
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #include "tf2_ros/transform_listener.h"
 
@@ -65,8 +57,8 @@
 #include "rviz_common/interaction/forwards.hpp"
 #include "rviz_common/interaction/selection_manager.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
-#include "frame_info.hpp"
-#include "frame_selection_handler.hpp"
+#include "include/rviz_default_plugins/displays/tf/frame_info.hpp"
+#include "include/rviz_default_plugins/displays/tf/frame_selection_handler.hpp"
 
 using rviz_common::interaction::SelectionHandler;
 using rviz_common::properties::BoolProperty;

@@ -30,7 +30,7 @@
 #include <algorithm>
 #include <string>
 
-#include "./intensity_pc_transformer.hpp"
+#include "rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.hpp"
 
 namespace rviz_default_plugins
 {

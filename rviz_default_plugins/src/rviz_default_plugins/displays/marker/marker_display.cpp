@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "marker_display.hpp"
+#include "rviz_default_plugins/displays/marker/marker_display.hpp"
 
 #include <memory>
 #include <string>
@@ -43,15 +43,15 @@
 #include "rviz_common/properties/queue_size_property.hpp"
 #include "rviz_common/validate_floats.hpp"
 
-#include "markers/arrow_marker.hpp"
-#include "markers/line_list_marker.hpp"
-#include "markers/line_strip_marker.hpp"
-#include "markers/mesh_resource_marker.hpp"
-#include "markers/points_marker.hpp"
-#include "markers/shape_marker.hpp"
-#include "markers/text_view_facing_marker.hpp"
-#include "markers/triangle_list_marker.hpp"
-#include "markers/marker_factory.hpp"
+#include "rviz_default_plugins/displays/marker/markers/arrow_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/line_list_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/line_strip_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/mesh_resource_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/points_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/shape_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/text_view_facing_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/triangle_list_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/marker_factory.hpp"
 
 namespace rviz_default_plugins
 {

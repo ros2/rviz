@@ -48,7 +48,7 @@
 
 #include "test/rviz_rendering/ogre_testing_environment.hpp"
 
-#include "../../../../src/rviz_default_plugins/displays/image/ros_image_texture.hpp"
+#include "include/rviz_default_plugins/displays/image/ros_image_texture.hpp"
 
 using namespace rviz_default_plugins::displays;  // NOLINT
 

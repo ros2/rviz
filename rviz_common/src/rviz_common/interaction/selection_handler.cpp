@@ -30,11 +30,6 @@
 
 #include "rviz_common/interaction/selection_handler.hpp"
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-
 #ifdef _WIN32
 # pragma warning(push)
 # pragma warning(disable : 4996)
@@ -45,16 +40,13 @@
 #ifdef _WIN32
 # pragma warning(pop)
 #endif
+
 #include <OgreManualObject.h>
 #include <OgreMaterialManager.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 #include <OgreSubEntity.h>
 #include <OgreWireBoundingBox.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #include <cassert>
 #include <string>

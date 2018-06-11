@@ -41,8 +41,8 @@
 #include "rviz_rendering/objects/arrow.hpp"
 #include "../../../scene_graph_introspection.hpp"
 
-#include "../../../../../src/rviz_default_plugins/displays/marker/markers/line_list_marker.hpp"
-#include "../../../../../src/rviz_default_plugins/displays/marker/markers/line_strip_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/line_list_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/line_strip_marker.hpp"
 
 #include "markers_test_fixture.hpp"
 #include "../marker_messages.hpp"

@@ -33,7 +33,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "../../../../src/rviz_default_plugins/displays/image/ros_image_texture_iface.hpp"
+#include "rviz_default_plugins/displays/image/ros_image_texture_iface.hpp"
 
 class MockROSImageTexture : public rviz_default_plugins::displays::ROSImageTextureIface
 {

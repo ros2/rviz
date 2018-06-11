@@ -27,40 +27,31 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "robot_model_display.hpp"
+#include "rviz_default_plugins/displays/robot_model/robot_model_display.hpp"
 
 #include <memory>
 #include <string>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#endif
-
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
-
-#include <QFile>
+#include <QFile>  // NOLINT cpplint cannot handle include order here
 
 // TODO(Martin-Idel-SI): Upgrade to tinyxml2 once supported by urdf
-#include <tinyxml.h>
+#include <tinyxml.h>  // NOLINT cpplint cannot handle include order here
 #include "urdf/model.h"
 
 #include "tf2_ros/transform_listener.h"
 
-#include "../../robot/robot.hpp"
-#include "../../robot/tf_link_updater.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/properties/enum_property.hpp"
 #include "rviz_common/properties/file_picker_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/properties/string_property.hpp"
+
+#include "rviz_default_plugins/robot/robot.hpp"
+#include "rviz_default_plugins/robot/tf_link_updater.hpp"
 
 namespace rviz_default_plugins
 {

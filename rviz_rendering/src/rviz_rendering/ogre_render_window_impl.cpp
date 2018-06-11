@@ -33,21 +33,18 @@
 #include <cstdlib>
 #include <functional>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# ifdef __clang__
-#   pragma clang diagnostic ignored "-Wextra-semi"
-# else
-#  pragma GCC diagnostic ignored "-Wpedantic"
-# endif
-#else
+#ifdef _WIN32
 # pragma warning(push)
 # pragma warning(disable:4996)
 #endif
 
-#include <OgreCamera.h>
 #include <OgreEntity.h>
+
+#ifdef _WIN32
+# pragma warning(pop)
+#endif
+
+#include <OgreCamera.h>
 #include <OgreGpuProgramManager.h>
 #include <OgreMaterialManager.h>
 #include <OgreRenderWindow.h>
@@ -58,14 +55,6 @@
 #include <OgreTextureManager.h>
 #include <OgreViewport.h>
 #include <OgreWindowEventUtilities.h>
-
-// #include <OgreRenderTargetListener.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#else
-# pragma warning(pop)
-#endif
 
 #include "rviz_rendering/orthographic.hpp"
 #include "./render_system.hpp"

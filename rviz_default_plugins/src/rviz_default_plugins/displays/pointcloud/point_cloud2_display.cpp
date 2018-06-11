@@ -27,23 +27,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "point_cloud2_display.hpp"
+#include "rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp"
 
 #include <memory>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#endif
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
-#include "point_cloud_common.hpp"
-#include "point_cloud_helpers.hpp"
+#include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
+#include "rviz_default_plugins/displays/pointcloud/point_cloud_helpers.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_rendering/objects/point_cloud.hpp"
