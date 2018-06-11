@@ -69,14 +69,12 @@ PoseTool::PoseTool()
   projection_finder_ = std::make_shared<rviz_rendering::ViewportProjectionFinder>();
 }
 
-PoseTool::~PoseTool()
-{
-  delete arrow_;
-}
+PoseTool::~PoseTool() = default;
 
 void PoseTool::onInitialize()
 {
-  arrow_ = new rviz_rendering::Arrow(scene_manager_, nullptr, 2.0f, 0.2f, 0.5f, 0.35f);
+  arrow_ = std::make_shared<rviz_rendering::Arrow>(
+    scene_manager_, nullptr, 2.0f, 0.2f, 0.5f, 0.35f);
   arrow_->setColor(0.0f, 1.0f, 0.0f, 1.0f);
   arrow_->getSceneNode()->setVisible(false);
 }
@@ -94,55 +92,81 @@ void PoseTool::deactivate()
 
 int PoseTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
 {
-  int flags = 0;
-
   auto point_projection_on_xy_plane = projection_finder_->getViewportPointProjectionOnXYPlane(
     event.panel->getRenderWindow(), event.x, event.y);
 
   if (event.leftDown()) {
-    assert(state_ == Position);
-    if (point_projection_on_xy_plane.first) {
-      pos_ = point_projection_on_xy_plane.second;
-      arrow_->setPosition(pos_);
-
-      state_ = Orientation;
-      flags |= Render;
-    }
+    return processeMouseLeftButtonPressed(point_projection_on_xy_plane);
   } else if (event.type == QEvent::MouseMove && event.left()) {
-    if (state_ == Orientation) {
-      // compute angle in x-y plane
-      if (point_projection_on_xy_plane.first) {
-        auto cur_pos = point_projection_on_xy_plane.second;
-        double angle = atan2(cur_pos.y - pos_.y, cur_pos.x - pos_.x);
-
-        arrow_->getSceneNode()->setVisible(true);
-
-        // we need base_orient, since the arrow goes along the -z axis by default
-        // (for historical reasons)
-        Ogre::Quaternion orient_x = Ogre::Quaternion(Ogre::Radian(-Ogre::Math::HALF_PI),
-            Ogre::Vector3::UNIT_Y);
-
-        arrow_->setOrientation(
-          Ogre::Quaternion(Ogre::Radian(angle), Ogre::Vector3::UNIT_Z) * orient_x);
-
-        flags |= Render;
-      }
-    }
+    return processMouseMoved(point_projection_on_xy_plane);
   } else if (event.leftUp()) {
-    if (state_ == Orientation) {
-      // compute angle in x-y plane
-      if (point_projection_on_xy_plane.first) {
-        auto cur_pos = point_projection_on_xy_plane.second;
-        double angle = atan2(cur_pos.y - pos_.y, cur_pos.x - pos_.x);
+    return processMouseLeftButtonReleased(point_projection_on_xy_plane);
+  }
 
-        onPoseSet(pos_.x, pos_.y, angle);
+  return 0;
+}
 
-        flags |= (Finished | Render);
-      }
+int PoseTool::processeMouseLeftButtonPressed(std::pair<bool, Ogre::Vector3> xy_plane_intersection)
+{
+  int flags = 0;
+  assert(state_ == Position);
+  if (xy_plane_intersection.first) {
+    arrow_position_ = xy_plane_intersection.second;
+    arrow_->setPosition(arrow_position_);
+
+    state_ = Orientation;
+    flags |= Render;
+  }
+  return flags;
+}
+
+int PoseTool::processMouseMoved(std::pair<bool, Ogre::Vector3> xy_plane_intersection)
+{
+  int flags = 0;
+  if (state_ == Orientation) {
+    // compute angle in x-y plane
+    if (xy_plane_intersection.first) {
+      double angle = calculateAngle(xy_plane_intersection.second, arrow_position_);
+      makeArrowVisibleAndSetOrientation(angle);
+
+      flags |= Render;
     }
   }
 
   return flags;
+}
+
+void PoseTool::makeArrowVisibleAndSetOrientation(double angle)
+{
+  arrow_->getSceneNode()->setVisible(true);
+
+  // we need base_orient, since the arrow goes along the -z axis by default
+  // (for historical reasons)
+  Ogre::Quaternion orient_x = Ogre::Quaternion(Ogre::Radian(-Ogre::Math::HALF_PI),
+      Ogre::Vector3::UNIT_Y);
+
+  arrow_->setOrientation(Ogre::Quaternion(Ogre::Radian(angle), Ogre::Vector3::UNIT_Z) * orient_x);
+}
+
+int PoseTool::processMouseLeftButtonReleased(std::pair<bool, Ogre::Vector3> xy_plane_intersection)
+{
+  int flags = 0;
+  if (state_ == Orientation) {
+    // compute angle in x-y plane
+    if (xy_plane_intersection.first) {
+      double angle = calculateAngle(xy_plane_intersection.second, arrow_position_);
+      onPoseSet(arrow_position_.x, arrow_position_.y, angle);
+
+      flags |= (Finished | Render);
+    }
+  }
+
+  return flags;
+}
+
+double PoseTool::calculateAngle(Ogre::Vector3 start_point, Ogre::Vector3 end_point)
+{
+  return atan2(start_point.y - end_point.y, start_point.x - end_point.x);
 }
 
 }  // namespace tools

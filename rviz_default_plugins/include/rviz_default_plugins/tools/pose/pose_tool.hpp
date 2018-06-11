@@ -31,6 +31,7 @@
 #define RVIZ_DEFAULT_PLUGINS__TOOLS__POSE__POSE_TOOL_HPP_
 
 #include <memory>
+#include <utility>
 
 #ifdef __clang__
 # pragma clang diagnostic push
@@ -62,20 +63,20 @@ class PoseTool : public rviz_common::Tool
 public:
   PoseTool();
 
-  virtual ~PoseTool();
+  ~PoseTool() override;
 
-  virtual void onInitialize();
+  void onInitialize() override;
 
-  virtual void activate();
+  void activate() override;
 
-  virtual void deactivate();
+  void deactivate() override;
 
-  virtual int processMouseEvent(rviz_common::ViewportMouseEvent & event);
+  int processMouseEvent(rviz_common::ViewportMouseEvent & event) override;
 
 protected:
   virtual void onPoseSet(double x, double y, double theta) = 0;
 
-  rviz_rendering::Arrow * arrow_;
+  std::shared_ptr<rviz_rendering::Arrow> arrow_;
 
   enum State
   {
@@ -84,8 +85,15 @@ protected:
   };
   State state_;
 
-  Ogre::Vector3 pos_;
+  Ogre::Vector3 arrow_position_;
   std::shared_ptr<rviz_rendering::ViewportProjectionFinder> projection_finder_;
+
+private:
+  int processeMouseLeftButtonPressed(std::pair<bool, Ogre::Vector3> xy_plane_intersection);
+  int processMouseMoved(std::pair<bool, Ogre::Vector3> xy_plane_intersection);
+  int processMouseLeftButtonReleased(std::pair<bool, Ogre::Vector3> xy_plane_intersection);
+  void makeArrowVisibleAndSetOrientation(double angle);
+  double calculateAngle(Ogre::Vector3 start_point, Ogre::Vector3 end_point);
 };
 
 }  // namespace tools
