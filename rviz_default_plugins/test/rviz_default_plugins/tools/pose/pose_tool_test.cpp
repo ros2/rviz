@@ -32,10 +32,12 @@
 #include <gmock/gmock.h>
 
 #include <memory>
+#include <utility>
 
-#include <OgreManualObject.h>
+#include <OgreVector3.h>
 
 #include "src/rviz_default_plugins/tools/pose/pose_tool.hpp"
+#include "rviz_rendering/viewport_projection_finder.hpp"
 
 #include "../tool_test_fixture.hpp"
 #include "../../displays/display_test_fixture.hpp"
@@ -44,21 +46,93 @@
 
 using namespace ::testing;  // NOLINT
 
+class MockProjectionFinder : public rviz_rendering::ViewportProjectionFinder
+{
+public:
+  std::pair<bool, Ogre::Vector3> getViewportPointProjectionOnXYPlane(
+    rviz_rendering::RenderWindow * render_window, int x, int y) override
+  {
+    (void) render_window;
+    return {true, Ogre::Vector3(x, y, 0)};
+  }
+};
+
+class MockPoseTool : public rviz_default_plugins::tools::PoseTool
+{
+public:
+  MockPoseTool()
+  : PoseTool()
+  {
+    projection_finder_ = std::make_shared<MockProjectionFinder>();
+  }
+
+  ~MockPoseTool() override = default;
+
+  void onPoseSet(double x, double y, double theta) override
+  {
+    (void) x;
+    (void) y;
+    (void) theta;
+  }
+};
+
 class PoseToolTestFixture : public ToolTestFixture, public DisplayTestFixture
 {
 public:
   PoseToolTestFixture()
   {
-    pose_tool_ = std::make_shared<rviz_default_plugins::tools::PoseTool>();
+    pose_tool_ = std::make_shared<MockPoseTool>();
     pose_tool_->initialize(context_.get());
+    pose_tool_->activate();
   }
 
-  std::shared_ptr<rviz_default_plugins::tools::PoseTool> pose_tool_;
+  std::shared_ptr<MockPoseTool> pose_tool_;
 };
 
-TEST_F(PoseToolTestFixture, prova) {
-  ASSERT_THAT(1, Eq(1));
+TEST_F(PoseToolTestFixture, onInitialize_sets_arrow_invisible_at_first) {
+  auto arrows = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
+
+  ASSERT_THAT(arrows, SizeIs(1));
+  EXPECT_FALSE(rviz_default_plugins::arrowIsVisible(arrows[0]));
 }
+
+TEST_F(PoseToolTestFixture, processMouseEvent_sets_arrow_position_correctly) {
+  auto left_click_event = generateMousePressEvent(10, 15);
+  pose_tool_->processMouseEvent(left_click_event);
+
+  auto arrows = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
+  ASSERT_THAT(arrows, SizeIs(1));
+  EXPECT_FALSE(rviz_default_plugins::arrowIsVisible(arrows[0]));
+  EXPECT_THAT(arrows[0]->getPosition(), Vector3Eq(Ogre::Vector3(10, 15, 0)));
+}
+
+TEST_F(PoseToolTestFixture,
+  processMouseEvent_sets_arrow_orientation_and_makes_it_visible_when_setting_the_orientation) {
+  auto left_click_event = generateMousePressEvent(10, 10);
+  auto move_mouse_event = generateMouseMoveWhileLeftClickedEvent(0, 0);
+  pose_tool_->processMouseEvent(left_click_event);
+  pose_tool_->processMouseEvent(move_mouse_event);
+
+  auto arrows = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
+  auto expected_orientation = Ogre::Quaternion(-0.270598f, -0.653282f, 0.270598f, -0.653282f);
+  ASSERT_THAT(arrows, SizeIs(1));
+  EXPECT_TRUE(rviz_default_plugins::arrowIsVisible(arrows[0]));
+  EXPECT_THAT(arrows[0]->getPosition(), Vector3Eq(Ogre::Vector3(10, 10, 0)));
+  EXPECT_THAT(arrows[0]->getOrientation(), QuaternionEq(expected_orientation));
+}
+
+TEST_F(PoseToolTestFixture, deactivate_makes_arrow_invisible) {
+  auto left_click_event = generateMousePressEvent(10, 10);
+  auto move_mouse_event = generateMouseMoveWhileLeftClickedEvent(0, 0);
+  pose_tool_->processMouseEvent(left_click_event);
+  pose_tool_->processMouseEvent(move_mouse_event);
+  pose_tool_->deactivate();
+
+  auto arrows = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
+  ASSERT_THAT(arrows, SizeIs(1));
+  EXPECT_FALSE(rviz_default_plugins::arrowIsVisible(arrows[0]));
+}
+
 
 int main(int argc, char ** argv)
 {

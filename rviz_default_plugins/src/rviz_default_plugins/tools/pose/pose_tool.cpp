@@ -29,6 +29,7 @@
 
 #include "rviz_default_plugins/tools/pose/pose_tool.hpp"
 
+#include <memory>
 #include <utility>
 
 #ifndef _WIN32
@@ -100,8 +101,7 @@ int PoseTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
 
   if (event.leftDown()) {
     assert(state_ == Position);
-    if (point_projection_on_xy_plane.first)
-    {
+    if (point_projection_on_xy_plane.first) {
       pos_ = point_projection_on_xy_plane.second;
       arrow_->setPosition(pos_);
 
@@ -111,8 +111,7 @@ int PoseTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
   } else if (event.type == QEvent::MouseMove && event.left()) {
     if (state_ == Orientation) {
       // compute angle in x-y plane
-      if (point_projection_on_xy_plane.first)
-      {
+      if (point_projection_on_xy_plane.first) {
         auto cur_pos = point_projection_on_xy_plane.second;
         double angle = atan2(cur_pos.y - pos_.y, cur_pos.x - pos_.x);
 
@@ -132,8 +131,7 @@ int PoseTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
   } else if (event.leftUp()) {
     if (state_ == Orientation) {
       // compute angle in x-y plane
-      if (point_projection_on_xy_plane.first)
-      {
+      if (point_projection_on_xy_plane.first) {
         auto cur_pos = point_projection_on_xy_plane.second;
         double angle = atan2(cur_pos.y - pos_.y, cur_pos.x - pos_.x);
 
