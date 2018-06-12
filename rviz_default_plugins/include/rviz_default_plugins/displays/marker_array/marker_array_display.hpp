@@ -26,12 +26,16 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef RVIZ_MARKER_ARRAY_DISPLAY_H
-#define RVIZ_MARKER_ARRAY_DISPLAY_H
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER_ARRAY__MARKER_ARRAY_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER_ARRAY__MARKER_ARRAY_DISPLAY_HPP_
 
-#include "marker_display.h"
+#include "../marker/marker_display.hpp"
 
-namespace rviz
+#include "visualization_msgs/msg/marker_array.hpp"
+
+namespace rviz_default_plugins
+{
+namespace displays
 {
 
 /**
@@ -46,18 +50,15 @@ public:
   MarkerArrayDisplay();
 
 protected:
-  /** @brief Overridden from MarkerDisplay.  Subscribes to the marker
-   * array topic. */
-  virtual void subscribe();
+  void onInitialize() override;
 
-  /** @brief Overridden from MarkerDisplay.  Unsubscribes to the
-   * marker array topic. */
-  virtual void unsubscribe();
-
+  /** @brief Overridden from MarkerDisplay. Subscribes to the marker array topic. */
+  void subscribe() override;
 private:
-  void handleMarkerArray( const visualization_msgs::MarkerArray::ConstPtr& array );
+  void handleMarkerArray(visualization_msgs::msg::MarkerArray::ConstSharedPtr array);
 };
 
-} // end namespace rviz
+}  // end namespace displays
+}  // end namespace rviz_default_plugins
 
-#endif // RVIZ_MARKER_ARRAY_DISPLAY_H
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER_ARRAY__MARKER_ARRAY_DISPLAY_HPP_

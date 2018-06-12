@@ -45,6 +45,11 @@ QueueSizeProperty::QueueSizeProperty(_RosTopicDisplay * display, uint32_t defaul
   updateQueueSize();
 }
 
+void QueueSizeProperty::setDescription(const QString & description)
+{
+  queue_size_property_->setDescription(description);
+}
+
 void QueueSizeProperty::updateQueueSize()
 {
   display_->updateQoSProfile([this](rmw_qos_profile_t profile) -> rmw_qos_profile_t {

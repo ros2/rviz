@@ -134,6 +134,17 @@
   </class>
 
   <class
+    name="rviz_default_plugins/MarkerArray"
+    type="rviz_default_plugins::displays::MarkerArrayDisplay"
+    base_class_type="rviz_common::Display">
+      <description>
+          Displays visualization_msgs::MarkerArray messages without presuming the topic name ends in "_array".
+          <a href="http://www.ros.org/wiki/rviz/DisplayTypes/Marker">More Information</a>.
+      </description>
+      <message_type>visualization_msgs/MarkerArray</message_type>
+  </class>
+
+  <class
     name="rviz_default_plugins/Odometry"
     type="rviz_default_plugins::displays::OdometryDisplay"
     base_class_type="rviz_common::Display"

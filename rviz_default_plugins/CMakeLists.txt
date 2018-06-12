@@ -57,6 +57,7 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/image/image_display.hpp
   include/rviz_default_plugins/displays/laser_scan/laser_scan_display.hpp
   include/rviz_default_plugins/displays/marker/marker_display.hpp
+  include/rviz_default_plugins/displays/marker_array/marker_array_display.hpp
   include/rviz_default_plugins/displays/odometry/odometry_display.hpp
   include/rviz_default_plugins/displays/path/path_display.hpp
   include/rviz_default_plugins/displays/point/point_stamped_display.hpp
@@ -108,6 +109,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/marker/markers/triangle_list_marker.cpp
   src/rviz_default_plugins/displays/marker/markers/marker_factory.cpp
   src/rviz_default_plugins/displays/marker/marker_display.cpp
+  src/rviz_default_plugins/displays/marker_array/marker_array_display.cpp
   src/rviz_default_plugins/displays/odometry/odometry_display.cpp
   src/rviz_default_plugins/displays/path/path_display.cpp
   src/rviz_default_plugins/displays/point/point_stamped_display.cpp
