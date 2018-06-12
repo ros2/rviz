@@ -39,6 +39,7 @@
 
 #include "rviz_common/config.hpp"
 #include "rviz_common/panel.hpp"
+#include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
 
 class QPushButton;
 
@@ -61,9 +62,11 @@ class DisplaysPanel : public Panel
   Q_OBJECT
 
 public:
-  explicit DisplaysPanel(
-    const std::string & node_name, VisualizationManager * manager, QWidget * parent = nullptr);
-  ~DisplaysPanel() override;
+  DisplaysPanel(
+    ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
+    VisualizationManager * manager,
+    QWidget * parent = nullptr);
+  ~DisplaysPanel() override = default;
 
   void onInitialize() override;
 
@@ -84,7 +87,6 @@ protected Q_SLOTS:
   void onSelectionChanged();
 
 protected:
-  const std::string node_name_;
   VisualizationManager * vis_manager_;
   properties::PropertyTreeWidget * property_grid_;
 
@@ -92,6 +94,7 @@ protected:
   QPushButton * remove_button_;
   QPushButton * rename_button_;
   properties::PropertyTreeWithHelp * tree_with_help_;
+  ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node_;
 };
 
 }  // namespace rviz_common

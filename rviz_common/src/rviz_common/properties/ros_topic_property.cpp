@@ -34,6 +34,7 @@
 #include <QApplication>  // NOLINT: cpplint can't handle Qt imports
 
 #include "rviz_common/properties/ros_topic_property.hpp"
+#include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
 
 namespace rviz_common
 {
@@ -49,16 +50,16 @@ RosTopicProperty::RosTopicProperty(
   const char * changed_slot,
   QObject * receiver)
 : EditableEnumProperty(name, default_value, description, parent, changed_slot, receiver),
-  node_(nullptr),
+  rviz_ros_node_(),
   message_type_(message_type)
 {
   connect(this, SIGNAL(requestOptions(EditableEnumProperty *)),
     this, SLOT(fillTopicList()));
 }
 
-void RosTopicProperty::initialize(rclcpp::Node::ConstSharedPtr node)
+void RosTopicProperty::initialize(ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node)
 {
-  node_ = node;
+  rviz_ros_node_ = rviz_ros_node;
 }
 
 void RosTopicProperty::setMessageType(const QString & message_type)
@@ -73,7 +74,7 @@ void RosTopicProperty::fillTopicList()
 
   std::string std_message_type = message_type_.toStdString();
   std::map<std::string, std::vector<std::string>> published_topics =
-    node_->get_topic_names_and_types();
+    rviz_ros_node_.lock()->get_topic_names_and_types();
 
   for (const auto & topic : published_topics) {
     // Only add topics whose type matches.

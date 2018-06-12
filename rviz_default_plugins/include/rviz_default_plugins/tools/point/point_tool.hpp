@@ -64,7 +64,6 @@ class RVIZ_DEFAULT_PLUGINS_PUBLIC PointTool : public rviz_common::Tool
 
 public:
   PointTool();
-  ~PointTool() override;
 
   void onInitialize() override;
 
@@ -81,7 +80,6 @@ protected:
   QCursor std_cursor_;
   QCursor hit_cursor_;
 
-  rclcpp::Node::SharedPtr node_;
   rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr publisher_;
 
   rviz_common::properties::StringProperty * topic_property_;

@@ -31,8 +31,8 @@
 
 #include <string>
 
-#include "rclcpp/node.hpp"
 #include "rviz_common/properties/editable_enum_property.hpp"
+#include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
 #include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
@@ -54,7 +54,7 @@ public:
     const char * changed_slot = nullptr,
     QObject * receiver = nullptr);
 
-  void initialize(rclcpp::Node::ConstSharedPtr node);
+  void initialize(ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node);
 
   void setMessageType(const QString & message_type);
 
@@ -74,7 +74,7 @@ protected Q_SLOTS:
   virtual void fillTopicList();
 
 private:
-  rclcpp::Node::ConstSharedPtr node_;
+  ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node_;
   QString message_type_;
 };
 

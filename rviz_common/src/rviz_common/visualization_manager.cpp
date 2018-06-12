@@ -149,6 +149,7 @@ public:
 
 VisualizationManager::VisualizationManager(
   RenderPanel * render_panel,
+  ros_integration::RosNodeAbstractionIface::WeakPtr ros_node_abstraction,
   WindowManagerInterface * wm,
   std::shared_ptr<tf2_ros::TransformListener> tf,
   std::shared_ptr<tf2_ros::Buffer> buffer,
@@ -164,7 +165,8 @@ VisualizationManager::VisualizationManager(
   window_manager_(wm),
   clock_(clock),
   private_(new VisualizationManagerPrivate),
-  executor_(std::make_shared<rclcpp::executors::SingleThreadedExecutor>())
+  executor_(std::make_shared<rclcpp::executors::SingleThreadedExecutor>()),
+  rviz_ros_node_(ros_node_abstraction)
 {
   // visibility_bit_allocator_ is listed after default_visibility_bit_
   // (and thus initialized later be default):
@@ -231,6 +233,7 @@ VisualizationManager::VisualizationManager(
   selection_manager_ = std::make_shared<SelectionManager>(this);
   view_picker_ = std::make_shared<ViewPicker>(this);
 
+  executor_->add_node(rviz_ros_node_.lock()->get_raw_node());
 // TODO(wjwwood): redo with executors?
 #if 0
   private_->threaded_queue_threads_.create_thread(std::bind(&VisualizationManager::
@@ -300,14 +303,10 @@ void VisualizationManager::unlockRender()
   private_->render_mutex_.unlock();
 }
 
-void VisualizationManager::addNodeToMainExecutor(rclcpp::Node::SharedPtr node)
+ros_integration::RosNodeAbstractionIface::WeakPtr
+VisualizationManager::getRosNodeAbstraction() const
 {
-  executor_->add_node(node);
-}
-
-void VisualizationManager::removeNodeFromMainExecutor(rclcpp::Node::SharedPtr node)
-{
-  executor_->remove_node(node);
+  return rviz_ros_node_;
 }
 
 #if 0

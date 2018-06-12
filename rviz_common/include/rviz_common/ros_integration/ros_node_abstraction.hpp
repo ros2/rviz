@@ -36,17 +36,15 @@
 #include <string>
 #include <vector>
 
-#include "rviz_common/visibility_control.hpp"
+#include "rclcpp/rclcpp.hpp"
 
-#include "./ros_node_abstraction_iface.hpp"
+#include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
 namespace ros_integration
 {
-
-// forward declaration so ros node storage headers can remain private
-class RosNodeStorageIface;
 
 class RosNodeAbstraction : public RosNodeAbstractionIface
 {
@@ -65,20 +63,6 @@ public:
   RVIZ_COMMON_PUBLIC
   explicit RosNodeAbstraction(const std::string & node_name);
 
-  /// Creates a ros node with the given name using a specific storage. For testing use only.
-  /**
-   * Internally a rclcpp::Node is created.
-   * If a rclcpp::Node with the given name already exists a node abstraction for this already
-   * existing node is created.
-   *
-   * \param node_name name of the node to create
-   * \param ros_node_storage storage handling for the internal rclcpp::Node
-   */
-  RVIZ_COMMON_PUBLIC
-  RosNodeAbstraction(
-    const std::string & node_name,
-    std::shared_ptr<RosNodeStorageIface> ros_node_storage);
-
   /// Returns the name of the ros node
   /**
    * The returned node name is what was given as constructor argument.
@@ -86,7 +70,7 @@ public:
    * \return the name of the node
    */
   RVIZ_COMMON_PUBLIC
-  std::string get_node_name() override;
+  std::string get_node_name() const override;
 
   /// Return a map with topic names mapped to a list of types for that topic.
   /**
@@ -96,11 +80,18 @@ public:
    */
   RVIZ_COMMON_PUBLIC
   std::map<std::string, std::vector<std::string>>
-  get_topic_names_and_types() override;
+  get_topic_names_and_types() const override;
+
+  // TODO(wjwwood): think about a suitable way to extend the abstraction to also cover subscriptions
+  RVIZ_COMMON_PUBLIC
+  rclcpp::Node::SharedPtr
+  get_raw_node() override
+  {
+    return raw_node_;
+  }
 
 private:
-  std::string node_name_;
-  std::shared_ptr<RosNodeStorageIface> ros_node_storage_;
+  rclcpp::Node::SharedPtr raw_node_;
 };
 
 }  // namespace ros_integration

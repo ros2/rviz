@@ -99,7 +99,8 @@
 namespace rviz_common
 {
 
-VisualizationFrame::VisualizationFrame(const std::string & node_name, QWidget * parent)
+VisualizationFrame::VisualizationFrame(
+  ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node, QWidget * parent)
 : QMainWindow(parent),
   app_(nullptr),
   render_panel_(nullptr),
@@ -111,7 +112,6 @@ VisualizationFrame::VisualizationFrame(const std::string & node_name, QWidget * 
   splash_(nullptr),
   toolbar_actions_(nullptr),
   show_choose_new_master_option_(false),
-  panel_factory_(nullptr),
   add_tool_action_(nullptr),
   remove_tool_menu_(nullptr),
   initialized_(false),
@@ -119,7 +119,7 @@ VisualizationFrame::VisualizationFrame(const std::string & node_name, QWidget * 
   loading_(false),
   post_load_timer_(new QTimer(this)),
   frame_count_(0),
-  node_name_(node_name)
+  rviz_ros_node_(rviz_ros_node)
 {
   setObjectName("VisualizationFrame");
   installEventFilter(geom_change_detector_);
@@ -158,8 +158,8 @@ VisualizationFrame::~VisualizationFrame()
   delete manager_;
   delete render_panel_;
 
-  for (int i = 0; i < custom_panels_.size(); i++) {
-    delete custom_panels_[i].dock;
+  for (auto & custom_panel : custom_panels_) {
+    delete custom_panel.dock;
   }
 
   delete panel_factory_;
@@ -242,7 +242,9 @@ void VisualizationFrame::setSplashPath(const QString & splash_path)
   splash_path_ = splash_path;
 }
 
-void VisualizationFrame::initialize(const QString & display_config_file)
+void VisualizationFrame::initialize(
+  ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
+  const QString & display_config_file)
 {
   initConfigs();
 
@@ -327,9 +329,10 @@ void VisualizationFrame::initialize(const QString & display_config_file)
   auto clock = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);
   // TODO(wjwwood): pass the rviz node so tf2 doesn't create it's own...
   auto tf_listener = std::make_shared<tf2_ros::TransformListener>(*buffer);
-  manager_ = new VisualizationManager(render_panel_, this, tf_listener, buffer, clock);
+  manager_ = new VisualizationManager(
+    render_panel_, rviz_ros_node, this, tf_listener, buffer, clock);
   manager_->setHelpPath(help_path_);
-  panel_factory_ = new PanelFactory(node_name_, manager_);
+  panel_factory_ = new PanelFactory(rviz_ros_node_, manager_);
 
   // Periodically process events for the splash screen.
   if (app_) {app_->processEvents();}

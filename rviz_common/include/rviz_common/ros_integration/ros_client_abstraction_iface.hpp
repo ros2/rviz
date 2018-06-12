@@ -34,6 +34,8 @@
 #include <string>
 #include "rviz_common/visibility_control.hpp"
 
+#include "ros_node_abstraction_iface.hpp"
+
 namespace rviz_common
 {
 namespace ros_integration
@@ -44,7 +46,7 @@ class RosClientAbstractionIface
 public:
   virtual ~RosClientAbstractionIface() = default;
 
-  virtual std::string
+  virtual RosNodeAbstractionIface::WeakPtr
   init(int argc, char ** argv, const std::string & name, bool anonymous_name) = 0;
 
   virtual bool

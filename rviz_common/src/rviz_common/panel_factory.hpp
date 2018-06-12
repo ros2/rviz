@@ -32,11 +32,9 @@
 #ifndef RVIZ_COMMON__PANEL_FACTORY_HPP_
 #define RVIZ_COMMON__PANEL_FACTORY_HPP_
 
-#include <string>
-
 #include "rviz_common/factory/pluginlib_factory.hpp"
 #include "rviz_common/panel.hpp"
-#include "rviz_common/visibility_control.hpp"
+#include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
 
 namespace rviz_common
 {
@@ -46,7 +44,9 @@ class VisualizationManager;
 class PanelFactory : public PluginlibFactory<Panel>
 {
 public:
-  explicit PanelFactory(const std::string & node_name, VisualizationManager * manager);
+  PanelFactory(
+    ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
+    VisualizationManager * manager);
 };
 
 }  // namespace rviz_common

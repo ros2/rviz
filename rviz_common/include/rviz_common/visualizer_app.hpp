@@ -32,7 +32,6 @@
 #define RVIZ_COMMON__VISUALIZER_APP_HPP_
 
 #include <memory>
-#include <string>
 
 #include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
@@ -81,7 +80,7 @@ private:
   QApplication * app_;
   QTimer * continue_timer_;
   VisualizationFrame * frame_;
-  std::string node_name_;
+  rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr node_;
   std::unique_ptr<rviz_common::ros_integration::RosClientAbstractionIface> ros_client_abstraction_;
 };
 
