@@ -43,8 +43,6 @@
 #include <OgreEntity.h>
 #endif
 
-#include "../../../scene_graph_introspection.hpp"
-
 #include "rviz_default_plugins/displays/marker/markers/points_marker.hpp"
 
 #include "test/rviz_rendering/scene_graph_introspection.hpp"
