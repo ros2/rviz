@@ -36,5 +36,9 @@
 
 MarkersTestFixture::MarkersTestFixture()
 {
-  marker_display_ = std::make_shared<rviz_default_plugins::displays::MarkerDisplay>();
+  display_ = std::make_unique<rviz_common::Display>();
+  scene_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
+
+  marker_common_ = std::make_unique<rviz_default_plugins::displays::MarkerCommon>(display_.get());
+  marker_common_->initialize(context_.get(), scene_node_);
 }

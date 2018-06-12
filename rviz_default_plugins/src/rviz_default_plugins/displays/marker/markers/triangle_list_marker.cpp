@@ -39,13 +39,13 @@
 #include <OgreTextureManager.h>
 #include <OgreTechnique.h>
 
-#include "rviz_default_plugins/displays/marker/markers/marker_selection_handler.hpp"
-#include "rviz_default_plugins/displays/marker/marker_display.hpp"
-#include "rviz_common/properties/status_property.hpp"
-#include "rviz_common/uniform_string_stream.hpp"
+#include "rviz_rendering/mesh_loader.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/logging.hpp"
-#include "rviz_rendering/mesh_loader.hpp"
+#include "rviz_common/uniform_string_stream.hpp"
+
+#include "rviz_default_plugins/displays/marker/markers/marker_selection_handler.hpp"
+#include "rviz_default_plugins/displays/marker/marker_common.hpp"
 
 namespace rviz_default_plugins
 {
@@ -55,7 +55,7 @@ namespace markers
 {
 
 TriangleListMarker::TriangleListMarker(
-  MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node)
+  MarkerCommon * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node)
 : MarkerBase(owner, context, parent_node),
   manual_object_(nullptr)
 {

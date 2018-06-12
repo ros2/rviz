@@ -56,6 +56,7 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/grid_cells/grid_cells_display.hpp
   include/rviz_default_plugins/displays/image/image_display.hpp
   include/rviz_default_plugins/displays/laser_scan/laser_scan_display.hpp
+  include/rviz_default_plugins/displays/marker/marker_common.hpp
   include/rviz_default_plugins/displays/marker/marker_display.hpp
   include/rviz_default_plugins/displays/marker_array/marker_array_display.hpp
   include/rviz_default_plugins/displays/odometry/odometry_display.hpp
@@ -108,6 +109,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/marker/markers/shape_marker.cpp
   src/rviz_default_plugins/displays/marker/markers/triangle_list_marker.cpp
   src/rviz_default_plugins/displays/marker/markers/marker_factory.cpp
+  src/rviz_default_plugins/displays/marker/marker_common.cpp
   src/rviz_default_plugins/displays/marker/marker_display.cpp
   src/rviz_default_plugins/displays/marker_array/marker_array_display.cpp
   src/rviz_default_plugins/displays/odometry/odometry_display.cpp
@@ -256,6 +258,7 @@ if(BUILD_TESTING)
       ${urdf_INCLUDE_DIRS}
       ${OGRE_INCLUDE_DIRS}
       ${rclcpp_INCLUDE_DIRS}
+      ${rclcpp_INCLUDE_DIRS}
       ${nav_msgs_INCLUDE_DIRS}
       ${sensor_msgs_INCLUDE_DIRS}
       ${visualization_msgs_INCLUDE_DIRS}
@@ -385,16 +388,16 @@ if(BUILD_TESTING)
         ${TEST_LINK_LIBRARIES})
     endif()
 
-    ament_add_gmock(marker_display_test
-      test/rviz_default_plugins/displays/marker/marker_display_test.cpp
+    ament_add_gmock(marker_common_test
+      test/rviz_default_plugins/displays/marker/marker_common_test.cpp
       test/rviz_default_plugins/displays/display_test_fixture.cpp
       test/rviz_default_plugins/displays/marker/marker_messages.cpp
       test/rviz_default_plugins/scene_graph_introspection_helper.cpp
       APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-    if(TARGET marker_display_test)
-      target_include_directories(marker_display_test PUBLIC
+    if(TARGET marker_common_test)
+      target_include_directories(marker_common_test PUBLIC
         ${TEST_INCLUDE_DIRS})
-      target_link_libraries(marker_display_test
+      target_link_libraries(marker_common_test
         ${TEST_LINK_LIBRARIES})
     endif()
 

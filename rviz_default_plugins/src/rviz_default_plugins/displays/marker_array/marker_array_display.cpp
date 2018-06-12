@@ -27,10 +27,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "../../../../include/rviz_default_plugins/displays/marker_array/marker_array_display.hpp"
+#include <memory>
+
+#include "rviz_default_plugins/displays/marker_array/marker_array_display.hpp"
 
 #include "rviz_common/properties/int_property.hpp"
-#include "rviz_common/properties/queue_size_property.hpp"
 #include "rviz_common/properties/ros_topic_property.hpp"
 
 namespace rviz_default_plugins
@@ -39,11 +40,14 @@ namespace displays
 {
 
 MarkerArrayDisplay::MarkerArrayDisplay()
-: MarkerDisplay() {}
+: rviz_common::RosTopicDisplay<visualization_msgs::msg::MarkerArray>(),
+  marker_common_(std::make_unique<MarkerCommon>(this)),
+  queue_size_property_(std::make_unique<rviz_common::QueueSizeProperty>(this, 10)) {}
 
 void MarkerArrayDisplay::onInitialize()
 {
-  MarkerDisplay::onInitialize();
+  RTDClass::onInitialize();
+  marker_common_->initialize(context_, scene_node_);
 
   topic_property_->setValue("visualization_marker_array");
   topic_property_->setDescription("visualization_msgs::MarkerArray topic to subscribe to.");
@@ -54,40 +58,29 @@ void MarkerArrayDisplay::onInitialize()
     "than the number of Markers in each MarkerArray.");
 }
 
-void MarkerArrayDisplay::subscribe()
+void MarkerArrayDisplay::load(const rviz_common::Config & config)
 {
-  if (!isEnabled() ) {
-    return;
-  }
-
-  if (topic_property_->isEmpty()) {
-    setStatus(rviz_common::properties::StatusProperty::Error,
-      "Topic",
-      QString("Error subscribing: Empty topic name"));
-    return;
-  }
-
-  try {
-    array_sub_ = node_->create_subscription<visualization_msgs::msg::MarkerArray>(
-      topic_property_->getTopicStd(),
-      std::bind(
-        &MarkerArrayDisplay::handleMarkerArray,
-        this,
-        std::placeholders::_1),
-      qos_profile);
-    setStatus(rviz_common::properties::StatusProperty::Ok, "Topic", "OK");
-  } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
-    setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
-      QString("Error subscribing: ") + e.what());
-  }
+  Display::load(config);
+  marker_common_->load(config);
 }
 
 // I seem to need this wrapper function to make the compiler like my
 // function pointer in the .subscribe() call above.
-void MarkerArrayDisplay::handleMarkerArray(
-  visualization_msgs::msg::MarkerArray::ConstSharedPtr array)
+void MarkerArrayDisplay::processMessage(
+  visualization_msgs::msg::MarkerArray::ConstSharedPtr msg)
 {
-  incomingMarkerArray(array);
+  marker_common_->addMessage(msg);
+}
+
+void MarkerArrayDisplay::update(float wall_dt, float ros_dt)
+{
+  marker_common_->update(wall_dt, ros_dt);
+}
+
+void MarkerArrayDisplay::reset()
+{
+  RosTopicDisplay::reset();
+  marker_common_->clearMarkers();
 }
 
 }  // end namespace displays

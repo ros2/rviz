@@ -29,9 +29,15 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER_ARRAY__MARKER_ARRAY_DISPLAY_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER_ARRAY__MARKER_ARRAY_DISPLAY_HPP_
 
-#include "../marker/marker_display.hpp"
-
 #include "visualization_msgs/msg/marker_array.hpp"
+
+#include <memory>
+
+#include "rviz_common/properties/queue_size_property.hpp"
+#include "rviz_common/ros_topic_display.hpp"
+
+#include "rviz_default_plugins/displays/marker/marker_common.hpp"
+#include "rviz_default_plugins/visibility_control.hpp"
 
 namespace rviz_default_plugins
 {
@@ -39,25 +45,26 @@ namespace displays
 {
 
 /**
- * @brief Display for an array of markers.  The MarkerDisplay class handles
- * MarkerArray messages.  This is just a wrapper to let MarkerArray
- * topics get selected in the topic browser.
+ * @brief Display for an array of markers. The MarkerDisplay class handles MarkerArray messages.
  */
-class MarkerArrayDisplay : public MarkerDisplay
+class RVIZ_DEFAULT_PLUGINS_PUBLIC MarkerArrayDisplay
+  : public rviz_common::RosTopicDisplay<visualization_msgs::msg::MarkerArray>
 {
-  Q_OBJECT
-
 public:
   MarkerArrayDisplay();
 
-protected:
   void onInitialize() override;
+  void load(const rviz_common::Config & config) override;
 
-  /** @brief Overridden from MarkerDisplay. Subscribes to the marker array topic. */
-  void subscribe() override;
+  void update(float wall_dt, float ros_dt) override;
+
+  void reset() override;
 
 private:
-  void handleMarkerArray(visualization_msgs::msg::MarkerArray::ConstSharedPtr array);
+  void processMessage(visualization_msgs::msg::MarkerArray::ConstSharedPtr array) override;
+
+  std::unique_ptr<MarkerCommon> marker_common_;
+  std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
 };
 
 }  // end namespace displays

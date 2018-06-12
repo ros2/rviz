@@ -39,7 +39,7 @@
 #include "visualization_msgs/msg/marker.hpp"
 
 #include "rviz_default_plugins/displays/marker/markers/marker_base.hpp"
-#include "rviz_default_plugins/displays/marker/marker_display.hpp"
+#include "rviz_default_plugins/displays/marker/marker_common.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 
 namespace rviz_default_plugins
@@ -71,7 +71,7 @@ public:
    */
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   void initialize(
-    MarkerDisplay * owner, rviz_common::DisplayContext * context,
+    MarkerCommon * owner, rviz_common::DisplayContext * context,
     Ogre::SceneNode * parent_node);
 
   /// Creates a new marker.
@@ -85,7 +85,7 @@ public:
   createMarkerForType(visualization_msgs::msg::Marker::_type_type marker_type);
 
 private:
-  MarkerDisplay * owner_display_;
+  MarkerCommon * owner_;
   rviz_common::DisplayContext * context_;
   Ogre::SceneNode * parent_node_;
 };
