@@ -325,10 +325,11 @@ void VisualizationFrame::initialize(
   //                render_panel and VisualizationManager
   render_panel_->getRenderWindow()->initialize();
 
-  auto buffer = std::make_shared<tf2_ros::Buffer>();
   auto clock = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);
-  // TODO(wjwwood): pass the rviz node so tf2 doesn't create it's own...
-  auto tf_listener = std::make_shared<tf2_ros::TransformListener>(*buffer);
+  auto buffer = std::make_shared<tf2_ros::Buffer>();
+  buffer->setUsingDedicatedThread(true);
+  auto tf_listener = std::make_shared<tf2_ros::TransformListener>(
+    *buffer, rviz_ros_node.lock()->get_raw_node(), false);
   manager_ = new VisualizationManager(
     render_panel_, rviz_ros_node, this, tf_listener, buffer, clock);
   manager_->setHelpPath(help_path_);

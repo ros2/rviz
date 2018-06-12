@@ -59,24 +59,11 @@ FrameManager::FrameManager(
   std::shared_ptr<tf2_ros::TransformListener> tf,
   std::shared_ptr<tf2_ros::Buffer> buffer,
   rclcpp::Clock::SharedPtr clock)
-: sync_time_(0),
-  clock_(clock)
+: tf_(tf), buffer_(buffer), sync_time_(0), clock_(clock)
 {
-  if (!tf) {
-    // TODO(wjwwood): reenable this when possible (ros2 has no singleton node),
-    //                for now just require it to be passed in
-    // tf_.reset(new tf2_ros::TransformListener(ros::NodeHandle(), ros::Duration(10 * 60), true));
-    throw std::runtime_error("given TransformListener is nullprt");
-  } else {
-    tf_ = tf;
-  }
-  buffer_ = buffer;
-
   setSyncMode(SyncOff);
   setPause(false);
 }
-
-FrameManager::~FrameManager() = default;
 
 void FrameManager::update()
 {
