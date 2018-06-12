@@ -56,7 +56,6 @@
 #include "rviz_rendering/geometry.hpp"
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_common/viewport_mouse_event.hpp"
-#include "rviz_common/load_resource.hpp"
 #include "rviz_common/render_panel.hpp"
 
 namespace rviz_default_plugins
