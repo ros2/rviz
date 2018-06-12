@@ -57,16 +57,16 @@ public:
   }
 };
 
-class MockPoseTool : public rviz_default_plugins::tools::PoseTool
+class PoseToolImpl : public rviz_default_plugins::tools::PoseTool
 {
 public:
-  MockPoseTool()
+  PoseToolImpl()
   : PoseTool()
   {
     projection_finder_ = std::make_shared<MockProjectionFinder>();
   }
 
-  ~MockPoseTool() override = default;
+  ~PoseToolImpl() override = default;
 
   void onPoseSet(double x, double y, double theta) override
   {
@@ -81,12 +81,12 @@ class PoseToolTestFixture : public ToolTestFixture, public DisplayTestFixture
 public:
   PoseToolTestFixture()
   {
-    pose_tool_ = std::make_shared<MockPoseTool>();
+    pose_tool_ = std::make_shared<PoseToolImpl>();
     pose_tool_->initialize(context_.get());
     pose_tool_->activate();
   }
 
-  std::shared_ptr<MockPoseTool> pose_tool_;
+  std::shared_ptr<PoseToolImpl> pose_tool_;
 };
 
 TEST_F(PoseToolTestFixture, onInitialize_sets_arrow_invisible_at_first) {
@@ -96,7 +96,7 @@ TEST_F(PoseToolTestFixture, onInitialize_sets_arrow_invisible_at_first) {
   EXPECT_FALSE(rviz_default_plugins::arrowIsVisible(arrows[0]));
 }
 
-TEST_F(PoseToolTestFixture, processMouseEvent_sets_arrow_position_correctly) {
+TEST_F(PoseToolTestFixture, processMouseEvent_sets_arrow_position_below_mouse_cursor) {
   auto left_click_event = generateMousePressEvent(10, 15);
   pose_tool_->processMouseEvent(left_click_event);
 
@@ -107,7 +107,7 @@ TEST_F(PoseToolTestFixture, processMouseEvent_sets_arrow_position_correctly) {
 }
 
 TEST_F(PoseToolTestFixture,
-  processMouseEvent_sets_arrow_orientation_and_makes_it_visible_when_setting_the_orientation) {
+  processMouseEvent_sets_arrow_orientation_in_direction_of_the_mouse_while_making_it_visible) {
   auto left_click_event = generateMousePressEvent(10, 10);
   auto move_mouse_event = generateMouseMoveWhileLeftClickedEvent(0, 0);
   pose_tool_->processMouseEvent(left_click_event);

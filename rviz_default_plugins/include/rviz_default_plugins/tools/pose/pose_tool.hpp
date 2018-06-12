@@ -48,6 +48,7 @@
 
 #include "rviz_common/tool.hpp"
 #include "rviz_rendering/viewport_projection_finder.hpp"
+#include "rviz_default_plugins/visibility_control.hpp"
 
 namespace rviz_rendering
 {
@@ -58,7 +59,7 @@ namespace rviz_default_plugins
 {
 namespace tools
 {
-class PoseTool : public rviz_common::Tool
+class RVIZ_DEFAULT_PLUGINS_PUBLIC PoseTool : public rviz_common::Tool
 {
 public:
   PoseTool();
@@ -89,7 +90,7 @@ protected:
   std::shared_ptr<rviz_rendering::ViewportProjectionFinder> projection_finder_;
 
 private:
-  int processeMouseLeftButtonPressed(std::pair<bool, Ogre::Vector3> xy_plane_intersection);
+  int processMouseLeftButtonPressed(std::pair<bool, Ogre::Vector3> xy_plane_intersection);
   int processMouseMoved(std::pair<bool, Ogre::Vector3> xy_plane_intersection);
   int processMouseLeftButtonReleased(std::pair<bool, Ogre::Vector3> xy_plane_intersection);
   void makeArrowVisibleAndSetOrientation(double angle);

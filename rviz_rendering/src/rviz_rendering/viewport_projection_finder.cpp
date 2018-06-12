@@ -39,7 +39,7 @@
 #include <OgreVector3.h>
 #include <OgreViewport.h>
 
-#include "include/rviz_rendering/render_window.hpp"
+#include "rviz_rendering/render_window.hpp"
 
 namespace rviz_rendering
 {

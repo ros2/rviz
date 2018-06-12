@@ -95,7 +95,7 @@ int PoseTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
     event.panel->getRenderWindow(), event.x, event.y);
 
   if (event.leftDown()) {
-    return processeMouseLeftButtonPressed(point_projection_on_xy_plane);
+    return processMouseLeftButtonPressed(point_projection_on_xy_plane);
   } else if (event.type == QEvent::MouseMove && event.left()) {
     return processMouseMoved(point_projection_on_xy_plane);
   } else if (event.leftUp()) {
@@ -105,7 +105,7 @@ int PoseTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
   return 0;
 }
 
-int PoseTool::processeMouseLeftButtonPressed(std::pair<bool, Ogre::Vector3> xy_plane_intersection)
+int PoseTool::processMouseLeftButtonPressed(std::pair<bool, Ogre::Vector3> xy_plane_intersection)
 {
   int flags = 0;
   assert(state_ == Position);
