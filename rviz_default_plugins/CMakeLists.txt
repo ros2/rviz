@@ -57,6 +57,7 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/grid_cells/grid_cells_display.hpp
   include/rviz_default_plugins/displays/image/image_display.hpp
   include/rviz_default_plugins/displays/laser_scan/laser_scan_display.hpp
+  include/rviz_default_plugins/displays/map/map_display.hpp
   include/rviz_default_plugins/displays/marker/marker_display.hpp
   include/rviz_default_plugins/displays/odometry/odometry_display.hpp
   include/rviz_default_plugins/displays/path/path_display.hpp
