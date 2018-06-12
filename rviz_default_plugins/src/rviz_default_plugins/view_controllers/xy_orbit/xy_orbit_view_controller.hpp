@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,47 +28,78 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_SIMPLE_ORBIT_VIEW_CONTROLLER_H
-#define RVIZ_SIMPLE_ORBIT_VIEW_CONTROLLER_H
+#ifndef RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__XY_ORBIT__XY_ORBIT_VIEW_CONTROLLER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__XY_ORBIT__XY_ORBIT_VIEW_CONTROLLER_HPP_
 
-#include "rviz/default_plugin/view_controllers/orbit_view_controller.h"
+#include <utility>
 
+#ifdef __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wkeyword-macro"
+#endif
+
+#include <OgreRay.h>
 #include <OgreVector3.h>
+
+#ifdef __clang__
+# pragma clang diagnostic pop
+#endif
+
+#include "rviz_default_plugins/view_controllers/orbit/orbit_view_controller.hpp"
 
 namespace Ogre
 {
 class SceneNode;
 }
 
-namespace rviz
+namespace rviz_default_plugins
 {
-
+namespace view_controllers
+{
 /**
  * \brief Like the orbit view controller, but focal point moves only in the x-y plane.
  */
 class XYOrbitViewController : public OrbitViewController
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  virtual void onInitialize();
+  void onInitialize() override;
 
-  virtual void handleMouseEvent(ViewportMouseEvent& evt);
-
-  virtual void lookAt( const Ogre::Vector3& point );
+  void lookAt(const Ogre::Vector3 & point) override;
 
   /** @brief Configure the settings of this view controller to give,
    * as much as possible, a similar view as that given by the
-   * @a source_view.
+   * @param source_view.
    *
-   * @a source_view must return a valid @c Ogre::Camera* from getCamera(). */
-  virtual void mimic( ViewController* source_view );
+   * @param source_view must return a valid Ogre::Camera* from getCamera().
+   */
+  void mimic(ViewController * source_view) override;
 
 protected:
-  virtual void updateCamera();
+  void updateCamera() override;
 
-  bool intersectGroundPlane( Ogre::Ray mouse_ray, Ogre::Vector3 &intersection_3d );
+  void moveFocalPoint(
+    float distance, int32_t diff_x, int32_t diff_y, int32_t last_x, int32_t last_y) override;
+
+  std::pair<bool, Ogre::Vector3> intersectGroundPlane(Ogre::Ray mouse_ray);
+
+  void handleWheelEvent(rviz_common::ViewportMouseEvent & event, float distance) override;
+
+  void handleRightClick(
+    rviz_common::ViewportMouseEvent & event, float distance, int32_t diff_y) override;
+
+  void setShiftOrbitStatus() override;
+
+  void setNewFocalPointKeepingViewIfPossible(ViewController * source_view);
+
+  void calculateNewCameraPositionAndOrientation(
+    const Ogre::Camera * source_camera,
+    Ogre::Ray & camera_dir_ray);
 };
 
-}
 
-#endif // RVIZ_VIEW_CONTROLLER_H
+}  // namespace view_controllers
+}  // namespace rviz_default_plugins
+
+#endif  // RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__XY_ORBIT__XY_ORBIT_VIEW_CONTROLLER_HPP_

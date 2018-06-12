@@ -55,7 +55,10 @@ namespace rviz_common
 {
 
 FramePositionTrackingViewController::FramePositionTrackingViewController()
-: target_scene_node_(nullptr), camera_scene_node_(nullptr)
+: target_scene_node_(nullptr),
+  reference_orientation_(Ogre::Quaternion::IDENTITY),
+  reference_position_(Ogre::Vector3::ZERO),
+  camera_scene_node_(nullptr)
 {
   target_frame_property_ = new rviz_common::properties::TfFrameProperty(
     "Target Frame",
@@ -148,6 +151,7 @@ void FramePositionTrackingViewController::mimic(ViewController * source_view)
   QVariant target_frame = source_view->subProp("Target Frame")->getValue();
   if (target_frame.isValid()) {
     target_frame_property_->setValue(target_frame);
+    getNewTransform();
   }
 }
 

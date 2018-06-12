@@ -116,7 +116,7 @@ void DisplayHandler::removeAllDisplays()
 void DisplayHandler::removeDisplay(std::shared_ptr<BasePageObject> display)
 {
   executor_->queueAction([this, display]() {
-      removeDisplayWithoutDelay(display->getDisplayId());
+      this->removeDisplayWithoutDelay(display->getDisplayId());
     }
   );
 }
@@ -124,7 +124,7 @@ void DisplayHandler::removeDisplay(std::shared_ptr<BasePageObject> display)
 void DisplayHandler::openAddDisplayDialog()
 {
   executor_->queueAction([this]() {
-      auto add_display_button = getAddDisplayButton();
+      auto add_display_button = this->getAddDisplayButton();
 
       QTest::mouseClick(add_display_button, Qt::MouseButton::LeftButton);
     }
@@ -133,7 +133,7 @@ void DisplayHandler::openAddDisplayDialog()
 
 void DisplayHandler::selectDisplayAndConfirm(std::shared_ptr<BasePageObject> page_object)
 {
-  executor_->queueAction([this, page_object]() {
+  executor_->queueAction([page_object]() {
       auto add_display_dialog_window = QApplication::activeWindow();
 
       auto create_visualization_type_box = add_display_dialog_window->findChild<QWidget *>(

@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2009, Willow Garage, Inc.
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,7 +31,12 @@
 
 #include "rviz_default_plugins/view_controllers/orbit/orbit_view_controller.hpp"
 
+#include <cmath>
+#include <complex>
 #include <cstdint>
+#include <ctgmath>
+#include <memory>
+#include <valarray>
 
 #include <OgreCamera.h>
 #include <OgreQuaternion.h>
@@ -48,6 +54,7 @@ static const float YAW_START = Ogre::Math::HALF_PI * 0.5f;
 static const float DISTANCE_START = 10;
 static const float FOCAL_SHAPE_SIZE_START = 0.05f;
 static const bool FOCAL_SHAPE_FIXED_SIZE = true;
+static const float ROTATION_SPEED = 0.005f;
 
 namespace rviz_default_plugins
 {
@@ -91,18 +98,14 @@ void OrbitViewController::onInitialize()
 
   camera_->setProjectionType(Ogre::PT_PERSPECTIVE);
 
-  focal_shape_ = new Shape(Shape::Sphere, context_->getSceneManager(), target_scene_node_);
+  focal_shape_ = std::make_unique<rviz_rendering::Shape>(
+    Shape::Sphere, context_->getSceneManager(), target_scene_node_);
   updateFocalShapeSize();
   focal_shape_->setColor(1.0f, 1.0f, 0.0f, 0.5f);
   focal_shape_->getRootNode()->setVisible(false);
 }
 
-OrbitViewController::~OrbitViewController()
-{
-  delete focal_shape_;
-  view_config_.setConfig(
-    distance_property_->getFloat(), yaw_property_->getFloat(), pitch_property_->getFloat());
-}
+OrbitViewController::~OrbitViewController() = default;
 
 void OrbitViewController::reset()
 {
@@ -119,81 +122,31 @@ void OrbitViewController::reset()
 void OrbitViewController::handleMouseEvent(rviz_common::ViewportMouseEvent & event)
 {
   if (event.shift()) {
-    setStatus(
-      "<b>Left-Click:</b> Move X/Y.  <b>Right-Click:</b>: Move Z.  <b>Mouse Wheel:</b>: Zoom.");
+    setShiftOrbitStatus();
   } else {
-    setStatus(
-      "<b>Left-Click:</b> Rotate.  <b>Middle-Click:</b> Move X/Y.  "
-      "<b>Right-Click/Mouse Wheel:</b>: Zoom.  <b>Shift</b>: More options.");
+    setDefaultOrbitStatus();
   }
 
-  float distance = distance_property_->getFloat();
   updateFocalShapeSize();
 
   int32_t diff_x = 0;
   int32_t diff_y = 0;
 
-  bool moved = false;
+  bool moved = setMouseMovementFromEvent(event, diff_x, diff_y);
 
-  if (event.type == QEvent::MouseButtonPress) {
-    focal_shape_->getRootNode()->setVisible(true);
-    moved = true;
-    dragging_ = true;
-  } else if (event.type == QEvent::MouseButtonRelease) {
-    focal_shape_->getRootNode()->setVisible(false);
-    moved = true;
-    dragging_ = false;
-  } else if (dragging_ && event.type == QEvent::MouseMove) {
-    diff_x = event.x - event.last_x;
-    diff_y = event.y - event.last_y;
-    moved = true;
-  }
-
-  // regular left-button drag
+  float distance = distance_property_->getFloat();
   if (event.left() && !event.shift()) {
-    setCursor(Rotate3D);
-    yaw(diff_x * 0.005);
-    pitch(-diff_y * 0.005);
-    // middle or shift-left drag
+    rotateCamera(diff_x, diff_y);
   } else if (event.middle() || (event.shift() && event.left())) {
-    setCursor(MoveXY);
-    float fovY = camera_->getFOVy().valueRadians();
-    float fovX = 2.0f * atan(tan(fovY / 2.0f) * camera_->getAspectRatio());
-
-    int width = camera_->getViewport()->getActualWidth();
-    int height = camera_->getViewport()->getActualHeight();
-
-    move(
-      -(static_cast<float>(diff_x) / static_cast<float>(width)) *
-      distance * tan(fovX / 2.0f) * 2.0f,
-      (static_cast<float>(diff_y) / static_cast<float>(height)) *
-      distance * tan(fovY / 2.0f) * 2.0f,
-      0.0f
-    );
+    moveFocalPoint(distance, diff_x, diff_y, 0, 0);
   } else if (event.right()) {
-    if (event.shift()) {
-      // move in z direction
-      setCursor(MoveZ);
-      move(0.0f, 0.0f, diff_y * 0.1 * (distance / 10.0f));
-    } else {
-      // zoom
-      setCursor(Zoom);
-      zoom(-diff_y * 0.1 * (distance / 10.0f));
-    }
+    handleRightClick(event, distance, diff_y);
   } else {
     setCursor(event.shift() ? MoveXY : Rotate3D);
   }
 
-  moved = true;
-
   if (event.wheel_delta != 0) {
-    int diff = event.wheel_delta;
-    if (event.shift()) {
-      move(0, 0, -diff * 0.001 * distance);
-    } else {
-      zoom(diff * 0.001 * distance);
-    }
-
+    handleWheelEvent(event, distance);
     moved = true;
   }
 
@@ -202,42 +155,129 @@ void OrbitViewController::handleMouseEvent(rviz_common::ViewportMouseEvent & eve
   }
 }
 
+void OrbitViewController::setShiftOrbitStatus()
+{
+  setStatus("<b>Left-Click:</b> Move X/Y.  "
+    "<b>Right-Click:</b>: Move Z.  "
+    "<b>Mouse Wheel:</b>: Zoom.");
+}
+
+void OrbitViewController::setDefaultOrbitStatus()
+{
+  setStatus(
+    "<b>Left-Click:</b> Rotate.  "
+    "<b>Middle-Click:</b> Move X/Y.  "
+    "<b>Right-Click/Mouse Wheel:</b>: Zoom.  "
+    "<b>Shift</b>: More options.");
+}
+
+bool OrbitViewController::setMouseMovementFromEvent(
+  const rviz_common::ViewportMouseEvent & event, int32_t & diff_x, int32_t & diff_y)
+{
+  if (event.type == QEvent::MouseButtonPress) {
+    focal_shape_->getRootNode()->setVisible(true);
+    dragging_ = true;
+    return true;
+  } else if (event.type == QEvent::MouseButtonRelease) {
+    focal_shape_->getRootNode()->setVisible(false);
+    dragging_ = false;
+    return true;
+  } else if (dragging_ && event.type == QEvent::MouseMove) {
+    diff_x = event.x - event.last_x;
+    diff_y = event.y - event.last_y;
+    return true;
+  }
+  return false;
+}
+
+void OrbitViewController::rotateCamera(int32_t diff_x, int32_t diff_y)
+{
+  setCursor(Rotate3D);
+  yaw(diff_x * ROTATION_SPEED);
+  pitch(-diff_y * ROTATION_SPEED);
+}
+
+void OrbitViewController::moveFocalPoint(
+  float distance, int32_t diff_x, int32_t diff_y, int32_t last_x, int32_t last_y)
+{
+  (void) last_x;
+  (void) last_y;
+  setCursor(MoveXY);
+  float fovY = camera_->getFOVy().valueRadians();
+  float fovX = 2.0f * atan(tan(fovY / 2.0f) * camera_->getAspectRatio());
+
+  int width = camera_->getViewport()->getActualWidth();
+  int height = camera_->getViewport()->getActualHeight();
+
+  move(
+    -(static_cast<float>(diff_x) / static_cast<float>(width)) * distance * tan(fovX / 2.0f) * 2.0f,
+    (static_cast<float>(diff_y) / static_cast<float>(height)) * distance * tan(fovY / 2.0f) * 2.0f,
+    0.0f
+  );
+}
+
+void OrbitViewController::handleRightClick(
+  rviz_common::ViewportMouseEvent & event, float distance, int32_t diff_y)
+{
+  if (event.shift()) {
+    setCursor(MoveZ);
+    move(0.0f, 0.0f, diff_y * 0.1f * (distance / 10.0f));
+  } else {
+    setCursor(Zoom);
+    zoom(-diff_y * 0.1f * (distance / 10.0f));
+  }
+}
+
+void OrbitViewController::handleWheelEvent(rviz_common::ViewportMouseEvent & event, float distance)
+{
+  int diff = event.wheel_delta;
+  if (event.shift()) {
+    move(0, 0, -diff * 0.001f * distance);
+  } else {
+    zoom(diff * 0.001f * distance);
+  }
+}
+
 void OrbitViewController::mimic(rviz_common::ViewController * source_view)
 {
   rviz_common::FramePositionTrackingViewController::mimic(source_view);
 
   Ogre::Camera * source_camera = source_view->getCamera();
-  if (!source_camera) {
-    throw std::runtime_error("camera pointer unexpectedly nullptr");
-  }
   Ogre::SceneNode * camera_parent = source_camera->getParentSceneNode();
-  if (!camera_parent) {
-    throw std::runtime_error("camera's parent scene node pointer unexpectedly nullptr");
-  }
+
   Ogre::Vector3 position = camera_parent->getPosition();
   Ogre::Quaternion orientation = camera_parent->getOrientation();
 
-  // TODO(botteroa-si): make sure that these two cases suffice also when more view controllers are
-  // available.
   if (source_view->getClassId() == "rviz_default_plugins/Orbit") {
-    // If I'm initializing from another instance of this same class, get the distance exactly.
-    distance_property_->setFloat(source_view->subProp("Distance")->getValue().toFloat());
+    const auto source_orbit_view = dynamic_cast<OrbitViewController *>(source_view);
+    distance_property_->setFloat(source_orbit_view->distance_property_->getFloat());
+    focal_point_property_->setVector(source_orbit_view->focal_point_property_->getVector());
     updateFocalShapeSize();
-    auto direction =
-      orientation * (Ogre::Vector3::NEGATIVE_UNIT_Z * distance_property_->getFloat());
-    focal_point_property_->setVector(position + direction);
-    calculatePitchYawFromPosition(position);
+  } else if (source_view->getClassId() == "rviz_default_plugins/TopDownOrtho") {
+    position = mimicTopDownViewController(source_view);
   } else {
-    // If coming from a different view controller, the distance, yaw and pitch are set from the
-    // last used view controller of type orbit (i.e. orit itself, or third person or orbitXY).
-    // If this is the first time an orbit view is used, then the default start values will be used.
-    distance_property_->setFloat(view_config_.distance_);
-    yaw_property_->setFloat(view_config_.yaw_);
-    pitch_property_->setFloat(view_config_.pitch_);
+    // Determine the distance from here to the reference frame, and use
+    // that as the distance our focal point should be at.
+    distance_property_->setFloat(position.length());
     updateFocalShapeSize();
     auto direction = orientation * (Ogre::Vector3::NEGATIVE_UNIT_Z * position.length());
     focal_point_property_->setVector(position + direction);
   }
+
+  calculatePitchYawFromPosition(position);
+}
+
+Ogre::Vector3 OrbitViewController::mimicTopDownViewController(
+  rviz_common::ViewController * view_controller)
+{
+  float focal_point_x = view_controller->subProp("X")->getValue().toFloat();
+  float focal_point_y = view_controller->subProp("Y")->getValue().toFloat();
+  distance_property_->setFloat(100);
+  focal_point_property_->setVector(Ogre::Vector3(focal_point_x, focal_point_y, 0));
+  updateFocalShapeSize();
+
+  // Substract a tiny bit in the y-direction to resolve pitch/yaw ambiguity.
+  return Ogre::Vector3(focal_point_x, focal_point_y - 0.0001f, 100);
 }
 
 rviz_common::FocalPointStatus OrbitViewController::getFocalPointStatus()
@@ -254,9 +294,6 @@ void OrbitViewController::update(float dt, float ros_dt)
 void OrbitViewController::lookAt(const Ogre::Vector3 & point)
 {
   Ogre::SceneNode * camera_parent = camera_->getParentSceneNode();
-  if (!camera_parent) {
-    throw std::runtime_error("camera's parent scene node pointer unexpectedly nullptr");
-  }
   Ogre::Vector3 camera_position = camera_parent->getPosition();
   focal_point_property_->setVector(target_scene_node_->getOrientation().Inverse() *
     (point - target_scene_node_->getPosition()));
@@ -266,8 +303,7 @@ void OrbitViewController::lookAt(const Ogre::Vector3 & point)
 }
 
 void OrbitViewController::onTargetFrameChanged(
-  const Ogre::Vector3 & old_reference_position,
-  const Ogre::Quaternion & old_reference_orientation)
+  const Ogre::Vector3 & old_reference_position, const Ogre::Quaternion & old_reference_orientation)
 {
   Q_UNUSED(old_reference_orientation);
   focal_point_property_->add(old_reference_position - reference_position_);
@@ -301,9 +337,7 @@ void OrbitViewController::updateCamera()
   }
   camera_parent->setPosition(pos);
   camera_parent->setFixedYawAxis(true, target_scene_node_->getOrientation() * camera_z);
-  camera_parent->setDirection(
-    target_scene_node_->getOrientation() * (focal_point - pos),
-    Ogre::SceneNode::TS_PARENT);
+  camera_parent->setDirection(focal_point - pos, Ogre::SceneNode::TS_PARENT);
 
   focal_shape_->setPosition(focal_point);
 }
@@ -327,15 +361,16 @@ void OrbitViewController::calculatePitchYawFromPosition(const Ogre::Vector3 & po
 
 void OrbitViewController::updateFocalShapeSize()
 {
-  const double fshape_size(focal_shape_size_property_->getFloat());
-  double distance_property(distance_property_->getFloat());
+  const float fshape_size(focal_shape_size_property_->getFloat());
+  float distance_property(distance_property_->getFloat());
   if (focal_shape_fixed_size_property_->getBool()) {
     distance_property = 1;
   }
 
-  focal_shape_->setScale(Ogre::Vector3(fshape_size * distance_property,
-    fshape_size * distance_property,
-    fshape_size * distance_property / 5.0));
+  focal_shape_->setScale(Ogre::Vector3(
+      fshape_size * distance_property,
+      fshape_size * distance_property,
+      fshape_size * distance_property / 5.0f));
 }
 
 void OrbitViewController::zoom(float amount)
@@ -348,18 +383,12 @@ void OrbitViewController::zoom(float amount)
 void OrbitViewController::move(float x, float y, float z)  // NOLINT(build/include_what_you_use)
 {
   Ogre::SceneNode * camera_parent = camera_->getParentSceneNode();
-  if (!camera_parent) {
-    throw std::runtime_error("camera's parent scene node pointer unexpectedly nullptr");
-  }
   focal_point_property_->add(camera_parent->getOrientation() * Ogre::Vector3(x, y, z));
 }
-
-ViewConfig OrbitViewController::view_config_ = ViewConfig(DISTANCE_START, YAW_START, PITCH_START);
 
 }  // namespace view_controllers
 }  // namespace rviz_default_plugins
 
 #include <pluginlib/class_list_macros.hpp>  // NOLINT(build/include_order)
 PLUGINLIB_EXPORT_CLASS(
-  rviz_default_plugins::view_controllers::OrbitViewController,
-  rviz_common::ViewController)
+  rviz_default_plugins::view_controllers::OrbitViewController, rviz_common::ViewController)

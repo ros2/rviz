@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2009, Willow Garage, Inc.
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,9 +32,11 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__ORBIT__ORBIT_VIEW_CONTROLLER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__ORBIT__ORBIT_VIEW_CONTROLLER_HPP_
 
+#include <memory>
+
 #include <OgreVector3.h>
 
-#include <QCursor>
+#include <QCursor>  // NOLINT(build/include_order)
 
 #include "rviz_common/frame_position_tracking_view_controller.hpp"
 #include "rviz_common/properties/bool_property.hpp"
@@ -47,35 +50,15 @@ namespace rviz_default_plugins
 namespace view_controllers
 {
 
-struct ViewConfig
-{
-  ViewConfig(float d, float y, float p)
-  : distance_(d), yaw_(y), pitch_(p) {}
-  void setConfig(float d, float y, float p)
-  {
-    distance_ = d;
-    yaw_ = y;
-    pitch_ = p;
-  }
-
-  float distance_;
-  float yaw_;
-  float pitch_;
-};
-
 /// An orbital camera, controlled by yaw, pitch, distance, and focal point
 /**
  * This camera is based on the equation of a sphere in spherical coordinates:
  *
- *   x = d * cos(theta) * sin(phi)
- *   y = d * cos(phi)
- *   z = d * sin(theta) * sin(phi)
+ *   x = distance * cos(yaw) * sin(pitch)
+ *   y = distance * cos(pitch)
+ *   z = distance * sin(yaw) * sin(pitch)
  *
- * Where:
- *
- *   d = distance
- *   theta = yaw
- *   phi = pitch
+ * The coordinates are then offset by the focal point
  */
 class RVIZ_DEFAULT_PLUGINS_PUBLIC OrbitViewController : public
   rviz_common::FramePositionTrackingViewController
@@ -84,7 +67,7 @@ class RVIZ_DEFAULT_PLUGINS_PUBLIC OrbitViewController : public
 
 public:
   OrbitViewController();
-  virtual ~OrbitViewController();
+  ~OrbitViewController() override;
 
   /// Do subclass-specific initialization.
   /**
@@ -127,8 +110,25 @@ public:
 
   rviz_common::FocalPointStatus getFocalPointStatus() override;
 
-protected:
   void update(float dt, float ros_dt) override;
+
+protected:
+  bool setMouseMovementFromEvent(
+    const rviz_common::ViewportMouseEvent & event, int32_t & diff_x, int32_t & diff_y);
+
+  void rotateCamera(int32_t diff_x, int32_t diff_y);
+
+  virtual void moveFocalPoint(
+    float distance, int32_t diff_x, int32_t diff_y, int32_t last_x, int32_t last_y);
+
+  virtual void handleWheelEvent(rviz_common::ViewportMouseEvent & event, float distance);
+
+  virtual void handleRightClick(
+    rviz_common::ViewportMouseEvent & event, float distance, int32_t diff_y);
+
+  virtual void setShiftOrbitStatus();
+
+  void setDefaultOrbitStatus();
 
   void onTargetFrameChanged(
     const Ogre::Vector3 & old_reference_position,
@@ -145,6 +145,8 @@ protected:
 
   virtual void updateCamera();
 
+  Ogre::Vector3 mimicTopDownViewController(rviz_common::ViewController * view_controller);
+
   /// The camera's yaw (rotation around the y-axis), in radians.
   rviz_common::properties::FloatProperty * yaw_property_;
   /// The camera's pitch (rotation around the x-axis), in radians.
@@ -158,11 +160,10 @@ protected:
   /// The focal shape size.
   rviz_common::properties::FloatProperty * focal_shape_size_property_;
 
-  rviz_rendering::Shape * focal_shape_;
+  std::unique_ptr<rviz_rendering::Shape> focal_shape_;
 
+private:
   bool dragging_;
-
-  static ViewConfig view_config_;
 };
 
 }  // namespace view_controllers
