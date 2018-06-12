@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "map_display.hpp"
+#include "rviz_default_plugins/displays/map/map_display.hpp"
 
 #include <memory>
 #include <string>
@@ -69,7 +69,7 @@
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/validate_floats.hpp"
 #include "rviz_common/display_context.hpp"
-#include "./palette_builder.hpp"
+#include "rviz_default_plugins/displays/map/palette_builder.hpp"
 
 
 namespace rviz_default_plugins

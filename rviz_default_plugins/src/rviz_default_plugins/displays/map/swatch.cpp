@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "swatch.hpp"
+#include "rviz_default_plugins/displays/map/swatch.hpp"
 
 #include <algorithm>
 #include <string>

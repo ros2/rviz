@@ -39,8 +39,8 @@
 
 #include <OgreManualObject.h>
 
+#include "rviz_default_plugins/displays/map/map_display.hpp"
 #include "../../scene_graph_introspection.hpp"
-#include "../../../../src/rviz_default_plugins/displays/map/map_display.hpp"
 #include "../display_test_fixture.hpp"
 
 using namespace ::testing;  // NOLINT

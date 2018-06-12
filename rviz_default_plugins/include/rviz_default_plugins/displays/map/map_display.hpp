@@ -61,7 +61,8 @@
 
 #include "rviz_common/ros_topic_display.hpp"
 
-#include "swatch.hpp"
+#include "rviz_default_plugins/displays/map/swatch.hpp"
+#include "rviz_default_plugins/visibility_control.hpp"
 
 namespace Ogre
 {
@@ -94,7 +95,8 @@ class AlphaSetter;
  * \class MapDisplay
  * \brief Displays a map along the XY plane.
  */
-class MapDisplay : public rviz_common::RosTopicDisplay<nav_msgs::msg::OccupancyGrid>
+class RVIZ_DEFAULT_PLUGINS_PUBLIC MapDisplay : public
+  rviz_common::RosTopicDisplay<nav_msgs::msg::OccupancyGrid>
 {
   Q_OBJECT
 

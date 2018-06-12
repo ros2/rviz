@@ -33,6 +33,8 @@
 #include <memory>
 #include <vector>
 
+#include "rviz_default_plugins/visibility_control.hpp"
+
 namespace rviz_default_plugins
 {
 namespace displays
@@ -42,7 +44,8 @@ std::vector<unsigned char> makeRawPalette();
 std::vector<unsigned char> makeMapPalette();
 std::vector<unsigned char> makeCostmapPalette();
 
-class PaletteBuilder : public std::enable_shared_from_this<PaletteBuilder>
+class RVIZ_DEFAULT_PLUGINS_PUBLIC PaletteBuilder : public
+  std::enable_shared_from_this<PaletteBuilder>
 {
 public:
   PaletteBuilder();

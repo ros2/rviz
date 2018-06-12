@@ -32,7 +32,7 @@
 
 #include <memory>
 
-#include "../../../../src/rviz_default_plugins/displays/map/palette_builder.hpp"
+#include "rviz_default_plugins/displays/map/palette_builder.hpp"
 
 using namespace ::testing;  // NOLINT
 

@@ -48,7 +48,9 @@
 # pragma GCC diagnostic pop
 #endif
 
-#include "nav_msgs/msg/occupancy_grid__struct.hpp"
+#include "nav_msgs/msg/occupancy_grid.hpp"
+
+#include "rviz_default_plugins/visibility_control.hpp"
 
 namespace Ogre
 {
@@ -63,7 +65,7 @@ namespace displays
 {
 class MapDisplay;
 
-class Swatch
+class RVIZ_DEFAULT_PLUGINS_PUBLIC Swatch
 {
 public:
   Swatch(

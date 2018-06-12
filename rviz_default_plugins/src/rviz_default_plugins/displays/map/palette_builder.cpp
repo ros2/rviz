@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "palette_builder.hpp"
+#include "rviz_default_plugins/displays/map/palette_builder.hpp"
 
 #include <cstring>
 #include <memory>
