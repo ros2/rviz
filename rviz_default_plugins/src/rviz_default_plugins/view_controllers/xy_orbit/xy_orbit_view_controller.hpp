@@ -45,7 +45,7 @@
 # pragma clang diagnostic pop
 #endif
 
-#include "../orbit/orbit_view_controller.hpp"
+#include "rviz_default_plugins/view_controllers/orbit/orbit_view_controller.hpp"
 
 namespace Ogre
 {
