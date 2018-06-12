@@ -31,7 +31,7 @@
 
 #include <string>
 
-#include "./panel.hpp"
+#include "rviz_common/panel.hpp"
 
 class QTextBrowser;
 
@@ -44,9 +44,9 @@ class HelpPanel : public Panel
 
 public:
   explicit HelpPanel(QWidget * parent = 0);
-  virtual ~HelpPanel();
+  ~HelpPanel() override;
 
-  virtual void onInitialize();
+  void onInitialize() override;
 
   /** @brief Load the given html file. */
   void setHelpFile(const QString & file_path);

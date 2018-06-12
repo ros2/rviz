@@ -298,7 +298,7 @@ public:
 
   virtual void setHelpPath(const QString & help_path);
 
-  virtual QString getHelpPath() const;
+  QString getHelpPath() const override;
 
   rclcpp::Clock::SharedPtr getClock() override;
 

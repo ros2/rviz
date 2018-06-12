@@ -35,7 +35,7 @@
 #include <QTextBrowser>  // NOLINT: cpplint is unable to handle the include order here
 #include <QVBoxLayout>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "./visualization_manager.hpp"
+#include "rviz_common/display_context.hpp"
 
 namespace rviz_common
 {
@@ -53,7 +53,7 @@ HelpPanel::~HelpPanel() = default;
 
 void HelpPanel::onInitialize()
 {
-  setHelpFile(vis_manager_->getHelpPath());
+  setHelpFile(getDisplayContext()->getHelpPath());
 }
 
 void HelpPanel::setHelpFile(const QString & qfile_path)

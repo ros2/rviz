@@ -202,6 +202,10 @@ public:
   setStatus(const QString & message) = 0;
 
   virtual
+  QString
+  getHelpPath() const = 0;
+
+  virtual
   std::shared_ptr<rclcpp::Clock>
   getClock() = 0;
 
