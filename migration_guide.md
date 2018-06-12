@@ -10,7 +10,6 @@ Please refer also to the ROS migration guide at https://github.com/ros2/ros2/wik
 - Most user-facing functionality such as base classes for displays or tools are now located in `rviz_common`.
 - The previous `ogre_helpers` as well as classes to do with rendering are located in `rviz_rendering` or its subfolder `objects`.
 - The default plugins and the robot are located in `rviz_default_plugins`.
-  Their headers are currently not exposed, i.e. cannot be used in custom plugins.
 - The Selection mechanism was moved to a subfolder `interaction` in `rviz_common`.
   The object picking behaviour was moved to a `ViewPicker`, which is also exposed via the display context.
 - If the display extends the `MessageFilterDisplay`, switch to extending `RosTopicDisplay`.
