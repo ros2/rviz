@@ -35,18 +35,18 @@
 #include "rviz_visual_testing_framework/visual_test_fixture.hpp"
 #include "rviz_visual_testing_framework/visual_test_publisher.hpp"
 
-#include "../../page_objects/marker_display_page_object.hpp"
-#include "../../publishers/marker_publisher.hpp"
+#include "../../page_objects/marker_array_display_page_object.hpp"
+#include "../../publishers/marker_array_publisher.hpp"
 
-TEST_F(VisualTestFixture, test_marker_with_three_marker_types) {
-  auto marker_publisher = std::make_unique<VisualTestPublisher>(
-    std::make_shared<nodes::MarkerPublisher>(), "marker_frame");
+TEST_F(VisualTestFixture, test_marker_array_with_three_marker_types) {
+  auto marker_array_publisher = std::make_unique<VisualTestPublisher>(
+    std::make_shared<nodes::MarkerArrayPublisher>(), "marker_array_frame");
 
   setCamPose(Ogre::Vector3(0, 0, 16));
   setCamLookAt(Ogre::Vector3(0, 0, 0));
 
-  auto marker_display = addDisplay<MarkerDisplayPageObject>();
-  marker_display->setTopic("/marker");
+  auto marker_display = addDisplay<MarkerArrayDisplayPageObject>();
+  marker_display->setTopic("/marker_array");
   wait(2000);
 
   assertMainWindowIdentity();
