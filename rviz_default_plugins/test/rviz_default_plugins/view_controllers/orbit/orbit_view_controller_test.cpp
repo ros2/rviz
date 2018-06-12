@@ -39,7 +39,6 @@
 #include <OgreCamera.h>
 #include <OgreRoot.h>
 #include <OgreSceneManager.h>
-#include <rviz_default_plugins/view_controllers/ortho/fixed_orientation_ortho_view_controller.hpp>
 
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/viewport_mouse_event.hpp"

@@ -36,7 +36,7 @@
 
 #include <OgreVector3.h>
 
-#include <QCursor>
+#include <QCursor>  // NOLINT(build/include_order)
 
 #include "rviz_common/frame_position_tracking_view_controller.hpp"
 #include "rviz_common/properties/bool_property.hpp"
