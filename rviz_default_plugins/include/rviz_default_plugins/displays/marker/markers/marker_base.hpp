@@ -42,6 +42,14 @@
 #include "rviz_common/interaction/forwards.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 
+// This is necessary because of using stl types with this display. Nevertheless, if you are
+// experiencing problems when subclassing this class, please make sure ROS2 and your code were
+// compiled with the same compiler and version
+#ifdef _WIN32
+# pragma warning(push)
+# pragma warning(disable:4251)
+#endif
+
 namespace Ogre
 {
 class SceneNode;
@@ -68,38 +76,29 @@ class MarkerSelectionHandler;
 typedef std::pair<std::string, int32_t> MarkerID;
 typedef std::set<Ogre::MaterialPtr> S_MaterialPtr;
 
-class MarkerBase
+class RVIZ_DEFAULT_PLUGINS_PUBLIC MarkerBase
 {
 public:
   typedef visualization_msgs::msg::Marker Marker;
   typedef visualization_msgs::msg::Marker::ConstSharedPtr MarkerConstSharedPtr;
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
   MarkerBase(
     MarkerCommon * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
   virtual ~MarkerBase();
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
   void setMessage(const Marker & message);
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
   void setMessage(const MarkerConstSharedPtr & message);
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
   bool expired();
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
   void updateFrameLocked();
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
   const MarkerConstSharedPtr & getMessage() const {return message_;}
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
   MarkerID getID() {return MarkerID(message_->ns, message_->id);}
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
   std::string getStringID()
   {
     return message_->ns + "/" + std::to_string(message_->id);
@@ -109,19 +108,14 @@ public:
   /** @brief Associate an InteractiveObject with this MarkerBase. */
   // void setInteractiveObject(InteractiveObjectWPtr object);
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
   virtual void setPosition(const Ogre::Vector3 & position);
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
   virtual void setOrientation(const Ogre::Quaternion & orientation);
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
   const Ogre::Vector3 & getPosition();
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
   const Ogre::Quaternion & getOrientation();
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
   virtual S_MaterialPtr getMaterials() {return S_MaterialPtr();}
 
 protected:
@@ -151,5 +145,9 @@ protected:
 }  // namespace markers
 }  // namespace displays
 }  // namespace rviz_default_plugins
+
+#ifdef _WIN32
+# pragma warning(pop)
+#endif
 
 #endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__MARKER_BASE_HPP_
