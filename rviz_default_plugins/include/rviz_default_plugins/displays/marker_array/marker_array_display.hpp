@@ -43,9 +43,10 @@ namespace displays
  * MarkerArray messages.  This is just a wrapper to let MarkerArray
  * topics get selected in the topic browser.
  */
-class MarkerArrayDisplay: public MarkerDisplay
+class MarkerArrayDisplay : public MarkerDisplay
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   MarkerArrayDisplay();
 
@@ -54,6 +55,7 @@ protected:
 
   /** @brief Overridden from MarkerDisplay. Subscribes to the marker array topic. */
   void subscribe() override;
+
 private:
   void handleMarkerArray(visualization_msgs::msg::MarkerArray::ConstSharedPtr array);
 };

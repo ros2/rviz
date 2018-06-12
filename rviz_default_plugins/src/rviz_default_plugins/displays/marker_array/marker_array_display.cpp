@@ -39,7 +39,7 @@ namespace displays
 {
 
 MarkerArrayDisplay::MarkerArrayDisplay()
-  : MarkerDisplay() {}
+: MarkerDisplay() {}
 
 void MarkerArrayDisplay::onInitialize()
 {
@@ -51,7 +51,7 @@ void MarkerArrayDisplay::onInitialize()
   queue_size_property_->setDescription(
     "Advanced: set the size of the incoming Marker message queue. "
     "This should generally be at least a few times larger "
-    "than the number of Markers in each MarkerArray." );
+    "than the number of Markers in each MarkerArray.");
 }
 
 void MarkerArrayDisplay::subscribe()
@@ -84,7 +84,8 @@ void MarkerArrayDisplay::subscribe()
 
 // I seem to need this wrapper function to make the compiler like my
 // function pointer in the .subscribe() call above.
-void MarkerArrayDisplay::handleMarkerArray(visualization_msgs::msg::MarkerArray::ConstSharedPtr array)
+void MarkerArrayDisplay::handleMarkerArray(
+  visualization_msgs::msg::MarkerArray::ConstSharedPtr array)
 {
   incomingMarkerArray(array);
 }
