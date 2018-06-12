@@ -77,6 +77,7 @@ public:
 
   MOCK_METHOD0(lockRender, void());
   MOCK_METHOD0(unlockRender, void());
+  MOCK_CONST_METHOD0(getHelpPath, QString());
 };
 
 #endif  // RVIZ_DEFAULT_PLUGINS__MOCK_DISPLAY_CONTEXT_HPP_
