@@ -81,10 +81,15 @@ Failures will result in missing symbols while linking.
   This avoids using the API in RosTopicDisplay which is called by the subscribers and needs ROS.
 - The Ogre dependency cannot be mocked.
   To work with it, a special testing setup is provided in `rviz_rendering`.
-  `rviz_default_plugins` provides additional helper methods to traverse the scene graph.
+  In addition, helper methods to traverse the scene graph are provided in `rviz_rendering`.
 - The tests need to be grouped with the other display tests, since the Ogre setup requires an actual display to be run.
   For now, display tests are only run on OSX at the OSRF Jenkins, but they will automatically be run on Linux if a physical display is present.
   To execute display tests on Windows, run `ament test --cmake-args -DEnableDisplayTests=True`.
+
+When writing tests inside `rviz_default_plugins`, test setups can be reused: 
+- For Displays, extend the `display_test_fixture`, which provides a fully set up mock of the Display Context and some convenience features to simulate correct transforms.
+- For Tools, extend the `tool_test_fixture`, which provides a fully set up mock of Display Context as well as convenience methods for mouse interaction.
+- For View Controllers, extend the `view_controller_test_fixture`, which provides a fully set up mock of Display Context as well as convenience methods to simulate mouse interaction
 
 ## End-to-end testing for RViz plugins
 
@@ -118,3 +123,4 @@ Then the function can be used for handler creation and the SelectionHandler work
   If they are needed, please provide a pull request to the RViz repository explaining why this functionality is needed.
 - `CovarianceProperty`: Previously used CovarianceVisual, now contains only a number of properties.
 See `rviz_rendering::CovarianceVisual` for further information and OdometryDisplay in `rviz_default_plugins` for an example usage.
+- The Display Context provides a whole host of new methods needed to write custom panels. The API has changed overall, but the functionality should only be extended.
