@@ -416,12 +416,10 @@ void PathDisplay::processMessage(nav_msgs::msg::Path::ConstSharedPtr msg)
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
   if (!context_->getFrameManager()->getTransform(msg->header, position, orientation)) {
-    rviz_common::UniformStringStream ss;
-    ss << "Error transforming from frame '" << msg->header.frame_id << "' to frame '" <<
-      qPrintable(fixed_frame_) << "'";
-    setStatusStd(rviz_common::properties::StatusProperty::Error, "Message", ss.str());
+    setMissingTransformToFixedFrame(msg->header.frame_id);
     return;
   }
+  setTransformOk();
 
   Ogre::Matrix4 transform(orientation);
   transform.setTrans(position);

@@ -46,7 +46,7 @@ TEST_F(VisualTestFixture, test_camera_display_with_published_image) {
   auto points = {nodes::createPoint(0, 0, 10)};
   std::vector<PublisherWithFrame> publishers = {
     PublisherWithFrame(std::make_shared<nodes::CameraInfoPublisher>(), "image"),
-    PublisherWithFrame(std::make_shared<nodes::ImagePublisher>(), "image"),
+    PublisherWithFrame(std::make_shared<nodes::ImagePublisher>(), "image_frame"),
     PublisherWithFrame(std::make_shared<nodes::PointCloudPublisher>(points), "pointcloud_frame")
   };
   auto cam_publisher = std::make_unique<VisualTestPublisher>(publishers);
@@ -59,6 +59,7 @@ TEST_F(VisualTestFixture, test_camera_display_with_published_image) {
   camera_display->collapse();
 
   auto pointcloud_display = addDisplay<PointCloudDisplayPageObject>();
+  pointcloud_display->setTopic("/pointcloud");
   pointcloud_display->setStyle("Spheres");
   pointcloud_display->setSizeMeters(11);
   pointcloud_display->setColor(0, 0, 255);

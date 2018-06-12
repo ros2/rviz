@@ -166,7 +166,7 @@ public:
    * This is thread-safe.
    *
    * Every Display has a StatusList to indicate how it is doing.  The
-   * StatusList has StatusPropertychildren indicating the status of
+   * StatusList has StatusProperty children indicating the status of
    * various subcomponents of the Display.  Each child of the status
    * has a level, a name, and descriptive text.  The top-level
    * StatusList has a level which is set to the worst of all the
@@ -192,6 +192,21 @@ public:
     properties::StatusProperty::Level level,
     const std::string & name,
     const std::string & text);
+
+  /// Convenience: Show and log missing transform
+  /**
+   * Convenience function which
+   * @param frame frame with missing transform to fixed_frame
+   * @param additional_info additional info included in the error_message which then reads "Could
+   * not transform <additional_info> from [<fixed_frame>] to [<frame>].
+   */
+  void
+  setMissingTransformToFixedFrame(
+    const std::string & frame, const std::string & additional_info = "");
+
+  /// Convenience: Set Transform ok
+  void
+  setTransformOk();
 
   /// Delete the status entry with the given name.
   /**

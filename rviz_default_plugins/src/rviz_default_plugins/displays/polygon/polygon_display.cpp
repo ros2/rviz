@@ -106,9 +106,10 @@ void PolygonDisplay::processMessage(geometry_msgs::msg::PolygonStamped::ConstSha
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
   if (!context_->getFrameManager()->getTransform(msg->header, position, orientation)) {
-    RVIZ_COMMON_LOG_DEBUG_STREAM("Error transforming from frame '" <<
-      msg->header.frame_id.c_str() << "' to frame '" << qPrintable(fixed_frame_) << "'");
+    setMissingTransformToFixedFrame(msg->header.frame_id);
+    return;
   }
+  setTransformOk();
 
   scene_node_->setPosition(position);
   scene_node_->setOrientation(orientation);

@@ -217,11 +217,11 @@ bool PoseArrayDisplay::setTransform(std_msgs::msg::Header const & header)
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
   if (!context_->getFrameManager()->getTransform(header, position, orientation)) {
-    RVIZ_COMMON_LOG_ERROR_STREAM(
-      "Error transforming pose '" << qPrintable(getName()) << "' from frame '" <<
-        header.frame_id.c_str() << "' to frame '" << qPrintable(fixed_frame_) << "'");
+    setMissingTransformToFixedFrame(header.frame_id, "pose " + getNameStd());
     return false;
   }
+  setTransformOk();
+
   scene_node_->setPosition(position);
   scene_node_->setOrientation(orientation);
   return true;

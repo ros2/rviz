@@ -199,11 +199,10 @@ void PoseDisplay::processMessage(geometry_msgs::msg::PoseStamped::ConstSharedPtr
   if (!context_->getFrameManager()->transform(message->header, message->pose, position,
     orientation))
   {
-    RVIZ_COMMON_LOG_ERROR_STREAM("Error transforming pose '" << qPrintable(getName()) <<
-      "' from frame '" << message->header.frame_id.c_str() << "' to frame '" <<
-      qPrintable(fixed_frame_));
+    setMissingTransformToFixedFrame(message->header.frame_id, "pose " + getNameStd());
     return;
   }
+  setTransformOk();
 
   pose_valid_ = true;
   updateShapeVisibility();
