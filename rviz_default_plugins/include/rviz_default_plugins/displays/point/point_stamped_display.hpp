@@ -42,8 +42,9 @@
 
 // TODO(Martin-Idel-SI): Add again when available
 // #include <rviz/message_filter_display.h>
-#include "rviz_common/ros_topic_display.hpp"
 
+#include "rviz_common/ros_topic_display.hpp"
+#include "rviz_default_plugins/visibility_control.hpp"
 
 namespace Ogre
 {
@@ -72,7 +73,8 @@ namespace rviz_default_plugins
 namespace displays
 {
 
-class PointStampedDisplay : public rviz_common::RosTopicDisplay<geometry_msgs::msg::PointStamped>
+class RVIZ_DEFAULT_PLUGINS_PUBLIC PointStampedDisplay
+  : public rviz_common::RosTopicDisplay<geometry_msgs::msg::PointStamped>
 {
   Q_OBJECT
 
