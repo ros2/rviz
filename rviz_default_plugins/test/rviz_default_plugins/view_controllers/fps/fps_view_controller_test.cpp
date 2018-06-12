@@ -42,9 +42,8 @@
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/viewport_mouse_event.hpp"
 
-#include "../../../../src/rviz_default_plugins/view_controllers/fps/fps_view_controller.hpp"
-#include \
-  "../../../../src/rviz_default_plugins/view_controllers/orbit/orbit_view_controller.hpp"  // NOLINT
+#include "rviz_default_plugins/view_controllers/fps/fps_view_controller.hpp"
+#include "rviz_default_plugins/view_controllers/orbit/orbit_view_controller.hpp"
 
 #include "../../displays/display_test_fixture.hpp"
 #include "../../scene_graph_introspection.hpp"

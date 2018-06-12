@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "fps_view_controller.hpp"
+#include "rviz_default_plugins/view_controllers/fps/fps_view_controller.hpp"
 
 #ifndef _WIN32
 # pragma GCC diagnostic push

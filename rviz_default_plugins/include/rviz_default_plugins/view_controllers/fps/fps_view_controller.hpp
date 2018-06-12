@@ -45,6 +45,8 @@
 
 #include "rviz_common/frame_position_tracking_view_controller.hpp"
 
+#include "rviz_default_plugins/visibility_control.hpp"
+
 namespace rviz_common
 {
 namespace properties
@@ -60,7 +62,8 @@ namespace rviz_default_plugins
 namespace view_controllers
 {
 /** @brief A first-person camera, controlled by yaw, pitch, and position. */
-class FPSViewController : public rviz_common::FramePositionTrackingViewController
+class RVIZ_DEFAULT_PLUGINS_PUBLIC FPSViewController : public
+  rviz_common::FramePositionTrackingViewController
 {
 public:
   FPSViewController();
