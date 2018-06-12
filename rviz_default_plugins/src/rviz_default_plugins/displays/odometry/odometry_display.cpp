@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "odometry_display.hpp"
+#include "rviz_default_plugins/displays/odometry/odometry_display.hpp"
 
 #include <memory>
 #include <string>
