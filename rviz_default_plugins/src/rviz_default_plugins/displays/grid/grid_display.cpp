@@ -146,8 +146,10 @@ void GridDisplay::update(float dt, float ros_dt)
     scene_node_->setPosition(position);
     scene_node_->setOrientation(orientation);
     setTransformOk();
+    grid_->getSceneNode()->setVisible(true);
   } else {
     setMissingTransformToFixedFrame(qframe.toStdString());
+    grid_->getSceneNode()->setVisible(false);
   }
 }
 

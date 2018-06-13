@@ -276,6 +276,13 @@ bool FrameManager::transform(
   Ogre::Vector3 & position,
   Ogre::Quaternion & orientation)
 {
+  // TODO(Martin-Idel-SI): Remove when https://github.com/ros2/geometry2/issues/58 closed
+  if (frame == fixed_frame_) {
+    position = Ogre::Vector3::ZERO;
+    orientation = Ogre::Quaternion::IDENTITY;
+    return true;
+  }
+
   if (!adjustTime(frame, time)) {
     return false;
   }
@@ -329,6 +336,11 @@ bool FrameManager::frameHasProblems(
   const std::string & frame,
   std::string & error)
 {
+  // TODO(Martin-Idel-SI): Remove when https://github.com/ros2/geometry2/issues/58 closed
+  if (frame == fixed_frame_) {
+    return false;
+  }
+
   if (!buffer_->_frameExists(frame)) {
     error = "Frame [" + frame + "] does not exist";
     if (frame == fixed_frame_) {
