@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "grid_cells_display.hpp"
+#include "rviz_default_plugins/displays/grid_cells/grid_cells_display.hpp"
 
 #include <memory>
 #include <string>
