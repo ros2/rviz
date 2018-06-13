@@ -48,7 +48,7 @@
 #include "rviz_default_plugins/view_controllers/ortho/fixed_orientation_ortho_view_controller.hpp"
 
 #include "../../displays/display_test_fixture.hpp"
-#include "../../scene_graph_introspection.hpp"
+#include "../../scene_graph_introspection_helper.hpp"
 #include "../view_controller_test_fixture.hpp"
 
 using namespace ::testing;  // NOLINT
