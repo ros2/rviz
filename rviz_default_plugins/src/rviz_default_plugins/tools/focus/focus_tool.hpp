@@ -27,38 +27,46 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_FOCUS_TOOL_H
-#define RVIZ_FOCUS_TOOL_H
-
-#include "rviz/tool.h"
+#ifndef RVIZ_DEFAULT_PLUGINS__TOOLS__FOCUS__FOCUS_TOOL_HPP_
+#define RVIZ_DEFAULT_PLUGINS__TOOLS__FOCUS__FOCUS_TOOL_HPP_
 
 #include <QCursor>
 
-namespace rviz
+#include "rviz_common/tool.hpp"
+#include "rviz_common/viewport_mouse_event.hpp"
+
+namespace rviz_default_plugins
+{
+namespace tools
 {
 
 //! The Focus Tool allows the user to set the focal point of the current
 //! view controller with a single mouse click.
-class FocusTool: public Tool
+class FocusTool : public rviz_common::Tool
 {
 public:
   FocusTool();
-  virtual ~FocusTool();
+  ~FocusTool() override;
 
-  virtual void onInitialize();
+  void onInitialize() override;
 
-  virtual void activate();
-  virtual void deactivate();
+  void activate() override;
+  void deactivate() override;
 
-  virtual int processMouseEvent( ViewportMouseEvent& event );
+  int processMouseEvent(rviz_common::ViewportMouseEvent & event) override;
+
+private:
+  void computePositionForDirection(
+    const rviz_common::ViewportMouseEvent & event, Ogre::Vector3 & position);
+
+  void setStatusFrom(const Ogre::Vector3 & position);
 
 protected:
   QCursor std_cursor_;
   QCursor hit_cursor_;
 };
 
-}
+}  // namespace tools
+}  // namespace rviz_default_plugins
 
-#endif
-
-
+#endif  // RVIZ_DEFAULT_PLUGINS__TOOLS__FOCUS__FOCUS_TOOL_HPP_
