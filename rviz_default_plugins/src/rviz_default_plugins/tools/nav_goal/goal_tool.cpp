@@ -44,8 +44,7 @@ namespace tools
 {
 
 GoalTool::GoalTool()
-: rviz_default_plugins::tools::PoseTool(),
-  node_(rclcpp::Node::make_shared("set_goal_tool_node"))
+: rviz_default_plugins::tools::PoseTool()
 {
   shortcut_key_ = 'g';
 
@@ -54,15 +53,10 @@ GoalTool::GoalTool()
       getPropertyContainer(), SLOT(updateTopic()), this);
 }
 
-GoalTool::~GoalTool()
-{
-  context_->removeNodeFromMainExecutor(node_);
-}
+GoalTool::~GoalTool() = default;
 
 void GoalTool::onInitialize()
 {
-  context_->addNodeToMainExecutor(node_);
-
   PoseTool::onInitialize();
   setName("2D Nav Goal");
   updateTopic();
@@ -70,8 +64,9 @@ void GoalTool::onInitialize()
 
 void GoalTool::updateTopic()
 {
-  publisher_ =
-    node_->create_publisher<geometry_msgs::msg::PoseStamped>(topic_property_->getStdString(), 1);
+  // TODO(anhosi, wjwwood): replace with abstraction for publishers once available
+  publisher_ = context_->getRosNodeAbstraction().lock()->get_raw_node()->
+    template create_publisher<geometry_msgs::msg::PoseStamped>(topic_property_->getStdString());
 }
 
 void GoalTool::onPoseSet(double x, double y, double theta)

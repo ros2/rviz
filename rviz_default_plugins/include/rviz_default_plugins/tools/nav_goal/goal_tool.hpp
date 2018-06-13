@@ -70,7 +70,6 @@ private Q_SLOTS:
   void updateTopic();
 
 private:
-  rclcpp::Node::SharedPtr node_;
   rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr publisher_;
 
   rviz_common::properties::StringProperty * topic_property_;
