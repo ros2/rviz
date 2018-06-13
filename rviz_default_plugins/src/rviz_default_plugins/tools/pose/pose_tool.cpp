@@ -63,7 +63,7 @@ namespace rviz_default_plugins
 namespace tools
 {
 PoseTool::PoseTool()
-: rviz_common::Tool(), arrow_(nullptr)
+: rviz_common::Tool(), arrow_(nullptr), angle_(0)
 {
   projection_finder_ = std::make_shared<rviz_rendering::ViewportProjectionFinder>();
 }
@@ -99,7 +99,7 @@ int PoseTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
   } else if (event.type == QEvent::MouseMove && event.left()) {
     return processMouseMoved(point_projection_on_xy_plane);
   } else if (event.leftUp()) {
-    return processMouseLeftButtonReleased(point_projection_on_xy_plane);
+    return processMouseLeftButtonReleased();
   }
 
   return 0;
@@ -125,8 +125,8 @@ int PoseTool::processMouseMoved(std::pair<bool, Ogre::Vector3> xy_plane_intersec
   if (state_ == Orientation) {
     // compute angle in x-y plane
     if (xy_plane_intersection.first) {
-      double angle = calculateAngle(xy_plane_intersection.second, arrow_position_);
-      makeArrowVisibleAndSetOrientation(angle);
+      angle_ = calculateAngle(xy_plane_intersection.second, arrow_position_);
+      makeArrowVisibleAndSetOrientation(angle_);
 
       flags |= Render;
     }
@@ -147,17 +147,12 @@ void PoseTool::makeArrowVisibleAndSetOrientation(double angle)
   arrow_->setOrientation(Ogre::Quaternion(Ogre::Radian(angle), Ogre::Vector3::UNIT_Z) * orient_x);
 }
 
-int PoseTool::processMouseLeftButtonReleased(std::pair<bool, Ogre::Vector3> xy_plane_intersection)
+int PoseTool::processMouseLeftButtonReleased()
 {
   int flags = 0;
   if (state_ == Orientation) {
-    // compute angle in x-y plane
-    if (xy_plane_intersection.first) {
-      double angle = calculateAngle(xy_plane_intersection.second, arrow_position_);
-      onPoseSet(arrow_position_.x, arrow_position_.y, angle);
-
-      flags |= (Finished | Render);
-    }
+    onPoseSet(arrow_position_.x, arrow_position_.y, angle_);
+    flags |= (Finished | Render);
   }
 
   return flags;

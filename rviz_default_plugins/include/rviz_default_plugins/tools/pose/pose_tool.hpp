@@ -85,6 +85,7 @@ protected:
     Orientation
   };
   State state_;
+  double angle_;
 
   Ogre::Vector3 arrow_position_;
   std::shared_ptr<rviz_rendering::ViewportProjectionFinder> projection_finder_;
@@ -92,7 +93,7 @@ protected:
 private:
   int processMouseLeftButtonPressed(std::pair<bool, Ogre::Vector3> xy_plane_intersection);
   int processMouseMoved(std::pair<bool, Ogre::Vector3> xy_plane_intersection);
-  int processMouseLeftButtonReleased(std::pair<bool, Ogre::Vector3> xy_plane_intersection);
+  int processMouseLeftButtonReleased();
   void makeArrowVisibleAndSetOrientation(double angle);
   double calculateAngle(Ogre::Vector3 start_point, Ogre::Vector3 end_point);
 };
