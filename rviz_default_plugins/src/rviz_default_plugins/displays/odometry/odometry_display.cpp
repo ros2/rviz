@@ -264,12 +264,10 @@ void OdometryDisplay::processMessage(nav_msgs::msg::Odometry::ConstSharedPtr msg
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
   if (!context_->getFrameManager()->transform(msg->header, msg->pose.pose, position, orientation)) {
-    std::string error_message = "Error transforming odometry '" + getName().toStdString() +
-      "' from frame '" + msg->header.frame_id + "' to frame '" + fixed_frame_.toStdString() + "'";
-    setStatusStd(rviz_common::properties::StatusProperty::Error, "Transform", error_message);
+    setMissingTransformToFixedFrame(msg->header.frame_id);
     return;
   }
-  setStatus(rviz_common::properties::StatusProperty::Ok, "Transform", "Transform OK");
+  setTransformOk();
 
   bool use_arrow = (shape_property_->getOptionInt() == ArrowShape);
   arrows_.push_back(createAndSetArrow(position, orientation, use_arrow));
