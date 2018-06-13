@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,8 +38,8 @@
 
 #include "rviz_common/properties/queue_size_property.hpp"
 #include "rviz_common/ros_topic_display.hpp"
-#include "rviz_default_plugins/displays/marker/marker_common.hpp"
 
+#include "rviz_default_plugins/displays/marker/marker_common.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 
 namespace rviz_default_plugins

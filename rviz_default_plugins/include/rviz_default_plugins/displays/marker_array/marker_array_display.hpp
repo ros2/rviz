@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2011, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,6 +27,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER_ARRAY__MARKER_ARRAY_DISPLAY_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER_ARRAY__MARKER_ARRAY_DISPLAY_HPP_
 
@@ -45,7 +47,11 @@ namespace displays
 {
 
 /**
- * @brief Display for an array of markers. The MarkerDisplay class handles MarkerArray messages.
+ * \class MarkerArrayDisplay
+ * \brief Displays arrays of "markers" sent in by other ROS nodes on the "visualization_marker" topic
+ *
+ * Marker arrays come in as visualization_msgs::msg::MarkerArray messages.
+ * See the Marker message for more information.
  */
 class RVIZ_DEFAULT_PLUGINS_PUBLIC MarkerArrayDisplay
   : public rviz_common::RosTopicDisplay<visualization_msgs::msg::MarkerArray>

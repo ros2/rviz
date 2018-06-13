@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -67,7 +68,7 @@ namespace rviz_default_plugins
 {
 namespace displays
 {
-class RVIZ_DEFAULT_PLUGINS_PUBLIC MarkerNamespace;
+class MarkerNamespace;
 
 namespace markers
 {
@@ -81,11 +82,8 @@ typedef std::shared_ptr<markers::MarkerBase> MarkerBasePtr;
 typedef std::pair<std::string, int32_t> MarkerID;
 
 /**
- * \class MarkerDisplay
- * \brief Displays "markers" sent in by other ROS nodes on the "visualization_marker" topic
- *
- * Markers come in as visualization_msgs::msg::Marker messages.
- * See the Marker message for more information.
+ * \class MarkerCommon
+ * Common code shared by MarkerDisplay and MarkerArrayDisplay
  */
 class RVIZ_DEFAULT_PLUGINS_PUBLIC MarkerCommon
 {
@@ -179,7 +177,7 @@ private:
 
 /** @brief Manager of a single marker namespace.  Keeps a hash from
  * marker IDs to MarkerBasePtr, and creates or destroys them when necessary. */
-class MarkerNamespace : public rviz_common::properties::BoolProperty
+class RVIZ_DEFAULT_PLUGINS_PUBLIC MarkerNamespace : public rviz_common::properties::BoolProperty
 {
   Q_OBJECT
 

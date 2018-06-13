@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2011, Willow Garage, Inc.
+ * Copyright (c) 2011, Willow Garage, Inc.'
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -64,10 +65,7 @@ void MarkerArrayDisplay::load(const rviz_common::Config & config)
   marker_common_->load(config);
 }
 
-// I seem to need this wrapper function to make the compiler like my
-// function pointer in the .subscribe() call above.
-void MarkerArrayDisplay::processMessage(
-  visualization_msgs::msg::MarkerArray::ConstSharedPtr msg)
+void MarkerArrayDisplay::processMessage(visualization_msgs::msg::MarkerArray::ConstSharedPtr msg)
 {
   marker_common_->addMessage(msg);
 }

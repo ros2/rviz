@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,28 +31,8 @@
 #include "rviz_default_plugins/displays/marker/marker_display.hpp"
 
 #include <memory>
-#include <string>
-#include <utility>
-#include <vector>
 
-#include "rclcpp/duration.hpp"
-
-#include "rviz_rendering/objects/arrow.hpp"
-#include "rviz_rendering/objects/billboard_line.hpp"
-#include "rviz_rendering/objects/shape.hpp"
-#include "rviz_common/properties/int_property.hpp"
 #include "rviz_common/properties/queue_size_property.hpp"
-#include "rviz_common/validate_floats.hpp"
-
-#include "rviz_default_plugins/displays/marker/markers/arrow_marker.hpp"
-#include "rviz_default_plugins/displays/marker/markers/line_list_marker.hpp"
-#include "rviz_default_plugins/displays/marker/markers/line_strip_marker.hpp"
-#include "rviz_default_plugins/displays/marker/markers/mesh_resource_marker.hpp"
-#include "rviz_default_plugins/displays/marker/markers/points_marker.hpp"
-#include "rviz_default_plugins/displays/marker/markers/shape_marker.hpp"
-#include "rviz_default_plugins/displays/marker/markers/text_view_facing_marker.hpp"
-#include "rviz_default_plugins/displays/marker/markers/triangle_list_marker.hpp"
-#include "rviz_default_plugins/displays/marker/markers/marker_factory.hpp"
 
 namespace rviz_default_plugins
 {
