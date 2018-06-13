@@ -247,6 +247,10 @@ if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_cmake_gmock REQUIRED)
 
+  install(DIRECTORY "${CMAKE_SOURCE_DIR}/test/ogre_media_resources/test_meshes"
+    DESTINATION "share/rviz_default_plugins"
+    USE_SOURCE_PERMISSIONS)
+
   if(DEFINED ENV{DISPLAY})
     set(DISPLAYPRESENT TRUE)
   endif()

@@ -86,7 +86,7 @@ public:
     EXPECT_CALL(*context_, getHandlerManager()).WillRepeatedly(Return(handle_manager_));
 
     resource_retriever::Retriever retriever;
-    auto file = retriever.get("package://rviz_rendering_tests/test_meshes/test.urdf");
+    auto file = retriever.get("package://rviz_default_plugins/test_meshes/test.urdf");
     std::string string(reinterpret_cast<char *>(file.data.get()), file.size);
     urdf_model_.initString(string);
 
