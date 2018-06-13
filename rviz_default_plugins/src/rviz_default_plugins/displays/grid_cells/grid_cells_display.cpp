@@ -114,24 +114,26 @@ void GridCellsDisplay::processMessage(nav_msgs::msg::GridCells::ConstSharedPtr m
     return;
   }
 
-  setStatus(rviz_common::properties::StatusProperty::Ok, "Topic",
-    QString::number(messages_received_) + " messages received");
-
-  Ogre::Vector3 position;
-  Ogre::Quaternion orientation;
-  if (!context_->getFrameManager()->getTransform(msg->header, position, orientation)) {
-    std::string error = "Error transforming from frame '" + msg->header.frame_id +
-      "' to frame '" + fixed_frame_.toStdString() + "'";
-    setStatusStd(rviz_common::properties::StatusProperty::Error, "Transform", error);
-    RVIZ_COMMON_LOG_DEBUG(error);
+  if (!setTransform(msg->header)) {
     return;
   }
-  setStatusStd(rviz_common::properties::StatusProperty::Ok, "Transform", "Ok");
+
+  convertMessageToCloud(msg);
+}
+
+bool GridCellsDisplay::setTransform(std_msgs::msg::Header const & header)
+{
+  Ogre::Vector3 position;
+  Ogre::Quaternion orientation;
+  if (!context_->getFrameManager()->getTransform(header, position, orientation)) {
+    setMissingTransformToFixedFrame(header.frame_id, getNameStd());
+    return false;
+  }
+  setTransformOk();
 
   scene_node_->setPosition(position);
   scene_node_->setOrientation(orientation);
-
-  convertMessageToCloud(msg);
+  return true;
 }
 
 bool validateFloats(const nav_msgs::msg::GridCells & msg)

@@ -90,6 +90,7 @@ private Q_SLOTS:
 private:
   bool messageIsValid(nav_msgs::msg::GridCells::ConstSharedPtr msg);
   void convertMessageToCloud(nav_msgs::msg::GridCells::ConstSharedPtr msg);
+  bool setTransform(std_msgs::msg::Header const & header);
 
   std::shared_ptr<rviz_rendering::PointCloud> cloud_;
 

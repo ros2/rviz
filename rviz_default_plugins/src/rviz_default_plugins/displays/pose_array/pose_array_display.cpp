@@ -190,8 +190,6 @@ void PoseArrayDisplay::processMessage(const geometry_msgs::msg::PoseArray::Const
   }
 
   if (!setTransform(msg->header)) {
-    setStatus(
-      rviz_common::properties::StatusProperty::Error, "Topic", "Failed to look up transform");
     return;
   }
 
@@ -217,7 +215,7 @@ bool PoseArrayDisplay::setTransform(std_msgs::msg::Header const & header)
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
   if (!context_->getFrameManager()->getTransform(header, position, orientation)) {
-    setMissingTransformToFixedFrame(header.frame_id, "pose " + getNameStd());
+    setMissingTransformToFixedFrame(header.frame_id);
     return false;
   }
   setTransformOk();
