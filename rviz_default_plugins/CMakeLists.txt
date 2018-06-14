@@ -729,7 +729,7 @@ if(EnableVisualTests STREQUAL "True")
     ament_add_gmock(pose_tool_test
       test/rviz_default_plugins/tools/pose/pose_tool_test.cpp
       test/rviz_default_plugins/displays/display_test_fixture.cpp
-      test/rviz_default_plugins/scene_graph_introspection.cpp
+      test/rviz_default_plugins/scene_graph_introspection_helper.cpp
       APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
     if(TARGET pose_tool_test)
       target_include_directories(pose_tool_test PUBLIC ${TEST_INCLUDE_DIRS})

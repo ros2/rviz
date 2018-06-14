@@ -51,6 +51,7 @@ namespace rviz_rendering
 RVIZ_RENDERING_PUBLIC
 bool arrowIsVisible(Ogre::SceneManager * scene_manager);
 
+RVIZ_RENDERING_PUBLIC
 std::vector<Ogre::SceneNode *> findAllArrows(Ogre::SceneNode * scene_node);
 RVIZ_RENDERING_PUBLIC
 Ogre::SceneNode * findOneArrow(Ogre::SceneNode * scene_node);

@@ -39,9 +39,10 @@
 #include "rviz_default_plugins/tools/pose/pose_tool.hpp"
 #include "rviz_rendering/viewport_projection_finder.hpp"
 
+#include "test/rviz_rendering/scene_graph_introspection.hpp"
 #include "../tool_test_fixture.hpp"
 #include "../../displays/display_test_fixture.hpp"
-#include "../../scene_graph_introspection.hpp"
+#include "../../scene_graph_introspection_helper.hpp"
 #include "../../mock_display_context.hpp"
 
 using namespace ::testing;  // NOLINT
@@ -90,7 +91,7 @@ public:
 };
 
 TEST_F(PoseToolTestFixture, onInitialize_sets_arrow_invisible_at_first) {
-  auto arrows = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
+  auto arrows = rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode());
 
   ASSERT_THAT(arrows, SizeIs(1));
   EXPECT_FALSE(rviz_default_plugins::arrowIsVisible(arrows[0]));
@@ -100,7 +101,7 @@ TEST_F(PoseToolTestFixture, processMouseEvent_sets_arrow_position_below_mouse_cu
   auto left_click_event = generateMousePressEvent(10, 15);
   pose_tool_->processMouseEvent(left_click_event);
 
-  auto arrows = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
+  auto arrows = rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode());
   ASSERT_THAT(arrows, SizeIs(1));
   EXPECT_FALSE(rviz_default_plugins::arrowIsVisible(arrows[0]));
   EXPECT_THAT(arrows[0]->getPosition(), Vector3Eq(Ogre::Vector3(10, 15, 0)));
@@ -113,7 +114,7 @@ TEST_F(PoseToolTestFixture,
   pose_tool_->processMouseEvent(left_click_event);
   pose_tool_->processMouseEvent(move_mouse_event);
 
-  auto arrows = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
+  auto arrows = rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode());
   auto expected_orientation = Ogre::Quaternion(-0.270598f, -0.653282f, 0.270598f, -0.653282f);
   ASSERT_THAT(arrows, SizeIs(1));
   EXPECT_TRUE(rviz_default_plugins::arrowIsVisible(arrows[0]));
@@ -128,7 +129,7 @@ TEST_F(PoseToolTestFixture, deactivate_makes_arrow_invisible) {
   pose_tool_->processMouseEvent(move_mouse_event);
   pose_tool_->deactivate();
 
-  auto arrows = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
+  auto arrows = rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode());
   ASSERT_THAT(arrows, SizeIs(1));
   EXPECT_FALSE(rviz_default_plugins::arrowIsVisible(arrows[0]));
 }
