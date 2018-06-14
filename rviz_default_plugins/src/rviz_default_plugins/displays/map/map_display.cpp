@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,6 +30,9 @@
 
 #include "map_display.hpp"
 
+#include <memory>
+#include <string>
+
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -53,6 +57,7 @@
 #include "rviz_rendering/objects/grid.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/logging.hpp"
+#include "rviz_common/msg_conversions.hpp"
 #include "rviz_common/properties/enum_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/int_property.hpp"
@@ -62,6 +67,7 @@
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/validate_floats.hpp"
 #include "rviz_common/display_context.hpp"
+#include "./palette_builder.hpp"
 
 
 namespace rviz_default_plugins
@@ -123,125 +129,18 @@ MapDisplay::~MapDisplay()
 {
   unsubscribe();
   clear();
-  for (unsigned i = 0; i < swatches.size(); i++) {
-    delete swatches[i];
-  }
-  swatches.clear();
+  swatches_.clear();
 }
 
-unsigned char * makeMapPalette()
-{
-  unsigned char * palette = new unsigned char[256 * 4];
-  unsigned char * palette_ptr = palette;
-  // Standard gray map palette values
-  for (int i = 0; i <= 100; i++) {
-    unsigned char v = 255 - (255 * i) / 100;
-    *palette_ptr++ = v;  // red
-    *palette_ptr++ = v;  // green
-    *palette_ptr++ = v;  // blue
-    *palette_ptr++ = 255;  // alpha
-  }
-  // illegal positive values in green
-  for (int i = 101; i <= 127; i++) {
-    *palette_ptr++ = 0;  // red
-    *palette_ptr++ = 255;  // green
-    *palette_ptr++ = 0;  // blue
-    *palette_ptr++ = 255;  // alpha
-  }
-  // illegal negative (char) values in shades of red/yellow
-  for (int i = 128; i <= 254; i++) {
-    *palette_ptr++ = 255;  // red
-    *palette_ptr++ = (255 * (i - 128)) / (254 - 128);  // green
-    *palette_ptr++ = 0;  // blue
-    *palette_ptr++ = 255;  // alpha
-  }
-  // legal -1 value is tasteful blueish greenish grayish color
-  *palette_ptr++ = 0x70;  // red
-  *palette_ptr++ = 0x89;  // green
-  *palette_ptr++ = 0x86;  // blue
-  *palette_ptr++ = 255;  // alpha
-
-  return palette;
-}
-
-unsigned char * makeCostmapPalette()
-{
-  unsigned char * palette = new unsigned char[256 * 4];
-  unsigned char * palette_ptr = palette;
-
-  // zero values have alpha=0
-  *palette_ptr++ = 0;  // red
-  *palette_ptr++ = 0;  // green
-  *palette_ptr++ = 0;  // blue
-  *palette_ptr++ = 0;  // alpha
-
-  // Blue to red spectrum for most normal cost values
-  for (int i = 1; i <= 98; i++) {
-    unsigned char v = (255 * i) / 100;
-    *palette_ptr++ = v;  // red
-    *palette_ptr++ = 0;  // green
-    *palette_ptr++ = 255 - v;  // blue
-    *palette_ptr++ = 255;  // alpha
-  }
-  // inscribed obstacle values (99) in cyan
-  *palette_ptr++ = 0;  // red
-  *palette_ptr++ = 255;  // green
-  *palette_ptr++ = 255;  // blue
-  *palette_ptr++ = 255;  // alpha
-  // lethal obstacle values (100) in purple
-  *palette_ptr++ = 255;  // red
-  *palette_ptr++ = 0;  // green
-  *palette_ptr++ = 255;  // blue
-  *palette_ptr++ = 255;  // alpha
-  // illegal positive values in green
-  for (int i = 101; i <= 127; i++) {
-    *palette_ptr++ = 0;  // red
-    *palette_ptr++ = 255;  // green
-    *palette_ptr++ = 0;  // blue
-    *palette_ptr++ = 255;  // alpha
-  }
-  // illegal negative (char) values in shades of red/yellow
-  for (int i = 128; i <= 254; i++) {
-    *palette_ptr++ = 255;  // red
-    *palette_ptr++ = (255 * (i - 128)) / (254 - 128);  // green
-    *palette_ptr++ = 0;  // blue
-    *palette_ptr++ = 255;  // alpha
-  }
-  // legal -1 value is tasteful blueish greenish grayish color
-  *palette_ptr++ = 0x70;  // red
-  *palette_ptr++ = 0x89;  // green
-  *palette_ptr++ = 0x86;  // blue
-  *palette_ptr++ = 255;  // alpha
-
-  return palette;
-}
-
-unsigned char * makeRawPalette()
-{
-  unsigned char * palette = new unsigned char[256 * 4];
-  unsigned char * palette_ptr = palette;
-  // Standard gray map palette values
-  for (int i = 0; i < 256; i++) {
-    *palette_ptr++ = i;  // red
-    *palette_ptr++ = i;  // green
-    *palette_ptr++ = i;  // blue
-    *palette_ptr++ = 255;  // alpha
-  }
-
-  return palette;
-}
-
-Ogre::TexturePtr makePaletteTexture(unsigned char * palette_bytes)
+Ogre::TexturePtr makePaletteTexture(std::vector<unsigned char> palette_bytes)
 {
   Ogre::DataStreamPtr palette_stream;
-  palette_stream.reset(new Ogre::MemoryDataStream(palette_bytes, 256 * 4));
+  palette_stream.reset(new Ogre::MemoryDataStream(palette_bytes.data(), 256 * 4));
 
   static int palette_tex_count = 0;
-  std::stringstream ss;
-  ss << "MapPaletteTexture" << palette_tex_count++;
-  return Ogre::TextureManager::getSingleton().loadRawData(ss.str(),
-           "rviz_rendering",
-           palette_stream, 256, 1, Ogre::PF_BYTE_RGBA, Ogre::TEX_TYPE_1D, 0);
+  std::string tex_name = "MapPaletteTexture" + std::to_string(palette_tex_count++);
+  return Ogre::TextureManager::getSingleton().loadRawData(
+    tex_name, "rviz_rendering", palette_stream, 256, 1, Ogre::PF_BYTE_RGBA, Ogre::TEX_TYPE_1D, 0);
 }
 
 MapDisplay::MapDisplay(rviz_common::DisplayContext * context)
@@ -326,8 +225,8 @@ void MapDisplay::updateAlpha()
     depthWrite = !draw_under_property_->getValue().toBool();
   }
 
-  for (unsigned i = 0; i < swatches.size(); i++) {
-    swatches[i]->updateAlpha(sceneBlending, depthWrite, alpha);
+  for (auto swatch : swatches_) {
+    swatch->updateAlpha(sceneBlending, depthWrite, alpha);
   }
 }
 
@@ -336,15 +235,15 @@ void MapDisplay::updateDrawUnder()
   bool draw_under = draw_under_property_->getValue().toBool();
 
   if (alpha_property_->getFloat() >= 0.9998) {
-    for (unsigned i = 0; i < swatches.size(); i++) {
-      swatches[i]->material_->setDepthWriteEnabled(!draw_under);
+    for (auto swatch : swatches_) {
+      swatch->material_->setDepthWriteEnabled(!draw_under);
     }
   }
 
-  int group = draw_under ? Ogre::RENDER_QUEUE_4 : Ogre::RENDER_QUEUE_MAIN;
-  for (unsigned i = 0; i < swatches.size(); i++) {
-    if (swatches[i]->manual_object_) {
-      swatches[i]->manual_object_->setRenderQueueGroup(group);
+  uint8_t group = draw_under ? Ogre::RENDER_QUEUE_4 : Ogre::RENDER_QUEUE_MAIN;
+  for (auto swatch : swatches_) {
+    if (swatch->manual_object_) {
+      swatch->manual_object_->setRenderQueueGroup(group);
     }
   }
 }
@@ -357,14 +256,14 @@ void MapDisplay::clear()
     return;
   }
 
-  for (unsigned i = 0; i < swatches.size(); i++) {
-    if (swatches[i]->manual_object_) {
-      swatches[i]->manual_object_->setVisible(false);
+  for (auto swatch : swatches_) {
+    if (swatch->manual_object_) {
+      swatch->manual_object_->setVisible(false);
     }
 
-    if (!swatches[i]->texture_) {
-      Ogre::TextureManager::getSingleton().remove(swatches[i]->texture_);
-      swatches[i]->texture_.reset();
+    if (!swatch->texture_) {
+      Ogre::TextureManager::getSingleton().remove(swatch->texture_);
+      swatch->texture_.reset();
     }
   }
 
@@ -373,18 +272,16 @@ void MapDisplay::clear()
 
 bool validateFloats(const nav_msgs::msg::OccupancyGrid & msg)
 {
-  bool valid = true;
-  valid = valid && rviz_common::validateFloats(msg.info.resolution);
-  valid = valid && rviz_common::validateFloats(msg.info.origin);
-  return valid;
+  return rviz_common::validateFloats(msg.info.resolution) &&
+         rviz_common::validateFloats(msg.info.origin);
 }
 
 void MapDisplay::processMessage(nav_msgs::msg::OccupancyGrid::ConstSharedPtr msg)
 {
   current_map_ = *msg;
+  loaded_ = true;
   // updated via signal in case ros spinner is in a different thread
   Q_EMIT mapUpdated();
-  loaded_ = true;
 }
 
 // TODO(Martin-Idel-SI): Port when map_msgs is ported to ROS2
@@ -417,59 +314,84 @@ void MapDisplay::processMessage(nav_msgs::msg::OccupancyGrid::ConstSharedPtr msg
 
 void MapDisplay::createSwatches()
 {
-  int width = current_map_.info.width;
-  int height = current_map_.info.height;
+  size_t width = current_map_.info.width;
+  size_t height = current_map_.info.height;
   float resolution = current_map_.info.resolution;
 
-  int sw = width;
-  int sh = height;
-  int n_swatches = 1;
+  size_t swatch_width = width;
+  size_t swatch_height = height;
+  int number_swatches = 1;
+  int maximum_number_swatch_splittings = 4;  // 4 seems to work well for this purpose.
 
-  for (int i = 0; i < 4; i++) {
-    RVIZ_COMMON_LOG_INFO_STREAM("Creating " << n_swatches << " swatches");
-    for (unsigned j = 0; j < swatches.size(); j++) {
-      delete swatches[j];
-    }
-    swatches.clear();
+  for (int i = 0; i < maximum_number_swatch_splittings; i++) {
+    RVIZ_COMMON_LOG_INFO_STREAM("Creating " << number_swatches << " swatches_");
+    swatches_.clear();
     try {
-      int x = 0;
-      int y = 0;
-      for (int j = 0; j < n_swatches; j++) {
-        int tw, th;
-        if (width - x - sw >= sw) {
-          tw = sw;
-        } else {
-          tw = width - x;
-        }
-
-        if (height - y - sh >= sh) {
-          th = sh;
-        } else {
-          th = height - y;
-        }
-
-        swatches.push_back(new Swatch(this->scene_manager_, this->scene_node_, x, y, tw, th,
-          resolution, draw_under_property_->getValue().toBool()));
-        swatches[j]->updateData(this->current_map_);
-
-        x += tw;
-        if (x >= width) {
-          x = 0;
-          y += sh;
-        }
-      }
-      updateAlpha();
+      tryCreateSwatches(width, height, resolution, swatch_width, swatch_height, number_swatches);
       return;
+    } catch (Ogre::InvalidParametersException &) {
+      doubleSwatchNumber(swatch_width, swatch_height, number_swatches);
     } catch (Ogre::RenderingAPIException &) {
-      RVIZ_COMMON_LOG_ERROR_STREAM("Failed to create " << n_swatches << " swatches");
-      if (sw > sh) {
-        sw /= 2;
-      } else {
-        sh /= 2;
-      }
-      n_swatches *= 2;
+      // This exception seems no longer thrown on some systems. May still be relevant for others.
+      doubleSwatchNumber(swatch_width, swatch_height, number_swatches);
     }
   }
+}
+
+void MapDisplay::doubleSwatchNumber(
+  size_t & swatch_width, size_t & swatch_height, int & number_swatches) const
+{
+  RVIZ_COMMON_LOG_ERROR_STREAM("Failed to create " << number_swatches << " swatches_");
+  if (swatch_width > swatch_height) {
+    swatch_width /= 2;
+  } else {
+    swatch_height /= 2;
+  }
+  number_swatches *= 2;
+}
+
+void MapDisplay::tryCreateSwatches(
+  size_t width,
+  size_t height,
+  float resolution,
+  size_t swatch_width,
+  size_t swatch_height,
+  int number_swatches)
+{
+  size_t x = 0;
+  size_t y = 0;
+  for (int i = 0; i < number_swatches; i++) {
+    size_t effective_width = getEffectiveDimension(width, swatch_width, x);
+    size_t effective_height = getEffectiveDimension(height, swatch_height, y);
+
+    swatches_.push_back(std::make_shared<Swatch>(
+        scene_manager_,
+        scene_node_,
+        x, y,
+        effective_width,
+        effective_height,
+        resolution,
+        draw_under_property_->getValue().toBool()));
+
+    swatches_[i]->updateData(current_map_);
+
+    x += effective_width;
+    if (x >= width) {
+      x = 0;
+      y += effective_height;
+    }
+  }
+  updateAlpha();
+}
+
+size_t MapDisplay::getEffectiveDimension(
+  size_t map_dimension, size_t swatch_dimension, size_t position)
+{
+  // Last swatch is bigger than swatch_dimension for odd numbers.
+  // subtracting the swatch_dimension in the LHS handles this case.
+  return map_dimension - position - swatch_dimension >= swatch_dimension ?
+         swatch_dimension :
+         map_dimension - position;
 }
 
 void MapDisplay::showMap()
@@ -484,12 +406,23 @@ void MapDisplay::showMap()
     return;
   }
 
-  if (current_map_.info.width * current_map_.info.height == 0) {
-    std::stringstream ss;
-    ss << "Map is zero-sized (" << current_map_.info.width << "x" << current_map_.info.height <<
-      ")";
+  size_t width = current_map_.info.width;
+  size_t height = current_map_.info.height;
+
+  if (width * height == 0) {
+    std::string message =
+      "Map is zero-sized (" + std::to_string(width) + "x" + std::to_string(height) + ")";
     setStatus(
-      rviz_common::properties::StatusProperty::Error, "Map", QString::fromStdString(ss.str()));
+      rviz_common::properties::StatusProperty::Error, "Map", QString::fromStdString(message));
+    return;
+  }
+
+  if (width * height != current_map_.data.size()) {
+    std::string message =
+      "Data size doesn't match width*height: width = " + std::to_string(width) + ", height = " +
+      std::to_string(height) + ", data size = " + std::to_string(current_map_.data.size());
+    setStatus(
+      rviz_common::properties::StatusProperty::Error, "Map", QString::fromStdString(message));
     return;
   }
 
@@ -498,55 +431,24 @@ void MapDisplay::showMap()
   RVIZ_COMMON_LOG_DEBUG_STREAM("Received a " << current_map_.info.width << " X " <<
     current_map_.info.height << " map @ " << current_map_.info.resolution << "m/pix\n");
 
-  float resolution = current_map_.info.resolution;
+  showValidMap();
+}
 
+void MapDisplay::showValidMap()
+{
   size_t width = current_map_.info.width;
   size_t height = current_map_.info.height;
 
-  if (width * height != current_map_.data.size()) {
-    std::stringstream ss;
-    ss << "Data size doesn't match width*height: width = " << width << ", height = " << height <<
-      ", data size = " << current_map_.data.size();
-    setStatus(
-      rviz_common::properties::StatusProperty::Error, "Map", QString::fromStdString(ss.str()));
-    return;
-  }
+  float resolution = current_map_.info.resolution;
 
-  if (width != width_ || height != height_ || resolution_ != resolution) {
-    createSwatches();
-    width_ = width;
-    height_ = height;
-    resolution_ = resolution;
-  }
+  resetSwatchesIfNecessary(width, height, resolution);
 
-  Ogre::Vector3 position(current_map_.info.origin.position.x,
-    current_map_.info.origin.position.y,
-    current_map_.info.origin.position.z);
-  Ogre::Quaternion orientation(current_map_.info.origin.orientation.w,
-    current_map_.info.origin.orientation.x,
-    current_map_.info.origin.orientation.y,
-    current_map_.info.origin.orientation.z);
   frame_ = current_map_.header.frame_id;
   if (frame_.empty()) {
     frame_ = "/map";
   }
 
-  for (size_t i = 0; i < swatches.size(); i++) {
-    swatches[i]->updateData(this->current_map_);
-
-    Ogre::Pass * pass = swatches[i]->material_->getTechnique(0)->getPass(0);
-    Ogre::TextureUnitState * tex_unit = NULL;
-    if (pass->getNumTextureUnitStates() > 0) {
-      tex_unit = pass->getTextureUnitState(0);
-    } else {
-      tex_unit = pass->createTextureUnitState();
-    }
-
-    tex_unit->setTextureName(swatches[i]->texture_->getName());
-    tex_unit->setTextureFiltering(Ogre::TFO_NONE);
-    swatches[i]->manual_object_->setVisible(true);
-  }
-
+  updateSwatches();
 
   setStatus(rviz_common::properties::StatusProperty::Ok, "Map", "Map OK");
   updatePalette();
@@ -554,21 +456,52 @@ void MapDisplay::showMap()
   resolution_property_->setValue(resolution);
   width_property_->setValue(static_cast<unsigned int>(width));
   height_property_->setValue(static_cast<unsigned int>(height));
-  position_property_->setVector(position);
-  orientation_property_->setQuaternion(orientation);
+
+  position_property_->setVector(rviz_common::pointMsgToOgre(current_map_.info.origin.position));
+  orientation_property_->setQuaternion(
+    rviz_common::quaternionMsgToOgre(current_map_.info.origin.orientation));
 
   transformMap();
 
   context_->queueRender();
 }
 
+void MapDisplay::resetSwatchesIfNecessary(size_t width, size_t height, float resolution)
+{
+  if (width != width_ || height != height_ || resolution_ != resolution) {
+    createSwatches();
+    width_ = width;
+    height_ = height;
+    resolution_ = resolution;
+  }
+}
+
+void MapDisplay::updateSwatches() const
+{
+  for (auto swatch : swatches_) {
+    swatch->updateData(current_map_);
+
+    Ogre::Pass * pass = swatch->material_->getTechnique(0)->getPass(0);
+    Ogre::TextureUnitState * tex_unit = nullptr;
+    if (pass->getNumTextureUnitStates() > 0) {
+      tex_unit = pass->getTextureUnitState(0);
+    } else {
+      tex_unit = pass->createTextureUnitState();
+    }
+
+    tex_unit->setTextureName(swatch->texture_->getName());
+    tex_unit->setTextureFiltering(Ogre::TFO_NONE);
+    swatch->manual_object_->setVisible(true);
+  }
+}
+
 void MapDisplay::updatePalette()
 {
   int palette_index = color_scheme_property_->getOptionInt();
 
-  for (unsigned i = 0; i < swatches.size(); i++) {
-    Ogre::Pass * pass = swatches[i]->material_->getTechnique(0)->getPass(0);
-    Ogre::TextureUnitState * palette_tex_unit = NULL;
+  for (auto swatch : swatches_) {
+    Ogre::Pass * pass = swatch->material_->getTechnique(0)->getPass(0);
+    Ogre::TextureUnitState * palette_tex_unit = nullptr;
     if (pass->getNumTextureUnitStates() > 1) {
       palette_tex_unit = pass->getTextureUnitState(1);
     } else {
@@ -601,7 +534,7 @@ void MapDisplay::transformMap()
     current_map_.info.origin, position, orientation))
   {
     RVIZ_COMMON_LOG_ERROR_STREAM("Error transforming map '" << getName().toStdString() <<
-      "' from frame '" << frame_ << "' to'" << fixed_frame_.toStdString() << "'.");
+      "' from frame '" << frame_ << "' to '" << fixed_frame_.toStdString() << "'.");
 
     setStatus(rviz_common::properties::StatusProperty::Error, "Transform",
       "No transform from [" + QString::fromStdString(frame_) + "] to [" + fixed_frame_ + "]");

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,6 +31,7 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__MAP__MAP_DISPLAY_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MAP__MAP_DISPLAY_HPP_
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -141,9 +143,20 @@ protected:
 
   void clear();
 
+  void showValidMap();
+  void resetSwatchesIfNecessary(size_t width, size_t height, float resolution);
   void createSwatches();
+  void tryCreateSwatches(
+    size_t width,
+    size_t height,
+    float resolution,
+    size_t swatch_width,
+    size_t swatch_height,
+    int number_swatches);
+  size_t getEffectiveDimension(size_t map_dimension, size_t swatch_dimension, size_t position);
+  void updateSwatches() const;
 
-  std::vector<Swatch *> swatches;
+  std::vector<std::shared_ptr<Swatch>> swatches_;
   std::vector<Ogre::TexturePtr> palette_textures_;
   std::vector<bool> color_scheme_transparency_;
   bool loaded_;
@@ -168,6 +181,9 @@ protected:
   rviz_common::properties::EnumProperty * color_scheme_property_;
 
   rviz_common::properties::BoolProperty * transform_timestamp_property_;
+  void doubleSwatchNumber(
+    size_t & swatch_width, size_t & swatch_height,
+    int & number_swatches) const;
 };
 
 }  // namespace displays

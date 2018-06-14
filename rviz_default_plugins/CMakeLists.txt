@@ -96,6 +96,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/image/ros_image_texture.cpp
   src/rviz_default_plugins/displays/laser_scan/laser_scan_display.cpp
   src/rviz_default_plugins/displays/map/map_display.cpp
+  src/rviz_default_plugins/displays/map/palette_builder.cpp
   src/rviz_default_plugins/displays/map/swatch.cpp
   src/rviz_default_plugins/displays/marker/markers/arrow_marker.cpp
   src/rviz_default_plugins/displays/marker/markers/line_list_marker.cpp
@@ -504,6 +505,15 @@ if(BUILD_TESTING)
       target_include_directories(fps_view_controller_test PUBLIC
         ${TEST_INCLUDE_DIRS})
       target_link_libraries(fps_view_controller_test
+        ${TEST_LINK_LIBRARIES})
+    endif()
+
+    ament_add_gmock(palette_builder_test
+      test/rviz_default_plugins/displays/map/palette_builder_test.cpp)
+    if(TARGET palette_builder_test)
+      target_include_directories(palette_builder_test PUBLIC
+        ${TEST_INCLUDE_DIRS})
+      target_link_libraries(palette_builder_test
         ${TEST_LINK_LIBRARIES})
     endif()
 

@@ -145,7 +145,6 @@ TEST_F(MapTestFixture, showMap_shows_manual_object_if_current_map_is_valid) {
   mockValidTransform();
 
   map_display_->processMessage(createMapMessage());
-  map_display_->showMap();
 
   auto manual_objects = rviz_default_plugins::findAllOgreObjectByType<Ogre::ManualObject>(
     scene_manager_->getRootSceneNode(), "ManualObject");
@@ -167,7 +166,6 @@ TEST_F(MapTestFixture, showMap_defaults_empty_frame_id_to_map) {
   auto message = createMapMessage();
   message->header.frame_id = "";
   map_display_->processMessage(message);
-  map_display_->showMap();
 
   auto manual_objects = rviz_default_plugins::findAllOgreObjectByType<Ogre::ManualObject>(
     scene_manager_->getRootSceneNode(), "ManualObject");
@@ -181,7 +179,22 @@ TEST_F(MapTestFixture, showMap_defaults_empty_frame_id_to_map) {
 
 TEST_F(MapTestFixture, showMap_does_not_display_anything_if_transform_fails) {
   map_display_->processMessage(createMapMessage());
-  map_display_->showMap();
+
+  auto manual_objects = rviz_default_plugins::findAllOgreObjectByType<Ogre::ManualObject>(
+    scene_manager_->getRootSceneNode(), "ManualObject");
+
+  ASSERT_THAT(manual_objects, SizeIs(1));
+  EXPECT_FALSE(manual_objects[0]->isVisible());
+}
+
+TEST_F(MapTestFixture, reset_makes_map_invisible) {
+  mockValidTransform();
+  Ogre::Vector3 position(1, 0, 0);
+  Ogre::Quaternion orientation(0.5f, 0.5f, 0, 0);
+
+  map_display_->processMessage(createMapMessage());
+
+  map_display_->reset();
 
   auto manual_objects = rviz_default_plugins::findAllOgreObjectByType<Ogre::ManualObject>(
     scene_manager_->getRootSceneNode(), "ManualObject");
