@@ -35,7 +35,7 @@
 
 // TODO(wjwwood): reenable the remaining panels
 #include "./displays_panel.hpp"
-// #include "./help_panel.hpp"
+#include "./help_panel.hpp"
 #include "./selection_panel.hpp"
 // #include "./time_panel.hpp"
 #include "./tool_properties_panel.hpp"
@@ -46,7 +46,7 @@
 namespace rviz_common
 {
 
-// static Panel * newHelpPanel() {return new HelpPanel();}
+static Panel * newHelpPanel() {return new HelpPanel();}
 static Panel * newSelectionPanel() {return new SelectionPanel();}
 // static Panel * newTimePanel() {return new TimePanel();}
 static Panel * newToolPropertiesPanel() {return new ToolPropertiesPanel();}
@@ -62,8 +62,8 @@ PanelFactory::PanelFactory(
     [rviz_ros_node, manager]() -> Panel * {
       return new DisplaysPanel(rviz_ros_node, manager, nullptr);
     });
-  // addBuiltInClass("rviz_common", "Help",
-  //   "Show the key and mouse bindings", &newHelpPanel);
+  addBuiltInClass("rviz_common", "Help",
+    "Show the key and mouse bindings", &newHelpPanel);
   addBuiltInClass("rviz_common", "Selection",
     "Show properties of selected objects", &newSelectionPanel);
   // addBuiltInClass("rviz", "Time",

@@ -171,13 +171,12 @@ bool VisualizerApp::init(int argc, char ** argv)
       "Enable the Ogre.log file (output in cwd) and console output.");
   parser.addOption(ogre_log_option);
 
-  // TODO(botteroa-si): enable when possible
-//  QCommandLineOption splash_screen_option(
-//    QStringList() << "s" << "splash-screen",
-//    "A custom splash-screen image to display",
-//    "splash_path");
-//  parser.addOption(splash_screen_option);
-//
+  QCommandLineOption splash_screen_option(
+    QStringList() << "s" << "splash-screen",
+      "A custom splash-screen image to display", "splash_path");
+  parser.addOption(splash_screen_option);
+
+// TODO(botteroa-si): enable when possible
 //  QCommandLineOption help_file_option(
 //    "help-file", "A custom html file to show as the help screen", "help_path");
 //  parser.addOption(help_file_option);
@@ -222,15 +221,12 @@ bool VisualizerApp::init(int argc, char ** argv)
     fixed_frame = parser.value(fixed_frame_option);
   }
 
-  // TODO(botteroa-si): enable when possible
-//    if (parser.isSet(splash_screen_option)) {
-//      splash_path = parser.value(splash_screen_option);
-//    }
+  if (parser.isSet(splash_screen_option)) {
+    splash_path = parser.value(splash_screen_option);
+  }
+// TODO(botteroa-si): enable when possible
 //    if (parser.isSet(help_file_option)) {
 //      help_path = parser.value(help_file_option);
-//    }
-//    if (parser.isSet(splash_screen_option)) {
-//      splash_path = parser.value(splash_screen_option);
 //    }
 //    if (parser.isSet(open_gl_option)) {
 //      force_gl_version = parser.value(open_gl_option).toInt();

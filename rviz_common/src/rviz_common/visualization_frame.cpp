@@ -85,7 +85,7 @@
 #include "./yaml_config_writer.hpp"
 
 // #include "./displays_panel.hpp"
-// #include "./help_panel.hpp"
+#include "./help_panel.hpp"
 // #include "./interaction/selection_manager.hpp"
 // #include "./selection_panel.hpp"
 // #include "./time_panel.hpp"
@@ -112,6 +112,7 @@ VisualizationFrame::VisualizationFrame(
   splash_(nullptr),
   toolbar_actions_(nullptr),
   show_choose_new_master_option_(false),
+  panel_factory_(nullptr),
   add_tool_action_(nullptr),
   remove_tool_menu_(nullptr),
   initialized_(false),
@@ -131,7 +132,7 @@ VisualizationFrame::VisualizationFrame(
   package_path_ = ament_index_cpp::get_package_share_directory("rviz_common");
   QDir help_path(QString::fromStdString(package_path_) + "/help/help.html");
   help_path_ = help_path.absolutePath();
-  QDir splash_path(QString::fromStdString(package_path_) + "images/splash.png");
+  QDir splash_path(QString::fromStdString(package_path_) + "/images/splash.png");
   splash_path_ = splash_path.absolutePath();
 
   auto * reset_button = new QToolButton();
@@ -365,7 +366,7 @@ void VisualizationFrame::initialize(
   if (app_) {app_->processEvents();}
 
   delete splash_;
-  splash_ = 0;
+  splash_ = nullptr;
 
   manager_->startUpdate();
   initialized_ = true;
@@ -700,7 +701,7 @@ void VisualizationFrame::loadDisplayConfig(const QString & qpath)
   setWindowModified(false);
   loading_ = true;
 
-  LoadingDialog * dialog = NULL;
+  LoadingDialog * dialog = nullptr;
   if (initialized_) {
     dialog = new LoadingDialog(this);
     dialog->show();
@@ -1123,25 +1124,17 @@ void VisualizationFrame::indicateToolIsCurrent(Tool * tool)
 void VisualizationFrame::showHelpPanel()
 {
   if (!show_help_action_) {
-    // TODO(wjwwood): reenable this when plugin loading is fixed.
-#if 0
-    QDockWidget * dock = addPanelByName("Help", "rviz/Help");
+    QDockWidget * dock = addPanelByName("Help", "rviz_common/Help");
     show_help_action_ = dock->toggleViewAction();
     connect(dock, SIGNAL(destroyed(QObject *)), this, SLOT(onHelpDestroyed()));
-#endif
   } else {
-    // TODO(wjwwood): figure out if this is needed
-    // show_help_action_ is a toggle action, so trigger() changes its
-    // state.  Therefore we must force it to the opposite state from
-    // what we want before we call trigger().  (I think.)
-    show_help_action_->setChecked(false);
     show_help_action_->trigger();
   }
 }
 
 void VisualizationFrame::onHelpDestroyed()
 {
-  show_help_action_ = NULL;
+  show_help_action_ = nullptr;
 }
 
 void VisualizationFrame::onHelpWiki()

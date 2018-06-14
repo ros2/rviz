@@ -15,7 +15,7 @@ Panels:
     Expanded:
   #     - /2D Pose Estimate1
   #     - /2D Nav Goal1
-  #     - /Publish Point1
+      - /Publish Point1
     Name: Tool Properties
     Splitter Ratio: 0.588679
   - Class: rviz_common/Views
@@ -60,14 +60,14 @@ Visualization Manager:
     - Class: rviz_default_plugins/MoveCamera
     - Class: rviz_default_plugins/Select
     # - Class: rviz/FocusCamera
-    # - Class: rviz/Measure
+    - Class: rviz_default_plugins/Measure
     # - Class: rviz/SetInitialPose
     #   Topic: /initialpose
     # - Class: rviz/SetGoal
     #   Topic: /move_base_simple/goal
-    # - Class: rviz/PublishPoint
-    #   Single click: true
-    #   Topic: /clicked_point
+    - Class: rviz_default_plugins/PublishPoint
+      Single click: true
+      Topic: /clicked_point
   Value: true
   Views:
     Current:

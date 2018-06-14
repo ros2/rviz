@@ -35,7 +35,7 @@
 
 class QTextBrowser;
 
-namespace rviz
+namespace rviz_common
 {
 
 class HelpPanel : public Panel
@@ -44,9 +44,9 @@ class HelpPanel : public Panel
 
 public:
   explicit HelpPanel(QWidget * parent = 0);
-  virtual ~HelpPanel();
+  ~HelpPanel() override;
 
-  virtual void onInitialize();
+  void onInitialize() override;
 
   /** @brief Load the given html file. */
   void setHelpFile(const QString & file_path);
@@ -55,6 +55,6 @@ private:
   QTextBrowser * browser_;
 };
 
-}  // end namespace rviz
+}  // namespace rviz_common
 
 #endif  // RVIZ_COMMON__HELP_PANEL_HPP_
