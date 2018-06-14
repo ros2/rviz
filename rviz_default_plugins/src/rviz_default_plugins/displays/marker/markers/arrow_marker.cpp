@@ -53,6 +53,7 @@
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/shape.hpp"
 #include "rviz_common/display_context.hpp"
+#include "rviz_common/msg_conversions.hpp"
 
 #include "rviz_default_plugins/displays/marker/marker_common.hpp"
 #include "rviz_default_plugins/displays/marker/markers/marker_selection_handler.hpp"
@@ -136,10 +137,8 @@ void ArrowMarker::setArrowFromPoints(const MarkerConstSharedPtr & message)
   last_arrow_set_from_points_ = true;
 
   // compute translation & rotation from the two points
-  Ogre::Vector3 point1(
-    message->points[0].x, message->points[0].y, message->points[0].z);
-  Ogre::Vector3 point2(
-    message->points[1].x, message->points[1].y, message->points[1].z);
+  Ogre::Vector3 point1 = rviz_common::pointMsgToOgre(message->points[0]);
+  Ogre::Vector3 point2 = rviz_common::pointMsgToOgre(message->points[1]);
 
   Ogre::Vector3 direction = point2 - point1;
   float distance = direction.length();
@@ -180,7 +179,7 @@ void ArrowMarker::setArrow(const MarkerConstSharedPtr & message)
     owner_->setMarkerStatus(
       getID(), rviz_common::properties::StatusProperty::Warn, "Scale of 0 in one of x/y/z");
   }
-  arrow_->setScale(Ogre::Vector3(message->scale.x, message->scale.y, message->scale.z));
+  arrow_->setScale(rviz_common::vector3MsgToOgre(message->scale));
 
   Ogre::Quaternion orient = Ogre::Vector3::NEGATIVE_UNIT_Z.getRotationTo(Ogre::Vector3(1, 0, 0));
   arrow_->setOrientation(orient);
