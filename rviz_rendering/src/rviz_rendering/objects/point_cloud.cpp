@@ -297,6 +297,12 @@ void PointCloud::clear()
   renderables_.clear();
 }
 
+void PointCloud::clearAndRemoveAllPoints()
+{
+  clear();
+  points_.clear();
+}
+
 void PointCloud::regenerateAll()
 {
   if (point_count_ == 0) {

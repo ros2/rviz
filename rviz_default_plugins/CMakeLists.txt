@@ -53,6 +53,7 @@ find_package(visualization_msgs REQUIRED)
 set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/camera/camera_display.hpp
   include/rviz_default_plugins/displays/grid/grid_display.hpp
+  include/rviz_default_plugins/displays/grid_cells/grid_cells_display.hpp
   include/rviz_default_plugins/displays/image/image_display.hpp
   include/rviz_default_plugins/displays/laser_scan/laser_scan_display.hpp
   include/rviz_default_plugins/displays/marker/marker_display.hpp
@@ -89,6 +90,7 @@ set(rviz_default_plugins_headers_to_moc
 set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/camera/camera_display.cpp
   src/rviz_default_plugins/displays/grid/grid_display.cpp
+  src/rviz_default_plugins/displays/grid_cells/grid_cells_display.cpp
   src/rviz_default_plugins/displays/image/image_display.cpp
   src/rviz_default_plugins/displays/image/ros_image_texture.cpp
   src/rviz_default_plugins/displays/laser_scan/laser_scan_display.cpp
@@ -265,6 +267,18 @@ if(BUILD_TESTING)
       Qt5::Widgets
       rviz_common::rviz_common
     )
+
+    ament_add_gmock(grid_cells_display_test
+      test/rviz_default_plugins/displays/grid_cells/grid_cells_display_test.cpp
+      test/rviz_default_plugins/displays/display_test_fixture.cpp
+      test/rviz_default_plugins/scene_graph_introspection.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET grid_cells_display_test)
+      target_include_directories(grid_cells_display_test PUBLIC
+        ${TEST_INCLUDE_DIRS})
+      target_link_libraries(grid_cells_display_test
+        ${TEST_LINK_LIBRARIES})
+    endif()
 
     ament_add_gmock(point_cloud2_display_test
       test/rviz_default_plugins/pointcloud_messages.hpp
@@ -508,6 +522,19 @@ if(EnableVisualTests STREQUAL "True")
           ${TEST_INCLUDE_DIRS}
           ${rviz_visual_testing_framework_INCLUDE_DIRS})
         target_link_libraries(grid_display_visual_test
+          ${TEST_LINK_LIBRARIES}
+          rviz_visual_testing_framework::rviz_visual_testing_framework)
+      endif()
+
+      ament_add_gtest(grid_cells_display_visual_test
+        test/rviz_default_plugins/displays/grid_cells/grid_cells_display_visual_test.cpp
+        test/rviz_default_plugins/page_objects/grid_cells_display_page_object.cpp
+        TIMEOUT 180)
+      if(TARGET grid_cells_display_visual_test)
+        target_include_directories(grid_cells_display_visual_test PUBLIC
+          ${TEST_INCLUDE_DIRS}
+          ${rviz_visual_testing_framework_INCLUDE_DIRS})
+        target_link_libraries(grid_cells_display_visual_test
           ${TEST_LINK_LIBRARIES}
           rviz_visual_testing_framework::rviz_visual_testing_framework)
       endif()

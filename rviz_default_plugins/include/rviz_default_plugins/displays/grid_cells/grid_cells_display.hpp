@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,80 +29,81 @@
  */
 
 
-#ifndef RVIZ_GRID_CELLS_DISPLAY_H
-#define RVIZ_GRID_CELLS_DISPLAY_H
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__GRID_CELLS__GRID_CELLS_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__GRID_CELLS__GRID_CELLS_DISPLAY_HPP_
 
-#include "rviz/display.h"
+#include <memory>
 
-#include <nav_msgs/GridCells.h>
-#include <nav_msgs/MapMetaData.h>
+#include "nav_msgs/msg/grid_cells.hpp"
+#include "nav_msgs/msg/map_meta_data.hpp"
 
-#ifndef Q_MOC_RUN
-#include <message_filters/subscriber.h>
-#include <tf/message_filter.h>
-#endif
+#include "rviz_common/display.hpp"
+#include "rviz_common/ros_topic_display.hpp"
+#include "rviz_common/display_context.hpp"
 
-#include <boost/shared_ptr.hpp>
+#include "rviz_default_plugins/visibility_control.hpp"
 
-namespace Ogre
+namespace rviz_rendering
 {
-class ManualObject;
+class PointCloud;
 }
 
-namespace rviz
+namespace rviz_common
 {
-
+namespace properties
+{
 class ColorProperty;
 class FloatProperty;
-class PointCloud;
-class RosTopicProperty;
+}  // properties
+}  // rviz_common
 
+namespace rviz_default_plugins
+{
+namespace displays
+{
+
+// TODO(Martin-Idel-SI): This display previously used tf message filter. Use again once available.
 /**
  * \class GridCellsDisplay
  * \brief Displays a nav_msgs::GridCells message
  */
-class GridCellsDisplay : public Display
+class RVIZ_DEFAULT_PLUGINS_PUBLIC GridCellsDisplay : public
+  rviz_common::RosTopicDisplay<nav_msgs::msg::GridCells>
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
+  // TODO(Martin-Idel-SI): Constructor for testing. Remove once ros nodes can be mocked and
+  // initialize() can be called
+  explicit GridCellsDisplay(rviz_common::DisplayContext * display_context);
+
   GridCellsDisplay();
-  virtual ~GridCellsDisplay();
 
-  virtual void onInitialize();
+  ~GridCellsDisplay() override;
 
-  // Overrides from Display
-  virtual void fixedFrameChanged();
-  virtual void reset();
+  void onInitialize() override;
 
-protected:
-  // overrides from Display
-  virtual void onEnable();
-  virtual void onDisable();
+  void processMessage(nav_msgs::msg::GridCells::ConstSharedPtr msg) override;
+
+  void setupCloud();
 
 private Q_SLOTS:
   void updateAlpha();
-  void updateTopic();
 
 private:
-  void subscribe();
-  void unsubscribe();
-  void clear();
-  void incomingMessage( const nav_msgs::GridCells::ConstPtr& msg );
+  bool messageIsValid(nav_msgs::msg::GridCells::ConstSharedPtr msg);
+  void convertMessageToCloud(nav_msgs::msg::GridCells::ConstSharedPtr msg);
+  bool setTransform(std_msgs::msg::Header const & header);
 
-  PointCloud* cloud_;
+  std::shared_ptr<rviz_rendering::PointCloud> cloud_;
 
-  message_filters::Subscriber<nav_msgs::GridCells> sub_;
-  tf::MessageFilter<nav_msgs::GridCells>* tf_filter_;
+  rviz_common::properties::ColorProperty * color_property_;
+  rviz_common::properties::FloatProperty * alpha_property_;
 
-  ColorProperty* color_property_;
-  RosTopicProperty* topic_property_;
-  FloatProperty* alpha_property_;
-
-  uint32_t messages_received_;
   uint64_t last_frame_count_;
 };
 
-} // namespace rviz
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif /* RVIZ_GRID_CELLS_DISPLAY_H */
-
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__GRID_CELLS__GRID_CELLS_DISPLAY_HPP_

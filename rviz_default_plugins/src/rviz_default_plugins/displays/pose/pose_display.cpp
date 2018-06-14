@@ -199,7 +199,7 @@ void PoseDisplay::processMessage(geometry_msgs::msg::PoseStamped::ConstSharedPtr
   if (!context_->getFrameManager()->transform(message->header, message->pose, position,
     orientation))
   {
-    setMissingTransformToFixedFrame(message->header.frame_id, "pose " + getNameStd());
+    setMissingTransformToFixedFrame(message->header.frame_id);
     return;
   }
   setTransformOk();
