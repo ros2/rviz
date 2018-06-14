@@ -152,6 +152,7 @@ void DisplayHandler::selectDisplayAndConfirm(std::shared_ptr<BasePageObject> pag
         return;
       }
 
+      add_by_name_tree->scrollToItem(items.at(0));
       QRect display_element_bounding_box = add_by_name_tree->visualItemRect(items.at(0));
 
       QTest::mouseClick(
