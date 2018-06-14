@@ -65,27 +65,40 @@ namespace displays
 {
 class MapDisplay;
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC Swatch
+class Swatch
 {
 public:
-  Swatch(
+  RVIZ_DEFAULT_PLUGINS_PUBLIC Swatch(
     Ogre::SceneManager * scene_manager,
     Ogre::SceneNode * parent_scene_node,
     size_t x, size_t y, size_t width, size_t height,
     float resolution, bool draw_under);
 
-  ~Swatch();
+  RVIZ_DEFAULT_PLUGINS_PUBLIC ~Swatch();
 
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   void updateAlpha(
     const Ogre::SceneBlendType & sceneBlending, bool depth_write, float alpha);
 
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   void updateData(const nav_msgs::msg::OccupancyGrid & map);
 
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   void setVisible(bool visible);
+
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   void resetTexture();
+
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   void setRenderQueueGroup(uint8_t group);
+
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   void setDepthWriteEnabled(bool depth_write_enabled);
+
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   Ogre::Pass * getTechniquePass();
+
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   std::string getTextureName();
 
 private:
