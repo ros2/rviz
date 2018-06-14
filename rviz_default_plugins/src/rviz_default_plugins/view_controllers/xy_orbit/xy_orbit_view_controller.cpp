@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./xy_orbit_view_controller.hpp"
+#include "rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller.hpp"
 
 #include <cstdint>
 #include <utility>

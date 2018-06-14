@@ -46,6 +46,7 @@
 #endif
 
 #include "rviz_default_plugins/view_controllers/orbit/orbit_view_controller.hpp"
+#include "rviz_default_plugins/visibility_control.hpp"
 
 namespace Ogre
 {
@@ -59,7 +60,7 @@ namespace view_controllers
 /**
  * \brief Like the orbit view controller, but focal point moves only in the x-y plane.
  */
-class XYOrbitViewController : public OrbitViewController
+class RVIZ_DEFAULT_PLUGINS_PUBLIC XYOrbitViewController : public OrbitViewController
 {
   Q_OBJECT
 
