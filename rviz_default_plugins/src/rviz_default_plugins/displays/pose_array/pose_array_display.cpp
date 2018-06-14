@@ -38,6 +38,7 @@
 #include <OgreTechnique.h>
 
 #include "rviz_common/logging.hpp"
+#include "rviz_common/msg_conversions.hpp"
 #include "rviz_common/properties/enum_property.hpp"
 #include "rviz_common/properties/color_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
@@ -64,15 +65,6 @@ struct ShapeType
   };
 };
 
-Ogre::Vector3 vectorRosToOgre(geometry_msgs::msg::Point const & point)
-{
-  return Ogre::Vector3(point.x, point.y, point.z);
-}
-
-Ogre::Quaternion quaternionRosToOgre(geometry_msgs::msg::Quaternion const & quaternion)
-{
-  return Ogre::Quaternion(quaternion.w, quaternion.x, quaternion.y, quaternion.z);
-}
 }  // namespace
 
 PoseArrayDisplay::PoseArrayDisplay(
@@ -196,8 +188,8 @@ void PoseArrayDisplay::processMessage(const geometry_msgs::msg::PoseArray::Const
   poses_.resize(msg->poses.size());
 
   for (std::size_t i = 0; i < msg->poses.size(); ++i) {
-    poses_[i].position = vectorRosToOgre(msg->poses[i].position);
-    poses_[i].orientation = quaternionRosToOgre(msg->poses[i].orientation);
+    poses_[i].position = rviz_common::pointMsgToOgre(msg->poses[i].position);
+    poses_[i].orientation = rviz_common::quaternionMsgToOgre(msg->poses[i].orientation);
   }
 
   updateDisplay();
