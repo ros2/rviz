@@ -51,6 +51,7 @@
 #include <OgreTextureManager.h>
 
 #include "rviz_rendering/mesh_loader.hpp"
+#include "rviz_rendering/material_manager.hpp"
 #include "rviz_common/display_context.hpp"
 
 #include "rviz_default_plugins/displays/marker/marker_common.hpp"
@@ -192,9 +193,7 @@ void MeshResourceMarker::createMeshWithMaterials(
 Ogre::MaterialPtr MeshResourceMarker::createDefaultMaterial(const std::string & material_name) const
 {
   Ogre::MaterialPtr default_material =
-    Ogre::MaterialManager::getSingleton().create(material_name, "rviz_rendering");
-  default_material->setReceiveShadows(false);
-  default_material->getTechnique(0)->setLightingEnabled(true);
+    rviz_rendering::MaterialManager::createMaterialWithLighting(material_name);
   default_material->getTechnique(0)->setAmbient(0.5, 0.5, 0.5);
   return default_material;
 }
@@ -239,13 +238,7 @@ MeshResourceMarker::updateMaterialColor(const MarkerBase::MarkerConstSharedPtr &
   Ogre::SceneBlendType blending;
   bool depth_write;
 
-  if (a < 0.9998) {
-    blending = Ogre::SBT_TRANSPARENT_ALPHA;
-    depth_write = false;
-  } else {
-    blending = Ogre::SBT_REPLACE;
-    depth_write = true;
-  }
+  rviz_rendering::MaterialManager::enableAlphaBlending(blending, depth_write, a);
 
   if (new_message->mesh_use_embedded_materials && r == 0 && g == 0 && b == 0 && a == 0) {
     blending = Ogre::SBT_REPLACE;
