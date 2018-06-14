@@ -43,18 +43,19 @@
 
 #include "resource_retriever/retriever.h"
 
+#include "rviz_common/properties/property.hpp"
+#include "rviz_rendering/material_manager.hpp"
+
+#include "rviz_default_plugins/robot/robot.hpp"
+#include "rviz_default_plugins/robot/robot_joint.hpp"
+#include "rviz_default_plugins/robot/robot_link.hpp"
+
 #include "test/rviz_rendering/ogre_testing_environment.hpp"
 #include "./mock_link_updater.hpp"
 #include "../mock_display_context.hpp"
 #include "../mock_handler_manager.hpp"
 #include "../mock_selection_manager.hpp"
-#include "../scene_graph_introspection.hpp"
-
-#include "rviz_common/properties/property.hpp"
-#include "rviz_rendering/material_manager.hpp"
-#include "rviz_default_plugins/robot/robot.hpp"
-#include "rviz_default_plugins/robot/robot_joint.hpp"
-#include "rviz_default_plugins/robot/robot_link.hpp"
+#include "../scene_graph_introspection_helper.hpp"
 
 using namespace ::testing;  // NOLINT
 using namespace rviz_default_plugins::robot;  // NOLINT

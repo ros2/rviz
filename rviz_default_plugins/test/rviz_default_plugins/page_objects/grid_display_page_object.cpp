@@ -56,7 +56,7 @@ void GridDisplayPageObject::setNormalCellCount(int normal_cell_count)
 
 void GridDisplayPageObject::setLineWidth(float line_width)
 {
-  setFloat("Line Style", line_width, 0, "Line Width");
+  setFloat("Line Width", line_width, {"Line Style"});
 }
 
 void GridDisplayPageObject::setCellSize(float cell_size)

@@ -131,6 +131,18 @@ After such call, interaction with RViz is no longer possible for the current tes
 
 - At the end of each test, the scene is cleaned, the application reset and all the present displays removed, before the following test begins.
 
+### How to write tests for custom displays
+
+In order to write tests for new displays that do not yet have a page object, it needs to be written.
+Everything else works as described in the previous display. To write a page object:
+
+- Derive from the class BasePageObject. You need to pass the display name and its group (the group is defined in the addDisplay dialog, if it is not `rviz_default_plugins`, this needs to be found out manually).
+
+- Implement methods to set all properties. Call the methods provided in BasePageObject (e.g. `setFloat` for FloatProperties), giving the name of the corresponding property and, if necessary a vector of parent properties.
+
+- Note: When several subproperties have the same name, only the first property will be found by the algorithms in BasePageObject.
+
+
 ### How to have stable tests
 
 As already anticipated above, visual tests are very sensitive to the the machine (graphic card, screen, settings, etc.) on which they run.

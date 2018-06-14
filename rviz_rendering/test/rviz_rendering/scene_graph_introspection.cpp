@@ -29,9 +29,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
-
 #include <algorithm>
 #include <memory>
 #include <string>
@@ -52,34 +49,10 @@
 #include "rviz_rendering/objects/point_cloud.hpp"
 #include "rviz_rendering/objects/shape.hpp"
 
-#include "scene_graph_introspection.hpp"
+#include "test/rviz_rendering/scene_graph_introspection.hpp"
 
-namespace rviz_default_plugins
+namespace rviz_rendering
 {
-
-bool arrowIsVisible(Ogre::SceneManager * scene_manager)
-{
-  auto arrow_head = rviz_default_plugins::findEntityByMeshName(
-    scene_manager->getRootSceneNode(), "rviz_cone.mesh");
-  auto arrow_shaft = rviz_default_plugins::findEntityByMeshName(
-    scene_manager->getRootSceneNode(), "rviz_cylinder.mesh");
-
-  return arrow_head->isVisible() && arrow_shaft->isVisible();
-}
-
-void assertArrowWithTransform(
-  Ogre::SceneManager * scene_manager,
-  Ogre::Vector3 position,
-  Ogre::Vector3 scale,
-  Ogre::Quaternion orientation)
-{
-  auto arrow_scene_node = rviz_default_plugins::findOneArrow(scene_manager->getRootSceneNode());
-  ASSERT_TRUE(arrow_scene_node);
-  EXPECT_THAT(arrow_scene_node->getPosition(), Vector3Eq(position));
-  // Have to mangle the scale because of the default orientation of the cylinders (see arrow.cpp).
-  EXPECT_THAT(arrow_scene_node->getScale(), Vector3Eq(Ogre::Vector3(scale.z, scale.x, scale.y)));
-  EXPECT_THAT(arrow_scene_node->getOrientation(), QuaternionEq(orientation));
-}
 
 std::vector<Ogre::Entity *> findAllEntitiesByMeshName(
   Ogre::SceneNode * scene_node, const Ogre::String & resource_name)
@@ -102,6 +75,21 @@ Ogre::Entity * findEntityByMeshName(
 {
   auto entities = findAllEntitiesByMeshName(scene_node, resource_name);
   return entities.empty() ? nullptr : entities[0];
+}
+
+std::vector<Ogre::Entity *> findAllSpheres(Ogre::SceneNode * scene_node)
+{
+  return findAllEntitiesByMeshName(scene_node, "rviz_sphere.mesh");
+}
+
+std::vector<Ogre::Entity *> findAllCones(Ogre::SceneNode * scene_node)
+{
+  return findAllEntitiesByMeshName(scene_node, "rviz_cone.mesh");
+}
+
+std::vector<Ogre::Entity *> findAllCylinders(Ogre::SceneNode * scene_node)
+{
+  return findAllEntitiesByMeshName(scene_node, "rviz_cylinder.mesh");
 }
 
 Ogre::BillboardChain * findOneBillboardChain(Ogre::SceneNode * scene_node)
@@ -145,7 +133,8 @@ std::vector<Ogre::SceneNode *> findAllArrows(Ogre::SceneNode * scene_node)
         ->getParentSceneNode();  // SceneNode from arrow
       if (arrow_scene_node) {
         auto shaft_entity = findEntityByMeshName(arrow_scene_node, "rviz_cylinder.mesh");
-        if (shaft_entity->getParentSceneNode()->getParentSceneNode()->getParentSceneNode() ==
+        if (shaft_entity &&
+          shaft_entity->getParentSceneNode()->getParentSceneNode()->getParentSceneNode() ==
           arrow_scene_node)
         {
           arrows.push_back(arrow_scene_node);
@@ -210,4 +199,4 @@ std::vector<Ogre::Quaternion> getOrientationsFromNodes(const std::vector<Ogre::S
   return orientations;
 }
 
-}  // namespace rviz_default_plugins
+}  // namespace rviz_rendering

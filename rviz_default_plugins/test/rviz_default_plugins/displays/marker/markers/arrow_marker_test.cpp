@@ -48,10 +48,10 @@
 #include "visualization_msgs/msg/marker.hpp"
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/shape.hpp"
-#include "../../../scene_graph_introspection.hpp"
 
 #include "rviz_default_plugins/displays/marker/markers/arrow_marker.hpp"
 
+#include "../../../scene_graph_introspection_helper.hpp"
 #include "markers_test_fixture.hpp"
 #include "../marker_messages.hpp"
 
@@ -68,7 +68,7 @@ TEST_F(MarkersTestFixture, setMessage_makes_the_scene_node_invisible_if_invalid_
 
   marker_->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::ARROW));
 
-  EXPECT_FALSE(rviz_default_plugins::arrowIsVisible(scene_manager_));
+  EXPECT_FALSE(rviz_default_plugins::arrowIsVisible(scene_manager_->getRootSceneNode()));
 }
 
 TEST_F(MarkersTestFixture, incomplete_message_sets_scene_node_to_not_visible) {
@@ -79,7 +79,7 @@ TEST_F(MarkersTestFixture, incomplete_message_sets_scene_node_to_not_visible) {
 
   marker_->setMessage(incomplete_message);
 
-  EXPECT_FALSE(rviz_default_plugins::arrowIsVisible(scene_manager_));
+  EXPECT_FALSE(rviz_default_plugins::arrowIsVisible(scene_manager_->getRootSceneNode()));
 }
 
 TEST_F(MarkersTestFixture, setMessage_sets_positions_and_orientations_correctly) {

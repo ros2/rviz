@@ -47,10 +47,11 @@
 
 #include "visualization_msgs/msg/marker.hpp"
 #include "rviz_rendering/objects/shape.hpp"
-#include "../../../scene_graph_introspection.hpp"
 
 #include "rviz_default_plugins/displays/marker/markers/shape_marker.hpp"
 
+#include "test/rviz_rendering/scene_graph_introspection.hpp"
+#include "../../../scene_graph_introspection_helper.hpp"
 #include "markers_test_fixture.hpp"
 #include "../marker_messages.hpp"
 
@@ -63,7 +64,7 @@ TEST_F(MarkersTestFixture, no_transform_does_not_try_to_set_scene_node) {
 
   marker_->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::CUBE));
 
-  auto entity = rviz_default_plugins::findEntityByMeshName(
+  auto entity = rviz_rendering::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), "rviz_cube.mesh");
   ASSERT_FALSE(entity->isVisible());
 }
@@ -80,7 +81,7 @@ TEST_F(MarkersTestFixture, positions_and_orientations_are_set_correctly) {
   EXPECT_THAT(marker_->getPosition(), Vector3Eq(position));
   EXPECT_THAT(marker_->getOrientation(), QuaternionEq(Ogre::Quaternion(0, 0, 0.7071f, -0.7071f)));
 
-  auto entity = rviz_default_plugins::findEntityByMeshName(
+  auto entity = rviz_rendering::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), "rviz_cube.mesh");
 
   auto shape_scene_node = entity
@@ -97,18 +98,18 @@ TEST_F(MarkersTestFixture, different_types_result_in_different_meshes) {
 
   marker_->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::SPHERE));
 
-  auto cylinder_entity = rviz_default_plugins::findEntityByMeshName(
+  auto cylinder_entity = rviz_rendering::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), "rviz_cylinder.mesh");
-  auto sphere_entity = rviz_default_plugins::findEntityByMeshName(
+  auto sphere_entity = rviz_rendering::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), "rviz_sphere.mesh");
   EXPECT_FALSE(cylinder_entity);
   EXPECT_TRUE(sphere_entity);
 
   marker_->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::CYLINDER));
 
-  cylinder_entity = rviz_default_plugins::findEntityByMeshName(
+  cylinder_entity = rviz_rendering::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), "rviz_cylinder.mesh");
-  sphere_entity = rviz_default_plugins::findEntityByMeshName(
+  sphere_entity = rviz_rendering::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), "rviz_sphere.mesh");
   EXPECT_TRUE(cylinder_entity);
   EXPECT_FALSE(sphere_entity);

@@ -44,9 +44,9 @@ CameraDisplayPageObject::CameraDisplayPageObject()
 }
 
 void CameraDisplayPageObject::setDisplayVisibilityInRenderWindow(
-  QString display_name, int relative_row_index, bool display_visibility)
+  QString display_name, bool display_visibility)
 {
-  setBool("Visibility", display_visibility, relative_row_index, display_name);
+  setBool(display_name, display_visibility, {"Visibility"});
 }
 
 void CameraDisplayPageObject::setTopic(QString topic)

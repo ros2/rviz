@@ -49,7 +49,7 @@ TEST_F(VisualTestFixture, tf_visual_test) {
 
   captureMainWindow("tf_display");
 
-  tf_display->setFrameVisible(2, "tf_frame", false);
+  tf_display->setFrameVisible("tf_frame", false);
 
   captureMainWindow("tf_display_frame_disabled");
 

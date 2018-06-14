@@ -123,6 +123,17 @@
   </class>
 
   <class
+    name="rviz_default_plugins/Odometry"
+    type="rviz_default_plugins::displays::OdometryDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Accumulates and displays poses from a nav_msgs::Odometry message.  &lt;a href="http://www.ros.org/wiki/rviz/DisplayTypes/Odometry"&gt;More Information&lt;/a&gt;
+    </description>
+    <message_type>nav_msgs/Odometry</message_type>
+  </class>
+
+  <class
     name="rviz_default_plugins/PoseArray"
     type="rviz_default_plugins::displays::PoseArrayDisplay"
     base_class_type="rviz_common::Display"

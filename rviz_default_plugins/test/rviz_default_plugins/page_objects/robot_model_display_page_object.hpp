@@ -30,9 +30,6 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__ROBOT_MODEL_DISPLAY_PAGE_OBJECT_HPP_
 #define RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__ROBOT_MODEL_DISPLAY_PAGE_OBJECT_HPP_
 
-#include <memory>
-#include <vector>
-
 #include "rviz_visual_testing_framework/page_objects/base_page_object.hpp"
 
 class RobotModelDisplayPageObject : public BasePageObject

@@ -45,7 +45,8 @@
 #include "../../../../src/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
 #include "../../../../src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp"
 
-#include "../../scene_graph_introspection.hpp"
+#include "test/rviz_rendering/scene_graph_introspection.hpp"
+#include "../../scene_graph_introspection_helper.hpp"
 #include "../display_test_fixture.hpp"
 #include "./message_creators.hpp"
 
@@ -138,7 +139,7 @@ TEST_F(PointCloudSelectionHandlerFixture, onSelect_selects_only_points_actually_
   rviz_common::interaction::V_AABB aabbs = cloud_info->selection_handler_->getAABBs(picked_object);
 
   EXPECT_THAT(aabbs, SizeIs(2));
-  auto found_objects = rviz_default_plugins::findAllOgreObjectByType<Ogre::SimpleRenderable>(
+  auto found_objects = rviz_rendering::findAllOgreObjectByType<Ogre::SimpleRenderable>(
     scene_manager_->getRootSceneNode(), "SimpleRenderable");
   EXPECT_THAT(
     found_objects,
@@ -170,7 +171,7 @@ TEST_F(PointCloudSelectionHandlerFixture,
   rviz_common::interaction::V_AABB aabbs = cloud_info->selection_handler_->getAABBs(picked_object);
 
   EXPECT_THAT(aabbs, SizeIs(1));
-  auto found_objects = rviz_default_plugins::findAllOgreObjectByType<Ogre::SimpleRenderable>(
+  auto found_objects = rviz_rendering::findAllOgreObjectByType<Ogre::SimpleRenderable>(
     scene_manager_->getRootSceneNode(), "SimpleRenderable");
   EXPECT_THAT(
     found_objects,

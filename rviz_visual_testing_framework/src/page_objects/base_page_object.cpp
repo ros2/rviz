@@ -28,9 +28,9 @@
  */
 #include "rviz_visual_testing_framework/page_objects/base_page_object.hpp"
 
-#include <iostream>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <QTest>  // NOLINT
@@ -58,27 +58,14 @@ void BasePageObject::initialize(
 }
 
 void BasePageObject::setString(
-  const QString & main_property_name,
+  const QString & property_to_change,
   const QString & value_to_set,
-  int sub_property_index,
-  const QString & sub_property_name)
+  std::vector<QString> super_properties)
 {
   executor_->queueAction(
-    [this, value_to_set, main_property_name, sub_property_index, sub_property_name] {
-      auto relative_display_index = getRelativeIndexAndExpandDisplay();
-      int main_property_row_index =
-      findPropertyRowIndexByName(main_property_name, relative_display_index);
-
-      if (main_property_row_index < 0) {
-        failForAbsentProperty(main_property_name);
-      }
-      doubleClickOnTreeItem(
-        getPropertyToChangeIndex(main_property_row_index, relative_display_index));
-
-      auto index_to_change = sub_property_index < 0 ?
-      getValueToChangeIndex(main_property_row_index, relative_display_index) :
-      getSubPropertyIndex(
-        sub_property_name, main_property_row_index, sub_property_index, relative_display_index);
+    [this, value_to_set, property_to_change, super_properties{std::move(super_properties)}] {
+      auto index_to_change =
+      getValueToChangeFromAllProperties(property_to_change, super_properties);
 
       clickOnTreeItem(index_to_change);
       QTest::keyClicks(helpers::getDisplaysTreeView()->focusWidget(), value_to_set);
@@ -87,16 +74,17 @@ void BasePageObject::setString(
   );
 }
 
-void BasePageObject::setComboBox(const QString & property_name, const QString & value_to_set)
+void BasePageObject::setComboBox(
+  const QString & property_to_change,
+  const QString & value_to_set,
+  std::vector<QString> super_properties)
 {
-  executor_->queueAction([this, value_to_set, property_name] {
-      auto relative_display_index = getRelativeIndexAndExpandDisplay();
+  executor_->queueAction([this, value_to_set, property_to_change,
+    super_properties{std::move(super_properties)}] {
+      auto index_to_change =
+      getValueToChangeFromAllProperties(property_to_change, super_properties);
 
-      int property_row_index = findPropertyRowIndexByName(property_name, relative_display_index);
-      auto value_to_change_index =
-      getMainPropertyIndex(property_name, property_row_index, relative_display_index);
-
-      helpers::getDisplaysTreeView()->setCurrentIndex(value_to_change_index);
+      helpers::getDisplaysTreeView()->setCurrentIndex(index_to_change);
 
       QComboBox * property_combo_box =
       qobject_cast<QComboBox *>(helpers::getDisplaysTreeView()->focusWidget());
@@ -113,96 +101,93 @@ void BasePageObject::setComboBox(const QString & property_name, const QString & 
 }
 
 void BasePageObject::setBool(
-  const QString & main_property_name,
+  const QString & property_to_change,
   bool value_to_set,
-  int sub_property_index,
-  const QString & sub_property_name)
+  std::vector<QString> super_properties)
 {
   executor_->queueAction(
-    [this, value_to_set, main_property_name, sub_property_index, sub_property_name] {
-      auto relative_display_index = getRelativeIndexAndExpandDisplay();
-      int property_row_index =
-      findPropertyRowIndexByName(main_property_name, relative_display_index);
-
-      auto value_to_change_index = sub_property_index < 0 ?
-      getMainPropertyIndex(main_property_name, property_row_index, relative_display_index) :
-      getSubPropertyIndex(
-        sub_property_name, property_row_index, sub_property_index, relative_display_index);
+    [this, value_to_set, property_to_change, super_properties{std::move(super_properties)}] {
+      auto index_to_change =
+      getValueToChangeFromAllProperties(property_to_change, super_properties);
 
       auto checked_status = value_to_set ? Qt::Checked : Qt::Unchecked;
       helpers::getDisplaysTreeView()->model()->setData(
-        value_to_change_index, checked_status, Qt::CheckStateRole);
+        index_to_change, checked_status, Qt::CheckStateRole);
     }
   );
 }
 
-void BasePageObject::setInt(const QString & property_name, int value_to_set)
+void BasePageObject::setInt(
+  const QString & property_to_change, int value_to_set, std::vector<QString> super_properties)
 {
-  setString(property_name, QString::number(value_to_set));
+  setString(property_to_change, QString::number(value_to_set), super_properties);
 }
 
 void BasePageObject::setFloat(
-  const QString & main_property_name,
+  const QString & property_to_change,
   float value_to_set,
-  int sub_property_index,
-  const QString & sub_property_name)
+  std::initializer_list<QString> super_properties)
 {
-  setString(main_property_name, format(value_to_set), sub_property_index, sub_property_name);
+  setString(property_to_change, format(value_to_set), super_properties);
 }
 
-void BasePageObject::setColorCode(const QString & property_name, int red, int green, int blue)
+void BasePageObject::setColorCode(
+  const QString & property_to_change,
+  int red, int green, int blue,
+  std::vector<QString> super_properties)
 {
   QString color_code = QString::fromStdString(
     std::to_string(red) + "; " + std::to_string(green) + "; " + std::to_string(blue));
 
-  setString(property_name, color_code);
+  setString(property_to_change, color_code, super_properties);
 }
 
-void BasePageObject::setVector(const QString & property_name, float x, float y, float z)
+void BasePageObject::setVector(
+  const QString & property_to_change,
+  float x, float y, float z,
+  std::vector<QString> super_properties)
 {
   QString formatted_vector = format(x) + "; " + format(y) + "; " + format(z);
 
-  setString(property_name, formatted_vector);
+  setString(property_to_change, formatted_vector, super_properties);
 }
 
-QModelIndex BasePageObject::getMainPropertyIndex(
-  const QString & property_name, int property_row_index, QModelIndex display_index)
+QModelIndex BasePageObject::getValueToChangeFromAllProperties(
+  const QString & property_to_change, std::vector<QString> super_properties)
 {
+  auto parent_index = super_properties.empty() ?
+    getRelativeIndexAndExpandDisplay() :
+    findSubPropertyParentIndex(super_properties, getRelativeIndexAndExpandDisplay());
+
+  int property_row_index = findPropertyRowIndexByName(property_to_change, parent_index);
+
   if (property_row_index < 0) {
-    failForAbsentProperty(property_name);
-    return {};
+    failForAbsentProperty(property_to_change);
   }
-  return getValueToChangeIndex(property_row_index, display_index);
+
+  auto index_to_change = getValueToChangeIndex(property_row_index, parent_index);
+
+  // We first need to click on the property name and then on the property to change it.
+  // This is somehow necessary on Linux.
+  clickOnTreeItem(getPropertyToChangeIndex(property_row_index, parent_index));
+  return index_to_change;
 }
 
-QModelIndex BasePageObject::getSubPropertyIndex(
-  QString property_name,
-  int main_property_index,
-  int sub_property_index,
-  QModelIndex display_index)
+QModelIndex BasePageObject::findSubPropertyParentIndex(
+  const std::vector<QString> & super_properties, QModelIndex parent_index)
 {
-  auto display_tree_view = helpers::getDisplaysTreeView();
-  auto relative_property_index = display_tree_view
-    ->model()
-    ->index(main_property_index, 0, display_index);
+  for (const auto & property : super_properties) {
+    int property_row_index =
+      findPropertyRowIndexByName(property, parent_index);
 
-  QString actual_property_name = display_tree_view->model()->data(
-    display_tree_view->model()->index(sub_property_index, 0, relative_property_index)).toString();
-
-  if (actual_property_name != property_name) {
-    sub_property_index = findPropertyRowIndexByName(property_name, relative_property_index);
-
-    if (sub_property_index < 0) {
-      failForAbsentProperty(property_name);
-      return {};
+    if (property_row_index < 0) {
+      failForAbsentProperty(property);
     }
 
-    std::cout << "[  INFO   ]  The Sub-property '" << property_name.toStdString() << "' is "
-      "not where expected. The first row with this name will be modified instead.\n";
+    parent_index = getPropertyToChangeIndex(property_row_index, parent_index);
+    setExpanded(parent_index, true);
   }
-
-  clickOnTreeItem(getPropertyToChangeIndex(sub_property_index, relative_property_index));
-  return getValueToChangeIndex(sub_property_index, relative_property_index);
+  return parent_index;
 }
 
 QModelIndex BasePageObject::getPropertyToChangeIndex(
@@ -249,10 +234,9 @@ void BasePageObject::doubleClickOnTreeItem(QModelIndex item_index) const
 {
   auto viewport = helpers::getDisplaysTreeView()->viewport();
   auto item_rect = helpers::getDisplaysTreeView()->visualRect(item_index);
-  // TODO(botteroa-si): for some reason, QTest::mouseDClick() doesn't perform as expected (i.e.
+  // For some reason, QTest::mouseDClick() doesn't perform as expected (i.e.
   // simulating a double click). Neither is this result achieved with two consecutive
-  // QTest::mouseClick(). With two consecutive mouseDClick() it works. Update this if/when the
-  // issue with mouseDClick() is fixed.
+  // QTest::mouseClick(). With two consecutive mouseDClick() it works.
   QTest::mouseDClick(viewport, Qt::MouseButton::LeftButton, Qt::NoModifier, item_rect.center());
   QTest::mouseDClick(viewport, Qt::MouseButton::LeftButton, Qt::NoModifier, item_rect.center());
 }
