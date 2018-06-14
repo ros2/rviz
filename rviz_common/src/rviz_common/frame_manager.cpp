@@ -278,8 +278,16 @@ bool FrameManager::transform(
 {
   // TODO(Martin-Idel-SI): Remove when https://github.com/ros2/geometry2/issues/58 closed
   if (frame == fixed_frame_) {
-    position = Ogre::Vector3::ZERO;
-    orientation = Ogre::Quaternion::IDENTITY;
+    position = Ogre::Vector3(
+      pose_msg.position.x,
+      pose_msg.position.y,
+      pose_msg.position.z);
+    orientation = Ogre::Quaternion(
+      pose_msg.orientation.w,
+      pose_msg.orientation.x,
+      pose_msg.orientation.y,
+      pose_msg.orientation.z);
+
     return true;
   }
 
