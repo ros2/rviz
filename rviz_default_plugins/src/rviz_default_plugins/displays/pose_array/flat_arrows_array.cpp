@@ -36,6 +36,8 @@
 #include <OgreSceneManager.h>
 #include <OgreTechnique.h>
 
+#include "rviz_rendering/material_manager.hpp"
+
 namespace rviz_default_plugins
 {
 namespace displays
@@ -68,7 +70,7 @@ void FlatArrowsArray::updateManualObject(
 
   color.a = alpha;
   setManualObjectMaterial();
-  EnableBlending(color);
+  rviz_rendering::MaterialManager::enableAlphaBlending(material_, alpha);
 
   manual_object_->begin(
     material_->getName(), Ogre::RenderOperation::OT_LINE_LIST, "rviz_rendering");
@@ -87,20 +89,7 @@ void FlatArrowsArray::setManualObjectMaterial()
 {
   static int material_count = 0;
   std::string material_name = "FlatArrowsMaterial" + std::to_string(material_count++);
-  material_ = Ogre::MaterialManager::getSingleton().create(material_name, "rviz_rendering");
-  material_->setReceiveShadows(false);
-  material_->getTechnique(0)->setLightingEnabled(false);
-}
-
-void FlatArrowsArray::EnableBlending(const Ogre::ColourValue & color)
-{
-  if (color.a < 0.9998) {
-    material_->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
-    material_->setDepthWriteEnabled(false);
-  } else {
-    material_->setSceneBlending(Ogre::SBT_REPLACE);
-    material_->setDepthWriteEnabled(true);
-  }
+  material_ = rviz_rendering::MaterialManager::createMaterialWithNoLighting(material_name);
 }
 
 void FlatArrowsArray::setManualObjectVertices(

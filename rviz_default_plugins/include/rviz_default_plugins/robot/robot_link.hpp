@@ -190,7 +190,6 @@ private:
   void createCollision(const urdf::LinkConstSharedPtr & link);
   void createVisual(const urdf::LinkConstSharedPtr & link);
   void createSelection();
-  void setBlending(const Ogre::MaterialPtr & material, const Ogre::ColourValue & color);
 
   template<typename T>
   void createVisualizable(

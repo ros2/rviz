@@ -33,7 +33,7 @@
 #include <string>
 
 #include <OgreMaterial.h>
-#include <OgreMaterialManager.h>
+#include <OgreTechnique.h>
 
 namespace rviz_rendering
 {
@@ -61,6 +61,55 @@ void MaterialManager::createDefaultColorMaterials()
   createColorMaterial("RVIZ/ShadedGreen", Ogre::ColourValue(0.0f, 1.0f, 0.0f, 1.0f), false);
   createColorMaterial("RVIZ/ShadedBlue", Ogre::ColourValue(0.0f, 0.0f, 1.0f, 1.0f), false);
   createColorMaterial("RVIZ/ShadedCyan", Ogre::ColourValue(0.0f, 1.0f, 1.0f, 1.0f), false);
+}
+
+Ogre::MaterialPtr MaterialManager::createMaterialWithNoLighting(std::string name)
+{
+  Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().create(name, "rviz_rendering");
+  material->setReceiveShadows(false);
+  material->getTechnique(0)->setLightingEnabled(false);
+
+  return material;
+}
+
+Ogre::MaterialPtr MaterialManager::createMaterialWithLighting(std::string name)
+{
+  Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().create(name, "rviz_rendering");
+  material->setReceiveShadows(false);
+  material->getTechnique(0)->setLightingEnabled(true);
+
+  return material;
+}
+
+Ogre::MaterialPtr MaterialManager::createMaterialWithShadowsAndLighting(std::string name)
+{
+  Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().create(name, "rviz_rendering");
+  material->getTechnique(0)->setLightingEnabled(true);
+
+  return material;
+}
+
+void MaterialManager::enableAlphaBlending(Ogre::MaterialPtr material, float alpha)
+{
+  if (alpha < unit_alpha_threshold) {
+    material->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
+    material->setDepthWriteEnabled(false);
+  } else {
+    material->setSceneBlending(Ogre::SBT_REPLACE);
+    material->setDepthWriteEnabled(true);
+  }
+}
+
+void MaterialManager::enableAlphaBlending(
+  Ogre::SceneBlendType & blending, bool & depth_write, float alpha)
+{
+  if (alpha < unit_alpha_threshold) {
+    blending = Ogre::SBT_TRANSPARENT_ALPHA;
+    depth_write = false;
+  } else {
+    blending = Ogre::SBT_REPLACE;
+    depth_write = true;
+  }
 }
 
 }  // namespace rviz_rendering

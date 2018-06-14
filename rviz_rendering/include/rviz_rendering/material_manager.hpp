@@ -34,11 +34,15 @@
 #include <string>
 
 #include <OgreColourValue.h>
+#include <OgreMaterialManager.h>
+#include <OgreSceneManager.h>
 
 #include "rviz_rendering/visibility_control.hpp"
 
 namespace rviz_rendering
 {
+
+const float unit_alpha_threshold = 0.9998f;
 
 class RVIZ_RENDERING_PUBLIC MaterialManager
 {
@@ -47,6 +51,16 @@ public:
     const std::string & name, const Ogre::ColourValue & color, bool use_self_illumination);
 
   static void createDefaultColorMaterials();
+
+  static Ogre::MaterialPtr createMaterialWithNoLighting(std::string name);
+
+  static Ogre::MaterialPtr createMaterialWithLighting(std::string name);
+
+  static Ogre::MaterialPtr createMaterialWithShadowsAndLighting(std::string name);
+
+  static void enableAlphaBlending(Ogre::MaterialPtr material, float alpha);
+
+  static void enableAlphaBlending(Ogre::SceneBlendType & blending, bool & depth_write, float alpha);
 };
 
 }  // namespace rviz_rendering

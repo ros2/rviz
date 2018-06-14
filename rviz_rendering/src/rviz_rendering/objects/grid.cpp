@@ -32,7 +32,7 @@
 
 #include <functional>
 #include <memory>
-#include <sstream>
+#include <string>
 
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
@@ -41,6 +41,7 @@
 #include <OgreMaterialManager.h>
 #include <OgreTechnique.h>
 
+#include "rviz_rendering/material_manager.hpp"
 #include "rviz_rendering/objects/billboard_line.hpp"
 
 namespace rviz_rendering
@@ -62,11 +63,10 @@ Grid::Grid(
   height_count_(0),
   color_(color)
 {
-  static uint32_t gridCount = 0;
-  std::stringstream ss;
-  ss << "Grid" << gridCount++;
+  static uint32_t grid_count = 0;
+  std::string grid_name = "Grid" + std::to_string(grid_count++);
 
-  manual_object_ = scene_manager_->createManualObject(ss.str());
+  manual_object_ = scene_manager_->createManualObject(grid_name);
 
   if (!parent_node) {
     parent_node = scene_manager_->getRootSceneNode();
@@ -77,11 +77,8 @@ Grid::Grid(
 
   billboard_line_ = std::make_shared<rviz_rendering::BillboardLine>(scene_manager, scene_node_);
 
-  ss << "Material";
-  material_ = Ogre::MaterialManager::getSingleton().create(
-    ss.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-  material_->setReceiveShadows(false);
-  material_->getTechnique(0)->setLightingEnabled(false);
+  std::string grid_material_name = grid_name + "Material";
+  material_ = MaterialManager::createMaterialWithNoLighting(grid_material_name);
 
   setColor(color_);
 }
@@ -118,15 +115,7 @@ void Grid::setLineWidth(float width)
 void Grid::setColor(const Ogre::ColourValue & color)
 {
   color_ = color;
-
-  if (color_.a < 0.9998) {
-    material_->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
-    material_->setDepthWriteEnabled(false);
-  } else {
-    material_->setSceneBlending(Ogre::SBT_REPLACE);
-    material_->setDepthWriteEnabled(true);
-  }
-
+  rviz_rendering::MaterialManager::enableAlphaBlending(material_, color.a);
   create();
 }
 
@@ -164,7 +153,8 @@ void Grid::createManualGrid() const
   const uint32_t number_of_vertices_in_plane = cell_count_ * 4 * (height_count_ + 1);
   manual_object_->estimateVertexCount(number_of_vertices_in_plane + numberOfVerticalLines());
 
-  manual_object_->begin(material_->getName(), Ogre::RenderOperation::OT_LINE_LIST);
+  manual_object_->begin(
+    material_->getName(), Ogre::RenderOperation::OT_LINE_LIST, "rviz_rendering");
   createLines(addLineFunction);
   manual_object_->end();
 }

@@ -45,6 +45,7 @@
 #include <OgreTechnique.h>
 #include <OgreCamera.h>
 
+#include "rviz_rendering/material_manager.hpp"
 #include "rviz_rendering/objects/axes.hpp"
 #include "rviz_rendering/render_window.hpp"
 
@@ -213,17 +214,13 @@ std::unique_ptr<Ogre::Rectangle2D> CameraDisplay::createScreenRectangle(
 
 Ogre::MaterialPtr CameraDisplay::createMaterial(std::string name) const
 {
-  auto material = Ogre::MaterialManager::getSingleton().create(
-    name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-
+  auto material = rviz_rendering::MaterialManager::createMaterialWithNoLighting(name);
   material->setDepthWriteEnabled(false);
-  material->setReceiveShadows(false);
   material->setDepthCheckEnabled(false);
 
   material->setCullingMode(Ogre::CULL_NONE);
   material->setSceneBlending(Ogre::SBT_REPLACE);
 
-  material->getTechnique(0)->setLightingEnabled(false);
   Ogre::TextureUnitState * tu =
     material->getTechnique(0)->getPass(0)->createTextureUnitState();
   tu->setTextureName(texture_->getTexture()->getName());

@@ -49,6 +49,8 @@
 #include "rviz_common/uniform_string_stream.hpp"
 #include "rviz_common/validate_floats.hpp"
 
+#include "rviz_rendering/material_manager.hpp"
+
 namespace rviz_default_plugins
 {
 namespace displays
@@ -141,10 +143,7 @@ PathDisplay::PathDisplay()
 
   static int count = 0;
   std::string material_name = "LinesMaterial" + std::to_string(count++);
-  lines_material_ = Ogre::MaterialManager::getSingleton().create(
-    material_name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-  lines_material_->setReceiveShadows(false);
-  lines_material_->getTechnique(0)->setLightingEnabled(false);
+  lines_material_ = rviz_rendering::MaterialManager::createMaterialWithNoLighting(material_name);
 }
 
 PathDisplay::~PathDisplay()
@@ -447,11 +446,12 @@ void PathDisplay::updateManualObject(
   color.a = alpha_property_->getFloat();
 
   manual_object->estimateVertexCount(msg->poses.size());
-  manual_object->begin(lines_material_->getName(), Ogre::RenderOperation::OT_LINE_STRIP);
+  manual_object->begin(
+    lines_material_->getName(), Ogre::RenderOperation::OT_LINE_STRIP, "rviz_rendering");
 
   for (auto pose_stamped : msg->poses) {
     manual_object->position(transform * rviz_common::pointMsgToOgre(pose_stamped.pose.position));
-    enableBlending(color);
+    rviz_rendering::MaterialManager::enableAlphaBlending(lines_material_, color.a);
     manual_object->colour(color);
   }
 
@@ -525,17 +525,6 @@ void PathDisplay::updateArrowMarkers(
     Ogre::Vector3 dir(1, 0, 0);
     dir = orientation * dir;
     arrow_vect[i]->setDirection(dir);
-  }
-}
-
-void PathDisplay::enableBlending(const Ogre::ColourValue & color)
-{
-  if (color.a < 0.9998) {
-    lines_material_->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
-    lines_material_->setDepthWriteEnabled(false);
-  } else {
-    lines_material_->setSceneBlending(Ogre::SBT_REPLACE);
-    lines_material_->setDepthWriteEnabled(true);
   }
 }
 

@@ -64,7 +64,6 @@ public:
 
 private:
   void setManualObjectMaterial();
-  void EnableBlending(const Ogre::ColourValue & color);
   void setManualObjectVertices(
     const Ogre::ColourValue & color,
     float length,

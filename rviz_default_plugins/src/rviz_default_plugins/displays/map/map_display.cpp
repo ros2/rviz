@@ -54,6 +54,7 @@
 #include "rclcpp/time.hpp"
 
 #include "rviz_rendering/custom_parameter_indices.hpp"
+#include "rviz_rendering/material_manager.hpp"
 #include "rviz_rendering/objects/grid.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/logging.hpp"
@@ -210,19 +211,13 @@ void MapDisplay::unsubscribe()
 void MapDisplay::updateAlpha()
 {
   float alpha = alpha_property_->getFloat();
-  Ogre::SceneBlendType sceneBlending;
-  bool depthWrite;
+  Ogre::SceneBlendType scene_blending;
+  bool depth_write;
 
-  if (alpha < 0.9998 || color_scheme_transparency_[color_scheme_property_->getOptionInt()]) {
-    sceneBlending = Ogre::SBT_TRANSPARENT_ALPHA;
-    depthWrite = false;
-  } else {
-    sceneBlending = Ogre::SBT_REPLACE;
-    depthWrite = !draw_under_property_->getValue().toBool();
-  }
+  rviz_rendering::MaterialManager::enableAlphaBlending(scene_blending, depth_write, alpha);
 
   for (auto swatch : swatches_) {
-    swatch->updateAlpha(sceneBlending, depthWrite, alpha);
+    swatch->updateAlpha(scene_blending, depth_write, alpha);
   }
 }
 
@@ -230,7 +225,7 @@ void MapDisplay::updateDrawUnder()
 {
   bool draw_under = draw_under_property_->getValue().toBool();
 
-  if (alpha_property_->getFloat() >= 0.9998) {
+  if (alpha_property_->getFloat() >= rviz_rendering::unit_alpha_threshold) {
     for (auto swatch : swatches_) {
       swatch->material_->setDepthWriteEnabled(!draw_under);
     }
