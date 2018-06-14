@@ -412,7 +412,7 @@ if(BUILD_TESTING)
     ament_add_gmock(map_display_test
       test/rviz_default_plugins/displays/map/map_display_test.cpp
       test/rviz_default_plugins/displays/display_test_fixture.cpp
-      test/rviz_default_plugins/scene_graph_introspection.cpp
+      test/rviz_default_plugins/scene_graph_introspection_helper.cpp
       APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
     if(TARGET map_display_test)
       target_include_directories(map_display_test PUBLIC
