@@ -37,6 +37,7 @@
 #include "rviz_rendering/objects/axes.hpp"
 
 #include "rviz_common/logging.hpp"
+#include "rviz_common/msg_conversions.hpp"
 #include "rviz_common/properties/color_property.hpp"
 #include "rviz_common/properties/covariance_property.hpp"
 #include "rviz_common/properties/enum_property.hpp"
@@ -303,25 +304,12 @@ bool OdometryDisplay::messageIsSimilarToPrevious(nav_msgs::msg::Odometry::ConstS
     return false;
   }
 
-  Ogre::Vector3 last_position(
-    last_used_message_->pose.pose.position.x,
-    last_used_message_->pose.pose.position.y,
-    last_used_message_->pose.pose.position.z);
-  Ogre::Vector3 current_position(
-    message->pose.pose.position.x,
-    message->pose.pose.position.y,
-    message->pose.pose.position.z);
+  auto last_position = rviz_common::pointMsgToOgre(last_used_message_->pose.pose.position);
+  auto current_position = rviz_common::pointMsgToOgre(message->pose.pose.position);
 
-  auto last_orientation = Ogre::Quaternion(
-    last_used_message_->pose.pose.orientation.w,
-    last_used_message_->pose.pose.orientation.x,
-    last_used_message_->pose.pose.orientation.y,
-    last_used_message_->pose.pose.orientation.z);
-  auto current_orientation = Ogre::Quaternion(
-    message->pose.pose.orientation.w,
-    message->pose.pose.orientation.x,
-    message->pose.pose.orientation.y,
-    message->pose.pose.orientation.z);
+  auto last_orientation =
+    rviz_common::quaternionMsgToOgre(last_used_message_->pose.pose.orientation);
+  auto current_orientation = rviz_common::quaternionMsgToOgre(message->pose.pose.orientation);
 
   bool position_difference_is_within_tolerance =
     (last_position - current_position).length() < position_tolerance_property_->getFloat();
@@ -377,8 +365,8 @@ std::unique_ptr<rviz_rendering::CovarianceVisual> OdometryDisplay::createAndSetC
   covariance_visual->setPosition(position);
   covariance_visual->setOrientation(orientation);
   auto quaternion = message->pose.pose.orientation;
-  covariance_visual->setCovariance(Ogre::Quaternion(
-      quaternion.w, quaternion.x, quaternion.y, quaternion.z), message->pose.covariance);
+  covariance_visual->setCovariance(
+    rviz_common::quaternionMsgToOgre(quaternion), message->pose.covariance);
   covariance_visual->updateUserData(covariance_property_->getUserData());
 
   return covariance_visual;

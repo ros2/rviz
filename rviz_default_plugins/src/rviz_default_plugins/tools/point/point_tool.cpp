@@ -37,6 +37,7 @@
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/interaction/view_picker_iface.hpp"
 #include "rviz_common/load_resource.hpp"
+#include "rviz_common/msg_conversions.hpp"
 #include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/properties/string_property.hpp"
 #include "rviz_common/render_panel.hpp"
@@ -118,13 +119,12 @@ void PointTool::setStatusForPosition(const Ogre::Vector3 & position)
 
 void PointTool::publishPosition(const Ogre::Vector3 & position) const
 {
-  geometry_msgs::msg::PointStamped ps;
-  ps.point.x = position.x;
-  ps.point.y = position.y;
-  ps.point.z = position.z;
-  ps.header.frame_id = context_->getFixedFrame().toStdString();
-  ps.header.stamp = rclcpp::Clock().now();
-  publisher_->publish(ps);
+  auto point = rviz_common::pointOgreToMsg(position);
+  geometry_msgs::msg::PointStamped point_stamped;
+  point_stamped.point = point;
+  point_stamped.header.frame_id = context_->getFixedFrame().toStdString();
+  point_stamped.header.stamp = rclcpp::Clock().now();
+  publisher_->publish(point_stamped);
 }
 
 }  // namespace tools
