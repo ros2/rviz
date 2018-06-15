@@ -147,7 +147,7 @@ void SelectionManager::initialize()
 
   Ogre::TexturePtr tex = Ogre::TextureManager::getSingleton().loadRawData(
     name + "Texture",
-    Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+    "rviz_rendering",
     pixel_stream,
     1,
     1,
@@ -156,8 +156,8 @@ void SelectionManager::initialize()
     0
     );
 
-  Ogre::MaterialPtr material = rviz_rendering::MaterialManager::createMaterialWithNoLighting(name);
-  // material->getTechnique(0)->getPass(0)->setPolygonMode(Ogre::PM_WIREFRAME);
+  Ogre::MaterialPtr material =
+    rviz_rendering::MaterialManager::createMaterialWithShadowsAndNoLighting(name);
   highlight_rectangle_->setMaterial(material);
   Ogre::AxisAlignedBox aabInf;
   aabInf.setInfinite();
