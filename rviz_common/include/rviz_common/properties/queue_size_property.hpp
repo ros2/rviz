@@ -46,6 +46,8 @@ class RVIZ_COMMON_PUBLIC QueueSizeProperty : public QObject
 public:
   QueueSizeProperty(_RosTopicDisplay * display, uint32_t default_size);
 
+  void setDescription(const QString & description);
+
 private Q_SLOTS:
   void updateQueueSize();
 

@@ -36,9 +36,9 @@
 #include <OgreVector3.h>
 #include <OgreSceneNode.h>
 
-#include "rviz_default_plugins/displays/marker/marker_display.hpp"
-
 #include "rviz_rendering/objects/billboard_line.hpp"
+
+#include "rviz_default_plugins/displays/marker/marker_common.hpp"
 
 namespace rviz_default_plugins
 {
@@ -48,7 +48,7 @@ namespace markers
 {
 
 LineListMarker::LineListMarker(
-  MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node)
+  MarkerCommon * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node)
 : LineMarkerBase(owner, context, parent_node)
 {}
 

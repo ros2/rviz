@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,52 +31,21 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKER_DISPLAY_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKER_DISPLAY_HPP_
 
-#include <map>
 #include <memory>
-#include <mutex>
-#include <set>
-#include <string>
-#include <vector>
-#include <utility>
 
 #include "visualization_msgs/msg/marker.hpp"
 #include "visualization_msgs/msg/marker_array.hpp"
 
-#include "rviz_common/display.hpp"
-#include "rviz_common/properties/bool_property.hpp"
+#include "rviz_common/properties/queue_size_property.hpp"
 #include "rviz_common/ros_topic_display.hpp"
-#include "rviz_common/interaction/forwards.hpp"
 
+#include "rviz_default_plugins/displays/marker/marker_common.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
-
-namespace rviz_common
-{
-class QueueSizeProperty;
-
-namespace properties
-{
-class IntProperty;
-}
-}
-
-using rviz_common::properties::StatusLevel;
 
 namespace rviz_default_plugins
 {
 namespace displays
 {
-class RVIZ_DEFAULT_PLUGINS_PUBLIC MarkerNamespace;
-
-namespace markers
-{
-class MarkerBase;
-class MarkerSelectionHandler;
-class MarkerFactory;
-}
-
-typedef std::shared_ptr<markers::MarkerSelectionHandler> MarkerSelectionHandlerPtr;
-typedef std::shared_ptr<markers::MarkerBase> MarkerBasePtr;
-typedef std::pair<std::string, int32_t> MarkerID;
 
 /**
  * \class MarkerDisplay
@@ -84,144 +54,32 @@ typedef std::pair<std::string, int32_t> MarkerID;
  * Markers come in as visualization_msgs::msg::Marker messages.
  * See the Marker message for more information.
  */
-class RVIZ_DEFAULT_PLUGINS_PUBLIC MarkerDisplay : public
-  rviz_common::RosTopicDisplay<visualization_msgs::msg::Marker>
+class RVIZ_DEFAULT_PLUGINS_PUBLIC MarkerDisplay
+  : public rviz_common::RosTopicDisplay<visualization_msgs::msg::Marker>
 {
-  Q_OBJECT
-
 public:
-  // TODO(Martin-Idel-SI): Constructor for testing, remove once ros_nodes can be mocked and call
-  // initialize instead
-  explicit MarkerDisplay(
-    std::unique_ptr<markers::MarkerFactory> factory,
-    rviz_common::DisplayContext * display_context);
   MarkerDisplay();
-  ~MarkerDisplay() override;
 
   void onInitialize() override;
+  void load(const rviz_common::Config & config) override;
 
   void update(float wall_dt, float ros_dt) override;
 
-  void fixedFrameChanged() override;
   void reset() override;
 
-  void deleteMarker(MarkerID id);
-
-  /** @brief Delete all known markers to this plugin, regardless of id or namespace **/
-  void deleteAllMarkers();
-
-  void setMarkerStatus(MarkerID id, StatusLevel level, const std::string & text);
-  void deleteMarkerStatus(MarkerID id);
-
-  /**
-   * \brief Processes a marker message
-   * @param message The message to process
-   */
-  void processMessage(visualization_msgs::msg::Marker::ConstSharedPtr message) override;
-
 protected:
-  void onEnable() override;
-  void onDisable() override;
-
-  void load(const rviz_common::Config & config) override;
-
-  /** @brief Subscribes to the "visualization_marker" and
-   * "visualization_marker_array" topics. */
   void subscribe() override;
-
-  /** @brief Unsubscribes from the "visualization_marker"
-   * "visualization_marker_array" topics. */
   void unsubscribe() override;
 
-  /** @brief Process a MarkerArray message. */
-  void incomingMarkerArray(visualization_msgs::msg::MarkerArray::ConstSharedPtr array);
-
-  rclcpp::Subscription<visualization_msgs::msg::MarkerArray>::SharedPtr array_sub_;
-  std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
-
 private:
-  /** @brief Delete all the markers within the given namespace. */
-  void deleteMarkersInNamespace(const std::string & ns);
-
-  /**
-   * \brief Removes all the markers
-   */
-  void clearMarkers();
-
-  /**
-   * \brief Processes an "Add" marker message
-   * @param message The message to process
-   */
-  void processAdd(visualization_msgs::msg::Marker::ConstSharedPtr message);
-  /**
-   * \brief Processes a "Delete" marker message
-   * @param message The message to process
-   */
-  void processDelete(visualization_msgs::msg::Marker::ConstSharedPtr message);
-
-  /**
-   * \brief ROS callback notifying us of a new marker
-   */
-  void incomingMarker(visualization_msgs::msg::Marker::ConstSharedPtr marker);
+  void processMessage(visualization_msgs::msg::Marker::ConstSharedPtr msg) override;
 
   void createMarkerArraySubscription();
 
-  typedef std::vector<visualization_msgs::msg::Marker::ConstSharedPtr> V_MarkerMessage;
-  V_MarkerMessage takeSnapshotOfMessageQueue();
-  void processNewMessages(const V_MarkerMessage & local_queue);
-  void removeExpiredMarkers();
+  rclcpp::Subscription<visualization_msgs::msg::MarkerArray>::SharedPtr array_sub_;
 
-  void updateMarkersWithLockedFrame() const;
-  QHash<QString, MarkerNamespace *>::const_iterator getMarkerNamespace(
-    const visualization_msgs::msg::Marker::ConstSharedPtr & message);
-  MarkerBasePtr createOrGetOldMarker(
-    const visualization_msgs::msg::Marker::ConstSharedPtr & message);
-  MarkerBasePtr createMarker(const visualization_msgs::msg::Marker::ConstSharedPtr & message);
-  void configureMarker(
-    const visualization_msgs::msg::Marker::ConstSharedPtr & message, MarkerBasePtr & marker);
-
-  typedef std::map<MarkerID, MarkerBasePtr> M_IDToMarker;
-  typedef std::set<MarkerBasePtr> S_MarkerBase;
-  M_IDToMarker markers_;                  ///< Map of marker id to the marker info structure
-  S_MarkerBase markers_with_expiration_;
-  S_MarkerBase frame_locked_markers_;
-  ///< Marker message queue.  Messages are added to this as they are received, and then processed
-  ///< in our update() function
-  V_MarkerMessage message_queue_;
-  std::mutex queue_mutex_;
-
-  typedef QHash<QString, MarkerNamespace *> M_Namespace;
-  M_Namespace namespaces_;
-
-  rviz_common::properties::Property * namespaces_category_;
-
-  typedef std::map<QString, bool> M_EnabledState;
-  M_EnabledState namespace_config_enabled_state_;
-
-  std::unique_ptr<markers::MarkerFactory> marker_factory_;
-
-  friend class MarkerNamespace;
-};
-
-/** @brief Manager of a single marker namespace.  Keeps a hash from
- * marker IDs to MarkerBasePtr, and creates or destroys them when necessary. */
-class MarkerNamespace : public rviz_common::properties::BoolProperty
-{
-  Q_OBJECT
-
-public:
-  MarkerNamespace(
-    const QString & name,
-    rviz_common::properties::Property * parent_property,
-    MarkerDisplay * owner
-  );
-  bool isEnabled() const {return getBool();}
-
-public Q_SLOTS:
-  void onEnableChanged();
-
-private:
-  MarkerDisplay * owner_;
+  std::unique_ptr<MarkerCommon> marker_common_;
+  std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
 };
 
 }  // namespace displays

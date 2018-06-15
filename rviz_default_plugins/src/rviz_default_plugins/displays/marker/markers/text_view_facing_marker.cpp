@@ -33,9 +33,10 @@
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 
-#include "rviz_default_plugins/displays/marker/markers/marker_selection_handler.hpp"
-#include "rviz_common/display_context.hpp"
 #include "rviz_rendering/objects/movable_text.hpp"
+#include "rviz_common/display_context.hpp"
+
+#include "rviz_default_plugins/displays/marker/markers/marker_selection_handler.hpp"
 
 namespace rviz_default_plugins
 {
@@ -45,7 +46,7 @@ namespace markers
 {
 
 TextViewFacingMarker::TextViewFacingMarker(
-  MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node)
+  MarkerCommon * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node)
 : MarkerBase(owner, context, parent_node),
   text_(nullptr)
 {}

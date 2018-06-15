@@ -47,7 +47,7 @@ class LineStripMarker : public LineMarkerBase
 public:
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   LineStripMarker(
-    MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);
+    MarkerCommon * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   ~LineStripMarker() override = default;
 

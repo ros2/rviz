@@ -44,18 +44,6 @@ class Viewport;
 namespace rviz_rendering
 {
 
-/// Find the point on a plane directly behind a given (x, y) position in window-pixel coordinates.
-/**
- * \return true if the intersection exists, false if it does not.
- */
-RVIZ_RENDERING_PUBLIC
-bool
-getPointOnPlaneFromWindowXY(
-  Ogre::Viewport * viewport,
-  Ogre::Plane & plane,
-  int window_x, int window_y,
-  Ogre::Vector3 & intersection_out);
-
 /// Return the input angle mapped back to the range 0 to 2*PI.
 RVIZ_RENDERING_PUBLIC
 float

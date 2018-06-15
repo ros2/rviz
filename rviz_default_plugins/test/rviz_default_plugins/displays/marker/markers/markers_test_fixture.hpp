@@ -60,13 +60,16 @@ public:
   std::unique_ptr<MarkerType> makeMarker()
   {
     return std::make_unique<MarkerType>(
-      marker_display_.get(),
+      marker_common_.get(),
       context_.get(),
-      scene_manager_->getRootSceneNode()->createChildSceneNode());
+      scene_node_);
   }
 
-  std::shared_ptr<rviz_default_plugins::displays::MarkerDisplay> marker_display_;
-  std::shared_ptr<rviz_default_plugins::displays::markers::MarkerBase> marker_;
+  std::unique_ptr<rviz_common::Display> display_;
+  std::unique_ptr<rviz_default_plugins::displays::MarkerCommon> marker_common_;
+  Ogre::SceneNode * scene_node_;
+
+  std::unique_ptr<rviz_default_plugins::displays::markers::MarkerBase> marker_;
 };
 
 #endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__MARKERS_TEST_FIXTURE_HPP_

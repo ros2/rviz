@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,52 +28,53 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_POSE_TOOL_H
-#define RVIZ_POSE_TOOL_H
+#include "rviz_default_plugins/view_controllers/follower/third_person_follower_view_controller.hpp"
 
-#include <OgreVector3.h>
-
-#include <QCursor>
-
-#include <ros/ros.h>
-
-#include "rviz/tool.h"
-
-namespace rviz
-{
-class Arrow;
-class DisplayContext;
-
-class PoseTool: public Tool
-{
-public:
-  PoseTool();
-  virtual ~PoseTool();
-
-  virtual void onInitialize();
-
-  virtual void activate();
-  virtual void deactivate();
-
-  virtual int processMouseEvent( ViewportMouseEvent& event );
-
-protected:
-  virtual void onPoseSet( double x, double y, double theta ) = 0;
-
-  Arrow* arrow_;
-
-  enum State
-  {
-    Position,
-    Orientation
-  };
-  State state_;
-
-  Ogre::Vector3 pos_;
-};
-
-}
-
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+# pragma GCC diagnostic ignored "-Wpedantic"
+#else
+# pragma warning(push)
+# pragma warning(disable : 4996)
 #endif
 
+#include <OgreQuaternion.h>
+#include <OgreSceneNode.h>
+#include <OgreMath.h>
 
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#else
+# pragma warning(pop)
+#endif
+
+#include "rviz_common/display_context.hpp"
+
+namespace rviz_default_plugins
+{
+namespace view_controllers
+{
+
+void ThirdPersonFollowerViewController::updateTargetSceneNode()
+{
+  if (FramePositionTrackingViewController::getNewTransform()) {
+    target_scene_node_->setPosition(reference_position_);
+
+    // OGRE camera frame looks along -Z, so they call rotation around Z "roll".
+    Ogre::Radian ref_yaw = reference_orientation_.getRoll(false);
+    Ogre::Quaternion ref_yaw_quat(ref_yaw, Ogre::Vector3::UNIT_Z);
+    target_scene_node_->setOrientation(ref_yaw_quat);
+
+    context_->queueRender();
+  }
+}
+
+}  // namespace view_controllers
+}  // namespace rviz_default_plugins
+
+#include <pluginlib/class_list_macros.hpp>  // NOLINT(build/include_order)
+
+PLUGINLIB_EXPORT_CLASS(
+  rviz_default_plugins::view_controllers::ThirdPersonFollowerViewController,
+  rviz_common::ViewController)

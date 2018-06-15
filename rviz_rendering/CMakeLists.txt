@@ -64,6 +64,7 @@ add_library(rviz_rendering SHARED
   src/rviz_rendering/apply_visibility_bits.cpp
   # src/rviz_rendering/initialization.cpp
   src/rviz_rendering/geometry.cpp
+  src/rviz_rendering/viewport_projection_finder.cpp
   src/rviz_rendering/logging.cpp
   src/rviz_rendering/material_manager.cpp
   src/rviz_rendering/mesh_loader.cpp

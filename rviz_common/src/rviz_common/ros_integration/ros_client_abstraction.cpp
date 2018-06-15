@@ -75,7 +75,6 @@ RosClientAbstraction::ok()
 void
 RosClientAbstraction::shutdown()
 {
-  rviz_ros_node_.reset();
   rclcpp::shutdown();
 }
 

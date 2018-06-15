@@ -144,6 +144,17 @@
   </class>
 
   <class
+    name="rviz_default_plugins/MarkerArray"
+    type="rviz_default_plugins::displays::MarkerArrayDisplay"
+    base_class_type="rviz_common::Display">
+      <description>
+          Displays visualization_msgs::MarkerArray messages without presuming the topic name ends in "_array".
+          <a href="http://www.ros.org/wiki/rviz/DisplayTypes/Marker">More Information</a>.
+      </description>
+      <message_type>visualization_msgs/MarkerArray</message_type>
+  </class>
+
+  <class
     name="rviz_default_plugins/Odometry"
     type="rviz_default_plugins::displays::OdometryDisplay"
     base_class_type="rviz_common::Display"
@@ -221,6 +232,16 @@
   </class>
 
   <class
+    name="rviz_default_plugins/SetGoal"
+    type="rviz_default_plugins::tools::GoalTool"
+    base_class_type="rviz_common::Tool"
+  >
+    <description>
+      Publish a goal pose for the robot.  After one use, reverts to default tool.
+    </description>
+  </class>
+
+  <class
     name="rviz_default_plugins/Measure"
     type="rviz_default_plugins::tools::MeasureTool"
     base_class_type="rviz_common::Tool"
@@ -278,6 +299,14 @@
   >
     <description>
       Makes it easy to move around a given point on the XY plane, looking at it from any angle.
+    </description>
+  </class>
+  <class
+    name="rviz_default_plugins/ThirdPersonFollower"
+    type="rviz_default_plugins::view_controllers::ThirdPersonFollowerViewController"
+    base_class_type="rviz_common::ViewController">
+    <description>
+      Follow a target frame and turn the viewing direction with the yaw of the target frame.
     </description>
   </class>
 </library>

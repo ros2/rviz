@@ -59,7 +59,7 @@ class LineMarkerBase : public MarkerBase
 public:
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   LineMarkerBase(
-    MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);
+    MarkerCommon * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   S_MaterialPtr getMaterials() override;

@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2011, Willow Garage, Inc.
+ * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,38 +28,39 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef RVIZ_MARKER_ARRAY_DISPLAY_H
-#define RVIZ_MARKER_ARRAY_DISPLAY_H
 
-#include "marker_display.h"
+#ifndef RVIZ_RENDERING__VIEWPORT_PROJECTION_FINDER_HPP_
+#define RVIZ_RENDERING__VIEWPORT_PROJECTION_FINDER_HPP_
 
-namespace rviz
+#include <utility>
+
+#include "rviz_rendering/visibility_control.hpp"
+
+namespace Ogre
+{
+class Plane;
+class Vector3;
+class Viewport;
+}
+
+namespace rviz_rendering
 {
 
-/**
- * @brief Display for an array of markers.  The MarkerDisplay class handles
- * MarkerArray messages.  This is just a wrapper to let MarkerArray
- * topics get selected in the topic browser.
- */
-class MarkerArrayDisplay: public MarkerDisplay
+class RenderWindow;
+
+class RVIZ_RENDERING_PUBLIC ViewportProjectionFinder
 {
-Q_OBJECT
 public:
-  MarkerArrayDisplay();
+  ViewportProjectionFinder() = default;
 
-protected:
-  /** @brief Overridden from MarkerDisplay.  Subscribes to the marker
-   * array topic. */
-  virtual void subscribe();
-
-  /** @brief Overridden from MarkerDisplay.  Unsubscribes to the
-   * marker array topic. */
-  virtual void unsubscribe();
+  virtual std::pair<bool, Ogre::Vector3> getViewportPointProjectionOnXYPlane(
+    RenderWindow * render_window, int x, int y);
 
 private:
-  void handleMarkerArray( const visualization_msgs::MarkerArray::ConstPtr& array );
+  virtual std::pair<bool, Ogre::Vector3> getViewportProjectionOnPlane(
+    RenderWindow * render_window, int x, int y, Ogre::Plane & plane);
 };
 
-} // end namespace rviz
+}  // namespace rviz_rendering
 
-#endif // RVIZ_MARKER_ARRAY_DISPLAY_H
+#endif  // RVIZ_RENDERING__VIEWPORT_PROJECTION_FINDER_HPP_
