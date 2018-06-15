@@ -29,13 +29,15 @@
 
 #include "rviz_rendering/objects/line.hpp"
 
-#include <sstream>
+#include <string>
 
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 #include <OgreManualObject.h>
 #include <OgreMaterialManager.h>
 #include <OgreTechnique.h>
+
+#include "rviz_rendering/material_manager.hpp"
 
 namespace rviz_rendering
 {
@@ -50,16 +52,12 @@ Line::Line(Ogre::SceneManager * manager, Ogre::SceneNode * parent_node)
   scene_node_ = parent_node->createChildSceneNode();
 
   static int count = 0;
-  std::stringstream ss;
-  ss << "LineMaterial" << count++;
+  std::string line_material_name = "LineMaterial" + std::to_string(count++);
 
   // NOTE: The second parameter to the create method is the resource group the material will be
   // added to. If the group you name does not exist (in your resources.cfg file) the library will
   // assert() and your program will crash
-  manual_object_material_ = Ogre::MaterialManager::getSingleton().create(
-    ss.str(), "rviz_rendering");
-  manual_object_material_->setReceiveShadows(false);
-  manual_object_material_->getTechnique(0)->setLightingEnabled(true);
+  manual_object_material_ = MaterialManager::createMaterialWithLighting(line_material_name);
   manual_object_material_->getTechnique(0)->getPass(0)->setDiffuse(0, 0, 0, 0);
   manual_object_material_->getTechnique(0)->getPass(0)->setAmbient(1, 1, 1);
 
@@ -114,13 +112,7 @@ void Line::setColor(const Ogre::ColourValue & c)
   manual_object_material_->getTechnique(0)->setAmbient(c * 0.5);
   manual_object_material_->getTechnique(0)->setDiffuse(c);
 
-  if (c.a < 0.9998) {
-    manual_object_material_->getTechnique(0)->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
-    manual_object_material_->getTechnique(0)->setDepthWriteEnabled(false);
-  } else {
-    manual_object_material_->getTechnique(0)->setSceneBlending(Ogre::SBT_REPLACE);
-    manual_object_material_->getTechnique(0)->setDepthWriteEnabled(true);
-  }
+  MaterialManager::enableAlphaBlending(manual_object_material_, c.a);
 }
 
 void Line::setColor(float r, float g, float b, float a)
