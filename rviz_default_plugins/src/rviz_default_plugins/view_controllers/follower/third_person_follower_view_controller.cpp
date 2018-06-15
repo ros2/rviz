@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,51 +28,53 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_THIRD_PERSON_VIEW_CONTROLLER_H
-#define RVIZ_THIRD_PERSON_VIEW_CONTROLLER_H
+#include "rviz_default_plugins/view_controllers/follower/third_person_follower_view_controller.hpp"
 
-#include "rviz/default_plugin/view_controllers/orbit_view_controller.h"
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+# pragma GCC diagnostic ignored "-Wpedantic"
+#else
+# pragma warning(push)
+# pragma warning(disable : 4996)
+#endif
 
-#include <OgreVector3.h>
+#include <OgreQuaternion.h>
+#include <OgreSceneNode.h>
+#include <OgreMath.h>
 
-namespace Ogre
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#else
+# pragma warning(pop)
+#endif
+
+#include "rviz_common/display_context.hpp"
+
+namespace rviz_default_plugins
 {
-class SceneNode;
+namespace view_controllers
+{
+
+void ThirdPersonFollowerViewController::updateTargetSceneNode()
+{
+  if (FramePositionTrackingViewController::getNewTransform()) {
+    target_scene_node_->setPosition(reference_position_);
+
+    // OGRE camera frame looks along -Z, so they call rotation around Z "roll".
+    Ogre::Radian ref_yaw = reference_orientation_.getRoll(false);
+    Ogre::Quaternion ref_yaw_quat(ref_yaw, Ogre::Vector3::UNIT_Z);
+    target_scene_node_->setOrientation(ref_yaw_quat);
+
+    context_->queueRender();
+  }
 }
 
-namespace rviz
-{
+}  // namespace view_controllers
+}  // namespace rviz_default_plugins
 
-class TfFrameProperty;
+#include <pluginlib/class_list_macros.hpp>  // NOLINT(build/include_order)
 
-/**
- * \brief Like the orbit view controller, but focal point moves only in the x-y plane.
- */
-class ThirdPersonFollowerViewController : public OrbitViewController
-{
-Q_OBJECT
-public:
-  virtual void onInitialize();
-
-  virtual void handleMouseEvent(ViewportMouseEvent& evt);
-
-  virtual void lookAt( const Ogre::Vector3& point );
-
-  /** @brief Configure the settings of this view controller to give,
-   * as much as possible, a similar view as that given by the
-   * @a source_view.
-   *
-   * @a source_view must return a valid @c Ogre::Camera* from getCamera(). */
-  virtual void mimic( ViewController* source_view );
-
-protected:
-  virtual void updateCamera();
-
-  virtual void updateTargetSceneNode();
-
-  bool intersectGroundPlane( Ogre::Ray mouse_ray, Ogre::Vector3 &intersection_3d );
-};
-
-}
-
-#endif // RVIZ_VIEW_CONTROLLER_H
+PLUGINLIB_EXPORT_CLASS(
+  rviz_default_plugins::view_controllers::ThirdPersonFollowerViewController,
+  rviz_common::ViewController)
