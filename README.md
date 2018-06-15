@@ -10,7 +10,8 @@ ROS 2 does not have a wiki, yet. To learn about rviz and its functionality, plea
 ## Features present in rviz for ROS and missing in rviz for ROS 2
 
 Tools:
-- Interactive Markers
+- Interact Tool
+- Initial Pose Tool
 
 Displays:
 - AxesDisplay
@@ -19,6 +20,7 @@ Displays:
 - FluidPressureDisplay
 - IlluminanceDisplay
 - InteractiveMarkerDisplay
+- OculusDisplay
 - PoseWithCovarianceStampedDisplay
 - RangeDisplay
 - RelativeHumidityDisplay
@@ -30,7 +32,7 @@ Other features:
 - Message filters
 - Image transport features
 
-If you would like to see those features in rviz, feel free to add a pull request.
+If you would like to see those features in rviz for ROS 2, feel free to add a pull request.
 Make sure to read the developer guide below and the migration guide.
 
 ## Features new in rviz for ROS 2
@@ -49,7 +51,8 @@ https://github.com/ros2/ros2/wiki/Installation
 
 When developing for rviz, it can be beneficial to build it in a separate folder. 
 
-**Note:** When building the current ros2 branch from source, the latest ROS 2 release for all dependencies might not be sufficient. Make sure to have a source build of ROS 2 available (see installation procedure above).
+**Note:** When building the current ros2 branch from source, the latest ROS 2 release for all dependencies might not be sufficient: it could be necessary to build the ROS 2 master branch.
+Make sure to have a source build of ROS 2 available (see installation procedure above).
 
 Create a new workspace:
 
