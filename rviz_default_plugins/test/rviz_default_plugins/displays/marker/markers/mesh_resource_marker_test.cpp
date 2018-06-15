@@ -211,12 +211,12 @@ TEST_F(MarkersTestFixture, setMessage_with_new_object_clears_old_entities_and_ma
   auto material_name = entity->getSubEntity(0)->getMaterialName();
   EXPECT_TRUE(Ogre::MaterialManager::getSingletonPtr()->getByName(material_name, "rviz_rendering"));
 
-  message.mesh_resource = "package://rviz_rendering_tests/test_meshes/pr2-base_large.dae";
+  message.mesh_resource = "package://rviz_default_plugins/test_meshes/pr2-base_large.dae";
   marker_->setMessage(message);
 
   // entity and material are cleaned up
   auto deleted_entity = rviz_rendering::findEntityByMeshName(
-    scene_manager_->getRootSceneNode(), "package://rviz_rendering_tests/test_meshes/pr2-base.dae");
+    scene_manager_->getRootSceneNode(), "package://rviz_default_plugins/test_meshes/pr2-base.dae");
   ASSERT_FALSE(deleted_entity);
   EXPECT_FALSE(
     Ogre::MaterialManager::getSingletonPtr()->getByName(material_name, "rviz_rendering"));

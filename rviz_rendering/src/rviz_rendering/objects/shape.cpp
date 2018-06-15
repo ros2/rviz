@@ -53,6 +53,7 @@
 #include <OgreVector3.h>
 
 #include "rviz_rendering/logging.hpp"
+#include "rviz_rendering/material_manager.hpp"
 
 // TODO(wjwwood): replace this with info from buildsystem
 #define ROS_PACKAGE_NAME "rviz_rendering"
@@ -99,10 +100,9 @@ Shape::Shape(Type type, Ogre::SceneManager * scene_manager, Ogre::SceneNode * pa
 : Object(scene_manager), type_(type)
 {
   static uint32_t count = 0;
-  std::stringstream ss;
-  ss << "Shape" << count++;
+  std::string entity_name = "Shape" + std::to_string(count++);
 
-  entity_ = createEntity(ss.str(), type, scene_manager);
+  entity_ = createEntity(entity_name, type, scene_manager);
 
   if (!parent_node) {
     parent_node = scene_manager_->getRootSceneNode();
@@ -114,11 +114,8 @@ Shape::Shape(Type type, Ogre::SceneManager * scene_manager, Ogre::SceneNode * pa
     offset_node_->attachObject(entity_);
   }
 
-  ss << "Material";
-  material_name_ = ss.str();
-  material_ = Ogre::MaterialManager::getSingleton().create(material_name_, ROS_PACKAGE_NAME);
-  material_->setReceiveShadows(false);
-  material_->getTechnique(0)->setLightingEnabled(true);
+  material_name_ = entity_name + "Material";
+  material_ = MaterialManager::createMaterialWithLighting(material_name_);
   material_->getTechnique(0)->setAmbient(0.5, 0.5, 0.5);
 
   if (entity_) {
@@ -150,13 +147,7 @@ void Shape::setColor(const Ogre::ColourValue & c)
   material_->getTechnique(0)->setAmbient(c * 0.5);
   material_->getTechnique(0)->setDiffuse(c);
 
-  if (c.a < 0.9998) {
-    material_->getTechnique(0)->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
-    material_->getTechnique(0)->setDepthWriteEnabled(false);
-  } else {
-    material_->getTechnique(0)->setSceneBlending(Ogre::SBT_REPLACE);
-    material_->getTechnique(0)->setDepthWriteEnabled(true);
-  }
+  rviz_rendering::MaterialManager::enableAlphaBlending(material_, c.a);
 }
 
 void Shape::setColor(float r, float g, float b, float a)

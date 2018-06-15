@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2008, Willow Garage, Inc.
- * Copyright (c) 2017, Bosch Software Innovations GmbH.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -11,8 +10,8 @@
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
- *       contributors may be used to endorse or promote products derived from
+ *     * Neither the name of the copyright holder nor the names of its contributors
+ *       may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -28,41 +27,22 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_RENDERING__MATERIAL_MANAGER_HPP_
-#define RVIZ_RENDERING__MATERIAL_MANAGER_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__MAP_DISPLAY_PAGE_OBJECT_HPP_
+#define RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__MAP_DISPLAY_PAGE_OBJECT_HPP_
 
-#include <string>
+#include "rviz_visual_testing_framework/page_objects/base_page_object.hpp"
 
-#include <OgreColourValue.h>
-#include <OgreMaterialManager.h>
-#include <OgreSceneManager.h>
-
-#include "rviz_rendering/visibility_control.hpp"
-
-namespace rviz_rendering
-{
-
-const float unit_alpha_threshold = 0.9998f;
-
-class RVIZ_RENDERING_PUBLIC MaterialManager
+class MapDisplayPageObject : public BasePageObject
 {
 public:
-  static void createColorMaterial(
-    const std::string & name, const Ogre::ColourValue & color, bool use_self_illumination);
+  MapDisplayPageObject();
 
-  static void createDefaultColorMaterials();
-
-  static Ogre::MaterialPtr createMaterialWithNoLighting(std::string name);
-
-  static Ogre::MaterialPtr createMaterialWithLighting(std::string name);
-
-  static Ogre::MaterialPtr createMaterialWithShadowsAndLighting(std::string name);
-
-  static void enableAlphaBlending(Ogre::MaterialPtr material, float alpha);
-
-  static void enableAlphaBlending(Ogre::SceneBlendType & blending, bool & depth_write, float alpha);
+  void setTopic(QString topic);
+  void setUnreliable(bool unreliable);
+  void drawUnder(bool under);
+  void setAlpha(float alpha);
+  void setColorScheme(QString scheme);
+  void setUseTransformTimestamp(bool use_transform_stamped);
 };
 
-}  // namespace rviz_rendering
-
-#endif  // RVIZ_RENDERING__MATERIAL_MANAGER_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__MAP_DISPLAY_PAGE_OBJECT_HPP_

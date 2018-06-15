@@ -43,12 +43,13 @@
 
 #include "tf2_ros/transform_listener.h"
 
-#include "rviz_common/display_context.hpp"
-#include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/axes.hpp"
 #include "rviz_rendering/objects/movable_text.hpp"
+#include "rviz_common/display_context.hpp"
+#include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/logging.hpp"
+#include "rviz_common/msg_conversions.hpp"
 #include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/quaternion_property.hpp"
@@ -527,18 +528,10 @@ void TFDisplay::updateRelativePositionAndOrientation(
     logTransformationException(frame->parent_, frame->name_, e.what());
   }
 
-  Ogre::Vector3 relative_position(
-    transform.transform.translation.x,
-    transform.transform.translation.y,
-    transform.transform.translation.z
-  );
-  Ogre::Quaternion relative_orientation(
-    transform.transform.rotation.w,
-    transform.transform.rotation.x,
-    transform.transform.rotation.y,
-    transform.transform.rotation.z);
-  frame->rel_position_property_->setVector(relative_position);
-  frame->rel_orientation_property_->setQuaternion(relative_orientation);
+  frame->rel_position_property_->setVector(
+    rviz_common::vector3MsgToOgre(transform.transform.translation));
+  frame->rel_orientation_property_->setQuaternion(
+    rviz_common::quaternionMsgToOgre(transform.transform.rotation));
 }
 
 void TFDisplay::updateParentArrowIfTransformExists(

@@ -10,8 +10,8 @@
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
- *       contributors may be used to endorse or promote products derived from
+ *     * Neither the name of the copyright holder nor the names of its contributors
+ *       may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -27,69 +27,75 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__PUBLISHERS__PATH_PUBLISHER_HPP_
-#define RVIZ_DEFAULT_PLUGINS__PUBLISHERS__PATH_PUBLISHER_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__PUBLISHERS__MAP_PUBLISHER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__PUBLISHERS__MAP_PUBLISHER_HPP_
 
-#define _USE_MATH_DEFINES
 #include <cmath>
+#include <memory>
 #include <vector>
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp/clock.hpp"
 #include "std_msgs/msg/header.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
-#include "nav_msgs/msg/path.hpp"
+#include "nav_msgs/msg/occupancy_grid.hpp"
 
 using namespace std::chrono_literals;  // NOLINT
 
 namespace nodes
 {
 
-class PathPublisher : public rclcpp::Node
+class MapPublisher : public rclcpp::Node
 {
 public:
-  PathPublisher()
-  : Node("path_publisher")
+  MapPublisher()
+  : Node("map_publisher")
   {
-    publisher = this->create_publisher<nav_msgs::msg::Path>("path");
-    timer = this->create_wall_timer(500ms, std::bind(&PathPublisher::timer_callback, this));
+    publisher = this->create_publisher<nav_msgs::msg::OccupancyGrid>("map");
+    timer = this->create_wall_timer(500ms, std::bind(&MapPublisher::timer_callback, this));
   }
 
 private:
   void timer_callback()
   {
-    auto message = nav_msgs::msg::Path();
-    message.header = std_msgs::msg::Header();
-    message.header.frame_id = "path_frame";
-    message.header.stamp = rclcpp::Clock().now();
+    auto header = std_msgs::msg::Header();
+    header.frame_id = "map_frame";
+    header.stamp = rclcpp::Clock().now();
 
-    auto p1 = geometry_msgs::msg::PoseStamped();
-    p1.pose.position.x = 0;
-    p1.pose.position.y = 0;
-    p1.pose.position.z = 0;
-    p1.pose.orientation.w = 1;
-    p1.pose.orientation.x = 0;
-    p1.pose.orientation.y = 0;
-    p1.pose.orientation.z = 0;
+    auto meta_data = nav_msgs::msg::MapMetaData();
+    meta_data.height = 256;
+    meta_data.width = 256;
+    meta_data.map_load_time = rclcpp::Clock().now();
+    meta_data.resolution = 1;
 
-    auto p2 = geometry_msgs::msg::PoseStamped();
-    p2.pose.position.x = 4;
-    p2.pose.position.y = 4;
-    p2.pose.position.z = 0;
-    p2.pose.orientation.w = 1;
-    p2.pose.orientation.x = 0;
-    p2.pose.orientation.y = 0;
-    p2.pose.orientation.z = 0;
+    meta_data.origin.position.x = -128;
+    meta_data.origin.position.y = -128;
+    meta_data.origin.position.z = 0;
 
-    message.poses = std::vector<geometry_msgs::msg::PoseStamped>({p1, p2});
+    meta_data.origin.orientation.x = 0;
+    meta_data.origin.orientation.y = 0;
+    meta_data.origin.orientation.z = 0;
+    meta_data.origin.orientation.w = 1;
 
-    publisher->publish(message);
+    auto new_data = std::vector<int8_t>();
+    for (uint32_t i = 0; i < meta_data.width; i++) {
+      for (uint32_t j = 0; j < meta_data.height; j++) {
+        new_data.emplace_back(i);
+      }
+    }
+
+    auto occupancy_grid = std::make_shared<nav_msgs::msg::OccupancyGrid>();
+    occupancy_grid->header = header;
+    occupancy_grid->info = meta_data;
+    occupancy_grid->data = new_data;
+
+    publisher->publish(occupancy_grid);
   }
 
   rclcpp::TimerBase::SharedPtr timer;
-  rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr publisher;
+  rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr publisher;
 };
 
 }  // namespace nodes
 
-#endif  // RVIZ_DEFAULT_PLUGINS__PUBLISHERS__PATH_PUBLISHER_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__PUBLISHERS__MAP_PUBLISHER_HPP_

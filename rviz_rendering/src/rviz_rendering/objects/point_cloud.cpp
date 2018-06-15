@@ -51,6 +51,8 @@
 
 #include "rviz_rendering/custom_parameter_indices.hpp"
 #include "rviz_rendering/logging.hpp"
+#include "rviz_rendering/material_manager.hpp"
+
 // TODO(greimela): Add again after clearing up the module dependencies
 // #include "rviz_rendering/selection/forwards.hpp"
 
@@ -431,7 +433,7 @@ void PointCloud::setAlpha(float alpha, bool per_point_alpha)
 {
   alpha_ = alpha;
 
-  if (alpha < 0.9998 || per_point_alpha) {
+  if (alpha < rviz_rendering::unit_alpha_threshold || per_point_alpha) {
     setAlphaBlending(point_material_);
     setAlphaBlending(square_material_);
     setAlphaBlending(flat_square_material_);

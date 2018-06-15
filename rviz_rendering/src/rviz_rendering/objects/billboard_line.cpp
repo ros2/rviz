@@ -39,7 +39,9 @@
 #include <OgreTechnique.h>
 
 #include <iostream>
-#include <sstream>
+#include <string>
+
+#include "rviz_rendering/material_manager.hpp"
 
 static const uint32_t MAX_ELEMENTS = (65536 / 4);
 
@@ -63,12 +65,8 @@ BillboardLine::BillboardLine(Ogre::SceneManager * scene_manager, Ogre::SceneNode
   scene_node_ = parent_node->createChildSceneNode();
 
   static int count = 0;
-  std::stringstream ss;
-  ss << "BillboardLineMaterial" << count++;
-  material_ = Ogre::MaterialManager::getSingleton().create(
-    ss.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-  material_->setReceiveShadows(false);
-  material_->getTechnique(0)->setLightingEnabled(false);
+  std::string material_name = "BillboardLineMaterial" + std::to_string(count++);
+  material_ = MaterialManager::createMaterialWithNoLighting(material_name);
 
   setNumLines(num_lines_);
   setMaxPointsPerLine(max_points_per_line_);
@@ -183,7 +181,7 @@ void BillboardLine::addPoint(const Ogre::Vector3 & point, const Ogre::ColourValu
 
   incrementChainContainerIfNecessary();
 
-  enableAlphaBlending(color.a);
+  rviz_rendering::MaterialManager::enableAlphaBlending(material_, color.a);
 
   Ogre::BillboardChain::Element e;
   e.position = point;
@@ -191,17 +189,6 @@ void BillboardLine::addPoint(const Ogre::Vector3 & point, const Ogre::ColourValu
   e.colour = color;
   chain_containers_[current_chain_container_]->addChainElement(
     current_line_ % chains_per_container_, e);
-}
-
-void BillboardLine::enableAlphaBlending(float alpha)
-{
-  if (alpha < 0.9998) {
-    material_->getTechnique(0)->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
-    material_->getTechnique(0)->setDepthWriteEnabled(false);
-  } else {
-    material_->getTechnique(0)->setSceneBlending(Ogre::SBT_REPLACE);
-    material_->getTechnique(0)->setDepthWriteEnabled(true);
-  }
 }
 
 void BillboardLine::incrementChainContainerIfNecessary()
@@ -241,7 +228,7 @@ void BillboardLine::setScale(const Ogre::Vector3 & scale)
 
 void BillboardLine::setColor(float r, float g, float b, float a)
 {
-  enableAlphaBlending(a);
+  rviz_rendering::MaterialManager::enableAlphaBlending(material_, a);
 
   color_ = Ogre::ColourValue(r, g, b, a);
 

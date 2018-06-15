@@ -42,6 +42,7 @@ find_package(Qt5 REQUIRED COMPONENTS Widgets Test)
 find_package(geometry_msgs REQUIRED)
 find_package(laser_geometry REQUIRED)
 find_package(nav_msgs REQUIRED)
+find_package(map_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 # find_package(tf2 REQUIRED)
 # find_package(tf2_geometry_msgs REQUIRED)
@@ -56,6 +57,7 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/grid_cells/grid_cells_display.hpp
   include/rviz_default_plugins/displays/image/image_display.hpp
   include/rviz_default_plugins/displays/laser_scan/laser_scan_display.hpp
+  include/rviz_default_plugins/displays/map/map_display.hpp
   include/rviz_default_plugins/displays/marker/marker_common.hpp
   include/rviz_default_plugins/displays/marker/marker_display.hpp
   include/rviz_default_plugins/displays/marker_array/marker_array_display.hpp
@@ -99,6 +101,9 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/image/image_display.cpp
   src/rviz_default_plugins/displays/image/ros_image_texture.cpp
   src/rviz_default_plugins/displays/laser_scan/laser_scan_display.cpp
+  src/rviz_default_plugins/displays/map/map_display.cpp
+  src/rviz_default_plugins/displays/map/palette_builder.cpp
+  src/rviz_default_plugins/displays/map/swatch.cpp
   src/rviz_default_plugins/displays/marker/markers/arrow_marker.cpp
   src/rviz_default_plugins/displays/marker/markers/line_list_marker.cpp
   src/rviz_default_plugins/displays/marker/markers/line_marker_base.cpp
@@ -172,6 +177,7 @@ target_include_directories(rviz_default_plugins PUBLIC
   ${rviz_common_INCLUDE_DIRS}
   ${laser_geometry_INCLUDE_DIRS}
   ${nav_msgs_INCLUDE_DIRS}
+  ${map_msgs_INCLUDE_DIRS}
   ${OGRE_INCLUDE_DIRS}
   ${Qt5Widgets_INCLUDE_DIRS}
   ${resource_retriever_INCLUDE_DIRS}
@@ -194,6 +200,7 @@ ament_target_dependencies(rviz_default_plugins
   geometry_msgs
   laser_geometry
   nav_msgs
+  map_msgs
   rclcpp
   resource_retriever
   urdf
@@ -249,6 +256,10 @@ if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_cmake_gmock REQUIRED)
 
+  install(DIRECTORY "${CMAKE_SOURCE_DIR}/test/ogre_media_resources/test_meshes"
+    DESTINATION "share/rviz_default_plugins"
+    USE_SOURCE_PERMISSIONS)
+
   if(DEFINED ENV{DISPLAY})
     set(DISPLAYPRESENT TRUE)
   endif()
@@ -265,6 +276,7 @@ if(BUILD_TESTING)
       ${rclcpp_INCLUDE_DIRS}
       ${rclcpp_INCLUDE_DIRS}
       ${nav_msgs_INCLUDE_DIRS}
+      ${map_msgs_INCLUDE_DIRS}
       ${sensor_msgs_INCLUDE_DIRS}
       ${visualization_msgs_INCLUDE_DIRS}
       ${Qt5Widgets_INCLUDE_DIRS}
@@ -274,6 +286,7 @@ if(BUILD_TESTING)
       rviz_default_plugins
       ${rclcpp_LIBRARIES}
       ${nav_msgs_LIBRARIES}
+      ${map_msgs_LIBRARIES}
       ${visualization_msgs_LIBRARIES}
       Qt5::Widgets
       rviz_common::rviz_common
@@ -406,6 +419,18 @@ if(BUILD_TESTING)
         ${TEST_LINK_LIBRARIES})
     endif()
 
+    ament_add_gmock(map_display_test
+      test/rviz_default_plugins/displays/map/map_display_test.cpp
+      test/rviz_default_plugins/displays/display_test_fixture.cpp
+      test/rviz_default_plugins/scene_graph_introspection_helper.cpp
+      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_yaml_cpp_vendor/bin;${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
+    if(TARGET map_display_test)
+      target_include_directories(map_display_test PUBLIC
+        ${TEST_INCLUDE_DIRS})
+      target_link_libraries(map_display_test
+        ${TEST_LINK_LIBRARIES})
+    endif()
+
     ament_add_gmock(odometry_display_test
       test/rviz_default_plugins/displays/odometry/odometry_display_test.cpp
       test/rviz_default_plugins/displays/display_test_fixture.cpp
@@ -503,6 +528,15 @@ if(BUILD_TESTING)
         ${TEST_LINK_LIBRARIES})
     endif()
 
+    ament_add_gmock(palette_builder_test
+      test/rviz_default_plugins/displays/map/palette_builder_test.cpp)
+    if(TARGET palette_builder_test)
+      target_include_directories(palette_builder_test PUBLIC
+        ${TEST_INCLUDE_DIRS})
+      target_link_libraries(palette_builder_test
+        ${TEST_LINK_LIBRARIES})
+    endif()
+
 if(EnableVisualTests STREQUAL "True")
       find_package(ament_index_cpp REQUIRED)
 
@@ -560,6 +594,22 @@ if(EnableVisualTests STREQUAL "True")
           ${TEST_INCLUDE_DIRS}
           ${rviz_visual_testing_framework_INCLUDE_DIRS})
         target_link_libraries(image_display_visual_test
+          ${TEST_LINK_LIBRARIES}
+          rviz_visual_testing_framework::rviz_visual_testing_framework)
+      endif()
+
+      ament_add_gtest(map_display_visual_test
+        test/rviz_default_plugins/displays/map/map_display_visual_test.cpp
+        test/rviz_default_plugins/page_objects/map_display_page_object.cpp
+        test/rviz_default_plugins/page_objects/marker_display_page_object.cpp
+        test/rviz_default_plugins/publishers/map_publisher.hpp
+        test/rviz_default_plugins/publishers/single_marker_publisher.hpp
+        TIMEOUT 180)
+      if(TARGET map_display_visual_test)
+        target_include_directories(map_display_visual_test PUBLIC
+          ${TEST_INCLUDE_DIRS}
+          ${rviz_visual_testing_framework_INCLUDE_DIRS})
+        target_link_libraries(map_display_visual_test
           ${TEST_LINK_LIBRARIES}
           rviz_visual_testing_framework::rviz_visual_testing_framework)
       endif()

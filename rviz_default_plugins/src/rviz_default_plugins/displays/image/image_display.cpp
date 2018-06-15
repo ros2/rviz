@@ -51,6 +51,7 @@
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/validate_floats.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
+#include "rviz_rendering/material_manager.hpp"
 #include "rviz_rendering/render_window.hpp"
 
 #include "rviz_default_plugins/displays/image/ros_image_texture.hpp"
@@ -218,14 +219,11 @@ void ImageDisplay::setupScreenRectangle()
   screen_rect_->setCorners(-1.0f, 1.0f, 1.0f, -1.0f);
 
   ss << "Material";
-  material_ = Ogre::MaterialManager::getSingleton().create(
-    ss.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+  material_ = rviz_rendering::MaterialManager::createMaterialWithNoLighting(ss.str());
   material_->setSceneBlending(Ogre::SBT_REPLACE);
   material_->setDepthWriteEnabled(false);
-  material_->setReceiveShadows(false);
   material_->setDepthCheckEnabled(false);
 
-  material_->getTechnique(0)->setLightingEnabled(false);
   Ogre::TextureUnitState * tu =
     material_->getTechnique(0)->getPass(0)->createTextureUnitState();
   tu->setTextureName(texture_->getName());

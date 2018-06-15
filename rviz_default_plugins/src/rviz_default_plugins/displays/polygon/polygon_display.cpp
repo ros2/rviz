@@ -45,6 +45,7 @@
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/parse_color.hpp"
 #include "rviz_common/validate_floats.hpp"
+#include "rviz_rendering/material_manager.hpp"
 
 namespace rviz_default_plugins
 {
@@ -62,10 +63,7 @@ PolygonDisplay::PolygonDisplay()
 
   static int polygon_count = 0;
   std::string material_name = "PolygonMaterial" + std::to_string(polygon_count++);
-  material_ = Ogre::MaterialManager::getSingleton().create(
-    material_name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-  material_->setReceiveShadows(false);
-  material_->getTechnique(0)->setLightingEnabled(false);
+  material_ = rviz_rendering::MaterialManager::createMaterialWithNoLighting(material_name);
 }
 
 PolygonDisplay::~PolygonDisplay()
@@ -118,30 +116,20 @@ void PolygonDisplay::processMessage(geometry_msgs::msg::PolygonStamped::ConstSha
 
   Ogre::ColourValue color = rviz_common::properties::qtToOgre(color_property_->getColor());
   color.a = alpha_property_->getFloat();
-  enableBlending(color);
+  rviz_rendering::MaterialManager::enableAlphaBlending(material_, color.a);
 
   size_t num_points = msg->polygon.points.size();
 
   if (num_points > 0) {
     manual_object_->estimateVertexCount(num_points);
-    manual_object_->begin(material_->getName(), Ogre::RenderOperation::OT_LINE_STRIP);
+    manual_object_->begin(
+      material_->getName(), Ogre::RenderOperation::OT_LINE_STRIP, "rviz_rendering");
     for (uint32_t i = 0; i < num_points + 1; ++i) {
       const geometry_msgs::msg::Point32 & msg_point = msg->polygon.points[i % num_points];
       manual_object_->position(msg_point.x, msg_point.y, msg_point.z);
       manual_object_->colour(color);
     }
     manual_object_->end();
-  }
-}
-
-void PolygonDisplay::enableBlending(const Ogre::ColourValue & color)
-{
-  if (color.a < 0.9998) {
-    material_->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
-    material_->setDepthWriteEnabled(false);
-  } else {
-    material_->setSceneBlending(Ogre::SBT_REPLACE);
-    material_->setDepthWriteEnabled(true);
   }
 }
 

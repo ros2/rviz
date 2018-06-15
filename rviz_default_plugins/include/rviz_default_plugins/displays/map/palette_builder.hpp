@@ -1,5 +1,4 @@
 /*
- * Copyright (c) 2012, Willow Garage, Inc.
  * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
@@ -11,8 +10,8 @@
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
- *       contributors may be used to endorse or promote products derived from
+ *     * Neither the name of the copyright holder nor the names of its contributors
+ *       may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -28,53 +27,57 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__POSE_ARRAY__FLAT_ARROWS_ARRAY_HPP_
-#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__POSE_ARRAY__FLAT_ARROWS_ARRAY_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__MAP__PALETTE_BUILDER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MAP__PALETTE_BUILDER_HPP_
 
+#include <memory>
 #include <vector>
 
-#include <OgreManualObject.h>
-#include <OgreMaterialManager.h>
-#include <OgreSceneNode.h>
-#include <OgreVector3.h>
-#include <OgreQuaternion.h>
-
-#include "rviz_default_plugins/displays/pose_array/pose_array_display.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 
 namespace rviz_default_plugins
 {
 namespace displays
 {
-struct OgrePose;
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC FlatArrowsArray
+std::vector<unsigned char> makeRawPalette();
+std::vector<unsigned char> makeMapPalette();
+std::vector<unsigned char> makeCostmapPalette();
+
+class PaletteBuilder : public
+  std::enable_shared_from_this<PaletteBuilder>
 {
 public:
-  explicit FlatArrowsArray(Ogre::SceneManager * scene_manager_);
-  ~FlatArrowsArray();
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
+  PaletteBuilder();
 
-  void createAndAttachManualObject(Ogre::SceneNode * scene_node);
-  void updateManualObject(
-    Ogre::ColourValue color,
-    float alpha,
-    float length,
-    const std::vector<rviz_default_plugins::displays::OgrePose> & poses);
-  void clear();
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
+  virtual ~PaletteBuilder() = default;
+
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
+  std::shared_ptr<PaletteBuilder> setColorForIllegalPositiveValues(
+    unsigned char r, unsigned char g, unsigned char b);
+
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
+  std::shared_ptr<PaletteBuilder> setRedYellowColorsForIllegalNegativeValues();
+
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
+  std::shared_ptr<PaletteBuilder> setColorForLegalNegativeValueMinusOne(
+    unsigned char r, unsigned char g, unsigned char b);
+
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
+  std::shared_ptr<PaletteBuilder> setColorForValue(
+    unsigned char palette_position,
+    unsigned char r, unsigned char g, unsigned char b, unsigned char alpha);
+
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
+  std::vector<unsigned char> buildPalette();
 
 private:
-  void setManualObjectMaterial();
-  void setManualObjectVertices(
-    const Ogre::ColourValue & color,
-    float length,
-    const std::vector<rviz_default_plugins::displays::OgrePose> & poses);
-
-  Ogre::SceneManager * scene_manager_;
-  Ogre::ManualObject * manual_object_;
-  Ogre::MaterialPtr material_;
+  std::vector<unsigned char> palette_;
 };
 
 }  // namespace displays
 }  // namespace rviz_default_plugins
 
-#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__POSE_ARRAY__FLAT_ARROWS_ARRAY_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__MAP__PALETTE_BUILDER_HPP_

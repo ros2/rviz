@@ -40,6 +40,7 @@
 #include <OgreTechnique.h>
 
 #include "rviz_common/logging.hpp"
+#include "rviz_common/msg_conversions.hpp"
 #include "rviz_common/properties/enum_property.hpp"
 #include "rviz_common/properties/color_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
@@ -47,6 +48,8 @@
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
 #include "rviz_common/validate_floats.hpp"
+
+#include "rviz_rendering/material_manager.hpp"
 
 namespace rviz_default_plugins
 {
@@ -140,10 +143,7 @@ PathDisplay::PathDisplay()
 
   static int count = 0;
   std::string material_name = "LinesMaterial" + std::to_string(count++);
-  lines_material_ = Ogre::MaterialManager::getSingleton().create(
-    material_name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-  lines_material_->setReceiveShadows(false);
-  lines_material_->getTechnique(0)->setLightingEnabled(false);
+  lines_material_ = rviz_rendering::MaterialManager::createMaterialWithNoLighting(material_name);
 }
 
 PathDisplay::~PathDisplay()
@@ -446,12 +446,12 @@ void PathDisplay::updateManualObject(
   color.a = alpha_property_->getFloat();
 
   manual_object->estimateVertexCount(msg->poses.size());
-  manual_object->begin(lines_material_->getName(), Ogre::RenderOperation::OT_LINE_STRIP);
+  manual_object->begin(
+    lines_material_->getName(), Ogre::RenderOperation::OT_LINE_STRIP, "rviz_rendering");
 
   for (auto pose_stamped : msg->poses) {
-    const auto & pos = pose_stamped.pose.position;
-    manual_object->position(transform * Ogre::Vector3(pos.x, pos.y, pos.z));
-    enableBlending(color);
+    manual_object->position(transform * rviz_common::pointMsgToOgre(pose_stamped.pose.position));
+    rviz_rendering::MaterialManager::enableAlphaBlending(lines_material_, color.a);
     manual_object->colour(color);
   }
 
@@ -470,8 +470,7 @@ void PathDisplay::updateBillBoardLine(
   billboard_line->setLineWidth(line_width_property_->getFloat());
 
   for (auto pose_stamped : msg->poses) {
-    const auto & pos = pose_stamped.pose.position;
-    Ogre::Vector3 xpos = transform * Ogre::Vector3(pos.x, pos.y, pos.z);
+    Ogre::Vector3 xpos = transform * rviz_common::pointMsgToOgre(pose_stamped.pose.position);
     billboard_line->addPoint(xpos, color);
   }
 }
@@ -499,11 +498,8 @@ void PathDisplay::updateAxesMarkers(
   allocateAxesVector(axes_vect, num_points);
   for (size_t i = 0; i < num_points; ++i) {
     const geometry_msgs::msg::Point & pos = msg->poses[i].pose.position;
-    axes_vect[i]->setPosition(transform * Ogre::Vector3(pos.x, pos.y, pos.z));
-    Ogre::Quaternion orientation(msg->poses[i].pose.orientation.w,
-      msg->poses[i].pose.orientation.x,
-      msg->poses[i].pose.orientation.y,
-      msg->poses[i].pose.orientation.z);
+    axes_vect[i]->setPosition(transform * rviz_common::pointMsgToOgre(pos));
+    Ogre::Quaternion orientation(rviz_common::quaternionMsgToOgre(msg->poses[i].pose.orientation));
     axes_vect[i]->setOrientation(orientation);
   }
 }
@@ -515,8 +511,6 @@ void PathDisplay::updateArrowMarkers(
   auto num_points = msg->poses.size();
   allocateArrowVector(arrow_vect, num_points);
   for (size_t i = 0; i < num_points; ++i) {
-    const geometry_msgs::msg::Point & pos = msg->poses[i].pose.position;
-
     QColor color = pose_arrow_color_property_->getColor();
     arrow_vect[i]->setColor(color.redF(), color.greenF(), color.blueF(), 1.0f);
 
@@ -524,26 +518,13 @@ void PathDisplay::updateArrowMarkers(
       pose_arrow_shaft_diameter_property_->getFloat(),
       pose_arrow_head_length_property_->getFloat(),
       pose_arrow_head_diameter_property_->getFloat());
-    arrow_vect[i]->setPosition(transform * Ogre::Vector3(pos.x, pos.y, pos.z));
-    Ogre::Quaternion orientation(msg->poses[i].pose.orientation.w,
-      msg->poses[i].pose.orientation.x,
-      msg->poses[i].pose.orientation.y,
-      msg->poses[i].pose.orientation.z);
+    const geometry_msgs::msg::Point & pos = msg->poses[i].pose.position;
+    arrow_vect[i]->setPosition(transform * rviz_common::pointMsgToOgre(pos));
+    Ogre::Quaternion orientation(rviz_common::quaternionMsgToOgre(msg->poses[i].pose.orientation));
 
     Ogre::Vector3 dir(1, 0, 0);
     dir = orientation * dir;
     arrow_vect[i]->setDirection(dir);
-  }
-}
-
-void PathDisplay::enableBlending(const Ogre::ColourValue & color)
-{
-  if (color.a < 0.9998) {
-    lines_material_->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
-    lines_material_->setDepthWriteEnabled(false);
-  } else {
-    lines_material_->setSceneBlending(Ogre::SBT_REPLACE);
-    lines_material_->setDepthWriteEnabled(true);
   }
 }
 

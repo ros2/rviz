@@ -45,6 +45,7 @@
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/shape.hpp"
 #include "rviz_common/interaction/selection_handler.hpp"
+#include "rviz_common/msg_conversions.hpp"
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/properties/string_property.hpp"
 #include "rviz_common/properties/quaternion_property.hpp"
@@ -121,13 +122,9 @@ void PoseDisplaySelectionHandler::setMessage(
   // pointers.
   if (properties_.size() > 0) {
     frame_property_->setStdString(message->header.frame_id);
-    position_property_->setVector(Ogre::Vector3(message->pose.position.x,
-      message->pose.position.y,
-      message->pose.position.z));
-    orientation_property_->setQuaternion(Ogre::Quaternion(message->pose.orientation.w,
-      message->pose.orientation.x,
-      message->pose.orientation.y,
-      message->pose.orientation.z));
+    position_property_->setVector(rviz_common::pointMsgToOgre(message->pose.position));
+    orientation_property_->setQuaternion(
+      rviz_common::quaternionMsgToOgre(message->pose.orientation));
   }
 }
 

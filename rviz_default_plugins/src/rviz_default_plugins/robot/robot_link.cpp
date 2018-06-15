@@ -63,6 +63,7 @@
 #include "rviz_default_plugins/robot/robot_joint.hpp"
 #include "rviz_default_plugins/robot/robot.hpp"
 
+#include "rviz_rendering/material_manager.hpp"
 #include "rviz_rendering/mesh_loader.hpp"
 #include "rviz_rendering/objects/axes.hpp"
 #include "rviz_rendering/objects/object.hpp"
@@ -206,10 +207,8 @@ RobotLink::RobotLink(
   static int count = 1;
   std::string color_material_name = "robot link color material " + std::to_string(count++);
 
-  color_material_ = Ogre::MaterialManager::getSingleton().create(
-    color_material_name, "rviz_rendering");
-  color_material_->setReceiveShadows(false);
-  color_material_->getTechnique(0)->setLightingEnabled(true);
+  color_material_ =
+    rviz_rendering::MaterialManager::createMaterialWithLighting(color_material_name);
 
   // create the ogre objects to display
   if (visual) {
@@ -466,7 +465,7 @@ void RobotLink::updateAlpha()
       color.a = robot_alpha_ * material_alpha_ * link_alpha;
       material->setDiffuse(color);
 
-      setBlending(material, color);
+      rviz_rendering::MaterialManager::enableAlphaBlending(material, color.a);
     }
   }
 
@@ -474,7 +473,7 @@ void RobotLink::updateAlpha()
   color.a = robot_alpha_ * link_alpha;
   color_material_->setDiffuse(color);
 
-  setBlending(color_material_, color);
+  rviz_rendering::MaterialManager::enableAlphaBlending(color_material_, color.a);
 }
 
 void RobotLink::updateTrail()
@@ -692,9 +691,8 @@ Ogre::MaterialPtr RobotLink::getMaterialForLink(
   static int count = 0;
   std::string link_material_name = "Robot Link Material" + std::to_string(count++);
 
-  Ogre::MaterialPtr material_for_link = Ogre::MaterialManager::getSingleton().create(
-    link_material_name, "rviz_rendering");
-  material_for_link->getTechnique(0)->setLightingEnabled(true);
+  auto material_for_link =
+    rviz_rendering::MaterialManager::createMaterialWithShadowsAndLighting(link_material_name);
 
   urdf::VisualSharedPtr visual = getVisualWithMaterial(link, material_name);
 
@@ -791,17 +789,6 @@ void RobotLink::createSelection()
   }
   for (auto & collision_mesh : collision_meshes_) {
     selection_handler_->addTrackedObject(collision_mesh);
-  }
-}
-
-void RobotLink::setBlending(const Ogre::MaterialPtr & material, const Ogre::ColourValue & color)
-{
-  if (color.a < 0.9998) {
-    material->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
-    material->setDepthWriteEnabled(false);
-  } else {
-    material->setSceneBlending(Ogre::SBT_REPLACE);
-    material->setDepthWriteEnabled(true);
   }
 }
 

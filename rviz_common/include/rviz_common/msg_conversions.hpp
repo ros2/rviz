@@ -27,54 +27,57 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef RVIZ_COMMON__MSG_CONVERSIONS_HPP_
+#define RVIZ_COMMON__MSG_CONVERSIONS_HPP_
 
-#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__POSE_ARRAY__FLAT_ARROWS_ARRAY_HPP_
-#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__POSE_ARRAY__FLAT_ARROWS_ARRAY_HPP_
-
-#include <vector>
-
-#include <OgreManualObject.h>
-#include <OgreMaterialManager.h>
-#include <OgreSceneNode.h>
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>
 
-#include "rviz_default_plugins/displays/pose_array/pose_array_display.hpp"
-#include "rviz_default_plugins/visibility_control.hpp"
+#include "geometry_msgs/msg/point.hpp"
+#include "geometry_msgs/msg/vector3.hpp"
+#include "geometry_msgs/msg/quaternion.hpp"
 
-namespace rviz_default_plugins
+namespace rviz_common
 {
-namespace displays
+
+// This file contains some convenience functions for Ogre / geometry_msgs conversions.
+
+static inline Ogre::Vector3 pointMsgToOgre(const geometry_msgs::msg::Point & m)
 {
-struct OgrePose;
+  return Ogre::Vector3(m.x, m.y, m.z);
+}
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC FlatArrowsArray
+static inline Ogre::Vector3 vector3MsgToOgre(const geometry_msgs::msg::Vector3 & m)
 {
-public:
-  explicit FlatArrowsArray(Ogre::SceneManager * scene_manager_);
-  ~FlatArrowsArray();
+  return Ogre::Vector3(m.x, m.y, m.z);
+}
 
-  void createAndAttachManualObject(Ogre::SceneNode * scene_node);
-  void updateManualObject(
-    Ogre::ColourValue color,
-    float alpha,
-    float length,
-    const std::vector<rviz_default_plugins::displays::OgrePose> & poses);
-  void clear();
+static inline Ogre::Quaternion quaternionMsgToOgre(const geometry_msgs::msg::Quaternion & m)
+{
+  return Ogre::Quaternion(m.w, m.x, m.y, m.z);
+}
 
-private:
-  void setManualObjectMaterial();
-  void setManualObjectVertices(
-    const Ogre::ColourValue & color,
-    float length,
-    const std::vector<rviz_default_plugins::displays::OgrePose> & poses);
+static inline geometry_msgs::msg::Point pointOgreToMsg(const Ogre::Vector3 & o)
+{
+  geometry_msgs::msg::Point m;
+  m.x = o.x; m.y = o.y; m.z = o.z;
+  return m;
+}
 
-  Ogre::SceneManager * scene_manager_;
-  Ogre::ManualObject * manual_object_;
-  Ogre::MaterialPtr material_;
-};
+static inline geometry_msgs::msg::Vector3 vector3OgreToMsg(const Ogre::Vector3 & o)
+{
+  geometry_msgs::msg::Vector3 m;
+  m.x = o.x; m.y = o.y; m.z = o.z;
+  return m;
+}
 
-}  // namespace displays
-}  // namespace rviz_default_plugins
+static inline geometry_msgs::msg::Quaternion quaternionOgreToMsg(const Ogre::Quaternion & o)
+{
+  geometry_msgs::msg::Quaternion m;
+  m.w = o.w; m.x = o.x; m.y = o.y; m.z = o.z;
+  return m;
+}
 
-#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__POSE_ARRAY__FLAT_ARROWS_ARRAY_HPP_
+}  // namespace rviz_common
+
+#endif  // RVIZ_COMMON__MSG_CONVERSIONS_HPP_

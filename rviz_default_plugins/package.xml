@@ -27,6 +27,7 @@
   <depend>geometry_msgs</depend>
   <depend>laser_geometry</depend>
   <depend>nav_msgs</depend>
+  <depend>map_msgs</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
   <depend>resource_retriever</depend>

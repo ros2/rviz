@@ -63,7 +63,7 @@ void RvizTestScene::setUpCamera()
   camera_ = manager_->createCamera(cam_name);
 
   camera_->setNearClipDistance(0.1f);
-  camera_->setFarClipDistance(200.0f);
+  camera_->setFarClipDistance(400.0f);
 
   cam_node_ = manager_->getRootSceneNode()->createChildSceneNode();
   cam_node_->attachObject(camera_);

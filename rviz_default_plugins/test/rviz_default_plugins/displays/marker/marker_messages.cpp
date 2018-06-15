@@ -97,7 +97,7 @@ visualization_msgs::msg::Marker createDefaultMessage(int32_t type)
 
   marker.text = "Displaytext";
 
-  marker.mesh_resource = "package://rviz_rendering_tests/test_meshes/pr2-base.dae";
+  marker.mesh_resource = "package://rviz_default_plugins/test_meshes/pr2-base.dae";
   marker.mesh_use_embedded_materials = true;
   return marker;
 }

@@ -104,7 +104,6 @@ private:
   void allocateAxesVector(std::vector<rviz_rendering::Axes *> & axes_vect, size_t num);
   void destroyPoseAxesChain();
   void destroyPoseArrowChain();
-  void enableBlending(const Ogre::ColourValue & color);
   void updateManualObject(
     Ogre::ManualObject * manual_object, nav_msgs::msg::Path::ConstSharedPtr msg,
     const Ogre::Matrix4 & transform);

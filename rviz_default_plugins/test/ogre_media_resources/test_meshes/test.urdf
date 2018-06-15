@@ -1,0 +1,70 @@
+<?xml version="1.0" ?>
+<robot name="test_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <material name="RVIZ/Cyan">
+        <color rgba="0.0 1.0 1.0 1.0"/>
+    </material>
+    <material name="RVIZ/Green">
+        <color rgba="0.0 1.0 0.0 1.0"/>
+    </material>
+    <material name="RVIZ/Blue">
+        <color rgba="0.0 0.0 1.0 1.0"/>
+    </material>
+    <link name="test_robot_link">
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <box size="1 1 1"/>
+            </geometry>
+        </collision>
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <mesh filename="package://rviz_rendering_tests/test_meshes/pr2-base.dae"/>
+            </geometry>
+        </visual>
+    </link>
+    <joint name="test_robot_fixed1" type="fixed">
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <parent link="test_robot_link"/>
+        <child link="test_robot_link_right_arm"/>
+    </joint>
+    <link name="test_robot_link_right_arm">
+        <visual>
+            <origin rpy="0 0 0" xyz="0 -2 0 "/>
+            <geometry>
+                <box size="1 3 1"/>
+            </geometry>
+            <material name="RVIZ/Cyan"/>
+        </visual>
+    </link>
+    <joint name="test_robot_fixed2" type="fixed">
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <parent link="test_robot_link"/>
+        <child link="test_robot_link_left_arm"/>
+    </joint>
+    <link name="test_robot_link_left_arm">
+        <visual>
+            <origin rpy="0 0 0" xyz="0 2 0 "/>
+            <geometry>
+                <box size="1 3 1"/>
+            </geometry>
+            <material name="RVIZ/Blue"/>
+        </visual>
+    </link>
+    <joint name="test_robot_continuous" type="continuous">
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <parent link="test_robot_link"/>
+        <child link="test_robot_link_head"/>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+    <link name="test_robot_link_head">
+        <visual>
+            <origin rpy="0 0 0" xyz = "0 0 2"/>
+            <geometry>
+                <sphere radius="1"/>
+            </geometry>
+            <material name="RVIZ/Green"/>
+        </visual>
+    </link>
+</robot>

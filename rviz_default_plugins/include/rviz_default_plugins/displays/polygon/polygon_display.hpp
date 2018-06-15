@@ -81,9 +81,6 @@ protected:
 
   rviz_common::properties::ColorProperty * color_property_;
   rviz_common::properties::FloatProperty * alpha_property_;
-
-private:
-  void enableBlending(const Ogre::ColourValue & color);
 };
 
 }  // namespace displays
