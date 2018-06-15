@@ -59,7 +59,7 @@ namespace rviz_default_plugins
 {
 namespace displays
 {
-class MarkerDisplay;
+class MarkerCommon;
 
 namespace markers
 {
@@ -76,7 +76,7 @@ public:
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   MarkerBase(
-    MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);
+    MarkerCommon * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   virtual ~MarkerBase();
@@ -136,7 +136,7 @@ protected:
 
   void extractMaterials(Ogre::Entity * entity, S_MaterialPtr & materials);
 
-  MarkerDisplay * owner_;
+  MarkerCommon * owner_;
   rviz_common::DisplayContext * context_;
 
   Ogre::SceneNode * scene_node_;

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2011, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,38 +27,53 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef RVIZ_MARKER_ARRAY_DISPLAY_H
-#define RVIZ_MARKER_ARRAY_DISPLAY_H
 
-#include "marker_display.h"
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER_ARRAY__MARKER_ARRAY_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER_ARRAY__MARKER_ARRAY_DISPLAY_HPP_
 
-namespace rviz
+#include "visualization_msgs/msg/marker_array.hpp"
+
+#include <memory>
+
+#include "rviz_common/properties/queue_size_property.hpp"
+#include "rviz_common/ros_topic_display.hpp"
+
+#include "rviz_default_plugins/displays/marker/marker_common.hpp"
+#include "rviz_default_plugins/visibility_control.hpp"
+
+namespace rviz_default_plugins
+{
+namespace displays
 {
 
 /**
- * @brief Display for an array of markers.  The MarkerDisplay class handles
- * MarkerArray messages.  This is just a wrapper to let MarkerArray
- * topics get selected in the topic browser.
+ * \class MarkerArrayDisplay
+ * \brief Displays arrays of "markers" sent in by other ROS nodes on the "visualization_marker" topic
+ *
+ * Marker arrays come in as visualization_msgs::msg::MarkerArray messages.
+ * See the Marker message for more information.
  */
-class MarkerArrayDisplay: public MarkerDisplay
+class RVIZ_DEFAULT_PLUGINS_PUBLIC MarkerArrayDisplay
+  : public rviz_common::RosTopicDisplay<visualization_msgs::msg::MarkerArray>
 {
-Q_OBJECT
 public:
   MarkerArrayDisplay();
 
-protected:
-  /** @brief Overridden from MarkerDisplay.  Subscribes to the marker
-   * array topic. */
-  virtual void subscribe();
+  void onInitialize() override;
+  void load(const rviz_common::Config & config) override;
 
-  /** @brief Overridden from MarkerDisplay.  Unsubscribes to the
-   * marker array topic. */
-  virtual void unsubscribe();
+  void update(float wall_dt, float ros_dt) override;
+
+  void reset() override;
 
 private:
-  void handleMarkerArray( const visualization_msgs::MarkerArray::ConstPtr& array );
+  void processMessage(visualization_msgs::msg::MarkerArray::ConstSharedPtr array) override;
+
+  std::unique_ptr<MarkerCommon> marker_common_;
+  std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
 };
 
-} // end namespace rviz
+}  // end namespace displays
+}  // end namespace rviz_default_plugins
 
-#endif // RVIZ_MARKER_ARRAY_DISPLAY_H
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER_ARRAY__MARKER_ARRAY_DISPLAY_HPP_

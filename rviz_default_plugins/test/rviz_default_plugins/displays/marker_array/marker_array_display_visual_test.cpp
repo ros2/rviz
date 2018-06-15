@@ -29,16 +29,25 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "markers_test_fixture.hpp"
-
 #include <memory>
 #include <string>
 
-MarkersTestFixture::MarkersTestFixture()
-{
-  display_ = std::make_unique<rviz_common::Display>();
-  scene_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
+#include "rviz_visual_testing_framework/visual_test_fixture.hpp"
+#include "rviz_visual_testing_framework/visual_test_publisher.hpp"
 
-  marker_common_ = std::make_unique<rviz_default_plugins::displays::MarkerCommon>(display_.get());
-  marker_common_->initialize(context_.get(), scene_node_);
+#include "../../page_objects/marker_array_display_page_object.hpp"
+#include "../../publishers/marker_array_publisher.hpp"
+
+TEST_F(VisualTestFixture, test_marker_array_with_three_marker_types) {
+  auto marker_array_publisher = std::make_unique<VisualTestPublisher>(
+    std::make_shared<nodes::MarkerArrayPublisher>(), "marker_array_frame");
+
+  setCamPose(Ogre::Vector3(0, 0, 16));
+  setCamLookAt(Ogre::Vector3(0, 0, 0));
+
+  auto marker_display = addDisplay<MarkerArrayDisplayPageObject>();
+  marker_display->setTopic("/marker_array");
+  wait(2000);
+
+  assertMainWindowIdentity();
 }

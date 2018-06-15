@@ -51,11 +51,11 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "rviz_default_plugins/displays/marker/marker_display.hpp"
-#include "rviz_default_plugins/displays/marker/markers/marker_selection_handler.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
-#include "rviz_common/properties/status_property.hpp"
+
+#include "rviz_default_plugins/displays/marker/marker_common.hpp"
+#include "rviz_default_plugins/displays/marker/markers/marker_selection_handler.hpp"
 
 namespace rviz_default_plugins
 {
@@ -65,7 +65,7 @@ namespace markers
 {
 
 MarkerBase::MarkerBase(
-  MarkerDisplay * owner,
+  MarkerCommon * owner,
   rviz_common::DisplayContext * context,
   Ogre::SceneNode * parent_node)
 : owner_(owner),

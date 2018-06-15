@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2011, Willow Garage, Inc.'
  * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
@@ -28,91 +28,61 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz_default_plugins/displays/marker/marker_display.hpp"
-
 #include <memory>
 
-#include "rviz_common/properties/queue_size_property.hpp"
+#include "rviz_default_plugins/displays/marker_array/marker_array_display.hpp"
+
+#include "rviz_common/properties/int_property.hpp"
+#include "rviz_common/properties/ros_topic_property.hpp"
 
 namespace rviz_default_plugins
 {
 namespace displays
 {
 
-MarkerDisplay::MarkerDisplay()
-: rviz_common::RosTopicDisplay<visualization_msgs::msg::Marker>(),
+MarkerArrayDisplay::MarkerArrayDisplay()
+: rviz_common::RosTopicDisplay<visualization_msgs::msg::MarkerArray>(),
   marker_common_(std::make_unique<MarkerCommon>(this)),
   queue_size_property_(std::make_unique<rviz_common::QueueSizeProperty>(this, 10)) {}
 
-void MarkerDisplay::onInitialize()
+void MarkerArrayDisplay::onInitialize()
 {
   RTDClass::onInitialize();
   marker_common_->initialize(context_, scene_node_);
 
-  topic_property_->setDescription(
-    "visualization_msgs::msg::Marker topic to subscribe to. <topic>_array will also"
-    " automatically be subscribed with type visualization_msgs::msg::MarkerArray.");
+  topic_property_->setValue("visualization_marker_array");
+  topic_property_->setDescription("visualization_msgs::MarkerArray topic to subscribe to.");
+
+  queue_size_property_->setDescription(
+    "Advanced: set the size of the incoming Marker message queue. "
+    "This should generally be at least a few times larger "
+    "than the number of Markers in each MarkerArray.");
 }
 
-void MarkerDisplay::load(const rviz_common::Config & config)
+void MarkerArrayDisplay::load(const rviz_common::Config & config)
 {
-  rviz_common::Display::load(config);
+  Display::load(config);
   marker_common_->load(config);
 }
 
-void MarkerDisplay::subscribe()
-{
-  RTDClass::subscribe();
-
-  if ((!isEnabled()) || (topic_property_->getTopicStd().empty())) {
-    return;
-  }
-
-  createMarkerArraySubscription();
-}
-
-void MarkerDisplay::createMarkerArraySubscription()
-{
-  try {
-    // TODO(anhosi,wjwwood): replace with abstraction for subscriptions one available
-    array_sub_ = rviz_ros_node_.lock()->get_raw_node()->
-      template create_subscription<visualization_msgs::msg::MarkerArray>(
-      topic_property_->getTopicStd() + "_array",
-      [this](visualization_msgs::msg::MarkerArray::ConstSharedPtr msg) {
-        marker_common_->addMessage(msg);
-      },
-      qos_profile);
-    setStatus(StatusLevel::Ok, "Array Topic", "OK");
-  } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
-    setStatus(StatusLevel::Error, "Array Topic", QString("Error subscribing: ") + e.what());
-  }
-}
-
-void MarkerDisplay::unsubscribe()
-{
-  RTDClass::unsubscribe();
-  array_sub_.reset();
-}
-
-
-void MarkerDisplay::processMessage(const visualization_msgs::msg::Marker::ConstSharedPtr msg)
+void MarkerArrayDisplay::processMessage(visualization_msgs::msg::MarkerArray::ConstSharedPtr msg)
 {
   marker_common_->addMessage(msg);
 }
 
-void MarkerDisplay::update(float wall_dt, float ros_dt)
+void MarkerArrayDisplay::update(float wall_dt, float ros_dt)
 {
   marker_common_->update(wall_dt, ros_dt);
 }
 
-void MarkerDisplay::reset()
+void MarkerArrayDisplay::reset()
 {
-  RTDClass::reset();
+  RosTopicDisplay::reset();
   marker_common_->clearMarkers();
 }
 
-}  // namespace displays
-}  // namespace rviz_default_plugins
+}  // end namespace displays
+}  // end namespace rviz_default_plugins
 
 #include <pluginlib/class_list_macros.hpp>  // NOLINT
-PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::MarkerDisplay, rviz_common::Display)
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::MarkerArrayDisplay, rviz_common::Display)

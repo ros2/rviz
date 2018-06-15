@@ -61,9 +61,9 @@ namespace markers
 {
 
 void MarkerFactory::initialize(
-  MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node)
+  MarkerCommon * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node)
 {
-  owner_display_ = owner;
+  owner_ = owner;
   context_ = context;
   parent_node_ = parent_node;
 }
@@ -75,30 +75,30 @@ std::shared_ptr<MarkerBase> MarkerFactory::createMarkerForType(
     case visualization_msgs::msg::Marker::CUBE:
     case visualization_msgs::msg::Marker::CYLINDER:
     case visualization_msgs::msg::Marker::SPHERE:
-      return std::make_shared<ShapeMarker>(owner_display_, context_, parent_node_);
+      return std::make_shared<ShapeMarker>(owner_, context_, parent_node_);
 
     case visualization_msgs::msg::Marker::ARROW:
-      return std::make_shared<ArrowMarker>(owner_display_, context_, parent_node_);
+      return std::make_shared<ArrowMarker>(owner_, context_, parent_node_);
 
     case visualization_msgs::msg::Marker::LINE_STRIP:
-      return std::make_shared<LineStripMarker>(owner_display_, context_, parent_node_);
+      return std::make_shared<LineStripMarker>(owner_, context_, parent_node_);
 
     case visualization_msgs::msg::Marker::LINE_LIST:
-      return std::make_shared<LineListMarker>(owner_display_, context_, parent_node_);
+      return std::make_shared<LineListMarker>(owner_, context_, parent_node_);
 
     case visualization_msgs::msg::Marker::SPHERE_LIST:
     case visualization_msgs::msg::Marker::CUBE_LIST:
     case visualization_msgs::msg::Marker::POINTS:
-      return std::make_shared<PointsMarker>(owner_display_, context_, parent_node_);
+      return std::make_shared<PointsMarker>(owner_, context_, parent_node_);
 
     case visualization_msgs::msg::Marker::TEXT_VIEW_FACING:
-      return std::make_shared<TextViewFacingMarker>(owner_display_, context_, parent_node_);
+      return std::make_shared<TextViewFacingMarker>(owner_, context_, parent_node_);
 
     case visualization_msgs::msg::Marker::MESH_RESOURCE:
-      return std::make_shared<MeshResourceMarker>(owner_display_, context_, parent_node_);
+      return std::make_shared<MeshResourceMarker>(owner_, context_, parent_node_);
 
     case visualization_msgs::msg::Marker::TRIANGLE_LIST:
-      return std::make_shared<TriangleListMarker>(owner_display_, context_, parent_node_);
+      return std::make_shared<TriangleListMarker>(owner_, context_, parent_node_);
 
     default:
       RVIZ_COMMON_LOG_ERROR_STREAM("Unknown marker type: " << marker_type);

@@ -60,26 +60,15 @@ public:
     timer = this->create_wall_timer(200ms, std::bind(&MarkerPublisher::timer_callback, this));
   }
 
-private:
-  void timer_callback()
+  // Convenience constructor for by MarkerArrayPublisher
+  explicit MarkerPublisher(std::string node_name)
+  : Node(node_name)
   {
-    auto header = std_msgs::msg::Header();
-    header.frame_id = "marker_frame";
-    header.stamp = rclcpp::Clock().now();
-
-    std::string ns = "test_ns";
-    int id = 0;
-
-    auto sphere_marker = createSphereMarker(header, ns, ++id);
-    publisher->publish(sphere_marker);
-
-    auto line_strip_marker = createLineStripMarker(header, ns, ++id);
-    publisher->publish(line_strip_marker);
-
-    auto cube_list_marker = createCubeListMarker(header, ns, ++id);
-    publisher->publish(cube_list_marker);
+    timer = this->create_wall_timer(200ms, std::bind(&MarkerPublisher::timer_callback, this));
+    publisher = this->create_publisher<visualization_msgs::msg::Marker>("marker");
   }
 
+protected:
   visualization_msgs::msg::Marker createSphereMarker(
     std_msgs::msg::Header header, const std::string & ns, int id)
   {
@@ -201,6 +190,26 @@ private:
     marker.points.push_back(p4);
 
     return marker;
+  }
+
+private:
+  virtual void timer_callback()
+  {
+    auto header = std_msgs::msg::Header();
+    header.frame_id = "marker_frame";
+    header.stamp = rclcpp::Clock().now();
+
+    std::string ns = "test_ns";
+    int id = 0;
+
+    auto sphere_marker = createSphereMarker(header, ns, ++id);
+    publisher->publish(sphere_marker);
+
+    auto line_strip_marker = createLineStripMarker(header, ns, ++id);
+    publisher->publish(line_strip_marker);
+
+    auto cube_list_marker = createCubeListMarker(header, ns, ++id);
+    publisher->publish(cube_list_marker);
   }
 
   rclcpp::TimerBase::SharedPtr timer;

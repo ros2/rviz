@@ -50,12 +50,12 @@
 #include <OgreSceneManager.h>
 #include <OgreVector3.h>
 
-#include "rviz_default_plugins/displays/marker/marker_display.hpp"
-#include "rviz_default_plugins/displays/marker/markers/marker_selection_handler.hpp"
-#include "rviz_common/display_context.hpp"
-#include "rviz_common/properties/status_property.hpp"
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/shape.hpp"
+#include "rviz_common/display_context.hpp"
+
+#include "rviz_default_plugins/displays/marker/marker_common.hpp"
+#include "rviz_default_plugins/displays/marker/markers/marker_selection_handler.hpp"
 
 namespace rviz_default_plugins
 {
@@ -65,7 +65,7 @@ namespace markers
 {
 
 ArrowMarker::ArrowMarker(
-  MarkerDisplay * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node)
+  MarkerCommon * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node)
 : MarkerBase(owner, context, parent_node),
   arrow_(nullptr), last_arrow_set_from_points_(false)
 {}
