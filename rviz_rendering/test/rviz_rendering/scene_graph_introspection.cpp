@@ -54,6 +54,16 @@
 namespace rviz_rendering
 {
 
+bool arrowIsVisible(Ogre::SceneNode * scene_node)
+{
+  auto arrow_head = findEntityByMeshName(
+    scene_node, "rviz_cone.mesh");
+  auto arrow_shaft = findEntityByMeshName(
+    scene_node, "rviz_cylinder.mesh");
+
+  return arrow_head->isVisible() && arrow_shaft->isVisible();
+}
+
 std::vector<Ogre::Entity *> findAllEntitiesByMeshName(
   Ogre::SceneNode * scene_node, const Ogre::String & resource_name)
 {

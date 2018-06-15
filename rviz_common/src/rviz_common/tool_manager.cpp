@@ -226,7 +226,6 @@ void ToolManager::closeTool()
 
 Tool * ToolManager::addTool(const QString & class_id)
 {
-#if 1
   QString error;
   bool failed = false;
   Tool * tool = factory_->make(class_id, &error);
@@ -271,46 +270,6 @@ Tool * ToolManager::addTool(const QString & class_id)
   Q_EMIT configChanged();
 
   return tool;
-#else
-  if (class_id == "rviz_default_plugins/MoveCamera") {
-    Tool * tool = new rviz_common::MoveTool();
-    tools_.append(tool);
-    tool->setName(addSpaceToCamelCase("MoveTool"));
-    // tool->setIcon(factory_->getIcon(class_id));
-    tool->initialize(context_);
-
-    if (tool->getShortcutKey() != '\0') {
-      uint key;
-      QString str = QString(tool->getShortcutKey());
-
-      if (toKey(str, key)) {
-        shortkey_to_tool_map_[key] = tool;
-      }
-    }
-
-    Property * container = tool->getPropertyContainer();
-    connect(container, SIGNAL(childListChanged(Property *)), this,
-      SLOT(updatePropertyVisibility(Property *)));
-    updatePropertyVisibility(container);
-
-    Q_EMIT toolAdded(tool);
-
-    // If the default tool is unset and this tool loaded correctly, set
-    // it as the default and current.
-    if (default_tool_ == nullptr) {
-      setDefaultTool(tool);
-    }
-    setCurrentTool(tool);
-
-    QObject::connect(tool, SIGNAL(close()), this, SLOT(closeTool()));
-
-    Q_EMIT configChanged();
-
-    return tool;
-  }
-  RVIZ_COMMON_LOG_WARNING_STREAM("would have loaded a tool called: " << class_id.toStdString());
-  return nullptr;
-#endif
 }
 
 void ToolManager::removeTool(int index)

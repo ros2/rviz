@@ -52,6 +52,11 @@ public:
     return generateMouseEvent(x, y, QMouseEvent::MouseMove, Qt::NoButton, Qt::NoModifier);
   }
 
+  rviz_common::ViewportMouseEvent generateMouseMoveWhileLeftClickedEvent(int x, int y)
+  {
+    return generateMouseEvent(x, y, QMouseEvent::MouseMove, Qt::LeftButton, Qt::NoModifier);
+  }
+
   rviz_common::ViewportMouseEvent generateMouseLeftClick(int x, int y)
   {
     return generateMouseEvent(

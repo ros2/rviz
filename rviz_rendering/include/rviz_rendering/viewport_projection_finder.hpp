@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,52 +29,38 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_POSE_TOOL_H
-#define RVIZ_POSE_TOOL_H
+#ifndef RVIZ_RENDERING__VIEWPORT_PROJECTION_FINDER_HPP_
+#define RVIZ_RENDERING__VIEWPORT_PROJECTION_FINDER_HPP_
 
-#include <OgreVector3.h>
+#include <utility>
 
-#include <QCursor>
+#include "rviz_rendering/visibility_control.hpp"
 
-#include <ros/ros.h>
-
-#include "rviz/tool.h"
-
-namespace rviz
+namespace Ogre
 {
-class Arrow;
-class DisplayContext;
-
-class PoseTool: public Tool
-{
-public:
-  PoseTool();
-  virtual ~PoseTool();
-
-  virtual void onInitialize();
-
-  virtual void activate();
-  virtual void deactivate();
-
-  virtual int processMouseEvent( ViewportMouseEvent& event );
-
-protected:
-  virtual void onPoseSet( double x, double y, double theta ) = 0;
-
-  Arrow* arrow_;
-
-  enum State
-  {
-    Position,
-    Orientation
-  };
-  State state_;
-
-  Ogre::Vector3 pos_;
-};
-
+class Plane;
+class Vector3;
+class Viewport;
 }
 
-#endif
+namespace rviz_rendering
+{
 
+class RenderWindow;
 
+class RVIZ_RENDERING_PUBLIC ViewportProjectionFinder
+{
+public:
+  ViewportProjectionFinder() = default;
+
+  virtual std::pair<bool, Ogre::Vector3> getViewportPointProjectionOnXYPlane(
+    RenderWindow * render_window, int x, int y);
+
+private:
+  virtual std::pair<bool, Ogre::Vector3> getViewportProjectionOnPlane(
+    RenderWindow * render_window, int x, int y, Ogre::Plane & plane);
+};
+
+}  // namespace rviz_rendering
+
+#endif  // RVIZ_RENDERING__VIEWPORT_PROJECTION_FINDER_HPP_
