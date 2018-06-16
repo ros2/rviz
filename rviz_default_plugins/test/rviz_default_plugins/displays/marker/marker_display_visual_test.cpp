@@ -39,7 +39,7 @@
 #include "../../publishers/marker_array_publisher.hpp"
 #include "../../publishers/marker_publisher.hpp"
 
-TEST_F(VisualTestFixture, test_marker_with_three_marker_types) {
+TEST_F(VisualTestFixture, test_marker_with_multiple_marker_types) {
   auto marker_publisher = std::make_unique<VisualTestPublisher>(
     std::make_shared<nodes::MarkerPublisher>(), "marker_frame");
 

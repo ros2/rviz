@@ -167,9 +167,7 @@ TEST_F(PointCloudCommonTestFixture, update_colors_the_points_using_the_selected_
 
   mockValidTransform();
 
-  auto color_transformer_property = parent_display_->childAt(7);
-  ASSERT_THAT(color_transformer_property->getNameStd(), StrEq("Color Transformer"));
-
+  auto color_transformer_property = parent_display_->findProperty("Color Transformer");
   color_transformer_property->setValue("FlatColor");
 
   auto color_property = parent_display_->findProperty("Color");
@@ -182,4 +180,52 @@ TEST_F(PointCloudCommonTestFixture, update_colors_the_points_using_the_selected_
 
   EXPECT_THAT(point_cloud->getPoints()[0].position, Vector3Eq(Ogre::Vector3(1, 2, 3)));
   EXPECT_THAT(point_cloud->getPoints()[0].color, ColourValueEq(Ogre::ColourValue(1, 0, 0)));
+}
+
+TEST_F(PointCloudCommonTestFixture,
+  sending_a_point_cloud_with_not_enough_data_results_in_error_but_no_crash)
+{
+  point_cloud_common_->initialize(
+    context_.get(), scene_manager_->getRootSceneNode()->createChildSceneNode());
+
+  mockValidTransform();
+
+  auto cloud = std::make_shared<sensor_msgs::msg::PointCloud2>();
+  cloud->header = std_msgs::msg::Header();
+  cloud->header.stamp = rclcpp::Clock().now();
+
+  cloud->is_bigendian = false;
+  cloud->is_dense = true;
+
+  cloud->height = 1;
+  cloud->width = 100;
+
+  cloud->fields.resize(3);
+  cloud->fields[0].name = "x";
+  cloud->fields[1].name = "y";
+  cloud->fields[2].name = "z";
+
+  sensor_msgs::msg::PointField::_offset_type offset = 0;
+  for (uint32_t i = 0; i < cloud->fields.size(); ++i, offset += sizeof(float)) {
+    cloud->fields[i].count = 1;
+    cloud->fields[i].offset = offset;
+    cloud->fields[i].datatype = sensor_msgs::msg::PointField::FLOAT32;
+  }
+
+  cloud->point_step = offset;
+  cloud->row_step = cloud->point_step * cloud->width;
+  cloud->data.resize(cloud->row_step * 1 + 5);  // have the cloud be a weird size
+
+  auto floatData = reinterpret_cast<float *>(cloud->data.data());
+  for (uint32_t i = 0; i < 10; ++i) {  // we don't fill in enough data
+    floatData[i * (cloud->point_step / sizeof(float)) + 0] = 1 + i;
+    floatData[i * (cloud->point_step / sizeof(float)) + 1] = 2 + i;
+    floatData[i * (cloud->point_step / sizeof(float)) + 2] = 3 + i;
+  }
+
+  point_cloud_common_->addMessage(cloud);
+  point_cloud_common_->update(0, 0);
+
+  auto point_clouds = rviz_rendering::findAllPointClouds(scene_manager_->getRootSceneNode());
+  ASSERT_THAT(point_clouds.size(), Eq(0u));
 }

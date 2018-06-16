@@ -21,7 +21,7 @@ TEST_F(VisualTestFixture, example_test_structure) {
   grid_display->setOffset(0.3, 2, 0.4);
   grid_display->setColor(0, 255, 0);
   grid_display->collapse();
-  image_display->setQueueSize("10");
+  image_display->setQueueSize(10);
 
   /// Take the screenshots of the desired render windows:
   captureMainWindow();

@@ -30,7 +30,6 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__MOCK_ROS_IMAGE_TEXTURE_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__MOCK_ROS_IMAGE_TEXTURE_HPP_
 
-#include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
 #include "rviz_default_plugins/displays/image/ros_image_texture_iface.hpp"

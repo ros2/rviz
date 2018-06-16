@@ -612,6 +612,15 @@ bool PointCloudCommon::transformPoints(
   PointCloudTransformerPtr xyz_trans = getXYZTransformer(cloud_info->message_);
   PointCloudTransformerPtr color_trans = getColorTransformer(cloud_info->message_);
 
+  if (cloud_info->message_->data.size() !=
+    cloud_info->message_->width * cloud_info->message_->height * cloud_info->message_->point_step)
+  {
+    std::string status = "PointCloud contained not enough or too much data";
+    display_->setStatusStd(
+      rviz_common::properties::StatusProperty::Error, message_status_name_, status);
+    return false;
+  }
+
   if (!xyz_trans) {
     std::string status = "No position transformer available for cloud";
     display_->setStatusStd(
@@ -688,11 +697,8 @@ void PointCloudCommon::fillTransformerOptions(
 
 float PointCloudCommon::getSelectionBoxSize()
 {
-  if (style_property_->getOptionInt() != rviz_rendering::PointCloud::RM_POINTS) {
-    return point_world_size_property_->getFloat();
-  } else {
-    return 0.004f;
-  }
+  return style_property_->getOptionInt() != rviz_rendering::PointCloud::RM_POINTS ?
+         point_world_size_property_->getFloat() : 0.004f;
 }
 
 }  // namespace rviz_default_plugins

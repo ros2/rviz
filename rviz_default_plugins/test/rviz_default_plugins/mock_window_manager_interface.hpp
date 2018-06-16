@@ -30,7 +30,6 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__MOCK_WINDOW_MANAGER_INTERFACE_HPP_
 #define RVIZ_DEFAULT_PLUGINS__MOCK_WINDOW_MANAGER_INTERFACE_HPP_
 
-#include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
 #include "rviz_common/panel_dock_widget.hpp"

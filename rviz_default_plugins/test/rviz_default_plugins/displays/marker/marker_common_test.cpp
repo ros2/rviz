@@ -29,7 +29,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
 #include <memory>
@@ -360,14 +359,15 @@ TEST_F(MarkerCommonFixture, update_does_not_retransform_normal_messages) {
 TEST_F(MarkerCommonFixture, processMessage_adds_new_namespace_for_message) {
   mockValidTransform();
 
-  ASSERT_THAT(display_->childAt(0)->numChildren(), Eq(0));
+  ASSERT_THAT(display_->findProperty("Namespaces")->numChildren(), Eq(0));
 
   auto marker = createSharedPtrMessage(
     visualization_msgs::msg::Marker::ADD, visualization_msgs::msg::Marker::POINTS);
 
   common_->processMessage(marker);
 
-  ASSERT_THAT(display_->childAt(0)->childAt(0)->getName().toStdString(), StrEq("test_ns"));
+  ASSERT_THAT(display_->findProperty("Namespaces")->childAt(0)->getName().toStdString(),
+    StrEq("test_ns"));
 }
 
 TEST_F(MarkerCommonFixture, processMessage_does_not_add_new_namespace_if_already_present) {
@@ -376,14 +376,16 @@ TEST_F(MarkerCommonFixture, processMessage_does_not_add_new_namespace_if_already
   common_->processMessage(createSharedPtrMessage(
       visualization_msgs::msg::Marker::ADD, visualization_msgs::msg::Marker::POINTS));
 
-  ASSERT_THAT(display_->childAt(0)->numChildren(), Eq(1));
-  ASSERT_THAT(display_->childAt(0)->childAt(0)->getName().toStdString(), StrEq("test_ns"));
+  ASSERT_THAT(display_->findProperty("Namespaces")->numChildren(), Eq(1));
+  ASSERT_THAT(display_->findProperty("Namespaces")->childAt(0)->getName().toStdString(),
+    StrEq("test_ns"));
 
   common_->processMessage(createSharedPtrMessage(
       visualization_msgs::msg::Marker::ADD, visualization_msgs::msg::Marker::TEXT_VIEW_FACING));
 
-  ASSERT_THAT(display_->childAt(0)->numChildren(), Eq(1));
-  ASSERT_THAT(display_->childAt(0)->childAt(0)->getName().toStdString(), StrEq("test_ns"));
+  ASSERT_THAT(display_->findProperty("Namespaces")->numChildren(), Eq(1));
+  ASSERT_THAT(display_->findProperty("Namespaces")->childAt(0)->getName().toStdString(),
+    StrEq("test_ns"));
 }
 
 TEST_F(MarkerCommonFixture, onEnableChanged_in_namespace_removes_all_markers_in_that_namespace) {
@@ -401,7 +403,7 @@ TEST_F(MarkerCommonFixture, onEnableChanged_in_namespace_removes_all_markers_in_
   EXPECT_TRUE(rviz_rendering::findOneMovableText(scene_manager_->getRootSceneNode()));
 
   auto namespace_property = dynamic_cast<rviz_default_plugins::displays::MarkerNamespace *>(
-    display_->childAt(0)->childAt(0));
+    display_->findProperty("Namespaces")->childAt(0));
   namespace_property->setValue(false);
 
   EXPECT_FALSE(rviz_rendering::findOnePointCloud(scene_manager_->getRootSceneNode()));
@@ -420,7 +422,7 @@ TEST_F(MarkerCommonFixture, processMessage_does_not_add_message_with_disabled_na
   EXPECT_TRUE(rviz_rendering::findOnePointCloud(scene_manager_->getRootSceneNode()));
 
   auto namespace_property = dynamic_cast<rviz_default_plugins::displays::MarkerNamespace *>(
-    display_->childAt(0)->childAt(0));
+    display_->findProperty("Namespaces")->childAt(0));
   namespace_property->setValue(false);
 
   marker->type = visualization_msgs::msg::Marker::TEXT_VIEW_FACING;

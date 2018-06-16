@@ -31,7 +31,7 @@
 
 #include <QObject>
 
-#include <rviz_common/properties/property.hpp>
+#include "rviz_common/properties/property.hpp"
 
 namespace rviz_common
 {

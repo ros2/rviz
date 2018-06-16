@@ -35,7 +35,6 @@
 namespace rviz_rendering
 {
 
-
 void OgreTestingEnvironment::setUpRenderSystem()
 {
   RenderSystem::get();

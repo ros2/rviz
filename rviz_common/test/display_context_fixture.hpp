@@ -32,7 +32,6 @@
 #ifndef DISPLAY_CONTEXT_FIXTURE_HPP_
 #define DISPLAY_CONTEXT_FIXTURE_HPP_
 
-#include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
 #include <memory>

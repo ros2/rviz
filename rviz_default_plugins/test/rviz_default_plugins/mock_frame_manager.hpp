@@ -32,7 +32,6 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__MOCK_FRAME_MANAGER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__MOCK_FRAME_MANAGER_HPP_
 
-#include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
 #include <memory>

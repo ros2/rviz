@@ -32,7 +32,6 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__ROBOT__MOCK_LINK_UPDATER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__ROBOT__MOCK_LINK_UPDATER_HPP_
 
-#include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
 #include <string>
