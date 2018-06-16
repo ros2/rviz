@@ -11,7 +11,7 @@
   <author>David Gossow</author>
   <author>Josh Faust</author>
 
-  <!--url type="website">http://ros.org/wiki/rviz_default_plugins</url-->
+  <url type="website">https://github.com/ros2/rviz/blob/ros2/README.md</url>
   <url type="repository">https://github.com/ros2/rviz</url>
   <url type="bugtracker">https://github.com/ros2/rviz/issues</url>
 
