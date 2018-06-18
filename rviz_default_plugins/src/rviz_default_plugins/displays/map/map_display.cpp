@@ -311,7 +311,7 @@ void MapDisplay::updateMapDataInMemory(
     std::copy(
       update->data.begin(),
       update->data.begin() + update->width,
-      &current_map_.data[(update->y + y) * current_map_.info.width + update->x]);
+      current_map_.data.begin() + (update->y + y) * current_map_.info.width + update->x);
   }
 }
 
