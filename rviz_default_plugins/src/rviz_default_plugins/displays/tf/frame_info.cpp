@@ -217,7 +217,8 @@ void FrameInfo::updateParentArrow(
 
   Ogre::Quaternion orient = Ogre::Vector3::NEGATIVE_UNIT_Z.getRotationTo(direction);
 
-  if (!orient.isNaN()) {
+  if (direction.squaredLength() > 0 && !orient.isNaN()) {
+    setParentArrowVisible(true);
     distance_to_parent_ = distance;
     float head_length = (distance < 0.1f * scale) ? (0.1f * scale * distance) : 0.1f * scale;
     float shaft_length = distance - head_length;
@@ -227,6 +228,8 @@ void FrameInfo::updateParentArrow(
 
     parent_arrow_->setPosition(position);
     parent_arrow_->setOrientation(orient);
+  } else {
+    setParentArrowVisible(false);
   }
 }
 
