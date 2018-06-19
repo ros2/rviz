@@ -67,9 +67,9 @@ The simplest way to build from source is to use the official installation guide,
 
 https://github.com/ros2/ros2/wiki/Installation
 
-### Building RViz in a separate folder
+### Building RViz in a separate workspace
 
-When developing for rviz, it can be beneficial to build it in a separate folder. 
+When developing for rviz, it can be beneficial to build it in a separate workspace. 
 
 **Note:** When building the current ros2 branch from source, the latest ROS 2 release for all dependencies might not be sufficient: it could be necessary to build the ROS 2 master branch.
 Make sure to have a source build of ROS 2 available (see installation procedure above).
@@ -119,3 +119,14 @@ Main rationale here is to create code that can be well tested by avoiding highly
 
 When migrating from rviz to rviz2, please see the more extensive [migration guide](https://github.com/ros2/rviz/migration_guide.md).
 
+## Plugin Developer Guide
+
+Plugins can extend RViz at different extension points:
+- `rviz_common::Display`
+- `rviz_common::Tool`
+- `rviz_common::ViewController`
+
+The process of writing plugins has not changed significantly compared to the original RViz.
+
+Tutorials for different plugins can be found here:
+http://docs.ros.org/lunar/api/rviz_plugin_tutorials/html/index.html
