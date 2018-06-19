@@ -73,6 +73,8 @@ FocusTool::~FocusTool() = default;
 
 void FocusTool::onInitialize()
 {
+  shortcut_key_ = 'c';
+
   std_cursor_ = rviz_common::getDefaultCursor();
   hit_cursor_ = rviz_common::makeIconCursor("package://rviz_common/icons/crosshair.svg");
 }

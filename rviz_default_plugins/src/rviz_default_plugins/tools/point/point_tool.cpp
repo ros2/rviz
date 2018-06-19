@@ -51,6 +51,8 @@ namespace tools
 
 PointTool::PointTool()
 {
+  shortcut_key_ = 'u';
+
   topic_property_ = new rviz_common::properties::StringProperty(
     "Topic", "/clicked_point",
     "The topic on which to publish points.",
