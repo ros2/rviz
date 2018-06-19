@@ -331,9 +331,7 @@ void PointCloudCommon::insertNewClouds(float point_decay_time, const rclcpp::Tim
 
       cloud_info->scene_node_->attachObject(cloud_info->cloud_.get());
 
-      cloud_info->selection_handler_.reset(new PointCloudSelectionHandler(
-          getSelectionBoxSize(),
-          cloud_info.get(), context_));
+      cloud_info->setSelectable(selectable_property_->getBool(), getSelectionBoxSize(), context_);
 
       cloud_infos_.push_back(*it);
     }
