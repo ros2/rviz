@@ -3,29 +3,49 @@
 This branch is currently contained in the main `ros2.repos` file of ROS 2 and can be used for ROS 2.
 The latest release will be available with your ROS 2 download.
 
-ROS 2 does not have a wiki, yet. To learn about rviz and its functionality, please refer to the ROS rviz [wiki page](http://www.ros.org/wiki/rviz). 
+ROS 2 does not have a wiki yet. To learn about rviz and its functionality, please refer to the ROS rviz [wiki page](http://www.ros.org/wiki/rviz). 
 
-# Features in the current master version
+# Features
 
-## Features present in rviz for ROS and missing in rviz for ROS 2
+## Already ported
+These features have already been ported from `ros-visualization/rviz` to `ros2/rviz`.
 
-Tools:
-- Interact Tool
-- Initial Pose Tool
+| Displays     | Tools         | View Controller       | Panels          |
+| ------------ | ------------- | --------------------- | --------------- |
+| Camera       | Move Camera   | Orbit                 | Displays        |
+| Grid         | Focus Camera  | XY Orbit              | Help            |
+| Grid Cells   | Measure       | First Person          | Selections      |
+| Image        | Select        | Third Person Follower | Tool Properties |
+| Laser Scan   | 2D Nav Goal   | Top Down Orthographic | Views           |
+| Map          | Publish Point |                       |                 |
+| Marker       |
+| Marker Array |
+| Odometry     |
+| Point Cloud  |
+| Point        |
+| Polygon      |
+| Pose         |
+| Pose Array   |
+| Robot Model  |
+| TF           |
 
-Displays:
-- AxesDisplay
-- DepthCloudDisplay
-- EffortDisplay
-- FluidPressureDisplay
-- IlluminanceDisplay
-- InteractiveMarkerDisplay
-- OculusDisplay
-- PoseWithCovarianceStampedDisplay
-- RangeDisplay
-- RelativeHumidityDisplay
-- TemperatureDisplay
-- WrenchDisplay
+## Not yet ported
+These features have not been ported to `ros2/rviz` yet.
+
+| Displays             | Tools        | Panels |
+| -------------------- | ------------ | ------ |
+| Axes                 | Initial Pose | Time   |
+| DepthCloud           | Interact     |        |
+| Effort               |
+| Fluid Pressure       |
+| Illuminance          |
+| Interactive Marker   |
+| Oculus               |
+| Pose With Covariance |
+| Range                |
+| Relative Humidity    |
+| Temperature          |
+| Wrench               |
 
 Other features:
 - Filtering of Topic lists by topic type
@@ -35,7 +55,7 @@ Other features:
 If you would like to see those features in rviz for ROS 2, feel free to add a pull request.
 Make sure to read the developer guide below and the migration guide.
 
-## Features new in rviz for ROS 2
+## New features
 
 None, yet.
 
