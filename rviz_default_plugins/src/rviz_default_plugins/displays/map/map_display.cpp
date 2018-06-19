@@ -543,11 +543,10 @@ void MapDisplay::transformMap()
     RVIZ_COMMON_LOG_ERROR_STREAM("Error transforming map '" << getName().toStdString() <<
       "' from frame '" << frame_ << "' to '" << fixed_frame_.toStdString() << "'.");
 
-    setStatus(rviz_common::properties::StatusProperty::Error, "Transform",
-      "No transform from [" + QString::fromStdString(frame_) + "] to [" + fixed_frame_ + "]");
+    setMissingTransformToFixedFrame(frame_);
     scene_node_->setVisible(false);
   } else {
-    setStatus(rviz_common::properties::StatusProperty::Ok, "Transform", "Transform OK");
+    setTransformOk();
   }
 
   scene_node_->setPosition(position);
