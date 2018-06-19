@@ -360,7 +360,14 @@ bool CameraDisplay::updateCamera()
     image = texture_->getImage();
   }
 
-  if (!info || !image) {
+  if (!image) {
+    return false;
+  }
+
+  if (!info) {
+    setStatus(StatusLevel::Warn, CAM_INFO_STATUS,
+      "Expecting Camera Info on topic [" + topic_property_->getTopic() + "/camera_info" + "]. "
+      "No CameraInfo received. Topic may not exist.");
     return false;
   }
 
