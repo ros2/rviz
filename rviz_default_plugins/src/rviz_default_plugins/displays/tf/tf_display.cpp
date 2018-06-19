@@ -545,8 +545,8 @@ void TFDisplay::updateParentArrowIfTransformExists(
   {
     logTransformationException(frame->parent_, frame->name_);
   } else {
-    frame->updateParentArrow(position, parent_position, scale_property_->getFloat());
     frame->setParentArrowVisible(show_arrows_property_->getBool());
+    frame->updateParentArrow(position, parent_position, scale_property_->getFloat());
   }
 }
 
