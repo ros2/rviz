@@ -183,6 +183,12 @@ void PointCloud2Display::reset()
   point_cloud_common_->reset();
 }
 
+void PointCloud2Display::onDisable()
+{
+  RosTopicDisplay::onDisable();
+  point_cloud_common_->onDisable();
+}
+
 }  // namespace displays
 }  // namespace rviz_default_plugins
 

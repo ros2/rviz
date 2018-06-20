@@ -693,6 +693,16 @@ void PointCloudCommon::fillTransformerOptions(
   }
 }
 
+void PointCloudCommon::onDisable()
+{
+  for (auto cloud_info : cloud_infos_) {
+    cloud_info->selection_handler_.reset();
+  }
+  for (auto obsolete_cloud_info : obsolete_cloud_infos_) {
+    obsolete_cloud_info->selection_handler_.reset();
+  }
+}
+
 float PointCloudCommon::getSelectionBoxSize()
 {
   return style_property_->getOptionInt() != rviz_rendering::PointCloud::RM_POINTS ?

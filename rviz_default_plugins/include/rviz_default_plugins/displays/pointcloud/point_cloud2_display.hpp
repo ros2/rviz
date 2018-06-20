@@ -93,6 +93,8 @@ public:
   /// Move to public for testing
   bool cloudDataMatchesDimensions(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
 
+  void onDisable() override;
+
 protected:
   /** @brief Do initialization. Overridden from RosTopicDisplay. */
   void onInitialize() override;

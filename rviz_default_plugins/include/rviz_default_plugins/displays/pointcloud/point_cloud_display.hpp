@@ -77,6 +77,8 @@ public:
 
   void update(float wall_dt, float ros_dt) override;
 
+  void onDisable() override;
+
 protected:
   /** @brief Do initialization. Overridden from RosTopicDisplay. */
   void onInitialize() override;
