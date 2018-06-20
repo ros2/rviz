@@ -48,8 +48,9 @@
 #include "tf2_ros/transform_listener.h"
 
 #include "rviz_common/display.hpp"
-#include "rviz_common/properties/property.hpp"
 #include "rviz_common/logging.hpp"
+#include "rviz_common/msg_conversions.hpp"
+#include "rviz_common/properties/property.hpp"
 
 namespace rviz_common
 {
@@ -75,9 +76,7 @@ FrameManager::FrameManager(
   setPause(false);
 }
 
-FrameManager::~FrameManager()
-{
-}
+FrameManager::~FrameManager() = default;
 
 void FrameManager::update()
 {
@@ -244,7 +243,7 @@ bool FrameManager::getTransform(
     return false;
   }
 
-  M_Cache::iterator it = cache_.find(CacheKey(frame, time));
+  auto it = cache_.find(CacheKey(frame, time));
   if (it != cache_.end()) {
     position = it->second.position;
     orientation = it->second.orientation;
@@ -278,15 +277,8 @@ bool FrameManager::transform(
 {
   // TODO(Martin-Idel-SI): Remove when https://github.com/ros2/geometry2/issues/58 closed
   if (frame == fixed_frame_) {
-    position = Ogre::Vector3(
-      pose_msg.position.x,
-      pose_msg.position.y,
-      pose_msg.position.z);
-    orientation = Ogre::Quaternion(
-      pose_msg.orientation.w,
-      pose_msg.orientation.x,
-      pose_msg.orientation.y,
-      pose_msg.orientation.z);
+    position = rviz_common::pointMsgToOgre(pose_msg.position);
+    orientation = rviz_common::quaternionMsgToOgre(pose_msg.orientation);
 
     return true;
   }
@@ -333,16 +325,8 @@ bool FrameManager::transform(
     return false;
   }
 
-  position = Ogre::Vector3(
-    pose_out.pose.position.x,
-    pose_out.pose.position.y,
-    pose_out.pose.position.z);
-  orientation = Ogre::Quaternion(
-    pose_out.pose.orientation.w,
-    pose_out.pose.orientation.x,
-    pose_out.pose.orientation.y,
-    pose_out.pose.orientation.z);
-
+  position = rviz_common::pointMsgToOgre(pose_out.pose.position);
+  orientation = rviz_common::quaternionMsgToOgre(pose_out.pose.orientation);
   return true;
 }
 
