@@ -117,18 +117,16 @@ Main rationale here is to create code that can be well tested by avoiding highly
 * Specify dependencies as a constructor argument.
 * Prefer `std::unique_ptr` for storing the dependency instead of a raw pointer.
 
-## Migration Guide
+## Migration
 
 When migrating from rviz to rviz2, please see the more extensive [migration guide](docs/migration_guide.md).
 
-## Plugin Developer Guide
+## Plugin Development
 
 Plugins can extend RViz at different extension points:
-- `rviz_common::Display`
-- `rviz_common::Tool`
-- `rviz_common::ViewController`
+- Displays
+- Panels
+- Tools
+- View Controllers
 
-The process of writing plugins has not changed significantly compared to the original RViz.
-
-Tutorials for different plugins can be found here:
-http://docs.ros.org/lunar/api/rviz_plugin_tutorials/html/index.html
+More information on writing plugins can be found in the [plugin development guide](docs/plugin_development.md).

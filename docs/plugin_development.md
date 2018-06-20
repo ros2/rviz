@@ -1,6 +1,6 @@
 # User's Guide to plugin development
 
-This is intended as a guide for people wishing to develop custom plugins
+This is intended as a guide for people wishing to develop custom plugins.
 
 ## Overview of RViz API
 
@@ -8,46 +8,50 @@ This is intended as a guide for people wishing to develop custom plugins
 
 The `rviz_rendering` package is supposed to contain all functionality referring to rendering:
 
-* it contains visuals and objects to be added to the scene graph such as arrows, shapes or text objects in the subfolder `objects` (many of those objects were ported from the folder `ogre_helpers`)
-* it contains the real render window including including functions exposing some of its internals (RenderWindowOgreAdapter). If possible, refrain from using the RenderWindowOgreAdapter, as it might be deprecated and deleted in the future
-* it contains conveniences functions to work with materials (`material_manager.hpp`) or other ogre related functionality (e.g. ray tracing in `viewport_projection_finder.hpp`)
-* it also contains convenience classes for testing, allowing to set up a working ogre environment and helpers for scene graph introspection
+* Visuals and objects to be added to the scene graph such as arrows, shapes or text objects in the subfolder `objects` (many of those objects were ported from the folder `ogre_helpers`)
+* The render window, including functions exposing some of its internals (RenderWindowOgreAdapter). 
+  If possible, refrain from using the RenderWindowOgreAdapter, as it might be deprecated and deleted in the future
+* Convenience functions to work with materials (`material_manager.hpp`) or other ogre related functionality (e.g. ray tracing in `viewport_projection_finder.hpp`)
+* Convenience classes for testing, allowing to set up a working ogre environment and helpers for scene graph introspection
 
 ### rviz_common
 
 The `rviz_common` package contains the bulk of rviz useful for doing plugin development:
 
-* while it contains the main application and rendering queues, those functionality is not exposed
-* it contains the main entry points for plugin development - base classes for panels, view controllers, displays and tools
-* it contains convenience classes to work with properties in the various views (such as the display panel) located in `rviz_common/properties`
-* it contains the main entry points for developing displays with selectable types, the SelectionHandlers (located in `rviz_common/interaction`)
-* it contains access points to ROS 2. Currently, rviz uses only one node, which can be accessed via `ros_integration`. In the future, further changes may be necessary to fully abstract ROS 2 access into `ros_integration`
+* Main application and rendering queues (not exposed)
+* Main entry points for plugin development - base classes for panels, view controllers, displays and tools
+* Convenience classes to work with properties in the various views (such as the display panel) located in `rviz_common/properties`
+* Main classes for selectable types, the SelectionHandlers (located in `rviz_common/interaction`)
+* Access points to ROS 2. 
+  Currently, rviz uses only one node, which can be accessed via `ros_integration`. 
+  In the future, further changes may be necessary to fully abstract ROS 2 access into `ros_integration`
 
 ### rviz_default_plugins
 
 The `rviz_default_plugins` contains all plugins (view controllers, tools, displays and in the future, panels) shipped with rviz (most of them ported from the `default_plugins` folder of rviz). 
 
-* If you want to develop simple plugins, it is not necessary to use anything in this package
-* If you want to develop more complex plugins similar to existing plugins, it might be beneficial to use or even derive from classes contained in this package to simplify your development
+* When developing simple plugins it is not necessary to use anything in this package.
+* When developing more complex plugins similar to existing plugins it might be beneficial to use or even derive from classes contained in this package to simplify your development.
 
-### rviz_visual_testing_frameworkj
+### rviz_visual_testing_framework
 
 The `rviz_visual_testing_framework` contains the backbone to writing visual tests for plugins. 
-It will only ever be necessary to use this package as a test dependency if you want to write automated screenshot tests
-Please see the documentation in the package for further help
+It will only ever be necessary to use this package as a test dependency if you want to write automated screenshot tests.
+Please see the documentation in the package for further help.
 
 ### rviz2
 
-This package contains the main program startup and entry point for nodes.
+This package contains the main program startup and entry point for nodes (not exposed).
 
 ## Plugin Development
 
-* In order to write your own plugin, set up a regular ROS 2 ament-workspace (see the [official documentation]("https://github.com/ros2/ros2/wiki/Colcon-Tutorial") for further help).
+* In order to write your own plugin, set up a regular ROS 2 workspace (see the [official documentation]("https://github.com/ros2/ros2/wiki/Colcon-Tutorial") for further help).
 * You will need to link your program against `rviz_common` and probably also against `rviz_rendering` and `rviz_default_plugins`. 
-* To let the plugin loader find your plugin, you will need to invoke the `PLUGINLIB_EXPORT_CLASS` macro. For instance, if your plugin is called "myplugin::Plugin" with base class `rviz_common::Dispay`, you will need to include the following into your `.cpp` file:
+* To let the plugin loader find your plugin, you will need to invoke the `PLUGINLIB_EXPORT_CLASS` macro. 
+  For instance, if your plugin is called "myplugin::Plugin" with base class `rviz_common::Dispay`, you will need to include the following into your `.cpp` file:
 ```
-#include <pluginlib/class_list_macros.hpp>
-PLUGINLIB_EXPORT_CLASS(myplugin::Plugin, rviz_common::Display)
+    #include <pluginlib/class_list_macros.hpp>
+    PLUGINLIB_EXPORT_CLASS(myplugin::Plugin, rviz_common::Display)
 ```
 * You need to link and compile against the `pluginlib` package. Further CMake options that might be relevant (see `rviz_default_plugins` CMakeLists):
 ```
@@ -56,7 +60,8 @@ target_compile_definitions(rviz_default_plugins PUBLIC "PLUGINLIB__DISABLE_BOOST
 # Causes the visibility macros to use dllexport rather than dllimport (for Windows, when your plugin should be used as library)
 target_compile_definitions(rviz_default_plugins PRIVATE "RVIZ_DEFAULT_PLUGINS_BUILDING_LIBRARY")
 ```
-* You need to write a `plugin_description.xml` file which contains the information necessary for the pluginlib to load your plugin at runtime. See `rviz_default_plugins/plugins_description.xml` for an example (the syntax is the same as for the old rviz)
+* You need to write a `plugin_description.xml` file which contains the information necessary for the pluginlib to load your plugin at runtime. 
+  See `rviz_default_plugins/plugins_description.xml` for an example (the syntax is the same as for the old rviz)
 * Export the plugin description file via
 ```
 pluginlib_export_plugin_description_file(<your library> plugins_description.xml)
@@ -65,7 +70,7 @@ This should make sure that your plugins are found at runtime
 
 ### Writing a custom display
 
-* In order to write a display plugin, derive from either `rviz_common::Display` or `rviz_common::RosTopicDisplay`.
+* In order to write a display plugin, derive from either `rviz_common::Display` or `rviz_common::RosTopicDisplay<MessageType>`.
 
 #### Writing a display without ros subscription
 
@@ -82,7 +87,7 @@ The RosTopicDisplay is templated on the message type of this display:
 
 * RosTopicDisplay derives from Display and thereby contains all of the functionality described in the previous section
 * It handles subscribing and unsubscribing to topics of its template type
-* It provides two properties: a property to choose the topic and a property to choose the qos profile (currently "reliable" or "unreliable")
+* It provides two properties: a property to choose the topic and a property to choose the QoS profile ("Quality of Service", currently "reliable" or "unreliable")
 * It provides convenient methods to receive messages and do initial checking. Override the `processMessage` to add behaviour on receiving a new message
 
 #### Providing Ogre media files
