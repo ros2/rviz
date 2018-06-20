@@ -288,6 +288,12 @@ RenderPanel::sizeHint() const
   return QSize(320, 240);
 }
 
+void RenderPanel::resizeEvent(QResizeEvent * event)
+{
+  QWidget::resizeEvent(event);
+  render_window_->windowMovedOrResized();
+}
+
 const Ogre::Vector3 RenderPanel::default_camera_pose_ = Ogre::Vector3(999999, 999999, 999999);
 
 #if 0

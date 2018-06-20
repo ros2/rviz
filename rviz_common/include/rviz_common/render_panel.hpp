@@ -97,6 +97,11 @@ public:
    */
   QSize
   sizeHint() const override;
+
+  // This method has to be overridden in order to avoid an Ogre assertion to fail on macOS
+  // (The assertion can be found in OgreOSXCocoaWindow.mm, line 410)
+  void resizeEvent(QResizeEvent * event) override;
+
   static const Ogre::Vector3 default_camera_pose_;
 
 // TODO(wjwwood): reenable these and pass down to rviz_rendering::RenderWindow

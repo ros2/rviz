@@ -117,6 +117,12 @@ RenderWindow::setupSceneAfterInit(setupSceneCallback setup_scene_callback)
   impl_->setupSceneAfterInit(setup_scene_callback);
 }
 
+void RenderWindow::windowMovedOrResized()
+{
+  // It seems that the 'width' and 'height' parameters of the resize() method don't play a role here
+  impl_->resize(0, 0);
+}
+
 void
 RenderWindow::renderLater()
 {
