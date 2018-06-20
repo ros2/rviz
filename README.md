@@ -10,7 +10,7 @@ ROS 2 does not have a wiki yet. To learn about rviz and its functionality, pleas
 ## Already ported
 These features have already been ported from `ros-visualization/rviz` to `ros2/rviz`.
 The basic documentation can still be found on the rviz [wiki page](http://www.ros.org/wiki/rviz). 
-For some displays, the [documentation is updated](https://www.github.com/ros2/rviz/docs/FEATURES.md).
+For some displays, the [documentation is updated](docs/FEATURES.md).
 
 | Displays     | Tools         | View Controller       | Panels          |
 | ------------ | ------------- | --------------------- | --------------- |
@@ -119,7 +119,7 @@ Main rationale here is to create code that can be well tested by avoiding highly
 
 ## Migration Guide
 
-When migrating from rviz to rviz2, please see the more extensive [migration guide](https://github.com/ros2/rviz/docs/migration_guide.md).
+When migrating from rviz to rviz2, please see the more extensive [migration guide](docs/migration_guide.md).
 
 ## Plugin Developer Guide
 
