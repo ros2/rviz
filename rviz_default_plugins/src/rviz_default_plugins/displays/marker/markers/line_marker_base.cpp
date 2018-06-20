@@ -64,6 +64,9 @@ void LineMarkerBase::onNewMessage(
   if (!lines_) {
     lines_ = std::make_shared<rviz_rendering::BillboardLine>(
       context_->getSceneManager(), scene_node_);
+    handler_ = rviz_common::interaction::createSelectionHandler<MarkerSelectionHandler>(
+      this, MarkerID(new_message->ns, new_message->id), context_);
+    handler_->addTrackedObjects(lines_->getSceneNode());
   }
 
   Ogre::Vector3 pos, scale;
@@ -94,10 +97,6 @@ void LineMarkerBase::onNewMessage(
   has_per_point_color_ = new_message->colors.size() == new_message->points.size();
 
   convertNewMessageToBillboardLine(new_message);
-
-  handler_ = rviz_common::interaction::createSelectionHandler<MarkerSelectionHandler>(
-    this, MarkerID(new_message->ns, new_message->id), context_);
-  handler_->addTrackedObjects(lines_->getSceneNode());
 }
 
 void LineMarkerBase::addPoint(
