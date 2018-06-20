@@ -315,15 +315,21 @@ bool FrameManager::transform(
   if (stripped_fixed_frame[0] == '/') {
     stripped_fixed_frame = stripped_fixed_frame.substr(1);
   }
+
   // convert pose into new frame
   try {
     buffer_->transform(pose_in, pose_out, stripped_fixed_frame);
-  } catch (const tf2::LookupException & exec) {
-    (void) exec;
-    // RVIZ_COMMON_LOG_WARNING_STREAM("tf2 lookup exception when transforming: " << exec.what());
+  } catch (const tf2::LookupException & exception) {
+    (void) exception;
     return false;
-  } catch (const tf2::ConnectivityException & exec) {
-    (void) exec;
+  } catch (const tf2::ConnectivityException & exception) {
+    (void) exception;
+    return false;
+  } catch (const tf2::ExtrapolationException & exception) {
+    (void) exception;
+    return false;
+  } catch (const tf2::InvalidArgumentException & exception) {
+    (void) exception;
     return false;
   }
 
