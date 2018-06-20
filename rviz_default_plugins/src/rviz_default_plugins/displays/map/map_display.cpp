@@ -240,7 +240,9 @@ void MapDisplay::updateDrawUnder() const
 
 void MapDisplay::clear()
 {
-  setStatus(rviz_common::properties::StatusProperty::Warn, "Message", "No map received");
+  if (isEnabled()) {
+    setStatus(rviz_common::properties::StatusProperty::Warn, "Message", "No map received");
+  }
 
   if (!loaded_) {
     return;
