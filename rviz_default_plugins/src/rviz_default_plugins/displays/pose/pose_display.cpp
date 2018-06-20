@@ -114,11 +114,6 @@ void PoseDisplay::onInitialize()
 
   updateShapeChoice();
   updateColorAndAlpha();
-
-  coll_handler_ = rviz_common::interaction::createSelectionHandler
-    <PoseDisplaySelectionHandler>(this, context_);
-  coll_handler_->addTrackedObjects(arrow_->getSceneNode());
-  coll_handler_->addTrackedObjects(axes_->getSceneNode());
 }
 
 PoseDisplay::~PoseDisplay() = default;
@@ -127,6 +122,21 @@ void PoseDisplay::onEnable()
 {
   RTDClass::onEnable();
   updateShapeVisibility();
+  setupSelectionHandler();
+}
+
+void PoseDisplay::setupSelectionHandler()
+{
+  coll_handler_ = rviz_common::interaction::createSelectionHandler
+    <PoseDisplaySelectionHandler>(this, context_);
+  coll_handler_->addTrackedObjects(arrow_->getSceneNode());
+  coll_handler_->addTrackedObjects(axes_->getSceneNode());
+}
+
+void PoseDisplay::onDisable()
+{
+  RTDClass::onDisable();
+  coll_handler_.reset();
 }
 
 void PoseDisplay::updateColorAndAlpha()
