@@ -226,6 +226,7 @@ VisualizationManager::VisualizationManager(
   updateBackgroundColor();
 
   global_status_ = new StatusList("Global Status", root_display_group_);
+  global_status_->setReadOnly(true);
 
   rviz_rendering::MaterialManager::createDefaultColorMaterials();
 
