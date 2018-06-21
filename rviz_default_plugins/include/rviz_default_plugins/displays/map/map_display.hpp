@@ -138,6 +138,8 @@ protected:
   void subscribe() override;
   void unsubscribe() override;
 
+  void onEnable() override;
+
   /** @brief Copy update's data into current_map_ and call showMap(). */
   void incomingUpdate(map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr update);
 

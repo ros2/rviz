@@ -131,7 +131,6 @@ MapDisplay::~MapDisplay()
 {
   unsubscribe();
   clear();
-  swatches_.clear();
 }
 
 Ogre::TexturePtr makePaletteTexture(std::vector<unsigned char> palette_bytes)
@@ -248,10 +247,10 @@ void MapDisplay::clear()
     return;
   }
 
-  for (const auto & swatch : swatches_) {
-    swatch->setVisible(false);
-    swatch->resetTexture();
-  }
+  swatches_.clear();
+  height_ = 0;
+  width_ = 0;
+  resolution_ = 0.0f;
 
   loaded_ = false;
 }
@@ -574,6 +573,12 @@ void MapDisplay::update(float wall_dt, float ros_dt)
   (void) ros_dt;
 
   transformMap();
+}
+
+void MapDisplay::onEnable()
+{
+  RosTopicDisplay::onEnable();
+  setStatus(rviz_common::properties::StatusProperty::Warn, "Message", "No map received");
 }
 
 }  // namespace displays
