@@ -100,7 +100,7 @@ RenderWindowImpl::~RenderWindowImpl()
 {
   if (ogre_render_window_) {
     Ogre::Root::getSingletonPtr()->detachRenderTarget(ogre_render_window_);
-    ogre_render_window_->destroy();
+    Ogre::Root::getSingletonPtr()->destroyRenderTarget(ogre_render_window_);
     // enableStereo(false);  // free stereo resources
   }
 }

@@ -98,6 +98,9 @@ public:
   void
   setupSceneAfterInit(setupSceneCallback setup_scene_callback);
 
+  void
+  windowMovedOrResized();
+
 public slots:
   virtual
   void
