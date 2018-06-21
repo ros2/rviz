@@ -8,7 +8,7 @@ Please refer also to the ROS migration guide at https://github.com/ros2/ros2/wik
 ### Fixing includes (RViz has been split into multiple packages)
 
 - Most user-facing functionality such as base classes for displays or tools are now located in `rviz_common`.
-- The previous `ogre_helpers` as well as classes to do with rendering are located in `rviz_rendering` or its subfolder `objects`.
+- The previous `ogre_helpers` as well as classes related to rendering are located in `rviz_rendering` or its subfolder `objects`.
 - The default plugins and the robot are located in `rviz_default_plugins`.
 - The Selection mechanism was moved to a subfolder `interaction` in `rviz_common`.
   The object picking behaviour was moved to a `ViewPicker`, which is also exposed via the display context.
@@ -71,7 +71,7 @@ This might impact code already ported.
 
 Since RViz can now be used on Windows and Mac, it is necessary that code runs on those platforms as well.
 The biggest issue for Windows is probably visibility control:
-Classes or methods from `rviz_rendering` and/or `rviz_common` to be used in other plugins must use the `RVIZ_RENDERING_PUBLIC` or the `RVIZ_COMMON_PUBLIC` modifier.
+classes or methods from `rviz_rendering` and/or `rviz_common` to be used in other plugins must use the `RVIZ_RENDERING_PUBLIC` or the `RVIZ_COMMON_PUBLIC` modifier.
 Failures will result in missing symbols while linking.
 
 ### Writing tests for displays
