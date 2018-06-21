@@ -57,7 +57,7 @@
 #include "rviz_common/view_controller.hpp"
 #include "rviz_rendering/render_window.hpp"
 
-#include "./focus_tool.hpp"
+#include "rviz_default_plugins/tools/focus/focus_tool.hpp"
 
 
 namespace rviz_default_plugins
