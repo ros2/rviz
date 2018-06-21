@@ -242,6 +242,7 @@ void Display::setStatusInternal(int level, const QString & name, const QString &
 
   if (!status_) {
     status_ = new rviz_common::properties::StatusList("Status");
+    status_->setReadOnly(true);
     addChild(status_, 0);
   }
   StatusProperty::Level old_level = status_->getLevel();

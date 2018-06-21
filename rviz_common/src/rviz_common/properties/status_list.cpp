@@ -57,6 +57,7 @@ void StatusList::setStatus(Level level, const QString & name, const QString & te
   StatusProperty * child;
   if (child_iter == status_children_.end()) {
     child = new StatusProperty(name, text, level, this);
+    child->setReadOnly(true);
     status_children_.insert(name, child);
   } else {
     child = child_iter.value();
