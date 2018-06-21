@@ -12,24 +12,24 @@ These features have already been ported from `ros-visualization/rviz` to `ros2/r
 The basic documentation can still be found on the rviz [wiki page](http://www.ros.org/wiki/rviz). 
 For some displays, the [documentation is updated](docs/FEATURES.md).
 
-| Displays     | Tools         | View Controller       | Panels          |
-| ------------ | ------------- | --------------------- | --------------- |
-| Camera       | Move Camera   | Orbit                 | Displays        |
-| Grid         | Focus Camera  | XY Orbit              | Help            |
-| Grid Cells   | Measure       | First Person          | Selections      |
-| Image        | Select        | Third Person Follower | Tool Properties |
-| Laser Scan   | 2D Nav Goal   | Top Down Orthographic | Views           |
-| Map          | Publish Point |                       |                 |
-| Marker       |
-| Marker Array |
-| Odometry     |
-| Point Cloud  |
-| Point        |
-| Polygon      |
-| Pose         |
-| Pose Array   |
-| Robot Model  |
-| TF           |
+| Displays               | Tools         | View Controller       | Panels          |
+| ---------------------- | ------------- | --------------------- | --------------- |
+| Camera                 | Move Camera   | Orbit                 | Displays        |
+| Grid                   | Focus Camera  | XY Orbit              | Help            |
+| Grid Cells             | Measure       | First Person          | Selections      |
+| Image                  | Select        | Third Person Follower | Tool Properties |
+| Laser Scan             | 2D Nav Goal   | Top Down Orthographic | Views           |
+| Map                    | Publish Point |                       |                 |
+| Marker                 |
+| Marker Array           |
+| Odometry               |
+| Point Cloud (1 and 2)  |
+| Point                  |
+| Polygon                |
+| Pose                   |
+| Pose Array             |
+| Robot Model            |
+| TF                     |
 
 ## Not yet ported
 These features have not been ported to `ros2/rviz` yet.
@@ -54,7 +54,7 @@ Other features:
 - Message filters
 - Image transport features
 
-If you would like to see those features in rviz for ROS 2, feel free to add a pull request.
+In case you wished to see those features in rviz for ROS 2, feel free to add a pull request.
 Make sure to read the developer guide below and the migration guide.
 
 ## New features
