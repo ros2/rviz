@@ -68,7 +68,6 @@
 #include "rviz_common/panel_dock_widget.hpp"
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/tool.hpp"
-#include "rviz_rendering/initialization.hpp"  // TODO(wjwwood): see if this is needed anymore
 #include "rviz_rendering/render_window.hpp"
 
 #include "./env_config.hpp"
