@@ -261,6 +261,16 @@
     </description>
   </class>
 
+  <class
+    name="rviz_default_plugins/SetInitialPose"
+    type="rviz_default_plugins::tools::InitialPoseTool"
+    base_class_type="rviz_common::Tool"
+  >
+    <description>
+      Publish an initial pose for the robot.  After one use, reverts to default tool.
+    </description>
+  </class>
+
   <!-- View Controller plugins -->
   <class
     name="rviz_default_plugins/FPS"

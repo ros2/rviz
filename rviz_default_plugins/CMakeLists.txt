@@ -106,6 +106,7 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/tools/measure/measure_tool.hpp
   include/rviz_default_plugins/tools/nav_goal/goal_tool.hpp
   include/rviz_default_plugins/tools/pose/pose_tool.hpp
+  include/rviz_default_plugins/tools/pose_estimate/initial_pose_tool.hpp
   include/rviz_default_plugins/tools/point/point_tool.hpp
   include/rviz_default_plugins/view_controllers/orbit/orbit_view_controller.hpp
   include/rviz_default_plugins/view_controllers/ortho/fixed_orientation_ortho_view_controller.hpp
@@ -171,6 +172,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/tools/move/move_tool.cpp
   src/rviz_default_plugins/tools/nav_goal/goal_tool.cpp
   src/rviz_default_plugins/tools/pose/pose_tool.cpp
+  src/rviz_default_plugins/tools/pose_estimate/initial_pose_tool.cpp
   src/rviz_default_plugins/tools/point/point_tool.cpp
   src/rviz_default_plugins/tools/select/selection_tool.cpp
   src/rviz_default_plugins/view_controllers/follower/third_person_follower_view_controller.cpp
