@@ -21,29 +21,28 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 endif()
 
-find_package(ament_cmake REQUIRED)
-
 # Qt5 boilerplate options from http://doc.qt.io/qt-5/cmake-manual.html
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
-find_package(pluginlib REQUIRED)
-find_package(resource_retriever REQUIRED)
+find_package(ament_cmake REQUIRED)
+
 find_package(rviz_common REQUIRED)
 find_package(rviz_rendering REQUIRED)
 find_package(rviz_ogre_vendor REQUIRED)
 find_package(rviz_visual_testing_framework REQUIRED)
-find_package(tinyxml_vendor REQUIRED)
-find_package(TinyXML REQUIRED)  # provided by tinyxml_vendor
-find_package(urdf REQUIRED)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets Test)
 
 find_package(geometry_msgs REQUIRED)
 find_package(laser_geometry REQUIRED)
-find_package(nav_msgs REQUIRED)
 find_package(map_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(resource_retriever REQUIRED)
+find_package(tinyxml_vendor REQUIRED)
+find_package(TinyXML REQUIRED)  # provided by tinyxml_vendor
 find_package(urdf REQUIRED)
 find_package(visualization_msgs REQUIRED)
 
@@ -164,9 +163,6 @@ add_library(rviz_default_plugins SHARED
   ${rviz_default_plugins_source_files}
 )
 
-# prevent pluginlib from using boost
-target_compile_definitions(rviz_default_plugins PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
-
 target_include_directories(rviz_default_plugins PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
@@ -183,16 +179,21 @@ target_include_directories(rviz_default_plugins PUBLIC
   ${visualization_msgs_INCLUDE_DIRS}
 )
 
-# Causes the visibility macros to use dllexport rather than dllimport,
-# which is appropriate when building the dll but not consuming it.
-target_compile_definitions(rviz_default_plugins PRIVATE "RVIZ_DEFAULT_PLUGINS_BUILDING_LIBRARY")
-
 target_link_libraries(rviz_default_plugins
   laser_geometry::laser_geometry
   resource_retriever::resource_retriever
   rviz_common::rviz_common
-  rviz_rendering::rviz_rendering
 )
+
+# Causes the visibility macros to use dllexport rather than dllimport,
+# which is appropriate when building the dll but not consuming it.
+target_compile_definitions(rviz_default_plugins PRIVATE "RVIZ_DEFAULT_PLUGINS_BUILDING_LIBRARY")
+
+# prevent pluginlib from using boost
+target_compile_definitions(rviz_default_plugins PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
+
+pluginlib_export_plugin_description_file(rviz_common plugins_description.xml)
+
 ament_target_dependencies(rviz_default_plugins
   geometry_msgs
   laser_geometry
@@ -204,15 +205,18 @@ ament_target_dependencies(rviz_default_plugins
   visualization_msgs
 )
 
-pluginlib_export_plugin_description_file(rviz_common plugins_description.xml)
-
+ament_export_include_directories(include)
 ament_export_interfaces(rviz_default_plugins)
-ament_export_dependencies(Qt5)
 ament_export_dependencies(
-  rviz_rendering
+  Qt5
   rviz_common
-  # geometry_msgs
+  geometry_msgs
+  laser_geometry
+  map_msgs
+  nav_msgs
   rclcpp
+  urdf
+  visualization_msgs
 )
 
 install(
@@ -263,25 +267,23 @@ if(BUILD_TESTING)
     find_package(visualization_msgs REQUIRED)
 
     set(TEST_INCLUDE_DIRS
-      ${urdf_INCLUDE_DIRS}
       ${OGRE_INCLUDE_DIRS}
-      ${rclcpp_INCLUDE_DIRS}
-      ${rclcpp_INCLUDE_DIRS}
       ${nav_msgs_INCLUDE_DIRS}
       ${map_msgs_INCLUDE_DIRS}
-      ${sensor_msgs_INCLUDE_DIRS}
-      ${visualization_msgs_INCLUDE_DIRS}
       ${Qt5Widgets_INCLUDE_DIRS}
+      ${rclcpp_INCLUDE_DIRS}
+      ${sensor_msgs_INCLUDE_DIRS}
+      ${urdf_INCLUDE_DIRS}
+      ${visualization_msgs_INCLUDE_DIRS}
     )
 
     set(TEST_LINK_LIBRARIES
       rviz_default_plugins
+      Qt5::Widgets
       ${rclcpp_LIBRARIES}
       ${nav_msgs_LIBRARIES}
       ${map_msgs_LIBRARIES}
       ${visualization_msgs_LIBRARIES}
-      Qt5::Widgets
-      rviz_common::rviz_common
     )
 
     ament_add_gmock(fps_view_controller_test
