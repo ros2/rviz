@@ -82,18 +82,13 @@ void InitialPoseTool::onPoseSet(double x, double y, double theta)
   pose.pose.pose.position.y = y;
   pose.pose.pose.position.z = 0.0;
 
-  // set quaternion from yaw only
-  pose.pose.pose.orientation.x = 0.0;
-  pose.pose.pose.orientation.y = 0.0;
-  pose.pose.pose.orientation.z = sin(theta) / (2 * cos(theta / 2));
-  pose.pose.pose.orientation.w = cos(theta / 2);
+  pose.pose.pose.orientation = orientationAroundZAxis(theta);
 
   pose.pose.covariance[6 * 0 + 0] = 0.5 * 0.5;
   pose.pose.covariance[6 * 1 + 1] = 0.5 * 0.5;
   pose.pose.covariance[6 * 5 + 5] = M_PI / 12.0 * M_PI / 12.0;
 
-  RVIZ_COMMON_LOG_INFO_STREAM("Setting pose: " << x << " " << y << " " << theta <<
-    "[frame=" << fixed_frame << "]");
+  logPose(pose.pose.pose.position, pose.pose.pose.orientation, theta, fixed_frame);
 
   publisher_->publish(pose);
 }

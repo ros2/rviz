@@ -81,16 +81,9 @@ void GoalTool::onPoseSet(double x, double y, double theta)
   goal.pose.position.y = y;
   goal.pose.position.z = 0.0;
 
-  // set quaternion from yaw only
-  goal.pose.orientation.x = 0.0;
-  goal.pose.orientation.y = 0.0;
-  goal.pose.orientation.z = sin(theta) / (2 * cos(theta / 2));
-  goal.pose.orientation.w = cos(theta / 2);
+  goal.pose.orientation = orientationAroundZAxis(theta);
 
-  RVIZ_COMMON_LOG_INFO_STREAM("Setting goal: Frame:" << fixed_frame << ", Position(" <<
-    goal.pose.position.x << ", " << goal.pose.position.y << ", " << goal.pose.position.z <<
-    "), Orientation(" << goal.pose.orientation.x << ", " << goal.pose.orientation.y << ", " <<
-    goal.pose.orientation.z << ", " << goal.pose.orientation.w << ") = Angle: " << theta);
+  logPose(goal.pose.position, goal.pose.orientation, theta, fixed_frame);
 
   publisher_->publish(goal);
 }

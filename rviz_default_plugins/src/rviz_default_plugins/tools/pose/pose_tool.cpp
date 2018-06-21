@@ -30,6 +30,7 @@
 #include "rviz_default_plugins/tools/pose/pose_tool.hpp"
 
 #include <memory>
+#include <string>
 #include <utility>
 
 #ifndef _WIN32
@@ -45,6 +46,7 @@
 #include <OgreRay.h>
 #include <OgreSceneNode.h>
 #include <OgreViewport.h>
+#include <geometry_msgs/msg/point.hpp>
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop
@@ -55,6 +57,7 @@
 #include "rviz_rendering/render_window.hpp"
 #include "rviz_rendering/geometry.hpp"
 #include "rviz_rendering/objects/arrow.hpp"
+#include "rviz_common/logging.hpp"
 #include "rviz_common/viewport_mouse_event.hpp"
 #include "rviz_common/render_panel.hpp"
 
@@ -161,6 +164,29 @@ int PoseTool::processMouseLeftButtonReleased()
 double PoseTool::calculateAngle(Ogre::Vector3 start_point, Ogre::Vector3 end_point)
 {
   return atan2(start_point.y - end_point.y, start_point.x - end_point.x);
+}
+
+geometry_msgs::msg::Quaternion PoseTool::orientationAroundZAxis(double angle)
+{
+  auto orientation = geometry_msgs::msg::Quaternion();
+  orientation.x = 0.0;
+  orientation.y = 0.0;
+  orientation.z = sin(angle) / (2 * cos(angle / 2));
+  orientation.w = cos(angle / 2);
+  return orientation;
+}
+
+void
+PoseTool::logPose(
+  geometry_msgs::msg::Point position,
+  geometry_msgs::msg::Quaternion orientation,
+  double angle,
+  std::string frame)
+{
+  RVIZ_COMMON_LOG_INFO_STREAM("Setting goal: Frame:" << frame << ", Position(" <<
+    position.x << ", " << position.y << ", " << position.z << "), Orientation(" <<
+    orientation.x << ", " << orientation.y << ", " << orientation.z << ", " << orientation.w <<
+    ") = Angle: " << angle);
 }
 
 }  // namespace tools
