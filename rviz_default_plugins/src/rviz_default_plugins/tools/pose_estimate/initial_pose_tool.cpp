@@ -33,11 +33,9 @@
 
 #include <string>
 
-#include "geometry_msgs/msg/pose_with_covariance_stamped.hpp"
-
 #include "rviz_common/display_context.hpp"
-#include "rviz_common/logging.hpp"
 #include "rviz_common/properties/string_property.hpp"
+#include "rviz_common/logging.hpp"
 
 namespace rviz_default_plugins
 {

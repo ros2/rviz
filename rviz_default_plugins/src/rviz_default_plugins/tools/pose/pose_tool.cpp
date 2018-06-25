@@ -46,7 +46,6 @@
 #include <OgreRay.h>
 #include <OgreSceneNode.h>
 #include <OgreViewport.h>
-#include <geometry_msgs/msg/point.hpp>
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop
@@ -54,12 +53,12 @@
 # pragma warning(pop)
 #endif
 
-#include "rviz_rendering/render_window.hpp"
 #include "rviz_rendering/geometry.hpp"
 #include "rviz_rendering/objects/arrow.hpp"
+#include "rviz_rendering/render_window.hpp"
 #include "rviz_common/logging.hpp"
-#include "rviz_common/viewport_mouse_event.hpp"
 #include "rviz_common/render_panel.hpp"
+#include "rviz_common/viewport_mouse_event.hpp"
 
 namespace rviz_default_plugins
 {
