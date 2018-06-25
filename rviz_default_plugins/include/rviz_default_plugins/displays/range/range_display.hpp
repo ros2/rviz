@@ -30,6 +30,9 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__RANGE__RANGE_DISPLAY_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__RANGE__RANGE_DISPLAY_HPP_
 
+#include <memory>
+#include <vector>
+
 #include "sensor_msgs/msg/range.hpp"
 
 #include "rviz_common/ros_topic_display.hpp"
@@ -61,23 +64,26 @@ namespace displays
  * \class RangeDisplay
  * \brief Displays a sensor_msgs::Range message as a cone.
  */
-class RVIZ_DEFAULT_PLUGINS_PUBLIC RangeDisplay: public
+class RVIZ_DEFAULT_PLUGINS_PUBLIC RangeDisplay : public
   rviz_common::RosTopicDisplay<sensor_msgs::msg::Range>
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
+  // TODO(botteroa-si): Constructor for testing. Remove once ros nodes can be mocked and
+  // initialize() can be called
+  explicit RangeDisplay(rviz_common::DisplayContext * display_context);
+
   RangeDisplay();
+
   virtual ~RangeDisplay();
 
-  /** @brief Overridden from Display. */
   virtual void reset();
 
-protected:
-  /** @brief Overridden from Display. */
-  virtual void onInitialize();
-
-  /** @brief Overridden from MessageFilterDisplay. */
   virtual void processMessage(const sensor_msgs::msg::Range::ConstSharedPtr msg);
+
+protected:
+  virtual void onInitialize();
 
 private Q_SLOTS:
   void updateBufferLength();
@@ -96,4 +102,3 @@ private:
 }  // namespace rviz_default_plugins
 
 #endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__RANGE__RANGE_DISPLAY_HPP_
-

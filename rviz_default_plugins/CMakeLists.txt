@@ -515,6 +515,16 @@ if(BUILD_TESTING)
     target_link_libraries(pose_tool_test ${TEST_LINK_LIBRARIES})
   endif()
 
+  ament_add_gmock(range_display_test
+    test/rviz_default_plugins/displays/range/range_display_test.cpp
+    test/rviz_default_plugins/displays/display_test_fixture.cpp
+    test/rviz_default_plugins/scene_graph_introspection_helper.cpp
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET range_display_test)
+    target_include_directories(range_display_test PUBLIC ${TEST_INCLUDE_DIRS})
+    target_link_libraries(range_display_test ${TEST_LINK_LIBRARIES})
+  endif()
+
   ament_add_gmock(robot_test
     test/rviz_default_plugins/robot/robot_test.cpp
     ${SKIP_DISPLAY_TESTS})
