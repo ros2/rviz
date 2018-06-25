@@ -27,45 +27,52 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <OgreSceneNode.h>
+#include "rviz_default_plugins/displays/range/range_display.hpp"
+
+#include <limits>
+
 #include <OgreSceneManager.h>
+#include <OgreSceneNode.h>
 
-#include "rviz/display_context.h"
-#include "rviz/frame_manager.h"
-#include "rviz/ogre_helpers/shape.h"
-#include "rviz/properties/color_property.h"
-#include "rviz/properties/float_property.h"
-#include "rviz/properties/int_property.h"
-#include "rviz/properties/parse_color.h"
+#include "rviz_common/display_context.hpp"
+#include "rviz_common/frame_manager_iface.hpp"
+#include "rviz_rendering/objects/shape.hpp"
+#include "rviz_common/properties/color_property.hpp"
+#include "rviz_common/properties/float_property.hpp"
+#include "rviz_common/properties/int_property.hpp"
+#include "rviz_common/properties/parse_color.hpp"
+# include "rviz_common/properties/queue_size_property.hpp"
 
-#include "range_display.h"
- #include <limits>
 
-namespace rviz
+
+namespace rviz_default_plugins
 {
+namespace displays
+{
+
 RangeDisplay::RangeDisplay()
+: queue_size_property_(std::make_unique<rviz_common::QueueSizeProperty>(this, 100))
 {
-  color_property_ = new ColorProperty( "Color", Qt::white,
-                                       "Color to draw the range.",
-                                       this, SLOT( updateColorAndAlpha() ));
+  color_property_ = new rviz_common::properties::ColorProperty(
+    "Color", Qt::white,
+    "Color to draw the range.",
+    this, SLOT( updateColorAndAlpha()));
 
-  alpha_property_ = new FloatProperty( "Alpha", 0.5,
-                                       "Amount of transparency to apply to the range.",
-                                       this, SLOT( updateColorAndAlpha() ));
+  alpha_property_ = new rviz_common::properties::FloatProperty(
+    "Alpha", 0.5,
+    "Amount of transparency to apply to the range.",
+    this, SLOT( updateColorAndAlpha()));
 
-  buffer_length_property_ = new IntProperty( "Buffer Length", 1,
-                                             "Number of prior measurements to display.",
-                                             this, SLOT( updateBufferLength() ));
-  buffer_length_property_->setMin( 1 );
-
-  queue_size_property_ = new IntProperty( "Queue Size", 100,
-                                          "Size of the tf message filter queue. It usually needs to be set at least as high as the number of sonar frames.",
-                                          this, SLOT( updateQueueSize() ));
+  buffer_length_property_ = new rviz_common::properties::IntProperty(
+    "Buffer Length", 1,
+    "Number of prior measurements to display.",
+    this, SLOT( updateBufferLength()));
+  buffer_length_property_->setMin(1);
 }
 
 void RangeDisplay::onInitialize()
 {
-  MFDClass::onInitialize();
+  RTDClass::onInitialize();
   updateBufferLength();
   updateColorAndAlpha();
 }
@@ -80,13 +87,8 @@ RangeDisplay::~RangeDisplay()
 
 void RangeDisplay::reset()
 {
-  MFDClass::reset();
+  RTDClass::reset();
   updateBufferLength();
-}
-
-void RangeDisplay::updateQueueSize()
-{
-  tf_filter_->setQueueSize( (uint32_t) queue_size_property_->getInt() );
 }
 
 void RangeDisplay::updateColorAndAlpha()
@@ -112,12 +114,13 @@ void RangeDisplay::updateBufferLength()
   cones_.resize( buffer_length );
   for( size_t i = 0; i < cones_.size(); i++ )
   {
-    Shape* cone = new Shape( Shape::Cone, context_->getSceneManager(), scene_node_ );
+    rviz_rendering::Shape * cone = new rviz_rendering::Shape(
+      rviz_rendering::Shape::Cone, context_->getSceneManager(), scene_node_ );
     cones_[ i ] = cone;    
 
     Ogre::Vector3 position;
     Ogre::Quaternion orientation;
-    geometry_msgs::Pose pose;
+    geometry_msgs::msg::Pose pose;
     pose.orientation.w = 1;
     Ogre::Vector3 scale( 0, 0, 0 );
     cone->setScale( scale );
@@ -125,30 +128,32 @@ void RangeDisplay::updateBufferLength()
   }
 }
 
-void RangeDisplay::processMessage( const sensor_msgs::Range::ConstPtr& msg )
+void RangeDisplay::processMessage(const sensor_msgs::msg::Range::ConstSharedPtr msg)
 {
-  Shape* cone = cones_[ messages_received_ % buffer_length_property_->getInt() ];
+  rviz_rendering::Shape * cone = cones_[messages_received_ % buffer_length_property_->getInt()];
 
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
-  geometry_msgs::Pose pose;
+  geometry_msgs::msg::Pose pose;
   float displayed_range = 0.0;
   if(msg->min_range <= msg->range && msg->range <= msg->max_range){
     displayed_range = msg->range;
   } else if(msg->min_range == msg->max_range){ // Fixed distance ranger
-    if(msg->range < 0 && !std::isfinite(msg->range)){ // NaNs and +Inf return false here: both of those should have 0.0 as the range
+    // NaNs and +Inf return false here: both of those should have 0.0 as the range
+    if(msg->range < 0 && !std::isfinite(msg->range)){
       displayed_range = msg->min_range; // -Inf, display the detectable range
     }
   }
-  
-  pose.position.x = displayed_range/2 - .008824 * displayed_range; // .008824 fudge factor measured, must be inaccuracy of cone model.
+  // .008824 fudge factor measured, must be inaccuracy of cone model.
+  pose.position.x = displayed_range/2 - .008824 * displayed_range;
   pose.orientation.z = 0.707;
   pose.orientation.w = 0.707;
-  if( !context_->getFrameManager()->transform( msg->header.frame_id, msg->header.stamp, pose, position, orientation ))
+  if( !context_->getFrameManager()->transform(
+    msg->header.frame_id, msg->header.stamp, pose, position, orientation ))
   {
-    ROS_DEBUG( "Error transforming from frame '%s' to frame '%s'",
-               msg->header.frame_id.c_str(), qPrintable( fixed_frame_ ));
+    setMissingTransformToFixedFrame(msg->header.frame_id);
   }
+  setTransformOk();
 
   cone->setPosition( position );
   cone->setOrientation( orientation );
@@ -161,7 +166,8 @@ void RangeDisplay::processMessage( const sensor_msgs::Range::ConstPtr& msg )
   cone->setColor( color.redF(), color.greenF(), color.blueF(), alpha_property_->getFloat() );
 }
 
-} // namespace rviz
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#include <pluginlib/class_list_macros.h>
-PLUGINLIB_EXPORT_CLASS( rviz::RangeDisplay, rviz::Display )
+#include <pluginlib/class_list_macros.hpp>
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::RangeDisplay, rviz_common::Display)

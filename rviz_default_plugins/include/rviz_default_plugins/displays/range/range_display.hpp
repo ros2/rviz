@@ -27,30 +27,42 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RANGE_DISPLAY_H
-#define RANGE_DISPLAY_H
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__RANGE__RANGE_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__RANGE__RANGE_DISPLAY_HPP_
 
-#include <sensor_msgs/Range.h>
+#include "sensor_msgs/msg/range.hpp"
 
-#include "rviz/message_filter_display.h"
+#include "rviz_common/ros_topic_display.hpp"
+#include "rviz_default_plugins/visibility_control.hpp"
 
-namespace rviz
+namespace rviz_rendering
 {
 class Shape;
-}
+}  // namespace rviz_rendering
 
-namespace rviz
+namespace rviz_common
 {
-
+class QueueSizeProperty;
+namespace properties
+{
 class ColorProperty;
 class FloatProperty;
 class IntProperty;
+}  // namespace properties
+}  // namespace rviz_common
+
+
+namespace rviz_default_plugins
+{
+namespace displays
+{
 
 /**
  * \class RangeDisplay
  * \brief Displays a sensor_msgs::Range message as a cone.
  */
-class RangeDisplay: public MessageFilterDisplay<sensor_msgs::Range>
+class RVIZ_DEFAULT_PLUGINS_PUBLIC RangeDisplay: public
+  rviz_common::RosTopicDisplay<sensor_msgs::msg::Range>
 {
 Q_OBJECT
 public:
@@ -65,23 +77,23 @@ protected:
   virtual void onInitialize();
 
   /** @brief Overridden from MessageFilterDisplay. */
-  virtual void processMessage( const sensor_msgs::Range::ConstPtr& msg );
+  virtual void processMessage(const sensor_msgs::msg::Range::ConstSharedPtr msg);
 
 private Q_SLOTS:
   void updateBufferLength();
   void updateColorAndAlpha();
-  void updateQueueSize();
 
 private:
-  std::vector<Shape* > cones_;      ///< Handles actually drawing the cones
+  std::vector<rviz_rendering::Shape *> cones_;      ///< Handles actually drawing the cones
 
-  ColorProperty* color_property_;
-  FloatProperty* alpha_property_;
-  IntProperty* buffer_length_property_;
-  IntProperty* queue_size_property_;
+  rviz_common::properties::ColorProperty * color_property_;
+  rviz_common::properties::FloatProperty * alpha_property_;
+  rviz_common::properties::IntProperty * buffer_length_property_;
+  std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
 };
 
-} // namespace range_plugin
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif /* RANGE_DISPLAY_H */
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__RANGE__RANGE_DISPLAY_HPP_
 
