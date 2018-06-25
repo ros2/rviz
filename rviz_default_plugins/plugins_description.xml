@@ -110,7 +110,17 @@
     </description>
     <message_type>geometry_msgs/PoseStamped</message_type>
   </class>
-  
+
+  <class
+    name="rviz_default_plugins/Range"
+    type="rviz_default_plugins::displays::RangeDisplay"
+    base_class_type="rviz_common::Display">
+    <description>
+      Displays the data from sensor_msgs::Range messages as cones. &lt;a href="http://www.ros.org/wiki/rviz/DisplayTypes/Range"&gt;More Information&lt;/a&gt;
+    </description>
+    <message_type>sensor_msgs/Range</message_type>
+  </class>
+
   <class
     name="rviz_default_plugins/RobotModel"
     type="rviz_default_plugins::displays::RobotModelDisplay"
