@@ -32,11 +32,6 @@
 #include <limits>
 #include <memory>
 
-#include <OgreSceneManager.h>
-#include <OgreSceneNode.h>
-
-#include "rviz_common/display_context.hpp"
-#include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_rendering/objects/shape.hpp"
 #include "rviz_common/properties/color_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
@@ -68,7 +63,7 @@ RangeDisplay::RangeDisplay()
     this, SLOT(updateColorAndAlpha()));
 
   alpha_property_ = new rviz_common::properties::FloatProperty(
-    "Alpha", 0.5,
+    "Alpha", 0.5f,
     "Amount of transparency to apply to the range.",
     this, SLOT(updateColorAndAlpha()));
 
@@ -86,12 +81,7 @@ void RangeDisplay::onInitialize()
   updateColorAndAlpha();
 }
 
-RangeDisplay::~RangeDisplay()
-{
-  for (size_t i = 0; i < cones_.size(); i++) {
-    delete cones_[i];
-  }
-}
+RangeDisplay::~RangeDisplay() = default;
 
 void RangeDisplay::reset()
 {
@@ -101,59 +91,38 @@ void RangeDisplay::reset()
 
 void RangeDisplay::updateColorAndAlpha()
 {
-  Ogre::ColourValue oc = color_property_->getOgreColor();
-  float alpha = alpha_property_->getFloat();
-  for (size_t i = 0; i < cones_.size(); i++) {
-    cones_[i]->setColor(oc.r, oc.g, oc.b, alpha);
+  auto color = color_property_->getOgreColor();
+  auto alpha = alpha_property_->getFloat();
+  for (const auto & cone : cones_) {
+    cone->setColor(color.r, color.g, color.b, alpha);
   }
   context_->queueRender();
 }
 
 void RangeDisplay::updateBufferLength()
 {
-  int buffer_length = buffer_length_property_->getInt();
-  QColor color = color_property_->getColor();
-
-  for (size_t i = 0; i < cones_.size(); i++) {
-    delete cones_[i];
-  }
+  auto buffer_length = buffer_length_property_->getInt();
+  auto color = color_property_->getOgreColor();
   cones_.resize(buffer_length);
-  for (size_t i = 0; i < cones_.size(); i++) {
-    rviz_rendering::Shape * cone = new rviz_rendering::Shape(
-      rviz_rendering::Shape::Cone, context_->getSceneManager(), scene_node_);
-    cones_[i] = cone;
 
-    Ogre::Vector3 position;
-    Ogre::Quaternion orientation;
-    geometry_msgs::msg::Pose pose;
-    pose.orientation.w = 1;
-    Ogre::Vector3 scale(0, 0, 0);
-    cone->setScale(scale);
-    cone->setColor(color.redF(), color.greenF(), color.blueF(), 0);
+  for (auto & cone : cones_) {
+    cone.reset(new rviz_rendering::Shape(
+        rviz_rendering::Shape::Cone, context_->getSceneManager(), scene_node_));
+
+    cone->setScale(Ogre::Vector3(0, 0, 0));
+    cone->setColor(color.r, color.g, color.b, 0);
   }
 }
 
 void RangeDisplay::processMessage(const sensor_msgs::msg::Range::ConstSharedPtr msg)
 {
-  rviz_rendering::Shape * cone = cones_[messages_received_ % buffer_length_property_->getInt()];
+  auto cone = cones_[messages_received_ % buffer_length_property_->getInt()];
 
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
-  geometry_msgs::msg::Pose pose;
-  float displayed_range = 0.0;
+  auto displayed_range = getDisplayedRange(msg);
+  auto pose = getPose(displayed_range);
 
-  if (msg->min_range <= msg->range && msg->range <= msg->max_range) {
-    displayed_range = msg->range;
-  } else if (msg->min_range == msg->max_range) {  // Fixed distance ranger
-    // NaNs and +Inf return false here: both of those should have 0.0 as the range
-    if (msg->range < 0 && !std::isfinite(msg->range)) {
-      displayed_range = msg->min_range;  // -Inf, display the detectable range
-    }
-  }
-  // .008824 fudge factor measured, must be inaccuracy of cone model.
-  pose.position.x = displayed_range / 2 - .008824 * displayed_range;
-  pose.orientation.z = 0.707;
-  pose.orientation.w = 0.707;
   if (!context_->getFrameManager()->transform(
       msg->header.frame_id, msg->header.stamp, pose, position, orientation))
   {
@@ -165,12 +134,37 @@ void RangeDisplay::processMessage(const sensor_msgs::msg::Range::ConstSharedPtr 
   cone->setPosition(position);
   cone->setOrientation(orientation);
 
-  double cone_width = 2.0 * displayed_range * tan(msg->field_of_view / 2.0);
+  auto cone_width = 2.0f * displayed_range * tan(msg->field_of_view / 2.0f);
   Ogre::Vector3 scale(cone_width, displayed_range, cone_width);
   cone->setScale(scale);
 
-  QColor color = color_property_->getColor();
-  cone->setColor(color.redF(), color.greenF(), color.blueF(), alpha_property_->getFloat() );
+  auto color = color_property_->getOgreColor();
+  cone->setColor(color.r, color.g, color.b, alpha_property_->getFloat());
+}
+
+float RangeDisplay::getDisplayedRange(sensor_msgs::msg::Range::ConstSharedPtr msg)
+{
+  float displayed_range = 0.0f;
+  if (msg->min_range <= msg->range && msg->range <= msg->max_range) {
+    displayed_range = msg->range;
+  } else if (msg->min_range == msg->max_range) {  // Fixed distance ranger
+    // NaNs and +Inf return false here: both of those should have 0.0 as the range
+    if (msg->range < 0 && !std::isfinite(msg->range)) {
+      displayed_range = msg->min_range;  // -Inf, display the detectable range
+    }
+  }
+  return displayed_range;
+}
+
+geometry_msgs::msg::Pose RangeDisplay::getPose(float displayed_range)
+{
+  geometry_msgs::msg::Pose pose;
+  // .008824 fudge factor measured, must be inaccuracy of cone model.
+  pose.position.x = displayed_range / 2 - 0.008824f * displayed_range;
+  pose.orientation.z = 0.707f;
+  pose.orientation.w = 0.707f;
+
+  return pose;
 }
 
 }  // namespace displays

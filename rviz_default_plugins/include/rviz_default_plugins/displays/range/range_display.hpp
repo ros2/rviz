@@ -59,7 +59,6 @@ namespace rviz_default_plugins
 {
 namespace displays
 {
-
 /**
  * \class RangeDisplay
  * \brief Displays a sensor_msgs::Range message as a cone.
@@ -76,21 +75,24 @@ public:
 
   RangeDisplay();
 
-  virtual ~RangeDisplay();
+  ~RangeDisplay() override;
 
-  virtual void reset();
+  void reset() override;
 
-  virtual void processMessage(const sensor_msgs::msg::Range::ConstSharedPtr msg);
+  void processMessage(sensor_msgs::msg::Range::ConstSharedPtr msg) override;
 
 protected:
-  virtual void onInitialize();
+  void onInitialize() override;
 
 private Q_SLOTS:
   void updateBufferLength();
   void updateColorAndAlpha();
 
 private:
-  std::vector<rviz_rendering::Shape *> cones_;      ///< Handles actually drawing the cones
+  float getDisplayedRange(sensor_msgs::msg::Range::ConstSharedPtr msg);
+  geometry_msgs::msg::Pose getPose(float displayed_range);
+
+  std::vector<std::shared_ptr<rviz_rendering::Shape>> cones_;
 
   rviz_common::properties::ColorProperty * color_property_;
   rviz_common::properties::FloatProperty * alpha_property_;
