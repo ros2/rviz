@@ -92,7 +92,7 @@ void RangeDisplay::reset()
 void RangeDisplay::updateColorAndAlpha()
 {
   auto color = color_property_->getOgreColor();
-  auto alpha = alpha_property_->getFloat();
+  float alpha = alpha_property_->getFloat();
   for (const auto & cone : cones_) {
     cone->setColor(color.r, color.g, color.b, alpha);
   }
@@ -101,7 +101,7 @@ void RangeDisplay::updateColorAndAlpha()
 
 void RangeDisplay::updateBufferLength()
 {
-  auto buffer_length = buffer_length_property_->getInt();
+  int buffer_length = buffer_length_property_->getInt();
   auto color = color_property_->getOgreColor();
   cones_.resize(buffer_length);
 
@@ -120,7 +120,7 @@ void RangeDisplay::processMessage(const sensor_msgs::msg::Range::ConstSharedPtr 
 
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
-  auto displayed_range = getDisplayedRange(msg);
+  float displayed_range = getDisplayedRange(msg);
   auto pose = getPose(displayed_range);
 
   if (!context_->getFrameManager()->transform(
@@ -134,7 +134,7 @@ void RangeDisplay::processMessage(const sensor_msgs::msg::Range::ConstSharedPtr 
   cone->setPosition(position);
   cone->setOrientation(orientation);
 
-  auto cone_width = 2.0f * displayed_range * tan(msg->field_of_view / 2.0f);
+  float cone_width = 2.0f * displayed_range * tan(msg->field_of_view / 2.0f);
   Ogre::Vector3 scale(cone_width, displayed_range, cone_width);
   cone->setScale(scale);
 
@@ -158,9 +158,10 @@ float RangeDisplay::getDisplayedRange(sensor_msgs::msg::Range::ConstSharedPtr ms
 
 geometry_msgs::msg::Pose RangeDisplay::getPose(float displayed_range)
 {
+  float fudge_factor = 0.008824f;  // fudge factor measured, must be inaccuracy of cone model.
   geometry_msgs::msg::Pose pose;
-  // .008824 fudge factor measured, must be inaccuracy of cone model.
-  pose.position.x = displayed_range / 2 - 0.008824f * displayed_range;
+
+  pose.position.x = displayed_range / 2 - fudge_factor * displayed_range;
   pose.orientation.z = 0.707f;
   pose.orientation.w = 0.707f;
 
