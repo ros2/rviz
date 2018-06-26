@@ -794,6 +794,20 @@ if(BUILD_TESTING)
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
 
+  ament_add_gtest(range_display_visual_test
+    test/rviz_default_plugins/displays/range/range_display_visual_test.cpp
+    test/rviz_default_plugins/page_objects/range_display_page_object.cpp
+    ${SKIP_VISUAL_TESTS}
+    TIMEOUT 180)
+  if(TARGET range_display_visual_test)
+    target_include_directories(range_display_visual_test PUBLIC
+      ${TEST_INCLUDE_DIRS}
+      ${rviz_visual_testing_framework_INCLUDE_DIRS})
+    target_link_libraries(range_display_visual_test
+      ${TEST_LINK_LIBRARIES}
+      rviz_visual_testing_framework::rviz_visual_testing_framework)
+  endif()
+
   ament_add_gtest(robot_model_display_visual_test
     test/rviz_default_plugins/displays/robot_model/robot_model_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/robot_model_display_page_object.cpp
