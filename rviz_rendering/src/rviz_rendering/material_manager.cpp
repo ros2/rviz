@@ -89,6 +89,14 @@ Ogre::MaterialPtr MaterialManager::createMaterialWithShadowsAndLighting(std::str
   return material;
 }
 
+Ogre::MaterialPtr MaterialManager::createMaterialWithShadowsAndNoLighting(std::string name)
+{
+  Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().create(name, "rviz_rendering");
+  material->getTechnique(0)->setLightingEnabled(false);
+
+  return material;
+}
+
 void MaterialManager::enableAlphaBlending(Ogre::MaterialPtr material, float alpha)
 {
   if (alpha < unit_alpha_threshold) {

@@ -40,6 +40,7 @@
 #include <OgreTechnique.h>
 
 #include "rviz_rendering/mesh_loader.hpp"
+#include "rviz_rendering/material_manager.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/logging.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
@@ -141,9 +142,7 @@ void TriangleListMarker::initializeManualObject(
 
   ss << "Material";
   material_name_ = ss.str();
-  material_ = Ogre::MaterialManager::getSingleton().create(material_name_, "rviz_rendering");
-  material_->setReceiveShadows(false);
-  material_->getTechnique(0)->setLightingEnabled(true);
+  material_ = rviz_rendering::MaterialManager::createMaterialWithLighting(material_name_);
   material_->setCullingMode(Ogre::CULL_NONE);
   handler_ = rviz_common::interaction::createSelectionHandler<MarkerSelectionHandler>(
     this, MarkerID(new_message->ns, new_message->id), context_);
@@ -202,13 +201,15 @@ bool TriangleListMarker::fillManualObjectAndDetermineAlpha(
       manual_object_->position(corners[c]);
       manual_object_->normal(normal);
       if (hasVertexColors(new_message)) {
-        any_vertex_has_alpha = any_vertex_has_alpha || (new_message->colors[i + c].a < 0.9998);
+        any_vertex_has_alpha = any_vertex_has_alpha ||
+          (new_message->colors[i + c].a < rviz_rendering::unit_alpha_threshold);
         manual_object_->colour(new_message->colors[i + c].r,
           new_message->colors[i + c].g,
           new_message->colors[i + c].b,
           new_message->color.a * new_message->colors[i + c].a);
       } else if (hasFaceColors(new_message)) {
-        any_vertex_has_alpha = any_vertex_has_alpha || (new_message->colors[i / 3].a < 0.9998);
+        any_vertex_has_alpha = any_vertex_has_alpha ||
+          (new_message->colors[i / 3].a < rviz_rendering::unit_alpha_threshold);
         manual_object_->colour(new_message->colors[i / 3].r,
           new_message->colors[i / 3].g,
           new_message->colors[i / 3].b,
@@ -236,7 +237,8 @@ void TriangleListMarker::updateMaterial(
     material_->getTechnique(0)->setDiffuse(r, g, b, a);
   }
 
-  if ( (!hasVertexColors(new_message) && new_message->color.a < 0.9998) ||
+  if ((!hasVertexColors(new_message) &&
+    new_message->color.a < rviz_rendering::unit_alpha_threshold) ||
     (hasVertexColors(new_message) && any_vertex_has_alpha))
   {
     material_->getTechnique(0)->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);

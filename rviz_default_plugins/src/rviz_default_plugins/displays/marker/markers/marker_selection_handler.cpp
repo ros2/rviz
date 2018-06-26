@@ -33,6 +33,7 @@
 #include <OgreQuaternion.h>
 #include <OgreVector3.h>
 
+#include "rviz_common/msg_conversions.hpp"
 #include "rviz_default_plugins/displays/marker/marker_display.hpp"
 #include "rviz_default_plugins/displays/marker/markers/marker_base.hpp"
 #include "rviz_common/properties/property.hpp"
@@ -60,17 +61,12 @@ MarkerSelectionHandler::~MarkerSelectionHandler()
 
 Ogre::Vector3 MarkerSelectionHandler::getPosition()
 {
-  return Ogre::Vector3(marker_->getMessage()->pose.position.x,
-           marker_->getMessage()->pose.position.y,
-           marker_->getMessage()->pose.position.z);
+  return rviz_common::pointMsgToOgre(marker_->getMessage()->pose.position);
 }
 
 Ogre::Quaternion MarkerSelectionHandler::getOrientation()
 {
-  return Ogre::Quaternion(marker_->getMessage()->pose.orientation.w,
-           marker_->getMessage()->pose.orientation.x,
-           marker_->getMessage()->pose.orientation.y,
-           marker_->getMessage()->pose.orientation.z);
+  return rviz_common::quaternionMsgToOgre(marker_->getMessage()->pose.orientation);
 }
 
 void MarkerSelectionHandler::createProperties(

@@ -42,6 +42,7 @@
 #include "rviz_rendering/objects/shape.hpp"
 
 #include "rviz_common/display_context.hpp"
+#include "rviz_common/msg_conversions.hpp"
 #include "rviz_common/properties/color_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/int_property.hpp"
@@ -151,7 +152,7 @@ void PointStampedDisplay::createNewSphereVisual(
   float radius = radius_property_->getFloat();
   Ogre::ColourValue color = color_property_->getOgreColor();
   visual->setColor(color.r, color.g, color.b, alpha);
-  visual->setPosition(Ogre::Vector3(msg->point.x, msg->point.y, msg->point.z));
+  visual->setPosition(rviz_common::pointMsgToOgre(msg->point));
   visual->setScale(Ogre::Vector3(radius, radius, radius));
 
   visuals_.push_back(visual);

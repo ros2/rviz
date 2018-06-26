@@ -51,6 +51,7 @@
 #include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_rendering/custom_parameter_indices.hpp"
+#include "rviz_rendering/material_manager.hpp"
 #include "rviz_rendering/render_window.hpp"
 
 #include "rviz_common/display_context.hpp"
@@ -146,7 +147,7 @@ void SelectionManager::initialize()
 
   Ogre::TexturePtr tex = Ogre::TextureManager::getSingleton().loadRawData(
     name + "Texture",
-    Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+    "rviz_rendering",
     pixel_stream,
     1,
     1,
@@ -155,10 +156,8 @@ void SelectionManager::initialize()
     0
     );
 
-  Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().create(
-    name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-  material->setLightingEnabled(false);
-  // material->getTechnique(0)->getPass(0)->setPolygonMode(Ogre::PM_WIREFRAME);
+  Ogre::MaterialPtr material =
+    rviz_rendering::MaterialManager::createMaterialWithShadowsAndNoLighting(name);
   highlight_rectangle_->setMaterial(material);
   Ogre::AxisAlignedBox aabInf;
   aabInf.setInfinite();
