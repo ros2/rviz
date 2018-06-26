@@ -28,6 +28,7 @@ For some displays, the [documentation is updated](docs/FEATURES.md).
 | Polygon               |
 | Pose                  |
 | Pose Array            |
+| Range                 |
 | Robot Model           |
 | TF                    |
 
@@ -44,7 +45,6 @@ These features have not been ported to `ros2/rviz` yet.
 | Interactive Marker   |
 | Oculus               |
 | Pose With Covariance |
-| Range                |
 | Relative Humidity    |
 | Temperature          |
 | Wrench               |
