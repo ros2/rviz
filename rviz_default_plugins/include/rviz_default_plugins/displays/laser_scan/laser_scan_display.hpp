@@ -69,6 +69,8 @@ public:
   void reset() override;
   void update(float wall_dt, float ros_dt) override;
 
+  void onDisable() override;
+
 protected:
   /** @brief Do initialization. Overridden from MessageFilterDisplay. */
   void onInitialize() override;

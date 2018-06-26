@@ -87,6 +87,7 @@ public:
 protected:
   /** @brief Overridden from RosTopicDisplay to get arrow/axes visibility correct. */
   void onEnable() override;
+  void onDisable() override;
 
 private Q_SLOTS:
   void updateShapeVisibility();
@@ -97,6 +98,7 @@ private Q_SLOTS:
 
 private:
   void processMessage(geometry_msgs::msg::PoseStamped::ConstSharedPtr message) override;
+  void setupSelectionHandler();
 
   std::unique_ptr<rviz_rendering::Arrow> arrow_;
   std::unique_ptr<rviz_rendering::Axes> axes_;

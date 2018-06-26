@@ -73,6 +73,7 @@ void PointsMarker::onNewMessage(
       this, MarkerID(new_message->ns, new_message->id), context_);
     points_->setPickColor(
       rviz_common::interaction::SelectionManager::handleToColor(handler_->getHandle()));
+    handler_->addTrackedObject(points_);
   }
 
   Ogre::Vector3 pose, scale;

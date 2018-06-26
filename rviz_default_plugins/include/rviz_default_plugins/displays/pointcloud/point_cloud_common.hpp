@@ -149,6 +149,8 @@ public:
 
   rviz_common::Display * getDisplay() {return display_;}
 
+  void onDisable();
+
   bool auto_size_;
 
   rviz_common::properties::BoolProperty * selectable_property_;

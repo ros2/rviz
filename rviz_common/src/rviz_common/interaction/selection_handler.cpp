@@ -83,6 +83,10 @@ SelectionHandler::~SelectionHandler()
   if (context_->getHandlerManager()) {
     context_->getHandlerManager()->removeHandler(pick_handle_);
   }
+  for (int i = 0; i < properties_.size(); i++) {
+    delete properties_.at(i);
+  }
+  properties_.clear();
 }
 
 void SelectionHandler::registerHandle()

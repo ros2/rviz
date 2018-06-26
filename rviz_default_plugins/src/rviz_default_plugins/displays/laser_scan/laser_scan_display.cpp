@@ -98,6 +98,12 @@ void LaserScanDisplay::reset()
   point_cloud_common_->reset();
 }
 
+void LaserScanDisplay::onDisable()
+{
+  RosTopicDisplay::onDisable();
+  point_cloud_common_->onDisable();
+}
+
 }  // namespace displays
 }  // namespace rviz_default_plugins
 
