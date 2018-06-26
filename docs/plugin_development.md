@@ -9,11 +9,11 @@ This is intended as a guide for people wishing to develop custom plugins.
 
 Plugins can extend RViz at different extension points:
 
-| plugin type | base type |
-| ----------- | --------- |
-| Display     | `rviz_common::Display` |
-| Panel       | `rviz_common::Panel`   |
-| Tool        | `rviz_common::Tool`    |
+| plugin type     | base type                     |
+| --------------- | ----------------------------- |
+| Display         | `rviz_common::Display`        |
+| Panel           | `rviz_common::Panel`          |
+| Tool            | `rviz_common::Tool`           |
 | View Controller | `rviz_common::ViewController` |
 
 Every plugin must be of the corresponding base type in order to be recognized by RViz.
