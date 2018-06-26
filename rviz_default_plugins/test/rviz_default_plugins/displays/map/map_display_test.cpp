@@ -188,7 +188,7 @@ TEST_F(MapTestFixture, showMap_does_not_display_anything_if_transform_fails) {
   EXPECT_FALSE(manual_objects[0]->isVisible());
 }
 
-TEST_F(MapTestFixture, reset_makes_map_invisible) {
+TEST_F(MapTestFixture, reset_deletes_map) {
   mockValidTransform();
   Ogre::Vector3 position(1, 0, 0);
   Ogre::Quaternion orientation(0.5f, 0.5f, 0, 0);
@@ -200,8 +200,7 @@ TEST_F(MapTestFixture, reset_makes_map_invisible) {
   auto manual_objects = rviz_rendering::findAllOgreObjectByType<Ogre::ManualObject>(
     scene_manager_->getRootSceneNode(), "ManualObject");
 
-  ASSERT_THAT(manual_objects, SizeIs(1));
-  EXPECT_FALSE(manual_objects[0]->isVisible());
+  ASSERT_THAT(manual_objects, SizeIs(0));
 }
 
 TEST_F(MapTestFixture, createSwatches_creates_more_swatches_if_map_is_too_big) {
