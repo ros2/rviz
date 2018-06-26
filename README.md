@@ -3,13 +3,13 @@
 This branch is currently contained in the main `ros2.repos` file of ROS 2 and can be used for ROS 2.
 The latest release will be available with your ROS 2 download.
 
-ROS 2 does not have a wiki yet. To learn about RViz and its functionality, please refer to the ROS RViz [wiki page](http://www.ros.org/wiki/rviz). 
+ROS 2 does not have a wiki yet. To learn about RViz and its functionality, please refer to the ROS RViz [wiki page](http://www.ros.org/wiki/rviz).
 
 ## Features
 
 ### Already ported
 These features have already been ported from `ros-visualization/rviz` to `ros2/rviz`.
-The basic documentation can still be found on the RViz [wiki page](http://www.ros.org/wiki/rviz). 
+The basic documentation can still be found on the RViz [wiki page](http://www.ros.org/wiki/rviz).
 For some displays, the [documentation is updated](docs/FEATURES.md).
 
 | Displays              | Tools         | View Controller       | Panels          |
@@ -20,7 +20,7 @@ For some displays, the [documentation is updated](docs/FEATURES.md).
 | Image                 | Select        | Third Person Follower | Tool Properties |
 | Laser Scan            | 2D Nav Goal   | Top Down Orthographic | Views           |
 | Map                   | Publish Point |                       |                 |
-| Marker                |
+| Marker                | Initial Pose  |
 | Marker Array          |
 | Odometry              |
 | Point Cloud (1 and 2) |
@@ -36,8 +36,8 @@ These features have not been ported to `ros2/rviz` yet.
 
 | Displays             | Tools        | Panels |
 | -------------------- | ------------ | ------ |
-| Axes                 | Initial Pose | Time   |
-| DepthCloud           | Interact     |        |
+| Axes                 | Interact     | Time   |
+| DepthCloud           |
 | Effort               |
 | Fluid Pressure       |
 | Illuminance          |
