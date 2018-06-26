@@ -79,7 +79,7 @@ public:
    * \param tf a pointer to tf::TransformListener (should not be used anywhere
    *   else because of thread safety).
    */
-  explicit FrameManager(
+  FrameManager(
     std::shared_ptr<tf2_ros::TransformListener> tf,
     std::shared_ptr<tf2_ros::Buffer> buffer,
     rclcpp::Clock::SharedPtr clock
@@ -91,7 +91,7 @@ public:
    * std::shared_ptr returned by instance(), and it will be deleted when the
    * last reference is removed.
    */
-  ~FrameManager() override;
+  ~FrameManager() override = default;
 
   /// Set the frame to consider "fixed", into which incoming data is transformed.
   /**
