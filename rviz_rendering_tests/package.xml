@@ -12,6 +12,8 @@
 
     <buildtool_depend>ament_cmake</buildtool_depend>
 
+    <build_depend>qtbase5-dev</build_depend>
+
     <depend>rviz_rendering</depend>
     <depend>resource_retriever</depend>
 
