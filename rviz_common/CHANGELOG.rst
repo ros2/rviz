@@ -2,8 +2,8 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+4.0.0 (2018-06-27)
+------------------
 * Polished selection behavior. (`#315 <https://github.com/ros2/rviz/issues/315>`_)
 * Fixed invalid color profile in PNGs. (`#306 <https://github.com/ros2/rviz/issues/306>`_)
 * Updated use of tf2 so that it reused the rviz node. (`#290 <https://github.com/ros2/rviz/issues/290>`_)

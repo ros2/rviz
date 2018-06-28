@@ -2,8 +2,8 @@
 Changelog for package rviz_visual_testing_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+4.0.0 (2018-06-27)
+------------------
 * Fixed some failing tests. (`#299 <https://github.com/ros2/rviz/issues/299>`_)
   * Fixed moved include files.
   * Fixed problem with TF visual test on Windows.

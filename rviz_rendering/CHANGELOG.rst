@@ -2,8 +2,8 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+4.0.0 (2018-06-27)
+------------------
 * Fixed the dependecy name for ``eigen``. (`#324 <https://github.com/ros2/rviz/issues/324>`_)
 * Fixed bugs causing rviz to crash on macOS. (`#319 <https://github.com/ros2/rviz/issues/319>`_)
   * Fix Ogre assertion failure on Mac on resizing an Image or Camera display render window.

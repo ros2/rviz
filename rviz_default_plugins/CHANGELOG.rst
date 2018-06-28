@@ -2,8 +2,8 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+4.0.0 (2018-06-27)
+------------------
 * Polished selection behavior. (`#315 <https://github.com/ros2/rviz/issues/315>`_)
 * Suppressed a warning when disabling a map display. (`#320 <https://github.com/ros2/rviz/issues/320>`_)
 * Fixed point cloud selection. (`#307 <https://github.com/ros2/rviz/issues/307>`_)
@@ -25,7 +25,7 @@ Forthcoming
 * Updated rviz to only use a single ros node. (`#197 <https://github.com/ros2/rviz/issues/197>`_)
 * Migrated XYOrbit View Controller. (`#282 <https://github.com/ros2/rviz/issues/282>`_)
 * Fixed a segfault in the selection manager tests. (`#284 <https://github.com/ros2/rviz/issues/284>`_)
-* Fixed some of the ``plugins_description``s. (`#285 <https://github.com/ros2/rviz/issues/285>`_)
+* Fixed some of the ``plugins_description`` entities. (`#285 <https://github.com/ros2/rviz/issues/285>`_)
 * Migrated the orthographic view controller. (`#270 <https://github.com/ros2/rviz/issues/270>`_)
 * Migrated the measure tool. (`#264 <https://github.com/ros2/rviz/issues/264>`_)
 * Migrated the publish point tool. (`#262 <https://github.com/ros2/rviz/issues/262>`_)
