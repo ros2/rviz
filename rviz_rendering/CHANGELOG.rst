@@ -2,8 +2,8 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.1.1 (2018-06-27)
+------------------
 * fix dependecy name for eigen (`#324 <https://github.com/ros2/rviz/issues/324>`_)
 * Contributors: William Woodall
 
