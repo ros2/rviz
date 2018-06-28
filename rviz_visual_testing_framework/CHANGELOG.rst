@@ -2,6 +2,9 @@
 Changelog for package rviz_visual_testing_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 2.1.0 (2018-06-27)
 ------------------
 * Fixed some failing tests. (`#299 <https://github.com/ros2/rviz/issues/299>`_)
