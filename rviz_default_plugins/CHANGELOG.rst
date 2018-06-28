@@ -2,17 +2,64 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Polished selection behavior. (`#315 <https://github.com/ros2/rviz/issues/315>`_)
+* Suppressed a warning when disabling a map display. (`#320 <https://github.com/ros2/rviz/issues/320>`_)
+* Fixed point cloud selection. (`#307 <https://github.com/ros2/rviz/issues/307>`_)
+* Fixed a segfault for tf on Windows. (`#310 <https://github.com/ros2/rviz/issues/310>`_)
+* Added a warning when the ``camera_info`` is missing. (`#311 <https://github.com/ros2/rviz/issues/311>`_)
+* Polished tests and migrate or delete old tests. (`#289 <https://github.com/ros2/rviz/issues/289>`_)
+* Migrated the map display. (`#267 <https://github.com/ros2/rviz/issues/267>`_)
+* Migrated the Marker Array display. (`#296 <https://github.com/ros2/rviz/issues/296>`_)
+* Migrated the 2D Nav Goal tool. (`#294 <https://github.com/ros2/rviz/issues/294>`_)
+* Migrated the Third Person Follower View Controller. (`#295 <https://github.com/ros2/rviz/issues/295>`_)
+* Implemented a workaround for the missing identity transform when transforming from a frame to itself. (`#298 <https://github.com/ros2/rviz/issues/298>`_)
+* Migrated the GridCells display. (`#286 <https://github.com/ros2/rviz/issues/286>`_)
+* Migrated the fps camera view controller. (`#281 <https://github.com/ros2/rviz/issues/281>`_)
+* Migrated the point stamped display. (`#278 <https://github.com/ros2/rviz/issues/278>`_)
+* Fixed the splash screen and the help panel. (`#277 <https://github.com/ros2/rviz/issues/277>`_)
+* Migrated the odometry display. (`#275 <https://github.com/ros2/rviz/issues/275>`_)
+* Migrated the focus tool. (`#266 <https://github.com/ros2/rviz/issues/266>`_)
+* Homogenized behavior of rviz when a tf transform fails. (`#292 <https://github.com/ros2/rviz/issues/292>`_)
+* Updated rviz to only use a single ros node. (`#197 <https://github.com/ros2/rviz/issues/197>`_)
+* Migrated XYOrbit View Controller. (`#282 <https://github.com/ros2/rviz/issues/282>`_)
+* Fixed a segfault in the selection manager tests. (`#284 <https://github.com/ros2/rviz/issues/284>`_)
+* Fixed some of the ``plugins_description``s. (`#285 <https://github.com/ros2/rviz/issues/285>`_)
+* Migrated the orthographic view controller. (`#270 <https://github.com/ros2/rviz/issues/270>`_)
+* Migrated the measure tool. (`#264 <https://github.com/ros2/rviz/issues/264>`_)
+* Migrated the publish point tool. (`#262 <https://github.com/ros2/rviz/issues/262>`_)
+* Added message type to MarkerDisplay plugin description. (`#252 <https://github.com/ros2/rviz/issues/252>`_)
+* Finished point cloud refactoring and testing. (`#250 <https://github.com/ros2/rviz/issues/250>`_)
+* Improved visual testing framework and added visual tests. (`#259 <https://github.com/ros2/rviz/issues/259>`_)
+* Fixed debug build on macOS. (`#258 <https://github.com/ros2/rviz/issues/258>`_)
+* Fixed a build error for ignored qualifiers warning/error on GCC8. (`#261 <https://github.com/ros2/rviz/issues/261>`_)
+* Migrated the select tool. (`#256 <https://github.com/ros2/rviz/issues/256>`_)
+* Disabled Ogre deprecation warnings on Windows. (`#242 <https://github.com/ros2/rviz/issues/242>`_)
+* Introduced visual testing framework for rviz. (`#209 <https://github.com/ros2/rviz/issues/209>`_)
+* Fixed "display" tests and enable when the test environment allows. (`#186 <https://github.com/ros2/rviz/issues/186>`_)
+* Migrated the LaserScan display. (`#238 <https://github.com/ros2/rviz/issues/238>`_)
+* Restored the use of icons throughout rviz. (`#235 <https://github.com/ros2/rviz/issues/235>`_)
+* Migrated the Path display. (`#236 <https://github.com/ros2/rviz/issues/236>`_)
+* Migrated the pose array display. (`#233 <https://github.com/ros2/rviz/issues/233>`_)
+* Migrated the marker display. (`#229 <https://github.com/ros2/rviz/issues/229>`_)
+* Migrated the Pose display. (`#204 <https://github.com/ros2/rviz/issues/204>`_)
+* Changed the default position of the camera in the RenderPanel. (`#205 <https://github.com/ros2/rviz/issues/205>`_)
+* Migrated the RobotModel display. (`#210 <https://github.com/ros2/rviz/issues/210>`_)
+* Fixed warnings from pluginlib. (`#196 <https://github.com/ros2/rviz/issues/196>`_)
+* Fixed a bug which caused rviz to crash when removing a display. (`#191 <https://github.com/ros2/rviz/issues/191>`_)
+* Refactored the Grid display. (`#165 <https://github.com/ros2/rviz/issues/165>`_)
+* Contributors: Alessandro Bottero, Andreas Greimel, Andreas Holzner, Dirk Thomas, Martin Idel, Mikael Arguedas, Steven! Ragnarök, William Woodall, mjbogusz
+
 3.0.0 (2018-02-07)
 ------------------
-* Numerous changes to support Windows.
-* Added camera display.
-* Moved to ogre 1.10.11.
-* (Re)migrated TF display.
-* Added image display.
-* Moved point cloud displays to rviz_default_plugins.
-* Fixed rendering of point clouds where valid points were not rendered.
-* Added polygon display.
-* Disable robot model until it is properly ported.
+* Fixed compilation errors and runtime issues on Windows. (`#175 <https://github.com/ros2/rviz/issues/175>`_)
+* Migrated the camera display. (`#183 <https://github.com/ros2/rviz/issues/183>`_)
+* Migrated the tf display. (`#182 <https://github.com/ros2/rviz/issues/182>`_)
+* Migrated the Image display. (`#164 <https://github.com/ros2/rviz/issues/164>`_)
+* Migrated code for point cloud displays to ``rviz_default_plugins``. (`#153 <https://github.com/ros2/rviz/issues/153>`_)
+* Fixed a bug where the PointCloud2 display was not accepting valid points. (`#189 <https://github.com/ros2/rviz/issues/189>`_)
+* Migrated the polygon display. (`#194 <https://github.com/ros2/rviz/issues/194>`_)
 * Contributors: William Woodall
 
 2.0.0 (2017-12-08)
