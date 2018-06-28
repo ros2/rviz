@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* move find_package or test dependencies to test block (`#331 <https://github.com/ros2/rviz/issues/331>`_)
+* Contributors: William Woodall
+
 4.0.0 (2018-06-27)
 ------------------
 * Fixed the dependecy name for ``eigen``. (`#324 <https://github.com/ros2/rviz/issues/324>`_)

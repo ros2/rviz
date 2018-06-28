@@ -2,6 +2,9 @@
 Changelog for package rviz_assimp_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 4.0.0 (2018-06-27)
 ------------------
 * Fixed the exported CMake variables to workaround the upstream ``libassimp-dev`` bug. (`#288 <https://github.com/ros2/rviz/issues/288>`_)

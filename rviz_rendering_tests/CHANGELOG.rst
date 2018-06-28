@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add Qt dependency to testing packages. (`#330 <https://github.com/ros2/rviz/issues/330>`_)
+* Contributors: Steven! Ragnarök
+
 4.0.0 (2018-06-27)
 ------------------
 * Added tests for various displays and other features.
