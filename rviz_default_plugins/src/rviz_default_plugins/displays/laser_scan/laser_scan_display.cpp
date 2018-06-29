@@ -79,10 +79,11 @@ void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPt
       *buffer,
       laser_geometry::channel_option::Intensity);
   } catch (tf2::TransformException & e) {
-    RVIZ_COMMON_LOG_DEBUG_STREAM(
-      "LaserScan [" << qPrintable(getName()) << "]: failed to transform scan:" << e.what() << ".");
+    (void) e;
+    setMissingTransformToFixedFrame(scan->header.frame_id);
     return;
   }
+  setTransformOk();
 
   point_cloud_common_->addMessage(cloud);
 }
