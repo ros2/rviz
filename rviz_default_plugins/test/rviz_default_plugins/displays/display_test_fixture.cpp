@@ -89,7 +89,7 @@ void DisplayTestFixture::mockValidTransform(Ogre::Vector3 position, Ogre::Quater
       ::testing::SetArgReferee<3>(position),
       ::testing::SetArgReferee<4>(orientation),
       ::testing::Return(true)
-    ));
+  ));
 
   EXPECT_CALL(
     *frame_manager_,
@@ -98,7 +98,7 @@ void DisplayTestFixture::mockValidTransform(Ogre::Vector3 position, Ogre::Quater
       ::testing::SetArgReferee<2>(position),
       ::testing::SetArgReferee<3>(orientation),
       ::testing::Return(true)
-    ));
+  ));
 }
 
 Ogre::SceneManager * DisplayTestFixture::scene_manager_ = nullptr;

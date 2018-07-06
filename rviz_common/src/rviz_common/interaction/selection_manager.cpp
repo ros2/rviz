@@ -143,7 +143,7 @@ void SelectionManager::initialize()
   pixel_stream.reset(new Ogre::MemoryDataStream(
       reinterpret_cast<void *>(const_cast<uint32_t *>(&texture_data[0])),
       4
-    ));
+  ));
 
   Ogre::TexturePtr tex = Ogre::TextureManager::getSingleton().loadRawData(
     name + "Texture",
@@ -154,7 +154,7 @@ void SelectionManager::initialize()
     Ogre::PF_R8G8B8A8,
     Ogre::TEX_TYPE_2D,
     0
-    );
+  );
 
   Ogre::MaterialPtr material =
     rviz_rendering::MaterialManager::createMaterialWithShadowsAndNoLighting(name);

@@ -251,7 +251,7 @@ TEST_F(RobotTestFixture, update_sets_position_and_orientation_in_links_and_joint
       SetArgReferee<3>(collision_position),
       SetArgReferee<4>(collision_orientation),
       Return(true)
-    ));
+  ));
 
   robot_->update(link_updater);
 
