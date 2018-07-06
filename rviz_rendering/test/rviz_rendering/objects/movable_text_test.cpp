@@ -106,7 +106,7 @@ TEST_F(MovableTextTestFixture, new_line_creates_a_new_line_making_bounding_box_l
     AllOf(
       HasMinimum(Ogre::Vector3(0, -4 - 0.01f, 0)),
       HasMaximum(Ogre::Vector3(char_width, 0, 0))
-    ));
+  ));
 }
 
 TEST_F(MovableTextTestFixture, larger_char_height_makes_characters_wider) {
@@ -118,7 +118,7 @@ TEST_F(MovableTextTestFixture, larger_char_height_makes_characters_wider) {
     AllOf(
       HasMinimum(Ogre::Vector3(0, -2 * 2.0f, 0)),
       HasMaximum(Ogre::Vector3(char_width, 0, 0))
-    ));
+  ));
 }
 
 TEST_F(MovableTextTestFixture, horizontal_alignment_center_centers_x_coordinate) {
@@ -134,7 +134,7 @@ TEST_F(MovableTextTestFixture, horizontal_alignment_center_centers_x_coordinate)
     AllOf(
       HasMinimum(Ogre::Vector3(-char_width / 2, -2, 0)),
       HasMaximum(Ogre::Vector3(char_width / 2, 0, 0))
-    ));
+  ));
 }
 
 TEST_F(MovableTextTestFixture, vertical_alignment_center_centers_y_coordinate) {
@@ -150,7 +150,7 @@ TEST_F(MovableTextTestFixture, vertical_alignment_center_centers_y_coordinate) {
     AllOf(
       HasMinimum(Ogre::Vector3(0, -1, 0)),
       HasMaximum(Ogre::Vector3(char_width, 1, 0))
-    ));
+  ));
 }
 
 TEST_F(MovableTextTestFixture, vertical_alignment_above_puts_y_coordinate_above_zero) {
@@ -166,7 +166,7 @@ TEST_F(MovableTextTestFixture, vertical_alignment_above_puts_y_coordinate_above_
     AllOf(
       HasMinimum(Ogre::Vector3(0, 0, 0)),
       HasMaximum(Ogre::Vector3(char_width, 2, 0))
-    ));
+  ));
 }
 
 TEST_F(MovableTextTestFixture, vertical_alignment_above_puts_y_coordinate_above) {
@@ -182,7 +182,7 @@ TEST_F(MovableTextTestFixture, vertical_alignment_above_puts_y_coordinate_above)
     AllOf(
       HasMinimum(Ogre::Vector3(0, 0, 0)),
       HasMaximum(Ogre::Vector3(char_width, 4.01f, 0))
-    ));
+  ));
 }
 
 TEST_F(MovableTextTestFixture, setSpaceWidth_changes_width_of_space_character) {
@@ -198,7 +198,7 @@ TEST_F(MovableTextTestFixture, setSpaceWidth_changes_width_of_space_character) {
     AllOf(
       HasMinimum(Ogre::Vector3(0, -2, 0)),
       HasMaximum(Ogre::Vector3(2 * char_width + new_space_width, 0, 0))
-    ));
+  ));
 }
 
 TEST_F(MovableTextTestFixture, setLineSpacing_changes_space_between_lines) {
@@ -214,7 +214,7 @@ TEST_F(MovableTextTestFixture, setLineSpacing_changes_space_between_lines) {
     AllOf(
       HasMinimum(Ogre::Vector3(0, -2 * 2 - new_line_spacing, 0)),
       HasMaximum(Ogre::Vector3(char_width, 0, 0))
-    ));
+  ));
 }
 
 TEST_F(MovableTextTestFixture, horizontal_alignment_works_correctly_with_spaces) {
@@ -230,7 +230,7 @@ TEST_F(MovableTextTestFixture, horizontal_alignment_works_correctly_with_spaces)
     AllOf(
       HasMinimum(Ogre::Vector3(-3 * char_width / 2, -2, 0)),
       HasMaximum(Ogre::Vector3(3 * char_width / 2, 0, 0))
-    ));
+  ));
 }
 
 TEST_F(MovableTextTestFixture, getBoundingRadius_gets_squared_length_from_origin_to_box_corner) {
