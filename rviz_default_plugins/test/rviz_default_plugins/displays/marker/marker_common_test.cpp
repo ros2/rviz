@@ -339,7 +339,7 @@ TEST_F(MarkerCommonFixture, update_does_not_retransform_normal_messages) {
       SetArgReferee<3>(starting_position),
       SetArgReferee<4>(starting_orientation),
       Return(true)
-  ));    // Test will fail if this function is called repeatedly
+  ));  // Test will fail if this function is called repeatedly
 
   common_->processMessage(marker);
 
