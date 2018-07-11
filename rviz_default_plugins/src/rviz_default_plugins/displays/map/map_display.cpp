@@ -541,9 +541,6 @@ void MapDisplay::transformMap()
     !context_->getFrameManager()->transform(frame_, context_->getClock()->now(),
     current_map_.info.origin, position, orientation))
   {
-    RVIZ_COMMON_LOG_ERROR_STREAM("Error transforming map '" << getName().toStdString() <<
-      "' from frame '" << frame_ << "' to '" << fixed_frame_.toStdString() << "'.");
-
     setMissingTransformToFixedFrame(frame_);
     scene_node_->setVisible(false);
   } else {

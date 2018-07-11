@@ -223,7 +223,6 @@ void Display::setMissingTransformToFixedFrame(
     "Could not transform " + (additional_info.empty() ? "from [" : additional_info + " from [") +
     frame + "] to [" + fixed_frame_.toStdString() + "]";
   setStatusStd(properties::StatusProperty::Error, "Transform", error_string);
-  RVIZ_COMMON_LOG_DEBUG(error_string);
 }
 
 void Display::setTransformOk()

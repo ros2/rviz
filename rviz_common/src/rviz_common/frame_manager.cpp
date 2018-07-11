@@ -180,29 +180,16 @@ bool FrameManager::adjustTime(const std::string & frame, rclcpp::Time & time)
             time = sync_time_;
           }
         } catch (const tf2::LookupException & exception) {
-          RVIZ_COMMON_LOG_ERROR_STREAM("Lookup failed while getting latest time from frame " <<
-            frame.c_str() << " to frame " <<
-            fixed_frame_.c_str() << ": " <<
-            exception.what());
+          RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
           return false;
         } catch (const tf2::ConnectivityException & exception) {
-          RVIZ_COMMON_LOG_ERROR_STREAM("Connection exception getting latest time from frame " <<
-            frame.c_str() << " to frame " <<
-            fixed_frame_.c_str() << ": " <<
-            exception.what());
+          RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
           return false;
         } catch (const tf2::ExtrapolationException & exception) {
-          RVIZ_COMMON_LOG_ERROR_STREAM("Extrapolation exception getting latest time from frame " <<
-            frame.c_str() << " to frame " <<
-            fixed_frame_.c_str() << ": " <<
-            exception.what());
+          RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
           return false;
         } catch (const tf2::InvalidArgumentException & exception) {
-          RVIZ_COMMON_LOG_ERROR_STREAM("Invalid argument exception "
-            "getting latest time from frame " <<
-            frame.c_str() << " to frame " <<
-            fixed_frame_.c_str() << ": " <<
-            exception.what());
+          RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
           return false;
         }
       }
@@ -299,16 +286,16 @@ bool FrameManager::transform(
   try {
     buffer_->transform(pose_in, pose_out, stripped_fixed_frame);
   } catch (const tf2::LookupException & exception) {
-    (void) exception;
+    RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
     return false;
   } catch (const tf2::ConnectivityException & exception) {
-    (void) exception;
+    RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
     return false;
   } catch (const tf2::ExtrapolationException & exception) {
-    (void) exception;
+    RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
     return false;
   } catch (const tf2::InvalidArgumentException & exception) {
-    (void) exception;
+    RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
     return false;
   }
 
