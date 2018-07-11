@@ -44,9 +44,9 @@ public:
 
   MOCK_METHOD4(addPane,
     rviz_common::PanelDockWidget *(
-      const QString &name, QWidget * pane, Qt::DockWidgetArea area, bool floating));
+      const QString & name, QWidget * pane, Qt::DockWidgetArea area, bool floating));
 
-  MOCK_METHOD1(setStatus, void(const QString &message));
+  MOCK_METHOD1(setStatus, void(const QString & message));
 };
 
 

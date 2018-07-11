@@ -97,7 +97,7 @@ TEST_F(PointCloudTestFixture, addPoints_many_points_gets_a_good_bounding_box_for
     AllOf(
       HasMinimum(Ogre::Vector3(-1, -1, 0)),
       HasMaximum(Ogre::Vector3(1, 1, 0))
-    ));
+  ));
 }
 
 TEST_F(PointCloudTestFixture, clear_resets_bounding_box_bounding_radius_and_clears_points) {
@@ -133,7 +133,7 @@ TEST_F(PointCloudTestFixture,
     AllOf(
       HasMinimum(points[0].position),
       HasMaximum(points[0].position)
-    ));
+  ));
 }
 
 TEST_F(PointCloudTestFixture, getBoundingBox_adding_points_correctly_expands_bounding_box) {
@@ -147,7 +147,7 @@ TEST_F(PointCloudTestFixture, getBoundingBox_adding_points_correctly_expands_bou
     AllOf(
       HasMinimum(squareCenteredAtZero[3].position),
       HasMaximum(singlePointArray[0].position)
-    ));
+  ));
 }
 
 TEST_F(PointCloudTestFixture, popPoints_removes_renderable_if_empty) {
@@ -170,7 +170,7 @@ TEST_F(PointCloudTestFixture, popPoints_correctly_limits_bounding_box_on_removin
     AllOf(
       HasMinimum(squareCenteredAtZero[3].position),
       HasMaximum(squareCenteredAtZero[2].position)
-    ));
+  ));
 }
 
 TEST_F(PointCloudTestFixture, popPoints_removes_bounding_box_when_completely_empty) {

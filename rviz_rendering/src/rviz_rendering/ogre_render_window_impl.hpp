@@ -109,7 +109,7 @@ public:
   void
   resize(size_t width, size_t height);
 
-  using setupSceneCallback = std::function<void(Ogre::SceneNode *)>;
+  using setupSceneCallback = std::function<void (Ogre::SceneNode *)>;
   void
   setupSceneAfterInit(setupSceneCallback setup_scene_callback);
 

@@ -86,15 +86,15 @@ public:
   void
   render();
 
-  using onRenderWindowMouseEventsCallback = std::function<void(QMouseEvent * event)>;
+  using onRenderWindowMouseEventsCallback = std::function<void (QMouseEvent * event)>;
   void
   setOnRenderWindowMouseEventsCallback(onRenderWindowMouseEventsCallback callback);
 
-  using onRenderWindowWheelEventsCallback = std::function<void(QWheelEvent * event)>;
+  using onRenderWindowWheelEventsCallback = std::function<void (QWheelEvent * event)>;
   void
   setOnRenderWindowWheelEventsCallback(onRenderWindowWheelEventsCallback callback);
 
-  using setupSceneCallback = std::function<void(Ogre::SceneNode *)>;
+  using setupSceneCallback = std::function<void (Ogre::SceneNode *)>;
   void
   setupSceneAfterInit(setupSceneCallback setup_scene_callback);
 

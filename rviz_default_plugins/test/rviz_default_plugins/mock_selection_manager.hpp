@@ -56,7 +56,7 @@ public:
   MOCK_METHOD6(select, void(rviz_rendering::RenderWindow *, int, int, int, int, SelectType));
 
   MOCK_METHOD0(update, void());
-  MOCK_CONST_METHOD0(getSelection, const M_Picked &());
+  MOCK_CONST_METHOD0(getSelection, const M_Picked & ());
 
   MOCK_METHOD0(focusOnSelection, void());
   MOCK_METHOD1(setTextureSize, void(unsigned int));

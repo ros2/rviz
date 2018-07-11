@@ -290,7 +290,7 @@ std::unique_ptr<rviz_rendering::Arrow> PoseArrayDisplay::makeArrow3d()
     arrow3d_shaft_radius_property_->getFloat(),
     arrow3d_head_length_property_->getFloat(),
     arrow3d_head_radius_property_->getFloat()
-    );
+  );
 
   arrow->setColor(color);
   return arrow;

@@ -198,7 +198,7 @@ void ImageTester::computeImageDifference(
         Ogre::Math::Sqrt(squared_difference_color.g),
         Ogre::Math::Sqrt(squared_difference_color.b),
         Ogre::Math::Sqrt(squared_difference_color.a)
-        );
+      );
       image_difference.setColourAt(absolute_value_difference_color, i, j, 0);
     }
   }

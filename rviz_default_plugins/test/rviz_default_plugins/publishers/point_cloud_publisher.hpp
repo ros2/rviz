@@ -59,7 +59,7 @@ class PointCloudPublisher : public rclcpp::Node
 public:
   explicit PointCloudPublisher(
     std::vector<geometry_msgs::msg::Point32> points = {createPoint(0, 0, 0)})
-    : Node("pointcloud_publisher"),
+  : Node("pointcloud_publisher"),
     timer_(nullptr),
     publisher_(nullptr),
     points_(points)

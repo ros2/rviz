@@ -103,8 +103,8 @@ namespace rviz_common
 {
 
 using LoggingHandler = std::function<
-  void(const std::string & message, const std::string & file_name, size_t line_number)
-  >;
+  void (const std::string & message, const std::string & file_name, size_t line_number)
+>;
 
 /// Set the given logging handlers globally.
 /**
