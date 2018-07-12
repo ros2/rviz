@@ -7,8 +7,20 @@ if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)
 endif()
 
+# Tests currently only run on OS X @ OSRF jenkins
+# Enable on Linux by providing a display, enable on Windows via EnableDisplayTests=True
 option(EnableDisplayTests "EnableDisplayTests")
 set(DisplayTests "False" CACHE STRING "DisplayTestsVariable")
+
+if(DEFINED ENV{DISPLAY})
+  set(DISPLAYPRESENT TRUE)
+endif()
+
+if(APPLE OR DISPLAYPRESENT OR EnableDisplayTests STREQUAL "True")
+  message(STATUS "Enabling tests requiring a display")
+else()
+  set(SKIP_DISPLAY_TESTS "SKIP_TEST")
+endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic -Werror)
@@ -353,47 +365,42 @@ if(BUILD_TESTING)
     target_link_libraries(rviz_common_ros_node_abstraction_test rviz_common)
   endif()
 
-  if(DEFINED ENV{DISPLAY})
-    set(DISPLAYPRESENT TRUE)
+  ament_add_gmock(selection_manager_test
+    test/interaction/selection_manager_test.cpp
+    test/interaction/mock_selection_renderer.hpp
+    test/interaction/selection_test_fixture.hpp
+    test/display_context_fixture.cpp
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET selection_manager_test)
+    target_link_libraries(selection_manager_test
+      rviz_common
+      rviz_ogre_vendor::OgreMain
+      rviz_ogre_vendor::OgreOverlay)
   endif()
 
-  if(APPLE OR DISPLAYPRESENT OR EnableDisplayTests STREQUAL "True")
-    message(STATUS "Enabling tests requiring a display")
+  ament_add_gmock(selection_handler_test
+    test/interaction/selection_handler_test.cpp
+    test/interaction/selection_test_fixture.hpp
+    test/display_context_fixture.cpp
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET selection_handler_test)
+    target_link_libraries(selection_handler_test
+      rviz_common
+      rviz_ogre_vendor::OgreMain
+      rviz_ogre_vendor::OgreOverlay)
+  endif()
 
-    ament_add_gmock(selection_manager_test
-      test/interaction/selection_manager_test.cpp
-      test/interaction/mock_selection_renderer.hpp
-      test/interaction/selection_test_fixture.hpp
-      test/display_context_fixture.cpp)
-    if(TARGET selection_manager_test)
-      target_link_libraries(selection_manager_test
-        rviz_common
-        rviz_ogre_vendor::OgreMain
-        rviz_ogre_vendor::OgreOverlay)
-    endif()
-
-    ament_add_gmock(selection_handler_test
-      test/interaction/selection_handler_test.cpp
-      test/interaction/selection_test_fixture.hpp
-      test/display_context_fixture.cpp)
-    if(TARGET selection_handler_test)
-      target_link_libraries(selection_handler_test
-        rviz_common
-        rviz_ogre_vendor::OgreMain
-        rviz_ogre_vendor::OgreOverlay)
-    endif()
-
-    ament_add_gtest(rviz_common_display_test
-      test/display_test.cpp
-      test/mock_display.cpp
-      test/mock_display_group.cpp)
-    if(TARGET rviz_common_display_test)
-      target_link_libraries(rviz_common_display_test
-        rviz_common
-        Qt5::Widgets)
-    ament_target_dependencies(rviz_common_display_test
-      rviz_yaml_cpp_vendor)
-    endif()
+  ament_add_gtest(rviz_common_display_test
+    test/display_test.cpp
+    test/mock_display.cpp
+    test/mock_display_group.cpp
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET rviz_common_display_test)
+    target_link_libraries(rviz_common_display_test
+      rviz_common
+      Qt5::Widgets)
+  ament_target_dependencies(rviz_common_display_test
+    rviz_yaml_cpp_vendor)
   endif()
 endif()
 
