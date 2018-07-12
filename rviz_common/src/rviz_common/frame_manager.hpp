@@ -226,10 +226,6 @@ public:
     tf::FilterFailureReason reason) override;
 #endif
 
-Q_SIGNALS:
-  /// Emitted whenever the fixed frame changes.
-  void fixedFrameChanged() override;
-
 private:
   bool adjustTime(const std::string & frame, rclcpp::Time & time);
 

@@ -265,8 +265,7 @@ public:
 #endif
 
 Q_SIGNALS:
-  /// Emitted whenever the fixed frame changes.
-  virtual void fixedFrameChanged() = 0;
+  void fixedFrameChanged();
 };
 
 }  // namespace rviz_common
