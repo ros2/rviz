@@ -62,7 +62,7 @@ GridCellsDisplay::GridCellsDisplay()
 : last_frame_count_(uint64_t(-1))
 {
   color_property_ = new rviz_common::properties::ColorProperty("Color", QColor(25, 255, 0),
-      "Color of the grid cells.", this);
+      "Color of the grid cells.", this, SLOT(updateColor()));
 
   alpha_property_ = new rviz_common::properties::FloatProperty("Alpha", 1.0f,
       "Amount of transparency to apply to the cells.",
@@ -98,6 +98,12 @@ GridCellsDisplay::~GridCellsDisplay()
 void GridCellsDisplay::updateAlpha()
 {
   cloud_->setAlpha(alpha_property_->getFloat());
+  context_->queueRender();
+}
+
+void GridCellsDisplay::updateColor()
+{
+  cloud_->setPickColor(rviz_common::properties::qtToOgre(color_property_->getColor()));
   context_->queueRender();
 }
 
