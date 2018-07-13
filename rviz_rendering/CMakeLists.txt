@@ -146,41 +146,11 @@ install(
   DESTINATION include
 )
 
-# add_executable(rendering_example src/examples/rendering_example.cpp)
-# target_link_libraries(rendering_example rviz_rendering Qt5::Widgets)
-# set_target_properties(rendering_example PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
-
-# # TODO(wjwwood): find a way to make this optional or to run without "deploying" the
-# #                necessary dlls and stuff to the bin folder.
-# #                see:
-# # https://stackoverflow.com/questions/41193584/deploy-all-qt-dependencies-when-building#41199492
-# if(TARGET Qt5::windeployqt)
-#   # execute windeployqt in a tmp directory after build
-#   add_custom_command(TARGET rendering_example
-#     POST_BUILD
-#     COMMAND ${CMAKE_COMMAND} -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
-#     COMMAND set PATH=%PATH%$<SEMICOLON>${qt5_install_prefix}/bin
-#     COMMAND
-#     Qt5::windeployqt
-#     --dir "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
-#     "$<TARGET_FILE_DIR:rendering_example>/$<TARGET_FILE_NAME:rendering_example>"
-#   )
-
-#   # copy deployment directory during installation
-#   install(
-#     DIRECTORY
-#     "${CMAKE_CURRENT_BINARY_DIR}/windeployqt/"
-#     DESTINATION bin
-#   )
-# endif()
-
 set(rviz_rendering_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/cmake")
 include(${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/register_rviz_ogre_media_exports_hook-extras.cmake)
 
 install(DIRECTORY src/cmake
   DESTINATION share/${PROJECT_NAME})
-
-# install(TARGETS rendering_example DESTINATION bin)
 
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/ogre_media"
   DESTINATION "share/${PROJECT_NAME}"
