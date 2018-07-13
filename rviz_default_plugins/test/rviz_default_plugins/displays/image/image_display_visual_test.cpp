@@ -44,6 +44,7 @@ TEST_F(VisualTestFixture, test_image_display_with_published_image) {
   setCamLookAt(Ogre::Vector3(0, 0, 0));
 
   auto image_display = addDisplay<ImageDisplayPageObject>();
+  image_display->setTopic("/image");
 
   captureRenderWindow(image_display);
 
