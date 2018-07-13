@@ -103,7 +103,7 @@ void GridCellsDisplay::updateAlpha()
 
 void GridCellsDisplay::updateColor()
 {
-  cloud_->setPickColor(rviz_common::properties::qtToOgre(color_property_->getColor()));
+  cloud_->setColor(rviz_common::properties::qtToOgre(color_property_->getColor()));
   context_->queueRender();
 }
 
