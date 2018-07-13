@@ -35,7 +35,14 @@
 #include <memory>
 #include <vector>
 
+#ifdef _WIN32
+#pragma warning(push)
+#pragma warning(disable : 4996)
 #include <Ogre.h>
+#pragma warning(pop)
+#else
+#include <Ogre.h>
+#endif
 
 #include "rviz_rendering/objects/line.hpp"
 #include "test/rviz_rendering/ogre_testing_environment.hpp"
