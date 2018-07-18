@@ -96,6 +96,7 @@
 #include "./tool_manager.hpp"
 // #include "rviz_common/view_controller.hpp"
 #include "rviz_common/view_manager.hpp"
+#include "frame_transformer_tf.hpp"
 // #include "./viewport_mouse_event.hpp"
 
 // #include "rviz/window_manager_interface.h"
@@ -150,10 +151,7 @@ public:
 VisualizationManager::VisualizationManager(
   RenderPanel * render_panel,
   ros_integration::RosNodeAbstractionIface::WeakPtr ros_node_abstraction,
-  WindowManagerInterface * wm,
-  std::shared_ptr<tf2_ros::TransformListener> tf,
-  std::shared_ptr<tf2_ros::Buffer> buffer,
-  rclcpp::Clock::SharedPtr clock)
+  WindowManagerInterface * wm, rclcpp::Clock::SharedPtr clock)
 : ogre_root_(Ogre::Root::getSingletonPtr()),
   update_timer_(0),
   shutting_down_(false),
@@ -172,7 +170,9 @@ VisualizationManager::VisualizationManager(
   // (and thus initialized later be default):
   default_visibility_bit_ = visibility_bit_allocator_.allocBit();
 
-  frame_manager_ = new FrameManager(tf, buffer, clock);
+  auto transformer = std::make_shared<FrameTransformerTF>();
+  transformer->initialize(rviz_ros_node_);
+  frame_manager_ = new FrameManager(clock, transformer);
 
 // TODO(wjwwood): is this needed?
 #if 0
@@ -455,14 +455,10 @@ void VisualizationManager::updateTime()
 
 void VisualizationManager::updateFrames()
 {
-  typedef std::vector<std::string> V_string;
-  V_string frames;
-  frame_manager_->getTFBufferPtr()->_getFrameStrings(frames);
-
   // Check the fixed frame to see if it's ok
   std::string error;
   if (frame_manager_->frameHasProblems(getFixedFrame().toStdString(), error)) {
-    if (frames.empty()) {
+    if (!frame_manager_->anyTransformationDataAvailable()) {
       // fixed_prop->setToWarn();
       std::stringstream ss;
       ss << "No tf data.  Actual error: " << error;
@@ -493,7 +489,7 @@ RenderPanel * VisualizationManager::getRenderPanel() const
 void VisualizationManager::resetTime()
 {
   root_display_group_->reset();
-  frame_manager_->getTFBufferPtr()->clear();
+  frame_manager_->clear();
 
   ros_time_begin_ = rclcpp::Time(0, 0, clock_->get_clock_type());
   wall_clock_begin_ = std::chrono::system_clock::time_point();

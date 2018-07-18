@@ -35,6 +35,7 @@
 #include <memory>
 #include <mutex>
 #include <string>
+#include <vector>
 
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>
@@ -49,6 +50,7 @@
 // #include "tf2_ros/message_filter.h"
 
 #include "rviz_common/visibility_control.hpp"
+#include "rviz_common/frame_transformer.hpp"
 
 namespace tf2_ros
 {
@@ -236,14 +238,8 @@ public:
   /// Return the current fixed frame name.
   virtual const std::string & getFixedFrame() = 0;
 
-  /// Return the tf::TransformListener used to receive transform data.
-  virtual tf2_ros::TransformListener * getTFClient() = 0;
-
-  /// Return a shared pointer to the tf2_ros::TransformListener used to receive transform data.
-  virtual const std::shared_ptr<tf2_ros::TransformListener> & getTFClientPtr() = 0;
-
-  /// Return a shared pointer to the tf2_ros::Buffer object.
-  virtual const std::shared_ptr<tf2_ros::Buffer> & getTFBufferPtr() = 0;
+  /// Return a shared pointer to the internal transformation object.
+  virtual std::shared_ptr<FrameTransformer> getInternalPtr() = 0;
 
 // TODO(wjwwood): figure out how to replace FilgerFailureReason here
 #if 0
@@ -263,6 +259,8 @@ public:
     const std::string & caller_id,
     tf::FilterFailureReason reason) = 0;
 #endif
+
+  virtual std::vector<std::string> getAllFrameNames() = 0;
 
 Q_SIGNALS:
   void fixedFrameChanged();

@@ -36,8 +36,10 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "rviz_common/frame_manager_iface.hpp"
+#include "rviz_common/frame_transformer.hpp"
 
 class MockFrameManager : public rviz_common::FrameManagerIface
 {
@@ -64,9 +66,8 @@ public:
   MOCK_METHOD2(transformHasProblems, bool(const std::string &, std::string &));
   MOCK_METHOD3(transformHasProblems, bool(const std::string &, rclcpp::Time, std::string &));
   MOCK_METHOD0(getFixedFrame, const std::string & ());
-  MOCK_METHOD0(getTFClient, tf2_ros::TransformListener * ());
-  MOCK_METHOD0(getTFClientPtr, const std::shared_ptr<tf2_ros::TransformListener>&());
-  MOCK_METHOD0(getTFBufferPtr, const std::shared_ptr<tf2_ros::Buffer>&());
+  MOCK_METHOD0(getInternalPtr, std::shared_ptr<rviz_common::FrameTransformer>());
+  MOCK_METHOD0(getAllFrameNames, std::vector<std::string>());
 
   MOCK_METHOD0(fixedFrameChanged, void());
 };

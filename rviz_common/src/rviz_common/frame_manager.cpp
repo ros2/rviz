@@ -35,6 +35,7 @@
 #include <memory>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "geometry_msgs/msg/pose.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
@@ -56,10 +57,8 @@ namespace rviz_common
 {
 
 FrameManager::FrameManager(
-  std::shared_ptr<tf2_ros::TransformListener> tf,
-  std::shared_ptr<tf2_ros::Buffer> buffer,
-  rclcpp::Clock::SharedPtr clock)
-: tf_(tf), buffer_(buffer), sync_time_(0), clock_(clock)
+  rclcpp::Clock::SharedPtr clock, std::shared_ptr<FrameTransformer> internals)
+: internals_(internals), sync_time_(0), clock_(clock)
 {
   setSyncMode(SyncOff);
   setPause(false);
@@ -173,24 +172,9 @@ bool FrameManager::adjustTime(const std::string & frame, rclcpp::Time & time)
     case SyncApprox:
       {
         // try to get the time from the latest available transformation
-        try {
-          auto lastAvailableTransform =
-            buffer_->lookupTransform(fixed_frame_, frame, tf2::TimePointZero);
-          if (lastAvailableTransform.header.stamp.nanosec > sync_time_.nanoseconds()) {
-            time = sync_time_;
-          }
-        } catch (const tf2::LookupException & exception) {
-          RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
-          return false;
-        } catch (const tf2::ConnectivityException & exception) {
-          RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
-          return false;
-        } catch (const tf2::ExtrapolationException & exception) {
-          RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
-          return false;
-        } catch (const tf2::InvalidArgumentException & exception) {
-          RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
-          return false;
+        geometry_msgs::msg::TransformStamped last_available_transform;
+        if (internals_->lastAvailableTransform(fixed_frame_, frame, last_available_transform)) {
+          time = sync_time_;
         }
       }
       break;
@@ -274,20 +258,7 @@ bool FrameManager::transform(
     stripped_fixed_frame = stripped_fixed_frame.substr(1);
   }
 
-  // convert pose into new frame
-  try {
-    buffer_->transform(pose_in, pose_out, stripped_fixed_frame);
-  } catch (const tf2::LookupException & exception) {
-    RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
-    return false;
-  } catch (const tf2::ConnectivityException & exception) {
-    RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
-    return false;
-  } catch (const tf2::ExtrapolationException & exception) {
-    RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
-    return false;
-  } catch (const tf2::InvalidArgumentException & exception) {
-    RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
+  if (!internals_->transform(pose_in, pose_out, stripped_fixed_frame)) {
     return false;
   }
 
@@ -296,19 +267,9 @@ bool FrameManager::transform(
   return true;
 }
 
-bool FrameManager::frameHasProblems(
-  const std::string & frame,
-  std::string & error)
+bool FrameManager::frameHasProblems(const std::string & frame, std::string & error)
 {
-  if (!buffer_->_frameExists(frame)) {
-    error = "Frame [" + frame + "] does not exist";
-    if (frame == fixed_frame_) {
-      error = "Fixed " + error;
-    }
-    return true;
-  }
-
-  return false;
+  return internals_->frameHasProblems(frame, fixed_frame_, error);
 }
 
 bool FrameManager::transformHasProblems(
@@ -320,46 +281,12 @@ bool FrameManager::transformHasProblems(
     return false;
   }
 
-  std::string tf_error;
-  tf2::TimePoint tf2_time(std::chrono::nanoseconds(time.nanoseconds()));
-  bool transform_succeeded = buffer_->canTransform(fixed_frame_, frame, tf2_time, &tf_error);
-  if (transform_succeeded) {
-    return false;
-  }
-
-  bool ok = true;
-  ok = ok && !frameHasProblems(fixed_frame_, error);
-  ok = ok && !frameHasProblems(frame, error);
-
-  if (ok) {
-    std::stringstream ss;
-    ss << "No transform to fixed frame [" << fixed_frame_ << "].  TF error: [" << tf_error << "]";
-    error = ss.str();
-    ok = false;
-  }
-
-  {
-    std::stringstream ss;
-    ss << "For frame [" << frame << "]: " << error;
-    error = ss.str();
-  }
-
-  return !ok;
+  return internals_->transformHasProblems(frame, fixed_frame_, time, error);
 }
 
 const std::string & FrameManager::getFixedFrame()
 {
   return fixed_frame_;
-}
-
-tf2_ros::TransformListener * FrameManager::getTFClient()
-{
-  return tf_.get();
-}
-
-const std::shared_ptr<tf2_ros::TransformListener> & FrameManager::getTFClientPtr()
-{
-  return tf_;
 }
 
 std::string getTransformStatusName(const std::string & caller_id)
@@ -404,6 +331,27 @@ void FrameManager::messageArrived(
   display->setStatusStd(StatusProperty::Ok, getTransformStatusName(caller_id), "Transform OK");
 }
 
+std::shared_ptr<FrameTransformer> FrameManager::getInternalPtr()
+{
+  return internals_;
+}
+
+std::vector<std::string> FrameManager::getAllFrameNames()
+{
+  return internals_->getAllFrameNames();
+}
+
+void FrameManager::clear()
+{
+  internals_->clear();
+}
+
+bool FrameManager::anyTransformationDataAvailable()
+{
+  auto frames = internals_->getAllFrameNames();
+  return !frames.empty();
+}
+
 #if 0
 void FrameManager::messageFailed(
   const std::string & frame_id,
@@ -418,10 +366,5 @@ void FrameManager::messageFailed(
   display->setStatusStd(StatusProperty::Error, status_name, status_text);
 }
 #endif
-
-const std::shared_ptr<tf2_ros::Buffer> & FrameManager::getTFBufferPtr()
-{
-  return buffer_;
-}
 
 }  // namespace rviz_common

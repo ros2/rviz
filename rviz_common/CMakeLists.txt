@@ -88,6 +88,8 @@ set(rviz_common_headers_to_moc
   src/rviz_common/displays_panel.hpp
   src/rviz_common/failed_panel.hpp
   src/rviz_common/frame_manager.hpp
+  src/rviz_common/frame_transformer_tf.hpp
+  include/rviz_common/frame_transformer.hpp
   include/rviz_common/frame_manager_iface.hpp
   src/rviz_common/loading_dialog.hpp
   src/rviz_common/new_object_dialog.hpp
@@ -153,6 +155,7 @@ set(rviz_common_source_files
   src/rviz_common/failed_tool.cpp
   src/rviz_common/failed_view_controller.cpp
   src/rviz_common/frame_manager.cpp
+  src/rviz_common/frame_transformer_tf.cpp
   src/rviz_common/frame_position_tracking_view_controller.cpp
   src/rviz_common/help_panel.cpp
   src/rviz_common/load_resource.cpp

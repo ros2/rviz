@@ -42,6 +42,7 @@
 #include <OgreSceneManager.h>
 
 #include "tf2_ros/transform_listener.h"
+#include "tf2_ros/buffer.h"
 
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/axes.hpp"
@@ -58,8 +59,9 @@
 #include "rviz_common/interaction/forwards.hpp"
 #include "rviz_common/interaction/selection_manager.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
-#include "include/rviz_default_plugins/displays/tf/frame_info.hpp"
-#include "include/rviz_default_plugins/displays/tf/frame_selection_handler.hpp"
+#include "rviz_common/tf_wrapper.hpp"
+#include "rviz_default_plugins/displays/tf/frame_info.hpp"
+#include "rviz_default_plugins/displays/tf/frame_selection_handler.hpp"
 
 using rviz_common::interaction::SelectionHandler;
 using rviz_common::properties::BoolProperty;
@@ -275,8 +277,7 @@ void TFDisplay::update(float wall_dt, float ros_dt)
 void TFDisplay::updateFrames()
 {
   typedef std::vector<std::string> V_string;
-  V_string frames;
-  context_->getFrameManager()->getTFBufferPtr()->_getFrameStrings(frames);
+  V_string frames = context_->getFrameManager()->getAllFrameNames();
   std::sort(frames.begin(), frames.end());
 
   S_FrameInfo current_frames = createOrUpdateFrames(frames);
@@ -405,7 +406,13 @@ FrameInfo * TFDisplay::createFrame(const std::string & frame)
 
 void TFDisplay::updateFrame(FrameInfo * frame)
 {
-  std::shared_ptr<tf2::BufferCore> tf_buffer = context_->getFrameManager()->getTFBufferPtr();
+  auto tf_wrapper = std::dynamic_pointer_cast<rviz_common::TFWrapper>(
+    context_->getFrameManager()->getInternalPtr()->getInternals());
+  if (!tf_wrapper) {
+    setStatusStd(StatusProperty::Error, "Display", "Can only work with TF2");
+    return;
+  }
+  std::shared_ptr<tf2::BufferCore> tf_buffer = tf_wrapper->buffer_;
 
   // Check last received time so we can grey out/fade out frames that have stopped being published
   tf2::TimePoint latest_time;
