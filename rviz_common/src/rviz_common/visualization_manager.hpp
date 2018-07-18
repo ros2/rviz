@@ -102,11 +102,7 @@ public:
   explicit VisualizationManager(
     RenderPanel * render_panel,
     ros_integration::RosNodeAbstractionIface::WeakPtr ros_node_abstraction,
-    WindowManagerInterface * wm = 0,
-    std::shared_ptr<tf2_ros::TransformListener> tf = nullptr,
-    std::shared_ptr<tf2_ros::Buffer> buffer = nullptr,
-    rclcpp::Clock::SharedPtr clock = nullptr
-  );
+    WindowManagerInterface * wm, rclcpp::Clock::SharedPtr clock);
 
   /// Destructor.
   /**

@@ -35,6 +35,7 @@
 #include <memory>
 #include <mutex>
 #include <string>
+#include <vector>
 
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>
@@ -50,6 +51,7 @@
 
 #include "rviz_common/visibility_control.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
+#include "rviz_common/frame_transformer.hpp"
 
 namespace tf2_ros
 {
@@ -79,11 +81,7 @@ public:
    * \param tf a pointer to tf::TransformListener (should not be used anywhere
    *   else because of thread safety).
    */
-  FrameManager(
-    std::shared_ptr<tf2_ros::TransformListener> tf,
-    std::shared_ptr<tf2_ros::Buffer> buffer,
-    rclcpp::Clock::SharedPtr clock
-  );
+  FrameManager(rclcpp::Clock::SharedPtr clock, std::shared_ptr<FrameTransformer> internals);
 
   /// Destructor.
   /**
@@ -198,14 +196,8 @@ public:
   /// Return the current fixed frame name.
   const std::string & getFixedFrame() override;
 
-  /// Return the tf::TransformListener used to receive transform data.
-  tf2_ros::TransformListener * getTFClient() override;
-
-  /// Return a shared pointer to the tf2_ros::TransformListener used to receive transform data.
-  const std::shared_ptr<tf2_ros::TransformListener> & getTFClientPtr() override;
-
-  /// Return a shared pointer to the tf2_ros::Buffer object.
-  const std::shared_ptr<tf2_ros::Buffer> & getTFBufferPtr() override;
+  /// Return a shared pointer to the internal transformation object.
+  std::shared_ptr<FrameTransformer> getInternalPtr() override;
 
 // TODO(wjwwood): figure out how to replace FilgerFailureReason here
 #if 0
@@ -225,6 +217,12 @@ public:
     const std::string & caller_id,
     tf::FilterFailureReason reason) override;
 #endif
+
+  std::vector<std::string> getAllFrameNames() override;
+
+  virtual void clear();
+
+  virtual bool anyTransformationDataAvailable();
 
 private:
   bool adjustTime(const std::string & frame, rclcpp::Time & time);
@@ -292,8 +290,7 @@ private:
   std::mutex cache_mutex_;
   M_Cache cache_;
 
-  std::shared_ptr<tf2_ros::TransformListener> tf_;
-  std::shared_ptr<tf2_ros::Buffer> buffer_;
+  std::shared_ptr<FrameTransformer> internals_;
   std::string fixed_frame_;
 
   bool pause_;

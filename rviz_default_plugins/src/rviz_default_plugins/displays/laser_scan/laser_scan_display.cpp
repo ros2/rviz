@@ -39,6 +39,7 @@
 #include "rviz_common/properties/int_property.hpp"
 #include "rviz_common/properties/queue_size_property.hpp"
 #include "rviz_common/validate_floats.hpp"
+#include "rviz_common/tf_wrapper.hpp"
 
 namespace rviz_default_plugins
 {
@@ -69,24 +70,29 @@ void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPt
 //  }
 
   auto cloud = std::make_shared<sensor_msgs::msg::PointCloud2>();
+  auto wrapper = std::dynamic_pointer_cast<rviz_common::TFWrapper>(
+    context_->getFrameManager()->getInternalPtr()->getInternals());
+  if (wrapper) {
+    try {
+      projector_->transformLaserScanToPointCloud(
+        fixed_frame_.toStdString(),
+        *scan,
+        *cloud,
+        *wrapper->buffer_,
+        -1,
+        laser_geometry::channel_option::Intensity);
+    } catch (tf2::TransformException & exception) {
+      setMissingTransformToFixedFrame(scan->header.frame_id);
+      RVIZ_COMMON_LOG_ERROR(exception.what());
+      return;
+    }
+    setTransformOk();
 
-  try {
-    auto buffer = context_->getFrameManager()->getTFBufferPtr();
-    projector_->transformLaserScanToPointCloud(
-      fixed_frame_.toStdString(),
-      *scan,
-      *cloud,
-      *buffer,
-      -1,
-      laser_geometry::channel_option::Intensity);
-  } catch (tf2::TransformException & exception) {
-    setMissingTransformToFixedFrame(scan->header.frame_id);
-    RVIZ_COMMON_LOG_ERROR(exception.what());
-    return;
+    point_cloud_common_->addMessage(cloud);
+  } else {
+    setStatusStd(rviz_common::properties::StatusProperty::Error, "Transform",
+      "This display can only work with TF");
   }
-  setTransformOk();
-
-  point_cloud_common_->addMessage(cloud);
 }
 
 void LaserScanDisplay::update(float wall_dt, float ros_dt)
