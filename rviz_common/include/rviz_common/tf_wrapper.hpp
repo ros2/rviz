@@ -33,10 +33,11 @@
 #include <memory>
 
 #include "rviz_common/frame_transformer.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
-struct TFWrapper : public InternalFrameTransformer
+struct RVIZ_COMMON_PUBLIC TFWrapper : public InternalFrameTransformer
 {
 public:
   std::shared_ptr<tf2_ros::Buffer> buffer_;
