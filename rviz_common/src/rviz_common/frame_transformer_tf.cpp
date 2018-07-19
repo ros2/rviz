@@ -78,8 +78,7 @@ FrameTransformerTF::lastAvailableTransform(
   geometry_msgs::msg::TransformStamped & transform)
 {
   try {
-    transform =
-      wrapper_->buffer_->lookupTransform(target_frame, source_frame, tf2::TimePointZero);
+    transform = wrapper_->buffer_->lookupTransform(target_frame, source_frame, tf2::TimePointZero);
   } catch (const tf2::LookupException & exception) {
     RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
     return false;
@@ -93,7 +92,7 @@ FrameTransformerTF::lastAvailableTransform(
     RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
     return false;
   }
-  return false;
+  return true;
 }
 
 bool
@@ -111,36 +110,26 @@ FrameTransformerTF::transformHasProblems(
     return false;
   }
 
-  bool ok = true;
-  ok = ok && !frameHasProblems(fixed_frame, fixed_frame, error);
-  ok = ok && !frameHasProblems(frame, fixed_frame, error);
+  bool fixed_frame_ok = !frameHasProblems(fixed_frame, error);
+  bool ok = fixed_frame_ok && !frameHasProblems(frame, error);
 
   if (ok) {
-    std::stringstream ss;
-    ss << "No transform to fixed frame [" << fixed_frame << "].  TF error: [" << tf_error << "]";
-    error = ss.str();
-    ok = false;
+    error = "No transform to fixed frame [" + fixed_frame + "].  TF error: [" + tf_error + "]";
+    return true;
   }
 
-  {
-    std::stringstream ss;
-    ss << "For frame [" << frame << "]: " << error;
-    error = ss.str();
-  }
+  error = fixed_frame_ok
+    ? "For frame [" + frame + "]: " + error
+    : "For frame [" + frame + "]: Fixed " + error;
 
-  return !ok;
+  return true;
 }
 
-// TODO(Martin-Idel-SI): Maybe have a better interface, don't check for fixed frame?
 bool
-FrameTransformerTF::frameHasProblems(
-  const std::string & frame, const std::string & fixed_frame, std::string & error)
+FrameTransformerTF::frameHasProblems(const std::string & frame, std::string & error)
 {
   if (!wrapper_->buffer_->_frameExists(frame)) {
     error = "Frame [" + frame + "] does not exist";
-    if (frame == fixed_frame) {
-      error = "Fixed " + error;
-    }
     return true;
   }
 

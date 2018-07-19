@@ -74,8 +74,7 @@ public:
     const rclcpp::Time & time,
     std::string & error) = 0;
 
-  virtual bool frameHasProblems(
-    const std::string & frame, const std::string & fixed_frame, std::string & error) = 0;
+  virtual bool frameHasProblems(const std::string & frame, std::string & error) = 0;
 
   /// Expose internal implementation
   virtual InternalFrameTransformerPtr getInternals() = 0;

@@ -71,7 +71,7 @@ void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPt
 
   auto cloud = std::make_shared<sensor_msgs::msg::PointCloud2>();
   auto wrapper = std::dynamic_pointer_cast<rviz_common::TFWrapper>(
-    context_->getFrameManager()->getInternalPtr()->getInternals());
+    context_->getFrameManager()->getInternalPtr());
   if (wrapper) {
     try {
       projector_->transformLaserScanToPointCloud(

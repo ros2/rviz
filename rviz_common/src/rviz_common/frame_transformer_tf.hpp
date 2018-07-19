@@ -76,10 +76,7 @@ public:
     const std::string & fixed_frame,
     const rclcpp::Time & time, std::string & error) override;
 
-  bool frameHasProblems(
-    const std::string & frame,
-    const std::string & fixed_frame,
-    std::string & error) override;
+  bool frameHasProblems(const std::string & frame, std::string & error) override;
 
   InternalFrameTransformerPtr getInternals() override
   {
