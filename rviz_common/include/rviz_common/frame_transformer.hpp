@@ -38,17 +38,18 @@
 #include "geometry_msgs/msg/transform_stamped.hpp"
 
 #include "rviz_common/ros_integration/ros_node_abstraction.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
-struct InternalFrameTransformer
+struct RVIZ_COMMON_PUBLIC InternalFrameTransformer
 {
   virtual ~InternalFrameTransformer() = default;
 };
 
 using InternalFrameTransformerPtr = std::weak_ptr<InternalFrameTransformer>;
 
-class FrameTransformer
+class RVIZ_COMMON_PUBLIC FrameTransformer
 {
 public:
   virtual void initialize(ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node) = 0;
