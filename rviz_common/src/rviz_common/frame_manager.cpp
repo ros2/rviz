@@ -42,11 +42,6 @@
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "rclcpp/clock.hpp"
 #include "std_msgs/msg/float32.hpp"
-#include "tf2/buffer_core.h"
-#include "tf2/LinearMath/Quaternion.h"
-#include "tf2/LinearMath/Vector3.h"
-#include "tf2_geometry_msgs/tf2_geometry_msgs.h"
-#include "tf2_ros/transform_listener.h"
 
 #include "rviz_common/display.hpp"
 #include "rviz_common/logging.hpp"
