@@ -37,9 +37,7 @@
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>
 
-#include "tf2/buffer_core.h"
-#include "tf2/LinearMath/Quaternion.h"
-#include "tf2/LinearMath/Vector3.h"
+#include "tf2_ros/buffer.h"
 #include "tf2_ros/transform_listener.h"
 
 #include "rviz_common/frame_transformer.hpp"

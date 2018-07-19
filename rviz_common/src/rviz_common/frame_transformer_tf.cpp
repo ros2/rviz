@@ -33,8 +33,6 @@
 #include <string>
 #include <vector>
 
-#include "tf2_geometry_msgs/tf2_geometry_msgs.h"
-
 #include "rviz_common/logging.hpp"
 
 namespace rviz_common

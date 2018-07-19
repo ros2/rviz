@@ -46,20 +46,9 @@
 #include "rclcpp/clock.hpp"
 #include "rclcpp/time.hpp"
 
-// TODO(wjwwood): reenable this when message_filters is ported.
-// #include "tf2_ros/message_filter.h"
-
 #include "rviz_common/visibility_control.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/frame_transformer.hpp"
-
-namespace tf2_ros
-{
-
-class Buffer;
-class TransformListener;
-
-}  // namespace tf2_ros
 
 namespace rviz_common
 {
