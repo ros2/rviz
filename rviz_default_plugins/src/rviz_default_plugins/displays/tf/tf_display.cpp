@@ -407,7 +407,8 @@ FrameInfo * TFDisplay::createFrame(const std::string & frame)
 void TFDisplay::updateFrame(FrameInfo * frame)
 {
   auto tf_wrapper = std::dynamic_pointer_cast<rviz_common::TFWrapper>(
-    context_->getFrameManager()->getInternalPtr());
+    std::shared_ptr<rviz_common::InternalFrameTransformer>(
+      context_->getFrameManager()->getInternalPtr()));
   if (!tf_wrapper) {
     setStatusStd(StatusProperty::Error, "Display", "Can only work with TF2");
     return;

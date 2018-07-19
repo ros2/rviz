@@ -326,7 +326,7 @@ void FrameManager::messageArrived(
   display->setStatusStd(StatusProperty::Ok, getTransformStatusName(caller_id), "Transform OK");
 }
 
-std::shared_ptr<InternalFrameTransformer> FrameManager::getInternalPtr()
+InternalFrameTransformerPtr FrameManager::getInternalPtr()
 {
   return internals_->getInternals();
 }
