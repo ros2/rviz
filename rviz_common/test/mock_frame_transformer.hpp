@@ -27,58 +27,39 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__FRAME_TRANSFORMER_HPP_
-#define RVIZ_COMMON__FRAME_TRANSFORMER_HPP_
+#ifndef MOCK_FRAME_TRANSFORMER_HPP_
+#define MOCK_FRAME_TRANSFORMER_HPP_
+
+#include <gmock/gmock.h>
 
 #include <memory>
-#include <string>
 #include <vector>
 
-#include "geometry_msgs/msg/pose_stamped.hpp"
-#include "geometry_msgs/msg/transform_stamped.hpp"
-
+#include "rviz_common/frame_transformer.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction.hpp"
 
-namespace rviz_common
-{
-struct InternalFrameTransformer
-{
-  virtual ~InternalFrameTransformer() = default;
-};
-
-using InternalFrameTransformerPtr = std::shared_ptr<InternalFrameTransformer>;
-
-class FrameTransformer
+class MockFrameTransformer : public rviz_common::FrameTransformer
 {
 public:
-  virtual void initialize(ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node) = 0;
-
-  virtual void clear() = 0;
-
-  virtual std::vector<std::string> getAllFrameNames() = 0;
-
-  virtual bool transform(
-    // NOLINT (this is not std::transform)
+  MOCK_METHOD1(
+    initialize, void(rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node));
+  MOCK_METHOD0(clear, void());
+  MOCK_METHOD0(getAllFrameNames, std::vector<std::string>());
+  MOCK_METHOD3(transform, bool(
     const geometry_msgs::msg::PoseStamped & pose_in,
     geometry_msgs::msg::PoseStamped & pose_out,
-    const std::string & frame) = 0;
-
-  virtual bool lastAvailableTransform(
+    const std::string & frame));
+  MOCK_METHOD3(lastAvailableTransform, bool(
     const std::string & target_frame,
     const std::string & source_frame,
-    geometry_msgs::msg::TransformStamped & transform) = 0;
-
-  virtual bool transformHasProblems(
+    geometry_msgs::msg::TransformStamped & transform));
+  MOCK_METHOD4(transformHasProblems, bool(
     const std::string & frame,
     const std::string & fixed_frame,
     const rclcpp::Time & time,
-    std::string & error) = 0;
-
-  virtual bool frameHasProblems(const std::string & frame, std::string & error) = 0;
-
-  /// Expose internal implementation
-  virtual InternalFrameTransformerPtr getInternals() = 0;
+    std::string & error));
+  MOCK_METHOD2(frameHasProblems, bool(const std::string & frame, std::string & error));
+  MOCK_METHOD0(getInternals, rviz_common::InternalFrameTransformerPtr());
 };
-}  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__FRAME_TRANSFORMER_HPP_
+#endif  // MOCK_FRAME_TRANSFORMER_HPP_
