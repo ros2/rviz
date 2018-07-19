@@ -47,6 +47,9 @@ FrameTransformerTF::FrameTransformerTF()
   wrapper_->buffer_->setUsingDedicatedThread(true);
 }
 
+FrameTransformerTF::FrameTransformerTF(std::shared_ptr<TFWrapper> wrapper) : wrapper_(wrapper)
+{}
+
 bool
 FrameTransformerTF::transform(
   const geometry_msgs::msg::PoseStamped & pose_in,
