@@ -47,7 +47,8 @@ FrameTransformerTF::FrameTransformerTF()
   wrapper_->buffer_->setUsingDedicatedThread(true);
 }
 
-FrameTransformerTF::FrameTransformerTF(std::shared_ptr<TFWrapper> wrapper) : wrapper_(wrapper)
+FrameTransformerTF::FrameTransformerTF(std::shared_ptr<TFWrapper> wrapper)
+: wrapper_(wrapper)
 {}
 
 bool

@@ -336,8 +336,7 @@ if(BUILD_TESTING)
     target_link_libraries(frame_transformer_tf_test
       rviz_common
       rviz_ogre_vendor::OgreMain
-      rviz_ogre_vendor::OgreOverlay
-      )
+      rviz_ogre_vendor::OgreOverlay)
   endif()
 
   ament_add_gmock(frame_manager_test
@@ -347,8 +346,7 @@ if(BUILD_TESTING)
     target_link_libraries(frame_manager_test
       rviz_common
       rviz_ogre_vendor::OgreMain
-      rviz_ogre_vendor::OgreOverlay
-      )
+      rviz_ogre_vendor::OgreOverlay)
   endif()
 
   ament_add_gtest(rviz_common_config_test
@@ -357,8 +355,7 @@ if(BUILD_TESTING)
     target_link_libraries(rviz_common_config_test
       rviz_common
       rviz_ogre_vendor::OgreMain
-      rviz_ogre_vendor::OgreOverlay
-    )
+      rviz_ogre_vendor::OgreOverlay)
   endif()
 
   ament_add_gtest(rviz_common_uniform_string_stream_test
@@ -367,8 +364,7 @@ if(BUILD_TESTING)
     target_link_libraries(rviz_common_uniform_string_stream_test
       rviz_common
       rviz_ogre_vendor::OgreMain
-      rviz_ogre_vendor::OgreOverlay
-    )
+      rviz_ogre_vendor::OgreOverlay)
   endif()
 
   ament_add_gtest(rviz_common_property_test
