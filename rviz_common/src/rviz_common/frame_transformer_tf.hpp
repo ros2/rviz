@@ -52,6 +52,7 @@ class FrameTransformerTF : public FrameTransformer
 {
 public:
   FrameTransformerTF();
+  explicit FrameTransformerTF(std::shared_ptr<TFWrapper> wrapper);
   ~FrameTransformerTF() = default;
 
   void initialize(ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node) override;

@@ -329,6 +329,17 @@ if(BUILD_TESTING)
   ament_lint_cmake()
   ament_uncrustify()
 
+  ament_add_gmock(frame_transformer_tf_test
+    test/frame_transformer_tf_test.cpp
+    src/rviz_common/frame_transformer_tf.cpp)
+  if(TARGET frame_transformer_tf_test)
+    target_link_libraries(frame_transformer_tf_test
+      rviz_common
+      rviz_ogre_vendor::OgreMain
+      rviz_ogre_vendor::OgreOverlay
+      )
+  endif()
+
   ament_add_gmock(frame_manager_test
     test/frame_manager_test.cpp
     src/rviz_common/frame_manager.cpp)
