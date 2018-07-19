@@ -46,7 +46,7 @@ struct InternalFrameTransformer
   virtual ~InternalFrameTransformer() = default;
 };
 
-using InternalFrameTransformerPtr = std::shared_ptr<InternalFrameTransformer>;
+using InternalFrameTransformerPtr = std::weak_ptr<InternalFrameTransformer>;
 
 class FrameTransformer
 {

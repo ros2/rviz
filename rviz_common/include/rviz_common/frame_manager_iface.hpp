@@ -239,7 +239,7 @@ public:
   virtual const std::string & getFixedFrame() = 0;
 
   /// Return a shared pointer to the internal transformation object.
-  virtual std::shared_ptr<InternalFrameTransformer> getInternalPtr() = 0;
+  virtual InternalFrameTransformerPtr getInternalPtr() = 0;
 
 // TODO(wjwwood): figure out how to replace FilgerFailureReason here
 #if 0
