@@ -329,6 +329,17 @@ if(BUILD_TESTING)
   ament_lint_cmake()
   ament_uncrustify()
 
+  ament_add_gmock(frame_manager_test
+    test/frame_manager_test.cpp
+    src/rviz_common/frame_manager.cpp)
+  if(TARGET frame_manager_test)
+    target_link_libraries(frame_manager_test
+      rviz_common
+      rviz_ogre_vendor::OgreMain
+      rviz_ogre_vendor::OgreOverlay
+      )
+  endif()
+
   ament_add_gtest(rviz_common_config_test
     test/config_test.cpp)
   if(TARGET rviz_common_config_test)
