@@ -264,7 +264,7 @@ bool FrameManager::transform(
 
 bool FrameManager::frameHasProblems(const std::string & frame, std::string & error)
 {
-  return internals_->frameHasProblems(frame, fixed_frame_, error);
+  return internals_->frameHasProblems(frame, error);
 }
 
 bool FrameManager::transformHasProblems(
@@ -326,9 +326,9 @@ void FrameManager::messageArrived(
   display->setStatusStd(StatusProperty::Ok, getTransformStatusName(caller_id), "Transform OK");
 }
 
-std::shared_ptr<FrameTransformer> FrameManager::getInternalPtr()
+std::shared_ptr<InternalFrameTransformer> FrameManager::getInternalPtr()
 {
-  return internals_;
+  return internals_->getInternals();
 }
 
 std::vector<std::string> FrameManager::getAllFrameNames()

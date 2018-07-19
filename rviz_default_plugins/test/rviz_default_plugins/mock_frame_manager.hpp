@@ -66,7 +66,7 @@ public:
   MOCK_METHOD2(transformHasProblems, bool(const std::string &, std::string &));
   MOCK_METHOD3(transformHasProblems, bool(const std::string &, rclcpp::Time, std::string &));
   MOCK_METHOD0(getFixedFrame, const std::string & ());
-  MOCK_METHOD0(getInternalPtr, std::shared_ptr<rviz_common::FrameTransformer>());
+  MOCK_METHOD0(getInternalPtr, std::shared_ptr<rviz_common::InternalFrameTransformer>());
   MOCK_METHOD0(getAllFrameNames, std::vector<std::string>());
 
   MOCK_METHOD0(fixedFrameChanged, void());
