@@ -118,9 +118,9 @@ FrameTransformerTF::transformHasProblems(
     return true;
   }
 
-  error = fixed_frame_ok
-    ? "For frame [" + frame + "]: " + error
-    : "For frame [" + frame + "]: Fixed " + error;
+  error = fixed_frame_ok ?
+    "For frame [" + frame + "]: " + error :
+    "For frame [" + frame + "]: Fixed " + error;
 
   return true;
 }
