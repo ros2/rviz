@@ -62,19 +62,20 @@ public:
 
   bool transform(
     // NOLINT (this is not std::transform)
-    const geometry_msgs::msg::PoseStamped & pose_in,
-    geometry_msgs::msg::PoseStamped & pose_out,
+    const transformation::PoseStamped & pose_in,
+    transformation::PoseStamped & pose_out,
     const std::string & frame) override;
 
   bool lastAvailableTransform(
     const std::string & target_frame,
     const std::string & source_frame,
-    geometry_msgs::msg::TransformStamped & transform) override;
+    transformation::TransformStamped & transform) override;
 
   bool transformHasProblems(
     const std::string & frame,
     const std::string & fixed_frame,
-    const rclcpp::Time & time, std::string & error) override;
+    const transformation::Time & time,
+    std::string & error) override;
 
   bool frameHasProblems(const std::string & frame, std::string & error) override;
 

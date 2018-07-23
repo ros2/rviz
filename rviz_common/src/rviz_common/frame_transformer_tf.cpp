@@ -34,6 +34,7 @@
 #include <vector>
 
 #include "rviz_common/logging.hpp"
+#include "rviz_common/transformation/ros_helpers/ros_conversion_helpers.hpp"
 
 namespace rviz_common
 {
@@ -47,12 +48,17 @@ FrameTransformerTF::FrameTransformerTF(std::shared_ptr<TFWrapper> wrapper)
 {}
 
 bool FrameTransformerTF::transform(
-  const geometry_msgs::msg::PoseStamped & pose_in,
-  geometry_msgs::msg::PoseStamped & pose_out,
+  const transformation::PoseStamped & pose_in,
+  transformation::PoseStamped & pose_out,
   const std::string & frame)
 {
+  // TODO(botteroa-si): revisit once the FrameTransformer::transform() method has been refactored
+  // not to return a bool.
+  geometry_msgs::msg::PoseStamped out_pose;
+  geometry_msgs::msg::PoseStamped in_pose = transformation::ros_helpers::toRosPoseStamped(pose_in);
   try {
-    tf_wrapper_->transform(pose_in, pose_out, frame);
+    tf_wrapper_->transform(in_pose, out_pose, frame);
+    pose_out = transformation::PoseStamped(out_pose);
   } catch (const tf2::LookupException & exception) {
     RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
     return false;
@@ -72,10 +78,11 @@ bool FrameTransformerTF::transform(
 bool FrameTransformerTF::lastAvailableTransform(
   const std::string & target_frame,
   const std::string & source_frame,
-  geometry_msgs::msg::TransformStamped & transform)
+  transformation::TransformStamped & transform)
 {
   try {
-    transform = tf_wrapper_->lookupTransform(target_frame, source_frame, tf2::TimePointZero);
+    transform = transformation::TransformStamped(
+      tf_wrapper_->lookupTransform(target_frame, source_frame, tf2::TimePointZero));
   } catch (const tf2::LookupException & exception) {
     RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
     return false;
@@ -95,11 +102,11 @@ bool FrameTransformerTF::lastAvailableTransform(
 bool FrameTransformerTF::transformHasProblems(
   const std::string & frame,
   const std::string & fixed_frame,
-  const rclcpp::Time & time,
+  const transformation::Time & time,
   std::string & error)
 {
   std::string tf_error;
-  tf2::TimePoint tf2_time(std::chrono::nanoseconds(time.nanoseconds()));
+  tf2::TimePoint tf2_time(std::chrono::nanoseconds(time.nanoseconds_));
   bool transform_succeeded = tf_wrapper_->canTransform(
     fixed_frame, frame, tf2_time, tf_error);
   if (transform_succeeded) {
