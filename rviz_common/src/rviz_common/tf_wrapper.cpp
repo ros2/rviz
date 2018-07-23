@@ -27,51 +27,66 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__TF_WRAPPER_HPP_
-#define RVIZ_COMMON__TF_WRAPPER_HPP_
+#include "rviz_common/tf_wrapper.hpp"
 
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "tf2_ros/buffer.h"
-#include "tf2_geometry_msgs/tf2_geometry_msgs.h"
-
-#include "rviz_common/frame_transformer.hpp"
-#include "rviz_common/visibility_control.hpp"
-
 namespace rviz_common
 {
-struct RVIZ_COMMON_PUBLIC TFWrapper : public InternalFrameTransformer
+
+TFWrapper::TFWrapper(std::shared_ptr<tf2_ros::Buffer> buffer, bool using_edicated_thread)
+: buffer_(buffer)
 {
-public:
-  TFWrapper(std::shared_ptr<tf2_ros::Buffer> buffer, bool using_edicated_thread);
+  buffer_->setUsingDedicatedThread(using_edicated_thread);
+}
 
-  void transform(
-    const geometry_msgs::msg::PoseStamped & pose_in,
-    geometry_msgs::msg::PoseStamped & pose_out,
-    const std::string & frame);
+void TFWrapper::transform(
+  const geometry_msgs::msg::PoseStamped & pose_in,
+  geometry_msgs::msg::PoseStamped & pose_out,
+  const std::string & frame)
+{
+  buffer_->transform(pose_in, pose_out, frame);
+}
 
-  geometry_msgs::msg::TransformStamped lookupTransform(
-    const std::string & target_frame,
-    const std::string & source_frame,
-    const tf2::TimePoint & time);
+geometry_msgs::msg::TransformStamped TFWrapper::lookupTransform(
+  const std::string & target_frame,
+  const std::string & source_frame,
+  const tf2::TimePoint & time)
+{
+  return buffer_->lookupTransform(target_frame, source_frame, time);
+}
 
-  bool canTransform(
-    const std::string & fixed_frame,
-    const std::string & frame,
-    tf2::TimePoint time,
-    std::string & error);
+bool TFWrapper::canTransform(
+  const std::string & fixed_frame,
+  const std::string & frame,
+  tf2::TimePoint time,
+  std::string & error)
+{
+  return buffer_->canTransform(fixed_frame, frame, time, &error);
+}
 
-  std::vector<std::string> getFrameStrings();
-  std::shared_ptr<tf2_ros::Buffer> getBuffer();
+std::vector<std::string> TFWrapper::getFrameStrings()
+{
+  std::vector<std::string> frames;
+  buffer_->_getFrameStrings(frames);
+  return frames;
+}
 
-  bool frameExists(const std::string & frame);
-  void clear();
+bool TFWrapper::frameExists(const std::string & frame)
+{
+  return buffer_->_frameExists(frame);
+}
 
-private:
-  std::shared_ptr<tf2_ros::Buffer> buffer_;
-};
+std::shared_ptr<tf2_ros::Buffer> TFWrapper::getBuffer()
+{
+  return buffer_;
+}
+
+void TFWrapper::clear()
+{
+  buffer_->clear();
+}
+
 }  // namespace rviz_common
-
-#endif  // RVIZ_COMMON__TF_WRAPPER_HPP_
