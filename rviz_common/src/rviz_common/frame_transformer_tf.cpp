@@ -40,11 +40,11 @@ namespace rviz_common
 
 FrameTransformerTF::FrameTransformerTF()
 {
-  wrapper_ = std::make_shared<TFWrapper>(std::make_shared<tf2_ros::Buffer>(), true);
+  tf_wrapper_ = std::make_shared<TFWrapper>(std::make_shared<tf2_ros::Buffer>(), true);
 }
 
 FrameTransformerTF::FrameTransformerTF(std::shared_ptr<TFWrapper> wrapper)
-: wrapper_(wrapper)
+: tf_wrapper_(wrapper)
 {}
 
 bool
@@ -54,7 +54,7 @@ FrameTransformerTF::transform(
   const std::string & frame)
 {
   try {
-    wrapper_->transform(pose_in, pose_out, frame);
+    tf_wrapper_->transform(pose_in, pose_out, frame);
   } catch (const tf2::LookupException & exception) {
     RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
     return false;
@@ -78,7 +78,7 @@ FrameTransformerTF::lastAvailableTransform(
   geometry_msgs::msg::TransformStamped & transform)
 {
   try {
-    transform = wrapper_->lookupTransform(target_frame, source_frame, tf2::TimePointZero);
+    transform = tf_wrapper_->lookupTransform(target_frame, source_frame, tf2::TimePointZero);
   } catch (const tf2::LookupException & exception) {
     RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
     return false;
@@ -104,7 +104,7 @@ FrameTransformerTF::transformHasProblems(
 {
   std::string tf_error;
   tf2::TimePoint tf2_time(std::chrono::nanoseconds(time.nanoseconds()));
-  bool transform_succeeded = wrapper_->canTransform(
+  bool transform_succeeded = tf_wrapper_->canTransform(
     fixed_frame, frame, tf2_time, tf_error);
   if (transform_succeeded) {
     return false;
@@ -128,7 +128,7 @@ FrameTransformerTF::transformHasProblems(
 bool
 FrameTransformerTF::frameHasProblems(const std::string & frame, std::string & error)
 {
-  if (!wrapper_->frameExists(frame)) {
+  if (!tf_wrapper_->frameExists(frame)) {
     error = "Frame [" + frame + "] does not exist";
     return true;
   }
@@ -140,17 +140,17 @@ void FrameTransformerTF::initialize(
   rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node)
 {
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(
-    *wrapper_->getBuffer(), rviz_ros_node.lock()->get_raw_node(), false);
+    *tf_wrapper_->getBuffer(), rviz_ros_node.lock()->get_raw_node(), false);
 }
 
 void FrameTransformerTF::clear()
 {
-  wrapper_->clear();
+  tf_wrapper_->clear();
 }
 
 std::vector<std::string> FrameTransformerTF::getAllFrameNames()
 {
-  return wrapper_->getFrameStrings();
+  return tf_wrapper_->getFrameStrings();
 }
 
 }  // namespace rviz_common
