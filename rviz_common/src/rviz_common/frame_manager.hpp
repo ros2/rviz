@@ -213,6 +213,9 @@ public:
 
   virtual bool anyTransformationDataAvailable();
 
+public Q_SLOTS:
+  void setTransformerPlugin(std::shared_ptr<rviz_common::FrameTransformer> transformer) override;
+
 private:
   bool adjustTime(const std::string & frame, rclcpp::Time & time);
 

@@ -76,6 +76,7 @@ class DisplayGroup;
 class FrameManager;
 class RenderPanel;
 class ToolManager;
+class TransformationManager;
 class ViewportMouseEvent;
 class ViewManager;
 class WindowManagerInterface;
@@ -180,6 +181,10 @@ public:
   virtual
   ViewManager *
   getViewManager() const = 0;
+
+  virtual
+  TransformationManager *
+  getTransformationManager() = 0;
 
   /// Return the root DisplayGroup.
   virtual

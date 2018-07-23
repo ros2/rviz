@@ -44,6 +44,7 @@
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
+#include "transformation_manager.hpp"
 
 class QTimer;
 
@@ -231,6 +232,9 @@ public:
   /// Return a pointer to the ViewManager.
   ViewManager * getViewManager() const override;
 
+  /// Return a pointer to the TransformationManager
+  rviz_common::TransformationManager * getTransformationManager() override;
+
   /// Lock a mutex to delay calls to Ogre::Root::renderOneFrame().
   void lockRender() override;
 
@@ -396,6 +400,7 @@ private:
   QString help_path_;
   rclcpp::executors::SingleThreadedExecutor::SharedPtr executor_;
   ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node_;
+  rviz_common::TransformationManager * transformation_manager_;
 };
 
 }  // namespace rviz_common

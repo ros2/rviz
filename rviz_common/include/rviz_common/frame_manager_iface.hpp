@@ -262,6 +262,9 @@ public:
 
   virtual std::vector<std::string> getAllFrameNames() = 0;
 
+public Q_SLOTS:
+  virtual void setTransformerPlugin(std::shared_ptr<rviz_common::FrameTransformer> transformer) = 0;
+
 Q_SIGNALS:
   void fixedFrameChanged();
 };

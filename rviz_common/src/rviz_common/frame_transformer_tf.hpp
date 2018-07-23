@@ -80,12 +80,9 @@ public:
 
   InternalFrameTransformerPtr getInternals() override;
 
-  std::string getTypeId() override;
-
 private:
   std::shared_ptr<TFWrapper> tf_wrapper_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
-  std::string type_id_;
 };
 }  // namespace rviz_common
 
