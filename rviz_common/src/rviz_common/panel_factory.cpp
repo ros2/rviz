@@ -39,6 +39,7 @@
 #include "./selection_panel.hpp"
 // #include "./time_panel.hpp"
 #include "./tool_properties_panel.hpp"
+#include "./transformation_panel.hpp"
 #include "./views_panel.hpp"
 #include "./visualization_manager.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
@@ -50,6 +51,7 @@ static Panel * newHelpPanel() {return new HelpPanel();}
 static Panel * newSelectionPanel() {return new SelectionPanel();}
 // static Panel * newTimePanel() {return new TimePanel();}
 static Panel * newToolPropertiesPanel() {return new ToolPropertiesPanel();}
+static Panel * newTransformationPanel() {return new TransformationPanel();}
 static Panel * newViewsPanel() {return new ViewsPanel();}
 
 PanelFactory::PanelFactory(
@@ -70,6 +72,8 @@ PanelFactory::PanelFactory(
   //   "Show the current time", &newTimePanel);
   addBuiltInClass("rviz_common", "Tool Properties",
     "Show and edit properties of tools", &newToolPropertiesPanel);
+  addBuiltInClass("rviz_common", "Transformation",
+    "Choose the transformation plugin", &newTransformationPanel);
   addBuiltInClass("rviz_common", "Views",
     "Show and edit viewpoints", &newViewsPanel);
 }
