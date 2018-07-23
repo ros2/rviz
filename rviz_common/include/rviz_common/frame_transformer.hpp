@@ -34,11 +34,10 @@
 #include <string>
 #include <vector>
 
-#include "geometry_msgs/msg/pose_stamped.hpp"
-#include "geometry_msgs/msg/transform_stamped.hpp"
-
 #include "rviz_common/ros_integration/ros_node_abstraction.hpp"
 #include "rviz_common/visibility_control.hpp"
+
+#include "rviz_common/transformation/structs.hpp"
 
 namespace rviz_common
 {
@@ -60,19 +59,19 @@ public:
 
   virtual bool transform(
     // NOLINT (this is not std::transform)
-    const geometry_msgs::msg::PoseStamped & pose_in,
-    geometry_msgs::msg::PoseStamped & pose_out,
+    const transformation::PoseStamped & pose_in,
+    transformation::PoseStamped & pose_out,
     const std::string & frame) = 0;
 
   virtual bool lastAvailableTransform(
     const std::string & target_frame,
     const std::string & source_frame,
-    geometry_msgs::msg::TransformStamped & transform) = 0;
+    transformation::TransformStamped & transform) = 0;
 
   virtual bool transformHasProblems(
     const std::string & frame,
     const std::string & fixed_frame,
-    const rclcpp::Time & time,
+    const transformation::Time & time,
     std::string & error) = 0;
 
   virtual bool frameHasProblems(const std::string & frame, std::string & error) = 0;

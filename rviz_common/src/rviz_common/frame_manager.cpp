@@ -167,7 +167,7 @@ bool FrameManager::adjustTime(const std::string & frame, rclcpp::Time & time)
     case SyncApprox:
       {
         // try to get the time from the latest available transformation
-        geometry_msgs::msg::TransformStamped last_available_transform;
+        rviz_common::transformation::TransformStamped last_available_transform;
         if (transformer_->lastAvailableTransform(fixed_frame_, frame, last_available_transform)) {
           time = sync_time_;
         }
@@ -244,7 +244,7 @@ bool FrameManager::transform(
     pose_in.header.frame_id = pose_in.header.frame_id.substr(1);
   }
   pose_in.pose = pose_msg;
-  geometry_msgs::msg::PoseStamped pose_out;
+  transformation::PoseStamped out_pose;
 
   // TODO(wjwwood): figure out where the `/` is coming from and remove it
   //                also consider warning the user in the GUI about this...
@@ -253,9 +253,16 @@ bool FrameManager::transform(
     stripped_fixed_frame = stripped_fixed_frame.substr(1);
   }
 
-  if (!transformer_->transform(pose_in, pose_out, stripped_fixed_frame)) {
+  if (!transformer_->transform(
+      transformation::PoseStamped(pose_in),
+      out_pose,
+      stripped_fixed_frame))
+  {
     return false;
   }
+  // TODO(botteroa-si): revisit once the FrameTransformer::transform() method has been refactored
+  // not to return a bool.
+  auto pose_out = transformation::ros_helpers::toRosPoseStamped(out_pose);
 
   position = rviz_common::pointMsgToOgre(pose_out.pose.position);
   orientation = rviz_common::quaternionMsgToOgre(pose_out.pose.orientation);
@@ -276,7 +283,7 @@ bool FrameManager::transformHasProblems(
     return false;
   }
 
-  return transformer_->transformHasProblems(frame, fixed_frame_, time, error);
+  return transformer_->transformHasProblems(frame, fixed_frame_, transformation::Time(time), error);
 }
 
 const std::string & FrameManager::getFixedFrame()

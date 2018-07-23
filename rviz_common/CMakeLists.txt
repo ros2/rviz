@@ -128,6 +128,7 @@ set(rviz_common_headers_to_moc
   src/rviz_common/splash_screen.hpp
   # src/rviz_common/time_panel.hpp
   include/rviz_common/tf_wrapper.hpp
+  include/rviz_common/transformation/structs.hpp
   include/rviz_common/tool.hpp
   src/rviz_common/tool_manager.hpp
   src/rviz_common/tool_properties_panel.hpp
@@ -212,6 +213,7 @@ set(rviz_common_source_files
   src/rviz_common/splash_screen.cpp
   # src/rviz_common/time_panel.cpp
   src/rviz_common/tf_wrapper.cpp
+  src/rviz_common/transformation/ros_helpers/ros_conversion_helpers.cpp
   src/rviz_common/tool_manager.cpp
   src/rviz_common/tool_properties_panel.cpp
   src/rviz_common/tool.cpp
