@@ -80,11 +80,11 @@ public:
 
   InternalFrameTransformerPtr getInternals() override
   {
-    return wrapper_;
+    return tf_wrapper_;
   }
 
 private:
-  std::shared_ptr<TFWrapper> wrapper_;
+  std::shared_ptr<TFWrapper> tf_wrapper_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
 };
 }  // namespace rviz_common
