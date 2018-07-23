@@ -31,16 +31,24 @@
 
 #include "transformation_manager.hpp"
 
+#include <memory>
 #include <string>
 #include <vector>
 
 namespace rviz_common
 {
 
-TransformationManager::TransformationManager(
-  std::vector<std::string> available_plugins, std::string current_plugin)
-: available_plugins_(available_plugins), current_plugin_(current_plugin)
-{}
+TransformationManager::TransformationManager(std::string current_plugin)
+: available_plugins_({}), current_plugin_(current_plugin)
+{
+  // TODO(bottteroa-si): use pluginlob to fill correctly available plugins list
+  setAvailablePlugins({"dummy_transformer", "tf_transformer"});
+}
+
+void TransformationManager::setAvailablePlugins(std::vector<std::string> available_plugins)
+{
+  available_plugins_ = available_plugins;
+}
 
 std::string TransformationManager::getCurrentPlugin()
 {
@@ -52,16 +60,12 @@ std::vector<std::string> TransformationManager::getAvailablePlugins()
   return available_plugins_;
 }
 
-void TransformationManager::setPlugin(std::shared_ptr<rviz_common::FrameTransformer> plugin)
+void TransformationManager::setPlugin(std::string plugin_name)
 {
-  std::string plugin_type_id = plugin->getTypeId();
-
-  if (plugin_type_id == current_plugin_) {
-    return;
-  }
-
-  current_plugin_ = plugin_type_id;
-  Q_EMIT currentPluginChanged(plugin);
+  current_plugin_ = plugin_name;
+  // TODO(botteroa-si): use pluginlib to build an object of the correct type
+//  auto plugin = // pluginlib code
+//  Q_EMIT currentPluginChanged(plugin);
 }
 
 }  // namespace rviz_common

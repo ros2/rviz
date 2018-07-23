@@ -77,11 +77,13 @@ public:
 
   virtual bool frameHasProblems(const std::string & frame, std::string & error) = 0;
 
+//  virtual void waitForValidTransform(
+//    std::string target_frame, std::string source_frame, time, callback) = 0;
+
   /// Expose internal implementation
   virtual InternalFrameTransformerPtr getInternals() = 0;
-
-  virtual std::string getTypeId() = 0;
 };
+
 }  // namespace rviz_common
 
 #endif  // RVIZ_COMMON__FRAME_TRANSFORMER_HPP_

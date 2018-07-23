@@ -347,6 +347,11 @@ bool FrameManager::anyTransformationDataAvailable()
   return !frames.empty();
 }
 
+void FrameManager::setTransformerPlugin(std::shared_ptr<rviz_common::FrameTransformer> transformer)
+{
+  transformer_ = transformer;
+}
+
 #if 0
 void FrameManager::messageFailed(
   const std::string & frame_id,

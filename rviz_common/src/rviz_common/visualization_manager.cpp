@@ -164,7 +164,8 @@ VisualizationManager::VisualizationManager(
   clock_(clock),
   private_(new VisualizationManagerPrivate),
   executor_(std::make_shared<rclcpp::executors::SingleThreadedExecutor>()),
-  rviz_ros_node_(ros_node_abstraction)
+  rviz_ros_node_(ros_node_abstraction),
+  transformation_manager_(new TransformationManager("tf_transformer"))
 {
   // visibility_bit_allocator_ is listed after default_visibility_bit_
   // (and thus initialized later be default):
@@ -173,6 +174,11 @@ VisualizationManager::VisualizationManager(
   auto transformer = std::make_shared<FrameTransformerTF>();
   transformer->initialize(rviz_ros_node_);
   frame_manager_ = new FrameManager(clock, transformer);
+  connect(
+    transformation_manager_,
+    SIGNAL(currentPluginChanged(std::shared_ptr<rviz_common::FrameTransformer>)),
+    frame_manager_,
+    SLOT(setTransformerPlugin(std::shared_ptr<rviz_common::FrameTransformer>)));
 
 // TODO(wjwwood): is this needed?
 #if 0
@@ -523,6 +529,11 @@ ToolManager * VisualizationManager::getToolManager() const
 ViewManager * VisualizationManager::getViewManager() const
 {
   return view_manager_;
+}
+
+rviz_common::TransformationManager * VisualizationManager::getTransformationManager()
+{
+  return transformation_manager_;
 }
 
 void VisualizationManager::addDisplay(Display * display, bool enabled)

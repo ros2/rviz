@@ -32,10 +32,11 @@
 #ifndef RVIZ_COMMON__TRANSFORMATION_MANAGER_HPP_
 #define RVIZ_COMMON__TRANSFORMATION_MANAGER_HPP_
 
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <QObject>
+#include <QObject>  // NOLINT
 
 #include "rviz_common/frame_transformer.hpp"
 
@@ -44,14 +45,15 @@ namespace rviz_common
 
 class TransformationManager : public QObject
 {
-Q_OBJECT
+  Q_OBJECT
 
 public:
-  TransformationManager(std::vector<std::string> available_plugins, std::string current_plugin);
+  explicit TransformationManager(std::string current_plugin);
 
+  void setAvailablePlugins(std::vector<std::string> available_plugins);
   std::string getCurrentPlugin();
   std::vector<std::string> getAvailablePlugins();
-  void setPlugin(std::shared_ptr<rviz_common::FrameTransformer> plugin);
+  void setPlugin(std::string plugin_name);
 
 Q_SIGNALS:
   void currentPluginChanged(std::shared_ptr<rviz_common::FrameTransformer> new_plugin);
