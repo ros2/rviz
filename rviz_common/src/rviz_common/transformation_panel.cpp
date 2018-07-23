@@ -50,7 +50,7 @@ TransformationPanel::TransformationPanel(QWidget * parent)
   auto layout = new QVBoxLayout();
   layout->setContentsMargins(0, 0, 0, 0);
   layout->addWidget(initializeRadioButtonGroup());
-  layout->addLayout(initializeButtonLayout());
+  layout->addLayout(initializeBottomButtonRow());
   layout->addStretch(1);
   setLayout(layout);
 }
@@ -64,7 +64,7 @@ QGroupBox * TransformationPanel::initializeRadioButtonGroup()
   return group_box;
 }
 
-QHBoxLayout * TransformationPanel::initializeButtonLayout()
+QHBoxLayout * TransformationPanel::initializeBottomButtonRow()
 {
   save_button_ = new QPushButton("Save");
   reset_button_ = new QPushButton("Reset");

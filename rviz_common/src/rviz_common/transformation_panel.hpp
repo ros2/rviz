@@ -66,7 +66,7 @@ private Q_SLOTS:
   void onToggled(bool checked);
 
 private:
-  QHBoxLayout * initializeButtonLayout();
+  QHBoxLayout * initializeBottomButtonRow();
   QGroupBox * initializeRadioButtonGroup();
 
   QRadioButton * getCheckedRadioButton();
