@@ -36,8 +36,6 @@
 #include <QGroupBox>
 #include <QRadioButton>
 #include <QVBoxLayout>
-#include <QtWidgets/QAbstractButton>
-#include <QtWidgets/QAbstractItemView>
 
 #include "rviz_common/display_context.hpp"
 
