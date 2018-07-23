@@ -39,12 +39,12 @@ namespace rviz_common
 {
 
 FrameTransformerTF::FrameTransformerTF()
-{
-  tf_wrapper_ = std::make_shared<TFWrapper>(std::make_shared<tf2_ros::Buffer>(), true);
-}
+: tf_wrapper_(std::make_shared<TFWrapper>(std::make_shared<tf2_ros::Buffer>(), true)),
+  type_id_("tf_transformer")
+{}
 
 FrameTransformerTF::FrameTransformerTF(std::shared_ptr<TFWrapper> wrapper)
-: tf_wrapper_(wrapper)
+: tf_wrapper_(wrapper), type_id_("tf_transformer")
 {}
 
 bool FrameTransformerTF::transform(
@@ -130,6 +130,16 @@ bool FrameTransformerTF::frameHasProblems(const std::string & frame, std::string
   }
 
   return false;
+}
+
+InternalFrameTransformerPtr FrameTransformerTF::getInternals()
+{
+  return tf_wrapper_;
+}
+
+std::string FrameTransformerTF::getTypeId()
+{
+  return type_id_;
 }
 
 void FrameTransformerTF::initialize(

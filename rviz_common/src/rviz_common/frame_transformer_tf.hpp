@@ -78,14 +78,14 @@ public:
 
   bool frameHasProblems(const std::string & frame, std::string & error) override;
 
-  InternalFrameTransformerPtr getInternals() override
-  {
-    return tf_wrapper_;
-  }
+  InternalFrameTransformerPtr getInternals() override;
+
+  std::string getTypeId() override;
 
 private:
   std::shared_ptr<TFWrapper> tf_wrapper_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
+  std::string type_id_;
 };
 }  // namespace rviz_common
 

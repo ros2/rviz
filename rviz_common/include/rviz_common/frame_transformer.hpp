@@ -79,6 +79,8 @@ public:
 
   /// Expose internal implementation
   virtual InternalFrameTransformerPtr getInternals() = 0;
+
+  virtual std::string getTypeId() = 0;
 };
 }  // namespace rviz_common
 
