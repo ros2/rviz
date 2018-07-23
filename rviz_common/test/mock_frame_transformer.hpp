@@ -47,17 +47,17 @@ public:
   MOCK_METHOD0(clear, void());
   MOCK_METHOD0(getAllFrameNames, std::vector<std::string>());
   MOCK_METHOD3(transform, bool(
-      const geometry_msgs::msg::PoseStamped & pose_in,
-      geometry_msgs::msg::PoseStamped & pose_out,
+      const rviz_common::transformation::PoseStamped & pose_in,
+      rviz_common::transformation::PoseStamped & pose_out,
       const std::string & frame));
   MOCK_METHOD3(lastAvailableTransform, bool(
       const std::string & target_frame,
       const std::string & source_frame,
-      geometry_msgs::msg::TransformStamped & transform));
+      rviz_common::transformation::TransformStamped & transform));
   MOCK_METHOD4(transformHasProblems, bool(
       const std::string & frame,
       const std::string & fixed_frame,
-      const rclcpp::Time & time,
+      const rviz_common::transformation::Time & time,
       std::string & error));
   MOCK_METHOD2(frameHasProblems, bool(const std::string & frame, std::string & error));
   MOCK_METHOD0(getInternals, rviz_common::InternalFrameTransformerPtr());
