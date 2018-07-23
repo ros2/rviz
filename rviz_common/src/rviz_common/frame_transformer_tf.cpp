@@ -47,8 +47,7 @@ FrameTransformerTF::FrameTransformerTF(std::shared_ptr<TFWrapper> wrapper)
 : tf_wrapper_(wrapper)
 {}
 
-bool
-FrameTransformerTF::transform(
+bool FrameTransformerTF::transform(
   const geometry_msgs::msg::PoseStamped & pose_in,
   geometry_msgs::msg::PoseStamped & pose_out,
   const std::string & frame)
@@ -71,8 +70,7 @@ FrameTransformerTF::transform(
   return true;
 }
 
-bool
-FrameTransformerTF::lastAvailableTransform(
+bool FrameTransformerTF::lastAvailableTransform(
   const std::string & target_frame,
   const std::string & source_frame,
   geometry_msgs::msg::TransformStamped & transform)
@@ -95,8 +93,7 @@ FrameTransformerTF::lastAvailableTransform(
   return true;
 }
 
-bool
-FrameTransformerTF::transformHasProblems(
+bool FrameTransformerTF::transformHasProblems(
   const std::string & frame,
   const std::string & fixed_frame,
   const rclcpp::Time & time,
@@ -125,8 +122,7 @@ FrameTransformerTF::transformHasProblems(
   return true;
 }
 
-bool
-FrameTransformerTF::frameHasProblems(const std::string & frame, std::string & error)
+bool FrameTransformerTF::frameHasProblems(const std::string & frame, std::string & error)
 {
   if (!tf_wrapper_->frameExists(frame)) {
     error = "Frame [" + frame + "] does not exist";
