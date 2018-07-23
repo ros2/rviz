@@ -52,8 +52,8 @@ namespace rviz_common
 {
 
 FrameManager::FrameManager(
-  rclcpp::Clock::SharedPtr clock, std::shared_ptr<FrameTransformer> internals)
-: internals_(internals), sync_time_(0), clock_(clock)
+  rclcpp::Clock::SharedPtr clock, std::shared_ptr<FrameTransformer> transformer)
+: transformer_(transformer), sync_time_(0), clock_(clock)
 {
   setSyncMode(SyncOff);
   setPause(false);
@@ -168,7 +168,7 @@ bool FrameManager::adjustTime(const std::string & frame, rclcpp::Time & time)
       {
         // try to get the time from the latest available transformation
         geometry_msgs::msg::TransformStamped last_available_transform;
-        if (internals_->lastAvailableTransform(fixed_frame_, frame, last_available_transform)) {
+        if (transformer_->lastAvailableTransform(fixed_frame_, frame, last_available_transform)) {
           time = sync_time_;
         }
       }
@@ -253,7 +253,7 @@ bool FrameManager::transform(
     stripped_fixed_frame = stripped_fixed_frame.substr(1);
   }
 
-  if (!internals_->transform(pose_in, pose_out, stripped_fixed_frame)) {
+  if (!transformer_->transform(pose_in, pose_out, stripped_fixed_frame)) {
     return false;
   }
 
@@ -264,7 +264,7 @@ bool FrameManager::transform(
 
 bool FrameManager::frameHasProblems(const std::string & frame, std::string & error)
 {
-  return internals_->frameHasProblems(frame, error);
+  return transformer_->frameHasProblems(frame, error);
 }
 
 bool FrameManager::transformHasProblems(
@@ -276,7 +276,7 @@ bool FrameManager::transformHasProblems(
     return false;
   }
 
-  return internals_->transformHasProblems(frame, fixed_frame_, time, error);
+  return transformer_->transformHasProblems(frame, fixed_frame_, time, error);
 }
 
 const std::string & FrameManager::getFixedFrame()
@@ -328,22 +328,22 @@ void FrameManager::messageArrived(
 
 InternalFrameTransformerPtr FrameManager::getInternalPtr()
 {
-  return internals_->getInternals();
+  return transformer_->getInternals();
 }
 
 std::vector<std::string> FrameManager::getAllFrameNames()
 {
-  return internals_->getAllFrameNames();
+  return transformer_->getAllFrameNames();
 }
 
 void FrameManager::clear()
 {
-  internals_->clear();
+  transformer_->clear();
 }
 
 bool FrameManager::anyTransformationDataAvailable()
 {
-  auto frames = internals_->getAllFrameNames();
+  auto frames = transformer_->getAllFrameNames();
   return !frames.empty();
 }
 

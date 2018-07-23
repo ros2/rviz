@@ -70,7 +70,7 @@ public:
    * \param tf a pointer to tf::TransformListener (should not be used anywhere
    *   else because of thread safety).
    */
-  FrameManager(rclcpp::Clock::SharedPtr clock, std::shared_ptr<FrameTransformer> internals);
+  FrameManager(rclcpp::Clock::SharedPtr clock, std::shared_ptr<FrameTransformer> transformer);
 
   /// Destructor.
   /**
@@ -279,7 +279,7 @@ private:
   std::mutex cache_mutex_;
   M_Cache cache_;
 
-  std::shared_ptr<FrameTransformer> internals_;
+  std::shared_ptr<FrameTransformer> transformer_;
   std::string fixed_frame_;
 
   bool pause_;
