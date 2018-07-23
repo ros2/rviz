@@ -79,7 +79,7 @@ void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPt
         fixed_frame_.toStdString(),
         *scan,
         *cloud,
-        *wrapper->buffer_,
+        *wrapper->getBuffer(),
         -1,
         laser_geometry::channel_option::Intensity);
     } catch (tf2::TransformException & exception) {

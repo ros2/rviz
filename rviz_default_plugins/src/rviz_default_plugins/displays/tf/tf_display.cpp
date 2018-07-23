@@ -413,7 +413,7 @@ void TFDisplay::updateFrame(FrameInfo * frame)
     setStatusStd(StatusProperty::Error, "Display", "Can only work with TF2");
     return;
   }
-  std::shared_ptr<tf2::BufferCore> tf_buffer = tf_wrapper->buffer_;
+  std::shared_ptr<tf2::BufferCore> tf_buffer = tf_wrapper->getBuffer();
 
   // Check last received time so we can grey out/fade out frames that have stopped being published
   tf2::TimePoint latest_time;
