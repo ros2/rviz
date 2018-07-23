@@ -44,8 +44,7 @@ class FrameTransformerTfFixture : public testing::Test
 public:
   FrameTransformerTfFixture()
   {
-    wrapper_ = std::make_shared<rviz_common::TFWrapper>();
-    wrapper_->buffer_ = std::make_shared<tf2_ros::Buffer>();
+    wrapper_ = std::make_shared<rviz_common::TFWrapper>(std::make_shared<tf2_ros::Buffer>(), false);
     tf_transformer_ = std::make_unique<rviz_common::FrameTransformerTF>(wrapper_);
   }
 
@@ -92,7 +91,7 @@ TEST_F(FrameTransformerTfFixture, frameHasProblems_returns_true_if_frame_does_no
 }
 
 TEST_F(FrameTransformerTfFixture, frameHasProblems_returns_false_if_frame_does_exist) {
-  wrapper_->buffer_->setTransform(getTransformStamped(), "test", true);
+  wrapper_->getBuffer()->setTransform(getTransformStamped(), "test", true);
 
   std::string error;
   EXPECT_FALSE(tf_transformer_->frameHasProblems("fixed_frame", error));
@@ -100,7 +99,7 @@ TEST_F(FrameTransformerTfFixture, frameHasProblems_returns_false_if_frame_does_e
 }
 
 TEST_F(FrameTransformerTfFixture, transformHasProblems_returns_true_if_frame_does_not_exist) {
-  wrapper_->buffer_->setTransform(getTransformStamped(), "test", true);
+  wrapper_->getBuffer()->setTransform(getTransformStamped(), "test", true);
 
   std::string error;
   std::string expected_error = "For frame [another_frame]: Frame [another_frame] does not exist";
@@ -110,7 +109,7 @@ TEST_F(FrameTransformerTfFixture, transformHasProblems_returns_true_if_frame_doe
 }
 
 TEST_F(FrameTransformerTfFixture, transformHasProblems_returns_true_if_fixed_frame_does_not_exist) {
-  wrapper_->buffer_->setTransform(getTransformStamped(), "test", true);
+  wrapper_->getBuffer()->setTransform(getTransformStamped(), "test", true);
 
   std::string error;
   std::string expected_error =
@@ -121,18 +120,21 @@ TEST_F(FrameTransformerTfFixture, transformHasProblems_returns_true_if_fixed_fra
 }
 
 TEST_F(FrameTransformerTfFixture, transformHasProblems_returns_true_if_transform_does_not_exist) {
-  wrapper_->buffer_->setTransform(getTransformStamped(), "test", true);
-  wrapper_->buffer_->setTransform(getTransformStamped("third_frame", "fourth_frame"), "test", true);
+  wrapper_->getBuffer()->setTransform(getTransformStamped(), "test", true);
+  wrapper_->getBuffer()->setTransform(getTransformStamped("third_frame",
+    "fourth_frame"), "test", true);
 
   std::string error;
-  std::string expected_error = "No transform to fixed frame";
+  std::string partial_expected_error = "No transform to fixed frame";
   EXPECT_TRUE(
     tf_transformer_->transformHasProblems("frame", "fourth_frame", rclcpp::Clock().now(), error));
-  EXPECT_THAT(error, testing::HasSubstr(expected_error));
+  EXPECT_THAT(error, testing::HasSubstr(partial_expected_error));
+  EXPECT_THAT(error, testing::HasSubstr("fourth_frame"));
+  EXPECT_THAT(error, testing::HasSubstr("frame"));
 }
 
 TEST_F(FrameTransformerTfFixture, transformHasProblems_returns_false_if_transform_exists) {
-  wrapper_->buffer_->setTransform(getTransformStamped(), "test", true);
+  wrapper_->getBuffer()->setTransform(getTransformStamped(), "test", true);
 
   std::string error;
   EXPECT_FALSE(tf_transformer_->transformHasProblems(
