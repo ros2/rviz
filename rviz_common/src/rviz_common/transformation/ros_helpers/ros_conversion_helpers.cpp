@@ -40,6 +40,11 @@ namespace transformation
 namespace ros_helpers
 {
 
+rviz_common::transformation::Time fromRclcppTime(rclcpp::Time time)
+{
+  return rviz_common::transformation::Time(0, static_cast<uint32_t>(time.nanoseconds()));
+}
+
 rviz_common::transformation::Point fromRosPoint(geometry_msgs::msg::Point ros_point)
 {
   Point point;
@@ -70,6 +75,33 @@ rviz_common::transformation::Point fromRosVector3(geometry_msgs::msg::Vector3 ro
   point.z_ = ros_vector.z;
 
   return point;
+}
+
+rviz_common::transformation::PoseStamped fromRosPoseStamped(
+  geometry_msgs::msg::PoseStamped ros_pose)
+{
+  rviz_common::transformation::PoseStamped pose_stamped;
+  pose_stamped.time_stamp_.seconds_ = ros_pose.header.stamp.sec;
+  pose_stamped.time_stamp_.nanoseconds_ = ros_pose.header.stamp.nanosec;
+  pose_stamped.frame_id_ = ros_pose.header.frame_id;
+  pose_stamped.position_ = fromRosPoint(ros_pose.pose.position);
+  pose_stamped.orientation_ = fromRosQuaternion(ros_pose.pose.orientation);
+
+  return pose_stamped;
+}
+
+rviz_common::transformation::TransformStamped fromRosTransformStamped(
+  geometry_msgs::msg::TransformStamped ros_transform)
+{
+  rviz_common::transformation::TransformStamped transform_stamped;
+  transform_stamped.time_stamp_.seconds_ = ros_transform.header.stamp.sec;
+  transform_stamped.time_stamp_.nanoseconds_ = ros_transform.header.stamp.nanosec;
+  transform_stamped.parent_frame_id_ = ros_transform.header.frame_id;
+  transform_stamped.child_frame_id_ = ros_transform.child_frame_id;
+  transform_stamped.translation_ = fromRosVector3(ros_transform.transform.translation);
+  transform_stamped.rotation_ = fromRosQuaternion(ros_transform.transform.rotation);
+
+  return transform_stamped;
 }
 
 std_msgs::msg::Header toRosHeader(
@@ -120,7 +152,7 @@ geometry_msgs::msg::PoseStamped toRosPoseStamped(
 {
   geometry_msgs::msg::PoseStamped ros_pose;
   ros_pose.header = toRosHeader(pose_stamped.time_stamp_, pose_stamped.frame_id_);
-  ros_pose.pose.position = toRosPoint(pose_stamped.point_);
+  ros_pose.pose.position = toRosPoint(pose_stamped.position_);
   ros_pose.pose.orientation = toRosQuaternion(pose_stamped.orientation_);
 
   return ros_pose;

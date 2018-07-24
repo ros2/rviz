@@ -35,8 +35,11 @@
 #include "geometry_msgs/msg/point.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/quaternion.hpp"
+#include "geometry_msgs/msg/transform_stamped.hpp"
 #include "geometry_msgs/msg/vector3.hpp"
 #include "std_msgs/msg/header.hpp"
+
+#include "rclcpp/rclcpp.hpp"
 
 #include "rviz_common/visibility_control.hpp"
 
@@ -55,6 +58,9 @@ namespace ros_helpers
 {
 
 RVIZ_COMMON_PUBLIC
+rviz_common::transformation::Time fromRclcppTime(rclcpp::Time time);
+
+RVIZ_COMMON_PUBLIC
 rviz_common::transformation::Point fromRosPoint(geometry_msgs::msg::Point ros_point);
 
 RVIZ_COMMON_PUBLIC
@@ -63,6 +69,14 @@ rviz_common::transformation::Quaternion fromRosQuaternion(
 
 RVIZ_COMMON_PUBLIC
 rviz_common::transformation::Point fromRosVector3(geometry_msgs::msg::Vector3 ros_vector);
+
+RVIZ_COMMON_PUBLIC
+rviz_common::transformation::PoseStamped fromRosPoseStamped(
+  geometry_msgs::msg::PoseStamped ros_pose);
+
+RVIZ_COMMON_PUBLIC
+rviz_common::transformation::TransformStamped fromRosTransformStamped(
+  geometry_msgs::msg::TransformStamped ros_transform);
 
 RVIZ_COMMON_PUBLIC
 std_msgs::msg::Header toRosHeader(

@@ -213,6 +213,7 @@ set(rviz_common_source_files
   src/rviz_common/splash_screen.cpp
   # src/rviz_common/time_panel.cpp
   src/rviz_common/tf_wrapper.cpp
+  src/rviz_common/transformation/structs.cpp
   src/rviz_common/transformation/ros_helpers/ros_conversion_helpers.cpp
   src/rviz_common/tool_manager.cpp
   src/rviz_common/tool_properties_panel.cpp

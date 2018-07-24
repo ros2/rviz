@@ -47,6 +47,7 @@
 #include "rviz_common/logging.hpp"
 #include "rviz_common/msg_conversions.hpp"
 #include "rviz_common/properties/property.hpp"
+#include "rviz_common/transformation/ros_helpers/ros_conversion_helpers.hpp"
 
 namespace rviz_common
 {
@@ -255,7 +256,8 @@ bool FrameManager::transform(
   geometry_msgs::msg::PoseStamped pose_out;
   try {
     pose_out = transformation::ros_helpers::toRosPoseStamped(
-      transformer_->transform(transformation::PoseStamped(pose_in), stripped_fixed_frame));
+      transformer_->transform(
+        transformation::ros_helpers::fromRosPoseStamped(pose_in), stripped_fixed_frame));
   } catch (const transformation::FrameTransformerException & exception) {
     (void) exception;
     return false;
@@ -280,7 +282,8 @@ bool FrameManager::transformHasProblems(
     return false;
   }
 
-  return transformer_->transformHasProblems(frame, fixed_frame_, transformation::Time(time), error);
+  return transformer_->transformHasProblems(
+    frame, fixed_frame_, transformation::ros_helpers::fromRclcppTime(time), error);
 }
 
 const std::string & FrameManager::getFixedFrame()
