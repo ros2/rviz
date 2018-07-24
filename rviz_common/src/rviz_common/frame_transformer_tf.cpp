@@ -47,56 +47,44 @@ FrameTransformerTF::FrameTransformerTF(std::shared_ptr<TFWrapper> wrapper)
 : tf_wrapper_(wrapper)
 {}
 
-bool FrameTransformerTF::transform(
-  const transformation::PoseStamped & pose_in,
-  transformation::PoseStamped & pose_out,
-  const std::string & frame)
+transformation::PoseStamped FrameTransformerTF::transform(
+  const transformation::PoseStamped & pose_in, const std::string & frame)
 {
-  // TODO(botteroa-si): revisit once the FrameTransformer::transform() method has been refactored
-  // not to return a bool.
   geometry_msgs::msg::PoseStamped out_pose;
   geometry_msgs::msg::PoseStamped in_pose = transformation::ros_helpers::toRosPoseStamped(pose_in);
   try {
     tf_wrapper_->transform(in_pose, out_pose, frame);
-    pose_out = transformation::PoseStamped(out_pose);
+    return transformation::PoseStamped(out_pose);
   } catch (const tf2::LookupException & exception) {
-    RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
-    return false;
+    throw rviz_common::transformation::FrameTransformerException(exception.what());
   } catch (const tf2::ConnectivityException & exception) {
-    RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
-    return false;
+    throw rviz_common::transformation::FrameTransformerException(exception.what());
   } catch (const tf2::ExtrapolationException & exception) {
-    RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
-    return false;
+    throw rviz_common::transformation::FrameTransformerException(exception.what());
   } catch (const tf2::InvalidArgumentException & exception) {
-    RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
-    return false;
+    throw rviz_common::transformation::FrameTransformerException(exception.what());
   }
-  return true;
 }
 
-bool FrameTransformerTF::lastAvailableTransform(
-  const std::string & target_frame,
-  const std::string & source_frame,
-  transformation::TransformStamped & transform)
+bool FrameTransformerTF::transformIsAvailable(
+  const std::string & target_frame, const std::string & source_frame)
 {
   try {
-    transform = transformation::TransformStamped(
-      tf_wrapper_->lookupTransform(target_frame, source_frame, tf2::TimePointZero));
+    tf_wrapper_->lookupTransform(target_frame, source_frame, tf2::TimePointZero);
+    return true;
   } catch (const tf2::LookupException & exception) {
-    RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
+    (void) exception;
     return false;
   } catch (const tf2::ConnectivityException & exception) {
-    RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
+    (void) exception;
     return false;
   } catch (const tf2::ExtrapolationException & exception) {
-    RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
+    (void) exception;
     return false;
   } catch (const tf2::InvalidArgumentException & exception) {
-    RVIZ_COMMON_LOG_ERROR_STREAM(exception.what());
+    (void) exception;
     return false;
   }
-  return true;
 }
 
 bool FrameTransformerTF::transformHasProblems(

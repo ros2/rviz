@@ -42,7 +42,8 @@ using namespace ::testing;  // NOLINT
 TEST(FrameManager, transform_uses_transform_of_transformer) {
   auto clock = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);
   auto frame_transformer = std::make_shared<MockFrameTransformer>();
-  EXPECT_CALL(*frame_transformer, transform(_, _, _)).WillOnce(Return(true));
+  rviz_common::transformation::PoseStamped dummy_pose;
+  EXPECT_CALL(*frame_transformer, transform(_, _)).WillOnce(Return(dummy_pose));
   auto frame_manager = std::make_shared<rviz_common::FrameManager>(clock, frame_transformer);
 
   geometry_msgs::msg::Pose pose;
@@ -55,8 +56,9 @@ TEST(FrameManager, transform_uses_transform_of_transformer) {
 TEST(FrameManager, lastAvailableTransform_used_when_using_sync_approx) {
   auto clock = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);
   auto frame_transformer = std::make_shared<MockFrameTransformer>();
-  EXPECT_CALL(*frame_transformer, lastAvailableTransform(_, _, _)).WillOnce(Return(true));
-  EXPECT_CALL(*frame_transformer, transform(_, _, _)).WillOnce(Return(true));  // NOLINT
+  rviz_common::transformation::PoseStamped dummy_pose;
+  EXPECT_CALL(*frame_transformer, transformIsAvailable(_, _)).WillOnce(Return(true));
+  EXPECT_CALL(*frame_transformer, transform(_, _)).WillOnce(Return(dummy_pose));  // NOLINT
   auto frame_manager = std::make_shared<rviz_common::FrameManager>(clock, frame_transformer);
 
   frame_manager->setSyncMode(rviz_common::FrameManager::SyncApprox);

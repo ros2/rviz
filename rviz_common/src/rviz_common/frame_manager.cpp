@@ -167,8 +167,7 @@ bool FrameManager::adjustTime(const std::string & frame, rclcpp::Time & time)
     case SyncApprox:
       {
         // try to get the time from the latest available transformation
-        rviz_common::transformation::TransformStamped last_available_transform;
-        if (transformer_->lastAvailableTransform(fixed_frame_, frame, last_available_transform)) {
+        if (transformer_->transformIsAvailable(fixed_frame_, frame)) {
           time = sync_time_;
         }
       }
@@ -253,16 +252,14 @@ bool FrameManager::transform(
     stripped_fixed_frame = stripped_fixed_frame.substr(1);
   }
 
-  if (!transformer_->transform(
-      transformation::PoseStamped(pose_in),
-      out_pose,
-      stripped_fixed_frame))
-  {
+  geometry_msgs::msg::PoseStamped pose_out;
+  try {
+    pose_out = transformation::ros_helpers::toRosPoseStamped(
+      transformer_->transform(transformation::PoseStamped(pose_in), stripped_fixed_frame));
+  } catch (const transformation::FrameTransformerException & exception) {
+    (void) exception;
     return false;
   }
-  // TODO(botteroa-si): revisit once the FrameTransformer::transform() method has been refactored
-  // not to return a bool.
-  auto pose_out = transformation::ros_helpers::toRosPoseStamped(out_pose);
 
   position = rviz_common::pointMsgToOgre(pose_out.pose.position);
   orientation = rviz_common::quaternionMsgToOgre(pose_out.pose.orientation);

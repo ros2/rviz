@@ -46,14 +46,10 @@ public:
     initialize, void(rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node));
   MOCK_METHOD0(clear, void());
   MOCK_METHOD0(getAllFrameNames, std::vector<std::string>());
-  MOCK_METHOD3(transform, bool(
-      const rviz_common::transformation::PoseStamped & pose_in,
-      rviz_common::transformation::PoseStamped & pose_out,
-      const std::string & frame));
-  MOCK_METHOD3(lastAvailableTransform, bool(
-      const std::string & target_frame,
-      const std::string & source_frame,
-      rviz_common::transformation::TransformStamped & transform));
+  MOCK_METHOD2(transform, rviz_common::transformation::PoseStamped(
+      const rviz_common::transformation::PoseStamped & pose_in, const std::string & frame));
+  MOCK_METHOD2(transformIsAvailable, bool(
+      const std::string & target_frame, const std::string & source_frame));
   MOCK_METHOD4(transformHasProblems, bool(
       const std::string & frame,
       const std::string & fixed_frame,
