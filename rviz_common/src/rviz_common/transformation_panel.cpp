@@ -38,6 +38,7 @@
 #include <QVBoxLayout>
 
 #include "rviz_common/display_context.hpp"
+#include "./transformation/transformation_manager.hpp"
 
 namespace rviz_common
 {
@@ -78,17 +79,14 @@ QHBoxLayout * TransformationPanel::initializeBottomButtonRow()
 
 void TransformationPanel::onInitialize()
 {
-  current_selection_ = "tf2";
-// TODO   getDisplayContext()->getFrameManager()->getCurrentTransformationPlugin();
+  std::vector<std::string> available_plugins =
+    getDisplayContext()->getTransformationManager()->getAvailablePlugins();
 
-  std::vector<std::string> transformation_plugins {"tf2", "TARDIS"};
-// TODO   getDisplayContext()->getFrameManager()->getTransformationPlugins();
-
-  for(const auto & plugin : transformation_plugins) {
+  for(const auto & plugin : available_plugins) {
     auto button = new QRadioButton(QString::fromStdString(plugin));
     connect(button, SIGNAL(toggled(bool)), this, SLOT(onToggled(bool)));
 
-    if (plugin == current_selection_) {
+    if (isCurrentPlugin(plugin)) {
       button->setChecked(true);
     }
 
@@ -103,10 +101,8 @@ void TransformationPanel::onSaveClicked()
 {
   auto checked_button = getCheckedRadioButton();
   if (checked_button) {
-    auto text = checked_button->text().toStdString();
-
-    // TODO getDisplayContext()->getTransformationManager()->setPlugin(text)
-    current_selection_ = text;
+    auto plugin_name = checked_button->text().toStdString();
+    getDisplayContext()->getTransformationManager()->setPlugin(plugin_name);
     updateButtonState();
   }
 }
@@ -114,7 +110,7 @@ void TransformationPanel::onSaveClicked()
 void TransformationPanel::onResetClicked()
 {
   for (auto button : radio_buttons_) {
-    if (button->text().toStdString() == current_selection_) {
+    if (isCurrentPlugin(button->text().toStdString())) {
       button->setChecked(true);
     }
   }
@@ -130,7 +126,7 @@ void TransformationPanel::onToggled(bool checked)
 void TransformationPanel::updateButtonState()
 {
   auto button = getCheckedRadioButton();
-  if (button && button->text().toStdString() == current_selection_) {
+  if (button && isCurrentPlugin(button->text().toStdString())) {
     save_button_->setEnabled(false);
     reset_button_->setEnabled(false);
   } else {
@@ -147,6 +143,11 @@ QRadioButton * TransformationPanel::getCheckedRadioButton()
     }
   }
   return nullptr;
+}
+
+bool TransformationPanel::isCurrentPlugin(std::string plugin_name)
+{
+  return plugin_name == getDisplayContext()->getTransformationManager()->getCurrentPlugin();
 }
 
 }  // namespace rviz_common

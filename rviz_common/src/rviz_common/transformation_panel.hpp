@@ -48,7 +48,7 @@ class PropertyTreeWidget;
 
 class DisplayContext;
 
-/** A place to choose the transformation plugin
+/** A panel to choose the transformation plugin
  */
 class TransformationPanel : public Panel
 {
@@ -69,10 +69,10 @@ private:
   QHBoxLayout * initializeBottomButtonRow();
   QGroupBox * initializeRadioButtonGroup();
 
-  QRadioButton * getCheckedRadioButton();
   void updateButtonState();
+  QRadioButton * getCheckedRadioButton();
 
-  std::string current_selection_;  // TODO Temporary, replace with TransformationManager
+  bool isCurrentPlugin(std::string plugin_name);
 
   QVBoxLayout *  radio_layout_;
   std::vector<QRadioButton *> radio_buttons_;
