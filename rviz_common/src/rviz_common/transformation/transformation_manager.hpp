@@ -38,7 +38,7 @@
 
 #include <QObject>  // NOLINT
 
-#include "rviz_common/frame_transformer.hpp"
+#include "rviz_common/transformation/frame_transformer.hpp"
 
 namespace rviz_common
 {

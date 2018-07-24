@@ -48,7 +48,7 @@
 
 #include "rviz_common/visibility_control.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
-#include "rviz_common/frame_transformer.hpp"
+#include "rviz_common/transformation/frame_transformer.hpp"
 
 namespace rviz_common
 {
@@ -70,7 +70,8 @@ public:
    * \param tf a pointer to tf::TransformListener (should not be used anywhere
    *   else because of thread safety).
    */
-  FrameManager(rclcpp::Clock::SharedPtr clock, std::shared_ptr<FrameTransformer> transformer);
+  FrameManager(
+    rclcpp::Clock::SharedPtr clock, std::shared_ptr<transformation::FrameTransformer> transformer);
 
   /// Destructor.
   /**
@@ -186,7 +187,7 @@ public:
   const std::string & getFixedFrame() override;
 
   /// Return a shared pointer to the internal transformation object.
-  InternalFrameTransformerPtr getInternalPtr() override;
+  transformation::InternalFrameTransformerPtr getInternalPtr() override;
 
 // TODO(wjwwood): figure out how to replace FilgerFailureReason here
 #if 0
@@ -214,7 +215,7 @@ public:
   virtual bool anyTransformationDataAvailable();
 
 public Q_SLOTS:
-  void setTransformerPlugin(std::shared_ptr<rviz_common::FrameTransformer> transformer) override;
+  void setTransformerPlugin(std::shared_ptr<transformation::FrameTransformer> transformer) override;
 
 private:
   bool adjustTime(const std::string & frame, rclcpp::Time & time);
@@ -282,7 +283,7 @@ private:
   std::mutex cache_mutex_;
   M_Cache cache_;
 
-  std::shared_ptr<FrameTransformer> transformer_;
+  std::shared_ptr<transformation::FrameTransformer> transformer_;
   std::string fixed_frame_;
 
   bool pause_;

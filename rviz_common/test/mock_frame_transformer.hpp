@@ -36,10 +36,10 @@
 #include <string>
 #include <vector>
 
-#include "rviz_common/frame_transformer.hpp"
+#include "rviz_common/transformation/frame_transformer.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction.hpp"
 
-class MockFrameTransformer : public rviz_common::FrameTransformer
+class MockFrameTransformer : public rviz_common::transformation::FrameTransformer
 {
 public:
   MOCK_METHOD1(
@@ -60,7 +60,7 @@ public:
       const rviz_common::transformation::Time & time,
       std::string & error));
   MOCK_METHOD2(frameHasProblems, bool(const std::string & frame, std::string & error));
-  MOCK_METHOD0(getInternals, rviz_common::InternalFrameTransformerPtr());
+  MOCK_METHOD0(getInternals, rviz_common::transformation::InternalFrameTransformerPtr());
 };
 
 #endif  // MOCK_FRAME_TRANSFORMER_HPP_

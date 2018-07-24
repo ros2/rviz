@@ -39,7 +39,7 @@
 #include <vector>
 
 #include "rviz_common/frame_manager_iface.hpp"
-#include "rviz_common/frame_transformer.hpp"
+#include "rviz_common/transformation/frame_transformer.hpp"
 
 class MockFrameManager : public rviz_common::FrameManagerIface
 {
@@ -66,10 +66,11 @@ public:
   MOCK_METHOD2(transformHasProblems, bool(const std::string &, std::string &));
   MOCK_METHOD3(transformHasProblems, bool(const std::string &, rclcpp::Time, std::string &));
   MOCK_METHOD0(getFixedFrame, const std::string & ());
-  MOCK_METHOD0(getInternalPtr, rviz_common::InternalFrameTransformerPtr());
+  MOCK_METHOD0(getInternalPtr, rviz_common::transformation::InternalFrameTransformerPtr());
   MOCK_METHOD0(getAllFrameNames, std::vector<std::string>());
   MOCK_METHOD1(
-    setTransformerPlugin, void(std::shared_ptr<rviz_common::FrameTransformer> transformer));
+    setTransformerPlugin,
+    void(std::shared_ptr<rviz_common::transformation::FrameTransformer> transformer));
 
   MOCK_METHOD0(fixedFrameChanged, void());
 };

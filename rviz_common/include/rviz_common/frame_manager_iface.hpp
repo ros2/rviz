@@ -50,7 +50,7 @@
 // #include "tf2_ros/message_filter.h"
 
 #include "rviz_common/visibility_control.hpp"
-#include "rviz_common/frame_transformer.hpp"
+#include "rviz_common/transformation/frame_transformer.hpp"
 
 namespace tf2_ros
 {
@@ -239,7 +239,7 @@ public:
   virtual const std::string & getFixedFrame() = 0;
 
   /// Return a shared pointer to the internal transformation object.
-  virtual InternalFrameTransformerPtr getInternalPtr() = 0;
+  virtual transformation::InternalFrameTransformerPtr getInternalPtr() = 0;
 
 // TODO(wjwwood): figure out how to replace FilgerFailureReason here
 #if 0
@@ -263,7 +263,8 @@ public:
   virtual std::vector<std::string> getAllFrameNames() = 0;
 
 public Q_SLOTS:
-  virtual void setTransformerPlugin(std::shared_ptr<rviz_common::FrameTransformer> transformer) = 0;
+  virtual void setTransformerPlugin(
+    std::shared_ptr<transformation::FrameTransformer> transformer) = 0;
 
 Q_SIGNALS:
   void fixedFrameChanged();

@@ -37,12 +37,12 @@
 #include "tf2_ros/buffer.h"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.h"
 
-#include "rviz_common/frame_transformer.hpp"
+#include "rviz_common/transformation/frame_transformer.hpp"
 #include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
-struct RVIZ_COMMON_PUBLIC TFWrapper : public InternalFrameTransformer
+struct RVIZ_COMMON_PUBLIC TFWrapper : public transformation::InternalFrameTransformer
 {
 public:
   TFWrapper(std::shared_ptr<tf2_ros::Buffer> buffer, bool using_edicated_thread);

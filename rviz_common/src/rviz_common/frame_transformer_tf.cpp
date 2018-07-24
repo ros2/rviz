@@ -138,7 +138,7 @@ bool FrameTransformerTF::frameHasProblems(const std::string & frame, std::string
   return false;
 }
 
-InternalFrameTransformerPtr FrameTransformerTF::getInternals()
+transformation::InternalFrameTransformerPtr FrameTransformerTF::getInternals()
 {
   return tf_wrapper_;
 }
