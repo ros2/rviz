@@ -60,16 +60,12 @@ public:
 
   std::vector<std::string> getAllFrameNames() override;
 
-  bool transform(
+  transformation::PoseStamped transform(
     // NOLINT (this is not std::transform)
-    const transformation::PoseStamped & pose_in,
-    transformation::PoseStamped & pose_out,
-    const std::string & frame) override;
+    const transformation::PoseStamped & pose_in, const std::string & frame) override;
 
-  bool lastAvailableTransform(
-    const std::string & target_frame,
-    const std::string & source_frame,
-    transformation::TransformStamped & transform) override;
+  bool transformIsAvailable(
+    const std::string & target_frame, const std::string & source_frame) override;
 
   bool transformHasProblems(
     const std::string & frame,

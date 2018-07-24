@@ -49,6 +49,15 @@ struct RVIZ_COMMON_PUBLIC InternalFrameTransformer
   virtual ~InternalFrameTransformer() = default;
 };
 
+class RVIZ_COMMON_PUBLIC FrameTransformerException : public std::runtime_error
+{
+public:
+  explicit FrameTransformerException(const char * error_message)
+  : std::runtime_error(error_message) {}
+
+  ~FrameTransformerException() throw() override = default;
+};
+
 using InternalFrameTransformerPtr = std::weak_ptr<InternalFrameTransformer>;
 
 class RVIZ_COMMON_PUBLIC FrameTransformer
@@ -60,16 +69,12 @@ public:
 
   virtual std::vector<std::string> getAllFrameNames() = 0;
 
-  virtual bool transform(
+  virtual transformation::PoseStamped transform(
     // NOLINT (this is not std::transform)
-    const transformation::PoseStamped & pose_in,
-    transformation::PoseStamped & pose_out,
-    const std::string & frame) = 0;
+    const transformation::PoseStamped & pose_in, const std::string & frame) = 0;
 
-  virtual bool lastAvailableTransform(
-    const std::string & target_frame,
-    const std::string & source_frame,
-    transformation::TransformStamped & transform) = 0;
+  virtual bool transformIsAvailable(
+    const std::string & target_frame, const std::string & source_frame) = 0;
 
   virtual bool transformHasProblems(
     const std::string & frame,

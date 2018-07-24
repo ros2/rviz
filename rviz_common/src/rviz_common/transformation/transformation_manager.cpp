@@ -43,7 +43,7 @@ namespace transformation
 TransformationManager::TransformationManager(std::string current_plugin)
 : available_plugins_({}), current_plugin_(current_plugin)
 {
-  // TODO(bottteroa-si): use pluginlob to fill correctly available plugins list
+  // TODO(botteroa-si): use pluginlob to fill correctly available plugins list
   setAvailablePlugins({"dummy_transformer", "tf_transformer"});
 }
 
