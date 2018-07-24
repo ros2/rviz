@@ -48,12 +48,12 @@ FrameTransformerTF::FrameTransformerTF(std::shared_ptr<TFWrapper> wrapper)
 {}
 
 transformation::PoseStamped FrameTransformerTF::transform(
-  const transformation::PoseStamped & pose_in, const std::string & frame)
+  const transformation::PoseStamped & pose_in, const std::string & target_frame)
 {
   geometry_msgs::msg::PoseStamped out_pose;
   geometry_msgs::msg::PoseStamped in_pose = transformation::ros_helpers::toRosPoseStamped(pose_in);
   try {
-    tf_wrapper_->transform(in_pose, out_pose, frame);
+    tf_wrapper_->transform(in_pose, out_pose, target_frame);
     return transformation::PoseStamped(out_pose);
   } catch (const tf2::LookupException & exception) {
     throw rviz_common::transformation::FrameTransformerException(exception.what());
@@ -88,30 +88,30 @@ bool FrameTransformerTF::transformIsAvailable(
 }
 
 bool FrameTransformerTF::transformHasProblems(
-  const std::string & frame,
-  const std::string & fixed_frame,
+  const std::string & source_frame,
+  const std::string & target_frame,
   const transformation::Time & time,
   std::string & error)
 {
   std::string tf_error;
   tf2::TimePoint tf2_time(std::chrono::nanoseconds(time.nanoseconds_));
   bool transform_succeeded = tf_wrapper_->canTransform(
-    fixed_frame, frame, tf2_time, tf_error);
+    target_frame, source_frame, tf2_time, tf_error);
   if (transform_succeeded) {
     return false;
   }
 
-  bool fixed_frame_ok = !frameHasProblems(fixed_frame, error);
-  bool ok = fixed_frame_ok && !frameHasProblems(frame, error);
+  bool fixed_frame_ok = !frameHasProblems(target_frame, error);
+  bool ok = fixed_frame_ok && !frameHasProblems(source_frame, error);
 
   if (ok) {
-    error = "No transform to fixed frame [" + fixed_frame + "].  TF error: [" + tf_error + "]";
+    error = "No transform to fixed frame [" + target_frame + "].  TF error: [" + tf_error + "]";
     return true;
   }
 
   error = fixed_frame_ok ?
-    "For frame [" + frame + "]: " + error :
-    "For frame [" + frame + "]: Fixed " + error;
+    "For frame [" + source_frame + "]: " + error :
+    "For frame [" + source_frame + "]: Fixed " + error;
 
   return true;
 }

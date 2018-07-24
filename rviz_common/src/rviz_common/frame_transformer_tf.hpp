@@ -62,14 +62,14 @@ public:
 
   transformation::PoseStamped transform(
     // NOLINT (this is not std::transform)
-    const transformation::PoseStamped & pose_in, const std::string & frame) override;
+    const transformation::PoseStamped & pose_in, const std::string & target_frame) override;
 
   bool transformIsAvailable(
     const std::string & target_frame, const std::string & source_frame) override;
 
   bool transformHasProblems(
-    const std::string & frame,
-    const std::string & fixed_frame,
+    const std::string & source_frame,
+    const std::string & target_frame,
     const transformation::Time & time,
     std::string & error) override;
 
