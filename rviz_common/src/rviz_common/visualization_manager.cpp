@@ -96,7 +96,6 @@
 #include "./tool_manager.hpp"
 // #include "rviz_common/view_controller.hpp"
 #include "rviz_common/view_manager.hpp"
-#include "frame_transformer_tf.hpp"
 // #include "./viewport_mouse_event.hpp"
 
 // #include "rviz/window_manager_interface.h"
@@ -164,16 +163,14 @@ VisualizationManager::VisualizationManager(
   clock_(clock),
   private_(new VisualizationManagerPrivate),
   executor_(std::make_shared<rclcpp::executors::SingleThreadedExecutor>()),
-  rviz_ros_node_(ros_node_abstraction),
-  transformation_manager_(new transformation::TransformationManager("tf_transformer"))
+  rviz_ros_node_(ros_node_abstraction)
 {
   // visibility_bit_allocator_ is listed after default_visibility_bit_
   // (and thus initialized later be default):
   default_visibility_bit_ = visibility_bit_allocator_.allocBit();
 
-  auto transformer = std::make_shared<FrameTransformerTF>();
-  transformer->initialize(rviz_ros_node_);
-  frame_manager_ = new FrameManager(clock, transformer);
+  transformation_manager_ = new transformation::TransformationManager(rviz_ros_node_);
+  frame_manager_ = new FrameManager(clock, transformation_manager_->getCurrentTransformer());
   connect(
     transformation_manager_,
     SIGNAL(currentPluginChanged(std::shared_ptr<rviz_common::transformation::FrameTransformer>)),
