@@ -71,8 +71,10 @@ struct RVIZ_COMMON_PUBLIC Quaternion
 
 struct RVIZ_COMMON_PUBLIC PoseStamped
 {
+public:
   PoseStamped();
-  PoseStamped(Time time_stamp, std::string frame_id, Point position, Quaternion orientation);
+  PoseStamped(
+    Time time_stamp, std::string frame_id, Point position, Quaternion orientation);
 
   Time time_stamp_;
   std::string frame_id_;
@@ -82,6 +84,7 @@ struct RVIZ_COMMON_PUBLIC PoseStamped
 
 struct RVIZ_COMMON_PUBLIC TransformStamped
 {
+public:
   TransformStamped();
   TransformStamped(
     Time time_stamp,

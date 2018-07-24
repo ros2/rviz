@@ -43,10 +43,11 @@
 
 namespace rviz_common
 {
-struct RVIZ_COMMON_PUBLIC TFWrapper : public transformation::InternalFrameTransformer
+class RVIZ_COMMON_PUBLIC TFWrapper : public transformation::InternalFrameTransformer
 {
 public:
   TFWrapper(std::shared_ptr<tf2_ros::Buffer> buffer, bool using_dedicated_thread);
+  ~TFWrapper() override = default;
 
   void transform(
     const geometry_msgs::msg::PoseStamped & pose_in,
@@ -77,6 +78,7 @@ private:
   std::shared_ptr<tf2_ros::Buffer> buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
 };
+
 }  // namespace rviz_common
 
 #endif  // RVIZ_COMMON__TF_WRAPPER_HPP_

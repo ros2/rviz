@@ -44,18 +44,19 @@ namespace rviz_common
 namespace transformation
 {
 
-struct RVIZ_COMMON_PUBLIC InternalFrameTransformer
+class RVIZ_COMMON_PUBLIC InternalFrameTransformer
 {
+public:
   virtual ~InternalFrameTransformer() = default;
 };
 
-class RVIZ_COMMON_PUBLIC FrameTransformerException : public std::runtime_error
+class FrameTransformerException : public std::runtime_error
 {
 public:
-  explicit FrameTransformerException(const char * error_message)
+  RVIZ_COMMON_PUBLIC explicit FrameTransformerException(const char * error_message)
   : std::runtime_error(error_message) {}
 
-  ~FrameTransformerException() throw() override = default;
+  RVIZ_COMMON_PUBLIC ~FrameTransformerException() noexcept override = default;
 };
 
 using InternalFrameTransformerPtr = std::weak_ptr<InternalFrameTransformer>;
