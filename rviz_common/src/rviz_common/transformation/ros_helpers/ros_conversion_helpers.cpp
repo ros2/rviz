@@ -73,7 +73,7 @@ rviz_common::transformation::Point fromRosVector3(geometry_msgs::msg::Vector3 ro
 }
 
 std_msgs::msg::Header toRosHeader(
-  rviz_common::transformation::Time time_stamp, std::string frame_id)
+  rviz_common::transformation::Time time_stamp, const std::string & frame_id)
 {
   std_msgs::msg::Header ros_header;
   ros_header.stamp.sec = time_stamp.seconds_;

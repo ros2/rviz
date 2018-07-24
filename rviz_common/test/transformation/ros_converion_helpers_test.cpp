@@ -41,7 +41,7 @@
 #include "rviz_common/transformation/structs.hpp"
 #include "rviz_common/transformation/ros_helpers/ros_conversion_helpers.hpp"
 
-geometry_msgs::msg::Point createRosPoint(float x, float y, float z)
+geometry_msgs::msg::Point createRosPoint(double x, double y, double z)
 {
   geometry_msgs::msg::Point point;
   point.x = x;
@@ -51,7 +51,7 @@ geometry_msgs::msg::Point createRosPoint(float x, float y, float z)
   return point;
 }
 
-geometry_msgs::msg::Vector3 createRosVector3(float x, float y, float z)
+geometry_msgs::msg::Vector3 createRosVector3(double x, double y, double z)
 {
   geometry_msgs::msg::Vector3 vector;
   vector.x = x;
@@ -61,7 +61,7 @@ geometry_msgs::msg::Vector3 createRosVector3(float x, float y, float z)
   return vector;
 }
 
-geometry_msgs::msg::Quaternion createRosQuaternion(float w, float x, float y, float z)
+geometry_msgs::msg::Quaternion createRosQuaternion(double w, double x, double y, double z)
 {
   geometry_msgs::msg::Quaternion quaternion;
   quaternion.w = w;
@@ -72,7 +72,7 @@ geometry_msgs::msg::Quaternion createRosQuaternion(float w, float x, float y, fl
   return quaternion;
 }
 
-rviz_common::transformation::Point createRvizCommonPoint(float x, float y, float z)
+rviz_common::transformation::Point createRvizCommonPoint(double x, double y, double z)
 {
   rviz_common::transformation::Point point;
   point.x_ = x;
@@ -83,7 +83,7 @@ rviz_common::transformation::Point createRvizCommonPoint(float x, float y, float
 }
 
 rviz_common::transformation::Quaternion createRvizCommonQuaternion(
-  float w, float x, float y, float z)
+  double w, double x, double y, double z)
 {
   rviz_common::transformation::Quaternion quaternion;
   quaternion.w_ = w;
