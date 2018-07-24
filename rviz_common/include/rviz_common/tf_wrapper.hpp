@@ -35,6 +35,7 @@
 #include <vector>
 
 #include "tf2_ros/buffer.h"
+#include "tf2_ros/transform_listener.h"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.h"
 
 #include "rviz_common/transformation/frame_transformer.hpp"
@@ -45,7 +46,7 @@ namespace rviz_common
 struct RVIZ_COMMON_PUBLIC TFWrapper : public transformation::InternalFrameTransformer
 {
 public:
-  TFWrapper(std::shared_ptr<tf2_ros::Buffer> buffer, bool using_edicated_thread);
+  TFWrapper(std::shared_ptr<tf2_ros::Buffer> buffer, bool using_dedicated_thread);
 
   void transform(
     const geometry_msgs::msg::PoseStamped & pose_in,
@@ -67,10 +68,14 @@ public:
   std::shared_ptr<tf2_ros::Buffer> getBuffer();
 
   bool frameExists(const std::string & frame);
+
+  void setListener(std::shared_ptr<tf2_ros::TransformListener> tf_listener);
+
   void clear();
 
 private:
   std::shared_ptr<tf2_ros::Buffer> buffer_;
+  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
 };
 }  // namespace rviz_common
 

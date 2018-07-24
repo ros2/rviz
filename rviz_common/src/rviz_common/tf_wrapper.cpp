@@ -36,10 +36,10 @@
 namespace rviz_common
 {
 
-TFWrapper::TFWrapper(std::shared_ptr<tf2_ros::Buffer> buffer, bool using_edicated_thread)
-: buffer_(buffer)
+TFWrapper::TFWrapper(std::shared_ptr<tf2_ros::Buffer> buffer, bool using_dedicated_thread)
+: buffer_(buffer), tf_listener_(nullptr)
 {
-  buffer_->setUsingDedicatedThread(using_edicated_thread);
+  buffer_->setUsingDedicatedThread(using_dedicated_thread);
 }
 
 void TFWrapper::transform(
@@ -82,6 +82,11 @@ bool TFWrapper::frameExists(const std::string & frame)
 std::shared_ptr<tf2_ros::Buffer> TFWrapper::getBuffer()
 {
   return buffer_;
+}
+
+void TFWrapper::setListener(std::shared_ptr<tf2_ros::TransformListener> tf_listener)
+{
+  tf_listener_ = tf_listener;
 }
 
 void TFWrapper::clear()
