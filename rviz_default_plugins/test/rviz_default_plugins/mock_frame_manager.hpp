@@ -68,6 +68,8 @@ public:
   MOCK_METHOD0(getFixedFrame, const std::string & ());
   MOCK_METHOD0(getInternalPtr, rviz_common::InternalFrameTransformerPtr());
   MOCK_METHOD0(getAllFrameNames, std::vector<std::string>());
+  MOCK_METHOD1(
+    setTransformerPlugin, void(std::shared_ptr<rviz_common::FrameTransformer> transformer));
 
   MOCK_METHOD0(fixedFrameChanged, void());
 };
