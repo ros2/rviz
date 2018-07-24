@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "frame_transformer_tf.hpp"
+#include "include/rviz_default_plugins/transformation/frame_transformer_tf.hpp"
 
 #include <memory>
 #include <string>
