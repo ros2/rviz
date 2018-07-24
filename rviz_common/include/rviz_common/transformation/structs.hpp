@@ -40,6 +40,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 
+#include "rviz_common/visibility_control.hpp"
 #include "rviz_common/transformation/ros_helpers/ros_conversion_helpers.hpp"
 
 namespace rviz_common
@@ -47,7 +48,7 @@ namespace rviz_common
 namespace transformation
 {
 
-struct Time
+struct RVIZ_COMMON_PUBLIC Time
 {
   Time()
   : seconds_(0), nanoseconds_(0) {}
@@ -66,7 +67,7 @@ struct Time
   uint32_t nanoseconds_;
 };
 
-struct Point
+struct RVIZ_COMMON_PUBLIC Point
 {
   Point()
   : x_(0), y_(0), z_(0) {}
@@ -82,7 +83,7 @@ struct Point
   float z_;
 };
 
-struct Quaternion
+struct RVIZ_COMMON_PUBLIC Quaternion
 {
   Quaternion()
   : w_(1), x_(0), y_(0), z_(0) {}
@@ -100,7 +101,7 @@ struct Quaternion
   float z_;
 };
 
-struct PoseStamped
+struct RVIZ_COMMON_PUBLIC PoseStamped
 {
   PoseStamped()
   : time_stamp_(), frame_id_(""), point_(), orientation_() {}
@@ -119,7 +120,7 @@ struct PoseStamped
   Quaternion orientation_;
 };
 
-struct TransformStamped
+struct RVIZ_COMMON_PUBLIC TransformStamped
 {
   TransformStamped()
   : time_stamp_(), parent_frame_id_(""), child_frame_id_(""), translation_(), rotation_()
