@@ -71,21 +71,21 @@ public:
 
   virtual transformation::PoseStamped transform(
     // NOLINT (this is not std::transform)
-    const transformation::PoseStamped & pose_in, const std::string & frame) = 0;
+    const transformation::PoseStamped & pose_in, const std::string & target_frame) = 0;
 
   virtual bool transformIsAvailable(
     const std::string & target_frame, const std::string & source_frame) = 0;
 
   virtual bool transformHasProblems(
-    const std::string & frame,
-    const std::string & fixed_frame,
+    const std::string & source_frame,
+    const std::string & target_frame,
     const transformation::Time & time,
     std::string & error) = 0;
 
   virtual bool frameHasProblems(const std::string & frame, std::string & error) = 0;
 
 //  virtual void waitForValidTransform(
-//    std::string target_frame, std::string source_frame, time, callback) = 0;
+//    std::string target_frame, std::string source_frame, transfrormation::Time time, callback) = 0;
 
   /// Expose internal implementation
   virtual InternalFrameTransformerPtr getInternals() = 0;
