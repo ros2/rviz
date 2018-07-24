@@ -52,18 +52,19 @@ struct RVIZ_COMMON_PUBLIC Time
 {
   Time()
   : seconds_(0), nanoseconds_(0) {}
-  Time(uint32_t seconds, uint32_t nanoseconds)
+  Time(int32_t seconds, uint32_t nanoseconds)
   {
     seconds_ = seconds;
     nanoseconds_ = nanoseconds;
   }
 
-  explicit Time(rclcpp::Time time)
+  explicit Time(const rclcpp::Time & time)
   {
-    nanoseconds_ = time.nanoseconds();
+    seconds_ = 0;
+    nanoseconds_ = static_cast<uint32_t>(time.nanoseconds());
   }
 
-  uint32_t seconds_;
+  int32_t seconds_;
   uint32_t nanoseconds_;
 };
 
@@ -71,23 +72,23 @@ struct RVIZ_COMMON_PUBLIC Point
 {
   Point()
   : x_(0), y_(0), z_(0) {}
-  Point(float x, float y, float z)
+  Point(double x, double y, double z)
   {
     x_ = x;
     y_ = y;
     z_ = z;
   }
 
-  float x_;
-  float y_;
-  float z_;
+  double x_;
+  double y_;
+  double z_;
 };
 
 struct RVIZ_COMMON_PUBLIC Quaternion
 {
   Quaternion()
   : w_(1), x_(0), y_(0), z_(0) {}
-  Quaternion(float w, float x, float y, float z)
+  Quaternion(double w, double x, double y, double z)
   {
     w_ = w;
     x_ = x;
@@ -95,10 +96,10 @@ struct RVIZ_COMMON_PUBLIC Quaternion
     z_ = z;
   }
 
-  float w_;
-  float x_;
-  float y_;
-  float z_;
+  double w_;
+  double x_;
+  double y_;
+  double z_;
 };
 
 struct RVIZ_COMMON_PUBLIC PoseStamped

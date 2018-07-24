@@ -66,7 +66,7 @@ rviz_common::transformation::Point fromRosVector3(geometry_msgs::msg::Vector3 ro
 
 RVIZ_COMMON_PUBLIC
 std_msgs::msg::Header toRosHeader(
-  rviz_common::transformation::Time time_stamp, std::string frame_id);
+  rviz_common::transformation::Time time_stamp, const std::string & frame_id);
 
 RVIZ_COMMON_PUBLIC
 geometry_msgs::msg::Point toRosPoint(rviz_common::transformation::Point point);
