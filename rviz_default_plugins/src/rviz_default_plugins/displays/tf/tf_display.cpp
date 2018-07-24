@@ -59,9 +59,9 @@
 #include "rviz_common/interaction/forwards.hpp"
 #include "rviz_common/interaction/selection_manager.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
-#include "rviz_common/tf_wrapper.hpp"
 #include "rviz_default_plugins/displays/tf/frame_info.hpp"
 #include "rviz_default_plugins/displays/tf/frame_selection_handler.hpp"
+#include "rviz_default_plugins/transformation/tf_wrapper.hpp"
 
 using rviz_common::interaction::SelectionHandler;
 using rviz_common::properties::BoolProperty;
@@ -406,7 +406,7 @@ FrameInfo * TFDisplay::createFrame(const std::string & frame)
 
 void TFDisplay::updateFrame(FrameInfo * frame)
 {
-  auto tf_wrapper = std::dynamic_pointer_cast<rviz_common::TFWrapper>(
+  auto tf_wrapper = std::dynamic_pointer_cast<transformation::TFWrapper>(
     std::shared_ptr<rviz_common::transformation::InternalFrameTransformer>(
       context_->getFrameManager()->getInternalPtr()));
   if (!tf_wrapper) {

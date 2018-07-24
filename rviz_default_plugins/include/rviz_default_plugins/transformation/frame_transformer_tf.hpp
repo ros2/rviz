@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__FRAME_TRANSFORMER_TF_HPP_
-#define RVIZ_COMMON__FRAME_TRANSFORMER_TF_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__TRANSFORMATION__FRAME_TRANSFORMER_TF_HPP_
+#define RVIZ_DEFAULT_PLUGINS__TRANSFORMATION__FRAME_TRANSFORMER_TF_HPP_
 
 #include <memory>
 #include <string>
@@ -39,26 +39,30 @@
 
 #include "rviz_common/transformation/frame_transformer.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction.hpp"
-#include "rviz_common/tf_wrapper.hpp"
+#include "rviz_default_plugins/transformation/tf_wrapper.hpp"
 
-namespace rviz_common
+namespace rviz_default_plugins
 {
-class FrameTransformerTF : public transformation::FrameTransformer
+namespace transformation
+{
+class FrameTransformerTF : public rviz_common::transformation::FrameTransformer
 {
 public:
   FrameTransformerTF();
   explicit FrameTransformerTF(std::shared_ptr<TFWrapper> wrapper);
   ~FrameTransformerTF() = default;
 
-  void initialize(ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node) override;
+  void initialize(
+    rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node) override;
 
   void clear() override;
 
   std::vector<std::string> getAllFrameNames() override;
 
-  transformation::PoseStamped transform(
+  rviz_common::transformation::PoseStamped transform(
     // NOLINT (this is not std::transform)
-    const transformation::PoseStamped & pose_in, const std::string & target_frame) override;
+    const rviz_common::transformation::PoseStamped & pose_in,
+    const std::string & target_frame) override;
 
   bool transformIsAvailable(
     const std::string & target_frame, const std::string & source_frame) override;
@@ -71,11 +75,12 @@ public:
 
   bool frameHasProblems(const std::string & frame, std::string & error) override;
 
-  transformation::InternalFrameTransformerPtr getInternals() override;
+  rviz_common::transformation::InternalFrameTransformerPtr getInternals() override;
 
 private:
   std::shared_ptr<TFWrapper> tf_wrapper_;
 };
-}  // namespace rviz_common
+}  // namespace transformation
+}  // namespace rviz_default_plugins
 
-#endif  // RVIZ_COMMON__FRAME_TRANSFORMER_TF_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__TRANSFORMATION__FRAME_TRANSFORMER_TF_HPP_

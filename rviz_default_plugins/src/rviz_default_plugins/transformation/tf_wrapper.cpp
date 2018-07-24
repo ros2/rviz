@@ -27,13 +27,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz_common/tf_wrapper.hpp"
+#include "rviz_default_plugins/transformation/tf_wrapper.hpp"
 
 #include <memory>
 #include <string>
 #include <vector>
 
-namespace rviz_common
+namespace rviz_default_plugins
+{
+namespace transformation
 {
 
 TFWrapper::TFWrapper(std::shared_ptr<tf2_ros::Buffer> buffer, bool using_dedicated_thread)
@@ -94,4 +96,5 @@ void TFWrapper::clear()
   buffer_->clear();
 }
 
-}  // namespace rviz_common
+}  // namespace transformation
+}  // namespace rviz_default_plugins
