@@ -53,7 +53,7 @@ TransformationManager::TransformationManager(
   // 1) Load from config
   // 2) Load TF if available
   // 3) Load dummy
-  setTransformer("rviz_default_plugins/FrameTransformerTF");
+  setTransformer("rviz_default_plugins/TFFrameTransformer");
 }
 
 QStringList TransformationManager::getAvailableTransformerNames()

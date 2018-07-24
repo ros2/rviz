@@ -284,8 +284,8 @@
   <!-- Transformation plugins -->
 
   <class
-    name="rviz_default_plugins/FrameTransformerTF"
-    type="rviz_default_plugins::transformation::FrameTransformerTF"
+    name="rviz_default_plugins/TFFrameTransformer"
+    type="rviz_default_plugins::transformation::TFFrameTransformer"
     base_class_type="rviz_common::transformation::FrameTransformer"
   >
     <description>
