@@ -112,6 +112,8 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/tools/pose/pose_tool.hpp
   include/rviz_default_plugins/tools/pose_estimate/initial_pose_tool.hpp
   include/rviz_default_plugins/tools/point/point_tool.hpp
+  include/rviz_default_plugins/transformation/frame_transformer_tf.hpp
+  include/rviz_default_plugins/transformation/tf_wrapper.hpp
   include/rviz_default_plugins/view_controllers/orbit/orbit_view_controller.hpp
   include/rviz_default_plugins/view_controllers/ortho/fixed_orientation_ortho_view_controller.hpp
   include/rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller.hpp
@@ -180,6 +182,8 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/tools/pose_estimate/initial_pose_tool.cpp
   src/rviz_default_plugins/tools/point/point_tool.cpp
   src/rviz_default_plugins/tools/select/selection_tool.cpp
+  src/rviz_default_plugins/transformation/frame_transformer_tf.cpp
+  src/rviz_default_plugins/transformation/tf_wrapper.cpp
   src/rviz_default_plugins/view_controllers/follower/third_person_follower_view_controller.cpp
   src/rviz_default_plugins/view_controllers/fps/fps_view_controller.cpp
   src/rviz_default_plugins/view_controllers/orbit/orbit_view_controller.cpp
@@ -288,6 +292,7 @@ if(BUILD_TESTING)
     DESTINATION "share/rviz_default_plugins"
     USE_SOURCE_PERMISSIONS)
 
+<<<<<<< 5a7fa3d72dbdcbcebad14016511eddce43b193d6
   set(TEST_INCLUDE_DIRS
     ${OGRE_INCLUDE_DIRS}
     ${nav_msgs_INCLUDE_DIRS}
@@ -563,6 +568,14 @@ if(BUILD_TESTING)
   if(TARGET xy_orbit_view_controller_test)
     target_include_directories(xy_orbit_view_controller_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(xy_orbit_view_controller_test ${TEST_LINK_LIBRARIES})
+  endif()
+
+  ament_add_gmock(frame_transformer_tf_test
+    test/rviz_default_plugins/transformation/frame_transformer_tf_test.cpp
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET frame_transformer_tf_test)
+    target_include_directories(frame_transformer_tf_test PUBLIC ${TEST_INCLUDE_DIRS})
+    target_link_libraries(frame_transformer_tf_test ${TEST_LINK_LIBRARIES})
   endif()
 
   ament_add_gtest(camera_display_visual_test
