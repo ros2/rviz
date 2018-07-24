@@ -40,8 +40,9 @@ namespace rviz_common
 namespace transformation
 {
 
-TransformationManager::TransformationManager(std::string current_plugin)
-: available_plugins_({}), current_plugin_(current_plugin)
+TransformationManager::TransformationManager(
+  ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node)
+: available_plugins_({}), rviz_ros_node_(rviz_ros_node)
 {
   // TODO(botteroa-si): use pluginlob to fill correctly available plugins list
   setAvailablePlugins(
@@ -72,6 +73,11 @@ void TransformationManager::setPlugin(std::string plugin_name)
   // TODO(botteroa-si): use pluginlib to build an object of the correct type
 //  auto plugin = // pluginlib code
 //  Q_EMIT currentPluginChanged(plugin);
+}
+
+std::shared_ptr<FrameTransformer> TransformationManager::getCurrentTransformer()
+{
+  return std::shared_ptr<FrameTransformer>();
 }
 
 }  // namespace transformation

@@ -50,10 +50,11 @@ class TransformationManager : public QObject
   Q_OBJECT
 
 public:
-  explicit TransformationManager(std::string current_plugin);
+  explicit TransformationManager(ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node);
 
   void setAvailablePlugins(std::vector<std::string> available_plugins);
   std::string getCurrentPlugin();
+  std::shared_ptr<FrameTransformer> getCurrentTransformer();
   std::vector<std::string> getAvailablePlugins();
   void setPlugin(std::string plugin_name);
 
@@ -63,6 +64,8 @@ Q_SIGNALS:
 private:
   std::vector<std::string> available_plugins_;
   std::string current_plugin_;
+
+  ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node_;
 };
 
 }  // namespace transformation
