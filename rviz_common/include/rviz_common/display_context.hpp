@@ -70,13 +70,19 @@ class ViewPickerIface;
 
 }  // namespace interaction
 
+namespace transformation
+{
+
+class TransformationManager;
+
+}  // namespace transformation
+
 class BitAllocator;
 class DisplayFactory;
 class DisplayGroup;
 class FrameManager;
 class RenderPanel;
 class ToolManager;
-class TransformationManager;
 class ViewportMouseEvent;
 class ViewManager;
 class WindowManagerInterface;
@@ -183,7 +189,7 @@ public:
   getViewManager() const = 0;
 
   virtual
-  TransformationManager *
+  transformation::TransformationManager *
   getTransformationManager() = 0;
 
   /// Return the root DisplayGroup.

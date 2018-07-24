@@ -39,7 +39,6 @@
 #include "std_msgs/msg/header.hpp"
 
 #include "rviz_common/transformation/structs.hpp"
-#include "rviz_common/transformation/ros_helpers/ros_conversion_helpers.hpp"
 
 geometry_msgs::msg::Point createRosPoint(double x, double y, double z)
 {

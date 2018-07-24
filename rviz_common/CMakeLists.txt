@@ -89,7 +89,7 @@ set(rviz_common_headers_to_moc
   src/rviz_common/failed_panel.hpp
   src/rviz_common/frame_manager.hpp
   src/rviz_common/frame_transformer_tf.hpp
-  include/rviz_common/frame_transformer.hpp
+  include/rviz_common/transformation/frame_transformer.hpp
   include/rviz_common/frame_manager_iface.hpp
   src/rviz_common/loading_dialog.hpp
   src/rviz_common/new_object_dialog.hpp
@@ -132,7 +132,7 @@ set(rviz_common_headers_to_moc
   include/rviz_common/tool.hpp
   src/rviz_common/tool_manager.hpp
   src/rviz_common/tool_properties_panel.hpp
-  src/rviz_common/transformation_manager.hpp
+  src/rviz_common/transformation/transformation_manager.hpp
   include/rviz_common/view_controller.hpp
   include/rviz_common/view_manager.hpp
   src/rviz_common/views_panel.hpp
@@ -217,7 +217,7 @@ set(rviz_common_source_files
   src/rviz_common/tool_manager.cpp
   src/rviz_common/tool_properties_panel.cpp
   src/rviz_common/tool.cpp
-  src/rviz_common/transformation_manager.cpp
+  src/rviz_common/transformation/transformation_manager.cpp
   src/rviz_common/uniform_string_stream.cpp
   src/rviz_common/view_controller.cpp
   src/rviz_common/view_manager.cpp
