@@ -281,6 +281,18 @@
     </description>
   </class>
 
+  <!-- Transformation plugins -->
+
+  <class
+    name="rviz_default_plugins/FrameTransformerTF"
+    type="rviz_default_plugins::transformation::FrameTransformerTF"
+    base_class_type="rviz_common::transformation::FrameTransformer"
+  >
+    <description>
+      Uses TF2 for frame transformations
+    </description>
+  </class>
+
   <!-- View Controller plugins -->
   <class
     name="rviz_default_plugins/FPS"

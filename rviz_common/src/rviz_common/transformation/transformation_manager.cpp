@@ -35,6 +35,8 @@
 #include <string>
 #include <vector>
 
+#include "rviz_common/factory/pluginlib_factory.hpp"
+
 namespace rviz_common
 {
 namespace transformation
@@ -42,42 +44,41 @@ namespace transformation
 
 TransformationManager::TransformationManager(
   ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node)
-: available_plugins_({}), rviz_ros_node_(rviz_ros_node)
+: rviz_ros_node_(rviz_ros_node)
 {
-  // TODO(botteroa-si): use pluginlob to fill correctly available plugins list
-  setAvailablePlugins(
-    {"rviz_common/DummyFrameTransformer",
-      "rviz_default_plugins/TFFrameTransformer",
-      "rviz_default_plugins/SomethingElse"});
-  setPlugin("rviz_default_plugins/TFFrameTransformer");
+  factory_ = std::make_unique<PluginlibFactory<FrameTransformer>>(
+    "rviz_common", "rviz_common::transformation::FrameTransformer");
+
+  // TODO Robust loading
+  // 1) Load from config
+  // 2) Load TF if available
+  // 3) Load dummy
+  setTransformer("rviz_default_plugins/FrameTransformerTF");
 }
 
-void TransformationManager::setAvailablePlugins(std::vector<std::string> available_plugins)
+QStringList TransformationManager::getAvailableTransformerNames()
 {
-  available_plugins_ = available_plugins;
-}
-
-std::string TransformationManager::getCurrentPlugin()
-{
-  return current_plugin_;
-}
-
-std::vector<std::string> TransformationManager::getAvailablePlugins()
-{
-  return available_plugins_;
-}
-
-void TransformationManager::setPlugin(std::string plugin_name)
-{
-  current_plugin_ = plugin_name;
-  // TODO(botteroa-si): use pluginlib to build an object of the correct type
-//  auto plugin = // pluginlib code
-//  Q_EMIT currentPluginChanged(plugin);
+  return factory_->getDeclaredClassIds();
 }
 
 std::shared_ptr<FrameTransformer> TransformationManager::getCurrentTransformer()
 {
-  return std::shared_ptr<FrameTransformer>();
+  return current_transformer_;
+}
+
+QString TransformationManager::getCurrentTransformerName()
+{
+  return current_transformer_name_;
+}
+
+void TransformationManager::setTransformer(const QString & transformer_name)
+{
+  current_transformer_ = std::unique_ptr<FrameTransformer>(factory_->make(transformer_name));
+  current_transformer_name_ = transformer_name;
+
+  current_transformer_->initialize(rviz_ros_node_);
+
+  Q_EMIT transformerChanged(current_transformer_);
 }
 
 }  // namespace transformation

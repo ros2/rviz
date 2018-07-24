@@ -93,11 +93,11 @@ QHBoxLayout * TransformationPanel::initializeBottomButtonRow()
 
 void TransformationPanel::onInitialize()
 {
-  std::vector<std::string> available_plugins =
-    getDisplayContext()->getTransformationManager()->getAvailablePlugins();
+  QStringList available_transformer_names =
+    getDisplayContext()->getTransformationManager()->getAvailableTransformerNames();
 
-  for (const auto & plugin : available_plugins) {
-    auto splitted_plugin = QString::fromStdString(plugin).split("/");
+  for (const auto & transformer_name : available_transformer_names) {
+    auto splitted_plugin = transformer_name.split("/");
     auto package_name = splitted_plugin[0];
     auto plugin_name = splitted_plugin[1];
 
@@ -135,15 +135,16 @@ void TransformationPanel::onSaveClicked()
 {
   auto property = button_group_->getChecked();
   if (property) {
-    getDisplayContext()->getTransformationManager()->setPlugin(getClassIdFromProperty(property));
+    getDisplayContext()->getTransformationManager()->setTransformer(
+      getClassIdFromProperty(property));
     updateButtonState();
   }
 }
 
 void TransformationPanel::onResetClicked()
 {
-  auto plugin = getDisplayContext()->getTransformationManager()->getCurrentPlugin();
-  auto splitted_plugin = QString::fromStdString(plugin).split("/");
+  auto plugin = getDisplayContext()->getTransformationManager()->getCurrentTransformerName();
+  auto splitted_plugin = plugin.split("/");
   auto package_name = splitted_plugin[0];
   auto plugin_name = splitted_plugin[1];
 
@@ -178,12 +179,12 @@ void TransformationPanel::updateButtonState()
 bool TransformationPanel::isCurrentPlugin(properties::RadioButtonProperty * property)
 {
   return getClassIdFromProperty(property) ==
-         getDisplayContext()->getTransformationManager()->getCurrentPlugin();
+         getDisplayContext()->getTransformationManager()->getCurrentTransformerName();
 }
 
-std::string TransformationPanel::getClassIdFromProperty(properties::RadioButtonProperty * property)
+QString TransformationPanel::getClassIdFromProperty(properties::RadioButtonProperty * property)
 {
-  return property->getParent()->getNameStd() + "/" + property->getNameStd();
+  return property->getParent()->getName() + "/" + property->getName();
 }
 
 }  // namespace rviz_common

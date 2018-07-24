@@ -87,7 +87,7 @@ private:
   void updateButtonState();
 
   bool isCurrentPlugin(properties::RadioButtonProperty * property);
-  std::string getClassIdFromProperty(properties::RadioButtonProperty * property);
+  QString getClassIdFromProperty(properties::RadioButtonProperty * property);
 };
 
 }  // namespace rviz_common
