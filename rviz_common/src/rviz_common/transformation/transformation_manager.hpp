@@ -57,7 +57,7 @@ public:
   QStringList getAvailableTransformerNames();
   std::shared_ptr<FrameTransformer> getCurrentTransformer();
   QString getCurrentTransformerName();
-  void setTransformer(const QString &  transformer_name);
+  void setTransformer(const QString & transformer_name);
 
 Q_SIGNALS:
   void transformerChanged(std::shared_ptr<FrameTransformer> new_transformer);
