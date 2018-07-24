@@ -392,6 +392,14 @@ if(BUILD_TESTING)
     target_link_libraries(rviz_common_ros_node_abstraction_test rviz_common)
   endif()
 
+  ament_add_gmock(ros_conversion_helpers_test
+    test/transformation/ros_converion_helpers_test.cpp
+    src/rviz_common/transformation/ros_helpers/ros_conversion_helpers.cpp)
+  if(TARGET ros_conversion_helpers_test)
+    target_link_libraries(ros_conversion_helpers_test
+      rviz_common)
+  endif()
+
   ament_add_gmock(selection_manager_test
     test/interaction/selection_manager_test.cpp
     test/interaction/mock_selection_renderer.hpp
@@ -426,8 +434,8 @@ if(BUILD_TESTING)
     target_link_libraries(rviz_common_display_test
       rviz_common
       Qt5::Widgets)
-  ament_target_dependencies(rviz_common_display_test
-    rviz_yaml_cpp_vendor)
+    ament_target_dependencies(rviz_common_display_test
+      rviz_yaml_cpp_vendor)
   endif()
 endif()
 
