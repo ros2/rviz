@@ -37,10 +37,6 @@
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>
 
-#include "tf2_ros/buffer.h"
-#include "tf2_geometry_msgs/tf2_geometry_msgs.h"
-#include "tf2_ros/transform_listener.h"
-
 #include "rviz_common/transformation/frame_transformer.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction.hpp"
 #include "rviz_common/tf_wrapper.hpp"
@@ -79,7 +75,6 @@ public:
 
 private:
   std::shared_ptr<TFWrapper> tf_wrapper_;
-  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
 };
 }  // namespace rviz_common
 

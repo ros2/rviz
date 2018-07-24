@@ -134,8 +134,8 @@ transformation::InternalFrameTransformerPtr FrameTransformerTF::getInternals()
 void FrameTransformerTF::initialize(
   rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node)
 {
-  tf_listener_ = std::make_shared<tf2_ros::TransformListener>(
-    *tf_wrapper_->getBuffer(), rviz_ros_node.lock()->get_raw_node(), false);
+  tf_wrapper_->setListener(std::make_shared<tf2_ros::TransformListener>(
+      *tf_wrapper_->getBuffer(), rviz_ros_node.lock()->get_raw_node(), false));
 }
 
 void FrameTransformerTF::clear()
