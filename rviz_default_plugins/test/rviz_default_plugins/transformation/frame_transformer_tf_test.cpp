@@ -37,7 +37,7 @@
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "geometry_msgs/msg/point.hpp"
 
-#include "rviz_default_plugins/transformation/frame_transformer_tf.hpp"
+#include "rviz_default_plugins/transformation/tf_frame_transformer.hpp"
 
 class FrameTransformerTfFixture : public testing::Test
 {
@@ -46,7 +46,7 @@ public:
   {
     wrapper_ = std::make_shared<rviz_default_plugins::transformation::TFWrapper>(
       std::make_shared<tf2_ros::Buffer>(), false);
-    tf_transformer_ = std::make_unique<rviz_default_plugins::transformation::FrameTransformerTF>(
+    tf_transformer_ = std::make_unique<rviz_default_plugins::transformation::TFFrameTransformer>(
       wrapper_);
   }
 
@@ -84,7 +84,7 @@ public:
   }
 
   std::shared_ptr<rviz_default_plugins::transformation::TFWrapper> wrapper_;
-  std::unique_ptr<rviz_default_plugins::transformation::FrameTransformerTF> tf_transformer_;
+  std::unique_ptr<rviz_default_plugins::transformation::TFFrameTransformer> tf_transformer_;
 };
 
 TEST_F(FrameTransformerTfFixture, frameHasProblems_returns_true_if_frame_does_not_exist) {

@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz_default_plugins/transformation/frame_transformer_tf.hpp"
+#include "rviz_default_plugins/transformation/tf_frame_transformer.hpp"
 
 #include <memory>
 #include <string>
@@ -42,15 +42,15 @@ namespace rviz_default_plugins
 namespace transformation
 {
 
-FrameTransformerTF::FrameTransformerTF()
+TFFrameTransformer::TFFrameTransformer()
 : tf_wrapper_(std::make_shared<TFWrapper>(std::make_shared<tf2_ros::Buffer>(), true))
 {}
 
-FrameTransformerTF::FrameTransformerTF(std::shared_ptr<TFWrapper> wrapper)
+TFFrameTransformer::TFFrameTransformer(std::shared_ptr<TFWrapper> wrapper)
 : tf_wrapper_(wrapper)
 {}
 
-rviz_common::transformation::PoseStamped FrameTransformerTF::transform(
+rviz_common::transformation::PoseStamped TFFrameTransformer::transform(
   const rviz_common::transformation::PoseStamped & pose_in, const std::string & target_frame)
 {
   geometry_msgs::msg::PoseStamped out_pose;
@@ -70,7 +70,7 @@ rviz_common::transformation::PoseStamped FrameTransformerTF::transform(
   }
 }
 
-bool FrameTransformerTF::transformIsAvailable(
+bool TFFrameTransformer::transformIsAvailable(
   const std::string & target_frame, const std::string & source_frame)
 {
   try {
@@ -91,7 +91,7 @@ bool FrameTransformerTF::transformIsAvailable(
   }
 }
 
-bool FrameTransformerTF::transformHasProblems(
+bool TFFrameTransformer::transformHasProblems(
   const std::string & source_frame,
   const std::string & target_frame,
   const rclcpp::Time & time,
@@ -120,7 +120,7 @@ bool FrameTransformerTF::transformHasProblems(
   return true;
 }
 
-bool FrameTransformerTF::frameHasProblems(const std::string & frame, std::string & error)
+bool TFFrameTransformer::frameHasProblems(const std::string & frame, std::string & error)
 {
   if (!tf_wrapper_->frameExists(frame)) {
     error = "Frame [" + frame + "] does not exist";
@@ -130,24 +130,24 @@ bool FrameTransformerTF::frameHasProblems(const std::string & frame, std::string
   return false;
 }
 
-rviz_common::transformation::InternalFrameTransformerPtr FrameTransformerTF::getInternals()
+rviz_common::transformation::InternalFrameTransformerPtr TFFrameTransformer::getInternals()
 {
   return tf_wrapper_;
 }
 
-void FrameTransformerTF::initialize(
+void TFFrameTransformer::initialize(
   rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node)
 {
   tf_wrapper_->setListener(std::make_shared<tf2_ros::TransformListener>(
       *tf_wrapper_->getBuffer(), rviz_ros_node.lock()->get_raw_node(), false));
 }
 
-void FrameTransformerTF::clear()
+void TFFrameTransformer::clear()
 {
   tf_wrapper_->clear();
 }
 
-std::vector<std::string> FrameTransformerTF::getAllFrameNames()
+std::vector<std::string> TFFrameTransformer::getAllFrameNames()
 {
   return tf_wrapper_->getFrameStrings();
 }
@@ -157,5 +157,5 @@ std::vector<std::string> FrameTransformerTF::getAllFrameNames()
 
 #include <pluginlib/class_list_macros.hpp>  // NOLINT
 PLUGINLIB_EXPORT_CLASS(
-  rviz_default_plugins::transformation::FrameTransformerTF,
+  rviz_default_plugins::transformation::TFFrameTransformer,
   rviz_common::transformation::FrameTransformer)

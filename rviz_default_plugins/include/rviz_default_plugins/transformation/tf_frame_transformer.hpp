@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__TRANSFORMATION__FRAME_TRANSFORMER_TF_HPP_
-#define RVIZ_DEFAULT_PLUGINS__TRANSFORMATION__FRAME_TRANSFORMER_TF_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__TRANSFORMATION__TF_FRAME_TRANSFORMER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__TRANSFORMATION__TF_FRAME_TRANSFORMER_HPP_
 
 #include <memory>
 #include <string>
@@ -45,12 +45,12 @@ namespace rviz_default_plugins
 {
 namespace transformation
 {
-class FrameTransformerTF : public rviz_common::transformation::FrameTransformer
+class TFFrameTransformer : public rviz_common::transformation::FrameTransformer
 {
 public:
-  FrameTransformerTF();
-  explicit FrameTransformerTF(std::shared_ptr<TFWrapper> wrapper);
-  ~FrameTransformerTF() = default;
+  TFFrameTransformer();
+  explicit TFFrameTransformer(std::shared_ptr<TFWrapper> wrapper);
+  ~TFFrameTransformer() = default;
 
   void initialize(
     rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node) override;
@@ -83,4 +83,4 @@ private:
 }  // namespace transformation
 }  // namespace rviz_default_plugins
 
-#endif  // RVIZ_DEFAULT_PLUGINS__TRANSFORMATION__FRAME_TRANSFORMER_TF_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__TRANSFORMATION__TF_FRAME_TRANSFORMER_HPP_
