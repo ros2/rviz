@@ -27,77 +27,69 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__TRANSFORMATION__STRUCTS_HPP_
-#define RVIZ_COMMON__TRANSFORMATION__STRUCTS_HPP_
+#include "rviz_common/transformation/structs.hpp"
 
 #include <string>
-
-#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
 namespace transformation
 {
 
-struct RVIZ_COMMON_PUBLIC Time
+Time::Time()
+: seconds_(0), nanoseconds_(0) {}
+
+Time::Time(int32_t seconds, uint32_t nanoseconds)
 {
-  Time();
-  Time(int32_t seconds, uint32_t nanoseconds);
+  seconds_ = seconds;
+  nanoseconds_ = nanoseconds;
+}
 
-  int32_t seconds_;
-  uint32_t nanoseconds_;
-};
+Point::Point()
+: x_(0), y_(0), z_(0) {}
 
-struct RVIZ_COMMON_PUBLIC Point
+Point::Point(double x, double y, double z)
 {
-  Point();
-  Point(double x, double y, double z);
+  x_ = x;
+  y_ = y;
+  z_ = z;
+}
 
-  double x_;
-  double y_;
-  double z_;
-};
+Quaternion::Quaternion()
+: w_(1), x_(0), y_(0), z_(0) {}
 
-struct RVIZ_COMMON_PUBLIC Quaternion
+Quaternion::Quaternion(double w, double x, double y, double z)
 {
-  Quaternion();
-  Quaternion(double w, double x, double y, double z);
+  w_ = w;
+  x_ = x;
+  y_ = y;
+  z_ = z;
+}
 
-  double w_;
-  double x_;
-  double y_;
-  double z_;
-};
+PoseStamped::PoseStamped()
+: time_stamp_(), frame_id_(""), position_(), orientation_() {}
 
-struct RVIZ_COMMON_PUBLIC PoseStamped
-{
-  PoseStamped();
-  PoseStamped(Time time_stamp, std::string frame_id, Point position, Quaternion orientation);
+PoseStamped::PoseStamped(
+  Time time_stamp, std::string frame_id, Point position, Quaternion orientation)
+: time_stamp_(time_stamp), frame_id_(frame_id), position_(position), orientation_(orientation)
+{}
 
-  Time time_stamp_;
-  std::string frame_id_;
-  Point position_;
-  Quaternion orientation_;
-};
+TransformStamped::TransformStamped()
+: time_stamp_(), parent_frame_id_(""), child_frame_id_(""), translation_(), rotation_()
+{}
 
-struct RVIZ_COMMON_PUBLIC TransformStamped
-{
-  TransformStamped();
-  TransformStamped(
-    Time time_stamp,
-    std::string parent_frame,
-    std::string child_frame,
-    Point translation,
-    Quaternion rotation);
-
-  Time time_stamp_;
-  std::string parent_frame_id_;
-  std::string child_frame_id_;
-  Point translation_;
-  Quaternion rotation_;
-};
+TransformStamped::TransformStamped(
+  Time time_stamp,
+  std::string parent_frame,
+  std::string child_frame,
+  Point translation,
+  Quaternion rotation)
+: time_stamp_(time_stamp),
+  parent_frame_id_(parent_frame),
+  child_frame_id_(child_frame),
+  translation_(translation),
+  rotation_(rotation)
+{}
 
 }  // namespace transformation
 }  // namespace rviz_common
-
-#endif  // RVIZ_COMMON__TRANSFORMATION__STRUCTS_HPP_

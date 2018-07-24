@@ -39,6 +39,7 @@
 #include "std_msgs/msg/header.hpp"
 
 #include "rviz_common/transformation/structs.hpp"
+#include "rviz_common/transformation/ros_helpers/ros_conversion_helpers.hpp"
 
 geometry_msgs::msg::Point createRosPoint(double x, double y, double z)
 {
@@ -174,7 +175,7 @@ TEST(
   rviz_common::transformation::PoseStamped rviz_common_pose_stamped;
   rviz_common_pose_stamped.time_stamp_ = rviz_common::transformation::Time(2, 10);
   rviz_common_pose_stamped.frame_id_ = "pose_stamped_frame";
-  rviz_common_pose_stamped.point_ = createRvizCommonPoint(1, 2, 3);
+  rviz_common_pose_stamped.position_ = createRvizCommonPoint(1, 2, 3);
   rviz_common_pose_stamped.orientation_ = createRvizCommonQuaternion(0, 1, 0, 0);
 
   auto ros_pose_stamped = rviz_common::transformation::ros_helpers::toRosPoseStamped(

@@ -54,7 +54,7 @@ transformation::PoseStamped FrameTransformerTF::transform(
   geometry_msgs::msg::PoseStamped in_pose = transformation::ros_helpers::toRosPoseStamped(pose_in);
   try {
     tf_wrapper_->transform(in_pose, out_pose, target_frame);
-    return transformation::PoseStamped(out_pose);
+    return transformation::ros_helpers::fromRosPoseStamped(out_pose);
   } catch (const tf2::LookupException & exception) {
     throw rviz_common::transformation::FrameTransformerException(exception.what());
   } catch (const tf2::ConnectivityException & exception) {
