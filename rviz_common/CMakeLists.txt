@@ -394,8 +394,7 @@ if(BUILD_TESTING)
   endif()
 
   ament_add_gmock(ros_conversion_helpers_test
-    test/transformation/ros_converion_helpers_test.cpp
-    src/rviz_common/transformation/ros_helpers/ros_conversion_helpers.cpp)
+    test/transformation/ros_converion_helpers_test.cpp)
   if(TARGET ros_conversion_helpers_test)
     target_link_libraries(ros_conversion_helpers_test
       rviz_common)
