@@ -34,6 +34,8 @@
 #include <string>
 #include <vector>
 
+#include <QString>
+
 #include "rviz_common/ros_integration/ros_node_abstraction.hpp"
 #include "rviz_common/visibility_control.hpp"
 
@@ -128,6 +130,34 @@ public:
 //    rclcpp::Time time,
 //    rclcpp::Duration timeout,
 //    std::function<void(void)> callback) = 0;
+
+  /// Return the class id set by the PluginlibFactory
+  virtual QString getClassId() const
+  {
+    return class_id_;
+  }
+
+  /// Used by PluginlibFactory to store the class id
+  virtual void setClassId(const QString & class_id)
+  {
+    class_id_ = class_id;
+  }
+
+  /// Return the description set by the PluginlibFactory
+  virtual QString getDescription() const
+  {
+    return description_;
+  }
+
+  /// Used by PluginlibFactory to store the description
+  virtual void setDescription(const QString & description)
+  {
+    description_ = description;
+  }
+
+private:
+  QString class_id_;
+  QString description_;
 };
 
 }  // namespace transformation

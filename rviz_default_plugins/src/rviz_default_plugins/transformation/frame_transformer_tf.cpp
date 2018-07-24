@@ -34,6 +34,7 @@
 #include <vector>
 
 #include "rviz_common/logging.hpp"
+#include "rviz_common/transformation/frame_transformer.hpp"
 #include "rviz_common/transformation/ros_helpers/ros_conversion_helpers.hpp"
 
 namespace rviz_default_plugins
@@ -153,3 +154,8 @@ std::vector<std::string> FrameTransformerTF::getAllFrameNames()
 
 }  // namespace transformation
 }  // namespace rviz_default_plugins
+
+#include <pluginlib/class_list_macros.hpp>  // NOLINT
+PLUGINLIB_EXPORT_CLASS(
+  rviz_default_plugins::transformation::FrameTransformerTF,
+  rviz_common::transformation::FrameTransformer)
