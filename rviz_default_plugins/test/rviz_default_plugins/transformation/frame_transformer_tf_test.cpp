@@ -37,7 +37,7 @@
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "geometry_msgs/msg/point.hpp"
 
-#include "../src/rviz_common/frame_transformer_tf.hpp"
+#include "rviz_default_plugins/transformation/frame_transformer_tf.hpp"
 
 class FrameTransformerTfFixture : public testing::Test
 {

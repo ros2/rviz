@@ -88,7 +88,6 @@ set(rviz_common_headers_to_moc
   src/rviz_common/displays_panel.hpp
   src/rviz_common/failed_panel.hpp
   src/rviz_common/frame_manager.hpp
-  src/rviz_common/frame_transformer_tf.hpp
   include/rviz_common/transformation/frame_transformer.hpp
   include/rviz_common/frame_manager_iface.hpp
   src/rviz_common/loading_dialog.hpp
@@ -129,7 +128,6 @@ set(rviz_common_headers_to_moc
   include/rviz_common/interaction/selection_renderer.hpp
   src/rviz_common/splash_screen.hpp
   # src/rviz_common/time_panel.hpp
-  include/rviz_common/tf_wrapper.hpp
   include/rviz_common/transformation/structs.hpp
   include/rviz_common/tool.hpp
   src/rviz_common/tool_manager.hpp
@@ -161,7 +159,6 @@ set(rviz_common_source_files
   src/rviz_common/failed_tool.cpp
   src/rviz_common/failed_view_controller.cpp
   src/rviz_common/frame_manager.cpp
-  src/rviz_common/frame_transformer_tf.cpp
   src/rviz_common/frame_position_tracking_view_controller.cpp
   src/rviz_common/help_panel.cpp
   src/rviz_common/load_resource.cpp
@@ -217,7 +214,6 @@ set(rviz_common_source_files
   src/rviz_common/interaction/view_picker.cpp
   src/rviz_common/splash_screen.cpp
   # src/rviz_common/time_panel.cpp
-  src/rviz_common/tf_wrapper.cpp
   src/rviz_common/transformation/structs.cpp
   src/rviz_common/transformation/ros_helpers/ros_conversion_helpers.cpp
   src/rviz_common/tool_manager.cpp
@@ -341,16 +337,6 @@ if(BUILD_TESTING)
   ament_cpplint()
   ament_lint_cmake()
   ament_uncrustify()
-
-  ament_add_gmock(frame_transformer_tf_test
-    test/frame_transformer_tf_test.cpp
-    src/rviz_common/frame_transformer_tf.cpp)
-  if(TARGET frame_transformer_tf_test)
-    target_link_libraries(frame_transformer_tf_test
-      rviz_common
-      rviz_ogre_vendor::OgreMain
-      rviz_ogre_vendor::OgreOverlay)
-  endif()
 
   ament_add_gmock(frame_manager_test
     test/frame_manager_test.cpp
