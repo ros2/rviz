@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__TF_WRAPPER_HPP_
-#define RVIZ_COMMON__TF_WRAPPER_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__TRANSFORMATION__TF_WRAPPER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__TRANSFORMATION__TF_WRAPPER_HPP_
 
 #include <memory>
 #include <string>
@@ -39,49 +39,52 @@
 #include "tf2_geometry_msgs/tf2_geometry_msgs.h"
 
 #include "rviz_common/transformation/frame_transformer.hpp"
-#include "rviz_common/visibility_control.hpp"
+#include "rviz_default_plugins/visibility_control.hpp"
 
-namespace rviz_common
+namespace rviz_default_plugins
 {
-class TFWrapper : public transformation::InternalFrameTransformer
+namespace transformation
+{
+class TFWrapper
+  : public rviz_common::transformation::InternalFrameTransformer
 {
 public:
-  RVIZ_COMMON_PUBLIC
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   TFWrapper(std::shared_ptr<tf2_ros::Buffer> buffer, bool using_dedicated_thread);
-  RVIZ_COMMON_PUBLIC
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   ~TFWrapper() override = default;
 
-  RVIZ_COMMON_PUBLIC
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   void transform(
     const geometry_msgs::msg::PoseStamped & pose_in,
     geometry_msgs::msg::PoseStamped & pose_out,
     const std::string & frame);
 
-  RVIZ_COMMON_PUBLIC
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   geometry_msgs::msg::TransformStamped lookupTransform(
     const std::string & target_frame,
     const std::string & source_frame,
     const tf2::TimePoint & time);
 
-  RVIZ_COMMON_PUBLIC
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   bool canTransform(
     const std::string & fixed_frame,
     const std::string & frame,
     tf2::TimePoint time,
     std::string & error);
 
-  RVIZ_COMMON_PUBLIC
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   std::vector<std::string> getFrameStrings();
-  RVIZ_COMMON_PUBLIC
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   std::shared_ptr<tf2_ros::Buffer> getBuffer();
 
-  RVIZ_COMMON_PUBLIC
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   bool frameExists(const std::string & frame);
 
-  RVIZ_COMMON_PUBLIC
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   void setListener(std::shared_ptr<tf2_ros::TransformListener> tf_listener);
 
-  RVIZ_COMMON_PUBLIC
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   void clear();
 
 private:
@@ -89,6 +92,7 @@ private:
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
 };
 
-}  // namespace rviz_common
+}  // namespace transformation
+}  // namespace rviz_default_plugins
 
-#endif  // RVIZ_COMMON__TF_WRAPPER_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__TRANSFORMATION__TF_WRAPPER_HPP_

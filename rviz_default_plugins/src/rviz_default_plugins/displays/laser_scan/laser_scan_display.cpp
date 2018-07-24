@@ -35,11 +35,11 @@
 #include "laser_geometry/laser_geometry.hpp"
 #include "tf2_ros/buffer.h"
 
-#include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
 #include "rviz_common/properties/int_property.hpp"
 #include "rviz_common/properties/queue_size_property.hpp"
 #include "rviz_common/validate_floats.hpp"
-#include "rviz_common/tf_wrapper.hpp"
+#include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
+#include "rviz_default_plugins/transformation/tf_wrapper.hpp"
 
 namespace rviz_default_plugins
 {
@@ -70,7 +70,7 @@ void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPt
 //  }
 
   auto cloud = std::make_shared<sensor_msgs::msg::PointCloud2>();
-  auto tf_wrapper = std::dynamic_pointer_cast<rviz_common::TFWrapper>(
+  auto tf_wrapper = std::dynamic_pointer_cast<transformation::TFWrapper>(
     std::shared_ptr<rviz_common::transformation::InternalFrameTransformer>(
       context_->getFrameManager()->getInternalPtr()));
   if (tf_wrapper) {

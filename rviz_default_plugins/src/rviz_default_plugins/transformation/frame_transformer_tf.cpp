@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "include/rviz_default_plugins/transformation/frame_transformer_tf.hpp"
+#include "rviz_default_plugins/transformation/frame_transformer_tf.hpp"
 
 #include <memory>
 #include <string>
@@ -36,7 +36,9 @@
 #include "rviz_common/logging.hpp"
 #include "rviz_common/transformation/ros_helpers/ros_conversion_helpers.hpp"
 
-namespace rviz_common
+namespace rviz_default_plugins
+{
+namespace transformation
 {
 
 FrameTransformerTF::FrameTransformerTF()
@@ -47,14 +49,15 @@ FrameTransformerTF::FrameTransformerTF(std::shared_ptr<TFWrapper> wrapper)
 : tf_wrapper_(wrapper)
 {}
 
-transformation::PoseStamped FrameTransformerTF::transform(
-  const transformation::PoseStamped & pose_in, const std::string & target_frame)
+rviz_common::transformation::PoseStamped FrameTransformerTF::transform(
+  const rviz_common::transformation::PoseStamped & pose_in, const std::string & target_frame)
 {
   geometry_msgs::msg::PoseStamped out_pose;
-  geometry_msgs::msg::PoseStamped in_pose = transformation::ros_helpers::toRosPoseStamped(pose_in);
+  geometry_msgs::msg::PoseStamped in_pose =
+    rviz_common::transformation::ros_helpers::toRosPoseStamped(pose_in);
   try {
     tf_wrapper_->transform(in_pose, out_pose, target_frame);
-    return transformation::ros_helpers::fromRosPoseStamped(out_pose);
+    return rviz_common::transformation::ros_helpers::fromRosPoseStamped(out_pose);
   } catch (const tf2::LookupException & exception) {
     throw rviz_common::transformation::FrameTransformerException(exception.what());
   } catch (const tf2::ConnectivityException & exception) {
@@ -126,7 +129,7 @@ bool FrameTransformerTF::frameHasProblems(const std::string & frame, std::string
   return false;
 }
 
-transformation::InternalFrameTransformerPtr FrameTransformerTF::getInternals()
+rviz_common::transformation::InternalFrameTransformerPtr FrameTransformerTF::getInternals()
 {
   return tf_wrapper_;
 }
@@ -148,4 +151,5 @@ std::vector<std::string> FrameTransformerTF::getAllFrameNames()
   return tf_wrapper_->getFrameStrings();
 }
 
-}  // namespace rviz_common
+}  // namespace transformation
+}  // namespace rviz_default_plugins

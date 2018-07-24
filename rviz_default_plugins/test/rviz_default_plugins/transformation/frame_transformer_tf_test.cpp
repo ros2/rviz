@@ -44,8 +44,10 @@ class FrameTransformerTfFixture : public testing::Test
 public:
   FrameTransformerTfFixture()
   {
-    wrapper_ = std::make_shared<rviz_common::TFWrapper>(std::make_shared<tf2_ros::Buffer>(), false);
-    tf_transformer_ = std::make_unique<rviz_common::FrameTransformerTF>(wrapper_);
+    wrapper_ = std::make_shared<rviz_default_plugins::transformation::TFWrapper>(
+      std::make_shared<tf2_ros::Buffer>(), false);
+    tf_transformer_ = std::make_unique<rviz_default_plugins::transformation::FrameTransformerTF>(
+      wrapper_);
   }
 
   geometry_msgs::msg::TransformStamped getTransformStamped(
@@ -81,8 +83,8 @@ public:
     return pose_stamped;
   }
 
-  std::shared_ptr<rviz_common::TFWrapper> wrapper_;
-  std::unique_ptr<rviz_common::FrameTransformerTF> tf_transformer_;
+  std::shared_ptr<rviz_default_plugins::transformation::TFWrapper> wrapper_;
+  std::unique_ptr<rviz_default_plugins::transformation::FrameTransformerTF> tf_transformer_;
 };
 
 TEST_F(FrameTransformerTfFixture, frameHasProblems_returns_true_if_frame_does_not_exist) {
