@@ -52,7 +52,7 @@ namespace rviz_common
 {
 
 FrameManager::FrameManager(
-  rclcpp::Clock::SharedPtr clock, std::shared_ptr<FrameTransformer> transformer)
+  rclcpp::Clock::SharedPtr clock, std::shared_ptr<transformation::FrameTransformer> transformer)
 : transformer_(transformer), sync_time_(0), clock_(clock)
 {
   setSyncMode(SyncOff);
@@ -333,7 +333,7 @@ void FrameManager::messageArrived(
   display->setStatusStd(StatusProperty::Ok, getTransformStatusName(caller_id), "Transform OK");
 }
 
-InternalFrameTransformerPtr FrameManager::getInternalPtr()
+transformation::InternalFrameTransformerPtr FrameManager::getInternalPtr()
 {
   return transformer_->getInternals();
 }
@@ -354,7 +354,8 @@ bool FrameManager::anyTransformationDataAvailable()
   return !frames.empty();
 }
 
-void FrameManager::setTransformerPlugin(std::shared_ptr<rviz_common::FrameTransformer> transformer)
+void FrameManager::setTransformerPlugin(
+  std::shared_ptr<transformation::FrameTransformer> transformer)
 {
   transformer_ = transformer;
 }
