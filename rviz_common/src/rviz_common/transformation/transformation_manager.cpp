@@ -49,7 +49,7 @@ TransformationManager::TransformationManager(
   factory_ = std::make_unique<PluginlibFactory<FrameTransformer>>(
     "rviz_common", "rviz_common::transformation::FrameTransformer");
 
-  // TODO Robust loading
+  // TODO(greimela) Robust loading
   // 1) Load from config
   // 2) Load TF if available
   // 3) Load dummy

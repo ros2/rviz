@@ -34,7 +34,7 @@
 #include <string>
 #include <vector>
 
-#include <QString>
+#include <QString>  // NOLINT
 
 #include "rviz_common/ros_integration/ros_node_abstraction.hpp"
 #include "rviz_common/visibility_control.hpp"
