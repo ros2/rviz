@@ -29,43 +29,43 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "transformation_manager.hpp"
+#ifndef RVIZ_COMMON__TRANSFORMATION__TRANSFORMATION_MANAGER_HPP_
+#define RVIZ_COMMON__TRANSFORMATION__TRANSFORMATION_MANAGER_HPP_
 
 #include <memory>
 #include <string>
 #include <vector>
 
+#include <QObject>  // NOLINT
+
+#include "rviz_common/frame_transformer.hpp"
+
 namespace rviz_common
 {
-
-TransformationManager::TransformationManager(std::string current_plugin)
-: available_plugins_({}), current_plugin_(current_plugin)
+namespace transformation
 {
-  // TODO(bottteroa-si): use pluginlob to fill correctly available plugins list
-  setAvailablePlugins({"dummy_transformer", "tf_transformer"});
-}
 
-void TransformationManager::setAvailablePlugins(std::vector<std::string> available_plugins)
+class TransformationManager : public QObject
 {
-  available_plugins_ = available_plugins;
-}
+  Q_OBJECT
 
-std::string TransformationManager::getCurrentPlugin()
-{
-  return current_plugin_;
-}
+public:
+  explicit TransformationManager(std::string current_plugin);
 
-std::vector<std::string> TransformationManager::getAvailablePlugins()
-{
-  return available_plugins_;
-}
+  void setAvailablePlugins(std::vector<std::string> available_plugins);
+  std::string getCurrentPlugin();
+  std::vector<std::string> getAvailablePlugins();
+  void setPlugin(std::string plugin_name);
 
-void TransformationManager::setPlugin(std::string plugin_name)
-{
-  current_plugin_ = plugin_name;
-  // TODO(botteroa-si): use pluginlib to build an object of the correct type
-//  auto plugin = // pluginlib code
-//  Q_EMIT currentPluginChanged(plugin);
-}
+Q_SIGNALS:
+  void currentPluginChanged(std::shared_ptr<FrameTransformer> new_plugin);
 
+private:
+  std::vector<std::string> available_plugins_;
+  std::string current_plugin_;
+};
+
+}  // namespace transformation
 }  // namespace rviz_common
+
+#endif  // RVIZ_COMMON__TRANSFORMATION__TRANSFORMATION_MANAGER_HPP_

@@ -67,7 +67,7 @@ public:
 
   MOCK_CONST_METHOD0(getToolManager, rviz_common::ToolManager * ());
   MOCK_CONST_METHOD0(getViewManager, rviz_common::ViewManager * ());
-  MOCK_METHOD0(getTransformationManager, rviz_common::TransformationManager * ());
+  MOCK_METHOD0(getTransformationManager, rviz_common::transformation::TransformationManager * ());
   MOCK_CONST_METHOD0(getRootDisplayGroup, rviz_common::DisplayGroup * ());
 
   MOCK_CONST_METHOD0(getDefaultVisibilityBit, uint32_t());

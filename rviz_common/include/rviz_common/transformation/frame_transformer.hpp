@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__FRAME_TRANSFORMER_HPP_
-#define RVIZ_COMMON__FRAME_TRANSFORMER_HPP_
+#ifndef RVIZ_COMMON__TRANSFORMATION__FRAME_TRANSFORMER_HPP_
+#define RVIZ_COMMON__TRANSFORMATION__FRAME_TRANSFORMER_HPP_
 
 #include <memory>
 #include <string>
@@ -41,6 +41,9 @@
 
 namespace rviz_common
 {
+namespace transformation
+{
+
 struct RVIZ_COMMON_PUBLIC InternalFrameTransformer
 {
   virtual ~InternalFrameTransformer() = default;
@@ -83,6 +86,7 @@ public:
   virtual InternalFrameTransformerPtr getInternals() = 0;
 };
 
+}  // namespace transformation
 }  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__FRAME_TRANSFORMER_HPP_
+#endif  // RVIZ_COMMON__TRANSFORMATION__FRAME_TRANSFORMER_HPP_
