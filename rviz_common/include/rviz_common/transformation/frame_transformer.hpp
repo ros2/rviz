@@ -98,14 +98,14 @@ public:
    * @param source_frame The source frame of the transformation
    * @param time The time of the transformation
    * @param error An out string in which an error (of generated) message is saved
-   * @returns Whether or not the given transformation has some problem and cannot be perfored */
+   * @returns Whether or not the given transformation has some problem and cannot be performed */
   virtual bool transformHasProblems(
     const std::string & source_frame,
     const std::string & target_frame,
     const rclcpp::Time & time,
     std::string & error) = 0;
 
-  /** \brief Checks that a given frame exsists and can be used
+  /** \brief Checks that a given frame exists and can be used
    * @param frame The frame to check
    * @param error An out string in which an error message (if generated) is saved
    * @returns Whether or not the given frame has some problem */
@@ -118,9 +118,9 @@ public:
 //   * action
 //   * @param target_frame The target frame of the transformation
 //   * @param source_frame The source frame of the transformation
-//   * @param time The time of the tranformation
+//   * @param time The time of the transformation
 //   * @param timeout A timeout duration after which the waiting will be stopped
-//   * @param callback The function to be called if the tranfrom becomes available before the
+//   * @param callback The function to be called if the transform becomes available before the
 //   * timeout */
 //  virtual void waitForValidTransform(
 //    std::string target_frame,
