@@ -149,7 +149,7 @@ void VisualTestFixture::assertMainWindowIdentity(Ogre::String image_name)
 
 void VisualTestFixture::startApplication()
 {
-  executor_->queueAction([this] {qapp_->quit();});
+  executor_->queueAction([] {qapp_->quit();});
   qapp_->exec();
 }
 
