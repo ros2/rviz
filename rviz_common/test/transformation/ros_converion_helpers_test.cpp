@@ -47,9 +47,9 @@ MATCHER_P(PointEq, expected, "") {
 
 MATCHER_P(QuaternionEq, expected, "") {
   return expected.w == arg.w &&
-    expected.x == arg.x &&
-    expected.y == arg.y &&
-    expected.z == arg.z;
+         expected.x == arg.x &&
+         expected.y == arg.y &&
+         expected.z == arg.z;
 }
 
 geometry_msgs::msg::Point createRosPoint(double x, double y, double z)
