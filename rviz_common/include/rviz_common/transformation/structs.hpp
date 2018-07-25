@@ -51,22 +51,22 @@ struct RVIZ_COMMON_PUBLIC Time
 struct RVIZ_COMMON_PUBLIC Point
 {
   Point();
-  Point(double x, double y, double z);
+  Point(double x_co, double y_co, double z_co);
 
-  double x_;
-  double y_;
-  double z_;
+  double x;
+  double y;
+  double z;
 };
 
 struct RVIZ_COMMON_PUBLIC Quaternion
 {
   Quaternion();
-  Quaternion(double w, double x, double y, double z);
+  Quaternion(double w_co, double x_co, double y_co, double z_co);
 
-  double w_;
-  double x_;
-  double y_;
-  double z_;
+  double w;
+  double x;
+  double y;
+  double z;
 };
 
 struct RVIZ_COMMON_PUBLIC PoseStamped

@@ -41,6 +41,17 @@
 #include "rviz_common/transformation/structs.hpp"
 #include "rviz_common/transformation/ros_helpers/ros_conversion_helpers.hpp"
 
+MATCHER_P(PointEq, expected, "") {
+  return expected.x == arg.x && expected.y == arg.y && expected.z == arg.z;
+}
+
+MATCHER_P(QuaternionEq, expected, "") {
+  return expected.w == arg.w &&
+    expected.x == arg.x &&
+    expected.y == arg.y &&
+    expected.z == arg.z;
+}
+
 geometry_msgs::msg::Point createRosPoint(double x, double y, double z)
 {
   geometry_msgs::msg::Point point;
@@ -72,12 +83,40 @@ geometry_msgs::msg::Quaternion createRosQuaternion(double w, double x, double y,
   return quaternion;
 }
 
+geometry_msgs::msg::PoseStamped createRosPoseStamped(
+  std_msgs::msg::Header header,
+  geometry_msgs::msg::Point position,
+  geometry_msgs::msg::Quaternion orientation)
+{
+  geometry_msgs::msg::PoseStamped pose_stamped;
+  pose_stamped.header = header;
+  pose_stamped.pose.position = position;
+  pose_stamped.pose.orientation = orientation;
+
+  return pose_stamped;
+}
+
+geometry_msgs::msg::TransformStamped createRosTransformStamped(
+  std_msgs::msg::Header header,
+  std::string child_frame_id,
+  geometry_msgs::msg::Vector3 translation,
+  geometry_msgs::msg::Quaternion rotation)
+{
+  geometry_msgs::msg::TransformStamped transform_stamped;
+  transform_stamped.header = header;
+  transform_stamped.child_frame_id = child_frame_id;
+  transform_stamped.transform.translation = translation;
+  transform_stamped.transform.rotation = rotation;
+
+  return transform_stamped;
+}
+
 rviz_common::transformation::Point createRvizCommonPoint(double x, double y, double z)
 {
   rviz_common::transformation::Point point;
-  point.x_ = x;
-  point.y_ = y;
-  point.z_ = z;
+  point.x = x;
+  point.y = y;
+  point.z = z;
 
   return point;
 }
@@ -86,10 +125,10 @@ rviz_common::transformation::Quaternion createRvizCommonQuaternion(
   double w, double x, double y, double z)
 {
   rviz_common::transformation::Quaternion quaternion;
-  quaternion.w_ = w;
-  quaternion.x_ = x;
-  quaternion.y_ = y;
-  quaternion.z_ = z;
+  quaternion.w = w;
+  quaternion.x = x;
+  quaternion.y = y;
+  quaternion.z = z;
 
   return quaternion;
 }
@@ -98,9 +137,7 @@ TEST(ros_conversion_helpers, fromRosPoint_converts_ros_point_to_rviz_common_tran
   auto ros_point = createRosPoint(0, 1, 3);
   auto rviz_common_point = rviz_common::transformation::ros_helpers::fromRosPoint(ros_point);
 
-  EXPECT_THAT(rviz_common_point.x_, testing::Eq(ros_point.x));
-  EXPECT_THAT(rviz_common_point.y_, testing::Eq(ros_point.y));
-  EXPECT_THAT(rviz_common_point.z_, testing::Eq(ros_point.z));
+  EXPECT_THAT(rviz_common_point, PointEq(ros_point));
 }
 
 TEST(
@@ -110,10 +147,7 @@ TEST(
   auto rviz_common_quaternion =
     rviz_common::transformation::ros_helpers::fromRosQuaternion(ros_quaternion);
 
-  EXPECT_THAT(rviz_common_quaternion.w_, testing::Eq(ros_quaternion.w));
-  EXPECT_THAT(rviz_common_quaternion.x_, testing::Eq(ros_quaternion.x));
-  EXPECT_THAT(rviz_common_quaternion.y_, testing::Eq(ros_quaternion.y));
-  EXPECT_THAT(rviz_common_quaternion.z_, testing::Eq(ros_quaternion.z));
+  EXPECT_THAT(rviz_common_quaternion, QuaternionEq(ros_quaternion));
 }
 
 TEST(
@@ -121,18 +155,14 @@ TEST(
   auto ros_vector = createRosVector3(2, 1, 3);
   auto rviz_common_point = rviz_common::transformation::ros_helpers::fromRosVector3(ros_vector);
 
-  EXPECT_THAT(rviz_common_point.x_, testing::Eq(ros_vector.x));
-  EXPECT_THAT(rviz_common_point.y_, testing::Eq(ros_vector.y));
-  EXPECT_THAT(rviz_common_point.z_, testing::Eq(ros_vector.z));
+  EXPECT_THAT(rviz_common_point, PointEq(ros_vector));
 }
 
 TEST(ros_conversion_helpers, toRosPoint_converts_rviz_common_transformation_point_to_ros_point) {
   auto rviz_common_point = createRvizCommonPoint(4, 1, 3);
   auto ros_point = rviz_common::transformation::ros_helpers::toRosPoint(rviz_common_point);
 
-  EXPECT_THAT(ros_point.x, testing::Eq(rviz_common_point.x_));
-  EXPECT_THAT(ros_point.y, testing::Eq(rviz_common_point.y_));
-  EXPECT_THAT(ros_point.z, testing::Eq(rviz_common_point.z_));
+  EXPECT_THAT(ros_point, PointEq(rviz_common_point));
 }
 
 TEST(
@@ -140,9 +170,7 @@ TEST(
   auto rviz_common_point = createRvizCommonPoint(4, 1, 0);
   auto ros_vector3 = rviz_common::transformation::ros_helpers::toRosVector3(rviz_common_point);
 
-  EXPECT_THAT(ros_vector3.x, testing::Eq(rviz_common_point.x_));
-  EXPECT_THAT(ros_vector3.y, testing::Eq(rviz_common_point.y_));
-  EXPECT_THAT(ros_vector3.z, testing::Eq(rviz_common_point.z_));
+  EXPECT_THAT(ros_vector3, PointEq(rviz_common_point));
 }
 
 TEST(
@@ -152,10 +180,7 @@ TEST(
   auto ros_quaternion =
     rviz_common::transformation::ros_helpers::toRosQuaternion(rviz_common_quaternion);
 
-  EXPECT_THAT(ros_quaternion.w, testing::Eq(rviz_common_quaternion.w_));
-  EXPECT_THAT(ros_quaternion.x, testing::Eq(rviz_common_quaternion.x_));
-  EXPECT_THAT(ros_quaternion.y, testing::Eq(rviz_common_quaternion.y_));
-  EXPECT_THAT(ros_quaternion.z, testing::Eq(rviz_common_quaternion.z_));
+  EXPECT_THAT(ros_quaternion, QuaternionEq(rviz_common_quaternion));
 }
 
 TEST(ros_conversion_helpers, toRosHeader_creates_a_ros_header_from_time_and_frame_id) {
@@ -181,9 +206,68 @@ TEST(
   auto ros_pose_stamped = rviz_common::transformation::ros_helpers::toRosPoseStamped(
     rviz_common_pose_stamped);
 
-  EXPECT_THAT(ros_pose_stamped.header.stamp.sec, testing::Eq(2));
-  EXPECT_THAT(ros_pose_stamped.header.stamp.nanosec, testing::Eq(static_cast<uint32_t>(10)));
-  EXPECT_THAT(ros_pose_stamped.header.frame_id, testing::Eq("pose_stamped_frame"));
-  EXPECT_THAT(ros_pose_stamped.pose.position, testing::Eq(createRosPoint(1, 2, 3)));
-  EXPECT_THAT(ros_pose_stamped.pose.orientation, testing::Eq(createRosQuaternion(0, 1, 0, 0)));
+  EXPECT_THAT(ros_pose_stamped.header.frame_id, testing::Eq(rviz_common_pose_stamped.frame_id_));
+  EXPECT_THAT(ros_pose_stamped.pose.position, PointEq(rviz_common_pose_stamped.position_));
+  EXPECT_THAT(
+    ros_pose_stamped.header.stamp.sec, testing::Eq(rviz_common_pose_stamped.time_stamp_.seconds_));
+  EXPECT_THAT(
+    ros_pose_stamped.pose.orientation, QuaternionEq(rviz_common_pose_stamped.orientation_));
+  EXPECT_THAT(
+    ros_pose_stamped.header.stamp.nanosec,
+    testing::Eq(rviz_common_pose_stamped.time_stamp_.nanoseconds_));
+}
+
+TEST(ros_conversion_helpers, fromRclcppTime_creates_an_rviz_common_time_from_an_rclcpp_time) {
+  rclcpp::Time rclcpp_time(0, 32);
+  auto rviz_common_time = rviz_common::transformation::ros_helpers::fromRclcppTime(rclcpp_time);
+
+  EXPECT_THAT(rviz_common_time.nanoseconds_, testing::Eq(rclcpp_time.nanoseconds()));
+}
+
+TEST(
+  ros_conversion_helpers, fromRosPoseStamped_creates_an_rviz_common_pose_stamoed_from_a_ros_one) {
+  std_msgs::msg::Header header;
+  header.stamp.sec = 10;
+  header.stamp.nanosec = 20;
+  header.frame_id = "pose_frame";
+  auto ros_pose = createRosPoseStamped(
+    header, createRosPoint(3, 2, 1), createRosQuaternion(0, 0, 1, 0));
+  auto rviz_common_pose_stamped =
+    rviz_common::transformation::ros_helpers::fromRosPoseStamped(ros_pose);
+
+  EXPECT_THAT(
+    rviz_common_pose_stamped.time_stamp_.seconds_, testing::Eq(ros_pose.header.stamp.sec));
+  EXPECT_THAT(
+    rviz_common_pose_stamped.time_stamp_.nanoseconds_, testing::Eq(ros_pose.header.stamp.nanosec));
+  EXPECT_THAT(rviz_common_pose_stamped.frame_id_, testing::Eq(ros_pose.header.frame_id));
+  EXPECT_THAT(rviz_common_pose_stamped.position_, PointEq(ros_pose.pose.position));
+  EXPECT_THAT(rviz_common_pose_stamped.orientation_, QuaternionEq(ros_pose.pose.orientation));
+}
+
+TEST(
+  ros_conversion_helpers,
+  fromRostransformStamped_creates_an_rviz_common_transform_stamoed_from_a_ros_one) {
+  std_msgs::msg::Header header;
+  header.stamp.sec = 10;
+  header.stamp.nanosec = 20;
+  header.frame_id = "parent_frame";
+  auto ros_transform = createRosTransformStamped(
+    header, "child_frame", createRosVector3(3, 2, 1), createRosQuaternion(0, 0, 1, 0));
+  auto rviz_common_transform_stamped =
+    rviz_common::transformation::ros_helpers::fromRosTransformStamped(ros_transform);
+
+  EXPECT_THAT(
+    rviz_common_transform_stamped.time_stamp_.nanoseconds_,
+    testing::Eq(ros_transform.header.stamp.nanosec));
+  EXPECT_THAT(
+    rviz_common_transform_stamped.time_stamp_.seconds_,
+    testing::Eq(ros_transform.header.stamp.sec));
+  EXPECT_THAT(
+    rviz_common_transform_stamped.child_frame_id_, testing::Eq(ros_transform.child_frame_id));
+  EXPECT_THAT(
+    rviz_common_transform_stamped.translation_, PointEq(ros_transform.transform.translation));
+  EXPECT_THAT(
+    rviz_common_transform_stamped.rotation_, QuaternionEq(ros_transform.transform.rotation));
+  EXPECT_THAT(
+    rviz_common_transform_stamped.parent_frame_id_, testing::Eq(ros_transform.header.frame_id));
 }

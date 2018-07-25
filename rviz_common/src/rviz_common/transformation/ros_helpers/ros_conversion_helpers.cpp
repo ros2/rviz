@@ -48,9 +48,9 @@ rviz_common::transformation::Time fromRclcppTime(rclcpp::Time time)
 rviz_common::transformation::Point fromRosPoint(geometry_msgs::msg::Point ros_point)
 {
   Point point;
-  point.x_ = ros_point.x;
-  point.y_ = ros_point.y;
-  point.z_ = ros_point.z;
+  point.x = ros_point.x;
+  point.y = ros_point.y;
+  point.z = ros_point.z;
 
   return point;
 }
@@ -59,10 +59,10 @@ rviz_common::transformation::Quaternion fromRosQuaternion(
   geometry_msgs::msg::Quaternion ros_quaternion)
 {
   Quaternion quaternion;
-  quaternion.w_ = ros_quaternion.w;
-  quaternion.x_ = ros_quaternion.x;
-  quaternion.y_ = ros_quaternion.y;
-  quaternion.z_ = ros_quaternion.z;
+  quaternion.w = ros_quaternion.w;
+  quaternion.x = ros_quaternion.x;
+  quaternion.y = ros_quaternion.y;
+  quaternion.z = ros_quaternion.z;
 
   return quaternion;
 }
@@ -70,9 +70,9 @@ rviz_common::transformation::Quaternion fromRosQuaternion(
 rviz_common::transformation::Point fromRosVector3(geometry_msgs::msg::Vector3 ros_vector)
 {
   Point point;
-  point.x_ = ros_vector.x;
-  point.y_ = ros_vector.y;
-  point.z_ = ros_vector.z;
+  point.x = ros_vector.x;
+  point.y = ros_vector.y;
+  point.z = ros_vector.z;
 
   return point;
 }
@@ -118,18 +118,18 @@ std_msgs::msg::Header toRosHeader(
 geometry_msgs::msg::Point toRosPoint(rviz_common::transformation::Point point)
 {
   geometry_msgs::msg::Point ros_point;
-  ros_point.x = point.x_;
-  ros_point.y = point.y_;
-  ros_point.z = point.z_;
+  ros_point.x = point.x;
+  ros_point.y = point.y;
+  ros_point.z = point.z;
 
   return ros_point;
 }
 geometry_msgs::msg::Vector3 toRosVector3(rviz_common::transformation::Point point)
 {
   geometry_msgs::msg::Vector3 ros_vector;
-  ros_vector.x = point.x_;
-  ros_vector.y = point.y_;
-  ros_vector.z = point.z_;
+  ros_vector.x = point.x;
+  ros_vector.y = point.y;
+  ros_vector.z = point.z;
 
   return ros_vector;
 }
@@ -139,10 +139,10 @@ geometry_msgs::msg::Quaternion toRosQuaternion(
   rviz_common::transformation::Quaternion quaternion)
 {
   geometry_msgs::msg::Quaternion ros_quaternion;
-  ros_quaternion.w = quaternion.w_;
-  ros_quaternion.x = quaternion.x_;
-  ros_quaternion.y = quaternion.y_;
-  ros_quaternion.z = quaternion.z_;
+  ros_quaternion.w = quaternion.w;
+  ros_quaternion.x = quaternion.x;
+  ros_quaternion.y = quaternion.y;
+  ros_quaternion.z = quaternion.z;
 
   return ros_quaternion;
 }

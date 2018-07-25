@@ -46,24 +46,24 @@ Time::Time(int32_t seconds, uint32_t nanoseconds)
 }
 
 Point::Point()
-: x_(0), y_(0), z_(0) {}
+: x(0), y(0), z(0) {}
 
-Point::Point(double x, double y, double z)
+Point::Point(double x_co, double y_co, double z_co)
 {
-  x_ = x;
-  y_ = y;
-  z_ = z;
+  x = x_co;
+  y = y_co;
+  z = z_co;
 }
 
 Quaternion::Quaternion()
-: w_(1), x_(0), y_(0), z_(0) {}
+: w(1), x(0), y(0), z(0) {}
 
-Quaternion::Quaternion(double w, double x, double y, double z)
+Quaternion::Quaternion(double w_co, double x_co, double y_co, double z_co)
 {
-  w_ = w;
-  x_ = x;
-  y_ = y;
-  z_ = z;
+  w = w_co;
+  x = x_co;
+  y = y_co;
+  z = z_co;
 }
 
 PoseStamped::PoseStamped()
