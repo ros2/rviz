@@ -29,67 +29,67 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "transformation_manager.hpp"
+#ifndef RVIZ_COMMON__TRANSFORMATION__DUMMY_TRANSFORMER_HPP_
+#define RVIZ_COMMON__TRANSFORMATION__DUMMY_TRANSFORMER_HPP_
 
-#include <memory>
 #include <string>
 #include <vector>
 
-#include "rviz_common/factory/pluginlib_factory.hpp"
-#include "dummy_transformer.hpp"
+#include "rclcpp/rclcpp.hpp"
+
+#include "rviz_common/transformation/frame_transformer.hpp"
+#include "rviz_common/transformation/structs.hpp"
 
 namespace rviz_common
 {
 namespace transformation
 {
 
-TransformationManager::TransformationManager(
-  ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node)
-: rviz_ros_node_(rviz_ros_node)
+/** \brief A dummy subclass of FrameTransformer, which allows all transformations and performs
+ *  always identity transforms.
+ */
+class DummyTransformer : public FrameTransformer
 {
-  factory_ = std::make_unique<PluginlibFactory<FrameTransformer>>(
-    "rviz_common", "rviz_common::transformation::FrameTransformer");
-  factory_->addBuiltInClass(
-    "rviz_common",
-    "DummyTransformer",
-    "A trivial implementation of FrameTransformer",
-    []() -> FrameTransformer *
-    {
-      return new DummyTransformer();
-    }
-  );
+public:
+  DummyTransformer() = default;
+  ~DummyTransformer() = default;
 
-  // TODO(greimela) Robust loading
-  // 1) Load from config
-  // 2) Load TF if available
-  // 3) Load dummy
-  setTransformer("rviz_default_plugins/TFFrameTransformer");
-}
+  void initialize(ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node) override;
 
-QStringList TransformationManager::getAvailableTransformerNames()
-{
-  return factory_->getDeclaredClassIds();
-}
+  void clear() override;
 
-std::shared_ptr<FrameTransformer> TransformationManager::getCurrentTransformer()
-{
-  return current_transformer_;
-}
+  std::vector<std::string> getAllFrameNames() override;
 
-QString TransformationManager::getCurrentTransformerName()
-{
-  return current_transformer_name_;
-}
+  transformation::PoseStamped transform(
+    // NOLINT (this is not std::transform)
+    const transformation::PoseStamped & pose_in, const std::string & target_frame) override;
 
-void TransformationManager::setTransformer(const QString & transformer_name)
-{
-  current_transformer_ = std::unique_ptr<FrameTransformer>(factory_->make(transformer_name));
-  current_transformer_name_ = transformer_name;
+  bool transformIsAvailable(
+    const std::string & target_frame, const std::string & source_frame) override;
 
-  current_transformer_->initialize(rviz_ros_node_);
+  bool transformHasProblems(
+    const std::string & source_frame,
+    const std::string & target_frame,
+    const rclcpp::Time & time,
+    std::string & error) override;
 
-  Q_EMIT transformerChanged(current_transformer_);
-}
+  bool frameHasProblems(const std::string & frame, std::string & error) override;
+
+  /// Expose internal implementation
+  InternalFrameTransformerPtr getInternals() override;
+
+//  virtual void waitForValidTransform(
+//    std::string target_frame,
+//    std::string source_frame,
+//    rclcpp::Time time,
+//    rclcpp::Duration timeout,
+//    std::function<void(void)> callback) override;
+
+private:
+  bool quaternionIsValid(transformation::Quaternion quaternion);
+};
 
 }  // namespace transformation
 }  // namespace rviz_common
+
+#endif  // RVIZ_COMMON__TRANSFORMATION__DUMMY_TRANSFORMER_HPP_
