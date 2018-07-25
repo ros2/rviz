@@ -69,10 +69,13 @@ struct RVIZ_COMMON_PUBLIC Quaternion
   double z;
 };
 
-struct RVIZ_COMMON_PUBLIC PoseStamped
+struct PoseStamped
 {
 public:
+  RVIZ_COMMON_PUBLIC
   PoseStamped();
+
+  RVIZ_COMMON_PUBLIC
   PoseStamped(
     Time time_stamp, std::string frame_id, Point position, Quaternion orientation);
 
@@ -82,10 +85,13 @@ public:
   Quaternion orientation_;
 };
 
-struct RVIZ_COMMON_PUBLIC TransformStamped
+struct TransformStamped
 {
 public:
+  RVIZ_COMMON_PUBLIC
   TransformStamped();
+
+  RVIZ_COMMON_PUBLIC
   TransformStamped(
     Time time_stamp,
     std::string parent_frame,
