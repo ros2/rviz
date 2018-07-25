@@ -32,35 +32,47 @@
 #include <string>
 #include <vector>
 
+#include <QButtonGroup>
 #include <QPushButton>
-#include <QGroupBox>
-#include <QRadioButton>
+#include <QString>
 #include <QVBoxLayout>
+#include <QtWidgets>
 
 #include "rviz_common/display_context.hpp"
+#include "rviz_common/properties/property.hpp"
+#include "rviz_common/properties/property_tree_widget.hpp"
+#include "rviz_common/properties/radio_button_property.hpp"
+#include "rviz_common/properties/radio_button_property_group.hpp"
 #include "./transformation/transformation_manager.hpp"
 
 namespace rviz_common
 {
 
 TransformationPanel::TransformationPanel(QWidget * parent)
-  : Panel(parent)
+  : Panel(parent), button_group_(std::make_shared<properties::RadioButtonPropertyGroup>())
 {
   auto layout = new QVBoxLayout();
   layout->setContentsMargins(0, 0, 0, 0);
-  layout->addWidget(initializeRadioButtonGroup());
+  layout->addWidget(initializeTreeWidget());
   layout->addLayout(initializeBottomButtonRow());
   layout->addStretch(1);
   setLayout(layout);
 }
 
-QGroupBox * TransformationPanel::initializeRadioButtonGroup()
+properties::PropertyTreeWidget * TransformationPanel::initializeTreeWidget()
 {
-  auto group_box = new QGroupBox("Available plugins");
-  radio_layout_ = new QVBoxLayout();
-  radio_layout_->addStretch(1);
-  group_box->setLayout(radio_layout_);
-  return group_box;
+  root_property_ = new properties::Property();
+  tree_model_ = new properties::PropertyTreeModel(root_property_);
+  tree_widget_ = new properties::PropertyTreeWidget();
+  tree_widget_->setSelectionMode(QTreeView::NoSelection);
+  tree_widget_->setModel(tree_model_);
+  connect(
+    tree_widget_, SIGNAL(clicked(
+    const QModelIndex &)),
+    this, SLOT(onItemClicked(
+    const QModelIndex &)));
+
+  return tree_widget_;
 }
 
 QHBoxLayout * TransformationPanel::initializeBottomButtonRow()
@@ -82,51 +94,77 @@ void TransformationPanel::onInitialize()
   std::vector<std::string> available_plugins =
     getDisplayContext()->getTransformationManager()->getAvailablePlugins();
 
-  for(const auto & plugin : available_plugins) {
-    auto button = new QRadioButton(QString::fromStdString(plugin));
-    connect(button, SIGNAL(toggled(bool)), this, SLOT(onToggled(bool)));
+  for (const auto & plugin : available_plugins) {
+    auto splitted_plugin = QString::fromStdString(plugin).split("/");
+    auto package_name = splitted_plugin[0];
+    auto plugin_name = splitted_plugin[1];
 
-    if (isCurrentPlugin(plugin)) {
-      button->setChecked(true);
-    }
-
-    radio_buttons_.push_back(button);
-    radio_layout_->addWidget(button);
+    initializeProperties(package_name, plugin_name);
   }
 
   updateButtonState();
 }
 
+void TransformationPanel::initializeProperties(
+  const QString & package_name, const QString & plugin_name)
+{
+  properties::Property * package_property;
+
+  auto package_property_entry = package_properties_.find(package_name);
+  if (package_property_entry != package_properties_.end()) {
+    package_property = package_property_entry->second;
+  } else {
+    package_property = new properties::Property(package_name, QString(), QString(), root_property_);
+    package_property->setReadOnly(true);
+    package_property->expand();
+    package_properties_.insert(
+      std::pair<QString, properties::Property *>(package_name, package_property));
+  }
+
+  auto radio_button_property = new properties::RadioButtonProperty(
+    button_group_, plugin_name, false, QString(), package_property);
+
+  if (isCurrentPlugin(radio_button_property)) {
+    radio_button_property->setValue(true);
+  }
+}
+
 void TransformationPanel::onSaveClicked()
 {
-  auto checked_button = getCheckedRadioButton();
-  if (checked_button) {
-    auto plugin_name = checked_button->text().toStdString();
-    getDisplayContext()->getTransformationManager()->setPlugin(plugin_name);
+  auto property = button_group_->getChecked();
+  if (property) {
+    getDisplayContext()->getTransformationManager()->setPlugin(getClassIdFromProperty(property));
     updateButtonState();
   }
 }
 
 void TransformationPanel::onResetClicked()
 {
-  for (auto button : radio_buttons_) {
-    if (isCurrentPlugin(button->text().toStdString())) {
-      button->setChecked(true);
-    }
+  auto plugin = getDisplayContext()->getTransformationManager()->getCurrentPlugin();
+  auto splitted_plugin = QString::fromStdString(plugin).split("/");
+  auto package_name = splitted_plugin[0];
+  auto plugin_name = splitted_plugin[1];
+
+  auto package_property = package_properties_.find(package_name);
+  if (package_property != package_properties_.end()) {
+    package_property->second->subProp(plugin_name)->setValue(true);
   }
+  updateButtonState();
 }
 
-void TransformationPanel::onToggled(bool checked)
+void TransformationPanel::onItemClicked(const QModelIndex & index)
 {
-  if (checked) {
-    updateButtonState();
+  auto property = dynamic_cast<properties::RadioButtonProperty *>(tree_model_->getProp(index));
+  if (property) {
+    property->setValue(true);
   }
+  updateButtonState();
 }
 
 void TransformationPanel::updateButtonState()
 {
-  auto button = getCheckedRadioButton();
-  if (button && isCurrentPlugin(button->text().toStdString())) {
+  auto button = button_group_->getChecked();
+  if (button && isCurrentPlugin(button)) {
     save_button_->setEnabled(false);
     reset_button_->setEnabled(false);
   } else {
@@ -135,19 +173,15 @@ void TransformationPanel::updateButtonState()
   }
 }
 
-QRadioButton * TransformationPanel::getCheckedRadioButton()
+bool TransformationPanel::isCurrentPlugin(properties::RadioButtonProperty * property)
 {
-  for (auto button : radio_buttons_) {
-    if(button->isChecked()) {
-      return button;
-    }
-  }
-  return nullptr;
+  return getClassIdFromProperty(property) ==
+    getDisplayContext()->getTransformationManager()->getCurrentPlugin();
 }
 
-bool TransformationPanel::isCurrentPlugin(std::string plugin_name)
+std::string TransformationPanel::getClassIdFromProperty(properties::RadioButtonProperty * property)
 {
-  return plugin_name == getDisplayContext()->getTransformationManager()->getCurrentPlugin();
+  return property->getParent()->getNameStd() + "/" + property->getNameStd();
 }
 
 }  // namespace rviz_common

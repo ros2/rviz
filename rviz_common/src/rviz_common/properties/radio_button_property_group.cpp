@@ -27,70 +27,37 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__TRANSFORMATION_PANEL_HPP_
-#define RVIZ_COMMON__TRANSFORMATION_PANEL_HPP_
-
-#include <memory>
-#include <vector>
-
-#include <QPushButton>
-#include <QRadioButton>
-#include <QVBoxLayout>
-#include <QtWidgets/QGroupBox>
-
-#include "rviz_common/panel.hpp"
+#include "rviz_common/properties/radio_button_property.hpp"
 #include "rviz_common/properties/radio_button_property_group.hpp"
 
 namespace rviz_common
 {
 namespace properties
 {
-class Property;
-class StringProperty;
-class PropertyTreeWidget;
+
+void RadioButtonPropertyGroup::addProperty(RadioButtonProperty * radio_button_property)
+{
+  radio_button_properties_.push_back(radio_button_property);
 }
 
-class DisplayContext;
-
-/** A panel to choose the transformation plugin
- */
-class TransformationPanel : public Panel
+void RadioButtonPropertyGroup::setChecked(RadioButtonProperty * radio_button_property)
 {
-  Q_OBJECT
+  for(const auto & property : radio_button_properties_) {
+    if (property) {
+      property->setRawValue(property == radio_button_property);
+    }
+  }
+}
 
-public:
-  explicit TransformationPanel(QWidget * parent = 0);
-  ~TransformationPanel() override = default;
+RadioButtonProperty * RadioButtonPropertyGroup::getChecked()
+{
+  for(const auto & property : radio_button_properties_) {
+    if (property && property->getValue().toBool()) {
+      return property;
+    }
+  }
+  return nullptr;
+}
 
-  void onInitialize() override;
-
-private Q_SLOTS:
-  void onSaveClicked();
-  void onResetClicked();
-  void onItemClicked(const QModelIndex & index);
-
-private:
-  properties::Property * root_property_;
-  properties::PropertyTreeModel * tree_model_;
-  properties::PropertyTreeWidget * tree_widget_;
-  properties::PropertyTreeWidget * initializeTreeWidget();
-
-  QPushButton * save_button_;
-  QPushButton * reset_button_;
-  QHBoxLayout * initializeBottomButtonRow();
-
-  std::shared_ptr<properties::RadioButtonPropertyGroup> button_group_;
-
-  std::map<QString, properties::Property *> package_properties_;
-  void initializeProperties(const QString & package_name, const QString & plugin_name);
-
-
-  void updateButtonState();
-
-  bool isCurrentPlugin(properties::RadioButtonProperty * property);
-  std::string getClassIdFromProperty(properties::RadioButtonProperty * property);
-};
-
+}  // namespace properties
 }  // namespace rviz_common
-
-#endif  // RVIZ_COMMON__TRANSFORMATION_PANEL_HPP_
