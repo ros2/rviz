@@ -27,70 +27,55 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__TRANSFORMATION_PANEL_HPP_
-#define RVIZ_COMMON__TRANSFORMATION_PANEL_HPP_
-
-#include <memory>
-#include <vector>
-
-#include <QPushButton>
+#include <QPainter>
 #include <QRadioButton>
-#include <QVBoxLayout>
-#include <QtWidgets/QGroupBox>
+#include <QStyleOptionViewItem>
 
-#include "rviz_common/panel.hpp"
+#include "rviz_common/properties/radio_button_property.hpp"
 #include "rviz_common/properties/radio_button_property_group.hpp"
 
 namespace rviz_common
 {
 namespace properties
 {
-class Property;
-class StringProperty;
-class PropertyTreeWidget;
+
+RadioButtonProperty::RadioButtonProperty(
+  std::shared_ptr<RadioButtonPropertyGroup> group,
+  const QString & name,
+  bool default_value,
+  const QString & description,
+  Property * parent,
+  const char * changed_slot,
+  QObject * receiver
+) : BoolProperty(name, default_value, description, parent, changed_slot, receiver), group_(group) {
+  radio_button_ = std::make_shared<QRadioButton>();
+  radio_button_->setAutoExclusive(false);
+  group->addProperty(this);
 }
 
-class DisplayContext;
-
-/** A panel to choose the transformation plugin
- */
-class TransformationPanel : public Panel
+bool RadioButtonProperty::paint(QPainter * painter, const QStyleOptionViewItem & option) const
 {
-  Q_OBJECT
+  painter->save();
+  painter->translate(option.rect.topLeft());
 
-public:
-  explicit TransformationPanel(QWidget * parent = 0);
-  ~TransformationPanel() override = default;
+  radio_button_->setChecked(value_.toBool());
+  radio_button_->resize(option.rect.size());
+  radio_button_->render(painter, QPoint(), QRegion(), QWidget::DrawChildren);
+  painter->restore();
+  return true;
+}
 
-  void onInitialize() override;
+bool RadioButtonProperty::setValue(const QVariant & new_value)
+{
+  Q_UNUSED(new_value);
+  group_->setChecked(this);
+  return true;
+}
 
-private Q_SLOTS:
-  void onSaveClicked();
-  void onResetClicked();
-  void onItemClicked(const QModelIndex & index);
+bool RadioButtonProperty::setRawValue(const QVariant & new_value)
+{
+  return Property::setValue(new_value);
+}
 
-private:
-  properties::Property * root_property_;
-  properties::PropertyTreeModel * tree_model_;
-  properties::PropertyTreeWidget * tree_widget_;
-  properties::PropertyTreeWidget * initializeTreeWidget();
-
-  QPushButton * save_button_;
-  QPushButton * reset_button_;
-  QHBoxLayout * initializeBottomButtonRow();
-
-  std::shared_ptr<properties::RadioButtonPropertyGroup> button_group_;
-
-  std::map<QString, properties::Property *> package_properties_;
-  void initializeProperties(const QString & package_name, const QString & plugin_name);
-
-
-  void updateButtonState();
-
-  bool isCurrentPlugin(properties::RadioButtonProperty * property);
-  std::string getClassIdFromProperty(properties::RadioButtonProperty * property);
-};
-
+}  // namespace properties
 }  // namespace rviz_common
-
-#endif  // RVIZ_COMMON__TRANSFORMATION_PANEL_HPP_
