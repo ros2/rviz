@@ -58,9 +58,6 @@ namespace ros_helpers
 {
 
 RVIZ_COMMON_PUBLIC
-rviz_common::transformation::Time fromRclcppTime(rclcpp::Time time);
-
-RVIZ_COMMON_PUBLIC
 rviz_common::transformation::Point fromRosPoint(geometry_msgs::msg::Point ros_point);
 
 RVIZ_COMMON_PUBLIC
