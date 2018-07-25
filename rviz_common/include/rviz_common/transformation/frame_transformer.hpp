@@ -86,7 +86,10 @@ public:
   virtual bool frameHasProblems(const std::string & frame, std::string & error) = 0;
 
 //  virtual void waitForValidTransform(
-//    std::string target_frame, std::string source_frame, transfrormation::Time time, callback) = 0;
+//    std::string target_frame,
+//    std::string source_frame,
+//    transfrormation::Time time,
+//    std::function<void(void)> callback) = 0;
 
   /// Expose internal implementation
   virtual InternalFrameTransformerPtr getInternals() = 0;
