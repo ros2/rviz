@@ -43,35 +43,45 @@
 
 namespace rviz_common
 {
-class RVIZ_COMMON_PUBLIC TFWrapper : public transformation::InternalFrameTransformer
+class TFWrapper : public transformation::InternalFrameTransformer
 {
 public:
+  RVIZ_COMMON_PUBLIC
   TFWrapper(std::shared_ptr<tf2_ros::Buffer> buffer, bool using_dedicated_thread);
+  RVIZ_COMMON_PUBLIC
   ~TFWrapper() override = default;
 
+  RVIZ_COMMON_PUBLIC
   void transform(
     const geometry_msgs::msg::PoseStamped & pose_in,
     geometry_msgs::msg::PoseStamped & pose_out,
     const std::string & frame);
 
+  RVIZ_COMMON_PUBLIC
   geometry_msgs::msg::TransformStamped lookupTransform(
     const std::string & target_frame,
     const std::string & source_frame,
     const tf2::TimePoint & time);
 
+  RVIZ_COMMON_PUBLIC
   bool canTransform(
     const std::string & fixed_frame,
     const std::string & frame,
     tf2::TimePoint time,
     std::string & error);
 
+  RVIZ_COMMON_PUBLIC
   std::vector<std::string> getFrameStrings();
+  RVIZ_COMMON_PUBLIC
   std::shared_ptr<tf2_ros::Buffer> getBuffer();
 
+  RVIZ_COMMON_PUBLIC
   bool frameExists(const std::string & frame);
 
+  RVIZ_COMMON_PUBLIC
   void setListener(std::shared_ptr<tf2_ros::TransformListener> tf_listener);
 
+  RVIZ_COMMON_PUBLIC
   void clear();
 
 private:
