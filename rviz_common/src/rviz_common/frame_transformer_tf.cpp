@@ -90,11 +90,11 @@ bool FrameTransformerTF::transformIsAvailable(
 bool FrameTransformerTF::transformHasProblems(
   const std::string & source_frame,
   const std::string & target_frame,
-  const transformation::Time & time,
+  const rclcpp::Time & time,
   std::string & error)
 {
   std::string tf_error;
-  tf2::TimePoint tf2_time(std::chrono::nanoseconds(time.nanoseconds_));
+  tf2::TimePoint tf2_time(std::chrono::nanoseconds(time.nanoseconds()));
   bool transform_succeeded = tf_wrapper_->canTransform(
     target_frame, source_frame, tf2_time, tf_error);
   if (transform_succeeded) {

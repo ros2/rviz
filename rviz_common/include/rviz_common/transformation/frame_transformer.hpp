@@ -80,7 +80,7 @@ public:
   virtual bool transformHasProblems(
     const std::string & source_frame,
     const std::string & target_frame,
-    const transformation::Time & time,
+    const rclcpp::Time & time,
     std::string & error) = 0;
 
   virtual bool frameHasProblems(const std::string & frame, std::string & error) = 0;
@@ -88,7 +88,8 @@ public:
 //  virtual void waitForValidTransform(
 //    std::string target_frame,
 //    std::string source_frame,
-//    transfrormation::Time time,
+//    rclcpp::Time time,
+//    rclcpp::Duration timeout,
 //    std::function<void(void)> callback) = 0;
 
   /// Expose internal implementation

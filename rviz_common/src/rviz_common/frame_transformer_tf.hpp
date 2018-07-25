@@ -66,7 +66,7 @@ public:
   bool transformHasProblems(
     const std::string & source_frame,
     const std::string & target_frame,
-    const transformation::Time & time,
+    const rclcpp::Time & time,
     std::string & error) override;
 
   bool frameHasProblems(const std::string & frame, std::string & error) override;

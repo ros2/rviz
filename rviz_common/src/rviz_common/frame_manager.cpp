@@ -283,7 +283,7 @@ bool FrameManager::transformHasProblems(
   }
 
   return transformer_->transformHasProblems(
-    frame, fixed_frame_, transformation::ros_helpers::fromRclcppTime(time), error);
+    frame, fixed_frame_, time, error);
 }
 
 const std::string & FrameManager::getFixedFrame()

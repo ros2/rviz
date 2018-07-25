@@ -217,13 +217,6 @@ TEST(
     testing::Eq(rviz_common_pose_stamped.time_stamp_.nanoseconds_));
 }
 
-TEST(ros_conversion_helpers, fromRclcppTime_creates_an_rviz_common_time_from_an_rclcpp_time) {
-  rclcpp::Time rclcpp_time(0, 32);
-  auto rviz_common_time = rviz_common::transformation::ros_helpers::fromRclcppTime(rclcpp_time);
-
-  EXPECT_THAT(rviz_common_time.nanoseconds_, testing::Eq(rclcpp_time.nanoseconds()));
-}
-
 TEST(
   ros_conversion_helpers, fromRosPoseStamped_creates_an_rviz_common_pose_stamoed_from_a_ros_one) {
   std_msgs::msg::Header header;

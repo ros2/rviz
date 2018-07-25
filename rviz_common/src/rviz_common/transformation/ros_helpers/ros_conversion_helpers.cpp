@@ -40,11 +40,6 @@ namespace transformation
 namespace ros_helpers
 {
 
-rviz_common::transformation::Time fromRclcppTime(rclcpp::Time time)
-{
-  return rviz_common::transformation::Time(0, static_cast<uint32_t>(time.nanoseconds()));
-}
-
 rviz_common::transformation::Point fromRosPoint(geometry_msgs::msg::Point ros_point)
 {
   Point point;
