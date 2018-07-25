@@ -44,12 +44,6 @@ namespace rviz_common
 namespace transformation
 {
 
-class RVIZ_COMMON_PUBLIC InternalFrameTransformer
-{
-public:
-  virtual ~InternalFrameTransformer() = default;
-};
-
 class FrameTransformerException : public std::runtime_error
 {
 public:
@@ -59,41 +53,81 @@ public:
   RVIZ_COMMON_PUBLIC ~FrameTransformerException() noexcept override = default;
 };
 
+/** \brief class which the internal (plugin specific) implementation member of
+ *  FrameTransformer should inherit from
+ */
+class RVIZ_COMMON_PUBLIC InternalFrameTransformer
+{
+public:
+  virtual ~InternalFrameTransformer() = default;
+};
+
 using InternalFrameTransformerPtr = std::weak_ptr<InternalFrameTransformer>;
 
 class RVIZ_COMMON_PUBLIC FrameTransformer
 {
 public:
+  /**
+   * \brief The pluginlib needs a no-parameters constructor. The initialization of a
+   * FrameTransformer object is therefore delegated to this method */
   virtual void initialize(ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node) = 0;
 
+  /** \brief Method thought to reset the internal implementation object */
   virtual void clear() = 0;
 
+  /** @returns A std::string vector containing all the available frame ids */
   virtual std::vector<std::string> getAllFrameNames() = 0;
 
+  /** \brief Transform a PoseStamped into a given target frame
+   * @param pose_in The pose to be transformed
+   * @param target_frame The frame into which to transform
+   * @returns The transformed PoseStamped */
   virtual transformation::PoseStamped transform(
     // NOLINT (this is not std::transform)
     const transformation::PoseStamped & pose_in, const std::string & target_frame) = 0;
 
+  /** \brief Checks if a transformation between two frames is available
+   * @param target_frame The target frame of the transformation
+   * @param source_frame The source frame of the transformation
+   * @returns Whether or not a transformation between the two frames is available */
   virtual bool transformIsAvailable(
     const std::string & target_frame, const std::string & source_frame) = 0;
 
+  /** \brief Checks that a given transformation can be performed
+   * @param target_frame The target frame of the transformation
+   * @param source_frame The source frame of the transformation
+   * @param time The time of the transformation
+   * @param error An out string in which an error (of generated) message is saved
+   * @returns Whether or not the given transformation has some problem and cannot be perfored */
   virtual bool transformHasProblems(
     const std::string & source_frame,
     const std::string & target_frame,
     const rclcpp::Time & time,
     std::string & error) = 0;
 
+  /** \brief Checks that a given frame exsists and can be used
+   * @param frame The frame to check
+   * @param error An out string in which an error message (if generated) is saved
+   * @returns Whether or not the given frame has some problem */
   virtual bool frameHasProblems(const std::string & frame, std::string & error) = 0;
 
+  /** \brief A getter for the internal implementation object */
+  virtual InternalFrameTransformerPtr getInternals() = 0;
+
+//  /** \brief Waits until a transformation between two given frames is available, then performs an
+//   * action
+//   * @param target_frame The target frame of the transformation
+//   * @param source_frame The source frame of the transformation
+//   * @param time The time of the tranformation
+//   * @param timeout A timeout duration after which the waiting will be stopped
+//   * @param callback The function to be called if the tranfrom becomes available before the
+//   * timeout */
 //  virtual void waitForValidTransform(
 //    std::string target_frame,
 //    std::string source_frame,
 //    rclcpp::Time time,
 //    rclcpp::Duration timeout,
 //    std::function<void(void)> callback) = 0;
-
-  /// Expose internal implementation
-  virtual InternalFrameTransformerPtr getInternals() = 0;
 };
 
 }  // namespace transformation
