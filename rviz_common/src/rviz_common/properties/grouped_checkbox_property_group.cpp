@@ -27,46 +27,37 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__PROPERTIES__RADIO_BUTTON_PROPERTY_HPP_
-#define RVIZ_COMMON__PROPERTIES__RADIO_BUTTON_PROPERTY_HPP_
-
-#include <memory>
-
-#include <QRadioButton>  // NOLINT
-
-#include "rviz_common/properties/bool_property.hpp"
+#include "rviz_common/properties/grouped_checkbox_property.hpp"
+#include "rviz_common/properties/grouped_checkbox_property_group.hpp"
 
 namespace rviz_common
 {
 namespace properties
 {
-class RadioButtonPropertyGroup;
 
-class RadioButtonProperty : public BoolProperty
+void GroupedCheckboxPropertyGroup::addProperty(GroupedCheckboxProperty * property)
 {
-public:
-  explicit
-  RadioButtonProperty(
-    std::shared_ptr<RadioButtonPropertyGroup> group,
-    const QString & name = QString(),
-    bool default_value = false,
-    const QString & description = QString(),
-    Property * parent = nullptr,
-    const char * changed_slot = nullptr,
-    QObject * receiver = nullptr);
+  properties_.push_back(property);
+}
 
-  /// Sets the value of this property
-  /// and triggers the group to disable all other RadioButtonProperties
-  bool setValue(const QVariant & new_value) override;
+void GroupedCheckboxPropertyGroup::setChecked(GroupedCheckboxProperty * property_to_check)
+{
+  for (const auto & property : properties_) {
+    if (property) {
+      property->setRawValue(property == property_to_check);
+    }
+  }
+}
 
-  /// Sets the value of the underlying property without triggering the group
-  bool setRawValue(const QVariant & new_value);
-
-private:
-  std::shared_ptr<RadioButtonPropertyGroup> group_;
-};
+GroupedCheckboxProperty * GroupedCheckboxPropertyGroup::getChecked()
+{
+  for (const auto & property : properties_) {
+    if (property && property->getValue().toBool()) {
+      return property;
+    }
+  }
+  return nullptr;
+}
 
 }  // namespace properties
 }  // namespace rviz_common
-
-#endif  // RVIZ_COMMON__PROPERTIES__RADIO_BUTTON_PROPERTY_HPP_

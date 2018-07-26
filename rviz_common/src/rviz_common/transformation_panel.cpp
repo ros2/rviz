@@ -34,24 +34,24 @@
 #include <utility>
 #include <vector>
 
-#include <QButtonGroup>  // NOLINT
 #include <QPushButton>  // NOLINT
 #include <QString>  // NOLINT
 #include <QVBoxLayout>  // NOLINT
 #include <QtWidgets>  // NOLINT
 
 #include "rviz_common/display_context.hpp"
+#include "rviz_common/properties/grouped_checkbox_property.hpp"
+#include "rviz_common/properties/grouped_checkbox_property_group.hpp"
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/properties/property_tree_widget.hpp"
-#include "rviz_common/properties/radio_button_property.hpp"
-#include "rviz_common/properties/radio_button_property_group.hpp"
 #include "rviz_common/transformation/transformation_manager.hpp"
 
 namespace rviz_common
 {
 
 TransformationPanel::TransformationPanel(QWidget * parent)
-: Panel(parent), button_group_(std::make_shared<properties::RadioButtonPropertyGroup>())
+: Panel(parent),
+  checkbox_property_group_(std::make_shared<properties::GroupedCheckboxPropertyGroup>())
 {
   auto layout = new QVBoxLayout();
   layout->setContentsMargins(0, 0, 0, 0);
@@ -123,17 +123,17 @@ void TransformationPanel::initializeProperties(
       std::pair<QString, properties::Property *>(package_name, package_property));
   }
 
-  auto radio_button_property = new properties::RadioButtonProperty(
-    button_group_, plugin_name, false, QString(), package_property);
+  auto checkbox_property = new properties::GroupedCheckboxProperty(
+    checkbox_property_group_, plugin_name, false, QString(), package_property);
 
-  if (isCurrentPlugin(radio_button_property)) {
-    radio_button_property->setValue(true);
+  if (isCurrentPlugin(checkbox_property)) {
+    checkbox_property->setValue(true);
   }
 }
 
 void TransformationPanel::onSaveClicked()
 {
-  auto property = button_group_->getChecked();
+  auto property = checkbox_property_group_->getChecked();
   if (property) {
     getDisplayContext()->getTransformationManager()->setTransformer(
       getClassIdFromProperty(property));
@@ -157,7 +157,7 @@ void TransformationPanel::onResetClicked()
 
 void TransformationPanel::onItemClicked(const QModelIndex & index)
 {
-  auto property = dynamic_cast<properties::RadioButtonProperty *>(tree_model_->getProp(index));
+  auto property = dynamic_cast<properties::GroupedCheckboxProperty *>(tree_model_->getProp(index));
   if (property) {
     property->setValue(true);
   }
@@ -166,7 +166,7 @@ void TransformationPanel::onItemClicked(const QModelIndex & index)
 
 void TransformationPanel::updateButtonState()
 {
-  auto button = button_group_->getChecked();
+  auto button = checkbox_property_group_->getChecked();
   if (button && isCurrentPlugin(button)) {
     save_button_->setEnabled(false);
     reset_button_->setEnabled(false);
@@ -176,13 +176,13 @@ void TransformationPanel::updateButtonState()
   }
 }
 
-bool TransformationPanel::isCurrentPlugin(properties::RadioButtonProperty * property)
+bool TransformationPanel::isCurrentPlugin(properties::GroupedCheckboxProperty * property)
 {
   return getClassIdFromProperty(property) ==
          getDisplayContext()->getTransformationManager()->getCurrentTransformerName();
 }
 
-QString TransformationPanel::getClassIdFromProperty(properties::RadioButtonProperty * property)
+QString TransformationPanel::getClassIdFromProperty(properties::GroupedCheckboxProperty * property)
 {
   return property->getParent()->getName() + "/" + property->getName();
 }

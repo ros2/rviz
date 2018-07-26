@@ -27,45 +27,32 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <memory>
+#ifndef RVIZ_COMMON__PROPERTIES__GROUPED_CHECKBOX_PROPERTY_GROUP_HPP_
+#define RVIZ_COMMON__PROPERTIES__GROUPED_CHECKBOX_PROPERTY_GROUP_HPP_
 
-#include <QPainter>  // NOLINT
-#include <QRadioButton>  // NOLINT
-#include <QStyleOptionViewItem>  // NOLINT
+#include <vector>
 
-#include "rviz_common/properties/radio_button_property.hpp"
-#include "rviz_common/properties/radio_button_property_group.hpp"
+#include "rviz_common/properties/grouped_checkbox_property.hpp"
 
 namespace rviz_common
 {
 namespace properties
 {
 
-RadioButtonProperty::RadioButtonProperty(
-  std::shared_ptr<RadioButtonPropertyGroup> group,
-  const QString & name,
-  bool default_value,
-  const QString & description,
-  Property * parent,
-  const char * changed_slot,
-  QObject * receiver
-)
-: BoolProperty(name, default_value, description, parent, changed_slot, receiver), group_(group)
+class GroupedCheckboxPropertyGroup
 {
-  group->addProperty(this);
-}
+public:
+  void addProperty(GroupedCheckboxProperty * property);
 
-bool RadioButtonProperty::setValue(const QVariant & new_value)
-{
-  Q_UNUSED(new_value);
-  group_->setChecked(this);
-  return true;
-}
+  GroupedCheckboxProperty * getChecked();
 
-bool RadioButtonProperty::setRawValue(const QVariant & new_value)
-{
-  return Property::setValue(new_value);
-}
+  void setChecked(GroupedCheckboxProperty * property_to_check);
+
+private:
+  std::vector<GroupedCheckboxProperty *> properties_;
+};
 
 }  // namespace properties
 }  // namespace rviz_common
+
+#endif  // RVIZ_COMMON__PROPERTIES__GROUPED_CHECKBOX_PROPERTY_GROUP_HPP_

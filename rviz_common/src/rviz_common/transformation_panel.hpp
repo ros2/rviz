@@ -39,7 +39,7 @@
 #include <QVBoxLayout>  // NOLINT
 
 #include "rviz_common/panel.hpp"
-#include "rviz_common/properties/radio_button_property_group.hpp"
+#include "rviz_common/properties/grouped_checkbox_property_group.hpp"
 
 namespace rviz_common
 {
@@ -79,15 +79,15 @@ private:
   QPushButton * reset_button_;
   QHBoxLayout * initializeBottomButtonRow();
 
-  std::shared_ptr<properties::RadioButtonPropertyGroup> button_group_;
+  std::shared_ptr<properties::GroupedCheckboxPropertyGroup> checkbox_property_group_;
 
   std::map<QString, properties::Property *> package_properties_;
   void initializeProperties(const QString & package_name, const QString & plugin_name);
 
   void updateButtonState();
 
-  bool isCurrentPlugin(properties::RadioButtonProperty * property);
-  QString getClassIdFromProperty(properties::RadioButtonProperty * property);
+  bool isCurrentPlugin(properties::GroupedCheckboxProperty * property);
+  QString getClassIdFromProperty(properties::GroupedCheckboxProperty * property);
 };
 
 }  // namespace rviz_common
