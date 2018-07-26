@@ -1,3 +1,5 @@
+#include <utility>
+
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
@@ -38,6 +40,18 @@
 namespace rviz_common
 {
 
+/// Struct to bundle the information available for a plugin
+struct PluginInformation
+{
+  PluginInformation(QString id, QString name, QString package, QString description)
+  : id(id), name(name), package(package), description(description) {}
+
+  QString id;
+  QString name;
+  QString package;
+  QString description;
+};
+
 /// Abstract base class representing a plugin load-able class factory.
 /**
  * The class represents the ability to get a list of class IDs and the ability
@@ -55,6 +69,15 @@ public:
   virtual QString getClassName(const QString & class_id) const = 0;
   virtual QString getClassPackage(const QString & class_id) const = 0;
   virtual QIcon getIcon(const QString & class_id) const = 0;
+
+  PluginInformation getPluginInformation(const QString & class_id)
+  {
+    return PluginInformation(
+      class_id,
+      getClassName(class_id),
+      getClassPackage(class_id),
+      getClassDescription(class_id));
+  }
 };
 
 }  // namespace rviz_common
