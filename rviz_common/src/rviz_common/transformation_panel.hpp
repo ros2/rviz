@@ -40,6 +40,7 @@
 
 #include "rviz_common/panel.hpp"
 #include "rviz_common/properties/grouped_checkbox_property_group.hpp"
+#include "rviz_common/transformation/transformation_manager.hpp"
 
 namespace rviz_common
 {
@@ -80,6 +81,8 @@ private:
   QHBoxLayout * initializeBottomButtonRow();
 
   std::shared_ptr<properties::GroupedCheckboxPropertyGroup> checkbox_property_group_;
+
+  transformation::TransformationManager * transformation_manager_;
 
   std::map<QString, properties::Property *> package_properties_;
   void initializeProperties(const QString & package_name, const QString & plugin_name);

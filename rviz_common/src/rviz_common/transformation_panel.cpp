@@ -51,7 +51,8 @@ namespace rviz_common
 
 TransformationPanel::TransformationPanel(QWidget * parent)
 : Panel(parent),
-  checkbox_property_group_(std::make_shared<properties::GroupedCheckboxPropertyGroup>())
+  checkbox_property_group_(std::make_shared<properties::GroupedCheckboxPropertyGroup>()),
+  transformation_manager_(nullptr)
 {
   auto layout = new QVBoxLayout();
   layout->setContentsMargins(0, 0, 0, 0);
@@ -93,8 +94,9 @@ QHBoxLayout * TransformationPanel::initializeBottomButtonRow()
 
 void TransformationPanel::onInitialize()
 {
-  QStringList available_transformer_names =
-    getDisplayContext()->getTransformationManager()->getAvailableTransformerNames();
+  transformation_manager_ = getDisplayContext()->getTransformationManager();
+
+  QStringList available_transformer_names = transformation_manager_->getAvailableTransformerNames();
 
   for (const auto & transformer_name : available_transformer_names) {
     auto splitted_plugin = transformer_name.split("/");
@@ -135,15 +137,14 @@ void TransformationPanel::onSaveClicked()
 {
   auto property = checkbox_property_group_->getChecked();
   if (property) {
-    getDisplayContext()->getTransformationManager()->setTransformer(
-      getClassIdFromProperty(property));
+    transformation_manager_->setTransformer(getClassIdFromProperty(property));
     updateButtonState();
   }
 }
 
 void TransformationPanel::onResetClicked()
 {
-  auto plugin = getDisplayContext()->getTransformationManager()->getCurrentTransformerName();
+  auto plugin = transformation_manager_->getCurrentTransformerName();
   auto splitted_plugin = plugin.split("/");
   auto package_name = splitted_plugin[0];
   auto plugin_name = splitted_plugin[1];
@@ -178,8 +179,7 @@ void TransformationPanel::updateButtonState()
 
 bool TransformationPanel::isCurrentPlugin(properties::GroupedCheckboxProperty * property)
 {
-  return getClassIdFromProperty(property) ==
-         getDisplayContext()->getTransformationManager()->getCurrentTransformerName();
+  return getClassIdFromProperty(property) == transformation_manager_->getCurrentTransformerName();
 }
 
 QString TransformationPanel::getClassIdFromProperty(properties::GroupedCheckboxProperty * property)
