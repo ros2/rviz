@@ -52,21 +52,7 @@ RadioButtonProperty::RadioButtonProperty(
 )
 : BoolProperty(name, default_value, description, parent, changed_slot, receiver), group_(group)
 {
-  radio_button_ = std::make_shared<QRadioButton>();
-  radio_button_->setAutoExclusive(false);
   group->addProperty(this);
-}
-
-bool RadioButtonProperty::paint(QPainter * painter, const QStyleOptionViewItem & option) const
-{
-  painter->save();
-  painter->translate(option.rect.topLeft());
-
-  radio_button_->setChecked(value_.toBool());
-  radio_button_->resize(option.rect.size());
-  radio_button_->render(painter, QPoint(), QRegion(), QWidget::DrawChildren);
-  painter->restore();
-  return true;
 }
 
 bool RadioButtonProperty::setValue(const QVariant & new_value)
