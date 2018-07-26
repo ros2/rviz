@@ -84,13 +84,14 @@ private:
 
   transformation::TransformationManager * transformation_manager_;
 
+  void initializeProperties(const PluginInformation & transformer_info);
+
   std::map<QString, properties::Property *> package_properties_;
-  void initializeProperties(const QString & package_name, const QString & plugin_name);
+  properties::Property * getOrCreatePackageProperty(const QString & package);
 
   void updateButtonState();
 
-  bool isCurrentPlugin(properties::GroupedCheckboxProperty * property);
-  QString getClassIdFromProperty(properties::GroupedCheckboxProperty * property);
+  bool isCurrentTransformerProperty(properties::GroupedCheckboxProperty * property);
 };
 
 }  // namespace rviz_common

@@ -54,10 +54,10 @@ class TransformationManager : public QObject
 public:
   explicit TransformationManager(ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node);
 
-  QStringList getAvailableTransformerNames();
+  std::vector<PluginInformation> getAvailableTransformers();
   std::shared_ptr<FrameTransformer> getCurrentTransformer();
-  QString getCurrentTransformerName();
-  void setTransformer(const QString & transformer_name);
+  PluginInformation getCurrentTransformerInfo();
+  void setTransformer(const QString & package, const QString & name);
 
 Q_SIGNALS:
   void transformerChanged(
@@ -67,7 +67,6 @@ private:
   std::unique_ptr<PluginlibFactory<FrameTransformer>> factory_;
 
   std::shared_ptr<FrameTransformer> current_transformer_;
-  QString current_transformer_name_;
 
   ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node_;
 };
