@@ -69,6 +69,8 @@ using InternalFrameTransformerPtr = std::weak_ptr<InternalFrameTransformer>;
 class RVIZ_COMMON_PUBLIC FrameTransformer
 {
 public:
+  virtual ~FrameTransformer() = default;
+
   /**
    * \brief The pluginlib needs a no-parameters constructor. The initialization of a
    * FrameTransformer object is therefore delegated to this method */
