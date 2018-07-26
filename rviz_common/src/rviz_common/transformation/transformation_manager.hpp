@@ -60,7 +60,7 @@ public:
   void setTransformer(const QString & transformer_name);
 
 Q_SIGNALS:
-  void transformerChanged(std::shared_ptr<FrameTransformer> new_transformer);
+  void transformerChanged(std::shared_ptr<transformation::FrameTransformer> new_transformer);
 
 private:
   std::unique_ptr<PluginlibFactory<FrameTransformer>> factory_;
