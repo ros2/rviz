@@ -29,7 +29,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "transformation_manager.hpp"
+#include "rviz_common/transformation/transformation_manager.hpp"
 
 #include <memory>
 #include <string>
