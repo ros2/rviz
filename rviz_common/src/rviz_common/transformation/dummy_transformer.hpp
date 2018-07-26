@@ -52,7 +52,7 @@ class DummyTransformer : public FrameTransformer
 {
 public:
   DummyTransformer() = default;
-  ~DummyTransformer() = default;
+  ~DummyTransformer() override = default;
 
   void initialize(ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node) override;
 

@@ -50,7 +50,7 @@ class TFFrameTransformer : public rviz_common::transformation::FrameTransformer
 public:
   TFFrameTransformer();
   explicit TFFrameTransformer(std::shared_ptr<TFWrapper> wrapper);
-  ~TFFrameTransformer() = default;
+  ~TFFrameTransformer() override = default;
 
   void initialize(
     rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node) override;
