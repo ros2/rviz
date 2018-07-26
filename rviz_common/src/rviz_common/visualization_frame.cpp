@@ -326,7 +326,7 @@ void VisualizationFrame::initialize(
   render_panel_->getRenderWindow()->initialize();
 
   auto clock = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);
-  auto buffer = std::make_shared<tf2_ros::Buffer>();
+  auto buffer = std::make_shared<tf2_ros::Buffer>(clock);
   buffer->setUsingDedicatedThread(true);
   auto tf_listener = std::make_shared<tf2_ros::TransformListener>(
     *buffer, rviz_ros_node.lock()->get_raw_node(), false);
