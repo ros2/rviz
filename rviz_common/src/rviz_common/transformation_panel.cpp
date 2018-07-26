@@ -96,40 +96,41 @@ void TransformationPanel::onInitialize()
 {
   transformation_manager_ = getDisplayContext()->getTransformationManager();
 
-  QStringList available_transformer_names = transformation_manager_->getAvailableTransformerNames();
-
-  for (const auto & transformer_name : available_transformer_names) {
-    auto splitted_plugin = transformer_name.split("/");
-    auto package_name = splitted_plugin[0];
-    auto plugin_name = splitted_plugin[1];
-
-    initializeProperties(package_name, plugin_name);
+  auto available_transformers = transformation_manager_->getAvailableTransformers();
+  for (const auto & transformer_info : available_transformers) {
+    initializeProperties(transformer_info);
   }
 
   updateButtonState();
 }
 
-void TransformationPanel::initializeProperties(
-  const QString & package_name, const QString & plugin_name)
+void TransformationPanel::initializeProperties(const PluginInformation & transformer_info)
 {
-  properties::Property * package_property;
+  properties::Property * package_property = getOrCreatePackageProperty(transformer_info.package);
 
-  auto package_property_entry = package_properties_.find(package_name);
+  auto transformer_property = new properties::GroupedCheckboxProperty(
+    checkbox_property_group_, transformer_info.name, false, QString(), package_property);
+
+  if (isCurrentTransformerProperty(transformer_property)) {
+    transformer_property->setValue(true);
+  }
+}
+
+properties::Property * TransformationPanel::getOrCreatePackageProperty(const QString & package)
+{
+  auto package_property_entry = package_properties_.find(package);
   if (package_property_entry != package_properties_.end()) {
-    package_property = package_property_entry->second;
+    return package_property_entry->second;
   } else {
-    package_property = new properties::Property(package_name, QString(), QString(), root_property_);
+    auto package_property = new properties::Property(package, QString(), QString(), root_property_);
+
     package_property->setReadOnly(true);
     package_property->expand();
+
     package_properties_.insert(
-      std::pair<QString, properties::Property *>(package_name, package_property));
-  }
+      std::pair<QString, properties::Property *>(package, package_property));
 
-  auto checkbox_property = new properties::GroupedCheckboxProperty(
-    checkbox_property_group_, plugin_name, false, QString(), package_property);
-
-  if (isCurrentPlugin(checkbox_property)) {
-    checkbox_property->setValue(true);
+    return package_property;
   }
 }
 
@@ -137,21 +138,18 @@ void TransformationPanel::onSaveClicked()
 {
   auto property = checkbox_property_group_->getChecked();
   if (property) {
-    transformation_manager_->setTransformer(getClassIdFromProperty(property));
+    transformation_manager_->setTransformer(property->getParent()->getName(), property->getName());
     updateButtonState();
   }
 }
 
 void TransformationPanel::onResetClicked()
 {
-  auto plugin = transformation_manager_->getCurrentTransformerName();
-  auto splitted_plugin = plugin.split("/");
-  auto package_name = splitted_plugin[0];
-  auto plugin_name = splitted_plugin[1];
+  auto transformer = transformation_manager_->getCurrentTransformerInfo();
 
-  auto package_property = package_properties_.find(package_name);
-  if (package_property != package_properties_.end()) {
-    package_property->second->subProp(plugin_name)->setValue(true);
+  auto package_property_entry = package_properties_.find(transformer.package);
+  if (package_property_entry != package_properties_.end()) {
+    package_property_entry->second->subProp(transformer.name)->setValue(true);
   }
   updateButtonState();
 }
@@ -167,8 +165,8 @@ void TransformationPanel::onItemClicked(const QModelIndex & index)
 
 void TransformationPanel::updateButtonState()
 {
-  auto button = checkbox_property_group_->getChecked();
-  if (button && isCurrentPlugin(button)) {
+  auto checked_property = checkbox_property_group_->getChecked();
+  if (checked_property && isCurrentTransformerProperty(checked_property)) {
     save_button_->setEnabled(false);
     reset_button_->setEnabled(false);
   } else {
@@ -177,14 +175,12 @@ void TransformationPanel::updateButtonState()
   }
 }
 
-bool TransformationPanel::isCurrentPlugin(properties::GroupedCheckboxProperty * property)
+bool TransformationPanel::isCurrentTransformerProperty(
+  properties::GroupedCheckboxProperty * property)
 {
-  return getClassIdFromProperty(property) == transformation_manager_->getCurrentTransformerName();
-}
-
-QString TransformationPanel::getClassIdFromProperty(properties::GroupedCheckboxProperty * property)
-{
-  return property->getParent()->getName() + "/" + property->getName();
+  auto transformer_info = transformation_manager_->getCurrentTransformerInfo();
+  return property->getParent()->getName() == transformer_info.package &&
+         property->getName() == transformer_info.name;
 }
 
 }  // namespace rviz_common
