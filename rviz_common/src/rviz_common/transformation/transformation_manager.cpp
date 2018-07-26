@@ -59,7 +59,7 @@ TransformationManager::TransformationManager(
   // 1) Load from config
   // 2) Load TF if available
   // 3) Load dummy
-  setTransformer("rviz_default_plugins", "TFFrameTransformer");
+  setTransformer("rviz_default_plugins", "TF");
 }
 
 std::vector<PluginInformation> TransformationManager::getAvailableTransformers()
