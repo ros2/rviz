@@ -83,7 +83,7 @@ QString TransformationManager::getCurrentTransformerName()
 
 void TransformationManager::setTransformer(const QString & transformer_name)
 {
-  current_transformer_ = std::unique_ptr<FrameTransformer>(factory_->make(transformer_name));
+  current_transformer_ = std::shared_ptr<FrameTransformer>(factory_->make(transformer_name));
   current_transformer_name_ = transformer_name;
 
   current_transformer_->initialize(rviz_ros_node_);
