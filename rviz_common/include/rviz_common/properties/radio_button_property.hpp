@@ -55,8 +55,6 @@ public:
     const char * changed_slot = nullptr,
     QObject * receiver = nullptr);
 
-  bool paint(QPainter * painter, const QStyleOptionViewItem & option) const override;
-
   /// Sets the value of this property
   /// and triggers the group to disable all other RadioButtonProperties
   bool setValue(const QVariant & new_value) override;
@@ -66,7 +64,6 @@ public:
 
 private:
   std::shared_ptr<RadioButtonPropertyGroup> group_;
-  std::shared_ptr<QRadioButton> radio_button_;
 };
 
 }  // namespace properties
