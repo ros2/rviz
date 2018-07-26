@@ -29,7 +29,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "dummy_transformer.hpp"
+#include "identity_frame_transformer.hpp"
 
 #include <memory>
 #include <string>
@@ -40,19 +40,20 @@ namespace rviz_common
 namespace transformation
 {
 
-void DummyTransformer::initialize(ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node)
+void IdentityFrameTransformer::initialize(
+  ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node)
 {
   (void) rviz_ros_node;
 }
 
-void DummyTransformer::clear() {}
+void IdentityFrameTransformer::clear() {}
 
-std::vector<std::string> DummyTransformer::getAllFrameNames()
+std::vector<std::string> IdentityFrameTransformer::getAllFrameNames()
 {
   return {""};
 }
 
-transformation::PoseStamped DummyTransformer::transform(
+transformation::PoseStamped IdentityFrameTransformer::transform(
   const transformation::PoseStamped & pose_in, const std::string & target_frame)
 {
   (void) target_frame;
@@ -65,7 +66,7 @@ transformation::PoseStamped DummyTransformer::transform(
   return pose_out;
 }
 
-bool DummyTransformer::transformIsAvailable(
+bool IdentityFrameTransformer::transformIsAvailable(
   const std::string & target_frame, const std::string & source_frame)
 {
   (void) target_frame;
@@ -74,7 +75,7 @@ bool DummyTransformer::transformIsAvailable(
   return true;
 }
 
-bool DummyTransformer::transformHasProblems(
+bool IdentityFrameTransformer::transformHasProblems(
   const std::string & source_frame,
   const std::string & target_frame,
   const rclcpp::Time & time,
@@ -88,7 +89,7 @@ bool DummyTransformer::transformHasProblems(
   return false;
 }
 
-bool DummyTransformer::frameHasProblems(const std::string & frame, std::string & error)
+bool IdentityFrameTransformer::frameHasProblems(const std::string & frame, std::string & error)
 {
   (void) frame;
   (void) error;
@@ -96,12 +97,12 @@ bool DummyTransformer::frameHasProblems(const std::string & frame, std::string &
   return false;
 }
 
-InternalFrameTransformerPtr DummyTransformer::getInternals()
+InternalFrameTransformerPtr IdentityFrameTransformer::getInternals()
 {
   return std::weak_ptr<InternalFrameTransformer>();
 }
 
-bool DummyTransformer::quaternionIsValid(transformation::Quaternion quaternion)
+bool IdentityFrameTransformer::quaternionIsValid(transformation::Quaternion quaternion)
 {
   return quaternion.w + quaternion.x + quaternion.y + quaternion.z != 0;
 }

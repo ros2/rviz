@@ -36,7 +36,7 @@
 #include <vector>
 
 #include "rviz_common/factory/pluginlib_factory.hpp"
-#include "dummy_transformer.hpp"
+#include "./identity_frame_transformer.hpp"
 
 namespace rviz_common
 {
@@ -51,9 +51,9 @@ TransformationManager::TransformationManager(
     "rviz_common", "rviz_common::transformation::FrameTransformer");
   factory_->addBuiltInClass(
     "rviz_common",
-    "DummyTransformer",
+    "Identity",
     "A trivial FrameTransformer implementation",
-    []() -> FrameTransformer * {return new DummyTransformer();});
+    []() -> FrameTransformer * {return new IdentityFrameTransformer();});
 
   // TODO(greimela) Robust loading
   // 1) Load from config

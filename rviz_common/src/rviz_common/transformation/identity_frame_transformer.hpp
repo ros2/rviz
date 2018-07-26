@@ -29,8 +29,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_COMMON__TRANSFORMATION__DUMMY_TRANSFORMER_HPP_
-#define RVIZ_COMMON__TRANSFORMATION__DUMMY_TRANSFORMER_HPP_
+#ifndef RVIZ_COMMON__TRANSFORMATION__IDENTITY_FRAME_TRANSFORMER_HPP_
+#define RVIZ_COMMON__TRANSFORMATION__IDENTITY_FRAME_TRANSFORMER_HPP_
 
 #include <string>
 #include <vector>
@@ -45,14 +45,14 @@ namespace rviz_common
 namespace transformation
 {
 
-/** \brief A dummy subclass of FrameTransformer, which allows all transformations and performs
+/** \brief A trivial subclass of FrameTransformer, which allows all transformations and performs
  *  always identity transforms.
  */
-class DummyTransformer : public FrameTransformer
+class IdentityFrameTransformer : public FrameTransformer
 {
 public:
-  DummyTransformer() = default;
-  ~DummyTransformer() override = default;
+  IdentityFrameTransformer() = default;
+  ~IdentityFrameTransformer() override = default;
 
   void initialize(ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node) override;
 
@@ -75,7 +75,6 @@ public:
 
   bool frameHasProblems(const std::string & frame, std::string & error) override;
 
-  /// Expose internal implementation
   InternalFrameTransformerPtr getInternals() override;
 
 //  virtual void waitForValidTransform(
@@ -92,4 +91,4 @@ private:
 }  // namespace transformation
 }  // namespace rviz_common
 
-#endif  // RVIZ_COMMON__TRANSFORMATION__DUMMY_TRANSFORMER_HPP_
+#endif  // RVIZ_COMMON__TRANSFORMATION__IDENTITY_FRAME_TRANSFORMER_HPP_
