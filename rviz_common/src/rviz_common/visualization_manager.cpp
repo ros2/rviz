@@ -173,9 +173,9 @@ VisualizationManager::VisualizationManager(
   frame_manager_ = new FrameManager(clock, transformation_manager_->getCurrentTransformer());
   connect(
     transformation_manager_,
-    SIGNAL(currentPluginChanged(std::shared_ptr<rviz_common::transformation::FrameTransformer>)),
+    SIGNAL(transformerChanged(std::shared_ptr<transformation::FrameTransformer>)),
     frame_manager_,
-    SLOT(setTransformerPlugin(std::shared_ptr<rviz_common::transformation::FrameTransformer>)));
+    SLOT(setTransformerPlugin(std::shared_ptr<transformation::FrameTransformer>)));
 
 // TODO(wjwwood): is this needed?
 #if 0
