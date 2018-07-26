@@ -52,12 +52,8 @@ TransformationManager::TransformationManager(
   factory_->addBuiltInClass(
     "rviz_common",
     "DummyTransformer",
-    "A trivial implementation of FrameTransformer",
-    []() -> FrameTransformer *
-    {
-      return new DummyTransformer();
-    }
-  );
+    "A trivial FrameTransformer implementation",
+    []() -> FrameTransformer * {return new DummyTransformer();});
 
   // TODO(greimela) Robust loading
   // 1) Load from config
