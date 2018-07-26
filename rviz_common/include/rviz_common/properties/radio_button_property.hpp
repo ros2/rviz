@@ -30,7 +30,9 @@
 #ifndef RVIZ_COMMON__PROPERTIES__RADIO_BUTTON_PROPERTY_HPP_
 #define RVIZ_COMMON__PROPERTIES__RADIO_BUTTON_PROPERTY_HPP_
 
-#include <QRadioButton>
+#include <memory>
+
+#include <QRadioButton>  // NOLINT
 
 #include "rviz_common/properties/bool_property.hpp"
 
@@ -55,11 +57,13 @@ public:
 
   bool paint(QPainter * painter, const QStyleOptionViewItem & option) const override;
 
-  /// Sets the value of this property and triggers the group to disable all other RadioButtonProperties
+  /// Sets the value of this property
+  /// and triggers the group to disable all other RadioButtonProperties
   bool setValue(const QVariant & new_value) override;
 
   /// Sets the value of the underlying property without triggering the group
   bool setRawValue(const QVariant & new_value);
+
 private:
   std::shared_ptr<RadioButtonPropertyGroup> group_;
   std::shared_ptr<QRadioButton> radio_button_;
@@ -68,4 +72,4 @@ private:
 }  // namespace properties
 }  // namespace rviz_common
 
-#endif //RVIZ_COMMON__PROPERTIES__RADIO_BUTTON_PROPERTY_HPP_
+#endif  // RVIZ_COMMON__PROPERTIES__RADIO_BUTTON_PROPERTY_HPP_

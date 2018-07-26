@@ -29,14 +29,16 @@
 
 #include "transformation_panel.hpp"
 
+#include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
-#include <QButtonGroup>
-#include <QPushButton>
-#include <QString>
-#include <QVBoxLayout>
-#include <QtWidgets>
+#include <QButtonGroup>  // NOLINT
+#include <QPushButton>  // NOLINT
+#include <QString>  // NOLINT
+#include <QVBoxLayout>  // NOLINT
+#include <QtWidgets>  // NOLINT
 
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/properties/property.hpp"
@@ -49,7 +51,7 @@ namespace rviz_common
 {
 
 TransformationPanel::TransformationPanel(QWidget * parent)
-  : Panel(parent), button_group_(std::make_shared<properties::RadioButtonPropertyGroup>())
+: Panel(parent), button_group_(std::make_shared<properties::RadioButtonPropertyGroup>())
 {
   auto layout = new QVBoxLayout();
   layout->setContentsMargins(0, 0, 0, 0);
@@ -67,10 +69,10 @@ properties::PropertyTreeWidget * TransformationPanel::initializeTreeWidget()
   tree_widget_->setSelectionMode(QTreeView::NoSelection);
   tree_widget_->setModel(tree_model_);
   connect(
-    tree_widget_, SIGNAL(clicked(
-    const QModelIndex &)),
-    this, SLOT(onItemClicked(
-    const QModelIndex &)));
+    tree_widget_,
+    SIGNAL(clicked(const QModelIndex&)),
+    this,
+    SLOT(onItemClicked(const QModelIndex&)));
 
   return tree_widget_;
 }
@@ -176,7 +178,7 @@ void TransformationPanel::updateButtonState()
 bool TransformationPanel::isCurrentPlugin(properties::RadioButtonProperty * property)
 {
   return getClassIdFromProperty(property) ==
-    getDisplayContext()->getTransformationManager()->getCurrentPlugin();
+         getDisplayContext()->getTransformationManager()->getCurrentPlugin();
 }
 
 std::string TransformationPanel::getClassIdFromProperty(properties::RadioButtonProperty * property)

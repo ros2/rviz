@@ -27,9 +27,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <QPainter>
-#include <QRadioButton>
-#include <QStyleOptionViewItem>
+#include <memory>
+
+#include <QPainter>  // NOLINT
+#include <QRadioButton>  // NOLINT
+#include <QStyleOptionViewItem>  // NOLINT
 
 #include "rviz_common/properties/radio_button_property.hpp"
 #include "rviz_common/properties/radio_button_property_group.hpp"
@@ -47,7 +49,9 @@ RadioButtonProperty::RadioButtonProperty(
   Property * parent,
   const char * changed_slot,
   QObject * receiver
-) : BoolProperty(name, default_value, description, parent, changed_slot, receiver), group_(group) {
+)
+: BoolProperty(name, default_value, description, parent, changed_slot, receiver), group_(group)
+{
   radio_button_ = std::make_shared<QRadioButton>();
   radio_button_->setAutoExclusive(false);
   group->addProperty(this);

@@ -30,6 +30,8 @@
 #ifndef RVIZ_COMMON__PROPERTIES__RADIO_BUTTON_PROPERTY_GROUP_HPP_
 #define RVIZ_COMMON__PROPERTIES__RADIO_BUTTON_PROPERTY_GROUP_HPP_
 
+#include <vector>
+
 #include "rviz_common/properties/radio_button_property.hpp"
 
 namespace rviz_common
@@ -52,4 +54,4 @@ private:
 }  // namespace properties
 }  // namespace rviz_common
 
-#endif //RVIZ_COMMON__PROPERTIES__RADIO_BUTTON_PROPERTY_GROUP_HPP_
+#endif  // RVIZ_COMMON__PROPERTIES__RADIO_BUTTON_PROPERTY_GROUP_HPP_

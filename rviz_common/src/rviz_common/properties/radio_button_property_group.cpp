@@ -42,7 +42,7 @@ void RadioButtonPropertyGroup::addProperty(RadioButtonProperty * radio_button_pr
 
 void RadioButtonPropertyGroup::setChecked(RadioButtonProperty * radio_button_property)
 {
-  for(const auto & property : radio_button_properties_) {
+  for (const auto & property : radio_button_properties_) {
     if (property) {
       property->setRawValue(property == radio_button_property);
     }
@@ -51,7 +51,7 @@ void RadioButtonPropertyGroup::setChecked(RadioButtonProperty * radio_button_pro
 
 RadioButtonProperty * RadioButtonPropertyGroup::getChecked()
 {
-  for(const auto & property : radio_button_properties_) {
+  for (const auto & property : radio_button_properties_) {
     if (property && property->getValue().toBool()) {
       return property;
     }

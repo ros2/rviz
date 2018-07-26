@@ -30,13 +30,13 @@
 #ifndef RVIZ_COMMON__TRANSFORMATION_PANEL_HPP_
 #define RVIZ_COMMON__TRANSFORMATION_PANEL_HPP_
 
+#include <map>
 #include <memory>
+#include <string>
 #include <vector>
 
-#include <QPushButton>
-#include <QRadioButton>
-#include <QVBoxLayout>
-#include <QtWidgets/QGroupBox>
+#include <QPushButton>  // NOLINT
+#include <QVBoxLayout>  // NOLINT
 
 #include "rviz_common/panel.hpp"
 #include "rviz_common/properties/radio_button_property_group.hpp"
@@ -83,7 +83,6 @@ private:
 
   std::map<QString, properties::Property *> package_properties_;
   void initializeProperties(const QString & package_name, const QString & plugin_name);
-
 
   void updateButtonState();
 

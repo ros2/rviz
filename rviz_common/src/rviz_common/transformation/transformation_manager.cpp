@@ -46,8 +46,8 @@ TransformationManager::TransformationManager(std::string current_plugin)
   // TODO(botteroa-si): use pluginlob to fill correctly available plugins list
   setAvailablePlugins(
     {"rviz_common/DummyFrameTransformer",
-     "rviz_default_plugins/TFFrameTransformer",
-     "rviz_default_plugins/SomethingElse"});
+      "rviz_default_plugins/TFFrameTransformer",
+      "rviz_default_plugins/SomethingElse"});
   setPlugin("rviz_default_plugins/TFFrameTransformer");
 }
 
