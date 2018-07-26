@@ -407,6 +407,13 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreOverlay)
   endif()
 
+  ament_add_gmock(dummy_transformer_test
+    test/transformation/dummy_transformer_tests.cpp)
+  if(TARGET dummy_transformer_test)
+    target_link_libraries(dummy_transformer_test
+      rviz_common)
+  endif()
+
   ament_add_gmock(selection_handler_test
     test/interaction/selection_handler_test.cpp
     test/interaction/selection_test_fixture.hpp
