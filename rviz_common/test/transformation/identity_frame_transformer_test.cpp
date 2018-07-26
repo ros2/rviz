@@ -33,24 +33,34 @@
 #include <memory>
 #include <string>
 
-#include "../../src/rviz_common/transformation/dummy_transformer.hpp"
+#include "src/rviz_common/transformation/identity_frame_transformer.hpp"
 #include "transformation_test_helpers.hpp"
 
 using namespace testing;  // NOLINT
 
-TEST(DummyTransformer, getAllFrameNames_returns_a_vector_containing_an_empty_string) {
-  auto dummy_transformer = std::make_shared<rviz_common::transformation::DummyTransformer>();
-  auto frame_names = dummy_transformer->getAllFrameNames();
+class IdentityTransformerFixture : public testing::Test
+{
+public:
+  IdentityTransformerFixture()
+  {
+    transformer_ = std::make_shared<rviz_common::transformation::IdentityFrameTransformer>();
+  }
+
+  std::shared_ptr<rviz_common::transformation::IdentityFrameTransformer> transformer_;
+};
+
+
+TEST_F(IdentityTransformerFixture, getAllFrameNames_returns_a_vector_containing_an_empty_string) {
+  auto frame_names = transformer_->getAllFrameNames();
 
   ASSERT_THAT(frame_names, SizeIs(1));
   EXPECT_THAT(frame_names[0], Eq(""));
 }
 
-TEST(DummyTransformer, transform_returns_the_input_pose_if_orientation_is_valid) {
-  auto dummy_transformer = std::make_shared<rviz_common::transformation::DummyTransformer>();
+TEST_F(IdentityTransformerFixture, transform_returns_the_input_pose_if_orientation_is_valid) {
   auto pose_stamped = createRvizCommonPoseStamped(
     1, 3, "test", createRvizCommonPoint(0, 3, 6), createRvizCommonQuaternion(0, 1, 0, 0));
-  auto transformed_pose = dummy_transformer->transform(pose_stamped, "any_frame");
+  auto transformed_pose = transformer_->transform(pose_stamped, "any_frame");
 
   EXPECT_THAT(transformed_pose.time_stamp_.seconds_, Eq(1));
   EXPECT_THAT(transformed_pose.time_stamp_.nanoseconds_, Eq(static_cast<uint32_t>(3)));
@@ -59,13 +69,12 @@ TEST(DummyTransformer, transform_returns_the_input_pose_if_orientation_is_valid)
   EXPECT_THAT(transformed_pose.orientation_, QuaternionEq(createRvizCommonQuaternion(0, 1, 0, 0)));
 }
 
-TEST(
-  DummyTransformer,
+TEST_F(
+  IdentityTransformerFixture,
   transform_returns_the_input_pose_with_trivial_orientation_if_original_orientation_is_not_valid) {
-  auto dummy_transformer = std::make_shared<rviz_common::transformation::DummyTransformer>();
   auto pose_stamped = createRvizCommonPoseStamped(
     1, 3, "test", createRvizCommonPoint(1, 3, 6), createRvizCommonQuaternion(0, 0, 0, 0));
-  auto transformed_pose = dummy_transformer->transform(pose_stamped, "any_frame");
+  auto transformed_pose = transformer_->transform(pose_stamped, "any_frame");
 
   EXPECT_THAT(transformed_pose.time_stamp_.seconds_, Eq(1));
   EXPECT_THAT(transformed_pose.time_stamp_.nanoseconds_, Eq(static_cast<uint32_t>(3)));
@@ -74,26 +83,21 @@ TEST(
   EXPECT_THAT(transformed_pose.orientation_, QuaternionEq(createRvizCommonQuaternion(1, 0, 0, 0)));
 }
 
-TEST(DummyTransformer, transformationIsAvailable_returns_true) {
-  auto dummy_transformer = std::make_shared<rviz_common::transformation::DummyTransformer>();
-
-  EXPECT_TRUE(
-    dummy_transformer->transformIsAvailable("any_target", "any_source"));
+TEST_F(IdentityTransformerFixture, transformationIsAvailable_returns_true) {
+  EXPECT_TRUE(transformer_->transformIsAvailable("any_target", "any_source"));
 }
 
-TEST(DummyTransformer, transformHasProblesm_returns_false) {
-  auto dummy_transformer = std::make_shared<rviz_common::transformation::DummyTransformer>();
+TEST_F(IdentityTransformerFixture, transformHasProblesm_returns_false) {
   std::string error = "";
 
-  EXPECT_FALSE(dummy_transformer->transformHasProblems(
+  EXPECT_FALSE(transformer_->transformHasProblems(
       "any_target", "any_source", rclcpp::Clock().now(), error));
   EXPECT_THAT(error, Eq(""));
 }
 
-TEST(DummyTransformer, frameHasProblesm_returns_false) {
-  auto dummy_transformer = std::make_shared<rviz_common::transformation::DummyTransformer>();
+TEST_F(IdentityTransformerFixture, frameHasProblesm_returns_false) {
   std::string error = "";
 
-  EXPECT_FALSE(dummy_transformer->frameHasProblems("any_frame", error));
+  EXPECT_FALSE(transformer_->frameHasProblems("any_frame", error));
   EXPECT_THAT(error, Eq(""));
 }
