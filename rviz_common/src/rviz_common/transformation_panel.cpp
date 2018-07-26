@@ -45,7 +45,7 @@
 #include "rviz_common/properties/property_tree_widget.hpp"
 #include "rviz_common/properties/radio_button_property.hpp"
 #include "rviz_common/properties/radio_button_property_group.hpp"
-#include "./transformation/transformation_manager.hpp"
+#include "rviz_common/transformation/transformation_manager.hpp"
 
 namespace rviz_common
 {
