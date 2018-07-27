@@ -49,7 +49,7 @@ void DummyTransformer::clear() {}
 
 std::vector<std::string> DummyTransformer::getAllFrameNames()
 {
-  return {"every_frame"};
+  return {""};
 }
 
 transformation::PoseStamped DummyTransformer::transform(
