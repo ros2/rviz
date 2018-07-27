@@ -1,8 +1,7 @@
-#include <utility>
-
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
  * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,23 +32,34 @@
 #ifndef RVIZ_COMMON__FACTORY__FACTORY_HPP_
 #define RVIZ_COMMON__FACTORY__FACTORY_HPP_
 
-#include <QIcon>
-#include <QString>
-#include <QStringList>
+#include <utility>
+#include <vector>
+
+#include <QIcon>  // NOLINT
+#include <QString>  // NOLINT
+#include <QStringList>  // NOLINT
 
 namespace rviz_common
 {
 
 /// Struct to bundle the information available for a plugin
-struct PluginInformation
+struct PluginInfo
 {
-  PluginInformation(QString id, QString name, QString package, QString description)
-  : id(id), name(name), package(package), description(description) {}
-
   QString id;
   QString name;
   QString package;
   QString description;
+  QIcon icon;
+
+  friend bool operator==(const PluginInfo & lhs, const PluginInfo & rhs)
+  {
+    return lhs.id == rhs.id;
+  }
+
+  friend bool operator<(const PluginInfo & lhs, const PluginInfo & rhs)
+  {
+    return lhs.id < rhs.id;
+  }
 };
 
 /// Abstract base class representing a plugin load-able class factory.
@@ -64,20 +74,8 @@ class Factory
 public:
   virtual ~Factory() {}
 
-  virtual QStringList getDeclaredClassIds() = 0;
-  virtual QString getClassDescription(const QString & class_id) const = 0;
-  virtual QString getClassName(const QString & class_id) const = 0;
-  virtual QString getClassPackage(const QString & class_id) const = 0;
-  virtual QIcon getIcon(const QString & class_id) const = 0;
-
-  PluginInformation getPluginInformation(const QString & class_id)
-  {
-    return PluginInformation(
-      class_id,
-      getClassName(class_id),
-      getClassPackage(class_id),
-      getClassDescription(class_id));
-  }
+  virtual std::vector<PluginInfo> getDeclaredPlugins() = 0;
+  virtual PluginInfo getPluginInfo(const QString & class_id) const = 0;
 };
 
 }  // namespace rviz_common

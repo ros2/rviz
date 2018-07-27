@@ -74,45 +74,39 @@ public:
     delete class_loader_;
   }
 
-  QStringList getDeclaredClassIds() override
+  std::vector<PluginInfo> getDeclaredPlugins() override
   {
-    QStringList ids;
+    std::vector<PluginInfo> plugins;
     std::vector<std::string> std_ids = class_loader_->getDeclaredClasses();
-    for (size_t i = 0; i < std_ids.size(); i++) {
-      ids.push_back(QString::fromStdString(std_ids[i]));
+    for (const auto & id : std_ids) {
+      plugins.emplace_back(getPluginInfo(QString::fromStdString(id)));
     }
     typename QHash<QString, BuiltInClassRecord>::const_iterator iter;
     for (iter = built_ins_.begin(); iter != built_ins_.end(); iter++) {
-      ids.push_back(iter.key());
+      plugins.emplace_back(getPluginInfo(iter->class_id_));
     }
-    return ids;
+    return plugins;
   }
 
-  QString getClassDescription(const QString & class_id) const override
+  PluginInfo getPluginInfo(const QString & class_id) const override
   {
+    PluginInfo info;
     typename QHash<QString, BuiltInClassRecord>::const_iterator iter = built_ins_.find(class_id);
     if (iter != built_ins_.end()) {
-      return iter->description_;
+      info.id = iter->class_id_;
+      info.name = iter->name_;
+      info.package = iter->package_;
+      info.description = iter->description_;
+      info.icon = getIcon(info.package, info.name);
+      return info;
     }
-    return QString::fromStdString(class_loader_->getClassDescription(class_id.toStdString()));
-  }
-
-  QString getClassName(const QString & class_id) const override
-  {
-    typename QHash<QString, BuiltInClassRecord>::const_iterator iter = built_ins_.find(class_id);
-    if (iter != built_ins_.end()) {
-      return iter->name_;
-    }
-    return QString::fromStdString(class_loader_->getName(class_id.toStdString()));
-  }
-
-  QString getClassPackage(const QString & class_id) const override
-  {
-    typename QHash<QString, BuiltInClassRecord>::const_iterator iter = built_ins_.find(class_id);
-    if (iter != built_ins_.end()) {
-      return iter->package_;
-    }
-    return QString::fromStdString(class_loader_->getClassPackage(class_id.toStdString()));
+    auto class_id_std = class_id.toStdString();
+    info.id = class_id;
+    info.name = QString::fromStdString(class_loader_->getName(class_id_std));
+    info.package = QString::fromStdString(class_loader_->getClassPackage(class_id_std));
+    info.description = QString::fromStdString(class_loader_->getClassDescription(class_id_std));
+    info.icon = getIcon(info.package, info.name);
+    return info;
   }
 
   virtual QString getPluginManifestPath(const QString & class_id) const
@@ -122,20 +116,6 @@ public:
       return "";
     }
     return QString::fromStdString(class_loader_->getPluginManifestPath(class_id.toStdString()));
-  }
-
-  QIcon getIcon(const QString & class_id) const override
-  {
-    QString package = getClassPackage(class_id);
-    QString class_name = getClassName(class_id);
-    QIcon icon = loadPixmap("package://" + package + "/icons/classes/" + class_name + ".svg");
-    if (icon.isNull()) {
-      icon = loadPixmap("package://" + package + "/icons/classes/" + class_name + ".png");
-      if (icon.isNull()) {
-        icon = loadPixmap("package://rviz_common/icons/default_class_icon.png");
-      }
-    }
-    return icon;
   }
 
   virtual void addBuiltInClass(
@@ -185,6 +165,19 @@ protected:
       }
       return nullptr;
     }
+  }
+
+  virtual QIcon getIcon(const QString & package, const QString & name) const
+  {
+    auto base_path = "package://" + package + "/icons/classes/" + name;
+    QIcon icon = loadPixmap(base_path + ".svg");
+    if (icon.isNull()) {
+      icon = loadPixmap(base_path + ".png");
+      if (icon.isNull()) {
+        icon = loadPixmap("package://rviz_common/icons/default_class_icon.png");
+      }
+    }
+    return icon;
   }
 
 private:

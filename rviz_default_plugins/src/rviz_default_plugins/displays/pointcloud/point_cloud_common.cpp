@@ -165,17 +165,16 @@ void PointCloudCommon::initialize(
 
 void PointCloudCommon::loadTransformers()
 {
-  QStringList classes = transformer_factory_->getDeclaredClassIds();
-  for (auto const & class_id : classes) {
-    std::string name = transformer_factory_->getClassName(class_id).toStdString();
-
-    if (transformers_.count(name) > 0) {
-      RVIZ_COMMON_LOG_ERROR_STREAM("Transformer type " << name << " is already loaded.");
+  auto plugins = transformer_factory_->getDeclaredPlugins();
+  for (auto const & plugin : plugins) {
+    auto plugin_name_std = plugin.name.toStdString();
+    if (transformers_.count(plugin_name_std) > 0) {
+      RVIZ_COMMON_LOG_ERROR_STREAM("Transformer type " << plugin_name_std << " is already loaded.");
       continue;
     }
 
-    PointCloudTransformerPtr trans(transformer_factory_->make(class_id));
-    loadTransformer(trans, name, class_id.toStdString());
+    PointCloudTransformerPtr trans(transformer_factory_->make(plugin.id));
+    loadTransformer(trans, plugin_name_std, plugin.id.toStdString());
   }
 }
 

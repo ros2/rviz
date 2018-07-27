@@ -105,7 +105,11 @@ ViewController * ViewManager::create(const QString & class_id)
 
 QStringList ViewManager::getDeclaredClassIdsFromFactory()
 {
-  return impl_->factory->getDeclaredClassIds();
+  QStringList class_ids;
+  for (const auto & plugin : impl_->factory->getDeclaredPlugins()) {
+    class_ids.append(plugin.id);
+  }
+  return class_ids;
 }
 
 ViewController * ViewManager::getCurrent() const
@@ -171,7 +175,7 @@ void ViewManager::copyCurrentToList()
   ViewController * current = getCurrent();
   if (current) {
     ViewController * new_copy = copy(current);
-    new_copy->setName(impl_->factory->getClassName(new_copy->getClassId()));
+    new_copy->setName(impl_->factory->getPluginInfo(new_copy->getClassId()).name);
     impl_->root_property->addChild(new_copy);
   }
 }

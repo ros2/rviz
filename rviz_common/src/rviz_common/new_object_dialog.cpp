@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,6 +30,7 @@
 
 #include "./new_object_dialog.hpp"
 
+#include <algorithm>
 #include <map>
 
 #include <QDialogButtonBox>  // NOLINT: cpplint is unable to handle the include order here
@@ -128,41 +130,36 @@ void NewObjectDialog::fillTree(QTreeWidget * tree)
 {
   QIcon default_package_icon = loadPixmap("package://rviz_common/icons/default_package_icon.png");
 
-  QStringList classes = factory_->getDeclaredClassIds();
-  classes.sort();
+  auto plugins = factory_->getDeclaredPlugins();
+  std::sort(plugins.begin(), plugins.end());
 
   // Map from package names to the corresponding top-level tree widget items.
   std::map<QString, QTreeWidgetItem *> package_items;
 
-  for (int i = 0; i < classes.size(); i++) {
-    QString lookup_name = classes[i];
-    QString package = factory_->getClassPackage(lookup_name);
-    QString description = factory_->getClassDescription(lookup_name);
-    QString name = factory_->getClassName(lookup_name);
-
+  for (const auto & plugin : plugins) {
     QTreeWidgetItem * package_item;
 
     std::map<QString, QTreeWidgetItem *>::iterator mi;
-    mi = package_items.find(package);
+    mi = package_items.find(plugin.package);
     if (mi == package_items.end()) {
       package_item = new QTreeWidgetItem(tree);
-      package_item->setText(0, package);
+      package_item->setText(0, plugin.package);
       package_item->setIcon(0, default_package_icon);
 
       package_item->setExpanded(true);
-      package_items[package] = package_item;
+      package_items[plugin.package] = package_item;
     } else {
       package_item = (*mi).second;
     }
-    QTreeWidgetItem * class_item = new QTreeWidgetItem(package_item);
+    auto class_item = new QTreeWidgetItem(package_item);
 
-    class_item->setIcon(0, factory_->getIcon(lookup_name));
+    class_item->setIcon(0, plugin.icon);
 
-    class_item->setText(0, name);
-    class_item->setWhatsThis(0, description);
+    class_item->setText(0, plugin.name);
+    class_item->setWhatsThis(0, plugin.description);
     // Store the lookup name for each class in the UserRole of the item.
-    class_item->setData(0, Qt::UserRole, lookup_name);
-    class_item->setDisabled(disallowed_class_lookup_names_.contains(lookup_name));
+    class_item->setData(0, Qt::UserRole, plugin.id);
+    class_item->setDisabled(disallowed_class_lookup_names_.contains(plugin.id));
   }
 }
 

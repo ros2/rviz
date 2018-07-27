@@ -417,40 +417,35 @@ void DisplayTypeTree::fillTree(Factory * factory)
 {
   QIcon default_package_icon = loadPixmap("package://rviz_common/icons/default_package_icon.png");
 
-  QStringList classes = factory->getDeclaredClassIds();
-  classes.sort();
+  auto plugins = factory->getDeclaredPlugins();
+  std::sort(plugins.begin(), plugins.end());
 
   // Map from package names to the corresponding top-level tree widget items.
   std::map<QString, QTreeWidgetItem *> package_items;
 
-  for (int i = 0; i < classes.size(); i++) {
-    QString lookup_name = classes[i];
-    QString package = factory->getClassPackage(lookup_name);
-    QString description = factory->getClassDescription(lookup_name);
-    QString name = factory->getClassName(lookup_name);
-
+  for (const auto & plugin : plugins) {
     QTreeWidgetItem * package_item;
 
     std::map<QString, QTreeWidgetItem *>::iterator mi;
-    mi = package_items.find(package);
+    mi = package_items.find(plugin.package);
     if (mi == package_items.end()) {
       package_item = new QTreeWidgetItem(this);
-      package_item->setText(0, package);
+      package_item->setText(0, plugin.package);
       package_item->setIcon(0, default_package_icon);
 
       package_item->setExpanded(true);
-      package_items[package] = package_item;
+      package_items[plugin.package] = package_item;
     } else {
       package_item = (*mi).second;
     }
-    QTreeWidgetItem * class_item = new QTreeWidgetItem(package_item);
+    auto class_item = new QTreeWidgetItem(package_item);
 
-    class_item->setIcon(0, factory->getIcon(lookup_name));
+    class_item->setIcon(0, plugin.icon);
 
-    class_item->setText(0, name);
-    class_item->setWhatsThis(0, description);
+    class_item->setText(0, plugin.name);
+    class_item->setWhatsThis(0, plugin.description);
     // Store the lookup name for each class in the UserRole of the item.
-    class_item->setData(0, Qt::UserRole, lookup_name);
+    class_item->setData(0, Qt::UserRole, plugin.id);
   }
 }
 
@@ -552,14 +547,16 @@ void TopicDisplayWidget::fill(DisplayFactory * factory)
 
     QMap<QString, PluginGroup::Info>::const_iterator it;
     for (it = pg.plugins.begin(); it != pg.plugins.end(); ++it) {
-      const QString plugin_name = it.key();
+      const QString plugin_id = it.key();
       const PluginGroup::Info & info = it.value();
-      QTreeWidgetItem * row = new QTreeWidgetItem(item);
+      auto * row = new QTreeWidgetItem(item);
 
-      row->setText(0, factory->getClassName(plugin_name));
-      row->setIcon(0, factory->getIcon(plugin_name));
-      row->setWhatsThis(0, factory->getClassDescription(plugin_name));
-      row->setData(0, Qt::UserRole, plugin_name);
+      auto plugin_info = factory->getPluginInfo(plugin_id);
+
+      row->setText(0, plugin_info.name);
+      row->setIcon(0, plugin_info.icon);
+      row->setWhatsThis(0, plugin_info.description);
+      row->setData(0, Qt::UserRole, plugin_id);
       row->setData(1, Qt::UserRole, info.datatypes[0]);
 
       // *INDENT-OFF* - uncrustify cannot deal with commas here
@@ -589,17 +586,12 @@ void TopicDisplayWidget::fill(DisplayFactory * factory)
 void TopicDisplayWidget::findPlugins(DisplayFactory * factory)
 {
   // Build map from topic type to plugin by instantiating every plugin we have.
-  QStringList lookup_names = factory->getDeclaredClassIds();
+  auto plugins = factory->getDeclaredPlugins();
 
-  QStringList::iterator it;
-  for (it = lookup_names.begin(); it != lookup_names.end(); ++it) {
-    const QString & lookup_name = *it;
-    // ROS_INFO("Class: %s", lookup_name.toStdString().c_str());
-
-    QSet<QString> topic_types = factory->getMessageTypes(lookup_name);
+  for (const auto & plugin : plugins) {
+    QSet<QString> topic_types = factory->getMessageTypes(plugin.id);
     Q_FOREACH (QString topic_type, topic_types) {
-      // ROS_INFO("Type: %s", topic_type.toStdString().c_str());
-      datatype_plugins_.insertMulti(topic_type, lookup_name);
+      datatype_plugins_.insertMulti(topic_type, plugin.id);
     }
   }
 }

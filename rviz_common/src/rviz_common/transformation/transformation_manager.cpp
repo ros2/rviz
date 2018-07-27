@@ -59,16 +59,12 @@ TransformationManager::TransformationManager(
   // 1) Load from config
   // 2) Load TF if available
   // 3) Load dummy
-  setTransformer("rviz_default_plugins", "TF");
+  setTransformer(factory_->getDeclaredPlugins()[0]);
 }
 
-std::vector<PluginInformation> TransformationManager::getAvailableTransformers()
+std::vector<PluginInfo> TransformationManager::getAvailableTransformers()
 {
-  std::vector<PluginInformation> information;
-  for (const auto & class_id : factory_->getDeclaredClassIds()) {
-    information.push_back(factory_->getPluginInformation(class_id));
-  }
-  return information;
+  return factory_->getDeclaredPlugins();
 }
 
 std::shared_ptr<FrameTransformer> TransformationManager::getCurrentTransformer()
@@ -76,22 +72,17 @@ std::shared_ptr<FrameTransformer> TransformationManager::getCurrentTransformer()
   return current_transformer_;
 }
 
-PluginInformation TransformationManager::getCurrentTransformerInfo()
+PluginInfo TransformationManager::getCurrentTransformerInfo()
 {
-  return factory_->getPluginInformation(current_transformer_->getClassId());
+  return factory_->getPluginInfo(current_transformer_->getClassId());
 }
 
-void TransformationManager::setTransformer(const QString & package, const QString & name)
+void TransformationManager::setTransformer(const PluginInfo & plugin_info)
 {
-  for (const auto & transformer : getAvailableTransformers()) {
-    if (transformer.package == package && transformer.name == name) {
-      current_transformer_ = std::shared_ptr<FrameTransformer>(factory_->make(transformer.id));
-      current_transformer_->initialize(rviz_ros_node_);
+  current_transformer_ = std::shared_ptr<FrameTransformer>(factory_->make(plugin_info.id));
+  current_transformer_->initialize(rviz_ros_node_);
 
-      Q_EMIT transformerChanged(current_transformer_);
-      return;
-    }
-  }
+  Q_EMIT transformerChanged(current_transformer_);
 }
 
 }  // namespace transformation

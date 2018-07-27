@@ -1236,7 +1236,7 @@ QDockWidget * VisualizationFrame::addPanelByName(
 
   record.panel->initialize(manager_);
 
-  record.dock->setIcon(panel_factory_->getIcon(class_id));
+  record.dock->setIcon(panel_factory_->getPluginInfo(class_id).icon);
 
   return record.dock;
 }

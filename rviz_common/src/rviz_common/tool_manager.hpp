@@ -77,7 +77,10 @@ public:
   rviz_common::properties::PropertyTreeModel * getPropertyModel() const;
 
   /// Create a tool by class lookup name, add it to the list, and return it.
-  Tool * addTool(const QString & tool_class_lookup_name);
+  Tool * addTool(const QString & class_id);
+
+  /// Create a tool by plugin info, add it to the list, and return it.
+  Tool * addTool(const PluginInfo & tool_plugin);
 
   /// Return the tool currently in use.
   /**
