@@ -89,6 +89,7 @@ void TransformationManager::setTransformer(const QString & package, const QStrin
       current_transformer_->initialize(rviz_ros_node_);
 
       Q_EMIT transformerChanged(current_transformer_);
+      return;
     }
   }
 }

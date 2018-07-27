@@ -84,7 +84,7 @@ private:
 
   transformation::TransformationManager * transformation_manager_;
 
-  void initializeProperties(const PluginInformation & transformer_info);
+  void createProperty(const PluginInformation & transformer_info);
 
   std::map<QString, properties::Property *> package_properties_;
   properties::Property * getOrCreatePackageProperty(const QString & package);

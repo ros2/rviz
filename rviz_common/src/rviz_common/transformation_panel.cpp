@@ -98,13 +98,13 @@ void TransformationPanel::onInitialize()
 
   auto available_transformers = transformation_manager_->getAvailableTransformers();
   for (const auto & transformer_info : available_transformers) {
-    initializeProperties(transformer_info);
+    createProperty(transformer_info);
   }
 
   updateButtonState();
 }
 
-void TransformationPanel::initializeProperties(const PluginInformation & transformer_info)
+void TransformationPanel::createProperty(const PluginInformation & transformer_info)
 {
   properties::Property * package_property = getOrCreatePackageProperty(transformer_info.package);
 
