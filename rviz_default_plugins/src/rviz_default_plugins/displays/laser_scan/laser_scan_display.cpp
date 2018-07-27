@@ -47,13 +47,13 @@ namespace displays
 {
 
 LaserScanDisplay::LaserScanDisplay()
-: OnlyTfCompatibleBaseDisplay(),
-  point_cloud_common_(std::make_unique<rviz_default_plugins::PointCloudCommon>(this)),
+: point_cloud_common_(std::make_unique<rviz_default_plugins::PointCloudCommon>(this)),
   queue_size_property_(std::make_unique<rviz_common::QueueSizeProperty>(this, 10)),
-  projector_(std::make_unique<laser_geometry::LaserProjection>())
-{
-  display_name_ = "LaserScan";
-}
+  projector_(std::make_unique<laser_geometry::LaserProjection>()),
+  transformer_handler_(
+    std::make_unique<TransformerHandlerDelegate<rviz_default_plugins::transformation::TFWrapper>>(
+      this, "LaserScan", "TF"))
+{}
 
 LaserScanDisplay::LaserScanDisplay(rviz_common::DisplayContext * context)
 : LaserScanDisplay()
@@ -65,12 +65,7 @@ void LaserScanDisplay::onInitialize()
 {
   RTDClass::onInitialize();
   point_cloud_common_->initialize(context_, scene_node_);
-
-  connect(
-    context_->getTransformationManager(),
-    SIGNAL(transformerChanged(std::shared_ptr<rviz_common::transformation::FrameTransformer>)),
-    this,
-    SLOT(transformerChanged(std::shared_ptr<rviz_common::transformation::FrameTransformer>)));
+  transformer_handler_->initialize(context_);
 }
 
 void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPtr scan)
@@ -110,9 +105,9 @@ void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPt
 
 void LaserScanDisplay::update(float wall_dt, float ros_dt)
 {
-  if (!using_tf_transformer_) {
-    return;
-  }
+//  if (!using_allowed_transformer_) {
+//    return;
+//  }
   point_cloud_common_->update(wall_dt, ros_dt);
 }
 
@@ -126,47 +121,6 @@ void LaserScanDisplay::onDisable()
 {
   RosTopicDisplay::onDisable();
   point_cloud_common_->onDisable();
-}
-
-void LaserScanDisplay::onEnable()
-{
-  updateDisplayAccordingToTransformerType();
-}
-
-void LaserScanDisplay::transformerChanged(
-  std::shared_ptr<rviz_common::transformation::FrameTransformer> new_transformer)
-{
-  if (using_tf_transformer_ != isTFTransformer(new_transformer->getInternals())) {
-    updateDisplayAccordingToTransformerType();
-  }
-}
-
-void LaserScanDisplay::showDefaultProperties()
-{
-  findProperty("Unreliable")->show();
-  findProperty("Selectable")->show();
-  findProperty("Style")->show();
-  findProperty("Size (m)")->show();
-  findProperty("Alpha")->show();
-  findProperty("Decay Time")->show();
-  findProperty("Queue Size")->show();
-  showAndResetParentProperty(findProperty("Position Transformer"));
-  showAndResetParentProperty(findProperty("Color Transformer"));
-
-  // In order for the display to restart receiving messages it is sometimes necessary to change
-  // topic and then set the right one again.
-  showAndResetParentProperty(findProperty("Topic"));
-}
-
-void LaserScanDisplay::showAndResetParentProperty(
-  rviz_common::properties::Property * parent_property)
-{
-  if (parent_property) {
-    parent_property->show();
-    QString property_value = parent_property->getValue().toString();
-    parent_property->setValue("");
-    parent_property->setValue(property_value);
-  }
 }
 
 }  // namespace displays

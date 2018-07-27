@@ -40,7 +40,8 @@
 
 #include "rviz_common/ros_topic_display.hpp"
 #include "rviz_common/transformation/frame_transformer.hpp"
-#include "rviz_default_plugins/displays/only_tf_compatible_base_display.hpp"
+#include "rviz_default_plugins/displays/transformer_handler_delegate.hpp"
+#include "rviz_default_plugins/transformation/tf_wrapper.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 
 namespace rviz_common
@@ -60,7 +61,7 @@ namespace displays
 // TODO(botteroa-si): This display originally extended the MessageFilterDisplay. Revisit when
 // available
 class RVIZ_DEFAULT_PLUGINS_PUBLIC LaserScanDisplay : public
-  OnlyTfCompatibleBaseDisplay<sensor_msgs::msg::LaserScan>
+  rviz_common::RosTopicDisplay<sensor_msgs::msg::LaserScan>
 {
   Q_OBJECT
 
@@ -74,7 +75,6 @@ public:
   void reset() override;
   void update(float wall_dt, float ros_dt) override;
 
-  void onEnable() override;
   void onDisable() override;
 
 protected:
@@ -88,13 +88,9 @@ protected:
   std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
   std::unique_ptr<laser_geometry::LaserProjection> projector_;
 
-private Q_SLOTS:
-  void transformerChanged(
-    std::shared_ptr<rviz_common::transformation::FrameTransformer> new_transformer);
-
 private:
-  void showDefaultProperties() override;
-  void showAndResetParentProperty(rviz_common::properties::Property * parent_property);
+  std::unique_ptr<TransformerHandlerDelegate<rviz_default_plugins::transformation::TFWrapper>>
+  transformer_handler_;
 };
 
 }  // namespace displays
