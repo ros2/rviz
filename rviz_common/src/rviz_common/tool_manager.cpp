@@ -75,7 +75,7 @@ ToolManager::~ToolManager()
 void ToolManager::initialize()
 {
   // get a list of available tool plugin class ids
-  QStringList class_ids = factory_->getDeclaredClassIds();
+  auto plugins = factory_->getDeclaredPlugins();
   // define a list of preferred tool names (they will be listed first in the toolbar)
   std::vector<const char *> preferred_tool_names = {
     "rviz_default_plugins/MoveCamera",
@@ -86,9 +86,9 @@ void ToolManager::initialize()
   };
   // attempt to load each preferred tool in order
   for (const auto & preferred_tool_name : preferred_tool_names) {
-    for (const auto & class_id : class_ids) {
-      if (class_id.toStdString() == preferred_tool_name) {
-        addTool(class_id);
+    for (const auto & plugin : plugins) {
+      if (plugin.name.toStdString() == preferred_tool_name) {
+        addTool(plugin);
       }
     }
   }
@@ -112,7 +112,7 @@ void ToolManager::load(const Config & config)
 
     QString class_id;
     if (tool_config.mapGetString("Class", &class_id)) {
-      Tool * tool = addTool(class_id);
+      Tool * tool = addTool(factory_->getPluginInfo(class_id));
       tool->load(tool_config);
     }
   }
@@ -226,17 +226,22 @@ void ToolManager::closeTool()
 
 Tool * ToolManager::addTool(const QString & class_id)
 {
+  return addTool(factory_->getPluginInfo(class_id));
+}
+
+Tool * ToolManager::addTool(const PluginInfo & tool_plugin)
+{
   QString error;
   bool failed = false;
-  Tool * tool = factory_->make(class_id, &error);
+  Tool * tool = factory_->make(tool_plugin.id, &error);
   if (!tool) {
-    tool = new FailedTool(class_id, error);
+    tool = new FailedTool(tool_plugin.id, error);
     failed = true;
   }
 
   tools_.append(tool);
-  tool->setName(addSpaceToCamelCase(factory_->getClassName(class_id)));
-  tool->setIcon(factory_->getIcon(class_id));
+  tool->setName(addSpaceToCamelCase(tool_plugin.name));
+  tool->setIcon(tool_plugin.icon);
   tool->initialize(context_);
 
   if (tool->getShortcutKey() != '\0') {

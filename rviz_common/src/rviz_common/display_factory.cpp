@@ -56,7 +56,7 @@ Display * DisplayFactory::makeRaw(const QString & class_id, QString * error_retu
 {
   Display * display = PluginlibFactory<Display>::makeRaw(class_id, error_return);
   if (display) {
-    display->setIcon(getIcon(class_id));
+    display->setIcon(getPluginInfo(class_id).icon);
   }
   return display;
 }

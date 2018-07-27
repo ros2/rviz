@@ -104,12 +104,13 @@ void TransformationPanel::onInitialize()
   updateButtonState();
 }
 
-void TransformationPanel::createProperty(const PluginInformation & transformer_info)
+void TransformationPanel::createProperty(const PluginInfo & transformer_info)
 {
   properties::Property * package_property = getOrCreatePackageProperty(transformer_info.package);
 
   auto transformer_property = new properties::GroupedCheckboxProperty(
     checkbox_property_group_, transformer_info.name, false, QString(), package_property);
+  transformer_property_infos_.insert(std::make_pair(transformer_property, transformer_info));
 
   if (isCurrentTransformerProperty(transformer_property)) {
     transformer_property->setValue(true);
@@ -127,8 +128,7 @@ properties::Property * TransformationPanel::getOrCreatePackageProperty(const QSt
     package_property->setReadOnly(true);
     package_property->expand();
 
-    package_properties_.insert(
-      std::pair<QString, properties::Property *>(package, package_property));
+    package_properties_.insert(std::make_pair(package, package_property));
 
     return package_property;
   }
@@ -138,7 +138,7 @@ void TransformationPanel::onSaveClicked()
 {
   auto property = checkbox_property_group_->getChecked();
   if (property) {
-    transformation_manager_->setTransformer(property->getParent()->getName(), property->getName());
+    transformation_manager_->setTransformer(transformer_property_infos_[property]);
     updateButtonState();
   }
 }
@@ -179,8 +179,7 @@ bool TransformationPanel::isCurrentTransformerProperty(
   properties::GroupedCheckboxProperty * property)
 {
   auto transformer_info = transformation_manager_->getCurrentTransformerInfo();
-  return property->getParent()->getName() == transformer_info.package &&
-         property->getName() == transformer_info.name;
+  return transformer_property_infos_[property] == transformer_info;
 }
 
 }  // namespace rviz_common
