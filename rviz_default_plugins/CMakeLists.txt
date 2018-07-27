@@ -293,6 +293,7 @@ if(BUILD_TESTING)
     DESTINATION "share/rviz_default_plugins"
     USE_SOURCE_PERMISSIONS)
 
+<<<<<<< 286a36f77f2f73f9f7510fb0bc52a54753c2ad1d
 <<<<<<< 5a7fa3d72dbdcbcebad14016511eddce43b193d6
   set(TEST_INCLUDE_DIRS
     ${OGRE_INCLUDE_DIRS}
