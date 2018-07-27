@@ -29,10 +29,6 @@
 
 #include <memory>
 
-#include <QPainter>  // NOLINT
-#include <QRadioButton>  // NOLINT
-#include <QStyleOptionViewItem>  // NOLINT
-
 #include "rviz_common/properties/grouped_checkbox_property.hpp"
 #include "rviz_common/properties/grouped_checkbox_property_group.hpp"
 

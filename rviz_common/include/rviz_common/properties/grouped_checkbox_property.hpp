@@ -32,8 +32,6 @@
 
 #include <memory>
 
-#include <QRadioButton>  // NOLINT
-
 #include "rviz_common/properties/bool_property.hpp"
 
 namespace rviz_common
@@ -56,7 +54,7 @@ public:
     QObject * receiver = nullptr);
 
   /// Sets the value of this property
-  /// and triggers the group to disable all other RadioButtonProperties
+  /// and triggers the group to disable all other GroupedCheckboxProperty
   bool setValue(const QVariant & new_value) override;
 
   /// Sets the value of the underlying property without triggering the group
