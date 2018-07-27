@@ -55,6 +55,12 @@ LaserScanDisplay::LaserScanDisplay()
   display_name_ = "LaserScan";
 }
 
+LaserScanDisplay::LaserScanDisplay(rviz_common::DisplayContext * context)
+: LaserScanDisplay()
+{
+  context_ = context;
+}
+
 void LaserScanDisplay::onInitialize()
 {
   RTDClass::onInitialize();
