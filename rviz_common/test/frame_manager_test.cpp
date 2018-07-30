@@ -30,6 +30,8 @@
 #include <gmock/gmock.h>
 
 #include <memory>
+#include <string>
+#include <vector>
 
 #include "rclcpp/rclcpp.hpp"
 
@@ -38,33 +40,69 @@
 
 using namespace ::testing;  // NOLINT
 
+class FrameManagerTestFixture : public testing::Test
+{
+public:
+  FrameManagerTestFixture()
+  {
+    clock_ = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);
+    frame_transformer_ = std::make_shared<MockFrameTransformer>();
+    frame_manager_ = std::make_unique<rviz_common::FrameManager>(clock_, frame_transformer_);
+  }
 
-TEST(FrameManager, transform_uses_transform_of_transformer) {
-  auto clock = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);
-  auto frame_transformer = std::make_shared<MockFrameTransformer>();
+  std::unique_ptr<rviz_common::FrameManager> frame_manager_;
+  std::shared_ptr<MockFrameTransformer> frame_transformer_;
+  std::shared_ptr<rclcpp::Clock> clock_;
+};
+
+
+TEST_F(FrameManagerTestFixture, transform_uses_transform_of_transformer) {
   rviz_common::transformation::PoseStamped dummy_pose;
-  EXPECT_CALL(*frame_transformer, transform(_, _)).WillOnce(Return(dummy_pose));
-  auto frame_manager = std::make_shared<rviz_common::FrameManager>(clock, frame_transformer);
+  EXPECT_CALL(*frame_transformer_, transform(_, _)).WillOnce(Return(dummy_pose));
 
   geometry_msgs::msg::Pose pose;
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
-  frame_manager->transform(
-    "any_frame", rclcpp::Time(0, 0, clock->get_clock_type()), pose, position, orientation);
+  frame_manager_->transform(
+    "any_frame", rclcpp::Time(0, 0, clock_->get_clock_type()), pose, position, orientation);
 }
 
-TEST(FrameManager, lastAvailableTransform_used_when_using_sync_approx) {
-  auto clock = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);
-  auto frame_transformer = std::make_shared<MockFrameTransformer>();
+TEST_F(FrameManagerTestFixture, lastAvailableTransform_used_when_using_sync_approx) {
   rviz_common::transformation::PoseStamped dummy_pose;
-  EXPECT_CALL(*frame_transformer, transformIsAvailable(_, _)).WillOnce(Return(true));
-  EXPECT_CALL(*frame_transformer, transform(_, _)).WillOnce(Return(dummy_pose));  // NOLINT
-  auto frame_manager = std::make_shared<rviz_common::FrameManager>(clock, frame_transformer);
+  EXPECT_CALL(*frame_transformer_, transformIsAvailable(_, _)).WillOnce(Return(true));
+  EXPECT_CALL(*frame_transformer_, transform(_, _)).WillOnce(Return(dummy_pose));  // NOLINT
 
-  frame_manager->setSyncMode(rviz_common::FrameManager::SyncApprox);
+  frame_manager_->setSyncMode(rviz_common::FrameManager::SyncApprox);
   geometry_msgs::msg::Pose pose;
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
-  frame_manager->transform(
-    "any_frame", rclcpp::Time(0, 0, clock->get_clock_type()), pose, position, orientation);
+  frame_manager_->transform(
+    "any_frame", rclcpp::Time(0, 0, clock_->get_clock_type()), pose, position, orientation);
+}
+
+TEST_F(FrameManagerTestFixture, getAllFrameNames_uses_transformer_method) {
+  std::vector<std::string> frame_names = {"test_frame"};
+  EXPECT_CALL(*frame_transformer_, getAllFrameNames()).WillOnce(Return(frame_names));
+
+  auto frames = frame_manager_->getAllFrameNames();
+  ASSERT_THAT(frames, SizeIs(1));
+  EXPECT_THAT(frames[0], Eq(frame_names[0]));
+}
+
+TEST_F(FrameManagerTestFixture, transformHasProblems_uses_transformer_method) {
+  std::string source_frame_name = "test_frame";
+  EXPECT_CALL(
+    *frame_transformer_, transformHasProblems(source_frame_name, _, _, _)).WillOnce(Return(false));
+
+  std::string error;
+  EXPECT_FALSE(frame_manager_->transformHasProblems(
+      source_frame_name, rclcpp::Time(0, 0, clock_->get_clock_type()), error));
+}
+
+TEST_F(FrameManagerTestFixture, frameHasProblems_uses_transformer_method) {
+  std::string frame_name = "test_frame";
+  EXPECT_CALL(*frame_transformer_, frameHasProblems(frame_name, _)).WillOnce(Return(true));
+
+  std::string error;
+  EXPECT_TRUE(frame_manager_->frameHasProblems(frame_name, error));
 }
