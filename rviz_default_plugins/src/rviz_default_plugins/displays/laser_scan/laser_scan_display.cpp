@@ -105,10 +105,9 @@ void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPt
 
 void LaserScanDisplay::update(float wall_dt, float ros_dt)
 {
-//  if (!using_allowed_transformer_) {
-//    return;
-//  }
-  point_cloud_common_->update(wall_dt, ros_dt);
+  if (transformer_handler_->usingAllowedTransformer()) {
+    point_cloud_common_->update(wall_dt, ros_dt);
+  }
 }
 
 void LaserScanDisplay::reset()
