@@ -63,7 +63,7 @@ public:
     display_name_(display_name),
     allowed_transformer_name_(transformer_name),
     using_allowed_transformer_(true),
-    disabled_by_user_(false)
+    display_disabled_by_user_(false)
   {}
 
   void initialize(rviz_common::DisplayContext * context)
@@ -74,25 +74,25 @@ public:
       SIGNAL(transformerChanged(std::shared_ptr<rviz_common::transformation::FrameTransformer>)),
       this,
       SLOT(transformerChanged(std::shared_ptr<rviz_common::transformation::FrameTransformer>)));
-//    connect(display_, SIGNAL(changed()), this, SLOT(enabledChanged()));
+    connect(display_, SIGNAL(changed()), this, SLOT(displayEnabledChanged()));
   }
 
 protected Q_SLOTS:
   virtual void transformerChanged(
     std::shared_ptr<rviz_common::transformation::FrameTransformer> new_transformer) = 0;
-//  virtual void enabledChanged() = 0;
+  virtual void displayEnabledChanged() = 0;
 
 protected:
   rviz_common::Display * display_;
   std::string display_name_;
   std::string allowed_transformer_name_;
   bool using_allowed_transformer_;
-  bool disabled_by_user_;
+  bool display_disabled_by_user_;
   rviz_common::DisplayContext * context_;
 };
 
-/** \brief Convenience helper class for displays that can only work with TFTransformer.
- *  It helps handling the change of the transformer.
+/** \brief Convenience helper class for displays that can only work with a specific transformer
+ * (e.g. only with the TF one). It helps handling the change of the transformer.
  */
 template<typename AllowedTransformerType>
 class RVIZ_DEFAULT_PLUGINS_PUBLIC TransformerHandlerDelegate : public _TransformerHandlerDelegate
@@ -132,8 +132,7 @@ private:
     rviz_common::transformation::InternalFrameTransformerPtr transformer_internals)
   {
     auto transformer =
-      std::dynamic_pointer_cast<AllowedTransformerType>(
-      transformer_internals.lock());
+      std::dynamic_pointer_cast<AllowedTransformerType>(transformer_internals.lock());
 
     if (transformer) {
       return true;
@@ -141,15 +140,19 @@ private:
     return false;
   }
 
-  void disableDisplayAndSetErrorStatus()
+  void disableDisplayAndSetErrorStatus(bool triggered_by_user = false)
   {
     if (!display_->isEnabled()) {
-      disabled_by_user_ = true;
+      display_disabled_by_user_ = true;
     } else if (display_->isEnabled()){
-      disabled_by_user_ = false;
+      display_disabled_by_user_ = false;
     }
 
-    display_->setEnabled(false);
+    Q_EMIT(display_->changed());
+  }
+
+  void setErrorStatus()
+  {
     display_->setStatus(
       rviz_common::properties::StatusProperty::Error,
       "Transformer",
@@ -161,17 +164,18 @@ private:
   void enableDisplayAndDeleteErrorStatus()
   {
     display_->deleteStatusStd("Transformer");
-    if (!disabled_by_user_) {
+    if (!display_disabled_by_user_) {
       display_->setEnabled(true);
     }
   }
 
-//  void enabledChanged() override
-//  {
-//    if (enabled_changed_by_user_) {
-//      disableDisplayAndSetErrorStatus(true);
-//    }
-//  }
+  void displayEnabledChanged() override
+  {
+    if (!using_allowed_transformer_) {
+      display_->setEnabled(false);
+      setErrorStatus();
+    }
+  }
 };
 
 }  // namespace displays
