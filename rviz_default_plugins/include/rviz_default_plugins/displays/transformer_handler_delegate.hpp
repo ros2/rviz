@@ -47,7 +47,7 @@ namespace rviz_default_plugins
 namespace displays
 {
 
-/** @brief Helper base class  for TransformerHandlerDelegate, needed because Qt's moc and c++
+/** @brief Base class for TransformerHandlerDelegate, needed because Qt's moc and c++
  * templates don't work nicely together. Not intended to be used directly.
  */
 class _TransformerHandlerDelegate : public QObject
@@ -107,6 +107,12 @@ public:
 
   ~TransformerHandlerDelegate() override = default;
 
+  bool usingAllowedTransformer()
+  {
+    return isAllowedTransformer(context_->getFrameManager()->getInternalPtr().lock());
+  }
+
+private:
   void updateDisplayAccordingToTransformerType(
     rviz_common::transformation::InternalFrameTransformerPtr transformer_internal)
   {
@@ -119,7 +125,6 @@ public:
     }
   }
 
-private:
   void transformerChanged(
     std::shared_ptr<rviz_common::transformation::FrameTransformer> new_transformer) override
   {
