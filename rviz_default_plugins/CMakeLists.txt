@@ -83,7 +83,7 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/marker/marker_display.hpp
   include/rviz_default_plugins/displays/marker_array/marker_array_display.hpp
   include/rviz_default_plugins/displays/odometry/odometry_display.hpp
-  include/rviz_default_plugins/displays/transformer_handler_delegate.hpp
+  include/rviz_default_plugins/displays/transformer_guard.hpp
   include/rviz_default_plugins/displays/path/path_display.hpp
   include/rviz_default_plugins/displays/point/point_stamped_display.hpp
   include/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp
@@ -293,8 +293,6 @@ if(BUILD_TESTING)
     DESTINATION "share/rviz_default_plugins"
     USE_SOURCE_PERMISSIONS)
 
-<<<<<<< 286a36f77f2f73f9f7510fb0bc52a54753c2ad1d
-<<<<<<< 5a7fa3d72dbdcbcebad14016511eddce43b193d6
   set(TEST_INCLUDE_DIRS
     ${OGRE_INCLUDE_DIRS}
     ${nav_msgs_INCLUDE_DIRS}

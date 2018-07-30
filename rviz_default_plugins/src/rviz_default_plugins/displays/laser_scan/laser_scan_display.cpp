@@ -50,8 +50,8 @@ LaserScanDisplay::LaserScanDisplay()
 : point_cloud_common_(std::make_unique<rviz_default_plugins::PointCloudCommon>(this)),
   queue_size_property_(std::make_unique<rviz_common::QueueSizeProperty>(this, 10)),
   projector_(std::make_unique<laser_geometry::LaserProjection>()),
-  transformer_handler_(
-    std::make_unique<TransformerHandlerDelegate<rviz_default_plugins::transformation::TFWrapper>>(
+  transformer_guard_(
+    std::make_unique<TransformerGuard<rviz_default_plugins::transformation::TFWrapper>>(
       this, "LaserScan", "TF"))
 {}
 
@@ -65,7 +65,7 @@ void LaserScanDisplay::onInitialize()
 {
   RTDClass::onInitialize();
   point_cloud_common_->initialize(context_, scene_node_);
-  transformer_handler_->initialize(context_);
+  transformer_guard_->initialize(context_);
 }
 
 void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPtr scan)
@@ -105,7 +105,7 @@ void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPt
 
 void LaserScanDisplay::update(float wall_dt, float ros_dt)
 {
-  if (transformer_handler_->usingAllowedTransformer()) {
+  if (transformer_guard_->usingAllowedTransformer()) {
     point_cloud_common_->update(wall_dt, ros_dt);
   }
 }
