@@ -84,7 +84,10 @@ namespace displays
 
 TFDisplay::TFDisplay()
 : update_timer_(0.0f),
-  changing_single_frame_enabled_state_(false)
+  changing_single_frame_enabled_state_(false),
+  transformer_guard_(
+    std::make_unique<rviz_default_plugins::transformation::TransformerGuard<
+      rviz_default_plugins::transformation::TFWrapper>>(this, "TF", "TF"))
 {
   show_names_property_ = new BoolProperty(
     "Show Names",
@@ -164,6 +167,8 @@ void TFDisplay::onInitialize()
   names_node_ = root_node_->createChildSceneNode();
   arrows_node_ = root_node_->createChildSceneNode();
   axes_node_ = root_node_->createChildSceneNode();
+
+  transformer_guard_->initialize(context_);
 }
 
 void TFDisplay::load(const rviz_common::Config & config)
@@ -264,6 +269,10 @@ void TFDisplay::allEnabledChanged()
 
 void TFDisplay::update(float wall_dt, float ros_dt)
 {
+  if (!transformer_guard_->usingAllowedTransformer()) {
+    return;
+  }
+
   (void) ros_dt;
   update_timer_ += wall_dt;
   float update_rate = update_rate_property_->getFloat();
@@ -407,83 +416,81 @@ FrameInfo * TFDisplay::createFrame(const std::string & frame)
 void TFDisplay::updateFrame(FrameInfo * frame)
 {
   auto tf_wrapper = std::dynamic_pointer_cast<transformation::TFWrapper>(
-    std::shared_ptr<rviz_common::transformation::InternalFrameTransformer>(
-      context_->getFrameManager()->getInternalPtr()));
-  if (!tf_wrapper) {
-    setStatusStd(StatusProperty::Error, "Display", "Can only work with TF2");
-    return;
-  }
-  std::shared_ptr<tf2::BufferCore> tf_buffer = tf_wrapper->getBuffer();
+    context_->getFrameManager()->getInternalPtr().lock());
 
-  // Check last received time so we can grey out/fade out frames that have stopped being published
-  tf2::TimePoint latest_time;
+  if (tf_wrapper) {
+    std::shared_ptr<tf2::BufferCore> tf_buffer = tf_wrapper->getBuffer();
 
-  std::string stripped_fixed_frame = fixed_frame_.toStdString();
-  if (stripped_fixed_frame[0] == '/') {
-    stripped_fixed_frame = stripped_fixed_frame.substr(1);
-  }
-  try {
-    tf_buffer->_getLatestCommonTime(
-      tf_buffer->_validateFrameId("get_latest_common_time", stripped_fixed_frame),
-      tf_buffer->_validateFrameId("get_latest_common_time", frame->name_),
-      latest_time,
-      nullptr);
-  } catch (const tf2::LookupException & e) {
-    logTransformationException(stripped_fixed_frame, frame->name_, e.what());
-    return;
-  }
+    // Check last received time so we can grey out/fade out frames that have stopped being published
+    tf2::TimePoint latest_time;
 
-  frame->setLastUpdate(latest_time);
-
-  double age = tf2::durationToSec(tf2::get_now() - frame->last_update_);
-  double frame_timeout = frame_timeout_property_->getFloat();
-  if (age > frame_timeout) {
-    frame->setVisible(false);
-    return;
-  }
-  frame->updateColorForAge(age, frame_timeout);
-
-  setStatusStd(StatusProperty::Ok, frame->name_, "Transform OK");
-
-  Ogre::Vector3 position(0, 0, 0);
-  Ogre::Quaternion orientation(1.0, 0.0, 0.0, 0.0);
-  if (!context_->getFrameManager()->getTransform(frame->name_, position, orientation)) {
-    rviz_common::UniformStringStream ss;
-    ss << "No transform from [" << frame->name_ << "] to [" << fixed_frame_.toStdString() << "]";
-    setStatusStd(StatusProperty::Warn, frame->name_, ss.str());
-    frame->setVisible(false);
-    return;
-  }
-
-  frame->updatePositionAndOrientation(position, orientation, scale_property_->getFloat());
-  frame->setNamesVisible(show_names_property_->getBool());
-  frame->setAxesVisible(show_axes_property_->getBool());
-
-  std::string old_parent = frame->parent_;
-  frame->parent_.clear();
-  bool has_parent = tf_buffer->_getParent(frame->name_, tf2::TimePointZero, frame->parent_);
-  if (has_parent) {
-    if (hasNoTreePropertyOrParentChanged(frame, old_parent)) {
-      updateParentTreeProperty(frame);
+    std::string stripped_fixed_frame = fixed_frame_.toStdString();
+    if (stripped_fixed_frame[0] == '/') {
+      stripped_fixed_frame = stripped_fixed_frame.substr(1);
+    }
+    try {
+      tf_buffer->_getLatestCommonTime(
+        tf_buffer->_validateFrameId("get_latest_common_time", stripped_fixed_frame),
+        tf_buffer->_validateFrameId("get_latest_common_time", frame->name_),
+        latest_time,
+        nullptr);
+    } catch (const tf2::LookupException & e) {
+      logTransformationException(stripped_fixed_frame, frame->name_, e.what());
+      return;
     }
 
-    updateRelativePositionAndOrientation(frame, tf_buffer);
+    frame->setLastUpdate(latest_time);
 
-    if (show_arrows_property_->getBool()) {
-      updateParentArrowIfTransformExists(frame, position);
+    double age = tf2::durationToSec(tf2::get_now() - frame->last_update_);
+    double frame_timeout = frame_timeout_property_->getFloat();
+    if (age > frame_timeout) {
+      frame->setVisible(false);
+      return;
+    }
+    frame->updateColorForAge(age, frame_timeout);
+
+    setStatusStd(StatusProperty::Ok, frame->name_, "Transform OK");
+
+    Ogre::Vector3 position(0, 0, 0);
+    Ogre::Quaternion orientation(1.0, 0.0, 0.0, 0.0);
+    if (!context_->getFrameManager()->getTransform(frame->name_, position, orientation)) {
+      rviz_common::UniformStringStream ss;
+      ss << "No transform from [" << frame->name_ << "] to [" << fixed_frame_.toStdString() << "]";
+      setStatusStd(StatusProperty::Warn, frame->name_, ss.str());
+      frame->setVisible(false);
+      return;
+    }
+
+    frame->updatePositionAndOrientation(position, orientation, scale_property_->getFloat());
+    frame->setNamesVisible(show_names_property_->getBool());
+    frame->setAxesVisible(show_axes_property_->getBool());
+
+    std::string old_parent = frame->parent_;
+    frame->parent_.clear();
+    bool has_parent = tf_buffer->_getParent(frame->name_, tf2::TimePointZero, frame->parent_);
+    if (has_parent) {
+      if (hasNoTreePropertyOrParentChanged(frame, old_parent)) {
+        updateParentTreeProperty(frame);
+      }
+
+      updateRelativePositionAndOrientation(frame, tf_buffer);
+
+      if (show_arrows_property_->getBool()) {
+        updateParentArrowIfTransformExists(frame, position);
+      } else {
+        frame->setParentArrowVisible(false);
+      }
     } else {
+      if (hasNoTreePropertyOrParentChanged(frame, old_parent)) {
+        frame->updateTreeProperty(tree_category_);
+      }
+
       frame->setParentArrowVisible(false);
     }
-  } else {
-    if (hasNoTreePropertyOrParentChanged(frame, old_parent)) {
-      frame->updateTreeProperty(tree_category_);
-    }
 
-    frame->setParentArrowVisible(false);
+    frame->parent_property_->setStdString(frame->parent_);
+    frame->selection_handler_->setParentName(frame->parent_);
   }
-
-  frame->parent_property_->setStdString(frame->parent_);
-  frame->selection_handler_->setParentName(frame->parent_);
 }
 
 void TFDisplay::updateParentTreeProperty(FrameInfo * frame) const
