@@ -100,23 +100,23 @@ TEST(
   ros_conversion_helpers,
   toRosPoseStamped_creates_a_ros_pose_stamped_from_an_rviz_common_transformation_pose_stamped) {
   rviz_common::transformation::PoseStamped rviz_common_pose_stamped;
-  rviz_common_pose_stamped.time_stamp_ = rviz_common::transformation::Time(2, 10);
-  rviz_common_pose_stamped.frame_id_ = "pose_stamped_frame";
-  rviz_common_pose_stamped.position_ = createRvizCommonPoint(1, 2, 3);
-  rviz_common_pose_stamped.orientation_ = createRvizCommonQuaternion(0, 1, 0, 0);
+  rviz_common_pose_stamped.time_stamp = rviz_common::transformation::Time(2, 10);
+  rviz_common_pose_stamped.frame_id = "pose_stamped_frame";
+  rviz_common_pose_stamped.position = createRvizCommonPoint(1, 2, 3);
+  rviz_common_pose_stamped.orientation = createRvizCommonQuaternion(0, 1, 0, 0);
 
   auto ros_pose_stamped = rviz_common::transformation::ros_helpers::toRosPoseStamped(
     rviz_common_pose_stamped);
 
-  EXPECT_THAT(ros_pose_stamped.header.frame_id, testing::Eq(rviz_common_pose_stamped.frame_id_));
-  EXPECT_THAT(ros_pose_stamped.pose.position, PointEq(rviz_common_pose_stamped.position_));
+  EXPECT_THAT(ros_pose_stamped.header.frame_id, testing::Eq(rviz_common_pose_stamped.frame_id));
+  EXPECT_THAT(ros_pose_stamped.pose.position, PointEq(rviz_common_pose_stamped.position));
   EXPECT_THAT(
-    ros_pose_stamped.header.stamp.sec, testing::Eq(rviz_common_pose_stamped.time_stamp_.seconds_));
+    ros_pose_stamped.header.stamp.sec, testing::Eq(rviz_common_pose_stamped.time_stamp.seconds));
   EXPECT_THAT(
-    ros_pose_stamped.pose.orientation, QuaternionEq(rviz_common_pose_stamped.orientation_));
+    ros_pose_stamped.pose.orientation, QuaternionEq(rviz_common_pose_stamped.orientation));
   EXPECT_THAT(
     ros_pose_stamped.header.stamp.nanosec,
-    testing::Eq(rviz_common_pose_stamped.time_stamp_.nanoseconds_));
+    testing::Eq(rviz_common_pose_stamped.time_stamp.nanoseconds));
 }
 
 TEST(
@@ -131,12 +131,12 @@ TEST(
     rviz_common::transformation::ros_helpers::fromRosPoseStamped(ros_pose);
 
   EXPECT_THAT(
-    rviz_common_pose_stamped.time_stamp_.seconds_, testing::Eq(ros_pose.header.stamp.sec));
+    rviz_common_pose_stamped.time_stamp.seconds, testing::Eq(ros_pose.header.stamp.sec));
   EXPECT_THAT(
-    rviz_common_pose_stamped.time_stamp_.nanoseconds_, testing::Eq(ros_pose.header.stamp.nanosec));
-  EXPECT_THAT(rviz_common_pose_stamped.frame_id_, testing::Eq(ros_pose.header.frame_id));
-  EXPECT_THAT(rviz_common_pose_stamped.position_, PointEq(ros_pose.pose.position));
-  EXPECT_THAT(rviz_common_pose_stamped.orientation_, QuaternionEq(ros_pose.pose.orientation));
+    rviz_common_pose_stamped.time_stamp.nanoseconds, testing::Eq(ros_pose.header.stamp.nanosec));
+  EXPECT_THAT(rviz_common_pose_stamped.frame_id, testing::Eq(ros_pose.header.frame_id));
+  EXPECT_THAT(rviz_common_pose_stamped.position, PointEq(ros_pose.pose.position));
+  EXPECT_THAT(rviz_common_pose_stamped.orientation, QuaternionEq(ros_pose.pose.orientation));
 }
 
 TEST(
@@ -152,17 +152,17 @@ TEST(
     rviz_common::transformation::ros_helpers::fromRosTransformStamped(ros_transform);
 
   EXPECT_THAT(
-    rviz_common_transform_stamped.time_stamp_.nanoseconds_,
+    rviz_common_transform_stamped.time_stamp.nanoseconds,
     testing::Eq(ros_transform.header.stamp.nanosec));
   EXPECT_THAT(
-    rviz_common_transform_stamped.time_stamp_.seconds_,
+    rviz_common_transform_stamped.time_stamp.seconds,
     testing::Eq(ros_transform.header.stamp.sec));
   EXPECT_THAT(
-    rviz_common_transform_stamped.child_frame_id_, testing::Eq(ros_transform.child_frame_id));
+    rviz_common_transform_stamped.child_frame_id, testing::Eq(ros_transform.child_frame_id));
   EXPECT_THAT(
-    rviz_common_transform_stamped.translation_, PointEq(ros_transform.transform.translation));
+    rviz_common_transform_stamped.translation, PointEq(ros_transform.transform.translation));
   EXPECT_THAT(
-    rviz_common_transform_stamped.rotation_, QuaternionEq(ros_transform.transform.rotation));
+    rviz_common_transform_stamped.rotation, QuaternionEq(ros_transform.transform.rotation));
   EXPECT_THAT(
-    rviz_common_transform_stamped.parent_frame_id_, testing::Eq(ros_transform.header.frame_id));
+    rviz_common_transform_stamped.parent_frame_id, testing::Eq(ros_transform.header.frame_id));
 }

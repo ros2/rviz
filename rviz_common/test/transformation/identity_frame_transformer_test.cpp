@@ -62,11 +62,11 @@ TEST_F(IdentityTransformerFixture, transform_returns_the_input_pose_if_orientati
     1, 3, "test", createRvizCommonPoint(0, 3, 6), createRvizCommonQuaternion(0, 1, 0, 0));
   auto transformed_pose = transformer_->transform(pose_stamped, "any_frame");
 
-  EXPECT_THAT(transformed_pose.time_stamp_.seconds_, Eq(1));
-  EXPECT_THAT(transformed_pose.time_stamp_.nanoseconds_, Eq(static_cast<uint32_t>(3)));
-  EXPECT_THAT(transformed_pose.frame_id_, Eq("test"));
-  EXPECT_THAT(transformed_pose.position_, PointEq(createRvizCommonPoint(0, 3, 6)));
-  EXPECT_THAT(transformed_pose.orientation_, QuaternionEq(createRvizCommonQuaternion(0, 1, 0, 0)));
+  EXPECT_THAT(transformed_pose.time_stamp.seconds, Eq(1));
+  EXPECT_THAT(transformed_pose.time_stamp.nanoseconds, Eq(static_cast<uint32_t>(3)));
+  EXPECT_THAT(transformed_pose.frame_id, Eq("test"));
+  EXPECT_THAT(transformed_pose.position, PointEq(createRvizCommonPoint(0, 3, 6)));
+  EXPECT_THAT(transformed_pose.orientation, QuaternionEq(createRvizCommonQuaternion(0, 1, 0, 0)));
 }
 
 TEST_F(
@@ -76,11 +76,11 @@ TEST_F(
     1, 3, "test", createRvizCommonPoint(1, 3, 6), createRvizCommonQuaternion(0, 0, 0, 0));
   auto transformed_pose = transformer_->transform(pose_stamped, "any_frame");
 
-  EXPECT_THAT(transformed_pose.time_stamp_.seconds_, Eq(1));
-  EXPECT_THAT(transformed_pose.time_stamp_.nanoseconds_, Eq(static_cast<uint32_t>(3)));
-  EXPECT_THAT(transformed_pose.frame_id_, Eq("test"));
-  EXPECT_THAT(transformed_pose.position_, PointEq(createRvizCommonPoint(1, 3, 6)));
-  EXPECT_THAT(transformed_pose.orientation_, QuaternionEq(createRvizCommonQuaternion(1, 0, 0, 0)));
+  EXPECT_THAT(transformed_pose.time_stamp.seconds, Eq(1));
+  EXPECT_THAT(transformed_pose.time_stamp.nanoseconds, Eq(static_cast<uint32_t>(3)));
+  EXPECT_THAT(transformed_pose.frame_id, Eq("test"));
+  EXPECT_THAT(transformed_pose.position, PointEq(createRvizCommonPoint(1, 3, 6)));
+  EXPECT_THAT(transformed_pose.orientation, QuaternionEq(createRvizCommonQuaternion(1, 0, 0, 0)));
 }
 
 TEST_F(IdentityTransformerFixture, transformationIsAvailable_returns_true) {

@@ -59,10 +59,10 @@ transformation::PoseStamped IdentityFrameTransformer::transform(
   (void) target_frame;
   transformation::PoseStamped pose_out = pose_in;
 
-  if (quaternionIsValid(pose_out.orientation_)) {
+  if (quaternionIsValid(pose_out.orientation)) {
     return pose_out;
   }
-  pose_out.orientation_.w = 1;
+  pose_out.orientation.w = 1;
   return pose_out;
 }
 

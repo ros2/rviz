@@ -141,11 +141,11 @@ rviz_common::transformation::PoseStamped createRvizCommonPoseStamped(
   rviz_common::transformation::Quaternion orient)
 {
   rviz_common::transformation::PoseStamped pose_stamped;
-  pose_stamped.time_stamp_.seconds_ = sec;
-  pose_stamped.time_stamp_.nanoseconds_ = nanosec;
-  pose_stamped.frame_id_ = frame;
-  pose_stamped.position_ = pose;
-  pose_stamped.orientation_ = orient;
+  pose_stamped.time_stamp.seconds = sec;
+  pose_stamped.time_stamp.nanoseconds = nanosec;
+  pose_stamped.frame_id = frame;
+  pose_stamped.position = pose;
+  pose_stamped.orientation = orient;
 
   return pose_stamped;
 }

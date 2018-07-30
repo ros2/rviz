@@ -42,10 +42,10 @@ namespace transformation
 struct RVIZ_COMMON_PUBLIC Time
 {
   Time();
-  Time(int32_t seconds, uint32_t nanoseconds);
+  Time(int32_t sec, uint32_t nanosec);
 
-  int32_t seconds_;
-  uint32_t nanoseconds_;
+  int32_t seconds;
+  uint32_t nanoseconds;
 };
 
 struct RVIZ_COMMON_PUBLIC Point
@@ -77,12 +77,12 @@ public:
 
   RVIZ_COMMON_PUBLIC
   PoseStamped(
-    Time time_stamp, std::string frame_id, Point position, Quaternion orientation);
+    Time time, std::string frame, Point position_vector, Quaternion orientation_quat);
 
-  Time time_stamp_;
-  std::string frame_id_;
-  Point position_;
-  Quaternion orientation_;
+  Time time_stamp;
+  std::string frame_id;
+  Point position;
+  Quaternion orientation;
 };
 
 struct TransformStamped
@@ -93,17 +93,17 @@ public:
 
   RVIZ_COMMON_PUBLIC
   TransformStamped(
-    Time time_stamp,
+    Time time,
     std::string parent_frame,
     std::string child_frame,
-    Point translation,
-    Quaternion rotation);
+    Point translation_vector,
+    Quaternion rotation_quat);
 
-  Time time_stamp_;
-  std::string parent_frame_id_;
-  std::string child_frame_id_;
-  Point translation_;
-  Quaternion rotation_;
+  Time time_stamp;
+  std::string parent_frame_id;
+  std::string child_frame_id;
+  Point translation;
+  Quaternion rotation;
 };
 
 }  // namespace transformation
