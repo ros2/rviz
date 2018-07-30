@@ -40,10 +40,10 @@
 #include "rviz_common/display.hpp"
 #include "rviz_common/transformation/frame_transformer.hpp"
 
-#include "rviz_default_plugins/displays/transformer_guard.hpp"
+#include "rviz_default_plugins/transformation/transformer_guard.hpp"
 #include "rviz_default_plugins/transformation/tf_wrapper.hpp"
 
-#include "display_test_fixture.hpp"
+#include "../displays/display_test_fixture.hpp"
 #include "../mock_display_context.hpp"
 
 using namespace ::testing;  // NOLINT
@@ -58,7 +58,7 @@ public:
     EXPECT_CALL(*context_, getFrameManager()).WillRepeatedly(Return(frame_manager_.get()));
 
     transformer_guard_ = std::make_unique<
-      rviz_default_plugins::displays::TransformerGuard<
+      rviz_default_plugins::transformation::TransformerGuard<
         rviz_default_plugins::transformation::TFWrapper>>(display_.get(), "any_display", "TF");
     transformer_guard_->initialize(context_.get());
 
@@ -66,7 +66,7 @@ public:
   }
 
   std::shared_ptr<rviz_common::Display> display_;
-  std::unique_ptr<rviz_default_plugins::displays::TransformerGuard<
+  std::unique_ptr<rviz_default_plugins::transformation::TransformerGuard<
       rviz_default_plugins::transformation::TFWrapper>> transformer_guard_;
 };
 
