@@ -50,7 +50,7 @@ namespace transformation
 /** @brief Base class for TransformerHandlerDelegate, needed because Qt's moc and c++
  * templates don't work nicely together. Not intended to be used directly.
  */
-class _TransformerGuard : public QObject
+class RVIZ_DEFAULT_PLUGINS_PUBLIC _TransformerGuard : public QObject
 {
   Q_OBJECT
 
@@ -102,7 +102,7 @@ protected:
  * (e.g. only with the TF one). It helps handling the change of the transformer.
  */
 template<typename AllowedTransformerType>
-class RVIZ_DEFAULT_PLUGINS_PUBLIC TransformerGuard : public _TransformerGuard
+class TransformerGuard : public _TransformerGuard
 {
 public:
   TransformerGuard(
