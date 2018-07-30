@@ -118,6 +118,8 @@ public:
   /** \brief A getter for the internal implementation object */
   virtual InternalFrameTransformerPtr getInternals() = 0;
 
+  // TODO(botteroa-si): This method can be needed when having displays working with tf_filter.
+  // Reenable once tf_filter is ported.
 //  /** \brief Waits until a transformation between two given frames is available, then performs an
 //   * action
 //   * @param target_frame The target frame of the transformation
@@ -133,25 +135,25 @@ public:
 //    rclcpp::Duration timeout,
 //    std::function<void(void)> callback) = 0;
 
-  /// Return the class id set by the PluginlibFactory
+  /** @returns the class id set by the PluginlibFactory */
   virtual QString getClassId() const
   {
     return class_id_;
   }
 
-  /// Used by PluginlibFactory to store the class id
+  /** \brief Used by PluginlibFactory to store the class id */
   virtual void setClassId(const QString & class_id)
   {
     class_id_ = class_id;
   }
 
-  /// Return the description set by the PluginlibFactory
+  /** @returns the description set by the PluginlibFactory */
   virtual QString getDescription() const
   {
     return description_;
   }
 
-  /// Used by PluginlibFactory to store the description
+  /** \brief Used by PluginlibFactory to store the description */
   virtual void setDescription(const QString & description)
   {
     description_ = description;
