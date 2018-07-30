@@ -37,10 +37,6 @@
 
 #include "tf2_ros/buffer.h"
 
-#include <include/rviz_default_plugins/displays/pose/pose_display.hpp>
-#include <include/rviz_default_plugins/displays/marker/marker_display.hpp>
-#include <include/rviz_default_plugins/displays/path/path_display.hpp>
-
 #include "rviz_common/display.hpp"
 #include "rviz_common/transformation/frame_transformer.hpp"
 
@@ -71,7 +67,7 @@ public:
 
   std::shared_ptr<rviz_common::Display> display_;
   std::unique_ptr<rviz_default_plugins::displays::TransformerGuard<
-    rviz_default_plugins::transformation::TFWrapper>> transformer_guard_;
+      rviz_default_plugins::transformation::TFWrapper>> transformer_guard_;
 };
 
 TEST_F(
@@ -119,7 +115,7 @@ TEST_F(
   auto tf_wrapper = std::make_shared<rviz_default_plugins::transformation::TFWrapper>(
     std::make_shared<tf2_ros::Buffer>(), false);
   EXPECT_CALL(*frame_manager_, getInternalPtr())
-    .WillOnce(Return(std::weak_ptr<rviz_default_plugins::transformation::TFWrapper>(tf_wrapper)));
+  .WillOnce(Return(std::weak_ptr<rviz_default_plugins::transformation::TFWrapper>(tf_wrapper)));
 
   EXPECT_TRUE(transformer_guard_->usingAllowedTransformer());
 }

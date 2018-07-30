@@ -67,9 +67,6 @@ class RVIZ_DEFAULT_PLUGINS_PUBLIC LaserScanDisplay : public
 
 public:
   LaserScanDisplay();
-  // TODO(botteroa-si): Constructor for testing, remove once ros_nodes can be mocked and call
-  // initialize() instead
-  explicit LaserScanDisplay(rviz_common::DisplayContext * context);
   ~LaserScanDisplay() override = default;
 
   void reset() override;

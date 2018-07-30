@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__TRANSFORMER_HANDLER_DELEGATE_HPP_
-#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__TRANSFORMER_HANDLER_DELEGATE_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__TRANSFORMER_GUARD_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__TRANSFORMER_GUARD_HPP_
 
 #include <string>
 #include <memory>
@@ -56,10 +56,10 @@ class _TransformerGurad : public QObject
 
 public:
   _TransformerGurad(
-    rviz_common::Display * display_,
+    rviz_common::Display * display,
     const std::string & display_name,
     const std::string & transformer_name)
-    : display_(display_),
+  : display_(display),
     display_name_(display_name),
     allowed_transformer_name_(transformer_name),
     using_allowed_transformer_(true),
@@ -149,11 +149,11 @@ private:
   {
     if (!display_->isEnabled()) {
       display_disabled_by_user_ = true;
-    } else if (display_->isEnabled()){
+    } else if (display_->isEnabled()) {
       display_disabled_by_user_ = false;
     }
 
-    Q_EMIT(display_->changed());
+    Q_EMIT (display_->changed());
   }
 
   void setErrorStatus()
@@ -163,7 +163,7 @@ private:
       "Transformer",
       QString::fromStdString(
         display_name_ +
-          " display works only with " + allowed_transformer_name_ + " Transformer"));
+        " display works only with " + allowed_transformer_name_ + " Transformer"));
   }
 
   void enableDisplayAndDeleteErrorStatus()
@@ -186,4 +186,4 @@ private:
 }  // namespace displays
 }  // namespace rviz_default_plugins
 
-#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__TRANSFORMER_HANDLER_DELEGATE_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__TRANSFORMER_GUARD_HPP_
