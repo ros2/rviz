@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__TRANSFORMER_GUARD_HPP_
-#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__TRANSFORMER_GUARD_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__TRANSFORMATION__TRANSFORMER_GUARD_HPP_
+#define RVIZ_DEFAULT_PLUGINS__TRANSFORMATION__TRANSFORMER_GUARD_HPP_
 
 #include <string>
 #include <memory>
@@ -44,7 +44,7 @@
 
 namespace rviz_default_plugins
 {
-namespace displays
+namespace transformation
 {
 
 /** @brief Base class for TransformerHandlerDelegate, needed because Qt's moc and c++
@@ -183,7 +183,7 @@ private:
   }
 };
 
-}  // namespace displays
+}  // namespace transformation
 }  // namespace rviz_default_plugins
 
-#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__TRANSFORMER_GUARD_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__TRANSFORMATION__TRANSFORMER_GUARD_HPP_

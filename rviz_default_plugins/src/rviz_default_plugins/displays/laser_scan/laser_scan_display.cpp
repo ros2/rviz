@@ -51,8 +51,8 @@ LaserScanDisplay::LaserScanDisplay()
   queue_size_property_(std::make_unique<rviz_common::QueueSizeProperty>(this, 10)),
   projector_(std::make_unique<laser_geometry::LaserProjection>()),
   transformer_guard_(
-    std::make_unique<TransformerGuard<rviz_default_plugins::transformation::TFWrapper>>(
-      this, "LaserScan", "TF"))
+    std::make_unique<rviz_default_plugins::transformation::TransformerGuard<
+      rviz_default_plugins::transformation::TFWrapper>>(this, "LaserScan", "TF"))
 {}
 
 void LaserScanDisplay::onInitialize()

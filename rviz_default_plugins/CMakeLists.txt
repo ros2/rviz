@@ -83,7 +83,7 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/marker/marker_display.hpp
   include/rviz_default_plugins/displays/marker_array/marker_array_display.hpp
   include/rviz_default_plugins/displays/odometry/odometry_display.hpp
-  include/rviz_default_plugins/displays/transformer_guard.hpp
+  include/rviz_default_plugins/transformation/transformer_guard.hpp
   include/rviz_default_plugins/displays/path/path_display.hpp
   include/rviz_default_plugins/displays/point/point_stamped_display.hpp
   include/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp
