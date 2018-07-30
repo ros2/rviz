@@ -39,6 +39,7 @@
 
 #include "rviz_common/transformation/frame_transformer.hpp"
 #include "rviz_common/transformation/structs.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
@@ -48,7 +49,7 @@ namespace transformation
 /** \brief A trivial subclass of FrameTransformer, which allows all transformations and performs
  *  always identity transforms.
  */
-class IdentityFrameTransformer : public FrameTransformer
+class RVIZ_COMMON_PUBLIC IdentityFrameTransformer : public FrameTransformer
 {
 public:
   IdentityFrameTransformer() = default;
