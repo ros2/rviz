@@ -75,7 +75,14 @@ public:
       this,
       SLOT(transformerChanged(std::shared_ptr<rviz_common::transformation::FrameTransformer>)));
     connect(display_, SIGNAL(changed()), this, SLOT(displayEnabledChanged()));
+
+    if (!usingAllowedTransformer()) {
+      using_allowed_transformer_ = false;
+      Q_EMIT (display_->changed());
+    }
   }
+
+  virtual bool usingAllowedTransformer() = 0;
 
 protected Q_SLOTS:
   virtual void transformerChanged(
@@ -107,7 +114,7 @@ public:
 
   ~TransformerGuard() override = default;
 
-  bool usingAllowedTransformer()
+  bool usingAllowedTransformer() override
   {
     return isAllowedTransformer(context_->getFrameManager()->getInternalPtr().lock());
   }
