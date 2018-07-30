@@ -55,34 +55,55 @@ TransformationManager::TransformationManager(
     "A trivial FrameTransformer implementation",
     []() -> FrameTransformer * {return new IdentityFrameTransformer();});
 
-  // TODO(greimela) Robust loading
-  // 1) Load from config
-  // 2) Load TF if available
-  // 3) Load dummy
-  setTransformer(factory_->getDeclaredPlugins()[0]);
+  for (const auto & transformer : getAvailableTransformers()) {
+    if (transformer.id == "rviz_default_plugins/TF") {
+      setTransformer(transformer);
+      return;
+    }
+  }
+  setTransformer(factory_->getPluginInfo("rviz_common/Identity"));
 }
 
-std::vector<PluginInfo> TransformationManager::getAvailableTransformers()
+void TransformationManager::load(const Config & config)
+{
+  Config current_config = config.mapGetChild("Current");
+  QString class_id;
+  if (current_config.mapGetString("Class", &class_id)) {
+    setTransformer(factory_->getPluginInfo(class_id));
+  }
+}
+
+void TransformationManager::save(Config config) const
+{
+  Config current_config = config.mapMakeChild("Current");
+  current_config.mapSetValue("Class", getCurrentTransformerInfo().id);
+}
+
+std::vector<PluginInfo> TransformationManager::getAvailableTransformers() const
 {
   return factory_->getDeclaredPlugins();
 }
 
-std::shared_ptr<FrameTransformer> TransformationManager::getCurrentTransformer()
+std::shared_ptr<FrameTransformer> TransformationManager::getCurrentTransformer() const
 {
   return current_transformer_;
 }
 
-PluginInfo TransformationManager::getCurrentTransformerInfo()
+PluginInfo TransformationManager::getCurrentTransformerInfo() const
 {
   return factory_->getPluginInfo(current_transformer_->getClassId());
 }
 
 void TransformationManager::setTransformer(const PluginInfo & plugin_info)
 {
-  current_transformer_ = std::shared_ptr<FrameTransformer>(factory_->make(plugin_info.id));
-  current_transformer_->initialize(rviz_ros_node_);
+  auto new_transformer = std::shared_ptr<FrameTransformer>(factory_->make(plugin_info.id));
+  if (new_transformer) {
+    current_transformer_ = new_transformer;
+    current_transformer_->initialize(rviz_ros_node_);
 
-  Q_EMIT transformerChanged(current_transformer_);
+    Q_EMIT transformerChanged(current_transformer_);
+    Q_EMIT configChanged();
+  }
 }
 
 }  // namespace transformation
