@@ -40,7 +40,7 @@
 
 #include "rviz_common/ros_topic_display.hpp"
 #include "rviz_common/transformation/frame_transformer.hpp"
-#include "rviz_default_plugins/displays/transformer_handler_delegate.hpp"
+#include "rviz_default_plugins/displays/transformer_guard.hpp"
 #include "rviz_default_plugins/transformation/tf_wrapper.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 
@@ -89,8 +89,8 @@ protected:
   std::unique_ptr<laser_geometry::LaserProjection> projector_;
 
 private:
-  std::unique_ptr<TransformerHandlerDelegate<rviz_default_plugins::transformation::TFWrapper>>
-  transformer_handler_;
+  std::unique_ptr<TransformerGuard<rviz_default_plugins::transformation::TFWrapper>>
+  transformer_guard_;
 };
 
 }  // namespace displays
