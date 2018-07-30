@@ -37,12 +37,12 @@ namespace transformation
 {
 
 Time::Time()
-: seconds_(0), nanoseconds_(0) {}
+: seconds(0), nanoseconds(0) {}
 
-Time::Time(int32_t seconds, uint32_t nanoseconds)
+Time::Time(int32_t sec, uint32_t nanosec)
 {
-  seconds_ = seconds;
-  nanoseconds_ = nanoseconds;
+  seconds = sec;
+  nanoseconds = nanosec;
 }
 
 Point::Point()
@@ -67,28 +67,28 @@ Quaternion::Quaternion(double w_co, double x_co, double y_co, double z_co)
 }
 
 PoseStamped::PoseStamped()
-: time_stamp_(), frame_id_(""), position_(), orientation_() {}
+: time_stamp(), frame_id(""), position(), orientation() {}
 
 PoseStamped::PoseStamped(
-  Time time_stamp, std::string frame_id, Point position, Quaternion orientation)
-: time_stamp_(time_stamp), frame_id_(frame_id), position_(position), orientation_(orientation)
+  Time time, std::string frame, Point position_vector, Quaternion orientation_quat)
+: time_stamp(time), frame_id(frame), position(position_vector), orientation(orientation_quat)
 {}
 
 TransformStamped::TransformStamped()
-: time_stamp_(), parent_frame_id_(""), child_frame_id_(""), translation_(), rotation_()
+: time_stamp(), parent_frame_id(""), child_frame_id(""), translation(), rotation()
 {}
 
 TransformStamped::TransformStamped(
-  Time time_stamp,
+  Time time,
   std::string parent_frame,
   std::string child_frame,
-  Point translation,
-  Quaternion rotation)
-: time_stamp_(time_stamp),
-  parent_frame_id_(parent_frame),
-  child_frame_id_(child_frame),
-  translation_(translation),
-  rotation_(rotation)
+  Point translation_vector,
+  Quaternion rotation_quat)
+: time_stamp(time),
+  parent_frame_id(parent_frame),
+  child_frame_id(child_frame),
+  translation(translation_vector),
+  rotation(rotation_quat)
 {}
 
 }  // namespace transformation

@@ -76,11 +76,11 @@ rviz_common::transformation::PoseStamped fromRosPoseStamped(
   geometry_msgs::msg::PoseStamped ros_pose)
 {
   rviz_common::transformation::PoseStamped pose_stamped;
-  pose_stamped.time_stamp_.seconds_ = ros_pose.header.stamp.sec;
-  pose_stamped.time_stamp_.nanoseconds_ = ros_pose.header.stamp.nanosec;
-  pose_stamped.frame_id_ = ros_pose.header.frame_id;
-  pose_stamped.position_ = fromRosPoint(ros_pose.pose.position);
-  pose_stamped.orientation_ = fromRosQuaternion(ros_pose.pose.orientation);
+  pose_stamped.time_stamp.seconds = ros_pose.header.stamp.sec;
+  pose_stamped.time_stamp.nanoseconds = ros_pose.header.stamp.nanosec;
+  pose_stamped.frame_id = ros_pose.header.frame_id;
+  pose_stamped.position = fromRosPoint(ros_pose.pose.position);
+  pose_stamped.orientation = fromRosQuaternion(ros_pose.pose.orientation);
 
   return pose_stamped;
 }
@@ -89,12 +89,12 @@ rviz_common::transformation::TransformStamped fromRosTransformStamped(
   geometry_msgs::msg::TransformStamped ros_transform)
 {
   rviz_common::transformation::TransformStamped transform_stamped;
-  transform_stamped.time_stamp_.seconds_ = ros_transform.header.stamp.sec;
-  transform_stamped.time_stamp_.nanoseconds_ = ros_transform.header.stamp.nanosec;
-  transform_stamped.parent_frame_id_ = ros_transform.header.frame_id;
-  transform_stamped.child_frame_id_ = ros_transform.child_frame_id;
-  transform_stamped.translation_ = fromRosVector3(ros_transform.transform.translation);
-  transform_stamped.rotation_ = fromRosQuaternion(ros_transform.transform.rotation);
+  transform_stamped.time_stamp.seconds = ros_transform.header.stamp.sec;
+  transform_stamped.time_stamp.nanoseconds = ros_transform.header.stamp.nanosec;
+  transform_stamped.parent_frame_id = ros_transform.header.frame_id;
+  transform_stamped.child_frame_id = ros_transform.child_frame_id;
+  transform_stamped.translation = fromRosVector3(ros_transform.transform.translation);
+  transform_stamped.rotation = fromRosQuaternion(ros_transform.transform.rotation);
 
   return transform_stamped;
 }
@@ -103,8 +103,8 @@ std_msgs::msg::Header toRosHeader(
   rviz_common::transformation::Time time_stamp, const std::string & frame_id)
 {
   std_msgs::msg::Header ros_header;
-  ros_header.stamp.sec = time_stamp.seconds_;
-  ros_header.stamp.nanosec = time_stamp.nanoseconds_;
+  ros_header.stamp.sec = time_stamp.seconds;
+  ros_header.stamp.nanosec = time_stamp.nanoseconds;
   ros_header.frame_id = frame_id;
 
   return ros_header;
@@ -146,9 +146,9 @@ geometry_msgs::msg::PoseStamped toRosPoseStamped(
   rviz_common::transformation::PoseStamped pose_stamped)
 {
   geometry_msgs::msg::PoseStamped ros_pose;
-  ros_pose.header = toRosHeader(pose_stamped.time_stamp_, pose_stamped.frame_id_);
-  ros_pose.pose.position = toRosPoint(pose_stamped.position_);
-  ros_pose.pose.orientation = toRosQuaternion(pose_stamped.orientation_);
+  ros_pose.header = toRosHeader(pose_stamped.time_stamp, pose_stamped.frame_id);
+  ros_pose.pose.position = toRosPoint(pose_stamped.position);
+  ros_pose.pose.orientation = toRosQuaternion(pose_stamped.orientation);
 
   return ros_pose;
 }
