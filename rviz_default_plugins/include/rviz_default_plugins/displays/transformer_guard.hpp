@@ -99,10 +99,10 @@ class RVIZ_DEFAULT_PLUGINS_PUBLIC TransformerGuard : public _TransformerGurad
 {
 public:
   TransformerGuard(
-    rviz_common::Display * display_,
+    rviz_common::Display * display,
     const std::string & display_name,
     const std::string & transformer_name)
-  : _TransformerGurad(display_, display_name, transformer_name)
+  : _TransformerGurad(display, display_name, transformer_name)
   {}
 
   ~TransformerGuard() override = default;
@@ -112,7 +112,6 @@ public:
     return isAllowedTransformer(context_->getFrameManager()->getInternalPtr().lock());
   }
 
-private:
   void updateDisplayAccordingToTransformerType(
     rviz_common::transformation::InternalFrameTransformerPtr transformer_internal)
   {
@@ -125,6 +124,7 @@ private:
     }
   }
 
+private:
   void transformerChanged(
     std::shared_ptr<rviz_common::transformation::FrameTransformer> new_transformer) override
   {
@@ -145,7 +145,7 @@ private:
     return false;
   }
 
-  void disableDisplayAndSetErrorStatus(bool triggered_by_user = false)
+  void disableDisplayAndSetErrorStatus()
   {
     if (!display_->isEnabled()) {
       display_disabled_by_user_ = true;

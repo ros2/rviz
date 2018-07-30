@@ -578,6 +578,15 @@ if(BUILD_TESTING)
     target_link_libraries(frame_transformer_tf_test ${TEST_LINK_LIBRARIES})
   endif()
 
+  ament_add_gmock(transformer_guard_test
+    test/rviz_default_plugins/displays/transformer_gurad_test.cpp
+    test/rviz_default_plugins/displays/display_test_fixture.cpp
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET transformer_guard_test)
+    target_include_directories(transformer_guard_test PUBLIC ${TEST_INCLUDE_DIRS})
+    target_link_libraries(transformer_guard_test ${TEST_LINK_LIBRARIES})
+  endif()
+
   ament_add_gtest(camera_display_visual_test
     test/rviz_default_plugins/displays/camera/camera_display_visual_test.cpp
     test/rviz_default_plugins/publishers/camera_info_publisher.hpp
