@@ -39,6 +39,7 @@
 #include <QObject>  // NOLINT
 #include <QString>  // NOLINT
 
+#include "rviz_common/config.hpp"
 #include "rviz_common/factory/pluginlib_factory.hpp"
 #include "rviz_common/transformation/frame_transformer.hpp"
 
@@ -54,12 +55,22 @@ class TransformationManager : public QObject
 public:
   explicit TransformationManager(ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node);
 
-  std::vector<PluginInfo> getAvailableTransformers();
-  std::shared_ptr<FrameTransformer> getCurrentTransformer();
-  PluginInfo getCurrentTransformerInfo();
+  /// Load configuration from a Config object.
+  void load(const Config & config);
+
+  /// Save configuration to a Config object.
+  void save(Config config) const;
+
+  std::vector<PluginInfo> getAvailableTransformers() const;
+  std::shared_ptr<FrameTransformer> getCurrentTransformer() const;
+  PluginInfo getCurrentTransformerInfo() const;
   void setTransformer(const PluginInfo & plugin_info);
 
 Q_SIGNALS:
+  /// Emitted when the current transformer changes.
+  void configChanged();
+
+  /// Emitted when the current transformer changes.
   void transformerChanged(
     std::shared_ptr<rviz_common::transformation::FrameTransformer> new_transformer);
 

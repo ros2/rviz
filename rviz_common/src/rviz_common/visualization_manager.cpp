@@ -170,6 +170,8 @@ VisualizationManager::VisualizationManager(
   default_visibility_bit_ = visibility_bit_allocator_.allocBit();
 
   transformation_manager_ = new transformation::TransformationManager(rviz_ros_node_);
+  connect(transformation_manager_, SIGNAL(configChanged()), this, SIGNAL(configChanged()));
+
   frame_manager_ = new FrameManager(clock, transformation_manager_->getCurrentTransformer());
   connect(
     transformation_manager_,
@@ -563,6 +565,9 @@ void VisualizationManager::load(const Config & config)
   emitStatusUpdate("Creating views");
   view_manager_->load(config.mapGetChild("Views"));
 
+  emitStatusUpdate("Loading transformation");
+  transformation_manager_->load(config.mapGetChild("Transformation"));
+
   startUpdate();
 }
 
@@ -571,6 +576,7 @@ void VisualizationManager::save(Config config) const
   root_display_group_->save(config);
   tool_manager_->save(config.mapMakeChild("Tools"));
   view_manager_->save(config.mapMakeChild("Views"));
+  transformation_manager_->save(config.mapMakeChild("Transformation"));
 }
 
 Display * VisualizationManager::createDisplay(
