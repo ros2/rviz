@@ -40,6 +40,10 @@ namespace properties
 {
 class GroupedCheckboxPropertyGroup;
 
+/** @brief Checkbox property that is grouped together with other checkbox properties.
+ *
+ * Behaves like radio buttons (exclusive selection, no manual deselect)
+ */
 class GroupedCheckboxProperty : public BoolProperty
 {
 public:
@@ -53,8 +57,13 @@ public:
     const char * changed_slot = nullptr,
     QObject * receiver = nullptr);
 
-  /// Sets the value of this property
-  /// and triggers the group to disable all other GroupedCheckboxProperty
+  /**
+   * Sets the value of this property to true
+   * and triggers the group to disable all other GroupedCheckboxProperty.
+   *
+   * @param new_value IGNORED, radio buttons can generally not be deselected manually
+   * @return
+   */
   bool setValue(const QVariant & new_value) override;
 
   /// Sets the value of the underlying property without triggering the group
