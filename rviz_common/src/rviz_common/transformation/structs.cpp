@@ -40,31 +40,22 @@ Time::Time()
 : seconds(0), nanoseconds(0) {}
 
 Time::Time(int32_t sec, uint32_t nanosec)
-{
-  seconds = sec;
-  nanoseconds = nanosec;
-}
+: seconds(sec), nanoseconds(nanosec)
+{}
 
 Point::Point()
 : x(0), y(0), z(0) {}
 
-Point::Point(double x_co, double y_co, double z_co)
-{
-  x = x_co;
-  y = y_co;
-  z = z_co;
-}
+Point::Point(double x, double y, double z)
+: x(x), y(y), z(z)
+{}
 
 Quaternion::Quaternion()
 : w(1), x(0), y(0), z(0) {}
 
-Quaternion::Quaternion(double w_co, double x_co, double y_co, double z_co)
-{
-  w = w_co;
-  x = x_co;
-  y = y_co;
-  z = z_co;
-}
+Quaternion::Quaternion(double w, double x, double y, double z)
+: w(w), x(x), y(y), z(z)
+{}
 
 PoseStamped::PoseStamped()
 : time_stamp(), frame_id(""), position(), orientation() {}
