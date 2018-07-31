@@ -84,7 +84,7 @@ RobotModelDisplay::RobotModelDisplay()
   time_since_last_transform_(0.0f),
   transformer_guard_(
     std::make_unique<rviz_default_plugins::transformation::TransformerGuard<
-      rviz_default_plugins::transformation::TFWrapper>>(this, "RobotModel", "TF"))
+      rviz_default_plugins::transformation::TFWrapper>>(this, "TF"))
 {
   visual_enabled_property_ = new Property("Visual Enabled", true,
       "Whether to display the visual representation of the robot.",
@@ -199,7 +199,7 @@ void RobotModelDisplay::updateTfPrefix()
 
 void RobotModelDisplay::load_urdf()
 {
-  if (!transformer_guard_->usingAllowedTransformer()) {
+  if (!transformer_guard_->checkTransformer()) {
     return;
   }
 
@@ -278,7 +278,7 @@ void RobotModelDisplay::onDisable()
 
 void RobotModelDisplay::update(float wall_dt, float ros_dt)
 {
-  if (!transformer_guard_->usingAllowedTransformer()) {
+  if (!transformer_guard_->checkTransformer()) {
     return;
   }
 

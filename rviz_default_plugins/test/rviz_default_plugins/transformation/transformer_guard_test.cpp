@@ -59,15 +59,41 @@ public:
 
     transformer_guard_ = std::make_unique<
       rviz_default_plugins::transformation::TransformerGuard<
-        rviz_default_plugins::transformation::TFWrapper>>(display_.get(), "any_display", "TF");
+        rviz_default_plugins::transformation::TFWrapper>>(display_.get(), "TF");
     transformer_guard_->initialize(context_.get());
+    base_transformer_internals_ =
+      std::make_shared<rviz_common::transformation::InternalFrameTransformer>();
+    tf_wrapper_ = std::make_shared<rviz_default_plugins::transformation::TFWrapper>(
+      std::make_shared<tf2_ros::Buffer>(), false);
 
+    display_->setEnabled(true);
+  }
+
+  void setWrongTransformer()
+  {
+    transformer_guard_->updateDisplayAccordingToTransformerType(
+      std::weak_ptr<rviz_common::transformation::InternalFrameTransformer>(
+        base_transformer_internals_));
+  }
+
+  void setCorrectTransformer()
+  {
+    transformer_guard_->updateDisplayAccordingToTransformerType(
+      std::weak_ptr<rviz_default_plugins::transformation::TFWrapper>(tf_wrapper_));
+  }
+
+  void setCorectTransformerAndEnableDisplay()
+  {
+    setCorrectTransformer();
     display_->setEnabled(true);
   }
 
   std::shared_ptr<rviz_common::Display> display_;
   std::unique_ptr<rviz_default_plugins::transformation::TransformerGuard<
       rviz_default_plugins::transformation::TFWrapper>> transformer_guard_;
+  std::shared_ptr<rviz_common::transformation::InternalFrameTransformer>
+  base_transformer_internals_;
+  std::shared_ptr<rviz_default_plugins::transformation::TFWrapper> tf_wrapper_;
 };
 
 TEST_F(TransformerGuardTestFixture, initialize_makes_display_disabled_if_transformer_is_wrong) {
@@ -76,32 +102,21 @@ TEST_F(TransformerGuardTestFixture, initialize_makes_display_disabled_if_transfo
 
 TEST_F(
   TransformerGuardTestFixture,
-  updateDisplayAccordingToTransformerType_makes_display_disabled_with_wrong_transformer) {
-  auto base_transformer = std::make_shared<rviz_common::transformation::InternalFrameTransformer>();
-  auto tf_wrapper = std::make_shared<rviz_default_plugins::transformation::TFWrapper>(
-    std::make_shared<tf2_ros::Buffer>(), false);
-  transformer_guard_->updateDisplayAccordingToTransformerType(
-    std::weak_ptr<rviz_default_plugins::transformation::TFWrapper>(tf_wrapper));
-  display_->setEnabled(true);
-  transformer_guard_->updateDisplayAccordingToTransformerType(
-    std::weak_ptr<rviz_common::transformation::InternalFrameTransformer>(base_transformer));
+  updateDisplayAccordingToTransformerType_disables_display_on_wrong_transformer) {
+  setCorectTransformerAndEnableDisplay();
+
+  setWrongTransformer();
 
   EXPECT_FALSE(display_->isEnabled());
 }
 
 TEST_F(
   TransformerGuardTestFixture,
-  updateDisplayAccordingToTransformerType_makes_display_enabled_with_correct_transformer) {
-  auto base_transformer = std::make_shared<rviz_common::transformation::InternalFrameTransformer>();
-  auto tf_wrapper = std::make_shared<rviz_default_plugins::transformation::TFWrapper>(
-    std::make_shared<tf2_ros::Buffer>(), false);
-  transformer_guard_->updateDisplayAccordingToTransformerType(
-    std::weak_ptr<rviz_default_plugins::transformation::TFWrapper>(tf_wrapper));
-  display_->setEnabled(true);
-  transformer_guard_->updateDisplayAccordingToTransformerType(
-    std::weak_ptr<rviz_common::transformation::InternalFrameTransformer>(base_transformer));
-  transformer_guard_->updateDisplayAccordingToTransformerType(
-    std::weak_ptr<rviz_default_plugins::transformation::TFWrapper>(tf_wrapper));
+  updateDisplayAccordingToTransformerType_enables_display_on_correct_transformer) {
+  setCorectTransformerAndEnableDisplay();
+
+  setWrongTransformer();
+  setCorrectTransformer();
 
   EXPECT_TRUE(display_->isEnabled());
 }
@@ -109,14 +124,11 @@ TEST_F(
 TEST_F(
   TransformerGuardTestFixture,
   updateDisplayAccordingToTransformerType_keeps_display_disabled_if_it_was_disabled_by_user) {
-  auto base_transformer = std::make_shared<rviz_common::transformation::InternalFrameTransformer>();
-  auto tf_wrapper = std::make_shared<rviz_default_plugins::transformation::TFWrapper>(
-    std::make_shared<tf2_ros::Buffer>(), false);
+  setCorectTransformerAndEnableDisplay();
   display_->setEnabled(false);
-  transformer_guard_->updateDisplayAccordingToTransformerType(
-    std::weak_ptr<rviz_common::transformation::InternalFrameTransformer>(base_transformer));
-  transformer_guard_->updateDisplayAccordingToTransformerType(
-    std::weak_ptr<rviz_default_plugins::transformation::TFWrapper>(tf_wrapper));
+
+  setWrongTransformer();
+  setCorrectTransformer();
 
   EXPECT_FALSE(display_->isEnabled());
 }
@@ -124,22 +136,20 @@ TEST_F(
 TEST_F(
   TransformerGuardTestFixture,
   usingAllowedTransformer_returns_true_if_current_transformer_is_correct_one) {
-  auto tf_wrapper = std::make_shared<rviz_default_plugins::transformation::TFWrapper>(
-    std::make_shared<tf2_ros::Buffer>(), false);
   EXPECT_CALL(*frame_manager_, getInternalPtr())
-  .WillOnce(Return(std::weak_ptr<rviz_default_plugins::transformation::TFWrapper>(tf_wrapper)));
+  .WillOnce(Return(std::weak_ptr<rviz_default_plugins::transformation::TFWrapper>(tf_wrapper_)));
 
-  EXPECT_TRUE(transformer_guard_->usingAllowedTransformer());
+  EXPECT_TRUE(transformer_guard_->checkTransformer());
 }
 
 TEST_F(
   TransformerGuardTestFixture,
   usingAllowedTransformer_returns_false_if_current_transformer_is_a_wrong_one) {
-  auto base_transformer = std::make_shared<rviz_common::transformation::InternalFrameTransformer>();
   EXPECT_CALL(*frame_manager_, getInternalPtr()).WillOnce(Return(
-      std::weak_ptr<rviz_common::transformation::InternalFrameTransformer>(base_transformer)));
+      std::weak_ptr<rviz_common::transformation::InternalFrameTransformer>(
+        base_transformer_internals_)));
 
-  EXPECT_FALSE(transformer_guard_->usingAllowedTransformer());
+  EXPECT_FALSE(transformer_guard_->checkTransformer());
 }
 
 int main(int argc, char ** argv)

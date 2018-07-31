@@ -52,7 +52,7 @@ LaserScanDisplay::LaserScanDisplay()
   projector_(std::make_unique<laser_geometry::LaserProjection>()),
   transformer_guard_(
     std::make_unique<rviz_default_plugins::transformation::TransformerGuard<
-      rviz_default_plugins::transformation::TFWrapper>>(this, "LaserScan", "TF"))
+      rviz_default_plugins::transformation::TFWrapper>>(this, "TF"))
 {}
 
 void LaserScanDisplay::onInitialize()
@@ -99,7 +99,7 @@ void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPt
 
 void LaserScanDisplay::update(float wall_dt, float ros_dt)
 {
-  if (transformer_guard_->usingAllowedTransformer()) {
+  if (transformer_guard_->checkTransformer()) {
     point_cloud_common_->update(wall_dt, ros_dt);
   }
 }
