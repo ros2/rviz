@@ -171,7 +171,7 @@ protected:
   {
     auto default_icon_path = "package://rviz_common/icons/default_class_icon.png";
 
-    if (info.package == "" || info.name == "") {
+    if (info.package.isEmpty() || info.name.isEmpty()) {
       return loadPixmap(default_icon_path);
     }
 
