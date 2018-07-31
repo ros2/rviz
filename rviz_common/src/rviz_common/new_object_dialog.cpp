@@ -65,18 +65,18 @@ NewObjectDialog::NewObjectDialog(
   //***** Layout
 
   // Display Type group
-  QGroupBox * type_box = new QGroupBox(object_type + " Type");
+  auto type_box = new QGroupBox(object_type + " Type");
 
-  QTreeWidget * tree = new QTreeWidget;
+  auto tree = new QTreeWidget;
   tree->setHeaderHidden(true);
   fillTree(tree);
 
-  QLabel * description_label = new QLabel("Description:");
+  auto description_label = new QLabel("Description:");
   description_ = new QTextBrowser;
   description_->setMaximumHeight(100);
   description_->setOpenExternalLinks(true);
 
-  QVBoxLayout * type_layout = new QVBoxLayout;
+  auto type_layout = new QVBoxLayout;
   type_layout->addWidget(tree);
   type_layout->addWidget(description_label);
   type_layout->addWidget(description_);
@@ -88,7 +88,7 @@ NewObjectDialog::NewObjectDialog(
   if (display_name_output_) {
     name_box = new QGroupBox(object_type + " Name");
     name_editor_ = new QLineEdit;
-    QVBoxLayout * name_layout = new QVBoxLayout;
+    auto name_layout = new QVBoxLayout;
     name_layout->addWidget(name_editor_);
     name_box->setLayout(name_layout);
   }
@@ -97,7 +97,7 @@ NewObjectDialog::NewObjectDialog(
   button_box_ = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
       Qt::Horizontal);
 
-  QVBoxLayout * main_layout = new QVBoxLayout;
+  auto main_layout = new QVBoxLayout;
   main_layout->addWidget(type_box);
   if (display_name_output_) {
     main_layout->addWidget(name_box);
@@ -116,8 +116,7 @@ NewObjectDialog::NewObjectDialog(
   // *INDENT-ON*
 
   if (display_name_output_) {
-    connect(name_editor_, SIGNAL(textEdited(const QString&)),
-      this, SLOT(onNameChanged()));
+    connect(name_editor_, SIGNAL(textEdited(const QString&)), this, SLOT(onNameChanged()));
   }
 }
 
