@@ -87,7 +87,7 @@ public:
   bool frameHasProblems(const std::string & frame, std::string & error) override;
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
-  rviz_common::transformation::InternalFrameTransformerPtr getInternals() override;
+  rviz_common::transformation::TransformationLibraryConnectorPtr getConnector() override;
 
 private:
   std::shared_ptr<TFWrapper> tf_wrapper_;

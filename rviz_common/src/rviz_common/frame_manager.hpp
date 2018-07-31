@@ -187,7 +187,7 @@ public:
   const std::string & getFixedFrame() override;
 
   /// Return a shared pointer to the internal transformation object.
-  transformation::InternalFrameTransformerPtr getInternalPtr() override;
+  transformation::TransformationLibraryConnectorPtr getConnector() override;
 
 // TODO(wjwwood): figure out how to replace FilgerFailureReason here
 #if 0

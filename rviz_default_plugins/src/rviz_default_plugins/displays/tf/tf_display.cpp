@@ -416,7 +416,7 @@ FrameInfo * TFDisplay::createFrame(const std::string & frame)
 void TFDisplay::updateFrame(FrameInfo * frame)
 {
   auto tf_wrapper = std::dynamic_pointer_cast<transformation::TFWrapper>(
-    context_->getFrameManager()->getInternalPtr().lock());
+    context_->getFrameManager()->getConnector().lock());
 
   if (tf_wrapper) {
     std::shared_ptr<tf2::BufferCore> tf_buffer = tf_wrapper->getBuffer();

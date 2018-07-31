@@ -75,7 +75,7 @@ void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPt
 
   auto cloud = std::make_shared<sensor_msgs::msg::PointCloud2>();
   auto tf_wrapper = std::dynamic_pointer_cast<transformation::TFWrapper>(
-    context_->getFrameManager()->getInternalPtr().lock());
+    context_->getFrameManager()->getConnector().lock());
 
   if (tf_wrapper) {
     try {

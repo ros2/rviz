@@ -46,7 +46,7 @@ namespace rviz_default_plugins
 namespace transformation
 {
 class TFWrapper
-  : public rviz_common::transformation::InternalFrameTransformer
+  : public rviz_common::transformation::TransformationLibraryConnector
 {
 public:
   RVIZ_DEFAULT_PLUGINS_PUBLIC
