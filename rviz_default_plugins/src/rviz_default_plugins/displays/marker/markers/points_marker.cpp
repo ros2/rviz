@@ -78,7 +78,11 @@ void PointsMarker::onNewMessage(
 
   Ogre::Vector3 pose, scale;
   Ogre::Quaternion orientation;
-  transformAndSetVisibility(new_message, pose, scale, orientation);
+  if (!transform(new_message, pose, orientation, scale)) {  // NOLINT: is super class method
+    scene_node_->setVisible(false);
+    return;
+  }
+  scene_node_->setVisible(true);
 
   setPosition(pose);
   setOrientation(orientation);
@@ -92,19 +96,6 @@ void PointsMarker::onNewMessage(
   }
 
   addPointsFromMessage(new_message);
-}
-
-void PointsMarker::transformAndSetVisibility(
-  const MarkerConstSharedPtr & new_message,
-  Ogre::Vector3 & position,
-  Ogre::Vector3 & scale,
-  Ogre::Quaternion & orientation)
-{
-  if (!transform(new_message, position, orientation, scale)) {  // NOLINT: is super class method
-    scene_node_->setVisible(false);
-    return;
-  }
-  scene_node_->setVisible(true);
 }
 
 void PointsMarker::setRenderModeAndDimensions(
