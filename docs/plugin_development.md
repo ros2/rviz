@@ -9,12 +9,13 @@ This is intended as a guide for people wishing to develop custom plugins.
 
 Plugins can extend RViz at different extension points:
 
-| plugin type     | base type                     |
-| --------------- | ----------------------------- |
-| Display         | `rviz_common::Display`        |
-| Panel           | `rviz_common::Panel`          |
-| Tool            | `rviz_common::Tool`           |
-| View Controller | `rviz_common::ViewController` |
+| plugin type                   | base type                                       |
+| ----------------------------- | ----------------------------------------------- |
+| Display                       | `rviz_common::Display`                          |
+| Panel                         | `rviz_common::Panel`                            |
+| Tool                          | `rviz_common::Tool`                             |
+| Frames transformation library | `rviz_common::transformation::FrameTransformer` |
+| View Controller               | `rviz_common::ViewController`                   |
 
 Every plugin must be of the corresponding base type in order to be recognized by RViz.
 Refer to the documentation of the relevant base class for a detailed API description.
@@ -76,6 +77,27 @@ register_rviz_ogre_media_exports(DIRECTORIES "test_folder/scripts")
 ```
 *Note:* If you want to export folder hierarchies, each folder needs to be exported separately. Folders within exported folders are not automatically available.
 
+#### Writing a display which can only work with one transformation plugin
+
+Some of the default displays (e.g. TF display or LaserScan display) can only work with tf2 as transformation framework.
+Similarly, as a developer, you may have written your own transformation plugin which cannot work with every display, or your own display which cannot work with every transformation plugin.
+The class `rviz_default_plugins::transformation::TransformerGuard` helps you to handle these possibilities.
+
+As explained in the relative section, every transformation plugin implements the base class `rviz_common::transformation::FrameTransformer`.
+The `TransformerGuard` class is templated on the type of this implementation and will make sure that the display by which is owned will be disabled if the transformer currently in use is of a different type.
+
+When writing a display that is supposed to be working only with a specific transformation plugin, you should make sure that the display owns, as member variable, an instance of `TransformerGuard`, correctly templated.
+The constructor of this class takes two argument: a raw pointer to the display that owns it, and the name of the transformer it is supposed to work with (as a `std::string`, needed to correctly set the error status).
+Ideally the `TransformerGuard` object is initialized in the constructor of the display.
+
+In order to make the `TransformerGuard` object work correctly, you need to call the method `TransformerGuard::initialize(rviz_common::DisplayContext * context)` inside the display `onInitialize()` method, passing as parameter the `context_` member of the display.
+Doing this will make sure that every time the current transformer plugin is of the wrong type, the display will be disabled and an appropriate error message will be shown in the display status.
+
+In addition to this, the `TransformerGuard` class also provides the `checkTransformer()` method, which returns `true` if the currently usd transformer is of the allowed type, and `false` otherwise.
+This method can be used by the display every time you want it to behave differently according to what kind of transformation plugin is used at the moment.
+
+For a concrete example of how all this is done, you can have a look, for example, at the TF or the LaserScan display, in `rviz_default_plugins` which, as said, only work with tf2.
+
 ### Writing a panel plugin
 
 To write a custom panel, derive from `rviz_common::Panel`.
@@ -93,6 +115,10 @@ To write a custom panel, derive from `rviz_common::Panel`.
 * If your view controller should be able to track tf frames in a scene, derive from `rviz_common::FramePositionTrackingViewController`, which already contains convenience functionality for tracking target frames
 * If your custom view controller orbits a focal point, it might also be beneficial to derive from `rviz_default_plugins::OrbitViewController`
 
+### Writing a transformation library plugin
+
+- To write a transformer plugin, you must implement the `rviz_common::transformation::FrameTransformer` class (refer to the API documentation contained in the header file).
+- If for your plugin you also need extra functionality, or you want to offer direct access to some parts of the library itself, you can also implement a subclass of `rviz_common::transformation::TransformerLibraryConnector` (see, for example, `rviz_default_plugins::transformation::TFWrapper`).
 
 ## Overview of RViz API
 
