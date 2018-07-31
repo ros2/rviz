@@ -103,6 +103,7 @@ template<typename AllowedTransformerType>
 class TransformerGuard : public _TransformerGuard
 {
 public:
+  // The transformer_name is only needed to set the error status. 
   TransformerGuard(
     rviz_common::Display * display,
     const std::string & transformer_name)
