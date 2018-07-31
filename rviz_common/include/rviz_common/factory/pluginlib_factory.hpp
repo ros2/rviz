@@ -31,20 +31,20 @@
 #ifndef RVIZ_COMMON__FACTORY__PLUGINLIB_FACTORY_HPP_
 #define RVIZ_COMMON__FACTORY__PLUGINLIB_FACTORY_HPP_
 
-#include <QHash>
-#include <QString>
-#include <QStringList>
-
 #include <string>
 #include <vector>
 
+#include <QHash>  // NOLINT
+#include <QString>  // NOLINT
+#include <QStringList>  // NOLINT
+
 #ifndef Q_MOC_RUN
-#include <pluginlib/class_loader.hpp>
+#include "pluginlib/class_loader.hpp"
 #endif
 
-#include "rviz_common/logging.hpp"
-#include "./class_id_recording_factory.hpp"
+#include "rviz_common/factory/class_id_recording_factory.hpp"
 #include "rviz_common/load_resource.hpp"
+#include "rviz_common/logging.hpp"
 
 namespace rviz_common
 {
