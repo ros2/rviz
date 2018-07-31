@@ -113,11 +113,11 @@ public:
 
   bool checkTransformer() override
   {
-    return isAllowedTransformer(context_->getFrameManager()->getInternalPtr().lock());
+    return isAllowedTransformer(context_->getFrameManager()->getConnector().lock());
   }
 
   void updateDisplayAccordingToTransformerType(
-    rviz_common::transformation::InternalFrameTransformerPtr transformer_internal)
+    rviz_common::transformation::TransformationLibraryConnectorPtr transformer_internal)
   {
     using_allowed_transformer_ = isAllowedTransformer(transformer_internal);
 
@@ -133,8 +133,8 @@ private:
   void transformerChanged(
     std::shared_ptr<rviz_common::transformation::FrameTransformer> new_transformer) override
   {
-    if (using_allowed_transformer_ != isAllowedTransformer(new_transformer->getInternals())) {
-      updateDisplayAccordingToTransformerType(context_->getFrameManager()->getInternalPtr());
+    if (using_allowed_transformer_ != isAllowedTransformer(new_transformer->getConnector())) {
+      updateDisplayAccordingToTransformerType(context_->getFrameManager()->getConnector());
     }
   }
 
@@ -146,7 +146,7 @@ private:
   }
 
   virtual bool isAllowedTransformer(
-    rviz_common::transformation::InternalFrameTransformerPtr transformer_internals)
+    rviz_common::transformation::TransformationLibraryConnectorPtr transformer_internals)
   {
     auto transformer =
       std::dynamic_pointer_cast<AllowedTransformerType>(transformer_internals.lock());

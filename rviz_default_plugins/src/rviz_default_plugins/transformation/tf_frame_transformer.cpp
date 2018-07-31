@@ -130,7 +130,7 @@ bool TFFrameTransformer::frameHasProblems(const std::string & frame, std::string
   return false;
 }
 
-rviz_common::transformation::InternalFrameTransformerPtr TFFrameTransformer::getInternals()
+rviz_common::transformation::TransformationLibraryConnectorPtr TFFrameTransformer::getConnector()
 {
   return tf_wrapper_;
 }

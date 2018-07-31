@@ -66,7 +66,7 @@ public:
   MOCK_METHOD2(transformHasProblems, bool(const std::string &, std::string &));
   MOCK_METHOD3(transformHasProblems, bool(const std::string &, rclcpp::Time, std::string &));
   MOCK_METHOD0(getFixedFrame, const std::string & ());
-  MOCK_METHOD0(getInternalPtr, rviz_common::transformation::InternalFrameTransformerPtr());
+  MOCK_METHOD0(getConnector, rviz_common::transformation::TransformationLibraryConnectorPtr());
   MOCK_METHOD0(getAllFrameNames, std::vector<std::string>());
   MOCK_METHOD1(
     setTransformerPlugin,

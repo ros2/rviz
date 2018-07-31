@@ -97,9 +97,9 @@ bool IdentityFrameTransformer::frameHasProblems(const std::string & frame, std::
   return false;
 }
 
-InternalFrameTransformerPtr IdentityFrameTransformer::getInternals()
+TransformationLibraryConnectorPtr IdentityFrameTransformer::getConnector()
 {
-  return std::weak_ptr<InternalFrameTransformer>();
+  return std::weak_ptr<TransformationLibraryConnector>();
 }
 
 bool IdentityFrameTransformer::quaternionIsValid(transformation::Quaternion quaternion)

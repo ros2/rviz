@@ -58,13 +58,13 @@ public:
 /** \brief class which the internal (plugin specific) implementation member of
  *  FrameTransformer should inherit from
  */
-class RVIZ_COMMON_PUBLIC InternalFrameTransformer
+class RVIZ_COMMON_PUBLIC TransformationLibraryConnector
 {
 public:
-  virtual ~InternalFrameTransformer() = default;
+  virtual ~TransformationLibraryConnector() = default;
 };
 
-using InternalFrameTransformerPtr = std::weak_ptr<InternalFrameTransformer>;
+using TransformationLibraryConnectorPtr = std::weak_ptr<TransformationLibraryConnector>;
 
 class RVIZ_COMMON_PUBLIC FrameTransformer
 {
@@ -116,7 +116,7 @@ public:
   virtual bool frameHasProblems(const std::string & frame, std::string & error) = 0;
 
   /** \brief A getter for the internal implementation object */
-  virtual InternalFrameTransformerPtr getInternals() = 0;
+  virtual TransformationLibraryConnectorPtr getConnector() = 0;
 
   // TODO(botteroa-si): This method can be needed when having displays working with tf_filter.
   // Reenable once tf_filter is ported.

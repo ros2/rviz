@@ -56,13 +56,13 @@ public:
     display_ = std::make_shared<rviz_common::Display>();
     display_->initialize(context_.get());
     base_transformer_internals_ =
-      std::make_shared<rviz_common::transformation::InternalFrameTransformer>();
+      std::make_shared<rviz_common::transformation::TransformationLibraryConnector>();
     tf_wrapper_ = std::make_shared<rviz_default_plugins::transformation::TFWrapper>(
       std::make_shared<tf2_ros::Buffer>(), false);
 
     EXPECT_CALL(*context_, getFrameManager()).WillRepeatedly(Return(frame_manager_.get()));
-    EXPECT_CALL(*frame_manager_, getInternalPtr()).WillOnce(Return(
-        std::weak_ptr<rviz_common::transformation::InternalFrameTransformer>(
+    EXPECT_CALL(*frame_manager_, getConnector()).WillOnce(Return(
+        std::weak_ptr<rviz_common::transformation::TransformationLibraryConnector>(
           base_transformer_internals_)));
 
     transformer_guard_ = std::make_unique<
@@ -76,7 +76,7 @@ public:
   void setWrongTransformer()
   {
     transformer_guard_->updateDisplayAccordingToTransformerType(
-      std::weak_ptr<rviz_common::transformation::InternalFrameTransformer>(
+      std::weak_ptr<rviz_common::transformation::TransformationLibraryConnector>(
         base_transformer_internals_));
   }
 
@@ -95,7 +95,7 @@ public:
   std::shared_ptr<rviz_common::Display> display_;
   std::unique_ptr<rviz_default_plugins::transformation::TransformerGuard<
       rviz_default_plugins::transformation::TFWrapper>> transformer_guard_;
-  std::shared_ptr<rviz_common::transformation::InternalFrameTransformer>
+  std::shared_ptr<rviz_common::transformation::TransformationLibraryConnector>
   base_transformer_internals_;
   std::shared_ptr<rviz_default_plugins::transformation::TFWrapper> tf_wrapper_;
 };
@@ -140,7 +140,7 @@ TEST_F(
 TEST_F(
   TransformerGuardTestFixture,
   usingAllowedTransformer_returns_true_if_current_transformer_is_correct_one) {
-  EXPECT_CALL(*frame_manager_, getInternalPtr())
+  EXPECT_CALL(*frame_manager_, getConnector())
   .WillOnce(Return(std::weak_ptr<rviz_default_plugins::transformation::TFWrapper>(tf_wrapper_)));
 
   EXPECT_TRUE(transformer_guard_->checkTransformer());
@@ -149,8 +149,8 @@ TEST_F(
 TEST_F(
   TransformerGuardTestFixture,
   usingAllowedTransformer_returns_false_if_current_transformer_is_a_wrong_one) {
-  EXPECT_CALL(*frame_manager_, getInternalPtr()).WillOnce(Return(
-      std::weak_ptr<rviz_common::transformation::InternalFrameTransformer>(
+  EXPECT_CALL(*frame_manager_, getConnector()).WillOnce(Return(
+      std::weak_ptr<rviz_common::transformation::TransformationLibraryConnector>(
         base_transformer_internals_)));
 
   EXPECT_FALSE(transformer_guard_->checkTransformer());
