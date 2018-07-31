@@ -39,6 +39,7 @@ namespace rviz_common
 namespace properties
 {
 
+/** @brief Groups multiple GroupedCheckboxProperties together */
 class GroupedCheckboxPropertyGroup
 {
 public:
