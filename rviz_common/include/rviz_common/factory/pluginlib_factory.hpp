@@ -97,7 +97,7 @@ public:
       info.name = iter->name_;
       info.package = iter->package_;
       info.description = iter->description_;
-      info.icon = getIcon(info.package, info.name);
+      info.icon = getIcon(info);
       return info;
     }
     auto class_id_std = class_id.toStdString();
@@ -105,7 +105,7 @@ public:
     info.name = QString::fromStdString(class_loader_->getName(class_id_std));
     info.package = QString::fromStdString(class_loader_->getClassPackage(class_id_std));
     info.description = QString::fromStdString(class_loader_->getClassDescription(class_id_std));
-    info.icon = getIcon(info.package, info.name);
+    info.icon = getIcon(info);
     return info;
   }
 
@@ -167,14 +167,20 @@ protected:
     }
   }
 
-  virtual QIcon getIcon(const QString & package, const QString & name) const
+  virtual QIcon getIcon(const PluginInfo & info) const
   {
-    auto base_path = "package://" + package + "/icons/classes/" + name;
+    auto default_icon_path = "package://rviz_common/icons/default_class_icon.png";
+
+    if (info.package == "" || info.name == "") {
+      return loadPixmap(default_icon_path);
+    }
+
+    auto base_path = "package://" + info.package + "/icons/classes/" + info.name;
     QIcon icon = loadPixmap(base_path + ".svg");
     if (icon.isNull()) {
       icon = loadPixmap(base_path + ".png");
       if (icon.isNull()) {
-        icon = loadPixmap("package://rviz_common/icons/default_class_icon.png");
+        icon = loadPixmap(default_icon_path);
       }
     }
     return icon;
