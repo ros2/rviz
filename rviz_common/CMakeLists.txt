@@ -387,6 +387,13 @@ if(BUILD_TESTING)
     target_link_libraries(rviz_common_ros_node_abstraction_test rviz_common)
   endif()
 
+  ament_add_gmock(identity_transformer_test
+    test/transformation/identity_frame_transformer_test.cpp)
+  if(TARGET identity_transformer_test)
+    target_link_libraries(identity_transformer_test
+      rviz_common)
+  endif()
+
   ament_add_gmock(ros_conversion_helpers_test
     test/transformation/ros_converion_helpers_test.cpp)
   if(TARGET ros_conversion_helpers_test)
@@ -405,13 +412,6 @@ if(BUILD_TESTING)
       rviz_common
       rviz_ogre_vendor::OgreMain
       rviz_ogre_vendor::OgreOverlay)
-  endif()
-
-  ament_add_gmock(dummy_transformer_test
-    test/transformation/identity_frame_transformer_test.cpp)
-  if(TARGET dummy_transformer_test)
-    target_link_libraries(dummy_transformer_test
-      rviz_common)
   endif()
 
   ament_add_gmock(selection_handler_test
