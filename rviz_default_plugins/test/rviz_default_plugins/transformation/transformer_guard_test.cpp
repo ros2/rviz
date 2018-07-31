@@ -41,10 +41,12 @@
 #include "rviz_common/transformation/frame_transformer.hpp"
 
 #include "rviz_default_plugins/transformation/transformer_guard.hpp"
+#include "rviz_default_plugins/transformation/tf_frame_transformer.hpp"
 #include "rviz_default_plugins/transformation/tf_wrapper.hpp"
 
 #include "../displays/display_test_fixture.hpp"
 #include "../mock_display_context.hpp"
+#include "./mock_frame_transformer.hpp"
 
 using namespace ::testing;  // NOLINT
 
@@ -55,19 +57,18 @@ public:
   {
     display_ = std::make_shared<rviz_common::Display>();
     display_->initialize(context_.get());
-    base_transformer_internals_ =
-      std::make_shared<rviz_common::transformation::TransformationLibraryConnector>();
-    tf_wrapper_ = std::make_shared<rviz_default_plugins::transformation::TFWrapper>(
+    base_transformer_ = std::make_shared<MockFrameTransformer>();
+    auto tf_wrapper = std::make_shared<rviz_default_plugins::transformation::TFWrapper>(
       std::make_shared<tf2_ros::Buffer>(), false);
+    tf_transformer_ = std::make_shared<rviz_default_plugins::transformation::TFFrameTransformer>(
+      tf_wrapper);
 
     EXPECT_CALL(*context_, getFrameManager()).WillRepeatedly(Return(frame_manager_.get()));
-    EXPECT_CALL(*frame_manager_, getConnector()).WillOnce(Return(
-        std::weak_ptr<rviz_common::transformation::TransformationLibraryConnector>(
-          base_transformer_internals_)));
+    EXPECT_CALL(*frame_manager_, getTransformer()).WillOnce(Return(base_transformer_));
 
     transformer_guard_ = std::make_unique<
       rviz_default_plugins::transformation::TransformerGuard<
-        rviz_default_plugins::transformation::TFWrapper>>(display_.get(), "TF");
+        rviz_default_plugins::transformation::TFFrameTransformer>>(display_.get(), "TF");
     transformer_guard_->initialize(context_.get());
 
     display_->setEnabled(true);
@@ -75,15 +76,12 @@ public:
 
   void setWrongTransformer()
   {
-    transformer_guard_->updateDisplayAccordingToTransformerType(
-      std::weak_ptr<rviz_common::transformation::TransformationLibraryConnector>(
-        base_transformer_internals_));
+    transformer_guard_->updateDisplayAccordingToTransformerType(base_transformer_);
   }
 
   void setCorrectTransformer()
   {
-    transformer_guard_->updateDisplayAccordingToTransformerType(
-      std::weak_ptr<rviz_default_plugins::transformation::TFWrapper>(tf_wrapper_));
+    transformer_guard_->updateDisplayAccordingToTransformerType(tf_transformer_);
   }
 
   void setCorectTransformerAndEnableDisplay()
@@ -94,10 +92,9 @@ public:
 
   std::shared_ptr<rviz_common::Display> display_;
   std::unique_ptr<rviz_default_plugins::transformation::TransformerGuard<
-      rviz_default_plugins::transformation::TFWrapper>> transformer_guard_;
-  std::shared_ptr<rviz_common::transformation::TransformationLibraryConnector>
-  base_transformer_internals_;
-  std::shared_ptr<rviz_default_plugins::transformation::TFWrapper> tf_wrapper_;
+      rviz_default_plugins::transformation::TFFrameTransformer>> transformer_guard_;
+  std::shared_ptr<MockFrameTransformer> base_transformer_;
+  std::shared_ptr<rviz_default_plugins::transformation::TFFrameTransformer> tf_transformer_;
 };
 
 TEST_F(TransformerGuardTestFixture, initialize_makes_display_disabled_if_transformer_is_wrong) {
@@ -140,8 +137,7 @@ TEST_F(
 TEST_F(
   TransformerGuardTestFixture,
   usingAllowedTransformer_returns_true_if_current_transformer_is_correct_one) {
-  EXPECT_CALL(*frame_manager_, getConnector())
-  .WillOnce(Return(std::weak_ptr<rviz_default_plugins::transformation::TFWrapper>(tf_wrapper_)));
+  EXPECT_CALL(*frame_manager_, getTransformer()).WillOnce(Return(tf_transformer_));
 
   EXPECT_TRUE(transformer_guard_->checkTransformer());
 }
@@ -149,9 +145,7 @@ TEST_F(
 TEST_F(
   TransformerGuardTestFixture,
   usingAllowedTransformer_returns_false_if_current_transformer_is_a_wrong_one) {
-  EXPECT_CALL(*frame_manager_, getConnector()).WillOnce(Return(
-      std::weak_ptr<rviz_common::transformation::TransformationLibraryConnector>(
-        base_transformer_internals_)));
+  EXPECT_CALL(*frame_manager_, getTransformer()).WillOnce(Return(base_transformer_));
 
   EXPECT_FALSE(transformer_guard_->checkTransformer());
 }

@@ -52,7 +52,7 @@ LaserScanDisplay::LaserScanDisplay()
   projector_(std::make_unique<laser_geometry::LaserProjection>()),
   transformer_guard_(
     std::make_unique<rviz_default_plugins::transformation::TransformerGuard<
-      rviz_default_plugins::transformation::TFWrapper>>(this, "TF"))
+      rviz_default_plugins::transformation::TFFrameTransformer>>(this, "TF"))
 {}
 
 void LaserScanDisplay::onInitialize()

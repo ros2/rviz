@@ -338,6 +338,11 @@ transformation::TransformationLibraryConnectorPtr FrameManager::getConnector()
   return transformer_->getConnector();
 }
 
+std::shared_ptr<transformation::FrameTransformer> FrameManager::getTransformer()
+{
+  return transformer_;
+}
+
 std::vector<std::string> FrameManager::getAllFrameNames()
 {
   return transformer_->getAllFrameNames();
