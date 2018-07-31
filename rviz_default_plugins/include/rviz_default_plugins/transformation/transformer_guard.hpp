@@ -57,10 +57,8 @@ class RVIZ_DEFAULT_PLUGINS_PUBLIC _TransformerGuard : public QObject
 public:
   _TransformerGuard(
     rviz_common::Display * display,
-    const std::string & display_name,
     const std::string & transformer_name)
   : display_(display),
-    display_name_(display_name),
     allowed_transformer_name_(transformer_name),
     using_allowed_transformer_(true),
     display_disabled_by_user_(false)
@@ -76,13 +74,13 @@ public:
       SLOT(transformerChanged(std::shared_ptr<rviz_common::transformation::FrameTransformer>)));
     connect(display_, SIGNAL(changed()), this, SLOT(displayEnabledChanged()));
 
-    if (!usingAllowedTransformer()) {
+    if (!checkTransformer()) {
       using_allowed_transformer_ = false;
       Q_EMIT (display_->changed());
     }
   }
 
-  virtual bool usingAllowedTransformer() = 0;
+  virtual bool checkTransformer() = 0;
 
 protected Q_SLOTS:
   virtual void transformerChanged(
@@ -91,7 +89,6 @@ protected Q_SLOTS:
 
 protected:
   rviz_common::Display * display_;
-  std::string display_name_;
   std::string allowed_transformer_name_;
   bool using_allowed_transformer_;
   bool display_disabled_by_user_;
@@ -107,14 +104,13 @@ class TransformerGuard : public _TransformerGuard
 public:
   TransformerGuard(
     rviz_common::Display * display,
-    const std::string & display_name,
     const std::string & transformer_name)
-  : _TransformerGuard(display, display_name, transformer_name)
+  : _TransformerGuard(display, transformer_name)
   {}
 
   ~TransformerGuard() override = default;
 
-  bool usingAllowedTransformer() override
+  bool checkTransformer() override
   {
     return isAllowedTransformer(context_->getFrameManager()->getInternalPtr().lock());
   }
@@ -146,20 +142,12 @@ private:
     auto transformer =
       std::dynamic_pointer_cast<AllowedTransformerType>(transformer_internals.lock());
 
-    if (transformer) {
-      return true;
-    }
-    return false;
+    return static_cast<bool>(transformer);
   }
 
   void disableDisplayAndSetErrorStatus()
   {
-    if (!display_->isEnabled()) {
-      display_disabled_by_user_ = true;
-    } else if (display_->isEnabled()) {
-      display_disabled_by_user_ = false;
-    }
-
+    display_disabled_by_user_ = !display_->isEnabled();
     Q_EMIT (display_->changed());
   }
 
@@ -169,8 +157,7 @@ private:
       rviz_common::properties::StatusProperty::Error,
       "Transformer",
       QString::fromStdString(
-        display_name_ +
-        " display works only with " + allowed_transformer_name_ + " Transformer"));
+        "The display works only with " + allowed_transformer_name_ + " Transformer"));
   }
 
   void enableDisplayAndDeleteErrorStatus()
