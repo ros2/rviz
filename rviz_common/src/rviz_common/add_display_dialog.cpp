@@ -117,7 +117,7 @@ bool isSubtopic(const std::string & base, const std::string & topic)
 
   std::string query = topic;
   // Both checks are required, otherwise the loop does not terminate when adding 'by topic'
-  while (query != "" && query != "/") {
+  while (!query.empty() && query != "/") {
     if (query == base) {
       return true;
     }
@@ -148,7 +148,7 @@ void getPluginGroups(
   std::map<std::string, std::vector<std::string>> topic_names_and_types =
     rviz_ros_node.lock()->get_topic_names_and_types();
 
-  for (const auto map_pair : topic_names_and_types) {
+  for (const auto & map_pair : topic_names_and_types) {
     QString topic = QString::fromStdString(map_pair.first);
     if (map_pair.second.empty()) {
       throw std::runtime_error("topic '" + map_pair.first + "' unexpectedly has not types.");
@@ -161,12 +161,12 @@ void getPluginGroups(
       for (const auto & topic_type_name : map_pair.second) {
         ss << " '" << topic_type_name << "'";
       }
-      RVIZ_COMMON_LOG_WARNING(ss.str().c_str());
+      RVIZ_COMMON_LOG_WARNING(ss.str());
     }
     QString datatype = QString::fromStdString(map_pair.second[0]);
 
     if (datatype_plugins.contains(datatype)) {
-      if (groups->size() == 0 ||
+      if (groups->empty() ||
         !isSubtopic(groups->back().base_topic.toStdString(),
         topic.toStdString()))
       {
@@ -182,10 +182,7 @@ void getPluginGroups(
         topic_suffix = topic.right(topic.size() - group.base_topic.size() - 1);
       }
 
-      const QList<QString> & plugin_names =
-        datatype_plugins.values(datatype);
-      for (int i = 0; i < plugin_names.size(); ++i) {
-        const QString & name = plugin_names[i];
+      for (const auto & name : datatype_plugins.values(datatype)) {
         PluginGroup::Info & info = group.plugins[name];
         info.topic_suffixes.append(topic_suffix);
         info.datatypes.append(datatype);
@@ -220,18 +217,18 @@ AddDisplayDialog::AddDisplayDialog(
   setObjectName("AddDisplayDialog");
 
   // Display Type group
-  QGroupBox * type_box = new QGroupBox("Create visualization");
+  auto type_box = new QGroupBox("Create visualization");
   type_box->setObjectName("AddDisplayDialog/Visualization_Typebox");
 
-  QLabel * description_label = new QLabel("Description:");
+  auto description_label = new QLabel("Description:");
   description_ = new QTextBrowser;
   description_->setMaximumHeight(100);
   description_->setOpenExternalLinks(true);
 
-  DisplayTypeTree * display_tree = new DisplayTypeTree;
+  auto display_tree = new DisplayTypeTree;
   display_tree->fillTree(factory);
 
-  TopicDisplayWidget * topic_widget = new TopicDisplayWidget(rviz_ros_node);
+  auto topic_widget = new TopicDisplayWidget(rviz_ros_node);
   topic_widget->fill(factory);
 
   tab_widget_ = new QTabWidget;
@@ -239,7 +236,7 @@ AddDisplayDialog::AddDisplayDialog(
   display_tab_ = tab_widget_->addTab(display_tree, tr("By display type"));
   topic_tab_ = tab_widget_->addTab(topic_widget, tr("By topic"));
 
-  QVBoxLayout * type_layout = new QVBoxLayout;
+  auto type_layout = new QVBoxLayout;
   type_layout->addWidget(tab_widget_);
   type_layout->addWidget(description_label);
   type_layout->addWidget(description_);
@@ -251,7 +248,7 @@ AddDisplayDialog::AddDisplayDialog(
   if (display_name_output_) {
     name_box = new QGroupBox("Display Name");
     name_editor_ = new QLineEdit;
-    QVBoxLayout * name_layout = new QVBoxLayout;
+    auto name_layout = new QVBoxLayout;
     name_layout->addWidget(name_editor_);
     name_box->setLayout(name_layout);
   }
@@ -261,7 +258,7 @@ AddDisplayDialog::AddDisplayDialog(
     new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal);
   button_box_->setObjectName("AddDisplayDialog/ButtonBox");
 
-  QVBoxLayout * main_layout = new QVBoxLayout;
+  auto main_layout = new QVBoxLayout;
   main_layout->addWidget(type_box);
   if (display_name_output_) {
     main_layout->addWidget(name_box);
@@ -297,7 +294,7 @@ AddDisplayDialog::AddDisplayDialog(
 
 QSize AddDisplayDialog::sizeHint() const
 {
-  return QSize(500, 660);
+  return {500, 660};
 }
 
 void AddDisplayDialog::onTabChanged(int index)
@@ -320,7 +317,7 @@ void AddDisplayDialog::onTopicSelected(SelectionData * data)
 
 void AddDisplayDialog::updateDisplay()
 {
-  SelectionData * data = NULL;
+  SelectionData * data = nullptr;
   if (tab_widget_->currentIndex() == topic_tab_) {
     data = &topic_data_;
   } else if (tab_widget_->currentIndex() == display_tab_) {
@@ -404,7 +401,7 @@ void DisplayTypeTree::onCurrentItemChanged(
   Q_UNUSED(prev);
   // If display is selected, populate selection data.  Otherwise, clear data.
   SelectionData sd;
-  if (curr->parent() != NULL) {
+  if (curr->parent() != nullptr) {
     // Leave topic and datatype blank
     sd.whats_this = curr->whatsThis(0);
     sd.lookup_name = curr->data(0, Qt::UserRole).toString();
@@ -426,9 +423,8 @@ void DisplayTypeTree::fillTree(Factory * factory)
   for (const auto & plugin : plugins) {
     QTreeWidgetItem * package_item;
 
-    std::map<QString, QTreeWidgetItem *>::iterator mi;
-    mi = package_items.find(plugin.package);
-    if (mi == package_items.end()) {
+    auto package_item_entry = package_items.find(plugin.package);
+    if (package_item_entry == package_items.end()) {
       package_item = new QTreeWidgetItem(this);
       package_item->setText(0, plugin.package);
       package_item->setIcon(0, default_package_icon);
@@ -436,7 +432,7 @@ void DisplayTypeTree::fillTree(Factory * factory)
       package_item->setExpanded(true);
       package_items[plugin.package] = package_item;
     } else {
-      package_item = (*mi).second;
+      package_item = (*package_item_entry).second;
     }
     auto class_item = new QTreeWidgetItem(package_item);
 
@@ -467,7 +463,7 @@ TopicDisplayWidget::TopicDisplayWidget(
   enable_hidden_box_ = new QCheckBox("Show unvisualizable topics");
   enable_hidden_box_->setCheckState(Qt::Unchecked);
 
-  QVBoxLayout * layout = new QVBoxLayout;
+  auto layout = new QVBoxLayout;
   layout->setContentsMargins(QMargins(0, 0, 0, 0));
 
   layout->addWidget(tree_);
@@ -500,8 +496,8 @@ void TopicDisplayWidget::onCurrentItemChanged(QTreeWidgetItem * curr)
     sd.lookup_name = curr->data(0, Qt::UserRole).toString();
     sd.display_name = curr->text(0);
 
-    QComboBox * combo = qobject_cast<QComboBox *>(tree_->itemWidget(curr, 1));
-    if (combo != NULL) {
+    auto combo = qobject_cast<QComboBox *>(tree_->itemWidget(curr, 1));
+    if (combo) {
       QString combo_text = combo->currentText();
       if (combo_text != "raw") {
         sd.topic += "/" + combo_text;
@@ -542,14 +538,14 @@ void TopicDisplayWidget::fill(DisplayFactory * factory)
   for (pg_it = groups.begin(); pg_it < groups.end(); ++pg_it) {
     const PluginGroup & pg = *pg_it;
 
-    QTreeWidgetItem * item = insertItem(pg.base_topic, false);
+    auto item = insertItem(pg.base_topic, false);
     item->setData(0, Qt::UserRole, pg.base_topic);
 
     QMap<QString, PluginGroup::Info>::const_iterator it;
     for (it = pg.plugins.begin(); it != pg.plugins.end(); ++it) {
-      const QString plugin_id = it.key();
+      const QString & plugin_id = it.key();
       const PluginGroup::Info & info = it.value();
-      auto * row = new QTreeWidgetItem(item);
+      auto row = new QTreeWidgetItem(item);
 
       auto plugin_info = factory->getPluginInfo(plugin_id);
 
@@ -561,7 +557,7 @@ void TopicDisplayWidget::fill(DisplayFactory * factory)
 
       // *INDENT-OFF* - uncrustify cannot deal with commas here
       if (info.topic_suffixes.size() > 1) {
-        EmbeddableComboBox * box = new EmbeddableComboBox(row, 1);
+        auto box = new EmbeddableComboBox(row, 1);
         connect(box, SIGNAL(itemClicked(QTreeWidgetItem *, int)),
           this, SLOT(onComboBoxClicked(QTreeWidgetItem *)));
         for (int i = 0; i < info.topic_suffixes.size(); ++i) {
@@ -617,7 +613,7 @@ QTreeWidgetItem * TopicDisplayWidget::insertItem(
     }
     // If no match, create a new child.
     if (!match) {
-      QTreeWidgetItem * new_child = new QTreeWidgetItem(current);
+      auto new_child = new QTreeWidgetItem(current);
       // Only expand first few levels of the tree
       new_child->setExpanded(3 > part_ind);
       new_child->setText(0, part);

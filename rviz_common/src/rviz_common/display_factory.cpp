@@ -35,7 +35,7 @@
 // TODO(wjwwood): replace with tinyxml2? implicit dependency?
 #include <tinyxml.h>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "include/rviz_common/display_group.hpp"
+#include "rviz_common/display_group.hpp"
 #include "rviz_common/logging.hpp"
 
 namespace rviz_common
