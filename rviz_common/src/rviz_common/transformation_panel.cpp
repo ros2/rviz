@@ -68,6 +68,7 @@ properties::PropertyTreeWidget * TransformationPanel::initializeTreeWidget()
   tree_model_ = new properties::PropertyTreeModel(root_property_);
   tree_widget_ = new properties::PropertyTreeWidget();
   tree_widget_->setSelectionMode(QTreeView::NoSelection);
+  tree_widget_->setFocusPolicy(Qt::NoFocus);
   tree_widget_->setModel(tree_model_);
   connect(
     tree_widget_,
