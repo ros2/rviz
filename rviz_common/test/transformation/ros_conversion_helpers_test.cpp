@@ -120,7 +120,7 @@ TEST(
 }
 
 TEST(
-  ros_conversion_helpers, fromRosPoseStamped_creates_an_rviz_common_pose_stamoed_from_a_ros_one) {
+  ros_conversion_helpers, fromRosPoseStamped_creates_an_rviz_common_pose_stamped_from_a_ros_one) {
   std_msgs::msg::Header header;
   header.stamp.sec = 10;
   header.stamp.nanosec = 20;
@@ -141,7 +141,7 @@ TEST(
 
 TEST(
   ros_conversion_helpers,
-  fromRostransformStamped_creates_an_rviz_common_transform_stamoed_from_a_ros_one) {
+  fromRostransformStamped_creates_an_rviz_common_transform_stamped_from_a_ros_one) {
   std_msgs::msg::Header header;
   header.stamp.sec = 10;
   header.stamp.nanosec = 20;
