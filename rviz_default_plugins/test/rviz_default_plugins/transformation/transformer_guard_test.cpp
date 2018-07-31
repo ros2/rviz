@@ -55,16 +55,20 @@ public:
   {
     display_ = std::make_shared<rviz_common::Display>();
     display_->initialize(context_.get());
+    base_transformer_internals_ =
+      std::make_shared<rviz_common::transformation::InternalFrameTransformer>();
+    tf_wrapper_ = std::make_shared<rviz_default_plugins::transformation::TFWrapper>(
+      std::make_shared<tf2_ros::Buffer>(), false);
+
     EXPECT_CALL(*context_, getFrameManager()).WillRepeatedly(Return(frame_manager_.get()));
+    EXPECT_CALL(*frame_manager_, getInternalPtr()).WillOnce(Return(
+        std::weak_ptr<rviz_common::transformation::InternalFrameTransformer>(
+          base_transformer_internals_)));
 
     transformer_guard_ = std::make_unique<
       rviz_default_plugins::transformation::TransformerGuard<
         rviz_default_plugins::transformation::TFWrapper>>(display_.get(), "TF");
     transformer_guard_->initialize(context_.get());
-    base_transformer_internals_ =
-      std::make_shared<rviz_common::transformation::InternalFrameTransformer>();
-    tf_wrapper_ = std::make_shared<rviz_default_plugins::transformation::TFWrapper>(
-      std::make_shared<tf2_ros::Buffer>(), false);
 
     display_->setEnabled(true);
   }
