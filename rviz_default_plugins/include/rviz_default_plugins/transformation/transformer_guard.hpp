@@ -36,6 +36,7 @@
 #include <QString>  // NOLINT
 #include <QObject>  //NOLINT
 
+#include "rviz_common/display.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/transformation/frame_transformer.hpp"
 #include "rviz_common/transformation/transformation_manager.hpp"
@@ -121,6 +122,7 @@ public:
     using_allowed_transformer_ = isAllowedTransformer(transformer_internal);
 
     if (!using_allowed_transformer_) {
+      display_disabled_by_user_ = !display_->isEnabled();
       disableDisplayAndSetErrorStatus();
     } else {
       enableDisplayAndDeleteErrorStatus();
@@ -136,6 +138,13 @@ private:
     }
   }
 
+  void displayEnabledChanged() override
+  {
+    if (!using_allowed_transformer_) {
+      disableDisplayAndSetErrorStatus();
+    }
+  }
+
   virtual bool isAllowedTransformer(
     rviz_common::transformation::InternalFrameTransformerPtr transformer_internals)
   {
@@ -143,12 +152,6 @@ private:
       std::dynamic_pointer_cast<AllowedTransformerType>(transformer_internals.lock());
 
     return static_cast<bool>(transformer);
-  }
-
-  void disableDisplayAndSetErrorStatus()
-  {
-    display_disabled_by_user_ = !display_->isEnabled();
-    Q_EMIT (display_->changed());
   }
 
   void setErrorStatus()
@@ -168,12 +171,10 @@ private:
     }
   }
 
-  void displayEnabledChanged() override
+  void disableDisplayAndSetErrorStatus()
   {
-    if (!using_allowed_transformer_) {
-      display_->setEnabled(false);
-      setErrorStatus();
-    }
+    display_->setEnabled(false);
+    setErrorStatus();
   }
 };
 
