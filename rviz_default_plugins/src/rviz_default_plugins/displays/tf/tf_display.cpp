@@ -87,7 +87,7 @@ TFDisplay::TFDisplay()
   changing_single_frame_enabled_state_(false),
   transformer_guard_(
     std::make_unique<rviz_default_plugins::transformation::TransformerGuard<
-      rviz_default_plugins::transformation::TFWrapper>>(this, "TF"))
+      rviz_default_plugins::transformation::TFFrameTransformer>>(this, "TF"))
 {
   show_names_property_ = new BoolProperty(
     "Show Names",

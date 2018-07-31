@@ -49,6 +49,7 @@
 #include "rviz_common/display.hpp"
 
 #include "rviz_default_plugins/transformation/transformer_guard.hpp"
+#include "rviz_default_plugins/transformation/tf_frame_transformer.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 
 namespace Ogre
@@ -151,7 +152,7 @@ private:
   bool changing_single_frame_enabled_state_;
 
   std::unique_ptr<rviz_default_plugins::transformation::TransformerGuard<
-      rviz_default_plugins::transformation::TFWrapper>> transformer_guard_;
+      rviz_default_plugins::transformation::TFFrameTransformer>> transformer_guard_;
 
   void updateRelativePositionAndOrientation(
     const FrameInfo * frame, std::shared_ptr<tf2::BufferCore> tf_buffer) const;

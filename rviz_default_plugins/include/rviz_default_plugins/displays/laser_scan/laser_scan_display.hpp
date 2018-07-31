@@ -42,6 +42,7 @@
 #include "rviz_common/transformation/frame_transformer.hpp"
 #include "rviz_default_plugins/transformation/transformer_guard.hpp"
 #include "rviz_default_plugins/transformation/tf_wrapper.hpp"
+#include "rviz_default_plugins/transformation/tf_frame_transformer.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 
 namespace rviz_common
@@ -87,7 +88,7 @@ protected:
 
 private:
   std::unique_ptr<rviz_default_plugins::transformation::TransformerGuard<
-      rviz_default_plugins::transformation::TFWrapper>> transformer_guard_;
+      rviz_default_plugins::transformation::TFFrameTransformer>> transformer_guard_;
 };
 
 }  // namespace displays

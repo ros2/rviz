@@ -84,7 +84,7 @@ RobotModelDisplay::RobotModelDisplay()
   time_since_last_transform_(0.0f),
   transformer_guard_(
     std::make_unique<rviz_default_plugins::transformation::TransformerGuard<
-      rviz_default_plugins::transformation::TFWrapper>>(this, "TF"))
+      rviz_default_plugins::transformation::TFFrameTransformer>>(this, "TF"))
 {
   visual_enabled_property_ = new Property("Visual Enabled", true,
       "Whether to display the visual representation of the robot.",

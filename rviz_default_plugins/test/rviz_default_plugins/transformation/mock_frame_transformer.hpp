@@ -29,8 +29,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__MOCK_FRAME_MANAGER_HPP_
-#define RVIZ_DEFAULT_PLUGINS__MOCK_FRAME_MANAGER_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__TRANSFORMATION__MOCK_FRAME_TRANSFORMER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__TRANSFORMATION__MOCK_FRAME_TRANSFORMER_HPP_
 
 #include <gmock/gmock.h>
 
@@ -38,42 +38,23 @@
 #include <string>
 #include <vector>
 
-#include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/transformation/frame_transformer.hpp"
 
-class MockFrameManager : public rviz_common::FrameManagerIface
+class MockFrameTransformer : public rviz_common::transformation::FrameTransformer
 {
 public:
-  MOCK_METHOD1(setFixedFrame, void(const std::string &));
-  MOCK_METHOD1(setPause, void(bool));
-  MOCK_METHOD0(getPause, bool());
-  MOCK_METHOD1(setSyncMode, void(SyncMode));
-  MOCK_METHOD0(getSyncMode, SyncMode());
-  MOCK_METHOD1(syncTime, void(rclcpp::Time));
-  MOCK_METHOD0(getTime, rclcpp::Time());
-
-  MOCK_METHOD3(getTransform, bool(const std::string &, Ogre::Vector3 &, Ogre::Quaternion &));
-  MOCK_METHOD4(getTransform, bool(
-      const std::string &, rclcpp::Time, Ogre::Vector3 &, Ogre::Quaternion &));
-  MOCK_METHOD5(transform, bool(
-      const std::string &,
-      rclcpp::Time,
-      const geometry_msgs::msg::Pose &,
-      Ogre::Vector3 &,
-      Ogre::Quaternion &));
-  MOCK_METHOD0(update, void());
-  MOCK_METHOD2(frameHasProblems, bool(const std::string &, std::string &));
-  MOCK_METHOD2(transformHasProblems, bool(const std::string &, std::string &));
-  MOCK_METHOD3(transformHasProblems, bool(const std::string &, rclcpp::Time, std::string &));
-  MOCK_METHOD0(getFixedFrame, const std::string & ());
-  MOCK_METHOD0(getConnector, rviz_common::transformation::TransformationLibraryConnectorPtr());
-  MOCK_METHOD0(getTransformer, std::shared_ptr<rviz_common::transformation::FrameTransformer>());
+  MOCK_METHOD1(initialize, void(rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr));
+  MOCK_METHOD0(clear, void());
   MOCK_METHOD0(getAllFrameNames, std::vector<std::string>());
-  MOCK_METHOD1(
-    setTransformerPlugin,
-    void(std::shared_ptr<rviz_common::transformation::FrameTransformer> transformer));
-
-  MOCK_METHOD0(fixedFrameChanged, void());
+  MOCK_METHOD2(
+    transform, rviz_common::transformation::PoseStamped(
+      const rviz_common::transformation::PoseStamped &, const std::string &));
+  MOCK_METHOD2(transformIsAvailable, bool(const std::string &, const std::string &));
+  MOCK_METHOD4(
+    transformHasProblems,
+    bool(const std::string &, const std::string &, const rclcpp::Time &, std::string &));
+  MOCK_METHOD2(frameHasProblems, bool(const std::string &, std::string &));
+  MOCK_METHOD0(getConnector, rviz_common::transformation::TransformationLibraryConnectorPtr());
 };
 
-#endif  // RVIZ_DEFAULT_PLUGINS__MOCK_FRAME_MANAGER_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__TRANSFORMATION__MOCK_FRAME_TRANSFORMER_HPP_

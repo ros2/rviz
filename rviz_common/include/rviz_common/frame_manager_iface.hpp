@@ -238,8 +238,11 @@ public:
   /// Return the current fixed frame name.
   virtual const std::string & getFixedFrame() = 0;
 
-  /// Return a shared pointer to the internal transformation object.
+  /// Return a weak pointer to the internal transformation object.
   virtual transformation::TransformationLibraryConnectorPtr getConnector() = 0;
+
+  /// Return a shared pointer to the transformer object.
+  virtual std::shared_ptr<transformation::FrameTransformer> getTransformer() = 0;
 
 // TODO(wjwwood): figure out how to replace FilgerFailureReason here
 #if 0
