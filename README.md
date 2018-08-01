@@ -60,20 +60,22 @@ Make sure to read the developer guide below and the migration guide.
 ### New features
 #### Pluggable transformation library
 
-In RViz for ROS 1 the frames transformation library used is tf2 (detailed information about it can be found [here](http://wiki.ros.org/tf2)), and it is not possible to do without it.
-Contrary to that, in RViz for ROS 2 the frames transformation library is now pluggable, meaning that it is possible to have different libraries, in the form of plugins, and change the one currently in use directly from RViz, via a new panel in the GUI.
-Therefore, developers can now write and use their own plugins to accomplish the tasks until now performed by tf2.
+In RViz for ROS 1 the frames transformation library used is tf2 (detailed information about it can be found [here](http://wiki.ros.org/tf2)).
+In RViz for ROS 2 the frames transformation library is now pluggable, meaning that different transformation library plugins can be loaded and changed dynamically in the gui.
+Developers can create and use their own plugins to provide custom transformation behavior.
 
-Two plugins are delivered with RViz:
-- a plugin for tf2 (`TFFrameTransformer`, in `rviz_default_plugins`), which provides the standard tf2 functionality and which is used as a default, if no other plugin is specified in the RViz config;
-- a trivial plugin (`IdentityFrameTransformer`, in `rviz_common`), which allows all transformations and always performs identity transforms. This plugin is used by default if for some reason the tf2 plugin is not available and no other valid plugin is specified.
+Two plugins are bundled with RViz:
+- a plugin for tf2 (`TFFrameTransformer`, in `rviz_default_plugins`), which provides the standard tf2 functionality and which is used as a default
+- a trivial plugin (`IdentityFrameTransformer`, in `rviz_common`), which always performs identity transforms.
+  This plugin is used by default if the tf2 plugin is not available and no other valid plugin is specified.
 
-As anticipated, in order for the user to choose the plugin to use, RViz provides a dedicated panel: the `Transformation` panel, which behaves exactly as all other panels.
+As anticipated, in order for the user to choose the plugin to use, RViz provides a dedicated panel: the `Transformation` panel.
 
-It must also be noted that not all transformation plugins are necessarily compatible with all RViz displays (e.g. some of the default displays, like the TF display, can only work with tf2).
-In order to take this possibility into account, the `TransformerGuard` class is provided. Properly incorporating an object of this kind in the problematic display will make sure that the display will be disabled and won't function in case the wrong transformer is used.
+Note: Not all transformation plugins are necessarily compatible with all RViz displays (e.g. some of the default displays, like the TF display, can only work with tf2).
+In order to take this possibility into account, the `TransformerGuard` class is provided.
+Adding it to a display ensures that the display will be disabled and won't function in case the wrong transformer is used.
 
-More detailed information on how to write a transformation plugin and on how to handle displays which cannot work with all plugins can be found in the [plugin development guide](docs/plugin_development.md).
+More detailed information on how to write a transformation plugin and on how to handle transformation specific displays can be found in the [plugin development guide](docs/plugin_development.md).
 
 ## Developer Guide
 
@@ -86,7 +88,7 @@ https://github.com/ros2/ros2/wiki/Installation
 
 #### Building RViz in a separate workspace
 
-When developing for RViz, it can be beneficial to build it in a separate workspace. 
+When developing for RViz, it can be beneficial to build it in a separate workspace.
 
 **Note:** When building the current ros2 branch from source, the latest ROS 2 release for all dependencies might not be sufficient: it could be necessary to build the ROS 2 master branch.
 Make sure to have a source build of ROS 2 available (see installation procedure above).
