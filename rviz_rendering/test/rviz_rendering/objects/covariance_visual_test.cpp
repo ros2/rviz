@@ -35,7 +35,14 @@
 #include <tuple>
 #include <vector>
 
+#ifdef _WIN32
+#pragma warning(push)
+#pragma warning(disable : 4996)
 #include <Ogre.h>
+#pragma warning(pop)
+#else
+#include <Ogre.h>
+#endif
 
 #include "rviz_rendering/objects/covariance_visual.hpp"
 #include "test/rviz_rendering/matcher.hpp"
@@ -67,7 +74,7 @@ protected:
     covariance_visual_ = std::make_unique<rviz_rendering::CovarianceVisual>(
       scene_manager, root_node, false, true, .1f, .1f, offset);
     covariance_visual_->setPosition(position);
-    covariance_visual_->setCovariance(Ogre::Quaternion(1.57, 0.0, 0.0, 1.0), covariances);
+    covariance_visual_->setCovariance(Ogre::Quaternion(1.57f, 0.0, 0.0, 1.0f), covariances);
 
     covariance_visual_node_ = dynamic_cast<Ogre::SceneNode *>(root_node->getChild(0));
 
@@ -172,7 +179,7 @@ TEST_F(CovarianceVisualTestFixture, covariance_visual_2D)
   auto all_orientation_uncertainties = findAllCones(covariance_visual_node_);
   ASSERT_THAT(all_orientation_uncertainties, SizeIs(1));
   assertCovarianceOrientationOffsetIsPresent(
-    all_orientation_uncertainties, Ogre::Vector3(0.49115, 0, 0), offset);
+    all_orientation_uncertainties, Ogre::Vector3(0.49115f, 0, 0), offset);
   EXPECT_TRUE(all_orientation_uncertainties[0]->isVisible());
 
   all_orientation_uncertainties = findAllCylinders(covariance_visual_node_);

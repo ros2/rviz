@@ -34,9 +34,16 @@
 #include <string>
 #include <vector>
 
-#include <OgreMovableObject.h>
+#ifdef _WIN32
+# pragma warning(push)
+# pragma warning(disable:4251)
+#endif
 #include <OgreFont.h>
 #include <OgreFontManager.h>
+#ifdef _WIN32
+# pragma warning(pop)
+#endif
+#include <OgreMovableObject.h>
 #include <OgreVector3.h>
 
 #include "rviz_rendering/objects/movable_text.hpp"

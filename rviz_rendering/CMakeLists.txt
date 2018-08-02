@@ -7,11 +7,23 @@ if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)
 endif()
 
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+endif()
+
+# Tests currently only run on OS X @ OSRF jenkins
+# Enable on Linux by providing a display, enable on Windows via EnableDisplayTests=True
 option(EnableDisplayTests "EnableDisplayTests")
 set(DisplayTests "False" CACHE STRING "DisplayTestsVariable")
 
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+if(DEFINED ENV{DISPLAY})
+  set(DISPLAYPRESENT TRUE)
+endif()
+
+if(APPLE OR DISPLAYPRESENT OR EnableDisplayTests STREQUAL "True")
+  message(STATUS "Enabling tests requiring a display")
+else()
+  set(SKIP_DISPLAY_TESTS "SKIP_TEST")
 endif()
 
 find_package(ament_cmake REQUIRED)
@@ -134,50 +146,17 @@ install(
   DESTINATION include
 )
 
-# add_executable(rendering_example src/examples/rendering_example.cpp)
-# target_link_libraries(rendering_example rviz_rendering Qt5::Widgets)
-# set_target_properties(rendering_example PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
-
-# # TODO(wjwwood): find a way to make this optional or to run without "deploying" the
-# #                necessary dlls and stuff to the bin folder.
-# #                see:
-# # https://stackoverflow.com/questions/41193584/deploy-all-qt-dependencies-when-building#41199492
-# if(TARGET Qt5::windeployqt)
-#   # execute windeployqt in a tmp directory after build
-#   add_custom_command(TARGET rendering_example
-#     POST_BUILD
-#     COMMAND ${CMAKE_COMMAND} -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
-#     COMMAND set PATH=%PATH%$<SEMICOLON>${qt5_install_prefix}/bin
-#     COMMAND
-#     Qt5::windeployqt
-#     --dir "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
-#     "$<TARGET_FILE_DIR:rendering_example>/$<TARGET_FILE_NAME:rendering_example>"
-#   )
-
-#   # copy deployment directory during installation
-#   install(
-#     DIRECTORY
-#     "${CMAKE_CURRENT_BINARY_DIR}/windeployqt/"
-#     DESTINATION bin
-#   )
-# endif()
-
 set(rviz_rendering_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/cmake")
 include(${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/register_rviz_ogre_media_exports_hook-extras.cmake)
 
 install(DIRECTORY src/cmake
   DESTINATION share/${PROJECT_NAME})
 
-# install(TARGETS rendering_example DESTINATION bin)
-
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/ogre_media"
   DESTINATION "share/${PROJECT_NAME}"
   USE_SOURCE_PERMISSIONS)
 
 if(BUILD_TESTING)
-  find_package(ament_cmake_gmock REQUIRED)
-  find_package(ament_cmake_gtest REQUIRED)
-
   # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back
   find_package(ament_cmake_cppcheck REQUIRED)
   find_package(ament_cmake_cpplint REQUIRED)
@@ -188,95 +167,90 @@ if(BUILD_TESTING)
   ament_lint_cmake()
   ament_uncrustify()
 
+  find_package(ament_cmake_gmock REQUIRED)
+  find_package(ament_cmake_gtest REQUIRED)
+
   ament_add_gmock(string_helper_test test/rviz_rendering/string_helper_test.cpp)
   if(TARGET string_helper_test)
     target_link_libraries(string_helper_test rviz_rendering)
   endif()
 
-  if(DEFINED ENV{DISPLAY})
-    set(DISPLAYPRESENT TRUE)
+  ament_add_gmock(point_cloud_test_target
+    test/rviz_rendering/objects/point_cloud_test.cpp
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET point_cloud_test_target)
+    target_link_libraries(point_cloud_test_target
+      rviz_ogre_vendor::OgreMain
+      rviz_rendering
+      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+    )
   endif()
 
-  if(APPLE OR DISPLAYPRESENT OR EnableDisplayTests STREQUAL "TRUE")
-    message(STATUS "Enabling tests requiring a display")
+  ament_add_gmock(point_cloud_renderable_test_target
+    test/rviz_rendering/objects/point_cloud_renderable_test.cpp
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET point_cloud_renderable_test_target)
+    target_link_libraries(point_cloud_renderable_test_target
+      rviz_ogre_vendor::OgreMain
+      rviz_rendering
+      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+    )
+  endif()
 
-    ament_add_gmock(point_cloud_test_target
-      test/rviz_rendering/objects/point_cloud_test.cpp
-      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-    if(TARGET point_cloud_test_target)
-      target_link_libraries(point_cloud_test_target
-        rviz_ogre_vendor::OgreMain
-        rviz_rendering
-        Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
-      )
-    endif()
+  ament_add_gmock(billboard_line_test_target
+    test/rviz_rendering/objects/billboard_line_test.cpp
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET billboard_line_test_target)
+    target_link_libraries(billboard_line_test_target
+      rviz_ogre_vendor::OgreMain
+      rviz_rendering
+      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+    )
+  endif()
 
-    ament_add_gmock(point_cloud_renderable_test_target
-      test/rviz_rendering/objects/point_cloud_renderable_test.cpp
-      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-    if(TARGET point_cloud_renderable_test_target)
-      target_link_libraries(point_cloud_renderable_test_target
-        rviz_ogre_vendor::OgreMain
-        rviz_rendering
-        Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
-      )
-    endif()
+  ament_add_gmock(covariance_visual_test_target
+    test/rviz_rendering/objects/covariance_visual_test.cpp
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET covariance_visual_test_target)
+    target_link_libraries(covariance_visual_test_target
+      rviz_ogre_vendor::OgreMain
+      rviz_rendering
+      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+    )
+  endif()
 
-    ament_add_gmock(billboard_line_test_target
-      test/rviz_rendering/objects/billboard_line_test.cpp
-      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-    if(TARGET billboard_line_test_target)
-      target_link_libraries(billboard_line_test_target
-        rviz_ogre_vendor::OgreMain
-        rviz_rendering
-        Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
-      )
-    endif()
+  ament_add_gmock(grid_test_target
+    test/rviz_rendering/objects/grid_test.cpp
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET grid_test_target)
+    target_link_libraries(grid_test_target
+      rviz_ogre_vendor::OgreMain
+      rviz_rendering
+      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+    )
+  endif()
 
-    ament_add_gmock(covariance_visual_test_target
-      test/rviz_rendering/objects/covariance_visual_test.cpp
-      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-    if(TARGET covariance_visual_test_target)
-      target_link_libraries(covariance_visual_test_target
-        rviz_ogre_vendor::OgreMain
-        rviz_rendering
-        Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
-      )
-    endif()
+  ament_add_gmock(movable_text_test_target
+    test/rviz_rendering/objects/movable_text_test.cpp
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET movable_text_test_target)
+    target_link_libraries(movable_text_test_target
+      rviz_ogre_vendor::OgreMain
+      rviz_ogre_vendor::OgreOverlay
+      rviz_rendering
+      Qt5::Widgets
+    )
+  endif()
 
-    ament_add_gmock(grid_test_target
-      test/rviz_rendering/objects/grid_test.cpp
-      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-    if(TARGET grid_test_target)
-      target_link_libraries(grid_test_target
-        rviz_ogre_vendor::OgreMain
-        rviz_rendering
-        Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
-      )
-    endif()
-
-    ament_add_gmock(movable_text_test_target
-      test/rviz_rendering/objects/movable_text_test.cpp
-      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-    if(TARGET movable_text_test_target)
-      target_link_libraries(movable_text_test_target
-        rviz_ogre_vendor::OgreMain
-        rviz_ogre_vendor::OgreOverlay
-        rviz_rendering
-        Qt5::Widgets
-      )
-    endif()
-
-    ament_add_gmock(line_test_target
-      test/rviz_rendering/objects/line_test.cpp
-      APPEND_ENV AMENT_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} PATH=${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor/bin)
-    if(TARGET line_test_target)
-      target_link_libraries(line_test_target
-        rviz_ogre_vendor::OgreMain
-        rviz_rendering
-        Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
-      )
-    endif()
+  ament_add_gmock(line_test_target
+    test/rviz_rendering/objects/line_test.cpp
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET line_test_target)
+    target_link_libraries(line_test_target
+      rviz_ogre_vendor::OgreMain
+      rviz_rendering
+      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+    )
   endif()
 endif()
 
