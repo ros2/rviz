@@ -77,6 +77,7 @@ void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPt
       *scan,
       *cloud,
       *buffer,
+      -1,
       laser_geometry::channel_option::Intensity);
   } catch (tf2::TransformException & exception) {
     setMissingTransformToFixedFrame(scan->header.frame_id);
