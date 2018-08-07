@@ -579,7 +579,7 @@ if(BUILD_TESTING)
   endif()
 
   ament_add_gmock(transformer_guard_test
-    test/rviz_default_plugins/displays/transformer_gurad_test.cpp
+    test/rviz_default_plugins/transformation/transformer_guard_test.cpp
     test/rviz_default_plugins/displays/display_test_fixture.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET transformer_guard_test)
