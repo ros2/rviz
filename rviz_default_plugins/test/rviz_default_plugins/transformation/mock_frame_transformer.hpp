@@ -43,7 +43,8 @@
 class MockFrameTransformer : public rviz_common::transformation::FrameTransformer
 {
 public:
-  MOCK_METHOD1(initialize, void(rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr));
+  MOCK_METHOD2(initialize, void(
+    rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr, rclcpp::Clock::SharedPtr));
   MOCK_METHOD0(clear, void());
   MOCK_METHOD0(getAllFrameNames, std::vector<std::string>());
   MOCK_METHOD2(

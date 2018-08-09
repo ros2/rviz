@@ -58,8 +58,10 @@ public:
     display_ = std::make_shared<rviz_common::Display>();
     display_->initialize(context_.get());
     base_transformer_ = std::make_shared<MockFrameTransformer>();
-    auto tf_wrapper = std::make_shared<rviz_default_plugins::transformation::TFWrapper>(
-      std::make_shared<tf2_ros::Buffer>(), false);
+    auto clock = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);
+    auto tf_wrapper = std::make_shared<rviz_default_plugins::transformation::TFWrapper>();
+    tf_wrapper->initialize(
+      clock, std::weak_ptr<rviz_common::ros_integration::RosNodeAbstractionIface>(), false);
     tf_transformer_ = std::make_shared<rviz_default_plugins::transformation::TFFrameTransformer>(
       tf_wrapper);
 

@@ -74,7 +74,9 @@ public:
   /**
    * \brief The pluginlib needs a no-parameters constructor. The initialization of a
    * FrameTransformer object is therefore delegated to this method */
-  virtual void initialize(ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node) = 0;
+  virtual void initialize(
+    ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
+    rclcpp::Clock::SharedPtr clock) = 0;
 
   /** \brief Method thought to reset the internal implementation object */
   virtual void clear() = 0;

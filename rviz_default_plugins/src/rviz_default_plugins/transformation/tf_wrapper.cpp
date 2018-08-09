@@ -38,11 +38,9 @@ namespace rviz_default_plugins
 namespace transformation
 {
 
-TFWrapper::TFWrapper(std::shared_ptr<tf2_ros::Buffer> buffer, bool using_dedicated_thread)
-: buffer_(buffer), tf_listener_(nullptr)
-{
-  buffer_->setUsingDedicatedThread(using_dedicated_thread);
-}
+TFWrapper::TFWrapper()
+:buffer_(nullptr), tf_listener_(nullptr)
+{}
 
 void TFWrapper::transform(
   const geometry_msgs::msg::PoseStamped & pose_in,
@@ -86,9 +84,16 @@ std::shared_ptr<tf2_ros::Buffer> TFWrapper::getBuffer()
   return buffer_;
 }
 
-void TFWrapper::setListener(std::shared_ptr<tf2_ros::TransformListener> tf_listener)
+void TFWrapper::initialize(
+  rclcpp::Clock::SharedPtr clock,
+  rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
+  bool using_dedicated_thread)
 {
-  tf_listener_ = tf_listener;
+  buffer_ = std::make_shared<tf2_ros::Buffer>(clock);
+  buffer_->setUsingDedicatedThread(using_dedicated_thread);
+
+  tf_listener_ = std::make_shared<tf2_ros::TransformListener>(
+    *buffer_, rviz_ros_node.lock()->get_raw_node(), false);
 }
 
 void TFWrapper::clear()

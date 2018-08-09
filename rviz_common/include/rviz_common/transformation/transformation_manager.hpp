@@ -53,7 +53,9 @@ class TransformationManager : public QObject
   Q_OBJECT
 
 public:
-  explicit TransformationManager(ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node);
+  explicit TransformationManager(
+    ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
+    rclcpp::Clock::SharedPtr clock);
 
   /// Load configuration from a Config object.
   void load(const Config & config);
@@ -80,6 +82,7 @@ private:
   std::shared_ptr<FrameTransformer> current_transformer_;
 
   ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node_;
+  rclcpp::Clock::SharedPtr clock_;
 };
 
 }  // namespace transformation
