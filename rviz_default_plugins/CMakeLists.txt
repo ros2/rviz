@@ -42,6 +42,9 @@ else()
   set(SKIP_VISUAL_TESTS "SKIP_TEST")
 endif()
 
+if(MSVC)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+endif()
 
 # Qt5 boilerplate options from http://doc.qt.io/qt-5/cmake-manual.html
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -96,6 +99,7 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/polygon/polygon_display.hpp
   include/rviz_default_plugins/displays/pose/pose_display.hpp
   include/rviz_default_plugins/displays/pose_array/pose_array_display.hpp
+  include/rviz_default_plugins/displays/range/range_display.hpp
   include/rviz_default_plugins/displays/robot_model/robot_model_display.hpp
   include/rviz_default_plugins/displays/tf/frame_info.hpp
   include/rviz_default_plugins/displays/tf/tf_display.hpp
@@ -158,6 +162,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/pose/pose_display_selection_handler.cpp
   src/rviz_default_plugins/displays/pose_array/pose_array_display.cpp
   src/rviz_default_plugins/displays/pose_array/flat_arrows_array.cpp
+  src/rviz_default_plugins/displays/range/range_display.cpp
   src/rviz_default_plugins/displays/robot_model/robot_model_display.cpp
   src/rviz_default_plugins/displays/tf/frame_info.cpp
   src/rviz_default_plugins/displays/tf/frame_selection_handler.cpp
@@ -515,6 +520,16 @@ if(BUILD_TESTING)
     target_link_libraries(pose_tool_test ${TEST_LINK_LIBRARIES})
   endif()
 
+  ament_add_gmock(range_display_test
+    test/rviz_default_plugins/displays/range/range_display_test.cpp
+    test/rviz_default_plugins/displays/display_test_fixture.cpp
+    test/rviz_default_plugins/scene_graph_introspection_helper.cpp
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET range_display_test)
+    target_include_directories(range_display_test PUBLIC ${TEST_INCLUDE_DIRS})
+    target_link_libraries(range_display_test ${TEST_LINK_LIBRARIES})
+  endif()
+
   ament_add_gmock(robot_test
     test/rviz_default_plugins/robot/robot_test.cpp
     ${SKIP_DISPLAY_TESTS})
@@ -780,6 +795,20 @@ if(BUILD_TESTING)
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(pose_display_visual_test
+      ${TEST_LINK_LIBRARIES}
+      rviz_visual_testing_framework::rviz_visual_testing_framework)
+  endif()
+
+  ament_add_gtest(range_display_visual_test
+    test/rviz_default_plugins/displays/range/range_display_visual_test.cpp
+    test/rviz_default_plugins/page_objects/range_display_page_object.cpp
+    ${SKIP_VISUAL_TESTS}
+    TIMEOUT 180)
+  if(TARGET range_display_visual_test)
+    target_include_directories(range_display_visual_test PUBLIC
+      ${TEST_INCLUDE_DIRS}
+      ${rviz_visual_testing_framework_INCLUDE_DIRS})
+    target_link_libraries(range_display_visual_test
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
