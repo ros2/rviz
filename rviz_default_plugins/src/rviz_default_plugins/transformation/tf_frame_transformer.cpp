@@ -43,7 +43,7 @@ namespace transformation
 {
 
 TFFrameTransformer::TFFrameTransformer()
-: tf_wrapper_(std::make_shared<TFWrapper>(std::make_shared<tf2_ros::Buffer>(), true))
+: tf_wrapper_(std::make_shared<TFWrapper>())
 {}
 
 TFFrameTransformer::TFFrameTransformer(std::shared_ptr<TFWrapper> wrapper)
@@ -136,10 +136,10 @@ rviz_common::transformation::TransformationLibraryConnectorPtr TFFrameTransforme
 }
 
 void TFFrameTransformer::initialize(
-  rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node)
+  rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
+  rclcpp::Clock::SharedPtr clock)
 {
-  tf_wrapper_->setListener(std::make_shared<tf2_ros::TransformListener>(
-      *tf_wrapper_->getBuffer(), rviz_ros_node.lock()->get_raw_node(), false));
+  tf_wrapper_->initialize(clock, rviz_ros_node, true);
 }
 
 void TFFrameTransformer::clear()

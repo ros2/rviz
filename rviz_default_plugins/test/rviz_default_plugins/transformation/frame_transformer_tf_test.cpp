@@ -44,10 +44,12 @@ class FrameTransformerTfFixture : public testing::Test
 public:
   FrameTransformerTfFixture()
   {
-    wrapper_ = std::make_shared<rviz_default_plugins::transformation::TFWrapper>(
-      std::make_shared<tf2_ros::Buffer>(), false);
+    auto clock = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);
+    tf_wrapper_ = std::make_shared<rviz_default_plugins::transformation::TFWrapper>();
+    tf_wrapper_->initialize(
+      clock, std::weak_ptr<rviz_common::ros_integration::RosNodeAbstractionIface>(), false);
     tf_transformer_ = std::make_unique<rviz_default_plugins::transformation::TFFrameTransformer>(
-      wrapper_);
+      tf_wrapper_);
   }
 
   geometry_msgs::msg::TransformStamped getTransformStamped(
@@ -83,7 +85,7 @@ public:
     return pose_stamped;
   }
 
-  std::shared_ptr<rviz_default_plugins::transformation::TFWrapper> wrapper_;
+  std::shared_ptr<rviz_default_plugins::transformation::TFWrapper> tf_wrapper_;
   std::unique_ptr<rviz_default_plugins::transformation::TFFrameTransformer> tf_transformer_;
 };
 
@@ -93,7 +95,7 @@ TEST_F(FrameTransformerTfFixture, frameHasProblems_returns_true_if_frame_does_no
 }
 
 TEST_F(FrameTransformerTfFixture, frameHasProblems_returns_false_if_frame_does_exist) {
-  wrapper_->getBuffer()->setTransform(getTransformStamped(), "test", true);
+  tf_wrapper_->getBuffer()->setTransform(getTransformStamped(), "test", true);
 
   std::string error;
   EXPECT_FALSE(tf_transformer_->frameHasProblems("fixed_frame", error));
@@ -101,7 +103,7 @@ TEST_F(FrameTransformerTfFixture, frameHasProblems_returns_false_if_frame_does_e
 }
 
 TEST_F(FrameTransformerTfFixture, transformHasProblems_returns_true_if_frame_does_not_exist) {
-  wrapper_->getBuffer()->setTransform(getTransformStamped(), "test", true);
+  tf_wrapper_->getBuffer()->setTransform(getTransformStamped(), "test", true);
 
   std::string error;
   std::string expected_error = "For frame [another_frame]: Frame [another_frame] does not exist";
@@ -111,7 +113,7 @@ TEST_F(FrameTransformerTfFixture, transformHasProblems_returns_true_if_frame_doe
 }
 
 TEST_F(FrameTransformerTfFixture, transformHasProblems_returns_true_if_fixed_frame_does_not_exist) {
-  wrapper_->getBuffer()->setTransform(getTransformStamped(), "test", true);
+  tf_wrapper_->getBuffer()->setTransform(getTransformStamped(), "test", true);
 
   std::string error;
   std::string expected_error =
@@ -122,8 +124,8 @@ TEST_F(FrameTransformerTfFixture, transformHasProblems_returns_true_if_fixed_fra
 }
 
 TEST_F(FrameTransformerTfFixture, transformHasProblems_returns_true_if_transform_does_not_exist) {
-  wrapper_->getBuffer()->setTransform(getTransformStamped(), "test", true);
-  wrapper_->getBuffer()->setTransform(getTransformStamped("third_frame",
+  tf_wrapper_->getBuffer()->setTransform(getTransformStamped(), "test", true);
+  tf_wrapper_->getBuffer()->setTransform(getTransformStamped("third_frame",
     "fourth_frame"), "test", true);
 
   std::string error;
@@ -137,7 +139,7 @@ TEST_F(FrameTransformerTfFixture, transformHasProblems_returns_true_if_transform
 }
 
 TEST_F(FrameTransformerTfFixture, transformHasProblems_returns_false_if_transform_exists) {
-  wrapper_->getBuffer()->setTransform(getTransformStamped(), "test", true);
+  tf_wrapper_->getBuffer()->setTransform(getTransformStamped(), "test", true);
 
   std::string error;
   EXPECT_FALSE(tf_transformer_->transformHasProblems(

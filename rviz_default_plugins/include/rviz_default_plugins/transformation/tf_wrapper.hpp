@@ -50,7 +50,7 @@ class TFWrapper
 {
 public:
   RVIZ_DEFAULT_PLUGINS_PUBLIC
-  TFWrapper(std::shared_ptr<tf2_ros::Buffer> buffer, bool using_dedicated_thread);
+  TFWrapper();
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   ~TFWrapper() override = default;
 
@@ -82,7 +82,10 @@ public:
   bool frameExists(const std::string & frame);
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
-  void setListener(std::shared_ptr<tf2_ros::TransformListener> tf_listener);
+  void initialize(
+    rclcpp::Clock::SharedPtr clock,
+    rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
+    bool using_dedicated_thread);
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   void clear();

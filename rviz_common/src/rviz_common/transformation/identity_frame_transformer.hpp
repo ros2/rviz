@@ -55,7 +55,9 @@ public:
   IdentityFrameTransformer() = default;
   ~IdentityFrameTransformer() override = default;
 
-  void initialize(ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node) override;
+  void initialize(
+    ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
+    rclcpp::Clock::SharedPtr clock) override;
 
   void clear() override;
 
