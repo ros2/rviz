@@ -58,6 +58,8 @@ namespace tools
 MeasureTool::MeasureTool()
 : is_line_started_(false), length_(-1)
 {
+  shortcut_key_ = 'n';
+
   color_property_ = new rviz_common::properties::ColorProperty(
     "Line color", Qt::darkYellow,
     "The topic on which to publish points.",

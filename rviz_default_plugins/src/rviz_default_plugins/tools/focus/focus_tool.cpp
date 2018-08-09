@@ -67,7 +67,9 @@ namespace tools
 
 FocusTool::FocusTool()
 : Tool()
-{}
+{
+  shortcut_key_ = 'c';
+}
 
 FocusTool::~FocusTool() = default;
 
