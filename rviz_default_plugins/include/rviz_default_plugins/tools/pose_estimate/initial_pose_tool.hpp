@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,46 +28,54 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_INITIAL_POSE_TOOL_H
-#define RVIZ_INITIAL_POSE_TOOL_H
+#ifndef RVIZ_DEFAULT_PLUGINS__TOOLS__POSE_ESTIMATE__INITIAL_POSE_TOOL_HPP_
+#define RVIZ_DEFAULT_PLUGINS__TOOLS__POSE_ESTIMATE__INITIAL_POSE_TOOL_HPP_
 
-#ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
-# include <QObject>
+#include <QObject>
 
-# include <ros/ros.h>
+#include "geometry_msgs/msg/pose_with_covariance_stamped.hpp"
+#include "rclcpp/node.hpp"
 
-# include "rviz/default_plugin/tools/pose_tool.h"
-#endif
+#include "rviz_default_plugins/tools/pose/pose_tool.hpp"
+#include "rviz_default_plugins/visibility_control.hpp"
 
-namespace rviz
+namespace rviz_common
 {
-class Arrow;
 class DisplayContext;
-class StringProperty;
-
-class InitialPoseTool: public PoseTool
+namespace properties
 {
-Q_OBJECT
+class StringProperty;
+}  // namespace properties
+}  // namespace rviz_common
+
+namespace rviz_default_plugins
+{
+namespace tools
+{
+class RVIZ_DEFAULT_PLUGINS_PUBLIC InitialPoseTool : public PoseTool
+{
+  Q_OBJECT
+
 public:
   InitialPoseTool();
-  virtual ~InitialPoseTool() {}
-  virtual void onInitialize();
+
+  ~InitialPoseTool() override;
+
+  void onInitialize() override;
 
 protected:
-  virtual void onPoseSet(double x, double y, double theta);
+  void onPoseSet(double x, double y, double theta) override;
 
 private Q_SLOTS:
   void updateTopic();
 
 private:
-  ros::NodeHandle nh_;
-  ros::Publisher pub_;
+  rclcpp::Publisher<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr publisher_;
 
-  StringProperty* topic_property_;
+  rviz_common::properties::StringProperty * topic_property_;
 };
 
-}
+}  // namespace tools
+}  // namespace rviz_default_plugins
 
-#endif
-
-
+#endif  // RVIZ_DEFAULT_PLUGINS__TOOLS__POSE_ESTIMATE__INITIAL_POSE_TOOL_HPP_

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,60 +28,71 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <tf/transform_listener.h>
+#define _USE_MATH_DEFINES
+#include "rviz_default_plugins/tools/pose_estimate/initial_pose_tool.hpp"
 
-#include <geometry_msgs/PoseWithCovarianceStamped.h>
+#include <string>
 
-#include "rviz/display_context.h"
-#include "rviz/properties/string_property.h"
+#include "rviz_common/display_context.hpp"
+#include "rviz_common/properties/string_property.hpp"
+#include "rviz_common/logging.hpp"
 
-#include "rviz/default_plugin/tools/initial_pose_tool.h"
-
-namespace rviz
+namespace rviz_default_plugins
+{
+namespace tools
 {
 
 InitialPoseTool::InitialPoseTool()
 {
   shortcut_key_ = 'p';
 
-  topic_property_ = new StringProperty( "Topic", "initialpose",
-                                        "The topic on which to publish initial pose estimates.",
-                                        getPropertyContainer(), SLOT( updateTopic() ), this );
+  topic_property_ = new rviz_common::properties::StringProperty("Topic", "initialpose",
+      "The topic on which to publish initial pose estimates.",
+      getPropertyContainer(), SLOT(updateTopic()), this);
 }
+
+InitialPoseTool::~InitialPoseTool() = default;
 
 void InitialPoseTool::onInitialize()
 {
   PoseTool::onInitialize();
-  setName( "2D Pose Estimate" );
+  setName("2D Pose Estimate");
   updateTopic();
 }
 
 void InitialPoseTool::updateTopic()
 {
-  pub_ = nh_.advertise<geometry_msgs::PoseWithCovarianceStamped>( topic_property_->getStdString(), 1 );
+  // TODO(anhosi, wjwwood): replace with abstraction for publishers once available
+  publisher_ = context_->getRosNodeAbstraction().lock()->get_raw_node()->
+    template create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>(
+    topic_property_->getStdString());
 }
 
 void InitialPoseTool::onPoseSet(double x, double y, double theta)
 {
   std::string fixed_frame = context_->getFixedFrame().toStdString();
-  geometry_msgs::PoseWithCovarianceStamped pose;
+
+  geometry_msgs::msg::PoseWithCovarianceStamped pose;
   pose.header.frame_id = fixed_frame;
-  pose.header.stamp = ros::Time::now();
+  pose.header.stamp = rclcpp::Clock().now();
+
   pose.pose.pose.position.x = x;
   pose.pose.pose.position.y = y;
+  pose.pose.pose.position.z = 0.0;
 
-  tf::Quaternion quat;
-  quat.setRPY(0.0, 0.0, theta);
-  tf::quaternionTFToMsg(quat,
-                        pose.pose.pose.orientation);
-  pose.pose.covariance[6*0+0] = 0.5 * 0.5;
-  pose.pose.covariance[6*1+1] = 0.5 * 0.5;
-  pose.pose.covariance[6*5+5] = M_PI/12.0 * M_PI/12.0;
-  ROS_INFO("Setting pose: %.3f %.3f %.3f [frame=%s]", x, y, theta, fixed_frame.c_str());
-  pub_.publish(pose);
+  pose.pose.pose.orientation = orientationAroundZAxis(theta);
+
+  pose.pose.covariance[6 * 0 + 0] = 0.5 * 0.5;
+  pose.pose.covariance[6 * 1 + 1] = 0.5 * 0.5;
+  pose.pose.covariance[6 * 5 + 5] = M_PI / 12.0 * M_PI / 12.0;
+
+  logPose(pose.pose.pose.position, pose.pose.pose.orientation, theta, fixed_frame);
+
+  publisher_->publish(pose);
 }
 
-} // end namespace rviz
+}  // namespace tools
+}  // namespace rviz_default_plugins
 
-#include <pluginlib/class_list_macros.h>
-PLUGINLIB_EXPORT_CLASS( rviz::InitialPoseTool, rviz::Tool )
+#include <pluginlib/class_list_macros.hpp>  // NOLINT
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::tools::InitialPoseTool, rviz_common::Tool)

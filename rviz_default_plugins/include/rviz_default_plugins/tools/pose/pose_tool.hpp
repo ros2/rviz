@@ -31,6 +31,7 @@
 #define RVIZ_DEFAULT_PLUGINS__TOOLS__POSE__POSE_TOOL_HPP_
 
 #include <memory>
+#include <string>
 #include <utility>
 
 #ifdef __clang__
@@ -45,6 +46,9 @@
 #endif
 
 #include <QCursor>  // NOLINT cpplint cannot handle include order here
+
+#include "geometry_msgs/msg/point.hpp"
+#include "geometry_msgs/msg/quaternion.hpp"
 
 #include "rviz_common/tool.hpp"
 #include "rviz_rendering/viewport_projection_finder.hpp"
@@ -76,6 +80,14 @@ public:
 
 protected:
   virtual void onPoseSet(double x, double y, double theta) = 0;
+
+  geometry_msgs::msg::Quaternion orientationAroundZAxis(double angle);
+
+  void logPose(
+    geometry_msgs::msg::Point position,
+    geometry_msgs::msg::Quaternion orientation,
+    double angle,
+    std::string frame);
 
   std::shared_ptr<rviz_rendering::Arrow> arrow_;
 
