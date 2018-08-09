@@ -48,7 +48,7 @@ namespace rviz_default_plugins
 namespace transformation
 {
 
-/** @brief Base class for TransformerHandlerDelegate, needed because Qt's moc and c++
+/** @brief Base class for TransformerGuard, needed because Qt's moc and c++
  * templates don't work nicely together. Not intended to be used directly.
  */
 class RVIZ_DEFAULT_PLUGINS_PUBLIC _TransformerGuard : public QObject
