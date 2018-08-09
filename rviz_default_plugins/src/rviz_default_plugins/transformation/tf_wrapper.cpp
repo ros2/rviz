@@ -39,7 +39,7 @@ namespace transformation
 {
 
 TFWrapper::TFWrapper()
-:buffer_(nullptr), tf_listener_(nullptr)
+: buffer_(nullptr), tf_listener_(nullptr)
 {}
 
 void TFWrapper::transform(
@@ -89,11 +89,15 @@ void TFWrapper::initialize(
   rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
   bool using_dedicated_thread)
 {
-  buffer_ = std::make_shared<tf2_ros::Buffer>(clock);
-  buffer_->setUsingDedicatedThread(using_dedicated_thread);
-
+  initializeBuffer(clock, using_dedicated_thread);
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(
     *buffer_, rviz_ros_node.lock()->get_raw_node(), false);
+}
+
+void TFWrapper::initializeBuffer(rclcpp::Clock::SharedPtr clock, bool using_dedicated_thread)
+{
+  buffer_ = std::make_shared<tf2_ros::Buffer>(clock);
+  buffer_->setUsingDedicatedThread(using_dedicated_thread);
 }
 
 void TFWrapper::clear()

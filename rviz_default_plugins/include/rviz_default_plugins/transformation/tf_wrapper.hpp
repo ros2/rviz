@@ -90,6 +90,9 @@ public:
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   void clear();
 
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
+  void initializeBuffer(rclcpp::Clock::SharedPtr clock, bool using_dedicated_thread);
+
 private:
   std::shared_ptr<tf2_ros::Buffer> buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;

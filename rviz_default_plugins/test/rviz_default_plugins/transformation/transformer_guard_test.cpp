@@ -60,8 +60,7 @@ public:
     base_transformer_ = std::make_shared<MockFrameTransformer>();
     auto clock = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);
     auto tf_wrapper = std::make_shared<rviz_default_plugins::transformation::TFWrapper>();
-    tf_wrapper->initialize(
-      clock, std::weak_ptr<rviz_common::ros_integration::RosNodeAbstractionIface>(), false);
+    tf_wrapper->initializeBuffer(clock, false);
     tf_transformer_ = std::make_shared<rviz_default_plugins::transformation::TFFrameTransformer>(
       tf_wrapper);
 
