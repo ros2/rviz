@@ -183,6 +183,9 @@ public:
   void setAlpha(float alpha, bool per_point_alpha = false);
 
   RVIZ_RENDERING_PUBLIC
+  void setColor(const Ogre::ColourValue & color);
+
+  RVIZ_RENDERING_PUBLIC
   void setPickColor(const Ogre::ColourValue & color);
 
   RVIZ_RENDERING_PUBLIC

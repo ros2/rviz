@@ -30,6 +30,7 @@
 #ifndef RVIZ_VISUAL_TESTING_FRAMEWORK__VISUAL_TEST_PUBLISHER_HPP_
 #define RVIZ_VISUAL_TESTING_FRAMEWORK__VISUAL_TEST_PUBLISHER_HPP_
 
+#include <chrono>
 #include <memory>
 #include <string>
 #include <thread>
@@ -86,7 +87,6 @@ private:
     auto transformer_publisher_node = std::make_shared<rclcpp::Node>("static_transform_publisher");
     tf2_ros::StaticTransformBroadcaster broadcaster(transformer_publisher_node);
 
-    rclcpp::WallRate loop_rate(0.2);
     rclcpp::executors::SingleThreadedExecutor executor;
     executor.add_node(transformer_publisher_node);
 
@@ -101,7 +101,7 @@ private:
         broadcaster.sendTransform(msg);
       }
       executor.spin_some();
-      loop_rate.sleep();
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
   }
 

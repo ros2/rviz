@@ -89,6 +89,7 @@ public:
 
 private Q_SLOTS:
   void updateAlpha();
+  void updateColor();
 
 private:
   bool messageIsValid(nav_msgs::msg::GridCells::ConstSharedPtr msg);

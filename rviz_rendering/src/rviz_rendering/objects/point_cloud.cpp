@@ -455,6 +455,14 @@ void PointCloud::setAlpha(float alpha, bool per_point_alpha)
   }
 }
 
+void PointCloud::setColor(const Ogre::ColourValue & color)
+{
+  for (auto & point : points_) {
+    point.setColor(color.r, color.g, color.b, color.a);
+  }
+  regenerateAll();
+}
+
 void PointCloud::addPoints(
   std::vector<Point>::iterator start_iterator,
   std::vector<Point>::iterator stop_iterator)
