@@ -2,6 +2,11 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixed a bug where a laserscans greater than 1 meter do not render. (`#345 <https://github.com/ros2/rviz/issues/345>`_) (`#348 <https://github.com/ros2/rviz/issues/348>`_)
+* Contributors: eric1221bday, William Woodall
+
 4.0.1 (2018-06-28)
 ------------------
 

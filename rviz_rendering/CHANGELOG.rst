@@ -2,6 +2,9 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 4.0.1 (2018-06-28)
 ------------------
 * move find_package or test dependencies to test block (`#331 <https://github.com/ros2/rviz/issues/331>`_)

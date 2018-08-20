@@ -2,6 +2,9 @@
 Changelog for package rviz_yaml_cpp_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 4.0.1 (2018-06-28)
 ------------------
 
