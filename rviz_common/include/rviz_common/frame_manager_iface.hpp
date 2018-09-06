@@ -37,8 +37,17 @@
 #include <string>
 #include <vector>
 
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wkeyword-macro"
+#endif
+
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
 
