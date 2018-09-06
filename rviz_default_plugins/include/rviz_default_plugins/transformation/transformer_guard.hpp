@@ -65,7 +65,8 @@ public:
   : display_(display),
     allowed_transformer_name_(transformer_name),
     using_allowed_transformer_(true),
-    display_disabled_by_user_(false)
+    display_disabled_by_user_(false),
+    context_(nullptr)
   {}
 
   void
