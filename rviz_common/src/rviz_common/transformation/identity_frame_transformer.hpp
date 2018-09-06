@@ -46,49 +46,61 @@ namespace rviz_common
 namespace transformation
 {
 
-/** \brief A trivial subclass of FrameTransformer, which allows all transformations and performs
- *  always identity transforms.
- */
+/// A trivial subclass of FrameTransformer, that always uses the identity transform.
 class RVIZ_COMMON_PUBLIC IdentityFrameTransformer : public FrameTransformer
 {
 public:
   IdentityFrameTransformer() = default;
   ~IdentityFrameTransformer() override = default;
 
-  void initialize(
+  void
+  initialize(
     ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
     rclcpp::Clock::SharedPtr clock) override;
 
-  void clear() override;
+  void
+  clear() override;
 
-  std::vector<std::string> getAllFrameNames() override;
+  std::vector<std::string>
+  getAllFrameNames() override;
 
-  transformation::PoseStamped transform(
+  transformation::PoseStamped
+  transform(
     // NOLINT (this is not std::transform)
-    const transformation::PoseStamped & pose_in, const std::string & target_frame) override;
+    const transformation::PoseStamped & pose_in,
+    const std::string & target_frame) override;
 
-  bool transformIsAvailable(
-    const std::string & target_frame, const std::string & source_frame) override;
+  bool
+  transformIsAvailable(
+    const std::string & target_frame,
+    const std::string & source_frame) override;
 
-  bool transformHasProblems(
+  bool
+  transformHasProblems(
     const std::string & source_frame,
     const std::string & target_frame,
     const rclcpp::Time & time,
     std::string & error) override;
 
-  bool frameHasProblems(const std::string & frame, std::string & error) override;
+  bool
+  frameHasProblems(const std::string & frame, std::string & error) override;
 
-  TransformationLibraryConnector::WeakPtr getConnector() override;
+  TransformationLibraryConnector::WeakPtr
+  getConnector() override;
 
-//  virtual void waitForValidTransform(
-//    std::string target_frame,
-//    std::string source_frame,
-//    rclcpp::Time time,
-//    rclcpp::Duration timeout,
-//    std::function<void(void)> callback) override;
+#if 0
+  void
+  waitForValidTransform(
+    std::string target_frame,
+    std::string source_frame,
+    rclcpp::Time time,
+    rclcpp::Duration timeout,
+    std::function<void(void)> callback) override;
+#endif
 
 private:
-  bool quaternionIsValid(transformation::Quaternion quaternion);
+  bool
+  quaternionIsValid(transformation::Quaternion quaternion);
 };
 
 }  // namespace transformation

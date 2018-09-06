@@ -87,25 +87,39 @@ public:
    * The fixed frame serves as the reference for all getTransform() and
    * transform() functions in FrameManager.
    */
-  virtual void setFixedFrame(const std::string & frame) = 0;
+  virtual
+  void
+  setFixedFrame(const std::string & frame) = 0;
 
   /// Enable/disable pause mode.
-  virtual void setPause(bool pause) = 0;
+  virtual
+  void
+  setPause(bool pause) = 0;
 
   /// Get pause state.
-  virtual bool getPause() = 0;
+  virtual
+  bool
+  getPause() = 0;
 
   /// Set synchronization mode (off/exact/approximate).
-  virtual void setSyncMode(SyncMode mode) = 0;
+  virtual
+  void
+  setSyncMode(SyncMode mode) = 0;
 
   /// Get the synchronization mode.
-  virtual SyncMode getSyncMode() = 0;
+  virtual
+  SyncMode
+  getSyncMode() = 0;
 
   /// Synchronize with given time.
-  virtual void syncTime(rclcpp::Time time) = 0;
+  virtual
+  void
+  syncTime(rclcpp::Time time) = 0;
 
   /// Get current time, depending on the sync mode.
-  virtual rclcpp::Time getTime() = 0;
+  virtual
+  rclcpp::Time
+  getTime() = 0;
 
   /// Return the pose for a header, relative to the fixed frame, in Ogre classes.
   /**
@@ -117,8 +131,11 @@ public:
    * \return true on success, false on failure.
    */
   template<typename Header>
-  bool getTransform(
-    const Header & header, Ogre::Vector3 & position, Ogre::Quaternion & orientation)
+  bool
+  getTransform(
+    const Header & header,
+    Ogre::Vector3 & position,
+    Ogre::Quaternion & orientation)
   {
     return getTransform(header.frame_id, header.stamp, position, orientation);
   }
@@ -131,8 +148,12 @@ public:
    *   fixed frame.
    * \return true on success, false on failure.
    */
-  virtual bool getTransform(
-    const std::string & frame, Ogre::Vector3 & position, Ogre::Quaternion & orientation) = 0;
+  virtual
+  bool
+  getTransform(
+    const std::string & frame,
+    Ogre::Vector3 & position,
+    Ogre::Quaternion & orientation) = 0;
 
   /// Return the pose for a frame relative to the fixed frame, in Ogre classes, at a given time.
   /**
@@ -143,7 +164,9 @@ public:
    *   fixed frame.
    * \return true on success, false on failure.
    */
-  virtual bool getTransform(
+  virtual
+  bool
+  getTransform(
     const std::string & frame,
     rclcpp::Time time,
     Ogre::Vector3 & position,
@@ -159,7 +182,8 @@ public:
    * \return true on success, false on failure.
    */
   template<typename Header>
-  bool transform(
+  bool
+  transform(
     const Header & header,
     const geometry_msgs::msg::Pose & pose,
     Ogre::Vector3 & position,
@@ -179,7 +203,9 @@ public:
    *   frame.
    * \return true on success, false on failure.
    */
-  virtual bool transform(
+  virtual
+  bool
+  transform(
     const std::string & frame,
     rclcpp::Time time,
     const geometry_msgs::msg::Pose & pose,
@@ -187,7 +213,9 @@ public:
     Ogre::Quaternion & orientation) = 0;
 
   /// Clear the internal cache.
-  virtual void update() = 0;
+  virtual
+  void
+  update() = 0;
 
   /// Check to see if a frame exists in the tf::TransformListener.
   /**
@@ -196,14 +224,18 @@ public:
    *   stored here.
    * \return true if the frame does not exist, false if it does exist.
    */
-  virtual bool frameHasProblems(const std::string & frame, std::string & error) = 0;
+  virtual
+  bool
+  frameHasProblems(const std::string & frame, std::string & error) = 0;
 
   /// Check to see if a transform is known between a given frame and the fixed frame.
   /**
    * \param[in] frame The name of the frame to check.
    * \param[out] error If the transform is not known, an error message is stored here.
    * \return true if the transform is not known, false if it is. */
-  virtual bool transformHasProblems(const std::string & frame, std::string & error) = 0;
+  virtual
+  bool
+  transformHasProblems(const std::string & frame, std::string & error) = 0;
 
   /// Check to see if a transform is known between a given frame and the fixed frame.
   /**
@@ -211,8 +243,9 @@ public:
    * \param[in] time The time at which the transform is desired.
    * \param[out] error If the transform is not known, an error message is stored here.
    * \return true if the transform is not known, false if it is. */
-  virtual bool transformHasProblems(
-    const std::string & frame, rclcpp::Time time, std::string & error) = 0;
+  virtual
+  bool
+  transformHasProblems(const std::string & frame, rclcpp::Time time, std::string & error) = 0;
 
 #if 0
   /// Connect a tf::MessageFilter's callbacks to success and failure handler functions.
@@ -226,8 +259,10 @@ public:
    * \param display The Display using the filter.
    */
   template<class M>
-  void registerFilterForTransformStatusCheck(
-    tf2_ros::MessageFilter<M> * filter, Display * display) override
+  void
+  registerFilterForTransformStatusCheck(
+    tf2_ros::MessageFilter<M> * filter,
+    Display * display) override
   {
     filter->registerCallback(boost::bind(&FrameManager::messageCallback<M>, this, _1, display));
     filter->registerFailureCallback(boost::bind(&FrameManager::failureCallback<M>, this, _1, _2,
@@ -236,13 +271,19 @@ public:
 #endif
 
   /// Return the current fixed frame name.
-  virtual const std::string & getFixedFrame() = 0;
+  virtual
+  const std::string &
+  getFixedFrame() = 0;
 
   /// Return a weak pointer to the internal transformation object.
-  virtual transformation::TransformationLibraryConnector::WeakPtr getConnector() = 0;
+  virtual
+  transformation::TransformationLibraryConnector::WeakPtr
+  getConnector() = 0;
 
   /// Return a shared pointer to the transformer object.
-  virtual std::shared_ptr<transformation::FrameTransformer> getTransformer() = 0;
+  virtual
+  std::shared_ptr<transformation::FrameTransformer>
+  getTransformer() = 0;
 
 // TODO(wjwwood): figure out how to replace FilgerFailureReason here
 #if 0
@@ -256,21 +297,27 @@ public:
    *
    * Once a problem has been detected with a given frame or transform,
    * call this to get an error message describing the problem. */
-  virtual std::string discoverFailureReason(
+  virtual
+  std::string
+  discoverFailureReason(
     const std::string & frame_id,
     const rclcpp::Time & stamp,
     const std::string & caller_id,
     tf::FilterFailureReason reason) = 0;
 #endif
 
-  virtual std::vector<std::string> getAllFrameNames() = 0;
+  virtual
+  std::vector<std::string>
+  getAllFrameNames() = 0;
 
 public Q_SLOTS:
-  virtual void setTransformerPlugin(
-    std::shared_ptr<transformation::FrameTransformer> transformer) = 0;
+  virtual
+  void
+  setTransformerPlugin(std::shared_ptr<transformation::FrameTransformer> transformer) = 0;
 
 Q_SIGNALS:
-  void fixedFrameChanged();
+  void
+  fixedFrameChanged();
 };
 
 }  // namespace rviz_common

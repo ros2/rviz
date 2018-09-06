@@ -40,9 +40,9 @@ namespace properties
 {
 class GroupedCheckboxPropertyGroup;
 
-/** @brief Checkbox property that is grouped together with other checkbox properties.
- *
- * Behaves like radio buttons (exclusive selection, no manual deselect)
+/// Checkbox property that is grouped together with other checkbox properties.
+/**
+ * Behaves like radio buttons (exclusive selection, no manual deselect).
  */
 class GroupedCheckboxProperty : public BoolProperty
 {
@@ -57,17 +57,19 @@ public:
     const char * changed_slot = nullptr,
     QObject * receiver = nullptr);
 
+  /// Set the value of this property to true reguardless of new_value's value.
   /**
-   * Sets the value of this property to true
-   * and triggers the group to disable all other GroupedCheckboxProperty.
+   * Also, trigger the group to disable all other GroupedCheckboxProperty.
    *
-   * @param new_value IGNORED, radio buttons can generally not be deselected manually
-   * @return
+   * \param new_value IGNORED, radio buttons can generally not be deselected
+   *   manually.
    */
-  bool setValue(const QVariant & new_value) override;
+  bool
+  setValue(const QVariant & new_value) override;
 
-  /// Sets the value of the underlying property without triggering the group
-  bool setRawValue(const QVariant & new_value);
+  /// Sets the value of the underlying property without triggering the group.
+  bool
+  setRawValue(const QVariant & new_value);
 
 private:
   std::shared_ptr<GroupedCheckboxPropertyGroup> group_;

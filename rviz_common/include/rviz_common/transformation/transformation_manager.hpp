@@ -61,22 +61,33 @@ public:
     rclcpp::Clock::SharedPtr clock);
 
   /// Load configuration from a Config object.
-  void load(const Config & config);
+  void
+  load(const Config & config);
 
   /// Save configuration to a Config object.
-  void save(Config config) const;
+  void
+  save(Config config) const;
 
-  std::vector<PluginInfo> getAvailableTransformers() const;
-  std::shared_ptr<FrameTransformer> getCurrentTransformer() const;
-  PluginInfo getCurrentTransformerInfo() const;
-  void setTransformer(const PluginInfo & plugin_info);
+  std::vector<PluginInfo>
+  getAvailableTransformers() const;
+
+  std::shared_ptr<FrameTransformer>
+  getCurrentTransformer() const;
+
+  PluginInfo
+  getCurrentTransformerInfo() const;
+
+  void
+  setTransformer(const PluginInfo & plugin_info);
 
 Q_SIGNALS:
   /// Emitted when the current transformer changes.
-  void configChanged();
+  void
+  configChanged();
 
   /// Emitted when the current transformer changes.
-  void transformerChanged(
+  void
+  transformerChanged(
     std::shared_ptr<rviz_common::transformation::FrameTransformer> new_transformer);
 
 private:

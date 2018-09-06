@@ -76,8 +76,7 @@ public:
   PoseStamped();
 
   RVIZ_COMMON_PUBLIC
-  PoseStamped(
-    Time time, std::string frame, Point position_vector, Quaternion orientation_quat);
+  PoseStamped(Time time, std::string frame, Point position_vector, Quaternion orientation_quat);
 
   Time time_stamp;
   std::string frame_id;

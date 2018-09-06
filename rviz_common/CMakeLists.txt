@@ -342,63 +342,70 @@ if(BUILD_TESTING)
 
   ament_add_gmock(frame_manager_test
     test/frame_manager_test.cpp
-    src/rviz_common/frame_manager.cpp)
+    src/rviz_common/frame_manager.cpp
+  )
   if(TARGET frame_manager_test)
     target_link_libraries(frame_manager_test
       rviz_common
       rviz_ogre_vendor::OgreMain
-      rviz_ogre_vendor::OgreOverlay)
+      rviz_ogre_vendor::OgreOverlay
+    )
   endif()
 
   ament_add_gtest(rviz_common_config_test
-    test/config_test.cpp)
+    test/config_test.cpp
+  )
   if(TARGET rviz_common_config_test)
     target_link_libraries(rviz_common_config_test
       rviz_common
       rviz_ogre_vendor::OgreMain
-      rviz_ogre_vendor::OgreOverlay)
+      rviz_ogre_vendor::OgreOverlay
+    )
   endif()
 
   ament_add_gtest(rviz_common_uniform_string_stream_test
-    test/uniform_string_stream_test.cpp)
+    test/uniform_string_stream_test.cpp
+  )
   if(TARGET rviz_common_uniform_string_stream_test)
     target_link_libraries(rviz_common_uniform_string_stream_test
       rviz_common
       rviz_ogre_vendor::OgreMain
-      rviz_ogre_vendor::OgreOverlay)
+      rviz_ogre_vendor::OgreOverlay
+    )
   endif()
 
   ament_add_gtest(rviz_common_property_test
     test/property_test.cpp
-    test/mock_property_change_receiver.cpp)
+    test/mock_property_change_receiver.cpp
+  )
   if(TARGET rviz_common_property_test)
     target_link_libraries(rviz_common_property_test rviz_common)
   endif()
 
-  ament_add_gmock(rviz_common_visualizer_app_test
-    test/visualizer_app_test.cpp)
+  ament_add_gmock(rviz_common_visualizer_app_test test/visualizer_app_test.cpp)
   if(TARGET rviz_common_visualizer_app_test)
     target_link_libraries(rviz_common_visualizer_app_test rviz_common)
   endif()
 
   ament_add_gmock(rviz_common_ros_node_abstraction_test
-    test/ros_node_abstraction_test.cpp)
+    test/ros_node_abstraction_test.cpp
+  )
   if(TARGET rviz_common_ros_node_abstraction_test)
     target_link_libraries(rviz_common_ros_node_abstraction_test rviz_common)
   endif()
 
   ament_add_gmock(identity_transformer_test
-    test/transformation/identity_frame_transformer_test.cpp)
+    test/transformation/identity_frame_transformer_test.cpp
+  )
   if(TARGET identity_transformer_test)
-    target_link_libraries(identity_transformer_test
-      rviz_common)
+    target_link_libraries(identity_transformer_test rviz_common)
   endif()
 
   ament_add_gmock(ros_conversion_helpers_test
-    test/transformation/ros_conversion_helpers_test.cpp)
+    test/transformation/ros_conversion_helpers_test.cpp
+  )
   if(TARGET ros_conversion_helpers_test)
-    target_link_libraries(ros_conversion_helpers_test
-      rviz_common)
+    target_link_libraries(ros_conversion_helpers_test rviz_common)
   endif()
 
   ament_add_gmock(selection_manager_test
@@ -411,7 +418,8 @@ if(BUILD_TESTING)
     target_link_libraries(selection_manager_test
       rviz_common
       rviz_ogre_vendor::OgreMain
-      rviz_ogre_vendor::OgreOverlay)
+      rviz_ogre_vendor::OgreOverlay
+    )
   endif()
 
   ament_add_gmock(selection_handler_test
@@ -423,7 +431,8 @@ if(BUILD_TESTING)
     target_link_libraries(selection_handler_test
       rviz_common
       rviz_ogre_vendor::OgreMain
-      rviz_ogre_vendor::OgreOverlay)
+      rviz_ogre_vendor::OgreOverlay
+    )
   endif()
 
   ament_add_gtest(rviz_common_display_test
@@ -432,11 +441,8 @@ if(BUILD_TESTING)
     test/mock_display_group.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET rviz_common_display_test)
-    target_link_libraries(rviz_common_display_test
-      rviz_common
-      Qt5::Widgets)
-    ament_target_dependencies(rviz_common_display_test
-      rviz_yaml_cpp_vendor)
+    target_link_libraries(rviz_common_display_test rviz_common Qt5::Widgets)
+    ament_target_dependencies(rviz_common_display_test rviz_yaml_cpp_vendor)
   endif()
 endif()
 

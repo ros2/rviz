@@ -282,8 +282,7 @@ bool FrameManager::transformHasProblems(
     return false;
   }
 
-  return transformer_->transformHasProblems(
-    frame, fixed_frame_, time, error);
+  return transformer_->transformHasProblems(frame, fixed_frame_, time, error);
 }
 
 const std::string & FrameManager::getFixedFrame()

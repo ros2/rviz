@@ -58,40 +58,45 @@ namespace ros_helpers
 {
 
 RVIZ_COMMON_PUBLIC
-rviz_common::transformation::Point fromRosPoint(geometry_msgs::msg::Point ros_point);
+rviz_common::transformation::Point
+fromRosPoint(geometry_msgs::msg::Point ros_point);
 
 RVIZ_COMMON_PUBLIC
-rviz_common::transformation::Quaternion fromRosQuaternion(
+rviz_common::transformation::Quaternion
+fromRosQuaternion(
   geometry_msgs::msg::Quaternion ros_quaternion);
 
 RVIZ_COMMON_PUBLIC
-rviz_common::transformation::Point fromRosVector3(geometry_msgs::msg::Vector3 ros_vector);
+rviz_common::transformation::Point
+fromRosVector3(geometry_msgs::msg::Vector3 ros_vector);
 
 RVIZ_COMMON_PUBLIC
-rviz_common::transformation::PoseStamped fromRosPoseStamped(
-  geometry_msgs::msg::PoseStamped ros_pose);
+rviz_common::transformation::PoseStamped
+fromRosPoseStamped(geometry_msgs::msg::PoseStamped ros_pose);
 
 RVIZ_COMMON_PUBLIC
-rviz_common::transformation::TransformStamped fromRosTransformStamped(
-  geometry_msgs::msg::TransformStamped ros_transform);
+rviz_common::transformation::TransformStamped
+fromRosTransformStamped(geometry_msgs::msg::TransformStamped ros_transform);
 
 RVIZ_COMMON_PUBLIC
-std_msgs::msg::Header toRosHeader(
-  rviz_common::transformation::Time time_stamp, const std::string & frame_id);
+std_msgs::msg::Header
+toRosHeader(rviz_common::transformation::Time time_stamp, const std::string & frame_id);
 
 RVIZ_COMMON_PUBLIC
-geometry_msgs::msg::Point toRosPoint(rviz_common::transformation::Point point);
+geometry_msgs::msg::Point
+toRosPoint(rviz_common::transformation::Point point);
 
 RVIZ_COMMON_PUBLIC
-geometry_msgs::msg::Vector3 toRosVector3(rviz_common::transformation::Point point);
+geometry_msgs::msg::Vector3
+toRosVector3(rviz_common::transformation::Point point);
 
 RVIZ_COMMON_PUBLIC
-geometry_msgs::msg::Quaternion toRosQuaternion(
-  rviz_common::transformation::Quaternion ros_quaternion);
+geometry_msgs::msg::Quaternion
+toRosQuaternion(rviz_common::transformation::Quaternion ros_quaternion);
 
 RVIZ_COMMON_PUBLIC
-geometry_msgs::msg::PoseStamped toRosPoseStamped(
-  rviz_common::transformation::PoseStamped pose_stamped);
+geometry_msgs::msg::PoseStamped
+toRosPoseStamped(rviz_common::transformation::PoseStamped pose_stamped);
 
 }  // namespace ros_helpers
 }  // namespace transformation

@@ -48,9 +48,11 @@ namespace rviz_default_plugins
 namespace transformation
 {
 
-/** @brief Helper base class for TransformerGuard, needed because Qt's moc and c++ templates don't
- * work nicely together (a Q_OBJECT may not be a template class). Not intended to be used directly.
- * Use TransformerGuard instead.
+/// Helper class for TransformerGuard.
+/**
+ * This is needed because Qt's moc and c++ templates do not work nicely
+ * together (i.e. a Q_OBJECT may not be a template class).
+ * Not intended to be used directly, use TransformerGuard instead.
  */
 class RVIZ_DEFAULT_PLUGINS_PUBLIC _TransformerGuard : public QObject
 {
@@ -66,7 +68,8 @@ public:
     display_disabled_by_user_(false)
   {}
 
-  void initialize(rviz_common::DisplayContext * context)
+  void
+  initialize(rviz_common::DisplayContext * context)
   {
     context_ = context;
     connect(
@@ -82,12 +85,18 @@ public:
     }
   }
 
-  virtual bool checkTransformer() = 0;
+  virtual
+  bool
+  checkTransformer() = 0;
 
 protected Q_SLOTS:
-  virtual void transformerChanged(
+  virtual
+  void
+  transformerChanged(
     std::shared_ptr<rviz_common::transformation::FrameTransformer> new_transformer) = 0;
-  virtual void displayEnabledChanged() = 0;
+  virtual
+  void
+  displayEnabledChanged() = 0;
 
 protected:
   rviz_common::Display * display_;
@@ -97,8 +106,10 @@ protected:
   rviz_common::DisplayContext * context_;
 };
 
-/** \brief Convenience helper class for displays that can only work with a specific transformer
- * (e.g. only with the TF one). It helps handling the change of the transformer.
+/// Convenience class for displays that can only work with a specific transformer.
+/**
+ * For example, some displays may only work with the tf2 backed transformer.
+ * It helps handling the change of the transformer.
  */
 template<typename AllowedTransformerType>
 class TransformerGuard : public _TransformerGuard
@@ -113,12 +124,14 @@ public:
 
   ~TransformerGuard() override = default;
 
-  bool checkTransformer() override
+  bool
+  checkTransformer() override
   {
     return isAllowedTransformer(context_->getFrameManager()->getTransformer());
   }
 
-  void updateDisplayAccordingToTransformerType(
+  void
+  updateDisplayAccordingToTransformerType(
     std::shared_ptr<rviz_common::transformation::FrameTransformer> transformer)
   {
     using_allowed_transformer_ = isAllowedTransformer(transformer);
@@ -132,7 +145,8 @@ public:
   }
 
 private:
-  void transformerChanged(
+  void
+  transformerChanged(
     std::shared_ptr<rviz_common::transformation::FrameTransformer> new_transformer) override
   {
     if (using_allowed_transformer_ != isAllowedTransformer(new_transformer)) {
@@ -140,21 +154,25 @@ private:
     }
   }
 
-  void displayEnabledChanged() override
+  void
+  displayEnabledChanged() override
   {
     if (!using_allowed_transformer_) {
       disableDisplayAndSetErrorStatus();
     }
   }
 
-  virtual bool isAllowedTransformer(
+  virtual
+  bool
+  isAllowedTransformer(
     std::shared_ptr<rviz_common::transformation::FrameTransformer> transformer)
   {
     auto derived_transformer = std::dynamic_pointer_cast<AllowedTransformerType>(transformer);
     return static_cast<bool>(derived_transformer);
   }
 
-  void setErrorStatus()
+  void
+  setErrorStatus()
   {
     display_->setStatus(
       rviz_common::properties::StatusProperty::Error,
@@ -163,7 +181,8 @@ private:
         "The display works only with " + allowed_transformer_name_ + " Transformer"));
   }
 
-  void enableDisplayAndDeleteErrorStatus()
+  void
+  enableDisplayAndDeleteErrorStatus()
   {
     display_->deleteStatusStd("Transformer");
     if (!display_disabled_by_user_) {
@@ -171,7 +190,8 @@ private:
     }
   }
 
-  void disableDisplayAndSetErrorStatus()
+  void
+  disableDisplayAndSetErrorStatus()
   {
     display_->setEnabled(false);
     setErrorStatus();

@@ -52,43 +52,54 @@ class TFFrameTransformer : public rviz_common::transformation::FrameTransformer
 public:
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   TFFrameTransformer();
+
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   explicit TFFrameTransformer(std::shared_ptr<TFWrapper> wrapper);
+
   ~TFFrameTransformer() override = default;
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
-  void initialize(
+  void
+  initialize(
     rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
     rclcpp::Clock::SharedPtr clock) override;
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
-  void clear() override;
+  void
+  clear() override;
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
-  std::vector<std::string> getAllFrameNames() override;
+  std::vector<std::string>
+  getAllFrameNames() override;
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
-  rviz_common::transformation::PoseStamped transform(
+  rviz_common::transformation::PoseStamped
+  transform(
     // NOLINT (this is not std::transform)
     const rviz_common::transformation::PoseStamped & pose_in,
     const std::string & target_frame) override;
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
-  bool transformIsAvailable(
-    const std::string & target_frame, const std::string & source_frame) override;
+  bool
+  transformIsAvailable(
+    const std::string & target_frame,
+    const std::string & source_frame) override;
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
-  bool transformHasProblems(
+  bool
+  transformHasProblems(
     const std::string & source_frame,
     const std::string & target_frame,
     const rclcpp::Time & time,
     std::string & error) override;
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
-  bool frameHasProblems(const std::string & frame, std::string & error) override;
+  bool
+  frameHasProblems(const std::string & frame, std::string & error) override;
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
-  rviz_common::transformation::TransformationLibraryConnector::WeakPtr getConnector() override;
+  rviz_common::transformation::TransformationLibraryConnector::WeakPtr
+  getConnector() override;
 
 private:
   std::shared_ptr<TFWrapper> tf_wrapper_;

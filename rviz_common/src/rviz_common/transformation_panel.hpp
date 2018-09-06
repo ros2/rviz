@@ -53,8 +53,7 @@ class PropertyTreeWidget;
 
 class DisplayContext;
 
-/** A panel to choose the transformation plugin
- */
+/// A panel to choose the transformation plugin.
 class TransformationPanel : public Panel
 {
   Q_OBJECT

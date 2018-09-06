@@ -51,6 +51,7 @@ class TFWrapper
 public:
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   TFWrapper();
+
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   ~TFWrapper() override = default;
 
@@ -61,37 +62,46 @@ public:
     const std::string & frame);
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
-  geometry_msgs::msg::TransformStamped lookupTransform(
+  geometry_msgs::msg::TransformStamped
+  lookupTransform(
     const std::string & target_frame,
     const std::string & source_frame,
     const tf2::TimePoint & time);
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
-  bool canTransform(
+  bool
+  canTransform(
     const std::string & fixed_frame,
     const std::string & frame,
     tf2::TimePoint time,
     std::string & error);
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
-  std::vector<std::string> getFrameStrings();
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
-  std::shared_ptr<tf2_ros::Buffer> getBuffer();
+  std::vector<std::string>
+  getFrameStrings();
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
-  bool frameExists(const std::string & frame);
+  std::shared_ptr<tf2_ros::Buffer>
+  getBuffer();
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
-  void initialize(
+  bool
+  frameExists(const std::string & frame);
+
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
+  void
+  initialize(
     rclcpp::Clock::SharedPtr clock,
     rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
     bool using_dedicated_thread);
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
-  void clear();
+  void
+  clear();
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
-  void initializeBuffer(rclcpp::Clock::SharedPtr clock, bool using_dedicated_thread);
+  void
+  initializeBuffer(rclcpp::Clock::SharedPtr clock, bool using_dedicated_thread);
 
 private:
   std::shared_ptr<tf2_ros::Buffer> buffer_;
