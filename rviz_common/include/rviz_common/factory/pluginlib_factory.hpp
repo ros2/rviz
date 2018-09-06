@@ -83,7 +83,7 @@ public:
       plugins.emplace_back(getPluginInfo(QString::fromStdString(id)));
     }
     typename QHash<QString, BuiltInClassRecord>::const_iterator iter;
-    for (iter = built_ins_.begin(); iter != built_ins_.end(); iter++) {
+    for (iter = built_ins_.begin(); iter != built_ins_.end(); ++iter) {
       plugins.emplace_back(getPluginInfo(iter->class_id_));
     }
     return plugins;
