@@ -60,13 +60,21 @@ rviz_common::transformation::PoseStamped TFFrameTransformer::transform(
     tf_wrapper_->transform(in_pose, out_pose, target_frame);
     return rviz_common::transformation::ros_helpers::fromRosPoseStamped(out_pose);
   } catch (const tf2::LookupException & exception) {
-    throw rviz_common::transformation::FrameTransformerException(exception.what());
+    std::string prefix = "[tf2::LookupException]: ";
+    throw rviz_common::transformation::FrameTransformerException(
+            std::string(prefix + exception.what()).c_str());
   } catch (const tf2::ConnectivityException & exception) {
-    throw rviz_common::transformation::FrameTransformerException(exception.what());
+    std::string prefix = "[tf2::ConnectivityException]: ";
+    throw rviz_common::transformation::FrameTransformerException(
+            std::string(prefix + exception.what()).c_str());
   } catch (const tf2::ExtrapolationException & exception) {
-    throw rviz_common::transformation::FrameTransformerException(exception.what());
+    std::string prefix = "[tf2::ExtrapolationException]: ";
+    throw rviz_common::transformation::FrameTransformerException(
+            std::string(prefix + exception.what()).c_str());
   } catch (const tf2::InvalidArgumentException & exception) {
-    throw rviz_common::transformation::FrameTransformerException(exception.what());
+    std::string prefix = "[tf2::InvalidArgumentException]: ";
+    throw rviz_common::transformation::FrameTransformerException(
+            std::string(prefix + exception.what()).c_str());
   }
 }
 
@@ -130,7 +138,8 @@ bool TFFrameTransformer::frameHasProblems(const std::string & frame, std::string
   return false;
 }
 
-rviz_common::transformation::TransformationLibraryConnectorPtr TFFrameTransformer::getConnector()
+rviz_common::transformation::TransformationLibraryConnector::WeakPtr
+TFFrameTransformer::getConnector()
 {
   return tf_wrapper_;
 }

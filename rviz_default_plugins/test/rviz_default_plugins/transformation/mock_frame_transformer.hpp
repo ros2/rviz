@@ -55,7 +55,8 @@ public:
     transformHasProblems,
     bool(const std::string &, const std::string &, const rclcpp::Time &, std::string &));
   MOCK_METHOD2(frameHasProblems, bool(const std::string &, std::string &));
-  MOCK_METHOD0(getConnector, rviz_common::transformation::TransformationLibraryConnectorPtr());
+  MOCK_METHOD0(getConnector,
+    rviz_common::transformation::TransformationLibraryConnector::WeakPtr());
 };
 
 #endif  // RVIZ_DEFAULT_PLUGINS__TRANSFORMATION__MOCK_FRAME_TRANSFORMER_HPP_

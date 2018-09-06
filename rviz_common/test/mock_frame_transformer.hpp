@@ -57,7 +57,8 @@ public:
       const rclcpp::Time & time,
       std::string & error));
   MOCK_METHOD2(frameHasProblems, bool(const std::string & frame, std::string & error));
-  MOCK_METHOD0(getConnector, rviz_common::transformation::TransformationLibraryConnectorPtr());
+  MOCK_METHOD0(getConnector,
+    rviz_common::transformation::TransformationLibraryConnector::WeakPtr());
 };
 
 #endif  // MOCK_FRAME_TRANSFORMER_HPP_

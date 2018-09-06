@@ -333,7 +333,7 @@ void FrameManager::messageArrived(
   display->setStatusStd(StatusProperty::Ok, getTransformStatusName(caller_id), "Transform OK");
 }
 
-transformation::TransformationLibraryConnectorPtr FrameManager::getConnector()
+transformation::TransformationLibraryConnector::WeakPtr FrameManager::getConnector()
 {
   return transformer_->getConnector();
 }

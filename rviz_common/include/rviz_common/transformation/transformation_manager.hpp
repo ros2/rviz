@@ -40,15 +40,18 @@
 #include <QString>  // NOLINT
 
 #include "rviz_common/config.hpp"
+#include "rviz_common/factory/factory.hpp"
 #include "rviz_common/factory/pluginlib_factory.hpp"
 #include "rviz_common/transformation/frame_transformer.hpp"
+#include "rviz_common/visibility_control.hpp"
+
 
 namespace rviz_common
 {
 namespace transformation
 {
 
-class TransformationManager : public QObject
+class RVIZ_COMMON_PUBLIC TransformationManager : public QObject
 {
   Q_OBJECT
 

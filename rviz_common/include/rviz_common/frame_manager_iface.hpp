@@ -239,7 +239,7 @@ public:
   virtual const std::string & getFixedFrame() = 0;
 
   /// Return a weak pointer to the internal transformation object.
-  virtual transformation::TransformationLibraryConnectorPtr getConnector() = 0;
+  virtual transformation::TransformationLibraryConnector::WeakPtr getConnector() = 0;
 
   /// Return a shared pointer to the transformer object.
   virtual std::shared_ptr<transformation::FrameTransformer> getTransformer() = 0;

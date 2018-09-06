@@ -187,7 +187,7 @@ public:
   const std::string & getFixedFrame() override;
 
   /// Return a weak pointer to the internal transformation object.
-  transformation::TransformationLibraryConnectorPtr getConnector() override;
+  transformation::TransformationLibraryConnector::WeakPtr getConnector() override;
 
   /// Return a shared pointer to the transformer object.
   std::shared_ptr<transformation::FrameTransformer> getTransformer() override;
