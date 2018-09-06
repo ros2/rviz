@@ -67,32 +67,31 @@ public:
 
 private Q_SLOTS:
   void onSaveClicked();
-  void onResetClicked();
   void onItemClicked(const QModelIndex & index);
 
 private:
+  void updateButtonState();
+  bool isCurrentTransformerProperty(properties::GroupedCheckboxProperty * property);
+  bool checkedPropertyIsNotCurrentTransformer();
+
+  properties::PropertyTreeWidget * initializeTreeWidget();
+  QHBoxLayout * initializeBottomButtonRow();
+  void createProperty(const PluginInfo & transformer_info);
+  properties::Property * getOrCreatePackageProperty(const QString & package);
+
   properties::Property * root_property_;
   properties::PropertyTreeModel * tree_model_;
   properties::PropertyTreeWidget * tree_widget_;
-  properties::PropertyTreeWidget * initializeTreeWidget();
 
   QPushButton * save_button_;
-  QPushButton * reset_button_;
-  QHBoxLayout * initializeBottomButtonRow();
 
   std::shared_ptr<properties::GroupedCheckboxPropertyGroup> checkbox_property_group_;
 
   transformation::TransformationManager * transformation_manager_;
 
   std::map<properties::Property *, PluginInfo> transformer_property_infos_;
-  void createProperty(const PluginInfo & transformer_info);
 
   std::map<QString, properties::Property *> package_properties_;
-  properties::Property * getOrCreatePackageProperty(const QString & package);
-
-  void updateButtonState();
-
-  bool isCurrentTransformerProperty(properties::GroupedCheckboxProperty * property);
 };
 
 }  // namespace rviz_common
