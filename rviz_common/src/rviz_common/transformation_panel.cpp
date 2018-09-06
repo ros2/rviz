@@ -82,14 +82,11 @@ properties::PropertyTreeWidget * TransformationPanel::initializeTreeWidget()
 QHBoxLayout * TransformationPanel::initializeBottomButtonRow()
 {
   save_button_ = new QPushButton("Save");
-  reset_button_ = new QPushButton("Reset");
 
   connect(save_button_, SIGNAL(clicked()), this, SLOT(onSaveClicked()));
-  connect(reset_button_, SIGNAL(clicked()), this, SLOT(onResetClicked()));
 
   auto button_layout = new QHBoxLayout();
   button_layout->addWidget(save_button_);
-  button_layout->addWidget(reset_button_);
   return button_layout;
 }
 
@@ -144,17 +141,6 @@ void TransformationPanel::onSaveClicked()
   }
 }
 
-void TransformationPanel::onResetClicked()
-{
-  auto transformer = transformation_manager_->getCurrentTransformerInfo();
-
-  auto package_property_entry = package_properties_.find(transformer.package);
-  if (package_property_entry != package_properties_.end()) {
-    package_property_entry->second->subProp(transformer.name)->setValue(true);
-  }
-  updateButtonState();
-}
-
 void TransformationPanel::onItemClicked(const QModelIndex & index)
 {
   auto property = dynamic_cast<properties::GroupedCheckboxProperty *>(tree_model_->getProp(index));
@@ -166,14 +152,13 @@ void TransformationPanel::onItemClicked(const QModelIndex & index)
 
 void TransformationPanel::updateButtonState()
 {
+  save_button_->setEnabled(checkedPropertyIsNotCurrentTransformer());
+}
+
+bool TransformationPanel::checkedPropertyIsNotCurrentTransformer()
+{
   auto checked_property = checkbox_property_group_->getChecked();
-  if (checked_property && isCurrentTransformerProperty(checked_property)) {
-    save_button_->setEnabled(false);
-    reset_button_->setEnabled(false);
-  } else {
-    save_button_->setEnabled(true);
-    reset_button_->setEnabled(true);
-  }
+  return !(checked_property && isCurrentTransformerProperty(checked_property));
 }
 
 bool TransformationPanel::isCurrentTransformerProperty(
