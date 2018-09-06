@@ -78,7 +78,7 @@ public:
 
   bool frameHasProblems(const std::string & frame, std::string & error) override;
 
-  TransformationLibraryConnectorPtr getConnector() override;
+  TransformationLibraryConnector::WeakPtr getConnector() override;
 
 //  virtual void waitForValidTransform(
 //    std::string target_frame,

@@ -42,6 +42,7 @@
 #include "pluginlib/class_loader.hpp"
 #endif
 
+#include "rviz_common/factory/factory.hpp"
 #include "rviz_common/factory/class_id_recording_factory.hpp"
 #include "rviz_common/load_resource.hpp"
 #include "rviz_common/logging.hpp"

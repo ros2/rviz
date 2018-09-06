@@ -98,7 +98,7 @@ bool IdentityFrameTransformer::frameHasProblems(const std::string & frame, std::
   return false;
 }
 
-TransformationLibraryConnectorPtr IdentityFrameTransformer::getConnector()
+TransformationLibraryConnector::WeakPtr IdentityFrameTransformer::getConnector()
 {
   return std::weak_ptr<TransformationLibraryConnector>();
 }

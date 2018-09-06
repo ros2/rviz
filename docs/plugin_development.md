@@ -83,8 +83,8 @@ Some of the default displays (e.g. TF display or LaserScan display) can only wor
 Similarly, as a developer, you may have written your own transformation plugin which cannot work with every display, or your own display which cannot work with every transformation plugin.
 The class `rviz_default_plugins::transformation::TransformerGuard` helps you to handle these possibilities.
 
-As explained in the relative section, every transformation plugin implements the base class `rviz_common::transformation::FrameTransformer`.
-The `TransformerGuard` class is templated on the type of this implementation and will make sure that the display by which is owned will be disabled if the transformer currently in use is of a different type.
+As explained below, every transformation plugin implements the base class `rviz_common::transformation::FrameTransformer`.
+The `TransformerGuard` class is templated on the type of this implementation and will make sure that the display by which it is owned will be disabled if the transformer currently in use is of a different type.
 
 When writing a display that is supposed to be working only with a specific transformation plugin, you can add a templated instance of `TransformerGuard` as a display member.
 The constructor of this class takes two argument: a raw pointer to the display that owns it, and the name of the transformer it is supposed to work with (needed to correctly set the error status).

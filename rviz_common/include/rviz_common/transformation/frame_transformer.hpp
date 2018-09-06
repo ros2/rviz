@@ -62,9 +62,10 @@ class RVIZ_COMMON_PUBLIC TransformationLibraryConnector
 {
 public:
   virtual ~TransformationLibraryConnector() = default;
+
+  using WeakPtr = std::weak_ptr<TransformationLibraryConnector>;
 };
 
-using TransformationLibraryConnectorPtr = std::weak_ptr<TransformationLibraryConnector>;
 
 class RVIZ_COMMON_PUBLIC FrameTransformer
 {
@@ -118,7 +119,7 @@ public:
   virtual bool frameHasProblems(const std::string & frame, std::string & error) = 0;
 
   /** \brief A getter for the internal implementation object */
-  virtual TransformationLibraryConnectorPtr getConnector() = 0;
+  virtual TransformationLibraryConnector::WeakPtr getConnector() = 0;
 
   // TODO(botteroa-si): This method can be needed when having displays working with tf_filter.
   // Reenable once tf_filter is ported.
