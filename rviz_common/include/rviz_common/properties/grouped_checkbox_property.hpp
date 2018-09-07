@@ -57,25 +57,26 @@ public:
     const char * changed_slot = nullptr,
     QObject * receiver = nullptr);
 
-  /* This overrides Property::setValue providing a noop. To set the value correctly, use
-   * setBoolValue.
+  /// An override for Property::setValue that is a noop.
+  /** 
+   * To set the value correctly, use setBoolValue.
+   *
    * This is a workaround for the issue where sometimes, clicking on the
-   * GroupedCheckboxPropertyGroup does not send the clicked() event of QTreeView but only the
-   * clicked() event of this property, resulting in weird behaviour
-   */
-  bool
-  setValue(const QVariant & new_value) override;
-
-  /// Sets the value of the underlying property without triggering the group
-  bool
-  setRawValue(const QVariant & new_value);
-
-  /**
-   * Also, trigger the group to disable all other GroupedCheckboxProperty.
+   * GroupedCheckboxPropertyGroup does not send the clicked() event of
+   * QTreeView but only the clicked() event of this property, resulting
+   * in weird behaviour.
    *
    * \param new_value IGNORED, radio buttons can generally not be deselected
    *   manually.
    */
+  bool
+  setValue(const QVariant & new_value) override;
+
+  /// Set the value of the underlying property without triggering the group.
+  bool
+  setRawValue(const QVariant & new_value);
+
+  /// Notify the group so that all other GroupedCheckboxProperty instances are disabled.
   void
   checkPropertyInGroup();
 
