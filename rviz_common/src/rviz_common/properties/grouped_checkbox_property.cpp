@@ -54,13 +54,17 @@ GroupedCheckboxProperty::GroupedCheckboxProperty(
 bool GroupedCheckboxProperty::setValue(const QVariant & new_value)
 {
   Q_UNUSED(new_value);
-  group_->setChecked(this);
   return true;
 }
 
 bool GroupedCheckboxProperty::setRawValue(const QVariant & new_value)
 {
   return Property::setValue(new_value);
+}
+
+void GroupedCheckboxProperty::checkPropertyInGroup()
+{
+  group_->setChecked(this);
 }
 
 }  // namespace properties

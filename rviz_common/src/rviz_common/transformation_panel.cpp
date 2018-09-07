@@ -111,7 +111,7 @@ void TransformationPanel::createProperty(const PluginInfo & transformer_info)
   transformer_property_infos_.insert(std::make_pair(transformer_property, transformer_info));
 
   if (isCurrentTransformerProperty(transformer_property)) {
-    transformer_property->setValue(true);
+    transformer_property->checkPropertyInGroup();
   }
 }
 
@@ -145,7 +145,7 @@ void TransformationPanel::onItemClicked(const QModelIndex & index)
 {
   auto property = dynamic_cast<properties::GroupedCheckboxProperty *>(tree_model_->getProp(index));
   if (property) {
-    property->setValue(true);
+    property->checkPropertyInGroup();
   }
   updateButtonState();
 }
