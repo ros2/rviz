@@ -58,7 +58,7 @@ public:
     QObject * receiver = nullptr);
 
   /// An override for Property::setValue that is a noop.
-  /** 
+  /**
    * To set the value correctly, use setBoolValue.
    *
    * This is a workaround for the issue where sometimes, clicking on the
