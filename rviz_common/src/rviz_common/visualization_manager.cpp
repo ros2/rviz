@@ -150,10 +150,7 @@ public:
 VisualizationManager::VisualizationManager(
   RenderPanel * render_panel,
   ros_integration::RosNodeAbstractionIface::WeakPtr ros_node_abstraction,
-  WindowManagerInterface * wm,
-  std::shared_ptr<tf2_ros::TransformListener> tf,
-  std::shared_ptr<tf2_ros::Buffer> buffer,
-  rclcpp::Clock::SharedPtr clock)
+  WindowManagerInterface * wm, rclcpp::Clock::SharedPtr clock)
 : ogre_root_(Ogre::Root::getSingletonPtr()),
   update_timer_(0),
   shutting_down_(false),
@@ -172,7 +169,15 @@ VisualizationManager::VisualizationManager(
   // (and thus initialized later be default):
   default_visibility_bit_ = visibility_bit_allocator_.allocBit();
 
-  frame_manager_ = new FrameManager(tf, buffer, clock);
+  transformation_manager_ = new transformation::TransformationManager(rviz_ros_node_, clock_);
+  connect(transformation_manager_, SIGNAL(configChanged()), this, SIGNAL(configChanged()));
+
+  frame_manager_ = new FrameManager(clock, transformation_manager_->getCurrentTransformer());
+  connect(
+    transformation_manager_,
+    SIGNAL(transformerChanged(std::shared_ptr<rviz_common::transformation::FrameTransformer>)),
+    frame_manager_,
+    SLOT(setTransformerPlugin(std::shared_ptr<rviz_common::transformation::FrameTransformer>)));
 
 // TODO(wjwwood): is this needed?
 #if 0
@@ -455,14 +460,10 @@ void VisualizationManager::updateTime()
 
 void VisualizationManager::updateFrames()
 {
-  typedef std::vector<std::string> V_string;
-  V_string frames;
-  frame_manager_->getTFBufferPtr()->_getFrameStrings(frames);
-
   // Check the fixed frame to see if it's ok
   std::string error;
   if (frame_manager_->frameHasProblems(getFixedFrame().toStdString(), error)) {
-    if (frames.empty()) {
+    if (!frame_manager_->anyTransformationDataAvailable()) {
       // fixed_prop->setToWarn();
       std::stringstream ss;
       ss << "No tf data.  Actual error: " << error;
@@ -493,7 +494,7 @@ RenderPanel * VisualizationManager::getRenderPanel() const
 void VisualizationManager::resetTime()
 {
   root_display_group_->reset();
-  frame_manager_->getTFBufferPtr()->clear();
+  frame_manager_->clear();
 
   ros_time_begin_ = rclcpp::Time(0, 0, clock_->get_clock_type());
   wall_clock_begin_ = std::chrono::system_clock::time_point();
@@ -529,6 +530,11 @@ ViewManager * VisualizationManager::getViewManager() const
   return view_manager_;
 }
 
+transformation::TransformationManager * VisualizationManager::getTransformationManager()
+{
+  return transformation_manager_;
+}
+
 void VisualizationManager::addDisplay(Display * display, bool enabled)
 {
   root_display_group_->addDisplay(display);
@@ -559,6 +565,9 @@ void VisualizationManager::load(const Config & config)
   emitStatusUpdate("Creating views");
   view_manager_->load(config.mapGetChild("Views"));
 
+  emitStatusUpdate("Loading transformation");
+  transformation_manager_->load(config.mapGetChild("Transformation"));
+
   startUpdate();
 }
 
@@ -567,6 +576,7 @@ void VisualizationManager::save(Config config) const
   root_display_group_->save(config);
   tool_manager_->save(config.mapMakeChild("Tools"));
   view_manager_->save(config.mapMakeChild("Views"));
+  transformation_manager_->save(config.mapMakeChild("Transformation"));
 }
 
 Display * VisualizationManager::createDisplay(

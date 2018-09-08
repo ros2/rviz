@@ -32,13 +32,14 @@
 #include <memory>
 #include <string>
 
-#include "laser_geometry/laser_geometry.hpp"
 #include "tf2_ros/buffer.h"
 
-#include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
 #include "rviz_common/properties/int_property.hpp"
 #include "rviz_common/properties/queue_size_property.hpp"
+#include "rviz_common/transformation/transformation_manager.hpp"
 #include "rviz_common/validate_floats.hpp"
+#include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
+#include "rviz_default_plugins/transformation/tf_wrapper.hpp"
 
 namespace rviz_default_plugins
 {
@@ -48,13 +49,17 @@ namespace displays
 LaserScanDisplay::LaserScanDisplay()
 : point_cloud_common_(std::make_unique<rviz_default_plugins::PointCloudCommon>(this)),
   queue_size_property_(std::make_unique<rviz_common::QueueSizeProperty>(this, 10)),
-  projector_(std::make_unique<laser_geometry::LaserProjection>())
+  projector_(std::make_unique<laser_geometry::LaserProjection>()),
+  transformer_guard_(
+    std::make_unique<rviz_default_plugins::transformation::TransformerGuard<
+      rviz_default_plugins::transformation::TFFrameTransformer>>(this, "TF"))
 {}
 
 void LaserScanDisplay::onInitialize()
 {
   RTDClass::onInitialize();
   point_cloud_common_->initialize(context_, scene_node_);
+  transformer_guard_->initialize(context_);
 }
 
 void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPtr scan)
@@ -69,29 +74,34 @@ void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPt
 //  }
 
   auto cloud = std::make_shared<sensor_msgs::msg::PointCloud2>();
+  auto tf_wrapper = std::dynamic_pointer_cast<transformation::TFWrapper>(
+    context_->getFrameManager()->getConnector().lock());
 
-  try {
-    auto buffer = context_->getFrameManager()->getTFBufferPtr();
-    projector_->transformLaserScanToPointCloud(
-      fixed_frame_.toStdString(),
-      *scan,
-      *cloud,
-      *buffer,
-      -1,
-      laser_geometry::channel_option::Intensity);
-  } catch (tf2::TransformException & exception) {
-    setMissingTransformToFixedFrame(scan->header.frame_id);
-    RVIZ_COMMON_LOG_ERROR(exception.what());
-    return;
+  if (tf_wrapper) {
+    try {
+      projector_->transformLaserScanToPointCloud(
+        fixed_frame_.toStdString(),
+        *scan,
+        *cloud,
+        *tf_wrapper->getBuffer(),
+        -1,
+        laser_geometry::channel_option::Intensity);
+    } catch (tf2::TransformException & exception) {
+      setMissingTransformToFixedFrame(scan->header.frame_id);
+      RVIZ_COMMON_LOG_ERROR(exception.what());
+      return;
+    }
+    setTransformOk();
+
+    point_cloud_common_->addMessage(cloud);
   }
-  setTransformOk();
-
-  point_cloud_common_->addMessage(cloud);
 }
 
 void LaserScanDisplay::update(float wall_dt, float ros_dt)
 {
-  point_cloud_common_->update(wall_dt, ros_dt);
+  if (transformer_guard_->checkTransformer()) {
+    point_cloud_common_->update(wall_dt, ros_dt);
+  }
 }
 
 void LaserScanDisplay::reset()

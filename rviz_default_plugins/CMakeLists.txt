@@ -83,6 +83,7 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/marker/marker_display.hpp
   include/rviz_default_plugins/displays/marker_array/marker_array_display.hpp
   include/rviz_default_plugins/displays/odometry/odometry_display.hpp
+  include/rviz_default_plugins/transformation/transformer_guard.hpp
   include/rviz_default_plugins/displays/path/path_display.hpp
   include/rviz_default_plugins/displays/point/point_stamped_display.hpp
   include/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp
@@ -112,6 +113,8 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/tools/pose/pose_tool.hpp
   include/rviz_default_plugins/tools/pose_estimate/initial_pose_tool.hpp
   include/rviz_default_plugins/tools/point/point_tool.hpp
+  include/rviz_default_plugins/transformation/tf_frame_transformer.hpp
+  include/rviz_default_plugins/transformation/tf_wrapper.hpp
   include/rviz_default_plugins/view_controllers/orbit/orbit_view_controller.hpp
   include/rviz_default_plugins/view_controllers/ortho/fixed_orientation_ortho_view_controller.hpp
   include/rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller.hpp
@@ -180,6 +183,8 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/tools/pose_estimate/initial_pose_tool.cpp
   src/rviz_default_plugins/tools/point/point_tool.cpp
   src/rviz_default_plugins/tools/select/selection_tool.cpp
+  src/rviz_default_plugins/transformation/tf_frame_transformer.cpp
+  src/rviz_default_plugins/transformation/tf_wrapper.cpp
   src/rviz_default_plugins/view_controllers/follower/third_person_follower_view_controller.cpp
   src/rviz_default_plugins/view_controllers/fps/fps_view_controller.cpp
   src/rviz_default_plugins/view_controllers/orbit/orbit_view_controller.cpp
@@ -563,6 +568,23 @@ if(BUILD_TESTING)
   if(TARGET xy_orbit_view_controller_test)
     target_include_directories(xy_orbit_view_controller_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(xy_orbit_view_controller_test ${TEST_LINK_LIBRARIES})
+  endif()
+
+  ament_add_gmock(frame_transformer_tf_test
+    test/rviz_default_plugins/transformation/frame_transformer_tf_test.cpp
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET frame_transformer_tf_test)
+    target_include_directories(frame_transformer_tf_test PUBLIC ${TEST_INCLUDE_DIRS})
+    target_link_libraries(frame_transformer_tf_test ${TEST_LINK_LIBRARIES})
+  endif()
+
+  ament_add_gmock(transformer_guard_test
+    test/rviz_default_plugins/transformation/transformer_guard_test.cpp
+    test/rviz_default_plugins/displays/display_test_fixture.cpp
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET transformer_guard_test)
+    target_include_directories(transformer_guard_test PUBLIC ${TEST_INCLUDE_DIRS})
+    target_link_libraries(transformer_guard_test ${TEST_LINK_LIBRARIES})
   endif()
 
   ament_add_gtest(camera_display_visual_test

@@ -81,7 +81,10 @@ enum DescriptionSource
 
 RobotModelDisplay::RobotModelDisplay()
 : has_new_transforms_(false),
-  time_since_last_transform_(0.0f)
+  time_since_last_transform_(0.0f),
+  transformer_guard_(
+    std::make_unique<rviz_default_plugins::transformation::TransformerGuard<
+      rviz_default_plugins::transformation::TFFrameTransformer>>(this, "TF"))
 {
   visual_enabled_property_ = new Property("Visual Enabled", true,
       "Whether to display the visual representation of the robot.",
@@ -136,6 +139,8 @@ void RobotModelDisplay::onInitialize()
   updateCollisionVisible();
   updateAlpha();
   updatePropertyVisibility();
+
+  transformer_guard_->initialize(context_);
 }
 
 void RobotModelDisplay::updateAlpha()
@@ -194,6 +199,10 @@ void RobotModelDisplay::updateTfPrefix()
 
 void RobotModelDisplay::load_urdf()
 {
+  if (!transformer_guard_->checkTransformer()) {
+    return;
+  }
+
   if (description_source_property_->getOptionInt() == DescriptionSource::FILE &&
     !description_file_property_->getString().isEmpty())
   {
@@ -269,6 +278,10 @@ void RobotModelDisplay::onDisable()
 
 void RobotModelDisplay::update(float wall_dt, float ros_dt)
 {
+  if (!transformer_guard_->checkTransformer()) {
+    return;
+  }
+
   (void) ros_dt;
   time_since_last_transform_ += wall_dt;
   float rate = update_rate_property_->getFloat();

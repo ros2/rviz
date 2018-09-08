@@ -55,7 +55,7 @@ TfFrameProperty::TfFrameProperty(
   const char * changed_slot,
   QObject * receiver)
 : EditableEnumProperty(name, default_value, description, parent, changed_slot, receiver),
-  frame_manager_(NULL),
+  frame_manager_(nullptr),
   include_fixed_frame_string_(include_fixed_frame_string)
 {
   // Parent class EditableEnumProperty has requestOptions() signal.
@@ -95,8 +95,7 @@ FrameManagerIface * TfFrameProperty::getFrameManager() const
 
 void TfFrameProperty::fillFrameList()
 {
-  std::vector<std::string> std_frames;
-  frame_manager_->getTFBufferPtr()->_getFrameStrings(std_frames);
+  std::vector<std::string> std_frames = frame_manager_->getAllFrameNames();
   std::sort(std_frames.begin(), std_frames.end() );
 
   clearOptions();

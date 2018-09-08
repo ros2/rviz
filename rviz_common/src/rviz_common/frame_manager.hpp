@@ -35,6 +35,7 @@
 #include <memory>
 #include <mutex>
 #include <string>
+#include <vector>
 
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>
@@ -45,19 +46,9 @@
 #include "rclcpp/clock.hpp"
 #include "rclcpp/time.hpp"
 
-// TODO(wjwwood): reenable this when message_filters is ported.
-// #include "tf2_ros/message_filter.h"
-
 #include "rviz_common/visibility_control.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
-
-namespace tf2_ros
-{
-
-class Buffer;
-class TransformListener;
-
-}  // namespace tf2_ros
+#include "rviz_common/transformation/frame_transformer.hpp"
 
 namespace rviz_common
 {
@@ -80,10 +71,7 @@ public:
    *   else because of thread safety).
    */
   FrameManager(
-    std::shared_ptr<tf2_ros::TransformListener> tf,
-    std::shared_ptr<tf2_ros::Buffer> buffer,
-    rclcpp::Clock::SharedPtr clock
-  );
+    rclcpp::Clock::SharedPtr clock, std::shared_ptr<transformation::FrameTransformer> transformer);
 
   /// Destructor.
   /**
@@ -198,14 +186,11 @@ public:
   /// Return the current fixed frame name.
   const std::string & getFixedFrame() override;
 
-  /// Return the tf::TransformListener used to receive transform data.
-  tf2_ros::TransformListener * getTFClient() override;
+  /// Return a weak pointer to the internal transformation object.
+  transformation::TransformationLibraryConnector::WeakPtr getConnector() override;
 
-  /// Return a shared pointer to the tf2_ros::TransformListener used to receive transform data.
-  const std::shared_ptr<tf2_ros::TransformListener> & getTFClientPtr() override;
-
-  /// Return a shared pointer to the tf2_ros::Buffer object.
-  const std::shared_ptr<tf2_ros::Buffer> & getTFBufferPtr() override;
+  /// Return a shared pointer to the transformer object.
+  std::shared_ptr<transformation::FrameTransformer> getTransformer() override;
 
 // TODO(wjwwood): figure out how to replace FilgerFailureReason here
 #if 0
@@ -225,6 +210,16 @@ public:
     const std::string & caller_id,
     tf::FilterFailureReason reason) override;
 #endif
+
+  std::vector<std::string> getAllFrameNames() override;
+
+  virtual void clear();
+
+  virtual bool anyTransformationDataAvailable();
+
+public Q_SLOTS:
+  void setTransformerPlugin(
+    std::shared_ptr<rviz_common::transformation::FrameTransformer> transformer) override;
 
 private:
   bool adjustTime(const std::string & frame, rclcpp::Time & time);
@@ -292,8 +287,7 @@ private:
   std::mutex cache_mutex_;
   M_Cache cache_;
 
-  std::shared_ptr<tf2_ros::TransformListener> tf_;
-  std::shared_ptr<tf2_ros::Buffer> buffer_;
+  std::shared_ptr<transformation::FrameTransformer> transformer_;
   std::string fixed_frame_;
 
   bool pause_;

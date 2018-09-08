@@ -24,6 +24,9 @@ Visualization Manager:
   Name: root
   Tools:
     - Class: rviz_default_plugins/MoveCamera
+  Transformation:
+    Current:
+      Class: rviz_default_plugins/TF
   Value: true
   Views:
     Current:

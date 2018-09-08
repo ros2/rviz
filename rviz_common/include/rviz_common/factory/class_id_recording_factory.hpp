@@ -63,7 +63,7 @@ public:
     Type * obj = makeRaw(class_id, error_return);
     if (obj != nullptr) {
       obj->setClassId(class_id);
-      obj->setDescription(getClassDescription(class_id));
+      obj->setDescription(getPluginInfo(class_id).description);
     }
     return obj;
   }

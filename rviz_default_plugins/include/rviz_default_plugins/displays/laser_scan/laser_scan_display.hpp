@@ -32,15 +32,18 @@
 
 #include <memory>
 
+#include <QObject>  //NOLINT
+
 #include "sensor_msgs/msg/laser_scan.hpp"
 
-#include "rviz_common/ros_topic_display.hpp"
-#include "rviz_default_plugins/visibility_control.hpp"
+#include "laser_geometry/laser_geometry.hpp"
 
-namespace laser_geometry
-{
-class LaserProjection;
-}  // namespace laser_geometry
+#include "rviz_common/ros_topic_display.hpp"
+#include "rviz_common/transformation/frame_transformer.hpp"
+#include "rviz_default_plugins/transformation/transformer_guard.hpp"
+#include "rviz_default_plugins/transformation/tf_wrapper.hpp"
+#include "rviz_default_plugins/transformation/tf_frame_transformer.hpp"
+#include "rviz_default_plugins/visibility_control.hpp"
 
 namespace rviz_common
 {
@@ -55,13 +58,14 @@ namespace rviz_default_plugins
 class PointCloudCommon;
 namespace displays
 {
-
 /** @brief Visualizes a laser scan, received as a sensor_msgs::LaserScan. */
 // TODO(botteroa-si): This display originally extended the MessageFilterDisplay. Revisit when
 // available
 class RVIZ_DEFAULT_PLUGINS_PUBLIC LaserScanDisplay : public
   rviz_common::RosTopicDisplay<sensor_msgs::msg::LaserScan>
 {
+  Q_OBJECT
+
 public:
   LaserScanDisplay();
   ~LaserScanDisplay() override = default;
@@ -81,6 +85,10 @@ protected:
   std::unique_ptr<PointCloudCommon> point_cloud_common_;
   std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
   std::unique_ptr<laser_geometry::LaserProjection> projector_;
+
+private:
+  std::unique_ptr<rviz_default_plugins::transformation::TransformerGuard<
+      rviz_default_plugins::transformation::TFFrameTransformer>> transformer_guard_;
 };
 
 }  // namespace displays
