@@ -49,6 +49,8 @@ class PanelDockWidget;
 class WindowManagerInterface
 {
 public:
+  virtual ~WindowManagerInterface() = default;
+
   /// Return the parent QWidget.
   virtual
   QWidget *

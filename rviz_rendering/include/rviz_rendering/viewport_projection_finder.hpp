@@ -52,6 +52,7 @@ class RVIZ_RENDERING_PUBLIC ViewportProjectionFinder
 {
 public:
   ViewportProjectionFinder() = default;
+  virtual ~ViewportProjectionFinder() = default;
 
   virtual std::pair<bool, Ogre::Vector3> getViewportPointProjectionOnXYPlane(
     RenderWindow * render_window, int x, int y);
