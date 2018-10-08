@@ -241,6 +241,7 @@ ament_target_dependencies(rviz_default_plugins
 
 ament_export_include_directories(include)
 ament_export_interfaces(rviz_default_plugins)
+ament_export_libraries(rviz_default_plugins)
 ament_export_dependencies(
   Qt5
   rviz_common
