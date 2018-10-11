@@ -291,6 +291,7 @@ ament_export_dependencies(
   tf2_ros
 )
 ament_export_include_directories(include)
+ament_export_libraries(rviz_common)
 
 install(
   TARGETS rviz_common

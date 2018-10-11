@@ -131,6 +131,7 @@ ament_export_dependencies(
   ament_index_cpp)
 
 ament_export_include_directories(include)
+ament_export_libraries(rviz_rendering)
 
 install(
   TARGETS rviz_rendering
