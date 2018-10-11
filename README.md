@@ -170,6 +170,7 @@ Authors (2012-2017):
 - Kei Okada
 - Julius Kammerl
 - Acorn Pooley
+- Rein Appeldoorn
 
 Copyright notice for all icons and graphics in this package:
 
