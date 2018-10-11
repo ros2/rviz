@@ -263,13 +263,13 @@ ament_target_dependencies(rviz_common
   rclcpp
   resource_retriever
   rviz_assimp_vendor
-  rviz_yaml_cpp_vendor
   sensor_msgs
   std_msgs
   tf2
   tf2_geometry_msgs
   tf2_ros
   urdf
+  yaml_cpp_vendor
 )
 # prevent pluginlib from using boost
 target_compile_definitions(rviz_common PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
@@ -283,12 +283,12 @@ ament_export_dependencies(
   geometry_msgs
   pluginlib
   rclcpp
-  rviz_yaml_cpp_vendor
   sensor_msgs
   std_msgs
   tf2
   tf2_geometry_msgs
   tf2_ros
+  yaml_cpp_vendor
 )
 ament_export_include_directories(include)
 ament_export_libraries(rviz_common)
@@ -443,7 +443,7 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET rviz_common_display_test)
     target_link_libraries(rviz_common_display_test rviz_common Qt5::Widgets)
-    ament_target_dependencies(rviz_common_display_test rviz_yaml_cpp_vendor)
+    ament_target_dependencies(rviz_common_display_test yaml_cpp_vendor)
   endif()
 endif()
 
