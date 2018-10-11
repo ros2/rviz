@@ -48,7 +48,6 @@ find_package(rclcpp REQUIRED)
 find_package(resource_retriever REQUIRED)
 find_package(rviz_assimp_vendor REQUIRED)
 find_package(rviz_rendering REQUIRED)
-find_package(rviz_yaml_cpp_vendor REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(tinyxml_vendor REQUIRED)
@@ -56,6 +55,7 @@ find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(urdf REQUIRED)
+find_package(yaml_cpp_vendor REQUIRED)
 
 find_package(TinyXML REQUIRED)  # provided by tinyxml_vendor
 
