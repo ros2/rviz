@@ -34,7 +34,6 @@
   <depend>resource_retriever</depend>
   <depend>rviz_ogre_vendor</depend>
   <depend>rviz_rendering</depend>
-  <depend>rviz_yaml_cpp_vendor</depend>
   <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>
   <depend>tf2</depend>
@@ -42,6 +41,7 @@
   <depend>tf2_ros</depend>
   <depend>tinyxml_vendor</depend>
   <depend>urdf</depend>
+  <depend>yaml_cpp_vendor</depend>
 
   <test_depend>ament_cmake_cppcheck</test_depend>
   <test_depend>ament_cmake_cpplint</test_depend>
