@@ -76,7 +76,7 @@ void linkUpdaterStatusFunction(
 
 enum DescriptionSource
 {
-  TOPIC, FILE
+  TOPIC, FILE, PARAMETER
 };
 
 RobotModelDisplay::RobotModelDisplay()
@@ -110,6 +110,7 @@ RobotModelDisplay::RobotModelDisplay()
       "Source to get the robot description from.", this, SLOT(updatePropertyVisibility()));
   description_source_property_->addOption("Topic", DescriptionSource::TOPIC);
   description_source_property_->addOption("File", DescriptionSource::FILE);
+  description_source_property_->addOption("Parameter", DescriptionSource::PARAMETER);
 
   description_file_property_ = new FilePickerProperty("Description File", "",
       "Path to the robot description.",
@@ -203,13 +204,33 @@ void RobotModelDisplay::load_urdf()
     return;
   }
 
-  if (description_source_property_->getOptionInt() == DescriptionSource::FILE &&
+  if (description_source_property_->getOptionInt() == DescriptionSource::PARAMETER &&
+    !description_file_property_->getString().isEmpty())
+  {
+    load_urdf_parameter(description_file_property_->getStdString());
+  } else if (description_source_property_->getOptionInt() == DescriptionSource::FILE &&
     !description_file_property_->getString().isEmpty())
   {
     load_urdf_from(description_file_property_->getStdString());
   } else {
     clear();
   }
+}
+
+void RobotModelDisplay::load_urdf_parameter(const std::string & parameter_name)
+{
+    printf("Loading urdf from parameter %s\n", parameter_name.c_str());
+    try {
+      auto param_client = rclcpp::SyncParametersClient(
+        rviz_ros_node_.lock()->get_raw_node(),
+        "robot_state_publisher");
+      auto param = param_client.get_parameter<std::string>(parameter_name);
+      printf("got parameter %s\n", param.c_str());
+
+      load_urdf_content(param);
+    } catch (std::out_of_range & ex) {
+      fprintf(stderr, "unable to fetch parameter: %s\n", ex.what());
+    }
 }
 
 void RobotModelDisplay::load_urdf_from(const std::string & filepath)
@@ -220,6 +241,12 @@ void RobotModelDisplay::load_urdf_from(const std::string & filepath)
     content = urdf_file.readAll().toStdString();
     urdf_file.close();
   }
+
+  load_urdf_content(content);
+}
+
+void RobotModelDisplay::load_urdf_content(const std::string & content)
+{
   if (content.empty()) {
     clear();
     setStatus(StatusProperty::Error, "URDF", "URDF is empty");
