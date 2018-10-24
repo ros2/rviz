@@ -36,6 +36,28 @@
   </class>
 
   <class
+          name="rviz_default_plugins/FluidPressure"
+          type="rviz_default_plugins::displays::FluidPressureDisplay"
+          base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays data from a sensor_msgs::FluidPressure as pointcloud with one point
+    </description>
+    <message_type>sensor_msgs/FluidPressure</message_type>
+  </class>
+
+  <class
+          name="rviz_default_plugins/Illuminance"
+          type="rviz_default_plugins::displays::IlluminanceDisplay"
+          base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays data from a sensor_msgs::Illuminance as pointcloud with one point
+    </description>
+    <message_type>sensor_msgs/Illuminance</message_type>
+  </class>
+
+  <class
     name="rviz_default_plugins/Image"
     type="rviz_default_plugins::displays::ImageDisplay"
     base_class_type="rviz_common::Display"
@@ -122,6 +144,16 @@
   </class>
 
   <class
+          name="rviz_default_plugins/RelativeHumidity"
+          type="rviz_default_plugins::displays::RelativeHumidityDisplay"
+          base_class_type="rviz_common::Display">
+    <description>
+      Displays the data from sensor_msgs::RelativeHumidity messages as point cloud with one point
+    </description>
+    <message_type>sensor_msgs/RelativeHumidity</message_type>
+  </class>
+
+  <class
     name="rviz_default_plugins/RobotModel"
     type="rviz_default_plugins::displays::RobotModelDisplay"
     base_class_type="rviz_common::Display"
@@ -129,6 +161,17 @@
     <description>
       Displays a visual representation of a robot in the correct pose (as defined by the current TF transforms).  &lt;a href="http://www.ros.org/wiki/rviz/DisplayTypes/RobotModel"&gt;More Information&lt;/a&gt;.
     </description>
+  </class>
+
+  <class
+    name="rviz_default_plugins/Temperature"
+    type="rviz_default_plugins::displays::TemperatureDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays the data from sensor_msgs::Temperature messages as point cloud with one point
+    </description>
+    <message_type>sensor_msgs/Temperature</message_type>
   </class>
 
   <class

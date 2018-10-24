@@ -27,51 +27,65 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_FLUID_PRESSURE_DISPLAY_H
-#define RVIZ_FLUID_PRESSURE_DISPLAY_H
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__FLUID_PRESSURE__FLUID_PRESSURE_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__FLUID_PRESSURE__FLUID_PRESSURE_DISPLAY_HPP_
 
-#include <sensor_msgs/FluidPressure.h>
-#include <sensor_msgs/PointCloud2.h>
+#include <memory>
 
-#include "rviz/message_filter_display.h"
+#include "sensor_msgs/msg/point_cloud2.hpp"
+#include "sensor_msgs/msg/fluid_pressure.hpp"
 
-namespace rviz
+#include "rviz_common/ros_topic_display.hpp"
+#include "rviz_common/properties/queue_size_property.hpp"
+#include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
+
+#include "rviz_default_plugins/visibility_control.hpp"
+
+namespace rviz_common
+{
+namespace properties
+{
+class IntProperty;
+}  // namespace properties
+}  // namespace rviz_common
+
+namespace rviz_default_plugins
 {
 
-class IntProperty;
 class PointCloudCommon;
 
+namespace displays
+{
+
 /**
- * \class FluidPressureDisplay
- * \brief Displays an FluidPressure message of type sensor_msgs::FluidPressure
+ * \class
+ * \brief Displays a FluidPressure message of type sensor_msgs::FluidPressure
  *
  */
-class FluidPressureDisplay: public MessageFilterDisplay<sensor_msgs::FluidPressure>
+
+class RVIZ_DEFAULT_PLUGINS_PUBLIC FluidPressureDisplay
+: public rviz_common::RosTopicDisplay<sensor_msgs::msg::FluidPressure>
 {
 Q_OBJECT
+
 public:
   FluidPressureDisplay();
   ~FluidPressureDisplay();
 
-  virtual void reset();
-
-  virtual void update( float wall_dt, float ros_dt );
-
-private Q_SLOTS:
-  void updateQueueSize();
+  void reset() override;
+  void update(float wall_dt, float ros_dt) override;
+  void onDisable() override;
+  void processMessage(const sensor_msgs::msg::FluidPressure::ConstSharedPtr msg) override;
 
 protected:
-  /** @brief Do initialization. Overridden from MessageFilterDisplay. */
-  virtual void onInitialize();
+  void onInitialize() override;
 
-  /** @brief Process a single message.  Overridden from MessageFilterDisplay. */
-  virtual void processMessage( const sensor_msgs::FluidPressureConstPtr& msg );
-
-  IntProperty* queue_size_property_;
-
-  PointCloudCommon* point_cloud_common_;
+private:
+  std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
+  std::shared_ptr<PointCloudCommon> point_cloud_common_;
 };
 
-} // namespace rviz
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif
+#endif // RVIZ_DEFAULT_PLUGINS__DISPLAYS__FLUID_PRESSURE__FLUID_PRESSURE_DISPLAY_HPP_

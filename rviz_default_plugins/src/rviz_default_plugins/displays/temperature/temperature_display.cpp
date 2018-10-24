@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2018, Maximilian Kuehn
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,129 +28,126 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "rviz_default_plugins/displays/temperature/temperature_display.hpp"
+
+#include <memory>
+
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 
-#include <ros/time.h>
+#include "rclcpp/clock.hpp"
+#include "rclcpp/time.hpp"
+#include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
+#include "rviz_default_plugins/displays/pointcloud/point_cloud_transformer.hpp"
+#include "rviz_common/display_context.hpp"
+#include "rviz_common/frame_manager_iface.hpp"
+#include "rviz_rendering/objects/point_cloud.hpp"
 
-#include "rviz/default_plugin/point_cloud_common.h"
-#include "rviz/default_plugin/point_cloud_transformers.h"
-#include "rviz/display_context.h"
-#include "rviz/frame_manager.h"
-#include "rviz/ogre_helpers/point_cloud.h"
-#include "rviz/properties/int_property.h"
-#include "rviz/validate_floats.h"
+#include "rviz_common/properties/queue_size_property.hpp"
+#include "rviz_common/validate_floats.hpp"
 
-#include "temperature_display.h"
 
-namespace rviz
+namespace rviz_default_plugins
 {
 
-TemperatureDisplay::TemperatureDisplay()
-  : point_cloud_common_( new PointCloudCommon( this ))
-{
-  queue_size_property_ = new IntProperty( "Queue Size", 10,
-                                          "Advanced: set the size of the incoming Temperature message queue. "
-                                          " Increasing this is useful if your incoming TF data is delayed significantly "
-                                          "from your Temperature data, but it can greatly increase memory usage if the messages are big.",
-                                          this, SLOT( updateQueueSize() ));
+  namespace displays
+  {
 
-  // PointCloudCommon sets up a callback queue with a thread for each
-  // instance.  Use that for processing incoming messages.
-  update_nh_.setCallbackQueue( point_cloud_common_->getCallbackQueue() );
-}
+    TemperatureDisplay::TemperatureDisplay()
+            : queue_size_property_(new rviz_common::QueueSizeProperty(this, 10)),
+              point_cloud_common_(new PointCloudCommon(this))
+    {}
 
-TemperatureDisplay::~TemperatureDisplay()
-{
-  delete point_cloud_common_;
-}
+    TemperatureDisplay::~TemperatureDisplay()
+    {}
 
-void TemperatureDisplay::onInitialize()
-{
-  MFDClass::onInitialize();
-  point_cloud_common_->initialize( context_, scene_node_ );
+    void TemperatureDisplay::onInitialize()
+    {
+      RTDClass::onInitialize();
+      point_cloud_common_->initialize(context_, scene_node_);
 
-  // Set correct initial values
-  subProp("Channel Name")->setValue("temperature");
-  subProp("Autocompute Intensity Bounds")->setValue(false);
-  subProp("Invert Rainbow")->setValue(true);
-  subProp("Min Intensity")->setValue(0); // Water Freezing
-  subProp("Max Intensity")->setValue(100); // Water Boiling
-}
+      // Set correct initial values
+      subProp("Channel Name")->setValue("temperature");
+      subProp("Autocompute Intensity Bounds")->setValue(false);
+      subProp("Invert Rainbow")->setValue(true);
+      subProp("Min Intensity")->setValue(0);
+      subProp("Max Intensity")->setValue(100);
+    }
 
-void TemperatureDisplay::updateQueueSize()
-{
-  tf_filter_->setQueueSize( (uint32_t) queue_size_property_->getInt() );
-}
+    void TemperatureDisplay::processMessage(const sensor_msgs::msg::Temperature::ConstSharedPtr message)
+    {
+      auto filtered = std::make_shared<sensor_msgs::msg::PointCloud2>();
 
-void TemperatureDisplay::processMessage( const sensor_msgs::TemperatureConstPtr& msg )
-{
-  sensor_msgs::PointCloud2Ptr filtered(new sensor_msgs::PointCloud2);
+      // Create fields
+      sensor_msgs::msg::PointField x;
+      x.name = "x";
+      x.offset = 0;
+      x.datatype = sensor_msgs::msg::PointField::FLOAT32;
+      x.count = 1;
+      sensor_msgs::msg::PointField y;
+      y.name = "y";
+      y.offset = 4;
+      y.datatype = sensor_msgs::msg::PointField::FLOAT32;
+      y.count = 1;
+      sensor_msgs::msg::PointField z;
+      z.name = "z";
+      z.offset = 8;
+      z.datatype = sensor_msgs::msg::PointField::FLOAT32;
+      z.count = 1;
+      sensor_msgs::msg::PointField temperature;
+      temperature.name = "temperature";
+      temperature.offset = 12;
+      temperature.datatype = sensor_msgs::msg::PointField::FLOAT64;
+      temperature.count = 1;
 
-  // Create fields
-  sensor_msgs::PointField x;
-  x.name = "x";
-  x.offset = 0;
-  x.datatype = sensor_msgs::PointField::FLOAT32;
-  x.count = 1;
-  sensor_msgs::PointField y;
-  y.name = "y";
-  y.offset = 4;
-  y.datatype = sensor_msgs::PointField::FLOAT32;
-  y.count = 1;
-  sensor_msgs::PointField z;
-  z.name = "z";
-  z.offset = 8;
-  z.datatype = sensor_msgs::PointField::FLOAT32;
-  z.count = 1;
-  sensor_msgs::PointField temperature;
-  temperature.name = "temperature";
-  temperature.offset = 12;
-  temperature.datatype = sensor_msgs::PointField::FLOAT64;
-  temperature.count = 1;
+      // Create pointcloud from message
+      filtered->header = message->header;
+      filtered->fields.push_back(x);
+      filtered->fields.push_back(y);
+      filtered->fields.push_back(z);
+      filtered->fields.push_back(temperature);
+      filtered->data.resize(20);
+      const float zero_float = 0.0;  // RelativeHumidity is always on its tf frame
+      memcpy(&filtered->data[x.offset], &zero_float, 4);
+      memcpy(&filtered->data[y.offset], &zero_float, 4);
+      memcpy(&filtered->data[z.offset], &zero_float, 4);
+      memcpy(&filtered->data[temperature.offset], &message->temperature, 8);
+      filtered->height = 1;
+      filtered->width = 1;
+      filtered->is_bigendian = false;
+      filtered->point_step = 20;
+      filtered->row_step = 1;
 
-  // Create pointcloud from message
-  filtered->header = msg->header;
-  filtered->fields.push_back(x);
-  filtered->fields.push_back(y);
-  filtered->fields.push_back(z);
-  filtered->fields.push_back(temperature);
-  filtered->data.resize(20);
-  const float zero_float = 0.0; // RelativeHumidity is always on its tf frame
-  memcpy(&filtered->data[x.offset], &zero_float, 4);
-  memcpy(&filtered->data[y.offset], &zero_float, 4);
-  memcpy(&filtered->data[z.offset], &zero_float, 4);
-  memcpy(&filtered->data[temperature.offset], &msg->temperature, 8);
-  filtered->height = 1;
-  filtered->width = 1;
-  filtered->is_bigendian = false;
-  filtered->point_step = 20;
-  filtered->row_step = 1;
-
-  // Give to point_cloud_common to draw
-  point_cloud_common_->addMessage( filtered );
-}
+      // Give to point_cloud_common to draw
+      point_cloud_common_->addMessage(filtered);
+    }
 
 
-void TemperatureDisplay::update( float wall_dt, float ros_dt )
-{
-  point_cloud_common_->update( wall_dt, ros_dt );
+    void TemperatureDisplay::update(float wall_dt, float ros_dt)
+    {
+      point_cloud_common_->update(wall_dt, ros_dt);
 
-  // Hide unneeded properties
-  subProp("Position Transformer")->hide();
-  subProp("Color Transformer")->hide();
-  subProp("Channel Name")->hide();
-  subProp("Invert Rainbow")->hide();
-  subProp("Autocompute Intensity Bounds")->hide();
-}
+      // Hide unneeded properties
+      subProp("Position Transformer")->hide();
+      subProp("Color Transformer")->hide();
+      subProp("Channel Name")->hide();
+      subProp("Autocompute Intensity Bounds")->hide();
+    }
 
-void TemperatureDisplay::reset()
-{
-  MFDClass::reset();
-  point_cloud_common_->reset();
-}
+    void TemperatureDisplay::reset()
+    {
+      RTDClass::reset();
+      point_cloud_common_->reset();
+    }
 
-} // namespace rviz
+    void TemperatureDisplay::onDisable()
+    {
+      RosTopicDisplay::onDisable();
+      point_cloud_common_->onDisable();
+    }
 
-#include <pluginlib/class_list_macros.h>
-PLUGINLIB_EXPORT_CLASS( rviz::TemperatureDisplay, rviz::Display )
+  }  // namespace displays
+}  // namespace rviz_default_plugins
+
+#include <pluginlib/class_list_macros.hpp>  // NOLINT
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::TemperatureDisplay, rviz_common::Display)

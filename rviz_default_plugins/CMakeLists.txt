@@ -74,8 +74,10 @@ find_package(visualization_msgs REQUIRED)
 # These need to be added in the add_library() call so AUTOMOC detects them.
 set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/camera/camera_display.hpp
+  include/rviz_default_plugins/displays/fluid_pressure/fluid_pressure_display.hpp
   include/rviz_default_plugins/displays/grid/grid_display.hpp
   include/rviz_default_plugins/displays/grid_cells/grid_cells_display.hpp
+  include/rviz_default_plugins/displays/illuminance/illuminance_display.hpp
   include/rviz_default_plugins/displays/image/image_display.hpp
   include/rviz_default_plugins/displays/laser_scan/laser_scan_display.hpp
   include/rviz_default_plugins/displays/map/map_display.hpp
@@ -101,7 +103,9 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/pose/pose_display.hpp
   include/rviz_default_plugins/displays/pose_array/pose_array_display.hpp
   include/rviz_default_plugins/displays/range/range_display.hpp
+  include/rviz_default_plugins/displays/relative_humidity/relative_humidity_display.hpp
   include/rviz_default_plugins/displays/robot_model/robot_model_display.hpp
+  include/rviz_default_plugins/displays/temperature/temperature_display.hpp
   include/rviz_default_plugins/displays/tf/frame_info.hpp
   include/rviz_default_plugins/displays/tf/tf_display.hpp
   include/rviz_default_plugins/robot/robot.hpp
@@ -124,6 +128,8 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/camera/camera_display.cpp
   src/rviz_default_plugins/displays/grid/grid_display.cpp
   src/rviz_default_plugins/displays/grid_cells/grid_cells_display.cpp
+  src/rviz_default_plugins/displays/fluid_pressure/fluid_pressure_display.cpp
+  src/rviz_default_plugins/displays/illuminance/illuminance_display.cpp
   src/rviz_default_plugins/displays/image/image_display.cpp
   src/rviz_default_plugins/displays/image/ros_image_texture.cpp
   src/rviz_default_plugins/displays/laser_scan/laser_scan_display.cpp
@@ -166,7 +172,9 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/pose_array/pose_array_display.cpp
   src/rviz_default_plugins/displays/pose_array/flat_arrows_array.cpp
   src/rviz_default_plugins/displays/range/range_display.cpp
+  src/rviz_default_plugins/displays/relative_humidity/relative_humidity_display.cpp
   src/rviz_default_plugins/displays/robot_model/robot_model_display.cpp
+  src/rviz_default_plugins/displays/temperature/temperature_display.cpp
   src/rviz_default_plugins/displays/tf/frame_info.cpp
   src/rviz_default_plugins/displays/tf/frame_selection_handler.cpp
   src/rviz_default_plugins/displays/tf/tf_display.cpp
