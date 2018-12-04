@@ -2,6 +2,12 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add semicolons to all RCLCPP and RCUTILS macros. (`#357 <https://github.com/ros2/rviz/issues/357>`_)
+* Made the transformation framework used by rviz pluggable. (`#346 <https://github.com/ros2/rviz/issues/346>`_)
+* Contributors: Andreas Greimel, Chris Lalancette
+
 4.0.1 (2018-06-28)
 ------------------
 

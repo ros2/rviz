@@ -2,6 +2,32 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Export libraries to trigger hooks. (`#358 <https://github.com/ros2/rviz/issues/358>`_)
+* Made the transformation framework used by rviz pluggable. (`#346 <https://github.com/ros2/rviz/issues/346>`_)
+* Added hotkeys (also to help) (`#312 <https://github.com/ros2/rviz/issues/312>`_)
+* Migrated Range Display (`#325 <https://github.com/ros2/rviz/issues/325>`_)
+* Migrated pose estimate tool (`#329 <https://github.com/ros2/rviz/issues/329>`_)
+* Increased visual testing stability (`#344 <https://github.com/ros2/rviz/issues/344>`_)
+* Fixed laserscan 1 meter limit bug (`#345 <https://github.com/ros2/rviz/issues/345>`_)
+* Changed to always build all tests and skip execution if not supported (`#342 <https://github.com/ros2/rviz/issues/342>`_)
+* Minor cleanup and fixes (`#336 <https://github.com/ros2/rviz/issues/336>`_)
+  * Fix environment for colcon builds (no appends necessary)
+  * Fix warning in visual_test_fixture.cpp and add -Werror option in CMakeLists.txt
+  * Fix Qt moc warning for virtual signal
+* Fixed missing status in laser scan display (`#335 <https://github.com/ros2/rviz/issues/335>`_)
+  * Show status error when transform failed
+* Changes due to uncrustify 0.67 (`#333 <https://github.com/ros2/rviz/issues/333>`_)
+  * fix closing block and tamplete indentation to comply with uncrustify 0.67
+  * add space between reference and variable name
+  * space before opening bracket
+  * fix indend of inherited class
+  * fix indent of code blocks
+  * no space around -> operator
+  * restore original spacing
+* Contributors: Alessandro Bottero, Andreas Greimel, Martin Idel, Mikael Arguedas, Steven! Ragnarök, eric1221bday
+
 4.0.1 (2018-06-28)
 ------------------
 

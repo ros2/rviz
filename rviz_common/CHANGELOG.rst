@@ -2,6 +2,41 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Moved rviz_yaml_cpp_vendor into it's own repo (`#361 <https://github.com/ros2/rviz/issues/361>`_)
+* Exported libraries to trigger hooks. (`#358 <https://github.com/ros2/rviz/issues/358>`_)
+* Added virtual destructors for WindowManagerInterface and ViewportProjectionFinder (`#356 <https://github.com/ros2/rviz/issues/356>`_)
+* Changed to use spin_some with max_duration (`#354 <https://github.com/ros2/rviz/issues/354>`_)
+  * spin_once() limits the number of callbacks that can be called based on how quickly the gui updates.
+    This results in lag when displaying tf frames.
+    Use spin_some(max_duration) to execute all of the work available.
+* Made the transformation framework used by rviz pluggable. (`#346 <https://github.com/ros2/rviz/issues/346>`_)
+* Fixed wrong name of InitialPose plugin in default config (`#352 <https://github.com/ros2/rviz/issues/352>`_)
+* Added hotkeys (also to help) (`#312 <https://github.com/ros2/rviz/issues/312>`_)
+* Migrated pose estimate tool (`#329 <https://github.com/ros2/rviz/issues/329>`_)
+* Changed to now pass clock to tf2_ros::buffer (`#340 <https://github.com/ros2/rviz/issues/340>`_)
+* Changted to always build all tests and skip execution if not supported (`#342 <https://github.com/ros2/rviz/issues/342>`_)
+* Reverted workaround for identity transform after geometry2 fix (`#343 <https://github.com/ros2/rviz/issues/343>`_)
+* Reverted "Add simple mechanism to automatically convert old configs" (`#337 <https://github.com/ros2/rviz/issues/337>`_)
+  * No longer necessary for C-Turtle
+* Minor cleanup and fixes (`#336 <https://github.com/ros2/rviz/issues/336>`_)
+  * Fix environment for colcon builds (no appends necessary)
+  * Fix warning in visual_test_fixture.cpp and add -Werror option in CMakeLists.txt
+  * Fix Qt moc warning for virtual signal
+* Fixed missing status in laser scan display (`#335 <https://github.com/ros2/rviz/issues/335>`_)
+  * Show status error when transform failed
+  * Modify logging behaviour
+* Updates due to uncrustify 0.67 (`#333 <https://github.com/ros2/rviz/issues/333>`_)
+  * fix closing block and tamplete indentation to comply with uncrustify 0.67
+  * add space between reference and variable name
+  * space before opening bracket
+  * fix indend of inherited class
+  * fix indent of code blocks
+  * no space around -> operator
+  * restore original spacing
+* Contributors: Andreas Greimel, Kartik Mohta, Martin Idel, Michael Carroll, Mikael Arguedas, Shane Loretz, Steven! Ragnarök
+
 4.0.1 (2018-06-28)
 ------------------
 

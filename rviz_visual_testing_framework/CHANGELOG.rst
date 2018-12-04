@@ -2,6 +2,24 @@
 Changelog for package rviz_visual_testing_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Made the transformation framework used by rviz pluggable. (`#346 <https://github.com/ros2/rviz/issues/346>`_)
+* Increased visual testing stability (`#344 <https://github.com/ros2/rviz/issues/344>`_)
+* Minor cleanup and fixes (`#336 <https://github.com/ros2/rviz/issues/336>`_)
+  * Fix environment for colcon builds (no appends necessary)
+  * Fix warning in visual_test_fixture.cpp and add -Werror option in CMakeLists.txt
+  * Fix Qt moc warning for virtual signal
+* Changed to support uncrustify 0.67 (`#333 <https://github.com/ros2/rviz/issues/333>`_)
+  * fix closing block and tamplete indentation to comply with uncrustify 0.67
+  * add space between reference and variable name
+  * space before opening bracket
+  * fix indend of inherited class
+  * fix indent of code blocks
+  * no space around -> operator
+  * restore original spacing
+* Contributors: Andreas Greimel, Martin Idel, Mikael Arguedas
+
 4.0.1 (2018-06-28)
 ------------------
 * Add Qt dependency to testing packages. (`#330 <https://github.com/ros2/rviz/issues/330>`_)

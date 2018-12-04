@@ -2,6 +2,23 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Export libraries to trigger hooks. (`#358 <https://github.com/ros2/rviz/issues/358>`_)
+* Added virtual destructors for WindowManagerInterface and ViewportProjectionFinder (`#356 <https://github.com/ros2/rviz/issues/356>`_)
+* Increased visual testing stability (`#344 <https://github.com/ros2/rviz/issues/344>`_)
+* Cleanup dependencies for rviz_rendering_tests (`#326 <https://github.com/ros2/rviz/issues/326>`_)
+* Changed to always build all tests and skip execution if not supported (`#342 <https://github.com/ros2/rviz/issues/342>`_)
+* Changed to support uncrustify 0.67 (`#333 <https://github.com/ros2/rviz/issues/333>`_)
+  * fix closing block and tamplete indentation to comply with uncrustify 0.67
+  * add space between reference and variable name
+  * space before opening bracket
+  * fix indend of inherited class
+  * fix indent of code blocks
+  * no space around -> operator
+  * restore original spacing
+* Contributors: Andreas Greimel, Kartik Mohta, Mikael Arguedas, Steven! Ragnarök, William Woodall
+
 4.0.1 (2018-06-28)
 ------------------
 * move find_package or test dependencies to test block (`#331 <https://github.com/ros2/rviz/issues/331>`_)

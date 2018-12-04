@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Changed to always build all tests and skip execution if not supported (`#342 <https://github.com/ros2/rviz/issues/342>`_)
+* Contributors: Andreas Greimel
+
 4.0.1 (2018-06-28)
 ------------------
 * Add Qt dependency to testing packages. (`#330 <https://github.com/ros2/rviz/issues/330>`_)
