@@ -2,8 +2,8 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+5.0.0 (2018-12-04)
+------------------
 * Moved rviz_yaml_cpp_vendor into it's own repo (`#361 <https://github.com/ros2/rviz/issues/361>`_)
 * Exported libraries to trigger hooks. (`#358 <https://github.com/ros2/rviz/issues/358>`_)
 * Added virtual destructors for WindowManagerInterface and ViewportProjectionFinder (`#356 <https://github.com/ros2/rviz/issues/356>`_)

@@ -2,8 +2,8 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+5.0.0 (2018-12-04)
+------------------
 * Export libraries to trigger hooks. (`#358 <https://github.com/ros2/rviz/issues/358>`_)
 * Made the transformation framework used by rviz pluggable. (`#346 <https://github.com/ros2/rviz/issues/346>`_)
 * Added hotkeys (also to help) (`#312 <https://github.com/ros2/rviz/issues/312>`_)

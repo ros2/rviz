@@ -2,8 +2,8 @@
 Changelog for package rviz_visual_testing_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+5.0.0 (2018-12-04)
+------------------
 * Made the transformation framework used by rviz pluggable. (`#346 <https://github.com/ros2/rviz/issues/346>`_)
 * Increased visual testing stability (`#344 <https://github.com/ros2/rviz/issues/344>`_)
 * Minor cleanup and fixes (`#336 <https://github.com/ros2/rviz/issues/336>`_)

@@ -2,8 +2,8 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+5.0.0 (2018-12-04)
+------------------
 * Changed ZLIB_ROOT -> ZLIB_DIR (`#349 <https://github.com/ros2/rviz/issues/349>`_)
 * Contributors: Mikael Arguedas
 

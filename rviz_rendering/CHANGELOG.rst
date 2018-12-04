@@ -2,8 +2,8 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+5.0.0 (2018-12-04)
+------------------
 * Export libraries to trigger hooks. (`#358 <https://github.com/ros2/rviz/issues/358>`_)
 * Added virtual destructors for WindowManagerInterface and ViewportProjectionFinder (`#356 <https://github.com/ros2/rviz/issues/356>`_)
 * Increased visual testing stability (`#344 <https://github.com/ros2/rviz/issues/344>`_)
