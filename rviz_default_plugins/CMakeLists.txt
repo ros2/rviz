@@ -94,6 +94,7 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/pointcloud/point_cloud_transformer.hpp
   include/rviz_default_plugins/displays/pointcloud/point_cloud_transformer_factory.hpp
   include/rviz_default_plugins/displays/pointcloud/point_cloud_helpers.hpp
+  include/rviz_default_plugins/displays/pointcloud/point_cloud_scalar_display.hpp
   include/rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.hpp
   include/rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.hpp
   include/rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.hpp

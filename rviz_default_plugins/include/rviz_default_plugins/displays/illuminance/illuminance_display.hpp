@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
- * Copyright (c) 2018, Maximilian Kuehn
+ * Copyright (c) 2018, TNG Technology Consulting GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,26 +31,8 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__ILLUMINANCE__ILLUMINANCE_DISPLAY_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__ILLUMINANCE__ILLUMINANCE_DISPLAY_HPP_
 
-#include <memory>
-
-#include "sensor_msgs/msg/point_cloud2.hpp"
+#include "rviz_default_plugins/displays/pointcloud/point_cloud_scalar_display.hpp"
 #include "sensor_msgs/msg/illuminance.hpp"
-
-#include "rviz_common/ros_topic_display.hpp"
-#include "rviz_common/properties/queue_size_property.hpp"
-#include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
-
-
-#include "rviz_default_plugins/visibility_control.hpp"
-
-
-namespace rviz_common
-{
-namespace properties
-{
-  class IntProperty;
-}  // namespace properties
-}  // namespace rviz_common
 
 namespace rviz_default_plugins
 {
@@ -61,34 +43,28 @@ namespace displays
 {
 
 /**
- * \class IlluminanceDisplay
- * \brief Displays a Illuminance message of type sensor_msgs::Illuminance
- *
- */
+* \class IlluminanceDisplay
+* \brief Displays a Illuminance message of type sensor_msgs::Illuminance
+*
+*/
 
 class RVIZ_DEFAULT_PLUGINS_PUBLIC IlluminanceDisplay
-: public rviz_common::RosTopicDisplay<sensor_msgs::msg::Illuminance>
+  : public PointCloudScalarDisplay<sensor_msgs::msg::Illuminance>
 {
   Q_OBJECT
 
 public:
   IlluminanceDisplay();
-  ~IlluminanceDisplay();
-
-  void reset() override;
-  void update(float wall_dt, float ros_dt) override;
-  void onDisable() override;
-  void processMessage(const sensor_msgs::msg::Illuminance::ConstSharedPtr message) override;
-
-protected:
-  void onInitialize() override;
+  ~IlluminanceDisplay() override;
 
 private:
-  std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
-  std::shared_ptr<PointCloudCommon> point_cloud_common_;
+  void processMessage(const sensor_msgs::msg::Illuminance::ConstSharedPtr message) override;
+
+  void setInitialValues() override;
+  void hideUnneededProperties() override;
 };
 
 }  // namespace displays
 }  // namespace rviz_default_plugins
 
-#endif // RVIZ_DEFAULT_PLUGINS__DISPLAYS__ILLUMINANCE__ILLUMINANCE_DISPLAY_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__ILLUMINANCE__ILLUMINANCE_DISPLAY_HPP_
