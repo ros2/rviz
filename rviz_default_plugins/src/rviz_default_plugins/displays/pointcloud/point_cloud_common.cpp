@@ -144,7 +144,7 @@ PointCloudCommon::PointCloudCommon(rviz_common::Display * display)
       display_, SLOT(updateColorTransformer()), this);
   connect(color_transformer_property_,
     SIGNAL(requestOptions(rviz_common::properties::EnumProperty*)),
-    this, SLOT(setColorTransformerOptions(rviz_common::properties::EnumProperty *)));
+    this, SLOT(setColorTransformerOptions(rviz_common::properties::EnumProperty*)));
 }
 
 void PointCloudCommon::initialize(
