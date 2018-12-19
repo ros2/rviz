@@ -199,7 +199,7 @@ VisualizationManager::VisualizationManager(
 
   tool_manager_ = new ToolManager(this);
   connect(tool_manager_, SIGNAL(configChanged()), this, SIGNAL(configChanged()));
-  connect(tool_manager_, SIGNAL(toolChanged(Tool *)), this, SLOT(onToolChanged(Tool *)));
+  connect(tool_manager_, SIGNAL(toolChanged(Tool*)), this, SLOT(onToolChanged(Tool*)));
 
   view_manager_ = new ViewManager(this);
   view_manager_->setRenderPanel(render_panel_);

@@ -79,8 +79,8 @@ ScreenshotDialog::ScreenshotDialog(
 
   setLayout(main_layout);
 
-  connect(button_box_, SIGNAL(clicked(QAbstractButton *)), this,
-    SLOT(onButtonClicked(QAbstractButton *)));
+  connect(button_box_, SIGNAL(clicked(QAbstractButton*)), this,
+    SLOT(onButtonClicked(QAbstractButton*)));
   connect(full_window_checkbox, SIGNAL(toggled(bool)), this, SLOT(setSaveFullWindow(bool)));
   connect(delay_timer_, SIGNAL(timeout()), this, SLOT(onTimeout()));
 }

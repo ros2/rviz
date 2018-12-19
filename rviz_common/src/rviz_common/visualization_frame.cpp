@@ -341,10 +341,10 @@ void VisualizationFrame::initialize(
   ToolManager * tool_man = manager_->getToolManager();
 
   connect(manager_, SIGNAL(configChanged()), this, SLOT(setDisplayConfigModified()));
-  connect(tool_man, SIGNAL(toolAdded(Tool *)), this, SLOT(addTool(Tool *)));
-  connect(tool_man, SIGNAL(toolRemoved(Tool *)), this, SLOT(removeTool(Tool *)));
-  connect(tool_man, SIGNAL(toolRefreshed(Tool *)), this, SLOT(refreshTool(Tool *)));
-  connect(tool_man, SIGNAL(toolChanged(Tool *)), this, SLOT(indicateToolIsCurrent(Tool *)));
+  connect(tool_man, SIGNAL(toolAdded(Tool*)), this, SLOT(addTool(Tool*)));
+  connect(tool_man, SIGNAL(toolRemoved(Tool*)), this, SLOT(removeTool(Tool*)));
+  connect(tool_man, SIGNAL(toolRefreshed(Tool*)), this, SLOT(refreshTool(Tool*)));
+  connect(tool_man, SIGNAL(toolChanged(Tool*)), this, SLOT(indicateToolIsCurrent(Tool*)));
 
   manager_->initialize();
 
@@ -513,8 +513,8 @@ void VisualizationFrame::initToolbars()
   toolbar_->setObjectName("Tools");
   toolbar_->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
   toolbar_actions_ = new QActionGroup(this);
-  connect(toolbar_actions_, SIGNAL(triggered(QAction *)), this,
-    SLOT(onToolbarActionTriggered(QAction *)));
+  connect(toolbar_actions_, SIGNAL(triggered(QAction*)), this,
+    SLOT(onToolbarActionTriggered(QAction*)));
   view_menu_->addAction(toolbar_->toggleViewAction());
 
   add_tool_action_ = new QAction("", toolbar_actions_);
@@ -530,8 +530,8 @@ void VisualizationFrame::initToolbars()
   remove_tool_button->setToolTip("Remove a tool from the toolbar");
   remove_tool_button->setIcon(loadPixmap("package://rviz_common/icons/minus.png"));
   toolbar_->addWidget(remove_tool_button);
-  connect(remove_tool_menu_, SIGNAL(triggered(QAction *)), this, SLOT(onToolbarRemoveTool(
-      QAction *)));
+  connect(remove_tool_menu_, SIGNAL(triggered(QAction*)), this, SLOT(onToolbarRemoveTool(
+      QAction*)));
 }
 
 void VisualizationFrame::hideDockImpl(Qt::DockWidgetArea area, bool hide)
@@ -1121,7 +1121,7 @@ void VisualizationFrame::showHelpPanel()
   if (!show_help_action_) {
     QDockWidget * dock = addPanelByName("Help", "rviz_common/Help");
     show_help_action_ = dock->toggleViewAction();
-    connect(dock, SIGNAL(destroyed(QObject *)), this, SLOT(onHelpDestroyed()));
+    connect(dock, SIGNAL(destroyed(QObject*)), this, SLOT(onHelpDestroyed()));
   } else {
     show_help_action_->trigger();
   }
