@@ -489,6 +489,15 @@ if(BUILD_TESTING)
     target_link_libraries(point_cloud_common_test ${TEST_LINK_LIBRARIES})
   endif()
 
+  ament_add_gmock(point_cloud_scalar_display_test
+          test/rviz_default_plugins/displays/pointcloud/point_cloud_scalar_display_test.cpp
+          test/rviz_default_plugins/displays/display_test_fixture.cpp
+          ${SKIP_DISPLAY_TESTS})
+  if(TARGET point_cloud_scalar_display_test)
+    target_include_directories(point_cloud_scalar_display_test PUBLIC ${TEST_INCLUDE_DIRS})
+    target_link_libraries(point_cloud_scalar_display_test ${TEST_LINK_LIBRARIES})
+  endif()
+
   ament_add_gmock(point_cloud_transformers_test
     test/rviz_default_plugins/pointcloud_messages.hpp
     test/rviz_default_plugins/pointcloud_messages.cpp
