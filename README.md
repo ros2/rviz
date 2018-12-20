@@ -15,12 +15,14 @@ For some displays, the [documentation is updated](docs/FEATURES.md).
 | Displays              | Tools         | View Controller       | Panels          |
 | --------------------- | ------------- | --------------------- | --------------- |
 | Camera                | Move Camera   | Orbit                 | Displays        |
-| Grid                  | Focus Camera  | XY Orbit              | Help            |
-| Grid Cells            | Measure       | First Person          | Selections      |
-| Image                 | Select        | Third Person Follower | Tool Properties |
-| Laser Scan            | 2D Nav Goal   | Top Down Orthographic | Views           |
-| Map                   | Publish Point |                       |                 |
-| Marker                | Initial Pose  |
+| Fluid Pressure        | Focus Camera  | XY Orbit              | Help            |
+| Grid                  | Measure       | First Person          | Selections      |
+| Grid Cells            | Select        | Third Person Follower | Tool Properties | 
+| Illuminance           | 2D Nav Goal   | Top Down Orthographic | Views           |
+| Image                 | Publish Point |
+| Laser Scan            | Initial Pose  |
+| Map                   | 
+| Marker                | 
 | Marker Array          |
 | Odometry              |
 | Point Cloud (1 and 2) |
@@ -29,8 +31,11 @@ For some displays, the [documentation is updated](docs/FEATURES.md).
 | Pose                  |
 | Pose Array            |
 | Range                 |
+| Relative Humidity     |
 | Robot Model           |
+| Temperature           |
 | TF                    |
+
 
 ### Not yet ported
 These features have not been ported to `ros2/rviz` yet.
@@ -40,13 +45,9 @@ These features have not been ported to `ros2/rviz` yet.
 | Axes                 | Interact     | Time   |
 | DepthCloud           |
 | Effort               |
-| Fluid Pressure       |
-| Illuminance          |
 | Interactive Marker   |
 | Oculus               |
 | Pose With Covariance |
-| Relative Humidity    |
-| Temperature          |
 | Wrench               |
 
 Other features:

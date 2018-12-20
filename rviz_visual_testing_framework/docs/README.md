@@ -60,12 +60,14 @@ After this method has been called in a test, interaction with RViz is no longer 
 
 ## Running the tests
 
-In order to run tests, use the following command:
+In order to run the tests, they have to be build first and executed seperately. Use the following commands:
 
-    ament test --cmake-args -DEnableVisualTests=True
+    colcon build --cmake-args -DEnableVisualTests=True
+    
+    colcon test
 
 This will make the tests run and the screenshots will be compared to the existing reference images.  
-**NB**: CMake will cache the flag value, so that after setting them to `True` or `False`, the following time `ament test` is run without specifying the flag, the previously set value will be used.
+**NB**: CMake will cache the flag value, so that after setting them to `True` or `False`, the following time `colcon test` is run without specifying the flag, the previously set value will be used.
 
 Furthermore, the reference images can be updated by running the tests after setting the environmental variable `GenerateReferenceImages` to `True`.
 

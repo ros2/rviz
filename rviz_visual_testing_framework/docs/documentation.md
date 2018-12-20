@@ -30,9 +30,13 @@ To ensure that such resizing is always possible, test images are a lot wider tha
 
 For RViz itself: the CMake flag `EnableVisualTests` is provided to enable visual tests:
 
-        ament test --cmake-args -DEnableVisualTests=True
+        colcon build --cmake-args -DEnableVisualTests=True
 
-This will make the tests run and the screenshots will be compared to the existing reference images.
+This will build the tests. Afterwards run
+
+        colcon test 
+      
+to execute the tests and the screenshots will be compared to the existing reference images.
 
 Furthermore, the reference images can be updated by running the tests after setting the environmental variable `GenerateReferenceImages` to `True`.
     
