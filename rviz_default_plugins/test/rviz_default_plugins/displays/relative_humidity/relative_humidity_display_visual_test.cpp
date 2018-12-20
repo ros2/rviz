@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2018, Bosch Software Innovations GmbH.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
+ * Copyright (c) 2018, TNG Technology Consulting GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,18 +28,46 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "point_cloud_display_page_object.hpp"
-
 #include <memory>
-#include <vector>
+#include <string>
 
-#include <QTest>  // NOLINT
+#include "rviz_visual_testing_framework/visual_test_fixture.hpp"
+#include "rviz_visual_testing_framework/visual_test_publisher.hpp"
 
-PointCloudDisplayPageObject::PointCloudDisplayPageObject()
-: PointCloudCommonPageObject("PointCloud")
-{}
+#include "../../page_objects/point_cloud_common_page_object.hpp"
+#include "../../publishers/relative_humidity_publisher.hpp"
 
-void PointCloudDisplayPageObject::setQueueSize(int queue_size)
+class RelativeHumidityDisplayPageObject
+  : public PointCloudCommonPageObject
 {
-  setInt("Queue Size", queue_size);
+public:
+  RelativeHumidityDisplayPageObject()
+  : PointCloudCommonPageObject("RelativeHumidity")
+  {}
+};
+
+TEST_F(VisualTestFixture, sphere_changes_color_depending_on_relative_humidity) {
+  auto relative_humidity_publisher = std::make_shared<nodes::RelativeHumidityPublisher>();
+  auto relative_humidity_visual_publisher =
+    std::make_unique<VisualTestPublisher>(
+    relative_humidity_publisher, "relative_humidity_frame");
+
+  setCamPose(Ogre::Vector3(0, 0, 16));
+  setCamLookAt(Ogre::Vector3(0, 0, 0));
+
+  auto relative_humidity_display = addDisplay<RelativeHumidityDisplayPageObject>();
+  relative_humidity_display->setTopic("/relative_humidity");
+  relative_humidity_display->setStyle("Spheres");
+  relative_humidity_display->setSizeMeters(11);
+
+  relative_humidity_publisher->setRelativeHumidity(0.15);
+  captureMainWindow("relative_humidity_display_low_relative_humidity");
+
+  executor_->queueAction([relative_humidity_publisher]()
+    {
+      relative_humidity_publisher->setRelativeHumidity(0.85);
+    });
+
+  captureMainWindow("relative_humidity_display_high_relative_humidity");
+  assertScreenShotsIdentity();
 }

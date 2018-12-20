@@ -39,8 +39,17 @@
 #include "../../page_objects/camera_display_page_object.hpp"
 #include "../../publishers/camera_info_publisher.hpp"
 #include "../../publishers/image_publisher.hpp"
-#include "../../page_objects/point_cloud_display_page_object.hpp"
+#include "../../page_objects/point_cloud_common_page_object.hpp"
 #include "../../publishers/point_cloud_publisher.hpp"
+
+class PointCloudDisplayPageObject
+  : public PointCloudCommonPageObject
+{
+public:
+  PointCloudDisplayPageObject()
+  : PointCloudCommonPageObject("PointCloud")
+  {}
+};
 
 TEST_F(VisualTestFixture, test_camera_display_with_published_image) {
   auto points = {nodes::createPoint(0, 0, 10)};

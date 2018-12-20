@@ -198,7 +198,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/view_controllers/orbit/orbit_view_controller.cpp
   src/rviz_default_plugins/view_controllers/ortho/fixed_orientation_ortho_view_controller.cpp
   src/rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller.cpp
-)
+        test/rviz_default_plugins/publishers/fluid_pressure_publisher.hpp)
 
 add_library(rviz_default_plugins SHARED
   ${rviz_default_plugins_headers_to_moc}
@@ -599,7 +599,6 @@ if(BUILD_TESTING)
     test/rviz_default_plugins/displays/camera/camera_display_visual_test.cpp
     test/rviz_default_plugins/publishers/camera_info_publisher.hpp
     test/rviz_default_plugins/page_objects/camera_display_page_object.cpp
-    test/rviz_default_plugins/page_objects/point_cloud_display_page_object.cpp
     test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
     test/rviz_default_plugins/publishers/image_publisher.hpp
     test/rviz_default_plugins/publishers/point_cloud_publisher.hpp
@@ -612,6 +611,21 @@ if(BUILD_TESTING)
     target_link_libraries(camera_display_visual_test
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
+  endif()
+
+  ament_add_gtest(fluid_pressure_display_visual_test
+          test/rviz_default_plugins/displays/fluid_pressure/fluid_pressure_display_visual_test.cpp
+          test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
+          test/rviz_default_plugins/pointcloud_messages.cpp
+          ${SKIP_VISUAL_TESTS}
+          TIMEOUT 180)
+  if(TARGET fluid_pressure_display_visual_test)
+    target_include_directories(fluid_pressure_display_visual_test PUBLIC
+            ${TEST_INCLUDE_DIRS}
+            ${rviz_visual_testing_framework_INCLUDE_DIRS})
+    target_link_libraries(fluid_pressure_display_visual_test
+            ${TEST_LINK_LIBRARIES}
+            rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
 
   ament_add_gtest(grid_display_visual_test
@@ -642,6 +656,21 @@ if(BUILD_TESTING)
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
 
+  ament_add_gtest(illuminance_display_visual_test
+          test/rviz_default_plugins/displays/illuminance/illuminance_display_visual_test.cpp
+          test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
+          test/rviz_default_plugins/pointcloud_messages.cpp
+          ${SKIP_VISUAL_TESTS}
+          TIMEOUT 180)
+  if(TARGET illuminance_display_visual_test)
+    target_include_directories(illuminance_display_visual_test PUBLIC
+            ${TEST_INCLUDE_DIRS}
+            ${rviz_visual_testing_framework_INCLUDE_DIRS})
+    target_link_libraries(illuminance_display_visual_test
+            ${TEST_LINK_LIBRARIES}
+            rviz_visual_testing_framework::rviz_visual_testing_framework)
+  endif()
+
   ament_add_gtest(image_display_visual_test
     test/rviz_default_plugins/displays/image/image_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/image_display_page_object.cpp
@@ -657,6 +686,20 @@ if(BUILD_TESTING)
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
 
+  ament_add_gtest(laser_scan_display_visual_test
+          test/rviz_default_plugins/displays/laser_scan/laser_scan_display_visual_test.cpp
+          test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
+          ${SKIP_VISUAL_TESTS}
+          TIMEOUT 180)
+  if(TARGET laser_scan_display_visual_test)
+    target_include_directories(laser_scan_display_visual_test PUBLIC
+            ${TEST_INCLUDE_DIRS}
+            ${rviz_visual_testing_framework_INCLUDE_DIRS})
+    target_link_libraries(laser_scan_display_visual_test
+            ${TEST_LINK_LIBRARIES}
+            rviz_visual_testing_framework::rviz_visual_testing_framework)
+  endif()
+
   ament_add_gtest(map_display_visual_test
     test/rviz_default_plugins/displays/map/map_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/map_display_page_object.cpp
@@ -670,21 +713,6 @@ if(BUILD_TESTING)
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(map_display_visual_test
-      ${TEST_LINK_LIBRARIES}
-      rviz_visual_testing_framework::rviz_visual_testing_framework)
-  endif()
-
-  ament_add_gtest(laser_scan_display_visual_test
-    test/rviz_default_plugins/displays/laser_scan/laser_scan_display_visual_test.cpp
-    test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
-    test/rviz_default_plugins/page_objects/laser_scan_display_page_object.cpp
-    ${SKIP_VISUAL_TESTS}
-    TIMEOUT 180)
-  if(TARGET laser_scan_display_visual_test)
-    target_include_directories(laser_scan_display_visual_test PUBLIC
-      ${TEST_INCLUDE_DIRS}
-      ${rviz_visual_testing_framework_INCLUDE_DIRS})
-    target_link_libraries(laser_scan_display_visual_test
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
@@ -767,7 +795,6 @@ if(BUILD_TESTING)
 
   ament_add_gtest(point_cloud_display_visual_test
     test/rviz_default_plugins/displays/pointcloud/point_cloud_display_visual_test.cpp
-    test/rviz_default_plugins/page_objects/point_cloud_display_page_object.cpp
     test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
     test/rviz_default_plugins/publishers/point_cloud_publisher.hpp
     ${SKIP_VISUAL_TESTS}
@@ -783,7 +810,6 @@ if(BUILD_TESTING)
 
   ament_add_gtest(point_cloud2_display_visual_test
     test/rviz_default_plugins/displays/pointcloud/point_cloud2_display_visual_test.cpp
-    test/rviz_default_plugins/page_objects/point_cloud2_display_page_object.cpp
     test/rviz_default_plugins/publishers/point_cloud2_publisher.hpp
     test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
     test/rviz_default_plugins/pointcloud_messages.cpp
@@ -843,6 +869,21 @@ if(BUILD_TESTING)
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
 
+  ament_add_gtest(relative_humidity_display_visual_test
+          test/rviz_default_plugins/displays/relative_humidity/relative_humidity_display_visual_test.cpp
+          test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
+          test/rviz_default_plugins/pointcloud_messages.cpp
+          ${SKIP_VISUAL_TESTS}
+          TIMEOUT 180)
+  if(TARGET relative_humidity_display_visual_test)
+    target_include_directories(relative_humidity_display_visual_test PUBLIC
+            ${TEST_INCLUDE_DIRS}
+            ${rviz_visual_testing_framework_INCLUDE_DIRS})
+    target_link_libraries(relative_humidity_display_visual_test
+            ${TEST_LINK_LIBRARIES}
+            rviz_visual_testing_framework::rviz_visual_testing_framework)
+  endif()
+
   ament_add_gtest(robot_model_display_visual_test
     test/rviz_default_plugins/displays/robot_model/robot_model_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/robot_model_display_page_object.cpp
@@ -856,6 +897,21 @@ if(BUILD_TESTING)
       ${TEST_LINK_LIBRARIES}
       ament_index_cpp::ament_index_cpp
       rviz_visual_testing_framework::rviz_visual_testing_framework)
+  endif()
+
+  ament_add_gtest(temperature_display_visual_test
+          test/rviz_default_plugins/displays/temperature/temperature_display_visual_test.cpp
+          test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
+          test/rviz_default_plugins/pointcloud_messages.cpp
+          ${SKIP_VISUAL_TESTS}
+          TIMEOUT 180)
+  if(TARGET temperature_display_visual_test)
+    target_include_directories(temperature_display_visual_test PUBLIC
+            ${TEST_INCLUDE_DIRS}
+            ${rviz_visual_testing_framework_INCLUDE_DIRS})
+    target_link_libraries(temperature_display_visual_test
+            ${TEST_LINK_LIBRARIES}
+            rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
 
   ament_add_gtest(tf_display_visual_test

@@ -33,8 +33,17 @@
 #include "rviz_visual_testing_framework/visual_test_fixture.hpp"
 #include "rviz_visual_testing_framework/visual_test_publisher.hpp"
 
-#include "../../page_objects/point_cloud_display_page_object.hpp"
+#include "../../page_objects/point_cloud_common_page_object.hpp"
 #include "../../publishers/point_cloud_publisher.hpp"
+
+class PointCloudDisplayPageObject
+  : public PointCloudCommonPageObject
+{
+public:
+  PointCloudDisplayPageObject()
+  : PointCloudCommonPageObject("PointCloud")
+  {}
+};
 
 TEST_F(VisualTestFixture, pointcloud_containing_one_big_point) {
   auto pointcloud_publisher =

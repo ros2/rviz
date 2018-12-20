@@ -33,8 +33,17 @@
 #include "rviz_visual_testing_framework/visual_test_fixture.hpp"
 #include "rviz_visual_testing_framework/visual_test_publisher.hpp"
 
-#include "../../page_objects/laser_scan_display_page_object.hpp"
+#include "../../page_objects/point_cloud_common_page_object.hpp"
 #include "../../publishers/laser_scan_publisher.hpp"
+
+class LaserScanDisplayPageObject
+  : public PointCloudCommonPageObject
+{
+public:
+  LaserScanDisplayPageObject()
+  : PointCloudCommonPageObject("LaserScan")
+  {}
+};
 
 TEST_F(VisualTestFixture, laser_scan_display) {
   auto laser_scan_publisher =

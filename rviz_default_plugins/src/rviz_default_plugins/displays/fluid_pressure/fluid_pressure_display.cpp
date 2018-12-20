@@ -68,7 +68,7 @@ namespace rviz_default_plugins
       subProp("Channel Name")->setValue("fluid_pressure");
       subProp("Autocompute Intensity Bounds")->setValue(false);
       subProp("Min Intensity")->setValue(98000); // 0% relative humidity
-      subProp("Max Intensity")->setValue(104000); // 100% relative humidity
+      subProp("Max Intensity")->setValue(105000); // 100% relative humidity
     }
 
     void FluidPressureDisplay::processMessage(const sensor_msgs::msg::FluidPressure::ConstSharedPtr msg)

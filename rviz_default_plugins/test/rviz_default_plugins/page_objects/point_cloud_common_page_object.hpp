@@ -48,6 +48,7 @@ public:
   void setPositionTransformer(QString position_transformer);
   void setColorTransformer(QString color_transformer);
   void setColor(int red, int green, int blue);
+  void setQueueSize(int queue_size);
 };
 
 #endif  // RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__POINT_CLOUD_COMMON_PAGE_OBJECT_HPP_
