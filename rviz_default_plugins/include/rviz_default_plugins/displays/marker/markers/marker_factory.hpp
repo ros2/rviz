@@ -58,7 +58,7 @@ namespace markers
  * Markers come in as visualization_msgs::msg::Marker messages.
  * See the Marker message for more information.
 */
-class RVIZ_DEFAULT_PLUGINS_PUBLIC MarkerFactory
+class MarkerFactory
 {
 public:
   /// Initialization of the marker factory
@@ -69,6 +69,7 @@ public:
    * \param context Display context.
    * \param parent_node Ogre parent scene node.
    */
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   void initialize(
     MarkerCommon * owner, rviz_common::DisplayContext * context,
     Ogre::SceneNode * parent_node);
@@ -79,6 +80,7 @@ public:
    * \param marker_type marker type of the marker message
    * \return shared pointer of the generated marker
    */
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   std::shared_ptr<MarkerBase>
   createMarkerForType(visualization_msgs::msg::Marker::_type_type marker_type);
 

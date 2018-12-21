@@ -36,14 +36,6 @@
 #include "rviz_default_plugins/displays/marker/markers/marker_base.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 
-// This is necessary because of using stl types with this display. Nevertheless, if you are
-// experiencing problems when subclassing this class, please make sure ROS2 and your code were
-// compiled with the same compiler and version
-#ifdef _WIN32
-# pragma warning(push)
-# pragma warning(disable:4251)
-#endif
-
 namespace rviz_rendering
 {
 class Shape;
@@ -56,12 +48,14 @@ namespace displays
 namespace markers
 {
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC ShapeMarker : public MarkerBase
+class ShapeMarker : public MarkerBase
 {
 public:
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   ShapeMarker(
     MarkerCommon * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);
 
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   S_MaterialPtr getMaterials() override;
 
 protected:
@@ -77,9 +71,5 @@ private:
 }  // namespace markers
 }  // namespace displays
 }  // namespace rviz_default_plugins
-
-#ifdef _WIN32
-# pragma warning(pop)
-#endif
 
 #endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__SHAPE_MARKER_HPP_
