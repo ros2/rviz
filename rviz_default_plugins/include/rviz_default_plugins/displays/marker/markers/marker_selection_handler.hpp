@@ -58,23 +58,29 @@ class InteractiveMarkerControl;
 class MarkerBase;
 typedef std::pair<std::string, int32_t> MarkerID;
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC MarkerSelectionHandler : public
+class MarkerSelectionHandler : public
   rviz_common::interaction::SelectionHandler
 {
 public:
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   MarkerSelectionHandler(
     const MarkerBase * marker, MarkerID id, rviz_common::DisplayContext * context);
 
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   ~MarkerSelectionHandler() override;
 
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   Ogre::Vector3 getPosition();
 
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   Ogre::Quaternion getOrientation();
 
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   void createProperties(
     const rviz_common::interaction::Picked & obj,
     rviz_common::properties::Property * parent_property) override;
 
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   void updateProperties() override;
 
 private:

@@ -48,14 +48,17 @@ namespace displays
 namespace markers
 {
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC PointsMarker : public MarkerBase
+class PointsMarker : public MarkerBase
 {
 public:
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   PointsMarker(
     MarkerCommon * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);
 
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   ~PointsMarker() override;
 
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   void setHighlightColor(float red, float green, float blue);
 
 protected:

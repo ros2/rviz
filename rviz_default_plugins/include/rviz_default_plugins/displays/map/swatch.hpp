@@ -68,15 +68,13 @@ class MapDisplay;
 class Swatch
 {
 public:
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
-  Swatch(
+  RVIZ_DEFAULT_PLUGINS_PUBLIC Swatch(
     Ogre::SceneManager * scene_manager,
     Ogre::SceneNode * parent_scene_node,
     size_t x, size_t y, size_t width, size_t height,
     float resolution, bool draw_under);
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
-  ~Swatch();
+  RVIZ_DEFAULT_PLUGINS_PUBLIC ~Swatch();
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   void updateAlpha(

@@ -44,12 +44,13 @@ namespace displays
 namespace markers
 {
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC LineListMarker : public LineMarkerBase
+class LineListMarker : public LineMarkerBase
 {
 public:
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   LineListMarker(
     MarkerCommon * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);
-
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   ~LineListMarker() override = default;
 
 private:
