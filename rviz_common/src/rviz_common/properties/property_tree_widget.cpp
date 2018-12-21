@@ -85,8 +85,8 @@ void PropertyTreeWidget::selectionChanged(
 void PropertyTreeWidget::setModel(PropertyTreeModel * model)
 {
   if (model_) {
-    disconnect(model_, SIGNAL(propertyHiddenChanged(const Property *)),
-      this, SLOT(propertyHiddenChanged(const Property *)));
+    disconnect(model_, SIGNAL(propertyHiddenChanged(const Property*)),
+      this, SLOT(propertyHiddenChanged(const Property*)));
     disconnect(model_, SIGNAL(expand(const QModelIndex&)),
       this, SLOT(expand(const QModelIndex&)));
     disconnect(model_, SIGNAL(collapse(const QModelIndex&)),
@@ -95,8 +95,8 @@ void PropertyTreeWidget::setModel(PropertyTreeModel * model)
   model_ = model;
   QTreeView::setModel(model_);
   if (model_) {
-    connect(model_, SIGNAL(propertyHiddenChanged(const Property *)),
-      this, SLOT(propertyHiddenChanged(const Property *)), Qt::QueuedConnection);
+    connect(model_, SIGNAL(propertyHiddenChanged(const Property*)),
+      this, SLOT(propertyHiddenChanged(const Property*)), Qt::QueuedConnection);
     connect(model_, SIGNAL(expand(const QModelIndex&)),
       this, SLOT(expand(const QModelIndex&)));
     connect(model_, SIGNAL(collapse(const QModelIndex&)),

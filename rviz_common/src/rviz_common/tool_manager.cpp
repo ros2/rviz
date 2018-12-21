@@ -256,9 +256,9 @@ Tool * ToolManager::addTool(const PluginInfo & tool_plugin)
   rviz_common::properties::Property * container = tool->getPropertyContainer();
   connect(
     container,
-    SIGNAL(childListChanged(rviz_common::properties::Property *)),
+    SIGNAL(childListChanged(rviz_common::properties::Property*)),
     this,
-    SLOT(updatePropertyVisibility(rviz_common::properties::Property *)));
+    SLOT(updatePropertyVisibility(rviz_common::properties::Property*)));
   updatePropertyVisibility(container);
 
   Q_EMIT toolAdded(tool);

@@ -65,11 +65,11 @@ DisplayGroupVisibilityProperty::DisplayGroupVisibilityProperty(
   parent_display_(parent_display)
 {
   connect(
-    display_group, SIGNAL(displayAdded(Display *)),
-    this, SLOT(onDisplayAdded(Display *)));
+    display_group, SIGNAL(displayAdded(Display*)),
+    this, SLOT(onDisplayAdded(Display*)));
   connect(
-    display_group, SIGNAL(displayRemoved(Display *)),
-    this, SLOT(onDisplayRemoved(Display *)));
+    display_group, SIGNAL(displayRemoved(Display*)),
+    this, SLOT(onDisplayRemoved(Display*)));
 
   for (int i = 0; i < display_group->numDisplays(); i++) {
     rviz_common::Display * display = display_group->getDisplayAt(i);

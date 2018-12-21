@@ -152,10 +152,10 @@ void TimePanel::onDisplayAdded(Display * display)
 {
   DisplayGroup * display_group = qobject_cast<DisplayGroup *>(display);
   if (display_group) {
-    connect(display_group, SIGNAL(displayAdded(rviz::Display *)), this,
-      SLOT(onDisplayAdded(rviz::Display *)));
-    connect(display_group, SIGNAL(displayRemoved(rviz::Display *)), this,
-      SLOT(onDisplayRemoved(rviz::Display *)));
+    connect(display_group, SIGNAL(displayAdded(rviz::Display*)), this,
+      SLOT(onDisplayAdded(rviz::Display*)));
+    connect(display_group, SIGNAL(displayRemoved(rviz::Display*)), this,
+      SLOT(onDisplayRemoved(rviz::Display*)));
 
     for (int i = 0; i < display_group->numDisplays(); i++) {
       rviz::Display * display = display_group->getDisplayAt(i);

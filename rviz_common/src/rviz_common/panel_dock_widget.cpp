@@ -109,11 +109,11 @@ void PanelDockWidget::setCollapsed(bool collapse)
 void PanelDockWidget::setContentWidget(QWidget * child)
 {
   if (widget()) {
-    disconnect(widget(), SIGNAL(destroyed(QObject *)), this, SLOT(onChildDestroyed(QObject *)));
+    disconnect(widget(), SIGNAL(destroyed(QObject*)), this, SLOT(onChildDestroyed(QObject*)));
   }
   setWidget(child);
   if (child) {
-    connect(child, SIGNAL(destroyed(QObject *)), this, SLOT(onChildDestroyed(QObject *)));
+    connect(child, SIGNAL(destroyed(QObject*)), this, SLOT(onChildDestroyed(QObject*)));
   }
 }
 

@@ -136,15 +136,15 @@ PointCloudCommon::PointCloudCommon(rviz_common::Display * display)
       "Set the transformer to use to set the position of the points.",
       display_, SLOT(updateXyzTransformer()), this);
   connect(xyz_transformer_property_, SIGNAL(requestOptions(
-      rviz_common::properties::EnumProperty *)),
-    this, SLOT(setXyzTransformerOptions(rviz_common::properties::EnumProperty *)));
+      rviz_common::properties::EnumProperty*)),
+    this, SLOT(setXyzTransformerOptions(rviz_common::properties::EnumProperty*)));
 
   color_transformer_property_ = new rviz_common::properties::EnumProperty("Color Transformer", "",
       "Set the transformer to use to set the color of the points.",
       display_, SLOT(updateColorTransformer()), this);
   connect(color_transformer_property_,
-    SIGNAL(requestOptions(rviz_common::properties::EnumProperty *)),
-    this, SLOT(setColorTransformerOptions(rviz_common::properties::EnumProperty *)));
+    SIGNAL(requestOptions(rviz_common::properties::EnumProperty*)),
+    this, SLOT(setColorTransformerOptions(rviz_common::properties::EnumProperty*)));
 }
 
 void PointCloudCommon::initialize(

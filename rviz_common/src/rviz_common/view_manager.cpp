@@ -148,10 +148,10 @@ void ViewManager::setCurrent(ViewController * new_current, bool mimic_view)
     } else {
       new_current->transitionFrom(previous);
     }
-    disconnect(previous, SIGNAL(destroyed(QObject *)), this, SLOT(onCurrentDestroyed(QObject *)));
+    disconnect(previous, SIGNAL(destroyed(QObject*)), this, SLOT(onCurrentDestroyed(QObject*)));
   }
   new_current->setName("Current View");
-  connect(new_current, SIGNAL(destroyed(QObject *)), this, SLOT(onCurrentDestroyed(QObject *)));
+  connect(new_current, SIGNAL(destroyed(QObject*)), this, SLOT(onCurrentDestroyed(QObject*)));
   impl_->current = new_current;
   impl_->root_property->addChildToFront(new_current);
   delete previous;

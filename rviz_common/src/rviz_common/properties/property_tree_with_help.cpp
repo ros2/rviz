@@ -61,8 +61,8 @@ PropertyTreeWithHelp::PropertyTreeWithHelp(QWidget * parent)
   _sizes.push_back(1);
   setSizes(_sizes);
 
-  connect(property_tree_, SIGNAL(currentPropertyChanged(const Property *)),
-    this, SLOT(showHelpForProperty(const Property *)));
+  connect(property_tree_, SIGNAL(currentPropertyChanged(const Property*)),
+    this, SLOT(showHelpForProperty(const Property*)));
 }
 
 void PropertyTreeWithHelp::showHelpForProperty(const Property * property)

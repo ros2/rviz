@@ -59,7 +59,7 @@ TfFrameProperty::TfFrameProperty(
   include_fixed_frame_string_(include_fixed_frame_string)
 {
   // Parent class EditableEnumProperty has requestOptions() signal.
-  connect(this, SIGNAL(requestOptions(EditableEnumProperty *)),
+  connect(this, SIGNAL(requestOptions(EditableEnumProperty*)),
     this, SLOT(fillFrameList()));
   setFrameManager(frame_manager);
 }
