@@ -14,7 +14,7 @@ message(STATUS "Setting OGRE_DIR to: '${OGRE_DIR}'")
 set(FREETYPE_HOME "${rviz_ogre_vendor_DIR}/../../../opt/rviz_ogre_vendor")
 set(ZLIB_HOME "${rviz_ogre_vendor_DIR}/../../../opt/rviz_ogre_vendor")
 
-find_package(OGRE REQUIRED)
+find_package(OGRE REQUIRED NO_SYSTEM_ENVIRONMENT_PATH)
 message(STATUS "OGRE_LIBRARIES: ${OGRE_LIBRARIES}")
 message(STATUS "OGRE_LIBRARY_DIRS: ${OGRE_LIBRARY_DIRS}")
 message(STATUS "OGRE_PLUGINS: ${OGRE_PLUGINS}")
