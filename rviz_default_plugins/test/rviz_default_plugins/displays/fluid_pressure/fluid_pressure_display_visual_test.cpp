@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2018, Bosch Software Innovations GmbH.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
+ * Copyright (c) 2018, TNG Technology Consulting GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,19 +28,46 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__POINT_CLOUD2_DISPLAY_PAGE_OBJECT_HPP_
-#define RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__POINT_CLOUD2_DISPLAY_PAGE_OBJECT_HPP_
+#include <memory>
+#include <string>
 
-#include "rviz_visual_testing_framework/page_objects/base_page_object.hpp"
+#include "rviz_visual_testing_framework/visual_test_fixture.hpp"
+#include "rviz_visual_testing_framework/visual_test_publisher.hpp"
 
-#include "point_cloud_common_page_object.hpp"
+#include "../../page_objects/point_cloud_common_page_object.hpp"
+#include "../../publishers/fluid_pressure_publisher.hpp"
 
-class PointCloud2DisplayPageObject : public PointCloudCommonPageObject
+class FluidPressureDisplayPageObject
+  : public PointCloudCommonPageObject
 {
 public:
-  PointCloud2DisplayPageObject();
-
-  void setQueueSize(int queue_size);
+  FluidPressureDisplayPageObject()
+  : PointCloudCommonPageObject("FluidPressure")
+  {}
 };
 
-#endif  // RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__POINT_CLOUD2_DISPLAY_PAGE_OBJECT_HPP_
+TEST_F(VisualTestFixture, sphere_changes_color_depending_on_fluid_pressure) {
+  auto fluid_pressure_publisher = std::make_shared<nodes::FluidPressurePublisher>();
+  auto fluid_pressure_visual_publisher =
+    std::make_unique<VisualTestPublisher>(
+    fluid_pressure_publisher, "fluid_pressure_frame");
+
+  setCamPose(Ogre::Vector3(0, 0, 16));
+  setCamLookAt(Ogre::Vector3(0, 0, 0));
+
+  auto fluid_pressure_display = addDisplay<FluidPressureDisplayPageObject>();
+  fluid_pressure_display->setTopic("/fluid_pressure");
+  fluid_pressure_display->setStyle("Spheres");
+  fluid_pressure_display->setSizeMeters(11);
+
+  fluid_pressure_publisher->setFluidPressure(99000);
+  captureMainWindow("fluid_pressure_display_low_fluid_pressure");
+
+  executor_->queueAction([fluid_pressure_publisher]()
+    {
+      fluid_pressure_publisher->setFluidPressure(104000);
+    });
+
+  captureMainWindow("fluid_pressure_display_high_fluid_pressure");
+  assertScreenShotsIdentity();
+}

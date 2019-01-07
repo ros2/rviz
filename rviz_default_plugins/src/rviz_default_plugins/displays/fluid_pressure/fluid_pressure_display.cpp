@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2018, TNG Technology Consulting GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,51 +28,45 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_RELATIVE_HUMIDITY_DISPLAY_H
-#define RVIZ_RELATIVE_HUMIDITY_DISPLAY_H
+#include "rviz_default_plugins/displays/fluid_pressure/fluid_pressure_display.hpp"
 
-#include <sensor_msgs/RelativeHumidity.h>
-#include <sensor_msgs/PointCloud2.h>
-
-#include "rviz/message_filter_display.h"
-
-namespace rviz
+namespace rviz_default_plugins
 {
 
-class IntProperty;
-class PointCloudCommon;
-
-/**
- * \class RelativeHumidityDisplay
- * \brief Displays a RelativeHumidity message of type sensor_msgs::RelativeHumidity
- *
- */
-class RelativeHumidityDisplay: public MessageFilterDisplay<sensor_msgs::RelativeHumidity>
+namespace displays
 {
-Q_OBJECT
-public:
-  RelativeHumidityDisplay();
-  ~RelativeHumidityDisplay();
 
-  virtual void reset();
+FluidPressureDisplay::FluidPressureDisplay()
+{}
 
-  virtual void update( float wall_dt, float ros_dt );
+FluidPressureDisplay::~FluidPressureDisplay() = default;
 
-private Q_SLOTS:
-  void updateQueueSize();
+void FluidPressureDisplay::setInitialValues()
+{
+  subProp("Channel Name")->setValue("fluid_pressure");
+  subProp("Autocompute Intensity Bounds")->setValue(false);
+  subProp("Min Intensity")->setValue(98000);
+  subProp("Max Intensity")->setValue(105000);
+}
 
-protected:
-  /** @brief Do initialization. Overridden from MessageFilterDisplay. */
-  virtual void onInitialize();
+void FluidPressureDisplay::hideUnneededProperties()
+{
+  subProp("Position Transformer")->hide();
+  subProp("Color Transformer")->hide();
+  subProp("Channel Name")->hide();
+  subProp("Autocompute Intensity Bounds")->hide();
+}
 
-  /** @brief Process a single message.  Overridden from MessageFilterDisplay. */
-  virtual void processMessage( const sensor_msgs::RelativeHumidityConstPtr& msg );
+void FluidPressureDisplay::processMessage(sensor_msgs::msg::FluidPressure::ConstSharedPtr message)
+{
+  auto point_cloud2_message =
+    createPointCloud2Message(message->header, message->fluid_pressure, "fluid_pressure");
 
-  IntProperty* queue_size_property_;
+  point_cloud_common_->addMessage(point_cloud2_message);
+}
 
-  PointCloudCommon* point_cloud_common_;
-};
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-} // namespace rviz
-
-#endif
+#include <pluginlib/class_list_macros.hpp>  // NOLINT
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::FluidPressureDisplay, rviz_common::Display)

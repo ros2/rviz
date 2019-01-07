@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2018, Bosch Software Innovations GmbH.
+ * Copyright (c) 2017, Bosch Software Innovations GmbH.
+ * Copyright (c) 2018, TNG Technology Consulting GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,19 +28,46 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__LASER_SCAN_DISPLAY_PAGE_OBJECT_HPP_
-#define RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__LASER_SCAN_DISPLAY_PAGE_OBJECT_HPP_
+#include <memory>
+#include <string>
 
-#include "rviz_visual_testing_framework/page_objects/base_page_object.hpp"
+#include "rviz_visual_testing_framework/visual_test_fixture.hpp"
+#include "rviz_visual_testing_framework/visual_test_publisher.hpp"
 
-#include "./point_cloud_common_page_object.hpp"
+#include "../../page_objects/point_cloud_common_page_object.hpp"
+#include "../../publishers/temperature_publisher.hpp"
 
-class LaserScanDisplayPageObject : public PointCloudCommonPageObject
+class TemperatureDisplayPageObject
+  : public PointCloudCommonPageObject
 {
 public:
-  LaserScanDisplayPageObject();
-
-  void setQueueSize(int queue_size);
+  TemperatureDisplayPageObject()
+  : PointCloudCommonPageObject("Temperature")
+  {}
 };
 
-#endif  // RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__LASER_SCAN_DISPLAY_PAGE_OBJECT_HPP_
+TEST_F(VisualTestFixture, sphere_changes_color_depending_on_temperature) {
+  auto temperature_publisher = std::make_shared<nodes::TemperaturePublisher>();
+  auto temperature_visual_publisher =
+    std::make_unique<VisualTestPublisher>(
+    temperature_publisher, "temperature_frame");
+
+  setCamPose(Ogre::Vector3(0, 0, 16));
+  setCamLookAt(Ogre::Vector3(0, 0, 0));
+
+  auto temperature_display = addDisplay<TemperatureDisplayPageObject>();
+  temperature_display->setTopic("/temperature");
+  temperature_display->setStyle("Spheres");
+  temperature_display->setSizeMeters(11);
+
+  temperature_publisher->setTemperature(15.);
+  captureMainWindow("temperature_display_low_temperature");
+
+  executor_->queueAction([temperature_publisher]()
+    {
+      temperature_publisher->setTemperature(85.);
+    });
+
+  captureMainWindow("temperature_display_high_temperature");
+  assertScreenShotsIdentity();
+}

@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2018, TNG Technology Consulting GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,51 +28,47 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_TEMPERATURE_DISPLAY_H
-#define RVIZ_TEMPERATURE_DISPLAY_H
+#include "rviz_default_plugins/displays/temperature/temperature_display.hpp"
 
-#include <sensor_msgs/Temperature.h>
-#include <sensor_msgs/PointCloud2.h>
-
-#include "rviz/message_filter_display.h"
-
-namespace rviz
+namespace rviz_default_plugins
 {
 
-class IntProperty;
-class PointCloudCommon;
-
-/**
- * \class TemperatureDisplay
- * \brief Displays a Temperature message of type sensor_msgs::Temperature
- *
- */
-class TemperatureDisplay: public MessageFilterDisplay<sensor_msgs::Temperature>
+namespace displays
 {
-Q_OBJECT
-public:
-  TemperatureDisplay();
-  ~TemperatureDisplay();
 
-  virtual void reset();
+TemperatureDisplay::TemperatureDisplay()
+{}
 
-  virtual void update( float wall_dt, float ros_dt );
+TemperatureDisplay::~TemperatureDisplay() = default;
 
-private Q_SLOTS:
-  void updateQueueSize();
+void TemperatureDisplay::setInitialValues()
+{
+  subProp("Channel Name")->setValue("temperature");
+  subProp("Autocompute Intensity Bounds")->setValue(false);
+  subProp("Invert Rainbow")->setValue(true);
+  subProp("Min Intensity")->setValue(0);
+  subProp("Max Intensity")->setValue(100);
+}
 
-protected:
-  /** @brief Do initialization. Overridden from MessageFilterDisplay. */
-  virtual void onInitialize();
+void TemperatureDisplay::hideUnneededProperties()
+{
+  subProp("Position Transformer")->hide();
+  subProp("Color Transformer")->hide();
+  subProp("Channel Name")->hide();
+  subProp("Invert Rainbow")->hide();
+  subProp("Autocompute Intensity Bounds")->hide();
+}
 
-  /** @brief Process a single message.  Overridden from MessageFilterDisplay. */
-  virtual void processMessage( const sensor_msgs::TemperatureConstPtr& msg );
+void TemperatureDisplay::processMessage(sensor_msgs::msg::Temperature::ConstSharedPtr message)
+{
+  auto point_cloud2_message =
+    createPointCloud2Message(message->header, message->temperature, "temperature");
 
-  IntProperty* queue_size_property_;
+  point_cloud_common_->addMessage(point_cloud2_message);
+}
 
-  PointCloudCommon* point_cloud_common_;
-};
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-} // namespace rviz
-
-#endif
+#include <pluginlib/class_list_macros.hpp>  // NOLINT
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::TemperatureDisplay, rviz_common::Display)

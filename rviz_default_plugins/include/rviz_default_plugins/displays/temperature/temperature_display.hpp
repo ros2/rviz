@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2018, TNG Technology Consulting GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,51 +28,42 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_ILLUMINANCE_DISPLAY_H
-#define RVIZ_ILLUMINANCE_DISPLAY_H
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__TEMPERATURE__TEMPERATURE_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__TEMPERATURE__TEMPERATURE_DISPLAY_HPP_
 
-#include <sensor_msgs/Illuminance.h>
-#include <sensor_msgs/PointCloud2.h>
+#include "rviz_default_plugins/displays/pointcloud/point_cloud_scalar_display.hpp"
+#include "sensor_msgs/msg/temperature.hpp"
 
-#include "rviz/message_filter_display.h"
-
-namespace rviz
+namespace rviz_default_plugins
 {
 
-class IntProperty;
 class PointCloudCommon;
 
-/**
- * \class IlluminanceDisplay
- * \brief Displays an Illuminance message of type sensor_msgs::Illuminance
- *
- */
-class IlluminanceDisplay: public MessageFilterDisplay<sensor_msgs::Illuminance>
+namespace displays
 {
-Q_OBJECT
+
+/// Display a Temperature message of type sensor_msgs::Temperature
+/**
+ * \class TemperatureDisplay
+ */
+
+class RVIZ_DEFAULT_PLUGINS_PUBLIC TemperatureDisplay
+  : public PointCloudScalarDisplay<sensor_msgs::msg::Temperature>
+{
+  Q_OBJECT
+
 public:
-  IlluminanceDisplay();
-  ~IlluminanceDisplay();
+  TemperatureDisplay();
+  ~TemperatureDisplay() override;
 
-  virtual void reset();
+  void processMessage(const sensor_msgs::msg::Temperature::ConstSharedPtr message) override;
 
-  virtual void update( float wall_dt, float ros_dt );
-
-private Q_SLOTS:
-  void updateQueueSize();
-
-protected:
-  /** @brief Do initialization. Overridden from MessageFilterDisplay. */
-  virtual void onInitialize();
-
-  /** @brief Process a single message.  Overridden from MessageFilterDisplay. */
-  virtual void processMessage( const sensor_msgs::IlluminanceConstPtr& msg );
-
-  IntProperty* queue_size_property_;
-
-  PointCloudCommon* point_cloud_common_;
+private:
+  void setInitialValues() override;
+  void hideUnneededProperties() override;
 };
 
-} // namespace rviz
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__TEMPERATURE__TEMPERATURE_DISPLAY_HPP_

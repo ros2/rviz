@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2012, Willow Garage, Inc.
+ * Copyright (c) 2018, TNG Technology Consulting GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,51 +28,45 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_FLUID_PRESSURE_DISPLAY_H
-#define RVIZ_FLUID_PRESSURE_DISPLAY_H
+#include "rviz_default_plugins/displays/illuminance/illuminance_display.hpp"
 
-#include <sensor_msgs/FluidPressure.h>
-#include <sensor_msgs/PointCloud2.h>
-
-#include "rviz/message_filter_display.h"
-
-namespace rviz
+namespace rviz_default_plugins
 {
 
-class IntProperty;
-class PointCloudCommon;
-
-/**
- * \class FluidPressureDisplay
- * \brief Displays an FluidPressure message of type sensor_msgs::FluidPressure
- *
- */
-class FluidPressureDisplay: public MessageFilterDisplay<sensor_msgs::FluidPressure>
+namespace displays
 {
-Q_OBJECT
-public:
-  FluidPressureDisplay();
-  ~FluidPressureDisplay();
 
-  virtual void reset();
+IlluminanceDisplay::IlluminanceDisplay()
+{}
 
-  virtual void update( float wall_dt, float ros_dt );
+IlluminanceDisplay::~IlluminanceDisplay() = default;
 
-private Q_SLOTS:
-  void updateQueueSize();
+void IlluminanceDisplay::setInitialValues()
+{
+  subProp("Channel Name")->setValue("illuminance");
+  subProp("Autocompute Intensity Bounds")->setValue(false);
+  subProp("Min Intensity")->setValue(0);
+  subProp("Max Intensity")->setValue(1000);
+}
 
-protected:
-  /** @brief Do initialization. Overridden from MessageFilterDisplay. */
-  virtual void onInitialize();
+void IlluminanceDisplay::hideUnneededProperties()
+{
+  subProp("Position Transformer")->hide();
+  subProp("Color Transformer")->hide();
+  subProp("Channel Name")->hide();
+  subProp("Autocompute Intensity Bounds")->hide();
+}
 
-  /** @brief Process a single message.  Overridden from MessageFilterDisplay. */
-  virtual void processMessage( const sensor_msgs::FluidPressureConstPtr& msg );
+void IlluminanceDisplay::processMessage(sensor_msgs::msg::Illuminance::ConstSharedPtr message)
+{
+  auto point_cloud2_message =
+    createPointCloud2Message(message->header, message->illuminance, "illuminance");
 
-  IntProperty* queue_size_property_;
+  point_cloud_common_->addMessage(point_cloud2_message);
+}
 
-  PointCloudCommon* point_cloud_common_;
-};
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-} // namespace rviz
-
-#endif
+#include <pluginlib/class_list_macros.hpp>  // NOLINT
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::IlluminanceDisplay, rviz_common::Display)
