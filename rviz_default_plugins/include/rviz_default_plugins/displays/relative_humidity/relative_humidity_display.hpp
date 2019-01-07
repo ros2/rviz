@@ -42,11 +42,10 @@ class PointCloudCommon;
 namespace displays
 {
 
+/// Display a RelativeHumidity message of type sensor_msgs::RelativeHumidity
 /**
-* \class RelativeHumidityDisplay
-* \brief Displays an RelativeHumidity message of type sensor_msgs::RelativeHumidity
-*
-*/
+ * \class RelativeHumidityDisplay
+ */
 
 class RVIZ_DEFAULT_PLUGINS_PUBLIC RelativeHumidityDisplay
   : public PointCloudScalarDisplay<sensor_msgs::msg::RelativeHumidity>

@@ -42,11 +42,10 @@ class PointCloudCommon;
 namespace displays
 {
 
+/// Display a Temperature message of type sensor_msgs::Temperature
 /**
-* \class TemperatureDisplay
-* \brief Displays a Temperature message of type sensor_msgs::Temperature
-*
-*/
+ * \class TemperatureDisplay
+ */
 
 class RVIZ_DEFAULT_PLUGINS_PUBLIC TemperatureDisplay
   : public PointCloudScalarDisplay<sensor_msgs::msg::Temperature>

@@ -42,11 +42,10 @@ class PointCloudCommon;
 namespace displays
 {
 
+/// Display a FluidPressure message of type sensor_msgs::FluidPressure
 /**
-* \class FluidPressureDisplay
-* \brief Displays an FluidPressure message of type sensor_msgs::FluidPressure
-*
-*/
+ * \class FluidPressureDisplay
+ */
 
 class RVIZ_DEFAULT_PLUGINS_PUBLIC FluidPressureDisplay
   : public PointCloudScalarDisplay<sensor_msgs::msg::FluidPressure>

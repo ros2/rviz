@@ -42,11 +42,10 @@ class PointCloudCommon;
 namespace displays
 {
 
+/// Display an Illuminance message of type sensor_msgs::Illuminance
 /**
-* \class IlluminanceDisplay
-* \brief Displays a Illuminance message of type sensor_msgs::Illuminance
-*
-*/
+ * \class IlluminanceDisplay
+ */
 
 class RVIZ_DEFAULT_PLUGINS_PUBLIC IlluminanceDisplay
   : public PointCloudScalarDisplay<sensor_msgs::msg::Illuminance>

@@ -55,11 +55,10 @@ namespace rviz_default_plugins
 namespace displays
 {
 
+/// This is the parent class for several scalar type message displays
+/// that use a point cloud to display their data
 /**
  * \class PointCloudScalarDisplay
- * \brief This is the parent class for several scalar type messages that use a point cloud to
- * display their data
- *
  */
 
 template<typename MessageType>

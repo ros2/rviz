@@ -36,9 +36,9 @@
   </class>
 
   <class
-          name="rviz_default_plugins/FluidPressure"
-          type="rviz_default_plugins::displays::FluidPressureDisplay"
-          base_class_type="rviz_common::Display"
+    name="rviz_default_plugins/FluidPressure"
+    type="rviz_default_plugins::displays::FluidPressureDisplay"
+    base_class_type="rviz_common::Display"
   >
     <description>
       Displays data from a sensor_msgs::FluidPressure as pointcloud with one point
@@ -47,9 +47,9 @@
   </class>
 
   <class
-          name="rviz_default_plugins/Illuminance"
-          type="rviz_default_plugins::displays::IlluminanceDisplay"
-          base_class_type="rviz_common::Display"
+    name="rviz_default_plugins/Illuminance"
+    type="rviz_default_plugins::displays::IlluminanceDisplay"
+    base_class_type="rviz_common::Display"
   >
     <description>
       Displays data from a sensor_msgs::Illuminance as pointcloud with one point
@@ -136,7 +136,8 @@
   <class
     name="rviz_default_plugins/Range"
     type="rviz_default_plugins::displays::RangeDisplay"
-    base_class_type="rviz_common::Display">
+    base_class_type="rviz_common::Display"
+  >
     <description>
       Displays the data from sensor_msgs::Range messages as cones. &lt;a href="http://www.ros.org/wiki/rviz/DisplayTypes/Range"&gt;More Information&lt;/a&gt;
     </description>
@@ -144,9 +145,10 @@
   </class>
 
   <class
-          name="rviz_default_plugins/RelativeHumidity"
-          type="rviz_default_plugins::displays::RelativeHumidityDisplay"
-          base_class_type="rviz_common::Display">
+    name="rviz_default_plugins/RelativeHumidity"
+    type="rviz_default_plugins::displays::RelativeHumidityDisplay"
+    base_class_type="rviz_common::Display"
+  >
     <description>
       Displays the data from sensor_msgs::RelativeHumidity messages as point cloud with one point
     </description>
