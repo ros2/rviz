@@ -42,6 +42,11 @@ find_package(ament_index_cpp REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(resource_retriever REQUIRED)
 
+# Handle FindEigen3 module's differing definitions
+if(NOT DEFINED EIGEN3_INCLUDE_DIRS AND DEFINED EIGEN3_INCLUDE_DIR)
+  set(EIGEN3_INCLUDE_DIRS ${EIGEN3_INCLUDE_DIR})
+endif()
+
 # TODO(wjwwood): this block is to setup the windeployqt tool, could be removed later.
 if(Qt5_FOUND AND WIN32 AND TARGET Qt5::qmake AND NOT TARGET Qt5::windeployqt)
   get_target_property(_qt5_qmake_location Qt5::qmake IMPORTED_LOCATION)
