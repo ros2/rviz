@@ -51,20 +51,16 @@ namespace displays
 namespace markers
 {
 
-class TextViewFacingMarker : public MarkerBase
+class RVIZ_DEFAULT_PLUGINS_PUBLIC TextViewFacingMarker : public MarkerBase
 {
 public:
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
   TextViewFacingMarker(
     MarkerCommon * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
   ~TextViewFacingMarker() override;
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
   void setOrientation(const Ogre::Quaternion & orientation) override {(void) orientation;}
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
   S_MaterialPtr getMaterials() override;
 
 protected:
