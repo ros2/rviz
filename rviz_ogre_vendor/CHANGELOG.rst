@@ -2,8 +2,8 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+5.1.0 (2019-01-14)
+------------------
 * Skip the system directories when looking for OGRE (`#371 <https://github.com/ros2/rviz/issues/371>`_)
 * Contributors: Scott K Logan
 

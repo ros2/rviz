@@ -2,8 +2,8 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+5.1.0 (2019-01-14)
+------------------
 * Handle FindEigen3 module's differing definitions (`#370 <https://github.com/ros2/rviz/issues/370>`_)
 * Contributors: Scott K Logan
 
