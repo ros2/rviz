@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Handle FindEigen3 module's differing definitions (`#370 <https://github.com/ros2/rviz/issues/370>`_)
+* Contributors: Scott K Logan
+
 5.0.0 (2018-12-04)
 ------------------
 * Export libraries to trigger hooks. (`#358 <https://github.com/ros2/rviz/issues/358>`_)

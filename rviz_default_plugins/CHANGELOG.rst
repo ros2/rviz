@@ -2,6 +2,13 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Migrate scalar displays, i.e. temperature, illuminance, relative humidity, and fluid pressure (`#367 <https://github.com/ros2/rviz/issues/367>`_)
+* Fix errors from uncrustify v0.68 (`#366 <https://github.com/ros2/rviz/issues/366>`_)
+* Visibility followup for Swatch marker (`#297 <https://github.com/ros2/rviz/issues/297>`_)
+* Contributors: GW1708, Jacob Perron, Martin Idel, William Woodall
+
 5.0.0 (2018-12-04)
 ------------------
 * Export libraries to trigger hooks. (`#358 <https://github.com/ros2/rviz/issues/358>`_)

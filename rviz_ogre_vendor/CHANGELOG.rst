@@ -2,6 +2,11 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Skip the system directories when looking for OGRE (`#371 <https://github.com/ros2/rviz/issues/371>`_)
+* Contributors: Scott K Logan
+
 5.0.0 (2018-12-04)
 ------------------
 * Changed ZLIB_ROOT -> ZLIB_DIR (`#349 <https://github.com/ros2/rviz/issues/349>`_)

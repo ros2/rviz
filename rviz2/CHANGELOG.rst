@@ -2,6 +2,12 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Update package maintainer for rviz2 (`#365 <https://github.com/ros2/rviz/issues/365>`_)
+  Thank you to Deanna for her contributions.
+* Contributors: Scott K Logan
+
 5.0.0 (2018-12-04)
 ------------------
 * Add semicolons to all RCLCPP and RCUTILS macros. (`#357 <https://github.com/ros2/rviz/issues/357>`_)
