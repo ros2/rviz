@@ -253,6 +253,17 @@
     <message_type>geometry_msgs/msg/PointStamped</message_type>
   </class>
 
+  <class
+          name="rviz_default_plugins/WrenchStamped"
+          type="rviz_default_plugins::displays::WrenchStampedDisplay"
+          base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays from geometry_msgs/WrenchStamped message
+    </description>
+    <message_type>geometry_msgs/msg/WrenchStamped</message_type>
+  </class>
+
   <!-- Tool plugins -->
 
   <class

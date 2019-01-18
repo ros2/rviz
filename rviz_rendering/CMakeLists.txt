@@ -102,6 +102,7 @@ add_library(rviz_rendering SHARED
   src/rviz_rendering/objects/point_cloud.cpp
   src/rviz_rendering/objects/point_cloud_renderable.cpp
   src/rviz_rendering/objects/shape.cpp
+  src/rviz_rendering/objects/wrench_visual.cpp
   test/rviz_rendering/ogre_testing_environment.cpp
   test/rviz_rendering/scene_graph_introspection.cpp
 )
