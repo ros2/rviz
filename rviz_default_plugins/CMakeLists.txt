@@ -944,6 +944,20 @@ if(BUILD_TESTING)
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
+
+  ament_add_gtest(wrench_display_visual_test
+    test/rviz_default_plugins/displays/wrench/wrench_stamped_display_visual_test.cpp
+    test/rviz_default_plugins/page_objects/wrench_display_page_object.cpp
+    ${SKIP_VISUAL_TESTS}
+    TIMEOUT 180)
+  if(TARGET wrench_display_visual_test)
+    target_include_directories(wrench_display_visual_test PUBLIC
+      ${TEST_INCLUDE_DIRS}
+      ${rviz_visual_testing_framework_INCLUDE_DIRS})
+    target_link_libraries(wrench_display_visual_test
+      ${TEST_LINK_LIBRARIES}
+      rviz_visual_testing_framework::rviz_visual_testing_framework)
+  endif()
 endif()
 
 ament_package()
