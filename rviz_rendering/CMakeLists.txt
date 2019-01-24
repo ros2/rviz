@@ -259,6 +259,17 @@ if(BUILD_TESTING)
       Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
+
+  ament_add_gmock(wrench_visual_test_target
+    test/rviz_rendering/objects/wrench_visual_test.cpp
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET wrench_visual_test_target)
+    target_link_libraries(wrench_visual_test_target
+      rviz_ogre_vendor::OgreMain
+      rviz_rendering
+      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+    )
+  endif()
 endif()
 
 list(APPEND ${PROJECT_NAME}_CONFIG_EXTRAS
