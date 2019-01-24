@@ -30,6 +30,8 @@
 #ifndef RVIZ_RENDERING__OBJECTS__WRENCH_VISUAL_HPP_
 #define RVIZ_RENDERING__OBJECTS__WRENCH_VISUAL_HPP_
 
+#include <memory>
+
 #include "rviz_rendering/visibility_control.hpp"
 
 namespace Ogre
@@ -47,59 +49,69 @@ class BillboardLine;
 namespace rviz_rendering
 {
 
-// Each instance of WrenchStampedVisual represents the visualization of a single
-// sensor_msgs::WrenchStamped message.  Currently it just shows an arrow with
-// the direction and magnitude of the acceleration vector, but could
-// easily be expanded to include more of the message data.
-class RVIZ_RENDERING_PUBLIC WrenchVisual
+/*
+ * Each instance of WrenchStampedVisual represents the visualization of a single
+ * sensor_msgs::WrenchStamped message.
+ */
+class WrenchVisual
 {
 public:
-  // Constructor.  Creates the visual stuff and puts it into the
-  // scene, but in an unconfigured state.
+  RVIZ_RENDERING_PUBLIC
   WrenchVisual(Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node);
 
-  // Destructor.  Removes the visual stuff from the scene.
+  RVIZ_RENDERING_PUBLIC
   virtual ~WrenchVisual();
 
   // Configure the visual to show the given force and torque vectors
+  RVIZ_RENDERING_PUBLIC
   void setWrench(const Ogre::Vector3 & force, const Ogre::Vector3 & torque);
 
   // Set the pose of the coordinate frame the message refers to.
-  // These could be done inside setMessage(), but that would require
-  // calls to FrameManager and error handling inside setMessage(),
-  // which doesn't seem as clean.  This way WrenchStampedVisual is only
-  // responsible for visualization.
+  RVIZ_RENDERING_PUBLIC
   void setFramePosition(const Ogre::Vector3 & position);
+
+  RVIZ_RENDERING_PUBLIC
   void setFrameOrientation(const Ogre::Quaternion & orientation);
 
-  // Set the color and alpha of the visual, which are user-editable
-  // parameters and therefore don't come from the WrenchStamped message.
+  RVIZ_RENDERING_PUBLIC
   void setForceColor(float r, float g, float b, float a);
+
+  RVIZ_RENDERING_PUBLIC
   void setTorqueColor(float r, float g, float b, float a);
-  void setForceScale(float s);
-  void setTorqueScale(float s);
-  void setWidth(float w);
+
+  RVIZ_RENDERING_PUBLIC
+  void setForceScale(float scale);
+
+  RVIZ_RENDERING_PUBLIC
+  void setTorqueScale(float scale);
+
+  RVIZ_RENDERING_PUBLIC
+  void setWidth(float width);
+
+  RVIZ_RENDERING_PUBLIC
   void setVisible(bool visible);
 
 private:
-  // The object implementing the wrenchStamped circle
-  rviz_rendering::Arrow * arrow_force_;
-  rviz_rendering::Arrow * arrow_torque_;
-  rviz_rendering::BillboardLine * circle_torque_;
-  rviz_rendering::Arrow * circle_arrow_torque_;
+  void createTorqueDirectionCircle(const Ogre::Quaternion & orientation) const;
+  void setTorqueDirectionArrow(const Ogre::Quaternion & orientation) const;
+  Ogre::Quaternion getDirectionOfRotationRelativeToTorque(
+    const Ogre::Vector3 & torque, const Ogre::Vector3 & axis_z) const;
+  void updateForceArrow() const;
+  void updateTorque() const;
+
+  std::shared_ptr<rviz_rendering::Arrow> arrow_force_;
+  std::shared_ptr<rviz_rendering::Arrow> arrow_torque_;
+  std::shared_ptr<rviz_rendering::BillboardLine> circle_torque_;
+  std::shared_ptr<rviz_rendering::Arrow> circle_arrow_torque_;
+  Ogre::Vector3 force_arrow_direction_;
+  Ogre::Vector3 torque_arrow_direction_;
   float force_scale_;
   float torque_scale_;
   float width_;
 
-  // A SceneNode whose pose is set to match the coordinate frame of
-  // the WrenchStamped message header.
   Ogre::SceneNode * frame_node_;
-  // allow showing/hiding of force / torque arrows
   Ogre::SceneNode * force_node_;
   Ogre::SceneNode * torque_node_;
-
-  // The SceneManager, kept here only so the destructor can ask it to
-  // destroy the ``frame_node_``.
   Ogre::SceneManager * scene_manager_;
 };
 

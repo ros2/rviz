@@ -64,14 +64,14 @@ protected:
 };
 
 std::shared_ptr<rviz_rendering::OgreTestingEnvironment>
-  WrenchVisualTestFixture::testing_environment_ = nullptr;
+WrenchVisualTestFixture::testing_environment_ = nullptr;
 
-Ogre::SceneNode * findForceArrow(Ogre::SceneNode * scene_node) {
+Ogre::SceneNode * findForceArrow(Ogre::SceneNode * scene_node)
+{
   auto arrows = rviz_rendering::findAllArrows(scene_node);
   auto billboard_line = rviz_rendering::findOneBillboardChain(scene_node);
   for (const auto & arrow : arrows) {
-    if (billboard_line->getParentSceneNode()->getParent() != arrow->getParent())
-    {
+    if (billboard_line->getParentSceneNode()->getParent() != arrow->getParent()) {
       return arrow;
     }
   }
