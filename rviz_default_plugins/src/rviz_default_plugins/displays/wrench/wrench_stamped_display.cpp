@@ -46,7 +46,6 @@
 
 namespace rviz_default_plugins
 {
-
 namespace displays
 {
 
@@ -54,25 +53,24 @@ WrenchStampedDisplay::WrenchStampedDisplay()
 {
   force_color_property_ = new rviz_common::properties::ColorProperty(
     "Force Color", QColor(204, 51, 51), "Color to draw the force arrows.", this,
-    SLOT(updateColorAndAlpha()));
+    SLOT(updateWrenchVisuals()));
 
   torque_color_property_ = new rviz_common::properties::ColorProperty(
     "Torque Color", QColor(204, 204, 51), "Color to draw the torque arrows.", this,
-    SLOT(updateColorAndAlpha()));
+    SLOT(updateWrenchVisuals()));
 
   alpha_property_ = new rviz_common::properties::FloatProperty(
     "Alpha", 1.0f, "0 is fully transparent, 1.0 is fully opaque.", this,
-    SLOT(updateColorAndAlpha()));
+    SLOT(updateWrenchVisuals()));
 
   force_scale_property_ = new rviz_common::properties::FloatProperty(
-    "Force Arrow Scale", 2.0f, "force arrow scale", this, SLOT(updateColorAndAlpha()));
+    "Force Arrow Scale", 2.0f, "force arrow scale", this, SLOT(updateWrenchVisuals()));
 
   torque_scale_property_ = new rviz_common::properties::FloatProperty(
-    "Torque Arrow Scale", 2.0f, "torque arrow scale", this, SLOT(updateColorAndAlpha()));
+    "Torque Arrow Scale", 2.0f, "torque arrow scale", this, SLOT(updateWrenchVisuals()));
 
   width_property_ = new rviz_common::properties::FloatProperty(
-    "Arrow Width", 0.5f, "arrow width", this, SLOT(updateColorAndAlpha()));
-
+    "Arrow Width", 0.5f, "arrow width", this, SLOT(updateWrenchVisuals()));
 
   history_length_property_ = new rviz_common::properties::IntProperty(
     "History Length", 1, "Number of prior measurements to display.", this,
@@ -96,7 +94,7 @@ void WrenchStampedDisplay::reset()
   visuals_.clear();
 }
 
-void WrenchStampedDisplay::updateColorAndAlpha()
+void WrenchStampedDisplay::updateWrenchVisuals()
 {
   float alpha = alpha_property_->getFloat();
   float force_scale = force_scale_property_->getFloat();
@@ -137,9 +135,8 @@ void WrenchStampedDisplay::processMessage(geometry_msgs::msg::WrenchStamped::Con
 
   Ogre::Quaternion orientation;
   Ogre::Vector3 position;
-  if (!context_->getFrameManager()->getTransform(msg->header.frame_id,
-    msg->header.stamp,
-    position, orientation))
+  if (!context_->getFrameManager()->getTransform(
+      msg->header.frame_id, msg->header.stamp, position, orientation))
   {
     setMissingTransformToFixedFrame(msg->header.frame_id);
     return;
@@ -151,23 +148,22 @@ void WrenchStampedDisplay::processMessage(geometry_msgs::msg::WrenchStamped::Con
     return;
   }
 
-  std::shared_ptr<rviz_rendering::WrenchVisual> visual;
   if (visuals_.size() >= static_cast<size_t>(history_length_property_->getInt())) {
     visuals_.pop_front();
   }
-  visual = std::make_shared<rviz_rendering::WrenchVisual>(context_->getSceneManager(), scene_node_);
 
-  float alpha = alpha_property_->getFloat();
-  float force_scale = force_scale_property_->getFloat();
-  float torque_scale = torque_scale_property_->getFloat();
-  float width = width_property_->getFloat();
-  Ogre::ColourValue force_color = force_color_property_->getOgreColor();
-  Ogre::ColourValue torque_color = torque_color_property_->getOgreColor();
-  visual->setForceColor(force_color.r, force_color.g, force_color.b, alpha);
-  visual->setTorqueColor(torque_color.r, torque_color.g, torque_color.b, alpha);
-  visual->setForceScale(force_scale);
-  visual->setTorqueScale(torque_scale);
-  visual->setWidth(width);
+  auto visual = createWrenchVisual(msg, orientation, position);
+
+  visuals_.push_back(visual);
+}
+
+std::shared_ptr<rviz_rendering::WrenchVisual> WrenchStampedDisplay::createWrenchVisual(
+  const geometry_msgs::msg::WrenchStamped::ConstSharedPtr & msg,
+  const Ogre::Quaternion & orientation,
+  const Ogre::Vector3 & position)
+{
+  std::shared_ptr<rviz_rendering::WrenchVisual> visual;
+  visual = std::make_shared<rviz_rendering::WrenchVisual>(context_->getSceneManager(), scene_node_);
 
   Ogre::Vector3 force(
     static_cast<float>(msg->wrench.force.x),
@@ -181,7 +177,19 @@ void WrenchStampedDisplay::processMessage(geometry_msgs::msg::WrenchStamped::Con
   visual->setFramePosition(position);
   visual->setFrameOrientation(orientation);
 
-  visuals_.push_back(visual);
+  float alpha = alpha_property_->getFloat();
+  float force_scale = force_scale_property_->getFloat();
+  float torque_scale = torque_scale_property_->getFloat();
+  float width = width_property_->getFloat();
+  Ogre::ColourValue force_color = force_color_property_->getOgreColor();
+  Ogre::ColourValue torque_color = torque_color_property_->getOgreColor();
+  visual->setForceColor(force_color.r, force_color.g, force_color.b, alpha);
+  visual->setTorqueColor(torque_color.r, torque_color.g, torque_color.b, alpha);
+  visual->setForceScale(force_scale);
+  visual->setTorqueScale(torque_scale);
+  visual->setWidth(width);
+
+  return visual;
 }
 
 }  // namespace displays

@@ -82,10 +82,15 @@ public:
 
 private
   Q_SLOTS:
-  void updateColorAndAlpha();
+  void updateWrenchVisuals();
   void updateHistoryLength();
 
 private:
+  std::shared_ptr<rviz_rendering::WrenchVisual> createWrenchVisual(
+    const geometry_msgs::msg::WrenchStamped::ConstSharedPtr & msg,
+    const Ogre::Quaternion & orientation,
+    const Ogre::Vector3 & position);
+
   std::deque<std::shared_ptr<rviz_rendering::WrenchVisual>> visuals_;
 
   rviz_common::properties::ColorProperty * force_color_property_;
