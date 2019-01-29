@@ -28,6 +28,10 @@ macro(build_freetype)
     list(APPEND extra_cmake_args "-DCMAKE_C_FLAGS=/w")
   endif()
 
+  if(DEFINED CMAKE_TOOLCHAIN_FILE)
+    list(APPEND extra_cmake_args "-DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}")
+  endif()
+
   include(ExternalProject)
   ExternalProject_Add(freetype-2.8.1
     URL https://git.savannah.gnu.org/cgit/freetype/freetype2.git/snapshot/freetype2-VER-2-6-5.tar.gz
@@ -55,6 +59,10 @@ macro(build_zlib)
   if(WIN32)
     list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=/w")
     list(APPEND extra_cmake_args "-DCMAKE_C_FLAGS=/w")
+  endif()
+
+  if(DEFINED CMAKE_TOOLCHAIN_FILE)
+    list(APPEND extra_cmake_args "-DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}")
   endif()
 
   include(ExternalProject)
@@ -118,6 +126,10 @@ macro(build_ogre)
     set(patch_exe patch.exe)
   else()
     set(patch_exe patch)
+  endif()
+
+  if(DEFINED CMAKE_TOOLCHAIN_FILE)
+    list(APPEND extra_cmake_args "-DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}")
   endif()
 
   include(ExternalProject)
