@@ -115,7 +115,9 @@ protected:
    * "Robot Description" property, iterates through the links, and
    * loads any necessary models. */
   virtual void load_urdf();
+  virtual void load_urdf_parameter(const std::string & parameter);
   virtual void load_urdf_from(const std::string & filepath);
+  virtual void load_urdf_content(const std::string & content);
   void updateRobot();
 
   void processMessage(std_msgs::msg::String::ConstSharedPtr msg) override;
