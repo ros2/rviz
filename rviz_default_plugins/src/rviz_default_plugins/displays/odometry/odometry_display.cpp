@@ -134,13 +134,16 @@ OdometryDisplay::~OdometryDisplay() = default;
 
 void OdometryDisplay::onInitialize()
 {
-  RTDClass::onInitialize();
+  auto tf_wrapper = std::dynamic_pointer_cast<transformation::TFWrapper>(
+          context_->getFrameManager()->getConnector().lock());
+  buffer_ = tf_wrapper->getBuffer();
+  MFDClass::onInitialize();
   updateShapeChoice();
 }
 
 void OdometryDisplay::onEnable()
 {
-  RTDClass::onEnable();
+  MFDClass::onEnable();
   updateShapeVisibility();
 }
 
@@ -392,7 +395,7 @@ void OdometryDisplay::update(float wall_dt, float ros_dt)
 
 void OdometryDisplay::reset()
 {
-  RTDClass::reset();
+  MFDClass::reset();
   clear();
 }
 

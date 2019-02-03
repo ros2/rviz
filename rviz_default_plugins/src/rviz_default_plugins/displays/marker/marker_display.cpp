@@ -40,15 +40,17 @@ namespace displays
 {
 
 MarkerDisplay::MarkerDisplay()
-: rviz_common::RosTopicDisplay<visualization_msgs::msg::Marker>(),
+: rviz_common::MessageFilterDisplay<visualization_msgs::msg::Marker>(),
   marker_common_(std::make_unique<MarkerCommon>(this)),
   queue_size_property_(std::make_unique<rviz_common::QueueSizeProperty>(this, 10)) {}
 
 void MarkerDisplay::onInitialize()
 {
-  RTDClass::onInitialize();
+  auto tf_wrapper = std::dynamic_pointer_cast<transformation::TFWrapper>(
+          context_->getFrameManager()->getConnector().lock());
+  buffer_ = tf_wrapper->getBuffer();
+  MFDClass::onInitialize();
   marker_common_->initialize(context_, scene_node_);
-
   topic_property_->setDescription(
     "visualization_msgs::msg::Marker topic to subscribe to. <topic>_array will also"
     " automatically be subscribed with type visualization_msgs::msg::MarkerArray.");
@@ -62,7 +64,7 @@ void MarkerDisplay::load(const rviz_common::Config & config)
 
 void MarkerDisplay::subscribe()
 {
-  RTDClass::subscribe();
+  MFDClass::subscribe();
 
   if ((!isEnabled()) || (topic_property_->getTopicStd().empty())) {
     return;
@@ -93,7 +95,7 @@ void MarkerDisplay::createMarkerArraySubscription()
 
 void MarkerDisplay::unsubscribe()
 {
-  RTDClass::unsubscribe();
+  MFDClass::unsubscribe();
   array_sub_.reset();
 }
 
@@ -110,7 +112,7 @@ void MarkerDisplay::update(float wall_dt, float ros_dt)
 
 void MarkerDisplay::reset()
 {
-  RTDClass::reset();
+  MFDClass::reset();
   marker_common_->clearMarkers();
 }
 

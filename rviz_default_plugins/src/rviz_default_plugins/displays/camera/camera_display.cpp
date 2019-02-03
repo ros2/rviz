@@ -132,7 +132,10 @@ CameraDisplay::~CameraDisplay()
 
 void CameraDisplay::onInitialize()
 {
-  RTDClass::onInitialize();
+  auto tf_wrapper = std::dynamic_pointer_cast<transformation::TFWrapper>(
+          context_->getFrameManager()->getConnector().lock());
+  buffer_ = tf_wrapper->getBuffer();
+  MFDClass::onInitialize();
 
   setupSceneNodes();
   setupRenderPanel();
@@ -267,7 +270,7 @@ void CameraDisplay::onDisable()
 
 void CameraDisplay::subscribe()
 {
-  RTDClass::subscribe();
+  MFDClass::subscribe();
 
   if ((!isEnabled()) || (topic_property_->getTopicStd().empty())) {
     return;
@@ -300,7 +303,7 @@ void CameraDisplay::createCameraInfoSubscription()
 
 void CameraDisplay::unsubscribe()
 {
-  RTDClass::unsubscribe();
+  MFDClass::unsubscribe();
   caminfo_sub_.reset();
 }
 
@@ -556,7 +559,7 @@ void CameraDisplay::processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg)
 
 void CameraDisplay::reset()
 {
-  RTDClass::reset();
+  MFDClass::reset();
   clear();
 }
 

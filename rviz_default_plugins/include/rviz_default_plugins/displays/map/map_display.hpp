@@ -59,8 +59,12 @@
 #include "map_msgs/msg/occupancy_grid_update.hpp"
 #include "rclcpp/time.hpp"
 
-#include "rviz_common/ros_topic_display.hpp"
+#include "rviz_common/message_filter_display.hpp"
+#include "rviz_common/transformation/frame_transformer.hpp"
 
+#include "rviz_default_plugins/transformation/transformer_guard.hpp"
+#include "rviz_default_plugins/transformation/tf_wrapper.hpp"
+#include "rviz_default_plugins/transformation/tf_frame_transformer.hpp"
 #include "rviz_default_plugins/displays/map/swatch.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 
@@ -96,7 +100,7 @@ class AlphaSetter;
  * \brief Displays a map along the XY plane.
  */
 class RVIZ_DEFAULT_PLUGINS_PUBLIC MapDisplay : public
-  rviz_common::RosTopicDisplay<nav_msgs::msg::OccupancyGrid>
+  rviz_common::MessageFilterDisplay<nav_msgs::msg::OccupancyGrid>
 {
   Q_OBJECT
 

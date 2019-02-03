@@ -123,7 +123,7 @@ MapDisplay::MapDisplay()
     "Orientation", Ogre::Quaternion::IDENTITY, "Orientation of the map. (not editable)", this);
   orientation_property_->setReadOnly(true);
 
-  transform_timestamp_property_ = new rviz_common::properties::BoolProperty("Use Timestamp", false,
+  transform_timestamp_property_ = new rviz_common::properties::BoolProperty("Use Timestamp", true,
       "Use map header timestamp when transforming", this, SLOT(transformMap()));
 }
 
@@ -161,7 +161,10 @@ MapDisplay::MapDisplay(rviz_common::DisplayContext * context)
 
 void MapDisplay::onInitialize()
 {
-  RosTopicDisplay::onInitialize();
+  auto tf_wrapper = std::dynamic_pointer_cast<transformation::TFWrapper>(
+          context_->getFrameManager()->getConnector().lock());
+  buffer_ = tf_wrapper->getBuffer();
+  MessageFilterDisplay::onInitialize();
   // Order of palette textures here must match option indices for color_scheme_property_ above.
   palette_textures_.push_back(makePaletteTexture(makeMapPalette()));
   color_scheme_transparency_.push_back(false);
@@ -184,7 +187,7 @@ void MapDisplay::subscribe()
     return;
   }
 
-  RTDClass::subscribe();
+  MFDClass::subscribe();
 
   try {
     // TODO(wjwwood): update this class to use rclcpp::QoS.
@@ -207,7 +210,7 @@ void MapDisplay::subscribe()
 
 void MapDisplay::unsubscribe()
 {
-  RTDClass::unsubscribe();
+  MFDClass::unsubscribe();
   update_subscription_.reset();
 }
 
@@ -569,7 +572,7 @@ void MapDisplay::fixedFrameChanged()
 
 void MapDisplay::reset()
 {
-  RosTopicDisplay::reset();
+  MessageFilterDisplay::reset();
   update_messages_received_ = 0;
   clear();
 }
@@ -584,7 +587,7 @@ void MapDisplay::update(float wall_dt, float ros_dt)
 
 void MapDisplay::onEnable()
 {
-  RosTopicDisplay::onEnable();
+  MessageFilterDisplay::onEnable();
   setStatus(rviz_common::properties::StatusProperty::Warn, "Message", "No map received");
 }
 

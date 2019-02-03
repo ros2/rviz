@@ -76,7 +76,10 @@ RangeDisplay::RangeDisplay()
 
 void RangeDisplay::onInitialize()
 {
-  RTDClass::onInitialize();
+  auto tf_wrapper = std::dynamic_pointer_cast<transformation::TFWrapper>(
+          context_->getFrameManager()->getConnector().lock());
+  buffer_ = tf_wrapper->getBuffer();
+  MFDClass::onInitialize();
   updateBufferLength();
   updateColorAndAlpha();
 }
@@ -85,7 +88,7 @@ RangeDisplay::~RangeDisplay() = default;
 
 void RangeDisplay::reset()
 {
-  RTDClass::reset();
+  MFDClass::reset();
   updateBufferLength();
 }
 

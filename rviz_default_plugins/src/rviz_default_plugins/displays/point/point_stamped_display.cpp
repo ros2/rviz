@@ -68,6 +68,14 @@ PointStampedDisplay::PointStampedDisplay()
   setUpProperties();
 }
 
+void PointStampedDisplay::onInitialize()
+{
+  auto tf_wrapper = std::dynamic_pointer_cast<transformation::TFWrapper>(
+          context_->getFrameManager()->getConnector().lock());
+  buffer_ = tf_wrapper->getBuffer();
+  MFDClass::onInitialize();
+}
+
 void PointStampedDisplay::setUpProperties()
 {
   color_property_ = new rviz_common::properties::ColorProperty(
@@ -91,7 +99,7 @@ PointStampedDisplay::~PointStampedDisplay() = default;
 
 void PointStampedDisplay::reset()
 {
-  RTDClass::reset();
+  MFDClass::reset();
   visuals_.clear();
 }
 

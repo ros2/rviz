@@ -54,6 +54,7 @@ find_package(tinyxml_vendor REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
+find_package(message_filters REQUIRED)
 find_package(urdf REQUIRED)
 find_package(yaml_cpp_vendor REQUIRED)
 
@@ -143,6 +144,7 @@ set(rviz_common_headers_to_moc
   include/rviz_common/window_manager_interface.hpp
   include/rviz_common/validate_floats.hpp
   include/rviz_common/ros_topic_display.hpp
+  include/rviz_common/message_filter_display.hpp
 )
 
 set(rviz_common_source_files
@@ -265,6 +267,7 @@ ament_target_dependencies(rviz_common
   tf2
   tf2_geometry_msgs
   tf2_ros
+  message_filters
   urdf
   yaml_cpp_vendor
 )

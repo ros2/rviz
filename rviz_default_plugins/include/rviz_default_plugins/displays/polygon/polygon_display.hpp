@@ -33,8 +33,12 @@
 
 #include "geometry_msgs/msg/polygon_stamped.hpp"
 
-#include "rviz_common/ros_topic_display.hpp"
+#include "rviz_common/message_filter_display.hpp"
+#include "rviz_common/transformation/frame_transformer.hpp"
 
+#include "rviz_default_plugins/transformation/transformer_guard.hpp"
+#include "rviz_default_plugins/transformation/tf_wrapper.hpp"
+#include "rviz_default_plugins/transformation/tf_frame_transformer.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 
 namespace Ogre
@@ -61,7 +65,7 @@ namespace displays
  * \brief Displays a geometry_msgs::PolygonStamped message
  */
 class RVIZ_DEFAULT_PLUGINS_PUBLIC PolygonDisplay : public
-  rviz_common::RosTopicDisplay<geometry_msgs::msg::PolygonStamped>
+  rviz_common::MessageFilterDisplay<geometry_msgs::msg::PolygonStamped>
 {
   Q_OBJECT
 

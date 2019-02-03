@@ -41,14 +41,18 @@
 # include <OgreRenderTargetListener.h>
 # include <OgreSharedPtr.h>
 
-# include "rviz_common/ros_topic_display.hpp"
+# include "rviz_common/message_filter_display.hpp"
 # include "rviz_common/render_panel.hpp"
 # include "rviz_common/properties/bool_property.hpp"
 # include "rviz_common/properties/float_property.hpp"
 # include "rviz_common/properties/int_property.hpp"
 # include "rviz_common/properties/queue_size_property.hpp"
+#include "rviz_common/transformation/frame_transformer.hpp"
 
 # include "rviz_default_plugins/displays/image/ros_image_texture_iface.hpp"
+#include "rviz_default_plugins/transformation/transformer_guard.hpp"
+#include "rviz_default_plugins/transformation/tf_wrapper.hpp"
+#include "rviz_default_plugins/transformation/tf_frame_transformer.hpp"
 # include "rviz_default_plugins/visibility_control.hpp"
 #endif
 
@@ -69,7 +73,7 @@ namespace displays
  *
  */
 class RVIZ_DEFAULT_PLUGINS_PUBLIC ImageDisplay : public
-  rviz_common::RosTopicDisplay<sensor_msgs::msg::Image>
+  rviz_common::MessageFilterDisplay<sensor_msgs::msg::Image>
 {
   Q_OBJECT
 

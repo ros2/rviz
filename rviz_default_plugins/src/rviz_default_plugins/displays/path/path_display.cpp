@@ -155,13 +155,16 @@ PathDisplay::~PathDisplay()
 
 void PathDisplay::onInitialize()
 {
-  RosTopicDisplay::onInitialize();
+  auto tf_wrapper = std::dynamic_pointer_cast<transformation::TFWrapper>(
+          context_->getFrameManager()->getConnector().lock());
+  buffer_ = tf_wrapper->getBuffer();
+  MessageFilterDisplay::onInitialize();
   updateBufferLength();
 }
 
 void PathDisplay::reset()
 {
-  RosTopicDisplay::reset();
+  MessageFilterDisplay::reset();
   updateBufferLength();
 }
 

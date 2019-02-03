@@ -39,10 +39,12 @@
 
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
-#include "rviz_common/ros_topic_display.hpp"
+#include "rviz_common/message_filter_display.hpp"
 #include "rviz_common/properties/queue_size_property.hpp"
 #include "rviz_common/validate_floats.hpp"
 #include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
+#include "rviz_default_plugins/transformation/tf_wrapper.hpp"
+#include "rviz_default_plugins/transformation/tf_frame_transformer.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 #include "rviz_rendering/objects/point_cloud.hpp"
 
@@ -63,7 +65,7 @@ namespace displays
 
 template<typename MessageType>
 class RVIZ_DEFAULT_PLUGINS_PUBLIC PointCloudScalarDisplay
-  : public rviz_common::RosTopicDisplay<MessageType>
+  : public rviz_common::MessageFilterDisplay<MessageType>
 {
 public:
   PointCloudScalarDisplay()
@@ -106,7 +108,10 @@ protected:
 private:
   void onInitialize() override
   {
-    rviz_common::RosTopicDisplay<MessageType>::onInitialize();
+    auto tf_wrapper = std::dynamic_pointer_cast<transformation::TFWrapper>(
+            rviz_common::Display::context_->getFrameManager()->getConnector().lock());
+    rviz_common::MessageFilterDisplay<MessageType>::buffer_ = tf_wrapper->getBuffer();
+    rviz_common::MessageFilterDisplay<MessageType>::onInitialize();
     point_cloud_common_->initialize(
       this->context_, this->scene_node_);
     setInitialValues();
@@ -120,18 +125,18 @@ private:
 
   void onEnable() override
   {
-    rviz_common::RosTopicDisplay<MessageType>::onEnable();
+    rviz_common::MessageFilterDisplay<MessageType>::onEnable();
   }
 
   void onDisable() override
   {
-    rviz_common::RosTopicDisplay<MessageType>::onDisable();
+    rviz_common::MessageFilterDisplay<MessageType>::onDisable();
     point_cloud_common_->onDisable();
   }
 
   void reset() override
   {
-    rviz_common::RosTopicDisplay<MessageType>::reset();
+    rviz_common::MessageFilterDisplay<MessageType>::reset();
     point_cloud_common_->reset();
   }
 

@@ -38,9 +38,11 @@
 #include "nav_msgs/msg/map_meta_data.hpp"
 
 #include "rviz_common/display.hpp"
-#include "rviz_common/ros_topic_display.hpp"
+#include "rviz_common/message_filter_display.hpp"
 #include "rviz_common/display_context.hpp"
 
+#include "rviz_default_plugins/transformation/tf_wrapper.hpp"
+#include "rviz_default_plugins/transformation/tf_frame_transformer.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 
 namespace rviz_rendering
@@ -68,7 +70,7 @@ namespace displays
  * \brief Displays a nav_msgs::GridCells message
  */
 class RVIZ_DEFAULT_PLUGINS_PUBLIC GridCellsDisplay : public
-  rviz_common::RosTopicDisplay<nav_msgs::msg::GridCells>
+  rviz_common::MessageFilterDisplay<nav_msgs::msg::GridCells>
 {
   Q_OBJECT
 

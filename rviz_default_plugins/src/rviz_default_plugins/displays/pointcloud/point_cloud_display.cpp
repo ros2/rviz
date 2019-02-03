@@ -52,7 +52,10 @@ PointCloudDisplay::PointCloudDisplay()
 
 void PointCloudDisplay::onInitialize()
 {
-  RTDClass::onInitialize();
+  auto tf_wrapper = std::dynamic_pointer_cast<transformation::TFWrapper>(
+          context_->getFrameManager()->getConnector().lock());
+  buffer_ = tf_wrapper->getBuffer();
+  MFDClass::onInitialize();
   point_cloud_common_->initialize(context_, scene_node_);
 }
 
@@ -68,13 +71,13 @@ void PointCloudDisplay::update(float wall_dt, float ros_dt)
 
 void PointCloudDisplay::reset()
 {
-  RTDClass::reset();
+  MFDClass::reset();
   point_cloud_common_->reset();
 }
 
 void PointCloudDisplay::onDisable()
 {
-  RosTopicDisplay::onDisable();
+  MessageFilterDisplay::onDisable();
   point_cloud_common_->onDisable();
 }
 
