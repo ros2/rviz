@@ -29,6 +29,8 @@
 
 #include "rviz_visual_testing_framework/visual_test_fixture.hpp"
 
+#include <ament_index_cpp/get_package_prefix.hpp>
+#include <ament_index_cpp/get_package_share_directory.hpp>
 #include <memory>
 #include <string>
 #include <vector>
@@ -47,17 +49,26 @@ void VisualTestFixture::SetUpTestCase()
     std::make_unique<rviz_common::ros_integration::RosClientAbstraction>());
   qapp_ = new QApplication(argc, argv);
 
+  std::string ROS_PACKAGE_NAME = "rviz_visual_testing_framework";
+  std::string install_share_directory_path_;
+  try {
+    install_share_directory_path_ = ament_index_cpp::get_package_share_directory(ROS_PACKAGE_NAME);
+  } catch (ament_index_cpp::PackageNotFoundError & e) {
+    std::cerr << "Caught PackageNotFoundError for package name '" << e.package_name;
+  }
 
   visualizer_app_->setApp(qapp_);
 
   visualizer_app_->init(argc, argv);
+
   if (VisualTest::generateReferenceImages()) {
     visualizer_app_->loadConfig(QDir::toNativeSeparators(
-        QString::fromStdString(std::string(_SRC_DIR_PATH) + "/visual_tests_default_config.rviz")));
+        QString::fromStdString(install_share_directory_path_ +
+        "/config/visual_tests_default_config.rviz")));
   } else {
     visualizer_app_->loadConfig(QDir::toNativeSeparators(
-        QString::fromStdString(std::string(_SRC_DIR_PATH) +
-        "/visual_tests_test_image_config.rviz")));
+        QString::fromStdString(install_share_directory_path_ +
+        "/config/visual_tests_test_image_config.rviz")));
   }
 }
 
