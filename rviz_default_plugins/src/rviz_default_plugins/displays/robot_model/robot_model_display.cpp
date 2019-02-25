@@ -120,6 +120,10 @@ RobotModelDisplay::RobotModelDisplay()
   topic_property_->setName("Description Topic");
 
   unreliable_property_->setHidden(true);
+  rmw_qos_profile_t qos = rmw_qos_profile_default;
+  qos.depth = 1;
+  qos.durability = RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL;
+  qos_profile = qos;
 
   tf_prefix_property_ = new StringProperty("TF Prefix", "",
       "Robot Model normally assumes the link name is the same as the tf frame name. "
@@ -206,13 +210,13 @@ void RobotModelDisplay::load_urdf()
   if (description_source_property_->getOptionInt() == DescriptionSource::FILE &&
     !description_file_property_->getString().isEmpty())
   {
-    load_urdf_from(description_file_property_->getStdString());
+    load_urdf_from_file(description_file_property_->getStdString());
   } else {
     clear();
   }
 }
 
-void RobotModelDisplay::load_urdf_from(const std::string & filepath)
+void RobotModelDisplay::load_urdf_from_file(const std::string & filepath)
 {
   std::string content;
   QFile urdf_file(QString::fromStdString(filepath));
@@ -232,6 +236,17 @@ void RobotModelDisplay::load_urdf_from(const std::string & filepath)
 
   robot_description_ = content;
 
+  display_urdf_content();
+}
+
+void RobotModelDisplay::load_urdf_from_string(const std::string & robot_description)
+{
+  robot_description_ = robot_description;
+  display_urdf_content();
+}
+
+void RobotModelDisplay::display_urdf_content()
+{
   TiXmlDocument doc;
   doc.Parse(robot_description_.c_str());
   if (!doc.RootElement() ) {
@@ -316,8 +331,7 @@ void RobotModelDisplay::reset()
 
 void RobotModelDisplay::processMessage(std_msgs::msg::String::ConstSharedPtr msg)
 {
-  std::string filepath = msg->data;
-  load_urdf_from(filepath);
+  load_urdf_from_string(msg->data);
 }
 
 }  // namespace displays
