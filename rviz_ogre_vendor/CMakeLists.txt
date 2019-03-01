@@ -156,8 +156,8 @@ macro(build_ogre)
 
   include(ExternalProject)
   ExternalProject_Add(ogre-master-ca665a6
-    URL https://github.com/OGRECave/ogre/archive/v1.10.11.zip
-    URL_MD5 6ffd5048fae72805e287bfc0b462b2ea
+    URL https://github.com/OGRECave/ogre/archive/v1.10.12.zip
+    URL_MD5 c8d2626270d576a98cc40ea194fdb39e
     TIMEOUT 1200
     LOG_CONFIGURE ${should_log}
     LOG_BUILD ${should_log}
@@ -171,7 +171,7 @@ macro(build_ogre)
       -DOGRE_INSTALL_SAMPLES:BOOL=FALSE
       -DOGRE_INSTALL_SAMPLES_SOURCE:BOOL=FALSE
       -DOGRE_CONFIG_THREADS:STRING=0
-      -DOGRE_RESOURCEMANAGER_STRICT:BOOL=ON
+      -DOGRE_RESOURCEMANAGER_STRICT:STRING=2
       -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ogre_install
       -DOGRE_BUILD_LIBS_AS_FRAMEWORKS:BOOL=OFF
       ${extra_cmake_args}
