@@ -37,7 +37,6 @@ macro(build_freetype)
   endif()
   list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=${FREETYPE_CXX_FLAGS}")
 
-
   include(ExternalProject)
   ExternalProject_Add(freetype-2.8.1
     URL https://git.savannah.gnu.org/cgit/freetype/freetype2.git/snapshot/freetype2-VER-2-6-5.tar.gz
