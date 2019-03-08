@@ -201,6 +201,11 @@ void RobotModelDisplay::updateTfPrefix()
   context_->queueRender();
 }
 
+void RobotModelDisplay::load_urdf_from(const std::string & filepath)
+{
+  load_urdf_from_file(filepath);
+}
+
 void RobotModelDisplay::load_urdf()
 {
   if (!transformer_guard_->checkTransformer()) {
