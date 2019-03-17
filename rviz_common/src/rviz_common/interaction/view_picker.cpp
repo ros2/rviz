@@ -43,6 +43,7 @@
 #include <OgreSceneNode.h>
 #include <OgreTextureManager.h>
 #include <OgreViewport.h>
+#include <OgreVector3.h>
 
 #include "rviz_common/logging.hpp"
 

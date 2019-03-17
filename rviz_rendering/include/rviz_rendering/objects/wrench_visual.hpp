@@ -32,13 +32,10 @@
 
 #include <memory>
 
-#include "rviz_rendering/visibility_control.hpp"
+#include <OgreVector3.h>
+#include <OgreQuaternion.h>
 
-namespace Ogre
-{
-class Vector3;
-class Quaternion;
-}
+#include "rviz_rendering/visibility_control.hpp"
 
 namespace rviz_rendering
 {

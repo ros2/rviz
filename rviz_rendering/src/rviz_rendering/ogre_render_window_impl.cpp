@@ -54,7 +54,6 @@
 #include <OgreTechnique.h>
 #include <OgreTextureManager.h>
 #include <OgreViewport.h>
-#include <OgreWindowEventUtilities.h>
 
 #include "rviz_rendering/orthographic.hpp"
 #include "./render_system.hpp"
@@ -123,7 +122,8 @@ RenderWindowImpl::render()
   // Theoretically you can have one function that does this check but from my
   // experience it seems better to keep things separate and keep the render
   // function as simple as possible.
-  Ogre::WindowEventUtilities::messagePump();
+  // TODO(Martin-Idel): This should be removed
+  // Ogre::WindowEventUtilities::messagePump();
   if (ogre_render_window_->isClosed()) {
     RVIZ_RENDERING_LOG_ERROR("in RenderSystemImpl::render() - ogre window is closed");
     return;

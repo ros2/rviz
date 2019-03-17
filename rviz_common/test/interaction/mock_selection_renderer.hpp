@@ -94,7 +94,7 @@ public:
     auto data = new uint8_t[Ogre::PixelUtil::getMemorySize(width, height, 1, Ogre::PF_A8R8G8B8)]();
     dst_box = Ogre::PixelBox(width, height, 1, Ogre::PF_A8R8G8B8, data);
 
-    auto dstptr = static_cast<uint32_t *>(dst_box.data);
+    auto dstptr = reinterpret_cast<uint32_t *>(dst_box.data);
     for (auto & object : objects_) {
       int x = object.x - rectangle.x1;
       int y = object.y - rectangle.y1;

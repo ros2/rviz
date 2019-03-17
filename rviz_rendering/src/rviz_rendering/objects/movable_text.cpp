@@ -53,14 +53,14 @@
 # pragma warning(disable:4251)
 #endif
 
-#include <OgreFont.h>
+#include <Overlay/OgreFont.h>
 
 #ifdef _WIN32
 # pragma warning(pop)
 #endif
 
+#include <Overlay/OgreFontManager.h>
 #include <OgreCamera.h>
-#include <OgreFontManager.h>
 #include <OgreHardwareBufferManager.h>
 #include <OgreMaterialManager.h>
 #include <OgreQuaternion.h>

@@ -38,8 +38,8 @@
 # pragma warning(push)
 # pragma warning(disable:4251)
 #endif
-#include <OgreFont.h>
-#include <OgreFontManager.h>
+#include <Overlay/OgreFont.h>
+#include <Overlay/OgreFontManager.h>
 #ifdef _WIN32
 # pragma warning(pop)
 #endif

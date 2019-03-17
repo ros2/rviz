@@ -31,13 +31,14 @@
 #ifndef RVIZ_RENDERING__OBJECTS__OBJECT_HPP_
 #define RVIZ_RENDERING__OBJECTS__OBJECT_HPP_
 
+#include <OgreVector3.h>
+
 #include "rviz_rendering/visibility_control.hpp"
 
 namespace Ogre
 {
 class SceneManager;
 class SceneNode;
-class Vector3;
 class Quaternion;
 class Any;
 }
