@@ -141,12 +141,6 @@ macro(build_ogre)
       "-DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/zlib_install")
   endif()
 
-  if(WIN32)
-    set(patch_exe patch.exe)
-  else()
-    set(patch_exe patch)
-  endif()
-
   if(DEFINED CMAKE_TOOLCHAIN_FILE)
     list(APPEND extra_cmake_args "-DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}")
   else()
@@ -156,8 +150,8 @@ macro(build_ogre)
 
   include(ExternalProject)
   ExternalProject_Add(ogre-master-ca665a6
-    URL https://github.com/OGRECave/ogre/archive/v1.10.12.zip
-    URL_MD5 c8d2626270d576a98cc40ea194fdb39e
+    URL https://github.com/OGRECave/ogre/archive/v1.12.1.zip
+    URL_MD5 cdbea4006d223c173e0a93864111b936
     TIMEOUT 1200
     LOG_CONFIGURE ${should_log}
     LOG_BUILD ${should_log}
@@ -178,8 +172,6 @@ macro(build_ogre)
       -DOGRE_BUILD_COMPONENT_JAVA:BOOL=FALSE
       ${extra_cmake_args}
       -Wno-dev
-    PATCH_COMMAND
-      ${patch_exe} -p1 -N < ${CMAKE_CURRENT_SOURCE_DIR}/ogre-ca665a6-patch.diff
   )
 
   if(BUILDING_FREETYPE_LOCALLY)
