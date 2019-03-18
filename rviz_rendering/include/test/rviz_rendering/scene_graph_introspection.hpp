@@ -97,13 +97,12 @@ Ogre::ManualObject * findOneManualObject(Ogre::SceneNode * scene_node);
 
 template<typename OgreType>
 void findAllObjectsAttached(
-  Ogre::SceneNode * scene_node, Ogre::String type, std::vector<OgreType *> & objects)
+  Ogre::SceneNode * scene_node, const Ogre::String & type, std::vector<OgreType *> & objects)
 {
-  auto it = scene_node->getAttachedObjectIterator();
-  while (it.hasMoreElements()) {
-    auto movable_object = it.getNext();
-    if (movable_object->getMovableType() == type) {
-      auto entity = dynamic_cast<OgreType *>(movable_object);
+  auto attached_objects = scene_node->getAttachedObjects();
+  for (const auto & object : attached_objects) {
+    if (object->getMovableType() == type) {
+      auto entity = dynamic_cast<OgreType *>(object);
       if (entity) {
         objects.push_back(entity);
       }

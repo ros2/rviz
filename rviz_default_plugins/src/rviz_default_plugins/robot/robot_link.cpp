@@ -510,10 +510,9 @@ void RobotLink::setRenderQueueGroup(Ogre::uint8 group)
   while (child_it.hasMoreElements()) {
     auto child = dynamic_cast<Ogre::SceneNode *>(child_it.getNext());
     if (child) {
-      Ogre::SceneNode::ObjectIterator object_it = child->getAttachedObjectIterator();
-      while (object_it.hasMoreElements()) {
-        Ogre::MovableObject * obj = object_it.getNext();
-        obj->setRenderQueueGroup(group);
+      auto attached_objects = child->getAttachedObjects();
+      for (const auto & object : attached_objects) {
+        object->setRenderQueueGroup(group);
       }
     }
   }

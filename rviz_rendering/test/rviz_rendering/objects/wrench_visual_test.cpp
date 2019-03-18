@@ -110,8 +110,8 @@ TEST_F(WrenchVisualTestFixture, setWrench_hides_force_arrow_for_larger_width_tha
   EXPECT_THAT(arrows, SizeIs(3u));
   auto force_arrow = findForceArrow(root_node);
   EXPECT_THAT(force_arrow->getScale(), Vector3Eq(Ogre::Vector3(1, 1, 1)));
-  auto it = force_arrow->getAttachedObjectIterator();
-  while (it.hasMoreElements()) {
-    EXPECT_THAT(it.getNext()->isVisible(), IsFalse());
+  auto objects = force_arrow->getAttachedObjects();
+  for (const auto & object : objects) {
+    EXPECT_THAT(object->isVisible(), IsFalse());
   }
 }

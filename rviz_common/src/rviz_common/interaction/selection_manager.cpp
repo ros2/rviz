@@ -353,10 +353,9 @@ void SelectionManager::setPickData(
     return;
   }
   // Loop over all objects attached to this node.
-  auto obj_it = node->getAttachedObjectIterator();
-  while (obj_it.hasMoreElements()) {
-    auto obj = obj_it.getNext();
-    setPickData(handle, color, obj);
+  auto objects = node->getAttachedObjects();
+  for (const auto & object : objects) {
+    setPickData(handle, color, object);
   }
   // Loop over and recurse into all child nodes.
   auto child_it = node->getChildIterator();
