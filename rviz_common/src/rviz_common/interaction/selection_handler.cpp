@@ -251,7 +251,7 @@ void SelectionHandler::destroyBox(const Handles & handles)
     auto box = handle_to_box_iterator->second.box;
 
     node->detachAllObjects();
-    node->getParentSceneNode()->removeAndDestroyChild(node->getName());
+    node->getParentSceneNode()->removeAndDestroyChild(node);
 
     delete box;
     box = nullptr;

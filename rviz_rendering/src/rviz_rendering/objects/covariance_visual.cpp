@@ -326,15 +326,15 @@ CovarianceVisual::CovarianceVisual(
 
 CovarianceVisual::~CovarianceVisual()
 {
-  scene_manager_->destroySceneNode(position_node_->getName() );
+  scene_manager_->destroySceneNode(position_node_);
 
   for (auto orientation_offset_node : orientation_offset_nodes_) {
-    scene_manager_->destroySceneNode(orientation_offset_node->getName() );
+    scene_manager_->destroySceneNode(orientation_offset_node);
   }
 
-  scene_manager_->destroySceneNode(position_scale_node_->getName() );
-  scene_manager_->destroySceneNode(fixed_orientation_node_->getName() );
-  scene_manager_->destroySceneNode(root_node_->getName() );
+  scene_manager_->destroySceneNode(position_scale_node_);
+  scene_manager_->destroySceneNode(fixed_orientation_node_);
+  scene_manager_->destroySceneNode(root_node_);
 }
 
 void CovarianceVisual::updateUserData(CovarianceUserData user_data)
@@ -607,9 +607,9 @@ void CovarianceVisual::setRotatingFrame(bool is_local_rotation)
   local_rotation_ = is_local_rotation;
 
   if (local_rotation_) {
-    root_node_->addChild(fixed_orientation_node_->removeChild(orientation_root_node_->getName()));
+    root_node_->addChild(fixed_orientation_node_->removeChild(orientation_root_node_));
   } else {
-    fixed_orientation_node_->addChild(root_node_->removeChild(orientation_root_node_->getName()));
+    fixed_orientation_node_->addChild(root_node_->removeChild(orientation_root_node_));
   }
 }
 
