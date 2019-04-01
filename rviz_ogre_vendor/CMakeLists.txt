@@ -98,7 +98,11 @@ endmacro()
 
 macro(build_ogre)
   set(extra_cmake_args)
-  set(OGRE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+  set(OGRE_CXX_FLAGS)
+  # standard library is important for linking, but the other cxx flags are not
+  if(CMAKE_CXX_FLAGS MATCHES "-stdlib=libc\\+\\+")
+    list(APPEND OGRE_CXX_FLAGS "-stdlib=libc++")
+  endif()
 
   if(DEFINED CMAKE_BUILD_TYPE)
     list(APPEND extra_cmake_args -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE})
