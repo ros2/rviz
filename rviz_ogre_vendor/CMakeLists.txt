@@ -101,7 +101,7 @@ macro(build_ogre)
   set(OGRE_CXX_FLAGS)
   # standard library is important for linking, but the other cxx flags are not
   if(CMAKE_CXX_FLAGS MATCHES "-stdlib=libc\\+\\+")
-    list(APPEND OGRE_CXX_FLAGS "-stdlib=libc++")
+    set(OGRE_CXX_FLAGS "${OGRE_CXX_FLAGS} -stdlib=libc++")
   endif()
 
   if(DEFINED CMAKE_BUILD_TYPE)
@@ -109,13 +109,14 @@ macro(build_ogre)
   endif()
 
   if(WIN32)
-    list(APPEND OGRE_CXX_FLAGS "/w /EHsc")
+    set(OGRE_CXX_FLAGS "${OGRE_CXX_FLAGS} /w /EHsc")
     list(APPEND extra_cmake_args "-DCMAKE_C_FLAGS=/w /EHsc")
   elseif(APPLE)
-    list(APPEND OGRE_CXX_FLAGS "-std=c++14 -stdlib=libc++ -w")
+    set(OGRE_CXX_FLAGS "${OGRE_CXX_FLAGS} -std=c++14 -stdlib=libc++ -w")
     list(APPEND extra_cmake_args "-DCMAKE_OSX_ARCHITECTURES='x86_64'")
-  else()
-    list(APPEND OGRE_CXX_FLAGS "-std=c++14 -w")
+  else()  # Linux
+    # include Clang -Wno-everything to disable warnings in that build. GCC doesn't mind it
+    set(OGRE_CXX_FLAGS "${OGRE_CXX_FLAGS} -std=c++14 -w -Wno-everything")
     list(APPEND extra_cmake_args "-DCMAKE_C_FLAGS=-w")
   endif()
   list(APPEND extra_cmake_args "-DOGRE_BUILD_RENDERSYSTEM_GL:BOOL=TRUE")
