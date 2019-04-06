@@ -3,7 +3,12 @@
 This branch is currently contained in the main `ros2.repos` file of ROS 2 and can be used for ROS 2.
 The latest release will be available with your ROS 2 download.
 
-ROS 2 does not have a wiki yet. To learn about RViz and its functionality, please refer to the ROS RViz [wiki page](http://www.ros.org/wiki/rviz).
+**PR DRAFT**: Update to whatever merges to upstream.
+
+## Documentation
+
+For ROS 2 documentation and tutorials, see the [ROS Index RViz Tutorials](
+https://index.ros.org/doc/ros2/Tutorials/RViz-Tutorials/)
 
 ## Features
 
