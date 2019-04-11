@@ -272,6 +272,7 @@ VisualizationManager::~VisualizationManager()
   delete display_factory_;
   delete frame_manager_;
   delete private_;
+  delete transformation_manager_;
 
 #if 0
   Ogre::Root::getSingletonPtr()->removeFrameListener(ogre_render_queue_clearer_);
