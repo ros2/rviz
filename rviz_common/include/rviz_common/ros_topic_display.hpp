@@ -39,7 +39,7 @@
 
 #endif
 
-#include "rmw/types.h"
+#include "rmw/qos_profiles.h"
 
 #include "rviz_common/display.hpp"
 #include "rviz_common/display_context.hpp"
@@ -49,18 +49,13 @@
 #include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
 #include "rviz_common/visibility_control.hpp"
 
-static const rmw_qos_profile_t display_default =
+static constexpr rmw_qos_profile_t display_default_qos_profile()
 {
-  RMW_QOS_POLICY_HISTORY_KEEP_LAST,
-  5,
-  RMW_QOS_POLICY_RELIABILITY_RELIABLE,
-  RMW_QOS_POLICY_DURABILITY_SYSTEM_DEFAULT,
-  RMW_QOS_DEADLINE_DEFAULT,
-  RMW_QOS_LIFESPAN_DEFAULT,
-  RMW_QOS_POLICY_LIVELINESS_SYSTEM_DEFAULT,
-  RMW_QOS_LIVELINESS_LEASE_DURATION_DEFAULT,
-  false
-};
+  rmw_qos_profile_t profile = rmw_qos_profile_default;
+  profile.depth = 5;
+  profile.durability = RMW_QOS_POLICY_DURABILITY_SYSTEM_DEFAULT;
+  return profile;
+}
 
 namespace rviz_common
 {
@@ -75,7 +70,7 @@ class RVIZ_COMMON_PUBLIC _RosTopicDisplay : public Display
 public:
   _RosTopicDisplay()
   : rviz_ros_node_(),
-    qos_profile(display_default)
+    qos_profile(display_default_qos_profile())
   {
     topic_property_ = new properties::RosTopicProperty("Topic", "",
         "", "", this, SLOT(updateTopic()));
