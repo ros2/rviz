@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <memory>
 
 #include <OgreVector3.h>
