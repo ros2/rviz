@@ -104,6 +104,7 @@ void AxesDisplay::update(float dt, float ros_dt)
   if (context_->getFrameManager()->getTransform(
       frame, context_->getClock()->now(), position, orientation))
   {
+    axes_->getSceneNode()->setVisible(true);
     axes_->setPosition(position);
     axes_->setOrientation(orientation);
     setStatus(rviz_common::properties::StatusProperty::Ok, "Transform", "Transform OK");
@@ -117,6 +118,7 @@ void AxesDisplay::update(float dt, float ros_dt)
     } else {
       setMissingTransformToFixedFrame(frame);
     }
+    axes_->getSceneNode()->setVisible(false);
   }
 }
 
