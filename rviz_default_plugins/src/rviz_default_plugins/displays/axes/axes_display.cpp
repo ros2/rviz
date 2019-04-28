@@ -27,100 +27,101 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <boost/bind.hpp>
+#include "rviz_default_plugins/displays/axes/axes_display.hpp"
+
+#include <memory>
+#include <string>
 
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 
-#include "rviz/display_context.h"
-#include "rviz/frame_manager.h"
-#include "rviz/ogre_helpers/axes.h"
-#include "rviz/properties/float_property.h"
-#include "rviz/properties/tf_frame_property.h"
+#include "rviz_rendering/objects/axes.hpp"
+#include "rviz_common/display_context.hpp"
+#include "rviz_common/frame_manager_iface.hpp"
+#include "rviz_common/properties/float_property.hpp"
+#include "rviz_common/properties/tf_frame_property.hpp"
 
-#include "axes_display.h"
 
-namespace rviz
+namespace rviz_default_plugins
+{
+namespace displays
 {
 
 AxesDisplay::AxesDisplay()
-  : Display()
-  , axes_( 0 )
+: Display(), axes_(nullptr)
 {
-  frame_property_ = new TfFrameProperty( "Reference Frame", TfFrameProperty::FIXED_FRAME_STRING,
-                                         "The TF frame these axes will use for their origin.",
-                                         this, NULL, true );
+  frame_property_ = new rviz_common::properties::TfFrameProperty(
+    "Reference Frame",
+    rviz_common::properties::TfFrameProperty::FIXED_FRAME_STRING,
+    "The TF frame these axes will use for their origin.",
+    this, nullptr, true);
 
-  length_property_ = new FloatProperty( "Length", 1.0,
-                                        "Length of each axis, in meters.",
-                                        this, SLOT( updateShape() ));
-  length_property_->setMin( 0.0001 );
+  length_property_ = new rviz_common::properties::FloatProperty(
+    "Length", 1.0f, "Length of each axis, in meters.", this, SLOT(updateShape()));
+  length_property_->setMin(0.0001f);
 
-  radius_property_ = new FloatProperty( "Radius", 0.1,
-                                        "Radius of each axis, in meters.",
-                                        this, SLOT( updateShape() ));
-  radius_property_->setMin( 0.0001 );
+  radius_property_ = new rviz_common::properties::FloatProperty(
+    "Radius", 0.1f, "Radius of each axis, in meters.", this, SLOT(updateShape()));
+  radius_property_->setMin(0.0001f);
 }
 
-AxesDisplay::~AxesDisplay()
-{
-  delete axes_;
-}
+AxesDisplay::~AxesDisplay() = default;
 
 void AxesDisplay::onInitialize()
 {
-  frame_property_->setFrameManager( context_->getFrameManager() );
+  frame_property_->setFrameManager(context_->getFrameManager());
 
-  axes_ = new Axes( scene_manager_, 0, length_property_->getFloat(), radius_property_->getFloat() );
-  axes_->getSceneNode()->setVisible( isEnabled() );
+  axes_ = std::make_shared<rviz_rendering::Axes>(
+    scene_manager_, scene_node_, length_property_->getFloat(), radius_property_->getFloat());
+  axes_->getSceneNode()->setVisible(isEnabled());
 }
 
 void AxesDisplay::onEnable()
 {
-  axes_->getSceneNode()->setVisible( true );
+  axes_->getSceneNode()->setVisible(true);
 }
 
 void AxesDisplay::onDisable()
 {
-  axes_->getSceneNode()->setVisible( false );
+  axes_->getSceneNode()->setVisible(false);
 }
 
 void AxesDisplay::updateShape()
 {
-  axes_->set( length_property_->getFloat(), radius_property_->getFloat() );
+  axes_->set(length_property_->getFloat(), radius_property_->getFloat());
   context_->queueRender();
 }
 
-void AxesDisplay::update( float dt, float ros_dt )
+void AxesDisplay::update(float dt, float ros_dt)
 {
-  QString qframe = frame_property_->getFrame();
-  std::string frame = qframe.toStdString();
+  (void) dt;
+  (void) ros_dt;
+
+  std::string frame = frame_property_->getStdString();
 
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
-  if( context_->getFrameManager()->getTransform( frame, ros::Time(), position, orientation ))
+  if (context_->getFrameManager()->getTransform(
+      frame, context_->getClock()->now(), position, orientation))
   {
-    axes_->setPosition( position );
-    axes_->setOrientation( orientation );
-    setStatus( StatusProperty::Ok, "Transform", "Transform OK" );
-  }
-  else
-  {
+    axes_->setPosition(position);
+    axes_->setOrientation(orientation);
+    setStatus(rviz_common::properties::StatusProperty::Ok, "Transform", "Transform OK");
+  } else {
     std::string error;
-    if( context_->getFrameManager()->transformHasProblems( frame, ros::Time(), error ))
+    if (context_->getFrameManager()->transformHasProblems(
+        frame, context_->getClock()->now(), error))
     {
-      setStatus( StatusProperty::Error, "Transform", QString::fromStdString( error ));
-    }
-    else
-    {
-      setStatus( StatusProperty::Error,
-                 "Transform",
-                 "Could not transform from [" + qframe + "] to Fixed Frame [" + fixed_frame_ + "] for an unknown reason" );
+      setStatus(
+        rviz_common::properties::StatusProperty::Error, "Transform", QString::fromStdString(error));
+    } else {
+      setMissingTransformToFixedFrame(frame);
     }
   }
 }
 
-} // namespace rviz
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#include <pluginlib/class_list_macros.h>
-PLUGINLIB_EXPORT_CLASS( rviz::AxesDisplay, rviz::Display )
+#include <pluginlib/class_list_macros.hpp>  // NOLINT
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::AxesDisplay, rviz_common::Display)
