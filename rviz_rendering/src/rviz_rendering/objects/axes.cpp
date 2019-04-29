@@ -30,6 +30,7 @@
 
 #include "rviz_rendering/objects/axes.hpp"
 
+#include <memory>
 #include <sstream>
 
 #include <OgreQuaternion.h>
@@ -55,19 +56,15 @@ Axes::Axes(
 
   scene_node_ = parent_node->createChildSceneNode();
 
-  x_axis_ = new Shape(Shape::Cylinder, scene_manager_, scene_node_);
-  y_axis_ = new Shape(Shape::Cylinder, scene_manager_, scene_node_);
-  z_axis_ = new Shape(Shape::Cylinder, scene_manager_, scene_node_);
+  x_axis_ = std::make_unique<Shape>(Shape::Cylinder, scene_manager_, scene_node_);
+  y_axis_ = std::make_unique<Shape>(Shape::Cylinder, scene_manager_, scene_node_);
+  z_axis_ = std::make_unique<Shape>(Shape::Cylinder, scene_manager_, scene_node_);
 
   set(length, radius);
 }
 
 Axes::~Axes()
 {
-  delete x_axis_;
-  delete y_axis_;
-  delete z_axis_;
-
   scene_manager_->destroySceneNode(scene_node_);
 }
 
@@ -107,8 +104,7 @@ void Axes::setColor(float r, float g, float b, float a)
   (void) g;
   (void) b;
   (void) a;
-  // for now, do nothing
-  /// \todo should anything be done here?
+  // we have several colors, so "setColor" doesn't make sense - noop
 }
 
 const Ogre::Vector3 & Axes::getPosition()

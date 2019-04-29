@@ -97,11 +97,11 @@ rviz_common::interaction::V_AABB PoseDisplaySelectionHandler::getAABBs(
         display_->arrow_->getShaft()->getEntity()->getWorldBoundingBox(derive_world_bounding_box));
     } else {
       aabbs.push_back(
-        display_->axes_->getXShape()->getEntity()->getWorldBoundingBox(derive_world_bounding_box));
+        display_->axes_->getXShape().getEntity()->getWorldBoundingBox(derive_world_bounding_box));
       aabbs.push_back(
-        display_->axes_->getYShape()->getEntity()->getWorldBoundingBox(derive_world_bounding_box));
+        display_->axes_->getYShape().getEntity()->getWorldBoundingBox(derive_world_bounding_box));
       aabbs.push_back(
-        display_->axes_->getZShape()->getEntity()->getWorldBoundingBox(derive_world_bounding_box));
+        display_->axes_->getZShape().getEntity()->getWorldBoundingBox(derive_world_bounding_box));
     }
   }
   return aabbs;
