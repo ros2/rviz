@@ -75,7 +75,7 @@ private:
     auto message = rviz_default_plugins::createPointCloud2WithPoints({{0, 0, 0}});
     message->header.frame_id = "pointcloud2_frame";
 
-    publisher_->publish(message);
+    publisher_->publish(*message);
   }
 
   rclcpp::TimerBase::SharedPtr timer_;
