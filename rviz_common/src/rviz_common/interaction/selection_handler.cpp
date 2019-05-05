@@ -126,10 +126,11 @@ void SelectionHandler::addTrackedObjects(Ogre::SceneNode * node)
     addTrackedObject(object);
   }
   // Loop over and recurse into all child nodes.
-  auto child_it = node->getChildIterator();
-  while (child_it.hasMoreElements() ) {
-    auto child = dynamic_cast<Ogre::SceneNode *>( child_it.getNext() );
-    addTrackedObjects(child);
+  for (auto child_node : node->getChildren()) {
+    auto child = dynamic_cast<Ogre::SceneNode *>(child_node);
+    if (child != nullptr) {
+      addTrackedObjects(child);
+    }
   }
 }
 

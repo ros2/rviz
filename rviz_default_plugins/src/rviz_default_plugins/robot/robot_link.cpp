@@ -506,9 +506,8 @@ void RobotLink::updateTrail()
 
 void RobotLink::setRenderQueueGroup(Ogre::uint8 group)
 {
-  Ogre::SceneNode::ChildNodeIterator child_it = visual_node_->getChildIterator();
-  while (child_it.hasMoreElements()) {
-    auto child = dynamic_cast<Ogre::SceneNode *>(child_it.getNext());
+  for (auto child_node : visual_node_->getChildren()) {
+    auto child = dynamic_cast<Ogre::SceneNode *>(child_node);
     if (child) {
       auto attached_objects = child->getAttachedObjects();
       for (const auto & object : attached_objects) {

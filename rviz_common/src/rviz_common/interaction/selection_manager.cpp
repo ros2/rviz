@@ -358,9 +358,8 @@ void SelectionManager::setPickData(
     setPickData(handle, color, object);
   }
   // Loop over and recurse into all child nodes.
-  auto child_it = node->getChildIterator();
-  while (child_it.hasMoreElements()) {
-    auto child = dynamic_cast<Ogre::SceneNode *>(child_it.getNext());
+  for (auto child_node : node->getChildren()) {
+    auto child = dynamic_cast<Ogre::SceneNode *>(child_node);
     setPickData(handle, color, child);
   }
 }

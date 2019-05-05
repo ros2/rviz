@@ -115,9 +115,7 @@ std::vector<OgreType *> findAllOgreObjectByType(Ogre::SceneNode * scene_node, Og
 {
   std::vector<OgreType *> objects_vector;
   findAllObjectsAttached(scene_node, type, objects_vector);
-  auto child_it = scene_node->getChildIterator();
-  while (child_it.hasMoreElements()) {
-    auto child_node = child_it.getNext();
+  for (auto child_node : scene_node->getChildren()) {
     auto child_scene_node = dynamic_cast<Ogre::SceneNode *>(child_node);
     if (child_scene_node != nullptr) {
       auto child_objects_vector = findAllOgreObjectByType<OgreType>(child_scene_node, type);
