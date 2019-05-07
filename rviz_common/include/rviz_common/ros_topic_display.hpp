@@ -183,12 +183,15 @@ protected:
     }
 
     try {
+      // TODO(wjwwood): update this class to use rclcpp::QoS.
+      auto qos = rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(qos_profile));
+      qos.get_rmw_qos_profile() = qos_profile;
       // TODO(anhosi,wjwwood): replace with abstraction for subscriptions once available
       subscription_ =
         rviz_ros_node_.lock()->get_raw_node()->template create_subscription<MessageType>(
         topic_property_->getTopicStd(),
-        [this](const typename MessageType::ConstSharedPtr message) {incomingMessage(message);},
-        qos_profile);
+        qos,
+        [this](const typename MessageType::ConstSharedPtr message) {incomingMessage(message);});
       setStatus(properties::StatusProperty::Ok, "Topic", "OK");
     } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
       setStatus(properties::StatusProperty::Error, "Topic",

@@ -74,14 +74,17 @@ void MarkerDisplay::subscribe()
 void MarkerDisplay::createMarkerArraySubscription()
 {
   try {
+    // TODO(wjwwood): update this class to use rclcpp::QoS.
+    auto qos = rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(qos_profile));
+    qos.get_rmw_qos_profile() = qos_profile;
     // TODO(anhosi,wjwwood): replace with abstraction for subscriptions one available
     array_sub_ = rviz_ros_node_.lock()->get_raw_node()->
       template create_subscription<visualization_msgs::msg::MarkerArray>(
       topic_property_->getTopicStd() + "_array",
+      qos,
       [this](visualization_msgs::msg::MarkerArray::ConstSharedPtr msg) {
         marker_common_->addMessage(msg);
-      },
-      qos_profile);
+      });
     setStatus(StatusLevel::Ok, "Array Topic", "OK");
   } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
     setStatus(StatusLevel::Error, "Array Topic", QString("Error subscribing: ") + e.what());

@@ -57,7 +57,8 @@ public:
   MarkerArrayPublisher()
   : MarkerPublisher("marker_array_publisher")
   {
-    array_publisher_ = this->create_publisher<visualization_msgs::msg::MarkerArray>("marker_array");
+    array_publisher_ =
+      this->create_publisher<visualization_msgs::msg::MarkerArray>("marker_array", 10);
   }
 
 private:

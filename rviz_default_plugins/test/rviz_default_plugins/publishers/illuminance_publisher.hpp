@@ -62,7 +62,7 @@ private:
 IlluminancePublisher::IlluminancePublisher()
 : Node("illuminance_publisher"), illuminance_(0.)
 {
-  publisher_ = this->create_publisher<sensor_msgs::msg::Illuminance>("illuminance");
+  publisher_ = this->create_publisher<sensor_msgs::msg::Illuminance>("illuminance", 10);
 
   auto timer_callback =
     [this]() -> void {

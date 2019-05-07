@@ -46,7 +46,7 @@ public:
   CameraInfoPublisher()
   : Node("camera_info_publisher")
   {
-    publisher = this->create_publisher<sensor_msgs::msg::CameraInfo>("/image/camera_info");
+    publisher = this->create_publisher<sensor_msgs::msg::CameraInfo>("/image/camera_info", 10);
     timer = this->create_wall_timer(500ms, std::bind(&CameraInfoPublisher::timer_callback, this));
   }
 

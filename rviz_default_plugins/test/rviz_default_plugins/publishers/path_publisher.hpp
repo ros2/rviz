@@ -51,7 +51,7 @@ public:
   PathPublisher()
   : Node("path_publisher")
   {
-    publisher = this->create_publisher<nav_msgs::msg::Path>("path");
+    publisher = this->create_publisher<nav_msgs::msg::Path>("path", 10);
     timer = this->create_wall_timer(500ms, std::bind(&PathPublisher::timer_callback, this));
   }
 
