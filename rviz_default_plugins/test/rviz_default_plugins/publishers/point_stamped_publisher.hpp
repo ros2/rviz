@@ -47,7 +47,7 @@ public:
   PointStampedPublisher()
   : Node("point_publisher")
   {
-    publisher = this->create_publisher<geometry_msgs::msg::PointStamped>("point");
+    publisher = this->create_publisher<geometry_msgs::msg::PointStamped>("point", 10);
     timer = this->create_wall_timer(
       500ms, std::bind(&PointStampedPublisher::timer_callback, this));
   }

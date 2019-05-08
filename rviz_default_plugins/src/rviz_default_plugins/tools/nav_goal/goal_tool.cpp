@@ -66,7 +66,7 @@ void GoalTool::updateTopic()
 {
   // TODO(anhosi, wjwwood): replace with abstraction for publishers once available
   publisher_ = context_->getRosNodeAbstraction().lock()->get_raw_node()->
-    template create_publisher<geometry_msgs::msg::PoseStamped>(topic_property_->getStdString());
+    template create_publisher<geometry_msgs::msg::PoseStamped>(topic_property_->getStdString(), 10);
 }
 
 void GoalTool::onPoseSet(double x, double y, double theta)

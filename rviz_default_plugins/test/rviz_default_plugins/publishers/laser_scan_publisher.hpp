@@ -52,7 +52,7 @@ public:
     timer_(nullptr),
     publisher_(nullptr)
   {
-    publisher_ = this->create_publisher<sensor_msgs::msg::LaserScan>("laser_scan");
+    publisher_ = this->create_publisher<sensor_msgs::msg::LaserScan>("laser_scan", 10);
     timer_ = this->create_wall_timer(500ms, std::bind(&LaserScanPublisher::timer_callback, this));
   }
 

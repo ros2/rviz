@@ -51,7 +51,7 @@ public:
   MapPublisher()
   : Node("map_publisher")
   {
-    publisher = this->create_publisher<nav_msgs::msg::OccupancyGrid>("map");
+    publisher = this->create_publisher<nav_msgs::msg::OccupancyGrid>("map", 10);
     timer = this->create_wall_timer(500ms, std::bind(&MapPublisher::timer_callback, this));
   }
 

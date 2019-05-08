@@ -56,7 +56,7 @@ public:
   MarkerPublisher()
   : Node("marker_publisher")
   {
-    publisher_ = this->create_publisher<visualization_msgs::msg::Marker>("marker");
+    publisher_ = this->create_publisher<visualization_msgs::msg::Marker>("marker", 10);
     timer_ = this->create_wall_timer(200ms, std::bind(&MarkerPublisher::timer_callback, this));
   }
 
@@ -65,7 +65,7 @@ public:
   : Node(node_name)
   {
     timer_ = this->create_wall_timer(200ms, std::bind(&MarkerPublisher::timer_callback, this));
-    publisher_ = this->create_publisher<visualization_msgs::msg::Marker>("marker");
+    publisher_ = this->create_publisher<visualization_msgs::msg::Marker>("marker", 10);
   }
 
 protected:

@@ -62,7 +62,7 @@ private:
 TemperaturePublisher::TemperaturePublisher()
 : Node("temperature_publisher"), temperature_(0.)
 {
-  publisher_ = this->create_publisher<sensor_msgs::msg::Temperature>("temperature");
+  publisher_ = this->create_publisher<sensor_msgs::msg::Temperature>("temperature", 10);
 
   auto timer_callback =
     [this]() -> void {

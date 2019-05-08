@@ -80,7 +80,9 @@ void PointTool::updateTopic()
 {
   // TODO(anhosi, wjwwood): replace with abstraction for publishers once available
   publisher_ = context_->getRosNodeAbstraction().lock()->get_raw_node()->
-    template create_publisher<geometry_msgs::msg::PointStamped>(topic_property_->getStdString());
+    template create_publisher<geometry_msgs::msg::PointStamped>(
+    topic_property_->getStdString(),
+    10);
 }
 
 void PointTool::updateAutoDeactivate() {}

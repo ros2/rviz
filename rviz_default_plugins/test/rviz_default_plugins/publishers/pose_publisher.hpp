@@ -47,7 +47,7 @@ public:
   PosePublisher()
   : Node("pose_publisher")
   {
-    publisher = this->create_publisher<geometry_msgs::msg::PoseStamped>("pose");
+    publisher = this->create_publisher<geometry_msgs::msg::PoseStamped>("pose", 10);
     timer = this->create_wall_timer(500ms, std::bind(&PosePublisher::timer_callback, this));
   }
 

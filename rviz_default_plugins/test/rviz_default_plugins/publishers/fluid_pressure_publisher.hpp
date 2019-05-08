@@ -62,7 +62,7 @@ private:
 FluidPressurePublisher::FluidPressurePublisher()
 : Node("fluid_pressure_publisher"), fluid_pressure_(0.)
 {
-  publisher_ = this->create_publisher<sensor_msgs::msg::FluidPressure>("fluid_pressure");
+  publisher_ = this->create_publisher<sensor_msgs::msg::FluidPressure>("fluid_pressure", 10);
 
   auto timer_callback =
     [this]() -> void {

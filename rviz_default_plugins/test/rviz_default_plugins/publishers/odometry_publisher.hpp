@@ -54,7 +54,7 @@ public:
   OdometryPublisher()
   : Node("odometry_publisher")
   {
-    publisher = this->create_publisher<nav_msgs::msg::Odometry>("odometry");
+    publisher = this->create_publisher<nav_msgs::msg::Odometry>("odometry", 10);
     timer = this->create_wall_timer(200ms, std::bind(&OdometryPublisher::timer_callback, this));
   }
 

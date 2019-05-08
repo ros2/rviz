@@ -65,7 +65,7 @@ void InitialPoseTool::updateTopic()
   // TODO(anhosi, wjwwood): replace with abstraction for publishers once available
   publisher_ = context_->getRosNodeAbstraction().lock()->get_raw_node()->
     template create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>(
-    topic_property_->getStdString());
+    topic_property_->getStdString(), 10);
 }
 
 void InitialPoseTool::onPoseSet(double x, double y, double theta)

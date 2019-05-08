@@ -54,7 +54,7 @@ public:
   SingleMarkerPublisher()
   : Node("marker_publisher")
   {
-    publisher = this->create_publisher<visualization_msgs::msg::Marker>("marker");
+    publisher = this->create_publisher<visualization_msgs::msg::Marker>("marker", 10);
     timer = this->create_wall_timer(200ms, std::bind(&SingleMarkerPublisher::timer_callback, this));
   }
 

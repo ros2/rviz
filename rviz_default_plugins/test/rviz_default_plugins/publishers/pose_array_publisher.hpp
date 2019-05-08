@@ -47,7 +47,7 @@ public:
   PoseArrayPublisher()
   : Node("pose_array_publisher")
   {
-    publisher = this->create_publisher<geometry_msgs::msg::PoseArray>("pose_array");
+    publisher = this->create_publisher<geometry_msgs::msg::PoseArray>("pose_array", 10);
     timer = this->create_wall_timer(500ms, std::bind(&PoseArrayPublisher::timer_callback, this));
   }
 
