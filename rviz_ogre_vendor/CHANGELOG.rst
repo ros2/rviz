@@ -2,8 +2,8 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+6.0.0 (2019-05-08)
+------------------
 * Suppress ogre_vendor warnings in clang+libcxx build. The -w flag was not strong enough for Clang builds. (`#389 <https://github.com/ros2/rviz/issues/389>`_)
   Signed-off-by: Emerson Knapp <eknapp@amazon.com>
 * Pass through only the stdlib flag to the vendor build, instead of all C++ flags (`#388 <https://github.com/ros2/rviz/issues/388>`_)

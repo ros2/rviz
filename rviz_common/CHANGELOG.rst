@@ -2,8 +2,8 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+6.0.0 (2019-05-08)
+------------------
 * Made changes to avoid newly deprecated API's related to publishers and subscriptions. (`#399 <https://github.com/ros2/rviz/issues/399>`_)
 * Updated to be compatible with new QoS settings.  (`#392 <https://github.com/ros2/rviz/issues/392>`_)
 * Fixed a crash on shutdown by properly freeing the ``transformation_manager``. (`#386 <https://github.com/ros2/rviz/issues/386>`_)
