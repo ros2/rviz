@@ -2,6 +2,13 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Made changes to avoid newly deprecated API's related to publishers and subscriptions. (`#399 <https://github.com/ros2/rviz/issues/399>`_)
+* Updated to be compatible with new QoS settings.  (`#392 <https://github.com/ros2/rviz/issues/392>`_)
+* Fixed a crash on shutdown by properly freeing the ``transformation_manager``. (`#386 <https://github.com/ros2/rviz/issues/386>`_)
+* Contributors: M. M, Michael Jeronimo, William Woodall
+
 5.1.0 (2019-01-14)
 ------------------
 * Fix errors from uncrustify v0.68 (`#366 <https://github.com/ros2/rviz/issues/366>`_)

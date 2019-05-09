@@ -2,6 +2,26 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Suppress ogre_vendor warnings in clang+libcxx build. The -w flag was not strong enough for Clang builds. (`#389 <https://github.com/ros2/rviz/issues/389>`_)
+  Signed-off-by: Emerson Knapp <eknapp@amazon.com>
+* Pass through only the stdlib flag to the vendor build, instead of all C++ flags (`#388 <https://github.com/ros2/rviz/issues/388>`_)
+  Signed-off-by: Emerson Knapp <eknapp@amazon.com>
+* Pass through CXX flags to OGRE vendor build (`#381 <https://github.com/ros2/rviz/issues/381>`_)
+  * Pass through CXX flags
+  Signed-off-by: Emerson Knapp <eknapp@amazon.com>
+  * fixup
+  Signed-off-by: William Woodall <william@osrfoundation.org>
+  * re-add removed libc++ flag, because OSX build always needs it
+  Signed-off-by: Emerson Knapp <eknapp@amazon.com>
+* Propagate toolchain-file to external-project (`#374 <https://github.com/ros2/rviz/issues/374>`_)
+  If defined, propagate the CMAKE_TOOLCHAIN_FILE argument to the cmake
+  argument of freetype, zlib and ogre projects.
+  Change-Id: Ibf2802b96c2238a06191e78a1b2a3128769a83af
+  Signed-off-by: Louis Mayencourt <louis.mayencourt@arm.com>
+* Contributors: Emerson Knapp, lmayencourt
+
 5.1.0 (2019-01-14)
 ------------------
 * Skip the system directories when looking for OGRE (`#371 <https://github.com/ros2/rviz/issues/371>`_)

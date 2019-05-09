@@ -2,6 +2,14 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Made changes to avoid newly deprecated API's related to publishers and subscriptions. (`#399 <https://github.com/ros2/rviz/issues/399>`_)
+* Made changes to avoid newly deprecated API's related to publish calls that used ``shared_ptr``. signature (`#398 <https://github.com/ros2/rviz/issues/398>`_)
+* Changed to use the ``ament_include_directories_order`` macro to ensure header include path ordering is correct. (`#384 <https://github.com/ros2/rviz/issues/384>`_)
+* Made changes to fix interoperability with ``robot_state_publisher``. `#14 <https://github.com/ros2/rviz/issues/14>`_ (`#378 <https://github.com/ros2/rviz/issues/378>`_)
+* Contributors: Karsten Knese, William Woodall, ivanpauno
+
 5.1.0 (2019-01-14)
 ------------------
 * Migrate scalar displays, i.e. temperature, illuminance, relative humidity, and fluid pressure (`#367 <https://github.com/ros2/rviz/issues/367>`_)
