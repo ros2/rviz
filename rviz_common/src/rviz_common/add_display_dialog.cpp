@@ -598,11 +598,11 @@ void TopicDisplayWidget::findPlugins(DisplayFactory * factory)
         topic_type = topic_type_parts.at(0) + "/msg/" + topic_type_parts.at(1);
         RVIZ_COMMON_LOG_WARNING_STREAM(
           "The plugin '" << plugin.id.toStdString() <<
-          "' message type may not be in a fully qualified namespace. " << std::endl <<
-          "Assuming that the type is in the 'msg' namespace with resultant type '" <<
-          topic_type.toStdString() << "'." << std::endl <<
-          "Please update the plugin description as this assumption will not be made in a " <<
-          "future release."
+            "' message type may not be in a fully qualified namespace. " << std::endl <<
+            "Assuming that the type is in the 'msg' namespace with resultant type '" <<
+            topic_type.toStdString() << "'." << std::endl <<
+            "Please update the plugin description as this assumption will not be made in a " <<
+            "future release."
         );
       }
       datatype_plugins_.insertMulti(topic_type, plugin.id);
