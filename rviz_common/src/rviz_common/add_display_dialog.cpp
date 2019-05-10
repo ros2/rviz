@@ -587,6 +587,24 @@ void TopicDisplayWidget::findPlugins(DisplayFactory * factory)
   for (const auto & plugin : plugins) {
     QSet<QString> topic_types = factory->getMessageTypes(plugin.id);
     Q_FOREACH (QString topic_type, topic_types) {
+      // Check if the type name is fully qualified (e.g. in 'msg' namespace).
+      // If not, then insert 'msg' and log a warning.
+      // For now, we assume that all types supported by plugins have the form
+      // "<pkg_name>/msg/<type_name>", though in the future zero or more namespaces may be
+      // permitted.
+      QRegExp delim("/");
+      QStringList topic_type_parts = topic_type.split(delim);
+      if (topic_type_parts.size() == 2) {
+        topic_type = topic_type_parts.at(0) + "/msg/" + topic_type_parts.at(1);
+        RVIZ_COMMON_LOG_WARNING_STREAM(
+          "The plugin '" << plugin.id.toStdString() <<
+            "' message type may not be in a fully qualified namespace. " << std::endl <<
+            "Assuming that the type is in the 'msg' namespace with resultant type '" <<
+            topic_type.toStdString() << "'." << std::endl <<
+            "Please update the plugin description as this assumption will not be made in a " <<
+            "future release."
+        );
+      }
       datatype_plugins_.insertMulti(topic_type, plugin.id);
     }
   }
