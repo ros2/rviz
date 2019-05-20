@@ -2,6 +2,9 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 6.0.0 (2019-05-08)
 ------------------
 

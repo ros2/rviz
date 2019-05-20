@@ -2,6 +2,12 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Upgraded to OGRE 1.10.12 to get a macOS fix but also not break any APIs by upgrading to OGRE 1.11 (`#380 <https://github.com/ros2/rviz/issues/380>`_)
+  Signed-off-by: Emerson Knapp <eknapp@amazon.com>
+* Contributors: Emerson Knapp
+
 6.0.0 (2019-05-08)
 ------------------
 * Suppress ogre_vendor warnings in clang+libcxx build. The -w flag was not strong enough for Clang builds. (`#389 <https://github.com/ros2/rviz/issues/389>`_)

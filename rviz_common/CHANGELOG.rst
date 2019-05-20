@@ -2,6 +2,11 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Updated to use the new specification for types from the ROS node graph API. (`#387 <https://github.com/ros2/rviz/issues/387>`_)
+* Contributors: Jacob Perron
+
 6.0.0 (2019-05-08)
 ------------------
 * Made changes to avoid newly deprecated API's related to publishers and subscriptions. (`#399 <https://github.com/ros2/rviz/issues/399>`_)
