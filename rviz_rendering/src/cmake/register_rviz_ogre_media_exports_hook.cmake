@@ -29,10 +29,18 @@ if(NOT "${OGRE_MEDIA_RESOURCE_DIRS}" STREQUAL "")
   message(STATUS "Deploy OGRE media")
   foreach(DIR ${OGRE_MEDIA_RESOURCE_DIRS})
     set(OGRE_MEDIA_RESOURCE_FILE "${OGRE_MEDIA_RESOURCE_FILE}${PROJECT_NAME}/${DIR}\n")
+
+    set(_destination "${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}")
+    # in case that DIR is not only a directory name but a path
+    # its dirname must be appended to the destination to keep the same relative path
+    get_filename_component(_dirname "${DIR}" DIRECTORY)
+    if(NOT "${_dirname}" STREQUAL "")
+      set(_destination "${_destination}/${_dirname}")
+    endif()
+
+    install(DIRECTORY ${DIR}
+      DESTINATION "${_destination}"
+      USE_SOURCE_PERMISSIONS)
   endforeach()
   ament_index_register_resource(rviz_ogre_media_exports CONTENT ${OGRE_MEDIA_RESOURCE_FILE})
-
-  install(DIRECTORY ${OGRE_MEDIA_RESOURCE_DIRS}
-    DESTINATION "${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}"
-    USE_SOURCE_PERMISSIONS)
 endif()
