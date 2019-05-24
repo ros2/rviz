@@ -61,8 +61,8 @@ TEST(CMake_Macro__Test, folders_are_installed_to_correct_location) {
     &prefix_path);
 
   struct stat info;
-  std::string scripts = prefix_path + "/share/rviz_rendering_tests/scripts";
-  std::string meshes = prefix_path + "/share/rviz_rendering_tests/meshes";
+  std::string scripts = prefix_path + "/share/rviz_rendering_tests/ogre_media_resources/scripts";
+  std::string meshes = prefix_path + "/share/rviz_rendering_tests/ogre_media_resources/meshes";
   ASSERT_EQ(stat(scripts.c_str(), &info), 0);
   ASSERT_EQ(stat(meshes.c_str(), &info), 0);
 }
