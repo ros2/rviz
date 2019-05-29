@@ -35,6 +35,7 @@ For some displays, the [documentation is updated](docs/FEATURES.md).
 | Robot Model           |
 | Temperature           |
 | TF                    |
+| Wrench                |
 
 
 ### Not yet ported
@@ -48,7 +49,6 @@ These features have not been ported to `ros2/rviz` yet.
 | Interactive Marker   |
 | Oculus               |
 | Pose With Covariance |
-| Wrench               |
 
 Other features:
 - Filtering of Topic lists by topic type
