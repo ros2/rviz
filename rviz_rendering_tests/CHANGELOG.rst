@@ -2,8 +2,8 @@
 Changelog for package rviz_rendering_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+6.1.1 (2019-05-29)
+------------------
 * Updated test to match changes from `#404 <https://github.com/ros2/rviz/issues/404>`_
 * Contributors: Dirk Thomas
 
