@@ -2,10 +2,12 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 6.1.0 (2019-05-20)
 ------------------
-* Upgraded to OGRE 1.10.12 to get a macOS fix but also not break any APIs by upgrading to OGRE 1.11 (`#380 <https://github.com/ros2/rviz/issues/380>`_)
-  Signed-off-by: Emerson Knapp <eknapp@amazon.com>
+* Upgraded to OGRE 1.10.12 to get a macOS fix but also not break any APIs by upgrading to OGRE 1.11.x. (`#380 <https://github.com/ros2/rviz/issues/380>`_)
 * Contributors: Emerson Knapp
 
 6.0.0 (2019-05-08)
