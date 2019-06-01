@@ -114,6 +114,7 @@ set(rviz_common_headers_to_moc
   include/rviz_common/properties/property_tree_delegate.hpp
   include/rviz_common/properties/property_tree_model.hpp
   include/rviz_common/properties/property_tree_with_help.hpp
+  include/rviz_common/properties/qos_profile_property.hpp
   include/rviz_common/properties/ros_topic_property.hpp
   include/rviz_common/properties/status_list.hpp
   include/rviz_common/properties/status_property.hpp
@@ -196,6 +197,7 @@ set(rviz_common_source_files
   src/rviz_common/properties/property.cpp
   src/rviz_common/properties/ros_topic_property.cpp
   src/rviz_common/properties/quaternion_property.cpp
+  src/rviz_common/properties/qos_profile_property.cpp
   src/rviz_common/properties/splitter_handle.cpp
   src/rviz_common/properties/status_list.cpp
   src/rviz_common/properties/status_property.cpp
@@ -381,6 +383,11 @@ if(BUILD_TESTING)
   )
   if(TARGET rviz_common_property_test)
     target_link_libraries(rviz_common_property_test rviz_common)
+  endif()
+
+  ament_add_gmock(qos_profile_property_test test/properties/qos_profile_property_test.cpp)
+  if(TARGET qos_profile_property_test)
+    target_link_libraries(qos_profile_property_test rviz_common)
   endif()
 
   ament_add_gmock(rviz_common_visualizer_app_test test/visualizer_app_test.cpp)
