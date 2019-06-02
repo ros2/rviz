@@ -38,7 +38,6 @@
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/properties/int_property.hpp"
-#include "rviz_common/properties/queue_size_property.hpp"
 
 namespace rviz_default_plugins
 {
@@ -46,8 +45,7 @@ namespace displays
 {
 
 PointCloudDisplay::PointCloudDisplay()
-: queue_size_property_(new rviz_common::QueueSizeProperty(this, 10)),
-  point_cloud_common_(std::make_unique<PointCloudCommon>(this))
+: point_cloud_common_(std::make_unique<PointCloudCommon>(this))
 {}
 
 void PointCloudDisplay::onInitialize()

@@ -44,11 +44,6 @@ void RangeDisplayPageObject::setUnreliable(bool unreliable)
   setBool("Unreliable", unreliable);
 }
 
-void RangeDisplayPageObject::setQueueSize(int queue_size)
-{
-  setInt("Queue Size", queue_size);
-}
-
 void RangeDisplayPageObject::setColor(int red, int green, int blue)
 {
   setColorCode("Color", red, green, blue);

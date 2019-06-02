@@ -38,7 +38,6 @@
 #include "sensor_msgs/msg/point_cloud.hpp"
 
 #include "rviz_common/message_filter_display.hpp"
-#include "rviz_common/properties/queue_size_property.hpp"
 
 #include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
@@ -58,7 +57,6 @@ namespace rviz_default_plugins
 namespace displays
 {
 
-// TODO(greimela) This display originally extended the MessageFilterDisplay. Revisit when available
 /**
  * \class PointCloudDisplay
  * \brief Displays a point cloud of type sensor_msgs::PointCloud
@@ -85,8 +83,6 @@ protected:
 
   /** @brief Process a single message.  Overridden from MessageFilterDisplay. */
   void processMessage(sensor_msgs::msg::PointCloud::ConstSharedPtr cloud) override;
-
-  std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
 
   std::unique_ptr<PointCloudCommon> point_cloud_common_;
 };

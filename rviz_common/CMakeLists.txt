@@ -121,7 +121,6 @@ set(rviz_common_headers_to_moc
   include/rviz_common/properties/string_property.hpp
   include/rviz_common/properties/tf_frame_property.hpp
   include/rviz_common/properties/vector_property.hpp
-  include/rviz_common/properties/queue_size_property.hpp
   include/rviz_common/render_panel.hpp
   src/rviz_common/scaled_image_widget.hpp
   src/rviz_common/screenshot_dialog.hpp
@@ -204,7 +203,6 @@ set(rviz_common_source_files
   src/rviz_common/properties/string_property.cpp
   src/rviz_common/properties/tf_frame_property.cpp
   src/rviz_common/properties/vector_property.cpp
-  src/rviz_common/properties/queue_size_property.cpp
   src/rviz_common/render_panel.cpp
   src/rviz_common/ros_integration/ros_client_abstraction.cpp
   src/rviz_common/ros_integration/ros_node_abstraction.cpp

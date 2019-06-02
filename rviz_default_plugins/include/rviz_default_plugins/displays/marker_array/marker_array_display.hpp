@@ -35,7 +35,6 @@
 
 #include <memory>
 
-#include "rviz_common/properties/queue_size_property.hpp"
 #include "rviz_common/ros_topic_display.hpp"
 
 #include "rviz_default_plugins/displays/marker/marker_common.hpp"
@@ -70,7 +69,6 @@ private:
   void processMessage(visualization_msgs::msg::MarkerArray::ConstSharedPtr array) override;
 
   std::unique_ptr<MarkerCommon> marker_common_;
-  std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
 };
 
 }  // end namespace displays

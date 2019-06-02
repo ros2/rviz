@@ -82,7 +82,6 @@ protected:
   void processMessage(sensor_msgs::msg::LaserScan::ConstSharedPtr scan) override;
 
   std::unique_ptr<PointCloudCommon> point_cloud_common_;
-  std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
   std::unique_ptr<laser_geometry::LaserProjection> projector_;
   rclcpp::Duration filter_tolerance_;
 

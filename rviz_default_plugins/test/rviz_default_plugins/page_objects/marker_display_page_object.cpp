@@ -44,11 +44,6 @@ void MarkerDisplayPageObject::setUnreliable(bool unreliable)
   setBool("Unreliable", unreliable);
 }
 
-void MarkerDisplayPageObject::setQueueSize(int queue_size)
-{
-  setInt("Queue Size", queue_size);
-}
-
 void MarkerDisplayPageObject::setNamespaceVisibility(QString name_space, bool visible)
 {
   setBool(name_space, visible, {"Namespaces"});

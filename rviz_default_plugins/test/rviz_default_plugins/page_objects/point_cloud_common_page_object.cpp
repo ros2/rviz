@@ -98,8 +98,3 @@ void PointCloudCommonPageObject::setColor(int red, int green, int blue)
 
   setString("Color", color_code);
 }
-
-void PointCloudCommonPageObject::setQueueSize(int queue_size)
-{
-  setInt("Queue Size", queue_size);
-}

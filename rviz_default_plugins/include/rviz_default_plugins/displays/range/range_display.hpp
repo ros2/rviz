@@ -98,7 +98,6 @@ private:
   rviz_common::properties::ColorProperty * color_property_;
   rviz_common::properties::FloatProperty * alpha_property_;
   rviz_common::properties::IntProperty * buffer_length_property_;
-  std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
 };
 
 }  // namespace displays

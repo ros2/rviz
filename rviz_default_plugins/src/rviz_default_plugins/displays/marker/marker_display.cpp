@@ -32,8 +32,6 @@
 
 #include <memory>
 
-#include "rviz_common/properties/queue_size_property.hpp"
-
 namespace rviz_default_plugins
 {
 namespace displays
@@ -41,8 +39,8 @@ namespace displays
 
 MarkerDisplay::MarkerDisplay()
 : rviz_common::MessageFilterDisplay<visualization_msgs::msg::Marker>(),
-  marker_common_(std::make_unique<MarkerCommon>(this)),
-  queue_size_property_(std::make_unique<rviz_common::QueueSizeProperty>(this, 10)) {}
+  marker_common_(std::make_unique<MarkerCommon>(this))
+{}
 
 void MarkerDisplay::onInitialize()
 {

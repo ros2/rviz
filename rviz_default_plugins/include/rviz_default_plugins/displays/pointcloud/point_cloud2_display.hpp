@@ -35,7 +35,6 @@
 #include "sensor_msgs/msg/point_cloud2.hpp"
 
 #include "rviz_common/message_filter_display.hpp"
-#include "rviz_common/properties/queue_size_property.hpp"
 
 #include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
@@ -103,8 +102,6 @@ protected:
   void processMessage(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) override;
 
 private:
-  std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
-
   std::unique_ptr<PointCloudCommon> point_cloud_common_;
 
   sensor_msgs::msg::PointCloud2::_data_type

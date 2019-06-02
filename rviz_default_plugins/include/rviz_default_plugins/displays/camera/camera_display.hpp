@@ -181,7 +181,6 @@ private:
 
   rclcpp::Subscription<sensor_msgs::msg::CameraInfo>::SharedPtr caminfo_sub_;
 
-  std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
   std::unique_ptr<ROSImageTextureIface> texture_;
   std::unique_ptr<rviz_common::RenderPanel> render_panel_;
 

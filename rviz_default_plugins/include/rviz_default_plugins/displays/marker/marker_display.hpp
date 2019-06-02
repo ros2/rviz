@@ -36,7 +36,6 @@
 #include "visualization_msgs/msg/marker.hpp"
 #include "visualization_msgs/msg/marker_array.hpp"
 
-#include "rviz_common/properties/queue_size_property.hpp"
 #include "rviz_common/message_filter_display.hpp"
 
 #include "rviz_default_plugins/displays/marker/marker_common.hpp"
@@ -79,7 +78,6 @@ private:
   rclcpp::Subscription<visualization_msgs::msg::MarkerArray>::SharedPtr array_sub_;
 
   std::unique_ptr<MarkerCommon> marker_common_;
-  std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
 };
 
 }  // namespace displays

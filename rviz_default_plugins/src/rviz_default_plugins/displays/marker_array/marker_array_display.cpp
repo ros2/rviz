@@ -42,8 +42,8 @@ namespace displays
 
 MarkerArrayDisplay::MarkerArrayDisplay()
 : rviz_common::RosTopicDisplay<visualization_msgs::msg::MarkerArray>(),
-  marker_common_(std::make_unique<MarkerCommon>(this)),
-  queue_size_property_(std::make_unique<rviz_common::QueueSizeProperty>(this, 10)) {}
+  marker_common_(std::make_unique<MarkerCommon>(this))
+{}
 
 void MarkerArrayDisplay::onInitialize()
 {
@@ -52,11 +52,6 @@ void MarkerArrayDisplay::onInitialize()
 
   topic_property_->setValue("visualization_marker_array");
   topic_property_->setDescription("visualization_msgs::MarkerArray topic to subscribe to.");
-
-  queue_size_property_->setDescription(
-    "Advanced: set the size of the incoming Marker message queue. "
-    "This should generally be at least a few times larger "
-    "than the number of Markers in each MarkerArray.");
 }
 
 void MarkerArrayDisplay::load(const rviz_common::Config & config)
