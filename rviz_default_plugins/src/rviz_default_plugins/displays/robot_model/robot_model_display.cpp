@@ -119,7 +119,6 @@ RobotModelDisplay::RobotModelDisplay()
   topic_property_->setDescription("Topic where filepath to urdf is published.");
   topic_property_->setName("Description Topic");
 
-  unreliable_property_->setHidden(true);
   rmw_qos_profile_t qos = rmw_qos_profile_default;
   qos.depth = 1;
   qos.durability = RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL;

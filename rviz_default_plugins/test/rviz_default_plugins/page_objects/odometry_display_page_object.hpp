@@ -39,8 +39,6 @@ public:
 
   void setTopic(QString topic);
 
-  void setUnreliable(bool unreliable);
-
   void setPositionTolerance(float position_tolerance);
 
   void setAngleTolerance(float angle_tolerance);

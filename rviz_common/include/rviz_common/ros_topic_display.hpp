@@ -75,18 +75,6 @@ public:
   {
     topic_property_ = new properties::RosTopicProperty("Topic", "",
         "", "", this, SLOT(updateTopic()));
-    unreliable_property_ = new properties::BoolProperty(
-      "Unreliable", false, "Prefer UDP topic transport", this, SLOT(updateReliability()));
-  }
-
-  using changeQoSProfile = std::function<rmw_qos_profile_t(rmw_qos_profile_t)>;
-
-  virtual void updateQoSProfile(changeQoSProfile change_profile)
-  {
-    qos_profile = change_profile(qos_profile);
-    if (!rviz_ros_node_.expired()) {
-      updateTopic();
-    }
   }
 
   /**
@@ -110,13 +98,6 @@ protected Q_SLOTS:
   {
   }
   virtual void updateTopic() = 0;
-  virtual void updateReliability()
-  {
-    qos_profile.reliability = unreliable_property_->getBool() ?
-      RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT :
-      RMW_QOS_POLICY_RELIABILITY_RELIABLE;
-    updateTopic();
-  }
 
 protected:
   /** @brief A Node which is registered with the main executor (used in the "update" thread).
@@ -125,7 +106,6 @@ protected:
   ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node_;
   rmw_qos_profile_t qos_profile;
   properties::RosTopicProperty * topic_property_;
-  properties::BoolProperty * unreliable_property_;
 };
 
 /** @brief Display subclass using a rclcpp::subscription, templated on the ROS message type.

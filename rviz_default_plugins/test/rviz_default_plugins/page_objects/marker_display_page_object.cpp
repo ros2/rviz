@@ -39,11 +39,6 @@ void MarkerDisplayPageObject::setTopic(QString topic)
   waitForFirstMessage();
 }
 
-void MarkerDisplayPageObject::setUnreliable(bool unreliable)
-{
-  setBool("Unreliable", unreliable);
-}
-
 void MarkerDisplayPageObject::setNamespaceVisibility(QString name_space, bool visible)
 {
   setBool(name_space, visible, {"Namespaces"});

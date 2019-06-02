@@ -55,11 +55,6 @@ void CameraDisplayPageObject::setTopic(QString topic)
   waitForFirstMessage();
 }
 
-void CameraDisplayPageObject::setUnreliable(bool unreliable)
-{
-  setBool("Unreliable", unreliable);
-}
-
 void CameraDisplayPageObject::setImageRendering(QString image_rendering)
 {
   setComboBox("Image Rendering", image_rendering);

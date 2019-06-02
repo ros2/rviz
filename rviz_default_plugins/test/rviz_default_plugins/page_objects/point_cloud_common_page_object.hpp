@@ -44,7 +44,6 @@ public:
   void setSelectable(bool selectable);
   void setAlpha(float alpha);
   void setDecayTime(float decay_time);
-  void setUnreliable(bool unreliable);
   void setPositionTransformer(QString position_transformer);
   void setColorTransformer(QString color_transformer);
   void setColor(int red, int green, int blue);

@@ -74,11 +74,6 @@ void PointCloudCommonPageObject::setSelectable(bool selectable)
   setBool("Selectable", selectable);
 }
 
-void PointCloudCommonPageObject::setUnreliable(bool unreliable)
-{
-  setBool("Unreliable", unreliable);
-}
-
 void PointCloudCommonPageObject::setPositionTransformer(QString position_transformer)
 {
   setComboBox("Position Transformer", position_transformer);

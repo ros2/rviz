@@ -39,11 +39,6 @@ void RangeDisplayPageObject::setTopic(QString topic)
   waitForFirstMessage();
 }
 
-void RangeDisplayPageObject::setUnreliable(bool unreliable)
-{
-  setBool("Unreliable", unreliable);
-}
-
 void RangeDisplayPageObject::setColor(int red, int green, int blue)
 {
   setColorCode("Color", red, green, blue);

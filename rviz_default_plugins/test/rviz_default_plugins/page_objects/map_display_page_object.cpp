@@ -39,11 +39,6 @@ void MapDisplayPageObject::setTopic(QString topic)
   waitForFirstMessage();
 }
 
-void MapDisplayPageObject::setUnreliable(bool unreliable)
-{
-  setBool("Unreliable", unreliable);
-}
-
 void MapDisplayPageObject::drawUnder(bool under)
 {
   setBool("Draw Behind", under);

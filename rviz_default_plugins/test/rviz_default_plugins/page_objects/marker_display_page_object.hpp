@@ -38,7 +38,6 @@ public:
   MarkerDisplayPageObject();
 
   void setTopic(QString topic);
-  void setUnreliable(bool unreliable);
   void setNamespaceVisibility(QString name_space, bool visible);
 };
 
