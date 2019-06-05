@@ -46,6 +46,7 @@
 #include "rviz_common/display_context.hpp"
 #include "frame_manager_iface.hpp"
 #include "rviz_common/properties/ros_topic_property.hpp"
+#include "rviz_common/properties/qos_profile_property.hpp"
 #include "rviz_common/properties/status_property.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
 #include "rviz_common/visibility_control.hpp"
@@ -75,6 +76,8 @@ public:
   {
     topic_property_ = new properties::RosTopicProperty("Topic", "",
         "", "", this, SLOT(updateTopic()));
+
+    qos_profile_property_ = new properties::QosProfileProperty(topic_property_, qos_profile);
   }
 
   /**
@@ -91,6 +94,8 @@ public:
       SIGNAL(transformerChanged(std::shared_ptr<rviz_common::transformation::FrameTransformer>)),
       this,
       SLOT(transformerChangedCallback()));
+    qos_profile_property_->initialize(
+      [this](rmw_qos_profile_t profile) {this->qos_profile = profile;});
   }
 
 protected Q_SLOTS:
@@ -106,6 +111,7 @@ protected:
   ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node_;
   rmw_qos_profile_t qos_profile;
   properties::RosTopicProperty * topic_property_;
+  properties::QosProfileProperty * qos_profile_property_;
 };
 
 /** @brief Display subclass using a rclcpp::subscription, templated on the ROS message type.
