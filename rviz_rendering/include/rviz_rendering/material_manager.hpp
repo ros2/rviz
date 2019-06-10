@@ -60,6 +60,8 @@ public:
 
   static Ogre::MaterialPtr createMaterialWithShadowsAndNoLighting(std::string name);
 
+  static void createDefaultMaterials();
+
   static void enableAlphaBlending(Ogre::MaterialPtr material, float alpha);
 
   static void enableAlphaBlending(Ogre::SceneBlendType & blending, bool & depth_write, float alpha);
