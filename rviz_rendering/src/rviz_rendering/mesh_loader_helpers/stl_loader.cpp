@@ -42,6 +42,8 @@
 
 #include "rviz_rendering/logging.hpp"
 
+#define ROS_PACKAGE_NAME "rviz_rendering"
+
 namespace rviz_rendering
 {
 
@@ -185,7 +187,7 @@ Ogre::MeshPtr STLLoader::toMesh(const std::string & name)
 {
   std::shared_ptr<Ogre::ManualObject> object =
     std::make_shared<Ogre::ManualObject>("the one and only");
-  object->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_TRIANGLE_LIST);
+  object->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_TRIANGLE_LIST, ROS_PACKAGE_NAME);
 
   unsigned int vertexCount = 0;
   for (const STLLoader::Triangle & triangle : triangles_) {
@@ -193,7 +195,8 @@ Ogre::MeshPtr STLLoader::toMesh(const std::string & name)
       // Subdivide large meshes into submeshes with at most 2004
       // vertices to prevent problems on some graphics cards.
       object->end();
-      object->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_TRIANGLE_LIST);
+      object->begin(
+        "BaseWhiteNoLighting", Ogre::RenderOperation::OT_TRIANGLE_LIST, ROS_PACKAGE_NAME);
       vertexCount = 0;
     }
 
@@ -208,8 +211,7 @@ Ogre::MeshPtr STLLoader::toMesh(const std::string & name)
 
   object->end();
 
-  Ogre::MeshPtr mesh = object->convertToMesh(name,
-      Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+  Ogre::MeshPtr mesh = object->convertToMesh(name, ROS_PACKAGE_NAME);
   mesh->buildEdgeList();
 
   return mesh;

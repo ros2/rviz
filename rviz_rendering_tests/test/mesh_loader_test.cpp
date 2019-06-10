@@ -148,6 +148,13 @@ TEST_F(MeshLoaderTestFixture, loading_almost_valid_stl_files_should_succed) {
   ASSERT_TRUE(rviz_rendering::loadMeshFromResource(mesh_path));
 }
 
+TEST_F(MeshLoaderTestFixture, loading_stl_mesh_twice_should_not_fail) {
+  std::string mesh_path = "package://rviz_rendering_tests/test_meshes/F2.stl";
+
+  ASSERT_TRUE(rviz_rendering::loadMeshFromResource(mesh_path));
+  ASSERT_TRUE(rviz_rendering::loadMeshFromResource(mesh_path));
+}
+
 TEST_F(MeshLoaderTestFixture, can_load_assimp_mesh_files) {
   std::string mesh_path = "package://rviz_rendering_tests/test_meshes/pr2-base.dae";
 
