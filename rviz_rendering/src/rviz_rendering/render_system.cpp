@@ -48,6 +48,7 @@
 
 #include "ament_index_cpp/get_resource.hpp"
 #include "ament_index_cpp/get_resources.hpp"
+#include "rviz_rendering/material_manager.hpp"
 #include "rviz_rendering/logging.hpp"
 #include "rviz_rendering/ogre_logging.hpp"
 #include "rviz_rendering/resource_config.hpp"
@@ -354,6 +355,7 @@ RenderSystem::setupResources()
   }
 
   addAdditionalResourcesFromAmentIndex();
+  MaterialManager::createDefaultMaterials();
 }
 
 void RenderSystem::addAdditionalResourcesFromAmentIndex() const
