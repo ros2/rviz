@@ -159,7 +159,6 @@ protected:
   virtual void addDisplayWithoutSignallingModel(Display * child);
 
 Q_SIGNALS:
-
   void displayAdded(Display * display);
   void displayRemoved(Display * display);
 
