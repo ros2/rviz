@@ -325,7 +325,7 @@ void VisualizationFrame::initialize(
   //                render_panel and VisualizationManager
   render_panel_->getRenderWindow()->initialize();
 
-  auto clock = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);
+  auto clock = rviz_ros_node.lock()->get_raw_node()->get_clock();
   manager_ = new VisualizationManager(render_panel_, rviz_ros_node, this, clock);
   manager_->setHelpPath(help_path_);
   panel_factory_ = new PanelFactory(rviz_ros_node_, manager_);
