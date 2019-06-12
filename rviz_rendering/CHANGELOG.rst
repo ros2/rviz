@@ -2,6 +2,14 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixed a bug in the STL loader where an STL would be loaded twice and produce an error. (`#410 <https://github.com/ros2/rviz/issues/410>`_)
+  * Also fixed a warning about a missing material, by adding BaseWhiteNoLighting to the ``rviz_rendering`` resource group.
+  * Previous to Ogre 1.11, materials would be searched in all groups With 1.11, this is no longer true.
+  * In RViz, we try to put materials in our own resource group, but we need the Ogre fallback material.
+* Contributors: Martin Idel
+
 6.1.1 (2019-05-29)
 ------------------
 * Fixed the installation destination of OGRE media resources which contain a ``dirname`` (`#404 <https://github.com/ros2/rviz/issues/404>`_)

@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixed a bug in the STL loader where an STL would be loaded twice and produce an error. (`#410 <https://github.com/ros2/rviz/issues/410>`_)
+* Contributors: Martin Idel
+
 6.1.1 (2019-05-29)
 ------------------
 * Updated test to match changes from `#404 <https://github.com/ros2/rviz/issues/404>`_
