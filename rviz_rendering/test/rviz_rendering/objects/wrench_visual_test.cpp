@@ -95,19 +95,23 @@ TEST_F(WrenchVisualTestFixture, setWrench_sets_force_arrow_correctly) {
   EXPECT_THAT(force_arrow->getScale(), Vector3Eq(Ogre::Vector3(0.2f, 3, 0.2f)));
 }
 
-TEST_F(WrenchVisualTestFixture, setWrench_updates_force_array_correctly) {
+TEST_F(WrenchVisualTestFixture, setWrench_hides_force_arrow_for_larger_width_than_scale) {
   auto scene_manager = Ogre::Root::getSingletonPtr()->createSceneManager();
   auto root_node = scene_manager->getRootSceneNode();
 
   auto wrench_visual = std::make_shared<rviz_rendering::WrenchVisual>(scene_manager, root_node);
 
-  wrench_visual->setWrench(Ogre::Vector3(3, 0, 0), Ogre::Vector3(0, 1, 0));
+  wrench_visual->setWrench(Ogre::Vector3(1, 0, 0), Ogre::Vector3(0, 1, 0));
 
-  wrench_visual->setForceScale(1);
-  wrench_visual->setWidth(0.2f);
+  wrench_visual->setForceScale(0.2f);
+  wrench_visual->setWidth(10);
 
   auto arrows = rviz_rendering::findAllArrows(root_node);
   EXPECT_THAT(arrows, SizeIs(3u));
   auto force_arrow = findForceArrow(root_node);
-  EXPECT_THAT(force_arrow->getScale(), Vector3Eq(Ogre::Vector3(0.2f, 3, 0.2f)));
+  EXPECT_THAT(force_arrow->getScale(), Vector3Eq(Ogre::Vector3(1, 1, 1)));
+  auto it = force_arrow->getAttachedObjectIterator();
+  while (it.hasMoreElements()) {
+    EXPECT_THAT(it.getNext()->isVisible(), IsFalse());
+  }
 }
