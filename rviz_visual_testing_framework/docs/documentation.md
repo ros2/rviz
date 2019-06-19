@@ -19,10 +19,14 @@ Both directories, if not already existing, will be generated at build time.
 In case of non identical pictures, the difference image will be generated (the color value of each pixel of such image is the absolute value of the difference between the respective pixels of the test and the reference images).
 At this point the MSE (Mean Square Error) index is calculated using the difference image and compared to a threshold value that the user can set.
 If the computed MSE index is lower than this threshold, then the test will pass, otherwise it will fail.
-In both cases the user will be notified about the actual value of the MSE index. In the future, a more sophisticated comparison method may be provided.
+In both cases the user will be notified about the actual value of the MSE index.
+In the future, a more sophisticated comparison method may be provided.
 
-- The dimensions of the different render windows are not fixed by RViz' config. Therefore screenshots will be different of different systems. To compensate for this, test images have to be resized.
-This is done in the same way as RViz resizes render windows: Vertical resizing is done by resizing the image keeping proportions, while horizontal resizing is cropping the image equally on the left and right. This ensures maximum compatibility between the test image and the reference image.
+- The dimensions of the different render windows are not fixed by RViz' config.
+Therefore screenshots will be different on different systems.
+To compensate for this, test images have to be resized.
+This is done in the same way that RViz resizes render windows: Vertical resizing is done by resizing the image keeping proportions, while horizontal resizing is cropping the image equally on the left and right.
+This ensures maximum compatibility between the test image and the reference image.
 To ensure that such resizing is always possible, test images are a lot wider than reference images.
 
 
@@ -64,7 +68,7 @@ Because of the heuristic nature of this method, the appropriate threshold value 
 
 ## GUI interaction
 
-In order to be able to set the scene in the desired way before taking the screenshots (e.g.add one or more displays, modify their properties, etc.), one would like to be able to automatise the interaction with the RViz GUI.
+In order to be able to set the scene in the desired way before taking the screenshots (e.g. add one or more displays, modify their properties, etc.), one would like to be able to automatise the interaction with the RViz GUI.
 In the future, on top of being the most sensible and effective way to prepare the 3D scene for the visual tests, this functionality may also allow pure GUI tests.
 This can be achieved with the help of the QTest framework.
 So far the Visual Testing framework offers the possibility to add and interact with most of the available displays (Grid, PointCloud, Camera, Image and Polygon).
