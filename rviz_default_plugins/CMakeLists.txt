@@ -109,6 +109,7 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/temperature/temperature_display.hpp
   include/rviz_default_plugins/displays/tf/frame_info.hpp
   include/rviz_default_plugins/displays/tf/tf_display.hpp
+  include/rviz_default_plugins/displays/wrench/wrench_display.hpp
   include/rviz_default_plugins/robot/robot.hpp
   include/rviz_default_plugins/robot/robot_joint.hpp
   include/rviz_default_plugins/robot/robot_link.hpp
@@ -179,6 +180,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/tf/frame_info.cpp
   src/rviz_default_plugins/displays/tf/frame_selection_handler.cpp
   src/rviz_default_plugins/displays/tf/tf_display.cpp
+  src/rviz_default_plugins/displays/wrench/wrench_display.cpp
   src/rviz_default_plugins/robot/robot.cpp
   src/rviz_default_plugins/robot/robot_joint.cpp
   src/rviz_default_plugins/robot/robot_link.cpp
@@ -939,6 +941,20 @@ if(BUILD_TESTING)
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(tf_display_visual_test
+      ${TEST_LINK_LIBRARIES}
+      rviz_visual_testing_framework::rviz_visual_testing_framework)
+  endif()
+
+  ament_add_gtest(wrench_display_visual_test
+    test/rviz_default_plugins/displays/wrench/wrench_stamped_display_visual_test.cpp
+    test/rviz_default_plugins/page_objects/wrench_display_page_object.cpp
+    ${SKIP_VISUAL_TESTS}
+    TIMEOUT 180)
+  if(TARGET wrench_display_visual_test)
+    target_include_directories(wrench_display_visual_test PUBLIC
+      ${TEST_INCLUDE_DIRS}
+      ${rviz_visual_testing_framework_INCLUDE_DIRS})
+    target_link_libraries(wrench_display_visual_test
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
