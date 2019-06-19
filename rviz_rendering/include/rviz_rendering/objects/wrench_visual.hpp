@@ -50,8 +50,8 @@ namespace rviz_rendering
 {
 
 /*
- * Each instance of WrenchStampedVisual represents the visualization of a single
- * sensor_msgs::WrenchStamped message.
+ * Each instance of WrenchVisual represents the visualization of a single
+ * sensor_msgs::msg::WrenchStamped message.
  */
 class WrenchVisual
 {
