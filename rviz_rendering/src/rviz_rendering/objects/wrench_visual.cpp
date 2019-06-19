@@ -78,8 +78,8 @@ void WrenchVisual::setWrench(const Ogre::Vector3 & force, const Ogre::Vector3 & 
 
 void WrenchVisual::updateForceArrow() const
 {
-  auto force_arrow_length = force_arrow_direction_.length() * force_scale_;
-  bool show_force = (force_arrow_length > width_);
+  const auto force_arrow_length = force_arrow_direction_.length() * force_scale_;
+  const bool show_force = (force_arrow_length > width_);
   if (show_force) {
     arrow_force_->setScale(Ogre::Vector3(force_arrow_length, width_, width_));
     arrow_force_->setDirection(force_arrow_direction_);
@@ -89,8 +89,8 @@ void WrenchVisual::updateForceArrow() const
 
 void WrenchVisual::updateTorque() const
 {
-  auto torque_arrow_length = torque_arrow_direction_.length() * torque_scale_;
-  bool show_torque = (torque_arrow_length > width_);
+  const auto torque_arrow_length = torque_arrow_direction_.length() * torque_scale_;
+  const bool show_torque = (torque_arrow_length > width_);
   if (show_torque) {
     arrow_torque_->setScale(Ogre::Vector3(torque_arrow_length, width_, width_));
     arrow_torque_->setDirection(torque_arrow_direction_);
@@ -119,7 +119,7 @@ Ogre::Quaternion WrenchVisual::getDirectionOfRotationRelativeToTorque(
 
 void WrenchVisual::setTorqueDirectionArrow(const Ogre::Quaternion & orientation) const
 {
-  auto torque_arrow_length = torque_arrow_direction_.length() * torque_scale_;
+  const auto torque_arrow_length = torque_arrow_direction_.length() * torque_scale_;
   circle_arrow_torque_->set(0, width_ * 0.1f, width_ * 0.1f * 1.0f, width_ * 0.1f * 2.0f);
   circle_arrow_torque_->setDirection(orientation * Ogre::Vector3(0, 1, 0));
   circle_arrow_torque_->setPosition(
@@ -128,7 +128,7 @@ void WrenchVisual::setTorqueDirectionArrow(const Ogre::Quaternion & orientation)
 
 void WrenchVisual::createTorqueDirectionCircle(const Ogre::Quaternion & orientation) const
 {
-  auto torque_arrow_length = torque_arrow_direction_.length() * torque_scale_;
+  const auto torque_arrow_length = torque_arrow_direction_.length() * torque_scale_;
   circle_torque_->clear();
   circle_torque_->setLineWidth(width_ * 0.05f);
   for (int i = 4; i <= 32; i++) {
