@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Martin Idel
+ * Copyright (c) 2019, Martin Idel
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 #include <vector>
 
 WrenchDisplayPageObject::WrenchDisplayPageObject()
-: BasePageObject(0, "WrenchStamped")
+: BasePageObject(0, "Wrench")
 {}
 
 void WrenchDisplayPageObject::setTopic(QString topic)

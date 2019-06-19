@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__WRENCH__WRENCH_STAMPED_DISPLAY_HPP_
-#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__WRENCH__WRENCH_STAMPED_DISPLAY_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__WRENCH__WRENCH_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__WRENCH__WRENCH_DISPLAY_HPP_
 
 #include <memory>
 #include <deque>
@@ -64,15 +64,15 @@ namespace displays
 {
 
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC WrenchStampedDisplay : public
+class RVIZ_DEFAULT_PLUGINS_PUBLIC WrenchDisplay : public
   rviz_common::RosTopicDisplay<geometry_msgs::msg::WrenchStamped>
 {
   Q_OBJECT
 
 public:
-  WrenchStampedDisplay();
+  WrenchDisplay();
 
-  ~WrenchStampedDisplay() override;
+  ~WrenchDisplay() override;
 
   void onInitialize() override;
 
@@ -105,4 +105,4 @@ private:
 }  // namespace displays
 }  // namespace rviz_default_plugins
 
-#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__WRENCH__WRENCH_STAMPED_DISPLAY_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__WRENCH__WRENCH_DISPLAY_HPP_

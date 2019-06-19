@@ -42,14 +42,14 @@
 #include "rviz_common/logging.hpp"
 #include "rviz_rendering/objects/wrench_visual.hpp"
 
-#include "rviz_default_plugins/displays/wrench/wrench_stamped_display.hpp"
+#include "rviz_default_plugins/displays/wrench/wrench_display.hpp"
 
 namespace rviz_default_plugins
 {
 namespace displays
 {
 
-WrenchStampedDisplay::WrenchStampedDisplay()
+WrenchDisplay::WrenchDisplay()
 {
   force_color_property_ = new rviz_common::properties::ColorProperty(
     "Force Color", QColor(204, 51, 51), "Color to draw the force arrows.", this,
@@ -80,21 +80,21 @@ WrenchStampedDisplay::WrenchStampedDisplay()
   history_length_property_->setMax(100000);
 }
 
-void WrenchStampedDisplay::onInitialize()
+void WrenchDisplay::onInitialize()
 {
   RTDClass::onInitialize();
   updateHistoryLength();
 }
 
-WrenchStampedDisplay::~WrenchStampedDisplay() = default;
+WrenchDisplay::~WrenchDisplay() = default;
 
-void WrenchStampedDisplay::reset()
+void WrenchDisplay::reset()
 {
   RTDClass::reset();
   visuals_.clear();
 }
 
-void WrenchStampedDisplay::updateWrenchVisuals()
+void WrenchDisplay::updateWrenchVisuals()
 {
   float alpha = alpha_property_->getFloat();
   float force_scale = force_scale_property_->getFloat();
@@ -112,7 +112,7 @@ void WrenchStampedDisplay::updateWrenchVisuals()
   }
 }
 
-void WrenchStampedDisplay::updateHistoryLength()
+void WrenchDisplay::updateHistoryLength()
 {
   while (visuals_.size() > static_cast<size_t>(history_length_property_->getInt())) {
     visuals_.pop_front();
@@ -125,7 +125,7 @@ bool validateFloats(const geometry_msgs::msg::WrenchStamped & msg)
          rviz_common::validateFloats(msg.wrench.torque);
 }
 
-void WrenchStampedDisplay::processMessage(geometry_msgs::msg::WrenchStamped::ConstSharedPtr msg)
+void WrenchDisplay::processMessage(geometry_msgs::msg::WrenchStamped::ConstSharedPtr msg)
 {
   if (!validateFloats(*msg)) {
     setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
@@ -157,7 +157,7 @@ void WrenchStampedDisplay::processMessage(geometry_msgs::msg::WrenchStamped::Con
   visuals_.push_back(visual);
 }
 
-std::shared_ptr<rviz_rendering::WrenchVisual> WrenchStampedDisplay::createWrenchVisual(
+std::shared_ptr<rviz_rendering::WrenchVisual> WrenchDisplay::createWrenchVisual(
   const geometry_msgs::msg::WrenchStamped::ConstSharedPtr & msg,
   const Ogre::Quaternion & orientation,
   const Ogre::Vector3 & position)
@@ -196,4 +196,4 @@ std::shared_ptr<rviz_rendering::WrenchVisual> WrenchStampedDisplay::createWrench
 }  // namespace rviz_default_plugins
 
 #include "pluginlib/class_list_macros.hpp"
-PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::WrenchStampedDisplay, rviz_common::Display)
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::WrenchDisplay, rviz_common::Display)
