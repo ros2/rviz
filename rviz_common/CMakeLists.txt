@@ -330,6 +330,17 @@ if(BUILD_TESTING)
   qt5_wrap_cpp(rviz_common_test_moc_files test/mock_property_change_receiver.hpp)
 
   qt5_wrap_cpp(rviz_common_test_frame_manager_moc src/rviz_common/frame_manager.hpp)
+
+  ament_add_gmock(display_factory_test
+    test/display_factory_test.cpp
+    src/rviz_common/display_factory.cpp
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET display_factory_test)
+    target_compile_definitions(display_factory_test PUBLIC
+      -D_TEST_PLUGIN_DESCRIPTIONS="${CMAKE_CURRENT_SOURCE_DIR}")
+    target_link_libraries(display_factory_test rviz_common Qt5::Widgets)
+  endif()
+
   ament_add_gmock(frame_manager_test
     test/frame_manager_test.cpp
     src/rviz_common/frame_manager.cpp
