@@ -40,7 +40,7 @@ find_package(rviz_assimp_vendor REQUIRED)
 find_package(rviz_rendering REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
-find_package(tinyxml_vendor REQUIRED)
+find_package(tinyxml2_vendor REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
@@ -48,7 +48,7 @@ find_package(message_filters REQUIRED)
 find_package(urdf REQUIRED)
 find_package(yaml_cpp_vendor REQUIRED)
 
-find_package(TinyXML REQUIRED)  # provided by tinyxml_vendor
+find_package(TinyXML2 REQUIRED)  # provided by tinyxml_vendor
 
 # Copy env_config.hpp so that env_config.cpp can find it
 # TODO(jsquare): Get rid of copy hpp file
@@ -227,7 +227,6 @@ target_include_directories(rviz_common
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
-    ${TinyXML_INCLUDE_DIRS}
 )
 
 target_link_libraries(rviz_common
@@ -236,7 +235,6 @@ target_link_libraries(rviz_common
   rviz_ogre_vendor::OgreOverlay
   rviz_rendering::rviz_rendering
   Qt5::Widgets
-  ${TinyXML_LIBRARIES}
 )
 
 ament_target_dependencies(rviz_common
@@ -252,6 +250,7 @@ ament_target_dependencies(rviz_common
   tf2_geometry_msgs
   tf2_ros
   message_filters
+  tinyxml2_vendor
   urdf
   yaml_cpp_vendor
 )

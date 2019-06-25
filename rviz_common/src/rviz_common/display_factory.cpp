@@ -32,8 +32,7 @@
 
 #include <string>
 
-// TODO(wjwwood): replace with tinyxml2? implicit dependency?
-#include <tinyxml.h>  // NOLINT: cpplint is unable to handle the include order here
+#include <tinyxml2.h>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/display_group.hpp"
 #include "rviz_common/logging.hpp"
@@ -77,17 +76,17 @@ QSet<QString> DisplayFactory::getMessageTypes(const QString & class_id)
 
   if (!xml_file.isEmpty()) {
     RVIZ_COMMON_LOG_DEBUG_STREAM("Parsing " << xml_file.toStdString());
-    TiXmlDocument document;
-    document.LoadFile(xml_file.toStdString());
-    TiXmlElement * config = document.RootElement();
+    tinyxml2::XMLDocument document;
+    document.LoadFile(xml_file.toUtf8().constData());
+    tinyxml2::XMLElement * config = document.RootElement();
     if (config == nullptr) {
       RVIZ_COMMON_LOG_ERROR_STREAM(
         "Skipping XML Document \"" << xml_file.toStdString() << "\" which had no Root Element.  "
           "This likely means the XML is malformed or missing.");
       return QSet<QString>();
     }
-    if (config->ValueStr() != "library" &&
-      config->ValueStr() != "class_libraries")
+    if (config->Value() != std::string("library") &&
+      config->Value() != std::string("class_libraries"))
     {
       RVIZ_COMMON_LOG_ERROR_STREAM(
         "The XML document \"" << xml_file.toStdString() <<
@@ -96,13 +95,13 @@ QSet<QString> DisplayFactory::getMessageTypes(const QString & class_id)
       return QSet<QString>();
     }
     // Step into the filter list if necessary
-    if (config->ValueStr() == "class_libraries") {
+    if (config->Value() == std::string("class_libraries")) {
       config = config->FirstChildElement("library");
     }
 
-    TiXmlElement * library = config;
+    tinyxml2::XMLElement * library = config;
     while (library) {
-      TiXmlElement * class_element = library->FirstChildElement("class");
+      tinyxml2::XMLElement * class_element = library->FirstChildElement("class");
       while (class_element) {
         std::string derived_class;
         if (class_element->Attribute("type")) {
@@ -121,7 +120,7 @@ QSet<QString> DisplayFactory::getMessageTypes(const QString & class_id)
         }
 
         QSet<QString> message_types;
-        TiXmlElement * message_type = class_element->FirstChildElement("message_type");
+        tinyxml2::XMLElement * message_type = class_element->FirstChildElement("message_type");
 
         while (message_type) {
           if (message_type->GetText()) {
