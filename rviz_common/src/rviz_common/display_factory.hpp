@@ -31,9 +31,11 @@
 #ifndef RVIZ_COMMON__DISPLAY_FACTORY_HPP_
 #define RVIZ_COMMON__DISPLAY_FACTORY_HPP_
 
-#include <QMap>
-#include <QSet>
-#include <QString>
+#include <string>
+
+#include <QMap>  // NOLINT: cpplint cannot handle include order here
+#include <QSet>  // NOLINT: cpplint cannot handle include order here
+#include <QString>  // NOLINT: cpplint cannot handle include order here
 
 #include "rviz_common/factory/pluginlib_factory.hpp"
 #include "rviz_common/display.hpp"
@@ -54,6 +56,16 @@ protected:
   Display * makeRaw(const QString & class_id, QString * error_return = nullptr) override;
 
   QMap<QString, QSet<QString>> message_type_cache_;
+
+private:
+  bool hasRootNode(tinyxml2::XMLElement * root_element, const std::string & xml_file);
+  bool hasLibraryRoot(tinyxml2::XMLElement * root_element, const std::string & xml_file);
+  void fillCacheForAllClassElements(tinyxml2::XMLElement * library);
+  QSet<QString> parseMessageTypes(
+    tinyxml2::XMLElement * class_element, const std::string & current_class_id) const;
+  std::string lookupClassId(
+    const tinyxml2::XMLElement * class_element, const std::string & derived_class) const;
+  std::string lookupDerivedClass(const tinyxml2::XMLElement * class_element) const;
 };
 
 }  // namespace rviz_common
