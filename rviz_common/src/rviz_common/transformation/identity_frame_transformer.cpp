@@ -31,7 +31,7 @@
 
 #include "./identity_frame_transformer.hpp"
 
-#include <memory>
+#include <future>
 #include <string>
 #include <vector>
 
@@ -47,13 +47,6 @@ void IdentityFrameTransformer::initialize(
   (void) clock;
 }
 
-void IdentityFrameTransformer::clear() {}
-
-std::vector<std::string> IdentityFrameTransformer::getAllFrameNames()
-{
-  return {""};
-}
-
 geometry_msgs::msg::PoseStamped IdentityFrameTransformer::transform(
   const geometry_msgs::msg::PoseStamped & pose_in, const std::string & target_frame)
 {
@@ -67,27 +60,9 @@ geometry_msgs::msg::PoseStamped IdentityFrameTransformer::transform(
   return pose_out;
 }
 
-bool IdentityFrameTransformer::transformIsAvailable(
-  const std::string & target_frame, const std::string & source_frame)
+TransformationLibraryConnector::WeakPtr IdentityFrameTransformer::getConnector()
 {
-  (void) target_frame;
-  (void) source_frame;
-
-  return true;
-}
-
-bool IdentityFrameTransformer::transformHasProblems(
-  const std::string & source_frame,
-  const std::string & target_frame,
-  const rclcpp::Time & time,
-  std::string & error)
-{
-  (void) source_frame;
-  (void) target_frame;
-  (void) time;
-  (void) error;
-
-  return false;
+  return std::weak_ptr<TransformationLibraryConnector>();
 }
 
 bool IdentityFrameTransformer::frameHasProblems(const std::string & frame, std::string & error)
@@ -98,9 +73,97 @@ bool IdentityFrameTransformer::frameHasProblems(const std::string & frame, std::
   return false;
 }
 
-TransformationLibraryConnector::WeakPtr IdentityFrameTransformer::getConnector()
+void IdentityFrameTransformer::clear() {}
+
+transformation::TransformStamped IdentityFrameTransformer::lookupTransform(
+  const std::string & target_frame,
+  const std::string & source_frame,
+  const rclcpp::Time & time) const
 {
-  return std::weak_ptr<TransformationLibraryConnector>();
+  return TransformStamped(
+      transformation::Time(time.nanoseconds()),
+      target_frame,
+      source_frame,
+      Point(0.0, 0.0, 0.0),
+      Quaternion(1.0, 0.0, 0.0, 0.0));
+}
+
+transformation::TransformStamped IdentityFrameTransformer::lookupTransform(
+  const std::string & target_frame,
+  const rclcpp::Time & target_time,
+  const std::string & source_frame,
+  const rclcpp::Time & source_time,
+  const std::string & fixed_frame) const
+{
+  (void) source_time;
+  (void) fixed_frame;
+
+  return TransformStamped(
+      transformation::Time(target_time.nanoseconds()),
+      target_frame,
+      source_frame,
+      Point(0.0, 0.0, 0.0),
+      Quaternion(1.0, 0.0, 0.0, 0.0));
+}
+
+bool IdentityFrameTransformer::canTransform(
+  const std::string & target_frame,
+  const std::string & source_frame,
+  const rclcpp::Time & time,
+  std::string & error_msg) const
+{
+  (void) target_frame;
+  (void) source_frame;
+  (void) time;
+  (void) error_msg;
+
+  return true;
+}
+
+bool IdentityFrameTransformer::canTransform(
+  const std::string & target_frame,
+  const rclcpp::Time & target_time,
+  const std::string & source_frame,
+  const rclcpp::Time & source_time,
+  const std::string & fixed_frame,
+  std::string & error_msg) const
+{
+  (void) target_frame;
+  (void) target_time;
+  (void) source_frame;
+  (void) source_time;
+  (void) fixed_frame;
+  (void) error_msg;
+
+  return true;
+}
+
+std::vector<std::string> IdentityFrameTransformer::getAllFrameNames() const
+{
+  return {""};
+}
+
+TransformStampedFuture IdentityFrameTransformer::waitForTransform(
+  const std::string & target_frame,
+  const std::string & source_frame,
+  const rclcpp::Time & time,
+  const std::chrono::nanoseconds & timeout,
+  TransformReadyCallback callback)
+{
+  (void) timeout;
+
+  auto transform_stamped = TransformStamped(
+    transformation::Time(time.nanoseconds()),
+    target_frame,
+    source_frame,
+    Point(0.0, 0.0, 0.0),
+    Quaternion(1.0, 0.0, 0.0, 0.0));
+
+  std::promise<TransformStamped> promise;
+  TransformStampedFuture future(promise.get_future());
+  promise.set_value(transform_stamped);
+  callback(future);
+  return future;
 }
 
 bool IdentityFrameTransformer::quaternionIsValid(geometry_msgs::msg::Quaternion quaternion)

@@ -32,6 +32,7 @@
 #ifndef RVIZ_COMMON__TRANSFORMATION__IDENTITY_FRAME_TRANSFORMER_HPP_
 #define RVIZ_COMMON__TRANSFORMATION__IDENTITY_FRAME_TRANSFORMER_HPP_
 
+#include <chrono>
 #include <string>
 #include <vector>
 
@@ -60,44 +61,60 @@ public:
     ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
     rclcpp::Clock::SharedPtr clock) override;
 
-  void
-  clear() override;
-
-  std::vector<std::string>
-  getAllFrameNames() override;
 
   geometry_msgs::msg::PoseStamped
   transform(
     const geometry_msgs::msg::PoseStamped & pose_in,
     const std::string & target_frame) override;
 
-  bool
-  transformIsAvailable(
-    const std::string & target_frame,
-    const std::string & source_frame) override;
-
-  bool
-  transformHasProblems(
-    const std::string & source_frame,
-    const std::string & target_frame,
-    const rclcpp::Time & time,
-    std::string & error) override;
+  TransformationLibraryConnector::WeakPtr
+  getConnector() override;
 
   bool
   frameHasProblems(const std::string & frame, std::string & error) override;
 
-  TransformationLibraryConnector::WeakPtr
-  getConnector() override;
-
-#if 0
   void
-  waitForValidTransform(
-    std::string target_frame,
-    std::string source_frame,
-    rclcpp::Time time,
-    rclcpp::Duration timeout,
-    std::function<void(void)> callback) override;
-#endif
+  clear() override;
+
+  transformation::TransformStamped
+  lookupTransform(
+    const std::string & target_frame,
+    const std::string & source_frame,
+    const rclcpp::Time & time) const override;
+
+  transformation::TransformStamped
+  lookupTransform(
+    const std::string & target_frame,
+    const rclcpp::Time & target_time,
+    const std::string & source_frame,
+    const rclcpp::Time & source_time,
+    const std::string & fixed_Frame) const override;
+
+  bool
+  canTransform(
+    const std::string & target_frame,
+    const std::string & source_frame,
+    const rclcpp::Time & time,
+    std::string & error_msg) const override;
+
+  bool
+  canTransform(
+    const std::string & target_frame,
+    const rclcpp::Time & target_time,
+    const std::string & source_frame,
+    const rclcpp::Time & source_time,
+    const std::string & fixed_frame,
+    std::string & error_msg) const override;
+
+  std::vector<std::string> getAllFrameNames() const override;
+
+  TransformStampedFuture
+  waitForTransform(
+    const std::string & target_frame,
+    const std::string & source_frame,
+    const rclcpp::Time & time,
+    const std::chrono::nanoseconds & timeout,
+    TransformReadyCallback callback) override;
 
 private:
   bool

@@ -166,8 +166,11 @@ bool FrameManager::adjustTime(const std::string & frame, rclcpp::Time & time)
       break;
     case SyncApprox:
       {
+        std::string error_message;
         // try to get the time from the latest available transformation
-        if (transformer_->transformIsAvailable(fixed_frame_, frame)) {
+        if (transformer_->canTransform(
+          fixed_frame_, frame, rclcpp::Time(0, 0u), error_message))
+        {
           time = sync_time_;
         }
       }
@@ -278,7 +281,7 @@ bool FrameManager::transformHasProblems(
     return false;
   }
 
-  return transformer_->transformHasProblems(frame, fixed_frame_, time, error);
+  return !transformer_->canTransform(fixed_frame_, frame, time, error);
 }
 
 const std::string & FrameManager::getFixedFrame()

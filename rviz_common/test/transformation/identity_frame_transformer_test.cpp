@@ -83,14 +83,18 @@ TEST_F(
   EXPECT_THAT(transformed_pose.pose.orientation, QuaternionEq(createRosQuaternion(1, 0, 0, 0)));
 }
 
+// TODO (jacobperron): Rename/refactor test
 TEST_F(IdentityTransformerFixture, transformationIsAvailable_returns_true) {
-  EXPECT_TRUE(transformer_->transformIsAvailable("any_target", "any_source"));
+  std::string error = "";
+  EXPECT_TRUE(transformer_->canTransform("any_target", "any_source", rclcpp::Time(0, 0u), error));
+  EXPECT_THAT(error, Eq(""));
 }
 
+// TODO (jacobperron): Rename/refactor test
 TEST_F(IdentityTransformerFixture, transformHasProblesm_returns_false) {
   std::string error = "";
 
-  EXPECT_FALSE(transformer_->transformHasProblems(
+  EXPECT_TRUE(transformer_->canTransform(
       "any_target", "any_source", rclcpp::Clock().now(), error));
   EXPECT_THAT(error, Eq(""));
 }

@@ -69,7 +69,7 @@ TEST_F(FrameManagerTestFixture, transform_uses_transform_of_transformer) {
 
 TEST_F(FrameManagerTestFixture, lastAvailableTransform_used_when_using_sync_approx) {
   geometry_msgs::msg::PoseStamped dummy_pose;
-  EXPECT_CALL(*frame_transformer_, transformIsAvailable(_, _)).WillOnce(Return(true));
+  EXPECT_CALL(*frame_transformer_, canTransform(_, _, _, _)).WillOnce(Return(true));
   EXPECT_CALL(*frame_transformer_, transform(_, _)).WillOnce(Return(dummy_pose));  // NOLINT
 
   frame_manager_->setSyncMode(rviz_common::FrameManager::SyncApprox);
@@ -92,7 +92,7 @@ TEST_F(FrameManagerTestFixture, getAllFrameNames_uses_transformer_method) {
 TEST_F(FrameManagerTestFixture, transformHasProblems_uses_transformer_method) {
   std::string source_frame_name = "test_frame";
   EXPECT_CALL(
-    *frame_transformer_, transformHasProblems(source_frame_name, _, _, _)).WillOnce(Return(false));
+    *frame_transformer_, canTransform(_, source_frame_name, _, _)).WillOnce(Return(true));
 
   std::string error;
   EXPECT_FALSE(frame_manager_->transformHasProblems(

@@ -30,6 +30,7 @@
 #ifndef RVIZ_COMMON__TRANSFORMATION__FRAME_TRANSFORMER_HPP_
 #define RVIZ_COMMON__TRANSFORMATION__FRAME_TRANSFORMER_HPP_
 
+#include <chrono>
 #include <memory>
 #include <string>
 #include <vector>
@@ -38,6 +39,9 @@
 
 #include "geometry_msgs/msg/pose_stamped.hpp"
 
+#include <tf2/buffer_core_interface.h>
+#include <tf2_ros/async_buffer_interface.h>
+
 #include "rviz_common/ros_integration/ros_node_abstraction.hpp"
 #include "rviz_common/visibility_control.hpp"
 
@@ -45,6 +49,9 @@ namespace rviz_common
 {
 namespace transformation
 {
+
+using TransformStampedFuture = std::shared_future<transformation::TransformStamped>;
+using TransformReadyCallback = std::function<void(const TransformStampedFuture&)>;
 
 class FrameTransformerException : public std::runtime_error
 {
@@ -66,8 +73,8 @@ public:
   using WeakPtr = std::weak_ptr<TransformationLibraryConnector>;
 };
 
-
 class RVIZ_COMMON_PUBLIC FrameTransformer
+: public tf2::BufferCoreInterface, public tf2_ros::AsyncBufferInterface
 {
 public:
   virtual ~FrameTransformer() = default;
@@ -83,14 +90,6 @@ public:
     ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
     rclcpp::Clock::SharedPtr clock) = 0;
 
-  /// Method thought to reset the internal implementation object.
-  virtual
-  void
-  clear() = 0;
-
-  /** \returns A std::string vector containing all the available frame ids */
-  virtual std::vector<std::string> getAllFrameNames() = 0;
-
   /// Transform a PoseStamped into a given target frame.
   /**
    * \param pose_in The pose to be transformed
@@ -103,34 +102,12 @@ public:
     const geometry_msgs::msg::PoseStamped & pose_in,
     const std::string & target_frame) = 0;
 
-  /// Checks if a transformation between two frames is available.
-  /**
-   * \param target_frame The target frame of the transformation
-   * \param source_frame The source frame of the transformation
-   * \returns True if a transformation between the two frames is available
-   */
+  /// A getter for the internal implementation object.
   virtual
-  bool
-  transformIsAvailable(
-    const std::string & target_frame,
-    const std::string & source_frame) = 0;
+  TransformationLibraryConnector::WeakPtr
+  getConnector() = 0;
 
-  /// Checks that a given transformation can be performed.
-  /**
-   * \param target_frame The target frame of the transformation
-   * \param source_frame The source frame of the transformation
-   * \param time The time of the transformation
-   * \param error An out string in which an error (of generated) message is saved
-   * \returns True if the given transformation has some problem and cannot be performed
-   */
-  virtual
-  bool
-  transformHasProblems(
-    const std::string & source_frame,
-    const std::string & target_frame,
-    const rclcpp::Time & time,
-    std::string & error) = 0;
-
+  // TODO(jacobperron): Rename to 'frameExists' and add to BufferCoreInterface
   /// Checks that a given frame exists and can be used.
   /**
    * \param frame The frame to check
@@ -141,32 +118,93 @@ public:
   bool
   frameHasProblems(const std::string & frame, std::string & error) = 0;
 
-  /// A getter for the internal implementation object.
-  virtual
-  TransformationLibraryConnector::WeakPtr
-  getConnector() = 0;
-
-  // TODO(botteroa-si): This method can be needed when having displays working with tf_filter.
-  // Reenable once tf_filter is ported.
-#if 0
-  /// Waits until a transformation between two given frames is available, then performs an action.
-  /**
-   * \param target_frame The target frame of the transformation
-   * \param source_frame The source frame of the transformation
-   * \param time The time of the transformation
-   * \param timeout A timeout duration after which the waiting will be stopped
-   * \param callback The function to be called if the transform becomes available before the
-   *   timeout
-   */
+  /// Method thought to reset the internal implementation object.
   virtual
   void
-  waitForValidTransform(
-    std::string target_frame,
-    std::string source_frame,
-    rclcpp::Time time,
-    rclcpp::Duration timeout,
-    std::function<void(void)> callback) = 0;
-#endif
+  clear() = 0;
+
+  virtual
+  transformation::TransformStamped
+  lookupTransform(
+    const std::string & target_frame,
+    const std::string & source_frame,
+    const rclcpp::Time & time) const = 0;
+
+  virtual
+  transformation::TransformStamped
+  lookupTransform(
+    const std::string & target_frame,
+    const rclcpp::Time & target_time,
+    const std::string & source_frame,
+    const rclcpp::Time & source_time,
+    const std::string & fixed_Frame) const = 0;
+
+  virtual
+  bool
+  canTransform(
+    const std::string & target_frame,
+    const std::string & source_frame,
+    const rclcpp::Time & time,
+    std::string & error_msg) const = 0;
+
+  virtual
+  bool
+  canTransform(
+    const std::string & target_frame,
+    const rclcpp::Time & target_time,
+    const std::string & source_frame,
+    const rclcpp::Time & source_time,
+    const std::string & fixed_frame,
+    std::string & error_msg) const = 0;
+
+  virtual std::vector<std::string> getAllFrameNames() const = 0;
+
+  virtual
+  TransformStampedFuture
+  waitForTransform(
+    const std::string & target_frame,
+    const std::string & source_frame,
+    const rclcpp::Time & time,
+    const std::chrono::nanoseconds & timeout,
+    TransformReadyCallback callback) = 0;
+
+  geometry_msgs::msg::TransformStamped
+  lookupTransform(
+    const std::string & target_frame,
+    const std::string & source_frame,
+    const tf2::TimePoint & time) const override;
+
+  geometry_msgs::msg::TransformStamped
+  lookupTransform(
+    const std::string & target_frame,
+    const tf2::TimePoint & target_time,
+    const std::string & source_frame,
+    const tf2::TimePoint & source_time,
+    const std::string & fixed_frame) const override;
+
+  bool
+  canTransform(
+    const std::string & target_frame,
+    const std::string & source_frame,
+    const tf2::TimePoint & time,
+    std::string * error_msg) const override;
+
+  bool
+  canTransform(
+    const std::string & target_frame,
+    const tf2::TimePoint & target_time,
+    const std::string & source_frame,
+    const tf2::TimePoint & source_time,
+    const std::string & fixed_frame,
+    std::string * error_msg) const override;
+
+  tf2_ros::TransformStampedFuture
+  waitForTransform(
+    const std::string & target_frame,
+    const std::string & source_frame,
+    const tf2::TimePoint & time,
+    const tf2::Duration & timeout,
+    tf2_ros::TransformReadyCallback callback) override;
 
   /// Return the class id set by the PluginlibFactory.
   virtual
