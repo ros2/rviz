@@ -32,6 +32,7 @@
 #include "./identity_frame_transformer.hpp"
 
 #include <future>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -81,11 +82,11 @@ transformation::TransformStamped IdentityFrameTransformer::lookupTransform(
   const rclcpp::Time & time) const
 {
   return TransformStamped(
-      transformation::Time(time.nanoseconds()),
-      target_frame,
-      source_frame,
-      Point(0.0, 0.0, 0.0),
-      Quaternion(1.0, 0.0, 0.0, 0.0));
+    transformation::Time(time.nanoseconds()),
+    target_frame,
+    source_frame,
+    Point(0.0, 0.0, 0.0),
+    Quaternion(1.0, 0.0, 0.0, 0.0));
 }
 
 transformation::TransformStamped IdentityFrameTransformer::lookupTransform(
@@ -99,11 +100,11 @@ transformation::TransformStamped IdentityFrameTransformer::lookupTransform(
   (void) fixed_frame;
 
   return TransformStamped(
-      transformation::Time(target_time.nanoseconds()),
-      target_frame,
-      source_frame,
-      Point(0.0, 0.0, 0.0),
-      Quaternion(1.0, 0.0, 0.0, 0.0));
+    transformation::Time(target_time.nanoseconds()),
+    target_frame,
+    source_frame,
+    Point(0.0, 0.0, 0.0),
+    Quaternion(1.0, 0.0, 0.0, 0.0));
 }
 
 bool IdentityFrameTransformer::canTransform(

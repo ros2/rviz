@@ -46,7 +46,7 @@ fromTf2TimePoint(const tf2::TimePoint & tf2_time)
 {
   const auto seconds = std::chrono::time_point_cast<std::chrono::seconds>(tf2_time);
   const auto nanoseconds = std::chrono::time_point_cast<std::chrono::nanoseconds>(tf2_time) -
-                           std::chrono::time_point_cast<std::chrono::nanoseconds>(seconds);
+    std::chrono::time_point_cast<std::chrono::nanoseconds>(seconds);
   return rclcpp::Time(seconds.time_since_epoch().count(), nanoseconds.count());
 }
 
@@ -55,7 +55,7 @@ tf2::TimePoint
 toTf2TimePoint(const rclcpp::Time & time)
 {
   return std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>(
-      std::chrono::nanoseconds{time.nanoseconds()});
+    std::chrono::nanoseconds{time.nanoseconds()});
 }
 
 }  // namespace tf2_helpers

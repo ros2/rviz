@@ -51,7 +51,7 @@ namespace transformation
 {
 
 using TransformStampedFuture = std::shared_future<transformation::TransformStamped>;
-using TransformReadyCallback = std::function<void(const TransformStampedFuture&)>;
+using TransformReadyCallback = std::function<void (const TransformStampedFuture &)>;
 
 class FrameTransformerException : public std::runtime_error
 {
@@ -74,7 +74,7 @@ public:
 };
 
 class RVIZ_COMMON_PUBLIC FrameTransformer
-: public tf2::BufferCoreInterface, public tf2_ros::AsyncBufferInterface
+  : public tf2::BufferCoreInterface, public tf2_ros::AsyncBufferInterface
 {
 public:
   virtual ~FrameTransformer() = default;

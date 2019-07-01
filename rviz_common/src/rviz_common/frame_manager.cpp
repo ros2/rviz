@@ -169,7 +169,7 @@ bool FrameManager::adjustTime(const std::string & frame, rclcpp::Time & time)
         std::string error_message;
         // try to get the time from the latest available transformation
         if (transformer_->canTransform(
-          fixed_frame_, frame, rclcpp::Time(0, 0u), error_message))
+            fixed_frame_, frame, rclcpp::Time(0, 0u), error_message))
         {
           time = sync_time_;
         }

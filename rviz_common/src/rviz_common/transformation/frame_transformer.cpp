@@ -26,12 +26,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "rviz_common/transformation/frame_transformer.hpp"
+
+#include <tf2/exceptions.h>
 
 #include <memory>
 #include <string>
-
-#include <tf2/exceptions.h>
 
 #include "rviz_common/transformation/ros_helpers/ros_conversion_helpers.hpp"
 #include "rviz_common/transformation/tf2_helpers/tf2_conversion_helpers.hpp"
@@ -47,7 +48,7 @@ geometry_msgs::msg::TransformStamped FrameTransformer::lookupTransform(
   const tf2::TimePoint & time) const
 {
   return ros_helpers::toRosTransformStamped(
-      lookupTransform(target_frame, source_frame, tf2_helpers::fromTf2TimePoint(time)));
+    lookupTransform(target_frame, source_frame, tf2_helpers::fromTf2TimePoint(time)));
 }
 
 geometry_msgs::msg::TransformStamped FrameTransformer::lookupTransform(
@@ -57,12 +58,13 @@ geometry_msgs::msg::TransformStamped FrameTransformer::lookupTransform(
   const tf2::TimePoint & source_time,
   const std::string & fixed_frame) const
 {
-  return ros_helpers::toRosTransformStamped(lookupTransform(
-        target_frame,
-        tf2_helpers::fromTf2TimePoint(target_time),
-        source_frame,
-        tf2_helpers::fromTf2TimePoint(source_time),
-        fixed_frame));
+  return ros_helpers::toRosTransformStamped(
+    lookupTransform(
+      target_frame,
+      tf2_helpers::fromTf2TimePoint(target_time),
+      source_frame,
+      tf2_helpers::fromTf2TimePoint(source_time),
+      fixed_frame));
 }
 
 bool FrameTransformer::canTransform(
