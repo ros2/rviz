@@ -78,7 +78,7 @@ public:
       const rclcpp::Time & time,
       const std::chrono::nanoseconds & timeout,
       rviz_common::transformation::TransformReadyCallback callback));
-  MOCK_METHOD2(frameHasProblems, bool(const std::string & frame, std::string & error));
+  MOCK_CONST_METHOD2(frameHasProblems, bool(const std::string & frame, std::string & error));
   MOCK_METHOD0(getConnector,
     rviz_common::transformation::TransformationLibraryConnector::WeakPtr());
 };

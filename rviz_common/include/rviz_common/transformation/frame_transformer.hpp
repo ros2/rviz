@@ -74,7 +74,7 @@ public:
 };
 
 class RVIZ_COMMON_PUBLIC FrameTransformer
-  : public tf2::BufferCoreInterface, public tf2_ros::AsyncBufferInterface
+  : public virtual tf2::BufferCoreInterface, public virtual tf2_ros::AsyncBufferInterface
 {
 public:
   virtual ~FrameTransformer() = default;
@@ -116,7 +116,7 @@ public:
    */
   virtual
   bool
-  frameHasProblems(const std::string & frame, std::string & error) = 0;
+  frameHasProblems(const std::string & frame, std::string & error) const = 0;
 
   /// Method thought to reset the internal implementation object.
   virtual

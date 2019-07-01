@@ -71,7 +71,7 @@ public:
   getConnector() override;
 
   bool
-  frameHasProblems(const std::string & frame, std::string & error) override;
+  frameHasProblems(const std::string & frame, std::string & error) const override;
 
   void
   clear() override;
