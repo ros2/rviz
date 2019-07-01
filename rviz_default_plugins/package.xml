@@ -33,6 +33,9 @@
   <depend>resource_retriever</depend>
   <depend>rviz_common</depend>
   <depend>rviz_rendering</depend>
+  <depend>tf2</depend>
+  <depend>tf2_ros</depend>
+  <depend>tf2_geometry_msgs</depend>
   <depend>tinyxml_vendor</depend>
   <depend>urdf</depend>
   <depend>visualization_msgs</depend>

@@ -66,6 +66,9 @@ find_package(nav_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(resource_retriever REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
 find_package(tinyxml_vendor REQUIRED)
 find_package(TinyXML REQUIRED)  # provided by tinyxml_vendor
 find_package(urdf REQUIRED)
@@ -246,6 +249,9 @@ ament_target_dependencies(rviz_default_plugins
   map_msgs
   rclcpp
   resource_retriever
+  tf2
+  tf2_geometry_msgs
+  tf2_ros
   urdf
   visualization_msgs
 )
@@ -260,6 +266,9 @@ ament_export_dependencies(
   map_msgs
   nav_msgs
   rclcpp
+  tf2
+  tf2_geometry_msgs
+  tf2_ros
   urdf
   visualization_msgs
 )
