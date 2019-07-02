@@ -46,15 +46,34 @@ public:
   MOCK_METHOD2(initialize, void(
       rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr, rclcpp::Clock::SharedPtr));
   MOCK_METHOD0(clear, void());
-  MOCK_METHOD0(getAllFrameNames, std::vector<std::string>());
+  MOCK_CONST_METHOD0(getAllFrameNames, std::vector<std::string>());
   MOCK_METHOD2(
     transform, geometry_msgs::msg::PoseStamped(
       const geometry_msgs::msg::PoseStamped &, const std::string &));
-  MOCK_METHOD2(transformIsAvailable, bool(const std::string &, const std::string &));
-  MOCK_METHOD4(
-    transformHasProblems,
-    bool(const std::string &, const std::string &, const rclcpp::Time &, std::string &));
-  MOCK_METHOD2(frameHasProblems, bool(const std::string &, std::string &));
+  MOCK_CONST_METHOD3(lookupTransform, rviz_common::transformation::TransformStamped(
+      const std::string &, const std::string &, const rclcpp::Time &));
+  MOCK_CONST_METHOD5(lookupTransform, rviz_common::transformation::TransformStamped(
+      const std::string &,
+      const rclcpp::Time &,
+      const std::string &,
+      const rclcpp::Time &,
+      const std::string &));
+  MOCK_CONST_METHOD4(canTransform, bool(
+      const std::string &, const std::string &, const rclcpp::Time &, std::string &));
+  MOCK_CONST_METHOD6(canTransform, bool(
+      const std::string &,
+      const rclcpp::Time &,
+      const std::string &,
+      const rclcpp::Time &,
+      const std::string &,
+      std::string &));
+  MOCK_METHOD5(waitForTransform, rviz_common::transformation::TransformStampedFuture(
+      const std::string &,
+      const std::string &,
+      const rclcpp::Time &,
+      const std::chrono::nanoseconds &,
+      rviz_common::transformation::TransformReadyCallback));
+  MOCK_CONST_METHOD2(frameHasProblems, bool(const std::string &, std::string &));
   MOCK_METHOD0(getConnector,
     rviz_common::transformation::TransformationLibraryConnector::WeakPtr());
 };
