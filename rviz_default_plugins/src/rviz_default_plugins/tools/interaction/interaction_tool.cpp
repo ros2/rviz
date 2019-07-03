@@ -198,5 +198,5 @@ int InteractionTool::processKeyEvent(QKeyEvent * event, rviz_common::RenderPanel
 }  // namespace tools
 }  // namespace rviz_default_plugins
 
-#include <pluginlib/class_list_macros.h>
+#include <pluginlib/class_list_macros.hpp>
 PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::tools::InteractionTool, rviz_common::Tool)
