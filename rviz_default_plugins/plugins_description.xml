@@ -337,6 +337,17 @@
     </description>
   </class>
 
+  <class
+    name="rviz_default_plugins/Interact"
+    type="rviz_default_plugins::tools::InteractionTool"
+    base_class_type="rviz_common::Tool"
+  >
+    <description>
+      Interact with interactive markers. Mouse actions not on
+      interactive markers fall back to moving the camera.
+    </description>
+  </class>
+
   <!-- Transformation plugins -->
 
   <class
