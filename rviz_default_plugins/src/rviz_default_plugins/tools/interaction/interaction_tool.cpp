@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2019, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,75 +34,82 @@
 #include <OgreSceneNode.h>
 #include <OgreViewport.h>
 
-#include "rviz/render_panel.h"
-#include "rviz/selection/selection_handler.h"
-#include "rviz/selection/selection_manager.h"
-#include "rviz/view_controller.h"
-#include "rviz/viewport_mouse_event.h"
-#include "rviz/viewport_mouse_event.h"
-#include "rviz/visualization_manager.h"
-#include "rviz/load_resource.h"
-#include "rviz/properties/bool_property.h"
+#include "rviz_common/display_context.hpp"
+#include "rviz_common/interaction/forwards.hpp"
+#include "rviz_common/interaction/handler_manager_iface.hpp"
+#include "rviz_common/interaction/selection_manager_iface.hpp"
+#include "rviz_common/interaction/selection_handler.hpp"
+#include "rviz_common/load_resource.hpp"
+#include "rviz_common/properties/bool_property.hpp"
+#include "rviz_common/render_panel.hpp"
+#include "rviz_common/view_controller.hpp"
+#include "rviz_common/viewport_mouse_event.hpp"
 
-#include "rviz/default_plugin/tools/interaction_tool.h"
+#include "rviz_default_plugins/tools/interaction/interaction_tool.hpp"
 
-namespace rviz
+namespace rviz_default_plugins
+{
+namespace tools
 {
 
 InteractionTool::InteractionTool()
 {
   shortcut_key_ = 'i';
-  hide_inactive_property_ = new BoolProperty("Hide Inactive Objects", true,
-                                             "While holding down a mouse button, hide all other Interactive Objects.",
-                                             getPropertyContainer(), SLOT( hideInactivePropertyChanged() ), this );
+  hide_inactive_property_ = new rviz_common::properties::BoolProperty(
+    "Hide Inactive Objects",
+    true,
+    "While holding down a mouse button, hide all other Interactive Objects.",
+    getPropertyContainer(),
+    SLOT(hideInactivePropertyChanged()),
+    this);
 }
 
-InteractionTool::~InteractionTool()
-{
-}
+InteractionTool::~InteractionTool() = default;
 
 void InteractionTool::onInitialize()
 {
-  move_tool_.initialize( context_ );
+  move_tool_.initialize(context_);
   last_selection_frame_count_ = context_->getFrameCount();
   deactivate();
 }
 
 void InteractionTool::activate()
 {
-  context_->getSelectionManager()->enableInteraction(true);
+  context_->getHandlerManager()->enableInteraction(true);
   context_->getSelectionManager()->setTextureSize(1);
 }
 
 void InteractionTool::deactivate()
 {
-  context_->getSelectionManager()->enableInteraction(false);
+  context_->getHandlerManager()->enableInteraction(false);
 }
 
-void InteractionTool::updateFocus( const ViewportMouseEvent& event )
+void InteractionTool::updateFocus(const rviz_common::ViewportMouseEvent & event)
 {
-  M_Picked results;
-  // Pick exactly 1 pixel
-  context_->getSelectionManager()->pick( event.viewport,
-                                         event.x, event.y,
-                                         event.x + 1, event.y + 1,
-                                         results, true );
+  const auto selection_manager = context_->getSelectionManager();
+  // Select exactly 1 pixel
+  selection_manager->select(
+    event.panel->getRenderWindow(),
+    event.x,
+    event.y,
+    event.x + 1,
+    event.y + 1,
+    rviz_common::interaction::SelectionManagerIface::SelectType::Add);
+
+  const rviz_common::interaction::M_Picked results = selection_manager->getSelection();
 
   last_selection_frame_count_ = context_->getFrameCount();
 
-  InteractiveObjectPtr new_focused_object;
+  rviz_common::InteractiveObjectPtr new_focused_object;
 
   // look for a valid handle in the result.
-  M_Picked::iterator result_it = results.begin();
-  if( result_it != results.end() )
-  {
-    Picked pick = result_it->second;
-    SelectionHandler* handler = context_->getSelectionManager()->getHandler( pick.handle );
-    if ( pick.pixel_count > 0 && handler )
-    {
-      InteractiveObjectPtr object = handler->getInteractiveObject().lock();
-      if( object && object->isInteractive() )
-      {
+  auto result_it = results.begin();
+  if (result_it != results.end()) {
+    rviz_common::interaction::Picked pick = result_it->second;
+    auto handler = context_->getHandlerManager()->getHandler(pick.handle);
+    if (pick.pixel_count > 0 && handler) {
+      rviz_common::InteractiveObjectPtr object = handler->getInteractiveObject().lock();
+      if (object && object->isInteractive()) {
         new_focused_object = object;
       }
     }
@@ -109,35 +117,31 @@ void InteractionTool::updateFocus( const ViewportMouseEvent& event )
 
   // If the mouse has gone from one object to another, defocus the old
   // and focus the new.
-  InteractiveObjectPtr new_obj = new_focused_object;
-  InteractiveObjectPtr old_obj = focused_object_.lock();
-  if( new_obj != old_obj )
-  {
+  rviz_common::InteractiveObjectPtr new_obj = new_focused_object;
+  rviz_common::InteractiveObjectPtr old_obj = focused_object_.lock();
+  if (new_obj != old_obj) {
     // Only copy the event contents here, once we know we need to use
     // a modified version of it.
-    ViewportMouseEvent event_copy = event;
-    if( old_obj )
-    {
+    rviz_common::ViewportMouseEvent event_copy = event;
+    if (old_obj) {
       event_copy.type = QEvent::FocusOut;
-      old_obj->handleMouseEvent( event_copy );
+      old_obj->handleMouseEvent(event_copy);
     }
 
-    if( new_obj )
-    {
+    if (new_obj) {
       event_copy.type = QEvent::FocusIn;
-      new_obj->handleMouseEvent( event_copy );
+      new_obj->handleMouseEvent(event_copy);
     }
   }
 
   focused_object_ = new_focused_object;
 }
 
-int InteractionTool::processMouseEvent( ViewportMouseEvent& event )
+int InteractionTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
 {
   int flags = 0;
 
-  if ( event.panel->contextMenuVisible() )
-  {
+  if (event.panel->contextMenuVisible()) {
     return flags;
   }
 
@@ -145,57 +149,54 @@ int InteractionTool::processMouseEvent( ViewportMouseEvent& event )
   bool need_selection_update = context_->getFrameCount() > last_selection_frame_count_;
 
   // We are dragging if a button was down and is still down
-  Qt::MouseButtons buttons = event.buttons_down & ( Qt::LeftButton | Qt::RightButton | Qt::MidButton );
-  if ( event.type == QEvent::MouseButtonPress )
+  Qt::MouseButtons buttons = event.buttons_down & (Qt::LeftButton | Qt::RightButton | Qt::MidButton);
+  if (event.type == QEvent::MouseButtonPress) {
     buttons &= ~event.acting_button;
+  }
   bool dragging = buttons != 0;
 
   // unless we're dragging, check if there's a new object under the mouse
-  if( need_selection_update &&
+  if (need_selection_update &&
       !dragging &&
-      event.type != QEvent::MouseButtonRelease )
+      event.type != QEvent::MouseButtonRelease)
   {
-    updateFocus( event );
+    updateFocus(event);
     flags = Render;
   }
 
   {
-    InteractiveObjectPtr focused_object = focused_object_.lock();
-    if( focused_object )
-    {
-      focused_object->handleMouseEvent( event );
-      setCursor( focused_object->getCursor() );
+    rviz_common::InteractiveObjectPtr focused_object = focused_object_.lock();
+    if (focused_object) {
+      focused_object->handleMouseEvent(event);
+      setCursor(focused_object->getCursor());
       // this will disable everything but the current interactive object
-      if ( hide_inactive_property_->getBool() )
-      {
-        context_->getSelectionManager()->enableInteraction(!dragging);
+      if (hide_inactive_property_->getBool()) {
+        context_->getHandlerManager()->enableInteraction(!dragging);
       }
     }
-    else if( event.panel->getViewController() )
-    {
-      move_tool_.processMouseEvent( event );
-      setCursor( move_tool_.getCursor() );
-      if ( hide_inactive_property_->getBool() )
-      {
-        context_->getSelectionManager()->enableInteraction(true);
+    else if (event.panel->getViewController()) {
+      move_tool_.processMouseEvent(event);
+      setCursor(move_tool_.getCursor());
+      if (hide_inactive_property_->getBool()) {
+        context_->getHandlerManager()->enableInteraction(true);
       }
     }
   }
 
-  if( event.type == QEvent::MouseButtonRelease )
-  {
-    updateFocus( event );
+  if (event.type == QEvent::MouseButtonRelease) {
+    updateFocus(event);
   }
 
   return flags;
 }
 
-int InteractionTool::processKeyEvent( QKeyEvent* event, RenderPanel* panel )
+int InteractionTool::processKeyEvent(QKeyEvent * event, rviz_common::RenderPanel * panel)
 {
-  return move_tool_.processKeyEvent( event, panel );
+  return move_tool_.processKeyEvent(event, panel);
 }
 
-} // end namespace rviz
+}  // namespace tools
+}  // namespace rviz_default_plugins
 
 #include <pluginlib/class_list_macros.h>
-PLUGINLIB_EXPORT_CLASS( rviz::InteractionTool, rviz::Tool )
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::tools::InteractionTool, rviz_common::Tool)

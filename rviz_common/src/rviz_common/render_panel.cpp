@@ -296,7 +296,7 @@ void RenderPanel::resizeEvent(QResizeEvent * event)
 
 const Ogre::Vector3 RenderPanel::default_camera_pose_ = Ogre::Vector3(999999, 999999, 999999);
 
-#if 0
+// TODO(jacobperron): Is there something to do related to the render window?
 void RenderPanel::showContextMenu(std::shared_ptr<QMenu> menu)
 {
   std::lock_guard<std::mutex> lock(context_menu_mutex_);
@@ -315,7 +315,6 @@ bool RenderPanel::contextMenuVisible()
 {
   return context_menu_visible_;
 }
-#endif
 
 void RenderPanel::contextMenuEvent(QContextMenuEvent * event)
 {

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2019, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,60 +28,70 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_INTERACTION_TOOL_H
-#define RVIZ_INTERACTION_TOOL_H
+#ifndef RVIZ_DEFAULT_PLUGINS__TOOLS__INTERACTION__INTERACTION_TOOL_HPP_
+#define RVIZ_DEFAULT_PLUGINS__TOOLS__INTERACTION__INTERACTION_TOOL_HPP_
 
-#include <stdint.h>
+#include <cstdint>
 
-#include <ros/subscriber.h>
+#include "rviz_common/interactive_object.hpp"
+#include "rviz_common/tool.hpp"
 
-#include <rviz/interactive_object.h>
+#include "rviz_default_plugins/tools/move/move_tool.hpp"
+#include "rviz_default_plugins/visibility_control.hpp"
 
-#include "move_tool.h"
-
-namespace rviz
+namespace rviz_common
 {
+class RenderPanel;
+class ViewportMouseEvent;
 
+namespace properties
+{
 class BoolProperty;
+}
+}
 
-class InteractionTool : public Tool
+namespace rviz_default_plugins
 {
-Q_OBJECT
+namespace tools
+{
+
+class RVIZ_DEFAULT_PLUGINS_PUBLIC InteractionTool : public rviz_common::Tool
+{
+  Q_OBJECT
+
 public:
   InteractionTool();
   virtual ~InteractionTool();
 
-  virtual void onInitialize();
+  virtual void onInitialize() override;
 
-  virtual void activate();
-  virtual void deactivate();
+  virtual void activate() override;
+  virtual void deactivate() override;
 
-  virtual int processMouseEvent( ViewportMouseEvent& event );
-  virtual int processKeyEvent( QKeyEvent* event, RenderPanel* panel );
+  virtual int processMouseEvent(rviz_common::ViewportMouseEvent & event);
+  virtual int processKeyEvent(QKeyEvent * event, rviz_common::RenderPanel * panel);
 
 public Q_SLOTS:
-
   void hideInactivePropertyChanged() {};
 
 protected:
+  /**
+   * @brief Check if the mouse has moved from one object to another,
+   * and update focused_object_ if so.
+   */
+  void updateFocus(const rviz_common::ViewportMouseEvent & event);
 
+  /// The object (control) which currently has the mouse focus.
+  rviz_common::InteractiveObjectWPtr focused_object_;
 
-  /** @brief Check if the mouse has moved from one object to another,
-   * and update focused_object_ if so. */
-  void updateFocus( const ViewportMouseEvent& event );
- 
-  /** @brief The object (control) which currently has the mouse focus. */
-  InteractiveObjectWPtr focused_object_;
- 
   uint64_t last_selection_frame_count_;
 
   MoveTool move_tool_;
 
-  BoolProperty *hide_inactive_property_;
+  rviz_common::properties::BoolProperty * hide_inactive_property_;
 };
 
-}
+}  // namespace tools
+}  // namespace rviz_default_plugins
 
-#endif
-
-
+#endif  // RVIZ_DEFAULT_PLUGINS__TOOLS__INTERACTION__INTERACTION_TOOL_HPP_
