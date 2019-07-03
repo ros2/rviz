@@ -63,16 +63,16 @@ public:
   InteractionTool();
   virtual ~InteractionTool();
 
-  virtual void onInitialize() override;
+  void onInitialize() override;
 
-  virtual void activate() override;
-  virtual void deactivate() override;
+  void activate() override;
+  void deactivate() override;
 
   virtual int processMouseEvent(rviz_common::ViewportMouseEvent & event);
   virtual int processKeyEvent(QKeyEvent * event, rviz_common::RenderPanel * panel);
 
 public Q_SLOTS:
-  void hideInactivePropertyChanged() {};
+  void hideInactivePropertyChanged() {}
 
 protected:
   /**

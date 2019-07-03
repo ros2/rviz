@@ -149,7 +149,8 @@ int InteractionTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
   bool need_selection_update = context_->getFrameCount() > last_selection_frame_count_;
 
   // We are dragging if a button was down and is still down
-  Qt::MouseButtons buttons = event.buttons_down & (Qt::LeftButton | Qt::RightButton | Qt::MidButton);
+  Qt::MouseButtons buttons = event.buttons_down &
+    (Qt::LeftButton | Qt::RightButton | Qt::MidButton);
   if (event.type == QEvent::MouseButtonPress) {
     buttons &= ~event.acting_button;
   }
@@ -157,8 +158,8 @@ int InteractionTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
 
   // unless we're dragging, check if there's a new object under the mouse
   if (need_selection_update &&
-      !dragging &&
-      event.type != QEvent::MouseButtonRelease)
+    !dragging &&
+    event.type != QEvent::MouseButtonRelease)
   {
     updateFocus(event);
     flags = Render;
@@ -173,8 +174,7 @@ int InteractionTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
       if (hide_inactive_property_->getBool()) {
         context_->getHandlerManager()->enableInteraction(!dragging);
       }
-    }
-    else if (event.panel->getViewController()) {
+    } else if (event.panel->getViewController()) {
       move_tool_.processMouseEvent(event);
       setCursor(move_tool_.getCursor());
       if (hide_inactive_property_->getBool()) {
@@ -198,5 +198,5 @@ int InteractionTool::processKeyEvent(QKeyEvent * event, rviz_common::RenderPanel
 }  // namespace tools
 }  // namespace rviz_default_plugins
 
-#include <pluginlib/class_list_macros.hpp>
+#include <pluginlib/class_list_macros.hpp>  // NOLINT(build/include_order)
 PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::tools::InteractionTool, rviz_common::Tool)
