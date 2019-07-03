@@ -54,10 +54,9 @@ Visualization Manager:
     Fixed Frame: /map
   Name: root
   Tools:
-    # TODO(wjwwood): restore these tools when ported
-    # - Class: rviz/Interact
-    #   Hide Inactive Objects: true
     - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Interact
+      Hide Inactive Objects: true
     - Class: rviz_default_plugins/Select
     - Class: rviz_default_plugins/FocusCamera
     - Class: rviz_default_plugins/Measure
