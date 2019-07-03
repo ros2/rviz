@@ -32,6 +32,7 @@
 #define RVIZ_DEFAULT_PLUGINS__TOOLS__INTERACTION__INTERACTION_TOOL_HPP_
 
 #include <cstdint>
+#include <memory>
 
 #include "rviz_common/interactive_object.hpp"
 #include "rviz_common/tool.hpp"
@@ -88,7 +89,7 @@ protected:
 
   MoveTool move_tool_;
 
-  rviz_common::properties::BoolProperty * hide_inactive_property_;
+  std::unique_ptr<rviz_common::properties::BoolProperty> hide_inactive_property_;
 };
 
 }  // namespace tools

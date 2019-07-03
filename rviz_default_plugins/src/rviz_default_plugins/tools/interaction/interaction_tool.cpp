@@ -55,7 +55,7 @@ namespace tools
 InteractionTool::InteractionTool()
 {
   shortcut_key_ = 'i';
-  hide_inactive_property_ = new rviz_common::properties::BoolProperty(
+  hide_inactive_property_ = std::make_unique<rviz_common::properties::BoolProperty>(
     "Hide Inactive Objects",
     true,
     "While holding down a mouse button, hide all other Interactive Objects.",
@@ -105,10 +105,10 @@ void InteractionTool::updateFocus(const rviz_common::ViewportMouseEvent & event)
   // look for a valid handle in the result.
   auto result_it = results.begin();
   if (result_it != results.end()) {
-    rviz_common::interaction::Picked pick = result_it->second;
-    auto handler = context_->getHandlerManager()->getHandler(pick.handle);
+    const rviz_common::interaction::Picked pick = result_it->second;
+    const auto handler = context_->getHandlerManager()->getHandler(pick.handle);
     if (pick.pixel_count > 0 && handler) {
-      rviz_common::InteractiveObjectPtr object = handler->getInteractiveObject().lock();
+      const rviz_common::InteractiveObjectPtr object = handler->getInteractiveObject().lock();
       if (object && object->isInteractive()) {
         new_focused_object = object;
       }
@@ -146,7 +146,7 @@ int InteractionTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
   }
 
   // make sure we let the vis. manager render at least one frame between selection updates
-  bool need_selection_update = context_->getFrameCount() > last_selection_frame_count_;
+  const bool need_selection_update = context_->getFrameCount() > last_selection_frame_count_;
 
   // We are dragging if a button was down and is still down
   Qt::MouseButtons buttons = event.buttons_down &
@@ -154,7 +154,7 @@ int InteractionTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
   if (event.type == QEvent::MouseButtonPress) {
     buttons &= ~event.acting_button;
   }
-  bool dragging = buttons != 0;
+  const bool dragging = buttons != 0;
 
   // unless we're dragging, check if there's a new object under the mouse
   if (need_selection_update &&
