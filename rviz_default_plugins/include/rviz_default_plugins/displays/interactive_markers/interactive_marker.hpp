@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2011, Willow Garage, Inc.
+ * Copyright (c) 2019, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,224 +28,296 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_INTERACTIVE_MARKER_H_
-#define RVIZ_INTERACTIVE_MARKER_H_
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__INTERACTIVE_MARKERS__INTERACTIVE_MARKER_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__INTERACTIVE_MARKERS__INTERACTIVE_MARKER_HPP_
 
 #ifndef Q_MOC_RUN
-#include <boost/shared_ptr.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/thread.hpp>
+#include <map>
+#include <memory>
+#include <mutex>
+#include <string>
+#include <thread>
+#include <vector>
 
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>
 #endif
 
-#include <visualization_msgs/InteractiveMarker.h>
-#include <visualization_msgs/InteractiveMarkerPose.h>
-#include <visualization_msgs/InteractiveMarkerFeedback.h>
-#include <geometry_msgs/Pose.h>
+#include <visualization_msgs/msg/interactive_marker.hpp>
+#include <visualization_msgs/msg/interactive_marker_pose.hpp>
+#include <visualization_msgs/msg/interactive_marker_feedback.hpp>
 
-#include <ros/publisher.h>
+#include <rclcpp/publisher.hpp>
 
-#include "rviz/selection/forwards.h"
-#include "rviz/ogre_helpers/axes.h"
+#include "rviz_common/properties/status_property.hpp"
+#include "rviz_rendering/objects/axes.hpp"
 
-#include "rviz/default_plugin/interactive_markers/interactive_marker_control.h"
-#include "rviz/properties/status_property.h"
+#include "rviz_default_plugins/displays/interactive_markers/interactive_marker_control.hpp"
 
-namespace Ogre {
+namespace Ogre
+{
 class SceneNode;
 }
 
 class QMenu;
 
-namespace rviz
+namespace rviz_common
 {
 class DisplayContext;
+}
+
+namespace rviz_default_plugins
+{
+namespace displays
+{
 class InteractiveMarkerDisplay;
 
 class InteractiveMarker : public QObject
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  InteractiveMarker( Ogre::SceneNode* scene_node, DisplayContext* context );
+  using SharedPtr = std::shared_ptr<InteractiveMarker>;
+
+  InteractiveMarker(Ogre::SceneNode * scene_node, rviz_common::DisplayContext * context);
   virtual ~InteractiveMarker();
 
-  // reset contents to reflect the data from a new message
-  // @return success
-  bool processMessage( const visualization_msgs::InteractiveMarker& message );
+  /// Reset contents to reflect the data from a new message.
+  /**
+   * @return true if successful, false otherwise.
+   */
+  bool processMessage(const visualization_msgs::msg::InteractiveMarker & message);
 
-  // reset contents to reflect the data from a new message
-  // @return success
-  void processMessage( const visualization_msgs::InteractiveMarkerPose& message );
+  /// Reset contents to reflect the data from a new message.
+  /**
+   * @return true if successful, false otherwise.
+   */
+  void processMessage(const visualization_msgs::msg::InteractiveMarkerPose & message);
 
-  // called every frame update
+  /// Called every frame update.
   void update(float wall_dt);
 
-  // directly set the pose, relative to parent frame
-  // if publish is set to true, publish the change
-  void setPose( Ogre::Vector3 position, Ogre::Quaternion orientation, const std::string &control_name );
+  /// Directly set the pose relative to the parent frame.
+  /**
+   * If publish is set to true, then the change is published.
+   */
+  void setPose(
+    Ogre::Vector3 position,
+    Ogre::Quaternion orientation,
+    const std::string & control_name);
 
-  void translate( Ogre::Vector3 delta_position, const std::string &control_name );
-  void rotate( Ogre::Quaternion delta_orientation, const std::string &control_name );
+  void translate(Ogre::Vector3 delta_position, const std::string & control_name);
 
-  // schedule a pose reset once dragging is finished
-  void requestPoseUpdate( Ogre::Vector3 position, Ogre::Quaternion orientation );
+  void rotate(Ogre::Quaternion delta_orientation, const std::string & control_name);
+
+  /// Schedule a pose reset once dragging is finished.
+  void requestPoseUpdate(Ogre::Vector3 position, Ogre::Quaternion orientation);
 
   void startDragging();
+
   void stopDragging();
 
-  const Ogre::Vector3& getPosition() { return position_; }
-  const Ogre::Quaternion& getOrientation() { return orientation_; }
+  inline const Ogre::Vector3 & getPosition()
+  {
+    return position_;
+  }
 
-  float getSize() { return scale_; }
-  const std::string &getReferenceFrame() { return reference_frame_; }
-  const std::string& getName() { return name_; }
+  inline const Ogre::Quaternion & getOrientation()
+  {
+    return orientation_;
+  }
 
-  // show name above marker
-  void setShowDescription( bool show );
+  inline float getSize()
+  {
+    return scale_;
+  }
 
-  // show axes in origin
-  void setShowAxes( bool show );
+  inline const std::string & getReferenceFrame()
+  {
+    return reference_frame_;
+  }
 
-  // show visual helpers while dragging
-  void setShowVisualAids( bool show );
+  inline const std::string & getName()
+  {
+    return name_;
+  }
 
-  // @return true if the mouse event was intercepted, false if it was ignored
-  bool handleMouseEvent(ViewportMouseEvent& event, const std::string &control_name );
+  /// Show name above marker.
+  void setShowDescription(bool show);
+
+  /// Show axes in origin.
+  void setShowAxes(bool show);
+
+  /// Show visual helpers while dragging.
+  void setShowVisualAids(bool show);
 
   /**
-   * Supports selection and menu events from a 3D cursor.
-   *
-   * @param  event        A struct holding certain event data (see full description InteractiveMarkerControl::handle3DCursorEvent)
-   * @param  cursor_pos   The world-relative position of the 3D cursor.
-   * @param  cursor_rot   The world-relative orientation of the 3D cursor.
-   * @param  control_name The name of the child InteractiveMarkerControl calling this function.
-   * @return              true if the cursor event was intercepted, false if it was ignored
+   * @return true if the mouse event was intercepted, false if it was ignored.
    */
-  bool handle3DCursorEvent(ViewportMouseEvent& event, const Ogre::Vector3& cursor_pos, const Ogre::Quaternion& cursor_rot, const std::string &control_name);
+  bool handleMouseEvent(rviz_common::ViewportMouseEvent & event, const std::string & control_name);
 
+  /// Supports selection and menu events from a 3D cursor.
+  /**
+   * @param event A struct holding certain event data (see full description
+   *   InteractiveMarkerControl::handle3DCursorEvent).
+   * @param cursor_pos The world-relative position of the 3D cursor.
+   * @param cursor_rot The world-relative orientation of the 3D cursor.
+   * @param control_name The name of the child InteractiveMarkerControl calling this function.
+   * @return true if the cursor event was intercepted, false if it was ignored.
+   */
+  bool handle3DCursorEvent(
+    rviz_common::ViewportMouseEvent & event,
+    const Ogre::Vector3 & cursor_pos,
+    const Ogre::Quaternion & cursor_rot,
+    const std::string & control_name);
+
+  /// Pop up the context menu for this marker.
+  /**
+   * @param event A struct holding certain event data (see full description on
+   *   InteractiveMarkerControl::handle3DCursorEvent).
+   * @param control_name The name of the InteractiveMarkerControl that was selected.
+   * @param three_d_point The world-relative position associated with this mouse-click or cursor event.
+   * @param valid_point true if three_d_point is valid (e.g. if the mouse ray was successfully
+   *   intersected with marker geometry).
+   */
+  void showMenu(
+    rviz_common::ViewportMouseEvent & event,
+    const std::string & control_name,
+    const Ogre::Vector3 & three_d_point,
+    bool valid_point);
+
+  /// Publish the current marker pose and name.
+  void publishFeedback(
+    visualization_msgs::msg::InteractiveMarkerFeedback & feedback,
+    bool mouse_point_valid = false,
+    const Ogre::Vector3 & mouse_point_rel_world = Ogre::Vector3(0, 0, 0));
+
+  inline bool hasMenu()
+  {
+    return has_menu_;
+  }
 
   /**
-   * Pop up the context menu for this marker.
-   *
-   * @param  event         A struct holding certain event data (see full description on InteractiveMarkerControl::handle3DCursorEvent)
-   * @param  control_name  The name of the InteractiveMarkerControl that was selected.
-   * @param  three_d_point The world-relative position associated with this mouse-click or cursor event.
-   * @param  valid_point   True if three_d_point is valid (e.g. if the mouse ray was successfully intersected with marker geometry).
+   * @return A shared_ptr to the QMenu owned by this InteractiveMarker.
    */
-  void showMenu( ViewportMouseEvent& event, const std::string &control_name, const Ogre::Vector3 &three_d_point, bool valid_point );
-
-  // fill in current marker pose & name, publish
-  void publishFeedback(visualization_msgs::InteractiveMarkerFeedback &feedback,
-                       bool mouse_point_valid = false,
-                       const Ogre::Vector3& mouse_point_rel_world = Ogre::Vector3(0,0,0) );
-
-  bool hasMenu() { return has_menu_; }
-
-  /** @return A shared_ptr to the QMenu owned by this InteractiveMarker. */
-  boost::shared_ptr<QMenu> getMenu() { return menu_; }
+  inline std::shared_ptr<QMenu> getMenu()
+  {
+    return menu_;
+  }
 
 Q_SIGNALS:
+  void userFeedback(visualization_msgs::msg::InteractiveMarkerFeedback & feedback);
 
-void userFeedback(visualization_msgs::InteractiveMarkerFeedback &feedback);
-void statusUpdate( StatusProperty::Level level, const std::string& name, const std::string& text );
+  void statusUpdate(
+    rviz_common::properties::StatusProperty::Level level,
+    const std::string & name,
+    const std::string & text);
 
 protected Q_SLOTS:
-  void handleMenuSelect( int menu_item_id );
+  void handleMenuSelect(int menu_item_id);
 
 protected:
-
   void publishPose();
 
   void reset();
 
-  // set the pose of the parent frame, relative to the fixed frame
+  /// Set the pose of the parent frame, relative to the fixed frame
   void updateReferencePose();
 
-  QString makeMenuString( const std::string &entry );
+  QString makeMenuString(const std::string & entry);
 
-  // Recursively append menu and submenu entries to menu, based on a
-  // vector of menu entry id numbers describing the menu entries at the
-  // current level.
-  void populateMenu( QMenu* menu, std::vector<uint32_t>& ids );
+  /**
+   * Recursively append menu and submenu entries to menu, based on a
+   * vector of menu entry id numbers describing the menu entries at the
+   * current level.
+   */
+  void populateMenu(QMenu * menu, std::vector<uint32_t> & ids);
 
-  DisplayContext* context_;
+  rviz_common::DisplayContext * context_;
 
-  // pose of parent coordinate frame
   std::string reference_frame_;
-  ros::Time reference_time_;
+
+  rclcpp::Time reference_time_;
+
   bool frame_locked_;
 
-  // node representing reference frame in tf, like /map, /base_link, /head, etc.
-  Ogre::SceneNode *reference_node_;
+  /// Node representing reference frame in tf, like /map, /base_link, /head, etc.
+  Ogre::SceneNode * reference_node_;
 
-  // pose being controlled, relative to reference frame
+  /// Position being controlled, relative to reference frame.
   Ogre::Vector3 position_;
+
+  /// Orientation being controlled, relative to reference frame.
   Ogre::Quaternion orientation_;
 
-  // has the pose changed since the last feedback was sent?
+  /// Has the pose changed since the last feedback was sent?
   bool pose_changed_;
+
   double time_since_last_feedback_;
 
-  typedef boost::shared_ptr<InteractiveMarkerControl> InteractiveMarkerControlPtr;
+  typedef std::shared_ptr<InteractiveMarkerControl> InteractiveMarkerControlPtr;
   typedef std::map<std::string, InteractiveMarkerControlPtr> M_ControlPtr;
+
   M_ControlPtr controls_;
 
   std::string name_;
+
   std::string description_;
 
   bool dragging_;
 
-  // pose being controlled
   bool pose_update_requested_;
+
   Ogre::Vector3 requested_position_;
+
   Ogre::Quaternion requested_orientation_;
 
   float scale_;
 
-  boost::shared_ptr<QMenu> menu_;
+  std::shared_ptr<QMenu> menu_;
+
   bool has_menu_;
 
-  // Helper to more simply represent the menu tree.
+  /// Helper to more simply represent the menu tree.
   struct MenuNode
   {
-    visualization_msgs::MenuEntry entry;
+    visualization_msgs::msg::MenuEntry entry;
     std::vector<uint32_t> child_ids;
   };
 
-  // maps menu index to menu entry and item
-  std::map< uint32_t, MenuNode > menu_entries_;
+  /// Maps menu index to menu entry and item.
+  std::map<uint32_t, MenuNode> menu_entries_;
 
-  // Helper to store the top level of the menu tree.
+  /// Helper to store the top level of the menu tree.
   std::vector<uint32_t> top_level_menu_ids_;
 
-  // which control has popped up the menu
+  /// Which control has popped up the menu
   std::string last_control_name_;
 
   double heart_beat_t_;
 
-  // visual aids
+  // Visual aids
 
-  Axes *axes_;
+  rviz_rendering::Axes * axes_;
 
   InteractiveMarkerControlPtr description_control_;
 
   std::string topic_ns_;
+
   std::string client_id_;
 
-  boost::recursive_mutex mutex_;
+  std::recursive_mutex mutex_;
 
-  boost::shared_ptr< boost::thread > sys_thread_;
+  std::shared_ptr<std::thread> sys_thread_;
 
   bool got_3d_point_for_menu_;
+
   Ogre::Vector3 three_d_point_for_menu_;
 
   bool show_visual_aids_;
-};
+};  // class InteractiveMarker
 
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-}
-
-#endif /* INTERACTIVE_MARKER_H_ */
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__INTERACTIVE_MARKERS__INTERACTIVE_MARKER_HPP_

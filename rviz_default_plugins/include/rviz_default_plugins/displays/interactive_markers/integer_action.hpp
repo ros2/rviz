@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2011, Willow Garage, Inc.
+ * Copyright (c) 2019, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,31 +27,38 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef INTEGER_ACTION_H
-#define INTEGER_ACTION_H
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__INTERACTIVE_MARKERS__INTEGER_ACTION_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__INTERACTIVE_MARKERS__INTEGER_ACTION_HPP_
 
 #include <QAction>
 
-namespace rviz
+namespace rviz_default_plugins
+{
+namespace displays
 {
 
-/** A simple subclass of QAction which keeps an ID number and emits a
+/**
+ * A simple subclass of QAction which keeps an ID number and emits a
  * signal with that number when it is triggered.
  */
-class IntegerAction: public QAction
+class IntegerAction : public QAction
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
-  IntegerAction(const QString& text, QObject* parent, int id );
-  int id_; // The menu id number from the visualization_msgs/MenuEntry
+  IntegerAction(const QString & text, QObject * parent, int id);
+
+  int id_;
 
 Q_SIGNALS:
-  void triggered( int id ); // emitted when action is triggered, sends id passed in.
+  /// Emitted when the action is triggered, sends the ID
+  void triggered(int id);
 
 private Q_SLOTS:
   void emitId();
 };
 
-} // end namespace rviz
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif // INTEGER_ACTION_H
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__INTERACTIVE_MARKERS__INTEGER_ACTION_HPP_

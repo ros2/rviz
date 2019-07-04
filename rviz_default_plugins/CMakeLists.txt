@@ -59,6 +59,7 @@ find_package(rviz_ogre_vendor REQUIRED)
 find_package(Qt5 REQUIRED COMPONENTS Widgets Test)
 
 find_package(geometry_msgs REQUIRED)
+find_package(interactive_markers REQUIRED)
 find_package(laser_geometry REQUIRED)
 find_package(map_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
@@ -88,6 +89,10 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/marker_array/marker_array_display.hpp
   include/rviz_default_plugins/displays/odometry/odometry_display.hpp
   include/rviz_default_plugins/transformation/transformer_guard.hpp
+  include/rviz_default_plugins/displays/interactive_markers/integer_action.hpp
+  include/rviz_default_plugins/displays/interactive_markers/interactive_marker.hpp
+  include/rviz_default_plugins/displays/interactive_markers/interactive_marker_control.hpp
+  include/rviz_default_plugins/displays/interactive_markers/interactive_marker_display.hpp
   include/rviz_default_plugins/displays/path/path_display.hpp
   include/rviz_default_plugins/displays/point/point_stamped_display.hpp
   include/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp
@@ -137,6 +142,10 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/illuminance/illuminance_display.cpp
   src/rviz_default_plugins/displays/image/image_display.cpp
   src/rviz_default_plugins/displays/image/ros_image_texture.cpp
+  src/rviz_default_plugins/displays/interactive_markers/integer_action.cpp
+  src/rviz_default_plugins/displays/interactive_markers/interactive_marker_control.cpp
+  src/rviz_default_plugins/displays/interactive_markers/interactive_marker.cpp
+  src/rviz_default_plugins/displays/interactive_markers/interactive_marker_display.cpp
   src/rviz_default_plugins/displays/laser_scan/laser_scan_display.cpp
   src/rviz_default_plugins/displays/map/map_display.cpp
   src/rviz_default_plugins/displays/map/palette_builder.cpp
@@ -245,6 +254,7 @@ pluginlib_export_plugin_description_file(rviz_common plugins_description.xml)
 
 ament_target_dependencies(rviz_default_plugins
   geometry_msgs
+  interactive_markers
   laser_geometry
   nav_msgs
   map_msgs
@@ -263,6 +273,7 @@ ament_export_dependencies(
   Qt5
   rviz_common
   geometry_msgs
+  interactive_markers
   laser_geometry
   map_msgs
   nav_msgs

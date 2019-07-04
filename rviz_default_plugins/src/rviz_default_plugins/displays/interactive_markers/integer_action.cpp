@@ -26,22 +26,24 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "integer_action.h"
+#include "rviz_default_plugins/displays/interactive_markers/integer_action.hpp"
 
-namespace rviz
+namespace rviz_default_plugins
+{
+namespace displays
 {
 
-IntegerAction::IntegerAction( const QString& text, QObject* parent, int id )
-  : QAction( text, parent )
-  , id_( id )
+IntegerAction::IntegerAction(const QString & text, QObject * parent, int id)
+: QAction(text, parent),
+  id_(id)
 {
-  connect( this, SIGNAL( triggered( bool )), this, SLOT( emitId() ));
+  connect(this, SIGNAL(triggered(bool)), this, SLOT(emitId()));
 }
 
 void IntegerAction::emitId()
 {
-  Q_EMIT triggered( id_ );
+  Q_EMIT triggered(id_);
 }
 
-} // end namespace rviz
-
+}  // namespace displays
+}  // namespace rviz_default_plugins

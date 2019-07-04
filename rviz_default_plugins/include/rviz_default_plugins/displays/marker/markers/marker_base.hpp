@@ -42,6 +42,7 @@
 #include "rclcpp/rclcpp.hpp"
 
 #include "rviz_common/interaction/forwards.hpp"
+#include "rviz_common/interactive_object.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 
 // This is necessary because of using stl types with this display. Nevertheless, if you are
@@ -105,9 +106,8 @@ public:
     return message_->ns + "/" + std::to_string(message_->id);
   }
 
-  // TODO(Martin-Idel-SI): use again when interactive marker is ported
-  /** @brief Associate an InteractiveObject with this MarkerBase. */
-  // void setInteractiveObject(InteractiveObjectWPtr object);
+  /// Associate an InteractiveObject with this MarkerBase.
+  void setInteractiveObject(rviz_common::InteractiveObjectWPtr object);
 
   virtual void setPosition(const Ogre::Vector3 & position);
 

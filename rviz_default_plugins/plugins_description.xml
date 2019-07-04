@@ -69,6 +69,17 @@
   </class>
 
   <class
+    name="rviz_default_plugins/InteractiveMarkers"
+    type="rviz_default_plugins::InteractiveMarkerDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Connects to one or more Interactive Marker servers, allowing you to interact with the provided 3D objects. &lt;a href="http://www.ros.org/wiki/rviz/DisplayTypes/InteractiveMarker"&gt;More Information&lt;/a&gt;.
+    </description>
+    <message_type>visualization_msgs/msg/InteractiveMarkerUpdate</message_type>
+  </class>
+
+  <class
     name="rviz_default_plugins/LaserScan"
     type="rviz_default_plugins::displays::LaserScanDisplay"
     base_class_type="rviz_common::Display"
