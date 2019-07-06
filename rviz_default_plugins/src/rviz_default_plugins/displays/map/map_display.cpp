@@ -328,13 +328,17 @@ void MapDisplay::createSwatches()
   size_t swatch_width = width;
   size_t swatch_height = height;
   int number_swatches = 1;
-  int maximum_number_swatch_splittings = 4;  // 4 seems to work well for this purpose.
+  // One swatch can have up to 2^16 * 2^16 pixel (8 bit texture, i.e. 4GB of data)
+  // Since the width and height are separately limited by 2^16 it might be necessary to have several
+  // pieces, however more than 8 swatches is probably unnecessary due to memory limitations
+  const size_t maximum_number_swatch_splittings = 4;
 
-  for (int i = 0; i < maximum_number_swatch_splittings; i++) {
+  for (size_t i = 0; i < maximum_number_swatch_splittings; ++i) {
     RVIZ_COMMON_LOG_INFO_STREAM("Creating " << number_swatches << " swatches_");
     swatches_.clear();
     try {
       tryCreateSwatches(width, height, resolution, swatch_width, swatch_height, number_swatches);
+      updateDrawUnder();
       return;
     } catch (Ogre::InvalidParametersException &) {
       doubleSwatchNumber(swatch_width, swatch_height, number_swatches);
@@ -343,7 +347,9 @@ void MapDisplay::createSwatches()
       doubleSwatchNumber(swatch_width, swatch_height, number_swatches);
     }
   }
-  updateDrawUnder();
+  RVIZ_COMMON_LOG_ERROR_STREAM("Creating " << number_swatches << "failed. "
+    "This map is too large to be displayed by RViz.");
+  swatches_.clear();
 }
 
 void MapDisplay::doubleSwatchNumber(
