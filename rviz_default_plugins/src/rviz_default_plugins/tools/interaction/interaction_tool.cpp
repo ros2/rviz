@@ -28,6 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <memory>
+
 #include <OgreCamera.h>
 #include <OgrePlane.h>
 #include <OgreRay.h>
