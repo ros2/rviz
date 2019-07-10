@@ -47,7 +47,6 @@
 #include "rviz_common/logging.hpp"
 #include "rviz_common/msg_conversions.hpp"
 #include "rviz_common/properties/property.hpp"
-#include "rviz_common/transformation/ros_helpers/ros_conversion_helpers.hpp"
 
 namespace rviz_common
 {
@@ -244,7 +243,6 @@ bool FrameManager::transform(
     pose_in.header.frame_id = pose_in.header.frame_id.substr(1);
   }
   pose_in.pose = pose_msg;
-  transformation::PoseStamped out_pose;
 
   // TODO(wjwwood): figure out where the `/` is coming from and remove it
   //                also consider warning the user in the GUI about this...
@@ -255,9 +253,7 @@ bool FrameManager::transform(
 
   geometry_msgs::msg::PoseStamped pose_out;
   try {
-    pose_out = transformation::ros_helpers::toRosPoseStamped(
-      transformer_->transform(
-        transformation::ros_helpers::fromRosPoseStamped(pose_in), stripped_fixed_frame));
+    pose_out = transformer_->transform(pose_in, stripped_fixed_frame);
   } catch (const transformation::FrameTransformerException & exception) {
     (void) exception;
     return false;

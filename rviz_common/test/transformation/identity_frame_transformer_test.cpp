@@ -58,29 +58,29 @@ TEST_F(IdentityTransformerFixture, getAllFrameNames_returns_a_vector_containing_
 }
 
 TEST_F(IdentityTransformerFixture, transform_returns_the_input_pose_if_orientation_is_valid) {
-  auto pose_stamped = createRvizCommonPoseStamped(
-    1, 3, "test", createRvizCommonPoint(0, 3, 6), createRvizCommonQuaternion(0, 1, 0, 0));
+  auto pose_stamped = createRosPoseStamped(
+    createRosHeader(1, 3, "test"), createRosPoint(0, 3, 6), createRosQuaternion(0, 1, 0, 0));
   auto transformed_pose = transformer_->transform(pose_stamped, "any_frame");
 
-  EXPECT_THAT(transformed_pose.time_stamp.seconds, Eq(1));
-  EXPECT_THAT(transformed_pose.time_stamp.nanoseconds, Eq(static_cast<uint32_t>(3)));
-  EXPECT_THAT(transformed_pose.frame_id, Eq("test"));
-  EXPECT_THAT(transformed_pose.position, PointEq(createRvizCommonPoint(0, 3, 6)));
-  EXPECT_THAT(transformed_pose.orientation, QuaternionEq(createRvizCommonQuaternion(0, 1, 0, 0)));
+  EXPECT_THAT(transformed_pose.header.stamp.sec, Eq(1));
+  EXPECT_THAT(transformed_pose.header.stamp.nanosec, Eq(static_cast<uint32_t>(3)));
+  EXPECT_THAT(transformed_pose.header.frame_id, Eq("test"));
+  EXPECT_THAT(transformed_pose.pose.position, PointEq(createRosPoint(0, 3, 6)));
+  EXPECT_THAT(transformed_pose.pose.orientation, QuaternionEq(createRosQuaternion(0, 1, 0, 0)));
 }
 
 TEST_F(
   IdentityTransformerFixture,
   transform_returns_the_input_pose_with_trivial_orientation_if_original_orientation_is_not_valid) {
-  auto pose_stamped = createRvizCommonPoseStamped(
-    1, 3, "test", createRvizCommonPoint(1, 3, 6), createRvizCommonQuaternion(0, 0, 0, 0));
+  auto pose_stamped = createRosPoseStamped(
+    createRosHeader(1, 3, "test"), createRosPoint(1, 3, 6), createRosQuaternion(0, 0, 0, 0));
   auto transformed_pose = transformer_->transform(pose_stamped, "any_frame");
 
-  EXPECT_THAT(transformed_pose.time_stamp.seconds, Eq(1));
-  EXPECT_THAT(transformed_pose.time_stamp.nanoseconds, Eq(static_cast<uint32_t>(3)));
-  EXPECT_THAT(transformed_pose.frame_id, Eq("test"));
-  EXPECT_THAT(transformed_pose.position, PointEq(createRvizCommonPoint(1, 3, 6)));
-  EXPECT_THAT(transformed_pose.orientation, QuaternionEq(createRvizCommonQuaternion(1, 0, 0, 0)));
+  EXPECT_THAT(transformed_pose.header.stamp.sec, Eq(1));
+  EXPECT_THAT(transformed_pose.header.stamp.nanosec, Eq(static_cast<uint32_t>(3)));
+  EXPECT_THAT(transformed_pose.header.frame_id, Eq("test"));
+  EXPECT_THAT(transformed_pose.pose.position, PointEq(createRosPoint(1, 3, 6)));
+  EXPECT_THAT(transformed_pose.pose.orientation, QuaternionEq(createRosQuaternion(1, 0, 0, 0)));
 }
 
 TEST_F(IdentityTransformerFixture, transformationIsAvailable_returns_true) {

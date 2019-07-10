@@ -35,10 +35,12 @@
 #include <string>
 #include <vector>
 
+#include "geometry_msgs/msg/pose_stamped.hpp"
+#include "geometry_msgs/msg/quaternion.hpp"
+
 #include "rclcpp/rclcpp.hpp"
 
 #include "rviz_common/transformation/frame_transformer.hpp"
-#include "rviz_common/transformation/structs.hpp"
 #include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
@@ -64,10 +66,9 @@ public:
   std::vector<std::string>
   getAllFrameNames() override;
 
-  transformation::PoseStamped
+  geometry_msgs::msg::PoseStamped
   transform(
-    // NOLINT (this is not std::transform)
-    const transformation::PoseStamped & pose_in,
+    const geometry_msgs::msg::PoseStamped & pose_in,
     const std::string & target_frame) override;
 
   bool
@@ -100,7 +101,7 @@ public:
 
 private:
   bool
-  quaternionIsValid(transformation::Quaternion quaternion);
+  quaternionIsValid(geometry_msgs::msg::Quaternion quaternion);
 };
 
 }  // namespace transformation

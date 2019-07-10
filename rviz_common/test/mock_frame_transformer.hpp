@@ -47,8 +47,8 @@ public:
       rclcpp::Clock::SharedPtr clock));
   MOCK_METHOD0(clear, void());
   MOCK_METHOD0(getAllFrameNames, std::vector<std::string>());
-  MOCK_METHOD2(transform, rviz_common::transformation::PoseStamped(
-      const rviz_common::transformation::PoseStamped & pose_in, const std::string & frame));
+  MOCK_METHOD2(transform, geometry_msgs::msg::PoseStamped(
+      const geometry_msgs::msg::PoseStamped & pose_in, const std::string & frame));
   MOCK_METHOD2(transformIsAvailable, bool(
       const std::string & target_frame, const std::string & source_frame));
   MOCK_METHOD4(transformHasProblems, bool(

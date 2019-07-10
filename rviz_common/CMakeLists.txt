@@ -129,7 +129,6 @@ set(rviz_common_headers_to_moc
   src/rviz_common/splash_screen.hpp
   # src/rviz_common/time_panel.hpp
   src/rviz_common/transformation/identity_frame_transformer.hpp
-  include/rviz_common/transformation/structs.hpp
   include/rviz_common/tool.hpp
   src/rviz_common/tool_manager.hpp
   src/rviz_common/tool_properties_panel.hpp
@@ -216,8 +215,6 @@ set(rviz_common_source_files
   src/rviz_common/splash_screen.cpp
   # src/rviz_common/time_panel.cpp
   src/rviz_common/transformation/identity_frame_transformer.cpp
-  src/rviz_common/transformation/structs.cpp
-  src/rviz_common/transformation/ros_helpers/ros_conversion_helpers.cpp
   src/rviz_common/tool_manager.cpp
   src/rviz_common/tool_properties_panel.cpp
   src/rviz_common/tool.cpp
@@ -400,13 +397,6 @@ if(BUILD_TESTING)
   )
   if(TARGET identity_transformer_test)
     target_link_libraries(identity_transformer_test rviz_common)
-  endif()
-
-  ament_add_gmock(ros_conversion_helpers_test
-    test/transformation/ros_conversion_helpers_test.cpp
-  )
-  if(TARGET ros_conversion_helpers_test)
-    target_link_libraries(ros_conversion_helpers_test rviz_common)
   endif()
 
   ament_add_gmock(selection_manager_test

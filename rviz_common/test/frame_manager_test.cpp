@@ -57,7 +57,7 @@ public:
 
 
 TEST_F(FrameManagerTestFixture, transform_uses_transform_of_transformer) {
-  rviz_common::transformation::PoseStamped dummy_pose;
+  geometry_msgs::msg::PoseStamped dummy_pose;
   EXPECT_CALL(*frame_transformer_, transform(_, _)).WillOnce(Return(dummy_pose));
 
   geometry_msgs::msg::Pose pose;
@@ -68,7 +68,7 @@ TEST_F(FrameManagerTestFixture, transform_uses_transform_of_transformer) {
 }
 
 TEST_F(FrameManagerTestFixture, lastAvailableTransform_used_when_using_sync_approx) {
-  rviz_common::transformation::PoseStamped dummy_pose;
+  geometry_msgs::msg::PoseStamped dummy_pose;
   EXPECT_CALL(*frame_transformer_, transformIsAvailable(_, _)).WillOnce(Return(true));
   EXPECT_CALL(*frame_transformer_, transform(_, _)).WillOnce(Return(dummy_pose));  // NOLINT
 

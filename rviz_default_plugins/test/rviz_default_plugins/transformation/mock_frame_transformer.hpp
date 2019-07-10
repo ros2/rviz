@@ -48,8 +48,8 @@ public:
   MOCK_METHOD0(clear, void());
   MOCK_METHOD0(getAllFrameNames, std::vector<std::string>());
   MOCK_METHOD2(
-    transform, rviz_common::transformation::PoseStamped(
-      const rviz_common::transformation::PoseStamped &, const std::string &));
+    transform, geometry_msgs::msg::PoseStamped(
+      const geometry_msgs::msg::PoseStamped &, const std::string &));
   MOCK_METHOD2(transformIsAvailable, bool(const std::string &, const std::string &));
   MOCK_METHOD4(
     transformHasProblems,

@@ -50,15 +50,13 @@ TFFrameTransformer::TFFrameTransformer(std::shared_ptr<TFWrapper> wrapper)
 : tf_wrapper_(wrapper)
 {}
 
-rviz_common::transformation::PoseStamped TFFrameTransformer::transform(
-  const rviz_common::transformation::PoseStamped & pose_in, const std::string & target_frame)
+geometry_msgs::msg::PoseStamped TFFrameTransformer::transform(
+  const geometry_msgs::msg::PoseStamped & in_pose, const std::string & target_frame)
 {
   geometry_msgs::msg::PoseStamped out_pose;
-  geometry_msgs::msg::PoseStamped in_pose =
-    rviz_common::transformation::ros_helpers::toRosPoseStamped(pose_in);
   try {
     tf_wrapper_->transform(in_pose, out_pose, target_frame);
-    return rviz_common::transformation::ros_helpers::fromRosPoseStamped(out_pose);
+    return out_pose;
   } catch (const tf2::LookupException & exception) {
     std::string prefix = "[tf2::LookupException]: ";
     throw rviz_common::transformation::FrameTransformerException(
