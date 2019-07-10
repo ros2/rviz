@@ -230,6 +230,66 @@ rviz_common::transformation::TransformStampedFuture TFFrameTransformer::waitForT
   return future;
 }
 
+geometry_msgs::msg::TransformStamped TFFrameTransformer::lookupTransform(
+  const std::string & target_frame,
+  const std::string & source_frame,
+  const tf2::TimePoint & time) const
+{
+  return tf_wrapper_->lookupTransform(target_frame, source_frame, time);
+}
+
+geometry_msgs::msg::TransformStamped TFFrameTransformer::lookupTransform(
+  const std::string & target_frame,
+  const tf2::TimePoint & target_time,
+  const std::string & source_frame,
+  const tf2::TimePoint & source_time,
+  const std::string & fixed_frame) const
+{
+  return tf_wrapper_->lookupTransform(
+    target_frame, target_time, source_frame, source_time, fixed_frame);
+}
+
+bool TFFrameTransformer::canTransform(
+  const std::string & target_frame,
+  const std::string & source_frame,
+  const tf2::TimePoint & time,
+  std::string * error_msg) const
+{
+  std::string error;
+  const bool result = tf_wrapper_->canTransform(target_frame, source_frame, time, error);
+  if (error_msg) {
+    *error_msg = error;
+  }
+  return result;
+}
+
+bool TFFrameTransformer::canTransform(
+  const std::string & target_frame,
+  const tf2::TimePoint & target_time,
+  const std::string & source_frame,
+  const tf2::TimePoint & source_time,
+  const std::string & fixed_frame,
+  std::string * error_msg) const
+{
+  std::string error;
+  const bool result = tf_wrapper_->canTransform(
+    target_frame, target_time, source_frame, source_time, fixed_frame, error);
+  if (error_msg) {
+    *error_msg = error;
+  }
+  return result;
+}
+
+tf2_ros::TransformStampedFuture TFFrameTransformer::waitForTransform(
+  const std::string & target_frame,
+  const std::string & source_frame,
+  const tf2::TimePoint & time,
+  const tf2::Duration & timeout,
+  tf2_ros::TransformReadyCallback callback)
+{
+  return tf_wrapper_->waitForTransform(target_frame, source_frame, time, timeout, callback);
+}
+
 bool TFFrameTransformer::frameHasProblems(const std::string & frame, std::string & error) const
 {
   if (!tf_wrapper_->frameExists(frame)) {
