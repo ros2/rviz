@@ -36,10 +36,10 @@
 
 #include <QString>  // NOLINT
 
+#include "geometry_msgs/msg/pose_stamped.hpp"
+
 #include "rviz_common/ros_integration/ros_node_abstraction.hpp"
 #include "rviz_common/visibility_control.hpp"
-
-#include "rviz_common/transformation/structs.hpp"
 
 namespace rviz_common
 {
@@ -98,10 +98,9 @@ public:
    * \returns The transformed PoseStamped
    */
   virtual
-  transformation::PoseStamped
+  geometry_msgs::msg::PoseStamped
   transform(
-    // NOLINT (this is not std::transform)
-    const transformation::PoseStamped & pose_in,
+    const geometry_msgs::msg::PoseStamped & pose_in,
     const std::string & target_frame) = 0;
 
   /// Checks if a transformation between two frames is available.

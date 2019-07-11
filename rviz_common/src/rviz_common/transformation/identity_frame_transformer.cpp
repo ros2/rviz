@@ -54,16 +54,16 @@ std::vector<std::string> IdentityFrameTransformer::getAllFrameNames()
   return {""};
 }
 
-transformation::PoseStamped IdentityFrameTransformer::transform(
-  const transformation::PoseStamped & pose_in, const std::string & target_frame)
+geometry_msgs::msg::PoseStamped IdentityFrameTransformer::transform(
+  const geometry_msgs::msg::PoseStamped & pose_in, const std::string & target_frame)
 {
   (void) target_frame;
-  transformation::PoseStamped pose_out = pose_in;
+  geometry_msgs::msg::PoseStamped pose_out = pose_in;
 
-  if (quaternionIsValid(pose_out.orientation)) {
+  if (quaternionIsValid(pose_out.pose.orientation)) {
     return pose_out;
   }
-  pose_out.orientation.w = 1;
+  pose_out.pose.orientation.w = 1;
   return pose_out;
 }
 
@@ -103,7 +103,7 @@ TransformationLibraryConnector::WeakPtr IdentityFrameTransformer::getConnector()
   return std::weak_ptr<TransformationLibraryConnector>();
 }
 
-bool IdentityFrameTransformer::quaternionIsValid(transformation::Quaternion quaternion)
+bool IdentityFrameTransformer::quaternionIsValid(geometry_msgs::msg::Quaternion quaternion)
 {
   return quaternion.w + quaternion.x + quaternion.y + quaternion.z != 0;
 }

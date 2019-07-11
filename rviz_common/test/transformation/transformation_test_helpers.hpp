@@ -39,8 +39,6 @@
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "std_msgs/msg/header.hpp"
 
-#include "rviz_common/transformation/structs.hpp"
-
 MATCHER_P(PointEq, expected, "") {
   return expected.x == arg.x && expected.y == arg.y && expected.z == arg.z;
 }
@@ -83,6 +81,16 @@ geometry_msgs::msg::Quaternion createRosQuaternion(double w, double x, double y,
   return quaternion;
 }
 
+std_msgs::msg::Header createRosHeader(int32_t sec, uint32_t nanosec, std::string frame)
+{
+  std_msgs::msg::Header header;
+  header.stamp.sec = sec;
+  header.stamp.nanosec = nanosec;
+  header.frame_id = frame;
+
+  return header;
+}
+
 geometry_msgs::msg::PoseStamped createRosPoseStamped(
   std_msgs::msg::Header header,
   geometry_msgs::msg::Point position,
@@ -109,45 +117,6 @@ geometry_msgs::msg::TransformStamped createRosTransformStamped(
   transform_stamped.transform.rotation = rotation;
 
   return transform_stamped;
-}
-
-rviz_common::transformation::Point createRvizCommonPoint(double x, double y, double z)
-{
-  rviz_common::transformation::Point point;
-  point.x = x;
-  point.y = y;
-  point.z = z;
-
-  return point;
-}
-
-rviz_common::transformation::Quaternion createRvizCommonQuaternion(
-  double w, double x, double y, double z)
-{
-  rviz_common::transformation::Quaternion quaternion;
-  quaternion.w = w;
-  quaternion.x = x;
-  quaternion.y = y;
-  quaternion.z = z;
-
-  return quaternion;
-}
-
-rviz_common::transformation::PoseStamped createRvizCommonPoseStamped(
-  int32_t sec,
-  uint32_t nanosec,
-  std::string frame,
-  rviz_common::transformation::Point pose,
-  rviz_common::transformation::Quaternion orient)
-{
-  rviz_common::transformation::PoseStamped pose_stamped;
-  pose_stamped.time_stamp.seconds = sec;
-  pose_stamped.time_stamp.nanoseconds = nanosec;
-  pose_stamped.frame_id = frame;
-  pose_stamped.position = pose;
-  pose_stamped.orientation = orient;
-
-  return pose_stamped;
 }
 
 #endif  // TRANSFORMATION__TRANSFORMATION_TEST_HELPERS_HPP_

@@ -73,10 +73,10 @@ public:
   getAllFrameNames() override;
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
-  rviz_common::transformation::PoseStamped
+  geometry_msgs::msg::PoseStamped
   transform(
     // NOLINT (this is not std::transform)
-    const rviz_common::transformation::PoseStamped & pose_in,
+    const geometry_msgs::msg::PoseStamped & pose_in,
     const std::string & target_frame) override;
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
