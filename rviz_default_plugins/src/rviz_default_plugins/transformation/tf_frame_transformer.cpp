@@ -35,7 +35,6 @@
 
 #include "rviz_common/logging.hpp"
 #include "rviz_common/transformation/frame_transformer.hpp"
-#include "rviz_common/transformation/ros_helpers/ros_conversion_helpers.hpp"
 
 namespace rviz_default_plugins
 {
