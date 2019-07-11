@@ -86,7 +86,7 @@ void InitialPoseTool::onPoseSet(double x, double y, double theta)
   pose.pose.covariance[6 * 1 + 1] = 0.5 * 0.5;
   pose.pose.covariance[6 * 5 + 5] = M_PI / 12.0 * M_PI / 12.0;
 
-  logPose(pose.pose.pose.position, pose.pose.pose.orientation, theta, fixed_frame);
+  logPose("estimate", pose.pose.pose.position, pose.pose.pose.orientation, theta, fixed_frame);
 
   publisher_->publish(pose);
 }
