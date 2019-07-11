@@ -50,34 +50,34 @@ public:
   MOCK_CONST_METHOD0(getAllFrameNames, std::vector<std::string>());
   MOCK_METHOD2(transform, geometry_msgs::msg::PoseStamped(
       const geometry_msgs::msg::PoseStamped & pose_in, const std::string & frame));
-  MOCK_CONST_METHOD3(lookupTransform, rviz_common::transformation::TransformStamped(
+  MOCK_CONST_METHOD3(lookupTransform, geometry_msgs::msg::TransformStamped(
       const std::string & target_frame,
       const std::string & source_frame,
-      const rclcpp::Time & time));
-  MOCK_CONST_METHOD5(lookupTransform, rviz_common::transformation::TransformStamped(
+      const tf2::TimePoint & time));
+  MOCK_CONST_METHOD5(lookupTransform, geometry_msgs::msg::TransformStamped(
       const std::string & target_frame,
-      const rclcpp::Time & target_time,
+      const tf2::TimePoint & target_time,
       const std::string & source_frame,
-      const rclcpp::Time & source_time,
+      const tf2::TimePoint & source_time,
       const std::string & fixed_Frame));
   MOCK_CONST_METHOD4(canTransform, bool(
       const std::string & target_frame,
       const std::string & source_frame,
-      const rclcpp::Time & time,
-      std::string & error_msg));
+      const tf2::TimePoint & time,
+      std::string * error_msg));
   MOCK_CONST_METHOD6(canTransform, bool(
       const std::string & target_frame,
-      const rclcpp::Time & target_time,
+      const tf2::TimePoint & target_time,
       const std::string & source_frame,
-      const rclcpp::Time & source_time,
+      const tf2::TimePoint & source_time,
       const std::string & fixed_frame,
-      std::string & error_msg));
-  MOCK_METHOD5(waitForTransform, rviz_common::transformation::TransformStampedFuture(
+      std::string * error_msg));
+  MOCK_METHOD5(waitForTransform, tf2_ros::TransformStampedFuture(
       const std::string & target_frame,
       const std::string & source_frame,
-      const rclcpp::Time & time,
-      const std::chrono::nanoseconds & timeout,
-      rviz_common::transformation::TransformReadyCallback callback));
+      const tf2::TimePoint & time,
+      const tf2::Duration & timeout,
+      tf2_ros::TransformReadyCallback callback));
   MOCK_CONST_METHOD2(frameHasProblems, bool(const std::string & frame, std::string & error));
   MOCK_METHOD0(getConnector,
     rviz_common::transformation::TransformationLibraryConnector::WeakPtr());

@@ -36,6 +36,8 @@
 #include <string>
 #include <vector>
 
+#include "rviz_common/transformation/tf2_helpers/tf2_conversion_helpers.hpp"
+
 namespace rviz_common
 {
 namespace transformation
@@ -77,42 +79,52 @@ bool IdentityFrameTransformer::frameHasProblems(
 
 void IdentityFrameTransformer::clear() {}
 
-transformation::TransformStamped IdentityFrameTransformer::lookupTransform(
+geometry_msgs::msg::TransformStamped IdentityFrameTransformer::lookupTransform(
   const std::string & target_frame,
   const std::string & source_frame,
-  const rclcpp::Time & time) const
+  const tf2::TimePoint & time) const
 {
-  return TransformStamped(
-    transformation::Time(time.nanoseconds()),
-    target_frame,
-    source_frame,
-    Point(0.0, 0.0, 0.0),
-    Quaternion(1.0, 0.0, 0.0, 0.0));
+  geometry_msgs::msg::TransformStamped transform;
+  transform.child_frame_id = target_frame;
+  transform.header = transformation::tf2_helpers::createHeader(time, source_frame);
+  transform.transform.translation.x = 0.0;
+  transform.transform.translation.y = 0.0;
+  transform.transform.translation.z = 0.0;
+  transform.transform.rotation.x = 0.0;
+  transform.transform.rotation.y = 0.0;
+  transform.transform.rotation.z = 0.0;
+  transform.transform.rotation.w = 1.0;
+  return transform;
 }
 
-transformation::TransformStamped IdentityFrameTransformer::lookupTransform(
+geometry_msgs::msg::TransformStamped IdentityFrameTransformer::lookupTransform(
   const std::string & target_frame,
-  const rclcpp::Time & target_time,
+  const tf2::TimePoint & target_time,
   const std::string & source_frame,
-  const rclcpp::Time & source_time,
+  const tf2::TimePoint & source_time,
   const std::string & fixed_frame) const
 {
-  (void) source_time;
   (void) fixed_frame;
+  (void) source_time;
 
-  return TransformStamped(
-    transformation::Time(target_time.nanoseconds()),
-    target_frame,
-    source_frame,
-    Point(0.0, 0.0, 0.0),
-    Quaternion(1.0, 0.0, 0.0, 0.0));
+  geometry_msgs::msg::TransformStamped transform;
+  transform.child_frame_id = target_frame;
+  transform.header = transformation::tf2_helpers::createHeader(target_time, source_frame);
+  transform.transform.translation.x = 0.0;
+  transform.transform.translation.y = 0.0;
+  transform.transform.translation.z = 0.0;
+  transform.transform.rotation.x = 0.0;
+  transform.transform.rotation.y = 0.0;
+  transform.transform.rotation.z = 0.0;
+  transform.transform.rotation.w = 1.0;
+  return transform;
 }
 
 bool IdentityFrameTransformer::canTransform(
   const std::string & target_frame,
   const std::string & source_frame,
-  const rclcpp::Time & time,
-  std::string & error_msg) const
+  const tf2::TimePoint & time,
+  std::string * error_msg) const
 {
   (void) target_frame;
   (void) source_frame;
@@ -124,11 +136,11 @@ bool IdentityFrameTransformer::canTransform(
 
 bool IdentityFrameTransformer::canTransform(
   const std::string & target_frame,
-  const rclcpp::Time & target_time,
+  const tf2::TimePoint & target_time,
   const std::string & source_frame,
-  const rclcpp::Time & source_time,
+  const tf2::TimePoint & source_time,
   const std::string & fixed_frame,
-  std::string & error_msg) const
+  std::string * error_msg) const
 {
   (void) target_frame;
   (void) target_time;
@@ -145,25 +157,29 @@ std::vector<std::string> IdentityFrameTransformer::getAllFrameNames() const
   return {""};
 }
 
-TransformStampedFuture IdentityFrameTransformer::waitForTransform(
+tf2_ros::TransformStampedFuture IdentityFrameTransformer::waitForTransform(
   const std::string & target_frame,
   const std::string & source_frame,
-  const rclcpp::Time & time,
-  const std::chrono::nanoseconds & timeout,
-  TransformReadyCallback callback)
+  const tf2::TimePoint & time,
+  const tf2::Duration & timeout,
+  tf2_ros::TransformReadyCallback callback)
 {
   (void) timeout;
 
-  auto transform_stamped = TransformStamped(
-    transformation::Time(time.nanoseconds()),
-    target_frame,
-    source_frame,
-    Point(0.0, 0.0, 0.0),
-    Quaternion(1.0, 0.0, 0.0, 0.0));
+  geometry_msgs::msg::TransformStamped transform;
+  transform.child_frame_id = target_frame;
+  transform.header = transformation::tf2_helpers::createHeader(time, source_frame);
+  transform.transform.translation.x = 0.0;
+  transform.transform.translation.y = 0.0;
+  transform.transform.translation.z = 0.0;
+  transform.transform.rotation.x = 0.0;
+  transform.transform.rotation.y = 0.0;
+  transform.transform.rotation.z = 0.0;
+  transform.transform.rotation.w = 1.0;
 
-  std::promise<TransformStamped> promise;
-  TransformStampedFuture future(promise.get_future());
-  promise.set_value(transform_stamped);
+  std::promise<geometry_msgs::msg::TransformStamped> promise;
+  tf2_ros::TransformStampedFuture future(promise.get_future());
+  promise.set_value(transform);
   callback(future);
   return future;
 }

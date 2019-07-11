@@ -35,12 +35,12 @@
 #include <string>
 #include <vector>
 
+#include "tf2/buffer_core_interface.h"
+#include "tf2_ros/async_buffer_interface.h"
+
 #include <QString>  // NOLINT
 
 #include "geometry_msgs/msg/pose_stamped.hpp"
-
-#include <tf2/buffer_core_interface.h>
-#include <tf2_ros/async_buffer_interface.h>
 
 #include "rviz_common/ros_integration/ros_node_abstraction.hpp"
 #include "rviz_common/visibility_control.hpp"
@@ -49,9 +49,6 @@ namespace rviz_common
 {
 namespace transformation
 {
-
-using TransformStampedFuture = std::shared_future<transformation::TransformStamped>;
-using TransformReadyCallback = std::function<void (const TransformStampedFuture &)>;
 
 class FrameTransformerException : public std::runtime_error
 {
@@ -117,94 +114,6 @@ public:
   virtual
   bool
   frameHasProblems(const std::string & frame, std::string & error) const = 0;
-
-  /// Method thought to reset the internal implementation object.
-  virtual
-  void
-  clear() = 0;
-
-  virtual
-  transformation::TransformStamped
-  lookupTransform(
-    const std::string & target_frame,
-    const std::string & source_frame,
-    const rclcpp::Time & time) const = 0;
-
-  virtual
-  transformation::TransformStamped
-  lookupTransform(
-    const std::string & target_frame,
-    const rclcpp::Time & target_time,
-    const std::string & source_frame,
-    const rclcpp::Time & source_time,
-    const std::string & fixed_Frame) const = 0;
-
-  virtual
-  bool
-  canTransform(
-    const std::string & target_frame,
-    const std::string & source_frame,
-    const rclcpp::Time & time,
-    std::string & error_msg) const = 0;
-
-  virtual
-  bool
-  canTransform(
-    const std::string & target_frame,
-    const rclcpp::Time & target_time,
-    const std::string & source_frame,
-    const rclcpp::Time & source_time,
-    const std::string & fixed_frame,
-    std::string & error_msg) const = 0;
-
-  virtual std::vector<std::string> getAllFrameNames() const = 0;
-
-  virtual
-  TransformStampedFuture
-  waitForTransform(
-    const std::string & target_frame,
-    const std::string & source_frame,
-    const rclcpp::Time & time,
-    const std::chrono::nanoseconds & timeout,
-    TransformReadyCallback callback) = 0;
-
-  geometry_msgs::msg::TransformStamped
-  lookupTransform(
-    const std::string & target_frame,
-    const std::string & source_frame,
-    const tf2::TimePoint & time) const override;
-
-  geometry_msgs::msg::TransformStamped
-  lookupTransform(
-    const std::string & target_frame,
-    const tf2::TimePoint & target_time,
-    const std::string & source_frame,
-    const tf2::TimePoint & source_time,
-    const std::string & fixed_frame) const override;
-
-  bool
-  canTransform(
-    const std::string & target_frame,
-    const std::string & source_frame,
-    const tf2::TimePoint & time,
-    std::string * error_msg) const override;
-
-  bool
-  canTransform(
-    const std::string & target_frame,
-    const tf2::TimePoint & target_time,
-    const std::string & source_frame,
-    const tf2::TimePoint & source_time,
-    const std::string & fixed_frame,
-    std::string * error_msg) const override;
-
-  tf2_ros::TransformStampedFuture
-  waitForTransform(
-    const std::string & target_frame,
-    const std::string & source_frame,
-    const tf2::TimePoint & time,
-    const tf2::Duration & timeout,
-    tf2_ros::TransformReadyCallback callback) override;
 
   /// Return the class id set by the PluginlibFactory.
   virtual

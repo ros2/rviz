@@ -107,7 +107,7 @@ TEST_F(FrameTransformerTfFixture, canTransform_returns_false_if_frame_does_not_e
   std::string error;
   std::string expected_error = "For frame [another_frame]: Frame [another_frame] does not exist";
   EXPECT_FALSE(tf_transformer_->canTransform(
-      "fixed_frame", "another_frame", rclcpp::Clock().now(), error));
+      "fixed_frame", "another_frame", tf2::get_now(), &error));
   EXPECT_THAT(error, testing::StrEq(expected_error));
 }
 
@@ -118,7 +118,7 @@ TEST_F(FrameTransformerTfFixture, canTransform_returns_false_if_fixed_frame_does
   std::string expected_error =
     "For frame [frame]: Fixed Frame [another_fixed_frame] does not exist";
   EXPECT_FALSE(tf_transformer_->canTransform(
-      "another_fixed_frame", "frame", rclcpp::Clock().now(), error));
+      "another_fixed_frame", "frame", tf2::get_now(), &error));
   EXPECT_THAT(error, testing::StrEq(expected_error));
 }
 
@@ -129,9 +129,7 @@ TEST_F(FrameTransformerTfFixture, canTransform_returns_false_if_transform_does_n
 
   std::string error;
   std::string partial_expected_error = "No transform to fixed frame";
-  EXPECT_FALSE(
-    tf_transformer_->canTransform(
-      "fourth_frame", "frame", rclcpp::Clock().now(), error));
+  EXPECT_FALSE(tf_transformer_->canTransform("fourth_frame", "frame", tf2::get_now(), &error));
   EXPECT_THAT(error, testing::HasSubstr(partial_expected_error));
   EXPECT_THAT(error, testing::HasSubstr("fourth_frame"));
   EXPECT_THAT(error, testing::HasSubstr("frame"));
@@ -142,5 +140,5 @@ TEST_F(FrameTransformerTfFixture, canTransform_returns_true_if_transform_exists)
 
   std::string error;
   EXPECT_TRUE(tf_transformer_->canTransform(
-      "fixed_frame", "frame", rclcpp::Clock().now(), error));
+      "fixed_frame", "frame", tf2::get_now(), &error));
 }

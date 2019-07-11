@@ -37,7 +37,6 @@
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>
 
-#include "rviz_common/transformation/structs.hpp"
 #include "rviz_common/transformation/frame_transformer.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction.hpp"
 #include "rviz_default_plugins/transformation/tf_wrapper.hpp"
@@ -76,7 +75,6 @@ public:
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   geometry_msgs::msg::PoseStamped
   transform(
-    // NOLINT (this is not std::transform)
     const geometry_msgs::msg::PoseStamped & pose_in,
     const std::string & target_frame) override;
 
@@ -87,49 +85,6 @@ public:
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   rviz_common::transformation::TransformationLibraryConnector::WeakPtr
   getConnector() override;
-
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
-  rviz_common::transformation::TransformStamped
-  lookupTransform(
-    const std::string & target_frame,
-    const std::string & source_frame,
-    const rclcpp::Time & time) const override;
-
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
-  rviz_common::transformation::TransformStamped
-  lookupTransform(
-    const std::string & target_frame,
-    const rclcpp::Time & target_time,
-    const std::string & source_frame,
-    const rclcpp::Time & source_time,
-    const std::string & fixed_Frame) const override;
-
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
-  bool
-  canTransform(
-    const std::string & target_frame,
-    const std::string & source_frame,
-    const rclcpp::Time & time,
-    std::string & error_msg) const override;
-
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
-  bool
-  canTransform(
-    const std::string & target_frame,
-    const rclcpp::Time & target_time,
-    const std::string & source_frame,
-    const rclcpp::Time & source_time,
-    const std::string & fixed_frame,
-    std::string & error_msg) const override;
-
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
-  rviz_common::transformation::TransformStampedFuture
-  waitForTransform(
-    const std::string & target_frame,
-    const std::string & source_frame,
-    const rclcpp::Time & time,
-    const std::chrono::nanoseconds & timeout,
-    rviz_common::transformation::TransformReadyCallback callback) override;
 
   geometry_msgs::msg::TransformStamped
   lookupTransform(

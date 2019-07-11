@@ -76,45 +76,45 @@ public:
   void
   clear() override;
 
-  transformation::TransformStamped
+  geometry_msgs::msg::TransformStamped
   lookupTransform(
     const std::string & target_frame,
     const std::string & source_frame,
-    const rclcpp::Time & time) const override;
+    const tf2::TimePoint & time) const override;
 
-  transformation::TransformStamped
+  geometry_msgs::msg::TransformStamped
   lookupTransform(
     const std::string & target_frame,
-    const rclcpp::Time & target_time,
+    const tf2::TimePoint & target_time,
     const std::string & source_frame,
-    const rclcpp::Time & source_time,
+    const tf2::TimePoint & source_time,
     const std::string & fixed_Frame) const override;
 
   bool
   canTransform(
     const std::string & target_frame,
     const std::string & source_frame,
-    const rclcpp::Time & time,
-    std::string & error_msg) const override;
+    const tf2::TimePoint & time,
+    std::string * error_msg) const override;
 
   bool
   canTransform(
     const std::string & target_frame,
-    const rclcpp::Time & target_time,
+    const tf2::TimePoint & target_time,
     const std::string & source_frame,
-    const rclcpp::Time & source_time,
+    const tf2::TimePoint & source_time,
     const std::string & fixed_frame,
-    std::string & error_msg) const override;
+    std::string * error_msg) const override;
 
   std::vector<std::string> getAllFrameNames() const override;
 
-  TransformStampedFuture
+  tf2_ros::TransformStampedFuture
   waitForTransform(
     const std::string & target_frame,
     const std::string & source_frame,
-    const rclcpp::Time & time,
-    const std::chrono::nanoseconds & timeout,
-    TransformReadyCallback callback) override;
+    const tf2::TimePoint & time,
+    const tf2::Duration & timeout,
+    tf2_ros::TransformReadyCallback callback) override;
 
 private:
   bool

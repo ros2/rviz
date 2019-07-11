@@ -214,7 +214,6 @@ set(rviz_common_source_files
   src/rviz_common/interaction/view_picker.cpp
   src/rviz_common/splash_screen.cpp
   # src/rviz_common/time_panel.cpp
-  src/rviz_common/transformation/frame_transformer.cpp
   src/rviz_common/transformation/identity_frame_transformer.cpp
   src/rviz_common/tool_manager.cpp
   src/rviz_common/tool_properties_panel.cpp
