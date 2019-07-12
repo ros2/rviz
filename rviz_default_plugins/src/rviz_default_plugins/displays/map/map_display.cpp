@@ -334,7 +334,8 @@ void MapDisplay::createSwatches()
   const size_t maximum_number_swatch_splittings = 4;
 
   for (size_t i = 0; i < maximum_number_swatch_splittings; ++i) {
-    RVIZ_COMMON_LOG_INFO_STREAM("Creating " << number_swatches << " swatches_");
+    RVIZ_COMMON_LOG_INFO_STREAM("Trying to create a map of size " <<
+      width << " x " << height << " using " << number_swatches << " swatches");
     swatches_.clear();
     try {
       tryCreateSwatches(width, height, resolution, swatch_width, swatch_height, number_swatches);
@@ -355,7 +356,8 @@ void MapDisplay::createSwatches()
 void MapDisplay::doubleSwatchNumber(
   size_t & swatch_width, size_t & swatch_height, int & number_swatches) const
 {
-  RVIZ_COMMON_LOG_ERROR_STREAM("Failed to create " << number_swatches << " swatches_");
+  RVIZ_COMMON_LOG_ERROR_STREAM("Failed to create map using " << number_swatches << " swatches. "
+    "At least one swatch seems to need too much memory");
   if (swatch_width > swatch_height) {
     swatch_width /= 2;
   } else {
