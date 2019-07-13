@@ -180,10 +180,10 @@ void PoseTool::logPose(
   geometry_msgs::msg::Quaternion orientation, double angle, std::string frame)
 {
   RVIZ_COMMON_LOG_INFO_STREAM(
-    "Setting " << designation << " pose: Frame:" << frame << ", Position(" << position.x << ", "
-               << position.y << ", " << position.z << "), Orientation(" << orientation.x << ", "
-               << orientation.y << ", " << orientation.z << ", " << orientation.w
-               << ") = Angle: " << angle);
+    "Setting " << designation << " pose: Frame:" << frame << ", Position(" << position.x << ", " <<
+      position.y << ", " << position.z << "), Orientation(" << orientation.x << ", " <<
+      orientation.y << ", " << orientation.z << ", " << orientation.w <<
+      ") = Angle: " << angle);
 }
 
 }  // namespace tools
