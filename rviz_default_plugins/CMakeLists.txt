@@ -55,7 +55,6 @@ find_package(ament_cmake REQUIRED)
 find_package(rviz_common REQUIRED)
 find_package(rviz_rendering REQUIRED)
 find_package(rviz_ogre_vendor REQUIRED)
-find_package(rviz_visual_testing_framework REQUIRED)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets Test)
 
@@ -297,6 +296,7 @@ if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_cmake_gmock REQUIRED)
   find_package(ament_index_cpp REQUIRED)
+  find_package(rviz_visual_testing_framework REQUIRED)
   find_package(sensor_msgs REQUIRED)
   find_package(visualization_msgs REQUIRED)
 
