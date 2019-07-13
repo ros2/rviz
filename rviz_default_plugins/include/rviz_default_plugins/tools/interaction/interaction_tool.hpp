@@ -76,11 +76,24 @@ public Q_SLOTS:
   void hideInactivePropertyChanged() {}
 
 protected:
+  inline bool isMouseEventDragging(const rviz_common::ViewportMouseEvent & event)
+  {
+    // We are dragging if a button was down and is still down
+    Qt::MouseButtons buttons = event.buttons_down &
+      (Qt::LeftButton | Qt::RightButton | Qt::MidButton);
+    if (event.type == QEvent::MouseButtonPress) {
+      buttons &= ~event.acting_button;
+    }
+    return buttons != 0;
+  }
+
   /**
    * @brief Check if the mouse has moved from one object to another,
    * and update focused_object_ if so.
    */
   void updateFocus(const rviz_common::ViewportMouseEvent & event);
+
+  void processInteraction(rviz_common::ViewportMouseEvent & event, const bool dragging);
 
   /// The object (control) which currently has the mouse focus.
   rviz_common::InteractiveObjectWPtr focused_object_;

@@ -150,13 +150,7 @@ int InteractionTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
   // make sure we let the vis. manager render at least one frame between selection updates
   const bool need_selection_update = context_->getFrameCount() > last_selection_frame_count_;
 
-  // We are dragging if a button was down and is still down
-  Qt::MouseButtons buttons = event.buttons_down &
-    (Qt::LeftButton | Qt::RightButton | Qt::MidButton);
-  if (event.type == QEvent::MouseButtonPress) {
-    buttons &= ~event.acting_button;
-  }
-  const bool dragging = buttons != 0;
+  const bool dragging = isMouseEventDragging(event);
 
   // unless we're dragging, check if there's a new object under the mouse
   if (need_selection_update &&
@@ -167,23 +161,7 @@ int InteractionTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
     flags = Render;
   }
 
-  {
-    rviz_common::InteractiveObjectPtr focused_object = focused_object_.lock();
-    if (focused_object) {
-      focused_object->handleMouseEvent(event);
-      setCursor(focused_object->getCursor());
-      // this will disable everything but the current interactive object
-      if (hide_inactive_property_->getBool()) {
-        context_->getHandlerManager()->enableInteraction(!dragging);
-      }
-    } else if (event.panel->getViewController()) {
-      move_tool_.processMouseEvent(event);
-      setCursor(move_tool_.getCursor());
-      if (hide_inactive_property_->getBool()) {
-        context_->getHandlerManager()->enableInteraction(true);
-      }
-    }
-  }
+  processInteraction(event, dragging);
 
   if (event.type == QEvent::MouseButtonRelease) {
     updateFocus(event);
@@ -195,6 +173,29 @@ int InteractionTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
 int InteractionTool::processKeyEvent(QKeyEvent * event, rviz_common::RenderPanel * panel)
 {
   return move_tool_.processKeyEvent(event, panel);
+}
+
+void InteractionTool::processInteraction(
+  rviz_common::ViewportMouseEvent & event,
+  const bool dragging)
+{
+  rviz_common::InteractiveObjectPtr focused_object = focused_object_.lock();
+  // Pass the mouse evenet to the interactive object
+  // If there is no interactive object, then fallback to the move tool
+  if (focused_object) {
+    focused_object->handleMouseEvent(event);
+    setCursor(focused_object->getCursor());
+    // this will disable everything but the current interactive object
+    if (hide_inactive_property_->getBool()) {
+      context_->getHandlerManager()->enableInteraction(!dragging);
+    }
+  } else if (event.panel->getViewController()) {
+    move_tool_.processMouseEvent(event);
+    setCursor(move_tool_.getCursor());
+    if (hide_inactive_property_->getBool()) {
+      context_->getHandlerManager()->enableInteraction(true);
+    }
+  }
 }
 
 }  // namespace tools
