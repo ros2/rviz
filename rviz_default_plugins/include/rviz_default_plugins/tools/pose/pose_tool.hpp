@@ -84,6 +84,7 @@ protected:
   geometry_msgs::msg::Quaternion orientationAroundZAxis(double angle);
 
   void logPose(
+    std::string designation,
     geometry_msgs::msg::Point position,
     geometry_msgs::msg::Quaternion orientation,
     double angle,

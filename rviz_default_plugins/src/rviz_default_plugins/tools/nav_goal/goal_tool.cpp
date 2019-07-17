@@ -83,7 +83,7 @@ void GoalTool::onPoseSet(double x, double y, double theta)
 
   goal.pose.orientation = orientationAroundZAxis(theta);
 
-  logPose(goal.pose.position, goal.pose.orientation, theta, fixed_frame);
+  logPose("goal", goal.pose.position, goal.pose.orientation, theta, fixed_frame);
 
   publisher_->publish(goal);
 }

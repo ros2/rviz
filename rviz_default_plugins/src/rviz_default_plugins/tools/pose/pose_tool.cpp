@@ -175,17 +175,15 @@ geometry_msgs::msg::Quaternion PoseTool::orientationAroundZAxis(double angle)
   return orientation;
 }
 
-void
-PoseTool::logPose(
-  geometry_msgs::msg::Point position,
-  geometry_msgs::msg::Quaternion orientation,
-  double angle,
-  std::string frame)
+void PoseTool::logPose(
+  std::string designation, geometry_msgs::msg::Point position,
+  geometry_msgs::msg::Quaternion orientation, double angle, std::string frame)
 {
-  RVIZ_COMMON_LOG_INFO_STREAM("Setting goal: Frame:" << frame << ", Position(" <<
-    position.x << ", " << position.y << ", " << position.z << "), Orientation(" <<
-    orientation.x << ", " << orientation.y << ", " << orientation.z << ", " << orientation.w <<
-    ") = Angle: " << angle);
+  RVIZ_COMMON_LOG_INFO_STREAM(
+    "Setting " << designation << " pose: Frame:" << frame << ", Position(" << position.x << ", " <<
+      position.y << ", " << position.z << "), Orientation(" << orientation.x << ", " <<
+      orientation.y << ", " << orientation.z << ", " << orientation.w <<
+      ") = Angle: " << angle);
 }
 
 }  // namespace tools
