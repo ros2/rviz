@@ -70,36 +70,59 @@ public:
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   std::vector<std::string>
-  getAllFrameNames() override;
+  getAllFrameNames() const override;
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   geometry_msgs::msg::PoseStamped
   transform(
-    // NOLINT (this is not std::transform)
     const geometry_msgs::msg::PoseStamped & pose_in,
     const std::string & target_frame) override;
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   bool
-  transformIsAvailable(
-    const std::string & target_frame,
-    const std::string & source_frame) override;
-
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
-  bool
-  transformHasProblems(
-    const std::string & source_frame,
-    const std::string & target_frame,
-    const rclcpp::Time & time,
-    std::string & error) override;
-
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
-  bool
-  frameHasProblems(const std::string & frame, std::string & error) override;
+  frameHasProblems(const std::string & frame, std::string & error) const override;
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   rviz_common::transformation::TransformationLibraryConnector::WeakPtr
   getConnector() override;
+
+  geometry_msgs::msg::TransformStamped
+  lookupTransform(
+    const std::string & target_frame,
+    const std::string & source_frame,
+    const tf2::TimePoint & time) const override;
+
+  geometry_msgs::msg::TransformStamped
+  lookupTransform(
+    const std::string & target_frame,
+    const tf2::TimePoint & target_time,
+    const std::string & source_frame,
+    const tf2::TimePoint & source_time,
+    const std::string & fixed_frame) const override;
+
+  bool
+  canTransform(
+    const std::string & target_frame,
+    const std::string & source_frame,
+    const tf2::TimePoint & time,
+    std::string * error_msg) const override;
+
+  bool
+  canTransform(
+    const std::string & target_frame,
+    const tf2::TimePoint & target_time,
+    const std::string & source_frame,
+    const tf2::TimePoint & source_time,
+    const std::string & fixed_frame,
+    std::string * error_msg) const override;
+
+  tf2_ros::TransformStampedFuture
+  waitForTransform(
+    const std::string & target_frame,
+    const std::string & source_frame,
+    const tf2::TimePoint & time,
+    const tf2::Duration & timeout,
+    tf2_ros::TransformReadyCallback callback) override;
 
 private:
   std::shared_ptr<TFWrapper> tf_wrapper_;

@@ -83,19 +83,23 @@ TEST_F(
   EXPECT_THAT(transformed_pose.pose.orientation, QuaternionEq(createRosQuaternion(1, 0, 0, 0)));
 }
 
-TEST_F(IdentityTransformerFixture, transformationIsAvailable_returns_true) {
-  EXPECT_TRUE(transformer_->transformIsAvailable("any_target", "any_source"));
-}
-
-TEST_F(IdentityTransformerFixture, transformHasProblesm_returns_false) {
+TEST_F(IdentityTransformerFixture, canTransform_returns_true) {
   std::string error = "";
+  EXPECT_TRUE(transformer_->canTransform("any_target", "any_source", tf2::TimePointZero, &error));
+  EXPECT_THAT(error, Eq(""));
 
-  EXPECT_FALSE(transformer_->transformHasProblems(
-      "any_target", "any_source", rclcpp::Clock().now(), error));
+  error = "";
+  EXPECT_TRUE(transformer_->canTransform(
+      "any_target",
+      tf2::TimePointZero,
+      "any_source",
+      tf2::get_now(),
+      "any_fixed_frame",
+      &error));
   EXPECT_THAT(error, Eq(""));
 }
 
-TEST_F(IdentityTransformerFixture, frameHasProblesm_returns_false) {
+TEST_F(IdentityTransformerFixture, frameHasProblems_returns_false) {
   std::string error = "";
 
   EXPECT_FALSE(transformer_->frameHasProblems("any_frame", error));

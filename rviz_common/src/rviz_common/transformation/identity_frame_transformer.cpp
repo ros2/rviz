@@ -31,9 +31,12 @@
 
 #include "./identity_frame_transformer.hpp"
 
+#include <future>
 #include <memory>
 #include <string>
 #include <vector>
+
+#include "rviz_common/transformation/tf2_helpers/tf2_conversion_helpers.hpp"
 
 namespace rviz_common
 {
@@ -45,13 +48,6 @@ void IdentityFrameTransformer::initialize(
 {
   (void) rviz_ros_node;
   (void) clock;
-}
-
-void IdentityFrameTransformer::clear() {}
-
-std::vector<std::string> IdentityFrameTransformer::getAllFrameNames()
-{
-  return {""};
 }
 
 geometry_msgs::msg::PoseStamped IdentityFrameTransformer::transform(
@@ -67,30 +63,13 @@ geometry_msgs::msg::PoseStamped IdentityFrameTransformer::transform(
   return pose_out;
 }
 
-bool IdentityFrameTransformer::transformIsAvailable(
-  const std::string & target_frame, const std::string & source_frame)
+TransformationLibraryConnector::WeakPtr IdentityFrameTransformer::getConnector()
 {
-  (void) target_frame;
-  (void) source_frame;
-
-  return true;
+  return std::weak_ptr<TransformationLibraryConnector>();
 }
 
-bool IdentityFrameTransformer::transformHasProblems(
-  const std::string & source_frame,
-  const std::string & target_frame,
-  const rclcpp::Time & time,
-  std::string & error)
-{
-  (void) source_frame;
-  (void) target_frame;
-  (void) time;
-  (void) error;
-
-  return false;
-}
-
-bool IdentityFrameTransformer::frameHasProblems(const std::string & frame, std::string & error)
+bool IdentityFrameTransformer::frameHasProblems(
+  const std::string & frame, std::string & error) const
 {
   (void) frame;
   (void) error;
@@ -98,9 +77,111 @@ bool IdentityFrameTransformer::frameHasProblems(const std::string & frame, std::
   return false;
 }
 
-TransformationLibraryConnector::WeakPtr IdentityFrameTransformer::getConnector()
+void IdentityFrameTransformer::clear() {}
+
+geometry_msgs::msg::TransformStamped IdentityFrameTransformer::lookupTransform(
+  const std::string & target_frame,
+  const std::string & source_frame,
+  const tf2::TimePoint & time) const
 {
-  return std::weak_ptr<TransformationLibraryConnector>();
+  geometry_msgs::msg::TransformStamped transform;
+  transform.child_frame_id = target_frame;
+  transform.header = transformation::tf2_helpers::createHeader(time, source_frame);
+  transform.transform.translation.x = 0.0;
+  transform.transform.translation.y = 0.0;
+  transform.transform.translation.z = 0.0;
+  transform.transform.rotation.x = 0.0;
+  transform.transform.rotation.y = 0.0;
+  transform.transform.rotation.z = 0.0;
+  transform.transform.rotation.w = 1.0;
+  return transform;
+}
+
+geometry_msgs::msg::TransformStamped IdentityFrameTransformer::lookupTransform(
+  const std::string & target_frame,
+  const tf2::TimePoint & target_time,
+  const std::string & source_frame,
+  const tf2::TimePoint & source_time,
+  const std::string & fixed_frame) const
+{
+  (void) fixed_frame;
+  (void) source_time;
+
+  geometry_msgs::msg::TransformStamped transform;
+  transform.child_frame_id = target_frame;
+  transform.header = transformation::tf2_helpers::createHeader(target_time, source_frame);
+  transform.transform.translation.x = 0.0;
+  transform.transform.translation.y = 0.0;
+  transform.transform.translation.z = 0.0;
+  transform.transform.rotation.x = 0.0;
+  transform.transform.rotation.y = 0.0;
+  transform.transform.rotation.z = 0.0;
+  transform.transform.rotation.w = 1.0;
+  return transform;
+}
+
+bool IdentityFrameTransformer::canTransform(
+  const std::string & target_frame,
+  const std::string & source_frame,
+  const tf2::TimePoint & time,
+  std::string * error_msg) const
+{
+  (void) target_frame;
+  (void) source_frame;
+  (void) time;
+  (void) error_msg;
+
+  return true;
+}
+
+bool IdentityFrameTransformer::canTransform(
+  const std::string & target_frame,
+  const tf2::TimePoint & target_time,
+  const std::string & source_frame,
+  const tf2::TimePoint & source_time,
+  const std::string & fixed_frame,
+  std::string * error_msg) const
+{
+  (void) target_frame;
+  (void) target_time;
+  (void) source_frame;
+  (void) source_time;
+  (void) fixed_frame;
+  (void) error_msg;
+
+  return true;
+}
+
+std::vector<std::string> IdentityFrameTransformer::getAllFrameNames() const
+{
+  return {""};
+}
+
+tf2_ros::TransformStampedFuture IdentityFrameTransformer::waitForTransform(
+  const std::string & target_frame,
+  const std::string & source_frame,
+  const tf2::TimePoint & time,
+  const tf2::Duration & timeout,
+  tf2_ros::TransformReadyCallback callback)
+{
+  (void) timeout;
+
+  geometry_msgs::msg::TransformStamped transform;
+  transform.child_frame_id = target_frame;
+  transform.header = transformation::tf2_helpers::createHeader(time, source_frame);
+  transform.transform.translation.x = 0.0;
+  transform.transform.translation.y = 0.0;
+  transform.transform.translation.z = 0.0;
+  transform.transform.rotation.x = 0.0;
+  transform.transform.rotation.y = 0.0;
+  transform.transform.rotation.z = 0.0;
+  transform.transform.rotation.w = 1.0;
+
+  std::promise<geometry_msgs::msg::TransformStamped> promise;
+  tf2_ros::TransformStampedFuture future(promise.get_future());
+  promise.set_value(transform);
+  callback(future);
+  return future;
 }
 
 bool IdentityFrameTransformer::quaternionIsValid(geometry_msgs::msg::Quaternion quaternion)

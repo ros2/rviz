@@ -58,13 +58,46 @@ geometry_msgs::msg::TransformStamped TFWrapper::lookupTransform(
   return buffer_->lookupTransform(target_frame, source_frame, time);
 }
 
+geometry_msgs::msg::TransformStamped TFWrapper::lookupTransform(
+  const std::string & target_frame,
+  const tf2::TimePoint & target_time,
+  const std::string & source_frame,
+  const tf2::TimePoint & source_time,
+  const std::string & fixed_frame)
+{
+  return buffer_->lookupTransform(
+    target_frame, target_time, source_frame, source_time, fixed_frame);
+}
+
 bool TFWrapper::canTransform(
-  const std::string & fixed_frame,
-  const std::string & frame,
+  const std::string & target_frame,
+  const std::string & source_frame,
   tf2::TimePoint time,
   std::string & error)
 {
-  return buffer_->canTransform(fixed_frame, frame, time, &error);
+  return buffer_->canTransform(target_frame, source_frame, time, &error);
+}
+
+bool TFWrapper::canTransform(
+  const std::string & target_frame,
+  const tf2::TimePoint & target_time,
+  const std::string & source_frame,
+  const tf2::TimePoint & source_time,
+  const std::string & fixed_frame,
+  std::string & error)
+{
+  return buffer_->canTransform(
+    target_frame, target_time, source_frame, source_time, fixed_frame, &error);
+}
+
+tf2_ros::TransformStampedFuture TFWrapper::waitForTransform(
+  const std::string & target_frame,
+  const std::string & source_frame,
+  const tf2::TimePoint & time,
+  const tf2::Duration & timeout,
+  tf2_ros::TransformReadyCallback callback)
+{
+  return buffer_->waitForTransform(target_frame, source_frame, time, timeout, callback);
 }
 
 std::vector<std::string> TFWrapper::getFrameStrings()

@@ -47,6 +47,7 @@
 #include "rviz_common/logging.hpp"
 #include "rviz_common/msg_conversions.hpp"
 #include "rviz_common/properties/property.hpp"
+#include "rviz_common/transformation/tf2_helpers/tf2_conversion_helpers.hpp"
 
 namespace rviz_common
 {
@@ -166,8 +167,11 @@ bool FrameManager::adjustTime(const std::string & frame, rclcpp::Time & time)
       break;
     case SyncApprox:
       {
+        std::string error_message;
         // try to get the time from the latest available transformation
-        if (transformer_->transformIsAvailable(fixed_frame_, frame)) {
+        if (transformer_->canTransform(
+            fixed_frame_, frame, tf2::TimePointZero, &error_message))
+        {
           time = sync_time_;
         }
       }
@@ -278,7 +282,8 @@ bool FrameManager::transformHasProblems(
     return false;
   }
 
-  return transformer_->transformHasProblems(frame, fixed_frame_, time, error);
+  return !transformer_->canTransform(
+    fixed_frame_, frame, transformation::tf2_helpers::toTf2TimePoint(time), &error);
 }
 
 const std::string & FrameManager::getFixedFrame()

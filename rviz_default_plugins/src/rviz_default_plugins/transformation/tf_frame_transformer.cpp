@@ -35,6 +35,7 @@
 
 #include "rviz_common/logging.hpp"
 #include "rviz_common/transformation/frame_transformer.hpp"
+#include "rviz_common/transformation/tf2_helpers/tf2_conversion_helpers.hpp"
 
 namespace rviz_default_plugins
 {
@@ -75,57 +76,135 @@ geometry_msgs::msg::PoseStamped TFFrameTransformer::transform(
   }
 }
 
-bool TFFrameTransformer::transformIsAvailable(
-  const std::string & target_frame, const std::string & source_frame)
+geometry_msgs::msg::TransformStamped TFFrameTransformer::lookupTransform(
+  const std::string & target_frame,
+  const std::string & source_frame,
+  const tf2::TimePoint & time) const
 {
   try {
-    tf_wrapper_->lookupTransform(target_frame, source_frame, tf2::TimePointZero);
-    return true;
+    return tf_wrapper_->lookupTransform(target_frame, source_frame, time);
   } catch (const tf2::LookupException & exception) {
-    (void) exception;
-    return false;
+    std::string prefix = "[tf2::LookupException]: ";
+    throw rviz_common::transformation::FrameTransformerException(
+            std::string(prefix + exception.what()).c_str());
   } catch (const tf2::ConnectivityException & exception) {
-    (void) exception;
-    return false;
+    std::string prefix = "[tf2::ConnectivityException]: ";
+    throw rviz_common::transformation::FrameTransformerException(
+            std::string(prefix + exception.what()).c_str());
   } catch (const tf2::ExtrapolationException & exception) {
-    (void) exception;
-    return false;
+    std::string prefix = "[tf2::ExtrapolationException]: ";
+    throw rviz_common::transformation::FrameTransformerException(
+            std::string(prefix + exception.what()).c_str());
   } catch (const tf2::InvalidArgumentException & exception) {
-    (void) exception;
-    return false;
+    std::string prefix = "[tf2::InvalidArgumentException]: ";
+    throw rviz_common::transformation::FrameTransformerException(
+            std::string(prefix + exception.what()).c_str());
   }
 }
 
-bool TFFrameTransformer::transformHasProblems(
-  const std::string & source_frame,
+geometry_msgs::msg::TransformStamped TFFrameTransformer::lookupTransform(
   const std::string & target_frame,
-  const rclcpp::Time & time,
-  std::string & error)
+  const tf2::TimePoint & target_time,
+  const std::string & source_frame,
+  const tf2::TimePoint & source_time,
+  const std::string & fixed_frame) const
 {
-  std::string tf_error;
-  tf2::TimePoint tf2_time(std::chrono::nanoseconds(time.nanoseconds()));
-  bool transform_succeeded = tf_wrapper_->canTransform(
-    target_frame, source_frame, tf2_time, tf_error);
-  if (transform_succeeded) {
-    return false;
+  try {
+    return tf_wrapper_->lookupTransform(
+      target_frame, target_time, source_frame, source_time, fixed_frame);
+  } catch (const tf2::LookupException & exception) {
+    std::string prefix = "[tf2::LookupException]: ";
+    throw rviz_common::transformation::FrameTransformerException(
+            std::string(prefix + exception.what()).c_str());
+  } catch (const tf2::ConnectivityException & exception) {
+    std::string prefix = "[tf2::ConnectivityException]: ";
+    throw rviz_common::transformation::FrameTransformerException(
+            std::string(prefix + exception.what()).c_str());
+  } catch (const tf2::ExtrapolationException & exception) {
+    std::string prefix = "[tf2::ExtrapolationException]: ";
+    throw rviz_common::transformation::FrameTransformerException(
+            std::string(prefix + exception.what()).c_str());
+  } catch (const tf2::InvalidArgumentException & exception) {
+    std::string prefix = "[tf2::InvalidArgumentException]: ";
+    throw rviz_common::transformation::FrameTransformerException(
+            std::string(prefix + exception.what()).c_str());
   }
+}
 
-  bool fixed_frame_ok = !frameHasProblems(target_frame, error);
-  bool ok = fixed_frame_ok && !frameHasProblems(source_frame, error);
-
-  if (ok) {
-    error = "No transform to fixed frame [" + target_frame + "].  TF error: [" + tf_error + "]";
+bool TFFrameTransformer::canTransform(
+  const std::string & target_frame,
+  const std::string & source_frame,
+  const tf2::TimePoint & time,
+  std::string * error) const
+{
+  std::string tf2_error;
+  bool transform_succeeded = tf_wrapper_->canTransform(
+    target_frame, source_frame, time, tf2_error);
+  if (transform_succeeded) {
     return true;
   }
 
-  error = fixed_frame_ok ?
-    "For frame [" + source_frame + "]: " + error :
-    "For frame [" + source_frame + "]: Fixed " + error;
+  if (error) {
+    bool target_frame_ok = !frameHasProblems(target_frame, *error);
+    bool ok = target_frame_ok && !frameHasProblems(source_frame, *error);
 
-  return true;
+    if (ok) {
+      *error = "No transform to fixed frame [" + target_frame + "]. "
+        "TF error: [" + tf2_error + "]";
+      return false;
+    }
+
+    *error = target_frame_ok ?
+      "For frame [" + source_frame + "]: " + *error :
+      "For frame [" + source_frame + "]: Fixed " + *error;
+  }
+  return false;
 }
 
-bool TFFrameTransformer::frameHasProblems(const std::string & frame, std::string & error)
+bool TFFrameTransformer::canTransform(
+  const std::string & target_frame,
+  const tf2::TimePoint & target_time,
+  const std::string & source_frame,
+  const tf2::TimePoint & source_time,
+  const std::string & fixed_frame,
+  std::string * error) const
+{
+  std::string tf2_error;
+  bool transform_succeeded = tf_wrapper_->canTransform(
+    target_frame, target_time, source_frame, source_time, fixed_frame, tf2_error);
+  if (transform_succeeded) {
+    return true;
+  }
+
+  if (error) {
+    bool target_frame_ok = !frameHasProblems(target_frame, *error);
+    bool ok = target_frame_ok && !frameHasProblems(source_frame, *error);
+
+    if (ok) {
+      *error = "No transform to fixed frame [" + target_frame + "]. "
+        "TF error: [" + tf2_error + "]";
+      return false;
+    }
+
+    *error = target_frame_ok ?
+      "For frame [" + source_frame + "]: " + *error :
+      "For frame [" + source_frame + "]: Fixed " + *error;
+  }
+
+  return false;
+}
+
+tf2_ros::TransformStampedFuture TFFrameTransformer::waitForTransform(
+  const std::string & target_frame,
+  const std::string & source_frame,
+  const tf2::TimePoint & time,
+  const tf2::Duration & timeout,
+  tf2_ros::TransformReadyCallback callback)
+{
+  return tf_wrapper_->waitForTransform(target_frame, source_frame, time, timeout, callback);
+}
+
+bool TFFrameTransformer::frameHasProblems(const std::string & frame, std::string & error) const
 {
   if (!tf_wrapper_->frameExists(frame)) {
     error = "Frame [" + frame + "] does not exist";
@@ -153,7 +232,7 @@ void TFFrameTransformer::clear()
   tf_wrapper_->clear();
 }
 
-std::vector<std::string> TFFrameTransformer::getAllFrameNames()
+std::vector<std::string> TFFrameTransformer::getAllFrameNames() const
 {
   return tf_wrapper_->getFrameStrings();
 }

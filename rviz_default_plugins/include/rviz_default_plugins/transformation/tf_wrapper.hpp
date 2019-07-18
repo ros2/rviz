@@ -69,12 +69,40 @@ public:
     const tf2::TimePoint & time);
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
+  geometry_msgs::msg::TransformStamped
+  lookupTransform(
+    const std::string & target_frame,
+    const tf2::TimePoint & target_time,
+    const std::string & source_frame,
+    const tf2::TimePoint & source_time,
+    const std::string & fixed_frame);
+
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   bool
   canTransform(
-    const std::string & fixed_frame,
-    const std::string & frame,
+    const std::string & target_frame,
+    const std::string & source_frame,
     tf2::TimePoint time,
     std::string & error);
+
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
+  bool
+  canTransform(
+    const std::string & target_frame,
+    const tf2::TimePoint & target_time,
+    const std::string & source_frame,
+    const tf2::TimePoint & source_time,
+    const std::string & fixed_frame,
+    std::string & error);
+
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
+  tf2_ros::TransformStampedFuture
+  waitForTransform(
+    const std::string & target_frame,
+    const std::string & source_frame,
+    const tf2::TimePoint & time,
+    const tf2::Duration & timeout,
+    tf2_ros::TransformReadyCallback callback);
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   std::vector<std::string>
