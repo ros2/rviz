@@ -74,8 +74,6 @@ if(BUILD_TESTING)
       rviz_rendering::rviz_rendering
       resource_retriever::resource_retriever
     )
-    ament_target_dependencies(mesh_loader_test_target
-      rviz_assimp_vendor)
   endif()
 
   ament_add_gtest(test_rviz_rendering_tests
