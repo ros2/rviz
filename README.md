@@ -14,14 +14,16 @@ For some displays, the [documentation is updated](docs/FEATURES.md).
 
 | Displays              | Tools         | View Controller       | Panels          |
 | --------------------- | ------------- | --------------------- | --------------- |
-| Camera                | Move Camera   | Orbit                 | Displays        |
-| Fluid Pressure        | Focus Camera  | XY Orbit              | Help            |
-| Grid                  | Measure       | First Person          | Selections      |
-| Grid Cells            | Select        | Third Person Follower | Tool Properties | 
-| Illuminance           | 2D Goal Pose  | Top Down Orthographic | Views           |
-| Image                 | Publish Point |
-| Laser Scan            | Initial Pose  |
-| Map                   | Interact      |
+| Axes                  | Move Camera   | Orbit                 | Displays        |
+| Camera                | Focus Camera  | XY Orbit              | Help            | 
+| Fluid Pressure        | Measure       | First Person          | Selections      |
+| Grid                  | Select        | Third Person Follower | Tool Properties | 
+| Grid Cells            | 2D Nav Goal   | Top Down Orthographic | Views           |
+| Illuminance           | Publish Point |
+| Image                 | Initial Pose  |
+| Interactive Marker    | Interact      |
+| Laser Scan            |
+| Map                   |
 | Marker                |
 | Marker Array          |
 | Odometry              |
@@ -41,19 +43,16 @@ For some displays, the [documentation is updated](docs/FEATURES.md).
 ### Not yet ported
 These features have not been ported to `ros2/rviz` yet.
 
-| Displays             | Tools        | Panels |
-| -------------------- | ------------ | ------ |
-| Axes                 |              | Time   |
-| DepthCloud           |
+| Displays             | Panels |
+| -------------------- | ------ |
+| DepthCloud           | Time   |
 | Effort               |
-| Interactive Marker   |
-| Oculus               |
 | Pose With Covariance |
 
 Other features:
 - Filtering of Topic lists by topic type
-- Message filters
 - Image transport features
+- Stereo
 
 In case you wished to see those features in RViz for ROS 2, feel free to add a pull request.
 Make sure to read the developer guide below and the migration guide.
