@@ -204,10 +204,11 @@ TEST_F(MapTestFixture, reset_deletes_map) {
 }
 
 TEST_F(MapTestFixture, createSwatches_creates_more_swatches_if_map_is_too_big) {
-  map_display_->processMessage(createMapMessage(500, 500));
+  // one dimension is larger than 2^16 --> that's too much for one texture buffer
+  map_display_->processMessage(createMapMessage(70000, 50));
 
   auto manual_objects = rviz_rendering::findAllOgreObjectByType<Ogre::ManualObject>(
     scene_manager_->getRootSceneNode(), "ManualObject");
 
-  EXPECT_THAT(manual_objects, SizeIs(4));
+  EXPECT_THAT(manual_objects, SizeIs(2));
 }
