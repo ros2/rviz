@@ -401,7 +401,9 @@ void VisualizationManager::onUpdate()
 
   root_display_group_->update(wall_dt, ros_dt);
 
-  view_manager_->update(wall_dt, ros_dt);
+  if (nullptr != view_manager_) {
+    view_manager_->update(wall_dt, ros_dt);
+  }
 
   time_update_timer_ += wall_dt;
 
