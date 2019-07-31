@@ -32,6 +32,7 @@
 
 #include <utility>
 
+#include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
 #include <QCheckBox>  // NOLINT: cpplint is unable to handle the include order here
 #include <QDateTime>  // NOLINT: cpplint is unable to handle the include order here
 #include <QDialogButtonBox>  // NOLINT: cpplint is unable to handle the include order here
@@ -42,8 +43,10 @@
 #include <QMessageBox>  // NOLINT: cpplint is unable to handle the include order here
 // Included so we know that QPushButton inherits QAbstractButton
 #include <QPushButton>  // NOLINT: cpplint is unable to handle the include order here
+#include <QScreen>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
 #include <QVBoxLayout>  // NOLINT: cpplint is unable to handle the include order here
+#include <QWindow>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "./scaled_image_widget.hpp"
 
@@ -119,10 +122,20 @@ void ScreenshotDialog::onTimeout()
 
 void ScreenshotDialog::takeScreenshotNow()
 {
+  QScreen *screen = QApplication::primaryScreen();
+  if (const QWindow *window = windowHandle()) {
+    screen = window->screen();
+  }
+  if (!screen) {
+    QString error_message = "Unable to fetch primary screen";
+    QMessageBox::critical(this, "Error", error_message);
+    return;
+  }
+
   if (save_full_window_) {
-    screenshot_ = QPixmap::grabWindow(main_window_->winId());
+    screenshot_ = screen->grabWindow(main_window_->winId());
   } else {
-    screenshot_ = QPixmap::grabWindow(render_window_->winId());
+    screenshot_ = screen->grabWindow(render_window_->winId());
   }
   image_widget_->setImage(screenshot_);
 }
