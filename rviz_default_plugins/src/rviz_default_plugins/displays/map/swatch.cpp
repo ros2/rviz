@@ -209,7 +209,7 @@ void Swatch::resetTexture(Ogre::DataStreamPtr & pixel_stream)
     "MapTexture" + std::to_string(texture_count_++),
     "rviz_rendering",
     pixel_stream,
-    static_cast<uint8_t>(width_), static_cast<uint8_t>(height_),
+    static_cast<uint16_t>(width_), static_cast<uint16_t>(height_),
     Ogre::PF_L8, Ogre::TEX_TYPE_2D, 0);
 }
 
