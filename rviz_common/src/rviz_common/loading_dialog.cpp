@@ -53,7 +53,6 @@ void LoadingDialog::showMessage(const QString & message)
   label_->setText(message);
   QApplication::processEvents();
   QWidget::repaint();
-  QApplication::flush();
 }
 
 }  // namespace rviz_common
