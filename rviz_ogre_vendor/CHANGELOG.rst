@@ -2,6 +2,11 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+6.1.3 (2019-07-31)
+------------------
+* Mojave compatibility (`#414 <https://github.com/ros2/rviz/issues/414>`_) (`#433 <https://github.com/ros2/rviz/issues/433>`_)
+* Contributors: Karsten Knese
+
 6.1.2 (2019-06-12)
 ------------------
 

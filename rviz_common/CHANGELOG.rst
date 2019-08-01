@@ -2,6 +2,11 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+6.1.3 (2019-07-31)
+------------------
+* Fix deprecation warnings with new Qt (`#435 <https://github.com/ros2/rviz/issues/435>`_) (`#436 <https://github.com/ros2/rviz/issues/436>`_)
+* Contributors: William Woodall
+
 6.1.2 (2019-06-12)
 ------------------
 * Changed the clock used to stamp publications, using one attached to a node instead so ``use_sim_time`` will work. (`#407 <https://github.com/ros2/rviz/issues/407>`_)

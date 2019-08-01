@@ -2,6 +2,9 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+6.1.3 (2019-07-31)
+------------------
+
 6.1.2 (2019-06-12)
 ------------------
 * Fixed a bug in the STL loader where an STL would be loaded twice and produce an error. (`#410 <https://github.com/ros2/rviz/issues/410>`_)

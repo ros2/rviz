@@ -2,6 +2,12 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+6.1.3 (2019-07-31)
+------------------
+* Mojave compatibility (`#414 <https://github.com/ros2/rviz/issues/414>`_) (`#433 <https://github.com/ros2/rviz/issues/433>`_)
+* Fix map display (`#425 <https://github.com/ros2/rviz/issues/425>`_) (`#432 <https://github.com/ros2/rviz/issues/432>`_)
+* Contributors: Martin Idel, Jacob Perron, Karsten Knese
+
 6.1.2 (2019-06-12)
 ------------------
 
