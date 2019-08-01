@@ -47,12 +47,8 @@
 # include "rviz_common/properties/float_property.hpp"
 # include "rviz_common/properties/int_property.hpp"
 # include "rviz_common/properties/queue_size_property.hpp"
-#include "rviz_common/transformation/frame_transformer.hpp"
 
 # include "rviz_default_plugins/displays/image/ros_image_texture_iface.hpp"
-#include "rviz_default_plugins/transformation/transformer_guard.hpp"
-#include "rviz_default_plugins/transformation/tf_wrapper.hpp"
-#include "rviz_default_plugins/transformation/tf_frame_transformer.hpp"
 # include "rviz_default_plugins/visibility_control.hpp"
 #endif
 

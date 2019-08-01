@@ -75,10 +75,8 @@ PolygonDisplay::~PolygonDisplay()
 
 void PolygonDisplay::onInitialize()
 {
-  auto tf_wrapper = std::dynamic_pointer_cast<transformation::TFWrapper>(
-          context_->getFrameManager()->getConnector().lock());
-  buffer_ = tf_wrapper->getBuffer();
   MFDClass::onInitialize();
+
   manual_object_ = scene_manager_->createManualObject();
   manual_object_->setDynamic(true);
   scene_node_->attachObject(manual_object_);

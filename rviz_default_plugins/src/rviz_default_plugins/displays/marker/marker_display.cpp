@@ -46,9 +46,6 @@ MarkerDisplay::MarkerDisplay()
 
 void MarkerDisplay::onInitialize()
 {
-  auto tf_wrapper = std::dynamic_pointer_cast<transformation::TFWrapper>(
-          context_->getFrameManager()->getConnector().lock());
-  buffer_ = tf_wrapper->getBuffer();
   MFDClass::onInitialize();
   marker_common_->initialize(context_, scene_node_);
   topic_property_->setDescription(

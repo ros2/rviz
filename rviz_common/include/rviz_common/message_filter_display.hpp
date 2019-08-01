@@ -35,6 +35,8 @@
 #include <tf2_ros/transform_listener.h>
 #include <tf2_ros/message_filter.h>
 
+#include <memory>
+
 #include "rviz_common/ros_topic_display.hpp"
 
 namespace rviz_common
@@ -59,7 +61,8 @@ public:
   {
     // TODO(Martin-Idel-SI): We need a way to extract the MessageType from the template to set a
     // correct string. Previously was:
-    // QString message_type = QString::fromStdString(message_filters::message_traits::datatype<MessageType>());
+    // QString message_type =
+    //   QString::fromStdString(message_filters::message_traits::datatype<MessageType>());
     QString message_type = QString::fromStdString("");
     topic_property_->setMessageType(message_type);
     topic_property_->setDescription(message_type + " topic to subscribe to.");
@@ -71,8 +74,7 @@ public:
   */
   void onInitialize() override
   {
-    rviz_ros_node_ = context_->getRosNodeAbstraction();
-    topic_property_->initialize(rviz_ros_node_);
+    _RosTopicDisplay::onInitialize();
   }
 
   ~MessageFilterDisplay() override
@@ -83,15 +85,15 @@ public:
   void reset() override
   {
     Display::reset();
-    if(tf_filter_) {
-        tf_filter_->clear();
+    if (tf_filter_) {
+      tf_filter_->clear();
     }
     messages_received_ = 0;
   }
 
   void setTopic(const QString & topic, const QString & datatype) override
   {
-      (void) datatype;
+    (void) datatype;
     topic_property_->setString(topic);
   }
 
@@ -106,7 +108,7 @@ protected:
 
   virtual void subscribe()
   {
-    if (!isEnabled() ) {
+    if (!isEnabled()) {
       return;
     }
 
@@ -118,14 +120,15 @@ protected:
     }
 
     try {
-      // TODO(anhosi,wjwwood): replace with abstraction for subscriptions once available
-      subscription_ = std::make_shared<message_filters::Subscriber<MessageType>>(rviz_ros_node_.lock()->get_raw_node(),
-                                      topic_property_->getTopicStd(), qos_profile);
-      tf_filter_ = std::make_shared<tf2_ros::MessageFilter<MessageType>>
-              (*buffer_, fixed_frame_.toStdString(), 10, rviz_ros_node_.lock()->get_raw_node());
+      subscription_ = std::make_shared<message_filters::Subscriber<MessageType>>(
+        rviz_ros_node_.lock()->get_raw_node(), topic_property_->getTopicStd(), qos_profile);
+      tf_filter_ =
+        std::make_shared<tf2_ros::MessageFilter<MessageType, transformation::FrameTransformer>>(
+        *context_->getFrameManager()->getTransformer(),
+        fixed_frame_.toStdString(), 10, rviz_ros_node_.lock()->get_raw_node());
       tf_filter_->connectInput(*subscription_);
-      tf_filter_->registerCallback
-              (std::bind(&MessageFilterDisplay<MessageType>::incomingMessage, this, std::placeholders::_1));
+      tf_filter_->registerCallback(std::bind(&MessageFilterDisplay<MessageType>::incomingMessage,
+        this, std::placeholders::_1));
       setStatus(properties::StatusProperty::Ok, "Topic", "OK");
     } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
       setStatus(properties::StatusProperty::Error, "Topic",
@@ -133,14 +136,23 @@ protected:
     }
   }
 
+  void transformerChangedCallback() override
+  {
+    unsubscribe();
+    reset();
+    subscribe();
+    context_->queueRender();
+  }
+
   virtual void unsubscribe()
   {
     subscription_.reset();
+    tf_filter_.reset();
   }
 
   void onEnable() override
   {
-      subscribe();
+    subscribe();
   }
 
   void onDisable() override
@@ -151,7 +163,9 @@ protected:
 
   void fixedFrameChanged() override
   {
-    tf_filter_->setTargetFrame( fixed_frame_.toStdString() );
+    if (tf_filter_) {
+      tf_filter_->setTargetFrame(fixed_frame_.toStdString());
+    }
     reset();
   }
 
@@ -179,8 +193,7 @@ protected:
   virtual void processMessage(typename MessageType::ConstSharedPtr msg) = 0;
 
   typename std::shared_ptr<message_filters::Subscriber<MessageType>> subscription_;
-  std::shared_ptr<tf2_ros::MessageFilter<MessageType>> tf_filter_;
-  std::shared_ptr<tf2_ros::Buffer> buffer_;
+  std::shared_ptr<tf2_ros::MessageFilter<MessageType, transformation::FrameTransformer>> tf_filter_;
   uint32_t messages_received_;
 };
 

@@ -41,8 +41,6 @@
 #include "rviz_common/message_filter_display.hpp"
 #include "rviz_common/display_context.hpp"
 
-#include "rviz_default_plugins/transformation/tf_wrapper.hpp"
-#include "rviz_default_plugins/transformation/tf_frame_transformer.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 
 namespace rviz_rendering

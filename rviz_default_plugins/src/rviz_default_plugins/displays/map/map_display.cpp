@@ -123,7 +123,7 @@ MapDisplay::MapDisplay()
     "Orientation", Ogre::Quaternion::IDENTITY, "Orientation of the map. (not editable)", this);
   orientation_property_->setReadOnly(true);
 
-  transform_timestamp_property_ = new rviz_common::properties::BoolProperty("Use Timestamp", true,
+  transform_timestamp_property_ = new rviz_common::properties::BoolProperty("Use Timestamp", false,
       "Use map header timestamp when transforming", this, SLOT(transformMap()));
 }
 
@@ -161,9 +161,6 @@ MapDisplay::MapDisplay(rviz_common::DisplayContext * context)
 
 void MapDisplay::onInitialize()
 {
-  auto tf_wrapper = std::dynamic_pointer_cast<transformation::TFWrapper>(
-          context_->getFrameManager()->getConnector().lock());
-  buffer_ = tf_wrapper->getBuffer();
   MessageFilterDisplay::onInitialize();
   // Order of palette textures here must match option indices for color_scheme_property_ above.
   palette_textures_.push_back(makePaletteTexture(makeMapPalette()));

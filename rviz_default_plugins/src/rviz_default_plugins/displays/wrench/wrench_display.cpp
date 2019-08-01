@@ -82,7 +82,7 @@ WrenchDisplay::WrenchDisplay()
 
 void WrenchDisplay::onInitialize()
 {
-  RTDClass::onInitialize();
+  MFDClass::onInitialize();
   updateHistoryLength();
 }
 
@@ -90,7 +90,7 @@ WrenchDisplay::~WrenchDisplay() = default;
 
 void WrenchDisplay::reset()
 {
-  RTDClass::reset();
+  MFDClass::reset();
   visuals_.clear();
 }
 

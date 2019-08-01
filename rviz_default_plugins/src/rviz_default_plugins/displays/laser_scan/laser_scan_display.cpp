@@ -58,9 +58,6 @@ LaserScanDisplay::LaserScanDisplay()
 
 void LaserScanDisplay::onInitialize()
 {
-  auto tf_wrapper = std::dynamic_pointer_cast<transformation::TFWrapper>(
-          context_->getFrameManager()->getConnector().lock());
-  buffer_ = tf_wrapper->getBuffer();
   MFDClass::onInitialize();
   point_cloud_common_->initialize(context_, scene_node_);
   transformer_guard_->initialize(context_);
@@ -70,10 +67,9 @@ void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPt
 {
   // TODO(Martin-Idel-SI): Reenable once tf_filter is ported or delete if necessary
 //  Compute tolerance necessary for this scan
-  rclcpp::Duration tolerance(
-          static_cast<int32_t>(static_cast<rcl_duration_value_t>(scan->time_increment * scan->ranges.size())), 0);
-  if (tolerance > filter_tolerance_)
-  {
+  rclcpp::Duration tolerance(static_cast<int32_t>(static_cast<rcl_duration_value_t>(
+      scan->time_increment * scan->ranges.size())), 0);
+  if (tolerance > filter_tolerance_) {
     filter_tolerance_ = tolerance;
     tf_filter_->setTolerance(filter_tolerance_);
   }

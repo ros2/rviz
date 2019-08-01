@@ -35,7 +35,7 @@
 
 #include "geometry_msgs/msg/wrench_stamped.hpp"
 
-#include "rviz_common/ros_topic_display.hpp"
+#include "rviz_common/message_filter_display.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 
 namespace Ogre
@@ -65,7 +65,7 @@ namespace displays
 
 
 class RVIZ_DEFAULT_PLUGINS_PUBLIC WrenchDisplay : public
-  rviz_common::RosTopicDisplay<geometry_msgs::msg::WrenchStamped>
+  rviz_common::MessageFilterDisplay<geometry_msgs::msg::WrenchStamped>
 {
   Q_OBJECT
 

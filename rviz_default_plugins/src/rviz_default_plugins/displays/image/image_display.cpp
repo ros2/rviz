@@ -103,9 +103,6 @@ ImageDisplay::ImageDisplay(std::unique_ptr<ROSImageTextureIface> texture)
 
 void ImageDisplay::onInitialize()
 {
-  auto tf_wrapper = std::dynamic_pointer_cast<transformation::TFWrapper>(
-          rviz_common::Display::context_->getFrameManager()->getConnector().lock());
-  buffer_ = tf_wrapper->getBuffer();
   MFDClass::onInitialize();
 
   updateNormalizeOptions();

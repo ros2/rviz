@@ -43,8 +43,6 @@
 #include "rviz_common/properties/queue_size_property.hpp"
 #include "rviz_common/validate_floats.hpp"
 #include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
-#include "rviz_default_plugins/transformation/tf_wrapper.hpp"
-#include "rviz_default_plugins/transformation/tf_frame_transformer.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 #include "rviz_rendering/objects/point_cloud.hpp"
 
@@ -108,9 +106,6 @@ protected:
 private:
   void onInitialize() override
   {
-    auto tf_wrapper = std::dynamic_pointer_cast<transformation::TFWrapper>(
-            rviz_common::Display::context_->getFrameManager()->getConnector().lock());
-    rviz_common::MessageFilterDisplay<MessageType>::buffer_ = tf_wrapper->getBuffer();
     rviz_common::MessageFilterDisplay<MessageType>::onInitialize();
     point_cloud_common_->initialize(
       this->context_, this->scene_node_);

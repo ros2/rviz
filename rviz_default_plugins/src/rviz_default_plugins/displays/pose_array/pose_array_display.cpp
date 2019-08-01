@@ -163,9 +163,6 @@ PoseArrayDisplay::~PoseArrayDisplay()
 
 void PoseArrayDisplay::onInitialize()
 {
-  auto tf_wrapper = std::dynamic_pointer_cast<transformation::TFWrapper>(
-          context_->getFrameManager()->getConnector().lock());
-  buffer_ = tf_wrapper->getBuffer();
   MFDClass::onInitialize();
   arrows2d_ = std::make_unique<FlatArrowsArray>(scene_manager_);
   arrows2d_->createAndAttachManualObject(scene_node_);

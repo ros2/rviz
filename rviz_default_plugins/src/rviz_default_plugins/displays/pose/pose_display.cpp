@@ -99,9 +99,6 @@ PoseDisplay::PoseDisplay()
 
 void PoseDisplay::onInitialize()
 {
-  auto tf_wrapper = std::dynamic_pointer_cast<transformation::TFWrapper>(
-          context_->getFrameManager()->getConnector().lock());
-  buffer_ = tf_wrapper->getBuffer();
   MFDClass::onInitialize();
 
   arrow_ = std::make_unique<rviz_rendering::Arrow>(scene_manager_, scene_node_,

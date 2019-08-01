@@ -37,11 +37,7 @@
 
 #include "rviz_common/message_filter_display.hpp"
 #include "rviz_common/interaction/forwards.hpp"
-#include "rviz_common/transformation/frame_transformer.hpp"
 
-#include "rviz_default_plugins/transformation/transformer_guard.hpp"
-#include "rviz_default_plugins/transformation/tf_wrapper.hpp"
-#include "rviz_default_plugins/transformation/tf_frame_transformer.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 
 namespace rviz_rendering

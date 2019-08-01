@@ -56,9 +56,6 @@ PointCloud2Display::PointCloud2Display()
 
 void PointCloud2Display::onInitialize()
 {
-  auto tf_wrapper = std::dynamic_pointer_cast<transformation::TFWrapper>(
-          context_->getFrameManager()->getConnector().lock());
-  buffer_ = tf_wrapper->getBuffer();
   MFDClass::onInitialize();
   point_cloud_common_->initialize(context_, scene_node_);
 }
