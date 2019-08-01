@@ -121,10 +121,11 @@ void ScreenshotDialog::onTimeout()
 
 void ScreenshotDialog::takeScreenshotNow()
 {
+  QScreen * screen = main_window_->windowHandle()->screen();
   if (save_full_window_) {
-    screenshot_ = main_window_->windowHandle()->screen()->grabWindow(main_window_->winId());
+    screenshot_ = screen->grabWindow(main_window_->winId());
   } else {
-    screenshot_ = render_window_->windowHandle()->screen()->grabWindow(render_window_->winId());
+    screenshot_ = screen->grabWindow(render_window_->winId());
   }
   image_widget_->setImage(screenshot_);
 }
