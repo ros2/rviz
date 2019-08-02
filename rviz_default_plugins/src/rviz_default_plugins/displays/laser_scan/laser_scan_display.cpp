@@ -65,7 +65,6 @@ void LaserScanDisplay::onInitialize()
 
 void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPtr scan)
 {
-  // TODO(Martin-Idel-SI): Reenable once tf_filter is ported or delete if necessary
 //  Compute tolerance necessary for this scan
   rclcpp::Duration tolerance(static_cast<int32_t>(static_cast<rcl_duration_value_t>(
       scan->time_increment * scan->ranges.size())), 0);

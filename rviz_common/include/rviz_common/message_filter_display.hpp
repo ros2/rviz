@@ -31,8 +31,6 @@
 #define RVIZ_COMMON__MESSAGE_FILTER_DISPLAY_HPP_
 
 #include <message_filters/subscriber.h>
-#include <tf2_ros/transform_broadcaster.h>
-#include <tf2_ros/transform_listener.h>
 #include <tf2_ros/message_filter.h>
 
 #include <memory>
@@ -41,18 +39,18 @@
 
 namespace rviz_common
 {
-/** @brief Display subclass using a rclcpp::subscription, templated on the ROS message type.
- *
- * This class handles subscribing and unsubscribing to a ROS node when the display is
- * enabled or disabled. */
+/// Display subclass using a rclcpp::subscription and tf2_ros::MessageFilter,
+/// templated on the ROS message type.
+/// This class handles subscribing and unsubscribing to a ROS node using the
+/// message filter when the display is enabled or disabled.
 template<class MessageType>
 class MessageFilterDisplay : public _RosTopicDisplay
 {
 // No Q_OBJECT macro here, moc does not support Q_OBJECT in a templated class.
 
 public:
-  /** @brief Convenience typedef so subclasses don't have to use
-   * the long templated class name to refer to their super class. */
+  /// Convenience typedef so subclasses don't have to use
+  /// the long templated class name to refer to their super class.
   typedef MessageFilterDisplay<MessageType> MFDClass;
 
   MessageFilterDisplay()
@@ -100,10 +98,7 @@ public:
 protected:
   void updateTopic() override
   {
-    unsubscribe();
-    reset();
-    subscribe();
-    context_->queueRender();
+    resetSubscription();
   }
 
   virtual void subscribe()
@@ -113,9 +108,8 @@ protected:
     }
 
     if (topic_property_->isEmpty()) {
-      setStatus(properties::StatusProperty::Error,
-        "Topic",
-        QString("Error subscribing: Empty topic name"));
+      setStatus(
+        properties::StatusProperty::Error, "Topic", QString("Error subscribing: Empty topic name"));
       return;
     }
 
@@ -127,16 +121,22 @@ protected:
         *context_->getFrameManager()->getTransformer(),
         fixed_frame_.toStdString(), 10, rviz_ros_node_.lock()->get_raw_node());
       tf_filter_->connectInput(*subscription_);
-      tf_filter_->registerCallback(std::bind(&MessageFilterDisplay<MessageType>::incomingMessage,
-        this, std::placeholders::_1));
+      tf_filter_->registerCallback(
+        std::bind(&MessageFilterDisplay<MessageType>::incomingMessage, this,
+        std::placeholders::_1));
       setStatus(properties::StatusProperty::Ok, "Topic", "OK");
     } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
-      setStatus(properties::StatusProperty::Error, "Topic",
-        QString("Error subscribing: ") + e.what());
+      setStatus(
+        properties::StatusProperty::Error, "Topic", QString("Error subscribing: ") + e.what());
     }
   }
 
   void transformerChangedCallback() override
+  {
+    resetSubscription();
+  }
+
+  void resetSubscription()
   {
     unsubscribe();
     reset();
@@ -169,9 +169,9 @@ protected:
     reset();
   }
 
-  /** @brief Incoming message callback.  Checks if the message pointer
-   * is valid, increments messages_received_, then calls
-   * processMessage(). */
+  /// Incoming message callback.  Checks if the message pointer
+  /// is valid, increments messages_received_, then calls
+  /// processMessage().
   void incomingMessage(const typename MessageType::ConstSharedPtr msg)
   {
     if (!msg) {
@@ -187,9 +187,8 @@ protected:
     processMessage(msg);
   }
 
-  /** @brief Implement this to process the contents of a message.
-   *
-   * This is called by incomingMessage(). */
+  /// Implement this to process the contents of a message.
+  /// This is called by incomingMessage().
   virtual void processMessage(typename MessageType::ConstSharedPtr msg) = 0;
 
   typename std::shared_ptr<message_filters::Subscriber<MessageType>> subscription_;

@@ -73,6 +73,11 @@ public:
     return transform_stamped;
   }
 
+  void TearDown() override
+  {
+    rclcpp::shutdown();
+  }
+
   geometry_msgs::msg::PoseStamped getPoseStamped()
   {
     std_msgs::msg::Header header;

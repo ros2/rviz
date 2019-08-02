@@ -60,8 +60,6 @@ class PointCloudCommon;
 namespace displays
 {
 /** @brief Visualizes a laser scan, received as a sensor_msgs::LaserScan. */
-// TODO(botteroa-si): This display originally extended the MessageFilterDisplay. Revisit when
-// available
 class RVIZ_DEFAULT_PLUGINS_PUBLIC LaserScanDisplay : public
   rviz_common::MessageFilterDisplay<sensor_msgs::msg::LaserScan>
 {

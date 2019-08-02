@@ -185,7 +185,7 @@ void PointCloud2Display::reset()
 
 void PointCloud2Display::onDisable()
 {
-  MessageFilterDisplay::onDisable();
+  MFDClass::onDisable();
   point_cloud_common_->onDisable();
 }
 
