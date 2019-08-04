@@ -138,7 +138,7 @@ macro(build_ogre)
   endif()
   if(BUILDING_ZLIB_LOCALLY)
     list(APPEND extra_cmake_args
-      "-DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/zlib_install")
+      "-DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/zlib-install")
   endif()
 
   if(DEFINED CMAKE_TOOLCHAIN_FILE)
@@ -175,6 +175,8 @@ macro(build_ogre)
       -DOGRE_BUILD_COMPONENT_SAMPLES:BOOL=FALSE
       ${extra_cmake_args}
       -Wno-dev
+    PATCH_COMMAND
+      ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/FindFreetype.cmake ${CMAKE_CURRENT_BINARY_DIR}/ogre-master-ca665a6-prefix/src/ogre-master-ca665a6/CMake/Packages/FindFreetype.cmake
   )
 
   if(BUILDING_FREETYPE_LOCALLY)
