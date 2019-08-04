@@ -381,11 +381,11 @@ BitAllocator * VisualizationManager::visibilityBits()
 
 void VisualizationManager::onUpdate()
 {
-  auto wall_now = std::chrono::system_clock::now();
-  auto wall_diff = wall_now - last_update_wall_time_;
-  uint64_t wall_dt = std::chrono::duration_cast<std::chrono::nanoseconds>(wall_diff).count();
-  auto ros_now = clock_->now();
-  uint64_t ros_dt = ros_now.nanoseconds() - last_update_ros_time_.nanoseconds();
+  const auto wall_now = std::chrono::system_clock::now();
+  const auto wall_diff = wall_now - last_update_wall_time_;
+  const uint64_t wall_dt = std::chrono::duration_cast<std::chrono::nanoseconds>(wall_diff).count();
+  const auto ros_now = clock_->now();
+  const uint64_t ros_dt = ros_now.nanoseconds() - last_update_ros_time_.nanoseconds();
   last_update_ros_time_ = ros_now;
   last_update_wall_time_ = wall_now;
 
@@ -437,8 +437,7 @@ void VisualizationManager::onUpdate()
   }
 
   frame_count_++;
-  constexpr std::chrono::milliseconds ten_ms = std::chrono::milliseconds(10);
-  if (render_requested_ || wall_dt > static_cast<uint64_t>(ten_ms.count())) {
+  if (render_requested_ || wall_dt > static_cast<uint64_t>(wall_diff.count())) {
     render_requested_ = 0;
     std::lock_guard<std::mutex> lock(private_->render_mutex_);
     ogre_root_->renderOneFrame();
