@@ -122,8 +122,11 @@ RenderWindowImpl::render()
   // Theoretically you can have one function that does this check but from my
   // experience it seems better to keep things separate and keep the render
   // function as simple as possible.
-  // TODO(Martin-Idel): This should be removed
-  // Ogre::WindowEventUtilities::messagePump();
+
+  // At this point, Ogre::WindowEventUtilities::messagePump() was called previously.
+  // This function would process native platform messages for each render window. However, this
+  // should be done by Qt for us. If the behavior is different, consider reimplementing the
+  // method using Qt onboard features.
   if (ogre_render_window_->isClosed()) {
     RVIZ_RENDERING_LOG_ERROR("in RenderSystemImpl::render() - ogre window is closed");
     return;
