@@ -437,7 +437,7 @@ void VisualizationManager::onUpdate()
   }
 
   frame_count_++;
-  if (render_requested_ || wall_dt > static_cast<uint64_t>(wall_diff.count())) {
+  if (render_requested_ || wall_diff > std::chrono::milliseconds(10)) {
     render_requested_ = 0;
     std::lock_guard<std::mutex> lock(private_->render_mutex_);
     ogre_root_->renderOneFrame();
