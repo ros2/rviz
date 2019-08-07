@@ -42,10 +42,6 @@
 class FrameTransformerTfFixture : public testing::Test
 {
 public:
-  FrameTransformerTfFixture()
-  {
-  }
-
   geometry_msgs::msg::TransformStamped getTransformStamped(
     std::string frame = "frame", std::string fixed_frame = "fixed_frame")
   {
