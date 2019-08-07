@@ -161,7 +161,7 @@ MapDisplay::MapDisplay(rviz_common::DisplayContext * context)
 
 void MapDisplay::onInitialize()
 {
-  RosTopicDisplay::onInitialize();
+  MFDClass::onInitialize();
   // Order of palette textures here must match option indices for color_scheme_property_ above.
   palette_textures_.push_back(makePaletteTexture(makeMapPalette()));
   color_scheme_transparency_.push_back(false);
@@ -184,7 +184,7 @@ void MapDisplay::subscribe()
     return;
   }
 
-  RTDClass::subscribe();
+  MFDClass::subscribe();
 
   try {
     // TODO(wjwwood): update this class to use rclcpp::QoS.
@@ -207,7 +207,7 @@ void MapDisplay::subscribe()
 
 void MapDisplay::unsubscribe()
 {
-  RTDClass::unsubscribe();
+  MFDClass::unsubscribe();
   update_subscription_.reset();
 }
 
@@ -569,7 +569,7 @@ void MapDisplay::fixedFrameChanged()
 
 void MapDisplay::reset()
 {
-  RosTopicDisplay::reset();
+  MFDClass::reset();
   update_messages_received_ = 0;
   clear();
 }
@@ -584,7 +584,7 @@ void MapDisplay::update(float wall_dt, float ros_dt)
 
 void MapDisplay::onEnable()
 {
-  RosTopicDisplay::onEnable();
+  MFDClass::onEnable();
   setStatus(rviz_common::properties::StatusProperty::Warn, "Message", "No map received");
 }
 

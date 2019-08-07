@@ -68,6 +68,11 @@ PointStampedDisplay::PointStampedDisplay()
   setUpProperties();
 }
 
+void PointStampedDisplay::onInitialize()
+{
+  MFDClass::onInitialize();
+}
+
 void PointStampedDisplay::setUpProperties()
 {
   color_property_ = new rviz_common::properties::ColorProperty(
@@ -91,7 +96,7 @@ PointStampedDisplay::~PointStampedDisplay() = default;
 
 void PointStampedDisplay::reset()
 {
-  RTDClass::reset();
+  MFDClass::reset();
   visuals_.clear();
 }
 

@@ -41,7 +41,7 @@
 # include <OgreRenderTargetListener.h>
 # include <OgreSharedPtr.h>
 
-# include "rviz_common/ros_topic_display.hpp"
+# include "rviz_common/message_filter_display.hpp"
 # include "rviz_common/render_panel.hpp"
 # include "rviz_common/properties/bool_property.hpp"
 # include "rviz_common/properties/float_property.hpp"
@@ -69,7 +69,7 @@ namespace displays
  *
  */
 class RVIZ_DEFAULT_PLUGINS_PUBLIC ImageDisplay : public
-  rviz_common::RosTopicDisplay<sensor_msgs::msg::Image>
+  rviz_common::MessageFilterDisplay<sensor_msgs::msg::Image>
 {
   Q_OBJECT
 

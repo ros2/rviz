@@ -155,13 +155,13 @@ PathDisplay::~PathDisplay()
 
 void PathDisplay::onInitialize()
 {
-  RosTopicDisplay::onInitialize();
+  MFDClass::onInitialize();
   updateBufferLength();
 }
 
 void PathDisplay::reset()
 {
-  RosTopicDisplay::reset();
+  MFDClass::reset();
   updateBufferLength();
 }
 

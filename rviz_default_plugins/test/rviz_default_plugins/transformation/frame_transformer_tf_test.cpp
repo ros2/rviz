@@ -42,15 +42,6 @@
 class FrameTransformerTfFixture : public testing::Test
 {
 public:
-  FrameTransformerTfFixture()
-  {
-    auto clock = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);
-    tf_wrapper_ = std::make_shared<rviz_default_plugins::transformation::TFWrapper>();
-    tf_wrapper_->initializeBuffer(clock, false);
-    tf_transformer_ = std::make_unique<rviz_default_plugins::transformation::TFFrameTransformer>(
-      tf_wrapper_);
-  }
-
   geometry_msgs::msg::TransformStamped getTransformStamped(
     std::string frame = "frame", std::string fixed_frame = "fixed_frame")
   {
@@ -67,6 +58,22 @@ public:
     transform_stamped.transform = transform;
 
     return transform_stamped;
+  }
+
+  void SetUp() override
+  {
+    rclcpp::init(0, nullptr);
+    auto clock = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);
+    auto node = std::make_shared<rclcpp::Node>("test_node");
+    tf_wrapper_ = std::make_shared<rviz_default_plugins::transformation::TFWrapper>();
+    tf_wrapper_->initializeBuffer(clock, node, false);
+    tf_transformer_ = std::make_unique<rviz_default_plugins::transformation::TFFrameTransformer>(
+      tf_wrapper_);
+  }
+
+  void TearDown() override
+  {
+    rclcpp::shutdown();
   }
 
   geometry_msgs::msg::PoseStamped getPoseStamped()

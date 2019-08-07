@@ -48,7 +48,7 @@
 # include "sensor_msgs/msg/camera_info.hpp"
 
 # include "rviz_rendering/render_window.hpp"
-# include "rviz_common/ros_topic_display.hpp"
+# include "rviz_common/message_filter_display.hpp"
 # include "rviz_default_plugins/displays/image/ros_image_texture_iface.hpp"
 # include "rviz_default_plugins/visibility_control.hpp"
 #endif
@@ -96,7 +96,7 @@ struct ImageDimensions
  *
  */
 class RVIZ_DEFAULT_PLUGINS_PUBLIC CameraDisplay
-  : public rviz_common::RosTopicDisplay<sensor_msgs::msg::Image>,
+  : public rviz_common::MessageFilterDisplay<sensor_msgs::msg::Image>,
   public Ogre::RenderTargetListener
 {
   Q_OBJECT

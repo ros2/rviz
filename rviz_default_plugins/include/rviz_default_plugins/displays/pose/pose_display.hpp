@@ -35,8 +35,9 @@
 
 #include "geometry_msgs/msg/pose_stamped.hpp"
 
-#include "rviz_common/ros_topic_display.hpp"
+#include "rviz_common/message_filter_display.hpp"
 #include "rviz_common/interaction/forwards.hpp"
+
 #include "rviz_default_plugins/visibility_control.hpp"
 
 namespace rviz_rendering
@@ -67,7 +68,7 @@ typedef std::shared_ptr<PoseDisplaySelectionHandler> PoseDisplaySelectionHandler
 
 /** @brief Accumulates and displays the pose from a geometry_msgs::PoseStamped message. */
 class RVIZ_DEFAULT_PLUGINS_PUBLIC PoseDisplay : public
-  rviz_common::RosTopicDisplay<geometry_msgs::msg::PoseStamped>
+  rviz_common::MessageFilterDisplay<geometry_msgs::msg::PoseStamped>
 {
   Q_OBJECT
 
@@ -85,7 +86,7 @@ public:
   void reset() override;
 
 protected:
-  /** @brief Overridden from RosTopicDisplay to get arrow/axes visibility correct. */
+  /** @brief Overridden from MessageFilterDisplay to get arrow/axes visibility correct. */
   void onEnable() override;
   void onDisable() override;
 

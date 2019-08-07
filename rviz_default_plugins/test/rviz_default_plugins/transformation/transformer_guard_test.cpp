@@ -59,8 +59,9 @@ public:
     display_->initialize(context_.get());
     base_transformer_ = std::make_shared<MockFrameTransformer>();
     auto clock = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);
+    auto node = std::make_shared<rclcpp::Node>("test_node");
     auto tf_wrapper = std::make_shared<rviz_default_plugins::transformation::TFWrapper>();
-    tf_wrapper->initializeBuffer(clock, false);
+    tf_wrapper->initializeBuffer(clock, node, false);
     tf_transformer_ = std::make_shared<rviz_default_plugins::transformation::TFFrameTransformer>(
       tf_wrapper);
 

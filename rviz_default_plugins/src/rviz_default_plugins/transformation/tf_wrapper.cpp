@@ -122,14 +122,18 @@ void TFWrapper::initialize(
   rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
   bool using_dedicated_thread)
 {
-  initializeBuffer(clock, using_dedicated_thread);
+  initializeBuffer(clock, rviz_ros_node.lock()->get_raw_node(), using_dedicated_thread);
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(
     *buffer_, rviz_ros_node.lock()->get_raw_node(), false);
 }
 
-void TFWrapper::initializeBuffer(rclcpp::Clock::SharedPtr clock, bool using_dedicated_thread)
+void TFWrapper::initializeBuffer(
+  rclcpp::Clock::SharedPtr clock, rclcpp::Node::SharedPtr node, bool using_dedicated_thread)
 {
   buffer_ = std::make_shared<tf2_ros::Buffer>(clock);
+  auto timer_interface = std::make_shared<tf2_ros::CreateTimerROS>(
+    node->get_node_base_interface(), node->get_node_timers_interface());
+  buffer_->setCreateTimerInterface(timer_interface);
   buffer_->setUsingDedicatedThread(using_dedicated_thread);
 }
 

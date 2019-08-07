@@ -76,7 +76,7 @@ RangeDisplay::RangeDisplay()
 
 void RangeDisplay::onInitialize()
 {
-  RTDClass::onInitialize();
+  MFDClass::onInitialize();
   updateBufferLength();
   updateColorAndAlpha();
 }
@@ -85,7 +85,7 @@ RangeDisplay::~RangeDisplay() = default;
 
 void RangeDisplay::reset()
 {
-  RTDClass::reset();
+  MFDClass::reset();
   updateBufferLength();
 }
 

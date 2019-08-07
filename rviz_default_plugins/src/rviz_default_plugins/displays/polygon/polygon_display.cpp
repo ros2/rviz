@@ -75,7 +75,7 @@ PolygonDisplay::~PolygonDisplay()
 
 void PolygonDisplay::onInitialize()
 {
-  RTDClass::onInitialize();
+  MFDClass::onInitialize();
 
   manual_object_ = scene_manager_->createManualObject();
   manual_object_->setDynamic(true);
@@ -84,7 +84,7 @@ void PolygonDisplay::onInitialize()
 
 void PolygonDisplay::reset()
 {
-  RTDClass::reset();
+  MFDClass::reset();
   manual_object_->clear();
 }
 

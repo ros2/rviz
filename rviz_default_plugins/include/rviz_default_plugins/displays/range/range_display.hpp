@@ -35,7 +35,8 @@
 
 #include "sensor_msgs/msg/range.hpp"
 
-#include "rviz_common/ros_topic_display.hpp"
+#include "rviz_common/message_filter_display.hpp"
+
 #include "rviz_default_plugins/visibility_control.hpp"
 
 namespace rviz_rendering
@@ -64,7 +65,7 @@ namespace displays
  * \brief Displays a sensor_msgs::Range message as a cone.
  */
 class RVIZ_DEFAULT_PLUGINS_PUBLIC RangeDisplay : public
-  rviz_common::RosTopicDisplay<sensor_msgs::msg::Range>
+  rviz_common::MessageFilterDisplay<sensor_msgs::msg::Range>
 {
   Q_OBJECT
 

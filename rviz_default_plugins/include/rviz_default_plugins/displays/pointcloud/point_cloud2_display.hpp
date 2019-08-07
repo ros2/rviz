@@ -34,7 +34,7 @@
 
 #include "sensor_msgs/msg/point_cloud2.hpp"
 
-#include "rviz_common/ros_topic_display.hpp"
+#include "rviz_common/message_filter_display.hpp"
 #include "rviz_common/properties/queue_size_property.hpp"
 
 #include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
@@ -68,7 +68,7 @@ struct Offsets
  * all being 8 bits.
  */
 class RVIZ_DEFAULT_PLUGINS_PUBLIC PointCloud2Display : public
-  rviz_common::RosTopicDisplay<sensor_msgs::msg::PointCloud2>
+  rviz_common::MessageFilterDisplay<sensor_msgs::msg::PointCloud2>
 {
 public:
   PointCloud2Display();
@@ -96,10 +96,10 @@ public:
   void onDisable() override;
 
 protected:
-  /** @brief Do initialization. Overridden from RosTopicDisplay. */
+  /** @brief Do initialization. Overridden from MessageFilterDisplay. */
   void onInitialize() override;
 
-  /** @brief Process a single message.  Overridden from RosTopicDisplay. */
+  /** @brief Process a single message.  Overridden from MessageFilterDisplay. */
   void processMessage(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) override;
 
 private:

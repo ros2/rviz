@@ -52,7 +52,7 @@ PointCloudDisplay::PointCloudDisplay()
 
 void PointCloudDisplay::onInitialize()
 {
-  RTDClass::onInitialize();
+  MFDClass::onInitialize();
   point_cloud_common_->initialize(context_, scene_node_);
 }
 
@@ -68,13 +68,13 @@ void PointCloudDisplay::update(float wall_dt, float ros_dt)
 
 void PointCloudDisplay::reset()
 {
-  RTDClass::reset();
+  MFDClass::reset();
   point_cloud_common_->reset();
 }
 
 void PointCloudDisplay::onDisable()
 {
-  RosTopicDisplay::onDisable();
+  MFDClass::onDisable();
   point_cloud_common_->onDisable();
 }
 

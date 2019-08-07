@@ -35,10 +35,12 @@
 
 #include "nav_msgs/msg/path.hpp"
 
-#include "rviz_common/ros_topic_display.hpp"
+#include "rviz_common/message_filter_display.hpp"
+
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/axes.hpp"
 #include "rviz_rendering/objects/billboard_line.hpp"
+
 #include "rviz_default_plugins/visibility_control.hpp"
 
 namespace Ogre
@@ -67,7 +69,7 @@ namespace displays
  * \brief Displays a nav_msgs::msg::Path message
  */
 class RVIZ_DEFAULT_PLUGINS_PUBLIC PathDisplay : public
-  rviz_common::RosTopicDisplay<nav_msgs::msg::Path>
+  rviz_common::MessageFilterDisplay<nav_msgs::msg::Path>
 {
   Q_OBJECT
 

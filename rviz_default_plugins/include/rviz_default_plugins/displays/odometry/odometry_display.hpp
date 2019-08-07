@@ -43,7 +43,7 @@
 #endif
 
 #include "rviz_rendering/objects/covariance_visual.hpp"
-#include "rviz_common/ros_topic_display.hpp"
+#include "rviz_common/message_filter_display.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 
 namespace rviz_rendering
@@ -73,7 +73,7 @@ namespace displays
  * \brief Accumulates and displays the pose from a nav_msgs::Odometry message
  */
 class RVIZ_DEFAULT_PLUGINS_PUBLIC OdometryDisplay : public
-  rviz_common::RosTopicDisplay<nav_msgs::msg::Odometry>
+  rviz_common::MessageFilterDisplay<nav_msgs::msg::Odometry>
 {
   Q_OBJECT
 
@@ -102,7 +102,7 @@ public:
   void processMessage(nav_msgs::msg::Odometry::ConstSharedPtr msg) override;
 
 protected:
-  /** @brief Overridden from RosTopicDisplay to get Arrow/Axes visibility correct. */
+  /** @brief Overridden from MessageFilterDisplay to get Arrow/Axes visibility correct. */
   void onEnable() override;
 
 public Q_SLOTS:

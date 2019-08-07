@@ -38,8 +38,9 @@
 
 #include "laser_geometry/laser_geometry.hpp"
 
-#include "rviz_common/ros_topic_display.hpp"
+#include "rviz_common/message_filter_display.hpp"
 #include "rviz_common/transformation/frame_transformer.hpp"
+
 #include "rviz_default_plugins/transformation/transformer_guard.hpp"
 #include "rviz_default_plugins/transformation/tf_wrapper.hpp"
 #include "rviz_default_plugins/transformation/tf_frame_transformer.hpp"
@@ -59,10 +60,8 @@ class PointCloudCommon;
 namespace displays
 {
 /** @brief Visualizes a laser scan, received as a sensor_msgs::LaserScan. */
-// TODO(botteroa-si): This display originally extended the MessageFilterDisplay. Revisit when
-// available
 class RVIZ_DEFAULT_PLUGINS_PUBLIC LaserScanDisplay : public
-  rviz_common::RosTopicDisplay<sensor_msgs::msg::LaserScan>
+  rviz_common::MessageFilterDisplay<sensor_msgs::msg::LaserScan>
 {
   Q_OBJECT
 
@@ -85,6 +84,7 @@ protected:
   std::unique_ptr<PointCloudCommon> point_cloud_common_;
   std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
   std::unique_ptr<laser_geometry::LaserProjection> projector_;
+  rclcpp::Duration filter_tolerance_;
 
 private:
   std::unique_ptr<rviz_default_plugins::transformation::TransformerGuard<

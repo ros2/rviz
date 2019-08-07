@@ -32,6 +32,7 @@
 
 #ifndef Q_MOC_RUN
 
+#include <memory>
 #include <string>
 
 #include <OgreSceneNode.h>
@@ -96,9 +97,18 @@ public:
   {
     rviz_ros_node_ = context_->getRosNodeAbstraction();
     topic_property_->initialize(rviz_ros_node_);
+
+    connect(
+      reinterpret_cast<QObject *>(context_->getTransformationManager()),
+      SIGNAL(transformerChanged(std::shared_ptr<rviz_common::transformation::FrameTransformer>)),
+      this,
+      SLOT(transformerChangedCallback()));
   }
 
 protected Q_SLOTS:
+  virtual void transformerChangedCallback()
+  {
+  }
   virtual void updateTopic() = 0;
   virtual void updateReliability()
   {
