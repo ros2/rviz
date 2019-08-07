@@ -39,10 +39,12 @@
 
 namespace rviz_common
 {
-/// Display subclass using a rclcpp::subscription and tf2_ros::MessageFilter,
-/// templated on the ROS message type.
-/// This class handles subscribing and unsubscribing to a ROS node using the
-/// message filter when the display is enabled or disabled.
+/// Display subclass using a rclcpp::subscription and tf2_ros::MessageFilter.
+/**
+ * This class handles subscribing and unsubscribing to a ROS node using the
+ * message filter when the display is enabled or disabled.
+ * This class is templated on the ROS message type.
+ */
 template<class MessageType>
 class MessageFilterDisplay : public _RosTopicDisplay
 {
@@ -67,9 +69,9 @@ public:
   }
 
   /**
-  * When overriding this method, the onInitialize() method of this superclass has to be called.
-  * Otherwise, the ros node will not be initialized.
-  */
+   * When overriding this method, the onInitialize() method of this superclass has to be called.
+   * Otherwise, the ros node will not be initialized.
+   */
   void onInitialize() override
   {
     _RosTopicDisplay::onInitialize();
@@ -169,9 +171,12 @@ protected:
     reset();
   }
 
-  /// Incoming message callback.  Checks if the message pointer
-  /// is valid, increments messages_received_, then calls
-  /// processMessage().
+  /// Incoming message callback.
+  /**
+   * Checks if the message pointer
+   * is valid, increments messages_received_, then calls
+   * processMessage().
+   */
   void incomingMessage(const typename MessageType::ConstSharedPtr msg)
   {
     if (!msg) {
@@ -188,7 +193,9 @@ protected:
   }
 
   /// Implement this to process the contents of a message.
-  /// This is called by incomingMessage().
+  /**
+   * This is called by incomingMessage().
+   */
   virtual void processMessage(typename MessageType::ConstSharedPtr msg) = 0;
 
   typename std::shared_ptr<message_filters::Subscriber<MessageType>> subscription_;

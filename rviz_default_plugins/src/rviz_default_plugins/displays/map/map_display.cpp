@@ -161,7 +161,7 @@ MapDisplay::MapDisplay(rviz_common::DisplayContext * context)
 
 void MapDisplay::onInitialize()
 {
-  MessageFilterDisplay::onInitialize();
+  MFDClass::onInitialize();
   // Order of palette textures here must match option indices for color_scheme_property_ above.
   palette_textures_.push_back(makePaletteTexture(makeMapPalette()));
   color_scheme_transparency_.push_back(false);
@@ -569,7 +569,7 @@ void MapDisplay::fixedFrameChanged()
 
 void MapDisplay::reset()
 {
-  MessageFilterDisplay::reset();
+  MFDClass::reset();
   update_messages_received_ = 0;
   clear();
 }
@@ -584,7 +584,7 @@ void MapDisplay::update(float wall_dt, float ros_dt)
 
 void MapDisplay::onEnable()
 {
-  MessageFilterDisplay::onEnable();
+  MFDClass::onEnable();
   setStatus(rviz_common::properties::StatusProperty::Warn, "Message", "No map received");
 }
 

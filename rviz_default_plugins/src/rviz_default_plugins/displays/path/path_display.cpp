@@ -155,13 +155,13 @@ PathDisplay::~PathDisplay()
 
 void PathDisplay::onInitialize()
 {
-  MessageFilterDisplay::onInitialize();
+  MFDClass::onInitialize();
   updateBufferLength();
 }
 
 void PathDisplay::reset()
 {
-  MessageFilterDisplay::reset();
+  MFDClass::reset();
   updateBufferLength();
 }
 

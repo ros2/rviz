@@ -111,7 +111,7 @@ void LaserScanDisplay::reset()
 
 void LaserScanDisplay::onDisable()
 {
-  MessageFilterDisplay::onDisable();
+  MFDClass::onDisable();
   point_cloud_common_->onDisable();
 }
 
