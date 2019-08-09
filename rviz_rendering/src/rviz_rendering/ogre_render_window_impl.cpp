@@ -33,17 +33,7 @@
 #include <cstdlib>
 #include <functional>
 
-#ifdef _WIN32
-# pragma warning(push)
-# pragma warning(disable:4996)
-#endif
-
 #include <OgreEntity.h>
-
-#ifdef _WIN32
-# pragma warning(pop)
-#endif
-
 #include <OgreCamera.h>
 #include <OgreGpuProgramManager.h>
 #include <OgreMaterialManager.h>

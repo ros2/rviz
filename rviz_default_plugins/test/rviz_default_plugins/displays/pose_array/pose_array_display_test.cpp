@@ -34,18 +34,9 @@
 #include <memory>
 #include <vector>
 
-#ifdef _WIN32
-#pragma warning(push)
-#pragma warning(disable : 4996)
-#endif
-
 #include <OgreRoot.h>
 #include <OgreEntity.h>
 #include <OgreManualObject.h>
-
-#ifdef _WIN32
-# pragma warning(pop)
-#endif
 
 #include "rviz_common/properties/float_property.hpp"
 

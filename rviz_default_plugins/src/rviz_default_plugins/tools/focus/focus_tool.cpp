@@ -33,9 +33,6 @@
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wunused-parameter"
 # pragma GCC diagnostic ignored "-Wpedantic"
-#else
-#pragma warning(push)
-#pragma warning(disable : 4996)
 #endif
 
 #include <OgreCamera.h>
@@ -45,8 +42,6 @@
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop
-#else
-# pragma warning(pop)
 #endif
 
 #include "rviz_common/display_context.hpp"

@@ -34,14 +34,7 @@
 #include <memory>
 #include <string>
 
-#ifdef _WIN32
-#pragma warning(push)
-#pragma warning(disable : 4996)
 #include <OgreEntity.h>
-#pragma warning(pop)
-#else
-#include <OgreEntity.h>
-#endif
 #include <OgreSimpleRenderable.h>
 
 #include "visualization_msgs/msg/marker.hpp"

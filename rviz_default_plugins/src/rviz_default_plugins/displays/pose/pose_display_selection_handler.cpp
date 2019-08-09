@@ -30,16 +30,7 @@
 
 #include "rviz_default_plugins/displays/pose/pose_display_selection_handler.hpp"
 
-#ifdef _WIN32
-# pragma warning(push)
-# pragma warning(disable:4996)
-#endif
-
 #include <OgreEntity.h>
-
-#ifdef _WIN32
-# pragma warning(pop)
-#endif
 
 #include "rviz_rendering/objects/axes.hpp"
 #include "rviz_rendering/objects/arrow.hpp"

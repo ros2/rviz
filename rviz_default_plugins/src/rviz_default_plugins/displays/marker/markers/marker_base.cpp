@@ -33,18 +33,8 @@
 #include <memory>
 #include <string>
 
-#ifdef _WIN32
-# pragma warning(push)
-# pragma warning(disable:4996)
-#endif
-
 #include <OgreEntity.h>
 #include <OgreSubEntity.h>
-
-#ifdef _WIN32
-# pragma warning(pop)
-#endif
-
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 #include <OgreSharedPtr.h>

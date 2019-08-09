@@ -35,14 +35,7 @@
 #include <tuple>
 #include <vector>
 
-#ifdef _WIN32
-#pragma warning(push)
-#pragma warning(disable : 4996)
 #include <Ogre.h>
-#pragma warning(pop)
-#else
-#include <Ogre.h>
-#endif
 
 #include "rviz_rendering/objects/covariance_visual.hpp"
 #include "test/rviz_rendering/matcher.hpp"
