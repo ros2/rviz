@@ -128,8 +128,6 @@ macro(build_ogre)
   # list(APPEND extra_cmake_args "-DOGRE_BUILD_RENDERSYSTEM_GL3PLUS:BOOL=TRUE")
 
   # These next lines can be used to disable some of the components or plugins for OGRE
-  # list(APPEND extra_cmake_args "-DOGRE_BUILD_COMPONENT_BITES:BOOL=OFF")
-  # list(APPEND extra_cmake_args "-DOGRE_BUILD_COMPONENT_HLMS:BOOL=ON")
   list(APPEND extra_cmake_args "-DOGRE_CONFIG_ENABLE_ZIP:BOOL=ON")
 
   if(BUILDING_FREETYPE_LOCALLY)
@@ -146,6 +144,11 @@ macro(build_ogre)
   else()
     list(APPEND extra_cmake_args "-DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}")
     list(APPEND extra_cmake_args "-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}")
+  endif()
+
+  # We need to patch some pragmas because the OgreVector cannot compile without warnings
+  if(WIN32)
+    set(patch_files patch.exe -p1 -N < ${CMAKE_CURRENT_SOURCE_DIR}/pragma-patch.diff &&)
   endif()
 
   include(ExternalProject)
@@ -176,6 +179,7 @@ macro(build_ogre)
       ${extra_cmake_args}
       -Wno-dev
     PATCH_COMMAND
+      ${patch_files}
       ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/FindFreetype.cmake ${CMAKE_CURRENT_BINARY_DIR}/ogre-master-ca665a6-prefix/src/ogre-master-ca665a6/CMake/Packages/FindFreetype.cmake
   )
 
