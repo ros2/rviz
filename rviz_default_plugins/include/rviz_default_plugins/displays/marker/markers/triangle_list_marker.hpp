@@ -33,18 +33,8 @@
 
 #include <string>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#endif
-
 #include <OgreMaterial.h>
 #include <OgreSharedPtr.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #include "rviz_default_plugins/displays/marker/markers/marker_base.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"

@@ -38,11 +38,6 @@
 #include <string>
 #include <vector>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-
 #include <OgreCamera.h>
 #include <OgreLight.h>
 #include <OgreMaterial.h>
@@ -58,10 +53,6 @@
 #include <QCursor>
 #include <QTimer>
 #include <QWindow>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 // #include "tf/transform_listener.h"
 #include "rclcpp/clock.hpp"

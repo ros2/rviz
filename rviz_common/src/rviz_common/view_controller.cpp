@@ -32,18 +32,9 @@
 
 #include <string>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-
 #include <OgreCamera.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #include <QFont>
 #include <QKeyEvent>

@@ -30,21 +30,12 @@
 
 #include "rviz_default_plugins/view_controllers/fps/fps_view_controller.hpp"
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#endif
 #include <OgreCamera.h>
 #include <OgreQuaternion.h>
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 #include <OgreVector3.h>
 #include <OgreViewport.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #include "rviz_rendering/geometry.hpp"
 #include "rviz_rendering/objects/shape.hpp"

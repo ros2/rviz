@@ -33,22 +33,19 @@
 
 #include "render_system.hpp"
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-# ifdef __clang__
-#  pragma clang diagnostic ignored "-Wkeyword-macro"
-#  pragma clang diagnostic ignored "-Wextra-semi"
-# else
-#  pragma GCC diagnostic ignored "-Wunused-but-set-parameter"
-#  pragma GCC diagnostic ignored "-Wpedantic"
-# endif
+#ifdef __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wkeyword-macro"
+# pragma clang diagnostic ignored "-Wextra-semi"
 #endif
 
 #include <OgreRenderTargetListener.h>
 #include <OgreRenderWindow.h>
 #include <OgreSceneManager.h>
+
+#ifdef __clang__
+# pragma clang diagnostic pop
+#endif
 
 // #include <OgreColourValue.h>
 // #include <OgreRenderTargetListener.h>
@@ -59,10 +56,6 @@
 
 #include <functional>
 #include <vector>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 namespace Ogre
 {

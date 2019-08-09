@@ -31,18 +31,9 @@
 
 #include "rviz_common/frame_position_tracking_view_controller.hpp"
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-
 #include <OgreCamera.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #include "rviz_common/display_context.hpp"
 #include "frame_manager.hpp"
