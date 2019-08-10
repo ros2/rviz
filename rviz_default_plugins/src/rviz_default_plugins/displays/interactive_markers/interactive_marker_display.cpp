@@ -109,6 +109,8 @@ void InteractiveMarkerDisplay::onInitialize()
     return;
   }
 
+  interactive_marker_namespace_property_->initialize(ros_node_abstraction);
+
   auto frame_transformer = context_->getFrameManager()->getTransformer();
   rclcpp::Node::SharedPtr node = ros_node_abstraction->get_raw_node();
   interactive_marker_client_.reset(new interactive_markers::InteractiveMarkerClient(
