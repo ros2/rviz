@@ -33,22 +33,9 @@
 
 #include "render_system.hpp"
 
-#ifdef __clang__
-# pragma clang diagnostic push
-# pragma clang diagnostic ignored "-Wkeyword-macro"
-# pragma clang diagnostic ignored "-Wextra-semi"
-#endif
-
 #include <OgreRenderTargetListener.h>
 #include <OgreRenderWindow.h>
 #include <OgreSceneManager.h>
-
-#ifdef __clang__
-# pragma clang diagnostic pop
-#endif
-
-// #include <OgreColourValue.h>
-// #include <OgreRenderTargetListener.h>
 
 #include <QEvent>
 #include <QObject>
