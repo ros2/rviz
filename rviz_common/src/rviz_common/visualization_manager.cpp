@@ -49,10 +49,10 @@
 #include <OgreSharedPtr.h>
 #include <OgreViewport.h>
 
-#include <QApplication>
-#include <QCursor>
-#include <QTimer>
-#include <QWindow>
+#include <QApplication>  // NOLINT: cpplint cannot handle include order here
+#include <QCursor>  // NOLINT: cpplint cannot handle include order here
+#include <QTimer>  // NOLINT: cpplint cannot handle include order here
+#include <QWindow>  // NOLINT: cpplint cannot handle include order here
 
 // #include "tf/transform_listener.h"
 #include "rclcpp/clock.hpp"

@@ -31,13 +31,10 @@
 #include <gmock/gmock.h>
 
 #include <memory>
-#include <string>
 #include <vector>
 
-#include <Overlay/OgreFont.h>
-#include <Overlay/OgreFontManager.h>
-#include <OgreMovableObject.h>
 #include <OgreVector3.h>
+#include <Overlay/OgreFontManager.h>  // NOLINT: cpplint cannot handle include order here
 
 #include "rviz_rendering/objects/movable_text.hpp"
 #include "test/rviz_rendering/ogre_testing_environment.hpp"

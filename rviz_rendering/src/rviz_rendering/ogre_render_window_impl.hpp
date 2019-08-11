@@ -31,18 +31,18 @@
 #ifndef RVIZ_RENDERING__OGRE_RENDER_WINDOW_IMPL_HPP_
 #define RVIZ_RENDERING__OGRE_RENDER_WINDOW_IMPL_HPP_
 
-#include "render_system.hpp"
+#include <functional>
+#include <vector>
 
 #include <OgreRenderTargetListener.h>
 #include <OgreRenderWindow.h>
 #include <OgreSceneManager.h>
 
-#include <QEvent>
-#include <QObject>
-#include <QWindow>
+#include <QEvent>  // NOLINT: cpplint cannot handle include order here
+#include <QObject>  // NOLINT: cpplint cannot handle include order here
+#include <QWindow>  // NOLINT: cpplint cannot handle include order here
 
-#include <functional>
-#include <vector>
+#include "render_system.hpp"
 
 namespace Ogre
 {

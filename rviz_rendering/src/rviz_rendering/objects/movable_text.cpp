@@ -48,8 +48,6 @@
 #include <sstream>
 #include <string>
 
-#include <Overlay/OgreFont.h>
-#include <Overlay/OgreFontManager.h>
 #include <OgreCamera.h>
 #include <OgreHardwareBufferManager.h>
 #include <OgreMaterialManager.h>
@@ -57,6 +55,8 @@
 #include <OgreRoot.h>
 #include <OgreSceneNode.h>
 #include <OgreVector3.h>
+#include <Overlay/OgreFont.h>  // NOLINT: cpplint cannot handle include order here
+#include <Overlay/OgreFontManager.h>  // NOLINT: cpplint cannot handle include order here
 
 #define POS_TEX_BINDING    0
 #define COLOUR_BINDING     1

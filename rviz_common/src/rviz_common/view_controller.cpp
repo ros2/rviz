@@ -36,8 +36,8 @@
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 
-#include <QFont>
-#include <QKeyEvent>
+#include <QFont>  // NOLINT: cpplint cannot handle include order here
+#include <QKeyEvent>  // NOLINT: cpplint cannot handle include order here
 
 #include "rviz_rendering/render_window.hpp"
 
