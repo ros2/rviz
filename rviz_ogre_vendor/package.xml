@@ -17,7 +17,7 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <build_depend>pkg-config</build_depend>
-
+  <build_depend>git</build_depend>
   <build_depend>libfreetype6-dev</build_depend>
   <build_export_depend>libfreetype6-dev</build_export_depend>
   <exec_depend>libfreetype6</exec_depend>
