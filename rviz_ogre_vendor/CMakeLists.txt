@@ -141,12 +141,6 @@ macro(build_ogre)
       "-DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/zlib_install")
   endif()
 
-  if(WIN32)
-    set(patch_exe patch.exe)
-  else()
-    set(patch_exe patch)
-  endif()
-
   if(DEFINED CMAKE_TOOLCHAIN_FILE)
     list(APPEND extra_cmake_args "-DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}")
   else()
@@ -179,7 +173,7 @@ macro(build_ogre)
       ${extra_cmake_args}
       -Wno-dev
     PATCH_COMMAND
-      ${patch_exe} -p1 -N < ${CMAKE_CURRENT_SOURCE_DIR}/ogre-ca665a6-patch.diff
+      git apply ${CMAKE_CURRENT_SOURCE_DIR}/ogre-ca665a6-patch.diff
   )
 
   if(BUILDING_FREETYPE_LOCALLY)
