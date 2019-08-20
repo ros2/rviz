@@ -341,10 +341,25 @@ void InteractiveMarkerDisplay::statusCallback(
   interactive_markers::InteractiveMarkerClient::Status status,
   const std::string & message)
 {
-  setStatusStd(
-    static_cast<rviz_common::properties::StatusProperty::Level>(status),
-    "Interactive Marker Client",
-    message);
+  rviz_common::properties::StatusProperty::Level rviz_level;
+  switch (status) {
+    case interactive_markers::InteractiveMarkerClient::DEBUG:
+      rviz_level = rviz_common::properties::StatusProperty::Ok;
+      break;
+    case interactive_markers::InteractiveMarkerClient::INFO:
+      rviz_level = rviz_common::properties::StatusProperty::Ok;
+      break;
+    case interactive_markers::InteractiveMarkerClient::WARN:
+      rviz_level = rviz_common::properties::StatusProperty::Warn;
+      break;
+    case interactive_markers::InteractiveMarkerClient::ERROR:
+      rviz_level = rviz_common::properties::StatusProperty::Error;
+      break;
+    default:
+      RVIZ_COMMON_LOG_WARNING("Unexpected status level from interactive marker client received");
+      rviz_level = rviz_common::properties::StatusProperty::Error;
+  }
+  setStatusStd(rviz_level, "Interactive Marker Client", message);
 }
 
 void InteractiveMarkerDisplay::fixedFrameChanged()

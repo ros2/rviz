@@ -293,7 +293,7 @@ void InteractiveMarker::updateReferencePose()
   // if we're frame-locked, we need to find out what the most recent transformation time
   // actually is so we send back correct feedback
   if (frame_locked_) {
-    std::string fixed_frame = context_->getFrameManager()->getFixedFrame();
+    const std::string fixed_frame = context_->getFrameManager()->getFixedFrame();
     if (reference_frame_ == fixed_frame) {
       // if the two frames are identical, we don't need to do anything.
       // This should be rclcpp::Time::now(), but then the computer running
@@ -302,23 +302,27 @@ void InteractiveMarker::updateReferencePose()
     } else {
       // TODO(jacobperron): To get latest common time, call lookupTransform with time=0
       //                    and use the stamp on the resultant transform.
-      reference_time_ = rclcpp::Time();
-      // std::string error;
-      // int retval = context_->getFrameManager()->getTFClient()->getLatestCommonTime(
-      //   reference_frame_, fixed_frame, reference_time_, &error);
-      // if (retval != tf::NO_ERROR) {
-      //   std::ostringstream s;
-      //   s << "Error getting time of latest transform between " << reference_frame_ <<
-      //     " and " << fixed_frame << ": " << error << " (error code: " << retval << ")";
-      //   Q_EMIT statusUpdate(rviz_common::properties::StatusProperty::Error, name_, s.str());
-      //   reference_node_->setVisible(false);
-      //   return;
-      // }
+      try {
+        geometry_msgs::msg::TransformStamped transform =
+          context_->getFrameManager()->getTransformer()->lookupTransform(
+              reference_frame_, fixed_frame, tf2::TimePoint());
+        reference_time_ = transform.header.stamp;
+      } catch (...) {
+        std::ostringstream oss;
+        oss << "Error getting time of latest transform between " << reference_frame_ <<
+          " and " << fixed_frame;
+        Q_EMIT statusUpdate(rviz_common::properties::StatusProperty::Error, name_, oss.str());
+        reference_node_->setVisible(false);
+        return;
+      }
     }
   }
 
   if (!context_->getFrameManager()->getTransform(
-      reference_frame_, rclcpp::Time(), reference_position, reference_orientation))
+      reference_frame_,
+      rclcpp::Time(0, 0u, context_->getClock()->get_clock_type()),
+      reference_position,
+      reference_orientation))
   {
     std::string error;
     context_->getFrameManager()->transformHasProblems(
@@ -334,7 +338,6 @@ void InteractiveMarker::updateReferencePose()
 
   context_->queueRender();
 }
-
 
 void InteractiveMarker::update(float wall_dt)
 {
