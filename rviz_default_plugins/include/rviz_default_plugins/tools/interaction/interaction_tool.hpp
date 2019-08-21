@@ -69,8 +69,8 @@ public:
   void activate() override;
   void deactivate() override;
 
-  virtual int processMouseEvent(rviz_common::ViewportMouseEvent & event);
-  virtual int processKeyEvent(QKeyEvent * event, rviz_common::RenderPanel * panel);
+  virtual int processMouseEvent(rviz_common::ViewportMouseEvent & event) override;
+  virtual int processKeyEvent(QKeyEvent * event, rviz_common::RenderPanel * panel) override;
 
 public Q_SLOTS:
   void hideInactivePropertyChanged() {}
