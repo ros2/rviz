@@ -30,24 +30,9 @@
 
 #include "rviz_default_plugins/view_controllers/follower/third_person_follower_view_controller.hpp"
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#else
-# pragma warning(push)
-# pragma warning(disable : 4996)
-#endif
-
 #include <OgreQuaternion.h>
 #include <OgreSceneNode.h>
 #include <OgreMath.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#else
-# pragma warning(pop)
-#endif
 
 #include "rviz_common/display_context.hpp"
 

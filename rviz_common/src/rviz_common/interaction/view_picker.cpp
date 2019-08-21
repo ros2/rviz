@@ -43,6 +43,7 @@
 #include <OgreSceneNode.h>
 #include <OgreTextureManager.h>
 #include <OgreViewport.h>
+#include <OgreVector3.h>
 
 #include "rviz_common/logging.hpp"
 
@@ -71,7 +72,7 @@ ViewPicker::ViewPicker(DisplayContext * context)
 
 ViewPicker::~ViewPicker()
 {
-  delete[] reinterpret_cast<uint8_t *>(depth_pixel_box_.data);
+  delete[] static_cast<uint8_t *>(depth_pixel_box_.data);
 }
 
 void ViewPicker::initialize()
@@ -167,7 +168,7 @@ void ViewPicker::getPatchDepthImage(
       depth_render_texture_, Dimensions(depth_texture_width_, depth_texture_height_), "Depth"),
     depth_pixel_box_);
 
-  auto data_ptr = reinterpret_cast<uint8_t *>(depth_pixel_box_.data);
+  auto data_ptr = static_cast<uint8_t *>(depth_pixel_box_.data);
 
   for (uint32_t pixel = 0; pixel < num_pixels; ++pixel) {
     uint8_t a = data_ptr[4 * pixel];

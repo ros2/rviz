@@ -36,16 +36,7 @@
 
 #include <Eigen/Dense>  // NOLINT: cpplint cannot handle correct include here
 
-#ifdef __clang__
-# pragma clang diagnostic push
-# pragma clang diagnostic ignored "-Wkeyword-macro"
-#endif
-
 #include <OgreVector3.h>
-
-#ifdef __clang__
-# pragma clang diagnostic pop
-#endif
 #include <OgreColourValue.h>
 
 #include "rviz_rendering/objects/shape.hpp"

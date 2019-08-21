@@ -32,16 +32,7 @@
 #include <memory>
 #include <vector>
 
-#ifdef _WIN32
-# pragma warning(push)
-# pragma warning(disable : 4996)
-#endif
-
 #include <Ogre.h>  // NOLINT
-
-#ifdef _WIN32
-# pragma warning(pop)
-#endif
 
 #include "sensor_msgs/image_encodings.hpp"
 

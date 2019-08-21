@@ -31,20 +31,10 @@
 #include <gmock/gmock.h>
 
 #include <memory>
-#include <string>
 #include <vector>
 
-#ifdef _WIN32
-# pragma warning(push)
-# pragma warning(disable:4251)
-#endif
-#include <OgreFont.h>
-#include <OgreFontManager.h>
-#ifdef _WIN32
-# pragma warning(pop)
-#endif
-#include <OgreMovableObject.h>
 #include <OgreVector3.h>
+#include <Overlay/OgreFontManager.h>  // NOLINT: cpplint cannot handle include order here
 
 #include "rviz_rendering/objects/movable_text.hpp"
 #include "test/rviz_rendering/ogre_testing_environment.hpp"

@@ -34,19 +34,9 @@
 #include <cstddef>
 #include <string>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-# pragma GCC diagnostic ignored "-Wpedantic"
-#endif
-
 #include <OgreSharedPtr.h>
 #include <OgrePrerequisites.h>
 #include <OgreBlendMode.h>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
 
 #include "nav_msgs/msg/occupancy_grid.hpp"
 

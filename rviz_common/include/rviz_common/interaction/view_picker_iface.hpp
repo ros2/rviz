@@ -33,10 +33,11 @@
 
 #include "rviz_common/visibility_control.hpp"
 
+#include <OgreVector3.h>
+
 namespace Ogre
 {
 class Viewport;
-class Vector3;
 }  // namespace Ogre
 
 

@@ -116,7 +116,7 @@ SelectionManager::~SelectionManager()
   delete highlight_rectangle_;
 
   for (auto & pixel_box : pixel_boxes_) {
-    delete[] reinterpret_cast<uint8_t *>(pixel_box.data);
+    delete[] static_cast<uint8_t *>(pixel_box.data);
   }
 
   delete property_model_;
@@ -269,7 +269,7 @@ void SelectionManager::unpackColors(const Ogre::PixelBox & box)
     for (uint32_t x = 0; x < w; ++x) {
       uint32_t pos = (x + y * w) * 4;
 
-      uint32_t pix_val = *reinterpret_cast<uint32_t *>(reinterpret_cast<uint8_t *>(box.data) + pos);
+      uint32_t pix_val = *reinterpret_cast<uint32_t *>(static_cast<uint8_t *>(box.data) + pos);
       uint32_t handle = colorToHandle(box.format, pix_val);
 
       pixel_buffer_.push_back(handle);
@@ -353,15 +353,13 @@ void SelectionManager::setPickData(
     return;
   }
   // Loop over all objects attached to this node.
-  auto obj_it = node->getAttachedObjectIterator();
-  while (obj_it.hasMoreElements()) {
-    auto obj = obj_it.getNext();
-    setPickData(handle, color, obj);
+  auto objects = node->getAttachedObjects();
+  for (const auto & object : objects) {
+    setPickData(handle, color, object);
   }
   // Loop over and recurse into all child nodes.
-  auto child_it = node->getChildIterator();
-  while (child_it.hasMoreElements()) {
-    auto child = dynamic_cast<Ogre::SceneNode *>(child_it.getNext());
+  for (auto child_node : node->getChildren()) {
+    auto child = dynamic_cast<Ogre::SceneNode *>(child_node);
     setPickData(handle, color, child);
   }
 }

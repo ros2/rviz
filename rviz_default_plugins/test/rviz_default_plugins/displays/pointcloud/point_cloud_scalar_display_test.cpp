@@ -32,17 +32,8 @@
 
 #include <memory>
 
-#ifdef _WIN32
-#pragma warning(push)
-#pragma warning(disable : 4996)
-#endif
-
 #include <OgreEntity.h>
 #include <OgreSceneNode.h>
-
-#ifdef _WIN32
-# pragma warning(pop)
-#endif
 
 #include "rviz_default_plugins/displays/pointcloud/point_cloud_scalar_display.hpp"
 #include "sensor_msgs/msg/illuminance.hpp"

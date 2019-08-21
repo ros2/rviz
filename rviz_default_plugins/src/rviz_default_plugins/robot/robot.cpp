@@ -34,17 +34,7 @@
 #include <string>
 #include <vector>
 
-#ifdef _WIN32
-# pragma warning(push)
-# pragma warning(disable:4996)
-#endif
-
 #include <OgreEntity.h>
-
-#ifdef _WIN32
-# pragma warning(pop)
-#endif
-
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 #include <OgreMaterialManager.h>
@@ -140,9 +130,9 @@ Robot::~Robot()
 {
   clear();
 
-  scene_manager_->destroySceneNode(root_visual_node_->getName() );
-  scene_manager_->destroySceneNode(root_collision_node_->getName() );
-  scene_manager_->destroySceneNode(root_other_node_->getName() );
+  scene_manager_->destroySceneNode(root_visual_node_);
+  scene_manager_->destroySceneNode(root_collision_node_);
+  scene_manager_->destroySceneNode(root_other_node_);
   delete link_factory_;
 }
 

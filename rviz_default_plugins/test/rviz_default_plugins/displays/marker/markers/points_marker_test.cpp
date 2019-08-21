@@ -33,14 +33,7 @@
 
 #include <memory>
 
-#ifdef _WIN32
-#pragma warning(push)
-#pragma warning(disable : 4996)
 #include <OgreEntity.h>
-#pragma warning(pop)
-#else
-#include <OgreEntity.h>
-#endif
 
 #include "rviz_default_plugins/displays/marker/markers/points_marker.hpp"
 

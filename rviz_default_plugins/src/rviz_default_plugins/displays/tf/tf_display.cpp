@@ -154,7 +154,7 @@ TFDisplay::~TFDisplay()
 {
   if (initialized()) {
     root_node_->removeAndDestroyAllChildren();
-    scene_manager_->destroySceneNode(root_node_->getName());
+    scene_manager_->destroySceneNode(root_node_);
   }
 }
 
@@ -577,7 +577,7 @@ void TFDisplay::deleteFrame(FrameInfo * frame, bool delete_properties)
   context_->getHandlerManager()->removeHandler(frame->axes_coll_);
   delete frame->parent_arrow_;
   delete frame->name_text_;
-  scene_manager_->destroySceneNode(frame->name_node_->getName());
+  scene_manager_->destroySceneNode(frame->name_node_);
   if (delete_properties) {
     delete frame->enabled_property_;
     delete frame->tree_property_;

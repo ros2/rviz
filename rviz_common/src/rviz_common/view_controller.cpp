@@ -32,21 +32,12 @@
 
 #include <string>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-
 #include <OgreCamera.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
-
-#include <QFont>
-#include <QKeyEvent>
+#include <QFont>  // NOLINT: cpplint cannot handle include order here
+#include <QKeyEvent>  // NOLINT: cpplint cannot handle include order here
 
 #include "rviz_rendering/render_window.hpp"
 

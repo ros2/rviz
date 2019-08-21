@@ -128,8 +128,6 @@ macro(build_ogre)
   # list(APPEND extra_cmake_args "-DOGRE_BUILD_RENDERSYSTEM_GL3PLUS:BOOL=TRUE")
 
   # These next lines can be used to disable some of the components or plugins for OGRE
-  # list(APPEND extra_cmake_args "-DOGRE_BUILD_COMPONENT_BITES:BOOL=OFF")
-  # list(APPEND extra_cmake_args "-DOGRE_BUILD_COMPONENT_HLMS:BOOL=ON")
   list(APPEND extra_cmake_args "-DOGRE_CONFIG_ENABLE_ZIP:BOOL=ON")
 
   if(BUILDING_FREETYPE_LOCALLY)
@@ -138,13 +136,7 @@ macro(build_ogre)
   endif()
   if(BUILDING_ZLIB_LOCALLY)
     list(APPEND extra_cmake_args
-      "-DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/zlib_install")
-  endif()
-
-  if(WIN32)
-    set(patch_exe patch.exe)
-  else()
-    set(patch_exe patch)
+      "-DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/zlib-install")
   endif()
 
   if(DEFINED CMAKE_TOOLCHAIN_FILE)
@@ -154,10 +146,15 @@ macro(build_ogre)
     list(APPEND extra_cmake_args "-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}")
   endif()
 
+  # We need to patch some pragmas because the OgreVector cannot compile without warnings
+  if(WIN32)
+    set(patch_files patch.exe -p1 -N < ${CMAKE_CURRENT_SOURCE_DIR}/pragma-patch.diff &&)
+  endif()
+
   include(ExternalProject)
-  ExternalProject_Add(ogre-master-ca665a6
-    URL https://github.com/OGRECave/ogre/archive/v1.10.12.zip
-    URL_MD5 c8d2626270d576a98cc40ea194fdb39e
+  ExternalProject_Add(ogre-v1.12.1
+    URL https://github.com/OGRECave/ogre/archive/v1.12.1.zip
+    URL_MD5 cdbea4006d223c173e0a93864111b936
     TIMEOUT 1200
     LOG_CONFIGURE ${should_log}
     LOG_BUILD ${should_log}
@@ -176,17 +173,21 @@ macro(build_ogre)
       -DOGRE_BUILD_LIBS_AS_FRAMEWORKS:BOOL=OFF
       -DOGRE_BUILD_COMPONENT_PYTHON:BOOL=FALSE
       -DOGRE_BUILD_COMPONENT_JAVA:BOOL=FALSE
+      -DOGRE_BUILD_COMPONENT_CSHARP:BOOL=FALSE
+      -DOGRE_BUILD_COMPONENT_BITES:BOOL=FALSE
+      -DOGRE_BUILD_COMPONENT_SAMPLES:BOOL=FALSE
       ${extra_cmake_args}
       -Wno-dev
     PATCH_COMMAND
-      ${patch_exe} -p1 -N < ${CMAKE_CURRENT_SOURCE_DIR}/ogre-ca665a6-patch.diff
+      ${patch_files}
+      ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/FindFreetype.cmake ${CMAKE_CURRENT_BINARY_DIR}/ogre-v1.12.1-prefix/src/ogre-v1.12.1/CMake/Packages/FindFreetype.cmake
   )
 
   if(BUILDING_FREETYPE_LOCALLY)
-    add_dependencies(ogre-master-ca665a6 freetype-2.8.1)
+    add_dependencies(ogre-v1.12.1 freetype-2.8.1)
   endif()
   if(BUILDING_ZLIB_LOCALLY)
-    add_dependencies(ogre-master-ca665a6 zlib-1.2.11)
+    add_dependencies(ogre-v1.12.1 zlib-1.2.11)
   endif()
 
   # The external project will install to the build folder, but we'll install that on make install.

@@ -32,13 +32,14 @@
 
 #include <string>
 
+#include <OgreVector3.h>
+
 #include "rviz_common/properties/status_property.hpp"
 
 #include "rviz_default_plugins/visibility_control.hpp"
 
 namespace Ogre
 {
-class Vector3;
 class Quaternion;
 }
 

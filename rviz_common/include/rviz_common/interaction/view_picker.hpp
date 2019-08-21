@@ -39,6 +39,7 @@
 
 #include <OgreMaterialManager.h>
 #include <OgreRenderQueueListener.h>
+#include <OgreVector3.h>
 
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
 

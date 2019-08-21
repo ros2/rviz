@@ -38,11 +38,6 @@
 #include <string>
 #include <vector>
 
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-
 #include <OgreCamera.h>
 #include <OgreLight.h>
 #include <OgreMaterial.h>
@@ -54,14 +49,10 @@
 #include <OgreSharedPtr.h>
 #include <OgreViewport.h>
 
-#include <QApplication>
-#include <QCursor>
-#include <QTimer>
-#include <QWindow>
-
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
+#include <QApplication>  // NOLINT: cpplint cannot handle include order here
+#include <QCursor>  // NOLINT: cpplint cannot handle include order here
+#include <QTimer>  // NOLINT: cpplint cannot handle include order here
+#include <QWindow>  // NOLINT: cpplint cannot handle include order here
 
 // #include "tf/transform_listener.h"
 #include "rclcpp/clock.hpp"

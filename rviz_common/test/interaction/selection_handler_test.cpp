@@ -81,11 +81,10 @@ public:
   void findSimpleRenderablesAttached(
     Ogre::SceneNode * scene_node, std::vector<Ogre::MovableObject *> & objects)
   {
-    auto it = scene_node->getAttachedObjectIterator();
-    while (it.hasMoreElements()) {
-      auto movable_object = it.getNext();
-      if (movable_object->getMovableType() == "SimpleRenderable") {
-        objects.push_back(movable_object);
+    auto attached_objects = scene_node->getAttachedObjects();
+    for (const auto & object : attached_objects) {
+      if (object->getMovableType() == "SimpleRenderable") {
+        objects.push_back(object);
       }
     }
   }
@@ -95,9 +94,7 @@ public:
     std::vector<Ogre::MovableObject *> objects;
     findSimpleRenderablesAttached(scene_node, objects);
 
-    auto child_it = scene_node->getChildIterator();
-    while (child_it.hasMoreElements()) {
-      auto child_node = child_it.getNext();
+    for (const auto child_node : scene_node->getChildren()) {
       auto child_scene_node = dynamic_cast<Ogre::SceneNode *>(child_node);
       findSimpleRenderablesAttached(child_scene_node, objects);
     }

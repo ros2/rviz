@@ -48,25 +48,15 @@
 #include <sstream>
 #include <string>
 
-#ifdef _WIN32
-# pragma warning(push)
-# pragma warning(disable:4251)
-#endif
-
-#include <OgreFont.h>
-
-#ifdef _WIN32
-# pragma warning(pop)
-#endif
-
 #include <OgreCamera.h>
-#include <OgreFontManager.h>
 #include <OgreHardwareBufferManager.h>
 #include <OgreMaterialManager.h>
 #include <OgreQuaternion.h>
 #include <OgreRoot.h>
 #include <OgreSceneNode.h>
 #include <OgreVector3.h>
+#include <Overlay/OgreFont.h>  // NOLINT: cpplint cannot handle include order here
+#include <Overlay/OgreFontManager.h>  // NOLINT: cpplint cannot handle include order here
 
 #define POS_TEX_BINDING    0
 #define COLOUR_BINDING     1

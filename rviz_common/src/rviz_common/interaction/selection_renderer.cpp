@@ -279,7 +279,7 @@ void SelectionRenderer::blitToMemory(
   auto size = Ogre::PixelUtil::getMemorySize(viewport_w, viewport_h, 1, format);
   auto data = new uint8_t[size];
 
-  delete[] reinterpret_cast<uint8_t *>(dst_box.data);
+  delete[] static_cast<uint8_t *>(dst_box.data);
   dst_box = Ogre::PixelBox(viewport_w, viewport_h, 1, format, data);
 
   pixel_buffer->blitToMemory(dst_box, dst_box);
