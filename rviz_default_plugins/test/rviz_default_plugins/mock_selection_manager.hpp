@@ -54,6 +54,7 @@ public:
   MOCK_METHOD5(highlight, void(rviz_rendering::RenderWindow *, int, int, int, int));
   MOCK_METHOD0(removeHighlight, void());
   MOCK_METHOD6(select, void(rviz_rendering::RenderWindow *, int, int, int, int, SelectType));
+  MOCK_METHOD6(pick, void(rviz_rendering::RenderWindow *, int, int, int, int, M_Picked &));
 
   MOCK_METHOD0(update, void());
   MOCK_CONST_METHOD0(getSelection, const M_Picked & ());
