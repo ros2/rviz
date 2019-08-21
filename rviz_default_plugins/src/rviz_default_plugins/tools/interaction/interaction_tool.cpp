@@ -96,7 +96,7 @@ void InteractionTool::updateFocus(const rviz_common::ViewportMouseEvent & event)
     event.y,
     event.x + 1,
     event.y + 1,
-    rviz_common::interaction::SelectionManagerIface::SelectType::Add);
+    rviz_common::interaction::SelectionManagerIface::SelectType::Replace);
 
   const rviz_common::interaction::M_Picked results = selection_manager->getSelection();
 
