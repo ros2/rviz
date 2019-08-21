@@ -104,8 +104,6 @@ public:
 
   static const Ogre::Vector3 default_camera_pose_;
 
-// TODO(wjwwood): reenable these and pass down to rviz_rendering::RenderWindow
-#if 0
   /// Show the given menu as a context menu, positioned based on the current mouse position.
   /**
    * This can be called from any thread.
@@ -114,7 +112,6 @@ public:
 
   /// Return true if the context menu for this panel is visible.
   bool contextMenuVisible();
-#endif
 
   // TODO(wjwwood): this should be moved into rviz_rendering::RenderWindowImpl, I think
   // virtual void sceneManagerDestroyed(Ogre::SceneManager * source);
@@ -177,7 +174,7 @@ protected:
 
 private Q_SLOTS:
   void sendMouseMoveEvent();
-  // void onContextMenuHide();
+  void onContextMenuHide();
 
 private:
   QTimer * fake_mouse_move_event_timer_;

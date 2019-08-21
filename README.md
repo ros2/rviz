@@ -21,8 +21,8 @@ For some displays, the [documentation is updated](docs/FEATURES.md).
 | Illuminance           | 2D Nav Goal   | Top Down Orthographic | Views           |
 | Image                 | Publish Point |
 | Laser Scan            | Initial Pose  |
-| Map                   | 
-| Marker                | 
+| Map                   | Interact      |
+| Marker                |
 | Marker Array          |
 | Odometry              |
 | Point Cloud (1 and 2) |
@@ -43,7 +43,7 @@ These features have not been ported to `ros2/rviz` yet.
 
 | Displays             | Tools        | Panels |
 | -------------------- | ------------ | ------ |
-| Axes                 | Interact     | Time   |
+| Axes                 |              | Time   |
 | DepthCloud           |
 | Effort               |
 | Interactive Marker   |

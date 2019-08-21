@@ -118,6 +118,7 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/robot/robot_element_base_class.hpp
   include/rviz_default_plugins/tools/measure/measure_tool.hpp
   include/rviz_default_plugins/tools/nav_goal/goal_tool.hpp
+  include/rviz_default_plugins/tools/interaction/interaction_tool.hpp
   include/rviz_default_plugins/tools/pose/pose_tool.hpp
   include/rviz_default_plugins/tools/pose_estimate/initial_pose_tool.hpp
   include/rviz_default_plugins/tools/point/point_tool.hpp
@@ -188,6 +189,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/robot/robot_link.cpp
   src/rviz_default_plugins/robot/robot_element_base_class.cpp
   src/rviz_default_plugins/robot/tf_link_updater.cpp
+  src/rviz_default_plugins/tools/interaction/interaction_tool.cpp
   src/rviz_default_plugins/tools/measure/measure_tool.cpp
   src/rviz_default_plugins/tools/focus/focus_tool.cpp
   src/rviz_default_plugins/tools/move/move_tool.cpp
