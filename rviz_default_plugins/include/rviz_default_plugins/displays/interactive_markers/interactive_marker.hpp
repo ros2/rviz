@@ -84,13 +84,13 @@ public:
 
   /// Reset contents to reflect the data from a new message.
   /**
-   * @return true if successful, false otherwise.
+   * \return true if successful, false otherwise.
    */
   bool processMessage(const visualization_msgs::msg::InteractiveMarker & message);
 
   /// Reset contents to reflect the data from a new message.
   /**
-   * @return true if successful, false otherwise.
+   * \return true if successful, false otherwise.
    */
   void processMessage(const visualization_msgs::msg::InteractiveMarkerPose & message);
 
@@ -152,18 +152,18 @@ public:
   void setShowVisualAids(bool show);
 
   /**
-   * @return true if the mouse event was intercepted, false if it was ignored.
+   * \return true if the mouse event was intercepted, false if it was ignored.
    */
   bool handleMouseEvent(rviz_common::ViewportMouseEvent & event, const std::string & control_name);
 
   /// Supports selection and menu events from a 3D cursor.
   /**
-   * @param event A struct holding certain event data (see full description
+   * \param event A struct holding certain event data (see full description
    *   InteractiveMarkerControl::handle3DCursorEvent).
-   * @param cursor_pos The world-relative position of the 3D cursor.
-   * @param cursor_rot The world-relative orientation of the 3D cursor.
-   * @param control_name The name of the child InteractiveMarkerControl calling this function.
-   * @return true if the cursor event was intercepted, false if it was ignored.
+   * \param cursor_pos The world-relative position of the 3D cursor.
+   * \param cursor_rot The world-relative orientation of the 3D cursor.
+   * \param control_name The name of the child InteractiveMarkerControl calling this function.
+   * \return true if the cursor event was intercepted, false if it was ignored.
    */
   bool handle3DCursorEvent(
     rviz_common::ViewportMouseEvent & event,
@@ -173,11 +173,11 @@ public:
 
   /// Pop up the context menu for this marker.
   /**
-   * @param event A struct holding certain event data (see full description on
+   * \param event A struct holding certain event data (see full description on
    *   InteractiveMarkerControl::handle3DCursorEvent).
-   * @param control_name The name of the InteractiveMarkerControl that was selected.
-   * @param three_d_point The world-relative position associated with this mouse-click or cursor event.
-   * @param valid_point true if three_d_point is valid (e.g. if the mouse ray was successfully
+   * \param control_name The name of the InteractiveMarkerControl that was selected.
+   * \param three_d_point The world-relative position associated with this mouse-click or cursor event.
+   * \param valid_point true if three_d_point is valid (e.g. if the mouse ray was successfully
    *   intersected with marker geometry).
    */
   void showMenu(
@@ -198,7 +198,7 @@ public:
   }
 
   /**
-   * @return A shared_ptr to the QMenu owned by this InteractiveMarker.
+   * \return A shared_ptr to the QMenu owned by this InteractiveMarker.
    */
   inline std::shared_ptr<QMenu> getMenu()
   {

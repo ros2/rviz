@@ -134,12 +134,6 @@ private:
    */
   void eraseMarkers(const std::vector<std::string> & names);
 
-  /// Update the display's versions of the markers.
-  // void processMarkerChanges(
-  //   const std::vector<visualization_msgs::msg::InteractiveMarker> * markers = NULL,
-  //   const std::vector<visualization_msgs::msg::InteractiveMarkerPose> * poses = NULL,
-  //   const std::vector<std::string> * erases = NULL);
-
   std::map<std::string, InteractiveMarker::SharedPtr> interactive_markers_map_;
 
   std::string client_id_;
@@ -154,8 +148,6 @@ private:
   std::unique_ptr<interactive_markers::InteractiveMarkerClient> interactive_marker_client_;
 
   rclcpp::Publisher<visualization_msgs::msg::InteractiveMarkerFeedback>::SharedPtr feedback_pub_;
-
-  // std::string topic_ns_;
 };  // class InteractiveMarkerDisplay
 
 }  // namespace displays

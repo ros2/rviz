@@ -89,9 +89,8 @@ class InteractiveMarkerControl
 public:
   /// Constructor.
   /**
-   * Just creates Ogre::SceneNodes and sets some defaults.  To
-   * actually make it look like a
-   * visualization_msgs::msg::InteractiveMarkerControl message specifies,
+   * Creates Ogre::SceneNodes and sets some defaults.
+   * To make it look like a visualization_msgs::msg::InteractiveMarkerControl message,
    * call processMessage().
    */
   InteractiveMarkerControl(
@@ -112,33 +111,32 @@ public:
 
   /// This is the main entry-point for interaction using a 3D cursor.
   /**
-   * <p>
    * The rviz_common::ViewportMouseEvent struct is used to "fake" a mouse event.
    * An event must have the panel, viewport, and type members filled in.
    * The acting_button and buttons_down members can be specified as well, if appropriate.
    * All other fields are currently ignored.
-   * <p>
+   *
    * A sample construction of a "right-button mouse-up" event:
-   * @code
+   *
+   * ```cpp
    * rviz_common::ViewportMouseEvent event;
    * event.panel = context_->getViewManager()->getRenderPanel();
    * event.viewport = context_->getViewManager()->getRenderPanel()->getRenderWindow()->getViewport(0);
    * event.type = QEvent::MouseButtonRelease;
    * event.acting_button = Qt::RightButton;
    * event.buttons_down = Qt::NoButton;
-   * @endcode
-   * <p>
+   * ```
+   *
    * For more examples, see the implementation in the interaction_cursor_rviz package.
    *
-   * @param  event        A struct holding certain event data (see description above).
-   * @param  cursor_pos   The world-relative position of the 3D cursor.
-   * @param  cursor_rot   The world-relative orientation of the 3D cursor.
-   * @param  control_name The name of the child InteractiveMarkerControl calling this function.
+   * \param event A struct holding certain event data (see description above).
+   * \param cursor_pos The world-relative position of the 3D cursor.
+   * \param cursor_orientation The world-relative orientation of the 3D cursor.
    */
   virtual void handle3DCursorEvent(
     rviz_common::ViewportMouseEvent event,
-    const Ogre::Vector3 & cursor_3D_pos,
-    const Ogre::Quaternion & cursor_3D_orientation);
+    const Ogre::Vector3 & cursor_pos,
+    const Ogre::Quaternion & cursor_orientation);
 
   /// Update the pose of the interactive marker being controlled relative to the reference frame.
   /**
@@ -162,7 +160,7 @@ public:
 
   bool getVisible();
 
-  /// Highlight types
+  /// Highlight types.
   enum ControlHighlight
   {
     NO_HIGHLIGHT = 0,
@@ -174,7 +172,7 @@ public:
   void setHighlight(const ControlHighlight & hl);
 
   /**
-   * @return pointer to the parent InteractiveMarker
+   * \return Pointer to the parent InteractiveMarker.
    */
   inline InteractiveMarker * getParent()
   {
@@ -182,7 +180,7 @@ public:
   }
 
   /**
-   * @return the name of this control
+   * \return The name of this control.
    */
   inline const std::string & getName()
   {
@@ -190,7 +188,7 @@ public:
   }
 
   /**
-   * @return the description for this control
+   * \return The description for this control.
    */
   inline const QString & getDescription()
   {
@@ -198,7 +196,8 @@ public:
   }
 
   /**
-   * @return the visualization_msgs::msg::InteractiveMarkerControl interaction_mode for this control
+   * \return The visualization_msgs::msg::InteractiveMarkerControl interaction_mode
+   *   for this control.
    */
   inline int getInteractionMode()
   {
@@ -206,7 +205,8 @@ public:
   }
 
   /**
-   * @return the visualization_msgs::msg::InteractiveMarkerControl orientation_mode for this control
+   * \return The visualization_msgs::msg::InteractiveMarkerControl orientation_mode
+   *   for this control.
    */
   inline int getOrientationMode()
   {
@@ -214,7 +214,7 @@ public:
   }
 
   /**
-   * @brief If true, will show some geometric helpers while dragging
+   * \param show If true, will show some geometric helpers while dragging.
    */
   inline void setShowVisualAids(bool show)
   {
@@ -222,7 +222,7 @@ public:
   }
 
 protected:
-  /// When this is called, we will face the camera
+  /// When this is called, we will face the camera.
   virtual void preFindVisibleObjects(
     Ogre::SceneManager * source,
     Ogre::SceneManager::IlluminationRenderStage irs,
@@ -333,9 +333,9 @@ protected:
 
   /// Find the closest point on target_ray to mouse_ray.
   /**
-   * @param closest_point Contains result point on target_ray if rays are not effectively
+   * \param[out] closest_point Contains result point on target_ray if rays are not effectively
    *   parallel.
-   * @returns false if rays are effectively parallel, true otherwise.
+   * \return false if rays are effectively parallel, true otherwise.
    */
   bool findClosestPoint(
     const Ogre::Ray & target_ray,
@@ -344,7 +344,7 @@ protected:
 
   /// Project a reference position onto the viewport to find screen coordinates in pixels.
   /**
-   * @param screen_pos the resultant screen position, in pixels.
+   * \param[out] screen_pos the resultant screen position, in pixels.
    */
   void worldToScreen(
     const Ogre::Vector3 & pos_rel_reference,

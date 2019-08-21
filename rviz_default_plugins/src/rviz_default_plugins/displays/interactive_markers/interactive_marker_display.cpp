@@ -335,6 +335,7 @@ void InteractiveMarkerDisplay::updateCallback(
 void InteractiveMarkerDisplay::resetCallback()
 {
   eraseAllMarkers();
+  deleteStatusStd("Interactive Marker Client");
 }
 
 void InteractiveMarkerDisplay::statusCallback(
