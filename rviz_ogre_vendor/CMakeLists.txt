@@ -209,9 +209,18 @@ build_ogre()
 
 if(WIN32)
   ament_environment_hooks(env_hook/rviz_ogre_vendor_library_path.bat)
+  set(ENV_VAR_NAME "PATH")
+  set(ENV_VAR_VALUE "opt\\rviz_ogre_vendor\\bin")
 else()
   ament_environment_hooks(env_hook/rviz_ogre_vendor_library_path.sh)
+  if(APPLE)
+    set(ENV_VAR_NAME "DYLD_LIBRARY_PATH")
+  else()
+    set(ENV_VAR_NAME "LD_LIBRARY_PATH")
+  endif()
+  set(ENV_VAR_VALUE "opt/rviz_ogre_vendor/lib")
 endif()
+ament_environment_hooks(env_hook/rviz_ogre_vendor_library_path.dsv.in)
 
 ament_package(
   CONFIG_EXTRAS "rviz_ogre_vendor-extras.cmake.in"
