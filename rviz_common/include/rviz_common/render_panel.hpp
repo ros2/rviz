@@ -104,7 +104,6 @@ public:
 
   static const Ogre::Vector3 default_camera_pose_;
 
-// TODO(wjwwood): reenable these and pass down to rviz_rendering::RenderWindow
   /// Show the given menu as a context menu, positioned based on the current mouse position.
   /**
    * This can be called from any thread.

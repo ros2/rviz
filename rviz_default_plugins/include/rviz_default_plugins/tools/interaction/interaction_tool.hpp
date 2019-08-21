@@ -87,10 +87,7 @@ protected:
     return buttons != 0;
   }
 
-  /**
-   * @brief Check if the mouse has moved from one object to another,
-   * and update focused_object_ if so.
-   */
+  /// Check if the mouse has moved from one object to another and update focus accordingly.
   void updateFocus(const rviz_common::ViewportMouseEvent & event);
 
   void processInteraction(rviz_common::ViewportMouseEvent & event, const bool dragging);
