@@ -64,7 +64,7 @@ bool validateFloats(const visualization_msgs::msg::InteractiveMarker & msg)
 
 InteractiveMarkerDisplay::InteractiveMarkerDisplay()
 {
-  // TODO(jacobperron): Maybe don't use a RosTopicProperty, since it's not really a topic
+  // TODO(jacobperron): Use a special property for filtering by interactive marker namespace.
   interactive_marker_namespace_property_ = new rviz_common::properties::RosTopicProperty(
     "Interactive Markers Namespace",
     "",
@@ -128,10 +128,6 @@ void InteractiveMarkerDisplay::onInitialize()
     std::placeholders::_1,
     std::placeholders::_2));
 
-  // TODO(jacobperron): Get node name from rclcpp
-  // client_id_ = ros::this_node::getName() + "/" + getNameStd();
-  client_id_ = "/" + getNameStd();
-
   subscribe();
 }
 
@@ -160,7 +156,7 @@ void InteractiveMarkerDisplay::namespaceChanged()
 
   if (interactive_marker_namespace_property_->isEmpty()) {
     setStatus(rviz_common::properties::StatusProperty::Error,
-      "Topic",
+      "Interactive Marker Client",
       QString("Error connecting: empty namespace"));
     return;
   }
@@ -173,23 +169,13 @@ void InteractiveMarkerDisplay::subscribe()
   const std::string topic_namespace = interactive_marker_namespace_property_->getTopicStd();
   if (isEnabled() && !topic_namespace.empty()) {
     interactive_marker_client_->connect(topic_namespace);
-
-    // TODO(jacobperron): Move feedback publisher into InteractiveMarkerClient
-    if (auto ros_node_abstraction = context_->getRosNodeAbstraction().lock()) {
-      rclcpp::Node::SharedPtr node = ros_node_abstraction->get_raw_node();
-      std::string feedback_topic = topic_namespace + "/feedback";
-      feedback_pub_ = node->create_publisher<visualization_msgs::msg::InteractiveMarkerFeedback>(
-        feedback_topic, 100);
-    }
   }
 }
 
 void InteractiveMarkerDisplay::publishFeedback(
   visualization_msgs::msg::InteractiveMarkerFeedback & feedback)
 {
-  // interactive_marker_client_->publishFeedback(feedback);
-  feedback.client_id = client_id_;
-  feedback_pub_->publish(feedback);
+  interactive_marker_client_->publishFeedback(feedback);
 }
 
 void InteractiveMarkerDisplay::onStatusUpdate(
@@ -205,7 +191,6 @@ void InteractiveMarkerDisplay::unsubscribe()
   if (interactive_marker_client_) {
     interactive_marker_client_->disconnect();
   }
-  feedback_pub_.reset();
   Display::reset();
 }
 

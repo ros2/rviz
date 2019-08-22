@@ -136,8 +136,6 @@ private:
 
   std::map<std::string, InteractiveMarker::SharedPtr> interactive_markers_map_;
 
-  std::string client_id_;
-
   // Properties
   rviz_common::properties::RosTopicProperty * interactive_marker_namespace_property_;
   rviz_common::properties::BoolProperty * show_descriptions_property_;
@@ -146,8 +144,6 @@ private:
   rviz_common::properties::BoolProperty * enable_transparency_property_;
 
   std::unique_ptr<interactive_markers::InteractiveMarkerClient> interactive_marker_client_;
-
-  rclcpp::Publisher<visualization_msgs::msg::InteractiveMarkerFeedback>::SharedPtr feedback_pub_;
 };  // class InteractiveMarkerDisplay
 
 }  // namespace displays
