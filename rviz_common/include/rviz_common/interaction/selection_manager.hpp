@@ -99,6 +99,15 @@ public:
     int y2,
     SelectType type) override;
 
+  /// Get all objects in a bounding box.
+  void pick(
+    rviz_rendering::RenderWindow * window,
+    int x1,
+    int y1,
+    int x2,
+    int y2,
+    M_Picked & results) override;
+
   void update() override;
 
   const M_Picked & getSelection() const override;
@@ -141,20 +150,6 @@ private Q_SLOTS:
   void updateProperties();
 
 private:
-  /**
-   * \return handles of all objects in the given bounding box
-   * \param single_render_pass only perform one rendering pass
-   *   (point cloud selecting won't work)
-   */
-  void pick(
-    rviz_rendering::RenderWindow * window,
-    int x1,
-    int y1,
-    int x2,
-    int y2,
-    M_Picked & results,
-    bool single_render_pass = false);
-
   /// Set the list of currently selected objects.
   void setSelection(const M_Picked & objs);
 

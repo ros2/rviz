@@ -88,17 +88,16 @@ void InteractionTool::deactivate()
 
 void InteractionTool::updateFocus(const rviz_common::ViewportMouseEvent & event)
 {
+  rviz_common::interaction::M_Picked results;
   const auto selection_manager = context_->getSelectionManager();
-  // Select exactly 1 pixel
-  selection_manager->select(
+  // Pick exactly 1 pixel
+  selection_manager->pick(
     event.panel->getRenderWindow(),
     event.x,
     event.y,
     event.x + 1,
     event.y + 1,
-    rviz_common::interaction::SelectionManagerIface::SelectType::Replace);
-
-  const rviz_common::interaction::M_Picked results = selection_manager->getSelection();
+    results);
 
   last_selection_frame_count_ = context_->getFrameCount();
 

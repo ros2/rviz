@@ -87,6 +87,18 @@ public:
   virtual void select(
     rviz_rendering::RenderWindow * window, int x1, int y1, int x2, int y2, SelectType type) = 0;
 
+  /// Get all objects in a bounding box.
+  /**
+   * \return handles of all objects in the given bounding box
+   */
+  virtual void pick(
+    rviz_rendering::RenderWindow * window,
+    int x1,
+    int y1,
+    int x2,
+    int y2,
+    M_Picked & results) = 0;
+
   virtual void update() = 0;
 
   virtual const M_Picked & getSelection() const = 0;
