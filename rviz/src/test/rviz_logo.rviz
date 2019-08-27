@@ -343,7 +343,7 @@ Visualization Manager:
     - Class: rviz/SetInitialPose
       Topic: initialpose
     - Class: rviz/SetGoal
-      Topic: /move_base_simple/goal
+      Topic: /goal_pose
   Views:
     Current:
       Class: rviz/Orbit

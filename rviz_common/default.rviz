@@ -63,7 +63,7 @@ Visualization Manager:
     - Class: rviz_default_plugins/SetInitialPose
       Topic: /initialpose
     - Class: rviz_default_plugins/SetGoal
-      Topic: /move_base_simple/goal
+      Topic: /goal_pose
     - Class: rviz_default_plugins/PublishPoint
       Single click: true
       Topic: /clicked_point
