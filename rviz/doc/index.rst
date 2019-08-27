@@ -308,7 +308,7 @@ hold down the Alt key.
 
 The f key will focus the camera on the current selection.
 
-2D Nav Goal
+2D Goal Pose
 ...........
 
  * Keyboard shortcut: g

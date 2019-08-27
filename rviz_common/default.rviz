@@ -13,7 +13,7 @@ Panels:
   - Class: rviz_common/Tool Properties
     Expanded:
   #     - /2D Pose Estimate1
-      - /2D Nav Goal1
+      - /2D Goal Pose1
       - /Publish Point1
     Name: Tool Properties
     Splitter Ratio: 0.588679

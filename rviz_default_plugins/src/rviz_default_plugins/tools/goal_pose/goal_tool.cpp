@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz_default_plugins/tools/nav_goal/goal_tool.hpp"
+#include "rviz_default_plugins/tools/goal_pose/goal_tool.hpp"
 
 #include <string>
 
@@ -49,7 +49,7 @@ GoalTool::GoalTool()
   shortcut_key_ = 'g';
 
   topic_property_ = new rviz_common::properties::StringProperty("Topic", "goal",
-      "The topic on which to publish navigation goals.",
+      "The topic on which to publish goals.",
       getPropertyContainer(), SLOT(updateTopic()), this);
 }
 
@@ -58,7 +58,7 @@ GoalTool::~GoalTool() = default;
 void GoalTool::onInitialize()
 {
   PoseTool::onInitialize();
-  setName("2D Nav Goal");
+  setName("2D Goal Pose");
   updateTopic();
 }
 

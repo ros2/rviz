@@ -18,7 +18,7 @@ For some displays, the [documentation is updated](docs/FEATURES.md).
 | Fluid Pressure        | Focus Camera  | XY Orbit              | Help            |
 | Grid                  | Measure       | First Person          | Selections      |
 | Grid Cells            | Select        | Third Person Follower | Tool Properties | 
-| Illuminance           | 2D Nav Goal   | Top Down Orthographic | Views           |
+| Illuminance           | 2D Goal Pose  | Top Down Orthographic | Views           |
 | Image                 | Publish Point |
 | Laser Scan            | Initial Pose  |
 | Map                   | Interact      |
