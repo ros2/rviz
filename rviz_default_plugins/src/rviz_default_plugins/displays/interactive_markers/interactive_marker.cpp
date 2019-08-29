@@ -300,12 +300,12 @@ void InteractiveMarker::updateReferencePose()
       // RViz has to be time-synced with the server
       reference_time_ = rclcpp::Time();
     } else {
-      // TODO(jacobperron): To get latest common time, call lookupTransform with time=0
-      //                    and use the stamp on the resultant transform.
+      // To get latest common time, call lookupTransform with time=0 and use the stamp on the
+      // resultant transform.
       try {
         geometry_msgs::msg::TransformStamped transform =
           context_->getFrameManager()->getTransformer()->lookupTransform(
-              reference_frame_, fixed_frame, tf2::TimePoint());
+          reference_frame_, fixed_frame, tf2::TimePoint());
         reference_time_ = transform.header.stamp;
       } catch (...) {
         std::ostringstream oss;
