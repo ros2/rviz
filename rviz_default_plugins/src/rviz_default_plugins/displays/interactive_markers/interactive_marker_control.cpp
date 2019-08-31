@@ -68,9 +68,9 @@
 #include "rviz_default_plugins/displays/interactive_markers/interactive_marker.hpp"
 #include "rviz_default_plugins/displays/interactive_markers/interactive_marker_control.hpp"
 
-#define NO_HIGHLIGHT_VALUE 0.0
-#define ACTIVE_HIGHLIGHT_VALUE 0.5
-#define HOVER_HIGHLIGHT_VALUE 0.3
+static const float kNoHighlightValue = 0.0f;
+static const float kActiveHightlightValue = 0.5f;
+static const float kHoverHighlightValue = 0.3f;
 
 namespace rviz_default_plugins
 {
@@ -390,7 +390,7 @@ void InteractiveMarkerControl::enableInteraction(bool enable)
   interaction_enabled_ = enable;
   setVisible(visible_);
   if (!enable) {
-    setHighlight(NO_HIGHLIGHT_VALUE);
+    setHighlight(kNoHighlightValue);
   }
 }
 
@@ -1045,13 +1045,13 @@ void InteractiveMarkerControl::moveRotate3D(
 void InteractiveMarkerControl::setHighlight(const ControlHighlight & hl)
 {
   if (hl == NO_HIGHLIGHT) {
-    setHighlight(NO_HIGHLIGHT_VALUE);
+    setHighlight(kNoHighlightValue);
   }
   if (hl == HOVER_HIGHLIGHT) {
-    setHighlight(HOVER_HIGHLIGHT_VALUE);
+    setHighlight(kHoverHighlightValue);
   }
   if (hl == ACTIVE_HIGHLIGHT) {
-    setHighlight(ACTIVE_HIGHLIGHT_VALUE);
+    setHighlight(kActiveHightlightValue);
   }
 }
 
@@ -1180,9 +1180,9 @@ void InteractiveMarkerControl::handle3DCursorEvent(
   }
 
   if (event.leftDown()) {
-    setHighlight(ACTIVE_HIGHLIGHT_VALUE);
+    setHighlight(kActiveHightlightValue);
   } else if (event.leftUp()) {
-    setHighlight(HOVER_HIGHLIGHT_VALUE);
+    setHighlight(kHoverHighlightValue);
   }
 
   if (!parent_->handle3DCursorEvent(event, cursor_3D_pos, cursor_3D_orientation, name_)) {
@@ -1238,7 +1238,7 @@ void InteractiveMarkerControl::handleMouseEvent(rviz_common::ViewportMouseEvent 
   if (event.type == QEvent::FocusIn) {
     has_focus_ = true;
     std::set<Ogre::Pass *>::iterator it;
-    setHighlight(HOVER_HIGHLIGHT_VALUE);
+    setHighlight(kHoverHighlightValue);
     context_->setStatus(status_msg_);
   } else if (event.type == QEvent::FocusOut) {
     stopDragging();
@@ -1322,9 +1322,9 @@ void InteractiveMarkerControl::handleMouseEvent(rviz_common::ViewportMouseEvent 
   }
 
   if (event.leftDown()) {
-    setHighlight(ACTIVE_HIGHLIGHT_VALUE);
+    setHighlight(kActiveHightlightValue);
   } else if (event.leftUp()) {
-    setHighlight(HOVER_HIGHLIGHT_VALUE);
+    setHighlight(kHoverHighlightValue);
     stopDragging();
   }
 }

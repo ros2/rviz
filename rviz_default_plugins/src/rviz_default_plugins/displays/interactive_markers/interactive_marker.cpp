@@ -74,7 +74,7 @@ InteractiveMarker::InteractiveMarker(
   show_visual_aids_(false)
 {
   reference_node_ = scene_node->createChildSceneNode();
-  axes_ = new rviz_rendering::Axes(context->getSceneManager(), reference_node_, 1, 0.05);
+  axes_ = new rviz_rendering::Axes(context->getSceneManager(), reference_node_, 1.0f, 0.05f);
 }
 
 InteractiveMarker::~InteractiveMarker()
