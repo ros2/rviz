@@ -39,13 +39,9 @@ find_package(rviz_assimp_vendor REQUIRED)
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
 find_package(ament_index_cpp REQUIRED)
+find_package(eigen3_cmake_module REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(resource_retriever REQUIRED)
-
-# Handle FindEigen3 module's differing definitions
-if(NOT DEFINED EIGEN3_INCLUDE_DIRS AND DEFINED EIGEN3_INCLUDE_DIR)
-  set(EIGEN3_INCLUDE_DIRS ${EIGEN3_INCLUDE_DIR})
-endif()
 
 # TODO(wjwwood): this block is to setup the windeployqt tool, could be removed later.
 if(Qt5_FOUND AND WIN32 AND TARGET Qt5::qmake AND NOT TARGET Qt5::windeployqt)
@@ -119,7 +115,7 @@ target_include_directories(rviz_rendering
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
     ${OGRE_INCLUDE_DIRS}
-    ${EIGEN3_INCLUDE_DIRS}
+    ${Eigen3_INCLUDE_DIRS}
 )
 # Causes the visibility macros to use dllexport rather than dllimport,
 # which is appropriate when building the dll but not consuming it.
@@ -131,6 +127,7 @@ ament_target_dependencies(rviz_rendering
 )
 ament_export_dependencies(
   rviz_ogre_vendor
+  eigen3_cmake_module
   Eigen3
   resource_retriever
   ament_index_cpp)
