@@ -30,12 +30,11 @@
 
 #include "rviz_default_plugins/displays/map/map_display.hpp"
 
+#include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include <OgreManualObject.h>
-#include <OgreMaterialManager.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 #include <OgreTextureManager.h>
@@ -44,10 +43,8 @@
 
 #include "rclcpp/time.hpp"
 
-#include "rviz_rendering/custom_parameter_indices.hpp"
 #include "rviz_rendering/material_manager.hpp"
 #include "rviz_rendering/objects/grid.hpp"
-#include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/logging.hpp"
 #include "rviz_common/msg_conversions.hpp"
 #include "rviz_common/properties/enum_property.hpp"

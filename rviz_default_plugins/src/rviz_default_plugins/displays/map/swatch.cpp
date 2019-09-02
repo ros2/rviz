@@ -30,7 +30,6 @@
 
 #include "rviz_default_plugins/displays/map/swatch.hpp"
 
-#include <algorithm>
 #include <string>
 #include <vector>
 
@@ -39,9 +38,9 @@
 #include <OgreRenderable.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
-#include <OgreTextureManager.h>
-#include <OgreTechnique.h>
 #include <OgreSharedPtr.h>
+#include <OgreTechnique.h>
+#include <OgreTextureManager.h>
 
 #include "rviz_rendering/custom_parameter_indices.hpp"
 
