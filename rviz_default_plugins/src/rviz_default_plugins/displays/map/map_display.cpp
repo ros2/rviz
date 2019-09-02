@@ -500,6 +500,7 @@ void MapDisplay::updateSwatches() const
     tex_unit->setTextureName(swatch->getTextureName());
     tex_unit->setTextureFiltering(Ogre::TFO_NONE);
     swatch->setVisible(true);
+    swatch->resetOldTexture();
   }
 }
 
@@ -515,7 +516,7 @@ void MapDisplay::updatePalette()
     } else {
       palette_tex_unit = pass->createTextureUnitState();
     }
-    palette_tex_unit->setTextureName(palette_textures_[palette_index]->getName());
+    palette_tex_unit->setTexture(palette_textures_[palette_index]);
     palette_tex_unit->setTextureFiltering(Ogre::TFO_NONE);
   }
 
