@@ -544,10 +544,10 @@ void MapDisplay::transformMap()
     scene_node_->setVisible(false);
   } else {
     setTransformOk();
-  }
 
-  scene_node_->setPosition(position);
-  scene_node_->setOrientation(orientation);
+    scene_node_->setPosition(position);
+    scene_node_->setOrientation(orientation);
+  }
 }
 
 void MapDisplay::fixedFrameChanged()
