@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2012, Willow Garage, Inc.
  * Copyright (c) 2018, Bosch Software Innovations GmbH.
  * All rights reserved.
  *
@@ -28,68 +28,54 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz_default_plugins/tools/nav_goal/goal_tool.hpp"
+#ifndef RVIZ_DEFAULT_PLUGINS__TOOLS__GOAL_POSE__GOAL_TOOL_HPP_
+#define RVIZ_DEFAULT_PLUGINS__TOOLS__GOAL_POSE__GOAL_TOOL_HPP_
 
-#include <string>
+#include <QObject>
 
 #include "geometry_msgs/msg/pose_stamped.hpp"
+#include "rclcpp/node.hpp"
 
-#include "rviz_common/display_context.hpp"
-#include "rviz_common/logging.hpp"
-#include "rviz_common/properties/string_property.hpp"
+#include "rviz_default_plugins/tools/pose/pose_tool.hpp"
+#include "rviz_default_plugins/visibility_control.hpp"
+
+namespace rviz_common
+{
+class DisplayContext;
+namespace properties
+{
+class StringProperty;
+}  // namespace properties
+}  // namespace rviz_common
 
 namespace rviz_default_plugins
 {
 namespace tools
 {
-
-GoalTool::GoalTool()
-: rviz_default_plugins::tools::PoseTool()
+class RVIZ_DEFAULT_PLUGINS_PUBLIC GoalTool : public PoseTool
 {
-  shortcut_key_ = 'g';
+  Q_OBJECT
 
-  topic_property_ = new rviz_common::properties::StringProperty("Topic", "goal",
-      "The topic on which to publish navigation goals.",
-      getPropertyContainer(), SLOT(updateTopic()), this);
-}
+public:
+  GoalTool();
 
-GoalTool::~GoalTool() = default;
+  ~GoalTool() override;
 
-void GoalTool::onInitialize()
-{
-  PoseTool::onInitialize();
-  setName("2D Nav Goal");
-  updateTopic();
-}
+  void onInitialize() override;
 
-void GoalTool::updateTopic()
-{
-  // TODO(anhosi, wjwwood): replace with abstraction for publishers once available
-  publisher_ = context_->getRosNodeAbstraction().lock()->get_raw_node()->
-    template create_publisher<geometry_msgs::msg::PoseStamped>(topic_property_->getStdString(), 10);
-}
+protected:
+  void onPoseSet(double x, double y, double theta) override;
 
-void GoalTool::onPoseSet(double x, double y, double theta)
-{
-  std::string fixed_frame = context_->getFixedFrame().toStdString();
+private Q_SLOTS:
+  void updateTopic();
 
-  geometry_msgs::msg::PoseStamped goal;
-  goal.header.stamp = rclcpp::Clock().now();
-  goal.header.frame_id = fixed_frame;
+private:
+  rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr publisher_;
 
-  goal.pose.position.x = x;
-  goal.pose.position.y = y;
-  goal.pose.position.z = 0.0;
-
-  goal.pose.orientation = orientationAroundZAxis(theta);
-
-  logPose("goal", goal.pose.position, goal.pose.orientation, theta, fixed_frame);
-
-  publisher_->publish(goal);
-}
+  rviz_common::properties::StringProperty * topic_property_;
+};
 
 }  // namespace tools
 }  // namespace rviz_default_plugins
 
-#include <pluginlib/class_list_macros.hpp>  // NOLINT
-PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::tools::GoalTool, rviz_common::Tool)
+#endif  // RVIZ_DEFAULT_PLUGINS__TOOLS__GOAL_POSE__GOAL_TOOL_HPP_

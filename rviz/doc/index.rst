@@ -308,12 +308,12 @@ hold down the Alt key.
 
 The f key will focus the camera on the current selection.
 
-2D Nav Goal
+2D Goal Pose
 ...........
 
  * Keyboard shortcut: g
 
-This tool lets you set a goal sent on the "/move_base_simple/goal" ROS
+This tool lets you set a goal sent on the "/goal_pose" ROS
 topic. Click on a location on the ground plane and drag to select the
 orientation.  The output topic can be changed in the "Tool Properties" panel.
 
