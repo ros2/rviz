@@ -93,6 +93,7 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/interactive_markers/interactive_marker.hpp
   include/rviz_default_plugins/displays/interactive_markers/interactive_marker_control.hpp
   include/rviz_default_plugins/displays/interactive_markers/interactive_marker_display.hpp
+  include/rviz_default_plugins/displays/interactive_markers/interactive_marker_namespace_property.hpp
   include/rviz_default_plugins/displays/path/path_display.hpp
   include/rviz_default_plugins/displays/point/point_stamped_display.hpp
   include/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp
@@ -146,6 +147,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/interactive_markers/interactive_marker_control.cpp
   src/rviz_default_plugins/displays/interactive_markers/interactive_marker.cpp
   src/rviz_default_plugins/displays/interactive_markers/interactive_marker_display.cpp
+  src/rviz_default_plugins/displays/interactive_markers/interactive_marker_namespace_property.cpp
   src/rviz_default_plugins/displays/laser_scan/laser_scan_display.cpp
   src/rviz_default_plugins/displays/map/map_display.cpp
   src/rviz_default_plugins/displays/map/palette_builder.cpp
@@ -721,6 +723,15 @@ if(BUILD_TESTING)
     target_link_libraries(image_display_visual_test
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
+  endif()
+
+  ament_add_gtest(interactive_marker_namespace_property_test
+    test/rviz_default_plugins/displays/interactive_markers/interactive_marker_namespace_property_test.cpp)
+  if(TARGET interactive_marker_namespace_property_test)
+    target_include_directories(interactive_marker_namespace_property_test PUBLIC
+      ${TEST_INCLUDE_DIRS})
+    target_link_libraries(interactive_marker_namespace_property_test
+      ${TEST_LINK_LIBRARIES})
   endif()
 
   ament_add_gtest(laser_scan_display_visual_test

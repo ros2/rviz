@@ -53,11 +53,12 @@ namespace rviz_common
 {
 class BoolProperty;
 class Object;
-class RosTopicProperty;
 }
 
 namespace rviz_default_plugins
 {
+class InteractiveMarkerNamespaceProperty;
+
 namespace displays
 {
 class MarkerBase;
@@ -137,7 +138,7 @@ private:
   std::map<std::string, InteractiveMarker::SharedPtr> interactive_markers_map_;
 
   // Properties
-  rviz_common::properties::RosTopicProperty * interactive_marker_namespace_property_;
+  InteractiveMarkerNamespaceProperty * interactive_marker_namespace_property_;
   rviz_common::properties::BoolProperty * show_descriptions_property_;
   rviz_common::properties::BoolProperty * show_axes_property_;
   rviz_common::properties::BoolProperty * show_visual_aids_property_;

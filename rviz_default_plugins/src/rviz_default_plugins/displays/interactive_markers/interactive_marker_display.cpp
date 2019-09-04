@@ -34,9 +34,11 @@
 #include <vector>
 
 #include "rviz_common/properties/bool_property.hpp"
-#include "rviz_common/properties/ros_topic_property.hpp"
 #include "rviz_common/validate_floats.hpp"
 #include "rviz_common/display_context.hpp"
+
+#include \
+  "rviz_default_plugins/displays/interactive_markers/interactive_marker_namespace_property.hpp"
 
 #include "rviz_default_plugins/displays/interactive_markers/interactive_marker_display.hpp"
 
@@ -64,10 +66,8 @@ bool validateFloats(const visualization_msgs::msg::InteractiveMarker & msg)
 
 InteractiveMarkerDisplay::InteractiveMarkerDisplay()
 {
-  // TODO(jacobperron): Use a special property for filtering by interactive marker namespace.
-  interactive_marker_namespace_property_ = new rviz_common::properties::RosTopicProperty(
+  interactive_marker_namespace_property_ = new InteractiveMarkerNamespaceProperty(
     "Interactive Markers Namespace",
-    "",
     "",
     "Namespace of the interactive marker server to connect to.",
     this,
@@ -166,7 +166,7 @@ void InteractiveMarkerDisplay::namespaceChanged()
 
 void InteractiveMarkerDisplay::subscribe()
 {
-  const std::string topic_namespace = interactive_marker_namespace_property_->getTopicStd();
+  const std::string topic_namespace = interactive_marker_namespace_property_->getNamespaceStd();
   if (isEnabled() && !topic_namespace.empty()) {
     interactive_marker_client_->connect(topic_namespace);
   }
