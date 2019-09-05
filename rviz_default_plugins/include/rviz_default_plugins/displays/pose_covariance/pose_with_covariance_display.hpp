@@ -27,37 +27,52 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef POSE_WITH_COVARIANCE_DISPLAY_H
-#define POSE_WITH_COVARIANCE_DISPLAY_H
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__POSE_COVARIANCE__POSE_WITH_COVARIANCE_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__POSE_COVARIANCE__POSE_WITH_COVARIANCE_DISPLAY_HPP_
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
-#include <geometry_msgs/PoseWithCovarianceStamped.h>
+#include "geometry_msgs/msg/pose_with_covariance_stamped.hpp"
 
-#include "rviz/message_filter_display.h"
-#include "rviz/selection/forwards.h"
+#include "rviz_common/message_filter_display.hpp"
+#include "rviz_common/interaction/forwards.hpp"
 
-namespace rviz
+namespace rviz_rendering
 {
-
 class Arrow;
 class Axes;
+class Shape;
+class CovarianceVisual;
+}  // namespace rviz_rendering
+
+namespace rviz_common
+{
+namespace properties
+{
 class ColorProperty;
 class EnumProperty;
 class FloatProperty;
 class BoolProperty;
-class Shape;
-
-class CovarianceVisual;
 class CovarianceProperty;
+}  // namespace properties
+}  // namespace rviz_common
+
+namespace rviz_default_plugins
+{
+
+namespace displays
+{
 
 class PoseWithCovarianceDisplaySelectionHandler;
-typedef boost::shared_ptr<PoseWithCovarianceDisplaySelectionHandler> PoseWithCovarianceDisplaySelectionHandlerPtr;
+typedef std::shared_ptr<PoseWithCovarianceDisplaySelectionHandler>
+  PoseWithCovarianceDisplaySelectionHandlerPtr;
 
 /** @brief Displays the pose from a geometry_msgs::PoseWithCovarianceStamped message. */
-class PoseWithCovarianceDisplay: public rviz::MessageFilterDisplay<geometry_msgs::PoseWithCovarianceStamped>
+class PoseWithCovarianceDisplay
+  : public rviz_common::MessageFilterDisplay<geometry_msgs::msg::PoseWithCovarianceStamped>
 {
-Q_OBJECT
+  Q_OBJECT
+
 public:
   enum Shape
   {
@@ -81,36 +96,39 @@ private Q_SLOTS:
   void updateShapeChoice();
   void updateAxisGeometry();
   void updateArrowGeometry();
+  void updateCovariance();
 
 private:
   void clear();
 
-  virtual void processMessage( const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& message );
+  void processMessage(geometry_msgs::msg::PoseWithCovarianceStamped::ConstSharedPtr message)
+  override;
 
-  rviz::Arrow* arrow_;
-  rviz::Axes* axes_;
-  boost::shared_ptr<CovarianceVisual> covariance_;
+  std::shared_ptr<rviz_rendering::Arrow> arrow_;
+  std::shared_ptr<rviz_rendering::Axes> axes_;
+  std::shared_ptr<rviz_rendering::CovarianceVisual> covariance_;
   bool pose_valid_;
   PoseWithCovarianceDisplaySelectionHandlerPtr coll_handler_;
 
-  rviz::EnumProperty* shape_property_;
+  rviz_common::properties::EnumProperty * shape_property_;
 
-  rviz::ColorProperty* color_property_;
-  rviz::FloatProperty* alpha_property_;
+  rviz_common::properties::ColorProperty * color_property_;
+  rviz_common::properties::FloatProperty * alpha_property_;
 
-  rviz::FloatProperty* head_radius_property_;
-  rviz::FloatProperty* head_length_property_;
-  rviz::FloatProperty* shaft_radius_property_;
-  rviz::FloatProperty* shaft_length_property_;
+  rviz_common::properties::FloatProperty * head_radius_property_;
+  rviz_common::properties::FloatProperty * head_length_property_;
+  rviz_common::properties::FloatProperty * shaft_radius_property_;
+  rviz_common::properties::FloatProperty * shaft_length_property_;
 
-  rviz::FloatProperty* axes_length_property_;
-  rviz::FloatProperty* axes_radius_property_;
+  rviz_common::properties::FloatProperty * axes_length_property_;
+  rviz_common::properties::FloatProperty * axes_radius_property_;
 
-  CovarianceProperty* covariance_property_;
+  rviz_common::properties::CovarianceProperty * covariance_property_;
 
   friend class PoseWithCovarianceDisplaySelectionHandler;
 };
 
-} // namespace rviz
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
-#endif // POSE_WITH_COVARIANCE_DISPLAY_H
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__POSE_COVARIANCE__POSE_WITH_COVARIANCE_DISPLAY_HPP_

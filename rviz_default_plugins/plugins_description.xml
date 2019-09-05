@@ -156,6 +156,17 @@
   </class>
 
   <class
+    name="rviz_default_plugins/PoseWithCovariance"
+    type="rviz_default_plugins::displays::PoseWithCovarianceDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays a geometry_msgs::msg::PoseWithCovarianceStamped message.  &lt;a href="http://www.ros.org/wiki/rviz/DisplayTypes/PoseWithCovariance"&gt;More Information&lt;/a&gt;.
+    </description>
+    <message_type>geometry_msgs/msg/PoseWithCovarianceStamped</message_type>
+  </class>
+
+  <class
     name="rviz_default_plugins/Range"
     type="rviz_default_plugins::displays::RangeDisplay"
     base_class_type="rviz_common::Display"
