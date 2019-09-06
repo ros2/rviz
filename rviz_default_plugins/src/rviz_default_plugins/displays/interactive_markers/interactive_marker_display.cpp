@@ -340,9 +340,7 @@ void InteractiveMarkerDisplay::fixedFrameChanged()
   if (interactive_marker_client_) {
     interactive_marker_client_->setTargetFrame(fixed_frame_.toStdString());
   }
-  // TODO(jacobperron): Do we really need a full reset (subscribe/unsubscribe)
-  //                    or can we just reset the screen?
-  reset();
+  Display::reset();
 }
 
 void InteractiveMarkerDisplay::reset()

@@ -76,7 +76,7 @@ void InteractiveMarkerNamespaceProperty::fillNamespaceList()
     return;
   }
 
-  // TODO(jacobperron): Only get server server names when/if an rclcpp API becomes available
+  // TODO(jacobperron): Only get service server names when/if an rclcpp API becomes available
   std::map<std::string, std::vector<std::string>> services =
     rviz_ros_node_ptr->get_raw_node()->get_service_names_and_types();
 
