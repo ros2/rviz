@@ -1,6 +1,6 @@
 <package format="2">
   <name>rviz_common</name>
-  <version>6.1.3</version>
+  <version>6.1.4</version>
   <description>
     Common rviz API, used by rviz plugins and applications.
   </description>
