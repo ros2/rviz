@@ -81,8 +81,10 @@ typedef std::set<Ogre::MaterialPtr> S_MaterialPtr;
 class RVIZ_DEFAULT_PLUGINS_PUBLIC MarkerBase
 {
 public:
-  typedef visualization_msgs::msg::Marker Marker;
-  typedef visualization_msgs::msg::Marker::ConstSharedPtr MarkerConstSharedPtr;
+  using Marker = visualization_msgs::msg::Marker;
+  using MarkerConstSharedPtr = visualization_msgs::msg::Marker::ConstSharedPtr;
+
+  using SharedPtr = std::shared_ptr<MarkerBase>;
 
   MarkerBase(
     MarkerCommon * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);

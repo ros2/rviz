@@ -27,11 +27,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <QApplication>
+
 #include <map>
 #include <string>
 #include <vector>
-
-#include <QApplication>  // NOLINT: cpplint can't handle Qt imports
 
 #include "rviz_common/logging.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
@@ -40,6 +40,8 @@
   "rviz_default_plugins/displays/interactive_markers/interactive_marker_namespace_property.hpp"
 
 namespace rviz_default_plugins
+{
+namespace displays
 {
 
 InteractiveMarkerNamespaceProperty::InteractiveMarkerNamespaceProperty(
@@ -93,4 +95,5 @@ void InteractiveMarkerNamespaceProperty::fillNamespaceList()
   QApplication::restoreOverrideCursor();
 }
 
-}  // end namespace rviz_default_plugins
+}  // namespace displays
+}  // namespace rviz_default_plugins

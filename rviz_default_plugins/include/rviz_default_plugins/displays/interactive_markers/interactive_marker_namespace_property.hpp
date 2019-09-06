@@ -26,11 +26,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-// NOLINTNEXTLINE
-#ifndef \
+#ifndef /* NOLINT */ \
   RVIZ_DEFAULT_PLUGINS__DISPLAYS__INTERACTIVE_MARKERS__INTERACTIVE_MARKER_NAMESPACE_PROPERTY_HPP_
-// NOLINTNEXTLINE
-#define \
+#define /* NOLINT */ \
   RVIZ_DEFAULT_PLUGINS__DISPLAYS__INTERACTIVE_MARKERS__INTERACTIVE_MARKER_NAMESPACE_PROPERTY_HPP_
 
 #include <string>
@@ -41,6 +39,8 @@
 #include "rviz_default_plugins/visibility_control.hpp"
 
 namespace rviz_default_plugins
+{
+namespace displays
 {
 
 class RVIZ_DEFAULT_PLUGINS_PUBLIC InteractiveMarkerNamespaceProperty
@@ -75,6 +75,7 @@ private:
   rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node_;
 };
 
-}  // end namespace rviz_default_plugins
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
 #endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__INTERACTIVE_MARKERS__INTERACTIVE_MARKER_NAMESPACE_PROPERTY_HPP_

@@ -11,7 +11,7 @@
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
+ *     * Neither the name of the copyright holder nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
  *
@@ -52,6 +52,7 @@
 #include "rviz_common/viewport_mouse_event.hpp"
 
 #include "rviz_default_plugins/displays/marker/markers/marker_base.hpp"
+#include "rviz_default_plugins/displays/marker/markers/points_marker.hpp"
 
 namespace Ogre
 {
@@ -74,12 +75,6 @@ namespace displays
 {
 class InteractiveMarker;
 
-namespace markers
-{
-class MarkerBase;
-class PointsMarker;
-}
-
 /// A single control element of an InteractiveMarker.
 class InteractiveMarkerControl
   : public Ogre::SceneManager::Listener,
@@ -87,6 +82,8 @@ class InteractiveMarkerControl
   public std::enable_shared_from_this<InteractiveMarkerControl>
 {
 public:
+  using SharedPtr = std::shared_ptr<InteractiveMarkerControl>;
+
   /// Constructor.
   /**
    * Creates Ogre::SceneNodes and sets some defaults.
@@ -446,25 +443,18 @@ protected:
 
   std::string name_;
 
-  // TODO(jacobperron): Move to MarkerBase declaration
-  typedef std::shared_ptr<markers::MarkerBase> MarkerBasePtr;
-
-  std::vector<MarkerBasePtr> markers_;
+  std::vector<markers::MarkerBase::SharedPtr> markers_;
 
   InteractiveMarker * parent_;
 
   std::set<Ogre::Pass *> highlight_passes_;
-
-
-  // TODO(jacobperron): Move to PointsMarker declaration
-  typedef std::shared_ptr<markers::PointsMarker> PointsMarkerPtr;
 
   /**
    * PointsMarkers are rendered by special shader programs, so the
    * regular highlighting method does not work for them.
    * Keep a vector of them so we can call their setHighlightColor() function.
    */
-  std::vector<PointsMarkerPtr> points_markers_;
+  std::vector<markers::PointsMarker::SharedPtr> points_markers_;
 
   /// Stores the rotation around the x axis of the control.
   /**

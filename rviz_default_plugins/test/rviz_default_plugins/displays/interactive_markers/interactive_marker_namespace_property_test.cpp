@@ -38,12 +38,12 @@ TEST(InteractiveMarkerNamespacePropertyConstructorTest, constructor)
 {
   // With defaults
   {
-    rviz_default_plugins::InteractiveMarkerNamespaceProperty prop("Test Name");
+    rviz_default_plugins::displays::InteractiveMarkerNamespaceProperty prop("Test Name");
   }
 
   // No defaults
   {
-    rviz_default_plugins::InteractiveMarkerNamespaceProperty prop(
+    rviz_default_plugins::displays::InteractiveMarkerNamespaceProperty prop(
       "Test Name",
       "Test default value",
       "Test description",
@@ -55,7 +55,8 @@ TEST(InteractiveMarkerNamespacePropertyConstructorTest, constructor)
 TEST(InteractiveMarkerNamespacePropertyTest, get_namespace)
 {
   QString default_value("Test default value");
-  rviz_default_plugins::InteractiveMarkerNamespaceProperty prop("Test Name", default_value);
+  rviz_default_plugins::displays::InteractiveMarkerNamespaceProperty prop(
+    "Test Name", default_value);
   EXPECT_EQ(prop.getNamespace(), default_value);
   EXPECT_EQ(prop.getNamespaceStd(), default_value.toStdString());
 
@@ -67,7 +68,7 @@ TEST(InteractiveMarkerNamespacePropertyTest, get_namespace)
 
 TEST(InteractiveMarkerNamespacePropertyTest, is_empty)
 {
-  rviz_default_plugins::InteractiveMarkerNamespaceProperty prop("Test Name", "");
+  rviz_default_plugins::displays::InteractiveMarkerNamespaceProperty prop("Test Name", "");
   EXPECT_TRUE(prop.isEmpty());
   QString set_value("Test non-empty value");
   prop.setString(set_value);

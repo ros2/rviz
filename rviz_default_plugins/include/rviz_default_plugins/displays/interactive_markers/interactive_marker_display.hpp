@@ -11,7 +11,7 @@
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
+ *     * Neither the name of the copyright holder nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
  *
@@ -32,9 +32,7 @@
 
 #include <map>
 #include <memory>
-#include <set>
 #include <string>
-#include <utility>
 #include <vector>
 
 #include "visualization_msgs/msg/interactive_marker.hpp"
@@ -75,8 +73,6 @@ public:
   void update(float wall_dt, float ros_dt) override;
 
   void reset() override;
-
-  void setTopic(const QString & topic, const QString & datatype) override;
 
 protected:
   // Overrides from Display

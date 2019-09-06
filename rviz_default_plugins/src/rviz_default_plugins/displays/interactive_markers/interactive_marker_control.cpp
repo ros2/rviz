@@ -11,7 +11,7 @@
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
+ *     * Neither the name of the copyright holder nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
  *
@@ -82,8 +82,8 @@ InteractiveMarkerControl::InteractiveMarkerControl(
   Ogre::SceneNode * reference_node,
   InteractiveMarker * parent)
 : mouse_dragging_(false),
-  drag_viewport_(NULL),
-  dragging_in_place_event_(0),
+  drag_viewport_(nullptr),
+  dragging_in_place_event_(nullptr),
   context_(context),
   reference_node_(reference_node),
   control_frame_node_(reference_node_->createChildSceneNode()),
@@ -104,67 +104,67 @@ InteractiveMarkerControl::InteractiveMarkerControl(
 void InteractiveMarkerControl::makeMarkers(
   const visualization_msgs::msg::InteractiveMarkerControl & message)
 {
-  for (unsigned i = 0; i < message.markers.size(); i++) {
-    MarkerBasePtr marker;
+  for (const auto & message_marker : message.markers) {
+    markers::MarkerBase::SharedPtr marker;
 
     // create a marker with the given type
-    switch (message.markers[i].type) {
+    switch (message_marker.type) {
       case visualization_msgs::msg::Marker::CUBE:
       case visualization_msgs::msg::Marker::CYLINDER:
       case visualization_msgs::msg::Marker::SPHERE:
         {
-          marker.reset(new markers::ShapeMarker(0, context_, markers_node_));
+          marker.reset(new markers::ShapeMarker(nullptr, context_, markers_node_));
         }
         break;
 
       case visualization_msgs::msg::Marker::ARROW:
         {
-          marker.reset(new markers::ArrowMarker(0, context_, markers_node_));
+          marker.reset(new markers::ArrowMarker(nullptr, context_, markers_node_));
         }
         break;
 
       case visualization_msgs::msg::Marker::LINE_STRIP:
         {
-          marker.reset(new markers::LineStripMarker(0, context_, markers_node_));
+          marker.reset(new markers::LineStripMarker(nullptr, context_, markers_node_));
         }
         break;
       case visualization_msgs::msg::Marker::LINE_LIST:
         {
-          marker.reset(new markers::LineListMarker(0, context_, markers_node_));
+          marker.reset(new markers::LineListMarker(nullptr, context_, markers_node_));
         }
         break;
       case visualization_msgs::msg::Marker::SPHERE_LIST:
       case visualization_msgs::msg::Marker::CUBE_LIST:
       case visualization_msgs::msg::Marker::POINTS:
         {
-          PointsMarkerPtr points_marker;
-          points_marker.reset(new markers::PointsMarker(0, context_, markers_node_));
+          auto points_marker = std::make_shared<markers::PointsMarker>(
+            nullptr, context_, markers_node_);
           points_markers_.push_back(points_marker);
           marker = points_marker;
         }
         break;
       case visualization_msgs::msg::Marker::TEXT_VIEW_FACING:
         {
-          marker.reset(new markers::TextViewFacingMarker(0, context_, markers_node_));
+          marker.reset(new markers::TextViewFacingMarker(nullptr, context_, markers_node_));
         }
         break;
       case visualization_msgs::msg::Marker::MESH_RESOURCE:
         {
-          marker.reset(new markers::MeshResourceMarker(0, context_, markers_node_));
+          marker.reset(new markers::MeshResourceMarker(nullptr, context_, markers_node_));
         }
         break;
 
       case visualization_msgs::msg::Marker::TRIANGLE_LIST:
         {
-          marker.reset(new markers::TriangleListMarker(0, context_, markers_node_));
+          marker.reset(new markers::TriangleListMarker(nullptr, context_, markers_node_));
         }
         break;
       default:
-        RVIZ_COMMON_LOG_ERROR_STREAM("Unknown marker type: " << message.markers[i].type);
+        RVIZ_COMMON_LOG_ERROR_STREAM("Unknown marker type: " << message_marker.type);
         break;
     }
 
-    auto marker_msg = std::make_shared<visualization_msgs::msg::Marker>(message.markers[i]);
+    auto marker_msg = std::make_shared<visualization_msgs::msg::Marker>(message_marker);
 
     if (marker_msg->header.frame_id.empty()) {
       // Put Marker into fixed frame, so the constructor does not apply any tf transform.
@@ -701,8 +701,6 @@ void InteractiveMarkerControl::movePlane(const Ogre::Vector3 & cursor_position_i
     parent_position_at_mouse_down_ + displacement_on_plane, parent_->getOrientation(), name_);
 }
 
-/** Project a world position onto the viewport to find screen coordinates in pixels.
- * @param screen_pos the resultant screen position, in pixels. */
 void InteractiveMarkerControl::worldToScreen(
   const Ogre::Vector3 & pos_rel_reference,
   const Ogre::Viewport * viewport,
@@ -721,9 +719,6 @@ void InteractiveMarkerControl::worldToScreen(
   screen_pos.y = half_height + (half_height * -homogeneous_screen_position.y) - .5;
 }
 
-/** Find the closest point on target_ray to mouse_ray.
- * @returns false if rays are effectively parallel, true otherwise.
- */
 bool InteractiveMarkerControl::findClosestPoint(
   const Ogre::Ray & target_ray, const Ogre::Ray & mouse_ray, Ogre::Vector3 & closest_point)
 {
@@ -1058,13 +1053,12 @@ void InteractiveMarkerControl::setHighlight(const ControlHighlight & hl)
 void InteractiveMarkerControl::setHighlight(float a)
 {
   std::set<Ogre::Pass *>::iterator it;
-  for (it = highlight_passes_.begin(); it != highlight_passes_.end(); ++it) {
-    (*it)->setAmbient(a, a, a);
+  for (auto highlight : highlight_passes_) {
+    highlight->setAmbient(a, a, a);
   }
 
-  std::vector<PointsMarkerPtr>::iterator pm_it;
-  for (pm_it = points_markers_.begin(); pm_it != points_markers_.end(); ++pm_it) {
-    (*pm_it)->setHighlightColor(a, a, a);
+  for (auto & marker : points_markers_) {
+    marker->setHighlightColor(a, a, a);
   }
 }
 
@@ -1084,7 +1078,7 @@ void InteractiveMarkerControl::stopDragging(bool force)
   if (mouse_dragging_ || force) {
     line_->setVisible(false);
     mouse_dragging_ = false;
-    drag_viewport_ = NULL;
+    drag_viewport_ = nullptr;
     parent_->stopDragging();
   }
 }
@@ -1229,7 +1223,6 @@ void InteractiveMarkerControl::handle3DCursorEvent(
 
 void InteractiveMarkerControl::handleMouseEvent(rviz_common::ViewportMouseEvent & event)
 {
-  // REMOVE ME ROS_INFO("Mouse event!");
   // * check if this is just a receive/lost focus event
   // * try to hand over the mouse event to the parent interactive marker
   // * otherwise, execute mouse move handling
@@ -1423,7 +1416,6 @@ void InteractiveMarkerControl::beginMouseMovement(
 void InteractiveMarkerControl::handleMouseMovement(rviz_common::ViewportMouseEvent & event)
 {
   Ogre::Ray mouse_ray = getMouseRayInReferenceFrame(event, event.x, event.y);
-  // Ogre::Ray last_mouse_ray = getMouseRayInReferenceFrame(event, event.last_x, event.last_y);
 
   bool do_rotation = false;
   switch (interaction_mode_) {
@@ -1533,10 +1525,7 @@ bool InteractiveMarkerControl::intersectSomeYzPlane(
 
 void InteractiveMarkerControl::addHighlightPass(markers::S_MaterialPtr materials)
 {
-  markers::S_MaterialPtr::iterator it;
-
-  for (it = materials.begin(); it != materials.end(); it++) {
-    Ogre::MaterialPtr material = *it;
+  for (auto material : materials) {
     Ogre::Pass * original_pass = material->getTechnique(0)->getPass(0);
     Ogre::Pass * pass = material->getTechnique(0)->createPass();
 

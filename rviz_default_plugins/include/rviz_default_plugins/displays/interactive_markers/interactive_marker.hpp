@@ -11,7 +11,7 @@
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
+ *     * Neither the name of the copyright holder nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
  *
@@ -216,15 +216,15 @@ Q_SIGNALS:
 protected Q_SLOTS:
   void handleMenuSelect(int menu_item_id);
 
-protected:
+private:
   void publishPose();
 
-  void reset();
+  /// Update the `controls_` member
+  void updateControls(
+    const std::vector<visualization_msgs::msg::InteractiveMarkerControl> & controls);
 
-  /// Set the pose of the parent frame, relative to the fixed frame
-  void updateReferencePose();
-
-  QString makeMenuString(const std::string & entry);
+  /// Update the `menu_` member
+  void createMenu(const std::vector<visualization_msgs::msg::MenuEntry> & entries);
 
   /**
    * Recursively append menu and submenu entries to menu, based on a
@@ -232,6 +232,11 @@ protected:
    * current level.
    */
   void populateMenu(QMenu * menu, std::vector<uint32_t> & ids);
+
+  QString makeMenuString(const std::string & entry);
+
+  /// Set the pose of the parent frame, relative to the fixed frame
+  void updateReferencePose();
 
   rviz_common::DisplayContext * context_;
 
@@ -298,7 +303,7 @@ protected:
 
   // Visual aids
 
-  rviz_rendering::Axes * axes_;
+  std::unique_ptr<rviz_rendering::Axes> axes_;
 
   InteractiveMarkerControlPtr description_control_;
 

@@ -11,7 +11,7 @@
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
+ *     * Neither the name of the copyright holder nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
  *
@@ -52,13 +52,13 @@ bool validateFloats(const visualization_msgs::msg::InteractiveMarker & msg)
   bool valid = true;
   valid = valid && rviz_common::validateFloats(msg.pose);
   valid = valid && rviz_common::validateFloats(msg.scale);
-  for (unsigned c = 0; c < msg.controls.size(); ++c) {
-    valid = valid && rviz_common::validateFloats(msg.controls[c].orientation);
-    for (unsigned m = 0; m < msg.controls[c].markers.size(); ++m) {
-      valid = valid && rviz_common::validateFloats(msg.controls[c].markers[m].pose);
-      valid = valid && rviz_common::validateFloats(msg.controls[c].markers[m].scale);
-      valid = valid && rviz_common::validateFloats(msg.controls[c].markers[m].color);
-      valid = valid && rviz_common::validateFloats(msg.controls[c].markers[m].points);
+  for (const auto & control : msg.controls) {
+    valid = valid && rviz_common::validateFloats(control.orientation);
+    for (const auto & marker : control.markers) {
+      valid = valid && rviz_common::validateFloats(marker.pose);
+      valid = valid && rviz_common::validateFloats(marker.scale);
+      valid = valid && rviz_common::validateFloats(marker.color);
+      valid = valid && rviz_common::validateFloats(marker.points);
     }
   }
   return valid;
@@ -131,13 +131,6 @@ void InteractiveMarkerDisplay::onInitialize()
   subscribe();
 }
 
-// TODO(jacobperron): Consider removing this
-void InteractiveMarkerDisplay::setTopic(const QString & topic, const QString & datatype)
-{
-  (void)datatype;
-  interactive_marker_namespace_property_->setString(topic);
-}
-
 void InteractiveMarkerDisplay::onEnable()
 {
   subscribe();
@@ -151,8 +144,6 @@ void InteractiveMarkerDisplay::onDisable()
 void InteractiveMarkerDisplay::namespaceChanged()
 {
   unsubscribe();
-
-  // TODO(jacobperron): reset?
 
   if (interactive_marker_namespace_property_->isEmpty()) {
     setStatus(rviz_common::properties::StatusProperty::Error,
@@ -200,17 +191,15 @@ void InteractiveMarkerDisplay::update(float wall_dt, float ros_dt)
 
   interactive_marker_client_->update();
 
-  for (auto it = interactive_markers_map_.begin(); it != interactive_markers_map_.end(); ++it) {
-    it->second->update(wall_dt);
+  for (const auto name_marker_pair : interactive_markers_map_) {
+    name_marker_pair.second->update(wall_dt);
   }
 }
 
 void InteractiveMarkerDisplay::updateMarkers(
   const std::vector<visualization_msgs::msg::InteractiveMarker> & markers)
 {
-  for (size_t i = 0; i < markers.size(); ++i) {
-    const visualization_msgs::msg::InteractiveMarker & marker = markers[i];
-
+  for (const visualization_msgs::msg::InteractiveMarker & marker : markers) {
     if (!validateFloats(marker)) {
       setStatusStd(
         rviz_common::properties::StatusProperty::Error,
@@ -267,18 +256,16 @@ void InteractiveMarkerDisplay::eraseAllMarkers()
 
 void InteractiveMarkerDisplay::eraseMarkers(const std::vector<std::string> & erases)
 {
-  for (size_t i = 0; i < erases.size(); ++i) {
-    interactive_markers_map_.erase(erases[i]);
-    deleteStatusStd(erases[i]);
+  for (const std::string & marker_name : erases) {
+    interactive_markers_map_.erase(marker_name);
+    deleteStatusStd(marker_name);
   }
 }
 
 void InteractiveMarkerDisplay::updatePoses(
   const std::vector<visualization_msgs::msg::InteractiveMarkerPose> & marker_poses)
 {
-  for (size_t i = 0; i < marker_poses.size(); ++i) {
-    const visualization_msgs::msg::InteractiveMarkerPose & marker_pose = marker_poses[i];
-
+  for (const visualization_msgs::msg::InteractiveMarkerPose & marker_pose : marker_poses) {
     if (!rviz_common::validateFloats(marker_pose.pose)) {
       setStatusStd(
         rviz_common::properties::StatusProperty::Error,
@@ -369,8 +356,8 @@ void InteractiveMarkerDisplay::updateShowDescriptions()
 {
   bool show = show_descriptions_property_->getBool();
 
-  for (auto it = interactive_markers_map_.begin(); it != interactive_markers_map_.end(); ++it) {
-    it->second->setShowDescription(show);
+  for (const auto name_marker_pair : interactive_markers_map_) {
+    name_marker_pair.second->setShowDescription(show);
   }
 }
 
@@ -378,8 +365,8 @@ void InteractiveMarkerDisplay::updateShowAxes()
 {
   bool show = show_axes_property_->getBool();
 
-  for (auto it = interactive_markers_map_.begin(); it != interactive_markers_map_.end(); ++it) {
-    it->second->setShowAxes(show);
+  for (const auto name_marker_pair : interactive_markers_map_) {
+    name_marker_pair.second->setShowAxes(show);
   }
 }
 
@@ -387,15 +374,14 @@ void InteractiveMarkerDisplay::updateShowVisualAids()
 {
   bool show = show_visual_aids_property_->getBool();
 
-  for (auto it = interactive_markers_map_.begin(); it != interactive_markers_map_.end(); ++it) {
-    it->second->setShowVisualAids(show);
+  for (const auto name_marker_pair : interactive_markers_map_) {
+    name_marker_pair.second->setShowVisualAids(show);
   }
 }
 
 void InteractiveMarkerDisplay::updateEnableTransparency()
 {
-  // TODO(jacobperron): Make this more efficient
-  // This is not very efficient... but it should do the trick.
+  // This is not very efficient, but works
   unsubscribe();
   interactive_marker_client_->setEnableAutocompleteTransparency(
     enable_transparency_property_->getBool());
