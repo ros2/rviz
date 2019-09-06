@@ -86,6 +86,7 @@ MapDisplay::MapDisplay()
   color_scheme_property_->addOption("map", 0);
   color_scheme_property_->addOption("costmap", 1);
   color_scheme_property_->addOption("raw", 2);
+  color_scheme_property_->addOption("probability", 2);
 
   draw_under_property_ = new rviz_common::properties::BoolProperty("Draw Behind", false,
       "Rendering option, controls whether or not the map is always"
@@ -147,6 +148,8 @@ MapDisplay::MapDisplay(rviz_common::DisplayContext * context)
   color_scheme_transparency_.push_back(true);
   palette_textures_.push_back(makePaletteTexture(makeRawPalette()));
   color_scheme_transparency_.push_back(true);
+  palette_textures_.push_back(makePaletteTexture(makeProbabilityPalette()));
+  color_scheme_transparency_.push_back(true);
 }
 
 void MapDisplay::onInitialize()
@@ -158,6 +161,8 @@ void MapDisplay::onInitialize()
   palette_textures_.push_back(makePaletteTexture(makeCostmapPalette()));
   color_scheme_transparency_.push_back(true);
   palette_textures_.push_back(makePaletteTexture(makeRawPalette()));
+  color_scheme_transparency_.push_back(true);
+  palette_textures_.push_back(makePaletteTexture(makeProbabilityPalette()));
   color_scheme_transparency_.push_back(true);
 }
 

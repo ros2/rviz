@@ -124,5 +124,17 @@ std::vector<unsigned char> makeRawPalette()
   return palette_builder->buildPalette();
 }
 
+std::vector<unsigned char> makeProbabilityPalette()
+{
+  auto palette_builder = std::make_shared<PaletteBuilder>();
+  // Standard gray map palette values
+  for (int i = 0; i < 255; i++) {
+    unsigned char v = 255 - i;
+    palette_builder->setColorForValue(i, v, v, v, 255);
+  }
+  palette_builder->setColorForLegalNegativeValueMinusOne(0x70, 0x89, 0x86);
+  return palette_builder->buildPalette();
+}
+
 }  // namespace displays
 }  // namespace rviz_default_plugins

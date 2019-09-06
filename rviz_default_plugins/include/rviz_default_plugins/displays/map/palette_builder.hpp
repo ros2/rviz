@@ -43,6 +43,7 @@ namespace displays
 std::vector<unsigned char> makeRawPalette();
 std::vector<unsigned char> makeMapPalette();
 std::vector<unsigned char> makeCostmapPalette();
+std::vector<unsigned char> makeProbabilityPalette();
 
 class PaletteBuilder : public
   std::enable_shared_from_this<PaletteBuilder>
