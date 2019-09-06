@@ -2,9 +2,12 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 6.1.3 (2019-07-31)
 ------------------
-* Fix deprecation warnings with new Qt (`#435 <https://github.com/ros2/rviz/issues/435>`_) (`#436 <https://github.com/ros2/rviz/issues/436>`_)
+* Fixed deprecation warnings with new Qt (`#435 <https://github.com/ros2/rviz/issues/435>`_) (`#436 <https://github.com/ros2/rviz/issues/436>`_)
 * Contributors: William Woodall
 
 6.1.2 (2019-06-12)
