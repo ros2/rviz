@@ -115,6 +115,9 @@ MapDisplay::MapDisplay()
 
   transform_timestamp_property_ = new rviz_common::properties::BoolProperty("Use Timestamp", false,
       "Use map header timestamp when transforming", this, SLOT(transformMap()));
+
+  // TODO(jacobperron): Replace this with an RViz property
+  qos_profile.durability = RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL;
 }
 
 MapDisplay::~MapDisplay()
