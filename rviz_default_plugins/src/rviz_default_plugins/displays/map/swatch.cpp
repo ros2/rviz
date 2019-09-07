@@ -30,6 +30,7 @@
 
 #include "rviz_default_plugins/displays/map/swatch.hpp"
 
+#include <algorithm>
 #include <string>
 #include <vector>
 
