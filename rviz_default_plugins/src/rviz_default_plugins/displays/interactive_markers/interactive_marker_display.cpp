@@ -187,12 +187,13 @@ void InteractiveMarkerDisplay::unsubscribe()
 
 void InteractiveMarkerDisplay::update(float wall_dt, float ros_dt)
 {
-  (void)ros_dt;
+  (void) wall_dt;
+  (void) ros_dt;
 
   interactive_marker_client_->update();
 
   for (const auto name_marker_pair : interactive_markers_map_) {
-    name_marker_pair.second->update(wall_dt);
+    name_marker_pair.second->update();
   }
 }
 

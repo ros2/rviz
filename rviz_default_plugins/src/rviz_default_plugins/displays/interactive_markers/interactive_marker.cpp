@@ -67,7 +67,6 @@ InteractiveMarker::InteractiveMarker(
   Ogre::SceneNode * scene_node, rviz_common::DisplayContext * context)
 : context_(context),
   pose_changed_(false),
-  time_since_last_feedback_(0),
   dragging_(false),
   pose_update_requested_(false),
   heart_beat_t_(0),
@@ -135,7 +134,6 @@ bool InteractiveMarker::processMessage(const visualization_msgs::msg::Interactiv
     message.pose.orientation.z);
 
   pose_changed_ = false;
-  time_since_last_feedback_ = 0.0;
 
   // setup axes
   axes_->setPosition(position_);
@@ -169,10 +167,9 @@ bool InteractiveMarker::processMessage(const visualization_msgs::msg::Interactiv
   return true;
 }
 
-void InteractiveMarker::update(float wall_dt)
+void InteractiveMarker::update()
 {
   std::lock_guard<std::recursive_mutex> lock(mutex_);
-  time_since_last_feedback_ += wall_dt;
   if (frame_locked_) {
     updateReferencePose();
   }
@@ -187,11 +184,6 @@ void InteractiveMarker::update(float wall_dt)
   if (dragging_) {
     if (pose_changed_) {
       publishPose();
-    } else if (time_since_last_feedback_ > 0.25) {
-      // send keep-alive so we don't use control over the marker
-      visualization_msgs::msg::InteractiveMarkerFeedback feedback;
-      feedback.event_type = visualization_msgs::msg::InteractiveMarkerFeedback::KEEP_ALIVE;
-      publishFeedback(feedback);
     }
   }
 }
@@ -452,8 +444,6 @@ void InteractiveMarker::publishFeedback(
   }
 
   Q_EMIT userFeedback(feedback);
-
-  time_since_last_feedback_ = 0;
 }
 
 void InteractiveMarker::handleMenuSelect(int menu_item_id)

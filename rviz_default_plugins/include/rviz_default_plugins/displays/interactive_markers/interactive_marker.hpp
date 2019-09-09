@@ -95,7 +95,7 @@ public:
   void processMessage(const visualization_msgs::msg::InteractiveMarkerPose & message);
 
   /// Called every frame update.
-  void update(float wall_dt);
+  void update();
 
   /// Directly set the pose relative to the parent frame.
   /**
@@ -257,8 +257,6 @@ private:
 
   /// Has the pose changed since the last feedback was sent?
   bool pose_changed_;
-
-  double time_since_last_feedback_;
 
   typedef std::shared_ptr<InteractiveMarkerControl> InteractiveMarkerControlPtr;
   typedef std::map<std::string, InteractiveMarkerControlPtr> M_ControlPtr;
