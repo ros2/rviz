@@ -30,12 +30,11 @@
 
 #include "rviz_default_plugins/displays/map/map_display.hpp"
 
+#include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include <OgreManualObject.h>
-#include <OgreMaterialManager.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 #include <OgreTextureManager.h>
@@ -44,10 +43,8 @@
 
 #include "rclcpp/time.hpp"
 
-#include "rviz_rendering/custom_parameter_indices.hpp"
 #include "rviz_rendering/material_manager.hpp"
 #include "rviz_rendering/objects/grid.hpp"
-#include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/logging.hpp"
 #include "rviz_common/msg_conversions.hpp"
 #include "rviz_common/properties/enum_property.hpp"
@@ -500,6 +497,7 @@ void MapDisplay::updateSwatches() const
     tex_unit->setTextureName(swatch->getTextureName());
     tex_unit->setTextureFiltering(Ogre::TFO_NONE);
     swatch->setVisible(true);
+    swatch->resetOldTexture();
   }
 }
 
@@ -515,7 +513,7 @@ void MapDisplay::updatePalette()
     } else {
       palette_tex_unit = pass->createTextureUnitState();
     }
-    palette_tex_unit->setTextureName(palette_textures_[palette_index]->getName());
+    palette_tex_unit->setTexture(palette_textures_[palette_index]);
     palette_tex_unit->setTextureFiltering(Ogre::TFO_NONE);
   }
 
@@ -546,10 +544,10 @@ void MapDisplay::transformMap()
     scene_node_->setVisible(false);
   } else {
     setTransformOk();
-  }
 
-  scene_node_->setPosition(position);
-  scene_node_->setOrientation(orientation);
+    scene_node_->setPosition(position);
+    scene_node_->setOrientation(orientation);
+  }
 }
 
 void MapDisplay::fixedFrameChanged()

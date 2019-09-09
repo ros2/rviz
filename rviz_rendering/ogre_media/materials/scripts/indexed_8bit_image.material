@@ -11,6 +11,14 @@ material rviz/Indexed8BitImage
         param_named eight_bit_image int 0
         param_named palette int 1
       }
+      texture_unit
+      {
+        texture no_image.png 2d
+      }
+      texture_unit
+      {
+        texture test_20x20.png 1d
+      }
     }
   }
 }
