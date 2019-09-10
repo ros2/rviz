@@ -36,6 +36,7 @@
 #include <vector>
 
 #include "tf2/buffer_core_interface.h"
+#include "tf2/exceptions.h"
 #include "tf2_ros/async_buffer_interface.h"
 
 #include <QString>  // NOLINT
@@ -50,12 +51,12 @@ namespace rviz_common
 namespace transformation
 {
 
-class FrameTransformerException : public std::runtime_error
+class FrameTransformerException : public tf2::TransformException
 {
 public:
   RVIZ_COMMON_PUBLIC
   explicit FrameTransformerException(const char * error_message)
-  : std::runtime_error(error_message) {}
+  : tf2::TransformException(error_message) {}
 
   RVIZ_COMMON_PUBLIC
   ~FrameTransformerException() noexcept override = default;

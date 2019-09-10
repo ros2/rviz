@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2009, Willow Garage, Inc.
- * Copyright (c) 2018, Bosch Software Innovations GmbH.
+ * Copyright (c) 2019, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -11,7 +10,7 @@
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
+ *     * Neither the name of the copyright holder nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
  *
@@ -27,57 +26,56 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef /* NOLINT */ \
+  RVIZ_DEFAULT_PLUGINS__DISPLAYS__INTERACTIVE_MARKERS__INTERACTIVE_MARKER_NAMESPACE_PROPERTY_HPP_
+#define /* NOLINT */ \
+  RVIZ_DEFAULT_PLUGINS__DISPLAYS__INTERACTIVE_MARKERS__INTERACTIVE_MARKER_NAMESPACE_PROPERTY_HPP_
 
-#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__POINTS_MARKER_HPP_
-#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__POINTS_MARKER_HPP_
+#include <string>
 
-#include <memory>
+#include "rviz_common/properties/editable_enum_property.hpp"
+#include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
 
-#include "rviz_rendering/objects/point_cloud.hpp"
-
-#include "rviz_default_plugins/displays/marker/markers/marker_base.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
-
-namespace Ogre
-{
-class SceneNode;
-}  // namespace Ogre
 
 namespace rviz_default_plugins
 {
 namespace displays
 {
-namespace markers
-{
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC PointsMarker : public MarkerBase
+class RVIZ_DEFAULT_PLUGINS_PUBLIC InteractiveMarkerNamespaceProperty
+  : public rviz_common::properties::EditableEnumProperty
 {
+  Q_OBJECT
+
 public:
-  using SharedPtr = std::shared_ptr<PointsMarker>;
+  explicit InteractiveMarkerNamespaceProperty(
+    const QString & name = QString(),
+    const QString & default_value = QString(),
+    const QString & description = QString(),
+    rviz_common::properties::Property * parent = nullptr,
+    const char * changed_slot = nullptr,
+    QObject * receiver = nullptr);
 
-  PointsMarker(
-    MarkerCommon * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node);
+  void initialize(rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node);
 
-  ~PointsMarker() override;
+  QString getNamespace() const
+  {return getValue().toString();}
 
-  void setHighlightColor(float red, float green, float blue);
+  std::string getNamespaceStd() const
+  {return getValue().toString().toStdString();}
 
-protected:
-  void onNewMessage(
-    const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message) override;
-  void transformAndSetVisibility(
-    const MarkerConstSharedPtr & new_message,
-    Ogre::Vector3 & position,
-    Ogre::Vector3 & scale,
-    Ogre::Quaternion & orientation);
-  void setRenderModeAndDimensions(const MarkerConstSharedPtr & new_message, Ogre::Vector3 & scale);
-  void addPointsFromMessage(const MarkerConstSharedPtr & new_message);
+  bool isEmpty() const
+  {return getNamespaceStd().empty();}
 
-  rviz_rendering::PointCloud * points_;
+protected Q_SLOTS:
+  virtual void fillNamespaceList();
+
+private:
+  rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node_;
 };
 
-}  // namespace markers
 }  // namespace displays
 }  // namespace rviz_default_plugins
 
-#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__POINTS_MARKER_HPP_
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__INTERACTIVE_MARKERS__INTERACTIVE_MARKER_NAMESPACE_PROPERTY_HPP_

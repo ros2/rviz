@@ -26,31 +26,24 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef INTEGER_ACTION_H
-#define INTEGER_ACTION_H
+#include "rviz_default_plugins/displays/interactive_markers/integer_action.hpp"
 
-#include <QAction>
-
-namespace rviz
+namespace rviz_default_plugins
+{
+namespace displays
 {
 
-/** A simple subclass of QAction which keeps an ID number and emits a
- * signal with that number when it is triggered.
- */
-class IntegerAction: public QAction
+IntegerAction::IntegerAction(const QString & text, QObject * parent, int id)
+: QAction(text, parent),
+  id_(id)
 {
-Q_OBJECT
-public:
-  IntegerAction(const QString& text, QObject* parent, int id );
-  int id_; // The menu id number from the visualization_msgs/MenuEntry
+  connect(this, SIGNAL(triggered(bool)), this, SLOT(emitId()));
+}
 
-Q_SIGNALS:
-  void triggered( int id ); // emitted when action is triggered, sends id passed in.
+void IntegerAction::emitId()
+{
+  Q_EMIT triggered(id_);
+}
 
-private Q_SLOTS:
-  void emitId();
-};
-
-} // end namespace rviz
-
-#endif // INTEGER_ACTION_H
+}  // namespace displays
+}  // namespace rviz_default_plugins

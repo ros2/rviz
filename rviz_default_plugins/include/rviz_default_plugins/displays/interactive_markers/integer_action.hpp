@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2011, Willow Garage, Inc.
+ * Copyright (c) 2019, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +11,7 @@
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
+ *     * Neither the name of the copyright holder nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
  *
@@ -26,22 +27,38 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "integer_action.h"
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__INTERACTIVE_MARKERS__INTEGER_ACTION_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__INTERACTIVE_MARKERS__INTEGER_ACTION_HPP_
 
-namespace rviz
+#include <QAction>
+
+namespace rviz_default_plugins
+{
+namespace displays
 {
 
-IntegerAction::IntegerAction( const QString& text, QObject* parent, int id )
-  : QAction( text, parent )
-  , id_( id )
+/**
+ * A simple subclass of QAction which keeps an ID number and emits a
+ * signal with that number when it is triggered.
+ */
+class IntegerAction : public QAction
 {
-  connect( this, SIGNAL( triggered( bool )), this, SLOT( emitId() ));
-}
+  Q_OBJECT
 
-void IntegerAction::emitId()
-{
-  Q_EMIT triggered( id_ );
-}
+public:
+  IntegerAction(const QString & text, QObject * parent, int id);
 
-} // end namespace rviz
+  int id_;
 
+Q_SIGNALS:
+  /// Emitted when the action is triggered, sends the ID
+  void triggered(int id);
+
+private Q_SLOTS:
+  void emitId();
+};
+
+}  // namespace displays
+}  // namespace rviz_default_plugins
+
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__INTERACTIVE_MARKERS__INTEGER_ACTION_HPP_
