@@ -459,25 +459,25 @@ protected:
   /// Stores the rotation around the x axis of the control.
   /**
    * Only relevant for fixed-orientation rotation controls.
-  */
+   */
   Ogre::Radian rotation_;
 
   /// Stores the rotation around the x axis of the control when the mouse-down event happened.
   /**
    * Only relevant for fixed-orientation rotation controls.
-  */
+   */
   Ogre::Radian rotation_at_mouse_down_;
 
   /**
    * The 3D position of the mouse click/cursor when the 'grab' button is
    * pressed, relative to the reference frame.
-  */
+   */
   Ogre::Vector3 grab_point_in_reference_frame_;
 
   /**
    * The orientation of the cursor when the 'grab' button is pressed, relative
    * to the reference frame.
-  */
+   */
   Ogre::Quaternion grab_orientation_in_reference_frame_;
 
   /**
@@ -526,13 +526,13 @@ protected:
    * The direction vector of the axis of rotation during a mouse
    * drag, relative to the reference frame.
    * Computed on mouse down event.
-  */
+   */
   Ogre::Vector3 rotation_axis_;
 
   /// The center of rotation during a mouse drag, relative to the control frame.
   /**
    * Computed on mouse down event.
-  */
+   */
   Ogre::Vector3 rotation_center_rel_control_;
 
   /// The grab point during a mouse drag, relative to the control frame.
