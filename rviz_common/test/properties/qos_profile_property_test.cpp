@@ -31,7 +31,7 @@
 #include <memory>
 #include <string>
 
-#include "rmw/qos_profiles.h"
+#include "rclcpp/qos.hpp"
 
 #include "rviz_common/properties/qos_profile_property.hpp"
 #include "rviz_common/properties/property.hpp"
@@ -51,14 +51,14 @@ TEST(QosProfilePropertyTest, all_properties_are_found_via_parent) {
 }
 
 TEST(QosProfilePropertyTest, enum_properties_set_enum_members_of_profile) {
-  rmw_qos_profile_t rmw_qos_profile = rmw_qos_profile_default;
+  rclcpp::QoS qos_profile(5);
   bool called = false;
   rviz_common::properties::Property parent;
   auto profile_property = std::make_unique<rviz_common::properties::QosProfileProperty>(&parent);
   profile_property->initialize(
-    [&called, &rmw_qos_profile](rmw_qos_profile_t profile) {
+    [&called, &qos_profile](rclcpp::QoS profile) {
       called = true;
-      rmw_qos_profile = profile;
+      qos_profile = profile;
     });
 
   parent.childAt(1)->setValue("Keep All");
@@ -66,24 +66,27 @@ TEST(QosProfilePropertyTest, enum_properties_set_enum_members_of_profile) {
   parent.childAt(3)->setValue("Volatile");
 
   EXPECT_THAT(called, IsTrue());
-  EXPECT_THAT(rmw_qos_profile.history, Eq(RMW_QOS_POLICY_HISTORY_KEEP_ALL));
-  EXPECT_THAT(rmw_qos_profile.reliability, Eq(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT));
-  EXPECT_THAT(rmw_qos_profile.durability, Eq(RMW_QOS_POLICY_DURABILITY_VOLATILE));
+  EXPECT_THAT(qos_profile.get_rmw_qos_profile().history,
+    Eq(RMW_QOS_POLICY_HISTORY_KEEP_ALL));
+  EXPECT_THAT(qos_profile.get_rmw_qos_profile().reliability,
+    Eq(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT));
+  EXPECT_THAT(qos_profile.get_rmw_qos_profile().durability,
+    Eq(RMW_QOS_POLICY_DURABILITY_VOLATILE));
 }
 
 TEST(QosProfilePropertyTest, queue_length_is_set_by_property) {
-  rmw_qos_profile_t rmw_qos_profile = rmw_qos_profile_default;
+  rclcpp::QoS qos_profile(5);
   bool called = false;
   rviz_common::properties::Property parent;
   auto profile_property = std::make_unique<rviz_common::properties::QosProfileProperty>(&parent);
   profile_property->initialize(
-    [&called, &rmw_qos_profile](rmw_qos_profile_t profile) {
+    [&called, &qos_profile](rclcpp::QoS profile) {
       called = true;
-      rmw_qos_profile = profile;
+      qos_profile = profile;
     });
 
   parent.childAt(0)->setValue(14);
 
   EXPECT_THAT(called, IsTrue());
-  EXPECT_THAT(rmw_qos_profile.depth, Eq(14u));
+  EXPECT_THAT(qos_profile.get_rmw_qos_profile().depth, Eq(14u));
 }

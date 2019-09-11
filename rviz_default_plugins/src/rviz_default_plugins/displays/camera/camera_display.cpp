@@ -277,14 +277,11 @@ void CameraDisplay::subscribe()
 void CameraDisplay::createCameraInfoSubscription()
 {
   try {
-    // TODO(wjwwood): update this class to use rclcpp::QoS.
-    auto qos = rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(qos_profile));
-    qos.get_rmw_qos_profile() = qos_profile;
     // TODO(anhosi,wjwwood): replace with abstraction for subscriptions one available
     caminfo_sub_ = rviz_ros_node_.lock()->get_raw_node()->
       template create_subscription<sensor_msgs::msg::CameraInfo>(
       topic_property_->getTopicStd() + "/camera_info",
-      qos,
+      qos_profile,
       [this](sensor_msgs::msg::CameraInfo::ConstSharedPtr msg) {
         std::unique_lock<std::mutex> lock(caminfo_mutex_);
         current_caminfo_ = msg;

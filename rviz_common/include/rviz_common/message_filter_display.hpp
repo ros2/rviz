@@ -117,7 +117,9 @@ protected:
 
     try {
       subscription_ = std::make_shared<message_filters::Subscriber<MessageType>>(
-        rviz_ros_node_.lock()->get_raw_node(), topic_property_->getTopicStd(), qos_profile);
+        rviz_ros_node_.lock()->get_raw_node(),
+        topic_property_->getTopicStd(),
+        qos_profile.get_rmw_qos_profile());
       tf_filter_ =
         std::make_shared<tf2_ros::MessageFilter<MessageType, transformation::FrameTransformer>>(
         *context_->getFrameManager()->getTransformer(),

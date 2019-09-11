@@ -174,13 +174,10 @@ void MapDisplay::subscribe()
   MFDClass::subscribe();
 
   try {
-    // TODO(wjwwood): update this class to use rclcpp::QoS.
-    auto qos = rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(qos_profile));
-    qos.get_rmw_qos_profile() = qos_profile;
     update_subscription_ = rviz_ros_node_.lock()->get_raw_node()->
       template create_subscription<map_msgs::msg::OccupancyGridUpdate>(
       topic_property_->getTopicStd() + "_updates",
-      qos,
+      qos_profile,
       [this](const map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr message) {
         incomingUpdate(message);
       });

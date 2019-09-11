@@ -40,7 +40,7 @@
 
 #endif
 
-#include "rmw/qos_profiles.h"
+#include "rclcpp/qos.hpp"
 
 #include "rviz_common/display.hpp"
 #include "rviz_common/display_context.hpp"
@@ -50,14 +50,6 @@
 #include "rviz_common/properties/status_property.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
 #include "rviz_common/visibility_control.hpp"
-
-static constexpr rmw_qos_profile_t display_default_qos_profile()
-{
-  rmw_qos_profile_t profile = rmw_qos_profile_default;
-  profile.depth = 5;
-  profile.durability = RMW_QOS_POLICY_DURABILITY_SYSTEM_DEFAULT;
-  return profile;
-}
 
 namespace rviz_common
 {
@@ -72,7 +64,7 @@ class RVIZ_COMMON_PUBLIC _RosTopicDisplay : public Display
 public:
   _RosTopicDisplay()
   : rviz_ros_node_(),
-    qos_profile(display_default_qos_profile())
+    qos_profile(5)
   {
     topic_property_ = new properties::RosTopicProperty("Topic", "",
         "", "", this, SLOT(updateTopic()));
@@ -95,7 +87,7 @@ public:
       this,
       SLOT(transformerChangedCallback()));
     qos_profile_property_->initialize(
-      [this](rmw_qos_profile_t profile) {this->qos_profile = profile;});
+      [this](rclcpp::QoS profile) {this->qos_profile = profile;});
   }
 
 protected Q_SLOTS:
@@ -109,7 +101,7 @@ protected:
    *
    * This is configured after the constructor within the initialize() method of Display. */
   ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node_;
-  rmw_qos_profile_t qos_profile;
+  rclcpp::QoS qos_profile;
   properties::RosTopicProperty * topic_property_;
   properties::QosProfileProperty * qos_profile_property_;
 };
@@ -179,14 +171,11 @@ protected:
     }
 
     try {
-      // TODO(wjwwood): update this class to use rclcpp::QoS.
-      auto qos = rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(qos_profile));
-      qos.get_rmw_qos_profile() = qos_profile;
       // TODO(anhosi,wjwwood): replace with abstraction for subscriptions once available
       subscription_ =
         rviz_ros_node_.lock()->get_raw_node()->template create_subscription<MessageType>(
         topic_property_->getTopicStd(),
-        qos,
+        qos_profile,
         [this](const typename MessageType::ConstSharedPtr message) {incomingMessage(message);});
       setStatus(properties::StatusProperty::Ok, "Topic", "OK");
     } catch (rclcpp::exceptions::InvalidTopicNameError & e) {

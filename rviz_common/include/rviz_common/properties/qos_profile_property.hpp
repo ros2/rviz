@@ -34,8 +34,7 @@
 
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "rmw/qos_profiles.h"
-#include "rmw/types.h"
+#include "rclcpp/qos.hpp"
 
 #include "rviz_common/visibility_control.hpp"
 
@@ -49,14 +48,6 @@ class IntProperty;
 
 class EditableEnumProperty;
 
-static constexpr rmw_qos_profile_t display_default_qos_profile()
-{
-  rmw_qos_profile_t profile = rmw_qos_profile_default;
-  profile.depth = 5;
-  profile.durability = RMW_QOS_POLICY_DURABILITY_SYSTEM_DEFAULT;
-  return profile;
-}
-
 class RVIZ_COMMON_PUBLIC QosProfileProperty : public QObject
 {
   Q_OBJECT
@@ -64,7 +55,7 @@ class RVIZ_COMMON_PUBLIC QosProfileProperty : public QObject
 public:
   explicit QosProfileProperty(
     Property * parent_property,
-    rmw_qos_profile_t default_profile = display_default_qos_profile()
+    rclcpp::QoS default_profile = rclcpp::QoS(5)
   );
 
   /**
@@ -74,7 +65,7 @@ public:
    *
    * @param qos_changed_callback Function to call when the profile changed
    */
-  void initialize(std::function<void(rmw_qos_profile_t)> qos_changed_callback);
+  void initialize(std::function<void(rclcpp::QoS)> qos_changed_callback);
 
 private Q_SLOTS:
   void updateQosProfile();
@@ -84,8 +75,8 @@ private:
   rviz_common::properties::EditableEnumProperty * history_policy_property_;
   rviz_common::properties::EditableEnumProperty * reliability_policy_property_;
   rviz_common::properties::EditableEnumProperty * durability_policy_property_;
-  rmw_qos_profile_t qos_profile_;
-  std::function<void(rmw_qos_profile_t)> qos_changed_callback_;
+  rclcpp::QoS qos_profile_;
+  std::function<void(rclcpp::QoS)> qos_changed_callback_;
 };
 
 }  // namespace properties
