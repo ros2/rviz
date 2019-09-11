@@ -37,6 +37,7 @@
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/logging.hpp"
 #include "rviz_common/properties/string_property.hpp"
+#include "rviz_common/properties/qos_profile_property.hpp"
 
 namespace rviz_default_plugins
 {
@@ -44,13 +45,16 @@ namespace tools
 {
 
 GoalTool::GoalTool()
-: rviz_default_plugins::tools::PoseTool()
+: rviz_default_plugins::tools::PoseTool(), qos_profile_(5)
 {
   shortcut_key_ = 'g';
 
   topic_property_ = new rviz_common::properties::StringProperty("Topic", "goal",
       "The topic on which to publish goals.",
       getPropertyContainer(), SLOT(updateTopic()), this);
+
+  qos_profile_property_ = new rviz_common::properties::QosProfileProperty(
+    topic_property_, qos_profile_);
 }
 
 GoalTool::~GoalTool() = default;
@@ -58,6 +62,8 @@ GoalTool::~GoalTool() = default;
 void GoalTool::onInitialize()
 {
   PoseTool::onInitialize();
+  qos_profile_property_->initialize(
+    [this](rclcpp::QoS profile) {this->qos_profile_ = profile;});
   setName("2D Goal Pose");
   updateTopic();
 }
@@ -66,7 +72,8 @@ void GoalTool::updateTopic()
 {
   // TODO(anhosi, wjwwood): replace with abstraction for publishers once available
   publisher_ = context_->getRosNodeAbstraction().lock()->get_raw_node()->
-    template create_publisher<geometry_msgs::msg::PoseStamped>(topic_property_->getStdString(), 10);
+    template create_publisher<geometry_msgs::msg::PoseStamped>(
+    topic_property_->getStdString(), qos_profile_);
 }
 
 void GoalTool::onPoseSet(double x, double y, double theta)

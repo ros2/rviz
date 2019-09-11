@@ -37,6 +37,7 @@
 
 #include "geometry_msgs/msg/point_stamped.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp/qos.hpp"
 
 #include "rviz_common/tool.hpp"
 
@@ -48,6 +49,7 @@ namespace properties
 {
 class StringProperty;
 class BoolProperty;
+class QosProfileProperty;
 }
 }
 
@@ -77,15 +79,18 @@ public Q_SLOTS:
   void updateAutoDeactivate();
 
 protected:
+  void publishPosition(const Ogre::Vector3 & position) const;
+  void setStatusForPosition(const Ogre::Vector3 & position);
+
   QCursor std_cursor_;
   QCursor hit_cursor_;
-
   rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr publisher_;
 
   rviz_common::properties::StringProperty * topic_property_;
   rviz_common::properties::BoolProperty * auto_deactivate_property_;
-  void publishPosition(const Ogre::Vector3 & position) const;
-  void setStatusForPosition(const Ogre::Vector3 & position);
+  rviz_common::properties::QosProfileProperty * qos_profile_property_;
+
+  rclcpp::QoS qos_profile_;
 };
 
 }  // namespace tools

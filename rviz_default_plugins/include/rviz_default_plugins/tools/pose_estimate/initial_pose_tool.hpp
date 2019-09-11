@@ -35,6 +35,7 @@
 
 #include "geometry_msgs/msg/pose_with_covariance_stamped.hpp"
 #include "rclcpp/node.hpp"
+#include "rclcpp/qos.hpp"
 
 #include "rviz_default_plugins/tools/pose/pose_tool.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
@@ -45,6 +46,7 @@ class DisplayContext;
 namespace properties
 {
 class StringProperty;
+class QosProfileProperty;
 }  // namespace properties
 }  // namespace rviz_common
 
@@ -73,6 +75,9 @@ private:
   rclcpp::Publisher<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr publisher_;
 
   rviz_common::properties::StringProperty * topic_property_;
+  rviz_common::properties::QosProfileProperty * qos_profile_property_;
+
+  rclcpp::QoS qos_profile_;
 };
 
 }  // namespace tools
