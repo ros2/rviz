@@ -87,7 +87,10 @@ public:
       this,
       SLOT(transformerChangedCallback()));
     qos_profile_property_->initialize(
-      [this](rclcpp::QoS profile) {this->qos_profile = profile;});
+      [this](rclcpp::QoS profile) {
+        this->qos_profile = profile;
+        updateTopic();
+      });
   }
 
 protected Q_SLOTS:
