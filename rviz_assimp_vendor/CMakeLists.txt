@@ -59,9 +59,18 @@ if(NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LESS 4.1.0)
 
   if(WIN32)
     ament_environment_hooks(env_hook/rviz_assimp_vendor_library_path.bat)
+    set(ENV_VAR_NAME "PATH")
+    set(ENV_VAR_VALUE "opt\\rviz_assimp_vendor\\bin")
   else()
     ament_environment_hooks(env_hook/rviz_assimp_vendor_library_path.sh)
+    if(APPLE)
+      set(ENV_VAR_NAME "DYLD_LIBRARY_PATH")
+    else()
+      set(ENV_VAR_NAME "LD_LIBRARY_PATH")
+    endif()
+    set(ENV_VAR_VALUE "opt/rviz_assimp_vendor/lib")
   endif()
+  ament_environment_hooks(env_hook/rviz_assimp_vendor_library_path.dsv.in)
 endif()
 
 ament_package(
