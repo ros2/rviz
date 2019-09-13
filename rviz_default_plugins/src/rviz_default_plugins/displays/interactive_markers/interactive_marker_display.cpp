@@ -317,16 +317,16 @@ void InteractiveMarkerDisplay::statusCallback(
 {
   rviz_common::properties::StatusProperty::Level rviz_level;
   switch (status) {
-    case interactive_markers::InteractiveMarkerClient::DEBUG:
+    case interactive_markers::InteractiveMarkerClient::STATUS_DEBUG:
       rviz_level = rviz_common::properties::StatusProperty::Ok;
       break;
-    case interactive_markers::InteractiveMarkerClient::INFO:
+    case interactive_markers::InteractiveMarkerClient::STATUS_INFO:
       rviz_level = rviz_common::properties::StatusProperty::Ok;
       break;
-    case interactive_markers::InteractiveMarkerClient::WARN:
+    case interactive_markers::InteractiveMarkerClient::STATUS_WARN:
       rviz_level = rviz_common::properties::StatusProperty::Warn;
       break;
-    case interactive_markers::InteractiveMarkerClient::ERROR:
+    case interactive_markers::InteractiveMarkerClient::STATUS_ERROR:
       rviz_level = rviz_common::properties::StatusProperty::Error;
       break;
     default:
