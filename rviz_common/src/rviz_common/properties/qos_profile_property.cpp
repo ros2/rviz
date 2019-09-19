@@ -67,7 +67,7 @@ QosProfileProperty::QosProfileProperty(Property * parent_property, rclcpp::QoS d
   qos_changed_callback_([](rclcpp::QoS profile) {(void) profile;})
 {
   depth_property_ = new IntProperty(
-    "Depth", default_profile.get_rmw_qos_profile().depth,
+    "Depth", static_cast<int>(default_profile.get_rmw_qos_profile().depth),
     "Set the depth of the incoming message queue. Increasing this is useful if your "
     "incoming TF data is delayed significantly from your message data, but it can greatly "
     "increase memory usage if the messages are big.",
