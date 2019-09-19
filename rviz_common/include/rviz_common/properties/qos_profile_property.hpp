@@ -10,7 +10,7 @@
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
+ *     * Neither the name of the copyright holder nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
  *
@@ -63,7 +63,7 @@ public:
    * property value changes. Note that this is not done in the constructor to allow using member
    * functions of displays.
    *
-   * @param qos_changed_callback Function to call when the profile changed
+   * \param qos_changed_callback Function to call when the profile changed
    */
   void initialize(std::function<void(rclcpp::QoS)> qos_changed_callback);
 
@@ -71,7 +71,7 @@ private Q_SLOTS:
   void updateQosProfile();
 
 private:
-  rviz_common::properties::IntProperty * queue_size_property_;
+  rviz_common::properties::IntProperty * depth_property_;
   rviz_common::properties::EditableEnumProperty * history_policy_property_;
   rviz_common::properties::EditableEnumProperty * reliability_policy_property_;
   rviz_common::properties::EditableEnumProperty * durability_policy_property_;

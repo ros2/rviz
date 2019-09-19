@@ -10,7 +10,7 @@
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
+ *     * Neither the name of the copyright holder nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
  *
@@ -44,7 +44,7 @@ TEST(QosProfilePropertyTest, all_properties_are_found_via_parent) {
   rviz_common::properties::Property parent;
   auto profile_property = std::make_unique<rviz_common::properties::QosProfileProperty>(&parent);
 
-  EXPECT_THAT(parent.childAt(0)->getName().toStdString(), StrEq("Queue Size"));
+  EXPECT_THAT(parent.childAt(0)->getName().toStdString(), StrEq("Depth"));
   EXPECT_THAT(parent.childAt(1)->getName().toStdString(), StrEq("History Policy"));
   EXPECT_THAT(parent.childAt(2)->getName().toStdString(), StrEq("Reliability Policy"));
   EXPECT_THAT(parent.childAt(3)->getName().toStdString(), StrEq("Durability Policy"));
@@ -74,7 +74,7 @@ TEST(QosProfilePropertyTest, enum_properties_set_enum_members_of_profile) {
     Eq(RMW_QOS_POLICY_DURABILITY_VOLATILE));
 }
 
-TEST(QosProfilePropertyTest, queue_length_is_set_by_property) {
+TEST(QosProfilePropertyTest, depth_is_set_by_property) {
   rclcpp::QoS qos_profile(5);
   bool called = false;
   rviz_common::properties::Property parent;

@@ -10,7 +10,7 @@
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
+ *     * Neither the name of the copyright holder nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
  *
@@ -30,7 +30,6 @@
 #include "rviz_common/properties/qos_profile_property.hpp"
 
 #include <functional>
-#include <iostream>
 #include <map>
 #include <utility>
 
@@ -63,24 +62,21 @@ const std::map<rmw_qos_durability_policy_t, QString> durability_policies {
   {RMW_QOS_POLICY_DURABILITY_VOLATILE, "Volatile"},
 };
 
-QosProfileProperty::QosProfileProperty(
-  Property * parent_property,
-  rclcpp::QoS default_profile
-)
+QosProfileProperty::QosProfileProperty(Property * parent_property, rclcpp::QoS default_profile)
 : qos_profile_(default_profile),
   qos_changed_callback_([](rclcpp::QoS profile) {(void) profile;})
 {
-  queue_size_property_ = new IntProperty(
-    "Queue Size", default_profile.get_rmw_qos_profile().depth,
-    "Set the size of the incoming message queue. Increasing this is useful if your "
+  depth_property_ = new IntProperty(
+    "Depth", default_profile.get_rmw_qos_profile().depth,
+    "Set the depth of the incoming message queue. Increasing this is useful if your "
     "incoming TF data is delayed significantly from your message data, but it can greatly "
     "increase memory usage if the messages are big.",
     parent_property, SLOT(updateQosProfile()), this);
 
   history_policy_property_ = new EditableEnumProperty(
     "History Policy", history_policies.at(default_profile.get_rmw_qos_profile().history),
-    "Set the history policy: 'Keep all' will keep every message and ignore the queue size, while "
-    "keep last will only keep the last messages up to the queue size.",
+    "Set the history policy: 'Keep all' will keep every message and ignore the depth, while "
+    "'keep last' will only keep the last messages up to the depth.",
     parent_property, SLOT(updateQosProfile()), this);
   for (const auto & history : history_policies) {
     history_policy_property_->addOption(history.second);
@@ -128,7 +124,7 @@ void QosProfileProperty::initialize(std::function<void(rclcpp::QoS)> qos_changed
 void QosProfileProperty::updateQosProfile()
 {
   rmw_qos_profile_t profile = rmw_qos_profile_default;
-  profile.depth = queue_size_property_->getInt();
+  profile.depth = depth_property_->getInt();
 
   profile.history = get_profile(history_policies, history_policy_property_, profile.history);
   profile.reliability = get_profile(
