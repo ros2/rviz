@@ -37,7 +37,9 @@
 
 #include "rclcpp/duration.hpp"
 
-#include "rviz_common/properties/queue_size_property.hpp"
+#include "rviz_common/display.hpp"
+#include "rviz_common/display_context.hpp"
+#include "rviz_common/properties/property.hpp"
 #include "rviz_common/validate_floats.hpp"
 
 #include "rviz_default_plugins/displays/marker/markers/marker_factory.hpp"

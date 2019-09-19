@@ -65,9 +65,27 @@ namespace displays
 {
 
 MapDisplay::MapDisplay()
-: loaded_(false), resolution_(0.0f), width_(0), height_(0), update_messages_received_(0)
+: loaded_(false),
+  resolution_(0.0f),
+  width_(0),
+  height_(0),
+  update_profile_(rclcpp::QoS(5)),
+  update_messages_received_(0)
 {
   connect(this, SIGNAL(mapUpdated()), this, SLOT(showMap()));
+
+  update_topic_property_ = new rviz_common::properties::RosTopicProperty(
+    "Update Topic", "",
+    "", "Topic where updates to this map display are received. "
+    "Currently, this topic is read-only and will automatically be determined by the map topic. "
+    "If the map is received on 'map_topic', the display assumes to receive updates on "
+    "'map_topic_updates'.", this);
+  // Set the property to read only for now. Since it is not connected to any slot,
+  // we don't want to update it.
+  update_topic_property_->setReadOnly(true);
+
+  update_profile_property_ = new rviz_common::properties::QosProfileProperty(
+    update_topic_property_, update_profile_);
 
   alpha_property_ = new rviz_common::properties::FloatProperty("Alpha", 0.7f,
       "Amount of transparency to apply to the map.",
@@ -149,6 +167,14 @@ MapDisplay::MapDisplay(rviz_common::DisplayContext * context)
 void MapDisplay::onInitialize()
 {
   MFDClass::onInitialize();
+  rviz_ros_node_ = context_->getRosNodeAbstraction();
+  update_topic_property_->initialize(rviz_ros_node_);
+
+  update_profile_property_->initialize(
+    [this](rclcpp::QoS profile) {
+      this->update_profile_ = profile;
+      updateMapUpdateTopic();
+    });
   // Order of palette textures here must match option indices for color_scheme_property_ above.
   palette_textures_.push_back(makePaletteTexture(makeMapPalette()));
   color_scheme_transparency_.push_back(false);
@@ -156,6 +182,12 @@ void MapDisplay::onInitialize()
   color_scheme_transparency_.push_back(true);
   palette_textures_.push_back(makePaletteTexture(makeRawPalette()));
   color_scheme_transparency_.push_back(true);
+}
+
+void MapDisplay::updateTopic()
+{
+  update_topic_property_->setValue(topic_property_->getTopic() + "_updates");
+  MFDClass::updateTopic();
 }
 
 void MapDisplay::subscribe()
@@ -173,14 +205,16 @@ void MapDisplay::subscribe()
 
   MFDClass::subscribe();
 
+  subscribeToUpdateTopic();
+}
+
+void MapDisplay::subscribeToUpdateTopic()
+{
   try {
-    // TODO(wjwwood): update this class to use rclcpp::QoS.
-    auto qos = rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(qos_profile));
-    qos.get_rmw_qos_profile() = qos_profile;
-    update_subscription_ = rviz_ros_node_.lock()->get_raw_node()->
+    update_subscription_ =
+      rviz_ros_node_.lock()->get_raw_node()->
       template create_subscription<map_msgs::msg::OccupancyGridUpdate>(
-      topic_property_->getTopicStd() + "_updates",
-      qos,
+      update_topic_property_->getTopicStd(), update_profile_,
       [this](const map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr message) {
         incomingUpdate(message);
       });
@@ -195,6 +229,11 @@ void MapDisplay::subscribe()
 void MapDisplay::unsubscribe()
 {
   MFDClass::unsubscribe();
+  unsubscribeToUpdateTopic();
+}
+
+void MapDisplay::unsubscribeToUpdateTopic()
+{
   update_subscription_.reset();
 }
 
@@ -259,7 +298,6 @@ void MapDisplay::processMessage(nav_msgs::msg::OccupancyGrid::ConstSharedPtr msg
   Q_EMIT mapUpdated();
 }
 
-// TODO(wjwwood): Use again once map_msgs are ported
 void MapDisplay::incomingUpdate(const map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr update)
 {
   // Only update the map if we have gotten a full one first.
@@ -574,6 +612,14 @@ void MapDisplay::onEnable()
 {
   MFDClass::onEnable();
   setStatus(rviz_common::properties::StatusProperty::Warn, "Message", "No map received");
+}
+
+void MapDisplay::updateMapUpdateTopic()
+{
+  unsubscribeToUpdateTopic();
+  reset();
+  subscribeToUpdateTopic();
+  context_->queueRender();
 }
 
 }  // namespace displays

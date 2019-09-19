@@ -67,8 +67,7 @@ ImageDisplay::ImageDisplay()
 : ImageDisplay(std::make_unique<ROSImageTexture>()) {}
 
 ImageDisplay::ImageDisplay(std::unique_ptr<ROSImageTextureIface> texture)
-: queue_size_property_(std::make_unique<rviz_common::QueueSizeProperty>(this, 10)),
-  texture_(std::move(texture))
+: texture_(std::move(texture))
 {
   normalize_property_ = new rviz_common::properties::BoolProperty(
     "Normalize Range",

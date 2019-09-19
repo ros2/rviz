@@ -32,8 +32,6 @@
 
 #include <memory>
 
-#include "rviz_common/properties/queue_size_property.hpp"
-
 namespace rviz_default_plugins
 {
 namespace displays
@@ -41,8 +39,8 @@ namespace displays
 
 MarkerDisplay::MarkerDisplay()
 : rviz_common::MessageFilterDisplay<visualization_msgs::msg::Marker>(),
-  marker_common_(std::make_unique<MarkerCommon>(this)),
-  queue_size_property_(std::make_unique<rviz_common::QueueSizeProperty>(this, 10)) {}
+  marker_common_(std::make_unique<MarkerCommon>(this))
+{}
 
 void MarkerDisplay::onInitialize()
 {
@@ -73,14 +71,11 @@ void MarkerDisplay::subscribe()
 void MarkerDisplay::createMarkerArraySubscription()
 {
   try {
-    // TODO(wjwwood): update this class to use rclcpp::QoS.
-    auto qos = rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(qos_profile));
-    qos.get_rmw_qos_profile() = qos_profile;
     // TODO(anhosi,wjwwood): replace with abstraction for subscriptions one available
     array_sub_ = rviz_ros_node_.lock()->get_raw_node()->
       template create_subscription<visualization_msgs::msg::MarkerArray>(
       topic_property_->getTopicStd() + "_array",
-      qos,
+      qos_profile,
       [this](visualization_msgs::msg::MarkerArray::ConstSharedPtr msg) {
         marker_common_->addMessage(msg);
       });

@@ -46,7 +46,6 @@
 # include "rviz_common/properties/bool_property.hpp"
 # include "rviz_common/properties/float_property.hpp"
 # include "rviz_common/properties/int_property.hpp"
-# include "rviz_common/properties/queue_size_property.hpp"
 
 # include "rviz_default_plugins/displays/image/ros_image_texture_iface.hpp"
 # include "rviz_default_plugins/visibility_control.hpp"
@@ -99,8 +98,6 @@ private:
   void setupRenderPanel();
 
   void clear();
-
-  std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
 
   std::unique_ptr<Ogre::Rectangle2D> screen_rect_;
   Ogre::MaterialPtr material_;

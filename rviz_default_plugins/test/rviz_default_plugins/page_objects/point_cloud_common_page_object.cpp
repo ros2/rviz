@@ -74,11 +74,6 @@ void PointCloudCommonPageObject::setSelectable(bool selectable)
   setBool("Selectable", selectable);
 }
 
-void PointCloudCommonPageObject::setUnreliable(bool unreliable)
-{
-  setBool("Unreliable", unreliable);
-}
-
 void PointCloudCommonPageObject::setPositionTransformer(QString position_transformer)
 {
   setComboBox("Position Transformer", position_transformer);
@@ -97,9 +92,4 @@ void PointCloudCommonPageObject::setColor(int red, int green, int blue)
     std::to_string(red) + "; " + std::to_string(green) + "; " + std::to_string(blue));
 
   setString("Color", color_code);
-}
-
-void PointCloudCommonPageObject::setQueueSize(int queue_size)
-{
-  setInt("Queue Size", queue_size);
 }

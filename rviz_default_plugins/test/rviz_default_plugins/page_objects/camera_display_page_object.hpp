@@ -43,8 +43,6 @@ public:
    */
   void setDisplayVisibilityInRenderWindow(QString display_name, bool display_visibility);
   void setTopic(QString topic);
-  void setUnreliable(bool unreliable);
-  void setQueueSize(int queue_size);
   void setImageRendering(QString image_rendering);
   void setOverlayAlpha(float overlay_alpha);
   void setZoomFactor(float zoom_factor);

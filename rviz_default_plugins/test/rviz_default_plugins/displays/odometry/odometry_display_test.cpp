@@ -185,7 +185,7 @@ TEST_F(
   OdometryDisplayFixture, processMessage_handles_arrow_and_axes_visibility_according_to_message) {
   mockValidTransform();
   auto odometry_message = createOdometryMessage();
-  auto shape_property = static_cast<rviz_common::properties::EnumProperty *>(display_->childAt(5));
+  auto shape_property = static_cast<rviz_common::properties::EnumProperty *>(display_->childAt(4));
   ASSERT_THAT(shape_property->getNameStd(), StrEq("Shape"));
 
   display_->processMessage(odometry_message);

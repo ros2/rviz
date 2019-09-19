@@ -39,8 +39,6 @@ public:
 
   void setRenderWindow() override;
   void setTopic(QString topic);
-  void setUnreliable(bool unreliable);
-  void setQueueSize(int queue_size);
 };
 
 #endif  // RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__IMAGE_DISPLAY_PAGE_OBJECT_HPP_

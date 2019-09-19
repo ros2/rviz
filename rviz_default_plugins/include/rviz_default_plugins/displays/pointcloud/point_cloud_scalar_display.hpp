@@ -40,7 +40,6 @@
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/message_filter_display.hpp"
-#include "rviz_common/properties/queue_size_property.hpp"
 #include "rviz_common/validate_floats.hpp"
 #include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
@@ -67,8 +66,7 @@ class RVIZ_DEFAULT_PLUGINS_PUBLIC PointCloudScalarDisplay
 {
 public:
   PointCloudScalarDisplay()
-  : queue_size_property_(std::make_unique<rviz_common::QueueSizeProperty>(this, 10)),
-    point_cloud_common_(std::make_shared<PointCloudCommon>(this))
+  : point_cloud_common_(std::make_shared<PointCloudCommon>(this))
   {}
 
   ~PointCloudScalarDisplay() override = default;
@@ -100,7 +98,6 @@ protected:
   virtual void setInitialValues() = 0;
   virtual void hideUnneededProperties() = 0;
 
-  std::unique_ptr<rviz_common::QueueSizeProperty> queue_size_property_;
   std::shared_ptr<rviz_default_plugins::PointCloudCommon> point_cloud_common_;
 
 private:

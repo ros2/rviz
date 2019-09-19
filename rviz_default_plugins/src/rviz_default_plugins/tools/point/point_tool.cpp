@@ -34,12 +34,15 @@
 
 #include <OgreVector3.h>
 
+#include "rclcpp/qos.hpp"
+
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/interaction/view_picker_iface.hpp"
 #include "rviz_common/load_resource.hpp"
 #include "rviz_common/msg_conversions.hpp"
 #include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/properties/string_property.hpp"
+#include "rviz_common/properties/qos_profile_property.hpp"
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/viewport_mouse_event.hpp"
 #include "rviz_common/view_controller.hpp"
@@ -50,6 +53,7 @@ namespace tools
 {
 
 PointTool::PointTool()
+: qos_profile_(5)
 {
   shortcut_key_ = 'u';
 
@@ -62,13 +66,17 @@ PointTool::PointTool()
     "Single click", true,
     "Switch away from this tool after one click.",
     getPropertyContainer(), SLOT(updateAutoDeactivate()), this);
+
+  qos_profile_property_ = new rviz_common::properties::QosProfileProperty(
+    topic_property_, qos_profile_);
 }
 
 void PointTool::onInitialize()
 {
   hit_cursor_ = cursor_;
   std_cursor_ = rviz_common::getDefaultCursor();
-
+  qos_profile_property_->initialize(
+    [this](rclcpp::QoS profile) {this->qos_profile_ = profile;});
   updateTopic();
 }
 
@@ -81,8 +89,7 @@ void PointTool::updateTopic()
   // TODO(anhosi, wjwwood): replace with abstraction for publishers once available
   publisher_ = context_->getRosNodeAbstraction().lock()->get_raw_node()->
     template create_publisher<geometry_msgs::msg::PointStamped>(
-    topic_property_->getStdString(),
-    10);
+    topic_property_->getStdString(), qos_profile_);
 }
 
 void PointTool::updateAutoDeactivate() {}

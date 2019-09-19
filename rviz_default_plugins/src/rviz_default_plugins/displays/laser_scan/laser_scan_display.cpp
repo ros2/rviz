@@ -35,7 +35,6 @@
 #include "tf2_ros/buffer.h"
 
 #include "rviz_common/properties/int_property.hpp"
-#include "rviz_common/properties/queue_size_property.hpp"
 #include "rviz_common/transformation/transformation_manager.hpp"
 #include "rviz_common/validate_floats.hpp"
 #include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
@@ -48,7 +47,6 @@ namespace displays
 
 LaserScanDisplay::LaserScanDisplay()
 : point_cloud_common_(std::make_unique<rviz_default_plugins::PointCloudCommon>(this)),
-  queue_size_property_(std::make_unique<rviz_common::QueueSizeProperty>(this, 10)),
   projector_(std::make_unique<laser_geometry::LaserProjection>()),
   filter_tolerance_(0, 0),
   transformer_guard_(

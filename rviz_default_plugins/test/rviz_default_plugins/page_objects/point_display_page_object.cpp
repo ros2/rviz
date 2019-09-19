@@ -39,11 +39,6 @@ void PointDisplayPageObject::setTopic(QString topic)
   waitForFirstMessage();
 }
 
-void PointDisplayPageObject::setUnreliable(bool unreliable)
-{
-  setBool("Unreliable", unreliable);
-}
-
 void PointDisplayPageObject::setColor(int red, int green, int blue)
 {
   setColorCode("Color", red, green, blue);

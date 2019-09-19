@@ -57,7 +57,6 @@
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/int_property.hpp"
 #include "rviz_common/properties/ros_topic_property.hpp"
-#include "rviz_common/properties/queue_size_property.hpp"
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
 #include "rviz_common/validate_floats.hpp"
@@ -92,8 +91,7 @@ bool validateFloats(const sensor_msgs::msg::CameraInfo & msg)
 }
 
 CameraDisplay::CameraDisplay()
-: queue_size_property_(std::make_unique<rviz_common::QueueSizeProperty>(this, 10)),
-  texture_(std::make_unique<ROSImageTexture>()),
+: texture_(std::make_unique<ROSImageTexture>()),
   new_caminfo_(false),
   caminfo_ok_(false),
   force_render_(false)
@@ -279,14 +277,11 @@ void CameraDisplay::subscribe()
 void CameraDisplay::createCameraInfoSubscription()
 {
   try {
-    // TODO(wjwwood): update this class to use rclcpp::QoS.
-    auto qos = rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(qos_profile));
-    qos.get_rmw_qos_profile() = qos_profile;
     // TODO(anhosi,wjwwood): replace with abstraction for subscriptions one available
     caminfo_sub_ = rviz_ros_node_.lock()->get_raw_node()->
       template create_subscription<sensor_msgs::msg::CameraInfo>(
       topic_property_->getTopicStd() + "/camera_info",
-      qos,
+      qos_profile,
       [this](sensor_msgs::msg::CameraInfo::ConstSharedPtr msg) {
         std::unique_lock<std::mutex> lock(caminfo_mutex_);
         current_caminfo_ = msg;
