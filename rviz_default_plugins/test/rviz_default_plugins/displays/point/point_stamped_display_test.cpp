@@ -102,8 +102,8 @@ TEST_F(PointStampedTestFixture,
   processMessage_stores_no_more_messages_in_scene_than_history_allows)
 {
   mockValidTransform();
-  EXPECT_THAT(point_stamped_display_->childAt(5)->getNameStd(), StrEq("History Length"));
-  point_stamped_display_->childAt(5)->setValue(2);
+  EXPECT_THAT(point_stamped_display_->childAt(4)->getNameStd(), StrEq("History Length"));
+  point_stamped_display_->childAt(4)->setValue(2);
 
   point_stamped_display_->processMessage(createPointMessage(0, 0, 0));
   point_stamped_display_->processMessage(createPointMessage(1, 0, 0));

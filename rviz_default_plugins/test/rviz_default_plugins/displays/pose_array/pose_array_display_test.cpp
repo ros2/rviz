@@ -57,15 +57,15 @@ public:
       context_.get(),
       scene_manager_->getRootSceneNode()->createChildSceneNode());
 
-    arrow_2d_length_property_ = display_->childAt(5);
+    arrow_2d_length_property_ = display_->childAt(4);
 
-    for (int i = 3; i < 5; i++) {
+    for (int i = 2; i < 4; i++) {
       common_arrow_properties_.push_back(display_->childAt(i));
     }
-    for (int i = 6; i < 10; i++) {
+    for (int i = 5; i < 9; i++) {
       arrow_3d_properties_.push_back(display_->childAt(i));
     }
-    for (int i = 10; i < 12; i++) {
+    for (int i = 9; i < 11; i++) {
       axes_properties_.push_back(display_->childAt(i));
     }
   }
@@ -99,15 +99,15 @@ geometry_msgs::msg::PoseArray::SharedPtr createMessageWithOnePose()
 }
 
 TEST_F(PoseArrayDisplayFixture, constructor_set_all_the_properties_in_the_right_order) {
-  EXPECT_THAT(display_->childAt(3)->getNameStd(), Eq("Color"));
-  EXPECT_THAT(display_->childAt(4)->getNameStd(), Eq("Alpha"));
-  EXPECT_THAT(display_->childAt(5)->getNameStd(), Eq("Arrow Length"));
-  EXPECT_THAT(display_->childAt(6)->getNameStd(), Eq("Head Radius"));
-  EXPECT_THAT(display_->childAt(7)->getNameStd(), Eq("Head Length"));
-  EXPECT_THAT(display_->childAt(8)->getNameStd(), Eq("Shaft Radius"));
-  EXPECT_THAT(display_->childAt(9)->getNameStd(), Eq("Shaft Length"));
-  EXPECT_THAT(display_->childAt(10)->getNameStd(), Eq("Axes Length"));
-  EXPECT_THAT(display_->childAt(11)->getNameStd(), Eq("Axes Radius"));
+  EXPECT_THAT(display_->childAt(2)->getNameStd(), Eq("Color"));
+  EXPECT_THAT(display_->childAt(3)->getNameStd(), Eq("Alpha"));
+  EXPECT_THAT(display_->childAt(4)->getNameStd(), Eq("Arrow Length"));
+  EXPECT_THAT(display_->childAt(5)->getNameStd(), Eq("Head Radius"));
+  EXPECT_THAT(display_->childAt(6)->getNameStd(), Eq("Head Length"));
+  EXPECT_THAT(display_->childAt(7)->getNameStd(), Eq("Shaft Radius"));
+  EXPECT_THAT(display_->childAt(8)->getNameStd(), Eq("Shaft Length"));
+  EXPECT_THAT(display_->childAt(9)->getNameStd(), Eq("Axes Length"));
+  EXPECT_THAT(display_->childAt(10)->getNameStd(), Eq("Axes Radius"));
 }
 
 TEST_F(PoseArrayDisplayFixture, at_startup_only_flat_arrows_propertie_are_visible) {
