@@ -205,11 +205,16 @@ void MapDisplay::subscribe()
 
   MFDClass::subscribe();
 
+  subscribeToUpdateTopic();
+}
+
+void MapDisplay::subscribeToUpdateTopic()
+{
   try {
-    update_subscription_ = rviz_ros_node_.lock()->get_raw_node()->
+    update_subscription_ =
+      rviz_ros_node_.lock()->get_raw_node()->
       template create_subscription<map_msgs::msg::OccupancyGridUpdate>(
-      update_topic_property_->getTopicStd(),
-      update_profile_,
+      update_topic_property_->getTopicStd(), update_profile_,
       [this](const map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr message) {
         incomingUpdate(message);
       });
@@ -224,6 +229,11 @@ void MapDisplay::subscribe()
 void MapDisplay::unsubscribe()
 {
   MFDClass::unsubscribe();
+  unsubscribeToUpdateTopic();
+}
+
+void MapDisplay::unsubscribeToUpdateTopic()
+{
   update_subscription_.reset();
 }
 
@@ -288,7 +298,6 @@ void MapDisplay::processMessage(nav_msgs::msg::OccupancyGrid::ConstSharedPtr msg
   Q_EMIT mapUpdated();
 }
 
-// TODO(wjwwood): Use again once map_msgs are ported
 void MapDisplay::incomingUpdate(const map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr update)
 {
   // Only update the map if we have gotten a full one first.
@@ -607,12 +616,11 @@ void MapDisplay::onEnable()
 
 void MapDisplay::updateMapUpdateTopic()
 {
-  unsubscribe();
+  unsubscribeToUpdateTopic();
   reset();
-  subscribe();
+  subscribeToUpdateTopic();
   context_->queueRender();
 }
-
 
 }  // namespace displays
 }  // namespace rviz_default_plugins

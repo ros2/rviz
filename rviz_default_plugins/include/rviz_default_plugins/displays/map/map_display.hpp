@@ -141,6 +141,9 @@ protected:
 
   void clear();
 
+  void subscribeToUpdateTopic();
+  void unsubscribeToUpdateTopic();
+
   void showValidMap();
   void resetSwatchesIfNecessary(size_t width, size_t height, float resolution);
   void createSwatches();
