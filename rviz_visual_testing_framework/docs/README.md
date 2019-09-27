@@ -60,7 +60,7 @@ After this method has been called in a test, interaction with RViz is no longer 
 
 ## Running the tests
 
-In order to run the tests, they have to be build first and executed seperately. Use the following commands:
+In order to run the tests, they have to be built first and executed seperately. Use the following commands:
 
     colcon build --cmake-args -DEnableVisualTests=True -DBUILD_TESTING=1
     
