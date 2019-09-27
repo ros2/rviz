@@ -2,6 +2,16 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+7.0.0 (2019-09-27)
+------------------
+* Fix map after upgrade (`#459 <https://github.com/ros2/rviz/issues/459>`_)
+* Use eigen3_cmake_module (`#441 <https://github.com/ros2/rviz/issues/441>`_)
+* Upgrade from Ogre 1.10 to Ogre 1.12.1 (`#394 <https://github.com/ros2/rviz/issues/394>`_)
+* Remove -Werror from defualt compiler options (`#420 <https://github.com/ros2/rviz/issues/420>`_)
+* Migrate Wrench Display (`#396 <https://github.com/ros2/rviz/issues/396>`_)
+* Fix STL loader (`#410 <https://github.com/ros2/rviz/issues/410>`_)
+* Contributors: Hunter L. Allen, Martin Idel, Shane Loretz
+
 6.1.1 (2019-05-29)
 ------------------
 * Fixed the installation destination of OGRE media resources which contain a ``dirname`` (`#404 <https://github.com/ros2/rviz/issues/404>`_)

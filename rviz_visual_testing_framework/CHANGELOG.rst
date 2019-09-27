@@ -2,6 +2,12 @@
 Changelog for package rviz_visual_testing_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+7.0.0 (2019-09-27)
+------------------
+* Fix typos in visual testing framework documentation (`#416 <https://github.com/ros2/rviz/issues/416>`_)
+* Remove -Werror from defualt compiler options (`#420 <https://github.com/ros2/rviz/issues/420>`_)
+* Contributors: Hunter L. Allen, Jacob Perron
+
 6.1.1 (2019-05-29)
 ------------------
 

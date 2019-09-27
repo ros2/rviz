@@ -2,6 +2,29 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+7.0.0 (2019-09-27)
+------------------
+* Introduce QoS property (`#409 <https://github.com/ros2/rviz/issues/409>`_)
+  A container of properties related to QoS settings. Replaces queue size and unreliable properties.
+* Rename interactive marker client enum (`#465 <https://github.com/ros2/rviz/issues/465>`_)
+* Migrate InteractiveMarkerDisplay (`#457 <https://github.com/ros2/rviz/issues/457>`_)
+* Fix map after upgrade (`#459 <https://github.com/ros2/rviz/issues/459>`_)
+* Rename 2d Nav Goal to 2d Goal Pose (`#455 <https://github.com/ros2/rviz/issues/455>`_)
+    * Rename nav pose tool to goal pose tool
+    * Rename topic for goal pose tool from "move_base_simple/goal" to "goal_pose"
+* Do not select interactive markers when mousing over them (`#451 <https://github.com/ros2/rviz/issues/451>`_)
+* Migrate Interaction Tool (`#423 <https://github.com/ros2/rviz/issues/423>`_)
+* Upgrade from Ogre 1.10 to Ogre 1.12.1 (`#394 <https://github.com/ros2/rviz/issues/394>`_)
+* Re-enable use of tf message filter (`#375 <https://github.com/ros2/rviz/issues/375>`_)
+* Fix map display (`#425 <https://github.com/ros2/rviz/issues/425>`_)
+* FrameTransformer implements tf2::BufferCoreInterface and tf2_ros::AsyncBufferInterface (`#422 <https://github.com/ros2/rviz/issues/422>`_)
+* Disambiguate "estimate" pose from "goal" pose in log (`#427 <https://github.com/ros2/rviz/issues/427>`_)
+* Mojave compatibility (`#414 <https://github.com/ros2/rviz/issues/414>`_)
+* Use geometry_msgs types instead of custom types (`#426 <https://github.com/ros2/rviz/issues/426>`_)
+* Remove -Werror from defualt compiler options (`#420 <https://github.com/ros2/rviz/issues/420>`_)
+* Migrate Wrench Display (`#396 <https://github.com/ros2/rviz/issues/396>`_)
+* Contributors: Dan Rose, Hunter L. Allen, Jacob Perron, Karsten Knese, Martin Idel, Shivesh Khaitan, Steven Macenski
+
 6.1.1 (2019-05-29)
 ------------------
 
