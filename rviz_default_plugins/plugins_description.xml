@@ -3,9 +3,9 @@
   <!-- Displays plugins -->
 
   <class
-          name="rviz_default_plugins/Axes"
-          type="rviz_default_plugins::displays::AxesDisplay"
-          base_class_type="rviz_common::Display"
+    name="rviz_default_plugins/Axes"
+    type="rviz_default_plugins::displays::AxesDisplay"
+    base_class_type="rviz_common::Display"
   >
     <description>
       Displays an axis at the Target Frame's origin.
