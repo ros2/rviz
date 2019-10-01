@@ -97,7 +97,7 @@ void AxesDisplay::update(float dt, float ros_dt)
   (void) dt;
   (void) ros_dt;
 
-  std::string frame = frame_property_->getStdString();
+  std::string frame = frame_property_->getFrameStd();
 
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
