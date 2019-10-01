@@ -33,11 +33,13 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <vector>
 
 #include <OgreVector3.h>
 
 #include "object.hpp"
+#include "shape.hpp"
 #include "rviz_rendering/visibility_control.hpp"
 
 namespace Ogre
@@ -51,8 +53,6 @@ class ColourValue;
 
 namespace rviz_rendering
 {
-class Shape;
-
 /**
  * \class Axes
  * \brief An object that displays a set of X/Y/Z axes, with X=Red, Y=Green, Z=Blue
@@ -68,10 +68,12 @@ public:
    * @param radius Radius of the axes
    */
   RVIZ_RENDERING_PUBLIC
-  Axes(
-    Ogre::SceneManager * manager, Ogre::SceneNode * parent_node = NULL, float length = 1.0f,
+  explicit Axes(
+    Ogre::SceneManager * manager,
+    Ogre::SceneNode * parent_node = nullptr,
+    float length = 1.0f,
     float radius = 0.1f);
-  virtual ~Axes();
+  ~Axes() override;
 
   /**
    * \brief Set the parameters on this object
@@ -83,22 +85,22 @@ public:
   void set(float length, float radius);
 
   RVIZ_RENDERING_PUBLIC
-  virtual void setOrientation(const Ogre::Quaternion & orientation);
+  void setOrientation(const Ogre::Quaternion & orientation) override;
 
   RVIZ_RENDERING_PUBLIC
-  virtual void setPosition(const Ogre::Vector3 & position);
+  void setPosition(const Ogre::Vector3 & position) override;
 
   RVIZ_RENDERING_PUBLIC
-  virtual void setScale(const Ogre::Vector3 & scale);
+  void setScale(const Ogre::Vector3 & scale) override;
 
   RVIZ_RENDERING_PUBLIC
-  virtual void setColor(float r, float g, float b, float a);
+  void setColor(float r, float g, float b, float a) override;
 
   RVIZ_RENDERING_PUBLIC
-  virtual const Ogre::Vector3 & getPosition();
+  const Ogre::Vector3 & getPosition() override;
 
   RVIZ_RENDERING_PUBLIC
-  virtual const Ogre::Quaternion & getOrientation();
+  const Ogre::Quaternion & getOrientation() override;
 
   /**
    * \brief Get the scene node associated with this object
@@ -110,16 +112,16 @@ public:
    * \brief Sets user data on all ogre objects we own
    */
   RVIZ_RENDERING_PUBLIC
-  void setUserData(const Ogre::Any & data);
+  void setUserData(const Ogre::Any & data) override;
 
   RVIZ_RENDERING_PUBLIC
-  Shape * getXShape() {return x_axis_;}
+  Shape & getXShape() {return *x_axis_;}
 
   RVIZ_RENDERING_PUBLIC
-  Shape * getYShape() {return y_axis_;}
+  Shape & getYShape() {return *y_axis_;}
 
   RVIZ_RENDERING_PUBLIC
-  Shape * getZShape() {return z_axis_;}
+  Shape & getZShape() {return *z_axis_;}
 
   RVIZ_RENDERING_PUBLIC
   void setXColor(const Ogre::ColourValue & col);
@@ -145,14 +147,14 @@ public:
 private:
   // prohibit copying
   Axes(const Axes & other)
-  : Object(0) {(void) other;}
+  : Object(nullptr) {(void) other;}
   Axes & operator=(const Axes & other) {(void) other; return *this;}
 
   Ogre::SceneNode * scene_node_;
 
-  Shape * x_axis_;      ///< Cylinder for the X-axis
-  Shape * y_axis_;      ///< Cylinder for the Y-axis
-  Shape * z_axis_;      ///< Cylinder for the Z-axis
+  std::unique_ptr<Shape> x_axis_;      ///< Cylinder for the X-axis
+  std::unique_ptr<Shape> y_axis_;      ///< Cylinder for the Y-axis
+  std::unique_ptr<Shape> z_axis_;      ///< Cylinder for the Z-axis
 
   static const Ogre::ColourValue default_x_color_;
   static const Ogre::ColourValue default_y_color_;

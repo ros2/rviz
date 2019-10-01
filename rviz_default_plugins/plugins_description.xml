@@ -3,6 +3,17 @@
   <!-- Displays plugins -->
 
   <class
+    name="rviz_default_plugins/Axes"
+    type="rviz_default_plugins::displays::AxesDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays an axis at the Target Frame's origin.
+      &lt;a href="http://www.ros.org/wiki/rviz/DisplayTypes/Axes"&gt;More Information&lt;/a&gt;.
+    </description>
+  </class>
+
+  <class
     name="rviz_default_plugins/Camera"
     type="rviz_default_plugins::displays::CameraDisplay"
     base_class_type="rviz_common::Display"

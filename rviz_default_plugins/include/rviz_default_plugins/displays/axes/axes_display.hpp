@@ -27,55 +27,63 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_AXES_DISPLAY_H
-#define RVIZ_AXES_DISPLAY_H
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__AXES__AXES_DISPLAY_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__AXES__AXES_DISPLAY_HPP_
 
-#include "rviz/display.h"
+#include <memory>
 
-namespace rviz
+#include "rviz_common/display.hpp"
+
+namespace rviz_rendering
 {
-
 class Axes;
+}
+
+namespace rviz_common
+{
+namespace properties
+{
 class FloatProperty;
 class TfFrameProperty;
+}
+}
 
-/** @brief Displays a set of XYZ axes at the origin of a chosen frame. */
-class AxesDisplay: public Display
+namespace rviz_default_plugins
 {
-Q_OBJECT
+namespace displays
+{
+
+class AxesDisplay : public rviz_common::Display
+{
+  Q_OBJECT
+
 public:
   AxesDisplay();
-  virtual ~AxesDisplay();
 
-  void onInitialize();
+  ~AxesDisplay() override;
 
-  /**
-   * \brief Set the parameters for the axes
-   * @param length Length of each axis
-   * @param radius Radius of each axis
-   */
-  void set( float length, float radius );
+  void onInitialize() override;
 
   // Overrides from Display
-  virtual void update(float dt, float ros_dt);
+  void update(float dt, float ros_dt) override;
 
 protected:
-  // overrides from Display
-  virtual void onEnable();
-  virtual void onDisable();
+  void onEnable() override;
+
+  void onDisable() override;
 
 private Q_SLOTS:
-  /** @brief Update the length and radius of the axes object from property values. */
   void updateShape();
 
 private:
-  Axes* axes_;      ///< Handles actually drawing the axes
+  std::shared_ptr<rviz_rendering::Axes> axes_;
 
-  FloatProperty* length_property_;
-  FloatProperty* radius_property_;
-  TfFrameProperty* frame_property_;
+  rviz_common::properties::FloatProperty * length_property_;
+  rviz_common::properties::FloatProperty * radius_property_;
+  rviz_common::properties::TfFrameProperty * frame_property_;
 };
 
-} // namespace rviz
+}  // namespace displays
+}  // namespace rviz_default_plugins
 
- #endif
+#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__AXES__AXES_DISPLAY_HPP_

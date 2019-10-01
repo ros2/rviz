@@ -76,6 +76,7 @@ find_package(visualization_msgs REQUIRED)
 
 # These need to be added in the add_library() call so AUTOMOC detects them.
 set(rviz_default_plugins_headers_to_moc
+  include/rviz_default_plugins/displays/axes/axes_display.hpp
   include/rviz_default_plugins/displays/camera/camera_display.hpp
   include/rviz_default_plugins/displays/fluid_pressure/fluid_pressure_display.hpp
   include/rviz_default_plugins/displays/grid/grid_display.hpp
@@ -136,6 +137,7 @@ set(rviz_default_plugins_headers_to_moc
 )
 
 set(rviz_default_plugins_source_files
+  src/rviz_default_plugins/displays/axes/axes_display.cpp
   src/rviz_default_plugins/displays/camera/camera_display.cpp
   src/rviz_default_plugins/displays/grid/grid_display.cpp
   src/rviz_default_plugins/displays/grid_cells/grid_cells_display.cpp
@@ -630,6 +632,20 @@ if(BUILD_TESTING)
   if(TARGET transformer_guard_test)
     target_include_directories(transformer_guard_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(transformer_guard_test ${TEST_LINK_LIBRARIES})
+  endif()
+
+  ament_add_gtest(axes_display_visual_test
+    test/rviz_default_plugins/displays/axes/axes_display_visual_test.cpp
+    test/rviz_default_plugins/page_objects/axes_display_page_object.cpp
+    ${SKIP_VISUAL_TESTS}
+    TIMEOUT 180)
+  if(TARGET axes_display_visual_test)
+    target_include_directories(axes_display_visual_test PUBLIC
+      ${TEST_INCLUDE_DIRS}
+      ${rviz_visual_testing_framework_INCLUDE_DIRS})
+    target_link_libraries(axes_display_visual_test
+      ${TEST_LINK_LIBRARIES}
+      rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
 
   ament_add_gtest(camera_display_visual_test
