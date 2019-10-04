@@ -2,8 +2,8 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+7.0.1 (2019-10-04)
+------------------
 * Fix the rviz_ogre_vendor packaging.
 * Contributors: Chris Lalancette
 
