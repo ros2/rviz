@@ -2,6 +2,11 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Migrate Axes Display (`#429 <https://github.com/ros2/rviz/issues/429>`_)
+* Contributors: Martin Idel
+
 7.0.0 (2019-09-27)
 ------------------
 * Introduce QoS property (`#409 <https://github.com/ros2/rviz/issues/409>`_)

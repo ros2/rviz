@@ -2,6 +2,9 @@
 Changelog for package rviz_rendering_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 7.0.0 (2019-09-27)
 ------------------
 * Fix assert in mesh_loader_test (`#446 <https://github.com/ros2/rviz/issues/446>`_)

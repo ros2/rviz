@@ -2,6 +2,9 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 7.0.0 (2019-09-27)
 ------------------
 * Introduce QoS property (`#409 <https://github.com/ros2/rviz/issues/409>`_)

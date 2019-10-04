@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Migrate Axes Display (`#429 <https://github.com/ros2/rviz/issues/429>`_)
+* Contributors: Martin Idel
+
 7.0.0 (2019-09-27)
 ------------------
 * Fix map after upgrade (`#459 <https://github.com/ros2/rviz/issues/459>`_)

@@ -2,6 +2,9 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 7.0.0 (2019-09-27)
 ------------------
 * Remove -Werror from defualt compiler options (`#420 <https://github.com/ros2/rviz/issues/420>`_)
