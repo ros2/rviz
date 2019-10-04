@@ -146,11 +146,6 @@ macro(build_ogre)
     list(APPEND extra_cmake_args "-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}")
   endif()
 
-  # We need to patch some pragmas because the OgreVector cannot compile without warnings
-  if(WIN32)
-    set(patch_files patch.exe -p1 -N < ${CMAKE_CURRENT_SOURCE_DIR}/pragma-patch.diff &&)
-  endif()
-
   include(ExternalProject)
   ExternalProject_Add(ogre-v1.12.1
     URL https://github.com/OGRECave/ogre/archive/v1.12.1.zip
@@ -179,7 +174,8 @@ macro(build_ogre)
       ${extra_cmake_args}
       -Wno-dev
     PATCH_COMMAND
-      ${patch_files}
+      ${CMAKE_COMMAND} -E chdir <SOURCE_DIR> git apply -p1 --ignore-space-change --whitespace=nowarn ${CMAKE_CURRENT_SOURCE_DIR}/pragma-patch.diff
+    COMMAND
       ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/FindFreetype.cmake ${CMAKE_CURRENT_BINARY_DIR}/ogre-v1.12.1-prefix/src/ogre-v1.12.1/CMake/Packages/FindFreetype.cmake
   )
 
