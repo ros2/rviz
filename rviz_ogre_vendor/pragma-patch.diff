@@ -1834,3 +1834,18 @@ index 071039a86..efe8859fc 100644
 +
  
  #endif 
+diff -urp ogre-1.12.1.orig/PlugIns/OctreeZone/CMakeLists.txt ogre-1.12.1/PlugIns/OctreeZone/CMakeLists.txt
+--- ogre-1.12.1.orig/PlugIns/OctreeZone/CMakeLists.txt	2019-06-24 23:04:20.000000000 +0000
++++ ogre-1.12.1/PlugIns/OctreeZone/CMakeLists.txt	2019-10-04 16:58:03.669588969 +0000
+@@ -23,6 +23,11 @@ generate_export_header(Plugin_OctreeZone
+     EXPORT_MACRO_NAME _OgreOctreeZonePluginExport
+     EXPORT_FILE_NAME ${PROJECT_BINARY_DIR}/include/OgreOctreeZonePrerequisites.h)
+ 
++if (UNIX)
++  set_property(TARGET Plugin_OctreeZone APPEND PROPERTY
++    INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/${OGRE_LIB_DIRECTORY}/OGRE)
++endif ()
++
+ ogre_config_framework(Plugin_OctreeZone)
+ 
+ ogre_config_plugin(Plugin_OctreeZone)
