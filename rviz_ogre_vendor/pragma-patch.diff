@@ -47,32 +47,6 @@ index 5b9cababd..dda7a57b3 100644
 +#endif
 +
  #endif
-diff --git a/OgreMain/include/Ogre.h b/OgreMain/include/Ogre.h
-index 515178aa0..5ad6463dd 100644
---- a/OgreMain/include/Ogre.h
-+++ b/OgreMain/include/Ogre.h
-@@ -27,6 +27,11 @@ THE SOFTWARE.
- */
- #ifndef _Ogre_H__
- #define _Ogre_H__
-+#ifdef _WIN32
-+#pragma warning(push)
-+#pragma warning(disable:4251)
-+#endif
-+
- // This file includes all the other files which you will need to build a client application
- #include "OgrePrerequisites.h"
- 
-@@ -130,5 +135,9 @@ THE SOFTWARE.
- #include "OgreViewport.h"
- #include "OgreComponents.h"
- // .... more to come
-+#ifdef _WIN32
-+#pragma warning(pop)
-+#endif
-+
- 
- #endif
 diff --git a/OgreMain/include/OgreAnimable.h b/OgreMain/include/OgreAnimable.h
 index 755e76d00..38c86cfea 100644
 --- a/OgreMain/include/OgreAnimable.h
@@ -1834,18 +1808,41 @@ index 071039a86..efe8859fc 100644
 +
  
  #endif 
-diff -urp ogre-1.12.1.orig/PlugIns/OctreeZone/CMakeLists.txt ogre-1.12.1/PlugIns/OctreeZone/CMakeLists.txt
---- ogre-1.12.1.orig/PlugIns/OctreeZone/CMakeLists.txt	2019-06-24 23:04:20.000000000 +0000
-+++ ogre-1.12.1/PlugIns/OctreeZone/CMakeLists.txt	2019-10-04 16:58:03.669588969 +0000
+diff --git a/PlugIns/OctreeZone/CMakeLists.txt b/PlugIns/OctreeZone/CMakeLists.txt
+--- a/PlugIns/OctreeZone/CMakeLists.txt	2019-06-24 23:04:20.000000000 +0000
++++ b/PlugIns/OctreeZone/CMakeLists.txt	2019-10-04 16:58:03.669588969 +0000
 @@ -23,6 +23,11 @@ generate_export_header(Plugin_OctreeZone
      EXPORT_MACRO_NAME _OgreOctreeZonePluginExport
      EXPORT_FILE_NAME ${PROJECT_BINARY_DIR}/include/OgreOctreeZonePrerequisites.h)
- 
+
 +if (UNIX)
 +  set_property(TARGET Plugin_OctreeZone APPEND PROPERTY
 +    INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/${OGRE_LIB_DIRECTORY}/OGRE)
 +endif ()
 +
  ogre_config_framework(Plugin_OctreeZone)
- 
+
  ogre_config_plugin(Plugin_OctreeZone)
+diff --git a/OgreMain/include/OgreTimer.h b/OgreMain/include/OgreTimer.h
+--- a/OgreMain/include/OgreTimer.h	2019-06-24 16:04:20.000000000 -0700
++++ b/OgreMain/include/OgreTimer.h	2019-10-10 12:33:07.243621900 -0700
+@@ -28,6 +28,10 @@ THE SOFTWARE.
+ 
+ #ifndef __OGRE_TIMER_H__
+ #define __OGRE_TIMER_H__
++#ifdef _WIN32
++#pragma warning(push)
++#pragma warning(disable:4251)
++#endif
+ 
+ #include "OgrePrerequisites.h"
+ #include <chrono>
+@@ -59,4 +63,7 @@ namespace Ogre
+         uint64_t getMicrosecondsCPU();
+     };
+ }
++#ifdef _WIN32
++#pragma warning(pop)
++#endif
+ #endif
+

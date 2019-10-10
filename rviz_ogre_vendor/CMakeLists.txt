@@ -173,7 +173,7 @@ macro(build_ogre)
       ${extra_cmake_args}
       -Wno-dev
     PATCH_COMMAND
-      ${CMAKE_COMMAND} -E chdir <SOURCE_DIR> git apply -p1 --ignore-space-change --whitespace=nowarn ${CMAKE_CURRENT_SOURCE_DIR}/pragma-patch.diff
+      ${CMAKE_COMMAND} -E chdir <SOURCE_DIR> patch${CMAKE_EXECUTABLE_SUFFIX} -p1 -N < ${CMAKE_CURRENT_SOURCE_DIR}/pragma-patch.diff
     COMMAND
       ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/FindFreetype.cmake ${CMAKE_CURRENT_BINARY_DIR}/ogre-v1.12.1-prefix/src/ogre-v1.12.1/CMake/Packages/FindFreetype.cmake
   )
