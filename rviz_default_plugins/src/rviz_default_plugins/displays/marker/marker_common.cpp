@@ -339,16 +339,14 @@ void MarkerCommon::processNewMessages(const MarkerCommon::V_MarkerMessage & loca
 
 void MarkerCommon::removeExpiredMarkers()
 {
-  auto marker_it = markers_with_expiration_.begin();
-  auto end = markers_with_expiration_.end();
-  for (; marker_it != end; ) {
-    MarkerBasePtr marker = *marker_it;
+  std::vector<MarkerBasePtr> markers_to_delete;
+  for (const auto & marker : markers_with_expiration_) {
     if (marker->expired()) {
-      ++marker_it;
-      deleteMarker(marker->getID());
-    } else {
-      ++marker_it;
+      markers_to_delete.push_back(marker);
     }
+  }
+  for(const auto & marker : markers_to_delete) {
+    deleteMarker(marker->getID());
   }
 }
 
