@@ -32,6 +32,7 @@ For some displays, the [documentation is updated](docs/FEATURES.md).
 | Polygon               |
 | Pose                  |
 | Pose Array            |
+| Pose With Covariance  |
 | Range                 |
 | Relative Humidity     |
 | Robot Model           |
@@ -43,11 +44,10 @@ For some displays, the [documentation is updated](docs/FEATURES.md).
 ### Not yet ported
 These features have not been ported to `ros2/rviz` yet.
 
-| Displays             | Panels |
-| -------------------- | ------ |
-| DepthCloud           | Time   |
-| Effort               |
-| Pose With Covariance |
+| Displays      | Panels |
+| ------------- | ------ |
+| DepthCloud    | Time   |
+| Effort        |
 
 Other features:
 - Filtering of Topic lists by topic type
