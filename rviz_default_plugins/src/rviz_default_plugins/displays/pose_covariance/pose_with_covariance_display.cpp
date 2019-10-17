@@ -38,7 +38,6 @@
 #include "rviz_rendering/objects/shape.hpp"
 #include "rviz_rendering/objects/covariance_visual.hpp"
 
-#include "rviz_common/display_context.hpp"
 #include "rviz_common/logging.hpp"
 #include "rviz_common/msg_conversions.hpp"
 #include "rviz_common/properties/color_property.hpp"
@@ -46,116 +45,16 @@
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/properties/quaternion_property.hpp"
-#include "rviz_common/properties/string_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/properties/covariance_property.hpp"
-#include "rviz_common/interaction/selection_handler.hpp"
 #include "rviz_common/validate_floats.hpp"
+
+#include "pose_with_cov_selection_handler.hpp"
 
 namespace rviz_default_plugins
 {
 namespace displays
 {
-
-class PoseWithCovarianceDisplaySelectionHandler : public rviz_common::interaction::SelectionHandler
-{
-public:
-  PoseWithCovarianceDisplaySelectionHandler(
-    PoseWithCovarianceDisplay * display, rviz_common::DisplayContext * context)
-  : SelectionHandler(context),
-    display_(display)
-  {}
-
-  void createProperties(
-    const rviz_common::interaction::Picked & obj,
-    rviz_common::properties::Property * parent_property)
-  {
-    (void) obj;
-    auto cat = new rviz_common::properties::Property(
-      "Pose " + display_->getName(), QVariant(), "", parent_property);
-    properties_.push_back(cat);
-
-    frame_property_ = new rviz_common::properties::StringProperty(
-      "Frame", "", "", cat);
-    frame_property_->setReadOnly(true);
-
-    position_property_ = new rviz_common::properties::VectorProperty(
-      "Position", Ogre::Vector3::ZERO, "", cat);
-    position_property_->setReadOnly(true);
-
-    orientation_property_ = new rviz_common::properties::QuaternionProperty(
-      "Orientation", Ogre::Quaternion::IDENTITY, "", cat);
-    orientation_property_->setReadOnly(true);
-
-    covariance_position_property_ = new rviz_common::properties::VectorProperty(
-      "Covariance Position", Ogre::Vector3::ZERO, "", cat);
-    covariance_position_property_->setReadOnly(true);
-
-    covariance_orientation_property_ = new rviz_common::properties::VectorProperty(
-      "Covariance Orientation", Ogre::Vector3::ZERO, "", cat);
-    covariance_orientation_property_->setReadOnly(true);
-  }
-
-  void getAABBs(
-    const rviz_common::interaction::Picked & obj,
-    rviz_common::interaction::V_AABB & aabbs)
-  {
-    (void) obj;
-    if (display_->pose_valid_) {
-      if (display_->shape_property_->getOptionInt() == PoseWithCovarianceDisplay::Arrow) {
-        aabbs.push_back(display_->arrow_->getHead()->getEntity()->getWorldBoundingBox());
-        aabbs.push_back(display_->arrow_->getShaft()->getEntity()->getWorldBoundingBox());
-      } else {
-        aabbs.push_back(display_->axes_->getXShape().getEntity()->getWorldBoundingBox());
-        aabbs.push_back(display_->axes_->getYShape().getEntity()->getWorldBoundingBox());
-        aabbs.push_back(display_->axes_->getZShape().getEntity()->getWorldBoundingBox());
-      }
-
-      if (display_->covariance_property_->getBool()) {
-        if (display_->covariance_property_->getUserData().position_visible) {
-          aabbs.push_back(display_->covariance_->getPositionBoundingBox());
-        }
-        if (display_->covariance_property_->getUserData().orientation_visible) {
-          auto orientation_aabbs = display_->covariance_->getOrientationBoundingBoxes();
-          aabbs.insert(aabbs.end(), std::begin(orientation_aabbs), std::end(orientation_aabbs));
-        }
-      }
-    }
-  }
-
-  void setMessage(geometry_msgs::msg::PoseWithCovarianceStamped::ConstSharedPtr message)
-  {
-    // properties_.size() should only be > 0 after createProperties()
-    // and before destroyProperties(), during which frame_property_,
-    // position_property_, and orientation_property_ should be valid
-    // pointers.
-    if (properties_.size() > 0) {
-      frame_property_->setStdString(message->header.frame_id);
-      position_property_->setVector(Ogre::Vector3(message->pose.pose.position.x,
-        message->pose.pose.position.y,
-        message->pose.pose.position.z));
-      orientation_property_->setQuaternion(Ogre::Quaternion(message->pose.pose.orientation.w,
-        message->pose.pose.orientation.x,
-        message->pose.pose.orientation.y,
-        message->pose.pose.orientation.z));
-      covariance_position_property_->setVector(Ogre::Vector3(message->pose.covariance[0 + 0 * 6],
-        message->pose.covariance[1 + 1 * 6],
-        message->pose.covariance[2 + 2 * 6]));
-
-      covariance_orientation_property_->setVector(Ogre::Vector3(message->pose.covariance[3 + 3 * 6],
-        message->pose.covariance[4 + 4 * 6],
-        message->pose.covariance[5 + 5 * 6]));
-    }
-  }
-
-private:
-  PoseWithCovarianceDisplay * display_;
-  rviz_common::properties::StringProperty * frame_property_;
-  rviz_common::properties::VectorProperty * position_property_;
-  rviz_common::properties::QuaternionProperty * orientation_property_;
-  rviz_common::properties::VectorProperty * covariance_position_property_;
-  rviz_common::properties::VectorProperty * covariance_orientation_property_;
-};
 
 PoseWithCovarianceDisplay::PoseWithCovarianceDisplay()
 : pose_valid_(false)
@@ -224,12 +123,6 @@ void PoseWithCovarianceDisplay::onInitialize()
 
   updateShapeChoice();
   updateColorAndAlpha();
-
-  coll_handler_.reset(new PoseWithCovarianceDisplaySelectionHandler(this, context_));
-  coll_handler_->addTrackedObjects(arrow_->getSceneNode());
-  coll_handler_->addTrackedObjects(axes_->getSceneNode());
-  coll_handler_->addTrackedObjects(covariance_->getPositionSceneNode());
-  coll_handler_->addTrackedObjects(covariance_->getOrientationSceneNode());
 }
 
 PoseWithCovarianceDisplay::~PoseWithCovarianceDisplay() = default;
@@ -238,6 +131,18 @@ void PoseWithCovarianceDisplay::onEnable()
 {
   MFDClass::onEnable();
   updateShapeVisibility();
+  setupSelectionHandler();
+}
+
+void PoseWithCovarianceDisplay::setupSelectionHandler()
+{
+  coll_handler_ = rviz_common::interaction::createSelectionHandler
+    <
+    PoseWithCovSelectionHandler>(this, context_);
+  coll_handler_->addTrackedObjects(arrow_->getSceneNode());
+  coll_handler_->addTrackedObjects(axes_->getSceneNode());
+  coll_handler_->addTrackedObjects(covariance_->getPositionSceneNode());
+  coll_handler_->addTrackedObjects(covariance_->getOrientationSceneNode());
 }
 
 void PoseWithCovarianceDisplay::updateColorAndAlpha()
@@ -299,8 +204,10 @@ void PoseWithCovarianceDisplay::updateShapeVisibility()
   }
 }
 
-void PoseWithCovarianceDisplay::updateCovariance() {
+void PoseWithCovarianceDisplay::updateCovariance()
+{
   covariance_->updateUserData(covariance_property_->getUserData());
+  context_->queueRender();
 }
 
 void PoseWithCovarianceDisplay::processMessage(
@@ -319,22 +226,16 @@ void PoseWithCovarianceDisplay::processMessage(
   if (!context_->getFrameManager()->transform(message->header, message->pose.pose, position,
     orientation))
   {
-    RVIZ_COMMON_LOG_ERROR_STREAM("Error transforming pose " << getNameStd() << " from frame '" <<
-      message->header.frame_id << "' to frame '" << fixed_frame_.toStdString() << "'");
+    setMissingTransformToFixedFrame(message->header.frame_id);
     return;
   }
+  setTransformOk();
 
   pose_valid_ = true;
   updateShapeVisibility();
 
-  axes_->setPosition(position);
-  axes_->setOrientation(orientation);
-
-  arrow_->setPosition(position);
-  arrow_->setOrientation(orientation * Ogre::Quaternion(Ogre::Degree(-90), Ogre::Vector3::UNIT_Y));
-
-  covariance_->setPosition(position);
-  covariance_->setOrientation(orientation);
+  scene_node_->setPosition(position);
+  scene_node_->setOrientation(orientation);
   covariance_->setCovariance(
     rviz_common::quaternionMsgToOgre(message->pose.pose.orientation), message->pose.covariance);
 
@@ -349,7 +250,6 @@ void PoseWithCovarianceDisplay::reset()
   pose_valid_ = false;
   updateShapeVisibility();
 }
-
 
 }  // namespace displays
 }  // namespace rviz_default_plugins

@@ -63,11 +63,11 @@ namespace rviz_default_plugins
 namespace displays
 {
 
-class PoseWithCovarianceDisplaySelectionHandler;
-typedef std::shared_ptr<PoseWithCovarianceDisplaySelectionHandler>
+class PoseWithCovSelectionHandler;
+typedef std::shared_ptr<PoseWithCovSelectionHandler>
   PoseWithCovarianceDisplaySelectionHandlerPtr;
 
-/** @brief Displays the pose from a geometry_msgs::PoseWithCovarianceStamped message. */
+/** @brief Displays the pose from a geometry_msgs::msg::PoseWithCovarianceStamped message. */
 class PoseWithCovarianceDisplay
   : public rviz_common::MessageFilterDisplay<geometry_msgs::msg::PoseWithCovarianceStamped>
 {
@@ -81,14 +81,14 @@ public:
   };
 
   PoseWithCovarianceDisplay();
-  virtual ~PoseWithCovarianceDisplay();
+  ~PoseWithCovarianceDisplay() override;
 
-  virtual void onInitialize();
-  virtual void reset();
+  void onInitialize() override;
+  void reset() override;
 
 protected:
   /** @brief Overridden from MessageFilterDisplay to get Arrow/Axes visibility correct. */
-  virtual void onEnable();
+  void onEnable() override;
 
 private Q_SLOTS:
   void updateShapeVisibility();
@@ -99,10 +99,9 @@ private Q_SLOTS:
   void updateCovariance();
 
 private:
-  void clear();
-
-  void processMessage(geometry_msgs::msg::PoseWithCovarianceStamped::ConstSharedPtr message)
-  override;
+  void
+  processMessage(geometry_msgs::msg::PoseWithCovarianceStamped::ConstSharedPtr message) override;
+  void setupSelectionHandler();
 
   std::shared_ptr<rviz_rendering::Arrow> arrow_;
   std::shared_ptr<rviz_rendering::Axes> axes_;
@@ -125,7 +124,7 @@ private:
 
   rviz_common::properties::CovarianceProperty * covariance_property_;
 
-  friend class PoseWithCovarianceDisplaySelectionHandler;
+  friend class PoseWithCovSelectionHandler;
 };
 
 }  // namespace displays
