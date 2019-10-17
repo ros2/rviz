@@ -70,16 +70,6 @@ void MarkerCommon::initialize(rviz_common::DisplayContext * context, Ogre::Scene
   namespace_config_enabled_state_.clear();
 
   marker_factory_->initialize(this, context_, scene_node_);
-
-  // TODO(greimela): Revisit after MessageFilter is available in ROS2
-//  tf_filter_ = new tf::MessageFilter<visualization_msgs::Marker>( *context_->getTFClient(),
-//    fixed_frame_.toStdString(),
-//    queue_size_property_->getInt(),
-//    update_nh_ );
-//
-//  tf_filter_->connectInput(sub_);
-//  tf_filter_->registerCallback(boost::bind(&MarkerCommon::incomingMarker, this, _1));
-//  tf_filter_->registerFailureCallback(boost::bind(&MarkerCommon::failedMarker, this, _1, _2));
 }
 
 void MarkerCommon::load(const rviz_common::Config & config)
