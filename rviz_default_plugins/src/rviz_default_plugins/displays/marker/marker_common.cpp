@@ -70,16 +70,6 @@ void MarkerCommon::initialize(rviz_common::DisplayContext * context, Ogre::Scene
   namespace_config_enabled_state_.clear();
 
   marker_factory_->initialize(this, context_, scene_node_);
-
-  // TODO(greimela): Revisit after MessageFilter is available in ROS2
-//  tf_filter_ = new tf::MessageFilter<visualization_msgs::Marker>( *context_->getTFClient(),
-//    fixed_frame_.toStdString(),
-//    queue_size_property_->getInt(),
-//    update_nh_ );
-//
-//  tf_filter_->connectInput(sub_);
-//  tf_filter_->registerCallback(boost::bind(&MarkerCommon::incomingMarker, this, _1));
-//  tf_filter_->registerFailureCallback(boost::bind(&MarkerCommon::failedMarker, this, _1, _2));
 }
 
 void MarkerCommon::load(const rviz_common::Config & config)
@@ -339,16 +329,14 @@ void MarkerCommon::processNewMessages(const MarkerCommon::V_MarkerMessage & loca
 
 void MarkerCommon::removeExpiredMarkers()
 {
-  auto marker_it = markers_with_expiration_.begin();
-  auto end = markers_with_expiration_.end();
-  for (; marker_it != end; ) {
-    MarkerBasePtr marker = *marker_it;
+  std::vector<MarkerBasePtr> markers_to_delete;
+  for (const auto & marker : markers_with_expiration_) {
     if (marker->expired()) {
-      ++marker_it;
-      deleteMarker(marker->getID());
-    } else {
-      ++marker_it;
+      markers_to_delete.push_back(marker);
     }
+  }
+  for (const auto & marker : markers_to_delete) {
+    deleteMarker(marker->getID());
   }
 }
 

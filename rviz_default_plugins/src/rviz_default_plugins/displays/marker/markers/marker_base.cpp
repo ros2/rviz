@@ -81,7 +81,7 @@ void MarkerBase::setMessage(const MarkerConstSharedPtr & message)
   MarkerConstSharedPtr old = message_;
   message_ = message;
 
-  expiration_ = rclcpp::Clock().now() + message->lifetime;
+  expiration_ = context_->getClock()->now() + message->lifetime;
 
   onNewMessage(old, message);
 }
@@ -94,7 +94,7 @@ void MarkerBase::updateFrameLocked()
 
 bool MarkerBase::expired()
 {
-  return rclcpp::Clock().now() >= expiration_;
+  return context_->getClock()->now() >= expiration_;
 }
 
 bool MarkerBase::transform(
