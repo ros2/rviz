@@ -335,7 +335,7 @@ void MarkerCommon::removeExpiredMarkers()
       markers_to_delete.push_back(marker);
     }
   }
-  for(const auto & marker : markers_to_delete) {
+  for (const auto & marker : markers_to_delete) {
     deleteMarker(marker->getID());
   }
 }
