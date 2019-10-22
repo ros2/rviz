@@ -47,7 +47,7 @@ if(BUILD_TESTING)
     "ogre_media_resources/meshes"
   )
 
-  install(DIRECTORY "${CMAKE_SOURCE_DIR}/ogre_media_resources/test_meshes"
+  install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/ogre_media_resources/test_meshes"
     DESTINATION "share/rviz_rendering_tests"
     USE_SOURCE_PERMISSIONS)
 

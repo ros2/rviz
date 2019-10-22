@@ -312,17 +312,17 @@ install(FILES default.rviz
 )
 
 install(
-  DIRECTORY "${CMAKE_SOURCE_DIR}/icons"
+  DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/icons"
   DESTINATION "share/${PROJECT_NAME}"
 )
 
 install(
-  DIRECTORY "${CMAKE_SOURCE_DIR}/images"
+  DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/images"
   DESTINATION "share/${PROJECT_NAME}"
 )
 
 install(
-  DIRECTORY "${CMAKE_SOURCE_DIR}/help"
+  DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/help"
   DESTINATION "share/${PROJECT_NAME}"
 )
 
