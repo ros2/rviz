@@ -30,6 +30,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 #include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
 
@@ -40,7 +41,15 @@
 
 int main(int argc, char ** argv)
 {
-  QApplication qapp(argc, argv);
+  // remove ROS arguments before passing to QApplication
+  std::vector<std::string> non_ros_args = rclcpp::remove_ros_arguments(argc, argv);
+  std::vector<char *> non_ros_args_c_strings;
+  for (auto & arg : non_ros_args) {
+    non_ros_args_c_strings.push_back(&arg.front());
+  }
+  int non_ros_argc = static_cast<int>(non_ros_args_c_strings.size());
+
+  QApplication qapp(non_ros_argc, non_ros_args_c_strings.data());
 
   // TODO(wjwwood): use node's logger here in stead
   auto logger = rclcpp::get_logger("rviz2");
