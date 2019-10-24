@@ -2,6 +2,11 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+7.0.2 (2019-10-23)
+------------------
+* Remove ROS arguments before passing to QApplication (`#474 <https://github.com/ros2/rviz/issues/474>`_)
+* Contributors: Jacob Perron
+
 7.0.1 (2019-10-04)
 ------------------
 

@@ -2,6 +2,12 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+7.0.2 (2019-10-23)
+------------------
+* Switch back to patch instead of git apply (`#470 <https://github.com/ros2/rviz/issues/470>`_)
+* Remove OGRE_BUILD_COMPONENT_SAMPLES cmake arg.
+* Contributors: Chris Lalancette
+
 7.0.1 (2019-10-04)
 ------------------
 * Fix the rviz_ogre_vendor packaging.

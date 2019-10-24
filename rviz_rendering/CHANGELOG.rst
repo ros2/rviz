@@ -2,6 +2,9 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+7.0.2 (2019-10-23)
+------------------
+
 7.0.1 (2019-10-04)
 ------------------
 * Migrate Axes Display (`#429 <https://github.com/ros2/rviz/issues/429>`_)

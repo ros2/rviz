@@ -2,6 +2,11 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+7.0.2 (2019-10-23)
+------------------
+* Use clock from context in markers (`#472 <https://github.com/ros2/rviz/issues/472>`_)
+* Contributors: Martin Idel
+
 7.0.1 (2019-10-04)
 ------------------
 * Migrate Axes Display (`#429 <https://github.com/ros2/rviz/issues/429>`_)
