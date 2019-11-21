@@ -156,7 +156,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/register_rviz_ogre_media_exports_h
 install(DIRECTORY src/cmake
   DESTINATION share/${PROJECT_NAME})
 
-install(DIRECTORY "${CMAKE_SOURCE_DIR}/ogre_media"
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/ogre_media"
   DESTINATION "share/${PROJECT_NAME}"
   USE_SOURCE_PERMISSIONS)
 

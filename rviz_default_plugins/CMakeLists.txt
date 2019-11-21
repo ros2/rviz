@@ -304,7 +304,7 @@ install(
 )
 
 install(
-  DIRECTORY "${CMAKE_SOURCE_DIR}/icons"
+  DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/icons"
   DESTINATION "share/${PROJECT_NAME}"
 )
 
@@ -326,7 +326,7 @@ if(BUILD_TESTING)
   find_package(sensor_msgs REQUIRED)
   find_package(visualization_msgs REQUIRED)
 
-  install(DIRECTORY "${CMAKE_SOURCE_DIR}/test/ogre_media_resources/test_meshes"
+  install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/test/ogre_media_resources/test_meshes"
     DESTINATION "share/rviz_default_plugins"
     USE_SOURCE_PERMISSIONS)
 
