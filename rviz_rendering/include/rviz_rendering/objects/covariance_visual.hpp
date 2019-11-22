@@ -157,22 +157,27 @@ public:
    *
    * Convenience method that sets visibility of both position and orientation parts.
    */
+  RVIZ_RENDERING_PUBLIC
   virtual void setVisible(bool visible);
 
   /**
    * \brief Get the root scene node of the position part of this covariance
    * @return the root scene node of the position part of this covariance
    */
+  RVIZ_RENDERING_PUBLIC
   Ogre::SceneNode * getPositionSceneNode() {return position_scale_node_;}
 
   /**
    * \brief Get the root scene node of the orientation part of this covariance
    * @return the root scene node of the orientation part of this covariance
    */
+  RVIZ_RENDERING_PUBLIC
   Ogre::SceneNode * getOrientationSceneNode() {return orientation_root_node_;}
 
+  RVIZ_RENDERING_PUBLIC
   Ogre::AxisAlignedBox getPositionBoundingBox();
 
+  RVIZ_RENDERING_PUBLIC
   std::vector<Ogre::AxisAlignedBox> getOrientationBoundingBoxes();
 
 private:
