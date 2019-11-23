@@ -112,6 +112,7 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/polygon/polygon_display.hpp
   include/rviz_default_plugins/displays/pose/pose_display.hpp
   include/rviz_default_plugins/displays/pose_array/pose_array_display.hpp
+  include/rviz_default_plugins/displays/pose_covariance/pose_with_covariance_display.hpp
   include/rviz_default_plugins/displays/range/range_display.hpp
   include/rviz_default_plugins/displays/relative_humidity/relative_humidity_display.hpp
   include/rviz_default_plugins/displays/robot_model/robot_model_display.hpp
@@ -189,6 +190,8 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/pose/pose_display_selection_handler.cpp
   src/rviz_default_plugins/displays/pose_array/pose_array_display.cpp
   src/rviz_default_plugins/displays/pose_array/flat_arrows_array.cpp
+  src/rviz_default_plugins/displays/pose_covariance/pose_with_covariance_display.cpp
+  src/rviz_default_plugins/displays/pose_covariance/pose_with_cov_selection_handler.cpp
   src/rviz_default_plugins/displays/range/range_display.cpp
   src/rviz_default_plugins/displays/relative_humidity/relative_humidity_display.cpp
   src/rviz_default_plugins/displays/robot_model/robot_model_display.cpp
@@ -917,6 +920,21 @@ if(BUILD_TESTING)
     target_link_libraries(pose_display_visual_test
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
+  endif()
+
+  ament_add_gtest(pose_with_covariance_display_visual_test
+          test/rviz_default_plugins/displays/pose_covariance/pose_with_covariance_display_visual_test.cpp
+          test/rviz_default_plugins/page_objects/pose_with_covariance_display_page_object.cpp
+          test/rviz_default_plugins/publishers/pose_with_covariance_publisher.hpp
+          ${SKIP_VISUAL_TESTS}
+          TIMEOUT 180)
+  if(TARGET pose_with_covariance_display_visual_test)
+    target_include_directories(pose_with_covariance_display_visual_test PUBLIC
+            ${TEST_INCLUDE_DIRS}
+            ${rviz_visual_testing_framework_INCLUDE_DIRS})
+    target_link_libraries(pose_with_covariance_display_visual_test
+            ${TEST_LINK_LIBRARIES}
+            rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
 
   ament_add_gtest(range_display_visual_test
