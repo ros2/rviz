@@ -105,7 +105,7 @@ bool MarkerBase::transform(
 {
   rclcpp::Time stamp = message->header.stamp;
   if (message->frame_locked) {
-    stamp = rclcpp::Time();
+    stamp = rclcpp::Time(0, 0, context_->getClock()->get_clock_type());
   }
 
   if (!context_->getFrameManager()->transform(
