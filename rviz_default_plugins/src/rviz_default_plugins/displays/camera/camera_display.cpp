@@ -283,7 +283,7 @@ void CameraDisplay::createCameraInfoSubscription()
     // TODO(anyone) Store this in a member variable
     auto camera_info_topic = topic_property_->getTopicStd();
     camera_info_topic =
-        camera_info_topic.substr(0, camera_info_topic.rfind("/") + 1) + "camera_info";
+      camera_info_topic.substr(0, camera_info_topic.rfind("/") + 1) + "camera_info";
 
     caminfo_sub_ = rviz_ros_node_.lock()->get_raw_node()->
       template create_subscription<sensor_msgs::msg::CameraInfo>(
@@ -334,7 +334,7 @@ void CameraDisplay::clear()
 
   auto camera_info_topic = topic_property_->getTopicStd();
   camera_info_topic =
-      camera_info_topic.substr(0, camera_info_topic.rfind("/") + 1) + "camera_info";
+    camera_info_topic.substr(0, camera_info_topic.rfind("/") + 1) + "camera_info";
 
   setStatus(StatusLevel::Warn, CAM_INFO_STATUS,
     "No CameraInfo received on [" + QString::fromStdString(camera_info_topic) + "]. "
@@ -376,7 +376,7 @@ bool CameraDisplay::updateCamera()
   if (!info) {
     auto camera_info_topic = topic_property_->getTopicStd();
     camera_info_topic =
-        camera_info_topic.substr(0, camera_info_topic.rfind("/") + 1) + "camera_info";
+      camera_info_topic.substr(0, camera_info_topic.rfind("/") + 1) + "camera_info";
 
     setStatus(StatusLevel::Warn, CAM_INFO_STATUS,
       "Expecting Camera Info on topic [" + QString::fromStdString(camera_info_topic) + "]. "
