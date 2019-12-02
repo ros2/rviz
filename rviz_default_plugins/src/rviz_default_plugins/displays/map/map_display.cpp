@@ -547,10 +547,11 @@ void MapDisplay::transformMap()
 
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
-  if (!context_->getFrameManager()->transform(frame_, transform_time, current_map_.info.origin,
-    position, orientation) &&
-    !context_->getFrameManager()->transform(frame_, context_->getClock()->now(),
-    current_map_.info.origin, position, orientation))
+  if (!context_->getFrameManager()->transform(
+      frame_, transform_time, current_map_.info.origin, position, orientation) &&
+    !context_->getFrameManager()->transform(
+      frame_, rclcpp::Time(0, 0, context_->getClock()->get_clock_type()),
+      current_map_.info.origin, position, orientation))
   {
     setMissingTransformToFixedFrame(frame_);
     scene_node_->setVisible(false);
