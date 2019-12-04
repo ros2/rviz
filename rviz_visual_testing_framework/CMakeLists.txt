@@ -109,6 +109,12 @@ install(
   DESTINATION include
 )
 
+install(FILES
+  visual_tests_default_config.rviz
+  visual_tests_test_image_config.rviz
+  DESTINATION share/${PROJECT_NAME}/rviz
+)
+
 if(BUILD_TESTING)
   # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back
   find_package(ament_cmake_cppcheck REQUIRED)
