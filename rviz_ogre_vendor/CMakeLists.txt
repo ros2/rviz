@@ -39,6 +39,10 @@ macro(build_freetype)
       -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/freetype_install
       ${extra_cmake_args}
       -Wno-dev
+      -DWITH_ZLIB=OFF
+      -DWITH_BZip2=OFF
+      -DWITH_PNG=OFF
+      -DWITH_HarfBuzz=OFF
   )
 
   install(
