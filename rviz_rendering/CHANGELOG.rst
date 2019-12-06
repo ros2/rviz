@@ -2,6 +2,9 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.1.1 (2019-12-06)
+------------------
+
 5.1.0 (2019-01-14)
 ------------------
 * Handle FindEigen3 module's differing definitions (`#370 <https://github.com/ros2/rviz/issues/370>`_)

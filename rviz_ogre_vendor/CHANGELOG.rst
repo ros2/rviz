@@ -2,6 +2,11 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.1.1 (2019-12-06)
+------------------
+* Constraint Freetype dependencies for more predictable build result on Windows. (`#393 <https://github.com/ros2/rviz/issues/393>`_)
+* Contributors: Sean Yen
+
 5.1.0 (2019-01-14)
 ------------------
 * Skip the system directories when looking for OGRE (`#371 <https://github.com/ros2/rviz/issues/371>`_)

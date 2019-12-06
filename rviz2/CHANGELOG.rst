@@ -2,6 +2,9 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.1.1 (2019-12-06)
+------------------
+
 5.1.0 (2019-01-14)
 ------------------
 * Update package maintainer for rviz2 (`#365 <https://github.com/ros2/rviz/issues/365>`_)
