@@ -247,6 +247,7 @@ Dimensions SelectionRenderer::getRenderDimensions(
 void SelectionRenderer::renderToTexture(
   Ogre::RenderTexture * render_texture, Ogre::Viewport * window_viewport)
 {
+  (void)window_viewport;
   // update & force ogre to render the scene
   Ogre::MaterialManager::getSingleton().addListener(this);
   render_texture->update();
