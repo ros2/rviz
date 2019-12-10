@@ -2,6 +2,9 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+6.1.5 (2019-12-10)
+------------------
+
 6.1.4 (2019-09-06)
 ------------------
 * Updated to use new ``eigen3_cmake_module``. (`#441 <https://github.com/ros2/rviz/issues/441>`_) (`#452 <https://github.com/ros2/rviz/issues/452>`_)
