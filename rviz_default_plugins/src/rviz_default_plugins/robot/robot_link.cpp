@@ -68,6 +68,8 @@
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/interaction/selection_manager.hpp"
 
+#define RVIZ_RESOURCE_GROUP "rviz_rendering"
+
 using rviz_rendering::Axes;
 using rviz_rendering::Shape;
 
@@ -717,7 +719,7 @@ void RobotLink::loadMaterialFromTexture(
   Ogre::MaterialPtr & material_for_link, const urdf::VisualSharedPtr & visual) const
 {
   std::string filename = visual->material->texture_filename;
-  if (!Ogre::TextureManager::getSingleton().resourceExists(filename, "rviz_common")) {
+  if (!Ogre::TextureManager::getSingleton().resourceExists(filename, RVIZ_RESOURCE_GROUP)) {
     resource_retriever::Retriever retriever;
     resource_retriever::MemoryResource res;
     try {
@@ -739,7 +741,7 @@ void RobotLink::loadMaterialFromTexture(
       try {
         image.load(stream, extension);
         Ogre::TextureManager::getSingleton().loadImage(filename,
-          Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+          RVIZ_RESOURCE_GROUP,
           image);
       } catch (Ogre::Exception & e) {
         RVIZ_COMMON_LOG_ERROR_STREAM("Could not load texture [" << filename << "]: " << e.what());
