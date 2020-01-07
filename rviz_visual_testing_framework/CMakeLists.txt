@@ -109,9 +109,8 @@ install(
   DESTINATION include
 )
 
-install(FILES
-  visual_tests_default_config.rviz
-  visual_tests_test_image_config.rviz
+install(
+  DIRECTORY config
   DESTINATION share/${PROJECT_NAME}/rviz
 )
 
