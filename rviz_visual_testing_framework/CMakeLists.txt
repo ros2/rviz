@@ -111,7 +111,7 @@ install(
 
 install(
   DIRECTORY config
-  DESTINATION share/${PROJECT_NAME}/rviz
+  DESTINATION share/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)

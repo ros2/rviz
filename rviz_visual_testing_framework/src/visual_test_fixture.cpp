@@ -58,11 +58,11 @@ void VisualTestFixture::SetUpTestCase()
   if (VisualTest::generateReferenceImages()) {
     visualizer_app_->loadConfig(QDir::toNativeSeparators(
         QString::fromStdString(package_share_directory +
-        "/rviz/visual_tests_default_config.rviz")));
+        "/config/visual_tests_default_config.rviz")));
   } else {
     visualizer_app_->loadConfig(QDir::toNativeSeparators(
         QString::fromStdString(package_share_directory +
-        "/rviz/visual_tests_test_image_config.rviz")));
+        "/config/visual_tests_test_image_config.rviz")));
   }
 }
 
