@@ -1,6 +1,6 @@
 <package format="2">
     <name>rviz_rendering_tests</name>
-    <version>7.0.3</version>
+    <version>7.0.4</version>
     <description>
         Example plugin for RViz - documents and tests RViz plugin development
     </description>

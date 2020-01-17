@@ -1,6 +1,6 @@
 <package format="2">
   <name>rviz_rendering</name>
-  <version>7.0.3</version>
+  <version>7.0.4</version>
   <description>
     Library which provides the 3D rendering functionality in rviz.
   </description>
