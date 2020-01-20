@@ -283,6 +283,13 @@ void CameraDisplay::createCameraInfoSubscription()
     auto qos = rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(qos_profile));
     qos.get_rmw_qos_profile() = qos_profile;
     // TODO(anhosi,wjwwood): replace with abstraction for subscriptions one available
+
+    // The camera_info topic should be at the same level as the image topic
+    // TODO(anyone) Store this in a member variable
+    auto camera_info_topic = topic_property_->getTopicStd();
+    camera_info_topic =
+      camera_info_topic.substr(0, camera_info_topic.rfind("/") + 1) + "camera_info";
+
     caminfo_sub_ = rviz_ros_node_.lock()->get_raw_node()->
       template create_subscription<sensor_msgs::msg::CameraInfo>(
       topic_property_->getTopicStd() + "/camera_info",
@@ -330,8 +337,12 @@ void CameraDisplay::clear()
   new_caminfo_ = false;
   current_caminfo_.reset();
 
+  auto camera_info_topic = topic_property_->getTopicStd();
+  camera_info_topic =
+    camera_info_topic.substr(0, camera_info_topic.rfind("/") + 1) + "camera_info";
+
   setStatus(StatusLevel::Warn, CAM_INFO_STATUS,
-    "No CameraInfo received on [" + topic_property_->getTopic() + "/camera_info" + "]. "
+    "No CameraInfo received on [" + QString::fromStdString(camera_info_topic) + "]. "
     "Topic may not exist.");
 
   rviz_rendering::RenderWindowOgreAdapter::getOgreCamera(
@@ -368,8 +379,12 @@ bool CameraDisplay::updateCamera()
   }
 
   if (!info) {
+    auto camera_info_topic = topic_property_->getTopicStd();
+    camera_info_topic =
+      camera_info_topic.substr(0, camera_info_topic.rfind("/") + 1) + "camera_info";
+
     setStatus(StatusLevel::Warn, CAM_INFO_STATUS,
-      "Expecting Camera Info on topic [" + topic_property_->getTopic() + "/camera_info" + "]. "
+      "Expecting Camera Info on topic [" + QString::fromStdString(camera_info_topic) + "]. "
       "No CameraInfo received. Topic may not exist.");
     return false;
   }
