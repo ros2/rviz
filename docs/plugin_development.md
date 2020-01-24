@@ -41,9 +41,9 @@ target_compile_definitions(rviz_default_plugins PRIVATE "RVIZ_DEFAULT_PLUGINS_BU
   See `rviz_default_plugins/plugins_description.xml` for an example (the syntax is the same as for the old RViz)
 * Export the plugin description file via
 ```
-pluginlib_export_plugin_description_file(<your library> plugins_description.xml)
+pluginlib_export_plugin_description_file(rviz_common plugins_description.xml)
 ```
-This should make sure that your plugins are found at runtime
+This should make sure that your plugins are found by rviz_common at runtime as described [here](https://index.ros.org/doc/ros2/Tutorials/Ament-CMake-Documentation/#id15)
 
 ### Writing a display plugin
 
