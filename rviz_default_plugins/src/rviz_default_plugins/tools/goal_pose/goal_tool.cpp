@@ -49,9 +49,10 @@ GoalTool::GoalTool()
 {
   shortcut_key_ = 'g';
 
-  topic_property_ = new rviz_common::properties::StringProperty("Topic", "goal_pose",
-      "The topic on which to publish goals.",
-      getPropertyContainer(), SLOT(updateTopic()), this);
+  topic_property_ = new rviz_common::properties::StringProperty(
+    "Topic", "goal_pose",
+    "The topic on which to publish goals.",
+    getPropertyContainer(), SLOT(updateTopic()), this);
 
   qos_profile_property_ = new rviz_common::properties::QosProfileProperty(
     topic_property_, qos_profile_);

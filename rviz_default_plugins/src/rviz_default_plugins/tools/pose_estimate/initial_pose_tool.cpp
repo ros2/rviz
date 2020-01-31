@@ -50,9 +50,10 @@ InitialPoseTool::InitialPoseTool()
 {
   shortcut_key_ = 'p';
 
-  topic_property_ = new rviz_common::properties::StringProperty("Topic", "initialpose",
-      "The topic on which to publish initial pose estimates.",
-      getPropertyContainer(), SLOT(updateTopic()), this);
+  topic_property_ = new rviz_common::properties::StringProperty(
+    "Topic", "initialpose",
+    "The topic on which to publish initial pose estimates.",
+    getPropertyContainer(), SLOT(updateTopic()), this);
 
   qos_profile_property_ = new rviz_common::properties::QosProfileProperty(
     topic_property_, qos_profile_);

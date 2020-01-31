@@ -66,11 +66,14 @@ TEST(QosProfilePropertyTest, enum_properties_set_enum_members_of_profile) {
   parent.childAt(3)->setValue("Volatile");
 
   EXPECT_THAT(called, IsTrue());
-  EXPECT_THAT(qos_profile.get_rmw_qos_profile().history,
+  EXPECT_THAT(
+    qos_profile.get_rmw_qos_profile().history,
     Eq(RMW_QOS_POLICY_HISTORY_KEEP_ALL));
-  EXPECT_THAT(qos_profile.get_rmw_qos_profile().reliability,
+  EXPECT_THAT(
+    qos_profile.get_rmw_qos_profile().reliability,
     Eq(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT));
-  EXPECT_THAT(qos_profile.get_rmw_qos_profile().durability,
+  EXPECT_THAT(
+    qos_profile.get_rmw_qos_profile().durability,
     Eq(RMW_QOS_POLICY_DURABILITY_VOLATILE));
 }
 

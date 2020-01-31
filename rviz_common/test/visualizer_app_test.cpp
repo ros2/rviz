@@ -39,7 +39,8 @@
 class MockRosNodeStorage : public rviz_common::ros_integration::RosClientAbstractionIface
 {
 public:
-  MOCK_METHOD4(init,
+  MOCK_METHOD4(
+    init,
     rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr(
       int argc, char ** argv, const std::string & name, bool anonymous_name));
   MOCK_METHOD0(ok, bool());

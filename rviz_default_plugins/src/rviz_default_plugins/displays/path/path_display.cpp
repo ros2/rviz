@@ -67,72 +67,86 @@ PathDisplay::PathDisplay(rviz_common::DisplayContext * context)
 
 PathDisplay::PathDisplay()
 {
-  style_property_ = new rviz_common::properties::EnumProperty("Line Style", "Lines",
-      "The rendering operation to use to draw the grid lines.",
-      this, SLOT(updateStyle()));
+  style_property_ = new rviz_common::properties::EnumProperty(
+    "Line Style", "Lines",
+    "The rendering operation to use to draw the grid lines.",
+    this, SLOT(updateStyle()));
 
   style_property_->addOption("Lines", LINES);
   style_property_->addOption("Billboards", BILLBOARDS);
 
-  line_width_property_ = new rviz_common::properties::FloatProperty("Line Width", 0.03f,
-      "The width, in meters, of each path line."
-      "Only works with the 'Billboards' style.",
-      this, SLOT(updateLineWidth()), this);
+  line_width_property_ = new rviz_common::properties::FloatProperty(
+    "Line Width", 0.03f,
+    "The width, in meters, of each path line."
+    "Only works with the 'Billboards' style.",
+    this, SLOT(updateLineWidth()), this);
   line_width_property_->setMin(0.001f);
   line_width_property_->hide();
 
-  color_property_ = new rviz_common::properties::ColorProperty("Color", QColor(25, 255, 0),
-      "Color to draw the path.", this);
+  color_property_ = new rviz_common::properties::ColorProperty(
+    "Color", QColor(25, 255, 0),
+    "Color to draw the path.", this);
 
-  alpha_property_ = new rviz_common::properties::FloatProperty("Alpha", 1.0,
-      "Amount of transparency to apply to the path.", this);
+  alpha_property_ = new rviz_common::properties::FloatProperty(
+    "Alpha", 1.0,
+    "Amount of transparency to apply to the path.", this);
 
-  buffer_length_property_ = new rviz_common::properties::IntProperty("Buffer Length", 1,
-      "Number of paths to display.",
-      this, SLOT(updateBufferLength()));
+  buffer_length_property_ = new rviz_common::properties::IntProperty(
+    "Buffer Length", 1,
+    "Number of paths to display.",
+    this, SLOT(updateBufferLength()));
   buffer_length_property_->setMin(1);
 
-  offset_property_ = new rviz_common::properties::VectorProperty("Offset", Ogre::Vector3::ZERO,
-      "Allows you to offset the path from the origin of the reference frame.  In meters.",
-      this, SLOT(updateOffset()));
+  offset_property_ = new rviz_common::properties::VectorProperty(
+    "Offset", Ogre::Vector3::ZERO,
+    "Allows you to offset the path from the origin of the reference frame.  In meters.",
+    this, SLOT(updateOffset()));
 
-  pose_style_property_ = new rviz_common::properties::EnumProperty("Pose Style", "None",
-      "Shape to display the pose as.",
-      this, SLOT(updatePoseStyle()));
+  pose_style_property_ = new rviz_common::properties::EnumProperty(
+    "Pose Style", "None",
+    "Shape to display the pose as.",
+    this, SLOT(updatePoseStyle()));
   pose_style_property_->addOption("None", NONE);
   pose_style_property_->addOption("Axes", AXES);
   pose_style_property_->addOption("Arrows", ARROWS);
 
-  pose_axes_length_property_ = new rviz_common::properties::FloatProperty("Length", 0.3f,
-      "Length of the axes.",
-      this, SLOT(updatePoseAxisGeometry()) );
-  pose_axes_radius_property_ = new rviz_common::properties::FloatProperty("Radius", 0.03f,
-      "Radius of the axes.",
-      this, SLOT(updatePoseAxisGeometry()) );
+  pose_axes_length_property_ = new rviz_common::properties::FloatProperty(
+    "Length", 0.3f,
+    "Length of the axes.",
+    this, SLOT(updatePoseAxisGeometry()) );
+  pose_axes_radius_property_ = new rviz_common::properties::FloatProperty(
+    "Radius", 0.03f,
+    "Radius of the axes.",
+    this, SLOT(updatePoseAxisGeometry()) );
 
-  pose_arrow_color_property_ = new rviz_common::properties::ColorProperty("Pose Color",
-      QColor(255, 85, 255),
-      "Color to draw the poses.",
-      this, SLOT(updatePoseArrowColor()));
-  pose_arrow_shaft_length_property_ = new rviz_common::properties::FloatProperty("Shaft Length",
-      0.1f,
-      "Length of the arrow shaft.",
-      this,
-      SLOT(updatePoseArrowGeometry()));
-  pose_arrow_head_length_property_ = new rviz_common::properties::FloatProperty("Head Length", 0.2f,
-      "Length of the arrow head.",
-      this,
-      SLOT(updatePoseArrowGeometry()));
-  pose_arrow_shaft_diameter_property_ = new rviz_common::properties::FloatProperty("Shaft Diameter",
-      0.1f,
-      "Diameter of the arrow shaft.",
-      this,
-      SLOT(updatePoseArrowGeometry()));
-  pose_arrow_head_diameter_property_ = new rviz_common::properties::FloatProperty("Head Diameter",
-      0.3f,
-      "Diameter of the arrow head.",
-      this,
-      SLOT(updatePoseArrowGeometry()));
+  pose_arrow_color_property_ = new rviz_common::properties::ColorProperty(
+    "Pose Color",
+    QColor(255, 85, 255),
+    "Color to draw the poses.",
+    this, SLOT(updatePoseArrowColor()));
+  pose_arrow_shaft_length_property_ = new rviz_common::properties::FloatProperty(
+    "Shaft Length",
+    0.1f,
+    "Length of the arrow shaft.",
+    this,
+    SLOT(updatePoseArrowGeometry()));
+  pose_arrow_head_length_property_ = new rviz_common::properties::FloatProperty(
+    "Head Length", 0.2f,
+    "Length of the arrow head.",
+    this,
+    SLOT(updatePoseArrowGeometry()));
+  pose_arrow_shaft_diameter_property_ = new rviz_common::properties::FloatProperty(
+    "Shaft Diameter",
+    0.1f,
+    "Diameter of the arrow shaft.",
+    this,
+    SLOT(updatePoseArrowGeometry()));
+  pose_arrow_head_diameter_property_ = new rviz_common::properties::FloatProperty(
+    "Head Diameter",
+    0.3f,
+    "Diameter of the arrow head.",
+    this,
+    SLOT(updatePoseArrowGeometry()));
   pose_axes_length_property_->hide();
   pose_axes_radius_property_->hide();
   pose_arrow_color_property_->hide();
@@ -173,9 +187,10 @@ void PathDisplay::allocateAxesVector(std::vector<rviz_rendering::Axes *> & axes_
     axes_vect.reserve(num);
     for (auto i = vector_size; i < num; ++i) {
       axes_vect.push_back(
-        new rviz_rendering::Axes(scene_manager_, scene_node_,
-        pose_axes_length_property_->getFloat(),
-        pose_axes_radius_property_->getFloat()));
+        new rviz_rendering::Axes(
+          scene_manager_, scene_node_,
+          pose_axes_length_property_->getFloat(),
+          pose_axes_radius_property_->getFloat()));
     }
   } else if (num < vector_size) {
     for (auto i = num; i < vector_size; ++i) {
@@ -289,7 +304,8 @@ void PathDisplay::updatePoseAxisGeometry()
 {
   for (auto & axes_vect : axes_chain_) {
     for (auto & axes : axes_vect) {
-      axes->set(pose_axes_length_property_->getFloat(),
+      axes->set(
+        pose_axes_length_property_->getFloat(),
         pose_axes_radius_property_->getFloat() );
     }
   }
@@ -312,7 +328,8 @@ void PathDisplay::updatePoseArrowGeometry()
 {
   for (auto & arrow_vect : arrow_chain_) {
     for (auto & arrow : arrow_vect) {
-      arrow->set(pose_arrow_shaft_length_property_->getFloat(),
+      arrow->set(
+        pose_arrow_shaft_length_property_->getFloat(),
         pose_arrow_shaft_diameter_property_->getFloat(),
         pose_arrow_head_length_property_->getFloat(),
         pose_arrow_head_diameter_property_->getFloat());
@@ -406,7 +423,8 @@ void PathDisplay::processMessage(nav_msgs::msg::Path::ConstSharedPtr msg)
 
   // Check if path contains invalid coordinate values
   if (!validateFloats(*msg)) {
-    setStatus(rviz_common::properties::StatusProperty::Error, "Topic", "Message contained invalid "
+    setStatus(
+      rviz_common::properties::StatusProperty::Error, "Topic", "Message contained invalid "
       "floating point "
       "values (nans or infs)");
     return;
@@ -514,7 +532,8 @@ void PathDisplay::updateArrowMarkers(
     QColor color = pose_arrow_color_property_->getColor();
     arrow_vect[i]->setColor(color.redF(), color.greenF(), color.blueF(), 1.0f);
 
-    arrow_vect[i]->set(pose_arrow_shaft_length_property_->getFloat(),
+    arrow_vect[i]->set(
+      pose_arrow_shaft_length_property_->getFloat(),
       pose_arrow_shaft_diameter_property_->getFloat(),
       pose_arrow_head_length_property_->getFloat(),
       pose_arrow_head_diameter_property_->getFloat());

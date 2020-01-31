@@ -57,31 +57,34 @@ bool STLLoader::load(uint8_t * buffer, const size_t num_bytes, const std::string
 
     // check for "endsolid" as well
     if (buffer_str.find("endsolid", 5) != std::string::npos) {
-      RVIZ_RENDERING_LOG_ERROR_STREAM("The STL file '" << origin << "' is malformed. It "
-        "starts with the word 'solid' and also contains the "
-        "word 'endsolid', indicating that it's an ASCII STL "
-        "file, but rviz can only load binary STL files so it "
-        "will not be loaded. Please convert it to a "
-        "binary STL file.");
+      RVIZ_RENDERING_LOG_ERROR_STREAM(
+        "The STL file '" << origin << "' is malformed. It "
+          "starts with the word 'solid' and also contains the "
+          "word 'endsolid', indicating that it's an ASCII STL "
+          "file, but rviz can only load binary STL files so it "
+          "will not be loaded. Please convert it to a "
+          "binary STL file.");
       return false;
     }
 
     // chastise the user for malformed files
-    RVIZ_RENDERING_LOG_WARNING_STREAM("The STL file '" << origin << "' is malformed. It starts "
-      "with the word 'solid', indicating that it's an ASCII "
-      "STL file, but it does not contain the word 'endsolid' so "
-      "it is either a malformed ASCII STL file or it is actually "
-      "a binary STL file. Trying to interpret it as a binary "
-      "STL file instead.");
+    RVIZ_RENDERING_LOG_WARNING_STREAM(
+      "The STL file '" << origin << "' is malformed. It starts "
+        "with the word 'solid', indicating that it's an ASCII "
+        "STL file, but it does not contain the word 'endsolid' so "
+        "it is either a malformed ASCII STL file or it is actually "
+        "a binary STL file. Trying to interpret it as a binary "
+        "STL file instead.");
   }
 
   // make sure there's enough data for a binary STL header and triangle count
   static const size_t binary_stl_header_len = 84;
   if (num_bytes <= binary_stl_header_len) {
-    RVIZ_RENDERING_LOG_ERROR_STREAM("The STL file '" << origin << "' is malformed. It "
-      "appears to be a binary STL file but does not contain "
-      "enough data for the 80 byte header and 32-bit integer "
-      "triangle count.");
+    RVIZ_RENDERING_LOG_ERROR_STREAM(
+      "The STL file '" << origin << "' is malformed. It "
+        "appears to be a binary STL file but does not contain "
+        "enough data for the 80 byte header and 32-bit integer "
+        "triangle count.");
     return false;
   }
 
@@ -90,15 +93,17 @@ bool STLLoader::load(uint8_t * buffer, const size_t num_bytes, const std::string
   static const size_t number_of_bytes_per_triangle = 50;
   size_t expected_size = binary_stl_header_len + num_triangles * number_of_bytes_per_triangle;
   if (num_bytes < expected_size) {
-    RVIZ_RENDERING_LOG_ERROR_STREAM("The STL file '" << origin << "' is malformed. According "
-      "to the binary STL header it should have '" <<
-      num_triangles << "' triangles, but it has too little data for that to be the case.");
+    RVIZ_RENDERING_LOG_ERROR_STREAM(
+      "The STL file '" << origin << "' is malformed. According "
+        "to the binary STL header it should have '" <<
+        num_triangles << "' triangles, but it has too little data for that to be the case.");
     return false;
   } else if (num_bytes > expected_size) {
-    RVIZ_RENDERING_LOG_WARNING_STREAM("The STL file '" << origin << "' is malformed. According "
-      "to the binary STL header it should have '" <<
-      num_triangles << "' triangles, but it has too much" <<
-      " data for that to be the case. The extra data will be ignored.");
+    RVIZ_RENDERING_LOG_WARNING_STREAM(
+      "The STL file '" << origin << "' is malformed. According "
+        "to the binary STL header it should have '" <<
+        num_triangles << "' triangles, but it has too much" <<
+        " data for that to be the case. The extra data will be ignored.");
   }
 
   // load the binary STL data

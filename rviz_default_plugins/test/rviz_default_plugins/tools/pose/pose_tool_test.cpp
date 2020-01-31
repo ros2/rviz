@@ -107,7 +107,8 @@ TEST_F(PoseToolTestFixture, processMouseEvent_sets_arrow_position_below_mouse_cu
   EXPECT_THAT(arrows[0]->getPosition(), Vector3Eq(Ogre::Vector3(10, 15, 0)));
 }
 
-TEST_F(PoseToolTestFixture,
+TEST_F(
+  PoseToolTestFixture,
   processMouseEvent_sets_arrow_orientation_in_direction_of_the_mouse_while_making_it_visible) {
   auto left_click_event = generateMousePressEvent(10, 10);
   auto move_mouse_event = generateMouseMoveWhileLeftClickedEvent(0, 0);

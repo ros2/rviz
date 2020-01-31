@@ -41,7 +41,8 @@ PageObjectWithWindow::PageObjectWithWindow(int display_category, QString display
 
 void PageObjectWithWindow::captureDisplayRenderWindow(std::string image_name)
 {
-  executor_->queueAction([this, image_name] {
+  executor_->queueAction(
+    [this, image_name] {
       if (!render_window_) {
         setRenderWindow();
       }

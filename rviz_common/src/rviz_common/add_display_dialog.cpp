@@ -166,9 +166,10 @@ void getPluginGroups(
     QString datatype = QString::fromStdString(map_pair.second[0]);
 
     if (datatype_plugins.contains(datatype)) {
-      if (groups->empty() ||
-        !isSubtopic(groups->back().base_topic.toStdString(),
-        topic.toStdString()))
+      if (
+        groups->empty() ||
+        !isSubtopic(
+          groups->back().base_topic.toStdString(), topic.toStdString()))
       {
         PluginGroup pi;
         pi.base_topic = topic;
@@ -478,7 +479,8 @@ TopicDisplayWidget::TopicDisplayWidget(
   // *INDENT-ON*
 
   // Connect signal from checkbox
-  connect(enable_hidden_box_, SIGNAL(stateChanged(int)),
+  connect(
+    enable_hidden_box_, SIGNAL(stateChanged(int)),
     this, SLOT(stateChanged(int)));
 
   setLayout(layout);

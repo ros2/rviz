@@ -140,9 +140,9 @@ void SelectionManager::initialize()
 
   static const uint32_t texture_data[1] = {0xffff0080};
   Ogre::DataStreamPtr pixel_stream;
-  pixel_stream.reset(new Ogre::MemoryDataStream(
-      reinterpret_cast<void *>(const_cast<uint32_t *>(&texture_data[0])),
-      4
+  pixel_stream.reset(
+    new Ogre::MemoryDataStream(
+      reinterpret_cast<void *>(const_cast<uint32_t *>(&texture_data[0])), 4
   ));
 
   Ogre::TexturePtr tex = Ogre::TextureManager::getSingleton().loadRawData(
@@ -207,9 +207,10 @@ void SelectionManager::setTextureSize(unsigned size)
       }
 
       // create new texture
-      render_texture = Ogre::TextureManager::getSingleton().createManual(tex_name,
-          Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D, size, size, 0,
-          Ogre::PF_R8G8B8A8, Ogre::TU_STATIC | Ogre::TU_RENDERTARGET);
+      render_texture = Ogre::TextureManager::getSingleton().createManual(
+        tex_name,
+        Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D, size, size, 0,
+        Ogre::PF_R8G8B8A8, Ogre::TU_STATIC | Ogre::TU_RENDERTARGET);
 
       render_texture->getBuffer()->getRenderTarget()->setAutoUpdated(false);
     }

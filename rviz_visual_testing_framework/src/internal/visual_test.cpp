@@ -80,8 +80,9 @@ void VisualTest::takeReferenceScreenShot(
   Ogre::String screenshot_name, std::shared_ptr<PageObjectWithWindow> display)
 {
   std::string images_name = QDir::toNativeSeparators(
-    QString::fromStdString(source_directory_path_ + reference_images_path_suffix_ +
-    screenshot_name)).toStdString();
+    QString::fromStdString(
+      source_directory_path_ + reference_images_path_suffix_ +
+      screenshot_name)).toStdString();
 
   if (display) {
     display->captureDisplayRenderWindow(images_name + "_ref.png");
@@ -94,8 +95,9 @@ void VisualTest::takeTestScreenShot(
   Ogre::String screenshot_name, std::shared_ptr<PageObjectWithWindow> display)
 {
   std::string images_name = QDir::toNativeSeparators(
-    QString::fromStdString(build_directory_path_ + test_images_path_suffix_ +
-    screenshot_name)).toStdString();
+    QString::fromStdString(
+      build_directory_path_ + test_images_path_suffix_ +
+      screenshot_name)).toStdString();
 
   if (display) {
     display->captureDisplayRenderWindow(images_name + ".png");
@@ -148,8 +150,9 @@ void VisualTest::setTesterThreshold(double threshold)
 bool VisualTest::checkImageExists(std::string & name)
 {
   const std::string reference_image_name = QDir::toNativeSeparators(
-    QString::fromStdString(source_directory_path_ + reference_images_path_suffix_ +
-    name + "_ref.png")).toStdString();
+    QString::fromStdString(
+      source_directory_path_ + reference_images_path_suffix_ +
+      name + "_ref.png")).toStdString();
   struct stat buffer;
 
   return stat(reference_image_name.c_str(), &buffer) == 0;
@@ -157,8 +160,9 @@ bool VisualTest::checkImageExists(std::string & name)
 
 bool VisualTest::directoriesDoNotExist()
 {
-  const std::string reference_directory = QDir::toNativeSeparators(QString::fromStdString(
-        source_directory_path_ + reference_images_path_suffix_)).toStdString();
+  const std::string reference_directory = QDir::toNativeSeparators(
+    QString::fromStdString(
+      source_directory_path_ + reference_images_path_suffix_)).toStdString();
   const std::string test_directory = QDir::toNativeSeparators(
     QString::fromStdString(build_directory_path_ + test_images_path_suffix_)).toStdString();
   struct stat buffer;

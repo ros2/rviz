@@ -181,7 +181,8 @@ TEST_F(XYOrbitViewControllerTestFixture, moving_the_focal_point_from_above_moves
   EXPECT_THAT(z_property->getValue().toFloat(), FloatNear(0, 0.001f));
 }
 
-TEST_F(XYOrbitViewControllerTestFixture,
+TEST_F(
+  XYOrbitViewControllerTestFixture,
   mimic_does_not_change_view_when_changing_back_and_forth_between_orbit_view_controllers)
 {
   auto orbit_view =
@@ -213,7 +214,8 @@ TEST_F(XYOrbitViewControllerTestFixture,
   // moving away from frame origin
 }
 
-TEST_F(XYOrbitViewControllerTestFixture,
+TEST_F(
+  XYOrbitViewControllerTestFixture,
   mimic_keeps_focal_point_and_view_from_top_down_ortho_view_controller)
 {
   auto ortho_view =
@@ -240,7 +242,8 @@ TEST_F(XYOrbitViewControllerTestFixture,
   EXPECT_THAT(z_property->getValue().toFloat(), FloatNear(0, 0.001f));
 }
 
-TEST_F(XYOrbitViewControllerTestFixture,
+TEST_F(
+  XYOrbitViewControllerTestFixture,
   mimic_does_not_move_camera_when_given_same_class_controller)
 {
   auto old_orbit_view =
@@ -264,12 +267,9 @@ TEST_F(XYOrbitViewControllerTestFixture,
   auto z_property = xy_orbit_->childAt(9)->childAt(2);
   auto yaw_property = xy_orbit_->childAt(7);
   auto pitch_property = xy_orbit_->childAt(8);
-  EXPECT_THAT(x_property->getValue().toFloat(),
-    FloatNear(old_x_value, 0.001f));
-  EXPECT_THAT(y_property->getValue().toFloat(),
-    FloatNear(old_y_value, 0.001f));
-  EXPECT_THAT(z_property->getValue().toFloat(),
-    FloatNear(old_z_value, 0.001f));
+  EXPECT_THAT(x_property->getValue().toFloat(), FloatNear(old_x_value, 0.001f));
+  EXPECT_THAT(y_property->getValue().toFloat(), FloatNear(old_y_value, 0.001f));
+  EXPECT_THAT(z_property->getValue().toFloat(), FloatNear(old_z_value, 0.001f));
   EXPECT_THAT(yaw_property->getValue().toFloat(), FloatNear(0, 0.001f));
   EXPECT_THAT(pitch_property->getValue().toFloat(), FloatNear(0.5f, 0.001f));
 }

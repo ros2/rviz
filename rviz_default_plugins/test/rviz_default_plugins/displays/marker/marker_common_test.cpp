@@ -91,7 +91,8 @@ visualization_msgs::msg::Marker::SharedPtr createSharedPtrMessage(
 TEST_F(MarkerCommonFixture, processMessage_creates_correct_marker_on_add_type) {
   mockValidTransform();
 
-  common_->processMessage(createSharedPtrMessage(
+  common_->processMessage(
+    createSharedPtrMessage(
       visualization_msgs::msg::Marker::ADD, visualization_msgs::msg::Marker::TEXT_VIEW_FACING));
 
   auto text = rviz_rendering::findOneMovableText(scene_manager_->getRootSceneNode());
@@ -103,17 +104,20 @@ TEST_F(MarkerCommonFixture, processMessage_creates_correct_marker_on_add_type) {
 TEST_F(MarkerCommonFixture, processMessage_deletes_correct_marker_on_delete_type) {
   mockValidTransform();
 
-  common_->processMessage(createSharedPtrMessage(
+  common_->processMessage(
+    createSharedPtrMessage(
       visualization_msgs::msg::Marker::ADD,
       visualization_msgs::msg::Marker::TEXT_VIEW_FACING,
       0));
 
-  common_->processMessage(createSharedPtrMessage(
+  common_->processMessage(
+    createSharedPtrMessage(
       visualization_msgs::msg::Marker::ADD,
       visualization_msgs::msg::Marker::POINTS,
       1));
 
-  common_->processMessage(createSharedPtrMessage(
+  common_->processMessage(
+    createSharedPtrMessage(
       visualization_msgs::msg::Marker::DELETE,
       visualization_msgs::msg::Marker::TEXT_VIEW_FACING,
       0));
@@ -125,17 +129,20 @@ TEST_F(MarkerCommonFixture, processMessage_deletes_correct_marker_on_delete_type
 TEST_F(MarkerCommonFixture, processMessage_with_deleteall_deletes_all_markers) {
   mockValidTransform();
 
-  common_->processMessage(createSharedPtrMessage(
+  common_->processMessage(
+    createSharedPtrMessage(
       visualization_msgs::msg::Marker::ADD,
       visualization_msgs::msg::Marker::TEXT_VIEW_FACING,
       0));
 
-  common_->processMessage(createSharedPtrMessage(
+  common_->processMessage(
+    createSharedPtrMessage(
       visualization_msgs::msg::Marker::ADD,
       visualization_msgs::msg::Marker::POINTS,
       1));
 
-  common_->processMessage(createSharedPtrMessage(
+  common_->processMessage(
+    createSharedPtrMessage(
       visualization_msgs::msg::Marker::DELETEALL,
       visualization_msgs::msg::Marker::TEXT_VIEW_FACING,
       3));
@@ -156,7 +163,8 @@ TEST_F(MarkerCommonFixture, proccesMessage_add_all_markers_correctly) {
 
   marker->type = visualization_msgs::msg::Marker::MESH_RESOURCE;
   common_->processMessage(marker);
-  ASSERT_TRUE(rviz_rendering::findEntityByMeshName(
+  ASSERT_TRUE(
+    rviz_rendering::findEntityByMeshName(
       scene_manager_->getRootSceneNode(), marker->mesh_resource));
 
   common_->deleteAllMarkers();
@@ -181,7 +189,8 @@ TEST_F(MarkerCommonFixture, proccesMessage_add_all_markers_correctly) {
 
   marker->type = visualization_msgs::msg::Marker::CYLINDER;
   common_->processMessage(marker);
-  ASSERT_TRUE(rviz_rendering::findEntityByMeshName(
+  ASSERT_TRUE(
+    rviz_rendering::findEntityByMeshName(
       scene_manager_->getRootSceneNode(), "rviz_cylinder.mesh"));
 
   common_->deleteAllMarkers();
@@ -201,14 +210,16 @@ TEST_F(MarkerCommonFixture, proccesMessage_add_all_markers_correctly) {
 TEST_F(MarkerCommonFixture, processMessage_adds_two_markers_of_same_type_if_ids_are_different) {
   mockValidTransform();
 
-  common_->processMessage(createSharedPtrMessage(
+  common_->processMessage(
+    createSharedPtrMessage(
       visualization_msgs::msg::Marker::ADD,
       visualization_msgs::msg::Marker::ARROW,
       0));
 
   EXPECT_THAT(rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode()), SizeIs(1));
 
-  common_->processMessage(createSharedPtrMessage(
+  common_->processMessage(
+    createSharedPtrMessage(
       visualization_msgs::msg::Marker::ADD,
       visualization_msgs::msg::Marker::ARROW,
       1));
@@ -216,7 +227,8 @@ TEST_F(MarkerCommonFixture, processMessage_adds_two_markers_of_same_type_if_ids_
   EXPECT_THAT(rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode()), SizeIs(2));
 }
 
-TEST_F(MarkerCommonFixture,
+TEST_F(
+  MarkerCommonFixture,
   processMessage_adds_two_markers_of_same_type_if_namespaces_are_different) {
   mockValidTransform();
 
@@ -236,14 +248,16 @@ TEST_F(MarkerCommonFixture,
 TEST_F(MarkerCommonFixture, processMessage_does_not_create_new_marker_if_id_already_exists) {
   mockValidTransform();
 
-  common_->processMessage(createSharedPtrMessage(
+  common_->processMessage(
+    createSharedPtrMessage(
       visualization_msgs::msg::Marker::ADD,
       visualization_msgs::msg::Marker::ARROW,
       0));
 
   EXPECT_THAT(rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode()), SizeIs(1));
 
-  common_->processMessage(createSharedPtrMessage(
+  common_->processMessage(
+    createSharedPtrMessage(
       visualization_msgs::msg::Marker::ADD,
       visualization_msgs::msg::Marker::ARROW,
       0));
@@ -273,14 +287,16 @@ TEST_F(MarkerCommonFixture, processMessage_updates_modified_marker) {
 TEST_F(MarkerCommonFixture, processMessage_using_modify_works_like_add) {
   mockValidTransform();
 
-  common_->processMessage(createSharedPtrMessage(
+  common_->processMessage(
+    createSharedPtrMessage(
       visualization_msgs::msg::Marker::ADD,
       visualization_msgs::msg::Marker::ARROW,
       0));
 
   EXPECT_THAT(rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode()), SizeIs(1));
 
-  common_->processMessage(createSharedPtrMessage(
+  common_->processMessage(
+    createSharedPtrMessage(
       visualization_msgs::msg::Marker::MODIFY,
       visualization_msgs::msg::Marker::ARROW,
       0));
@@ -300,12 +316,14 @@ TEST_F(MarkerCommonFixture, update_retransforms_frame_locked_messages) {
   EXPECT_CALL(
     *frame_manager_,
     transform(_, _, _, _, _))  // NOLINT
-  .WillOnce(DoAll(
+  .WillOnce(
+    DoAll(
       SetArgReferee<3>(starting_position),
       SetArgReferee<4>(starting_orientation),
       Return(true)
   ))
-  .WillOnce(DoAll(
+  .WillOnce(
+    DoAll(
       SetArgReferee<3>(next_position),
       SetArgReferee<4>(next_orientation),
       Return(true)));
@@ -315,13 +333,15 @@ TEST_F(MarkerCommonFixture, update_retransforms_frame_locked_messages) {
   auto pointCloud = rviz_rendering::findOnePointCloud(scene_manager_->getRootSceneNode());
   ASSERT_TRUE(pointCloud);
   EXPECT_THAT(pointCloud->getParentSceneNode()->getPosition(), Vector3Eq(starting_position));
-  EXPECT_THAT(pointCloud->getParentSceneNode()->getOrientation(),
+  EXPECT_THAT(
+    pointCloud->getParentSceneNode()->getOrientation(),
     QuaternionEq(starting_orientation));
 
   common_->update(0, 0);
 
   EXPECT_THAT(pointCloud->getParentSceneNode()->getPosition(), Vector3Eq(next_position));
-  EXPECT_THAT(pointCloud->getParentSceneNode()->getOrientation(),
+  EXPECT_THAT(
+    pointCloud->getParentSceneNode()->getOrientation(),
     QuaternionEq(next_orientation));
 }
 
@@ -335,7 +355,8 @@ TEST_F(MarkerCommonFixture, update_does_not_retransform_normal_messages) {
   EXPECT_CALL(
     *frame_manager_,
     transform(_, _, _, _, _))  // NOLINT
-  .WillOnce(DoAll(
+  .WillOnce(
+    DoAll(
       SetArgReferee<3>(starting_position),
       SetArgReferee<4>(starting_orientation),
       Return(true)
@@ -346,13 +367,15 @@ TEST_F(MarkerCommonFixture, update_does_not_retransform_normal_messages) {
   auto pointCloud = rviz_rendering::findOnePointCloud(scene_manager_->getRootSceneNode());
   ASSERT_TRUE(pointCloud);
   EXPECT_THAT(pointCloud->getParentSceneNode()->getPosition(), Vector3Eq(starting_position));
-  EXPECT_THAT(pointCloud->getParentSceneNode()->getOrientation(),
+  EXPECT_THAT(
+    pointCloud->getParentSceneNode()->getOrientation(),
     QuaternionEq(starting_orientation));
 
   common_->update(0, 0);
 
   EXPECT_THAT(pointCloud->getParentSceneNode()->getPosition(), Vector3Eq(starting_position));
-  EXPECT_THAT(pointCloud->getParentSceneNode()->getOrientation(),
+  EXPECT_THAT(
+    pointCloud->getParentSceneNode()->getOrientation(),
     QuaternionEq(starting_orientation));
 }
 
@@ -366,25 +389,30 @@ TEST_F(MarkerCommonFixture, processMessage_adds_new_namespace_for_message) {
 
   common_->processMessage(marker);
 
-  ASSERT_THAT(display_->findProperty("Namespaces")->childAt(0)->getName().toStdString(),
+  ASSERT_THAT(
+    display_->findProperty("Namespaces")->childAt(0)->getName().toStdString(),
     StrEq("test_ns"));
 }
 
 TEST_F(MarkerCommonFixture, processMessage_does_not_add_new_namespace_if_already_present) {
   mockValidTransform();
 
-  common_->processMessage(createSharedPtrMessage(
+  common_->processMessage(
+    createSharedPtrMessage(
       visualization_msgs::msg::Marker::ADD, visualization_msgs::msg::Marker::POINTS));
 
   ASSERT_THAT(display_->findProperty("Namespaces")->numChildren(), Eq(1));
-  ASSERT_THAT(display_->findProperty("Namespaces")->childAt(0)->getName().toStdString(),
+  ASSERT_THAT(
+    display_->findProperty("Namespaces")->childAt(0)->getName().toStdString(),
     StrEq("test_ns"));
 
-  common_->processMessage(createSharedPtrMessage(
+  common_->processMessage(
+    createSharedPtrMessage(
       visualization_msgs::msg::Marker::ADD, visualization_msgs::msg::Marker::TEXT_VIEW_FACING));
 
   ASSERT_THAT(display_->findProperty("Namespaces")->numChildren(), Eq(1));
-  ASSERT_THAT(display_->findProperty("Namespaces")->childAt(0)->getName().toStdString(),
+  ASSERT_THAT(
+    display_->findProperty("Namespaces")->childAt(0)->getName().toStdString(),
     StrEq("test_ns"));
 }
 

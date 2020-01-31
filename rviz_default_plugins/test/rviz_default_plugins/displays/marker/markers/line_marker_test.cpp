@@ -148,15 +148,18 @@ TEST_F(MarkersTestFixture, setMessage_adds_billboard_line_with_one_color) {
   EXPECT_TRUE(billboard_chain->isVisible());
   EXPECT_THAT(billboard_chain->getNumberOfChains(), Eq(1u));
   EXPECT_THAT(billboard_chain->getNumChainElements(0), Eq(2u));
-  EXPECT_THAT(billboard_chain->getChainElement(0, 1).position,
+  EXPECT_THAT(
+    billboard_chain->getChainElement(0, 1).position,
     Vector3Eq(Ogre::Vector3(first_point.x, first_point.y, first_point.z)));
-  EXPECT_THAT(billboard_chain->getChainElement(0, 0).position,
+  EXPECT_THAT(
+    billboard_chain->getChainElement(0, 0).position,
     Vector3Eq(Ogre::Vector3(second_point.x, second_point.y, second_point.z)));
   assertColorEquals(message.color, billboard_chain, 0);
   assertColorEquals(message.color, billboard_chain, 1);
 }
 
-TEST_F(MarkersTestFixture,
+TEST_F(
+  MarkersTestFixture,
   setMessage_adds_billboard_line_with_many_colors_if_all_points_have_color_information) {
   marker_ = makeMarker<rviz_default_plugins::displays::markers::LineListMarker>();
   mockValidTransform();
@@ -179,9 +182,11 @@ TEST_F(MarkersTestFixture,
   EXPECT_TRUE(billboard_chain->isVisible());
   EXPECT_THAT(billboard_chain->getNumberOfChains(), Eq(1u));
   EXPECT_THAT(billboard_chain->getNumChainElements(0), Eq(2u));
-  EXPECT_THAT(billboard_chain->getChainElement(0, 1).position,
+  EXPECT_THAT(
+    billboard_chain->getChainElement(0, 1).position,
     Vector3Eq(Ogre::Vector3(first_point.x, first_point.y, first_point.z)));
-  EXPECT_THAT(billboard_chain->getChainElement(0, 0).position,
+  EXPECT_THAT(
+    billboard_chain->getChainElement(0, 0).position,
     Vector3Eq(Ogre::Vector3(second_point.x, second_point.y, second_point.z)));
   assertColorEquals(second_point_color, billboard_chain, 0);
   assertColorEquals(first_point_color, billboard_chain, 1);
@@ -222,10 +227,13 @@ TEST_F(MarkersTestFixture, setMessage_adds_many_points_into_same_chain) {
   EXPECT_TRUE(billboard_chain->isVisible());
   EXPECT_THAT(billboard_chain->getNumberOfChains(), Eq(1u));
   EXPECT_THAT(billboard_chain->getNumChainElements(0), Eq(3u));
-  EXPECT_THAT(billboard_chain->getChainElement(0, 2).position,
+  EXPECT_THAT(
+    billboard_chain->getChainElement(0, 2).position,
     Vector3Eq(Ogre::Vector3(first_point.x, first_point.y, first_point.z)));
-  EXPECT_THAT(billboard_chain->getChainElement(0, 1).position,
+  EXPECT_THAT(
+    billboard_chain->getChainElement(0, 1).position,
     Vector3Eq(Ogre::Vector3(second_point.x, second_point.y, second_point.z)));
-  EXPECT_THAT(billboard_chain->getChainElement(0, 0).position,
+  EXPECT_THAT(
+    billboard_chain->getChainElement(0, 0).position,
     Vector3Eq(Ogre::Vector3(third_point.x, third_point.y, third_point.z)));
 }

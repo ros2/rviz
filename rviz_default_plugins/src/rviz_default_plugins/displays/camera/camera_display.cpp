@@ -336,7 +336,8 @@ void CameraDisplay::clear()
   camera_info_topic =
     camera_info_topic.substr(0, camera_info_topic.rfind("/") + 1) + "camera_info";
 
-  setStatus(StatusLevel::Warn, CAM_INFO_STATUS,
+  setStatus(
+    StatusLevel::Warn, CAM_INFO_STATUS,
     "No CameraInfo received on [" + QString::fromStdString(camera_info_topic) + "]. "
     "Topic may not exist.");
 
@@ -378,21 +379,24 @@ bool CameraDisplay::updateCamera()
     camera_info_topic =
       camera_info_topic.substr(0, camera_info_topic.rfind("/") + 1) + "camera_info";
 
-    setStatus(StatusLevel::Warn, CAM_INFO_STATUS,
+    setStatus(
+      StatusLevel::Warn, CAM_INFO_STATUS,
       "Expecting Camera Info on topic [" + QString::fromStdString(camera_info_topic) + "]. "
       "No CameraInfo received. Topic may not exist.");
     return false;
   }
 
   if (!validateFloats(*info)) {
-    setStatus(StatusLevel::Error, CAM_INFO_STATUS,
+    setStatus(
+      StatusLevel::Error, CAM_INFO_STATUS,
       "Contains invalid floating point values (nans or infs)");
     return false;
   }
 
   rclcpp::Time rviz_time = context_->getFrameManager()->getTime();
   if (timeDifferenceInExactSyncMode(image, rviz_time)) {
-    setStatus(StatusLevel::Warn, TIME_STATUS,
+    setStatus(
+      StatusLevel::Warn, TIME_STATUS,
       QString("Time-syncing active and no image at timestamp ") + rviz_time.nanoseconds() + ".");
     return false;
   }
@@ -412,7 +416,8 @@ bool CameraDisplay::updateCamera()
 
   auto dimensions = getImageDimensions(info);
   if (dimensions.height == 0.0 || dimensions.width == 0.0) {
-    setStatus(StatusLevel::Error, CAM_INFO_STATUS,
+    setStatus(
+      StatusLevel::Error, CAM_INFO_STATUS,
       "Could not determine width/height of image "
       "due to malformed CameraInfo (either width or height is 0)");
     return false;
@@ -420,7 +425,8 @@ bool CameraDisplay::updateCamera()
 
   translatePosition(position, info, orientation);
   if (!rviz_common::validateFloats(position)) {
-    setStatus(StatusLevel::Error, CAM_INFO_STATUS,
+    setStatus(
+      StatusLevel::Error, CAM_INFO_STATUS,
       "CameraInfo/P resulted in an invalid position calculation (nans or infs)");
     return false;
   }
@@ -467,14 +473,14 @@ ImageDimensions CameraDisplay::getImageDimensions(
 
   // If the image width is 0 due to a malformed caminfo, try to grab the width from the image.
   if (dimensions.width == 0) {
-    RVIZ_COMMON_LOG_DEBUG_STREAM("Malformed CameraInfo on camera" << qPrintable(getName()) << ", "
-      "width = 0");
+    RVIZ_COMMON_LOG_DEBUG_STREAM(
+      "Malformed CameraInfo on camera" << qPrintable(getName()) << ", width = 0");
     dimensions.width = texture_->getWidth();
   }
 
   if (dimensions.height == 0) {
-    RVIZ_COMMON_LOG_DEBUG_STREAM("Malformed CameraInfo on camera" << qPrintable(getName()) << ","
-      " height = 0");
+    RVIZ_COMMON_LOG_DEBUG_STREAM(
+      "Malformed CameraInfo on camera" << qPrintable(getName()) << ", height = 0");
     dimensions.height = texture_->getHeight();
   }
 

@@ -275,8 +275,10 @@ float PointCloud::getBoundingRadius() const
 {
   return bounding_box_.isNull() ?
          0.0f :
-         Ogre::Math::Sqrt(std::max(bounding_box_.getMaximum().squaredLength(),
-           bounding_box_.getMinimum().squaredLength()));
+         Ogre::Math::Sqrt(
+    std::max(
+      bounding_box_.getMaximum().squaredLength(),
+      bounding_box_.getMinimum().squaredLength()));
 }
 
 void PointCloud::getWorldTransforms(Ogre::Matrix4 * xform) const
@@ -479,14 +481,16 @@ void PointCloud::addPoints(
     if (internals.bufferIsFull()) {
       assert(internals.noBufferOverflowOccurred());
 
-      finishRenderable(internals,
+      finishRenderable(
+        internals,
         static_cast<uint32_t>(internals.rend->getBuffer()->getNumVertices()));
 
       internals = createNewRenderable(static_cast<uint32_t>(stop_iterator - current_point));
     }
     internals.aabb.merge(current_point->position);
-    internals = addPointToHardwareBuffer(internals, current_point,
-        static_cast<uint32_t>(current_point - start_iterator));
+    internals = addPointToHardwareBuffer(
+      internals, current_point,
+      static_cast<uint32_t>(current_point - start_iterator));
   }
 
   finishRenderable(internals, internals.current_vertex_count);
@@ -502,8 +506,9 @@ PointCloud::RenderableInternals
 PointCloud::createNewRenderable(uint32_t number_of_points_to_be_added)
 {
   RenderableInternals internals;
-  internals.buffer_size = std::min<uint32_t>(VERTEX_BUFFER_CAPACITY,
-      number_of_points_to_be_added * getVerticesPerPoint());
+  internals.buffer_size = std::min<uint32_t>(
+    VERTEX_BUFFER_CAPACITY,
+    number_of_points_to_be_added * getVerticesPerPoint());
 
   internals.rend = createRenderable(internals.buffer_size, getRenderOperationType());
 
@@ -595,7 +600,8 @@ PointCloud::addPointToHardwareBuffer(
     *iptr = color;
     ++float_buffer;
 
-    assert(reinterpret_cast<uint8_t *>(float_buffer) <=
+    assert(
+      reinterpret_cast<uint8_t *>(float_buffer) <=
       reinterpret_cast<uint8_t *>(float_buffer) +
       internals.rend->getBuffer()->getNumVertices() *
       internals.rend->getRenderOperation()->vertexData->vertexDeclaration->getVertexSize(0));
@@ -696,8 +702,8 @@ PointCloudRenderablePtr PointCloud::createRenderable(
   int num_points,
   Ogre::RenderOperation::OperationType operation_type)
 {
-  PointCloudRenderablePtr rend(new PointCloudRenderable(this, num_points,
-    !current_mode_supports_geometry_shader_, operation_type));
+  PointCloudRenderablePtr rend(new PointCloudRenderable(
+      this, num_points, !current_mode_supports_geometry_shader_, operation_type));
   rend->setMaterial(current_material_);
   Ogre::Vector4 alpha(alpha_, 0.0f, 0.0f, 0.0f);
   Ogre::Vector4 highlight(0.0f, 0.0f, 0.0f, 0.0f);

@@ -165,8 +165,8 @@ std::vector<Ogre::SceneNode *> findAllAxes(Ogre::SceneNode * scene_node)
         ->getParentSceneNode()  // SceneNode from cylinder_entity
         ->getParentSceneNode();  // SceneNode from axes
       if (axes_scene_node) {
-        auto local_cylinder_entities = findAllEntitiesByMeshName(axes_scene_node,
-            "rviz_cylinder.mesh");
+        auto local_cylinder_entities = findAllEntitiesByMeshName(
+          axes_scene_node, "rviz_cylinder.mesh");
         if (local_cylinder_entities.size() == 3 &&
           std::find(axes.begin(), axes.end(), axes_scene_node) == axes.end())
         {
@@ -187,7 +187,8 @@ Ogre::SceneNode * findOneAxes(Ogre::SceneNode * scene_node)
 std::vector<Ogre::Vector3> getPositionsFromNodes(const std::vector<Ogre::SceneNode *> & nodes)
 {
   std::vector<Ogre::Vector3> positions(nodes.size(), Ogre::Vector3::ZERO);
-  std::transform(nodes.cbegin(), nodes.cend(), positions.begin(), [](auto node) {
+  std::transform(
+    nodes.cbegin(), nodes.cend(), positions.begin(), [](auto node) {
       return node->getPosition();
     });
   return positions;
@@ -196,7 +197,8 @@ std::vector<Ogre::Vector3> getPositionsFromNodes(const std::vector<Ogre::SceneNo
 std::vector<Ogre::Quaternion> getOrientationsFromNodes(const std::vector<Ogre::SceneNode *> & nodes)
 {
   std::vector<Ogre::Quaternion> orientations(nodes.size(), Ogre::Quaternion::IDENTITY);
-  std::transform(nodes.cbegin(), nodes.cend(), orientations.begin(), [](auto node) {
+  std::transform(
+    nodes.cbegin(), nodes.cend(), orientations.begin(), [](auto node) {
       return node->getOrientation();
     });
   return orientations;

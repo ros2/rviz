@@ -67,23 +67,28 @@ ViewController::ViewController()
   near_clip_property_->setMin(0.001f);
   near_clip_property_->setMax(10000);
 
-  stereo_enable_ = new BoolProperty("Enable Stereo Rendering", true,
-      "Render the main view in stereo if supported."
-      "  On Linux this requires a recent version of Ogre and"
-      " an NVIDIA Quadro card with 3DVision glasses.",
-      this, SLOT(updateStereoProperties()));
-  stereo_eye_swap_ = new BoolProperty("Swap Stereo Eyes", false,
-      "Swap eyes if the monitor shows the left eye on the right.",
-      stereo_enable_, SLOT(updateStereoProperties()), this);
-  stereo_eye_separation_ = new FloatProperty("Stereo Eye Separation", 0.06f,
-      "Distance between eyes for stereo rendering.",
-      stereo_enable_, SLOT(updateStereoProperties()), this);
-  stereo_focal_distance_ = new FloatProperty("Stereo Focal Distance", 1.0f,
-      "Distance from eyes to screen.  For stereo rendering.",
-      stereo_enable_, SLOT(updateStereoProperties()), this);
-  invert_z_ = new BoolProperty("Invert Z Axis", false,
-      "Invert camera's Z axis for Z-down environments/models.",
-      this, SLOT(updateStereoProperties()));
+  stereo_enable_ = new BoolProperty(
+    "Enable Stereo Rendering", true,
+    "Render the main view in stereo if supported."
+    "  On Linux this requires a recent version of Ogre and"
+    " an NVIDIA Quadro card with 3DVision glasses.",
+    this, SLOT(updateStereoProperties()));
+  stereo_eye_swap_ = new BoolProperty(
+    "Swap Stereo Eyes", false,
+    "Swap eyes if the monitor shows the left eye on the right.",
+    stereo_enable_, SLOT(updateStereoProperties()), this);
+  stereo_eye_separation_ = new FloatProperty(
+    "Stereo Eye Separation", 0.06f,
+    "Distance between eyes for stereo rendering.",
+    stereo_enable_, SLOT(updateStereoProperties()), this);
+  stereo_focal_distance_ = new FloatProperty(
+    "Stereo Focal Distance", 1.0f,
+    "Distance from eyes to screen.  For stereo rendering.",
+    stereo_enable_, SLOT(updateStereoProperties()), this);
+  invert_z_ = new BoolProperty(
+    "Invert Z Axis", false,
+    "Invert camera's Z axis for Z-down environments/models.",
+    this, SLOT(updateStereoProperties()));
 }
 
 void ViewController::initialize(DisplayContext * context)
@@ -218,9 +223,11 @@ void ViewController::handleKeyEvent(QKeyEvent * event, RenderPanel * panel)
   if (event->key() == Qt::Key_F && context_->getViewPicker()) {
     QPoint mouse_rel_panel = panel->mapFromGlobal(QCursor::pos());
     Ogre::Vector3 point_rel_world;  // output of get3DPoint().
-    if (context_->getViewPicker()->get3DPoint(panel,
-      mouse_rel_panel.x(), mouse_rel_panel.y(),
-      point_rel_world))
+    if (
+      context_->getViewPicker()->get3DPoint(
+        panel,
+        mouse_rel_panel.x(), mouse_rel_panel.y(),
+        point_rel_world))
     {
       lookAt(point_rel_world);
     }

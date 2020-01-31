@@ -176,7 +176,8 @@ void BillboardLine::addPoint(const Ogre::Vector3 & point)
 void BillboardLine::addPoint(const Ogre::Vector3 & point, const Ogre::ColourValue & color)
 {
   assert(current_line_ < num_lines_);
-  assert(chain_containers_[current_chain_container_]->
+  assert(
+    chain_containers_[current_chain_container_]->
     getNumChainElements(current_line_ % chains_per_container_) <= max_points_per_line_);
 
   incrementChainContainerIfNecessary();
@@ -204,7 +205,8 @@ void BillboardLine::setLineWidth(float width)
 {
   width_ = width;
 
-  changeAllElements([width](Ogre::BillboardChain::Element element) {
+  changeAllElements(
+    [width](Ogre::BillboardChain::Element element) {
       element.width = width;
       return element;
     });
@@ -232,7 +234,8 @@ void BillboardLine::setColor(float r, float g, float b, float a)
 
   color_ = Ogre::ColourValue(r, g, b, a);
 
-  changeAllElements([this](Ogre::BillboardChain::Element element) {
+  changeAllElements(
+    [this](Ogre::BillboardChain::Element element) {
       element.colour = color_;
       return element;
     });

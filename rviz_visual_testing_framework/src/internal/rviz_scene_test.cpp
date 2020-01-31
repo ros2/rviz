@@ -88,7 +88,8 @@ void RvizTestScene::takeTestShot(Ogre::String name)
 
 void RvizTestScene::takeScreenShot(Ogre::String name)
 {
-  executor_->queueAction([this, name] {
+  executor_->queueAction(
+    [this, name] {
       render_window_->captureScreenShot(name);
     }
   );

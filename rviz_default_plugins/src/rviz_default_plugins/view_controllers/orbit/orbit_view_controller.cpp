@@ -69,27 +69,33 @@ using rviz_rendering::Shape;
 OrbitViewController::OrbitViewController()
 : focal_shape_(nullptr), dragging_(false)
 {
-  distance_property_ = new FloatProperty("Distance", DISTANCE_START,
-      "Distance from the focal point.", this);
+  distance_property_ = new FloatProperty(
+    "Distance", DISTANCE_START,
+    "Distance from the focal point.", this);
   distance_property_->setMin(0.01f);
 
-  focal_shape_size_property_ = new FloatProperty("Focal Shape Size", FOCAL_SHAPE_SIZE_START,
-      "Focal shape size.", this);
+  focal_shape_size_property_ = new FloatProperty(
+    "Focal Shape Size", FOCAL_SHAPE_SIZE_START,
+    "Focal shape size.", this);
   focal_shape_size_property_->setMin(0.001f);
 
-  focal_shape_fixed_size_property_ = new BoolProperty("Focal Shape Fixed Size",
-      FOCAL_SHAPE_FIXED_SIZE, "Focal shape size.", this);
+  focal_shape_fixed_size_property_ = new BoolProperty(
+    "Focal Shape Fixed Size",
+    FOCAL_SHAPE_FIXED_SIZE, "Focal shape size.", this);
 
-  yaw_property_ = new FloatProperty("Yaw", YAW_START,
-      "Rotation of the camera around the Z (up) axis.", this);
+  yaw_property_ = new FloatProperty(
+    "Yaw", YAW_START,
+    "Rotation of the camera around the Z (up) axis.", this);
 
-  pitch_property_ = new FloatProperty("Pitch", PITCH_START,
-      "How much the camera is tipped downward.", this);
+  pitch_property_ = new FloatProperty(
+    "Pitch", PITCH_START,
+    "How much the camera is tipped downward.", this);
   pitch_property_->setMax(Ogre::Math::HALF_PI - 0.001f);
   pitch_property_->setMin(-pitch_property_->getMax());
 
-  focal_point_property_ = new VectorProperty("Focal Point", Ogre::Vector3::ZERO,
-      "The center point which the camera orbits.", this);
+  focal_point_property_ = new VectorProperty(
+    "Focal Point", Ogre::Vector3::ZERO,
+    "The center point which the camera orbits.", this);
 }
 
 void OrbitViewController::onInitialize()
@@ -157,7 +163,8 @@ void OrbitViewController::handleMouseEvent(rviz_common::ViewportMouseEvent & eve
 
 void OrbitViewController::setShiftOrbitStatus()
 {
-  setStatus("<b>Left-Click:</b> Move X/Y.  "
+  setStatus(
+    "<b>Left-Click:</b> Move X/Y.  "
     "<b>Right-Click:</b>: Move Z.  "
     "<b>Mouse Wheel:</b>: Zoom.");
 }
@@ -295,7 +302,8 @@ void OrbitViewController::lookAt(const Ogre::Vector3 & point)
 {
   Ogre::SceneNode * camera_parent = camera_->getParentSceneNode();
   Ogre::Vector3 camera_position = camera_parent->getPosition();
-  focal_point_property_->setVector(target_scene_node_->getOrientation().Inverse() *
+  focal_point_property_->setVector(
+    target_scene_node_->getOrientation().Inverse() *
     (point - target_scene_node_->getPosition()));
   distance_property_->setFloat(focal_point_property_->getVector().distance(camera_position));
   updateFocalShapeSize();
@@ -367,7 +375,8 @@ void OrbitViewController::updateFocalShapeSize()
     distance_property = 1;
   }
 
-  focal_shape_->setScale(Ogre::Vector3(
+  focal_shape_->setScale(
+    Ogre::Vector3(
       fshape_size * distance_property,
       fshape_size * distance_property,
       fshape_size * distance_property / 5.0f));

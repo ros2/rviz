@@ -63,7 +63,8 @@ TEST_F(VisualTestFixture, sphere_changes_color_depending_on_fluid_pressure) {
   fluid_pressure_publisher->setFluidPressure(99000);
   captureMainWindow("fluid_pressure_display_low_fluid_pressure");
 
-  executor_->queueAction([fluid_pressure_publisher]()
+  executor_->queueAction(
+    [fluid_pressure_publisher]()
     {
       fluid_pressure_publisher->setFluidPressure(104000);
     });

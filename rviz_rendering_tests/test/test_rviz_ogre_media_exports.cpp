@@ -38,18 +38,21 @@
 TEST(CMake_Macro__Test, correctly_registers_plugin_in_ament_index) {
   std::string content;
   std::string prefix_path;
-  ASSERT_TRUE(ament_index_cpp::get_resource("rviz_ogre_media_exports", "rviz_rendering_tests",
-    content,
-    &prefix_path));
+  ASSERT_TRUE(
+    ament_index_cpp::get_resource(
+      "rviz_ogre_media_exports", "rviz_rendering_tests",
+      content,
+      &prefix_path));
 }
 
 TEST(CMake_Macro__Test, ament_index_resource_file_has_correct_content) {
   std::string content;
   std::string prefix_path;
-  ament_index_cpp::get_resource("rviz_ogre_media_exports", "rviz_rendering_tests", content,
-    &prefix_path);
+  ament_index_cpp::get_resource(
+    "rviz_ogre_media_exports", "rviz_rendering_tests", content, &prefix_path);
 
-  ASSERT_EQ(content,
+  ASSERT_EQ(
+    content,
     "rviz_rendering_tests/ogre_media_resources/scripts\n"
     "rviz_rendering_tests/ogre_media_resources/meshes\n");
 }
@@ -57,8 +60,8 @@ TEST(CMake_Macro__Test, ament_index_resource_file_has_correct_content) {
 TEST(CMake_Macro__Test, folders_are_installed_to_correct_location) {
   std::string content;
   std::string prefix_path;
-  ament_index_cpp::get_resource("rviz_ogre_media_exports", "rviz_rendering_tests", content,
-    &prefix_path);
+  ament_index_cpp::get_resource(
+    "rviz_ogre_media_exports", "rviz_rendering_tests", content, &prefix_path);
 
   struct stat info;
   std::string scripts = prefix_path + "/share/rviz_rendering_tests/ogre_media_resources/scripts";

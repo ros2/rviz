@@ -123,7 +123,8 @@ TEST_F(PoseArrayDisplayFixture, at_startup_only_flat_arrows_propertie_are_visibl
   EXPECT_FALSE(arrow_2d_length_property_->getHidden());
 }
 
-TEST_F(PoseArrayDisplayFixture,
+TEST_F(
+  PoseArrayDisplayFixture,
   processMessage_corrctly_manages_property_visibility_from_arrow2d_to_arrow3d) {
   mockValidTransform();
   auto msg = createMessageWithOnePose();
@@ -142,7 +143,8 @@ TEST_F(PoseArrayDisplayFixture,
   EXPECT_TRUE(arrow_2d_length_property_->getHidden());
 }
 
-TEST_F(PoseArrayDisplayFixture,
+TEST_F(
+  PoseArrayDisplayFixture,
   processMessage_corrctly_manages_property_visibility_from_arrow2d_to_axes) {
   mockValidTransform();
   auto msg = createMessageWithOnePose();

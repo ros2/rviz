@@ -230,9 +230,10 @@ Ogre::MeshPtr AssimpLoader::meshFromAssimpScene(const std::string & name, const 
 
 const aiScene * AssimpLoader::getScene(const std::string & resource_path)
 {
-  return importer_->ReadFile(resource_path,
-           aiProcess_SortByPType | aiProcess_GenNormals | aiProcess_Triangulate |
-           aiProcess_GenUVCoords | aiProcess_FlipUVs);
+  return importer_->ReadFile(
+    resource_path,
+    aiProcess_SortByPType | aiProcess_GenNormals | aiProcess_Triangulate |
+    aiProcess_GenUVCoords | aiProcess_FlipUVs);
 }
 
 std::string AssimpLoader::getErrorMessage()

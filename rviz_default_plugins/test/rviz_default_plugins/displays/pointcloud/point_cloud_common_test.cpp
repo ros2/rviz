@@ -182,7 +182,8 @@ TEST_F(PointCloudCommonTestFixture, update_colors_the_points_using_the_selected_
   EXPECT_THAT(point_cloud->getPoints()[0].color, ColourValueEq(Ogre::ColourValue(1, 0, 0)));
 }
 
-TEST_F(PointCloudCommonTestFixture,
+TEST_F(
+  PointCloudCommonTestFixture,
   sending_a_point_cloud_with_not_enough_data_results_in_error_but_no_crash)
 {
   point_cloud_common_->initialize(

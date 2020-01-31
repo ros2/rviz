@@ -176,7 +176,8 @@ void FixedOrientationOrthoViewController::onTargetFrameChanged(
 {
   (void) old_reference_orientation;
 
-  move(old_reference_position.x - reference_position_.x,
+  move(
+    old_reference_position.x - reference_position_.x,
     old_reference_position.y - reference_position_.y);
 }
 
@@ -198,7 +199,8 @@ void FixedOrientationOrthoViewController::updateCamera()
   // For Z, we use a value that seems to work very well in the past. It once was connected to
   // half the far_clip_distance.
   auto camera_parent = getCameraParent(camera_);
-  camera_parent->setPosition(Ogre::Vector3(
+  camera_parent->setPosition(
+    Ogre::Vector3(
       x_property_->getFloat(), y_property_->getFloat(), ORTHO_VIEW_CONTROLLER_CAMERA_Z));
 }
 

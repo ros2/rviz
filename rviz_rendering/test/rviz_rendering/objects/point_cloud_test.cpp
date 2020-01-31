@@ -112,7 +112,8 @@ TEST_F(PointCloudTestFixture, clear_resets_bounding_box_bounding_radius_and_clea
   ASSERT_THAT(point_cloud->getBoundingRadius(), FloatEq(0.0f));
 }
 
-TEST_F(PointCloudTestFixture,
+TEST_F(
+  PointCloudTestFixture,
   getBoundingRadius_returns_length_to_point_farthest_away_from_origin) {
   auto point_cloud = std::make_shared<rviz_rendering::PointCloud>();
 
@@ -121,7 +122,8 @@ TEST_F(PointCloudTestFixture,
   ASSERT_THAT(point_cloud->getBoundingRadius(), FloatEq(Ogre::Math::Sqrt(2)));
 }
 
-TEST_F(PointCloudTestFixture,
+TEST_F(
+  PointCloudTestFixture,
   for_one_point_getBoundingBox_returns_bounding_box_containing_only_one_point) {
   auto point_cloud = std::make_shared<rviz_rendering::PointCloud>();
 
@@ -240,7 +242,8 @@ TEST_F(PointCloudTestFixture, setRenderMode_changes_material) {
   }
 }
 
-TEST_F(PointCloudTestFixture,
+TEST_F(
+  PointCloudTestFixture,
   setRenderMode_regenerates_renderables_with_different_size_when_geometry_support_changes) {
   auto point_cloud = std::make_shared<rviz_rendering::PointCloud>();
   point_cloud->addPoints(singlePointArray.begin(), singlePointArray.end());
@@ -296,7 +299,8 @@ TEST_F(PointCloudTestFixture, addPoints_adds_vertices_with_correct_geometry_when
   ASSERT_THAT(number_of_vertices_in_all_renderables, Eq(number_of_vertices_per_flat_square * 5));
 }
 
-TEST_F(PointCloudTestFixture,
+TEST_F(
+  PointCloudTestFixture,
   adding_and_removing_points_many_times_does_not_lead_to_superfluous_renderables) {
   auto point_cloud = std::make_shared<rviz_rendering::PointCloud>();
   point_cloud->setRenderMode(rviz_rendering::PointCloud::RM_BOXES);

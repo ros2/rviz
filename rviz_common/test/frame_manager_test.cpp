@@ -95,7 +95,8 @@ TEST_F(FrameManagerTestFixture, transformHasProblems_uses_transformer_method) {
     *frame_transformer_, canTransform(_, source_frame_name, _, _)).WillOnce(Return(true));
 
   std::string error;
-  EXPECT_FALSE(frame_manager_->transformHasProblems(
+  EXPECT_FALSE(
+    frame_manager_->transformHasProblems(
       source_frame_name, rclcpp::Time(0, 0, clock_->get_clock_type()), error));
 }
 

@@ -229,8 +229,8 @@ bool Config::mapGetInt(const QString & key, int * value_out) const
 bool Config::mapGetFloat(const QString & key, float * value_out) const
 {
   QVariant v;
-  if (mapGetValue(key,
-    &v) &&
+  if (
+    mapGetValue(key, &v) &&
     (static_cast<int>(v.type()) == static_cast<int>(QMetaType::Float) ||
     v.type() == QVariant::Double ||
     v.type() == QVariant::String))

@@ -159,8 +159,9 @@ protected:
     try {
       return class_loader_->createUnmanagedInstance(class_id.toStdString());
     } catch (pluginlib::PluginlibException & ex) {
-      RVIZ_COMMON_LOG_ERROR_STREAM("PluginlibFactory: The plugin for class '" <<
-        qPrintable(class_id) << "' failed to load. Error: " << ex.what());
+      RVIZ_COMMON_LOG_ERROR_STREAM(
+        "PluginlibFactory: The plugin for class '" <<
+          qPrintable(class_id) << "' failed to load. Error: " << ex.what());
       if (error_return) {
         *error_return = QString::fromStdString(ex.what());
       }

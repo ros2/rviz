@@ -223,7 +223,8 @@ void Robot::update(const LinkUpdater & updater)
         log_error(link, "collision", "position");
         continue;
       }
-      link->setTransforms(visual_position, visual_orientation, collision_position,
+      link->setTransforms(
+        visual_position, visual_orientation, collision_position,
         collision_orientation);
 
       for (const auto & child_joint_name : link->getChildJointNames()) {
@@ -379,7 +380,8 @@ void Robot::calculateJointCheckboxes()
       int child_links_with_geom;
       int child_links_with_geom_checked;
       int child_links_with_geom_unchecked;
-      child_joint->calculateJointCheckboxesRecursive(child_links_with_geom,
+      child_joint->calculateJointCheckboxesRecursive(
+        child_links_with_geom,
         child_links_with_geom_checked,
         child_links_with_geom_unchecked);
       links_with_geom_checked += child_links_with_geom_checked;

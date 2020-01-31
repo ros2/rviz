@@ -128,12 +128,14 @@ void PoseWithCovSelectionHandler::setMessage(
     position_property_->setVector(rviz_common::pointMsgToOgre(message->pose.pose.position));
     orientation_property_->setQuaternion(
       rviz_common::quaternionMsgToOgre(message->pose.pose.orientation));
-    covariance_position_property_->setVector(Ogre::Vector3(
+    covariance_position_property_->setVector(
+      Ogre::Vector3(
         message->pose.covariance[0 + 0 * 6],
         message->pose.covariance[1 + 1 * 6],
         message->pose.covariance[2 + 2 * 6]));
 
-    covariance_orientation_property_->setVector(Ogre::Vector3(
+    covariance_orientation_property_->setVector(
+      Ogre::Vector3(
         message->pose.covariance[3 + 3 * 6],
         message->pose.covariance[4 + 4 * 6],
         message->pose.covariance[5 + 5 * 6]));

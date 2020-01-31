@@ -157,7 +157,8 @@ void PoseWithCovarianceDisplay::updateColorAndAlpha()
 
 void PoseWithCovarianceDisplay::updateArrowGeometry()
 {
-  arrow_->set(shaft_length_property_->getFloat(),
+  arrow_->set(
+    shaft_length_property_->getFloat(),
     shaft_radius_property_->getFloat(),
     head_length_property_->getFloat(),
     head_radius_property_->getFloat() );
@@ -166,7 +167,8 @@ void PoseWithCovarianceDisplay::updateArrowGeometry()
 
 void PoseWithCovarianceDisplay::updateAxisGeometry()
 {
-  axes_->set(axes_length_property_->getFloat(),
+  axes_->set(
+    axes_length_property_->getFloat(),
     axes_radius_property_->getFloat() );
   context_->queueRender();
 }
@@ -216,15 +218,17 @@ void PoseWithCovarianceDisplay::processMessage(
   if (!rviz_common::validateFloats(message->pose.pose) ||
     !rviz_common::validateFloats(message->pose.covariance))
   {
-    setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
+    setStatus(
+      rviz_common::properties::StatusProperty::Error, "Topic",
       "Message contained invalid floating point values (nans or infs)");
     return;
   }
 
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
-  if (!context_->getFrameManager()->transform(message->header, message->pose.pose, position,
-    orientation))
+  if (
+    !context_->getFrameManager()->transform(
+      message->header, message->pose.pose, position, orientation))
   {
     setMissingTransformToFixedFrame(message->header.frame_id);
     return;

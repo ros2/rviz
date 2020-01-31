@@ -526,7 +526,8 @@ Ogre::Ray InteractiveMarkerControl::getMouseRayInReferenceFrame(
 
   // convert ray into reference frame
   mouse_ray.setOrigin(reference_node_->convertWorldToLocalPosition(mouse_ray.getOrigin()));
-  mouse_ray.setDirection(reference_node_->convertWorldToLocalOrientation(
+  mouse_ray.setDirection(
+    reference_node_->convertWorldToLocalOrientation(
       Ogre::Quaternion::IDENTITY) * mouse_ray.getDirection());
 
   return mouse_ray;

@@ -63,7 +63,8 @@ TEST_F(VisualTestFixture, sphere_changes_color_depending_on_relative_humidity) {
   relative_humidity_publisher->setRelativeHumidity(0.15);
   captureMainWindow("relative_humidity_display_low_relative_humidity");
 
-  executor_->queueAction([relative_humidity_publisher]()
+  executor_->queueAction(
+    [relative_humidity_publisher]()
     {
       relative_humidity_publisher->setRelativeHumidity(0.85);
     });

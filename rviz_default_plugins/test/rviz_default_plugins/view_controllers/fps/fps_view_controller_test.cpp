@@ -135,7 +135,8 @@ TEST_F(FPSViewControllerTestFixture, moving_the_wheel_moves_camera_in_looking_di
   EXPECT_THAT(z_position->getValue().toFloat(), FloatNear(0, 0.001f));
 }
 
-TEST_F(FPSViewControllerTestFixture,
+TEST_F(
+  FPSViewControllerTestFixture,
   moving_the_mouse_with_right_button_moves_camera_in_looking_direction) {
   setCameraToDefaultPosition();
 

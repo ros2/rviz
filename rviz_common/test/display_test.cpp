@@ -120,7 +120,8 @@ TEST(Display, save_properties) {
 
   // Since we instantiated the display directly instead of using the
   // DisplayFactory, it won't know its class name.
-  EXPECT_EQ(std::string(
+  EXPECT_EQ(
+    std::string(
       "Class: \"\"\n"
       "Color: 10; 20; 30\n"
       "Count: 37\n"
@@ -158,7 +159,8 @@ TEST(DisplayGroup, save_properties) {
 
   // Since we instantiated the display directly instead of using the
   // DisplayFactory, it won't know its class name.
-  EXPECT_EQ(std::string(
+  EXPECT_EQ(
+    std::string(
       "Class: \"\"\n"
       "Displays:\n"
       "  - Class: \"\"\n"

@@ -72,7 +72,8 @@ void LineEditWithButton::resizeEvent(QResizeEvent * event)
   // padding, and located all the way to the right.
   int button_width = height() - 2 * padding;
   int button_height = button_width;
-  button_->setGeometry(width() - button_width - padding, padding,
+  button_->setGeometry(
+    width() - button_width - padding, padding,
     button_width, button_height);
 }
 

@@ -227,11 +227,12 @@ void ViewPicker::setDepthTextureSize(unsigned width, unsigned height)
     }
 
     depth_render_texture_ =
-      Ogre::TextureManager::getSingleton().createManual(tex_name,
-        Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-        Ogre::TEX_TYPE_2D, depth_texture_width_, depth_texture_height_, 0,
-        Ogre::PF_R8G8B8,
-        Ogre::TU_RENDERTARGET);
+      Ogre::TextureManager::getSingleton().createManual(
+      tex_name,
+      Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+      Ogre::TEX_TYPE_2D, depth_texture_width_, depth_texture_height_, 0,
+      Ogre::PF_R8G8B8,
+      Ogre::TU_RENDERTARGET);
 
     depth_render_texture_->getBuffer()->getRenderTarget()->setAutoUpdated(false);
   }

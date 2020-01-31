@@ -79,8 +79,8 @@ TEST_F(MarkersTestFixture, setMessage_with_transform_sets_position_and_orientati
   ASSERT_TRUE(entity);
   EXPECT_TRUE(entity->isVisible());
   EXPECT_THAT(entity->getParentSceneNode()->getPosition(), Vector3Eq(Ogre::Vector3(0, 1, 0)));
-  EXPECT_THAT(entity->getParentSceneNode()->getOrientation(),
-    QuaternionEq(Ogre::Quaternion(0, 0, 1, 0)));
+  EXPECT_THAT(
+    entity->getParentSceneNode()->getOrientation(), QuaternionEq(Ogre::Quaternion(0, 0, 1, 0)));
 }
 
 TEST_F(MarkersTestFixture, setMessage_does_not_attach_entity_when_mesh_is_missing) {

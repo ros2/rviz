@@ -115,10 +115,12 @@ void assertCovarianceOrientationOffsetIsPresent(
 {
   bool found = false;
   for (auto entity : entities) {
-    if (Matches(Vector3Eq(direction))(entity->getParentSceneNode()->getParentSceneNode()
-      ->getParentSceneNode()->getPosition()) &&
-      Matches(Vector3Eq(Ogre::Vector3(length, length, length)))(entity->getParentSceneNode()
-      ->getParentSceneNode()->getParentSceneNode()->getParentSceneNode()->getScale()))
+    if (Matches(Vector3Eq(direction))(
+        entity->getParentSceneNode()->getParentSceneNode()
+        ->getParentSceneNode()->getPosition()) &&
+      Matches(Vector3Eq(Ogre::Vector3(length, length, length)))(
+        entity->getParentSceneNode()
+        ->getParentSceneNode()->getParentSceneNode()->getParentSceneNode()->getScale()))
     {
       found = true;
     }
@@ -135,19 +137,23 @@ TEST_F(CovarianceVisualTestFixture, covariance_visual_3D)
   EXPECT_THAT(covariance_visual_node_->getPosition(), Vector3Eq(position));
   auto all_spheres = findAllSpheres(covariance_visual_node_);
   ASSERT_THAT(all_spheres, SizeIs(1));
-  EXPECT_THAT(all_spheres[0]->getParentSceneNode()->getPosition(),
+  EXPECT_THAT(
+    all_spheres[0]->getParentSceneNode()->getPosition(),
     Vector3Eq(Ogre::Vector3(0.0, 0.0, 0.0)));
   EXPECT_TRUE(all_spheres[0]->isVisible());
 
   auto all_orientation_uncertainties = findAllCylinders(covariance_visual_node_);
   ASSERT_THAT(all_orientation_uncertainties, SizeIs(3));
-  assertCovarianceOrientationOffsetIsPresent(all_orientation_uncertainties,
+  assertCovarianceOrientationOffsetIsPresent(
+    all_orientation_uncertainties,
     Ogre::Vector3::UNIT_Y, offset);
   EXPECT_TRUE(all_orientation_uncertainties[0]->isVisible());
-  assertCovarianceOrientationOffsetIsPresent(all_orientation_uncertainties,
+  assertCovarianceOrientationOffsetIsPresent(
+    all_orientation_uncertainties,
     Ogre::Vector3::UNIT_X, offset);
   EXPECT_TRUE(all_orientation_uncertainties[1]->isVisible());
-  assertCovarianceOrientationOffsetIsPresent(all_orientation_uncertainties,
+  assertCovarianceOrientationOffsetIsPresent(
+    all_orientation_uncertainties,
     Ogre::Vector3::UNIT_Z, offset);
   EXPECT_TRUE(all_orientation_uncertainties[2]->isVisible());
 
@@ -165,7 +171,8 @@ TEST_F(CovarianceVisualTestFixture, covariance_visual_2D)
   EXPECT_THAT(covariance_visual_node_->getPosition(), Vector3Eq(position));
   auto all_spheres = findAllSpheres(covariance_visual_node_);
   ASSERT_THAT(all_spheres, SizeIs(1));
-  EXPECT_THAT(all_spheres[0]->getParentSceneNode()->getPosition(),
+  EXPECT_THAT(
+    all_spheres[0]->getParentSceneNode()->getPosition(),
     Vector3Eq(Ogre::Vector3(0.0, 0.0, 0.0)));
   EXPECT_TRUE(all_spheres[0]->isVisible());
 

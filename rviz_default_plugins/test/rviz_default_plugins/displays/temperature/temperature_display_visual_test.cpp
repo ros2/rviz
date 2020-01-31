@@ -63,7 +63,8 @@ TEST_F(VisualTestFixture, sphere_changes_color_depending_on_temperature) {
   temperature_publisher->setTemperature(15.);
   captureMainWindow("temperature_display_low_temperature");
 
-  executor_->queueAction([temperature_publisher]()
+  executor_->queueAction(
+    [temperature_publisher]()
     {
       temperature_publisher->setTemperature(85.);
     });

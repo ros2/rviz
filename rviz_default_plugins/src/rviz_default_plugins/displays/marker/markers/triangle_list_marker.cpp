@@ -203,14 +203,16 @@ bool TriangleListMarker::fillManualObjectAndDetermineAlpha(
       if (hasVertexColors(new_message)) {
         any_vertex_has_alpha = any_vertex_has_alpha ||
           (new_message->colors[i + c].a < rviz_rendering::unit_alpha_threshold);
-        manual_object_->colour(new_message->colors[i + c].r,
+        manual_object_->colour(
+          new_message->colors[i + c].r,
           new_message->colors[i + c].g,
           new_message->colors[i + c].b,
           new_message->color.a * new_message->colors[i + c].a);
       } else if (hasFaceColors(new_message)) {
         any_vertex_has_alpha = any_vertex_has_alpha ||
           (new_message->colors[i / 3].a < rviz_rendering::unit_alpha_threshold);
-        manual_object_->colour(new_message->colors[i / 3].r,
+        manual_object_->colour(
+          new_message->colors[i / 3].r,
           new_message->colors[i / 3].g,
           new_message->colors[i / 3].b,
           new_message->color.a * new_message->colors[i / 3].a);

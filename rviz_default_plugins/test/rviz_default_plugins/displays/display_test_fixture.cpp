@@ -85,7 +85,9 @@ void DisplayTestFixture::mockValidTransform(Ogre::Vector3 position, Ogre::Quater
   EXPECT_CALL(
     *frame_manager_,
     transform(::testing::_, ::testing::_, ::testing::_, ::testing::_, ::testing::_))  // NOLINT
-  .WillRepeatedly(::testing::DoAll(      // NOLINT
+  .WillRepeatedly(
+    // NOLINT
+    ::testing::DoAll(
       ::testing::SetArgReferee<3>(position),
       ::testing::SetArgReferee<4>(orientation),
       ::testing::Return(true)
@@ -94,7 +96,9 @@ void DisplayTestFixture::mockValidTransform(Ogre::Vector3 position, Ogre::Quater
   EXPECT_CALL(
     *frame_manager_,
     getTransform(::testing::_, ::testing::_, ::testing::_, ::testing::_))
-  .WillRepeatedly(::testing::DoAll(      // NOLINT
+  .WillRepeatedly(
+    // NOLINT
+    ::testing::DoAll(
       ::testing::SetArgReferee<2>(position),
       ::testing::SetArgReferee<3>(orientation),
       ::testing::Return(true)

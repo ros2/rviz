@@ -54,10 +54,12 @@ namespace displays
 
 PolygonDisplay::PolygonDisplay()
 {
-  color_property_ = new rviz_common::properties::ColorProperty("Color", QColor(25, 255, 0),
-      "Color to draw the polygon.", this, SLOT(queueRender()));
-  alpha_property_ = new rviz_common::properties::FloatProperty("Alpha", 1.0f,
-      "Amount of transparency to apply to the polygon.", this, SLOT(queueRender()));
+  color_property_ = new rviz_common::properties::ColorProperty(
+    "Color", QColor(25, 255, 0),
+    "Color to draw the polygon.", this, SLOT(queueRender()));
+  alpha_property_ = new rviz_common::properties::FloatProperty(
+    "Alpha", 1.0f,
+    "Amount of transparency to apply to the polygon.", this, SLOT(queueRender()));
   alpha_property_->setMin(0);
   alpha_property_->setMax(1);
 
@@ -96,7 +98,8 @@ bool validateFloats(geometry_msgs::msg::PolygonStamped::ConstSharedPtr msg)
 void PolygonDisplay::processMessage(geometry_msgs::msg::PolygonStamped::ConstSharedPtr msg)
 {
   if (!validateFloats(msg)) {
-    setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
+    setStatus(
+      rviz_common::properties::StatusProperty::Error, "Topic",
       "Message contained invalid floating point values (nans or infs)");
     return;
   }

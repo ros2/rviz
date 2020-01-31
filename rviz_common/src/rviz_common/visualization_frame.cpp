@@ -289,8 +289,8 @@ void VisualizationFrame::initialize(
   hide_right_dock_button_ = new QToolButton();
   hide_right_dock_button_->setContentsMargins(0, 0, 0, 0);
   hide_right_dock_button_->setArrowType(Qt::RightArrow);
-  hide_right_dock_button_->setSizePolicy(QSizePolicy(QSizePolicy::Minimum,
-    QSizePolicy::Expanding));
+  hide_right_dock_button_->setSizePolicy(
+    QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding));
   hide_right_dock_button_->setFixedWidth(16);
   hide_right_dock_button_->setAutoRaise(true);
   hide_right_dock_button_->setCheckable(true);
@@ -368,7 +368,8 @@ void VisualizationFrame::initialize(
   Q_EMIT statusUpdate("RViz is ready.");
 
   connect(manager_, SIGNAL(preUpdate()), this, SLOT(updateFps()));
-  connect(manager_, SIGNAL(statusUpdate(const QString&)), this,
+  connect(
+    manager_, SIGNAL(statusUpdate(const QString&)), this,
     SIGNAL(statusUpdate(const QString&)));
 }
 
@@ -426,7 +427,8 @@ void VisualizationFrame::loadPersistentSettings()
     recent_configs_.clear();
     int num_recent = recent_configs_list.listLength();
     for (int i = 0; i < num_recent; i++) {
-      recent_configs_.push_back(recent_configs_list.listChildAt(
+      recent_configs_.push_back(
+        recent_configs_list.listChildAt(
           i).getValue().toString().toStdString());
     }
   } else {
@@ -456,15 +458,18 @@ void VisualizationFrame::initMenus()
 {
   file_menu_ = menuBar()->addMenu("&File");
 
-  QAction * file_menu_open_action = file_menu_->addAction("&Open Config", this, SLOT(
-        onOpen()), QKeySequence("Ctrl+O"));
+  QAction * file_menu_open_action = file_menu_->addAction(
+    "&Open Config", this, SLOT(
+      onOpen()), QKeySequence("Ctrl+O"));
   this->addAction(file_menu_open_action);
-  QAction * file_menu_save_action = file_menu_->addAction("&Save Config", this, SLOT(
-        onSave()), QKeySequence("Ctrl+S"));
+  QAction * file_menu_save_action = file_menu_->addAction(
+    "&Save Config", this, SLOT(
+      onSave()), QKeySequence("Ctrl+S"));
   this->addAction(file_menu_save_action);
   QAction * file_menu_save_as_action =
-    file_menu_->addAction("Save Config &As", this, SLOT(onSaveAs()),
-      QKeySequence("Ctrl+Shift+S"));
+    file_menu_->addAction(
+    "Save Config &As", this, SLOT(onSaveAs()),
+    QKeySequence("Ctrl+Shift+S"));
   this->addAction(file_menu_save_as_action);
 
   recent_configs_menu_ = file_menu_->addMenu("&Recent Configs");
@@ -475,8 +480,9 @@ void VisualizationFrame::initMenus()
   }
   file_menu_->addSeparator();
 
-  QAction * file_menu_quit_action = file_menu_->addAction("&Quit", this, SLOT(
-        close()), QKeySequence("Ctrl+Q"));
+  QAction * file_menu_quit_action = file_menu_->addAction(
+    "&Quit", this, SLOT(
+      close()), QKeySequence("Ctrl+Q"));
   this->addAction(file_menu_quit_action);
 
   view_menu_ = menuBar()->addMenu("&Panels");
@@ -484,8 +490,9 @@ void VisualizationFrame::initMenus()
   delete_view_menu_ = view_menu_->addMenu("&Delete Panel");
   delete_view_menu_->setEnabled(false);
 
-  QAction * fullscreen_action = view_menu_->addAction("&Fullscreen", this, SLOT(setFullScreen(
-        bool)), Qt::Key_F11);
+  QAction * fullscreen_action = view_menu_->addAction(
+    "&Fullscreen", this, SLOT(
+      setFullScreen(bool)), Qt::Key_F11);
   fullscreen_action->setCheckable(true);
   this->addAction(fullscreen_action);  // Also add to window, or the shortcut doest work
                                        // when the menu is hidden.
@@ -513,7 +520,8 @@ void VisualizationFrame::initToolbars()
   toolbar_->setObjectName("Tools");
   toolbar_->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
   toolbar_actions_ = new QActionGroup(this);
-  connect(toolbar_actions_, SIGNAL(triggered(QAction*)), this,
+  connect(
+    toolbar_actions_, SIGNAL(triggered(QAction*)), this,
     SLOT(onToolbarActionTriggered(QAction*)));
   view_menu_->addAction(toolbar_->toggleViewAction());
 
@@ -530,8 +538,9 @@ void VisualizationFrame::initToolbars()
   remove_tool_button->setToolTip("Remove a tool from the toolbar");
   remove_tool_button->setIcon(loadPixmap("package://rviz_common/icons/minus.png"));
   toolbar_->addWidget(remove_tool_button);
-  connect(remove_tool_menu_, SIGNAL(triggered(QAction*)), this, SLOT(onToolbarRemoveTool(
-      QAction*)));
+  connect(
+    remove_tool_menu_, SIGNAL(triggered(QAction*)), this, SLOT(
+      onToolbarRemoveTool(QAction*)));
 }
 
 void VisualizationFrame::hideDockImpl(Qt::DockWidgetArea area, bool hide)
@@ -596,13 +605,14 @@ void VisualizationFrame::openNewPanelDialog()
   QString display_name;
   QStringList empty;
 
-  NewObjectDialog * dialog = new NewObjectDialog(panel_factory_,
-      "Panel",
-      empty,
-      empty,
-      &class_id,
-      &display_name,
-      this);
+  NewObjectDialog * dialog = new NewObjectDialog(
+    panel_factory_,
+    "Panel",
+    empty,
+    empty,
+    &class_id,
+    &display_name,
+    this);
   manager_->stopUpdate();
   if (dialog->exec() == QDialog::Accepted) {
     addPanelByName(display_name, class_id);
@@ -616,11 +626,12 @@ void VisualizationFrame::openNewToolDialog()
   QStringList empty;
   ToolManager * tool_man = manager_->getToolManager();
 
-  NewObjectDialog * dialog = new NewObjectDialog(tool_man->getFactory(),
-      "Tool",
-      empty,
-      tool_man->getToolClasses(),
-      &class_id);
+  NewObjectDialog * dialog = new NewObjectDialog(
+    tool_man->getFactory(),
+    "Tool",
+    empty,
+    tool_man->getToolClasses(),
+    &class_id);
   manager_->stopUpdate();
   if (dialog->exec() == QDialog::Accepted) {
     tool_man->addTool(class_id);
@@ -929,8 +940,9 @@ bool VisualizationFrame::prepareToExit()
           QMessageBox box(this);
           box.setWindowTitle("Failed to save.");
           box.setText(getErrorMessage());
-          box.setInformativeText(QString::fromStdString("Save copy of " + display_config_file_ +
-            " to another file?"));
+          box.setInformativeText(
+            QString::fromStdString(
+              "Save copy of " + display_config_file_ + " to another file?"));
           box.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
           box.setDefaultButton(QMessageBox::Save);
           int result = box.exec();
@@ -957,9 +969,10 @@ bool VisualizationFrame::prepareToExit()
 void VisualizationFrame::onOpen()
 {
   manager_->stopUpdate();
-  QString filename = QFileDialog::getOpenFileName(this, "Choose a file to open",
-      QString::fromStdString(last_config_dir_),
-      "RViz config files (" CONFIG_EXTENSION_WILDCARD ")");
+  QString filename = QFileDialog::getOpenFileName(
+    this, "Choose a file to open",
+    QString::fromStdString(last_config_dir_),
+    "RViz config files (" CONFIG_EXTENSION_WILDCARD ")");
   manager_->startUpdate();
 
   if (!filename.isEmpty()) {
@@ -986,8 +999,9 @@ void VisualizationFrame::onSave()
     QMessageBox box(this);
     box.setWindowTitle("Failed to save.");
     box.setText(getErrorMessage());
-    box.setInformativeText(QString::fromStdString("Save copy of " + display_config_file_ +
-      " to another file?"));
+    box.setInformativeText(
+      QString::fromStdString(
+        "Save copy of " + display_config_file_ + " to another file?"));
     box.setStandardButtons(QMessageBox::Save | QMessageBox::Cancel);
     box.setDefaultButton(QMessageBox::Save);
     if (box.exec() == QMessageBox::Save) {
@@ -1000,9 +1014,10 @@ void VisualizationFrame::onSave()
 void VisualizationFrame::onSaveAs()
 {
   manager_->stopUpdate();
-  QString q_filename = QFileDialog::getSaveFileName(this, "Choose a file to save to",
-      QString::fromStdString(last_config_dir_),
-      "RViz config files (" CONFIG_EXTENSION_WILDCARD ")");
+  QString q_filename = QFileDialog::getSaveFileName(
+    this, "Choose a file to save to",
+    QString::fromStdString(last_config_dir_),
+    "RViz config files (" CONFIG_EXTENSION_WILDCARD ")");
   manager_->startUpdate();
 
   if (!q_filename.isEmpty()) {
@@ -1025,7 +1040,8 @@ void VisualizationFrame::onSaveImage()
 {
   ScreenshotDialog * dialog =
     new ScreenshotDialog(this, render_panel_, QString::fromStdString(last_image_dir_));
-  connect(dialog, SIGNAL(savedInDirectory(const QString&)),
+  connect(
+    dialog, SIGNAL(savedInDirectory(const QString&)),
     this, SLOT(setImageSaveDirectory(const QString&)));
   dialog->show();
 }

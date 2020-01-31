@@ -124,8 +124,8 @@ TEST_F(BillboardLineTestFixture, new_billboard_contains_correct_points_as_boundi
   auto chains = grid_cell->getChains();
 
   // chains are basically bounded by the square
-  auto bounding_box = Ogre::AxisAlignedBox(Ogre::Vector3(-1.1f, -1.1f, -0.1f),
-      Ogre::Vector3(1.1f, 1.1f, 0.1f));
+  auto bounding_box = Ogre::AxisAlignedBox(
+    Ogre::Vector3(-1.1f, -1.1f, -0.1f), Ogre::Vector3(1.1f, 1.1f, 0.1f));
   ASSERT_THAT(chains[0]->getBoundingBox(), Eq(bounding_box));
 }
 

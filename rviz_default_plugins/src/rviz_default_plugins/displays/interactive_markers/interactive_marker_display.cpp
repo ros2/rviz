@@ -113,7 +113,8 @@ void InteractiveMarkerDisplay::onInitialize()
 
   auto frame_transformer = context_->getFrameManager()->getTransformer();
   rclcpp::Node::SharedPtr node = ros_node_abstraction->get_raw_node();
-  interactive_marker_client_.reset(new interactive_markers::InteractiveMarkerClient(
+  interactive_marker_client_.reset(
+    new interactive_markers::InteractiveMarkerClient(
       node, frame_transformer, fixed_frame_.toStdString()));
 
   interactive_marker_client_->setInitializeCallback(
@@ -123,10 +124,11 @@ void InteractiveMarkerDisplay::onInitialize()
   interactive_marker_client_->setResetCallback(
     std::bind(&InteractiveMarkerDisplay::resetCallback, this));
   interactive_marker_client_->setStatusCallback(
-    std::bind(&InteractiveMarkerDisplay::statusCallback,
-    this,
-    std::placeholders::_1,
-    std::placeholders::_2));
+    std::bind(
+      &InteractiveMarkerDisplay::statusCallback,
+      this,
+      std::placeholders::_1,
+      std::placeholders::_2));
 
   subscribe();
 }
@@ -146,7 +148,8 @@ void InteractiveMarkerDisplay::namespaceChanged()
   unsubscribe();
 
   if (interactive_marker_namespace_property_->isEmpty()) {
-    setStatus(rviz_common::properties::StatusProperty::Error,
+    setStatus(
+      rviz_common::properties::StatusProperty::Error,
       "Interactive Marker Client",
       QString("Error connecting: empty namespace"));
     return;
