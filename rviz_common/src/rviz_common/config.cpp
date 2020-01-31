@@ -119,6 +119,13 @@ Config::Config(NodePtr node)
 : node_(node)
 {}
 
+Config &
+Config::operator=(const Config & source)
+{
+  node_ = source.node_;
+  return *this;
+}
+
 void Config::copy(const Config & source)  // NOLINT linter wants #include <algorithm>
 {
   if (!source.isValid()) {
