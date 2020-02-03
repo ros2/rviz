@@ -128,13 +128,16 @@ TEST_F(RobotTestFixture, load_creates_links_and_sets_the_scene_node_positions) {
   auto link1 = robot_->getLink("test_robot_link");
   EXPECT_THAT(link1->getVisualNode()->getChild(0)->getPosition(), Vector3Eq(Ogre::Vector3::ZERO));
   EXPECT_THAT(link1->getVisualNode()->getChild(0)->getScale(), Vector3Eq(Ogre::Vector3(1, 1, 1)));
-  EXPECT_THAT(link1->getCollisionNode()->getChild(0)->getPosition(),
+  EXPECT_THAT(
+    link1->getCollisionNode()->getChild(0)->getPosition(),
     Vector3Eq(Ogre::Vector3::ZERO));
-  EXPECT_THAT(link1->getCollisionNode()->getChild(0)->getScale(),
+  EXPECT_THAT(
+    link1->getCollisionNode()->getChild(0)->getScale(),
     Vector3Eq(Ogre::Vector3(1, 1, 1)));
 
   auto link3 = robot_->getLink("test_robot_link_head");
-  EXPECT_THAT(link3->getVisualNode()->getChild(0)->getPosition(),
+  EXPECT_THAT(
+    link3->getVisualNode()->getChild(0)->getPosition(),
     Vector3Eq(Ogre::Vector3(0, 0, 2)));
   EXPECT_THAT(link3->getVisualNode()->getChild(0)->getScale(), Vector3Eq(Ogre::Vector3(2, 2, 2)));
   EXPECT_THAT(link3->getCollisionNode()->numChildren(), Eq(0u));
@@ -144,16 +147,20 @@ TEST_F(RobotTestFixture, load_sets_joint_parents_and_children) {
   robot_->load(urdf_model_);
 
   EXPECT_THAT(robot_->getJoint("test_robot_fixed1")->getParentLinkName(), StrEq("test_robot_link"));
-  EXPECT_THAT(robot_->getJoint("test_robot_fixed1")->getChildLinkName(),
+  EXPECT_THAT(
+    robot_->getJoint("test_robot_fixed1")->getChildLinkName(),
     StrEq("test_robot_link_right_arm"));
 
   EXPECT_THAT(robot_->getJoint("test_robot_fixed2")->getParentLinkName(), StrEq("test_robot_link"));
-  EXPECT_THAT(robot_->getJoint("test_robot_fixed2")->getChildLinkName(),
+  EXPECT_THAT(
+    robot_->getJoint("test_robot_fixed2")->getChildLinkName(),
     StrEq("test_robot_link_left_arm"));
 
-  EXPECT_THAT(robot_->getJoint("test_robot_continuous")->getParentLinkName(),
+  EXPECT_THAT(
+    robot_->getJoint("test_robot_continuous")->getParentLinkName(),
     StrEq("test_robot_link"));
-  EXPECT_THAT(robot_->getJoint("test_robot_continuous")->getChildLinkName(),
+  EXPECT_THAT(
+    robot_->getJoint("test_robot_continuous")->getChildLinkName(),
     StrEq("test_robot_link_head"));
 }
 
@@ -245,7 +252,8 @@ TEST_F(RobotTestFixture, update_sets_position_and_orientation_in_links_and_joint
   Ogre::Quaternion collision_orientation(0, 0, 0, 1);
 
   EXPECT_CALL(link_updater, getLinkTransforms(StrEq("test_robot_link"), _, _, _, _))
-  .WillOnce(DoAll(
+  .WillOnce(
+    DoAll(
       SetArgReferee<1>(visual_position),
       SetArgReferee<2>(visual_orientation),
       SetArgReferee<3>(collision_position),
@@ -275,10 +283,12 @@ TEST_F(RobotTestFixture, link_descriptions_show_correct_hierarchy) {
   EXPECT_THAT(prop->numChildren(), Eq(9));
   EXPECT_THAT(prop->childAt(0)->getNameStd(), StrEq("Link Tree Style"));
   EXPECT_THAT(prop->childAt(5)->getNameStd(), StrEq("test_robot_link"));
-  EXPECT_THAT(prop->childAt(5)->getDescription().toStdString(),
-    StrEq("Root Link <b>test_robot_link</b> has 3 child joints: "
-    "<b>test_robot_continuous</b>, <b>test_robot_fixed1</b>, <b>test_robot_fixed2</b>.  "
-    "Check/uncheck to show/hide this link in the display."
+  EXPECT_THAT(
+    prop->childAt(5)->getDescription().toStdString(),
+    StrEq(
+      "Root Link <b>test_robot_link</b> has 3 child joints: "
+      "<b>test_robot_continuous</b>, <b>test_robot_fixed1</b>, <b>test_robot_fixed2</b>.  "
+      "Check/uncheck to show/hide this link in the display."
     )
   );
 }
@@ -292,10 +302,12 @@ TEST_F(RobotTestFixture, joint_descriptions_show_correct_hierarchy) {
   EXPECT_THAT(prop->numChildren(), Eq(8));
   EXPECT_THAT(prop->childAt(0)->getNameStd(), StrEq("Link Tree Style"));
   EXPECT_THAT(prop->childAt(5)->getNameStd(), StrEq("test_robot_continuous"));
-  EXPECT_THAT(prop->childAt(5)->getDescription().toStdString(),
-    StrEq("Joint <b>test_robot_continuous</b> with parent link <b>test_robot_link</b> "
-    "and child link <b>test_robot_link_head</b>.  "
-    "Check/uncheck to show/hide this joint's child link."
+  EXPECT_THAT(
+    prop->childAt(5)->getDescription().toStdString(),
+    StrEq(
+      "Joint <b>test_robot_continuous</b> with parent link <b>test_robot_link</b> "
+      "and child link <b>test_robot_link_head</b>.  "
+      "Check/uncheck to show/hide this joint's child link."
     )
   );
 }

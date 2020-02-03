@@ -74,15 +74,17 @@ void OdometryDisplay::setupProperties()
     this);
   position_tolerance_property_->setMin(0);
 
-  angle_tolerance_property_ = new rviz_common::properties::FloatProperty("Angle Tolerance", 0.1f,
-      "Angular distance from the last arrow dropped, "
-      "that will cause a new arrow to drop.",
-      this);
+  angle_tolerance_property_ = new rviz_common::properties::FloatProperty(
+    "Angle Tolerance", 0.1f,
+    "Angular distance from the last arrow dropped, "
+    "that will cause a new arrow to drop.",
+    this);
   angle_tolerance_property_->setMin(0);
 
-  keep_property_ = new rviz_common::properties::IntProperty("Keep", 100,
-      "Number of arrows to keep before removing the oldest.  0 means keep all of them.",
-      this);
+  keep_property_ = new rviz_common::properties::IntProperty(
+    "Keep", 100,
+    "Number of arrows to keep before removing the oldest.  0 means keep all of them.",
+    this);
   keep_property_->setMin(0);
 
   shape_property_ = new rviz_common::properties::EnumProperty(
@@ -91,9 +93,10 @@ void OdometryDisplay::setupProperties()
   shape_property_->addOption("Arrow", ArrowShape);
   shape_property_->addOption("Axes", AxesShape);
 
-  color_property_ = new rviz_common::properties::ColorProperty("Color", QColor(255, 25, 0),
-      "Color of the arrows.",
-      shape_property_, SLOT(updateColorAndAlpha()), this);
+  color_property_ = new rviz_common::properties::ColorProperty(
+    "Color", QColor(255, 25, 0),
+    "Color of the arrows.",
+    shape_property_, SLOT(updateColorAndAlpha()), this);
 
   alpha_property_ = new rviz_common::properties::FloatProperty(
     "Alpha", 1, "Amount of transparency to apply to the arrow.",
@@ -101,21 +104,25 @@ void OdometryDisplay::setupProperties()
   alpha_property_->setMin(0);
   alpha_property_->setMax(1);
 
-  shaft_length_property_ = new rviz_common::properties::FloatProperty("Shaft Length", 1,
-      "Length of the each arrow's shaft, in meters.",
-      shape_property_, SLOT(updateArrowsGeometry()), this);
+  shaft_length_property_ = new rviz_common::properties::FloatProperty(
+    "Shaft Length", 1,
+    "Length of the each arrow's shaft, in meters.",
+    shape_property_, SLOT(updateArrowsGeometry()), this);
 
-  shaft_radius_property_ = new rviz_common::properties::FloatProperty("Shaft Radius", 0.05f,
-      "Radius of the each arrow's shaft, in meters.",
-      shape_property_, SLOT(updateArrowsGeometry()), this);
+  shaft_radius_property_ = new rviz_common::properties::FloatProperty(
+    "Shaft Radius", 0.05f,
+    "Radius of the each arrow's shaft, in meters.",
+    shape_property_, SLOT(updateArrowsGeometry()), this);
 
-  head_length_property_ = new rviz_common::properties::FloatProperty("Head Length", 0.3f,
-      "Length of the each arrow's head, in meters.",
-      shape_property_, SLOT(updateArrowsGeometry()), this);
+  head_length_property_ = new rviz_common::properties::FloatProperty(
+    "Head Length", 0.3f,
+    "Length of the each arrow's head, in meters.",
+    shape_property_, SLOT(updateArrowsGeometry()), this);
 
-  head_radius_property_ = new rviz_common::properties::FloatProperty("Head Radius", 0.1f,
-      "Radius of the each arrow's head, in meters.",
-      shape_property_, SLOT(updateArrowsGeometry()), this);
+  head_radius_property_ = new rviz_common::properties::FloatProperty(
+    "Head Radius", 0.1f,
+    "Radius of the each arrow's head, in meters.",
+    shape_property_, SLOT(updateArrowsGeometry()), this);
 
   axes_length_property_ = new rviz_common::properties::FloatProperty(
     "Axes Length", 1, "Length of each axis, in meters.",
@@ -125,9 +132,10 @@ void OdometryDisplay::setupProperties()
     "Axes Radius", 0.1f, "Radius of each axis, in meters.",
     shape_property_, SLOT(updateAxisGeometry()), this);
 
-  covariance_property_ = new rviz_common::properties::CovarianceProperty("Covariance", true,
-      "Whether or not the covariances of the messages should be shown.",
-      this, SLOT(updateCovariances()));
+  covariance_property_ = new rviz_common::properties::CovarianceProperty(
+    "Covariance", true,
+    "Whether or not the covariances of the messages should be shown.",
+    this, SLOT(updateCovariances()));
 }
 
 OdometryDisplay::~OdometryDisplay() = default;
@@ -250,10 +258,11 @@ bool validateFloats(nav_msgs::msg::Odometry msg)
 
 bool validateQuaternion(nav_msgs::msg::Odometry msg)
 {
-  return std::abs((msg.pose.pose.orientation.x * msg.pose.pose.orientation.x +
-           msg.pose.pose.orientation.y * msg.pose.pose.orientation.y +
-           msg.pose.pose.orientation.z * msg.pose.pose.orientation.z +
-           msg.pose.pose.orientation.w * msg.pose.pose.orientation.w) - 1.0f) < 10e-3;
+  return std::abs(
+    (msg.pose.pose.orientation.x * msg.pose.pose.orientation.x +
+    msg.pose.pose.orientation.y * msg.pose.pose.orientation.y +
+    msg.pose.pose.orientation.z * msg.pose.pose.orientation.z +
+    msg.pose.pose.orientation.w * msg.pose.pose.orientation.w) - 1.0f) < 10e-3;
 }
 
 void OdometryDisplay::processMessage(nav_msgs::msg::Odometry::ConstSharedPtr msg)
@@ -284,13 +293,15 @@ bool OdometryDisplay::messageIsValid(nav_msgs::msg::Odometry::ConstSharedPtr mes
   // if both invalid values and unnormalized quaternion are present, both messages are printed.
   bool message_is_valid = true;
   if (!validateFloats(*message)) {
-    setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
+    setStatus(
+      rviz_common::properties::StatusProperty::Error, "Topic",
       "Message contained invalid floating point values (nans or infs)");
     message_is_valid = false;
   }
 
   if (!validateQuaternion(*message)) {
-    setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
+    setStatus(
+      rviz_common::properties::StatusProperty::Error, "Topic",
       "Message contained unnormalized quaternion (squares of values don't add to 1)");
     message_is_valid = false;
   }

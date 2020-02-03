@@ -202,7 +202,8 @@ void Display::setStatus(
   const QString & name,
   const QString & text)
 {
-  QMetaObject::invokeMethod(this, "setStatusInternal", Qt::QueuedConnection,
+  QMetaObject::invokeMethod(
+    this, "setStatusInternal", Qt::QueuedConnection,
     Q_ARG(int, level),
     Q_ARG(QString, name),
     Q_ARG(QString, text));
@@ -254,8 +255,8 @@ void Display::setStatusInternal(int level, const QString & name, const QString &
 
 void Display::deleteStatus(const QString & name)
 {
-  QMetaObject::invokeMethod(this, "deleteStatusInternal", Qt::QueuedConnection,
-    Q_ARG(QString, name));
+  QMetaObject::invokeMethod(
+    this, "deleteStatusInternal", Qt::QueuedConnection, Q_ARG(QString, name));
 }
 
 void Display::deleteStatusInternal(const QString & name)
@@ -398,7 +399,8 @@ Ogre::SceneNode * Display::getSceneNode() const
 void Display::setAssociatedWidget(QWidget * widget)
 {
   if (associated_widget_panel_) {
-    disconnect(associated_widget_panel_, SIGNAL(visibilityChanged(bool)), this,
+    disconnect(
+      associated_widget_panel_, SIGNAL(visibilityChanged(bool)), this,
       SLOT(associatedPanelVisibilityChange(bool)));
     disconnect(associated_widget_panel_, SIGNAL(closed()), this, SLOT(disable()));
   }
@@ -408,7 +410,8 @@ void Display::setAssociatedWidget(QWidget * widget)
     WindowManagerInterface * wm = context_->getWindowManager();
     if (wm) {
       associated_widget_panel_ = wm->addPane(getName(), associated_widget_);
-      connect(associated_widget_panel_, SIGNAL(visibilityChanged(bool)), this,
+      connect(
+        associated_widget_panel_, SIGNAL(visibilityChanged(bool)), this,
         SLOT(associatedPanelVisibilityChange(bool)));
       connect(associated_widget_panel_, SIGNAL(closed()), this, SLOT(disable()));
       associated_widget_panel_->setIcon(getIcon());

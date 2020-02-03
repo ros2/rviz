@@ -48,7 +48,8 @@ ColorEditor::ColorEditor(ColorProperty * property, QWidget * parent)
 : LineEditWithButton(parent),
   property_(property)
 {
-  connect(this, SIGNAL(textChanged(const QString&)),
+  connect(
+    this, SIGNAL(textChanged(const QString&)),
     this, SLOT(parseText()));
 }
 
@@ -66,7 +67,8 @@ void ColorEditor::paintColorBox(QPainter * painter, const QRect & rect, const QC
   int size = rect.height() - padding * 2 - 1;
   painter->save();
   painter->setBrush(color);
-  painter->drawRoundedRect(rect.x() + padding + 3,
+  painter->drawRoundedRect(
+    rect.x() + padding + 3,
     rect.y() + padding, size, size, 0, 0, Qt::AbsoluteSize);
   painter->restore();
 }
@@ -108,13 +110,15 @@ void ColorEditor::onButtonClick()
 
   QColorDialog * dialog = new QColorDialog(color_, parentWidget() );
 
-  connect(dialog, SIGNAL(currentColorChanged(const QColor&)),
+  connect(
+    dialog, SIGNAL(currentColorChanged(const QColor&)),
     property_, SLOT(setColor(const QColor&)));
 
   // Without this connection the PropertyTreeWidget does not update
   // the color info "live" when it changes in the dialog and the 3D
   // view.
-  connect(dialog, SIGNAL(currentColorChanged(const QColor&)),
+  connect(
+    dialog, SIGNAL(currentColorChanged(const QColor&)),
     parentWidget(), SLOT(update()));
 
   // On the TWM window manager under linux, and on OSX, this

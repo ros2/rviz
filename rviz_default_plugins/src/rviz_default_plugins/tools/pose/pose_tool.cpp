@@ -128,8 +128,9 @@ void PoseTool::makeArrowVisibleAndSetOrientation(double angle)
 
   // we need base_orient, since the arrow goes along the -z axis by default
   // (for historical reasons)
-  Ogre::Quaternion orient_x = Ogre::Quaternion(Ogre::Radian(-Ogre::Math::HALF_PI),
-      Ogre::Vector3::UNIT_Y);
+  Ogre::Quaternion orient_x = Ogre::Quaternion(
+    Ogre::Radian(-Ogre::Math::HALF_PI),
+    Ogre::Vector3::UNIT_Y);
 
   arrow_->setOrientation(Ogre::Quaternion(Ogre::Radian(angle), Ogre::Vector3::UNIT_Z) * orient_x);
 }

@@ -72,12 +72,14 @@ void FrameSelectionHandler::createProperties(const Picked & obj, Property * pare
 {
   (void) obj;
   (void) display_;
-  category_property_ = new Property("Frame " + QString::fromStdString(frame_->name_),
-      QVariant(), "", parent_property);
+  category_property_ = new Property(
+    "Frame " + QString::fromStdString(frame_->name_),
+    QVariant(), "", parent_property);
 
   enabled_property_ =
-    new BoolProperty("Enabled", true, "", category_property_, SLOT(
-        updateVisibilityFromSelection()), frame_);
+    new BoolProperty(
+    "Enabled", true, "", category_property_, SLOT(
+      updateVisibilityFromSelection()), frame_);
 
   parent_property_ = new StringProperty("Parent", "", "", category_property_);
   parent_property_->setReadOnly(true);
@@ -85,8 +87,9 @@ void FrameSelectionHandler::createProperties(const Picked & obj, Property * pare
   position_property_ = new VectorProperty("Position", Ogre::Vector3::ZERO, "", category_property_);
   position_property_->setReadOnly(true);
 
-  orientation_property_ = new QuaternionProperty("Orientation", Ogre::Quaternion::IDENTITY, "",
-      category_property_);
+  orientation_property_ = new QuaternionProperty(
+    "Orientation", Ogre::Quaternion::IDENTITY, "",
+    category_property_);
   orientation_property_->setReadOnly(true);
 }
 

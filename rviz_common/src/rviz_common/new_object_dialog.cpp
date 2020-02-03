@@ -94,8 +94,8 @@ NewObjectDialog::NewObjectDialog(
   }
 
   // Buttons
-  button_box_ = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
-      Qt::Horizontal);
+  button_box_ = new QDialogButtonBox(
+    QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal);
 
   auto main_layout = new QVBoxLayout;
   main_layout->addWidget(type_box);

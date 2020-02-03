@@ -76,7 +76,8 @@ void ImageTester::assertImageIdentity(
       ".\n";
   }
 
-  resizeAndCropImage(image_name, test_image, reference_image_width,
+  resizeAndCropImage(
+    image_name, test_image, reference_image_width,
     reference_image_height, test_image_width, test_image_height);
 
   size_t different_pixels_number = pixelDifference(

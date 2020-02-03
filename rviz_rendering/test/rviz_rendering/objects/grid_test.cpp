@@ -76,12 +76,14 @@ Ogre::AxisAlignedBox expectedBoxForBillboards(
   float cell_length, float line_width)
 {
   return Ogre::AxisAlignedBox(
-    Ogre::Vector3(-cell_length * cell_count / 2 - line_width,
-    -cell_length * height_count / 2 - line_width,
-    -cell_length * cell_count / 2 - line_width),
-    Ogre::Vector3(cell_length * cell_count / 2 + line_width,
-    cell_length * height_count / 2 + line_width,
-    cell_length * cell_count / 2 + line_width));
+    Ogre::Vector3(
+      -cell_length * cell_count / 2 - line_width,
+      -cell_length * height_count / 2 - line_width,
+      -cell_length * cell_count / 2 - line_width),
+    Ogre::Vector3(
+      cell_length * cell_count / 2 + line_width,
+      cell_length * height_count / 2 + line_width,
+      cell_length * cell_count / 2 + line_width));
 }
 
 Ogre::AxisAlignedBox expectedBoxForLines(
@@ -118,14 +120,15 @@ TEST_F(GridTestFixture, setHeight_creates_object_with_correct_height_in_bounding
   ASSERT_THAT(manual_object->getBoundingBox(), Eq(expected_bounding_box));
 }
 
-TEST_F(GridTestFixture,
+TEST_F(
+  GridTestFixture,
   createGrid_returns_billboard_object_with_bounding_box_bounding_cells_including_billboard_size) {
   uint32_t cell_count = 2;
   float cell_length = 2.0f;
   float line_width = 0.1f;
 
-  auto grid = createGrid(rviz_rendering::Grid::Style::Billboards,
-      cell_count, cell_length, line_width);
+  auto grid = createGrid(
+    rviz_rendering::Grid::Style::Billboards, cell_count, cell_length, line_width);
 
   grid.create();
 
@@ -139,8 +142,8 @@ TEST_F(GridTestFixture, setStyle_creates_a_new_grid_with_new_style) {
   float cell_length = 2.0f;
   float line_width = 0.1f;
 
-  auto grid = createGrid(rviz_rendering::Grid::Style::Lines,
-      cell_count, cell_length, line_width);
+  auto grid = createGrid(
+    rviz_rendering::Grid::Style::Lines, cell_count, cell_length, line_width);
   grid.create();
 
   grid.setStyle(rviz_rendering::Grid::Style::Billboards);

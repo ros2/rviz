@@ -74,9 +74,11 @@ TEST(Property, set_value_events) {
 TEST(Property, children) {
   Property * display = new Property("Test");
   new Property("Alpha", 0.5, "The amount of transparency to apply to the grid lines.", display);
-  Property * beta = new Property("Beta Band", 10, "The number of betas to apply to the grid lines.",
-      display);
-  new Property("Gamma Topic", "chubby", "The topic on which to listen for Gamma messages.",
+  Property * beta = new Property(
+    "Beta Band", 10, "The number of betas to apply to the grid lines.",
+    display);
+  new Property(
+    "Gamma Topic", "chubby", "The topic on which to listen for Gamma messages.",
     display);
   Property * position = new Property("Position", QVariant(), "Position of the chub.", display);
   new Property("X", 1.1f, "X component of the position of the chub.", position);
@@ -166,7 +168,8 @@ TEST(VectorProperty, set_value_events) {
   r.reset();
 
   p.subProp("Z")->setValue(2.1);
-  EXPECT_EQ(" aboutToChange, v=0.1; 0.0001; 1000 changed, v=0.1; 0.0001; 2.1",
+  EXPECT_EQ(
+    " aboutToChange, v=0.1; 0.0001; 1000 changed, v=0.1; 0.0001; 2.1",
     r.result().toStdString() );
 }
 
@@ -240,12 +243,14 @@ TEST(QuaternionProperty, set_value_events) {
   p.connect(&p, SIGNAL(changed()), &r, SLOT(changed()));
 
   p.setQuaternion(Ogre::Quaternion(1, .1f, .0001f, 1000));
-  EXPECT_EQ(" aboutToChange, v=0; 0; 0; 1 changed, v=0.1; 0.0001; 1000; 1",
+  EXPECT_EQ(
+    " aboutToChange, v=0; 0; 0; 1 changed, v=0.1; 0.0001; 1000; 1",
     r.result().toStdString() );
   r.reset();
 
   p.subProp("Z")->setValue(2.1);
-  EXPECT_EQ(" aboutToChange, v=0.1; 0.0001; 1000; 1 changed, v=0.1; 0.0001; 2.1; 1",
+  EXPECT_EQ(
+    " aboutToChange, v=0.1; 0.0001; 1000; 1 changed, v=0.1; 0.0001; 2.1; 1",
     r.result().toStdString() );
 }
 

@@ -173,9 +173,8 @@ RenderSystem::setupDummyWindowId()
 
   XVisualInfo * visual = glXChooseVisual(display, screen, attribList);
 
-  dummy_window_id_ = XCreateSimpleWindow(display,
-      RootWindow(display, screen),
-      0, 0, 1, 1, 0, 0, 0);
+  dummy_window_id_ = XCreateSimpleWindow(
+    display, RootWindow(display, screen), 0, 0, 1, 1, 0, 0, 0);
 
   GLXContext context = glXCreateContext(display, visual, nullptr, 1);
 
@@ -368,8 +367,8 @@ void RenderSystem::addAdditionalResourcesFromAmentIndex() const
   for (auto resource : resource_locations) {
     std::string content;
     std::string prefix_path;
-    if (ament_index_cpp::get_resource(RVIZ_OGRE_MEDIA_RESOURCE_NAME, resource.first, content,
-      &prefix_path))
+    if (ament_index_cpp::get_resource(
+        RVIZ_OGRE_MEDIA_RESOURCE_NAME, resource.first, content, &prefix_path))
     {
       std::vector<std::string> filenames =
         string_helper::splitStringIntoTrimmedItems(content, '\n');
@@ -378,8 +377,8 @@ void RenderSystem::addAdditionalResourcesFromAmentIndex() const
         if (!QDir(QString::fromStdString(resource_path)).exists()) {
           RVIZ_RENDERING_LOG_WARNING_STREAM("Could not find folder " << resource_path);
         }
-        Ogre::ResourceGroupManager::getSingleton().addResourceLocation(resource_path, "FileSystem",
-          "rviz_rendering");
+        Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+          resource_path, "FileSystem", "rviz_rendering");
       }
     }
   }

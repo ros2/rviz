@@ -184,7 +184,8 @@ private:
     float coordinate_value = 0.0;
 
     for (int i = 0; i < 3; i++) {
-      memcpy(&point_cloud_message->data[point_cloud_message->fields[i].offset],
+      memcpy(
+        &point_cloud_message->data[point_cloud_message->fields[i].offset],
         &coordinate_value, field_size_32_);
     }
   }
@@ -192,7 +193,8 @@ private:
   void copyScalarValue(
     std::shared_ptr<sensor_msgs::msg::PointCloud2> point_cloud_message, double scalar_value)
   {
-    memcpy(&point_cloud_message->data[point_cloud_message->fields[3].offset],
+    memcpy(
+      &point_cloud_message->data[point_cloud_message->fields[3].offset],
       &scalar_value, field_size_64_);
   }
 

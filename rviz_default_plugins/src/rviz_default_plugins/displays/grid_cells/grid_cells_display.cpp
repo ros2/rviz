@@ -61,12 +61,14 @@ GridCellsDisplay::GridCellsDisplay(rviz_common::DisplayContext * context)
 GridCellsDisplay::GridCellsDisplay()
 : last_frame_count_(uint64_t(-1))
 {
-  color_property_ = new rviz_common::properties::ColorProperty("Color", QColor(25, 255, 0),
-      "Color of the grid cells.", this, SLOT(updateColor()));
+  color_property_ = new rviz_common::properties::ColorProperty(
+    "Color", QColor(25, 255, 0),
+    "Color of the grid cells.", this, SLOT(updateColor()));
 
-  alpha_property_ = new rviz_common::properties::FloatProperty("Alpha", 1.0f,
-      "Amount of transparency to apply to the cells.",
-      this, SLOT(updateAlpha()));
+  alpha_property_ = new rviz_common::properties::FloatProperty(
+    "Alpha", 1.0f,
+    "Amount of transparency to apply to the cells.",
+    this, SLOT(updateAlpha()));
   alpha_property_->setMin(0);
   alpha_property_->setMax(1);
 }
@@ -154,19 +156,22 @@ bool validateFloats(const nav_msgs::msg::GridCells & msg)
 bool GridCellsDisplay::messageIsValid(nav_msgs::msg::GridCells::ConstSharedPtr msg)
 {
   if (!validateFloats(*msg)) {
-    setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
+    setStatus(
+      rviz_common::properties::StatusProperty::Error, "Topic",
       "Message contained invalid floating point values (nans or infs)");
     return false;
   }
 
   if (msg->cell_width == 0 || msg->cell_height == 0) {
-    setStatus(rviz_common::properties::StatusProperty::Error, "Topic",
+    setStatus(
+      rviz_common::properties::StatusProperty::Error, "Topic",
       "One of the Cell's dimension is zero, cells will be invisible.");
     return false;
   }
 
   if (msg->cells.empty()) {
-    setStatus(rviz_common::properties::StatusProperty::Warn, "Topic",
+    setStatus(
+      rviz_common::properties::StatusProperty::Warn, "Topic",
       "Message is empty: there are no cells to be shown.");
     return false;
   }

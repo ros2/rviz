@@ -89,7 +89,8 @@ TEST_F(IdentityTransformerFixture, canTransform_returns_true) {
   EXPECT_THAT(error, Eq(""));
 
   error = "";
-  EXPECT_TRUE(transformer_->canTransform(
+  EXPECT_TRUE(
+    transformer_->canTransform(
       "any_target",
       tf2::TimePointZero,
       "any_source",

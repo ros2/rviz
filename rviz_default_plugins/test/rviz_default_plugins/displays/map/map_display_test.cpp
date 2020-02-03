@@ -161,7 +161,9 @@ TEST_F(MapTestFixture, showMap_defaults_empty_frame_id_to_map) {
   EXPECT_CALL(
     *frame_manager_,
     transform("/map", _, _, _, _))  // NOLINT
-  .WillRepeatedly(DoAll(    // NOLINT
+  .WillRepeatedly(
+    // NOLINT
+    DoAll(
       SetArgReferee<3>(position), SetArgReferee<4>(orientation), Return(true)));
 
   auto message = createMapMessage();

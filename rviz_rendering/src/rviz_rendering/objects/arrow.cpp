@@ -120,8 +120,8 @@ void Arrow::setOrientation(const Ogre::Quaternion & orientation)
 {
   // "forward" (negative z) should always be our identity orientation
   // ... wouldn't need to mangle the orientation if we just fix the cylinders!
-  scene_node_->setOrientation(orientation *
-    Ogre::Quaternion(Ogre::Degree(-90), Ogre::Vector3::UNIT_X) );
+  scene_node_->setOrientation(
+    orientation * Ogre::Quaternion(Ogre::Degree(-90), Ogre::Vector3::UNIT_X) );
 }
 
 void Arrow::setDirection(const Ogre::Vector3 & direction)

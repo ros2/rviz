@@ -126,8 +126,9 @@ protected:
         fixed_frame_.toStdString(), 10, rviz_ros_node_.lock()->get_raw_node());
       tf_filter_->connectInput(*subscription_);
       tf_filter_->registerCallback(
-        std::bind(&MessageFilterDisplay<MessageType>::incomingMessage, this,
-        std::placeholders::_1));
+        std::bind(
+          &MessageFilterDisplay<MessageType>::incomingMessage, this,
+          std::placeholders::_1));
       setStatus(properties::StatusProperty::Ok, "Topic", "OK");
     } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
       setStatus(

@@ -141,7 +141,8 @@ TEST_F(OdometryDisplayFixture, processMessage_returns_early_if_transform_is_miss
   EXPECT_THAT(axes, IsEmpty());
 }
 
-TEST_F(OdometryDisplayFixture,
+TEST_F(
+  OdometryDisplayFixture,
   processMessage_returns_early_if_message_position_and_orientation_are_close_to_previous_ones) {
   mockValidTransform();
   auto odometry_message = createOdometryMessage();
@@ -190,18 +191,22 @@ TEST_F(
 
   display_->processMessage(odometry_message);
 
-  EXPECT_TRUE(rviz_default_plugins::arrowIsVisible(
+  EXPECT_TRUE(
+    rviz_default_plugins::arrowIsVisible(
       rviz_rendering::findOneArrow(scene_manager_->getRootSceneNode())));
-  EXPECT_FALSE(rviz_default_plugins::axesAreVisible(
+  EXPECT_FALSE(
+    rviz_default_plugins::axesAreVisible(
       rviz_rendering::findOneAxes(scene_manager_->getRootSceneNode())));
 
   shape_property->setString("Axes");
   odometry_message->pose.pose.position.x = 35;
   display_->processMessage(odometry_message);
 
-  EXPECT_FALSE(rviz_default_plugins::arrowIsVisible(
+  EXPECT_FALSE(
+    rviz_default_plugins::arrowIsVisible(
       rviz_rendering::findOneArrow(scene_manager_->getRootSceneNode())));
-  EXPECT_TRUE(rviz_default_plugins::axesAreVisible(
+  EXPECT_TRUE(
+    rviz_default_plugins::axesAreVisible(
       rviz_rendering::findOneAxes(scene_manager_->getRootSceneNode())));
 }
 

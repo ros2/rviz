@@ -42,7 +42,8 @@
 TEST_F(VisualTestFixture, test_map_display_with_large_map) {
   auto publishers = std::vector<PublisherWithFrame>();
   publishers.emplace_back(PublisherWithFrame(std::make_shared<nodes::MapPublisher>(), "map_frame"));
-  publishers.emplace_back(PublisherWithFrame(
+  publishers.emplace_back(
+    PublisherWithFrame(
       std::make_shared<nodes::SingleMarkerPublisher>(), "marker_frame"));
   auto map_publisher = std::make_unique<VisualTestPublisher>(publishers);
 

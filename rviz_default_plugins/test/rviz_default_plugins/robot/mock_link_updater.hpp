@@ -44,14 +44,16 @@
 class MockLinkUpdater : public rviz_default_plugins::robot::LinkUpdater
 {
 public:
-  MOCK_CONST_METHOD5(getLinkTransforms, bool(
+  MOCK_CONST_METHOD5(
+    getLinkTransforms, bool(
       const std::string & link_name,
       Ogre::Vector3 & visual_position,
       Ogre::Quaternion & visual_orientation,
       Ogre::Vector3 & collision_position,
       Ogre::Quaternion & collision_orientation));
 
-  MOCK_CONST_METHOD3(setLinkStatus, void(
+  MOCK_CONST_METHOD3(
+    setLinkStatus, void(
       rviz_common::properties::StatusLevel level,
       const std::string & link_name,
       const std::string & text));

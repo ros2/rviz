@@ -66,8 +66,9 @@ public:
   : rviz_ros_node_(),
     qos_profile(5)
   {
-    topic_property_ = new properties::RosTopicProperty("Topic", "",
-        "", "", this, SLOT(updateTopic()));
+    topic_property_ = new properties::RosTopicProperty(
+      "Topic", "",
+      "", "", this, SLOT(updateTopic()));
 
     qos_profile_property_ = new properties::QosProfileProperty(topic_property_, qos_profile);
   }
@@ -167,7 +168,8 @@ protected:
     }
 
     if (topic_property_->isEmpty()) {
-      setStatus(properties::StatusProperty::Error,
+      setStatus(
+        properties::StatusProperty::Error,
         "Topic",
         QString("Error subscribing: Empty topic name"));
       return;
@@ -182,7 +184,8 @@ protected:
         [this](const typename MessageType::ConstSharedPtr message) {incomingMessage(message);});
       setStatus(properties::StatusProperty::Ok, "Topic", "OK");
     } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
-      setStatus(properties::StatusProperty::Error, "Topic",
+      setStatus(
+        properties::StatusProperty::Error, "Topic",
         QString("Error subscribing: ") + e.what());
     }
   }

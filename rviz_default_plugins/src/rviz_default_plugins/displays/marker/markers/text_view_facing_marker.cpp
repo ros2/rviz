@@ -85,7 +85,8 @@ void TextViewFacingMarker::onNewMessage(
 
   setPosition(pos);
   text_->setCharacterHeight(new_message->scale.z);
-  text_->setColor(Ogre::ColourValue(
+  text_->setColor(
+    Ogre::ColourValue(
       new_message->color.r, new_message->color.g, new_message->color.b, new_message->color.a));
   text_->setCaption(new_message->text);
 }

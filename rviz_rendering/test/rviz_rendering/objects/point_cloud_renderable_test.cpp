@@ -92,7 +92,8 @@ TEST_F(PointCloudRenderableTestFixture, renderable_contains_a_correctly_filled_b
     renderable_->getRenderOperation()->operationType, Eq(Ogre::RenderOperation::OT_TRIANGLE_LIST));
 }
 
-TEST_F(PointCloudRenderableTestFixture,
+TEST_F(
+  PointCloudRenderableTestFixture,
   getSquaredViewDepth_returns_squared_length_to_center_of_bounding_box_for_default_camera) {
   Ogre::Camera * camera = Ogre::Root::getSingletonPtr()
     ->createSceneManager()

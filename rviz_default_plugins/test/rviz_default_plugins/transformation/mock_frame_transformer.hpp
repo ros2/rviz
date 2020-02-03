@@ -43,38 +43,45 @@
 class MockFrameTransformer : public rviz_common::transformation::FrameTransformer
 {
 public:
-  MOCK_METHOD2(initialize, void(
+  MOCK_METHOD2(
+    initialize, void(
       rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr, rclcpp::Clock::SharedPtr));
   MOCK_METHOD0(clear, void());
   MOCK_CONST_METHOD0(getAllFrameNames, std::vector<std::string>());
   MOCK_METHOD2(
     transform, geometry_msgs::msg::PoseStamped(
       const geometry_msgs::msg::PoseStamped &, const std::string &));
-  MOCK_CONST_METHOD3(lookupTransform, geometry_msgs::msg::TransformStamped(
+  MOCK_CONST_METHOD3(
+    lookupTransform, geometry_msgs::msg::TransformStamped(
       const std::string &, const std::string &, const tf2::TimePoint &));
-  MOCK_CONST_METHOD5(lookupTransform, geometry_msgs::msg::TransformStamped(
+  MOCK_CONST_METHOD5(
+    lookupTransform, geometry_msgs::msg::TransformStamped(
       const std::string &,
       const tf2::TimePoint &,
       const std::string &,
       const tf2::TimePoint &,
       const std::string &));
-  MOCK_CONST_METHOD4(canTransform, bool(
+  MOCK_CONST_METHOD4(
+    canTransform, bool(
       const std::string &, const std::string &, const tf2::TimePoint &, std::string *));
-  MOCK_CONST_METHOD6(canTransform, bool(
+  MOCK_CONST_METHOD6(
+    canTransform, bool(
       const std::string &,
       const tf2::TimePoint &,
       const std::string &,
       const tf2::TimePoint &,
       const std::string &,
       std::string *));
-  MOCK_METHOD5(waitForTransform, tf2_ros::TransformStampedFuture(
+  MOCK_METHOD5(
+    waitForTransform, tf2_ros::TransformStampedFuture(
       const std::string &,
       const std::string &,
       const tf2::TimePoint &,
       const tf2::Duration &,
       tf2_ros::TransformReadyCallback));
   MOCK_CONST_METHOD2(frameHasProblems, bool(const std::string &, std::string &));
-  MOCK_METHOD0(getConnector,
+  MOCK_METHOD0(
+    getConnector,
     rviz_common::transformation::TransformationLibraryConnector::WeakPtr());
 };
 

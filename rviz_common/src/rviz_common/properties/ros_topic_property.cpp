@@ -53,7 +53,8 @@ RosTopicProperty::RosTopicProperty(
   rviz_ros_node_(),
   message_type_(message_type)
 {
-  connect(this, SIGNAL(requestOptions(EditableEnumProperty*)),
+  connect(
+    this, SIGNAL(requestOptions(EditableEnumProperty*)),
     this, SLOT(fillTopicList()));
 }
 

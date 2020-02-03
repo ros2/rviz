@@ -160,7 +160,8 @@ TEST_F(OrbitViewControllerTestFixture, moving_the_mouse_with_shift_and_left_move
   EXPECT_THAT(z_property->getValue().toFloat(), FloatNear(7.27013f, 0.001f));
 }
 
-TEST_F(OrbitViewControllerTestFixture,
+TEST_F(
+  OrbitViewControllerTestFixture,
   mimic_does_not_change_view_when_given_any_orbit_view_controller)
 {
   auto xy_orbit_view =
@@ -183,7 +184,8 @@ TEST_F(OrbitViewControllerTestFixture,
   EXPECT_THAT(pitch_property->getValue().toFloat(), FloatNear(0.5f, 0.001f));
 }
 
-TEST_F(OrbitViewControllerTestFixture,
+TEST_F(
+  OrbitViewControllerTestFixture,
   mimic_keeps_focal_point_and_view_from_top_down_ortho_view_controller)
 {
   auto ortho_view =

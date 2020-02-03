@@ -78,7 +78,8 @@ void CloudInfo::setSelectable(
   if (selectable) {
     selection_handler_ = rviz_common::interaction::createSelectionHandler
       <PointCloudSelectionHandler>(selection_box_size, this, context);
-    cloud_->setPickColor(rviz_common::interaction::SelectionManager::handleToColor(
+    cloud_->setPickColor(
+      rviz_common::interaction::SelectionManager::handleToColor(
         selection_handler_->getHandle()));
   } else {
     selection_handler_.reset();
@@ -96,13 +97,15 @@ PointCloudCommon::PointCloudCommon(rviz_common::Display * display)
   transformer_factory_(std::make_unique<PointCloudTransformerFactory>()),
   display_(display)
 {
-  selectable_property_ = new rviz_common::properties::BoolProperty("Selectable", true,
-      "Whether or not the points in this point cloud are selectable.",
-      display_, SLOT(updateSelectable()), this);
+  selectable_property_ = new rviz_common::properties::BoolProperty(
+    "Selectable", true,
+    "Whether or not the points in this point cloud are selectable.",
+    display_, SLOT(updateSelectable()), this);
 
-  style_property_ = new rviz_common::properties::EnumProperty("Style", "Flat Squares",
-      "Rendering mode to use, in order of computational complexity.",
-      display_, SLOT(updateStyle()), this);
+  style_property_ = new rviz_common::properties::EnumProperty(
+    "Style", "Flat Squares",
+    "Rendering mode to use, in order of computational complexity.",
+    display_, SLOT(updateStyle()), this);
   style_property_->addOption("Points", rviz_rendering::PointCloud::RM_POINTS);
   style_property_->addOption("Squares", rviz_rendering::PointCloud::RM_SQUARES);
   style_property_->addOption("Flat Squares", rviz_rendering::PointCloud::RM_FLAT_SQUARES);
@@ -110,39 +113,48 @@ PointCloudCommon::PointCloudCommon(rviz_common::Display * display)
   style_property_->addOption("Boxes", rviz_rendering::PointCloud::RM_BOXES);
   style_property_->addOption("Tiles", rviz_rendering::PointCloud::RM_TILES);
 
-  point_world_size_property_ = new rviz_common::properties::FloatProperty("Size (m)", 0.01f,
-      "Point size in meters.",
-      display_, SLOT(updateBillboardSize()), this);
+  point_world_size_property_ = new rviz_common::properties::FloatProperty(
+    "Size (m)", 0.01f,
+    "Point size in meters.",
+    display_, SLOT(updateBillboardSize()), this);
   point_world_size_property_->setMin(0.0001f);
 
-  point_pixel_size_property_ = new rviz_common::properties::FloatProperty("Size (Pixels)", 3,
-      "Point size in pixels.",
-      display_, SLOT(updateBillboardSize()), this);
+  point_pixel_size_property_ = new rviz_common::properties::FloatProperty(
+    "Size (Pixels)", 3,
+    "Point size in pixels.",
+    display_, SLOT(updateBillboardSize()), this);
   point_pixel_size_property_->setMin(1);
 
-  alpha_property_ = new rviz_common::properties::FloatProperty("Alpha", 1.0f,
-      "Amount of transparency to apply to the points.  Note that this is experimental "
-      "and does not always look correct.",
-      display_, SLOT(updateAlpha()), this);
+  alpha_property_ = new rviz_common::properties::FloatProperty(
+    "Alpha", 1.0f,
+    "Amount of transparency to apply to the points.  Note that this is experimental "
+    "and does not always look correct.",
+    display_, SLOT(updateAlpha()), this);
   alpha_property_->setMin(0);
   alpha_property_->setMax(1);
 
-  decay_time_property_ = new rviz_common::properties::FloatProperty("Decay Time", 0,
-      "Duration, in seconds, to keep the incoming points.  0 means only show the latest points.",
-      display_, SLOT(queueRender()));
+  decay_time_property_ = new rviz_common::properties::FloatProperty(
+    "Decay Time", 0,
+    "Duration, in seconds, to keep the incoming points.  0 means only show the latest points.",
+    display_, SLOT(queueRender()));
   decay_time_property_->setMin(0);
 
-  xyz_transformer_property_ = new rviz_common::properties::EnumProperty("Position Transformer", "",
-      "Set the transformer to use to set the position of the points.",
-      display_, SLOT(updateXyzTransformer()), this);
-  connect(xyz_transformer_property_, SIGNAL(requestOptions(
-      rviz_common::properties::EnumProperty*)),
+  xyz_transformer_property_ = new rviz_common::properties::EnumProperty(
+    "Position Transformer", "",
+    "Set the transformer to use to set the position of the points.",
+    display_, SLOT(updateXyzTransformer()), this);
+  connect(
+    xyz_transformer_property_, SIGNAL(
+      requestOptions(
+        rviz_common::properties::EnumProperty*)),
     this, SLOT(setXyzTransformerOptions(rviz_common::properties::EnumProperty*)));
 
-  color_transformer_property_ = new rviz_common::properties::EnumProperty("Color Transformer", "",
-      "Set the transformer to use to set the color of the points.",
-      display_, SLOT(updateColorTransformer()), this);
-  connect(color_transformer_property_,
+  color_transformer_property_ = new rviz_common::properties::EnumProperty(
+    "Color Transformer", "",
+    "Set the transformer to use to set the color of the points.",
+    display_, SLOT(updateColorTransformer()), this);
+  connect(
+    color_transformer_property_,
     SIGNAL(requestOptions(rviz_common::properties::EnumProperty*)),
     this, SLOT(setColorTransformerOptions(rviz_common::properties::EnumProperty*)));
 }
@@ -325,8 +337,9 @@ void PointCloudCommon::insertNewClouds(float point_decay_time, const rclcpp::Tim
 
       cloud_info->manager_ = context_->getSceneManager();
 
-      cloud_info->scene_node_ = scene_node_->createChildSceneNode(cloud_info->position_,
-          cloud_info->orientation_);
+      cloud_info->scene_node_ = scene_node_->createChildSceneNode(
+        cloud_info->position_,
+        cloud_info->orientation_);
 
       cloud_info->scene_node_->attachObject(cloud_info->cloud_.get());
 
@@ -360,8 +373,8 @@ void PointCloudCommon::updateTransformerProperties()
       TransformerInfo & info = transformer.second;
 
       setPropertiesHidden(info.xyz_props, name != xyz_transformer_property_->getStdString());
-      setPropertiesHidden(info.color_props,
-        name != color_transformer_property_->getStdString());
+      setPropertiesHidden(
+        info.color_props, name != color_transformer_property_->getStdString());
 
       if (name == xyz_transformer_property_->getStdString() ||
         name == color_transformer_property_->getStdString())
@@ -632,10 +645,10 @@ bool PointCloudCommon::transformPoints(
     return false;
   }
 
-  xyz_trans->transform(cloud_info->message_, PointCloudTransformer::Support_XYZ, transform,
-    cloud_points);
-  color_trans->transform(cloud_info->message_, PointCloudTransformer::Support_Color, transform,
-    cloud_points);
+  xyz_trans->transform(
+    cloud_info->message_, PointCloudTransformer::Support_XYZ, transform, cloud_points);
+  color_trans->transform(
+    cloud_info->message_, PointCloudTransformer::Support_Color, transform, cloud_points);
   return true;
 }
 

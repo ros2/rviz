@@ -74,7 +74,8 @@ RobotJoint::RobotJoint(Robot * robot, const urdf::JointConstSharedPtr & joint)
     nullptr,
     SLOT(updateChildVisibility()),
     this);
-  robot_element_property_->setIcon(rviz_common::loadPixmap(
+  robot_element_property_->setIcon(
+    rviz_common::loadPixmap(
       "package://rviz_default_plugins/icons/classes/RobotJoint.png"));
 
   details_ = new Property("Details", QVariant(), "", nullptr);
@@ -283,7 +284,8 @@ void RobotJoint::getChildLinkState(
         int child_links_with_geom;
         int child_links_with_geom_checked;
         int child_links_with_geom_unchecked;
-        child_joint->getChildLinkState(child_links_with_geom, child_links_with_geom_checked,
+        child_joint->getChildLinkState(
+          child_links_with_geom, child_links_with_geom_checked,
           child_links_with_geom_unchecked, recursive);
         links_with_geom_checked += child_links_with_geom_checked;
         links_with_geom_unchecked += child_links_with_geom_unchecked;

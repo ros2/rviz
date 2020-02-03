@@ -70,7 +70,8 @@ void PropertyTreeWidget::currentChanged(
   const QModelIndex & previous_current_index)
 {
   QTreeView::currentChanged(new_current_index, previous_current_index);
-  Q_EMIT currentPropertyChanged(static_cast<const Property *>(
+  Q_EMIT currentPropertyChanged(
+    static_cast<const Property *>(
       new_current_index.internalPointer() ));
 }
 
@@ -85,21 +86,27 @@ void PropertyTreeWidget::selectionChanged(
 void PropertyTreeWidget::setModel(PropertyTreeModel * model)
 {
   if (model_) {
-    disconnect(model_, SIGNAL(propertyHiddenChanged(const Property*)),
+    disconnect(
+      model_, SIGNAL(propertyHiddenChanged(const Property*)),
       this, SLOT(propertyHiddenChanged(const Property*)));
-    disconnect(model_, SIGNAL(expand(const QModelIndex&)),
+    disconnect(
+      model_, SIGNAL(expand(const QModelIndex&)),
       this, SLOT(expand(const QModelIndex&)));
-    disconnect(model_, SIGNAL(collapse(const QModelIndex&)),
+    disconnect(
+      model_, SIGNAL(collapse(const QModelIndex&)),
       this, SLOT(collapse(const QModelIndex&)));
   }
   model_ = model;
   QTreeView::setModel(model_);
   if (model_) {
-    connect(model_, SIGNAL(propertyHiddenChanged(const Property*)),
+    connect(
+      model_, SIGNAL(propertyHiddenChanged(const Property*)),
       this, SLOT(propertyHiddenChanged(const Property*)), Qt::QueuedConnection);
-    connect(model_, SIGNAL(expand(const QModelIndex&)),
+    connect(
+      model_, SIGNAL(expand(const QModelIndex&)),
       this, SLOT(expand(const QModelIndex&)));
-    connect(model_, SIGNAL(collapse(const QModelIndex&)),
+    connect(
+      model_, SIGNAL(collapse(const QModelIndex&)),
       this, SLOT(collapse(const QModelIndex&)));
 
     // this will trigger all hiddenChanged events to get re-fired
@@ -110,7 +117,8 @@ void PropertyTreeWidget::setModel(PropertyTreeModel * model)
 void PropertyTreeWidget::propertyHiddenChanged(const Property * property)
 {
   if (model_) {
-    setRowHidden(property->rowNumberInParent(), model_->parentIndex(property),
+    setRowHidden(
+      property->rowNumberInParent(), model_->parentIndex(property),
       property->getHidden() );
   }
 }

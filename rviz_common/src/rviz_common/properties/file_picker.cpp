@@ -50,7 +50,8 @@ void FilePicker::onButtonClick()
 {
   auto dialog = new QFileDialog(parentWidget());
 
-  connect(dialog, SIGNAL(fileSelected(const QString&)),
+  connect(
+    dialog, SIGNAL(fileSelected(const QString&)),
     file_name_property_, SLOT(setString(const QString&)));
 
   dialog->exec();

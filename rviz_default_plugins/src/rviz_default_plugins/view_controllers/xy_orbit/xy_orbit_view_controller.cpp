@@ -204,5 +204,6 @@ void XYOrbitViewController::handleWheelEvent(
 }  // namespace rviz_default_plugins
 
 #include <pluginlib/class_list_macros.hpp>  // NOLINT
-PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::view_controllers::XYOrbitViewController,
+PLUGINLIB_EXPORT_CLASS(
+  rviz_default_plugins::view_controllers::XYOrbitViewController,
   rviz_common::ViewController)

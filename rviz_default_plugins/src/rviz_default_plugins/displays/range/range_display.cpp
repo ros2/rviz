@@ -104,7 +104,8 @@ void RangeDisplay::updateBufferLength()
   cones_.resize(buffer_length);
 
   for (auto & cone : cones_) {
-    cone.reset(new rviz_rendering::Shape(
+    cone.reset(
+      new rviz_rendering::Shape(
         rviz_rendering::Shape::Cone, context_->getSceneManager(), scene_node_));
 
     cone->setScale(Ogre::Vector3(0, 0, 0));

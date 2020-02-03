@@ -79,7 +79,8 @@ void BasePageObject::setComboBox(
   const QString & value_to_set,
   std::vector<QString> super_properties)
 {
-  executor_->queueAction([this, value_to_set, property_to_change,
+  executor_->queueAction(
+    [this, value_to_set, property_to_change,
     super_properties{std::move(super_properties)}] {
       auto index_to_change =
       getValueToChangeFromAllProperties(property_to_change, super_properties);
@@ -258,7 +259,8 @@ QString BasePageObject::getDisplayName() const
 
 void BasePageObject::collapse()
 {
-  executor_->queueAction([this] {
+  executor_->queueAction(
+    [this] {
       int display_index =
       helpers::findIndex(display_id_, *all_display_ids_vector_);
       auto relative_display_index = helpers::getDisplaysTreeView()->model()->index(

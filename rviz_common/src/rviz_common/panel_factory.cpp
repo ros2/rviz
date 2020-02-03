@@ -59,22 +59,28 @@ PanelFactory::PanelFactory(
   VisualizationManager * manager)
 : PluginlibFactory<Panel>("rviz_common", "rviz_common::Panel")
 {
-  addBuiltInClass("rviz_common", "Displays",
+  addBuiltInClass(
+    "rviz_common", "Displays",
     "Show and edit the list of Displays",
     [rviz_ros_node, manager]() -> Panel * {
       return new DisplaysPanel(rviz_ros_node, manager, nullptr);
     });
-  addBuiltInClass("rviz_common", "Help",
+  addBuiltInClass(
+    "rviz_common", "Help",
     "Show the key and mouse bindings", &newHelpPanel);
-  addBuiltInClass("rviz_common", "Selection",
+  addBuiltInClass(
+    "rviz_common", "Selection",
     "Show properties of selected objects", &newSelectionPanel);
   // addBuiltInClass("rviz", "Time",
   //   "Show the current time", &newTimePanel);
-  addBuiltInClass("rviz_common", "Tool Properties",
+  addBuiltInClass(
+    "rviz_common", "Tool Properties",
     "Show and edit properties of tools", &newToolPropertiesPanel);
-  addBuiltInClass("rviz_common", "Transformation",
+  addBuiltInClass(
+    "rviz_common", "Transformation",
     "Choose the transformation plugin", &newTransformationPanel);
-  addBuiltInClass("rviz_common", "Views",
+  addBuiltInClass(
+    "rviz_common", "Views",
     "Show and edit viewpoints", &newViewsPanel);
 }
 

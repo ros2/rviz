@@ -40,8 +40,8 @@ using namespace ::testing;  // NOLINT
 TEST(QuaternionHelper, ogreQuaternionHelper_returns_0_for_equal_inputs) {
   Ogre::Quaternion quaternion(1.0f, 0.0f, 0.0f, 0.0f);
 
-  EXPECT_THAT(rviz_default_plugins::ogreQuaternionAngularDistance(quaternion, quaternion),
-    Eq(0.0f));
+  EXPECT_THAT(
+    rviz_default_plugins::ogreQuaternionAngularDistance(quaternion, quaternion), Eq(0.0f));
 }
 
 TEST(QuaternionHelper, ogreQuaternionHelper_returns_angle) {
@@ -54,8 +54,10 @@ TEST(QuaternionHelper, ogreQuaternionHelper_returns_angle) {
   Ogre::Quaternion quaternion3;
   quaternion3.FromAngleAxis(Ogre::Radian(1.2f), axis);
 
-  EXPECT_THAT(rviz_default_plugins::ogreQuaternionAngularDistance(quaternion1, quaternion2),
+  EXPECT_THAT(
+    rviz_default_plugins::ogreQuaternionAngularDistance(quaternion1, quaternion2),
     FloatNear(0.5f, 0.001f));
-  EXPECT_THAT(rviz_default_plugins::ogreQuaternionAngularDistance(quaternion1, quaternion3),
+  EXPECT_THAT(
+    rviz_default_plugins::ogreQuaternionAngularDistance(quaternion1, quaternion3),
     FloatNear(1.2f, 0.001f));
 }

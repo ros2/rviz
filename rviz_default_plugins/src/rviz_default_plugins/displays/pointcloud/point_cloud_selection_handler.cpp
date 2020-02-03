@@ -86,7 +86,8 @@ void PointCloudSelectionHandler::preRenderPass(uint32_t pass)
 
   switch (pass) {
     case 0:
-      cloud_info_->cloud_->setPickColor(rviz_common::interaction::SelectionManager::handleToColor(
+      cloud_info_->cloud_->setPickColor(
+        rviz_common::interaction::SelectionManager::handleToColor(
           getHandle()));
       break;
     case 1:

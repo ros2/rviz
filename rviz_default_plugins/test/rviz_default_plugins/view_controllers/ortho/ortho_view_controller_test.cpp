@@ -143,7 +143,8 @@ TEST_F(OrthoViewControllerTestFixture, update_sets_camera_to_position_indicated_
   EXPECT_THAT(camera_parent->getPosition(), Vector3Eq(Ogre::Vector3(-2, 2, 500)));
 }
 
-TEST_F(OrthoViewControllerTestFixture,
+TEST_F(
+  OrthoViewControllerTestFixture,
   mimic_sets_camera_above_focal_point_when_given_an_orbit_view_controller)
 {
   auto orbit_view = std::make_shared<rviz_default_plugins::view_controllers::OrbitViewController>();
@@ -163,7 +164,8 @@ TEST_F(OrthoViewControllerTestFixture,
   EXPECT_THAT(camera_parent->getPosition(), Vector3Eq(Ogre::Vector3(10, 12, 500)));
 }
 
-TEST_F(OrthoViewControllerTestFixture,
+TEST_F(
+  OrthoViewControllerTestFixture,
   mimic_does_not_move_camera_when_given_same_class_controller)
 {
   auto old_ortho_view =
@@ -181,7 +183,8 @@ TEST_F(OrthoViewControllerTestFixture,
   EXPECT_THAT(y_property->getValue().toFloat(), FloatNear(0, 0.001f));
 }
 
-TEST_F(OrthoViewControllerTestFixture,
+TEST_F(
+  OrthoViewControllerTestFixture,
   mimic_sets_camera_at_view_controller_camera_position_when_given_any_view_controller)
 {
   auto controller = std::make_shared<MockViewController>();

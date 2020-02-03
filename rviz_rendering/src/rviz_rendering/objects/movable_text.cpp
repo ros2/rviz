@@ -119,7 +119,8 @@ void MovableText::setFontName(const Ogre::String & font_name)
     font_name_ = font_name;
     font_ = Ogre::FontManager::getSingleton().getByName(font_name_, MATERIAL_GROUP).get();
     if (!font_) {
-      throw Ogre::Exception(Ogre::Exception::ERR_ITEM_NOT_FOUND, "Could not find font " +
+      throw Ogre::Exception(
+              Ogre::Exception::ERR_ITEM_NOT_FOUND, "Could not find font " +
               font_name, "MovableText::setFontName");
     }
 
@@ -351,7 +352,8 @@ Ogre::HardwareVertexBufferSharedPtr MovableText::setupHardwareBuffers() const
   offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
 
   if (!declaration->findElementBySemantic(Ogre::VES_TEXTURE_COORDINATES)) {
-    declaration->addElement(POS_TEX_BINDING, offset, Ogre::VET_FLOAT2,
+    declaration->addElement(
+      POS_TEX_BINDING, offset, Ogre::VET_FLOAT2,
       Ogre::VES_TEXTURE_COORDINATES, 0);
   }
 

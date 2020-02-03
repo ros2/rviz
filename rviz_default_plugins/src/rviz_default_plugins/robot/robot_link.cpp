@@ -123,15 +123,15 @@ void RobotLinkSelectionHandler::createProperties(
   rviz_common::properties::Property * parent_property)
 {
   (void) obj;
-  Property * group = new Property("Link " + QString::fromStdString(link_->getName()),
-      QVariant(), "", parent_property);
+  Property * group = new Property(
+    "Link " + QString::fromStdString(link_->getName()), QVariant(), "", parent_property);
   properties_.push_back(group);
 
   position_property_ = new VectorProperty("Position", Ogre::Vector3::ZERO, "", group);
   position_property_->setReadOnly(true);
 
-  orientation_property_ = new QuaternionProperty("Orientation", Ogre::Quaternion::IDENTITY, "",
-      group);
+  orientation_property_ = new QuaternionProperty(
+    "Orientation", Ogre::Quaternion::IDENTITY, "", group);
   orientation_property_->setReadOnly(true);
 
   group->expand();
@@ -218,7 +218,8 @@ RobotLink::RobotLink(
   createDescription(link);
 
   if (!hasGeometry()) {
-    robot_element_property_->setIcon(rviz_common::loadPixmap(
+    robot_element_property_->setIcon(
+      rviz_common::loadPixmap(
         "package://rviz_default_plugins/icons/classes/RobotLinkNoGeom.png"));
     alpha_property_->hide();
     robot_element_property_->setValue(QVariant());
@@ -229,31 +230,37 @@ void RobotLink::setProperties(const urdf::LinkConstSharedPtr & link)
 {
   robot_element_property_ = new Property(
     link->name.c_str(), true, "", nullptr, SLOT(updateVisibility()), this);
-  robot_element_property_->setIcon(rviz_common::loadPixmap(
+  robot_element_property_->setIcon(
+    rviz_common::loadPixmap(
       "package://rviz_default_plugins/icons/classes/RobotLink.png"));
 
   details_ = new Property("Details", QVariant(), "", nullptr);
 
-  alpha_property_ = new FloatProperty("Alpha", 1,
-      "Amount of transparency to apply to this link.",
-      robot_element_property_, SLOT(updateAlpha()), this);
+  alpha_property_ = new FloatProperty(
+    "Alpha", 1,
+    "Amount of transparency to apply to this link.",
+    robot_element_property_, SLOT(updateAlpha()), this);
 
-  trail_property_ = new Property("Show Trail", false,
-      "Enable/disable a 2 meter \"ribbon\" which follows this link.",
-      robot_element_property_, SLOT(updateTrail()), this);
+  trail_property_ = new Property(
+    "Show Trail", false,
+    "Enable/disable a 2 meter \"ribbon\" which follows this link.",
+    robot_element_property_, SLOT(updateTrail()), this);
 
-  axes_property_ = new Property("Show Axes", false,
-      "Enable/disable showing the axes of this link.",
-      robot_element_property_, SLOT(updateAxes()), this);
+  axes_property_ = new Property(
+    "Show Axes", false,
+    "Enable/disable showing the axes of this link.",
+    robot_element_property_, SLOT(updateAxes()), this);
 
-  position_property_ = new VectorProperty("Position", Ogre::Vector3::ZERO,
-      "Position of this link, in the current Fixed Frame.  (Not editable)",
-      robot_element_property_);
+  position_property_ = new VectorProperty(
+    "Position", Ogre::Vector3::ZERO,
+    "Position of this link, in the current Fixed Frame.  (Not editable)",
+    robot_element_property_);
   position_property_->setReadOnly(true);
 
-  orientation_property_ = new QuaternionProperty("Orientation", Ogre::Quaternion::IDENTITY,
-      "Orientation of this link, in the current Fixed Frame.  (Not editable)",
-      robot_element_property_);
+  orientation_property_ = new QuaternionProperty(
+    "Orientation", Ogre::Quaternion::IDENTITY,
+    "Orientation of this link, in the current Fixed Frame.  (Not editable)",
+    robot_element_property_);
   orientation_property_->setReadOnly(true);
 
   robot_element_property_->collapse();
@@ -740,7 +747,8 @@ void RobotLink::loadMaterialFromTexture(
 
       try {
         image.load(stream, extension);
-        Ogre::TextureManager::getSingleton().loadImage(filename,
+        Ogre::TextureManager::getSingleton().loadImage(
+          filename,
           RVIZ_RESOURCE_GROUP,
           image);
       } catch (Ogre::Exception & e) {

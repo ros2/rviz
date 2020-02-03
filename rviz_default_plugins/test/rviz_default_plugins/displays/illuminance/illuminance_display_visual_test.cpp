@@ -63,7 +63,8 @@ TEST_F(VisualTestFixture, sphere_changes_color_depending_on_illuminance) {
   illuminance_publisher->setIlluminance(150);
   captureMainWindow("illuminance_display_low_illuminance");
 
-  executor_->queueAction([illuminance_publisher]()
+  executor_->queueAction(
+    [illuminance_publisher]()
     {
       illuminance_publisher->setIlluminance(800);
     });
