@@ -47,7 +47,7 @@ PanelDockWidget::PanelDockWidget(const QString & name)
   QWidget * title_bar = new QWidget(this);
 
   QPalette pal(palette());
-  pal.setColor(QPalette::Background, QColor(200, 200, 200));
+  pal.setColor(QPalette::Window, QColor(200, 200, 200));
   title_bar->setAutoFillBackground(true);
   title_bar->setPalette(pal);
   title_bar->setContentsMargins(0, 0, 0, 0);
