@@ -251,7 +251,7 @@ void Property::setParent(Property * new_parent)
 
 QVariant Property::getViewData(int column, int role) const
 {
-  if (role == Qt::TextColorRole &&
+  if (role == Qt::ForegroundRole &&
     ( parent_ && parent_->getDisableChildren() ) )
   {
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
