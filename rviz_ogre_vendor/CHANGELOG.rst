@@ -2,6 +2,9 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+6.1.6 (2020-03-11)
+------------------
+
 6.1.5 (2019-12-10)
 ------------------
 * Skip freetype2 dependencies (`#405 <https://github.com/ros2/rviz/issues/405>`_) (`#489 <https://github.com/ros2/rviz/issues/489>`_)

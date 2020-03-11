@@ -2,6 +2,11 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+6.1.6 (2020-03-11)
+------------------
+* Fix camera info for camera display. (`#516 <https://github.com/ros2/rviz/issues/516>`_)
+* Contributors: Alejandro Hernández Cordero
+
 6.1.5 (2019-12-10)
 ------------------
 
