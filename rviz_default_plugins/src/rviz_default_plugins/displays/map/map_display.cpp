@@ -77,12 +77,11 @@ MapDisplay::MapDisplay()
   update_topic_property_ = new rviz_common::properties::RosTopicProperty(
     "Update Topic", "",
     "", "Topic where updates to this map display are received. "
-    "Currently, this topic is read-only and will automatically be determined by the map topic. "
-    "If the map is received on 'map_topic', the display assumes to receive updates on "
-    "'map_topic_updates'.", this);
-  // Set the property to read only for now. Since it is not connected to any slot,
-  // we don't want to update it.
-  update_topic_property_->setReadOnly(true);
+    "This topic is automatically determined by the map topic. "
+    "If the map is received on 'map_topic', the display assumes updates are received on "
+    "'map_topic_updates'."
+    "This can be overridden in the UI by clicking on the topic and setting the desired topic.",
+    this, SLOT(updateMapUpdateTopic()));
 
   update_profile_property_ = new rviz_common::properties::QosProfileProperty(
     update_topic_property_, update_profile_);
