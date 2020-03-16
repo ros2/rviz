@@ -73,9 +73,12 @@ void InitialPoseTool::onInitialize()
 void InitialPoseTool::updateTopic()
 {
   // TODO(anhosi, wjwwood): replace with abstraction for publishers once available
-  publisher_ = context_->getRosNodeAbstraction().lock()->get_raw_node()->
+  rclcpp::Node::SharedPtr raw_node =
+    context_->getRosNodeAbstraction().lock()->get_raw_node();
+  publisher_ = raw_node->
     template create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>(
     topic_property_->getStdString(), qos_profile_);
+  clock_ = raw_node->get_clock();
 }
 
 void InitialPoseTool::onPoseSet(double x, double y, double theta)
@@ -84,7 +87,7 @@ void InitialPoseTool::onPoseSet(double x, double y, double theta)
 
   geometry_msgs::msg::PoseWithCovarianceStamped pose;
   pose.header.frame_id = fixed_frame;
-  pose.header.stamp = rclcpp::Clock().now();
+  pose.header.stamp = clock_->now();
 
   pose.pose.pose.position.x = x;
   pose.pose.pose.position.y = y;

@@ -85,6 +85,7 @@ protected:
   QCursor std_cursor_;
   QCursor hit_cursor_;
   rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr publisher_;
+  rclcpp::Clock::SharedPtr clock_;
 
   rviz_common::properties::StringProperty * topic_property_;
   rviz_common::properties::BoolProperty * auto_deactivate_property_;
