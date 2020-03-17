@@ -73,6 +73,7 @@ private Q_SLOTS:
 
 private:
   rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr publisher_;
+  rclcpp::Clock::SharedPtr clock_;
 
   rviz_common::properties::StringProperty * topic_property_;
   rviz_common::properties::QosProfileProperty * qos_profile_property_;

@@ -71,10 +71,13 @@ void GoalTool::onInitialize()
 
 void GoalTool::updateTopic()
 {
+  rclcpp::Node::SharedPtr raw_node =
+    context_->getRosNodeAbstraction().lock()->get_raw_node();
   // TODO(anhosi, wjwwood): replace with abstraction for publishers once available
-  publisher_ = context_->getRosNodeAbstraction().lock()->get_raw_node()->
+  publisher_ = raw_node->
     template create_publisher<geometry_msgs::msg::PoseStamped>(
     topic_property_->getStdString(), qos_profile_);
+  clock_ = raw_node->get_clock();
 }
 
 void GoalTool::onPoseSet(double x, double y, double theta)
@@ -82,7 +85,7 @@ void GoalTool::onPoseSet(double x, double y, double theta)
   std::string fixed_frame = context_->getFixedFrame().toStdString();
 
   geometry_msgs::msg::PoseStamped goal;
-  goal.header.stamp = rclcpp::Clock().now();
+  goal.header.stamp = clock_->now();
   goal.header.frame_id = fixed_frame;
 
   goal.pose.position.x = x;

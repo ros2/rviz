@@ -86,10 +86,13 @@ void PointTool::deactivate() {}
 
 void PointTool::updateTopic()
 {
+  rclcpp::Node::SharedPtr raw_node =
+    context_->getRosNodeAbstraction().lock()->get_raw_node();
   // TODO(anhosi, wjwwood): replace with abstraction for publishers once available
-  publisher_ = context_->getRosNodeAbstraction().lock()->get_raw_node()->
+  publisher_ = raw_node->
     template create_publisher<geometry_msgs::msg::PointStamped>(
     topic_property_->getStdString(), qos_profile_);
+  clock_ = raw_node->get_clock();
 }
 
 void PointTool::updateAutoDeactivate() {}
@@ -134,7 +137,7 @@ void PointTool::publishPosition(const Ogre::Vector3 & position) const
   geometry_msgs::msg::PointStamped point_stamped;
   point_stamped.point = point;
   point_stamped.header.frame_id = context_->getFixedFrame().toStdString();
-  point_stamped.header.stamp = rclcpp::Clock().now();
+  point_stamped.header.stamp = clock_->now();
   publisher_->publish(point_stamped);
 }
 
