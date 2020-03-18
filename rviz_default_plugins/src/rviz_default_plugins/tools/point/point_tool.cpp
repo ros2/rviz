@@ -134,7 +134,8 @@ void PointTool::publishPosition(const Ogre::Vector3 & position) const
   geometry_msgs::msg::PointStamped point_stamped;
   point_stamped.point = point;
   point_stamped.header.frame_id = context_->getFixedFrame().toStdString();
-  point_stamped.header.stamp = rclcpp::Clock().now();
+  point_stamped.header.stamp =
+    context_->getRosNodeAbstraction().lock()->get_raw_node()->get_clock()->now();
   publisher_->publish(point_stamped);
 }
 

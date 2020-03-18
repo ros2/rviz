@@ -81,7 +81,8 @@ void GoalTool::onPoseSet(double x, double y, double theta)
   std::string fixed_frame = context_->getFixedFrame().toStdString();
 
   geometry_msgs::msg::PoseStamped goal;
-  goal.header.stamp = rclcpp::Clock().now();
+  goal.header.stamp =
+    context_->getRosNodeAbstraction().lock()->get_raw_node()->get_clock()->now();
   goal.header.frame_id = fixed_frame;
 
   goal.pose.position.x = x;

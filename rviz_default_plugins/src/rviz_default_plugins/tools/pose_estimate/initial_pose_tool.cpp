@@ -83,7 +83,8 @@ void InitialPoseTool::onPoseSet(double x, double y, double theta)
 
   geometry_msgs::msg::PoseWithCovarianceStamped pose;
   pose.header.frame_id = fixed_frame;
-  pose.header.stamp = rclcpp::Clock().now();
+  pose.header.stamp =
+    context_->getRosNodeAbstraction().lock()->get_raw_node()->get_clock()->now();
 
   pose.pose.pose.position.x = x;
   pose.pose.pose.position.y = y;
