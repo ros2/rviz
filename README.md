@@ -50,7 +50,6 @@ These features have not been ported to `ros2/rviz` yet.
 | Effort        |
 
 Other features:
-- Image transport features
 - Stereo
 
 In case you wished to see those features in RViz for ROS 2, feel free to add a pull request.
