@@ -89,7 +89,7 @@ target_link_libraries(rviz_visual_testing_framework
   ${visual_tests_target_libaries})
 
 # export information to downstream packages
-ament_export_interfaces(rviz_visual_testing_framework)
+ament_export_targets(rviz_visual_testing_framework)
 ament_export_dependencies(Qt5)
 ament_export_dependencies(rviz_common)
 
