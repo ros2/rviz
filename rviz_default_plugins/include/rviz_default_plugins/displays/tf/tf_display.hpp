@@ -40,7 +40,7 @@
 #include <OgreQuaternion.h>
 #include <OgreVector3.h>
 
-#include "geometry_msgs/msg/transform_stamped__struct.hpp"
+#include "geometry_msgs/msg/transform_stamped.hpp"
 #include "tf2/exceptions.h"
 #include "tf2/buffer_core.h"
 #include "tf2/time.h"
