@@ -2,6 +2,11 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+7.0.5 (2020-04-17)
+------------------
+* Remove unnecessary call to render scene (`#490 <https://github.com/ros2/rviz/issues/490>`_) (`#514 <https://github.com/ros2/rviz/issues/514>`_)
+* Contributors: Jacob Perron
+
 7.0.4 (2020-01-17)
 ------------------
 

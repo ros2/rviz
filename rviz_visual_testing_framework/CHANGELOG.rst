@@ -2,6 +2,9 @@
 Changelog for package rviz_visual_testing_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+7.0.5 (2020-04-17)
+------------------
+
 7.0.4 (2020-01-17)
 ------------------
 * Installed RViz configs for visual tests (`#487 <https://github.com/ros2/rviz/issues/487>`_)

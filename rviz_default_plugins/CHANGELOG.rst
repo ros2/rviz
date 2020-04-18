@@ -2,6 +2,12 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+7.0.5 (2020-04-17)
+------------------
+* Allow the MapDisplay "Update Topic" to be changed. (`#517 <https://github.com/ros2/rviz/issues/517>`_) (`#518 <https://github.com/ros2/rviz/issues/518>`_)
+* Fix camera info for camera display (`#419 <https://github.com/ros2/rviz/issues/419>`_) (`#500 <https://github.com/ros2/rviz/issues/500>`_)
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette
+
 7.0.4 (2020-01-17)
 ------------------
 
