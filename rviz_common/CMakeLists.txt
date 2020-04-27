@@ -288,6 +288,7 @@ ament_export_dependencies(
   tf2
   tf2_geometry_msgs
   tf2_ros
+  urdf
   yaml_cpp_vendor
 )
 ament_export_include_directories(include)
