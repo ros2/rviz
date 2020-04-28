@@ -231,23 +231,9 @@ add_library(rviz_default_plugins SHARED
 target_include_directories(rviz_default_plugins PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
-  ${rviz_rendering_INCLUDE_DIRS}
-  ${rviz_common_INCLUDE_DIRS}
-  ${laser_geometry_INCLUDE_DIRS}
-  ${nav_msgs_INCLUDE_DIRS}
-  ${map_msgs_INCLUDE_DIRS}
   ${OGRE_INCLUDE_DIRS}
   ${Qt5Widgets_INCLUDE_DIRS}
-  ${resource_retriever_INCLUDE_DIRS}
   ${TinyXML_INCLUDE_DIRS}
-  ${urdf_INCLUDE_DIRS}
-  ${visualization_msgs_INCLUDE_DIRS}
-)
-
-target_link_libraries(rviz_default_plugins
-  laser_geometry::laser_geometry
-  resource_retriever::resource_retriever
-  rviz_common::rviz_common
 )
 
 # Causes the visibility macros to use dllexport rather than dllimport,
@@ -267,6 +253,8 @@ ament_target_dependencies(rviz_default_plugins
   map_msgs
   rclcpp
   resource_retriever
+  rviz_common
+  rviz_rendering
   tf2
   tf2_geometry_msgs
   tf2_ros
@@ -334,24 +322,23 @@ if(BUILD_TESTING)
     USE_SOURCE_PERMISSIONS)
 
   set(TEST_INCLUDE_DIRS
-    ${map_msgs_INCLUDE_DIRS}
-    ${nav_msgs_INCLUDE_DIRS}
     ${OGRE_INCLUDE_DIRS}
     ${Qt5Widgets_INCLUDE_DIRS}
-    ${rclcpp_INCLUDE_DIRS}
-    ${sensor_msgs_INCLUDE_DIRS}
-    ${urdf_INCLUDE_DIRS}
-    ${visualization_msgs_INCLUDE_DIRS}
   )
   ament_include_directories_order(TEST_INCLUDE_DIRS ${TEST_INCLUDE_DIRS})
 
   set(TEST_LINK_LIBRARIES
     rviz_default_plugins
     Qt5::Widgets
-    ${rclcpp_LIBRARIES}
-    ${nav_msgs_LIBRARIES}
-    ${map_msgs_LIBRARIES}
-    ${visualization_msgs_LIBRARIES}
+  )
+
+  set(TEST_TARGET_DEPENDENCIES
+    map_msgs
+    nav_msgs
+    rclcpp
+    sensor_msgs
+    urdf
+    visualization_msgs
   )
 
   ament_add_gmock(fps_view_controller_test
@@ -363,6 +350,7 @@ if(BUILD_TESTING)
   if(TARGET fps_view_controller_test)
     target_include_directories(fps_view_controller_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(fps_view_controller_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(fps_view_controller_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(frame_info_test
@@ -373,6 +361,7 @@ if(BUILD_TESTING)
   if(TARGET frame_info_test)
     target_include_directories(frame_info_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(frame_info_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(frame_info_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(grid_cells_display_test
@@ -382,6 +371,7 @@ if(BUILD_TESTING)
   if(TARGET grid_cells_display_test)
     target_include_directories(grid_cells_display_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(grid_cells_display_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(grid_cells_display_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(image_display_test
@@ -390,6 +380,7 @@ if(BUILD_TESTING)
   if(TARGET image_display_test)
     target_include_directories(image_display_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(image_display_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(image_display_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(marker_test
@@ -408,6 +399,7 @@ if(BUILD_TESTING)
   if(TARGET marker_test)
     target_include_directories(marker_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(marker_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(marker_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(marker_common_test
@@ -419,6 +411,7 @@ if(BUILD_TESTING)
   if(TARGET marker_common_test)
     target_include_directories(marker_common_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(marker_common_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(marker_common_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(map_display_test
@@ -429,6 +422,7 @@ if(BUILD_TESTING)
   if(TARGET map_display_test)
     target_include_directories(map_display_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(map_display_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(marker_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(measure_tool_test
@@ -439,6 +433,7 @@ if(BUILD_TESTING)
   if(TARGET measure_tool_test)
     target_include_directories(measure_tool_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(measure_tool_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(measure_tool_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(odometry_display_test
@@ -449,6 +444,7 @@ if(BUILD_TESTING)
   if(TARGET odometry_display_test)
     target_include_directories(odometry_display_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(odometry_display_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(odometry_display_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(odometry_ogre_helper_test
@@ -457,6 +453,7 @@ if(BUILD_TESTING)
   if(TARGET odometry_ogre_helper_test)
     target_include_directories(odometry_ogre_helper_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(odometry_ogre_helper_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(odometry_ogre_helper_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(orbit_view_controller_test
@@ -468,6 +465,7 @@ if(BUILD_TESTING)
   if(TARGET orbit_view_controller_test)
     target_include_directories(orbit_view_controller_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(orbit_view_controller_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(orbit_view_controller_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(ortho_view_controller_test
@@ -479,6 +477,7 @@ if(BUILD_TESTING)
   if(TARGET ortho_view_controller_test)
     target_include_directories(ortho_view_controller_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(ortho_view_controller_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(ortho_view_controller_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(palette_builder_test
@@ -487,6 +486,7 @@ if(BUILD_TESTING)
   if(TARGET palette_builder_test)
     target_include_directories(palette_builder_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(palette_builder_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(palette_builder_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(path_display_test
@@ -497,6 +497,7 @@ if(BUILD_TESTING)
   if(TARGET path_display_test)
     target_include_directories(path_display_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(path_display_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(path_display_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(point_cloud2_display_test
@@ -507,6 +508,7 @@ if(BUILD_TESTING)
   if(TARGET point_cloud2_display_test)
     target_include_directories(point_cloud2_display_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(point_cloud2_display_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(point_cloud2_display_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(point_cloud_common_test
@@ -519,6 +521,7 @@ if(BUILD_TESTING)
   if(TARGET point_cloud_common_test)
     target_include_directories(point_cloud_common_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(point_cloud_common_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(point_cloud_common_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(point_cloud_scalar_display_test
@@ -528,6 +531,7 @@ if(BUILD_TESTING)
   if(TARGET point_cloud_scalar_display_test)
     target_include_directories(point_cloud_scalar_display_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(point_cloud_scalar_display_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(point_cloud_scalar_display_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(point_cloud_transformers_test
@@ -543,6 +547,7 @@ if(BUILD_TESTING)
   if(TARGET point_cloud_transformers_test)
     target_include_directories(point_cloud_transformers_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(point_cloud_transformers_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(marker_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(point_display_test
@@ -553,6 +558,7 @@ if(BUILD_TESTING)
   if(TARGET point_display_test)
     target_include_directories(point_display_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(point_display_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(point_display_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(pose_array_display_test
@@ -563,6 +569,7 @@ if(BUILD_TESTING)
   if(TARGET pose_array_display_test)
     target_include_directories(pose_array_display_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(pose_array_display_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(pose_array_display_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(pose_tool_test
@@ -573,6 +580,7 @@ if(BUILD_TESTING)
   if(TARGET pose_tool_test)
     target_include_directories(pose_tool_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(pose_tool_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(pose_tool_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(range_display_test
@@ -583,6 +591,7 @@ if(BUILD_TESTING)
   if(TARGET range_display_test)
     target_include_directories(range_display_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(range_display_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(range_display_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(robot_test
@@ -591,6 +600,7 @@ if(BUILD_TESTING)
   if(TARGET robot_test)
     target_include_directories(robot_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(robot_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(robot_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(ros_image_texture_test
@@ -599,6 +609,7 @@ if(BUILD_TESTING)
   if(TARGET ros_image_texture_test)
     target_include_directories(ros_image_texture_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(ros_image_texture_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(ros_image_texture_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(selection_tool_test
@@ -607,6 +618,7 @@ if(BUILD_TESTING)
   if(TARGET selection_tool_test)
     target_include_directories(selection_tool_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(selection_tool_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(selection_tool_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(xy_orbit_view_controller_test
@@ -618,6 +630,7 @@ if(BUILD_TESTING)
   if(TARGET xy_orbit_view_controller_test)
     target_include_directories(xy_orbit_view_controller_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(xy_orbit_view_controller_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(xy_orbit_view_controller_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(frame_transformer_tf_test
@@ -626,6 +639,7 @@ if(BUILD_TESTING)
   if(TARGET frame_transformer_tf_test)
     target_include_directories(frame_transformer_tf_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(frame_transformer_tf_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(frame_transformer_tf_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(transformer_guard_test
@@ -635,6 +649,7 @@ if(BUILD_TESTING)
   if(TARGET transformer_guard_test)
     target_include_directories(transformer_guard_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(transformer_guard_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(transformer_guard_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gtest(axes_display_visual_test
@@ -751,6 +766,8 @@ if(BUILD_TESTING)
       ${TEST_INCLUDE_DIRS})
     target_link_libraries(interactive_marker_namespace_property_test
       ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(interactive_marker_namespace_property_test
+      ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gtest(laser_scan_display_visual_test
