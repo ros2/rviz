@@ -137,24 +137,51 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller.hpp
 )
 
-set(rviz_default_plugins_source_files
+add_library(plugins_displays_axes OBJECT
   src/rviz_default_plugins/displays/axes/axes_display.cpp
+)
+
+add_library(plugins_displays_camera OBJECT
   src/rviz_default_plugins/displays/camera/camera_display.cpp
+)
+
+add_library(plugins_displays_grid OBJECT
   src/rviz_default_plugins/displays/grid/grid_display.cpp
   src/rviz_default_plugins/displays/grid_cells/grid_cells_display.cpp
+)
+
+add_library(plugins_displays_fluid_pressure OBJECT
   src/rviz_default_plugins/displays/fluid_pressure/fluid_pressure_display.cpp
+)
+
+add_library(plugins_displays_illuminance OBJECT
   src/rviz_default_plugins/displays/illuminance/illuminance_display.cpp
+)
+
+add_library(plugins_displays_image OBJECT
   src/rviz_default_plugins/displays/image/image_display.cpp
   src/rviz_default_plugins/displays/image/ros_image_texture.cpp
+)
+
+add_library(plugins_displays_interactive_markers OBJECT
   src/rviz_default_plugins/displays/interactive_markers/integer_action.cpp
   src/rviz_default_plugins/displays/interactive_markers/interactive_marker_control.cpp
   src/rviz_default_plugins/displays/interactive_markers/interactive_marker.cpp
   src/rviz_default_plugins/displays/interactive_markers/interactive_marker_display.cpp
   src/rviz_default_plugins/displays/interactive_markers/interactive_marker_namespace_property.cpp
+)
+
+add_library(plugins_displays_laser_scan OBJECT
   src/rviz_default_plugins/displays/laser_scan/laser_scan_display.cpp
+)
+
+add_library(plugins_displays_map OBJECT
   src/rviz_default_plugins/displays/map/map_display.cpp
   src/rviz_default_plugins/displays/map/palette_builder.cpp
   src/rviz_default_plugins/displays/map/swatch.cpp
+)
+
+add_library(plugins_displays_marker OBJECT
   src/rviz_default_plugins/displays/marker/markers/arrow_marker.cpp
   src/rviz_default_plugins/displays/marker/markers/line_list_marker.cpp
   src/rviz_default_plugins/displays/marker/markers/line_marker_base.cpp
@@ -170,9 +197,21 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/marker/marker_common.cpp
   src/rviz_default_plugins/displays/marker/marker_display.cpp
   src/rviz_default_plugins/displays/marker_array/marker_array_display.cpp
+)
+
+add_library(plugins_displays_odometry OBJECT
   src/rviz_default_plugins/displays/odometry/odometry_display.cpp
+)
+
+add_library(plugins_displays_path OBJECT
   src/rviz_default_plugins/displays/path/path_display.cpp
+)
+
+add_library(plugins_displays_point OBJECT
   src/rviz_default_plugins/displays/point/point_stamped_display.cpp
+)
+
+add_library(plugins_displays_pointcloud OBJECT
   src/rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.cpp
@@ -185,26 +224,56 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/pointcloud/point_cloud_selection_handler.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_display.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.cpp
+)
+
+add_library(plugins_displays_polygon OBJECT
   src/rviz_default_plugins/displays/polygon/polygon_display.cpp
+)
+
+add_library(plugins_displays_pose OBJECT
   src/rviz_default_plugins/displays/pose/pose_display.cpp
   src/rviz_default_plugins/displays/pose/pose_display_selection_handler.cpp
   src/rviz_default_plugins/displays/pose_array/pose_array_display.cpp
   src/rviz_default_plugins/displays/pose_array/flat_arrows_array.cpp
   src/rviz_default_plugins/displays/pose_covariance/pose_with_covariance_display.cpp
   src/rviz_default_plugins/displays/pose_covariance/pose_with_cov_selection_handler.cpp
+)
+
+add_library(plugins_displays_range OBJECT
   src/rviz_default_plugins/displays/range/range_display.cpp
+)
+
+add_library(plugins_displays_relative_humidity OBJECT
   src/rviz_default_plugins/displays/relative_humidity/relative_humidity_display.cpp
+)
+
+add_library(plugins_displays_robot_model OBJECT
   src/rviz_default_plugins/displays/robot_model/robot_model_display.cpp
+)
+
+add_library(plugins_displays_temperature OBJECT
   src/rviz_default_plugins/displays/temperature/temperature_display.cpp
+)
+
+add_library(plugins_displays_tf OBJECT
   src/rviz_default_plugins/displays/tf/frame_info.cpp
   src/rviz_default_plugins/displays/tf/frame_selection_handler.cpp
   src/rviz_default_plugins/displays/tf/tf_display.cpp
+)
+
+add_library(plugins_displays_wrench OBJECT
   src/rviz_default_plugins/displays/wrench/wrench_display.cpp
+)
+
+add_library(plugins_robot OBJECT
   src/rviz_default_plugins/robot/robot.cpp
   src/rviz_default_plugins/robot/robot_joint.cpp
   src/rviz_default_plugins/robot/robot_link.cpp
   src/rviz_default_plugins/robot/robot_element_base_class.cpp
   src/rviz_default_plugins/robot/tf_link_updater.cpp
+)
+
+add_library(plugins_tools OBJECT
   src/rviz_default_plugins/tools/interaction/interaction_tool.cpp
   src/rviz_default_plugins/tools/measure/measure_tool.cpp
   src/rviz_default_plugins/tools/focus/focus_tool.cpp
@@ -214,8 +283,14 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/tools/pose_estimate/initial_pose_tool.cpp
   src/rviz_default_plugins/tools/point/point_tool.cpp
   src/rviz_default_plugins/tools/select/selection_tool.cpp
+)
+
+add_library(plugins_transformation OBJECT
   src/rviz_default_plugins/transformation/tf_frame_transformer.cpp
   src/rviz_default_plugins/transformation/tf_wrapper.cpp
+)
+
+set(rviz_default_plugins_view_controllers_source_files
   src/rviz_default_plugins/view_controllers/follower/third_person_follower_view_controller.cpp
   src/rviz_default_plugins/view_controllers/fps/fps_view_controller.cpp
   src/rviz_default_plugins/view_controllers/orbit/orbit_view_controller.cpp
@@ -223,56 +298,115 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller.cpp
 )
 
+set(rviz_plugin_object_libs
+  plugins_displays_axes
+  plugins_displays_camera
+  plugins_displays_grid
+  plugins_displays_fluid_pressure
+  plugins_displays_illuminance
+  plugins_displays_image
+  plugins_displays_interactive_markers
+  plugins_displays_laser_scan
+  plugins_displays_map
+  plugins_displays_marker
+  plugins_displays_odometry
+  plugins_displays_path
+  plugins_displays_point
+  plugins_displays_pointcloud
+  plugins_displays_polygon
+  plugins_displays_pose
+  plugins_displays_range
+  plugins_displays_relative_humidity
+  plugins_displays_robot_model
+  plugins_displays_temperature
+  plugins_displays_tf
+  plugins_displays_wrench
+  plugins_robot
+  plugins_tools
+  plugins_transformation
+)
+
+set_target_properties(${rviz_plugin_object_libs} PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+
 add_library(rviz_default_plugins SHARED
   ${rviz_default_plugins_headers_to_moc}
-  ${rviz_default_plugins_source_files}
+  $<TARGET_OBJECTS:plugins_displays_axes>
+  $<TARGET_OBJECTS:plugins_displays_camera>
+  $<TARGET_OBJECTS:plugins_displays_grid>
+  $<TARGET_OBJECTS:plugins_displays_fluid_pressure>
+  $<TARGET_OBJECTS:plugins_displays_illuminance>
+  $<TARGET_OBJECTS:plugins_displays_image>
+  $<TARGET_OBJECTS:plugins_displays_interactive_markers>
+  $<TARGET_OBJECTS:plugins_displays_laser_scan>
+  $<TARGET_OBJECTS:plugins_displays_map>
+  $<TARGET_OBJECTS:plugins_displays_marker>
+  $<TARGET_OBJECTS:plugins_displays_odometry>
+  $<TARGET_OBJECTS:plugins_displays_path>
+  $<TARGET_OBJECTS:plugins_displays_point>
+  $<TARGET_OBJECTS:plugins_displays_pointcloud>
+  $<TARGET_OBJECTS:plugins_displays_polygon>
+  $<TARGET_OBJECTS:plugins_displays_pose>
+  $<TARGET_OBJECTS:plugins_displays_range>
+  $<TARGET_OBJECTS:plugins_displays_relative_humidity>
+  $<TARGET_OBJECTS:plugins_displays_robot_model>
+  $<TARGET_OBJECTS:plugins_displays_temperature>
+  $<TARGET_OBJECTS:plugins_displays_tf>
+  $<TARGET_OBJECTS:plugins_displays_wrench>
+  $<TARGET_OBJECTS:plugins_robot>
+  $<TARGET_OBJECTS:plugins_tools>
+  $<TARGET_OBJECTS:plugins_transformation>
+  ${rviz_default_plugins_view_controllers_source_files}
 )
 
-target_include_directories(rviz_default_plugins PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-  ${rviz_rendering_INCLUDE_DIRS}
-  ${rviz_common_INCLUDE_DIRS}
-  ${laser_geometry_INCLUDE_DIRS}
-  ${nav_msgs_INCLUDE_DIRS}
-  ${map_msgs_INCLUDE_DIRS}
-  ${OGRE_INCLUDE_DIRS}
-  ${Qt5Widgets_INCLUDE_DIRS}
-  ${resource_retriever_INCLUDE_DIRS}
-  ${TinyXML_INCLUDE_DIRS}
-  ${urdf_INCLUDE_DIRS}
-  ${visualization_msgs_INCLUDE_DIRS}
-)
+set(rviz_all_libs ${rviz_plugin_object_libs})
+list(APPEND rviz_all_libs rviz_default_plugins)
 
-target_link_libraries(rviz_default_plugins
-  laser_geometry::laser_geometry
-  resource_retriever::resource_retriever
-  rviz_common::rviz_common
-)
+foreach(_lib ${rviz_all_libs})
+  target_include_directories(${_lib} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+    ${rviz_rendering_INCLUDE_DIRS}
+    ${rviz_common_INCLUDE_DIRS}
+    ${laser_geometry_INCLUDE_DIRS}
+    ${nav_msgs_INCLUDE_DIRS}
+    ${map_msgs_INCLUDE_DIRS}
+    ${OGRE_INCLUDE_DIRS}
+    ${Qt5Widgets_INCLUDE_DIRS}
+    ${resource_retriever_INCLUDE_DIRS}
+    ${TinyXML_INCLUDE_DIRS}
+    ${urdf_INCLUDE_DIRS}
+    ${visualization_msgs_INCLUDE_DIRS}
+  )
+  target_link_libraries(${_lib}
+    laser_geometry::laser_geometry
+    resource_retriever::resource_retriever
+    rviz_common::rviz_common
+  )
 
-# Causes the visibility macros to use dllexport rather than dllimport,
-# which is appropriate when building the dll but not consuming it.
-target_compile_definitions(rviz_default_plugins PRIVATE "RVIZ_DEFAULT_PLUGINS_BUILDING_LIBRARY")
+  # Causes the visibility macros to use dllexport rather than dllimport,
+  # which is appropriate when building the dll but not consuming it.
+  target_compile_definitions(${_lib} PRIVATE "RVIZ_DEFAULT_PLUGINS_BUILDING_LIBRARY")
 
-# prevent pluginlib from using boost
-target_compile_definitions(rviz_default_plugins PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
+  # prevent pluginlib from using boost
+  target_compile_definitions(${_lib} PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
+
+  ament_target_dependencies(${_lib}
+    geometry_msgs
+    interactive_markers
+    laser_geometry
+    nav_msgs
+    map_msgs
+    rclcpp
+    resource_retriever
+    tf2
+    tf2_geometry_msgs
+    tf2_ros
+    urdf
+    visualization_msgs
+  )
+endforeach()
 
 pluginlib_export_plugin_description_file(rviz_common plugins_description.xml)
-
-ament_target_dependencies(rviz_default_plugins
-  geometry_msgs
-  interactive_markers
-  laser_geometry
-  nav_msgs
-  map_msgs
-  rclcpp
-  resource_retriever
-  tf2
-  tf2_geometry_msgs
-  tf2_ros
-  urdf
-  visualization_msgs
-)
 
 ament_export_include_directories(include)
 ament_export_targets(rviz_default_plugins HAS_LIBRARY_TARGET)
