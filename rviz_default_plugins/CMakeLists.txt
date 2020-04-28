@@ -422,7 +422,7 @@ if(BUILD_TESTING)
   if(TARGET map_display_test)
     target_include_directories(map_display_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(map_display_test ${TEST_LINK_LIBRARIES})
-    ament_target_dependencies(marker_test ${TEST_TARGET_DEPENDENCIES})
+    ament_target_dependencies(map_display_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(measure_tool_test
@@ -547,7 +547,7 @@ if(BUILD_TESTING)
   if(TARGET point_cloud_transformers_test)
     target_include_directories(point_cloud_transformers_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(point_cloud_transformers_test ${TEST_LINK_LIBRARIES})
-    ament_target_dependencies(marker_test ${TEST_TARGET_DEPENDENCIES})
+    ament_target_dependencies(point_cloud_transformers_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(point_display_test
