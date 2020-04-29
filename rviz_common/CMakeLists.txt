@@ -249,6 +249,7 @@ target_include_directories(rviz_common
 )
 
 target_link_libraries(rviz_common
+  PUBLIC
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
   ${pluginlib_LIBRARIES}
@@ -258,6 +259,7 @@ target_link_libraries(rviz_common
 )
 
 ament_target_dependencies(rviz_common
+  PUBLIC
   geometry_msgs
   rclcpp
   resource_retriever

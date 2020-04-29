@@ -104,6 +104,7 @@ add_library(rviz_rendering SHARED
 )
 
 target_link_libraries(rviz_rendering
+  PUBLIC
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
   Qt5::Widgets
@@ -124,6 +125,7 @@ target_compile_definitions(rviz_rendering PRIVATE "RVIZ_RENDERING_BUILDING_LIBRA
 
 ament_export_targets(rviz_rendering)
 ament_target_dependencies(rviz_rendering
+  PUBLIC
   rviz_assimp_vendor
 )
 ament_export_dependencies(
