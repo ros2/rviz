@@ -52,6 +52,47 @@ macro(build_assimp)
   )
 endmacro()
 
+# Copy and fix the assimp config files on Ubuntu, in order to suppress a warning.
+# This should be removed once upstream is updated to assimp-0.5.1, see:
+#   https://github.com/ros2/rviz/issues/524
+#   https://bugs.launchpad.net/ubuntu/+source/assimp/+bug/1869405
+### BEGIN HACKS
+set(IS_UBUNTU FALSE)
+if(UNIX AND NOT APPLE)
+  find_program(LSB_RELEASE_EXEC lsb_release)
+  execute_process(COMMAND ${LSB_RELEASE_EXEC} -is
+      OUTPUT_VARIABLE LSB_RELEASE_ID_SHORT
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+
+  if(${LSB_RELEASE_ID_SHORT} STREQUAL "Ubuntu")
+    set(IS_UBUNTU TRUE)
+  endif()
+endif()
+if(IS_UBUNTU)
+  file(READ "/usr/lib/x86_64-linux-gnu/cmake/assimp-5.0/assimpTargets.cmake" assimp_targets_content)
+  string(REPLACE
+    "if(ON)"
+    "set(WORKAROUND ON)\nif(WORKAROUND)"
+    assimp_targets_content
+    ${assimp_targets_content})
+  file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/assimp-0.5/assimpTargets.cmake" "${assimp_targets_content}")
+  file(READ "/usr/lib/x86_64-linux-gnu/cmake/assimp-5.0/assimpTargets-release.cmake" assimp_targets_content)
+  string(REPLACE
+    "if(ON)"
+    "set(WORKAROUND ON)\nif(WORKAROUND)"
+    assimp_targets_content
+    ${assimp_targets_content})
+  file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/assimp-0.5/assimpTargets-release.cmake" "${assimp_targets_content}")
+  file(
+    COPY "/usr/lib/x86_64-linux-gnu/cmake/assimp-5.0/assimp-config.cmake"
+    DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/assimp-0.5")
+  file(
+    COPY "/usr/lib/x86_64-linux-gnu/cmake/assimp-5.0/assimp-config-version.cmake"
+    DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/assimp-0.5")
+  set(assimp_DIR "${CMAKE_CURRENT_BINARY_DIR}/assimp-0.5")
+endif()
+### END HACKS
 find_package(assimp QUIET)
 
 if(NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LESS 4.1.0)
