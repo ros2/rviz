@@ -60,37 +60,55 @@ endmacro()
 set(IS_UBUNTU FALSE)
 if(UNIX AND NOT APPLE)
   find_program(LSB_RELEASE_EXEC lsb_release)
-  execute_process(COMMAND ${LSB_RELEASE_EXEC} -is
-      OUTPUT_VARIABLE LSB_RELEASE_ID_SHORT
-      OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
+  if(EXISTS LSB_RELEASE_EXEC)
+    execute_process(COMMAND ${LSB_RELEASE_EXEC} -is
+        OUTPUT_VARIABLE LSB_RELEASE_ID_SHORT
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+  else()
+    set(LSB_RELEASE_ID_SHORT "Unknown")
+  endif()
 
   if(${LSB_RELEASE_ID_SHORT} STREQUAL "Ubuntu")
     set(IS_UBUNTU TRUE)
   endif()
 endif()
+
 if(IS_UBUNTU)
-  file(READ "/usr/lib/x86_64-linux-gnu/cmake/assimp-5.0/assimpTargets.cmake" assimp_targets_content)
+  file(GLOB_RECURSE assimp_target_files "/usr/lib/*/cmake/assimp-5.0/assimpTargets.cmake")
+  list(LENGTH assimp_target_files assimp_target_files_len)
+  if(assimp_target_files_len EQUAL 0)
+    message(FATAL_ERROR "failed to find assimpTargets.cmake as expected")
+  endif()
+  if(NOT assimp_target_files_len EQUAL 1)
+    message(FATAL_ERROR "found multiple assimpTargets.cmake files, unexpectedly")
+  endif()
+  list(GET assimp_target_files 0 assimp_target_file)
+
+  get_filename_component(assimp_target_dir "${assimp_target_file}" DIRECTORY)
+  set(new_assimp_target_dir "${CMAKE_CURRENT_BINARY_DIR}/assimp-0.5")
+
+  file(READ "${assimp_target_dir}/assimpTargets.cmake" assimp_targets_content)
   string(REPLACE
     "if(ON)"
     "set(WORKAROUND ON)\nif(WORKAROUND)"
     assimp_targets_content
     ${assimp_targets_content})
-  file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/assimp-0.5/assimpTargets.cmake" "${assimp_targets_content}")
-  file(READ "/usr/lib/x86_64-linux-gnu/cmake/assimp-5.0/assimpTargets-release.cmake" assimp_targets_content)
+  file(WRITE "${new_assimp_target_dir}/assimpTargets.cmake" "${assimp_targets_content}")
+  file(READ "${assimp_target_dir}/assimpTargets-release.cmake" assimp_targets_content)
   string(REPLACE
     "if(ON)"
     "set(WORKAROUND ON)\nif(WORKAROUND)"
     assimp_targets_content
     ${assimp_targets_content})
-  file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/assimp-0.5/assimpTargets-release.cmake" "${assimp_targets_content}")
+  file(WRITE "${new_assimp_target_dir}/assimpTargets-release.cmake" "${assimp_targets_content}")
   file(
-    COPY "/usr/lib/x86_64-linux-gnu/cmake/assimp-5.0/assimp-config.cmake"
-    DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/assimp-0.5")
+    COPY "${assimp_target_dir}/assimp-config.cmake"
+    DESTINATION "${new_assimp_target_dir}")
   file(
-    COPY "/usr/lib/x86_64-linux-gnu/cmake/assimp-5.0/assimp-config-version.cmake"
-    DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/assimp-0.5")
-  set(assimp_DIR "${CMAKE_CURRENT_BINARY_DIR}/assimp-0.5")
+    COPY "${assimp_target_dir}/assimp-config-version.cmake"
+    DESTINATION "${new_assimp_target_dir}")
+  set(assimp_DIR "${new_assimp_target_dir}")
 endif()
 ### END HACKS
 find_package(assimp QUIET)
