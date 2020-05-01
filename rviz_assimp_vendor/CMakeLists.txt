@@ -109,6 +109,13 @@ if(IS_UBUNTU)
     COPY "${assimp_target_dir}/assimp-config-version.cmake"
     DESTINATION "${new_assimp_target_dir}")
   set(assimp_DIR "${new_assimp_target_dir}")
+
+  install(
+    DIRECTORY
+      ${new_assimp_target_dir}/
+    DESTINATION
+      ${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor_custom_config
+  )
 endif()
 ### END HACKS
 find_package(assimp QUIET)
