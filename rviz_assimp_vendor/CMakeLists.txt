@@ -57,7 +57,7 @@ endmacro()
 #   https://github.com/ros2/rviz/issues/524
 #   https://bugs.launchpad.net/ubuntu/+source/assimp/+bug/1869405
 ### BEGIN HACKS
-set(IS_UBUNTU FALSE)
+set(IS_UBUNTU_FOCAL FALSE)
 if(UNIX AND NOT APPLE)
   find_program(LSB_RELEASE_EXEC lsb_release)
   if(EXISTS "${LSB_RELEASE_EXEC}")
@@ -65,16 +65,21 @@ if(UNIX AND NOT APPLE)
         OUTPUT_VARIABLE LSB_RELEASE_ID_SHORT
         OUTPUT_STRIP_TRAILING_WHITESPACE
     )
+    execute_process(COMMAND ${LSB_RELEASE_EXEC} -sr
+      OUTPUT_VARIABLE LSB_RELEASE_RELEASE_SHORT
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
   else()
     set(LSB_RELEASE_ID_SHORT "Unknown")
+    set(LSB_RELEASE_RELEASE_SHORT "Unknown")
   endif()
 
-  if(${LSB_RELEASE_ID_SHORT} STREQUAL "Ubuntu")
-    set(IS_UBUNTU TRUE)
+  if(${LSB_RELEASE_ID_SHORT} STREQUAL "Ubuntu" AND ${LSB_RELEASE_RELEASE_SHORT} STREQUAL "20.04")
+    set(IS_UBUNTU_FOCAL TRUE)
   endif()
 endif()
 
-if(IS_UBUNTU)
+if(IS_UBUNTU_FOCAL)
   file(GLOB_RECURSE assimp_target_files "/usr/lib/*/cmake/assimp-5.0/assimpTargets.cmake")
   list(LENGTH assimp_target_files assimp_target_files_len)
   if(assimp_target_files_len EQUAL 0)
