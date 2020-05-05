@@ -336,6 +336,10 @@ if(BUILD_TESTING)
     visualization_msgs
   )
 
+  # None of the tests are Qt files, so we can save a bit of time by not letting
+  # AUTOMOC run on every one of them and generate an empty file.
+  set(CMAKE_AUTOMOC OFF)
+
   # display_test_fixture.cpp is a piece of code that is used by every test.
   # Instead of recompiling it for every test, just compile it once as a library
   # and reuse it.  Note that we need to call ament_find_gmock() by hand here to
