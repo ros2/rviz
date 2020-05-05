@@ -327,11 +327,6 @@ if(BUILD_TESTING)
   )
   ament_include_directories_order(TEST_INCLUDE_DIRS ${TEST_INCLUDE_DIRS})
 
-  set(TEST_LINK_LIBRARIES
-    rviz_default_plugins
-    Qt5::Widgets
-  )
-
   set(TEST_TARGET_DEPENDENCIES
     map_msgs
     nav_msgs
@@ -341,10 +336,26 @@ if(BUILD_TESTING)
     visualization_msgs
   )
 
+  # display_test_fixture.cpp is a piece of code that is used by every test.
+  # Instead of recompiling it for every test, just compile it once as a library
+  # and reuse it.  Note that we need to call ament_find_gmock() by hand here to
+  # find GMOCK_INCLUDE_DIRS so we can compile this file.
+  ament_find_gmock()
+  add_library(display_test_fixture SHARED
+    test/rviz_default_plugins/displays/display_test_fixture.cpp
+  )
+  target_include_directories(display_test_fixture PRIVATE ${GMOCK_INCLUDE_DIRS} ${TEST_INCLUDE_DIRS})
+  ament_target_dependencies(display_test_fixture ${TEST_TARGET_DEPENDENCIES} rviz_rendering rviz_common)
+
+  set(TEST_LINK_LIBRARIES
+    display_test_fixture
+    rviz_default_plugins
+    Qt5::Widgets
+  )
+
   ament_add_gmock(fps_view_controller_test
     test/rviz_default_plugins/view_controllers/fps/fps_view_controller_test.cpp
     test/rviz_default_plugins/view_controllers/view_controller_test_fixture.hpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET fps_view_controller_test)
@@ -355,7 +366,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(frame_info_test
     test/rviz_default_plugins/displays/tf/frame_info_test.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET frame_info_test)
@@ -366,7 +376,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(grid_cells_display_test
     test/rviz_default_plugins/displays/grid_cells/grid_cells_display_test.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET grid_cells_display_test)
     target_include_directories(grid_cells_display_test PUBLIC ${TEST_INCLUDE_DIRS})
@@ -392,7 +401,6 @@ if(BUILD_TESTING)
     test/rviz_default_plugins/displays/marker/markers/text_view_facing_marker_test.cpp
     test/rviz_default_plugins/displays/marker/markers/triangle_list_marker_test.cpp
     test/rviz_default_plugins/displays/marker/markers/markers_test_fixture.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/displays/marker/marker_messages.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
@@ -405,7 +413,6 @@ if(BUILD_TESTING)
   ament_add_gmock(marker_common_test
     test/rviz_default_plugins/displays/marker/marker_common_test.cpp
     test/rviz_default_plugins/displays/marker/marker_messages.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET marker_common_test)
@@ -416,7 +423,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(map_display_test
     test/rviz_default_plugins/displays/map/map_display_test.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET map_display_test)
@@ -427,7 +433,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(measure_tool_test
     test/rviz_default_plugins/tools/measure/measure_tool_test.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET measure_tool_test)
@@ -438,7 +443,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(odometry_display_test
     test/rviz_default_plugins/displays/odometry/odometry_display_test.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET odometry_display_test)
@@ -459,7 +463,6 @@ if(BUILD_TESTING)
   ament_add_gmock(orbit_view_controller_test
     test/rviz_default_plugins/view_controllers/orbit/orbit_view_controller_test.cpp
     test/rviz_default_plugins/view_controllers/view_controller_test_fixture.hpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET orbit_view_controller_test)
@@ -471,7 +474,6 @@ if(BUILD_TESTING)
   ament_add_gmock(ortho_view_controller_test
     test/rviz_default_plugins/view_controllers/ortho/ortho_view_controller_test.cpp
     test/rviz_default_plugins/view_controllers/view_controller_test_fixture.hpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET ortho_view_controller_test)
@@ -491,7 +493,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(path_display_test
     test/rviz_default_plugins/displays/path/path_display_test.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET path_display_test)
@@ -515,7 +516,6 @@ if(BUILD_TESTING)
     test/rviz_default_plugins/pointcloud_messages.hpp
     test/rviz_default_plugins/pointcloud_messages.cpp
     test/rviz_default_plugins/displays/pointcloud/point_cloud_common_test.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET point_cloud_common_test)
@@ -526,7 +526,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(point_cloud_scalar_display_test
     test/rviz_default_plugins/displays/pointcloud/point_cloud_scalar_display_test.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET point_cloud_scalar_display_test)
     target_include_directories(point_cloud_scalar_display_test PUBLIC ${TEST_INCLUDE_DIRS})
@@ -552,7 +551,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(point_display_test
     test/rviz_default_plugins/displays/point/point_stamped_display_test.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET point_display_test)
@@ -563,7 +561,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(pose_array_display_test
     test/rviz_default_plugins/displays/pose_array/pose_array_display_test.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET pose_array_display_test)
@@ -574,7 +571,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(pose_tool_test
     test/rviz_default_plugins/tools/pose/pose_tool_test.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET pose_tool_test)
@@ -585,7 +581,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(range_display_test
     test/rviz_default_plugins/displays/range/range_display_test.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET range_display_test)
@@ -624,7 +619,6 @@ if(BUILD_TESTING)
   ament_add_gmock(xy_orbit_view_controller_test
     test/rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller_test.cpp
     test/rviz_default_plugins/view_controllers/view_controller_test_fixture.hpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET xy_orbit_view_controller_test)
@@ -644,7 +638,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(transformer_guard_test
     test/rviz_default_plugins/transformation/transformer_guard_test.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET transformer_guard_test)
     target_include_directories(transformer_guard_test PUBLIC ${TEST_INCLUDE_DIRS})
