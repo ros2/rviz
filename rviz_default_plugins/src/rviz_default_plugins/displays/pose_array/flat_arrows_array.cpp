@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "include/rviz_default_plugins/displays/pose_array/flat_arrows_array.hpp"
+#include "rviz_default_plugins/displays/pose_array/flat_arrows_array.hpp"
 
 #include <vector>
 #include <string>

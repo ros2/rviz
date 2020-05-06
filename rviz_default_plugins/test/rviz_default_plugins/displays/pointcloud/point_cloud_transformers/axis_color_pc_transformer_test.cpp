@@ -34,7 +34,7 @@
 #include <QList>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/properties/property.hpp"
-#include "test/rviz_default_plugins/pointcloud_messages.hpp"
+#include "../../../pointcloud_messages.hpp"
 
 #include "rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.hpp"
 
