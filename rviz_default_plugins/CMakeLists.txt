@@ -74,7 +74,6 @@ find_package(TinyXML REQUIRED)  # provided by tinyxml_vendor
 find_package(urdf REQUIRED)
 find_package(visualization_msgs REQUIRED)
 
-# These need to be added in the add_library() call so AUTOMOC detects them.
 set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/axes/axes_display.hpp
   include/rviz_default_plugins/displays/camera/camera_display.hpp
@@ -327,19 +326,16 @@ if(BUILD_TESTING)
     visualization_msgs
   )
 
-  # None of the tests are Qt files, so we can save a bit of time by not letting
-  # AUTOMOC run on every one of them and generate an empty file.
-  set(CMAKE_AUTOMOC OFF)
-
   # display_test_fixture.cpp is a piece of code that is used by every test.
   # Instead of recompiling it for every test, just compile it once as a library
   # and reuse it.  Note that we need to call ament_find_gmock() by hand here to
-  # find GMOCK_INCLUDE_DIRS so we can compile this file.
+  # find GMOCK_INCLUDE_DIRS and GMOCK_LIBRARIES so we can compile this file.
   ament_find_gmock()
-  add_library(display_test_fixture SHARED
+  add_library(display_test_fixture
     test/rviz_default_plugins/displays/display_test_fixture.cpp
   )
   target_include_directories(display_test_fixture PRIVATE ${GMOCK_INCLUDE_DIRS} ${TEST_INCLUDE_DIRS})
+  target_link_libraries(display_test_fixture ${GMOCK_LIBRARIES})
   ament_target_dependencies(display_test_fixture ${TEST_TARGET_DEPENDENCIES} rviz_rendering rviz_common)
 
   set(TEST_LINK_LIBRARIES
