@@ -235,7 +235,6 @@ target_include_directories(rviz_common
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
-    ${pluginlib_INCLUDE_DIRS}
     ${TinyXML_INCLUDE_DIRS}
 )
 
@@ -243,7 +242,6 @@ target_link_libraries(rviz_common
   PUBLIC
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
-  ${pluginlib_LIBRARIES}
   rviz_rendering::rviz_rendering
   Qt5::Widgets
   ${TinyXML_LIBRARIES}
@@ -252,6 +250,7 @@ target_link_libraries(rviz_common
 ament_target_dependencies(rviz_common
   PUBLIC
   geometry_msgs
+  pluginlib
   rclcpp
   resource_retriever
   rviz_assimp_vendor
