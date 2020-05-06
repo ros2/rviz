@@ -32,7 +32,7 @@
 #include <memory>
 #include <vector>
 
-#include "test/rviz_default_plugins/pointcloud_messages.hpp"
+#include "../../../pointcloud_messages.hpp"
 
 #include "rviz_default_plugins/displays/pointcloud/transformers/rgbf32_pc_transformer.hpp"
 

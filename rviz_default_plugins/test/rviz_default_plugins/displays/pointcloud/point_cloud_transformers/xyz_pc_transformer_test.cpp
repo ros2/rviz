@@ -32,7 +32,7 @@
 #include <memory>
 #include <vector>
 
-#include "test/rviz_default_plugins/pointcloud_messages.hpp"
+#include "../../../pointcloud_messages.hpp"
 
 #include "../../../scene_graph_introspection_helper.hpp"
 
