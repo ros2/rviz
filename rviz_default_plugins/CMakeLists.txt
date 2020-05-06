@@ -46,9 +46,9 @@ if(MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
 endif()
 
-# Qt5 boilerplate options from http://doc.qt.io/qt-5/cmake-manual.html
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
+# We specifically don't turn on CMAKE_AUTOMOC, since it generates one huge
+# mocs_compilation.cpp file that takes a lot of memory to compile.  Instead
+# we create individual moc files that can be compiled separately.
 
 find_package(ament_cmake REQUIRED)
 
@@ -86,29 +86,19 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/laser_scan/laser_scan_display.hpp
   include/rviz_default_plugins/displays/map/map_display.hpp
   include/rviz_default_plugins/displays/marker/marker_common.hpp
-  include/rviz_default_plugins/displays/marker/marker_display.hpp
-  include/rviz_default_plugins/displays/marker_array/marker_array_display.hpp
   include/rviz_default_plugins/displays/odometry/odometry_display.hpp
   include/rviz_default_plugins/transformation/transformer_guard.hpp
   include/rviz_default_plugins/displays/interactive_markers/integer_action.hpp
   include/rviz_default_plugins/displays/interactive_markers/interactive_marker.hpp
-  include/rviz_default_plugins/displays/interactive_markers/interactive_marker_control.hpp
   include/rviz_default_plugins/displays/interactive_markers/interactive_marker_display.hpp
   include/rviz_default_plugins/displays/interactive_markers/interactive_marker_namespace_property.hpp
   include/rviz_default_plugins/displays/path/path_display.hpp
   include/rviz_default_plugins/displays/point/point_stamped_display.hpp
   include/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp
-  include/rviz_default_plugins/displays/pointcloud/point_cloud_display.hpp
-  include/rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp
   include/rviz_default_plugins/displays/pointcloud/point_cloud_transformer.hpp
-  include/rviz_default_plugins/displays/pointcloud/point_cloud_transformer_factory.hpp
-  include/rviz_default_plugins/displays/pointcloud/point_cloud_helpers.hpp
-  include/rviz_default_plugins/displays/pointcloud/point_cloud_scalar_display.hpp
   include/rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.hpp
   include/rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.hpp
   include/rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.hpp
-  include/rviz_default_plugins/displays/pointcloud/transformers/rgb8_pc_transformer.hpp
-  include/rviz_default_plugins/displays/pointcloud/transformers/rgbf32_pc_transformer.hpp
   include/rviz_default_plugins/displays/polygon/polygon_display.hpp
   include/rviz_default_plugins/displays/pose/pose_display.hpp
   include/rviz_default_plugins/displays/pose_array/pose_array_display.hpp
@@ -127,15 +117,16 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/tools/measure/measure_tool.hpp
   include/rviz_default_plugins/tools/goal_pose/goal_tool.hpp
   include/rviz_default_plugins/tools/interaction/interaction_tool.hpp
-  include/rviz_default_plugins/tools/pose/pose_tool.hpp
   include/rviz_default_plugins/tools/pose_estimate/initial_pose_tool.hpp
   include/rviz_default_plugins/tools/point/point_tool.hpp
-  include/rviz_default_plugins/transformation/tf_frame_transformer.hpp
-  include/rviz_default_plugins/transformation/tf_wrapper.hpp
   include/rviz_default_plugins/view_controllers/orbit/orbit_view_controller.hpp
   include/rviz_default_plugins/view_controllers/ortho/fixed_orientation_ortho_view_controller.hpp
   include/rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller.hpp
 )
+
+foreach(header "${rviz_default_plugins_headers_to_moc}")
+  qt5_wrap_cpp(rviz_default_plugins_moc_files "${header}")
+endforeach()
 
 set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/axes/axes_display.cpp
@@ -224,7 +215,7 @@ set(rviz_default_plugins_source_files
 )
 
 add_library(rviz_default_plugins SHARED
-  ${rviz_default_plugins_headers_to_moc}
+  ${rviz_default_plugins_moc_files}
   ${rviz_default_plugins_source_files}
 )
 
