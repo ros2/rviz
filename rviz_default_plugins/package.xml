@@ -28,6 +28,7 @@
   <depend>interactive_markers</depend>
   <depend>laser_geometry</depend>
   <depend>nav_msgs</depend>
+  <depend>nav2_msgs</depend>
   <depend>map_msgs</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
