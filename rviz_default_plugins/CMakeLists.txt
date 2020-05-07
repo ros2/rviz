@@ -226,6 +226,11 @@ target_include_directories(rviz_default_plugins PUBLIC
   ${TinyXML_INCLUDE_DIRS}
 )
 
+target_link_libraries(rviz_default_plugins PUBLIC
+  rviz_ogre_vendor::OgreMain
+  rviz_ogre_vendor::OgreOverlay
+)
+
 # Causes the visibility macros to use dllexport rather than dllimport,
 # which is appropriate when building the dll but not consuming it.
 target_compile_definitions(rviz_default_plugins PRIVATE "RVIZ_DEFAULT_PLUGINS_BUILDING_LIBRARY")
@@ -236,6 +241,7 @@ target_compile_definitions(rviz_default_plugins PUBLIC "PLUGINLIB__DISABLE_BOOST
 pluginlib_export_plugin_description_file(rviz_common plugins_description.xml)
 
 ament_target_dependencies(rviz_default_plugins
+  PUBLIC
   geometry_msgs
   interactive_markers
   laser_geometry
@@ -263,6 +269,8 @@ ament_export_dependencies(
   map_msgs
   nav_msgs
   rclcpp
+  resource_retriever
+  rviz_ogre_vendor
   tf2
   tf2_geometry_msgs
   tf2_ros
@@ -585,7 +593,9 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET robot_test)
     target_include_directories(robot_test PUBLIC ${TEST_INCLUDE_DIRS})
-    target_link_libraries(robot_test ${TEST_LINK_LIBRARIES})
+    # TODO(clalancette): Figure out why putting resource_retriever in the
+    # TEST_TARGET_DEPENDENCIES doesn't work.
+    target_link_libraries(robot_test resource_retriever::resource_retriever ${TEST_LINK_LIBRARIES})
     ament_target_dependencies(robot_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
