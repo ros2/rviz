@@ -2,8 +2,8 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.0.1 (2020-05-07)
+------------------
 * Added dependency on ogre to fix building on the buildfarm (`#544 <https://github.com/ros2/rviz/issues/544>`_)
 * Refactored test fixtures to reduce memory usage while compiling (`#540 <https://github.com/ros2/rviz/pull/540>`_)
 * Contributors: Chris Lalancette
