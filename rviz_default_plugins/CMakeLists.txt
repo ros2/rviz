@@ -269,6 +269,7 @@ ament_export_dependencies(
   map_msgs
   nav_msgs
   rclcpp
+  resource_retriever
   rviz_ogre_vendor
   tf2
   tf2_geometry_msgs
@@ -592,7 +593,9 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET robot_test)
     target_include_directories(robot_test PUBLIC ${TEST_INCLUDE_DIRS})
-    target_link_libraries(robot_test ${TEST_LINK_LIBRARIES})
+    # TODO(clalancette): Figure out why putting resource_retriever in the
+    # TEST_TARGET_DEPENDENCIES doesn't work.
+    target_link_libraries(robot_test resource_retriever::resource_retriever ${TEST_LINK_LIBRARIES})
     ament_target_dependencies(robot_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
