@@ -2,6 +2,12 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Added dependency on ogre to fix building on the buildfarm (`#544 <https://github.com/ros2/rviz/issues/544>`_)
+* Refactored test fixtures to reduce memory usage while compiling (`#540 <https://github.com/ros2/rviz/pull/540>`_)
+* Contributors: Chris Lalancette
+
 8.0.0 (2020-05-01)
 ------------------
 * Note from wjwwood: I've chosen bump the major version this time, even though the API was not broken strictly speaking, partly because of some potentially disruptive build system changes and partially in preparation for ROS Foxy, to allow for new minor/patch versions in the previous ROS release Eloquent.
