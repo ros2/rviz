@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "include/rviz_common/display_group.hpp"
+#include "rviz_common/display_group.hpp"
 
 #include <cstdio>  // for debug-write printf
 #include <map>

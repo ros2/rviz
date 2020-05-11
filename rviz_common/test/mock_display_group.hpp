@@ -30,7 +30,7 @@
 #ifndef MOCK_DISPLAY_GROUP_HPP_
 #define MOCK_DISPLAY_GROUP_HPP_
 
-#include "include/rviz_common/display_group.hpp"
+#include "rviz_common/display_group.hpp"
 
 using namespace rviz_common;  // NOLINT
 

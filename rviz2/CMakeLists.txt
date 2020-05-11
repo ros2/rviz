@@ -13,10 +13,6 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 
-# Qt5 boilerplate options from http://doc.qt.io/qt-5/cmake-manual.html
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
-
 find_package(rviz_common REQUIRED)
 
 find_package(rviz_ogre_vendor REQUIRED)

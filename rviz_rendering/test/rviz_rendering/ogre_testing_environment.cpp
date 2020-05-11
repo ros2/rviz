@@ -30,7 +30,7 @@
 #include "test/rviz_rendering/ogre_testing_environment.hpp"
 
 #include "rviz_rendering/render_window.hpp"
-#include "src/rviz_rendering/render_system.hpp"
+#include "../src/rviz_rendering/render_system.hpp"
 
 namespace rviz_rendering
 {

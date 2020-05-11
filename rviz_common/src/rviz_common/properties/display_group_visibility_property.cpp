@@ -35,7 +35,7 @@
 
 #include <map>
 
-#include "include/rviz_common/properties/display_group_visibility_property.hpp"
+#include "rviz_common/properties/display_group_visibility_property.hpp"
 
 #include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/display_context.hpp"
