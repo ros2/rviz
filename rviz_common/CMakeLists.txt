@@ -85,7 +85,6 @@ set(rviz_common_headers_to_moc
   src/rviz_common/displays_panel.hpp
   src/rviz_common/failed_panel.hpp
   src/rviz_common/frame_manager.hpp
-  include/rviz_common/transformation/frame_transformer.hpp
   include/rviz_common/frame_manager_iface.hpp
   src/rviz_common/loading_dialog.hpp
   src/rviz_common/new_object_dialog.hpp
@@ -102,8 +101,6 @@ set(rviz_common_headers_to_moc
   include/rviz_common/properties/editable_enum_property.hpp
   include/rviz_common/properties/float_edit.hpp
   include/rviz_common/properties/float_property.hpp
-  include/rviz_common/properties/grouped_checkbox_property.hpp
-  include/rviz_common/properties/grouped_checkbox_property_group.hpp
   include/rviz_common/properties/int_property.hpp
   include/rviz_common/properties/line_edit_with_button.hpp
   include/rviz_common/properties/property.hpp
@@ -122,10 +119,7 @@ set(rviz_common_headers_to_moc
   src/rviz_common/screenshot_dialog.hpp
   include/rviz_common/interaction/selection_manager.hpp
   include/rviz_common/interaction/selection_manager_iface.hpp
-  include/rviz_common/interaction/selection_renderer.hpp
   src/rviz_common/splash_screen.hpp
-  # src/rviz_common/time_panel.hpp
-  src/rviz_common/transformation/identity_frame_transformer.hpp
   include/rviz_common/tool.hpp
   src/rviz_common/tool_manager.hpp
   src/rviz_common/tool_properties_panel.hpp
@@ -137,10 +131,7 @@ set(rviz_common_headers_to_moc
   src/rviz_common/visualization_frame.hpp
   src/rviz_common/visualization_manager.hpp
   src/rviz_common/widget_geometry_change_detector.hpp
-  include/rviz_common/window_manager_interface.hpp
-  include/rviz_common/validate_floats.hpp
   include/rviz_common/ros_topic_display.hpp
-  include/rviz_common/message_filter_display.hpp
 )
 
 foreach(header "${rviz_common_headers_to_moc}")
@@ -347,9 +338,11 @@ if(BUILD_TESTING)
   qt5_wrap_cpp(rviz_common_test_moc_files test/mock_display.hpp)
   qt5_wrap_cpp(rviz_common_test_moc_files test/mock_property_change_receiver.hpp)
 
+  qt5_wrap_cpp(rviz_common_test_frame_manager_moc src/rviz_common/frame_manager.hpp)
   ament_add_gmock(frame_manager_test
     test/frame_manager_test.cpp
     src/rviz_common/frame_manager.cpp
+    ${rviz_common_test_frame_manager_moc}
   )
   if(TARGET frame_manager_test)
     target_link_libraries(frame_manager_test
