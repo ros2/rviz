@@ -1,6 +1,6 @@
 <package format="2">
   <name>rviz_default_plugins</name>
-  <version>7.0.3</version>
+  <version>8.0.1</version>
   <description>
     Several default plugins for rviz to cover the basic functionality.
   </description>
@@ -18,11 +18,15 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <build_depend>qtbase5-dev</build_depend>
+  <build_depend>rviz_ogre_vendor</build_depend>
+
+  <build_export_depend>rviz_ogre_vendor</build_export_depend>
 
   <exec_depend>libqt5-core</exec_depend>
   <exec_depend>libqt5-gui</exec_depend>
   <exec_depend>libqt5-opengl</exec_depend>
   <exec_depend>libqt5-widgets</exec_depend>
+  <exec_depend>rviz_ogre_vendor</exec_depend>
 
   <depend>geometry_msgs</depend>
   <depend>interactive_markers</depend>

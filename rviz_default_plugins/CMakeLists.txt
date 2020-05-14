@@ -46,9 +46,9 @@ if(MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
 endif()
 
-# Qt5 boilerplate options from http://doc.qt.io/qt-5/cmake-manual.html
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
+# We specifically don't turn on CMAKE_AUTOMOC, since it generates one huge
+# mocs_compilation.cpp file that takes a lot of memory to compile.  Instead
+# we create individual moc files that can be compiled separately.
 
 find_package(ament_cmake REQUIRED)
 
@@ -72,7 +72,6 @@ find_package(tf2_ros REQUIRED)
 find_package(urdf REQUIRED)
 find_package(visualization_msgs REQUIRED)
 
-# These need to be added in the add_library() call so AUTOMOC detects them.
 set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/axes/axes_display.hpp
   include/rviz_default_plugins/displays/camera/camera_display.hpp
@@ -84,29 +83,19 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/laser_scan/laser_scan_display.hpp
   include/rviz_default_plugins/displays/map/map_display.hpp
   include/rviz_default_plugins/displays/marker/marker_common.hpp
-  include/rviz_default_plugins/displays/marker/marker_display.hpp
-  include/rviz_default_plugins/displays/marker_array/marker_array_display.hpp
   include/rviz_default_plugins/displays/odometry/odometry_display.hpp
   include/rviz_default_plugins/transformation/transformer_guard.hpp
   include/rviz_default_plugins/displays/interactive_markers/integer_action.hpp
   include/rviz_default_plugins/displays/interactive_markers/interactive_marker.hpp
-  include/rviz_default_plugins/displays/interactive_markers/interactive_marker_control.hpp
   include/rviz_default_plugins/displays/interactive_markers/interactive_marker_display.hpp
   include/rviz_default_plugins/displays/interactive_markers/interactive_marker_namespace_property.hpp
   include/rviz_default_plugins/displays/path/path_display.hpp
   include/rviz_default_plugins/displays/point/point_stamped_display.hpp
   include/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp
-  include/rviz_default_plugins/displays/pointcloud/point_cloud_display.hpp
-  include/rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp
   include/rviz_default_plugins/displays/pointcloud/point_cloud_transformer.hpp
-  include/rviz_default_plugins/displays/pointcloud/point_cloud_transformer_factory.hpp
-  include/rviz_default_plugins/displays/pointcloud/point_cloud_helpers.hpp
-  include/rviz_default_plugins/displays/pointcloud/point_cloud_scalar_display.hpp
   include/rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.hpp
   include/rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.hpp
   include/rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.hpp
-  include/rviz_default_plugins/displays/pointcloud/transformers/rgb8_pc_transformer.hpp
-  include/rviz_default_plugins/displays/pointcloud/transformers/rgbf32_pc_transformer.hpp
   include/rviz_default_plugins/displays/polygon/polygon_display.hpp
   include/rviz_default_plugins/displays/pose/pose_display.hpp
   include/rviz_default_plugins/displays/pose_array/pose_array_display.hpp
@@ -125,15 +114,16 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/tools/measure/measure_tool.hpp
   include/rviz_default_plugins/tools/goal_pose/goal_tool.hpp
   include/rviz_default_plugins/tools/interaction/interaction_tool.hpp
-  include/rviz_default_plugins/tools/pose/pose_tool.hpp
   include/rviz_default_plugins/tools/pose_estimate/initial_pose_tool.hpp
   include/rviz_default_plugins/tools/point/point_tool.hpp
-  include/rviz_default_plugins/transformation/tf_frame_transformer.hpp
-  include/rviz_default_plugins/transformation/tf_wrapper.hpp
   include/rviz_default_plugins/view_controllers/orbit/orbit_view_controller.hpp
   include/rviz_default_plugins/view_controllers/ortho/fixed_orientation_ortho_view_controller.hpp
   include/rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller.hpp
 )
+
+foreach(header "${rviz_default_plugins_headers_to_moc}")
+  qt5_wrap_cpp(rviz_default_plugins_moc_files "${header}")
+endforeach()
 
 set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/axes/axes_display.cpp
@@ -222,7 +212,7 @@ set(rviz_default_plugins_source_files
 )
 
 add_library(rviz_default_plugins SHARED
-  ${rviz_default_plugins_headers_to_moc}
+  ${rviz_default_plugins_moc_files}
   ${rviz_default_plugins_source_files}
 )
 
@@ -231,6 +221,11 @@ target_include_directories(rviz_default_plugins PUBLIC
   $<INSTALL_INTERFACE:include>
   ${OGRE_INCLUDE_DIRS}
   ${Qt5Widgets_INCLUDE_DIRS}
+)
+
+target_link_libraries(rviz_default_plugins PUBLIC
+  rviz_ogre_vendor::OgreMain
+  rviz_ogre_vendor::OgreOverlay
 )
 
 # Causes the visibility macros to use dllexport rather than dllimport,
@@ -243,6 +238,7 @@ target_compile_definitions(rviz_default_plugins PUBLIC "PLUGINLIB__DISABLE_BOOST
 pluginlib_export_plugin_description_file(rviz_common plugins_description.xml)
 
 ament_target_dependencies(rviz_default_plugins
+  PUBLIC
   geometry_msgs
   interactive_markers
   laser_geometry
@@ -270,6 +266,8 @@ ament_export_dependencies(
   map_msgs
   nav_msgs
   rclcpp
+  resource_retriever
+  rviz_ogre_vendor
   tf2
   tf2_geometry_msgs
   tf2_ros
@@ -324,11 +322,6 @@ if(BUILD_TESTING)
   )
   ament_include_directories_order(TEST_INCLUDE_DIRS ${TEST_INCLUDE_DIRS})
 
-  set(TEST_LINK_LIBRARIES
-    rviz_default_plugins
-    Qt5::Widgets
-  )
-
   set(TEST_TARGET_DEPENDENCIES
     map_msgs
     nav_msgs
@@ -338,10 +331,27 @@ if(BUILD_TESTING)
     visualization_msgs
   )
 
+  # display_test_fixture.cpp is a piece of code that is used by every test.
+  # Instead of recompiling it for every test, just compile it once as a library
+  # and reuse it.  Note that we need to call ament_find_gmock() by hand here to
+  # find GMOCK_INCLUDE_DIRS and GMOCK_LIBRARIES so we can compile this file.
+  ament_find_gmock()
+  add_library(display_test_fixture
+    test/rviz_default_plugins/displays/display_test_fixture.cpp
+  )
+  target_include_directories(display_test_fixture PRIVATE ${GMOCK_INCLUDE_DIRS} ${TEST_INCLUDE_DIRS})
+  target_link_libraries(display_test_fixture ${GMOCK_LIBRARIES})
+  ament_target_dependencies(display_test_fixture ${TEST_TARGET_DEPENDENCIES} rviz_rendering rviz_common)
+
+  set(TEST_LINK_LIBRARIES
+    display_test_fixture
+    rviz_default_plugins
+    Qt5::Widgets
+  )
+
   ament_add_gmock(fps_view_controller_test
     test/rviz_default_plugins/view_controllers/fps/fps_view_controller_test.cpp
     test/rviz_default_plugins/view_controllers/view_controller_test_fixture.hpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET fps_view_controller_test)
@@ -352,7 +362,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(frame_info_test
     test/rviz_default_plugins/displays/tf/frame_info_test.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET frame_info_test)
@@ -363,7 +372,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(grid_cells_display_test
     test/rviz_default_plugins/displays/grid_cells/grid_cells_display_test.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET grid_cells_display_test)
     target_include_directories(grid_cells_display_test PUBLIC ${TEST_INCLUDE_DIRS})
@@ -389,7 +397,6 @@ if(BUILD_TESTING)
     test/rviz_default_plugins/displays/marker/markers/text_view_facing_marker_test.cpp
     test/rviz_default_plugins/displays/marker/markers/triangle_list_marker_test.cpp
     test/rviz_default_plugins/displays/marker/markers/markers_test_fixture.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/displays/marker/marker_messages.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
@@ -402,7 +409,6 @@ if(BUILD_TESTING)
   ament_add_gmock(marker_common_test
     test/rviz_default_plugins/displays/marker/marker_common_test.cpp
     test/rviz_default_plugins/displays/marker/marker_messages.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET marker_common_test)
@@ -413,7 +419,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(map_display_test
     test/rviz_default_plugins/displays/map/map_display_test.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET map_display_test)
@@ -424,7 +429,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(measure_tool_test
     test/rviz_default_plugins/tools/measure/measure_tool_test.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET measure_tool_test)
@@ -435,7 +439,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(odometry_display_test
     test/rviz_default_plugins/displays/odometry/odometry_display_test.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET odometry_display_test)
@@ -456,7 +459,6 @@ if(BUILD_TESTING)
   ament_add_gmock(orbit_view_controller_test
     test/rviz_default_plugins/view_controllers/orbit/orbit_view_controller_test.cpp
     test/rviz_default_plugins/view_controllers/view_controller_test_fixture.hpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET orbit_view_controller_test)
@@ -468,7 +470,6 @@ if(BUILD_TESTING)
   ament_add_gmock(ortho_view_controller_test
     test/rviz_default_plugins/view_controllers/ortho/ortho_view_controller_test.cpp
     test/rviz_default_plugins/view_controllers/view_controller_test_fixture.hpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET ortho_view_controller_test)
@@ -488,7 +489,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(path_display_test
     test/rviz_default_plugins/displays/path/path_display_test.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET path_display_test)
@@ -512,7 +512,6 @@ if(BUILD_TESTING)
     test/rviz_default_plugins/pointcloud_messages.hpp
     test/rviz_default_plugins/pointcloud_messages.cpp
     test/rviz_default_plugins/displays/pointcloud/point_cloud_common_test.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET point_cloud_common_test)
@@ -523,7 +522,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(point_cloud_scalar_display_test
     test/rviz_default_plugins/displays/pointcloud/point_cloud_scalar_display_test.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET point_cloud_scalar_display_test)
     target_include_directories(point_cloud_scalar_display_test PUBLIC ${TEST_INCLUDE_DIRS})
@@ -549,7 +547,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(point_display_test
     test/rviz_default_plugins/displays/point/point_stamped_display_test.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET point_display_test)
@@ -560,7 +557,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(pose_array_display_test
     test/rviz_default_plugins/displays/pose_array/pose_array_display_test.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET pose_array_display_test)
@@ -571,7 +567,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(pose_tool_test
     test/rviz_default_plugins/tools/pose/pose_tool_test.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET pose_tool_test)
@@ -582,7 +577,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(range_display_test
     test/rviz_default_plugins/displays/range/range_display_test.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET range_display_test)
@@ -596,7 +590,9 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET robot_test)
     target_include_directories(robot_test PUBLIC ${TEST_INCLUDE_DIRS})
-    target_link_libraries(robot_test ${TEST_LINK_LIBRARIES})
+    # TODO(clalancette): Figure out why putting resource_retriever in the
+    # TEST_TARGET_DEPENDENCIES doesn't work.
+    target_link_libraries(robot_test resource_retriever::resource_retriever ${TEST_LINK_LIBRARIES})
     ament_target_dependencies(robot_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
@@ -621,7 +617,6 @@ if(BUILD_TESTING)
   ament_add_gmock(xy_orbit_view_controller_test
     test/rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller_test.cpp
     test/rviz_default_plugins/view_controllers/view_controller_test_fixture.hpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection_helper.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET xy_orbit_view_controller_test)
@@ -641,7 +636,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(transformer_guard_test
     test/rviz_default_plugins/transformation/transformer_guard_test.cpp
-    test/rviz_default_plugins/displays/display_test_fixture.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET transformer_guard_test)
     target_include_directories(transformer_guard_test PUBLIC ${TEST_INCLUDE_DIRS})

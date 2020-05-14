@@ -2,6 +2,15 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.0.1 (2020-05-07)
+------------------
+
+8.0.0 (2020-05-01)
+------------------
+* Note from wjwwood: I've chosen bump the major version this time, even though the API was not broken strictly speaking, partly because of some potentially disruptive build system changes and partially in preparation for ROS Foxy, to allow for new minor/patch versions in the previous ROS release Eloquent.
+* Switched to the CMake Patch module. (`#509 <https://github.com/ros2/rviz/issues/509>`_)
+* Contributors: Dan Rose, Mikael Arguedas
+
 7.0.3 (2019-11-13)
 ------------------
 * Skip freetype2 dependencies (`#405 <https://github.com/ros2/rviz/issues/405>`_)

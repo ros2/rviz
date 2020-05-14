@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "src/rviz_default_plugins/displays/pose_covariance/pose_with_cov_selection_handler.hpp"
+#include "pose_with_cov_selection_handler.hpp"
 
 #include <memory>
 

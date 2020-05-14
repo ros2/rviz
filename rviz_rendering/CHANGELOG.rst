@@ -2,6 +2,19 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.0.1 (2020-05-07)
+------------------
+
+8.0.0 (2020-05-01)
+------------------
+* Note from wjwwood: I've chosen bump the major version this time, even though the API was not broken strictly speaking, partly because of some potentially disruptive build system changes and partially in preparation for ROS Foxy, to allow for new minor/patch versions in the previous ROS release Eloquent.
+* Removed duplicate include dirs and link libraries. (`#533 <https://github.com/ros2/rviz/issues/533>`_)
+* Changed to use ``ament_export_targets()``. (`#525 <https://github.com/ros2/rviz/issues/525>`_)
+* Made some code style changes. (`#504 <https://github.com/ros2/rviz/issues/504>`_)
+* Migrated the pose with covariance display. (`#471 <https://github.com/ros2/rviz/issues/471>`_)
+* Fixed the build when included as a sub-project. (`#475 <https://github.com/ros2/rviz/issues/475>`_)
+* Contributors: Dan Rose, Dirk Thomas, Martin Idel
+
 7.0.3 (2019-11-13)
 ------------------
 

@@ -2,6 +2,17 @@
 Changelog for package rviz_visual_testing_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.0.1 (2020-05-07)
+------------------
+
+8.0.0 (2020-05-01)
+------------------
+* Note from wjwwood: I've chosen bump the major version this time, even though the API was not broken strictly speaking, partly because of some potentially disruptive build system changes and partially in preparation for ROS Foxy, to allow for new minor/patch versions in the previous ROS release Eloquent.
+* Changed to use ``ament_export_targets()``. (`#525 <https://github.com/ros2/rviz/issues/525>`_)
+* Made some code style changes. (`#504 <https://github.com/ros2/rviz/issues/504>`_)
+* Changed to install RViz configs for visual tests. (`#487 <https://github.com/ros2/rviz/issues/487>`_) (`#498 <https://github.com/ros2/rviz/issues/498>`_)
+* Contributors: Alejandro Hernández Cordero, Dirk Thomas
+
 7.0.3 (2019-11-13)
 ------------------
 

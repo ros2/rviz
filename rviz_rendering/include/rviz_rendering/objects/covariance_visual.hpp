@@ -33,6 +33,7 @@
 
 #include <array>
 #include <memory>
+#include <sstream>  // needed for Eigen until https://gitlab.com/libeigen/eigen/-/merge_requests/65
 #include <vector>
 
 #include <Eigen/Dense>  // NOLINT: cpplint cannot handle correct include here
