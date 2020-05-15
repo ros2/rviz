@@ -38,7 +38,7 @@
 #include <Ogre.h>
 
 #include "rviz_rendering/objects/covariance_visual.hpp"
-#include "test/rviz_rendering/matcher.hpp"
+#include "../matcher.hpp"
 #include "test/rviz_rendering/ogre_testing_environment.hpp"
 #include "test/rviz_rendering/scene_graph_introspection.hpp"
 

@@ -28,10 +28,6 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 
-# Qt5 boilerplate options from http://doc.qt.io/qt-5/cmake-manual.html
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
-
 # do find_package(rviz_ogre_vendor) first to make sure the custom OGRE is found
 find_package(rviz_ogre_vendor REQUIRED)
 find_package(rviz_assimp_vendor REQUIRED)
@@ -65,13 +61,11 @@ if(Qt5_FOUND AND WIN32 AND TARGET Qt5::qmake AND NOT TARGET Qt5::windeployqt)
   endif()
 endif()
 
-# These need to be added in the add_library() call so AUTOMOC detects them.
-set(headers_with_q_object
-  include/rviz_rendering/render_window.hpp
-)
+# These need to be added in the add_library() call
+qt5_wrap_cpp(rviz_rendering_moc_files include/rviz_rendering/render_window.hpp)
 
 add_library(rviz_rendering SHARED
-  ${headers_with_q_object}
+  ${rviz_rendering_moc_files}
   src/rviz_rendering/apply_visibility_bits.cpp
   src/rviz_rendering/geometry.cpp
   src/rviz_rendering/viewport_projection_finder.cpp

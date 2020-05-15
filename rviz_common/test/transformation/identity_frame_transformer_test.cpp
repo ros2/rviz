@@ -33,7 +33,7 @@
 #include <memory>
 #include <string>
 
-#include "src/rviz_common/transformation/identity_frame_transformer.hpp"
+#include "../../src/rviz_common/transformation/identity_frame_transformer.hpp"
 #include "transformation_test_helpers.hpp"
 
 using namespace testing;  // NOLINT
