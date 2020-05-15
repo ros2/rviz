@@ -272,8 +272,8 @@ target_compile_definitions(rviz_common PRIVATE "RVIZ_COMMON_BUILDING_LIBRARY")
 ament_export_targets(rviz_common)
 ament_export_dependencies(
   rviz_rendering
-  geometry_msgs
   pluginlib
+  geometry_msgs
   rclcpp
   sensor_msgs
   std_msgs
