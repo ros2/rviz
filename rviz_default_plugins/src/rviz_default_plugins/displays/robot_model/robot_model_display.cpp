@@ -37,8 +37,6 @@
 
 #include <QFile>  // NOLINT cpplint cannot handle include order here
 
-// TODO(Martin-Idel-SI): Upgrade to tinyxml2 once supported by urdf
-#include <tinyxml.h>  // NOLINT cpplint cannot handle include order here
 #include "urdf/model.h"
 
 #include "tf2_ros/transform_listener.h"
@@ -250,16 +248,8 @@ void RobotModelDisplay::load_urdf_from_string(const std::string & robot_descript
 
 void RobotModelDisplay::display_urdf_content()
 {
-  TiXmlDocument doc;
-  doc.Parse(robot_description_.c_str());
-  if (!doc.RootElement() ) {
-    clear();
-    setStatus(StatusProperty::Error, "URDF", "URDF failed XML parse");
-    return;
-  }
-
   urdf::Model descr;
-  if (!descr.initXml(doc.RootElement())) {
+  if (!descr.initString(robot_description_)) {
     clear();
     setStatus(StatusProperty::Error, "URDF", "URDF failed Model parse");
     return;

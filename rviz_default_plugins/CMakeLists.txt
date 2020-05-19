@@ -69,8 +69,6 @@ find_package(resource_retriever REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
-find_package(tinyxml_vendor REQUIRED)
-find_package(TinyXML REQUIRED)  # provided by tinyxml_vendor
 find_package(urdf REQUIRED)
 find_package(visualization_msgs REQUIRED)
 
@@ -223,7 +221,6 @@ target_include_directories(rviz_default_plugins PUBLIC
   $<INSTALL_INTERFACE:include>
   ${OGRE_INCLUDE_DIRS}
   ${Qt5Widgets_INCLUDE_DIRS}
-  ${TinyXML_INCLUDE_DIRS}
 )
 
 target_link_libraries(rviz_default_plugins PUBLIC
