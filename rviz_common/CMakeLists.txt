@@ -38,8 +38,8 @@ find_package(rviz_ogre_vendor REQUIRED)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
-find_package(geometry_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
+find_package(geometry_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(resource_retriever REQUIRED)
 find_package(rviz_assimp_vendor REQUIRED)
@@ -235,7 +235,6 @@ target_include_directories(rviz_common
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
-    ${pluginlib_INCLUDE_DIRS}
     ${TinyXML_INCLUDE_DIRS}
 )
 
@@ -243,7 +242,6 @@ target_link_libraries(rviz_common
   PUBLIC
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
-  ${pluginlib_LIBRARIES}
   rviz_rendering::rviz_rendering
   Qt5::Widgets
   ${TinyXML_LIBRARIES}
@@ -252,6 +250,7 @@ target_link_libraries(rviz_common
 ament_target_dependencies(rviz_common
   PUBLIC
   geometry_msgs
+  pluginlib
   rclcpp
   resource_retriever
   rviz_assimp_vendor
@@ -273,8 +272,8 @@ target_compile_definitions(rviz_common PRIVATE "RVIZ_COMMON_BUILDING_LIBRARY")
 ament_export_targets(rviz_common)
 ament_export_dependencies(
   rviz_rendering
-  geometry_msgs
   pluginlib
+  geometry_msgs
   rclcpp
   sensor_msgs
   std_msgs
