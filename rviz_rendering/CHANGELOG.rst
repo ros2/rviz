@@ -2,6 +2,12 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Removed automoc completely. (`#545 <https://github.com/ros2/rviz/issues/545>`_)
+* Added workaround for Eigen build bug (`#546 <https://github.com/ros2/rviz/issues/546>`_)
+* Contributors: Chris Lalancette
+
 8.0.1 (2020-05-07)
 ------------------
 

@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Removed automoc completely. (`#545 <https://github.com/ros2/rviz/issues/545>`_)
+* Contributors: Chris Lalancette
+
 8.0.1 (2020-05-07)
 ------------------
 

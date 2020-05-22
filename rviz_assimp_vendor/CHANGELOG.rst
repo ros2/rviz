@@ -2,10 +2,12 @@
 Changelog for package rviz_assimp_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 8.0.1 (2020-05-07)
 ------------------
 * Make rviz_assimp_vendor hack specific to Ubuntu Focal. (`#536 <https://github.com/ros2/rviz/issues/536>`_)
-  Signed-off-by: Chris Lalancette <clalancette@openrobotics.org>
 * Contributors: Chris Lalancette
 
 8.0.0 (2020-05-01)

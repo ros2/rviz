@@ -2,6 +2,13 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Removed rviz_default_plugins dependency on TinyXML (`#531 <https://github.com/ros2/rviz/issues/531>`_)
+  This clears the way for urdf to switch to TinyXML2
+  Note that internally, urdf was converting the passed XML to a string and reparsing it in the implementation of ``urdf::model::initXml``
+* Contributors: Dan Rose
+
 8.0.1 (2020-05-07)
 ------------------
 * Added dependency on ogre to fix building on the buildfarm (`#544 <https://github.com/ros2/rviz/issues/544>`_)
