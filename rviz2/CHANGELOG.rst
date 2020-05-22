@@ -2,8 +2,8 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.0.2 (2020-05-21)
+------------------
 * Removed automoc completely. (`#545 <https://github.com/ros2/rviz/issues/545>`_)
 * Contributors: Chris Lalancette
 
