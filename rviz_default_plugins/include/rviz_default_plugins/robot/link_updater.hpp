@@ -52,7 +52,6 @@ using rviz_common::properties::StatusLevel;
 class RVIZ_DEFAULT_PLUGINS_PUBLIC LinkUpdater
 {
 public:
-
   virtual ~LinkUpdater() {}
 
   virtual bool getLinkTransforms(
