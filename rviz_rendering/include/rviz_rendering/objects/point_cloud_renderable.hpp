@@ -78,8 +78,17 @@ public:
 #pragma clang diagnostic ignored "-Woverloaded-virtual"
 #endif
 
+// TODO(ivanpauno): Fixme!
+// This is not creating a problem, but hidding a base class virtual method is not a good practice.
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Woverloaded-virtual"
+#endif
   RVIZ_RENDERING_PUBLIC
   Ogre::RenderOperation * getRenderOperation() {return &mRenderOp;}
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
 
 #ifdef __clang__
 #pragma clang diagnostic pop
