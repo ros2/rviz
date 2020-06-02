@@ -2,6 +2,11 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixed deprecated Qt usage. (`#555 <https://github.com/ros2/rviz/issues/555>`_)
+* Contributors: Jacob Perron
+
 8.0.2 (2020-05-21)
 ------------------
 * Removed rviz_default_plugins dependency on TinyXML (`#531 <https://github.com/ros2/rviz/issues/531>`_)
