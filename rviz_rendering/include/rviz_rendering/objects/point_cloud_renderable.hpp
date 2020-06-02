@@ -73,16 +73,14 @@ public:
   RVIZ_RENDERING_PUBLIC
   virtual ~PointCloudRenderable();
 
-#ifdef __clang__
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Woverloaded-virtual"
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Woverloaded-virtual"
 #endif
-
   RVIZ_RENDERING_PUBLIC
   Ogre::RenderOperation * getRenderOperation() {return &mRenderOp;}
-
-#ifdef __clang__
-#pragma clang diagnostic pop
+#ifndef _WIN32
+# pragma GCC diagnostic pop
 #endif
 
   RVIZ_RENDERING_PUBLIC

@@ -52,6 +52,8 @@ using rviz_common::properties::StatusLevel;
 class RVIZ_DEFAULT_PLUGINS_PUBLIC LinkUpdater
 {
 public:
+  virtual ~LinkUpdater() {}
+
   virtual bool getLinkTransforms(
     const std::string & link_name, Ogre::Vector3 & visual_position,
     Ogre::Quaternion & visual_orientation,
