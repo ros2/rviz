@@ -101,7 +101,6 @@ public:
     auto global_point = QPointF();
     auto pixel_delta = QPoint();
     auto angle_delta = QPoint(delta, 0);
-
     auto mouseEvent = new QWheelEvent(
       point,
       global_point,
