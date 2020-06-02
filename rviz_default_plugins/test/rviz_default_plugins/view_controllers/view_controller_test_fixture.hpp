@@ -98,8 +98,18 @@ public:
   rviz_common::ViewportMouseEvent generateMouseWheelEvent(int delta)
   {
     auto point = QPointF();
+    auto global_point = QPointF();
+    auto pixel_delta = QPoint();
+
     auto mouseEvent = new QWheelEvent(
-      point, delta, Qt::NoButton, Qt::NoModifier, Qt::Orientation::Horizontal);
+      point,
+      global_point,
+      pixel_delta,
+      delta,
+      Qt::NoButton,
+      Qt::NoModifier,
+      Qt::NoScrollPhase,
+      false);
     return {render_panel_.get(), mouseEvent, 0, 0};
   }
 
