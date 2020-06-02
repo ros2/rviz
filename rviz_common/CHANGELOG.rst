@@ -2,8 +2,8 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.0.3 (2020-06-02)
+------------------
 * Fixed deprecated Qt usage. (`#555 <https://github.com/ros2/rviz/issues/555>`_)
 * Contributors: Jacob Perron
 
