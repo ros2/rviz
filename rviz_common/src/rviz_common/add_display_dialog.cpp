@@ -140,7 +140,7 @@ struct PluginGroup
 };
 
 void getPluginGroups(
-  const QMap<QString, QString> & datatype_plugins,
+  const QMultiMap<QString, QString> & datatype_plugins,
   QList<PluginGroup> * groups,
   std::vector<std::string> * unvisualizable,
   ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node)
@@ -607,7 +607,7 @@ void TopicDisplayWidget::findPlugins(DisplayFactory * factory)
             "future release."
         );
       }
-      datatype_plugins_.insertMulti(topic_type, plugin.id);
+      datatype_plugins_.insert(topic_type, plugin.id);
     }
   }
 }
