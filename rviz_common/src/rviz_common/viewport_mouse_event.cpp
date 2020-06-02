@@ -57,8 +57,13 @@ ViewportMouseEvent::ViewportMouseEvent(RenderPanel * p, QWheelEvent * e, int lx,
 : panel(p),
   type(e->type()),
   device_pixel_ratio(static_cast<int>(panel->getRenderWindow()->devicePixelRatio())),
+#if QT_MAJOR_VERSION == 5 && QT_MINOR_VERSION >= 14
   x(e->position.x() * device_pixel_ratio),
   y(e->position.y() * device_pixel_ratio),
+#else
+  x(e->x() * device_pixel_ratio),
+  y(e->y() * device_pixel_ratio),
+#endif
   wheel_delta(e->angleDelta().x()),
   acting_button(Qt::NoButton),
   buttons_down(e->buttons()),

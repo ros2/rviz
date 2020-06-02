@@ -238,10 +238,13 @@ void RenderPanel::wheelEvent(QWheelEvent * event)
 {
   int last_x = mouse_x_;
   int last_y = mouse_y_;
-
+#if QT_MAJOR_VERSION == 5 && QT_MINOR_VERSION >= 14
   mouse_x_ = event->position().x();
   mouse_y_ = event->position().y();
-
+#else
+  mouse_x_ = event->x();
+  mouse_y_ = event->y();
+#endif
   if (context_) {
     setFocus(Qt::MouseFocusReason);
 
