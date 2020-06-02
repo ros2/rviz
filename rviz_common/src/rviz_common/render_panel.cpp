@@ -238,7 +238,7 @@ void RenderPanel::wheelEvent(QWheelEvent * event)
 {
   int last_x = mouse_x_;
   int last_y = mouse_y_;
-#if QT_MAJOR_VERSION == 5 && QT_MINOR_VERSION >= 14
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
   mouse_x_ = event->position().x();
   mouse_y_ = event->position().y();
 #else
