@@ -92,6 +92,7 @@ public:
   int device_pixel_ratio;
   int x;
   int y;
+  /// Angle that the common vertical mouse wheel was rotated
   int wheel_delta;
   // The button which caused the event.  Can be Qt::NoButton (move or wheel events).
   Qt::MouseButton acting_button;

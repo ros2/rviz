@@ -37,6 +37,7 @@
 
 #include <QComboBox>  // NOLINT: cpplint is unable to handle the include order here
 #include <QDialog>  // NOLINT: cpplint is unable to handle the include order here
+#include <QMultiMap>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTreeWidget>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/factory/factory.hpp"
@@ -205,7 +206,7 @@ private:
 
   // Map from ROS topic type to all displays that can visualize it.
   // One key may have multiple values.
-  QMap<QString, QString> datatype_plugins_;
+  QMultiMap<QString, QString> datatype_plugins_;
   ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node_;
 };
 
