@@ -58,8 +58,8 @@ ViewportMouseEvent::ViewportMouseEvent(RenderPanel * p, QWheelEvent * e, int lx,
   type(e->type()),
   device_pixel_ratio(static_cast<int>(panel->getRenderWindow()->devicePixelRatio())),
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
-  x(e->position.x() * device_pixel_ratio),
-  y(e->position.y() * device_pixel_ratio),
+  x(e->position().x() * device_pixel_ratio),
+  y(e->position().y() * device_pixel_ratio),
 #else
   x(e->x() * device_pixel_ratio),
   y(e->y() * device_pixel_ratio),
