@@ -2,6 +2,9 @@
 Changelog for package rviz_visual_testing_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 8.1.0 (2020-06-03)
 ------------------
 * Added missing virtual destructors (`#553 <https://github.com/ros2/rviz/issues/553>`_)
