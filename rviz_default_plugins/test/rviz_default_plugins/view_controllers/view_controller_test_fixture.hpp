@@ -101,6 +101,7 @@ public:
     auto global_point = QPointF();
     auto pixel_delta = QPoint();
     auto angle_delta = QPoint(delta, 0);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
     auto mouseEvent = new QWheelEvent(
       point,
       global_point,
@@ -110,6 +111,10 @@ public:
       Qt::NoModifier,
       Qt::NoScrollPhase,
       false);
+#else
+    auto mouseEvent = new QWheelEvent(
+      point, delta, Qt::NoButton, Qt::NoModifier, Qt::Orientation::Horizontal);
+#endif
     return {render_panel_.get(), mouseEvent, 0, 0};
   }
 
