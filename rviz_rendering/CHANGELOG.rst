@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Added missing virtual destructors (`#553 <https://github.com/ros2/rviz/issues/553>`_)
+* Contributors: Ivan Santiago Paunovic
+
 8.0.3 (2020-06-02)
 ------------------
 
