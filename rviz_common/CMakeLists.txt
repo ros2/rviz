@@ -38,8 +38,8 @@ find_package(rviz_ogre_vendor REQUIRED)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
-find_package(pluginlib REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(resource_retriever REQUIRED)
 find_package(rviz_assimp_vendor REQUIRED)
@@ -272,8 +272,8 @@ target_compile_definitions(rviz_common PRIVATE "RVIZ_COMMON_BUILDING_LIBRARY")
 ament_export_targets(rviz_common)
 ament_export_dependencies(
   rviz_rendering
-  pluginlib
   geometry_msgs
+  pluginlib
   rclcpp
   sensor_msgs
   std_msgs
