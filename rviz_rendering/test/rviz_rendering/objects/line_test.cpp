@@ -38,7 +38,7 @@
 #include <Ogre.h>
 
 #include "rviz_rendering/objects/line.hpp"
-#include "test/rviz_rendering/ogre_testing_environment.hpp"
+#include "../ogre_testing_environment.hpp"
 
 #include "../matcher.hpp"
 

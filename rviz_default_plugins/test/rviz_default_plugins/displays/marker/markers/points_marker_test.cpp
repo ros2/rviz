@@ -37,8 +37,7 @@
 
 #include "rviz_default_plugins/displays/marker/markers/points_marker.hpp"
 
-#include "test/rviz_rendering/scene_graph_introspection.hpp"
-#include "../../../scene_graph_introspection_helper.hpp"
+#include "../../../scene_graph_introspection.hpp"
 #include "markers_test_fixture.hpp"
 #include "../marker_messages.hpp"
 
@@ -50,7 +49,7 @@ TEST_F(MarkersTestFixture, setMessage_makes_the_point_cloud_node_invisible_if_in
 
   marker_->setMessage(createDefaultMessage(visualization_msgs::msg::Marker::POINTS));
 
-  auto point_cloud = rviz_rendering::findOnePointCloud(scene_manager_->getRootSceneNode());
+  auto point_cloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
   EXPECT_FALSE(point_cloud->isVisible());
 }
 
@@ -60,7 +59,7 @@ TEST_F(MarkersTestFixture, setMessage_sets_points_correctly) {
 
   marker_->setMessage(createMessageWithPoints(visualization_msgs::msg::Marker::SPHERE_LIST));
 
-  auto point_cloud = rviz_rendering::findOnePointCloud(scene_manager_->getRootSceneNode());
+  auto point_cloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
   float expected_bounding_radius = 2.236068f;
   EXPECT_TRUE(point_cloud->isVisible());
   EXPECT_THAT(point_cloud->getBoundingRadius(), FloatEq(expected_bounding_radius));
@@ -81,7 +80,7 @@ TEST_F(MarkersTestFixture, setMessage_sets_single_color_correctly) {
   mockValidTransform();
 
   marker_->setMessage(createMessageWithPoints(visualization_msgs::msg::Marker::SPHERE_LIST));
-  auto point_cloud = rviz_rendering::findOnePointCloud(scene_manager_->getRootSceneNode());
+  auto point_cloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
 
   Ogre::ColourValue expected_color(0.0f, 1.0f, 1.0f, 1.0f);
   EXPECT_THAT(point_cloud->getPoints()[0].color, Eq(expected_color));
@@ -93,7 +92,7 @@ TEST_F(MarkersTestFixture, setMessage_sets_per_point_color_correctly) {
   mockValidTransform();
 
   marker_->setMessage(createMessageWithColorPerPoint(visualization_msgs::msg::Marker::POINTS));
-  auto point_cloud = rviz_rendering::findOnePointCloud(scene_manager_->getRootSceneNode());
+  auto point_cloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
 
   EXPECT_THAT(point_cloud->getPoints()[0].color, Eq(Ogre::ColourValue(1.0f, 0.0f, 0.5f, 0.5f)));
   EXPECT_THAT(point_cloud->getPoints()[1].color, Eq(Ogre::ColourValue(0.5f, 0.6f, 0.0f, 0.3f)));

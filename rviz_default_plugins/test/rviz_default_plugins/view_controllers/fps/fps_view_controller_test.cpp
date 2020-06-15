@@ -46,7 +46,7 @@
 #include "rviz_default_plugins/view_controllers/orbit/orbit_view_controller.hpp"
 
 #include "../../displays/display_test_fixture.hpp"
-#include "../../scene_graph_introspection_helper.hpp"
+#include "../../scene_graph_introspection.hpp"
 #include "../view_controller_test_fixture.hpp"
 
 using namespace ::testing;  // NOLINT

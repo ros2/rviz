@@ -37,8 +37,8 @@
 #include <OgreRoot.h>
 #include <OgreSceneNode.h>
 
-#include "test/rviz_rendering/ogre_testing_environment.hpp"
-#include "test/rviz_rendering/scene_graph_introspection.hpp"
+#include "../ogre_testing_environment.hpp"
+#include "../scene_graph_introspection.hpp"
 #include "rviz_rendering/objects/wrench_visual.hpp"
 #include "rviz_rendering/objects/billboard_line.hpp"
 #include "rviz_rendering/objects/arrow.hpp"

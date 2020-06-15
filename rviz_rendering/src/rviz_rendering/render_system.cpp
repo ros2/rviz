@@ -29,7 +29,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "render_system.hpp"
+#include "rviz_rendering/render_system.hpp"
 
 #include <map>
 #include <memory>

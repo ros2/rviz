@@ -49,12 +49,12 @@
 #include "rviz_default_plugins/robot/robot_joint.hpp"
 #include "rviz_default_plugins/robot/robot_link.hpp"
 
-#include "test/rviz_rendering/ogre_testing_environment.hpp"
+#include "../ogre_testing_environment.hpp"
 #include "./mock_link_updater.hpp"
 #include "../mock_display_context.hpp"
 #include "../mock_handler_manager.hpp"
 #include "../mock_selection_manager.hpp"
-#include "../scene_graph_introspection_helper.hpp"
+#include "../scene_graph_introspection.hpp"
 
 using namespace ::testing;  // NOLINT
 using namespace rviz_default_plugins::robot;  // NOLINT
@@ -66,7 +66,7 @@ class RobotTestFixture : public Test
 public:
   static void SetUpTestCase()
   {
-    testing_environment_ = std::make_shared<rviz_rendering::OgreTestingEnvironment>();
+    testing_environment_ = std::make_shared<rviz_default_plugins::OgreTestingEnvironment>();
     testing_environment_->setUpOgreTestEnvironment();
 
     scene_manager_ = Ogre::Root::getSingletonPtr()->createSceneManager();
@@ -99,7 +99,7 @@ public:
     Ogre::Root::getSingletonPtr()->destroySceneManager(scene_manager_);
   }
 
-  static std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
+  static std::shared_ptr<rviz_default_plugins::OgreTestingEnvironment> testing_environment_;
   static Ogre::SceneManager * scene_manager_;
 
   urdf::Model urdf_model_;
@@ -112,7 +112,7 @@ public:
 };
 
 Ogre::SceneManager * RobotTestFixture::scene_manager_ = nullptr;
-std::shared_ptr<rviz_rendering::OgreTestingEnvironment>
+std::shared_ptr<rviz_default_plugins::OgreTestingEnvironment>
 RobotTestFixture::testing_environment_ = nullptr;
 
 TEST_F(RobotTestFixture, load_gets_the_correct_link_and_joint_count) {

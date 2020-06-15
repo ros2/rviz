@@ -33,9 +33,10 @@
 
 #include <OgreLogManager.h>
 
+#include "rviz_rendering/render_window.hpp"
 #include "rviz_rendering/render_system.hpp"
 
-namespace rviz_rendering
+namespace rviz_default_plugins
 {
 
 void OgreTestingEnvironment::setUpOgreTestEnvironment(bool debug)
@@ -50,7 +51,13 @@ void OgreTestingEnvironment::setUpOgreTestEnvironment(bool debug)
 
 void OgreTestingEnvironment::setUpRenderSystem()
 {
-  RenderSystem::get();
+  rviz_rendering::RenderSystem::get();
 }
 
-}  // end namespace rviz_rendering
+Ogre::RenderWindow * OgreTestingEnvironment::createOgreRenderWindow()
+{
+  auto test = new rviz_rendering::RenderWindow();
+  return rviz_rendering::RenderSystem::get()->makeRenderWindow(test->winId(), 10, 10, 1.0);
+}
+
+}  // end namespace rviz_default_plugins

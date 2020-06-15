@@ -63,6 +63,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(mesh_loader_test_target
     test/mesh_loader_test.cpp
+    test/ogre_testing_environment.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET mesh_loader_test_target)
     target_link_libraries(mesh_loader_test_target

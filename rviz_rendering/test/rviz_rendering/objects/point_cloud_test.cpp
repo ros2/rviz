@@ -42,7 +42,7 @@
 #include "rviz_rendering/objects/point_cloud.hpp"
 #include "rviz_rendering/render_window.hpp"
 #include "rviz_rendering/custom_parameter_indices.hpp"
-#include "test/rviz_rendering/ogre_testing_environment.hpp"
+#include "../ogre_testing_environment.hpp"
 
 #include "../matcher.hpp"
 

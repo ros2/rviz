@@ -37,7 +37,7 @@
 
 void DisplayContextFixture::SetUpTestCase()
 {
-  testing_environment_ = std::make_shared<rviz_rendering::OgreTestingEnvironment>();
+  testing_environment_ = std::make_shared<rviz_common::OgreTestingEnvironment>();
   testing_environment_->setUpOgreTestEnvironment();
 
   scene_manager_ = Ogre::Root::getSingletonPtr()->createSceneManager();
@@ -66,5 +66,5 @@ void DisplayContextFixture::TearDownTestCase()
 }
 
 Ogre::SceneManager * DisplayContextFixture::scene_manager_ = nullptr;
-std::shared_ptr<rviz_rendering::OgreTestingEnvironment>
+std::shared_ptr<rviz_common::OgreTestingEnvironment>
 DisplayContextFixture::testing_environment_ = nullptr;
