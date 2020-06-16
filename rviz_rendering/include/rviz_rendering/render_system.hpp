@@ -59,6 +59,7 @@ public:
   RenderSystem *
   get();
 
+  RVIZ_RENDERING_PUBLIC
   Ogre::RenderWindow *
   makeRenderWindow(
     WindowIDType window_id,
