@@ -1,29 +1,8 @@
-# Use custom CMake config files for assimp on Ubuntu to work around a cmake warning.
-# This should be removed once upstream is updated to assimp-0.5.1, see:
+# Override ON so that the following CMake logic in assimp 5.0.1 and older
+# doesn't result in a CMake warning: if(ON)
 #   https://github.com/ros2/rviz/issues/524
 #   https://bugs.launchpad.net/ubuntu/+source/assimp/+bug/1869405
-### BEGIN HACKS
-set(IS_UBUNTU FALSE)
-if(UNIX AND NOT APPLE)
-  find_program(LSB_RELEASE_EXEC lsb_release)
-  if(EXISTS "${LSB_RELEASE_EXEC}")
-    execute_process(COMMAND ${LSB_RELEASE_EXEC} -is
-        OUTPUT_VARIABLE LSB_RELEASE_ID_SHORT
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-  else()
-    set(LSB_RELEASE_ID_SHORT "Unknown")
-  endif()
-
-  if(${LSB_RELEASE_ID_SHORT} STREQUAL "Ubuntu")
-    set(IS_UBUNTU TRUE)
-  endif()
-endif()
-
-if(IS_UBUNTU)
-  set(assimp_DIR "${@PROJECT_NAME@_DIR}/../../../opt/rviz_assimp_vendor_custom_config")
-endif()
-### END HACKS
+set(ON 1)
 
 find_package(assimp QUIET)
 
