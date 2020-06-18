@@ -42,8 +42,7 @@
 #include "visualization_msgs/msg/marker.hpp"
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/shape.hpp"
-#include "test/rviz_rendering/scene_graph_introspection.hpp"
-#include "../../scene_graph_introspection_helper.hpp"
+#include "../../scene_graph_introspection.hpp"
 
 #include "rviz_default_plugins/displays/path/path_display.hpp"
 
@@ -102,7 +101,7 @@ TEST_F(PathTestFixture, processMessage_adds_nothing_to_scene_if_invalid_transfor
 
   path_display_->processMessage(createPathMessage());
 
-  auto object = rviz_rendering::findOneManualObject(scene_manager_->getRootSceneNode());
+  auto object = rviz_default_plugins::findOneManualObject(scene_manager_->getRootSceneNode());
   EXPECT_THAT(object->getNumSections(), Eq(0u));
 }
 
@@ -113,7 +112,7 @@ TEST_F(PathTestFixture, processMessage_adds_vertices_to_scene) {
 
   path_display_->processMessage(createPathMessage());
 
-  auto object = rviz_rendering::findOneManualObject(scene_manager_->getRootSceneNode());
+  auto object = rviz_default_plugins::findOneManualObject(scene_manager_->getRootSceneNode());
   EXPECT_THAT(object->getSection(0)->getRenderOperation()->vertexData->vertexCount, Eq(2u));
 }
 
@@ -125,7 +124,7 @@ TEST_F(PathTestFixture, reset_clears_the_scene) {
   path_display_->processMessage(createPathMessage());
   path_display_->reset();
 
-  auto object = rviz_rendering::findOneManualObject(scene_manager_->getRootSceneNode());
+  auto object = rviz_default_plugins::findOneManualObject(scene_manager_->getRootSceneNode());
   EXPECT_THAT(object->getNumSections(), Eq(0u));
 }
 
@@ -149,10 +148,10 @@ TEST_F(PathTestFixture, reset_removes_all_axes) {
   mockValidTransform(position, orientation);
 
   path_display_->processMessage(createPathMessage());
-  EXPECT_THAT(rviz_rendering::findAllAxes(scene_manager_->getRootSceneNode()), SizeIs(2));
+  EXPECT_THAT(rviz_default_plugins::findAllAxes(scene_manager_->getRootSceneNode()), SizeIs(2));
 
   path_display_->reset();
-  EXPECT_THAT(rviz_rendering::findAllAxes(scene_manager_->getRootSceneNode()), SizeIs(0));
+  EXPECT_THAT(rviz_default_plugins::findAllAxes(scene_manager_->getRootSceneNode()), SizeIs(0));
 }
 
 TEST_F(PathTestFixture, reset_removes_all_arrows) {
@@ -163,10 +162,10 @@ TEST_F(PathTestFixture, reset_removes_all_arrows) {
   mockValidTransform(position, orientation);
 
   path_display_->processMessage(createPathMessage());
-  EXPECT_THAT(rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode()), SizeIs(2));
+  EXPECT_THAT(rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode()), SizeIs(2));
 
   path_display_->reset();
-  EXPECT_THAT(rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode()), SizeIs(0));
+  EXPECT_THAT(rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode()), SizeIs(0));
 }
 
 TEST_F(PathTestFixture, processMessage_transforms_the_vertices_correctly) {
@@ -176,7 +175,7 @@ TEST_F(PathTestFixture, processMessage_transforms_the_vertices_correctly) {
 
   path_display_->processMessage(createPathMessage());
 
-  auto object = rviz_rendering::findOneManualObject(scene_manager_->getRootSceneNode());
+  auto object = rviz_default_plugins::findOneManualObject(scene_manager_->getRootSceneNode());
   EXPECT_THAT(object->getSection(0)->getRenderOperation()->vertexData->vertexCount, Eq(2u));
 
   // Use bounding box to indirectly assert the vertices
@@ -193,7 +192,7 @@ TEST_F(PathTestFixture, processMessage_adds_billboard_line_to_scene) {
 
   path_display_->processMessage(createPathMessage());
 
-  auto object = rviz_rendering::findOneBillboardChain(scene_manager_->getRootSceneNode());
+  auto object = rviz_default_plugins::findOneBillboardChain(scene_manager_->getRootSceneNode());
   EXPECT_THAT(object->getNumberOfChains(), Eq(1u));
   EXPECT_THAT(object->getNumChainElements(0), Eq(2u));
 
@@ -210,10 +209,10 @@ TEST_F(PathTestFixture, processMessage_adds_axes_to_scene) {
 
   path_display_->processMessage(createPathMessage());
 
-  auto axes = rviz_rendering::findAllAxes(scene_manager_->getRootSceneNode());
+  auto axes = rviz_default_plugins::findAllAxes(scene_manager_->getRootSceneNode());
   EXPECT_THAT(axes, SizeIs(2));
 
-  auto axes_positions = rviz_rendering::getPositionsFromNodes(axes);
+  auto axes_positions = rviz_default_plugins::getPositionsFromNodes(axes);
   EXPECT_THAT(axes_positions, Contains(Vector3Eq(Ogre::Vector3(4, 2, 0))));
   EXPECT_THAT(axes_positions, Contains(Vector3Eq(Ogre::Vector3(1, 1, 1))));
 }
@@ -227,15 +226,15 @@ TEST_F(PathTestFixture, processMessage_adds_arrows_to_scene) {
 
   path_display_->processMessage(createPathMessage());
 
-  auto arrows = rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode());
+  auto arrows = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
   EXPECT_THAT(arrows, SizeIs(2));
 
-  auto arrow_positions = rviz_rendering::getPositionsFromNodes(arrows);
+  auto arrow_positions = rviz_default_plugins::getPositionsFromNodes(arrows);
   EXPECT_THAT(arrow_positions, Contains(Vector3Eq(Ogre::Vector3(1, 1, 1))));
   EXPECT_THAT(arrow_positions, Contains(Vector3Eq(Ogre::Vector3(4, 2, 0))));
 
   // default orientation is set to (0.5, -0.5, -0.5, -0.5) by arrow
   auto default_orientation = Ogre::Quaternion(0.5f, -0.5f, -0.5f, -0.5f);
-  auto arrow_orientations = rviz_rendering::getOrientationsFromNodes(arrows);
+  auto arrow_orientations = rviz_default_plugins::getOrientationsFromNodes(arrows);
   EXPECT_THAT(arrow_orientations, Each(QuaternionEq(default_orientation)));
 }

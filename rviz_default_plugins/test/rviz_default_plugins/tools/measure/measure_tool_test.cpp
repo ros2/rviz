@@ -41,8 +41,7 @@
 
 #include "../tool_test_fixture.hpp"
 #include "../../displays/display_test_fixture.hpp"
-#include "../../scene_graph_introspection_helper.hpp"
-#include "test/rviz_rendering/scene_graph_introspection.hpp"
+#include "../../scene_graph_introspection.hpp"
 #include "../../mock_display_context.hpp"
 #include "../../mock_view_picker.hpp"
 
@@ -85,7 +84,7 @@ TEST_F(MeasureToolTestFixture, choosing_two_objects_shows_a_line_and_the_distanc
   EXPECT_CALL(*context_, setStatus(_)).WillOnce(SaveArg<0>(&status));
   measure_tool_->processMouseEvent(click);
 
-  auto line = rviz_rendering::findOneManualObject(scene_manager_->getRootSceneNode());
+  auto line = rviz_default_plugins::findOneManualObject(scene_manager_->getRootSceneNode());
   // Use bounding box to indirectly assert the vertices
   ASSERT_TRUE(line->isVisible());
   EXPECT_THAT(line->getBoundingBox().getMinimum(), Vector3Eq(obj1.position));
@@ -105,7 +104,7 @@ TEST_F(MeasureToolTestFixture, hovering_over_a_second_object_updates_the_line_an
   EXPECT_CALL(*context_, setStatus(_)).WillOnce(SaveArg<0>(&status));
   measure_tool_->processMouseEvent(move);
 
-  auto line = rviz_rendering::findOneManualObject(scene_manager_->getRootSceneNode());
+  auto line = rviz_default_plugins::findOneManualObject(scene_manager_->getRootSceneNode());
   // Use bounding box to indirectly assert the vertices
   ASSERT_TRUE(line->isVisible());
   EXPECT_THAT(line->getBoundingBox().getMinimum(), Vector3Eq(obj1.position));
@@ -123,7 +122,7 @@ TEST_F(MeasureToolTestFixture, right_clicking_removes_the_measurement_line) {
   click = generateMouseLeftClick(obj2.x, obj2.y);
   measure_tool_->processMouseEvent(click);
 
-  auto line = rviz_rendering::findOneManualObject(scene_manager_->getRootSceneNode());
+  auto line = rviz_default_plugins::findOneManualObject(scene_manager_->getRootSceneNode());
   ASSERT_TRUE(line->isVisible());
 
   click = generateMouseRightClick(5, 5);

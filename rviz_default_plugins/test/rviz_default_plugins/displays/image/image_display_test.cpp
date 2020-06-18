@@ -36,7 +36,7 @@
 #include <QKeyEvent>  // NOLINT
 #include <OgreRectangle2D.h>  // NOLINT
 
-#include "test/rviz_rendering/ogre_testing_environment.hpp"
+#include "../../ogre_testing_environment.hpp"
 #include "rviz_common/viewport_mouse_event.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/panel_dock_widget.hpp"
@@ -56,7 +56,7 @@ class ImageDisplayTestFixture : public Test
 public:
   static void SetUpTestCase()
   {
-    testing_environment_ = std::make_shared<rviz_rendering::OgreTestingEnvironment>();
+    testing_environment_ = std::make_shared<rviz_default_plugins::OgreTestingEnvironment>();
     testing_environment_->setUpOgreTestEnvironment();
   }
 
@@ -71,7 +71,7 @@ public:
     ON_CALL(*context_, getWindowManager()).WillByDefault(Return(window_manager_.get()));
   }
 
-  static std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
+  static std::shared_ptr<rviz_default_plugins::OgreTestingEnvironment> testing_environment_;
 
   std::unique_ptr<MockROSImageTexture> texture_;
 
@@ -79,7 +79,7 @@ public:
   std::shared_ptr<MockWindowManagerInterface> window_manager_;
 };
 
-std::shared_ptr<rviz_rendering::OgreTestingEnvironment>
+std::shared_ptr<rviz_default_plugins::OgreTestingEnvironment>
 ImageDisplayTestFixture::testing_environment_ = nullptr;
 
 TEST_F(ImageDisplayTestFixture, initialize_adds_render_panel_to_window) {

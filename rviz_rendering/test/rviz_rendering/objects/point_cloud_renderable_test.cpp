@@ -37,7 +37,7 @@
 
 #include "rviz_rendering/objects/point_cloud.hpp"
 #include "rviz_rendering/objects/point_cloud_renderable.hpp"
-#include "test/rviz_rendering/ogre_testing_environment.hpp"
+#include "../ogre_testing_environment.hpp"
 
 using namespace ::testing;  // NOLINT
 

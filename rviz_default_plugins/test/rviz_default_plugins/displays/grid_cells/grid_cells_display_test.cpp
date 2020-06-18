@@ -40,9 +40,8 @@
 
 #include "rviz_default_plugins/displays/grid_cells/grid_cells_display.hpp"
 
-#include "test/rviz_rendering/scene_graph_introspection.hpp"
+#include "../../scene_graph_introspection.hpp"
 #include "../display_test_fixture.hpp"
-#include "../../scene_graph_introspection_helper.hpp"
 
 using namespace ::testing;  // NOLINT
 
@@ -97,7 +96,7 @@ TEST_F(GridCellsDisplayFixture, processMessage_with_invalid_transform_returns_ea
   auto msg = createGridCellsMessageWithTwoCells();
   display_->processMessage(msg);
 
-  auto point_clouds = rviz_rendering::findAllPointClouds(scene_manager_->getRootSceneNode());
+  auto point_clouds = rviz_default_plugins::findAllPointClouds(scene_manager_->getRootSceneNode());
   EXPECT_THAT(point_clouds.size(), Eq(1u));
   EXPECT_THAT(point_clouds[0]->getPoints().size(), Eq(0u));
 }
@@ -108,7 +107,7 @@ TEST_F(GridCellsDisplayFixture, processMessage_with_zero_size_does_not_add_messa
   auto msg = createGridCellsMessageWithTwoCells(0, 1);
   display_->processMessage(msg);
 
-  auto point_clouds = rviz_rendering::findAllPointClouds(scene_manager_->getRootSceneNode());
+  auto point_clouds = rviz_default_plugins::findAllPointClouds(scene_manager_->getRootSceneNode());
   EXPECT_THAT(point_clouds.size(), Eq(1u));
   EXPECT_THAT(point_clouds[0]->getPoints().size(), Eq(0u));
 }
@@ -118,7 +117,7 @@ TEST_F(GridCellsDisplayFixture, processMessage_fills_pointcloud_with_correct_gri
   auto msg = createGridCellsMessageWithTwoCells();
   display_->processMessage(msg);
 
-  auto point_clouds = rviz_rendering::findAllPointClouds(scene_manager_->getRootSceneNode());
+  auto point_clouds = rviz_default_plugins::findAllPointClouds(scene_manager_->getRootSceneNode());
   EXPECT_THAT(point_clouds.size(), Eq(1u));
   EXPECT_THAT(point_clouds[0]->getPoints().size(), Eq(2u));
   EXPECT_THAT(
@@ -137,7 +136,7 @@ TEST_F(GridCellsDisplayFixture, processMessage_clears_cloud_on_new_message) {
   auto broken_msg = createGridCellsMessageWithTwoCells(0, 1);
   display_->processMessage(broken_msg);
 
-  auto point_clouds = rviz_rendering::findAllPointClouds(scene_manager_->getRootSceneNode());
+  auto point_clouds = rviz_default_plugins::findAllPointClouds(scene_manager_->getRootSceneNode());
   EXPECT_THAT(point_clouds.size(), Eq(1u));
   EXPECT_THAT(point_clouds[0]->getPoints().size(), Eq(0u));
 }

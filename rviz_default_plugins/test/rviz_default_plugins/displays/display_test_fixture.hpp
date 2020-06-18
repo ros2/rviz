@@ -43,7 +43,7 @@
 
 #include "rclcpp/clock.hpp"
 
-#include "test/rviz_rendering/ogre_testing_environment.hpp"
+#include "../ogre_testing_environment.hpp"
 
 #include "../mock_display_context.hpp"
 #include "../mock_frame_manager.hpp"
@@ -65,7 +65,7 @@ public:
 
   void mockValidTransform(Ogre::Vector3 position, Ogre::Quaternion orientation);
 
-  static std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
+  static std::shared_ptr<rviz_default_plugins::OgreTestingEnvironment> testing_environment_;
   static Ogre::SceneManager * scene_manager_;
 
   std::shared_ptr<MockDisplayContext> context_;

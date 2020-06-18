@@ -93,8 +93,6 @@ add_library(rviz_rendering SHARED
   src/rviz_rendering/objects/point_cloud_renderable.cpp
   src/rviz_rendering/objects/shape.cpp
   src/rviz_rendering/objects/wrench_visual.cpp
-  test/rviz_rendering/ogre_testing_environment.cpp
-  test/rviz_rendering/scene_graph_introspection.cpp
 )
 
 target_link_libraries(rviz_rendering
@@ -169,6 +167,16 @@ if(BUILD_TESTING)
   find_package(ament_cmake_gmock REQUIRED)
   find_package(ament_cmake_gtest REQUIRED)
 
+  add_library(rviz_rendering_test_utils
+    test/rviz_rendering/ogre_testing_environment.cpp
+    test/rviz_rendering/scene_graph_introspection.cpp
+  )
+  target_link_libraries(rviz_rendering_test_utils
+    PUBLIC
+    rviz_ogre_vendor::OgreMain
+    rviz_rendering
+  )
+
   ament_add_gmock(string_helper_test test/rviz_rendering/string_helper_test.cpp)
   if(TARGET string_helper_test)
     target_link_libraries(string_helper_test rviz_rendering)
@@ -181,6 +189,7 @@ if(BUILD_TESTING)
     target_link_libraries(point_cloud_test_target
       rviz_ogre_vendor::OgreMain
       rviz_rendering
+      rviz_rendering_test_utils
       Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
@@ -192,6 +201,7 @@ if(BUILD_TESTING)
     target_link_libraries(point_cloud_renderable_test_target
       rviz_ogre_vendor::OgreMain
       rviz_rendering
+      rviz_rendering_test_utils
       Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
@@ -203,6 +213,7 @@ if(BUILD_TESTING)
     target_link_libraries(billboard_line_test_target
       rviz_ogre_vendor::OgreMain
       rviz_rendering
+      rviz_rendering_test_utils
       Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
@@ -214,6 +225,7 @@ if(BUILD_TESTING)
     target_link_libraries(covariance_visual_test_target
       rviz_ogre_vendor::OgreMain
       rviz_rendering
+      rviz_rendering_test_utils
       Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
@@ -225,6 +237,7 @@ if(BUILD_TESTING)
     target_link_libraries(grid_test_target
       rviz_ogre_vendor::OgreMain
       rviz_rendering
+      rviz_rendering_test_utils
       Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
@@ -237,6 +250,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_ogre_vendor::OgreOverlay
       rviz_rendering
+      rviz_rendering_test_utils
       Qt5::Widgets
     )
   endif()
@@ -248,6 +262,7 @@ if(BUILD_TESTING)
     target_link_libraries(line_test_target
       rviz_ogre_vendor::OgreMain
       rviz_rendering
+      rviz_rendering_test_utils
       Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
@@ -259,6 +274,7 @@ if(BUILD_TESTING)
     target_link_libraries(wrench_visual_test_target
       rviz_ogre_vendor::OgreMain
       rviz_rendering
+      rviz_rendering_test_utils
       Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()

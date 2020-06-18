@@ -27,30 +27,25 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "ogre_testing_environment.hpp"
+#ifndef OGRE_TESTING_ENVIRONMENT_HPP_
+#define OGRE_TESTING_ENVIRONMENT_HPP_
 
-#include <string>
-
-#include <OgreLogManager.h>
-
-#include "rviz_rendering/render_system.hpp"
-
-namespace rviz_rendering
+namespace rviz_common
 {
-
-void OgreTestingEnvironment::setUpOgreTestEnvironment(bool debug)
+class OgreTestingEnvironment
 {
-  if (!debug) {
-    const std::string & name = "";
-    auto lm = new Ogre::LogManager();
-    lm->createLog(name, false, debug, true);
-  }
-  setUpRenderSystem();
-}
+public:
+  /**
+   * Set up a testing environment to run tests needing Ogre.
+   *
+   * @param: bool debug, if true, all logging of Ogre is send to std::out, if false no logging
+   * occurs. Since the logging pollutes the test output, it defaults to false
+   */
+  void setUpOgreTestEnvironment(bool debug = false);
 
-void OgreTestingEnvironment::setUpRenderSystem()
-{
-  RenderSystem::get();
-}
+  void setUpRenderSystem();
+};
 
-}  // end namespace rviz_rendering
+}  // namespace rviz_common
+
+#endif  // OGRE_TESTING_ENVIRONMENT_HPP_

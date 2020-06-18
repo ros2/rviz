@@ -43,7 +43,7 @@
 
 #include "rclcpp/clock.hpp"
 
-#include "test/rviz_rendering/ogre_testing_environment.hpp"
+#include "ogre_testing_environment.hpp"
 
 #include "mock_display_context.hpp"
 #include "mock_window_manager_interface.hpp"
@@ -59,7 +59,7 @@ public:
 
   static void TearDownTestCase();
 
-  static std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
+  static std::shared_ptr<rviz_common::OgreTestingEnvironment> testing_environment_;
   static Ogre::SceneManager * scene_manager_;
 
   std::shared_ptr<MockDisplayContext> context_;

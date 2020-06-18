@@ -46,7 +46,7 @@
 #include <OgreViewport.h>
 
 #include "rviz_rendering/orthographic.hpp"
-#include "./render_system.hpp"
+#include "rviz_rendering/render_system.hpp"
 #include "rviz_rendering/objects/grid.hpp"
 #include "rviz_rendering/logging.hpp"
 

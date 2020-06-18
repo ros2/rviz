@@ -35,7 +35,7 @@
 
 #include "rviz_rendering/render_system.hpp"
 
-namespace rviz_rendering
+namespace rviz_rendering_tests
 {
 
 void OgreTestingEnvironment::setUpOgreTestEnvironment(bool debug)
@@ -50,7 +50,7 @@ void OgreTestingEnvironment::setUpOgreTestEnvironment(bool debug)
 
 void OgreTestingEnvironment::setUpRenderSystem()
 {
-  RenderSystem::get();
+  rviz_rendering::RenderSystem::get();
 }
 
-}  // end namespace rviz_rendering
+}  // end namespace rviz_rendering_tests

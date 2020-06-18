@@ -410,6 +410,7 @@ if(BUILD_TESTING)
     test/interaction/mock_selection_renderer.hpp
     test/interaction/selection_test_fixture.hpp
     test/display_context_fixture.cpp
+    test/ogre_testing_environment.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET selection_manager_test)
     target_link_libraries(selection_manager_test
@@ -423,6 +424,7 @@ if(BUILD_TESTING)
     test/interaction/selection_handler_test.cpp
     test/interaction/selection_test_fixture.hpp
     test/display_context_fixture.cpp
+    test/ogre_testing_environment.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET selection_handler_test)
     target_link_libraries(selection_handler_test
