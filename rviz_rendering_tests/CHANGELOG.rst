@@ -2,8 +2,8 @@
 Changelog for package rviz_rendering_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.2.0 (2020-06-23)
+------------------
 * Changed to not install test header files in rviz_rendering. (`#564 <https://github.com/ros2/rviz/issues/564>`_)
 * Contributors: Chris Lalancette
 

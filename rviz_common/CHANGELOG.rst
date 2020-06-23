@@ -2,8 +2,8 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.2.0 (2020-06-23)
+------------------
 * Changed to not install test header files in rviz_rendering. (`#564 <https://github.com/ros2/rviz/issues/564>`_)
 * Fixed alphabetical include order (`#563 <https://github.com/ros2/rviz/issues/563>`_)
 * Changed to avoid trying to moc generate ``env_config.hpp`` file. (`#550 <https://github.com/ros2/rviz/issues/550>`_)
