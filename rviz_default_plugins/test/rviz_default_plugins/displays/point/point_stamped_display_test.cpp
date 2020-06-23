@@ -43,8 +43,7 @@
 
 #include "rviz_default_plugins/displays/point/point_stamped_display.hpp"
 
-#include "test/rviz_rendering/scene_graph_introspection.hpp"
-#include "../../scene_graph_introspection_helper.hpp"
+#include "../../scene_graph_introspection.hpp"
 #include "../display_test_fixture.hpp"
 
 using namespace ::testing;  // NOLINT
@@ -94,7 +93,7 @@ TEST_F(PointStampedTestFixture, processMessage_adds_nothing_to_scene_if_invalid_
 
   point_stamped_display_->processMessage(createPointMessage(0, 0, 0));
 
-  auto objects = rviz_rendering::findAllEntitiesByMeshName(
+  auto objects = rviz_default_plugins::findAllEntitiesByMeshName(
     scene_manager_->getRootSceneNode(), "rviz_sphere.mesh");
   EXPECT_THAT(objects.size(), Eq(0u));
 }
@@ -110,7 +109,7 @@ TEST_F(
   point_stamped_display_->processMessage(createPointMessage(1, 0, 0));
   point_stamped_display_->processMessage(createPointMessage(-1, 0, 0));
 
-  auto objects = rviz_rendering::findAllEntitiesByMeshName(
+  auto objects = rviz_default_plugins::findAllEntitiesByMeshName(
     scene_manager_->getRootSceneNode(), "rviz_sphere.mesh");
   EXPECT_THAT(objects.size(), Eq(2u));
   assertPointsPresent(objects, Ogre::Vector3(1, 0, 0));

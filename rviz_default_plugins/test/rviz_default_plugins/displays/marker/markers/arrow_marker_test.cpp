@@ -43,7 +43,7 @@
 
 #include "rviz_default_plugins/displays/marker/markers/arrow_marker.hpp"
 
-#include "../../../scene_graph_introspection_helper.hpp"
+#include "../../../scene_graph_introspection.hpp"
 #include "markers_test_fixture.hpp"
 #include "../marker_messages.hpp"
 

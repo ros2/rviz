@@ -38,8 +38,8 @@ find_package(rviz_ogre_vendor REQUIRED)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
-find_package(pluginlib REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(resource_retriever REQUIRED)
 find_package(rviz_assimp_vendor REQUIRED)
@@ -70,7 +70,6 @@ configure_file(src/rviz_common/env_config.cpp.in ${ENV_CONFIG_CPP} @ONLY)
 
 # These need to be added in the add_library() call
 set(rviz_common_headers_to_moc
-  ${ENV_CONFIG_HPP}
   src/rviz_common/add_display_dialog.hpp
   src/rviz_common/help_panel.hpp
   include/rviz_common/properties/enum_property.hpp
@@ -206,7 +205,6 @@ set(rviz_common_source_files
   src/rviz_common/interaction/selection_renderer.cpp
   src/rviz_common/interaction/view_picker.cpp
   src/rviz_common/splash_screen.cpp
-  # src/rviz_common/time_panel.cpp
   src/rviz_common/transformation/identity_frame_transformer.cpp
   src/rviz_common/tool_manager.cpp
   src/rviz_common/tool_properties_panel.cpp
@@ -272,8 +270,8 @@ target_compile_definitions(rviz_common PRIVATE "RVIZ_COMMON_BUILDING_LIBRARY")
 ament_export_targets(rviz_common)
 ament_export_dependencies(
   rviz_rendering
-  pluginlib
   geometry_msgs
+  pluginlib
   rclcpp
   sensor_msgs
   std_msgs
@@ -412,6 +410,7 @@ if(BUILD_TESTING)
     test/interaction/mock_selection_renderer.hpp
     test/interaction/selection_test_fixture.hpp
     test/display_context_fixture.cpp
+    test/ogre_testing_environment.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET selection_manager_test)
     target_link_libraries(selection_manager_test
@@ -425,6 +424,7 @@ if(BUILD_TESTING)
     test/interaction/selection_handler_test.cpp
     test/interaction/selection_test_fixture.hpp
     test/display_context_fixture.cpp
+    test/ogre_testing_environment.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET selection_handler_test)
     target_link_libraries(selection_handler_test

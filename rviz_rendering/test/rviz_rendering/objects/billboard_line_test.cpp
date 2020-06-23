@@ -37,7 +37,7 @@
 #include <OgreBillboardChain.h>
 #include <OgreRoot.h>
 
-#include "test/rviz_rendering/ogre_testing_environment.hpp"
+#include "../ogre_testing_environment.hpp"
 #include "rviz_rendering/objects/billboard_line.hpp"
 
 using namespace ::testing;  // NOLINT

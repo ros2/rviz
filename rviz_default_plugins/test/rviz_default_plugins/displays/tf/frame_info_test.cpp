@@ -41,9 +41,8 @@
 
 #include "rviz_default_plugins/displays/tf/frame_info.hpp"
 
-#include "test/rviz_rendering/scene_graph_introspection.hpp"
+#include "../../scene_graph_introspection.hpp"
 #include "../display_test_fixture.hpp"
-#include "../../scene_graph_introspection_helper.hpp"
 
 using namespace ::testing;  // NOLINT
 
@@ -66,13 +65,13 @@ TEST_F(FrameInfoTestFixture, updateArrow_makes_arrow_invisible_if_transform_has_
   property->setValue(true);
   frame_info_->enabled_property_ = property.get();
 
-  auto arrows = rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode());
+  auto arrows = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
   EXPECT_THAT(arrows, SizeIs(1));
   EXPECT_TRUE(rviz_default_plugins::arrowIsVisible(arrows[0]));
 
   frame_info_->updateParentArrow(Ogre::Vector3::ZERO, Ogre::Vector3::ZERO, 1);
 
-  auto invisible_arrows = rviz_rendering::findAllArrows(scene_manager_->getRootSceneNode());
+  auto invisible_arrows = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
   EXPECT_THAT(invisible_arrows, SizeIs(1));
   EXPECT_FALSE(rviz_default_plugins::arrowIsVisible(invisible_arrows[0]));
 }

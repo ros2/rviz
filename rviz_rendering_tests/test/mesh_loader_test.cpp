@@ -39,7 +39,7 @@
 #include <OgreMaterialManager.h>
 #include "resource_retriever/retriever.h"
 
-#include "test/rviz_rendering/ogre_testing_environment.hpp"
+#include "ogre_testing_environment.hpp"
 #include "rviz_rendering/mesh_loader.hpp"
 
 using namespace ::testing;  // NOLINT
@@ -49,14 +49,14 @@ class MeshLoaderTestFixture : public ::testing::Test
 protected:
   static void SetUpTestCase()
   {
-    testing_environment_ = std::make_shared<rviz_rendering::OgreTestingEnvironment>();
+    testing_environment_ = std::make_shared<rviz_rendering_tests::OgreTestingEnvironment>();
     testing_environment_->setUpOgreTestEnvironment();
   }
 
-  static std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
+  static std::shared_ptr<rviz_rendering_tests::OgreTestingEnvironment> testing_environment_;
 };
 
-std::shared_ptr<rviz_rendering::OgreTestingEnvironment>
+std::shared_ptr<rviz_rendering_tests::OgreTestingEnvironment>
 MeshLoaderTestFixture::testing_environment_ = nullptr;
 
 void assertVector3Equality(Ogre::Vector3 actual, Ogre::Vector3 expected)

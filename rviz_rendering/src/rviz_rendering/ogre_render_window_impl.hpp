@@ -42,7 +42,7 @@
 #include <QObject>  // NOLINT: cpplint cannot handle include order here
 #include <QWindow>  // NOLINT: cpplint cannot handle include order here
 
-#include "render_system.hpp"
+#include "rviz_rendering/render_system.hpp"
 
 namespace Ogre
 {

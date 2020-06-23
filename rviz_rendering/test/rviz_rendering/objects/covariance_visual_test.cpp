@@ -39,8 +39,8 @@
 
 #include "rviz_rendering/objects/covariance_visual.hpp"
 #include "../matcher.hpp"
-#include "test/rviz_rendering/ogre_testing_environment.hpp"
-#include "test/rviz_rendering/scene_graph_introspection.hpp"
+#include "../ogre_testing_environment.hpp"
+#include "../scene_graph_introspection.hpp"
 
 using namespace ::testing;  // NOLINT
 using rviz_rendering::findAllCones;

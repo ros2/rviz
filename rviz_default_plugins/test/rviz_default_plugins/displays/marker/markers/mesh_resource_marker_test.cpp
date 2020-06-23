@@ -44,8 +44,7 @@
 
 #include "rviz_default_plugins/displays/marker/markers/mesh_resource_marker.hpp"
 
-#include "test/rviz_rendering/scene_graph_introspection.hpp"
-#include "../../../scene_graph_introspection_helper.hpp"
+#include "../../../scene_graph_introspection.hpp"
 #include "markers_test_fixture.hpp"
 #include "../marker_messages.hpp"
 
@@ -60,7 +59,7 @@ TEST_F(MarkersTestFixture, setMessage_with_no_transform_makes_node_invisible) {
 
   marker_->setMessage(message);
 
-  auto entity = rviz_rendering::findEntityByMeshName(
+  auto entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), message.mesh_resource);
   ASSERT_TRUE(entity);
   EXPECT_FALSE(entity->isVisible());
@@ -74,7 +73,7 @@ TEST_F(MarkersTestFixture, setMessage_with_transform_sets_position_and_orientati
 
   marker_->setMessage(message);
 
-  auto entity = rviz_rendering::findEntityByMeshName(
+  auto entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), message.mesh_resource);
   ASSERT_TRUE(entity);
   EXPECT_TRUE(entity->isVisible());
@@ -93,7 +92,7 @@ TEST_F(MarkersTestFixture, setMessage_does_not_attach_entity_when_mesh_is_missin
 
   marker_->setMessage(message);
 
-  auto entity = rviz_rendering::findEntityByMeshName(
+  auto entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), message.mesh_resource);
   ASSERT_FALSE(entity);
 }
@@ -108,7 +107,7 @@ TEST_F(MarkersTestFixture, setMessage_does_not_attache_entity_when_no_mesh_attac
 
   marker_->setMessage(message);
 
-  auto entity = rviz_rendering::findEntityByMeshName(
+  auto entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), message.mesh_resource);
   ASSERT_FALSE(entity);
 }
@@ -123,7 +122,7 @@ TEST_F(MarkersTestFixture, setMessage_attaches_default_material_to_correct_mesh)
 
   marker_->setMessage(message);
 
-  auto entity = rviz_rendering::findEntityByMeshName(
+  auto entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), message.mesh_resource);
   ASSERT_TRUE(entity);
   EXPECT_THAT(entity->getMesh()->getName(), StrEq(message.mesh_resource));
@@ -142,7 +141,7 @@ TEST_F(MarkersTestFixture, setMessage_initially_sets_color_correctly) {
 
   marker_->setMessage(message);
 
-  auto entity = rviz_rendering::findEntityByMeshName(
+  auto entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), message.mesh_resource);
   ASSERT_TRUE(entity);
   EXPECT_THAT(
@@ -162,7 +161,7 @@ TEST_F(MarkersTestFixture, setMessage_changes_color_on_new_message_changing_colo
   message.color.b = 0.0f;
   marker_->setMessage(message);
 
-  auto entity = rviz_rendering::findEntityByMeshName(
+  auto entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), message.mesh_resource);
   ASSERT_TRUE(entity);
   EXPECT_THAT(
@@ -178,7 +177,7 @@ TEST_F(MarkersTestFixture, setMessage_uses_cloned_materials_to_make_selection_wo
 
   marker_->setMessage(message);
 
-  auto entity = rviz_rendering::findEntityByMeshName(
+  auto entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), message.mesh_resource);
   ASSERT_TRUE(entity);
   auto entity_material_name = entity->getSubEntity(0)->getMaterialName();
@@ -196,7 +195,7 @@ TEST_F(MarkersTestFixture, setMessage_with_new_object_clears_old_entities_and_ma
   marker_->setMessage(message);
 
   // get everything that needs to be deleted later on
-  auto entity = rviz_rendering::findEntityByMeshName(
+  auto entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), message.mesh_resource);
   ASSERT_TRUE(entity);
   EXPECT_EQ(1u, marker_->getMaterials().size());
@@ -207,7 +206,7 @@ TEST_F(MarkersTestFixture, setMessage_with_new_object_clears_old_entities_and_ma
   marker_->setMessage(message);
 
   // entity and material are cleaned up
-  auto deleted_entity = rviz_rendering::findEntityByMeshName(
+  auto deleted_entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), "package://rviz_default_plugins/test_meshes/pr2-base.dae");
   ASSERT_FALSE(deleted_entity);
   EXPECT_FALSE(

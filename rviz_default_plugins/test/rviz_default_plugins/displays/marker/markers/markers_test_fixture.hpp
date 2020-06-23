@@ -42,7 +42,7 @@
 
 #include <QApplication>  // NOLINT
 
-#include "test/rviz_rendering/ogre_testing_environment.hpp"
+#include "../../../ogre_testing_environment.hpp"
 #include "../../display_test_fixture.hpp"
 #include "../../../mock_display_context.hpp"
 #include "../../../mock_frame_manager.hpp"

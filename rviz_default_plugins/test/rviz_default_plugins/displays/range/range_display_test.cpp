@@ -36,8 +36,7 @@
 
 #include "rviz_default_plugins/displays/range/range_display.hpp"
 #include "../display_test_fixture.hpp"
-#include "../../scene_graph_introspection_helper.hpp"
-#include "test/rviz_rendering/scene_graph_introspection.hpp"
+#include "../../scene_graph_introspection.hpp"
 
 using namespace ::testing;  // NOLINT
 
@@ -69,11 +68,11 @@ sensor_msgs::msg::Range::ConstSharedPtr createRangeMessage(float range = 5)
 }
 
 TEST_F(RangeDisplayFixture, updateBufferLength_creates_right_number_of_cones) {
-  auto cones = rviz_rendering::findAllCones(scene_manager_->getRootSceneNode());
+  auto cones = rviz_default_plugins::findAllCones(scene_manager_->getRootSceneNode());
   EXPECT_THAT(cones, SizeIs(1));
 
   display_->findProperty("Buffer Length")->setValue(3);
-  cones = rviz_rendering::findAllCones(scene_manager_->getRootSceneNode());
+  cones = rviz_default_plugins::findAllCones(scene_manager_->getRootSceneNode());
   EXPECT_THAT(cones, SizeIs(3));
 }
 
@@ -81,7 +80,7 @@ TEST_F(RangeDisplayFixture, processMessage_returns_early_if_transform_is_missing
   auto message = createRangeMessage();
   display_->processMessage(message);
 
-  auto cones = rviz_rendering::findAllCones(scene_manager_->getRootSceneNode());
+  auto cones = rviz_default_plugins::findAllCones(scene_manager_->getRootSceneNode());
   ASSERT_THAT(cones, SizeIs(1));
 
   auto cone_position = cones[0]->getParentSceneNode()->getParentSceneNode()->getPosition();
@@ -97,7 +96,7 @@ TEST_F(RangeDisplayFixture, processMessage_sets_cones_correctly) {
   auto message = createRangeMessage();
   display_->processMessage(message);
 
-  auto cones = rviz_rendering::findAllCones(scene_manager_->getRootSceneNode());
+  auto cones = rviz_default_plugins::findAllCones(scene_manager_->getRootSceneNode());
   ASSERT_THAT(cones, SizeIs(1));
 
   auto cone_position = cones[0]->getParentSceneNode()->getParentSceneNode()->getPosition();

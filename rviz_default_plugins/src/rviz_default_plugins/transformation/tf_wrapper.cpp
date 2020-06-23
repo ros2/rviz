@@ -123,8 +123,16 @@ void TFWrapper::initialize(
   bool using_dedicated_thread)
 {
   initializeBuffer(clock, rviz_ros_node.lock()->get_raw_node(), using_dedicated_thread);
-  tf_listener_ = std::make_shared<tf2_ros::TransformListener>(
-    *buffer_, rviz_ros_node.lock()->get_raw_node(), false);
+  if (using_dedicated_thread) {
+    // TODO(pull/551): The TransformListener needs very quick spinning so it uses its own node
+    // here. Remove this in favor of a multithreaded spinner and ensure that the listener callback
+    // queue does not fill up.
+    tf_listener_ = std::make_shared<tf2_ros::TransformListener>(
+      *buffer_, true);
+  } else {
+    tf_listener_ = std::make_shared<tf2_ros::TransformListener>(
+      *buffer_, rviz_ros_node.lock()->get_raw_node(), false);
+  }
 }
 
 void TFWrapper::initializeBuffer(

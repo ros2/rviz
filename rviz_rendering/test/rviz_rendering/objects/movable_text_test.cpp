@@ -37,7 +37,7 @@
 #include <Overlay/OgreFontManager.h>  // NOLINT: cpplint cannot handle include order here
 
 #include "rviz_rendering/objects/movable_text.hpp"
-#include "test/rviz_rendering/ogre_testing_environment.hpp"
+#include "../ogre_testing_environment.hpp"
 
 #include "../matcher.hpp"
 
