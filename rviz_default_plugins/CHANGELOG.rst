@@ -2,8 +2,8 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.2.0 (2020-06-23)
+------------------
 * Changed to not install test header files in rviz_rendering. (`#564 <https://github.com/ros2/rviz/issues/564>`_)
 * Changed to use a dedicated TransformListener thread. (`#551 <https://github.com/ros2/rviz/issues/551>`_)
 * Suppressed warnings when building with older Qt versions. (`#562 <https://github.com/ros2/rviz/issues/562>`_)
