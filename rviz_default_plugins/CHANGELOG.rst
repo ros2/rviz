@@ -2,6 +2,14 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Changed to not install test header files in rviz_rendering. (`#564 <https://github.com/ros2/rviz/issues/564>`_)
+* Changed to use a dedicated TransformListener thread. (`#551 <https://github.com/ros2/rviz/issues/551>`_)
+* Suppressed warnings when building with older Qt versions. (`#562 <https://github.com/ros2/rviz/issues/562>`_)
+* Restored compatibility with older Qt versions (`#561 <https://github.com/ros2/rviz/issues/561>`_)
+* Contributors: Chris Lalancette, Dirk Thomas, ymd-stella
+
 8.1.1 (2020-06-03)
 ------------------
 * avoid absolute OGRE path in exported targets (`#558 <https://github.com/ros2/rviz/issues/558>`_)
