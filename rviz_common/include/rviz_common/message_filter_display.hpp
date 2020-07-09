@@ -56,8 +56,7 @@ public:
   typedef MessageFilterDisplay<MessageType> MFDClass;
 
   MessageFilterDisplay()
-  : subscription_(),
-    tf_filter_(),
+  : tf_filter_(nullptr),
     messages_received_(0)
   {
     // TODO(Martin-Idel-SI): We need a way to extract the MessageType from the template to set a
@@ -152,12 +151,8 @@ protected:
 
   virtual void unsubscribe()
   {
-    if (tf_filter_) {
-      tf_filter_.reset();
-    }
-    if (subscription_) {
-      subscription_.reset();
-    }
+    tf_filter_.reset();
+    subscription_.reset();
   }
 
   void onEnable() override
