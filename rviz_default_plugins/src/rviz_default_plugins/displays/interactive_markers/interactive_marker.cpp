@@ -498,7 +498,7 @@ void InteractiveMarker::updateControls(
 
   // Maintain a set of old controls to delete
   std::set<std::string> old_names_to_delete;
-  for (const auto name_control_pair : controls_) {
+  for (const auto & name_control_pair : controls_) {
     old_names_to_delete.insert(name_control_pair.first);
   }
 
