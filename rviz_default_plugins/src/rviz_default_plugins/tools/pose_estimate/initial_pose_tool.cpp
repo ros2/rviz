@@ -36,9 +36,10 @@
 #include "rclcpp/qos.hpp"
 
 #include "rviz_common/display_context.hpp"
-#include "rviz_common/properties/string_property.hpp"
-#include "rviz_common/properties/qos_profile_property.hpp"
 #include "rviz_common/logging.hpp"
+#include "rviz_common/properties/float_property.hpp"
+#include "rviz_common/properties/qos_profile_property.hpp"
+#include "rviz_common/properties/string_property.hpp"
 
 namespace rviz_default_plugins
 {
@@ -57,6 +58,16 @@ InitialPoseTool::InitialPoseTool()
 
   qos_profile_property_ = new rviz_common::properties::QosProfileProperty(
     topic_property_, qos_profile_);
+
+  covariance_x_property_ = new rviz_common::properties::FloatProperty(
+    "Covariance x", 0.5f * 0.5f, "Covariance on the x-axis.",
+    getPropertyContainer(), 0, this);
+  covariance_y_property_ = new rviz_common::properties::FloatProperty(
+    "Covariance y", 0.5f * 0.5f, "Covariance on the y-axis.",
+    getPropertyContainer(), 0, this);
+  covariance_yaw_property_ = new rviz_common::properties::FloatProperty(
+    "Covariance yaw", static_cast<float>(M_PI / 12.0 * M_PI / 12.0),
+    "Covariance on the yaw-axis.", getPropertyContainer(), 0, this);
 }
 
 InitialPoseTool::~InitialPoseTool() = default;
@@ -95,9 +106,9 @@ void InitialPoseTool::onPoseSet(double x, double y, double theta)
 
   pose.pose.pose.orientation = orientationAroundZAxis(theta);
 
-  pose.pose.covariance[6 * 0 + 0] = 0.5 * 0.5;
-  pose.pose.covariance[6 * 1 + 1] = 0.5 * 0.5;
-  pose.pose.covariance[6 * 5 + 5] = M_PI / 12.0 * M_PI / 12.0;
+  pose.pose.covariance[6 * 0 + 0] = covariance_x_property_->getFloat();
+  pose.pose.covariance[6 * 1 + 1] = covariance_y_property_->getFloat();
+  pose.pose.covariance[6 * 5 + 5] = covariance_yaw_property_->getFloat();
 
   logPose("estimate", pose.pose.pose.position, pose.pose.pose.orientation, theta, fixed_frame);
 
