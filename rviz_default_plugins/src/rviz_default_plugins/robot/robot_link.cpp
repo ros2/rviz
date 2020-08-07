@@ -48,7 +48,7 @@
 
 #include <QFileInfo>  // NOLINT cpplint cannot handle include order here
 
-#include "resource_retriever/retriever.h"
+#include "resource_retriever/retriever.hpp"
 
 #include "rviz_default_plugins/robot/robot_joint.hpp"
 #include "rviz_default_plugins/robot/robot.hpp"
