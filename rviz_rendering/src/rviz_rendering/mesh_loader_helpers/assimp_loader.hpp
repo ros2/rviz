@@ -50,7 +50,7 @@
 #include <assimp/aiScene.h>
 #endif
 
-#include "resource_retriever/retriever.h"
+#include "resource_retriever/retriever.hpp"
 
 #include "rviz_rendering/logging.hpp"
 

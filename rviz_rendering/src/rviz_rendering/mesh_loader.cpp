@@ -62,7 +62,7 @@
 #include <assimp/IOSystem.h>
 #endif
 
-#include "resource_retriever/retriever.h"
+#include "resource_retriever/retriever.hpp"
 
 #include "mesh_loader_helpers/assimp_loader.hpp"
 #include "mesh_loader_helpers/stl_loader.hpp"
