@@ -111,16 +111,6 @@ void Display::queueRender()
 QVariant Display::getViewData(int column, int role) const
 {
   switch (role) {
-    case Qt::BackgroundRole:
-      {
-        /*
-        QLinearGradient q( 0,0, 0,5);
-        q.setColorAt( 0.0, QColor(230,230,230));
-        q.setColorAt( 1.0, Qt::white);
-        return QBrush( q);
-        */
-        return QColor(Qt::white);
-      }
     case Qt::ForegroundRole:
       {
         // if we're item-enabled (not greyed out) and in warn/error state, set appropriate color
@@ -134,7 +124,7 @@ QVariant Display::getViewData(int column, int role) const
               return QColor(40, 120, 197);
             }
           } else {
-            return QColor(Qt::black);
+            return QApplication::palette().color(QPalette::Text);
           }
         }
         break;

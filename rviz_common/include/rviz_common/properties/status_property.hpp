@@ -60,10 +60,6 @@ public:
   Qt::ItemFlags getViewFlags(int column) const override;
 
   /// Return the color appropriate for the given status level.
-  /**
-   * Returns an invalid QColor for Ok status, meaning we should use the default
-   * text color.
-   */
   static QColor statusColor(Level level);
 
   /// Return the word appropriate for the given status level: "Ok", "Warn", or "Error".
