@@ -83,7 +83,7 @@ void RosTopicProperty::fillTopicList()
       // TODO(Martin-Idel-SI): revisit after message_traits become available.
       // We only want to show the types of the topic we subscribe to, however, currently we can't
       // get the type, so std_message_type will always be empty --> show all topics instead
-      if (std_message_type.empty() || type == std_message_type) {
+      if (type == std_message_type) {
         addOptionStd(topic.first);
       }
     }
