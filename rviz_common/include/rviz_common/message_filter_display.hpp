@@ -62,12 +62,12 @@ public:
   {
     try{
       std::string data_type(rosidl_generator_traits::data_type<MessageType>());
-      std::string look_for = "::";
-      std::string replace_with = "/";
+      const std::string look_for = "::";
+      const std::string replace_with = "/";
       for (int i=0; i<2; ++i) {
         int idx = data_type.find(look_for);
         if (idx == -1) {
-          throw std::runtime_error(data_type + "is not a valid data type");
+          throw std::runtime_error("Not a valid data type");
         }
         data_type.replace(idx, look_for.length(), replace_with);
       }
