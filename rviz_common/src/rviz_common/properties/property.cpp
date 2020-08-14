@@ -34,8 +34,8 @@
 #include <climits>  // for INT_MIN and INT_MAX
 #include <string>
 
-#include <QApplication>
-#include <QPalette>
+#include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
+#include <QPalette>  // NOLINT: cpplint is unable to handle the include order here
 #include <QLineEdit>  // NOLINT: cpplint is unable to handle the include order here
 #include <QSpinBox>  // NOLINT: cpplint is unable to handle the include order here
 
