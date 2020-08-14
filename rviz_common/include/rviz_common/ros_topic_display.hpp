@@ -40,11 +40,13 @@
 
 #endif
 
+#include "rclcpp/rclcpp.hpp"
 #include "rclcpp/qos.hpp"
 
 #include "rviz_common/display.hpp"
 #include "rviz_common/display_context.hpp"
 #include "frame_manager_iface.hpp"
+#include "rviz_common/properties/int_property.hpp"
 #include "rviz_common/properties/ros_topic_property.hpp"
 #include "rviz_common/properties/qos_profile_property.hpp"
 #include "rviz_common/properties/status_property.hpp"
@@ -96,6 +98,9 @@ public:
 
 protected Q_SLOTS:
   virtual void transformerChangedCallback()
+  {
+  }
+  virtual void updateMessageQueueSize()
   {
   }
   virtual void updateTopic() = 0;

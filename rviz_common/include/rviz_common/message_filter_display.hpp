@@ -66,6 +66,11 @@ public:
     QString message_type = QString::fromStdString("");
     topic_property_->setMessageType(message_type);
     topic_property_->setDescription(message_type + " topic to subscribe to.");
+
+    message_queue_property_ = new properties::IntProperty(
+      "Filter size", 10,
+      "Set the filter size of the Message Filter Display.",
+      topic_property_, SLOT(updateMessageQueueSize()), this);
   }
 
   /**
@@ -136,6 +141,11 @@ protected:
     }
   }
 
+  void updateMessageQueueSize()
+  {
+    tf_filter_->setQueueSize(static_cast<uint32_t>(message_queue_property_->getInt()));
+  }
+
   void transformerChangedCallback() override
   {
     resetSubscription();
@@ -204,6 +214,7 @@ protected:
   typename std::shared_ptr<message_filters::Subscriber<MessageType>> subscription_;
   std::shared_ptr<tf2_ros::MessageFilter<MessageType, transformation::FrameTransformer>> tf_filter_;
   uint32_t messages_received_;
+  properties::IntProperty * message_queue_property_;
 };
 
 }  // end namespace rviz_common
