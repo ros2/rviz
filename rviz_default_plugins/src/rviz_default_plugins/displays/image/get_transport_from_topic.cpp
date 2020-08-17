@@ -44,6 +44,7 @@ bool isRawTransport(const std::string & topic)
          last_subtopic != "theora";
 }
 
+RVIZ_DEFAULT_PLUGINS_PUBLIC
 std::string getTransportFromTopic(const std::string & topic)
 {
   if (isRawTransport(topic)) {
@@ -53,6 +54,7 @@ std::string getTransportFromTopic(const std::string & topic)
 }
 
 
+RVIZ_DEFAULT_PLUGINS_PUBLIC
 std::string getBaseTopicFromTopic(const std::string & topic)
 {
   if (isRawTransport(topic)) {
