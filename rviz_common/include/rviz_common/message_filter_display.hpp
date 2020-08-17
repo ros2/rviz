@@ -34,7 +34,6 @@
 #include <tf2_ros/message_filter.h>
 
 #include <memory>
-#include <string>
 
 #include "rviz_common/ros_topic_display.hpp"
 
