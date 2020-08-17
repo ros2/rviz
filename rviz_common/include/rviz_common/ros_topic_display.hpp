@@ -98,6 +98,9 @@ protected Q_SLOTS:
   virtual void transformerChangedCallback()
   {
   }
+  virtual void updateMessageQueueSize()
+  {
+  }
   virtual void updateTopic() = 0;
 
 protected:
