@@ -37,8 +37,8 @@
 #include <memory>
 
 #include "get_transport_from_topic.hpp"
-#include "image_transport/image_transport.h"
-#include "image_transport/subscriber_filter.h"
+#include "image_transport/image_transport.hpp"
+#include "image_transport/subscriber_filter.hpp"
 #include "tf2_ros/message_filter.h"
 #include "rviz_common/ros_topic_display.hpp"
 

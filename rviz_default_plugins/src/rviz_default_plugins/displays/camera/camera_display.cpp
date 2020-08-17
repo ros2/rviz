@@ -46,7 +46,7 @@
 #include <OgreTechnique.h>
 #include <OgreCamera.h>
 
-#include "image_transport/camera_common.h"
+#include "image_transport/camera_common.hpp"
 
 #include "rviz_rendering/material_manager.hpp"
 #include "rviz_rendering/objects/axes.hpp"

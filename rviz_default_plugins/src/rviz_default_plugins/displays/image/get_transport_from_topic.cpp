@@ -30,6 +30,7 @@
 #include <string>
 
 #include "rviz_default_plugins/displays/image/get_transport_from_topic.hpp"
+#include "rviz_default_plugins/visibility_control.hpp"
 
 namespace rviz_default_plugins
 {
