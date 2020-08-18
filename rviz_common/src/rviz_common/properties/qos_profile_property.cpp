@@ -71,7 +71,7 @@ QosProfileProperty::QosProfileProperty(Property * parent_property, rclcpp::QoS d
     "Set the depth of the incoming message queue. Increasing this is useful if your "
     "incoming TF data is delayed significantly from your message data, but it can greatly "
     "increase memory usage if the messages are big.",
-    parent_property, SLOT(updateQosProfile()), this);
+    parent_property, SLOT(updateQosProfile()), this, 1, INT_MAX);
 
   history_policy_property_ = new EditableEnumProperty(
     "History Policy", history_policies.at(default_profile.get_rmw_qos_profile().history),
