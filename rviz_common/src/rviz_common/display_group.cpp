@@ -166,8 +166,8 @@ void DisplayGroup::removeAllDisplays()
   for (int i = displays_.size() - 1; i >= 0; i--) {
     Display * child = displays_.takeAt(i);
     Q_EMIT displayRemoved(child);
-    child->setParent(NULL);  // prevent child destructor from calling getParent()->takeChild().
-    child->setModel(NULL);
+    child->setParent(nullptr);  // prevent child destructor from calling getParent()->takeChild().
+    child->setModel(nullptr);
     child_indexes_valid_ = false;
     delete child;
   }
@@ -179,7 +179,7 @@ void DisplayGroup::removeAllDisplays()
 
 Display * DisplayGroup::takeDisplay(Display * child)
 {
-  Display * result = NULL;
+  Display * result = nullptr;
   int num_displays = displays_.size();
   for (int i = 0; i < num_displays; i++) {
     if (displays_.at(i) == child) {
@@ -188,8 +188,8 @@ Display * DisplayGroup::takeDisplay(Display * child)
       }
       result = displays_.takeAt(i);
       Q_EMIT displayRemoved(result);
-      result->setParent(NULL);
-      result->setModel(NULL);
+      result->setParent(nullptr);
+      result->setModel(nullptr);
       child_indexes_valid_ = false;
       if (model_) {
         model_->endRemove();
@@ -206,7 +206,7 @@ Display * DisplayGroup::getDisplayAt(int index) const
   if (0 <= index && index < displays_.size() ) {
     return displays_.at(index);
   }
-  return NULL;
+  return nullptr;
 }
 
 DisplayGroup * DisplayGroup::getGroupAt(int index) const
@@ -307,8 +307,8 @@ Property * DisplayGroup::takeChildAt(int index)
 //  printf("  displaygroup5 displays_.takeAt( %d ) ( index = %d )\n", disp_index, index );
   Display * child = displays_.takeAt(disp_index);
   Q_EMIT displayRemoved(child);
-  child->setModel(NULL);
-  child->setParent(NULL);
+  child->setModel(nullptr);
+  child->setParent(nullptr);
   child_indexes_valid_ = false;
   if (model_) {
     model_->endRemove();

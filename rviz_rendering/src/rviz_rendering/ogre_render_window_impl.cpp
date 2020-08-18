@@ -291,7 +291,7 @@ void RenderWindowImpl::setupStereo()
   rendering_stereo_ = render_stereo;
 
   if (rendering_stereo_) {
-    right_viewport_ = render_window_->addViewport(NULL, 1);
+    right_viewport_ = render_window_->addViewport(nullptr, 1);
 #if OGRE_STEREO_ENABLE
     right_viewport_->setDrawBuffer(Ogre::CBT_BACK_RIGHT);
     viewport_->setDrawBuffer(Ogre::CBT_BACK_LEFT);
@@ -308,7 +308,7 @@ void RenderWindowImpl::setupStereo()
   } else {
     render_window_->removeListener(this);
     render_window_->removeViewport(1);
-    right_viewport_ = NULL;
+    right_viewport_ = nullptr;
 
 #if OGRE_STEREO_ENABLE
     viewport_->setDrawBuffer(Ogre::CBT_BACK);
@@ -317,11 +317,11 @@ void RenderWindowImpl::setupStereo()
     if (left_camera_) {
       left_camera_->getSceneManager()->destroyCamera(left_camera_);
     }
-    left_camera_ = NULL;
+    left_camera_ = nullptr;
     if (right_camera_) {
       right_camera_->getSceneManager()->destroyCamera(right_camera_);
     }
-    right_camera_ = NULL;
+    right_camera_ = nullptr;
   }
 }
 #endif
