@@ -80,7 +80,10 @@ void RosTopicProperty::fillTopicList()
   for (const auto & topic : published_topics) {
     // Only add topics whose type matches.
     for (const auto & type : topic.second) {
-      if (type == std_message_type) {
+      // TODO(Martin-Idel-SI): revisit after message_traits become available.
+      // We only want to show the types of the topic we subscribe to, however, currently we can't
+      // get the type, so std_message_type will always be empty --> show all topics instead
+      if (std_message_type.empty() || type == std_message_type) {
         addOptionStd(topic.first);
       }
     }

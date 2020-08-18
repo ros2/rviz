@@ -50,6 +50,7 @@ These features have not been ported to `ros2/rviz` yet.
 | Effort        |
 
 Other features:
+- Filtering of Topic lists by topic type
 - Image transport features
 - Stereo
 
