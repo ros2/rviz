@@ -45,10 +45,12 @@ IntProperty::IntProperty(
   const QString & description,
   Property * parent,
   const char * changed_slot,
-  QObject * receiver)
+  QObject * receiver,
+  int min_value,
+  int max_value)
 : Property(name, default_value, description, parent, changed_slot, receiver),
-  min_(INT_MIN),
-  max_(INT_MAX)
+  min_(min_value),
+  max_(max_value)
 {
 }
 

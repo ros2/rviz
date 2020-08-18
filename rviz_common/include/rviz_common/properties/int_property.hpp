@@ -63,12 +63,14 @@ public:
    *   connected to the changed_slot on the receiver object.
    */
   explicit IntProperty(
-    const QString & name = QString(),
-    int default_value = 0,
-    const QString & description = QString(),
-    Property * parent = 0,
-    const char * changed_slot = 0,
-    QObject * receiver = 0);
+      const QString &name = QString(),
+      int default_value = 0,
+      const QString &description = QString(),
+      Property *parent = 0,
+      const char *changed_slot = 0,
+      QObject *receiver = 0,
+      int min_value = INT_MIN,
+      int max_value = INT_MAX);
 
   /// Set the new value for this property.
   /**
