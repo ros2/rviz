@@ -30,7 +30,6 @@
 #include <string>
 
 #include "rviz_default_plugins/displays/image/get_transport_from_topic.hpp"
-#include "rviz_default_plugins/visibility_control.hpp"
 
 namespace rviz_default_plugins
 {
@@ -44,7 +43,6 @@ bool isRawTransport(const std::string & topic)
          last_subtopic != "theora";
 }
 
-RVIZ_DEFAULT_PLUGINS_PUBLIC
 std::string getTransportFromTopic(const std::string & topic)
 {
   if (isRawTransport(topic)) {
@@ -53,8 +51,6 @@ std::string getTransportFromTopic(const std::string & topic)
   return topic.substr(topic.find_last_of('/') + 1);
 }
 
-
-RVIZ_DEFAULT_PLUGINS_PUBLIC
 std::string getBaseTopicFromTopic(const std::string & topic)
 {
   if (isRawTransport(topic)) {

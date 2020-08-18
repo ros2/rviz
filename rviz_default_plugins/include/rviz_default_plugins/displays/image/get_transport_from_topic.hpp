@@ -32,13 +32,17 @@
 
 #include <string>
 
+#include "rviz_default_plugins/visibility_control.hpp"
+
 namespace rviz_default_plugins
 {
 namespace displays
 {
 
+RVIZ_DEFAULT_PLUGINS_PUBLIC
 std::string getTransportFromTopic(const std::string & topic);
 
+RVIZ_DEFAULT_PLUGINS_PUBLIC
 std::string getBaseTopicFromTopic(const std::string & topic);
 
 
