@@ -67,7 +67,8 @@ public:
     message_queue_property_ = new properties::IntProperty(
       "Filter size", 10,
       "Set the filter size of the Message Filter Display.",
-      topic_property_, SLOT(updateMessageQueueSize()), this);
+      topic_property_, SLOT(updateMessageQueueSize()), this,
+      1, INT_MAX);
   }
 
   /**
