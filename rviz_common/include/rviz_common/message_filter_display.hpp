@@ -131,6 +131,7 @@ protected:
         std::bind(
           &MessageFilterDisplay<MessageType>::incomingMessage, this,
           std::placeholders::_1));
+      updateMessageQueueSize();
       setStatus(properties::StatusProperty::Ok, "Topic", "OK");
     } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
       setStatus(
@@ -140,6 +141,11 @@ protected:
 
   void updateMessageQueueSize()
   {
+    if (topic_property_->isEmpty()) {
+      setStatus(
+        properties::StatusProperty::Error, "Topic", QString("Error subscribing: Empty topic name"));
+      return;
+    }
     tf_filter_->setQueueSize(static_cast<uint32_t>(message_queue_property_->getInt()));
   }
 
