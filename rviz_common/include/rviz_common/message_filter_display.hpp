@@ -126,7 +126,9 @@ protected:
       tf_filter_ =
         std::make_shared<tf2_ros::MessageFilter<MessageType, transformation::FrameTransformer>>(
         *context_->getFrameManager()->getTransformer(),
-        fixed_frame_.toStdString(), 10, rviz_ros_node_.lock()->get_raw_node());
+        fixed_frame_.toStdString(),
+        static_cast<uint32_t>(message_queue_property_->getInt()),
+        rviz_ros_node_.lock()->get_raw_node());
       tf_filter_->connectInput(*subscription_);
       tf_filter_->registerCallback(
         std::bind(
@@ -141,7 +143,9 @@ protected:
 
   void updateMessageQueueSize()
   {
-    tf_filter_->setQueueSize(static_cast<uint32_t>(message_queue_property_->getInt()));
+    if (tf_filter_) {
+      tf_filter_->setQueueSize(static_cast<uint32_t>(message_queue_property_->getInt()));
+    }
   }
 
   void transformerChangedCallback() override
