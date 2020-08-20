@@ -113,6 +113,7 @@ set(rviz_common_headers_to_moc
   include/rviz_common/interaction/selection_manager.hpp
   include/rviz_common/interaction/selection_manager_iface.hpp
   src/rviz_common/splash_screen.hpp
+  src/rviz_common/time_panel.hpp
   include/rviz_common/tool.hpp
   src/rviz_common/tool_manager.hpp
   src/rviz_common/tool_properties_panel.hpp
@@ -199,6 +200,7 @@ set(rviz_common_source_files
   src/rviz_common/interaction/selection_renderer.cpp
   src/rviz_common/interaction/view_picker.cpp
   src/rviz_common/splash_screen.cpp
+  src/rviz_common/time_panel.cpp
   src/rviz_common/transformation/identity_frame_transformer.cpp
   src/rviz_common/tool_manager.cpp
   src/rviz_common/tool_properties_panel.cpp

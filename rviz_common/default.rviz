@@ -22,11 +22,10 @@ Panels:
       - /Current View1
     Name: Views
     Splitter Ratio: 0.5
-  # TODO(wjwwood): restore these panels when ported
-  # - Class: rviz/Time
-  #   Name: Time
-  #   SyncMode: 0
-  #   SyncSource: ""
+   - Class: rviz_common/Time
+     Name: Time
+     SyncMode: 0
+     SyncSource: ""
 Visualization Manager:
   Class: ""
   Displays:

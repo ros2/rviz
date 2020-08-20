@@ -33,11 +33,10 @@
 
 #include <string>
 
-// TODO(wjwwood): reenable the remaining panels
 #include "./displays_panel.hpp"
 #include "./help_panel.hpp"
 #include "./selection_panel.hpp"
-// #include "./time_panel.hpp"
+#include "./time_panel.hpp"
 #include "./tool_properties_panel.hpp"
 #include "./transformation_panel.hpp"
 #include "./views_panel.hpp"
@@ -49,7 +48,6 @@ namespace rviz_common
 
 static Panel * newHelpPanel() {return new HelpPanel();}
 static Panel * newSelectionPanel() {return new SelectionPanel();}
-// static Panel * newTimePanel() {return new TimePanel();}
 static Panel * newToolPropertiesPanel() {return new ToolPropertiesPanel();}
 static Panel * newTransformationPanel() {return new TransformationPanel();}
 static Panel * newViewsPanel() {return new ViewsPanel();}
@@ -71,8 +69,12 @@ PanelFactory::PanelFactory(
   addBuiltInClass(
     "rviz_common", "Selection",
     "Show properties of selected objects", &newSelectionPanel);
-  // addBuiltInClass("rviz", "Time",
-  //   "Show the current time", &newTimePanel);
+  addBuiltInClass(
+    "rviz_common", "Time",
+    "Show the current time",
+    [manager]() -> Panel * {
+      return new TimePanel(manager, nullptr);
+    });
   addBuiltInClass(
     "rviz_common", "Tool Properties",
     "Show and edit properties of tools", &newToolPropertiesPanel);
