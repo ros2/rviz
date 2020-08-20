@@ -28,7 +28,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <QApplication>
 #include <QColor>
+#include <QPalette>
 
 #include "rviz_common/load_resource.hpp"
 #include "rviz_common/properties/property_tree_model.hpp"
@@ -54,6 +56,10 @@ StatusProperty::StatusProperty(
   status_icons_[0] = loadPixmap("package://rviz_common/icons/ok.png");
   status_icons_[1] = loadPixmap("package://rviz_common/icons/warning.png");
   status_icons_[2] = loadPixmap("package://rviz_common/icons/error.png");
+
+  if (!status_colors_[0].isValid()) {  // initialize default text color once
+    status_colors_[0] = QApplication::palette().color(QPalette::Text);
+  }
 }
 
 bool StatusProperty::setValue(const QVariant & new_value)
