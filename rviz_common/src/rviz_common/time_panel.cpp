@@ -121,6 +121,7 @@ void TimePanel::onInitialize()
   DisplayGroup * display_group = vis_manager_->getRootDisplayGroup();
   onDisplayAdded(display_group);
 
+  experimentalToggled(false);
   syncModeSelected(0);
   pauseToggled(false);
 }

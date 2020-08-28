@@ -606,10 +606,7 @@ double VisualizationManager::getWallClockElapsed()
 
 double VisualizationManager::getROSTimeElapsed()
 {
-  // TODO(wjwwood): why does this function return now - begin, whereas the getWallClockElapsed
-  //                returns a pre-calculated elapsed value?
-  //                figure out how this function is being used and make these consistent
-  return (frame_manager_->getTime() - ros_time_begin_).nanoseconds() / 1e9;
+  return static_cast<double>(ros_time_elapsed_) / 1e9;
 }
 
 void VisualizationManager::updateBackgroundColor()
