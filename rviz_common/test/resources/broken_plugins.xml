@@ -1,0 +1,13 @@
+<no-library path="rviz_common_test">
+  <class
+    name="rviz_common_test/Camera"
+    type="rviz_common_test::displays::CameraDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays an image from a camera, with the visualized world rendered behind it.  &lt;a href="http://www.ros.org/wiki/rviz/DisplayTypes/Camera"&gt;More Information&lt;/a&gt;.
+    </description>
+    <message_type>sensor_msgs/msg/Image</message_type>
+    <message_type>sensor_msgs/msg/CompressedImage</message_type>
+  </class>
+</no-library>

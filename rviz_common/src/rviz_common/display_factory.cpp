@@ -32,8 +32,7 @@
 
 #include <string>
 
-// TODO(wjwwood): replace with tinyxml2? implicit dependency?
-#include <tinyxml.h>  // NOLINT: cpplint is unable to handle the include order here
+#include <tinyxml2.h>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/display_group.hpp"
 #include "rviz_common/logging.hpp"
@@ -77,71 +76,22 @@ QSet<QString> DisplayFactory::getMessageTypes(const QString & class_id)
 
   if (!xml_file.isEmpty()) {
     RVIZ_COMMON_LOG_DEBUG_STREAM("Parsing " << xml_file.toStdString());
-    TiXmlDocument document;
-    document.LoadFile(xml_file.toStdString());
-    TiXmlElement * config = document.RootElement();
-    if (config == nullptr) {
-      RVIZ_COMMON_LOG_ERROR_STREAM(
-        "Skipping XML Document \"" << xml_file.toStdString() << "\" which had no Root Element.  "
-          "This likely means the XML is malformed or missing.");
-      return QSet<QString>();
-    }
-    if (config->ValueStr() != "library" &&
-      config->ValueStr() != "class_libraries")
+    tinyxml2::XMLDocument document;
+    document.LoadFile(xml_file.toUtf8().constData());
+    tinyxml2::XMLElement * config = document.RootElement();
+    if (!hasRootNode(config, xml_file.toStdString()) ||
+      !hasLibraryRoot(config, xml_file.toStdString()))
     {
-      RVIZ_COMMON_LOG_ERROR_STREAM(
-        "The XML document \"" << xml_file.toStdString() <<
-          "\" given to add must have either \"library\" or "
-          "\"class_libraries\" as the root tag");
       return QSet<QString>();
     }
     // Step into the filter list if necessary
-    if (config->ValueStr() == "class_libraries") {
+    if (config->Value() == std::string("class_libraries")) {
       config = config->FirstChildElement("library");
     }
 
-    TiXmlElement * library = config;
+    tinyxml2::XMLElement * library = config;
     while (library) {
-      TiXmlElement * class_element = library->FirstChildElement("class");
-      while (class_element) {
-        std::string derived_class;
-        if (class_element->Attribute("type")) {
-          derived_class = class_element->Attribute("type");
-        }
-        std::string current_class_id;
-        if (class_element->Attribute("name")) {
-          current_class_id = class_element->Attribute("name");
-          RVIZ_COMMON_LOG_DEBUG_STREAM(
-            "XML file specifies lookup name (i.e. magic name) = " << current_class_id);
-        } else {
-          RVIZ_COMMON_LOG_DEBUG_STREAM(
-            "XML file has no lookup name (i.e. magic name) for class " << derived_class <<
-              ", assuming class_id == real class name.");
-          current_class_id = derived_class;
-        }
-
-        QSet<QString> message_types;
-        TiXmlElement * message_type = class_element->FirstChildElement("message_type");
-
-        while (message_type) {
-          if (message_type->GetText()) {
-            const char * message_type_str = message_type->GetText();
-            RVIZ_COMMON_LOG_DEBUG_STREAM(
-              current_class_id << " supports message type " << message_type_str);
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-            message_types.insert(QString::fromAscii(message_type_str));
-#else
-            message_types.insert(QString(message_type_str));
-#endif
-          }
-          message_type = message_type->NextSiblingElement("message_type");
-        }
-
-        message_type_cache_[QString::fromStdString(current_class_id)] = message_types;
-
-        // step to next class_element
-        class_element = class_element->NextSiblingElement("class");
-      }
+      fillCacheForAllClassElements(library);
       library = library->NextSiblingElement("library");
     }
   }
@@ -152,6 +102,87 @@ QSet<QString> DisplayFactory::getMessageTypes(const QString & class_id)
   }
 
   return QSet<QString>();
+}
+
+bool DisplayFactory::hasRootNode(tinyxml2::XMLElement * root_element, const std::string & xml_file)
+{
+  if (root_element == nullptr) {
+    RVIZ_COMMON_LOG_ERROR_STREAM(
+      "Skipping XML Document \"" << xml_file << "\" which had no Root Element.  "
+        "This likely means the XML is malformed or missing.");
+    return false;
+  }
+  return true;
+}
+
+bool
+DisplayFactory::hasLibraryRoot(tinyxml2::XMLElement * root_element, const std::string & xml_file)
+{
+  if (root_element->Value() != std::string("library") &&
+    root_element->Value() != std::string("class_libraries"))
+  {
+    RVIZ_COMMON_LOG_ERROR_STREAM(
+      "The XML document \"" << xml_file <<
+        "\" given to add must have either \"library\" or "
+        "\"class_libraries\" as the root tag");
+    return false;
+  }
+  return true;
+}
+
+void DisplayFactory::fillCacheForAllClassElements(tinyxml2::XMLElement * library)
+{
+  tinyxml2::XMLElement * class_element = library->FirstChildElement("class");
+  while (class_element) {
+    const std::string derived_class = lookupDerivedClass(class_element);
+    const std::string current_class_id = lookupClassId(class_element, derived_class);
+    QSet<QString> message_types = parseMessageTypes(class_element, current_class_id);
+
+    message_type_cache_[QString::fromStdString(current_class_id)] = message_types;
+
+    class_element = class_element->NextSiblingElement("class");
+  }
+}
+
+QSet<QString> DisplayFactory::parseMessageTypes(
+  tinyxml2::XMLElement * class_element, const std::string & current_class_id) const
+{
+  QSet<QString> message_types;
+
+  const tinyxml2::XMLElement * message_type = class_element->FirstChildElement("message_type");
+  while (message_type) {
+    if (message_type->GetText()) {
+      const char * message_type_str = message_type->GetText();
+      RVIZ_COMMON_LOG_DEBUG_STREAM(
+        current_class_id << " supports message type " << message_type_str);
+      message_types.insert(QString(message_type_str));
+    }
+    message_type = message_type->NextSiblingElement("message_type");
+  }
+  return message_types;
+}
+
+std::string DisplayFactory::lookupDerivedClass(const tinyxml2::XMLElement * class_element) const
+{
+  if (class_element->Attribute("type")) {
+    return class_element->Attribute("type");
+  }
+  return "";
+}
+
+std::string DisplayFactory::lookupClassId(
+  const tinyxml2::XMLElement * class_element, const std::string & derived_class) const
+{
+  if (class_element->Attribute("name")) {
+    RVIZ_COMMON_LOG_DEBUG_STREAM(
+      "XML file specifies lookup name (i.e. magic name) = " << class_element->Attribute("name"));
+    return class_element->Attribute("name");
+  } else {
+    RVIZ_COMMON_LOG_DEBUG_STREAM(
+      "XML file has no lookup name (i.e. magic name) for class " << derived_class <<
+        ", assuming class_id == real class name.");
+    return derived_class;
+  }
 }
 
 }  // namespace rviz_common
