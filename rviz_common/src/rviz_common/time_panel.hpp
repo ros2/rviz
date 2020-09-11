@@ -30,8 +30,8 @@
 #ifndef RVIZ_COMMON__TIME_PANEL_HPP_
 #define RVIZ_COMMON__TIME_PANEL_HPP_
 
-#include "rviz_rendering/panel.hpp"
-#include "ros/time.h"
+#include "rviz_common/panel.hpp"
+#include "rclcpp/rclcpp.hpp"
 
 class QLineEdit;
 class QComboBox;
@@ -40,7 +40,7 @@ class QPushButton;
 class QHBoxLayout;
 class QWidget;
 
-namespace rviz
+namespace rviz_common
 {
 
 class VisualizationManager;
@@ -55,7 +55,9 @@ class TimePanel : public Panel
   Q_OBJECT
 
 public:
-  explicit TimePanel(QWidget * parent = 0);
+  explicit TimePanel(
+    VisualizationManager * manager,
+    QWidget * parent = nullptr);
 
   virtual void onInitialize();
 
@@ -68,10 +70,10 @@ protected Q_SLOTS:
   /** Read time values from VisualizationManager and update displays. */
   void update();
 
-  void onDisplayAdded(rviz::Display * display);
-  void onDisplayRemoved(rviz::Display * display);
+  void onDisplayAdded(rviz_common::Display * display);
+  void onDisplayRemoved(rviz_common::Display * display);
 
-  void onTimeSignal(rviz::Display * display, ros::Time time);
+  void onTimeSignal(rviz_common::Display * display, rclcpp::Time time);
 
   virtual void load(const Config & config);
   virtual void save(Config config) const;
@@ -98,8 +100,10 @@ protected:
   QLineEdit * ros_elapsed_label_;
   QLineEdit * wall_time_label_;
   QLineEdit * wall_elapsed_label_;
+
+  VisualizationManager * vis_manager_;
 };
 
-}  // namespace rviz
+}  // namespace rviz_common
 
 #endif  // RVIZ_COMMON__TIME_PANEL_HPP_
