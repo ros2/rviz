@@ -46,13 +46,16 @@
   <depend>urdf</depend>
   <depend>visualization_msgs</depend>
 
+  <!-- TODO(jacobperron): Replace with ament_lint_common when ament_copyright is working -->
   <test_depend>ament_cmake_cppcheck</test_depend>
   <test_depend>ament_cmake_cpplint</test_depend>
   <test_depend>ament_cmake_gmock</test_depend>
   <test_depend>ament_cmake_gtest</test_depend>
   <test_depend>ament_cmake_lint_cmake</test_depend>
   <test_depend>ament_cmake_uncrustify</test_depend>
+  <test_depend>ament_cmake_xmllint</test_depend>
   <test_depend>ament_index_cpp</test_depend>
+  <test_depend>ament_lint_auto</test_depend>
   <test_depend>rviz_rendering_tests</test_depend>
   <test_depend>rviz_visual_testing_framework</test_depend>
 

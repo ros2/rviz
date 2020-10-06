@@ -313,19 +313,11 @@ install(
 )
 
 if(BUILD_TESTING)
-  # TODO(wjwwood): replace this with ament_lint_auto() and/or add the copyright linter back
-  find_package(ament_cmake_cppcheck REQUIRED)
-  find_package(ament_cmake_cpplint REQUIRED)
-  find_package(ament_cmake_lint_cmake REQUIRED)
-  find_package(ament_cmake_uncrustify REQUIRED)
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
 
   find_package(ament_cmake_gmock REQUIRED)
   find_package(ament_cmake_gtest REQUIRED)
-
-  ament_cppcheck()
-  ament_cpplint()
-  ament_lint_cmake()
-  ament_uncrustify()
 
   qt5_wrap_cpp(rviz_common_test_moc_files test/mock_display.hpp)
   qt5_wrap_cpp(rviz_common_test_moc_files test/mock_property_change_receiver.hpp)

@@ -1,3 +1,4 @@
+# lint_cmake: -readability/wonkycase
 cmake_minimum_required(VERSION 3.5)
 
 project(rviz_assimp_vendor)
@@ -77,6 +78,11 @@ if(NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LESS 4.1.0)
     set(ENV_VAR_VALUE "opt/rviz_assimp_vendor/lib")
   endif()
   ament_environment_hooks(env_hook/rviz_assimp_vendor_library_path.dsv.in)
+endif()
+
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
 endif()
 
 ament_package(
