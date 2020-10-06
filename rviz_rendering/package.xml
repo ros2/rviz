@@ -4,12 +4,14 @@
   <description>
     Library which provides the 3D rendering functionality in rviz.
   </description>
-  <maintainer email="william@osrfoundation.org">William Woodall</maintainer>
+  <maintainer email="jacob@openrobotics.org">Jacob Perron</maintainer>
+  <maintainer email="michael.jeronimo@openrobotics.org">Michael Jeronimo</maintainer>
   <license>BSD</license>
 
   <author>Dave Hershberger</author>
   <author>David Gossow</author>
   <author>Josh Faust</author>
+  <author email="william@openrobotics.org">William Woodall</author>
 
   <url type="website">https://github.com/ros2/rviz/blob/ros2/README.md</url>
   <url type="repository">https://github.com/ros2/rviz</url>
