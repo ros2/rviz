@@ -1,3 +1,7 @@
+<?xml version="1.0"?>
+<?xml-model
+  href="http://download.ros.org/schema/package_format2.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>rviz_visual_testing_framework</name>
   <version>8.2.0</version>
@@ -8,12 +12,12 @@
   <maintainer email="michael.jeronimo@openrobotics.org">Michael Jeronimo</maintainer>
   <license>BSD</license>
 
-  <author>Alessandro Bottero</author>
-  <author email="william@openrobotics.org">William Woodall</author>
-
   <url type="website">http://ros.org/wiki/rviz2</url>
   <url type="repository">https://github.com/ros-visualization/rviz</url>
   <url type="bugtracker">https://github.com/ros-visualization/rviz/issues</url>
+
+  <author>Alessandro Bottero</author>
+  <author email="william@openrobotics.org">William Woodall</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

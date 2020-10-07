@@ -1,3 +1,7 @@
+<?xml version="1.0"?>
+<?xml-model
+  href="http://download.ros.org/schema/package_format2.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>rviz_default_plugins</name>
   <version>8.2.0</version>
@@ -8,14 +12,14 @@
   <maintainer email="michael.jeronimo@openrobotics.org">Michael Jeronimo</maintainer>
   <license>BSD</license>
 
+  <url type="website">https://github.com/ros2/rviz/blob/ros2/README.md</url>
+  <url type="repository">https://github.com/ros2/rviz</url>
+  <url type="bugtracker">https://github.com/ros2/rviz/issues</url>
+
   <author>Dave Hershberger</author>
   <author>David Gossow</author>
   <author>Josh Faust</author>
   <author email="william@openrobotics.org">William Woodall</author>
-
-  <url type="website">https://github.com/ros2/rviz/blob/ros2/README.md</url>
-  <url type="repository">https://github.com/ros2/rviz</url>
-  <url type="bugtracker">https://github.com/ros2/rviz/issues</url>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
