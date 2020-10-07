@@ -3,39 +3,39 @@
   href="http://download.ros.org/schema/package_format2.xsd"
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
-    <name>rviz_rendering_tests</name>
-    <version>8.2.0</version>
-    <description>
-        Example plugin for RViz - documents and tests RViz plugin development
-    </description>
-    <maintainer email="jacob@openrobotics.org">Jacob Perron</maintainer>
-    <maintainer email="michael.jeronimo@openrobotics.org">Michael Jeronimo</maintainer>
-    <license>BSD</license>
+  <name>rviz_rendering_tests</name>
+  <version>8.2.0</version>
+  <description>
+    Example plugin for RViz - documents and tests RViz plugin development
+  </description>
+  <maintainer email="jacob@openrobotics.org">Jacob Perron</maintainer>
+  <maintainer email="michael.jeronimo@openrobotics.org">Michael Jeronimo</maintainer>
+  <license>BSD</license>
 
-    <url type="repository">https://github.com/ros2/rviz</url>
-    <url type="bugtracker">https://github.com/ros2/rviz/issues</url>
+  <url type="repository">https://github.com/ros2/rviz</url>
+  <url type="bugtracker">https://github.com/ros2/rviz/issues</url>
 
-    <author email="william@openrobotics.org">William Woodall</author>
+  <author email="william@openrobotics.org">William Woodall</author>
 
-    <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
 
-    <build_depend>qtbase5-dev</build_depend>
+  <build_depend>qtbase5-dev</build_depend>
 
-    <depend>rviz_rendering</depend>
-    <depend>resource_retriever</depend>
+  <depend>rviz_rendering</depend>
+  <depend>resource_retriever</depend>
 
-    <!-- TODO(jacobperron): Replace with ament_lint_common when ament_copyright is working -->
-    <test_depend>ament_cmake_cppcheck</test_depend>
-    <test_depend>ament_cmake_cpplint</test_depend>
-    <test_depend>ament_cmake_gmock</test_depend>
-    <test_depend>ament_cmake_gtest</test_depend>
-    <test_depend>ament_cmake_lint_cmake</test_depend>
-    <test_depend>ament_cmake_uncrustify</test_depend>
-    <test_depend>ament_cmake_xmllint</test_depend>
-    <test_depend>ament_lint_auto</test_depend>
-    <test_depend>ament_index_cpp</test_depend>
+  <!-- TODO(jacobperron): Replace with ament_lint_common when ament_copyright is working -->
+  <test_depend>ament_cmake_cppcheck</test_depend>
+  <test_depend>ament_cmake_cpplint</test_depend>
+  <test_depend>ament_cmake_gmock</test_depend>
+  <test_depend>ament_cmake_gtest</test_depend>
+  <test_depend>ament_cmake_lint_cmake</test_depend>
+  <test_depend>ament_cmake_uncrustify</test_depend>
+  <test_depend>ament_cmake_xmllint</test_depend>
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_index_cpp</test_depend>
 
-    <export>
-        <build_type>ament_cmake</build_type>
-    </export>
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
 </package>
