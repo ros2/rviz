@@ -225,6 +225,11 @@ else()
 endif()
 ament_environment_hooks(env_hook/rviz_ogre_vendor_library_path.dsv.in)
 
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+endif()
+
 ament_package(
   CONFIG_EXTRAS "rviz_ogre_vendor-extras.cmake.in"
 )
