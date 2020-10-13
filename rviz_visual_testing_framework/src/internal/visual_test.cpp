@@ -38,6 +38,8 @@
 
 #include <QDir>  // NOLINT
 
+#include "rcutils/get_env.h"
+
 VisualTest::VisualTest(
   rviz_common::VisualizerApp * vapp,
   std::shared_ptr<Executor> executor,
@@ -182,23 +184,12 @@ void VisualTest::reset()
 
 bool VisualTest::generateReferenceImages()
 {
-#ifdef _WIN32
-  char * buffer = nullptr;
-  size_t size = 0;
-  if (_dupenv_s(&buffer, &size, "GenerateReferenceImages") == 0 && buffer != nullptr) {
-    std::string generate_references(buffer);
-    free(buffer);
-
-    return generate_references == "True";
-  }
-
-  return false;
-#else
-  if (!std::getenv("GenerateReferenceImages")) {
+  const char * env_var_value = NULL;
+  const char * ret_str = rcutils_get_env("GenerateReferenceImages", &env_var_value);
+  if (NULL != ret_str || *env_var_value == '\0') {
     return false;
   }
+  std::string generate_references(env_var_value);
 
-  std::string generate_references = std::getenv("GenerateReferenceImages");
   return generate_references == "True";
-#endif
 }
