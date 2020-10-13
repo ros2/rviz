@@ -23,6 +23,7 @@
 
   <build_depend>qtbase5-dev</build_depend>
 
+  <depend>rcutils</depend>
   <depend>rviz_common</depend>
   <depend>ament_cmake_gtest</depend>
 

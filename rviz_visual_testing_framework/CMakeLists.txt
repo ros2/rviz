@@ -24,6 +24,8 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 
+find_package(rcutils REQUIRED)
+
 find_package(rviz_common REQUIRED)
 
 find_package(rviz_ogre_vendor REQUIRED)
