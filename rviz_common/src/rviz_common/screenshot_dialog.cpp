@@ -126,7 +126,12 @@ void ScreenshotDialog::takeScreenshotNow()
   if (save_full_window_) {
     screenshot_ = screen->grabWindow(main_window_->winId());
   } else {
+    // There is a known issue in Qt where calling winId() on an OpenGL window
+    // (OGRE being a wrapper for OpenGL) can result in rendering 'glitches" (See
+    // https://doc.qt.io/qt-5/qopenglwidget.html). As a work-around, we can raise
+    // the main window, causing the render window to re-render its graphics display.
     screenshot_ = screen->grabWindow(render_window_->winId());
+    main_window_->raise();
   }
   image_widget_->setImage(screenshot_);
 }
