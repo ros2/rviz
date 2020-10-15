@@ -62,7 +62,7 @@ class AssimpLoader
 public:
   AssimpLoader();
   Ogre::MeshPtr meshFromAssimpScene(const std::string & name, const aiScene * scene);
-  const aiScene * getScene(const std::string & resource_path);
+  const aiScene * getScene(void * buffer, size_t size);
   std::string getErrorMessage();
 
 private:

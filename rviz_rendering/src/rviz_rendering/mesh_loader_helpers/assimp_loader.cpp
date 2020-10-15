@@ -228,10 +228,10 @@ Ogre::MeshPtr AssimpLoader::meshFromAssimpScene(const std::string & name, const 
   return mesh;
 }
 
-const aiScene * AssimpLoader::getScene(const std::string & resource_path)
+const aiScene * AssimpLoader::getScene(void * buffer, size_t size)
 {
-  return importer_->ReadFile(
-    resource_path,
+  return importer_->ReadFileFromMemory(
+    buffer, size,
     aiProcess_SortByPType | aiProcess_GenNormals | aiProcess_Triangulate |
     aiProcess_GenUVCoords | aiProcess_FlipUVs);
 }
