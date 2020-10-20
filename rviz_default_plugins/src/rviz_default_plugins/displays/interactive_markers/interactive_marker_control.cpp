@@ -521,7 +521,7 @@ Ogre::Ray InteractiveMarkerControl::getMouseRayInReferenceFrame(
   float width = viewport->getActualWidth() - 1;
   float height = viewport->getActualHeight() - 1;
 
-  Ogre::Ray mouse_ray = event.panel->getViewController()->getCamera()->getCameraToViewportRay(
+  Ogre::Ray mouse_ray = viewport->getCamera()->getCameraToViewportRay(
     (x + .5) / width, (y + .5) / height);
 
   // convert ray into reference frame
@@ -574,8 +574,10 @@ void InteractiveMarkerControl::rotateXYRelative(const rviz_common::ViewportMouse
   Ogre::Radian rx(dx * MOUSE_SCALE);
   Ogre::Radian ry(dy * MOUSE_SCALE);
 
-  Ogre::Quaternion up_rot(rx, event.panel->getViewController()->getCamera()->getRealUp());
-  Ogre::Quaternion right_rot(ry, event.panel->getViewController()->getCamera()->getRealRight());
+  auto viewport =
+    rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(event.panel->getRenderWindow());
+  Ogre::Quaternion up_rot(rx, viewport->getCamera()->getRealUp());
+  Ogre::Quaternion right_rot(ry, viewport->getCamera()->getRealRight());
 
   parent_->setPose(parent_->getPosition(), up_rot * right_rot * parent_->getOrientation(), name_);
 }
@@ -596,7 +598,9 @@ void InteractiveMarkerControl::rotateZRelative(const rviz_common::ViewportMouseE
   static const double MOUSE_SCALE = 2 * 3.14 / 300;  // 300 pixels = 360deg
   Ogre::Radian rx(dx * MOUSE_SCALE);
 
-  Ogre::Quaternion rot(rx, event.panel->getViewController()->getCamera()->getRealDirection());
+  auto viewport =
+    rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(event.panel->getRenderWindow());
+  Ogre::Quaternion rot(rx, viewport->getCamera()->getRealDirection());
 
   parent_->setPose(parent_->getPosition(), rot * parent_->getOrientation(), name_);
 }
@@ -639,8 +643,10 @@ void InteractiveMarkerControl::moveViewPlane(
   Ogre::Ray & mouse_ray, const rviz_common::ViewportMouseEvent & event)
 {
   // find plane on which mouse is moving
+  auto viewport =
+    rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(event.panel->getRenderWindow());
   Ogre::Plane plane(
-    event.panel->getViewController()->getCamera()->getRealDirection(),
+    viewport->getCamera()->getRealDirection(),
     grab_point_in_reference_frame_);
 
   // find intersection of mouse with the plane
