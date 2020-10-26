@@ -9,11 +9,12 @@
     Wrapper around assimp, providing nothing but a dependency on assimp, on some systems.
     On others, it provides a fixed CMake module or even an ExternalProject build of assimp.
   </description>
-  <maintainer email="william@osrfoundation.org">William Woodall</maintainer>
+  <maintainer email="jacob@openrobotics.org">Jacob Perron</maintainer>
+  <maintainer email="michael.jeronimo@openrobotics.org">Michael Jeronimo</maintainer>
   <license>Apache License 2.0</license>  <!-- the contents of this package are Apache 2.0 -->
   <license>BSD</license>  <!-- assimp is BSD (http://assimp.sourceforge.net/main_license.html) -->
-
   <url type="website">http://assimp.sourceforge.net/index.html</url>
+  <author email="william@osrfoundation.org">William Woodall</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

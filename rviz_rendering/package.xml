@@ -4,16 +4,16 @@
   <description>
     Library which provides the 3D rendering functionality in rviz.
   </description>
-  <maintainer email="william@osrfoundation.org">William Woodall</maintainer>
+  <maintainer email="jacob@openrobotics.org">Jacob Perron</maintainer>
+  <maintainer email="michael.jeronimo@openrobotics.org">Michael Jeronimo</maintainer>
   <license>BSD</license>
-
-  <author>Dave Hershberger</author>
-  <author>David Gossow</author>
-  <author>Josh Faust</author>
-
   <url type="website">https://github.com/ros2/rviz/blob/ros2/README.md</url>
   <url type="repository">https://github.com/ros2/rviz</url>
   <url type="bugtracker">https://github.com/ros2/rviz/issues</url>
+  <author>Dave Hershberger</author>
+  <author>David Gossow</author>
+  <author>Josh Faust</author>
+  <author email="william@osrfoundation.org">William Woodall</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>eigen3_cmake_module</buildtool_depend>
