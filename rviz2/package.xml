@@ -4,18 +4,18 @@
   <description>
     3D visualization tool for ROS.
   </description>
-  <maintainer email="scott@openrobotics.org">Scott K Logan</maintainer>
-  <maintainer email="william@osrfoundation.org">William Woodall</maintainer>
+  <maintainer email="jacob@openrobotics.org">Jacob Perron</maintainer>
+  <maintainer email="michael.jeronimo@openrobotics.org">Michael Jeronimo</maintainer>
   <license>BSD</license>
-
+  <url type="website">https://github.com/ros2/rviz/blob/ros2/README.md</url>
+  <url type="repository">https://github.com/ros2/rviz</url>
+  <url type="bugtracker">https://github.com/ros2/rviz/issues</url>
   <author>Dave Hershberger</author>
   <author>David Gossow</author>
   <author>D. Hood</author>
   <author>Josh Faust</author>
-
-  <url type="website">https://github.com/ros2/rviz/blob/ros2/README.md</url>
-  <url type="repository">https://github.com/ros2/rviz</url>
-  <url type="bugtracker">https://github.com/ros2/rviz/issues</url>
+  <author email="scott@openrobotics.org">Scott K Logan</author>
+  <author email="william@osrfoundation.org">William Woodall</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
