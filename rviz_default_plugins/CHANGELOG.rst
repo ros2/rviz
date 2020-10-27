@@ -2,6 +2,23 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Update maintainer list (`#618 <https://github.com/ros2/rviz/issues/618>`_)
+* Set clock type if Marker frame_locked is true (`#482 <https://github.com/ros2/rviz/issues/482>`_) (`#580 <https://github.com/ros2/rviz/issues/580>`_)
+  Fixes `#479 <https://github.com/ros2/rviz/issues/479>`_
+* Use dedicated TransformListener thread (`#551 <https://github.com/ros2/rviz/issues/551>`_) (`#581 <https://github.com/ros2/rviz/issues/581>`_)
+* Do not use assume every RenderPanel has a ViewController. (`#613 <https://github.com/ros2/rviz/issues/613>`_) (`#614 <https://github.com/ros2/rviz/issues/614>`_)
+  Get the Viewport from its RenderWindow instead.
+  Ensures interactive markers work (and do not make rviz crash)
+  when interaction goes through a camera feed and not the main
+  window.
+* Fix map display for moving TF frame (`#483 <https://github.com/ros2/rviz/issues/483>`_) (`#579 <https://github.com/ros2/rviz/issues/579>`_)
+  Instead of the current time, use Time(0) to get the latest available transform as a fallback.
+  This is the same logic that is applied in RViz from ROS 1.
+  Resolves `#332 <https://github.com/ros2/rviz/issues/332>`_
+* Contributors: Jacob Perron, Michael Jeronimo, Michel Hidalgo, ymd-stella
+
 7.0.5 (2020-04-17)
 ------------------
 * Allow the MapDisplay "Update Topic" to be changed. (`#517 <https://github.com/ros2/rviz/issues/517>`_) (`#518 <https://github.com/ros2/rviz/issues/518>`_)
