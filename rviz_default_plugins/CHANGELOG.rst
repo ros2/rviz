@@ -2,8 +2,8 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+7.0.6 (2020-10-27)
+------------------
 * Update maintainer list (`#618 <https://github.com/ros2/rviz/issues/618>`_)
 * Set clock type if Marker frame_locked is true (`#482 <https://github.com/ros2/rviz/issues/482>`_) (`#580 <https://github.com/ros2/rviz/issues/580>`_)
   Fixes `#479 <https://github.com/ros2/rviz/issues/479>`_
