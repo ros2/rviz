@@ -199,7 +199,8 @@ protected:
     Q_EMIT typeErasedMessageTaken(std::static_pointer_cast<const void>(msg));
   }
 
-  void processTypeErasedMessage(std::shared_ptr<const void> type_erased_msg) override {
+  void processTypeErasedMessage(std::shared_ptr<const void> type_erased_msg) override
+  {
     auto msg = std::static_pointer_cast<const MessageType>(type_erased_msg);
 
     ++messages_received_;
