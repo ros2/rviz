@@ -107,7 +107,9 @@ public:
       this,
       SIGNAL(typeErasedMessageTaken(std::shared_ptr<const void>)),
       this,
-      SLOT(processTypeErasedMessage(std::shared_ptr<const void>)));
+      SLOT(processTypeErasedMessage(std::shared_ptr<const void>)),
+      // Force queued connections regardless of QObject thread affinity
+      Qt::QueuedConnection);
   }
 
 Q_SIGNALS:
