@@ -127,7 +127,7 @@ protected:
       tf_filter_->connectInput(*subscription_);
       tf_filter_->registerCallback(
         std::bind(
-          &MessageFilterDisplay<MessageType>::incomingMessage, this,
+          &MessageFilterDisplay<MessageType>::messageTaken, this,
           std::placeholders::_1));
       setStatus(properties::StatusProperty::Ok, "Topic", "OK");
     } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
@@ -174,17 +174,22 @@ protected:
     reset();
   }
 
-  /// Incoming message callback.
-  /**
-   * Checks if the message pointer
-   * is valid, increments messages_received_, then calls
-   * processMessage().
-   */
-  void incomingMessage(const typename MessageType::ConstSharedPtr msg)
+  void messageTaken(typename MessageType::ConstSharedPtr msg)
   {
     if (!msg) {
       return;
     }
+
+    // Do not process message right away, tf2_ros::MessageFilter may be
+    // calling back from tf2_ros::TransformListener dedicated thread.
+    // Use type erased signal/slot machinery to ensure messages are
+    // processed in the main thread.
+    Q_EMIT typeErasedMessageTaken(std::static_pointer_cast<const void>(msg));
+  }
+
+  void processTypeErasedMessage(std::shared_ptr<const void> type_erased_msg) override
+  {
+    auto msg = std::static_pointer_cast<const MessageType>(type_erased_msg);
 
     ++messages_received_;
     setStatus(
