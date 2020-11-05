@@ -118,13 +118,13 @@ void FPSViewController::handleMouseEvent(rviz_common::ViewportMouseEvent & event
 void FPSViewController::setCursorStatus(rviz_common::ViewportMouseEvent & event)
 {
   if (event.shift()) {
-    setStatus("<b>Left-Click:</b> Move X/Y.  <b>Right-Click:</b>: Move Z.");
+    setStatus("<b>Left-Click:</b> Move X/Y.  <b>Right-Click:</b> Move Z.");
   } else {
     setStatus(
       "<b>Left-Click:</b> Rotate.  "
       "<b>Middle-Click:</b> Move X/Y.  "
-      "<b>Right-Click:</b>: Zoom.  "
-      "<b>Shift</b>: More options.");
+      "<b>Right-Click:</b> Zoom.  "
+      "<b>Shift:</b> More options.");
   }
 }
 

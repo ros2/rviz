@@ -88,7 +88,7 @@ void FixedOrientationOrthoViewController::handleMouseEvent(rviz_common::Viewport
   } else {
     setStatus(
       "<b>Left-Click:</b> Rotate.  <b>Middle-Click:</b> Move X/Y. "
-      " <b>Right-Click:</b>: Zoom.  <b>Shift</b>: More options.");
+      " <b>Right-Click:</b> Zoom.  <b>Shift:</b> More options.");
   }
 
   int32_t diff_x = 0;
