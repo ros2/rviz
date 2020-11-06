@@ -135,7 +135,7 @@ void XYOrbitViewController::lookAt(const Ogre::Vector3 & point)
 
 void XYOrbitViewController::setShiftOrbitStatus()
 {
-  setStatus("<b>Left-Click:</b> Move X/Y.  <b>Right-Click:</b>: Zoom.");
+  setStatus("<b>Left-Click:</b> Move X/Y.  <b>Right-Click:</b> Zoom.");
 }
 
 void XYOrbitViewController::moveFocalPoint(
