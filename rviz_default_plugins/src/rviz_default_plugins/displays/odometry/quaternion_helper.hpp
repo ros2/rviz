@@ -30,7 +30,6 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__ODOMETRY__QUATERNION_HELPER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__ODOMETRY__QUATERNION_HELPER_HPP_
 
-#include <algorithm>
 #include <cmath>
 
 #include <OgreQuaternion.h>
@@ -40,10 +39,11 @@ namespace rviz_default_plugins
 
 float ogreQuaternionAngularDistance(Ogre::Quaternion first, Ogre::Quaternion second)
 {
-  auto product = first * Ogre::Quaternion(second.w, -second.x, -second.y, -second.z);
-  auto imaginary_norm = sqrt(pow(product.x, 2) + pow(product.y, 2) + pow(product.z, 2));
+  Ogre::Quaternion product = first * Ogre::Quaternion(second.w, -second.x, -second.y, -second.z);
+  float imaginary_norm =
+    sqrtf(powf(product.x, 2.0f) + powf(product.y, 2.0f) + powf(product.z, 2.0f));
 
-  return 2 * atan2(imaginary_norm, sqrt(pow(product.w, 2)));
+  return 2.0f * atan2f(imaginary_norm, sqrtf(powf(product.w, 2.0f)));
 }
 
 }  // namespace rviz_default_plugins
