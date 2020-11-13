@@ -64,7 +64,7 @@ ViewportMouseEvent::ViewportMouseEvent(RenderPanel * p, QWheelEvent * e, int lx,
   x(e->x() * device_pixel_ratio),
   y(e->y() * device_pixel_ratio),
 #endif
-  wheel_delta(e->angleDelta().x()),
+  wheel_delta(e->angleDelta().y()),
   acting_button(Qt::NoButton),
   buttons_down(e->buttons()),
   modifiers(e->modifiers()),
