@@ -2,6 +2,14 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+6.1.7 (2020-11-24)
+------------------
+* Fix map display for moving TF frame. (`#483 <https://github.com/ros2/rviz/issues/483>`_) (`#582 <https://github.com/ros2/rviz/issues/582>`_)
+* Set clock type if Marker frame_locked is true. (`#482 <https://github.com/ros2/rviz/issues/482>`_) (`#583 <https://github.com/ros2/rviz/issues/583>`_)
+* Use dedicated TransformListener thread. (`#551 <https://github.com/ros2/rviz/issues/551>`_) (`#584 <https://github.com/ros2/rviz/issues/584>`_)
+* Update maintainers. (`#617 <https://github.com/ros2/rviz/issues/617>`_)
+* Contributors: Jacob Perron, Michael Jeronimo
+
 6.1.6 (2020-03-11)
 ------------------
 * Fix camera info for camera display. (`#516 <https://github.com/ros2/rviz/issues/516>`_)
