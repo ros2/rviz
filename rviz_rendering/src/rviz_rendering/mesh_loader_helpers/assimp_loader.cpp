@@ -256,7 +256,7 @@ std::vector<Ogre::MaterialPtr> AssimpLoader::loadMaterials(
     material_name = resource_path + "Material" + std::to_string(i);
     auto result = Ogre::MaterialManager::getSingleton().createOrRetrieve(
       material_name, ROS_PACKAGE_NAME, true);
-    Ogre::MaterialPtr mat = std::static_pointer_cast<Ogre::Material>(result.first);
+    Ogre::MaterialPtr mat = Ogre::static_pointer_cast<Ogre::Material>(result.first);
     material_table_out.push_back(mat);
 
     aiMaterial * ai_material = scene->mMaterials[i];
