@@ -2,6 +2,9 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 7.0.6 (2020-10-27)
 ------------------
 * Update maintainer list (`#618 <https://github.com/ros2/rviz/issues/618>`_)
