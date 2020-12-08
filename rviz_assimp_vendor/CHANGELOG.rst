@@ -2,6 +2,12 @@
 Changelog for package rviz_assimp_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add linters and use ament_lint_auto (`#608 <https://github.com/ros2/rviz/issues/608>`_)
+* Update maintainers (`#607 <https://github.com/ros2/rviz/issues/607>`_)
+* Contributors: Jacob Perron
+
 8.2.0 (2020-06-23)
 ------------------
 * Updated a hack to avoid CMake warning with assimp 5.0.1 and older, applying it cross platforms (`#565 <https://github.com/ros2/rviz/issues/565>`_)

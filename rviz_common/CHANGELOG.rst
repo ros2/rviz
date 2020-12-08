@@ -2,6 +2,26 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix for mousewheel to zoom in/out (`#623 <https://github.com/ros2/rviz/issues/623>`_)
+* Ensure rviz_common::MessageFilterDisplay processes messages in the main thread (`#620 <https://github.com/ros2/rviz/issues/620>`_)
+* Fix render window disppearing after saving image (`#611 <https://github.com/ros2/rviz/issues/611>`_)
+* Add linters and use ament_lint_auto (`#608 <https://github.com/ros2/rviz/issues/608>`_)
+* Update maintainers (`#607 <https://github.com/ros2/rviz/issues/607>`_)
+* TimePanel port (`#599 <https://github.com/ros2/rviz/issues/599>`_)
+* Upgrade to tinyxml2 for rviz (`#418 <https://github.com/ros2/rviz/issues/418>`_)
+* Fix segfault on changing filter size for non-existent topic (`#597 <https://github.com/ros2/rviz/issues/597>`_)
+* improve color support for themes (`#590 <https://github.com/ros2/rviz/issues/590>`_)
+* Fix topic IntProperty number ranges (`#596 <https://github.com/ros2/rviz/issues/596>`_)
+* Switch to nullptr everywhere. (`#592 <https://github.com/ros2/rviz/issues/592>`_)
+* Expose MessageFilterDisplay's queue size (`#593 <https://github.com/ros2/rviz/issues/593>`_)
+* Filter topics in drop down menu (`#591 <https://github.com/ros2/rviz/issues/591>`_)
+* rviz_common: Remove variadic macro warning check (`#421 <https://github.com/ros2/rviz/issues/421>`_)
+* Use retriever.hpp (`#589 <https://github.com/ros2/rviz/issues/589>`_)
+* Fix the order of destructors (`#572 <https://github.com/ros2/rviz/issues/572>`_)
+* Contributors: Audrow Nash, Chen Lihui, Chris Lalancette, Jacob Perron, Martin Idel, Michael Ferguson, Michael Jeronimo, Michel Hidalgo, Nico Neumann, Rich Mattes, Shane Loretz, spiralray
+
 8.2.0 (2020-06-23)
 ------------------
 * Changed to not install test header files in rviz_rendering. (`#564 <https://github.com/ros2/rviz/issues/564>`_)

@@ -2,6 +2,17 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Prevent rviz_rendering::AssimpLoader from loading materials twice. (`#622 <https://github.com/ros2/rviz/issues/622>`_)
+* Support loading meshes other than .mesh and .stl with package URIs (`#610 <https://github.com/ros2/rviz/issues/610>`_)
+* Add linters and use ament_lint_auto (`#608 <https://github.com/ros2/rviz/issues/608>`_)
+* Update maintainers (`#607 <https://github.com/ros2/rviz/issues/607>`_)
+* Switch to nullptr everywhere. (`#592 <https://github.com/ros2/rviz/issues/592>`_)
+* Use retriever.hpp (`#589 <https://github.com/ros2/rviz/issues/589>`_)
+* Avoid hidding base class getRenderOperation in PointCloudRenderable (`#586 <https://github.com/ros2/rviz/issues/586>`_)
+* Contributors: Chris Lalancette, Ivan Santiago Paunovic, Jacob Perron, Michel Hidalgo, Shane Loretz
+
 8.2.0 (2020-06-23)
 ------------------
 * Changed to not install test header files in rviz_rendering. (`#564 <https://github.com/ros2/rviz/issues/564>`_)

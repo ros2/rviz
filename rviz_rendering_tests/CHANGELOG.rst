@@ -2,6 +2,13 @@
 Changelog for package rviz_rendering_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add linters and use ament_lint_auto (`#608 <https://github.com/ros2/rviz/issues/608>`_)
+* Update maintainers (`#607 <https://github.com/ros2/rviz/issues/607>`_)
+* Use retriever.hpp (`#589 <https://github.com/ros2/rviz/issues/589>`_)
+* Contributors: Jacob Perron, Shane Loretz
+
 8.2.0 (2020-06-23)
 ------------------
 * Changed to not install test header files in rviz_rendering. (`#564 <https://github.com/ros2/rviz/issues/564>`_)
