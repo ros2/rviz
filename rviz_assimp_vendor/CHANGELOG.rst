@@ -2,8 +2,8 @@
 Changelog for package rviz_assimp_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.3.0 (2020-12-08)
+------------------
 * Add linters and use ament_lint_auto (`#608 <https://github.com/ros2/rviz/issues/608>`_)
 * Update maintainers (`#607 <https://github.com/ros2/rviz/issues/607>`_)
 * Contributors: Jacob Perron

@@ -2,8 +2,8 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.3.0 (2020-12-08)
+------------------
 * Add linters and use ament_lint_auto (`#608 <https://github.com/ros2/rviz/issues/608>`_)
 * Update maintainers (`#607 <https://github.com/ros2/rviz/issues/607>`_)
 * Pass through CMAKE\_{C,CXX}_FLAGS to OGRE build (`#587 <https://github.com/ros2/rviz/issues/587>`_)
