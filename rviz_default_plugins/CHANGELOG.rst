@@ -2,8 +2,8 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.2.1 (2020-12-09)
+------------------
 * Fix for mousewheel to zoom in/out (`#623 <https://github.com/ros2/rviz/issues/623>`_) (`#626 <https://github.com/ros2/rviz/issues/626>`_)
 * Update maintainer list (`#619 <https://github.com/ros2/rviz/issues/619>`_)
 * Do not use assume every RenderPanel has a ViewController. (`#613 <https://github.com/ros2/rviz/issues/613>`_) (`#615 <https://github.com/ros2/rviz/issues/615>`_)

@@ -2,8 +2,8 @@
 Changelog for package rviz_assimp_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.2.1 (2020-12-09)
+------------------
 * Update maintainer list (`#619 <https://github.com/ros2/rviz/issues/619>`_)
 * [foxy-backport] fast forward of ros2 (default) to foxy (`#570 <https://github.com/ros2/rviz/issues/570>`_)
   * restore compatibility with older Qt versions (`#561 <https://github.com/ros2/rviz/issues/561>`_)

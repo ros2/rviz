@@ -2,8 +2,8 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.2.1 (2020-12-09)
+------------------
 * Update maintainer list (`#619 <https://github.com/ros2/rviz/issues/619>`_)
 * changelogs
 * Contributors: Michael Jeronimo, William Woodall
