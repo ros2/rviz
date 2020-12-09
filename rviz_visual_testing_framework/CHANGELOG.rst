@@ -2,6 +2,12 @@
 Changelog for package rviz_visual_testing_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Update maintainer list (`#619 <https://github.com/ros2/rviz/issues/619>`_)
+* changelogs
+* Contributors: Michael Jeronimo, William Woodall
+
 8.2.0 (2020-06-23)
 ------------------
 

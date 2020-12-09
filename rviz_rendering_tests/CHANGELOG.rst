@@ -2,6 +2,20 @@
 Changelog for package rviz_rendering_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Update maintainer list (`#619 <https://github.com/ros2/rviz/issues/619>`_)
+* [foxy-backport] fast forward of ros2 (default) to foxy (`#570 <https://github.com/ros2/rviz/issues/570>`_)
+  * restore compatibility with older Qt versions (`#561 <https://github.com/ros2/rviz/issues/561>`_)
+  * Suppress warnings when building with older Qt versions. (`#562 <https://github.com/ros2/rviz/issues/562>`_)
+  * Don't try to moc generate env_config.hpp file. (`#550 <https://github.com/ros2/rviz/issues/550>`_)
+  This removes one more warning from rviz_common builds.
+  * rewrite hack to avoid CMake warning with assimp 5.0.1 and older, apply cross platform (`#565 <https://github.com/ros2/rviz/issues/565>`_)
+  * Use dedicated TransformListener thread (`#551 <https://github.com/ros2/rviz/issues/551>`_)
+  * restore alphabetical include order (`#563 <https://github.com/ros2/rviz/issues/563>`_)
+  * Don't install test header files in rviz_rendering. (`#564 <https://github.com/ros2/rviz/issues/564>`_)
+* Contributors: Michael Jeronimo, William Woodall, Dirk Thomas, Chris Lalancette, ymd-stella, Karsten Knese
+
 8.2.0 (2020-06-23)
 ------------------
 * Changed to not install test header files in rviz_rendering. (`#564 <https://github.com/ros2/rviz/issues/564>`_)
