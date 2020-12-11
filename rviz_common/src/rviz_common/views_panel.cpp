@@ -92,7 +92,7 @@ ViewsPanel::ViewsPanel(QWidget * parent)
 
 void ViewsPanel::onInitialize()
 {
-  setViewManager(getDisplayContext()->getViewManager() );
+  setViewManager(getDisplayContext()->getViewManager());
 }
 
 void ViewsPanel::setViewManager(ViewManager * view_man)
@@ -133,7 +133,7 @@ void ViewsPanel::onTypeSelectorChanged(int selected_index)
 
 void ViewsPanel::onZeroClicked()
 {
-  if (view_man_->getCurrent() ) {
+  if (view_man_->getCurrent()) {
     view_man_->getCurrent()->reset();
   }
 }
@@ -155,7 +155,7 @@ void ViewsPanel::onDeleteClicked()
     // TODO(anyone): should eventually move to a scheme where the CURRENT view
     // is not in the same list as the saved views, at which point this
     // check can go away.
-    if (views_to_delete[i] != view_man_->getCurrent() ) {
+    if (views_to_delete[i] != view_man_->getCurrent()) {
       delete views_to_delete[i];
     }
   }
@@ -170,7 +170,7 @@ void ViewsPanel::renameSelected()
     // TODO(anyone): should eventually move to a scheme where the CURRENT view
     // is not in the same list as the saved views, at which point this
     // check can go away.
-    if (view == view_man_->getCurrent() ) {
+    if (view == view_man_->getCurrent()) {
       return;
     }
 
@@ -188,8 +188,12 @@ void ViewsPanel::renameSelected()
 
 void ViewsPanel::onCurrentChanged()
 {
+  if (view_man_ == nullptr || view_man_->getCurrent() == nullptr) {
+    return;
+  }
+
   QString formatted_class_id =
-    ViewController::formatClassId(view_man_->getCurrent()->getClassId() );
+    ViewController::formatClassId(view_man_->getCurrent()->getClassId());
 
   // Make sure the type selector shows the type of the current view.
   // This is only here in case the type is changed programmatically,
