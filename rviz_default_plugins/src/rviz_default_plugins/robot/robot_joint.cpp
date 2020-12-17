@@ -217,11 +217,15 @@ void RobotJoint::calculateJointCheckboxesRecursive(
   int & links_with_geom_checked,
   int & links_with_geom_unchecked)
 {
+  links_with_geom = 0;
   links_with_geom_checked = 0;
   links_with_geom_unchecked = 0;
 
   RobotLink * link = robot_->getLink(child_link_name_);
-  if (link && link->hasGeometry()) {
+  if (link == nullptr) {
+    return;
+  }
+  if (link->hasGeometry()) {
     bool checked = link->getLinkProperty()->getValue().toBool();
     links_with_geom_checked += checked ? 1 : 0;
     links_with_geom_unchecked += checked ? 0 : 1;
@@ -267,11 +271,15 @@ void RobotJoint::getChildLinkState(
   int & links_with_geom_unchecked,
   bool recursive) const
 {
+  links_with_geom = 0;
   links_with_geom_checked = 0;
   links_with_geom_unchecked = 0;
 
   RobotLink * link = robot_->getLink(child_link_name_);
-  if (link && link->hasGeometry()) {
+  if (link == nullptr) {
+    return;
+  }
+  if (link->hasGeometry()) {
     bool checked = link->getLinkProperty()->getValue().toBool();
     links_with_geom_checked += checked ? 1 : 0;
     links_with_geom_unchecked += checked ? 0 : 1;
