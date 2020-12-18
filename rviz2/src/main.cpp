@@ -56,16 +56,16 @@ int main(int argc, char ** argv)
   // install logging handlers to route logging through ROS's logging system
   rviz_common::set_logging_handlers(
     [logger](const std::string & msg, const std::string &, size_t) {
-      RCLCPP_DEBUG(logger, msg.c_str());
+      RCLCPP_DEBUG(logger, "%s", msg.c_str());
     },
     [logger](const std::string & msg, const std::string &, size_t) {
-      RCLCPP_INFO(logger, msg.c_str());
+      RCLCPP_INFO(logger, "%s", msg.c_str());
     },
     [logger](const std::string & msg, const std::string &, size_t) {
-      RCLCPP_WARN(logger, msg.c_str());
+      RCLCPP_WARN(logger, "%s", msg.c_str());
     },
     [logger](const std::string & msg, const std::string &, size_t) {
-      RCLCPP_ERROR(logger, msg.c_str());
+      RCLCPP_ERROR(logger, "%s", msg.c_str());
     }
   );
 
