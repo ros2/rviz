@@ -94,14 +94,13 @@ Ogre::MeshPtr loadMeshFromResource(const std::string & resource_path)
   } else {
     QFileInfo model_path(QString::fromStdString(resource_path));
     std::string ext = model_path.completeSuffix().toStdString();
-
-    auto res = getResource(resource_path);
-
-    if (res.size == 0) {
-      return Ogre::MeshPtr();
-    }
-
     if (ext == "mesh" || ext == "MESH") {
+      auto res = getResource(resource_path);
+
+      if (res.size == 0) {
+        return Ogre::MeshPtr();
+      }
+
       Ogre::MeshSerializer ser;
       Ogre::DataStreamPtr stream(new Ogre::MemoryDataStream(res.data.get(), res.size));
       Ogre::MeshPtr mesh = Ogre::MeshManager::getSingleton().createManual(
@@ -110,6 +109,12 @@ Ogre::MeshPtr loadMeshFromResource(const std::string & resource_path)
 
       return mesh;
     } else if (ext == "stl" || ext == "STL" || ext == "stlb" || ext == "STLB") {
+      auto res = getResource(resource_path);
+
+      if (res.size == 0) {
+        return Ogre::MeshPtr();
+      }
+
       STLLoader stl_loader;
       if (!stl_loader.load(res.data.get(), res.size, resource_path)) {
         RVIZ_RENDERING_LOG_ERROR_STREAM("Failed to load file [" << resource_path.c_str() << "]");
@@ -120,7 +125,7 @@ Ogre::MeshPtr loadMeshFromResource(const std::string & resource_path)
     } else {
       AssimpLoader assimp_loader;
 
-      const aiScene * scene = assimp_loader.getScene(static_cast<void *>(res.data.get()), res.size);
+      const aiScene * scene = assimp_loader.getScene(resource_path);
       if (!scene) {
         RVIZ_RENDERING_LOG_ERROR_STREAM(
           "Could not load resource [" << resource_path.c_str() << "]: " <<
