@@ -2,8 +2,8 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.3.1 (2021-01-25)
+------------------
 * Revert "Support loading meshes other than .mesh and .stl with package URIs (`#610 <https://github.com/ros2/rviz/issues/610>`_)" (`#638 <https://github.com/ros2/rviz/issues/638>`_)
 * Contributors: Shane Loretz
 

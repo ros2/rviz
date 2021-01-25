@@ -2,8 +2,8 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.3.1 (2021-01-25)
+------------------
 * Check that the views_man\_ and views_man\_->getCurrent() are not nullptr. (`#634 <https://github.com/ros2/rviz/issues/634>`_)
 * Contributors: Chris Lalancette
 

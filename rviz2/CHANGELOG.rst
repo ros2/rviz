@@ -2,8 +2,8 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.3.1 (2021-01-25)
+------------------
 * Use "%s" as format string literal in logging macros (`#633 <https://github.com/ros2/rviz/issues/633>`_)
 * Contributors: Audrow Nash
 

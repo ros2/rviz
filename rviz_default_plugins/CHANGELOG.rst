@@ -2,8 +2,8 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.3.1 (2021-01-25)
+------------------
 * Fix possible nullptr access in robot_joint.cpp. (`#636 <https://github.com/ros2/rviz/issues/636>`_)
 * Contributors: Chris Lalancette
 
