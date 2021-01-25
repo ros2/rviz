@@ -2,6 +2,11 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Check that the views_man\_ and views_man\_->getCurrent() are not nullptr. (`#634 <https://github.com/ros2/rviz/issues/634>`_)
+* Contributors: Chris Lalancette
+
 8.3.0 (2020-12-08)
 ------------------
 * Fix for mousewheel to zoom in/out (`#623 <https://github.com/ros2/rviz/issues/623>`_)

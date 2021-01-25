@@ -2,6 +2,11 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix possible nullptr access in robot_joint.cpp. (`#636 <https://github.com/ros2/rviz/issues/636>`_)
+* Contributors: Chris Lalancette
+
 8.3.0 (2020-12-08)
 ------------------
 * Fix for mousewheel to zoom in/out (`#623 <https://github.com/ros2/rviz/issues/623>`_)

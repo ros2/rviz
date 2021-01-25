@@ -2,6 +2,11 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Use "%s" as format string literal in logging macros (`#633 <https://github.com/ros2/rviz/issues/633>`_)
+* Contributors: Audrow Nash
+
 8.3.0 (2020-12-08)
 ------------------
 * Add linters and use ament_lint_auto (`#608 <https://github.com/ros2/rviz/issues/608>`_)
