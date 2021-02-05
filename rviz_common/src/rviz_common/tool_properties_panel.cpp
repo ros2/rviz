@@ -34,7 +34,7 @@
 
 #include "rviz_common/properties/property_tree_widget.hpp"
 #include "tool_manager.hpp"
-#include "visualization_manager.hpp"
+#include "rviz_common/visualization_manager.hpp"
 
 namespace rviz_common
 {

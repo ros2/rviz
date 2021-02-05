@@ -47,7 +47,7 @@
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/interaction/selection_manager.hpp"
 #include "rviz_common/interaction/handler_manager_iface.hpp"
-#include "../visualization_manager.hpp"
+#include "rviz_common/visualization_manager.hpp"
 
 namespace rviz_common
 {
