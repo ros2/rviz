@@ -480,6 +480,7 @@ void AssimpLoader::declareVertexBufferOrdering(
   }
 
   // TODO(anyone): vertex colors
+  (void)offset;
 }
 
 Ogre::HardwareVertexBufferSharedPtr
