@@ -102,58 +102,58 @@ TEST(Property, children) {
 }
 
 TEST(VectorProperty, default_value) {
-  VectorProperty * vp = new VectorProperty();
-  Ogre::Vector3 vec = vp->getVector();
+  VectorProperty vp;
+  Ogre::Vector3 vec = vp.getVector();
   EXPECT_EQ(0, vec.x);
   EXPECT_EQ(0, vec.y);
   EXPECT_EQ(0, vec.z);
 }
 
 TEST(VectorProperty, set_and_get) {
-  VectorProperty * vp = new VectorProperty();
+  VectorProperty vp;
   Ogre::Vector3 vec(1, 2, 3);
-  vp->setVector(vec);
+  vp.setVector(vec);
 
-  Ogre::Vector3 vec2 = vp->getVector();
+  Ogre::Vector3 vec2 = vp.getVector();
   EXPECT_EQ(1, vec2.x);
   EXPECT_EQ(2, vec2.y);
   EXPECT_EQ(3, vec2.z);
 }
 
 TEST(VectorProperty, set_string) {
-  VectorProperty * vp = new VectorProperty();
-  vp->setValue(QString("1;2;3"));
+  VectorProperty vp;
+  vp.setValue(QString("1;2;3"));
 
-  Ogre::Vector3 vec = vp->getVector();
+  Ogre::Vector3 vec = vp.getVector();
   EXPECT_EQ(1, vec.x);
   EXPECT_EQ(2, vec.y);
   EXPECT_EQ(3, vec.z);
 
-  vp->setValue(QString("chubby!"));
+  vp.setValue(QString("chubby!"));
 
-  vec = vp->getVector();
+  vec = vp.getVector();
   EXPECT_EQ(1, vec.x);
   EXPECT_EQ(2, vec.y);
   EXPECT_EQ(3, vec.z);
 }
 
 TEST(VectorProperty, set_child) {
-  VectorProperty * vp = new VectorProperty();
-  vp->subProp("X")->setValue(0.9);
-  vp->subProp("Y")->setValue(1.1);
-  vp->subProp("Z")->setValue(1.3);
+  VectorProperty vp;
+  vp.subProp("X")->setValue(0.9);
+  vp.subProp("Y")->setValue(1.1);
+  vp.subProp("Z")->setValue(1.3);
 
-  Ogre::Vector3 vec = vp->getVector();
+  Ogre::Vector3 vec = vp.getVector();
   EXPECT_EQ(0.9f, vec.x);
   EXPECT_EQ(1.1f, vec.y);
   EXPECT_EQ(1.3f, vec.z);
 }
 
 TEST(VectorProperty, get_child) {
-  VectorProperty * vp = new VectorProperty("v", Ogre::Vector3(1, 2, 3));
-  EXPECT_EQ(1, vp->subProp("X")->getValue().toFloat() );
-  EXPECT_EQ(2, vp->subProp("Y")->getValue().toFloat() );
-  EXPECT_EQ(3, vp->subProp("Z")->getValue().toFloat() );
+  VectorProperty vp("v", Ogre::Vector3(1, 2, 3));
+  EXPECT_EQ(1, vp.subProp("X")->getValue().toFloat());
+  EXPECT_EQ(2, vp.subProp("Y")->getValue().toFloat());
+  EXPECT_EQ(3, vp.subProp("Z")->getValue().toFloat());
 }
 
 TEST(VectorProperty, set_value_events) {
@@ -174,8 +174,8 @@ TEST(VectorProperty, set_value_events) {
 }
 
 TEST(QuaternionProperty, default_value) {
-  QuaternionProperty * qp = new QuaternionProperty();
-  Ogre::Quaternion quat = qp->getQuaternion();
+  QuaternionProperty qp;
+  Ogre::Quaternion quat = qp.getQuaternion();
   EXPECT_EQ(0, quat.x);
   EXPECT_EQ(0, quat.y);
   EXPECT_EQ(0, quat.z);
@@ -183,11 +183,11 @@ TEST(QuaternionProperty, default_value) {
 }
 
 TEST(QuaternionProperty, set_and_get) {
-  QuaternionProperty * qp = new QuaternionProperty();
+  QuaternionProperty qp;
   Ogre::Quaternion quat(4, 1, 2, 3);
-  qp->setQuaternion(quat);
+  qp.setQuaternion(quat);
 
-  Ogre::Quaternion quat2 = qp->getQuaternion();
+  Ogre::Quaternion quat2 = qp.getQuaternion();
   EXPECT_EQ(1, quat2.x);
   EXPECT_EQ(2, quat2.y);
   EXPECT_EQ(3, quat2.z);
@@ -195,18 +195,18 @@ TEST(QuaternionProperty, set_and_get) {
 }
 
 TEST(QuaternionProperty, set_string) {
-  QuaternionProperty * qp = new QuaternionProperty();
-  qp->setValue(QString("1;2;3;4"));
+  QuaternionProperty qp;
+  qp.setValue(QString("1;2;3;4"));
 
-  Ogre::Quaternion quat = qp->getQuaternion();
+  Ogre::Quaternion quat = qp.getQuaternion();
   EXPECT_EQ(1, quat.x);
   EXPECT_EQ(2, quat.y);
   EXPECT_EQ(3, quat.z);
   EXPECT_EQ(4, quat.w);
 
-  qp->setValue(QString("chubby!"));
+  qp.setValue(QString("chubby!"));
 
-  quat = qp->getQuaternion();
+  quat = qp.getQuaternion();
   EXPECT_EQ(1, quat.x);
   EXPECT_EQ(2, quat.y);
   EXPECT_EQ(3, quat.z);
@@ -214,13 +214,13 @@ TEST(QuaternionProperty, set_string) {
 }
 
 TEST(QuaternionProperty, set_child) {
-  QuaternionProperty * qp = new QuaternionProperty();
-  qp->subProp("X")->setValue(0.9);
-  qp->subProp("Y")->setValue(1.1);
-  qp->subProp("Z")->setValue(1.3);
-  qp->subProp("W")->setValue(1.5);
+  QuaternionProperty qp;
+  qp.subProp("X")->setValue(0.9);
+  qp.subProp("Y")->setValue(1.1);
+  qp.subProp("Z")->setValue(1.3);
+  qp.subProp("W")->setValue(1.5);
 
-  Ogre::Quaternion quat = qp->getQuaternion();
+  Ogre::Quaternion quat = qp.getQuaternion();
   EXPECT_EQ(0.9f, quat.x);
   EXPECT_EQ(1.1f, quat.y);
   EXPECT_EQ(1.3f, quat.z);
@@ -228,11 +228,11 @@ TEST(QuaternionProperty, set_child) {
 }
 
 TEST(QuaternionProperty, get_child) {
-  QuaternionProperty * qp = new QuaternionProperty("v", Ogre::Quaternion(4, 1, 2, 3));
-  EXPECT_EQ(1, qp->subProp("X")->getValue().toFloat() );
-  EXPECT_EQ(2, qp->subProp("Y")->getValue().toFloat() );
-  EXPECT_EQ(3, qp->subProp("Z")->getValue().toFloat() );
-  EXPECT_EQ(4, qp->subProp("W")->getValue().toFloat() );
+  QuaternionProperty qp("v", Ogre::Quaternion(4, 1, 2, 3));
+  EXPECT_EQ(1, qp.subProp("X")->getValue().toFloat() );
+  EXPECT_EQ(2, qp.subProp("Y")->getValue().toFloat() );
+  EXPECT_EQ(3, qp.subProp("Z")->getValue().toFloat() );
+  EXPECT_EQ(4, qp.subProp("W")->getValue().toFloat() );
 }
 
 TEST(QuaternionProperty, set_value_events) {
@@ -255,49 +255,49 @@ TEST(QuaternionProperty, set_value_events) {
 }
 
 TEST(ColorProperty, default_value) {
-  ColorProperty * qp = new ColorProperty();
-  QColor color = qp->getColor();
+  ColorProperty cp;
+  QColor color = cp.getColor();
   EXPECT_EQ(0, color.red() );
   EXPECT_EQ(0, color.green() );
   EXPECT_EQ(0, color.blue() );
 }
 
 TEST(ColorProperty, set_and_get) {
-  ColorProperty * qp = new ColorProperty();
+  ColorProperty cp;
   QColor color(1, 2, 3);
-  qp->setColor(color);
+  cp.setColor(color);
 
-  QColor color2 = qp->getColor();
-  EXPECT_EQ(1, color2.red() );
-  EXPECT_EQ(2, color2.green() );
-  EXPECT_EQ(3, color2.blue() );
+  QColor color2 = cp.getColor();
+  EXPECT_EQ(1, color2.red());
+  EXPECT_EQ(2, color2.green());
+  EXPECT_EQ(3, color2.blue());
 }
 
 TEST(ColorProperty, set_string) {
-  ColorProperty * qp = new ColorProperty();
-  qp->setValue(QString("1;2;3"));
+  ColorProperty cp;
+  cp.setValue(QString("1;2;3"));
 
-  QColor color = qp->getColor();
-  EXPECT_EQ(1, color.red() );
-  EXPECT_EQ(2, color.green() );
-  EXPECT_EQ(3, color.blue() );
+  QColor color = cp.getColor();
+  EXPECT_EQ(1, color.red());
+  EXPECT_EQ(2, color.green());
+  EXPECT_EQ(3, color.blue());
 
-  qp->setValue(QString("chubby!"));
+  cp.setValue(QString("chubby!"));
 
-  color = qp->getColor();
-  EXPECT_EQ(1, color.red() );
-  EXPECT_EQ(2, color.green() );
-  EXPECT_EQ(3, color.blue() );
+  color = cp.getColor();
+  EXPECT_EQ(1, color.red());
+  EXPECT_EQ(2, color.green());
+  EXPECT_EQ(3, color.blue());
 }
 
 TEST(ColorProperty, set_string_limits) {
-  ColorProperty * qp = new ColorProperty();
-  qp->setValue(QString("-1;2000;3"));
+  ColorProperty cp;
+  cp.setValue(QString("-1;2000;3"));
 
-  QColor color = qp->getColor();
-  EXPECT_EQ(0, color.red() );
-  EXPECT_EQ(255, color.green() );
-  EXPECT_EQ(3, color.blue() );
+  QColor color = cp.getColor();
+  EXPECT_EQ(0, color.red());
+  EXPECT_EQ(255, color.green());
+  EXPECT_EQ(3, color.blue());
 }
 
 TEST(ColorProperty, set_value_events) {
