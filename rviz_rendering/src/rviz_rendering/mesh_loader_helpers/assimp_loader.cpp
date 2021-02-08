@@ -477,10 +477,10 @@ void AssimpLoader::declareVertexBufferOrdering(
   if (input_mesh->HasTextureCoords(0)) {
     vertex_decl->addElement(0, offset, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES, 0);
     offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT2);
-    (void)offset;
   }
 
   // TODO(anyone): vertex colors
+  (void)offset;
 }
 
 Ogre::HardwareVertexBufferSharedPtr
