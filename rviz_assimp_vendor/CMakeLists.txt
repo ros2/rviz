@@ -54,6 +54,7 @@ macro(build_assimp)
       ${CMAKE_CURRENT_BINARY_DIR}/assimp_install/
     DESTINATION
       ${CMAKE_INSTALL_PREFIX}/opt/rviz_assimp_vendor
+    USE_SOURCE_PERMISSIONS
   )
 endmacro()
 
