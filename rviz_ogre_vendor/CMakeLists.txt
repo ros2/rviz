@@ -59,6 +59,7 @@ macro(build_freetype)
       ${CMAKE_CURRENT_BINARY_DIR}/freetype_install/
     DESTINATION
       ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor
+    USE_SOURCE_PERMISSIONS
   )
 endmacro()
 
@@ -97,6 +98,7 @@ macro(build_zlib)
       ${CMAKE_CURRENT_BINARY_DIR}/zlib-install/
     DESTINATION
       ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor
+    USE_SOURCE_PERMISSIONS
   )
 endmacro()
 
@@ -198,6 +200,7 @@ macro(build_ogre)
       ${CMAKE_CURRENT_BINARY_DIR}/ogre_install/
     DESTINATION
       ${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor
+    USE_SOURCE_PERMISSIONS
   )
 endmacro()
 
