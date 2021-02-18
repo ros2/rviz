@@ -39,7 +39,14 @@ Executor::Executor()
 
 void Executor::queueAction(std::function<void(void)> action)
 {
+  // The static method QTimer::singleShot allocates an object inside of it,
+  // which clang static analysis flags as a potential memory leak.  However,
+  // the allocation becomes part of the Qt object hierarchy attached to this
+  // object, so it is in fact not a leak.  Just make clang static analysis
+  // skip this line of code.
+#ifndef __clang_analyzer__
   QTimer::singleShot(total_delay_, this, action);
+#endif
   increaseTotalDelay();
 }
 
