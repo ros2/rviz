@@ -68,6 +68,7 @@
 #include "rviz_common/panel_dock_widget.hpp"
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/tool.hpp"
+#include "rviz_common/yaml_config_reader.hpp"
 #include "rviz_rendering/render_window.hpp"
 
 #include "./env_config.hpp"
@@ -78,9 +79,8 @@
 #include "./screenshot_dialog.hpp"
 #include "./splash_screen.hpp"
 #include "./tool_manager.hpp"
-#include "./visualization_manager.hpp"
+#include "rviz_common/visualization_manager.hpp"
 #include "./widget_geometry_change_detector.hpp"
-#include "./yaml_config_reader.hpp"
 #include "./yaml_config_writer.hpp"
 
 // #include "./displays_panel.hpp"

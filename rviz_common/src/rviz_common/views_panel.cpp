@@ -38,7 +38,7 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
-#include "./visualization_manager.hpp"
+#include "rviz_common/visualization_manager.hpp"
 #include "rviz_common/properties/property_tree_widget.hpp"
 #include "rviz_common/view_controller.hpp"
 #include "rviz_common/view_manager.hpp"

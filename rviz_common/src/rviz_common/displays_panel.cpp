@@ -47,7 +47,7 @@
 #include "rviz_common/properties/property_tree_widget.hpp"
 #include "rviz_common/properties/property_tree_with_help.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
-#include "./visualization_manager.hpp"
+#include "rviz_common/visualization_manager.hpp"
 
 namespace rviz_common
 {

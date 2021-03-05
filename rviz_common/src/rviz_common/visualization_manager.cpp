@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "visualization_manager.hpp"
+#include "rviz_common/visualization_manager.hpp"
 
 #include <algorithm>
 #include <chrono>
