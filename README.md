@@ -83,7 +83,7 @@ More detailed information on how to write a transformation plugin and on how to 
 
 The simplest way to build from source is to use the official installation guide, since RViz is part of the official ROS 2 repos file.
 
-https://github.com/ros2/ros2/wiki/Installation
+https://docs.ros.org/en/rolling/Installation.html
 
 #### Building RViz in a separate workspace
 
@@ -114,7 +114,7 @@ The `--merge-install` flag is optional but ensures a cleaner environment which i
 
 More instructions and examples to come.
 
-In addition to the [ROS 2 Developer Guide](https://github.com/ros2/ros2/wiki/Developer-Guide) we suggest the following.
+In addition to the [ROS 2 Developer Guide](https://docs.ros.org/en/rolling/Contributing/Developer-Guide.html) we suggest the following.
 
 ### Testing
 
