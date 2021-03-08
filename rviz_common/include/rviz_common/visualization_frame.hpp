@@ -218,10 +218,10 @@ public:
   /// Add a panel by a given name and class name.
   QDockWidget *
   addPanelByName(
-      const QString & name,
-      const QString & class_lookup_name,
-      Qt::DockWidgetArea area = Qt::LeftDockWidgetArea,
-      bool floating = true);
+    const QString & name,
+    const QString & class_lookup_name,
+    Qt::DockWidgetArea area = Qt::LeftDockWidgetArea,
+    bool floating = true);
 
 public Q_SLOTS:
   /// Notification that something would change in the display config if saved.
