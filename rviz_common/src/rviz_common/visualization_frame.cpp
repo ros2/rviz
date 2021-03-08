@@ -29,7 +29,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "visualization_frame.hpp"
+#include "rviz_common/visualization_frame.hpp"
 
 #include <exception>
 #include <fstream>
