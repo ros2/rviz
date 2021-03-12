@@ -98,11 +98,6 @@ public:
     int y,
     Ogre::Vector3 & result_point) override;
 
-private:
-  void setDepthTextureSize(unsigned width, unsigned height);
-
-  void capTextureSize(unsigned int & width, unsigned int & height);
-
   /// Gets the 3D points in a box around a point in a view port.
   /**
    * \param[in] viewport Rendering area clicked on.
@@ -125,7 +120,12 @@ private:
     unsigned width,
     unsigned height,
     bool skip_missing,
-    std::vector<Ogre::Vector3> & result_points);
+    std::vector<Ogre::Vector3> & result_points) override;
+
+private:
+  void setDepthTextureSize(unsigned width, unsigned height);
+
+  void capTextureSize(unsigned int & width, unsigned int & height);
 
   /**
    * \param[in] panel Rendering area clicked on.

@@ -63,6 +63,9 @@ public:
   MOCK_METHOD1(setTextureSize, void(unsigned int));
 
   MOCK_METHOD4(get3DPoint, bool(Ogre::Viewport *, int, int, Ogre::Vector3 &));
+  MOCK_METHOD7(
+    get3DPatch, bool(Ogre::Viewport *, int, int, unsigned, unsigned,
+    bool, std::vector<Ogre::Vector3>&));
   MOCK_METHOD0(getPropertyModel, rviz_common::properties::PropertyTreeModel *());
 };
 
