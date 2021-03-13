@@ -390,6 +390,7 @@ MovableText::calculateTotalDimensionsForPositioning(float & total_height, float 
     if (character == '\n') {
       total_height += effective_char_height + line_spacing_;
       total_width = current_width > total_width ? current_width : total_width;
+      current_width = 0;
     } else if (character == ' ') {
       current_width += space_width_;
     } else {
