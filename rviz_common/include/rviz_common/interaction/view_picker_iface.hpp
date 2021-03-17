@@ -31,9 +31,11 @@
 #ifndef RVIZ_COMMON__INTERACTION__VIEW_PICKER_IFACE_HPP_
 #define RVIZ_COMMON__INTERACTION__VIEW_PICKER_IFACE_HPP_
 
-#include "rviz_common/visibility_control.hpp"
+#include <vector>
 
 #include <OgreVector3.h>
+
+#include "rviz_common/visibility_control.hpp"
 
 namespace Ogre
 {
@@ -65,6 +67,19 @@ public:
     int x,
     int y,
     Ogre::Vector3 & result_point) = 0;
+
+  /// Return true if the point at x,y in the viewport is showing an object, false otherwise.
+  /**
+   * Gets the 3D points in a box around a point in a view port.
+   */
+  virtual bool get3DPatch(
+    RenderPanel * panel,
+    int x,
+    int y,
+    unsigned width,
+    unsigned height,
+    bool skip_missing,
+    std::vector<Ogre::Vector3> & result_points) = 0;
 };
 
 }  // namespace interaction
