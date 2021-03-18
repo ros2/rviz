@@ -2,8 +2,8 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.4.0 (2021-03-18)
+------------------
 * Add ViewPicker::get3DPatch to the public API (`#657 <https://github.com/ros2/rviz/issues/657>`_)
 * Fix byte indexing for depth patch pixels (`#661 <https://github.com/ros2/rviz/issues/661>`_)
 * fix toolbar vanishing when pressing escape (`#656 <https://github.com/ros2/rviz/issues/656>`_)

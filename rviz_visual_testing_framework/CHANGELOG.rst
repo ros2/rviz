@@ -2,8 +2,8 @@
 Changelog for package rviz_visual_testing_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.4.0 (2021-03-18)
+------------------
 * Quiet a clang warning about a Qt memory leak. (`#651 <https://github.com/ros2/rviz/issues/651>`_)
 * Contributors: Chris Lalancette
 

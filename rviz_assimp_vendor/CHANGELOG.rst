@@ -2,8 +2,8 @@
 Changelog for package rviz_assimp_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.4.0 (2021-03-18)
+------------------
 * Always preserve source permissions in vendor packages (`#647 <https://github.com/ros2/rviz/issues/647>`_)
 * Add an override flag to force vendored build (`#642 <https://github.com/ros2/rviz/issues/642>`_)
 * Contributors: Scott K Logan

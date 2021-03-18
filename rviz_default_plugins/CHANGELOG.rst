@@ -2,8 +2,8 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.4.0 (2021-03-18)
+------------------
 * Add ViewPicker::get3DPatch to the public API (`#657 <https://github.com/ros2/rviz/issues/657>`_)
 * Allow to zoom more with orbit controller (`#654 <https://github.com/ros2/rviz/issues/654>`_)
 * Contributors: Joseph Schornak, Victor Lamoine

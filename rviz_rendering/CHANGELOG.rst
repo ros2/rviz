@@ -2,8 +2,8 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.4.0 (2021-03-18)
+------------------
 * reset current line width when calculating text width (`#655 <https://github.com/ros2/rviz/issues/655>`_)
 * Silence a dead store warning. (`#643 <https://github.com/ros2/rviz/issues/643>`_)
 * Fix a memory leak when using the ResourceIOSystem. (`#641 <https://github.com/ros2/rviz/issues/641>`_)
