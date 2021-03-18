@@ -2,6 +2,13 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* reset current line width when calculating text width (`#655 <https://github.com/ros2/rviz/issues/655>`_)
+* Silence a dead store warning. (`#643 <https://github.com/ros2/rviz/issues/643>`_)
+* Fix a memory leak when using the ResourceIOSystem. (`#641 <https://github.com/ros2/rviz/issues/641>`_)
+* Contributors: Chris Lalancette, ipa-fez
+
 8.3.1 (2021-01-25)
 ------------------
 * Revert "Support loading meshes other than .mesh and .stl with package URIs (`#610 <https://github.com/ros2/rviz/issues/610>`_)" (`#638 <https://github.com/ros2/rviz/issues/638>`_)

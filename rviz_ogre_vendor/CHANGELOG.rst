@@ -2,6 +2,11 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Always preserve source permissions in vendor packages (`#647 <https://github.com/ros2/rviz/issues/647>`_)
+* Contributors: Scott K Logan
+
 8.3.1 (2021-01-25)
 ------------------
 
