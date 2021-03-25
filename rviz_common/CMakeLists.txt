@@ -123,7 +123,7 @@ set(rviz_common_headers_to_moc
   include/rviz_common/view_controller.hpp
   include/rviz_common/view_manager.hpp
   src/rviz_common/views_panel.hpp
-  src/rviz_common/visualization_frame.hpp
+  include/rviz_common/visualization_frame.hpp
   src/rviz_common/widget_geometry_change_detector.hpp
   include/rviz_common/ros_topic_display.hpp
 )
