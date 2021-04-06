@@ -2,6 +2,9 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 8.4.0 (2021-03-18)
 ------------------
 * reset current line width when calculating text width (`#655 <https://github.com/ros2/rviz/issues/655>`_)

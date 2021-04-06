@@ -2,6 +2,11 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add visualization_frame to the public API (`#660 <https://github.com/ros2/rviz/issues/660>`_)
+* Contributors: Jafar Abdi
+
 8.4.0 (2021-03-18)
 ------------------
 * Add ViewPicker::get3DPatch to the public API (`#657 <https://github.com/ros2/rviz/issues/657>`_)
