@@ -2,8 +2,8 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.5.0 (2021-04-06)
+------------------
 * Add visualization_frame to the public API (`#660 <https://github.com/ros2/rviz/issues/660>`_)
 * Contributors: Jafar Abdi
 
