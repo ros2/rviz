@@ -44,6 +44,8 @@ public:
   void setUpOgreTestEnvironment(bool debug = false);
 
   void setUpRenderSystem();
+
+  int getGlslVersion();
 };
 
 }  // namespace rviz_rendering

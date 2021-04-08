@@ -245,6 +245,7 @@ TEST_F(PointCloudTestFixture, setRenderMode_changes_material) {
 TEST_F(
   PointCloudTestFixture,
   setRenderMode_regenerates_renderables_with_different_size_when_geometry_support_changes) {
+  int glsl_version = testing_environment_->getGlslVersion();
   auto point_cloud = std::make_shared<rviz_rendering::PointCloud>();
   point_cloud->addPoints(singlePointArray.begin(), singlePointArray.end());
 
@@ -260,7 +261,12 @@ TEST_F(
 
   renderables = point_cloud->getRenderables();
   for (auto const & renderable : renderables) {
-    size_t number_of_vertices_per_box = 6 * 3 * 2;  // six sides with two triangles each
+    size_t number_of_vertices_per_box {0};
+    if (glsl_version >= 150) {
+      number_of_vertices_per_box = 1;
+    } else if (glsl_version >= 120) {
+      number_of_vertices_per_box = 6 * 3 * 2;  // six sides with two triangles each
+    }
     ASSERT_THAT(renderable->getBuffer()->getNumVertices(), Eq(number_of_vertices_per_box));
   }
 }
@@ -278,9 +284,15 @@ TEST_F(PointCloudTestFixture, addPoints_adds_new_renderable_whenever_it_is_calle
 
 
 TEST_F(PointCloudTestFixture, addPoints_adds_vertices_with_correct_geometry_when_called) {
+  int glsl_version = testing_environment_->getGlslVersion();
   auto point_cloud = std::make_shared<rviz_rendering::PointCloud>();
   point_cloud->setRenderMode(rviz_rendering::PointCloud::RM_FLAT_SQUARES);
-  size_t number_of_vertices_per_flat_square = 3 * 2;  // two triangles for one square
+  size_t number_of_vertices_per_flat_square = {0};
+  if (glsl_version >= 150) {
+    number_of_vertices_per_flat_square = 1;
+  } else if (glsl_version >= 120) {
+    number_of_vertices_per_flat_square = 3 * 2;  // two triangles for one square
+  }
 
   point_cloud->addPoints(singlePointArray.begin(), singlePointArray.end());
 
