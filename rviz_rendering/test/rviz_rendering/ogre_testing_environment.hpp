@@ -45,7 +45,7 @@ public:
 
   void setUpRenderSystem();
 
-  int getGlslVersion();
+  int getGlslVersion() const;
 };
 
 }  // namespace rviz_rendering

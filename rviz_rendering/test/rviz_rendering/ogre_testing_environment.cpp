@@ -53,7 +53,7 @@ void OgreTestingEnvironment::setUpRenderSystem()
   RenderSystem::get();
 }
 
-int OgreTestingEnvironment::getGlslVersion()
+int OgreTestingEnvironment::getGlslVersion() const
 {
   return RenderSystem::get()->getGlslVersion();
 }
