@@ -38,7 +38,7 @@
 
 #include <QDir>  // NOLINT
 
-#include "rcutils/get_env.h"
+#include "rcutils/env.h"
 
 VisualTest::VisualTest(
   rviz_common::VisualizerApp * vapp,
