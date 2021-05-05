@@ -80,6 +80,7 @@ public:
   getGlVersion();
 
   /// return GLSL Version as integer, e.g. 150 for GLSL 1.50
+  RVIZ_RENDERING_PUBLIC
   int
   getGlslVersion();
 
