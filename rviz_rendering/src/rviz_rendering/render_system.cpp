@@ -335,14 +335,12 @@ RenderSystem::setupResources()
   // Unfortunately, Ogre doesn't have a notion of glsl versions so we can't go
   // the 'official' way of defining multiple schemes per material and let Ogre
   // decide which one to use.
-  // TODO(wjwwood): figure out why includes don't work on 150
-  // if (getGlslVersion() >= 150) {
-  //   Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-  //     rviz_path + "/ogre_media/materials/glsl150", "FileSystem", "rviz_rendering");
-  //   Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-  //     rviz_path + "/ogre_media/materials/scripts150", "FileSystem", "rviz_rendering");
-  // } else if (getGlslVersion() >= 120) {
-  if (getGlslVersion() >= 120) {
+  if (getGlslVersion() >= 150) {
+    Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+      rviz_path + "/ogre_media/materials/glsl150", "FileSystem", "rviz_rendering");
+    Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+      rviz_path + "/ogre_media/materials/scripts150", "FileSystem", "rviz_rendering");
+  } else if (getGlslVersion() >= 120) {
     Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
       rviz_path + "/ogre_media/materials/scripts120", "FileSystem", "rviz_rendering");
   } else {
