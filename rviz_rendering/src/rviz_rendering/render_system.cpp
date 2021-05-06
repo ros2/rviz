@@ -239,6 +239,14 @@ RenderSystem::detectGlVersion()
       }
       break;
   }
+
+  // TODO(pijaro): Nouveanu driver doesn't support glsl150 even if it "should", figure out why.
+  // We fix version to 120 since this is the one we are currently using in materials.
+  std::string vendor_name = (const char *)glGetString(GL_VENDOR);
+  if (vendor_name == "nouveau" && glsl_version_ > 120) {
+    glsl_version_ = 120;
+  }
+
   RVIZ_RENDERING_LOG_INFO_STREAM(
     "OpenGl version: " << gl_version_ / 100.0 << " (GLSL " << glsl_version_ / 100.0 << ")"
   );
