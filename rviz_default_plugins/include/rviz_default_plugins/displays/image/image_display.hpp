@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
  * Copyright (c) 2017, Bosch Software Innovations GmbH.
+ * Copyright (c) 2020, TNG Technology Consulting GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,6 +50,7 @@
 
 # include "rviz_default_plugins/displays/image/ros_image_texture_iface.hpp"
 # include "rviz_default_plugins/visibility_control.hpp"
+#include "rviz_default_plugins/displays/image/image_transport_display.hpp"
 #endif
 
 
@@ -68,7 +70,7 @@ namespace displays
  *
  */
 class RVIZ_DEFAULT_PLUGINS_PUBLIC ImageDisplay : public
-  rviz_common::MessageFilterDisplay<sensor_msgs::msg::Image>
+  rviz_default_plugins::displays::ImageTransportDisplay<sensor_msgs::msg::Image>
 {
   Q_OBJECT
 
