@@ -219,7 +219,6 @@ void MapDisplay::subscribe()
 void MapDisplay::subscribeToUpdateTopic()
 {
   try {
-
     rclcpp::SubscriptionOptions sub_opts;
     sub_opts.event_callbacks.message_lost_callback =
       [&](rclcpp::QOSMessageLostInfo & info)

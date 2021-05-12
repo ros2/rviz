@@ -211,9 +211,9 @@ protected:
         [&](rclcpp::QOSMessageLostInfo & info)
         {
           std::stringstream sstm;
-          sstm << "Some messages were lost:\n>\tNumber of new lost messages: "
-               << info.total_count_change << " \n>\tTotal number of messages lost: "
-               << info.total_count;
+          sstm << "Some messages were lost:\n>\tNumber of new lost messages: " <<
+            info.total_count_change << " \n>\tTotal number of messages lost: " <<
+            info.total_count;
           setStatus(properties::StatusProperty::Warn, "Topic", QString(sstm.str().c_str()));
         };
 

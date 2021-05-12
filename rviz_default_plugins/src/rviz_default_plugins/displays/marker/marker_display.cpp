@@ -71,7 +71,6 @@ void MarkerDisplay::subscribe()
 void MarkerDisplay::createMarkerArraySubscription()
 {
   try {
-
     rclcpp::SubscriptionOptions sub_opts;
     sub_opts.event_callbacks.message_lost_callback =
       [&](rclcpp::QOSMessageLostInfo & info)
