@@ -294,9 +294,9 @@ void CameraDisplay::createCameraInfoSubscription()
       [&](rclcpp::QOSMessageLostInfo & info)
       {
         std::stringstream sstm;
-        sstm << "Some messages were lost:\n>\tNumber of new lost messages: "
-             << info.total_count_change << " \n>\tTotal number of messages lost: "
-             << info.total_count;
+        sstm << "Some messages were lost:\n>\tNumber of new lost messages: " <<
+          info.total_count_change << " \n>\tTotal number of messages lost: " <<
+          info.total_count;
         setStatus(StatusLevel::Warn, CAM_INFO_STATUS, QString(sstm.str().c_str()));
       };
 
@@ -309,7 +309,7 @@ void CameraDisplay::createCameraInfoSubscription()
         current_caminfo_ = msg;
         new_caminfo_ = true;
       }, sub_opts);
-    
+
     setStatus(StatusLevel::Ok, CAM_INFO_STATUS, "OK");
   } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
     setStatus(StatusLevel::Error, CAM_INFO_STATUS, QString("Error subscribing: ") + e.what());

@@ -225,11 +225,12 @@ void MapDisplay::subscribeToUpdateTopic()
       [&](rclcpp::QOSMessageLostInfo & info)
       {
         std::stringstream sstm;
-        sstm << "Some messages were lost:\n>\tNumber of new lost messages: "
-             << info.total_count_change << " \n>\tTotal number of messages lost: "
-             << info.total_count;
-        setStatus(rviz_common::properties::StatusProperty::Warn, "Update Topic",
-                  QString(sstm.str().c_str()));
+        sstm << "Some messages were lost:\n>\tNumber of new lost messages: " <<
+          info.total_count_change << " \n>\tTotal number of messages lost: " <<
+          info.total_count;
+        setStatus(
+          rviz_common::properties::StatusProperty::Warn, "Update Topic",
+          QString(sstm.str().c_str()));
       };
 
     update_subscription_ =
