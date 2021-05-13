@@ -2,8 +2,8 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.6.0 (2021-05-13)
+------------------
 * Export Qt5 dependencies properly (`#687 <https://github.com/ros2/rviz/issues/687>`_)
 * Add support for namespace-scoped DELETEALL action in Marker displays (`#685 <https://github.com/ros2/rviz/issues/685>`_)
 * Use image_transport to subscribe to image messages (`#523 <https://github.com/ros2/rviz/issues/523>`_)

@@ -2,8 +2,8 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.6.0 (2021-05-13)
+------------------
 * Export Qt5 dependencies properly (`#687 <https://github.com/ros2/rviz/issues/687>`_)
 * Putting glsl 1.50 resources back in RenderSystem (`#668 <https://github.com/ros2/rviz/issues/668>`_)
 * Contributors: Michel Hidalgo, Piotr Jaroszek
