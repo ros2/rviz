@@ -262,7 +262,6 @@ ament_target_dependencies(rviz_default_plugins
 ament_export_include_directories(include)
 ament_export_targets(rviz_default_plugins HAS_LIBRARY_TARGET)
 ament_export_dependencies(
-  Qt5
   rviz_common
   geometry_msgs
   interactive_markers
@@ -1025,5 +1024,7 @@ if(BUILD_TESTING)
   endif()
 endif()
 
-ament_package()
+ament_package(
+  CONFIG_EXTRAS "rviz_default_plugins-extras.cmake"
+)
 
