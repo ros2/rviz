@@ -277,4 +277,6 @@ list(APPEND ${PROJECT_NAME}_CONFIG_EXTRAS
   "${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/register_rviz_ogre_media_exports_hook-extras.cmake"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/register_rviz_ogre_media_exports.cmake")
 
-ament_package()
+ament_package(
+  CONFIG_EXTRAS "rviz_rendering-extras.cmake"
+)
