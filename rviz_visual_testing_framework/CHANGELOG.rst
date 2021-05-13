@@ -2,6 +2,11 @@
 Changelog for package rviz_visual_testing_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Update includes after rcutils/get_env.h deprecation (`#677 <https://github.com/ros2/rviz/issues/677>`_)
+* Contributors: Christophe Bedard
+
 8.5.0 (2021-04-06)
 ------------------
 
