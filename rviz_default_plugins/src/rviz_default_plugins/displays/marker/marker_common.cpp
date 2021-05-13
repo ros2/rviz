@@ -204,7 +204,11 @@ void MarkerCommon::processMessage(const visualization_msgs::msg::Marker::ConstSh
       break;
 
     case visualization_msgs::msg::Marker::DELETEALL:
-      deleteAllMarkers();
+      if (!message->ns.empty()) {
+        deleteMarkersInNamespace(message->ns);
+      } else {
+        deleteAllMarkers();
+      }
       break;
 
     default:

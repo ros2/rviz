@@ -87,6 +87,20 @@ visualization_msgs::msg::Marker::SharedPtr createSharedPtrMessage(
   return std::make_shared<visualization_msgs::msg::Marker>(marker);
 }
 
+visualization_msgs::msg::Marker::SharedPtr createSharedPtrMessage(
+  int32_t action, int32_t type, const std::string & ns)
+{
+  auto marker = createSharedPtrMessage(action, type);
+  marker->ns = ns;
+  return marker;
+}
+
+visualization_msgs::msg::Marker::SharedPtr createSharedPtrMessage(
+  int32_t action, const std::string & ns)
+{
+  return createSharedPtrMessage(action, -1, ns);
+}
+
 TEST_F(MarkerCommonFixture, processMessage_creates_correct_marker_on_add_type) {
   mockValidTransform();
 
@@ -120,6 +134,30 @@ TEST_F(MarkerCommonFixture, processMessage_deletes_correct_marker_on_delete_type
       visualization_msgs::msg::Marker::DELETE,
       visualization_msgs::msg::Marker::TEXT_VIEW_FACING,
       0));
+
+  ASSERT_FALSE(rviz_default_plugins::findOneMovableText(scene_manager_->getRootSceneNode()));
+  ASSERT_TRUE(rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode()));
+}
+
+TEST_F(MarkerCommonFixture, processMessage_with_scoped_deleteall_deletes_correct_markers) {
+  mockValidTransform();
+
+  common_->processMessage(
+    createSharedPtrMessage(
+      visualization_msgs::msg::Marker::ADD,
+      visualization_msgs::msg::Marker::TEXT_VIEW_FACING,
+      "ns_a"));
+
+  common_->processMessage(
+    createSharedPtrMessage(
+      visualization_msgs::msg::Marker::ADD,
+      visualization_msgs::msg::Marker::POINTS,
+      "ns_b"));
+
+  common_->processMessage(
+    createSharedPtrMessage(
+      visualization_msgs::msg::Marker::DELETEALL,
+      "ns_a"));
 
   ASSERT_FALSE(rviz_default_plugins::findOneMovableText(scene_manager_->getRootSceneNode()));
   ASSERT_TRUE(rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode()));
