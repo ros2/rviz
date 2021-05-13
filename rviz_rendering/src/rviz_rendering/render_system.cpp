@@ -241,10 +241,10 @@ RenderSystem::detectGlVersion()
   }
 
   #ifdef __linux__
-  // TODO(pijaro): Nouveanu driver doesn't support glsl150 even if it "should", figure out why.
+  // TODO(pijaro): Nouveanu and Intel drivers don't support glsl150 even if they "should".
   // We fix version to 120 since this is the one we are currently using in materials.
   std::string vendor_name = (const char *)glGetString(GL_VENDOR);
-  if (vendor_name == "nouveau" && glsl_version_ > 120) {
+  if ((vendor_name == "nouveau" || vendor_name == "Intel") && glsl_version_ > 120) {
     glsl_version_ = 120;
   }
   #endif
