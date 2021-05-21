@@ -2,6 +2,9 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+6.1.8 (2021-05-21)
+------------------
+
 6.1.7 (2020-11-24)
 ------------------
 * Fix map display for moving TF frame. (`#483 <https://github.com/ros2/rviz/issues/483>`_) (`#582 <https://github.com/ros2/rviz/issues/582>`_)

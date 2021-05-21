@@ -2,6 +2,9 @@
 Changelog for package rviz_visual_testing_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+6.1.8 (2021-05-21)
+------------------
+
 6.1.7 (2020-11-24)
 ------------------
 * Update maintainers. (`#617 <https://github.com/ros2/rviz/issues/617>`_)

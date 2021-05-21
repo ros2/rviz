@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+6.1.8 (2021-05-21)
+------------------
+* Prevent rviz_rendering::AssimpLoader from loading materials twice. (`#628 <https://github.com/ros2/rviz/issues/628>`_)
+* Contributors: Michel Hidalgo
+
 6.1.7 (2020-11-24)
 ------------------
 * Update maintainers. (`#617 <https://github.com/ros2/rviz/issues/617>`_)
