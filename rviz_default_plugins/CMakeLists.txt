@@ -80,9 +80,7 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/grid/grid_display.hpp
   include/rviz_default_plugins/displays/grid_cells/grid_cells_display.hpp
   include/rviz_default_plugins/displays/illuminance/illuminance_display.hpp
-  include/rviz_default_plugins/displays/image/get_transport_from_topic.hpp
   include/rviz_default_plugins/displays/image/image_display.hpp
-  include/rviz_default_plugins/displays/image/image_transport_display.hpp
   include/rviz_default_plugins/displays/laser_scan/laser_scan_display.hpp
   include/rviz_default_plugins/displays/map/map_display.hpp
   include/rviz_default_plugins/displays/marker/marker_common.hpp
