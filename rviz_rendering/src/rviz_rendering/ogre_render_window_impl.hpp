@@ -31,6 +31,7 @@
 #ifndef RVIZ_RENDERING__OGRE_RENDER_WINDOW_IMPL_HPP_
 #define RVIZ_RENDERING__OGRE_RENDER_WINDOW_IMPL_HPP_
 
+#include <chrono>
 #include <functional>
 #include <vector>
 
@@ -211,6 +212,9 @@ protected:
   setupSceneCallback setup_scene_callback_;
   std::vector<Ogre::RenderTargetListener *> pending_listeners_;
   std::vector<uint32_t> pending_visibility_masks_;
+
+  /// \brief timepoint to check the speed of the events received
+  std::chrono::time_point<std::chrono::system_clock> eventTimePoint;
 };
 
 }  // namespace rviz_rendering

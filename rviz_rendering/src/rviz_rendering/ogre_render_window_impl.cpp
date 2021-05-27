@@ -83,6 +83,7 @@ RenderWindowImpl::RenderWindowImpl(QWindow * parent)
 //   enableStereo(true);
 
   // setCameraAspectRatio();
+  eventTimePoint = std::chrono::system_clock::now();
 }
 
 RenderWindowImpl::~RenderWindowImpl()
@@ -258,6 +259,17 @@ RenderWindowImpl::initialize()
 void
 RenderWindowImpl::resize(size_t width, size_t height)
 {
+  // Check how fast we are calling this method
+  auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(
+    std::chrono::system_clock::now() - eventTimePoint).count();
+  eventTimePoint = std::chrono::system_clock::now();
+  // if the time between call is less than 100 milliseconds then we return
+  // otherwise this may generate a crash. Review this issue:
+  // https://github.com/ros2/rviz/issues/202
+  if (diff < 100) {
+    return;
+  }
+
   if (ogre_render_window_) {
     this->setCameraAspectRatio();
     ogre_render_window_->resize(
