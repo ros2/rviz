@@ -213,8 +213,10 @@ protected:
   std::vector<Ogre::RenderTargetListener *> pending_listeners_;
   std::vector<uint32_t> pending_visibility_masks_;
 
-  /// \brief timepoint to check the speed of the events received
-  std::chrono::time_point<std::chrono::system_clock> eventTimePoint;
+  /// \brief time point to check the speed of the events received
+  std::chrono::time_point<std::chrono::system_clock> eventTimePoint_;
+  /// \brief time point to check the time since the app was started
+  static std::chrono::time_point<std::chrono::system_clock> timeFromStart_;
 };
 
 }  // namespace rviz_rendering
