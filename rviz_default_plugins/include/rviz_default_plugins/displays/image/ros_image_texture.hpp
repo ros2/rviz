@@ -70,6 +70,22 @@ struct ImageData
   size_t size_;
 };
 
+struct yuyv
+{
+  uint8_t y0;
+  uint8_t u;
+  uint8_t y1;
+  uint8_t v;
+};
+
+struct uyvy
+{
+  uint8_t u;
+  uint8_t y0;
+  uint8_t v;
+  uint8_t y1;
+};
+
 class ROSImageTexture : public ROSImageTextureIface
 {
 public:
@@ -126,6 +142,11 @@ private:
   bool fillWithCurrentImage(sensor_msgs::msg::Image::ConstSharedPtr & image);
   ImageData setFormatAndNormalizeDataIfNecessary(ImageData image_data);
   void loadImageToOgreImage(const ImageData & image_data, Ogre::Image & ogre_image) const;
+
+  void image_convert_yuv422_to_rgb(uint8_t *dst_img, uint8_t *src_img,
+                                  int dst_start_row, int dst_end_row,
+                                  int dst_num_cols, uint32_t stride_in_bytes,
+                                  std::string src_format);
 
   sensor_msgs::msg::Image::ConstSharedPtr current_image_;
   std::mutex mutex_;

@@ -228,6 +228,26 @@ bool ROSImageTexture::update()
   width_ = image->width;
   height_ = image->height;
 
+  // check if image is yuv format and convert it to rgb before normalizing data
+  if ( // NOLINT enforces bracket on the same line, which makes code unreadable
+    image->encoding == sensor_msgs::image_encodings::YUV422 ||
+    image->encoding == sensor_msgs::image_encodings::YUV422_YUY2)
+  {
+    // The number of bytes between the first pixel of the first row in memory
+    // and the first pixel of the second row in memory
+    uint32_t stride_in_bytes = image->step;
+    uint8_t * buffer = (uint8_t*)&image->data.front();
+
+    // yuv format uses 4 bytes to show 2 pixels in rgb format, which is 6 bytes
+    int new_size = (int)image->data.size() * 3 / 2;
+    uint8_t * dst_img  = new uint8_t[new_size];
+
+    image_convert_yuv422_to_rgb(dst_img, buffer, 0, height_, width_,stride_in_bytes,image->encoding);
+
+    image_data = setFormatAndNormalizeDataIfNecessary(
+      ImageData(image->encoding, dst_img, new_size));
+  }
+
   Ogre::Image ogre_image;
   try {
     loadImageToOgreImage(image_data, ogre_image);
@@ -294,6 +314,13 @@ ImageData ROSImageTexture::setFormatAndNormalizeDataIfNecessary(ImageData image_
       image_data.size_);
     image_data.pixel_format_ = Ogre::PF_BYTE_L;
     image_data.data_ptr_ = &buffer[0];
+  } else if ( // NOLINT enforces bracket on the same line, which makes code unreadable
+    image_data.encoding_ == sensor_msgs::image_encodings::YUV422 ||
+    image_data.encoding_ == sensor_msgs::image_encodings::YUV422_YUY2
+  )
+  {
+    // we previously converted from yuv to rgb so set the format to RGB
+    image_data.pixel_format_ = Ogre::PF_BYTE_RGB;
   } else {
     throw UnsupportedImageEncoding(image_data.encoding_);
   }
@@ -317,6 +344,83 @@ void ROSImageTexture::addMessage(sensor_msgs::msg::Image::ConstSharedPtr msg)
   std::lock_guard<std::mutex> lock(mutex_);
   current_image_ = msg;
   new_image_ = true;
+}
+
+// Function converts src_img from yuv to rgb
+void ROSImageTexture::image_convert_yuv422_to_rgb(uint8_t *dst_img, uint8_t *src_img,
+                                int dst_start_row, int dst_end_row,
+                                int dst_num_cols, uint32_t stride_in_bytes,
+                                std::string src_format) {
+  // generate lookup tables for conversion
+  std::array<int, 256> U_VALUE_FOR_G;
+  std::array<int, 256> V_VALUE_FOR_G;
+  std::array<int, 256> V_VALUE_FOR_R;
+  std::array<int, 256> U_VALUE_FOR_B;
+  // Values generated based on this formula
+  // for converting YUV to RGB
+  // R = Y + 1.403V'
+  // G = Y + 0.344U' - 0.714V'
+  // B = Y + 1.770U'
+  for (int i = 0; i < 256; i++) {
+    U_VALUE_FOR_G[i] = 0.344 * (i - 128);
+    V_VALUE_FOR_G[i] = 0.714 * (i - 128);
+    V_VALUE_FOR_R[i] = 1.403 * (i - 128);
+    U_VALUE_FOR_B[i] = 1.770 * (i - 128);
+  }
+
+  int final_y0 = 0;
+  int final_u = 0;
+  int final_y1 = 0;
+  int final_v = 0;
+  int r1 = 0;
+  int b1 = 0;
+  int g1 = 0;
+  int r2 = 0;
+  int b2 = 0;
+  int g2 = 0;
+
+  uint32_t stride_in_pixels = stride_in_bytes / 4;
+
+  // rows in dst_img
+  for (int row = dst_start_row; row < dst_end_row; row++) {
+    // col iterates till num_cols / 2 since two rgb pixels processed each
+    // iteration cols in dst_img
+    for (int col = 0; col < dst_num_cols / 2; col++) {
+
+      if (!src_format.compare(sensor_msgs::image_encodings::YUV422_YUY2)) {
+        struct yuyv *src_ptr = reinterpret_cast<struct yuyv *>(src_img);
+        struct yuyv *pixel = &src_ptr[col + row * stride_in_pixels];
+        final_y0 = pixel->y0;
+        final_u = pixel->u;
+        final_y1 = pixel->y1;
+        final_v = pixel->v;
+      } else if (!src_format.compare(sensor_msgs::image_encodings::YUV422)) {
+        struct uyvy *src_ptr = reinterpret_cast<struct uyvy *>(src_img);
+        struct uyvy *pixel = &src_ptr[col + row * stride_in_pixels];
+        final_y0 = pixel->y0;
+        final_u = pixel->u;
+        final_y1 = pixel->y1;
+        final_v = pixel->v;
+      }
+
+      // formula for converting from yuv to rgb
+      r1 = final_y0 + V_VALUE_FOR_R[final_v];
+      g1 = final_y0 + U_VALUE_FOR_G[final_u] - V_VALUE_FOR_G[final_v];
+      b1 = final_y0 + U_VALUE_FOR_B[final_u];
+      r2 = final_y1 + V_VALUE_FOR_R[final_v];
+      g2 = final_y1 + U_VALUE_FOR_G[final_u] - V_VALUE_FOR_G[final_v];
+      b2 = final_y1 + U_VALUE_FOR_B[final_u];
+
+      // pixel value must fit in a uint8_t
+      dst_img[0] = ((r1 & 0xFFFFFF00) == 0) ? r1 : (r1 < 0) ? 0 : 0xFF;
+      dst_img[1] = ((g1 & 0xFFFFFF00) == 0) ? g1 : (g1 < 0) ? 0 : 0xFF;
+      dst_img[2] = ((b1 & 0xFFFFFF00) == 0) ? b1 : (b1 < 0) ? 0 : 0xFF;
+      dst_img[3] = ((r2 & 0xFFFFFF00) == 0) ? r2 : (r2 < 0) ? 0 : 0xFF;
+      dst_img[4] = ((g2 & 0xFFFFFF00) == 0) ? g2 : (g2 < 0) ? 0 : 0xFF;
+      dst_img[5] = ((b2 & 0xFFFFFF00) == 0) ? b2 : (b2 < 0) ? 0 : 0xFF;
+      dst_img += 6;
+    }
+  }
 }
 
 }  // namespace displays
