@@ -9,7 +9,7 @@ If you're running into problems and have not seen the answer below, please try s
 Installation
 ------------
 
-Please see the installation instructions for ROS 2 (which includes RViz) in the `ROS 2 documentation <https://index.ros.org/doc/ros2/Installation/#installationguide>`_.
+Please see the installation instructions for ROS 2 (which includes RViz) in the `ROS 2 documentation <https://docs.ros.org/en/rolling/Installation.html>`_.
 
 Startup
 -------
