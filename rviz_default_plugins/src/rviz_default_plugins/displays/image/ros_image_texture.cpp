@@ -222,13 +222,13 @@ bool ROSImageTexture::update()
     return false;
   }
 
-  ImageData image_data = setFormatAndNormalizeDataIfNecessary(
-    ImageData(image->encoding, image->data.data(), image->data.size()));
-
   width_ = image->width;
   height_ = image->height;
   stride_ = image->step;
 
+  ImageData image_data = setFormatAndNormalizeDataIfNecessary(
+    ImageData(image->encoding, image->data.data(), image->data.size()));
+    
   Ogre::Image ogre_image;
   try {
     loadImageToOgreImage(image_data, ogre_image);
