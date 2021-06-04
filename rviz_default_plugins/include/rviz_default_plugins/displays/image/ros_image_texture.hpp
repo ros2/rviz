@@ -70,22 +70,6 @@ struct ImageData
   size_t size_;
 };
 
-struct yuyv
-{
-  uint8_t y0;
-  uint8_t u;
-  uint8_t y1;
-  uint8_t v;
-};
-
-struct uyvy
-{
-  uint8_t u;
-  uint8_t y0;
-  uint8_t v;
-  uint8_t y1;
-};
-
 class ROSImageTexture : public ROSImageTextureIface
 {
 public:
@@ -143,7 +127,7 @@ private:
   ImageData setFormatAndNormalizeDataIfNecessary(ImageData image_data);
   void loadImageToOgreImage(const ImageData & image_data, Ogre::Image & ogre_image) const;
 
-  void image_convert_yuv422_to_rgb(uint8_t *dst_img, uint8_t *src_img,
+  void imageConvertYUV422ToRGB(uint8_t *dst_img, uint8_t *src_img,
                                   int dst_start_row, int dst_end_row,
                                   int dst_num_cols, uint32_t stride_in_bytes,
                                   std::string src_format);
@@ -157,6 +141,8 @@ private:
 
   uint32_t width_;
   uint32_t height_;
+  uint32_t stride_;
+  std::shared_ptr<std::vector<uint8_t>> bufferptr_;
 
   // fields for float image running median computation
   bool normalize_;
