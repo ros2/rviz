@@ -313,12 +313,17 @@ void ROSImageTexture::imageConvertYUV422ToRGB(uint8_t *dst_img, uint8_t *src_img
       // R = Y + 1.403V'
       // G = Y + 0.344U' - 0.714V'
       // B = Y + 1.770U'
-      r1 = final_y0 + 1.403 * (final_v - 128);
-      g1 = final_y0 + 0.344 * (final_u - 128) - 0.714 * (final_v - 128);
-      b1 = final_y0 + 1.770 * (final_u - 128);
-      r2 = final_y1 + 1.403 * (final_v - 128);
-      g2 = final_y1 + 0.344 * (final_u - 128) - 0.714 * (final_v - 128);
-      b2 = final_y1 + 1.770 * (final_u - 128);
+
+      final_v -= 128;
+      final_u -= 128;
+
+      r1 = final_y0 + (1403 * final_v)/1000;
+      g1 = final_y0 + (344 * final_u - 714 * final_v)/1000;
+      b1 = final_y0 + (1770 * final_u)/1000;
+
+      r2 = final_y1 + (1403 * final_v)/1000;
+      g2 = final_y1 + (344 * final_u - 714 * final_v)/1000;
+      b2 = final_y1 + (1770 * final_u)/1000;
 
       // pixel value must fit in a uint8_t
       dst_img[0] = ((r1 & 0xFFFFFF00) == 0) ? r1 : (r1 < 0) ? 0 : 0xFF;
