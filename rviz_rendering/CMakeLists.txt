@@ -109,6 +109,7 @@ target_include_directories(rviz_rendering
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
     ${Eigen3_INCLUDE_DIRS}
+    ${OGRE_INCLUDE_DIRS}/RenderSystems/GL
 )
 # Causes the visibility macros to use dllexport rather than dllimport,
 # which is appropriate when building the dll but not consuming it.
