@@ -30,6 +30,7 @@
   <depend>libxaw</depend>
   <depend>libxrandr</depend>
   <depend>opengl</depend>
+  <depend>pugixml-dev</depend>
 
   <test_depend>ament_cmake_xmllint</test_depend>
   <test_depend>ament_lint_auto</test_depend>
