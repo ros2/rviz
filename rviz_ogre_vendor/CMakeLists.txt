@@ -120,7 +120,12 @@ macro(build_ogre)
     set(OGRE_CXX_FLAGS "${OGRE_CXX_FLAGS} /w /EHsc")
   elseif(APPLE)
     set(OGRE_CXX_FLAGS "${OGRE_CXX_FLAGS} -std=c++14 -stdlib=libc++ -w")
-    list(APPEND extra_cmake_args "-DCMAKE_OSX_ARCHITECTURES='x86_64'")
+    message("-- Building for CMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}")
+    if (NOT CMAKE_OSX_ARCHITECTURES)
+      message(FATAL_ERROR "Must specify CMAKE_OSX_ARCHITECTURES for APPLE builds")
+    endif()
+    # Need to explicitly pass this var to OGRE's build, otherwise it defaults to x86_64
+    list(APPEND extra_cmake_args "-DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}")
   else()  # Linux
     set(OGRE_C_FLAGS "${OGRE_C_FLAGS} -w")
     # include Clang -Wno-everything to disable warnings in that build. GCC doesn't mind it
