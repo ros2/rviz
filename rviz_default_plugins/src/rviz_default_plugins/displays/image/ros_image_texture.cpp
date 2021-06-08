@@ -387,8 +387,8 @@ ImageData ROSImageTexture::setFormatAndNormalizeDataIfNecessary(ImageData image_
     image_data.encoding_ == sensor_msgs::image_encodings::YUV422_YUY2)
   {
     int new_size = image_data.size_ * 3 / 2;
-    if(!bufferptr_) {
-      bufferptr_ = std::make_shared<std::vector<uint8_t> >(new_size);
+    if (!bufferptr_) {
+      bufferptr_ = std::make_shared<std::vector<uint8_t>>(new_size);
     } else if (static_cast<int>(bufferptr_->size()) != new_size) {
       bufferptr_->resize(new_size, 0);
     }
