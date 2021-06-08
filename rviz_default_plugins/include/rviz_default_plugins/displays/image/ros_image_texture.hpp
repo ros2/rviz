@@ -128,7 +128,7 @@ private:
   void loadImageToOgreImage(const ImageData & image_data, Ogre::Image & ogre_image) const;
 
   void imageConvertYUV422ToRGB(
-    uint8_t *dst_img, uint8_t *src_img,
+    uint8_t * dst_img, uint8_t * src_img,
     int dst_start_row, int dst_end_row,
     int dst_num_cols, uint32_t stride_in_bytes,
     std::string src_format);

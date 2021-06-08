@@ -269,10 +269,12 @@ struct uyvy
 };
 
 // Function converts src_img from yuv to rgb
-void ROSImageTexture::imageConvertYUV422ToRGB(uint8_t *dst_img, uint8_t *src_img,
-                                int dst_start_row, int dst_end_row,
-                                int dst_num_cols, uint32_t stride_in_bytes,
-                                std::string src_format) {
+void ROSImageTexture::imageConvertYUV422ToRGB(
+  uint8_t * dst_img, uint8_t * src_img,
+  int dst_start_row, int dst_end_row,
+  int dst_num_cols, uint32_t stride_in_bytes,
+  std::string src_format)
+{
   int final_y0 = 0;
   int final_u = 0;
   int final_y1 = 0;
@@ -292,15 +294,15 @@ void ROSImageTexture::imageConvertYUV422ToRGB(uint8_t *dst_img, uint8_t *src_img
     // iteration cols in dst_img
     for (int col = 0; col < dst_num_cols / 2; col++) {
       if (!src_format.compare(sensor_msgs::image_encodings::YUV422_YUY2)) {
-        struct yuyv *src_ptr = reinterpret_cast<struct yuyv *>(src_img);
-        struct yuyv *pixel = &src_ptr[col + row * stride_in_pixels];
+        struct yuyv * src_ptr = reinterpret_cast<struct yuyv *>(src_img);
+        struct yuyv * pixel = &src_ptr[col + row * stride_in_pixels];
         final_y0 = pixel->y0;
         final_u = pixel->u;
         final_y1 = pixel->y1;
         final_v = pixel->v;
       } else if (!src_format.compare(sensor_msgs::image_encodings::YUV422)) {
-        struct uyvy *src_ptr = reinterpret_cast<struct uyvy *>(src_img);
-        struct uyvy *pixel = &src_ptr[col + row * stride_in_pixels];
+        struct uyvy * src_ptr = reinterpret_cast<struct uyvy *>(src_img);
+        struct uyvy * pixel = &src_ptr[col + row * stride_in_pixels];
         final_y0 = pixel->y0;
         final_u = pixel->u;
         final_y1 = pixel->y1;
@@ -316,13 +318,13 @@ void ROSImageTexture::imageConvertYUV422ToRGB(uint8_t *dst_img, uint8_t *src_img
       final_v -= 128;
       final_u -= 128;
 
-      r1 = final_y0 + (1403 * final_v)/1000;
-      g1 = final_y0 + (344 * final_u - 714 * final_v)/1000;
-      b1 = final_y0 + (1770 * final_u)/1000;
+      r1 = final_y0 + (1403 * final_v) / 1000;
+      g1 = final_y0 + (344 * final_u - 714 * final_v) / 1000;
+      b1 = final_y0 + (1770 * final_u) / 1000;
 
-      r2 = final_y1 + (1403 * final_v)/1000;
-      g2 = final_y1 + (344 * final_u - 714 * final_v)/1000;
-      b2 = final_y1 + (1770 * final_u)/1000;
+      r2 = final_y1 + (1403 * final_v) / 1000;
+      g2 = final_y1 + (344 * final_u - 714 * final_v) / 1000;
+      b2 = final_y1 + (1770 * final_u) / 1000;
 
       // pixel value must fit in a uint8_t
       dst_img[0] = ((r1 & 0xFFFFFF00) == 0) ? r1 : (r1 < 0) ? 0 : 0xFF;
@@ -382,17 +384,17 @@ ImageData ROSImageTexture::setFormatAndNormalizeDataIfNecessary(ImageData image_
     image_data.data_ptr_ = &buffer[0];
   } else if ( // NOLINT enforces bracket on the same line, which makes code unreadable
     image_data.encoding_ == sensor_msgs::image_encodings::YUV422 ||
-    image_data.encoding_ == sensor_msgs::image_encodings::YUV422_YUY2
-  )
+    image_data.encoding_ == sensor_msgs::image_encodings::YUV422_YUY2)
   {
     int new_size = image_data.size_ * 3 / 2;
-    if(!bufferptr_){
+    if(!bufferptr_) {
       bufferptr_ = std::make_shared<std::vector<uint8_t> >(new_size);
     } else if (static_cast<int>(bufferptr_->size()) != new_size) {
       bufferptr_->resize(new_size, 0);
     }
 
-    imageConvertYUV422ToRGB(bufferptr_->data(), const_cast<uint8_t *>(image_data.data_ptr_),
+    imageConvertYUV422ToRGB(
+      bufferptr_->data(), const_cast<uint8_t *>(image_data.data_ptr_),
       0, height_, width_, stride_, image_data.encoding_);
     image_data.pixel_format_ = Ogre::PF_BYTE_RGB;
     image_data.data_ptr_ = bufferptr_->data();
