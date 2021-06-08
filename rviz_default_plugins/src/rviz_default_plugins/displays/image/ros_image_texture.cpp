@@ -39,6 +39,7 @@
 #include <string>
 #include <vector>
 #include <utility>
+#include <memory>
 
 #include <OgreTextureManager.h>  // NOLINT: cpplint cannot handle include order
 
@@ -228,7 +229,7 @@ bool ROSImageTexture::update()
 
   ImageData image_data = setFormatAndNormalizeDataIfNecessary(
     ImageData(image->encoding, image->data.data(), image->data.size()));
-    
+
   Ogre::Image ogre_image;
   try {
     loadImageToOgreImage(image_data, ogre_image);
@@ -272,7 +273,6 @@ void ROSImageTexture::imageConvertYUV422ToRGB(uint8_t *dst_img, uint8_t *src_img
                                 int dst_start_row, int dst_end_row,
                                 int dst_num_cols, uint32_t stride_in_bytes,
                                 std::string src_format) {
-
   int final_y0 = 0;
   int final_u = 0;
   int final_y1 = 0;
@@ -291,7 +291,6 @@ void ROSImageTexture::imageConvertYUV422ToRGB(uint8_t *dst_img, uint8_t *src_img
     // col iterates till num_cols / 2 since two rgb pixels processed each
     // iteration cols in dst_img
     for (int col = 0; col < dst_num_cols / 2; col++) {
-
       if (!src_format.compare(sensor_msgs::image_encodings::YUV422_YUY2)) {
         struct yuyv *src_ptr = reinterpret_cast<struct yuyv *>(src_img);
         struct yuyv *pixel = &src_ptr[col + row * stride_in_pixels];
@@ -389,11 +388,12 @@ ImageData ROSImageTexture::setFormatAndNormalizeDataIfNecessary(ImageData image_
     int new_size = image_data.size_ * 3 / 2;
     if(!bufferptr_){
       bufferptr_ = std::make_shared<std::vector<uint8_t> >(new_size);
-    } else if ((int)bufferptr_->size() != new_size) {
-      bufferptr_->resize(new_size,0);
+    } else if (static_cast<int>(bufferptr_->size()) != new_size) {
+      bufferptr_->resize(new_size, 0);
     }
 
-    imageConvertYUV422ToRGB(bufferptr_->data(), const_cast<uint8_t *>(image_data.data_ptr_), 0, height_, width_, stride_, image_data.encoding_);
+    imageConvertYUV422ToRGB(bufferptr_->data(), const_cast<uint8_t *>(image_data.data_ptr_),
+      0, height_, width_, stride_, image_data.encoding_);
     image_data.pixel_format_ = Ogre::PF_BYTE_RGB;
     image_data.data_ptr_ = bufferptr_->data();
     image_data.size_ = image_data.size_ * 3 / 2;
