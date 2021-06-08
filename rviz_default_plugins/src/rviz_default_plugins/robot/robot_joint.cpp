@@ -211,6 +211,37 @@ void RobotJoint::setJointCheckbox(QVariant val)
   doing_set_checkbox_ = false;
 }
 
+int RobotJoint::links_with_geom(
+  RobotLink * link, int & links_with_geom_checked,
+  int & links_with_geom_unchecked, int n_args, ...)
+{
+  va_list arg_ptr;
+  va_start(arg_ptr, n_args);
+
+  for (auto & child_joint_name : link->getChildJointNames()) {
+    RobotJoint * child_joint = robot_->getJoint(child_joint_name);
+    if (child_joint) {
+      int child_links_with_geom;
+      int child_links_with_geom_checked;
+      int child_links_with_geom_unchecked;
+      if (n_args == 1) {
+        child_joint->getChildLinkState(
+          child_links_with_geom, child_links_with_geom_checked,
+          child_links_with_geom_unchecked, va_arg(arg_ptr, int));
+      } else {
+        child_joint->calculateJointCheckboxesRecursive(
+          child_links_with_geom,
+          child_links_with_geom_checked,
+          child_links_with_geom_unchecked);
+      }
+      links_with_geom_checked += child_links_with_geom_checked;
+      links_with_geom_unchecked += child_links_with_geom_unchecked;
+    }
+  }
+  va_end(arg_ptr);
+  return links_with_geom_checked + links_with_geom_unchecked;
+}
+
 void RobotJoint::calculateJointCheckboxesRecursive(
   int & links_with_geom,
   int & links_with_geom_checked,
@@ -218,9 +249,11 @@ void RobotJoint::calculateJointCheckboxesRecursive(
 {
   links_with_geom = 0;
 
-  RobotLink * link = links_checked_and_unchecked(links_with_geom_checked, links_with_geom_unchecked);
-  if (!link)
+  RobotLink * link =
+    links_checked_and_unchecked(links_with_geom_checked, links_with_geom_unchecked);
+  if (!link) {
     return;
+  }
 
   links_with_geom = links_with_geom_checked + links_with_geom_unchecked;
 
@@ -232,21 +265,8 @@ void RobotJoint::calculateJointCheckboxesRecursive(
     }
   }
 
-  for (auto & child_joint_name : link->getChildJointNames()) {
-    RobotJoint * child_joint = robot_->getJoint(child_joint_name);
-    if (child_joint) {
-      int child_links_with_geom;
-      int child_links_with_geom_checked;
-      int child_links_with_geom_unchecked;
-      child_joint->calculateJointCheckboxesRecursive(
-        child_links_with_geom,
-        child_links_with_geom_checked,
-        child_links_with_geom_unchecked);
-      links_with_geom_checked += child_links_with_geom_checked;
-      links_with_geom_unchecked += child_links_with_geom_unchecked;
-    }
-  }
-  links_with_geom = links_with_geom_checked + links_with_geom_unchecked;
+  links_with_geom = this->links_with_geom(
+    link, links_with_geom_checked, links_with_geom_unchecked, 0);
 
   if (styleIsTree()) {
     if (!links_with_geom) {
@@ -284,23 +304,12 @@ void RobotJoint::getChildLinkState(
   links_with_geom = 0;
   RobotLink * link = this->links_checked_and_unchecked(
     links_with_geom_checked, links_with_geom_unchecked);
-  if (!link)
+  if (!link) {
     return;
+  }
 
   if (recursive) {
-    for (auto & child_joint_name : link->getChildJointNames()) {
-      RobotJoint * child_joint = robot_->getJoint(child_joint_name);
-      if (child_joint) {
-        int child_links_with_geom;
-        int child_links_with_geom_checked;
-        int child_links_with_geom_unchecked;
-        child_joint->getChildLinkState(
-          child_links_with_geom, child_links_with_geom_checked,
-          child_links_with_geom_unchecked, recursive);
-        links_with_geom_checked += child_links_with_geom_checked;
-        links_with_geom_unchecked += child_links_with_geom_unchecked;
-      }
-    }
+    this->links_with_geom(link, links_with_geom_checked, links_with_geom_unchecked, 1, recursive);
   }
 
   links_with_geom = links_with_geom_checked + links_with_geom_unchecked;

@@ -164,7 +164,12 @@ protected:
   rviz_common::properties::FloatProperty * upper_limit_property_;
 
 private:
-  RobotLink * links_checked_and_unchecked(int & links_with_geom_checked, int & links_with_geom_unchecked);
+  RobotLink * links_checked_and_unchecked(
+    int & links_with_geom_checked,
+    int & links_with_geom_unchecked);
+  int links_with_geom(
+    RobotLink * link, int & links_with_geom_checked,
+    int & links_with_geom_unchecked, int n_args, ...);
 
   Ogre::Vector3 joint_origin_pos_;
   Ogre::Quaternion joint_origin_rot_;
