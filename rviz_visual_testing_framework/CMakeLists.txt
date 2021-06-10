@@ -30,7 +30,7 @@ find_package(rviz_common REQUIRED)
 
 find_package(rviz_ogre_vendor REQUIRED)
 
-find_package(Qt5 REQUIRED COMPONENTS Widgets Test)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Test)
 
 find_package(ament_cmake_gtest REQUIRED)
 ament_find_gtest()
@@ -61,17 +61,17 @@ set(visual_test_framework_source_files
 
 set(visual_tests_target_libaries
   rviz_common::rviz_common
-  Qt5::Widgets
-  Qt5::Test)
+  Qt6::Widgets
+  Qt6::Test)
 
 # TODO(wjwwood): this block is to setup the windeployqt tool, could be removed later.
-if(Qt5_FOUND AND WIN32 AND TARGET Qt5::qmake AND NOT TARGET Qt5::windeployqt)
-  get_target_property(_qt5_qmake_location Qt5::qmake IMPORTED_LOCATION)
+if(Qt6_FOUND AND WIN32 AND TARGET Qt6::qmake AND NOT TARGET Qt6::windeployqt)
+  get_target_property(_Qt6_qmake_location Qt6::qmake IMPORTED_LOCATION)
 
   execute_process(
-    COMMAND "${_qt5_qmake_location}" -query QT_INSTALL_PREFIX
+    COMMAND "${_Qt6_qmake_location}" -query QT_INSTALL_PREFIX
     RESULT_VARIABLE return_code
-    OUTPUT_VARIABLE qt5_install_prefix
+    OUTPUT_VARIABLE Qt6_install_prefix
     OUTPUT_STRIP_TRAILING_WHITESPACE
   )
 endif()
@@ -88,7 +88,7 @@ target_link_libraries(rviz_visual_testing_framework
 
 # export information to downstream packages
 ament_export_targets(rviz_visual_testing_framework)
-ament_export_dependencies(Qt5)
+ament_export_dependencies(Qt6)
 ament_export_dependencies(rviz_common)
 
 ament_export_include_directories(include)

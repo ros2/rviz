@@ -56,10 +56,10 @@ find_package(rviz_common REQUIRED)
 find_package(rviz_rendering REQUIRED)
 find_package(rviz_ogre_vendor REQUIRED)
 
-find_package(Qt5 REQUIRED COMPONENTS Widgets Test)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Test)
 
 find_package(geometry_msgs REQUIRED)
-find_package(interactive_markers REQUIRED)
+# find_package(interactive_markers REQUIRED)
 find_package(laser_geometry REQUIRED)
 find_package(map_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
@@ -85,10 +85,10 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/marker/marker_common.hpp
   include/rviz_default_plugins/displays/odometry/odometry_display.hpp
   include/rviz_default_plugins/transformation/transformer_guard.hpp
-  include/rviz_default_plugins/displays/interactive_markers/integer_action.hpp
-  include/rviz_default_plugins/displays/interactive_markers/interactive_marker.hpp
-  include/rviz_default_plugins/displays/interactive_markers/interactive_marker_display.hpp
-  include/rviz_default_plugins/displays/interactive_markers/interactive_marker_namespace_property.hpp
+  # include/rviz_default_plugins/displays/interactive_markers/integer_action.hpp
+  # include/rviz_default_plugins/displays/interactive_markers/interactive_marker.hpp
+  # include/rviz_default_plugins/displays/interactive_markers/interactive_marker_display.hpp
+  # include/rviz_default_plugins/displays/interactive_markers/interactive_marker_namespace_property.hpp
   include/rviz_default_plugins/displays/path/path_display.hpp
   include/rviz_default_plugins/displays/point/point_stamped_display.hpp
   include/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp
@@ -122,7 +122,7 @@ set(rviz_default_plugins_headers_to_moc
 )
 
 foreach(header "${rviz_default_plugins_headers_to_moc}")
-  qt5_wrap_cpp(rviz_default_plugins_moc_files "${header}")
+  Qt6_wrap_cpp(rviz_default_plugins_moc_files "${header}")
 endforeach()
 
 set(rviz_default_plugins_source_files
@@ -134,11 +134,11 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/illuminance/illuminance_display.cpp
   src/rviz_default_plugins/displays/image/image_display.cpp
   src/rviz_default_plugins/displays/image/ros_image_texture.cpp
-  src/rviz_default_plugins/displays/interactive_markers/integer_action.cpp
-  src/rviz_default_plugins/displays/interactive_markers/interactive_marker_control.cpp
-  src/rviz_default_plugins/displays/interactive_markers/interactive_marker.cpp
-  src/rviz_default_plugins/displays/interactive_markers/interactive_marker_display.cpp
-  src/rviz_default_plugins/displays/interactive_markers/interactive_marker_namespace_property.cpp
+  # src/rviz_default_plugins/displays/interactive_markers/integer_action.cpp
+  # src/rviz_default_plugins/displays/interactive_markers/interactive_marker_control.cpp
+  # src/rviz_default_plugins/displays/interactive_markers/interactive_marker.cpp
+  # src/rviz_default_plugins/displays/interactive_markers/interactive_marker_display.cpp
+  # src/rviz_default_plugins/displays/interactive_markers/interactive_marker_namespace_property.cpp
   src/rviz_default_plugins/displays/laser_scan/laser_scan_display.cpp
   src/rviz_default_plugins/displays/map/map_display.cpp
   src/rviz_default_plugins/displays/map/palette_builder.cpp
@@ -219,7 +219,7 @@ add_library(rviz_default_plugins SHARED
 target_include_directories(rviz_default_plugins PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
-  ${Qt5Widgets_INCLUDE_DIRS}
+  ${Qt6Widgets_INCLUDE_DIRS}
 )
 
 target_link_libraries(rviz_default_plugins PUBLIC
@@ -239,7 +239,7 @@ pluginlib_export_plugin_description_file(rviz_common plugins_description.xml)
 ament_target_dependencies(rviz_default_plugins
   PUBLIC
   geometry_msgs
-  interactive_markers
+  # interactive_markers
   laser_geometry
   nav_msgs
   map_msgs
@@ -257,10 +257,10 @@ ament_target_dependencies(rviz_default_plugins
 ament_export_include_directories(include)
 ament_export_targets(rviz_default_plugins HAS_LIBRARY_TARGET)
 ament_export_dependencies(
-  Qt5
+  Qt6
   rviz_common
   geometry_msgs
-  interactive_markers
+  # interactive_markers
   laser_geometry
   map_msgs
   nav_msgs
@@ -310,7 +310,7 @@ if(BUILD_TESTING)
 
   set(TEST_INCLUDE_DIRS
     ${OGRE_INCLUDE_DIRS}
-    ${Qt5Widgets_INCLUDE_DIRS}
+    ${Qt6Widgets_INCLUDE_DIRS}
   )
   ament_include_directories_order(TEST_INCLUDE_DIRS ${TEST_INCLUDE_DIRS})
 
@@ -340,7 +340,7 @@ if(BUILD_TESTING)
   set(TEST_LINK_LIBRARIES
     display_test_fixture
     rviz_default_plugins
-    Qt5::Widgets
+    Qt6::Widgets
   )
 
   ament_add_gmock(fps_view_controller_test
@@ -728,16 +728,16 @@ if(BUILD_TESTING)
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
 
-  ament_add_gtest(interactive_marker_namespace_property_test
-    test/rviz_default_plugins/displays/interactive_markers/interactive_marker_namespace_property_test.cpp)
-  if(TARGET interactive_marker_namespace_property_test)
-    target_include_directories(interactive_marker_namespace_property_test PUBLIC
-      ${TEST_INCLUDE_DIRS})
-    target_link_libraries(interactive_marker_namespace_property_test
-      ${TEST_LINK_LIBRARIES})
-    ament_target_dependencies(interactive_marker_namespace_property_test
-      ${TEST_TARGET_DEPENDENCIES})
-  endif()
+  # ament_add_gtest(interactive_marker_namespace_property_test
+  #   test/rviz_default_plugins/displays/interactive_markers/interactive_marker_namespace_property_test.cpp)
+  # if(TARGET interactive_marker_namespace_property_test)
+  #   target_include_directories(interactive_marker_namespace_property_test PUBLIC
+  #     ${TEST_INCLUDE_DIRS})
+  #   target_link_libraries(interactive_marker_namespace_property_test
+  #     ${TEST_LINK_LIBRARIES})
+  #   ament_target_dependencies(interactive_marker_namespace_property_test
+  #     ${TEST_TARGET_DEPENDENCIES})
+  # endif()
 
   ament_add_gtest(laser_scan_display_visual_test
     test/rviz_default_plugins/displays/laser_scan/laser_scan_display_visual_test.cpp

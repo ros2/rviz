@@ -221,7 +221,7 @@ void RobotModelDisplay::load_urdf_from_file(const std::string & filepath)
 {
   std::string content;
   QFile urdf_file(QString::fromStdString(filepath));
-  if (urdf_file.open(QIODevice::ReadOnly)) {
+  if (urdf_file.open(QIODeviceBase::ReadOnly)) {
     content = urdf_file.readAll().toStdString();
     urdf_file.close();
   }

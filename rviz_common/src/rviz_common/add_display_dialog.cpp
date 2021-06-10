@@ -29,7 +29,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./add_display_dialog.hpp"
+#include "add_display_dialog.hpp"
 
 #include <algorithm>
 #include <map>
@@ -594,7 +594,7 @@ void TopicDisplayWidget::findPlugins(DisplayFactory * factory)
       // For now, we assume that all types supported by plugins have the form
       // "<pkg_name>/msg/<type_name>", though in the future zero or more namespaces may be
       // permitted.
-      QRegExp delim("/");
+      QRegularExpression delim("/");
       QStringList topic_type_parts = topic_type.split(delim);
       if (topic_type_parts.size() == 2) {
         topic_type = topic_type_parts.at(0) + "/msg/" + topic_type_parts.at(1);

@@ -30,7 +30,7 @@ find_package(ament_cmake REQUIRED)
 # do find_package(rviz_ogre_vendor) first to make sure the custom OGRE is found
 find_package(rviz_ogre_vendor REQUIRED)
 
-find_package(Qt5 REQUIRED COMPONENTS Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
 
 find_package(geometry_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
@@ -129,7 +129,7 @@ set(rviz_common_headers_to_moc
 )
 
 foreach(header "${rviz_common_headers_to_moc}")
-  qt5_wrap_cpp(rviz_common_moc_files "${header}")
+  Qt6_wrap_cpp(rviz_common_moc_files "${header}")
 endforeach()
 
 set(rviz_common_source_files
@@ -236,7 +236,7 @@ target_link_libraries(rviz_common
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
   rviz_rendering::rviz_rendering
-  Qt5::Widgets
+  Qt6::Widgets
 )
 
 ament_target_dependencies(rviz_common
@@ -319,10 +319,10 @@ if(BUILD_TESTING)
   find_package(ament_cmake_gmock REQUIRED)
   find_package(ament_cmake_gtest REQUIRED)
 
-  qt5_wrap_cpp(rviz_common_test_moc_files test/mock_display.hpp)
-  qt5_wrap_cpp(rviz_common_test_moc_files test/mock_property_change_receiver.hpp)
+  Qt6_wrap_cpp(rviz_common_test_moc_files test/mock_display.hpp)
+  Qt6_wrap_cpp(rviz_common_test_moc_files test/mock_property_change_receiver.hpp)
 
-  qt5_wrap_cpp(rviz_common_test_frame_manager_moc src/rviz_common/frame_manager.hpp)
+  Qt6_wrap_cpp(rviz_common_test_frame_manager_moc src/rviz_common/frame_manager.hpp)
 
   ament_add_gmock(display_factory_test
     test/display_factory_test.cpp
@@ -331,7 +331,7 @@ if(BUILD_TESTING)
   if(TARGET display_factory_test)
     target_compile_definitions(display_factory_test PUBLIC
       -D_TEST_PLUGIN_DESCRIPTIONS="${CMAKE_CURRENT_SOURCE_DIR}")
-    target_link_libraries(display_factory_test rviz_common Qt5::Widgets)
+    target_link_libraries(display_factory_test rviz_common Qt6::Widgets)
   endif()
 
   ament_add_gmock(frame_manager_test
@@ -440,7 +440,7 @@ if(BUILD_TESTING)
     test/mock_property_change_receiver.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET rviz_common_display_test)
-    target_link_libraries(rviz_common_display_test rviz_common Qt5::Widgets)
+    target_link_libraries(rviz_common_display_test rviz_common Qt6::Widgets)
     ament_target_dependencies(rviz_common_display_test yaml_cpp_vendor)
   endif()
 endif()

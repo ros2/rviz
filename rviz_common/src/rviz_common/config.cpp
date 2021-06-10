@@ -222,7 +222,7 @@ bool Config::mapGetValue(const QString & key, QVariant * value_out) const
 bool Config::mapGetInt(const QString & key, int * value_out) const
 {
   QVariant v;
-  if (mapGetValue(key, &v) && (v.type() == QVariant::Int || v.type() == QVariant::String)) {
+  if (mapGetValue(key, &v) && (v.type() == QMetaType::Int || v.type() == QVariant::String)) {
     bool ok;
     int i = v.toInt(&ok);
     if (ok) {

@@ -1845,4 +1845,38 @@ diff --git a/OgreMain/include/OgreTimer.h b/OgreMain/include/OgreTimer.h
 +#pragma warning(pop)
 +#endif
  #endif
-
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 3e09d2d..6a528bb 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -43,7 +43,7 @@ if (APPLE AND NOT ANDROID)
+   endif()
+ 
+   if (NOT CMAKE_OSX_ARCHITECTURES)
+-    set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "") # target the common case
++    set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE STRING "") # target the common case
+   endif()
+ 
+   # otherwise apple defines a macro named check that conflicts with boost
+@@ -309,7 +309,7 @@ include(Dependencies)
+ 
+ # Customise what to build
+ option(OGRE_STATIC "Static build" FALSE)
+-option(OGRE_ENABLE_PRECOMPILED_HEADERS "Use precompiled headers to speed up build" TRUE)
++option(OGRE_ENABLE_PRECOMPILED_HEADERS "Use precompiled headers to speed up build" FALSE)
+ set(OGRE_RESOURCEMANAGER_STRICT "2" CACHE STRING 
+   "Make ResourceManager strict for faster operation. Possible values:
+   0 - OFF search in all groups twice - for case sensitive and insensitive lookup [DEPRECATED]
+diff --git a/OgreMain/include/OgrePlatformInformation.h b/OgreMain/include/OgrePlatformInformation.h
+index 8696960..d641fa0 100644
+--- a/OgreMain/include/OgrePlatformInformation.h
++++ b/OgreMain/include/OgrePlatformInformation.h
+@@ -51,7 +51,7 @@ namespace Ogre {
+ 
+ #elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE && defined(__BIG_ENDIAN__)
+ #   define OGRE_CPU OGRE_CPU_PPC
+-#elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE
++#elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE && defined(__x86_64__)
+ #   define OGRE_CPU OGRE_CPU_X86
+ #elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS && (defined(__i386__) || defined(__x86_64__))
+ #   define OGRE_CPU OGRE_CPU_X86

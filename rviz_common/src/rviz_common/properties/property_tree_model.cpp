@@ -186,7 +186,7 @@ QMimeData * PropertyTreeModel::mimeData(const QModelIndexList & indexes) const
   QMimeData * data = new QMimeData();
   QString format = types.at(0);
   QByteArray encoded;
-  QDataStream stream(&encoded, QIODevice::WriteOnly);
+  QDataStream stream(&encoded, QIODeviceBase::WriteOnly);
 
   QModelIndexList::ConstIterator it = indexes.begin();
   for (; it != indexes.end(); ++it) {
@@ -221,7 +221,7 @@ bool PropertyTreeModel::dropMimeData(
     return false;
   }
   QByteArray encoded = data->data(format);
-  QDataStream stream(&encoded, QIODevice::ReadOnly);
+  QDataStream stream(&encoded, QIODeviceBase::ReadOnly);
 
   Property * dest_parent_property = getProp(dest_parent);
 
