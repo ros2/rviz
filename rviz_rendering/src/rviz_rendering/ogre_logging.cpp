@@ -80,10 +80,16 @@ public:
 
 namespace rviz_rendering
 {
+OgreLogging::OgreLogging()
+{
+  this->configureLogging();
+}
 
-OgreLogging::Preference OgreLogging::preference_ = OgreLogging::NoLogging;
-// TODO(wjwwood): refactor this to not have static members.
-std::string OgreLogging::filename_;  // NOLINT: cpplint doesn't allow static strings
+OgreLogging::~OgreLogging()
+{
+  Ogre::LogManager * log_manager = Ogre::LogManager::getSingletonPtr();
+  delete log_manager;
+}
 
 void OgreLogging::useLogFile(const std::string & filename)
 {
@@ -104,7 +110,7 @@ void OgreLogging::noLog()
 
 void OgreLogging::configureLogging()
 {
-  static CustomOgreLogListener ll;
+  CustomOgreLogListener custom_ogre_log_listener;
   Ogre::LogManager * log_manager = Ogre::LogManager::getSingletonPtr();
   if (!log_manager) {
     // suppressing this memleak warning from cppcheck below
@@ -112,11 +118,11 @@ void OgreLogging::configureLogging()
     log_manager = new Ogre::LogManager();
   }
   Ogre::Log * l = log_manager->createLog(filename_, false, false, (preference_ == NoLogging));
-  l->addListener(&ll);
+  l->addListener(&custom_ogre_log_listener);
 
   // Printing to standard out is what Ogre does if you don't do any LogManager calls.
   if (preference_ == StandardOut) {
-    ll.min_lml = Ogre::LML_NORMAL;
+    custom_ogre_log_listener.min_lml = Ogre::LML_NORMAL;
   }
   // cppcheck-suppress memleak
 }

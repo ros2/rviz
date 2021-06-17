@@ -40,7 +40,16 @@
 
 #include <QDir>  // NOLINT cpplint cannot handle include order here
 
+#ifdef __linux__
+
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <GL/glx.h>
+
+#endif
+
 #include "rviz_rendering/visibility_control.hpp"
+#include "rviz_rendering/ogre_logging.hpp"
 
 namespace rviz_rendering
 {
@@ -69,6 +78,10 @@ public:
 
   Ogre::Root *
   getOgreRoot();
+
+  ~RenderSystem();
+
+  void Destroy();
 
   // Prepare a scene_manager to render overlays.
   // Needed for Ogre >= 1.9 to use fonts; does nothing for prior versions.
@@ -135,8 +148,6 @@ private:
   void
   detectGlVersion();
 
-  static Ogre::GLPlugin * render_system_gl_plugin_;
-
   static RenderSystem * instance_;
 
   // ID for a dummy window of size 1x1, used to keep Ogre happy.
@@ -151,6 +162,12 @@ private:
   static int force_gl_version_;
   bool stereo_supported_;
   static bool force_no_stereo_;
+  rviz_rendering::OgreLogging * ogre_logging;
+#if !defined(__APPLE__) && !defined(_WIN32)
+  void * dummyDisplay = nullptr;
+  void * dummyContext = nullptr;
+  XVisualInfo * dummyVisual = nullptr;
+#endif
 };
 
 }  // namespace rviz_rendering

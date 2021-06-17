@@ -58,4 +58,9 @@ int OgreTestingEnvironment::getGlslVersion() const
   return RenderSystem::get()->getGlslVersion();
 }
 
+OgreTestingEnvironment::~OgreTestingEnvironment()
+{
+  delete rviz_rendering::RenderSystem::get();
+}
+
 }  // end namespace rviz_rendering

@@ -106,6 +106,7 @@ Ogre::MeshPtr loadMeshFromResource(const std::string & resource_path)
       Ogre::MeshPtr mesh = Ogre::MeshManager::getSingleton().createManual(
         resource_path, ROS_PACKAGE_NAME);
       ser.importMesh(stream, mesh.get());
+      stream->close();
 
       return mesh;
     } else if (ext == "stl" || ext == "STL" || ext == "stlb" || ext == "STLB") {

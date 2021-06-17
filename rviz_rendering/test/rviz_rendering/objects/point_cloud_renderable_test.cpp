@@ -44,13 +44,14 @@ using namespace ::testing;  // NOLINT
 class PointCloudRenderableTestFixture : public ::testing::Test
 {
 protected:
-  static void SetUpTestCase()
+  void SetUp()
   {
     testing_environment_ = std::make_shared<rviz_rendering::OgreTestingEnvironment>();
     testing_environment_->setUpOgreTestEnvironment();
+    PointCloudRenderable();
   }
 
-  PointCloudRenderableTestFixture()
+  void PointCloudRenderable()
   {
     cloud_ = std::make_shared<rviz_rendering::PointCloud>();
     auto points = std::vector<rviz_rendering::PointCloud::Point>(
@@ -59,13 +60,10 @@ protected:
     renderable_ = cloud_->getRenderables().front();
   }
 
-  static std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
+  std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
   std::shared_ptr<rviz_rendering::PointCloud> cloud_;
   rviz_rendering::PointCloudRenderablePtr renderable_;
 };
-
-std::shared_ptr<rviz_rendering::OgreTestingEnvironment>
-PointCloudRenderableTestFixture::testing_environment_ = nullptr;
 
 TEST_F(PointCloudRenderableTestFixture, getBoundingRadius_returns_radius_from_coordinate_origin) {
   auto boundingBox = Ogre::AxisAlignedBox(Ogre::Vector3(-1, -1, -1), Ogre::Vector3(2, 2, 0));

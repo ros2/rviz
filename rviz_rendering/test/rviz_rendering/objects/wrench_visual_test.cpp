@@ -54,17 +54,14 @@ MATCHER_P(Vector3Eq, expected, "") {
 class WrenchVisualTestFixture : public ::testing::Test
 {
 protected:
-  static void SetUpTestCase()
+  void SetUp()
   {
     testing_environment_ = std::make_shared<rviz_rendering::OgreTestingEnvironment>();
     testing_environment_->setUpOgreTestEnvironment();
   }
 
-  static std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
+  std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
 };
-
-std::shared_ptr<rviz_rendering::OgreTestingEnvironment>
-WrenchVisualTestFixture::testing_environment_ = nullptr;
 
 Ogre::SceneNode * findForceArrow(Ogre::SceneNode * scene_node)
 {

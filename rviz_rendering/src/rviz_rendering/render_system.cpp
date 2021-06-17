@@ -36,21 +36,14 @@
 #include <string>
 #include <vector>
 
-#ifdef __linux__
-
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <GL/glx.h>
-
-#endif
-
 #include <OgreRenderWindow.h>
+#include <OgreLogManager.h>
+#include <OgreMeshManager.h>
 
 #include "ament_index_cpp/get_resource.hpp"
 #include "ament_index_cpp/get_resources.hpp"
 #include "rviz_rendering/material_manager.hpp"
 #include "rviz_rendering/logging.hpp"
-#include "rviz_rendering/ogre_logging.hpp"
 #include "rviz_rendering/resource_config.hpp"
 
 #include "string_helper.hpp"
@@ -58,7 +51,6 @@
 namespace rviz_rendering
 {
 
-Ogre::GLPlugin * RenderSystem::render_system_gl_plugin_ = nullptr;
 RenderSystem * RenderSystem::instance_ = nullptr;
 int RenderSystem::force_gl_version_ = 0;
 bool RenderSystem::force_no_stereo_ = false;
@@ -76,7 +68,6 @@ RenderSystem *
 RenderSystem::get()
 {
   if (instance_ == 0) {
-    rviz_rendering::OgreLogging::configureLogging();
     instance_ = new RenderSystem();
   }
   return instance_;
@@ -86,6 +77,42 @@ Ogre::Root *
 RenderSystem::getOgreRoot()
 {
   return ogre_root_;
+}
+
+void RenderSystem::Destroy()
+{
+#if (OGRE_VERSION >= ((1 << 16) | (9 << 8) | 0))
+  OGRE_DELETE this->ogre_overlay_system_;
+  this->ogre_overlay_system_ = nullptr;
+#endif
+  if (this->ogre_root_) {
+    try {
+      // TODO(anyone): do we need to catch segfault on delete?
+      OGRE_DELETE this->ogre_root_;
+    } catch (...) {
+    }
+    this->ogre_root_ = nullptr;
+  }
+  delete this->ogre_logging;
+
+#if __linux__
+  if (this->dummyDisplay) {
+    Display * x11Display = static_cast<Display *>(this->dummyDisplay);
+    GLXContext x11Context = static_cast<GLXContext>(this->dummyContext);
+    glXDestroyContext(x11Display, x11Context);
+    XDestroyWindow(x11Display, this->dummy_window_id_);
+    XCloseDisplay(x11Display);
+    this->dummyDisplay = nullptr;
+    XFree(this->dummyVisual);
+    this->dummyVisual = nullptr;
+  }
+#endif
+  instance_ = 0;
+}
+
+RenderSystem::~RenderSystem()
+{
+  this->Destroy();
 }
 
 int
@@ -130,7 +157,7 @@ RenderSystem::forceNoStereo()
 RenderSystem::RenderSystem()
 : dummy_window_id_(0), ogre_overlay_system_(nullptr), stereo_supported_(false)
 {
-  OgreLogging::configureLogging();
+  this->ogre_logging = new rviz_rendering::OgreLogging();
 
   setResourceDirectory();
   setPluginDirectory();
@@ -161,24 +188,37 @@ RenderSystem::prepareOverlays(Ogre::SceneManager * scene_manager)
 void
 RenderSystem::setupDummyWindowId()
 {
-  dummy_window_id_ = 0;
+  this->dummy_window_id_ = 0;
 #ifdef __linux__
-  Display * display = XOpenDisplay(0);
-  assert(display);
+  this->dummyDisplay = XOpenDisplay(0);
+  if (!this->dummyDisplay) {
+    std::cerr << "Unable to open display: " << XDisplayName(0) << std::endl;
+    return;
+  }
+  Display * x11Display = static_cast<Display *>(this->dummyDisplay);
 
-  int screen = DefaultScreen(display);
+  int screen = DefaultScreen(x11Display);
 
   int attribList[] = {GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 16,
     GLX_STENCIL_SIZE, 8, None};
 
-  XVisualInfo * visual = glXChooseVisual(display, screen, attribList);
+  this->dummyVisual = glXChooseVisual(x11Display, screen, attribList);
+  if (!this->dummyVisual) {
+    std::cerr << "Unable to create glx visual" << std::endl;
+    return;
+  }
 
-  dummy_window_id_ = XCreateSimpleWindow(
-    display, RootWindow(display, screen), 0, 0, 1, 1, 0, 0, 0);
+  this->dummy_window_id_ = XCreateSimpleWindow(
+    x11Display, RootWindow(this->dummyDisplay, screen), 0, 0, 1, 1, 0, 0, 0);
 
-  GLXContext context = glXCreateContext(display, visual, nullptr, 1);
+  this->dummyContext = glXCreateContext(x11Display, this->dummyVisual, nullptr, 1);
+  GLXContext x11Context = static_cast<GLXContext>(this->dummyContext);
+  if (!this->dummyContext) {
+    std::cerr << "Unable to create glx context" << std::endl;
+    return;
+  }
 
-  glXMakeCurrent(display, dummy_window_id_, context);
+  glXMakeCurrent(x11Display, this->dummy_window_id_, x11Context);
 #endif
 }
 
