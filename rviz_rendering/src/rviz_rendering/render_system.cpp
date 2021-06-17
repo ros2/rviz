@@ -31,6 +31,7 @@
 
 #include "rviz_rendering/render_system.hpp"
 
+#include <iostream>
 #include <map>
 #include <memory>
 #include <string>
