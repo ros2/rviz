@@ -2,8 +2,8 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.2.2 (2021-06-18)
+------------------
 * Make the types explicit in quaternion_helper.hpp. (`#625 <https://github.com/ros2/rviz/issues/625>`_) (`#673 <https://github.com/ros2/rviz/issues/673>`_)
   all calculations to floats.
 * Contributors: Louise Poubel

@@ -2,8 +2,8 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.2.2 (2021-06-18)
+------------------
 * Expose VisualizationManager and YamlConfigReader to the public API (`#649 <https://github.com/ros2/rviz/issues/649>`_) (`#709 <https://github.com/ros2/rviz/issues/709>`_)
 * Contributors: Michael Jeronimo
 
