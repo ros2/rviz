@@ -259,6 +259,7 @@ bool VisualizerApp::init(int argc, char ** argv)
   //
   if (enable_ogre_log) {
     rviz_rendering::OgreLogging::get()->useLogFileAndStandardOut();
+    rviz_rendering::OgreLogging::get()->configureLogging();
   }
   //
   // if (force_gl_version) {

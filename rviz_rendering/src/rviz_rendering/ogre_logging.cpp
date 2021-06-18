@@ -30,6 +30,7 @@
 
 #include "rviz_rendering/ogre_logging.hpp"
 
+#include <memory>
 #include <string>
 
 #include <OgreLogManager.h>
@@ -81,6 +82,12 @@ public:
 namespace rviz_rendering
 {
 
+class OgreLoggingPrivate
+{
+public:
+  CustomOgreLogListener custom_ogre_log_listener;
+};
+
 OgreLogging * OgreLogging::instance_ = nullptr;
 
 OgreLogging *
@@ -93,8 +100,8 @@ OgreLogging::get()
 }
 
 OgreLogging::OgreLogging()
+: dataPtr(std::make_unique<OgreLoggingPrivate>())
 {
-  this->configureLogging();
 }
 
 OgreLogging::~OgreLogging()
@@ -123,7 +130,6 @@ void OgreLogging::noLog()
 
 void OgreLogging::configureLogging()
 {
-  CustomOgreLogListener custom_ogre_log_listener;
   Ogre::LogManager * log_manager = Ogre::LogManager::getSingletonPtr();
   if (!log_manager) {
     // suppressing this memleak warning from cppcheck below
@@ -131,11 +137,11 @@ void OgreLogging::configureLogging()
     log_manager = new Ogre::LogManager();
   }
   Ogre::Log * l = log_manager->createLog(filename_, false, false, (preference_ == NoLogging));
-  l->addListener(&custom_ogre_log_listener);
+  l->addListener(&this->dataPtr->custom_ogre_log_listener);
 
   // Printing to standard out is what Ogre does if you don't do any LogManager calls.
   if (preference_ == StandardOut) {
-    custom_ogre_log_listener.min_lml = Ogre::LML_NORMAL;
+    this->dataPtr->custom_ogre_log_listener.min_lml = Ogre::LML_NORMAL;
   }
   // cppcheck-suppress memleak
 }

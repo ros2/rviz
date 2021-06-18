@@ -159,6 +159,7 @@ RenderSystem::RenderSystem()
 : dummy_window_id_(0), ogre_overlay_system_(nullptr), stereo_supported_(false)
 {
   this->ogre_logging = rviz_rendering::OgreLogging::get();
+  this->ogre_logging->configureLogging();
 
   setResourceDirectory();
   setPluginDirectory();

@@ -31,6 +31,7 @@
 #ifndef RVIZ_RENDERING__OGRE_LOGGING_HPP_
 #define RVIZ_RENDERING__OGRE_LOGGING_HPP_
 
+#include <memory>
 #include <string>
 
 #include "rviz_rendering/visibility_control.hpp"
@@ -48,6 +49,10 @@ namespace rviz_rendering
  * configureLogging() is called at the right time by the RenderSystem
  * constructor, so you generally won't need to call it explicitly.
  */
+
+// forward declarations
+class OgreLoggingPrivate;
+
 class OgreLogging
 {
 public:
@@ -92,10 +97,11 @@ private:
   OgreLogging();
 
   static OgreLogging * instance_;
-
   typedef enum { StandardOut, FileLogging, NoLogging } Preference;
   Preference preference_ = OgreLogging::NoLogging;
   std::string filename_ = "Ogre.log";
+
+  std::unique_ptr<OgreLoggingPrivate> dataPtr;
 };
 
 }  // namespace rviz_rendering
