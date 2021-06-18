@@ -258,7 +258,7 @@ bool VisualizerApp::init(int argc, char ** argv)
   // nh_.reset(new ros::NodeHandle);
   //
   if (enable_ogre_log) {
-    rviz_rendering::OgreLogging::useLogFileAndStandardOut();
+    rviz_rendering::OgreLogging::get()->useLogFileAndStandardOut();
   }
   //
   // if (force_gl_version) {

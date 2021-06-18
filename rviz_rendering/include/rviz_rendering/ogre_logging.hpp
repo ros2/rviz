@@ -51,7 +51,10 @@ namespace rviz_rendering
 class OgreLogging
 {
 public:
-  OgreLogging();
+  RVIZ_RENDERING_PUBLIC
+  static
+  OgreLogging *
+  get();
 
   ~OgreLogging();
 
@@ -86,6 +89,10 @@ public:
   configureLogging();
 
 private:
+  OgreLogging();
+
+  static OgreLogging * instance_;
+
   typedef enum { StandardOut, FileLogging, NoLogging } Preference;
   Preference preference_ = OgreLogging::NoLogging;
   std::string filename_ = "Ogre.log";

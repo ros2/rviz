@@ -158,7 +158,7 @@ RenderSystem::forceNoStereo()
 RenderSystem::RenderSystem()
 : dummy_window_id_(0), ogre_overlay_system_(nullptr), stereo_supported_(false)
 {
-  this->ogre_logging = new rviz_rendering::OgreLogging();
+  this->ogre_logging = rviz_rendering::OgreLogging::get();
 
   setResourceDirectory();
   setPluginDirectory();

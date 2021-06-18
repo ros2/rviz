@@ -80,6 +80,18 @@ public:
 
 namespace rviz_rendering
 {
+
+OgreLogging * OgreLogging::instance_ = nullptr;
+
+OgreLogging *
+OgreLogging::get()
+{
+  if (instance_ == 0) {
+    instance_ = new OgreLogging();
+  }
+  return instance_;
+}
+
 OgreLogging::OgreLogging()
 {
   this->configureLogging();
@@ -89,6 +101,7 @@ OgreLogging::~OgreLogging()
 {
   Ogre::LogManager * log_manager = Ogre::LogManager::getSingletonPtr();
   delete log_manager;
+  instance_ = nullptr;
 }
 
 void OgreLogging::useLogFile(const std::string & filename)
