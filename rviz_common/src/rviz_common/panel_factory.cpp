@@ -41,7 +41,7 @@
 #include "./tool_properties_panel.hpp"
 #include "./transformation_panel.hpp"
 #include "./views_panel.hpp"
-#include "./visualization_manager.hpp"
+#include "rviz_common/visualization_manager.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
 
 namespace rviz_common

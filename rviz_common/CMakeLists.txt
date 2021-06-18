@@ -114,6 +114,7 @@ set(rviz_common_headers_to_moc
   include/rviz_common/properties/tf_frame_property.hpp
   include/rviz_common/properties/vector_property.hpp
   include/rviz_common/render_panel.hpp
+  include/rviz_common/visualization_manager.hpp
   src/rviz_common/scaled_image_widget.hpp
   src/rviz_common/screenshot_dialog.hpp
   include/rviz_common/interaction/selection_manager.hpp
@@ -128,7 +129,6 @@ set(rviz_common_headers_to_moc
   include/rviz_common/view_manager.hpp
   src/rviz_common/views_panel.hpp
   src/rviz_common/visualization_frame.hpp
-  src/rviz_common/visualization_manager.hpp
   src/rviz_common/widget_geometry_change_detector.hpp
   include/rviz_common/ros_topic_display.hpp
 )
