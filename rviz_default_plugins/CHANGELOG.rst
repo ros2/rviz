@@ -2,6 +2,12 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Make the types explicit in quaternion_helper.hpp. (`#625 <https://github.com/ros2/rviz/issues/625>`_) (`#673 <https://github.com/ros2/rviz/issues/673>`_)
+  all calculations to floats.
+* Contributors: Louise Poubel
+
 8.2.1 (2020-12-09)
 ------------------
 * Fix for mousewheel to zoom in/out (`#623 <https://github.com/ros2/rviz/issues/623>`_) (`#626 <https://github.com/ros2/rviz/issues/626>`_)

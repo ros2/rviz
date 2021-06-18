@@ -2,6 +2,9 @@
 Changelog for package rviz_assimp_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 8.2.1 (2020-12-09)
 ------------------
 * Update maintainer list (`#619 <https://github.com/ros2/rviz/issues/619>`_)

@@ -2,6 +2,11 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Expose VisualizationManager and YamlConfigReader to the public API (`#649 <https://github.com/ros2/rviz/issues/649>`_) (`#709 <https://github.com/ros2/rviz/issues/709>`_)
+* Contributors: Michael Jeronimo
+
 8.2.1 (2020-12-09)
 ------------------
 * Fix for mousewheel to zoom in/out (`#623 <https://github.com/ros2/rviz/issues/623>`_) (`#626 <https://github.com/ros2/rviz/issues/626>`_)
