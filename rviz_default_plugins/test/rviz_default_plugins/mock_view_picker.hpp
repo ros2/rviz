@@ -75,7 +75,7 @@ public:
 
   bool get3DPatch(
     rviz_common::RenderPanel * panel, int x, int y, unsigned width, unsigned height,
-    bool skip_missing, std::vector<Ogre::Vector3> & result_points)
+    bool skip_missing, std::vector<Ogre::Vector3> & result_points) override
   {
     (void) panel;
     (void) skip_missing;
