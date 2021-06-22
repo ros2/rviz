@@ -112,7 +112,9 @@ public:
     const urdf::LinkConstSharedPtr & link,
     const std::string & parent_joint_name,
     bool visual,
-    bool collision);
+    bool collision,
+    bool mass,
+    bool inertia);
   ~RobotLink() override;
 
   virtual void setRobotAlpha(float a);
@@ -188,6 +190,8 @@ private:
 
   void createCollision(const urdf::LinkConstSharedPtr & link);
   void createVisual(const urdf::LinkConstSharedPtr & link);
+  void createMass(const urdf::LinkConstSharedPtr & link);
+  void createInertia(const urdf::LinkConstSharedPtr & link);
   void createSelection();
 
   template<typename T>
@@ -247,6 +251,12 @@ private:
 ///< are attached to
   Ogre::SceneNode * collision_node_;           ///< The scene node the collision meshes
 ///< are attached to
+  Ogre::SceneNode * mass_node_;              ///< The scene node the visual meshes
+///< are attached to
+  Ogre::SceneNode * inertia_node_;           ///< The scene node the collision meshes
+///< are attached to
+  rviz_rendering::Shape* mass_shape_;                       ///< The shape representing the mass
+  rviz_rendering::Shape* inertia_shape_;                    ///< The shape representing the inertia
 
   Ogre::RibbonTrail * trail_;
 
