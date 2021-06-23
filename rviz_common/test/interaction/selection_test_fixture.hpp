@@ -48,6 +48,12 @@ using namespace ::testing;  // NOLINT
 class SelectionTestFixture : public DisplayContextFixture
 {
 public:
+  void SetUp()
+  {
+    DisplayContextFixture::SetUp();
+    selection_manager_->initialize();
+  }
+
   SelectionTestFixture()
   {
     renderer_ = std::make_shared<MockSelectionRenderer>(context_.get());
@@ -62,7 +68,6 @@ public:
       Invoke([handler_manager_weak_ptr]() {return handler_manager_weak_ptr.lock();}));
     EXPECT_CALL(*context_, getSelectionManager()).WillRepeatedly(
       Invoke([selection_manager_weak_ptr]() {return selection_manager_weak_ptr.lock();}));
-    selection_manager_->initialize();
   }
 
   std::shared_ptr<MockSelectionRenderer> renderer_;
