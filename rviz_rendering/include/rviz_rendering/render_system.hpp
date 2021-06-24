@@ -31,6 +31,8 @@
 #ifndef RVIZ_RENDERING__RENDER_SYSTEM_HPP_
 #define RVIZ_RENDERING__RENDER_SYSTEM_HPP_
 
+#define OGRE_VERSION_HIGHER_OR_EQUAL_1_9_0 (OGRE_VERSION >= ((1 << 16) | (9 << 8) | 0))
+
 #include <cstdint>
 #include <string>
 
@@ -42,7 +44,6 @@
 
 #ifdef __linux__
 
-#include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <GL/glx.h>
 

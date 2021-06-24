@@ -82,7 +82,7 @@ RenderSystem::getOgreRoot()
 
 void RenderSystem::Destroy()
 {
-#if (OGRE_VERSION >= ((1 << 16) | (9 << 8) | 0))
+#if OGRE_VERSION_HIGHER_OR_EQUAL_1_9_0
   OGRE_DELETE this->ogre_overlay_system_;
   this->ogre_overlay_system_ = nullptr;
 #endif
