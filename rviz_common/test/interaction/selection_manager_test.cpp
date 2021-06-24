@@ -56,8 +56,9 @@ public:
 
   ~SelectionManagerTestFixture()
   {
-    if (render_window_)
+    if (render_window_) {
       delete render_window_;
+    }
   }
 
   rviz_rendering::RenderWindow * render_window_ = nullptr;
