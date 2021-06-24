@@ -90,6 +90,7 @@ public:
   /**
    * This must be called before Ogre::Root is instantiated!
    */
+  RVIZ_RENDERING_PUBLIC
   void
   configureLogging();
 
