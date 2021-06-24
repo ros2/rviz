@@ -487,6 +487,7 @@ void PointCloud::addPoints(
 
       internals = createNewRenderable(static_cast<uint32_t>(stop_iterator - current_point));
     }
+
     internals.aabb.merge(current_point->position);
     internals = addPointToHardwareBuffer(
       internals, current_point,
@@ -541,6 +542,7 @@ PointCloud::finishRenderable(
 {
   Ogre::RenderOperation * op = internals.rend->getRenderOperation();
   op->vertexData->vertexCount = vertex_count_of_renderable - op->vertexData->vertexStart;
+
   internals.rend->setBoundingBox(internals.aabb);
   bounding_box_.merge(internals.aabb);
   assert(
@@ -708,6 +710,7 @@ PointCloudRenderablePtr PointCloud::createRenderable(
   Ogre::Vector4 alpha(alpha_, 0.0f, 0.0f, 0.0f);
   Ogre::Vector4 highlight(0.0f, 0.0f, 0.0f, 0.0f);
   Ogre::Vector4 pick_col(pick_color_.r, pick_color_.g, pick_color_.b, pick_color_.a);
+
   rend->setCustomParameter(RVIZ_RENDERING_SIZE_PARAMETER, Ogre::Vector4(point_extensions_));
   rend->setCustomParameter(RVIZ_RENDERING_ALPHA_PARAMETER, alpha);
   rend->setCustomParameter(RVIZ_RENDERING_HIGHLIGHT_PARAMETER, highlight);

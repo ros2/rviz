@@ -43,6 +43,7 @@
 //   https://doc.qt.io/qt-5/qtgui-openglwindow-openglwindow-cpp.html
 
 #include "rviz_rendering/render_window.hpp"
+#include "rviz_rendering/logging.hpp"
 
 #include <OgreCamera.h>
 
@@ -119,8 +120,10 @@ RenderWindow::setupSceneAfterInit(setupSceneCallback setup_scene_callback)
 
 void RenderWindow::windowMovedOrResized()
 {
-  // It seems that the 'width' and 'height' parameters of the resize() method don't play a role here
-  impl_->resize(0, 0);
+  if (this->isExposed()) {
+    impl_->resize(this->width(), this->height());
+    this->renderNow();
+  }
 }
 
 void
@@ -152,6 +155,11 @@ ToString(const EnumType & enumValue)
   return QString("%1::%2").arg(enumName).arg(static_cast<int>(enumValue));
 }
 
+void RenderWindow::resizeEvent(QResizeEvent * resize_event)
+{
+  windowMovedOrResized();
+}
+
 bool
 RenderWindow::event(QEvent * event)
 {
@@ -159,11 +167,6 @@ RenderWindow::event(QEvent * event)
   //   "[" << QTime::currentTime().toString("HH:mm:ss:zzz") << "]:" <<
   //   "event->type() ==" << ToString(event->type());
   switch (event->type()) {
-    case QEvent::Resize:
-      if (this->isExposed()) {
-        impl_->resize(this->width(), this->height());
-      }
-      return QWindow::event(event);
     case QEvent::UpdateRequest:
       this->renderNow();
       return true;
@@ -192,10 +195,7 @@ RenderWindow::exposeEvent(QExposeEvent * expose_event)
 {
   Q_UNUSED(expose_event);
 
-  if (this->isExposed()) {
-    impl_->resize(this->width(), this->height());
-    this->renderNow();
-  }
+  windowMovedOrResized();
 }
 
 // bool

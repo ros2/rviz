@@ -35,100 +35,101 @@
 #include <OgreCamera.h>
 
 #include "rviz_rendering/objects/point_cloud.hpp"
+#include "rviz_rendering/logging.hpp"
 
 namespace rviz_rendering
 {
 
-PointCloudRenderable::PointCloudRenderable(
-  PointCloud * parent, int num_points, bool
-  use_tex_coords, Ogre::RenderOperation::OperationType operationType)
-: parent_(parent)
-{
-  initializeRenderOperation(operationType);
-  specifyBufferContent(use_tex_coords);
-  createAndBindBuffer(num_points);
-}
-
-PointCloudRenderable::~PointCloudRenderable()
-{
-  delete mRenderOp.vertexData;
-  delete mRenderOp.indexData;
-}
-
-Ogre::HardwareVertexBufferSharedPtr PointCloudRenderable::getBuffer()
-{
-  return mRenderOp.vertexData->vertexBufferBinding->getBuffer(0);
-}
-
-void PointCloudRenderable::_notifyCurrentCamera(Ogre::Camera * camera)
-{
-  Ogre::SimpleRenderable::_notifyCurrentCamera(camera);
-}
-
-Ogre::Real PointCloudRenderable::getBoundingRadius() const
-{
-  return Ogre::Math::Sqrt(
-    std::max(
-      mBox.getMaximum().squaredLength(),
-      mBox.getMinimum().squaredLength()));
-}
-
-Ogre::Real PointCloudRenderable::getSquaredViewDepth(const Ogre::Camera * cam) const
-{
-  Ogre::Vector3 vMin, vMax, vMid, vDist;
-  vMin = mBox.getMinimum();
-  vMax = mBox.getMaximum();
-  vMid = ((vMax - vMin) * 0.5) + vMin;
-  vDist = cam->getDerivedPosition() - vMid;
-
-  return vDist.squaredLength();
-}
-
-void PointCloudRenderable::getWorldTransforms(Ogre::Matrix4 * xform) const
-{
-  parent_->getWorldTransforms(xform);
-}
-
-const Ogre::LightList & PointCloudRenderable::getLights() const
-{
-  return parent_->queryLights();
-}
-
-void PointCloudRenderable::initializeRenderOperation(
-  Ogre::RenderOperation::OperationType operation_type)
-{
-  mRenderOp.operationType = operation_type;
-  mRenderOp.useIndexes = false;
-  mRenderOp.vertexData = new Ogre::VertexData;
-  mRenderOp.vertexData->vertexStart = 0;
-  mRenderOp.vertexData->vertexCount = 0;
-}
-
-void PointCloudRenderable::specifyBufferContent(bool use_tex_coords)
-{
-  Ogre::VertexDeclaration * declaration = mRenderOp.vertexData->vertexDeclaration;
-  size_t offset = 0;
-
-  declaration->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
-  offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
-
-  if (use_tex_coords) {
-    declaration->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_TEXTURE_COORDINATES, 0);
-    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
+  PointCloudRenderable::PointCloudRenderable(
+      PointCloud *parent, int num_points, bool use_tex_coords, Ogre::RenderOperation::OperationType operationType)
+      : parent_(parent)
+  {
+    initializeRenderOperation(operationType);
+    specifyBufferContent(use_tex_coords);
+    createAndBindBuffer(num_points);
   }
 
-  declaration->addElement(0, offset, Ogre::VET_COLOUR, Ogre::VES_DIFFUSE);
-}
+  PointCloudRenderable::~PointCloudRenderable()
+  {
+    delete mRenderOp.vertexData;
+    delete mRenderOp.indexData;
+  }
 
-void PointCloudRenderable::createAndBindBuffer(int num_points)
-{
-  Ogre::HardwareVertexBufferSharedPtr vertexBuffer =
-    Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
-    mRenderOp.vertexData->vertexDeclaration->getVertexSize(0),
-    num_points,
-    Ogre::HardwareBuffer::HBU_DYNAMIC);
+  Ogre::HardwareVertexBufferSharedPtr PointCloudRenderable::getBuffer()
+  {
+    return mRenderOp.vertexData->vertexBufferBinding->getBuffer(0);
+  }
 
-  mRenderOp.vertexData->vertexBufferBinding->setBinding(0, vertexBuffer);
-}
+  void PointCloudRenderable::_notifyCurrentCamera(Ogre::Camera *camera)
+  {
+    Ogre::SimpleRenderable::_notifyCurrentCamera(camera);
+  }
 
-}  // namespace rviz_rendering
+  Ogre::Real PointCloudRenderable::getBoundingRadius() const
+  {
+    return Ogre::Math::Sqrt(
+        std::max(
+            mBox.getMaximum().squaredLength(),
+            mBox.getMinimum().squaredLength()));
+  }
+
+  Ogre::Real PointCloudRenderable::getSquaredViewDepth(const Ogre::Camera *cam) const
+  {
+    Ogre::Vector3 vMin, vMax, vMid, vDist;
+    vMin = mBox.getMinimum();
+    vMax = mBox.getMaximum();
+    vMid = ((vMax - vMin) * 0.5) + vMin;
+    vDist = cam->getDerivedPosition() - vMid;
+
+    return vDist.squaredLength();
+  }
+
+  void PointCloudRenderable::getWorldTransforms(Ogre::Matrix4 *xform) const
+  {
+    parent_->getWorldTransforms(xform);
+  }
+
+  const Ogre::LightList &PointCloudRenderable::getLights() const
+  {
+    return parent_->queryLights();
+  }
+
+  void PointCloudRenderable::initializeRenderOperation(
+      Ogre::RenderOperation::OperationType operation_type)
+  {
+    mRenderOp.operationType = operation_type;
+    mRenderOp.useIndexes = false;
+    mRenderOp.vertexData = new Ogre::VertexData;
+    mRenderOp.vertexData->vertexStart = 0;
+    mRenderOp.vertexData->vertexCount = 0;
+  }
+
+  void PointCloudRenderable::specifyBufferContent(bool use_tex_coords)
+  {
+    Ogre::VertexDeclaration *declaration = mRenderOp.vertexData->vertexDeclaration;
+    size_t offset = 0;
+
+    declaration->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
+    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
+
+    if (use_tex_coords)
+    {
+      declaration->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_TEXTURE_COORDINATES, 0);
+      offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
+    }
+
+    declaration->addElement(0, offset, Ogre::VET_COLOUR, Ogre::VES_DIFFUSE);
+  }
+
+  void PointCloudRenderable::createAndBindBuffer(int num_points)
+  {
+    Ogre::HardwareVertexBufferSharedPtr vertexBuffer =
+        Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
+            mRenderOp.vertexData->vertexDeclaration->getVertexSize(0),
+            num_points,
+            Ogre::HardwareBuffer::HBU_DYNAMIC);
+
+    mRenderOp.vertexData->vertexBufferBinding->setBinding(0, vertexBuffer);
+  }
+
+} // namespace rviz_rendering

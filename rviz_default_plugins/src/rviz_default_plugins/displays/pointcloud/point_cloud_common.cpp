@@ -259,12 +259,8 @@ void PointCloudCommon::updateStyle()
 void PointCloudCommon::updateBillboardSize()
 {
   auto mode = static_cast<rviz_rendering::PointCloud::RenderMode>(style_property_->getOptionInt());
-  float size;
-  if (mode == rviz_rendering::PointCloud::RM_POINTS) {
-    size = point_pixel_size_property_->getFloat();
-  } else {
-    size = point_world_size_property_->getFloat();
-  }
+  float size = getSizeForRenderMode(mode);
+
   for (auto & cloud_info : cloud_infos_) {
     cloud_info->cloud_->setDimensions(size, size, size);
     cloud_info->selection_handler_->setBoxSize(getSelectionBoxSize());
@@ -718,7 +714,7 @@ void PointCloudCommon::onDisable()
 float PointCloudCommon::getSelectionBoxSize()
 {
   return style_property_->getOptionInt() != rviz_rendering::PointCloud::RM_POINTS ?
-         point_world_size_property_->getFloat() : 0.004f;
+         point_world_size_property_->getFloat() : point_pixel_size_property_->getFloat();
 }
 
 }  // namespace rviz_default_plugins
