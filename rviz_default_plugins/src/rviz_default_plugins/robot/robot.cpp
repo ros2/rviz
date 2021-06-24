@@ -140,11 +140,12 @@ Robot::~Robot()
   delete link_factory_;
 }
 
-void Robot::load(const urdf::ModelInterface & urdf, 
-                 bool visual, 
-                 bool collision,
-                 bool mass,
-                 bool inertia)
+void Robot::load(
+  const urdf::ModelInterface & urdf,
+  bool visual,
+  bool collision,
+  bool mass,
+  bool inertia)
 {
   link_tree_->hide();  // hide until loaded
   robot_loaded_ = false;
@@ -456,7 +457,12 @@ RobotJoint * Robot::LinkFactory::createJoint(
   return new RobotJoint(robot, joint);
 }
 
-void Robot::createLinkProperties(const urdf::ModelInterface & urdf, bool visual, bool collision, bool mass, bool inertia)
+void Robot::createLinkProperties(
+  const urdf::ModelInterface & urdf,
+  bool visual,
+  bool collision,
+  bool mass,
+  bool inertia)
 {
   for (const auto & link_entry : urdf.links_) {
     const urdf::LinkConstSharedPtr & urdf_link = link_entry.second;

@@ -113,11 +113,12 @@ public:
    * @param mass Whether or not to load the mass representation
    * @param inertia Whether or not to load the inertia representation
    */
-  virtual void load(const urdf::ModelInterface & urdf, 
-                    bool visual = true, 
-                    bool collision = true,
-                    bool mass = true,
-                    bool inertia = true);
+  virtual void load(
+    const urdf::ModelInterface & urdf,
+    bool visual = true,
+    bool collision = true,
+    bool mass = true,
+    bool inertia = true);
 
   /**
    * \brief Clears all data loaded from a URDF
@@ -144,7 +145,7 @@ public:
    */
   void setCollisionVisible(bool visible);
 
-    /**
+  /**
    * \brief Set whether the mass of each part is visible
    * @param visible Whether the mass of each link is visible
    */
@@ -335,11 +336,12 @@ protected:
   float alpha_;
 
 private:
-  void createLinkProperties(const urdf::ModelInterface & urdf, 
-                            bool visual, 
-                            bool collision, 
-                            bool mass, 
-                            bool inertia);
+  void createLinkProperties(
+    const urdf::ModelInterface & urdf,
+    bool visual,
+    bool collision,
+    bool mass,
+    bool inertia);
   void createJointProperties(const urdf::ModelInterface & urdf);
   void log_error(
     const RobotLink * link,

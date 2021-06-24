@@ -820,27 +820,25 @@ void RobotLink::createVisual(const urdf::LinkConstSharedPtr & link)
 
 void RobotLink::createMass(const urdf::LinkConstSharedPtr & link)
 {
-  if(link->inertial)
-  {
+  if(link->inertial) {
     // display a sphere sized as if it were a ball of lead
     // with the same mass as the link
     // mass = 4/3 pi r^3 density
     urdf::Pose pose = link->inertial->origin;
     Ogre::Vector3 translate(pose.position.x, pose.position.y, pose.position.z);
-    Ogre::SceneNode* offset_node = mass_node_->createChildSceneNode(translate);
+    Ogre::SceneNode * offset_node = mass_node_->createChildSceneNode(translate);
     mass_shape_ = new Shape(Shape::Sphere, scene_manager_, offset_node);
 
     double density_of_lead = 11340;
-    double diameter = 2*cbrt((0.75 * link->inertial->mass) / (M_PI * density_of_lead));
-    mass_shape_->setColor(1,0,0,1);
+    double diameter = 2 * cbrt((0.75 * link->inertial->mass) / (M_PI * density_of_lead));
+    mass_shape_->setColor(1, 0, 0, 1);
     mass_shape_->setScale(Ogre::Vector3(diameter, diameter, diameter));
   }
 }
 
 void RobotLink::createInertia(const urdf::LinkConstSharedPtr & link)
 {
-  if(link->inertial)
-  {
+  if(link->inertial) {
     // display a box sized as if it were a box of uniform density
     // with the same inertia as the link
     // Ixx = mass/12 (ly^2 + lz^2)
@@ -849,13 +847,16 @@ void RobotLink::createInertia(const urdf::LinkConstSharedPtr & link)
     urdf::Pose pose = link->inertial->origin;
     Ogre::Vector3 translate(pose.position.x, pose.position.y, pose.position.z);
     Ogre::Quaternion rotate(pose.rotation.w, pose.rotation.x, pose.rotation.y, pose.rotation.z);
-    Ogre::SceneNode* offset_node = inertia_node_->createChildSceneNode(translate, rotate);
+    Ogre::SceneNode * offset_node = inertia_node_->createChildSceneNode(translate, rotate);
     inertia_shape_ = new Shape(Shape::Cube, scene_manager_, offset_node);
 
-    double length_x = sqrt(6/link->inertial->mass*(link->inertial->iyy + link->inertial->izz - link->inertial->ixx));
-    double length_y = sqrt(6/link->inertial->mass*(link->inertial->ixx + link->inertial->izz - link->inertial->iyy));
-    double length_z = sqrt(6/link->inertial->mass*(link->inertial->ixx + link->inertial->iyy - link->inertial->izz));
-    inertia_shape_->setColor(1,0,0,1);
+    double length_x = sqrt(6/link->inertial->mass * (link->inertial->iyy + link->inertial->izz -
+                                                     link->inertial->ixx));
+    double length_y = sqrt(6/link->inertial->mass * (link->inertial->ixx + link->inertial->izz -
+                                                     link->inertial->iyy));
+    double length_z = sqrt(6/link->inertial->mass * (link->inertial->ixx + link->inertial->iyy -
+                                                     link->inertial->izz));
+    inertia_shape_->setColor(1, 0, 0, 1);
     inertia_shape_->setScale(Ogre::Vector3(length_x, length_y, length_z));
   }
 }
