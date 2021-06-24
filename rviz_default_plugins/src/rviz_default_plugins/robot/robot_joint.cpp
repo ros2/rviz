@@ -248,6 +248,8 @@ void RobotJoint::calculateJointCheckboxesRecursive(
   int & links_with_geom_unchecked)
 {
   links_with_geom = 0;
+  links_with_geom_checked = 0;
+  links_with_geom_unchecked = 0;
 
   RobotLink * link =
     links_checked_and_unchecked(links_with_geom_checked, links_with_geom_unchecked);
