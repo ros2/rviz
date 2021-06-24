@@ -53,6 +53,7 @@
 #include "rviz_common/interaction/forwards.hpp"
 
 #include "rviz_default_plugins/robot/robot_element_base_class.hpp"
+#include "rviz_default_plugins/robot/robot_link.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 
 namespace Ogre
@@ -141,7 +142,7 @@ private:
     int & links_with_geom,              // returns # of children with geometry
     int & links_with_geom_checked,      // returns # of enabled children with geometry
     int & links_with_geom_unchecked,    // returns # of disabled children with geometry
-    bool recursive) const;              // True: all descendant links.
+    bool recursive);              // True: all descendant links.
   // False: just single child link.
 
   // set the value of the enable checkbox without touching child joints/links
@@ -163,6 +164,13 @@ protected:
   rviz_common::properties::FloatProperty * upper_limit_property_;
 
 private:
+  RobotLink * links_checked_and_unchecked(
+    int & links_with_geom_checked,
+    int & links_with_geom_unchecked);
+  int links_with_geom(
+    RobotLink * link, int & links_with_geom_checked,
+    int & links_with_geom_unchecked, int n_args, ...);
+
   Ogre::Vector3 joint_origin_pos_;
   Ogre::Quaternion joint_origin_rot_;
   bool has_decendent_links_with_geometry_;
