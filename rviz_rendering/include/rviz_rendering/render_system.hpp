@@ -80,6 +80,7 @@ public:
   Ogre::Root *
   getOgreRoot();
 
+  RVIZ_RENDERING_PUBLIC
   ~RenderSystem();
 
   void Destroy();
