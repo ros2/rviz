@@ -35,7 +35,7 @@
 
 #include <OgreSceneNode.h>
 
-void DisplayContextFixture::SetUpTestCase()
+void DisplayContextFixture::SetUp()
 {
   testing_environment_ = std::make_shared<rviz_common::OgreTestingEnvironment>();
   testing_environment_->setUpOgreTestEnvironment();
@@ -52,19 +52,5 @@ DisplayContextFixture::DisplayContextFixture()
   EXPECT_CALL(*context_, getClock()).WillRepeatedly(testing::Return(clock_));
   EXPECT_CALL(*context_, getWindowManager()).WillRepeatedly(testing::Return(window_manager_.get()));
   EXPECT_CALL(*context_, getSceneManager()).WillRepeatedly(
-    testing::Invoke([]() {return scene_manager_;}));
+    testing::Invoke([&]() {return scene_manager_;}));
 }
-
-DisplayContextFixture::~DisplayContextFixture()
-{
-  scene_manager_->getRootSceneNode()->removeAndDestroyAllChildren();
-}
-
-void DisplayContextFixture::TearDownTestCase()
-{
-  Ogre::Root::getSingletonPtr()->destroySceneManager(scene_manager_);
-}
-
-Ogre::SceneManager * DisplayContextFixture::scene_manager_ = nullptr;
-std::shared_ptr<rviz_common::OgreTestingEnvironment>
-DisplayContextFixture::testing_environment_ = nullptr;

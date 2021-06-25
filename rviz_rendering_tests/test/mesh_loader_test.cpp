@@ -47,17 +47,14 @@ using namespace ::testing;  // NOLINT
 class MeshLoaderTestFixture : public ::testing::Test
 {
 protected:
-  static void SetUpTestCase()
+  void SetUp()
   {
     testing_environment_ = std::make_shared<rviz_rendering_tests::OgreTestingEnvironment>();
     testing_environment_->setUpOgreTestEnvironment();
   }
 
-  static std::shared_ptr<rviz_rendering_tests::OgreTestingEnvironment> testing_environment_;
+  std::shared_ptr<rviz_rendering_tests::OgreTestingEnvironment> testing_environment_;
 };
-
-std::shared_ptr<rviz_rendering_tests::OgreTestingEnvironment>
-MeshLoaderTestFixture::testing_environment_ = nullptr;
 
 void assertVector3Equality(Ogre::Vector3 actual, Ogre::Vector3 expected)
 {

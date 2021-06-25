@@ -46,17 +46,14 @@ using namespace ::testing;  // NOLINT
 class MovableTextTestFixture : public ::testing::Test
 {
 protected:
-  static void SetUpTestCase()
+  void SetUp()
   {
     testing_environment_ = std::make_shared<rviz_rendering::OgreTestingEnvironment>();
     testing_environment_->setUpOgreTestEnvironment();
   }
 
-  static std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
+  std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
 };
-
-std::shared_ptr<rviz_rendering::OgreTestingEnvironment>
-MovableTextTestFixture::testing_environment_ = nullptr;
 
 float getCharWidth(std::shared_ptr<rviz_rendering::MovableText> movable_text, char character)
 {
