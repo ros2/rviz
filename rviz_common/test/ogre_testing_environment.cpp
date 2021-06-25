@@ -53,4 +53,9 @@ void OgreTestingEnvironment::setUpRenderSystem()
   rviz_rendering::RenderSystem::get();
 }
 
+OgreTestingEnvironment::~OgreTestingEnvironment()
+{
+  delete rviz_rendering::RenderSystem::get();
+}
+
 }  // end namespace rviz_common

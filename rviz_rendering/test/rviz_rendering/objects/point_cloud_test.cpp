@@ -51,17 +51,14 @@ using namespace ::testing;  // NOLINT
 class PointCloudTestFixture : public ::testing::Test
 {
 protected:
-  static void SetUpTestCase()
+  void SetUp()
   {
     testing_environment_ = std::make_shared<rviz_rendering::OgreTestingEnvironment>();
     testing_environment_->setUpOgreTestEnvironment();
   }
 
-  static std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
+  std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
 };
-
-std::shared_ptr<rviz_rendering::OgreTestingEnvironment>
-PointCloudTestFixture::testing_environment_ = nullptr;
 
 static Ogre::ColourValue colorValue = Ogre::ColourValue(0.5f, 0.5f, 0.5f, 1.0f);
 

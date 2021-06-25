@@ -45,17 +45,14 @@
 class LineTestFixture : public ::testing::Test
 {
 protected:
-  static void SetUpTestCase()
+  void SetUp()
   {
     testing_environment_ = std::make_shared<rviz_rendering::OgreTestingEnvironment>();
     testing_environment_->setUpOgreTestEnvironment();
   }
 
-  static std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
+  std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
 };
-
-std::shared_ptr<rviz_rendering::OgreTestingEnvironment> LineTestFixture::testing_environment_ =
-  nullptr;
 
 TEST_F(LineTestFixture, setPoints_sets_the_line_position_and_size) {
   auto scene_manager = Ogre::Root::getSingletonPtr()->createSceneManager();
@@ -69,4 +66,5 @@ TEST_F(LineTestFixture, setPoints_sets_the_line_position_and_size) {
 
   ASSERT_THAT(aabb.getMinimum(), Vector3Eq(Ogre::Vector3(-5, -5, -5)));
   ASSERT_THAT(aabb.getMaximum(), Vector3Eq(Ogre::Vector3(3, 3, 3)));
+  delete line;
 }

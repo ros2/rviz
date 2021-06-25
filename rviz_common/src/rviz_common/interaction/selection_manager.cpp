@@ -114,6 +114,7 @@ SelectionManager::~SelectionManager()
 
   highlight_node_->getParentSceneNode()->removeAndDestroyChild(highlight_node_);
   delete highlight_rectangle_;
+  context_->getSceneManager()->destroyCamera(camera_);
 
   for (auto & pixel_box : pixel_boxes_) {
     delete[] static_cast<uint8_t *>(pixel_box.data);

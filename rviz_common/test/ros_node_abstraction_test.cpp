@@ -40,12 +40,12 @@ using namespace ::testing;  // NOLINT
 class RosNodeAbstractionTestFixture : public Test
 {
 protected:
-  static void SetUpTestCase()
+  void SetUp()
   {
     rclcpp::init(0, nullptr);
   }
 
-  static void TearDownTestCase()
+  void TearDown()
   {
     rclcpp::shutdown();
   }
