@@ -850,12 +850,16 @@ void RobotLink::createInertia(const urdf::LinkConstSharedPtr & link)
     Ogre::SceneNode * offset_node = inertia_node_->createChildSceneNode(translate, rotate);
     inertia_shape_ = new Shape(Shape::Cube, scene_manager_, offset_node);
 
-    double length_x = sqrt(6/link->inertial->mass * (link->inertial->iyy + link->inertial->izz -
-                                                     link->inertial->ixx));
-    double length_y = sqrt(6/link->inertial->mass * (link->inertial->ixx + link->inertial->izz -
-                                                     link->inertial->iyy));
-    double length_z = sqrt(6/link->inertial->mass * (link->inertial->ixx + link->inertial->iyy -
-                                                     link->inertial->izz));
+    double length_x = sqrt(
+      6 / link->inertial->mass * (link->inertial->iyy + link->inertial->izz -
+      link->inertial->ixx));
+    double length_y = sqrt(
+      6 / link->inertial->mass * (link->inertial->ixx + link->inertial->izz -
+      link->inertial->iyy));
+    double length_z = sqrt(
+      6 / link->inertial->mass * (link->inertial->ixx + link->inertial->iyy -
+      link->inertial->izz));
+
     inertia_shape_->setColor(1, 0, 0, 1);
     inertia_shape_->setScale(Ogre::Vector3(length_x, length_y, length_z));
   }
