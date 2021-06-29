@@ -820,7 +820,7 @@ void RobotLink::createVisual(const urdf::LinkConstSharedPtr & link)
 
 void RobotLink::createMass(const urdf::LinkConstSharedPtr & link)
 {
-  if(link->inertial) {
+  if (link->inertial) {
     // display a sphere sized as if it were a ball of lead
     // with the same mass as the link
     // mass = 4/3 pi r^3 density
@@ -838,7 +838,7 @@ void RobotLink::createMass(const urdf::LinkConstSharedPtr & link)
 
 void RobotLink::createInertia(const urdf::LinkConstSharedPtr & link)
 {
-  if(link->inertial) {
+  if (link->inertial) {
     // display a box sized as if it were a box of uniform density
     // with the same inertia as the link
     // Ixx = mass/12 (ly^2 + lz^2)
