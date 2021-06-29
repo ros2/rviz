@@ -76,19 +76,19 @@ resource_retriever::MemoryResource getResource(const std::string & resource_path
   return res;
 }
 
-bool loadImage(const Ogre::String& texture_name, const Ogre::String& texture_path)
+bool loadImage(const Ogre::String & texture_name, const Ogre::String & texture_path)
 {
   bool image_loaded = false;
   resource_retriever::MemoryResource res = getResource(texture_path);
   Ogre::String tex_ext;
   Ogre::String::size_type index_of_extension = texture_path.find_last_of('.');
-  if (index_of_extension != Ogre::String::npos)
-  {
-    tex_ext = texture_path.substr(index_of_extension+1);
+  if (index_of_extension != Ogre::String::npos) {
+    tex_ext = texture_path.substr(index_of_extension + 1);
     Ogre::DataStreamPtr data_stream(new Ogre::MemoryDataStream(res.data.get(), res.size, false));
     Ogre::Image img;
     img.load(data_stream, tex_ext);
-    Ogre::TextureManager::getSingleton().loadImage(texture_name,
+    Ogre::TextureManager::getSingleton().loadImage(
+      texture_name,
       "rviz_rendering", img, Ogre::TEX_TYPE_2D, 0, 1.0f);
     image_loaded = true;
   }
@@ -259,8 +259,7 @@ bool TriangleListMarker::fillManualObjectAndDetermineAlpha(
           new_message->color.a * new_message->colors[i / 3].a);
       }
 
-      if (hasTexture(new_message))
-      {
+      if (hasTexture(new_message)) {
         manual_object_->textureCoord(
           new_message->uv_coordinates[i + c].u,
           new_message->uv_coordinates[i + c].v);
@@ -298,18 +297,18 @@ void TriangleListMarker::updateMaterial(
     material_->getTechnique(0)->setDepthWriteEnabled(true);
   }
 
-  if (hasTexture(new_message))
-  {
+  if (hasTexture(new_message)) {
     // If the texture is marked as updated, delete the last texture (if it exists).
-    Ogre::ResourcePtr texture = Ogre::TextureManager::getSingleton().getByName(new_message->texture_map, "rviz_rendering");
-    if (new_message->texture_update)
-    {
-      if (texture != NULL)
-      {
+    Ogre::ResourcePtr texture = Ogre::TextureManager::getSingleton().getByName(
+      new_message->texture_map, "rviz_rendering");
+    if (new_message->texture_update) {
+      if (texture != NULL) {
         Ogre::TextureManager::getSingleton().remove(texture);
       }
     }
-    if (Ogre::TextureManager::getSingleton().getByName(new_message->texture_map, "rviz_rendering") == NULL)
+    if (Ogre::TextureManager::getSingleton().getByName(
+        new_message->texture_map,
+        "rviz_rendering") == NULL)
     {
       loadImage(new_message->texture_map, new_message->texture_map);
     }
@@ -331,7 +330,8 @@ bool TriangleListMarker::hasVertexColors(const MarkerBase::MarkerConstSharedPtr 
 
 bool TriangleListMarker::hasTexture(const MarkerBase::MarkerConstSharedPtr new_message) const
 {
-  return !new_message->texture_map.empty() && new_message->uv_coordinates.size() == new_message->points.size();
+  return !new_message->texture_map.empty() &&
+         new_message->uv_coordinates.size() == new_message->points.size();
 }
 
 S_MaterialPtr TriangleListMarker::getMaterials()
