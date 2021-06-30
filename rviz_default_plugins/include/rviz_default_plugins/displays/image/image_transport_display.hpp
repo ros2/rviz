@@ -61,11 +61,7 @@ public:
   : tf_filter_(nullptr),
     messages_received_(0)
   {
-    // TODO(Martin-Idel-SI): We need a way to extract the MessageType from the template to set a
-    // correct string. Previously was:
-    // QString message_type =
-    //   QString::fromStdString(message_filters::message_traits::datatype<MessageType>());
-    QString message_type = QString::fromStdString("");
+    QString message_type = QString::fromStdString(rosidl_generator_traits::name<MessageType>());
     topic_property_->setMessageType(message_type);
     topic_property_->setDescription(message_type + " topic to subscribe to.");
   }
