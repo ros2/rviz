@@ -31,6 +31,8 @@
 #ifndef RVIZ_RENDERING__RENDER_SYSTEM_HPP_
 #define RVIZ_RENDERING__RENDER_SYSTEM_HPP_
 
+#define OGRE_VERSION_HIGHER_OR_EQUAL_1_9_0 (OGRE_VERSION >= ((1 << 16) | (9 << 8) | 0))
+
 #include <cstdint>
 #include <string>
 
@@ -40,7 +42,15 @@
 
 #include <QDir>  // NOLINT cpplint cannot handle include order here
 
+#ifdef __linux__
+
+#include <X11/Xutil.h>
+#include <GL/glx.h>
+
+#endif
+
 #include "rviz_rendering/visibility_control.hpp"
+#include "rviz_rendering/ogre_logging.hpp"
 
 namespace rviz_rendering
 {
@@ -70,16 +80,23 @@ public:
   Ogre::Root *
   getOgreRoot();
 
+  RVIZ_RENDERING_PUBLIC
+  ~RenderSystem();
+
+  void Destroy();
+
   // Prepare a scene_manager to render overlays.
   // Needed for Ogre >= 1.9 to use fonts; does nothing for prior versions.
   void
   prepareOverlays(Ogre::SceneManager * scene_manager);
 
   /// return OpenGl Version as integer, e.g. 320 for OpenGl 3.20
+  RVIZ_RENDERING_PUBLIC
   int
   getGlVersion();
 
   /// return GLSL Version as integer, e.g. 150 for GLSL 1.50
+  RVIZ_RENDERING_PUBLIC
   int
   getGlslVersion();
 
@@ -134,8 +151,6 @@ private:
   void
   detectGlVersion();
 
-  static Ogre::GLPlugin * render_system_gl_plugin_;
-
   static RenderSystem * instance_;
 
   // ID for a dummy window of size 1x1, used to keep Ogre happy.
@@ -150,6 +165,12 @@ private:
   static int force_gl_version_;
   bool stereo_supported_;
   static bool force_no_stereo_;
+  rviz_rendering::OgreLogging * ogre_logging;
+#if !defined(__APPLE__) && !defined(_WIN32)
+  void * dummyDisplay = nullptr;
+  void * dummyContext = nullptr;
+  XVisualInfo * dummyVisual = nullptr;
+#endif
 };
 
 }  // namespace rviz_rendering
