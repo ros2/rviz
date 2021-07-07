@@ -151,8 +151,8 @@ protected:
 
   virtual void unsubscribe()
   {
-    subscription_.reset();
     tf_filter_.reset();
+    subscription_.reset();
   }
 
   void onEnable() override
