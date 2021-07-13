@@ -84,6 +84,8 @@ protected:
 
   void onDisable() override;
 
+  void setTopic(const QString & topic, const QString & datatype) override;
+
 protected Q_SLOTS:
   void namespaceChanged();
   void updateShowDescriptions();
