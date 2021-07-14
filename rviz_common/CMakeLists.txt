@@ -246,6 +246,7 @@ ament_target_dependencies(rviz_common
   rclcpp
   resource_retriever
   rviz_assimp_vendor
+  rviz_rendering
   sensor_msgs
   std_msgs
   tf2
