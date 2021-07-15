@@ -112,10 +112,14 @@ public:
 
 private:
   template<typename T>
-  std::vector<uint8_t> normalize(const T * image_data, size_t image_data_size);
+  void normalize(
+    const T * image_data, size_t image_data_size, std::shared_ptr<std::vector<uint8_t>> &output);
+
   template<typename T>
-  std::vector<uint8_t> createNewNormalizedBuffer(
-    const T * image_data, size_t image_data_size, T minValue, T maxValue) const;
+  void createNewNormalizedBuffer(
+      const T * image_data, size_t image_data_size, T minValue, T maxValue,
+      std::shared_ptr<std::vector<uint8_t>> &buffer) const;
+
   double computeMedianOfSeveralFrames(std::deque<double> & buffer, double new_value);
   void updateBuffer(std::deque<double> & buffer, double value) const;
   double computeMedianOfBuffer(const std::deque<double> & buffer) const;
