@@ -235,7 +235,6 @@ target_link_libraries(rviz_common
   PUBLIC
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
-  rviz_rendering::rviz_rendering
   Qt5::Widgets
 )
 
