@@ -240,7 +240,6 @@ target_link_libraries(rviz_common
   PUBLIC
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
-  rviz_rendering::rviz_rendering
   Qt5::Widgets
   ${TinyXML_LIBRARIES}
 )
@@ -252,6 +251,7 @@ ament_target_dependencies(rviz_common
   rclcpp
   resource_retriever
   rviz_assimp_vendor
+  rviz_rendering
   sensor_msgs
   std_msgs
   tf2
