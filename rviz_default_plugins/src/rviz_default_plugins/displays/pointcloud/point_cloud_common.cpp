@@ -259,7 +259,7 @@ void PointCloudCommon::updateStyle()
 void PointCloudCommon::updateBillboardSize()
 {
   auto mode = static_cast<rviz_rendering::PointCloud::RenderMode>(style_property_->getOptionInt());
-  float size = getSizeForRenderMode(mode);
+  const float size = getSizeForRenderMode(mode);
 
   for (auto & cloud_info : cloud_infos_) {
     cloud_info->cloud_->setDimensions(size, size, size);
