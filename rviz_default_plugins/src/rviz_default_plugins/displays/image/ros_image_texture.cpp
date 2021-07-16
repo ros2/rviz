@@ -114,8 +114,9 @@ void ROSImageTexture::setNormalizeFloatImage(bool normalize, double min, double 
 
 template<typename T>
 void
-ROSImageTexture::normalize(const T * image_data, size_t image_data_size,
-  std::shared_ptr<std::vector<uint8_t>> &output)
+ROSImageTexture::normalize(
+  const T * image_data, size_t image_data_size,
+  std::shared_ptr<std::vector<uint8_t>> & output)
 {
   T minValue;
   T maxValue;
@@ -179,11 +180,11 @@ void ROSImageTexture::createNewNormalizedBuffer(
   size_t image_data_size,
   T minValue,
   T maxValue,
-  std::shared_ptr<std::vector<uint8_t>> &buffer) const
+  std::shared_ptr<std::vector<uint8_t>> & buffer) const
 {
-
-  if (buffer->size() != image_data_size)
+  if (buffer->size() != image_data_size) {
     buffer->resize(image_data_size, 0);
+  }
 
   uint8_t * output_ptr = &((*buffer.get())[0]);
 
@@ -194,7 +195,6 @@ void ROSImageTexture::createNewNormalizedBuffer(
 
     // Rescale and quantize
     for (size_t i = 0; i < image_data_size; ++i, ++output_ptr, ++input_ptr) {
-
       double val = (static_cast<double>(*input_ptr - minValue) / range);
       if (val < 0) {val = 0;}
       if (val > 1) {val = 1;}
