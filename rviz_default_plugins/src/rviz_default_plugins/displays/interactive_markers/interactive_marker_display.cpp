@@ -148,8 +148,8 @@ void InteractiveMarkerDisplay::setTopic(const QString & topic, const QString & d
   (void) datatype;
 
   // Separate the namespace from the rest of the topic name, usually formatted '/namespace/update'
-  std::string s = topic.toStdString();
-  std::string topic_namespace = s.substr(0, s.find('/', 1));
+  std::string topic_name = topic.toStdString();
+  std::string topic_namespace = topic_name.substr(0, topic_name.find('/', 1));
 
   interactive_marker_namespace_property_->setString(QString::fromStdString(topic_namespace));
 }
