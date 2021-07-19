@@ -33,6 +33,7 @@
 #ifndef Q_MOC_RUN
 
 #include <memory>
+#include <sstream>
 #include <string>
 
 #include <OgreSceneNode.h>
@@ -205,18 +206,18 @@ protected:
     }
 
     try {
-      // TODO(anhosi,wjwwood): replace with abstraction for subscriptions once available
       rclcpp::SubscriptionOptions sub_opts;
       sub_opts.event_callbacks.message_lost_callback =
         [&](rclcpp::QOSMessageLostInfo & info)
         {
-          std::stringstream sstm;
+          std::ostringstream sstm;
           sstm << "Some messages were lost:\n>\tNumber of new lost messages: " <<
             info.total_count_change << " \n>\tTotal number of messages lost: " <<
             info.total_count;
           setStatus(properties::StatusProperty::Warn, "Topic", QString(sstm.str().c_str()));
         };
 
+      // TODO(anhosi,wjwwood): replace with abstraction for subscriptions once available
       subscription_ =
         rviz_ros_node_.lock()->get_raw_node()->template create_subscription<MessageType>(
         topic_property_->getTopicStd(),
