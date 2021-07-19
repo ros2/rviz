@@ -30,6 +30,8 @@
 
 #include "rviz_default_plugins/robot/robot_link.hpp"
 
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <map>
 #include <memory>
 #include <string>
@@ -154,6 +156,12 @@ void RobotLinkSelectionHandler::preRenderPass(uint32_t pass)
     if (link_->collision_node_) {
       link_->collision_node_->setVisible(false);
     }
+    if (link_->mass_node_) {
+      link_->mass_node_->setVisible(false);
+    }
+    if (link_->inertia_node_) {
+      link_->inertia_node_->setVisible(false);
+    }
     if (link_->trail_) {
       link_->trail_->setVisible(false);
     }
@@ -176,13 +184,19 @@ RobotLink::RobotLink(
   const urdf::LinkConstSharedPtr & link,
   const std::string & parent_joint_name,
   bool visual,
-  bool collision)
+  bool collision,
+  bool mass,
+  bool inertia)
 : RobotElementBaseClass(robot, link->name),
   scene_manager_(robot->getDisplayContext()->getSceneManager()),
   context_(robot->getDisplayContext()),
   parent_joint_name_(parent_joint_name),
   visual_node_(nullptr),
   collision_node_(nullptr),
+  mass_node_(nullptr),
+  inertia_node_(nullptr),
+  mass_shape_(nullptr),
+  inertia_shape_(nullptr),
   trail_(nullptr),
   material_alpha_(1.0),
   robot_alpha_(1.0),
@@ -194,6 +208,8 @@ RobotLink::RobotLink(
 
   visual_node_ = robot_->getVisualNode()->createChildSceneNode();
   collision_node_ = robot_->getCollisionNode()->createChildSceneNode();
+  mass_node_ = robot_->getOtherNode()->createChildSceneNode();
+  inertia_node_ = robot_->getOtherNode()->createChildSceneNode();
 
   // create material for coloring links
   static int count = 1;
@@ -209,6 +225,14 @@ RobotLink::RobotLink(
 
   if (collision) {
     createCollision(link);
+  }
+
+  if (mass) {
+    createMass(link);
+  }
+
+  if (inertia) {
+    createInertia(link);
   }
 
   if (collision || visual) {
@@ -323,6 +347,8 @@ RobotLink::~RobotLink()
 
   scene_manager_->destroySceneNode(visual_node_);
   scene_manager_->destroySceneNode(collision_node_);
+  scene_manager_->destroySceneNode(mass_node_);
+  scene_manager_->destroySceneNode(inertia_node_);
 
   if (trail_) {
     scene_manager_->destroyRibbonTrail(trail_);
@@ -350,6 +376,16 @@ void RobotLink::setTransforms(
   if (collision_node_) {
     collision_node_->setPosition(collision_position);
     collision_node_->setOrientation(collision_orientation);
+  }
+
+  if (mass_node_) {
+    mass_node_->setPosition(visual_position);
+    mass_node_->setOrientation(visual_orientation);
+  }
+
+  if (inertia_node_) {
+    inertia_node_->setPosition(visual_position);
+    inertia_node_->setOrientation(visual_orientation);
   }
 
   position_property_->setVector(visual_position);
@@ -441,6 +477,12 @@ void RobotLink::updateVisibility()
   }
   if (collision_node_) {
     collision_node_->setVisible(enabled && robot_->isVisible() && robot_->isCollisionVisible());
+  }
+  if (mass_node_) {
+    mass_node_->setVisible(enabled && robot_->isVisible() && robot_->isMassVisible());
+  }
+  if (inertia_node_) {
+    inertia_node_->setVisible(enabled && robot_->isVisible() && robot_->isInertiaVisible());
   }
   if (trail_) {
     trail_->setVisible(enabled && robot_->isVisible());
@@ -776,6 +818,53 @@ void RobotLink::createVisual(const urdf::LinkConstSharedPtr & link)
     link, visual_meshes_, link->visual_array, link->visual, visual_node_);
 
   visual_node_->setVisible(getEnabled());
+}
+
+void RobotLink::createMass(const urdf::LinkConstSharedPtr & link)
+{
+  if (link->inertial) {
+    // display a sphere sized as if it were a ball of lead
+    // with the same mass as the link
+    // mass = 4/3 pi r^3 density
+    urdf::Pose pose = link->inertial->origin;
+    Ogre::Vector3 translate(pose.position.x, pose.position.y, pose.position.z);
+    Ogre::SceneNode * offset_node = mass_node_->createChildSceneNode(translate);
+    mass_shape_ = new Shape(Shape::Sphere, scene_manager_, offset_node);
+
+    double density_of_lead = 11340;
+    double diameter = 2 * cbrt((0.75 * link->inertial->mass) / (M_PI * density_of_lead));
+    mass_shape_->setColor(1, 0, 0, 1);
+    mass_shape_->setScale(Ogre::Vector3(diameter, diameter, diameter));
+  }
+}
+
+void RobotLink::createInertia(const urdf::LinkConstSharedPtr & link)
+{
+  if (link->inertial) {
+    // display a box sized as if it were a box of uniform density
+    // with the same inertia as the link
+    // Ixx = mass/12 (ly^2 + lz^2)
+    // Iyy = mass/12 (lx^2 + lz^2)
+    // Izz = mass/12 (lx^2 + ly^2)
+    urdf::Pose pose = link->inertial->origin;
+    Ogre::Vector3 translate(pose.position.x, pose.position.y, pose.position.z);
+    Ogre::Quaternion rotate(pose.rotation.w, pose.rotation.x, pose.rotation.y, pose.rotation.z);
+    Ogre::SceneNode * offset_node = inertia_node_->createChildSceneNode(translate, rotate);
+    inertia_shape_ = new Shape(Shape::Cube, scene_manager_, offset_node);
+
+    double length_x = sqrt(
+      6 / link->inertial->mass * (link->inertial->iyy + link->inertial->izz -
+      link->inertial->ixx));
+    double length_y = sqrt(
+      6 / link->inertial->mass * (link->inertial->ixx + link->inertial->izz -
+      link->inertial->iyy));
+    double length_z = sqrt(
+      6 / link->inertial->mass * (link->inertial->ixx + link->inertial->iyy -
+      link->inertial->izz));
+
+    inertia_shape_->setColor(1, 0, 0, 1);
+    inertia_shape_->setScale(Ogre::Vector3(length_x, length_y, length_z));
+  }
 }
 
 void RobotLink::createSelection()
