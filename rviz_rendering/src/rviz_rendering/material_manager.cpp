@@ -124,7 +124,10 @@ void MaterialManager::createDefaultMaterials()
 {
   auto retrieve_result = Ogre::MaterialManager::getSingleton().createOrRetrieve(
     "BaseWhiteNoLighting", "rviz_rendering");
-  std::dynamic_pointer_cast<Ogre::Material>(retrieve_result.first)->setLightingEnabled(false);
+   auto material = std::dynamic_pointer_cast<Ogre::Material>(retrieve_result.first);
+   if (material) {
+     material->setLightingEnabled(false);
+   }
 }
 
 }  // namespace rviz_rendering
