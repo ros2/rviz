@@ -231,13 +231,13 @@ RenderWindowImpl::initialize()
   }
 
   if (ogre_camera_) {
+    ogre_camera_->setAspectRatio(
+      Ogre::Real(parent_->width()) / Ogre::Real(parent_->height()));
+    ogre_camera_->setAutoAspectRatio(true);
+
     ogre_viewport_ = ogre_render_window_->addViewport(ogre_camera_);
     auto bg_color = Ogre::ColourValue(0.937254902f, 0.921568627f, 0.905882353f);  // Qt background
     ogre_viewport_->setBackgroundColour(bg_color);
-
-    ogre_camera_->setAspectRatio(
-      Ogre::Real(ogre_render_window_->getWidth()) / Ogre::Real(ogre_render_window_->getHeight()));
-    ogre_camera_->setAutoAspectRatio(true);
 
     Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
@@ -260,13 +260,8 @@ RenderWindowImpl::resize(size_t width, size_t height)
 {
   if (ogre_render_window_) {
     this->setCameraAspectRatio();
-    ogre_render_window_->resize(
-      static_cast<unsigned int>(width),  // NOLINT
-      static_cast<unsigned int>(height)  // NOLINT
-    );
     ogre_render_window_->windowMovedOrResized();
   }
-  this->renderLater();
 }
 
 #if 0
@@ -477,16 +472,15 @@ void RenderWindowImpl::setBackgroundColor(Ogre::ColourValue background_color)
 
 void RenderWindowImpl::setCameraAspectRatio()
 {
-  // auto width = parent_->width();
-  auto width = parent_->width() ? parent_->width() : 100;
-  // auto height = parent_->height();
-  auto height = parent_->height() ? parent_->height() : 100;
+  auto width = parent_->width();
+  // auto width = ogre_render_window_->getWidth() ? ogre_render_window_->getWidth() : 100;
+  auto height = parent_->height();
+  // auto height = ogre_render_window_->getHeight() ? ogre_render_window_->getHeight() : 100;
   if (ogre_camera_) {
     ogre_camera_->setAspectRatio(Ogre::Real(width) / Ogre::Real(height));
     // if (right_ogre_camera_) {
     //   right_ogre_camera_->setAspectRatio(Ogre::Real(width()) / Ogre::Real(height()));
     // }
-
     if (ogre_camera_->getProjectionType() == Ogre::PT_ORTHOGRAPHIC) {
       Ogre::Matrix4 proj = buildScaledOrthoMatrix(
         -width / ortho_scale_ / 2, width / ortho_scale_ / 2,
