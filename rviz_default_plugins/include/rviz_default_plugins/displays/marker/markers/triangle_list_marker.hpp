@@ -94,6 +94,7 @@ private:
 
   bool hasVertexColors(MarkerConstSharedPtr new_message) const;
   bool hasFaceColors(MarkerConstSharedPtr new_message) const;
+  bool hasTexture(MarkerConstSharedPtr new_message) const;
 };
 
 }  // namespace markers
