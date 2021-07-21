@@ -28,7 +28,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz_common/load_resource.hpp"
 #include "rviz_common/panel_dock_widget.hpp"
 
 #include <QApplication>
@@ -37,6 +36,8 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QToolButton>
+
+#include "rviz_common/load_resource.hpp"
 
 namespace rviz_common
 {
