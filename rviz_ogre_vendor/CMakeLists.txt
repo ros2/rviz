@@ -120,7 +120,12 @@ macro(build_ogre)
     set(OGRE_CXX_FLAGS "${OGRE_CXX_FLAGS} /w /EHsc")
   elseif(APPLE)
     set(OGRE_CXX_FLAGS "${OGRE_CXX_FLAGS} -std=c++14 -stdlib=libc++ -w")
-    list(APPEND extra_cmake_args "-DCMAKE_OSX_ARCHITECTURES='x86_64'")
+    # Ogre build defaults to x86_64 unless CMAKE_OSX_ARCHITECTURES is explicitly passed in
+    if (NOT CMAKE_OSX_ARCHITECTURES)
+      list(APPEND extra_cmake_args "-DCMAKE_OSX_ARCHITECTURES=${CMAKE_SYSTEM_PROCESSOR}")
+    else()
+      list(APPEND extra_cmake_args "-DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}")
+    endif()
   else()  # Linux
     set(OGRE_C_FLAGS "${OGRE_C_FLAGS} -w")
     # include Clang -Wno-everything to disable warnings in that build. GCC doesn't mind it
@@ -156,9 +161,9 @@ macro(build_ogre)
 
   find_package(Patch REQUIRED)
   include(ExternalProject)
-  ExternalProject_Add(ogre-v1.12.1
-    URL https://github.com/OGRECave/ogre/archive/v1.12.1.zip
-    URL_MD5 cdbea4006d223c173e0a93864111b936
+  ExternalProject_Add(ogre-v1.12.12
+    URL https://github.com/OGRECave/ogre/archive/refs/tags/v1.12.12.zip
+    URL_MD5 bf54fd9b944dee4a12d77dbe2235a4c9
     TIMEOUT 1200
     LOG_CONFIGURE ${should_log}
     LOG_BUILD ${should_log}
@@ -180,19 +185,20 @@ macro(build_ogre)
       -DOGRE_BUILD_COMPONENT_JAVA:BOOL=FALSE
       -DOGRE_BUILD_COMPONENT_CSHARP:BOOL=FALSE
       -DOGRE_BUILD_COMPONENT_BITES:BOOL=FALSE
+      -DOGRE_ENABLE_PRECOMPILED_HEADERS:BOOL=OFF
       ${extra_cmake_args}
       -Wno-dev
     PATCH_COMMAND
       ${Patch_EXECUTABLE} -p1 -N < ${CMAKE_CURRENT_SOURCE_DIR}/pragma-patch.diff
     COMMAND
-      ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/FindFreetype.cmake ${CMAKE_CURRENT_BINARY_DIR}/ogre-v1.12.1-prefix/src/ogre-v1.12.1/CMake/Packages/FindFreetype.cmake
+      ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/FindFreetype.cmake ${CMAKE_CURRENT_BINARY_DIR}/ogre-v1.12.12-prefix/src/ogre-v1.12.12/CMake/Packages/FindFreetype.cmake
   )
 
   if(BUILDING_FREETYPE_LOCALLY)
-    add_dependencies(ogre-v1.12.1 freetype-2.8.1)
+    add_dependencies(ogre-v1.12.12 freetype-2.8.1)
   endif()
   if(BUILDING_ZLIB_LOCALLY)
-    add_dependencies(ogre-v1.12.1 zlib-1.2.11)
+    add_dependencies(ogre-v1.12.12 zlib-1.2.11)
   endif()
 
   # The external project will install to the build folder, but we'll install that on make install.
