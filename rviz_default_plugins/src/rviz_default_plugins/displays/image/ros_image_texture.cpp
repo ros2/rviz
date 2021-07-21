@@ -113,15 +113,17 @@ void ROSImageTexture::setNormalizeFloatImage(bool normalize, double min, double 
 }
 
 template<typename T>
-std::vector<uint8_t>
-ROSImageTexture::normalize(const T * image_data, size_t image_data_size)
+void
+ROSImageTexture::normalize(
+  const T * image_data, size_t image_data_size,
+  std::shared_ptr<std::vector<uint8_t>> & output)
 {
   T minValue;
   T maxValue;
 
   getMinimalAndMaximalValueToNormalize(image_data, image_data_size, minValue, maxValue);
 
-  return createNewNormalizedBuffer(image_data, image_data_size, minValue, maxValue);
+  createNewNormalizedBuffer(image_data, image_data_size, minValue, maxValue, output);
 }
 
 template<typename T>
@@ -173,16 +175,18 @@ double ROSImageTexture::computeMedianOfBuffer(const std::deque<double> & buffer)
 }
 
 template<typename T>
-std::vector<uint8_t>
-ROSImageTexture::createNewNormalizedBuffer(
+void ROSImageTexture::createNewNormalizedBuffer(
   const T * image_data,
   size_t image_data_size,
   T minValue,
-  T maxValue) const
+  T maxValue,
+  std::shared_ptr<std::vector<uint8_t>> & buffer) const
 {
-  std::vector<uint8_t> buffer;
-  buffer.resize(image_data_size, 0);
-  uint8_t * output_ptr = &buffer[0];
+  if (buffer->size() != image_data_size) {
+    buffer->resize(image_data_size, 0);
+  }
+
+  uint8_t * output_ptr = &((*buffer.get())[0]);
 
   // Rescale floating point image and convert it to 8-bit
   double range = maxValue - minValue;
@@ -194,11 +198,11 @@ ROSImageTexture::createNewNormalizedBuffer(
       double val = (static_cast<double>(*input_ptr - minValue) / range);
       if (val < 0) {val = 0;}
       if (val > 1) {val = 1;}
-      *output_ptr = static_cast<uint8_t>(val * 255u);
+      *output_ptr = static_cast<T>(val * 255u);
     }
   }
-  return buffer;
 }
+
 
 ImageData::ImageData(std::string encoding, const uint8_t * data_ptr, size_t size)
 : encoding_(std::move(encoding)),
@@ -418,20 +422,34 @@ ImageData ROSImageTexture::setFormatAndNormalizeDataIfNecessary(ImageData image_
     image_data.encoding_ == sensor_msgs::image_encodings::MONO16)
   {
     image_data.size_ /= sizeof(uint16_t);
-    std::vector<uint8_t> buffer = normalize<uint16_t>(
+    if (!bufferptr_) {
+      bufferptr_ = std::make_shared<std::vector<uint8_t>>(image_data.size_);
+    } else if (static_cast<size_t>(bufferptr_->size()) != image_data.size_) {
+      bufferptr_->resize(image_data.size_, 0);
+    }
+
+    normalize<uint16_t>(
       reinterpret_cast<const uint16_t *>(image_data.data_ptr_),
-      image_data.size_);
+      image_data.size_, bufferptr_);
+
     image_data.pixel_format_ = Ogre::PF_BYTE_L;
-    image_data.data_ptr_ = &buffer[0];
+    image_data.data_ptr_ = bufferptr_->data();
   } else if (image_data.encoding_.find("bayer") == 0) {
     image_data.pixel_format_ = Ogre::PF_BYTE_L;
   } else if (image_data.encoding_ == sensor_msgs::image_encodings::TYPE_32FC1) {
     image_data.size_ /= sizeof(float);
-    std::vector<uint8_t> buffer = normalize<float>(
+    if (!bufferptr_) {
+      bufferptr_ = std::make_shared<std::vector<uint8_t>>(image_data.size_);
+    } else if (static_cast<size_t>(bufferptr_->size()) != image_data.size_) {
+      bufferptr_->resize(image_data.size_, 0);
+    }
+
+    normalize<float>(
       reinterpret_cast<const float *>(image_data.data_ptr_),
-      image_data.size_);
+      image_data.size_, bufferptr_);
+
     image_data.pixel_format_ = Ogre::PF_BYTE_L;
-    image_data.data_ptr_ = &buffer[0];
+    image_data.data_ptr_ = bufferptr_->data();
   } else if ( // NOLINT enforces bracket on the same line, which makes code unreadable
     image_data.encoding_ == sensor_msgs::image_encodings::YUV422 ||
     image_data.encoding_ == sensor_msgs::image_encodings::YUV422_YUY2)
