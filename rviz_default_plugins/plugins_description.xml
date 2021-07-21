@@ -265,6 +265,17 @@
   </class>
 
   <class
+    name="rviz_default_plugins/ParticleCloud"
+    type="rviz_default_plugins::displays::ParticleCloudDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      The Particle Cloud display shows a nav2_msgs/ParticleCloud message, as a collection of arrows scaled according to weight.
+    </description>
+    <message_type>nav2_msgs/msg/ParticleCloud</message_type>
+  </class>
+
+  <class
     name="rviz_default_plugins/Path"
     type="rviz_default_plugins::displays::PathDisplay"
     base_class_type="rviz_common::Display"
