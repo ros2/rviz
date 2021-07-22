@@ -33,6 +33,7 @@
 #include <deque>
 #include <limits>
 #include <map>
+#include <memory>
 #include <mutex>
 #include <sstream>
 #include <iostream>
@@ -46,6 +47,9 @@
 
 #include "rviz_common/logging.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
+
+uint32_t stride_;
+std::shared_ptr<std::vector<uint8_t>> bufferptr_;
 
 namespace rviz_default_plugins
 {
@@ -74,6 +78,7 @@ ROSImageTexture::ROSImageTexture()
 ROSImageTexture::~ROSImageTexture()
 {
   current_image_.reset();
+  bufferptr_.reset();
 }
 
 void ROSImageTexture::clear()
@@ -222,11 +227,13 @@ bool ROSImageTexture::update()
     return false;
   }
 
-  ImageData image_data = setFormatAndNormalizeDataIfNecessary(
-    ImageData(image->encoding, image->data.data(), image->data.size()));
 
   width_ = image->width;
   height_ = image->height;
+  stride_ = image->step;
+
+  ImageData image_data = setFormatAndNormalizeDataIfNecessary(
+    ImageData(image->encoding, image->data.data(), image->data.size()));
 
   Ogre::Image ogre_image;
   try {
@@ -248,6 +255,142 @@ bool ROSImageTexture::fillWithCurrentImage(sensor_msgs::msg::Image::ConstSharedP
 
   image = current_image_;
   return new_image_;
+}
+
+struct yuyv
+{
+  uint8_t y0;
+  uint8_t u;
+  uint8_t y1;
+  uint8_t v;
+};
+
+struct uyvy
+{
+  uint8_t u;
+  uint8_t y0;
+  uint8_t v;
+  uint8_t y1;
+};
+
+// Function converts src_img from yuv422 format to rgb
+void imageConvertYUV422ToRGB(
+  uint8_t * dst_img, uint8_t * src_img,
+  int dst_start_row, int dst_end_row,
+  int dst_num_cols, uint32_t stride_in_bytes)
+{
+  int final_y0 = 0;
+  int final_u = 0;
+  int final_y1 = 0;
+  int final_v = 0;
+  int r1 = 0;
+  int b1 = 0;
+  int g1 = 0;
+  int r2 = 0;
+  int b2 = 0;
+  int g2 = 0;
+
+  uint32_t stride_in_pixels = stride_in_bytes / 4;
+
+  // rows in dst_img
+  for (int row = dst_start_row; row < dst_end_row; row++) {
+    // col iterates till num_cols / 2 since two rgb pixels processed each
+    // iteration cols in dst_img
+    for (int col = 0; col < dst_num_cols / 2; col++) {
+      struct uyvy * src_ptr = reinterpret_cast<struct uyvy *>(src_img);
+      struct uyvy * pixel = &src_ptr[col + row * stride_in_pixels];
+      final_y0 = pixel->y0;
+      final_u = pixel->u;
+      final_y1 = pixel->y1;
+      final_v = pixel->v;
+
+      // Values generated based on this formula
+      // for converting YUV to RGB
+      // R = Y + 1.403V'
+      // G = Y + 0.344U' - 0.714V'
+      // B = Y + 1.770U'
+
+      final_v -= 128;
+      final_u -= 128;
+
+      r1 = final_y0 + (1403 * final_v) / 1000;
+      g1 = final_y0 + (344 * final_u - 714 * final_v) / 1000;
+      b1 = final_y0 + (1770 * final_u) / 1000;
+
+      r2 = final_y1 + (1403 * final_v) / 1000;
+      g2 = final_y1 + (344 * final_u - 714 * final_v) / 1000;
+      b2 = final_y1 + (1770 * final_u) / 1000;
+
+      // pixel value must fit in a uint8_t
+      dst_img[0] = ((r1 & 0xFFFFFF00) == 0) ? r1 : (r1 < 0) ? 0 : 0xFF;
+      dst_img[1] = ((g1 & 0xFFFFFF00) == 0) ? g1 : (g1 < 0) ? 0 : 0xFF;
+      dst_img[2] = ((b1 & 0xFFFFFF00) == 0) ? b1 : (b1 < 0) ? 0 : 0xFF;
+      dst_img[3] = ((r2 & 0xFFFFFF00) == 0) ? r2 : (r2 < 0) ? 0 : 0xFF;
+      dst_img[4] = ((g2 & 0xFFFFFF00) == 0) ? g2 : (g2 < 0) ? 0 : 0xFF;
+      dst_img[5] = ((b2 & 0xFFFFFF00) == 0) ? b2 : (b2 < 0) ? 0 : 0xFF;
+      dst_img += 6;
+    }
+  }
+}
+
+// Function converts src_img from yuv422_yuy2 format to rgb
+void imageConvertYUV422_YUY2ToRGB(
+  uint8_t * dst_img, uint8_t * src_img,
+  int dst_start_row, int dst_end_row,
+  int dst_num_cols, uint32_t stride_in_bytes)
+{
+  int final_y0 = 0;
+  int final_u = 0;
+  int final_y1 = 0;
+  int final_v = 0;
+  int r1 = 0;
+  int b1 = 0;
+  int g1 = 0;
+  int r2 = 0;
+  int b2 = 0;
+  int g2 = 0;
+
+  uint32_t stride_in_pixels = stride_in_bytes / 4;
+
+  // rows in dst_img
+  for (int row = dst_start_row; row < dst_end_row; row++) {
+    // col iterates till num_cols / 2 since two rgb pixels processed each
+    // iteration cols in dst_img
+    for (int col = 0; col < dst_num_cols / 2; col++) {
+      struct yuyv * src_ptr = reinterpret_cast<struct yuyv *>(src_img);
+      struct yuyv * pixel = &src_ptr[col + row * stride_in_pixels];
+      final_y0 = pixel->y0;
+      final_u = pixel->u;
+      final_y1 = pixel->y1;
+      final_v = pixel->v;
+
+      // Values generated based on this formula
+      // for converting YUV to RGB
+      // R = Y + 1.403V'
+      // G = Y + 0.344U' - 0.714V'
+      // B = Y + 1.770U'
+
+      final_v -= 128;
+      final_u -= 128;
+
+      r1 = final_y0 + (1403 * final_v) / 1000;
+      g1 = final_y0 + (344 * final_u - 714 * final_v) / 1000;
+      b1 = final_y0 + (1770 * final_u) / 1000;
+
+      r2 = final_y1 + (1403 * final_v) / 1000;
+      g2 = final_y1 + (344 * final_u - 714 * final_v) / 1000;
+      b2 = final_y1 + (1770 * final_u) / 1000;
+
+      // pixel value must fit in a uint8_t
+      dst_img[0] = ((r1 & 0xFFFFFF00) == 0) ? r1 : (r1 < 0) ? 0 : 0xFF;
+      dst_img[1] = ((g1 & 0xFFFFFF00) == 0) ? g1 : (g1 < 0) ? 0 : 0xFF;
+      dst_img[2] = ((b1 & 0xFFFFFF00) == 0) ? b1 : (b1 < 0) ? 0 : 0xFF;
+      dst_img[3] = ((r2 & 0xFFFFFF00) == 0) ? r2 : (r2 < 0) ? 0 : 0xFF;
+      dst_img[4] = ((g2 & 0xFFFFFF00) == 0) ? g2 : (g2 < 0) ? 0 : 0xFF;
+      dst_img[5] = ((b2 & 0xFFFFFF00) == 0) ? b2 : (b2 < 0) ? 0 : 0xFF;
+      dst_img += 6;
+    }
+  }
 }
 
 ImageData ROSImageTexture::setFormatAndNormalizeDataIfNecessary(ImageData image_data)
@@ -294,6 +437,30 @@ ImageData ROSImageTexture::setFormatAndNormalizeDataIfNecessary(ImageData image_
       image_data.size_);
     image_data.pixel_format_ = Ogre::PF_BYTE_L;
     image_data.data_ptr_ = &buffer[0];
+  } else if ( // NOLINT enforces bracket on the same line, which makes code unreadable
+    image_data.encoding_ == sensor_msgs::image_encodings::YUV422 ||
+    image_data.encoding_ == sensor_msgs::image_encodings::YUV422_YUY2)
+  {
+    size_t new_size = image_data.size_ * 3 / 2;
+    if (!bufferptr_) {
+      bufferptr_ = std::make_shared<std::vector<uint8_t>>(new_size);
+    } else if (static_cast<size_t>(bufferptr_->size()) != new_size) {
+      bufferptr_->resize(new_size, 0);
+    }
+
+    if (image_data.encoding_ == sensor_msgs::image_encodings::YUV422) {
+      imageConvertYUV422ToRGB(
+        bufferptr_->data(), const_cast<uint8_t *>(image_data.data_ptr_),
+        0, height_, width_, stride_);
+    } else if (image_data.encoding_ == sensor_msgs::image_encodings::YUV422_YUY2) {
+      imageConvertYUV422_YUY2ToRGB(
+        bufferptr_->data(), const_cast<uint8_t *>(image_data.data_ptr_),
+        0, height_, width_, stride_);
+    }
+
+    image_data.pixel_format_ = Ogre::PF_BYTE_RGB;
+    image_data.data_ptr_ = bufferptr_->data();
+    image_data.size_ = new_size;
   } else {
     throw UnsupportedImageEncoding(image_data.encoding_);
   }
