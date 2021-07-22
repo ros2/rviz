@@ -136,8 +136,6 @@ private:
 
   uint32_t width_;
   uint32_t height_;
-  uint32_t stride_;
-  std::shared_ptr<std::vector<uint8_t>> bufferptr_;
 
   // fields for float image running median computation
   bool normalize_;
