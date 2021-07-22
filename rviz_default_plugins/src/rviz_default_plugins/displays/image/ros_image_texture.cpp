@@ -227,8 +227,8 @@ bool ROSImageTexture::update()
   height_ = image->height;
   stride_ = image->step;
 
-    ImageData image_data = setFormatAndNormalizeDataIfNecessary(
-      ImageData(image->encoding, image->data.data(), image->data.size()));
+  ImageData image_data = setFormatAndNormalizeDataIfNecessary(
+    ImageData(image->encoding, image->data.data(), image->data.size()));
 
   Ogre::Image ogre_image;
   try {
