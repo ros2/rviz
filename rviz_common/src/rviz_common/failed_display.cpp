@@ -44,7 +44,7 @@ FailedDisplay::FailedDisplay(const QString & desired_class_id, const QString & e
 : error_message_(error_message)
 {
   setClassId(desired_class_id);
-  setIcon(loadPixmap("package://rviz_common/icons/failed_display.png"));
+  setIcon(loadPixmap("package://rviz_common/icons/close.png"));
 }
 
 QVariant FailedDisplay::getViewData(int column, int role) const
