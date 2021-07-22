@@ -48,6 +48,9 @@
 #include "rviz_common/logging.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
 
+uint32_t stride_;
+std::shared_ptr<std::vector<uint8_t>> bufferptr_;
+
 namespace rviz_default_plugins
 {
 namespace displays
@@ -75,6 +78,7 @@ ROSImageTexture::ROSImageTexture()
 ROSImageTexture::~ROSImageTexture()
 {
   current_image_.reset();
+  bufferptr_.reset();
 }
 
 void ROSImageTexture::clear()
