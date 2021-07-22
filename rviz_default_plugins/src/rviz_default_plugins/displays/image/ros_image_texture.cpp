@@ -438,8 +438,8 @@ ImageData ROSImageTexture::setFormatAndNormalizeDataIfNecessary(ImageData image_
     image_data.pixel_format_ = Ogre::PF_BYTE_L;
     image_data.data_ptr_ = &buffer[0];
   } else if ( // NOLINT enforces bracket on the same line, which makes code unreadable
-  image_data.encoding_ == sensor_msgs::image_encodings::YUV422 ||
-  image_data.encoding_ == sensor_msgs::image_encodings::YUV422_YUY2)
+    image_data.encoding_ == sensor_msgs::image_encodings::YUV422 ||
+    image_data.encoding_ == sensor_msgs::image_encodings::YUV422_YUY2)
   {
     size_t new_size = image_data.size_ * 3 / 2;
     if (!bufferptr_) {
