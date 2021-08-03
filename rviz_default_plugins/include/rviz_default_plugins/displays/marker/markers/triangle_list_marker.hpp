@@ -36,6 +36,8 @@
 #include <OgreMaterial.h>
 #include <OgreSharedPtr.h>
 
+#include <sensor_msgs/msg/image.hpp>
+
 #include "rviz_default_plugins/displays/marker/markers/marker_base.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 
@@ -77,6 +79,7 @@ protected:
   Ogre::ManualObject * manual_object_;
   Ogre::MaterialPtr material_;
   std::string material_name_;
+  std::string texture_name_;
 
 private:
   bool wrongNumberOfPoints(const MarkerConstSharedPtr & new_message);
@@ -91,6 +94,8 @@ private:
     const MarkerConstSharedPtr & new_message) const;
   bool fillManualObjectAndDetermineAlpha(MarkerConstSharedPtr new_message) const;
   void updateMaterial(const MarkerConstSharedPtr & new_message, bool any_vertex_has_alpha) const;
+
+  void loadTexture(const MarkerConstSharedPtr & new_message) const;
 
   bool hasVertexColors(MarkerConstSharedPtr new_message) const;
   bool hasFaceColors(MarkerConstSharedPtr new_message) const;

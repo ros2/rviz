@@ -62,39 +62,6 @@ namespace displays
 namespace markers
 {
 
-resource_retriever::MemoryResource getResource(const std::string & resource_path)
-{
-  resource_retriever::Retriever retriever;
-  resource_retriever::MemoryResource res;
-  try {
-    res = retriever.get(resource_path);
-  } catch (resource_retriever::Exception & e) {
-    RVIZ_COMMON_LOG_DEBUG(e.what());
-    return resource_retriever::MemoryResource();
-  }
-
-  return res;
-}
-
-bool loadImage(const Ogre::String & texture_name, const Ogre::String & texture_path)
-{
-  bool image_loaded = false;
-  resource_retriever::MemoryResource res = getResource(texture_path);
-  Ogre::String tex_ext;
-  Ogre::String::size_type index_of_extension = texture_path.find_last_of('.');
-  if (index_of_extension != Ogre::String::npos) {
-    tex_ext = texture_path.substr(index_of_extension + 1);
-    Ogre::DataStreamPtr data_stream(new Ogre::MemoryDataStream(res.data.get(), res.size, false));
-    Ogre::Image img;
-    img.load(data_stream, tex_ext);
-    Ogre::TextureManager::getSingleton().loadImage(
-      texture_name,
-      "rviz_rendering", img, Ogre::TEX_TYPE_2D, 0, 1.0f);
-    image_loaded = true;
-  }
-  return image_loaded;
-}
-
 TriangleListMarker::TriangleListMarker(
   MarkerCommon * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node)
 : MarkerBase(owner, context, parent_node),
@@ -180,8 +147,8 @@ void TriangleListMarker::initializeManualObject(
   manual_object_ = context_->getSceneManager()->createManualObject(ss.str());
   scene_node_->attachObject(manual_object_);
 
-  ss << "Material";
-  material_name_ = ss.str();
+  texture_name_ = ss.str() + std::string("Texture");
+  material_name_ = ss.str() + std::string("Material");
   material_ = rviz_rendering::MaterialManager::createMaterialWithLighting(material_name_);
   material_->setCullingMode(Ogre::CULL_NONE);
   handler_ = rviz_common::interaction::createSelectionHandler<MarkerSelectionHandler>(
@@ -298,24 +265,31 @@ void TriangleListMarker::updateMaterial(
   }
 
   if (hasTexture(new_message)) {
-    // If the texture is marked as updated, delete the last texture (if it exists).
+    // If the texture is already loaded, delete it.
     Ogre::ResourcePtr texture = Ogre::TextureManager::getSingleton().getByName(
-      new_message->texture_map, "rviz_rendering");
-    if (new_message->texture_update) {
-      if (texture != NULL) {
-        Ogre::TextureManager::getSingleton().remove(texture);
-      }
+      texture_name_, "rviz_rendering");
+    if (texture != NULL) {
+      Ogre::TextureManager::getSingleton().remove(texture);
     }
-    if (Ogre::TextureManager::getSingleton().getByName(
-        new_message->texture_map,
-        "rviz_rendering") == NULL)
-    {
-      loadImage(new_message->texture_map, new_message->texture_map);
-    }
-    material_->getTechnique(0)->getPass(0)->createTextureUnitState(new_message->texture_map);
+
+    loadTexture(new_message);
+    material_->getTechnique(0)->getPass(0)->createTextureUnitState(texture_name_);
     material_->getTechnique(0)->getPass(0)->setSceneBlending(
       Ogre::SBT_TRANSPARENT_ALPHA);
   }
+}
+
+void TriangleListMarker::loadTexture(const MarkerBase::MarkerConstSharedPtr & new_message) const
+{
+  Ogre::DataStreamPtr data_stream(new Ogre::MemoryDataStream(
+      (void *)new_message->texture.data.data(),
+      new_message->texture.data.size(), false, true));
+  Ogre::TextureManager::getSingleton().loadRawData(
+    texture_name_,
+    "rviz_rendering", data_stream,
+    new_message->texture.width,
+    new_message->texture.height,
+    Ogre::PF_B8G8R8, Ogre::TEX_TYPE_2D);
 }
 
 bool TriangleListMarker::hasFaceColors(const MarkerBase::MarkerConstSharedPtr new_message) const
@@ -330,7 +304,7 @@ bool TriangleListMarker::hasVertexColors(const MarkerBase::MarkerConstSharedPtr 
 
 bool TriangleListMarker::hasTexture(const MarkerBase::MarkerConstSharedPtr new_message) const
 {
-  return !new_message->texture_map.empty() &&
+  return !new_message->texture.data.empty() &&
          new_message->uv_coordinates.size() == new_message->points.size();
 }
 
