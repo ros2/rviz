@@ -518,7 +518,11 @@ void PathDisplay::updateAxesMarkers(
     const geometry_msgs::msg::Point & pos = msg->poses[i].pose.position;
     axes_vect[i]->setPosition(transform * rviz_common::pointMsgToOgre(pos));
     Ogre::Quaternion orientation(rviz_common::quaternionMsgToOgre(msg->poses[i].pose.orientation));
-    axes_vect[i]->setOrientation(orientation);
+
+    // Extract the rotation part of the transformation matrix as a quaternion
+    Ogre::Quaternion transform_orientation = transform.linear();
+
+    axes_vect[i]->setOrientation(transform_orientation * orientation);
   }
 }
 
@@ -541,8 +545,11 @@ void PathDisplay::updateArrowMarkers(
     arrow_vect[i]->setPosition(transform * rviz_common::pointMsgToOgre(pos));
     Ogre::Quaternion orientation(rviz_common::quaternionMsgToOgre(msg->poses[i].pose.orientation));
 
+    // Extract the rotation part of the transformation matrix as a quaternion
+    Ogre::Quaternion transform_orientation = transform.linear();
+
     Ogre::Vector3 dir(1, 0, 0);
-    dir = orientation * dir;
+    dir = transform_orientation * orientation * dir;
     arrow_vect[i]->setDirection(dir);
   }
 }
