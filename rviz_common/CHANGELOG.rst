@@ -2,8 +2,8 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.7.0 (2021-08-11)
+------------------
 * Update window close icon (`#734 <https://github.com/ros2/rviz/issues/734>`_)
 * Fix missing "X" icon in panel close button (`#731 <https://github.com/ros2/rviz/issues/731>`_)
 * Add rviz_rendering dependency to rviz_common (`#727 <https://github.com/ros2/rviz/issues/727>`_)

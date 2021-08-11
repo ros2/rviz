@@ -2,8 +2,8 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.7.0 (2021-08-11)
+------------------
 * Fix path message orientation error (`#736 <https://github.com/ros2/rviz/issues/736>`_)
 * Set topic namespace in interactive markers display (`#725 <https://github.com/ros2/rviz/issues/725>`_)
 * mass property visualization (`#714 <https://github.com/ros2/rviz/issues/714>`_)

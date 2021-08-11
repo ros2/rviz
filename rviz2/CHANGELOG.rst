@@ -2,8 +2,8 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.7.0 (2021-08-11)
+------------------
 * Change links index.ros.org -> docs.ros.org. (`#698 <https://github.com/ros2/rviz/issues/698>`_)
 * Contributors: Chris Lalancette
 
