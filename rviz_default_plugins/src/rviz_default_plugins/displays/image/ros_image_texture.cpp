@@ -61,6 +61,9 @@ ROSImageTexture::ROSImageTexture()
 {
   empty_image_.load("no_image.png", "rviz_rendering");
 
+  // Initializing bufferptr
+  bufferptr_ = std::make_shared<std::vector<uint8_t>>(1);
+
   static uint32_t count = 0;
   rviz_common::UniformStringStream ss;
   ss << "ROSImageTexture" << count++;
@@ -422,9 +425,7 @@ ImageData ROSImageTexture::setFormatAndNormalizeDataIfNecessary(ImageData image_
     image_data.encoding_ == sensor_msgs::image_encodings::MONO16)
   {
     image_data.size_ /= sizeof(uint16_t);
-    if (!bufferptr_) {
-      bufferptr_ = std::make_shared<std::vector<uint8_t>>(image_data.size_);
-    } else if (static_cast<size_t>(bufferptr_->size()) != image_data.size_) {
+    if (bufferptr_->size() != image_data.size_) {
       bufferptr_->resize(image_data.size_, 0);
     }
 
@@ -438,9 +439,7 @@ ImageData ROSImageTexture::setFormatAndNormalizeDataIfNecessary(ImageData image_
     image_data.pixel_format_ = Ogre::PF_BYTE_L;
   } else if (image_data.encoding_ == sensor_msgs::image_encodings::TYPE_32FC1) {
     image_data.size_ /= sizeof(float);
-    if (!bufferptr_) {
-      bufferptr_ = std::make_shared<std::vector<uint8_t>>(image_data.size_);
-    } else if (static_cast<size_t>(bufferptr_->size()) != image_data.size_) {
+    if (bufferptr_->size() != image_data.size_) {
       bufferptr_->resize(image_data.size_, 0);
     }
 
@@ -455,9 +454,8 @@ ImageData ROSImageTexture::setFormatAndNormalizeDataIfNecessary(ImageData image_
     image_data.encoding_ == sensor_msgs::image_encodings::YUV422_YUY2)
   {
     size_t new_size = image_data.size_ * 3 / 2;
-    if (!bufferptr_) {
-      bufferptr_ = std::make_shared<std::vector<uint8_t>>(new_size);
-    } else if (static_cast<size_t>(bufferptr_->size()) != new_size) {
+
+    if (bufferptr_->size() != new_size) {
       bufferptr_->resize(new_size, 0);
     }
 
@@ -470,7 +468,6 @@ ImageData ROSImageTexture::setFormatAndNormalizeDataIfNecessary(ImageData image_
         bufferptr_->data(), const_cast<uint8_t *>(image_data.data_ptr_),
         0, height_, width_, stride_);
     }
-
 
     image_data.pixel_format_ = Ogre::PF_BYTE_RGB;
     image_data.data_ptr_ = bufferptr_->data();
