@@ -119,7 +119,7 @@ void DisplaysPanel::onNewDisplay()
   QStringList empty;
 
   QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-  AddDisplayDialog * dialog = new AddDisplayDialog(
+  AddDisplayDialog dialog(
     vis_manager_->getDisplayFactory(),
     empty,
     empty,
@@ -131,7 +131,7 @@ void DisplaysPanel::onNewDisplay()
   QApplication::restoreOverrideCursor();
 
   vis_manager_->stopUpdate();
-  if (dialog->exec() == QDialog::Accepted) {
+  if (dialog.exec() == QDialog::Accepted) {
     Display * disp = vis_manager_->createDisplay(lookup_name, display_name, true);
     if (!topic.isEmpty() && !datatype.isEmpty()) {
       disp->setTopic(topic, datatype);
@@ -139,7 +139,6 @@ void DisplaysPanel::onNewDisplay()
   }
   vis_manager_->startUpdate();
   activateWindow();  // Force keyboard focus back on main window.
-  delete dialog;
 }
 
 void DisplaysPanel::onDuplicateDisplay()
