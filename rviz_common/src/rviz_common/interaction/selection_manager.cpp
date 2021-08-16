@@ -267,14 +267,17 @@ void SelectionManager::unpackColors(const Ogre::PixelBox & box)
   pixel_buffer_.clear();
   pixel_buffer_.reserve(w * h);
 
-  for (uint32_t y = 0; y < h; ++y) {
-    for (uint32_t x = 0; x < w; ++x) {
-      uint32_t pos = (x + y * w) * 4;
+  size_t size = Ogre::PixelUtil::getMemorySize(1, 1, 1, box.format);
 
-      uint32_t pix_val = *reinterpret_cast<uint32_t *>(static_cast<uint8_t *>(box.data) + pos);
-      uint32_t handle = colorToHandle(box.format, pix_val);
-
-      pixel_buffer_.push_back(handle);
+  for (unsigned int y = 0; y < h; y++) {
+    for (unsigned int x = 0; x < w; x++) {
+      uint32_t pos = (x + y * w) * size;
+      uint32_t pix_val = 0;
+      memcpy(
+        reinterpret_cast<uint8_t *>(&pix_val),
+        reinterpret_cast<uint8_t *>(box.data + pos),
+        size);
+      pixel_buffer_.push_back(colorToHandle(box.format, pix_val));
     }
   }
 }
