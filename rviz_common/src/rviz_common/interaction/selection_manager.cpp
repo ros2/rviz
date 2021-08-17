@@ -271,7 +271,7 @@ void SelectionManager::unpackColors(const Ogre::PixelBox & box)
 
   for (uint32_t y = 0; y < h; y++) {
     for (uint32_t x = 0; x < w; x++) {
-      uint32_t pos = (x + y * w) * size;
+      uint32_t pos = static_cast<uint32_t>((x + y * w) * size);
       uint32_t pix_val = 0;
       memcpy(
         reinterpret_cast<uint8_t *>(&pix_val),
