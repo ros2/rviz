@@ -261,16 +261,16 @@ void SelectionManager::setHighlightRect(Ogre::Viewport * viewport, int x1, int y
 
 void SelectionManager::unpackColors(const Ogre::PixelBox & box)
 {
-  auto w = box.getWidth();
-  auto h = box.getHeight();
+  uint32_t w = box.getWidth();
+  uint32_t h = box.getHeight();
 
   pixel_buffer_.clear();
   pixel_buffer_.reserve(w * h);
 
   size_t size = Ogre::PixelUtil::getMemorySize(1, 1, 1, box.format);
 
-  for (unsigned int y = 0; y < h; y++) {
-    for (unsigned int x = 0; x < w; x++) {
+  for (uint32_t y = 0; y < h; y++) {
+    for (uint32_t x = 0; x < w; x++) {
       uint32_t pos = (x + y * w) * size;
       uint32_t pix_val = 0;
       memcpy(
