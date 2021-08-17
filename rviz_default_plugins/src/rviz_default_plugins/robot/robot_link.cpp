@@ -179,6 +179,8 @@ void RobotLinkSelectionHandler::postRenderPass(uint32_t pass)
   }
 }
 
+static std::map<const RobotLink *, std::string> errors;
+
 RobotLink::RobotLink(
   Robot * robot,
   const urdf::LinkConstSharedPtr & link,
@@ -356,6 +358,27 @@ RobotLink::~RobotLink()
 
   delete details_;
   delete robot_element_property_;
+  errors.erase(this);
+}
+
+void RobotLink::addError(const char * format, ...)
+{
+  char buffer[256];
+  va_list args;
+  va_start(args, format);
+  vsnprintf(buffer, sizeof(buffer), format, args);
+  va_end(args);
+
+  std::string & err = const_cast<std::string &>(getGeometryErrors());
+  if (!err.empty()) {
+    err.append("\n");
+  }
+  err.append(buffer);
+}
+
+const std::string & RobotLink::getGeometryErrors() const
+{
+  return errors[this];
 }
 
 void RobotLink::setRobotAlpha(float a)
@@ -643,19 +666,24 @@ Ogre::Entity * RobotLink::createEntityForGeometryElement(
           static_cast<float>(mesh.scale.y),
           static_cast<float>(mesh.scale.z));
 
-        std::string model_name = mesh.filename;
+        const std::string & model_name = mesh.filename;
 
         try {
-          rviz_rendering::loadMeshFromResource(model_name);
-          entity = scene_manager_->createEntity(entity_name, model_name);
+          if (rviz_rendering::loadMeshFromResource(model_name) == nullptr) {
+            addError("Could not load mesh resource '%s'", model_name.c_str());
+          } else {
+            entity = scene_manager_->createEntity(entity_name, model_name);
+          }
         } catch (Ogre::InvalidParametersException & e) {
           RVIZ_COMMON_LOG_ERROR_STREAM(
             "Could not convert mesh resource '" << model_name << "' for link '" << link->name <<
               "'. It may be an empty mesh: " << e.what());
+          addError("Could not convert mesh resource '%s': %s", model_name.c_str(), e.what());
         } catch (Ogre::Exception & e) {
           RVIZ_COMMON_LOG_ERROR_STREAM(
             "could not load model '" << model_name << "' for link '" << link->name + "': " <<
               e.what());
+          addError("Could not load model '%s': %s", model_name.c_str(), e.what());
         }
         break;
       }
