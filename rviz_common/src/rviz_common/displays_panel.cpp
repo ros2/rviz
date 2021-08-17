@@ -168,8 +168,9 @@ void DisplaysPanel::onDuplicateDisplay()
     progress_dlg.setValue(i + 1);
     i++;
     // push cancel to stop duplicate
-    if (progress_dlg.wasCanceled())
+    if (progress_dlg.wasCanceled()) {
       break;
+    }
   }
   // make sure the newly duplicated displays are selected.
   if (!duplicated_displays.isEmpty()) {
