@@ -133,7 +133,7 @@ bool validateFloats(const geometry_msgs::msg::WrenchStamped & msg)
 
 void WrenchDisplay::processMessage(geometry_msgs::msg::WrenchStamped::ConstSharedPtr msg)
 {
-  auto custom_msg = std::make_shared<geometry_msgs::msg::WrenchStamped>();
+  auto adjusted_msg = std::make_shared<geometry_msgs::msg::WrenchStamped>();
 
   if (!accept_NaN) {
     if (!validateFloats(*msg)) {
