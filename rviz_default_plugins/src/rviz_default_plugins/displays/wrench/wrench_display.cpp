@@ -53,7 +53,7 @@ WrenchDisplay::WrenchDisplay()
 {
   accept_NaN_values_ = new rviz_common::properties::BoolProperty(
     "Accept NaN Values", false,
-    "Convert NaN values to 0 if checked.", this, SLOT(updateWrenchVisuals()));
+    "NaN values in incoming messages are converted to 0 to display wrench vector.", this, SLOT(updateWrenchVisuals()));
 
   force_color_property_ = new rviz_common::properties::ColorProperty(
     "Force Color", QColor(204, 51, 51), "Color to draw the force arrows.", this,
