@@ -51,7 +51,7 @@ namespace displays
 
 WrenchDisplay::WrenchDisplay()
 {
-  accept_NaN_values_ = new rviz_common::properties::BoolProperty(
+  accept_nan_values_ = new rviz_common::properties::BoolProperty(
     "Accept NaN Values", false,
     "NaN values in incoming messages are converted to 0 to display wrench vector.", this, SLOT(updateWrenchVisuals()));
 
@@ -134,6 +134,7 @@ bool validateFloats(const geometry_msgs::msg::WrenchStamped & msg)
 void WrenchDisplay::processMessage(geometry_msgs::msg::WrenchStamped::ConstSharedPtr msg)
 {
   auto adjusted_msg = std::make_shared<geometry_msgs::msg::WrenchStamped>();
+  bool accept_NaN = accept_nan_values_->getBool();
 
   if (!accept_NaN) {
     if (!validateFloats(*msg)) {
@@ -143,13 +144,20 @@ void WrenchDisplay::processMessage(geometry_msgs::msg::WrenchStamped::ConstShare
       return;
     }
   } else {
-      custom_msg->wrench.force.x = (std::isnan(msg->wrench.force.x)) ?  0.0 : msg->wrench.force.x;
-      custom_msg->wrench.force.y = (std::isnan(msg->wrench.force.y)) ?  0.0 : msg->wrench.force.y;
-      custom_msg->wrench.force.z = (std::isnan(msg->wrench.force.z)) ?  0.0 : msg->wrench.force.z;
+      adjusted_msg->wrench.force.x = (std::isnan(msg->wrench.force.x)) ?  0.0 : msg->wrench.force.x;
+      adjusted_msg->wrench.force.y = (std::isnan(msg->wrench.force.y)) ?  0.0 : msg->wrench.force.y;
+      adjusted_msg->wrench.force.z = (std::isnan(msg->wrench.force.z)) ?  0.0 : msg->wrench.force.z;
 
-      custom_msg->wrench.torque.x = (std::isnan(msg->wrench.torque.x)) ?  0.0 : msg->wrench.torque.x;
-      custom_msg->wrench.torque.y = (std::isnan(msg->wrench.torque.y)) ?  0.0 : msg->wrench.torque.y;
-      custom_msg->wrench.torque.z = (std::isnan(msg->wrench.torque.z)) ?  0.0 : msg->wrench.torque.z;
+      adjusted_msg->wrench.torque.x = (std::isnan(msg->wrench.torque.x)) ?  0.0 : msg->wrench.torque.x;
+      adjusted_msg->wrench.torque.y = (std::isnan(msg->wrench.torque.y)) ?  0.0 : msg->wrench.torque.y;
+      adjusted_msg->wrench.torque.z = (std::isnan(msg->wrench.torque.z)) ?  0.0 : msg->wrench.torque.z;
+
+      if (!validateFloats(*msg)) {
+      setStatus(
+        rviz_common::properties::StatusProperty::Error, "Topic",
+        "Message contained invalid floating point values (nans or infs)");
+      return;
+    }
   }
 
   Ogre::Quaternion orientation;
@@ -172,7 +180,7 @@ void WrenchDisplay::processMessage(geometry_msgs::msg::WrenchStamped::ConstShare
   }
 
   auto visual = (!accept_NaN) ? createWrenchVisual(msg, orientation, position) :
-    createWrenchVisual(custom_msg, orientation, position);
+    createWrenchVisual(adjusted_msg, orientation, position);
 
   visuals_.push_back(visual);
 }
