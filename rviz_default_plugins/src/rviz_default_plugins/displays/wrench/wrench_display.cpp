@@ -52,7 +52,7 @@ namespace displays
 WrenchDisplay::WrenchDisplay()
 {
   accept_NaN_values_ = new rviz_common::properties::BoolProperty(
-    "Accept NaN Values", true,
+    "Accept NaN Values", false,
     "Convert NaN values to 0 if checked.", this, SLOT(updateWrenchVisuals()));
 
   force_color_property_ = new rviz_common::properties::ColorProperty(
