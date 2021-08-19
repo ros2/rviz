@@ -53,7 +53,8 @@ WrenchDisplay::WrenchDisplay()
 {
   accept_nan_values_ = new rviz_common::properties::BoolProperty(
     "Accept NaN Values", false,
-    "NaN values in incoming messages are converted to 0 to display wrench vector.", this, SLOT(updateWrenchVisuals()));
+    "NaN values in incoming messages are converted to 0 to display wrench vector.", this,
+    SLOT(updateWrenchVisuals()));
 
   force_color_property_ = new rviz_common::properties::ColorProperty(
     "Force Color", QColor(204, 51, 51), "Color to draw the force arrows.", this,
@@ -100,7 +101,6 @@ void WrenchDisplay::reset()
 
 void WrenchDisplay::updateWrenchVisuals()
 {
-  // bool accept_NaN = accept_NaN_values_->getBool();
   float alpha = alpha_property_->getFloat();
   float force_scale = force_scale_property_->getFloat();
   float torque_scale = torque_scale_property_->getFloat();
@@ -109,7 +109,6 @@ void WrenchDisplay::updateWrenchVisuals()
   Ogre::ColourValue torque_color = torque_color_property_->getOgreColor();
 
   for (const auto & visual : visuals_) {
-    // visual->setNaN(accept_NaN);
     visual->setForceColor(force_color.r, force_color.g, force_color.b, alpha);
     visual->setTorqueColor(torque_color.r, torque_color.g, torque_color.b, alpha);
     visual->setForceScale(force_scale);
@@ -205,7 +204,6 @@ std::shared_ptr<rviz_rendering::WrenchVisual> WrenchDisplay::createWrenchVisual(
   visual->setFramePosition(position);
   visual->setFrameOrientation(orientation);
 
-  // bool accept_NaN = accept_NaN_values_->getBool();
   float alpha = alpha_property_->getFloat();
   float force_scale = force_scale_property_->getFloat();
   float torque_scale = torque_scale_property_->getFloat();
@@ -213,7 +211,6 @@ std::shared_ptr<rviz_rendering::WrenchVisual> WrenchDisplay::createWrenchVisual(
   Ogre::ColourValue force_color = force_color_property_->getOgreColor();
   Ogre::ColourValue torque_color = torque_color_property_->getOgreColor();
 
-  // visual->setNaN(accept_NaN);
   visual->setForceColor(force_color.r, force_color.g, force_color.b, alpha);
   visual->setTorqueColor(torque_color.r, torque_color.g, torque_color.b, alpha);
   visual->setForceScale(force_scale);
