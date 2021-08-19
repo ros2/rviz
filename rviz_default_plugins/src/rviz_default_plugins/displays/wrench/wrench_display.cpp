@@ -133,9 +133,9 @@ bool validateFloats(const geometry_msgs::msg::WrenchStamped & msg)
 void WrenchDisplay::processMessage(geometry_msgs::msg::WrenchStamped::ConstSharedPtr msg)
 {
   auto adjusted_msg = std::make_shared<geometry_msgs::msg::WrenchStamped>();
-  bool accept_NaN = accept_nan_values_->getBool();
+  bool accept_nan = accept_nan_values_->getBool();
 
-  if (!accept_NaN) {
+  if (!accept_nan) {
     if (!validateFloats(*msg)) {
       setStatus(
         rviz_common::properties::StatusProperty::Error, "Topic",
@@ -143,15 +143,18 @@ void WrenchDisplay::processMessage(geometry_msgs::msg::WrenchStamped::ConstShare
       return;
     }
   } else {
-      adjusted_msg->wrench.force.x = (std::isnan(msg->wrench.force.x)) ?  0.0 : msg->wrench.force.x;
-      adjusted_msg->wrench.force.y = (std::isnan(msg->wrench.force.y)) ?  0.0 : msg->wrench.force.y;
-      adjusted_msg->wrench.force.z = (std::isnan(msg->wrench.force.z)) ?  0.0 : msg->wrench.force.z;
+    adjusted_msg->wrench.force.x = (std::isnan(msg->wrench.force.x)) ?  0.0 : msg->wrench.force.x;
+    adjusted_msg->wrench.force.y = (std::isnan(msg->wrench.force.y)) ?  0.0 : msg->wrench.force.y;
+    adjusted_msg->wrench.force.z = (std::isnan(msg->wrench.force.z)) ?  0.0 : msg->wrench.force.z;
 
-      adjusted_msg->wrench.torque.x = (std::isnan(msg->wrench.torque.x)) ?  0.0 : msg->wrench.torque.x;
-      adjusted_msg->wrench.torque.y = (std::isnan(msg->wrench.torque.y)) ?  0.0 : msg->wrench.torque.y;
-      adjusted_msg->wrench.torque.z = (std::isnan(msg->wrench.torque.z)) ?  0.0 : msg->wrench.torque.z;
+    adjusted_msg->wrench.torque.x = (std::isnan(msg->wrench.torque.x)) ?  0.0 :
+      msg->wrench.torque.x;
+    adjusted_msg->wrench.torque.y = (std::isnan(msg->wrench.torque.y)) ?  0.0 :
+      msg->wrench.torque.y;
+    adjusted_msg->wrench.torque.z = (std::isnan(msg->wrench.torque.z)) ?  0.0 :
+      msg->wrench.torque.z;
 
-      if (!validateFloats(*msg)) {
+    if (!validateFloats(*msg)) {
       setStatus(
         rviz_common::properties::StatusProperty::Error, "Topic",
         "Message contained invalid floating point values (nans or infs)");
@@ -178,7 +181,7 @@ void WrenchDisplay::processMessage(geometry_msgs::msg::WrenchStamped::ConstShare
     visuals_.pop_front();
   }
 
-  auto visual = (!accept_NaN) ? createWrenchVisual(msg, orientation, position) :
+  auto visual = (!accept_nan) ? createWrenchVisual(msg, orientation, position) :
     createWrenchVisual(adjusted_msg, orientation, position);
 
   visuals_.push_back(visual);
