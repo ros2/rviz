@@ -143,15 +143,15 @@ void WrenchDisplay::processMessage(geometry_msgs::msg::WrenchStamped::ConstShare
       return;
     }
   } else {
-    adjusted_msg->wrench.force.x = (std::isnan(msg->wrench.force.x)) ?  0.0 : msg->wrench.force.x;
-    adjusted_msg->wrench.force.y = (std::isnan(msg->wrench.force.y)) ?  0.0 : msg->wrench.force.y;
-    adjusted_msg->wrench.force.z = (std::isnan(msg->wrench.force.z)) ?  0.0 : msg->wrench.force.z;
+    adjusted_msg->wrench.force.x = (std::isnan(msg->wrench.force.x)) ? 0.0 : msg->wrench.force.x;
+    adjusted_msg->wrench.force.y = (std::isnan(msg->wrench.force.y)) ? 0.0 : msg->wrench.force.y;
+    adjusted_msg->wrench.force.z = (std::isnan(msg->wrench.force.z)) ? 0.0 : msg->wrench.force.z;
 
-    adjusted_msg->wrench.torque.x = (std::isnan(msg->wrench.torque.x)) ?  0.0 :
+    adjusted_msg->wrench.torque.x = (std::isnan(msg->wrench.torque.x)) ? 0.0 :
       msg->wrench.torque.x;
-    adjusted_msg->wrench.torque.y = (std::isnan(msg->wrench.torque.y)) ?  0.0 :
+    adjusted_msg->wrench.torque.y = (std::isnan(msg->wrench.torque.y)) ? 0.0 :
       msg->wrench.torque.y;
-    adjusted_msg->wrench.torque.z = (std::isnan(msg->wrench.torque.z)) ?  0.0 :
+    adjusted_msg->wrench.torque.z = (std::isnan(msg->wrench.torque.z)) ? 0.0 :
       msg->wrench.torque.z;
 
     if (!validateFloats(*msg)) {
