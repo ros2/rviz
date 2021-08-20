@@ -194,7 +194,6 @@ bool TriangleListMarker::fillManualObjectAndDetermineAlpha(
 {
   bool any_vertex_has_alpha = false;
 
-
   size_t num_points = new_message->points.size();
   const std::vector<geometry_msgs::msg::Point> & points = new_message->points;
   for (size_t i = 0; i < num_points; i += 3) {
