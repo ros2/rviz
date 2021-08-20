@@ -312,7 +312,7 @@ bool TriangleListMarker::hasTexture(const MarkerBase::MarkerConstSharedPtr new_m
 bool TriangleListMarker::textureEmbedded(const MarkerBase::MarkerConstSharedPtr new_message) const
 {
   return !new_message->texture_resource.empty() &&
-         new_message->texture_resource.find("texture_embedded://") == 0;
+         new_message->texture_resource.find("embedded://") == 0;
 }
 
 std::string TriangleListMarker::getTextureName(const MarkerBase::MarkerConstSharedPtr new_message)
