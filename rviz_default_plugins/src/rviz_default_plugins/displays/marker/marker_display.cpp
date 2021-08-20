@@ -71,6 +71,17 @@ void MarkerDisplay::subscribe()
 void MarkerDisplay::createMarkerArraySubscription()
 {
   try {
+    rclcpp::SubscriptionOptions sub_opts;
+    sub_opts.event_callbacks.message_lost_callback =
+      [&](rclcpp::QOSMessageLostInfo & info)
+      {
+        std::ostringstream sstm;
+        sstm << "Some messages were lost:\n>\tNumber of new lost messages: " <<
+          info.total_count_change << " \n>\tTotal number of messages lost: " <<
+          info.total_count;
+        setStatus(StatusLevel::Warn, "Array Topic", QString(sstm.str().c_str()));
+      };
+
     // TODO(anhosi,wjwwood): replace with abstraction for subscriptions one available
     array_sub_ = rviz_ros_node_.lock()->get_raw_node()->
       template create_subscription<visualization_msgs::msg::MarkerArray>(
@@ -78,7 +89,8 @@ void MarkerDisplay::createMarkerArraySubscription()
       qos_profile,
       [this](visualization_msgs::msg::MarkerArray::ConstSharedPtr msg) {
         marker_common_->addMessage(msg);
-      });
+      },
+      sub_opts);
     setStatus(StatusLevel::Ok, "Array Topic", "OK");
   } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
     setStatus(StatusLevel::Error, "Array Topic", QString("Error subscribing: ") + e.what());

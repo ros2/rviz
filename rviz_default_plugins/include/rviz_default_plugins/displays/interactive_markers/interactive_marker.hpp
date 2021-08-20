@@ -54,6 +54,8 @@
 
 #include "rviz_default_plugins/displays/interactive_markers/interactive_marker_control.hpp"
 
+#include "rviz_default_plugins/visibility_control.hpp"
+
 namespace Ogre
 {
 class SceneNode;
@@ -72,7 +74,7 @@ namespace displays
 {
 class InteractiveMarkerDisplay;
 
-class InteractiveMarker : public QObject
+class RVIZ_DEFAULT_PLUGINS_PUBLIC InteractiveMarker : public QObject
 {
   Q_OBJECT
 

@@ -94,6 +94,17 @@ RobotModelDisplay::RobotModelDisplay()
     "Whether to display the collision representation of the robot.",
     this, SLOT(updateCollisionVisible()));
 
+  mass_properties_ = new Property("Mass Properties", QVariant(), "", this);
+  mass_enabled_property_ = new Property(
+    "Mass", false,
+    "Whether to display the visual representation of the mass of each link.",
+    mass_properties_, SLOT(updateMassVisible()), this);
+  inertia_enabled_property_ = new Property(
+    "Inertia", false,
+    "Whether to display the visual representation of the inertia of each link.",
+    mass_properties_, SLOT(updateInertiaVisible()), this);
+  mass_properties_->collapse();
+
   update_rate_property_ = new FloatProperty(
     "Update Interval", 0,
     "Interval at which to update the links, in seconds. "
@@ -199,6 +210,18 @@ void RobotModelDisplay::updateCollisionVisible()
 void RobotModelDisplay::updateTfPrefix()
 {
   clearStatuses();
+  context_->queueRender();
+}
+
+void RobotModelDisplay::updateMassVisible()
+{
+  robot_->setMassVisible(mass_enabled_property_->getValue().toBool());
+  context_->queueRender();
+}
+
+void RobotModelDisplay::updateInertiaVisible()
+{
+  robot_->setInertiaVisible(inertia_enabled_property_->getValue().toBool());
   context_->queueRender();
 }
 
