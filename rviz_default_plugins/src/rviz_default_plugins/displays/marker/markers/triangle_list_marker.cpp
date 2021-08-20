@@ -30,8 +30,6 @@
 
 #include "rviz_default_plugins/displays/marker/markers/triangle_list_marker.hpp"
 
-#include <iostream>
-#include <fstream>
 #include <vector>
 
 #include <OgreDataStream.h>
