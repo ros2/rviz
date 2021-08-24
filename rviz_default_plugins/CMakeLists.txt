@@ -59,6 +59,9 @@ find_package(rviz_ogre_vendor REQUIRED)
 find_package(Qt5 REQUIRED COMPONENTS Widgets Test)
 
 find_package(geometry_msgs REQUIRED)
+
+find_package(ignition-math6 REQUIRED)
+
 find_package(image_transport REQUIRED)
 find_package(interactive_markers REQUIRED)
 find_package(laser_geometry REQUIRED)
@@ -227,6 +230,7 @@ target_include_directories(rviz_default_plugins PUBLIC
 target_link_libraries(rviz_default_plugins PUBLIC
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
+  ignition-math6
 )
 
 # Causes the visibility macros to use dllexport rather than dllimport,
