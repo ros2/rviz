@@ -327,6 +327,7 @@ const
     return "";
   }
 
+  // Index past "://" by adding 3 to the result of find.
   return new_message->texture_resource.substr(index + 3);
 }
 
