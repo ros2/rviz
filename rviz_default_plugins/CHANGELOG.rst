@@ -2,6 +2,26 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.7.0 (2021-08-11)
+------------------
+* Fix path message orientation error (`#736 <https://github.com/ros2/rviz/issues/736>`_)
+* Set topic namespace in interactive markers display (`#725 <https://github.com/ros2/rviz/issues/725>`_)
+* mass property visualization (`#714 <https://github.com/ros2/rviz/issues/714>`_)
+* Export InteractiveMarker (`#718 <https://github.com/ros2/rviz/issues/718>`_)
+* Yuv to rgb changes (`#701 <https://github.com/ros2/rviz/issues/701>`_)
+* Extract message type in ImageTransportDisplay (`#711 <https://github.com/ros2/rviz/issues/711>`_)
+* Duplicated code RobotJoint (`#702 <https://github.com/ros2/rviz/issues/702>`_)
+* Don't attempt to moc generate files that don't have QOBJECT. (`#690 <https://github.com/ros2/rviz/issues/690>`_)
+* Switch to including tf2_geometry_msgs.hpp (`#689 <https://github.com/ros2/rviz/issues/689>`_)
+* Contributors: Akash, Alejandro Hernández Cordero, Chris Lalancette, Paul, Rebecca Butler, brian soe, cturcotte-qnx
+
+8.6.0 (2021-05-13)
+------------------
+* Export Qt5 dependencies properly (`#687 <https://github.com/ros2/rviz/issues/687>`_)
+* Add support for namespace-scoped DELETEALL action in Marker displays (`#685 <https://github.com/ros2/rviz/issues/685>`_)
+* Use image_transport to subscribe to image messages (`#523 <https://github.com/ros2/rviz/issues/523>`_)
+* Contributors: Audrow Nash, ketatam, Martin Idel, Michel Hidalgo
+
 8.5.0 (2021-04-06)
 ------------------
 

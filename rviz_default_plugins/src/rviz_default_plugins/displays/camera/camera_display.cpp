@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
  * Copyright (c) 2018, Bosch Software Innovations GmbH.
+ * Copyright (c) 2020, TNG Technology Consulting GmbH.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,6 +33,7 @@
 
 #include <memory>
 #include <string>
+#include <sstream>
 
 #include <OgreManualObject.h>
 #include <OgreMaterialManager.h>
@@ -44,6 +46,8 @@
 #include <OgreViewport.h>
 #include <OgreTechnique.h>
 #include <OgreCamera.h>
+
+#include "image_transport/camera_common.hpp"
 
 #include "rviz_rendering/material_manager.hpp"
 #include "rviz_rendering/objects/axes.hpp"
@@ -130,7 +134,7 @@ CameraDisplay::~CameraDisplay()
 
 void CameraDisplay::onInitialize()
 {
-  MFDClass::onInitialize();
+  ITDClass::onInitialize();
 
   setupSceneNodes();
   setupRenderPanel();
@@ -265,7 +269,7 @@ void CameraDisplay::onDisable()
 
 void CameraDisplay::subscribe()
 {
-  MFDClass::subscribe();
+  ITDClass::subscribe();
 
   if ((!isEnabled()) || (topic_property_->getTopicStd().empty())) {
     return;
@@ -281,9 +285,20 @@ void CameraDisplay::createCameraInfoSubscription()
 
     // The camera_info topic should be at the same level as the image topic
     // TODO(anyone) Store this in a member variable
-    auto camera_info_topic = topic_property_->getTopicStd();
-    camera_info_topic =
-      camera_info_topic.substr(0, camera_info_topic.rfind("/") + 1) + "camera_info";
+
+    std::string camera_info_topic = image_transport::getCameraInfoTopic(
+      topic_property_->getTopicStd());
+
+    rclcpp::SubscriptionOptions sub_opts;
+    sub_opts.event_callbacks.message_lost_callback =
+      [&](rclcpp::QOSMessageLostInfo & info)
+      {
+        std::ostringstream sstm;
+        sstm << "Some messages were lost:\n>\tNumber of new lost messages: " <<
+          info.total_count_change << " \n>\tTotal number of messages lost: " <<
+          info.total_count;
+        setStatus(StatusLevel::Warn, CAM_INFO_STATUS, QString(sstm.str().c_str()));
+      };
 
     caminfo_sub_ = rviz_ros_node_.lock()->get_raw_node()->
       template create_subscription<sensor_msgs::msg::CameraInfo>(
@@ -293,7 +308,8 @@ void CameraDisplay::createCameraInfoSubscription()
         std::unique_lock<std::mutex> lock(caminfo_mutex_);
         current_caminfo_ = msg;
         new_caminfo_ = true;
-      });
+      }, sub_opts);
+
     setStatus(StatusLevel::Ok, CAM_INFO_STATUS, "OK");
   } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
     setStatus(StatusLevel::Error, CAM_INFO_STATUS, QString("Error subscribing: ") + e.what());
@@ -302,7 +318,7 @@ void CameraDisplay::createCameraInfoSubscription()
 
 void CameraDisplay::unsubscribe()
 {
-  MFDClass::unsubscribe();
+  ITDClass::unsubscribe();
   caminfo_sub_.reset();
 }
 
@@ -332,9 +348,8 @@ void CameraDisplay::clear()
   new_caminfo_ = false;
   current_caminfo_.reset();
 
-  auto camera_info_topic = topic_property_->getTopicStd();
-  camera_info_topic =
-    camera_info_topic.substr(0, camera_info_topic.rfind("/") + 1) + "camera_info";
+  std::string camera_info_topic =
+    image_transport::getCameraInfoTopic(topic_property_->getTopicStd());
 
   setStatus(
     StatusLevel::Warn, CAM_INFO_STATUS,
@@ -375,9 +390,8 @@ bool CameraDisplay::updateCamera()
   }
 
   if (!info) {
-    auto camera_info_topic = topic_property_->getTopicStd();
-    camera_info_topic =
-      camera_info_topic.substr(0, camera_info_topic.rfind("/") + 1) + "camera_info";
+    std::string camera_info_topic = image_transport::getCameraInfoTopic(
+      topic_property_->getTopicStd());
 
     setStatus(
       StatusLevel::Warn, CAM_INFO_STATUS,
@@ -572,7 +586,7 @@ void CameraDisplay::processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg)
 
 void CameraDisplay::reset()
 {
-  MFDClass::reset();
+  ITDClass::reset();
   clear();
 }
 
