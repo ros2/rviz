@@ -30,6 +30,7 @@
 
 #include "rviz_default_plugins/displays/marker/markers/triangle_list_marker.hpp"
 
+#include <string>
 #include <vector>
 
 #include <OgreDataStream.h>
@@ -284,9 +285,11 @@ void TriangleListMarker::updateMaterial(
 
 void TriangleListMarker::loadTexture(const MarkerBase::MarkerConstSharedPtr & new_message) const
 {
+  // Have to pass non-const date to MemoryDataStream so copy into non-const buffer.
+  std::vector<unsigned char> texture = new_message->texture.data;
   Ogre::DataStreamPtr data_stream(new Ogre::MemoryDataStream(
-      (void *)new_message->texture.data.data(),
-      new_message->texture.data.size(), false, true));
+      texture.data(),
+      texture.size(), false, true));
   Ogre::Image img;
   img.load(data_stream, new_message->texture.format);
   Ogre::TextureManager::getSingleton().loadImage(
