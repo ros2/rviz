@@ -50,7 +50,7 @@ using rviz_rendering::findAllSpheres;
 class CovarianceVisualTestFixture : public ::testing::Test
 {
 protected:
-  static void SetUpTestCase()
+  void SetUp()
   {
     testing_environment_ = std::make_shared<rviz_rendering::OgreTestingEnvironment>();
     testing_environment_->setUpOgreTestEnvironment();
@@ -74,14 +74,11 @@ protected:
     return std::make_tuple(position, offset);
   }
 
-  static std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
+  std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
 
   std::unique_ptr<rviz_rendering::CovarianceVisual> covariance_visual_;
   Ogre::SceneNode * covariance_visual_node_;
 };
-
-std::shared_ptr<rviz_rendering::OgreTestingEnvironment>
-CovarianceVisualTestFixture::testing_environment_ = nullptr;
 
 // *INDENT-OFF* - uncrustify cannot deal with layout of matrices here
 std::array<double, 36> getCovariances3D()

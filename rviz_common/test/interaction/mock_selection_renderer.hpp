@@ -92,6 +92,7 @@ public:
     auto height = static_cast<uint32_t>(rectangle.y2 - rectangle.y1);
 
     auto data = new uint8_t[Ogre::PixelUtil::getMemorySize(width, height, 1, Ogre::PF_A8R8G8B8)]();
+    delete[] static_cast<uint8_t *>(dst_box.data);
     dst_box = Ogre::PixelBox(width, height, 1, Ogre::PF_A8R8G8B8, data);
 
     // The data is stored in uchars where four contiguous uchars correspond to one pixel (each

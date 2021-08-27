@@ -31,6 +31,7 @@
 #ifndef RVIZ_RENDERING__OGRE_LOGGING_HPP_
 #define RVIZ_RENDERING__OGRE_LOGGING_HPP_
 
+#include <memory>
 #include <string>
 
 #include "rviz_rendering/visibility_control.hpp"
@@ -48,16 +49,26 @@ namespace rviz_rendering
  * configureLogging() is called at the right time by the RenderSystem
  * constructor, so you generally won't need to call it explicitly.
  */
+
+// forward declarations
+class OgreLoggingPrivate;
+
 class OgreLogging
 {
 public:
+  RVIZ_RENDERING_PUBLIC
+  static
+  OgreLogging *
+  get();
+
+  ~OgreLogging();
+
   /// Configure Ogre to write output to the given log file name.
   /**
    * If file name is a relative path, it will be relative to
    * the directory which is current when the program is run.  Default
    * is "Ogre.log".
    */
-  static
   void
   useLogFile(const std::string & filename = "Ogre.log");
 
@@ -67,13 +78,11 @@ public:
    * the directory which is current when the program is run.  Default
    * is "Ogre.log".
    */
-  static
   RVIZ_RENDERING_PUBLIC
   void
   useLogFileAndStandardOut(const std::string & filename = "Ogre.log");
 
   /// Disable Ogre logging entirely, this is the default.
-  static
   void
   noLog();
 
@@ -81,14 +90,19 @@ public:
   /**
    * This must be called before Ogre::Root is instantiated!
    */
-  static
+  RVIZ_RENDERING_PUBLIC
   void
   configureLogging();
 
 private:
+  OgreLogging();
+
+  static OgreLogging * instance_;
   typedef enum { StandardOut, FileLogging, NoLogging } Preference;
-  static Preference preference_;
-  static std::string filename_;
+  Preference preference_ = OgreLogging::NoLogging;
+  std::string filename_ = "Ogre.log";
+
+  std::unique_ptr<OgreLoggingPrivate> dataPtr;
 };
 
 }  // namespace rviz_rendering

@@ -99,6 +99,10 @@ TEST(Property, children) {
   // Accessing a missing property should not crash.
   printf("Next line should say 'ERROR' but not crash.\n");
   display->subProp("Position")->subProp("Z")->getValue().toFloat();
+
+  delete beta;
+  delete position;
+  delete display;
 }
 
 TEST(VectorProperty, default_value) {

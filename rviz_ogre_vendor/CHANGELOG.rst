@@ -2,6 +2,9 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.7.0 (2021-08-11)
+------------------
+
 8.6.0 (2021-05-13)
 ------------------
 * Strip RPATH from installed Ogre binaries (`#688 <https://github.com/ros2/rviz/issues/688>`_)

@@ -110,8 +110,15 @@ public:
    * @param urdf The robot description to read from
    * @param visual Whether or not to load the visual representation
    * @param collision Whether or not to load the collision representation
+   * @param mass Whether or not to load the mass representation
+   * @param inertia Whether or not to load the inertia representation
    */
-  virtual void load(const urdf::ModelInterface & urdf, bool visual = true, bool collision = true);
+  virtual void load(
+    const urdf::ModelInterface & urdf,
+    bool visual = true,
+    bool collision = true,
+    bool mass = true,
+    bool inertia = true);
 
   /**
    * \brief Clears all data loaded from a URDF
@@ -139,6 +146,18 @@ public:
   void setCollisionVisible(bool visible);
 
   /**
+   * \brief Set whether the mass of each part is visible
+   * @param visible Whether the mass of each link is visible
+   */
+  void setMassVisible(bool visible);
+
+  /**
+   * \brief Set whether the inertia of each part is visible
+   * @param visible Whether the inertia of each link is visible
+   */
+  void setInertiaVisible(bool visible);
+
+  /**
    * \brief Returns whether anything is visible
    */
   bool isVisible();
@@ -152,6 +171,18 @@ public:
    * To be visible this and isVisible() must both be true.
    */
   bool isCollisionVisible();
+
+  /**
+   * \brief Returns whether or not mass of each link is visible.
+   * To be visible this and isVisible() must both be true
+   */
+  bool isMassVisible();
+
+  /**
+   * \brief Returns whether or not inertia of each link is visible.
+   * To be visible this and isVisible() must both be true
+   */
+  bool isInertiaVisible();
 
   void setAlpha(float a);
   float getAlpha() {return alpha_;}
@@ -190,7 +221,9 @@ public:
       const urdf::LinkConstSharedPtr & link,
       const std::string & parent_joint_name,
       bool visual,
-      bool collision);
+      bool collision,
+      bool mass,
+      bool inertia);
     virtual RobotJoint * createJoint(
       Robot * robot,
       const urdf::JointConstSharedPtr & joint);
@@ -280,6 +313,9 @@ protected:
   bool visual_visible_;                         ///< Should we show the visual representation?
   bool collision_visible_;                      ///< Should we show the collision representation?
 
+  bool mass_visible_;                           ///< Should we show mass of each link?
+  bool inertia_visible_;                        ///< Should we show inertia of each link?
+
   rviz_common::DisplayContext * context_;
   rviz_common::properties::Property * link_tree_;
   rviz_common::properties::EnumProperty * link_tree_style_;
@@ -300,7 +336,12 @@ protected:
   float alpha_;
 
 private:
-  void createLinkProperties(const urdf::ModelInterface & urdf, bool visual, bool collision);
+  void createLinkProperties(
+    const urdf::ModelInterface & urdf,
+    bool visual,
+    bool collision,
+    bool mass,
+    bool inertia);
   void createJointProperties(const urdf::ModelInterface & urdf);
   void log_error(
     const RobotLink * link,

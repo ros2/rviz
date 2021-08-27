@@ -219,13 +219,27 @@ void MapDisplay::subscribe()
 void MapDisplay::subscribeToUpdateTopic()
 {
   try {
+    rclcpp::SubscriptionOptions sub_opts;
+    sub_opts.event_callbacks.message_lost_callback =
+      [&](rclcpp::QOSMessageLostInfo & info)
+      {
+        std::ostringstream sstm;
+        sstm << "Some messages were lost:\n>\tNumber of new lost messages: " <<
+          info.total_count_change << " \n>\tTotal number of messages lost: " <<
+          info.total_count;
+        setStatus(
+          rviz_common::properties::StatusProperty::Warn, "Update Topic",
+          QString(sstm.str().c_str()));
+      };
+
     update_subscription_ =
       rviz_ros_node_.lock()->get_raw_node()->
       template create_subscription<map_msgs::msg::OccupancyGridUpdate>(
       update_topic_property_->getTopicStd(), update_profile_,
       [this](const map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr message) {
         incomingUpdate(message);
-      });
+      },
+      sub_opts);
     setStatus(rviz_common::properties::StatusProperty::Ok, "Update Topic", "OK");
   } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
     setStatus(
