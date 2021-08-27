@@ -38,6 +38,7 @@
 
 #include "rviz_default_plugins/displays/marker/markers/marker_base.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
+#include "sensor_msgs/msg/image.hpp"
 
 // This is necessary because of using stl types with this display. Nevertheless, if you are
 // experiencing problems when subclassing this class, please make sure ROS2 and your code were
@@ -77,6 +78,7 @@ protected:
   Ogre::ManualObject * manual_object_;
   Ogre::MaterialPtr material_;
   std::string material_name_;
+  std::string texture_name_;
 
 private:
   bool wrongNumberOfPoints(const MarkerConstSharedPtr & new_message);
@@ -92,8 +94,14 @@ private:
   bool fillManualObjectAndDetermineAlpha(MarkerConstSharedPtr new_message) const;
   void updateMaterial(const MarkerConstSharedPtr & new_message, bool any_vertex_has_alpha) const;
 
+  void loadTexture(const MarkerConstSharedPtr & new_message) const;
+
   bool hasVertexColors(MarkerConstSharedPtr new_message) const;
   bool hasFaceColors(MarkerConstSharedPtr new_message) const;
+  bool hasTexture(MarkerConstSharedPtr new_message) const;
+  bool textureEmbedded(MarkerConstSharedPtr new_message) const;
+
+  std::string getTextureName(MarkerConstSharedPtr new_message) const;
 };
 
 }  // namespace markers
