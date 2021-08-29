@@ -60,7 +60,6 @@ public:
   void takeReferenceShot(Ogre::String name);
   void takeTestShot(Ogre::String name);
   void setCamPose(Ogre::Vector3 pose);
-  void setLookAt(Ogre::Vector3 look_at);
   void setUpCamera();
   void installCamera();
 

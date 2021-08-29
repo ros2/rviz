@@ -165,8 +165,8 @@ void SelectionRenderer::configureCamera(
 
   camera_->setCustomProjectionMatrix(true, scale_matrix * trans_matrix * proj_matrix);
 
-  camera_->setPosition(viewport->getCamera()->getDerivedPosition());
-  camera_->setOrientation(viewport->getCamera()->getDerivedOrientation());
+  camera_->getParentSceneNode()->setPosition(viewport->getCamera()->getDerivedPosition());
+  camera_->getParentSceneNode()->setOrientation(viewport->getCamera()->getDerivedOrientation());
 }
 
 float SelectionRenderer::getRelativeCoordinate(float coordinate, int dimension) const

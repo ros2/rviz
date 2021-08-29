@@ -217,17 +217,19 @@ RenderWindowImpl::initialize()
 
     ogre_directional_light_ = ogre_scene_manager_->createLight("MainDirectional");
     ogre_directional_light_->setType(Ogre::Light::LT_DIRECTIONAL);
-    ogre_directional_light_->setDirection(Ogre::Vector3(-1, 0, -1));
     ogre_directional_light_->setDiffuseColour(Ogre::ColourValue(1.0f, 1.0f, 1.0f));
+
+    ogre_scene_manager_->getRootSceneNode()->createChildSceneNode()->attachObject(ogre_directional_light_);
+    ogre_directional_light_->getParentSceneNode()->setDirection(Ogre::Vector3(-1, 0, -1));
 
     ogre_camera_ = ogre_scene_manager_->createCamera("MainCamera");
     ogre_camera_->setNearClipDistance(0.1f);
     ogre_camera_->setFarClipDistance(200.0f);
 
     auto camera_node_ = ogre_scene_manager_->getRootSceneNode()->createChildSceneNode();
-    ogre_camera_->setPosition(Ogre::Vector3(0.0f, 10.0f, 10.0f));
-    ogre_camera_->lookAt(Ogre::Vector3(0.0f, 0.0f, 0.0f));
     camera_node_->attachObject(ogre_camera_);
+    camera_node_->setPosition(Ogre::Vector3(0.0f, 10.0f, 10.0f));
+    camera_node_->lookAt(Ogre::Vector3(0.0f, 0.0f, 0.0f), camera_node_->TransformSpace::TS_PARENT);
   }
 
   if (ogre_camera_) {

@@ -565,9 +565,9 @@ uint32_t PointCloud::getColorForPoint(
     c.r = ((color >> 16) & 0xff) / 255.0f;
     c.g = ((color >> 8) & 0xff) / 255.0f;
     c.b = (color & 0xff) / 255.0f;
-    root->convertColourValue(c, &color);
+    color = c.getAsBYTE();
   } else {
-    root->convertColourValue(point->color, &color);
+    color = point->color.getAsBYTE();
   }
   return color;
 }

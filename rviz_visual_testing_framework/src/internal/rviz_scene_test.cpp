@@ -68,7 +68,7 @@ void RvizTestScene::setUpCamera()
   cam_node_ = manager_->getRootSceneNode()->createChildSceneNode();
   cam_node_->attachObject(camera_);
   cam_node_->setPosition(cam_pose_);
-  camera_->lookAt(cam_look_at_vector_);
+  cam_node_->lookAt(cam_look_at_vector_, cam_node_->TransformSpace::TS_PARENT);
 }
 
 void RvizTestScene::installCamera()
@@ -98,9 +98,4 @@ void RvizTestScene::takeScreenShot(Ogre::String name)
 void RvizTestScene::setCamPose(Ogre::Vector3 pose)
 {
   cam_node_->setPosition(pose);
-}
-
-void RvizTestScene::setLookAt(Ogre::Vector3 look_at)
-{
-  camera_->lookAt(look_at);
 }

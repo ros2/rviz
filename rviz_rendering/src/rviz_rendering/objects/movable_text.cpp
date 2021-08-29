@@ -476,8 +476,7 @@ void MovableText::updateColors()
   assert(font_);
   assert(material_);
 
-  Ogre::RGBA color;
-  Ogre::Root::getSingleton().convertColourValue(color_, &color);
+  Ogre::RGBA color = color_.getAsBYTE();
   fillColorBuffer(color);
   needs_color_update_ = false;
 }
