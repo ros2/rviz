@@ -56,10 +56,10 @@ public:
     QObject * receiver = 0);
 
   /// Get value as std::string.
-  std::string getStdString();
+  std::string getStdString() const;
 
   /// Get value as QString.
-  QString getString();
+  QString getString() const;
 
 public Q_SLOTS:
   /// Set value from std::string.
