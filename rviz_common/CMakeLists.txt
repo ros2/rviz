@@ -121,7 +121,7 @@ set(rviz_common_headers_to_moc
   include/rviz_common/interaction/selection_manager_iface.hpp
   src/rviz_common/splash_screen.hpp
   include/rviz_common/tool.hpp
-  src/rviz_common/tool_manager.hpp
+  include/rviz_common/tool_manager.hpp
   src/rviz_common/tool_properties_panel.hpp
   include/rviz_common/transformation/transformation_manager.hpp
   src/rviz_common/transformation_panel.hpp
