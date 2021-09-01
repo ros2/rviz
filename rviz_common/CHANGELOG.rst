@@ -2,6 +2,11 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.2.3 (2021-09-01)
+------------------
+* Update message_filter_display.hpp (`#708 <https://github.com/ros2/rviz/issues/708>`_)
+* Contributors: Nisala Kalupahana
+
 8.2.2 (2021-06-18)
 ------------------
 * Expose VisualizationManager and YamlConfigReader to the public API (`#649 <https://github.com/ros2/rviz/issues/649>`_) (`#709 <https://github.com/ros2/rviz/issues/709>`_)

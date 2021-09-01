@@ -2,6 +2,12 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.2.3 (2021-09-01)
+------------------
+* YUV to RGB changes (`#732 <https://github.com/ros2/rviz/issues/732>`_)
+* Export InteractiveMarker (`#728 <https://github.com/ros2/rviz/issues/728>`_)
+* Contributors: Akash, cturcotte-qnx
+
 8.2.2 (2021-06-18)
 ------------------
 * Make the types explicit in quaternion_helper.hpp. (`#625 <https://github.com/ros2/rviz/issues/625>`_) (`#673 <https://github.com/ros2/rviz/issues/673>`_)
