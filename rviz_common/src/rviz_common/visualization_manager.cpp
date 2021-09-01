@@ -84,7 +84,7 @@
 #include "rviz_common/interaction/view_picker.hpp"
 #include "rviz_common/interaction/view_picker_iface.hpp"
 #include "rviz_common/tool.hpp"
-#include "./tool_manager.hpp"
+#include "rviz_common/tool_manager.hpp"
 // #include "rviz_common/view_controller.hpp"
 #include "rviz_common/view_manager.hpp"
 // #include "./viewport_mouse_event.hpp"

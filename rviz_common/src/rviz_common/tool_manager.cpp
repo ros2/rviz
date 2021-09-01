@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./tool_manager.hpp"
+#include "rviz_common/tool_manager.hpp"
 
 #include <cassert>
 #include <vector>
