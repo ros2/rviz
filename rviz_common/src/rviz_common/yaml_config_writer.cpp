@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./yaml_config_writer.hpp"
+#include "rviz_common/yaml_config_writer.hpp"
 
 #include <fstream>
 
