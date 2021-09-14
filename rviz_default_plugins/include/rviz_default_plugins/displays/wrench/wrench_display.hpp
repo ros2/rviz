@@ -93,6 +93,7 @@ private:
 
   std::deque<std::shared_ptr<rviz_rendering::WrenchVisual>> visuals_;
 
+  rviz_common::properties::BoolProperty * accept_nan_values_;
   rviz_common::properties::ColorProperty * force_color_property_;
   rviz_common::properties::ColorProperty * torque_color_property_;
   rviz_common::properties::FloatProperty * alpha_property_;
