@@ -283,7 +283,7 @@ void RobotModelDisplay::display_urdf_content()
   robot_->load(descr);
   std::stringstream ss;
   for (const auto & name_link_pair : robot_->getLinks()) {
-    const std::string & err = name_link_pair.second->getGeometryErrors();
+    const std::string err = name_link_pair.second->getGeometryErrors();
     if (!err.empty()) {
       ss << "\n• for link '" << name_link_pair.first << "':\n" << err;
     }

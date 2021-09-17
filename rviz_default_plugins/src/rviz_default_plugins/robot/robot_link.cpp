@@ -366,14 +366,13 @@ void RobotLink::addError(const char * format, ...)
   vsnprintf(buffer, sizeof(buffer), format, args);
   va_end(args);
 
-  std::string & err = const_cast<std::string &>(getGeometryErrors());
-  if (!err.empty()) {
-    err.append("\n");
+  if (!error.empty()) {
+    error.append("\n");
   }
-  err.append(buffer);
+  error.append(buffer);
 }
 
-const std::string & RobotLink::getGeometryErrors() const
+const std::string RobotLink::getGeometryErrors() const
 {
   return error;
 }

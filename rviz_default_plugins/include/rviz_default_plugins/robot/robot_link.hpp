@@ -151,7 +151,7 @@ public:
   Ogre::SceneNode * getVisualNode() const {return visual_node_;}
   Ogre::SceneNode * getCollisionNode() const {return collision_node_;}
   Robot * getRobot() const {return robot_;}
-  const std::string & getGeometryErrors() const;
+  const std::string getGeometryErrors() const;
 
   // get the meshes vector to be used in robot_test.cpp
   std::vector<Ogre::Entity *> getVisualMeshes() {return visual_meshes_;}
