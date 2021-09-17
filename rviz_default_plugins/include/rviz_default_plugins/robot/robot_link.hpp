@@ -273,6 +273,8 @@ private:
   Ogre::MaterialPtr color_material_;
   bool using_color_;
 
+  std::string error;
+
   friend class RobotLinkSelectionHandler;
 };
 

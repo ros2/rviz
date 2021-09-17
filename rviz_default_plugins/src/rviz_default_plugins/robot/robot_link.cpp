@@ -179,8 +179,6 @@ void RobotLinkSelectionHandler::postRenderPass(uint32_t pass)
   }
 }
 
-static std::map<const RobotLink *, std::string> errors;
-
 RobotLink::RobotLink(
   Robot * robot,
   const urdf::LinkConstSharedPtr & link,
@@ -358,7 +356,6 @@ RobotLink::~RobotLink()
 
   delete details_;
   delete robot_element_property_;
-  errors.erase(this);
 }
 
 void RobotLink::addError(const char * format, ...)
@@ -378,7 +375,7 @@ void RobotLink::addError(const char * format, ...)
 
 const std::string & RobotLink::getGeometryErrors() const
 {
-  return errors[this];
+  return error;
 }
 
 void RobotLink::setRobotAlpha(float a)
