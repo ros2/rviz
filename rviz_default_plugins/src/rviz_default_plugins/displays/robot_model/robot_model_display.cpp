@@ -49,6 +49,7 @@
 #include "rviz_common/properties/string_property.hpp"
 
 #include "rviz_default_plugins/robot/robot.hpp"
+#include "rviz_default_plugins/robot/robot_link.hpp"
 #include "rviz_default_plugins/robot/tf_link_updater.hpp"
 
 namespace rviz_default_plugins
@@ -280,6 +281,18 @@ void RobotModelDisplay::display_urdf_content()
 
   setStatus(StatusProperty::Ok, "URDF", "URDF parsed OK");
   robot_->load(descr);
+  std::stringstream ss;
+  for (const auto & name_link_pair : robot_->getLinks()) {
+    const std::string err = name_link_pair.second->getGeometryErrors();
+    if (!err.empty()) {
+      ss << "\n• for link '" << name_link_pair.first << "':\n" << err;
+    }
+  }
+  if (ss.tellp()) {
+    setStatus(
+      StatusProperty::Error, "URDF",
+      QString("Errors loading geometries:").append(ss.str().c_str()));
+  }
   updateRobot();
 }
 

@@ -151,6 +151,7 @@ public:
   Ogre::SceneNode * getVisualNode() const {return visual_node_;}
   Ogre::SceneNode * getCollisionNode() const {return collision_node_;}
   Robot * getRobot() const {return robot_;}
+  const std::string getGeometryErrors() const;
 
   // get the meshes vector to be used in robot_test.cpp
   std::vector<Ogre::Entity *> getVisualMeshes() {return visual_meshes_;}
@@ -189,6 +190,9 @@ private:
     Ogre::MaterialPtr & material_for_link, const urdf::VisualSharedPtr & visual) const;
 
   void createCollision(const urdf::LinkConstSharedPtr & link);
+
+  void addError(const char * format, ...);
+
   void createVisual(const urdf::LinkConstSharedPtr & link);
   void createMass(const urdf::LinkConstSharedPtr & link);
   void createInertia(const urdf::LinkConstSharedPtr & link);
@@ -268,6 +272,8 @@ private:
 
   Ogre::MaterialPtr color_material_;
   bool using_color_;
+
+  std::string error;
 
   friend class RobotLinkSelectionHandler;
 };
