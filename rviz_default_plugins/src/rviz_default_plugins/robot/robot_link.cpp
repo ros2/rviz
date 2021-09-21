@@ -847,7 +847,7 @@ void RobotLink::createMass(const urdf::LinkConstSharedPtr & link)
 void RobotLink::createInertia(const urdf::LinkConstSharedPtr & link)
 {
   if (link->inertial) {
-    const ignition::math::Vector3d Ixxyyzz(
+    const ignition::math::Vector3d i_xx_yy_zz(
       link->inertial->ixx,
       link->inertial->iyy,
       link->inertial->izz);
@@ -855,11 +855,11 @@ void RobotLink::createInertia(const urdf::LinkConstSharedPtr & link)
       link->inertial->ixy,
       link->inertial->ixz,
       link->inertial->iyz);
-    ignition::math::MassMatrix3d m(link->inertial->mass, Ixxyyzz, Ixyxzyz);
+    ignition::math::MassMatrix3d mass_matrix(link->inertial->mass, i_xx_yy_zz, Ixyxzyz);
 
-    ignition::math::Vector3d boxScale;
-    ignition::math::Quaterniond boxRot;
-    if (!m.EquivalentBox(boxScale, boxRot)) {
+    ignition::math::Vector3d box_scale;
+    ignition::math::Quaterniond box_rot;
+    if (!mass_matrix.EquivalentBox(box_scale, box_rot)) {
       // Invalid inertia, load with default scale
       RVIZ_COMMON_LOG_ERROR_STREAM(
         "The link is static or has unrealistic "
@@ -870,12 +870,12 @@ void RobotLink::createInertia(const urdf::LinkConstSharedPtr & link)
       link->inertial->origin.position.x,
       link->inertial->origin.position.y,
       link->inertial->origin.position.z);
-    Ogre::Quaternion rotate(boxRot.W(), boxRot.X(), boxRot.Y(), boxRot.Z());
+    Ogre::Quaternion rotate(box_rot.W(), box_rot.X(), box_rot.Y(), box_rot.Z());
     Ogre::SceneNode * offset_node = inertia_node_->createChildSceneNode(translate, rotate);
     inertia_shape_ = new Shape(Shape::Cube, scene_manager_, offset_node);
 
     inertia_shape_->setColor(1, 0, 0, 1);
-    inertia_shape_->setScale(Ogre::Vector3(boxScale.X(), boxScale.Y(), boxScale.Z()));
+    inertia_shape_->setScale(Ogre::Vector3(box_scale.X(), box_scale.Y(), box_scale.Z()));
   }
 }
 
