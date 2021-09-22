@@ -30,6 +30,12 @@
 
 #include "rviz_default_plugins/robot/robot_link.hpp"
 
+#include <ignition/math/Inertial.hh>
+#include <ignition/math/MassMatrix3.hh>
+#include <ignition/math/Pose3.hh>
+#include <ignition/math/Quaternion.hh>
+#include <ignition/math/Vector3.hh>
+
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <map>
@@ -865,29 +871,35 @@ void RobotLink::createMass(const urdf::LinkConstSharedPtr & link)
 void RobotLink::createInertia(const urdf::LinkConstSharedPtr & link)
 {
   if (link->inertial) {
-    // display a box sized as if it were a box of uniform density
-    // with the same inertia as the link
-    // Ixx = mass/12 (ly^2 + lz^2)
-    // Iyy = mass/12 (lx^2 + lz^2)
-    // Izz = mass/12 (lx^2 + ly^2)
-    urdf::Pose pose = link->inertial->origin;
-    Ogre::Vector3 translate(pose.position.x, pose.position.y, pose.position.z);
-    Ogre::Quaternion rotate(pose.rotation.w, pose.rotation.x, pose.rotation.y, pose.rotation.z);
+    const ignition::math::Vector3d i_xx_yy_zz(
+      link->inertial->ixx,
+      link->inertial->iyy,
+      link->inertial->izz);
+    const ignition::math::Vector3d Ixyxzyz(
+      link->inertial->ixy,
+      link->inertial->ixz,
+      link->inertial->iyz);
+    ignition::math::MassMatrix3d mass_matrix(link->inertial->mass, i_xx_yy_zz, Ixyxzyz);
+
+    ignition::math::Vector3d box_scale;
+    ignition::math::Quaterniond box_rot;
+    if (!mass_matrix.EquivalentBox(box_scale, box_rot)) {
+      // Invalid inertia, load with default scale
+      RVIZ_COMMON_LOG_ERROR_STREAM(
+        "The link is static or has unrealistic "
+        "inertia, so the equivalent inertia box will not be shown.\n");
+      return;
+    }
+    Ogre::Vector3 translate(
+      link->inertial->origin.position.x,
+      link->inertial->origin.position.y,
+      link->inertial->origin.position.z);
+    Ogre::Quaternion rotate(box_rot.W(), box_rot.X(), box_rot.Y(), box_rot.Z());
     Ogre::SceneNode * offset_node = inertia_node_->createChildSceneNode(translate, rotate);
     inertia_shape_ = new Shape(Shape::Cube, scene_manager_, offset_node);
 
-    double length_x = sqrt(
-      6 / link->inertial->mass * (link->inertial->iyy + link->inertial->izz -
-      link->inertial->ixx));
-    double length_y = sqrt(
-      6 / link->inertial->mass * (link->inertial->ixx + link->inertial->izz -
-      link->inertial->iyy));
-    double length_z = sqrt(
-      6 / link->inertial->mass * (link->inertial->ixx + link->inertial->iyy -
-      link->inertial->izz));
-
     inertia_shape_->setColor(1, 0, 0, 1);
-    inertia_shape_->setScale(Ogre::Vector3(length_x, length_y, length_z));
+    inertia_shape_->setScale(Ogre::Vector3(box_scale.X(), box_scale.Y(), box_scale.Z()));
   }
 }
 
