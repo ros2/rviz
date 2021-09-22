@@ -267,7 +267,9 @@ void PointCloudCommon::updateBillboardSize()
   }
   for (auto & cloud_info : cloud_infos_) {
     cloud_info->cloud_->setDimensions(size, size, size);
-    cloud_info->selection_handler_->setBoxSize(getSelectionBoxSize());
+    if (cloud_info->selection_handler_) {
+      cloud_info->selection_handler_->setBoxSize(getSelectionBoxSize());
+    }
   }
   context_->queueRender();
 }
