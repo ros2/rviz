@@ -116,7 +116,7 @@ Q_SIGNALS:
   void typeErasedMessageTaken(std::shared_ptr<const void> type_erased_message);
 
 protected Q_SLOTS:
-  virtual void processTypeErasedMessage(std::shared_ptr<const void> type_erased_message)
+  void processTypeErasedMessage(std::shared_ptr<const void> type_erased_message)
   {
     (void)type_erased_message;
   }
