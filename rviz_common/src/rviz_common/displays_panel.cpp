@@ -36,6 +36,7 @@
 #include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
 #include <QHBoxLayout>  // NOLINT: cpplint is unable to handle the include order here
 #include <QInputDialog>  // NOLINT: cpplint is unable to handle the include order here
+#include <QProgressDialog> // NOLINT: cpplint is unable to handle the include order here
 #include <QPushButton>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
 #include <QVBoxLayout>  // NOLINT: cpplint is unable to handle the include order here
@@ -147,7 +148,13 @@ void DisplaysPanel::onDuplicateDisplay()
   QList<Display *> displays_to_duplicate = property_grid_->getSelectedObjects<Display>();
 
   QList<Display *> duplicated_displays;
+  QProgressDialog progress_dlg("Duplicating displays...", "Cancel", 0, displays_to_duplicate.size(),
+    this);
+  progress_dlg.setWindowModality(Qt::WindowModal);
+  progress_dlg.show();
 
+  // duplicate all selected displays
+  int i = 0;
   for (const auto & display_to_duplicate : displays_to_duplicate) {
     // initialize display
     QString lookup_name = display_to_duplicate->getClassId();
@@ -158,6 +165,12 @@ void DisplaysPanel::onDuplicateDisplay()
     display_to_duplicate->save(config);
     disp->load(config);
     duplicated_displays.push_back(disp);
+    progress_dlg.setValue(i + 1);
+    i++;
+    // push cancel to stop duplicate
+    if (progress_dlg.wasCanceled()) {
+      break;
+    }
   }
   // make sure the newly duplicated displays are selected.
   if (!duplicated_displays.isEmpty()) {
