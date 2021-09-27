@@ -127,7 +127,7 @@ protected:
       tf_filter_->connectInput(*subscription_);
       tf_filter_->registerCallback(
         std::bind(
-          &MessageFilterDisplay<MessageType>::messageTaken, this,
+          &MessageFilterDisplay<MessageType>::incomingMessage, this,
           std::placeholders::_1));
       setStatus(properties::StatusProperty::Ok, "Topic", "OK");
     } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
@@ -174,7 +174,7 @@ protected:
     reset();
   }
 
-  void messageTaken(typename MessageType::ConstSharedPtr msg)
+  void incomingMessage(const typename MessageType::ConstSharedPtr msg)
   {
     if (!msg) {
       return;
@@ -187,7 +187,7 @@ protected:
     Q_EMIT typeErasedMessageTaken(std::static_pointer_cast<const void>(msg));
   }
 
-  void processTypeErasedMessage(std::shared_ptr<const void> type_erased_msg) override
+  void processTypeErasedMessage(std::shared_ptr<const void> type_erased_msg)
   {
     auto msg = std::static_pointer_cast<const MessageType>(type_erased_msg);
 
