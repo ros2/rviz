@@ -116,7 +116,7 @@ target_compile_definitions(rviz_rendering PRIVATE "RVIZ_RENDERING_BUILDING_LIBRA
 
 ament_export_targets(rviz_rendering)
 ament_target_dependencies(rviz_rendering
-  PUBLIC
+  SYSTEM PUBLIC
   rviz_assimp_vendor
 )
 ament_export_dependencies(
