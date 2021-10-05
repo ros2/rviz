@@ -120,9 +120,11 @@ std::shared_ptr<tf2_ros::Buffer> TFWrapper::getBuffer()
 void TFWrapper::initialize(
   rclcpp::Clock::SharedPtr clock,
   rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
-  bool using_dedicated_thread)
+  bool using_dedicated_thread,
+  tf2::Duration buffer_cache_sec
+)
 {
-  initializeBuffer(clock, rviz_ros_node.lock()->get_raw_node(), using_dedicated_thread);
+  initializeBuffer(clock, rviz_ros_node.lock()->get_raw_node(), using_dedicated_thread, buffer_cache_sec);
   if (using_dedicated_thread) {
     // TODO(pull/551): The TransformListener needs very quick spinning so it uses its own node
     // here. Remove this in favor of a multithreaded spinner and ensure that the listener callback
@@ -136,9 +138,11 @@ void TFWrapper::initialize(
 }
 
 void TFWrapper::initializeBuffer(
-  rclcpp::Clock::SharedPtr clock, rclcpp::Node::SharedPtr node, bool using_dedicated_thread)
+  rclcpp::Clock::SharedPtr clock, rclcpp::Node::SharedPtr node, bool using_dedicated_thread,
+  tf2::Duration buffer_cache_sec
+)
 {
-  buffer_ = std::make_shared<tf2_ros::Buffer>(clock);
+  buffer_ = std::make_shared<tf2_ros::Buffer>(clock, buffer_cache_sec);
   auto timer_interface = std::make_shared<tf2_ros::CreateTimerROS>(
     node->get_node_base_interface(), node->get_node_timers_interface());
   buffer_->setCreateTimerInterface(timer_interface);

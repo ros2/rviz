@@ -43,6 +43,8 @@
 
 #include "rviz_default_plugins/visibility_control.hpp"
 
+#include "tf2_ros/buffer.h"
+
 namespace rviz_default_plugins
 {
 namespace transformation
@@ -62,7 +64,7 @@ public:
   void
   initialize(
     rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
-    rclcpp::Clock::SharedPtr clock) override;
+    rclcpp::Clock::SharedPtr clock, tf2::Duration buffer_cache_sec) override;
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   void

@@ -66,7 +66,7 @@ public:
     auto clock = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);
     auto node = std::make_shared<rclcpp::Node>("test_node");
     tf_wrapper_ = std::make_shared<rviz_default_plugins::transformation::TFWrapper>();
-    tf_wrapper_->initializeBuffer(clock, node, false);
+    tf_wrapper_->initializeBuffer(clock, node, false, tf2::BUFFER_CORE_DEFAULT_CACHE_TIME);
     tf_transformer_ = std::make_unique<rviz_default_plugins::transformation::TFFrameTransformer>(
       tf_wrapper_);
   }

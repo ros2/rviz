@@ -122,7 +122,8 @@ public:
   initialize(
     rclcpp::Clock::SharedPtr clock,
     rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
-    bool using_dedicated_thread);
+    bool using_dedicated_thread,
+    tf2::Duration buffer_cache_sec);
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   void
@@ -133,7 +134,8 @@ public:
   initializeBuffer(
     rclcpp::Clock::SharedPtr clock,
     rclcpp::Node::SharedPtr node,
-    bool using_dedicated_thread);
+    bool using_dedicated_thread,
+    tf2::Duration buffer_cache_sec);
 
 private:
   std::shared_ptr<tf2_ros::Buffer> buffer_;

@@ -47,6 +47,8 @@
 #include "rviz_common/window_manager_interface.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
 
+#include "tf2_ros/buffer.h"
+
 class QAction;
 class QActionGroup;
 class QApplication;
@@ -131,7 +133,9 @@ public:
   void
   initialize(
     ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
-    const QString & display_config_file = "");
+    const QString & display_config_file = "",
+    tf2::Duration buffer_cache_sec= tf2::BUFFER_CORE_DEFAULT_CACHE_TIME
+  );
 
   /// Return the visualization manager.
   VisualizationManager *

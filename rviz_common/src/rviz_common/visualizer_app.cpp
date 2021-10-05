@@ -50,6 +50,8 @@
 #include "rviz_common/visualization_frame.hpp"
 #include "rviz_common/visualization_manager.hpp"
 
+#include "tf2_ros/buffer.h"
+
 // TODO(wjwwood): figure out a non-depricated way to do this
 #if 0
 #ifdef Q_OS_MAC
@@ -176,6 +178,11 @@ bool VisualizerApp::init(int argc, char ** argv)
       "A custom splash-screen image to display", "splash_path");
   parser.addOption(splash_screen_option);
 
+  QCommandLineOption buffer_cache_time_options(
+    QStringList() << "b" << "buffer-cache",
+      "TF Buffer cache timeout in seconds");
+  parser.addOption(buffer_cache_time_options);
+
 // TODO(botteroa-si): enable when possible
 //  QCommandLineOption help_file_option(
 //    "help-file", "A custom html file to show as the help screen", "help_path");
@@ -200,7 +207,7 @@ bool VisualizerApp::init(int argc, char ** argv)
 
 //   ("in-mc-wrapper", "Signal that this is running inside a master-chooser wrapper")
 
-  QString display_config, fixed_frame, splash_path, help_path;
+  QString display_config, fixed_frame, splash_path, help_path, buffer_cache_qstr;
   bool enable_ogre_log;
   // TODO(botteroa-si): enable when possible
 //  bool in_mc_wrapper = false;
@@ -224,6 +231,19 @@ bool VisualizerApp::init(int argc, char ** argv)
   if (parser.isSet(splash_screen_option)) {
     splash_path = parser.value(splash_screen_option);
   }
+
+  bool buffer_cache_option_set{false};
+  tf2::Duration buffer_cache_sec = tf2::BUFFER_CORE_DEFAULT_CACHE_TIME;
+  if (parser.isSet(buffer_cache_time_options)) {
+    buffer_cache_qstr = parser.value(buffer_cache_time_options);
+    tf2::Duration buffer_cache_sec_param = tf2::durationFromSec(
+                              buffer_cache_qstr.toInt(&buffer_cache_option_set)
+                            );
+    if (buffer_cache_option_set ) {
+      buffer_cache_sec = buffer_cache_sec_param;
+    }
+  }
+
 // TODO(botteroa-si): enable when possible
 //    if (parser.isSet(help_file_option)) {
 //      help_path = parser.value(help_file_option);
@@ -293,7 +313,7 @@ bool VisualizerApp::init(int argc, char ** argv)
   if (!splash_path.isEmpty()) {
     frame_->setSplashPath(splash_path);
   }
-  frame_->initialize(node_, display_config);
+  frame_->initialize(node_, display_config, buffer_cache_sec);
 
   if (!fixed_frame.isEmpty()) {
     frame_->getManager()->setFixedFrame(fixed_frame);

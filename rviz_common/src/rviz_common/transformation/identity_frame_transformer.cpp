@@ -44,7 +44,9 @@ namespace transformation
 {
 
 void IdentityFrameTransformer::initialize(
-  ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node, rclcpp::Clock::SharedPtr clock)
+  ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node, rclcpp::Clock::SharedPtr clock,
+  tf2::Duration buffer_cache_sec
+)
 {
   (void) rviz_ros_node;
   (void) clock;

@@ -46,6 +46,8 @@
 #include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
 #include "rviz_common/transformation/transformation_manager.hpp"
 
+#include "tf2_ros/buffer.h"
+
 class QTimer;
 
 namespace Ogre
@@ -103,7 +105,9 @@ public:
   explicit VisualizationManager(
     RenderPanel * render_panel,
     ros_integration::RosNodeAbstractionIface::WeakPtr ros_node_abstraction,
-    WindowManagerInterface * wm, rclcpp::Clock::SharedPtr clock);
+    WindowManagerInterface * wm, rclcpp::Clock::SharedPtr clock,
+    tf2::Duration buffer_cache_sec = tf2::BUFFER_CORE_DEFAULT_CACHE_TIME
+  );
 
   /// Destructor.
   /**
