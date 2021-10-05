@@ -2,6 +2,15 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.2.4 (2021-10-05)
+------------------
+* Removed traces in renderPanel (`#777 <https://github.com/ros2/rviz/issues/777>`_) (`#779 <https://github.com/ros2/rviz/issues/779>`_)
+* Ensure rviz_common::MessageFilterDisplay processes messages in the main thread (`#620 <https://github.com/ros2/rviz/issues/620>`_) (`#765 <https://github.com/ros2/rviz/issues/765>`_)
+* Update displays_panel.cpp (`#745 <https://github.com/ros2/rviz/issues/745>`_) (`#772 <https://github.com/ros2/rviz/issues/772>`_)
+* Fix byte indexing for depth patch pixels (`#661 <https://github.com/ros2/rviz/issues/661>`_) (`#759 <https://github.com/ros2/rviz/issues/759>`_)
+* Fix toolbar vanishing when pressing escape (`#656 <https://github.com/ros2/rviz/issues/656>`_) (`#758 <https://github.com/ros2/rviz/issues/758>`_)
+* Efficiently handle 3-bytes pixel formats (`#743 <https://github.com/ros2/rviz/issues/743>`_)
+* Contributors: Alejandro Hernández Cordero, Jacob Perron, Vojtech Spurny, Michel Hidalgo, Greg Balke, Joseph Schornak, ipa-fez
 8.2.3 (2021-09-01)
 ------------------
 * Update message_filter_display.hpp (`#708 <https://github.com/ros2/rviz/issues/708>`_)

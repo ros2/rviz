@@ -2,6 +2,11 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.2.4 (2021-10-05)
+------------------
+* Fixed crash when changing rendering parameters for pointcloud2 while 'Selectable' box is unchecked (`#768 <https://github.com/ros2/rviz/issues/768>`_) (`#770 <https://github.com/ros2/rviz/issues/770>`_)
+* Contributors: Alejandro Hernández Cordero
+
 8.2.3 (2021-09-01)
 ------------------
 * YUV to RGB changes (`#732 <https://github.com/ros2/rviz/issues/732>`_)
