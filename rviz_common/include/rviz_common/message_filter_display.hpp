@@ -174,17 +174,22 @@ protected:
     reset();
   }
 
-  /// Incoming message callback.
-  /**
-   * Checks if the message pointer
-   * is valid, increments messages_received_, then calls
-   * processMessage().
-   */
   void incomingMessage(const typename MessageType::ConstSharedPtr msg)
   {
     if (!msg) {
       return;
     }
+
+    // Do not process message right away, tf2_ros::MessageFilter may be
+    // calling back from tf2_ros::TransformListener dedicated thread.
+    // Use type erased signal/slot machinery to ensure messages are
+    // processed in the main thread.
+    Q_EMIT typeErasedMessageTaken(std::static_pointer_cast<const void>(msg));
+  }
+
+  void processTypeErasedMessage(std::shared_ptr<const void> type_erased_msg)
+  {
+    auto msg = std::static_pointer_cast<const MessageType>(type_erased_msg);
 
     ++messages_received_;
     setStatus(
