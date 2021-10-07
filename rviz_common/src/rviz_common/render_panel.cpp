@@ -211,25 +211,21 @@ void RenderPanel::leaveEvent(QEvent * event)
 
 void RenderPanel::mouseMoveEvent(QMouseEvent * event)
 {
-  printf("in RenderPanel::mouseMoveEvent()\n");
   onRenderWindowMouseEvents(event);
 }
 
 void RenderPanel::mousePressEvent(QMouseEvent * event)
 {
-  printf("in RenderPanel::mousePressEvent()\n");
   onRenderWindowMouseEvents(event);
 }
 
 void RenderPanel::mouseReleaseEvent(QMouseEvent * event)
 {
-  printf("in RenderPanel::mouseReleaseEvent()\n");
   onRenderWindowMouseEvents(event);
 }
 
 void RenderPanel::mouseDoubleClickEvent(QMouseEvent * event)
 {
-  printf("in RenderPanel::mouseDoubleClickEvent()\n");
   onRenderWindowMouseEvents(event);
 }
 
