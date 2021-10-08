@@ -51,12 +51,6 @@
 #include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
 #include "rviz_common/visibility_control.hpp"
 
-// Required, in combination with
-// `qRegisterMetaType<std::shared_ptr<const void>>` so that this
-// type can be queued by Qt slots.
-// See: http://doc.qt.io/qt-5/qmetatype.html#qRegisterMetaType-1
-Q_DECLARE_METATYPE(std::shared_ptr<const void>)
-
 namespace rviz_common
 {
 
@@ -72,8 +66,6 @@ public:
   : rviz_ros_node_(),
     qos_profile(5)
   {
-    qRegisterMetaType<std::shared_ptr<const void>>();
-
     topic_property_ = new properties::RosTopicProperty(
       "Topic", "",
       "", "", this, SLOT(updateTopic()));
@@ -100,27 +92,9 @@ public:
         this->qos_profile = profile;
         updateTopic();
       });
-
-    // Useful to _ROSTopicDisplay subclasses to ensure GUI updates
-    // are performed by the main thread only.
-    connect(
-      this,
-      SIGNAL(typeErasedMessageTaken(std::shared_ptr<const void>)),
-      this,
-      SLOT(processTypeErasedMessage(std::shared_ptr<const void>)),
-      // Force queued connections regardless of QObject thread affinity
-      Qt::QueuedConnection);
   }
-
-Q_SIGNALS:
-  void typeErasedMessageTaken(std::shared_ptr<const void> type_erased_message);
 
 protected Q_SLOTS:
-  void processTypeErasedMessage(std::shared_ptr<const void> type_erased_message)
-  {
-    (void)type_erased_message;
-  }
-
   virtual void transformerChangedCallback()
   {
   }
