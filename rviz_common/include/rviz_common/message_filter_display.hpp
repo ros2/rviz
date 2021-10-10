@@ -37,6 +37,12 @@
 
 #include "rviz_common/ros_topic_display.hpp"
 
+// Required, in combination with
+// `qRegisterMetaType<std::shared_ptr<const void>>` so that this
+// type can be queued by Qt slots.
+// See: http://doc.qt.io/qt-5/qmetatype.html#qRegisterMetaType-1
+Q_DECLARE_METATYPE(std::shared_ptr<const void>)
+
 namespace rviz_common
 {
 /// Display subclass using a rclcpp::subscription and tf2_ros::MessageFilter.
@@ -59,6 +65,8 @@ public:
   : tf_filter_(nullptr),
     messages_received_(0)
   {
+    qRegisterMetaType<std::shared_ptr<const void>>();
+
     // TODO(Martin-Idel-SI): We need a way to extract the MessageType from the template to set a
     // correct string. Previously was:
     // QString message_type =
@@ -75,6 +83,16 @@ public:
   void onInitialize() override
   {
     _RosTopicDisplay::onInitialize();
+
+    // Useful to _ROSTopicDisplay subclasses to ensure GUI updates
+    // are performed by the main thread only.
+    connect(
+      this,
+      SIGNAL(typeErasedMessageTaken(std::shared_ptr<const void>)),
+      this,
+      SLOT(processTypeErasedMessage(std::shared_ptr<const void>)),
+      // Force queued connections regardless of QObject thread affinity
+      Qt::QueuedConnection);
   }
 
   ~MessageFilterDisplay() override
@@ -187,6 +205,20 @@ protected:
     Q_EMIT typeErasedMessageTaken(std::static_pointer_cast<const void>(msg));
   }
 
+  /// Implement this to process the contents of a message.
+  /**
+   * This is called by incomingMessage().
+   */
+  virtual void processMessage(typename MessageType::ConstSharedPtr msg) = 0;
+
+  typename std::shared_ptr<message_filters::Subscriber<MessageType>> subscription_;
+  std::shared_ptr<tf2_ros::MessageFilter<MessageType, transformation::FrameTransformer>> tf_filter_;
+  uint32_t messages_received_;
+
+Q_SIGNALS:
+  void typeErasedMessageTaken(std::shared_ptr<const void> type_erased_message);
+
+protected Q_SLOTS:
   void processTypeErasedMessage(std::shared_ptr<const void> type_erased_msg)
   {
     auto msg = std::static_pointer_cast<const MessageType>(type_erased_msg);
@@ -199,16 +231,6 @@ protected:
 
     processMessage(msg);
   }
-
-  /// Implement this to process the contents of a message.
-  /**
-   * This is called by incomingMessage().
-   */
-  virtual void processMessage(typename MessageType::ConstSharedPtr msg) = 0;
-
-  typename std::shared_ptr<message_filters::Subscriber<MessageType>> subscription_;
-  std::shared_ptr<tf2_ros::MessageFilter<MessageType, transformation::FrameTransformer>> tf_filter_;
-  uint32_t messages_received_;
 };
 
 }  // end namespace rviz_common
