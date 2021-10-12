@@ -2,6 +2,11 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.2.5 (2021-10-12)
+------------------
+* Revert "Ensure rviz_common::MessageFilterDisplay processes messages in the main thread (`#620 <https://github.com/ros2/rviz/issues/620>`_) (`#765 <https://github.com/ros2/rviz/issues/765>`_)" (`#783 <https://github.com/ros2/rviz/issues/783>`_)
+* Contributors: Greg Balke
+
 8.2.4 (2021-10-05)
 ------------------
 * Removed traces in renderPanel (`#777 <https://github.com/ros2/rviz/issues/777>`_) (`#779 <https://github.com/ros2/rviz/issues/779>`_)

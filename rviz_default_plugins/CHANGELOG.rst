@@ -2,6 +2,9 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.2.5 (2021-10-12)
+------------------
+
 8.2.4 (2021-10-05)
 ------------------
 * Fixed crash when changing rendering parameters for pointcloud2 while 'Selectable' box is unchecked (`#768 <https://github.com/ros2/rviz/issues/768>`_) (`#770 <https://github.com/ros2/rviz/issues/770>`_)
