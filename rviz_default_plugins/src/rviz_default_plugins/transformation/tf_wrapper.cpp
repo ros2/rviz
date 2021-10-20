@@ -124,7 +124,8 @@ void TFWrapper::initialize(
   tf2::Duration buffer_cache_sec
 )
 {
-  initializeBuffer(clock, rviz_ros_node.lock()->get_raw_node(), using_dedicated_thread, buffer_cache_sec);
+  initializeBuffer(
+    clock, rviz_ros_node.lock()->get_raw_node(), using_dedicated_thread, buffer_cache_sec);
   if (using_dedicated_thread) {
     // TODO(pull/551): The TransformListener needs very quick spinning so it uses its own node
     // here. Remove this in favor of a multithreaded spinner and ensure that the listener callback

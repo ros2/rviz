@@ -237,9 +237,8 @@ bool VisualizerApp::init(int argc, char ** argv)
   if (parser.isSet(buffer_cache_time_options)) {
     buffer_cache_qstr = parser.value(buffer_cache_time_options);
     tf2::Duration buffer_cache_sec_param = tf2::durationFromSec(
-                              buffer_cache_qstr.toInt(&buffer_cache_option_set)
-                            );
-    if (buffer_cache_option_set ) {
+      buffer_cache_qstr.toInt(&buffer_cache_option_set));
+    if (buffer_cache_option_set) {
       buffer_cache_sec = buffer_cache_sec_param;
     }
   }

@@ -162,7 +162,8 @@ VisualizationManager::VisualizationManager(
   // (and thus initialized later be default):
   default_visibility_bit_ = visibility_bit_allocator_.allocBit();
 
-  transformation_manager_ = new transformation::TransformationManager(rviz_ros_node_, clock_, buffer_cache_sec);
+  transformation_manager_ = new transformation::TransformationManager(
+    rviz_ros_node_, clock_, buffer_cache_sec);
   connect(transformation_manager_, SIGNAL(configChanged()), this, SIGNAL(configChanged()));
 
   frame_manager_ = new FrameManager(clock, transformation_manager_->getCurrentTransformer());

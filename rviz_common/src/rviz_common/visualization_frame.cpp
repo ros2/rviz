@@ -327,9 +327,12 @@ void VisualizationFrame::initialize(
   render_panel_->getRenderWindow()->initialize();
 
   auto clock = rviz_ros_node.lock()->get_raw_node()->get_clock();
-  manager_ = new VisualizationManager(render_panel_, rviz_ros_node, this, clock,
-                                      buffer_cache_sec
-                                      );
+  manager_ = new VisualizationManager(
+    render_panel_,
+    rviz_ros_node,
+    this,
+    clock,
+    buffer_cache_sec);
   manager_->setHelpPath(help_path_);
   panel_factory_ = new PanelFactory(rviz_ros_node_, manager_);
 
