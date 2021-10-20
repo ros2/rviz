@@ -142,7 +142,7 @@ VisualizationManager::VisualizationManager(
   RenderPanel * render_panel,
   ros_integration::RosNodeAbstractionIface::WeakPtr ros_node_abstraction,
   WindowManagerInterface * wm, rclcpp::Clock::SharedPtr clock,
-  tf2::Duration buffer_cache_sec
+  tf2::Duration buffer_cache_duration
 )
 : ogre_root_(Ogre::Root::getSingletonPtr()),
   update_timer_(0),
@@ -163,7 +163,7 @@ VisualizationManager::VisualizationManager(
   default_visibility_bit_ = visibility_bit_allocator_.allocBit();
 
   transformation_manager_ = new transformation::TransformationManager(
-    rviz_ros_node_, clock_, buffer_cache_sec);
+    rviz_ros_node_, clock_, buffer_cache_duration);
   connect(transformation_manager_, SIGNAL(configChanged()), this, SIGNAL(configChanged()));
 
   frame_manager_ = new FrameManager(clock, transformation_manager_->getCurrentTransformer());

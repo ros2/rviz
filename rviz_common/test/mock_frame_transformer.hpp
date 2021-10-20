@@ -46,7 +46,7 @@ public:
   MOCK_METHOD3(
     initialize, void(
       rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
-      rclcpp::Clock::SharedPtr clock, tf2::Duration buffer_cache_sec));
+      rclcpp::Clock::SharedPtr clock, tf2::Duration buffer_cache_duration));
   MOCK_METHOD0(clear, void());
   MOCK_CONST_METHOD0(getAllFrameNames, std::vector<std::string>());
   MOCK_METHOD2(

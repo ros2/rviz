@@ -134,7 +134,7 @@ public:
   initialize(
     ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
     const QString & display_config_file = "",
-    tf2::Duration buffer_cache_sec = tf2::BUFFER_CORE_DEFAULT_CACHE_TIME
+    tf2::Duration buffer_cache_duration = tf2::BUFFER_CORE_DEFAULT_CACHE_TIME
   );
 
   /// Return the visualization manager.

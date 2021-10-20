@@ -64,7 +64,7 @@ public:
   void
   initialize(
     rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
-    rclcpp::Clock::SharedPtr clock, tf2::Duration buffer_cache_sec) override;
+    rclcpp::Clock::SharedPtr clock, tf2::Duration buffer_cache_duration) override;
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   void

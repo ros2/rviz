@@ -106,7 +106,7 @@ public:
     RenderPanel * render_panel,
     ros_integration::RosNodeAbstractionIface::WeakPtr ros_node_abstraction,
     WindowManagerInterface * wm, rclcpp::Clock::SharedPtr clock,
-    tf2::Duration buffer_cache_sec = tf2::BUFFER_CORE_DEFAULT_CACHE_TIME
+    tf2::Duration buffer_cache_duration = tf2::BUFFER_CORE_DEFAULT_CACHE_TIME
   );
 
   /// Destructor.

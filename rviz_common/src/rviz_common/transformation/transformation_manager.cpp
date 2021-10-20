@@ -46,8 +46,8 @@ namespace transformation
 TransformationManager::TransformationManager(
   ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
   rclcpp::Clock::SharedPtr clock,
-  tf2::Duration buffer_cache_sec)
-: rviz_ros_node_(rviz_ros_node), clock_(clock), buffer_cache_sec_(buffer_cache_sec)
+  tf2::Duration buffer_cache_duration)
+: rviz_ros_node_(rviz_ros_node), clock_(clock), buffer_cache_duration_(buffer_cache_duration)
 {
   factory_ = std::make_unique<PluginlibFactory<FrameTransformer>>(
     "rviz_common", "rviz_common::transformation::FrameTransformer");
@@ -101,7 +101,7 @@ void TransformationManager::setTransformer(const PluginInfo & plugin_info)
   auto new_transformer = std::shared_ptr<FrameTransformer>(factory_->make(plugin_info.id));
   if (new_transformer) {
     current_transformer_ = new_transformer;
-    current_transformer_->initialize(rviz_ros_node_, clock_, buffer_cache_sec_);
+    current_transformer_->initialize(rviz_ros_node_, clock_, buffer_cache_duration_);
 
     Q_EMIT transformerChanged(current_transformer_);
     Q_EMIT configChanged();

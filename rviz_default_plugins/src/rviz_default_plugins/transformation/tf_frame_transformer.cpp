@@ -222,9 +222,9 @@ TFFrameTransformer::getConnector()
 
 void TFFrameTransformer::initialize(
   rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
-  rclcpp::Clock::SharedPtr clock, tf2::Duration buffer_cache_sec)
+  rclcpp::Clock::SharedPtr clock, tf2::Duration buffer_cache_duration)
 {
-  tf_wrapper_->initialize(clock, rviz_ros_node, true, buffer_cache_sec);
+  tf_wrapper_->initialize(clock, rviz_ros_node, true, buffer_cache_duration);
 }
 
 void TFFrameTransformer::clear()

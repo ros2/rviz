@@ -245,7 +245,7 @@ void VisualizationFrame::setSplashPath(const QString & splash_path)
 
 void VisualizationFrame::initialize(
   ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
-  const QString & display_config_file, tf2::Duration buffer_cache_sec)
+  const QString & display_config_file, tf2::Duration buffer_cache_duration)
 {
   initConfigs();
 
@@ -332,7 +332,7 @@ void VisualizationFrame::initialize(
     rviz_ros_node,
     this,
     clock,
-    buffer_cache_sec);
+    buffer_cache_duration);
   manager_->setHelpPath(help_path_);
   panel_factory_ = new PanelFactory(rviz_ros_node_, manager_);
 

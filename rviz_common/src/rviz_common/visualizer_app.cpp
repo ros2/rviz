@@ -233,13 +233,13 @@ bool VisualizerApp::init(int argc, char ** argv)
   }
 
   bool buffer_cache_option_set{false};
-  tf2::Duration buffer_cache_sec = tf2::BUFFER_CORE_DEFAULT_CACHE_TIME;
+  tf2::Duration buffer_cache_duration = tf2::BUFFER_CORE_DEFAULT_CACHE_TIME;
   if (parser.isSet(buffer_cache_time_options)) {
     buffer_cache_qstr = parser.value(buffer_cache_time_options);
-    tf2::Duration buffer_cache_sec_param = tf2::durationFromSec(
+    tf2::Duration buffer_cache_duration_param = tf2::durationFromSec(
       buffer_cache_qstr.toInt(&buffer_cache_option_set));
     if (buffer_cache_option_set) {
-      buffer_cache_sec = buffer_cache_sec_param;
+      buffer_cache_duration = buffer_cache_duration_param;
     }
   }
 
@@ -312,7 +312,7 @@ bool VisualizerApp::init(int argc, char ** argv)
   if (!splash_path.isEmpty()) {
     frame_->setSplashPath(splash_path);
   }
-  frame_->initialize(node_, display_config, buffer_cache_sec);
+  frame_->initialize(node_, display_config, buffer_cache_duration);
 
   if (!fixed_frame.isEmpty()) {
     frame_->getManager()->setFixedFrame(fixed_frame);

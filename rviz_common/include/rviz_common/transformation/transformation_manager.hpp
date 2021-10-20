@@ -60,7 +60,7 @@ public:
   explicit TransformationManager(
     ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
     rclcpp::Clock::SharedPtr clock,
-    tf2::Duration buffer_cache_sec = tf2::BUFFER_CORE_DEFAULT_CACHE_TIME);
+    tf2::Duration buffer_cache_duration = tf2::BUFFER_CORE_DEFAULT_CACHE_TIME);
 
   /// Load configuration from a Config object.
   void
@@ -99,7 +99,7 @@ private:
 
   ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node_;
   rclcpp::Clock::SharedPtr clock_;
-  tf2::Duration buffer_cache_sec_;
+  tf2::Duration buffer_cache_duration_;
 };
 
 }  // namespace transformation
