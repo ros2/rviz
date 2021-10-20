@@ -48,6 +48,7 @@ void IdentityFrameTransformer::initialize(
   tf2::Duration buffer_cache_duration
 )
 {
+  (void) buffer_cache_duration;
   (void) rviz_ros_node;
   (void) clock;
 }
