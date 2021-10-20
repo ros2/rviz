@@ -180,7 +180,7 @@ bool VisualizerApp::init(int argc, char ** argv)
 
   QCommandLineOption buffer_cache_time_options(
     QStringList() << "b" << "buffer-cache",
-      "TF Buffer cache timeout in seconds");
+      "TF Buffer cache timeout in seconds", "buffer_cache");
   parser.addOption(buffer_cache_time_options);
 
 // TODO(botteroa-si): enable when possible
