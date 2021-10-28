@@ -39,7 +39,6 @@
 #include "get_transport_from_topic.hpp"
 #include "image_transport/image_transport.hpp"
 #include "image_transport/subscriber_filter.hpp"
-#include "tf2_ros/message_filter.h"
 #include "rviz_common/ros_topic_display.hpp"
 
 namespace rviz_default_plugins
@@ -58,8 +57,7 @@ public:
   typedef ImageTransportDisplay<MessageType> ITDClass;
 
   ImageTransportDisplay()
-  : tf_filter_(nullptr),
-    messages_received_(0)
+  : messages_received_(0)
   {
     QString message_type = QString::fromStdString(rosidl_generator_traits::name<MessageType>());
     topic_property_->setMessageType(message_type);
@@ -83,9 +81,6 @@ public:
   void reset() override
   {
     Display::reset();
-    if (tf_filter_) {
-      tf_filter_->clear();
-    }
     messages_received_ = 0;
   }
 
@@ -121,16 +116,9 @@ protected:
         getBaseTopicFromTopic(topic_property_->getTopicStd()),
         getTransportFromTopic(topic_property_->getTopicStd()),
         qos_profile.get_rmw_qos_profile());
-      tf_filter_ =
-        std::make_shared<tf2_ros::MessageFilter<MessageType,
-          rviz_common::transformation::FrameTransformer>>(
-        *context_->getFrameManager()->getTransformer(),
-        fixed_frame_.toStdString(), 10, rviz_ros_node_.lock()->get_raw_node());
-      tf_filter_->connectInput(*subscription_);
-      tf_filter_->registerCallback(
+      subscription_callback_ = subscription_->registerCallback(
         std::bind(
-          &ImageTransportDisplay<MessageType>::incomingMessage, this,
-          std::placeholders::_1));
+          &ImageTransportDisplay<MessageType>::incomingMessage, this, std::placeholders::_1));
       setStatus(rviz_common::properties::StatusProperty::Ok, "Topic", "OK");
     } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
       setStatus(
@@ -155,7 +143,6 @@ protected:
   virtual void unsubscribe()
   {
     subscription_.reset();
-    tf_filter_.reset();
   }
 
   void onEnable() override
@@ -166,14 +153,6 @@ protected:
   void onDisable() override
   {
     unsubscribe();
-    reset();
-  }
-
-  void fixedFrameChanged() override
-  {
-    if (tf_filter_) {
-      tf_filter_->setTargetFrame(fixed_frame_.toStdString());
-    }
     reset();
   }
 
@@ -205,11 +184,10 @@ protected:
 */
   virtual void processMessage(typename MessageType::ConstSharedPtr msg) = 0;
 
-  std::shared_ptr<tf2_ros::MessageFilter<MessageType,
-    rviz_common::transformation::FrameTransformer>> tf_filter_;
   uint32_t messages_received_;
 
   std::shared_ptr<image_transport::SubscriberFilter> subscription_;
+  message_filters::Connection subscription_callback_;
 };
 
 }  //  end namespace displays

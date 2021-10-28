@@ -47,6 +47,7 @@
 # include <OgreSharedPtr.h>
 
 # include "sensor_msgs/msg/camera_info.hpp"
+# include "tf2_ros/message_filter.h"
 
 # include "rviz_default_plugins/displays/image/image_transport_display.hpp"
 # include "rviz_default_plugins/displays/image/ros_image_texture_iface.hpp"
@@ -129,6 +130,8 @@ protected:
 
   void onDisable() override;
 
+  void fixedFrameChanged() override;
+
   void processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg) override;
 
 private Q_SLOTS:
@@ -181,6 +184,9 @@ private:
   Ogre::MaterialPtr overlay_material_;
 
   rclcpp::Subscription<sensor_msgs::msg::CameraInfo>::SharedPtr caminfo_sub_;
+
+  std::shared_ptr<tf2_ros::MessageFilter<sensor_msgs::msg::Image,
+    rviz_common::transformation::FrameTransformer>> tf_filter_;
 
   std::unique_ptr<ROSImageTextureIface> texture_;
   std::unique_ptr<rviz_common::RenderPanel> render_panel_;
