@@ -708,11 +708,13 @@ void VisualizationFrame::loadDisplayConfig(const QString & qpath)
   setWindowModified(false);
   loading_ = true;
 
-  LoadingDialog * dialog = nullptr;
+  std::unique_ptr<LoadingDialog> dialog;
   if (initialized_) {
-    dialog = new LoadingDialog(this);
+    dialog.reset(new LoadingDialog(this));
     dialog->show();
-    connect(this, SIGNAL(statusUpdate(const QString&)), dialog, SLOT(showMessage(const QString&)));
+    connect(
+      this, SIGNAL(statusUpdate(const QString&)),
+      dialog.get(), SLOT(showMessage(const QString&)));
   }
 
   YamlConfigReader reader;
@@ -731,8 +733,6 @@ void VisualizationFrame::loadDisplayConfig(const QString & qpath)
   setDisplayConfigFile(path);
 
   last_config_dir_ = path_info.absolutePath().toStdString();
-
-  delete dialog;
 
   post_load_timer_->start(1000);
 }
