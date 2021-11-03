@@ -29,6 +29,7 @@
 
 #include "rviz_default_plugins/transformation/tf_wrapper.hpp"
 
+#include <chrono>
 #include <memory>
 #include <string>
 #include <vector>
@@ -138,7 +139,22 @@ void TFWrapper::initialize(
 void TFWrapper::initializeBuffer(
   rclcpp::Clock::SharedPtr clock, rclcpp::Node::SharedPtr node, bool using_dedicated_thread)
 {
-  buffer_ = std::make_shared<tf2_ros::Buffer>(clock);
+  rcl_interfaces::msg::ParameterDescriptor descriptor;
+  descriptor.description = "Configure the rviz tf buffer cache time [ns].";
+  descriptor.read_only = true;
+  auto cache_time_ns = node->declare_parameter<int64_t>(
+    "tf_buffer_cache_time_ns",
+    std::chrono::duration_cast<std::chrono::nanoseconds>(
+      tf2::BUFFER_CORE_DEFAULT_CACHE_TIME).count(),
+    descriptor);
+  if (cache_time_ns < 0) {
+    RCLCPP_WARN(
+      node->get_logger(),
+      "Specified parameter 'tf_buffer_cache_time_ns' is < 0, using the default tf buffer"
+      " cache time");
+  }
+  std::chrono::nanoseconds cache_time{cache_time_ns};
+  buffer_ = std::make_shared<tf2_ros::Buffer>(clock, cache_time);
   auto timer_interface = std::make_shared<tf2_ros::CreateTimerROS>(
     node->get_node_base_interface(), node->get_node_timers_interface());
   buffer_->setCreateTimerInterface(timer_interface);
