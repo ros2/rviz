@@ -142,11 +142,16 @@ void TFWrapper::initializeBuffer(
   rcl_interfaces::msg::ParameterDescriptor descriptor;
   descriptor.description = "Configure the rviz tf buffer cache time [ms].";
   descriptor.read_only = true;
-  auto cache_time_ms = node->declare_parameter<int64_t>(
-    "tf_buffer_cache_time_ms",
-    std::chrono::duration_cast<std::chrono::milliseconds>(
-      tf2::BUFFER_CORE_DEFAULT_CACHE_TIME).count(),
-    descriptor);
+  int64_t cache_time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+    tf2::BUFFER_CORE_DEFAULT_CACHE_TIME).count();
+  try {
+    cache_time_ms = node->declare_parameter<int64_t>(
+      "tf_buffer_cache_time_ms",
+      cache_time_ms,
+      descriptor);
+  } catch (rclcpp::exceptions::ParameterAlreadyDeclaredException &) {
+    node->get_parameter<int64_t>("tf_buffer_cache_time_ms", cache_time_ms);
+  }
   if (cache_time_ms < 0) {
     RCLCPP_WARN(
       node->get_logger(),
