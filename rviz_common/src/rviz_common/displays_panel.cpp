@@ -131,14 +131,14 @@ void DisplaysPanel::onNewDisplay()
     &datatype);
   QApplication::restoreOverrideCursor();
 
-  vis_manager_->stopUpdate();
   if (dialog.exec() == QDialog::Accepted) {
+    vis_manager_->stopUpdate();
     Display * disp = vis_manager_->createDisplay(lookup_name, display_name, true);
     if (!topic.isEmpty() && !datatype.isEmpty()) {
       disp->setTopic(topic, datatype);
     }
+    vis_manager_->startUpdate();
   }
-  vis_manager_->startUpdate();
   activateWindow();  // Force keyboard focus back on main window.
 }
 
