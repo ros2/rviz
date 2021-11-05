@@ -41,6 +41,7 @@
 #include "nav_msgs/msg/occupancy_grid.hpp"
 
 #include "rviz_default_plugins/visibility_control.hpp"
+#include "rviz_default_plugins/displays/map/swatch_base.hpp"
 
 namespace Ogre
 {
@@ -55,7 +56,7 @@ namespace displays
 {
 class MapDisplay;
 
-class Swatch
+class Swatch : public SwatchBase<nav_msgs::msg::OccupancyGrid>
 {
 public:
   RVIZ_DEFAULT_PLUGINS_PUBLIC
@@ -66,53 +67,10 @@ public:
     float resolution, bool draw_under);
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
-  ~Swatch();
+  ~Swatch() override = default;
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
-  void updateAlpha(
-    const Ogre::SceneBlendType & sceneBlending, bool depth_write, float alpha);
-
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
-  void updateData(const nav_msgs::msg::OccupancyGrid & map);
-
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
-  void setVisible(bool visible);
-
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
-  void resetOldTexture();
-
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
-  void setRenderQueueGroup(uint8_t group);
-
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
-  void setDepthWriteEnabled(bool depth_write_enabled);
-
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
-  Ogre::Pass * getTechniquePass();
-
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
-  std::string getTextureName();
-
-private:
-  void setupMaterial();
-  void resetTexture(Ogre::DataStreamPtr & pixel_stream);
-  void setupSceneNodeWithManualObject();
-  void setupSquareManualObject();
-  void addPointWithPlaneCoordinates(float x, float y);
-
-  static size_t material_count_;
-  static size_t map_count_;
-  static size_t node_count_;
-  static size_t texture_count_;
-
-  Ogre::SceneManager * scene_manager_;
-  Ogre::SceneNode * parent_scene_node_;
-  Ogre::SceneNode * scene_node_;
-  Ogre::ManualObject * manual_object_;
-  Ogre::TexturePtr texture_;
-  Ogre::TexturePtr old_texture_;
-  Ogre::MaterialPtr material_;
-  size_t x_, y_, width_, height_;
+  void updateData(const nav_msgs::msg::OccupancyGrid & map) override;
 };
 
 }  // namespace displays
