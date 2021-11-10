@@ -54,28 +54,38 @@ namespace rviz_default_plugins
 {
 namespace displays
 {
-
+/**
+ * @class Helper class to handle all qt related communication for the MapDisplayBase class.
+ *        Since template classes cannot by Q_OBJECTS, the functionality has to be separated
+ */
 class QMapDisplayObject : public QObject
 {
   Q_OBJECT
 
 public:
+  // naming the callback function type
   using EmptyCallback = std::function<void ()>;
 
+  /** @brief set up all properties and hook them into the parent branch */
   explicit QMapDisplayObject(rviz_common::properties::Property * parent);
   ~QMapDisplayObject() override = default;
 
 public Q_SLOTS:
+  /** @brief connected to mapUpdated, call showMap_() is valid */
   void showMap();
 
+  // the following functions are triggered by property updates
+  // respective callbacks can be set and are called if valid
+  /** @brief call updateAlpha_() if valid */
   virtual void updateAlpha();
+  /** @brief call updateDrawUnder_() if valid */
   void updateDrawUnder();
-  /** @brief Show current_map_ in the scene. */
+  /** @brief call transformMap_() if valid */
   void transformMap();
   void updateMapUpdateTopic();
 
 Q_SIGNALS:
-  /** @brief Emitted when a new map is received*/
+  /** @brief Emitted when a new map is received */
   void mapUpdated();
 
 public:
@@ -88,16 +98,17 @@ public:
 
   rclcpp::QoS update_profile_;
 
-  rviz_common::properties::RosTopicProperty * update_topic_property_;
-  rviz_common::properties::QosProfileProperty * update_profile_property_;
-  rviz_common::properties::FloatProperty * resolution_property_;
-  rviz_common::properties::IntProperty * width_property_;
-  rviz_common::properties::IntProperty * height_property_;
-  rviz_common::properties::VectorProperty * position_property_;
-  rviz_common::properties::QuaternionProperty * orientation_property_;
-  rviz_common::properties::FloatProperty * alpha_property_;
-  rviz_common::properties::Property * draw_under_property_;
-  rviz_common::properties::BoolProperty * transform_timestamp_property_;
+  // properties handled by this helper class
+  rviz_common::properties::RosTopicProperty * update_topic_property_ {nullptr};
+  rviz_common::properties::QosProfileProperty * update_profile_property_ {nullptr};
+  rviz_common::properties::FloatProperty * resolution_property_ {nullptr};
+  rviz_common::properties::IntProperty * width_property_ {nullptr};
+  rviz_common::properties::IntProperty * height_property_ {nullptr};
+  rviz_common::properties::VectorProperty * position_property_ {nullptr};
+  rviz_common::properties::QuaternionProperty * orientation_property_ {nullptr};
+  rviz_common::properties::FloatProperty * alpha_property_ {nullptr};
+  rviz_common::properties::Property * draw_under_property_ {nullptr};
+  rviz_common::properties::BoolProperty * transform_timestamp_property_ {nullptr};
 };
 
 }  // namespace displays

@@ -69,50 +69,48 @@ namespace Ogre
 class ManualObject;
 }
 
-namespace rviz_common
-{
-namespace properties
-{
-
-class EnumProperty;
-class FloatProperty;
-class IntProperty;
-class Property;
-class QuaternionProperty;
-class VectorProperty;
-
-}  // namespace properties
-}  // namespace rviz_common
-
 namespace rviz_default_plugins
 {
 namespace displays
 {
 /**
  * \class MapDisplayBase
- * \brief Displays a map along the XY plane.
+ * \brief Base class which means to display data using swatches.
+ *        Message/Data type is templated,
+ *        which let message specific displays inherit the functionality
  */
 template<class MessageT, class UpdateMessageT = MessageT>
 class RVIZ_DEFAULT_PLUGINS_PUBLIC MapDisplayBase : public
   rviz_common::MessageFilterDisplay<MessageT>
 {
 public:
-  // simplyfy usage of MFDClass
+  // simplify usage of MFDClass
   using MFDClass = typename rviz_common::MessageFilterDisplay<MessageT>::MFDClass;
 
+  // simplify usage of message ptrs
   using MsgConstSharedPtr = typename MessageT::ConstSharedPtr;
   using UpdateMsgConstSharedPtr = typename UpdateMessageT::ConstSharedPtr;
 
   // TODO(botteroa-si): Constructor for testing, remove once ros_nodes can be mocked and call
   // initialize() instead
+  /**
+   * @brief given a context, the display is hooked into the scene
+   * @param context
+   */
   explicit MapDisplayBase(rviz_common::DisplayContext * context);
+  /** @brief set up qt related member */
   MapDisplayBase();
+  /** @brief clear swatches and drop subscriptions */
   ~MapDisplayBase() override;
 
+  /** @brief initialize ros specific member */
   void onInitialize() override;
+  /** @brief transform map to new fixed frame */
   void fixedFrameChanged() override;
+  /** @brief clear swatches, keep subscriptions active */
   void reset() override;
 
+  // simple getter functions
   float getResolution() {return resolution_;}
   size_t getWidth() {return width_;}
   size_t getHeight() {return height_;}
@@ -120,49 +118,67 @@ public:
   /** @brief Copy msg into current_map_ and call showMap(). */
   void processMessage(typename MessageT::ConstSharedPtr msg) override;
 
-public:
+  // the following functions are called by the helper q_map_display_object
+  // whenever parameter are updated and respective SLOTS are triggered
+  /** @brief check map validity and call showValidMap() if applicable*/
   void showMap();
 
 protected:
+  /** @brief update alpha on all swatches */
   virtual void updateAlpha();
+  /** @brief update draw under on all swatches */
   void updateDrawUnder() const;
   /** @brief Show current_map_ in the scene. */
   void transformMap();
+  /** @brief update update topic subscription */
   void updateMapUpdateTopic();
 
-protected:
+  // communication related functions
+  /** @brief update property and call super class function */
   void updateTopic() override;
+  /** @brief call transformMap() */
   void update(float wall_dt, float ros_dt) override;
 
+  /** @brief update property and call super class function */
   void subscribe() override;
+  /** @brief call super class function and update property */
   void unsubscribe() override;
 
+  /** @brief call super class function and update property */
   void onEnable() override;
 
   /** @brief Copy update's data into current_map_ and call showMap(). */
   virtual void incomingUpdate(typename UpdateMessageT::ConstSharedPtr update) = 0;
 
-  virtual bool updateDataOutOfBounds(typename UpdateMessageT::ConstSharedPtr update) const = 0;
-  virtual void updateMapDataInMemory(typename UpdateMessageT::ConstSharedPtr update) = 0;
-
+  /** @brief clear swatches and update property*/
   void clear();
 
+  /** @brief subscribe to update topic using qos_profile from property */
   void subscribeToUpdateTopic();
+  /** @brief unsubscribe to update topic */
   void unsubscribeToUpdateTopic();
 
+  // functions to handle swatches and show the current map
+  /** @brief create (if necessary) and update swatches update properties
+   *         and call transformMap() and updateDrawUnder()*/
   virtual void showValidMap();
+  /** @brief if width,height, or resolution differs create new swatches*/
   virtual void resetSwatchesIfNecessary(size_t width, size_t height, float resolution);
+  /** @brief create new swatches for current width, height, and resolution */
   virtual void createSwatches();
+  /** @brief update values for twice as many swatches*/
   virtual void doubleSwatchNumber(
     size_t & swatch_width, size_t & swatch_height,
     int & number_swatches) const;
-
+  /** @brief create a single swatch,
+   *         done by child class since specific swatch class must be used*/
   virtual std::shared_ptr<SwatchBase<MessageT>> createSwatch(
     Ogre::SceneManager * scene_manager,
     Ogre::SceneNode * parent_scene_node,
     size_t x, size_t y, size_t width, size_t height,
     float resolution, bool draw_under
   ) = 0;
+  /** @brief try to create as many swatches as needed */
   virtual void tryCreateSwatches(
     size_t width,
     size_t height,
@@ -170,16 +186,20 @@ protected:
     size_t swatch_width,
     size_t swatch_height,
     int number_swatches);
+  /** @brief determin effective dimension for even and odd number of swatches */
   virtual size_t getEffectiveDimension(
     size_t map_dimension,
     size_t swatch_dimension,
     size_t position
   );
 
+  /** @brief for each swatch, call updateData and set texture*/
   virtual void updateSwatches() const;
 
+  /** @brief validate floats for specific message, done by child class*/
   virtual bool validateFloats(const MessageT & msg) const = 0;
 
+  // protected members
   std::vector<std::shared_ptr<SwatchBase<MessageT>>> swatches_;
   bool loaded_;
 
@@ -190,9 +210,9 @@ protected:
   MessageT current_map_;
 
   typename rclcpp::Subscription<UpdateMessageT>::SharedPtr update_subscription_;
-
   uint32_t update_messages_received_;
 
+  // helper object to handle qt related interaction via SIGNALS and SLOTS
   QMapDisplayObject * q_helper_object_{nullptr};
 };
 

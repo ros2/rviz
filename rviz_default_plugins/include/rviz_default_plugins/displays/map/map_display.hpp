@@ -63,6 +63,8 @@ class RVIZ_DEFAULT_PLUGINS_PUBLIC MapDisplay : public
 public:
   // TODO(botteroa-si): Constructor for testing, remove once ros_nodes can be mocked and call
   // initialize() instead
+
+  /** @brief create palettes and setup respective property */
   explicit MapDisplay(rviz_common::DisplayContext * context);
   MapDisplay() = default;
   ~MapDisplay() override = default;
@@ -71,11 +73,14 @@ public:
   void processMessage(MsgConstSharedPtr msg) override;
 
   protected Q_SLOT:
+  /** @brief triggered by property update, update palette for all swatches */
   void updatePalette();
 
 protected:
+  /** @brief call super class showValidMap and updatePalette() */
   void showValidMap() override;
 
+  /** @brief create message specific swatch */
   std::shared_ptr<SwatchBase<nav_msgs::msg::OccupancyGrid>> createSwatch(
     Ogre::SceneManager * scene_manager,
     Ogre::SceneNode * parent_scene_node,
@@ -83,15 +88,20 @@ protected:
     float resolution, bool draw_under
   ) override;
 
+  /** @brief validate message specific floats */
   bool validateFloats(const nav_msgs::msg::OccupancyGrid & msg) const override;
 
   /** @brief Copy update's data into current_map_ and call showMap(). */
   void incomingUpdate(UpdateMsgConstSharedPtr update);
 
-  bool updateDataOutOfBounds(UpdateMsgConstSharedPtr update) const override;
-  void updateMapDataInMemory(UpdateMsgConstSharedPtr update) override;
+  /** @brief check if new data is out of bound */
+  bool updateDataOutOfBounds(UpdateMsgConstSharedPtr update) const;
+  /** @brief copy update data row-wise for valid heights*/
+  void updateMapDataInMemory(UpdateMsgConstSharedPtr update);
 
-  rviz_common::properties::EnumProperty * color_scheme_property_;
+  // protected member
+  // color scheme property to select palette
+  rviz_common::properties::EnumProperty * color_scheme_property_ {nullptr};
 
   std::vector<Ogre::TexturePtr> palette_textures_;
   std::vector<bool> color_scheme_transparency_;
