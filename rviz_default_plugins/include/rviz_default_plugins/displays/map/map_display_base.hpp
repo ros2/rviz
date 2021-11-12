@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2012, Willow Garage, Inc.
  * Copyright (c) 2018, Bosch Software Innovations GmbH.
+ * Copyright (c) 2021, Thomas Wodtko @ Institute of Measurement, Control and Microtechnology.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
