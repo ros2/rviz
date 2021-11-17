@@ -80,7 +80,7 @@ bool ViewportMouseEvent::left()
 
 bool ViewportMouseEvent::middle()
 {
-  return buttons_down & Qt::MidButton;
+  return buttons_down & Qt::MiddleButton;
 }
 
 bool ViewportMouseEvent::right()
@@ -110,7 +110,7 @@ bool ViewportMouseEvent::leftUp()
 
 bool ViewportMouseEvent::middleUp()
 {
-  return type == QEvent::MouseButtonRelease && acting_button == Qt::MidButton;
+  return type == QEvent::MouseButtonRelease && acting_button == Qt::MiddleButton;
 }
 
 bool ViewportMouseEvent::rightUp()
@@ -125,7 +125,7 @@ bool ViewportMouseEvent::leftDown()
 
 bool ViewportMouseEvent::middleDown()
 {
-  return type == QEvent::MouseButtonPress && acting_button == Qt::MidButton;
+  return type == QEvent::MouseButtonPress && acting_button == Qt::MiddleButton;
 }
 
 bool ViewportMouseEvent::rightDown()
