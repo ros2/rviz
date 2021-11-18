@@ -8,8 +8,10 @@
   <description>
     Example plugin for RViz - documents and tests RViz plugin development
   </description>
+
   <maintainer email="jacob@openrobotics.org">Jacob Perron</maintainer>
   <maintainer email="michael.jeronimo@openrobotics.org">Michael Jeronimo</maintainer>
+
   <license>BSD</license>
 
   <url type="repository">https://github.com/ros2/rviz</url>

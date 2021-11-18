@@ -8,8 +8,10 @@
   <description>
     Wrapper around ogre3d, it provides a fixed CMake module and an ExternalProject build of ogre.
   </description>
+
   <maintainer email="jacob@openrobotics.org">Jacob Perron</maintainer>
   <maintainer email="michael.jeronimo@openrobotics.org">Michael Jeronimo</maintainer>
+
   <license>Apache License 2.0</license>  <!-- the contents of this package are Apache 2.0 -->
   <license>MIT</license>  <!-- ogre is MIT (https://www.ogre3d.org/licensing) -->
 

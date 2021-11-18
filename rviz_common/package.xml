@@ -8,8 +8,10 @@
   <description>
     Common rviz API, used by rviz plugins and applications.
   </description>
+
   <maintainer email="jacob@openrobotics.org">Jacob Perron</maintainer>
   <maintainer email="michael.jeronimo@openrobotics.org">Michael Jeronimo</maintainer>
+
   <license>BSD</license>
 
   <url type="website">https://github.com/ros2/rviz/blob/ros2/README.md</url>

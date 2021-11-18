@@ -8,8 +8,10 @@
   <description>
     3D testing framework for RViz.
   </description>
+
   <maintainer email="jacob@openrobotics.org">Jacob Perron</maintainer>
   <maintainer email="michael.jeronimo@openrobotics.org">Michael Jeronimo</maintainer>
+
   <license>BSD</license>
 
   <url type="website">http://ros.org/wiki/rviz2</url>
