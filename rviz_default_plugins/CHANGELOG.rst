@@ -2,8 +2,8 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+9.0.0 (2021-11-18)
+------------------
 * Switch to using Qt::MiddleButton for RViz. (`#802 <https://github.com/ros2/rviz/issues/802>`_)
 * Add a tf_buffer_cache_time_ns to tf_wrapper (`#792 <https://github.com/ros2/rviz/issues/792>`_)
 * Make libraries to avoid compiling files multiple times (`#774 <https://github.com/ros2/rviz/issues/774>`_)

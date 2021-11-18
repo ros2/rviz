@@ -2,8 +2,8 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+9.0.0 (2021-11-18)
+------------------
 * Switch to using Qt::MiddleButton for RViz. (`#802 <https://github.com/ros2/rviz/issues/802>`_)
 * Removed traces in renderPanel (`#777 <https://github.com/ros2/rviz/issues/777>`_)
 * move yaml_config_writer.hpp to public includes (`#764 <https://github.com/ros2/rviz/issues/764>`_)
