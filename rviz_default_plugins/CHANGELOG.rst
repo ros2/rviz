@@ -2,6 +2,19 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Switch to using Qt::MiddleButton for RViz. (`#802 <https://github.com/ros2/rviz/issues/802>`_)
+* Add a tf_buffer_cache_time_ns to tf_wrapper (`#792 <https://github.com/ros2/rviz/issues/792>`_)
+* Make libraries to avoid compiling files multiple times (`#774 <https://github.com/ros2/rviz/issues/774>`_)
+* Computed inertia with ignition-math (`#751 <https://github.com/ros2/rviz/issues/751>`_)
+* Fixed crash when changing rendering parameters for pointcloud2 while 'Selectable' box is unchecked (`#768 <https://github.com/ros2/rviz/issues/768>`_)
+* Robot: Report mesh loading issues (`#744 <https://github.com/ros2/rviz/issues/744>`_)
+* Handle NaN values for Wrench msgs (`#746 <https://github.com/ros2/rviz/issues/746>`_)
+* Triangle lists support textures (`#719 <https://github.com/ros2/rviz/issues/719>`_)
+* Report sample lost events (`#686 <https://github.com/ros2/rviz/issues/686>`_)
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette, Gonzo, Greg Balke, Ivan Santiago Paunovic, Shane Loretz, bailaC
+
 8.7.0 (2021-08-11)
 ------------------
 * Fix path message orientation error (`#736 <https://github.com/ros2/rviz/issues/736>`_)

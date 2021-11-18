@@ -2,6 +2,12 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Suppress assimp warnings in rviz_rendering build (`#775 <https://github.com/ros2/rviz/issues/775>`_)
+* Fix for ogre failing when material already exists (`#729 <https://github.com/ros2/rviz/issues/729>`_)
+* Contributors: Scott K Logan, Wolf Vollprecht
+
 8.7.0 (2021-08-11)
 ------------------
 * Removed some memory leaks in rviz_rendering and rviz_rendering_tests (`#710 <https://github.com/ros2/rviz/issues/710>`_)

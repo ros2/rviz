@@ -2,6 +2,19 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Switch to using Qt::MiddleButton for RViz. (`#802 <https://github.com/ros2/rviz/issues/802>`_)
+* Removed traces in renderPanel (`#777 <https://github.com/ros2/rviz/issues/777>`_)
+* move yaml_config_writer.hpp to public includes (`#764 <https://github.com/ros2/rviz/issues/764>`_)
+* Update displays_panel.cpp (`#745 <https://github.com/ros2/rviz/issues/745>`_)
+* Robot: Report mesh loading issues (`#744 <https://github.com/ros2/rviz/issues/744>`_)
+* Exposed tool_manager header file. (`#767 <https://github.com/ros2/rviz/issues/767>`_)
+* refactor: make const getter methods const (`#756 <https://github.com/ros2/rviz/issues/756>`_)
+* Efficiently handle 3-bytes pixel formats (`#743 <https://github.com/ros2/rviz/issues/743>`_)
+* Report sample lost events (`#686 <https://github.com/ros2/rviz/issues/686>`_)
+* Contributors: ANDOU Tetsuo, Alejandro Hernández Cordero, Chris Lalancette, Gonzo, Joseph Schornak, davidorchansky
+
 8.7.0 (2021-08-11)
 ------------------
 * Update window close icon (`#734 <https://github.com/ros2/rviz/issues/734>`_)
