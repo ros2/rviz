@@ -131,14 +131,12 @@ void DisplaysPanel::onNewDisplay()
     &datatype);
   QApplication::restoreOverrideCursor();
 
-  vis_manager_->stopUpdate();
   if (dialog.exec() == QDialog::Accepted) {
     Display * disp = vis_manager_->createDisplay(lookup_name, display_name, true);
     if (!topic.isEmpty() && !datatype.isEmpty()) {
       disp->setTopic(topic, datatype);
     }
   }
-  vis_manager_->startUpdate();
   activateWindow();  // Force keyboard focus back on main window.
 }
 
@@ -178,7 +176,6 @@ void DisplaysPanel::onDuplicateDisplay()
     QItemSelection selection(first, last);
     property_grid_->selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
   }
-  vis_manager_->startUpdate();
   activateWindow();  // Force keyboard focus back on main window.
 }
 
