@@ -67,6 +67,13 @@ public:
    */
   void initialize(std::function<void(rclcpp::QoS)> qos_changed_callback);
 
+  /**
+   * This function changes the display properties according to a new QoS
+   *
+   * \param new_qos The new QoS
+   */
+  void setQoSProfile(const rclcpp::QoS & new_qos);
+
 private Q_SLOTS:
   void updateQosProfile();
 
