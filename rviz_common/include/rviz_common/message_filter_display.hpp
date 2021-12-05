@@ -103,9 +103,6 @@ public:
 protected:
   void updateTopic() override
   {
-    RCLCPP_INFO_STREAM(rviz_ros_node_.lock()->get_raw_node()->get_logger(),  "Update topic: " << 
-      topic_property_->getTopicStd());
-
     // Change the QoS according to the info in the ROS Graph
     const auto & publishers = rviz_ros_node_.lock()->get_raw_node()->get_publishers_info_by_topic(
       topic_property_->getTopicStd());
