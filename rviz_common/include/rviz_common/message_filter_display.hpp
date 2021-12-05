@@ -170,7 +170,9 @@ protected:
       if (!different_qos) {
         setStatus(properties::StatusProperty::Ok, "Topic", "OK");
       } else {
-        setStatus(properties::StatusProperty::Warn, "Topic", "Different QoS the publisher");
+        setStatus(
+          properties::StatusProperty::Warn, "Topic",
+          "1 or more publishers have different QoS settings");
       }
     } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
       setStatus(
