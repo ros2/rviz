@@ -265,9 +265,9 @@ private:
   void addPositionToBuffer(float plus_left, float minus_top)
   {
     Ogre::Vector3 current_position = Ogre::Vector3(left_ + plus_left, top_ - minus_top, 0.0);
-    * buffer_++ = current_position.x;
-    * buffer_++ = current_position.y;
-    * buffer_++ = current_position.z;
+    *buffer_++ = current_position.x;
+    *buffer_++ = current_position.y;
+    *buffer_++ = current_position.z;
 
     min_.makeFloor(current_position);
     max_.makeCeil(current_position);
@@ -276,8 +276,8 @@ private:
 
   void addTextureToBuffer(float texture_x, float texture_y)
   {
-    * buffer_++ = texture_x;
-    * buffer_++ = texture_y;
+    *buffer_++ = texture_x;
+    *buffer_++ = texture_y;
   }
 };
 

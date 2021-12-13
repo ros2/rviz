@@ -652,7 +652,7 @@ void VisualizationFrame::updateRecentConfigMenu()
         display_name = (
           QDir::homePath() + "/" +
           QString::fromStdString(display_name.substr(home_dir_.size()))
-          ).toStdString();
+        ).toStdString();
       }
       QString qdisplay_name = QString::fromStdString(display_name);
       QAction * action = new QAction(qdisplay_name, this);

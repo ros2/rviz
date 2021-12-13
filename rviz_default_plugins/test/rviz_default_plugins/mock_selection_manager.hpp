@@ -65,8 +65,8 @@ public:
   MOCK_METHOD4(get3DPoint, bool(Ogre::Viewport *, int, int, Ogre::Vector3 &));
   MOCK_METHOD7(
     get3DPatch, bool(Ogre::Viewport *, int, int, unsigned, unsigned,
-    bool, std::vector<Ogre::Vector3>&));
-  MOCK_METHOD0(getPropertyModel, rviz_common::properties::PropertyTreeModel *());
+    bool, std::vector<Ogre::Vector3> &));
+  MOCK_METHOD0(getPropertyModel, rviz_common::properties::PropertyTreeModel * ());
 };
 
 #endif  // RVIZ_DEFAULT_PLUGINS__MOCK_SELECTION_MANAGER_HPP_
