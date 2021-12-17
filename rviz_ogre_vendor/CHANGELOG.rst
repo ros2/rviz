@@ -2,6 +2,9 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 9.0.0 (2021-11-18)
 ------------------
 

@@ -2,6 +2,11 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixes for uncrustify 0.72 (`#807 <https://github.com/ros2/rviz/issues/807>`_)
+* Contributors: Chris Lalancette
+
 9.0.0 (2021-11-18)
 ------------------
 * Switch to using Qt::MiddleButton for RViz. (`#802 <https://github.com/ros2/rviz/issues/802>`_)

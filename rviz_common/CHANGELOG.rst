@@ -2,6 +2,12 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixes for uncrustify 0.72 (`#807 <https://github.com/ros2/rviz/issues/807>`_)
+* Do not block visualization manager updates when opening the display panel dialog (`#795 <https://github.com/ros2/rviz/issues/795>`_)
+* Contributors: Chris Lalancette, Ivan Santiago Paunovic
+
 9.0.0 (2021-11-18)
 ------------------
 * Switch to using Qt::MiddleButton for RViz. (`#802 <https://github.com/ros2/rviz/issues/802>`_)
