@@ -60,7 +60,7 @@ private:
     QString package_;
     QString name_;
     QString description_;
-    std::function<Type *()> factory_function_;
+    std::function<Type * ()> factory_function_;
   };
 
 public:
@@ -121,7 +121,7 @@ public:
 
   virtual void addBuiltInClass(
     const QString & package, const QString & name, const QString & description,
-    std::function<Type *()> factory_function)
+    std::function<Type * ()> factory_function)
   {
     BuiltInClassRecord record;
     record.class_id_ = package + "/" + name;

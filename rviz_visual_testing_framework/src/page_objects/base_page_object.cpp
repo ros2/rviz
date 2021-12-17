@@ -94,7 +94,7 @@ void BasePageObject::setComboBox(
 
       if (value_index == -1) {
         GTEST_FAIL() << "[  ERROR   ]  The value '" << value_to_set.toStdString() << "' does "
-        "not exist!";
+          "not exist!";
       }
       property_combo_box->setCurrentIndex(value_index);
     }

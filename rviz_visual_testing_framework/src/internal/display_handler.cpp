@@ -151,8 +151,10 @@ void DisplayHandler::selectDisplayAndConfirm(std::shared_ptr<BasePageObject> pag
 
       if (items.empty()) {
         std::cout << "[  ERROR   ] The display with name '" <<
-        page_object->getDisplayName().toStdString() << "' does not exist!\n";
+          page_object->getDisplayName().toStdString() << "' does not exist!\n";
+        // *INDENT-OFF* (uncrustify 0.72 erroneously wants to remove this return)
         return;
+        // *INDENT-ON*
       }
 
       add_by_name_tree->scrollToItem(items.at(0));
