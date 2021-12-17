@@ -67,6 +67,7 @@ find_package(interactive_markers REQUIRED)
 find_package(laser_geometry REQUIRED)
 find_package(map_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
+find_package(nav2_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(resource_retriever REQUIRED)
@@ -112,6 +113,7 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/tf/frame_info.hpp
   include/rviz_default_plugins/displays/tf/tf_display.hpp
   include/rviz_default_plugins/displays/wrench/wrench_display.hpp
+  include/rviz_default_plugins/displays/particle_cloud/particle_cloud_display.hpp
   include/rviz_default_plugins/robot/robot.hpp
   include/rviz_default_plugins/robot/robot_joint.hpp
   include/rviz_default_plugins/robot/robot_link.hpp
@@ -194,6 +196,8 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/tf/frame_selection_handler.cpp
   src/rviz_default_plugins/displays/tf/tf_display.cpp
   src/rviz_default_plugins/displays/wrench/wrench_display.cpp
+  src/rviz_default_plugins/displays/particle_cloud/particle_cloud_display.cpp
+  src/rviz_default_plugins/displays/particle_cloud/flat_weighted_arrows_array.cpp
   src/rviz_default_plugins/robot/robot.cpp
   src/rviz_default_plugins/robot/robot_joint.cpp
   src/rviz_default_plugins/robot/robot_link.cpp
@@ -249,6 +253,7 @@ ament_target_dependencies(rviz_default_plugins
   interactive_markers
   laser_geometry
   nav_msgs
+  nav2_msgs
   map_msgs
   rclcpp
   resource_retriever
@@ -272,6 +277,7 @@ ament_export_dependencies(
   laser_geometry
   map_msgs
   nav_msgs
+  nav2_msgs
   rclcpp
   resource_retriever
   rviz_ogre_vendor
@@ -326,6 +332,7 @@ if(BUILD_TESTING)
   set(TEST_TARGET_DEPENDENCIES
     map_msgs
     nav_msgs
+    nav2_msgs
     rclcpp
     sensor_msgs
     urdf
@@ -577,6 +584,17 @@ if(BUILD_TESTING)
     target_include_directories(pose_array_display_test PUBLIC ${TEST_INCLUDE_DIRS})
     target_link_libraries(pose_array_display_test ${TEST_LINK_LIBRARIES})
     ament_target_dependencies(pose_array_display_test ${TEST_TARGET_DEPENDENCIES})
+  endif()
+
+  ament_add_gmock(particle_cloud_display_test
+    test/rviz_default_plugins/displays/particle_cloud/particle_cloud_display_test.cpp
+    test/rviz_default_plugins/displays/display_test_fixture.cpp
+    test/rviz_default_plugins/scene_graph_introspection_helper.cpp
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET particle_cloud_display_test)
+    target_include_directories(particle_cloud_display_test PUBLIC ${TEST_INCLUDE_DIRS})
+    target_link_libraries(particle_cloud_display_test ${TEST_LINK_LIBRARIES})
+    ament_target_dependencies(particle_cloud_display_test ${TEST_TARGET_DEPENDENCIES})
   endif()
 
   ament_add_gmock(pose_tool_test
@@ -922,6 +940,21 @@ if(BUILD_TESTING)
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(pose_array_display_visual_test
+      ${TEST_LINK_LIBRARIES}
+      rviz_visual_testing_framework::rviz_visual_testing_framework)
+  endif()
+
+  ament_add_gtest(particle_cloud_display_visual_test
+    test/rviz_default_plugins/displays/particle_cloud/particle_cloud_display_visual_test.cpp
+    test/rviz_default_plugins/page_objects/particle_cloud_display_page_object.cpp
+    test/rviz_default_plugins/publishers/particle_cloud_publisher.hpp
+    ${SKIP_VISUAL_TESTS}
+    TIMEOUT 180)
+  if(TARGET particle_cloud_display_visual_test)
+    target_include_directories(particle_cloud_display_visual_test PUBLIC
+      ${TEST_INCLUDE_DIRS}
+      ${rviz_visual_testing_framework_INCLUDE_DIRS})
+    target_link_libraries(particle_cloud_display_visual_test
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
