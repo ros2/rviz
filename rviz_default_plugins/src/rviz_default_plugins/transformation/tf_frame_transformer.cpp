@@ -204,6 +204,12 @@ tf2_ros::TransformStampedFuture TFFrameTransformer::waitForTransform(
   return tf_wrapper_->waitForTransform(target_frame, source_frame, time, timeout, callback);
 }
 
+void TFFrameTransformer::cancel(
+  const tf2_ros::TransformStampedFuture & ts_future)
+{
+  tf_wrapper_->cancel(ts_future);
+}
+
 bool TFFrameTransformer::frameHasProblems(const std::string & frame, std::string & error) const
 {
   if (!tf_wrapper_->frameExists(frame)) {

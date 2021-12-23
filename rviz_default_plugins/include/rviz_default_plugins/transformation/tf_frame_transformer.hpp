@@ -124,6 +124,10 @@ public:
     const tf2::Duration & timeout,
     tf2_ros::TransformReadyCallback callback) override;
 
+  void
+  cancel(
+    const tf2_ros::TransformStampedFuture & ts_future) override;
+
 private:
   std::shared_ptr<TFWrapper> tf_wrapper_;
 };
