@@ -246,10 +246,11 @@ pluginlib_export_plugin_description_file(rviz_common plugins_description.xml)
 ament_target_dependencies(rviz_default_plugins
   PUBLIC
   geometry_msgs
+  image_transport
   interactive_markers
   laser_geometry
-  nav_msgs
   map_msgs
+  nav_msgs
   rclcpp
   resource_retriever
   rviz_common
@@ -260,20 +261,20 @@ ament_target_dependencies(rviz_default_plugins
   tf2_ros
   urdf
   visualization_msgs
-  image_transport
 )
 
 ament_export_include_directories(include)
 ament_export_targets(rviz_default_plugins HAS_LIBRARY_TARGET)
 ament_export_dependencies(
-  rviz_common
   geometry_msgs
+  image_transport
   interactive_markers
   laser_geometry
   map_msgs
   nav_msgs
   rclcpp
   resource_retriever
+  rviz_common
   rviz_ogre_vendor
   sensor_msgs
   tf2
