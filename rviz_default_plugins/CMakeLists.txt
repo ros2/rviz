@@ -281,6 +281,7 @@ ament_export_dependencies(
   tf2_ros
   urdf
   visualization_msgs
+  image_transport
 )
 
 install(
