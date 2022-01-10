@@ -29,17 +29,17 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./panel_factory.hpp"
+#include "panel_factory.hpp"
 
 #include <string>
 
-#include "./displays_panel.hpp"
-#include "./help_panel.hpp"
-#include "./selection_panel.hpp"
-#include "./time_panel.hpp"
-#include "./tool_properties_panel.hpp"
-#include "./transformation_panel.hpp"
-#include "./views_panel.hpp"
+#include "displays_panel.hpp"
+#include "help_panel.hpp"
+#include "selection_panel.hpp"
+#include "time_panel.hpp"
+#include "tool_properties_panel.hpp"
+#include "transformation_panel.hpp"
+#include "views_panel.hpp"
 #include "rviz_common/visualization_manager.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
 

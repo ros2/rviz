@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./new_object_dialog.hpp"
+#include "new_object_dialog.hpp"
 
 #include <algorithm>
 #include <map>

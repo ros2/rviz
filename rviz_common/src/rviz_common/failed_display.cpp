@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./failed_display.hpp"
+#include "failed_display.hpp"
 
 #include <QColor>  // NOLINT: cpplint is unable to handle the include order here
 

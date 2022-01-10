@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./failed_view_controller.hpp"
+#include "failed_view_controller.hpp"
 
 #include <QMessageBox>
 

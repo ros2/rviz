@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./scaled_image_widget.hpp"
+#include "scaled_image_widget.hpp"
 
 #include <QPainter>
 #include <QWidget>

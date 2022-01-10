@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./screenshot_dialog.hpp"
+#include "screenshot_dialog.hpp"
 
 #include <utility>
 
@@ -47,7 +47,7 @@
 #include <QVBoxLayout>  // NOLINT: cpplint is unable to handle the include order here
 #include <QWindow>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "./scaled_image_widget.hpp"
+#include "scaled_image_widget.hpp"
 
 namespace rviz_common
 {

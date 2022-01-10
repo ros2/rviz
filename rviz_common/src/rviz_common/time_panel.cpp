@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "time_panel.hpp"
+
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
@@ -40,8 +42,6 @@
 #include "frame_manager.hpp"
 
 #include "rviz_common/display_group.hpp"
-
-#include "./time_panel.hpp"
 
 namespace rviz_common
 {

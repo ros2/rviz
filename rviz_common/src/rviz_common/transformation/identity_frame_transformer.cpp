@@ -29,7 +29,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./identity_frame_transformer.hpp"
+#include "identity_frame_transformer.hpp"
 
 #include <future>
 #include <memory>
