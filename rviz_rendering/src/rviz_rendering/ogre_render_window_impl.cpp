@@ -28,22 +28,22 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./ogre_render_window_impl.hpp"
+#include "ogre_render_window_impl.hpp"
 
 #include <cstdlib>
 #include <functional>
 
-#include <OgreEntity.h>
-#include <OgreCamera.h>
-#include <OgreGpuProgramManager.h>
-#include <OgreMaterialManager.h>
-#include <OgreRenderWindow.h>
-#include <OgreRoot.h>
-#include <OgreSceneNode.h>
-#include <OgreStringConverter.h>
-#include <OgreTechnique.h>
-#include <OgreTextureManager.h>
-#include <OgreViewport.h>
+#include "OgreEntity.h"
+#include "OgreCamera.h"
+#include "OgreGpuProgramManager.h"
+#include "OgreMaterialManager.h"
+#include "OgreRenderWindow.h"
+#include "OgreRoot.h"
+#include "OgreSceneNode.h"
+#include "OgreStringConverter.h"
+#include "OgreTechnique.h"
+#include "OgreTextureManager.h"
+#include "OgreViewport.h"
 
 #include "rviz_rendering/orthographic.hpp"
 #include "rviz_rendering/render_system.hpp"
