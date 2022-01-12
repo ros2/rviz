@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./display_factory.hpp"
+#include "display_factory.hpp"
 
 #include <string>
 

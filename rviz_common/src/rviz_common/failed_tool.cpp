@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./failed_tool.hpp"
+#include "failed_tool.hpp"
 
 #include <QMessageBox>
 

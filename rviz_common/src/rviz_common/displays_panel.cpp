@@ -29,7 +29,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./displays_panel.hpp"
+#include "displays_panel.hpp"
 
 #include <string>
 
@@ -41,9 +41,9 @@
 #include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
 #include <QVBoxLayout>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "./display_factory.hpp"
+#include "display_factory.hpp"
 #include "rviz_common/display.hpp"
-#include "./add_display_dialog.hpp"
+#include "add_display_dialog.hpp"
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/properties/property_tree_widget.hpp"
 #include "rviz_common/properties/property_tree_with_help.hpp"

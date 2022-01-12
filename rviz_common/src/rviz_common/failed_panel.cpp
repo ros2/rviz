@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./failed_panel.hpp"
+#include "failed_panel.hpp"
 
 #include <cstdio>
 

@@ -30,7 +30,7 @@
 
 #include <QEvent>
 
-#include "./widget_geometry_change_detector.hpp"
+#include "widget_geometry_change_detector.hpp"
 
 namespace rviz_common
 {

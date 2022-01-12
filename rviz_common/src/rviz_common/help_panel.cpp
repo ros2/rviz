@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./help_panel.hpp"
+#include "help_panel.hpp"
 
 #include <string>
 

@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./loading_dialog.hpp"
+#include "loading_dialog.hpp"
 
 #include <QApplication>
 #include <QLabel>

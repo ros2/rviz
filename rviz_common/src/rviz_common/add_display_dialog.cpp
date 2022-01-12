@@ -29,7 +29,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "./add_display_dialog.hpp"
+#include "add_display_dialog.hpp"
 
 #include <algorithm>
 #include <map>
@@ -52,7 +52,7 @@
 
 #include "rcl/validate_topic_name.h"
 
-#include "./display_factory.hpp"
+#include "display_factory.hpp"
 #include "rviz_common/load_resource.hpp"
 #include "rviz_common/logging.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction.hpp"
