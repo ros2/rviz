@@ -715,7 +715,7 @@ void RobotLink::assignMaterialsToEntities(
     default_material_ = getMaterialForLink(link);
 
     std::string cloned_name =
-      default_material_->getName() + std::to_string(material_count++) + "Robot";
+      default_material_->getName() + "_" + std::to_string(material_count++) + "Robot";
 
     default_material_ = default_material_->clone(cloned_name);
     default_material_name_ = default_material_->getName();
@@ -724,7 +724,7 @@ void RobotLink::assignMaterialsToEntities(
   for (uint32_t i = 0; i < entity->getNumSubEntities(); ++i) {
     default_material_ = getMaterialForLink(link, material_name);
     std::string cloned_name =
-      default_material_->getName() + std::to_string(material_count++) + "Robot";
+      default_material_->getName() + "_" + std::to_string(material_count++) + "Robot";
 
     default_material_ = default_material_->clone(cloned_name);
     default_material_name_ = default_material_->getName();
@@ -741,7 +741,7 @@ void RobotLink::assignMaterialsToEntities(
       // Once selection id is done per object and not per material,
       // this can go away
       std::string sub_cloned_name =
-        sub_material_name + std::to_string(material_count++) + "Robot";
+        sub_material_name + "_" + std::to_string(material_count++) + "Robot";
       sub->getMaterial()->clone(sub_cloned_name);
       sub->setMaterialName(sub_cloned_name);
     }
