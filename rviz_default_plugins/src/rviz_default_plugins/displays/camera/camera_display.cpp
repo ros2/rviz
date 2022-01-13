@@ -95,7 +95,8 @@ bool validateFloats(const sensor_msgs::msg::CameraInfo & msg)
 }
 
 CameraDisplay::CameraDisplay()
-: texture_(std::make_unique<ROSImageTexture>()),
+: tf_filter_(nullptr),
+  texture_(std::make_unique<ROSImageTexture>()),
   new_caminfo_(false),
   caminfo_ok_(false),
   force_render_(false)
@@ -267,9 +268,37 @@ void CameraDisplay::onDisable()
   clear();
 }
 
+void CameraDisplay::fixedFrameChanged()
+{
+  if (tf_filter_) {
+    tf_filter_->setTargetFrame(fixed_frame_.toStdString());
+  }
+  reset();
+}
+
 void CameraDisplay::subscribe()
 {
   ITDClass::subscribe();
+
+  if (!subscription_) {
+    return;
+  }
+
+  // Unregster the callback registered by the ImageTransportDisplay
+  // and instead connect it to the TF filter
+  subscription_callback_.disconnect();
+
+  tf_filter_ = std::make_shared<
+    tf2_ros::MessageFilter<sensor_msgs::msg::Image,
+    rviz_common::transformation::FrameTransformer>>(
+    *context_->getFrameManager()->getTransformer(),
+    fixed_frame_.toStdString(), 10, rviz_ros_node_.lock()->get_raw_node());
+
+  tf_filter_->connectInput(*subscription_);
+  tf_filter_->registerCallback(
+    [ = ](const sensor_msgs::msg::Image::ConstSharedPtr msg) {
+      this->incomingMessage(msg);
+    });
 
   if ((!isEnabled()) || (topic_property_->getTopicStd().empty())) {
     return;
@@ -320,6 +349,7 @@ void CameraDisplay::unsubscribe()
 {
   ITDClass::unsubscribe();
   caminfo_sub_.reset();
+  tf_filter_.reset();
 }
 
 void CameraDisplay::updateAlpha()
@@ -358,6 +388,10 @@ void CameraDisplay::clear()
 
   rviz_rendering::RenderWindowOgreAdapter::getOgreCamera(
     render_panel_->getRenderWindow())->setPosition(rviz_common::RenderPanel::default_camera_pose_);
+
+  if (tf_filter_) {
+    tf_filter_->clear();
+  }
 }
 
 void CameraDisplay::update(float wall_dt, float ros_dt)
