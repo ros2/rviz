@@ -2,6 +2,12 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+9.1.0 (2022-01-13)
+------------------
+* Fix cpplint errors (`#818 <https://github.com/ros2/rviz/issues/818>`_)
+* Set message type for ros topic display (`#800 <https://github.com/ros2/rviz/issues/800>`_)
+* Contributors: Daisuke Nishimatsu, Jacob Perron
+
 9.0.1 (2021-12-17)
 ------------------
 * Fixes for uncrustify 0.72 (`#807 <https://github.com/ros2/rviz/issues/807>`_)

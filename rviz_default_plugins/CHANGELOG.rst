@@ -2,6 +2,13 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+9.1.0 (2022-01-13)
+------------------
+* Remove TF filter from ImageTransportDisplay (`#788 <https://github.com/ros2/rviz/issues/788>`_)
+* Add underscores to material names (`#811 <https://github.com/ros2/rviz/issues/811>`_)
+* Export image_transport dependency (`#813 <https://github.com/ros2/rviz/issues/813>`_)
+* Contributors: Chen Lihui, Cory Crean, Jacob Perron
+
 9.0.1 (2021-12-17)
 ------------------
 * Fixes for uncrustify 0.72 (`#807 <https://github.com/ros2/rviz/issues/807>`_)
