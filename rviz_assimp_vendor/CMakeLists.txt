@@ -83,6 +83,9 @@ if(FORCE_BUILD_VENDOR_PKG OR NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LES
     set(ENV_VAR_VALUE "opt/rviz_assimp_vendor/lib")
   endif()
   ament_environment_hooks(env_hook/rviz_assimp_vendor_library_path.dsv.in)
+# This matches the similar if clause in rviz_assimp_vendor-extras.cmake.in
+elseif(TARGET assimp::assimp AND "${assimp_VERSION}" VERSION_GREATER 5.0.1)
+  ament_export_dependencies(assimp)
 endif()
 
 if(BUILD_TESTING)
