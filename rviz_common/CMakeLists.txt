@@ -36,7 +36,6 @@ find_package(geometry_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(resource_retriever REQUIRED)
-find_package(rviz_assimp_vendor REQUIRED)
 find_package(rviz_rendering REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
@@ -245,7 +244,6 @@ ament_target_dependencies(rviz_common
   pluginlib
   rclcpp
   resource_retriever
-  rviz_assimp_vendor
   rviz_rendering
   sensor_msgs
   std_msgs
