@@ -257,8 +257,6 @@ ament_target_dependencies(rviz_common
   urdf
   yaml_cpp_vendor
 )
-# prevent pluginlib from using boost
-target_compile_definitions(rviz_common PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
 # Causes the visibility macros to use dllexport rather than dllimport,
 # which is appropriate when building the dll but not consuming it.
 target_compile_definitions(rviz_common PRIVATE "RVIZ_COMMON_BUILDING_LIBRARY")
