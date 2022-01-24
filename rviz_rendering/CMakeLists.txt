@@ -120,6 +120,7 @@ ament_target_dependencies(rviz_rendering
   rviz_assimp_vendor
 )
 ament_export_dependencies(
+  rviz_assimp_vendor
   rviz_ogre_vendor
   eigen3_cmake_module
   Eigen3
