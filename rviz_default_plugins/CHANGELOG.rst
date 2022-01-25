@@ -2,6 +2,9 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+9.1.1 (2022-01-25)
+------------------
+
 9.1.0 (2022-01-13)
 ------------------
 * Remove TF filter from ImageTransportDisplay (`#788 <https://github.com/ros2/rviz/issues/788>`_)
