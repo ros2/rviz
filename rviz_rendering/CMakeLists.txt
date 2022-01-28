@@ -121,6 +121,7 @@ ament_target_dependencies(rviz_rendering
 )
 ament_export_dependencies(
   rviz_ogre_vendor
+  rviz_assimp_vendor
   eigen3_cmake_module
   Eigen3
   resource_retriever
