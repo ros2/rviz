@@ -238,9 +238,6 @@ target_link_libraries(rviz_default_plugins PUBLIC
 # which is appropriate when building the dll but not consuming it.
 target_compile_definitions(rviz_default_plugins PRIVATE "RVIZ_DEFAULT_PLUGINS_BUILDING_LIBRARY")
 
-# prevent pluginlib from using boost
-target_compile_definitions(rviz_default_plugins PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
-
 pluginlib_export_plugin_description_file(rviz_common plugins_description.xml)
 
 ament_target_dependencies(rviz_default_plugins

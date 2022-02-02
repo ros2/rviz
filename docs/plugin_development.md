@@ -32,8 +32,6 @@ Refer to the documentation of the relevant base class for a detailed API descrip
 ```
 * You need to link and compile against the `pluginlib` package. Further CMake options that might be relevant (see `rviz_default_plugins` CMakeLists):
 ```
-# prevent pluginlib from using boost
-target_compile_definitions(rviz_default_plugins PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
 # Causes the visibility macros to use dllexport rather than dllimport (for Windows, when your plugin should be used as library)
 target_compile_definitions(rviz_default_plugins PRIVATE "RVIZ_DEFAULT_PLUGINS_BUILDING_LIBRARY")
 ```
