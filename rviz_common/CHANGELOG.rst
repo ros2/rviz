@@ -2,6 +2,11 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.2.6 (2022-02-04)
+------------------
+* Add rviz_rendering dependency to rviz_common (`#727 <https://github.com/ros2/rviz/issues/727>`_) (`#785 <https://github.com/ros2/rviz/issues/785>`_)
+* Contributors: Jacob Perron, Rebecca Butler
+
 8.2.5 (2021-10-12)
 ------------------
 * Revert "Ensure rviz_common::MessageFilterDisplay processes messages in the main thread (`#620 <https://github.com/ros2/rviz/issues/620>`_) (`#765 <https://github.com/ros2/rviz/issues/765>`_)" (`#783 <https://github.com/ros2/rviz/issues/783>`_)

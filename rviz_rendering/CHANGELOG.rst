@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.2.6 (2022-02-04)
+------------------
+* Export Qt5 dependencies properly (`#687 <https://github.com/ros2/rviz/issues/687>`_) (`#822 <https://github.com/ros2/rviz/issues/822>`_)
+* Contributors: Jacob Perron, Michel Hidalgo
+
 8.2.5 (2021-10-12)
 ------------------
 

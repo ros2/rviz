@@ -2,6 +2,13 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.2.6 (2022-02-04)
+------------------
+* Add underscores to material names (`#811 <https://github.com/ros2/rviz/issues/811>`_) (`#824 <https://github.com/ros2/rviz/issues/824>`_)
+* Export Qt5 dependencies properly (`#687 <https://github.com/ros2/rviz/issues/687>`_) (`#822 <https://github.com/ros2/rviz/issues/822>`_)
+* Change image display to not rely on TF (`#781 <https://github.com/ros2/rviz/issues/781>`_)
+* Contributors: Cory Crean, Helen Oleynikova, Jacob Perron, Michel Hidalgo
+
 8.2.5 (2021-10-12)
 ------------------
 
