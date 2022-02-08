@@ -177,7 +177,7 @@ void TriangleListMarker::beginManualObject(
   // If we have the same number of tris as previously, just update the object
   if (old_message &&
     num_points == old_message->points.size() &&
-    manual_object_->getNumSections() > 0)
+    manual_object_->getSections().size() > 0)
   {
     manual_object_->beginUpdate(0);
   } else {  // Otherwise clear it and begin anew

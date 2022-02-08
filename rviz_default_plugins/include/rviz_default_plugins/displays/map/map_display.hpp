@@ -39,7 +39,7 @@
 
 #include <OgreTexture.h>
 #include <OgreMaterial.h>
-#include <OgreVector3.h>
+#include <Ogre.h>
 #include <OgreSharedPtr.h>
 
 #endif  // Q_MOC_RUN
