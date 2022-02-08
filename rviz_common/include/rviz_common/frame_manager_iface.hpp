@@ -42,7 +42,7 @@
 #pragma clang diagnostic ignored "-Wkeyword-macro"
 #endif
 
-#include <OgreVector3.h>
+#include <Ogre.h>
 #include <OgreQuaternion.h>
 
 #ifdef __clang__

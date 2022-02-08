@@ -36,7 +36,7 @@
 #include <memory>
 #include <vector>
 
-#include <OgreVector3.h>
+#include <Ogre.h>
 
 #include "object.hpp"
 #include "shape.hpp"

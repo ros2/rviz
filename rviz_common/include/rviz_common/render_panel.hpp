@@ -36,7 +36,7 @@
 #include <mutex>
 #include <vector>
 
-#include <OgreVector3.h>
+#include <Ogre.h>
 
 #include <QWidget>  // NOLINT: cpplint is unable to handle the include order here
 

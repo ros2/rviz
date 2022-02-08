@@ -33,7 +33,7 @@
 
 #include <vector>
 
-#include <OgreVector3.h>
+#include <Ogre.h>
 
 #include "rviz_common/visibility_control.hpp"
 

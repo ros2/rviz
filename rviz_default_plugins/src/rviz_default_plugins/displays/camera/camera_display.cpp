@@ -393,8 +393,9 @@ void CameraDisplay::clear()
     "No CameraInfo received on [" + QString::fromStdString(camera_info_topic) + "]. "
     "Topic may not exist.");
 
-  rviz_rendering::RenderWindowOgreAdapter::getOgreCamera(
-    render_panel_->getRenderWindow())->setPosition(rviz_common::RenderPanel::default_camera_pose_);
+  rviz_rendering::RenderWindowOgreAdapter::setOgreCameraPosition(
+    render_panel_->getRenderWindow(),
+    rviz_common::RenderPanel::default_camera_pose_);
 
   if (tf_filter_) {
     tf_filter_->clear();
@@ -487,9 +488,8 @@ bool CameraDisplay::updateCamera()
   }
 
   auto render_window = render_panel_->getRenderWindow();
-  rviz_rendering::RenderWindowOgreAdapter::getOgreCamera(render_window)->setPosition(position);
-  rviz_rendering::RenderWindowOgreAdapter::getOgreCamera(render_window)
-  ->setOrientation(orientation);
+  rviz_rendering::RenderWindowOgreAdapter::setOgreCameraPosition(render_window, position);
+  rviz_rendering::RenderWindowOgreAdapter::setOgreCameraOrientation(render_window, orientation);
 
   Ogre::Vector2 zoom = getZoomFromInfo(info, dimensions);
   Ogre::Matrix4 proj_matrix = calculateProjectionMatrix(info, dimensions, zoom);

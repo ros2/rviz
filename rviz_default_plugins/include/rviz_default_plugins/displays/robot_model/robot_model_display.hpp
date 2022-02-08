@@ -34,7 +34,7 @@
 #include <memory>
 #include <string>
 
-#include <OgreVector3.h>
+#include <Ogre.h>
 
 #include "std_msgs/msg/string.hpp"
 

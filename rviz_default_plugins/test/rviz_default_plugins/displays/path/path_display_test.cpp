@@ -102,7 +102,7 @@ TEST_F(PathTestFixture, processMessage_adds_nothing_to_scene_if_invalid_transfor
   path_display_->processMessage(createPathMessage());
 
   auto object = rviz_default_plugins::findOneManualObject(scene_manager_->getRootSceneNode());
-  EXPECT_THAT(object->getNumSections(), Eq(0u));
+  EXPECT_THAT(object->getSections().size(), Eq(0u));
 }
 
 TEST_F(PathTestFixture, processMessage_adds_vertices_to_scene) {
@@ -113,7 +113,7 @@ TEST_F(PathTestFixture, processMessage_adds_vertices_to_scene) {
   path_display_->processMessage(createPathMessage());
 
   auto object = rviz_default_plugins::findOneManualObject(scene_manager_->getRootSceneNode());
-  EXPECT_THAT(object->getSection(0)->getRenderOperation()->vertexData->vertexCount, Eq(2u));
+  EXPECT_THAT(object->getSections()[0]->getRenderOperation()->vertexData->vertexCount, Eq(2u));
 }
 
 TEST_F(PathTestFixture, reset_clears_the_scene) {
@@ -125,7 +125,7 @@ TEST_F(PathTestFixture, reset_clears_the_scene) {
   path_display_->reset();
 
   auto object = rviz_default_plugins::findOneManualObject(scene_manager_->getRootSceneNode());
-  EXPECT_THAT(object->getNumSections(), Eq(0u));
+  EXPECT_THAT(object->getSections().size(), Eq(0u));
 }
 
 TEST_F(PathTestFixture, reset_is_idempotent) {
@@ -176,7 +176,7 @@ TEST_F(PathTestFixture, processMessage_transforms_the_vertices_correctly) {
   path_display_->processMessage(createPathMessage());
 
   auto object = rviz_default_plugins::findOneManualObject(scene_manager_->getRootSceneNode());
-  EXPECT_THAT(object->getSection(0)->getRenderOperation()->vertexData->vertexCount, Eq(2u));
+  EXPECT_THAT(object->getSections()[0]->getRenderOperation()->vertexData->vertexCount, Eq(2u));
 
   // Use bounding box to indirectly assert the vertices
   EXPECT_THAT(object->getBoundingBox().getMinimum(), Vector3Eq(Ogre::Vector3(2, 3, 3)));

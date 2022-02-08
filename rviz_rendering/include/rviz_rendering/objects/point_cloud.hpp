@@ -41,7 +41,7 @@
 #include <OgreMovableObject.h>
 #include <OgreString.h>
 #include <OgreAxisAlignedBox.h>
-#include <OgreVector3.h>
+#include <Ogre.h>
 #include <OgreMaterial.h>
 #include <OgreColourValue.h>
 #include <OgreRoot.h>
