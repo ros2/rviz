@@ -1,0 +1,21 @@
+commit 8ec086e9bc2e24fab373b514c572483b69071d69
+Author: Jonathan Wakely <jwakely@redhat.com>
+Date:   Thu May 28 22:37:19 2020 +0100
+
+    Only include <sys/sysctl.h> for iOS
+    
+    This file includes <sys/sysctl.h> if the CPU is ARM, which breaks compilation with the upcoming glibc 2.32 release because that header has been removed. The header only seems to be needed for sysctlbyname, which is only used on iOS. Change the #ifdef to avoid including it when not needed.
+
+diff --git a/OgreMain/src/OgrePlatformInformation.cpp b/OgreMain/src/OgrePlatformInformation.cpp
+index 9d1a39bc8..ad8beee35 100644
+--- a/OgreMain/src/OgrePlatformInformation.cpp
++++ b/OgreMain/src/OgrePlatformInformation.cpp
+@@ -36,7 +36,7 @@ THE SOFTWARE.
+ 
+     #if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
+         #include <cpu-features.h>
+-    #elif OGRE_CPU == OGRE_CPU_ARM 
++    #elif OGRE_CPU == OGRE_CPU_ARM && OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
+         #include <sys/sysctl.h>
+         #if __MACH__
+             #include <mach/machine.h>
