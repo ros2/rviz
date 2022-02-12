@@ -81,17 +81,21 @@ add_library(rviz_visual_testing_framework STATIC ${visual_test_framework_source_
 target_include_directories(rviz_visual_testing_framework
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
     ${GTEST_INCLUDE_DIRS})
 
 target_link_libraries(rviz_visual_testing_framework
   ${visual_tests_target_libaries})
 
 # export information to downstream packages
-ament_export_targets(rviz_visual_testing_framework)
 ament_export_dependencies(Qt5)
 ament_export_dependencies(rviz_common)
 
-ament_export_include_directories(include)
+# Export old-style CMake variables
+ament_export_include_directories("include/${PROJECT_NAME}")
+
+# Export modern CMake targets
+ament_export_targets(rviz_visual_testing_framework)
 
 install(
   TARGETS rviz_visual_testing_framework
@@ -99,12 +103,11 @@ install(
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
-  INCLUDES DESTINATION include
 )
 
 install(
   DIRECTORY include/
-  DESTINATION include
+  DESTINATION include/${PROJECT_NAME}
 )
 
 install(
