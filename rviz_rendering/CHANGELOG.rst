@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.0.0 (2022-02-16)
+-------------------
+* Install headers to include/${PROJECT_NAME} (`#829 <https://github.com/ros2/rviz/issues/829>`_)
+* Contributors: Shane Loretz
+
 9.1.1 (2022-01-25)
 ------------------
 * Fix support for assimp 5.1.0 (`#817 <https://github.com/ros2/rviz/issues/817>`_)

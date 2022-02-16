@@ -2,6 +2,9 @@
 Changelog for package rviz_assimp_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.0.0 (2022-02-16)
+-------------------
+
 9.1.1 (2022-01-25)
 ------------------
 * Fix support for assimp 5.1.0 (`#817 <https://github.com/ros2/rviz/issues/817>`_)

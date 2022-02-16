@@ -2,6 +2,12 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.0.0 (2022-02-16)
+-------------------
+* Install headers to include/${PROJECT_NAME} (`#829 <https://github.com/ros2/rviz/issues/829>`_)
+* Remove definition of PLUGINLIB_DISABLE_BOOST. (`#821 <https://github.com/ros2/rviz/issues/821>`_)
+* Contributors: Chris Lalancette, Shane Loretz
+
 9.1.1 (2022-01-25)
 ------------------
 * Fix support for assimp 5.1.0 (`#817 <https://github.com/ros2/rviz/issues/817>`_)
