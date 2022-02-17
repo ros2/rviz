@@ -184,6 +184,12 @@ tf2_ros::TransformStampedFuture IdentityFrameTransformer::waitForTransform(
   return future;
 }
 
+void
+IdentityFrameTransformer::cancel(const tf2_ros::TransformStampedFuture & ts_future)
+{
+  (void) ts_future;
+}
+
 bool IdentityFrameTransformer::quaternionIsValid(geometry_msgs::msg::Quaternion quaternion)
 {
   return quaternion.w + quaternion.x + quaternion.y + quaternion.z != 0;

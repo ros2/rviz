@@ -79,6 +79,7 @@ public:
       const tf2::TimePoint &,
       const tf2::Duration &,
       tf2_ros::TransformReadyCallback));
+  MOCK_METHOD1(cancel, void(const tf2_ros::TransformStampedFuture &));
   MOCK_CONST_METHOD2(frameHasProblems, bool(const std::string &, std::string &));
   MOCK_METHOD0(
     getConnector,

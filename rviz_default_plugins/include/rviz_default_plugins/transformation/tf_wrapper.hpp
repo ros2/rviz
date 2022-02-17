@@ -106,6 +106,11 @@ public:
     tf2_ros::TransformReadyCallback callback);
 
   RVIZ_DEFAULT_PLUGINS_PUBLIC
+  void
+  cancel(
+    const tf2_ros::TransformStampedFuture & ts_future);
+
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
   std::vector<std::string>
   getFrameStrings();
 
