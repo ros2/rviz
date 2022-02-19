@@ -68,7 +68,7 @@ namespace displays
  *
  */
 class RVIZ_DEFAULT_PLUGINS_PUBLIC ImageDisplay : public
-  rviz_common::MessageFilterDisplay<sensor_msgs::msg::Image>
+  rviz_common::RosTopicDisplay<sensor_msgs::msg::Image>
 {
   Q_OBJECT
 
