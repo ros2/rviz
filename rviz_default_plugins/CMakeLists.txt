@@ -231,6 +231,9 @@ target_include_directories(rviz_default_plugins PUBLIC
 target_link_libraries(rviz_default_plugins PUBLIC
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
+)
+
+target_link_libraries(rviz_default_plugins PRIVATE
   ignition-math6
 )
 
