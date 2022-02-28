@@ -36,7 +36,17 @@
 #include <sstream>  // needed for Eigen until https://gitlab.com/libeigen/eigen/-/merge_requests/65
 #include <vector>
 
+// GCC 11 has a false positive warning about uninitialized variables in Eigen.  There is an open
+// issue about it at https://gitlab.com/libeigen/eigen/-/issues/2304 .  Just disable the warning
+// for Eigen for now.
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
 #include <Eigen/Dense>  // NOLINT: cpplint cannot handle correct include here
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 
 #include <OgreVector3.h>
 #include <OgreColourValue.h>
