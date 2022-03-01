@@ -2,8 +2,8 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+11.0.0 (2022-03-01)
+-------------------
 * Disable a warning when including Eigen. (`#835 <https://github.com/ros2/rviz/issues/835>`_)
 * Contributors: Chris Lalancette
 

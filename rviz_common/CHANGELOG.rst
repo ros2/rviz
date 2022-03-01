@@ -2,8 +2,8 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+11.0.0 (2022-03-01)
+-------------------
 * add implementation for cancel interface (`#809 <https://github.com/ros2/rviz/issues/809>`_)
 * Contributors: Chen Lihui
 
