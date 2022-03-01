@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Disable a warning when including Eigen. (`#835 <https://github.com/ros2/rviz/issues/835>`_)
+* Contributors: Chris Lalancette
+
 10.0.0 (2022-02-16)
 -------------------
 * Install headers to include/${PROJECT_NAME} (`#829 <https://github.com/ros2/rviz/issues/829>`_)

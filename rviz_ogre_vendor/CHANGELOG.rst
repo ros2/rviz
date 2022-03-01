@@ -2,6 +2,9 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 10.0.0 (2022-02-16)
 -------------------
 * Fix the build for Ubuntu Jammy arm64. (`#828 <https://github.com/ros2/rviz/issues/828>`_)
