@@ -9,8 +9,6 @@ option(FORCE_BUILD_VENDOR_PKG
 
 find_package(ament_cmake REQUIRED)
 
-set(PACKAGE_VERSION "1.0.0")
-
 macro(build_assimp)
   set(extra_cmake_args)
   if(DEFINED CMAKE_BUILD_TYPE)
@@ -21,13 +19,15 @@ macro(build_assimp)
     list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=/w /EHsc")
     list(APPEND extra_cmake_args "-DCMAKE_C_FLAGS=/w")
   else()
-    list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=-std=c++14 -w")
-    list(APPEND extra_cmake_args "-DCMAKE_C_FLAGS=-w")
+    list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS} -std=c++14 -w")
+    list(APPEND extra_cmake_args "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} -w")
   endif()
 
   list(APPEND extra_cmake_args "-DASSIMP_BUILD_ASSIMP_TOOLS=OFF")
   list(APPEND extra_cmake_args "-DASSIMP_BUILD_TESTS=OFF")
   list(APPEND extra_cmake_args "-DASSIMP_BUILD_SAMPLES=OFF")
+  list(APPEND extra_cmake_args "-DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}")
+  list(APPEND extra_cmake_args "-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}")
 
   if(WIN32 AND NOT ${CMAKE_VERBOSE_MAKEFILE})
     set(should_log ON)  # prevent warnings in Windows CI
@@ -36,9 +36,9 @@ macro(build_assimp)
   endif()
 
   include(ExternalProject)
-  ExternalProject_Add(assimp-4.1.0
-    URL https://github.com/assimp/assimp/archive/v4.1.0.tar.gz
-    URL_MD5 83b53a10c38d964bd1e69da0606e2727
+  ExternalProject_Add(assimp-5.2.2
+    URL https://github.com/assimp/assimp/archive/v5.2.2.tar.gz
+    URL_MD5 800322aa3b2a34dcba1fdad64fb00f1b
     TIMEOUT 600
     LOG_CONFIGURE ${should_log}
     LOG_BUILD ${should_log}
@@ -58,15 +58,9 @@ macro(build_assimp)
   )
 endmacro()
 
-# Override ON so that the following CMake logic in assimp 5.0.1 and older
-# doesn't result in a CMake warning: if(ON)
-#   https://github.com/ros2/rviz/issues/524
-#   https://bugs.launchpad.net/ubuntu/+source/assimp/+bug/1869405
-set(ON 1)
-
 find_package(assimp QUIET)
 
-if(FORCE_BUILD_VENDOR_PKG OR NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LESS 4.1.0)
+if(FORCE_BUILD_VENDOR_PKG OR NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LESS 5.2)
   build_assimp()
 
   if(WIN32)
