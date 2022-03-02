@@ -126,7 +126,7 @@ public:
 
   void
   cancel(
-    const tf2_ros::TransformStampedFuture & ts_future) override;
+    const tf2_ros::TransformStampedFuture & ts_future);
 
 private:
   std::shared_ptr<TFWrapper> tf_wrapper_;
