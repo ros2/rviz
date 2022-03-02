@@ -117,7 +117,7 @@ public:
     tf2_ros::TransformReadyCallback callback) override;
 
   void
-  cancel(const tf2_ros::TransformStampedFuture & ts_future) override;
+  cancel(const tf2_ros::TransformStampedFuture & ts_future);
 
 private:
   bool
