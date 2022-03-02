@@ -104,7 +104,7 @@ tf2_ros::TransformStampedFuture TFWrapper::waitForTransform(
 void TFWrapper::cancel(
   const tf2_ros::TransformStampedFuture & ts_future)
 {
-  return buffer_->cancel(ts_future);
+  buffer_->cancel(ts_future);
 }
 
 std::vector<std::string> TFWrapper::getFrameStrings()
