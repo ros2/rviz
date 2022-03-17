@@ -227,6 +227,9 @@ public:
   RVIZ_RENDERING_PUBLIC
   PointCloudRenderableQueue getRenderables();
 
+  RVIZ_RENDERING_PUBLIC
+  uint32_t getVerticesPerPoint();
+
 private:
   struct RenderableInternals
   {
@@ -246,9 +249,6 @@ private:
     Ogre::AxisAlignedBox aabb;
     uint32_t current_vertex_count = 0;
   };
-
-  RVIZ_RENDERING_PUBLIC
-  uint32_t getVerticesPerPoint();
 
   RVIZ_RENDERING_PUBLIC
   float * getVertices();
