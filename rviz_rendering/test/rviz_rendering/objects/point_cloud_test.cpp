@@ -249,7 +249,7 @@ TEST_F(
 
   auto renderables = point_cloud->getRenderables();
   for (auto const & renderable : renderables) {
-    size_t number_of_vertices_per_point = 1;
+    size_t number_of_vertices_per_point = point_cloud->getVerticesPerPoint();
     ASSERT_THAT(renderable->getBuffer()->getNumVertices(), Eq(number_of_vertices_per_point));
   }
 
@@ -257,8 +257,7 @@ TEST_F(
 
   renderables = point_cloud->getRenderables();
   for (auto const & renderable : renderables) {
-    size_t number_of_vertices_per_box {0};
-    number_of_vertices_per_box = point_cloud->getVerticesPerPoint();
+    size_t number_of_vertices_per_box = point_cloud->getVerticesPerPoint();
     ASSERT_THAT(renderable->getBuffer()->getNumVertices(), Eq(number_of_vertices_per_box));
   }
 }
