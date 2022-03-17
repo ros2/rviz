@@ -277,8 +277,7 @@ TEST_F(PointCloudTestFixture, addPoints_adds_new_renderable_whenever_it_is_calle
 TEST_F(PointCloudTestFixture, addPoints_adds_vertices_with_correct_geometry_when_called) {
   auto point_cloud = std::make_shared<rviz_rendering::PointCloud>();
   point_cloud->setRenderMode(rviz_rendering::PointCloud::RM_FLAT_SQUARES);
-  size_t number_of_vertices_per_flat_square = {0};
-  number_of_vertices_per_flat_square = point_cloud->getVerticesPerPoint();
+  size_t number_of_vertices_per_flat_square = point_cloud->getVerticesPerPoint();
 
   point_cloud->addPoints(singlePointArray.begin(), singlePointArray.end());
 
