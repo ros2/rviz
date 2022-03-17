@@ -242,7 +242,6 @@ TEST_F(PointCloudTestFixture, setRenderMode_changes_material) {
 TEST_F(
   PointCloudTestFixture,
   setRenderMode_regenerates_renderables_with_different_size_when_geometry_support_changes) {
-  int glsl_version = testing_environment_->getGlslVersion();
   auto point_cloud = std::make_shared<rviz_rendering::PointCloud>();
   point_cloud->addPoints(singlePointArray.begin(), singlePointArray.end());
 
@@ -277,7 +276,6 @@ TEST_F(PointCloudTestFixture, addPoints_adds_new_renderable_whenever_it_is_calle
 
 
 TEST_F(PointCloudTestFixture, addPoints_adds_vertices_with_correct_geometry_when_called) {
-  int glsl_version = testing_environment_->getGlslVersion();
   auto point_cloud = std::make_shared<rviz_rendering::PointCloud>();
   point_cloud->setRenderMode(rviz_rendering::PointCloud::RM_FLAT_SQUARES);
   size_t number_of_vertices_per_flat_square = {0};

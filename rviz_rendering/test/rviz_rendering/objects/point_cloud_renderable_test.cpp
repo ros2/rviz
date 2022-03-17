@@ -99,6 +99,7 @@ TEST_F(PointCloudRenderableTestFixture, renderable_contains_a_correctly_filled_b
   }
 
   ASSERT_THAT(vertex_size, Eq(size_of_single_vertex));
+  ASSERT_THAT(number_of_vertices, Eq(vertices_added));
 }
 
 TEST_F(
