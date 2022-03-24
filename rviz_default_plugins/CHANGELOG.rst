@@ -2,6 +2,9 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.1.0 (2022-03-24)
+-------------------
+
 11.0.0 (2022-03-01)
 -------------------
 * Drop ignition-math6 from rviz_default_plugins link interface (`#833 <https://github.com/ros2/rviz/issues/833>`_)

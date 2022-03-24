@@ -2,6 +2,12 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.1.0 (2022-03-24)
+-------------------
+* Make getVerticesPerPoint method public and improve tests (`#843 <https://github.com/ros2/rviz/issues/843>`_)
+* Disable class-memaccess warnings for Eigen (`#838 <https://github.com/ros2/rviz/issues/838>`_)
+* Contributors: Chris Lalancette, Jorge Perez
+
 11.0.0 (2022-03-01)
 -------------------
 * Disable a warning when including Eigen. (`#835 <https://github.com/ros2/rviz/issues/835>`_)
