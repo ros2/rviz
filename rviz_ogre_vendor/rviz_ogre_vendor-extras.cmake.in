@@ -127,9 +127,9 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
     if(APPLE)
       list(APPEND _extra_interface_link_libraries "-framework Cocoa")
     endif()
-    set_target_properties(rviz_ogre_vendor::OgreMain
-      PROPERTIES
-        "INTERFACE_LINK_LIBRARIES" "${_extra_interface_link_libraries}"
+    target_link_libraries(rviz_ogre_vendor::OgreMain
+      INTERFACE
+      ${_extra_interface_link_libraries}
     )
   endif()
   if("OgreOverlayStatic" STREQUAL ${_lib} OR "OgreOverlay" STREQUAL ${_lib})
