@@ -2,6 +2,9 @@
 Changelog for package rviz_assimp_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 11.1.0 (2022-03-24)
 -------------------
 * Make sure to pass compiler and flags down to assimp (`#844 <https://github.com/ros2/rviz/issues/844>`_)

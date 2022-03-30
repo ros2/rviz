@@ -2,6 +2,9 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 11.1.0 (2022-03-24)
 -------------------
 * Make getVerticesPerPoint method public and improve tests (`#843 <https://github.com/ros2/rviz/issues/843>`_)
