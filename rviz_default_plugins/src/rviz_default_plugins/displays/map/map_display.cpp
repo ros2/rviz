@@ -215,8 +215,8 @@ void MapDisplay::updateBinaryThreshold()
 {
   int threshold = binary_threshold_property_->getInt();
   palette_textures_binary_[0] = makePaletteTexture(makeMapPalette(true, threshold));
-  palette_textures_binary_[1] = makePaletteTexture(makeCostmapPalette(true,  threshold));
-  palette_textures_binary_[2] = makePaletteTexture(makeRawPalette(true,  threshold));
+  palette_textures_binary_[1] = makePaletteTexture(makeCostmapPalette(true, threshold));
+  palette_textures_binary_[2] = makePaletteTexture(makeRawPalette(true, threshold));
 }
 
 void MapDisplay::updateTopic()
