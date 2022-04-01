@@ -139,21 +139,20 @@ MapDisplay::MapDisplay()
     "Use map header timestamp when transforming", this, SLOT(transformMap()));
 
   binary_view_property_ = new rviz_common::properties::BoolProperty(
-    "Binary representation", 
+    "Binary representation",
     false,
-    "Allows to represent the map value as either free or occupied, considering the user-defined threshold",
-    this, 
+    "Represent the map value as either free or occupied, considering the user-defined threshold",
+    this,
     SLOT(updatePalette()));
 
   binary_threshold_property_ = new rviz_common::properties::IntProperty(
-    "Binary threshold", 
+    "Binary threshold",
     100,
-    "Minimum value to mark cells as obstacle in the binary representation of the map", 
+    "Minimum value to mark cells as obstacle in the binary representation of the map",
     this,
     SLOT(updateBinaryThreshold()));
    binary_threshold_property_->setMin(0);
    binary_threshold_property_->setMax(100);
-
 }
 
 MapDisplay::~MapDisplay()
@@ -199,23 +198,25 @@ void MapDisplay::onInitialize()
       this->update_profile_ = profile;
       updateMapUpdateTopic();
     });
+  int threshold = binary_threshold_property_->getInt();
   // Order of palette textures here must match option indices for color_scheme_property_ above.
   palette_textures_.push_back(makePaletteTexture(makeMapPalette()));
-  palette_textures_binary_.push_back(makePaletteTexture(makeMapPalette(true, binary_threshold_property_->getInt())));
+  palette_textures_binary_.push_back(makePaletteTexture(makeMapPalette(true, threshold)));
   color_scheme_transparency_.push_back(false);
   palette_textures_.push_back(makePaletteTexture(makeCostmapPalette()));
-  palette_textures_binary_.push_back(makePaletteTexture(makeCostmapPalette(true, binary_threshold_property_->getInt())));
+  palette_textures_binary_.push_back(makePaletteTexture(makeCostmapPalette(true, threshold)));
   color_scheme_transparency_.push_back(true);
   palette_textures_.push_back(makePaletteTexture(makeRawPalette()));
-  palette_textures_binary_.push_back(makePaletteTexture(makeRawPalette(true, binary_threshold_property_->getInt())));
+  palette_textures_binary_.push_back(makePaletteTexture(makeRawPalette(true, threshold)));
   color_scheme_transparency_.push_back(true);
 }
 
 void MapDisplay::updateBinaryThreshold()
 {
-  palette_textures_binary_[0] = makePaletteTexture(makeMapPalette(true, binary_threshold_property_->getInt()));
-  palette_textures_binary_[1] = makePaletteTexture(makeCostmapPalette(true, binary_threshold_property_->getInt()));
-  palette_textures_binary_[2] = makePaletteTexture(makeRawPalette(true, binary_threshold_property_->getInt()));
+  int threshold = binary_threshold_property_->getInt();
+  palette_textures_binary_[0] = makePaletteTexture(makeMapPalette(true, threshold));
+  palette_textures_binary_[1] = makePaletteTexture(makeCostmapPalette(true,  threshold));
+  palette_textures_binary_[2] = makePaletteTexture(makeRawPalette(true,  threshold));
 }
 
 void MapDisplay::updateTopic()
