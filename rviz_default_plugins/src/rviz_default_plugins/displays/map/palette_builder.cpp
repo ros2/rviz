@@ -110,7 +110,7 @@ std::vector<unsigned char> makeMapPalette(bool binary, int threshold)
 std::vector<unsigned char> makeCostmapPalette(bool binary, int threshold)
 {
   auto palette_builder = std::make_shared<PaletteBuilder>();
-    if (binary) {
+  if (binary) {
     for (unsigned char i = 0; i < threshold; i++) {
       palette_builder->setColorForValue(i, 0, 0, 255, 255);
     }
