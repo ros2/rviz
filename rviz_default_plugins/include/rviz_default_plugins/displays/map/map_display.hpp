@@ -125,7 +125,6 @@ protected Q_SLOTS:
   void transformMap();
   void updateMapUpdateTopic();
 
-
 protected:
   void updateTopic() override;
   void update(float wall_dt, float ros_dt) override;
