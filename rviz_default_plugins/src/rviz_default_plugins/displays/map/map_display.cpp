@@ -151,8 +151,8 @@ MapDisplay::MapDisplay()
     "Minimum value to mark cells as obstacle in the binary representation of the map",
     this,
     SLOT(updateBinaryThreshold()));
-   binary_threshold_property_->setMin(0);
-   binary_threshold_property_->setMax(100);
+  binary_threshold_property_->setMin(0);
+  binary_threshold_property_->setMax(100);
 }
 
 MapDisplay::~MapDisplay()
@@ -611,7 +611,7 @@ void MapDisplay::updatePalette()
     } else {
       palette_tex_unit = pass->createTextureUnitState();
     }
-    if (binary){
+    if (binary) {
       palette_tex_unit->setTexture(palette_textures_binary_[palette_index]);
     } else {
       palette_tex_unit->setTexture(palette_textures_[palette_index]);
