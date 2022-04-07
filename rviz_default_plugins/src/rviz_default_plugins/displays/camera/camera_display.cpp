@@ -122,6 +122,13 @@ CameraDisplay::CameraDisplay()
     this);
   zoom_property_->setMin(0.00001f);
   zoom_property_->setMax(100000.0f);
+
+  far_plane_property_ = new rviz_common::properties::FloatProperty(
+    "Far Plane Distance", 100.0f,
+    "Geometry beyond the camera's far plane will not be rendered.",
+    this);
+  far_plane_property_->setMin(0.00001f);
+  far_plane_property_->setMax(100000.0f);
 }
 
 CameraDisplay::~CameraDisplay()
@@ -593,7 +600,7 @@ Ogre::Matrix4 CameraDisplay::calculateProjectionMatrix(
   auto fx = static_cast<float>(info->p[0]);
   auto fy = static_cast<float>(info->p[5]);
 
-  float far_plane = 100.0f;
+  float far_plane = far_plane_property_->getFloat();
   float near_plane = 0.01f;
 
   Ogre::Matrix4 proj_matrix;

@@ -194,6 +194,7 @@ private:
   rviz_common::properties::FloatProperty * alpha_property_;
   rviz_common::properties::EnumProperty * image_position_property_;
   rviz_common::properties::FloatProperty * zoom_property_;
+  rviz_common::properties::FloatProperty * far_plane_property_;
   rviz_common::properties::DisplayGroupVisibilityProperty * visibility_property_;
 
   sensor_msgs::msg::CameraInfo::ConstSharedPtr current_caminfo_;
