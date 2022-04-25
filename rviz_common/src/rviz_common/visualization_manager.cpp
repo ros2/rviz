@@ -233,6 +233,19 @@ VisualizationManager::VisualizationManager(
   selection_manager_ = std::make_shared<SelectionManager>(this);
   view_picker_ = std::make_shared<ViewPicker>(this);
 
+  rcl_jump_threshold_t jump_threshold;
+  jump_threshold.on_clock_change = true;
+  // Disable forward jump callbacks
+  jump_threshold.min_forward.nanoseconds = 0;
+  // Anything backwards is a jump
+  jump_threshold.min_backward.nanoseconds = -1;
+  clock_jump_handler_ = clock_->create_jump_callback(
+    nullptr, std::bind(
+      &VisualizationManager::onTimeJump, this,
+      std::placeholders::_1), jump_threshold);
+
+  connect(this, SIGNAL(timeJumped()), this, SLOT(resetTime()));
+
   executor_->add_node(rviz_ros_node_.lock()->get_raw_node());
 // TODO(wjwwood): redo with executors?
 #if 0
@@ -435,6 +448,20 @@ void VisualizationManager::onUpdate()
     render_requested_ = 0;
     std::lock_guard<std::mutex> lock(private_->render_mutex_);
     ogre_root_->renderOneFrame();
+  }
+}
+
+void VisualizationManager::onTimeJump(const rcl_time_jump_t & jump)
+{
+  if (jump.clock_change == RCL_ROS_TIME_ACTIVATED ||
+    jump.clock_change == RCL_ROS_TIME_DEACTIVATED)
+  {
+    RVIZ_COMMON_LOG_WARNING("Detected time source change. Resetting RViz.");
+    Q_EMIT timeJumped();
+  } else if (jump.delta.nanoseconds < 0) {
+    RVIZ_COMMON_LOG_WARNING_STREAM(
+      "Detected jump back in time. Resetting RViz.");
+    Q_EMIT timeJumped();
   }
 }
 
