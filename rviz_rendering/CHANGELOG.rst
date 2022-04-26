@@ -2,8 +2,8 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+11.2.1 (2022-04-26)
+-------------------
 * Stop using glsl150 resources for now. (`#851 <https://github.com/ros2/rviz/issues/851>`_)
 * Contributors: Chris Lalancette
 

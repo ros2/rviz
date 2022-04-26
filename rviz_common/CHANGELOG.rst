@@ -2,8 +2,8 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+11.2.1 (2022-04-26)
+-------------------
 * Make sure not to dereference a null Renderable pointer. (`#850 <https://github.com/ros2/rviz/issues/850>`_)
 * Contributors: Chris Lalancette
 
