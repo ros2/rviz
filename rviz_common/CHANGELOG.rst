@@ -2,6 +2,15 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Removed traces in renderPanel (`#777 <https://github.com/ros2/rviz/issues/777>`_) (`#778 <https://github.com/ros2/rviz/issues/778>`_)
+* Update displays_panel.cpp (`#745 <https://github.com/ros2/rviz/issues/745>`_) (`#771 <https://github.com/ros2/rviz/issues/771>`_)
+* Efficiently handle 3-bytes pixel formats (`#743 <https://github.com/ros2/rviz/issues/743>`_) (`#750 <https://github.com/ros2/rviz/issues/750>`_)
+* Add rviz_rendering dependency to rviz_common (`#727 <https://github.com/ros2/rviz/issues/727>`_) (`#748 <https://github.com/ros2/rviz/issues/748>`_)
+* Removed some memory leaks in rviz_rendering and rviz_rendering_tests (`#710 <https://github.com/ros2/rviz/issues/710>`_)
+* Contributors: Alejandro Hernández Cordero, Rebecca Butler
+
 8.5.0 (2021-04-06)
 ------------------
 * Add visualization_frame to the public API (`#660 <https://github.com/ros2/rviz/issues/660>`_)

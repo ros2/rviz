@@ -2,6 +2,11 @@
 Changelog for package rviz_assimp_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix support for assimp 5.1.0 (`#827 <https://github.com/ros2/rviz/issues/827>`_)
+* Contributors: Akash
+
 8.5.0 (2021-04-06)
 ------------------
 

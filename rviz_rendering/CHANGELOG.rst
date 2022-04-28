@@ -2,6 +2,14 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix support for assimp 5.1.0 (`#827 <https://github.com/ros2/rviz/issues/827>`_)
+* Export Qt5 dependencies properly (`#687 <https://github.com/ros2/rviz/issues/687>`_) (`#789 <https://github.com/ros2/rviz/issues/789>`_)
+* fixed windows test
+* Removed some memory leaks in rviz_rendering and rviz_rendering_tests (`#710 <https://github.com/ros2/rviz/issues/710>`_)
+* Contributors: Akash, Alejandro Hernández Cordero, Michel Hidalgo, ahcorde
+
 8.5.0 (2021-04-06)
 ------------------
 
