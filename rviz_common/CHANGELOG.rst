@@ -2,8 +2,8 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.5.1 (2022-04-28)
+------------------
 * Removed traces in renderPanel (`#777 <https://github.com/ros2/rviz/issues/777>`_) (`#778 <https://github.com/ros2/rviz/issues/778>`_)
 * Update displays_panel.cpp (`#745 <https://github.com/ros2/rviz/issues/745>`_) (`#771 <https://github.com/ros2/rviz/issues/771>`_)
 * Efficiently handle 3-bytes pixel formats (`#743 <https://github.com/ros2/rviz/issues/743>`_) (`#750 <https://github.com/ros2/rviz/issues/750>`_)

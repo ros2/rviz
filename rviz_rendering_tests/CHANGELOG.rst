@@ -2,8 +2,8 @@
 Changelog for package rviz_rendering_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.5.1 (2022-04-28)
+------------------
 * Removed some memory leaks in rviz_rendering and rviz_rendering_tests (`#710 <https://github.com/ros2/rviz/issues/710>`_)
 * Contributors: Alejandro Hernández Cordero
 
