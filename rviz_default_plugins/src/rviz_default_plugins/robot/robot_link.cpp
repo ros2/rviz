@@ -30,12 +30,6 @@
 
 #include "rviz_default_plugins/robot/robot_link.hpp"
 
-#include <ignition/math/Inertial.hh>
-#include <ignition/math/MassMatrix3.hh>
-#include <ignition/math/Pose3.hh>
-#include <ignition/math/Quaternion.hh>
-#include <ignition/math/Vector3.hh>
-
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <map>
@@ -55,6 +49,12 @@
 #include <OgreTechnique.h>
 
 #include <QFileInfo>  // NOLINT cpplint cannot handle include order here
+
+#include <ignition/math/Inertial.hh>
+#include <ignition/math/MassMatrix3.hh>
+#include <ignition/math/Pose3.hh>
+#include <ignition/math/Quaternion.hh>
+#include <ignition/math/Vector3.hh>
 
 #include "resource_retriever/retriever.hpp"
 
