@@ -116,7 +116,7 @@ macro(build_ogre)
   endif()
 
   if(WIN32)
-    set(OGRE_C_FLAGS "${OGRE_C_FLAGS} /w /EHsc")
+    set(OGRE_C_FLAGS "${OGRE_C_FLAGS} -std:c++14 /w /EHsc")
     set(OGRE_CXX_FLAGS "${OGRE_CXX_FLAGS} /w /EHsc")
   elseif(APPLE)
     set(OGRE_CXX_FLAGS "${OGRE_CXX_FLAGS} -std=c++14 -stdlib=libc++ -w")
