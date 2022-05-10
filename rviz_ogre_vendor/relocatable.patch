@@ -1,9 +1,9 @@
 diff -uNr a/CMake/InstallResources.cmake b/CMake/InstallResources.cmake
 --- a/CMake/InstallResources.cmake	2022-05-09 17:30:13.273565553 -0700
 +++ b/CMake/InstallResources.cmake	2022-05-09 17:29:53.013345872 -0700
-@@ -44,6 +44,20 @@
-   set(OGRE_CFG_INSTALL_PATH "share/OGRE")
- endif ()
+@@ -59,6 +59,20 @@
+   endif()
+ endif()
  
 +# ensure installation is relocatable
 +if (IS_ABSOLUTE "${OGRE_MEDIA_DIR_REL}")
@@ -19,6 +19,6 @@ diff -uNr a/CMake/InstallResources.cmake b/CMake/InstallResources.cmake
 +  file(RELATIVE_PATH OGRE_SAMPLES_DIR_REL "${CMAKE_INSTALL_PREFIX}/${OGRE_CFG_INSTALL_PATH}" "${OGRE_SAMPLES_DIR_REL}")
 +endif ()
 +
- # generate OgreConfigPaths.h
- configure_file(${OGRE_TEMPLATES_DIR}/OgreConfigPaths.h.in ${PROJECT_BINARY_DIR}/include/OgreConfigPaths.h @ONLY)
- 
+ # configure plugins.cfg
+ if (NOT OGRE_BUILD_RENDERSYSTEM_D3D9)
+   set(OGRE_COMMENT_RENDERSYSTEM_D3D9 "#")
