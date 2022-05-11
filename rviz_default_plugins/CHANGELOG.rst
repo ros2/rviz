@@ -2,6 +2,11 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.2 (2022-05-10)
+-------------------
+* Fix include order (`#858 <https://github.com/ros2/rviz/issues/858>`_) (`#859 <https://github.com/ros2/rviz/issues/859>`_)
+* Contributors: Jacob Perron
+
 11.2.1 (2022-04-26)
 -------------------
 

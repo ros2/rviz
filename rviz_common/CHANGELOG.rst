@@ -2,6 +2,11 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.2 (2022-05-10)
+-------------------
+* Add time jump handler (`#791 <https://github.com/ros2/rviz/issues/791>`_) (`#854 <https://github.com/ros2/rviz/issues/854>`_)
+* Contributors: Jacob Perron
+
 11.2.1 (2022-04-26)
 -------------------
 * Make sure not to dereference a null Renderable pointer. (`#850 <https://github.com/ros2/rviz/issues/850>`_)
