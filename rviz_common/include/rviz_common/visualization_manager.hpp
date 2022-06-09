@@ -87,7 +87,7 @@ class VisualizationManagerPrivate;
  * The "protected" members should probably all be "private", as
  * VisualizationManager is not intended to be subclassed.
  */
-class VisualizationManager : public DisplayContext
+class RVIZ_COMMON_PUBLIC VisualizationManager : public DisplayContext
 {
   Q_OBJECT
 
