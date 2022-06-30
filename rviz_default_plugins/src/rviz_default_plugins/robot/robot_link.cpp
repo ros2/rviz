@@ -886,7 +886,7 @@ void RobotLink::createInertia(const urdf::LinkConstSharedPtr & link)
     if (!mass_matrix.EquivalentBox(box_scale, box_rot)) {
       // Invalid inertia, load with default scale
       RVIZ_COMMON_LOG_ERROR_STREAM(
-        "The link is static or has unrealistic "
+        "The link " << link->name << " is static or has unrealistic "
         "inertia, so the equivalent inertia box will not be shown.\n");
       return;
     }
