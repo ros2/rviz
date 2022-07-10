@@ -453,7 +453,6 @@ Ogre::Light * RenderWindowImpl::getDirectionalLight() const
 void RenderWindowImpl::setDirectionalLightDirection(const Ogre::Vector3& vec)
 {
   auto light_node = ogre_scene_manager_->getRootSceneNode()->createChildSceneNode();
-  light_node->attachObject(ogre_directional_light_);
   light_node->setDirection(vec);
 }
 
