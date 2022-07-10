@@ -227,10 +227,10 @@ RenderWindowImpl::initialize()
     ogre_camera_->setNearClipDistance(0.1f);
     ogre_camera_->setFarClipDistance(200.0f);
 
-    auto camera_node = ogre_scene_manager_->getRootSceneNode()->createChildSceneNode();
-    camera_node->attachObject(ogre_camera_);
-    camera_node->setPosition(Ogre::Vector3(0.0f, 10.0f, 10.0f));
-    camera_node->lookAt(Ogre::Vector3(0.0f, 0.0f, 0.0f), Ogre::Node::TS_WORLD);
+    ogre_camera_node_ = ogre_scene_manager_->getRootSceneNode()->createChildSceneNode();
+    ogre_camera_node_->attachObject(ogre_camera_);
+    ogre_camera_node_->setPosition(Ogre::Vector3(0.0f, 10.0f, 10.0f));
+    ogre_camera_node_->lookAt(Ogre::Vector3(0.0f, 0.0f, 0.0f), Ogre::Node::TS_WORLD);
   }
 
   if (ogre_camera_) {
@@ -433,16 +433,12 @@ Ogre::Camera * RenderWindowImpl::getCamera() const
 
 void RenderWindowImpl::setCameraPosition(const Ogre::Vector3& vec)
 {
-  auto camera_node = ogre_scene_manager_->getRootSceneNode()->createChildSceneNode();
-  camera_node->attachObject(ogre_camera_);
-  camera_node->setPosition(vec);
+  ogre_camera_node_->setPosition(vec);
 }
 
 void RenderWindowImpl::setCameraOrientation(const Ogre::Quaternion& quat)
 {
-  auto camera_node = ogre_scene_manager_->getRootSceneNode()->createChildSceneNode();
-  camera_node->attachObject(ogre_camera_);
-  camera_node->setOrientation(quat);
+  ogre_camera_node_->setOrientation(quat);
 }
 
 Ogre::Light * RenderWindowImpl::getDirectionalLight() const

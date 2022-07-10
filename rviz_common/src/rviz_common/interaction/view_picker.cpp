@@ -80,8 +80,10 @@ void ViewPicker::initialize()
   auto scene_manager = context_->getSceneManager();
 
   camera_ = scene_manager->createCamera("ViewPicker_camera");
+  auto camera_node = scene_manager->getRootSceneNode()->createChildSceneNode();
+  camera_node->attachObject(camera_);
 
-  renderer_->initialize(camera_, scene_manager);
+  renderer_->initialize(camera_, camera_node);
 
   handler_manager_ = context_->getHandlerManager();
 }
