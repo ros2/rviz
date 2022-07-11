@@ -164,11 +164,11 @@ public:
 
   static
   void
-  setOgreCameraPosition(RenderWindow * render_window, const Ogre::Vector3& vec);
+  setOgreCameraPosition(RenderWindow * render_window, const Ogre::Vector3 & vec);
 
   static
   void
-  setOgreCameraOrientation(RenderWindow * render_window, const Ogre::Quaternion& quat);
+  setOgreCameraOrientation(RenderWindow * render_window, const Ogre::Quaternion & quat);
 
   static
   Ogre::Viewport *
@@ -180,7 +180,7 @@ public:
 
   static
   void
-  setDirectionalLightDirection(RenderWindow * render_window, const Ogre::Vector3& vec);
+  setDirectionalLightDirection(RenderWindow * render_window, const Ogre::Vector3 & vec);
 
   static
   Ogre::Light *
