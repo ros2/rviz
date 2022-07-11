@@ -194,6 +194,7 @@ protected:
   Ogre::Camera * ogre_camera_;
   Ogre::Light * ogre_directional_light_;
   Ogre::SceneNode * ogre_camera_node_;
+  Ogre::SceneNode * ogre_light_node_;
 
   bool animating_;
 

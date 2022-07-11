@@ -60,6 +60,9 @@ RenderWindowImpl::RenderWindowImpl(QWindow * parent)
   ogre_frame_listener_(nullptr),
   ogre_scene_manager_(nullptr),
   ogre_camera_(nullptr),
+  ogre_directional_light_(nullptr),
+  ogre_camera_node_(nullptr),
+  ogre_light_node_(nullptr),
   animating_(false),
   ogre_viewport_(nullptr),
   ortho_scale_(1.0f),
@@ -219,9 +222,9 @@ RenderWindowImpl::initialize()
     ogre_directional_light_->setType(Ogre::Light::LT_DIRECTIONAL);
     ogre_directional_light_->setDiffuseColour(Ogre::ColourValue(1.0f, 1.0f, 1.0f));
 
-    auto light_node = ogre_scene_manager_->getRootSceneNode()->createChildSceneNode();
-    light_node->attachObject(ogre_directional_light_);
-    light_node->setDirection(Ogre::Vector3(-1, 0, -1));
+    ogre_light_node_ = ogre_scene_manager_->getRootSceneNode()->createChildSceneNode();
+    ogre_light_node_->attachObject(ogre_directional_light_);
+    ogre_light_node_->setDirection(Ogre::Vector3(-1, 0, -1), Ogre::Node::TS_WORLD);
 
     ogre_camera_ = ogre_scene_manager_->createCamera("MainCamera");
     ogre_camera_->setNearClipDistance(0.1f);
@@ -448,8 +451,7 @@ Ogre::Light * RenderWindowImpl::getDirectionalLight() const
 
 void RenderWindowImpl::setDirectionalLightDirection(const Ogre::Vector3& vec)
 {
-  auto light_node = ogre_scene_manager_->getRootSceneNode()->createChildSceneNode();
-  light_node->setDirection(vec);
+  ogre_light_node_->setDirection(vec, Ogre::Node::TS_WORLD);
 }
 
 Ogre::SceneManager * RenderWindowImpl::getSceneManager() const
