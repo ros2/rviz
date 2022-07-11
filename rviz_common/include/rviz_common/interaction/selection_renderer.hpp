@@ -100,7 +100,7 @@ public:
   ~SelectionRenderer() override = default;
 
   RVIZ_COMMON_PUBLIC
-  virtual void initialize(Ogre::Camera * camera, Ogre::SceneNode * scene_node);
+  virtual void initialize(Ogre::Camera * camera);
 
   RVIZ_COMMON_PUBLIC
   virtual void render(

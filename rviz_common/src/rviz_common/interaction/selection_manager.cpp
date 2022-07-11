@@ -179,7 +179,7 @@ void SelectionManager::initialize()
   auto camera_node = scene_manager->getRootSceneNode()->createChildSceneNode();
   camera_node->attachObject(camera_);
 
-  renderer_->initialize(camera_, camera_node);
+  renderer_->initialize(camera_);
 
   handler_manager_ = context_->getHandlerManager();
   handler_manager_->addListener(this);

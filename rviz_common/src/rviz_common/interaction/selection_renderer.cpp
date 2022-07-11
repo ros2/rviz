@@ -63,12 +63,10 @@ SelectionRenderer::SelectionRenderer(rviz_common::DisplayContext * context)
   camera_node_(nullptr)
 {}
 
-void SelectionRenderer::initialize(
-  Ogre::Camera * camera,
-  Ogre::SceneNode * camera_node)
+void SelectionRenderer::initialize(Ogre::Camera * camera)
 {
   camera_ = camera;
-  camera_node_ = camera_node;
+  camera_node_ = camera_->getParentSceneNode();
 
   fallback_pick_material_ = Ogre::MaterialManager::getSingleton().getByName(
     "rviz/DefaultPickAndDepth");
