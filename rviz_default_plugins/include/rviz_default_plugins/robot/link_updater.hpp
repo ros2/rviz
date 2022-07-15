@@ -32,7 +32,7 @@
 
 #include <string>
 
-#include <Ogre.h>
+#include <OgreVector.h>
 
 #include "rviz_common/properties/status_property.hpp"
 

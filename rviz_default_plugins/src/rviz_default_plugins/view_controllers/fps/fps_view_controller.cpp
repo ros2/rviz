@@ -34,7 +34,7 @@
 #include <OgreQuaternion.h>
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
-#include <Ogre.h>
+#include <OgreVector.h>
 #include <OgreViewport.h>
 
 #include "rviz_rendering/geometry.hpp"

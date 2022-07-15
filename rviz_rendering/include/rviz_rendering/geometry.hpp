@@ -33,7 +33,7 @@
 
 #include "rviz_rendering/visibility_control.hpp"
 
-#include <Ogre.h>
+#include <OgreVector.h>
 
 namespace Ogre
 {

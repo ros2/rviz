@@ -38,7 +38,7 @@
 #include <vector>
 
 #include <OgreRay.h>
-#include <Ogre.h>
+#include <OgreVector.h>
 #include <OgreQuaternion.h>
 #include <OgreSceneManager.h>
 #endif

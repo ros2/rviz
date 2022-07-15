@@ -39,7 +39,7 @@
 #include <thread>
 #include <vector>
 
-#include <Ogre.h>
+#include <OgreVector.h>
 #include <OgreQuaternion.h>
 #endif
 

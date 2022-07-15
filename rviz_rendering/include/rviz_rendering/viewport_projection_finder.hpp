@@ -34,7 +34,7 @@
 
 #include <utility>
 
-#include <Ogre.h>
+#include <OgreVector.h>
 
 #include "rviz_rendering/visibility_control.hpp"
 

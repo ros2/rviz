@@ -34,7 +34,7 @@
 #include <string>
 #include <vector>
 
-#include <Ogre.h>
+#include <OgreVector.h>
 #include <OgreMesh.h>
 
 namespace rviz_rendering

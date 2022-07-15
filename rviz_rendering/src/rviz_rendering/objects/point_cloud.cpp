@@ -37,7 +37,7 @@
 
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
-#include <Ogre.h>
+#include <OgreVector.h>
 #include <OgreQuaternion.h>
 #include <OgreManualObject.h>
 #include <OgreMaterialManager.h>

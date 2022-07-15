@@ -37,7 +37,7 @@
 #include <string>
 
 #include <OgreQuaternion.h>
-#include <Ogre.h>
+#include <OgreVector.h>
 
 #include "rviz_default_plugins/robot/link_updater.hpp"
 

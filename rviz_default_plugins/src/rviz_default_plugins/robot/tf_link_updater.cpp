@@ -32,7 +32,7 @@
 
 #include <string>
 
-#include <Ogre.h>
+#include <OgreVector.h>
 
 #include "rviz_common/frame_manager_iface.hpp"
 

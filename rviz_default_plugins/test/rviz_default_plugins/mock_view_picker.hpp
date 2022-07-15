@@ -38,7 +38,7 @@
 #include <string>
 #include <vector>
 
-#include <Ogre.h>
+#include <OgreVector.h>
 
 #include "rviz_common/interaction/forwards.hpp"
 #include "rviz_common/interaction/view_picker_iface.hpp"

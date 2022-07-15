@@ -38,7 +38,7 @@
 
 #ifndef Q_MOC_RUN
 
-#include <Ogre.h>
+#include <OgreVector.h>
 #include <OgreQuaternion.h>
 #include <OgreAny.h>
 #include <OgreMaterial.h>
