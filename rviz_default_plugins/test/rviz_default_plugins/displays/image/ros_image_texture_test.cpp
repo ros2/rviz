@@ -68,9 +68,17 @@ TEST_F(RosImageTextureTestFixture, constructor_initializes_texture_with_default_
   Ogre::Image expectedImage;
   expectedImage.load("no_image.png", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 
+#if OGRE_MIN_VERSION(13, 4, 3)
   ASSERT_THAT(
     std::vector<uint8_t>(textureImage.getData(), textureImage.getData() + textureImage.getSize()),
     testing::ElementsAreArray(expectedImage.getData(), expectedImage.getSize()));
+#else
+  // Can't compare the two images directly because the of a bug that was introduced in Ogre 1.12.10
+  // and only fixed in Ogre 13.4.3
+  // See https://github.com/OGRECave/ogre/pull/2519
+  ASSERT_EQ(textureImage.getWidth(), expectedImage.getWidth());
+  ASSERT_EQ(textureImage.getHeight(), expectedImage.getHeight());
+#endif  // OGRE_MIN_VERSION(13, 4, 3)
 }
 
 TEST_F(RosImageTextureTestFixture, update_writes_new_image_to_the_texture) {
@@ -92,7 +100,15 @@ TEST_F(RosImageTextureTestFixture, update_writes_new_image_to_the_texture) {
   Ogre::Image textureImage;
   ogreTexture->convertToImage(textureImage);
 
+#if OGRE_MIN_VERSION(13, 4, 3)
   ASSERT_THAT(
     std::vector<uint8_t>(textureImage.getData(), textureImage.getData() + textureImage.getSize()),
     testing::ElementsAreArray(testImage.getData(), testImage.getSize()));
+#else
+  // Can't compare the two images directly because the of a bug that was introduced in Ogre 1.12.10
+  // and only fixed in Ogre 13.4.3
+  // See https://github.com/OGRECave/ogre/pull/2519
+  ASSERT_EQ(textureImage.getWidth(), testImage.getWidth());
+  ASSERT_EQ(textureImage.getHeight(), testImage.getHeight());
+#endif  // OGRE_MIN_VERSION(13, 4, 3)
 }
