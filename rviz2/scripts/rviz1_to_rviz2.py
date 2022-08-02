@@ -339,8 +339,6 @@ def migrate_visualization_manager_tools(tools_list):
 
 
 def migrate_visualization_manager_views(view_dict):
-    if view_dict['Saved']:
-        print('Skipping migration of saved views', file=sys.stderr)
     rviz2 = {
             'Current': migrate_view(view_dict['Current']),
             'Saved': [],
