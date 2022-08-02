@@ -60,6 +60,9 @@ RenderWindowImpl::RenderWindowImpl(QWindow * parent)
   ogre_frame_listener_(nullptr),
   ogre_scene_manager_(nullptr),
   ogre_camera_(nullptr),
+  ogre_directional_light_(nullptr),
+  ogre_camera_node_(nullptr),
+  ogre_light_node_(nullptr),
   animating_(false),
   ogre_viewport_(nullptr),
   ortho_scale_(1.0f),
@@ -217,17 +220,20 @@ RenderWindowImpl::initialize()
 
     ogre_directional_light_ = ogre_scene_manager_->createLight("MainDirectional");
     ogre_directional_light_->setType(Ogre::Light::LT_DIRECTIONAL);
-    ogre_directional_light_->setDirection(Ogre::Vector3(-1, 0, -1));
     ogre_directional_light_->setDiffuseColour(Ogre::ColourValue(1.0f, 1.0f, 1.0f));
+
+    ogre_light_node_ = ogre_scene_manager_->getRootSceneNode()->createChildSceneNode();
+    ogre_light_node_->attachObject(ogre_directional_light_);
+    ogre_light_node_->setDirection(Ogre::Vector3(-1, 0, -1), Ogre::Node::TS_WORLD);
 
     ogre_camera_ = ogre_scene_manager_->createCamera("MainCamera");
     ogre_camera_->setNearClipDistance(0.1f);
     ogre_camera_->setFarClipDistance(200.0f);
 
-    auto camera_node_ = ogre_scene_manager_->getRootSceneNode()->createChildSceneNode();
-    ogre_camera_->setPosition(Ogre::Vector3(0.0f, 10.0f, 10.0f));
-    ogre_camera_->lookAt(Ogre::Vector3(0.0f, 0.0f, 0.0f));
-    camera_node_->attachObject(ogre_camera_);
+    ogre_camera_node_ = ogre_scene_manager_->getRootSceneNode()->createChildSceneNode();
+    ogre_camera_node_->attachObject(ogre_camera_);
+    ogre_camera_node_->setPosition(Ogre::Vector3(0.0f, 10.0f, 10.0f));
+    ogre_camera_node_->lookAt(Ogre::Vector3(0.0f, 0.0f, 0.0f), Ogre::Node::TS_WORLD);
   }
 
   if (ogre_camera_) {
@@ -428,9 +434,24 @@ Ogre::Camera * RenderWindowImpl::getCamera() const
   return ogre_camera_;
 }
 
+void RenderWindowImpl::setCameraPosition(const Ogre::Vector3 & vec)
+{
+  ogre_camera_node_->setPosition(vec);
+}
+
+void RenderWindowImpl::setCameraOrientation(const Ogre::Quaternion & quat)
+{
+  ogre_camera_node_->setOrientation(quat);
+}
+
 Ogre::Light * RenderWindowImpl::getDirectionalLight() const
 {
   return ogre_directional_light_;
+}
+
+void RenderWindowImpl::setDirectionalLightDirection(const Ogre::Vector3 & vec)
+{
+  ogre_light_node_->setDirection(vec, Ogre::Node::TS_WORLD);
 }
 
 Ogre::SceneManager * RenderWindowImpl::getSceneManager() const

@@ -40,7 +40,7 @@
 #include <OgreSceneNode.h>
 #include <OgreTechnique.h>
 #include <OgreTextureManager.h>
-#include <OgreVector3.h>
+#include <OgreVector.h>
 
 #include "rviz_rendering/logging.hpp"
 #include "rviz_rendering/material_manager.hpp"

@@ -33,7 +33,7 @@
 #include <memory>
 #include <vector>
 
-#include <OgreVector3.h>
+#include <OgreVector.h>
 #include <Overlay/OgreFontManager.h>  // NOLINT: cpplint cannot handle include order here
 
 #include "rviz_rendering/objects/movable_text.hpp"

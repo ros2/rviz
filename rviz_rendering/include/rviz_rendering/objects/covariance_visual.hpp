@@ -55,7 +55,7 @@
 #pragma GCC diagnostic pop
 #endif
 
-#include <OgreVector3.h>
+#include <OgreVector.h>
 #include <OgreColourValue.h>
 
 #include "rviz_rendering/objects/shape.hpp"

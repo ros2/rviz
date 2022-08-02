@@ -49,7 +49,7 @@
 #include <OgreRenderable.h>
 #include <OgreSharedPtr.h>
 #include <OgreSimpleRenderable.h>
-#include <OgreVector3.h>
+#include <OgreVector.h>
 
 #include "rviz_rendering/visibility_control.hpp"
 

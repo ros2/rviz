@@ -36,7 +36,7 @@
 #include <OgreManualObject.h>
 #include <OgreMaterialManager.h>
 #include <OgreSceneNode.h>
-#include <OgreVector3.h>
+#include <OgreVector.h>
 #include <OgreQuaternion.h>
 
 #include "rviz_default_plugins/displays/pose_array/pose_array_display.hpp"

@@ -35,7 +35,7 @@
 #include <QObject>  // NOLINT
 
 #ifndef Q_MOC_RUN
-#include <OgreVector3.h>
+#include <OgreVector.h>
 #include <OgreColourValue.h>
 
 #include "sensor_msgs/msg/point_cloud2.hpp"

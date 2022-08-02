@@ -33,7 +33,7 @@
 #include <vector>
 #include <string>
 
-#include <OgreVector3.h>
+#include <OgreVector.h>
 #include <OgreSceneNode.h>
 
 #include "rviz_rendering/objects/billboard_line.hpp"

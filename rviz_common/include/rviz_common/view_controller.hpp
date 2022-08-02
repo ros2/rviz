@@ -33,7 +33,7 @@
 
 #include <string>
 
-#include <OgreVector3.h>
+#include <OgreVector.h>
 
 #include <QCursor>  // NOLINT: cpplint is unable to handle the include order here
 #include <QMap>  // NOLINT: cpplint is unable to handle the include order here

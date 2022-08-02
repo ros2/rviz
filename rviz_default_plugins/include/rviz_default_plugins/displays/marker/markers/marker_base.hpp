@@ -36,7 +36,7 @@
 #include <string>
 #include <utility>
 
-#include <OgreVector3.h>
+#include <OgreVector.h>
 
 #include "visualization_msgs/msg/marker.hpp"
 #include "rclcpp/rclcpp.hpp"

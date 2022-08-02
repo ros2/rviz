@@ -31,7 +31,7 @@
 #include <cmath>
 #include <memory>
 
-#include <OgreVector3.h>
+#include <OgreVector.h>
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 

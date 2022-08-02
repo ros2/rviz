@@ -30,7 +30,7 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__TOOLS__POINT__POINT_TOOL_HPP_
 #define RVIZ_DEFAULT_PLUGINS__TOOLS__POINT__POINT_TOOL_HPP_
 
-#include <OgreVector3.h>
+#include <OgreVector.h>
 
 #include <QCursor>  // NOLINT cpplint cannot handle the include order here
 #include <QObject>  // NOLINT cpplint cannot handle the include order here

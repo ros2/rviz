@@ -41,7 +41,7 @@
 
 #include <QCursor>  // NOLINT cpplint cannot handle include order
 
-#include <OgreVector3.h>
+#include <OgreVector.h>
 
 #include "rviz_common/tool.hpp"
 

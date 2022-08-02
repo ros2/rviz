@@ -122,8 +122,14 @@ public:
   /// Get the camera.
   Ogre::Camera * getCamera() const;
 
-  /// Get the main directional light.
+  void setCameraPosition(const Ogre::Vector3 & vec);
+
+  void setCameraOrientation(const Ogre::Quaternion & quat);
+
   Ogre::Light * getDirectionalLight() const;
+
+  /// Get the main directional light.
+  void setDirectionalLightDirection(const Ogre::Vector3 & vec);
 
   /// Get the Ogre scene manager.
   Ogre::SceneManager * getSceneManager() const;
@@ -187,6 +193,8 @@ protected:
   Ogre::SceneManager * ogre_scene_manager_;
   Ogre::Camera * ogre_camera_;
   Ogre::Light * ogre_directional_light_;
+  Ogre::SceneNode * ogre_camera_node_;
+  Ogre::SceneNode * ogre_light_node_;
 
   bool animating_;
 

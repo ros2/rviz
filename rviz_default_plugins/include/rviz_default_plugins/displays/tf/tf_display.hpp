@@ -38,7 +38,7 @@
 #include <vector>
 
 #include <OgreQuaternion.h>
-#include <OgreVector3.h>
+#include <OgreVector.h>
 
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "tf2/exceptions.h"

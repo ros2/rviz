@@ -32,7 +32,7 @@
 
 #include <memory>
 
-#include <OgreVector3.h>
+#include <OgreVector.h>
 #include <OgreQuaternion.h>
 
 #include "rviz_rendering/visibility_control.hpp"

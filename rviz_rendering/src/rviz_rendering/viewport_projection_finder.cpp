@@ -36,7 +36,7 @@
 #include <OgreCamera.h>
 #include <OgrePlane.h>
 #include <OgreRay.h>
-#include <OgreVector3.h>
+#include <OgreVector.h>
 #include <OgreViewport.h>
 
 #include "rviz_rendering/render_window.hpp"

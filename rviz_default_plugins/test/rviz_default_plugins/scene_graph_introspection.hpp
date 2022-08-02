@@ -42,7 +42,7 @@
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 #include <OgreString.h>
-#include <OgreVector3.h>
+#include <OgreVector.h>
 
 #include "rviz_rendering/objects/point_cloud.hpp"
 #include "rviz_rendering/objects/movable_text.hpp"

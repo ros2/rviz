@@ -41,7 +41,7 @@
 #include "OgreSubMesh.h"
 #include "OgreTechnique.h"
 #include "OgreTextureManager.h"
-#include "OgreVector3.h"
+#include "OgreVector.h"
 
 #include <QDir>  // NOLINT cpplint cannot handle include order here
 #include <QFileInfo>  // NOLINT cpplint cannot handle include order here

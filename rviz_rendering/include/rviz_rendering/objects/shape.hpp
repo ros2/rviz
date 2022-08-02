@@ -35,7 +35,7 @@
 
 #include <OgreMaterial.h>
 #include <OgreSharedPtr.h>
-#include <OgreVector3.h>
+#include <OgreVector.h>
 
 #include "rviz_rendering/objects/object.hpp"
 #include "rviz_rendering/visibility_control.hpp"

@@ -60,13 +60,13 @@ namespace interaction
 SelectionRenderer::SelectionRenderer(rviz_common::DisplayContext * context)
 : context_(context),
   camera_(nullptr),
-  scene_manager_(nullptr)
+  camera_node_(nullptr)
 {}
 
-void SelectionRenderer::initialize(Ogre::Camera * camera, Ogre::SceneManager * scene_manager)
+void SelectionRenderer::initialize(Ogre::Camera * camera)
 {
   camera_ = camera;
-  scene_manager_ = scene_manager;
+  camera_node_ = camera_->getParentSceneNode();
 
   fallback_pick_material_ = Ogre::MaterialManager::getSingleton().getByName(
     "rviz/DefaultPickAndDepth");
@@ -165,8 +165,8 @@ void SelectionRenderer::configureCamera(
 
   camera_->setCustomProjectionMatrix(true, scale_matrix * trans_matrix * proj_matrix);
 
-  camera_->setPosition(viewport->getCamera()->getDerivedPosition());
-  camera_->setOrientation(viewport->getCamera()->getDerivedOrientation());
+  camera_node_->setPosition(viewport->getCamera()->getDerivedPosition());
+  camera_node_->setOrientation(viewport->getCamera()->getDerivedOrientation());
 }
 
 float SelectionRenderer::getRelativeCoordinate(float coordinate, int dimension) const

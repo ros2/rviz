@@ -163,12 +163,24 @@ public:
   getOgreCamera(RenderWindow * render_window);
 
   static
+  void
+  setOgreCameraPosition(RenderWindow * render_window, const Ogre::Vector3 & vec);
+
+  static
+  void
+  setOgreCameraOrientation(RenderWindow * render_window, const Ogre::Quaternion & quat);
+
+  static
   Ogre::Viewport *
   getOgreViewport(RenderWindow * render_window);
 
   static
   void
   setBackgroundColor(RenderWindow * render_window, const Ogre::ColourValue * color);
+
+  static
+  void
+  setDirectionalLightDirection(RenderWindow * render_window, const Ogre::Vector3 & vec);
 
   static
   Ogre::Light *

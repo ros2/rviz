@@ -37,7 +37,7 @@
 #include <string>
 #include <vector>
 
-#include <OgreVector3.h>
+#include <OgreVector.h>
 #include <OgreQuaternion.h>
 
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here

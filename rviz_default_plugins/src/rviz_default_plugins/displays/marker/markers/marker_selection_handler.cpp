@@ -31,7 +31,7 @@
 #include "rviz_default_plugins/displays/marker/markers/marker_selection_handler.hpp"
 
 #include <OgreQuaternion.h>
-#include <OgreVector3.h>
+#include <OgreVector.h>
 
 #include "rviz_common/msg_conversions.hpp"
 #include "rviz_default_plugins/displays/marker/marker_display.hpp"

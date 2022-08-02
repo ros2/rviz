@@ -31,7 +31,7 @@
 
 #include <OgreMatrix3.h>
 #include <OgreQuaternion.h>
-#include <OgreVector3.h>
+#include <OgreVector.h>
 
 #include "../../../../src/rviz_default_plugins/displays/odometry/quaternion_helper.hpp"
 

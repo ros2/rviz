@@ -34,7 +34,7 @@
 #include <vector>
 #include <string>
 
-#include <OgreVector3.h>
+#include <OgreVector.h>
 #include <OgreQuaternion.h>
 #include <OgreSceneNode.h>
 

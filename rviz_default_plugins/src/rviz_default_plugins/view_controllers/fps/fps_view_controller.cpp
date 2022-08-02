@@ -34,7 +34,7 @@
 #include <OgreQuaternion.h>
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
-#include <OgreVector3.h>
+#include <OgreVector.h>
 #include <OgreViewport.h>
 
 #include "rviz_rendering/geometry.hpp"
@@ -215,7 +215,7 @@ void FPSViewController::update(float dt, float ros_dt)
 
 void FPSViewController::lookAt(const Ogre::Vector3 & point)
 {
-  camera_->lookAt(point);
+  camera_scene_node_->lookAt(point, Ogre::Node::TS_WORLD);
   setPropertiesFromCamera(camera_);
 }
 

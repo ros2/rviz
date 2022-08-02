@@ -32,7 +32,7 @@
 #define RVIZ_COMMON__FRAME_POSITION_TRACKING_VIEW_CONTROLLER_HPP_
 
 #include <OgreQuaternion.h>
-#include <OgreVector3.h>
+#include <OgreVector.h>
 
 #include "rviz_common/view_controller.hpp"
 #include "rviz_common/visibility_control.hpp"

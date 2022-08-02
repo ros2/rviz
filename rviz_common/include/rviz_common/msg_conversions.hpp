@@ -30,7 +30,7 @@
 #ifndef RVIZ_COMMON__MSG_CONVERSIONS_HPP_
 #define RVIZ_COMMON__MSG_CONVERSIONS_HPP_
 
-#include <OgreVector3.h>
+#include <OgreVector.h>
 #include <OgreQuaternion.h>
 
 #include "geometry_msgs/msg/point.hpp"

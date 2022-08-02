@@ -34,7 +34,7 @@
 #include <string>
 #include <utility>
 
-#include <OgreVector3.h>
+#include <OgreVector.h>
 
 #include <QCursor>  // NOLINT cpplint cannot handle include order here
 
