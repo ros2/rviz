@@ -7,6 +7,11 @@ import warnings
 import yaml
 
 
+def del_maybe(dictionary, key):
+    if key in dictionary:
+        del dictionary[key]
+
+
 def migrate_panels(panels):
     panels_rviz2 = []
 
@@ -142,7 +147,7 @@ def auto_migrate_display(display_dict):
 
 def migrate_display_axes(display_dict):
     rviz2 = auto_migrate_display(display_dict)
-    del rviz2['Alpha']
+    del_maybe(rviz2, 'Alpha')
     return rviz2
 
 
@@ -157,7 +162,7 @@ def migrate_display_camera(display_dict):
     del rviz2['Queue Size']
     del rviz2['Unreliable']
     # TODO(sloretz) what is the ROS 2 equivalent to Transport Hint?
-    del rviz2['Transport Hint']
+    del_maybe(rviz2, 'Transport Hint')
     del rviz2['Topic']['Filter size']
     rviz2['Far Plane Distance'] = 100
     # Not sure all plugins that wil be migrated, so clear visibility
@@ -183,7 +188,7 @@ def migrate_display_image(display_dict):
     del rviz2['Queue Size']
     del rviz2['Unreliable']
     # TODO(sloretz) what is the ROS 2 equivalent to Transport Hint?
-    del rviz2['Transport Hint']
+    del_maybe(rviz2, 'Transport Hint')
     del rviz2['Topic']['Filter size']
     return rviz2
 
@@ -268,7 +273,7 @@ def migrate_display_robot_model(display_dict):
 
 def migrate_display_tf(display_dict):
     rviz2 = auto_migrate_display(display_dict)
-    del rviz2['Marker Alpha']
+    del_maybe(rviz2, 'Marker Alpha')
     return rviz2
 
 
@@ -282,7 +287,7 @@ def migrate_display_wrench_stamped(display_dict):
     del rviz2['Queue Size']
     del rviz2['Unreliable']
     rviz2['Accept NaN Values'] = False
-    del rviz2['Hide Small Values']
+    del_maybe(rviz2, 'Hide Small Values')
     return rviz2
 
 
@@ -302,11 +307,14 @@ def migrate_visualization_manager_tools(tools_list):
         elif name == 'rviz/SetInitialPose':
             rviz2 = {
                 'Class': 'rviz_default_plugins/SetInitialPose',
-                'Covariance x': float(tool_dict['X std deviation'])**2,
-                'Covariance y': float(tool_dict['Y std deviation'])**2,
-                'Covariance yaw': float(tool_dict['Theta std deviation'])**2,
                 'Topic': migrate_topic(name = tool_dict['Topic']),
                 }
+            if 'X std deviation' in tool_dict:
+                rviz2['Covariance x'] = float(tool_dict['X std deviation'])**2
+            if 'Y std deviation' in tool_dict:
+                rviz2['Covariance y'] = float(tool_dict['Y std deviation'])**2
+            if 'Theta std deviation' in tool_dict:
+                rviz2['Covariance yaw'] = float(tool_dict['Theta std deviation'])**2
             del rviz2['Topic']['Filter size']
             tools_rviz2.append(rviz2)
         elif name == 'rviz/SetGoal':
@@ -366,7 +374,7 @@ def migrate_view_orbit(view_dict):
     rviz2_view = copy.deepcopy(view_dict)
     rviz2_view['Class'] = 'rviz_default_plugins/Orbit'
     rviz2_view['Value'] = 'Orbit (rviz)'
-    del rviz2_view['Field of View']
+    del_maybe(rviz2_view, 'Field of View')
     return rviz2_view
 
 
@@ -374,7 +382,7 @@ def migrate_view_fps(view_dict):
     rviz2_view = copy.deepcopy(view_dict)
     rviz2_view['Class'] = 'rviz_default_plugins/FPS'
     rviz2_view['Value'] = 'FPS (rviz_default_plugins)'
-    del rviz2_view['Roll']
+    del_maybe(rviz2_view, 'Roll')
     return rviz2_view
 
 
@@ -382,7 +390,7 @@ def migrate_view_third_person_follower(view_dict):
     rviz2_view = copy.deepcopy(view_dict)
     rviz2_view['Class'] = 'rviz_default_plugins/ThirdPersonFollower'
     rviz2_view['Value'] = 'ThirdPersonFollower (rviz_default_plugins)'
-    del rviz2_view['Field of View']
+    del_maybe(rviz2_view, 'Field of View')
     return rviz2_view
 
 
@@ -397,7 +405,7 @@ def migrate_view_xy_orbit(view_dict):
     rviz2_view = copy.deepcopy(view_dict)
     rviz2_view['Class'] = 'rviz_default_plugins/XYOrbit'
     rviz2_view['Value'] = 'XYOrbit (rviz_default_plugins)'
-    del rviz2_view['Field of View']
+    del_maybe(rviz2_view, 'Field of View')
     return rviz2_view
 
 
