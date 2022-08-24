@@ -30,6 +30,9 @@ def migrate_panels(panels):
             panels_rviz2.append(migrate_panel_views(panel_dict))
         elif 'rviz/Time' == panel_dict['Class']:
             panels_rviz2.append(migrate_panel_time(panel_dict))
+        else:
+            print('Unknown panel type, skipping:' + panel_dict['Class'], file=sys.stderr)
+
 
     return panels_rviz2
 
