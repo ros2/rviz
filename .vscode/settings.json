@@ -1,0 +1,21 @@
+{
+    "ros.distro": "humble",
+    "python.autoComplete.extraPaths": [
+        "/home/christoph/ws_ros2/install/lely_core_libraries/lib/python3.10/site-packages",
+        "/home/christoph/ws_ros2/install/canopen_utils/lib/python3.10/site-packages",
+        "/home/christoph/ws_ros2/install/canopen_interfaces/local/lib/python3.10/dist-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ],
+    "files.associations": {
+        "qtcore": "cpp",
+        "qdebug": "cpp"
+    },
+    "python.analysis.extraPaths": [
+        "/home/christoph/ws_ros2/install/lely_core_libraries/lib/python3.10/site-packages",
+        "/home/christoph/ws_ros2/install/canopen_utils/lib/python3.10/site-packages",
+        "/home/christoph/ws_ros2/install/canopen_interfaces/local/lib/python3.10/dist-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ]
+}

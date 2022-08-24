@@ -1,0 +1,35 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/christoph/ws_ros2/install/canopen_402_driver/include/**",
+        "/home/christoph/ws_ros2/install/canopen_proxy_driver/include/**",
+        "/home/christoph/ws_ros2/install/canopen_base_driver/include/**",
+        "/home/christoph/ws_ros2/install/canopen_core/include/**",
+        "/home/christoph/ws_ros2/install/lely_core_libraries/include/**",
+        "/home/christoph/ws_ros2/install/canopen_interfaces/include/**",
+        "/opt/ros/humble/include/**",
+        "/home/christoph/ws_ros2/src/ros2_canopen/canopen_402_driver/include/**",
+        "/home/christoph/ws_ros2/src/ros2_canopen/canopen_base_driver/include/**",
+        "/home/christoph/ws_ros2/src/ros2_canopen/canopen_core/include/**",
+        "/home/christoph/ws_ros2/src/ros2_canopen/canopen_mock_slave/include/**",
+        "/home/christoph/ws_ros2/src/ros2_canopen/canopen_proxy_driver/include/**",
+        "/home/christoph/ws_ros2/src/rviz/rviz_common/include/**",
+        "/home/christoph/ws_ros2/src/rviz/rviz_default_plugins/include/**",
+        "/home/christoph/ws_ros2/src/rviz/rviz_rendering/include/**",
+        "/home/christoph/ws_ros2/src/rviz/rviz_visual_testing_framework/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
