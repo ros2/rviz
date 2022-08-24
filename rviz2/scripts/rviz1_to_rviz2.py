@@ -17,7 +17,7 @@ def migrate_panels(panels):
 
     for panel_dict in panels:
         if 'Class' not in panel_dict:
-            print('Uknown panel format, skipping:' + repr(panel_dict), file=sys.stderr)
+            print('Unknown panel format, skipping:' + repr(panel_dict), file=sys.stderr)
             continue
 
         if 'rviz/Displays' == panel_dict['Class']:
@@ -333,7 +333,7 @@ def migrate_visualization_manager_tools(tools_list):
             del rviz2['Topic']['Filter size']
             tools_rviz2.append(rviz2)
         else:
-            print(f"Uknown tool {tool_dict['Class']}, skipping", file=sys.stderr)
+            print(f"Unknown tool {tool_dict['Class']}, skipping", file=sys.stderr)
 
     return tools_rviz2
 
