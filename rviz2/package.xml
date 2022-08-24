@@ -30,6 +30,9 @@
   <!-- this ensures some basic plugins are available when installing just rviz2 -->
   <exec_depend>rviz_default_plugins</exec_depend>
 
+  <!-- For RViz 1 to 2 conversion script -->
+  <exec_depend>python3</exec_depend>
+
   <depend>rviz_common</depend>
   <depend>rviz_ogre_vendor</depend>
 
