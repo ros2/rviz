@@ -474,8 +474,11 @@ def parse_yaml_file(path):
 
 
 def write_yaml_file(output, yaml_dict):
-    with open(output, 'w') as fout:
-        yaml.dump(yaml_dict, stream=fout)
+    if '-' == output:
+        yaml.dump(yaml_dict, stream=sys.stdout)
+    else:
+        with open(output, 'w') as fout:
+            yaml.dump(yaml_dict, stream=fout)
 
 
 def main():
