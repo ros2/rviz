@@ -67,11 +67,13 @@ macro(_shiboken_generator_command VAR GLOBAL TYPESYSTEM INCLUDE_PATH BUILD_DIR)
   endforeach()
   string(REPLACE ";" ":" INCLUDE_PATH_WITH_COLONS "${INCLUDE_PATH}")
   set(${VAR} ${SHIBOKEN_BINARY}
-    --generatorSet=shiboken
     --enable-pyside-extensions
+    --generator-set=shiboken --enable-parent-ctor-heuristic
+    --enable-return-value-heuristic --use-isnull-as-nb_nonzero
+    --avoid-protected-hack
     --include-paths=${INCLUDE_PATH_WITH_COLONS}${SHIBOKEN_HELPER_INCLUDE_DIRS_WITH_COLONS}
     --typesystem-paths=${PYSIDE_TYPESYSTEMS}
-    --output-directory=${BUILD_DIR} --framework-include-paths="/usr/include/x86_64-linux-gnu/qt5"
+    --output-directory=${BUILD_DIR}
     --language-level=c++17
     ${GLOBAL} ${TYPESYSTEM}
     )

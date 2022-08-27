@@ -30,33 +30,14 @@
 #ifndef PYTHON_GLOBAL_H
 #define PYTHON_GLOBAL_H
 
-#undef QT_NO_STL
-#undef QT_NO_STL_WCHAR
-
-#ifndef NULL
-#define NULL 0
-#endif
-
-#include "pyside2_global.h"
-
-#include <QtCore/QtCore>
-#include <QtGui/QtGui>
-#include <QtWidgets/QtWidgets>
-
-
+#include <pyside2_global.h>
 #include <rviz_common/visualization_frame.hpp>
 #include <rviz_common/visualization_manager.hpp>
-#include <rviz_common/display.hpp>
 #include <rviz_common/display_group.hpp>
-#include <rviz_rendering/ogre_logging.hpp>
-#include <rviz_common/properties/property.hpp>
-#include <rviz_common/properties/bool_property.hpp>
-#include <rviz_common/panel_dock_widget.hpp>
-#include <rviz_common/view_manager.hpp>
-#include <rviz_common/tool.hpp>
-#include <rviz_common/tool_manager.hpp>
-#include <rviz_common/config.hpp>
+#include <rviz_common/display.hpp>
+#include <rviz_python_bindings/visualizer_frame_py.hpp>
 #include <rviz_common/yaml_config_reader.hpp>
 #include <rviz_common/yaml_config_writer.hpp>
+#include <rviz_common/config.hpp>
 
 #endif // PYTHON_GLOBAL_H

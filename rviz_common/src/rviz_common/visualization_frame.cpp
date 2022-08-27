@@ -98,6 +98,30 @@
 namespace rviz_common
 {
 
+VisualizationFrame::VisualizationFrame(QWidget * parent) 
+: QMainWindow(parent),
+  app_(nullptr),
+  render_panel_(nullptr),
+  show_help_action_(nullptr),
+  file_menu_(nullptr),
+  recent_configs_menu_(nullptr),
+  toolbar_(nullptr),
+  manager_(nullptr),
+  splash_(nullptr),
+  toolbar_actions_(nullptr),
+  show_choose_new_master_option_(false),
+  panel_factory_(nullptr),
+  add_tool_action_(nullptr),
+  remove_tool_menu_(nullptr),
+  initialized_(false),
+  geom_change_detector_(new WidgetGeometryChangeDetector(this)),
+  loading_(false),
+  post_load_timer_(new QTimer(this)),
+  frame_count_(0),
+  toolbar_visible_(true)
+  {
+  }
+
 VisualizationFrame::VisualizationFrame(
   ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node, QWidget * parent)
 : QMainWindow(parent),
