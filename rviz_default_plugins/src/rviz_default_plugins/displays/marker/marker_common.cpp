@@ -153,8 +153,49 @@ void MarkerCommon::addMessage(const visualization_msgs::msg::Marker::ConstShared
 void MarkerCommon::addMessage(
   const visualization_msgs::msg::MarkerArray::ConstSharedPtr array)
 {
+  using ns_type = decltype(visualization_msgs::msg::Marker::ns);
+  using id_type = decltype(visualization_msgs::msg::Marker::id);
+  using pair_type = std::pair<const ns_type &, id_type>;
+
+  // Keep track of unique markers
+  std::vector<pair_type> unique_markers;
+  unique_markers.reserve(array->markers.size());
+  id_type biggest_id = std::numeric_limits<id_type>::lowest();
+  bool found_duplicate = false;
+
+  std::unique_lock<std::mutex> lock(queue_mutex_);
   for (auto const & marker : array->markers) {
-    addMessage(std::make_shared<visualization_msgs::msg::Marker>(marker));
+    bool is_duplicate = false;
+    // Comparing against the biggest id will avoid searching the unique_marker list when
+    // someone creates a lot of markers by incrementing the id.
+    if (marker.id > biggest_id) {
+      biggest_id = marker.id;
+    } else if (!found_duplicate) {
+      // Look for a duplicate marker
+      for (const auto & ns_id : unique_markers) {
+        // Compare id first because it's a numeric type.
+        if (ns_id.second == marker.id && ns_id.first == marker.ns) {
+          found_duplicate = true;
+          is_duplicate = true;
+          break;
+        }
+      }
+    }
+    if (!is_duplicate) {
+      unique_markers.push_back(pair_type(marker.ns, marker.id));
+    }
+    message_queue_.push_back(std::make_shared<visualization_msgs::msg::Marker>(marker));
+  }
+
+  // Can't use setMarkerStatus on individual markers because processAdd would clear it.
+  const char * kDuplicateStatus = "Duplicate Marker Check";
+  if (found_duplicate) {
+    display_->setStatusStd(
+      rviz_common::properties::StatusProperty::Error,
+      kDuplicateStatus,
+      "Multiple Markers in the same MarkerArray message had the same namespace and id");
+  } else {
+    display_->deleteStatusStd(kDuplicateStatus);
   }
 }
 
