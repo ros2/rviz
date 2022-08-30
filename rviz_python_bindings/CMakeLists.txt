@@ -30,6 +30,12 @@ set(generated_sources
     ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/rviz_common_displaygroup_wrapper.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/rviz_common_display_wrapper.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/rviz_common_viewmanager_wrapper.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/rviz_common_paneldockwidget_wrapper.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/rviz_common_tool_wrapper.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/rviz_common_toolmanager_wrapper.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/rviz_common_properties_wrapper.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/rviz_common_properties_property_wrapper.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/rviz_common_properties_boolproperty_wrapper.cpp
 )
 
 add_library(rviz_python SHARED

@@ -7,13 +7,23 @@
   <namespace-type name="rviz_common">
     <object-type name="VisualizationFrame"/>
     <object-type name="VisualizationManager"/>
+    <object-type name="ViewController"/>
     <object-type name="ViewManager"/>
     <object-type name="DisplayGroup"/>
     <object-type name="Display"/>
-    <object-type name="VisualizerFramePy">
-    </object-type>
+    <object-type name="VisualizerFramePy"/>
+    <object-type name="PanelDockWidget"/>
+    <object-type name="Tool"/>
+    <object-type name="ToolManager"/>
     <object-type name="YamlConfigReader"/>
     <object-type name="YamlConfigWriter"/>
-    <object-type name="Config"/>
+    <object-type name="Config">
+      <enum-type name="Type"/>
+      <object-type name="MapIterator"/>
+    </object-type>
+    <namespace-type name="properties">
+    <object-type name="Property"/>
+    <object-type name="BoolProperty"/>
+    </namespace-type>
   </namespace-type>
 </typesystem>
