@@ -26,7 +26,7 @@ def test_convert_all_supported_configs():
     assert len(output) > 0
     assert len(result.stderr) == 0
 
-    yaml_output = yaml.load(output)
+    yaml_output = yaml.safe_load(output)
     assert 'Panels' in yaml_output.keys()
 
 
@@ -52,5 +52,5 @@ def test_convert_all_ros1():
 
     assert expected_stderr == actual_stderr
 
-    yaml_output = yaml.load(output)
+    yaml_output = yaml.safe_load(output)
     assert 'Panels' in yaml_output.keys()
