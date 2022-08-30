@@ -37,6 +37,10 @@ set(generated_sources
     ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/rviz_common_properties_wrapper.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/rviz_common_properties_property_wrapper.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/rviz_common_properties_boolproperty_wrapper.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/rviz_common_viewcontroller_wrapper.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/rviz_rendering_ogrelogging_wrapper.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/rviz_rendering_wrapper.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/ogre_wrapper.cpp
 )
 
 add_library(rviz_python SHARED
@@ -235,7 +239,7 @@ if(BUILD_TESTING)
   # comment the line when this package is in a git repo and when
   # a copyright and license is added to all source files
   set(ament_cmake_cpplint_FOUND TRUE)
-  ament_add_pytest_test(test/test_import.py)
+
   ament_lint_auto_find_test_dependencies()
 endif()
 

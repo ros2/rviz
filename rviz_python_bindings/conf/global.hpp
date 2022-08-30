@@ -48,5 +48,7 @@
 #include <rviz_common/yaml_config_reader.hpp>
 #include <rviz_common/yaml_config_writer.hpp>
 #include <rviz_common/config.hpp>
+#include <rviz_common/view_controller.hpp>
+#include <rviz_rendering/ogre_logging.hpp>
 
 #endif // PYTHON_GLOBAL_H
