@@ -1,5 +1,6 @@
 # Copyright (C) 2022 The Qt Company Ltd.
-# SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
+#               2022 Christoph Hellmann Santos
+# SPDX-License-Identifier: BSD-3-Clause
 
 import sysconfig
 from enum import Enum

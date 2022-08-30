@@ -98,7 +98,7 @@
 namespace rviz_common
 {
 
-VisualizationFrame::VisualizationFrame(QWidget * parent) 
+VisualizationFrame::VisualizationFrame(QWidget * parent)
 : QMainWindow(parent),
   app_(nullptr),
   render_panel_(nullptr),
@@ -119,8 +119,8 @@ VisualizationFrame::VisualizationFrame(QWidget * parent)
   post_load_timer_(new QTimer(this)),
   frame_count_(0),
   toolbar_visible_(true)
-  {
-  }
+{
+}
 
 VisualizationFrame::VisualizationFrame(
   ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node, QWidget * parent)
