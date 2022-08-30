@@ -39,7 +39,6 @@
 #include <rviz_common/display_group.hpp>
 #include <rviz_common/display.hpp>
 #include <rviz_common/view_manager.hpp>
-#include <rviz_common/view_controller.hpp>
 #include <rviz_common/tool.hpp>
 #include <rviz_common/tool_manager.hpp>
 #include <rviz_common/panel_dock_widget.hpp>
