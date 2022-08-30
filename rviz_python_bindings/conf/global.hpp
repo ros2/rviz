@@ -35,6 +35,7 @@
 #include <rviz_common/visualization_manager.hpp>
 #include <rviz_common/display_group.hpp>
 #include <rviz_common/display.hpp>
+#include <rviz_common/view_manager.hpp>
 #include <rviz_python_bindings/visualizer_frame_py.hpp>
 #include <rviz_common/yaml_config_reader.hpp>
 #include <rviz_common/yaml_config_writer.hpp>

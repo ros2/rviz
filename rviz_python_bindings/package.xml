@@ -12,6 +12,10 @@
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 
+  <depend>rviz_common</depend>
+  <depend>rviz_rendering</depend>
+  <depend>python3_pyside2</depend>
+
   <export>
     <build_type>ament_cmake</build_type>
   </export>

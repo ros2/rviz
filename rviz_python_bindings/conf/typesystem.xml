@@ -7,6 +7,7 @@
   <namespace-type name="rviz_common">
     <object-type name="VisualizationFrame"/>
     <object-type name="VisualizationManager"/>
+    <object-type name="ViewManager"/>
     <object-type name="DisplayGroup"/>
     <object-type name="Display"/>
     <object-type name="VisualizerFramePy">
