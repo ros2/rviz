@@ -31,6 +31,7 @@
 #include "rviz_default_plugins/displays/marker/marker_common.hpp"
 
 #include <memory>
+#include <set>
 #include <string>
 #include <utility>
 #include <vector>
@@ -155,34 +156,17 @@ void MarkerCommon::addMessage(
 {
   using ns_type = decltype(visualization_msgs::msg::Marker::ns);
   using id_type = decltype(visualization_msgs::msg::Marker::id);
-  using pair_type = std::pair<const ns_type &, id_type>;
+  using pair_type = std::pair<id_type, const ns_type &>;
 
   // Keep track of unique markers
-  std::vector<pair_type> unique_markers;
-  unique_markers.reserve(array->markers.size());
-  id_type biggest_id = std::numeric_limits<id_type>::lowest();
+  std::set<pair_type> unique_markers;
   bool found_duplicate = false;
 
   std::unique_lock<std::mutex> lock(queue_mutex_);
   for (auto const & marker : array->markers) {
-    bool is_duplicate = false;
-    // Comparing against the biggest id will avoid searching the unique_marker list when
-    // someone creates a lot of markers by incrementing the id.
-    if (marker.id > biggest_id) {
-      biggest_id = marker.id;
-    } else if (!found_duplicate) {
-      // Look for a duplicate marker
-      for (const auto & ns_id : unique_markers) {
-        // Compare id first because it's a numeric type.
-        if (ns_id.second == marker.id && ns_id.first == marker.ns) {
-          found_duplicate = true;
-          is_duplicate = true;
-          break;
-        }
-      }
-    }
-    if (!is_duplicate) {
-      unique_markers.push_back(pair_type(marker.ns, marker.id));
+    if (!found_duplicate) {
+      pair_type pair(marker.id, marker.ns);
+      found_duplicate = !unique_markers.insert(pair).second;
     }
     message_queue_.push_back(std::make_shared<visualization_msgs::msg::Marker>(marker));
   }
