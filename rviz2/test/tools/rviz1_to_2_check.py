@@ -43,14 +43,16 @@ def test_convert_all_ros1():
 
     actual_stderr = result.stderr.decode()
     expected_stderr = (
-        "Cannot migrate display rviz/AccelStamped - skipping\n"
-        "Cannot migrate display rviz/DepthCloud - skipping\n"
-        "Cannot migrate display rviz/Effort - skipping\n"
-        "Cannot migrate display rviz/TwistStamped - skipping\n"
-        "Cannot migrate display rviz_plugin_tutorials/Imu - skipping\n"
-        "Unable to migrate view type rviz/FrameAligned - skipping\n")
+        "Cannot migrate display rviz/AccelStamped - skipping",
+        "Cannot migrate display rviz/DepthCloud - skipping",
+        "Cannot migrate display rviz/Effort - skipping",
+        "Cannot migrate display rviz/TwistStamped - skipping",
+        "Cannot migrate display rviz_plugin_tutorials/Imu - skipping",
+        "Unable to migrate view type rviz/FrameAligned - skipping")
 
-    assert expected_stderr == actual_stderr
+    for expected_line, line in zip(expected_stderr, actual_stderr.split('\n')):
+        # Strip line endings for Linux/Windows compatibility
+        assert expected_line.strip() == line.strip()
 
     yaml_output = yaml.safe_load(output)
     assert 'Panels' in yaml_output.keys()
