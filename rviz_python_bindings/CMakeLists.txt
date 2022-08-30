@@ -25,6 +25,7 @@ set(generated_sources
     ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/rviz_common_yamlconfigreader_wrapper.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/rviz_common_yamlconfigwriter_wrapper.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/rviz_common_config_wrapper.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/rviz_common_config_mapiterator_wrapper.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/rviz_common_visualizationframe_wrapper.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/rviz_common_visualizationmanager_wrapper.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/rviz_common_displaygroup_wrapper.cpp
@@ -72,11 +73,11 @@ macro(pyside_config option output_var)
       OUTPUT_VARIABLE ${output_var}
       OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-    if ("${${output_var}}" STREQUAL "")
+    if("${${output_var}}" STREQUAL "")
         message(FATAL_ERROR "Error: Calling pyside_config.py ${option} returned no output.")
     endif()
     if(is_list)
-        string (REPLACE " " ";" ${output_var} "${${output_var}}")
+        string(REPLACE " " ";" ${output_var} "${${output_var}}")
     endif()
 endmacro()
 
@@ -112,7 +113,7 @@ if(PySide2_FOUND)
     get_property(PYSIDE_INCLUDE_DIR TARGET PySide2::pyside2 PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
     get_property(PYSIDE_LIBRARY TARGET PySide2::pyside2 PROPERTY LOCATION)
   endif()
-else ()
+else()
   if(WIN32)
     pyside_config(--pyside-include-path pyside_include_dir 1)
     pyside_config(--pyside-shared-libraries-cmake pyside_shared_libraries 0)
@@ -143,22 +144,20 @@ list(APPEND SHIBOKEN_HELPER_INCLUDE_DIRS
     ${rcl_interfaces_INCLUDE_DIRS}
     ${pluginlib_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES}
-    )
+    ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
 
   set(SHIBOKEN_HELPER_INCLUDE_DIRS_WITH_COLONS "")
   foreach(dir ${SHIBOKEN_HELPER_INCLUDE_DIRS})
     set(SHIBOKEN_HELPER_INCLUDE_DIRS_WITH_COLONS "${SHIBOKEN_HELPER_INCLUDE_DIRS_WITH_COLONS}:${dir}")
   endforeach()
 
-set(shiboken_options --generator-set=shiboken 
+set(shiboken_options --generator-set=shiboken
     --avoid-protected-hack
     --enable-pyside-extensions
     -I${CMAKE_SOURCE_DIR}:${SHIBOKEN_HELPER_INCLUDE_DIRS_WITH_COLONS}
     -T${CMAKE_SOURCE_DIR}:${PYSIDE_TYPESYSTEMS}
     --output-directory=${CMAKE_CURRENT_BINARY_DIR}
-    --language-level=c++17
-    )
+    --language-level=c++17)
 
 
 add_custom_command(OUTPUT ${generated_sources}
@@ -174,7 +173,7 @@ ament_python_install_package(rviz)
 add_library(${bindings_library} MODULE ${generated_sources})
 
 # Apply relevant include and link flags.
-target_include_directories(${bindings_library} PRIVATE 
+target_include_directories(${bindings_library} PRIVATE
     ${QT_INCLUDE_DIR}
     ${PYTHON_INCLUDE_DIR}
     ${SHIBOKEN_INCLUDE_DIR}
@@ -194,8 +193,7 @@ target_include_directories(${bindings_library} PRIVATE
     ${PYSIDE_INCLUDE_DIR}/QtWidgets
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
-    ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES}
-  )
+    ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
 
 target_link_libraries(${bindings_library} PRIVATE
   ${Python3_LIBRARIES}
@@ -210,9 +208,10 @@ target_link_libraries(${bindings_library} PRIVATE
 
 set_target_properties(${bindings_library} PROPERTIES
 PREFIX "")
-set_property(TARGET ${bindings_library} PROPERTY OUTPUT_NAME
-             "${bindings_library}${Python3_SOABI}")
+
 if(WIN32)
+    set_property(TARGET ${bindings_library} PROPERTY OUTPUT_NAME
+        "${bindings_library}.${Python3_SOABI}")
     if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
         set_property(TARGET ${bindings_library} PROPERTY SUFFIX "_d.pyd")
     else()
@@ -228,6 +227,7 @@ install(TARGETS ${bindings_library}
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
+  find_package(ament_cmake_pytest REQUIRED)
   # the following line skips the linter which checks for copyrights
   # comment the line when a copyright and license is added to all source files
   set(ament_cmake_copyright_FOUND TRUE)
@@ -235,6 +235,7 @@ if(BUILD_TESTING)
   # comment the line when this package is in a git repo and when
   # a copyright and license is added to all source files
   set(ament_cmake_cpplint_FOUND TRUE)
+  ament_add_pytest_test(test/test_import.py)
   ament_lint_auto_find_test_dependencies()
 endif()
 
