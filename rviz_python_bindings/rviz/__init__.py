@@ -15,8 +15,20 @@ if PYSIDE2:
     rviz_common = bindings.rviz_common
     VisualizationFrame = bindings.rviz_common.VisualizerFramePy
     Config = bindings.rviz_common.Config
+    VisualizationManager = bindings.rviz_common.VisualizationManager
+    ViewController = bindings.rviz_common.ViewController
+    ViewManager = bindings.rviz_common.ViewManager
+    DisplayGroup = bindings.rviz_common.DisplayGroup
+    Display = bindings.rviz_common.Display
+    PanelDockWidget = bindings.rviz_common.PanelDockWidget
+    Tool = bindings.rviz_common.Tool
+    ToolManager = bindings.rviz_common.ToolManager
     YamlConfigReader = bindings.rviz_common.YamlConfigReader
+    YamlConfigWriter = bindings.rviz_common.YamlConfigWriter
+    Property = bindings.rviz_common.properties.Property
+    BoolProperty = bindings.rviz_common.properties.BoolProperty
 else:
-    raise ImportError("Python Bindings for rviz are only available for PySide2."
-                      "Please set ENV Variable Qt_API to \'pyside2\'"
+    raise ImportError(
+        "Python Bindings for rviz are only available for PySide2."
+        "Please set ENV Variable Qt_API to 'pyside2'"
     )
