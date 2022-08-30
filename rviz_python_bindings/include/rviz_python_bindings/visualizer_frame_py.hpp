@@ -8,24 +8,24 @@
 namespace rviz_common
 {
 
-    class VisualizerFramePy : public VisualizationFrame
-    {
-    protected:
-        std::unique_ptr<rviz_common::ros_integration::RosClientAbstraction> ros_client_abstraction_;
+class VisualizerFramePy : public VisualizationFrame
+{
+protected:
+  std::unique_ptr<rviz_common::ros_integration::RosClientAbstraction> ros_client_abstraction_;
 
-    public:
-        explicit VisualizerFramePy(
-            QWidget *parent = nullptr);
+public:
+  explicit VisualizerFramePy(
+    QWidget * parent = nullptr);
 
-        ~VisualizerFramePy()
-        {
-            ros_client_abstraction_->shutdown();
-        }
+  ~VisualizerFramePy()
+  {
+    ros_client_abstraction_->shutdown();
+  }
 
-        bool node_ok();
+  bool node_ok();
 
-        void initialize(const QString &display_config_file = "");
-    };
+  void initialize(const QString & display_config_file = "");
+};
 }
 
 #endif
