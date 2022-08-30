@@ -131,6 +131,7 @@ if(WIN32)
         set_property(TARGET ${shiboken_bindings_library} PROPERTY SUFFIX ".pyd")
     endif()
     target_link_libraries(
+      ${shiboken_bindings_library}
       Python3_LIBRARIES
     )
 endif()
