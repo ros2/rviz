@@ -162,13 +162,12 @@ void MarkerCommon::addMessage(
   std::set<pair_type> unique_markers;
   bool found_duplicate = false;
 
-  std::unique_lock<std::mutex> lock(queue_mutex_);
   for (auto const & marker : array->markers) {
     if (!found_duplicate) {
       pair_type pair(marker.id, marker.ns);
       found_duplicate = !unique_markers.insert(pair).second;
     }
-    message_queue_.push_back(std::make_shared<visualization_msgs::msg::Marker>(marker));
+    addMessage(std::make_shared<visualization_msgs::msg::Marker>(marker));
   }
 
   // Can't use setMarkerStatus on individual markers because processAdd would clear it.
