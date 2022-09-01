@@ -130,7 +130,7 @@ public:
   rclcpp::Time
   getTime() = 0;
 
-  /// Return the pose for a header, relative to the fixed frame, in Ogre classes.
+  /// Return the pose for a header, relative to the fixed frame, in Ogre classes, at a given time.
   /**
    * \param[in] header The source of the frame name and time.
    * \param[out] position The position of the header frame relative to the
@@ -149,7 +149,8 @@ public:
     return getTransform(header.frame_id, header.stamp, position, orientation);
   }
 
-  /// Return the pose for a frame relative to the fixed frame, in Ogre classes, at a given time.
+  /// Return the pose for a frame relative to the fixed frame, in Ogre classes, at the most recent
+  /// time there is data for.
   /**
    * \param[in] frame The frame to find the pose of.
    * \param[out] position The position of the frame relative to the fixed frame.
