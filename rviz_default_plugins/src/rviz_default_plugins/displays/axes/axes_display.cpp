@@ -102,7 +102,7 @@ void AxesDisplay::update(float dt, float ros_dt)
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
   if (context_->getFrameManager()->getTransform(
-      frame, context_->getClock()->now(), position, orientation))
+      frame, position, orientation))
   {
     axes_->getSceneNode()->setVisible(true);
     axes_->setPosition(position);
