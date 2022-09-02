@@ -1048,9 +1048,6 @@ if(BUILD_TESTING)
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
-
-  ament_add_google_benchmark(bm891 test/bm891.cpp)
-  target_link_libraries(bm891 ${visualization_msgs_TARGETS})
 endif()
 
 ament_package(
