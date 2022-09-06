@@ -360,10 +360,10 @@ void MapDisplay::updateMapDataInMemory(
   const map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr update)
 {
   for (size_t y = 0; y < update->height; y++) {
-    std::copy(
-      update->data.begin(),
-      update->data.begin() + update->width,
-      current_map_.data.begin() + (update->y + y) * current_map_.info.width + update->x);
+    for (size_t x = 0; x < update->height; x++) {
+      current_map_.data[(update->x + x) + (update->y + y) * current_map_.info.width] =
+              update->data[x + y * update->width];
+    }
   }
 }
 
