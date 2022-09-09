@@ -6,6 +6,11 @@ find_package(ament_cmake REQUIRED)
 
 set(PACKAGE_VERSION "1.0.0")
 
+# Avoid DOWNLOAD_EXTRACT_TIMESTAMP warning for CMake >= 3.24
+if (POLICY CMP0135)
+  cmake_policy(SET CMP0135 OLD)
+endif()
+
 if(WIN32)
   set(BUILDING_FREETYPE_LOCALLY ON)
   set(BUILDING_ZLIB_LOCALLY ON)
