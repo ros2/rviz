@@ -2,6 +2,9 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.3 (2022-09-12)
+-------------------
+
 11.2.2 (2022-05-10)
 -------------------
 * Add time jump handler (`#791 <https://github.com/ros2/rviz/issues/791>`_) (`#854 <https://github.com/ros2/rviz/issues/854>`_)

@@ -2,6 +2,12 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.3 (2022-09-12)
+-------------------
+* Set error status when duplicate markers are in the same MarkerArray (`#891 <https://github.com/ros2/rviz/issues/891>`_) (`#899 <https://github.com/ros2/rviz/issues/899>`_)
+* Make Axes display use latest transform (`#892 <https://github.com/ros2/rviz/issues/892>`_) (`#902 <https://github.com/ros2/rviz/issues/902>`_)
+* Contributors: Shane Loretz
+
 11.2.2 (2022-05-10)
 -------------------
 * Fix include order (`#858 <https://github.com/ros2/rviz/issues/858>`_) (`#859 <https://github.com/ros2/rviz/issues/859>`_)
