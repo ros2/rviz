@@ -10,7 +10,7 @@ option(FORCE_BUILD_VENDOR_PKG
 find_package(ament_cmake REQUIRED)
 
 # Avoid DOWNLOAD_EXTRACT_TIMESTAMP warning for CMake >= 3.24
-if (POLICY CMP0135)
+if(POLICY CMP0135)
   cmake_policy(SET CMP0135 OLD)
 endif()
 
