@@ -7,8 +7,8 @@ find_package(ament_cmake REQUIRED)
 set(PACKAGE_VERSION "1.0.0")
 
 # Avoid DOWNLOAD_EXTRACT_TIMESTAMP warning for CMake >= 3.24
-if (POLICY CMP0135)
-  cmake_policy(SET CMP0135 OLD)
+if(POLICY CMP0135)
+  cmake_policy(SET CMP0135 NEW)
 endif()
 
 if(WIN32)
