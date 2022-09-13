@@ -2,6 +2,11 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add rviz1_to_rviz2.py conversion script (`#882 <https://github.com/ros2/rviz/issues/882>`_)
+* Contributors: Shane Loretz
+
 11.3.0 (2022-04-26)
 -------------------
 

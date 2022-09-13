@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Ogre 1.12.10 upgrade (`#878 <https://github.com/ros2/rviz/issues/878>`_)
+* Contributors: Kenji Brameld
+
 11.3.0 (2022-04-26)
 -------------------
 * Stop using glsl150 resources for now. (`#851 <https://github.com/ros2/rviz/issues/851>`_)

@@ -2,6 +2,16 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Set error status when duplicate markers are in the same MarkerArray (`#891 <https://github.com/ros2/rviz/issues/891>`_)
+* Make Axes display use latest transform (`#892 <https://github.com/ros2/rviz/issues/892>`_)
+* Show link names in inertia error message (`#874 <https://github.com/ros2/rviz/issues/874>`_)
+* Ogre 1.12.10 upgrade (`#878 <https://github.com/ros2/rviz/issues/878>`_)
+* Use make_shared to construct PointCloud2 (`#869 <https://github.com/ros2/rviz/issues/869>`_)
+* Fix include order (`#858 <https://github.com/ros2/rviz/issues/858>`_)
+* Contributors: Hunter L. Allen, Jacob Perron, Kenji Brameld, Shane Loretz, Timon Engelke
+
 11.3.0 (2022-04-26)
 -------------------
 

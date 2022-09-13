@@ -2,6 +2,11 @@
 Changelog for package rviz_assimp_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixes policy CMP0135 warning for CMake >= 3.24 (`#898 <https://github.com/ros2/rviz/issues/898>`_)
+* Contributors: Cristóbal Arroyo
+
 11.3.0 (2022-04-26)
 -------------------
 

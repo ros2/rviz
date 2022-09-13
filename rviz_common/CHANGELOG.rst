@@ -2,6 +2,13 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Document getTransform() time behavior (`#893 <https://github.com/ros2/rviz/issues/893>`_)
+* Ogre 1.12.10 upgrade (`#878 <https://github.com/ros2/rviz/issues/878>`_)
+* Add RVIZ_COMMON_PUBLIC macro (`#865 <https://github.com/ros2/rviz/issues/865>`_)
+* Contributors: Kenji Brameld, Shane Loretz, juchajam
+
 11.3.0 (2022-04-26)
 -------------------
 * Add time jump handler (`#752 <https://github.com/ros2/rviz/issues/752>`_) (`#791 <https://github.com/ros2/rviz/issues/791>`_)

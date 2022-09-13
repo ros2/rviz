@@ -2,6 +2,14 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixes policy CMP0135 warning for CMake >= 3.24 (`#898 <https://github.com/ros2/rviz/issues/898>`_)
+* Ogre 1.12.10 upgrade (`#878 <https://github.com/ros2/rviz/issues/878>`_)
+* Make resource file paths relative (`#862 <https://github.com/ros2/rviz/issues/862>`_)
+* Use CMAKE_STAGING_PREFIX for staging OGRE installation (`#861 <https://github.com/ros2/rviz/issues/861>`_)
+* Contributors: Cristóbal Arroyo, Kenji Brameld, Scott K Logan
+
 11.3.0 (2022-04-26)
 -------------------
 
