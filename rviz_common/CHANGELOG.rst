@@ -2,8 +2,8 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+12.0.0 (2022-09-13)
+-------------------
 * Document getTransform() time behavior (`#893 <https://github.com/ros2/rviz/issues/893>`_)
 * Ogre 1.12.10 upgrade (`#878 <https://github.com/ros2/rviz/issues/878>`_)
 * Add RVIZ_COMMON_PUBLIC macro (`#865 <https://github.com/ros2/rviz/issues/865>`_)

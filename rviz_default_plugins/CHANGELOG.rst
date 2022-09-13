@@ -2,8 +2,8 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+12.0.0 (2022-09-13)
+-------------------
 * Set error status when duplicate markers are in the same MarkerArray (`#891 <https://github.com/ros2/rviz/issues/891>`_)
 * Make Axes display use latest transform (`#892 <https://github.com/ros2/rviz/issues/892>`_)
 * Show link names in inertia error message (`#874 <https://github.com/ros2/rviz/issues/874>`_)
