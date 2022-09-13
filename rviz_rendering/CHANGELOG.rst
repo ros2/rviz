@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.2.7 (2022-09-12)
+------------------
+* Fix support for assimp 5.1.0 (`#826 <https://github.com/ros2/rviz/issues/826>`_)
+* Contributors: Akash
+
 8.2.6 (2022-02-04)
 ------------------
 * Export Qt5 dependencies properly (`#687 <https://github.com/ros2/rviz/issues/687>`_) (`#822 <https://github.com/ros2/rviz/issues/822>`_)

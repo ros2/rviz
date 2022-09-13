@@ -2,6 +2,12 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.2.7 (2022-09-12)
+------------------
+* Make Axes display use latest transform (`#892 <https://github.com/ros2/rviz/issues/892>`_) (`#904 <https://github.com/ros2/rviz/issues/904>`_)
+* Set error status when duplicate markers are in the same MarkerArray (`#891 <https://github.com/ros2/rviz/issues/891>`_) (`#901 <https://github.com/ros2/rviz/issues/901>`_)
+* Contributors: Shane Loretz
+
 8.2.6 (2022-02-04)
 ------------------
 * Add underscores to material names (`#811 <https://github.com/ros2/rviz/issues/811>`_) (`#824 <https://github.com/ros2/rviz/issues/824>`_)

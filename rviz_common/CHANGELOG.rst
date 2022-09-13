@@ -2,6 +2,9 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.2.7 (2022-09-12)
+------------------
+
 8.2.6 (2022-02-04)
 ------------------
 * Add rviz_rendering dependency to rviz_common (`#727 <https://github.com/ros2/rviz/issues/727>`_) (`#785 <https://github.com/ros2/rviz/issues/785>`_)
