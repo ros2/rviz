@@ -361,8 +361,11 @@ void MapDisplay::updateMapDataInMemory(
 {
   for (size_t y = 0; y < update->height; y++) {
     for (size_t x = 0; x < update->width; x++) {
-      current_map_.data[(update->x + x) + (update->y + y) * current_map_.info.width] =
-            update->data[x + y * update->width];
+      auto offset = update->data.begin() + y * update->width;
+      std::copy(
+        offset,
+        offset + update->width,
+        current_map_.data.begin() + (update->y + y) * current_map_.info.width + update->x);
     }
   }
 }
