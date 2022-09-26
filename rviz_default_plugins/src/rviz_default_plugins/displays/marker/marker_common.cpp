@@ -294,6 +294,7 @@ MarkerBasePtr MarkerCommon::createOrGetOldMarker(
   if (it != markers_.end()) {
     marker = it->second;
     markers_with_expiration_.erase(marker);
+    frame_locked_markers_.erase(marker);
     if (message->type != marker->getMessage()->type) {
       markers_.erase(it);
       marker = createMarker(message);
