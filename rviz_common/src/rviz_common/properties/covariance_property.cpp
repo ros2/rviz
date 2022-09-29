@@ -51,24 +51,25 @@ CovarianceProperty::CovarianceProperty(
   bool default_value,
   const QString & description,
   Property * parent,
-  const char * changed_slot)
-: BoolProperty(name, default_value, description, parent, changed_slot)
+  const char * changed_slot,
+  QObject * receiver)
+: BoolProperty(name, default_value, description, parent, changed_slot, receiver)
 {
   position_property_ = new BoolProperty(
     "Position", true,
     "Whether or not to show the position part of covariances",
-    this, changed_slot, parent);
+    this, changed_slot, receiver);
   position_property_->setDisableChildrenIfFalse(true);
 
   position_color_property_ = new ColorProperty(
     "Color", QColor(204, 51, 204),
     "Color to draw the position covariance ellipse.",
-    position_property_, changed_slot, parent);
+    position_property_, changed_slot, receiver);
 
   position_alpha_property_ = new FloatProperty(
     "Alpha", 0.3f,
     "0 is fully transparent, 1.0 is fully opaque.",
-    position_property_, changed_slot, parent);
+    position_property_, changed_slot, receiver);
   position_alpha_property_->setMin(0);
   position_alpha_property_->setMax(1);
 
@@ -76,19 +77,19 @@ CovarianceProperty::CovarianceProperty(
     "Scale", 1.0f,
     "Scale factor to be applied to covariance ellipse. "
     "Corresponds to the number of standard deviations to display",
-    position_property_, changed_slot, parent);
+    position_property_, changed_slot, receiver);
   position_scale_property_->setMin(0);
 
   orientation_property_ = new BoolProperty(
     "Orientation", true,
     "Whether or not to show the orientation part of covariances",
-    this, changed_slot, parent);
+    this, changed_slot, receiver);
   orientation_property_->setDisableChildrenIfFalse(true);
 
   orientation_frame_property_ = new EnumProperty(
     "Frame", "Local",
     "Frame used to display the orientation covariance.",
-    orientation_property_, changed_slot, parent);
+    orientation_property_, changed_slot, receiver);
   orientation_frame_property_->addOption("Local", rviz_rendering::Local);
   orientation_frame_property_->addOption("Fixed", rviz_rendering::Fixed);
 
@@ -96,7 +97,7 @@ CovarianceProperty::CovarianceProperty(
     "Color Style", "Unique",
     "Style to color the orientation covariance: "
     "XYZ with same unique color or following RGB order",
-    orientation_property_, changed_slot, parent);
+    orientation_property_, changed_slot, receiver);
   orientation_colorstyle_property_->addOption("Unique", rviz_rendering::Unique);
   orientation_colorstyle_property_->addOption("RGB", rviz_rendering::RGB);
   connect(
@@ -106,12 +107,12 @@ CovarianceProperty::CovarianceProperty(
   orientation_color_property_ = new ColorProperty(
     "Color", QColor(255, 255, 127),
     "Color to draw the covariance ellipse.",
-    orientation_property_, changed_slot, parent);
+    orientation_property_, changed_slot, receiver);
 
   orientation_alpha_property_ = new FloatProperty(
     "Alpha", 0.5f,
     "0 is fully transparent, 1.0 is fully opaque.",
-    orientation_property_, changed_slot, parent);
+    orientation_property_, changed_slot, receiver);
   orientation_alpha_property_->setMin(0);
   orientation_alpha_property_->setMax(1);
 
@@ -120,14 +121,14 @@ CovarianceProperty::CovarianceProperty(
     "For 3D poses: the distance where to position the ellipses representing "
     "orientation covariance. "
     "For 2D poses: the height of the triangle representing the variance on yaw",
-    orientation_property_, changed_slot, parent);
+    orientation_property_, changed_slot, receiver);
   orientation_offset_property_->setMin(0);
 
   orientation_scale_property_ = new FloatProperty(
     "Scale", 1.0f,
     "Scale factor to be applied to orientation covariance shapes. "
     "Corresponds to the number of standard deviations to display",
-    orientation_property_, changed_slot, parent);
+    orientation_property_, changed_slot, receiver);
   orientation_scale_property_->setMin(0);
 
   setDisableChildrenIfFalse(true);
