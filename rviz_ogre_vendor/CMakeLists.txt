@@ -147,6 +147,11 @@ macro(build_ogre)
   # These next lines can be used to disable some of the components or plugins for OGRE
   list(APPEND extra_cmake_args "-DOGRE_CONFIG_ENABLE_ZIP:BOOL=ON")
 
+  # Need to disable precompiled header on macOS according to https://forums.ogre3d.org/viewtopic.php?t=95843
+  if(APPLE)
+    list(APPEND extra_cmake_args "-DOGRE_ENABLE_PRECOMPILED_HEADERS:BOOL=FALSE")
+  endif()
+
   if(BUILDING_FREETYPE_LOCALLY)
     list(APPEND extra_cmake_args
       "-DFREETYPE_HOME=${CMAKE_CURRENT_BINARY_DIR}/freetype_install")
