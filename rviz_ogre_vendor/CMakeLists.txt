@@ -120,6 +120,10 @@ macro(build_ogre)
     list(APPEND extra_cmake_args -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE})
   endif()
 
+  if(DEFINED CMAKE_PREFIX_PATH)
+    list(APPEND extra_cmake_args "-DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}")
+  endif()
+
   if(WIN32)
     set(OGRE_C_FLAGS "${OGRE_C_FLAGS} /w /EHsc")
     set(OGRE_CXX_FLAGS "${OGRE_CXX_FLAGS} /w /EHsc")
