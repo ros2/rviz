@@ -75,7 +75,31 @@ register_rviz_ogre_media_exports(DIRECTORIES "test_folder/scripts")
 ```
 *Note:* If you want to export folder hierarchies, each folder needs to be exported separately. Folders within exported folders are not automatically available.
 
-#### Writing a display which can only work with one transformation plugin
+### Handling time and transformations
+
+Display plugins should use the `rviz_common::FrameManagerIface` class to transform data to the fixed frame.
+It is an abstraction that enables custom transformation plugins.
+The default transformation plugin uses `tf2`.
+
+Any data with an associated time, such as a ROS message with a `std_msgs/msg/Header` field, should be transformed to the fixed frame using the time that came with it.
+Note that RViz uses `rclcpp::Time` instead of `tf2::TimePoint`.
+
+```c++
+Ogre::Vector3 position;
+Ogre::Quaternion orientation;
+context_->getFrameManager()->getTransform(frame_from_data, time_from_data, position, orientation))
+```
+
+Data without an associated time should be transformed using one of the functions that does not accept a time.
+This will use the latest available transform data.
+
+```c++
+Ogre::Vector3 position;
+Ogre::Quaternion orientation;
+context_->getFrameManager()->getTransform(frame_of_data, position, orientation)
+```
+
+##### Writing a display which can only work with one transformation plugin
 
 Some of the default displays (e.g. TF display or LaserScan display) can only work with tf2 as transformation framework.
 Similarly, as a developer, you may have written your own transformation plugin which cannot work with every display, or your own display which cannot work with every transformation plugin.
