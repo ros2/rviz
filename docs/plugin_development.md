@@ -75,7 +75,7 @@ register_rviz_ogre_media_exports(DIRECTORIES "test_folder/scripts")
 ```
 *Note:* If you want to export folder hierarchies, each folder needs to be exported separately. Folders within exported folders are not automatically available.
 
-### Handling time and transformations
+#### Handling time and transformations
 
 Display plugins should use the `rviz_common::FrameManagerIface` class to transform data to the fixed frame.
 It is an abstraction that enables custom transformation plugins.
