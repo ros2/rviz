@@ -400,7 +400,7 @@ void VisualizationManager::onUpdate()
     resetTime();
   }
 
-  executor_->spin_some(std::chrono::milliseconds(10));
+  executor_->spin_all(std::chrono::milliseconds(10));
 
   Q_EMIT preUpdate();
 
