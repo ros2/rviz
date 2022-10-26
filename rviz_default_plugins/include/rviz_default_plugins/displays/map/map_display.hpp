@@ -120,6 +120,7 @@ protected Q_SLOTS:
   void updateAlpha();
   void updateDrawUnder() const;
   void updatePalette();
+  void updateBinaryThreshold();
   /** @brief Show current_map_ in the scene. */
   void transformMap();
   void updateMapUpdateTopic();
@@ -161,7 +162,7 @@ protected:
   void updateSwatches() const;
 
   std::vector<std::shared_ptr<Swatch>> swatches_;
-  std::vector<Ogre::TexturePtr> palette_textures_;
+  std::vector<Ogre::TexturePtr> palette_textures_, palette_textures_binary_;
   std::vector<bool> color_scheme_transparency_;
   bool loaded_;
 
@@ -185,6 +186,8 @@ protected:
   rviz_common::properties::Property * draw_under_property_;
   rviz_common::properties::EnumProperty * color_scheme_property_;
   rviz_common::properties::BoolProperty * transform_timestamp_property_;
+  rviz_common::properties::BoolProperty * binary_view_property_;
+  rviz_common::properties::IntProperty * binary_threshold_property_;
 
   uint32_t update_messages_received_;
 };
