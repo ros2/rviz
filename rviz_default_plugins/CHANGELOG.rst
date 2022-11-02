@@ -2,8 +2,8 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+12.1.0 (2022-11-02)
+-------------------
 * Add Map Display binary option (`#846 <https://github.com/ros2/rviz/issues/846>`_)
 * Delete frame_locked_markers when reusing marker (`#907 <https://github.com/ros2/rviz/issues/907>`_)
 * Consider region of interest in CameraDisplay (`#864 <https://github.com/ros2/rviz/issues/864>`_)
