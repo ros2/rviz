@@ -2,6 +2,11 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Remove YAML_CPP_DLL define (`#831 <https://github.com/ros2/rviz/issues/831>`_)
+* Contributors: Akash
+
 12.0.0 (2022-09-13)
 -------------------
 * Document getTransform() time behavior (`#893 <https://github.com/ros2/rviz/issues/893>`_)

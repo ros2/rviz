@@ -2,6 +2,9 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 12.0.0 (2022-09-13)
 -------------------
 * Ogre 1.12.10 upgrade (`#878 <https://github.com/ros2/rviz/issues/878>`_)
