@@ -52,29 +52,17 @@ bool STLLoader::load(uint8_t * buffer, const size_t num_bytes, const std::string
   // check for ascii since we can only load binary types with this class
   std::string buffer_str = std::string(reinterpret_cast<char *>(buffer), num_bytes);
 
-  if (buffer_str.substr(0, 5) == std::string("solid")) {
-    // file says that it is ascii, but why should we trust it?
-
-    // check for "endsolid" as well
-    if (buffer_str.find("endsolid", 5) != std::string::npos) {
-      RVIZ_RENDERING_LOG_ERROR_STREAM(
-        "The STL file '" << origin << "' is malformed. It "
-          "starts with the word 'solid' and also contains the "
-          "word 'endsolid', indicating that it's an ASCII STL "
-          "file, but rviz can only load binary STL files so it "
-          "will not be loaded. Please convert it to a "
-          "binary STL file.");
-      return false;
-    }
-
-    // chastise the user for malformed files
-    RVIZ_RENDERING_LOG_WARNING_STREAM(
-      "The STL file '" << origin << "' is malformed. It starts "
-        "with the word 'solid', indicating that it's an ASCII "
-        "STL file, but it does not contain the word 'endsolid' so "
-        "it is either a malformed ASCII STL file or it is actually "
-        "a binary STL file. Trying to interpret it as a binary "
-        "STL file instead.");
+  if (buffer_str.substr(0, 5) == std::string("solid") &&
+    buffer_str.find("endsolid", 5) != std::string::npos)
+  {
+    RVIZ_RENDERING_LOG_ERROR_STREAM(
+      "The STL file '" << origin << "' is malformed. It "
+        "starts with the word 'solid' and also contains the "
+        "word 'endsolid', indicating that it's an ASCII STL "
+        "file, but rviz can only load binary STL files so it "
+        "will not be loaded. Please convert it to a "
+        "binary STL file.");
+    return false;
   }
 
   // make sure there's enough data for a binary STL header and triangle count
