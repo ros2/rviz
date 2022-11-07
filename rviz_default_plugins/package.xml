@@ -8,8 +8,9 @@
   <description>
     Several default plugins for rviz to cover the basic functionality.
   </description>
-  <maintainer email="jacob@openrobotics.org">Jacob Perron</maintainer>
-  <maintainer email="michael.jeronimo@openrobotics.org">Michael Jeronimo</maintainer>
+
+  <maintainer email="alejandro@openrobotics.org">Alejandro Hernandez Cordero</maintainer>
+
   <license>BSD</license>
 
   <url type="website">https://github.com/ros2/rviz/blob/ros2/README.md</url>
@@ -18,7 +19,9 @@
 
   <author>Dave Hershberger</author>
   <author>David Gossow</author>
+  <author email="jacob@openrobotics.org">Jacob Perron</author>
   <author>Josh Faust</author>
+  <author email="michael.jeronimo@openrobotics.org">Michael Jeronimo</author>
   <author email="william@openrobotics.org">William Woodall</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

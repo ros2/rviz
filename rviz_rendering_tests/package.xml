@@ -8,13 +8,16 @@
   <description>
     Example plugin for RViz - documents and tests RViz plugin development
   </description>
-  <maintainer email="jacob@openrobotics.org">Jacob Perron</maintainer>
-  <maintainer email="michael.jeronimo@openrobotics.org">Michael Jeronimo</maintainer>
+
+  <maintainer email="alejandro@openrobotics.org">Alejandro Hernandez Cordero</maintainer>
+
   <license>BSD</license>
 
   <url type="repository">https://github.com/ros2/rviz</url>
   <url type="bugtracker">https://github.com/ros2/rviz/issues</url>
 
+  <author email="jacob@openrobotics.org">Jacob Perron</author>
+  <author email="michael.jeronimo@openrobotics.org">Michael Jeronimo</author>
   <author email="william@openrobotics.org">William Woodall</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
