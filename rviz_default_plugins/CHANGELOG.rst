@@ -2,6 +2,11 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.4 (2022-11-07)
+-------------------
+* Delete frame_locked_markers when reusing marker (`#907 <https://github.com/ros2/rviz/issues/907>`_) (`#910 <https://github.com/ros2/rviz/issues/910>`_)
+* Contributors: mergify[bot]
+
 11.2.3 (2022-09-12)
 -------------------
 * Set error status when duplicate markers are in the same MarkerArray (`#891 <https://github.com/ros2/rviz/issues/891>`_) (`#899 <https://github.com/ros2/rviz/issues/899>`_)
