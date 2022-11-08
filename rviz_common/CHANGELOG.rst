@@ -2,6 +2,9 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+12.2.0 (2022-11-07)
+-------------------
+
 12.1.0 (2022-11-02)
 -------------------
 * Remove YAML_CPP_DLL define (`#831 <https://github.com/ros2/rviz/issues/831>`_)

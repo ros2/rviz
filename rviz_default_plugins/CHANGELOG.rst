@@ -2,6 +2,9 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+12.2.0 (2022-11-07)
+-------------------
+
 12.1.0 (2022-11-02)
 -------------------
 * Add Map Display binary option (`#846 <https://github.com/ros2/rviz/issues/846>`_)
