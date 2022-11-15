@@ -8,8 +8,9 @@
   <description>
     3D testing framework for RViz.
   </description>
-  <maintainer email="jacob@openrobotics.org">Jacob Perron</maintainer>
-  <maintainer email="michael.jeronimo@openrobotics.org">Michael Jeronimo</maintainer>
+
+  <maintainer email="alejandro@openrobotics.org">Alejandro Hernandez Cordero</maintainer>
+
   <license>BSD</license>
 
   <url type="website">http://ros.org/wiki/rviz2</url>
@@ -17,6 +18,8 @@
   <url type="bugtracker">https://github.com/ros-visualization/rviz/issues</url>
 
   <author>Alessandro Bottero</author>
+  <author email="jacob@openrobotics.org">Jacob Perron</author>
+  <author email="michael.jeronimo@openrobotics.org">Michael Jeronimo</author>
   <author email="william@openrobotics.org">William Woodall</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
