@@ -2,6 +2,9 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.5.2 (2022-12-02)
+------------------
+
 8.5.1 (2022-04-28)
 ------------------
 * Removed traces in renderPanel (`#777 <https://github.com/ros2/rviz/issues/777>`_) (`#778 <https://github.com/ros2/rviz/issues/778>`_)

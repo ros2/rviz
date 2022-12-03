@@ -2,6 +2,11 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.5.2 (2022-12-02)
+------------------
+* Fix interface link libraries in ogre vendor (`#879 <https://github.com/ros2/rviz/issues/879>`_)
+* Contributors: Laszlo Turanyi
+
 8.5.1 (2022-04-28)
 ------------------
 

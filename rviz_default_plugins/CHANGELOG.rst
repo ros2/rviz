@@ -2,6 +2,13 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.5.2 (2022-12-02)
+------------------
+* Delete frame_locked_markers when reusing marker (`#911 <https://github.com/ros2/rviz/issues/911>`_)
+* Set error status when duplicate markers are in the same MarkerArray (`#900 <https://github.com/ros2/rviz/issues/900>`_)
+* Make Axes display use latest transform (`#903 <https://github.com/ros2/rviz/issues/903>`_)
+* Contributors: Shane Loretz
+
 8.5.1 (2022-04-28)
 ------------------
 * Add underscores to material names (`#811 <https://github.com/ros2/rviz/issues/811>`_) (`#823 <https://github.com/ros2/rviz/issues/823>`_)
