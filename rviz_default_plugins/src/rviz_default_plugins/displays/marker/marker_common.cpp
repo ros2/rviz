@@ -31,6 +31,8 @@
 #include "rviz_default_plugins/displays/marker/marker_common.hpp"
 
 #include <memory>
+#include <set>
+#include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
@@ -153,8 +155,40 @@ void MarkerCommon::addMessage(const visualization_msgs::msg::Marker::ConstShared
 void MarkerCommon::addMessage(
   const visualization_msgs::msg::MarkerArray::ConstSharedPtr array)
 {
+  using ns_type = decltype(visualization_msgs::msg::Marker::ns);
+  using id_type = decltype(visualization_msgs::msg::Marker::id);
+  using pair_type = std::pair<id_type, const ns_type &>;
+
+  // Keep track of unique markers
+  std::set<pair_type> unique_markers;
+  bool found_duplicate = false;
+  std::string offending_ns;
+  id_type offending_id = 0;
+
   for (auto const & marker : array->markers) {
+    if (!found_duplicate) {
+      pair_type pair(marker.id, marker.ns);
+      found_duplicate = !unique_markers.insert(pair).second;
+      if (found_duplicate) {
+        offending_ns = marker.ns;
+        offending_id = marker.id;
+      }
+    }
     addMessage(std::make_shared<visualization_msgs::msg::Marker>(marker));
+  }
+
+  // Can't use setMarkerStatus on individual markers because processAdd would clear it.
+  const char * kDuplicateStatus = "Duplicate Marker Check";
+  if (found_duplicate) {
+    std::stringstream error_stream;
+    error_stream << "Multiple Markers in the same MarkerArray message had the same ns and id: ";
+    error_stream << "(" << offending_ns << ", " << offending_id << ")";
+    display_->setStatusStd(
+      rviz_common::properties::StatusProperty::Error,
+      kDuplicateStatus,
+      error_stream.str());
+  } else {
+    display_->deleteStatusStd(kDuplicateStatus);
   }
 }
 
@@ -256,6 +290,7 @@ MarkerBasePtr MarkerCommon::createOrGetOldMarker(
   if (it != markers_.end()) {
     marker = it->second;
     markers_with_expiration_.erase(marker);
+    frame_locked_markers_.erase(marker);
     if (message->type != marker->getMessage()->type) {
       markers_.erase(it);
       marker = createMarker(message);
