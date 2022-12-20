@@ -64,7 +64,11 @@ void LaserScanDisplay::onInitialize()
 void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPtr scan)
 {
 //  Compute tolerance necessary for this scan
-  rclcpp::Duration tolerance = rclcpp::Duration::from_seconds(static_cast<double>(scan->ranges.size() - 1) * static_cast<double>(scan->time_increment));
+  rclcpp::Duration tolerance =
+    rclcpp::Duration::from_seconds(
+    static_cast<double>(scan->ranges.size() - 1) *
+    static_cast<double>(scan->time_increment));
+
   if (tolerance > filter_tolerance_) {
     filter_tolerance_ = tolerance;
     tf_filter_->setTolerance(filter_tolerance_);
