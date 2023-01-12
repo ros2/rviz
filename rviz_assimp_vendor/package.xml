@@ -22,6 +22,7 @@
   <author email="william@openrobotics.org">William Woodall</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_vendor_package</buildtool_depend>
 
   <depend>assimp</depend>
 

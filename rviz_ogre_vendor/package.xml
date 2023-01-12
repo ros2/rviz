@@ -21,9 +21,7 @@
   <author email="william@openrobotics.org">William Woodall</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
-
-  <build_depend>git</build_depend>
-  <build_depend>pkg-config</build_depend>
+  <buildtool_depend>ament_cmake_vendor_package</buildtool_depend>
 
   <build_depend>libfreetype6-dev</build_depend>
   <build_export_depend>libfreetype6-dev</build_export_depend>
