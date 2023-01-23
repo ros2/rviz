@@ -191,7 +191,7 @@ macro(build_ogre)
       ${extra_cmake_args}
       -Wno-dev
     PATCH_COMMAND
-      ${Patch_EXECUTABLE} -p1 -N < ${CMAKE_CURRENT_SOURCE_DIR}/pragma-patch.diff &&
+      ${Patch_EXECUTABLE} -p1 -N -l < ${CMAKE_CURRENT_SOURCE_DIR}/pragma-patch.diff &&
       ${Patch_EXECUTABLE} -p1 -N < ${CMAKE_CURRENT_SOURCE_DIR}/relocatable.patch &&
       ${Patch_EXECUTABLE} -p1 -N < ${CMAKE_CURRENT_SOURCE_DIR}/C4267.patch
     COMMAND
