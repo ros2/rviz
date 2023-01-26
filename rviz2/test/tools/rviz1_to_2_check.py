@@ -30,6 +30,37 @@ def test_convert_all_supported_configs():
     assert 'Panels' in yaml_output.keys()
 
 
+def test_convert_fuse_simple_tutorial_config():
+    result = subprocess.run(
+        [sys.executable, script(), config('fuse_simple_tutorial.rviz'), '-'],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=True)
+
+    output = result.stdout.decode()
+    assert len(output) > 0
+    assert len(result.stderr) == 0
+
+    yaml_output = yaml.safe_load(output)
+    assert 'Background Color' in yaml_output['Visualization Manager']['Global Options'].keys()
+
+
+def test_convert_range_sensor_tutorial_config():
+    result = subprocess.run(
+        [sys.executable, script(), config('range_sensor_tutorial.rviz'), '-'],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=True)
+
+    output = result.stdout.decode()
+    assert len(output) > 0
+    assert len(result.stderr) == 0
+
+    yaml_output = yaml.safe_load(output)
+    assert 'Panels' in yaml_output.keys()
+    assert 'Background Color' in yaml_output['Visualization Manager']['Global Options'].keys()
+
+
 def test_convert_all_ros1():
     result = subprocess.run(
         [sys.executable, script(), config('all_ros1.rviz'), '-'],

@@ -73,18 +73,18 @@ def migrate_panel_time(panel_dict):
 
 def migrate_visualization_manager(vm_dict):
     vm_rviz2 = {
-        'Class': str(vm_dict['Class']),
+        'Class': str(vm_dict.get('Class', '')),
         'Displays': migrate_displays(vm_dict['Displays']),
-        'Enabled': bool(vm_dict['Enabled']),
-        'Name': str(vm_dict['Name']),
+        'Enabled': bool(vm_dict.get('Enabled', True)),
+        'Name': str(vm_dict.get('Name', 'root')),
         'Tools': migrate_visualization_manager_tools(vm_dict['Tools']),
-        'Value': bool(vm_dict['Value']),
+        'Value': bool(vm_dict.get('Value', True)),
         'Views': migrate_visualization_manager_views(vm_dict['Views']),
         'Transformation': {'Current': {'Class': 'rviz_default_plugins/TF'}},
         'Global Options': {
-            'Background Color': str(vm_dict['Global Options']['Background Color']),
-            'Fixed Frame': str(vm_dict['Global Options']['Fixed Frame']),
-            'Frame Rate': int(vm_dict['Global Options']['Frame Rate']),
+            'Background Color': str(vm_dict.get('Global Options', {}).get('Background Color', '48; 48; 48')),
+            'Fixed Frame': str(vm_dict.get('Global Options', {}).get('Fixed Frame', 'map')),
+            'Frame Rate': int(vm_dict.get('Global Options', {}).get('Frame Rate', 30)),
         }
     }
     return vm_rviz2
@@ -310,7 +310,7 @@ def migrate_visualization_manager_tools(tools_list):
         elif name == 'rviz/SetInitialPose':
             rviz2 = {
                 'Class': 'rviz_default_plugins/SetInitialPose',
-                'Topic': migrate_topic(name = tool_dict['Topic']),
+                'Topic': migrate_topic(name = tool_dict.get('Topic', '/initialpose')),
                 }
             if 'X std deviation' in tool_dict:
                 rviz2['Covariance x'] = float(tool_dict['X std deviation'])**2
@@ -323,15 +323,15 @@ def migrate_visualization_manager_tools(tools_list):
         elif name == 'rviz/SetGoal':
             rviz2 = {
                 'Class': 'rviz_default_plugins/SetGoal',
-                'Topic': migrate_topic(name = tool_dict['Topic']),
+                'Topic': migrate_topic(name = tool_dict.get('Topic', '/goal_pose')),
                 }
             del rviz2['Topic']['Filter size']
             tools_rviz2.append(rviz2)
         elif name == 'rviz/PublishPoint':
             rviz2 = {
                 'Class': 'rviz_default_plugins/PublishPoint',
-                'Single click': bool(tool_dict['Single click']),
-                'Topic': migrate_topic(name = tool_dict['Topic']),
+                'Single click': bool(tool_dict.get('Single click', True)),
+                'Topic': migrate_topic(name = tool_dict.get('Topic', '/clicked_point')),
                 }
             del rviz2['Topic']['Filter size']
             tools_rviz2.append(rviz2)
