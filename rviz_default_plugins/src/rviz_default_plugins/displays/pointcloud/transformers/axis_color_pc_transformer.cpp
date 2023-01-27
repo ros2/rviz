@@ -45,8 +45,19 @@ namespace rviz_default_plugins
 uint8_t AxisColorPCTransformer::supports(
   const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
 {
-  (void) cloud;
-  return PointCloudTransformer::Support_Color;
+  int32_t xi = findChannelIndex(cloud, "x");
+  int32_t yi = findChannelIndex(cloud, "y");
+  int32_t zi = findChannelIndex(cloud, "z");
+
+  if (xi == -1 || yi == -1 || zi == -1) {
+    return PointCloudTransformer::Support_None;
+  }
+
+  if (cloud->fields[xi].datatype == sensor_msgs::msg::PointField::FLOAT32) {
+    return PointCloudTransformer::Support_Color;
+  }
+
+  return PointCloudTransformer::Support_None;
 }
 
 uint8_t AxisColorPCTransformer::score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)

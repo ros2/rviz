@@ -60,7 +60,17 @@ void PointCloud2Display::onInitialize()
 
 void PointCloud2Display::processMessage(const sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud)
 {
-  if (!hasXYZChannels(cloud)) {
+  if( hasXYZChannels(cloud) )
+  {
+    this->cartesianType = eCartesianTypes::CT_XYZCoordinate;
+  }
+  else if( hasPolarChannels(cloud) )
+  {
+    this->cartesianType = eCartesianTypes::CT_PolarCoordinate;
+  }
+  else
+  {
+    this->cartesianType = eCartesianTypes::CT_None;
     return;
   }
 
@@ -84,6 +94,16 @@ bool PointCloud2Display::hasXYZChannels(
   int32_t zi = findChannelIndex(cloud, "z");
 
   return xi != -1 && yi != -1 && zi != -1;
+}
+
+bool PointCloud2Display::hasPolarChannels(
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const
+{
+  int32_t rangei = findChannelIndex(cloud, "Range");
+  int32_t azimuthi = findChannelIndex(cloud, "Azimuth");
+  int32_t elevationi = findChannelIndex(cloud, "Elevation");
+
+  return rangei != -1 && azimuthi != -1 && elevationi != -1;
 }
 
 bool PointCloud2Display::cloudDataMatchesDimensions(
@@ -149,12 +169,34 @@ PointCloud2Display::filterData(sensor_msgs::msg::PointCloud2::ConstSharedPtr clo
 Offsets PointCloud2Display::determineOffsets(
   const sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const
 {
-  Offsets offsets{
-    cloud->fields[findChannelIndex(cloud, "x")].offset,
-    cloud->fields[findChannelIndex(cloud, "y")].offset,
-    cloud->fields[findChannelIndex(cloud, "z")].offset
-  };
-  return offsets;
+  switch (this->cartesianType)
+  {
+  case eCartesianTypes::CT_XYZCoordinate:
+    {
+      Offsets offsets{
+        cloud->fields[findChannelIndex(cloud, "x")].offset,
+        cloud->fields[findChannelIndex(cloud, "y")].offset,
+        cloud->fields[findChannelIndex(cloud, "z")].offset
+      };
+      return offsets;
+    }
+  
+  case eCartesianTypes::CT_PolarCoordinate:
+    {
+      Offsets offsets{
+        cloud->fields[findChannelIndex(cloud, "Range")].offset,
+        cloud->fields[findChannelIndex(cloud, "Azimuth")].offset,
+        cloud->fields[findChannelIndex(cloud, "Elevation")].offset
+      };
+      return offsets;
+    }
+
+  default:
+    {
+      Offsets offsets{0,0,0};
+      return offsets;
+    }
+  }
 }
 
 bool PointCloud2Display::validateFloatsAtPosition(

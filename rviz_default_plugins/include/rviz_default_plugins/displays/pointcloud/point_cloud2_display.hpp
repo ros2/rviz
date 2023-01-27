@@ -57,6 +57,13 @@ struct Offsets
   uint32_t x, y, z;
 };
 
+enum eCartesianTypes
+{
+  CT_None = 0,
+  CT_XYZCoordinate,
+  CT_PolarCoordinate
+};
+
 // TODO(greimela) This display originally extended the MessageFilterDisplay. Revisit when available
 /**
  * \class PointCloud2Display
@@ -88,6 +95,7 @@ public:
 
   /// Move to public for testing
   bool hasXYZChannels(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
+  bool hasPolarChannels(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
 
   /// Move to public for testing
   bool cloudDataMatchesDimensions(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
@@ -103,6 +111,7 @@ protected:
 
 private:
   std::unique_ptr<PointCloudCommon> point_cloud_common_;
+  eCartesianTypes cartesianType = eCartesianTypes::CT_None;
 
   sensor_msgs::msg::PointCloud2::_data_type
   filterData(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;

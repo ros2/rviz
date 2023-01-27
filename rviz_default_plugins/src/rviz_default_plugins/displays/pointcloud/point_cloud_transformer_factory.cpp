@@ -37,6 +37,7 @@
 #include "rviz_default_plugins/displays/pointcloud/transformers/rgbf32_pc_transformer.hpp"
 #include "rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.hpp"
 #include "rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.hpp"
+#include "rviz_default_plugins/displays/pointcloud/transformers/polar_pc_transformer.hpp"
 
 namespace rviz_default_plugins
 {
@@ -50,6 +51,12 @@ PointCloudTransformerFactory::PointCloudTransformerFactory()
     "XYZ",
     "Transforms the point cloud data into XYZ coordinates to position each point.",
     []() {return new XYZPCTransformer();});
+
+    addBuiltInClass(
+    "rviz_default_plugins",
+    "Polar",
+    "Transforms the polar cordinaate point cloud data into XYZ coordinates to position each point.",
+    []() {return new PolarPCTransformer();});
 
   addBuiltInClass(
     "rviz_default_plugins",

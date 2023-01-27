@@ -167,6 +167,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/pointcloud/transformers/rgb8_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/rgbf32_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/xyz_pc_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/transformers/polar_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_common.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_to_point_cloud2.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_transformer_factory.cpp
