@@ -2,8 +2,8 @@
 Changelog for package rviz_visual_testing_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+12.3.0 (2023-02-14)
+-------------------
 * Update rviz to C++17. (`#939 <https://github.com/ros2/rviz/issues/939>`_)
 * [rolling] Update maintainers - 2022-11-07 (`#923 <https://github.com/ros2/rviz/issues/923>`_)
 * Contributors: Audrow Nash, Chris Lalancette
