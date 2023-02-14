@@ -2,6 +2,11 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* [rolling] Update maintainers - 2022-11-07 (`#923 <https://github.com/ros2/rviz/issues/923>`_)
+* Contributors: Audrow Nash
+
 12.2.0 (2022-11-07)
 -------------------
 * Remove broken rviz_ogre_vendor::RenderSystem_GL target (`#920 <https://github.com/ros2/rviz/issues/920>`_)

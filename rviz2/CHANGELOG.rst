@@ -2,6 +2,13 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Make rviz1_to_rviz2.py accept configs with missing values (`#945 <https://github.com/ros2/rviz/issues/945>`_)
+* Update rviz to C++17. (`#939 <https://github.com/ros2/rviz/issues/939>`_)
+* [rolling] Update maintainers - 2022-11-07 (`#923 <https://github.com/ros2/rviz/issues/923>`_)
+* Contributors: Audrow Nash, Chris Lalancette, Shane Loretz
+
 12.2.0 (2022-11-07)
 -------------------
 

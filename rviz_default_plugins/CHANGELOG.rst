@@ -2,6 +2,14 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Update rviz to C++17. (`#939 <https://github.com/ros2/rviz/issues/939>`_)
+* Fix tolerance calculation precision (`#934 <https://github.com/ros2/rviz/issues/934>`_)
+* Fix MeshResourceMarker for mesh with color-based embedded material (`#928 <https://github.com/ros2/rviz/issues/928>`_)
+* [rolling] Update maintainers - 2022-11-07 (`#923 <https://github.com/ros2/rviz/issues/923>`_)
+* Contributors: Audrow Nash, Chris Lalancette, Xavier BROQUERE, Xenofon Karamanos
+
 12.2.0 (2022-11-07)
 -------------------
 
