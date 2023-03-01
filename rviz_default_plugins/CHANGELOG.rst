@@ -2,6 +2,11 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* point_marker: fix bug where the number of rendered points accumulates over time (`#949 <https://github.com/ros2/rviz/issues/949>`_)
+* Contributors: AndreasR30
+
 12.3.0 (2023-02-14)
 -------------------
 * Update rviz to C++17. (`#939 <https://github.com/ros2/rviz/issues/939>`_)

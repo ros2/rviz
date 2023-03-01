@@ -2,6 +2,9 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 12.3.0 (2023-02-14)
 -------------------
 * Make rviz1_to_rviz2.py accept configs with missing values (`#945 <https://github.com/ros2/rviz/issues/945>`_)
