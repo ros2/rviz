@@ -2,6 +2,11 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Delete frame_locked_markers when reusing marker (`#907 <https://github.com/ros2/rviz/issues/907>`_) (`#912 <https://github.com/ros2/rviz/issues/912>`_)
+* Contributors: mergify[bot], Shane Loretz
+
 8.2.7 (2022-09-12)
 ------------------
 * Make Axes display use latest transform (`#892 <https://github.com/ros2/rviz/issues/892>`_) (`#904 <https://github.com/ros2/rviz/issues/904>`_)

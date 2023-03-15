@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* add test to ensure binary STL files from SOLIDWORKS get imported without a warning (`#917 <https://github.com/ros2/rviz/issues/917>`_) (`#933 <https://github.com/ros2/rviz/issues/933>`_)
+* Contributors: mergify[bot]
+
 8.2.7 (2022-09-12)
 ------------------
 
