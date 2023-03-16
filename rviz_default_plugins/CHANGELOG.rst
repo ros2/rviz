@@ -2,8 +2,8 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.2.8 (2023-03-16)
+------------------
 * Delete frame_locked_markers when reusing marker (`#907 <https://github.com/ros2/rviz/issues/907>`_) (`#912 <https://github.com/ros2/rviz/issues/912>`_)
 * Contributors: mergify[bot], Shane Loretz
 
