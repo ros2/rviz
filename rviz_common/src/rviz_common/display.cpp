@@ -483,4 +483,22 @@ properties::Property * Display::findProperty(const QString & name)
   return nullptr;
 }
 
+
+bool Display::updateFrame(const std::string & frame)
+{
+  return updateFrame(frame, rclcpp::Time(0, 0, context_->getClock()->get_clock_type()));
+}
+
+bool Display::updateFrame(const std::string & frame, rclcpp::Time time)
+{
+  Ogre::Vector3 position;
+  Ogre::Quaternion orientation;
+  if (context_->getFrameManager()->getTransform(frame, time, position, orientation)) {
+    scene_node_->setPosition(position);
+    scene_node_->setOrientation(orientation);
+    return true;
+  }
+  return false;
+}
+
 }  // namespace rviz_common
