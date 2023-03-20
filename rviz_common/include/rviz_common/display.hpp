@@ -286,9 +286,9 @@ public:
   findProperty(const QString & name);
 
   /// Get the latest transform to the frame and update the scene node. Return true on success.
-  bool updateFrame(const std::string& frame);
+  bool updateFrame(const std::string & frame);
 
-  /// Get the transform to the frame at the given time, and update the scene node. Return true on success
+  /// Get transform to the frame at the given time and update the scene node. True on success.
   bool updateFrame(const std::string & frame, rclcpp::Time time);
 
 Q_SIGNALS:
