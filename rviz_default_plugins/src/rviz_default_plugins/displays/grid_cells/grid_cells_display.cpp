@@ -131,16 +131,12 @@ void GridCellsDisplay::processMessage(nav_msgs::msg::GridCells::ConstSharedPtr m
 
 bool GridCellsDisplay::setTransform(std_msgs::msg::Header const & header)
 {
-  Ogre::Vector3 position;
-  Ogre::Quaternion orientation;
-  if (!context_->getFrameManager()->getTransform(header, position, orientation)) {
+  if (!updateFrame(header.frame_id, header.stamp)) {
     setMissingTransformToFixedFrame(header.frame_id, getNameStd());
     return false;
   }
   setTransformOk();
 
-  scene_node_->setPosition(position);
-  scene_node_->setOrientation(orientation);
   return true;
 }
 
