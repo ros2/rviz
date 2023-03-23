@@ -43,9 +43,9 @@ macro(build_freetype)
   list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=${FREETYPE_CXX_FLAGS}")
 
   include(ExternalProject)
-  ExternalProject_Add(freetype-2.8.1
-    URL https://git.savannah.gnu.org/cgit/freetype/freetype2.git/snapshot/freetype2-VER-2-6-5.tar.gz
-    URL_MD5 0dd62a0125895431e074a3df29f94d69
+  ExternalProject_Add(freetype-2.13.0
+    URL https://git.savannah.gnu.org/cgit/freetype/freetype2.git/snapshot/freetype2-VER-2-13-0.tar.gz
+    URL_MD5 e810e6f2d84f7c2608bcfd6e723cd98a
     TIMEOUT 600
     LOG_CONFIGURE ${should_log}
     LOG_BUILD ${should_log}
@@ -86,9 +86,9 @@ macro(build_zlib)
   list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=${ZLIB_CXX_FLAGS}")
 
   include(ExternalProject)
-  ExternalProject_Add(zlib-1.2.11
-    URL https://www.zlib.net/fossils/zlib-1.2.11.tar.gz
-    URL_MD5 1c9f62f0778697a09d36121ead88e08e
+  ExternalProject_Add(zlib-1.2.13
+    URL https://www.zlib.net/fossils/zlib-1.2.13.tar.gz
+    URL_MD5 9b8aa094c4e5765dabf4da391f00d15c
     TIMEOUT 600
     LOG_CONFIGURE ${should_log}
     LOG_BUILD ${should_log}
@@ -161,9 +161,9 @@ macro(build_ogre)
 
   find_package(Patch REQUIRED)
   include(ExternalProject)
-  ExternalProject_Add(ogre-v1.12.1
-    URL https://github.com/OGRECave/ogre/archive/v1.12.1.zip
-    URL_MD5 cdbea4006d223c173e0a93864111b936
+  ExternalProject_Add(ogre-v1.12.2
+    URL https://github.com/OGRECave/ogre/archive/refs/tags/v1.12.2.zip
+    URL_MD5 c4a5100cf7ddcc01c940f607546cdbf7
     TIMEOUT 1200
     LOG_CONFIGURE ${should_log}
     LOG_BUILD ${should_log}
@@ -191,14 +191,14 @@ macro(build_ogre)
       ${Patch_EXECUTABLE} -p1 -N < ${CMAKE_CURRENT_SOURCE_DIR}/pragma-patch.diff &&
       ${Patch_EXECUTABLE} -p1 -N < ${CMAKE_CURRENT_SOURCE_DIR}/fix-arm64.diff
     COMMAND
-      ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/FindFreetype.cmake ${CMAKE_CURRENT_BINARY_DIR}/ogre-v1.12.1-prefix/src/ogre-v1.12.1/CMake/Packages/FindFreetype.cmake
+      ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/FindFreetype.cmake ${CMAKE_CURRENT_BINARY_DIR}/ogre-v1.12.2-prefix/src/ogre-v1.12.2/CMake/Packages/FindFreetype.cmake
   )
 
   if(BUILDING_FREETYPE_LOCALLY)
-    add_dependencies(ogre-v1.12.1 freetype-2.8.1)
+    add_dependencies(ogre-v1.12.2 freetype-2.13.0)
   endif()
   if(BUILDING_ZLIB_LOCALLY)
-    add_dependencies(ogre-v1.12.1 zlib-1.2.11)
+    add_dependencies(ogre-v1.12.2 zlib-1.2.13)
   endif()
 
   # The external project will install to the build folder, but we'll install that on make install.
