@@ -26,6 +26,7 @@ macro(build_assimp)
   else()
     list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS} -std=c++14 -w")
     list(APPEND extra_cmake_args "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} -w")
+    list(APPEND extra_cmake_args "-DCMAKE_INSTALL_LIBDIR=lib")
   endif()
 
   list(APPEND extra_cmake_args "-DASSIMP_BUILD_ASSIMP_TOOLS=OFF")
@@ -41,9 +42,9 @@ macro(build_assimp)
   endif()
 
   include(ExternalProject)
-  ExternalProject_Add(assimp-4.1.0
-    URL https://github.com/assimp/assimp/archive/v4.1.0.tar.gz
-    URL_MD5 83b53a10c38d964bd1e69da0606e2727
+  ExternalProject_Add(assimp-5.2.2
+    URL https://github.com/assimp/assimp/archive/v5.2.2.tar.gz
+    URL_MD5 800322aa3b2a34dcba1fdad64fb00f1b
     TIMEOUT 600
     LOG_CONFIGURE ${should_log}
     LOG_BUILD ${should_log}
@@ -51,6 +52,9 @@ macro(build_assimp)
       -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/assimp_install
       ${extra_cmake_args}
       -Wno-dev
+    PATCH_COMMAND
+      ${CMAKE_COMMAND} -E chdir <SOURCE_DIR> git apply -p1 --ignore-space-change --whitespace=nowarn
+        ${CMAKE_CURRENT_SOURCE_DIR}/patches/0001-use-system-minizip.patch
   )
 
   # The external project will install to the build folder, but we'll install that on make install.
@@ -71,7 +75,7 @@ set(ON 1)
 
 find_package(assimp QUIET)
 
-if(FORCE_BUILD_VENDOR_PKG OR NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LESS 4.1.0)
+if(FORCE_BUILD_VENDOR_PKG OR NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LESS 5.2.0)
   build_assimp()
 
   if(WIN32)

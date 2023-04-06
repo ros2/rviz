@@ -6,9 +6,9 @@ set(ON 1)
 
 find_package(assimp QUIET)
 
-if(NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LESS 4.1.0)
+if(NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LESS 5.2.0)
   # add the local Modules directory to the modules path
-  set(assimp_DIR "${@PROJECT_NAME@_DIR}/../../../opt/rviz_assimp_vendor/lib/cmake/assimp-4.1")
+  set(assimp_DIR "${@PROJECT_NAME@_DIR}/../../../opt/rviz_assimp_vendor/lib/cmake/assimp-5.2")
   message(STATUS "Setting assimp_DIR to: '${assimp_DIR}'")
 endif()
 
