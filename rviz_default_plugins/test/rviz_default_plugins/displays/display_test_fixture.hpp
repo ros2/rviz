@@ -49,20 +49,27 @@
 #include "../mock_frame_manager.hpp"
 #include "../mock_selection_manager.hpp"
 #include "../mock_handler_manager.hpp"
+#include "../visibility_control.hpp"
 
 class DisplayTestFixture : public testing::Test
 {
 public:
+  TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
   static void SetUpTestCase();
 
+  TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
   DisplayTestFixture();
 
+  TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
   ~DisplayTestFixture() override;
 
+  TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
   static void TearDownTestCase();
 
+  TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
   void mockValidTransform();
 
+  TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
   void mockValidTransform(Ogre::Vector3 position, Ogre::Quaternion orientation);
 
   static std::shared_ptr<rviz_default_plugins::OgreTestingEnvironment> testing_environment_;

@@ -51,7 +51,7 @@ endif()
 # mocs_compilation.cpp file that takes a lot of memory to compile.  Instead
 # we create individual moc files that can be compiled separately.
 
-find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_ros REQUIRED)
 
 find_package(rviz_common REQUIRED)
 find_package(rviz_rendering REQUIRED)
@@ -349,6 +349,8 @@ if(BUILD_TESTING)
   )
   target_include_directories(display_test_fixture PRIVATE ${GMOCK_INCLUDE_DIRS} ${TEST_INCLUDE_DIRS})
   ament_target_dependencies(display_test_fixture ${TEST_TARGET_DEPENDENCIES} rviz_rendering rviz_common)
+  target_compile_definitions(display_test_fixture PRIVATE "TEST_RVIZ_DEFAULT_PLUGINS_BUILDING_LIBRARY")
+
 
   set(TEST_LINK_LIBRARIES
     display_test_fixture

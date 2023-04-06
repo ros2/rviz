@@ -31,6 +31,7 @@
 #define RVIZ_DEFAULT_PLUGINS__OGRE_TESTING_ENVIRONMENT_HPP_
 
 #include <OgreRenderWindow.h>
+#include "./visibility_control.hpp"
 
 namespace rviz_default_plugins
 {
@@ -43,10 +44,13 @@ public:
    * @param: bool debug, if true, all logging of Ogre is send to std::out, if false no logging
    * occurs. Since the logging pollutes the test output, it defaults to false
    */
+  TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
   void setUpOgreTestEnvironment(bool debug = false);
 
+  TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
   void setUpRenderSystem();
 
+  TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
   Ogre::RenderWindow * createOgreRenderWindow();
 };
 

@@ -46,6 +46,7 @@
 
 #include "rviz_rendering/objects/point_cloud.hpp"
 #include "rviz_rendering/objects/movable_text.hpp"
+#include "./visibility_control.hpp"
 
 MATCHER_P(Vector3Eq, expected, "") {
   return Ogre::Math::Abs(expected.x - arg.x) < 0.0001f &&
@@ -69,42 +70,68 @@ MATCHER_P(ColourValueEq, expected, "") {
 
 namespace rviz_default_plugins
 {
+TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
 void assertArrowWithTransform(
   Ogre::SceneManager * scene_manager,
   Ogre::Vector3 position,
   Ogre::Vector3 scale,
   Ogre::Quaternion orientation);
 
+TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
 bool axesAreVisible(Ogre::SceneNode * scene_node);
 
+TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
 bool arrowIsVisible(Ogre::SceneNode * scene_manager);
 
+TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
 std::vector<Ogre::SceneNode *> findAllArrows(Ogre::SceneNode * scene_node);
+
+TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
 Ogre::SceneNode * findOneArrow(Ogre::SceneNode * scene_node);
 
+TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
 std::vector<Ogre::SceneNode *> findAllAxes(Ogre::SceneNode * scene_node);
+
+TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
 Ogre::SceneNode * findOneAxes(Ogre::SceneNode * scene_node);
 
+TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
 std::vector<Ogre::Vector3> getPositionsFromNodes(const std::vector<Ogre::SceneNode *> & nodes);
+
+TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
 std::vector<Ogre::Quaternion>
 getOrientationsFromNodes(const std::vector<Ogre::SceneNode *> & nodes);
 
+TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
 std::vector<Ogre::Entity *> findAllEntitiesByMeshName(
   Ogre::SceneNode * scene_node, const Ogre::String & resource_name);
+
+TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
 Ogre::Entity * findEntityByMeshName(
   Ogre::SceneNode * scene_node, const Ogre::String & resource_name);
 
+TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
 std::vector<Ogre::Entity *> findAllSpheres(Ogre::SceneNode * scene_node);
+
+TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
 std::vector<Ogre::Entity *> findAllCones(Ogre::SceneNode * scene_node);
+
+TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
 std::vector<Ogre::Entity *> findAllCylinders(Ogre::SceneNode * scene_node);
 
+TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
 std::vector<rviz_rendering::PointCloud *> findAllPointClouds(Ogre::SceneNode * scene_node);
+
+TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
 rviz_rendering::PointCloud * findOnePointCloud(Ogre::SceneNode * scene_node);
 
+TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
 Ogre::BillboardChain * findOneBillboardChain(Ogre::SceneNode * scene_node);
 
+TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
 rviz_rendering::MovableText * findOneMovableText(Ogre::SceneNode * scene_node);
 
+TEST_RVIZ_DEFAULT_PLUGINS_PUBLIC
 Ogre::ManualObject * findOneManualObject(Ogre::SceneNode * scene_node);
 
 template<typename OgreType>
