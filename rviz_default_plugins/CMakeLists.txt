@@ -348,7 +348,6 @@ if(BUILD_TESTING)
     test/rviz_default_plugins/scene_graph_introspection.cpp
   )
   target_include_directories(display_test_fixture PRIVATE ${GMOCK_INCLUDE_DIRS} ${TEST_INCLUDE_DIRS})
-  target_link_libraries(display_test_fixture ${GMOCK_LIBRARIES})
   ament_target_dependencies(display_test_fixture ${TEST_TARGET_DEPENDENCIES} rviz_rendering rviz_common)
 
   set(TEST_LINK_LIBRARIES
@@ -1054,4 +1053,3 @@ endif()
 ament_package(
   CONFIG_EXTRAS "rviz_default_plugins-extras.cmake"
 )
-
