@@ -701,6 +701,7 @@ if(BUILD_TESTING)
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(axes_display_visual_test
+      ${GMOCK_LIBRARIES}
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
@@ -720,6 +721,7 @@ if(BUILD_TESTING)
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(camera_display_visual_test
       point_cloud_common_page_object
+      ${GMOCK_LIBRARIES}
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
@@ -737,6 +739,7 @@ if(BUILD_TESTING)
     target_link_libraries(fluid_pressure_display_visual_test
       point_cloud_common_page_object
       pointcloud_messages
+      ${GMOCK_LIBRARIES}
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
@@ -752,6 +755,7 @@ if(BUILD_TESTING)
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(grid_display_visual_test
+      ${GMOCK_LIBRARIES}
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
@@ -767,6 +771,7 @@ if(BUILD_TESTING)
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(grid_cells_display_visual_test
+      ${GMOCK_LIBRARIES}
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
@@ -784,6 +789,7 @@ if(BUILD_TESTING)
     target_link_libraries(illuminance_display_visual_test
       point_cloud_common_page_object
       pointcloud_messages
+      ${GMOCK_LIBRARIES}
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
@@ -800,6 +806,7 @@ if(BUILD_TESTING)
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(image_display_visual_test
+      ${GMOCK_LIBRARIES}
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
@@ -811,6 +818,7 @@ if(BUILD_TESTING)
     target_include_directories(interactive_marker_namespace_property_test PUBLIC
       ${TEST_INCLUDE_DIRS})
     target_link_libraries(interactive_marker_namespace_property_test
+      ${GMOCK_LIBRARIES}
       ${TEST_LINK_LIBRARIES})
     ament_target_dependencies(interactive_marker_namespace_property_test
       ${TEST_TARGET_DEPENDENCIES})
@@ -827,6 +835,7 @@ if(BUILD_TESTING)
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(laser_scan_display_visual_test
       point_cloud_common_page_object
+      ${GMOCK_LIBRARIES}
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
@@ -845,6 +854,7 @@ if(BUILD_TESTING)
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(map_display_visual_test
+      ${GMOCK_LIBRARIES}
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
@@ -862,6 +872,7 @@ if(BUILD_TESTING)
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(marker_array_display_visual_test
+      ${GMOCK_LIBRARIES}
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
@@ -878,6 +889,7 @@ if(BUILD_TESTING)
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(marker_display_visual_test
+      ${GMOCK_LIBRARIES}
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
@@ -894,6 +906,7 @@ if(BUILD_TESTING)
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(odometry_display_visual_test
+      ${GMOCK_LIBRARIES}
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
@@ -910,6 +923,7 @@ if(BUILD_TESTING)
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(path_display_visual_test
+      ${GMOCK_LIBRARIES}
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
@@ -926,6 +940,7 @@ if(BUILD_TESTING)
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(point_display_visual_test
+      ${GMOCK_LIBRARIES}
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
@@ -942,6 +957,7 @@ if(BUILD_TESTING)
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(point_cloud_display_visual_test
       point_cloud_common_page_object
+      ${GMOCK_LIBRARIES}
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
@@ -959,6 +975,7 @@ if(BUILD_TESTING)
     target_link_libraries(point_cloud2_display_visual_test
       point_cloud_common_page_object
       pointcloud_messages
+      ${GMOCK_LIBRARIES}
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
@@ -976,6 +993,7 @@ if(BUILD_TESTING)
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(pose_array_display_visual_test
+      ${GMOCK_LIBRARIES}
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
@@ -992,6 +1010,7 @@ if(BUILD_TESTING)
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(pose_display_visual_test
+      ${GMOCK_LIBRARIES}
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
@@ -1005,11 +1024,12 @@ if(BUILD_TESTING)
     TIMEOUT 180)
   if(TARGET pose_with_covariance_display_visual_test)
     target_include_directories(pose_with_covariance_display_visual_test PUBLIC
-            ${TEST_INCLUDE_DIRS}
-            ${rviz_visual_testing_framework_INCLUDE_DIRS})
+      ${TEST_INCLUDE_DIRS}
+      ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(pose_with_covariance_display_visual_test
-            ${TEST_LINK_LIBRARIES}
-            rviz_visual_testing_framework::rviz_visual_testing_framework)
+      ${GMOCK_LIBRARIES}
+      ${TEST_LINK_LIBRARIES}
+      rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
 
   ament_add_gtest(range_display_visual_test
@@ -1023,6 +1043,7 @@ if(BUILD_TESTING)
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(range_display_visual_test
+      ${GMOCK_LIBRARIES}
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
@@ -1040,6 +1061,7 @@ if(BUILD_TESTING)
     target_link_libraries(relative_humidity_display_visual_test
       point_cloud_common_page_object
       pointcloud_messages
+      ${GMOCK_LIBRARIES}
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
@@ -1055,6 +1077,7 @@ if(BUILD_TESTING)
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(robot_model_display_visual_test
+      ${GMOCK_LIBRARIES}
       ${TEST_LINK_LIBRARIES}
       ament_index_cpp::ament_index_cpp
       rviz_visual_testing_framework::rviz_visual_testing_framework)
@@ -1073,6 +1096,7 @@ if(BUILD_TESTING)
     target_link_libraries(temperature_display_visual_test
       point_cloud_common_page_object
       pointcloud_messages
+      ${GMOCK_LIBRARIES}
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
@@ -1088,6 +1112,7 @@ if(BUILD_TESTING)
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(tf_display_visual_test
+      ${GMOCK_LIBRARIES}
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
@@ -1103,6 +1128,7 @@ if(BUILD_TESTING)
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(wrench_display_visual_test
+      ${GMOCK_LIBRARIES}
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
