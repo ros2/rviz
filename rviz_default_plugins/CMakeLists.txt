@@ -371,15 +371,6 @@ if(BUILD_TESTING)
     rclcpp::rclcpp
     ${sensor_msgs_TARGETS})
 
-  # This code is used by many tests, so compile it just once
-  add_library(point_cloud_common_page_object
-    test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp)
-  target_include_directories(point_cloud_common_page_object PUBLIC
-    test/page_objects
-    ${TEST_INCLUDE_DIRS})
-  target_link_libraries(point_cloud_common_page_object PUBLIC
-    rviz_visual_testing_framework::rviz_visual_testing_framework)
-
   ament_add_gmock(fps_view_controller_test
     test/rviz_default_plugins/view_controllers/fps/fps_view_controller_test.cpp
     test/rviz_default_plugins/view_controllers/view_controller_test_fixture.hpp
@@ -713,6 +704,7 @@ if(BUILD_TESTING)
     test/rviz_default_plugins/displays/camera/camera_display_visual_test.cpp
     test/rviz_default_plugins/publishers/camera_info_publisher.hpp
     test/rviz_default_plugins/page_objects/camera_display_page_object.cpp
+    test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
     test/rviz_default_plugins/publishers/image_publisher.hpp
     test/rviz_default_plugins/publishers/point_cloud_publisher.hpp
     ${TEST_FIXTURE_SOURCES}
@@ -720,26 +712,27 @@ if(BUILD_TESTING)
     TIMEOUT 180)
   if(TARGET camera_display_visual_test)
     target_include_directories(camera_display_visual_test PUBLIC
+      test/page_objects
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(camera_display_visual_test
-      point_cloud_common_page_object
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
 
   ament_add_gtest(fluid_pressure_display_visual_test
     test/rviz_default_plugins/displays/fluid_pressure/fluid_pressure_display_visual_test.cpp
+    test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
     test/rviz_default_plugins/publishers/fluid_pressure_publisher.hpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET fluid_pressure_display_visual_test)
     target_include_directories(fluid_pressure_display_visual_test PUBLIC
+      test/page_objects
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(fluid_pressure_display_visual_test
-      point_cloud_common_page_object
       pointcloud_messages
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
@@ -777,16 +770,17 @@ if(BUILD_TESTING)
 
   ament_add_gtest(illuminance_display_visual_test
     test/rviz_default_plugins/displays/illuminance/illuminance_display_visual_test.cpp
+    test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
     test/rviz_default_plugins/publishers/illuminance_publisher.hpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET illuminance_display_visual_test)
     target_include_directories(illuminance_display_visual_test PUBLIC
+      test/page_objects
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(illuminance_display_visual_test
-      point_cloud_common_page_object
       pointcloud_messages
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
@@ -822,15 +816,16 @@ if(BUILD_TESTING)
 
   ament_add_gtest(laser_scan_display_visual_test
     test/rviz_default_plugins/displays/laser_scan/laser_scan_display_visual_test.cpp
+    test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET laser_scan_display_visual_test)
     target_include_directories(laser_scan_display_visual_test PUBLIC
+      test/page_objects
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(laser_scan_display_visual_test
-      point_cloud_common_page_object
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
@@ -936,32 +931,34 @@ if(BUILD_TESTING)
 
   ament_add_gtest(point_cloud_display_visual_test
     test/rviz_default_plugins/displays/pointcloud/point_cloud_display_visual_test.cpp
+    test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
     test/rviz_default_plugins/publishers/point_cloud_publisher.hpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET point_cloud_display_visual_test)
     target_include_directories(point_cloud_display_visual_test PUBLIC
+      test/page_objects
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(point_cloud_display_visual_test
-      point_cloud_common_page_object
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
 
   ament_add_gtest(point_cloud2_display_visual_test
     test/rviz_default_plugins/displays/pointcloud/point_cloud2_display_visual_test.cpp
+    test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
     test/rviz_default_plugins/publishers/point_cloud2_publisher.hpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET point_cloud2_display_visual_test)
     target_include_directories(point_cloud2_display_visual_test PUBLIC
+      test/page_objects
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(point_cloud2_display_visual_test
-      point_cloud_common_page_object
       pointcloud_messages
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
@@ -1033,16 +1030,17 @@ if(BUILD_TESTING)
 
   ament_add_gtest(relative_humidity_display_visual_test
     test/rviz_default_plugins/displays/relative_humidity/relative_humidity_display_visual_test.cpp
+    test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
     test/rviz_default_plugins/publishers/relative_humidity_publisher.hpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET relative_humidity_display_visual_test)
     target_include_directories(relative_humidity_display_visual_test PUBLIC
+      test/page_objects
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(relative_humidity_display_visual_test
-      point_cloud_common_page_object
       pointcloud_messages
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
@@ -1066,16 +1064,17 @@ if(BUILD_TESTING)
 
   ament_add_gtest(temperature_display_visual_test
     test/rviz_default_plugins/displays/temperature/temperature_display_visual_test.cpp
+    test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
     test/rviz_default_plugins/publishers/temperature_publisher.hpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET temperature_display_visual_test)
     target_include_directories(temperature_display_visual_test PUBLIC
+      test/page_objects
       ${TEST_INCLUDE_DIRS}
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(temperature_display_visual_test
-      point_cloud_common_page_object
       pointcloud_messages
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
