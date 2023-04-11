@@ -2,6 +2,12 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Update Frame shortcut (`#958 <https://github.com/ros2/rviz/issues/958>`_)
+  * Update Frame shortcut
+* Contributors: David V. Lu!!
+
 12.3.1 (2023-03-01)
 -------------------
 
