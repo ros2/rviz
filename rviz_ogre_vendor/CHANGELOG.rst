@@ -2,8 +2,8 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+12.3.2 (2023-04-11)
+-------------------
 * Fix build failures on macOS + Apple Silicon (`#944 <https://github.com/ros2/rviz/issues/944>`_)
 * Contributors: Yadu
 
