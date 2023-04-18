@@ -2,8 +2,8 @@
 Changelog for package rviz_assimp_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+12.4.0 (2023-04-18)
+-------------------
 * If vendored assimp is present, always prefer that (`#970 <https://github.com/ros2/rviz/issues/970>`_)
 * Contributors: Scott K Logan
 
