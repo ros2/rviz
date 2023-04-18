@@ -4,13 +4,11 @@
 #   https://bugs.launchpad.net/ubuntu/+source/assimp/+bug/1869405
 set(ON 1)
 
-find_package(assimp QUIET)
-
-if(NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LESS 4.1.0)
-  # add the local Modules directory to the modules path
-  set(assimp_DIR "${@PROJECT_NAME@_DIR}/../../../opt/rviz_assimp_vendor/lib/cmake/assimp-4.1")
-  message(STATUS "Setting assimp_DIR to: '${assimp_DIR}'")
-endif()
+# We always add the local Modules directory to the modules path, so if a vendored package was
+# built, it is used.  If it was not built, find_package() will fall back to attempting to find the
+# system package.
+set(assimp_DIR "${@PROJECT_NAME@_DIR}/../../../opt/rviz_assimp_vendor/lib/cmake/assimp-4.1")
+message(STATUS "Setting assimp_DIR to: '${assimp_DIR}'")
 
 find_package(assimp REQUIRED QUIET)
 
