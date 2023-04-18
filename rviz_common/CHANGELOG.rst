@@ -2,6 +2,9 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 12.3.2 (2023-04-11)
 -------------------
 * Update Frame shortcut (`#958 <https://github.com/ros2/rviz/issues/958>`_)

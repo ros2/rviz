@@ -2,6 +2,9 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 12.3.2 (2023-04-11)
 -------------------
 * Fix ODR errors with gmock (`#967 <https://github.com/ros2/rviz/issues/967>`_)
