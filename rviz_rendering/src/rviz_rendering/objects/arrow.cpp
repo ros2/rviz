@@ -72,14 +72,14 @@ Arrow::~Arrow()
   scene_manager_->destroySceneNode(scene_node_);
 }
 
-Arrow::setEndpoints(const Ogre::Vector3 & start, const Ogre::Vector3 & end) {
+void Arrow::setEndpoints(const Ogre::Vector3 & start, const Ogre::Vector3 & end) {
   Ogre::Vector3 direction = end - start;
   setPosition(start);
   setDirection(direction.normalisedCopy());
   setLength(direction.length());
 }
 
-Arrow::setLength(float length) {
+void Arrow::setLength(float length) {
   float shaft_length = shaft_->getRootNode()->getScale().y;
   float head_length = head_->getRootNode()->getScale().y;
   float shaft_proportion = shaft_length / (shaft_length + head_length);
@@ -88,7 +88,7 @@ Arrow::setLength(float length) {
   setHeadLength(length * head_proportion);
 }
 
-Arrow::setShaftHeadRatio(float shaft_weight, float head_weight) {
+void Arrow::setShaftHeadRatio(float shaft_weight, float head_weight) {
   float shaft_proportion = shaft_weight / (shaft_weight + head_weight);
   float head_proportion = 1.0 - shaft_proportion; 
   float shaft_length = shaft_->getRootNode()->getScale().y;
