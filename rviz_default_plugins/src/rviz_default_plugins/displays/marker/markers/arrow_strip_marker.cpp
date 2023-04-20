@@ -13,6 +13,7 @@
 // #include <rviz/ogre_helpers/arrow.h>
 // #include <rviz/ogre_helpers/shape.h>
 // #include <rviz/validate_floats.h>
+#include "rviz_common/msg_conversions.hpp"
 
 namespace rviz_default_plugins
 {
@@ -25,23 +26,28 @@ ArrowStripMarker::ArrowStripMarker(MarkerDisplay* owner, rviz_common::DisplayCon
 {
 }
 
-ArrowStripMarker::~ArrowStripMarker()
-{
+void ArrowStripMarker::clearArrows() {
   for (Arrow* arrow : arrows_)
   {
     delete arrow;
   }
+  arrows_.clear();
 }
 
-// TODO: Port to ros2
+ArrowStripMarker::~ArrowStripMarker()
+{
+  clearArrows();
+}
+
 void ArrowStripMarker::onNewMessage(const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message)
 {
+  (void) old_message;
+
   assert(new_message->type == visualization_msgs::msg::Marker::ARROW_STRIP);
 
   Ogre::Vector3 pos, scale;
   Ogre::Quaternion orient;
-  if (!transform(new_message, pos, orient, scale))
-  {
+  if (!transform(new_message, pos, orient, scale)){   // NOLINT: is super class method
     scene_node_->setVisible(false);
     return;
   }
@@ -50,49 +56,38 @@ void ArrowStripMarker::onNewMessage(const MarkerConstSharedPtr & old_message, co
   setPosition(pos);
   setOrientation(orient);
 
-  for (Arrow* arrow : arrows_)
-  {
-    delete arrow;
-    arrows_.clear();
-  }
+  clearArrows();
 
   handler_.reset(new MarkerSelectionHandler(this, MarkerID(new_message->ns, new_message->id), context_));
-  if (new_message->points.size() < 2)
-  {
+  if (new_message->points.size() < 2) {
+    printErrorMessage();
+    scene_node_->setVisible(false);
     return;
   }
 
-  geometry_msgs::Point p = new_message->points.at(0);
-  Ogre::Vector3 arrow_start(p.x, p.y, p.z);
-  for (int i = 1; i < new_message->points.size(); i++)
-  {
-    p = new_message->points.at(i);
-    Ogre::Vector3 arrow_end(p.x, p.y, p.z);
-    if (!validateFloats(p))
-    {
-      ROS_WARN("Marker '%s/%d': invalid point[%d] (%.2f, %.2f, %.2f)", new_message->ns.c_str(),
-               new_message->id, i, p.x, p.y, p.z);
-      continue;
-    }
+  // if scale.x and scale.y are 0, then nothing is shown
+  if (owner_ && (new_message->scale.x + new_message->scale.y == 0.0f)) {
+    owner_->setMarkerStatus(
+      getID(), rviz_common::properties::StatusProperty::Warn, "Scale of 0 in both x and y");
+      return;
+  }
 
-    arrows_.push_back(new Arrow(context_->getSceneManager(), scene_node_));
-    Ogre::Vector3 direction = arrow_end - arrow_start;
-    float distance = direction.length();
-    float head_length_proportion = 0.23;
-    float head_length = head_length_proportion * distance;
-    if (new_message->scale.z != 0.0)
-    {
-      float length = new_message->scale.z;
-      head_length = std::max<double>(0.0, std::min<double>(length, distance)); // clamp
+  for (int i = 0; i < new_message->points.size() - 1; i++) {
+    Ogre::Vector3 start = rviz_common::pointMsgToOgre(new_message->points.at(i));
+    Ogre::Vector3 end = rviz_common::pointMsgToOgre(new_message->points.at(i+1));
+    Arrow arrow = new Arrow(context_->getSceneManager(), scene_node_);
+    arrow_->setEndpoints(start, end);
+    arrow_->setShaftDiameter(new_message->scale.x);
+    arrow_->setHeadDiameter(new_message->scale.y);
+    float head_length = std::clamp(new_message->scale.z, 0, arrow_->getLength());
+    if (head_length > 0.0) {
+      arrow_->setShaftHeadRatio(head_length - arrow_->getLength(), head_length)
+    } else {
+      arrow_->setShaftHeadRatio(3, 1); // default 3:1 ratio from arrow.hpp
     }
-    float shaft_length = distance - head_length;
-    arrows_.back()->set(shaft_length, new_message->scale.x, head_length, new_message->scale.y);
-    arrows_.back()->setPosition(arrow_start);
-    arrows_.back()->setDirection(direction.normalisedCopy());
-    arrows_.back()->setColor(new_message->color.r, new_message->color.g, new_message->color.b,
-                             new_message->color.a);
+    arrow_->setColor(rviz_common::colorMsgToOgre(new_message.color));
     handler_->addTrackedObjects(arrows_.back()->getSceneNode());
-    arrow_start = arrow_end;
+    arrow_.push_back(arrow);
   }
 }
 
