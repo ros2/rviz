@@ -77,16 +77,51 @@ public:
     float shaft_length = 1.0f, float shaft_diameter = 0.1f,
     float head_length = 0.3f, float head_diameter = 0.2f);
   virtual ~Arrow();
+  
+  /**
+   * \brief Sets the position, direction, and length of this arrow from two endpoints.
+   * @param start Vector to the start of the arrow.
+   * @param end Vector to the end of the arrow.
+   */
+  void setEndpoints(const Ogre::Vector3 & start, const Ogre::Vector3 & end);
 
   /**
-   * \brief Set the parameters for this arrow
-   *
-   * @param shaft_length Length of the arrow's shaft
-   * @param shaft_diameter Diameter of the arrow's shaft
-   * @param head_length Length of the arrow's head
-   * @param head_diameter Diameter of the arrow's head
+   * \brief Sets the total length of this arrow whilst keeping the shaft and head proportions constant.
+   * @param 
    */
-  void set(float shaft_length, float shaft_diameter, float head_length, float head_diameter);
+  void setLength(float length);
+
+  /**
+   * \brief Sets the shaft and head proportions whilst keeping the total length constant.
+   * @param shaft_weight Unnormalized weight given to the shaft of this arrow.
+   * @param head_weight Unnormalized weight given to the head of this arrow.
+   */
+  void setShaftHeadProportions(float shaft_weight, float head_weight);
+
+  /**
+   * \brief Set the size of this arrow's shaft. 
+   * @param shaft_length Length of the arrow's shaft.
+   * @param shaft_diameter Diameter of the arrow's shaft.
+   */
+  void setShaftLength(float shaft_length);
+
+  /**
+   * \brief Set the diameter of this arrow's shaft.
+   * @param shaft_diameter Diameter of the arrow's shaft. 
+   */
+  void setShaftDiameter(float shaft_diameter);
+
+  /**
+   * \brief Set the length of this arrow's head.
+   * @param head_length Length of the arrow's head. 
+   */
+  void setHeadLength(float head_length);
+
+  /**
+   * \brief Set the size of this arrow's head.
+   * @param head_diameter Diameter of the arrow's head.
+   */
+  void setHeadDiameter(float head_diameter);
 
   /**
    * \brief Set the color of this arrow.  Sets both the head and shaft color to the same value.  Values are in the range [0, 1]

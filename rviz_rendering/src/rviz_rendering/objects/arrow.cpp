@@ -57,9 +57,10 @@ Arrow::Arrow(
   shaft_ = new Shape(Shape::Cylinder, scene_manager_, scene_node_);
   head_ = new Shape(Shape::Cone, scene_manager_, scene_node_);
   head_->setOffset(Ogre::Vector3(0.0f, 0.5f, 0.0f));
-
-  set(shaft_length, shaft_diameter, head_length, head_diameter);
-
+  setShaftLength(shaft_length);
+  setShaftDiameter(shaft_diameter);
+  setHeadLength(head_length);
+  setHeadDiameter(head_diameter);
   setOrientation(Ogre::Quaternion::IDENTITY);
 }
 
@@ -71,13 +72,51 @@ Arrow::~Arrow()
   scene_manager_->destroySceneNode(scene_node_);
 }
 
-void Arrow::set(float shaft_length, float shaft_diameter, float head_length, float head_diameter)
-{
-  shaft_->setScale(Ogre::Vector3(shaft_diameter, shaft_length, shaft_diameter));
-  shaft_->setPosition(Ogre::Vector3(0.0f, shaft_length / 2.0f, 0.0f) );
+Arrow::setEndpoints(const Ogre::Vector3 & start, const Ogre::Vector3 & end) {
+  Ogre::Vector3 direction = end - start;
+  setPosition(start);
+  setDirection(direction.normalisedCopy());
+  setLength(direction.length());
+}
 
-  head_->setScale(Ogre::Vector3(head_diameter, head_length, head_diameter) );
-  head_->setPosition(Ogre::Vector3(0.0f, shaft_length, 0.0f) );
+Arrow::setLength(float length) {
+  float shaft_length = shaft_->getRootNode()->getScale().y;
+  float head_length = head_->getRootNode()->getScale().y;
+  float shaft_proportion = shaft_length / (shaft_length + head_length);
+  float head_proportion = 1.0 - shaft_proportion;
+  setShaftLength(length * shaft_proportion);
+  setHeadLength(length * head_proportion);
+}
+
+Arrow::setShaftHeadRatio(float shaft_weight, float head_weight) {
+  float shaft_proportion = shaft_weight / (shaft_weight + head_weight);
+  float head_proportion = 1.0 - shaft_proportion; 
+  float shaft_length = shaft_->getRootNode()->getScale().y;
+  float head_length = head_->getRootNode()->getScale().y;
+  setShaftLength((shaft_length + head_length) * shaft_proportion);
+  setHeadLength((shaft_length + head_length) * head_proportion);
+}
+
+void Arrow::setShaftLength(float shaft_length) {
+  Ogre::Vector3 scale = shaft_->getRootNode()->getScale();
+  shaft_->setScale(Ogre::Vector3(scale.x, shaft_length, scale.z));
+  shaft_->setPosition(0.0f, shaft_length / 2.0f, 0.0f);
+  head_->setPosition(Ogre::Vector3(0.0f, shaft_length, 0.0f));
+}
+
+void Arrow::setShaftDiameter(float shaft_diameter) {
+  Ogre::Vector3 scale = shaft_->getRootNode()->getScale();
+  shaft_->setScale(Ogre::Vector3(shaft_diameter, scale.y, shaft_diameter));
+}
+
+void Arrow::setHeadLength(float head_length) {
+  Ogre::Vector3 scale = head_->getRootNode()->getScale();
+  head_->setScale(Ogre::Vector3(scale.x, head_length, scale.z));
+}
+
+void Arrow::setHeadDiameter(float head_diameter) {
+  Ogre::Vector3 scale = head_->getRootNode()->getScale();
+  head_->setScale(Ogre::Vector3(head_diameter, scale.y, head_diameter));
 }
 
 void Arrow::setColor(const Ogre::ColourValue & c)
