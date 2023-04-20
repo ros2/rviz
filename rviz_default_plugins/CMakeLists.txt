@@ -151,6 +151,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/map/palette_builder.cpp
   src/rviz_default_plugins/displays/map/swatch.cpp
   src/rviz_default_plugins/displays/marker/markers/arrow_marker.cpp
+  src/rviz_default_plugins/displays/marker/markers/arrow_strip_marker.cpp
   src/rviz_default_plugins/displays/marker/markers/line_list_marker.cpp
   src/rviz_default_plugins/displays/marker/markers/line_marker_base.cpp
   src/rviz_default_plugins/displays/marker/markers/line_strip_marker.cpp
@@ -415,6 +416,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(marker_test
     test/rviz_default_plugins/displays/marker/markers/arrow_marker_test.cpp
+    # TODO: Add arrow strip marker test
     test/rviz_default_plugins/displays/marker/markers/line_marker_test.cpp
     test/rviz_default_plugins/displays/marker/markers/mesh_resource_marker_test.cpp
     test/rviz_default_plugins/displays/marker/markers/points_marker_test.cpp
