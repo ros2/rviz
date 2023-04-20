@@ -32,7 +32,9 @@
 
 #include <OgreVector.h>
 #include <OgreQuaternion.h>
+#include <>
 
+#include "std_msgs/msg/colour_rgba.hpp"
 #include "geometry_msgs/msg/point.hpp"
 #include "geometry_msgs/msg/vector3.hpp"
 #include "geometry_msgs/msg/quaternion.hpp"
@@ -57,6 +59,11 @@ static inline Ogre::Quaternion quaternionMsgToOgre(const geometry_msgs::msg::Qua
   return Ogre::Quaternion(m.w, m.x, m.y, m.z);
 }
 
+static inline Ogre::ColorValue colorMsgToOgre(const std_msgs::ColorRGBA & m)
+{
+  return Ogre::ColourValue(m.r, m.g, m.b, m.a);
+}
+
 static inline geometry_msgs::msg::Point pointOgreToMsg(const Ogre::Vector3 & o)
 {
   geometry_msgs::msg::Point m;
@@ -75,6 +82,12 @@ static inline geometry_msgs::msg::Quaternion quaternionOgreToMsg(const Ogre::Qua
 {
   geometry_msgs::msg::Quaternion m;
   m.w = o.w; m.x = o.x; m.y = o.y; m.z = o.z;
+  return m;
+}
+
+static inline std_msgs::msg::ColorRGBA colorOgreToMsg(const Ogre::ColourValue & o) {
+  std_msgs::msg::ColorRGBA m;
+  m.r = o.r; m.g = o.g; m.b = o.b; m.a = o.a;
   return m;
 }
 
