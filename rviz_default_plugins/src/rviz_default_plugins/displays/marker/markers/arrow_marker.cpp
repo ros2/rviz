@@ -102,8 +102,7 @@ void ArrowMarker::onNewMessage(
   setPosition(pos);
   setOrientation(orientation);
 
-  arrow_->setColor(
-    new_message->color.r, new_message->color.g, new_message->color.b, new_message->color.a);
+  arrow_->setColor(rviz_common::colorMsgToOgre(new_message.color));
 
   if (new_message->points.size() == 2) {
     setArrowFromPoints(new_message);
@@ -126,35 +125,23 @@ void ArrowMarker::setArrowFromPoints(const MarkerConstSharedPtr & message)
 {
   last_arrow_set_from_points_ = true;
 
-  // compute translation & rotation from the two points
-  Ogre::Vector3 point1 = rviz_common::pointMsgToOgre(message->points[0]);
-  Ogre::Vector3 point2 = rviz_common::pointMsgToOgre(message->points[1]);
-
-  Ogre::Vector3 direction = point2 - point1;
-  float distance = direction.length();
-
-  float head_length_proportion = 0.23f;  // see default in arrow.hpp: shaft:head ratio of 1:0.3
-  float head_length = head_length_proportion * distance;
-  if (message->scale.z != 0.0) {
-    double length = message->scale.z;
-    head_length = std::max<double>(0.0, std::min<double>(length, distance));  // clamp
+  Ogre::Vector3 start = rviz_common::pointMsgToOgre(message->points[0]);
+  Ogre::Vector3 end = rviz_common::pointMsgToOgre(message->points[1]);
+  arrow_->setEndpoints(start, end);
+  arrow_->setShaftDiameter(message->scale.x);
+  arrow_->setHeadDiameter(message->scale.y);
+  float head_length = std::clamp(message->scale.z, 0, arrow_->getLength());
+  if (head_length > 0.0) {
+    arrow_->setShaftHeadRatio(head_length - arrow_->getLength(), head_length)
+  } else {
+    arrow_->setShaftHeadRatio(3, 1); // default 3:1 ratio from arrow.hpp
   }
-  float shaft_length = distance - head_length;
-
-  arrow_->set(shaft_length, message->scale.x, head_length, message->scale.y);
-
-  direction.normalise();
-
-  // for some reason the arrow goes into the y direction by default
-  Ogre::Quaternion orient = Ogre::Vector3::NEGATIVE_UNIT_Z.getRotationTo(direction);
 
   // if scale.x and scale.y are 0, then nothing is shown
   if (owner_ && (message->scale.x + message->scale.y == 0.0f)) {
     owner_->setMarkerStatus(
       getID(), rviz_common::properties::StatusProperty::Warn, "Scale of 0 in both x and y");
   }
-  arrow_->setPosition(point1);
-  arrow_->setOrientation(orient);
 }
 
 void ArrowMarker::setArrow(const MarkerConstSharedPtr & message)
@@ -170,14 +157,15 @@ void ArrowMarker::setArrow(const MarkerConstSharedPtr & message)
       getID(), rviz_common::properties::StatusProperty::Warn, "Scale of 0 in one of x/y/z");
   }
   arrow_->setScale(rviz_common::vector3MsgToOgre(message->scale));
-
-  Ogre::Quaternion orient = Ogre::Vector3::NEGATIVE_UNIT_Z.getRotationTo(Ogre::Vector3(1, 0, 0));
-  arrow_->setOrientation(orient);
+  arrow_->setDirection(Ogre::Vector3::UNIT_Z);
 }
 
 void ArrowMarker::setDefaultProportions()
 {
-  arrow_->set(0.77f, 1.0f, 0.23f, 2.0f);
+  arrow_->setShaftLength(0.77);
+  arrow_->setShaftDiameter(1);
+  arrow_->setHeadLength(0.23)
+  arrow_->setHeadDiameter(2);
 }
 
 }  // namespace markers
