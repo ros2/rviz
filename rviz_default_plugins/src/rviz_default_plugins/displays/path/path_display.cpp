@@ -328,11 +328,10 @@ void PathDisplay::updatePoseArrowGeometry()
 {
   for (auto & arrow_vect : arrow_chain_) {
     for (auto & arrow : arrow_vect) {
-      arrow->set(
-        pose_arrow_shaft_length_property_->getFloat(),
-        pose_arrow_shaft_diameter_property_->getFloat(),
-        pose_arrow_head_length_property_->getFloat(),
-        pose_arrow_head_diameter_property_->getFloat());
+      arrow->setShaftLength(pose_arrow_shaft_length_property_->getFloat());
+      arrow->setShaftDiameter(pose_arrow_shaft_diameter_property_->getFloat());
+      arrow->setHeadLength(pose_arrow_head_length_property_->getFloat());
+      arrow->setHeadDiameter(pose_arrow_head_diameter_property_->getFloat());
     }
   }
   context_->queueRender();
@@ -535,12 +534,10 @@ void PathDisplay::updateArrowMarkers(
   for (size_t i = 0; i < num_points; ++i) {
     QColor color = pose_arrow_color_property_->getColor();
     arrow_vect[i]->setColor(color.redF(), color.greenF(), color.blueF(), 1.0f);
-
-    arrow_vect[i]->set(
-      pose_arrow_shaft_length_property_->getFloat(),
-      pose_arrow_shaft_diameter_property_->getFloat(),
-      pose_arrow_head_length_property_->getFloat(),
-      pose_arrow_head_diameter_property_->getFloat());
+    arrow_vect[i]->setShaftLength(pose_arrow_shaft_length_property_->getFloat());
+    arrow_vect[i]->setShaftDiameter(pose_arrow_shaft_diameter_property_->getFloat());
+    arrow_vect[i]->setHeadLength(pose_arrow_head_length_property_->getFloat());
+    arrow_vect[i]->setHeadDiameter(pose_arrow_head_diameter_property_->getFloat());
     const geometry_msgs::msg::Point & pos = msg->poses[i].pose.position;
     arrow_vect[i]->setPosition(transform * rviz_common::pointMsgToOgre(pos));
     Ogre::Quaternion orientation(rviz_common::quaternionMsgToOgre(msg->poses[i].pose.orientation));

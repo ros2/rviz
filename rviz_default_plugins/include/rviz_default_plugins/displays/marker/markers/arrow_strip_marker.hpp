@@ -22,19 +22,17 @@ namespace displays
 namespace markers
 {
 
-class Arrow;
-class DisplayContext;
-
 class RVIZ_DEFAULT_PLUGINS_PUBLIC ArrowStripMarker : public MarkerBase
 {
 public:
-  ArrowStripMarker(MarkerDisplay* owner, rviz_common::DisplayContext* context, Ogre::SceneNode* parent_node);
-  ~ArrowStripMarker();
+  ArrowStripMarker(MarkerCommon* owner, rviz_common::DisplayContext* context, Ogre::SceneNode* parent_node);
+  ~ArrowStripMarker() override = default;
 
 protected:
   void onNewMessage(const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message) override;
-  std::vector<Arrow*> arrows_;
+  std::vector<std::unique_ptr<rviz_rendering::Arrow>> arrows_;
 };
+
 }  // namespace markers
 }  // namespace displays
 }  // namespace rviz_default_plugins

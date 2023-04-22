@@ -153,11 +153,10 @@ void PoseDisplay::updateColorAndAlpha()
 
 void PoseDisplay::updateArrowGeometry()
 {
-  arrow_->set(
-    shaft_length_property_->getFloat(),
-    shaft_radius_property_->getFloat(),
-    head_length_property_->getFloat(),
-    head_radius_property_->getFloat());
+  arrow_->setShaftLength(shaft_length_property_->getFloat());
+  arrow_->setShaftDiameter(shaft_radius_property_->getFloat());
+  arrow_->setHeadLength(head_length_property_->getFloat());
+  arrow_->setHeadDiameter(head_radius_property_->getFloat());
   context_->queueRender();
 }
 

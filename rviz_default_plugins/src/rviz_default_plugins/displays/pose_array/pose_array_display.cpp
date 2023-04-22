@@ -360,12 +360,10 @@ void PoseArrayDisplay::updateArrow2dGeometry()
 void PoseArrayDisplay::updateArrow3dGeometry()
 {
   for (const auto & arrow : arrows3d_) {
-    arrow->set(
-      arrow3d_shaft_length_property_->getFloat(),
-      arrow3d_shaft_radius_property_->getFloat(),
-      arrow3d_head_length_property_->getFloat(),
-      arrow3d_head_radius_property_->getFloat()
-    );
+    arrow->setShaftLength(arrow3d_shaft_length_property_->getFloat());
+    arrow->setShaftDiameter(arrow3d_shaft_radius_property_->getFloat());
+    arrow->setHeadLength(arrow3d_head_length_property_->getFloat());
+    arrow->setHeadDiameter(arrow3d_head_radius_property_->getFloat());
   }
   context_->queueRender();
 }

@@ -125,8 +125,9 @@ void InteractiveMarkerControl::makeMarkers(
         break;
       case visualization_msgs::msg::Marker::ARROW_STRIP:
         {
-          marker.reset(new markers::ArrowStripMarker(nullptr, contect_, markers_node_));
+          marker.reset(new markers::ArrowStripMarker(nullptr, context_, markers_node_));
         }
+        break;
       case visualization_msgs::msg::Marker::LINE_STRIP:
         {
           marker.reset(new markers::LineStripMarker(nullptr, context_, markers_node_));

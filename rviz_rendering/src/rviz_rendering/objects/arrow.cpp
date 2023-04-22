@@ -79,6 +79,12 @@ void Arrow::setEndpoints(const Ogre::Vector3 & start, const Ogre::Vector3 & end)
   setLength(direction.length());
 }
 
+float Arrow::getLength() {
+  float shaft_length = shaft_->getRootNode()->getScale().y;
+  float head_length = head_->getRootNode()->getScale().y;
+  return shaft_length + head_length;
+}
+
 void Arrow::setLength(float length) {
   float shaft_length = shaft_->getRootNode()->getScale().y;
   float head_length = head_->getRootNode()->getScale().y;
@@ -100,7 +106,7 @@ void Arrow::setShaftHeadRatio(float shaft_weight, float head_weight) {
 void Arrow::setShaftLength(float shaft_length) {
   Ogre::Vector3 scale = shaft_->getRootNode()->getScale();
   shaft_->setScale(Ogre::Vector3(scale.x, shaft_length, scale.z));
-  shaft_->setPosition(0.0f, shaft_length / 2.0f, 0.0f);
+  shaft_->setPosition(Ogre::Vector3(0.0f, shaft_length / 2.0f, 0.0f));
   head_->setPosition(Ogre::Vector3(0.0f, shaft_length, 0.0f));
 }
 

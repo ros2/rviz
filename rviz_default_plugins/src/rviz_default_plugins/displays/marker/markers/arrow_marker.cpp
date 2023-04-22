@@ -102,7 +102,7 @@ void ArrowMarker::onNewMessage(
   setPosition(pos);
   setOrientation(orientation);
 
-  arrow_->setColor(rviz_common::colorMsgToOgre(new_message.color));
+  arrow_->setColor(rviz_common::colorMsgToOgre(new_message->color));
 
   if (new_message->points.size() == 2) {
     setArrowFromPoints(new_message);
@@ -130,9 +130,9 @@ void ArrowMarker::setArrowFromPoints(const MarkerConstSharedPtr & message)
   arrow_->setEndpoints(start, end);
   arrow_->setShaftDiameter(message->scale.x);
   arrow_->setHeadDiameter(message->scale.y);
-  float head_length = std::clamp(message->scale.z, 0, arrow_->getLength());
+  float head_length = std::clamp<float>(message->scale.z, 0.0, arrow_->getLength());
   if (head_length > 0.0) {
-    arrow_->setShaftHeadRatio(head_length - arrow_->getLength(), head_length)
+    arrow_->setShaftHeadRatio(head_length - arrow_->getLength(), head_length);
   } else {
     arrow_->setShaftHeadRatio(3, 1); // default 3:1 ratio from arrow.hpp
   }
@@ -164,7 +164,7 @@ void ArrowMarker::setDefaultProportions()
 {
   arrow_->setShaftLength(0.77);
   arrow_->setShaftDiameter(1);
-  arrow_->setHeadLength(0.23)
+  arrow_->setHeadLength(0.23);
   arrow_->setHeadDiameter(2);
 }
 

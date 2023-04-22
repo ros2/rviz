@@ -86,8 +86,14 @@ public:
   void setEndpoints(const Ogre::Vector3 & start, const Ogre::Vector3 & end);
 
   /**
+   * \brief Gets the total length of this arrow.
+   * @return The combined length of the shaft and head.
+  */
+ float getLength();
+ 
+  /**
    * \brief Sets the total length of this arrow whilst keeping the shaft and head proportions constant.
-   * @param 
+   * @param The combined length of the shaft and head.
    */
   void setLength(float length);
 
@@ -96,7 +102,7 @@ public:
    * @param shaft_weight Unnormalized weight given to the shaft of this arrow.
    * @param head_weight Unnormalized weight given to the head of this arrow.
    */
-  void setShaftHeadProportions(float shaft_weight, float head_weight);
+  void setShaftHeadRatio(float shaft_weight, float head_weight);
 
   /**
    * \brief Set the size of this arrow's shaft. 
