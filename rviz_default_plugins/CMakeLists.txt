@@ -316,8 +316,6 @@ if(BUILD_TESTING)
   find_package(ament_cmake_gmock REQUIRED)
   find_package(ament_index_cpp REQUIRED)
   find_package(rviz_visual_testing_framework REQUIRED)
-  find_package(sensor_msgs REQUIRED)
-  find_package(visualization_msgs REQUIRED)
 
   install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/test/ogre_media_resources/test_meshes"
     DESTINATION "share/rviz_default_plugins"
