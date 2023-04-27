@@ -551,8 +551,8 @@ void RenderWindowImpl::paintEvent(QPaintEvent * e)
     }
 
     if (ogre_root_->_fireFrameStarted()) {
+      ogre_root_->_fireFrameRenderingQueued();
       render_window_->update();
-
       ogre_root_->_fireFrameEnded();
     }
 
