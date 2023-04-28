@@ -180,7 +180,6 @@ RenderWindow::event(QEvent * event)
       QWindow::event(event);
       return false;
   }
-
 }
 
 void

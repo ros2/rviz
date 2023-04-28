@@ -111,7 +111,6 @@ Shape::Shape(Type type, Ogre::SceneManager * scene_manager, Ogre::SceneNode * pa
   if (entity_) {
     entity_->setMaterialName(material_name_);
   }
-
 }
 
 Shape::~Shape()
