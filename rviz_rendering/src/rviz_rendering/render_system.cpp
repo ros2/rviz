@@ -234,6 +234,7 @@ RenderSystem::loadOgrePlugins()
   ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL");
 #endif
   ogre_root_->loadPlugin(plugin_prefix + "Codec_STBI");
+  ogre_root_->loadPlugin(plugin_prefix + "Codec_FreeImage");
 // #if __APPLE__
 // #else
 // ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL3Plus");

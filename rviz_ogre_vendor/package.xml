@@ -26,8 +26,10 @@
   <build_depend>pkg-config</build_depend>
 
   <build_depend>libfreetype6-dev</build_depend>
+  <build_depend>libfreeimage-dev</build_depend>
   <build_export_depend>libfreetype6-dev</build_export_depend>
   <exec_depend>libfreetype6</exec_depend>
+  <exec_depend>libfreeimage</exec_depend>
 
   <depend>libx11-dev</depend>
   <depend>libxaw</depend>
