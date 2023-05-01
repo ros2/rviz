@@ -82,10 +82,8 @@ RenderSystem::getOgreRoot()
 
 void RenderSystem::Destroy()
 {
-#if OGRE_VERSION_HIGHER_OR_EQUAL_1_9_0
   OGRE_DELETE this->ogre_overlay_system_;
   this->ogre_overlay_system_ = nullptr;
-#endif
   if (this->ogre_root_) {
     try {
       // TODO(anyone): do we need to catch segfault on delete?
@@ -165,9 +163,7 @@ RenderSystem::RenderSystem()
   setPluginDirectory();
   setupDummyWindowId();
   ogre_root_ = new Ogre::Root(get_resource_directory() + "/ogre_media/plugins.cfg");
-#if ((OGRE_VERSION_MAJOR == 1 && OGRE_VERSION_MINOR >= 9) || OGRE_VERSION_MAJOR >= 2)
   ogre_overlay_system_ = new Ogre::OverlaySystem();
-#endif
   loadOgrePlugins();
   setupRenderSystem();
   ogre_root_->initialise(false);
@@ -180,11 +176,9 @@ RenderSystem::RenderSystem()
 void
 RenderSystem::prepareOverlays(Ogre::SceneManager * scene_manager)
 {
-#if ((OGRE_VERSION_MAJOR == 1 && OGRE_VERSION_MINOR >= 9) || OGRE_VERSION_MAJOR >= 2)
   if (ogre_overlay_system_) {
     scene_manager->addRenderQueueListener(ogre_overlay_system_);
   }
-#endif
 }
 
 void
@@ -234,12 +228,6 @@ RenderSystem::loadOgrePlugins()
   ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL");
 #endif
   ogre_root_->loadPlugin(plugin_prefix + "Codec_STBI");
-// #if __APPLE__
-// #else
-// ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL3Plus");
-// #endif
-// ogre_root_->loadPlugin(plugin_prefix + "Plugin_OctreeSceneManager");
-// ogre_root_->loadPlugin(plugin_prefix + "Plugin_ParticleFX");
 }
 
 void
