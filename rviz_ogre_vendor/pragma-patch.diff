@@ -1814,14 +1814,14 @@ diff --git a/PlugIns/OctreeZone/CMakeLists.txt b/PlugIns/OctreeZone/CMakeLists.t
 @@ -23,6 +23,11 @@ generate_export_header(Plugin_OctreeZone
      EXPORT_MACRO_NAME _OgreOctreeZonePluginExport
      EXPORT_FILE_NAME ${PROJECT_BINARY_DIR}/include/OgreOctreeZonePrerequisites.h)
-
+ 
 +if (UNIX)
 +  set_property(TARGET Plugin_OctreeZone APPEND PROPERTY
 +    INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/${OGRE_LIB_DIRECTORY}/OGRE)
 +endif ()
 +
  ogre_config_framework(Plugin_OctreeZone)
-
+ 
  ogre_config_plugin(Plugin_OctreeZone)
 diff --git a/OgreMain/include/OgreTimer.h b/OgreMain/include/OgreTimer.h
 --- a/OgreMain/include/OgreTimer.h	2019-06-24 16:04:20.000000000 -0700
@@ -1845,4 +1845,20 @@ diff --git a/OgreMain/include/OgreTimer.h b/OgreMain/include/OgreTimer.h
 +#pragma warning(pop)
 +#endif
  #endif
-
+diff --git a/CMake/Utils/PrecompiledHeader.cmake b/CMake/Utils/PrecompiledHeader.cmake
+index bfb0059..62b4f6d 100644
+--- a/CMake/Utils/PrecompiledHeader.cmake
++++ b/CMake/Utils/PrecompiledHeader.cmake
+@@ -340,7 +340,11 @@ MACRO(ADD_NATIVE_PRECOMPILED_HEADER _targetName _input)
+     if(NOT OGRE_ENABLE_PRECOMPILED_HEADERS)
+         # do nothing
+     elseif(CMAKE_VERSION GREATER_EQUAL "3.16")
+-        target_precompile_headers(${_targetName} PRIVATE ${_input})
++        if(APPLE)
++            add_compile_options((-Xclang -include -Xclang ${_input}))
++        else()
++            target_precompile_headers(${_targetName} PRIVATE ${_input})
++        endif()
+     elseif(CMAKE_GENERATOR MATCHES "^Visual.*$")
+ 
+         # Auto include the precompile (useful for moc processing, since the use of

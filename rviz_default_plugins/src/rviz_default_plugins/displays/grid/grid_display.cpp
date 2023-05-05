@@ -151,11 +151,7 @@ void GridDisplay::update(float dt, float ros_dt)
   QString qframe = frame_property_->getFrame();
   std::string frame = qframe.toStdString();
 
-  Ogre::Vector3 position;
-  Ogre::Quaternion orientation;
-  if (context_->getFrameManager()->getTransform(frame, position, orientation)) {
-    scene_node_->setPosition(position);
-    scene_node_->setOrientation(orientation);
+  if (updateFrame(frame)) {
     setTransformOk();
     grid_->getSceneNode()->setVisible(true);
   } else {
