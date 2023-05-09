@@ -64,22 +64,5 @@ sensor_msgs::msg::PointCloud2::ConstSharedPtr rviz_default_plugins::convertPoint
   output->is_bigendian = false;
   output->is_dense = false;
 
-  // Copy the data points
-  auto floatData = reinterpret_cast<float *>(output->data.data());
-  for (size_t cp = 0; cp < input->points.size(); ++cp) {
-    floatData[(cp * output->point_step + output->fields[0].offset) / sizeof(float)] =
-      input->points[cp].x;
-    floatData[(cp * output->point_step + output->fields[1].offset) / sizeof(float)] =
-      input->points[cp].y;
-    floatData[(cp * output->point_step + output->fields[2].offset) / sizeof(float)] =
-      input->points[cp].z;
-
-    for (size_t d = 0; d < input->channels.size(); ++d) {
-      if (input->channels[d].values.size() == input->points.size()) {
-        floatData[(cp * output->point_step + output->fields[3 + d].offset) / sizeof(float)] =
-          input->channels[d].values[cp];
-      }
-    }
-  }
   return output;
 }

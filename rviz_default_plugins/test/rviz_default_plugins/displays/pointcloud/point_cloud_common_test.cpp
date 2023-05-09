@@ -216,13 +216,6 @@ TEST_F(
   cloud->row_step = cloud->point_step * cloud->width;
   cloud->data.resize(cloud->row_step * 1 + 5);  // have the cloud be a weird size
 
-  auto floatData = reinterpret_cast<float *>(cloud->data.data());
-  for (uint32_t i = 0; i < 10; ++i) {  // we don't fill in enough data
-    floatData[i * (cloud->point_step / sizeof(float)) + 0] = 1 + i;
-    floatData[i * (cloud->point_step / sizeof(float)) + 1] = 2 + i;
-    floatData[i * (cloud->point_step / sizeof(float)) + 2] = 3 + i;
-  }
-
   point_cloud_common_->addMessage(cloud);
   point_cloud_common_->update(0, 0);
 

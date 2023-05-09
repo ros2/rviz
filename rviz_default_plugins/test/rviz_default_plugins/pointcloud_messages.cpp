@@ -67,13 +67,6 @@ sensor_msgs::msg::PointCloud2::SharedPtr createPointCloud2WithPoints(
   cloud->row_step = cloud->point_step * cloud->width;
   cloud->data.resize(cloud->row_step * cloud->height);
 
-  auto floatData = reinterpret_cast<float *>(cloud->data.data());
-  for (uint32_t i = 0; i < cloud->width; ++i) {
-    floatData[i * (cloud->point_step / sizeof(float)) + 0] = points[i].x;
-    floatData[i * (cloud->point_step / sizeof(float)) + 1] = points[i].y;
-    floatData[i * (cloud->point_step / sizeof(float)) + 2] = points[i].z;
-  }
-
   return cloud;
 }
 
@@ -109,15 +102,6 @@ sensor_msgs::msg::PointCloud2::ConstSharedPtr createF32ColoredPointCloud2(
   cloud->row_step = cloud->point_step * cloud->width;
   cloud->data.resize(cloud->row_step * cloud->height);
 
-  auto floatData = reinterpret_cast<float *>(cloud->data.data());
-  for (uint32_t i = 0; i < cloud->width; ++i) {
-    floatData[i * (cloud->point_step / sizeof(float)) + 0] = points[i].x;
-    floatData[i * (cloud->point_step / sizeof(float)) + 1] = points[i].y;
-    floatData[i * (cloud->point_step / sizeof(float)) + 2] = points[i].z;
-    floatData[i * (cloud->point_step / sizeof(float)) + 3] = points[i].r;
-    floatData[i * (cloud->point_step / sizeof(float)) + 4] = points[i].g;
-    floatData[i * (cloud->point_step / sizeof(float)) + 5] = points[i].b;
-  }
   return cloud;
 }
 
@@ -151,14 +135,6 @@ sensor_msgs::msg::PointCloud2::ConstSharedPtr createPointCloud2WithIntensity(
   cloud->row_step = cloud->point_step * cloud->width;
   cloud->data.resize(cloud->row_step * cloud->height);
 
-  auto floatData = reinterpret_cast<float *>(cloud->data.data());
-  for (uint32_t i = 0; i < cloud->width; ++i) {
-    floatData[i * (cloud->point_step / sizeof(float)) + 0] = points[i].x;
-    floatData[i * (cloud->point_step / sizeof(float)) + 1] = points[i].y;
-    floatData[i * (cloud->point_step / sizeof(float)) + 2] = points[i].z;
-    floatData[i * (cloud->point_step / sizeof(float)) + 3] = points[i].intensity;
-  }
-
   return cloud;
 }
 
@@ -191,20 +167,6 @@ sensor_msgs::msg::PointCloud2::ConstSharedPtr create8BitColoredPointCloud2(
   cloud->point_step = offset;
   cloud->row_step = cloud->point_step * cloud->width;
   cloud->data.resize(cloud->row_step * cloud->height);
-
-  auto floatData = reinterpret_cast<float *>(cloud->data.data());
-  auto intData = reinterpret_cast<uint32_t *>(cloud->data.data());
-  for (uint32_t i = 0; i < cloud->width; ++i) {
-    floatData[i * (cloud->point_step / sizeof(float)) + 0] = points[i].x;
-    floatData[i * (cloud->point_step / sizeof(float)) + 1] = points[i].y;
-    floatData[i * (cloud->point_step / sizeof(float)) + 2] = points[i].z;
-
-    const uint32_t color =
-      (static_cast<uint8_t>(points[i].r * 255) << 16) +
-      (static_cast<uint8_t>(points[i].g * 255) << 8) +
-      static_cast<uint8_t>(points[i].b * 255);
-    intData[i * (cloud->point_step / sizeof(float)) + 3] = color;
-  }
 
   return cloud;
 }
