@@ -89,6 +89,7 @@ public:
 protected:
   /** @brief Overridden from MessageFilterDisplay to get Arrow/Axes visibility correct. */
   void onEnable() override;
+  void processMessage(geometry_msgs::msg::PoseWithCovarianceStamped::ConstSharedPtr message) override;
 
 private Q_SLOTS:
   void updateShapeVisibility();
@@ -99,8 +100,6 @@ private Q_SLOTS:
   void updateCovariance();
 
 private:
-  void
-  processMessage(geometry_msgs::msg::PoseWithCovarianceStamped::ConstSharedPtr message) override;
   void setupSelectionHandler();
 
   std::shared_ptr<rviz_rendering::Arrow> arrow_;
