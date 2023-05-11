@@ -47,7 +47,7 @@ namespace displays
  * \class FluidPressureDisplay
  */
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC FluidPressureDisplay
+class RVIZ_DEFAULT_PLUGINS_PUBLIC z
   : public PointCloudScalarDisplay<sensor_msgs::msg::FluidPressure>
 {
   Q_OBJECT
@@ -56,9 +56,10 @@ public:
   FluidPressureDisplay();
   ~FluidPressureDisplay() override;
 
-private:
+protected:
   void processMessage(const sensor_msgs::msg::FluidPressure::ConstSharedPtr message) override;
 
+private:
   void setInitialValues() override;
   void hideUnneededProperties() override;
 };
