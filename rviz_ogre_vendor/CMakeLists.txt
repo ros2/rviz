@@ -43,9 +43,9 @@ macro(build_freetype)
   list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=${FREETYPE_CXX_FLAGS}")
 
   include(ExternalProject)
-  ExternalProject_Add(freetype-2.13.0
-    URL https://git.savannah.gnu.org/cgit/freetype/freetype2.git/snapshot/freetype2-VER-2-13-0.tar.gz
-    URL_MD5 e810e6f2d84f7c2608bcfd6e723cd98a
+  ExternalProject_Add(freetype-2.11.1
+    URL https://git.savannah.gnu.org/cgit/freetype/freetype2.git/snapshot/freetype2-VER-2-11-1.tar.gz
+    URL_MD5 d2892e2c30b252039f54775ae8dc97c4
     TIMEOUT 600
     LOG_CONFIGURE ${should_log}
     LOG_BUILD ${should_log}
@@ -203,7 +203,7 @@ macro(build_ogre)
   )
 
   if(BUILDING_FREETYPE_LOCALLY)
-    add_dependencies(ogre-v1.12.10 freetype-2.13.0)
+    add_dependencies(ogre-v1.12.10 freetype-2.11.1)
   endif()
   if(BUILDING_ZLIB_LOCALLY)
     add_dependencies(ogre-v1.12.10 zlib-1.2.13)
