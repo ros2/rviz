@@ -2,6 +2,12 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Clean Code (`#975 <https://github.com/ros2/rviz/issues/975>`_)
+  * Clean Code
+* Contributors: mosfet80
+
 12.5.0 (2023-04-28)
 -------------------
 
