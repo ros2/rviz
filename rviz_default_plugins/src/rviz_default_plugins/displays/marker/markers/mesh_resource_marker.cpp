@@ -211,6 +211,13 @@ void MeshResourceMarker::cloneMaterials(const std::string & id)
   for (auto const & material : getMaterials()) {
     if (material->getName() != "BaseWhiteNoLighting") {
       Ogre::MaterialPtr new_material = material->clone(id + material->getName());
+      // add a new pass to every custom material to perform the color tinting
+      Ogre::Pass * pass = new_material->getTechnique(0)->createPass();
+      pass->setAmbient(0.0f, 0.0f, 0.0f);
+      pass->setDiffuse(0.0f, 0.0f, 0.0f, 0.0f);
+      pass->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
+      pass->setDepthWriteEnabled(false);
+      pass->setLightingEnabled(true);
       materials_.insert(new_material);
     }
   }
@@ -228,22 +235,36 @@ MeshResourceMarker::updateMaterialColor(const MarkerBase::MarkerConstSharedPtr &
 
   Ogre::SceneBlendType blending;
   bool depth_write;
+  bool tinting = new_message->mesh_use_embedded_materials;
 
   rviz_rendering::MaterialManager::enableAlphaBlending(blending, depth_write, a);
 
   if (new_message->mesh_use_embedded_materials && r == 0 && g == 0 && b == 0 && a == 0) {
     blending = Ogre::SBT_REPLACE;
     depth_write = true;
-    r = 1; g = 1; b = 1; a = 1;
   }
 
   for (auto & material : this->materials_) {
     Ogre::Technique * technique = material->getTechnique(0);
-    technique->setAmbient(r * 0.5f, g * 0.5f, b * 0.5f);
-    technique->setDiffuse(r, g, b, a);
-    technique->setSceneBlending(blending);
-    technique->setDepthWriteEnabled(depth_write);
-    technique->setLightingEnabled(true);
+    Ogre::Pass * pass0 = technique->getPass(0);
+    Ogre::Pass * passT = technique->getPass(technique->getNumPasses() - 1);
+
+    if (tinting) {
+      // modify material's original color to use given alpha value
+      Ogre::ColourValue color = pass0->getDiffuse();
+      color.a = a;
+      pass0->setDiffuse(color);
+      // tint by re-rendering with marker color
+      passT->setAmbient(r * 0.5f, g * 0.5f, b * 0.5f);
+      passT->setDiffuse(r, g, b, std::min(a, 0.5f));
+    } else {
+      pass0->setAmbient(r * 0.5f, g * 0.5f, b * 0.5f);
+      pass0->setDiffuse(r, g, b, a);
+    }
+
+    pass0->setSceneBlending(blending);
+    pass0->setDepthWriteEnabled(depth_write);
+    pass0->setLightingEnabled(true);
   }
 }
 
