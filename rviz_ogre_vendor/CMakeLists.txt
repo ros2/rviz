@@ -43,9 +43,9 @@ macro(build_freetype)
   list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=${FREETYPE_CXX_FLAGS}")
 
   include(ExternalProject)
-  ExternalProject_Add(freetype-2.8.1
-    URL https://git.savannah.gnu.org/cgit/freetype/freetype2.git/snapshot/freetype2-VER-2-6-5.tar.gz
-    URL_MD5 0dd62a0125895431e074a3df29f94d69
+  ExternalProject_Add(freetype-2.11.1
+    URL https://git.savannah.gnu.org/cgit/freetype/freetype2.git/snapshot/freetype2-VER-2-11-1.tar.gz
+    URL_MD5 d2892e2c30b252039f54775ae8dc97c4
     TIMEOUT 600
     LOG_CONFIGURE ${should_log}
     LOG_BUILD ${should_log}
@@ -86,9 +86,9 @@ macro(build_zlib)
   list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=${ZLIB_CXX_FLAGS}")
 
   include(ExternalProject)
-  ExternalProject_Add(zlib-1.2.11
-    URL https://www.zlib.net/fossils/zlib-1.2.11.tar.gz
-    URL_MD5 1c9f62f0778697a09d36121ead88e08e
+  ExternalProject_Add(zlib-1.2.13
+    URL https://www.zlib.net/fossils/zlib-1.2.13.tar.gz
+    URL_MD5 9b8aa094c4e5765dabf4da391f00d15c
     TIMEOUT 600
     LOG_CONFIGURE ${should_log}
     LOG_BUILD ${should_log}
@@ -203,10 +203,10 @@ macro(build_ogre)
   )
 
   if(BUILDING_FREETYPE_LOCALLY)
-    add_dependencies(ogre-v1.12.10 freetype-2.8.1)
+    add_dependencies(ogre-v1.12.10 freetype-2.11.1)
   endif()
   if(BUILDING_ZLIB_LOCALLY)
-    add_dependencies(ogre-v1.12.10 zlib-1.2.11)
+    add_dependencies(ogre-v1.12.10 zlib-1.2.13)
   endif()
 
   # The external project will install to the build folder, but we'll install that on make install.
