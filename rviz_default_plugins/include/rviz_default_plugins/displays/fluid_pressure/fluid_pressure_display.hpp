@@ -56,9 +56,10 @@ public:
   FluidPressureDisplay();
   ~FluidPressureDisplay() override;
 
-private:
+protected:
   void processMessage(const sensor_msgs::msg::FluidPressure::ConstSharedPtr message) override;
 
+private:
   void setInitialValues() override;
   void hideUnneededProperties() override;
 };
