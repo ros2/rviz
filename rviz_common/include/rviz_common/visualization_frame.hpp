@@ -262,10 +262,6 @@ protected Q_SLOTS:
   void
   onRecentConfigSelected();
 
-  /// Handle event to display the help on the ROS wiki.
-  void
-  onHelpWiki();
-
   /// Handle event to show the about dialog.
   void
   onHelpAbout();

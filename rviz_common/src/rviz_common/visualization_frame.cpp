@@ -502,7 +502,6 @@ void VisualizationFrame::initMenus()
 
   QMenu * help_menu = menuBar()->addMenu("&Help");
   help_menu->addAction("Show &Help panel", this, SLOT(showHelpPanel()));
-  help_menu->addAction("Open rviz wiki in browser", this, SLOT(onHelpWiki()));
   help_menu->addSeparator();
   help_menu->addAction("&About", this, SLOT(onHelpAbout()));
 }
@@ -1134,11 +1133,6 @@ void VisualizationFrame::showHelpPanel()
 void VisualizationFrame::onHelpDestroyed()
 {
   show_help_action_ = nullptr;
-}
-
-void VisualizationFrame::onHelpWiki()
-{
-  QDesktopServices::openUrl(QUrl("http://www.ros.org/wiki/rviz"));
 }
 
 void VisualizationFrame::onHelpAbout()
