@@ -197,6 +197,8 @@ macro(build_ogre)
     PATCH_COMMAND
       ${Patch_EXECUTABLE} -p1 -N -l < ${CMAKE_CURRENT_SOURCE_DIR}/pragma-patch.diff &&
       ${Patch_EXECUTABLE} -p1 -N < ${CMAKE_CURRENT_SOURCE_DIR}/relocatable.patch &&
+      ${Patch_EXECUTABLE} -p1 -N < ${CMAKE_CURRENT_SOURCE_DIR}/featuresummary-rename.patch &&
+      ${CMAKE_COMMAND} -E rename CMake/FeatureSummary.cmake CMake/OgreFeatureSummary.cmake &&
       ${Patch_EXECUTABLE} -p1 -N < ${CMAKE_CURRENT_SOURCE_DIR}/C4267.patch
     COMMAND
       ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/FindFreetype.cmake ${CMAKE_CURRENT_BINARY_DIR}/ogre-v1.12.10-prefix/src/ogre-v1.12.10/CMake/Packages/FindFreetype.cmake
