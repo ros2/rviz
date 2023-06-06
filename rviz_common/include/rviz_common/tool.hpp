@@ -189,6 +189,8 @@ public:
 Q_SIGNALS:
   /// Emitted when closed.
   void close();
+  /// Emitted when name property has been changed.
+  void nameChanged(const QString& name);
 
 protected:
   /// Override onInitialize to do any setup needed after the DisplayContext has been set.
