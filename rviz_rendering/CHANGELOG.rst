@@ -2,6 +2,9 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 12.5.1 (2023-05-11)
 -------------------
 * Clean Code (`#975 <https://github.com/ros2/rviz/issues/975>`_)

@@ -2,6 +2,11 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Remove onHelpWiki. (`#985 <https://github.com/ros2/rviz/issues/985>`_)
+* Contributors: Chris Lalancette
+
 12.5.1 (2023-05-11)
 -------------------
 * Clean Code (`#975 <https://github.com/ros2/rviz/issues/975>`_)
