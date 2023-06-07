@@ -297,7 +297,7 @@ protected Q_SLOTS:
   addTool(Tool * tool);
 
   /// React to name changes of a tool, updating the name of the associated QAction
-  void onToolNameChanged(const QString& name);
+  void onToolNameChanged(const QString & name);
 
   /// Remove the given tool from the frame's toolbar.
   void
