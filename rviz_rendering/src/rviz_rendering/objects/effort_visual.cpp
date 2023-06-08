@@ -29,6 +29,9 @@
 
 #include "rviz_rendering/objects/effort_visual.hpp"
 
+#include <algorithm>
+#include <cmath>
+
 namespace rviz_rendering
 {
 EffortVisual::EffortVisual(Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node)

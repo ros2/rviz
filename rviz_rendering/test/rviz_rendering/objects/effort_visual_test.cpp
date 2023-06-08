@@ -29,23 +29,17 @@
 
 #include <gmock/gmock.h>
 
-// #include <memory>
-// #include <string>
-// #include <vector>
-//
-// #include <OgreBillboardChain.h>
-// #include <OgreManualObject.h>
 #include <OgreRoot.h>
 #include <OgreSceneNode.h>
-//
+
+#include <memory>
+
 #include "../ogre_testing_environment.hpp"
 #include "../scene_graph_introspection.hpp"
 #include "rviz_rendering/objects/effort_visual.hpp"
-// #include "rviz_rendering/objects/billboard_line.hpp"
-// #include "rviz_rendering/objects/arrow.hpp"
-//
+
 using namespace ::testing;  // NOLINT
-//
+
 MATCHER_P(ColorEq, expected, "") {
   return Ogre::Math::Abs(expected.a - arg.a) < 0.0001f &&
          Ogre::Math::Abs(expected.r - arg.r) < 0.0001f &&
@@ -88,7 +82,6 @@ Ogre::SceneNode * findForceArrow(Ogre::SceneNode * scene_node)
       return arrow;
     }
   }
-  std::cerr << "here" << '\n';
   return nullptr;
 }
 

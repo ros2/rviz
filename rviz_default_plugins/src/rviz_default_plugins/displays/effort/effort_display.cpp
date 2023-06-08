@@ -39,12 +39,14 @@
 #include <cstddef>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <rviz_common/validate_floats.hpp>
 
 #include <rviz_common/properties/property.hpp>
 #include <rviz_rendering/objects/effort_visual.hpp>
+#include <sensor_msgs/msg/joint_state.hpp>
 
 using namespace std::chrono_literals;
 
@@ -58,8 +60,6 @@ JointInfo::JointInfo(const std::string & name, rviz_common::properties::Property
   effort_ = 0;
   max_effort_ = 0;
 
-  // info->category_ = new Property( QString::fromStdString( info->name_ ) , QVariant(), "",
-  // joints_category_);
   category_ = new rviz_common::properties::Property(
     QString::fromStdString(name_), true, "", parent_category,
     SLOT(updateVisibility()), this);
@@ -81,7 +81,6 @@ JointInfo::~JointInfo()
 JointInfo * EffortDisplay::createJoint(const std::string & joint)
 {
   JointInfo * info = new JointInfo(joint, joints_category_);
-  joints_.insert(std::make_pair(joint, info));
   return info;
 }
 
@@ -104,6 +103,7 @@ void JointInfo::setEffort(double e)
   effort_property_->setFloat(e);
   effort_ = e;
 }
+
 void JointInfo::setMaxEffort(double m)
 {
   max_effort_property_->setFloat(m);
@@ -127,7 +127,7 @@ EffortDisplay::EffortDisplay()
     SLOT(updateColorAndAlpha()));
 
   scale_property_ = new rviz_common::properties::FloatProperty(
-    "Scale", 1.0, "Scale to drow effort circle", this,
+    "Scale", 1.0, "Scale to draw effort circle", this,
     SLOT(updateColorAndAlpha()));
 
   history_length_property_ = new rviz_common::properties::IntProperty(
@@ -140,7 +140,7 @@ EffortDisplay::EffortDisplay()
   robot_description_property_ =
     new rviz_common::properties::StringProperty(
     "Robot Description", "/robot_description",
-    "Name of the parameter to search for to load the robot "
+    "Name of the topic from which to load the robot "
     "description.",
     this, SLOT(updateRobotDescription()));
 
@@ -155,6 +155,9 @@ EffortDisplay::EffortDisplay()
 
 EffortDisplay::~EffortDisplay()
 {
+  for (auto & j : this->joints_) {
+    free(j.second);
+  }
 }
 
 void EffortDisplay::onInitialize()
@@ -229,7 +232,7 @@ void EffortDisplay::subscribeToRobotDescription()
           info.total_count;
         setStatus(
           rviz_common::properties::StatusLevel::Warn,
-          "Array Topic",
+          "Topic",
           QString(sstm.str().c_str()));
       };
 
@@ -243,7 +246,7 @@ void EffortDisplay::subscribeToRobotDescription()
   } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
     setStatus(
       rviz_common::properties::StatusLevel::Error,
-      "Array Topic",
+      "Topic",
       QString("Error subscribing: ") + e.what());
   }
 }
@@ -287,7 +290,7 @@ void EffortDisplay::processMessage(sensor_msgs::msg::JointState::ConstSharedPtr 
 {
   // Robot model might not be loaded already
   if (!robot_model_) {
-    std::cerr << "Robot model might not be loaded already" << '\n';
+    std::cerr << "Robot model might not be loaded yet" << '\n';
     return;
   }
   // We are keeping a circular buffer of visual pointers.  This gets

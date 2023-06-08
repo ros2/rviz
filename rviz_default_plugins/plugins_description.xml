@@ -31,7 +31,7 @@
     base_class_type="rviz_common::Display"
   >
     <description>
-      The Effort display shows a sensor_msgs/JointState/effort message as circled arrows around each revolute joint in the robot. &lt;a href="http://www.ros.org/wiki/rviz/DisplayTypes/Effort"&gt;More Information&lt;/a&gt;.
+      The Effort display shows a sensor_msgs/JointState/effort message as circled arrows around each revolute joint in the robot.
     </description>
     <message_type>sensor_msgs/msg/JointState</message_type>
   </class>

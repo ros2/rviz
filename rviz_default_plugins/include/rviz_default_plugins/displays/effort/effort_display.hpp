@@ -87,11 +87,6 @@ private:
   rviz_common::properties::FloatProperty * effort_property_;
   rviz_common::properties::FloatProperty * max_effort_property_;
 };
-//
-// typedef std::set<JointInfo*> S_JointInfo;
-// typedef std::vector<std::string> V_string;
-
-// class EffortVisual;
 
 class RVIZ_DEFAULT_PLUGINS_PUBLIC EffortDisplay
   : public rviz_common::MessageFilterDisplay<sensor_msgs::msg::JointState>
@@ -111,7 +106,7 @@ public:
   void update(float wall_dt, float ros_dt) override;
 
 private Q_SLOTS:
-//   // Helper function to apply color and alpha to all visuals.
+  // Helper function to apply color and alpha to all visuals.
   void updateColorAndAlpha();
   void updateHistoryLength();
   void updateRobotDescription();
