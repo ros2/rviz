@@ -1,6 +1,16 @@
 <library path="rviz_default_plugins">
 
   <!-- Displays plugins -->
+  <class
+    name="rviz_default_plugins/AccelStamped"
+    type="rviz_default_plugins::displays::AccelStampedDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays from geometry_msgs/AccelStamped message
+    </description>
+    <message_type>geometry_msgs/msg/AccelStamped</message_type>
+  </class>
 
   <class
     name="rviz_default_plugins/Axes"
@@ -218,6 +228,17 @@
       Displays the TF transform hierarchy.  &lt;a href="http://www.ros.org/wiki/rviz/DisplayTypes/TF"&gt;More Information&lt;/a&gt;.
     </description>
     <message_type>tf2_msgs/msg/TFMessage</message_type>
+  </class>
+
+  <class
+    name="rviz_default_plugins/TwistStamped"
+    type="rviz_default_plugins::displays::TwistStampedDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays from geometry_msgs/TwistStamped message
+    </description>
+    <message_type>geometry_msgs/msg/TwistStamped</message_type>
   </class>
 
   <class
