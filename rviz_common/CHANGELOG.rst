@@ -2,8 +2,8 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+12.6.1 (2023-06-12)
+-------------------
 * Add a libqt5-svg dependency to rviz_common. (`#992 <https://github.com/ros2/rviz/issues/992>`_)
 * Contributors: Chris Lalancette
 
