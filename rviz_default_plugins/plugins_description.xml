@@ -26,6 +26,17 @@
   </class>
 
   <class
+    name="rviz_default_plugins/DepthCloud"
+    type="rviz_default_plugins::displays::DepthCloudDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays point clouds based on depth maps.
+    </description>
+    <message_type>sensor_msgs/msg/Image</message_type>
+  </class>
+
+  <class
     name="rviz_default_plugins/Grid"
     type="rviz_default_plugins::displays::GridDisplay"
     base_class_type="rviz_common::Display"

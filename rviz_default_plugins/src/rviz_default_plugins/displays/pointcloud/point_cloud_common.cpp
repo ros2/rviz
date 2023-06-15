@@ -214,14 +214,13 @@ void PointCloudCommon::loadTransformer(
   transformers_[name] = info;
 }
 
-// TODO(anhosi): check if still needed when migrating DepthCloud
-// void PointCloudCommon::setAutoSize(bool auto_size)
-// {
-//   auto_size_ = auto_size;
-//   for (auto const & cloud_info : cloud_infos_) {
-//     cloud_info->cloud_->setAutoSize(auto_size);
-//   }
-// }
+void PointCloudCommon::setAutoSize(bool auto_size)
+{
+  auto_size_ = auto_size;
+  for (auto const & cloud_info : cloud_infos_) {
+    cloud_info->cloud_->setAutoSize(auto_size);
+  }
+}
 
 void PointCloudCommon::updateAlpha()
 {

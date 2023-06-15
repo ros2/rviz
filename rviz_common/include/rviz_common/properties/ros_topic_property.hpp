@@ -78,8 +78,57 @@ private:
   QString message_type_;
 };
 
-}  // end namespace properties
+class RosFilteredTopicProperty : public rviz_common::properties::RosTopicProperty
+{
+  Q_OBJECT
 
+public:
+  RosFilteredTopicProperty(
+    const QString & name = QString(),
+    const QString & default_value = QString(),
+    const QString & message_type = QString(),
+    const QString & description = QString(),
+    const QRegExp & filter = QRegExp(),
+    Property * parent = 0,
+    const char * changed_slot = 0,
+    QObject * receiver = 0)
+  : RosTopicProperty(name, default_value, message_type, description, parent, changed_slot, receiver)
+    , filter_(filter)
+    , filter_enabled_(true)
+  {
+  }
+
+public:
+  void enableFilter(bool enabled)
+  {
+    filter_enabled_ = enabled;
+    fillTopicList();
+  }
+
+  QRegExp filter() const
+  {
+    return filter_;
+  }
+
+protected Q_SLOTS:
+  void fillTopicList() override
+  {
+    QStringList filtered_strings_;
+
+    // Obtain list of available topics
+    RosTopicProperty::fillTopicList();
+    // Apply filter
+    if (filter_enabled_) {
+      strings_ = strings_.filter(filter_);
+    }
+  }
+
+private:
+  QRegExp filter_;
+  bool filter_enabled_;
+};
+
+}  // end namespace properties
 }  // end namespace rviz_common
 
 #endif  // RVIZ_COMMON__PROPERTIES__ROS_TOPIC_PROPERTY_HPP_

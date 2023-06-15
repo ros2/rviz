@@ -138,6 +138,7 @@ set(rviz_common_source_files
   src/rviz_common/add_display_dialog.cpp
   src/rviz_common/bit_allocator.cpp
   src/rviz_common/config.cpp
+  src/rviz_common/depth_cloud_mld.cpp
   src/rviz_common/display_factory.cpp
   src/rviz_common/display_group.cpp
   src/rviz_common/display.cpp
