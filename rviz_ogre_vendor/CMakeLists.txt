@@ -122,7 +122,7 @@ macro(build_ogre)
 
   if(WIN32)
     set(OGRE_C_FLAGS "${OGRE_C_FLAGS} /w /EHsc")
-    set(OGRE_CXX_FLAGS "${OGRE_CXX_FLAGS} /w /EHsc")
+    set(OGRE_CXX_FLAGS "${OGRE_CXX_FLAGS} -std:c++14 /w /EHsc")
   elseif(APPLE)
     set(OGRE_CXX_FLAGS "${OGRE_CXX_FLAGS} -std=c++14 -stdlib=libc++ -w")
     if (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "arm64")
