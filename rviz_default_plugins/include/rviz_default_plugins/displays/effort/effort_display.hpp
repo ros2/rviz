@@ -113,8 +113,7 @@ private Q_SLOTS:
   void updateTfPrefix();
 
 private:
-  JointInfo * getJointInfo(const std::string & joint);
-  JointInfo * createJoint(const std::string & joint);
+  std::shared_ptr<JointInfo> getJointInfo(const std::string & joint);
   void subscribeToRobotDescription();
 
 protected:
@@ -142,7 +141,7 @@ private:
   // data gets popped from the front (oldest) and pushed to the back (newest)
   std::deque<std::shared_ptr<rviz_rendering::EffortVisual>> visuals_;
 
-  typedef std::map<std::string, JointInfo *> M_JointInfo;
+  typedef std::map<std::string, std::shared_ptr<JointInfo>> M_JointInfo;
   M_JointInfo joints_;
 
   // Property objects for user-editable properties.

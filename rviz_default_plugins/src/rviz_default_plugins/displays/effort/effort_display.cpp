@@ -78,13 +78,7 @@ JointInfo::~JointInfo()
 {
 }
 
-JointInfo * EffortDisplay::createJoint(const std::string & joint)
-{
-  JointInfo * info = new JointInfo(joint, joints_category_);
-  return info;
-}
-
-JointInfo * EffortDisplay::getJointInfo(const std::string & joint)
+std::shared_ptr<JointInfo> EffortDisplay::getJointInfo(const std::string & joint)
 {
   M_JointInfo::iterator it = joints_.find(joint);
   if (it == joints_.end()) {
@@ -155,9 +149,6 @@ EffortDisplay::EffortDisplay()
 
 EffortDisplay::~EffortDisplay()
 {
-  for (auto & j : this->joints_) {
-    free(j.second);
-  }
 }
 
 void EffortDisplay::onInitialize()
@@ -191,7 +182,6 @@ void EffortDisplay::topic_callback(const std_msgs::msg::String & msg)
   robot_description_ = msg.data;
   robot_model_ = std::shared_ptr<urdf::Model>(new urdf::Model());
   if (!robot_model_->initString(robot_description_)) {
-    // ROS_ERROR("Unable to parse URDF description!");
     setStatus(
       rviz_common::properties::StatusProperty::Error,
       "URDF", "Unable to parse robot model description!");
@@ -206,7 +196,7 @@ void EffortDisplay::topic_callback(const std_msgs::msg::String & msg)
     if (joint->type == urdf::Joint::REVOLUTE || joint->type == 2) {
       std::string joint_name = it->first;
       urdf::JointLimitsSharedPtr limit = joint->limits;
-      joints_[joint_name] = createJoint(joint_name);
+      joints_[joint_name] = std::make_shared<JointInfo>(joint_name, joints_category_);
       joints_[joint_name]->setMaxEffort(limit->effort);
     }
   }
@@ -288,9 +278,12 @@ std::string concat(const std::string & prefix, const std::string & frame)
 
 void EffortDisplay::processMessage(sensor_msgs::msg::JointState::ConstSharedPtr msg)
 {
-  // Robot model might not be loaded already
+  // Robot model might not be loaded yet
   if (!robot_model_) {
-    std::cerr << "Robot model might not be loaded yet" << '\n';
+    setStatus(
+      rviz_common::properties::StatusLevel::Error,
+      "Process message",
+      QString("Robot model might not be loaded yet"));
     return;
   }
   // We are keeping a circular buffer of visual pointers.  This gets
@@ -299,7 +292,8 @@ void EffortDisplay::processMessage(sensor_msgs::msg::JointState::ConstSharedPtr 
   if (visuals_.size() == static_cast<size_t>(history_length_property_->getInt())) {
     visual = visuals_.front();
   } else {
-    visual.reset(new rviz_rendering::EffortVisual(context_->getSceneManager(), scene_node_));
+    visual = std::make_shared<rviz_rendering::EffortVisual>(
+      context_->getSceneManager(), scene_node_);
   }
   visual->setWidth(width_property_->getFloat());
   visual->setScale(scale_property_->getFloat());
@@ -318,7 +312,7 @@ void EffortDisplay::processMessage(sensor_msgs::msg::JointState::ConstSharedPtr 
   }
   for (size_t i = 0; i < joint_num; ++i) {
     const std::string & joint_name = msg->name[i];
-    JointInfo * joint_info = getJointInfo(joint_name);
+    std::shared_ptr<JointInfo> joint_info = getJointInfo(joint_name);
     if (!joint_info) {
       continue;  // skip joints..
     }
