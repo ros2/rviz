@@ -30,16 +30,12 @@
 
 #include <memory>
 
-// #include <OgreBillboardChain.h>
-// #include <OgreManualObject.h>
 #include <OgreRoot.h>
 #include <OgreSceneNode.h>
 
 #include "../ogre_testing_environment.hpp"
 #include "../scene_graph_introspection.hpp"
 #include "rviz_rendering/objects/screw_visual.hpp"
-// #include "rviz_rendering/objects/billboard_line.hpp"
-// #include "rviz_rendering/objects/arrow.hpp"
 
 using namespace ::testing;  // NOLINT
 

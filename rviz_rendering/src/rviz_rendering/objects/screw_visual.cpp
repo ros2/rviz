@@ -51,20 +51,14 @@ ScrewVisual::ScrewVisual(Ogre::SceneManager * scene_manager, Ogre::SceneNode * p
 
   // We create the arrow object within the frame node so that we can
   // set its position and direction relative to its header frame.
-  arrow_linear_ = new rviz_rendering::Arrow(scene_manager_, linear_node_);
-  arrow_angular_ = new rviz_rendering::Arrow(scene_manager_, angular_node_);
-  circle_angular_ = new rviz_rendering::BillboardLine(scene_manager_, angular_node_);
-  circle_arrow_angular_ = new rviz_rendering::Arrow(scene_manager_, angular_node_);
+  arrow_linear_ = std::make_unique<rviz_rendering::Arrow>(scene_manager_, linear_node_);
+  arrow_angular_ = std::make_unique<rviz_rendering::Arrow>(scene_manager_, angular_node_);
+  circle_angular_ = std::make_unique<rviz_rendering::BillboardLine>(scene_manager_, angular_node_);
+  circle_arrow_angular_ = std::make_unique<rviz_rendering::Arrow>(scene_manager_, angular_node_);
 }
 
 ScrewVisual::~ScrewVisual()
 {
-  // Delete the arrow to make it disappear.
-  delete arrow_linear_;
-  delete arrow_angular_;
-  delete circle_angular_;
-  delete circle_arrow_angular_;
-
   // Destroy the frame node since we don't need it anymore.
   scene_manager_->destroySceneNode(frame_node_);
 }

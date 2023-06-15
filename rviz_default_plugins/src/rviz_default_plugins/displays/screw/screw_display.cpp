@@ -189,9 +189,13 @@ void ScrewDisplay<MessageType>::processMessagePrivate(
       header.frame_id, header.stamp, position,
       orientation))
   {
-    RVIZ_COMMON_LOG_DEBUG_STREAM(
-      "Error transforming from frame '" << header.frame_id.c_str() << "' to frame '" <<
-        qPrintable(rviz_common::MessageFilterDisplay<MessageType>::fixed_frame_) << "'");
+    rviz_common::MessageFilterDisplay<MessageType>::setStatus(
+      rviz_common::properties::StatusProperty::Error, "Topic",
+      QString("Error transforming from frame '") +
+      QString::fromStdString(header.frame_id.c_str()) +
+      QString("' to frame '") +
+      qPrintable(rviz_common::MessageFilterDisplay<MessageType>::fixed_frame_) +
+      QString("'"));
     return;
   }
 
@@ -201,10 +205,9 @@ void ScrewDisplay<MessageType>::processMessagePrivate(
   if (visuals_.size() == static_cast<size_t>(history_length_property_->getInt())) {
     visual = visuals_.front();
   } else {
-    visual.reset(
-      new rviz_rendering::ScrewVisual(
-        rviz_common::MessageFilterDisplay<MessageType>::context_->getSceneManager(),
-        rviz_common::MessageFilterDisplay<MessageType>::scene_node_));
+    visual = std::make_shared<rviz_rendering::ScrewVisual>(
+      rviz_common::MessageFilterDisplay<MessageType>::context_->getSceneManager(),
+      rviz_common::MessageFilterDisplay<MessageType>::scene_node_);
   }
 
   if (visuals_.size() >= static_cast<size_t>(history_length_property_->getInt())) {

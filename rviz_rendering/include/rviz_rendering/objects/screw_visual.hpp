@@ -34,6 +34,8 @@
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 
+#include <memory>
+
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/billboard_line.hpp"
 
@@ -85,11 +87,13 @@ public:
 
 private:
   // The object implementing the circle
-  rviz_rendering::Arrow * arrow_linear_;
-  rviz_rendering::Arrow * arrow_angular_;
-  rviz_rendering::BillboardLine * circle_angular_;
-  rviz_rendering::Arrow * circle_arrow_angular_;
-  float linear_scale_, angular_scale_, width_;
+  std::unique_ptr<rviz_rendering::Arrow> arrow_linear_;
+  std::unique_ptr<rviz_rendering::Arrow> arrow_angular_;
+  std::unique_ptr<rviz_rendering::BillboardLine> circle_angular_;
+  std::unique_ptr<rviz_rendering::Arrow> circle_arrow_angular_;
+  float linear_scale_;
+  float angular_scale_;
+  float width_;
   bool hide_small_values_;
 
   // A SceneNode whose pose is set to match the coordinate frame of the message header.
