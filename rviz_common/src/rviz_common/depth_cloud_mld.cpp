@@ -196,7 +196,7 @@ MultiLayerDepth::generatePointCloudSL(
   std::size_t point_count = 0;
   std::size_t point_idx = 0;
 
-  const T * depth_img_ptr = reinterpret_cast<T *>(&depth_msg->data[0]);
+  const T * depth_img_ptr = reinterpret_cast<const T *>(&depth_msg->data[0]);
 
   std::vector<float>::iterator proj_x;
   std::vector<float>::const_iterator proj_x_end = projection_map_x_.end();
@@ -280,7 +280,7 @@ MultiLayerDepth::generatePointCloudML(
   double time_now = rclcpp::Clock().now().seconds();
   double time_expire = time_now - shadow_time_out_;
 
-  const T * depth_img_ptr = reinterpret_cast<T *>(&depth_msg->data[0]);
+  const T * depth_img_ptr = reinterpret_cast<const T *>(&depth_msg->data[0]);
 
   std::vector<float>::iterator proj_x;
   std::vector<float>::const_iterator proj_x_end = projection_map_x_.end();
@@ -395,7 +395,7 @@ void MultiLayerDepth::convertColor(
   rgba_color_raw.reserve(num_pixel);
 
   // pointer to most significant byte
-  uint8_t * img_ptr = reinterpret_cast<uint8_t *>(&color_msg->data[sizeof(T) - 1]);
+  const uint8_t * img_ptr = reinterpret_cast<const uint8_t *>(&color_msg->data[sizeof(T) - 1]);
 
   // color conversion
   switch (num_channels) {
@@ -414,11 +414,11 @@ void MultiLayerDepth::convertColor(
     case 4:
       // rgb/bgr encoding
       for (i = 0; i < num_pixel; ++i) {
-        uint8_t color1 = *(reinterpret_cast<uint8_t *>(img_ptr));
+        uint8_t color1 = *(reinterpret_cast<const uint8_t *>(img_ptr));
         img_ptr += sizeof(T);
-        uint8_t color2 = *(reinterpret_cast<uint8_t *>(img_ptr));
+        uint8_t color2 = *(reinterpret_cast<const uint8_t *>(img_ptr));
         img_ptr += sizeof(T);
-        uint8_t color3 = *(reinterpret_cast<uint8_t *>(img_ptr));
+        uint8_t color3 = *(reinterpret_cast<const uint8_t *>(img_ptr));
         img_ptr += sizeof(T);
 
         if (has_alpha) {

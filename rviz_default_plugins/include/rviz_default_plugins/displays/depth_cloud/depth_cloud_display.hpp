@@ -31,11 +31,8 @@
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__DEPTH_CLOUD__DEPTH_CLOUD_DISPLAY_HPP_
 
 #ifndef Q_MOC_RUN
-
-
 #include <QObject>  // NOLINT: cpplint cannot handle the include order here
-#include <OgreQuaternion.h>
-#include <OgreVector3.h>
+#include <Ogre.h>
 
 #include <message_filters/subscriber.h>
 #include <message_filters/synchronizer.h>
@@ -66,7 +63,6 @@
 
 #include <sensor_msgs/msg/image.hpp>
 #include <sensor_msgs/msg/camera_info.hpp>
-
 #endif
 
 #include <QMap>
