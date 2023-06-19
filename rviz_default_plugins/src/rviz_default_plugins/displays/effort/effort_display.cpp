@@ -113,15 +113,15 @@ EffortDisplay::EffortDisplay()
 : rviz_common::MessageFilterDisplay<sensor_msgs::msg::JointState>()
 {
   alpha_property_ = new rviz_common::properties::FloatProperty(
-    "Alpha", 1.0, "0 is fully transparent, 1.0 is fully opaque.",
+    "Alpha", 1.0f, "0 is fully transparent, 1.0 is fully opaque.",
     this, SLOT(updateColorAndAlpha()));
 
   width_property_ = new rviz_common::properties::FloatProperty(
-    "Width", 0.02, "Width to drow effort circle", this,
+    "Width", 0.02f, "Width to drow effort circle", this,
     SLOT(updateColorAndAlpha()));
 
   scale_property_ = new rviz_common::properties::FloatProperty(
-    "Scale", 1.0, "Scale to draw effort circle", this,
+    "Scale", 1.0f, "Scale to draw effort circle", this,
     SLOT(updateColorAndAlpha()));
 
   history_length_property_ = new rviz_common::properties::IntProperty(

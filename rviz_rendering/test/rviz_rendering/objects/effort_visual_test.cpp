@@ -106,7 +106,7 @@ TEST_F(EffortVisualTestFixture, setEffort_sets_force_arrow_correctly) {
   EXPECT_THAT(arrows, SizeIs(1u));
   EXPECT_THAT(
     arrows[0]->convertWorldToLocalPosition(Ogre::Vector3(0, 0, 0)),
-    Vector3Eq(Ogre::Vector3(0, 0, -0.05)));
+    Vector3Eq(Ogre::Vector3(0.0f, 0.0f, -0.05f)));
 
   EXPECT_THAT(
     arrows[0]->convertWorldToLocalOrientation(Ogre::Quaternion()),
@@ -117,7 +117,7 @@ TEST_F(EffortVisualTestFixture, setEffort_sets_force_arrow_correctly) {
   effort_visual->setEffort("joint1", 1, 10);
   EXPECT_THAT(
     arrows[0]->convertWorldToLocalPosition(Ogre::Vector3(0, 0, 0)),
-    Vector3Eq(Ogre::Vector3(3, 1, -2.05)));
+    Vector3Eq(Ogre::Vector3(3.0f, 1.0f, -2.05f)));
 }
 
 TEST_F(EffortVisualTestFixture, setEffort_hides_force_arrow_for_larger_width_than_scale) {

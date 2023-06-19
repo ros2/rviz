@@ -89,9 +89,9 @@ void EffortVisual::setEffort(const std::string & joint_name, double effort, doub
   float effort_value;
 
   if (max_effort != 0.0) {
-    effort_value = std::fmin(fabs(effort) / max_effort, 1.0f) + 0.05f;
+    effort_value = static_cast<float>(std::fmin(fabs(effort) / max_effort, 1.0f) + 0.05f);
   } else {
-    effort_value = fabs(effort) + 0.05f;
+    effort_value = static_cast<float>(fabs(effort) + 0.05f);
   }
 
   effort_arrow_[joint_name]->set(0, width_ * 2.0f, width_ * 2.0f * 1.0f, width_ * 2.0f * 2.0f);
@@ -109,8 +109,9 @@ void EffortVisual::setEffort(const std::string & joint_name, double effort, doub
   for (int i = 0; i < 30; i++) {
     Ogre::Vector3 point =
       Ogre::Vector3(
-      (0.05f + effort_value * scale_ * 0.5f) * sin(i * 2.0f * M_PI / 32.0f),
-      (0.05f + effort_value * scale_ * 0.5f) * cos(i * 2.0f * M_PI / 32.0f), 0);
+      static_cast<float>((0.05f + effort_value * scale_ * 0.5f) * sin(i * 2.0f * M_PI / 32.0f)),
+      static_cast<float>((0.05f + effort_value * scale_ * 0.5f) * cos(i * 2.0f * M_PI / 32.0f)),
+      static_cast<float>(0));
     if (effort < 0) {
       point.x = -point.x;
     }
