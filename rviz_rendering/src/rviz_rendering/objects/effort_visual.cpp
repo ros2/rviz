@@ -27,10 +27,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+ #define _USE_MATH_DEFINES
 #include "rviz_rendering/objects/effort_visual.hpp"
 
 #include <algorithm>
-#define _USE_MATH_DEFINES
 #include <cmath>
 
 namespace rviz_rendering
@@ -89,9 +89,9 @@ void EffortVisual::setEffort(const std::string & joint_name, double effort, doub
   float effort_value;
 
   if (max_effort != 0.0) {
-    effort_value = std::min(fabs(effort) / max_effort, 1.0) + 0.05;
+    effort_value = std::fmin(fabs(effort) / max_effort, 1.0f) + 0.05f;
   } else {
-    effort_value = fabs(effort) + 0.05;
+    effort_value = fabs(effort) + 0.05f;
   }
 
   effort_arrow_[joint_name]->set(0, width_ * 2.0f, width_ * 2.0f * 1.0f, width_ * 2.0f * 2.0f);
