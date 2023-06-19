@@ -30,6 +30,7 @@
 #include "rviz_rendering/objects/effort_visual.hpp"
 
 #include <algorithm>
+#define _USE_MATH_DEFINES
 #include <cmath>
 
 namespace rviz_rendering
@@ -45,8 +46,8 @@ void EffortVisual::getRainbowColor(float value, Ogre::ColourValue & color)
   value = std::max(value, 0.0f);
 
   float h = value * 5.0f + 1.0f;
-  int i = floor(h);
-  float f = h - i;
+  int i = static_cast<int>(floor(h));
+  float f = h - static_cast<float>(i);
   if (!(i & 1)) {
     f = 1 - f;  // if i is even
   }
@@ -85,7 +86,7 @@ void EffortVisual::setEffort(const std::string & joint_name, double effort, doub
     return;
   }
 
-  double effort_value;
+  float effort_value;
 
   if (max_effort != 0.0) {
     effort_value = std::min(fabs(effort) / max_effort, 1.0) + 0.05;
@@ -93,7 +94,7 @@ void EffortVisual::setEffort(const std::string & joint_name, double effort, doub
     effort_value = fabs(effort) + 0.05;
   }
 
-  effort_arrow_[joint_name]->set(0, width_ * 2, width_ * 2 * 1.0, width_ * 2 * 2.0);
+  effort_arrow_[joint_name]->set(0, width_ * 2.0f, width_ * 2.0f * 1.0f, width_ * 2.0f * 2.0f);
   if (effort > 0) {
     effort_arrow_[joint_name]->setDirection(orientation_[joint_name] * Ogre::Vector3(-1, 0, 0));
   } else {
@@ -101,15 +102,15 @@ void EffortVisual::setEffort(const std::string & joint_name, double effort, doub
   }
   effort_arrow_[joint_name]->setPosition(
     orientation_[joint_name] *
-    Ogre::Vector3(0, 0.05 + effort_value * scale_ * 0.5, 0) +
+    Ogre::Vector3(0, 0.05f + effort_value * scale_ * 0.5f, 0) +
     position_[joint_name]);
   effort_circle_[joint_name]->clear();
   effort_circle_[joint_name]->setLineWidth(width_);
   for (int i = 0; i < 30; i++) {
     Ogre::Vector3 point =
       Ogre::Vector3(
-      (0.05 + effort_value * scale_ * 0.5) * sin(i * 2 * M_PI / 32),
-      (0.05 + effort_value * scale_ * 0.5) * cos(i * 2 * M_PI / 32), 0);
+      (0.05f + effort_value * scale_ * 0.5f) * sin(i * 2.0f * M_PI / 32.0f),
+      (0.05f + effort_value * scale_ * 0.5f) * cos(i * 2.0f * M_PI / 32.0f), 0);
     if (effort < 0) {
       point.x = -point.x;
     }
