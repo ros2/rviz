@@ -29,6 +29,9 @@
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/billboard_line.hpp"
 
@@ -65,8 +68,8 @@ ScrewVisual::~ScrewVisual()
 
 void ScrewVisual::setScrew(const Ogre::Vector3 & linear, const Ogre::Vector3 & angular)
 {
-  double linear_length = linear.length() * linear_scale_;
-  double angular_length = angular.length() * angular_scale_;
+  float linear_length = linear.length() * linear_scale_;
+  float angular_length = angular.length() * angular_scale_;
   // hide markers if they get too short and hide_small_values_ is activated
   // "too short" is defined as "linear_length > width_"
   bool show_linear = (linear_length > width_) || !hide_small_values_;
@@ -87,18 +90,18 @@ void ScrewVisual::setScrew(const Ogre::Vector3 & linear, const Ogre::Vector3 & a
       orientation = Ogre::Quaternion::IDENTITY;
     }
     // circle_arrow_angular_->setScale(Ogre::Vector3(width_, width_, 0.05));
-    circle_arrow_angular_->set(0, width_ * 0.1, width_ * 0.1 * 1.0, width_ * 0.1 * 2.0);
+    circle_arrow_angular_->set(0, width_ * 0.1f, width_ * 0.1f * 1.0f, width_ * 0.1f * 2.0f);
     circle_arrow_angular_->setDirection(orientation * Ogre::Vector3(0, 1, 0));
     circle_arrow_angular_->setPosition(
       orientation *
-      Ogre::Vector3(angular_length / 4, 0, angular_length / 2));
+      Ogre::Vector3(angular_length / 4.0f, 0, angular_length / 2.0f));
     circle_angular_->clear();
-    circle_angular_->setLineWidth(width_ * 0.05);
+    circle_angular_->setLineWidth(width_ * 0.05f);
     for (int i = 4; i <= 32; i++) {
       Ogre::Vector3 point =
         Ogre::Vector3(
-        (angular_length / 4) * cos(i * 2 * M_PI / 32),
-        (angular_length / 4) * sin(i * 2 * M_PI / 32), angular_length / 2);
+        (angular_length / 4.0f) * cos(i * 2.0f * M_PI / 32.0f),
+        (angular_length / 4.0f) * sin(i * 2.0f * M_PI / 32.0f), angular_length / 2.0f);
       circle_angular_->addPoint(orientation * point);
     }
   }
