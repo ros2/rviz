@@ -50,17 +50,24 @@ public:
   EffortVisual(Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node);
 
   // set rainbow color
+  RVIZ_RENDERING_PUBLIC
   void getRainbowColor(float value, Ogre::ColourValue & color);
+  RVIZ_RENDERING_PUBLIC
   void setEffort(const std::string & joint_name, double effort, double max_effort);
 
   // set the pose of coordinates frame the each joint refers to.
+  RVIZ_RENDERING_PUBLIC
   void setFramePosition(const std::string & joint_name, const Ogre::Vector3 & position);
+  RVIZ_RENDERING_PUBLIC
   void setFrameOrientation(const std::string & joint_name, const Ogre::Quaternion & orientation);
 
+  RVIZ_RENDERING_PUBLIC
   void setFrameEnabled(const std::string & joint_name, const bool e);
 
+  RVIZ_RENDERING_PUBLIC
   void setWidth(float w);
 
+  RVIZ_RENDERING_PUBLIC
   void setScale(float s);
 
 private:
