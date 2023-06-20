@@ -76,22 +76,27 @@ public:
   {
   }
 
+  RVIZ_COMMON_PUBLIC
   void setShadowTimeOut(double time_out)
   {
     shadow_time_out_ = time_out;
   }
 
+  RVIZ_COMMON_PUBLIC
   void enableOcclusionCompensation(bool occlusion_compensation)
   {
     occlusion_compensation_ = occlusion_compensation;
     reset();
   }
 
+  RVIZ_COMMON_PUBLIC
   sensor_msgs::msg::PointCloud2::SharedPtr
   generatePointCloudFromDepth(
     const sensor_msgs::msg::Image::ConstSharedPtr & depth_msg,
     const sensor_msgs::msg::Image::ConstSharedPtr & color_msg,
     sensor_msgs::msg::CameraInfo::ConstSharedPtr camera_info_msg);
+
+  RVIZ_COMMON_PUBLIC
   void reset()
   {
     if (occlusion_compensation_) {

@@ -715,6 +715,24 @@ if(BUILD_TESTING)
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
 
+  ament_add_gtest(depth_cloud_display_visual_test
+    test/rviz_default_plugins/displays/depth_cloud/depth_cloud_display_visual_test.cpp
+    test/rviz_default_plugins/page_objects/depth_cloud_page_object.cpp
+    test/rviz_default_plugins/publishers/camera_info_publisher.hpp
+    test/rviz_default_plugins/publishers/image_publisher.hpp
+    ${TEST_FIXTURE_SOURCES}
+    ${SKIP_VISUAL_TESTS}
+    TIMEOUT 180)
+  if(TARGET depth_cloud_display_visual_test)
+    target_include_directories(depth_cloud_display_visual_test PUBLIC
+      test/page_objects
+      ${TEST_INCLUDE_DIRS}
+      ${rviz_visual_testing_framework_INCLUDE_DIRS})
+    target_link_libraries(depth_cloud_display_visual_test
+      ${TEST_LINK_LIBRARIES}
+      rviz_visual_testing_framework::rviz_visual_testing_framework)
+  endif()
+
   ament_add_gtest(fluid_pressure_display_visual_test
     test/rviz_default_plugins/displays/fluid_pressure/fluid_pressure_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
