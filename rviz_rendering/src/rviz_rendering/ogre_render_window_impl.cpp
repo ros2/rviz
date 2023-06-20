@@ -436,12 +436,16 @@ Ogre::Camera * RenderWindowImpl::getCamera() const
 
 void RenderWindowImpl::setCameraPosition(const Ogre::Vector3 & vec)
 {
-  ogre_camera_node_->setPosition(vec);
+  if (ogre_camera_node_ != nullptr) {
+    ogre_camera_node_->setPosition(vec);
+  }
 }
 
 void RenderWindowImpl::setCameraOrientation(const Ogre::Quaternion & quat)
 {
-  ogre_camera_node_->setOrientation(quat);
+  if (ogre_camera_node_ != nullptr) {
+    ogre_camera_node_->setOrientation(quat);
+  }
 }
 
 Ogre::Light * RenderWindowImpl::getDirectionalLight() const
