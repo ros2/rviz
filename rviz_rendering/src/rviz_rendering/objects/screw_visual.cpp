@@ -101,8 +101,8 @@ void ScrewVisual::setScrew(const Ogre::Vector3 & linear, const Ogre::Vector3 & a
     for (int i = 4; i <= 32; i++) {
       Ogre::Vector3 point =
         Ogre::Vector3(
-        (angular_length / 4.0f) * cos(i * 2.0f * M_PI / 32.0f),
-        (angular_length / 4.0f) * sin(i * 2.0f * M_PI / 32.0f), angular_length / 2.0f);
+        static_cast<float>((angular_length / 4.0f) * cos(i * 2.0f * M_PI / 32.0f)),
+        static_cast<float>((angular_length / 4.0f) * sin(i * 2.0f * M_PI / 32.0f), angular_length / 2.0f));
       circle_angular_->addPoint(orientation * point);
     }
   }

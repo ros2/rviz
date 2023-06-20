@@ -120,20 +120,20 @@ TEST_F(ScrewVisualTestFixture, setScrew_sets_linear_arrow_correctly) {
 
   EXPECT_THAT(
     arrows[0]->convertWorldToLocalOrientation(Ogre::Quaternion()),
-    QuaterionEq(Ogre::Quaternion(0.707107, 0.707107, 0, 0)));
+    QuaterionEq(Ogre::Quaternion(0.707107f, 0.707107f, 0.0f, 0.0f)));
   EXPECT_THAT(
     arrows[1]->convertWorldToLocalOrientation(Ogre::Quaternion()),
-    QuaterionEq(Ogre::Quaternion(0.707107, 0.707107, 0, 0)));
+    QuaterionEq(Ogre::Quaternion(0.707107f, 0.707107f, 0.0f, 0.0f)));
   EXPECT_THAT(
     arrows[2]->convertWorldToLocalOrientation(Ogre::Quaternion()),
-    QuaterionEq(Ogre::Quaternion(0.707107, 0.707107, 0, 0)));
+    QuaterionEq(Ogre::Quaternion(0.707107f, 0.707107f, 0.0f, 0.0f)));
 
   screw_visual->setLinearScale(1);
   screw_visual->setAngularScale(2);
   screw_visual->setScrew(Ogre::Vector3(1, 1, 1), Ogre::Vector3(1, 1, 1));
   linear_arrow = findLinearArrow(root_node);
-  EXPECT_THAT(linear_arrow->getScale(), Vector3Eq(Ogre::Vector3(0, 1.73205, 0)));
+  EXPECT_THAT(linear_arrow->getScale(), Vector3Eq(Ogre::Vector3(0.0f, 1.73205f, 0.0f)));
 
   angular_arrow = findAngularArrow(root_node);
-  EXPECT_THAT(angular_arrow->getScale(), Vector3Eq(Ogre::Vector3(0, 3.4641, 0)));
+  EXPECT_THAT(angular_arrow->getScale(), Vector3Eq(Ogre::Vector3(0.0f, 3.4641f, 0.0f)));
 }
