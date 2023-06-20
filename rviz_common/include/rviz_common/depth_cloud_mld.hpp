@@ -45,9 +45,11 @@
 
 #include <rclcpp/rclcpp.hpp>
 
+#include "rviz_common/visibility_control.hpp"
+
 namespace rviz_common
 {
-class MultiLayerDepthException : public std::exception
+class RVIZ_COMMON_PUBLIC MultiLayerDepthException : public std::exception
 {
 public:
   explicit MultiLayerDepthException(const std::string & error_msg)
@@ -58,6 +60,7 @@ public:
   {
   }
 
+  RVIZ_COMMON_PUBLIC
   const char * what() const throw() override
   {
     return error_msg_.c_str();
@@ -67,7 +70,7 @@ protected:
   std::string error_msg_;
 };
 
-class MultiLayerDepth
+class RVIZ_COMMON_PUBLIC MultiLayerDepth
 {
 public:
   MultiLayerDepth()
