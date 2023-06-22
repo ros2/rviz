@@ -291,16 +291,18 @@ void AssimpLoader::setLightColorsFromAssimp(
       uint32_t uv_index;
       ai_material->GetTexture(aiTextureType_DIFFUSE, 0, &texture_name, &mapping, &uv_index);
       std::string texture_path;
-
-      if (texture_name.data[0] != '*') {
+      const aiTexture *texture = ai_scene->GetEmbeddedTexture(texture_name.C_Str());
+      if (texture == nullptr) {
+        // It's not an embedded texture. We have to go find it.
         // Assume textures are in paths relative to the mesh
         QFileInfo resource_path_finfo(QString::fromStdString(resource_path));
         QDir resource_path_qdir = resource_path_finfo.dir();
         texture_path = resource_path_qdir.path().toStdString() + "/" + texture_name.data;
         loadTexture(texture_path);
       } else {
+        // it's an embedded texture, like in GLB / glTF
         texture_path = resource_path + texture_name.data;
-        loadEmbeddedTexture(ai_scene, texture_name.data, texture_path);
+        loadEmbeddedTexture(texture, texture_path);
       }
       Ogre::TextureUnitState * tu = material_internals.pass_->createTextureUnitState();
       tu->setTextureName(texture_path);
@@ -348,26 +350,26 @@ void AssimpLoader::setLightColorsFromAssimp(
 }
 
 void AssimpLoader::loadEmbeddedTexture(
-  const aiScene *ai_scene, const std::string & embedded_name,
-  const std::string & resource_path)
+  const aiTexture *texture, const std::string &resource_path)
 {
-  // it's an embedded texture, like in GLB / glTF
-  const aiTexture *texture = ai_scene->GetEmbeddedTexture(embedded_name.c_str());
-  if (texture == nullptr) {
-    RVIZ_RENDERING_LOG_ERROR_STREAM("bad embedded texture: " << embedded_name.c_str());
-    return;
-  }
+  // use the format hint to try to load the image
+  std::string format_hint(
+    texture->achFormatHint,
+    strnlen(texture->achFormatHint, sizeof(texture->achFormatHint)));
+
+  Ogre::DataStreamPtr stream(
+      new Ogre::MemoryDataStream(
+          (unsigned char *)texture->pcData, texture->mWidth));
+
   try {
-    Ogre::DataStreamPtr stream(
-        new Ogre::MemoryDataStream(
-            (unsigned char *)texture->pcData, texture->mWidth));
     Ogre::Image image;
-    image.load(stream, "png");
+    image.load(stream, format_hint.c_str());
     Ogre::TextureManager::getSingleton().loadImage(
         resource_path, ROS_PACKAGE_NAME, image);
   } catch (Ogre::Exception & e) {
     RVIZ_RENDERING_LOG_ERROR_STREAM(
-        "Could not load texture [" << resource_path.c_str() << "]: " << e.what());
+        "Could not load texture [" << resource_path.c_str() <<
+        "] with format hint [" << format_hint << "]: " << e.what());
   }
 }
 
