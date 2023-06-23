@@ -350,7 +350,7 @@ void AssimpLoader::setLightColorsFromAssimp(
 }
 
 void AssimpLoader::loadEmbeddedTexture(
-  const aiTexture * texture, const std::string &resource_path)
+  const aiTexture * texture, const std::string & resource_path)
 {
   // use the format hint to try to load the image
   std::string format_hint(
