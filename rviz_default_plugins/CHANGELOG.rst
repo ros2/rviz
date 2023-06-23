@@ -2,6 +2,23 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+12.6.1 (2023-06-12)
+-------------------
+
+12.6.0 (2023-06-07)
+-------------------
+* Modify access specifier to protected or public for the scope of processMessage() member function (`#984 <https://github.com/ros2/rviz/issues/984>`_)
+* Contributors: Hyunseok
+
+12.5.1 (2023-05-11)
+-------------------
+
+12.5.0 (2023-04-28)
+-------------------
+
+12.4.0 (2023-04-18)
+-------------------
+
 12.3.2 (2023-04-11)
 -------------------
 * Fix ODR errors with gmock (`#967 <https://github.com/ros2/rviz/issues/967>`_)

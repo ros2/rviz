@@ -502,7 +502,6 @@ void VisualizationFrame::initMenus()
 
   QMenu * help_menu = menuBar()->addMenu("&Help");
   help_menu->addAction("Show &Help panel", this, SLOT(showHelpPanel()));
-  help_menu->addAction("Open rviz wiki in browser", this, SLOT(onHelpWiki()));
   help_menu->addSeparator();
   help_menu->addAction("&About", this, SLOT(onHelpAbout()));
 }
@@ -1062,6 +1061,22 @@ void VisualizationFrame::addTool(Tool * tool)
   tool_to_action_map_[tool] = action;
 
   remove_tool_menu_->addAction(tool->getName());
+
+  QObject::connect(
+    tool, &Tool::nameChanged, this,
+    &VisualizationFrame::VisualizationFrame::onToolNameChanged);
+}
+
+void VisualizationFrame::onToolNameChanged(const QString & name)
+{
+  // Early return if the tool is not present
+  auto it = tool_to_action_map_.find(qobject_cast<Tool *>(sender()));
+  if (it == tool_to_action_map_.end()) {
+    return;
+  }
+
+  // Change the name of the action
+  it->second->setIconText(name);
 }
 
 void VisualizationFrame::onToolbarActionTriggered(QAction * action)
@@ -1134,11 +1149,6 @@ void VisualizationFrame::showHelpPanel()
 void VisualizationFrame::onHelpDestroyed()
 {
   show_help_action_ = nullptr;
-}
-
-void VisualizationFrame::onHelpWiki()
-{
-  QDesktopServices::openUrl(QUrl("http://www.ros.org/wiki/rviz"));
 }
 
 void VisualizationFrame::onHelpAbout()

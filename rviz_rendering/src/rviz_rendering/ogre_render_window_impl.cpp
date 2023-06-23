@@ -436,12 +436,16 @@ Ogre::Camera * RenderWindowImpl::getCamera() const
 
 void RenderWindowImpl::setCameraPosition(const Ogre::Vector3 & vec)
 {
-  ogre_camera_node_->setPosition(vec);
+  if (ogre_camera_node_ != nullptr) {
+    ogre_camera_node_->setPosition(vec);
+  }
 }
 
 void RenderWindowImpl::setCameraOrientation(const Ogre::Quaternion & quat)
 {
-  ogre_camera_node_->setOrientation(quat);
+  if (ogre_camera_node_ != nullptr) {
+    ogre_camera_node_->setOrientation(quat);
+  }
 }
 
 Ogre::Light * RenderWindowImpl::getDirectionalLight() const
@@ -551,12 +555,8 @@ void RenderWindowImpl::paintEvent(QPaintEvent * e)
     }
 
     if (ogre_root_->_fireFrameStarted()) {
-#if (OGRE_VERSION_MAJOR >= 1 && OGRE_VERSION_MINOR >= 6)
       ogre_root_->_fireFrameRenderingQueued();
-#endif
-
       render_window_->update();
-
       ogre_root_->_fireFrameEnded();
     }
 

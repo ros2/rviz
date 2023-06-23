@@ -155,9 +155,6 @@ ToString(const EnumType & enumValue)
 bool
 RenderWindow::event(QEvent * event)
 {
-  // qDebug() <<
-  //   "[" << QTime::currentTime().toString("HH:mm:ss:zzz") << "]:" <<
-  //   "event->type() ==" << ToString(event->type());
   switch (event->type()) {
     case QEvent::Resize:
       if (this->isExposed()) {
@@ -170,7 +167,6 @@ RenderWindow::event(QEvent * event)
     case QEvent::Type::MouseMove:
     case QEvent::Type::MouseButtonPress:
     case QEvent::Type::MouseButtonRelease:
-      // case QEvent::Type::MouseButtonRelease:
       if (on_mouse_events_callback_) {
         on_mouse_events_callback_(static_cast<QMouseEvent *>(event));
       }
@@ -184,7 +180,6 @@ RenderWindow::event(QEvent * event)
       QWindow::event(event);
       return false;
   }
-  // return QWindow::event(event);
 }
 
 void
@@ -198,30 +193,6 @@ RenderWindow::exposeEvent(QExposeEvent * expose_event)
   }
 }
 
-// bool
-// RenderWindow::eventFilter(QObject * target, QEvent * event)
-// {
-//   // if (target == this) {
-//   //   qDebug() <<
-//   //     "[" << QTime::currentTime().toString("HH:mm:ss:zzz") << "]:" <<
-//   //     "event->type() ==" << ToString(event->type()) <<
-//   //     "target ==" << target;
-//   //   switch (event->type()) {
-//   //     case QEvent::Resize:
-//   //       if (this->isExposed()) {
-//   //         impl_->resize(this->width(), this->height());
-//   //       }
-//   //       return false;
-//   //     case QEvent::UpdateRequest:
-//   //       this->renderNow();
-//   //       return true;
-//   //     default:
-//   //       return QWindow::event(event);
-//   //   }
-//   // }
-//   QWindow::eventFilter(target, event);
-//   return false;
-// }
 
 void
 RenderWindowOgreAdapter::setOgreCamera(RenderWindow * render_window, Ogre::Camera * ogre_camera)

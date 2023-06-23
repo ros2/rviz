@@ -93,18 +93,6 @@ public:
   void
   setupSceneAfterInit(setupSceneCallback setup_scene_callback);
 
-#if 0
-  /**
-   * Set a callback which is called before each render
-   * @param func The callback functor
-   */
-  virtual void setPreRenderCallback(boost::function<void()> func);
-  /**
-     * Set a callback which is called after each render
-     * @param func The callback functor
-     */
-  virtual void setPostRenderCallback(boost::function<void()> func);
-#endif
 
   /// Get the associated Ogre viewport.
   /**
@@ -138,28 +126,7 @@ public:
 
   void addListener(Ogre::RenderTargetListener * listener);
   void removeListener(Ogre::RenderTargetListener * listener);
-#if 0
-  /**
-   * \brief Set the scale of the orthographic window.  Only valid for an orthographic camera.
-   * @param scale The scale
-   */
-  void setOrthoScale(float scale);
 
-  /** \brief Enable or disable stereo rendering
-   * If stereo is not supported this is ignored.
-   * @return the old setting (whether stereo was enabled before)
-   */
-  bool enableStereo(bool enable);
-
-  /** \brief Prepare to render in stereo if enabled and supported. */
-  void setupStereo();
-
-  void setAutoRender(bool auto_render) {auto_render_ = auto_render;}
-
-  ////// Functions mimicked from Ogre::Viewport to satisfy timing of
-  ////// after-constructor creation of Ogre::RenderWindow.
-  void setOverlaysEnabled(bool overlays_enabled);
-#endif
   void setBackgroundColor(Ogre::ColourValue color);
 
   void setVisibilityMask(uint32_t mask);

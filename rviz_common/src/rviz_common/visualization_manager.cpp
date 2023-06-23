@@ -54,7 +54,6 @@
 #include <QTimer>  // NOLINT: cpplint cannot handle include order here
 #include <QWindow>  // NOLINT: cpplint cannot handle include order here
 
-// #include "tf/transform_listener.h"
 #include "rclcpp/clock.hpp"
 #include "rclcpp/time.hpp"
 #include "rviz_rendering/material_manager.hpp"
@@ -66,9 +65,6 @@
 #include "./displays_panel.hpp"
 #include "frame_manager.hpp"
 #include "rviz_common/load_resource.hpp"
-// #include "./ogre_helpers/ogre_render_queue_clearer.hpp"
-// #include "./ogre_helpers/qt_ogre_render_window.hpp"
-// #include "./ogre_helpers/render_system.hpp"
 #include "rviz_common/properties/color_property.hpp"
 #include "rviz_common/properties/int_property.hpp"
 #include "rviz_common/properties/parse_color.hpp"
@@ -85,11 +81,8 @@
 #include "rviz_common/interaction/view_picker_iface.hpp"
 #include "rviz_common/tool.hpp"
 #include "rviz_common/tool_manager.hpp"
-// #include "rviz_common/view_controller.hpp"
 #include "rviz_common/view_manager.hpp"
-// #include "./viewport_mouse_event.hpp"
 
-// #include "rviz/window_manager_interface.h"
 
 namespace rviz_common
 {
@@ -131,10 +124,6 @@ private:
 class VisualizationManagerPrivate
 {
 public:
-  // ros::CallbackQueue threaded_queue_;
-  // boost::thread_group threaded_queue_threads_;
-  // ros::NodeHandle update_nh_;
-  // ros::NodeHandle threaded_nh_;
   std::mutex render_mutex_;
 };
 
@@ -662,7 +651,7 @@ void VisualizationManager::handleMouseEvent(const ViewportMouseEvent & vme)
   int flags = 0;
   if (current_tool) {
     ViewportMouseEvent _vme = vme;
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+
     QWindow * window = vme.panel->windowHandle();
     if (window) {
       double pixel_ratio = window->devicePixelRatio();
@@ -671,7 +660,7 @@ void VisualizationManager::handleMouseEvent(const ViewportMouseEvent & vme)
       _vme.last_x = static_cast<int>(pixel_ratio * _vme.last_x);
       _vme.last_y = static_cast<int>(pixel_ratio * _vme.last_y);
     }
-#endif
+
     flags = current_tool->processMouseEvent(_vme);
     vme.panel->setCursor(current_tool->getCursor());
     vme.panel->getRenderWindow()->setCursor(current_tool->getCursor());

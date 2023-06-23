@@ -2,6 +2,27 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+12.6.1 (2023-06-12)
+-------------------
+* Add a libqt5-svg dependency to rviz_common. (`#992 <https://github.com/ros2/rviz/issues/992>`_)
+* Contributors: Chris Lalancette
+
+12.6.0 (2023-06-07)
+-------------------
+* Remove onHelpWiki. (`#985 <https://github.com/ros2/rviz/issues/985>`_)
+* Contributors: Chris Lalancette
+
+12.5.1 (2023-05-11)
+-------------------
+* Clean Code (`#975 <https://github.com/ros2/rviz/issues/975>`_)
+* Contributors: mosfet80
+
+12.5.0 (2023-04-28)
+-------------------
+
+12.4.0 (2023-04-18)
+-------------------
+
 12.3.2 (2023-04-11)
 -------------------
 * Update Frame shortcut (`#958 <https://github.com/ros2/rviz/issues/958>`_)
