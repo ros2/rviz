@@ -291,7 +291,7 @@ void AssimpLoader::setLightColorsFromAssimp(
       uint32_t uv_index;
       ai_material->GetTexture(aiTextureType_DIFFUSE, 0, &texture_name, &mapping, &uv_index);
       std::string texture_path;
-      const aiTexture *texture = ai_scene->GetEmbeddedTexture(texture_name.C_Str());
+      const aiTexture * texture = ai_scene->GetEmbeddedTexture(texture_name.C_Str());
       if (texture == nullptr) {
         // It's not an embedded texture. We have to go find it.
         // Assume textures are in paths relative to the mesh
@@ -350,7 +350,7 @@ void AssimpLoader::setLightColorsFromAssimp(
 }
 
 void AssimpLoader::loadEmbeddedTexture(
-  const aiTexture *texture, const std::string &resource_path)
+  const aiTexture * texture, const std::string &resource_path)
 {
   // use the format hint to try to load the image
   std::string format_hint(
@@ -358,17 +358,17 @@ void AssimpLoader::loadEmbeddedTexture(
     strnlen(texture->achFormatHint, sizeof(texture->achFormatHint)));
 
   Ogre::DataStreamPtr stream(
-      new Ogre::MemoryDataStream(
-          (unsigned char *)texture->pcData, texture->mWidth));
+    new Ogre::MemoryDataStream(
+      (unsigned char *)texture->pcData, texture->mWidth));
 
   try {
     Ogre::Image image;
     image.load(stream, format_hint.c_str());
     Ogre::TextureManager::getSingleton().loadImage(
-        resource_path, ROS_PACKAGE_NAME, image);
+      resource_path, ROS_PACKAGE_NAME, image);
   } catch (Ogre::Exception & e) {
     RVIZ_RENDERING_LOG_ERROR_STREAM(
-        "Could not load texture [" << resource_path.c_str() <<
+      "Could not load texture [" << resource_path.c_str() <<
         "] with format hint [" << format_hint << "]: " << e.what());
   }
 }
