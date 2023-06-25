@@ -41,9 +41,9 @@ macro(build_assimp)
   endif()
 
   include(ExternalProject)
-  ExternalProject_Add(assimp-5.2.5
-    URL https://github.com/assimp/assimp/archive/v5.2.5.tar.gz
-    URL_MD5 0b5a5a2714f1126b9931cdb95f512c91
+  ExternalProject_Add(assimp-5.2.2
+    URL https://github.com/assimp/assimp/archive/v5.2.2.tar.gz
+    URL_MD5 800322aa3b2a34dcba1fdad64fb00f1b
     TIMEOUT 600
     LOG_CONFIGURE ${should_log}
     LOG_BUILD ${should_log}
@@ -71,7 +71,7 @@ set(ON 1)
 
 find_package(assimp QUIET)
 
-if(FORCE_BUILD_VENDOR_PKG OR NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LESS 5.2.5)
+if(FORCE_BUILD_VENDOR_PKG OR NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LESS 5.2.2)
   build_assimp()
 
   if(WIN32)
