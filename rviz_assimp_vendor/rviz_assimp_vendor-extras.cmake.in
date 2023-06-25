@@ -12,13 +12,9 @@ message(STATUS "Setting assimp_DIR to: '${assimp_DIR}'")
 
 find_package(assimp REQUIRED QUIET)
 
-# workaround bug in Assimp 4.1.0 https://github.com/assimp/assimp/issues/1914
-# Affecting Ubuntu package: libassimp-dev 4.1.0~dfsg-3, Brew: assimp 4.1.0
-#string(REPLACE "/lib/lib/" "/lib/" ASSIMP_LIBRARY_DIRS "${ASSIMP_LIBRARY_DIRS}")
-#string(REGEX REPLACE "/lib/include$" "/include" ASSIMP_INCLUDE_DIRS "${ASSIMP_INCLUDE_DIRS}")
 
 # Fix for https://github.com/ros2/ros2/issues/1222
-if(TARGET assimp::assimp AND "${assimp_VERSION}" VERSION_GREATER 5.2.5)
+if(TARGET assimp::assimp AND "${assimp_VERSION}" VERSION_GREATER 5.2.2)
   set(rviz_assimp_vendor_LIBRARIES assimp::assimp)
 else()
   set(rviz_assimp_vendor_LIBRARIES)
