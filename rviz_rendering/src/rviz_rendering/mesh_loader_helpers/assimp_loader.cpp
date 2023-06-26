@@ -352,6 +352,11 @@ void AssimpLoader::setLightColorsFromAssimp(
 void AssimpLoader::loadEmbeddedTexture(
   const aiTexture * texture, const std::string & resource_path)
 {
+  if (texture == nullptr) {
+    RVIZ_RENDERING_LOG_ERROR_STREAM("null texture!");
+    return;
+  }
+
   // use the format hint to try to load the image
   std::string format_hint(
     texture->achFormatHint,
