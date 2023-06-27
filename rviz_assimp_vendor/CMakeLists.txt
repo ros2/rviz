@@ -22,10 +22,13 @@ if(MSVC)
 else()
   set(ASSIMP_CXX_FLAGS "-std=c++14 ${CMAKE_CXX_FLAGS}")
   set(ASSIMP_CXX_FLAGS "-Wno-address-of-packed-member ${ASSIMP_CXX_FLAGS}")
-  set(ASSIMP_CXX_FLAGS "-Wno-catch-value ${ASSIMP_CXX_FLAGS}")
-  set(ASSIMP_CXX_FLAGS "-Wno-class-memaccess ${ASSIMP_CXX_FLAGS}")
   set(ASSIMP_CXX_FLAGS "-Wno-range-loop-construct ${ASSIMP_CXX_FLAGS}")
   set(ASSIMP_CXX_FLAGS "-Wno-tautological-compare ${ASSIMP_CXX_FLAGS}")
+
+  if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    set(ASSIMP_CXX_FLAGS "-Wno-class-memaccess ${ASSIMP_CXX_FLAGS}")
+    set(ASSIMP_CXX_FLAGS "-Wno-catch-value ${ASSIMP_CXX_FLAGS}")
+  endif()
 endif()
 
 ament_vendor(assimp_vendor
