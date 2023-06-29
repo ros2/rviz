@@ -2,6 +2,15 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+12.6.1 (2023-06-12)
+-------------------
+
+12.6.0 (2023-06-07)
+-------------------
+* CMake: rename FeatureSummary.cmake to avoid name clashes (`#953 <https://github.com/ros2/rviz/issues/953>`_)
+* FIX CVE in external libraries (`#961 <https://github.com/ros2/rviz/issues/961>`_)
+* Contributors: Gökçe Aydos, mosfet80
+
 12.5.1 (2023-05-11)
 -------------------
 
