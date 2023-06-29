@@ -21,11 +21,6 @@ if(MSVC)
   set(ASSIMP_CXX_FLAGS "/wd4700 ${ASSIMP_CXX_FLAGS}")
 else()
   set(ASSIMP_CXX_FLAGS "-std=c++14 ${CMAKE_CXX_FLAGS}")
-  set(ASSIMP_CXX_FLAGS "-Wno-address-of-packed-member ${ASSIMP_CXX_FLAGS}")
-  set(ASSIMP_CXX_FLAGS "-Wno-catch-value ${ASSIMP_CXX_FLAGS}")
-  set(ASSIMP_CXX_FLAGS "-Wno-class-memaccess ${ASSIMP_CXX_FLAGS}")
-  set(ASSIMP_CXX_FLAGS "-Wno-range-loop-construct ${ASSIMP_CXX_FLAGS}")
-  set(ASSIMP_CXX_FLAGS "-Wno-tautological-compare ${ASSIMP_CXX_FLAGS}")
 endif()
 
 ament_vendor(assimp_vendor
