@@ -49,9 +49,10 @@
 
 namespace rviz_common
 {
-class RVIZ_COMMON_PUBLIC MultiLayerDepthException : public std::exception
+class MultiLayerDepthException : public std::exception
 {
 public:
+  RVIZ_COMMON_PUBLIC
   explicit MultiLayerDepthException(const std::string & error_msg)
   : std::exception(), error_msg_(error_msg)
   {
@@ -74,32 +75,28 @@ class RVIZ_COMMON_PUBLIC MultiLayerDepth
 {
 public:
   MultiLayerDepth()
-  : shadow_time_out_(30.0), shadow_distance_(0.01) {}
+  : shadow_time_out_(30.0), shadow_distance_(0.01f) {}
   virtual ~MultiLayerDepth()
   {
   }
 
-  RVIZ_COMMON_PUBLIC
   void setShadowTimeOut(double time_out)
   {
     shadow_time_out_ = time_out;
   }
 
-  RVIZ_COMMON_PUBLIC
   void enableOcclusionCompensation(bool occlusion_compensation)
   {
     occlusion_compensation_ = occlusion_compensation;
     reset();
   }
 
-  RVIZ_COMMON_PUBLIC
   sensor_msgs::msg::PointCloud2::SharedPtr
   generatePointCloudFromDepth(
     const sensor_msgs::msg::Image::ConstSharedPtr & depth_msg,
     const sensor_msgs::msg::Image::ConstSharedPtr & color_msg,
     sensor_msgs::msg::CameraInfo::ConstSharedPtr camera_info_msg);
 
-  RVIZ_COMMON_PUBLIC
   void reset()
   {
     if (occlusion_compensation_) {

@@ -140,14 +140,14 @@ void MultiLayerDepth::initializeConversion(
     double scale_y = camera_info_msg->binning_y > 1 ? (1.0 / camera_info_msg->binning_y) : 1.0;
 
     // Use correct principal point from calibration
-    float center_x = (camera_info_msg->p[2] - camera_info_msg->roi.x_offset) * scale_x;
-    float center_y = (camera_info_msg->p[6] - camera_info_msg->roi.y_offset) * scale_y;
+    float center_x = static_cast<float>((camera_info_msg->p[2] - camera_info_msg->roi.x_offset) * scale_x);
+    float center_y = static_cast<float>((camera_info_msg->p[6] - camera_info_msg->roi.y_offset) * scale_y);
 
     double fx = camera_info_msg->p[0] * scale_x;
     double fy = camera_info_msg->p[5] * scale_y;
 
-    float constant_x = 1.0f / fx;
-    float constant_y = 1.0f / fy;
+    float constant_x = static_cast<float>(1.0f / fx);
+    float constant_y = static_cast<float>(1.0f / fy);
 
     projection_map_x_.resize(width);
     projection_map_y_.resize(height);
@@ -530,28 +530,28 @@ sensor_msgs::msg::PointCloud2::SharedPtr MultiLayerDepth::initPointCloud()
   point_cloud_out->fields[0].name = "x";
   point_cloud_out->fields[0].datatype = sensor_msgs::msg::PointField::FLOAT32;
   point_cloud_out->fields[0].count = 1;
-  point_cloud_out->fields[0].offset = point_offset;
+  point_cloud_out->fields[0].offset = static_cast<uint32_t>(point_offset);
   point_offset += sizeof(float);
 
   point_cloud_out->fields[1].name = "y";
   point_cloud_out->fields[1].datatype = sensor_msgs::msg::PointField::FLOAT32;
   point_cloud_out->fields[1].count = 1;
-  point_cloud_out->fields[1].offset = point_offset;
+  point_cloud_out->fields[1].offset = static_cast<uint32_t>(point_offset);
   point_offset += sizeof(float);
 
   point_cloud_out->fields[2].name = "z";
   point_cloud_out->fields[2].datatype = sensor_msgs::msg::PointField::FLOAT32;
   point_cloud_out->fields[2].count = 1;
-  point_cloud_out->fields[2].offset = point_offset;
+  point_cloud_out->fields[2].offset = static_cast<uint32_t>(point_offset);
   point_offset += sizeof(float);
 
   point_cloud_out->fields[3].name = "rgb";
   point_cloud_out->fields[3].datatype = sensor_msgs::msg::PointField::FLOAT32;
   point_cloud_out->fields[3].count = 1;
-  point_cloud_out->fields[3].offset = point_offset;
+  point_cloud_out->fields[3].offset = static_cast<uint32_t>(point_offset);
   point_offset += sizeof(float);
 
-  point_cloud_out->point_step = point_offset;
+  point_cloud_out->point_step = static_cast<uint32_t>(point_offset);
 
   point_cloud_out->is_bigendian = false;
   point_cloud_out->is_dense = false;
