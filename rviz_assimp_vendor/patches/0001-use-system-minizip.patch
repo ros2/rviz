@@ -1,0 +1,20 @@
+Description: fix compilation with system provided minizip package
+ upstream vendored an a forked version of minizip that has not seen any love for 6 years...
+Origin: https://github.com/assimp/assimp/issues/4334
+Forwarded: https://github.com/assimp/assimp/issues/4334
+Reviewed-by: IOhannes m zmölnig
+Last-Update: 2022-01-19
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+--- assimp.orig/code/Common/ZipArchiveIOSystem.cpp
++++ assimp/code/Common/ZipArchiveIOSystem.cpp
+@@ -196,7 +196,9 @@
+     zlib_filefunc_def mapping;
+ 
+     mapping.zopen_file = (open_file_func)open;
++#ifdef ZOPENDISK64
+     mapping.zopendisk_file = (opendisk_file_func)opendisk;
++#endif
+     mapping.zread_file = (read_file_func)read;
+     mapping.zwrite_file = (write_file_func)write;
+     mapping.ztell_file = (tell_file_func)tell;
