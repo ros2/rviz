@@ -17,6 +17,10 @@ if(NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LESS 5.2.0)
 endif()
 
 if(MSVC)
+  # TODO(clalancette): When building assimp 5.2.2 on Windows Debug,
+  # it fails to install the PDB file with a "File exists" error.
+  # Since we don't really need the PDB file, just unconditionally
+  # disable it.
   set(ASSIMP_CMAKE_FLAGS "-DASSIMP_INSTALL_PDB=OFF")
 
   set(ASSIMP_CXX_FLAGS "/EHsc ${CMAKE_CXX_FLAGS}")
