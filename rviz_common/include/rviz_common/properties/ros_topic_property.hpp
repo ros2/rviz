@@ -78,7 +78,8 @@ private:
   QString message_type_;
 };
 
-class RosFilteredTopicProperty : public rviz_common::properties::RosTopicProperty
+class RVIZ_COMMON_PUBLIC RosFilteredTopicProperty
+  : public rviz_common::properties::RosTopicProperty
 {
   Q_OBJECT
 

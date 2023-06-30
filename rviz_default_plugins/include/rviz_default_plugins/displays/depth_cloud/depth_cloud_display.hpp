@@ -65,6 +65,8 @@
 #include <sensor_msgs/msg/camera_info.hpp>
 #endif
 
+#include "rviz_default_plugins/visibility_control.hpp"
+
 #include <QMap>
 #include <QString>
 
@@ -77,7 +79,7 @@ namespace displays
  * \class DepthCloudDisplay
  *
  */
-class DepthCloudDisplay : public rviz_common::Display
+class RVIZ_DEFAULT_PLUGINS_PUBLIC DepthCloudDisplay : public rviz_common::Display
 {
   Q_OBJECT
 
