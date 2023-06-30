@@ -67,8 +67,8 @@
 
 #include "rviz_default_plugins/visibility_control.hpp"
 
-#include <QMap>
-#include <QString>
+#include <QMap>  // NOLINT: cpplint cannot handle the include order here
+#include <QString>  // NOLINT: cpplint cannot handle the include order here
 
 namespace rviz_default_plugins
 {

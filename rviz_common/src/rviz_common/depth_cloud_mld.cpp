@@ -140,8 +140,10 @@ void MultiLayerDepth::initializeConversion(
     double scale_y = camera_info_msg->binning_y > 1 ? (1.0 / camera_info_msg->binning_y) : 1.0;
 
     // Use correct principal point from calibration
-    float center_x = static_cast<float>((camera_info_msg->p[2] - camera_info_msg->roi.x_offset) * scale_x);
-    float center_y = static_cast<float>((camera_info_msg->p[6] - camera_info_msg->roi.y_offset) * scale_y);
+    float center_x =
+      static_cast<float>((camera_info_msg->p[2] - camera_info_msg->roi.x_offset) * scale_x);
+    float center_y =
+      static_cast<float>((camera_info_msg->p[6] - camera_info_msg->roi.y_offset) * scale_y);
 
     double fx = camera_info_msg->p[0] * scale_x;
     double fy = camera_info_msg->p[5] * scale_y;
