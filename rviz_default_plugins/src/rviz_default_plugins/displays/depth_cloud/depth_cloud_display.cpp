@@ -146,7 +146,7 @@ DepthCloudDisplay::DepthCloudDisplay()
     new rviz_common::properties::FloatProperty(
     "Auto Size Factor", 1, "Scaling factor to be applied to the auto size.",
     use_auto_size_property_, SLOT(updateAutoSizeFactor()), this);
-  auto_size_factor_property_->setMin(0.0001);
+  auto_size_factor_property_->setMin(0.0001f);
 
   use_occlusion_compensation_property_ =
     new rviz_common::properties::BoolProperty(
@@ -541,8 +541,8 @@ void DepthCloudDisplay::scanForTransportSubscriberPlugins()
       std::shared_ptr<image_transport::SubscriberPlugin> sub =
         sub_loader.createSharedInstance(lookup_name);
       transport_plugin_types_.insert(transport_name);
-    } catch (const pluginlib::LibraryLoadException & e) {
-    } catch (const pluginlib::CreateClassException & e) {
+    } catch (const pluginlib::LibraryLoadException & /*e*/) {
+    } catch (const pluginlib::CreateClassException & /*e*/) {
     }
   }
 }
