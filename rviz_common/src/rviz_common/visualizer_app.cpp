@@ -208,7 +208,7 @@ bool VisualizerApp::init(int argc, char ** argv)
 //  bool disable_anti_aliasing = false;
 //  bool disable_stereo = false;
 
-  if (app_) { parser.process(*app_); }
+  if (app_) {parser.process(*app_);}
 
   enable_ogre_log = parser.isSet(ogre_log_option);
 //    disable_stereo = parser.isSet(no_stereo_option);
