@@ -680,10 +680,12 @@ if(BUILD_TESTING)
     target_link_libraries(axes_display_visual_test ${TEST_FIXTURE_LIBRARIES} rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
 
+  add_library(point_cloud_common_page_object STATIC test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp)
+  target_link_libraries(point_cloud_common_page_object PRIVATE Qt5::Test rviz_visual_testing_framework::rviz_visual_testing_framework)
+
   ament_add_gtest(camera_display_visual_test
     test/rviz_default_plugins/displays/camera/camera_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/camera_display_page_object.cpp
-    test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -698,12 +700,12 @@ if(BUILD_TESTING)
       Qt5::Test
       ${geometry_msgs_TARGETS}
       tf2::tf2
+      point_cloud_common_page_object
     )
   endif()
 
   ament_add_gtest(fluid_pressure_display_visual_test
     test/rviz_default_plugins/displays/fluid_pressure/fluid_pressure_display_visual_test.cpp
-    test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -715,6 +717,7 @@ if(BUILD_TESTING)
       Qt5::Test
       rclcpp::rclcpp
       pointcloud_messages
+      point_cloud_common_page_object
     )
   endif()
 
@@ -750,7 +753,6 @@ if(BUILD_TESTING)
 
   ament_add_gtest(illuminance_display_visual_test
     test/rviz_default_plugins/displays/illuminance/illuminance_display_visual_test.cpp
-    test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -761,6 +763,7 @@ if(BUILD_TESTING)
       Qt5::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework
       pointcloud_messages
+      point_cloud_common_page_object
     )
   endif()
 
@@ -792,7 +795,6 @@ if(BUILD_TESTING)
 
   ament_add_gtest(laser_scan_display_visual_test
     test/rviz_default_plugins/displays/laser_scan/laser_scan_display_visual_test.cpp
-    test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -802,6 +804,7 @@ if(BUILD_TESTING)
       ${TEST_FIXTURE_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework
       Qt5::Test
+      point_cloud_common_page_object
     )
   endif()
 
@@ -922,7 +925,6 @@ if(BUILD_TESTING)
 
   ament_add_gtest(point_cloud_display_visual_test
     test/rviz_default_plugins/displays/pointcloud/point_cloud_display_visual_test.cpp
-    test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -937,12 +939,12 @@ if(BUILD_TESTING)
       rclcpp::rclcpp
       ${std_msgs_TARGETS}
       ${sensor_msgs_TARGETS}
+      point_cloud_common_page_object
     )
   endif()
 
   ament_add_gtest(point_cloud2_display_visual_test
     test/rviz_default_plugins/displays/pointcloud/point_cloud2_display_visual_test.cpp
-    test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -953,6 +955,7 @@ if(BUILD_TESTING)
       Qt5::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework
       pointcloud_messages
+      point_cloud_common_page_object
     )
   endif()
 
@@ -1029,7 +1032,6 @@ if(BUILD_TESTING)
 
   ament_add_gtest(relative_humidity_display_visual_test
     test/rviz_default_plugins/displays/relative_humidity/relative_humidity_display_visual_test.cpp
-    test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -1039,6 +1041,7 @@ if(BUILD_TESTING)
       ${TEST_FIXTURE_LIBRARIES}
       Qt5::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework
+      point_cloud_common_page_object
     )
   endif()
 
@@ -1059,7 +1062,6 @@ if(BUILD_TESTING)
 
   ament_add_gtest(temperature_display_visual_test
     test/rviz_default_plugins/displays/temperature/temperature_display_visual_test.cpp
-    test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -1069,6 +1071,7 @@ if(BUILD_TESTING)
       ${TEST_FIXTURE_LIBRARIES}
       Qt5::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework
+      point_cloud_common_page_object
     )
   endif()
 
