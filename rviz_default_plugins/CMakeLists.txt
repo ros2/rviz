@@ -365,7 +365,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(fps_view_controller_test
     test/rviz_default_plugins/view_controllers/fps/fps_view_controller_test.cpp
-    test/rviz_default_plugins/view_controllers/view_controller_test_fixture.hpp
     ${TEST_FIXTURE_SOURCES_WITH_MOCK}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET fps_view_controller_test)
@@ -483,7 +482,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(orbit_view_controller_test
     test/rviz_default_plugins/view_controllers/orbit/orbit_view_controller_test.cpp
-    test/rviz_default_plugins/view_controllers/view_controller_test_fixture.hpp
     ${TEST_FIXTURE_SOURCES_WITH_MOCK}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET orbit_view_controller_test)
@@ -494,7 +492,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(ortho_view_controller_test
     test/rviz_default_plugins/view_controllers/ortho/ortho_view_controller_test.cpp
-    test/rviz_default_plugins/view_controllers/view_controller_test_fixture.hpp
     ${TEST_FIXTURE_SOURCES_WITH_MOCK}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET ortho_view_controller_test)
@@ -648,7 +645,6 @@ if(BUILD_TESTING)
 
   ament_add_gmock(xy_orbit_view_controller_test
     test/rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller_test.cpp
-    test/rviz_default_plugins/view_controllers/view_controller_test_fixture.hpp
     ${TEST_FIXTURE_SOURCES_WITH_MOCK}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET xy_orbit_view_controller_test)
@@ -694,11 +690,8 @@ if(BUILD_TESTING)
 
   ament_add_gtest(camera_display_visual_test
     test/rviz_default_plugins/displays/camera/camera_display_visual_test.cpp
-    test/rviz_default_plugins/publishers/camera_info_publisher.hpp
     test/rviz_default_plugins/page_objects/camera_display_page_object.cpp
     test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
-    test/rviz_default_plugins/publishers/image_publisher.hpp
-    test/rviz_default_plugins/publishers/point_cloud_publisher.hpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -717,7 +710,6 @@ if(BUILD_TESTING)
     test/rviz_default_plugins/displays/fluid_pressure/fluid_pressure_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
     test/rviz_default_plugins/pointcloud_messages.cpp
-    test/rviz_default_plugins/publishers/fluid_pressure_publisher.hpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -767,7 +759,6 @@ if(BUILD_TESTING)
     test/rviz_default_plugins/displays/illuminance/illuminance_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
     test/rviz_default_plugins/pointcloud_messages.cpp
-    test/rviz_default_plugins/publishers/illuminance_publisher.hpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -785,7 +776,6 @@ if(BUILD_TESTING)
   ament_add_gtest(image_display_visual_test
     test/rviz_default_plugins/displays/image/image_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/image_display_page_object.cpp
-    test/rviz_default_plugins/publishers/image_publisher.hpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -832,8 +822,6 @@ if(BUILD_TESTING)
     test/rviz_default_plugins/displays/map/map_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/map_display_page_object.cpp
     test/rviz_default_plugins/page_objects/marker_display_page_object.cpp
-    test/rviz_default_plugins/publishers/map_publisher.hpp
-    test/rviz_default_plugins/publishers/single_marker_publisher.hpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -850,7 +838,6 @@ if(BUILD_TESTING)
     test/rviz_default_plugins/displays/marker_array/marker_array_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/marker_array_display_page_object.cpp
     test/rviz_default_plugins/page_objects/marker_display_page_object.cpp
-    test/rviz_default_plugins/publishers/marker_array_publisher.hpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -866,7 +853,6 @@ if(BUILD_TESTING)
   ament_add_gtest(marker_display_visual_test
     test/rviz_default_plugins/displays/marker/marker_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/marker_display_page_object.cpp
-    test/rviz_default_plugins/publishers/marker_publisher.hpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -882,7 +868,6 @@ if(BUILD_TESTING)
   ament_add_gtest(odometry_display_visual_test
     test/rviz_default_plugins/displays/odometry/odometry_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/odometry_display_page_object.cpp
-    test/rviz_default_plugins/publishers/odometry_publisher.hpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -898,7 +883,6 @@ if(BUILD_TESTING)
   ament_add_gtest(path_display_visual_test
     test/rviz_default_plugins/displays/path/path_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/path_display_page_object.cpp
-    test/rviz_default_plugins/publishers/path_publisher.hpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -915,7 +899,6 @@ if(BUILD_TESTING)
   ament_add_gtest(point_display_visual_test
     test/rviz_default_plugins/displays/point/point_stamped_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/point_display_page_object.cpp
-    test/rviz_default_plugins/publishers/point_stamped_publisher.hpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -931,7 +914,6 @@ if(BUILD_TESTING)
   ament_add_gtest(point_cloud_display_visual_test
     test/rviz_default_plugins/displays/pointcloud/point_cloud_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
-    test/rviz_default_plugins/publishers/point_cloud_publisher.hpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -950,7 +932,6 @@ if(BUILD_TESTING)
     test/rviz_default_plugins/displays/pointcloud/point_cloud2_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
     test/rviz_default_plugins/pointcloud_messages.cpp
-    test/rviz_default_plugins/publishers/point_cloud2_publisher.hpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -969,7 +950,6 @@ if(BUILD_TESTING)
     test/rviz_default_plugins/displays/pose_array/pose_array_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/pose_array_display_page_object.cpp
     test/rviz_default_plugins/page_objects/pose_display_page_object.cpp
-    test/rviz_default_plugins/publishers/pose_array_publisher.hpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -985,7 +965,6 @@ if(BUILD_TESTING)
   ament_add_gtest(pose_display_visual_test
     test/rviz_default_plugins/displays/pose/pose_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/pose_display_page_object.cpp
-    test/rviz_default_plugins/publishers/pose_publisher.hpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -1001,7 +980,6 @@ if(BUILD_TESTING)
   ament_add_gtest(pose_with_covariance_display_visual_test
     test/rviz_default_plugins/displays/pose_covariance/pose_with_covariance_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/pose_with_covariance_display_page_object.cpp
-    test/rviz_default_plugins/publishers/pose_with_covariance_publisher.hpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -1033,7 +1011,6 @@ if(BUILD_TESTING)
     test/rviz_default_plugins/displays/relative_humidity/relative_humidity_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
     test/rviz_default_plugins/pointcloud_messages.cpp
-    test/rviz_default_plugins/publishers/relative_humidity_publisher.hpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -1068,7 +1045,6 @@ if(BUILD_TESTING)
     test/rviz_default_plugins/displays/temperature/temperature_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp
     test/rviz_default_plugins/pointcloud_messages.cpp
-    test/rviz_default_plugins/publishers/temperature_publisher.hpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
