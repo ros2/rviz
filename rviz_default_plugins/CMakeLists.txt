@@ -808,10 +808,12 @@ if(BUILD_TESTING)
     )
   endif()
 
+  add_library(marker_display_page_object STATIC test/rviz_default_plugins/page_objects/marker_display_page_object.cpp)
+  target_link_libraries(marker_display_page_object PRIVATE Qt5::Widgets rviz_visual_testing_framework::rviz_visual_testing_framework)
+
   ament_add_gtest(map_display_visual_test
     test/rviz_default_plugins/displays/map/map_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/map_display_page_object.cpp
-    test/rviz_default_plugins/page_objects/marker_display_page_object.cpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -826,13 +828,13 @@ if(BUILD_TESTING)
       ${geometry_msgs_TARGETS}
       ${nav_msgs_TARGETS}
       ${visualization_msgs_TARGETS}
+      marker_display_page_object
     )
   endif()
 
   ament_add_gtest(marker_array_display_visual_test
     test/rviz_default_plugins/displays/marker_array/marker_array_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/marker_array_display_page_object.cpp
-    test/rviz_default_plugins/page_objects/marker_display_page_object.cpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -845,12 +847,12 @@ if(BUILD_TESTING)
       rclcpp::rclcpp
       ${std_msgs_TARGETS}
       ${visualization_msgs_TARGETS}
+      marker_display_page_object
     )
   endif()
 
   ament_add_gtest(marker_display_visual_test
     test/rviz_default_plugins/displays/marker/marker_display_visual_test.cpp
-    test/rviz_default_plugins/page_objects/marker_display_page_object.cpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -863,6 +865,7 @@ if(BUILD_TESTING)
       rclcpp::rclcpp
       ${std_msgs_TARGETS}
       ${visualization_msgs_TARGETS}
+      marker_display_page_object
     )
   endif()
 
