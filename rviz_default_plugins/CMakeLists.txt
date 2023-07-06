@@ -319,31 +319,25 @@ if(BUILD_TESTING)
   # This is needed for the fixture sources down below...
   ament_find_gmock()
 
-  # We can't compile the fixtures into a library to be used by every test because that would require
-  # linking against gtest/gmock libraries, which would cause ODR violations down the line with
-  # ament_add_gmock.
+  add_library(ogre_testing_environment STATIC test/rviz_default_plugins/ogre_testing_environment.cpp)
+  target_link_libraries(ogre_testing_environment PRIVATE rviz_ogre_vendor::OgreMain rviz_rendering::rviz_rendering)
+
+  # We can't compile these fixtures into a library to be used by every test because that would
+  # require linking against gtest/gmock libraries, which would cause ODR violations down the line
+  # with ament_add_gmock.
   #
   # There are also issues even if we manage to defer the linking, because the fixture class inherits
   # from gtest classes, which are not exported.
-  set(TEST_FIXTURE_SOURCES
-    test/rviz_default_plugins/ogre_testing_environment.cpp
-  )
-
   set(TEST_FIXTURE_SOURCES_WITH_MOCK
     test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection.cpp
-    ${TEST_FIXTURE_SOURCES}
-  )
-
-  set(TEST_FIXTURE_LIBRARIES
-    rviz_ogre_vendor::OgreMain
-    rviz_rendering::rviz_rendering
   )
 
   set(TEST_FIXTURE_WITH_MOCK_LIBRARIES
-    ${TEST_FIXTURE_LIBRARIES}
     rclcpp::rclcpp
     rviz_common::rviz_common
+    rviz_ogre_vendor::OgreMain
+    ogre_testing_environment
   )
 
   ament_add_gmock(fps_view_controller_test
@@ -351,8 +345,13 @@ if(BUILD_TESTING)
     ${TEST_FIXTURE_SOURCES_WITH_MOCK}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET fps_view_controller_test)
-    target_include_directories(fps_view_controller_test PRIVATE test)
-    target_link_libraries(fps_view_controller_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins Qt5::Widgets)
+    target_include_directories(fps_view_controller_test PRIVATE ${TEST_INCLUDE_DIRS})
+    target_link_libraries(fps_view_controller_test
+      ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
+      rviz_default_plugins
+      Qt5::Widgets
+      ogre_testing_environment
+    )
   endif()
 
   ament_add_gmock(frame_info_test
@@ -361,7 +360,7 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET frame_info_test)
     target_include_directories(frame_info_test PRIVATE test)
-    target_link_libraries(frame_info_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins)
+    target_link_libraries(frame_info_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins ogre_testing_environment)
   endif()
 
   ament_add_gmock(get_transport_from_topic_test
@@ -369,7 +368,7 @@ if(BUILD_TESTING)
     ${TEST_FIXTURE_SOURCES_WITH_MOCK})
   if(TARGET get_transport_from_topic_test)
     target_include_directories(get_transport_from_topic_test PRIVATE test)
-    target_link_libraries(get_transport_from_topic_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins)
+    target_link_libraries(get_transport_from_topic_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins ogre_testing_environment)
   endif()
 
   ament_add_gmock(grid_cells_display_test
@@ -378,7 +377,7 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET grid_cells_display_test)
     target_include_directories(grid_cells_display_test PRIVATE test)
-    target_link_libraries(grid_cells_display_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins)
+    target_link_libraries(grid_cells_display_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins ogre_testing_environment)
   endif()
 
   ament_add_gmock(image_display_test
@@ -387,7 +386,7 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET image_display_test)
     target_include_directories(image_display_test PRIVATE test)
-    target_link_libraries(image_display_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} Qt5::Widgets rviz_default_plugins)
+    target_link_libraries(image_display_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} Qt5::Widgets rviz_default_plugins ogre_testing_environment)
   endif()
 
   add_library(marker_messages STATIC test/rviz_default_plugins/displays/marker/marker_messages.cpp)
@@ -417,6 +416,7 @@ if(BUILD_TESTING)
       rviz_default_plugins
       marker_messages
       ${visualization_msgs_TARGETS}
+      ogre_testing_environment
     )
   endif()
 
@@ -431,6 +431,7 @@ if(BUILD_TESTING)
       ${visualization_msgs_TARGETS}
       rviz_default_plugins
       marker_messages
+      ogre_testing_environment
     )
   endif()
 
@@ -440,7 +441,7 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET map_display_test)
     target_include_directories(map_display_test PRIVATE test)
-    target_link_libraries(map_display_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins)
+    target_link_libraries(map_display_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins ogre_testing_environment)
   endif()
 
   ament_add_gmock(measure_tool_test
@@ -449,7 +450,7 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET measure_tool_test)
     target_include_directories(measure_tool_test PRIVATE test)
-    target_link_libraries(measure_tool_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins)
+    target_link_libraries(measure_tool_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins ogre_testing_environment)
   endif()
 
   ament_add_gmock(odometry_display_test
@@ -458,7 +459,7 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET odometry_display_test)
     target_include_directories(odometry_display_test PRIVATE test)
-    target_link_libraries(odometry_display_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins)
+    target_link_libraries(odometry_display_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins ogre_testing_environment)
   endif()
 
   ament_add_gmock(odometry_ogre_helper_test
@@ -467,7 +468,7 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET odometry_ogre_helper_test)
     target_include_directories(odometry_ogre_helper_test PRIVATE test)
-    target_link_libraries(odometry_ogre_helper_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES})
+    target_link_libraries(odometry_ogre_helper_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} ogre_testing_environment)
   endif()
 
   ament_add_gmock(orbit_view_controller_test
@@ -476,7 +477,12 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET orbit_view_controller_test)
     target_include_directories(orbit_view_controller_test PRIVATE test)
-    target_link_libraries(orbit_view_controller_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} Qt5::Widgets rviz_default_plugins)
+    target_link_libraries(orbit_view_controller_test
+      ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
+      Qt5::Widgets
+      rviz_default_plugins
+      ogre_testing_environment
+    )
   endif()
 
   ament_add_gmock(ortho_view_controller_test
@@ -485,7 +491,12 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET ortho_view_controller_test)
     target_include_directories(ortho_view_controller_test PRIVATE test)
-    target_link_libraries(ortho_view_controller_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} Qt5::Widgets rviz_default_plugins)
+    target_link_libraries(ortho_view_controller_test
+      ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
+      Qt5::Widgets
+      rviz_default_plugins
+      ogre_testing_environment
+    )
   endif()
 
   ament_add_gmock(palette_builder_test
@@ -494,7 +505,7 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET palette_builder_test)
     target_include_directories(palette_builder_test PRIVATE test)
-    target_link_libraries(palette_builder_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins)
+    target_link_libraries(palette_builder_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins ogre_testing_environment)
   endif()
 
   ament_add_gmock(path_display_test
@@ -503,7 +514,12 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET path_display_test)
     target_include_directories(path_display_test PRIVATE test)
-    target_link_libraries(path_display_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} ${visualization_msgs_TARGETS} rviz_default_plugins)
+    target_link_libraries(path_display_test
+      ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
+      ${visualization_msgs_TARGETS}
+      rviz_default_plugins
+      ogre_testing_environment
+    )
   endif()
 
   add_library(pointcloud_messages STATIC test/rviz_default_plugins/pointcloud_messages.cpp)
@@ -525,6 +541,7 @@ if(BUILD_TESTING)
       ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
       rviz_default_plugins
       pointcloud_messages
+      ogre_testing_environment
     )
   endif()
 
@@ -538,6 +555,7 @@ if(BUILD_TESTING)
       ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
       rviz_default_plugins
       pointcloud_messages
+      ogre_testing_environment
     )
   endif()
 
@@ -547,7 +565,12 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET point_cloud_scalar_display_test)
     target_include_directories(point_cloud_scalar_display_test PRIVATE test)
-    target_link_libraries(point_cloud_scalar_display_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins ${sensor_msgs_TARGETS})
+    target_link_libraries(point_cloud_scalar_display_test
+      ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
+      rviz_default_plugins
+      ${sensor_msgs_TARGETS}
+      ogre_testing_environment
+    )
   endif()
 
   ament_add_gmock(point_cloud_transformers_test
@@ -566,6 +589,7 @@ if(BUILD_TESTING)
       Qt5::Widgets
       rviz_default_plugins
       pointcloud_messages
+      ogre_testing_environment
     )
   endif()
 
@@ -575,7 +599,12 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET point_display_test)
     target_include_directories(point_display_test PRIVATE test)
-    target_link_libraries(point_display_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} ${geometry_msgs_TARGETS} rviz_default_plugins)
+    target_link_libraries(point_display_test
+      ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
+      ${geometry_msgs_TARGETS}
+      rviz_default_plugins
+      ogre_testing_environment
+    )
   endif()
 
   ament_add_gmock(pose_array_display_test
@@ -584,7 +613,7 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET pose_array_display_test)
     target_include_directories(pose_array_display_test PRIVATE test)
-    target_link_libraries(pose_array_display_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins)
+    target_link_libraries(pose_array_display_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins ogre_testing_environment)
   endif()
 
   ament_add_gmock(pose_tool_test
@@ -593,7 +622,7 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET pose_tool_test)
     target_include_directories(pose_tool_test PRIVATE test)
-    target_link_libraries(pose_tool_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins)
+    target_link_libraries(pose_tool_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins ogre_testing_environment)
   endif()
 
   ament_add_gmock(range_display_test
@@ -602,7 +631,7 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET range_display_test)
     target_include_directories(range_display_test PRIVATE test)
-    target_link_libraries(range_display_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins)
+    target_link_libraries(range_display_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins ogre_testing_environment)
   endif()
 
   ament_add_gmock(robot_test
@@ -616,6 +645,7 @@ if(BUILD_TESTING)
       resource_retriever::resource_retriever
       Qt5::Widgets
       rviz_default_plugins
+      ogre_testing_environment
     )
   endif()
 
@@ -625,7 +655,12 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET ros_image_texture_test)
     target_include_directories(ros_image_texture_test PRIVATE test)
-    target_link_libraries(ros_image_texture_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} ${sensor_msgs_TARGETS} rviz_default_plugins)
+    target_link_libraries(ros_image_texture_test
+      ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
+      ${sensor_msgs_TARGETS}
+      rviz_default_plugins
+      ogre_testing_environment
+    )
   endif()
 
   ament_add_gmock(selection_tool_test
@@ -634,7 +669,7 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET selection_tool_test)
     target_include_directories(selection_tool_test PRIVATE test)
-    target_link_libraries(selection_tool_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins)
+    target_link_libraries(selection_tool_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins ogre_testing_environment)
   endif()
 
   ament_add_gmock(xy_orbit_view_controller_test
@@ -643,7 +678,12 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET xy_orbit_view_controller_test)
     target_include_directories(xy_orbit_view_controller_test PRIVATE test)
-    target_link_libraries(xy_orbit_view_controller_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} Qt5::Widgets rviz_default_plugins)
+    target_link_libraries(xy_orbit_view_controller_test
+      ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
+      Qt5::Widgets
+      rviz_default_plugins
+      ogre_testing_environment
+    )
   endif()
 
   ament_add_gmock(frame_transformer_tf_test
@@ -657,6 +697,7 @@ if(BUILD_TESTING)
       tf2_ros::tf2_ros
       ${geometry_msgs_TARGETS}
       rviz_default_plugins
+      ogre_testing_environment
     )
   endif()
 
@@ -666,18 +707,25 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET transformer_guard_test)
     target_include_directories(transformer_guard_test PRIVATE test)
-    target_link_libraries(transformer_guard_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} tf2_ros::tf2_ros rviz_default_plugins)
+    target_link_libraries(transformer_guard_test
+      ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
+      tf2_ros::tf2_ros
+      rviz_default_plugins
+      ogre_testing_environment
+    )
   endif()
 
   ament_add_gtest(axes_display_visual_test
     test/rviz_default_plugins/displays/axes/axes_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/axes_display_page_object.cpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET axes_display_visual_test)
     target_include_directories(axes_display_visual_test PRIVATE test)
-    target_link_libraries(axes_display_visual_test ${TEST_FIXTURE_LIBRARIES} rviz_visual_testing_framework::rviz_visual_testing_framework)
+    target_link_libraries(axes_display_visual_test
+      rviz_visual_testing_framework::rviz_visual_testing_framework
+      ogre_testing_environment
+    )
   endif()
 
   add_library(point_cloud_common_page_object STATIC test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp)
@@ -686,13 +734,11 @@ if(BUILD_TESTING)
   ament_add_gtest(camera_display_visual_test
     test/rviz_default_plugins/displays/camera/camera_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/camera_display_page_object.cpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET camera_display_visual_test)
     target_include_directories(camera_display_visual_test PRIVATE test)
     target_link_libraries(camera_display_visual_test
-      ${TEST_FIXTURE_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework
       rclcpp::rclcpp
       ${sensor_msgs_TARGETS}
@@ -706,13 +752,11 @@ if(BUILD_TESTING)
 
   ament_add_gtest(fluid_pressure_display_visual_test
     test/rviz_default_plugins/displays/fluid_pressure/fluid_pressure_display_visual_test.cpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET fluid_pressure_display_visual_test)
     target_include_directories(fluid_pressure_display_visual_test PRIVATE test)
     target_link_libraries(fluid_pressure_display_visual_test
-      ${TEST_FIXTURE_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework
       Qt5::Test
       rclcpp::rclcpp
@@ -724,13 +768,11 @@ if(BUILD_TESTING)
   ament_add_gtest(grid_display_visual_test
     test/rviz_default_plugins/displays/grid/grid_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/grid_display_page_object.cpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET grid_display_visual_test)
     target_include_directories(grid_display_visual_test PRIVATE test)
     target_link_libraries(grid_display_visual_test
-      ${TEST_FIXTURE_LIBRARIES}
       Qt5::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework
     )
@@ -739,13 +781,11 @@ if(BUILD_TESTING)
   ament_add_gtest(grid_cells_display_visual_test
     test/rviz_default_plugins/displays/grid_cells/grid_cells_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/grid_cells_display_page_object.cpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET grid_cells_display_visual_test)
     target_include_directories(grid_cells_display_visual_test PRIVATE test)
     target_link_libraries(grid_cells_display_visual_test
-      ${TEST_FIXTURE_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework
       ${nav_msgs_TARGETS}
     )
@@ -753,13 +793,11 @@ if(BUILD_TESTING)
 
   ament_add_gtest(illuminance_display_visual_test
     test/rviz_default_plugins/displays/illuminance/illuminance_display_visual_test.cpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET illuminance_display_visual_test)
     target_include_directories(illuminance_display_visual_test PRIVATE test)
     target_link_libraries(illuminance_display_visual_test
-      ${TEST_FIXTURE_LIBRARIES}
       Qt5::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework
       pointcloud_messages
@@ -770,13 +808,11 @@ if(BUILD_TESTING)
   ament_add_gtest(image_display_visual_test
     test/rviz_default_plugins/displays/image/image_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/image_display_page_object.cpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET image_display_visual_test)
     target_include_directories(image_display_visual_test PRIVATE test)
     target_link_libraries(image_display_visual_test
-      ${TEST_FIXTURE_LIBRARIES}
       Qt5::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework
       rclcpp::rclcpp
@@ -787,21 +823,24 @@ if(BUILD_TESTING)
 
   ament_add_gtest(interactive_marker_namespace_property_test
     test/rviz_default_plugins/displays/interactive_markers/interactive_marker_namespace_property_test.cpp
-    ${TEST_FIXTURE_SOURCES})
+    ${SKIP_VISUAL_TESTS}
+    TIMEOUT 180)
   if(TARGET interactive_marker_namespace_property_test)
     target_include_directories(interactive_marker_namespace_property_test PRIVATE test)
-    target_link_libraries(interactive_marker_namespace_property_test ${TEST_FIXTURE_LIBRARIES} rviz_default_plugins Qt5::Widgets)
+    target_link_libraries(interactive_marker_namespace_property_test
+      rviz_default_plugins
+      Qt5::Widgets
+      ogre_testing_environment
+    )
   endif()
 
   ament_add_gtest(laser_scan_display_visual_test
     test/rviz_default_plugins/displays/laser_scan/laser_scan_display_visual_test.cpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET laser_scan_display_visual_test)
     target_include_directories(laser_scan_display_visual_test PRIVATE test)
     target_link_libraries(laser_scan_display_visual_test
-      ${TEST_FIXTURE_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework
       Qt5::Test
       point_cloud_common_page_object
@@ -814,13 +853,11 @@ if(BUILD_TESTING)
   ament_add_gtest(map_display_visual_test
     test/rviz_default_plugins/displays/map/map_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/map_display_page_object.cpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET map_display_visual_test)
     target_include_directories(map_display_visual_test PRIVATE test)
     target_link_libraries(map_display_visual_test
-      ${TEST_FIXTURE_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework
       Qt5::Widgets
       rclcpp::rclcpp
@@ -835,13 +872,11 @@ if(BUILD_TESTING)
   ament_add_gtest(marker_array_display_visual_test
     test/rviz_default_plugins/displays/marker_array/marker_array_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/marker_array_display_page_object.cpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET marker_array_display_visual_test)
     target_include_directories(marker_array_display_visual_test PRIVATE test)
     target_link_libraries(marker_array_display_visual_test
-      ${TEST_FIXTURE_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework
       Qt5::Widgets
       rclcpp::rclcpp
@@ -853,13 +888,11 @@ if(BUILD_TESTING)
 
   ament_add_gtest(marker_display_visual_test
     test/rviz_default_plugins/displays/marker/marker_display_visual_test.cpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET marker_display_visual_test)
     target_include_directories(marker_display_visual_test PRIVATE test)
     target_link_libraries(marker_display_visual_test
-      ${TEST_FIXTURE_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework
       Qt5::Widgets
       rclcpp::rclcpp
@@ -872,13 +905,11 @@ if(BUILD_TESTING)
   ament_add_gtest(odometry_display_visual_test
     test/rviz_default_plugins/displays/odometry/odometry_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/odometry_display_page_object.cpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET odometry_display_visual_test)
     target_include_directories(odometry_display_visual_test PRIVATE test)
     target_link_libraries(odometry_display_visual_test
-      ${TEST_FIXTURE_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework
       Qt5::Widgets
       rclcpp::rclcpp
@@ -892,13 +923,11 @@ if(BUILD_TESTING)
   ament_add_gtest(path_display_visual_test
     test/rviz_default_plugins/displays/path/path_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/path_display_page_object.cpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET path_display_visual_test)
     target_include_directories(path_display_visual_test PRIVATE test)
     target_link_libraries(path_display_visual_test
-      ${TEST_FIXTURE_LIBRARIES}
       Qt5::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework
       rclcpp::rclcpp
@@ -911,13 +940,11 @@ if(BUILD_TESTING)
   ament_add_gtest(point_display_visual_test
     test/rviz_default_plugins/displays/point/point_stamped_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/point_display_page_object.cpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET point_display_visual_test)
     target_include_directories(point_display_visual_test PRIVATE test)
     target_link_libraries(point_display_visual_test
-      ${TEST_FIXTURE_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework
       Qt5::Widgets
       ${geometry_msgs_TARGETS}
@@ -928,13 +955,11 @@ if(BUILD_TESTING)
 
   ament_add_gtest(point_cloud_display_visual_test
     test/rviz_default_plugins/displays/pointcloud/point_cloud_display_visual_test.cpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET point_cloud_display_visual_test)
     target_include_directories(point_cloud_display_visual_test PRIVATE test)
     target_link_libraries(point_cloud_display_visual_test
-      ${TEST_FIXTURE_LIBRARIES}
       Qt5::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework
       ${geometry_msgs_TARGETS}
@@ -948,13 +973,11 @@ if(BUILD_TESTING)
 
   ament_add_gtest(point_cloud2_display_visual_test
     test/rviz_default_plugins/displays/pointcloud/point_cloud2_display_visual_test.cpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET point_cloud2_display_visual_test)
     target_include_directories(point_cloud2_display_visual_test PRIVATE test)
     target_link_libraries(point_cloud2_display_visual_test
-      ${TEST_FIXTURE_LIBRARIES}
       Qt5::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework
       pointcloud_messages
@@ -968,13 +991,11 @@ if(BUILD_TESTING)
   ament_add_gtest(pose_array_display_visual_test
     test/rviz_default_plugins/displays/pose_array/pose_array_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/pose_array_display_page_object.cpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET pose_array_display_visual_test)
     target_include_directories(pose_array_display_visual_test PRIVATE test)
     target_link_libraries(pose_array_display_visual_test
-      ${TEST_FIXTURE_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework
       Qt5::Widgets
       rclcpp::rclcpp
@@ -986,13 +1007,11 @@ if(BUILD_TESTING)
 
   ament_add_gtest(pose_display_visual_test
     test/rviz_default_plugins/displays/pose/pose_display_visual_test.cpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET pose_display_visual_test)
     target_include_directories(pose_display_visual_test PRIVATE test)
     target_link_libraries(pose_display_visual_test
-      ${TEST_FIXTURE_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework
       Qt5::Widgets
       ${geometry_msgs_TARGETS}
@@ -1005,13 +1024,11 @@ if(BUILD_TESTING)
   ament_add_gtest(pose_with_covariance_display_visual_test
     test/rviz_default_plugins/displays/pose_covariance/pose_with_covariance_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/pose_with_covariance_display_page_object.cpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET pose_with_covariance_display_visual_test)
     target_include_directories(pose_with_covariance_display_visual_test PRIVATE test)
     target_link_libraries(pose_with_covariance_display_visual_test
-      ${TEST_FIXTURE_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework
       Qt5::Widgets
       ${geometry_msgs_TARGETS}
@@ -1024,13 +1041,11 @@ if(BUILD_TESTING)
   ament_add_gtest(range_display_visual_test
     test/rviz_default_plugins/displays/range/range_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/range_display_page_object.cpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET range_display_visual_test)
     target_include_directories(range_display_visual_test PRIVATE test)
     target_link_libraries(range_display_visual_test
-      ${TEST_FIXTURE_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework
       Qt5::Widgets
     )
@@ -1038,13 +1053,11 @@ if(BUILD_TESTING)
 
   ament_add_gtest(relative_humidity_display_visual_test
     test/rviz_default_plugins/displays/relative_humidity/relative_humidity_display_visual_test.cpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET relative_humidity_display_visual_test)
     target_include_directories(relative_humidity_display_visual_test PRIVATE test)
     target_link_libraries(relative_humidity_display_visual_test
-      ${TEST_FIXTURE_LIBRARIES}
       Qt5::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework
       point_cloud_common_page_object
@@ -1054,13 +1067,11 @@ if(BUILD_TESTING)
   ament_add_gtest(robot_model_display_visual_test
     test/rviz_default_plugins/displays/robot_model/robot_model_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/robot_model_display_page_object.cpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET robot_model_display_visual_test)
     target_include_directories(robot_model_display_visual_test PRIVATE test)
     target_link_libraries(robot_model_display_visual_test
-      ${TEST_FIXTURE_LIBRARIES}
       ament_index_cpp::ament_index_cpp
       rviz_visual_testing_framework::rviz_visual_testing_framework
     )
@@ -1068,13 +1079,11 @@ if(BUILD_TESTING)
 
   ament_add_gtest(temperature_display_visual_test
     test/rviz_default_plugins/displays/temperature/temperature_display_visual_test.cpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET temperature_display_visual_test)
     target_include_directories(temperature_display_visual_test PRIVATE test)
     target_link_libraries(temperature_display_visual_test
-      ${TEST_FIXTURE_LIBRARIES}
       Qt5::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework
       point_cloud_common_page_object
@@ -1084,13 +1093,11 @@ if(BUILD_TESTING)
   ament_add_gtest(tf_display_visual_test
     test/rviz_default_plugins/displays/tf/tf_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/tf_display_page_object.cpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET tf_display_visual_test)
     target_include_directories(tf_display_visual_test PRIVATE test)
     target_link_libraries(tf_display_visual_test
-      ${TEST_FIXTURE_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework
       Qt5::Widgets
     )
@@ -1099,13 +1106,11 @@ if(BUILD_TESTING)
   ament_add_gtest(wrench_display_visual_test
     test/rviz_default_plugins/displays/wrench/wrench_stamped_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/wrench_display_page_object.cpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET wrench_display_visual_test)
     target_include_directories(wrench_display_visual_test PRIVATE test)
     target_link_libraries(wrench_display_visual_test
-      ${TEST_FIXTURE_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework
       Qt5::Widgets
     )
