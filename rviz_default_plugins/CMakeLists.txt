@@ -962,10 +962,12 @@ if(BUILD_TESTING)
     )
   endif()
 
+  add_library(pose_display_page_object STATIC test/rviz_default_plugins/page_objects/pose_display_page_object.cpp)
+  target_link_libraries(pose_display_page_object PRIVATE Qt5::Widgets rviz_visual_testing_framework::rviz_visual_testing_framework)
+
   ament_add_gtest(pose_array_display_visual_test
     test/rviz_default_plugins/displays/pose_array/pose_array_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/pose_array_display_page_object.cpp
-    test/rviz_default_plugins/page_objects/pose_display_page_object.cpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -978,12 +980,12 @@ if(BUILD_TESTING)
       rclcpp::rclcpp
       ${std_msgs_TARGETS}
       ${geometry_msgs_TARGETS}
+      pose_display_page_object
     )
   endif()
 
   ament_add_gtest(pose_display_visual_test
     test/rviz_default_plugins/displays/pose/pose_display_visual_test.cpp
-    test/rviz_default_plugins/page_objects/pose_display_page_object.cpp
     ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
@@ -996,6 +998,7 @@ if(BUILD_TESTING)
       ${geometry_msgs_TARGETS}
       rclcpp::rclcpp
       ${std_msgs_TARGETS}
+      pose_display_page_object
     )
   endif()
 
