@@ -711,6 +711,7 @@ if(BUILD_TESTING)
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(camera_display_visual_test
       ${TEST_LINK_LIBRARIES}
+      Qt5::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
 
@@ -729,6 +730,7 @@ if(BUILD_TESTING)
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(fluid_pressure_display_visual_test
       ${TEST_LINK_LIBRARIES}
+      Qt5::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
 
@@ -744,6 +746,7 @@ if(BUILD_TESTING)
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(grid_display_visual_test
       ${TEST_LINK_LIBRARIES}
+      Qt5::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
 
@@ -777,6 +780,7 @@ if(BUILD_TESTING)
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(illuminance_display_visual_test
       ${TEST_LINK_LIBRARIES}
+      Qt5::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
 
@@ -793,6 +797,7 @@ if(BUILD_TESTING)
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(image_display_visual_test
       ${TEST_LINK_LIBRARIES}
+      Qt5::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
 
@@ -821,6 +826,7 @@ if(BUILD_TESTING)
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(laser_scan_display_visual_test
       ${TEST_LINK_LIBRARIES}
+      Qt5::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
 
@@ -904,6 +910,7 @@ if(BUILD_TESTING)
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(path_display_visual_test
       ${TEST_LINK_LIBRARIES}
+      Qt5::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
 
@@ -937,6 +944,7 @@ if(BUILD_TESTING)
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(point_cloud_display_visual_test
       ${TEST_LINK_LIBRARIES}
+      Qt5::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
 
@@ -955,6 +963,7 @@ if(BUILD_TESTING)
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(point_cloud2_display_visual_test
       ${TEST_LINK_LIBRARIES}
+      Qt5::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
 
@@ -1037,6 +1046,7 @@ if(BUILD_TESTING)
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(relative_humidity_display_visual_test
       ${TEST_LINK_LIBRARIES}
+      Qt5::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
 
@@ -1071,6 +1081,7 @@ if(BUILD_TESTING)
       ${rviz_visual_testing_framework_INCLUDE_DIRS})
     target_link_libraries(temperature_display_visual_test
       ${TEST_LINK_LIBRARIES}
+      Qt5::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
 
