@@ -390,6 +390,15 @@ if(BUILD_TESTING)
     target_link_libraries(image_display_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} Qt5::Widgets rviz_default_plugins)
   endif()
 
+  add_library(marker_messages STATIC test/rviz_default_plugins/displays/marker/marker_messages.cpp)
+  target_link_libraries(marker_messages PRIVATE
+    ${geometry_msgs_TARGETS}
+    rclcpp::rclcpp
+    ${std_msgs_TARGETS}
+    ${visualization_msgs_TARGETS}
+    rviz_ogre_vendor::OgreMain
+  )
+
   ament_add_gmock(marker_test
     test/rviz_default_plugins/displays/marker/markers/arrow_marker_test.cpp
     test/rviz_default_plugins/displays/marker/markers/line_marker_test.cpp
@@ -399,22 +408,30 @@ if(BUILD_TESTING)
     test/rviz_default_plugins/displays/marker/markers/text_view_facing_marker_test.cpp
     test/rviz_default_plugins/displays/marker/markers/triangle_list_marker_test.cpp
     test/rviz_default_plugins/displays/marker/markers/markers_test_fixture.cpp
-    test/rviz_default_plugins/displays/marker/marker_messages.cpp
     ${TEST_FIXTURE_SOURCES_WITH_MOCK}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET marker_test)
     target_include_directories(marker_test PRIVATE test)
-    target_link_libraries(marker_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins ${visualization_msgs_TARGETS})
+    target_link_libraries(marker_test
+      ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
+      rviz_default_plugins
+      marker_messages
+      ${visualization_msgs_TARGETS}
+    )
   endif()
 
   ament_add_gmock(marker_common_test
     test/rviz_default_plugins/displays/marker/marker_common_test.cpp
-    test/rviz_default_plugins/displays/marker/marker_messages.cpp
     ${TEST_FIXTURE_SOURCES_WITH_MOCK}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET marker_common_test)
     target_include_directories(marker_common_test PRIVATE test)
-    target_link_libraries(marker_common_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} ${visualization_msgs_TARGETS} rviz_default_plugins)
+    target_link_libraries(marker_common_test
+      ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
+      ${visualization_msgs_TARGETS}
+      rviz_default_plugins
+      marker_messages
+    )
   endif()
 
   ament_add_gmock(map_display_test
