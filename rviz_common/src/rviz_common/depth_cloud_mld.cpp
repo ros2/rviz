@@ -565,8 +565,8 @@ void MultiLayerDepth::finalizingPointCloud(
   sensor_msgs::msg::PointCloud2::SharedPtr & point_cloud,
   std::size_t size)
 {
-  point_cloud->width = size;
-  point_cloud->height = 1;
+  point_cloud->width = static_cast<uint32_t>(size);
+  point_cloud->height = static_cast<uint32_t>(1);
   point_cloud->data.resize(point_cloud->height * point_cloud->width * point_cloud->point_step);
   point_cloud->row_step = point_cloud->point_step * point_cloud->width;
 }

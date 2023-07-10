@@ -47,6 +47,14 @@
 
 #include "rviz_common/visibility_control.hpp"
 
+// This is necessary because of using stl types here. It is completely safe, because
+// a) the member is not accessible from the outside
+// b) there are no inline functions.
+#ifdef _WIN32
+# pragma warning(push)
+# pragma warning(disable:4251)
+#endif
+
 namespace rviz_common
 {
 class MultiLayerDepthException : public std::exception
@@ -151,4 +159,9 @@ protected:
   float shadow_distance_;
 };
 }  // namespace rviz_common
+
+#ifdef _WIN32
+# pragma warning(pop)
+#endif
+
 #endif  // RVIZ_COMMON__DEPTH_CLOUD_MLD_HPP_
