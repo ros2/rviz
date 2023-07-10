@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <QString>
+
 #include "marker_display_page_object.hpp"
 
 MarkerDisplayPageObject::MarkerDisplayPageObject()
