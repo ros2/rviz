@@ -12,34 +12,36 @@ set(ON 1)
 
 # TODO: Switch to version range in find_package in CMake 3.19
 find_package(assimp QUIET)
-if(NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LESS 4.1.0)
+if(NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LESS 5.2.0)
   set(assimp_FOUND FALSE)
 endif()
 
 if(MSVC)
+  # TODO(clalancette): When building assimp 5.2.2 on Windows Debug,
+  # it fails to install the PDB file with a "File exists" error.
+  # Since we don't really need the PDB file, just unconditionally
+  # disable it.
+  set(ASSIMP_CMAKE_FLAGS "-DASSIMP_INSTALL_PDB=OFF")
+
   set(ASSIMP_CXX_FLAGS "/EHsc ${CMAKE_CXX_FLAGS}")
   set(ASSIMP_CXX_FLAGS "/wd4700 ${ASSIMP_CXX_FLAGS}")
 else()
-  set(ASSIMP_CXX_FLAGS "-std=c++14 ${CMAKE_CXX_FLAGS}")
-  set(ASSIMP_CXX_FLAGS "-Wno-address-of-packed-member ${ASSIMP_CXX_FLAGS}")
-  set(ASSIMP_CXX_FLAGS "-Wno-range-loop-construct ${ASSIMP_CXX_FLAGS}")
-  set(ASSIMP_CXX_FLAGS "-Wno-tautological-compare ${ASSIMP_CXX_FLAGS}")
+  set(ASSIMP_CMAKE_FLAGS "-DCMAKE_INSTALL_LIBDIR=lib")
 
-  if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    set(ASSIMP_CXX_FLAGS "-Wno-class-memaccess ${ASSIMP_CXX_FLAGS}")
-    set(ASSIMP_CXX_FLAGS "-Wno-catch-value ${ASSIMP_CXX_FLAGS}")
-  endif()
+  set(ASSIMP_CXX_FLAGS "-std=c++14 ${CMAKE_CXX_FLAGS}")
 endif()
 
 ament_vendor(assimp_vendor
   SATISFIED ${assimp_FOUND}
   VCS_URL https://github.com/assimp/assimp.git
-  VCS_VERSION v4.1.0
+  VCS_VERSION v5.2.2
   CMAKE_ARGS
     -DASSIMP_BUILD_ASSIMP_TOOLS:BOOL=OFF
     -DASSIMP_BUILD_TESTS:BOOL=OFF
     -DASSIMP_BUILD_SAMPLES:BOOL=OFF
+    "${ASSIMP_CMAKE_FLAGS}"
     "-DCMAKE_CXX_FLAGS=${ASSIMP_CXX_FLAGS}"
+  PATCHES patches
 )
 
 if(BUILD_TESTING)

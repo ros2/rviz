@@ -32,6 +32,8 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKER_MESSAGES_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKER_MESSAGES_HPP_
 
+#include "geometry_msgs/msg/point.hpp"
+#include "std_msgs/msg/color_rgba.hpp"
 #include "visualization_msgs/msg/marker.hpp"
 
 namespace testing
