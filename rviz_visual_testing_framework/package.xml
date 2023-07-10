@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>rviz_visual_testing_framework</name>
-  <version>12.5.1</version>
+  <version>12.6.1</version>
   <description>
     3D testing framework for RViz.
   </description>
@@ -26,8 +26,15 @@
 
   <build_depend>qtbase5-dev</build_depend>
 
+  <depend>geometry_msgs</depend>
+  <depend>rclcpp</depend>
   <depend>rcutils</depend>
   <depend>rviz_common</depend>
+  <depend>rviz_ogre_vendor</depend>
+  <depend>rviz_rendering</depend>
+  <depend>std_msgs</depend>
+  <depend>tf2</depend>
+  <depend>tf2_ros</depend>
   <depend>ament_cmake_gtest</depend>
 
   <!-- TODO(jacobperron): Replace with ament_lint_common when ament_copyright is working -->

@@ -251,9 +251,11 @@ void VisualizationFrame::initialize(
 
   loadPersistentSettings();
 
-  QDir app_icon_path(QString::fromStdString(package_path_) + "/icons/package.png");
-  QIcon app_icon(app_icon_path.absolutePath());
-  app_->setWindowIcon(app_icon);
+  if (app_) {
+    QDir app_icon_path(QString::fromStdString(package_path_) + "/icons/package.png");
+    QIcon app_icon(app_icon_path.absolutePath());
+    app_->setWindowIcon(app_icon);
+  }
 
   if (splash_path_ != "") {
     QPixmap splash_image(splash_path_);
@@ -265,10 +267,10 @@ void VisualizationFrame::initialize(
 
   // Periodically process events for the splash screen.
   // See: http://doc.qt.io/qt-5/qsplashscreen.html#details
-  if (app_) {app_->processEvents();}
+  QCoreApplication::processEvents();
 
   // Periodically process events for the splash screen.
-  if (app_) {app_->processEvents();}
+  QCoreApplication::processEvents();
 
   QWidget * central_widget = new QWidget(this);
   QHBoxLayout * central_layout = new QHBoxLayout;
@@ -305,22 +307,22 @@ void VisualizationFrame::initialize(
   central_widget->setLayout(central_layout);
 
   // Periodically process events for the splash screen.
-  if (app_) {app_->processEvents();}
+  QCoreApplication::processEvents();
 
   initMenus();
 
   // Periodically process events for the splash screen.
-  if (app_) {app_->processEvents();}
+  QCoreApplication::processEvents();
 
   initToolbars();
 
   // Periodically process events for the splash screen.
-  if (app_) {app_->processEvents();}
+  QCoreApplication::processEvents();
 
   setCentralWidget(central_widget);
 
   // Periodically process events for the splash screen.
-  if (app_) {app_->processEvents();}
+  QCoreApplication::processEvents();
 
   // TODO(wjwwood): sort out the issue with initialization order between
   //                render_panel and VisualizationManager
@@ -332,12 +334,12 @@ void VisualizationFrame::initialize(
   panel_factory_ = new PanelFactory(rviz_ros_node_, manager_);
 
   // Periodically process events for the splash screen.
-  if (app_) {app_->processEvents();}
+  QCoreApplication::processEvents();
 
   render_panel_->initialize(manager_);
 
   // Periodically process events for the splash screen.
-  if (app_) {app_->processEvents();}
+  QCoreApplication::processEvents();
 
   ToolManager * tool_man = manager_->getToolManager();
 
@@ -350,7 +352,7 @@ void VisualizationFrame::initialize(
   manager_->initialize();
 
   // Periodically process events for the splash screen.
-  if (app_) {app_->processEvents();}
+  QCoreApplication::processEvents();
 
   if (display_config_file != "") {
     loadDisplayConfig(display_config_file);
@@ -359,7 +361,7 @@ void VisualizationFrame::initialize(
   }
 
   // Periodically process events for the splash screen.
-  if (app_) {app_->processEvents();}
+  QCoreApplication::processEvents();
 
   delete splash_;
   splash_ = nullptr;
@@ -1061,6 +1063,22 @@ void VisualizationFrame::addTool(Tool * tool)
   tool_to_action_map_[tool] = action;
 
   remove_tool_menu_->addAction(tool->getName());
+
+  QObject::connect(
+    tool, &Tool::nameChanged, this,
+    &VisualizationFrame::VisualizationFrame::onToolNameChanged);
+}
+
+void VisualizationFrame::onToolNameChanged(const QString & name)
+{
+  // Early return if the tool is not present
+  auto it = tool_to_action_map_.find(qobject_cast<Tool *>(sender()));
+  if (it == tool_to_action_map_.end()) {
+    return;
+  }
+
+  // Change the name of the action
+  it->second->setIconText(name);
 }
 
 void VisualizationFrame::onToolbarActionTriggered(QAction * action)
