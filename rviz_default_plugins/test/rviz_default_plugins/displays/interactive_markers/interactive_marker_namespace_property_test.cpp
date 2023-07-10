@@ -31,6 +31,8 @@
 
 #include <gtest/gtest.h>
 
+#include <QString>
+
 #include \
   "rviz_default_plugins/displays/interactive_markers/interactive_marker_namespace_property.hpp"
 
