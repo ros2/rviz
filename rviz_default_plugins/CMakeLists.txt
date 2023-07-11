@@ -80,6 +80,7 @@ find_package(visualization_msgs REQUIRED)
 set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/axes/axes_display.hpp
   include/rviz_default_plugins/displays/camera/camera_display.hpp
+  include/rviz_default_plugins/displays/effort/effort_display.hpp
   include/rviz_default_plugins/displays/fluid_pressure/fluid_pressure_display.hpp
   include/rviz_default_plugins/displays/grid/grid_display.hpp
   include/rviz_default_plugins/displays/grid_cells/grid_cells_display.hpp
@@ -133,6 +134,7 @@ endforeach()
 set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/axes/axes_display.cpp
   src/rviz_default_plugins/displays/camera/camera_display.cpp
+  src/rviz_default_plugins/displays/effort/effort_display.cpp
   src/rviz_default_plugins/displays/grid/grid_display.cpp
   src/rviz_default_plugins/displays/grid_cells/grid_cells_display.cpp
   src/rviz_default_plugins/displays/fluid_pressure/fluid_pressure_display.cpp
@@ -688,6 +690,21 @@ if(BUILD_TESTING)
       point_cloud_common_page_object
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
+  endif()
+
+  ament_add_gtest(effort_display_visual_test
+    test/rviz_default_plugins/displays/effort/effort_display_visual_test.cpp
+    test/rviz_default_plugins/publishers/effort_publisher.hpp
+    test/rviz_default_plugins/page_objects/effort_display_page_object.cpp
+    ${SKIP_VISUAL_TESTS}
+    TIMEOUT 180)
+  if(TARGET effort_display_visual_test)
+    target_include_directories(effort_display_visual_test PRIVATE test)
+    target_link_libraries(effort_display_visual_test
+      rviz_visual_testing_framework::rviz_visual_testing_framework
+      rclcpp::rclcpp
+      ${sensor_msgs_TARGETS}
+    )
   endif()
 
   ament_add_gtest(fluid_pressure_display_visual_test
