@@ -36,7 +36,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
 
-using namespace std::chrono_literals; //NOLINT
+using namespace std::chrono_literals;  // NOLINT
 
 namespace nodes
 {
