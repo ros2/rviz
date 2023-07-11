@@ -2,8 +2,8 @@
 Changelog for package rviz_assimp_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+12.7.0 (2023-07-11)
+-------------------
 * Update to assimp 5.2.2 (`#968 <https://github.com/ros2/rviz/issues/968>`_)
 * Fix the vendoring flags for clang compilation. (`#1003 <https://github.com/ros2/rviz/issues/1003>`_)
 * Switch to ament_cmake_vendor_package (`#995 <https://github.com/ros2/rviz/issues/995>`_)

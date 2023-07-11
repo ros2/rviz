@@ -2,8 +2,8 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+12.7.0 (2023-07-11)
+-------------------
 * use static QCoreApplication::processEvents() function without a QApplication instance (`#924 <https://github.com/ros2/rviz/issues/924>`_)
 * Re-implemented setName for tools (`#989 <https://github.com/ros2/rviz/issues/989>`_)
 * Contributors: Felix Exner (fexner), Yannis Gerlach
