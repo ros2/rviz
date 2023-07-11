@@ -45,6 +45,7 @@
   <depend>nav_msgs</depend>
   <depend>map_msgs</depend>
   <depend>pluginlib</depend>
+  <depend>point_cloud_transport</depend>
   <depend>rclcpp</depend>
   <depend>resource_retriever</depend>
   <depend>rviz_common</depend>
