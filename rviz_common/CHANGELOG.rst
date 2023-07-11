@@ -2,6 +2,12 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* use static QCoreApplication::processEvents() function without a QApplication instance (`#924 <https://github.com/ros2/rviz/issues/924>`_)
+* Re-implemented setName for tools (`#989 <https://github.com/ros2/rviz/issues/989>`_)
+* Contributors: Felix Exner (fexner), Yannis Gerlach
+
 12.6.1 (2023-06-12)
 -------------------
 * Add a libqt5-svg dependency to rviz_common. (`#992 <https://github.com/ros2/rviz/issues/992>`_)

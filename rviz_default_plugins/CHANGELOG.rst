@@ -2,6 +2,13 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Added Effort plugin (`#990 <https://github.com/ros2/rviz/issues/990>`_)
+* Improve the compilation time of rviz_default_plugins (`#1007 <https://github.com/ros2/rviz/issues/1007>`_)
+* Switch to ament_cmake_vendor_package (`#995 <https://github.com/ros2/rviz/issues/995>`_)
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette, Scott K Logan
+
 12.6.1 (2023-06-12)
 -------------------
 
