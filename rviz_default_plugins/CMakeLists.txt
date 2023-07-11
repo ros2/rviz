@@ -83,6 +83,7 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/axes/axes_display.hpp
   include/rviz_default_plugins/displays/camera/camera_display.hpp
   include/rviz_default_plugins/displays/depth_cloud/depth_cloud_display.hpp
+  include/rviz_default_plugins/displays/effort/effort_display.hpp
   include/rviz_default_plugins/displays/fluid_pressure/fluid_pressure_display.hpp
   include/rviz_default_plugins/displays/grid/grid_display.hpp
   include/rviz_default_plugins/displays/grid_cells/grid_cells_display.hpp
@@ -137,6 +138,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/axes/axes_display.cpp
   src/rviz_default_plugins/displays/camera/camera_display.cpp
   src/rviz_default_plugins/displays/depth_cloud/depth_cloud_display.cpp
+  src/rviz_default_plugins/displays/effort/effort_display.cpp
   src/rviz_default_plugins/displays/grid/grid_display.cpp
   src/rviz_default_plugins/displays/grid_cells/grid_cells_display.cpp
   src/rviz_default_plugins/displays/fluid_pressure/fluid_pressure_display.cpp
@@ -757,17 +759,28 @@ if(BUILD_TESTING)
     test/rviz_default_plugins/page_objects/depth_cloud_page_object.cpp
     test/rviz_default_plugins/publishers/camera_info_publisher.hpp
     test/rviz_default_plugins/publishers/image_publisher.hpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET depth_cloud_display_visual_test)
-    target_include_directories(depth_cloud_display_visual_test PUBLIC
-      test/page_objects
-      ${TEST_INCLUDE_DIRS}
-      ${rviz_visual_testing_framework_INCLUDE_DIRS})
+    target_include_directories(depth_cloud_display_visual_test PUBLIC test)
     target_link_libraries(depth_cloud_display_visual_test
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
+  endif()
+
+  ament_add_gtest(effort_display_visual_test
+    test/rviz_default_plugins/displays/effort/effort_display_visual_test.cpp
+    test/rviz_default_plugins/publishers/effort_publisher.hpp
+    test/rviz_default_plugins/page_objects/effort_display_page_object.cpp
+    ${SKIP_VISUAL_TESTS}
+    TIMEOUT 180)
+  if(TARGET effort_display_visual_test)
+    target_include_directories(effort_display_visual_test PRIVATE test)
+    target_link_libraries(effort_display_visual_test
+      rviz_visual_testing_framework::rviz_visual_testing_framework
+      rclcpp::rclcpp
+      ${sensor_msgs_TARGETS}
+    )
   endif()
 
   ament_add_gtest(fluid_pressure_display_visual_test

@@ -17,11 +17,12 @@ For some displays, the [documentation is updated](docs/FEATURES.md).
 | Axes                  | Move Camera   | Orbit                 | Displays        |
 | Camera                | Focus Camera  | XY Orbit              | Help            |
 | DepthCloud            | Measure       | First Person          | Selections      |
-| Fluid Pressure        | Select        | Third Person Follower | Time            |
-| Grid                  | 2D Nav Goal   | Top Down Orthographic | Tool Properties |
-| Grid Cells            | Publish Point |                       | Views           |
-| Illuminance           | Initial Pose  |
-| Image                 | Interact      |
+| Effort                | Select        | Third Person Follower | Time            |
+| Fluid                 | 2D Nav Goal   | Top Down Orthographic | Tool Properties |
+| Grid                  | Publish Point |                       | Views           |
+| Grid Cells            | Initial Pose  |
+| Illuminance           | Interact      |
+| Image                 |
 | Interactive Marker    |
 | Laser Scan            |
 | Map                   |
@@ -43,12 +44,6 @@ For some displays, the [documentation is updated](docs/FEATURES.md).
 
 
 ### Not yet ported
-These features have not been ported to `ros2/rviz` yet.
-
-| Displays      |
-| ------------- |
-| Effort        |
-
 Other features:
 - Stereo
 
