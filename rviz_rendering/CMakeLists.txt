@@ -85,6 +85,7 @@ add_library(rviz_rendering SHARED
   src/rviz_rendering/objects/axes.cpp
   src/rviz_rendering/objects/billboard_line.cpp
   src/rviz_rendering/objects/covariance_visual.cpp
+  src/rviz_rendering/objects/effort_visual.cpp
   src/rviz_rendering/objects/grid.cpp
   src/rviz_rendering/objects/line.cpp
   src/rviz_rendering/objects/movable_text.cpp
@@ -219,6 +220,18 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET covariance_visual_test_target)
     target_link_libraries(covariance_visual_test_target
+      rviz_ogre_vendor::OgreMain
+      rviz_rendering
+      rviz_rendering_test_utils
+      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+    )
+  endif()
+
+  ament_add_gmock(effort_visual_test_target
+    test/rviz_rendering/objects/effort_visual_test.cpp
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET effort_visual_test_target)
+    target_link_libraries(effort_visual_test_target
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
