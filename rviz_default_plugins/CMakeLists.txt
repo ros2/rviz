@@ -1144,13 +1144,10 @@ if(BUILD_TESTING)
   ament_add_gtest(twist_display_visual_test
     test/rviz_default_plugins/displays/twist/twist_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/twist_display_page_object.cpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET twist_display_visual_test)
-    target_include_directories(twist_display_visual_test PUBLIC
-      ${TEST_INCLUDE_DIRS}
-      ${rviz_visual_testing_framework_INCLUDE_DIRS})
+    target_include_directories(twist_display_visual_test PUBLIC test)
     target_link_libraries(twist_display_visual_test
       ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
