@@ -92,37 +92,14 @@ public:
     const QRegExp & filter = QRegExp(),
     Property * parent = 0,
     const char * changed_slot = 0,
-    QObject * receiver = 0)
-  : RosTopicProperty(name, default_value, message_type, description, parent, changed_slot, receiver)
-    , filter_(filter)
-    , filter_enabled_(true)
-  {
-  }
+    QObject * receiver = 0);
 
-public:
-  void enableFilter(bool enabled)
-  {
-    filter_enabled_ = enabled;
-    fillTopicList();
-  }
+  void enableFilter(bool enabled);
 
-  QRegExp filter() const
-  {
-    return filter_;
-  }
+  QRegExp filter() const;
 
 protected Q_SLOTS:
-  void fillTopicList() override
-  {
-    QStringList filtered_strings_;
-
-    // Obtain list of available topics
-    RosTopicProperty::fillTopicList();
-    // Apply filter
-    if (filter_enabled_) {
-      strings_ = strings_.filter(filter_);
-    }
-  }
+  void fillTopicList() override;
 
 private:
   QRegExp filter_;

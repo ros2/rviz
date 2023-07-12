@@ -762,9 +762,8 @@ if(BUILD_TESTING)
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET depth_cloud_display_visual_test)
-    target_include_directories(depth_cloud_display_visual_test PUBLIC test)
+    target_include_directories(depth_cloud_display_visual_test PRIVATE test)
     target_link_libraries(depth_cloud_display_visual_test
-      ${TEST_LINK_LIBRARIES}
       rviz_visual_testing_framework::rviz_visual_testing_framework)
   endif()
 

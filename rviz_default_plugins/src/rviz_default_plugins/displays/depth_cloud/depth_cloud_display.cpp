@@ -62,8 +62,6 @@
 #include <rviz_common/depth_cloud_mld.hpp>
 #include <sensor_msgs/msg/image.hpp>
 
-using namespace std::placeholders;
-
 namespace rviz_default_plugins
 {
 namespace displays
@@ -75,10 +73,10 @@ DepthCloudDisplay::DepthCloudDisplay()
   , rgb_sub_()
   , cam_info_sub_()
   , queue_size_(5)
-  , ml_depth_data_(new rviz_common::MultiLayerDepth())
   , angular_thres_(0.5f)
   , trans_thres_(0.01f)
 {
+  ml_depth_data_ = std::make_unique<rviz_common::MultiLayerDepth>();
   // Depth map properties
   QRegExp depth_filter("depth");
   depth_filter.setCaseSensitivity(Qt::CaseInsensitive);
@@ -163,13 +161,15 @@ DepthCloudDisplay::DepthCloudDisplay()
 
 void DepthCloudDisplay::onInitialize()
 {
-  auto rviz_ros_node_ = context_->getRosNodeAbstraction();
+  auto rviz_ros_node_ = context_->getRosNodeAbstraction().lock();
 
-  depthmap_it_.reset(new image_transport::ImageTransport(rviz_ros_node_.lock()->get_raw_node()));
-  rgb_it_.reset(new image_transport::ImageTransport(rviz_ros_node_.lock()->get_raw_node()));
+  depthmap_it_ = std::make_unique<image_transport::ImageTransport>(
+    rviz_ros_node_->get_raw_node());
+  rgb_it_ = std::make_unique<image_transport::ImageTransport>(
+    rviz_ros_node_->get_raw_node());
 
   // Instantiate PointCloudCommon class for displaying point clouds
-  pointcloud_common_ = new PointCloudCommon(this);
+  pointcloud_common_ = std::make_unique<PointCloudCommon>(this);
 
   updateUseAutoSize();
   updateUseOcclusionCompensation();
@@ -180,25 +180,20 @@ void DepthCloudDisplay::onInitialize()
   pointcloud_common_->initialize(context_, scene_node_);
   pointcloud_common_->xyz_transformer_property_->hide();
 
-  depth_topic_property_->initialize(context_->getRosNodeAbstraction());
-  color_topic_property_->initialize(context_->getRosNodeAbstraction());
+  depth_topic_property_->initialize(rviz_ros_node_);
+  color_topic_property_->initialize(rviz_ros_node_);
 }
 
 DepthCloudDisplay::~DepthCloudDisplay()
 {
   if (initialized()) {
     unsubscribe();
-    delete pointcloud_common_;
-  }
-
-  if (ml_depth_data_) {
-    delete ml_depth_data_;
+    pointcloud_common_.reset();
   }
 }
 
 void DepthCloudDisplay::setTopic(const QString & topic, const QString & datatype)
 {
-  // Copied from ImageDisplayBase::setTopic()
   if (datatype == "sensor_msgs::msgs::Image") {
     depth_transport_property_->setStdString("raw");
     depth_topic_property_->setString(topic);
@@ -284,10 +279,11 @@ void DepthCloudDisplay::subscribe()
 
   try {
     // reset all message filters
-    sync_depth_color_.reset(new SynchronizerDepthColor(SyncPolicyDepthColor(queue_size_)));
+    sync_depth_color_ = std::make_shared<SynchronizerDepthColor>(
+      SyncPolicyDepthColor(queue_size_));
     depthmap_tf_filter_.reset();
-    depthmap_sub_.reset(new image_transport::SubscriberFilter());
-    rgb_sub_.reset(new image_transport::SubscriberFilter());
+    depthmap_sub_ = std::make_shared<image_transport::SubscriberFilter>();
+    rgb_sub_ = std::make_shared<image_transport::SubscriberFilter>();
     cam_info_sub_.reset();
 
     std::string depthmap_topic = depth_topic_property_->getTopicStd();
@@ -296,12 +292,12 @@ void DepthCloudDisplay::subscribe()
     std::string depthmap_transport = depth_transport_property_->getStdString();
     std::string color_transport = color_transport_property_->getStdString();
 
-    auto rviz_ros_node_ = context_->getRosNodeAbstraction();
+    auto rviz_ros_node_ = context_->getRosNodeAbstraction().lock();
 
     if (!depthmap_topic.empty() && !depthmap_transport.empty()) {
       // subscribe to depth map topic
       depthmap_sub_->subscribe(
-        rviz_ros_node_.lock()->get_raw_node().get(),
+        rviz_ros_node_->get_raw_node().get(),
         depthmap_topic,
         depthmap_transport);
 
@@ -311,7 +307,7 @@ void DepthCloudDisplay::subscribe()
         *context_->getFrameManager()->getTransformer(),
         fixed_frame_.toStdString(),
         10,
-        rviz_ros_node_.lock()->get_raw_node());
+        rviz_ros_node_->get_raw_node());
 
       depthmap_tf_filter_->connectInput(*depthmap_sub_);
 
@@ -332,7 +328,7 @@ void DepthCloudDisplay::subscribe()
             QString(sstm.str().c_str()));
         };
 
-      cam_info_sub_ = rviz_ros_node_.lock()->get_raw_node()->
+      cam_info_sub_ = rviz_ros_node_->get_raw_node()->
         create_subscription<sensor_msgs::msg::CameraInfo>(
         info_topic,
         rclcpp::SensorDataQoS(),
@@ -344,7 +340,7 @@ void DepthCloudDisplay::subscribe()
       if (!color_topic.empty() && !color_transport.empty()) {
         // subscribe to color image topic
         rgb_sub_->subscribe(
-          rviz_ros_node_.lock()->get_raw_node().get(),
+          rviz_ros_node_->get_raw_node().get(),
           color_topic, color_transport, rclcpp::SensorDataQoS().get_rmw_qos_profile());
 
         // connect message filters to synchronizer
@@ -353,15 +349,16 @@ void DepthCloudDisplay::subscribe()
         sync_depth_color_->setInterMessageLowerBound(1, rclcpp::Duration(0, 0.5 * 1e+9));
         sync_depth_color_->registerCallback(
           std::bind(
-            &DepthCloudDisplay::processMessage, this, _1, _2));
+            &DepthCloudDisplay::processMessage, this,
+            std::placeholders::_1, std::placeholders::_2));
 
         pointcloud_common_->color_transformer_property_->setValue("RGB8");
       } else {
         depthmap_tf_filter_->registerCallback(
-          std::bind(&DepthCloudDisplay::processDepthMessage, this, _1));
+          std::bind(&DepthCloudDisplay::processDepthMessage, this, std::placeholders::_1));
       }
     }
-  } catch (image_transport::TransportLoadException & e) {
+  } catch (const image_transport::TransportLoadException & e) {
     setStatus(
       rviz_common::properties::StatusProperty::Error, "Message",
       QString("Error subscribing: ") + e.what());
@@ -501,11 +498,18 @@ void DepthCloudDisplay::processMessage(
   }
 
   try {
+    auto rviz_ros_node_ = context_->getRosNodeAbstraction().lock();
+
     sensor_msgs::msg::PointCloud2::SharedPtr cloud_msg =
-      ml_depth_data_->generatePointCloudFromDepth(depth_msg, rgb_msg, cam_info);
+      ml_depth_data_->generatePointCloudFromDepth(depth_msg, rgb_msg, cam_info, rviz_ros_node_);
 
     if (!cloud_msg.get()) {
-      throw rviz_common::MultiLayerDepthException("generatePointCloudFromDepth() returned zero.");
+      std::ostringstream sstm;
+      sstm << "generatePointCloudFromDepth() returned zero.";
+      setStatus(
+        rviz_common::properties::StatusProperty::Warn,
+        "Depth Camera Info",
+        QString(sstm.str().c_str()));
     }
     cloud_msg->header = depth_msg->header;
 
@@ -563,10 +567,10 @@ void DepthCloudDisplay::fillTransportOptionList(rviz_common::properties::EnumPro
 
   choices.push_back("raw");
 
-  auto rviz_ros_node_ = context_->getRosNodeAbstraction();
+  auto rviz_ros_node_ = context_->getRosNodeAbstraction().lock();
 
   std::map<std::string, std::vector<std::string>> published_topics =
-    rviz_ros_node_.lock()->get_topic_names_and_types();
+    rviz_ros_node_->get_topic_names_and_types();
 
   const std::string & topic = depth_topic_property_->getStdString();
 

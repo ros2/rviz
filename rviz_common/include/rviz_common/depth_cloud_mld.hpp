@@ -31,8 +31,9 @@
 #ifndef RVIZ_COMMON__DEPTH_CLOUD_MLD_HPP_
 #define RVIZ_COMMON__DEPTH_CLOUD_MLD_HPP_
 
-#include <cstdint>
 #include <cmath>
+#include <cstdint>
+#include <stdexcept>
 #include <exception>
 #include <memory>
 #include <mutex>
@@ -45,6 +46,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 
+#include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
 #include "rviz_common/visibility_control.hpp"
 
 // This is necessary because of using stl types here. It is completely safe, because
@@ -79,43 +81,30 @@ protected:
   std::string error_msg_;
 };
 
-class RVIZ_COMMON_PUBLIC MultiLayerDepth
+class RVIZ_COMMON_PUBLIC MultiLayerDepth final
 {
 public:
   MultiLayerDepth()
   : shadow_time_out_(30.0), shadow_distance_(0.01f) {}
+
   virtual ~MultiLayerDepth()
   {
   }
 
-  void setShadowTimeOut(double time_out)
-  {
-    shadow_time_out_ = time_out;
-  }
+  void setShadowTimeOut(double time_out);
 
-  void enableOcclusionCompensation(bool occlusion_compensation)
-  {
-    occlusion_compensation_ = occlusion_compensation;
-    reset();
-  }
+  void enableOcclusionCompensation(bool occlusion_compensation);
 
   sensor_msgs::msg::PointCloud2::SharedPtr
   generatePointCloudFromDepth(
     const sensor_msgs::msg::Image::ConstSharedPtr & depth_msg,
     const sensor_msgs::msg::Image::ConstSharedPtr & color_msg,
-    sensor_msgs::msg::CameraInfo::ConstSharedPtr camera_info_msg);
+    sensor_msgs::msg::CameraInfo::ConstSharedPtr camera_info_msg,
+    ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node);
 
-  void reset()
-  {
-    if (occlusion_compensation_) {
-      // reset shadow buffer
-      memset(&shadow_depth_[0], 0, sizeof(float) * shadow_depth_.size());
-      memset(&shadow_buffer_[0], 0, sizeof(uint8_t) * shadow_buffer_.size());
-      memset(&shadow_timestamp_[0], 0, sizeof(double) * shadow_timestamp_.size());
-    }
-  }
+  void reset();
 
-protected:
+private:
   /** @brief Precompute projection matrix, initialize buffers */
   void initializeConversion(
     const sensor_msgs::msg::Image::ConstSharedPtr & depth_msg,
@@ -137,11 +126,12 @@ protected:
   template<typename T>
   sensor_msgs::msg::PointCloud2::SharedPtr generatePointCloudML(
     const sensor_msgs::msg::Image::ConstSharedPtr & depth_msg,
-    std::vector<uint32_t> & rgba_color_raw);
+    std::vector<uint32_t> & rgba_color_raw,
+    ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node);
 
   // Helpers to generate pointcloud2 message
   sensor_msgs::msg::PointCloud2::SharedPtr initPointCloud();
-  void finalizingPointCloud(
+  void finalizePointCloud(
     sensor_msgs::msg::PointCloud2::SharedPtr & point_cloud,
     std::size_t size);
 

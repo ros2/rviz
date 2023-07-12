@@ -170,14 +170,14 @@ protected:
 
   uint32_t queue_size_;
 
-  rviz_common::MultiLayerDepth * ml_depth_data_;
+  std::unique_ptr<rviz_common::MultiLayerDepth> ml_depth_data_;
 
   Ogre::Quaternion current_orientation_;
   Ogre::Vector3 current_position_;
   float angular_thres_;
   float trans_thres_;
 
-  PointCloudCommon * pointcloud_common_;
+  std::unique_ptr<PointCloudCommon> pointcloud_common_;
 
   std::set<std::string> transport_plugin_types_;
 };

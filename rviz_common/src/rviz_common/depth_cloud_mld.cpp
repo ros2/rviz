@@ -30,6 +30,7 @@
 #include "rviz_common/depth_cloud_mld.hpp"
 
 #include <chrono>
+#include <cmath>
 #include <cstdint>
 #include <cstring>
 #include <memory>
@@ -41,7 +42,9 @@
 #include <sensor_msgs/msg/image.hpp>
 #include <sensor_msgs/image_encodings.hpp>
 
-#define POINT_STEP (sizeof(float) * 4)
+#include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
+
+constexpr size_t POINT_STEP = (sizeof(float) * 4);
 
 namespace rviz_common
 {
@@ -61,7 +64,7 @@ struct DepthTraits<uint16_t>
   static inline float toMeters(uint16_t depth)
   {
     return depth * 0.001f;
-  }  // originally mm
+  }
 };
 
 template<>
@@ -86,6 +89,27 @@ struct RGBA
   uint8_t alpha;
 };
 
+void MultiLayerDepth::setShadowTimeOut(double time_out)
+{
+  this->shadow_time_out_ = time_out;
+}
+
+void MultiLayerDepth::enableOcclusionCompensation(bool occlusion_compensation)
+{
+  occlusion_compensation_ = occlusion_compensation;
+  reset();
+}
+
+void MultiLayerDepth::reset()
+{
+  if (occlusion_compensation_) {
+    // reset shadow buffer
+    memset(&shadow_depth_[0], 0, sizeof(float) * shadow_depth_.size());
+    memset(&shadow_buffer_[0], 0, sizeof(uint8_t) * shadow_buffer_.size());
+    memset(&shadow_timestamp_[0], 0, sizeof(double) * shadow_timestamp_.size());
+  }
+}
+
 
 void MultiLayerDepth::initializeConversion(
   const sensor_msgs::msg::Image::ConstSharedPtr & depth_msg,
@@ -97,16 +121,16 @@ void MultiLayerDepth::initializeConversion(
   }
 
   // do some sanity checks
-  unsigned binning_x = camera_info_msg->binning_x > 1 ? camera_info_msg->binning_x : 1;
-  unsigned binning_y = camera_info_msg->binning_y > 1 ? camera_info_msg->binning_y : 1;
+  uint32_t binning_x = camera_info_msg->binning_x > 1 ? camera_info_msg->binning_x : 1;
+  uint32_t binning_y = camera_info_msg->binning_y > 1 ? camera_info_msg->binning_y : 1;
 
-  unsigned roi_width =
+  uint32_t roi_width =
     camera_info_msg->roi.width > 0 ? camera_info_msg->roi.width : camera_info_msg->width;
-  unsigned roi_height =
+  uint32_t roi_height =
     camera_info_msg->roi.height > 0 ? camera_info_msg->roi.height : camera_info_msg->height;
 
-  unsigned expected_width = roi_width / binning_x;
-  unsigned expected_height = roi_height / binning_y;
+  uint32_t expected_width = roi_width / binning_x;
+  uint32_t expected_height = roi_height / binning_y;
 
   if (expected_width != depth_msg->width || expected_height != depth_msg->height) {
     std::ostringstream s;
@@ -118,21 +142,21 @@ void MultiLayerDepth::initializeConversion(
     throw(rviz_common::MultiLayerDepthException(s.str()));
   }
 
-  int width = depth_msg->width;
-  int height = depth_msg->height;
+  uint32_t width = depth_msg->width;
+  uint32_t height = depth_msg->height;
 
-  std::size_t size = width * height;
+  uint32_t size = width * height;
 
-  if (size != shadow_depth_.size()) {
+  if (size != static_cast<uint32_t>(shadow_depth_.size())) {
     // Allocate memory for shadow processing
     shadow_depth_.resize(size, 0.0f);
     shadow_timestamp_.resize(size, 0.0);
     shadow_buffer_.resize(size * POINT_STEP, 0);
 
-    // Procompute 3D projection matrix
+    // Precompute 3D projection matrix
     //
     // The following computation of center_x,y and fx,fy duplicates
-    // code in the image_geometry package, but this avoids dependency
+    // code in the image_geometry package, but this avoids a dependency
     // on OpenCV, which simplifies releasing rviz.
 
     // Combine unit conversion (if necessary) with scaling by focal length for computing (X,Y)
@@ -157,11 +181,11 @@ void MultiLayerDepth::initializeConversion(
     std::vector<float>::iterator projY = projection_map_y_.begin();
 
     // precompute 3D projection matrix
-    for (int v = 0; v < height; ++v, ++projY) {
+    for (uint32_t v = 0; v < height; ++v, ++projY) {
       *projY = (v - center_y) * constant_y;
     }
 
-    for (int u = 0; u < width; ++u, ++projX) {
+    for (uint32_t u = 0; u < width; ++u, ++projX) {
       *projX = (u - center_x) * constant_x;
     }
 
@@ -243,7 +267,7 @@ MultiLayerDepth::generatePointCloudSL(
     }
   }
 
-  finalizingPointCloud(cloud_msg, point_count);
+  finalizePointCloud(cloud_msg, point_count);
 
   return cloud_msg;
 }
@@ -253,7 +277,8 @@ template<typename T>
 sensor_msgs::msg::PointCloud2::SharedPtr
 MultiLayerDepth::generatePointCloudML(
   const sensor_msgs::msg::Image::ConstSharedPtr & depth_msg,
-  std::vector<uint32_t> & rgba_color_raw)
+  std::vector<uint32_t> & rgba_color_raw,
+  ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node)
 {
   int width = depth_msg->width;
   int height = depth_msg->height;
@@ -279,7 +304,7 @@ MultiLayerDepth::generatePointCloudML(
   std::size_t point_count = 0;
   std::size_t point_idx = 0;
 
-  double time_now = rclcpp::Clock().now().seconds();
+  double time_now = rviz_ros_node.lock()->get_raw_node()->now().seconds();
   double time_expire = time_now - shadow_time_out_;
 
   const T * depth_img_ptr = reinterpret_cast<const T *>(&depth_msg->data[0]);
@@ -368,7 +393,7 @@ MultiLayerDepth::generatePointCloudML(
     }
   }
 
-  finalizingPointCloud(cloud_msg, point_count);
+  finalizePointCloud(cloud_msg, point_count);
 
   return cloud_msg;
 }
@@ -446,7 +471,8 @@ sensor_msgs::msg::PointCloud2::SharedPtr
 MultiLayerDepth::generatePointCloudFromDepth(
   const sensor_msgs::msg::Image::ConstSharedPtr & depth_msg,
   const sensor_msgs::msg::Image::ConstSharedPtr & color_msg,
-  sensor_msgs::msg::CameraInfo::ConstSharedPtr camera_info_msg)
+  sensor_msgs::msg::CameraInfo::ConstSharedPtr camera_info_msg,
+  ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node)
 {
   // Add data to multi depth image
   sensor_msgs::msg::PointCloud2::SharedPtr point_cloud_out;
@@ -506,10 +532,10 @@ MultiLayerDepth::generatePointCloudFromDepth(
 
     if ((bitDepth == 32) && (numChannels == 1)) {
       // floating point encoded depth map
-      point_cloud_out = generatePointCloudML<float>(depth_msg, rgba_color_raw_);
+      point_cloud_out = generatePointCloudML<float>(depth_msg, rgba_color_raw_, rviz_ros_node);
     } else if ((bitDepth == 16) && (numChannels == 1)) {
       // 32bit integer encoded depth map
-      point_cloud_out = generatePointCloudML<uint16_t>(depth_msg, rgba_color_raw_);
+      point_cloud_out = generatePointCloudML<uint16_t>(depth_msg, rgba_color_raw_, rviz_ros_node);
     }
   }
 
@@ -561,7 +587,7 @@ sensor_msgs::msg::PointCloud2::SharedPtr MultiLayerDepth::initPointCloud()
   return point_cloud_out;
 }
 
-void MultiLayerDepth::finalizingPointCloud(
+void MultiLayerDepth::finalizePointCloud(
   sensor_msgs::msg::PointCloud2::SharedPtr & point_cloud,
   std::size_t size)
 {
