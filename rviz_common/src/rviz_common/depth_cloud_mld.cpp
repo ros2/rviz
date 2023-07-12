@@ -410,6 +410,7 @@ void MultiLayerDepth::convertColor(
   // query image properties
   int num_channels = sensor_msgs::image_encodings::numChannels(color_msg->encoding);
 
+  // TODO(ahcorde): Review other encodings
   bool rgb_encoding = false;
   if (color_msg->encoding.find("rgb") != std::string::npos) {
     rgb_encoding = true;
