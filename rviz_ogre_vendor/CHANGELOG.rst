@@ -2,6 +2,11 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* CMake: rename FeatureSummary.cmake to avoid name clashes (`#988 <https://github.com/ros2/rviz/issues/988>`_)
+* Contributors: Gökçe Aydos, Scott K Logan
+
 12.4.0 (2023-04-18)
 -------------------
 

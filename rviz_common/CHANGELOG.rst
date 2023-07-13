@@ -2,6 +2,12 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Re-implemented setName for tools (`#997 <https://github.com/ros2/rviz/issues/997>`_)
+* Add a libqt5-svg dependency to rviz_common. (`#992 <https://github.com/ros2/rviz/issues/992>`_)
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette, Felix Exner
+
 12.4.0 (2023-04-18)
 -------------------
 
