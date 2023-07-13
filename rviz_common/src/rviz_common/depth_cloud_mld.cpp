@@ -41,6 +41,7 @@
 #include <sensor_msgs/msg/camera_info.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <sensor_msgs/image_encodings.hpp>
+#include <sensor_msgs/msg/point_cloud2.hpp>
 
 #include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
 
@@ -201,11 +202,8 @@ MultiLayerDepth::generatePointCloudSL(
   const sensor_msgs::msg::Image::ConstSharedPtr & depth_msg,
   std::vector<uint32_t> & rgba_color_raw)
 {
-  int width = depth_msg->width;
-  int height = depth_msg->height;
-
   sensor_msgs::msg::PointCloud2::SharedPtr cloud_msg = initPointCloud();
-  cloud_msg->data.resize(height * width * cloud_msg->point_step);
+  cloud_msg->data.resize(depth_msg->height * depth_msg->width * cloud_msg->point_step);
 
   uint32_t * color_img_ptr = nullptr;
 
@@ -280,11 +278,8 @@ MultiLayerDepth::generatePointCloudML(
   std::vector<uint32_t> & rgba_color_raw,
   ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node)
 {
-  int width = depth_msg->width;
-  int height = depth_msg->height;
-
   sensor_msgs::msg::PointCloud2::SharedPtr cloud_msg = initPointCloud();
-  cloud_msg->data.resize(height * width * cloud_msg->point_step * 2);
+  cloud_msg->data.resize(depth_msg->height * depth_msg->width * cloud_msg->point_step * 2);
 
   uint32_t * color_img_ptr = nullptr;
 
@@ -404,13 +399,18 @@ void MultiLayerDepth::convertColor(
   const sensor_msgs::msg::Image::ConstSharedPtr & color_msg,
   std::vector<uint32_t> & rgba_color_raw)
 {
+  if (color_msg->encoding.find("rgb") == std::string::npos &&
+    color_msg->encoding.find("bgr") == std::string::npos)
+  {
+    throw rviz_common::MultiLayerDepthException("Encoded type not supported!");
+  }
+
   size_t i;
   size_t num_pixel = color_msg->width * color_msg->height;
 
   // query image properties
   int num_channels = sensor_msgs::image_encodings::numChannels(color_msg->encoding);
 
-  // TODO(ahcorde): Review other encodings
   bool rgb_encoding = false;
   if (color_msg->encoding.find("rgb") != std::string::npos) {
     rgb_encoding = true;
@@ -475,16 +475,16 @@ MultiLayerDepth::generatePointCloudFromDepth(
   sensor_msgs::msg::CameraInfo::ConstSharedPtr camera_info_msg,
   ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node)
 {
+  if (!camera_info_msg) {
+    throw rviz_common::MultiLayerDepthException("Camera info missing!");
+  }
+
   // Add data to multi depth image
   sensor_msgs::msg::PointCloud2::SharedPtr point_cloud_out;
 
   // Bit depth of image encoding
   int bitDepth = sensor_msgs::image_encodings::bitDepth(depth_msg->encoding);
   int numChannels = sensor_msgs::image_encodings::numChannels(depth_msg->encoding);
-
-  if (!camera_info_msg) {
-    throw rviz_common::MultiLayerDepthException("Camera info missing!");
-  }
 
   // precompute projection matrix and initialize shadow buffer
   initializeConversion(depth_msg, camera_info_msg);
@@ -551,7 +551,7 @@ MultiLayerDepth::generatePointCloudFromDepth(
 sensor_msgs::msg::PointCloud2::SharedPtr MultiLayerDepth::initPointCloud()
 {
   sensor_msgs::msg::PointCloud2::SharedPtr point_cloud_out =
-    sensor_msgs::msg::PointCloud2::SharedPtr(new sensor_msgs::msg::PointCloud2());
+    std::make_shared<sensor_msgs::msg::PointCloud2>();
 
   point_cloud_out->fields.resize(4);
   std::size_t point_offset = 0;

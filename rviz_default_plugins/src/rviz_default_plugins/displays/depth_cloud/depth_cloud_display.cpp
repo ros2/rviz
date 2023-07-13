@@ -33,6 +33,8 @@
 #include <Ogre.h>
 #include <tf2_ros/message_filter.h>
 
+#include <QRegExp>
+
 #include <iostream>
 #include <functional>
 #include <utility>
@@ -334,7 +336,7 @@ void DepthCloudDisplay::subscribe()
         rclcpp::SensorDataQoS(),
         [this](sensor_msgs::msg::CameraInfo::ConstSharedPtr msg) {
           std::lock_guard<std::mutex> lock(cam_info_mutex_);
-          cam_info_ = std::move(msg);
+          cam_info_ = msg;
         }, sub_opts);
 
       if (!color_topic.empty() && !color_transport.empty()) {
@@ -442,9 +444,9 @@ void DepthCloudDisplay::processMessage(
 
     if (depth_msg->header.frame_id != rgb_msg->header.frame_id) {
       std::stringstream errorMsg;
-      std::cerr << "Depth image frame id [" << depth_msg->header.frame_id.c_str()
-                << "] doesn't match color image frame id ["
-                << rgb_msg->header.frame_id.c_str() << "]";
+      errorMsg << "Depth image frame id [" << depth_msg->header.frame_id.c_str()
+               << "] doesn't match color image frame id ["
+               << rgb_msg->header.frame_id.c_str() << "]";
       setStatusStd(rviz_common::properties::StatusProperty::Warn, "Message", errorMsg.str());
     }
   }
