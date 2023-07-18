@@ -29,6 +29,18 @@
 
 #include <rviz_default_plugins/displays/twist/twist_display.hpp>
 
+namespace rviz_default_plugins
+{
+namespace displays
+{
+// Function to handle an incoming ROS message.
+void TwistStampedDisplay::processMessage(geometry_msgs::msg::TwistStamped::ConstSharedPtr msg)
+{
+  processMessagePrivate(msg->header, msg->twist.linear, msg->twist.angular);
+}
+}  // namespace displays
+}  // namespace rviz_default_plugins
+
 // Tell pluginlib about these classes.  It is important to do this in
 // global scope, outside our package's namespace.
 #include <pluginlib/class_list_macros.hpp>

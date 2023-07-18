@@ -32,6 +32,8 @@
 
 #include "rviz_visual_testing_framework/page_objects/base_page_object.hpp"
 
+#include <QString>  // NOLINT
+
 class AccelDisplayPageObject : public BasePageObject
 {
 public:

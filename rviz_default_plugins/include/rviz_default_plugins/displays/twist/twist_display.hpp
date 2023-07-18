@@ -46,10 +46,7 @@ class TwistStampedDisplay : public ScrewDisplay<geometry_msgs::msg::TwistStamped
   Q_OBJECT
 
   // Function to handle an incoming ROS message.
-  void processMessage(geometry_msgs::msg::TwistStamped::ConstSharedPtr msg) override
-  {
-    processMessagePrivate(msg->header, msg->twist.linear, msg->twist.angular);
-  }
+  void processMessage(geometry_msgs::msg::TwistStamped::ConstSharedPtr msg) override;
 };
 
 }  // namespace displays

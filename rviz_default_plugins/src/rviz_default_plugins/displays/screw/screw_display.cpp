@@ -29,6 +29,8 @@
 
 #include "rviz_default_plugins/displays/screw/screw_display.hpp"
 
+#include <QObject>
+#include <QString>
 #include <memory>
 
 #include <geometry_msgs/msg/twist_stamped.hpp>

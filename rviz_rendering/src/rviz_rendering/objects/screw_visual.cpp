@@ -32,6 +32,7 @@
 #include <OgreSceneManager.h>
 
 #include <cmath>
+#include <memory>
 
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/billboard_line.hpp"
