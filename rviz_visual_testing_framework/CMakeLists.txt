@@ -24,46 +24,19 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(ament_cmake REQUIRED)
-
-find_package(rcutils REQUIRED)
-
-find_package(rviz_common REQUIRED)
-
-find_package(rviz_ogre_vendor REQUIRED)
-
+find_package(geometry_msgs REQUIRED)
 find_package(Qt5 REQUIRED COMPONENTS Widgets Test)
+find_package(rclcpp REQUIRED)
+find_package(rcutils REQUIRED)
+find_package(rviz_common REQUIRED)
+find_package(rviz_ogre_vendor REQUIRED)
+find_package(rviz_rendering REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
 
 find_package(ament_cmake_gtest REQUIRED)
 ament_find_gtest()
-
-set(visual_test_framework_source_files
-  include/rviz_visual_testing_framework/page_objects/base_page_object.hpp
-  src/page_objects/base_page_object.cpp
-  include/rviz_visual_testing_framework/page_objects/page_object_with_window.hpp
-  src/page_objects/page_object_with_window.cpp
-  src/internal/rviz_scene_test.cpp
-  include/rviz_visual_testing_framework/internal/rviz_scene_test.hpp
-  include/rviz_visual_testing_framework/internal/display_handler.hpp
-  src/internal/display_handler.cpp
-  src/internal/image_tester.cpp
-  include/rviz_visual_testing_framework/internal/image_tester.hpp
-  include/rviz_visual_testing_framework/test_helpers.hpp
-  src/test_helpers.cpp
-  include/rviz_visual_testing_framework/internal/executor.hpp
-  src/internal/executor.cpp
-  include/rviz_visual_testing_framework/internal/transform_message_creator.hpp
-  src/internal/transform_message_creator.cpp
-  include/rviz_visual_testing_framework/internal/visual_test.hpp
-  src/internal/visual_test.cpp
-  include/rviz_visual_testing_framework/visual_test_fixture.hpp
-  src/visual_test_fixture.cpp
-  include/rviz_visual_testing_framework/visual_test_publisher.hpp
-)
-
-set(visual_tests_target_libaries
-  rviz_common::rviz_common
-  Qt5::Widgets
-  Qt5::Test)
 
 # TODO(wjwwood): this block is to setup the windeployqt tool, could be removed later.
 if(Qt5_FOUND AND WIN32 AND TARGET Qt5::qmake AND NOT TARGET Qt5::windeployqt)
@@ -77,7 +50,18 @@ if(Qt5_FOUND AND WIN32 AND TARGET Qt5::qmake AND NOT TARGET Qt5::windeployqt)
   )
 endif()
 
-add_library(rviz_visual_testing_framework STATIC ${visual_test_framework_source_files})
+add_library(rviz_visual_testing_framework STATIC
+  src/page_objects/base_page_object.cpp
+  src/page_objects/page_object_with_window.cpp
+  src/internal/rviz_scene_test.cpp
+  src/internal/display_handler.cpp
+  src/internal/image_tester.cpp
+  src/test_helpers.cpp
+  src/internal/executor.cpp
+  src/internal/transform_message_creator.cpp
+  src/internal/visual_test.cpp
+  src/visual_test_fixture.cpp
+)
 
 target_include_directories(rviz_visual_testing_framework
   PUBLIC
@@ -85,12 +69,22 @@ target_include_directories(rviz_visual_testing_framework
     $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
     ${GTEST_INCLUDE_DIRS})
 
-target_link_libraries(rviz_visual_testing_framework
-  ${visual_tests_target_libaries})
+target_link_libraries(rviz_visual_testing_framework PUBLIC
+  ${geometry_msgs_TARGETS}
+  Qt5::Test
+  Qt5::Widgets
+  rclcpp::rclcpp
+  rcutils::rcutils
+  rviz_common::rviz_common
+  rviz_ogre_vendor::OgreMain
+  rviz_rendering::rviz_rendering
+  ${std_msgs_TARGETS}
+  tf2::tf2
+  tf2_ros::tf2_ros
+)
 
 # export information to downstream packages
-ament_export_dependencies(Qt5)
-ament_export_dependencies(rviz_common)
+ament_export_dependencies(geometry_msgs Qt5 rclcpp rcutils rviz_common rviz_ogre_vendor rviz_rendering std_msgs tf2 tf2_ros)
 
 # Export old-style CMake variables
 ament_export_include_directories("include/${PROJECT_NAME}")

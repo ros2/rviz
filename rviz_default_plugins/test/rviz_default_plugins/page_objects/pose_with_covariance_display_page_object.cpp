@@ -28,6 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <QString>
+
 #include "pose_with_covariance_display_page_object.hpp"
 
 PoseWithCovarianceDisplayPageObject::PoseWithCovarianceDisplayPageObject()

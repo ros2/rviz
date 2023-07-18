@@ -33,7 +33,11 @@
 #include <memory>
 #include <vector>
 
+#include "geometry_msgs/msg/point32.hpp"
 #include "rclcpp/clock.hpp"
+#include "sensor_msgs/msg/point_cloud2.hpp"
+#include "sensor_msgs/msg/point_field.hpp"
+#include "std_msgs/msg/header.hpp"
 
 namespace rviz_default_plugins
 {
