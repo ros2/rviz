@@ -2,6 +2,15 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.6 (2023-07-18)
+-------------------
+* Merge pull request `#993 <https://github.com/ros2/rviz/issues/993>`_ from ros2/mergify/bp/humble/pr-992
+* Merge pull request `#998 <https://github.com/ros2/rviz/issues/998>`_ from ros2/mergify/bp/humble/pr-989
+* Re-implemented setName for tools (`#989 <https://github.com/ros2/rviz/issues/989>`_)
+* Add a libqt5-svg dependency to rviz_common. (`#992 <https://github.com/ros2/rviz/issues/992>`_)
+* Update Frame shortcut (`#958 <https://github.com/ros2/rviz/issues/958>`_) (`#960 <https://github.com/ros2/rviz/issues/960>`_)
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette, Felix Exner (fexner), mergify[bot]
+
 11.2.5 (2023-01-10)
 -------------------
 

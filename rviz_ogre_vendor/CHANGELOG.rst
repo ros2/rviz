@@ -2,6 +2,9 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.6 (2023-07-18)
+-------------------
+
 11.2.5 (2023-01-10)
 -------------------
 * Fixes policy CMP0135 warning for CMake >= 3.24 (`#898 <https://github.com/ros2/rviz/issues/898>`_) (`#936 <https://github.com/ros2/rviz/issues/936>`_)

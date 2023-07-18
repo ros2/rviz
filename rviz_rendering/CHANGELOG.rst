@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.6 (2023-07-18)
+-------------------
+* Added Effort plugin (`#990 <https://github.com/ros2/rviz/issues/990>`_) (`#1010 <https://github.com/ros2/rviz/issues/1010>`_)
+* Contributors: mergify[bot]
+
 11.2.5 (2023-01-10)
 -------------------
 * add test to ensure binary STL files from SOLIDWORKS get imported without a warning (`#917 <https://github.com/ros2/rviz/issues/917>`_) (`#931 <https://github.com/ros2/rviz/issues/931>`_)

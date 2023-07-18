@@ -2,6 +2,15 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.6 (2023-07-18)
+-------------------
+* Added Effort plugin (`#990 <https://github.com/ros2/rviz/issues/990>`_) (`#1010 <https://github.com/ros2/rviz/issues/1010>`_)
+* Update Frame shortcut (`#958 <https://github.com/ros2/rviz/issues/958>`_) (`#960 <https://github.com/ros2/rviz/issues/960>`_)
+* Fix tolerance calculation precision (`#934 <https://github.com/ros2/rviz/issues/934>`_) (`#965 <https://github.com/ros2/rviz/issues/965>`_)
+* Fix MeshResourceMarker for mesh with color-based embedded material (`#928 <https://github.com/ros2/rviz/issues/928>`_) (`#964 <https://github.com/ros2/rviz/issues/964>`_)
+* std::copy fix - OccupancyGridUpdate - Data is not being processed correctly (`#895 <https://github.com/ros2/rviz/issues/895>`_) (`#978 <https://github.com/ros2/rviz/issues/978>`_)
+* Contributors: Chuanhong Guo, Daisuke Sato, mergify[bot]
+
 11.2.5 (2023-01-10)
 -------------------
 
