@@ -38,7 +38,7 @@
 #include "geometry_msgs/msg/twist_stamped.hpp"
 #include "std_msgs/msg/header.hpp"
 
-using namespace std::chrono_literals; //NOLINT
+using namespace std::chrono_literals;  // NOLINT
 
 namespace nodes
 {

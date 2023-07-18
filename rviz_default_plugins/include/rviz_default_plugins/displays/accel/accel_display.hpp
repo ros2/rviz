@@ -46,10 +46,7 @@ class AccelStampedDisplay : public ScrewDisplay<geometry_msgs::msg::AccelStamped
   Q_OBJECT
 
   // Function to handle an incoming ROS message.
-  void processMessage(geometry_msgs::msg::AccelStamped::ConstSharedPtr msg) override
-  {
-    processMessagePrivate(msg->header, msg->accel.linear, msg->accel.angular);
-  }
+  void processMessage(geometry_msgs::msg::AccelStamped::ConstSharedPtr msg) override;
 };
 
 }  // namespace displays

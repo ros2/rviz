@@ -98,7 +98,12 @@ void ScrewVisual::setScrew(const Ogre::Vector3 & linear, const Ogre::Vector3 & a
       Ogre::Vector3(angular_length / 4.0f, 0, angular_length / 2.0f));
     circle_angular_->clear();
     circle_angular_->setLineWidth(width_ * 0.05f);
-    for (int i = 4; i <= 32; i++) {
+    // create Torque Direction Circle
+    // The cirlce is divided in 32 parts because it plotted using lines. We are going to plot
+    // the cirle from the 4th portion to the 31. The first 4 parts are used to visualize the arrow
+    const int initialCiclePortion = 4;
+    const int endCirclePortion = 32;
+    for (int i = initialCiclePortion; i <= endCirclePortion; i++) {
       Ogre::Vector3 point =
         Ogre::Vector3(
         static_cast<float>((angular_length / 4.0f) * cos(i * 2.0f * M_PI / 32.0f)),

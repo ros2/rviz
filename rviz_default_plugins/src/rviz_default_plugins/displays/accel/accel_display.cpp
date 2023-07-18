@@ -35,3 +35,15 @@
 PLUGINLIB_EXPORT_CLASS(
   rviz_default_plugins::displays::AccelStampedDisplay,
   rviz_common::Display)
+
+namespace rviz_default_plugins
+{
+namespace displays
+{
+// Function to handle an incoming ROS message.
+void AccelStampedDisplay::processMessage(geometry_msgs::msg::AccelStamped::ConstSharedPtr msg)
+{
+  processMessagePrivate(msg->header, msg->accel.linear, msg->accel.angular);
+}
+}  // namespace displays
+}  // namespace rviz_default_plugins

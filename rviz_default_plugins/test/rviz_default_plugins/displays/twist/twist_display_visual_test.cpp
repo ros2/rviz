@@ -36,7 +36,7 @@
 #include "../../page_objects/twist_display_page_object.hpp"
 #include "../../publishers/twist_publisher.hpp"
 
-TEST_F(VisualTestFixture, twistes_are_displayed) {
+TEST_F(VisualTestFixture, twists_are_displayed) {
   auto twist_publisher = std::make_shared<nodes::TwistPublisher>();
   auto twist_visual_publisher =
     std::make_unique<VisualTestPublisher>(twist_publisher, "twist_frame");

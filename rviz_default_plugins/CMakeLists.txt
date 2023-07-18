@@ -726,16 +726,16 @@ if(BUILD_TESTING)
   ament_add_gtest(accel_display_visual_test
     test/rviz_default_plugins/displays/accel/accel_display_visual_test.cpp
     test/rviz_default_plugins/page_objects/accel_display_page_object.cpp
-    ${TEST_FIXTURE_SOURCES}
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET accel_display_visual_test)
-    target_include_directories(accel_display_visual_test PUBLIC
-      ${TEST_INCLUDE_DIRS}
-      ${rviz_visual_testing_framework_INCLUDE_DIRS})
+    target_include_directories(accel_display_visual_test PRIVATE test)
     target_link_libraries(accel_display_visual_test
-      ${TEST_LINK_LIBRARIES}
-      rviz_visual_testing_framework::rviz_visual_testing_framework)
+      rviz_visual_testing_framework::rviz_visual_testing_framework
+      ${geometry_msgs_TARGETS}
+      ${std_msgs_TARGETS}
+      rclcpp::rclcpp
+    )
   endif()
 
   ament_add_gtest(axes_display_visual_test
@@ -1147,10 +1147,13 @@ if(BUILD_TESTING)
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET twist_display_visual_test)
-    target_include_directories(twist_display_visual_test PUBLIC test)
+    target_include_directories(twist_display_visual_test PRIVATE test)
     target_link_libraries(twist_display_visual_test
-      ${TEST_LINK_LIBRARIES}
-      rviz_visual_testing_framework::rviz_visual_testing_framework)
+      rviz_visual_testing_framework::rviz_visual_testing_framework
+      ${geometry_msgs_TARGETS}
+      ${std_msgs_TARGETS}
+      rclcpp::rclcpp
+    )
   endif()
 
   ament_add_gtest(wrench_display_visual_test

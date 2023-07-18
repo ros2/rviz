@@ -36,7 +36,7 @@
 #include "../../page_objects/accel_display_page_object.hpp"
 #include "../../publishers/accel_publisher.hpp"
 
-TEST_F(VisualTestFixture, acceles_are_displayed) {
+TEST_F(VisualTestFixture, accels_are_displayed) {
   auto accel_publisher = std::make_shared<nodes::AccelPublisher>();
   auto accel_visual_publisher =
     std::make_unique<VisualTestPublisher>(accel_publisher, "accel_frame");
