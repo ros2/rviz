@@ -32,7 +32,7 @@
 #include <memory>
 #include <utility>
 
-#include <OgreSceneNode.h>
+#include <Ogre.h>
 
 #include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
 #include "rviz_common/display_context.hpp"

@@ -78,8 +78,35 @@ private:
   QString message_type_;
 };
 
-}  // end namespace properties
+class RVIZ_COMMON_PUBLIC RosFilteredTopicProperty
+  : public rviz_common::properties::RosTopicProperty
+{
+  Q_OBJECT
 
+public:
+  RosFilteredTopicProperty(
+    const QString & name = QString(),
+    const QString & default_value = QString(),
+    const QString & message_type = QString(),
+    const QString & description = QString(),
+    const QRegExp & filter = QRegExp(),
+    Property * parent = 0,
+    const char * changed_slot = 0,
+    QObject * receiver = 0);
+
+  void enableFilter(bool enabled);
+
+  QRegExp filter() const;
+
+protected Q_SLOTS:
+  void fillTopicList() override;
+
+private:
+  QRegExp filter_;
+  bool filter_enabled_;
+};
+
+}  // end namespace properties
 }  // end namespace rviz_common
 
 #endif  // RVIZ_COMMON__PROPERTIES__ROS_TOPIC_PROPERTY_HPP_
