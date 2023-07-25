@@ -252,7 +252,9 @@ MultiLayerDepth::generatePointCloudSL(
         ++cloud_data_ptr;
         *cloud_data_ptr = depth;
         ++cloud_data_ptr;
-        *cloud_data_ptr = *reinterpret_cast<float *>(&color);
+        float ret;
+        std::memcpy(&ret, &color, sizeof(float));
+        *cloud_data_ptr = ret;
         ++cloud_data_ptr;
 
         ++point_count;
@@ -346,7 +348,9 @@ MultiLayerDepth::generatePointCloudML(
         ++cloud_data_ptr;
         *cloud_data_ptr = depth;
         ++cloud_data_ptr;
-        *cloud_data_ptr = *reinterpret_cast<float *>(&color);
+        float ret;
+        std::memcpy(&ret, &color, sizeof(float));
+        *cloud_data_ptr = ret;
         ++cloud_data_ptr;
 
         ++point_count;
