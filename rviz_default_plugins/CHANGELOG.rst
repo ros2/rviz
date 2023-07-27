@@ -2,6 +2,17 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+12.8.0 (2023-08-27)
+-------------------
+* Don't pass screw_display.hpp to the moc generator. (`#1018 <https://github.com/ros2/rviz/issues/1018>`_)
+  Since it isn't a Qt class, you get a warning from moc:
+  Note: No relevant classes found. No output generated.
+  Just skip adding it to the moc list here, which gets rid
+  of the warning.
+* Added DepthCloud default plugin (`#996 <https://github.com/ros2/rviz/issues/996>`_)
+* Added TwistStamped and AccelStamped default plugins (`#991 <https://github.com/ros2/rviz/issues/991>`_)
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette
+
 12.7.0 (2023-07-11)
 -------------------
 * Added Effort plugin (`#990 <https://github.com/ros2/rviz/issues/990>`_)
