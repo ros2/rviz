@@ -2,6 +2,14 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.7 (2023-07-27)
+-------------------
+* Remove warning in depth_cloud_mld.cpp (`#1021 <https://github.com/ros2/rviz/issues/1021>`_)
+  (cherry picked from commit 092e3efef2f907549976ffd101e5ad8100cbea3f)
+* Added DepthCloud default plugin (`#996 <https://github.com/ros2/rviz/issues/996>`_)
+  (cherry picked from commit 8f2e17e441399974ebd465a2d2ef0a3529f57f23)
+* Contributors: Alejandro Hernández Cordero
+
 11.2.6 (2023-07-18)
 -------------------
 * Merge pull request `#993 <https://github.com/ros2/rviz/issues/993>`_ from ros2/mergify/bp/humble/pr-992
