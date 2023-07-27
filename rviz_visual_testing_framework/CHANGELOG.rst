@@ -2,6 +2,18 @@
 Changelog for package rviz_visual_testing_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+12.4.2 (2023-07-27)
+-------------------
+* Improve the compilation time of rviz_default_plugins (`#1007 <https://github.com/ros2/rviz/issues/1007>`_) (`#1009 <https://github.com/ros2/rviz/issues/1009>`_)
+  * Cleanup rviz_visual_testing_frameiwork CMakeLists.txt
+  The main motivation here is to remove an exported absolute
+  path from this package.  To do this, mark everything in
+  the CMakeLists.txt private that we can.
+  This ended up exposing a bunch of missing dependencies
+  in rviz_default_plugins, so fix those here as well.
+  (cherry picked from commit 5af8896a30311e4b8171864391d3bc2d8b81b611)
+  Co-authored-by: Chris Lalancette <clalancette@gmail.com>
+
 12.4.1 (2023-07-14)
 -------------------
 

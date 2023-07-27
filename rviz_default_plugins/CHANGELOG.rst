@@ -2,6 +2,34 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+12.4.2 (2023-07-27)
+-------------------
+* Don't pass screw_display.hpp to the moc generator. (`#1018 <https://github.com/ros2/rviz/issues/1018>`_)
+  Since it isn't a Qt class, you get a warning from moc:
+  Note: No relevant classes found. No output generated.
+  Just skip adding it to the moc list here, which gets rid
+  of the warning.
+  (cherry picked from commit 071adba7fca13da7f6ba77c26e2d9cf989308ca2)
+* Added DepthCloud default plugin (`#996 <https://github.com/ros2/rviz/issues/996>`_)
+  (cherry picked from commit 8f2e17e441399974ebd465a2d2ef0a3529f57f23)
+* Added TwistStamped and AccelStamped default plugins (`#991 <https://github.com/ros2/rviz/issues/991>`_) (`#1015 <https://github.com/ros2/rviz/issues/1015>`_)
+  (cherry picked from commit 9599dd488d543671121c40df9aec5533064e86fb)
+  Co-authored-by: Alejandro Hernández Cordero <alejandro@openrobotics.org>
+* Improve the compilation time of rviz_default_plugins (`#1007 <https://github.com/ros2/rviz/issues/1007>`_) (`#1009 <https://github.com/ros2/rviz/issues/1009>`_)
+  * Cleanup rviz_visual_testing_framework CMakeLists.txt
+  The main motivation here is to remove an exported absolute
+  path from this package.  To do this, mark everything in
+  the CMakeLists.txt private that we can.
+  This ended up exposing a bunch of missing dependencies
+  in rviz_default_plugins, so fix those here as well.
+  (cherry picked from commit 5af8896a30311e4b8171864391d3bc2d8b81b611)
+  Co-authored-by: Chris Lalancette <clalancette@gmail.com>
+* Added Effort plugin (`#990 <https://github.com/ros2/rviz/issues/990>`_) (`#1011 <https://github.com/ros2/rviz/issues/1011>`_)
+  * Added Effort plugin
+  (cherry picked from commit e3b56ed7058502d94fe3d1c27948d4f4e9be58a8)
+  Co-authored-by: Alejandro Hernández Cordero <alejandro@openrobotics.org>
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette
+
 12.4.1 (2023-07-14)
 -------------------
 

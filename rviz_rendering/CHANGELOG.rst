@@ -2,6 +2,17 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+12.4.2 (2023-07-27)
+-------------------
+* Added TwistStamped and AccelStamped default plugins (`#991 <https://github.com/ros2/rviz/issues/991>`_) (`#1015 <https://github.com/ros2/rviz/issues/1015>`_)
+  (cherry picked from commit 9599dd488d543671121c40df9aec5533064e86fb)
+  Co-authored-by: Alejandro Hernández Cordero <alejandro@openrobotics.org>
+* Added Effort plugin (`#990 <https://github.com/ros2/rviz/issues/990>`_) (`#1011 <https://github.com/ros2/rviz/issues/1011>`_)
+  * Added Effort plugin
+  (cherry picked from commit e3b56ed7058502d94fe3d1c27948d4f4e9be58a8)
+  Co-authored-by: Alejandro Hernández Cordero <alejandro@openrobotics.org>
+* Contributors: Alejandro Hernández Cordero
+
 12.4.1 (2023-07-14)
 -------------------
 
