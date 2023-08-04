@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
- #define _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
 #include "rviz_rendering/objects/effort_visual.hpp"
 
 #include <algorithm>
@@ -36,7 +36,7 @@
 namespace rviz_rendering
 {
 EffortVisual::EffortVisual(Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node)
-: scene_manager_(scene_manager), parent_node_(parent_node)
+: scene_manager_(scene_manager), parent_node_(parent_node), width_(0.0f), scale_(0.0f)
 {
 }
 

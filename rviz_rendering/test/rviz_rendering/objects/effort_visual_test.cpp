@@ -76,7 +76,7 @@ protected:
 static Ogre::SceneNode * findForceArrow(Ogre::SceneNode * scene_node)
 {
   std::vector<Ogre::SceneNode *> arrows = rviz_rendering::findAllArrows(scene_node);
-  auto billboard_line = rviz_rendering::findOneBillboardChain(scene_node);
+  Ogre::BillboardChain * billboard_line = rviz_rendering::findOneBillboardChain(scene_node);
   for (Ogre::SceneNode * arrow : arrows) {
     if (billboard_line->getParentSceneNode()->getParent() == arrow->getParent()) {
       return arrow;
@@ -90,6 +90,7 @@ TEST_F(EffortVisualTestFixture, setEffort_sets_force_arrow_correctly) {
   auto root_node = scene_manager->getRootSceneNode();
 
   auto effort_visual = std::make_shared<rviz_rendering::EffortVisual>(scene_manager, root_node);
+  ASSERT_NE(nullptr, effort_visual);
 
   Ogre::ColourValue color;
   effort_visual->getRainbowColor(0, color);
@@ -98,9 +99,10 @@ TEST_F(EffortVisualTestFixture, setEffort_sets_force_arrow_correctly) {
   effort_visual->getRainbowColor(1, color);
   EXPECT_THAT(color, ColorEq(Ogre::ColourValue(1, 0, 0, 1)));
 
+  effort_visual->setFramePosition("joint1", Ogre::Vector3(0, 0, 0));
+  effort_visual->setFrameOrientation("joint1", Ogre::Quaternion());
   effort_visual->setEffort("joint1", 1, 10);
 
-  effort_visual->setFramePosition("joint1", Ogre::Vector3());
   std::vector<Ogre::SceneNode *> arrows = rviz_rendering::findAllArrows(root_node);
   EXPECT_THAT(arrows, SizeIs(1u));
   EXPECT_THAT(
@@ -124,8 +126,10 @@ TEST_F(EffortVisualTestFixture, setEffort_hides_force_arrow_for_larger_width_tha
   auto root_node = scene_manager->getRootSceneNode();
 
   auto effort_visual = std::make_shared<rviz_rendering::EffortVisual>(scene_manager, root_node);
+  ASSERT_NE(nullptr, effort_visual);
 
-  Ogre::Vector3 pos1(1, 2, 3);
+  effort_visual->setFramePosition("joint1", Ogre::Vector3(0, 0, 0));
+  effort_visual->setFrameOrientation("joint1", Ogre::Quaternion());
   effort_visual->setEffort("joint1", 1, 10);
 
   effort_visual->setScale(0.7f);
