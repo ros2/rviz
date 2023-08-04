@@ -31,6 +31,7 @@
 #define RVIZ_RENDERING__OBJECTS__EFFORT_VISUAL_HPP_
 
 #include <map>
+#include <memory>
 #include <string>
 
 #include <OgreSceneNode.h>
@@ -72,8 +73,8 @@ public:
 
 private:
   // The object implementing the effort circle
-  std::map<std::string, rviz_rendering::BillboardLine *> effort_circle_;
-  std::map<std::string, rviz_rendering::Arrow *> effort_arrow_;
+  std::map<std::string, std::unique_ptr<rviz_rendering::BillboardLine>> effort_circle_;
+  std::map<std::string, std::unique_ptr<rviz_rendering::Arrow>> effort_arrow_;
   std::map<std::string, bool> effort_enabled_;
 
   Ogre::SceneManager * scene_manager_;

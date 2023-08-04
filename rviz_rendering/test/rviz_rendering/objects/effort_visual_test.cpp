@@ -73,18 +73,17 @@ protected:
   std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
 };
 
-Ogre::SceneNode * findForceArrow(Ogre::SceneNode * scene_node)
+static Ogre::SceneNode * findForceArrow(Ogre::SceneNode * scene_node)
 {
-  auto arrows = rviz_rendering::findAllArrows(scene_node);
+  std::vector<Ogre::SceneNode *> arrows = rviz_rendering::findAllArrows(scene_node);
   auto billboard_line = rviz_rendering::findOneBillboardChain(scene_node);
-  for (const auto & arrow : arrows) {
+  for (Ogre::SceneNode * arrow : arrows) {
     if (billboard_line->getParentSceneNode()->getParent() == arrow->getParent()) {
       return arrow;
     }
   }
   return nullptr;
 }
-
 
 TEST_F(EffortVisualTestFixture, setEffort_sets_force_arrow_correctly) {
   auto scene_manager = Ogre::Root::getSingletonPtr()->createSceneManager();
@@ -102,7 +101,7 @@ TEST_F(EffortVisualTestFixture, setEffort_sets_force_arrow_correctly) {
   effort_visual->setEffort("joint1", 1, 10);
 
   effort_visual->setFramePosition("joint1", Ogre::Vector3());
-  auto arrows = rviz_rendering::findAllArrows(root_node);
+  std::vector<Ogre::SceneNode *> arrows = rviz_rendering::findAllArrows(root_node);
   EXPECT_THAT(arrows, SizeIs(1u));
   EXPECT_THAT(
     arrows[0]->convertWorldToLocalPosition(Ogre::Vector3(0, 0, 0)),
