@@ -72,13 +72,31 @@ void EffortVisual::setEffort(const std::string & joint_name, double effort, doub
   bool enabled = effort_enabled_.insert(std::make_pair(joint_name, true)).first->second;
 
   // enable or disable draw
-  if (effort_circle_.find(joint_name) != effort_circle_.end() && !enabled) {  // enable->disable
-    effort_circle_.erase(joint_name);
-    effort_arrow_.erase(joint_name);
-  }
-  if (effort_circle_.find(joint_name) == effort_circle_.end() && enabled) {  // disable -> enable
-    effort_circle_[joint_name] = std::make_unique<rviz_rendering::BillboardLine>(scene_manager_, parent_node_);
-    effort_arrow_[joint_name] = std::make_unique<rviz_rendering::Arrow>(scene_manager_, parent_node_);
+  if (enabled) {
+    if (effort_circle_.count(joint_name) == 0) {
+      effort_circle_[joint_name] =
+        std::make_unique<rviz_rendering::BillboardLine>(scene_manager_, parent_node_);
+    }
+    if (effort_arrow_.count(joint_name) == 0) {
+      effort_arrow_[joint_name] =
+        std::make_unique<rviz_rendering::Arrow>(scene_manager_, parent_node_);
+    }
+    if (position_.count(joint_name) == 0) {
+      position_[joint_name] = Ogre::Vector3(0.0f, 0.0f, 0.0f);
+    }
+    if (orientation_.count(joint_name) == 0) {
+      orientation_[joint_name] = Ogre::Quaternion();
+    }
+  } else {
+    if (effort_circle_.count(joint_name) != 0) {
+      effort_circle_.erase(joint_name);
+    }
+    if (effort_arrow_.count(joint_name) != 0) {
+      effort_arrow_.erase(joint_name);
+    }
+    // Note that we specifically do not erase the position_ and orientation_ here, as the user
+    // may have set them via setFrame{Position,Orientation} below and we don't want to
+    // forget that information.
   }
 
   if (!enabled) {
