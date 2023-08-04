@@ -35,8 +35,9 @@
 
 namespace rviz_rendering
 {
-EffortVisual::EffortVisual(Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node)
-: scene_manager_(scene_manager), parent_node_(parent_node), width_(0.0f), scale_(0.0f)
+EffortVisual::EffortVisual(
+  Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node, float width, float scale)
+: scene_manager_(scene_manager), parent_node_(parent_node), width_(width), scale_(scale)
 {
 }
 

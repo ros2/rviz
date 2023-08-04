@@ -48,7 +48,8 @@ class EffortVisual
 {
 public:
   RVIZ_RENDERING_PUBLIC
-  EffortVisual(Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node);
+  EffortVisual(
+    Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node, float width, float scale);
 
   // set rainbow color
   RVIZ_RENDERING_PUBLIC

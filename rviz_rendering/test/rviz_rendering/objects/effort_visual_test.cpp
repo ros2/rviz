@@ -89,7 +89,8 @@ TEST_F(EffortVisualTestFixture, setEffort_sets_force_arrow_correctly) {
   auto scene_manager = Ogre::Root::getSingletonPtr()->createSceneManager();
   auto root_node = scene_manager->getRootSceneNode();
 
-  auto effort_visual = std::make_shared<rviz_rendering::EffortVisual>(scene_manager, root_node);
+  auto effort_visual = std::make_shared<rviz_rendering::EffortVisual>(
+    scene_manager, root_node, 0.0f, 0.0f);
   ASSERT_NE(nullptr, effort_visual);
 
   Ogre::ColourValue color;
@@ -125,15 +126,13 @@ TEST_F(EffortVisualTestFixture, setEffort_hides_force_arrow_for_larger_width_tha
   auto scene_manager = Ogre::Root::getSingletonPtr()->createSceneManager();
   auto root_node = scene_manager->getRootSceneNode();
 
-  auto effort_visual = std::make_shared<rviz_rendering::EffortVisual>(scene_manager, root_node);
+  auto effort_visual = std::make_shared<rviz_rendering::EffortVisual>(
+    scene_manager, root_node, 5.0f, 0.7f);
   ASSERT_NE(nullptr, effort_visual);
 
   effort_visual->setFramePosition("joint1", Ogre::Vector3(0, 0, 0));
   effort_visual->setFrameOrientation("joint1", Ogre::Quaternion());
   effort_visual->setEffort("joint1", 1, 10);
-
-  effort_visual->setScale(0.7f);
-  effort_visual->setWidth(5);
 
   auto arrows = rviz_rendering::findAllArrows(root_node);
   EXPECT_THAT(arrows, SizeIs(1u));
