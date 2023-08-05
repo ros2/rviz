@@ -295,7 +295,8 @@ void EffortDisplay::processMessage(sensor_msgs::msg::JointState::ConstSharedPtr 
     visual->setScale(scale_property_->getFloat());
   } else {
     visual = std::make_shared<rviz_rendering::EffortVisual>(
-      context_->getSceneManager(), scene_node_, width_property_->getFloat(), scale_property_->getFloat());
+      context_->getSceneManager(), scene_node_,
+      width_property_->getFloat(), scale_property_->getFloat());
   }
 
   if (visuals_.size() >= static_cast<size_t>(history_length_property_->getInt())) {
