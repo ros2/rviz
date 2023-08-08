@@ -100,9 +100,9 @@ TEST_F(ScrewVisualTestFixture, setScrew_sets_linear_arrow_correctly) {
   auto root_node = scene_manager->getRootSceneNode();
 
   auto screw_visual = std::make_shared<rviz_rendering::ScrewVisual>(scene_manager, root_node);
-  EXPECT_NE(nullptr, screw_visual);
+  ASSERT_NE(nullptr, screw_visual);
 
-  auto arrows = rviz_rendering::findAllArrows(root_node);
+  std::vector<Ogre::SceneNode *> arrows = rviz_rendering::findAllArrows(root_node);
   EXPECT_THAT(arrows, SizeIs(3u));
   auto linear_arrow = findLinearArrow(root_node);
   auto angular_arrow = findAngularArrow(root_node);

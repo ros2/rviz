@@ -42,9 +42,9 @@
 namespace rviz_rendering
 {
 ScrewVisual::ScrewVisual(Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node)
+: linear_scale_(0.0f), angular_scale_(0.0f), width_(0.0f), hide_small_values_(true),
+  scene_manager_(scene_manager)
 {
-  scene_manager_ = scene_manager;
-
   // Ogre::SceneNode s form a tree, with each node storing the transform (position and orientation)
   // of itself relative to its parent. Ogre does the math of combining those transforms
   // for rendering. Here we create a node to store the pose of the screw's header
@@ -52,7 +52,6 @@ ScrewVisual::ScrewVisual(Ogre::SceneManager * scene_manager, Ogre::SceneNode * p
   frame_node_ = parent_node->createChildSceneNode();
   linear_node_ = frame_node_->createChildSceneNode();
   angular_node_ = frame_node_->createChildSceneNode();
-  hide_small_values_ = true;
 
   // We create the arrow object within the frame node so that we can
   // set its position and direction relative to its header frame.
