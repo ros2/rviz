@@ -4,15 +4,9 @@ project(rviz_assimp_vendor)
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_vendor_package REQUIRED)
 
-# Override ON so that the following CMake logic in assimp 5.0.1 and older
-# doesn't result in a CMake warning: if(ON)
-#   https://github.com/ros2/rviz/issues/524
-#   https://bugs.launchpad.net/ubuntu/+source/assimp/+bug/1869405
-set(ON 1)
-
 # TODO: Switch to version range in find_package in CMake 3.19
 find_package(assimp QUIET)
-if(NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LESS 5.2.0)
+if(NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LESS 5.2.2)
   set(assimp_FOUND FALSE)
 endif()
 
