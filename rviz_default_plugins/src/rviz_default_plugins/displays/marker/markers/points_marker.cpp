@@ -88,9 +88,9 @@ void PointsMarker::onNewMessage(
   setPosition(pose);
   setOrientation(orientation);
 
-  setRenderModeAndDimensions(new_message, scale);
+  points_->clearAndRemoveAllPoints();
 
-  points_->clear();
+  setRenderModeAndDimensions(new_message, scale);
 
   if (new_message->points.empty()) {
     return;
