@@ -291,12 +291,13 @@ void EffortDisplay::processMessage(sensor_msgs::msg::JointState::ConstSharedPtr 
   std::shared_ptr<rviz_rendering::EffortVisual> visual;
   if (visuals_.size() == static_cast<size_t>(history_length_property_->getInt())) {
     visual = visuals_.front();
+    visual->setWidth(width_property_->getFloat());
+    visual->setScale(scale_property_->getFloat());
   } else {
     visual = std::make_shared<rviz_rendering::EffortVisual>(
-      context_->getSceneManager(), scene_node_);
+      context_->getSceneManager(), scene_node_,
+      width_property_->getFloat(), scale_property_->getFloat());
   }
-  visual->setWidth(width_property_->getFloat());
-  visual->setScale(scale_property_->getFloat());
 
   if (visuals_.size() >= static_cast<size_t>(history_length_property_->getInt())) {
     visuals_.pop_front();
