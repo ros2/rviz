@@ -33,6 +33,7 @@
 #include <algorithm>
 #include <cassert>
 #include <memory>
+#include <regex>
 #include <set>
 #include <string>
 #include <vector>
@@ -40,6 +41,9 @@
 
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
+#include <QValidator>
+#include <QLineEdit>
+#include <QToolTip>
 
 #include "tf2_ros/transform_listener.h"
 #include "tf2_ros/buffer.h"
@@ -54,6 +58,7 @@
 #include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/quaternion_property.hpp"
+#include "rviz_common/properties/regex_filter_property.hpp"
 #include "rviz_common/properties/string_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/interaction/forwards.hpp"
@@ -132,6 +137,11 @@ TFDisplay::TFDisplay()
     " fade to gray, and then it will fade out completely.",
     this);
   frame_timeout_property_->setMin(1);
+
+  filter_whitelist_property_ = new rviz_common::properties::RegexFilterProperty(
+    "Filter (whitelist)", std::regex(""), this);
+  filter_blacklist_property_ = new rviz_common::properties::RegexFilterProperty(
+    "Filter (blacklist)", std::regex(), this);
 
   frames_category_ = new Property("Frames", QVariant(), "The list of all frames.", this);
 
@@ -287,9 +297,36 @@ void TFDisplay::updateFrames()
 {
   typedef std::vector<std::string> V_string;
   V_string frames = context_->getFrameManager()->getAllFrameNames();
-  std::sort(frames.begin(), frames.end());
 
-  S_FrameInfo current_frames = createOrUpdateFrames(frames);
+  // filter frames according to white-list and black-list regular expressions
+  auto it = frames.begin(), end = frames.end();
+  while (it != end)
+  {
+    if (it->empty() || !std::regex_search(*it, filter_whitelist_property_->regex()) ||
+        std::regex_search(*it, filter_blacklist_property_->regex()))
+      std::swap(*it, *--end); // swap current to-be-dropped name with last one
+    else
+      ++it;
+  }
+
+  std::sort(frames.begin(), end);
+
+  S_FrameInfo current_frames;
+  for (it = frames.begin(); it != end; ++it)
+  {
+    FrameInfo* info = getFrameInfo(*it);
+    if (!info)
+    {
+      info = createFrame(*it);
+    }
+    else
+    {
+      updateFrame(info);
+    }
+
+    current_frames.insert(info);
+  }
+
   deleteObsoleteFrames(current_frames);
 
   context_->queueRender();
@@ -327,15 +364,12 @@ FrameInfo * TFDisplay::getFrameInfo(const std::string & frame)
 
 void TFDisplay::deleteObsoleteFrames(S_FrameInfo & current_frames)
 {
-  S_FrameInfo to_delete;
-  for (auto & frame : frames_) {
-    if (current_frames.find(frame.second) == current_frames.end()) {
-      to_delete.insert(frame.second);
-    }
-  }
-
-  for (auto & frame : to_delete) {
-    deleteFrame(frame, true);
+  for (auto frame_it = frames_.begin(), frame_end = frames_.end(); frame_it != frame_end;)
+  {
+    if (current_frames.find(frame_it->second) == current_frames.end())
+      frame_it = deleteFrame(frame_it, false);
+    else
+      ++frame_it;
   }
 }
 
@@ -565,6 +599,24 @@ void TFDisplay::updateParentArrowIfTransformExists(
   }
 }
 
+TFDisplay::M_FrameInfo::iterator TFDisplay::deleteFrame(M_FrameInfo::iterator it, bool delete_properties)
+{
+  FrameInfo* frame = it->second;
+  it = frames_.erase(it);
+
+  delete frame->axes_;
+  context_->getHandlerManager()->removeHandler(frame->axes_coll_);
+  delete frame->parent_arrow_;
+  delete frame->name_text_;
+  scene_manager_->destroySceneNode(frame->name_node_);
+  if (delete_properties)
+  {
+    delete frame->enabled_property_;
+    delete frame->tree_property_;
+  }
+  delete frame;
+  return it;
+}
 
 void TFDisplay::deleteFrame(FrameInfo * frame, bool delete_properties)
 {
@@ -579,8 +631,10 @@ void TFDisplay::deleteFrame(FrameInfo * frame, bool delete_properties)
   delete frame->name_text_;
   scene_manager_->destroySceneNode(frame->name_node_);
   if (delete_properties) {
-    delete frame->enabled_property_;
-    delete frame->tree_property_;
+    if (frame->enabled_property_)
+      delete frame->enabled_property_;
+    if (frame->tree_property_)
+      delete frame->tree_property_;
   }
   delete frame;
 }
