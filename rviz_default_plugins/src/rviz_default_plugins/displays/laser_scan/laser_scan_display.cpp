@@ -35,6 +35,7 @@
 #include "tf2_ros/buffer.h"
 
 #include "rviz_common/properties/int_property.hpp"
+#include "rviz_common/properties/status_property.hpp"
 #include "rviz_common/transformation/transformation_manager.hpp"
 #include "rviz_common/validate_floats.hpp"
 #include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
@@ -61,6 +62,16 @@ void LaserScanDisplay::onInitialize()
   transformer_guard_->initialize(context_);
 }
 
+void LaserScanDisplay::checkTolerance(int tolerance)
+{
+  if (tolerance > 1)
+    setStatus(rviz_common::properties::StatusProperty::Warn, "Scan Time",
+              QString(
+                  "Laser scan time, computed from time_increment * len(ranges), is rather large: "
+                  " %1s.\nThe display of any message will be delayed by this amount of time!")
+                  .arg(tolerance));
+}
+
 void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPtr scan)
 {
 //  Compute tolerance necessary for this scan
@@ -72,6 +83,7 @@ void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPt
   if (tolerance > filter_tolerance_) {
     filter_tolerance_ = tolerance;
     tf_filter_->setTolerance(filter_tolerance_);
+    checkTolerance(filter_tolerance_.nanoseconds() * 1e-9);
   }
   auto cloud = std::make_shared<sensor_msgs::msg::PointCloud2>();
   auto tf_wrapper = std::dynamic_pointer_cast<transformation::TFWrapper>(
@@ -108,6 +120,7 @@ void LaserScanDisplay::reset()
 {
   MFDClass::reset();
   point_cloud_common_->reset();
+  checkTolerance(filter_tolerance_.nanoseconds() * 1e-9);
 }
 
 void LaserScanDisplay::onDisable()

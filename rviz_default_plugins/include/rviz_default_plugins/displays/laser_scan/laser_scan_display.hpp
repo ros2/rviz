@@ -81,6 +81,9 @@ protected:
   /** @brief Process a single message.  Overridden from MessageFilterDisplay. */
   void processMessage(sensor_msgs::msg::LaserScan::ConstSharedPtr scan) override;
 
+  /** create a status warning when tolerance is larger than 1s */
+  void checkTolerance(int tolerance);
+
   std::unique_ptr<PointCloudCommon> point_cloud_common_;
   std::unique_ptr<laser_geometry::LaserProjection> projector_;
   rclcpp::Duration filter_tolerance_;
