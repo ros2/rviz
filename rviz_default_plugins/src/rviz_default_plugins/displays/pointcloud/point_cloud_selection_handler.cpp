@@ -53,11 +53,6 @@
 namespace rviz_default_plugins
 {
 
-uint64_t qHash(IndexAndMessage iam)
-{
-  return iam.index + (iam.message >> 32) + (iam.message & 0xffffffff);
-}
-
 bool operator==(IndexAndMessage a, IndexAndMessage b)
 {
   return a.index == b.index && a.message == b.message;
