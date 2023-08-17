@@ -237,12 +237,6 @@ private:
     Display * display);
 #endif
 
-  void messageArrived(
-    const std::string & frame_id,
-    const rclcpp::Time & stamp,
-    const std::string & caller_id,
-    Display * display);
-
 #if 0
   void messageFailed(
     const std::string & frame_id,

@@ -321,18 +321,6 @@ std::string FrameManager::discoverFailureReason(
 }
 #endif
 
-void FrameManager::messageArrived(
-  const std::string & frame_id,
-  const rclcpp::Time & stamp,
-  const std::string & caller_id,
-  Display * display)
-{
-  Q_UNUSED(frame_id);
-  Q_UNUSED(stamp);
-  using rviz_common::properties::StatusProperty;
-  display->setStatusStd(StatusProperty::Ok, getTransformStatusName(caller_id), "Transform OK");
-}
-
 transformation::TransformationLibraryConnector::WeakPtr FrameManager::getConnector()
 {
   return transformer_->getConnector();
