@@ -30,6 +30,10 @@
 
 #include "rviz_default_plugins/displays/tf/tf_display.hpp"
 
+#include <QValidator>
+#include <QLineEdit>
+#include <QToolTip>
+
 #include <algorithm>
 #include <cassert>
 #include <memory>
@@ -41,9 +45,6 @@
 
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
-#include <QValidator>
-#include <QLineEdit>
-#include <QToolTip>
 
 #include "tf2_ros/transform_listener.h"
 #include "tf2_ros/buffer.h"
@@ -300,27 +301,24 @@ void TFDisplay::updateFrames()
 
   // filter frames according to white-list and black-list regular expressions
   auto it = frames.begin(), end = frames.end();
-  while (it != end)
-  {
+  while (it != end) {
     if (it->empty() || !std::regex_search(*it, filter_whitelist_property_->regex()) ||
-        std::regex_search(*it, filter_blacklist_property_->regex()))
-      std::swap(*it, *--end); // swap current to-be-dropped name with last one
-    else
+      std::regex_search(*it, filter_blacklist_property_->regex()))
+    {
+      std::swap(*it, *--end);  // swap current to-be-dropped name with last one
+    } else {
       ++it;
+    }
   }
 
   std::sort(frames.begin(), end);
 
   S_FrameInfo current_frames;
-  for (it = frames.begin(); it != end; ++it)
-  {
-    FrameInfo* info = getFrameInfo(*it);
-    if (!info)
-    {
+  for (it = frames.begin(); it != end; ++it) {
+    FrameInfo * info = getFrameInfo(*it);
+    if (!info) {
       info = createFrame(*it);
-    }
-    else
-    {
+    } else {
       updateFrame(info);
     }
 
@@ -364,12 +362,12 @@ FrameInfo * TFDisplay::getFrameInfo(const std::string & frame)
 
 void TFDisplay::deleteObsoleteFrames(S_FrameInfo & current_frames)
 {
-  for (auto frame_it = frames_.begin(), frame_end = frames_.end(); frame_it != frame_end;)
-  {
-    if (current_frames.find(frame_it->second) == current_frames.end())
+  for (auto frame_it = frames_.begin(), frame_end = frames_.end(); frame_it != frame_end; ) {
+    if (current_frames.find(frame_it->second) == current_frames.end()) {
       frame_it = deleteFrame(frame_it, false);
-    else
+    } else {
       ++frame_it;
+    }
   }
 }
 
@@ -599,9 +597,11 @@ void TFDisplay::updateParentArrowIfTransformExists(
   }
 }
 
-TFDisplay::M_FrameInfo::iterator TFDisplay::deleteFrame(M_FrameInfo::iterator it, bool delete_properties)
+TFDisplay::M_FrameInfo::iterator TFDisplay::deleteFrame(
+  M_FrameInfo::iterator it,
+  bool delete_properties)
 {
-  FrameInfo* frame = it->second;
+  FrameInfo * frame = it->second;
   it = frames_.erase(it);
 
   delete frame->axes_;
@@ -609,8 +609,7 @@ TFDisplay::M_FrameInfo::iterator TFDisplay::deleteFrame(M_FrameInfo::iterator it
   delete frame->parent_arrow_;
   delete frame->name_text_;
   scene_manager_->destroySceneNode(frame->name_node_);
-  if (delete_properties)
-  {
+  if (delete_properties) {
     delete frame->enabled_property_;
     delete frame->tree_property_;
   }
@@ -631,10 +630,12 @@ void TFDisplay::deleteFrame(FrameInfo * frame, bool delete_properties)
   delete frame->name_text_;
   scene_manager_->destroySceneNode(frame->name_node_);
   if (delete_properties) {
-    if (frame->enabled_property_)
+    if (frame->enabled_property_) {
       delete frame->enabled_property_;
-    if (frame->tree_property_)
+    }
+    if (frame->tree_property_) {
       delete frame->tree_property_;
+    }
   }
   delete frame;
 }

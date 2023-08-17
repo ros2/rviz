@@ -119,7 +119,7 @@ private:
   FrameInfo * createFrame(const std::string & frame);
   void updateFrame(FrameInfo * frame);
   void deleteFrame(FrameInfo * frame, bool delete_properties);
-  typedef std::map<std::string, FrameInfo*> M_FrameInfo;
+  typedef std::map<std::string, FrameInfo *> M_FrameInfo;
   TFDisplay::M_FrameInfo::iterator deleteFrame(M_FrameInfo::iterator it, bool delete_properties);
   FrameInfo * getFrameInfo(const std::string & frame);
   void clear();
@@ -148,8 +148,8 @@ private:
 
   rviz_common::properties::FloatProperty * scale_property_;
 
-  rviz_common::properties::RegexFilterProperty* filter_whitelist_property_;
-  rviz_common::properties::RegexFilterProperty* filter_blacklist_property_;
+  rviz_common::properties::RegexFilterProperty * filter_whitelist_property_;
+  rviz_common::properties::RegexFilterProperty * filter_blacklist_property_;
 
   rviz_common::properties::Property * frames_category_;
   rviz_common::properties::Property * tree_category_;
