@@ -57,11 +57,6 @@ public:
 protected:
   virtual void resizeEvent(QResizeEvent * event);
 
-  /** @brief Send key events to mimic the "return" key being pressed and
-   * released.  Useful ending an edit session and sending the data on
-   * out. */
-  void simulateReturnPressed();
-
 protected Q_SLOTS:
   /** @brief Override this to do something when the button is clicked. */
   virtual void onButtonClick() {}
