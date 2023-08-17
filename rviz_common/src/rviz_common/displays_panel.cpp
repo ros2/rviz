@@ -181,10 +181,9 @@ void DisplaysPanel::onDuplicateDisplay()
 
 void DisplaysPanel::onDeleteDisplay()
 {
-  QList<Display*> displays_to_delete = property_grid_->getSelectedObjects<Display>();
+  QList<Display *> displays_to_delete = property_grid_->getSelectedObjects<Display>();
 
-  for (int i = 0; i < displays_to_delete.size(); i++)
-  {
+  for (int i = 0; i < displays_to_delete.size(); i++) {
     // Displays can emit signals from other threads with self pointers.  We're
     // freeing the display now, so ensure no one is listening to those signals.
     displays_to_delete[i]->disconnect();
@@ -194,9 +193,9 @@ void DisplaysPanel::onDeleteDisplay()
     displays_to_delete[i]->deleteLater();
   }
   // Select new current index
-  const QModelIndex& cur = property_grid_->currentIndex();
+  const QModelIndex & cur = property_grid_->currentIndex();
   QItemSelection selection(cur.sibling(cur.row(), 0),
-                           cur.sibling(cur.row(), cur.model()->columnCount() - 1));
+    cur.sibling(cur.row(), cur.model()->columnCount() - 1));
   property_grid_->selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
 
   vis_manager_->notifyConfigChanged();
