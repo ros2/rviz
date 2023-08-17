@@ -363,7 +363,7 @@ protected Q_SLOTS:
 
   // Destroy panel
   void
-  onPanelDeleted(QObject* dock);
+  onPanelDeleted(QObject * dock);
 
   // TODO(wjwwood): figure out if this is needed
   /// Handle event when the help dialog is closed.

@@ -1178,13 +1178,11 @@ QWidget * VisualizationFrame::getParentWindow()
   return this;
 }
 
-void VisualizationFrame::onPanelDeleted(QObject* dock)
+void VisualizationFrame::onPanelDeleted(QObject * dock)
 {
-  for (int i = 0; i < custom_panels_.size(); ++i)
-  {
-    if (custom_panels_[i].dock == dock)
-    {
-      auto& record = custom_panels_[i];
+  for (int i = 0; i < custom_panels_.size(); ++i) {
+    if (custom_panels_[i].dock == dock) {
+      auto & record = custom_panels_[i];
       record.delete_action->deleteLater();
       delete_view_menu_->removeAction(record.delete_action);
       delete_view_menu_->setDisabled(delete_view_menu_->actions().isEmpty());
