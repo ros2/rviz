@@ -237,15 +237,6 @@ private:
     Display * display);
 #endif
 
-#if 0
-  void messageFailed(
-    const std::string & frame_id,
-    const ros::Time & stamp,
-    const std::string & caller_id,
-    tf::FilterFailureReason reason,
-    Display * display);
-#endif
-
   struct CacheKey
   {
     CacheKey(const std::string & f, rclcpp::Time t)

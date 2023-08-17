@@ -291,13 +291,6 @@ const std::string & FrameManager::getFixedFrame()
   return fixed_frame_;
 }
 
-std::string getTransformStatusName(const std::string & caller_id)
-{
-  std::stringstream ss;
-  ss << "Transform [sender=" << caller_id << "]";
-  return ss.str();
-}
-
 #if 0
 std::string FrameManager::discoverFailureReason(
   const std::string & frame_id,
@@ -352,20 +345,5 @@ void FrameManager::setTransformerPlugin(
 {
   transformer_ = transformer;
 }
-
-#if 0
-void FrameManager::messageFailed(
-  const std::string & frame_id,
-  const rclcpp::Time & stamp,
-  const std::string & caller_id,
-  tf::FilterFailureReason reason,
-  Display * display)
-{
-  std::string status_name = getTransformStatusName(caller_id);
-  std::string status_text = discoverFailureReason(frame_id, stamp, caller_id, reason);
-
-  display->setStatusStd(StatusProperty::Error, status_name, status_text);
-}
-#endif
 
 }  // namespace rviz_common
