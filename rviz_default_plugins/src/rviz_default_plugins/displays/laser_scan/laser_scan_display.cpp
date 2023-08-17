@@ -64,12 +64,14 @@ void LaserScanDisplay::onInitialize()
 
 void LaserScanDisplay::checkTolerance(int tolerance)
 {
-  if (tolerance > 1)
-    setStatus(rviz_common::properties::StatusProperty::Warn, "Scan Time",
-              QString(
-                  "Laser scan time, computed from time_increment * len(ranges), is rather large: "
-                  " %1s.\nThe display of any message will be delayed by this amount of time!")
-                  .arg(tolerance));
+  if (tolerance > 1) {
+    setStatus(
+      rviz_common::properties::StatusProperty::Warn, "Scan Time",
+      QString(
+        "Laser scan time, computed from time_increment * len(ranges), is rather large: "
+        " %1s.\nThe display of any message will be delayed by this amount of time!")
+      .arg(tolerance));
+  }
 }
 
 void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPtr scan)
