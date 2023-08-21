@@ -2,6 +2,24 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+12.8.0 (2023-08-27)
+-------------------
+* Remove warning in depth_cloud_mld.cpp (`#1021 <https://github.com/ros2/rviz/issues/1021>`_)
+* Added DepthCloud default plugin (`#996 <https://github.com/ros2/rviz/issues/996>`_)
+* Stop inheriting from std::iterator. (`#1013 <https://github.com/ros2/rviz/issues/1013>`_)
+  In C++17, inheriting from std::iterator has been
+  deprecated: https://www.fluentcpp.com/2018/05/08/std-iterator-deprecated/
+  Here, switch away from inheriting and just define the
+  interface ourselves (which is the current recommended best practice).
+  This removes some warnings when building with gcc 13.1.1
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette
+
+12.7.0 (2023-07-11)
+-------------------
+* use static QCoreApplication::processEvents() function without a QApplication instance (`#924 <https://github.com/ros2/rviz/issues/924>`_)
+* Re-implemented setName for tools (`#989 <https://github.com/ros2/rviz/issues/989>`_)
+* Contributors: Felix Exner (fexner), Yannis Gerlach
+
 12.6.1 (2023-06-12)
 -------------------
 * Add a libqt5-svg dependency to rviz_common. (`#992 <https://github.com/ros2/rviz/issues/992>`_)

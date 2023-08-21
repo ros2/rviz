@@ -31,6 +31,7 @@
 #define RVIZ_RENDERING__OBJECTS__EFFORT_VISUAL_HPP_
 
 #include <map>
+#include <memory>
 #include <string>
 
 #include <OgreSceneNode.h>
@@ -47,7 +48,8 @@ class EffortVisual
 {
 public:
   RVIZ_RENDERING_PUBLIC
-  EffortVisual(Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node);
+  EffortVisual(
+    Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node, float width, float scale);
 
   // set rainbow color
   RVIZ_RENDERING_PUBLIC
@@ -72,8 +74,8 @@ public:
 
 private:
   // The object implementing the effort circle
-  std::map<std::string, rviz_rendering::BillboardLine *> effort_circle_;
-  std::map<std::string, rviz_rendering::Arrow *> effort_arrow_;
+  std::map<std::string, std::unique_ptr<rviz_rendering::BillboardLine>> effort_circle_;
+  std::map<std::string, std::unique_ptr<rviz_rendering::Arrow>> effort_arrow_;
   std::map<std::string, bool> effort_enabled_;
 
   Ogre::SceneManager * scene_manager_;

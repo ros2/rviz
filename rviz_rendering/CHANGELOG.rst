@@ -2,6 +2,18 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+12.8.0 (2023-08-27)
+-------------------
+* Added TwistStamped and AccelStamped default plugins (`#991 <https://github.com/ros2/rviz/issues/991>`_)
+* Contributors: Alejandro Hernández Cordero
+
+12.7.0 (2023-07-11)
+-------------------
+* Added Effort plugin (`#990 <https://github.com/ros2/rviz/issues/990>`_)
+* load GLB meshes (`#1001 <https://github.com/ros2/rviz/issues/1001>`_)
+* Fixed camera default plusin crash (`#999 <https://github.com/ros2/rviz/issues/999>`_)
+* Contributors: Alejandro Hernández Cordero, Morgan Quigley
+
 12.6.1 (2023-06-12)
 -------------------
 
