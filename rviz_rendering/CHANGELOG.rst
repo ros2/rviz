@@ -2,8 +2,8 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+12.4.3 (2023-08-21)
+-------------------
 * Fix the flakey rviz_rendering tests (`#1026 <https://github.com/ros2/rviz/issues/1026>`_) (`#1031 <https://github.com/ros2/rviz/issues/1031>`_)
 * Contributors: mergify[bot]
 

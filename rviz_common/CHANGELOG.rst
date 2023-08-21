@@ -2,8 +2,8 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+12.4.3 (2023-08-21)
+-------------------
 * Remove unused LineEditWithButton::simulateReturnPressed() (`#1040 <https://github.com/ros2/rviz/issues/1040>`_) (`#1043 <https://github.com/ros2/rviz/issues/1043>`_)
 * Contributors: mergify[bot]
 
