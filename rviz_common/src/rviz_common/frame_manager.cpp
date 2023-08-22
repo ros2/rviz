@@ -291,29 +291,6 @@ const std::string & FrameManager::getFixedFrame()
   return fixed_frame_;
 }
 
-#if 0
-std::string FrameManager::discoverFailureReason(
-  const std::string & frame_id,
-  const rclcpp::Time & stamp,
-  const std::string & caller_id,
-  tf::FilterFailureReason reason)
-{
-  if (reason == tf::filter_failure_reasons::OutTheBack) {
-    std::stringstream ss;
-    ss << "Message removed because it is too old (frame=[" << frame_id << "], stamp=[" << stamp <<
-      "])";
-    return ss.str();
-  } else {
-    std::string error;
-    if (transformHasProblems(frame_id, stamp, error)) {
-      return error;
-    }
-  }
-
-  return "Unknown reason for transform failure";
-}
-#endif
-
 transformation::TransformationLibraryConnector::WeakPtr FrameManager::getConnector()
 {
   return transformer_->getConnector();

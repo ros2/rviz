@@ -50,57 +50,8 @@
 #include "rviz_common/visualization_frame.hpp"
 #include "rviz_common/visualization_manager.hpp"
 
-// TODO(wjwwood): figure out a non-depricated way to do this
-#if 0
-#ifdef Q_OS_MAC
-#include <ApplicationServices/ApplicationServices.h>
-// Apparently OSX #defines 'check' to be an empty string somewhere.
-// That was fun to figure out.
-#undef check
-#endif
-#endif
-
-// #include "rviz/env_config.h"
-// #include "rviz/ogre_helpers/ogre_logging.h"
-// #include "rviz/ogre_helpers/render_system.h"
-// #include "rviz/wait_for_master_dialog.h"
-
 namespace rviz_common
 {
-
-// TODO(wjwwood): reenable the service to reload the shaders
-// bool
-// reloadShaders(std_srvs::Empty::Request &, std_srvs::Empty::Response &)
-// {
-//   ROS_INFO("Reloading materials.");
-//   {
-//     Ogre::ResourceManager::ResourceMapIterator it =
-//       Ogre::MaterialManager::getSingleton().getResourceIterator();
-//     while (it.hasMoreElements()) {
-//       Ogre::ResourcePtr resource = it.getNext();
-//       resource->reload();
-//     }
-//   }
-//   ROS_INFO("Reloading high-level gpu shaders.");
-//   {
-//     Ogre::ResourceManager::ResourceMapIterator it =
-//       Ogre::HighLevelGpuProgramManager::getSingleton().getResourceIterator();
-//     while (it.hasMoreElements()) {
-//       Ogre::ResourcePtr resource = it.getNext();
-//       resource->reload();
-//     }
-//   }
-//   ROS_INFO("Reloading gpu shaders.");
-//   {
-//     Ogre::ResourceManager::ResourceMapIterator it =
-//       Ogre::GpuProgramManager::getSingleton().getResourceIterator();
-//     while (it.hasMoreElements()) {
-//       Ogre::ResourcePtr resource = it.getNext();
-//       resource->reload();
-//     }
-//   }
-//   return true;
-// }
 
 VisualizerApp::VisualizerApp(
   std::unique_ptr<rviz_common::ros_integration::RosClientAbstractionIface> ros_client_abstraction)
@@ -128,28 +79,6 @@ void VisualizerApp::loadConfig(QString config_path)
 
 bool VisualizerApp::init(int argc, char ** argv)
 {
-  // TODO(wjwwood): find a way to get the versions and print them here
-  //                also include versions of more things, like rviz_rendering,
-  //                rviz_common, and the plugins
-  // RVIZ_COMMON_LOG_INFO_STREAM("rviz version " << get_version().c_str());
-  // RVIZ_COMMON_LOG_INFO("compiled against Qt version " QT_VERSION_STR);
-  // RVIZ_COMMON_LOG_INFO_STREAM(
-  //   "compiled against OGRE version " <<
-  //     OGRE_VERSION_MAJOR << "." <<
-  //     OGRE_VERSION_MINOR << "." <<
-  //     OGRE_VERSION_PATCH << OGRE_VERSION_SUFFIX <<
-  //     " (" << OGRE_VERSION_NAME << ")");
-
-// TODO(wjwwood): figure out a non-depricated way to do this
-#if 0
-#ifdef Q_OS_MAC
-  ProcessSerialNumber PSN;
-  GetCurrentProcess(&PSN);
-  TransformProcessType(&PSN, kProcessTransformToForegroundApplication);
-  SetFrontProcess(&PSN);
-#endif
-#endif
-
   rviz_common::install_rviz_rendering_log_handlers();
 
   QCommandLineParser parser;
@@ -176,43 +105,12 @@ bool VisualizerApp::init(int argc, char ** argv)
       "A custom splash-screen image to display", "splash_path");
   parser.addOption(splash_screen_option);
 
-// TODO(botteroa-si): enable when possible
-//  QCommandLineOption help_file_option(
-//    "help-file", "A custom html file to show as the help screen", "help_path");
-//  parser.addOption(help_file_option);
-//
-//  QCommandLineOption open_gl_option(
-//    "opengl",
-//    "Force OpenGL version (use '--opengl 210' for OpenGL 2.1 compatibility mode)",
-//    "version");
-//  parser.addOption(open_gl_option);
-//
-//  QCommandLineOption disable_anti_aliasing_option(
-//    "disable-anti-aliasing", "Prevent rviz from trying to use anti-aliasing when rendering.");
-//  parser.addOption(disable_anti_aliasing_option);
-//
-//  QCommandLineOption no_stereo_option("no-stereo", "Disable the use of stereo rendering.");
-//  parser.addOption(no_stereo_option);
-//
-//  QCommandLineOption log_level_debug_option(
-//    "log-level-debug", "Sets the ROS logger level to debug.");
-//  parser.addOption(log_level_debug_option);
-
-//   ("in-mc-wrapper", "Signal that this is running inside a master-chooser wrapper")
-
   QString display_config, fixed_frame, splash_path, help_path;
   bool enable_ogre_log;
-  // TODO(botteroa-si): enable when possible
-//  bool in_mc_wrapper = false;
-//  int force_gl_version = 0;
-//  bool disable_anti_aliasing = false;
-//  bool disable_stereo = false;
 
   if (app_) {parser.process(*app_);}
 
   enable_ogre_log = parser.isSet(ogre_log_option);
-//    disable_stereo = parser.isSet(no_stereo_option);
-//    disable_anti_aliasing = parser.isSet(disable_anti_aliasing_option);
 
   if (parser.isSet(display_config_option)) {
     display_config = parser.value(display_config_option);
@@ -224,60 +122,14 @@ bool VisualizerApp::init(int argc, char ** argv)
   if (parser.isSet(splash_screen_option)) {
     splash_path = parser.value(splash_screen_option);
   }
-// TODO(botteroa-si): enable when possible
-//    if (parser.isSet(help_file_option)) {
-//      help_path = parser.value(help_file_option);
-//    }
-//    if (parser.isSet(open_gl_option)) {
-//      force_gl_version = parser.value(open_gl_option).toInt();
-//    }
 
-//   if (vm.count("in-mc-wrapper")) {
-//     in_mc_wrapper = true;
-//   }
-//
-//
-//   if (vm.count("log-level-debug")) {
-//     if (
-//       ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug))
-//     {
-//       ros::console::notifyLoggerLevelsChanged();
-//     }
-//   }
-
-  //
-  // if (!ros::master::check() ) {
-  // TODO(wjwwood): figure out how to support the "wait for master" functionality
-  //                while also using the rviz_common/ros_integration abstraction
-  //   WaitForMasterDialog * dialog = new WaitForMasterDialog;
-  //   if (dialog->exec() != QDialog::Accepted) {
-  //     return false;
-  //   }
-  // }
-  //
-  // nh_.reset(new ros::NodeHandle);
-  //
   if (enable_ogre_log) {
     rviz_rendering::OgreLogging::get()->useLogFileAndStandardOut();
     rviz_rendering::OgreLogging::get()->configureLogging();
   }
-  //
-  // if (force_gl_version) {
-  //   RenderSystem::forceGlVersion(force_gl_version);
-  // }
-  //
-  // if (disable_anti_aliasing) {
-  //   RenderSystem::disableAntiAliasing();
-  // }
-  //
-  // if (disable_stereo) {
-  //   RenderSystem::forceNoStereo();
-  // }
 
   startContinueChecker();
 
-  // TODO(wjwwood): anonymous is not working right now, reenable later
-  // node_name_ = rviz_common::ros_integration::init(argc, argv, "rviz", true /* anonymous_name */);
   node_ = ros_client_abstraction_->init(argc, argv, "rviz", false /* anonymous_name */);
 
   frame_ = new VisualizationFrame(node_);
@@ -286,9 +138,6 @@ bool VisualizerApp::init(int argc, char ** argv)
   if (!help_path.isEmpty()) {
     frame_->setHelpPath(help_path);
   }
-
-  // TODO(wjwwood): figure out how to preserve the "choost new master" feature
-  // frame_->setShowChooseNewMaster(in_mc_wrapper);
 
   if (!splash_path.isEmpty()) {
     frame_->setSplashPath(splash_path);
@@ -300,10 +149,6 @@ bool VisualizerApp::init(int argc, char ** argv)
   }
 
   frame_->show();
-
-  // TODO(wjwwood): reenable the ROS service to reload the shaders via the ros_integration API
-  // ros::NodeHandle private_nh("~");
-  // reload_shaders_service_ = private_nh.advertiseService("reload_shaders", reloadShaders);
 
   return true;
 }

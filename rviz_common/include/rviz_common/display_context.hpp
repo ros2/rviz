@@ -163,11 +163,6 @@ public:
   ros_integration::RosNodeAbstractionIface::WeakPtr
   getRosNodeAbstraction() const = 0;
 
-#if 0
-  /// Return a CallbackQueue using a different thread than the main GUI one.
-  virtual ros::CallbackQueueInterface * getThreadedQueue() = 0;
-#endif
-
   /// Handle a single key event for a given RenderPanel.
   virtual
   void

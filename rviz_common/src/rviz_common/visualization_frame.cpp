@@ -218,20 +218,6 @@ void VisualizationFrame::reset()
   manager_->resetTime();
 }
 
-#if 0
-void VisualizationFrame::changeMaster()
-{
-  if (prepareToExit()) {
-    QApplication::exit(255);
-  }
-}
-
-void VisualizationFrame::setShowChooseNewMaster(bool show)
-{
-  show_choose_new_master_option_ = show;
-}
-#endif
-
 void VisualizationFrame::setHelpPath(const QString & help_path)
 {
   help_path_ = help_path;
