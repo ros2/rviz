@@ -132,26 +132,8 @@ public:
   void setVisibilityMask(uint32_t mask);
 
 protected:
-#if 0
-  virtual void paintEvent(QPaintEvent * e);
-  virtual void resizeEvent(QResizeEvent * event);
-
-  // When stereo is enabled, these are called before/after rendering each
-  // viewport.
-  virtual void preViewportUpdate(const Ogre::RenderTargetViewportEvent & evt);
-  virtual void postViewportUpdate(const Ogre::RenderTargetViewportEvent & evt);
-#endif
-
   /// Set the aspect ratio on the camera.
   void setCameraAspectRatio();
-
-#if 0
-  /**
-   * prepare a viewport's camera for stereo rendering.
-   * This should only be called from StereoRenderTargetListener
-   */
-  void prepareStereoViewport(Ogre::Viewport *);
-#endif
 
   QWindow * parent_;
   RenderSystem * render_system_;

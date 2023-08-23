@@ -159,18 +159,6 @@ VisualizationManager::VisualizationManager(
     frame_manager_,
     SLOT(setTransformerPlugin(std::shared_ptr<rviz_common::transformation::FrameTransformer>)));
 
-// TODO(wjwwood): is this needed?
-#if 0
-  render_panel->setAutoRender(false);
-#endif
-
-  // scene_manager_ = ogre_root_->createSceneManager(Ogre::ST_GENERIC);
-
-// TODO(wjwwood): is this needed?
-#if 0
-  rviz::RenderSystem::RenderSystem::get()->prepareOverlays(scene_manager_);
-#endif
-
   root_display_group_ = new DisplayGroup();
   root_display_group_->setName("root");
   display_property_tree_model_ = new PropertyTreeModel(root_display_group_);
@@ -236,19 +224,8 @@ VisualizationManager::VisualizationManager(
   connect(this, SIGNAL(timeJumped()), this, SLOT(resetTime()));
 
   executor_->add_node(rviz_ros_node_.lock()->get_raw_node());
-// TODO(wjwwood): redo with executors?
-#if 0
-  private_->threaded_queue_threads_.create_thread(
-    std::bind(&VisualizationManager::threadedQueueThreadFunc, this));
-#endif
 
   display_factory_ = new DisplayFactory();
-
-// TODO(wjwwood): move this to rviz_rendering somewhere?
-#if 0
-  ogre_render_queue_clearer_ = new OgreRenderQueueClearer();
-  Ogre::Root::getSingletonPtr()->addFrameListener(ogre_render_queue_clearer_);
-#endif
 
   update_timer_ = new QTimer;
   connect(update_timer_, SIGNAL(timeout()), this, SLOT(onUpdate()));
@@ -259,9 +236,6 @@ VisualizationManager::~VisualizationManager()
   delete update_timer_;
 
   shutting_down_ = true;
-#if 0
-  private_->threaded_queue_threads_.join_all();
-#endif
 
   delete display_property_tree_model_;
   delete tool_manager_;
@@ -269,11 +243,6 @@ VisualizationManager::~VisualizationManager()
   delete frame_manager_;
   delete private_;
   delete transformation_manager_;
-
-#if 0
-  Ogre::Root::getSingletonPtr()->removeFrameListener(ogre_render_queue_clearer_);
-  delete ogre_render_queue_clearer_;
-#endif
 }
 
 void VisualizationManager::initialize()
@@ -288,13 +257,6 @@ void VisualizationManager::initialize()
   last_update_ros_time_ = clock_->now();
   last_update_wall_time_ = std::chrono::system_clock::now();
 }
-
-#if 0
-ros::CallbackQueueInterface * VisualizationManager::getThreadedQueue()
-{
-  return &private_->threaded_queue_;
-}
-#endif
 
 void VisualizationManager::lockRender()
 {
@@ -311,13 +273,6 @@ VisualizationManager::getRosNodeAbstraction() const
 {
   return rviz_ros_node_;
 }
-
-#if 0
-ros::CallbackQueueInterface * VisualizationManager::getUpdateQueue()
-{
-  return ros::getGlobalCallbackQueue();
-}
-#endif
 
 void VisualizationManager::startUpdate()
 {
@@ -680,16 +635,6 @@ void VisualizationManager::handleMouseEvent(const ViewportMouseEvent & vme)
 void VisualizationManager::handleChar(QKeyEvent * event, RenderPanel * panel)
 {
   tool_manager_->handleChar(event, panel);
-}
-
-void VisualizationManager::threadedQueueThreadFunc()
-{
-  // TODO(wjwwood): redo with executors
-#if 0
-  while (!shutting_down_) {
-    private_->threaded_queue_.callOne(ros::WallDuration(0.1));
-  }
-#endif
 }
 
 void VisualizationManager::notifyConfigChanged()
