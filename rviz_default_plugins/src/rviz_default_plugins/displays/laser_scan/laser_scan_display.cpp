@@ -85,7 +85,7 @@ void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPt
   if (tolerance > filter_tolerance_) {
     filter_tolerance_ = tolerance;
     tf_filter_->setTolerance(filter_tolerance_);
-    checkTolerance(filter_tolerance_.nanoseconds() * 1e-9);
+    checkTolerance(RCL_NS_TO_S(filter_tolerance_.nanoseconds()));
   }
   auto cloud = std::make_shared<sensor_msgs::msg::PointCloud2>();
   auto tf_wrapper = std::dynamic_pointer_cast<transformation::TFWrapper>(
@@ -122,7 +122,7 @@ void LaserScanDisplay::reset()
 {
   MFDClass::reset();
   point_cloud_common_->reset();
-  checkTolerance(filter_tolerance_.nanoseconds() * 1e-9);
+  checkTolerance(RCL_NS_TO_S(filter_tolerance_.nanoseconds()));
 }
 
 void LaserScanDisplay::onDisable()
