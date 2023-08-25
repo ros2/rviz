@@ -40,7 +40,7 @@ bool isPointCloud2RawTransport(const std::string & topic)
 {
   std::string last_subtopic = topic.substr(topic.find_last_of('/') + 1);
   return last_subtopic != "draco" && last_subtopic != "zlib" &&
-         last_subtopic != "pcl";
+         last_subtopic != "pcl" && last_subtopic != "zstd";
 }
 
 std::string getPointCloud2TransportFromTopic(const std::string & topic)
