@@ -584,6 +584,10 @@ PointCloud::addPointToHardwareBuffer(
   float y = point->position.y;
   float z = point->position.z;
 
+  auto num_vertices = internals.rend->getBuffer()->getNumVertices();
+  auto vertex_size =
+    internals.rend->getRenderOperation()->vertexData->vertexDeclaration->getVertexSize(0);
+
   for (uint32_t j = 0; j < getVerticesPerPoint(); ++j, ++internals.current_vertex_count) {
     *float_buffer++ = x;
     *float_buffer++ = y;
@@ -601,9 +605,7 @@ PointCloud::addPointToHardwareBuffer(
 
     assert(
       reinterpret_cast<uint8_t *>(float_buffer) <=
-      reinterpret_cast<uint8_t *>(float_buffer) +
-      internals.rend->getBuffer()->getNumVertices() *
-      internals.rend->getRenderOperation()->vertexData->vertexDeclaration->getVertexSize(0));
+      reinterpret_cast<uint8_t *>(float_buffer) + num_vertices * vertex_size);
   }
   internals.float_buffer = float_buffer;
   return internals;
