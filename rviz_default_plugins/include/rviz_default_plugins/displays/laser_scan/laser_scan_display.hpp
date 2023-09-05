@@ -47,6 +47,8 @@
 #include "rviz_default_plugins/transformation/tf_frame_transformer.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 
+#include <rclcpp/duration.hpp>
+
 namespace rviz_common
 {
 class QueueSizeProperty;
@@ -82,7 +84,7 @@ protected:
   void processMessage(sensor_msgs::msg::LaserScan::ConstSharedPtr scan) override;
 
   /** create a status warning when tolerance is larger than 1s */
-  void checkTolerance(int tolerance);
+  void checkTolerance(rclcpp::Duration tolerance);
 
   std::unique_ptr<PointCloudCommon> point_cloud_common_;
   std::unique_ptr<laser_geometry::LaserProjection> projector_;
