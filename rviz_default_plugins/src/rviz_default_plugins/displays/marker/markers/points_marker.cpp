@@ -108,7 +108,7 @@ void PointsMarker::setRenderModeAndDimensions(
       points_->setDimensions(scale.x, scale.y, 0.0f);
       break;
     case visualization_msgs::msg::Marker::CUBE_LIST:
-      points_->setRenderMode(rviz_rendering::PointCloud::RM_SQUARES);
+      points_->setRenderMode(rviz_rendering::PointCloud::RM_BOXES);
       points_->setDimensions(scale.x, scale.y, scale.z);
       break;
     case visualization_msgs::msg::Marker::SPHERE_LIST:
