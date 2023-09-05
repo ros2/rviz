@@ -66,7 +66,7 @@ void LaserScanDisplay::onInitialize()
 
 void LaserScanDisplay::checkTolerance(rclcpp::Duration tolerance)
 {
-  auto tolerance_seg = RCL_NS_TO_S(filter_tolerance_.nanoseconds());
+  auto tolerance_seg = RCL_NS_TO_S(tolerance.nanoseconds());
   if (tolerance_seg > 1) {
     setStatus(
       rviz_common::properties::StatusProperty::Warn, "Scan Time",
