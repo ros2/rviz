@@ -587,6 +587,10 @@ PointCloud::addPointToHardwareBuffer(
   auto num_vertices = internals.rend->getBuffer()->getNumVertices();
   auto vertex_size =
     internals.rend->getRenderOperation()->vertexData->vertexDeclaration->getVertexSize(0);
+  // When the package is build in Release mode these variables are unused
+  (void) num_vertices;
+  (void) vertex_size;
+
 
   for (uint32_t j = 0; j < getVerticesPerPoint(); ++j, ++internals.current_vertex_count) {
     *float_buffer++ = x;
