@@ -584,14 +584,6 @@ PointCloud::addPointToHardwareBuffer(
   float y = point->position.y;
   float z = point->position.z;
 
-  auto num_vertices = internals.rend->getBuffer()->getNumVertices();
-  auto vertex_size =
-    internals.rend->getRenderOperation()->vertexData->vertexDeclaration->getVertexSize(0);
-  // When the package is build in Release mode these variables are unused
-  (void) num_vertices;
-  (void) vertex_size;
-
-
   for (uint32_t j = 0; j < getVerticesPerPoint(); ++j, ++internals.current_vertex_count) {
     *float_buffer++ = x;
     *float_buffer++ = y;
@@ -606,11 +598,16 @@ PointCloud::addPointToHardwareBuffer(
     auto iptr = reinterpret_cast<uint32_t *>(float_buffer);
     *iptr = color;
     ++float_buffer;
-
-    assert(
-      reinterpret_cast<uint8_t *>(float_buffer) <=
-      reinterpret_cast<uint8_t *>(float_buffer) + num_vertices * vertex_size);
   }
+#ifndef NDEBUG
+  size_t num_vertices = internals.rend->getBuffer()->getNumVertices();
+  size_t vertex_size =
+    internals.rend->getRenderOperation()->vertexData->vertexDeclaration->getVertexSize(0);
+  assert(
+    reinterpret_cast<uint8_t *>(float_buffer) <=
+    reinterpret_cast<uint8_t *>(internals.float_buffer) + num_vertices * vertex_size);
+#endif
+
   internals.float_buffer = float_buffer;
   return internals;
 }
