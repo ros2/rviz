@@ -2,6 +2,11 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Removed unused code (`#1044 <https://github.com/ros2/rviz/issues/1044>`_)
+* Contributors: Alejandro Hernández Cordero
+
 13.0.0 (2023-08-21)
 -------------------
 * Remove unused LineEditWithButton::simulateReturnPressed() (`#1040 <https://github.com/ros2/rviz/issues/1040>`_)

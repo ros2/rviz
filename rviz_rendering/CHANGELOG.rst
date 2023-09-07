@@ -2,6 +2,14 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* make box-mode point cloud shader lighter on top than bottom (`#1058 <https://github.com/ros2/rviz/issues/1058>`_)
+* Removed warning when building in release mode (`#1057 <https://github.com/ros2/rviz/issues/1057>`_)
+* Fixed low FPS when sending point markers (`#1049 <https://github.com/ros2/rviz/issues/1049>`_)
+* Removed unused code (`#1044 <https://github.com/ros2/rviz/issues/1044>`_)
+* Contributors: Alejandro Hernández Cordero, Morgan Quigley
+
 13.0.0 (2023-08-21)
 -------------------
 * Fix the flakey rviz_rendering tests (`#1026 <https://github.com/ros2/rviz/issues/1026>`_)
