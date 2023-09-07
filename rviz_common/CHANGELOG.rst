@@ -2,8 +2,8 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+13.1.0 (2023-09-07)
+-------------------
 * Removed unused code (`#1044 <https://github.com/ros2/rviz/issues/1044>`_)
 * Contributors: Alejandro Hernández Cordero
 
