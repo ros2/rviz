@@ -16,13 +16,13 @@ void main()
   float ay;
   float l;
   
-  if ( gl_TexCoord[0].z < -0.4999 )
+  if ( gl_TexCoord[0].z > 0.4999 )
   {
     ax = gl_TexCoord[0].x;
     ay = gl_TexCoord[0].y;
     l = lightness[0];
   }
-  else if ( gl_TexCoord[0].z > 0.4999 )
+  else if ( gl_TexCoord[0].z < -0.4999 )
   {
     ax = gl_TexCoord[0].x;
     ay = gl_TexCoord[0].y;
