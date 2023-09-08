@@ -2,6 +2,17 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixed AccelStamped, TwistStamped and Wrench icons (`#1047 <https://github.com/ros2/rviz/issues/1047>`_)
+* Fix the flakey rviz_rendering tests (`#1031 <https://github.com/ros2/rviz/issues/1031>`_)
+* Don't pass screw_display.hpp to the moc generator (`#1020 <https://github.com/ros2/rviz/issues/1020>`_)
+* Added DepthCloud default plugin (`#996 <https://github.com/ros2/rviz/issues/996>`_)
+* Added TwistStamped and AccelStamped default plugins (`#1015 <https://github.com/ros2/rviz/issues/1015>`_)
+* Improve the compilation time of rviz_default_plugins (`#1009 <https://github.com/ros2/rviz/issues/1009>`_)
+* Added Effort plugin (`#1011 <https://github.com/ros2/rviz/issues/1011>`_)
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette
+
 12.4.3 (2023-08-21)
 -------------------
 * Fixed AccelStamped, TwistStamped and Wrench icons (`#1041 <https://github.com/ros2/rviz/issues/1041>`_) (`#1047 <https://github.com/ros2/rviz/issues/1047>`_)

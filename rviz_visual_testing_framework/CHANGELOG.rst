@@ -2,6 +2,12 @@
 Changelog for package rviz_visual_testing_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Improve the compilation time of rviz_default_plugins (`#1009 <https://github.com/ros2/rviz/issues/1009>`_)
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette
+
+
 12.4.3 (2023-08-21)
 -------------------
 

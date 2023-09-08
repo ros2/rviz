@@ -2,6 +2,15 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixed low FPS when sending point markers (`#1056 <https://github.com/ros2/rviz/issues/1056>`_)
+* Fixed camera default plugin crash (`#1054 <https://github.com/ros2/rviz/issues/1054>`_)
+* Fix the flakey rviz_rendering tests (`#1031 <https://github.com/ros2/rviz/issues/1031>`_)
+* Added TwistStamped and AccelStamped default plugins (`#1015 <https://github.com/ros2/rviz/issues/1015>`_)
+* Added Effort plugin (`#1011 <https://github.com/ros2/rviz/issues/1011>`_)
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette
+
 12.4.3 (2023-08-21)
 -------------------
 * Fix the flakey rviz_rendering tests (`#1026 <https://github.com/ros2/rviz/issues/1026>`_) (`#1031 <https://github.com/ros2/rviz/issues/1031>`_)
