@@ -2,8 +2,8 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+12.4.4 (2023-09-08)
+-------------------
 * Fixed low FPS when sending point markers (`#1056 <https://github.com/ros2/rviz/issues/1056>`_)
 * Fixed camera default plugin crash (`#1054 <https://github.com/ros2/rviz/issues/1054>`_)
 * Fix the flakey rviz_rendering tests (`#1031 <https://github.com/ros2/rviz/issues/1031>`_)

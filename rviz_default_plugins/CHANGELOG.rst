@@ -2,8 +2,8 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+12.4.4 (2023-09-08)
+-------------------
 * Fixed AccelStamped, TwistStamped and Wrench icons (`#1047 <https://github.com/ros2/rviz/issues/1047>`_)
 * Fix the flakey rviz_rendering tests (`#1031 <https://github.com/ros2/rviz/issues/1031>`_)
 * Don't pass screw_display.hpp to the moc generator (`#1020 <https://github.com/ros2/rviz/issues/1020>`_)

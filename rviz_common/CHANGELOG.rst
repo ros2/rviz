@@ -2,8 +2,8 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+12.4.4 (2023-09-08)
+-------------------
 * Remove warning in depth_cloud_mld.cpp (`#1021 <https://github.com/ros2/rviz/issues/1021>`_)
 * Added DepthCloud default plugin (`#1017 <https://github.com/ros2/rviz/issues/1017>`_)
 * Contributors: Alejandro Hernández Cordero, Chris Lalancette
