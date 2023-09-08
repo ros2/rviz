@@ -140,9 +140,9 @@ TFDisplay::TFDisplay()
   frame_timeout_property_->setMin(1);
 
   filter_whitelist_property_ = new rviz_common::properties::RegexFilterProperty(
-    "Filter (whitelist)", std::regex(""), this);
+    "Filter (whitelist)", std::string(""), this);
   filter_blacklist_property_ = new rviz_common::properties::RegexFilterProperty(
-    "Filter (blacklist)", std::regex(), this);
+    "Filter (blacklist)", std::string(), this);
 
   frames_category_ = new Property("Frames", QVariant(), "The list of all frames.", this);
 
@@ -300,54 +300,43 @@ void TFDisplay::updateFrames()
   V_string frames = context_->getFrameManager()->getAllFrameNames();
 
   // filter frames according to white-list and black-list regular expressions
-  auto it = frames.begin(), end = frames.end();
-  while (it != end) {
-    if (it->empty() || !std::regex_search(*it, filter_whitelist_property_->regex()) ||
-      std::regex_search(*it, filter_blacklist_property_->regex()))
-    {
-      std::swap(*it, *--end);  // swap current to-be-dropped name with last one
-    } else {
+  V_string::iterator it = frames.begin();
+  V_string::iterator end = frames.end();
+
+  std::vector<std::string> available_frames;
+
+  if (!filter_whitelist_property_->regex_str().empty() ||
+    !filter_blacklist_property_->regex_str().empty())
+  {
+    while (it != end) {
+      if ((filter_whitelist_property_->regex_str().empty() ||
+        std::regex_search(*it, filter_whitelist_property_->regex())) && (
+          filter_blacklist_property_->regex_str().empty() || (
+            !filter_blacklist_property_->regex_str().empty() &&
+            !std::regex_search(*it, filter_blacklist_property_->regex()))))
+      {
+        available_frames.push_back(*it);
+      }
       ++it;
     }
+  } else {
+    available_frames = frames;
   }
 
-  std::sort(frames.begin(), end);
-
   S_FrameInfo current_frames;
-  for (it = frames.begin(); it != end; ++it) {
-    FrameInfo * info = getFrameInfo(*it);
-    if (!info) {
-      info = createFrame(*it);
-    } else {
-      updateFrame(info);
-    }
-
-    current_frames.insert(info);
-  }
-
-  deleteObsoleteFrames(current_frames);
-
-  context_->queueRender();
-}
-
-S_FrameInfo TFDisplay::createOrUpdateFrames(const std::vector<std::string> & frames)
-{
-  S_FrameInfo current_frames;
-  for (auto & frame : frames) {
-    if (frame.empty()) {
-      continue;
-    }
-
+  for (auto & frame : available_frames) {
     FrameInfo * info = getFrameInfo(frame);
     if (!info) {
       info = createFrame(frame);
     } else {
       updateFrame(info);
     }
-
     current_frames.insert(info);
   }
-  return current_frames;
+
+  deleteObsoleteFrames(current_frames);
+
+  context_->queueRender();
 }
 
 FrameInfo * TFDisplay::getFrameInfo(const std::string & frame)

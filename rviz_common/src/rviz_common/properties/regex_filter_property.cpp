@@ -64,20 +64,24 @@ void RegexFilterProperty::onValueChanged()
 {
   const auto & value = getString();
   if (value.isEmpty()) {
-    regex_ = default_;
+    regex_ = std::regex(default_);
+    regex_str_ = default_;
   } else {
     try {
-      regex_.assign(value.toLocal8Bit().constData(), std::regex_constants::optimize);
+      regex_str_ = std::string(value.toLocal8Bit().constData());
+      regex_.assign(regex_str_, std::regex_constants::optimize);
     } catch (const std::regex_error & e) {
-      regex_ = default_;
+      regex_ = std::regex(default_);
+      regex_str_ = default_;
     }
   }
 }
 
 RegexFilterProperty::RegexFilterProperty(
-  const QString & name, const std::regex regex,
+  const QString & name, const std::string regex,
   Property * parent)
-: StringProperty(name, "", "regular expression", parent), default_(regex), regex_(regex)
+: StringProperty(name, "", "regular expression", parent), default_(regex), regex_(regex),
+  regex_str_(regex)
 {
   QObject::connect(this, &RegexFilterProperty::changed, this, [this]() {onValueChanged();});
 }
@@ -85,6 +89,11 @@ RegexFilterProperty::RegexFilterProperty(
 const std::regex & RegexFilterProperty::regex() const
 {
   return regex_;
+}
+
+const std::string & RegexFilterProperty::regex_str() const
+{
+  return regex_str_;
 }
 
 QWidget * RegexFilterProperty::createEditor(QWidget * parent, const QStyleOptionViewItem & option)

@@ -120,7 +120,7 @@ private:
   void updateFrame(FrameInfo * frame);
   void deleteFrame(FrameInfo * frame, bool delete_properties);
   typedef std::map<std::string, FrameInfo *> M_FrameInfo;
-  TFDisplay::M_FrameInfo::iterator deleteFrame(M_FrameInfo::iterator it, bool delete_properties);
+  M_FrameInfo::iterator deleteFrame(M_FrameInfo::iterator it, bool delete_properties);
   FrameInfo * getFrameInfo(const std::string & frame);
   void clear();
 
@@ -174,7 +174,6 @@ private:
   void updateParentTreeProperty(FrameInfo * frame) const;
 
   void deleteObsoleteFrames(std::set<FrameInfo *> & current_frames);
-  S_FrameInfo createOrUpdateFrames(const std::vector<std::string> & frames);
 
   friend class FrameInfo;
 };

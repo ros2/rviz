@@ -35,6 +35,7 @@
 #include <QWidget>
 
 #include <regex>
+#include <string>
 
 #include "rviz_common/properties/string_property.hpp"
 
@@ -44,27 +45,31 @@ namespace properties
 {
 class RegexValidator : public QValidator
 {
-  QLineEdit * editor_;
-
 public:
   explicit RegexValidator(QLineEdit * editor);
 
   QValidator::State validate(QString & input, int & /*pos*/) const override;
+
+private:
+  QLineEdit * editor_;
 };
 
 class RegexFilterProperty : public StringProperty
 {
-  std::regex default_;
-  std::regex regex_;
-
-  void onValueChanged();
-
 public:
-  RegexFilterProperty(const QString & name, const std::regex regex, Property * parent);
+  RegexFilterProperty(const QString & name, const std::string regex, Property * parent);
 
   const std::regex & regex() const;
+  const std::string & regex_str() const;
 
   QWidget * createEditor(QWidget * parent, const QStyleOptionViewItem & option) override;
+
+private:
+  std::string default_;
+  std::regex regex_;
+  std::string regex_str_;
+
+  void onValueChanged();
 };
 }  // end namespace properties
 }  // end namespace rviz_common
