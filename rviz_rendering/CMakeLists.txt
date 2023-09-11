@@ -26,7 +26,6 @@ else()
   set(SKIP_DISPLAY_TESTS "SKIP_TEST")
 endif()
 
-find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_ros REQUIRED)
 
 # do find_package(rviz_ogre_vendor) first to make sure the custom OGRE is found
