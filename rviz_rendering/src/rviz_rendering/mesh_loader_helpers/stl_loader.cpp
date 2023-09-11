@@ -42,8 +42,6 @@
 
 #include "rviz_rendering/logging.hpp"
 
-#define ROS_PACKAGE_NAME "rviz_rendering"
-
 namespace rviz_rendering
 {
 

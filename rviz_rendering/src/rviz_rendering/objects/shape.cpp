@@ -45,9 +45,6 @@
 #include "rviz_rendering/logging.hpp"
 #include "rviz_rendering/material_manager.hpp"
 
-// TODO(wjwwood): replace this with info from buildsystem
-#define ROS_PACKAGE_NAME "rviz_rendering"
-
 namespace rviz_rendering
 {
 
