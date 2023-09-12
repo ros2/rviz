@@ -45,23 +45,35 @@
 #include "rviz_rendering/objects/point_cloud.hpp"
 #include "rviz_rendering/objects/movable_text.hpp"
 
+#include "./visibility_control.hpp"
+
 namespace rviz_rendering
 {
+TEST_RVIZ_RENDERING_PUBLIC
 std::vector<Ogre::SceneNode *> findAllArrows(Ogre::SceneNode * scene_node);
 
+TEST_RVIZ_RENDERING_PUBLIC
 std::vector<Ogre::SceneNode *> findAllAxes(Ogre::SceneNode * scene_node);
 
+TEST_RVIZ_RENDERING_PUBLIC
 std::vector<Ogre::Entity *> findAllEntitiesByMeshName(
   Ogre::SceneNode * scene_node, const Ogre::String & resource_name);
+TEST_RVIZ_RENDERING_PUBLIC
 Ogre::Entity * findEntityByMeshName(
   Ogre::SceneNode * scene_node, const Ogre::String & resource_name);
 
+TEST_RVIZ_RENDERING_PUBLIC
 std::vector<Ogre::Entity *> findAllSpheres(Ogre::SceneNode * scene_node);
+TEST_RVIZ_RENDERING_PUBLIC
 std::vector<Ogre::Entity *> findAllCones(Ogre::SceneNode * scene_node);
+
+TEST_RVIZ_RENDERING_PUBLIC
 std::vector<Ogre::Entity *> findAllCylinders(Ogre::SceneNode * scene_node);
 
+TEST_RVIZ_RENDERING_PUBLIC
 std::vector<rviz_rendering::PointCloud *> findAllPointClouds(Ogre::SceneNode * scene_node);
 
+TEST_RVIZ_RENDERING_PUBLIC
 Ogre::BillboardChain * findOneBillboardChain(Ogre::SceneNode * scene_node);
 
 template<typename OgreType>
