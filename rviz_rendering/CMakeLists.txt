@@ -165,12 +165,12 @@ if(BUILD_TESTING)
   find_package(ament_cmake_gmock REQUIRED)
   find_package(ament_cmake_gtest REQUIRED)
 
-  add_library(rviz_rendering_test_utils SHARED
+  add_library(rviz_rendering_test_utils
     test/rviz_rendering/ogre_testing_environment.cpp
     test/rviz_rendering/scene_graph_introspection.cpp
   )
   target_compile_definitions(rviz_rendering_test_utils PRIVATE
-  "TEST_RVIZ_RENDERING_BUILDING_LIBRARY")
+    "TEST_RVIZ_RENDERING_BUILDING_LIBRARY")
   target_link_libraries(rviz_rendering_test_utils
     PUBLIC
     rviz_ogre_vendor::OgreMain
