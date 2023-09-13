@@ -26,7 +26,7 @@ else()
   set(SKIP_DISPLAY_TESTS "SKIP_TEST")
 endif()
 
-find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_ros REQUIRED)
 
 # do find_package(rviz_ogre_vendor) first to make sure the custom OGRE is found
 find_package(rviz_ogre_vendor REQUIRED)
@@ -169,6 +169,8 @@ if(BUILD_TESTING)
     test/rviz_rendering/ogre_testing_environment.cpp
     test/rviz_rendering/scene_graph_introspection.cpp
   )
+  target_compile_definitions(rviz_rendering_test_utils PRIVATE
+    "TEST_RVIZ_RENDERING_BUILDING_LIBRARY")
   target_link_libraries(rviz_rendering_test_utils
     PUBLIC
     rviz_ogre_vendor::OgreMain
