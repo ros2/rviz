@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Use buildsystem info to get the ros_package_name (`#1062 <https://github.com/ros2/rviz/issues/1062>`_)
+* Contributors: Alejandro Hernández Cordero
+
 13.1.0 (2023-09-07)
 -------------------
 * make box-mode point cloud shader lighter on top than bottom (`#1058 <https://github.com/ros2/rviz/issues/1058>`_)

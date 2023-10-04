@@ -2,6 +2,9 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 13.1.0 (2023-09-07)
 -------------------
 * Improve error handling in LaserScanDisplay (`#1035 <https://github.com/ros2/rviz/issues/1035>`_)
