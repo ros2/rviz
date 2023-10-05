@@ -41,7 +41,10 @@
 
 #include <OgreVector.h>
 #include <OgreQuaternion.h>
+#include <OgreSceneNode.h>
 #endif
+
+#include <QMenu>
 
 #include <visualization_msgs/msg/interactive_marker.hpp>
 #include <visualization_msgs/msg/interactive_marker_pose.hpp>
@@ -49,6 +52,7 @@
 
 #include <rclcpp/publisher.hpp>
 
+#include "rviz_common/display_context.hpp"
 #include "rviz_common/properties/status_property.hpp"
 #include "rviz_rendering/objects/axes.hpp"
 
@@ -56,24 +60,10 @@
 
 #include "rviz_default_plugins/visibility_control.hpp"
 
-namespace Ogre
-{
-class SceneNode;
-}
-
-class QMenu;
-
-namespace rviz_common
-{
-class DisplayContext;
-}
-
 namespace rviz_default_plugins
 {
 namespace displays
 {
-class InteractiveMarkerDisplay;
-
 class RVIZ_DEFAULT_PLUGINS_PUBLIC InteractiveMarker : public QObject
 {
   Q_OBJECT

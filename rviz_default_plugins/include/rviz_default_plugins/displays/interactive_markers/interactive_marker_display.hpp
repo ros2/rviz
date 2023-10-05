@@ -44,23 +44,17 @@
 #endif
 
 #include "rviz_common/display.hpp"
+#include "rviz_common/properties/bool_property.hpp"
 
 #include "rviz_default_plugins/displays/interactive_markers/interactive_marker.hpp"
-
-namespace rviz_common
-{
-class BoolProperty;
-class Object;
-}
+#include "./interactive_marker_namespace_property.hpp"
+#include "rviz_default_plugins/displays/marker/markers/marker_base.hpp"
 
 namespace rviz_default_plugins
 {
-class InteractiveMarkerNamespaceProperty;
 
 namespace displays
 {
-class MarkerBase;
-
 /// Displays Interactive Markers
 class InteractiveMarkerDisplay : public rviz_common::Display
 {
