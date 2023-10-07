@@ -766,7 +766,7 @@ void VisualizationFrame::setDisplayConfigFile(const std::string & path)
   std::string node_namespace;
   node_namespace = rviz_ros_node_.lock()->get_raw_node()->get_namespace();
   if(node_namespace.compare("/") != 0){
-    title = node_namespace + " " + title;
+    title = node_namespace + " - " + title;
   }
 
   setWindowTitle(QString::fromStdString(title));
