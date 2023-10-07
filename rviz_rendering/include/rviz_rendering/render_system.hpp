@@ -90,7 +90,7 @@ public:
   int
   getGlVersion();
 
-  /// return GLSL Version as integer, e.g. 150 for GLSL 1.50  
+  /// return GLSL Version as integer, e.g. 150 for GLSL 1.50
   int
   getGlslVersion();
 
