@@ -748,6 +748,14 @@ void VisualizationFrame::setDisplayConfigFile(const std::string & path)
   } else {
     title = QDir::toNativeSeparators(QString::fromStdString(path)).toStdString() + "[*] - RViz";
   }
+  
+  /// Adding a namespace prefix on the window frame title
+  std::string node_namespace;
+  node_namespace = rviz_ros_node_.lock()->get_raw_node()->get_namespace();
+  if(node_namespace.compare("/") != 0){
+    title = node_namespace + " - " + title;
+  }
+
   setWindowTitle(QString::fromStdString(title));
 }
 
