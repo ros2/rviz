@@ -427,6 +427,16 @@ protected:
   void
   setDisplayConfigFile(const std::string & path);
 
+
+  /// Set the display title format.
+  /**
+   * It sets the format of the window title
+   * Default will be "NAMESPACE - CONFIG_PATH/CONFIG_FILE - RViz" 
+   * NAMESPACE, CONFIG_PATH and CONFIG_FILE will be replaced accordingly.
+   */
+  void
+  setDisplayTitleFormat(const std::string & title_format);
+
   /// Hide or show the given dock area based on the hide bool.
   void
   hideDockImpl(Qt::DockWidgetArea area, bool hide);
@@ -444,6 +454,7 @@ protected:
 
   std::string config_dir_;
   std::string persistent_settings_file_;
+  std::string display_title_format_;
   std::string display_config_file_;
   std::string default_display_config_file_;
   std::string last_config_dir_;
