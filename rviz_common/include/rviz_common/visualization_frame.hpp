@@ -126,6 +126,15 @@ public:
     ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
     const QString & display_config_file = "");
 
+  /// Set the display title format.
+  /**
+   * It sets the format of the window title
+   * Default will be "NAMESPACE - CONFIG_PATH/CONFIG_FILE - RViz" 
+   * NAMESPACE, CONFIG_PATH and CONFIG_FILE will be replaced accordingly.
+   */
+  void
+  setDisplayTitleFormat(const QString & title_format);
+
   /// Return the visualization manager.
   VisualizationManager *
   getManager();
@@ -426,16 +435,6 @@ protected:
    */
   void
   setDisplayConfigFile(const std::string & path);
-
-
-  /// Set the display title format.
-  /**
-   * It sets the format of the window title
-   * Default will be "NAMESPACE - CONFIG_PATH/CONFIG_FILE - RViz" 
-   * NAMESPACE, CONFIG_PATH and CONFIG_FILE will be replaced accordingly.
-   */
-  void
-  setDisplayTitleFormat(const std::string & title_format);
 
   /// Hide or show the given dock area based on the hide bool.
   void

@@ -739,8 +739,8 @@ void VisualizationFrame::setDisplayConfigModified()
   }
 }
 
-void VisualizationFrame::setDisplayTitleFormat(const std::string & title_format){
-  display_title_format =  std::string("NAMESPACE - PATH/FILE - RViz");
+void VisualizationFrame::setDisplayTitleFormat(const QString & title_format){
+  display_title_format_ =  title_format.toStdString();
 }
 
 void VisualizationFrame::setDisplayConfigFile(const std::string & path)
@@ -748,7 +748,7 @@ void VisualizationFrame::setDisplayConfigFile(const std::string & path)
   display_config_file_ = path;
   std::string title;
 
-  if(display_title_format.empty()){
+  if(display_title_format_.empty()){
     if (path == default_display_config_file_) {
       title = "RViz[*]";
     } else {
@@ -762,11 +762,25 @@ void VisualizationFrame::setDisplayConfigFile(const std::string & path)
       title = node_namespace + " - " + title;
     }
   } else{
-    title = display_title_format;
-    std::filesystem::path p(QString::fromStdString(path)).toStdString());
-    title.replace(title.find("NAMESPACE"), sizeof("NAMESPACE") - 1, rviz_ros_node_.lock()->get_raw_node()->get_namespace());
-    title.replace(title.find("PATH"), sizeof("PATH") - 1, p.relative_path());
-    title.replace(title.find("FILE"), sizeof("FILE") - 1, p.filename());
+    title = display_title_format_;
+    std::filesystem::path full_filename(path.c_str());
+    std::size_t found;
+    found  = title.find("NAMESPACE");
+    if(found != std::string::npos){
+      title.replace(found, sizeof("NAMESPACE") - 1, rviz_ros_node_.lock()->get_raw_node()->get_namespace());
+    }
+    found = title.find("PATH");
+    if(found != std::string::npos){
+      title.replace(found, sizeof("PATH") - 1, full_filename.relative_path());
+    }
+    found = title.find("FILE");
+    if(found != std::string::npos){
+      title.replace(found, sizeof("FILE") - 1, full_filename.filename());
+    }
+    found = title.find("[*]");
+    if(found == std::string::npos){
+      title.append("[*]");
+    }
   }
 
   setWindowTitle(QString::fromStdString(title));
