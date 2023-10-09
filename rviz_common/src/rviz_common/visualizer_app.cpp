@@ -33,6 +33,7 @@
 #include <iostream>
 #include <memory>
 #include <utility>
+#include <filesystem>
 
 // #include <OgreGpuProgramManager.h>
 // #include <OgreHighLevelGpuProgramManager.h>
@@ -156,6 +157,12 @@ bool VisualizerApp::init(int argc, char ** argv)
   parser.setApplicationDescription("3D visualization tool for ROS2");
   parser.addHelpOption();
 
+  QCommandLineOption display_title_format_option(
+    QStringList() << "t" << "display-title-format",
+      "A display title format like \"NAMESPACE - PATH/FILE - RViz2\"",
+      "display_title_format");
+  parser.addOption(display_title_format_option);
+  ^
   QCommandLineOption display_config_option(
     QStringList() << "d" << "display-config",
       "A display config file (.rviz) to load",
@@ -200,7 +207,7 @@ bool VisualizerApp::init(int argc, char ** argv)
 
 //   ("in-mc-wrapper", "Signal that this is running inside a master-chooser wrapper")
 
-  QString display_config, fixed_frame, splash_path, help_path;
+  QString display_config, fixed_frame, splash_path, help_path, display_title_format;
   bool enable_ogre_log;
   // TODO(botteroa-si): enable when possible
 //  bool in_mc_wrapper = false;
@@ -224,6 +231,12 @@ bool VisualizerApp::init(int argc, char ** argv)
   if (parser.isSet(splash_screen_option)) {
     splash_path = parser.value(splash_screen_option);
   }
+
+  if (parser.isSet(display_title_format_option)) {
+    display_title_format = parser.value(display_title_format_option);
+  }
+
+
 // TODO(botteroa-si): enable when possible
 //    if (parser.isSet(help_file_option)) {
 //      help_path = parser.value(help_file_option);

@@ -133,6 +133,15 @@ public:
     ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
     const QString & display_config_file = "");
 
+  /// Set the display title format.
+  /**
+   * It sets the format of the window title
+   * Default will be "NAMESPACE - CONFIG_PATH/CONFIG_FILE - RViz" 
+   * NAMESPACE, CONFIG_PATH and CONFIG_FILE will be replaced accordingly.
+   */
+  void
+  setDisplayTitleFormat(const QString & title_format);
+  
   /// Return the visualization manager.
   VisualizationManager *
   getManager();
@@ -466,6 +475,7 @@ protected:
 
   std::string config_dir_;
   std::string persistent_settings_file_;
+  std::string display_title_format_;
   std::string display_config_file_;
   std::string default_display_config_file_;
   std::string last_config_dir_;
