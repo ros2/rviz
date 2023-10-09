@@ -775,7 +775,7 @@ void VisualizationFrame::setDisplayConfigFile(const std::string & path)
     }
   } else{
     title = display_title_format_;
-    std::filesystem::path full_filename(path.c_str());
+    QFileInfo fi(path.c_str());
     std::size_t found;
     found  = title.find("NAMESPACE");
     if(found != std::string::npos){
@@ -783,11 +783,11 @@ void VisualizationFrame::setDisplayConfigFile(const std::string & path)
     }
     found = title.find("PATH");
     if(found != std::string::npos){
-      title.replace(found, sizeof("PATH") - 1, full_filename.relative_path());
+      title.replace(found, sizeof("PATH") - 1, fi.absolutePath().toStdString());
     }
     found = title.find("FILE");
     if(found != std::string::npos){
-      title.replace(found, sizeof("FILE") - 1, full_filename.filename());
+      title.replace(found, sizeof("FILE") - 1, fi.fileName().toStdString());
     }
     found = title.find("[*]");
     if(found == std::string::npos){

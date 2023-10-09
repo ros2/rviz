@@ -162,7 +162,7 @@ bool VisualizerApp::init(int argc, char ** argv)
       "A display title format like \"NAMESPACE - PATH/FILE - RViz2\"",
       "display_title_format");
   parser.addOption(display_title_format_option);
-  ^
+  
   QCommandLineOption display_config_option(
     QStringList() << "d" << "display-config",
       "A display config file (.rviz) to load",
