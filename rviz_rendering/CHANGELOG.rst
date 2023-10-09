@@ -2,8 +2,8 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+13.1.2 (2023-10-09)
+-------------------
 * RVIZ_RENDERING_PUBLIC to export class RenderSystem (`#1072 <https://github.com/ros2/rviz/issues/1072>`_)
 * Restore the maybe-uninitialized flag in covariance_visual.hpp (`#1071 <https://github.com/ros2/rviz/issues/1071>`_)
 * Fix up warnings when building with clang. (`#1070 <https://github.com/ros2/rviz/issues/1070>`_)
