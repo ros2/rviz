@@ -86,7 +86,7 @@ void SelectionTool::activate()
   context_->getSelectionManager()->setTextureSize(512);
   selecting_ = false;
   moving_ = false;
-//  context_->getSelectionManager()->enableInteraction(true);
+//  context_->getHandlerManager()->enableInteraction(true);
 }
 
 void SelectionTool::deactivate()
