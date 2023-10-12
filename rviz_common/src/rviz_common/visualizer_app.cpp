@@ -33,7 +33,6 @@
 #include <iostream>
 #include <memory>
 #include <utility>
-#include <filesystem>
 
 // #include <OgreGpuProgramManager.h>
 // #include <OgreHighLevelGpuProgramManager.h>
