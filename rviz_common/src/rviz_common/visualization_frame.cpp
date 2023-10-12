@@ -739,8 +739,9 @@ void VisualizationFrame::setDisplayConfigModified()
   }
 }
 
-void VisualizationFrame::setDisplayTitleFormat(const QString & title_format){
-  display_title_format_ =  title_format.toStdString();
+void VisualizationFrame::setDisplayTitleFormat(const QString & title_format)
+{
+  display_title_format_ = title_format.toStdString();
 }
 
 void VisualizationFrame::setDisplayConfigFile(const std::string & path)
@@ -748,37 +749,38 @@ void VisualizationFrame::setDisplayConfigFile(const std::string & path)
   display_config_file_ = path;
   std::string title;
 
-  if(display_title_format_.empty()){
+  if (display_title_format_.empty()) {
     if (path == default_display_config_file_) {
       title = "RViz[*]";
     } else {
       title = QDir::toNativeSeparators(QString::fromStdString(path)).toStdString() + "[*] - RViz";
     }
-    
+
     /// Adding a namespace prefix on the window frame title
     std::string node_namespace;
     node_namespace = rviz_ros_node_.lock()->get_raw_node()->get_namespace();
-    if(node_namespace.compare("/") != 0){
+    if (node_namespace.compare("/") != 0) {
       title = node_namespace + " - " + title;
     }
-  } else{
+  } else {
     title = display_title_format_;
     std::filesystem::path full_filename(path.c_str());
     std::size_t found;
-    found  = title.find("NAMESPACE");
-    if(found != std::string::npos){
-      title.replace(found, sizeof("NAMESPACE") - 1, rviz_ros_node_.lock()->get_raw_node()->get_namespace());
+    found = title.find("NAMESPACE");
+    if (found != std::string::npos) {
+      title.replace(
+        found, sizeof("NAMESPACE") - 1, rviz_ros_node_.lock()->get_raw_node()->get_namespace());
     }
     found = title.find("PATH");
-    if(found != std::string::npos){
+    if (found != std::string::npos) {
       title.replace(found, sizeof("PATH") - 1, full_filename.relative_path());
     }
     found = title.find("FILE");
-    if(found != std::string::npos){
+    if (found != std::string::npos) {
       title.replace(found, sizeof("FILE") - 1, full_filename.filename());
     }
     found = title.find("[*]");
-    if(found == std::string::npos){
+    if (found == std::string::npos) {
       title.append("[*]");
     }
   }

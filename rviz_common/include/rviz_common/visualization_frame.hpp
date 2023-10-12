@@ -129,7 +129,7 @@ public:
   /// Set the display title format.
   /**
    * It sets the format of the window title
-   * Default will be "NAMESPACE - CONFIG_PATH/CONFIG_FILE - RViz" 
+   * Default will be "NAMESPACE - CONFIG_PATH/CONFIG_FILE - RViz"
    * NAMESPACE, CONFIG_PATH and CONFIG_FILE will be replaced accordingly.
    */
   void

@@ -131,7 +131,6 @@ bool VisualizerApp::init(int argc, char ** argv)
 
   if (parser.isSet(display_title_format_option)) {
     display_title_format = parser.value(display_title_format_option);
-    //frame_->setDisplayTitleFormat("NAMESPACE - PATH/FILE - RViz2");
   }
 
   if (enable_ogre_log) {
@@ -144,7 +143,7 @@ bool VisualizerApp::init(int argc, char ** argv)
   node_ = ros_client_abstraction_->init(argc, argv, "rviz", false /* anonymous_name */);
 
   frame_ = new VisualizationFrame(node_);
-  
+
   frame_->setDisplayTitleFormat(display_title_format);
 
   frame_->setApp(this->app_);
