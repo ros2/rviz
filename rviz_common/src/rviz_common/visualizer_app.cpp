@@ -158,7 +158,7 @@ bool VisualizerApp::init(int argc, char ** argv)
 
   QCommandLineOption display_title_format_option(
     QStringList() << "t" << "display-title-format",
-      "A display title format like \"NAMESPACE - PATH/FILE - RViz2\"",
+      "A display title format like \"{NAMESPACE} - {PATH}/{FILE} - RViz2\"",
       "display_title_format");
   parser.addOption(display_title_format_option);
 
@@ -293,6 +293,9 @@ bool VisualizerApp::init(int argc, char ** argv)
   node_ = ros_client_abstraction_->init(argc, argv, "rviz", false /* anonymous_name */);
 
   frame_ = new VisualizationFrame(node_);
+  
+  frame_->setDisplayTitleFormat(display_title_format);
+
   frame_->setApp(this->app_);
 
   if (!help_path.isEmpty()) {
