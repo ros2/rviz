@@ -33,7 +33,6 @@
 
 #include <array>
 #include <memory>
-#include <sstream>  // needed for Eigen until https://gitlab.com/libeigen/eigen/-/merge_requests/65
 #include <vector>
 
 // GCC 11 has a false positive warning about uninitialized variables in Eigen.  There is an open
@@ -45,13 +44,13 @@
 // https://salsa.debian.org/science-team/eigen3/-/merge_requests/1 .
 // However, it is not clear that that fix is going to make it into Ubuntu 22.04 before it
 // freezes, so disable the warning here.
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 #pragma GCC diagnostic ignored "-Wclass-memaccess"
 #endif
-#include <Eigen/Dense>  // NOLINT: cpplint cannot handle correct include here
-#ifdef __GNUC__
+#include <Eigen/Dense>
+#if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic pop
 #endif
 
