@@ -234,8 +234,6 @@ bool VisualizerApp::init(int argc, char ** argv)
   if (parser.isSet(display_title_format_option)) {
     display_title_format = parser.value(display_title_format_option);
   }
-
-
 // TODO(botteroa-si): enable when possible
 //    if (parser.isSet(help_file_option)) {
 //      help_path = parser.value(help_file_option);
