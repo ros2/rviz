@@ -125,9 +125,9 @@ TEST_F(MeshLoaderTestFixture, loading_invalid_stl_files_fail) {
   ASSERT_FALSE(rviz_rendering::loadMeshFromResource(mesh_path));
 }
 
-TEST_F(MeshLoaderTestFixture, loading_valid_ascii_stl_file) {
+TEST_F(MeshLoaderTestFixture, loading_invalid_ascii_stl_file) {
   /// Load an invalid STL binary file (size does not match the expected size).
-  std::string mesh_path = "package://rviz_rendering_tests/test_meshes/valid_ascii.stl";
+  std::string mesh_path = "package://rviz_rendering_tests/test_meshes/invalid_ascii.stl";
 
   ASSERT_FALSE(rviz_rendering::loadMeshFromResource(mesh_path));
 }
@@ -141,11 +141,10 @@ TEST_F(MeshLoaderTestFixture, loading_invalid_stl_files_should_fail) {
   ASSERT_FALSE(rviz_rendering::loadMeshFromResource(mesh_path));
 }
 
-TEST_F(MeshLoaderTestFixture, loading_almost_valid_stl_files_should_fail) {
+TEST_F(MeshLoaderTestFixture, loading_almost_invalid_stl_files_should_fail) {
   /// Load a "potentially" valid STL binary file with bigger size than the
-  /// expected. The extra "unexpected" data at the end of the file should be
-  /// ignored.
-  std::string mesh_path = "package://rviz_rendering_tests/test_meshes/valid_extra.stl";
+  /// expected. The file will not load.
+  std::string mesh_path = "package://rviz_rendering_tests/test_meshes/invalid_extra.stl";
 
   EXPECT_FALSE(rviz_rendering::loadMeshFromResource(mesh_path));
 }
