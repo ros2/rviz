@@ -2,6 +2,11 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+13.1.2 (2023-10-09)
+-------------------
+* Fix ODR violations in interactive_marker displays. (`#1068 <https://github.com/ros2/rviz/issues/1068>`_)
+* Contributors: Chris Lalancette
+
 13.1.1 (2023-10-04)
 -------------------
 

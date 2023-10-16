@@ -46,6 +46,7 @@
 // freezes, so disable the warning here.
 #if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 #pragma GCC diagnostic ignored "-Wclass-memaccess"
 #endif
 #include <Eigen/Dense>
