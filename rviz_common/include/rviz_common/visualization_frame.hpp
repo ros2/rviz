@@ -128,9 +128,13 @@ public:
 
   /// Set the display title format.
   /**
-   * It sets the format of the window title
-   * Default will be "NAMESPACE - CONFIG_PATH/CONFIG_FILE - RViz"
-   * NAMESPACE, CONFIG_PATH and CONFIG_FILE will be replaced accordingly.
+   * Sets the format of the window title.
+   * Three replacement tokens are supported:
+   *  - {NAMESPACE} - replace with the namespace this node is in
+   *  - {CONFIG_PATH} - replace with the path (but not the filename) of the configuration file in use.
+   *  - {CONFIG_FILENAME} - replace with the filename (but not the path) of the configuration file in use.
+   * The default is "RViz[*]" if the default configuration file is in use,
+   * or "{CONFIG_PATH}/{CONFIG_FILENAME}[*] - RViz if a custom configuration file is in use.
    */
   void
   setDisplayTitleFormat(const QString & title_format);

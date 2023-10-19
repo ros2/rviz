@@ -87,7 +87,8 @@ bool VisualizerApp::init(int argc, char ** argv)
 
   QCommandLineOption display_title_format_option(
     QStringList() << "t" << "display-title-format",
-      "A display title format like \"{NAMESPACE} - {PATH}/{FILE} - RViz2\"",
+      "A display title format like ",
+      "\"{NAMESPACE} - {CONFIG_PATH}/{CONFIG_FILENAME} - RViz2\" ",
       "display_title_format");
   parser.addOption(display_title_format_option);
 
