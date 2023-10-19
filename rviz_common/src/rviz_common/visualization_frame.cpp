@@ -763,7 +763,7 @@ void VisualizationFrame::setDisplayConfigFile(const std::string & path)
         found = title.find(token);
         if ((found) != std::string::npos) {
           title.replace(found, token.length(), replacement);
-          }
+        }
       };
     title = display_title_format_;
     std::filesystem::path full_filename(path.c_str());
