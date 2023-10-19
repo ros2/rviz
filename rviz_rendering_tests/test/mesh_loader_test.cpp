@@ -95,8 +95,7 @@ TEST_F(MeshLoaderTestFixture, can_load_stl_files) {
   float expected_bound_radius = 34.920441f;
   size_t expected_vertex_count = 35532;
   size_t actual_vertex_count = 0;
-  // Meshes are divided and stored in submeshes with at most 2004 vertices each.
-  for (int i = 0; i < 18; ++i) {
+  for (size_t i = 0; i < mesh->getNumSubMeshes(); ++i) {
     actual_vertex_count += mesh->getSubMesh(i)->vertexData->vertexCount;
   }
   ASSERT_TRUE(mesh->isManuallyLoaded());
@@ -126,6 +125,13 @@ TEST_F(MeshLoaderTestFixture, loading_invalid_stl_files_fail) {
   ASSERT_FALSE(rviz_rendering::loadMeshFromResource(mesh_path));
 }
 
+TEST_F(MeshLoaderTestFixture, loading_invalid_ascii_stl_file) {
+  /// Load an invalid STL binary file (size does not match the expected size).
+  std::string mesh_path = "package://rviz_rendering_tests/test_meshes/invalid_ascii.stl";
+
+  ASSERT_FALSE(rviz_rendering::loadMeshFromResource(mesh_path));
+}
+
 TEST_F(MeshLoaderTestFixture, loading_invalid_stl_files_should_fail) {
   /// Load an invalid STL binary file (size does not match the expected size,
   /// but does if incorrectly read as an 16-bit uint)
@@ -135,13 +141,12 @@ TEST_F(MeshLoaderTestFixture, loading_invalid_stl_files_should_fail) {
   ASSERT_FALSE(rviz_rendering::loadMeshFromResource(mesh_path));
 }
 
-TEST_F(MeshLoaderTestFixture, loading_almost_valid_stl_files_should_succed) {
+TEST_F(MeshLoaderTestFixture, loading_almost_invalid_stl_files_should_fail) {
   /// Load a "potentially" valid STL binary file with bigger size than the
-  /// expected. The extra "unexpected" data at the end of the file should be
-  /// ignored.
-  std::string mesh_path = "package://rviz_rendering_tests/test_meshes/valid_extra.stl";
+  /// expected. The file will not load.
+  std::string mesh_path = "package://rviz_rendering_tests/test_meshes/invalid_extra.stl";
 
-  ASSERT_TRUE(rviz_rendering::loadMeshFromResource(mesh_path));
+  EXPECT_FALSE(rviz_rendering::loadMeshFromResource(mesh_path));
 }
 
 TEST_F(MeshLoaderTestFixture, loading_stl_mesh_twice_should_not_fail) {
