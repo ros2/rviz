@@ -782,7 +782,7 @@ void VisualizationFrame::setDisplayConfigFile(const std::string & path)
         found = title.find(token);
         if ((found) != std::string::npos) {
           title.replace(found, token.length(), replacement);
-          }
+        }
       };
     title = display_title_format_;
     QFileInfo fi(path.c_str());
