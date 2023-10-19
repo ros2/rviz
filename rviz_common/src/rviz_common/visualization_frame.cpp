@@ -792,7 +792,6 @@ void VisualizationFrame::setDisplayConfigFile(const std::string & path)
       title.append("[*]");
     }
   }
-
   setWindowTitle(QString::fromStdString(title));
 }
 bool VisualizationFrame::saveDisplayConfig(const QString & path)
