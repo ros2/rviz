@@ -38,7 +38,7 @@
 
 #include "./ogre_testing_environment.hpp"
 #include "./scene_graph_introspection.hpp"
-#include "rviz_rendering/mesh_shape.hpp"
+#include "rviz_rendering/objects/mesh_shape.hpp"
 
 using namespace ::testing;  // NOLINT
 

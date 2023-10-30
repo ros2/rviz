@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz_rendering/mesh_shape.hpp"
+#include "rviz_rendering/objects/mesh_shape.hpp"
 
 #include <OgreMesh.h>
 #include <OgreMeshManager.h>

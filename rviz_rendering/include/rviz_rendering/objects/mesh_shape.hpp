@@ -27,15 +27,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_RENDERING__MESH_SHAPE_HPP_
-#define RVIZ_RENDERING__MESH_SHAPE_HPP_
+#ifndef RVIZ_RENDERING__OBJECTS__MESH_SHAPE_HPP_
+#define RVIZ_RENDERING__OBJECTS__MESH_SHAPE_HPP_
 
 #include "rviz_rendering/objects/shape.hpp"
-
-namespace Ogre
-{
-class ManualObject;
-}
+#include "OgreManualObject.h"
+#include "OgreSceneNode.h"
+#include "OgreSceneManager.h"
+#include "OgreVector.h"
 
 namespace rviz_rendering
 {
@@ -142,4 +141,4 @@ private:
 
 }  // namespace rviz_rendering
 
-#endif  // RVIZ_RENDERING__MESH_SHAPE_HPP_
+#endif  // RVIZ_RENDERING__OBJECTS__MESH_SHAPE_HPP_

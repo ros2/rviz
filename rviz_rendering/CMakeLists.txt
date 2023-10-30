@@ -72,7 +72,7 @@ add_library(rviz_rendering SHARED
   src/rviz_rendering/logging.cpp
   src/rviz_rendering/material_manager.cpp
   src/rviz_rendering/mesh_loader.cpp
-  src/rviz_rendering/mesh_shape.cpp
+  src/rviz_rendering/objects/mesh_shape.cpp
   src/rviz_rendering/ogre_logging.cpp
   src/rviz_rendering/ogre_render_window_impl.cpp
   src/rviz_rendering/orthographic.cpp
