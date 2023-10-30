@@ -79,7 +79,6 @@ add_library(rviz_rendering SHARED
   src/rviz_rendering/render_system.cpp
   src/rviz_rendering/render_window.cpp
   src/rviz_rendering/resource_config.cpp
-  src/rviz_rendering/mesh_loader_helpers/stl_loader.cpp
   src/rviz_rendering/mesh_loader_helpers/assimp_loader.cpp
   src/rviz_rendering/string_helper.cpp
   src/rviz_rendering/objects/arrow.cpp
