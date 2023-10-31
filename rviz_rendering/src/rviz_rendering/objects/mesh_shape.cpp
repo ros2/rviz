@@ -148,4 +148,9 @@ void MeshShape::clear()
   started_ = false;
 }
 
+Ogre::ManualObject * MeshShape::getManualObject()
+{
+  return manual_object_;
+}
+
 }  // namespace rviz_rendering
