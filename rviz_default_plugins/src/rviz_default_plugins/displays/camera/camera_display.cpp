@@ -257,6 +257,7 @@ Ogre::MaterialPtr CameraDisplay::createMaterial(std::string name) const
     material->getTechnique(0)->getPass(0)->createTextureUnitState();
   tu->setTextureName(texture_->getTexture()->getName());
   tu->setTextureFiltering(Ogre::TFO_NONE);
+  tu->setTextureAddressingMode(Ogre::TextureUnitState::TAM_CLAMP);
   tu->setAlphaOperation(Ogre::LBX_SOURCE1, Ogre::LBS_MANUAL, Ogre::LBS_CURRENT, 0.0);
 
   return material;
