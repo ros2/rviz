@@ -761,7 +761,7 @@ void VisualizationFrame::setDisplayConfigFile(const std::string & path)
       {
         std::size_t found;
         found = title.find(token);
-        if ((found) != std::string::npos) {
+        if (found != std::string::npos) {
           title.replace(found, token.length(), replacement);
         }
       };
@@ -770,12 +770,8 @@ void VisualizationFrame::setDisplayConfigFile(const std::string & path)
     find_and_replace_token(
       title, "{NAMESPACE}",
       rviz_ros_node_.lock()->get_raw_node()->get_namespace());
-    find_and_replace_token(
-      title, "{CONFIG_PATH}",
-      full_filename.relative_path());
-    find_and_replace_token(
-      title, "{CONFIG_FILENAME}",
-      full_filename.filename());
+    find_and_replace_token(title, "{CONFIG_PATH}", full_filename.relative_path());
+    find_and_replace_token(title, "{CONFIG_FILENAME}", full_filename.filename());
     if (title.find("[*]") == std::string::npos) {
       title.append("[*]");
     }
