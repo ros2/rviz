@@ -2,8 +2,8 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+13.2.0 (2023-11-06)
+-------------------
 * Include MeshShape class (`#1064 <https://github.com/ros2/rviz/issues/1064>`_)
 * Use assimp to load stl (`#1063 <https://github.com/ros2/rviz/issues/1063>`_)
 * Contributors: Alejandro Hernández Cordero

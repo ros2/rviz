@@ -2,8 +2,8 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+13.2.0 (2023-11-06)
+-------------------
 * (robot) fix styling of log msg (`#1080 <https://github.com/ros2/rviz/issues/1080>`_)
 * Fix image display wrapping (`#1038 <https://github.com/ros2/rviz/issues/1038>`_)
 * removed enableInteraction reference (`#1075 <https://github.com/ros2/rviz/issues/1075>`_)
