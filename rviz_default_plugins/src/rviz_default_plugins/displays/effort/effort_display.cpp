@@ -196,7 +196,7 @@ void EffortDisplay::topic_callback(const std_msgs::msg::String & msg)
     if (joint->type == urdf::Joint::REVOLUTE || joint->type == 2) {
       std::string joint_name = it->first;
       urdf::JointLimitsSharedPtr limit = joint->limits;
-      if (limit){
+      if (limit) {
         joints_[joint_name] = std::make_shared<JointInfo>(joint_name, joints_category_);
         joints_[joint_name]->setMaxEffort(limit->effort);
       } else {
