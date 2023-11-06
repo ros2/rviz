@@ -134,7 +134,7 @@ public:
    *  - {CONFIG_PATH} - replace with the path (but not the filename) of the configuration file in use.
    *  - {CONFIG_FILENAME} - replace with the filename (but not the path) of the configuration file in use.
    * The default is "RViz[*]" if the default configuration file is in use,
-   * or "{CONFIG_PATH}/{CONFIG_FILENAME}[*] - RViz if a custom configuration file is in use.
+   * or "{CONFIG_PATH}/{CONFIG_FILENAME}[*] - RViz" if a custom configuration file is in use.
    */
   void
   setDisplayTitleFormat(const QString & title_format);
