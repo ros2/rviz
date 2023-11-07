@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+13.2.0 (2023-11-06)
+-------------------
+* Use assimp to load stl (`#1063 <https://github.com/ros2/rviz/issues/1063>`_)
+* Contributors: Alejandro Hernández Cordero
+
 13.1.2 (2023-10-09)
 -------------------
 

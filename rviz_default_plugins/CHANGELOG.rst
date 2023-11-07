@@ -2,6 +2,13 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+13.2.0 (2023-11-06)
+-------------------
+* (robot) fix styling of log msg (`#1080 <https://github.com/ros2/rviz/issues/1080>`_)
+* Fix image display wrapping (`#1038 <https://github.com/ros2/rviz/issues/1038>`_)
+* removed enableInteraction reference (`#1075 <https://github.com/ros2/rviz/issues/1075>`_)
+* Contributors: Alejandro Hernández Cordero, Lewe Christiansen, Matthijs van der Burgh
+
 13.1.2 (2023-10-09)
 -------------------
 * Fix ODR violations in interactive_marker displays. (`#1068 <https://github.com/ros2/rviz/issues/1068>`_)
