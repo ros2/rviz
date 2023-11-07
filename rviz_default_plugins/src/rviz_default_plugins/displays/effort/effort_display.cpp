@@ -47,6 +47,7 @@
 #include <rviz_common/properties/property.hpp>
 #include <rviz_rendering/objects/effort_visual.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
+#include <rclcpp/logging.hpp>
 
 using namespace std::chrono_literals;
 
