@@ -202,7 +202,7 @@ void EffortDisplay::topic_callback(const std_msgs::msg::String & msg)
       } else {
         RCLCPP_WARN(
           context_->getRosNodeAbstraction().lock()->get_raw_node()->get_logger(),
-          "Joint `%s` has no <limit> tag in URDF. Effort plugin needs to know the effort "
+          "Joint '%s' has no <limit> tag in URDF. Effort plugin needs to know the effort "
           "limit to determine the size of the corresponding visual marker. "
           "Effort display for this joint will be inhibited.", joint_name.c_str());
       }
