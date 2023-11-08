@@ -770,8 +770,8 @@ void VisualizationFrame::setDisplayConfigFile(const std::string & path)
     find_and_replace_token(
       title, "{NAMESPACE}",
       rviz_ros_node_.lock()->get_raw_node()->get_namespace());
-    find_and_replace_token(title, "{CONFIG_PATH}", full_filename.relative_path().c_str());
-    find_and_replace_token(title, "{CONFIG_FILENAME}", full_filename.filename().c_str());
+    find_and_replace_token(title, "{CONFIG_PATH}", full_filename.relative_path().native());
+    find_and_replace_token(title, "{CONFIG_FILENAME}", full_filename.filename().native());
     if (title.find("[*]") == std::string::npos) {
       title.append("[*]");
     }
