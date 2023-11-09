@@ -759,8 +759,7 @@ void VisualizationFrame::setDisplayConfigFile(const std::string & path)
     auto find_and_replace_token =
       [](std::string & title, const std::string & token, const std::string & replacement)
       {
-        std::size_t found;
-        found = title.find(token);
+        std::size_t found = title.find(token);
         if (found != std::string::npos) {
           title.replace(found, token.length(), replacement);
         }
