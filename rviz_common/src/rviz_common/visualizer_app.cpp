@@ -156,6 +156,13 @@ bool VisualizerApp::init(int argc, char ** argv)
   parser.setApplicationDescription("3D visualization tool for ROS2");
   parser.addHelpOption();
 
+  QCommandLineOption display_title_format_option(
+    QStringList() << "t" << "display-title-format",
+      "A display title format like ",
+      "\"{NAMESPACE} - {CONFIG_PATH}/{CONFIG_FILENAME} - RViz2\" ",
+      "display_title_format");
+  parser.addOption(display_title_format_option);
+
   QCommandLineOption display_config_option(
     QStringList() << "d" << "display-config",
       "A display config file (.rviz) to load",
@@ -176,6 +183,7 @@ bool VisualizerApp::init(int argc, char ** argv)
       "A custom splash-screen image to display", "splash_path");
   parser.addOption(splash_screen_option);
 
+<<<<<<< HEAD
 // TODO(botteroa-si): enable when possible
 //  QCommandLineOption help_file_option(
 //    "help-file", "A custom html file to show as the help screen", "help_path");
@@ -201,6 +209,9 @@ bool VisualizerApp::init(int argc, char ** argv)
 //   ("in-mc-wrapper", "Signal that this is running inside a master-chooser wrapper")
 
   QString display_config, fixed_frame, splash_path, help_path;
+=======
+  QString display_config, fixed_frame, splash_path, help_path, display_title_format;
+>>>>>>> ea2dbb30 (Rolling namespace in title (#1074))
   bool enable_ogre_log;
   // TODO(botteroa-si): enable when possible
 //  bool in_mc_wrapper = false;
@@ -232,6 +243,7 @@ bool VisualizerApp::init(int argc, char ** argv)
 //      force_gl_version = parser.value(open_gl_option).toInt();
 //    }
 
+<<<<<<< HEAD
 //   if (vm.count("in-mc-wrapper")) {
 //     in_mc_wrapper = true;
 //   }
@@ -257,6 +269,12 @@ bool VisualizerApp::init(int argc, char ** argv)
   //
   // nh_.reset(new ros::NodeHandle);
   //
+=======
+  if (parser.isSet(display_title_format_option)) {
+    display_title_format = parser.value(display_title_format_option);
+  }
+
+>>>>>>> ea2dbb30 (Rolling namespace in title (#1074))
   if (enable_ogre_log) {
     rviz_rendering::OgreLogging::get()->useLogFileAndStandardOut();
     rviz_rendering::OgreLogging::get()->configureLogging();
@@ -281,6 +299,9 @@ bool VisualizerApp::init(int argc, char ** argv)
   node_ = ros_client_abstraction_->init(argc, argv, "rviz", false /* anonymous_name */);
 
   frame_ = new VisualizationFrame(node_);
+
+  frame_->setDisplayTitleFormat(display_title_format);
+
   frame_->setApp(this->app_);
 
   if (!help_path.isEmpty()) {
