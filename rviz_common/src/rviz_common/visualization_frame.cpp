@@ -32,6 +32,7 @@
 #include "rviz_common/visualization_frame.hpp"
 
 #include <exception>
+#include <filesystem>
 #include <fstream>
 #include <memory>
 #include <string>
@@ -738,16 +739,43 @@ void VisualizationFrame::setDisplayConfigModified()
   }
 }
 
+void VisualizationFrame::setDisplayTitleFormat(const QString & title_format)
+{
+  display_title_format_ = title_format.toStdString();
+}
+
 void VisualizationFrame::setDisplayConfigFile(const std::string & path)
 {
   display_config_file_ = path;
-
   std::string title;
-  if (path == default_display_config_file_) {
-    title = "RViz[*]";
+
+  if (display_title_format_.empty()) {
+    if (path == default_display_config_file_) {
+      title = "RViz[*]";
+    } else {
+      title = QDir::toNativeSeparators(QString::fromStdString(path)).toStdString() + "[*] - RViz";
+    }
   } else {
-    title = QDir::toNativeSeparators(QString::fromStdString(path)).toStdString() + "[*] - RViz";
+    auto find_and_replace_token =
+      [](std::string & title, const std::string & token, const std::string & replacement)
+      {
+        std::size_t found = title.find(token);
+        if (found != std::string::npos) {
+          title.replace(found, token.length(), replacement);
+        }
+      };
+    title = display_title_format_;
+    std::filesystem::path full_filename(path.c_str());
+    find_and_replace_token(
+      title, "{NAMESPACE}",
+      rviz_ros_node_.lock()->get_raw_node()->get_namespace());
+    find_and_replace_token(title, "{CONFIG_PATH}", full_filename.parent_path().string());
+    find_and_replace_token(title, "{CONFIG_FILENAME}", full_filename.filename().string());
+    if (title.find("[*]") == std::string::npos) {
+      title.append("[*]");
+    }
   }
+
   setWindowTitle(QString::fromStdString(title));
 }
 

@@ -85,6 +85,13 @@ bool VisualizerApp::init(int argc, char ** argv)
   parser.setApplicationDescription("3D visualization tool for ROS2");
   parser.addHelpOption();
 
+  QCommandLineOption display_title_format_option(
+    QStringList() << "t" << "display-title-format",
+      "A display title format like ",
+      "\"{NAMESPACE} - {CONFIG_PATH}/{CONFIG_FILENAME} - RViz2\" ",
+      "display_title_format");
+  parser.addOption(display_title_format_option);
+
   QCommandLineOption display_config_option(
     QStringList() << "d" << "display-config",
       "A display config file (.rviz) to load",
@@ -105,7 +112,7 @@ bool VisualizerApp::init(int argc, char ** argv)
       "A custom splash-screen image to display", "splash_path");
   parser.addOption(splash_screen_option);
 
-  QString display_config, fixed_frame, splash_path, help_path;
+  QString display_config, fixed_frame, splash_path, help_path, display_title_format;
   bool enable_ogre_log;
 
   if (app_) {parser.process(*app_);}
@@ -123,6 +130,10 @@ bool VisualizerApp::init(int argc, char ** argv)
     splash_path = parser.value(splash_screen_option);
   }
 
+  if (parser.isSet(display_title_format_option)) {
+    display_title_format = parser.value(display_title_format_option);
+  }
+
   if (enable_ogre_log) {
     rviz_rendering::OgreLogging::get()->useLogFileAndStandardOut();
     rviz_rendering::OgreLogging::get()->configureLogging();
@@ -133,6 +144,9 @@ bool VisualizerApp::init(int argc, char ** argv)
   node_ = ros_client_abstraction_->init(argc, argv, "rviz", false /* anonymous_name */);
 
   frame_ = new VisualizationFrame(node_);
+
+  frame_->setDisplayTitleFormat(display_title_format);
+
   frame_->setApp(this->app_);
 
   if (!help_path.isEmpty()) {
