@@ -2,6 +2,11 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.9 (2023-11-13)
+-------------------
+* Handle missing effort limit in URDF (`#1084 <https://github.com/ros2/rviz/issues/1084>`_) (`#1085 <https://github.com/ros2/rviz/issues/1085>`_)
+* Contributors: mergify[bot]
+
 11.2.8 (2023-09-19)
 -------------------
 * Fixed AccelStamped, TwistStamped and Wrench icons (`#1041 <https://github.com/ros2/rviz/issues/1041>`_) (`#1046 <https://github.com/ros2/rviz/issues/1046>`_)

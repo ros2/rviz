@@ -2,6 +2,9 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.9 (2023-11-13)
+-------------------
+
 11.2.8 (2023-09-19)
 -------------------
 * Removed warning when building in release mode (`#1057 <https://github.com/ros2/rviz/issues/1057>`_) (`#1059 <https://github.com/ros2/rviz/issues/1059>`_)

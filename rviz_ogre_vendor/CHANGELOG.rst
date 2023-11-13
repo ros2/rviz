@@ -2,6 +2,9 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.9 (2023-11-13)
+-------------------
+
 11.2.8 (2023-09-19)
 -------------------
 * Make resource file paths relative (`#862 <https://github.com/ros2/rviz/issues/862>`_) (`#867 <https://github.com/ros2/rviz/issues/867>`_)
