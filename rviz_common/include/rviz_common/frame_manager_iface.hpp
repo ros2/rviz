@@ -146,7 +146,8 @@ public:
     Ogre::Vector3 & position,
     Ogre::Quaternion & orientation)
   {
-    return getTransform(header.frame_id, header.stamp, position, orientation);
+    rclcpp::Time time_stamp(header.stamp, RCL_ROS_TIME);
+    return getTransform(header.frame_id, time_stamp, position, orientation);
   }
 
   /// Return the pose for a frame relative to the fixed frame, in Ogre classes, at the most recent
@@ -199,7 +200,8 @@ public:
     Ogre::Vector3 & position,
     Ogre::Quaternion & orientation)
   {
-    return transform(header.frame_id, header.stamp, pose, position, orientation);   // NOLINT
+    rclcpp::Time time_stamp(header.stamp, RCL_ROS_TIME);
+    return transform(header.frame_id, time_stamp, pose, position, orientation);   // NOLINT
     // linter wants #include <algorithm> for transform
   }
 

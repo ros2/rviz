@@ -632,7 +632,7 @@ void MapDisplay::transformMap()
   rclcpp::Time transform_time = context_->getClock()->now();
 
   if (transform_timestamp_property_->getBool()) {
-    transform_time = current_map_.header.stamp;
+    transform_time = rclcpp::Time(current_map_.header.stamp, RCL_ROS_TIME);
   }
 
   Ogre::Vector3 position;

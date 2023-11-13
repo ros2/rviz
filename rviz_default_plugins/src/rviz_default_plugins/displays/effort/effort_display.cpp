@@ -327,9 +327,11 @@ void EffortDisplay::processMessage(sensor_msgs::msg::JointState::ConstSharedPtr 
       continue;  // skip joints..
     }
 
+    rclcpp::Time msg_time(msg->header.stamp, RCL_ROS_TIME);
+
     // update effort property
     joint_info->setEffort(msg->effort[i]);
-    joint_info->last_update_ = msg->header.stamp;
+    joint_info->last_update_ = msg_time;
 
     const urdf::Joint * joint = robot_model_->getJoint(joint_name).get();
     int joint_type = joint->type;
@@ -341,7 +343,7 @@ void EffortDisplay::processMessage(sensor_msgs::msg::JointState::ConstSharedPtr 
 
       // Call rviz::FrameManager to get the transform from the fixed frame to the joint's frame.
       if (!context_->getFrameManager()->getTransform(
-          tf_frame_id, msg->header.stamp, position, orientation))
+          tf_frame_id, msg_time, position, orientation))
       {
         setStatus(
           rviz_common::properties::StatusProperty::Error,
