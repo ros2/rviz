@@ -32,6 +32,8 @@
 
 #include <gmock/gmock.h>
 
+#include "sensor_msgs/msg/image.hpp"
+
 #include "rviz_default_plugins/displays/image/ros_image_texture_iface.hpp"
 
 class MockROSImageTexture : public rviz_default_plugins::displays::ROSImageTextureIface
@@ -41,13 +43,13 @@ public:
   MOCK_METHOD0(update, bool());
   MOCK_METHOD0(clear, void());
 
-  MOCK_METHOD0(getName, const Ogre::String());
+  MOCK_METHOD(const Ogre::String, getName, (), (const, override));
   MOCK_METHOD0(getTexture, const Ogre::TexturePtr & ());
   MOCK_METHOD0(getImage, const sensor_msgs::msg::Image::ConstSharedPtr());
   MOCK_METHOD0(getMaterial, Ogre::MaterialPtr());
 
-  MOCK_METHOD0(getWidth, uint32_t());
-  MOCK_METHOD0(getHeight, uint32_t());
+  MOCK_METHOD(uint32_t, getWidth, (), (const, override));
+  MOCK_METHOD(uint32_t, getHeight, (), (const, override));
 
   MOCK_METHOD1(setNormalizeFloatImage, void(bool normalize));
   MOCK_METHOD3(setNormalizeFloatImage, void(bool normalize, double min, double max));
