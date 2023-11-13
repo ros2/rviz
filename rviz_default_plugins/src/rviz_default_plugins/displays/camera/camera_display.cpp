@@ -482,8 +482,9 @@ bool CameraDisplay::updateCamera()
 
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
+  rclcpp::Time time_stamp(image->header.stamp, RCL_ROS_TIME);
   if (!context_->getFrameManager()->getTransform(
-      image->header.frame_id, image->header.stamp, position, orientation))
+      image->header.frame_id, time_stamp, position, orientation))
   {
     setMissingTransformToFixedFrame(image->header.frame_id);
     return false;
@@ -542,7 +543,7 @@ bool CameraDisplay::timeDifferenceInExactSyncMode(
   const sensor_msgs::msg::Image::ConstSharedPtr & image, rclcpp::Time & rviz_time) const
 {
   return context_->getFrameManager()->getSyncMode() == rviz_common::FrameManagerIface::SyncExact &&
-         rviz_time != image->header.stamp;
+         rviz_time != rclcpp::Time(image->header.stamp, RCL_ROS_TIME);
 }
 
 ImageDimensions CameraDisplay::getImageDimensions(

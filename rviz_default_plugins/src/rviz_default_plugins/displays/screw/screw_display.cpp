@@ -187,8 +187,9 @@ void ScrewDisplay<MessageType>::processMessagePrivate(
   // it fails, we can't do anything else so we return.
   Ogre::Quaternion orientation;
   Ogre::Vector3 position;
+  rclcpp::Time time_stamp(header.stamp, RCL_ROS_TIME);
   if (!rviz_common::MessageFilterDisplay<MessageType>::context_->getFrameManager()->getTransform(
-      header.frame_id, header.stamp, position,
+      header.frame_id, time_stamp, position,
       orientation))
   {
     rviz_common::MessageFilterDisplay<MessageType>::setStatus(

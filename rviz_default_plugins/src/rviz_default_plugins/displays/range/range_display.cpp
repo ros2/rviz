@@ -119,11 +119,12 @@ void RangeDisplay::processMessage(const sensor_msgs::msg::Range::ConstSharedPtr 
 
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
+  rclcpp::Time time_stamp(msg->header.stamp, RCL_ROS_TIME);
   float displayed_range = getDisplayedRange(msg);
   auto pose = getPose(displayed_range);
 
   if (!context_->getFrameManager()->transform(
-      msg->header.frame_id, msg->header.stamp, pose, position, orientation))
+      msg->header.frame_id, time_stamp, pose, position, orientation))
   {
     setMissingTransformToFixedFrame(msg->header.frame_id);
     return;
