@@ -135,6 +135,8 @@ VisualizationManager::VisualizationManager(
   update_timer_(0),
   shutting_down_(false),
   render_panel_(render_panel),
+  wall_clock_elapsed_(0),
+  ros_time_elapsed_(0),
   time_update_timer_(0.0f),
   frame_update_timer_(0.0f),
   render_requested_(1),
