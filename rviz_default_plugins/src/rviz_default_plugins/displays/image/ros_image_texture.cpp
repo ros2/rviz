@@ -401,7 +401,7 @@ ROSImageTexture::convertTo8bit(const uint8_t * data_ptr, size_t data_size_in_byt
       double val = (static_cast<double>(*input_ptr - min_value) / range);
       if (val < 0) {val = 0;}
       if (val > 1) {val = 1;}
-      *output_ptr = static_cast<T>(val * 255u);
+      *output_ptr = static_cast<uint8_t>(val * 255u);
     }
   }
   // TODO(clalancette): What happens when range is <= 0.0?
