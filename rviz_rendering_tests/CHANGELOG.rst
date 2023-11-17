@@ -2,6 +2,9 @@
 Changelog for package rviz_rendering_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 12.4.4 (2023-09-08)
 -------------------
 

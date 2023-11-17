@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Removed warning when building in release mode (`#1060 <https://github.com/ros2/rviz/issues/1060>`_)
+* Contributors: Alejandro Hernández Cordero
+
 12.4.4 (2023-09-08)
 -------------------
 * Fixed low FPS when sending point markers (`#1056 <https://github.com/ros2/rviz/issues/1056>`_)

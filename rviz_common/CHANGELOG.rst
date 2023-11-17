@@ -2,6 +2,11 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Initialize more of the visualization_manager members. (`#1092 <https://github.com/ros2/rviz/issues/1092>`_)
+* Contributors: Chris Lalancette
+
 12.4.4 (2023-09-08)
 -------------------
 * Remove warning in depth_cloud_mld.cpp (`#1021 <https://github.com/ros2/rviz/issues/1021>`_)
