@@ -2,8 +2,8 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+12.4.5 (2023-11-17)
+-------------------
 * Removed warning when building in release mode (`#1060 <https://github.com/ros2/rviz/issues/1060>`_)
 * Contributors: Alejandro Hernández Cordero
 

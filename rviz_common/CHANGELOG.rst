@@ -2,8 +2,8 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+12.4.5 (2023-11-17)
+-------------------
 * Initialize more of the visualization_manager members. (`#1092 <https://github.com/ros2/rviz/issues/1092>`_)
 * Contributors: Chris Lalancette
 
