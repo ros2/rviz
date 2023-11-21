@@ -48,10 +48,15 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 #pragma GCC diagnostic ignored "-Wclass-memaccess"
+#elif defined(_WIN32)
+#pragma warning(push)
+#pragma warning(disable:4996)
 #endif
 #include <Eigen/Dense>
 #if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic pop
+#elif defined(_WIN32)
+#pragma warning(pop)
 #endif
 
 #include <OgreVector.h>
