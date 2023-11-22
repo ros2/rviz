@@ -98,12 +98,21 @@ add_library(rviz_rendering SHARED
   src/rviz_rendering/objects/wrench_visual.cpp
 )
 
-target_link_libraries(rviz_rendering
-  PUBLIC
+target_link_libraries(rviz_rendering PUBLIC
+  Qt5::Widgets
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
-  Qt5::Widgets
+)
+if(TARGET Eigen3::Eigen)
+  # TODO(sloretz) require target to exist when https://github.com/ros2/choco-packages/issues/19 is addressed
+  target_link_libraries(rviz_rendering PUBLIC Eigen3::Eigen)
+else()
+  target_include_directories(rviz_rendering PUBLIC ${Eigen3_INCLUDE_DIRS})
+endif()
+
+target_link_libraries(rviz_rendering PRIVATE
   ament_index_cpp::ament_index_cpp
+  assimp::assimp
   resource_retriever::resource_retriever
 )
 
@@ -111,23 +120,16 @@ target_include_directories(rviz_rendering
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
-    ${Eigen3_INCLUDE_DIRS}
 )
 # Causes the visibility macros to use dllexport rather than dllimport,
 # which is appropriate when building the dll but not consuming it.
 target_compile_definitions(rviz_rendering PRIVATE "RVIZ_RENDERING_BUILDING_LIBRARY")
 
-ament_target_dependencies(rviz_rendering
-  SYSTEM PUBLIC
-  rviz_assimp_vendor
-)
 ament_export_dependencies(
-  rviz_assimp_vendor
-  rviz_ogre_vendor
-  eigen3_cmake_module
   Eigen3
-  resource_retriever
-  ament_index_cpp)
+  Qt5
+  rviz_ogre_vendor
+)
 
 # Export old-style CMake variables
 ament_export_include_directories("include/${PROJECT_NAME}")
