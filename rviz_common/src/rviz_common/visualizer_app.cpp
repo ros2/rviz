@@ -114,7 +114,7 @@ bool VisualizerApp::init(int argc, char ** argv)
 
   QCommandLineOption fullscreen_option(
     "fullscreen",
-    "Start rviz in fullscreen mode.");
+    "Start RViz in fullscreen mode.");
   parser.addOption(fullscreen_option);
 
   QString display_config, fixed_frame, splash_path, help_path, display_title_format;
