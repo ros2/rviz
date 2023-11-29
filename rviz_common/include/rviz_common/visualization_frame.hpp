@@ -238,6 +238,14 @@ public Q_SLOTS:
   void
   setStatus(const QString & message) override;
 
+  /// Set full screen mode.
+  void
+  setFullScreen(bool full_screen);
+
+  /// Exit full screen mode.
+  void
+  exitFullScreen();
+
 Q_SIGNALS:
   /// Emitted during file-loading and initialization to indicate progress.
   void
@@ -331,14 +339,6 @@ protected Q_SLOTS:
    */
   void
   onDeletePanel();
-
-  /// Set full screen mode.
-  void
-  setFullScreen(bool full_screen);
-
-  /// Exit full screen mode.
-  void
-  exitFullScreen();
 
   /// Indicate that loading is done.
   void

@@ -112,12 +112,18 @@ bool VisualizerApp::init(int argc, char ** argv)
       "A custom splash-screen image to display", "splash_path");
   parser.addOption(splash_screen_option);
 
+  QCommandLineOption fullscreen_option(
+    "fullscreen",
+    "Start RViz in fullscreen mode.");
+  parser.addOption(fullscreen_option);
+
   QString display_config, fixed_frame, splash_path, help_path, display_title_format;
-  bool enable_ogre_log;
+  bool enable_ogre_log, fullscreen;
 
   if (app_) {parser.process(*app_);}
 
   enable_ogre_log = parser.isSet(ogre_log_option);
+  fullscreen = parser.isSet(fullscreen_option);
 
   if (parser.isSet(display_config_option)) {
     display_config = parser.value(display_config_option);
@@ -160,6 +166,10 @@ bool VisualizerApp::init(int argc, char ** argv)
 
   if (!fixed_frame.isEmpty()) {
     frame_->getManager()->setFixedFrame(fixed_frame);
+  }
+
+  if (fullscreen) {
+    frame_->setFullScreen(true);
   }
 
   frame_->show();
