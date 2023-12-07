@@ -888,7 +888,7 @@ void RobotLink::createInertia(const urdf::LinkConstSharedPtr & link)
       if (link->parent_joint && link->parent_joint->type != urdf::Joint::FIXED) {
         // Do not show error message for base link or static links
         RVIZ_COMMON_LOG_ERROR_STREAM(
-          "The link " << link->name << " is has unrealistic "
+          "The link " << link->name << " has unrealistic "
             "inertia, so the equivalent inertia box will not be shown.\n");
       }
       return;
