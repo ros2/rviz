@@ -84,6 +84,9 @@ class RVIZ_COMMON_PUBLIC VisualizationFrame : public QMainWindow, public WindowM
 {
   Q_OBJECT
 
+protected:
+  explicit VisualizationFrame(QWidget * parent = nullptr);
+
 public:
   explicit VisualizationFrame(
     ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node, QWidget * parent = nullptr);
