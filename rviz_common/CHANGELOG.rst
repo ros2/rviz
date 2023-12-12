@@ -2,6 +2,25 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+13.2.0 (2023-11-06)
+-------------------
+
+13.1.2 (2023-10-09)
+-------------------
+
+13.1.1 (2023-10-04)
+-------------------
+
+13.1.0 (2023-09-07)
+-------------------
+* Removed unused code (`#1044 <https://github.com/ros2/rviz/issues/1044>`_)
+* Contributors: Alejandro Hernández Cordero
+
+13.0.0 (2023-08-21)
+-------------------
+* Remove unused LineEditWithButton::simulateReturnPressed() (`#1040 <https://github.com/ros2/rviz/issues/1040>`_)
+* Contributors: Alejandro Hernández Cordero
+
 12.8.0 (2023-08-27)
 -------------------
 * Remove warning in depth_cloud_mld.cpp (`#1021 <https://github.com/ros2/rviz/issues/1021>`_)

@@ -2,6 +2,34 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+13.2.0 (2023-11-06)
+-------------------
+* (robot) fix styling of log msg (`#1080 <https://github.com/ros2/rviz/issues/1080>`_)
+* Fix image display wrapping (`#1038 <https://github.com/ros2/rviz/issues/1038>`_)
+* removed enableInteraction reference (`#1075 <https://github.com/ros2/rviz/issues/1075>`_)
+* Contributors: Alejandro Hernández Cordero, Lewe Christiansen, Matthijs van der Burgh
+
+13.1.2 (2023-10-09)
+-------------------
+* Fix ODR violations in interactive_marker displays. (`#1068 <https://github.com/ros2/rviz/issues/1068>`_)
+* Contributors: Chris Lalancette
+
+13.1.1 (2023-10-04)
+-------------------
+
+13.1.0 (2023-09-07)
+-------------------
+* Improve error handling in LaserScanDisplay (`#1035 <https://github.com/ros2/rviz/issues/1035>`_)
+* Fix implicit capture of "this" warning in C++20 (`#1053 <https://github.com/ros2/rviz/issues/1053>`_)
+* Removed unused code (`#1044 <https://github.com/ros2/rviz/issues/1044>`_)
+* Contributors: AiVerisimilitude, Alejandro Hernández Cordero
+
+13.0.0 (2023-08-21)
+-------------------
+* Fixed AccelStamped, TwistStamped and Wrench icons (`#1041 <https://github.com/ros2/rviz/issues/1041>`_)
+* Fix the flakey rviz_rendering tests (`#1026 <https://github.com/ros2/rviz/issues/1026>`_)
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette
+
 12.8.0 (2023-08-27)
 -------------------
 * Don't pass screw_display.hpp to the moc generator. (`#1018 <https://github.com/ros2/rviz/issues/1018>`_)

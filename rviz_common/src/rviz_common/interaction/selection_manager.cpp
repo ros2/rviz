@@ -229,13 +229,6 @@ void SelectionManager::update()
   if (highlight_enabled_) {
     setHighlightRect(
       highlight_.viewport, highlight_.x1, highlight_.y1, highlight_.x2, highlight_.y2);
-
-#if 0
-    M_Picked results;
-    highlight_node_->setVisible(false);
-    pick(highlight_.viewport, highlight_.x1, highlight_.y1, highlight_.x2, highlight_.y2, results);
-    highlight_node_->setVisible(true);
-#endif
   }
 }
 

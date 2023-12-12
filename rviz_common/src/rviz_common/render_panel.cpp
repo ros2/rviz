@@ -336,16 +336,4 @@ void RenderPanel::contextMenuEvent(QContextMenuEvent * event)
     context_menu->exec(QCursor::pos());
   }
 }
-
-#if 0
-void RenderPanel::sceneManagerDestroyed(Ogre::SceneManager * destroyed_scene_manager)
-{
-  if (destroyed_scene_manager == scene_manager_) {
-    scene_manager_ = nullptr;
-    default_camera_ = nullptr;
-    setCamera(nullptr);
-  }
-}
-#endif
-
 }  // namespace rviz_common

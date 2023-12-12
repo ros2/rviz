@@ -275,131 +275,6 @@ RenderWindowImpl::resize(size_t width, size_t height)
   this->renderLater();
 }
 
-#if 0
-bool RenderWindowImpl::enableStereo(bool enable)
-{
-  bool was_enabled = stereo_enabled_;
-  stereo_enabled_ = enable;
-  setupStereo();
-  return was_enabled;
-}
-#endif
-
-#if 0
-void RenderWindowImpl::setupStereo()
-{
-  bool render_stereo = stereo_enabled_ && RenderSystem::get()->isStereoSupported();
-
-  if (render_stereo == rendering_stereo_) {
-    return;
-  }
-
-  rendering_stereo_ = render_stereo;
-
-  if (rendering_stereo_) {
-    right_viewport_ = render_window_->addViewport(nullptr, 1);
-#if OGRE_STEREO_ENABLE
-    right_viewport_->setDrawBuffer(Ogre::CBT_BACK_RIGHT);
-    viewport_->setDrawBuffer(Ogre::CBT_BACK_LEFT);
-#endif
-
-    setOverlaysEnabled(overlays_enabled_);
-    setBackgroundColor(background_color_);
-    if (camera_) {
-      setCamera(camera_);
-    }
-
-    // addListener causes preViewportUpdate() to be called when rendering.
-    render_window_->addListener(this);
-  } else {
-    render_window_->removeListener(this);
-    render_window_->removeViewport(1);
-    right_viewport_ = nullptr;
-
-#if OGRE_STEREO_ENABLE
-    viewport_->setDrawBuffer(Ogre::CBT_BACK);
-#endif
-
-    if (left_camera_) {
-      left_camera_->getSceneManager()->destroyCamera(left_camera_);
-    }
-    left_camera_ = nullptr;
-    if (right_camera_) {
-      right_camera_->getSceneManager()->destroyCamera(right_camera_);
-    }
-    right_camera_ = nullptr;
-  }
-}
-#endif
-
-#if 0
-// this is called just before rendering either viewport when stereo is enabled.
-void RenderWindowImpl::preViewportUpdate(
-  const Ogre::RenderTargetViewportEvent & evt)
-{
-  Ogre::Viewport * viewport = evt.source;
-
-  const Ogre::Vector2 & offset = camera_->getFrustumOffset();
-  const Ogre::Vector3 pos = camera_->getPosition();
-  const Ogre::Vector3 right = camera_->getRight();
-  const Ogre::Vector3 up = camera_->getUp();
-
-  if (viewport == right_viewport_) {
-    if (camera_->getProjectionType() != Ogre::PT_PERSPECTIVE || !right_camera_) {
-      viewport->setCamera(camera_);
-      return;
-    }
-
-    Ogre::Vector3 newpos = pos +
-      right * offset.x +
-      up * offset.y;
-
-    right_camera_->synchroniseBaseSettingsWith(camera_);
-    right_camera_->setFrustumOffset(-offset);
-    right_camera_->setPosition(newpos);
-    viewport->setCamera(right_camera_);
-  } else if (viewport == viewport_) {
-    if (camera_->getProjectionType() != Ogre::PT_PERSPECTIVE || !left_camera_) {
-      viewport->setCamera(camera_);
-      return;
-    }
-
-    Ogre::Vector3 newpos = pos -
-      right * offset.x -
-      up * offset.y;
-
-    left_camera_->synchroniseBaseSettingsWith(camera_);
-    left_camera_->setFrustumOffset(offset);
-    left_camera_->setPosition(newpos);
-    viewport->setCamera(left_camera_);
-  } else {
-    ROS_WARN("Begin rendering to unknown viewport.");
-  }
-}
-#endif
-
-#if 0
-void RenderWindowImpl::postViewportUpdate(
-  const Ogre::RenderTargetViewportEvent & evt)
-{
-  Ogre::Viewport * viewport = evt.source;
-
-  if (viewport == right_viewport_) {
-    // nothing to do here
-  } else if (viewport == viewport_) {
-    viewport->setCamera(camera_);
-  } else {
-    ROS_WARN("End rendering to unknown viewport.");
-  }
-
-  if (!right_camera_->isCustomProjectionMatrixEnabled()) {
-    right_camera_->synchroniseBaseSettingsWith(camera_);
-    right_camera_->setFrustumOffset(-camera_->getFrustumOffset());
-  }
-  right_viewport_->setCamera(right_camera_);
-}
-#endif
-
 Ogre::Viewport * RenderWindowImpl::getViewport() const
 {
   return ogre_viewport_;
@@ -478,26 +353,10 @@ void RenderWindowImpl::setVisibilityMask(uint32_t mask)
 }
 
 
-#if 0
-void RenderWindowImpl::setOverlaysEnabled(bool overlays_enabled)
-{
-  overlays_enabled_ = overlays_enabled;
-  viewport_->setOverlaysEnabled(overlays_enabled);
-  if (right_viewport_) {
-    right_viewport_->setOverlaysEnabled(overlays_enabled);
-  }
-}
-#endif
-
 void RenderWindowImpl::setBackgroundColor(Ogre::ColourValue background_color)
 {
   background_color_ = background_color;
   ogre_viewport_->setBackgroundColour(background_color);
-#if 0
-  if (ogre_right_viewport_) {
-    ogre_right_viewport_->setBackgroundColour(background_color);
-  }
-#endif
 }
 
 void RenderWindowImpl::setCameraAspectRatio()
@@ -521,50 +380,4 @@ void RenderWindowImpl::setCameraAspectRatio()
     }
   }
 }
-
-#if 0
-void RenderWindowImpl::setOrthoScale(float scale)
-{
-  ortho_scale_ = scale;
-
-  setCameraAspectRatio();
-}
-#endif
-
-#if 0
-void RenderWindowImpl::setPreRenderCallback(boost::function<void()> func)
-{
-  pre_render_callback_ = func;
-}
-#endif
-
-#if 0
-void RenderWindowImpl::setPostRenderCallback(boost::function<void()> func)
-{
-  post_render_callback_ = func;
-}
-#endif
-
-//------------------------------------------------------------------------------
-#if 0
-void RenderWindowImpl::paintEvent(QPaintEvent * e)
-{
-  if (auto_render_ && render_window_) {
-    if (pre_render_callback_) {
-      pre_render_callback_();
-    }
-
-    if (ogre_root_->_fireFrameStarted()) {
-      ogre_root_->_fireFrameRenderingQueued();
-      render_window_->update();
-      ogre_root_->_fireFrameEnded();
-    }
-
-    if (post_render_callback_) {
-      post_render_callback_();
-    }
-  }
-}
-#endif
-
 }  // namespace rviz_rendering

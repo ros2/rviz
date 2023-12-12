@@ -31,6 +31,8 @@
 #ifndef RVIZ_COMMON__DISPLAY_FACTORY_HPP_
 #define RVIZ_COMMON__DISPLAY_FACTORY_HPP_
 
+#include <tinyxml2.h>
+
 #include <string>
 
 #include <QMap>  // NOLINT: cpplint cannot handle include order here

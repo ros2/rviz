@@ -2,6 +2,37 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+13.2.0 (2023-11-06)
+-------------------
+* Include MeshShape class (`#1064 <https://github.com/ros2/rviz/issues/1064>`_)
+* Use assimp to load stl (`#1063 <https://github.com/ros2/rviz/issues/1063>`_)
+* Contributors: Alejandro Hernández Cordero
+
+13.1.2 (2023-10-09)
+-------------------
+* RVIZ_RENDERING_PUBLIC to export class RenderSystem (`#1072 <https://github.com/ros2/rviz/issues/1072>`_)
+* Restore the maybe-uninitialized flag in covariance_visual.hpp (`#1071 <https://github.com/ros2/rviz/issues/1071>`_)
+* Fix up warnings when building with clang. (`#1070 <https://github.com/ros2/rviz/issues/1070>`_)
+* Contributors: Chris Lalancette, Felix F Xu
+
+13.1.1 (2023-10-04)
+-------------------
+* Use buildsystem info to get the ros_package_name (`#1062 <https://github.com/ros2/rviz/issues/1062>`_)
+* Contributors: Alejandro Hernández Cordero
+
+13.1.0 (2023-09-07)
+-------------------
+* make box-mode point cloud shader lighter on top than bottom (`#1058 <https://github.com/ros2/rviz/issues/1058>`_)
+* Removed warning when building in release mode (`#1057 <https://github.com/ros2/rviz/issues/1057>`_)
+* Fixed low FPS when sending point markers (`#1049 <https://github.com/ros2/rviz/issues/1049>`_)
+* Removed unused code (`#1044 <https://github.com/ros2/rviz/issues/1044>`_)
+* Contributors: Alejandro Hernández Cordero, Morgan Quigley
+
+13.0.0 (2023-08-21)
+-------------------
+* Fix the flakey rviz_rendering tests (`#1026 <https://github.com/ros2/rviz/issues/1026>`_)
+* Contributors: Chris Lalancette
+
 12.8.0 (2023-08-27)
 -------------------
 * Added TwistStamped and AccelStamped default plugins (`#991 <https://github.com/ros2/rviz/issues/991>`_)

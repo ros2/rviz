@@ -192,25 +192,6 @@ public:
   /// Return a shared pointer to the transformer object.
   std::shared_ptr<transformation::FrameTransformer> getTransformer() override;
 
-// TODO(wjwwood): figure out how to replace FilgerFailureReason here
-#if 0
-  /// Create a description of a transform problem.
-  /**
-   * \param frame_id The name of the frame with issues.
-   * \param stamp The time for which the problem was detected.
-   * \param caller_id Dummy parameter, not used.
-   * \param reason The reason given by the tf::MessageFilter in its failure callback.
-   * \return An error message describing the problem.
-   *
-   * Once a problem has been detected with a given frame or transform,
-   * call this to get an error message describing the problem. */
-  std::string discoverFailureReason(
-    const std::string & frame_id,
-    const rclcpp::Time & stamp,
-    const std::string & caller_id,
-    tf::FilterFailureReason reason) override;
-#endif
-
   std::vector<std::string> getAllFrameNames() override;
 
   virtual void clear();
@@ -223,34 +204,6 @@ public Q_SLOTS:
 
 private:
   bool adjustTime(const std::string & frame, rclcpp::Time & time);
-
-#if 0
-  template<class M>
-  void messageCallback(const ros::MessageEvent<M const> & msg_evt, Display * display);
-#endif
-
-#if 0
-  template<class M>
-  void failureCallback(
-    const ros::MessageEvent<M const> & msg_evt,
-    tf::FilterFailureReason reason,
-    Display * display);
-#endif
-
-  void messageArrived(
-    const std::string & frame_id,
-    const rclcpp::Time & stamp,
-    const std::string & caller_id,
-    Display * display);
-
-#if 0
-  void messageFailed(
-    const std::string & frame_id,
-    const ros::Time & stamp,
-    const std::string & caller_id,
-    tf::FilterFailureReason reason,
-    Display * display);
-#endif
 
   struct CacheKey
   {

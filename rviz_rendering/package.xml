@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>rviz_rendering</name>
-  <version>12.8.0</version>
+  <version>13.2.0</version>
   <description>
     Library which provides the 3D rendering functionality in rviz.
   </description>
@@ -24,7 +24,7 @@
   <author email="michael.jeronimo@openrobotics.org">Michael Jeronimo</author>
   <author email="william@openrobotics.org">William Woodall</author>
 
-  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_ros</buildtool_depend>
   <buildtool_depend>eigen3_cmake_module</buildtool_depend>
 
   <buildtool_export_depend>eigen3_cmake_module</buildtool_export_depend>

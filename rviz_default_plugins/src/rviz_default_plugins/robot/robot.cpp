@@ -258,9 +258,9 @@ void Robot::log_error(
   // TODO(wjwwood): restore throttle behavior of ROS_ERROR_THROTTLE
   RVIZ_COMMON_LOG_ERROR_STREAM(
     // 1.0,
-    visual_or_collision << position_or_orientation << link->getName().c_str() <<
+    visual_or_collision << ": " << position_or_orientation << " of link " << link->getName() <<
       " contains NaNs. Skipping render as long as the " << position_or_orientation <<
-      "is invalid.";
+      " is invalid.";
   );
 }
 

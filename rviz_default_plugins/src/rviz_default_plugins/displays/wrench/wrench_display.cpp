@@ -164,8 +164,9 @@ void WrenchDisplay::processMessage(geometry_msgs::msg::WrenchStamped::ConstShare
 
   Ogre::Quaternion orientation;
   Ogre::Vector3 position;
+  rclcpp::Time time_stamp(msg->header.stamp, RCL_ROS_TIME);
   if (!context_->getFrameManager()->getTransform(
-      msg->header.frame_id, msg->header.stamp, position, orientation))
+      msg->header.frame_id, time_stamp, position, orientation))
   {
     setMissingTransformToFixedFrame(msg->header.frame_id);
     return;

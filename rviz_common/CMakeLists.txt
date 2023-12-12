@@ -42,13 +42,12 @@ find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(tinyxml2_vendor REQUIRED)
 find_package(tf2 REQUIRED)
-find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(message_filters REQUIRED)
 find_package(urdf REQUIRED)
 find_package(yaml_cpp_vendor REQUIRED)
 
-find_package(TinyXML2 REQUIRED)  # provided by tinyxml_vendor
+find_package(TinyXML2 REQUIRED)  # provided by tinyxml2_vendor
 
 # Copy env_config.hpp so that env_config.cpp can find it
 # TODO(jsquare): Get rid of copy hpp file
@@ -233,45 +232,43 @@ target_include_directories(rviz_common
     $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
 )
 
-target_link_libraries(rviz_common
-  PUBLIC
+target_link_libraries(rviz_common PUBLIC
+  ${geometry_msgs_TARGETS}
+  message_filters::message_filters
+  pluginlib::pluginlib
+  Qt5::Widgets
+  rclcpp::rclcpp
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
-  Qt5::Widgets
+  rviz_rendering::rviz_rendering
+  ${sensor_msgs_TARGETS}
+  ${std_msgs_TARGETS}
+  tf2::tf2
+  tf2_ros::tf2_ros
+  yaml-cpp
 )
 
-ament_target_dependencies(rviz_common
-  PUBLIC
-  geometry_msgs
-  pluginlib
-  rclcpp
-  resource_retriever
-  rviz_rendering
-  sensor_msgs
-  std_msgs
-  tf2
-  tf2_geometry_msgs
-  tf2_ros
-  message_filters
-  tinyxml2_vendor
-  urdf
-  yaml_cpp_vendor
+target_link_libraries(rviz_common PRIVATE
+  resource_retriever::resource_retriever
+  tinyxml2::tinyxml2
 )
+
 # Causes the visibility macros to use dllexport rather than dllimport,
 # which is appropriate when building the dll but not consuming it.
 target_compile_definitions(rviz_common PRIVATE "RVIZ_COMMON_BUILDING_LIBRARY")
 
 ament_export_dependencies(
-  rviz_rendering
   geometry_msgs
+  message_filters
   pluginlib
+  Qt5
   rclcpp
+  rviz_ogre_vendor
+  rviz_rendering
   sensor_msgs
   std_msgs
   tf2
-  tf2_geometry_msgs
   tf2_ros
-  urdf
   yaml_cpp_vendor
 )
 
@@ -442,8 +439,7 @@ if(BUILD_TESTING)
     test/mock_property_change_receiver.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET rviz_common_display_test)
-    target_link_libraries(rviz_common_display_test rviz_common Qt5::Widgets)
-    ament_target_dependencies(rviz_common_display_test yaml_cpp_vendor)
+    target_link_libraries(rviz_common_display_test rviz_common Qt5::Widgets yaml-cpp)
   endif()
 endif()
 
