@@ -47,6 +47,7 @@
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/interaction/view_picker_iface.hpp"
 #include "rviz_common/render_panel.hpp"
+#include "rviz_common/visualization_manager.hpp"
 
 namespace rviz_common
 {
@@ -231,6 +232,15 @@ void ViewController::handleKeyEvent(QKeyEvent * event, RenderPanel * panel)
 
   if (event->key() == Qt::Key_Z) {
     reset();
+  }
+
+  if (event->key() == Qt::Key_R) {
+    rviz_common::VisualizationManager * vis_manager =
+      dynamic_cast<rviz_common::VisualizationManager *>(context_);
+
+    if (vis_manager != nullptr) {
+      vis_manager->resetTime();
+    }
   }
 }
 
