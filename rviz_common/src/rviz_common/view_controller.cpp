@@ -126,6 +126,16 @@ void ViewController::initialize(DisplayContext * context)
   stereo_enable_->setBool(false);
   stereo_enable_->hide();
   // }
+
+  auto ros_node_abstraction = context_->getRosNodeAbstraction().lock();
+  if (ros_node_abstraction) {
+    auto node = ros_node_abstraction->get_raw_node();
+    reset_time_srv_ = node->create_service<std_srvs::srv::Empty>(
+      ros_node_abstraction->get_node_name() + "/reset_time",
+      std::bind(
+        &ViewController::resetService, this,
+        std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+  }
 }
 
 ViewController::~ViewController()
@@ -235,12 +245,25 @@ void ViewController::handleKeyEvent(QKeyEvent * event, RenderPanel * panel)
   }
 
   if (event->key() == Qt::Key_R) {
-    rviz_common::VisualizationManager * vis_manager =
-      dynamic_cast<rviz_common::VisualizationManager *>(context_);
+    resetTime();
+  }
+}
 
-    if (vis_manager != nullptr) {
-      vis_manager->resetTime();
-    }
+void ViewController::resetService(
+  const std::shared_ptr<rmw_request_id_t>,
+  const std::shared_ptr<std_srvs::srv::Empty::Request>,
+  const std::shared_ptr<std_srvs::srv::Empty::Response>)
+{
+  resetTime();
+}
+
+void ViewController::resetTime()
+{
+  rviz_common::VisualizationManager * vis_manager =
+    dynamic_cast<rviz_common::VisualizationManager *>(context_);
+
+  if (vis_manager != nullptr) {
+    vis_manager->resetTime();
   }
 }
 

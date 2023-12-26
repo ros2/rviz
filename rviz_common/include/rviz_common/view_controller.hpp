@@ -32,6 +32,7 @@
 #define RVIZ_COMMON__VIEW_CONTROLLER_HPP_
 
 #include <string>
+#include <memory>
 
 #include <OgreVector.h>
 
@@ -40,6 +41,8 @@
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <Qt>  // NOLINT: cpplint is unable to handle the include order here
 #include <QVariant>  // NOLINT: cpplint is unable to handle the include order here
+#include <rclcpp/service.hpp>
+#include <std_srvs/srv/empty.hpp>
 
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/visibility_control.hpp"
@@ -211,6 +214,8 @@ public:
 
   virtual FocalPointStatus getFocalPointStatus();
 
+  void resetTime();
+
 Q_SIGNALS:
   void configChanged();
 
@@ -279,6 +284,13 @@ private:
 
   // Default cursors for the most common actions
   QMap<CursorType, QCursor> standard_cursors_;
+
+  rclcpp::Service<std_srvs::srv::Empty>::SharedPtr reset_time_srv_;
+
+  void resetService(
+    const std::shared_ptr<rmw_request_id_t>,
+    const std::shared_ptr<std_srvs::srv::Empty::Request>,
+    const std::shared_ptr<std_srvs::srv::Empty::Response>);
 };
 
 }  // namespace rviz_common
