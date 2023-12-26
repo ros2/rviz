@@ -2,6 +2,15 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix typo (`#1104 <https://github.com/ros2/rviz/issues/1104>`_)
+* Fix potencial leak / seg fault (`#726 <https://github.com/ros2/rviz/issues/726>`_)
+* Fixed screw display (`#1093 <https://github.com/ros2/rviz/issues/1093>`_)
+* Explicit time conversions and comparisons (`#1087 <https://github.com/ros2/rviz/issues/1087>`_)
+* Handle missing effort limit in URDF (`#1084 <https://github.com/ros2/rviz/issues/1084>`_)
+* Contributors: AiVerisimilitude, Alejandro Hernández Cordero, Christoph Fröhlich, Patrick Roncagliolo
+
 13.2.0 (2023-11-06)
 -------------------
 * (robot) fix styling of log msg (`#1080 <https://github.com/ros2/rviz/issues/1080>`_)

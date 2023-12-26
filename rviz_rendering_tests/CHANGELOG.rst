@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Update rviz_rendering and rviz_rendering_tests to C++17. (`#1096 <https://github.com/ros2/rviz/issues/1096>`_)
+* Contributors: Chris Lalancette
+
 13.2.0 (2023-11-06)
 -------------------
 * Use assimp to load stl (`#1063 <https://github.com/ros2/rviz/issues/1063>`_)
