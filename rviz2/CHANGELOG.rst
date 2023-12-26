@@ -2,8 +2,8 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+13.3.0 (2023-12-26)
+-------------------
 * Add "R" key as shortcut for resetTime (`#1088 <https://github.com/ros2/rviz/issues/1088>`_)
 * Switch to target_link_libraries. (`#1098 <https://github.com/ros2/rviz/issues/1098>`_)
 * Contributors: Chris Lalancette, Paul Erik Frivold

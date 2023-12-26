@@ -2,8 +2,8 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+13.3.0 (2023-12-26)
+-------------------
 * Implement reset time service (`#1109 <https://github.com/ros2/rviz/issues/1109>`_)
 * Add "R" key as shortcut for resetTime (`#1088 <https://github.com/ros2/rviz/issues/1088>`_)
 * Add fullscreen startup option (`#1097 <https://github.com/ros2/rviz/issues/1097>`_)

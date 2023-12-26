@@ -2,8 +2,8 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+13.3.0 (2023-12-26)
+-------------------
 * Fix typo (`#1104 <https://github.com/ros2/rviz/issues/1104>`_)
 * Fix potencial leak / seg fault (`#726 <https://github.com/ros2/rviz/issues/726>`_)
 * Fixed screw display (`#1093 <https://github.com/ros2/rviz/issues/1093>`_)
