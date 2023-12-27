@@ -260,14 +260,16 @@ void MapDisplay::subscribeToUpdateTopic()
           QString(sstm.str().c_str()));
       };
 
+    rclcpp::Node::SharedPtr node = rviz_ros_node_.lock()->get_raw_node();
     update_subscription_ =
-      rviz_ros_node_.lock()->get_raw_node()->
+      node->
       template create_subscription<map_msgs::msg::OccupancyGridUpdate>(
       update_topic_property_->getTopicStd(), update_profile_,
       [this](const map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr message) {
         incomingUpdate(message);
       },
       sub_opts);
+    subscription_start_time_ = node->now();
     setStatus(rviz_common::properties::StatusProperty::Ok, "Update Topic", "OK");
   } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
     setStatus(
@@ -356,10 +358,21 @@ void MapDisplay::incomingUpdate(const map_msgs::msg::OccupancyGridUpdate::ConstS
   }
 
   ++update_messages_received_;
+  QString topic_str = QString::number(messages_received_) + " update messages received";
+  // Append topic subscription frequency if we can lock rviz_ros_node_.
+  std::shared_ptr<rviz_common::ros_integration::RosNodeAbstractionIface> node_interface =
+    rviz_ros_node_.lock();
+  if (node_interface != nullptr) {
+    const double duration =
+      (node_interface->get_raw_node()->now() - subscription_start_time_).seconds();
+    const double subscription_frequency =
+      static_cast<double>(messages_received_) / duration;
+    topic_str += " at " + QString::number(subscription_frequency, 'f', 1) + " hz.";
+  }
   setStatus(
     rviz_common::properties::StatusProperty::Ok,
     "Topic",
-    QString::number(update_messages_received_) + " update messages received");
+    topic_str);
 
   if (updateDataOutOfBounds(update)) {
     setStatus(
