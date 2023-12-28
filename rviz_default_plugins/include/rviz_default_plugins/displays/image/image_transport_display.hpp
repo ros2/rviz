@@ -111,11 +111,13 @@ protected:
 
     try {
       subscription_ = std::make_shared<image_transport::SubscriberFilter>();
+      rclcpp::Node::SharedPtr node = rviz_ros_node_.lock()->get_raw_node();
       subscription_->subscribe(
-        rviz_ros_node_.lock()->get_raw_node().get(),
+        node.get(),
         getBaseTopicFromTopic(topic_property_->getTopicStd()),
         getTransportFromTopic(topic_property_->getTopicStd()),
         qos_profile.get_rmw_qos_profile());
+      subscription_start_time_ = node->now();
       subscription_callback_ = subscription_->registerCallback(
         std::bind(
           &ImageTransportDisplay<MessageType>::incomingMessage, this, std::placeholders::_1));
@@ -169,10 +171,21 @@ protected:
     }
 
     ++messages_received_;
+    QString topic_str = QString::number(messages_received_) + " messages received";
+    // Append topic subscription frequency if we can lock rviz_ros_node_.
+    std::shared_ptr<rviz_common::ros_integration::RosNodeAbstractionIface> node_interface =
+      rviz_ros_node_.lock();
+    if (node_interface != nullptr) {
+      const double duration =
+        (node_interface->get_raw_node()->now() - subscription_start_time_).seconds();
+      const double subscription_frequency =
+        static_cast<double>(messages_received_) / duration;
+      topic_str += " at " + QString::number(subscription_frequency, 'f', 1) + " hz.";
+    }
     setStatus(
       rviz_common::properties::StatusProperty::Ok,
       "Topic",
-      QString::number(messages_received_) + " messages received");
+      topic_str);
 
     processMessage(msg);
   }
@@ -187,6 +200,7 @@ protected:
   uint32_t messages_received_;
 
   std::shared_ptr<image_transport::SubscriberFilter> subscription_;
+  rclcpp::Time subscription_start_time_;
   message_filters::Connection subscription_callback_;
 };
 
