@@ -119,16 +119,18 @@ protected:
     }
 
     try {
+      rclcpp::Node::SharedPtr node = rviz_ros_node_.lock()->get_raw_node();
       subscription_ = std::make_shared<message_filters::Subscriber<MessageType>>(
-        rviz_ros_node_.lock()->get_raw_node(),
+        node,
         topic_property_->getTopicStd(),
         qos_profile.get_rmw_qos_profile());
+      subscription_start_time_ = node->now();
       tf_filter_ =
         std::make_shared<tf2_ros::MessageFilter<MessageType, transformation::FrameTransformer>>(
         *context_->getFrameManager()->getTransformer(),
         fixed_frame_.toStdString(),
         static_cast<uint32_t>(message_queue_property_->getInt()),
-        rviz_ros_node_.lock()->get_raw_node());
+        node);
       tf_filter_->connectInput(*subscription_);
       tf_filter_->registerCallback(
         std::bind(
@@ -204,10 +206,21 @@ protected:
     auto msg = std::static_pointer_cast<const MessageType>(type_erased_msg);
 
     ++messages_received_;
+    QString topic_str = QString::number(messages_received_) + " messages received";
+    // Append topic subscription frequency if we can lock rviz_ros_node_.
+    std::shared_ptr<ros_integration::RosNodeAbstractionIface> node_interface =
+      rviz_ros_node_.lock();
+    if (node_interface != nullptr) {
+      const double duration =
+        (node_interface->get_raw_node()->now() - subscription_start_time_).seconds();
+      const double subscription_frequency =
+        static_cast<double>(messages_received_) / duration;
+      topic_str += " at " + QString::number(subscription_frequency, 'f', 1) + " hz.";
+    }
     setStatus(
       properties::StatusProperty::Ok,
       "Topic",
-      QString::number(messages_received_) + " messages received");
+      topic_str);
 
     processMessage(msg);
   }
@@ -219,6 +232,7 @@ protected:
   virtual void processMessage(typename MessageType::ConstSharedPtr msg) = 0;
 
   typename std::shared_ptr<message_filters::Subscriber<MessageType>> subscription_;
+  rclcpp::Time subscription_start_time_;
   std::shared_ptr<tf2_ros::MessageFilter<MessageType, transformation::FrameTransformer>> tf_filter_;
   uint32_t messages_received_;
   properties::IntProperty * message_queue_property_;
