@@ -164,7 +164,7 @@ void WrenchDisplay::processMessage(geometry_msgs::msg::WrenchStamped::ConstShare
 
   Ogre::Quaternion orientation;
   Ogre::Vector3 position;
-  rclcpp::Time time_stamp(msg->header.stamp, RCL_ROS_TIME);
+  rclcpp::Time time_stamp(msg->header.stamp, RCL_SYSTEM_TIME);
   if (!context_->getFrameManager()->getTransform(
       msg->header.frame_id, time_stamp, position, orientation))
   {

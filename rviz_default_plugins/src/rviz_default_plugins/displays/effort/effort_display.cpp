@@ -327,7 +327,7 @@ void EffortDisplay::processMessage(sensor_msgs::msg::JointState::ConstSharedPtr 
       continue;  // skip joints..
     }
 
-    rclcpp::Time msg_time(msg->header.stamp, RCL_ROS_TIME);
+    rclcpp::Time msg_time(msg->header.stamp, RCL_SYSTEM_TIME);
 
     // update effort property
     joint_info->setEffort(msg->effort[i]);

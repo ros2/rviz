@@ -131,7 +131,7 @@ void GridCellsDisplay::processMessage(nav_msgs::msg::GridCells::ConstSharedPtr m
 
 bool GridCellsDisplay::setTransform(std_msgs::msg::Header const & header)
 {
-  rclcpp::Time time_stamp(header.stamp, RCL_ROS_TIME);
+  rclcpp::Time time_stamp(header.stamp, RCL_SYSTEM_TIME);
   if (!updateFrame(header.frame_id, time_stamp)) {
     setMissingTransformToFixedFrame(header.frame_id, getNameStd());
     return false;

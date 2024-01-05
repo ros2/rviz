@@ -97,7 +97,7 @@ void InteractiveMarker::processMessage(
     orientation.w = 1.0;
   }
 
-  reference_time_ = rclcpp::Time(message.header.stamp, RCL_ROS_TIME);
+  reference_time_ = rclcpp::Time(message.header.stamp, RCL_SYSTEM_TIME);
   reference_frame_ = message.header.frame_id;
   frame_locked_ = (reference_time_ == rclcpp::Time());
 
@@ -120,7 +120,7 @@ bool InteractiveMarker::processMessage(const visualization_msgs::msg::Interactiv
 
   scale_ = message.scale;
 
-  reference_time_ = rclcpp::Time(message.header.stamp, RCL_ROS_TIME);
+  reference_time_ = rclcpp::Time(message.header.stamp, RCL_SYSTEM_TIME);
   reference_frame_ = message.header.frame_id;
   frame_locked_ = (reference_time_ == rclcpp::Time());
 
@@ -619,7 +619,7 @@ void InteractiveMarker::updateReferencePose()
         geometry_msgs::msg::TransformStamped transform =
           context_->getFrameManager()->getTransformer()->lookupTransform(
           reference_frame_, fixed_frame, tf2::TimePoint());
-        reference_time_ = rclcpp::Time(transform.header.stamp, RCL_ROS_TIME);
+        reference_time_ = rclcpp::Time(transform.header.stamp, RCL_SYSTEM_TIME);
       } catch (...) {
         std::ostringstream oss;
         oss << "Error getting time of latest transform between " << reference_frame_ <<
