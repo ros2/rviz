@@ -99,7 +99,7 @@ void InteractiveMarker::processMessage(
 
   reference_time_ = rclcpp::Time(message.header.stamp, RCL_ROS_TIME);
   reference_frame_ = message.header.frame_id;
-  frame_locked_ = (reference_time_ == rclcpp::Time());
+  frame_locked_ = (message.header.stamp == builtin_interfaces::msg::Time());
 
   requestPoseUpdate(position, orientation);
   context_->queueRender();
@@ -122,7 +122,7 @@ bool InteractiveMarker::processMessage(const visualization_msgs::msg::Interactiv
 
   reference_time_ = rclcpp::Time(message.header.stamp, RCL_ROS_TIME);
   reference_frame_ = message.header.frame_id;
-  frame_locked_ = (reference_time_ == rclcpp::Time());
+  frame_locked_ = (message.header.stamp == builtin_interfaces::msg::Time());
 
   position_ = Ogre::Vector3(
     message.pose.position.x, message.pose.position.y, message.pose.position.z);
