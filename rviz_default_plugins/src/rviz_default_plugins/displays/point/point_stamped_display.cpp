@@ -128,7 +128,7 @@ void PointStampedDisplay::processMessage(geometry_msgs::msg::PointStamped::Const
     return;
   }
 
-  rclcpp::Time time_stamp(msg->header.stamp, RCL_SYSTEM_TIME);
+  rclcpp::Time time_stamp(msg->header.stamp, RCL_ROS_TIME);
   if (!updateFrame(msg->header.frame_id, time_stamp)) {
     setMissingTransformToFixedFrame(msg->header.frame_id);
     return;

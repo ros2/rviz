@@ -146,7 +146,7 @@ public:
     Ogre::Vector3 & position,
     Ogre::Quaternion & orientation)
   {
-    rclcpp::Time time_stamp(header.stamp, RCL_SYSTEM_TIME);
+    rclcpp::Time time_stamp(header.stamp, RCL_ROS_TIME);
     return getTransform(header.frame_id, time_stamp, position, orientation);
   }
 
@@ -200,7 +200,7 @@ public:
     Ogre::Vector3 & position,
     Ogre::Quaternion & orientation)
   {
-    rclcpp::Time time_stamp(header.stamp, RCL_SYSTEM_TIME);
+    rclcpp::Time time_stamp(header.stamp, RCL_ROS_TIME);
     return transform(header.frame_id, time_stamp, pose, position, orientation);   // NOLINT
     // linter wants #include <algorithm> for transform
   }

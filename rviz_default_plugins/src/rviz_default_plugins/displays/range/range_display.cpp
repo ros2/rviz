@@ -119,7 +119,7 @@ void RangeDisplay::processMessage(const sensor_msgs::msg::Range::ConstSharedPtr 
 
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;
-  rclcpp::Time time_stamp(msg->header.stamp, RCL_SYSTEM_TIME);
+  rclcpp::Time time_stamp(msg->header.stamp, RCL_ROS_TIME);
   float displayed_range = getDisplayedRange(msg);
   auto pose = getPose(displayed_range);
 

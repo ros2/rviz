@@ -104,7 +104,7 @@ void PolygonDisplay::processMessage(geometry_msgs::msg::PolygonStamped::ConstSha
     return;
   }
 
-  rclcpp::Time msg_time(msg->header.stamp, RCL_SYSTEM_TIME);
+  rclcpp::Time msg_time(msg->header.stamp, RCL_ROS_TIME);
   if (!updateFrame(msg->header.frame_id, msg_time)) {
     setMissingTransformToFixedFrame(msg->header.frame_id);
     return;
