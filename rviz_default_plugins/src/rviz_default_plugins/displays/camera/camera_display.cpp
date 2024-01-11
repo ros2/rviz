@@ -476,7 +476,8 @@ bool CameraDisplay::updateCamera()
   if (timeDifferenceInExactSyncMode(image, rviz_time)) {
     setStatus(
       StatusLevel::Warn, TIME_STATUS,
-      QString("Time-syncing active and no image at timestamp ") + rviz_time.nanoseconds() + ".");
+      QString("Time-syncing active and no image at timestamp ") +
+      QString::number(rviz_time.nanoseconds()) + ".");
     return false;
   }
 
