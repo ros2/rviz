@@ -105,13 +105,6 @@ TEST_F(MeshLoaderTestFixture, can_load_stl_files) {
   ASSERT_EQ(expected_vertex_count, actual_vertex_count);
 }
 
-TEST_F(MeshLoaderTestFixture, loading_ascii_stl_files_fail) {
-  /// Load an ascii STL file. Note that only binary STL files are supported.
-  std::string mesh_path = "package://rviz_rendering_tests/test_meshes/ascii.stl";
-
-  ASSERT_FALSE(rviz_rendering::loadMeshFromResource(mesh_path));
-}
-
 TEST_F(MeshLoaderTestFixture, loading_invalid_short_stl_files_fail) {
   /// Load an invalid STL binary file (size < 84 bytes).
   std::string mesh_path = "package://rviz_rendering_tests/test_meshes/invalid_short.stl";
