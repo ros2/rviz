@@ -2,6 +2,12 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.10 (2024-01-24)
+--------------------
+* Fix time-syncing message (`#1121 <https://github.com/ros2/rviz/issues/1121>`_) (`#1123 <https://github.com/ros2/rviz/issues/1123>`_)
+* Fixed screw display (`#1093 <https://github.com/ros2/rviz/issues/1093>`_) (`#1094 <https://github.com/ros2/rviz/issues/1094>`_)
+* Contributors: mergify[bot]
+
 11.2.9 (2023-11-13)
 -------------------
 * Handle missing effort limit in URDF (`#1084 <https://github.com/ros2/rviz/issues/1084>`_) (`#1085 <https://github.com/ros2/rviz/issues/1085>`_)

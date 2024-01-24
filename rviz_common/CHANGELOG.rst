@@ -2,6 +2,13 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.10 (2024-01-24)
+--------------------
+* Switch to using rcpputils::fs helpers. (`#1105 <https://github.com/ros2/rviz/issues/1105>`_)
+* Rolling namespace in title (backport `#1074 <https://github.com/ros2/rviz/issues/1074>`_) (`#1099 <https://github.com/ros2/rviz/issues/1099>`_)
+* Initialize more of the visualization_manager members. (`#1090 <https://github.com/ros2/rviz/issues/1090>`_) (`#1091 <https://github.com/ros2/rviz/issues/1091>`_)
+* Contributors: Chris Lalancette, mergify[bot]
+
 11.2.9 (2023-11-13)
 -------------------
 
