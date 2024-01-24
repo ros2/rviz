@@ -2,6 +2,9 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 13.3.0 (2023-12-26)
 -------------------
 * Suppress a couple more of clang warnings in rviz_ogre_vendor. (`#1102 <https://github.com/ros2/rviz/issues/1102>`_)

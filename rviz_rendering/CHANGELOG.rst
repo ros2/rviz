@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fixed MovableText::getWorldTransforms transform (`#1118 <https://github.com/ros2/rviz/issues/1118>`_)
+* Contributors: Yaswanth
+
 13.3.0 (2023-12-26)
 -------------------
 * Switch to target_link_libraries. (`#1098 <https://github.com/ros2/rviz/issues/1098>`_)

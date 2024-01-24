@@ -2,6 +2,11 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Append measured subscription frequency to topic status (`#1113 <https://github.com/ros2/rviz/issues/1113>`_)
+* Contributors: Yadu
+
 13.3.0 (2023-12-26)
 -------------------
 * Implement reset time service (`#1109 <https://github.com/ros2/rviz/issues/1109>`_)

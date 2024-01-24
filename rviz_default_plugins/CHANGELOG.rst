@@ -2,6 +2,13 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix time-syncing message (`#1121 <https://github.com/ros2/rviz/issues/1121>`_)
+* Switch from ROS_TIME to SYSTEM_TIME on rclcpp::Time construction (`#1117 <https://github.com/ros2/rviz/issues/1117>`_)
+* Append measured subscription frequency to topic status (`#1113 <https://github.com/ros2/rviz/issues/1113>`_)
+* Contributors: Alejandro Hernández Cordero, Austin Moore, Yadu
+
 13.3.0 (2023-12-26)
 -------------------
 * Fix typo (`#1104 <https://github.com/ros2/rviz/issues/1104>`_)
