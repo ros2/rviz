@@ -2,8 +2,8 @@
 Changelog for package rviz_rendering_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+13.3.1 (2024-01-24)
+-------------------
 * Remove the loading_ascii_stl_files_fail (`#1125 <https://github.com/ros2/rviz/issues/1125>`_)
 * Contributors: Chris Lalancette
 

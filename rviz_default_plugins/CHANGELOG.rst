@@ -2,8 +2,8 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+13.3.1 (2024-01-24)
+-------------------
 * Fix time-syncing message (`#1121 <https://github.com/ros2/rviz/issues/1121>`_)
 * Switch from ROS_TIME to SYSTEM_TIME on rclcpp::Time construction (`#1117 <https://github.com/ros2/rviz/issues/1117>`_)
 * Append measured subscription frequency to topic status (`#1113 <https://github.com/ros2/rviz/issues/1113>`_)

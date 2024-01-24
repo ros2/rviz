@@ -2,8 +2,8 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+13.3.1 (2024-01-24)
+-------------------
 * fixed MovableText::getWorldTransforms transform (`#1118 <https://github.com/ros2/rviz/issues/1118>`_)
 * Contributors: Yaswanth
 
