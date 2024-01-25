@@ -173,6 +173,7 @@ protected:
 
   rclcpp::Subscription<map_msgs::msg::OccupancyGridUpdate>::SharedPtr update_subscription_;
   rclcpp::QoS update_profile_;
+  rclcpp::Time subscription_start_time_;
 
   rviz_common::properties::RosTopicProperty * update_topic_property_;
   rviz_common::properties::QosProfileProperty * update_profile_property_;
