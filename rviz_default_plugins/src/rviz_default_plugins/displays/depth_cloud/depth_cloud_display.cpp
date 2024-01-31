@@ -72,6 +72,7 @@ DepthCloudDisplay::DepthCloudDisplay()
 : rviz_common::Display()
   , messages_received_(0)
   , depthmap_sub_()
+  , depthmap_tf_filter_(nullptr)
   , rgb_sub_()
   , cam_info_sub_()
   , queue_size_(5)
@@ -161,6 +162,11 @@ DepthCloudDisplay::DepthCloudDisplay()
     use_occlusion_compensation_property_, SLOT(updateOcclusionTimeOut()), this);
 }
 
+void DepthCloudDisplay::transformerChangedCallback()
+{
+  updateTopic();
+}
+
 void DepthCloudDisplay::onInitialize()
 {
   auto rviz_ros_node_ = context_->getRosNodeAbstraction().lock();
@@ -184,6 +190,12 @@ void DepthCloudDisplay::onInitialize()
 
   depth_topic_property_->initialize(rviz_ros_node_);
   color_topic_property_->initialize(rviz_ros_node_);
+
+  QObject::connect(
+    reinterpret_cast<QObject *>(context_->getTransformationManager()),
+    SIGNAL(transformerChanged(std::shared_ptr<rviz_common::transformation::FrameTransformer>)),
+    this,
+    SLOT(transformerChangedCallback()));
 }
 
 DepthCloudDisplay::~DepthCloudDisplay()
@@ -214,6 +226,9 @@ void DepthCloudDisplay::setTopic(const QString & topic, const QString & datatype
 
 void DepthCloudDisplay::updateQueueSize()
 {
+  if (depthmap_tf_filter_) {
+    depthmap_tf_filter_->setQueueSize(static_cast<uint32_t>(queue_size_property_->getInt()));
+  }
   queue_size_ = queue_size_property_->getInt();
 }
 
@@ -308,7 +323,7 @@ void DepthCloudDisplay::subscribe()
           rviz_common::transformation::FrameTransformer>>(
         *context_->getFrameManager()->getTransformer(),
         fixed_frame_.toStdString(),
-        10,
+        queue_size_,
         rviz_ros_node_->get_raw_node());
 
       depthmap_tf_filter_->connectInput(*depthmap_sub_);
@@ -387,6 +402,9 @@ void DepthCloudDisplay::unsubscribe()
 void DepthCloudDisplay::clear()
 {
   pointcloud_common_->reset();
+  if (depthmap_tf_filter_) {
+    depthmap_tf_filter_->clear();
+  }
 }
 
 void DepthCloudDisplay::update(float wall_dt, float ros_dt)
@@ -597,6 +615,9 @@ void DepthCloudDisplay::fillTransportOptionList(rviz_common::properties::EnumPro
 
 void DepthCloudDisplay::fixedFrameChanged()
 {
+  if (depthmap_tf_filter_) {
+    depthmap_tf_filter_->setTargetFrame(fixed_frame_.toStdString());
+  }
   Display::reset();
 }
 

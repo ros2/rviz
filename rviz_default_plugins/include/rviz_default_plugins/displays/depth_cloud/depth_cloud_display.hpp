@@ -104,6 +104,8 @@ protected Q_SLOTS:
   /** @brief Fill list of available and working transport options */
   void fillTransportOptionList(rviz_common::properties::EnumProperty * property);
 
+  void transformerChangedCallback();
+
   // Property callbacks
   virtual void updateTopic();
   virtual void updateTopicFilter();
