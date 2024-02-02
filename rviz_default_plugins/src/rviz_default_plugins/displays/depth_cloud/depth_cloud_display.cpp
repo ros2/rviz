@@ -207,7 +207,6 @@ void DepthCloudDisplay::setTopic(const QString & topic, const QString & datatype
     QString transport = topic.mid(index + 1);
     QString base_topic = topic.mid(0, index);
 
-    depth_transport_property_->setString(transport);
     depth_topic_property_->setString(base_topic);
   }
 }
