@@ -2,6 +2,14 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Append measured subscription frequency to topic status (`#1130 <https://github.com/ros2/rviz/issues/1130>`_)
+* Fix time-syncing message (`#1124 <https://github.com/ros2/rviz/issues/1124>`_)
+* Fix typo (`#1106 <https://github.com/ros2/rviz/issues/1106>`_)
+* Fixed screw display (`#1095 <https://github.com/ros2/rviz/issues/1095>`_)
+* Contributors: Alejandro Hernández Cordero, Christoph Fröhlich, Yadunund
+
 12.4.5 (2023-11-17)
 -------------------
 * Handle missing effort limit in URDF (`#1086 <https://github.com/ros2/rviz/issues/1086>`_)

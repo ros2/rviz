@@ -2,6 +2,12 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Append measured subscription frequency to topic status (`#1130 <https://github.com/ros2/rviz/issues/1130>`_)
+* Rolling namespace in title (`#1100 <https://github.com/ros2/rviz/issues/1100>`_)
+* Contributors: Alejandro Hernández Cordero, Yadunund
+
 12.4.5 (2023-11-17)
 -------------------
 * Initialize more of the visualization_manager members. (`#1092 <https://github.com/ros2/rviz/issues/1092>`_)
