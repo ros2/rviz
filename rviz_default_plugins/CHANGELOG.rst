@@ -2,8 +2,8 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+12.4.6 (2024-02-07)
+-------------------
 * Append measured subscription frequency to topic status (`#1130 <https://github.com/ros2/rviz/issues/1130>`_)
 * Fix time-syncing message (`#1124 <https://github.com/ros2/rviz/issues/1124>`_)
 * Fix typo (`#1106 <https://github.com/ros2/rviz/issues/1106>`_)
