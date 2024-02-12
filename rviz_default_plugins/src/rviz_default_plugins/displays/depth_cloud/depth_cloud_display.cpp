@@ -203,7 +203,7 @@ void DepthCloudDisplay::setTopic(const QString & topic, const QString & datatype
     setStatus(
       rviz_common::properties::StatusProperty::Warn,
       "Message",
-      "Data type of the topic is not correct. Expect sensor_msgs::msgs::Image");
+      "Expected topic type of 'sensor_msgs/msg/Image', saw topic type '" + datatype + "'");
   }
 }
 
