@@ -46,6 +46,8 @@
 # include <OgreRenderTargetListener.h>
 # include <OgreSharedPtr.h>
 
+#include <message_filters/cache.h>
+
 # include "sensor_msgs/msg/camera_info.hpp"
 # include "tf2_ros/message_filter.h"
 
@@ -190,6 +192,8 @@ private:
 
   std::unique_ptr<ROSImageTextureIface> texture_;
   std::unique_ptr<rviz_common::RenderPanel> render_panel_;
+
+  std::shared_ptr<message_filters::Cache<sensor_msgs::msg::Image>> cache_images_;
 
   rviz_common::properties::FloatProperty * alpha_property_;
   rviz_common::properties::EnumProperty * image_position_property_;
