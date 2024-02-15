@@ -56,6 +56,7 @@
 
 #include "rclcpp/clock.hpp"
 #include "rclcpp/time.hpp"
+#include <rclcpp_components/node_instance_wrapper.hpp>
 #include "rviz_rendering/material_manager.hpp"
 #include "rviz_rendering/render_window.hpp"
 
@@ -225,7 +226,15 @@ VisualizationManager::VisualizationManager(
 
   connect(this, SIGNAL(timeJumped()), this, SLOT(resetTime()));
 
-  executor_->add_node(rviz_ros_node_.lock()->get_raw_node());
+  if (!mgr_) {
+    mgr_ = std::make_shared<ros_integration::ComponentManager>(executor_);
+    executor_->add_node(mgr_);
+
+    auto inst = rclcpp_components::NodeInstanceWrapper(
+      rviz_ros_node_.lock()->get_raw_node(),
+      std::bind(&rclcpp::Node::get_node_base_interface, rviz_ros_node_.lock()->get_raw_node()));
+    mgr_->add_node_to_executor(inst);
+  }
 
   display_factory_ = new DisplayFactory();
 
