@@ -2,6 +2,12 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.11 (2024-02-16)
+--------------------
+* Fixed transport name in DepthCloud plugin (`#1134 <https://github.com/ros2/rviz/issues/1134>`_) (`#1135 <https://github.com/ros2/rviz/issues/1135>`_)
+* Append measured subscription frequency to topic status (`#1113 <https://github.com/ros2/rviz/issues/1113>`_) (`#1129 <https://github.com/ros2/rviz/issues/1129>`_)
+* Contributors: mergify[bot]
+
 11.2.10 (2024-01-24)
 --------------------
 * Fix time-syncing message (`#1121 <https://github.com/ros2/rviz/issues/1121>`_) (`#1123 <https://github.com/ros2/rviz/issues/1123>`_)

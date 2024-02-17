@@ -2,6 +2,11 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.11 (2024-02-16)
+--------------------
+* Append measured subscription frequency to topic status (`#1113 <https://github.com/ros2/rviz/issues/1113>`_) (`#1129 <https://github.com/ros2/rviz/issues/1129>`_)
+* Contributors: mergify[bot]
+
 11.2.10 (2024-01-24)
 --------------------
 * Switch to using rcpputils::fs helpers. (`#1105 <https://github.com/ros2/rviz/issues/1105>`_)
