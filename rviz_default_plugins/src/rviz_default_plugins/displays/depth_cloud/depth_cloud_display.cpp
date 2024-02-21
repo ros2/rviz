@@ -412,11 +412,22 @@ void DepthCloudDisplay::processMessage(
 
   std::ostringstream s;
 
-  ++messages_received_;
-  setStatus(
-    rviz_common::properties::StatusProperty::Ok, "Depth Map",
-    QString::number(messages_received_) + " depth maps received");
-  setStatus(rviz_common::properties::StatusProperty::Ok, "Message", "Ok");
+  {
+    ++messages_received_;
+    auto rviz_ros_node_ = context_->getRosNodeAbstraction().lock();
+    QString topic_str = QString::number(messages_received_) + " messages received";
+    // Append topic subscription frequency if we can lock rviz_ros_node_.
+    if (rviz_ros_node_ != nullptr) {
+      const double duration =
+        (rviz_ros_node_->get_raw_node()->now() - subscription_start_time_).seconds();
+      const double subscription_frequency =
+        static_cast<double>(messages_received_) / duration;
+      topic_str += " at " + QString::number(subscription_frequency, 'f', 1) + " hz.";
+    }
+    setStatus(
+      rviz_common::properties::StatusProperty::Ok, "Depth Map", topic_str);
+    setStatus(rviz_common::properties::StatusProperty::Ok, "Message", "Ok");
+  }
 
   sensor_msgs::msg::CameraInfo::ConstSharedPtr cam_info;
   {
