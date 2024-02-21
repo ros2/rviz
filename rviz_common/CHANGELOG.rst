@@ -2,6 +2,22 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+13.3.1 (2024-01-24)
+-------------------
+* Append measured subscription frequency to topic status (`#1113 <https://github.com/ros2/rviz/issues/1113>`_)
+* Contributors: Yadu
+
+13.3.0 (2023-12-26)
+-------------------
+* Implement reset time service (`#1109 <https://github.com/ros2/rviz/issues/1109>`_)
+* Add "R" key as shortcut for resetTime (`#1088 <https://github.com/ros2/rviz/issues/1088>`_)
+* Add fullscreen startup option (`#1097 <https://github.com/ros2/rviz/issues/1097>`_)
+* Switch to target_link_libraries. (`#1098 <https://github.com/ros2/rviz/issues/1098>`_)
+* Initialize more of the visualization_manager members. (`#1090 <https://github.com/ros2/rviz/issues/1090>`_)
+* Explicit time conversions and comparisons (`#1087 <https://github.com/ros2/rviz/issues/1087>`_)
+* Rolling namespace in title (`#1074 <https://github.com/ros2/rviz/issues/1074>`_)
+* Contributors: AiVerisimilitude, Chris Lalancette, Hyunseok, Markus Bader, Paul Erik Frivold
+
 13.2.0 (2023-11-06)
 -------------------
 

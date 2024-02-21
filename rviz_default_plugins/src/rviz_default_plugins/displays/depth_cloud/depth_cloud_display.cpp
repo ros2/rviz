@@ -200,15 +200,10 @@ void DepthCloudDisplay::setTopic(const QString & topic, const QString & datatype
     depth_transport_property_->setStdString("raw");
     depth_topic_property_->setString(topic);
   } else {
-    int index = topic.lastIndexOf("/");
-    if (index == -1) {
-      return;
-    }
-    QString transport = topic.mid(index + 1);
-    QString base_topic = topic.mid(0, index);
-
-    depth_transport_property_->setString(transport);
-    depth_topic_property_->setString(base_topic);
+    setStatus(
+      rviz_common::properties::StatusProperty::Warn,
+      "Message",
+      "Expected topic type of 'sensor_msgs/msg/Image', saw topic type '" + datatype + "'");
   }
 }
 
@@ -417,11 +412,22 @@ void DepthCloudDisplay::processMessage(
 
   std::ostringstream s;
 
-  ++messages_received_;
-  setStatus(
-    rviz_common::properties::StatusProperty::Ok, "Depth Map",
-    QString::number(messages_received_) + " depth maps received");
-  setStatus(rviz_common::properties::StatusProperty::Ok, "Message", "Ok");
+  {
+    ++messages_received_;
+    auto rviz_ros_node_ = context_->getRosNodeAbstraction().lock();
+    QString topic_str = QString::number(messages_received_) + " messages received";
+    // Append topic subscription frequency if we can lock rviz_ros_node_.
+    if (rviz_ros_node_ != nullptr) {
+      const double duration =
+        (rviz_ros_node_->get_raw_node()->now() - subscription_start_time_).seconds();
+      const double subscription_frequency =
+        static_cast<double>(messages_received_) / duration;
+      topic_str += " at " + QString::number(subscription_frequency, 'f', 1) + " hz.";
+    }
+    setStatus(
+      rviz_common::properties::StatusProperty::Ok, "Depth Map", topic_str);
+    setStatus(rviz_common::properties::StatusProperty::Ok, "Message", "Ok");
+  }
 
   sensor_msgs::msg::CameraInfo::ConstSharedPtr cam_info;
   {

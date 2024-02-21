@@ -215,12 +215,14 @@ protected:
         };
 
       // TODO(anhosi,wjwwood): replace with abstraction for subscriptions once available
+      rclcpp::Node::SharedPtr node = rviz_ros_node_.lock()->get_raw_node();
       subscription_ =
-        rviz_ros_node_.lock()->get_raw_node()->template create_subscription<MessageType>(
+        node->template create_subscription<MessageType>(
         topic_property_->getTopicStd(),
         qos_profile,
         [this](const typename MessageType::ConstSharedPtr message) {incomingMessage(message);},
         sub_opts);
+      subscription_start_time_ = node->now();
       setStatus(properties::StatusProperty::Ok, "Topic", "OK");
     } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
       setStatus(
@@ -260,10 +262,21 @@ protected:
     }
 
     ++messages_received_;
+    QString topic_str = QString::number(messages_received_) + " messages received";
+    // Append topic subscription frequency if we can lock rviz_ros_node_.
+    std::shared_ptr<ros_integration::RosNodeAbstractionIface> node_interface =
+      rviz_ros_node_.lock();
+    if (node_interface != nullptr) {
+      const double duration =
+        (node_interface->get_raw_node()->now() - subscription_start_time_).seconds();
+      const double subscription_frequency =
+        static_cast<double>(messages_received_) / duration;
+      topic_str += " at " + QString::number(subscription_frequency, 'f', 1) + " hz.";
+    }
     setStatus(
       properties::StatusProperty::Ok,
       "Topic",
-      QString::number(messages_received_) + " messages received");
+      topic_str);
 
     processMessage(msg);
   }
@@ -274,6 +287,7 @@ protected:
   virtual void processMessage(typename MessageType::ConstSharedPtr msg) = 0;
 
   typename rclcpp::Subscription<MessageType>::SharedPtr subscription_;
+  rclcpp::Time subscription_start_time_;
   uint32_t messages_received_;
 };
 

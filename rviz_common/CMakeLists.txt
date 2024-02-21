@@ -40,6 +40,7 @@ find_package(resource_retriever REQUIRED)
 find_package(rviz_rendering REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
 find_package(tinyxml2_vendor REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
@@ -243,6 +244,7 @@ target_link_libraries(rviz_common PUBLIC
   rviz_rendering::rviz_rendering
   ${sensor_msgs_TARGETS}
   ${std_msgs_TARGETS}
+  ${std_srvs_TARGETS}
   tf2::tf2
   tf2_ros::tf2_ros
   yaml-cpp
@@ -267,6 +269,7 @@ ament_export_dependencies(
   rviz_rendering
   sensor_msgs
   std_msgs
+  std_srvs
   tf2
   tf2_ros
   yaml_cpp_vendor

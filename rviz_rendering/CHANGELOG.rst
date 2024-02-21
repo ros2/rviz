@@ -2,6 +2,17 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+13.3.1 (2024-01-24)
+-------------------
+* fixed MovableText::getWorldTransforms transform (`#1118 <https://github.com/ros2/rviz/issues/1118>`_)
+* Contributors: Yaswanth
+
+13.3.0 (2023-12-26)
+-------------------
+* Switch to target_link_libraries. (`#1098 <https://github.com/ros2/rviz/issues/1098>`_)
+* Update rviz_rendering and rviz_rendering_tests to C++17. (`#1096 <https://github.com/ros2/rviz/issues/1096>`_)
+* Contributors: Chris Lalancette
+
 13.2.0 (2023-11-06)
 -------------------
 * Include MeshShape class (`#1064 <https://github.com/ros2/rviz/issues/1064>`_)
