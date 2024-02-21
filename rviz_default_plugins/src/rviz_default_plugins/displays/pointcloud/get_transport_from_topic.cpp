@@ -29,7 +29,7 @@
 
 #include <string>
 
-#include "rviz_default_plugins/displays/image/get_transport_from_topic.hpp"
+#include "rviz_default_plugins/displays/pointcloud/get_transport_from_topic.hpp"
 
 namespace rviz_default_plugins
 {
