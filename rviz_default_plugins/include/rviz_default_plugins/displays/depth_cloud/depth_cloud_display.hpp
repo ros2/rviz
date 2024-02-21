@@ -155,6 +155,7 @@ protected:
   typedef message_filters::Synchronizer<SyncPolicyDepthColor> SynchronizerDepthColor;
 
   std::shared_ptr<SynchronizerDepthColor> sync_depth_color_;
+  rclcpp::Time subscription_start_time_;
 
   // RVIZ properties
   rviz_common::properties::Property * topic_filter_property_;
