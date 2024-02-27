@@ -103,6 +103,14 @@ private:
 
   std::vector<Ogre::MaterialPtr> loadMaterials(
     const std::string & resource_path, const aiScene * scene);
+
+  void SetScene(const aiScene * ai_scene);
+  const aiScene * ai_scene_;
+
+  void loadEmbeddedTexture(
+    const aiTexture * ai_texture,
+    const std::string & resource_path);
+
   void setLightColorsFromAssimp(
     const std::string & resource_path,
     Ogre::MaterialPtr & mat,

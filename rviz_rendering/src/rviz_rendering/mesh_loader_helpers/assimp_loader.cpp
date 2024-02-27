@@ -82,7 +82,7 @@ public:
     memcpy(buffer, pos_, to_read);
     pos_ += to_read;
 
-    return to_read;
+    return to_read / size;
   }
 
   size_t Write(const void * buffer, size_t size, size_t count) override
@@ -262,6 +262,7 @@ std::vector<Ogre::MaterialPtr> AssimpLoader::loadMaterials(
       Ogre::ColourValue(0, 0, 0, 1.0));
 
 
+    SetScene(scene);
     setLightColorsFromAssimp(resource_path, mat, ai_material, material_internals);
 
     setBlending(mat, ai_material, material_internals);
@@ -272,6 +273,11 @@ std::vector<Ogre::MaterialPtr> AssimpLoader::loadMaterials(
     mat->setSpecular(material_internals.specular_);
   }
   return material_table_out;
+}
+
+void AssimpLoader::SetScene(const aiScene * ai_scene)
+{
+  this->ai_scene_ = ai_scene;
 }
 
 void AssimpLoader::setLightColorsFromAssimp(
@@ -290,11 +296,20 @@ void AssimpLoader::setLightColorsFromAssimp(
       uint32_t uv_index;
       ai_material->GetTexture(aiTextureType_DIFFUSE, 0, &texture_name, &mapping, &uv_index);
 
-      // Assume textures are in paths relative to the mesh
-      QFileInfo resource_path_finfo(QString::fromStdString(resource_path));
-      QDir resource_path_qdir = resource_path_finfo.dir();
-      std::string texture_path = resource_path_qdir.path().toStdString() + "/" + texture_name.data;
-      loadTexture(texture_path);
+      std::string texture_path;
+      const aiTexture * texture = this->ai_scene_->GetEmbeddedTexture(texture_name.C_Str());
+      if (texture == nullptr) {
+        // It's not an embedded texture. We have to go find it.
+        // Assume textures are in paths relative to the mesh
+        QFileInfo resource_path_finfo(QString::fromStdString(resource_path));
+        QDir resource_path_qdir = resource_path_finfo.dir();
+        texture_path = resource_path_qdir.path().toStdString() + "/" + texture_name.data;
+        loadTexture(texture_path);
+      } else {
+        // it's an embedded texture, like in GLB / glTF
+        texture_path = resource_path + texture_name.data;
+        loadEmbeddedTexture(texture, texture_path);
+      }
       Ogre::TextureUnitState * tu = material_internals.pass_->createTextureUnitState();
       tu->setTextureName(texture_path);
     } else if (propKey == "$clr.diffuse") {
@@ -337,6 +352,35 @@ void AssimpLoader::setLightColorsFromAssimp(
           break;
       }
     }
+  }
+}
+
+void AssimpLoader::loadEmbeddedTexture(
+  const aiTexture * texture, const std::string & resource_path)
+{
+  if (texture == nullptr) {
+    RVIZ_RENDERING_LOG_ERROR_STREAM("null texture!");
+    return;
+  }
+
+  // use the format hint to try to load the image
+  std::string format_hint(
+    texture->achFormatHint,
+    strnlen(texture->achFormatHint, sizeof(texture->achFormatHint)));
+
+  Ogre::DataStreamPtr stream(
+    new Ogre::MemoryDataStream(
+      (unsigned char *)texture->pcData, texture->mWidth));
+
+  try {
+    Ogre::Image image;
+    image.load(stream, format_hint.c_str());
+    Ogre::TextureManager::getSingleton().loadImage(
+      resource_path, ROS_PACKAGE_NAME, image);
+  } catch (Ogre::Exception & e) {
+    RVIZ_RENDERING_LOG_ERROR_STREAM(
+      "Could not load texture [" << resource_path.c_str() <<
+        "] with format hint [" << format_hint << "]: " << e.what());
   }
 }
 
