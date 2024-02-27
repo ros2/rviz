@@ -306,8 +306,7 @@ void RenderWindowImpl::setCamera(Ogre::Camera * ogre_camera)
 
 void RenderWindowImpl::setSceneNodeCamera(Ogre::SceneNode * ogre_camera)
 {
-  if (ogre_camera)
-  {
+  if (ogre_camera) {
     ogre_camera_node_ = ogre_camera;
   }
 }

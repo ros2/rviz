@@ -201,7 +201,9 @@ RenderWindowOgreAdapter::setOgreCamera(RenderWindow * render_window, Ogre::Camer
 }
 
 void
-RenderWindowOgreAdapter::setSceneNodeCamera(RenderWindow * render_window, Ogre::SceneNode * ogre_camera)
+RenderWindowOgreAdapter::setSceneNodeCamera(
+  RenderWindow * render_window,
+  Ogre::SceneNode * ogre_camera)
 {
   render_window->impl_->setSceneNodeCamera(ogre_camera);
 }
