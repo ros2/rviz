@@ -112,4 +112,6 @@ protected:
 }  // namespace view_controllers
 }  // namespace rviz_default_plugins
 
+// *INDENT-OFF*
 #endif  // RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__ORTHO__FIXED_ORIENTATION_ORTHO_VIEW_CONTROLLER_HPP_  // NOLINT
+// *INDENT-ON*

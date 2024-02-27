@@ -78,4 +78,6 @@ private:
 }  // namespace displays
 }  // namespace rviz_default_plugins
 
+// *INDENT-OFF*
 #endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__INTERACTIVE_MARKERS__INTERACTIVE_MARKER_NAMESPACE_PROPERTY_HPP_
+// *INDENT-ON*
