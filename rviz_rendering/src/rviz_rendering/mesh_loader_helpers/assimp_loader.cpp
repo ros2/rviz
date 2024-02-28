@@ -297,21 +297,23 @@ void AssimpLoader::setLightColorsFromAssimp(
       ai_material->GetTexture(aiTextureType_DIFFUSE, 0, &texture_name, &mapping, &uv_index);
 
       std::string texture_path;
+#ifdef ASSIMP_VERSION_5
       const aiTexture * texture = this->ai_scene_->GetEmbeddedTexture(texture_name.C_Str());
       if (texture == nullptr) {
-        // It's not an embedded texture. We have to go find it.
-        // Assume textures are in paths relative to the mesh
-        QFileInfo resource_path_finfo(QString::fromStdString(resource_path));
-        QDir resource_path_qdir = resource_path_finfo.dir();
-        texture_path = resource_path_qdir.path().toStdString() + "/" + texture_name.data;
-        loadTexture(texture_path);
-      } else {
-#ifdef ASSIMP_VERSION_5
-        // it's an embedded texture, like in GLB / glTF
-        texture_path = resource_path + texture_name.data;
-        loadEmbeddedTexture(texture, texture_path);
 #endif
-      }
+      // It's not an embedded texture. We have to go find it.
+      // Assume textures are in paths relative to the mesh
+      QFileInfo resource_path_finfo(QString::fromStdString(resource_path));
+      QDir resource_path_qdir = resource_path_finfo.dir();
+      texture_path = resource_path_qdir.path().toStdString() + "/" + texture_name.data;
+      loadTexture(texture_path);
+#ifdef ASSIMP_VERSION_5
+    } else {
+      // it's an embedded texture, like in GLB / glTF
+      texture_path = resource_path + texture_name.data;
+      loadEmbeddedTexture(texture, texture_path);
+    }
+#endif
       Ogre::TextureUnitState * tu = material_internals.pass_->createTextureUnitState();
       tu->setTextureName(texture_path);
     } else if (propKey == "$clr.diffuse") {
