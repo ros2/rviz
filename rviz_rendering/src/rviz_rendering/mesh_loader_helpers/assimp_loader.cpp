@@ -306,9 +306,11 @@ void AssimpLoader::setLightColorsFromAssimp(
         texture_path = resource_path_qdir.path().toStdString() + "/" + texture_name.data;
         loadTexture(texture_path);
       } else {
+#ifdef ASSIMP_VERSION_5
         // it's an embedded texture, like in GLB / glTF
         texture_path = resource_path + texture_name.data;
         loadEmbeddedTexture(texture, texture_path);
+#endif
       }
       Ogre::TextureUnitState * tu = material_internals.pass_->createTextureUnitState();
       tu->setTextureName(texture_path);
