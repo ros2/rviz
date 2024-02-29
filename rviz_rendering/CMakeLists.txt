@@ -106,6 +106,12 @@ target_link_libraries(rviz_rendering
   resource_retriever::resource_retriever
 )
 
+if("${assimp_VERSION}" VERSION_GREATER 4.1.0)
+  target_compile_definitions(rviz_rendering PRIVATE ASSIMP_VERSION_5)
+else()
+  message("Warning, assimp below 4.10 detected, disable embedded texture")
+endif()
+
 target_include_directories(rviz_rendering
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
