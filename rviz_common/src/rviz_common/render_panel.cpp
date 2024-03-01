@@ -116,7 +116,7 @@ void RenderPanel::initialize(DisplayContext * context, bool use_main_scene)
     camera_node->attachObject(default_camera);
     camera_node->setPosition(default_camera_pose_);
     camera_node->lookAt(Ogre::Vector3(0, 0, 0), Ogre::Node::TS_WORLD);
-
+    rviz_rendering::RenderWindowOgreAdapter::setSceneNodeCamera(render_window_, camera_node);
     rviz_rendering::RenderWindowOgreAdapter::setOgreCamera(render_window_, default_camera);
   }
   // scene_manager_ = scene_manager;
