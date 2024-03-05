@@ -370,6 +370,7 @@ void DepthCloudDisplay::subscribe()
           std::bind(&DepthCloudDisplay::processDepthMessage, this, std::placeholders::_1));
       }
     }
+    subscription_start_time_ = rviz_ros_node_->get_raw_node()->now();
   } catch (const image_transport::TransportLoadException & e) {
     setStatus(
       rviz_common::properties::StatusProperty::Error, "Message",
