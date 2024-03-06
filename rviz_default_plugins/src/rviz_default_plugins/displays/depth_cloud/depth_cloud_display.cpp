@@ -84,6 +84,18 @@ DepthCloudDisplay::DepthCloudDisplay()
   QRegExp depth_filter("depth");
   depth_filter.setCaseSensitivity(Qt::CaseInsensitive);
 
+  reliability_policy_property_ = new rviz_common::properties::EditableEnumProperty(
+    "Reliability Policy",
+    "Best effort",
+    "Set the reliability policy: When choosing 'Best effort', no guarantee will be given that the "
+    "messages will be delivered, choosing 'Reliable', messages will be sent until received.", this,
+    SLOT(updateQosProfile()));
+  reliability_policy_property_->addOption("System Default");
+  reliability_policy_property_->addOption("Reliable");
+  reliability_policy_property_->addOption("Best effort");
+
+  qos_profile_ = rmw_qos_profile_sensor_data;
+
   topic_filter_property_ =
     new rviz_common::properties::Property(
     "Topic Filter", true,
@@ -162,6 +174,26 @@ DepthCloudDisplay::DepthCloudDisplay()
     use_occlusion_compensation_property_, SLOT(updateOcclusionTimeOut()), this);
 }
 
+void DepthCloudDisplay::updateQosProfile()
+{
+  updateQueueSize();
+  qos_profile_ = rmw_qos_profile_default;
+  qos_profile_.depth = queue_size_;
+
+  auto policy = reliability_policy_property_->getString().toStdString();
+
+  if (policy == "Best effort") {
+    qos_profile_.reliability = RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT;
+
+  } else if (policy == "Reliable") {
+    qos_profile_.reliability = RMW_QOS_POLICY_RELIABILITY_RELIABLE;
+  } else {
+    qos_profile_.reliability = RMW_QOS_POLICY_RELIABILITY_SYSTEM_DEFAULT;
+  }
+
+  updateTopic();
+}
+
 void DepthCloudDisplay::transformerChangedCallback()
 {
   updateTopic();
@@ -225,6 +257,7 @@ void DepthCloudDisplay::updateQueueSize()
     depthmap_tf_filter_->setQueueSize(static_cast<uint32_t>(queue_size_property_->getInt()));
   }
   queue_size_ = queue_size_property_->getInt();
+  qos_profile_.depth = queue_size_;
 }
 
 void DepthCloudDisplay::updateUseAutoSize()
@@ -311,7 +344,8 @@ void DepthCloudDisplay::subscribe()
       depthmap_sub_->subscribe(
         rviz_ros_node_->get_raw_node().get(),
         depthmap_topic,
-        depthmap_transport);
+        depthmap_transport,
+        qos_profile_);
 
       depthmap_tf_filter_ =
         std::make_shared<tf2_ros::MessageFilter<sensor_msgs::msg::Image,
@@ -353,7 +387,7 @@ void DepthCloudDisplay::subscribe()
         // subscribe to color image topic
         rgb_sub_->subscribe(
           rviz_ros_node_->get_raw_node().get(),
-          color_topic, color_transport, rclcpp::SensorDataQoS().get_rmw_qos_profile());
+          color_topic, color_transport, qos_profile_);
 
         // connect message filters to synchronizer
         sync_depth_color_->connectInput(*depthmap_tf_filter_, *rgb_sub_);
