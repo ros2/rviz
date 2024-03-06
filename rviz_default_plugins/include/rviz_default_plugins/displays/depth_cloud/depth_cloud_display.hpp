@@ -106,6 +106,8 @@ protected Q_SLOTS:
 
   void transformerChangedCallback();
 
+  void updateQosProfile();
+
   // Property callbacks
   virtual void updateTopic();
   virtual void updateTopicFilter();
@@ -160,6 +162,8 @@ protected:
   rclcpp::Time subscription_start_time_;
 
   // RVIZ properties
+  rviz_common::properties::EditableEnumProperty * reliability_policy_property_;
+  rmw_qos_profile_t qos_profile_;
   rviz_common::properties::Property * topic_filter_property_;
   rviz_common::properties::IntProperty * queue_size_property_;
   rviz_common::properties::BoolProperty * use_auto_size_property_;
