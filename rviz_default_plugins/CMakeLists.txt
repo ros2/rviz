@@ -64,6 +64,7 @@ find_package(geometry_msgs REQUIRED)
 find_package(ignition_math6_vendor REQUIRED)
 find_package(ignition-math6 REQUIRED)
 
+find_package(image_geometry REQUIRED)
 find_package(image_transport REQUIRED)
 find_package(interactive_markers REQUIRED)
 find_package(laser_geometry REQUIRED)
@@ -82,6 +83,7 @@ find_package(visualization_msgs REQUIRED)
 set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/accel/accel_display.hpp
   include/rviz_default_plugins/displays/axes/axes_display.hpp
+  include/rviz_default_plugins/displays/camera_info/camera_info_display.hpp
   include/rviz_default_plugins/displays/camera/camera_display.hpp
   include/rviz_default_plugins/displays/depth_cloud/depth_cloud_display.hpp
   include/rviz_default_plugins/displays/effort/effort_display.hpp
@@ -139,6 +141,7 @@ endforeach()
 set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/accel/accel_display.cpp
   src/rviz_default_plugins/displays/axes/axes_display.cpp
+  src/rviz_default_plugins/displays/camera_info/camera_info_display.cpp
   src/rviz_default_plugins/displays/camera/camera_display.cpp
   src/rviz_default_plugins/displays/depth_cloud/depth_cloud_display.cpp
   src/rviz_default_plugins/displays/effort/effort_display.cpp
@@ -241,6 +244,7 @@ target_include_directories(rviz_default_plugins PUBLIC
 
 target_link_libraries(rviz_default_plugins PUBLIC
   ${geometry_msgs_TARGETS}
+  image_geometry::image_geometry
   image_transport::image_transport
   interactive_markers::interactive_markers
   laser_geometry::laser_geometry

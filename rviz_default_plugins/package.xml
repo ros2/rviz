@@ -39,6 +39,7 @@
 
   <depend>geometry_msgs</depend>
   <depend>ignition_math6_vendor</depend>
+  <depend>image_geometry</depend>
   <depend>image_transport</depend>
   <depend>interactive_markers</depend>
   <depend>laser_geometry</depend>
