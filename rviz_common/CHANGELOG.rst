@@ -2,6 +2,17 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+13.4.0 (2024-03-09)
+-------------------
+* Fix camera display overlay (`#1151 <https://github.com/ros2/rviz/issues/1151>`_)
+* Fixes for uncrustify 0.78. (`#1155 <https://github.com/ros2/rviz/issues/1155>`_)
+  Mostly what we do here is to disable the indentation on
+  certain constructs that are different between 0.72 and
+  0.78.  It isn't my preferred solution, but since it only
+  affects a small amount of code (and most of that in macros),
+  this seems acceptable to me.
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette
+
 13.3.1 (2024-01-24)
 -------------------
 * Append measured subscription frequency to topic status (`#1113 <https://github.com/ros2/rviz/issues/1113>`_)

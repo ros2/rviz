@@ -2,6 +2,28 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+13.4.0 (2024-03-09)
+-------------------
+* Change an rviz_ogre_vendor dependency to libfreetype-dev. (`#1167 <https://github.com/ros2/rviz/issues/1167>`_)
+  The situation is complicated, but in versions of Ubuntu
+  prior to Focal and versions of Debian prior to Bookworm,
+  the name of the library was 'libfreetype6-dev'.  Since
+  Focal and Bookworm, the name of the library is 'libfreetype-dev'.
+  While 'libfreetype-dev' provides a "virtual package"
+  for 'libfreetype6-dev', we should really use the new canonical
+  name.
+  Further, there is currently a bug on ros_buildfarm where
+  it doesn't properly deal with "virtual packages" like this.
+  This is currently preventing this package from building on
+  Ubuntu Noble.  That bug is being worked on separately.
+  Finally, I'll note that we already have a libfreetype-dev
+  key in rosdep, so we just switch to using that here which
+  should work around the bug on the buildfarm, and also use
+  the correct canonical name going forward.
+* fix: modify typo in cmake args for mac (`#1160 <https://github.com/ros2/rviz/issues/1160>`_)
+* feat: support macos (`#1156 <https://github.com/ros2/rviz/issues/1156>`_)
+* Contributors: Chris Lalancette, Daisuke Nishimatsu
+
 13.3.1 (2024-01-24)
 -------------------
 

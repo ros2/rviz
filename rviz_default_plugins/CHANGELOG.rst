@@ -2,6 +2,23 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+13.4.0 (2024-03-09)
+-------------------
+* Select QoS reliability policy in DepthCloud Plugin (`#1159 <https://github.com/ros2/rviz/issues/1159>`_)
+* Fixed crash on DepthCloud plugin (`#1161 <https://github.com/ros2/rviz/issues/1161>`_)
+* Fixes for uncrustify 0.78. (`#1155 <https://github.com/ros2/rviz/issues/1155>`_)
+  Mostly what we do here is to disable the indentation on
+  certain constructs that are different between 0.72 and
+  0.78.  It isn't my preferred solution, but since it only
+  affects a small amount of code (and most of that in macros),
+  this seems acceptable to me.
+* Fixed crash on DepthCloudPlugin (`#1133 <https://github.com/ros2/rviz/issues/1133>`_)
+* Wrench accepth nan values fix (`#1141 <https://github.com/ros2/rviz/issues/1141>`_)
+* DepthCloud plugin: Append measured subscription frequency to topic status (`#1137 <https://github.com/ros2/rviz/issues/1137>`_)
+* Added Cache to camera display for TimeExact (`#1138 <https://github.com/ros2/rviz/issues/1138>`_)
+* Fixed transport name in DepthCloud plugin (`#1134 <https://github.com/ros2/rviz/issues/1134>`_)
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette
+
 13.3.1 (2024-01-24)
 -------------------
 * Fix time-syncing message (`#1121 <https://github.com/ros2/rviz/issues/1121>`_)
