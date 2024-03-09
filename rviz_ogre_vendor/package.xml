@@ -23,8 +23,8 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>ament_cmake_vendor_package</buildtool_depend>
 
-  <build_depend>libfreetype6-dev</build_depend>
-  <build_export_depend>libfreetype6-dev</build_export_depend>
+  <build_depend>libfreetype-dev</build_depend>
+  <build_export_depend>libfreetype-dev</build_export_depend>
   <exec_depend>libfreetype6</exec_depend>
 
   <depend>libx11-dev</depend>
