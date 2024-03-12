@@ -73,7 +73,7 @@ void MeshShape::beginTriangles()
 
   if (!started_) {
     started_ = true;
-    manual_object_->begin(material_name_, Ogre::RenderOperation::OT_TRIANGLE_LIST);
+    manual_object_->begin(material_name_, Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
   }
 }
 
@@ -126,7 +126,7 @@ void MeshShape::endTriangles()
     manual_object_->convertToMesh(name);
     entity_ = scene_manager_->createEntity(name);
     if (entity_) {
-      entity_->setMaterial(material_);
+      entity_->setMaterial(material_, "rviz_rendering");
       offset_node_->attachObject(entity_);
     } else {
       RVIZ_RENDERING_LOG_ERROR("Unable to construct triangle mesh");
