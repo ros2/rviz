@@ -40,11 +40,14 @@
 #include <OgreSceneManager.h>
 #include <OgreVector.h>
 
+#include "rviz_rendering/visibility_control.hpp"
+
 namespace rviz_rendering
 {
 class TrianglePolygon
 {
 public:
+  RVIZ_RENDERING_PUBLIC
   TrianglePolygon(
     Ogre::SceneManager * manager,
     Ogre::SceneNode * node,
@@ -57,6 +60,7 @@ public:
     bool upper_triangle);
   virtual ~TrianglePolygon();
 
+  RVIZ_RENDERING_PUBLIC
   Ogre::ManualObject * getManualObject();
 
 protected:
