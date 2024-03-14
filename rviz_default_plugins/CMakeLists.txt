@@ -754,6 +754,19 @@ if(BUILD_TESTING)
     )
   endif()
 
+  ament_add_gtest(camera_info_display_visual_test
+    test/rviz_default_plugins/displays/camera_info/camera_info_display_visual_test.cpp
+    test/rviz_default_plugins/page_objects/camera_info_display_page_object.cpp
+    ${SKIP_VISUAL_TESTS}
+    TIMEOUT 180)
+  if(TARGET camera_info_display_visual_test)
+    target_include_directories(camera_info_display_visual_test PRIVATE test)
+    target_link_libraries(camera_info_display_visual_test
+      rviz_visual_testing_framework::rviz_visual_testing_framework
+      ogre_testing_environment
+    )
+  endif()
+
   add_library(point_cloud_common_page_object STATIC test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp)
   target_link_libraries(point_cloud_common_page_object PRIVATE Qt5::Test rviz_visual_testing_framework::rviz_visual_testing_framework)
 

@@ -26,54 +26,33 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__CAMERA_INFO_DISPLAY_PAGE_OBJECT_HPP_
+#define RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__CAMERA_INFO_DISPLAY_PAGE_OBJECT_HPP_
 
-#include "accel_display_page_object.hpp"
+#include "rviz_visual_testing_framework/page_objects/base_page_object.hpp"
 
-#include <QString>
-#include <memory>
-#include <vector>
+#include <QString>  // NOLINT
 
-AccelDisplayPageObject::AccelDisplayPageObject()
-: BasePageObject(0, "AccelStamped")
-{}
-
-void AccelDisplayPageObject::setTopic(QString topic)
+class CameraInfoDisplayPageObject : public BasePageObject
 {
-  setComboBox("Topic", topic);
-  waitForFirstMessage();
-}
+public:
+  CameraInfoDisplayPageObject();
 
-void AccelDisplayPageObject::setAlpha(float alpha)
-{
-  setFloat("Alpha", alpha);
-}
+  void setTopic(QString topic);
+  void setFarClip(float far_clip);
+  void setShowEdged(bool show_edges);
+  void setShowPolygon(bool show_polygon);
+  void setNotShowSidePolygon(bool now_show_side_polygon);
+  void setColor(int r, int g, int b);
+  void setEdgeColor(int r, int g, int b);
 
-void AccelDisplayPageObject::setAngularColor(int r, int g, int b)
-{
-  setColorCode("Angular Color", r, g, b);
-}
+  void setAlpha(float alpha);
+  void setAngularColor(int r, int g, int b);
+  void setLinearColor(int r, int g, int b);
+  void setAngularScale(float scale);
+  void setLinearScale(float scale);
+  void setWidth(float width);
+  void setHistoryLength(int history);
+};
 
-void AccelDisplayPageObject::setLinearColor(int r, int g, int b)
-{
-  setColorCode("Linear Color", r, g, b);
-}
-
-void AccelDisplayPageObject::setLinearScale(float scale)
-{
-  setFloat("Linear Arrow Scale", scale);
-}
-
-void AccelDisplayPageObject::setAngularScale(float scale)
-{
-  setFloat("Angular Arrow Scale", scale);
-}
-
-void AccelDisplayPageObject::setWidth(float width)
-{
-  setFloat("Arrow Width", width);
-}
-
-void AccelDisplayPageObject::setHistoryLength(int history)
-{
-  setInt("History Length", history);
-}
+#endif  // RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__CAMERA_INFO_DISPLAY_PAGE_OBJECT_HPP_

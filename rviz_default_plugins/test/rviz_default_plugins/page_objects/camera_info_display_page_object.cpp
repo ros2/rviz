@@ -27,53 +27,50 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "accel_display_page_object.hpp"
+#include "camera_info_display_page_object.hpp"
 
-#include <QString>
-#include <memory>
-#include <vector>
+CameraInfoDisplayPageObject::CameraInfoDisplayPageObject()
+: BasePageObject(0, "CameraInfo")
+{
+}
 
-AccelDisplayPageObject::AccelDisplayPageObject()
-: BasePageObject(0, "AccelStamped")
-{}
-
-void AccelDisplayPageObject::setTopic(QString topic)
+void CameraInfoDisplayPageObject::setTopic(QString topic)
 {
   setComboBox("Topic", topic);
   waitForFirstMessage();
 }
 
-void AccelDisplayPageObject::setAlpha(float alpha)
+void CameraInfoDisplayPageObject::setFarClip(float far_clip)
+{
+  setFloat("Far clip", far_clip);
+}
+
+void CameraInfoDisplayPageObject::setShowEdged(bool show_edges)
+{
+  setBool("Show edges", show_edges);
+}
+
+void CameraInfoDisplayPageObject::setShowPolygon(bool show_polygon)
+{
+  setBool("Show polygons", show_polygon);
+}
+
+void CameraInfoDisplayPageObject::setNotShowSidePolygon(bool now_show_side_polygon)
+{
+  setBool("Not show side polygons", now_show_side_polygon);
+}
+
+void CameraInfoDisplayPageObject::setColor(int r, int g, int b)
+{
+  setColorCode("Color", r, g, b);
+}
+
+void CameraInfoDisplayPageObject::setEdgeColor(int r, int g, int b)
+{
+  setColorCode("Edge color", r, g, b);
+}
+
+void CameraInfoDisplayPageObject::setAlpha(float alpha)
 {
   setFloat("Alpha", alpha);
-}
-
-void AccelDisplayPageObject::setAngularColor(int r, int g, int b)
-{
-  setColorCode("Angular Color", r, g, b);
-}
-
-void AccelDisplayPageObject::setLinearColor(int r, int g, int b)
-{
-  setColorCode("Linear Color", r, g, b);
-}
-
-void AccelDisplayPageObject::setLinearScale(float scale)
-{
-  setFloat("Linear Arrow Scale", scale);
-}
-
-void AccelDisplayPageObject::setAngularScale(float scale)
-{
-  setFloat("Angular Arrow Scale", scale);
-}
-
-void AccelDisplayPageObject::setWidth(float width)
-{
-  setFloat("Arrow Width", width);
-}
-
-void AccelDisplayPageObject::setHistoryLength(int history)
-{
-  setInt("History Length", history);
 }

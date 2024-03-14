@@ -55,44 +55,41 @@ static const char * const CAM_INFO_STATUS = "Camera Info";
 CameraInfoDisplay::CameraInfoDisplay()
 : rviz_common::MessageFilterDisplay<sensor_msgs::msg::CameraInfo>()
 {
-  ////////////////////////////////////////////////////////
-  // initialize properties
-  ////////////////////////////////////////////////////////
   far_clip_distance_property_ = new rviz_common::properties::FloatProperty(
-    "far clip",
+    "Far clip",
     1.0,
-    "far clip distance from the origin of camera info",
+    "Far clip distance from the origin of camera info",
     this, SLOT(updateFarClipDistance()));
   show_edges_property_ = new rviz_common::properties::BoolProperty(
-    "show edges",
+    "Show edges",
     true,
-    "show edges of the region of the camera info",
+    "Show edges of the region of the camera info",
     this, SLOT(updateShowEdges()));
   show_polygons_property_ = new rviz_common::properties::BoolProperty(
-    "show polygons",
+    "Show polygons",
     true,
-    "show polygons of the region of the camera info",
+    "Show polygons of the region of the camera info",
     this, SLOT(updateShowPolygons()));
   not_show_side_polygons_property_ = new rviz_common::properties::BoolProperty(
-    "not show side polygons",
+    "Not show side polygons",
     true,
-    "do not show polygons of the region of the camera info",
+    "Do not show polygons of the region of the camera info",
     this, SLOT(updateNotShowSidePolygons()));
 
   color_property_ = new rviz_common::properties::ColorProperty(
-    "color",
+    "Color",
     QColor(85, 255, 255),
-    "color of CameraInfo",
+    "Color of CameraInfo",
     this, SLOT(updateColor()));
   edge_color_property_ = new rviz_common::properties::ColorProperty(
-    "edge color",
+    "Edge color",
     QColor(125, 125, 125),
-    "edge color of CameraInfo",
+    "Edge color of CameraInfo",
     this, SLOT(updateEdgeColor()));
   alpha_property_ = new rviz_common::properties::FloatProperty(
-    "alpha",
+    "Alpha",
     0.5,
-    "alpha blending value",
+    "Alpha blending value",
     this, SLOT(updateAlpha()));
 }
 
