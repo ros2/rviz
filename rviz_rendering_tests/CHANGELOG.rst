@@ -2,6 +2,36 @@
 Changelog for package rviz_rendering_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+13.4.0 (2024-03-09)
+-------------------
+
+13.3.1 (2024-01-24)
+-------------------
+* Remove the loading_ascii_stl_files_fail (`#1125 <https://github.com/ros2/rviz/issues/1125>`_)
+* Contributors: Chris Lalancette
+
+13.3.0 (2023-12-26)
+-------------------
+* Update rviz_rendering and rviz_rendering_tests to C++17. (`#1096 <https://github.com/ros2/rviz/issues/1096>`_)
+* Contributors: Chris Lalancette
+
+13.2.0 (2023-11-06)
+-------------------
+* Use assimp to load stl (`#1063 <https://github.com/ros2/rviz/issues/1063>`_)
+* Contributors: Alejandro Hernández Cordero
+
+13.1.2 (2023-10-09)
+-------------------
+
+13.1.1 (2023-10-04)
+-------------------
+
+13.1.0 (2023-09-07)
+-------------------
+
+13.0.0 (2023-08-21)
+-------------------
+
 12.8.0 (2023-08-27)
 -------------------
 

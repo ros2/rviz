@@ -192,22 +192,6 @@ void MarkerCommon::addMessage(
   }
 }
 
-// TODO(greimela): Revisit after MessageFilter is available in ROS2
-// void MarkerCommon::failedMarker(const ros::MessageEvent<visualization_msgs::Marker>&
-// marker_evt, tf::FilterFailureReason reason)
-// {
-//  visualization_msgs::Marker::ConstPtr marker = marker_evt.getConstMessage();
-//  if (marker->action == visualization_msgs::msg::Marker::DELETE ||
-//      marker->action == visualization_msgs::msg::Marker::DELETEALL)
-//  {
-//    return this->processMessage(marker);
-//  }
-//  std::string authority = marker_evt.getPublisherName();
-//  std::string error = context_->getFrameManager()
-//    ->discoverFailureReason(marker->header.frame_id, marker->header.stamp, authority, reason);
-//  setMarkerStatus(MarkerID(marker->ns, marker->id), StatusProperty::Error, error);
-// }
-
 bool validateFloats(const visualization_msgs::msg::Marker & msg)
 {
   bool valid = true;

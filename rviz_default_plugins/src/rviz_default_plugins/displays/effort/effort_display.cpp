@@ -47,6 +47,7 @@
 #include <rviz_common/properties/property.hpp>
 #include <rviz_rendering/objects/effort_visual.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
+#include <rclcpp/logging.hpp>
 
 using namespace std::chrono_literals;
 
@@ -196,8 +197,16 @@ void EffortDisplay::topic_callback(const std_msgs::msg::String & msg)
     if (joint->type == urdf::Joint::REVOLUTE || joint->type == 2) {
       std::string joint_name = it->first;
       urdf::JointLimitsSharedPtr limit = joint->limits;
-      joints_[joint_name] = std::make_shared<JointInfo>(joint_name, joints_category_);
-      joints_[joint_name]->setMaxEffort(limit->effort);
+      if (limit) {
+        joints_[joint_name] = std::make_shared<JointInfo>(joint_name, joints_category_);
+        joints_[joint_name]->setMaxEffort(limit->effort);
+      } else {
+        RCLCPP_WARN(
+          context_->getRosNodeAbstraction().lock()->get_raw_node()->get_logger(),
+          "Joint '%s' has no <limit> tag in URDF. Effort plugin needs to know the effort "
+          "limit to determine the size of the corresponding visual marker. "
+          "Effort display for this joint will be inhibited.", joint_name.c_str());
+      }
     }
   }
 }
@@ -318,9 +327,11 @@ void EffortDisplay::processMessage(sensor_msgs::msg::JointState::ConstSharedPtr 
       continue;  // skip joints..
     }
 
+    rclcpp::Time msg_time(msg->header.stamp, RCL_ROS_TIME);
+
     // update effort property
     joint_info->setEffort(msg->effort[i]);
-    joint_info->last_update_ = msg->header.stamp;
+    joint_info->last_update_ = msg_time;
 
     const urdf::Joint * joint = robot_model_->getJoint(joint_name).get();
     int joint_type = joint->type;
@@ -332,7 +343,7 @@ void EffortDisplay::processMessage(sensor_msgs::msg::JointState::ConstSharedPtr 
 
       // Call rviz::FrameManager to get the transform from the fixed frame to the joint's frame.
       if (!context_->getFrameManager()->getTransform(
-          tf_frame_id, msg->header.stamp, position, orientation))
+          tf_frame_id, msg_time, position, orientation))
       {
         setStatus(
           rviz_common::properties::StatusProperty::Error,

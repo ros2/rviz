@@ -2,6 +2,52 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+13.4.0 (2024-03-09)
+-------------------
+* Fix camera display overlay (`#1151 <https://github.com/ros2/rviz/issues/1151>`_)
+* Fixes for uncrustify 0.78. (`#1155 <https://github.com/ros2/rviz/issues/1155>`_)
+  Mostly what we do here is to disable the indentation on
+  certain constructs that are different between 0.72 and
+  0.78.  It isn't my preferred solution, but since it only
+  affects a small amount of code (and most of that in macros),
+  this seems acceptable to me.
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette
+
+13.3.1 (2024-01-24)
+-------------------
+* Append measured subscription frequency to topic status (`#1113 <https://github.com/ros2/rviz/issues/1113>`_)
+* Contributors: Yadu
+
+13.3.0 (2023-12-26)
+-------------------
+* Implement reset time service (`#1109 <https://github.com/ros2/rviz/issues/1109>`_)
+* Add "R" key as shortcut for resetTime (`#1088 <https://github.com/ros2/rviz/issues/1088>`_)
+* Add fullscreen startup option (`#1097 <https://github.com/ros2/rviz/issues/1097>`_)
+* Switch to target_link_libraries. (`#1098 <https://github.com/ros2/rviz/issues/1098>`_)
+* Initialize more of the visualization_manager members. (`#1090 <https://github.com/ros2/rviz/issues/1090>`_)
+* Explicit time conversions and comparisons (`#1087 <https://github.com/ros2/rviz/issues/1087>`_)
+* Rolling namespace in title (`#1074 <https://github.com/ros2/rviz/issues/1074>`_)
+* Contributors: AiVerisimilitude, Chris Lalancette, Hyunseok, Markus Bader, Paul Erik Frivold
+
+13.2.0 (2023-11-06)
+-------------------
+
+13.1.2 (2023-10-09)
+-------------------
+
+13.1.1 (2023-10-04)
+-------------------
+
+13.1.0 (2023-09-07)
+-------------------
+* Removed unused code (`#1044 <https://github.com/ros2/rviz/issues/1044>`_)
+* Contributors: Alejandro Hernández Cordero
+
+13.0.0 (2023-08-21)
+-------------------
+* Remove unused LineEditWithButton::simulateReturnPressed() (`#1040 <https://github.com/ros2/rviz/issues/1040>`_)
+* Contributors: Alejandro Hernández Cordero
+
 12.8.0 (2023-08-27)
 -------------------
 * Remove warning in depth_cloud_mld.cpp (`#1021 <https://github.com/ros2/rviz/issues/1021>`_)

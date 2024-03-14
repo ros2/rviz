@@ -56,6 +56,8 @@ else()
   set(OGRE_CXX_FLAGS "-Wno-mismatched-new-delete ${OGRE_CXX_FLAGS}")
   set(OGRE_CXX_FLAGS "-Wno-range-loop-construct ${OGRE_CXX_FLAGS}")
   set(OGRE_CXX_FLAGS "-Wno-undef ${OGRE_CXX_FLAGS}")
+  set(OGRE_CXX_FLAGS "-Wno-misleading-indentation ${OGRE_CXX_FLAGS}")
+  set(OGRE_CXX_FLAGS "-Wno-implicit-const-int-float-conversion ${OGRE_CXX_FLAGS}")
 
   if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(OGRE_CXX_FLAGS "-Wno-maybe-uninitialized ${OGRE_CXX_FLAGS}")
@@ -68,6 +70,11 @@ endif()
 set(OGRE_CMAKE_ARGS)
 if(NOT WIN32)
   list(APPEND OGRE_CMAKE_ARGS -DCMAKE_SKIP_INSTALL_RPATH:BOOL=ON)
+endif()
+
+if(APPLE)
+  list(APPEND OGRE_CMAKE_ARGS -DOGRE_ENABLE_PRECOMPILED_HEADERS:BOOL=OFF)
+  list(APPEND OGRE_CMAKE_ARGS -DCMAKE_OSX_ARCHITECTURES=arm64;x86_64)
 endif()
 
 ament_vendor(ogre_vendor
