@@ -38,12 +38,13 @@
 #include <string>
 
 #include "rviz_common/properties/string_property.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
 namespace properties
 {
-class RegexValidator : public QValidator
+class RVIZ_COMMON_PUBLIC RegexValidator : public QValidator
 {
 public:
   explicit RegexValidator(QLineEdit * editor);
@@ -54,7 +55,7 @@ private:
   QLineEdit * editor_;
 };
 
-class RegexFilterProperty : public StringProperty
+class RVIZ_COMMON_PUBLIC RegexFilterProperty : public StringProperty
 {
 public:
   RegexFilterProperty(const QString & name, const std::string regex, Property * parent);
