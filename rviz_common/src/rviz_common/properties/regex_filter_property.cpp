@@ -70,7 +70,7 @@ void RegexFilterProperty::onValueChanged()
     try {
       regex_str_ = std::string(value.toLocal8Bit().constData());
       regex_.assign(regex_str_, std::regex_constants::optimize);
-    } catch (const std::regex_error & e) {
+    } catch (const std::regex_error &) {
       regex_ = std::regex(default_);
       regex_str_ = default_;
     }
