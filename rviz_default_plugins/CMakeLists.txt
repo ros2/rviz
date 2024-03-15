@@ -68,6 +68,7 @@ find_package(laser_geometry REQUIRED)
 find_package(map_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
+find_package(point_cloud_transport REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(resource_retriever REQUIRED)
 find_package(sensor_msgs REQUIRED)
@@ -181,6 +182,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/pointcloud/transformers/rgb8_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/rgbf32_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/xyz_pc_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/get_transport_from_topic.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_common.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_to_point_cloud2.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_transformer_factory.cpp
@@ -262,6 +264,7 @@ ament_target_dependencies(rviz_default_plugins
   laser_geometry
   map_msgs
   nav_msgs
+  point_cloud_transport
   rclcpp
   resource_retriever
   rviz_common
@@ -287,6 +290,7 @@ ament_export_dependencies(
   laser_geometry
   map_msgs
   nav_msgs
+  point_cloud_transport
   rclcpp
   resource_retriever
   rviz_common
