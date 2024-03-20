@@ -897,8 +897,14 @@ void RobotLink::createInertia(const urdf::LinkConstSharedPtr & link)
       link->inertial->origin.position.x,
       link->inertial->origin.position.y,
       link->inertial->origin.position.z);
+
+    double x, y, z, w;
+    link->inertial->origin.rotation.getQuaternion(x, y, z, w);
+    Ogre::Quaternion originRotate(w, x, y, z);
+
     Ogre::Quaternion rotate(box_rot.W(), box_rot.X(), box_rot.Y(), box_rot.Z());
-    Ogre::SceneNode * offset_node = inertia_node_->createChildSceneNode(translate, rotate);
+    Ogre::SceneNode * offset_node = inertia_node_->createChildSceneNode(
+      translate, originRotate * rotate);
     inertia_shape_ = new Shape(Shape::Cube, scene_manager_, offset_node);
 
     inertia_shape_->setColor(1, 0, 0, 1);
