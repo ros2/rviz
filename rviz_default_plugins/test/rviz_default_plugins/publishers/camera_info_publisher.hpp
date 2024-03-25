@@ -30,6 +30,8 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__PUBLISHERS__CAMERA_INFO_PUBLISHER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__PUBLISHERS__CAMERA_INFO_PUBLISHER_HPP_
 
+#include <string>
+
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp/clock.hpp"
 #include "sensor_msgs/msg/camera_info.hpp"
@@ -43,11 +45,12 @@ namespace nodes
 class CameraInfoPublisher : public rclcpp::Node
 {
 public:
-  CameraInfoPublisher()
+  explicit CameraInfoPublisher(std::string frame_id = "camera_info_frame")
   : Node("camera_info_publisher")
   {
     publisher = this->create_publisher<sensor_msgs::msg::CameraInfo>("/image/camera_info", 10);
     timer = this->create_wall_timer(500ms, std::bind(&CameraInfoPublisher::timer_callback, this));
+    this->frame_id = frame_id;
   }
 
 private:
@@ -55,7 +58,7 @@ private:
   {
     auto message = sensor_msgs::msg::CameraInfo();
     message.header = std_msgs::msg::Header();
-    message.header.frame_id = "camera_info_frame";
+    message.header.frame_id = this->frame_id;
     message.header.stamp = rclcpp::Clock().now();
 
     message.width = 320;
@@ -68,6 +71,7 @@ private:
 
   rclcpp::TimerBase::SharedPtr timer;
   rclcpp::Publisher<sensor_msgs::msg::CameraInfo>::SharedPtr publisher;
+  std::string frame_id;
 };
 
 }  // namespace nodes

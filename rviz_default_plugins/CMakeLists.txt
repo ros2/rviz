@@ -83,6 +83,7 @@ find_package(visualization_msgs REQUIRED)
 set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/accel/accel_display.hpp
   include/rviz_default_plugins/displays/axes/axes_display.hpp
+  include/rviz_default_plugins/displays/camera_info/camera_info_display.hpp
   include/rviz_default_plugins/displays/camera/camera_display.hpp
   include/rviz_default_plugins/displays/depth_cloud/depth_cloud_display.hpp
   include/rviz_default_plugins/displays/effort/effort_display.hpp
@@ -140,6 +141,7 @@ endforeach()
 set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/accel/accel_display.cpp
   src/rviz_default_plugins/displays/axes/axes_display.cpp
+  src/rviz_default_plugins/displays/camera_info/camera_info_display.cpp
   src/rviz_default_plugins/displays/camera/camera_display.cpp
   src/rviz_default_plugins/displays/depth_cloud/depth_cloud_display.cpp
   src/rviz_default_plugins/displays/effort/effort_display.cpp
@@ -750,6 +752,19 @@ if(BUILD_TESTING)
   if(TARGET axes_display_visual_test)
     target_include_directories(axes_display_visual_test PRIVATE test)
     target_link_libraries(axes_display_visual_test
+      rviz_visual_testing_framework::rviz_visual_testing_framework
+      ogre_testing_environment
+    )
+  endif()
+
+  ament_add_gtest(camera_info_display_visual_test
+    test/rviz_default_plugins/displays/camera_info/camera_info_display_visual_test.cpp
+    test/rviz_default_plugins/page_objects/camera_info_display_page_object.cpp
+    ${SKIP_VISUAL_TESTS}
+    TIMEOUT 180)
+  if(TARGET camera_info_display_visual_test)
+    target_include_directories(camera_info_display_visual_test PRIVATE test)
+    target_link_libraries(camera_info_display_visual_test
       rviz_visual_testing_framework::rviz_visual_testing_framework
       ogre_testing_environment
     )
