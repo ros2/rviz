@@ -280,7 +280,7 @@ void CameraInfoDisplay::createCameraInfoShapes(
       new rviz_rendering::BillboardLine(
         context_->getSceneManager(),
         scene_node_));
-    edges_->setLineWidth(0.01);
+    edges_->setLineWidth(0.01f);
   }
 
   int height = msg->roi.height ? msg->roi.height : msg->height;
