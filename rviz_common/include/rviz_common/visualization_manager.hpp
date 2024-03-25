@@ -44,6 +44,7 @@
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
+#include "rviz_common/ros_integration/ros_component_manager.hpp"
 #include "rviz_common/transformation/transformation_manager.hpp"
 
 class QTimer;
@@ -399,6 +400,7 @@ private:
   rclcpp::executors::SingleThreadedExecutor::SharedPtr executor_;
   ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node_;
   rviz_common::transformation::TransformationManager * transformation_manager_;
+  std::shared_ptr<ros_integration::ComponentManager> mgr_;
 };
 
 }  // namespace rviz_common

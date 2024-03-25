@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
- * Copyright (c) 2017, Bosch Software Innovations GmbH.
+ * Copyright (c) 2024, Open Source Robotics Foundation.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,36 +27,33 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "rviz_common/ros_integration/ros_node_abstraction.hpp"
+#ifndef RVIZ_COMMON__ROS_INTEGRATION__ROS_COMPONENT_MANAGER_HPP_
+#define RVIZ_COMMON__ROS_INTEGRATION__ROS_COMPONENT_MANAGER_HPP_
 
-#include <map>
-#include <memory>
-#include <mutex>
-#include <string>
-#include <vector>
-
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp_components/component_manager.hpp"
+#include "rclcpp_components/node_instance_wrapper.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
 namespace ros_integration
 {
+class RVIZ_COMMON_PUBLIC ComponentManager : public rclcpp_components::ComponentManager{
+public:
+    using rclcpp_components::ComponentManager::ComponentManager;
 
-RosNodeAbstraction::RosNodeAbstraction(const std::string & node_name)
-: raw_node_(rclcpp::Node::make_shared(node_name, rclcpp::NodeOptions().use_intra_process_comms(true)))
-{}
-
-std::string
-RosNodeAbstraction::get_node_name() const
-{
-  return raw_node_->get_name();
-}
-
-std::map<std::string, std::vector<std::string>>
-RosNodeAbstraction::get_topic_names_and_types() const
-{
-  return raw_node_->get_topic_names_and_types();
-}
-
+    void
+    add_node_to_executor(
+        rclcpp_components::NodeInstanceWrapper & node)
+    {
+        auto node_id = unique_id_++;
+        node_wrappers_[node_id] = node;
+        if (auto exec = this->executor_.lock()) {
+            exec->add_node(node.get_node_base_interface(), true);
+        }
+    }
+};
 }  // namespace ros_integration
 }  // namespace rviz_common
+
+#endif  // RVIZ_COMMON__ROS_INTEGRATION__ROS_COMPONENT_MANAGER_HPP_
