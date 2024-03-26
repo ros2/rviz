@@ -2,6 +2,9 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+13.4.1 (2024-03-26)
+-------------------
+
 13.4.0 (2024-03-09)
 -------------------
 * Change an rviz_ogre_vendor dependency to libfreetype-dev. (`#1167 <https://github.com/ros2/rviz/issues/1167>`_)

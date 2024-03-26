@@ -2,6 +2,14 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+13.4.1 (2024-03-26)
+-------------------
+* Added CameraInfo display (`#1166 <https://github.com/ros2/rviz/issues/1166>`_)
+* apply origin rotation to inertia box visualization (`#1171 <https://github.com/ros2/rviz/issues/1171>`_)
+* Added regex filter field for TF display (`#1032 <https://github.com/ros2/rviz/issues/1032>`_)
+* Added point_cloud_transport (`#1008 <https://github.com/ros2/rviz/issues/1008>`_)
+* Contributors: Alejandro Hernández Cordero, Jonas Otto
+
 13.4.0 (2024-03-09)
 -------------------
 * Select QoS reliability policy in DepthCloud Plugin (`#1159 <https://github.com/ros2/rviz/issues/1159>`_)
