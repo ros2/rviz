@@ -74,7 +74,7 @@ public:
   void reset() override;
 
 protected:
-  void processMessage(const sensor_msgs::msg::CameraInfo::ConstSharedPtr msg);
+  void processMessage(const sensor_msgs::msg::CameraInfo::ConstSharedPtr msg) override;
 
   void update(float wall_dt, float ros_dt) override;
   bool isSameCameraInfo(
