@@ -2,6 +2,28 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.12 (2024-03-26)
+--------------------
+* Select QoS reliability policy in DepthCloud Plugin (`#1159 <https://github.com/ros2/rviz/issues/1159>`_) (`#1164 <https://github.com/ros2/rviz/issues/1164>`_)
+  (cherry picked from commit a76cf91b1b5a4d21c5b6e2405fae99799318f363)
+  Co-authored-by: Alejandro Hernández Cordero <alejandro@openrobotics.org>
+* Fixed crash on DepthCloud plugin (`#1161 <https://github.com/ros2/rviz/issues/1161>`_) (`#1162 <https://github.com/ros2/rviz/issues/1162>`_)
+  (cherry picked from commit 92023c966414d4d9a044ad8f609a1c6f3ca402d3)
+  Co-authored-by: Alejandro Hernández Cordero <alejandro@openrobotics.org>
+* Fixed crash on DepthCloudPlugin (`#1133 <https://github.com/ros2/rviz/issues/1133>`_) (`#1152 <https://github.com/ros2/rviz/issues/1152>`_)
+  (cherry picked from commit 85bd6636c8e1d2e61668ca125f8d05ce25531fff)
+  Co-authored-by: Alejandro Hernández Cordero <alejandro@openrobotics.org>
+* Wrench accepth nan values fix (`#1141 <https://github.com/ros2/rviz/issues/1141>`_) (`#1149 <https://github.com/ros2/rviz/issues/1149>`_)
+  (cherry picked from commit 82385de6ef21db8b4dde57e397f039803c0b102e)
+  Co-authored-by: Alejandro Hernández Cordero <alejandro@openrobotics.org>
+* DepthCloud plugin: Append measured subscription frequency to topic status (`#1137 <https://github.com/ros2/rviz/issues/1137>`_) (`#1145 <https://github.com/ros2/rviz/issues/1145>`_)
+  (cherry picked from commit ad1990bfa180f39b4cf04116438453783bb125f9)
+  Co-authored-by: Alejandro Hernández Cordero <alejandro@openrobotics.org>
+* Added Cache to camera display for TimeExact (`#1138 <https://github.com/ros2/rviz/issues/1138>`_) (`#1142 <https://github.com/ros2/rviz/issues/1142>`_)
+  (cherry picked from commit fdf195771a948d510768ec2ccb08b0c78fdc2b14)
+  Co-authored-by: Alejandro Hernández Cordero <alejandro@openrobotics.org>
+* Contributors: mergify[bot]
+
 11.2.11 (2024-02-16)
 --------------------
 * Fixed transport name in DepthCloud plugin (`#1134 <https://github.com/ros2/rviz/issues/1134>`_) (`#1135 <https://github.com/ros2/rviz/issues/1135>`_)

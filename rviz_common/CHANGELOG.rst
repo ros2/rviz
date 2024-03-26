@@ -2,6 +2,9 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.12 (2024-03-26)
+--------------------
+
 11.2.11 (2024-02-16)
 --------------------
 * Append measured subscription frequency to topic status (`#1113 <https://github.com/ros2/rviz/issues/1113>`_) (`#1129 <https://github.com/ros2/rviz/issues/1129>`_)

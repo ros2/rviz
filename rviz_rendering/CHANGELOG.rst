@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.12 (2024-03-26)
+--------------------
+* [backport Humble] load glb meshes (`#1154 <https://github.com/ros2/rviz/issues/1154>`_)
+* Contributors: Alejandro Hernández Cordero
+
 11.2.11 (2024-02-16)
 --------------------
 
