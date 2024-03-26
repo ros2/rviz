@@ -2,6 +2,16 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+12.4.7 (2024-03-26)
+-------------------
+* Fix camera display overlay (`#1151 <https://github.com/ros2/rviz/issues/1151>`_) (`#1158 <https://github.com/ros2/rviz/issues/1158>`_)
+  (cherry picked from commit c7bf4c99b5f888d2dc200041994ed5c8fe16d3ce)
+  Co-authored-by: Alejandro Hernández Cordero <alejandro@openrobotics.org>
+* [backport Humble] load glb meshes (`#1154 <https://github.com/ros2/rviz/issues/1154>`_) (`#1157 <https://github.com/ros2/rviz/issues/1157>`_)
+  (cherry picked from commit 0722bd0dc1e8d7948a8fa0a15364a48fb9c5afc9)
+  Co-authored-by: Alejandro Hernández Cordero <alejandro@openrobotics.org>
+* Contributors: mergify[bot]
+
 12.4.6 (2024-02-07)
 -------------------
 

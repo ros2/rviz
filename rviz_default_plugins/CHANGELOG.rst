@@ -2,6 +2,31 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+12.4.7 (2024-03-26)
+-------------------
+* Select QoS reliability policy in DepthCloud Plugin (`#1159 <https://github.com/ros2/rviz/issues/1159>`_) (`#1165 <https://github.com/ros2/rviz/issues/1165>`_)
+  (cherry picked from commit a76cf91b1b5a4d21c5b6e2405fae99799318f363)
+  Co-authored-by: Alejandro Hernández Cordero <alejandro@openrobotics.org>
+* Fixed crash on DepthCloud plugin (`#1161 <https://github.com/ros2/rviz/issues/1161>`_) (`#1163 <https://github.com/ros2/rviz/issues/1163>`_)
+  (cherry picked from commit 92023c966414d4d9a044ad8f609a1c6f3ca402d3)
+  Co-authored-by: Alejandro Hernández Cordero <alejandro@openrobotics.org>
+* Fixed crash on DepthCloudPlugin (`#1133 <https://github.com/ros2/rviz/issues/1133>`_) (`#1153 <https://github.com/ros2/rviz/issues/1153>`_)
+  (cherry picked from commit 85bd6636c8e1d2e61668ca125f8d05ce25531fff)
+  Co-authored-by: Alejandro Hernández Cordero <alejandro@openrobotics.org>
+* Wrench accepth nan values fix (`#1141 <https://github.com/ros2/rviz/issues/1141>`_) (`#1150 <https://github.com/ros2/rviz/issues/1150>`_)
+  (cherry picked from commit 82385de6ef21db8b4dde57e397f039803c0b102e)
+  Co-authored-by: Alejandro Hernández Cordero <alejandro@openrobotics.org>
+* DepthCloud plugin: Append measured subscription frequency to topic status (`#1137 <https://github.com/ros2/rviz/issues/1137>`_) (`#1146 <https://github.com/ros2/rviz/issues/1146>`_)
+  (cherry picked from commit ad1990bfa180f39b4cf04116438453783bb125f9)
+  Co-authored-by: Alejandro Hernández Cordero <alejandro@openrobotics.org>
+* Added Cache to camera display for TimeExact (`#1138 <https://github.com/ros2/rviz/issues/1138>`_) (`#1143 <https://github.com/ros2/rviz/issues/1143>`_)
+  (cherry picked from commit fdf195771a948d510768ec2ccb08b0c78fdc2b14)
+  Co-authored-by: Alejandro Hernández Cordero <alejandro@openrobotics.org>
+* Fixed transport name in DepthCloud plugin (`#1134 <https://github.com/ros2/rviz/issues/1134>`_) (`#1136 <https://github.com/ros2/rviz/issues/1136>`_)
+  (cherry picked from commit b30838530c1aee8f6ddcbd11db258fbd24e57935)
+  Co-authored-by: Alejandro Hernández Cordero <alejandro@openrobotics.org>
+* Contributors: mergify[bot]
+
 12.4.6 (2024-02-07)
 -------------------
 * Append measured subscription frequency to topic status (`#1130 <https://github.com/ros2/rviz/issues/1130>`_)
