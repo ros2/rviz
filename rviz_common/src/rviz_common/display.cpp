@@ -400,9 +400,6 @@ void Display::setAssociatedWidget(QWidget * widget)
     WindowManagerInterface * wm = context_->getWindowManager();
     if (wm) {
       associated_widget_panel_ = wm->addPane(getName(), associated_widget_);
-      connect(
-        associated_widget_panel_, SIGNAL(visibilityChanged(bool)), this,
-        SLOT(associatedPanelVisibilityChange(bool)));
       connect(associated_widget_panel_, SIGNAL(closed()), this, SLOT(disable()));
       associated_widget_panel_->setIcon(getIcon());
     } else {
