@@ -2,6 +2,9 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 13.4.1 (2024-03-26)
 -------------------
 * Remove regex_filter_property.hpp from the moc lines. (`#1172 <https://github.com/ros2/rviz/issues/1172>`_)
