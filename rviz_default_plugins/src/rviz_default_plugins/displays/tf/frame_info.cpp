@@ -224,8 +224,10 @@ void FrameInfo::updateParentArrow(
     float shaft_length = distance - head_length;
     // aleeper: This was changed from 0.02 and 0.08 to 0.01 and 0.04
     // to match proper radius handling in arrow.cpp
-    parent_arrow_->set(shaft_length, 0.01f * scale, head_length, 0.04f * scale);
-
+    parent_arrow_->setShaftLength(shaft_length);
+    parent_arrow_->setShaftDiameter(0.01f * scale);
+    parent_arrow_->setHeadLength(head_length);
+    parent_arrow_->setHeadDiameter(0.04f * scale);
     parent_arrow_->setPosition(position);
     parent_arrow_->setOrientation(orient);
   } else {

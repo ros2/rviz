@@ -120,7 +120,10 @@ Ogre::Quaternion WrenchVisual::getDirectionOfRotationRelativeToTorque(
 void WrenchVisual::setTorqueDirectionArrow(const Ogre::Quaternion & orientation) const
 {
   const auto torque_arrow_length = torque_arrow_direction_.length() * torque_scale_;
-  circle_arrow_torque_->set(0, width_ * 0.1f, width_ * 0.1f * 1.0f, width_ * 0.1f * 2.0f);
+  circle_arrow_torque_->setShaftLength(0);
+  circle_arrow_torque_->setShaftDiameter(width_ * 0.1f);
+  circle_arrow_torque_->setHeadLength(width_ * 0.1f);
+  circle_arrow_torque_->setHeadDiameter(width_ * 0.2f);
   circle_arrow_torque_->setDirection(orientation * Ogre::Vector3(0, 1, 0));
   circle_arrow_torque_->setPosition(
     orientation * Ogre::Vector3(torque_arrow_length / 4, 0, torque_arrow_length / 2));

@@ -45,6 +45,7 @@
 
 #include "rviz_default_plugins/displays/marker/markers/marker_base.hpp"
 #include "rviz_default_plugins/displays/marker/markers/arrow_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/arrow_strip_marker.hpp"
 #include "rviz_default_plugins/displays/marker/markers/line_list_marker.hpp"
 #include "rviz_default_plugins/displays/marker/markers/line_strip_marker.hpp"
 #include "rviz_default_plugins/displays/marker/markers/mesh_resource_marker.hpp"
@@ -80,6 +81,8 @@ std::shared_ptr<MarkerBase> MarkerFactory::createMarkerForType(
     case visualization_msgs::msg::Marker::ARROW:
       return std::make_shared<ArrowMarker>(owner_, context_, parent_node_);
 
+    case visualization_msgs::msg::Marker::ARROW_STRIP:
+      return std::make_shared<ArrowStripMarker>(owner_, context_, parent_node_);
     case visualization_msgs::msg::Marker::LINE_STRIP:
       return std::make_shared<LineStripMarker>(owner_, context_, parent_node_);
 

@@ -208,11 +208,10 @@ void OdometryDisplay::updateAxes(const std::unique_ptr<rviz_rendering::Axes> & a
 
 void OdometryDisplay::updateArrow(const std::unique_ptr<rviz_rendering::Arrow> & arrow)
 {
-  arrow->set(
-    shaft_length_property_->getFloat(),
-    shaft_radius_property_->getFloat(),
-    head_length_property_->getFloat(),
-    head_radius_property_->getFloat());
+  arrow->setShaftLength(shaft_length_property_->getFloat());
+  arrow->setShaftDiameter(shaft_radius_property_->getFloat());
+  arrow->setHeadLength(head_length_property_->getFloat());
+  arrow->setHeadDiameter(head_radius_property_->getFloat());
 }
 
 void OdometryDisplay::updateShapeChoice()
