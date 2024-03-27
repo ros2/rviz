@@ -38,44 +38,44 @@
 
 namespace
 {
-
+// *INDENT-OFF*
 static rviz_common::LoggingHandler __debug_logging_handler = [](
   const std::string & message,
   const std::string & file_name,
   size_t line_number)
-  {
-    printf(
-      "[rviz_common:debug] %s, at %s:%zu\n", message.c_str(), file_name.c_str(), line_number);
-  };
+{
+  printf(
+    "[rviz_common:debug] %s, at %s:%zu\n", message.c_str(), file_name.c_str(), line_number);
+};
 static rviz_common::LoggingHandler __info_logging_handler = [](
   const std::string & message,
   const std::string & file_name,
   size_t line_number)
-  {
-    printf(
-      "[rviz_common:info] %s, at %s:%zu\n", message.c_str(), file_name.c_str(), line_number);
-  };
+{
+  printf(
+    "[rviz_common:info] %s, at %s:%zu\n", message.c_str(), file_name.c_str(), line_number);
+};
 static rviz_common::LoggingHandler __warning_logging_handler = [](
   const std::string & message,
   const std::string & file_name,
   size_t line_number)
-  {
-    fprintf(
-      stderr,
-      "[rviz_common:warning] %s, at %s:%zu\n", message.c_str(), file_name.c_str(), line_number);
-  };
+{
+  fprintf(
+    stderr,
+    "[rviz_common:warning] %s, at %s:%zu\n", message.c_str(), file_name.c_str(), line_number);
+};
 static rviz_common::LoggingHandler __error_logging_handler = [](
   const std::string & message,
   const std::string & file_name,
   size_t line_number)
-  {
-    fprintf(
-      stderr,
-      "[rviz_common:error] %s, at %s:%zu\n", message.c_str(), file_name.c_str(), line_number);
-  };
+{
+  fprintf(
+    stderr,
+    "[rviz_common:error] %s, at %s:%zu\n", message.c_str(), file_name.c_str(), line_number);
+};
 
 static std::mutex __logging_mutex;
-
+// *INDENT-ON*
 }  // namespace
 
 namespace rviz_common
