@@ -159,6 +159,10 @@ public:
   setOgreCamera(RenderWindow * render_window, Ogre::Camera * ogre_camera);
 
   static
+  void
+  setSceneNodeCamera(RenderWindow * render_window, Ogre::SceneNode * ogre_camera);
+
+  static
   Ogre::Camera *
   getOgreCamera(RenderWindow * render_window);
 

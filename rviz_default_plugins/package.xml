@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>rviz_default_plugins</name>
-  <version>13.3.0</version>
+  <version>13.4.1</version>
   <description>
     Several default plugins for rviz to cover the basic functionality.
   </description>
@@ -45,6 +45,7 @@
   <depend>nav_msgs</depend>
   <depend>map_msgs</depend>
   <depend>pluginlib</depend>
+  <depend>point_cloud_transport</depend>
   <depend>rclcpp</depend>
   <depend>resource_retriever</depend>
   <depend>rviz_common</depend>

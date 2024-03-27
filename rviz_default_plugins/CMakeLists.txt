@@ -70,6 +70,7 @@ find_package(laser_geometry REQUIRED)
 find_package(map_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
+find_package(point_cloud_transport REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(resource_retriever REQUIRED)
 find_package(sensor_msgs REQUIRED)
@@ -82,6 +83,7 @@ find_package(visualization_msgs REQUIRED)
 set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/accel/accel_display.hpp
   include/rviz_default_plugins/displays/axes/axes_display.hpp
+  include/rviz_default_plugins/displays/camera_info/camera_info_display.hpp
   include/rviz_default_plugins/displays/camera/camera_display.hpp
   include/rviz_default_plugins/displays/depth_cloud/depth_cloud_display.hpp
   include/rviz_default_plugins/displays/effort/effort_display.hpp
@@ -139,6 +141,7 @@ endforeach()
 set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/accel/accel_display.cpp
   src/rviz_default_plugins/displays/axes/axes_display.cpp
+  src/rviz_default_plugins/displays/camera_info/camera_info_display.cpp
   src/rviz_default_plugins/displays/camera/camera_display.cpp
   src/rviz_default_plugins/displays/depth_cloud/depth_cloud_display.cpp
   src/rviz_default_plugins/displays/effort/effort_display.cpp
@@ -182,6 +185,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/pointcloud/transformers/rgb8_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/rgbf32_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/transformers/xyz_pc_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/get_transport_from_topic.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_common.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_to_point_cloud2.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_transformer_factory.cpp
@@ -246,6 +250,7 @@ target_link_libraries(rviz_default_plugins PUBLIC
   laser_geometry::laser_geometry
   ${map_msgs_TARGETS}
   ${nav_msgs_TARGETS}
+  point_cloud_transport::point_cloud_transport
   rclcpp::rclcpp
   rviz_common::rviz_common
   rviz_ogre_vendor::OgreMain
@@ -747,6 +752,19 @@ if(BUILD_TESTING)
   if(TARGET axes_display_visual_test)
     target_include_directories(axes_display_visual_test PRIVATE test)
     target_link_libraries(axes_display_visual_test
+      rviz_visual_testing_framework::rviz_visual_testing_framework
+      ogre_testing_environment
+    )
+  endif()
+
+  ament_add_gtest(camera_info_display_visual_test
+    test/rviz_default_plugins/displays/camera_info/camera_info_display_visual_test.cpp
+    test/rviz_default_plugins/page_objects/camera_info_display_page_object.cpp
+    ${SKIP_VISUAL_TESTS}
+    TIMEOUT 180)
+  if(TARGET camera_info_display_visual_test)
+    target_include_directories(camera_info_display_visual_test PRIVATE test)
+    target_link_libraries(camera_info_display_visual_test
       rviz_visual_testing_framework::rviz_visual_testing_framework
       ogre_testing_environment
     )

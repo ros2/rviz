@@ -34,7 +34,7 @@
 
 #include "sensor_msgs/msg/point_cloud2.hpp"
 
-#include "rviz_common/message_filter_display.hpp"
+#include "rviz_default_plugins/displays/pointcloud/point_cloud_transport_display.hpp"
 
 #include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
@@ -67,7 +67,7 @@ struct Offsets
  * all being 8 bits.
  */
 class RVIZ_DEFAULT_PLUGINS_PUBLIC PointCloud2Display : public
-  rviz_common::MessageFilterDisplay<sensor_msgs::msg::PointCloud2>
+  rviz_default_plugins::displays::PointCloud2TransportDisplay<sensor_msgs::msg::PointCloud2>
 {
 public:
   PointCloud2Display();

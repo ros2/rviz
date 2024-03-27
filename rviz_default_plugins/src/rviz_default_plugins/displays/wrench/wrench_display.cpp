@@ -156,9 +156,8 @@ void WrenchDisplay::processMessage(geometry_msgs::msg::WrenchStamped::ConstShare
 
     if (!validateFloats(*msg)) {
       setStatus(
-        rviz_common::properties::StatusProperty::Error, "Topic",
-        "Message contained invalid floating point values (nans or infs)");
-      return;
+        rviz_common::properties::StatusProperty::Ok, "Topic",
+        "Message might contain floating point values (nans or infs)");
     }
   }
 

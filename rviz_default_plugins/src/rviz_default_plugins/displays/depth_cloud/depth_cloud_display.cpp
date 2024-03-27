@@ -72,6 +72,7 @@ DepthCloudDisplay::DepthCloudDisplay()
 : rviz_common::Display()
   , messages_received_(0)
   , depthmap_sub_()
+  , depthmap_tf_filter_(nullptr)
   , rgb_sub_()
   , cam_info_sub_()
   , queue_size_(5)
@@ -82,6 +83,18 @@ DepthCloudDisplay::DepthCloudDisplay()
   // Depth map properties
   QRegExp depth_filter("depth");
   depth_filter.setCaseSensitivity(Qt::CaseInsensitive);
+
+  reliability_policy_property_ = new rviz_common::properties::EditableEnumProperty(
+    "Reliability Policy",
+    "Best effort",
+    "Set the reliability policy: When choosing 'Best effort', no guarantee will be given that the "
+    "messages will be delivered, choosing 'Reliable', messages will be sent until received.", this,
+    SLOT(updateQosProfile()));
+  reliability_policy_property_->addOption("System Default");
+  reliability_policy_property_->addOption("Reliable");
+  reliability_policy_property_->addOption("Best effort");
+
+  qos_profile_ = rmw_qos_profile_sensor_data;
 
   topic_filter_property_ =
     new rviz_common::properties::Property(
@@ -161,6 +174,31 @@ DepthCloudDisplay::DepthCloudDisplay()
     use_occlusion_compensation_property_, SLOT(updateOcclusionTimeOut()), this);
 }
 
+void DepthCloudDisplay::updateQosProfile()
+{
+  updateQueueSize();
+  qos_profile_ = rmw_qos_profile_default;
+  qos_profile_.depth = queue_size_;
+
+  auto policy = reliability_policy_property_->getString().toStdString();
+
+  if (policy == "Best effort") {
+    qos_profile_.reliability = RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT;
+
+  } else if (policy == "Reliable") {
+    qos_profile_.reliability = RMW_QOS_POLICY_RELIABILITY_RELIABLE;
+  } else {
+    qos_profile_.reliability = RMW_QOS_POLICY_RELIABILITY_SYSTEM_DEFAULT;
+  }
+
+  updateTopic();
+}
+
+void DepthCloudDisplay::transformerChangedCallback()
+{
+  updateTopic();
+}
+
 void DepthCloudDisplay::onInitialize()
 {
   auto rviz_ros_node_ = context_->getRosNodeAbstraction().lock();
@@ -184,6 +222,12 @@ void DepthCloudDisplay::onInitialize()
 
   depth_topic_property_->initialize(rviz_ros_node_);
   color_topic_property_->initialize(rviz_ros_node_);
+
+  QObject::connect(
+    reinterpret_cast<QObject *>(context_->getTransformationManager()),
+    SIGNAL(transformerChanged(std::shared_ptr<rviz_common::transformation::FrameTransformer>)),
+    this,
+    SLOT(transformerChangedCallback()));
 }
 
 DepthCloudDisplay::~DepthCloudDisplay()
@@ -200,21 +244,20 @@ void DepthCloudDisplay::setTopic(const QString & topic, const QString & datatype
     depth_transport_property_->setStdString("raw");
     depth_topic_property_->setString(topic);
   } else {
-    int index = topic.lastIndexOf("/");
-    if (index == -1) {
-      return;
-    }
-    QString transport = topic.mid(index + 1);
-    QString base_topic = topic.mid(0, index);
-
-    depth_transport_property_->setString(transport);
-    depth_topic_property_->setString(base_topic);
+    setStatus(
+      rviz_common::properties::StatusProperty::Warn,
+      "Message",
+      "Expected topic type of 'sensor_msgs/msg/Image', saw topic type '" + datatype + "'");
   }
 }
 
 void DepthCloudDisplay::updateQueueSize()
 {
+  if (depthmap_tf_filter_) {
+    depthmap_tf_filter_->setQueueSize(static_cast<uint32_t>(queue_size_property_->getInt()));
+  }
   queue_size_ = queue_size_property_->getInt();
+  qos_profile_.depth = queue_size_;
 }
 
 void DepthCloudDisplay::updateUseAutoSize()
@@ -301,14 +344,15 @@ void DepthCloudDisplay::subscribe()
       depthmap_sub_->subscribe(
         rviz_ros_node_->get_raw_node().get(),
         depthmap_topic,
-        depthmap_transport);
+        depthmap_transport,
+        qos_profile_);
 
       depthmap_tf_filter_ =
         std::make_shared<tf2_ros::MessageFilter<sensor_msgs::msg::Image,
           rviz_common::transformation::FrameTransformer>>(
         *context_->getFrameManager()->getTransformer(),
         fixed_frame_.toStdString(),
-        10,
+        queue_size_,
         rviz_ros_node_->get_raw_node());
 
       depthmap_tf_filter_->connectInput(*depthmap_sub_);
@@ -343,7 +387,7 @@ void DepthCloudDisplay::subscribe()
         // subscribe to color image topic
         rgb_sub_->subscribe(
           rviz_ros_node_->get_raw_node().get(),
-          color_topic, color_transport, rclcpp::SensorDataQoS().get_rmw_qos_profile());
+          color_topic, color_transport, qos_profile_);
 
         // connect message filters to synchronizer
         sync_depth_color_->connectInput(*depthmap_tf_filter_, *rgb_sub_);
@@ -360,6 +404,7 @@ void DepthCloudDisplay::subscribe()
           std::bind(&DepthCloudDisplay::processDepthMessage, this, std::placeholders::_1));
       }
     }
+    subscription_start_time_ = rviz_ros_node_->get_raw_node()->now();
   } catch (const image_transport::TransportLoadException & e) {
     setStatus(
       rviz_common::properties::StatusProperty::Error, "Message",
@@ -387,6 +432,9 @@ void DepthCloudDisplay::unsubscribe()
 void DepthCloudDisplay::clear()
 {
   pointcloud_common_->reset();
+  if (depthmap_tf_filter_) {
+    depthmap_tf_filter_->clear();
+  }
 }
 
 void DepthCloudDisplay::update(float wall_dt, float ros_dt)
@@ -417,11 +465,22 @@ void DepthCloudDisplay::processMessage(
 
   std::ostringstream s;
 
-  ++messages_received_;
-  setStatus(
-    rviz_common::properties::StatusProperty::Ok, "Depth Map",
-    QString::number(messages_received_) + " depth maps received");
-  setStatus(rviz_common::properties::StatusProperty::Ok, "Message", "Ok");
+  {
+    ++messages_received_;
+    auto rviz_ros_node_ = context_->getRosNodeAbstraction().lock();
+    QString topic_str = QString::number(messages_received_) + " messages received";
+    // Append topic subscription frequency if we can lock rviz_ros_node_.
+    if (rviz_ros_node_ != nullptr) {
+      const double duration =
+        (rviz_ros_node_->get_raw_node()->now() - subscription_start_time_).seconds();
+      const double subscription_frequency =
+        static_cast<double>(messages_received_) / duration;
+      topic_str += " at " + QString::number(subscription_frequency, 'f', 1) + " hz.";
+    }
+    setStatus(
+      rviz_common::properties::StatusProperty::Ok, "Depth Map", topic_str);
+    setStatus(rviz_common::properties::StatusProperty::Ok, "Message", "Ok");
+  }
 
   sensor_msgs::msg::CameraInfo::ConstSharedPtr cam_info;
   {
@@ -597,6 +656,9 @@ void DepthCloudDisplay::fillTransportOptionList(rviz_common::properties::EnumPro
 
 void DepthCloudDisplay::fixedFrameChanged()
 {
+  if (depthmap_tf_filter_) {
+    depthmap_tf_filter_->setTargetFrame(fixed_frame_.toStdString());
+  }
   Display::reset();
 }
 

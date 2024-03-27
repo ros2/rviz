@@ -107,6 +107,8 @@ public:
   /// Set the camera associated with this render window's viewport.
   void setCamera(Ogre::Camera * camera);
 
+  void setSceneNodeCamera(Ogre::SceneNode * ogre_camera);
+
   /// Get the camera.
   Ogre::Camera * getCamera() const;
 

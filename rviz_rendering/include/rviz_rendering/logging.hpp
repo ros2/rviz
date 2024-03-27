@@ -37,45 +37,49 @@
 #include "rviz_rendering/logging_handler.hpp"
 #include "rviz_rendering/visibility_control.hpp"
 
+// *INDENT-OFF*
+
 #define RVIZ_RENDERING_LOG_DEBUG(msg) do { \
-    rviz_rendering::log_debug(msg, __FILE__, __LINE__); \
+  rviz_rendering::log_debug(msg, __FILE__, __LINE__); \
 } while (0)
 
 #define RVIZ_RENDERING_LOG_DEBUG_STREAM(args) do { \
-    std::stringstream __ss; \
-    __ss << args; \
-    rviz_rendering::log_debug(__ss.str(), __FILE__, __LINE__); \
+  std::stringstream __ss; \
+  __ss << args; \
+  rviz_rendering::log_debug(__ss.str(), __FILE__, __LINE__); \
 } while (0)
 
 #define RVIZ_RENDERING_LOG_INFO(msg) do { \
-    rviz_rendering::log_info(msg, __FILE__, __LINE__); \
+  rviz_rendering::log_info(msg, __FILE__, __LINE__); \
 } while (0)
 
 #define RVIZ_RENDERING_LOG_INFO_STREAM(args) do { \
-    std::stringstream __ss; \
-    __ss << args; \
-    rviz_rendering::log_info(__ss.str(), __FILE__, __LINE__); \
+  std::stringstream __ss; \
+  __ss << args; \
+  rviz_rendering::log_info(__ss.str(), __FILE__, __LINE__); \
 } while (0)
 
 #define RVIZ_RENDERING_LOG_WARNING(msg) do { \
-    rviz_rendering::log_warning(msg, __FILE__, __LINE__); \
+  rviz_rendering::log_warning(msg, __FILE__, __LINE__); \
 } while (0)
 
 #define RVIZ_RENDERING_LOG_WARNING_STREAM(args) do { \
-    std::stringstream __ss; \
-    __ss << args; \
-    rviz_rendering::log_warning(__ss.str(), __FILE__, __LINE__); \
+  std::stringstream __ss; \
+  __ss << args; \
+  rviz_rendering::log_warning(__ss.str(), __FILE__, __LINE__); \
 } while (0)
 
 #define RVIZ_RENDERING_LOG_ERROR(msg) do { \
-    rviz_rendering::log_error(msg, __FILE__, __LINE__); \
+  rviz_rendering::log_error(msg, __FILE__, __LINE__); \
 } while (0)
 
 #define RVIZ_RENDERING_LOG_ERROR_STREAM(args) do { \
-    std::stringstream __ss; \
-    __ss << args; \
-    rviz_rendering::log_error(__ss.str(), __FILE__, __LINE__); \
+  std::stringstream __ss; \
+  __ss << args; \
+  rviz_rendering::log_error(__ss.str(), __FILE__, __LINE__); \
 } while (0)
+
+// *INDENT-ON*
 
 namespace rviz_rendering
 {

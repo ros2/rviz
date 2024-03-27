@@ -95,6 +95,7 @@ add_library(rviz_rendering SHARED
   src/rviz_rendering/objects/point_cloud_renderable.cpp
   src/rviz_rendering/objects/screw_visual.cpp
   src/rviz_rendering/objects/shape.cpp
+  src/rviz_rendering/objects/triangle_polygon.cpp
   src/rviz_rendering/objects/wrench_visual.cpp
 )
 
@@ -287,6 +288,18 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET screw_visual_test_target)
     target_link_libraries(screw_visual_test_target
+      rviz_ogre_vendor::OgreMain
+      rviz_rendering
+      rviz_rendering_test_utils
+      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+    )
+  endif()
+
+  ament_add_gmock(triangle_polygon_visual_test_target
+    test/rviz_rendering/objects/triangle_polygon_test.cpp
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET triangle_polygon_visual_test_target)
+    target_link_libraries(triangle_polygon_visual_test_target
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils

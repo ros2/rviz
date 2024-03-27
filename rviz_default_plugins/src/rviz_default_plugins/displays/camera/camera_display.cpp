@@ -472,13 +472,28 @@ bool CameraDisplay::updateCamera()
     return false;
   }
 
-  rclcpp::Time rviz_time = context_->getFrameManager()->getTime();
-  if (timeDifferenceInExactSyncMode(image, rviz_time)) {
-    setStatus(
-      StatusLevel::Warn, TIME_STATUS,
-      QString("Time-syncing active and no image at timestamp ") +
-      QString::number(rviz_time.nanoseconds()) + ".");
-    return false;
+  if (context_->getFrameManager()->getSyncMode() == rviz_common::FrameManagerIface::SyncExact) {
+    if (cache_images_ == nullptr) {
+      cache_images_ = std::make_shared<message_filters::Cache<sensor_msgs::msg::Image>>(
+        *subscription_, 20);
+    }
+    rclcpp::Time rviz_time = context_->getFrameManager()->getTime();
+    std::vector<sensor_msgs::msg::Image::ConstSharedPtr> interval_data = cache_images_->getInterval(
+      rviz_time, rviz_time);
+    if (!interval_data.empty()) {
+      image = interval_data[0];
+      if (timeDifferenceInExactSyncMode(image, rviz_time)) {
+        setStatus(
+          StatusLevel::Warn, TIME_STATUS,
+          QString("Time-syncing active and no image at timestamp ") +
+          QString::number(rviz_time.nanoseconds()) + ".");
+        return false;
+      }
+    }
+  } else {
+    if (cache_images_ != nullptr) {
+      cache_images_.reset();
+    }
   }
 
   Ogre::Vector3 position;
