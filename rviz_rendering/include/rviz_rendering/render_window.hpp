@@ -139,9 +139,6 @@ protected:
   // void
   // mouseReleaseEvent(QMouseEvent * mouse_event) override;
 
-  void
-  exposeEvent(QExposeEvent * expose_event) override;
-
   bool
   event(QEvent * event) override;
 
