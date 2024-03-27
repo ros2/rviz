@@ -73,7 +73,8 @@ public:
     bool default_value = false,
     const QString & description = QString(),
     Property * parent = nullptr,
-    const char * changed_slot = nullptr);
+    const char * changed_slot = nullptr,
+    QObject * receiver = nullptr);
 
   ~CovarianceProperty() override = default;
 

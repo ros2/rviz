@@ -98,7 +98,7 @@ PoseWithCovarianceDisplay::PoseWithCovarianceDisplay()
 
   covariance_property_ = new rviz_common::properties::CovarianceProperty(
     "Covariance", true, "Whether or not the covariances of the messages should be shown.",
-    this, SLOT(updateCovariance()));
+    this, SLOT(updateCovariance()), this);
 }
 
 void PoseWithCovarianceDisplay::onInitialize()

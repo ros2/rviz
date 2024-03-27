@@ -135,7 +135,7 @@ void OdometryDisplay::setupProperties()
   covariance_property_ = new rviz_common::properties::CovarianceProperty(
     "Covariance", true,
     "Whether or not the covariances of the messages should be shown.",
-    this, SLOT(updateCovariances()));
+    this, SLOT(updateCovariances()), this);
 }
 
 OdometryDisplay::~OdometryDisplay() = default;
