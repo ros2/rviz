@@ -134,5 +134,20 @@ void QosProfileProperty::updateQosProfile()
   qos_changed_callback_(rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(profile), profile));
 }
 
+void QosProfileProperty::setQoSProfile(const rclcpp::QoS & new_qos)
+{
+  const auto & depth_policy = new_qos.get_rmw_qos_profile().depth;
+  const auto & history_policy_qstr = history_policies.at(new_qos.get_rmw_qos_profile().history);
+  const auto & reliability_policy_qstr =
+    reliability_policies.at(new_qos.get_rmw_qos_profile().reliability);
+  const auto & durability_policy_qstr =
+    durability_policies.at(new_qos.get_rmw_qos_profile().durability);
+
+  depth_property_->setInt(static_cast<int>(depth_policy));
+  history_policy_property_->setString(history_policy_qstr);
+  reliability_policy_property_->setString(reliability_policy_qstr);
+  durability_policy_property_->setString(durability_policy_qstr);
+}
+
 }  // namespace properties
 }  // namespace rviz_common
