@@ -2,6 +2,11 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixed camera info warning (`#1175 <https://github.com/ros2/rviz/issues/1175>`_)
+* Contributors: Alejandro Hernández Cordero
+
 13.4.1 (2024-03-26)
 -------------------
 * Added CameraInfo display (`#1166 <https://github.com/ros2/rviz/issues/1166>`_)

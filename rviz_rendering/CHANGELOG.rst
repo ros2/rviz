@@ -2,6 +2,9 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 13.4.1 (2024-03-26)
 -------------------
 * Added CameraInfo display (`#1166 <https://github.com/ros2/rviz/issues/1166>`_)
