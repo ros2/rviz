@@ -31,7 +31,7 @@ if(WIN32)
 
   ament_vendor(zlib_vendor
     VCS_URL https://github.com/madler/zlib.git
-    VCS_VERSION v1.2.13
+    VCS_VERSION v1.3
     CMAKE_ARGS
       # zlib doesn't use CMAKE_INSTALL_PREFIX correctly, so we need to override
       -DINSTALL_BIN_DIR=<INSTALL_DIR>/bin
