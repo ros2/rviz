@@ -1205,3 +1205,7 @@ endif()
 ament_package(
   CONFIG_EXTRAS "rviz_default_plugins-extras.cmake"
 )
+
+if(TEST cpplint)
+  set_tests_properties(cpplint PROPERTIES TIMEOUT 180)
+endif()
