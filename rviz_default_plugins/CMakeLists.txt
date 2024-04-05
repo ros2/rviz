@@ -288,9 +288,11 @@ ament_export_dependencies(
   laser_geometry
   map_msgs
   nav_msgs
+  point_cloud_transport
   rclcpp
   rviz_common
   rviz_ogre_vendor
+  rviz_rendering
   sensor_msgs
   tf2
   tf2_geometry_msgs
