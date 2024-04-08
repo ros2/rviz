@@ -34,14 +34,13 @@ endif()
 ament_vendor(assimp_vendor
   SATISFIED ${assimp_FOUND}
   VCS_URL https://github.com/assimp/assimp.git
-  VCS_VERSION v5.2.2
+  VCS_VERSION v5.3.1
   CMAKE_ARGS
     -DASSIMP_BUILD_ASSIMP_TOOLS:BOOL=OFF
     -DASSIMP_BUILD_TESTS:BOOL=OFF
     -DASSIMP_BUILD_SAMPLES:BOOL=OFF
     "${ASSIMP_CMAKE_FLAGS}"
     "-DCMAKE_CXX_FLAGS=${ASSIMP_CXX_FLAGS}"
-  PATCHES patches
 )
 
 if(BUILD_TESTING)
