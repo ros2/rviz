@@ -47,6 +47,7 @@ find_package(tf2_ros REQUIRED)
 find_package(message_filters REQUIRED)
 find_package(urdf REQUIRED)
 find_package(yaml_cpp_vendor REQUIRED)
+find_package(yaml-cpp REQUIRED)
 
 find_package(TinyXML2 REQUIRED)  # provided by tinyxml2_vendor
 
@@ -248,7 +249,7 @@ target_link_libraries(rviz_common PUBLIC
   ${std_srvs_TARGETS}
   tf2::tf2
   tf2_ros::tf2_ros
-  yaml-cpp
+  yaml-cpp::yaml-cpp
 )
 
 target_link_libraries(rviz_common PRIVATE
@@ -274,6 +275,7 @@ ament_export_dependencies(
   tf2
   tf2_ros
   yaml_cpp_vendor
+  yaml-cpp
 )
 
 # Export old-style CMake variables
@@ -443,7 +445,7 @@ if(BUILD_TESTING)
     test/mock_property_change_receiver.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET rviz_common_display_test)
-    target_link_libraries(rviz_common_display_test rviz_common Qt5::Widgets yaml-cpp)
+    target_link_libraries(rviz_common_display_test rviz_common Qt5::Widgets yaml-cpp::yaml-cpp)
   endif()
 endif()
 
