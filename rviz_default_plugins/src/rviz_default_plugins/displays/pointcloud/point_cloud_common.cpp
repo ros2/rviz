@@ -214,14 +214,13 @@ void PointCloudCommon::loadTransformer(
   transformers_[name] = info;
 }
 
-// TODO(anhosi): check if still needed when migrating DepthCloud
-// void PointCloudCommon::setAutoSize(bool auto_size)
-// {
-//   auto_size_ = auto_size;
-//   for (auto const & cloud_info : cloud_infos_) {
-//     cloud_info->cloud_->setAutoSize(auto_size);
-//   }
-// }
+void PointCloudCommon::setAutoSize(bool auto_size)
+{
+  auto_size_ = auto_size;
+  for (auto const & cloud_info : cloud_infos_) {
+    cloud_info->cloud_->setAutoSize(auto_size);
+  }
+}
 
 void PointCloudCommon::updateAlpha()
 {
@@ -511,9 +510,11 @@ void PointCloudCommon::processMessage(const sensor_msgs::msg::PointCloud2::Const
   info->receive_time_ = clock_->now();
 
   if (transformCloud(info, true)) {
+    rclcpp::Time time_stamp(cloud->header.stamp, RCL_ROS_TIME);
+
     std::unique_lock<std::mutex> lock(new_clouds_mutex_);
     new_cloud_infos_.push_back(info);
-    display_->emitTimeSignal(cloud->header.stamp);
+    display_->emitTimeSignal(time_stamp);
   }
 }
 

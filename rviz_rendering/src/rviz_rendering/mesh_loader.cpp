@@ -65,10 +65,7 @@
 #include "resource_retriever/retriever.hpp"
 
 #include "mesh_loader_helpers/assimp_loader.hpp"
-#include "mesh_loader_helpers/stl_loader.hpp"
 #include "rviz_rendering/logging.hpp"
-
-#define ROS_PACKAGE_NAME "rviz_rendering"
 
 namespace rviz_rendering
 {
@@ -109,20 +106,6 @@ Ogre::MeshPtr loadMeshFromResource(const std::string & resource_path)
       stream->close();
 
       return mesh;
-    } else if (ext == "stl" || ext == "STL" || ext == "stlb" || ext == "STLB") {
-      auto res = getResource(resource_path);
-
-      if (res.size == 0) {
-        return Ogre::MeshPtr();
-      }
-
-      STLLoader stl_loader;
-      if (!stl_loader.load(res.data.get(), res.size, resource_path)) {
-        RVIZ_RENDERING_LOG_ERROR_STREAM("Failed to load file [" << resource_path.c_str() << "]");
-        return Ogre::MeshPtr();
-      }
-
-      return stl_loader.toMesh(resource_path);
     } else {
       AssimpLoader assimp_loader;
 

@@ -95,13 +95,6 @@ public:
   void
   setApp(QApplication * app);
 
-  // TODO(wjwwood): figure out how to preserve the "choost new master" feature
-#if 0
-  /// Call this before initialize() to have it take effect.
-  void
-  setShowChooseNewMaster(bool show);
-#endif
-
   /// Set the path to the html help file.
   /**
    * Default is a file within the rviz_common package.
@@ -132,6 +125,19 @@ public:
   initialize(
     ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
     const QString & display_config_file = "");
+
+  /// Set the display title format.
+  /**
+   * Sets the format of the window title.
+   * Three replacement tokens are supported:
+   *  - {NAMESPACE} - replace with the namespace this node is in
+   *  - {CONFIG_PATH} - replace with the path (but not the filename) of the configuration file in use.
+   *  - {CONFIG_FILENAME} - replace with the filename (but not the path) of the configuration file in use.
+   * The default is "RViz[*]" if the default configuration file is in use,
+   * or "{CONFIG_PATH}/{CONFIG_FILENAME}[*] - RViz" if a custom configuration file is in use.
+   */
+  void
+  setDisplayTitleFormat(const QString & title_format);
 
   /// Return the visualization manager.
   VisualizationManager *
@@ -232,6 +238,14 @@ public Q_SLOTS:
   void
   setStatus(const QString & message) override;
 
+  /// Set full screen mode.
+  void
+  setFullScreen(bool full_screen);
+
+  /// Exit full screen mode.
+  void
+  exitFullScreen();
+
 Q_SIGNALS:
   /// Emitted during file-loading and initialization to indicate progress.
   void
@@ -261,10 +275,6 @@ protected Q_SLOTS:
   /// Handle QActions, often fired when panels are added or removed.
   void
   onRecentConfigSelected();
-
-  /// Handle event to display the help on the ROS wiki.
-  void
-  onHelpWiki();
 
   /// Handle event to show the about dialog.
   void
@@ -300,6 +310,9 @@ protected Q_SLOTS:
   void
   addTool(Tool * tool);
 
+  /// React to name changes of a tool, updating the name of the associated QAction
+  void onToolNameChanged(const QString & name);
+
   /// Remove the given tool from the frame's toolbar.
   void
   removeTool(Tool * tool);
@@ -319,17 +332,6 @@ protected Q_SLOTS:
   void
   indicateToolIsCurrent(Tool * tool);
 
-  // TODO(wjwwood): figure out how to reenable this, or how it might be useful in ROS 2
-#if 0
-  /// Restart rviz with a new master.
-  /**
-   * Save the current state and quit with exit code 255 to signal the wrapper
-   * that we would like to restart with a different ROS master URI.
-   */
-  void
-  changeMaster();
-#endif
-
   /// Delete a panel widget.
   /**
    * The sender() of the signal should be a QAction whose text() is
@@ -337,14 +339,6 @@ protected Q_SLOTS:
    */
   void
   onDeletePanel();
-
-  /// Set full screen mode.
-  void
-  setFullScreen(bool full_screen);
-
-  /// Exit full screen mode.
-  void
-  exitFullScreen();
 
   /// Indicate that loading is done.
   void
@@ -463,6 +457,7 @@ protected:
 
   std::string config_dir_;
   std::string persistent_settings_file_;
+  std::string display_title_format_;
   std::string display_config_file_;
   std::string default_display_config_file_;
   std::string last_config_dir_;

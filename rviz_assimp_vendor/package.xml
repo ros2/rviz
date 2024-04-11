@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>rviz_assimp_vendor</name>
-  <version>12.4.0</version>
+  <version>14.0.0</version>
   <description>
     Wrapper around assimp, providing nothing but a dependency on assimp, on some systems.
     On others, it provides a fixed CMake module or even an ExternalProject build of assimp.
@@ -22,6 +22,7 @@
   <author email="william@openrobotics.org">William Woodall</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_vendor_package</buildtool_depend>
 
   <depend>assimp</depend>
 

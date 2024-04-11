@@ -204,7 +204,8 @@ bool PoseArrayDisplay::validateFloats(const geometry_msgs::msg::PoseArray & msg)
 
 bool PoseArrayDisplay::setTransform(std_msgs::msg::Header const & header)
 {
-  if (!updateFrame(header.frame_id, header.stamp)) {
+  rclcpp::Time time_stamp(header.stamp, RCL_ROS_TIME);
+  if (!updateFrame(header.frame_id, time_stamp)) {
     setMissingTransformToFixedFrame(header.frame_id);
     return false;
   }

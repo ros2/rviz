@@ -59,9 +59,15 @@ using M_ObjectHandleToSelectionHandler =
 class RVIZ_COMMON_PUBLIC HandlerRange
 {
 public:
-  class iterator : public std::iterator<std::forward_iterator_tag, SelectionHandlerWeakPtr>
+  class iterator
   {
 public:
+    using iterator_category = std::forward_iterator_tag;
+    using value_type = SelectionHandlerWeakPtr;
+    using difference_type = std::ptrdiff_t;
+    using pointer = SelectionHandlerWeakPtr *;
+    using reference = SelectionHandlerWeakPtr &;
+
     // TODO(anhosi) uncrustify does not handle this identation correctly
     reference operator*() const
     {

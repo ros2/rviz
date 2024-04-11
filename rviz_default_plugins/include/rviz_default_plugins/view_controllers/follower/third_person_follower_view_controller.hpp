@@ -52,4 +52,6 @@ protected:
 }  // namespace view_controllers
 }  // namespace rviz_default_plugins
 
+// *INDENT-OFF*
 #endif  // RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__FOLLOWER__THIRD_PERSON_FOLLOWER_VIEW_CONTROLLER_HPP_
+// *INDENT-ON*

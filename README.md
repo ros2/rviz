@@ -15,13 +15,15 @@ For some displays, the [documentation is updated](docs/FEATURES.md).
 | Displays              | Tools         | View Controller       | Panels          |
 | --------------------- | ------------- | --------------------- | --------------- |
 | Axes                  | Move Camera   | Orbit                 | Displays        |
-| Camera                | Focus Camera  | XY Orbit              | Help            | 
-| Fluid Pressure        | Measure       | First Person          | Selections      |
-| Grid                  | Select        | Third Person Follower | Time            |
-| Grid Cells            | 2D Nav Goal   | Top Down Orthographic | Tool Properties |
-| Illuminance           | Publish Point |                       | Views           |
-| Image                 | Initial Pose  |
-| Interactive Marker    | Interact      |
+| Camera                | Focus Camera  | XY Orbit              | Help            |
+| DepthCloud            | Measure       | First Person          | Selections      |
+| Effort                | Select        | Third Person Follower | Time            |
+| Fluid                 | 2D Nav Goal   | Top Down Orthographic | Tool Properties |
+| Grid                  | Publish Point |                       | Views           |
+| Grid Cells            | Initial Pose  |
+| Illuminance           | Interact      |
+| Image                 |
+| Interactive Marker    |
 | Laser Scan            |
 | Map                   |
 | Marker                |
@@ -42,13 +44,6 @@ For some displays, the [documentation is updated](docs/FEATURES.md).
 
 
 ### Not yet ported
-These features have not been ported to `ros2/rviz` yet.
-
-| Displays      |
-| ------------- |
-| DepthCloud    |
-| Effort        |
-
 Other features:
 - Stereo
 

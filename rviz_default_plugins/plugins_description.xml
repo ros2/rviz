@@ -1,6 +1,16 @@
 <library path="rviz_default_plugins">
 
   <!-- Displays plugins -->
+  <class
+    name="rviz_default_plugins/AccelStamped"
+    type="rviz_default_plugins::displays::AccelStampedDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays from geometry_msgs/AccelStamped message
+    </description>
+    <message_type>geometry_msgs/msg/AccelStamped</message_type>
+  </class>
 
   <class
     name="rviz_default_plugins/Axes"
@@ -23,6 +33,39 @@
     </description>
     <message_type>sensor_msgs/msg/Image</message_type>
     <message_type>sensor_msgs/msg/CompressedImage</message_type>
+  </class>
+
+  <class
+    name="rviz_default_plugins/DepthCloud"
+    type="rviz_default_plugins::displays::DepthCloudDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays point clouds based on depth maps.
+    </description>
+    <message_type>sensor_msgs/msg/Image</message_type>
+  </class>
+
+  <class
+    name="rviz_default_plugins/CameraInfo"
+    type="rviz_default_plugins::displays::CameraInfoDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays CameraInfo.
+    </description>
+    <message_type>sensor_msgs/msg/CameraInfo</message_type>
+  </class>
+
+  <class
+    name="rviz_default_plugins/Effort"
+    type="rviz_default_plugins::displays::EffortDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      The Effort display shows a sensor_msgs/JointState/effort message as circled arrows around each revolute joint in the robot.
+    </description>
+    <message_type>sensor_msgs/msg/JointState</message_type>
   </class>
 
   <class
@@ -218,6 +261,17 @@
       Displays the TF transform hierarchy.  &lt;a href="http://www.ros.org/wiki/rviz/DisplayTypes/TF"&gt;More Information&lt;/a&gt;.
     </description>
     <message_type>tf2_msgs/msg/TFMessage</message_type>
+  </class>
+
+  <class
+    name="rviz_default_plugins/TwistStamped"
+    type="rviz_default_plugins::displays::TwistStampedDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays from geometry_msgs/TwistStamped message
+    </description>
+    <message_type>geometry_msgs/msg/TwistStamped</message_type>
   </class>
 
   <class

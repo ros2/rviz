@@ -116,7 +116,7 @@ void RenderPanel::initialize(DisplayContext * context, bool use_main_scene)
     camera_node->attachObject(default_camera);
     camera_node->setPosition(default_camera_pose_);
     camera_node->lookAt(Ogre::Vector3(0, 0, 0), Ogre::Node::TS_WORLD);
-
+    rviz_rendering::RenderWindowOgreAdapter::setSceneNodeCamera(render_window_, camera_node);
     rviz_rendering::RenderWindowOgreAdapter::setOgreCamera(render_window_, default_camera);
   }
   // scene_manager_ = scene_manager;
@@ -336,16 +336,4 @@ void RenderPanel::contextMenuEvent(QContextMenuEvent * event)
     context_menu->exec(QCursor::pos());
   }
 }
-
-#if 0
-void RenderPanel::sceneManagerDestroyed(Ogre::SceneManager * destroyed_scene_manager)
-{
-  if (destroyed_scene_manager == scene_manager_) {
-    scene_manager_ = nullptr;
-    default_camera_ = nullptr;
-    setCamera(nullptr);
-  }
-}
-#endif
-
 }  // namespace rviz_common

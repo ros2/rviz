@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>rviz_common</name>
-  <version>12.4.0</version>
+  <version>14.0.0</version>
   <description>
     Common rviz API, used by rviz plugins and applications.
   </description>
@@ -26,6 +26,7 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <build_depend>libqt5-svg-dev</build_depend>
   <build_depend>qtbase5-dev</build_depend>
 
   <build_export_depend>qtbase5-dev</build_export_depend>
@@ -33,6 +34,7 @@
   <exec_depend>libqt5-core</exec_depend>
   <exec_depend>libqt5-gui</exec_depend>
   <exec_depend>libqt5-opengl</exec_depend>
+  <exec_depend>libqt5-svg</exec_depend>
   <exec_depend>libqt5-widgets</exec_depend>
 
   <depend>geometry_msgs</depend>
@@ -43,8 +45,8 @@
   <depend>rviz_rendering</depend>
   <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>
+  <depend>std_srvs</depend>
   <depend>tf2</depend>
-  <depend>tf2_geometry_msgs</depend>
   <depend>tf2_ros</depend>
   <depend>message_filters</depend>
   <depend>tinyxml2_vendor</depend>

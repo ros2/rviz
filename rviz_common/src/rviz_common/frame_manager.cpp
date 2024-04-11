@@ -291,48 +291,6 @@ const std::string & FrameManager::getFixedFrame()
   return fixed_frame_;
 }
 
-std::string getTransformStatusName(const std::string & caller_id)
-{
-  std::stringstream ss;
-  ss << "Transform [sender=" << caller_id << "]";
-  return ss.str();
-}
-
-#if 0
-std::string FrameManager::discoverFailureReason(
-  const std::string & frame_id,
-  const rclcpp::Time & stamp,
-  const std::string & caller_id,
-  tf::FilterFailureReason reason)
-{
-  if (reason == tf::filter_failure_reasons::OutTheBack) {
-    std::stringstream ss;
-    ss << "Message removed because it is too old (frame=[" << frame_id << "], stamp=[" << stamp <<
-      "])";
-    return ss.str();
-  } else {
-    std::string error;
-    if (transformHasProblems(frame_id, stamp, error)) {
-      return error;
-    }
-  }
-
-  return "Unknown reason for transform failure";
-}
-#endif
-
-void FrameManager::messageArrived(
-  const std::string & frame_id,
-  const rclcpp::Time & stamp,
-  const std::string & caller_id,
-  Display * display)
-{
-  Q_UNUSED(frame_id);
-  Q_UNUSED(stamp);
-  using rviz_common::properties::StatusProperty;
-  display->setStatusStd(StatusProperty::Ok, getTransformStatusName(caller_id), "Transform OK");
-}
-
 transformation::TransformationLibraryConnector::WeakPtr FrameManager::getConnector()
 {
   return transformer_->getConnector();
@@ -364,20 +322,5 @@ void FrameManager::setTransformerPlugin(
 {
   transformer_ = transformer;
 }
-
-#if 0
-void FrameManager::messageFailed(
-  const std::string & frame_id,
-  const rclcpp::Time & stamp,
-  const std::string & caller_id,
-  tf::FilterFailureReason reason,
-  Display * display)
-{
-  std::string status_name = getTransformStatusName(caller_id);
-  std::string status_text = discoverFailureReason(frame_id, stamp, caller_id, reason);
-
-  display->setStatusStd(StatusProperty::Error, status_name, status_text);
-}
-#endif
 
 }  // namespace rviz_common

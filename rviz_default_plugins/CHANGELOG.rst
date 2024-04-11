@@ -2,6 +2,119 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.0.0 (2024-04-07)
+-------------------
+* Make sure to export all rviz_default_plugins dependencies. (`#1181 <https://github.com/ros2/rviz/issues/1181>`_)
+* Increase the cpplint timeout to 180 seconds. (`#1179 <https://github.com/ros2/rviz/issues/1179>`_)
+* Switch to gz_math_vendor. (`#1177 <https://github.com/ros2/rviz/issues/1177>`_)
+* Contributors: Chris Lalancette
+
+13.4.2 (2024-03-27)
+-------------------
+* Fixed camera info warning (`#1175 <https://github.com/ros2/rviz/issues/1175>`_)
+* Contributors: Alejandro Hernández Cordero
+
+13.4.1 (2024-03-26)
+-------------------
+* Added CameraInfo display (`#1166 <https://github.com/ros2/rviz/issues/1166>`_)
+* apply origin rotation to inertia box visualization (`#1171 <https://github.com/ros2/rviz/issues/1171>`_)
+* Added regex filter field for TF display (`#1032 <https://github.com/ros2/rviz/issues/1032>`_)
+* Added point_cloud_transport (`#1008 <https://github.com/ros2/rviz/issues/1008>`_)
+* Contributors: Alejandro Hernández Cordero, Jonas Otto
+
+13.4.0 (2024-03-09)
+-------------------
+* Select QoS reliability policy in DepthCloud Plugin (`#1159 <https://github.com/ros2/rviz/issues/1159>`_)
+* Fixed crash on DepthCloud plugin (`#1161 <https://github.com/ros2/rviz/issues/1161>`_)
+* Fixes for uncrustify 0.78. (`#1155 <https://github.com/ros2/rviz/issues/1155>`_)
+  Mostly what we do here is to disable the indentation on
+  certain constructs that are different between 0.72 and
+  0.78.  It isn't my preferred solution, but since it only
+  affects a small amount of code (and most of that in macros),
+  this seems acceptable to me.
+* Fixed crash on DepthCloudPlugin (`#1133 <https://github.com/ros2/rviz/issues/1133>`_)
+* Wrench accepth nan values fix (`#1141 <https://github.com/ros2/rviz/issues/1141>`_)
+* DepthCloud plugin: Append measured subscription frequency to topic status (`#1137 <https://github.com/ros2/rviz/issues/1137>`_)
+* Added Cache to camera display for TimeExact (`#1138 <https://github.com/ros2/rviz/issues/1138>`_)
+* Fixed transport name in DepthCloud plugin (`#1134 <https://github.com/ros2/rviz/issues/1134>`_)
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette
+
+13.3.1 (2024-01-24)
+-------------------
+* Fix time-syncing message (`#1121 <https://github.com/ros2/rviz/issues/1121>`_)
+* Switch from ROS_TIME to SYSTEM_TIME on rclcpp::Time construction (`#1117 <https://github.com/ros2/rviz/issues/1117>`_)
+* Append measured subscription frequency to topic status (`#1113 <https://github.com/ros2/rviz/issues/1113>`_)
+* Contributors: Alejandro Hernández Cordero, Austin Moore, Yadu
+
+13.3.0 (2023-12-26)
+-------------------
+* Fix typo (`#1104 <https://github.com/ros2/rviz/issues/1104>`_)
+* Fix potencial leak / seg fault (`#726 <https://github.com/ros2/rviz/issues/726>`_)
+* Fixed screw display (`#1093 <https://github.com/ros2/rviz/issues/1093>`_)
+* Explicit time conversions and comparisons (`#1087 <https://github.com/ros2/rviz/issues/1087>`_)
+* Handle missing effort limit in URDF (`#1084 <https://github.com/ros2/rviz/issues/1084>`_)
+* Contributors: AiVerisimilitude, Alejandro Hernández Cordero, Christoph Fröhlich, Patrick Roncagliolo
+
+13.2.0 (2023-11-06)
+-------------------
+* (robot) fix styling of log msg (`#1080 <https://github.com/ros2/rviz/issues/1080>`_)
+* Fix image display wrapping (`#1038 <https://github.com/ros2/rviz/issues/1038>`_)
+* removed enableInteraction reference (`#1075 <https://github.com/ros2/rviz/issues/1075>`_)
+* Contributors: Alejandro Hernández Cordero, Lewe Christiansen, Matthijs van der Burgh
+
+13.1.2 (2023-10-09)
+-------------------
+* Fix ODR violations in interactive_marker displays. (`#1068 <https://github.com/ros2/rviz/issues/1068>`_)
+* Contributors: Chris Lalancette
+
+13.1.1 (2023-10-04)
+-------------------
+
+13.1.0 (2023-09-07)
+-------------------
+* Improve error handling in LaserScanDisplay (`#1035 <https://github.com/ros2/rviz/issues/1035>`_)
+* Fix implicit capture of "this" warning in C++20 (`#1053 <https://github.com/ros2/rviz/issues/1053>`_)
+* Removed unused code (`#1044 <https://github.com/ros2/rviz/issues/1044>`_)
+* Contributors: AiVerisimilitude, Alejandro Hernández Cordero
+
+13.0.0 (2023-08-21)
+-------------------
+* Fixed AccelStamped, TwistStamped and Wrench icons (`#1041 <https://github.com/ros2/rviz/issues/1041>`_)
+* Fix the flakey rviz_rendering tests (`#1026 <https://github.com/ros2/rviz/issues/1026>`_)
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette
+
+12.8.0 (2023-08-27)
+-------------------
+* Don't pass screw_display.hpp to the moc generator. (`#1018 <https://github.com/ros2/rviz/issues/1018>`_)
+  Since it isn't a Qt class, you get a warning from moc:
+  Note: No relevant classes found. No output generated.
+  Just skip adding it to the moc list here, which gets rid
+  of the warning.
+* Added DepthCloud default plugin (`#996 <https://github.com/ros2/rviz/issues/996>`_)
+* Added TwistStamped and AccelStamped default plugins (`#991 <https://github.com/ros2/rviz/issues/991>`_)
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette
+
+12.7.0 (2023-07-11)
+-------------------
+* Added Effort plugin (`#990 <https://github.com/ros2/rviz/issues/990>`_)
+* Improve the compilation time of rviz_default_plugins (`#1007 <https://github.com/ros2/rviz/issues/1007>`_)
+* Switch to ament_cmake_vendor_package (`#995 <https://github.com/ros2/rviz/issues/995>`_)
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette, Scott K Logan
+
+12.6.1 (2023-06-12)
+-------------------
+
+12.6.0 (2023-06-07)
+-------------------
+* Modify access specifier to protected or public for the scope of processMessage() member function (`#984 <https://github.com/ros2/rviz/issues/984>`_)
+* Contributors: Hyunseok
+
+12.5.1 (2023-05-11)
+-------------------
+
+12.5.0 (2023-04-28)
+-------------------
+
 12.4.0 (2023-04-18)
 -------------------
 

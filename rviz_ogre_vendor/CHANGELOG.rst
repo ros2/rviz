@@ -2,6 +2,87 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.0.0 (2024-04-07)
+-------------------
+
+13.4.2 (2024-03-27)
+-------------------
+
+13.4.1 (2024-03-26)
+-------------------
+
+13.4.0 (2024-03-09)
+-------------------
+* Change an rviz_ogre_vendor dependency to libfreetype-dev. (`#1167 <https://github.com/ros2/rviz/issues/1167>`_)
+  The situation is complicated, but in versions of Ubuntu
+  prior to Focal and versions of Debian prior to Bookworm,
+  the name of the library was 'libfreetype6-dev'.  Since
+  Focal and Bookworm, the name of the library is 'libfreetype-dev'.
+  While 'libfreetype-dev' provides a "virtual package"
+  for 'libfreetype6-dev', we should really use the new canonical
+  name.
+  Further, there is currently a bug on ros_buildfarm where
+  it doesn't properly deal with "virtual packages" like this.
+  This is currently preventing this package from building on
+  Ubuntu Noble.  That bug is being worked on separately.
+  Finally, I'll note that we already have a libfreetype-dev
+  key in rosdep, so we just switch to using that here which
+  should work around the bug on the buildfarm, and also use
+  the correct canonical name going forward.
+* fix: modify typo in cmake args for mac (`#1160 <https://github.com/ros2/rviz/issues/1160>`_)
+* feat: support macos (`#1156 <https://github.com/ros2/rviz/issues/1156>`_)
+* Contributors: Chris Lalancette, Daisuke Nishimatsu
+
+13.3.1 (2024-01-24)
+-------------------
+
+13.3.0 (2023-12-26)
+-------------------
+* Suppress a couple more of clang warnings in rviz_ogre_vendor. (`#1102 <https://github.com/ros2/rviz/issues/1102>`_)
+* Contributors: Chris Lalancette
+
+13.2.0 (2023-11-06)
+-------------------
+
+13.1.2 (2023-10-09)
+-------------------
+
+13.1.1 (2023-10-04)
+-------------------
+
+13.1.0 (2023-09-07)
+-------------------
+
+13.0.0 (2023-08-21)
+-------------------
+
+12.8.0 (2023-08-27)
+-------------------
+
+12.7.0 (2023-07-11)
+-------------------
+* Fix the vendoring flags for clang compilation. (`#1003 <https://github.com/ros2/rviz/issues/1003>`_)
+  Several of the flags are not available on clang, so
+  don't add them there.  This fixes the clang build for
+  me locally.
+* Switch to ament_cmake_vendor_package (`#995 <https://github.com/ros2/rviz/issues/995>`_)
+* Contributors: Chris Lalancette, Scott K Logan
+
+12.6.1 (2023-06-12)
+-------------------
+
+12.6.0 (2023-06-07)
+-------------------
+* CMake: rename FeatureSummary.cmake to avoid name clashes (`#953 <https://github.com/ros2/rviz/issues/953>`_)
+* FIX CVE in external libraries (`#961 <https://github.com/ros2/rviz/issues/961>`_)
+* Contributors: Gökçe Aydos, mosfet80
+
+12.5.1 (2023-05-11)
+-------------------
+
+12.5.0 (2023-04-28)
+-------------------
+
 12.4.0 (2023-04-18)
 -------------------
 
