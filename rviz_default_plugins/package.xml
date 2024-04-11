@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>rviz_default_plugins</name>
-  <version>13.3.0</version>
+  <version>14.0.0</version>
   <description>
     Several default plugins for rviz to cover the basic functionality.
   </description>
@@ -38,13 +38,14 @@
   <exec_depend>rviz_ogre_vendor</exec_depend>
 
   <depend>geometry_msgs</depend>
-  <depend>ignition_math6_vendor</depend>
+  <depend>gz_math_vendor</depend>
   <depend>image_transport</depend>
   <depend>interactive_markers</depend>
   <depend>laser_geometry</depend>
   <depend>nav_msgs</depend>
   <depend>map_msgs</depend>
   <depend>pluginlib</depend>
+  <depend>point_cloud_transport</depend>
   <depend>rclcpp</depend>
   <depend>resource_retriever</depend>
   <depend>rviz_common</depend>

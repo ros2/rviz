@@ -72,6 +72,7 @@ namespace properties
 class BoolProperty;
 class FloatProperty;
 class QuaternionProperty;
+class RegexFilterProperty;
 class StringProperty;
 class VectorProperty;
 }  // namespace properties
@@ -118,6 +119,8 @@ private:
   FrameInfo * createFrame(const std::string & frame);
   void updateFrame(FrameInfo * frame);
   void deleteFrame(FrameInfo * frame, bool delete_properties);
+  typedef std::map<std::string, FrameInfo *> M_FrameInfo;
+  M_FrameInfo::iterator deleteFrame(M_FrameInfo::iterator it, bool delete_properties);
   FrameInfo * getFrameInfo(const std::string & frame);
   void clear();
 
@@ -129,7 +132,6 @@ private:
   Ogre::SceneNode * arrows_node_;
   Ogre::SceneNode * axes_node_;
 
-  typedef std::map<std::string, FrameInfo *> M_FrameInfo;
   M_FrameInfo frames_;
 
   typedef std::map<std::string, bool> M_EnabledState;
@@ -145,6 +147,9 @@ private:
   rviz_common::properties::BoolProperty * all_enabled_property_;
 
   rviz_common::properties::FloatProperty * scale_property_;
+
+  rviz_common::properties::RegexFilterProperty * filter_whitelist_property_;
+  rviz_common::properties::RegexFilterProperty * filter_blacklist_property_;
 
   rviz_common::properties::Property * frames_category_;
   rviz_common::properties::Property * tree_category_;
@@ -169,7 +174,6 @@ private:
   void updateParentTreeProperty(FrameInfo * frame) const;
 
   void deleteObsoleteFrames(std::set<FrameInfo *> & current_frames);
-  S_FrameInfo createOrUpdateFrames(const std::vector<std::string> & frames);
 
   friend class FrameInfo;
 };

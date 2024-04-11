@@ -50,11 +50,11 @@
 
 #include <QFileInfo>  // NOLINT cpplint cannot handle include order here
 
-#include <ignition/math/Inertial.hh>
-#include <ignition/math/MassMatrix3.hh>
-#include <ignition/math/Pose3.hh>
-#include <ignition/math/Quaternion.hh>
-#include <ignition/math/Vector3.hh>
+#include <gz/math/Inertial.hh>
+#include <gz/math/MassMatrix3.hh>
+#include <gz/math/Pose3.hh>
+#include <gz/math/Quaternion.hh>
+#include <gz/math/Vector3.hh>
 
 #include "resource_retriever/retriever.hpp"
 
@@ -871,18 +871,18 @@ void RobotLink::createMass(const urdf::LinkConstSharedPtr & link)
 void RobotLink::createInertia(const urdf::LinkConstSharedPtr & link)
 {
   if (link->inertial) {
-    const ignition::math::Vector3d i_xx_yy_zz(
+    const gz::math::Vector3d i_xx_yy_zz(
       link->inertial->ixx,
       link->inertial->iyy,
       link->inertial->izz);
-    const ignition::math::Vector3d Ixyxzyz(
+    const gz::math::Vector3d Ixyxzyz(
       link->inertial->ixy,
       link->inertial->ixz,
       link->inertial->iyz);
-    ignition::math::MassMatrix3d mass_matrix(link->inertial->mass, i_xx_yy_zz, Ixyxzyz);
+    gz::math::MassMatrix3d mass_matrix(link->inertial->mass, i_xx_yy_zz, Ixyxzyz);
 
-    ignition::math::Vector3d box_scale;
-    ignition::math::Quaterniond box_rot;
+    gz::math::Vector3d box_scale;
+    gz::math::Quaterniond box_rot;
     if (!mass_matrix.EquivalentBox(box_scale, box_rot)) {
       // Invalid inertia, load with default scale
       if (link->parent_joint && link->parent_joint->type != urdf::Joint::FIXED) {
@@ -897,8 +897,14 @@ void RobotLink::createInertia(const urdf::LinkConstSharedPtr & link)
       link->inertial->origin.position.x,
       link->inertial->origin.position.y,
       link->inertial->origin.position.z);
+
+    double x, y, z, w;
+    link->inertial->origin.rotation.getQuaternion(x, y, z, w);
+    Ogre::Quaternion originRotate(w, x, y, z);
+
     Ogre::Quaternion rotate(box_rot.W(), box_rot.X(), box_rot.Y(), box_rot.Z());
-    Ogre::SceneNode * offset_node = inertia_node_->createChildSceneNode(translate, rotate);
+    Ogre::SceneNode * offset_node = inertia_node_->createChildSceneNode(
+      translate, originRotate * rotate);
     inertia_shape_ = new Shape(Shape::Cube, scene_manager_, offset_node);
 
     inertia_shape_->setColor(1, 0, 0, 1);

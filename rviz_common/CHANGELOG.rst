@@ -2,6 +2,37 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.0.0 (2024-04-07)
+-------------------
+
+13.4.2 (2024-03-27)
+-------------------
+
+13.4.1 (2024-03-26)
+-------------------
+* Remove regex_filter_property.hpp from the moc lines. (`#1172 <https://github.com/ros2/rviz/issues/1172>`_)
+  Since it has no SLOTS or SIGNALS, we don't need to run
+  MOC on it.  That will both speed up the compilation and
+  remove a warning when building.
+* Added regex filter field for TF display (`#1032 <https://github.com/ros2/rviz/issues/1032>`_)
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette
+
+13.4.0 (2024-03-09)
+-------------------
+* Fix camera display overlay (`#1151 <https://github.com/ros2/rviz/issues/1151>`_)
+* Fixes for uncrustify 0.78. (`#1155 <https://github.com/ros2/rviz/issues/1155>`_)
+  Mostly what we do here is to disable the indentation on
+  certain constructs that are different between 0.72 and
+  0.78.  It isn't my preferred solution, but since it only
+  affects a small amount of code (and most of that in macros),
+  this seems acceptable to me.
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette
+
+13.3.1 (2024-01-24)
+-------------------
+* Append measured subscription frequency to topic status (`#1113 <https://github.com/ros2/rviz/issues/1113>`_)
+* Contributors: Yadu
+
 13.3.0 (2023-12-26)
 -------------------
 * Implement reset time service (`#1109 <https://github.com/ros2/rviz/issues/1109>`_)

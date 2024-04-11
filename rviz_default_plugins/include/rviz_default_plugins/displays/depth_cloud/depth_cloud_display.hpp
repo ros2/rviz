@@ -104,6 +104,10 @@ protected Q_SLOTS:
   /** @brief Fill list of available and working transport options */
   void fillTransportOptionList(rviz_common::properties::EnumProperty * property);
 
+  void transformerChangedCallback();
+
+  void updateQosProfile();
+
   // Property callbacks
   virtual void updateTopic();
   virtual void updateTopicFilter();
@@ -155,8 +159,11 @@ protected:
   typedef message_filters::Synchronizer<SyncPolicyDepthColor> SynchronizerDepthColor;
 
   std::shared_ptr<SynchronizerDepthColor> sync_depth_color_;
+  rclcpp::Time subscription_start_time_;
 
   // RVIZ properties
+  rviz_common::properties::EditableEnumProperty * reliability_policy_property_;
+  rmw_qos_profile_t qos_profile_;
   rviz_common::properties::Property * topic_filter_property_;
   rviz_common::properties::IntProperty * queue_size_property_;
   rviz_common::properties::BoolProperty * use_auto_size_property_;

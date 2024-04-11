@@ -2,6 +2,50 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.0.0 (2024-04-07)
+-------------------
+* Make sure to export all rviz_default_plugins dependencies. (`#1181 <https://github.com/ros2/rviz/issues/1181>`_)
+* Increase the cpplint timeout to 180 seconds. (`#1179 <https://github.com/ros2/rviz/issues/1179>`_)
+* Switch to gz_math_vendor. (`#1177 <https://github.com/ros2/rviz/issues/1177>`_)
+* Contributors: Chris Lalancette
+
+13.4.2 (2024-03-27)
+-------------------
+* Fixed camera info warning (`#1175 <https://github.com/ros2/rviz/issues/1175>`_)
+* Contributors: Alejandro Hernández Cordero
+
+13.4.1 (2024-03-26)
+-------------------
+* Added CameraInfo display (`#1166 <https://github.com/ros2/rviz/issues/1166>`_)
+* apply origin rotation to inertia box visualization (`#1171 <https://github.com/ros2/rviz/issues/1171>`_)
+* Added regex filter field for TF display (`#1032 <https://github.com/ros2/rviz/issues/1032>`_)
+* Added point_cloud_transport (`#1008 <https://github.com/ros2/rviz/issues/1008>`_)
+* Contributors: Alejandro Hernández Cordero, Jonas Otto
+
+13.4.0 (2024-03-09)
+-------------------
+* Select QoS reliability policy in DepthCloud Plugin (`#1159 <https://github.com/ros2/rviz/issues/1159>`_)
+* Fixed crash on DepthCloud plugin (`#1161 <https://github.com/ros2/rviz/issues/1161>`_)
+* Fixes for uncrustify 0.78. (`#1155 <https://github.com/ros2/rviz/issues/1155>`_)
+  Mostly what we do here is to disable the indentation on
+  certain constructs that are different between 0.72 and
+  0.78.  It isn't my preferred solution, but since it only
+  affects a small amount of code (and most of that in macros),
+  this seems acceptable to me.
+* Fixed crash on DepthCloudPlugin (`#1133 <https://github.com/ros2/rviz/issues/1133>`_)
+* Wrench accepth nan values fix (`#1141 <https://github.com/ros2/rviz/issues/1141>`_)
+* DepthCloud plugin: Append measured subscription frequency to topic status (`#1137 <https://github.com/ros2/rviz/issues/1137>`_)
+* Added Cache to camera display for TimeExact (`#1138 <https://github.com/ros2/rviz/issues/1138>`_)
+* Fixed transport name in DepthCloud plugin (`#1134 <https://github.com/ros2/rviz/issues/1134>`_)
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette
+
+13.3.1 (2024-01-24)
+-------------------
+* Fix time-syncing message (`#1121 <https://github.com/ros2/rviz/issues/1121>`_)
+* Switch from ROS_TIME to SYSTEM_TIME on rclcpp::Time construction (`#1117 <https://github.com/ros2/rviz/issues/1117>`_)
+* Append measured subscription frequency to topic status (`#1113 <https://github.com/ros2/rviz/issues/1113>`_)
+* Contributors: Alejandro Hernández Cordero, Austin Moore, Yadu
+
 13.3.0 (2023-12-26)
 -------------------
 * Fix typo (`#1104 <https://github.com/ros2/rviz/issues/1104>`_)

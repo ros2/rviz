@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2009, Willow Garage, Inc.
- * Copyright (c) 2018, Bosch Software Innovations GmbH.
+ * Copyright (c) 2024, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,31 +26,33 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__CAMERA_INFO_DISPLAY_PAGE_OBJECT_HPP_
+#define RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__CAMERA_INFO_DISPLAY_PAGE_OBJECT_HPP_
 
-#ifndef RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__FOLLOWER__THIRD_PERSON_FOLLOWER_VIEW_CONTROLLER_HPP_
-#define RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__FOLLOWER__THIRD_PERSON_FOLLOWER_VIEW_CONTROLLER_HPP_
+#include "rviz_visual_testing_framework/page_objects/base_page_object.hpp"
 
-#include <OgreVector.h>
+#include <QString>  // NOLINT
 
-#include "rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller.hpp"
-
-namespace rviz_default_plugins
+class CameraInfoDisplayPageObject : public BasePageObject
 {
-namespace view_controllers
-{
+public:
+  CameraInfoDisplayPageObject();
 
-/**
- * \brief Like the XY orbit view controller, but turns when the target frame yaws.
- */
-class ThirdPersonFollowerViewController : public XYOrbitViewController
-{
-protected:
-  void updateTargetSceneNode() override;
+  void setTopic(QString topic);
+  void setFarClip(float far_clip);
+  void setShowEdged(bool show_edges);
+  void setShowPolygon(bool show_polygon);
+  void setNotShowSidePolygon(bool now_show_side_polygon);
+  void setColor(int r, int g, int b);
+  void setEdgeColor(int r, int g, int b);
+
+  void setAlpha(float alpha);
+  void setAngularColor(int r, int g, int b);
+  void setLinearColor(int r, int g, int b);
+  void setAngularScale(float scale);
+  void setLinearScale(float scale);
+  void setWidth(float width);
+  void setHistoryLength(int history);
 };
 
-}  // namespace view_controllers
-}  // namespace rviz_default_plugins
-
-// *INDENT-OFF*
-#endif  // RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__FOLLOWER__THIRD_PERSON_FOLLOWER_VIEW_CONTROLLER_HPP_
-// *INDENT-ON*
+#endif  // RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__CAMERA_INFO_DISPLAY_PAGE_OBJECT_HPP_

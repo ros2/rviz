@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2009, Willow Garage, Inc.
- * Copyright (c) 2018, Bosch Software Innovations GmbH.
+ * Copyright (c) 2024, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,30 +27,50 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__FOLLOWER__THIRD_PERSON_FOLLOWER_VIEW_CONTROLLER_HPP_
-#define RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__FOLLOWER__THIRD_PERSON_FOLLOWER_VIEW_CONTROLLER_HPP_
+#include "camera_info_display_page_object.hpp"
 
-#include <OgreVector.h>
-
-#include "rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller.hpp"
-
-namespace rviz_default_plugins
+CameraInfoDisplayPageObject::CameraInfoDisplayPageObject()
+: BasePageObject(0, "CameraInfo")
 {
-namespace view_controllers
+}
+
+void CameraInfoDisplayPageObject::setTopic(QString topic)
 {
+  setComboBox("Topic", topic);
+  waitForFirstMessage();
+}
 
-/**
- * \brief Like the XY orbit view controller, but turns when the target frame yaws.
- */
-class ThirdPersonFollowerViewController : public XYOrbitViewController
+void CameraInfoDisplayPageObject::setFarClip(float far_clip)
 {
-protected:
-  void updateTargetSceneNode() override;
-};
+  setFloat("Far clip", far_clip);
+}
 
-}  // namespace view_controllers
-}  // namespace rviz_default_plugins
+void CameraInfoDisplayPageObject::setShowEdged(bool show_edges)
+{
+  setBool("Show edges", show_edges);
+}
 
-// *INDENT-OFF*
-#endif  // RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__FOLLOWER__THIRD_PERSON_FOLLOWER_VIEW_CONTROLLER_HPP_
-// *INDENT-ON*
+void CameraInfoDisplayPageObject::setShowPolygon(bool show_polygon)
+{
+  setBool("Show polygons", show_polygon);
+}
+
+void CameraInfoDisplayPageObject::setNotShowSidePolygon(bool now_show_side_polygon)
+{
+  setBool("Not show side polygons", now_show_side_polygon);
+}
+
+void CameraInfoDisplayPageObject::setColor(int r, int g, int b)
+{
+  setColorCode("Color", r, g, b);
+}
+
+void CameraInfoDisplayPageObject::setEdgeColor(int r, int g, int b)
+{
+  setColorCode("Edge color", r, g, b);
+}
+
+void CameraInfoDisplayPageObject::setAlpha(float alpha)
+{
+  setFloat("Alpha", alpha);
+}

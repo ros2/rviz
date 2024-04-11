@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2009, Willow Garage, Inc.
- * Copyright (c) 2018, Bosch Software Innovations GmbH.
+ * Copyright (c) 2023, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,31 +26,52 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef RVIZ_COMMON__PROPERTIES__REGEX_FILTER_PROPERTY_HPP_
+#define RVIZ_COMMON__PROPERTIES__REGEX_FILTER_PROPERTY_HPP_
 
-#ifndef RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__FOLLOWER__THIRD_PERSON_FOLLOWER_VIEW_CONTROLLER_HPP_
-#define RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__FOLLOWER__THIRD_PERSON_FOLLOWER_VIEW_CONTROLLER_HPP_
+#include <QValidator>
+#include <QLineEdit>
+#include <QToolTip>
+#include <QWidget>
 
-#include <OgreVector.h>
+#include <regex>
+#include <string>
 
-#include "rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller.hpp"
+#include "rviz_common/properties/string_property.hpp"
+#include "rviz_common/visibility_control.hpp"
 
-namespace rviz_default_plugins
+namespace rviz_common
 {
-namespace view_controllers
+namespace properties
 {
+class RVIZ_COMMON_PUBLIC RegexValidator : public QValidator
+{
+public:
+  explicit RegexValidator(QLineEdit * editor);
 
-/**
- * \brief Like the XY orbit view controller, but turns when the target frame yaws.
- */
-class ThirdPersonFollowerViewController : public XYOrbitViewController
-{
-protected:
-  void updateTargetSceneNode() override;
+  QValidator::State validate(QString & input, int & /*pos*/) const override;
+
+private:
+  QLineEdit * editor_;
 };
 
-}  // namespace view_controllers
-}  // namespace rviz_default_plugins
+class RVIZ_COMMON_PUBLIC RegexFilterProperty : public StringProperty
+{
+public:
+  RegexFilterProperty(const QString & name, const std::string regex, Property * parent);
 
-// *INDENT-OFF*
-#endif  // RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__FOLLOWER__THIRD_PERSON_FOLLOWER_VIEW_CONTROLLER_HPP_
-// *INDENT-ON*
+  const std::regex & regex() const;
+  const std::string & regex_str() const;
+
+  QWidget * createEditor(QWidget * parent, const QStyleOptionViewItem & option) override;
+
+private:
+  std::string default_;
+  std::regex regex_;
+  std::string regex_str_;
+
+  void onValueChanged();
+};
+}  // end namespace properties
+}  // end namespace rviz_common
+#endif  // RVIZ_COMMON__PROPERTIES__REGEX_FILTER_PROPERTY_HPP_

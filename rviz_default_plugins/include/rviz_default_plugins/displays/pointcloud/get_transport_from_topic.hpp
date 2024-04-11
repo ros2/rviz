@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2009, Willow Garage, Inc.
- * Copyright (c) 2018, Bosch Software Innovations GmbH.
+ * Copyright (c) 2023, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -11,8 +10,8 @@
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
- *       contributors may be used to endorse or promote products derived from
+ *     * Neither the name of the copyright holder nor the names of its contributors
+ *       may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -28,30 +27,26 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__FOLLOWER__THIRD_PERSON_FOLLOWER_VIEW_CONTROLLER_HPP_
-#define RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__FOLLOWER__THIRD_PERSON_FOLLOWER_VIEW_CONTROLLER_HPP_
+#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINTCLOUD__GET_TRANSPORT_FROM_TOPIC_HPP_
+#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINTCLOUD__GET_TRANSPORT_FROM_TOPIC_HPP_
 
-#include <OgreVector.h>
+#include <string>
 
-#include "rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller.hpp"
+#include "rviz_default_plugins/visibility_control.hpp"
 
 namespace rviz_default_plugins
 {
-namespace view_controllers
+namespace displays
 {
 
-/**
- * \brief Like the XY orbit view controller, but turns when the target frame yaws.
- */
-class ThirdPersonFollowerViewController : public XYOrbitViewController
-{
-protected:
-  void updateTargetSceneNode() override;
-};
+RVIZ_DEFAULT_PLUGINS_PUBLIC
+std::string getPointCloud2TransportFromTopic(const std::string & topic);
 
-}  // namespace view_controllers
-}  // namespace rviz_default_plugins
+RVIZ_DEFAULT_PLUGINS_PUBLIC
+std::string getPointCloud2BaseTopicFromTopic(const std::string & topic);
 
-// *INDENT-OFF*
-#endif  // RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__FOLLOWER__THIRD_PERSON_FOLLOWER_VIEW_CONTROLLER_HPP_
-// *INDENT-ON*
+
+}  //  end namespace displays
+}  //  end namespace rviz_default_plugins
+
+#endif  //  RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINTCLOUD__GET_TRANSPORT_FROM_TOPIC_HPP_
