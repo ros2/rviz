@@ -47,6 +47,8 @@
 #include <QFileInfo>  // NOLINT cpplint cannot handle include order here
 #include <QString>  // NOLINT cpplint cannot handle include order here
 
+#include <gz/fuel_tools/Interface.hh>
+
 #define ASSIMP_UNIFIED_HEADER_NAMES 1
 #if defined(ASSIMP_UNIFIED_HEADER_NAMES)
 #include "assimp/Importer.hpp"
@@ -108,11 +110,20 @@ Ogre::MeshPtr loadMeshFromResource(const std::string & resource_path)
       return mesh;
     } else {
       AssimpLoader assimp_loader;
+      std::string file_resource_path = resource_path;
 
-      const aiScene * scene = assimp_loader.getScene(resource_path);
+      // Check to see if the resource is referencing a Fuel resource.
+      // If so, then use fuel_tools to resolve the path. This will
+      // also download the resource if it doesn't exist on disk.
+      if (resource_path.find("https://fuel") == 0) {
+        file_resource_path = "file://" +
+          gz::fuel_tools::fetchResource(resource_path);
+      }
+
+      const aiScene * scene = assimp_loader.getScene(file_resource_path);
       if (!scene) {
         RVIZ_RENDERING_LOG_ERROR_STREAM(
-          "Could not load resource [" << resource_path.c_str() << "]: " <<
+          "Could not load resource [" << file_resource_path.c_str() << "]: " <<
             assimp_loader.getErrorMessage());
         return Ogre::MeshPtr();
       }
