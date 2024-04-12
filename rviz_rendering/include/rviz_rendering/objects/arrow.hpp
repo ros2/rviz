@@ -66,7 +66,8 @@ public:
    * \brief Constructor
    *
    * @param scene_manager The scene manager to use to construct any necessary objects
-   * @param parent_node A scene node to use as the parent of this object.  If NULL, uses the root scene node.
+   * @param parent_node A scene node to use as the parent of this object. If NULL, uses the root
+   *                    scene node.
    * @param shaft_length Length of the arrow's shaft
    * @param shaft_diameter Diameter of the arrow's shaft
    * @param head_length Length of the arrow's head
@@ -77,7 +78,7 @@ public:
     float shaft_length = 1.0f, float shaft_diameter = 0.1f,
     float head_length = 0.3f, float head_diameter = 0.2f);
   virtual ~Arrow();
-  
+
   /**
    * \brief Sets the position, direction, and length of this arrow from two endpoints.
    * @param start Vector to the start of the arrow.
@@ -89,13 +90,23 @@ public:
    * \brief Gets the total length of this arrow.
    * @return The combined length of the shaft and head.
   */
- float getLength();
- 
+  float getLength();
+
   /**
    * \brief Sets the total length of this arrow whilst keeping the shaft and head proportions constant.
-   * @param The combined length of the shaft and head.
+   * @param length The combined length of the shaft and head.
    */
   void setLength(float length);
+
+  /**
+   * \brief Set the parameters for this arrow
+   *
+   * @param shaft_length Length of the arrow's shaft
+   * @param shaft_diameter Diameter of the arrow's shaft
+   * @param head_length Length of the arrow's head
+   * @param head_diameter Diameter of the arrow's head
+   */
+  void set(float shaft_length, float shaft_diameter, float head_length, float head_diameter);
 
   /**
    * \brief Sets the shaft and head proportions whilst keeping the total length constant.
@@ -105,7 +116,7 @@ public:
   void setShaftHeadRatio(float shaft_weight, float head_weight);
 
   /**
-   * \brief Set the size of this arrow's shaft. 
+   * \brief Set the size of this arrow's shaft.
    * @param shaft_length Length of the arrow's shaft.
    * @param shaft_diameter Diameter of the arrow's shaft.
    */
@@ -113,13 +124,13 @@ public:
 
   /**
    * \brief Set the diameter of this arrow's shaft.
-   * @param shaft_diameter Diameter of the arrow's shaft. 
+   * @param shaft_diameter Diameter of the arrow's shaft.
    */
   void setShaftDiameter(float shaft_diameter);
 
   /**
    * \brief Set the length of this arrow's head.
-   * @param head_length Length of the arrow's head. 
+   * @param head_length Length of the arrow's head.
    */
   void setHeadLength(float head_length);
 

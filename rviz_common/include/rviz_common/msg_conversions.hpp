@@ -85,7 +85,8 @@ static inline geometry_msgs::msg::Quaternion quaternionOgreToMsg(const Ogre::Qua
   return m;
 }
 
-static inline std_msgs::msg::ColorRGBA colorOgreToMsg(const Ogre::ColourValue & o) {
+static inline std_msgs::msg::ColorRGBA colorOgreToMsg(const Ogre::ColourValue & o)
+{
   std_msgs::msg::ColorRGBA m;
   m.r = o.r; m.g = o.g; m.b = o.b; m.a = o.a;
   return m;

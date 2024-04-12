@@ -134,7 +134,7 @@ void ArrowMarker::setArrowFromPoints(const MarkerConstSharedPtr & message)
   if (head_length > 0.0) {
     arrow_->setShaftHeadRatio(head_length - arrow_->getLength(), head_length);
   } else {
-    arrow_->setShaftHeadRatio(3, 1); // default 3:1 ratio from arrow.hpp
+    arrow_->setShaftHeadRatio(3, 1);  // default 3:1 ratio from arrow.hpp
   }
 
   // if scale.x and scale.y are 0, then nothing is shown
