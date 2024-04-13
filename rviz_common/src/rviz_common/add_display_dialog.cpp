@@ -47,6 +47,7 @@
 #include <QLabel>  // NOLINT: cpplint is unable to handle the include order here
 #include <QLineEdit>  // NOLINT: cpplint is unable to handle the include order here
 #include <QPushButton>  // NOLINT: cpplint is unable to handle the include order here
+#include <QRegularExpression>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTabWidget>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTextBrowser>  // NOLINT: cpplint is unable to handle the include order here
 #include <QVBoxLayout>  // NOLINT: cpplint is unable to handle the include order here
@@ -591,7 +592,7 @@ void TopicDisplayWidget::findPlugins(DisplayFactory * factory)
       // For now, we assume that all types supported by plugins have the form
       // "<pkg_name>/msg/<type_name>", though in the future zero or more namespaces may be
       // permitted.
-      QRegExp delim("/");
+      QRegularExpression delim("/");
       QStringList topic_type_parts = topic_type.split(delim);
       if (topic_type_parts.size() == 2) {
         topic_type = topic_type_parts.at(0) + "/msg/" + topic_type_parts.at(1);
