@@ -85,7 +85,18 @@ target_link_libraries(rviz_visual_testing_framework PUBLIC
 )
 
 # export information to downstream packages
-ament_export_dependencies(geometry_msgs Qt${QT_VERSION_MAJOR} rclcpp rcutils rviz_common rviz_ogre_vendor rviz_rendering std_msgs tf2 tf2_ros)
+ament_export_dependencies(
+  geometry_msgs
+  Qt${QT_VERSION_MAJOR}
+  rclcpp
+  rcutils
+  rviz_common
+  rviz_ogre_vendor
+  rviz_rendering
+  std_msgs
+  tf2
+  tf2_ros
+)
 
 # Export old-style CMake variables
 ament_export_include_directories("include/${PROJECT_NAME}")

@@ -404,7 +404,12 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET image_display_test)
     target_include_directories(image_display_test PRIVATE test)
-    target_link_libraries(image_display_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} Qt${QT_VERSION_MAJOR}::Widgets rviz_default_plugins ogre_testing_environment)
+    target_link_libraries(image_display_test
+      ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
+      Qt${QT_VERSION_MAJOR}::Widgets
+      rviz_default_plugins
+      ogre_testing_environment
+    )
   endif()
 
   add_library(marker_messages STATIC test/rviz_default_plugins/displays/marker/marker_messages.cpp)
@@ -775,7 +780,11 @@ if(BUILD_TESTING)
   endif()
 
   add_library(point_cloud_common_page_object STATIC test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp)
-  target_link_libraries(point_cloud_common_page_object PRIVATE Qt${QT_VERSION_MAJOR}::Test rviz_visual_testing_framework::rviz_visual_testing_framework)
+  target_link_libraries(point_cloud_common_page_object
+    PRIVATE
+      Qt${QT_VERSION_MAJOR}::Test
+      rviz_visual_testing_framework::rviz_visual_testing_framework
+  )
 
   ament_add_gtest(camera_display_visual_test
     test/rviz_default_plugins/displays/camera/camera_display_visual_test.cpp
@@ -922,7 +931,11 @@ if(BUILD_TESTING)
   endif()
 
   add_library(marker_display_page_object STATIC test/rviz_default_plugins/page_objects/marker_display_page_object.cpp)
-  target_link_libraries(marker_display_page_object PRIVATE Qt${QT_VERSION_MAJOR}::Widgets rviz_visual_testing_framework::rviz_visual_testing_framework)
+  target_link_libraries(marker_display_page_object
+    PRIVATE
+      Qt${QT_VERSION_MAJOR}::Widgets
+      rviz_visual_testing_framework::rviz_visual_testing_framework
+  )
 
   ament_add_gtest(map_display_visual_test
     test/rviz_default_plugins/displays/map/map_display_visual_test.cpp
@@ -1060,7 +1073,11 @@ if(BUILD_TESTING)
   endif()
 
   add_library(pose_display_page_object STATIC test/rviz_default_plugins/page_objects/pose_display_page_object.cpp)
-  target_link_libraries(pose_display_page_object PRIVATE Qt${QT_VERSION_MAJOR}::Widgets rviz_visual_testing_framework::rviz_visual_testing_framework)
+  target_link_libraries(pose_display_page_object
+    PRIVATE
+      Qt${QT_VERSION_MAJOR}::Widgets
+      rviz_visual_testing_framework::rviz_visual_testing_framework
+  )
 
   ament_add_gtest(pose_array_display_visual_test
     test/rviz_default_plugins/displays/pose_array/pose_array_display_visual_test.cpp
