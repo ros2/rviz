@@ -20,9 +20,9 @@ find_package(rviz_ogre_vendor REQUIRED)
 
 if(DEFINED ENV{Qt6_DIR})
   set(QT_DIR $ENV{Qt6_DIR})
-elseif(DEFINED ENV{Qt5_DIR})
+else(DEFINED ENV{Qt5_DIR})
   set(QT_DIR $ENV{Qt5_DIR})
-else()
+endif()
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 # TODO(wjwwood): this block is to setup the windeployqt tool, could be removed later.
