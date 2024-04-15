@@ -18,6 +18,12 @@ find_package(rviz_common REQUIRED)
 
 find_package(rviz_ogre_vendor REQUIRED)
 
+if(Qt5_DIR AND NOT QT_DIR)
+  set(QT_DIR "${Qt5_DIR}" CACHE PATH "" FORCE)
+endif()
+if(Qt6_DIR AND NOT QT_DIR)
+  set(QT_DIR "{Qt6_DIR}" CACHE PATH "" FORCE)
+endif()
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 # TODO(wjwwood): this block is to setup the windeployqt tool, could be removed later.

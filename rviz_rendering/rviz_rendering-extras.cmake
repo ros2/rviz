@@ -30,5 +30,11 @@
 
 # find package Qt5 because otherwise using the rviz_rendering::rviz_rendering
 # exported target will complain that the Qt5::Widgets target does not exist
+if(Qt5_DIR AND NOT QT_DIR)
+  set(QT_DIR "${Qt5_DIR}" CACHE PATH "" FORCE)
+endif()
+if(Qt6_DIR AND NOT QT_DIR)
+  set(QT_DIR "{Qt6_DIR}" CACHE PATH "" FORCE)
+endif()
 find_package(QT NAMES Qt6 Qt5 REQUIRED QUIET COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED QUIET COMPONENTS Widgets)
