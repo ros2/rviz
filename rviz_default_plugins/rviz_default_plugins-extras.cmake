@@ -31,7 +31,7 @@
 # exported target will complain that the Qt5::Widgets target does not exist
 if(DEFINED ENV{Qt6_DIR})
   set(QT_DIR $ENV{Qt6_DIR})
-else(DEFINED ENV{Qt5_DIR})
+elseif(DEFINED ENV{Qt5_DIR})
   set(QT_DIR $ENV{Qt5_DIR})
 endif()
 find_package(QT NAMES Qt6 Qt5 REQUIRED QUIET COMPONENTS Widgets)
