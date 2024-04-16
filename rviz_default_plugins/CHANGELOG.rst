@@ -2,6 +2,9 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.1.0 (2024-04-16)
+-------------------
+
 14.0.0 (2024-04-07)
 -------------------
 * Make sure to export all rviz_default_plugins dependencies. (`#1181 <https://github.com/ros2/rviz/issues/1181>`_)

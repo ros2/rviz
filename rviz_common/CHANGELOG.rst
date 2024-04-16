@@ -2,6 +2,13 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.1.0 (2024-04-16)
+-------------------
+* Update to yaml-cpp 0.8.0 (`#1183 <https://github.com/ros2/rviz/issues/1183>`_)
+  yaml-cpp 0.8.0 has a proper CMake target, i.e. yaml-cpp::yaml-cpp.
+  Use that here.
+* Contributors: Chris Lalancette
+
 14.0.0 (2024-04-07)
 -------------------
 
