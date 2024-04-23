@@ -47,6 +47,17 @@
   </class>
 
   <class
+    name="rviz_default_plugins/CameraInfo"
+    type="rviz_default_plugins::displays::CameraInfoDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays CameraInfo.
+    </description>
+    <message_type>sensor_msgs/msg/CameraInfo</message_type>
+  </class>
+
+  <class
     name="rviz_default_plugins/Effort"
     type="rviz_default_plugins::displays::EffortDisplay"
     base_class_type="rviz_common::Display"

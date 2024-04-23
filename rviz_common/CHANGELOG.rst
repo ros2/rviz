@@ -2,6 +2,28 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.1.0 (2024-04-16)
+-------------------
+* Update to yaml-cpp 0.8.0 (`#1183 <https://github.com/ros2/rviz/issues/1183>`_)
+  yaml-cpp 0.8.0 has a proper CMake target, i.e. yaml-cpp::yaml-cpp.
+  Use that here.
+* Contributors: Chris Lalancette
+
+14.0.0 (2024-04-07)
+-------------------
+
+13.4.2 (2024-03-27)
+-------------------
+
+13.4.1 (2024-03-26)
+-------------------
+* Remove regex_filter_property.hpp from the moc lines. (`#1172 <https://github.com/ros2/rviz/issues/1172>`_)
+  Since it has no SLOTS or SIGNALS, we don't need to run
+  MOC on it.  That will both speed up the compilation and
+  remove a warning when building.
+* Added regex filter field for TF display (`#1032 <https://github.com/ros2/rviz/issues/1032>`_)
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette
+
 13.4.0 (2024-03-09)
 -------------------
 * Fix camera display overlay (`#1151 <https://github.com/ros2/rviz/issues/1151>`_)

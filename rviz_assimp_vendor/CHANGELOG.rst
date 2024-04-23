@@ -2,6 +2,26 @@
 Changelog for package rviz_assimp_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.1.0 (2024-04-16)
+-------------------
+* Update the vendored package path. (`#1184 <https://github.com/ros2/rviz/issues/1184>`_)
+  Since we just updated to assimp 5.3, we also need to
+  update the path we look for it.
+  This should fix the build with clang which is currently
+  failing.
+* Update assimp vendor to 5.3.1 (`#1182 <https://github.com/ros2/rviz/issues/1182>`_)
+  This matches what is in Ubuntu 24.04.
+* Contributors: Chris Lalancette
+
+14.0.0 (2024-04-07)
+-------------------
+
+13.4.2 (2024-03-27)
+-------------------
+
+13.4.1 (2024-03-26)
+-------------------
+
 13.4.0 (2024-03-09)
 -------------------
 
