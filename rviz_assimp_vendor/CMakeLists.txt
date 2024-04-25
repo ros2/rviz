@@ -29,6 +29,7 @@ else()
   set(ASSIMP_CMAKE_FLAGS "-DCMAKE_INSTALL_LIBDIR=lib")
 
   set(ASSIMP_CXX_FLAGS "-std=c++14 ${CMAKE_CXX_FLAGS}")
+  set(ASSIMP_C_FLAGS "-Wno-deprecated-non-prototype ${CMAKE_C_FLAGS}")
 endif()
 
 ament_vendor(assimp_vendor
@@ -41,6 +42,7 @@ ament_vendor(assimp_vendor
     -DASSIMP_BUILD_SAMPLES:BOOL=OFF
     "${ASSIMP_CMAKE_FLAGS}"
     "-DCMAKE_CXX_FLAGS=${ASSIMP_CXX_FLAGS}"
+    "-DCMAKE_C_FLAGS=${ASSIMP_C_FLAGS}"
 )
 
 if(BUILD_TESTING)
