@@ -29,6 +29,9 @@ else()
   set(ASSIMP_CMAKE_FLAGS "-DCMAKE_INSTALL_LIBDIR=lib")
 
   set(ASSIMP_CXX_FLAGS "-std=c++14 ${CMAKE_CXX_FLAGS}")
+  # assimp version 5.3.1 still uses K&R style function prototypes,
+  # which are deprecated as of gcc 13.2 (in Ubuntu 24.04).
+  # Suppress the warning here for now.
   set(ASSIMP_C_FLAGS "-Wno-deprecated-non-prototype ${CMAKE_C_FLAGS}")
 endif()
 
