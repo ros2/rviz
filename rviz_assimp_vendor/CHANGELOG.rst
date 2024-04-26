@@ -2,6 +2,12 @@
 Changelog for package rviz_assimp_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Removed assimp warnings (`#1191 <https://github.com/ros2/rviz/issues/1191>`_)
+* Don't treat warnings as errors when building Assimp (`#1174 <https://github.com/ros2/rviz/issues/1174>`_)
+* Contributors: Alejandro Hernández Cordero, Scott K Logan
+
 14.1.0 (2024-04-16)
 -------------------
 * Update the vendored package path. (`#1184 <https://github.com/ros2/rviz/issues/1184>`_)
