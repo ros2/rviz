@@ -30,7 +30,7 @@ if(Qt${QT_VERSION_MAJOR}_FOUND AND WIN32 AND TARGET Qt${QT_VERSION_MAJOR}::qmake
   get_target_property(_qt_qmake_location Qt${QT_VERSION_MAJOR}::qmake IMPORTED_LOCATION)
 
   execute_process(
-    COMMAND "${_qt_qmake_location}" -query QT_INSTALL_PREFIX
+    COMMAND "${_qt_qmake_location}" -query QT${QT_VERSION_MAJOR}_INSTALL_PREFIX
     RESULT_VARIABLE return_code
     OUTPUT_VARIABLE qt_install_prefix
     OUTPUT_STRIP_TRAILING_WHITESPACE
