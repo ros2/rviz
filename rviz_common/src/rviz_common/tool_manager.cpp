@@ -35,7 +35,7 @@
 
 #include <QKeyEvent>  // NOLINT: cpplint is unable to handle the include order here
 #include <QKeySequence>  // NOLINT: cpplint is unable to handle the include order here
-#include <QRegExp>  // NOLINT: cpplint is unable to handle the include order here
+#include <QRegularExpression>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/logging.hpp"
 
@@ -52,7 +52,7 @@ using rviz_common::properties::PropertyTreeModel;
 
 QString addSpaceToCamelCase(QString input)
 {
-  QRegExp re = QRegExp("([A-Z])([a-z]*)");
+  QRegularExpression re = QRegularExpression("([A-Z])([a-z]*)");
   input.replace(re, " \\1\\2");
   return input.trimmed();
 }

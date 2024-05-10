@@ -94,7 +94,7 @@ RosFilteredTopicProperty::RosFilteredTopicProperty(
   const QString & default_value,
   const QString & message_type,
   const QString & description,
-  const QRegExp & filter,
+  const QRegularExpression & filter,
   Property * parent,
   const char * changed_slot,
   QObject * receiver)
@@ -110,7 +110,7 @@ void RosFilteredTopicProperty::enableFilter(bool enabled)
   fillTopicList();
 }
 
-QRegExp RosFilteredTopicProperty::filter() const
+QRegularExpression RosFilteredTopicProperty::filter() const
 {
   return filter_;
 }

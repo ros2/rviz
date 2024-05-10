@@ -42,6 +42,7 @@
 #include <OgreMeshManager.h>
 #include <OgreMaterialManager.h>
 
+#include <QActionGroup>  // NOLINT cpplint cannot handle include order here
 #include <QApplication>  // NOLINT cpplint cannot handle include order here
 #include <QCloseEvent>  // NOLINT cpplint cannot handle include order here
 #include <QDesktopServices>  // NOLINT cpplint cannot handle include order here
@@ -262,7 +263,7 @@ void VisualizationFrame::initialize(
   QWidget * central_widget = new QWidget(this);
   QHBoxLayout * central_layout = new QHBoxLayout;
   central_layout->setSpacing(0);
-  central_layout->setMargin(0);
+  central_layout->setContentsMargins(0, 0, 0, 0);
 
   render_panel_ = new RenderPanel(central_widget);
 
