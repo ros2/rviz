@@ -33,7 +33,7 @@
 #include <Ogre.h>
 #include <tf2_ros/message_filter.h>
 
-#include <QRegExp>
+#include <QRegularExpression>
 
 #include <iostream>
 #include <functional>
@@ -80,9 +80,12 @@ DepthCloudDisplay::DepthCloudDisplay()
   , trans_thres_(0.01f)
 {
   ml_depth_data_ = std::make_unique<rviz_common::MultiLayerDepth>();
+
+  // Set options for case insensitivity
+  auto reOptions =  QRegularExpression::CaseInsensitiveOption;
+
   // Depth map properties
-  QRegExp depth_filter("depth");
-  depth_filter.setCaseSensitivity(Qt::CaseInsensitive);
+  QRegularExpression depth_filter("depth", reOptions);
 
   reliability_policy_property_ = new rviz_common::properties::EditableEnumProperty(
     "Reliability Policy",
@@ -119,8 +122,7 @@ DepthCloudDisplay::DepthCloudDisplay()
   depth_transport_property_->setStdString("raw");
 
   // color image properties
-  QRegExp color_filter("color|rgb|bgr|gray|mono");
-  color_filter.setCaseSensitivity(Qt::CaseInsensitive);
+  QRegularExpression color_filter("color|rgb|bgr|gray|mono", reOptions);
 
   color_topic_property_ = new rviz_common::properties::RosFilteredTopicProperty(
     "Color Image Topic", "",
