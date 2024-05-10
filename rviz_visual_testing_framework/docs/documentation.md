@@ -109,7 +109,7 @@ In particular, for this mechanism to work, we also need to wrap the `ament_add_g
 
 Moreover, should it not already be present, the following should also be included:
 
-    find_package(Qt5 REQUIRED COMPONENTS Widgets Test)
+    find_package(Qt6 REQUIRED COMPONENTS Widgets Test)
 
 ### How to write a test
 
