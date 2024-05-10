@@ -41,10 +41,10 @@
   <build_export_depend>rviz_ogre_vendor</build_export_depend>
 
   <exec_depend>ament_index_cpp</exec_depend>
-  <exec_depend>libqt5-core</exec_depend>
-  <exec_depend>libqt5-gui</exec_depend>
-  <exec_depend>libqt5-opengl</exec_depend>
-  <exec_depend>libqt5-widgets</exec_depend>
+  <exec_depend>libqt6-core</exec_depend>
+  <exec_depend>libqt6-gui</exec_depend>
+  <exec_depend>libqt6-opengl</exec_depend>
+  <exec_depend>libqt6-widgets</exec_depend>
   <exec_depend>resource_retriever</exec_depend>
   <exec_depend>rviz_assimp_vendor</exec_depend>
   <exec_depend>rviz_ogre_vendor</exec_depend>

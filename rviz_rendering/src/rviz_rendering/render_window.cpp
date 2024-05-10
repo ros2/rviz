@@ -27,13 +27,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-// This class is based on the Ogre documentation's recommendation on how to use with Qt5:
+// This class is based on the Ogre documentation's recommendation on how to use with Qt6:
 //
 //   http://www.ogre3d.org/tikiwiki/tiki-index.php?page=Integrating+Ogre+into+QT5
 //
 // Which is in the public domain.
 //
-// As well as the Qt5 suggestions on how to integrate with OpenGL:
+// As well as the Qt6 suggestions on how to integrate with OpenGL:
 //
 //   https://doc.qt.io/qt-5/qtgui-openglwindow-example.html
 //

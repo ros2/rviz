@@ -33,7 +33,7 @@ find_package(ament_cmake_ros REQUIRED)
 find_package(rviz_ogre_vendor REQUIRED)
 find_package(rviz_assimp_vendor REQUIRED)
 
-find_package(Qt5 REQUIRED COMPONENTS Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
 
 find_package(ament_index_cpp REQUIRED)
 find_package(eigen3_cmake_module REQUIRED)
@@ -41,29 +41,29 @@ find_package(Eigen3 REQUIRED)
 find_package(resource_retriever REQUIRED)
 
 # TODO(wjwwood): this block is to setup the windeployqt tool, could be removed later.
-if(Qt5_FOUND AND WIN32 AND TARGET Qt5::qmake AND NOT TARGET Qt5::windeployqt)
-  get_target_property(_qt5_qmake_location Qt5::qmake IMPORTED_LOCATION)
+if(Qt6_FOUND AND WIN32 AND TARGET Qt6::qmake AND NOT TARGET Qt6::windeployqt)
+  get_target_property(_qt6_qmake_location Qt6::qmake IMPORTED_LOCATION)
 
   execute_process(
-    COMMAND "${_qt5_qmake_location}" -query QT_INSTALL_PREFIX
+    COMMAND "${_qt6_qmake_location}" -query QT_INSTALL_PREFIX
     RESULT_VARIABLE return_code
-    OUTPUT_VARIABLE qt5_install_prefix
+    OUTPUT_VARIABLE qt6_install_prefix
     OUTPUT_STRIP_TRAILING_WHITESPACE
   )
 
-  set(imported_location "${qt5_install_prefix}/bin/windeployqt.exe")
+  set(imported_location "${qt6_install_prefix}/bin/windeployqt.exe")
 
   if(EXISTS ${imported_location})
-    add_executable(Qt5::windeployqt IMPORTED)
+    add_executable(Qt6::windeployqt IMPORTED)
 
-    set_target_properties(Qt5::windeployqt PROPERTIES
+    set_target_properties(Qt6::windeployqt PROPERTIES
       IMPORTED_LOCATION ${imported_location}
     )
   endif()
 endif()
 
 # These need to be added in the add_library() call
-qt5_wrap_cpp(rviz_rendering_moc_files include/rviz_rendering/render_window.hpp)
+qt6_wrap_cpp(rviz_rendering_moc_files include/rviz_rendering/render_window.hpp)
 
 add_library(rviz_rendering SHARED
   ${rviz_rendering_moc_files}
@@ -100,7 +100,7 @@ add_library(rviz_rendering SHARED
 )
 
 target_link_libraries(rviz_rendering PUBLIC
-  Qt5::Widgets
+  Qt6::Widgets
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
 )
@@ -128,7 +128,7 @@ target_compile_definitions(rviz_rendering PRIVATE "RVIZ_RENDERING_BUILDING_LIBRA
 
 ament_export_dependencies(
   Eigen3
-  Qt5
+  Qt6
   rviz_ogre_vendor
 )
 
@@ -194,7 +194,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt6::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -206,7 +206,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt6::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -218,7 +218,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt6::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -230,7 +230,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt6::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -242,7 +242,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt6::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -254,7 +254,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt6::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -267,7 +267,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreOverlay
       rviz_rendering
       rviz_rendering_test_utils
-      Qt5::Widgets
+      Qt6::Widgets
     )
   endif()
 
@@ -279,7 +279,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt6::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -291,7 +291,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt6::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -303,7 +303,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt6::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -315,7 +315,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt6::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -327,7 +327,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt6::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 endif()
