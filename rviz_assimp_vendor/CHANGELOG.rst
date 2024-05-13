@@ -2,6 +2,13 @@
 Changelog for package rviz_assimp_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Removed assimp warnings (`#1191 <https://github.com/ros2/rviz/issues/1191>`_) (`#1192 <https://github.com/ros2/rviz/issues/1192>`_)
+  (cherry picked from commit e8dd485d19a35d3abba905020741973e613334e3)
+  Co-authored-by: Alejandro Hernández Cordero <alejandro@openrobotics.org>
+* Contributors: mergify[bot]
+
 14.1.0 (2024-04-16)
 -------------------
 * Update the vendored package path. (`#1184 <https://github.com/ros2/rviz/issues/1184>`_)
