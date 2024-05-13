@@ -2,8 +2,8 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+14.1.1 (2024-05-13)
+-------------------
 * Update zlib into CMakeLists.txt (`#1128 <https://github.com/ros2/rviz/issues/1128>`_) (`#1195 <https://github.com/ros2/rviz/issues/1195>`_)
   Changes in 1.3 (18 Aug 2023)
   - Remove K&R function definitions and zlib2ansi
