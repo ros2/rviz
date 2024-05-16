@@ -32,8 +32,8 @@ In general, values between 0 and 100 are regarded as valid (often interpreted as
 * *Map:* Paint valid points between 0 and 100 from white (0) to black (100). 
   Paint valid value -1 in a blueish, greenish, grayish color (it might be used to indicate unchartered territory for instance). 
   Invalid points between 101 and 127 are painted in green, while invalid negative numbers are painted in shades from red to yellow.
-* *Costmap:* Paint valid points between 0 and 98 from blue to red. 
-  Paint points with value 99 in cyan (obstacle value) and points with value 100 in purple (lethal obstacle). 
+* *Costmap:* Paint valid points between 1 and 98 from blue to red. 
+  Paint points with value 0 in black, points with value 99 in cyan (obstacle value) and points with value 100 in purple (lethal obstacle). 
   The valid value -1 is painted in a blueish, greenish, grayish color. 
   Invalid points between 101 and 127 are painted in green, while invalid negative numbers are painted in shades from red to yellow.
 
