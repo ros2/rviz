@@ -309,6 +309,9 @@ Q_SIGNALS:
   /// Emitted during file-loading and initialization to indicate progress.
   void statusUpdate(const QString & message);
 
+  /// Emmited when ESC key is pressed
+  void escapePressed();
+
 protected Q_SLOTS:
   /// Call update() on all managed objects.
   /**

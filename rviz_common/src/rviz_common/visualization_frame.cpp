@@ -331,6 +331,7 @@ void VisualizationFrame::initialize(
   ToolManager * tool_man = manager_->getToolManager();
 
   connect(manager_, SIGNAL(configChanged()), this, SLOT(setDisplayConfigModified()));
+  connect(manager_, SIGNAL(escapePressed()), this, SLOT(exitFullScreen()));
   connect(tool_man, SIGNAL(toolAdded(Tool*)), this, SLOT(addTool(Tool*)));
   connect(tool_man, SIGNAL(toolRemoved(Tool*)), this, SLOT(removeTool(Tool*)));
   connect(tool_man, SIGNAL(toolRefreshed(Tool*)), this, SLOT(refreshTool(Tool*)));
@@ -486,7 +487,6 @@ void VisualizationFrame::initMenus()
   this->addAction(fullscreen_action);  // Also add to window, or the shortcut doest work
                                        // when the menu is hidden.
   connect(this, SIGNAL(fullScreenChange(bool)), fullscreen_action, SLOT(setChecked(bool)));
-  new QShortcut(Qt::Key_Escape, this, SLOT(exitFullScreen()));
   view_menu_->addSeparator();
 
   QMenu * help_menu = menuBar()->addMenu("&Help");
