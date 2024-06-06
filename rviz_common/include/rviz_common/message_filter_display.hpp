@@ -123,7 +123,7 @@ protected:
       subscription_ = std::make_shared<message_filters::Subscriber<MessageType>>(
         node,
         topic_property_->getTopicStd(),
-        qos_profile.get_rmw_qos_profile());
+        qos_profile);
       subscription_start_time_ = node->now();
       tf_filter_ =
         std::make_shared<tf2_ros::MessageFilter<MessageType, transformation::FrameTransformer>>(
