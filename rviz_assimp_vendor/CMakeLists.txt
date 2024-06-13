@@ -12,7 +12,7 @@ set(ON 1)
 
 # TODO: Switch to version range in find_package in CMake 3.19
 find_package(assimp QUIET)
-if(NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LESS 5.2.0)
+if(NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LESS 5.4.0)
   set(assimp_FOUND FALSE)
 endif()
 
@@ -28,7 +28,7 @@ if(MSVC)
 else()
   set(ASSIMP_CMAKE_FLAGS "-DCMAKE_INSTALL_LIBDIR=lib")
 
-  set(ASSIMP_CXX_FLAGS "-std=c++14 ${CMAKE_CXX_FLAGS}")
+  # set(ASSIMP_CXX_FLAGS "-std=c++14 ${CMAKE_CXX_FLAGS}")
   # assimp version 5.3.1 still uses K&R style function prototypes,
   # which are deprecated as of gcc 13.2 (in Ubuntu 24.04).
   # Suppress the warning here for now.
@@ -38,7 +38,7 @@ endif()
 ament_vendor(assimp_vendor
   SATISFIED ${assimp_FOUND}
   VCS_URL https://github.com/assimp/assimp.git
-  VCS_VERSION v5.3.1
+  VCS_VERSION v5.4.1
   CMAKE_ARGS
     -DASSIMP_BUILD_ASSIMP_TOOLS:BOOL=OFF
     -DASSIMP_BUILD_TESTS:BOOL=OFF
