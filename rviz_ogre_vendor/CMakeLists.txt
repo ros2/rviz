@@ -15,7 +15,7 @@ if(WIN32)
 
   ament_vendor(freetype_vendor
     VCS_URL https://git.savannah.gnu.org/git/freetype/freetype2.git
-    VCS_VERSION VER-2-11-1
+    VCS_VERSION VER-2-13-2
     CMAKE_ARGS
       -DFT_DISABLE_ZLIB:BOOL=ON
       -DFT_DISABLE_BZIP2:BOOL=ON
