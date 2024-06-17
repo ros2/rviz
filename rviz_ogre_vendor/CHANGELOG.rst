@@ -2,6 +2,9 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 14.2.1 (2024-05-24)
 -------------------
 * Update zlib into CMakeLists.txt (`#1128 <https://github.com/ros2/rviz/issues/1128>`_)
