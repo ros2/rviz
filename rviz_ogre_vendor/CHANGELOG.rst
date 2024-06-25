@@ -2,8 +2,8 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+14.2.3 (2024-06-25)
+-------------------
 * Fix flags for both clang and gcc. (`#1219 <https://github.com/ros2/rviz/issues/1219>`_)
 * Update freetype lib (`#1216 <https://github.com/ros2/rviz/issues/1216>`_)
 * Contributors: Chris Lalancette, mosfet80
