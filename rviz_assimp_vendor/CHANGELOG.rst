@@ -2,6 +2,9 @@
 Changelog for package rviz_assimp_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 14.1.1 (2024-05-13)
 -------------------
 * Removed assimp warnings (`#1191 <https://github.com/ros2/rviz/issues/1191>`_) (`#1192 <https://github.com/ros2/rviz/issues/1192>`_)

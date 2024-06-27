@@ -2,6 +2,17 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix flags for both clang and gcc. (`#1219 <https://github.com/ros2/rviz/issues/1219>`_) (`#1223 <https://github.com/ros2/rviz/issues/1223>`_)
+  In particular, make sure that a clang-only flag
+  (-Wno-implicit-const-int-float-conversion) is only
+  set for clang, and also add in another suppression
+  for g++ 13 (where there are false warnings for stringop-overflow).
+  (cherry picked from commit 0707355430b5a1c915c8a57961099155bb40cef8)
+  Co-authored-by: Chris Lalancette <clalancette@gmail.com>
+* Contributors: mergify[bot]
+
 14.1.1 (2024-05-13)
 -------------------
 * Update zlib into CMakeLists.txt (`#1128 <https://github.com/ros2/rviz/issues/1128>`_) (`#1195 <https://github.com/ros2/rviz/issues/1195>`_)
