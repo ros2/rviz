@@ -29,10 +29,5 @@
 
 # find package Qt5 because otherwise using the rviz_default_plugins::rviz_default_plugins
 # exported target will complain that the Qt5::Widgets target does not exist
-if(MSVC)
-  set(QT_VERSION_MAJOR 5)
-  find_package(Qt${QT_VERSION_MAJOR} QUIET COMPONENTS Widgets)
-else()
-  find_package(QT NAMES Qt6 Qt5 QUIET COMPONENTS Widgets)
-  find_package(Qt${QT_VERSION_MAJOR} QUIET COMPONENTS Widgets)
-endif()
+find_package(QT NAMES Qt6 Qt5 QUIET COMPONENTS Widgets)
+find_package(Qt${QT_VERSION_MAJOR} QUIET COMPONENTS Widgets)
