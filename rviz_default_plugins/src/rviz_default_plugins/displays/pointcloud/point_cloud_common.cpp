@@ -40,7 +40,6 @@
 
 #include "rclcpp/clock.hpp"
 
-#include "rviz_default_plugins/displays/pointcloud/point_cloud_to_point_cloud2.hpp"
 #include "rviz_default_plugins/displays/pointcloud/point_cloud_helpers.hpp"
 #include "rviz_common/display.hpp"
 #include "rviz_common/display_context.hpp"
@@ -664,11 +663,6 @@ void PointCloudCommon::setProblematicPointsToInfinity(V_PointCloudPoint & cloud_
       cloud_point.position.z = 999999.0f;
     }
   }
-}
-
-void PointCloudCommon::addMessage(const sensor_msgs::msg::PointCloud::ConstSharedPtr cloud)
-{
-  addMessage(convertPointCloudToPointCloud2(cloud));
 }
 
 void PointCloudCommon::addMessage(const sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud)
