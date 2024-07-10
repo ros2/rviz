@@ -39,7 +39,6 @@
   <depend>rviz_common</depend>
   <depend>rviz_ogre_vendor</depend>
 
-  <!-- TODO(jacobperron): Replace with ament_lint_common when ament_copyright is working -->
   <test_depend>ament_lint_common</test_depend>
   <test_depend>ament_cmake_lint_cmake</test_depend>
   <test_depend>ament_cmake_pytest</test_depend>
