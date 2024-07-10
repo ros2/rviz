@@ -89,9 +89,9 @@ int main(int argc, char ** argv)
           *iter_z = ((x + y + count) % 100) / 100.0f;
         }
 
-        *iter_r = rand() % 256;
-        *iter_g = rand() % 256;
-        *iter_b = rand() % 256;
+        *iter_r = 255;
+        *iter_g = 0;
+        *iter_b = 0;
 
         ++iter_x;
         ++iter_y;
