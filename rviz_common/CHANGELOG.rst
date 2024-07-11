@@ -2,6 +2,11 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Replace ESC shortcut for exiting full screen with solution from https://github.com/ros-visualization/rviz/pull/1416 (`#1211 <https://github.com/ros2/rviz/issues/1211>`_)
+* Contributors: Michael Ripperger
+
 12.4.7 (2024-03-26)
 -------------------
 * Fix camera display overlay (`#1151 <https://github.com/ros2/rviz/issues/1151>`_) (`#1158 <https://github.com/ros2/rviz/issues/1158>`_)

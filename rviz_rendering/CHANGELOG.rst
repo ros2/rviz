@@ -2,6 +2,9 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 12.4.7 (2024-03-26)
 -------------------
 * Fix camera display overlay (`#1151 <https://github.com/ros2/rviz/issues/1151>`_) (`#1158 <https://github.com/ros2/rviz/issues/1158>`_)
