@@ -2,8 +2,8 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+12.4.8 (2024-07-11)
+-------------------
 * Replace ESC shortcut for exiting full screen with solution from https://github.com/ros-visualization/rviz/pull/1416 (`#1211 <https://github.com/ros2/rviz/issues/1211>`_)
 * Contributors: Michael Ripperger
 
