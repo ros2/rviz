@@ -242,7 +242,6 @@ protected:
   class Listener : public Ogre::MovableObject::Listener
   {
 public:
-    // TODO(wjwwood): uncrustify doesn't handle this indentation correctly.
     explicit Listener(SelectionHandler * handler);
 
     void objectMoved(Ogre::MovableObject * object) override;

@@ -69,7 +69,6 @@ public:
     using pointer = SelectionHandlerWeakPtr *;
     using reference = SelectionHandlerWeakPtr &;
 
-    // TODO(anhosi) uncrustify does not handle this identation correctly
     reference operator*() const
     {
       return iterator_->second;
