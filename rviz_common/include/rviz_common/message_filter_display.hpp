@@ -30,7 +30,7 @@
 #ifndef RVIZ_COMMON__MESSAGE_FILTER_DISPLAY_HPP_
 #define RVIZ_COMMON__MESSAGE_FILTER_DISPLAY_HPP_
 
-#include <message_filters/subscriber.h>
+#include <message_filters/subscriber.hpp>
 #include <tf2_ros/message_filter.h>
 
 #include <memory>
