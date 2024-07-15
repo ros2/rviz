@@ -184,58 +184,6 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
         "INTERFACE_LINK_LIBRARIES" "${_extra_interface_link_libraries}"
     )
   endif()
-  if("RenderSystem_GLStatic" STREQUAL ${_lib} OR "RenderSystem_GL" STREQUAL ${_lib})
-    find_library(_render_system_gl_static_library_abs ${_lib}
-      PATHS
-        ${OGRE_LIBRARY_DIRS}
-      NO_DEFAULT_PATH
-      NO_CMAKE_ENVIRONMENT_PATH
-      NO_CMAKE_PATH
-      NO_SYSTEM_ENVIRONMENT_PATH
-      NO_CMAKE_SYSTEM_PATH
-      NO_CMAKE_FIND_ROOT_PATH
-    )
-    find_library(_render_system_gl_static_library_debug_abs ${_lib}_d
-      PATHS
-        ${OGRE_LIBRARY_DIRS}
-      NO_DEFAULT_PATH
-      NO_CMAKE_ENVIRONMENT_PATH
-      NO_CMAKE_PATH
-      NO_SYSTEM_ENVIRONMENT_PATH
-      NO_CMAKE_SYSTEM_PATH
-      NO_CMAKE_FIND_ROOT_PATH
-    )
-    if(NOT _render_system_gl_static_library_debug_abs AND NOT WIN32)
-      # On macOS it seems the _d is not used, so just use the normal library name.
-      set(_render_system_gl_static_library_debug_abs ${_render_system_gl_static_library_abs})
-    endif()
-
-    add_library(rviz_ogre_vendor::RenderSystem_GL UNKNOWN IMPORTED)
-    message(STATUS "rviz_ogre_vendor::RenderSystem_GL for IMPORTED_LOCATION_RELEASE: ${_render_system_gl_static_library_abs}")
-    message(STATUS "rviz_ogre_vendor::RenderSystem_GL for IMPORTED_LOCATION_DEBUG: ${_render_system_gl_static_library_debug_abs}")
-    set_target_properties(rviz_ogre_vendor::RenderSystem_GL
-      PROPERTIES
-        IMPORTED_LOCATION_RELEASE ${_render_system_gl_static_library_abs}
-        IMPORTED_LOCATION_DEBUG ${_render_system_gl_static_library_debug_abs}
-    )
-
-    set_property(TARGET rviz_ogre_vendor::RenderSystem_GL
-      PROPERTY
-        INTERFACE_INCLUDE_DIRECTORIES ${OGRE_INCLUDE_DIRS}
-    )
-    if(_render_system_gl_static_library_abs)
-      set_property(TARGET rviz_ogre_vendor::RenderSystem_GL APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-    endif()
-    if(_render_system_gl_static_library_debug_abs)
-      set_property(TARGET rviz_ogre_vendor::RenderSystem_GL APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
-    endif()
-
-    set(_extra_interface_link_libraries rviz_ogre_vendor::OgreMain)
-    set_target_properties(rviz_ogre_vendor::RenderSystem_GL
-      PROPERTIES
-        "INTERFACE_LINK_LIBRARIES" "${_extra_interface_link_libraries}"
-    )
-  endif()
   if("OgreGLSupportStatic" STREQUAL ${_lib} OR "OgreGLSupport" STREQUAL ${_lib})
     find_library(_ogre_gl_support_static_library_abs ${_lib}
       PATHS
