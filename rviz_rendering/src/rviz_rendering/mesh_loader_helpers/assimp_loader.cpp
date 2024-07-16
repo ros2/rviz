@@ -252,7 +252,7 @@ std::vector<Ogre::MaterialPtr> AssimpLoader::loadMaterials(
 
   std::string ext = std::filesystem::path(resource_path).extension();
   std::transform(ext.begin(), ext.end(), ext.begin(),
-    [](unsigned char c) { return std::tolower(c); });
+    [](unsigned char c) {return std::tolower(c);});
   // STL meshes don't support proper
   // materials: use Ogre's default material
   if (ext == ".stl" || ext == ".stlb") {
