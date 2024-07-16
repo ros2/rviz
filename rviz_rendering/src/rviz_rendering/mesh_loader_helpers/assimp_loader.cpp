@@ -250,7 +250,7 @@ std::vector<Ogre::MaterialPtr> AssimpLoader::loadMaterials(
 {
   std::vector<Ogre::MaterialPtr> material_table_out;
 
-  std::string ext = std::filesystem::path(resource_path).extension();
+  std::string ext = std::filesystem::path(resource_path).extension().string();
   std::transform(ext.begin(), ext.end(), ext.begin(),
     [](unsigned char c) {return std::tolower(c);});
   // STL meshes don't support proper
