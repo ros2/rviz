@@ -39,6 +39,7 @@ find_package(ament_index_cpp REQUIRED)
 find_package(eigen3_cmake_module REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(resource_retriever REQUIRED)
+find_package(gz-fuel_tools8 REQUIRED)
 
 # TODO(wjwwood): this block is to setup the windeployqt tool, could be removed later.
 if(Qt5_FOUND AND WIN32 AND TARGET Qt5::qmake AND NOT TARGET Qt5::windeployqt)
@@ -103,6 +104,7 @@ target_link_libraries(rviz_rendering PUBLIC
   Qt5::Widgets
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
+  gz-fuel_tools8::gz-fuel_tools8
 )
 if(TARGET Eigen3::Eigen)
   # TODO(sloretz) require target to exist when https://github.com/ros2/choco-packages/issues/19 is addressed
@@ -130,6 +132,7 @@ ament_export_dependencies(
   Eigen3
   Qt5
   rviz_ogre_vendor
+  gz-fuel_tools8
 )
 
 # Export old-style CMake variables
@@ -179,6 +182,7 @@ if(BUILD_TESTING)
     PUBLIC
     rviz_ogre_vendor::OgreMain
     rviz_rendering
+    gz-fuel_tools8::gz-fuel_tools8
   )
 
   ament_add_gmock(string_helper_test test/rviz_rendering/string_helper_test.cpp)
