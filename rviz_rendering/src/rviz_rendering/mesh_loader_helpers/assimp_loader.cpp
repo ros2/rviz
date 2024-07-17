@@ -30,6 +30,9 @@
 
 #include "assimp_loader.hpp"
 
+#include <algorithm>
+#include <cctype>
+#include <filesystem>
 #include <memory>
 #include <string>
 #include <vector>
@@ -245,6 +248,18 @@ std::vector<Ogre::MaterialPtr> AssimpLoader::loadMaterials(
   const std::string & resource_path, const aiScene * scene)
 {
   std::vector<Ogre::MaterialPtr> material_table_out;
+
+  std::string ext = std::filesystem::path(resource_path).extension().string();
+  std::transform(ext.begin(), ext.end(), ext.begin(),
+    [](unsigned char c) {return std::tolower(c);});
+  // STL meshes don't support proper
+  // materials: use Ogre's default material
+  if (ext == ".stl" || ext == ".stlb") {
+    material_table_out.push_back(
+      Ogre::MaterialManager::getSingleton().getByName("BaseWhiteNoLighting"));
+    return material_table_out;
+  }
+
   for (uint32_t i = 0; i < scene->mNumMaterials; i++) {
     std::string material_name;
     material_name = resource_path + "Material" + std::to_string(i);
