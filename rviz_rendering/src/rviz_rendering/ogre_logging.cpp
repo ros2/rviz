@@ -66,6 +66,9 @@ public:
           case Ogre::LogMessageLevel::LML_NORMAL:
             RVIZ_RENDERING_LOG_INFO(message.c_str());
             break;
+          case Ogre::LogMessageLevel::LML_WARNING:
+            RVIZ_RENDERING_LOG_WARNING(message.c_str());
+            break;
           case Ogre::LogMessageLevel::LML_CRITICAL:
             RVIZ_RENDERING_LOG_ERROR(message.c_str());
             break;
