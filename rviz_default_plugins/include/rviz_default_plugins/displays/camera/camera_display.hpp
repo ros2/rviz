@@ -47,7 +47,7 @@
 # include <OgreRenderTargetListener.h>
 # include <OgreSharedPtr.h>
 
-#include <message_filters/cache.h>
+#include <message_filters/cache.hpp>
 
 # include "sensor_msgs/msg/camera_info.hpp"
 # include "tf2_ros/message_filter.h"

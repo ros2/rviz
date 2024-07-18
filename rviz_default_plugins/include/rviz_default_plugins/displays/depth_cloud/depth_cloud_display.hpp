@@ -35,15 +35,16 @@
 #include <QObject>  // NOLINT: cpplint cannot handle the include order here
 #include <Ogre.h>
 
-#include <message_filters/subscriber.h>
-#include <message_filters/synchronizer.h>
-#include <message_filters/sync_policies/approximate_time.h>
 #include <tf2_ros/message_filter.h>
 
 #include <memory>
 #include <mutex>
 #include <set>
 #include <string>
+
+#include <message_filters/subscriber.hpp>
+#include <message_filters/synchronizer.hpp>
+#include <message_filters/sync_policies/approximate_time.hpp>
 
 #include <image_transport/image_transport.hpp>
 #include <image_transport/subscriber_filter.hpp>
