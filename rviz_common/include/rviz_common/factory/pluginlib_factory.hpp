@@ -177,7 +177,9 @@ protected:
       return loadPixmap(default_icon_path);
     }
 
-    auto base_path = "package://" + info.package + "/icons/classes/" + info.name;
+    auto encoded_name = info.name;
+    encoded_name.replace(" ", "%20");
+    auto base_path = "package://" + info.package + "/icons/classes/" + encoded_name;
     QIcon icon = loadPixmap(base_path + ".svg");
     if (icon.isNull()) {
       icon = loadPixmap(base_path + ".png");
