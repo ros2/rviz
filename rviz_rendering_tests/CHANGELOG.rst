@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.2.4 (2024-07-19)
+-------------------
+* Added common test to rviz_rendering_tests (`#1234 <https://github.com/ros2/rviz/issues/1234>`_)
+* Contributors: Alejandro Hernández Cordero
+
 14.2.3 (2024-06-25)
 -------------------
 

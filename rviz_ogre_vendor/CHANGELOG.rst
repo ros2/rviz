@@ -2,6 +2,9 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.2.4 (2024-07-19)
+-------------------
+
 14.2.3 (2024-06-25)
 -------------------
 * Fix flags for both clang and gcc. (`#1219 <https://github.com/ros2/rviz/issues/1219>`_)
