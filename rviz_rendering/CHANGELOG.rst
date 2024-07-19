@@ -2,6 +2,14 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.1.3 (2024-07-19)
+-------------------
+* Fix: issue `#1220 <https://github.com/ros2/rviz/issues/1220>`_. (`#1237 <https://github.com/ros2/rviz/issues/1237>`_) (`#1246 <https://github.com/ros2/rviz/issues/1246>`_)
+  Co-authored-by: Alejandro Hernández Cordero <ahcorde@gmail.com>
+  (cherry picked from commit 85dfbef6d96956960b48115f046dbb2539aa0f36)
+  Co-authored-by: chama1176 <kaede6120@gmail.com>
+* Contributors: mergify[bot]
+
 14.1.2 (2024-06-27)
 -------------------
 

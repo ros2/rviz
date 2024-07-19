@@ -2,6 +2,13 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.1.3 (2024-07-19)
+-------------------
+* Correclty load icons of panels with whitespaces in their name (`#1241 <https://github.com/ros2/rviz/issues/1241>`_) (`#1242 <https://github.com/ros2/rviz/issues/1242>`_)
+  (cherry picked from commit d390a55b7c038c0b97d9dd17636ee6bdbc9ea86a)
+  Co-authored-by: Patrick Roncagliolo <ronca.pat@gmail.com>
+* Contributors: mergify[bot]
+
 14.1.2 (2024-06-27)
 -------------------
 * Replace ESC shortcut for exiting full screen with solution from https://github.com/ros-visualization/rviz/pull/1416 (`#1205 <https://github.com/ros2/rviz/issues/1205>`_) (`#1209 <https://github.com/ros2/rviz/issues/1209>`_)
