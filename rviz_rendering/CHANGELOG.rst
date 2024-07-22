@@ -2,6 +2,13 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.2.4 (2024-07-19)
+-------------------
+* Fix: issue `#1220 <https://github.com/ros2/rviz/issues/1220>`_. (`#1237 <https://github.com/ros2/rviz/issues/1237>`_)
+  Co-authored-by: Alejandro Hernández Cordero <ahcorde@gmail.com>
+* Added common test: rviz_rendering (`#1233 <https://github.com/ros2/rviz/issues/1233>`_)
+* Contributors: Alejandro Hernández Cordero, chama1176
+
 14.2.3 (2024-06-25)
 -------------------
 

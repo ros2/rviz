@@ -2,6 +2,11 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.2.4 (2024-07-19)
+-------------------
+* Fixed RViz2 linters (`#1231 <https://github.com/ros2/rviz/issues/1231>`_)
+* Contributors: Alejandro Hernández Cordero
+
 14.2.3 (2024-06-25)
 -------------------
 

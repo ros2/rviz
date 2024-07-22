@@ -2,6 +2,11 @@
 Changelog for package rviz_visual_testing_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.2.4 (2024-07-19)
+-------------------
+* Added common test to rviz_visual_testing_framework (`#1235 <https://github.com/ros2/rviz/issues/1235>`_)
+* Contributors: Alejandro Hernández Cordero
+
 14.2.3 (2024-06-25)
 -------------------
 

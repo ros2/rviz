@@ -2,6 +2,12 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.2.4 (2024-07-19)
+-------------------
+* Updated deprecated message filter headers (`#1239 <https://github.com/ros2/rviz/issues/1239>`_)
+* Correclty load icons of panels with whitespaces in their name (`#1241 <https://github.com/ros2/rviz/issues/1241>`_)
+* Contributors: Alejandro Hernández Cordero, Patrick Roncagliolo
+
 14.2.3 (2024-06-25)
 -------------------
 
