@@ -1211,3 +1211,7 @@ ament_package(
 if(TEST cpplint)
   set_tests_properties(cpplint PROPERTIES TIMEOUT 180)
 endif()
+
+if(TEST copyright)
+  set_tests_properties(copyright PROPERTIES TIMEOUT 600)
+endif()
