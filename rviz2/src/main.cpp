@@ -33,6 +33,7 @@
 #include <vector>
 
 #include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
+#include <QProcessEnvironment> // NOLINT: cpplint is unable to hande the include order here
 
 #include "rclcpp/rclcpp.hpp"
 #include "rviz_common/logging.hpp"
@@ -43,6 +44,20 @@ int main(int argc, char ** argv)
 {
   // remove ROS arguments before passing to QApplication
   std::vector<std::string> non_ros_args = rclcpp::remove_ros_arguments(argc, argv);
+
+  // check for wayland and if so force the use of X to render everything
+  // but only if the user hasn't already tried to specify -platform
+  // or override QT_QPA_PLATFORM
+  auto env = QProcessEnvironment::systemEnvironment();
+  if(env.value("XDG_SESSION_TYPE") == "wayland" &&
+    non_ros_args.end() == std::find(non_ros_args.begin(), non_ros_args.end(),
+      "-platform") &&
+    !env.contains("QT_QPA_PLATFORM"))
+  {
+    non_ros_args.push_back("-platform");
+    non_ros_args.push_back("xcb");
+  }
+
   std::vector<char *> non_ros_args_c_strings;
   for (auto & arg : non_ros_args) {
     non_ros_args_c_strings.push_back(&arg.front());
