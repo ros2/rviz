@@ -2,6 +2,9 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.13 (2024-07-26)
+--------------------
+
 11.2.12 (2024-03-26)
 --------------------
 * Select QoS reliability policy in DepthCloud Plugin (`#1159 <https://github.com/ros2/rviz/issues/1159>`_) (`#1164 <https://github.com/ros2/rviz/issues/1164>`_)

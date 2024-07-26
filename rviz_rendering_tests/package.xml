@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>rviz_rendering_tests</name>
-  <version>11.2.12</version>
+  <version>11.2.13</version>
   <description>
     Example plugin for RViz - documents and tests RViz plugin development
   </description>

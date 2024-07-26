@@ -2,6 +2,11 @@
 Changelog for package rviz_assimp_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.13 (2024-07-26)
+--------------------
+* Migrate some security-related changes from `iron` to `humble` (`#1238 <https://github.com/ros2/rviz/issues/1238>`_)
+* Contributors: xueying
+
 11.2.12 (2024-03-26)
 --------------------
 
