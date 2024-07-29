@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Added more time to copyright on Windwos (`#1252 <https://github.com/ros2/rviz/issues/1252>`_)
+* Contributors: Alejandro Hernández Cordero
+
 14.2.4 (2024-07-19)
 -------------------
 * Fix: issue `#1220 <https://github.com/ros2/rviz/issues/1220>`_. (`#1237 <https://github.com/ros2/rviz/issues/1237>`_)

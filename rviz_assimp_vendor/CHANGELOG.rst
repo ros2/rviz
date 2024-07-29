@@ -2,6 +2,11 @@
 Changelog for package rviz_assimp_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Revert "Update ASSIMP_VENDOR CMakeLists.txt (`#1226 <https://github.com/ros2/rviz/issues/1226>`_)" (`#1249 <https://github.com/ros2/rviz/issues/1249>`_)
+* Contributors: Chris Lalancette
+
 14.2.4 (2024-07-19)
 -------------------
 * Update ASSIMP_VENDOR CMakeLists.txt (`#1226 <https://github.com/ros2/rviz/issues/1226>`_)

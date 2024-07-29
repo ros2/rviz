@@ -2,6 +2,11 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Detect wayland and make sure X rendering is used. (`#1253 <https://github.com/ros2/rviz/issues/1253>`_)
+* Contributors: Matthew Elwin
+
 14.2.4 (2024-07-19)
 -------------------
 * Fixed RViz2 linters (`#1231 <https://github.com/ros2/rviz/issues/1231>`_)

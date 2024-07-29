@@ -2,6 +2,13 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Added more time to copyright on Windwos (`#1252 <https://github.com/ros2/rviz/issues/1252>`_)
+* Added common test for rviz_common (`#1232 <https://github.com/ros2/rviz/issues/1232>`_)
+* Set ContentsMargins for RenderPanel to 0 to avoid borders in fullscreen mode. Fixes `#1024 <https://github.com/ros2/rviz/issues/1024>`_ (`#1228 <https://github.com/ros2/rviz/issues/1228>`_)
+* Contributors: Alejandro Hernández Cordero, Bo Chen
+
 14.2.4 (2024-07-19)
 -------------------
 * Updated deprecated message filter headers (`#1239 <https://github.com/ros2/rviz/issues/1239>`_)
