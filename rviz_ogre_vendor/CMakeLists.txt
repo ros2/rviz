@@ -15,7 +15,7 @@ if(WIN32)
 
   ament_vendor(freetype_vendor
     VCS_URL https://git.savannah.gnu.org/git/freetype/freetype2.git
-    VCS_VERSION VER-2-11-1
+    VCS_VERSION VER-2-13-2
     CMAKE_ARGS
       -DFT_DISABLE_ZLIB:BOOL=ON
       -DFT_DISABLE_BZIP2:BOOL=ON
@@ -57,13 +57,15 @@ else()
   set(OGRE_CXX_FLAGS "-Wno-range-loop-construct ${OGRE_CXX_FLAGS}")
   set(OGRE_CXX_FLAGS "-Wno-undef ${OGRE_CXX_FLAGS}")
   set(OGRE_CXX_FLAGS "-Wno-misleading-indentation ${OGRE_CXX_FLAGS}")
-  set(OGRE_CXX_FLAGS "-Wno-implicit-const-int-float-conversion ${OGRE_CXX_FLAGS}")
 
-  if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    set(OGRE_CXX_FLAGS "-Wno-implicit-const-int-float-conversion ${OGRE_CXX_FLAGS}")
+  else()
     set(OGRE_CXX_FLAGS "-Wno-maybe-uninitialized ${OGRE_CXX_FLAGS}")
     set(OGRE_CXX_FLAGS "-Wno-format-overflow ${OGRE_CXX_FLAGS}")
     set(OGRE_CXX_FLAGS "-Wno-dangling-pointer ${OGRE_CXX_FLAGS}")
     set(OGRE_CXX_FLAGS "-Wno-array-compare ${OGRE_CXX_FLAGS}")
+    set(OGRE_CXX_FLAGS "-Wno-stringop-overflow ${OGRE_CXX_FLAGS}")
   endif()
 endif()
 

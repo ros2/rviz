@@ -339,3 +339,7 @@ list(APPEND ${PROJECT_NAME}_CONFIG_EXTRAS
 ament_package(
   CONFIG_EXTRAS "rviz_rendering-extras.cmake"
 )
+
+if(TEST copyright)
+  set_tests_properties(copyright PROPERTIES TIMEOUT 600)
+endif()

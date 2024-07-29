@@ -2,6 +2,41 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.2.4 (2024-07-19)
+-------------------
+
+14.2.3 (2024-06-25)
+-------------------
+* Fix flags for both clang and gcc. (`#1219 <https://github.com/ros2/rviz/issues/1219>`_)
+* Update freetype lib (`#1216 <https://github.com/ros2/rviz/issues/1216>`_)
+* Contributors: Chris Lalancette, mosfet80
+
+14.2.2 (2024-06-17)
+-------------------
+
+14.2.1 (2024-05-24)
+-------------------
+* Update zlib into CMakeLists.txt (`#1128 <https://github.com/ros2/rviz/issues/1128>`_)
+  Changes in 1.3 (18 Aug 2023)
+  - Remove K&R function definitions and zlib2ansi
+  - Fix bug in deflateBound() for level 0 and memLevel 9
+  - Fix bug when gzungetc() is used immediately after gzopen()
+  - Fix bug when using gzflush() with a very small buffer
+  - Fix crash when gzsetparams() attempted for transparent write
+  - Fix test/example.c to work with FORCE_STORED
+  - Rewrite of zran in examples (see zran.c version history)
+  - Fix minizip to allow it to open an empty zip file
+  - Fix reading disk number start on zip64 files in minizip
+  - Fix logic error in minizip argument processing
+  - Add minizip testing to Makefile
+  - Read multiple bytes instead of byte-by-byte in minizip unzip.c
+  - Add memory sanitizer to configure (--memory)
+  - Various portability improvements
+  - Various documentation improvements
+  - Various spelling and typo corrections
+  Co-authored-by: Chris Lalancette <clalancette@gmail.com>
+* Contributors: mosfet80
+
 14.2.0 (2024-04-26)
 -------------------
 

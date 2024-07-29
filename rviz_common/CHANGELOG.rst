@@ -2,6 +2,24 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.2.4 (2024-07-19)
+-------------------
+* Updated deprecated message filter headers (`#1239 <https://github.com/ros2/rviz/issues/1239>`_)
+* Correclty load icons of panels with whitespaces in their name (`#1241 <https://github.com/ros2/rviz/issues/1241>`_)
+* Contributors: Alejandro Hernández Cordero, Patrick Roncagliolo
+
+14.2.3 (2024-06-25)
+-------------------
+
+14.2.2 (2024-06-17)
+-------------------
+* Prepping for qos deprecation (`#1214 <https://github.com/ros2/rviz/issues/1214>`_)
+* Replace ESC shortcut for exiting full screen with solution from https://github.com/ros-visualization/rviz/pull/1416 (`#1205 <https://github.com/ros2/rviz/issues/1205>`_)
+* Contributors: Lucas Wendland, Michael Ripperger
+
+14.2.1 (2024-05-24)
+-------------------
+
 14.2.0 (2024-04-26)
 -------------------
 
