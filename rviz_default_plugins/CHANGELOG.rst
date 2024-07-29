@@ -2,8 +2,8 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+14.2.5 (2024-07-29)
+-------------------
 * Added more time to copyright on Windwos (`#1252 <https://github.com/ros2/rviz/issues/1252>`_)
 * Contributors: Alejandro Hernández Cordero
 
