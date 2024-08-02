@@ -54,6 +54,9 @@
 namespace rviz_rendering
 {
 
+std::chrono::time_point<std::chrono::system_clock> RenderWindowImpl::timeFromStart_ =
+  std::chrono::system_clock::now();
+
 RenderWindowImpl::RenderWindowImpl(QWindow * parent)
 : parent_(parent),
   render_system_(nullptr),
@@ -67,7 +70,8 @@ RenderWindowImpl::RenderWindowImpl(QWindow * parent)
   animating_(false),
   ogre_viewport_(nullptr),
   ortho_scale_(1.0f),
-  pending_listeners_()
+  pending_listeners_(),
+  eventTimePoint_(std::chrono::system_clock::now())
   // auto_render_(true),
   // overlays_enabled_(true),    // matches the default of Ogre::Viewport.
   // stereo_enabled_(false),
@@ -85,7 +89,6 @@ RenderWindowImpl::RenderWindowImpl(QWindow * parent)
 //   viewport_->setDrawBuffer(Ogre::CBT_BACK);
 // #endif
 //   enableStereo(true);
-
   // setCameraAspectRatio();
 }
 
@@ -265,6 +268,22 @@ RenderWindowImpl::initialize()
 void
 RenderWindowImpl::resize(size_t width, size_t height)
 {
+  // Check how fast we are calling this method
+  auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(
+    std::chrono::system_clock::now() - eventTimePoint_).count();
+  eventTimePoint_ = std::chrono::system_clock::now();
+
+  auto diffFromStart = std::chrono::duration_cast<std::chrono::milliseconds>(
+    std::chrono::system_clock::now() - timeFromStart_).count();
+
+  // if the time between call is less than 100 milliseconds then we return
+  // otherwise this may generate a crash. Review this issue:
+  // https://github.com/ros2/rviz/issues/202
+  // if the app is active less than 10s then we handle the initial resize events
+  if (diff < 100 && diffFromStart > 10000) {
+    return;
+  }
+
   if (ogre_render_window_) {
     this->setCameraAspectRatio();
     ogre_render_window_->resize(
