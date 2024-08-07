@@ -179,9 +179,9 @@ void ToolManager::handleChar(QKeyEvent * event, RenderPanel * panel)
     // just hand down the key event
     flags = current_tool_->processKeyEvent(event, panel);
   }
- 
-  if (flags & Tool::Finished) { 
-    setCurrentTool(getDefaultTool()); 
+
+  if (flags & Tool::Finished) {
+    setCurrentTool(getDefaultTool());
   }
 }
 
