@@ -153,6 +153,46 @@ ToString(const EnumType & enumValue)
   return QString("%1::%2").arg(enumName).arg(static_cast<int>(enumValue));
 }
 
+bool RenderWindow::translateTouchToMouseEvent(QTouchEvent* touchEvent) {
+    auto touchPoints = touchEvent->touchPoints();
+
+    if (touchPoints.size() == 1) {
+        auto position = touchPoints[0].pos().toPoint();
+        if (touchPoints[0].state() == Qt::TouchPointReleased) {
+            on_mouse_events_callback_(new QMouseEvent(QEvent::MouseButtonRelease, position, Qt::LeftButton, Qt::NoButton, Qt::NoModifier));
+            singleTouch = doubleTouch = false;
+        } else if (!doubleTouch) { // Ignore single touch if we are already dragging or zooming
+            on_mouse_events_callback_(new QMouseEvent(
+                singleTouch ? QEvent::MouseMove : QEvent::MouseButtonPress,
+                position, Qt::LeftButton, Qt::LeftButton, singleTouch ? Qt::ShiftModifier : Qt::NoModifier
+            ));
+            // Left button down first, then mouse move
+            singleTouch = true;
+        }
+        previousTouchPoints.clear();
+    } else if (touchPoints.size() == 2) { // We are in multitouch
+        auto pos1 = touchPoints[0].pos();
+        auto pos2 = touchPoints[1].pos();
+        if (touchPoints[0].state() == Qt::TouchPointReleased || touchPoints[1].state() == Qt::TouchPointReleased) {
+            previousTouchPoints.clear();
+        } else if (previousTouchPoints.contains(touchPoints[0].id()) && previousTouchPoints.contains(touchPoints[1].id())) {
+            qreal delta = QLineF(pos1, pos2).length() - QLineF(previousTouchPoints[touchPoints[0].id()], previousTouchPoints[touchPoints[1].id()]).length();
+            QPointF midpoint = (pos1 + pos2) / 2.0;
+            int deltaInt = std::abs(delta) > 0.5 ? static_cast<int>(delta * 6) : 0;
+            on_wheel_events_callback_(new QWheelEvent(midpoint, midpoint, QPoint(0, deltaInt), QPoint(0, deltaInt), Qt::LeftButton, Qt::NoModifier, Qt::ScrollUpdate, false));
+            doubleTouch = true;
+
+            previousTouchPoints[touchPoints[0].id()] = pos1;
+            previousTouchPoints[touchPoints[1].id()] = pos2;
+            return true;
+        } else {
+          previousTouchPoints[touchPoints[0].id()] = pos1;
+          previousTouchPoints[touchPoints[1].id()] = pos2;
+        }
+    }
+    return false;
+}
+
 bool
 RenderWindow::event(QEvent * event)
 {
@@ -165,6 +205,16 @@ RenderWindow::event(QEvent * event)
     case QEvent::UpdateRequest:
       this->renderNow();
       return true;
+    case QEvent::TouchBegin:
+    case QEvent::TouchUpdate:
+    case QEvent::TouchEnd:
+    {
+      QTouchEvent* touchEvent = static_cast<QTouchEvent*>(event);
+      if (translateTouchToMouseEvent(touchEvent)) {
+        return QWindow::event(event);
+      }
+      return false;
+    }
     case QEvent::Type::MouseMove:
     case QEvent::Type::MouseButtonPress:
     case QEvent::Type::MouseButtonRelease:

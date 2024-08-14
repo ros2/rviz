@@ -193,6 +193,14 @@ bool OrbitViewController::setMouseMovementFromEvent(
   } else if (dragging_ && event.type == QEvent::MouseMove) {
     diff_x = event.x - event.last_x;
     diff_y = event.y - event.last_y;
+  } else if (dragging_ && event.type == QEvent::Wheel) {
+    diff_x = (event.x - event.last_x) / 1.01;
+    diff_y = (event.y - event.last_y) / 1.01;
+    if (std::abs(diff_x) > 50 || std::abs(diff_y) > 50) {
+      diff_x = 0;
+      diff_y = 0;
+      return false;
+    }
     return true;
   }
   return false;

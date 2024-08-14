@@ -36,6 +36,7 @@
 
 #include <QObject>  // NOLINT
 #include <QWindow>  // NOLINT
+#include <QMap>  // NOLINT
 
 #include "OgreSceneNode.h"
 #include "OgreRenderTargetListener.h"
@@ -101,6 +102,12 @@ public:
 
   void
   windowMovedOrResized();
+
+  bool translateTouchToMouseEvent(QTouchEvent* touchEvent);
+
+  QMap<int, QPointF> previousTouchPoints;
+  bool singleTouch = false;
+  bool doubleTouch = false;
 
 public slots:
   virtual
