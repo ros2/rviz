@@ -2,6 +2,18 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.1.4 (2024-08-19)
+-------------------
+* Detect wayland and make sure X rendering is used. (`#1253 <https://github.com/ros2/rviz/issues/1253>`_) (`#1254 <https://github.com/ros2/rviz/issues/1254>`_)
+  rviz2 does not work under wayland unless using X compatibility.
+  The current workaround on wayland is to set the QT_QPA_PLATFORM
+  environment variable to xcb.  This patch now detects
+  if rviz2 is started in a wayland session and if so sets that
+  variable automatically.
+  (cherry picked from commit 72c0826545b4cc173413699a381cc36da78437bf)
+  Co-authored-by: Matthew Elwin <10161574+m-elwin@users.noreply.github.com>
+* Contributors: mergify[bot]
+
 14.1.3 (2024-07-19)
 -------------------
 

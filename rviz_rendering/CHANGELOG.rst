@@ -2,6 +2,9 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.1.4 (2024-08-19)
+-------------------
+
 14.1.3 (2024-07-19)
 -------------------
 * Fix: issue `#1220 <https://github.com/ros2/rviz/issues/1220>`_. (`#1237 <https://github.com/ros2/rviz/issues/1237>`_) (`#1246 <https://github.com/ros2/rviz/issues/1246>`_)

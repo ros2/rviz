@@ -2,6 +2,13 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.1.4 (2024-08-19)
+-------------------
+* Set ContentsMargins for RenderPanel to 0 to avoid borders in fullscreen mode. Fixes `#1024 <https://github.com/ros2/rviz/issues/1024>`_ (`#1228 <https://github.com/ros2/rviz/issues/1228>`_) (`#1250 <https://github.com/ros2/rviz/issues/1250>`_)
+  (cherry picked from commit 642b1a34b1a50bfa8afa76817ec3fe0e2f9cf210)
+  Co-authored-by: Bo Chen <bo@enway.ai>
+* Contributors: mergify[bot]
+
 14.1.3 (2024-07-19)
 -------------------
 * Correclty load icons of panels with whitespaces in their name (`#1241 <https://github.com/ros2/rviz/issues/1241>`_) (`#1242 <https://github.com/ros2/rviz/issues/1242>`_)
