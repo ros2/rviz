@@ -262,11 +262,11 @@ target_link_libraries(rviz_default_plugins PUBLIC
   tf2_ros::tf2_ros
   urdf::urdf
   ${visualization_msgs_TARGETS}
+  resource_retriever::resource_retriever
 )
 
 target_link_libraries(rviz_default_plugins PRIVATE
   gz-math::core
-  resource_retriever::resource_retriever
 )
 
 # Causes the visibility macros to use dllexport rather than dllimport,

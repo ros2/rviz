@@ -32,6 +32,9 @@
 #include "rviz_default_plugins/displays/marker/marker_common.hpp"
 
 #include <memory>
+#include <resource_retriever/plugins/retriever_plugin.hpp>
+#include <resource_retriever/retriever.hpp>
+#include <rviz_common/ros_integration/ros_node_abstraction_iface.hpp>
 #include <set>
 #include <sstream>
 #include <string>
@@ -47,6 +50,36 @@
 
 #include "rviz_default_plugins/displays/marker/markers/marker_factory.hpp"
 
+class RosRetriever: public resource_retriever::plugins::RetrieverPlugin
+{
+public:
+  explicit RosRetriever(rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr ros_iface):
+    ros_iface_(std::move(ros_iface))
+  {
+  }
+
+  ~RosRetriever() override {};
+
+  std::string name() override
+  {
+    return "rviz_common::RosRetriever";
+  }
+
+  bool can_handle(const std::string & url) override
+  {
+    return true;
+  }
+
+  resource_retriever::MemoryResourcePtr get(const std::string & url) override
+  {
+    printf("Trying to get %s\n", url.c_str());
+    return nullptr;
+  }
+
+private:
+    rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr ros_iface_;
+};
+
 namespace rviz_default_plugins
 {
 namespace displays
@@ -58,6 +91,7 @@ MarkerCommon::MarkerCommon(rviz_common::Display * display)
   namespaces_category_ = new rviz_common::properties::Property(
     "Namespaces", QVariant(), "", display_);
   marker_factory_ = std::make_unique<markers::MarkerFactory>();
+
 }
 
 MarkerCommon::~MarkerCommon()
@@ -69,6 +103,14 @@ void MarkerCommon::initialize(rviz_common::DisplayContext * context, Ogre::Scene
 {
   context_ = context;
   scene_node_ = scene_node;
+
+  resource_retriever::RetrieverVec plugins;
+  plugins.push_back(std::make_shared<RosRetriever>(context_->getRosNodeAbstraction()));
+  for (const auto & plugin : resource_retriever::default_plugins())
+  {
+    plugins.push_back(plugin);
+  }
+  retriever_ = resource_retriever::Retriever(plugins);
 
   namespace_config_enabled_state_.clear();
 
@@ -144,6 +186,11 @@ void MarkerCommon::deleteMarkerStatus(MarkerID id)
 {
   std::string marker_name = id.first + "/" + std::to_string(id.second);
   display_->deleteStatusStd(marker_name);
+}
+
+resource_retriever::Retriever * MarkerCommon::getResourceRetriever()
+{
+  return &this->retriever_;
 }
 
 void MarkerCommon::addMessage(const visualization_msgs::msg::Marker::ConstSharedPtr marker)
