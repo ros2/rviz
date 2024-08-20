@@ -34,6 +34,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <resource_retriever/retriever.hpp>
 #include <set>
 #include <string>
 #include <vector>
@@ -119,6 +120,8 @@ public:
   void setMarkerStatus(MarkerID id, StatusLevel level, const std::string & text);
   void deleteMarkerStatus(MarkerID id);
 
+  resource_retriever::Retriever * getResourceRetriever();
+
 private:
   /** @brief Delete all the markers within the given namespace. */
   void deleteMarkersInNamespace(const std::string & ns);
@@ -171,6 +174,8 @@ private:
   rviz_common::Display * display_;
   rviz_common::DisplayContext * context_;
   Ogre::SceneNode * scene_node_;
+
+  resource_retriever::Retriever retriever_;
 
   friend class MarkerNamespace;
 };
