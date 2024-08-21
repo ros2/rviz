@@ -71,6 +71,7 @@ find_package(nav_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(resource_retriever REQUIRED)
+find_package(resource_retriever_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
@@ -257,6 +258,7 @@ target_link_libraries(rviz_default_plugins PUBLIC
   urdf::urdf
   ${visualization_msgs_TARGETS}
   resource_retriever::resource_retriever
+  ${resource_retriever_msgs_TARGETS}
 )
 
 target_link_libraries(rviz_default_plugins PRIVATE
