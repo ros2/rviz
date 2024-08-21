@@ -84,6 +84,9 @@ void TextViewFacingMarker::onNewMessage(
   scene_node_->setVisible(true);
 
   setPosition(pos);
+  if (new_message->scale.x != 0.0) {
+    text_->setSpaceWidth(new_message->scale.x);
+  }
   text_->setCharacterHeight(new_message->scale.z);
   text_->setColor(
     Ogre::ColourValue(
