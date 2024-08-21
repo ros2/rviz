@@ -31,6 +31,9 @@
 #include "rviz_default_plugins/displays/marker/marker_common.hpp"
 
 #include <memory>
+#include <rclcpp/callback_group.hpp>
+#include <rclcpp/executors/single_threaded_executor.hpp>
+#include <resource_retriever/memory_resource.hpp>
 #include <resource_retriever/plugins/retriever_plugin.hpp>
 #include <resource_retriever/retriever.hpp>
 #include <rviz_common/ros_integration/ros_node_abstraction_iface.hpp>
@@ -49,15 +52,23 @@
 
 #include "rviz_default_plugins/displays/marker/markers/marker_factory.hpp"
 
+#include <resource_retriever_msgs/srv/get_resource.hpp>
+
 class RosRetriever: public resource_retriever::plugins::RetrieverPlugin
 {
+  using GetResource = resource_retriever_msgs::srv::GetResource;
+
 public:
   explicit RosRetriever(rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr ros_iface):
     ros_iface_(std::move(ros_iface))
   {
+    auto iface = ros_iface_.lock();
+    auto raw_node = iface->get_raw_node();
+    callback_group_ = raw_node->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive, false);
+    this->client_ = raw_node->create_client<GetResource>("/get_resource", rclcpp::ServicesQoS(), callback_group_);
   }
 
-  ~RosRetriever() override {};
+  ~RosRetriever() override = default;
 
   std::string name() override
   {
@@ -66,17 +77,60 @@ public:
 
   bool can_handle(const std::string & url) override
   {
-    return true;
+    return !url.empty();
   }
 
   resource_retriever::MemoryResourcePtr get(const std::string & url) override
   {
-    printf("Trying to get %s\n", url.c_str());
+    auto it = cached_resources_.find(url);
+    if (it != cached_resources_.end())
+    {
+      RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "[Resource Cached]: %s", url.c_str());
+      return it->second;
+    }
+
+    auto node = ros_iface_.lock();
+    if (nullptr == node)
+    {
+      RCLCPP_WARN(rclcpp::get_logger("rclcpp"), "Could not acquire node lock");
+      return nullptr;
+    }
+
+    auto raw_node = node->get_raw_node();
+    if (nullptr == node->get_raw_node())
+    {
+      RCLCPP_WARN(rclcpp::get_logger("rclcpp"), "Could not acquire raw node");
+      return nullptr;
+    }
+
+    auto req = std::make_shared<GetResource::Request>();
+    req->path = url;
+    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Sending request");
+    auto result = this->client_->async_send_request(req);
+
+    auto exec = rclcpp::executors::SingleThreadedExecutor();
+    exec.add_callback_group(callback_group_, raw_node->get_node_base_interface());
+    exec.spin_until_future_complete(result);
+    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Waiting done");
+
+    auto res = result.get();
+    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Result: %s", res->path.c_str());
+
+    if (res->status_code == 0)
+    {
+     RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "[Retrieved resource]: %s", url.c_str());
+     cached_resources_.insert({url, std::make_shared<resource_retriever::MemoryResource>(url, res->path, res->body)});
+     return cached_resources_[url];
+    }
+
     return nullptr;
   }
 
 private:
-    rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr ros_iface_;
+  rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr ros_iface_;
+  rclcpp::CallbackGroup::SharedPtr callback_group_;
+  rclcpp::Client<GetResource>::SharedPtr client_;
+  std::unordered_map<std::string, resource_retriever::MemoryResourcePtr> cached_resources_;
 };
 
 namespace rviz_default_plugins
