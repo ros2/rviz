@@ -72,7 +72,8 @@ TEST_F(MeshLoaderTestFixture, throws_reasonable_exception_for_missing_files) {
   std::string mesh_path = "package://rviz_rendering/ogre_media/MISSING.mesh";
   testing::internal::CaptureStderr();
 
-  auto mesh = rviz_rendering::loadMeshFromResource(mesh_path);
+  resource_retriever::Retriever r;
+  auto mesh = rviz_rendering::loadMeshFromResource(&r, mesh_path);
 
   std::string output = testing::internal::GetCapturedStderr();
   ASSERT_THAT(output, HasSubstr("Error retrieving file"));
@@ -81,7 +82,8 @@ TEST_F(MeshLoaderTestFixture, throws_reasonable_exception_for_missing_files) {
 TEST_F(MeshLoaderTestFixture, can_load_ogre_mesh_files) {
   std::string mesh_path = "package://rviz_rendering/ogre_media/models/rviz_sphere.mesh";
 
-  auto mesh = rviz_rendering::loadMeshFromResource(mesh_path);
+  resource_retriever::Retriever r;
+  auto mesh = rviz_rendering::loadMeshFromResource(&r, mesh_path);
 
   ASSERT_TRUE(mesh->isManuallyLoaded());
   ASSERT_EQ(mesh_path, mesh->getName());
@@ -90,7 +92,8 @@ TEST_F(MeshLoaderTestFixture, can_load_ogre_mesh_files) {
 TEST_F(MeshLoaderTestFixture, can_load_stl_files) {
   std::string mesh_path = "package://rviz_rendering_tests/test_meshes/F2.stl";
 
-  auto mesh = rviz_rendering::loadMeshFromResource(mesh_path);
+  resource_retriever::Retriever r;
+  auto mesh = rviz_rendering::loadMeshFromResource(&r, mesh_path);
 
   float expected_bound_radius = 34.920441f;
   size_t expected_vertex_count = 35532;
@@ -109,14 +112,16 @@ TEST_F(MeshLoaderTestFixture, loading_invalid_short_stl_files_fail) {
   /// Load an invalid STL binary file (size < 84 bytes).
   std::string mesh_path = "package://rviz_rendering_tests/test_meshes/invalid_short.stl";
 
-  ASSERT_FALSE(rviz_rendering::loadMeshFromResource(mesh_path));
+  resource_retriever::Retriever r;
+  ASSERT_FALSE(rviz_rendering::loadMeshFromResource(&r, mesh_path));
 }
 
 TEST_F(MeshLoaderTestFixture, loading_invalid_stl_files_fail) {
   /// Load an invalid STL binary file (size does not match the expected size).
   std::string mesh_path = "package://rviz_rendering_tests/test_meshes/invalid.stl";
 
-  ASSERT_FALSE(rviz_rendering::loadMeshFromResource(mesh_path));
+  resource_retriever::Retriever r;
+  ASSERT_FALSE(rviz_rendering::loadMeshFromResource(&r, mesh_path));
 }
 
 TEST_F(MeshLoaderTestFixture, loading_invalid_stl_files_should_fail) {
@@ -125,7 +130,8 @@ TEST_F(MeshLoaderTestFixture, loading_invalid_stl_files_should_fail) {
   std::string mesh_path =
     "package://rviz_rendering_tests/test_meshes/16bit_vs_32bit_should_fail.stl";
 
-  ASSERT_FALSE(rviz_rendering::loadMeshFromResource(mesh_path));
+  resource_retriever::Retriever r;
+  ASSERT_FALSE(rviz_rendering::loadMeshFromResource(&r,mesh_path));
 }
 
 TEST_F(MeshLoaderTestFixture, loading_almost_valid_stl_files_should_succed) {
@@ -134,20 +140,23 @@ TEST_F(MeshLoaderTestFixture, loading_almost_valid_stl_files_should_succed) {
   /// ignored.
   std::string mesh_path = "package://rviz_rendering_tests/test_meshes/valid_extra.stl";
 
-  ASSERT_TRUE(rviz_rendering::loadMeshFromResource(mesh_path));
+  resource_retriever::Retriever r;
+  ASSERT_TRUE(rviz_rendering::loadMeshFromResource(&r, mesh_path));
 }
 
 TEST_F(MeshLoaderTestFixture, loading_stl_mesh_twice_should_not_fail) {
   std::string mesh_path = "package://rviz_rendering_tests/test_meshes/F2.stl";
 
-  ASSERT_TRUE(rviz_rendering::loadMeshFromResource(mesh_path));
-  ASSERT_TRUE(rviz_rendering::loadMeshFromResource(mesh_path));
+  resource_retriever::Retriever r;
+  ASSERT_TRUE(rviz_rendering::loadMeshFromResource(&r, mesh_path));
+  ASSERT_TRUE(rviz_rendering::loadMeshFromResource(&r, mesh_path));
 }
 
 TEST_F(MeshLoaderTestFixture, can_load_assimp_mesh_files) {
   std::string mesh_path = "package://rviz_rendering_tests/test_meshes/pr2-base.dae";
 
-  auto mesh = rviz_rendering::loadMeshFromResource(mesh_path);
+  resource_retriever::Retriever r;
+  auto mesh = rviz_rendering::loadMeshFromResource(&r, mesh_path);
 
   size_t expected_vertex_number = 3600;
   size_t actual_vertex_number = mesh->getSubMesh(0)->vertexData->vertexCount;
@@ -165,7 +174,8 @@ TEST_F(MeshLoaderTestFixture, can_load_assimp_mesh_files) {
 TEST_F(MeshLoaderTestFixture, assimp_loader_reads_size_correctly) {
   std::string mesh_path = "package://rviz_rendering_tests/test_meshes/pr2-base_large.dae";
 
-  auto mesh = rviz_rendering::loadMeshFromResource(mesh_path);
+  resource_retriever::Retriever r;
+  auto mesh = rviz_rendering::loadMeshFromResource(&r, mesh_path);
 
   // The pr2-base_large.dae mesh should be 6 times larger than pr2-base.dae.
   float expected_bounding_radius = 6 * 0.754754f;
@@ -188,5 +198,6 @@ TEST_F(MeshLoaderTestFixture, loading_solidworks_binary_stl) {
   // as ASCII STL files.
   std::string mesh_path = "package://rviz_rendering_tests/test_meshes/solidworks.stl";
 
-  ASSERT_TRUE(rviz_rendering::loadMeshFromResource(mesh_path));
+  resource_retriever::Retriever r;
+  ASSERT_TRUE(rviz_rendering::loadMeshFromResource(&r, mesh_path));
 }
