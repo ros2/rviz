@@ -641,9 +641,9 @@ void VisualizationManager::handleChar(QKeyEvent * event, RenderPanel * panel)
   if (event->key() == Qt::Key_Escape) {
     Q_EMIT escapePressed();
   }
-  
+
   int flags = tool_manager_->handleChar(event, panel);
-  
+
   if (flags & Tool::Render) {
     queueRender();
   }
