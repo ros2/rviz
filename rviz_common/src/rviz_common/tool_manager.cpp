@@ -144,12 +144,12 @@ bool ToolManager::toKey(QString const & str, uint & key)
   }
 }
 
-void ToolManager::handleChar(QKeyEvent * event, RenderPanel * panel)
+int ToolManager::handleChar(QKeyEvent * event, RenderPanel * panel)
 {
   // if the incoming key is ESC fallback to the default tool
   if (event->key() == Qt::Key_Escape) {
     setCurrentTool(getDefaultTool());
-    return;
+    return 0;
   }
 
   // check if the incoming key triggers the activation of another tool
@@ -180,9 +180,7 @@ void ToolManager::handleChar(QKeyEvent * event, RenderPanel * panel)
     flags = current_tool_->processKeyEvent(event, panel);
   }
 
-  if (flags & Tool::Finished) {
-    setCurrentTool(getDefaultTool());
-  }
+  return flags;
 }
 
 void ToolManager::setCurrentTool(Tool * tool)
