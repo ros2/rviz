@@ -138,7 +138,7 @@ public:
   QStringList getToolClasses();
 
   /// Function to handle a key event.
-  void handleChar(QKeyEvent * event, RenderPanel * panel);
+  [[nodiscard]] int handleChar(QKeyEvent * event, RenderPanel * panel);
 
   PluginlibFactory<Tool> * getFactory();
 
