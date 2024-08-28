@@ -43,13 +43,13 @@
 
 #include <QObject>  // NOLINT cpplint cannot handle include order here
 
-#include "urdf/model.h"  // can be replaced later by urdf_model/types.h
 #include "urdf_model/pose.h"
 
 #include "rviz_rendering/objects/object.hpp"
 #include "rviz_common/interaction/forwards.hpp"
 
 #include "rviz_default_plugins/visibility_control.hpp"
+#include "urdf/model.hpp"  // can be replaced later by urdf_model/types.h
 
 namespace Ogre
 {

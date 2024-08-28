@@ -47,7 +47,6 @@
 
 #include <QObject>
 
-#include "urdf/model.h"
 #include "urdf_model/pose.h"
 
 #include "rviz_rendering/objects/object.hpp"
@@ -56,6 +55,8 @@
 #include "rviz_default_plugins/robot/robot_element_base_class.hpp"
 #include "rviz_default_plugins/robot/robot_link.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
+
+#include "urdf/model.hpp"
 
 namespace Ogre
 {
