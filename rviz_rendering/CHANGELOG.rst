@@ -2,6 +2,9 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.2.6 (2024-08-28)
+-------------------
+
 14.2.5 (2024-07-29)
 -------------------
 * Added more time to copyright on Windwos (`#1252 <https://github.com/ros2/rviz/issues/1252>`_)
