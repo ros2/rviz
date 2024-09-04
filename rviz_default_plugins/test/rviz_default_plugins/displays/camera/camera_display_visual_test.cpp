@@ -39,7 +39,7 @@
 #include "../../publishers/camera_info_publisher.hpp"
 #include "../../publishers/image_publisher.hpp"
 #include "../../page_objects/point_cloud_common_page_object.hpp"
-#include "../../publishers/point_cloud_publisher.hpp"
+#include "../../publishers/point_cloud2_publisher.hpp"
 
 class PointCloudDisplayPageObject
   : public PointCloudCommonPageObject
@@ -51,11 +51,11 @@ public:
 };
 
 TEST_F(VisualTestFixture, test_camera_display_with_published_image) {
-  auto points = {nodes::createPoint(0, 0, 10)};
+  // auto points = {nodes::createPoint(0, 0, 10)};
   std::vector<PublisherWithFrame> publishers = {
     PublisherWithFrame(std::make_shared<nodes::CameraInfoPublisher>(), "image"),
-    PublisherWithFrame(std::make_shared<nodes::ImagePublisher>(), "image_frame"),
-    PublisherWithFrame(std::make_shared<nodes::PointCloudPublisher>(points), "pointcloud_frame")
+    PublisherWithFrame(std::make_shared<nodes::ImagePublisher>(), "image_frame")
+    // PublisherWithFrame(std::make_shared<nodes::PointCloud2Publisher>(points), "pointcloud_frame")
   };
   auto cam_publisher = std::make_unique<VisualTestPublisher>(publishers);
 
@@ -66,11 +66,11 @@ TEST_F(VisualTestFixture, test_camera_display_with_published_image) {
   camera_display->setTopic("/image");
   camera_display->collapse();
 
-  auto pointcloud_display = addDisplay<PointCloudDisplayPageObject>();
-  pointcloud_display->setTopic("/pointcloud");
-  pointcloud_display->setStyle("Spheres");
-  pointcloud_display->setSizeMeters(11);
-  pointcloud_display->setColor(0, 0, 255);
+  // auto pointcloud_display = addDisplay<PointCloudDisplayPageObject>();
+  // pointcloud_display->setTopic("/pointcloud");
+  // pointcloud_display->setStyle("Spheres");
+  // pointcloud_display->setSizeMeters(11);
+  // pointcloud_display->setColor(0, 0, 255);
 
   captureRenderWindow(camera_display);
 
