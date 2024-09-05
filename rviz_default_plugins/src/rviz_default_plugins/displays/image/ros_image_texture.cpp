@@ -474,9 +474,9 @@ ROSImageTexture::setFormatAndNormalizeDataIfNecessary(
     return ImageData(Ogre::PF_BYTE_L, data_ptr, data_size_in_bytes, false);
   } else if (encoding == sensor_msgs::image_encodings::TYPE_32FC1) {
     return convertTo8bit<float>(data_ptr, data_size_in_bytes);
-  } else if (encoding == sensor_msgs::image_encodings::YUV422) {
+  } else if (encoding == sensor_msgs::image_encodings::UYVY) {
     return convertYUV422ToRGBData(data_ptr, data_size_in_bytes);
-  } else if (encoding == sensor_msgs::image_encodings::YUV422_YUY2) {
+  } else if (encoding == sensor_msgs::image_encodings::YUYV) {
     return convertYUV422_YUY2ToRGBData(data_ptr, data_size_in_bytes);
   } else {
     throw UnsupportedImageEncoding(encoding);
