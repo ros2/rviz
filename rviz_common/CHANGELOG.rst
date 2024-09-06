@@ -2,6 +2,13 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Handle `Tool::Finished` returned by `processKeyEvent` (`#1257 <https://github.com/ros2/rviz/issues/1257>`_) (`#1263 <https://github.com/ros2/rviz/issues/1263>`_)
+  (cherry picked from commit 37cf8051a4dec9bbaddd17ca07d846b3e5016a99)
+  Co-authored-by: Patrick Roncagliolo <ronca.pat@gmail.com>
+* Contributors: mergify[bot]
+
 14.1.4 (2024-08-19)
 -------------------
 * Set ContentsMargins for RenderPanel to 0 to avoid borders in fullscreen mode. Fixes `#1024 <https://github.com/ros2/rviz/issues/1024>`_ (`#1228 <https://github.com/ros2/rviz/issues/1228>`_) (`#1250 <https://github.com/ros2/rviz/issues/1250>`_)

@@ -2,6 +2,9 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 14.1.4 (2024-08-19)
 -------------------
 * Detect wayland and make sure X rendering is used. (`#1253 <https://github.com/ros2/rviz/issues/1253>`_) (`#1254 <https://github.com/ros2/rviz/issues/1254>`_)
