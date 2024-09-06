@@ -2,8 +2,8 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+14.1.5 (2024-09-06)
+-------------------
 * Enabling manual space width for TextViewFacingMarker (`#1261 <https://github.com/ros2/rviz/issues/1261>`_) (`#1267 <https://github.com/ros2/rviz/issues/1267>`_)
   (cherry picked from commit db7e7f8e8e3e1d848c24d8430bb66e3d79a1e50f)
   Co-authored-by: Tom Moore <tmoore@locusrobotics.com>
