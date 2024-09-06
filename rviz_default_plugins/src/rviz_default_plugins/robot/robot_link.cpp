@@ -108,6 +108,7 @@ public:
 
   bool can_handle(const std::string & url) override
   {
+    Q_UNUSED(url);
     return true;
   }
 
