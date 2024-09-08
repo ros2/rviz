@@ -206,8 +206,8 @@ struct uyvy
   uint8_t y1;
 };
 
-// Function converts src_img from yuv422 format to rgb
-static void imageConvertYUV422ToRGB(
+// Function converts src_img from UYVY format to rgb
+static void imageConvertUYVYToRGB(
   uint8_t * dst_img, uint8_t * src_img,
   int dst_start_row, int dst_end_row,
   int dst_num_cols, uint32_t stride_in_bytes)
@@ -266,8 +266,8 @@ static void imageConvertYUV422ToRGB(
   }
 }
 
-// Function converts src_img from yuv422_yuy2 format to rgb
-static void imageConvertYUV422_YUY2ToRGB(
+// Function converts src_img from YUYV format to rgb
+static void imageConvertYUYVToRGB(
   uint8_t * dst_img, uint8_t * src_img,
   int dst_start_row, int dst_end_row,
   int dst_num_cols, uint32_t stride_in_bytes)
@@ -411,13 +411,13 @@ ROSImageTexture::convertTo8bit(const uint8_t * data_ptr, size_t data_size_in_byt
 }
 
 ImageData
-ROSImageTexture::convertYUV422ToRGBData(const uint8_t * data_ptr, size_t data_size_in_bytes)
+ROSImageTexture::convertUYVYToRGBData(const uint8_t * data_ptr, size_t data_size_in_bytes)
 {
   size_t new_size_in_bytes = data_size_in_bytes * 3 / 2;
 
   uint8_t * new_data = new uint8_t[new_size_in_bytes];
 
-  imageConvertYUV422ToRGB(
+  imageConvertUYVYToRGB(
     new_data, const_cast<uint8_t *>(data_ptr),
     0, height_, width_, stride_);
 
@@ -425,13 +425,13 @@ ROSImageTexture::convertYUV422ToRGBData(const uint8_t * data_ptr, size_t data_si
 }
 
 ImageData
-ROSImageTexture::convertYUV422_YUY2ToRGBData(const uint8_t * data_ptr, size_t data_size_in_bytes)
+ROSImageTexture::convertYUYVToRGBData(const uint8_t * data_ptr, size_t data_size_in_bytes)
 {
   size_t new_size_in_bytes = data_size_in_bytes * 3 / 2;
 
   uint8_t * new_data = new uint8_t[new_size_in_bytes];
 
-  imageConvertYUV422_YUY2ToRGB(
+  imageConvertYUYVToRGB(
     new_data, const_cast<uint8_t *>(data_ptr),
     0, height_, width_, stride_);
 
@@ -474,10 +474,10 @@ ROSImageTexture::setFormatAndNormalizeDataIfNecessary(
     return ImageData(Ogre::PF_BYTE_L, data_ptr, data_size_in_bytes, false);
   } else if (encoding == sensor_msgs::image_encodings::TYPE_32FC1) {
     return convertTo8bit<float>(data_ptr, data_size_in_bytes);
-  } else if (encoding == sensor_msgs::image_encodings::YUV422) {
-    return convertYUV422ToRGBData(data_ptr, data_size_in_bytes);
-  } else if (encoding == sensor_msgs::image_encodings::YUV422_YUY2) {
-    return convertYUV422_YUY2ToRGBData(data_ptr, data_size_in_bytes);
+  } else if (encoding == sensor_msgs::image_encodings::UYVY) {
+    return convertUYVYToRGBData(data_ptr, data_size_in_bytes);
+  } else if (encoding == sensor_msgs::image_encodings::YUYV) {
+    return convertYUYVToRGBData(data_ptr, data_size_in_bytes);
   } else {
     throw UnsupportedImageEncoding(encoding);
   }
