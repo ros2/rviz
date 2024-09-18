@@ -49,8 +49,9 @@
 
 #include <QObject>
 
-#include <urdf/model.h>  // can be replaced later by urdf_model/types.h
 #include <urdf_model/pose.h>
+
+#include <urdf/model.hpp>  // can be replaced later by urdf_model/types.h
 
 #include "rviz_rendering/objects/object.hpp"
 #include "rviz_common/interaction/forwards.hpp"

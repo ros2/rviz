@@ -32,7 +32,6 @@
 
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
-#include <urdf/model.h>
 
 #include <QString>
 
@@ -49,6 +48,7 @@
 #include <rviz_rendering/objects/effort_visual.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
 #include <rclcpp/logging.hpp>
+#include <urdf/model.hpp>
 
 using namespace std::chrono_literals;
 

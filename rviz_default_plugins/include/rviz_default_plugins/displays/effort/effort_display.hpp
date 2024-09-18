@@ -31,7 +31,6 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__EFFORT__EFFORT_DISPLAY_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__EFFORT__EFFORT_DISPLAY_HPP_
 
-#include <urdf/model.h>
 
 #include <deque>
 #include <map>
@@ -48,6 +47,7 @@
 #include <rviz_rendering/objects/effort_visual.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
 #include <std_msgs/msg/string.hpp>
+#include <urdf/model.hpp>
 
 #include "rviz_default_plugins/visibility_control.hpp"
 
