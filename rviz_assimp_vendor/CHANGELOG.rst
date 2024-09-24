@@ -2,6 +2,22 @@
 Changelog for package rviz_assimp_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.2.6 (2024-08-28)
+-------------------
+
+14.2.5 (2024-07-29)
+-------------------
+* Revert "Update ASSIMP_VENDOR CMakeLists.txt (`#1226 <https://github.com/ros2/rviz/issues/1226>`_)" (`#1249 <https://github.com/ros2/rviz/issues/1249>`_)
+* Contributors: Chris Lalancette
+
+14.2.4 (2024-07-19)
+-------------------
+* Update ASSIMP_VENDOR CMakeLists.txt (`#1226 <https://github.com/ros2/rviz/issues/1226>`_)
+  CLEAN UNUSED CHECK
+  SE MIN ASSIMP VERSION TO 5.3.1
+  SET C++ VERSION TO 17
+* Contributors: mosfet80
+
 14.2.3 (2024-06-25)
 -------------------
 

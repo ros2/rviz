@@ -452,3 +452,7 @@ endif()
 ament_package(
   CONFIG_EXTRAS "rviz_common-extras.cmake"
 )
+
+if(TEST copyright)
+  set_tests_properties(copyright PROPERTIES TIMEOUT 600)
+endif()

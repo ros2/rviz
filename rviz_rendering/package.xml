@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>rviz_rendering</name>
-  <version>14.2.3</version>
+  <version>14.2.6</version>
   <description>
     Library which provides the 3D rendering functionality in rviz.
   </description>
@@ -49,14 +49,9 @@
   <exec_depend>rviz_assimp_vendor</exec_depend>
   <exec_depend>rviz_ogre_vendor</exec_depend>
 
-  <!-- TODO(jacobperron): Replace with ament_lint_common when ament_copyright is working -->
-  <test_depend>ament_cmake_cppcheck</test_depend>
-  <test_depend>ament_cmake_cpplint</test_depend>
+  <test_depend>ament_lint_common</test_depend>
   <test_depend>ament_cmake_gtest</test_depend>
   <test_depend>ament_cmake_gmock</test_depend>
-  <test_depend>ament_cmake_lint_cmake</test_depend>
-  <test_depend>ament_cmake_uncrustify</test_depend>
-  <test_depend>ament_cmake_xmllint</test_depend>
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>rviz_assimp_vendor</test_depend>
 
