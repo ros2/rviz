@@ -2,6 +2,11 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* replace deprecated encodings 'yuv422' and 'yuv422_yuy2' (`#1276 <https://github.com/ros2/rviz/issues/1276>`_)
+* Contributors: Christian Rauch
+
 14.2.6 (2024-08-28)
 -------------------
 * Update urdf model.h deprecation (`#1266 <https://github.com/ros2/rviz/issues/1266>`_)

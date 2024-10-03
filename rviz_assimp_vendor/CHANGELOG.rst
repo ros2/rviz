@@ -2,6 +2,9 @@
 Changelog for package rviz_assimp_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 14.2.6 (2024-08-28)
 -------------------
 
