@@ -2,8 +2,8 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+14.3.0 (2024-10-03)
+-------------------
 * replace deprecated encodings 'yuv422' and 'yuv422_yuy2' (`#1276 <https://github.com/ros2/rviz/issues/1276>`_)
 * Contributors: Christian Rauch
 

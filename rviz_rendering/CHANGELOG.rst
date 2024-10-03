@@ -2,8 +2,8 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+14.3.0 (2024-10-03)
+-------------------
 * Avoid redefinition of default color materials (`#1281 <https://github.com/ros2/rviz/issues/1281>`_)
 * Contributors: Masayoshi Dohi
 
