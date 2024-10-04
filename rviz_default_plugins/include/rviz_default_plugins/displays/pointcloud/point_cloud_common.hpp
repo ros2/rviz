@@ -53,6 +53,7 @@
 #include "sensor_msgs/msg/point_cloud2.hpp"
 
 #include "rviz_common/interaction/forwards.hpp"
+#include "rviz_common/properties/int_property.hpp"
 #include "rviz_common/interaction/selection_manager.hpp"
 #include "rviz_common/properties/color_property.hpp"
 #include "rviz_rendering/objects/point_cloud.hpp"
@@ -162,6 +163,7 @@ public:
   rviz_common::properties::EnumProperty * color_transformer_property_;
   rviz_common::properties::EnumProperty * style_property_;
   rviz_common::properties::FloatProperty * decay_time_property_;
+  rviz_common::properties::IntProperty * max_points_property_;
 
   void setAutoSize(bool auto_size);
 

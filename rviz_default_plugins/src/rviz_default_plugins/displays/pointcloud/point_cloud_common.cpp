@@ -140,6 +140,11 @@ PointCloudCommon::PointCloudCommon(rviz_common::Display * display)
     display_, SLOT(queueRender()));
   decay_time_property_->setMin(0);
 
+  max_points_property_ = new rviz_common::properties::IntProperty(
+    "Max Points", 0,
+    "The maximum number of points to render in the pointclod. 0 will render all the points.",
+    display_, SLOT(queueRender()));
+
   xyz_transformer_property_ = new rviz_common::properties::EnumProperty(
     "Position Transformer", "",
     "Set the transformer to use to set the position of the points.",
@@ -507,7 +512,66 @@ void PointCloudCommon::updateStatus()
 void PointCloudCommon::processMessage(const sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud)
 {
   CloudInfoPtr info(new CloudInfo);
-  info->message_ = cloud;
+  // Create a copy of a downsampled pointcloud if required.
+  if (max_points_property_ != nullptr &&
+    max_points_property_->getInt() > 0 &&
+    ((cloud->width * cloud->height) > max_points_property_->getInt()))
+  {
+    int decimation_factor = 1;
+    // for now, decimate equally in rows and cols
+    // round to the nearest perfect square
+    const double input_factor =
+      cloud->width * cloud->height / static_cast<double>(max_points_property_->getInt());
+    decimation_factor = static_cast<int>(std::ceil(std::sqrt(input_factor)));
+    std::shared_ptr<sensor_msgs::msg::PointCloud2> new_cloud =
+      std::make_shared<sensor_msgs::msg::PointCloud2>();
+    new_cloud->header = cloud->header;
+    new_cloud->height = cloud->height / decimation_factor;
+    new_cloud->width = cloud->width / decimation_factor;
+    new_cloud->is_bigendian = cloud->is_bigendian;
+    new_cloud->point_step = 3 * sizeof(float);
+    new_cloud->row_step = new_cloud->point_step * new_cloud->width;
+    new_cloud->is_dense = true;
+
+    // sensor_msgs::msg::PointField fields[3];
+    // fields[0].name = "x";
+    // fields[0].offset = 0;
+    // fields[0].datatype = 7;
+    // fields[0].count = 1;
+    // fields[1].name = "y";
+    // fields[1].offset = 4;
+    // fields[1].datatype = 7;
+    // fields[1].count = 1;
+    // fields[2].name = "z";
+    // fields[2].offset = 8;
+    // fields[2].datatype = 7;
+    // fields[2].count = 1;
+    // new_cloud->fields.push_back(fields[0]);
+    // new_cloud->fields.push_back(fields[1]);
+    new_cloud->fields = cloud->fields;
+
+    // TODO(Yadunund): Don't bother allocating new_cloud if decimation == 1.
+    if (decimation_factor != 1) {
+      new_cloud->data.resize(new_cloud->row_step *
+                                  new_cloud->height);
+      for (std::size_t i = 0; i < new_cloud->height; i++) {
+        for (std::size_t j = 0; j < new_cloud->width; j++) {
+          const int output_offset = 3 * (i * new_cloud->width + j);
+          const int input_offset = 3 * decimation_factor * (i * cloud->width + j);
+          const float *input =
+            reinterpret_cast<const float *>(cloud->data.data());
+          float *output = reinterpret_cast<float *>(new_cloud->data.data());
+          output[output_offset] = input[input_offset];
+          output[output_offset + 1] = input[input_offset + 1];
+          output[output_offset + 2] = input[input_offset + 2];
+        }
+      }
+    }
+    info->message_ = std::move(new_cloud);
+  } else {
+    info->message_ = cloud;
+  }
+
   info->receive_time_ = clock_->now();
 
   if (transformCloud(info, true)) {
