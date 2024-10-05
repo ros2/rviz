@@ -36,14 +36,38 @@
 #include <memory>
 
 #include "get_transport_from_topic.hpp"
-#include "image_transport/image_transport.hpp"
-#include "image_transport/subscriber_filter.hpp"
-#include "rviz_common/ros_topic_display.hpp"
+#include <image_transport/image_transport.hpp>
+#include <image_transport/camera_common.hpp>
+#include <image_transport/publisher_plugin.hpp>
+#include <image_transport/subscriber_plugin.hpp>
+#include <image_transport/subscriber_filter.hpp>
+#include <pluginlib/class_loader.hpp>
+#include <rviz_common/properties/enum_property.hpp>
+#include <rviz_common/properties/ros_topic_property.hpp>
+#include <rviz_common/ros_topic_display.hpp>
+
+#include <sensor_msgs/msg/compressed_image.hpp>
 
 namespace rviz_default_plugins
 {
 namespace displays
 {
+
+enum PluginStatus {SUCCESS, CREATE_FAILURE, LIB_LOAD_FAILURE, DOES_NOT_EXIST};
+
+/// \cond
+struct TransportDesc
+{
+  TransportDesc()
+  : pub_status(DOES_NOT_EXIST), sub_status(DOES_NOT_EXIST)
+  {}
+
+  std::string package_name;
+  std::string pub_name;
+  PluginStatus pub_status;
+  std::string sub_name;
+  PluginStatus sub_status;
+};
 
 template<class MessageType>
 class ImageTransportDisplay : public rviz_common::_RosTopicDisplay
@@ -61,6 +85,50 @@ public:
     QString message_type = QString::fromStdString(rosidl_generator_traits::name<MessageType>());
     topic_property_->setMessageType(message_type);
     topic_property_->setDescription(message_type + " topic to subscribe to.");
+
+    image_transport_type_property_ = new rviz_common::properties::EnumProperty(
+      "Transport hints", "raw", "Preferred method of sending images.",
+      this, SLOT(updateTopic()));
+
+    pluginlib::ClassLoader<image_transport::PublisherPlugin> pub_loader(
+      "image_transport", "image_transport::PublisherPlugin");
+    pluginlib::ClassLoader<image_transport::SubscriberPlugin> sub_loader(
+      "image_transport", "image_transport::SubscriberPlugin");
+    typedef std::map<std::string, TransportDesc> StatusMap;
+    StatusMap transports;
+
+    for (const std::string & lookup_name : pub_loader.getDeclaredClasses()) {
+      std::string transport_name = image_transport::erase_last_copy(lookup_name, "_pub");
+      transports[transport_name].pub_name = lookup_name;
+      transports[transport_name].package_name = pub_loader.getClassPackage(lookup_name);
+      try {
+        auto pub = pub_loader.createUniqueInstance(lookup_name);
+        transports[transport_name].pub_status = SUCCESS;
+      } catch (const pluginlib::LibraryLoadException &) {
+        transports[transport_name].pub_status = LIB_LOAD_FAILURE;
+      } catch (const pluginlib::CreateClassException &) {
+        transports[transport_name].pub_status = CREATE_FAILURE;
+      }
+    }
+
+    for (const std::string & lookup_name : sub_loader.getDeclaredClasses()) {
+      std::string transport_name = image_transport::erase_last_copy(lookup_name, "_sub");
+      transports[transport_name].sub_name = lookup_name;
+      transports[transport_name].package_name = sub_loader.getClassPackage(lookup_name);
+      try {
+        auto sub = sub_loader.createUniqueInstance(lookup_name);
+        transports[transport_name].sub_status = SUCCESS;
+      } catch (const pluginlib::LibraryLoadException &) {
+        transports[transport_name].sub_status = LIB_LOAD_FAILURE;
+      } catch (const pluginlib::CreateClassException &) {
+        transports[transport_name].sub_status = CREATE_FAILURE;
+      }
+    }
+    for (const StatusMap::value_type & value : transports) {
+      std::vector<std::string> tokens = split(
+        value.first, '/');
+      image_transport_type_property_->addOption(tokens[1].c_str());
+    }
   }
 
 /**
@@ -89,9 +157,34 @@ public:
     topic_property_->setString(topic);
   }
 
+  std::vector<std::string> split(const std::string& target, char c)
+  {
+  	std::string temp;
+  	std::stringstream stringstream { target };
+  	std::vector<std::string> result;
+
+  	while (std::getline(stringstream, temp, c)) {
+  		result.push_back(temp);
+  	}
+
+  	return result;
+  }
+
+
 protected:
   void updateTopic() override
   {
+    if (image_transport_type_property_->getStdString() == "raw")
+    {
+      QString message_type =
+        QString::fromStdString(rosidl_generator_traits::name<sensor_msgs::msg::Image>());
+      topic_property_->setMessageType(message_type);
+    } else if (image_transport_type_property_->getStdString() == "compressed")
+    {
+      QString message_type =
+        QString::fromStdString(rosidl_generator_traits::name<sensor_msgs::msg::CompressedImage>());
+      topic_property_->setMessageType(message_type);
+    }
     resetSubscription();
   }
 
@@ -189,7 +282,6 @@ protected:
     processMessage(msg);
   }
 
-
 /// Implement this to process the contents of a message.
 /**
 * This is called by incomingMessage().
@@ -201,6 +293,15 @@ protected:
   std::shared_ptr<image_transport::SubscriberFilter> subscription_;
   rclcpp::Time subscription_start_time_;
   message_filters::Connection subscription_callback_;
+
+  rviz_common::properties::EnumProperty * image_transport_type_property_;
+
+private Q_SLOTS:
+  void updateChoice()
+  {
+    std::cerr << "updateChoice" << '\n';
+  }
+
 };
 
 }  //  end namespace displays
