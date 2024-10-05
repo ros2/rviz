@@ -73,7 +73,11 @@ MapDisplay::MapDisplay()
   update_profile_(rclcpp::QoS(5)),
   update_messages_received_(0)
 {
-  connect(this, SIGNAL(mapUpdated()), this, SLOT(showMap()));
+  // HACK: Using a direct connection triggers a segfault on NVIDIA hardware (#1793) when rendering
+  //       *and* having performed a depth rendering before (e.g. due to raycasting for selections)
+  // A queued connection delays the update of renderables after the current
+  // VisualizationManager::onUpdate() call
+  connect(this, SIGNAL(mapUpdated()), this, SLOT(showMap()), Qt::QueuedConnection);
 
   update_topic_property_ = new rviz_common::properties::RosTopicProperty(
     "Update Topic", "",
