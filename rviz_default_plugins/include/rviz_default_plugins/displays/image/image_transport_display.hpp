@@ -175,11 +175,19 @@ protected:
     std::shared_ptr<rviz_common::ros_integration::RosNodeAbstractionIface> node_interface =
       rviz_ros_node_.lock();
     if (node_interface != nullptr) {
-      const double duration =
-        (node_interface->get_raw_node()->now() - subscription_start_time_).seconds();
-      const double subscription_frequency =
-        static_cast<double>(messages_received_) / duration;
-      topic_str += " at " + QString::number(subscription_frequency, 'f', 1) + " hz.";
+      try{
+        const double duration =
+          (node_interface->get_raw_node()->now() - subscription_start_time_).seconds();
+        const double subscription_frequency =
+          static_cast<double>(messages_received_) / duration;
+        topic_str += " at " + QString::number(subscription_frequency, 'f', 1) + " hz.";
+      }
+      catch (const std::runtime_error &e){
+        if (std::string(e.what()).find("can't subtract times with different time sources") != std::string::npos)
+          topic_str += " at ?? hz.";
+        else
+          throw;
+      }
     }
     setStatus(
       rviz_common::properties::StatusProperty::Ok,
