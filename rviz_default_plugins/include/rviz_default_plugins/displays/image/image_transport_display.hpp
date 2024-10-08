@@ -34,6 +34,7 @@
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__IMAGE_TRANSPORT_DISPLAY_HPP_
 
 #include <memory>
+#include <string>
 
 #include "get_transport_from_topic.hpp"
 #include "image_transport/image_transport.hpp"
@@ -171,7 +172,8 @@ protected:
 
     ++messages_received_;
     QString topic_str = QString::number(messages_received_) + " messages received";
-    rviz_common::properties::StatusProperty::Level topic_status_level = rviz_common::properties::StatusProperty::Ok;
+    rviz_common::properties::StatusProperty::Level topic_status_level =
+      rviz_common::properties::StatusProperty::Ok;
     // Append topic subscription frequency if we can lock rviz_ros_node_.
     std::shared_ptr<rviz_common::ros_integration::RosNodeAbstractionIface> node_interface =
       rviz_ros_node_.lock();
@@ -184,12 +186,12 @@ protected:
         topic_str += " at " + QString::number(subscription_frequency, 'f', 1) + " hz.";
       }
       catch (const std::runtime_error &e){
-        if (std::string(e.what()).find("can't subtract times with different time sources") != std::string::npos){
+        if (std::string(e.what()).find("can't subtract times with different time sources") !=
+          std::string::npos){
           topic_status_level = rviz_common::properties::StatusProperty::Warn;
           topic_str += ". ";
           topic_str += e.what();
-        }
-        else
+        } else
           throw;
       }
     }
