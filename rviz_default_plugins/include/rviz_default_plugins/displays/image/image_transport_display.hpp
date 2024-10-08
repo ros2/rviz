@@ -191,8 +191,9 @@ protected:
           topic_status_level = rviz_common::properties::StatusProperty::Warn;
           topic_str += ". ";
           topic_str += e.what();
-        } else
+        } else {
           throw;
+        }
       }
     }
     setStatus(
