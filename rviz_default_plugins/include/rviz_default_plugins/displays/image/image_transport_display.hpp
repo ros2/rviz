@@ -184,7 +184,7 @@ protected:
         const double subscription_frequency =
           static_cast<double>(messages_received_) / duration;
         topic_str += " at " + QString::number(subscription_frequency, 'f', 1) + " hz.";
-      } catch (const std::runtime_error &e) {
+      } catch (const std::runtime_error & e) {
         if (std::string(e.what()).find("can't subtract times with different time sources") !=
           std::string::npos)
         {
