@@ -46,18 +46,11 @@
 namespace rviz_common
 {
 
-resource_retriever::MemoryResource getResource(const std::string & resource_path)
+resource_retriever::MemoryResourcePtr getResource(const std::string & resource_path)
 {
+  printf("rviz_common::getResource: %s\n", resource_path.c_str());
   resource_retriever::Retriever retriever;
-  resource_retriever::MemoryResource res;
-  try {
-    res = retriever.get(resource_path);
-  } catch (resource_retriever::Exception & e) {
-    RVIZ_COMMON_LOG_DEBUG(e.what());
-    return resource_retriever::MemoryResource();
-  }
-
-  return res;
+  return retriever.get(resource_path);
 }
 
 QPixmap loadPixmap(QString url, bool fill_cache)
@@ -72,8 +65,8 @@ QPixmap loadPixmap(QString url, bool fill_cache)
   RVIZ_COMMON_LOG_DEBUG("Load pixmap at " + url.toStdString());
 
   auto image = getResource(url.toStdString());
-  if (image.size != 0) {
-    if (!pixmap.loadFromData(image.data.get(), static_cast<uint32_t>(image.size))) {
+  if (image!= nullptr && !image->data.empty()) {
+    if (!pixmap.loadFromData(image->data.data(), static_cast<uint32_t>(image->data.size()))) {
       RVIZ_COMMON_LOG_ERROR("Could not load pixmap " + url.toStdString());
     }
   }

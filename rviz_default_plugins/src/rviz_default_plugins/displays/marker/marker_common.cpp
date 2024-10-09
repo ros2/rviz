@@ -32,6 +32,12 @@
 #include "rviz_default_plugins/displays/marker/marker_common.hpp"
 
 #include <memory>
+#include <rclcpp/callback_group.hpp>
+#include <rclcpp/executors/single_threaded_executor.hpp>
+#include <resource_retriever/memory_resource.hpp>
+#include <resource_retriever/plugins/retriever_plugin.hpp>
+#include <resource_retriever/retriever.hpp>
+#include <rviz_common/ros_integration/ros_node_abstraction_iface.hpp>
 #include <set>
 #include <sstream>
 #include <string>
@@ -47,6 +53,87 @@
 
 #include "rviz_default_plugins/displays/marker/markers/marker_factory.hpp"
 
+#include <resource_retriever_msgs/srv/get_resource.hpp>
+
+class RosRetriever: public resource_retriever::plugins::RetrieverPlugin
+{
+  using GetResource = resource_retriever_msgs::srv::GetResource;
+
+public:
+  explicit RosRetriever(rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr ros_iface):
+    ros_iface_(std::move(ros_iface))
+  {
+    auto iface = ros_iface_.lock();
+    auto raw_node = iface->get_raw_node();
+    callback_group_ = raw_node->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive, false);
+    this->client_ = raw_node->create_client<GetResource>("/get_resource", rclcpp::ServicesQoS(), callback_group_);
+  }
+
+  ~RosRetriever() override = default;
+
+  std::string name() override
+  {
+    return "rviz_common::RosRetriever";
+  }
+
+  bool can_handle(const std::string & url) override
+  {
+    return !url.empty();
+  }
+
+  resource_retriever::MemoryResourcePtr get(const std::string & url) override
+  {
+    auto it = cached_resources_.find(url);
+    if (it != cached_resources_.end())
+    {
+      RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "[Resource Cached]: %s", url.c_str());
+      return it->second;
+    }
+
+    auto node = ros_iface_.lock();
+    if (nullptr == node)
+    {
+      RCLCPP_WARN(rclcpp::get_logger("rclcpp"), "Could not acquire node lock");
+      return nullptr;
+    }
+
+    auto raw_node = node->get_raw_node();
+    if (nullptr == node->get_raw_node())
+    {
+      RCLCPP_WARN(rclcpp::get_logger("rclcpp"), "Could not acquire raw node");
+      return nullptr;
+    }
+
+    auto req = std::make_shared<GetResource::Request>();
+    req->path = url;
+    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Sending request");
+    auto result = this->client_->async_send_request(req);
+
+    auto exec = rclcpp::executors::SingleThreadedExecutor();
+    exec.add_callback_group(callback_group_, raw_node->get_node_base_interface());
+    exec.spin_until_future_complete(result);
+    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Waiting done");
+
+    auto res = result.get();
+    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Result: %s", res->path.c_str());
+
+    if (res->status_code == 0)
+    {
+     RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "[Retrieved resource]: %s", url.c_str());
+     cached_resources_.insert({url, std::make_shared<resource_retriever::MemoryResource>(url, res->path, res->body)});
+     return cached_resources_[url];
+    }
+
+    return nullptr;
+  }
+
+private:
+  rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr ros_iface_;
+  rclcpp::CallbackGroup::SharedPtr callback_group_;
+  rclcpp::Client<GetResource>::SharedPtr client_;
+  std::unordered_map<std::string, resource_retriever::MemoryResourcePtr> cached_resources_;
+};
+
 namespace rviz_default_plugins
 {
 namespace displays
@@ -58,6 +145,7 @@ MarkerCommon::MarkerCommon(rviz_common::Display * display)
   namespaces_category_ = new rviz_common::properties::Property(
     "Namespaces", QVariant(), "", display_);
   marker_factory_ = std::make_unique<markers::MarkerFactory>();
+
 }
 
 MarkerCommon::~MarkerCommon()
@@ -69,6 +157,14 @@ void MarkerCommon::initialize(rviz_common::DisplayContext * context, Ogre::Scene
 {
   context_ = context;
   scene_node_ = scene_node;
+
+  resource_retriever::RetrieverVec plugins;
+  plugins.push_back(std::make_shared<RosRetriever>(context_->getRosNodeAbstraction()));
+  for (const auto & plugin : resource_retriever::default_plugins())
+  {
+    plugins.push_back(plugin);
+  }
+  retriever_ = resource_retriever::Retriever(plugins);
 
   namespace_config_enabled_state_.clear();
 
@@ -144,6 +240,11 @@ void MarkerCommon::deleteMarkerStatus(MarkerID id)
 {
   std::string marker_name = id.first + "/" + std::to_string(id.second);
   display_->deleteStatusStd(marker_name);
+}
+
+resource_retriever::Retriever * MarkerCommon::getResourceRetriever()
+{
+  return &this->retriever_;
 }
 
 void MarkerCommon::addMessage(const visualization_msgs::msg::Marker::ConstSharedPtr marker)

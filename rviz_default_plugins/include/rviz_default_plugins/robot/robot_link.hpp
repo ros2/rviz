@@ -34,6 +34,7 @@
 
 #include <map>
 #include <memory>
+#include <resource_retriever/retriever.hpp>
 #include <string>
 #include <vector>
 
@@ -234,6 +235,8 @@ private:
 protected:
   Ogre::SceneManager * scene_manager_;
   rviz_common::DisplayContext * context_;
+
+  mutable resource_retriever::Retriever retriever_;
 
   std::string parent_joint_name_;
   std::vector<std::string> child_joint_names_;
