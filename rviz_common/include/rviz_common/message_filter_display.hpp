@@ -33,6 +33,7 @@
 
 #include <tf2_ros/message_filter.h>
 #include <memory>
+#include <string>
 
 #include <message_filters/subscriber.hpp>
 
@@ -207,19 +208,33 @@ protected:
     auto msg = std::static_pointer_cast<const MessageType>(type_erased_msg);
 
     ++messages_received_;
+    rviz_common::properties::StatusProperty::Level topic_status_level =
+      rviz_common::properties::StatusProperty::Ok;
     QString topic_str = QString::number(messages_received_) + " messages received";
     // Append topic subscription frequency if we can lock rviz_ros_node_.
     std::shared_ptr<ros_integration::RosNodeAbstractionIface> node_interface =
       rviz_ros_node_.lock();
     if (node_interface != nullptr) {
-      const double duration =
-        (node_interface->get_raw_node()->now() - subscription_start_time_).seconds();
-      const double subscription_frequency =
-        static_cast<double>(messages_received_) / duration;
-      topic_str += " at " + QString::number(subscription_frequency, 'f', 1) + " hz.";
+      try {
+        const double duration =
+          (node_interface->get_raw_node()->now() - subscription_start_time_).seconds();
+        const double subscription_frequency =
+          static_cast<double>(messages_received_) / duration;
+        topic_str += " at " + QString::number(subscription_frequency, 'f', 1) + " hz.";
+      } catch (const std::runtime_error & e) {
+        if (std::string(e.what()).find("can't subtract times with different time sources") !=
+          std::string::npos)
+        {
+          topic_status_level = rviz_common::properties::StatusProperty::Warn;
+          topic_str += ". ";
+          topic_str += e.what();
+        } else {
+          throw;
+        }
+      }
     }
     setStatus(
-      properties::StatusProperty::Ok,
+      topic_status_level,
       "Topic",
       topic_str);
 
