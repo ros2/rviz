@@ -105,6 +105,27 @@ public:
 protected:
   void updateTopic() override
   {
+    // Change the QoS according to the info in the ROS Graph
+    const auto & publishers = rviz_ros_node_.lock()->get_raw_node()->get_publishers_info_by_topic(
+      topic_property_->getTopicStd());
+
+    if (!publishers.empty()) {
+      // Check if there is any Subscriber with the same QoS as set
+      bool any_publisher_qos_compatible = false;
+      for (const auto & publisher : publishers) {
+        if (qos_profile == publisher.qos_profile()) {
+          any_publisher_qos_compatible = true;
+          break;
+        }
+      }
+
+      // If not found, select one valid
+      if (!any_publisher_qos_compatible) {
+        qos_profile = publishers[0].qos_profile();
+        qos_profile_property_->setQoSProfile(qos_profile);
+      }
+    }
+
     resetSubscription();
   }
 
@@ -118,6 +139,17 @@ protected:
       setStatus(
         properties::StatusProperty::Error, "Topic", QString("Error subscribing: Empty topic name"));
       return;
+    }
+
+    const auto & publishers = rviz_ros_node_.lock()->get_raw_node()->get_publishers_info_by_topic(
+      topic_property_->getTopicStd());
+
+    bool different_qos = false;
+    for (const auto & publisher : publishers) {
+      if (qos_profile != publisher.qos_profile()) {
+        different_qos = true;
+        break;
+      }
     }
 
     try {
@@ -138,7 +170,14 @@ protected:
         std::bind(
           &MessageFilterDisplay<MessageType>::messageTaken, this,
           std::placeholders::_1));
-      setStatus(properties::StatusProperty::Ok, "Topic", "OK");
+
+      if (!different_qos) {
+        setStatus(properties::StatusProperty::Ok, "Topic", "OK");
+      } else {
+        setStatus(
+          properties::StatusProperty::Warn, "Topic",
+          "1 or more publishers have different QoS settings");
+      }
     } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
       setStatus(
         properties::StatusProperty::Error, "Topic", QString("Error subscribing: ") + e.what());
