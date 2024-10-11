@@ -2,6 +2,11 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.3.1 (2024-10-11)
+-------------------
+* Handle time source exception (`#1285 <https://github.com/ros2/rviz/issues/1285>`_)
+* Contributors: Matthew Foran
+
 14.3.0 (2024-10-03)
 -------------------
 * replace deprecated encodings 'yuv422' and 'yuv422_yuy2' (`#1276 <https://github.com/ros2/rviz/issues/1276>`_)

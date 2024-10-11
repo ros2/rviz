@@ -2,6 +2,11 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.3.1 (2024-10-11)
+-------------------
+* Handle time source exception (`#1285 <https://github.com/ros2/rviz/issues/1285>`_)
+* Contributors: Matthew Foran
+
 14.3.0 (2024-10-03)
 -------------------
 
