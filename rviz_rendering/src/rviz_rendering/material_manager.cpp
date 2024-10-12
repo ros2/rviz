@@ -42,6 +42,9 @@ namespace rviz_rendering
 void MaterialManager::createColorMaterial(
   const std::string & name, const Ogre::ColourValue & color, bool use_self_illumination)
 {
+  if (Ogre::MaterialManager::getSingleton().resourceExists(name, "rviz_rendering")) {
+    return;
+  }
   Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().create(name, "rviz_rendering");
   mat->setAmbient(color * 0.5f);
   mat->setDiffuse(color);

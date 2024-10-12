@@ -2,6 +2,15 @@
 Changelog for package rviz_assimp_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.3.1 (2024-10-11)
+-------------------
+
+14.3.0 (2024-10-03)
+-------------------
+
+14.2.6 (2024-08-28)
+-------------------
+
 14.2.5 (2024-07-29)
 -------------------
 * Revert "Update ASSIMP_VENDOR CMakeLists.txt (`#1226 <https://github.com/ros2/rviz/issues/1226>`_)" (`#1249 <https://github.com/ros2/rviz/issues/1249>`_)

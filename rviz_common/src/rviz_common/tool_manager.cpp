@@ -144,12 +144,12 @@ bool ToolManager::toKey(QString const & str, uint & key)
   }
 }
 
-void ToolManager::handleChar(QKeyEvent * event, RenderPanel * panel)
+int ToolManager::handleChar(QKeyEvent * event, RenderPanel * panel)
 {
   // if the incoming key is ESC fallback to the default tool
   if (event->key() == Qt::Key_Escape) {
     setCurrentTool(getDefaultTool());
-    return;
+    return 0;
   }
 
   // check if the incoming key triggers the activation of another tool
@@ -158,6 +158,7 @@ void ToolManager::handleChar(QKeyEvent * event, RenderPanel * panel)
     tool = shortkey_to_tool_map_[event->key()];
   }
 
+  int flags = 0;
   if (tool) {
     // if there is a incoming tool check if it matches the current tool
     if (current_tool_ == tool) {
@@ -167,7 +168,7 @@ void ToolManager::handleChar(QKeyEvent * event, RenderPanel * panel)
       // if no, check if the current tool accesses all key events
       if (current_tool_->accessAllKeys()) {
         // if yes, pass the key
-        current_tool_->processKeyEvent(event, panel);
+        flags = current_tool_->processKeyEvent(event, panel);
       } else {
         // if no, switch the tool
         setCurrentTool(tool);
@@ -176,8 +177,10 @@ void ToolManager::handleChar(QKeyEvent * event, RenderPanel * panel)
   } else {
     // if the incoming key triggers no other tool,
     // just hand down the key event
-    current_tool_->processKeyEvent(event, panel);
+    flags = current_tool_->processKeyEvent(event, panel);
   }
+
+  return flags;
 }
 
 void ToolManager::setCurrentTool(Tool * tool)
