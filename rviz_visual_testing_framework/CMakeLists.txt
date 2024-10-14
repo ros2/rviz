@@ -25,7 +25,8 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 find_package(geometry_msgs REQUIRED)
-find_package(Qt5 REQUIRED COMPONENTS Widgets Test)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Test Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Test Widgets)
 find_package(rclcpp REQUIRED)
 find_package(rcutils REQUIRED)
 find_package(rviz_common REQUIRED)
@@ -39,13 +40,13 @@ find_package(ament_cmake_gtest REQUIRED)
 ament_find_gtest()
 
 # TODO(wjwwood): this block is to setup the windeployqt tool, could be removed later.
-if(Qt5_FOUND AND WIN32 AND TARGET Qt5::qmake AND NOT TARGET Qt5::windeployqt)
-  get_target_property(_qt5_qmake_location Qt5::qmake IMPORTED_LOCATION)
+if(Qt${QT_VERSION_MAJOR}_FOUND AND WIN32 AND TARGET Qt${QT_VERSION_MAJOR}::qmake AND NOT TARGET Qt${QT_VERSION_MAJOR}::windeployqt)
+  get_target_property(_qt_qmake_location Qt${QT_VERSION_MAJOR}::qmake IMPORTED_LOCATION)
 
   execute_process(
-    COMMAND "${_qt5_qmake_location}" -query QT_INSTALL_PREFIX
+    COMMAND "${_qt_qmake_location}" -query QT${QT_VERSION_MAJOR}_INSTALL_PREFIX
     RESULT_VARIABLE return_code
-    OUTPUT_VARIABLE qt5_install_prefix
+    OUTPUT_VARIABLE qt_install_prefix
     OUTPUT_STRIP_TRAILING_WHITESPACE
   )
 endif()
@@ -71,8 +72,8 @@ target_include_directories(rviz_visual_testing_framework
 
 target_link_libraries(rviz_visual_testing_framework PUBLIC
   ${geometry_msgs_TARGETS}
-  Qt5::Test
-  Qt5::Widgets
+  Qt${QT_VERSION_MAJOR}::Test
+  Qt${QT_VERSION_MAJOR}::Widgets
   rclcpp::rclcpp
   rcutils::rcutils
   rviz_common::rviz_common
@@ -84,7 +85,18 @@ target_link_libraries(rviz_visual_testing_framework PUBLIC
 )
 
 # export information to downstream packages
-ament_export_dependencies(geometry_msgs Qt5 rclcpp rcutils rviz_common rviz_ogre_vendor rviz_rendering std_msgs tf2 tf2_ros)
+ament_export_dependencies(
+  geometry_msgs
+  Qt${QT_VERSION_MAJOR}
+  rclcpp
+  rcutils
+  rviz_common
+  rviz_ogre_vendor
+  rviz_rendering
+  std_msgs
+  tf2
+  tf2_ros
+)
 
 # Export old-style CMake variables
 ament_export_include_directories("include/${PROJECT_NAME}")
