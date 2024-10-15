@@ -38,8 +38,6 @@
 
 #include <QFile>  // NOLINT cpplint cannot handle include order here
 
-#include "urdf/model.h"
-
 #include "tf2_ros/transform_listener.h"
 
 #include "rviz_common/display_context.hpp"
@@ -52,6 +50,8 @@
 #include "rviz_default_plugins/robot/robot.hpp"
 #include "rviz_default_plugins/robot/robot_link.hpp"
 #include "rviz_default_plugins/robot/tf_link_updater.hpp"
+
+#include "urdf/model.hpp"
 
 namespace rviz_default_plugins
 {

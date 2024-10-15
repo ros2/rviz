@@ -39,7 +39,7 @@
 #include <OgreQuaternion.h>
 #include <OgreAny.h>
 
-#include "urdf/model.h"  // can be replaced later by urdf_model/types.h
+#include "urdf/model.hpp"  // can be replaced later by urdf_model/types.h
 
 #include "rviz_default_plugins/robot/link_updater.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"

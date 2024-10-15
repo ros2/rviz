@@ -2,6 +2,22 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.3.1 (2024-10-11)
+-------------------
+* Handle time source exception (`#1285 <https://github.com/ros2/rviz/issues/1285>`_)
+* Contributors: Matthew Foran
+
+14.3.0 (2024-10-03)
+-------------------
+* replace deprecated encodings 'yuv422' and 'yuv422_yuy2' (`#1276 <https://github.com/ros2/rviz/issues/1276>`_)
+* Contributors: Christian Rauch
+
+14.2.6 (2024-08-28)
+-------------------
+* Update urdf model.h deprecation (`#1266 <https://github.com/ros2/rviz/issues/1266>`_)
+* Enabling manual space width for TextViewFacingMarker (`#1261 <https://github.com/ros2/rviz/issues/1261>`_)
+* Contributors: Alejandro Hernández Cordero, Tom Moore
+
 14.2.5 (2024-07-29)
 -------------------
 * Added more time to copyright on Windwos (`#1252 <https://github.com/ros2/rviz/issues/1252>`_)

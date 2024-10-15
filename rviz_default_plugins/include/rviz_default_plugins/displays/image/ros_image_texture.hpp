@@ -128,8 +128,8 @@ private:
     const T * data_ptr, size_t num_elements, T & min_value, T & max_value);
   template<typename T>
   ImageData convertTo8bit(const uint8_t * data_ptr, size_t data_size_in_bytes);
-  ImageData convertYUV422ToRGBData(const uint8_t * data_ptr, size_t data_size_in_bytes);
-  ImageData convertYUV422_YUY2ToRGBData(const uint8_t * data_ptr, size_t data_size_in_bytes);
+  ImageData convertUYVYToRGBData(const uint8_t * data_ptr, size_t data_size_in_bytes);
+  ImageData convertYUYVToRGBData(const uint8_t * data_ptr, size_t data_size_in_bytes);
 
   ImageData setFormatAndNormalizeDataIfNecessary(
     const std::string & encoding, const uint8_t * data_ptr, size_t data_size_in_bytes);
