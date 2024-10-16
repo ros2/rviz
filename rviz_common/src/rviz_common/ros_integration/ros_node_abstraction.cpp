@@ -45,7 +45,7 @@ namespace ros_integration
 {
 
 RosNodeAbstraction::RosNodeAbstraction(const std::string & node_name)
-: raw_node_(rclcpp::Node::make_shared(node_name))
+: raw_node_(rclcpp::Node::make_shared(node_name, rclcpp::NodeOptions().use_intra_process_comms(true)))
 {}
 
 std::string

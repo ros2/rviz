@@ -36,6 +36,7 @@ find_package(Qt5 REQUIRED COMPONENTS Widgets)
 find_package(geometry_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_components REQUIRED)
 find_package(resource_retriever REQUIRED)
 find_package(rviz_rendering REQUIRED)
 find_package(sensor_msgs REQUIRED)
@@ -241,6 +242,8 @@ target_link_libraries(rviz_common PUBLIC
   pluginlib::pluginlib
   Qt5::Widgets
   rclcpp::rclcpp
+  rclcpp_components::component
+  rclcpp_components::component_manager
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
   rviz_rendering::rviz_rendering
