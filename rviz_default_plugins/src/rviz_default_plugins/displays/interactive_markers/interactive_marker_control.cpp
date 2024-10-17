@@ -58,6 +58,7 @@
 
 #include "rviz_default_plugins/displays/marker/markers/shape_marker.hpp"
 #include "rviz_default_plugins/displays/marker/markers/arrow_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/arrow_strip_marker.hpp"
 #include "rviz_default_plugins/displays/marker/markers/line_list_marker.hpp"
 #include "rviz_default_plugins/displays/marker/markers/line_strip_marker.hpp"
 #include "rviz_default_plugins/displays/marker/markers/points_marker.hpp"
@@ -123,7 +124,11 @@ void InteractiveMarkerControl::makeMarkers(
           marker.reset(new markers::ArrowMarker(nullptr, context_, markers_node_));
         }
         break;
-
+      case visualization_msgs::msg::Marker::ARROW_STRIP:
+        {
+          marker.reset(new markers::ArrowStripMarker(nullptr, context_, markers_node_));
+        }
+        break;
       case visualization_msgs::msg::Marker::LINE_STRIP:
         {
           marker.reset(new markers::LineStripMarker(nullptr, context_, markers_node_));
