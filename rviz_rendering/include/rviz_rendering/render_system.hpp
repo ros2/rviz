@@ -41,7 +41,7 @@
 
 #include <QDir>  // NOLINT cpplint cannot handle include order here
 
-#ifdef __linux__
+#if !defined(__APPLE__) && !defined(_WIN32)
 
 #include <X11/Xutil.h>
 #include <GL/glx.h>
