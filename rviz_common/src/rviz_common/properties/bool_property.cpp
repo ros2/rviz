@@ -32,6 +32,7 @@
 #include "rviz_common/properties/bool_property.hpp"
 
 #include <QColor>
+#include <QString>
 
 namespace rviz_common
 {

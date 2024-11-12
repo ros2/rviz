@@ -32,6 +32,7 @@
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__INTERACTIVE_MARKERS__INTEGER_ACTION_HPP_
 
 #include <QAction>
+#include <QString>
 
 namespace rviz_default_plugins
 {

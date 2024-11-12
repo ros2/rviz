@@ -34,6 +34,8 @@
 #include <OgreQuaternion.h>
 #include <OgreVector.h>
 
+#include <QString>
+
 #include "rviz_common/msg_conversions.hpp"
 #include "rviz_default_plugins/displays/marker/marker_display.hpp"
 #include "rviz_default_plugins/displays/marker/markers/marker_base.hpp"

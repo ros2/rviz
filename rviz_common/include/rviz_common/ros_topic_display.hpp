@@ -40,6 +40,8 @@
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #endif
 
 #include "rclcpp/qos.hpp"

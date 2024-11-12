@@ -33,6 +33,7 @@
 #define RVIZ_COMMON__PROPERTIES__PROPERTY_TREE_MODEL_HPP_
 
 #include <QAbstractItemModel>
+#include <QString>
 
 #include "rviz_common/visibility_control.hpp"
 

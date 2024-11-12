@@ -34,6 +34,8 @@
 
 #include <OgreVector.h>
 
+#include <QString>
+
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/visibility_control.hpp"
 

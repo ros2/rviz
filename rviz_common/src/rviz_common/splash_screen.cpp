@@ -32,9 +32,10 @@
 
 #include <iostream>
 
+#include <QCoreApplication>  // NOLINT: cpplint is unable to handle the include order here
 #include <QPainter>  // NOLINT: cpplint is unable to handle the include order here
 #include <QPoint>  // NOLINT: cpplint is unable to handle the include order here
-#include <QCoreApplication>  // NOLINT: cpplint is unable to handle the include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "env_config.hpp"
 #include "rviz_common/load_resource.hpp"

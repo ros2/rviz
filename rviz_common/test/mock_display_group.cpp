@@ -28,6 +28,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 
+#include <QString>
+
 #include "../src/rviz_common/failed_display.hpp"
 
 #include "mock_display_group.hpp"

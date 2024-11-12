@@ -33,6 +33,7 @@
 #include <memory>
 #include <vector>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTest>  // NOLINT
 
 PointCloudCommonPageObject::PointCloudCommonPageObject(QString display_name)

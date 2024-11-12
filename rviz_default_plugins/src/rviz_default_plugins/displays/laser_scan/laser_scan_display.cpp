@@ -33,6 +33,8 @@
 #include <memory>
 #include <string>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "tf2_ros/buffer.h"
 
 #include "rviz_common/properties/int_property.hpp"

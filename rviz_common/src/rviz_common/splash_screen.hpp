@@ -32,6 +32,7 @@
 #define RVIZ_COMMON__SPLASH_SCREEN_HPP_
 
 #include <QSplashScreen>
+#include <QString>
 
 
 class QPainter;

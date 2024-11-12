@@ -30,6 +30,8 @@
 
 #include "odometry_display_page_object.hpp"
 
+#include <QString>
+
 OdometryDisplayPageObject::OdometryDisplayPageObject()
 : BasePageObject(0, "Odometry")
 {}

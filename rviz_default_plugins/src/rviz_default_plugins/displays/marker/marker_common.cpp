@@ -38,6 +38,8 @@
 #include <utility>
 #include <vector>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "rclcpp/duration.hpp"
 
 #include "rviz_common/display.hpp"

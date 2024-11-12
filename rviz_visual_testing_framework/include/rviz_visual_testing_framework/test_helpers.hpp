@@ -32,6 +32,7 @@
 
 #include <vector>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTreeView>  // NOLINT
 
 #include "rviz_rendering/render_window.hpp"

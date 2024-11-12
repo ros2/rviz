@@ -34,6 +34,7 @@
 #include <vector>
 
 #include <QObject>  // NOLINT
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #ifndef Q_MOC_RUN
 #include <OgreVector.h>

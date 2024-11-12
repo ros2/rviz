@@ -30,6 +30,7 @@
 
 #include "rviz_common/properties/quaternion_property.hpp"
 
+#include <QString>
 #include <QStringList>
 
 namespace rviz_common

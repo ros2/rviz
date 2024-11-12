@@ -37,6 +37,7 @@
 #include <OgreSceneNode.h>
 
 #include <QFile>  // NOLINT cpplint cannot handle include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "tf2_ros/transform_listener.h"
 

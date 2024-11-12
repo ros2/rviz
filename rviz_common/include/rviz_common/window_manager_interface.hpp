@@ -33,6 +33,7 @@
 #define RVIZ_COMMON__WINDOW_MANAGER_INTERFACE_HPP_
 
 #include <Qt>
+#include <QString>
 
 class QWidget;
 class QString;

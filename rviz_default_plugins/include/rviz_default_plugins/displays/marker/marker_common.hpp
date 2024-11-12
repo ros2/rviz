@@ -42,6 +42,8 @@
 
 #include <OgreSceneNode.h>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "visualization_msgs/msg/marker.hpp"
 #include "visualization_msgs/msg/marker_array.hpp"
 

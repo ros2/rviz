@@ -33,6 +33,7 @@
 #define RVIZ_COMMON__PROPERTIES__STATUS_PROPERTY_HPP_
 
 #include <QIcon>
+#include <QString>
 
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/visibility_control.hpp"

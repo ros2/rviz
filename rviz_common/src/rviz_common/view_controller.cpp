@@ -39,6 +39,7 @@
 
 #include <QFont>  // NOLINT: cpplint cannot handle include order here
 #include <QKeyEvent>  // NOLINT: cpplint cannot handle include order here
+#include <QString>  // NOLINT: cpplint cannot handle include order here
 
 #include "rviz_rendering/render_window.hpp"
 

@@ -37,6 +37,7 @@
 #include <string>
 
 #include <QDir>  // NOLINT
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rcutils/env.h"
 

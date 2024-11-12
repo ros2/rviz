@@ -39,6 +39,8 @@
 #include <OgreSceneNode.h>
 #include <OgreWireBoundingBox.h>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "rviz_rendering/objects/point_cloud.hpp"
 #include "rviz_common/display.hpp"
 #include "rviz_common/display_context.hpp"

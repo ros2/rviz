@@ -56,6 +56,7 @@
 #include <QShortcut>  // NOLINT cpplint cannot handle include order here
 #include <QSplashScreen>  // NOLINT cpplint cannot handle include order here
 #include <QStatusBar>  // NOLINT cpplint cannot handle include order here
+#include <QString>  // NOLINT cpplint cannot handle include order here
 #include <QTimer>  // NOLINT cpplint cannot handle include order here
 #include <QToolBar>  // NOLINT cpplint cannot handle include order here
 #include <QToolButton>  // NOLINT cpplint cannot handle include order here

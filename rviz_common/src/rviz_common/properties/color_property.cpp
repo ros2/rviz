@@ -30,6 +30,7 @@
 
 
 #include <QPainter>
+#include <QString>
 #include <QStringList>
 #include <QStyleOptionViewItem>
 

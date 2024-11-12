@@ -33,6 +33,8 @@
 #include <string>
 #include <vector>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 PageObjectWithWindow::PageObjectWithWindow(int display_category, QString display_name)
 : BasePageObject(display_category, display_name),
   render_window_(nullptr),

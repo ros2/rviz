@@ -30,13 +30,14 @@
 #ifndef RVIZ_COMMON__PROPERTIES__REGEX_FILTER_PROPERTY_HPP_
 #define RVIZ_COMMON__PROPERTIES__REGEX_FILTER_PROPERTY_HPP_
 
-#include <QValidator>
-#include <QLineEdit>
-#include <QToolTip>
-#include <QWidget>
-
 #include <regex>
 #include <string>
+
+#include <QValidator>  // NOLINT: cpplint is unable to handle the include order here
+#include <QLineEdit>  // NOLINT: cpplint is unable to handle the include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+#include <QToolTip>  // NOLINT: cpplint is unable to handle the include order here
+#include <QWidget>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/properties/string_property.hpp"
 #include "rviz_common/visibility_control.hpp"

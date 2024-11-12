@@ -36,6 +36,7 @@
 
 #include <QIcon>  // NOLINT: cpplint is unable to handle the include order here
 #include <QSet>  // NOLINT: cpplint is unable to handle the include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rclcpp/time.hpp"
 

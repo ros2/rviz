@@ -29,7 +29,11 @@
 
 
 #include <gtest/gtest.h>
+
+#include <QString>
+
 #include <rviz_common/config.hpp>
+
 
 TEST(Config, set_then_get) {
   rviz_common::Config c;

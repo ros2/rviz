@@ -45,6 +45,7 @@
 #endif
 
 #include <QCursor>
+#include <QString>
 
 #include <visualization_msgs/msg/interactive_marker_control.hpp>
 

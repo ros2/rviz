@@ -34,6 +34,7 @@
 
 #include <QtGlobal>  // NOLINT: cpplint is unable to handle the include order here
 #include <QSpinBox>  // NOLINT: cpplint is unable to handle the include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 namespace rviz_common
 {

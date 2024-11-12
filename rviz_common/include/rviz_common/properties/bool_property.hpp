@@ -32,6 +32,8 @@
 #ifndef RVIZ_COMMON__PROPERTIES__BOOL_PROPERTY_HPP_
 #define RVIZ_COMMON__PROPERTIES__BOOL_PROPERTY_HPP_
 
+#include <QString>
+
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/visibility_control.hpp"
 

@@ -33,6 +33,8 @@
 #include <string>
 #include <vector>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "rviz_common/ros_integration/ros_client_abstraction.hpp"
 #include "ament_index_cpp/get_package_share_directory.hpp"
 

@@ -36,8 +36,9 @@
 #include <string>
 #include <vector>
 
-#include <QPushButton>  // NOLINT
-#include <QVBoxLayout>  // NOLINT
+#include <QPushButton>  // NOLINT: cpplint cannot handle the include order here
+#include <QVBoxLayout>  // NOLINT: cpplint cannot handle the include order here
+#include <QString>  // NOLINT: cpplint cannot handle the include order here
 
 #include "rviz_common/panel.hpp"
 #include "rviz_common/properties/grouped_checkbox_property_group.hpp"

@@ -35,6 +35,8 @@
 #include <memory>
 #include <vector>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "geometry_msgs/msg/pose_array.hpp"
 
 #include "rviz_rendering/objects/shape.hpp"

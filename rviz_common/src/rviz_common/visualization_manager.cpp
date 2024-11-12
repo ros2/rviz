@@ -53,6 +53,7 @@
 #include <QApplication>  // NOLINT: cpplint cannot handle include order here
 #include <QCursor>  // NOLINT: cpplint cannot handle include order here
 #include <QKeyEvent>  // NOLINT: cpplint cannot handle include order here
+#include <QString>  // NOLINT: cpplint cannot handle include order here
 #include <QTimer>  // NOLINT: cpplint cannot handle include order here
 #include <QWindow>  // NOLINT: cpplint cannot handle include order here
 

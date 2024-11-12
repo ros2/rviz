@@ -30,6 +30,8 @@
 
 #include "point_display_page_object.hpp"
 
+#include <QString>
+
 PointDisplayPageObject::PointDisplayPageObject()
 : BasePageObject(0, "PointStamped")
 {}

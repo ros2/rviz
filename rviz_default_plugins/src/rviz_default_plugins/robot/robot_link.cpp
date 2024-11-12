@@ -50,6 +50,7 @@
 #include <OgreTechnique.h>
 
 #include <QFileInfo>  // NOLINT cpplint cannot handle include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include <gz/math/Inertial.hh>
 #include <gz/math/MassMatrix3.hh>

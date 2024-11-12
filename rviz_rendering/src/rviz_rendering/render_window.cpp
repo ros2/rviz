@@ -54,6 +54,7 @@
 #include <QWindow>   // NOLINT
 #include <QMetaEnum>   // NOLINT
 #include <QDebug>   // NOLINT
+#include <QString>  // NOLINT: cpplint cannot handle the include order here
 #include <QTime>   // NOLINT
 
 // Use the Ogre implementation for now.

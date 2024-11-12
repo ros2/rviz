@@ -41,6 +41,8 @@
 #include <OgreTechnique.h>
 #include <OgreHardwarePixelBuffer.h>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include <rviz_common/uniform_string_stream.hpp>
 #include <rviz_common/properties/parse_color.hpp>
 

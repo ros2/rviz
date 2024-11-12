@@ -51,6 +51,8 @@
 #include <OgreTextureManager.h>
 #include <OgreTextureUnitState.h>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #define ASSIMP_UNIFIED_HEADER_NAMES 1
 #if defined(ASSIMP_UNIFIED_HEADER_NAMES)
 #include <assimp/postprocess.h>

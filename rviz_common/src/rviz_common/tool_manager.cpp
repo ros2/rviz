@@ -37,6 +37,7 @@
 #include <QKeyEvent>  // NOLINT: cpplint is unable to handle the include order here
 #include <QKeySequence>  // NOLINT: cpplint is unable to handle the include order here
 #include <QRegExp>  // NOLINT: cpplint is unable to handle the include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/logging.hpp"
 

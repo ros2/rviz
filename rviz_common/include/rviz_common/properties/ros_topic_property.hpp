@@ -32,6 +32,8 @@
 
 #include <string>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "rviz_common/properties/editable_enum_property.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
 #include "rviz_common/visibility_control.hpp"

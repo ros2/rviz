@@ -35,6 +35,7 @@
 #include <map>
 
 #include <QColor>  // NOLINT: cpplint is unable to handle the include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "./display_factory.hpp"
 #include "./failed_display.hpp"

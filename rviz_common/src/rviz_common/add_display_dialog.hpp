@@ -39,6 +39,7 @@
 #include <QComboBox>  // NOLINT: cpplint is unable to handle the include order here
 #include <QDialog>  // NOLINT: cpplint is unable to handle the include order here
 #include <QMultiMap>  // NOLINT: cpplint is unable to handle the include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTreeWidget>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/factory/factory.hpp"

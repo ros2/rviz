@@ -34,6 +34,8 @@
 
 #include <OgreManualObject.h>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "rviz_common/tool.hpp"
 
 #include "rviz_default_plugins/tools/measure/measure_tool.hpp"

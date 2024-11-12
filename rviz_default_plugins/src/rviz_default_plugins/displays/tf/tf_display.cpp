@@ -31,10 +31,6 @@
 
 #include "rviz_default_plugins/displays/tf/tf_display.hpp"
 
-#include <QValidator>
-#include <QLineEdit>
-#include <QToolTip>
-
 #include <algorithm>
 #include <cassert>
 #include <memory>
@@ -46,6 +42,11 @@
 
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
+
+#include <QValidator>  // NOLINT: cpplint cannot handle the include order here
+#include <QLineEdit>  // NOLINT: cpplint cannot handle the include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+#include <QToolTip>  // NOLINT: cpplint cannot handle the include order here
 
 #include "tf2_ros/transform_listener.h"
 #include "tf2_ros/buffer.h"

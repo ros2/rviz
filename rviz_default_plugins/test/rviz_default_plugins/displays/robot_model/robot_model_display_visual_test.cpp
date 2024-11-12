@@ -32,6 +32,8 @@
 #include <string>
 #include <vector>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "ament_index_cpp/get_package_prefix.hpp"
 
 #include "rviz_visual_testing_framework/visual_test_fixture.hpp"

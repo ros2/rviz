@@ -39,6 +39,7 @@
 #include <QInputDialog>  // NOLINT: cpplint is unable to handle the include order here
 #include <QProgressDialog> // NOLINT: cpplint is unable to handle the include order here
 #include <QPushButton>  // NOLINT: cpplint is unable to handle the include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
 #include <QVBoxLayout>  // NOLINT: cpplint is unable to handle the include order here
 

@@ -42,6 +42,8 @@
 #include <OgreTechnique.h>
 #include <OgreSharedPtr.h>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "rclcpp/time.hpp"
 
 #include "rviz_rendering/material_manager.hpp"

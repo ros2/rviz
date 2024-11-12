@@ -35,6 +35,8 @@
 
 #include <tinyxml2.h>  // NOLINT: cpplint is unable to handle the include order here
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "rviz_common/display_group.hpp"
 #include "rviz_common/logging.hpp"
 

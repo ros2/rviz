@@ -32,6 +32,8 @@
 #ifndef RVIZ_COMMON__FACTORY__CLASS_ID_RECORDING_FACTORY_HPP_
 #define RVIZ_COMMON__FACTORY__CLASS_ID_RECORDING_FACTORY_HPP_
 
+#include <QString>
+
 #include "./factory.hpp"
 
 namespace rviz_common

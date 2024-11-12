@@ -45,6 +45,8 @@
 #include <OgreSharedPtr.h>
 #include <OgreTechnique.h>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/interaction/handler_manager.hpp"
 #include "rviz_common/interaction/view_picker_iface.hpp"

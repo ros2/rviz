@@ -30,17 +30,17 @@
 
 #include "rviz_default_plugins/displays/effort/effort_display.hpp"
 
-#include <OgreSceneNode.h>
-#include <OgreSceneManager.h>
-
-#include <QString>
-
 #include <chrono>
 #include <cstddef>
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
+
+#include <OgreSceneNode.h>
+#include <OgreSceneManager.h>
+
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include <rviz_common/validate_floats.hpp>
 

@@ -33,6 +33,7 @@
 
 #include <QHash>
 #include <QSet>
+#include <QString>
 #include <QTimer>
 
 #include "rviz_common/properties/property.hpp"

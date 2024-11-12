@@ -29,6 +29,8 @@
 
 #include "rviz_default_plugins/displays/interactive_markers/integer_action.hpp"
 
+#include <QString>
+
 namespace rviz_default_plugins
 {
 namespace displays
