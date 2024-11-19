@@ -214,35 +214,10 @@ sensor_msgs::msg::PointCloud2::ConstSharedPtr create8BitColoredPointCloud2(
   return cloud;
 }
 
-sensor_msgs::msg::PointCloud::ConstSharedPtr createPointCloudWithPoints(std::vector<Point> points)
-{
-  auto message = sensor_msgs::msg::PointCloud();
-  message.header = std_msgs::msg::Header();
-  message.header.stamp = rclcpp::Clock().now();
-  message.header.frame_id = "base_link";
-
-  std::vector<geometry_msgs::msg::Point32> points32;
-  for (auto const & point : points) {
-    geometry_msgs::msg::Point32 p;
-    p.x = point.x;
-    p.y = point.y;
-    p.z = point.z;
-    message.points.push_back(p);
-  }
-
-  return std::make_shared<sensor_msgs::msg::PointCloud>(message);
-}
-
 static std::vector<Point> points = {{1, 1, 1}, {-1, -1, 1}, {-1, 1, 1}, {1, -1, 1}};
 
 sensor_msgs::msg::PointCloud2::ConstSharedPtr createPointCloud2WithSquare()
 {
   return createPointCloud2WithPoints(points);
 }
-
-sensor_msgs::msg::PointCloud::ConstSharedPtr createPointCloudWithSquare()
-{
-  return createPointCloudWithPoints(points);
-}
-
 }  // namespace rviz_default_plugins

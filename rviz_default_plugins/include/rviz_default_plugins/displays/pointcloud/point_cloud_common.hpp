@@ -145,7 +145,6 @@ public:
   void reset();
   void update(float wall_dt, float ros_dt);
 
-  void addMessage(sensor_msgs::msg::PointCloud::ConstSharedPtr cloud);
   void addMessage(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud);
 
   rviz_common::Display * getDisplay() {return display_;}

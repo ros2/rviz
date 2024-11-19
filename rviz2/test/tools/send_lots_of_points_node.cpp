@@ -31,7 +31,8 @@
 #include <cmath>
 
 #include "rclcpp/rclcpp.hpp"
-#include "sensor_msgs/msg/point_cloud.hpp"
+#include "sensor_msgs/msg/point_cloud2.hpp"
+#include "sensor_msgs/point_cloud2_iterator.hpp"
 #include "geometry_msgs/msg/point32.hpp"
 
 int main(int argc, char ** argv)
@@ -54,34 +55,53 @@ int main(int argc, char ** argv)
 
   auto node = rclcpp::Node::make_shared("send_lots_of_points");
 
-  auto pub = node->create_publisher<sensor_msgs::msg::PointCloud>("pointcloud", 100);
+  auto pub = node->create_publisher<sensor_msgs::msg::PointCloud2>("pointcloud", 100);
   rclcpp::Rate loop_rate(rate);
 
-  sensor_msgs::msg::PointCloud msg;
+  sensor_msgs::msg::PointCloud2 msg;
   int width = size;
   int length = 2 * size;
-  msg.points.resize(width * length);
   msg.header.frame_id = "world";
 
+  // Fill 2 using an iterator
+  sensor_msgs::PointCloud2Modifier modifier(msg);
+  modifier.setPointCloud2FieldsByString(2, "xyz", "rgb");
   int count = 0;
+  printf("cloud_msg_.point_step %d\n", msg.point_step);
   while (rclcpp::ok() ) {
     width++;
-    msg.points.resize(width * length + (count % 2) );
-
+    modifier.resize(width, length + (count % 2));
+    sensor_msgs::PointCloud2Iterator<float> iter_x(msg, "x");
+    sensor_msgs::PointCloud2Iterator<float> iter_y(msg, "y");
+    sensor_msgs::PointCloud2Iterator<float> iter_z(msg, "z");
+    sensor_msgs::PointCloud2Iterator<uint8_t> iter_r(msg, "r");
+    sensor_msgs::PointCloud2Iterator<uint8_t> iter_g(msg, "g");
+    sensor_msgs::PointCloud2Iterator<uint8_t> iter_b(msg, "b");
     for (int x = 0; x < width; x++) {
       for (int y = 0; y < length; y++) {
-        geometry_msgs::msg::Point32 & point = msg.points[x + y * width];
-        point.x = static_cast<float>(x / 100.0);
-        point.y = static_cast<float>(y / 100.0);
-//        point.z = sinf( x / 100.0 + y / 100.0 + count / 100.0 );
-        point.z = ((x + y + count) % 100) / 100.0f;
+        if (count % 2) {
+          *iter_x = -.1f;
+          *iter_y = -.1f;
+          *iter_z = 1.1f;
+        } else {
+          *iter_x = static_cast<float>(x / 100.0);
+          *iter_y = static_cast<float>(y / 100.0);
+          *iter_z = ((x + y + count) % 100) / 100.0f;
+        }
+
+        *iter_r = 255;
+        *iter_g = 0;
+        *iter_b = 0;
+
+        ++iter_x;
+        ++iter_y;
+        ++iter_z;
+        ++iter_r;
+        ++iter_g;
+        ++iter_b;
       }
     }
-    if (count % 2) {
-      msg.points[width * length + 1].x = -.1f;
-      msg.points[width * length + 1].y = -.1f;
-      msg.points[width * length + 1].z = 1.1f;
-    }
+
     msg.header.stamp = node->now();
 
     printf(

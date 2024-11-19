@@ -61,9 +61,6 @@ struct ColoredPoint : Point
   : Point(x, y, z), r(r), g(g), b(b) {}
 };
 
-sensor_msgs::msg::PointCloud::ConstSharedPtr createPointCloudWithSquare();
-sensor_msgs::msg::PointCloud::ConstSharedPtr createPointCloudWithPoints(std::vector<Point> points);
-
 sensor_msgs::msg::PointCloud2::ConstSharedPtr createPointCloud2WithSquare();
 sensor_msgs::msg::PointCloud2::SharedPtr createPointCloud2WithPoints(
   const std::vector<Point> & points);

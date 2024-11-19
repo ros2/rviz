@@ -187,10 +187,8 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/pointcloud/transformers/xyz_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/get_transport_from_topic.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_common.cpp
-  src/rviz_default_plugins/displays/pointcloud/point_cloud_to_point_cloud2.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_transformer_factory.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_selection_handler.cpp
-  src/rviz_default_plugins/displays/pointcloud/point_cloud_display.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.cpp
   src/rviz_default_plugins/displays/polygon/polygon_display.cpp
   src/rviz_default_plugins/displays/pose/pose_display.cpp
@@ -1022,24 +1020,6 @@ if(BUILD_TESTING)
       ${geometry_msgs_TARGETS}
       rclcpp::rclcpp
       ${std_msgs_TARGETS}
-    )
-  endif()
-
-  ament_add_gtest(point_cloud_display_visual_test
-    test/rviz_default_plugins/displays/pointcloud/point_cloud_display_visual_test.cpp
-    ${SKIP_VISUAL_TESTS}
-    TIMEOUT 180)
-  if(TARGET point_cloud_display_visual_test)
-    target_include_directories(point_cloud_display_visual_test PRIVATE test)
-    target_link_libraries(point_cloud_display_visual_test
-      Qt5::Test
-      rviz_visual_testing_framework::rviz_visual_testing_framework
-      ${geometry_msgs_TARGETS}
-      tf2::tf2
-      rclcpp::rclcpp
-      ${std_msgs_TARGETS}
-      ${sensor_msgs_TARGETS}
-      point_cloud_common_page_object
     )
   endif()
 
