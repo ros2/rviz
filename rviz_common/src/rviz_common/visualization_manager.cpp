@@ -231,7 +231,6 @@ VisualizationManager::VisualizationManager(
   executor_->add_node(rviz_ros_node_.lock()->get_raw_node());
 
   display_factory_ = new DisplayFactory();
-
   update_timer_ = new QTimer;
   connect(update_timer_, SIGNAL(timeout()), this, SLOT(onUpdate()));
 }
@@ -365,7 +364,6 @@ void VisualizationManager::onUpdate()
 
   if (time_update_timer_ > 0.1f) {
     time_update_timer_ = 0.0f;
-
     updateTime();
   }
 
@@ -373,7 +371,6 @@ void VisualizationManager::onUpdate()
 
   if (frame_update_timer_ > 1.0f) {
     frame_update_timer_ = 0.0f;
-
     updateFrames();
   }
 
@@ -436,18 +433,15 @@ void VisualizationManager::updateFrames()
   std::string error;
   if (frame_manager_->frameHasProblems(getFixedFrame().toStdString(), error)) {
     if (!frame_manager_->anyTransformationDataAvailable()) {
-      // fixed_prop->setToWarn();
       std::stringstream ss;
       ss << "No tf data.  Actual error: " << error;
       global_status_->setStatus(
         StatusProperty::Warn, "Fixed Frame", QString::fromStdString(ss.str()));
     } else {
-      // fixed_prop->setToError();
       global_status_->setStatus(
         StatusProperty::Error, "Fixed Frame", QString::fromStdString(error));
     }
   } else {
-    // fixed_prop->setToOK();
     global_status_->setStatus(StatusProperty::Ok, "Fixed Frame", "OK");
   }
 }
