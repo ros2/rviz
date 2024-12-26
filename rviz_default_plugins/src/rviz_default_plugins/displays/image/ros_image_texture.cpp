@@ -233,6 +233,34 @@ struct uyvy
   uint8_t y1;
 };
 
+// Function converts src_img from NV12 format to rgb
+static void imageConvertNV12ToRGB(
+  uint8_t * dst_img,
+  const uint8_t * src_img,
+  int dst_start_row,
+  int dst_end_row,
+  int dst_num_cols,
+  uint32_t stride_in_bytes)
+{
+  const uint8_t * y_ptr = src_img;
+  const uint8_t * uv_ptr = src_img + (dst_end_row * stride_in_bytes);
+
+  for (int row = dst_start_row; row < dst_end_row; row++) {
+    for (int col = 0; col < dst_num_cols; col++) {
+      int y_index = row * stride_in_bytes + col;
+      int uv_index = (row / 2) * stride_in_bytes + (col / 2) * 2;
+
+      int final_y = y_ptr[y_index];
+      int final_u = uv_ptr[uv_index + 0];
+      int final_v = uv_ptr[uv_index + 1];
+
+      std::tie(dst_img[0], dst_img[1], dst_img[2]) = pixelYUVToRGB(final_y, final_u, final_v);
+
+      dst_img += 3;
+    }
+  }
+}
+
 // Function converts src_img from UYVY format to rgb
 static void imageConvertUYVYToRGB(
   uint8_t * dst_img, uint8_t * src_img,
@@ -410,6 +438,20 @@ ROSImageTexture::convertYUYVToRGBData(const uint8_t * data_ptr, size_t data_size
 }
 
 ImageData
+ROSImageTexture::convertNV12ToRGBData(const uint8_t * data_ptr, size_t data_size_in_bytes)
+{
+  size_t new_size_in_bytes = data_size_in_bytes * 2;
+
+  uint8_t * new_data = new uint8_t[new_size_in_bytes];
+
+  imageConvertNV12ToRGB(
+    new_data, const_cast<uint8_t *>(data_ptr),
+    0, height_, width_, width_);
+
+  return ImageData(Ogre::PF_BYTE_RGB, new_data, new_size_in_bytes, true);
+}
+
+ImageData
 ROSImageTexture::setFormatAndNormalizeDataIfNecessary(
   const std::string & encoding, const uint8_t * data_ptr, size_t data_size_in_bytes)
 {
@@ -449,6 +491,8 @@ ROSImageTexture::setFormatAndNormalizeDataIfNecessary(
     return convertUYVYToRGBData(data_ptr, data_size_in_bytes);
   } else if (encoding == sensor_msgs::image_encodings::YUYV) {
     return convertYUYVToRGBData(data_ptr, data_size_in_bytes);
+  } else if (encoding == sensor_msgs::image_encodings::NV12) {
+    return convertNV12ToRGBData(data_ptr, data_size_in_bytes);
   } else {
     throw UnsupportedImageEncoding(encoding);
   }
