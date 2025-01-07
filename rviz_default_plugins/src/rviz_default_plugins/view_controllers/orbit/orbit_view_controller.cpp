@@ -145,7 +145,7 @@ void OrbitViewController::handleMouseEvent(rviz_common::ViewportMouseEvent & eve
   if (event.left() && !event.shift()) {
     rotateCamera(diff_x, diff_y);
   } else if (event.middle() || (event.shift() && event.left())) {
-    moveFocalPoint(distance, diff_x, diff_y, 0, 0);
+    moveFocalPoint(distance, diff_x, diff_y, event.last_x, event.last_y);
   } else if (event.right()) {
     handleRightClick(event, distance, diff_y);
   } else {
