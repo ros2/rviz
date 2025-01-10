@@ -446,7 +446,7 @@ ROSImageTexture::convertNV12ToRGBData(const uint8_t * data_ptr, size_t data_size
 
   imageConvertNV12ToRGB(
     new_data, const_cast<uint8_t *>(data_ptr),
-    0, height_, width_, width_);
+    0, height_, width_, stride_);
 
   return ImageData(Ogre::PF_BYTE_RGB, new_data, new_size_in_bytes, true);
 }
