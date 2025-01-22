@@ -597,7 +597,6 @@ Ogre::Entity * RobotLink::createEntityForGeometryElement(
   const urdf::LinkConstSharedPtr & link,
   const urdf::Geometry & geom,
   const urdf::Pose & origin,
-  const std::string material_name,
   Ogre::SceneNode * scene_node)
 {
   Ogre::Entity * entity = nullptr;  // default in case nothing works.
@@ -702,7 +701,6 @@ Ogre::Entity * RobotLink::createEntityForGeometryElement(
     offset_node->setPosition(offset_position);
     offset_node->setOrientation(offset_orientation);
 
-    assignMaterialsToEntities(link, material_name, entity);
   }
   return entity;
 }
@@ -759,13 +757,18 @@ Ogre::MaterialPtr RobotLink::getMaterialForLink(
     return Ogre::MaterialManager::getSingleton().getByName("RVIZ/ShadedRed");
   }
 
+  urdf::VisualSharedPtr visual = getVisualWithMaterial(link, material_name);
+
+  return getMaterialForVisual(visual);
+}
+
+Ogre::MaterialPtr RobotLink::getMaterialForVisual(const urdf::VisualSharedPtr & visual)
+{
   static int count = 0;
-  std::string link_material_name = "Robot Link Material" + std::to_string(count++);
+  std::string link_material_name = "Robot Material" + std::to_string(count++);
 
   auto material_for_link =
     rviz_rendering::MaterialManager::createMaterialWithShadowsAndLighting(link_material_name);
-
-  urdf::VisualSharedPtr visual = getVisualWithMaterial(link, material_name);
 
   if (visual->material->texture_filename.empty()) {
     const urdf::Color & color = visual->material->color;
@@ -780,14 +783,27 @@ Ogre::MaterialPtr RobotLink::getMaterialForLink(
   return material_for_link;
 }
 
+void RobotLink::getMaterialForVisualizable(
+  Ogre::Entity * entity,
+  const urdf::VisualSharedPtr & visual)
+{
+    if (!visual->material_name.empty() || 
+      (visual->material && !visual->material->texture_filename.empty()))
+    {
+      Ogre::MaterialPtr material = getMaterialForVisual(visual);
+      // Sets uniformly for all subentities
+      entity -> setMaterial(material);
+      entity -> setMaterialName(material->getName());
+    }
+}
+
 urdf::VisualSharedPtr RobotLink::getVisualWithMaterial(
   const urdf::LinkConstSharedPtr & link, const std::string & material_name) const
 {
   urdf::VisualSharedPtr visual = link->visual;
   for (const auto & visual_array_element : link->visual_array) {
-    if (visual_array_element &&
-      !material_name.empty() &&
-      visual_array_element->material_name == material_name)
+    if (visual_array_element && !visual_array_element->material_name.empty() &&
+      (material_name.empty() || visual_array_element->material_name == material_name))
     {
       visual = visual_array_element;
       break;
