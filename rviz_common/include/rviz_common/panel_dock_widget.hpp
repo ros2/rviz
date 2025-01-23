@@ -34,6 +34,7 @@
 
 #include <QDockWidget>
 #include <QLabel>
+#include <QString>
 
 #include "rviz_common/config.hpp"
 #include "rviz_common/visibility_control.hpp"

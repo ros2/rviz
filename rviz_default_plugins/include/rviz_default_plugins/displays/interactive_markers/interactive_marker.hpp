@@ -46,6 +46,7 @@
 #endif
 
 #include <QMenu>
+#include <QString>
 
 #include <visualization_msgs/msg/interactive_marker.hpp>
 #include <visualization_msgs/msg/interactive_marker_pose.hpp>

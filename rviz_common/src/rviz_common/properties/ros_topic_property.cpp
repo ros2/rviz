@@ -33,6 +33,7 @@
 #include <vector>
 
 #include <QApplication>  // NOLINT: cpplint can't handle Qt imports
+#include <QString>  // NOLINT: cpplint can't handle Qt imports
 
 #include "rviz_common/properties/ros_topic_property.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"

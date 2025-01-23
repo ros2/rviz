@@ -37,10 +37,12 @@
 
 #include <QList>  // NOLINT: cpplint is unable to handle the include order here
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <QStringList>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/factory/pluginlib_factory.hpp"
 #include "rviz_common/tool.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 class QKeyEvent;
 
@@ -54,7 +56,7 @@ class PropertyTreeModel;
 
 }  // namespace properties
 
-class ToolManager : public QObject
+class RVIZ_COMMON_PUBLIC ToolManager : public QObject
 {
   Q_OBJECT
 

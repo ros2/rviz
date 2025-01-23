@@ -33,6 +33,8 @@
 #include <memory>
 #include <vector>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 EffortDisplayPageObject::EffortDisplayPageObject()
 : BasePageObject(0, "Effort")
 {}

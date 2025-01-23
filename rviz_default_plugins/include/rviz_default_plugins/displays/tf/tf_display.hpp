@@ -42,9 +42,9 @@
 #include <OgreVector.h>
 
 #include "geometry_msgs/msg/transform_stamped.hpp"
-#include "tf2/exceptions.h"
-#include "tf2/buffer_core.h"
-#include "tf2/time.h"
+#include "tf2/exceptions.hpp"
+#include "tf2/buffer_core.hpp"
+#include "tf2/time.hpp"
 
 #include "rviz_common/interaction/forwards.hpp"
 #include "rviz_common/display.hpp"

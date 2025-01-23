@@ -36,6 +36,8 @@
 #include <string>
 #include <utility>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "rviz_common/interaction/forwards.hpp"
 #include "rviz_common/interaction/selection_manager.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"

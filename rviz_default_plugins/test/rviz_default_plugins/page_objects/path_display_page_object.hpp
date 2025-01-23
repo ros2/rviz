@@ -31,6 +31,8 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__PATH_DISPLAY_PAGE_OBJECT_HPP_
 #define RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__PATH_DISPLAY_PAGE_OBJECT_HPP_
 
+#include <QString>
+
 #include "rviz_visual_testing_framework/page_objects/base_page_object.hpp"
 
 class PathDisplayPageObject : public BasePageObject

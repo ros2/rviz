@@ -30,9 +30,10 @@
 
 #include "rviz_default_plugins/displays/screw/screw_display.hpp"
 
-#include <QObject>
-#include <QString>
 #include <memory>
+
+#include <QObject>  // NOLINT: cpplint cannot handle the include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include <geometry_msgs/msg/twist_stamped.hpp>
 #include <geometry_msgs/msg/accel_stamped.hpp>

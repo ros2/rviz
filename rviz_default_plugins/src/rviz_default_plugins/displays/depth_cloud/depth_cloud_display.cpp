@@ -34,6 +34,7 @@
 #include <tf2_ros/message_filter.h>
 
 #include <QRegExp>
+#include <QString>
 
 #include <iostream>
 #include <functional>

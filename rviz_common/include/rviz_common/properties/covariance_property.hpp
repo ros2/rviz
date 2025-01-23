@@ -38,6 +38,7 @@
 #include <OgreColourValue.h>
 
 #include <QColor>  // NOLINT cpplint cannot handle include order here
+#include <QString>  // NOLINT cpplint cannot handle include order here
 
 #include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/visibility_control.hpp"

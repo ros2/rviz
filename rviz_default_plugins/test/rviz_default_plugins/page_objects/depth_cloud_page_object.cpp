@@ -33,6 +33,8 @@
 #include <memory>
 #include <vector>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 DepthCloudDisplayPageObject::DepthCloudDisplayPageObject()
 : BasePageObject(0, "DepthCloud")
 {}

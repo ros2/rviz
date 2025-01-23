@@ -30,6 +30,8 @@
 
 #include "rviz_common/properties/parse_color.hpp"
 
+#include <QString>
+
 namespace rviz_common
 {
 namespace properties

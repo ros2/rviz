@@ -41,6 +41,7 @@
 #include <QGridLayout>  // NOLINT: cpplint is unable to handle the include order here
 #include <QMenu>  // NOLINT: cpplint is unable to handle the include order here
 #include <QMouseEvent>  // NOLINT: cpplint is unable to handle the include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
 #include <QWidget>  // NOLINT: cpplint is unable to handle the include order here
 // TODO(wjwwood): remove

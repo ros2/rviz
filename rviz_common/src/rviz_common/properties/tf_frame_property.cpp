@@ -35,6 +35,8 @@
 #include <string>
 #include <vector>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "tf2_ros/transform_listener.h"
 
 #include "../frame_manager.hpp"

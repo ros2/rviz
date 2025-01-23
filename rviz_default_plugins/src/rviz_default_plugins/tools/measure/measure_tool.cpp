@@ -42,6 +42,8 @@
 
 #include <OgreSceneNode.h>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "rviz_rendering/objects/line.hpp"
 
 #include "rviz_common/display_context.hpp"

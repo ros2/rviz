@@ -37,6 +37,7 @@
 #include <QButtonGroup>
 #include <QCheckBox>
 #include <QSlider>
+#include <QString>
 #include <QComboBox>
 
 #include "rviz_common/visualization_manager.hpp"

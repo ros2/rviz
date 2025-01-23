@@ -33,6 +33,7 @@
 #define RVIZ_COMMON__LOADING_DIALOG_HPP_
 
 #include <QDialog>
+#include <QString>
 
 class QLabel;
 

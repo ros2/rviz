@@ -38,7 +38,7 @@
 #include <string>
 
 #include <rclcpp/rclcpp.hpp>
-#include <rviz_common/message_filter_display.hpp>
+#include <rviz_common/ros_topic_display.hpp>
 #include <rviz_common/properties/bool_property.hpp>
 #include <rviz_common/properties/int_property.hpp>
 #include <rviz_common/properties/float_property.hpp>
@@ -90,7 +90,7 @@ private:
 };
 
 class RVIZ_DEFAULT_PLUGINS_PUBLIC EffortDisplay
-  : public rviz_common::MessageFilterDisplay<sensor_msgs::msg::JointState>
+  : public rviz_common::RosTopicDisplay<sensor_msgs::msg::JointState>
 {
   Q_OBJECT
 
@@ -121,6 +121,8 @@ protected:
   // overrides from Display
   void onEnable() override;
   void onDisable() override;
+  void processMessage(sensor_msgs::msg::JointState::ConstSharedPtr msg) override;
+  void processTypeErasedMessage(std::shared_ptr<const void> type_erased_msg) override;
 
   void load();
   void clear();
@@ -132,7 +134,6 @@ protected:
   std::string robot_description_topic_;
 
 private:
-  void processMessage(sensor_msgs::msg::JointState::ConstSharedPtr msg) override;
   void topic_callback(const std_msgs::msg::String & msg);
 
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;

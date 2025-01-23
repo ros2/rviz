@@ -32,6 +32,8 @@
 
 #include <string>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "rviz_common/panel.hpp"
 
 class QTextBrowser;

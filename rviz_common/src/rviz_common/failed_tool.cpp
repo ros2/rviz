@@ -32,6 +32,7 @@
 #include "failed_tool.hpp"
 
 #include <QMessageBox>
+#include <QString>
 
 #include "rviz_common/window_manager_interface.hpp"
 #include "rviz_common/display_context.hpp"

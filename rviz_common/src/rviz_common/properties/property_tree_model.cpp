@@ -34,6 +34,7 @@
 #include <cstdio>
 
 #include <QMimeData>  // NOLINT: cpplint is unable to handle the include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <QStringList>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/properties/property.hpp"

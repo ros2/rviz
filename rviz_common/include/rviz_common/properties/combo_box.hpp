@@ -31,6 +31,7 @@
 #define RVIZ_COMMON__PROPERTIES__COMBO_BOX_HPP_
 
 #include <QComboBox>
+#include <QString>
 
 #include "rviz_common/visibility_control.hpp"
 

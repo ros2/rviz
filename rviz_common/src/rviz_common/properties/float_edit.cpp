@@ -33,6 +33,7 @@
 
 #include <QDoubleValidator>
 #include <QLocale>
+#include <QString>
 
 namespace rviz_common
 {

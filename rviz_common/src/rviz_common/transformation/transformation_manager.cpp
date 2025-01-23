@@ -34,6 +34,8 @@
 #include <string>
 #include <vector>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "rviz_common/factory/pluginlib_factory.hpp"
 #include "./identity_frame_transformer.hpp"
 

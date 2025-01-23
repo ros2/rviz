@@ -29,8 +29,6 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 
-#include <QMenu>
-
 #include <map>
 #include <memory>
 #include <set>
@@ -45,6 +43,9 @@
 #include <OgreSubEntity.h>
 #include <OgreMath.h>
 #include <OgreRenderWindow.h>
+
+#include <QMenu>  // NOLINT: cpplint cannot handle the include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "interactive_markers/tools.hpp"
 

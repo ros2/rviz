@@ -36,6 +36,8 @@
 #include <deque>
 #include <memory>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "rclcpp/clock.hpp"
 #include "rclcpp/time.hpp"
 #include "tf2_ros/transform_listener.h"

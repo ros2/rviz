@@ -29,10 +29,10 @@
 
 #include "twist_display_page_object.hpp"
 
-#include <QString>
-
 #include <memory>
 #include <vector>
+
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 TwistDisplayPageObject::TwistDisplayPageObject()
 : BasePageObject(0, "TwistStamped")

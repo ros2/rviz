@@ -36,6 +36,8 @@
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "rviz_rendering/objects/axes.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"

@@ -33,6 +33,7 @@
 #define RVIZ_COMMON__PROPERTIES__PROPERTY_TREE_WIDGET_HPP_
 
 #include <QTreeView>
+#include <QString>
 
 #include "./property_tree_model.hpp"
 #include "rviz_common/config.hpp"

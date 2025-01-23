@@ -34,6 +34,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <QString>
+
 #include "rviz_common/panel_dock_widget.hpp"
 
 #include "rviz_common/window_manager_interface.hpp"

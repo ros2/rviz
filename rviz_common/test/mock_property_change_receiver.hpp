@@ -31,6 +31,7 @@
 #define MOCK_PROPERTY_CHANGE_RECEIVER_HPP_
 
 #include <QObject>
+#include <QString>
 
 #include "rviz_common/properties/property.hpp"
 

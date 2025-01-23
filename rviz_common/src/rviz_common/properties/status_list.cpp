@@ -32,6 +32,8 @@
 
 #include <cstdio>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "rviz_common/properties/property_tree_model.hpp"
 
 namespace rviz_common

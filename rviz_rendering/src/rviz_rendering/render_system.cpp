@@ -42,6 +42,8 @@
 #include <OgreLogManager.h>
 #include <OgreMeshManager.h>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "ament_index_cpp/get_resource.hpp"
 #include "ament_index_cpp/get_resources.hpp"
 #include "rviz_rendering/material_manager.hpp"

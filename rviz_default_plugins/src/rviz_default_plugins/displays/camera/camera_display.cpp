@@ -48,6 +48,8 @@
 #include <OgreTechnique.h>
 #include <OgreCamera.h>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "image_transport/camera_common.hpp"
 
 #include "rviz_rendering/material_manager.hpp"

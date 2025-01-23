@@ -33,6 +33,7 @@
 #ifndef RVIZ_COMMON__PANEL_HPP_
 #define RVIZ_COMMON__PANEL_HPP_
 
+#include <QString>
 #include <QWidget>
 
 #include "rviz_common/config.hpp"

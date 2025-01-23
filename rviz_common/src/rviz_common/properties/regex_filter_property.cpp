@@ -31,6 +31,7 @@
 
 #include <QValidator>
 #include <QLineEdit>
+#include <QString>
 #include <QToolTip>
 #include <QWidget>
 

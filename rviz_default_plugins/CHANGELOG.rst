@@ -2,6 +2,30 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.4.1 (2025-01-15)
+-------------------
+* Fixed the XY Orbit controller move (`#1327 <https://github.com/ros2/rviz/issues/1327>`_)
+  Co-authored-by: Terry Scott <tscott@seegrid.com>
+* Contributors: Terry Scott
+
+14.4.0 (2024-12-20)
+-------------------
+* Fix Deprecated tf2 headers (`#1289 <https://github.com/ros2/rviz/issues/1289>`_)
+* Change EffortDisplay superclass from MessageFilterDisplay to RosTopicDisplay to avoid dropping messages with empty frame_id. (`#1312 <https://github.com/ros2/rviz/issues/1312>`_)
+* Fix access control for Accel, Effort and Twist displays (`#1311 <https://github.com/ros2/rviz/issues/1311>`_)
+* Contributors: Lucas Wendland, disRecord, suchetanrs
+
+14.3.3 (2024-11-25)
+-------------------
+* remove unused variable (`#1301 <https://github.com/ros2/rviz/issues/1301>`_)
+* Contributors: Alejandro Hernández Cordero
+
+14.3.2 (2024-11-20)
+-------------------
+* include QString (`#1298 <https://github.com/ros2/rviz/issues/1298>`_)
+* Clean code for Image display (`#1271 <https://github.com/ros2/rviz/issues/1271>`_)
+* Contributors: Matthew Foran, Peng Wang
+
 14.3.1 (2024-10-11)
 -------------------
 * Handle time source exception (`#1285 <https://github.com/ros2/rviz/issues/1285>`_)

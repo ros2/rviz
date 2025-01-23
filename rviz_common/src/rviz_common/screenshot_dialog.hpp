@@ -32,6 +32,7 @@
 #ifndef RVIZ_COMMON__SCREENSHOT_DIALOG_HPP_
 #define RVIZ_COMMON__SCREENSHOT_DIALOG_HPP_
 
+#include <QString>
 #include <QWidget>
 
 class QAbstractButton;

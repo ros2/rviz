@@ -31,6 +31,8 @@
 #ifndef RVIZ_COMMON__TIME_PANEL_HPP_
 #define RVIZ_COMMON__TIME_PANEL_HPP_
 
+#include <QString>
+
 #include "rviz_common/panel.hpp"
 #include "rclcpp/rclcpp.hpp"
 

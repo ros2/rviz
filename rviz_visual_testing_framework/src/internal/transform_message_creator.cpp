@@ -33,7 +33,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp/clock.hpp"
-#include "tf2/LinearMath/Quaternion.h"
+#include "tf2/LinearMath/Quaternion.hpp"
 
 geometry_msgs::msg::TransformStamped createStaticTransformMessageFor(
   std::string header_frame_id, std::string child_frame_id)

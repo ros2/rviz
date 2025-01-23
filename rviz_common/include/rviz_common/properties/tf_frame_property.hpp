@@ -33,6 +33,9 @@
 #define RVIZ_COMMON__PROPERTIES__TF_FRAME_PROPERTY_HPP_
 
 #include <string>
+
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "rviz_common/frame_manager_iface.hpp"
 
 #include "./editable_enum_property.hpp"

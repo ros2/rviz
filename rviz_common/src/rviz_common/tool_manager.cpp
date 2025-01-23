@@ -37,6 +37,7 @@
 #include <QKeyEvent>  // NOLINT: cpplint is unable to handle the include order here
 #include <QKeySequence>  // NOLINT: cpplint is unable to handle the include order here
 #include <QRegExp>  // NOLINT: cpplint is unable to handle the include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/logging.hpp"
 
@@ -78,7 +79,7 @@ void ToolManager::initialize()
   // get a list of available tool plugin class ids
   auto plugins = factory_->getDeclaredPlugins();
   // define a list of preferred tool names (they will be listed first in the toolbar)
-  std::vector<const char *> preferred_tool_names = {
+  std::vector<const char *> preferred_tool_class_ids = {
     "rviz_default_plugins/MoveCamera",
     "rviz_default_plugins/Interact",
     "rviz_default_plugins/Select",
@@ -86,9 +87,9 @@ void ToolManager::initialize()
     "rviz_default_plugins/SetGoal",
   };
   // attempt to load each preferred tool in order
-  for (const auto & preferred_tool_name : preferred_tool_names) {
+  for (const auto & preferred_tool_class_id : preferred_tool_class_ids) {
     for (const auto & plugin : plugins) {
-      if (plugin.name.toStdString() == preferred_tool_name) {
+      if (plugin.id.toStdString() == preferred_tool_class_id) {
         addTool(plugin);
       }
     }

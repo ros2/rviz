@@ -31,6 +31,7 @@
 
 #include "rviz_common/properties/vector_property.hpp"
 
+#include <QString>
 #include <QStringList>
 
 namespace rviz_common

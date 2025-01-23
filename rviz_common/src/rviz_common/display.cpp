@@ -43,6 +43,7 @@
 #include <QFont>  // NOLINT: cpplint is unable to handle the include order here
 #include <QMetaObject>  // NOLINT: cpplint is unable to handle the include order here
 #include <QWidget>  // NOLINT: cpplint is unable to handle the include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rclcpp/time.hpp"
 #include "rclcpp/rclcpp.hpp"
