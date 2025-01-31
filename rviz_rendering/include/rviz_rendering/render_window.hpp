@@ -143,6 +143,9 @@ protected:
   void
   exposeEvent(QExposeEvent * expose_event) override;
 
+  void
+  resizeEvent(QResizeEvent * resize_event) override;
+
   bool
   event(QEvent * event) override;
 
