@@ -97,7 +97,8 @@ Ogre::MeshPtr loadMeshFromResource(
       return nullptr;
     }
     Ogre::MeshSerializer ser;
-    Ogre::DataStreamPtr stream(new Ogre::MemoryDataStream(*res->data.data(), res->data.size()));
+    Ogre::DataStreamPtr stream(new Ogre::MemoryDataStream(
+      const_cast<void*>(reinterpret_cast<void const *>(res->data.data())), res->data.size()));
     Ogre::MeshPtr mesh = Ogre::MeshManager::getSingleton().createManual(resource_uri,
         ROS_PACKAGE_NAME);
     ser.importMesh(stream, mesh.get());
