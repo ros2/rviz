@@ -47,7 +47,7 @@
 namespace rviz_common
 {
 
-resource_retriever::MemoryResourceSharedPtr getResource(const std::string & resource_path)
+resource_retriever::ResourceSharedPtr getResource(const std::string & resource_path)
 {
   RVIZ_COMMON_LOG_DEBUG("rviz_common::getResource() loading resource: " + resource_path);
   resource_retriever::Retriever retriever;

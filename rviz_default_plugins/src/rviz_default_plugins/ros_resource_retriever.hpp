@@ -64,7 +64,7 @@ public:
 
   bool can_handle(const std::string & url) override;
 
-  resource_retriever::MemoryResourceSharedPtr get_shared(const std::string & url) override;
+  resource_retriever::ResourceSharedPtr get_shared(const std::string & url) override;
 
 private:
   // It should be safe to keep a shared pointer to the node here, because this
@@ -81,7 +81,7 @@ private:
   // Map of the resource path to a pair with the etag value and the memory resource that is cached.
   std::unordered_map<
     std::string,
-    std::pair<std::string, resource_retriever::MemoryResourceSharedPtr>
+    std::pair<std::string, resource_retriever::ResourceSharedPtr>
   > cached_resources_;
 };
 

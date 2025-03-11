@@ -71,7 +71,7 @@ namespace rviz_rendering
 class ResourceIOStream : public Assimp::IOStream
 {
 public:
-  explicit ResourceIOStream(resource_retriever::MemoryResourceSharedPtr res)
+  explicit ResourceIOStream(resource_retriever::ResourceSharedPtr res)
   : res_(res),
     pos_(res->data.data())
   {}
@@ -138,7 +138,7 @@ public:
   {}
 
 private:
-  resource_retriever::MemoryResourceSharedPtr res_;
+  resource_retriever::ResourceSharedPtr res_;
   const uint8_t * pos_;
 };
 

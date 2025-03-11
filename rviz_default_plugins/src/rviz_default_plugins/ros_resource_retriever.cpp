@@ -88,7 +88,7 @@ bool RosResourceRetriever::can_handle(const std::string & url)
   return !url.empty();
 }
 
-resource_retriever::MemoryResourceSharedPtr
+resource_retriever::ResourceSharedPtr
 RosResourceRetriever::get_shared(const std::string & url)
 {
   RCLCPP_DEBUG(this->logger_, "Getting resource: %s", url.c_str());
@@ -118,7 +118,7 @@ RosResourceRetriever::get_shared(const std::string & url)
   executor_.spin_until_future_complete(result);
 
   auto res = result.get();
-  std::shared_ptr<resource_retriever::MemoryResource> memory_resource = nullptr;
+  std::shared_ptr<resource_retriever::Resource> memory_resource = nullptr;
   switch (res->status_code) {
     case rviz_resource_interfaces::srv::GetResource::Response::OK:
       RCLCPP_DEBUG(
@@ -128,7 +128,7 @@ RosResourceRetriever::get_shared(const std::string & url)
         res->etag.c_str(),
         res->body.size());
       memory_resource =
-        std::make_shared<resource_retriever::MemoryResource>(url, res->expanded_path, res->body);
+        std::make_shared<resource_retriever::Resource>(url, res->expanded_path, res->body);
       cached_resources_.insert({url, {res->etag, memory_resource}});
       return memory_resource;
     case rviz_resource_interfaces::srv::GetResource::Response::NOT_MODIFIED:
