@@ -48,7 +48,7 @@ class RosClientAbstraction : public RosClientAbstractionIface
 {
 public:
   RVIZ_COMMON_PUBLIC
-  RosClientAbstraction(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
+  explicit RosClientAbstraction(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
 
   // TODO(wjwwood): Figure out which exceptions can be raised and document them
   //                consider consolidating all possible exceptions to a few
