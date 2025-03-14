@@ -44,7 +44,8 @@ namespace rviz_common
 namespace ros_integration
 {
 
-RosClientAbstraction::RosClientAbstraction()
+RosClientAbstraction::RosClientAbstraction(const rclcpp::NodeOptions & options)
+: options_(options)
 {}
 
 RosNodeAbstractionIface::WeakPtr
@@ -63,7 +64,7 @@ RosClientAbstraction::init(int argc, char ** argv, const std::string & name, boo
     // TODO(wjwwood): make a better exception type rather than using std::runtime_error.
     throw std::runtime_error("Node with name " + final_name + " already exists.");
   }
-  rviz_ros_node_ = std::make_shared<RosNodeAbstraction>(final_name);
+  rviz_ros_node_ = std::make_shared<RosNodeAbstraction>(final_name, options_);
   return rviz_ros_node_;
 }
 
