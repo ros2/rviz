@@ -62,7 +62,9 @@ public:
    * \param node_name name of the node to create
    */
   RVIZ_COMMON_PUBLIC
-  explicit RosNodeAbstraction(const std::string & node_name);
+  explicit RosNodeAbstraction(
+    const std::string & node_name,
+    const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
 
   /// Returns the name of the ros node
   /**

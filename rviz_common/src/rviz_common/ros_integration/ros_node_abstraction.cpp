@@ -44,8 +44,10 @@ namespace rviz_common
 namespace ros_integration
 {
 
-RosNodeAbstraction::RosNodeAbstraction(const std::string & node_name)
-: raw_node_(rclcpp::Node::make_shared(node_name))
+RosNodeAbstraction::RosNodeAbstraction(
+  const std::string & node_name,
+  const rclcpp::NodeOptions & options)
+: raw_node_(rclcpp::Node::make_shared(node_name, options))
 {}
 
 std::string
