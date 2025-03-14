@@ -40,6 +40,7 @@
   <depend>geometry_msgs</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
+  <depend>rclcpp_components</depend>
   <depend>resource_retriever</depend>
   <depend>rviz_ogre_vendor</depend>
   <depend>rviz_rendering</depend>
