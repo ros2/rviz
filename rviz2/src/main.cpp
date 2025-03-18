@@ -86,7 +86,11 @@ int main(int argc, char ** argv)
   );
 
   rviz_common::VisualizerApp vapp(
-    std::make_unique<rviz_common::ros_integration::RosClientAbstraction>());
+    std::make_unique<rviz_common::ros_integration::RosClientAbstraction>(
+      // In custom setups, this is the injection point for ROS node options
+      rclcpp::NodeOptions()
+    )
+  );
   vapp.setApp(&qapp);
   if (vapp.init(argc, argv)) {
     return qapp.exec();

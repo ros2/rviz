@@ -2,6 +2,14 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.4.3 (2025-02-27)
+-------------------
+* uniform CMAKE requirement (`#1335 <https://github.com/ros2/rviz/issues/1335>`_)
+* Contributors: mosfet80
+
+14.4.2 (2025-01-31)
+-------------------
+
 14.4.1 (2025-01-15)
 -------------------
 

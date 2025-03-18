@@ -2,6 +2,16 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.4.3 (2025-02-27)
+-------------------
+* uniform CMAKE requirement (`#1335 <https://github.com/ros2/rviz/issues/1335>`_)
+* Contributors: mosfet80
+
+14.4.2 (2025-01-31)
+-------------------
+* Add basic support for type adaptation (REP 2007) in `rviz_common` for displays (`#1331 <https://github.com/ros2/rviz/issues/1331>`_)
+* Contributors: Patrick Roncagliolo
+
 14.4.1 (2025-01-15)
 -------------------
 * Fix preferred tools loading names (`#1321 <https://github.com/ros2/rviz/issues/1321>`_)

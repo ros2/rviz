@@ -68,25 +68,8 @@ RenderWindowImpl::RenderWindowImpl(QWindow * parent)
   ogre_viewport_(nullptr),
   ortho_scale_(1.0f),
   pending_listeners_()
-  // auto_render_(true),
-  // overlays_enabled_(true),    // matches the default of Ogre::Viewport.
-  // stereo_enabled_(false),
-  // rendering_stereo_(false),
-  // left_camera_(0),
-  // right_camera_(0),
-  // right_viewport_(0)
 {
   RenderSystem::get();  // side-effect is that the render system is setup
-  // this->initialize();
-  // render_window_->setVisible(true);
-  // render_window_->setAutoUpdated(true);
-
-// #if OGRE_STEREO_ENABLE
-//   viewport_->setDrawBuffer(Ogre::CBT_BACK);
-// #endif
-//   enableStereo(true);
-
-  // setCameraAspectRatio();
 }
 
 RenderWindowImpl::~RenderWindowImpl()
@@ -94,7 +77,6 @@ RenderWindowImpl::~RenderWindowImpl()
   if (ogre_render_window_) {
     Ogre::Root::getSingletonPtr()->detachRenderTarget(ogre_render_window_);
     Ogre::Root::getSingletonPtr()->destroyRenderTarget(ogre_render_window_);
-    // enableStereo(false);  // free stereo resources
   }
 }
 
@@ -134,18 +116,6 @@ void
 RenderWindowImpl::renderLater()
 {
   parent_->requestUpdate();
-
-  // Alternative impl?:
-
-  // // This function forces QWindow to keep rendering.
-  // // Omitting this causes the renderNow() function to only get called when the
-  // // window is resized, moved, etc. as opposed to all of the time; which is
-  // // generally what we need.
-  // if (!m_update_pending)
-  // {
-  //   m_update_pending = true;
-  //   QApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
-  // }
 }
 
 
@@ -165,7 +135,6 @@ RenderWindowImpl::renderNow()
       setup_scene_callback_ = 0;
     }
   }
-
   this->render();
 
   if (animating_) {
@@ -289,19 +258,6 @@ void RenderWindowImpl::setCamera(Ogre::Camera * ogre_camera)
       ogre_viewport_->setCamera(ogre_camera);
       this->setCameraAspectRatio();
     }
-
-    // if (ogre_camera_ && rendering_stereo_ && !left_ogre_camera_) {
-    //   left_ogre_camera_ =
-    //     ogre_camera_->getSceneManager()->createCamera(ogre_camera_->getName() + "-left");
-    // }
-    // if (ogre_camera_ && rendering_stereo_ && !right_ogre_camera_) {
-    //   right_ogre_camera_ =
-    //     ogre_camera_->getSceneManager()->createCamera(ogre_camera_->getName() + "-right");
-    // }
-
-    // TODO(wjwwood): not sure where this was going before, need to figure that out
-    //                and see if it is still needed, could have been QWidget before
-    // this->update();
   }
 }
 
@@ -369,15 +325,10 @@ void RenderWindowImpl::setBackgroundColor(Ogre::ColourValue background_color)
 
 void RenderWindowImpl::setCameraAspectRatio()
 {
-  // auto width = parent_->width();
   auto width = parent_->width() ? parent_->width() : 100;
-  // auto height = parent_->height();
   auto height = parent_->height() ? parent_->height() : 100;
   if (ogre_camera_) {
     ogre_camera_->setAspectRatio(Ogre::Real(width) / Ogre::Real(height));
-    // if (right_ogre_camera_) {
-    //   right_ogre_camera_->setAspectRatio(Ogre::Real(width()) / Ogre::Real(height()));
-    // }
 
     if (ogre_camera_->getProjectionType() == Ogre::PT_ORTHOGRAPHIC) {
       Ogre::Matrix4 proj = buildScaledOrthoMatrix(

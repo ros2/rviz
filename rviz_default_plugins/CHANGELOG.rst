@@ -2,6 +2,19 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.4.3 (2025-02-27)
+-------------------
+* Nv12 color format (`#1318 <https://github.com/ros2/rviz/issues/1318>`_)
+  Co-authored-by: zycczy <zycczyby@gmail.com>
+* uniform CMAKE requirement (`#1335 <https://github.com/ros2/rviz/issues/1335>`_)
+* Contributors: mosfet80, quic-zhaoyuan
+
+14.4.2 (2025-01-31)
+-------------------
+* Initialize lookup table only once at compile time (`#1330 <https://github.com/ros2/rviz/issues/1330>`_)
+  Co-authored-by: Alejandro Hernández Cordero <ahcorde@gmail.com>
+* Contributors: Patrick Roncagliolo
+
 14.4.1 (2025-01-15)
 -------------------
 * Fixed the XY Orbit controller move (`#1327 <https://github.com/ros2/rviz/issues/1327>`_)
