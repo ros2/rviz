@@ -19,17 +19,12 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-<<<<<<< HEAD
   <build_depend>git</build_depend>
   <build_depend>pkg-config</build_depend>
 
   <build_depend>libfreetype6-dev</build_depend>
   <build_export_depend>libfreetype6-dev</build_export_depend>
-=======
-  <build_depend>libfreetype-dev</build_depend>
-  <build_export_depend>libfreetype-dev</build_export_depend>
   <build_export_depend>libglew-dev</build_export_depend>
->>>>>>> 84c82b1b (Add missing glew dependency for ogre vendor package. (#1350))
   <exec_depend>libfreetype6</exec_depend>
 
   <depend>libx11-dev</depend>
