@@ -31,6 +31,7 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__PUBLISHERS__POSE_PUBLISHER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__PUBLISHERS__POSE_PUBLISHER_HPP_
 
+#include <chrono>
 #include <vector>
 
 #include "geometry_msgs/msg/pose_stamped.hpp"
