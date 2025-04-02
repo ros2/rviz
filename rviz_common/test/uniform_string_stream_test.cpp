@@ -93,6 +93,14 @@ TEST(UniformStringStream, print_floats) {
   std::locale::global(old_locale);
 }
 
+TEST(UniformStringStream, parse_floats_invalid_float_format) {
+  UniformStringStream uss("1.2.3 4,5");
+  float a, b;
+  uss.parseFloat(a);
+  uss.parseFloat(b);
+  EXPECT_FALSE(!!uss);
+}
+
 int main(int argc, char ** argv)
 {
   testing::InitGoogleTest(&argc, argv);
