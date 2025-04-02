@@ -64,5 +64,5 @@ TEST(VisualizerApp, handlesEmptyFrameDuringExit) {
   EXPECT_CALL(*dynamic_cast<MockRosNodeStorage *>(ros_client.get()), shutdown()).Times(1);
   rviz_common::VisualizerApp visualizer_app(std::move(ros_client));
   // Simulate that frame_ is nullptr during exit, ensuring no crash occurs
-  visualizer_app.getRenderWindow();
+  EXPECT_EQ(nullptr, visualizer_app.getRenderWindow());
 }
