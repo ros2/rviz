@@ -69,6 +69,9 @@ void VisualizerApp::setApp(QApplication * app)
 
 rviz_rendering::RenderWindow * VisualizerApp::getRenderWindow()
 {
+  if (!frame_) {
+    return nullptr;
+  }
   return frame_->getRenderWindow();
 }
 
