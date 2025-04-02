@@ -76,6 +76,9 @@ TEST(Config, mapGetValue_key_not_found_null_check) {
   QString s;
   EXPECT_FALSE(c.mapGetString("non_existent_key", &s));
   EXPECT_EQ(s, "");
+  QString s_default("my_default_value");
+  EXPECT_FALSE(c.mapGetString("non_existent_key", &s_default));
+  EXPECT_EQ(s_default, "my_default_value");
 }
 
 int main(int argc, char ** argv)
