@@ -61,6 +61,11 @@ void UniformStringStream::parseFloat(float & f)
   if (float_reader.fail()) {
     this->setstate(std::ios::failbit);
   }
+
+  // Ensure the entire string is correctly parsed
+  if (float_reader.fail() || !float_reader.eof()) {
+    this->setstate(std::ios::failbit);
+  }
 }
 
 }  // namespace rviz_common
