@@ -71,12 +71,10 @@ void assertBoundingBoxEquality(Ogre::AxisAlignedBox actual, Ogre::AxisAlignedBox
 
 TEST_F(MeshLoaderTestFixture, throws_reasonable_exception_for_missing_files) {
   std::string mesh_path = "package://rviz_rendering/ogre_media/MISSING.mesh";
-  testing::internal::CaptureStderr();
 
-  auto mesh = rviz_rendering::loadMeshFromResource(&this->retriever_, mesh_path);
-
-  std::string output = testing::internal::GetCapturedStderr();
-  ASSERT_THAT(output, HasSubstr("Error retrieving file"));
+  EXPECT_THROW(
+    rviz_rendering::loadMeshFromResource(&this->retriever_, mesh_path),
+    resource_retriever::Exception);
 }
 
 TEST_F(MeshLoaderTestFixture, can_load_ogre_mesh_files) {
