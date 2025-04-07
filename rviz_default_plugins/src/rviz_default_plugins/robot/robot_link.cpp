@@ -229,7 +229,12 @@ RobotLink::RobotLink(
     rviz_rendering::MaterialManager::createMaterialWithLighting(color_material_name);
 
   resource_retriever::RetrieverVec plugins;
-  plugins.push_back(std::make_shared<RosResourceRetriever>(context_->getRosNodeAbstraction()));
+  if (context_ != nullptr) {
+    std::shared_ptr node_ptr = context_->getRosNodeAbstraction().lock();
+    if (node_ptr != nullptr) {
+      plugins.push_back(std::make_shared<RosResourceRetriever>(context_->getRosNodeAbstraction()));
+    }
+  }
   for (const auto & plugin : resource_retriever::default_plugins()) {
     plugins.push_back(plugin);
   }
