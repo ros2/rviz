@@ -44,10 +44,21 @@
 #include "rviz_common/interaction/handler_manager_iface.hpp"
 #include "rviz_common/interaction/selection_manager_iface.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
+#include "rviz_common/ros_integration/ros_client_abstraction_iface.hpp"
+#include "rviz_common/ros_integration/ros_client_abstraction.hpp"
 
 class MockDisplayContext : public rviz_common::DisplayContext
 {
 public:
+  void initialize()
+  {
+  }
+
+  void destroy()
+  {
+    rclcpp::shutdown();
+  }
+
   MOCK_CONST_METHOD0(getSceneManager, Ogre::SceneManager * ());
   MOCK_CONST_METHOD0(getWindowManager, rviz_common::WindowManagerInterface * ());
   MOCK_CONST_METHOD0(
@@ -81,6 +92,9 @@ public:
   MOCK_METHOD0(lockRender, void());
   MOCK_METHOD0(unlockRender, void());
   MOCK_CONST_METHOD0(getHelpPath, QString());
+
+private:
+
 };
 
 #endif  // RVIZ_DEFAULT_PLUGINS__MOCK_DISPLAY_CONTEXT_HPP_

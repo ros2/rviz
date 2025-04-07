@@ -42,6 +42,13 @@ void DisplayTestFixture::SetUpTestCase()
   testing_environment_->setUpOgreTestEnvironment();
 
   scene_manager_ = Ogre::Root::getSingletonPtr()->createSceneManager();
+
+  ros_client_abstraction_ = std::make_unique<rviz_common::ros_integration::RosClientAbstraction>();
+  int argc = 1;
+  const auto arg0 = "MockDisplayContext";
+  char* argv0 = const_cast<char*>(arg0);
+  char** argv = &argv0;
+  rviz_ros_node_ = ros_client_abstraction_->init(argc, argv, "rviz", false /* anonymous_name */);
 }
 
 DisplayTestFixture::DisplayTestFixture()
@@ -57,6 +64,8 @@ DisplayTestFixture::DisplayTestFixture()
   EXPECT_CALL(*context_, getClock()).WillRepeatedly(testing::Return(clock_));
   EXPECT_CALL(*context_, getSceneManager()).WillRepeatedly(
     testing::Invoke([]() {return scene_manager_;}));
+  EXPECT_CALL(*context_, getRosNodeAbstraction()).WillRepeatedly(
+    testing::Invoke([]() {return rviz_ros_node_;}));
   EXPECT_CALL(*context_, getFrameManager()).WillRepeatedly(testing::Return(frame_manager_.get()));
   EXPECT_CALL(*context_, getSelectionManager()).WillRepeatedly(
     testing::Return(selection_manager_));
@@ -72,6 +81,7 @@ DisplayTestFixture::~DisplayTestFixture()
 void DisplayTestFixture::TearDownTestCase()
 {
   Ogre::Root::getSingletonPtr()->destroySceneManager(scene_manager_);
+  rclcpp::shutdown();
 }
 
 void DisplayTestFixture::mockValidTransform()
@@ -109,3 +119,5 @@ void DisplayTestFixture::mockValidTransform(Ogre::Vector3 position, Ogre::Quater
 Ogre::SceneManager * DisplayTestFixture::scene_manager_ = nullptr;
 std::shared_ptr<rviz_default_plugins::OgreTestingEnvironment>
 DisplayTestFixture::testing_environment_ = nullptr;
+rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr DisplayTestFixture::rviz_ros_node_;
+std::unique_ptr<rviz_common::ros_integration::RosClientAbstractionIface> DisplayTestFixture::ros_client_abstraction_ = nullptr;

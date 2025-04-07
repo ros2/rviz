@@ -49,6 +49,10 @@
 #include "../mock_selection_manager.hpp"
 #include "../mock_handler_manager.hpp"
 
+#include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
+#include "rviz_common/ros_integration/ros_client_abstraction_iface.hpp"
+#include "rviz_common/ros_integration/ros_client_abstraction.hpp"
+
 class DisplayTestFixture : public testing::Test
 {
 public:
@@ -66,6 +70,8 @@ public:
 
   static std::shared_ptr<rviz_default_plugins::OgreTestingEnvironment> testing_environment_;
   static Ogre::SceneManager * scene_manager_;
+  static rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node_;
+  static std::unique_ptr<rviz_common::ros_integration::RosClientAbstractionIface> ros_client_abstraction_;
 
   std::shared_ptr<MockDisplayContext> context_;
   std::shared_ptr<MockFrameManager> frame_manager_;
