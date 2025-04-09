@@ -63,10 +63,15 @@ public:
       scene_node_);
   }
 
+  static void TearDownTestCase();
+  static void SetUpTestCase();
+
   std::unique_ptr<rviz_common::Display> display_;
   std::unique_ptr<rviz_default_plugins::displays::MarkerCommon> marker_common_;
   Ogre::SceneNode * scene_node_;
-
+  static rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node_;
+  static std::unique_ptr<rviz_common::ros_integration::RosClientAbstractionIface>
+  ros_client_abstraction_;
   std::unique_ptr<rviz_default_plugins::displays::markers::MarkerBase> marker_;
 };
 

@@ -70,8 +70,6 @@ public:
 
   static std::shared_ptr<rviz_default_plugins::OgreTestingEnvironment> testing_environment_;
   static Ogre::SceneManager * scene_manager_;
-  static rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node_;
-  static std::unique_ptr<rviz_common::ros_integration::RosClientAbstractionIface> ros_client_abstraction_;
 
   std::shared_ptr<MockDisplayContext> context_;
   std::shared_ptr<MockFrameManager> frame_manager_;
@@ -79,7 +77,7 @@ public:
   std::shared_ptr<MockHandlerManager> handler_manager_;
   std::shared_ptr<rclcpp::Clock> clock_;
 
-  std::string fixed_frame = "fixed_frame";
+  std::string fixed_frame{"fixed_frame"};
 };
 
 

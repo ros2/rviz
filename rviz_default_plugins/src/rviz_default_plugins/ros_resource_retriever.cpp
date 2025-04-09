@@ -131,7 +131,7 @@ RosResourceRetriever::get_shared(const std::string & url)
   std::shared_ptr<resource_retriever::Resource> memory_resource = nullptr;
   switch (res->status_code) {
     case rviz_resource_interfaces::srv::GetResource::Response::OK:
-    RCLCPP_DEBUG(
+      RCLCPP_DEBUG(
         this->logger_,
         "Received resource '%s' with etag '%s', caching and returning %zu bytes.",
         res->expanded_path.c_str(),
@@ -142,7 +142,7 @@ RosResourceRetriever::get_shared(const std::string & url)
       cached_resources_.insert({url, {res->etag, memory_resource}});
       return memory_resource;
     case rviz_resource_interfaces::srv::GetResource::Response::NOT_MODIFIED:
-    RCLCPP_DEBUG(
+      RCLCPP_DEBUG(
         this->logger_,
         "Resource '%s' with etag '%s' was not modified, returning cached value.",
         res->expanded_path.c_str(),
@@ -160,7 +160,7 @@ RosResourceRetriever::get_shared(const std::string & url)
       return it->second.second;
       break;
     case rviz_resource_interfaces::srv::GetResource::Response::ERROR:
-    RCLCPP_DEBUG(
+      RCLCPP_DEBUG(
         this->logger_,
         "Received an unexpected error when getting resource '%s': %s",
         url.c_str(),
@@ -168,7 +168,7 @@ RosResourceRetriever::get_shared(const std::string & url)
       return nullptr;
       break;
     default:
-    RCLCPP_ERROR(
+      RCLCPP_ERROR(
         this->logger_,
         "Unexpected status_code from resource ROS Service '%s' for resource '%s': %" PRId32,
         service_name.data(),
