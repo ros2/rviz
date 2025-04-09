@@ -64,8 +64,7 @@ DisplayTestFixture::DisplayTestFixture()
   EXPECT_CALL(*context_, getClock()).WillRepeatedly(testing::Return(clock_));
   EXPECT_CALL(*context_, getSceneManager()).WillRepeatedly(
     testing::Invoke([]() {return scene_manager_;}));
-  EXPECT_CALL(*context_, getRosNodeAbstraction()).WillRepeatedly(
-    testing::Invoke([]() {return rviz_ros_node_;}));
+  EXPECT_CALL(*context_, getRosNodeAbstraction()).WillRepeatedly(testing::Return(rviz_ros_node_));
   EXPECT_CALL(*context_, getFrameManager()).WillRepeatedly(testing::Return(frame_manager_.get()));
   EXPECT_CALL(*context_, getSelectionManager()).WillRepeatedly(
     testing::Return(selection_manager_));

@@ -27,7 +27,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "ros_resource_retriever.hpp"
+#include "rviz_default_plugins/ros_resource_retriever.hpp"
 
 #include <cinttypes>
 #include <memory>
@@ -115,13 +115,23 @@ RosResourceRetriever::get_shared(const std::string & url)
   req->path = url;
   req->etag = etag;
   auto result = this->client_->async_send_request(req);
-  executor_.spin_until_future_complete(result);
+
+  using namespace std::chrono_literals;
+  auto maximum_wait_time = 3s;
+
+  if (executor_.spin_until_future_complete(result, maximum_wait_time) !=
+    rclcpp::FutureReturnCode::SUCCESS)
+  {
+    RCLCPP_ERROR(this->logger_, "service call failed :(");
+    this->client_->remove_pending_request(result);
+    return nullptr;
+  }
 
   auto res = result.get();
   std::shared_ptr<resource_retriever::Resource> memory_resource = nullptr;
   switch (res->status_code) {
     case rviz_resource_interfaces::srv::GetResource::Response::OK:
-      RCLCPP_DEBUG(
+    RCLCPP_DEBUG(
         this->logger_,
         "Received resource '%s' with etag '%s', caching and returning %zu bytes.",
         res->expanded_path.c_str(),
@@ -132,7 +142,7 @@ RosResourceRetriever::get_shared(const std::string & url)
       cached_resources_.insert({url, {res->etag, memory_resource}});
       return memory_resource;
     case rviz_resource_interfaces::srv::GetResource::Response::NOT_MODIFIED:
-      RCLCPP_DEBUG(
+    RCLCPP_DEBUG(
         this->logger_,
         "Resource '%s' with etag '%s' was not modified, returning cached value.",
         res->expanded_path.c_str(),
@@ -150,7 +160,7 @@ RosResourceRetriever::get_shared(const std::string & url)
       return it->second.second;
       break;
     case rviz_resource_interfaces::srv::GetResource::Response::ERROR:
-      RCLCPP_DEBUG(
+    RCLCPP_DEBUG(
         this->logger_,
         "Received an unexpected error when getting resource '%s': %s",
         url.c_str(),
@@ -158,7 +168,7 @@ RosResourceRetriever::get_shared(const std::string & url)
       return nullptr;
       break;
     default:
-      RCLCPP_ERROR(
+    RCLCPP_ERROR(
         this->logger_,
         "Unexpected status_code from resource ROS Service '%s' for resource '%s': %" PRId32,
         service_name.data(),

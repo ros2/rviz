@@ -50,7 +50,7 @@
 
 #include "rviz_default_plugins/displays/marker/markers/marker_factory.hpp"
 
-#include "../../ros_resource_retriever.hpp"
+#include "rviz_default_plugins/ros_resource_retriever.hpp"
 
 namespace rviz_default_plugins
 {
