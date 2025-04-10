@@ -152,3 +152,13 @@ TEST_F(GridTestFixture, setStyle_creates_a_new_grid_with_new_style) {
   auto manual_object = grid.getManualObject();
   ASSERT_THAT(manual_object->getBoundingBox(), Eq(Ogre::AxisAlignedBox()));
 }
+
+TEST_F(GridTestFixture, createGrid_with_null_scene_manager_throws_exception) {
+  uint32_t cell_count = 2;
+  float cell_length = 2.0f;
+  ASSERT_THROW(
+    rviz_rendering::Grid(
+      nullptr, nullptr, rviz_rendering::Grid::Style::Lines, cell_count, cell_length, 1.0f,
+    Ogre::ColourValue()),
+    std::invalid_argument);
+}
