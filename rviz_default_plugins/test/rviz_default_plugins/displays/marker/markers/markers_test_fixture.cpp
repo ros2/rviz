@@ -34,10 +34,36 @@
 #include <string>
 
 MarkersTestFixture::MarkersTestFixture()
+: DisplayTestFixture()
 {
+  EXPECT_CALL(*context_, getRosNodeAbstraction()).WillRepeatedly(
+    testing::Invoke([]() {
+      return rviz_ros_node_;
+    }));
   display_ = std::make_unique<rviz_common::Display>();
   scene_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
 
   marker_common_ = std::make_unique<rviz_default_plugins::displays::MarkerCommon>(display_.get());
   marker_common_->initialize(context_.get(), scene_node_);
 }
+
+void MarkersTestFixture::SetUpTestCase()
+{
+  DisplayTestFixture::SetUpTestCase();
+  ros_client_abstraction_ = std::make_unique<rviz_common::ros_integration::RosClientAbstraction>();
+  int argc = 1;
+  const auto arg0 = "MockDisplayContext";
+  char * argv0 = const_cast<char *>(arg0);
+  char ** argv = &argv0;
+  rviz_ros_node_ = ros_client_abstraction_->init(argc, argv, "rviz", false /* anonymous_name */);
+}
+
+void MarkersTestFixture::TearDownTestCase()
+{
+  DisplayTestFixture::TearDownTestCase();
+  rclcpp::shutdown();
+}
+
+rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr MarkersTestFixture::rviz_ros_node_;
+std::unique_ptr<rviz_common::ros_integration::RosClientAbstractionIface> MarkersTestFixture::
+ros_client_abstraction_ = nullptr;

@@ -78,7 +78,7 @@
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/interaction/selection_manager.hpp"
 
-#include "../ros_resource_retriever.hpp"
+#include "rviz_default_plugins/ros_resource_retriever.hpp"
 
 #define RVIZ_RESOURCE_GROUP "rviz_rendering"
 

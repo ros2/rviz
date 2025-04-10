@@ -27,7 +27,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "ros_resource_retriever.hpp"
+#include "rviz_default_plugins/ros_resource_retriever.hpp"
 
 #include <cinttypes>
 #include <memory>
@@ -115,7 +115,17 @@ RosResourceRetriever::get_shared(const std::string & url)
   req->path = url;
   req->etag = etag;
   auto result = this->client_->async_send_request(req);
-  executor_.spin_until_future_complete(result);
+
+  using namespace std::chrono_literals;
+  auto maximum_wait_time = 3s;
+
+  if (executor_.spin_until_future_complete(result, maximum_wait_time) !=
+    rclcpp::FutureReturnCode::SUCCESS)
+  {
+    RCLCPP_ERROR(this->logger_, "service call failed :(");
+    this->client_->remove_pending_request(result);
+    return nullptr;
+  }
 
   auto res = result.get();
   std::shared_ptr<resource_retriever::Resource> memory_resource = nullptr;
