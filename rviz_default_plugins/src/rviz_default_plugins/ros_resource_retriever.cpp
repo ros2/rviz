@@ -122,7 +122,7 @@ RosResourceRetriever::get_shared(const std::string & url)
   if (executor_.spin_until_future_complete(result, maximum_wait_time) !=
     rclcpp::FutureReturnCode::SUCCESS)
   {
-    RCLCPP_ERROR(this->logger_, "service call failed :(");
+    RCLCPP_ERROR(this->logger_, "Timeout: Not able to call the service %s", service_name.data());
     this->client_->remove_pending_request(result);
     return nullptr;
   }
