@@ -126,6 +126,8 @@ public:
   resource_retriever::Retriever * getResourceRetriever();
 
 private:
+  /** @brief Change the visibility for all markers in the given namespace. */
+  void setVisibilityForMarkersInNamespace(const std::string & ns, bool visible);
   /** @brief Delete all the markers within the given namespace. */
   void deleteMarkersInNamespace(const std::string & ns);
 

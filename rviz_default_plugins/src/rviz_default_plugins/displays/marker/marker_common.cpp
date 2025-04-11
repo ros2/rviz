@@ -118,6 +118,15 @@ void MarkerCommon::deleteMarker(MarkerID id)
   }
 }
 
+void MarkerCommon::setVisibilityForMarkersInNamespace(const std::string & ns, bool visible)
+{
+  for (auto const & marker : markers_) {
+    if (marker.first.first == ns) {
+      marker.second->setVisible(visible);
+    }
+  }
+}
+
 void MarkerCommon::deleteMarkersInNamespace(const std::string & ns)
 {
   std::vector<MarkerID> to_delete;
@@ -273,12 +282,6 @@ QHash<QString, MarkerNamespace *>::const_iterator MarkerCommon::getMarkerNamespa
 
 void MarkerCommon::processAdd(const visualization_msgs::msg::Marker::ConstSharedPtr message)
 {
-  auto ns_it = getMarkerNamespace(message);
-
-  if (!ns_it.value()->isEnabled() ) {
-    return;
-  }
-
   deleteMarkerStatus(MarkerID(message->ns, message->id));
 
   MarkerBasePtr marker = createOrGetOldMarker(message);
@@ -319,6 +322,10 @@ void MarkerCommon::configureMarker(
   const visualization_msgs::msg::Marker::ConstSharedPtr & message, MarkerBasePtr & marker)
 {
   marker->setMessage(message);
+
+  // Visibility needs to be set after changes to the marker as they might make it visible again
+  auto ns_it = getMarkerNamespace(message);
+  marker->setVisible(ns_it.value()->isEnabled());
 
   if (rclcpp::Duration(message->lifetime).nanoseconds() > 100000) {
     markers_with_expiration_.insert(marker);
@@ -401,9 +408,7 @@ MarkerNamespace::MarkerNamespace(
 
 void MarkerNamespace::onEnableChanged()
 {
-  if (!isEnabled()) {
-    owner_->deleteMarkersInNamespace(getName().toStdString());
-  }
+  owner_->setVisibilityForMarkersInNamespace(getName().toStdString(), isEnabled());
 
   // Update the configuration that stores the enabled state of all markers
   owner_->namespace_config_enabled_state_[getName()] = isEnabled();

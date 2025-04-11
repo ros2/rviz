@@ -155,6 +155,17 @@ const Ogre::Quaternion & MarkerBase::getOrientation()
   return scene_node_->getOrientation();
 }
 
+bool MarkerBase::isVisible() const
+{
+  return visible_;
+}
+
+void MarkerBase::setVisible(bool visible)
+{
+  visible_ = visible;
+  scene_node_->setVisible(visible);
+}
+
 void MarkerBase::extractMaterials(Ogre::Entity * entity, S_MaterialPtr & materials)
 {
   uint64_t num_sub_entities = entity->getNumSubEntities();
