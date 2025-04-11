@@ -240,3 +240,9 @@ TEST_F(MovableTextTestFixture, getBoundingRadius_gets_squared_length_from_origin
   ASSERT_THAT(
     movable_text->getBoundingRadius(), Eq(Ogre::Math::Sqrt(farthest_point.squaredLength())));
 }
+
+TEST_F(MovableTextTestFixture, EmptyCaptionDoesNotCrash) {
+  auto movable_text = std::make_shared<rviz_rendering::MovableText>("");
+  movable_text->update();
+  ASSERT_THAT(movable_text->getBoundingBox(), Eq(Ogre::AxisAlignedBox::BOX_NULL));
+}
