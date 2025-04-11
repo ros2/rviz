@@ -247,3 +247,9 @@ TEST_F(MovableTextTestFixture, handle_invalid_char_height) {
   // Expect that default char height is used when invalid
   ASSERT_EQ(movable_text->getCharacterHeight(), 1.0f);
 }
+
+TEST_F(MovableTextTestFixture, EmptyCaptionDoesNotCrash) {
+  auto movable_text = std::make_shared<rviz_rendering::MovableText>("");
+  movable_text->update();
+  ASSERT_THAT(movable_text->getBoundingBox(), Eq(Ogre::AxisAlignedBox::BOX_NULL));
+}
