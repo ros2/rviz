@@ -539,6 +539,10 @@ void MovableText::getRenderOperation(Ogre::RenderOperation & op)
 
 void MovableText::update()
 {
+  if (caption_.empty()) {
+    return;
+  }
+
   if (needs_update_) {
     setupGeometry();
   }
