@@ -60,8 +60,8 @@ namespace displays
 MarkerCommon::MarkerCommon(rviz_common::Display * display)
 : display_(display)
 {
-  namespaces_category_ = new rviz_common::properties::Property(
-    "Namespaces", QVariant(), "", display_);
+  namespaces_category_ = new rviz_common::properties::BoolProperty(
+    "Namespaces", true, "Toggle to toggle all namespaces", display_);
   marker_factory_ = std::make_unique<markers::MarkerFactory>();
 }
 
@@ -354,6 +354,14 @@ void MarkerCommon::update(float wall_dt, float ros_dt)
   processNewMessages(local_queue);
   removeExpiredMarkers();
   updateMarkersWithLockedFrame();
+
+  // Workaround because this is not a QObject
+  if (all_namespaces_enabled_ != namespaces_category_->getBool()) {
+    all_namespaces_enabled_ = namespaces_category_->getBool();
+    for (auto const & ns : namespaces_) {
+      ns->setValue(all_namespaces_enabled_);
+    }
+  }
 }
 
 MarkerCommon::V_MarkerMessage MarkerCommon::takeSnapshotOfMessageQueue()
