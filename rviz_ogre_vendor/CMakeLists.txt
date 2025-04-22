@@ -44,8 +44,8 @@ macro(build_freetype)
 
   include(ExternalProject)
   ExternalProject_Add(freetype-2.8.1
-    URL https://git.savannah.gnu.org/cgit/freetype/freetype2.git/snapshot/freetype2-VER-2-6-5.tar.gz
-    URL_MD5 0dd62a0125895431e074a3df29f94d69
+    URL https://github.com/freetype/freetype/archive/refs/tags/VER-2-6-5.tar.gz
+    URL_MD5 f1d143e33aa40ce36b6c6ecc5365420c
     TIMEOUT 600
     LOG_CONFIGURE ${should_log}
     LOG_BUILD ${should_log}
