@@ -14,13 +14,8 @@ if(WIN32)
   endif()
 
   ament_vendor(freetype_vendor
-<<<<<<< HEAD
-    VCS_URL https://git.savannah.gnu.org/git/freetype/freetype2.git
-    VCS_VERSION VER-2-11-1
-=======
     VCS_URL https://github.com/freetype/freetype.git
-    VCS_VERSION VER-2-13-2
->>>>>>> fbe9254e (Use official freetype github mirror instead of savannah (#1348))
+    VCS_VERSION VER-2-11-1
     CMAKE_ARGS
       -DFT_DISABLE_ZLIB:BOOL=ON
       -DFT_DISABLE_BZIP2:BOOL=ON
