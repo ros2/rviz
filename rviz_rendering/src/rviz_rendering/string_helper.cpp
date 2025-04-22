@@ -43,9 +43,10 @@ std::vector<std::string> rviz_rendering::string_helper::splitStringIntoTrimmedIt
   std::string item;
   std::vector<std::string> filenames;
   while (std::getline(stringstream, item, delimiter)) {
-    if (std::all_of(item.begin(), item.end(), [](char character) {
-        return std::isspace<char>(character, std::locale(""));
-    }))
+    if (std::all_of(
+        item.begin(), item.end(), [](char character) {
+          return std::isspace<char>(character, std::locale(""));
+        }))
     {
       item.clear();
     } else {

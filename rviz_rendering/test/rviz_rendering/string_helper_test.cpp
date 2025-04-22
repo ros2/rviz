@@ -86,9 +86,9 @@ TEST(String_Helper__Test, split_string_with_empty_and_space_items) {
 }
 
 TEST(String_Helper__Test, HandlesNothingBesidesDelimiters) {
-    std::vector<std::string> expected{};
-    std::string test_string(",,\n,\n,,");
-    std::vector<std::string> actual = rviz_rendering::string_helper::splitStringIntoTrimmedItems(
-        test_string, ',');
-    ASSERT_THAT(expected, Eq(actual));
+  std::vector<std::string> expected{};
+  std::string test_string(",,\n,\n,,");
+  std::vector<std::string> actual = rviz_rendering::string_helper::splitStringIntoTrimmedItems(
+    test_string, ',');
+  ASSERT_THAT(expected, Eq(actual));
 }
