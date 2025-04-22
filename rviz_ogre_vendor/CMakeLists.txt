@@ -12,57 +12,8 @@ if(POLICY CMP0135)
 endif()
 
 if(WIN32)
-<<<<<<< HEAD
   set(BUILDING_FREETYPE_LOCALLY ON)
   set(BUILDING_ZLIB_LOCALLY ON)
-=======
-  set(FREETYPE_C_FLAGS "${CMAKE_C_FLAGS}")
-  if(MSVC)
-    set(FREETYPE_C_FLAGS "/wd4244 ${FREETYPE_C_FLAGS}")
-    set(FREETYPE_C_FLAGS "/wd4267 ${FREETYPE_C_FLAGS}")
-    set(FREETYPE_C_FLAGS "/wd4312 ${FREETYPE_C_FLAGS}")
-    set(FREETYPE_C_FLAGS "/wd4996 ${FREETYPE_C_FLAGS}")
-  endif()
-
-  ament_vendor(freetype_vendor
-    VCS_URL https://github.com/freetype/freetype.git
-    VCS_VERSION VER-2-13-2
-    CMAKE_ARGS
-      -DFT_DISABLE_ZLIB:BOOL=ON
-      -DFT_DISABLE_BZIP2:BOOL=ON
-      -DFT_DISABLE_PNG:BOOL=ON
-      -DFT_DISABLE_HARFBUZZ:BOOL=ON
-      "-DCMAKE_C_FLAGS=${FREETYPE_C_FLAGS}"
-  )
-
-  set(ZLIB_C_FLAGS "${ZLIB_C_FLAGS}")
-  if(MSVC)
-    set(ZLIB_C_FLAGS "/wd4267 ${ZLIB_C_FLAGS}")
-  endif()
-
-  ament_vendor(zlib_vendor
-    VCS_URL https://github.com/madler/zlib.git
-    VCS_VERSION v1.3
-    CMAKE_ARGS
-      # zlib doesn't use CMAKE_INSTALL_PREFIX correctly, so we need to override
-      -DINSTALL_BIN_DIR=<INSTALL_DIR>/bin
-      -DINSTALL_LIB_DIR=<INSTALL_DIR>/lib
-      -DINSTALL_INC_DIR=<INSTALL_DIR>/include
-      -DINSTALL_MAN_DIR=<INSTALL_DIR>/share/man
-      -DINSTALL_PKGCONFIG_DIR=<INSTALL_DIR>/share/pkgconfig
-      "-DCMAKE_C_FLAGS=${ZLIB_C_FLAGS}"
-  )
-endif()
-
-set(OGRE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
-if(MSVC)
-  set(OGRE_CXX_FLAGS "/wd4101 ${OGRE_CXX_FLAGS}")
-  set(OGRE_CXX_FLAGS "/wd4244 ${OGRE_CXX_FLAGS}")
-  set(OGRE_CXX_FLAGS "/wd4267 ${OGRE_CXX_FLAGS}")
-  set(OGRE_CXX_FLAGS "/wd4334 ${OGRE_CXX_FLAGS}")
-  set(OGRE_CXX_FLAGS "/wd4477 ${OGRE_CXX_FLAGS}")
-  set(OGRE_CXX_FLAGS "/wd4996 ${OGRE_CXX_FLAGS}")
->>>>>>> fbe9254e (Use official freetype github mirror instead of savannah (#1348))
 else()
   set(BUILDING_FREETYPE_LOCALLY OFF)
   set(BUILDING_ZLIB_LOCALLY OFF)
@@ -93,8 +44,8 @@ macro(build_freetype)
 
   include(ExternalProject)
   ExternalProject_Add(freetype-2.8.1
-    URL https://git.savannah.gnu.org/cgit/freetype/freetype2.git/snapshot/freetype2-VER-2-6-5.tar.gz
-    URL_MD5 0dd62a0125895431e074a3df29f94d69
+    URL https://github.com/freetype/freetype/archive/refs/tags/VER-2-11-1.tar.gz
+    URL_MD5 194bc069f497f2e0de68a11344ca0f57
     TIMEOUT 600
     LOG_CONFIGURE ${should_log}
     LOG_BUILD ${should_log}
