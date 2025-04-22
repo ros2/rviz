@@ -158,6 +158,6 @@ TEST_F(GridTestFixture, createGrid_with_null_scene_manager_throws_exception) {
   ASSERT_THROW(
     rviz_rendering::Grid(
       nullptr, nullptr, rviz_rendering::Grid::Style::Lines, cell_count, cell_length, 1.0f,
-    Ogre::ColourValue()),
+      Ogre::ColourValue()),
     std::invalid_argument);
 }
