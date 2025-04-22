@@ -259,8 +259,9 @@ CovarianceVisual::CovarianceVisual(
 {
   // Check if the passed pointers are valid
   if (!scene_manager_ || !parent_node) {
-    throw std::runtime_error("Invalid scene_manager or parent_node passed to "
-      "CovarianceVisual constructor.");
+    throw std::runtime_error(
+            "Invalid scene_manager or parent_node passed to "
+            "CovarianceVisual constructor.");
   }
   // Main node of the visual
   root_node_ = parent_node->createChildSceneNode();
