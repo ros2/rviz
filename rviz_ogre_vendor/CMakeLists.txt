@@ -44,8 +44,8 @@ macro(build_freetype)
 
   include(ExternalProject)
   ExternalProject_Add(freetype-2.8.1
-    URL https://github.com/freetype/freetype/archive/refs/tags/VER-2-11-1.tar.gz
-    URL_MD5 194bc069f497f2e0de68a11344ca0f57
+    URL https://github.com/freetype/freetype/archive/refs/tags/VER-2-6-5.tar.gz
+    URL_MD5 f1d143e33aa40ce36b6c6ecc5365420c
     TIMEOUT 600
     LOG_CONFIGURE ${should_log}
     LOG_BUILD ${should_log}
