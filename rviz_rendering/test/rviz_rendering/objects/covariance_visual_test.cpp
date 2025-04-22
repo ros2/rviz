@@ -189,6 +189,6 @@ TEST_F(CovarianceVisualTestFixture, covariance_visual_2D)
 TEST_F(CovarianceVisualTestFixture, CovarianceVisualNullScene)
 {
   EXPECT_THROW(
-    std::make_unique<rviz_rendering::CovarianceVisual>(
+    auto cov = std::make_unique<rviz_rendering::CovarianceVisual>(
       nullptr, nullptr, false, true, .1f, .1f, 2.0f), std::runtime_error);
 }

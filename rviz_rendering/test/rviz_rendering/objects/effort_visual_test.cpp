@@ -146,6 +146,6 @@ TEST_F(EffortVisualTestFixture, verify_no_memory_leak_on_exception) {
   auto root_node = scene_manager->getRootSceneNode();
   // Intentionally passing nullptr
   EXPECT_THROW(
-    std::make_shared<rviz_rendering::EffortVisual>(
+    auto effort = std::make_shared<rviz_rendering::EffortVisual>(
       nullptr, root_node, 0.0f, 0.0f), std::runtime_error);
 }
