@@ -117,7 +117,8 @@ TEST_F(WrenchVisualTestFixture, constructor_handles_null_pointers_gracefully) {
   Ogre::SceneManager * scene_manager = nullptr;
   Ogre::SceneNode * root_node = nullptr;
 
-  EXPECT_THROW({
+  EXPECT_THROW(
+  {
     auto wrench_visual = std::make_shared<rviz_rendering::WrenchVisual>(scene_manager, root_node);
   }, std::invalid_argument);
 }
