@@ -130,6 +130,7 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/tools/interaction/interaction_tool.hpp
   include/rviz_default_plugins/tools/pose_estimate/initial_pose_tool.hpp
   include/rviz_default_plugins/tools/point/point_tool.hpp
+  include/rviz_default_plugins/view_controllers/frame/frame_view_controller.hpp
   include/rviz_default_plugins/view_controllers/orbit/orbit_view_controller.hpp
   include/rviz_default_plugins/view_controllers/ortho/fixed_orientation_ortho_view_controller.hpp
   include/rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller.hpp
@@ -228,6 +229,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/transformation/tf_wrapper.cpp
   src/rviz_default_plugins/view_controllers/follower/third_person_follower_view_controller.cpp
   src/rviz_default_plugins/view_controllers/fps/fps_view_controller.cpp
+  src/rviz_default_plugins/view_controllers/frame/frame_view_controller.cpp
   src/rviz_default_plugins/view_controllers/orbit/orbit_view_controller.cpp
   src/rviz_default_plugins/view_controllers/ortho/fixed_orientation_ortho_view_controller.cpp
   src/rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller.cpp
@@ -366,6 +368,20 @@ if(BUILD_TESTING)
   if(TARGET fps_view_controller_test)
     target_include_directories(fps_view_controller_test PRIVATE ${TEST_INCLUDE_DIRS})
     target_link_libraries(fps_view_controller_test
+      ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
+      rviz_default_plugins
+      Qt5::Widgets
+      ogre_testing_environment
+    )
+  endif()
+
+  ament_add_gmock(frame_view_controller_test
+    test/rviz_default_plugins/view_controllers/frame/frame_view_controller_test.cpp
+    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET frame_view_controller_test)
+    target_include_directories(frame_view_controller_test PRIVATE ${TEST_INCLUDE_DIRS})
+    target_link_libraries(frame_view_controller_test
       ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
       rviz_default_plugins
       Qt5::Widgets
