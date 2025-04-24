@@ -422,7 +422,7 @@ void PointCloudCommon::removeObsoleteCloudInfos()
 bool PointCloudCommon::cloudInfoIsDecayed(
   CloudInfoPtr cloud_info, float point_decay_time, const rclcpp::Time & now)
 {
-  return (now.nanoseconds() - cloud_info->receive_time_.nanoseconds()) / 1000000000.0 >
+  return (now.nanoseconds() - cloud_info->receive_time_.nanoseconds()) / 1E9 >=
          point_decay_time;
 }
 
