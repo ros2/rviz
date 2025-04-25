@@ -57,6 +57,8 @@ public:
     const Ogre::ColourValue & color,
     bool use_color,
     bool upper_triangle);
+
+  RVIZ_RENDERING_PUBLIC
   virtual ~TrianglePolygon();
 
   RVIZ_RENDERING_PUBLIC
