@@ -32,6 +32,7 @@
 #include <OgreSceneManager.h>
 
 #include <cmath>
+#include <stdexcept>
 #include <memory>
 
 #include "rviz_rendering/objects/arrow.hpp"
@@ -45,6 +46,10 @@ ScrewVisual::ScrewVisual(Ogre::SceneManager * scene_manager, Ogre::SceneNode * p
 : linear_scale_(0.0f), angular_scale_(0.0f), width_(0.0f), hide_small_values_(true),
   scene_manager_(scene_manager)
 {
+  if (!scene_manager || !parent_node) {
+    throw std::invalid_argument("Invalid input: scene_manager or parent_node is nullptr.");
+  }
+
   // Ogre::SceneNode s form a tree, with each node storing the transform (position and orientation)
   // of itself relative to its parent. Ogre does the math of combining those transforms
   // for rendering. Here we create a node to store the pose of the screw's header
