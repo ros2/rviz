@@ -138,3 +138,10 @@ TEST_F(ScrewVisualTestFixture, setScrew_sets_linear_arrow_correctly) {
   angular_arrow = findAngularArrow(root_node);
   EXPECT_THAT(angular_arrow->getScale(), Vector3Eq(Ogre::Vector3(0.0f, 3.4641f, 0.0f)));
 }
+
+TEST_F(ScrewVisualTestFixture, HandleNullSceneManagerAndParentNode)
+{
+  EXPECT_THROW(
+    auto screw_visual = std::make_shared<rviz_rendering::ScrewVisual>(nullptr, nullptr),
+    std::invalid_argument);
+}
