@@ -29,6 +29,7 @@
 
 
 #define _USE_MATH_DEFINES
+#include <algorithm>
 #include <cmath>
 #include <memory>
 
@@ -156,11 +157,20 @@ void WrenchVisual::setFrameOrientation(const Ogre::Quaternion & orientation)
 
 void WrenchVisual::setForceColor(float r, float g, float b, float a)
 {
+  r = std::clamp(r, 0.0f, 1.0f);
+  g = std::clamp(g, 0.0f, 1.0f);
+  b = std::clamp(b, 0.0f, 1.0f);
+  a = std::clamp(a, 0.0f, 1.0f);
   arrow_force_->setColor(r, g, b, a);
 }
 
 void WrenchVisual::setTorqueColor(float r, float g, float b, float a)
 {
+  r = std::clamp(r, 0.0f, 1.0f);
+  g = std::clamp(g, 0.0f, 1.0f);
+  b = std::clamp(b, 0.0f, 1.0f);
+  a = std::clamp(a, 0.0f, 1.0f);
+
   arrow_torque_->setColor(r, g, b, a);
   circle_torque_->setColor(r, g, b, a);
   circle_arrow_torque_->setColor(r, g, b, a);
