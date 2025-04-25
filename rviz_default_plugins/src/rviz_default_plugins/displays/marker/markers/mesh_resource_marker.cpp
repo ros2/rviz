@@ -109,7 +109,11 @@ void MeshResourceMarker::onNewMessage(
       return;
     }
 
-    if (!rviz_rendering::loadMeshFromResource(new_message->mesh_resource)) {
+    if (
+      !rviz_rendering::loadMeshFromResource(
+        owner_->getResourceRetriever(),
+        new_message->mesh_resource))
+    {
       printMeshLoadingError(new_message);
       return;
     }

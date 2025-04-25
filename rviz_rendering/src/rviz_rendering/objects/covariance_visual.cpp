@@ -258,6 +258,11 @@ CovarianceVisual::CovarianceVisual(
   pose_2d_(false),
   orientation_visible_(is_visible)
 {
+  // Check if the passed pointers are valid
+  if (!scene_manager_ || !parent_node) {
+    throw std::runtime_error("Invalid scene_manager or parent_node passed to "
+      "CovarianceVisual constructor.");
+  }
   // Main node of the visual
   root_node_ = parent_node->createChildSceneNode();
   // Node that will have the same orientation as the fixed frame.

@@ -44,6 +44,7 @@
 
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
+#include "resource_retriever/retriever.hpp"
 #include "visualization_msgs/msg/marker.hpp"
 #include "visualization_msgs/msg/marker_array.hpp"
 
@@ -122,6 +123,8 @@ public:
   void setMarkerStatus(MarkerID id, StatusLevel level, const std::string & text);
   void deleteMarkerStatus(MarkerID id);
 
+  resource_retriever::Retriever * getResourceRetriever();
+
 private:
   /** @brief Delete all the markers within the given namespace. */
   void deleteMarkersInNamespace(const std::string & ns);
@@ -174,6 +177,8 @@ private:
   rviz_common::Display * display_;
   rviz_common::DisplayContext * context_;
   Ogre::SceneNode * scene_node_;
+
+  resource_retriever::Retriever retriever_;
 
   friend class MarkerNamespace;
 };

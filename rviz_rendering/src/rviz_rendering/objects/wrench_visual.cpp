@@ -51,6 +51,9 @@ WrenchVisual::WrenchVisual(Ogre::SceneManager * scene_manager, Ogre::SceneNode *
   torque_scale_(1),
   width_(1)
 {
+  if (!scene_manager || !parent_node) {
+    throw std::invalid_argument("Scene manager or root node is null");
+  }
   scene_manager_ = scene_manager;
 
   frame_node_ = parent_node->createChildSceneNode();

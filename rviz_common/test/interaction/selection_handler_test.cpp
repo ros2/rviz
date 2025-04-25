@@ -152,3 +152,8 @@ TEST_F(SelectionHandlerFixture, onDeselect_removes_wirebox_around_object) {
     Not(
       ContainsWireBoxWithBoundingBox(Ogre::AxisAlignedBox(-2.0f, -2.0f, 0.0f, 2.0f, 2.0f, 0.0f))));
 }
+
+TEST_F(SelectionHandlerFixture, addTrackedObject_invalid_pointer_does_not_crash) {
+  Ogre::MovableObject * invalid_object = nullptr;
+  EXPECT_NO_THROW(handler_->addTrackedObject(invalid_object));
+}

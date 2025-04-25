@@ -34,6 +34,7 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__PUBLISHERS__POSE_WITH_COVARIANCE_PUBLISHER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__PUBLISHERS__POSE_WITH_COVARIANCE_PUBLISHER_HPP_
 
+#include <chrono>
 #include <cmath>
 #include <memory>
 #include <string>

@@ -127,6 +127,11 @@ void SelectionHandler::addTrackedObjects(Ogre::SceneNode * node)
 
 void SelectionHandler::addTrackedObject(Ogre::MovableObject * object)
 {
+  if (!object) {
+    // If object is nullptr, return immediately without further processing
+    return;
+  }
+
   tracked_objects_.insert(object);
   object->setListener(listener_.get());
 

@@ -2,6 +2,11 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.4.4 (2025-03-20)
+-------------------
+* fix: add rclcpp::shutdown (`#1343 <https://github.com/ros2/rviz/issues/1343>`_)
+* Contributors: Yuyuan Yuan
+
 14.4.3 (2025-02-27)
 -------------------
 * Nv12 color format (`#1318 <https://github.com/ros2/rviz/issues/1318>`_)

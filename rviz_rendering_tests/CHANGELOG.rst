@@ -2,6 +2,9 @@
 Changelog for package rviz_rendering_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.4.4 (2025-03-20)
+-------------------
+
 14.4.3 (2025-02-27)
 -------------------
 * uniform CMAKE requirement (`#1335 <https://github.com/ros2/rviz/issues/1335>`_)

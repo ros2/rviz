@@ -2,6 +2,11 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.4.4 (2025-03-20)
+-------------------
+* Use official freetype github mirror instead of savannah (`#1348 <https://github.com/ros2/rviz/issues/1348>`_)
+* Contributors: Silvio Traversaro
+
 14.4.3 (2025-02-27)
 -------------------
 

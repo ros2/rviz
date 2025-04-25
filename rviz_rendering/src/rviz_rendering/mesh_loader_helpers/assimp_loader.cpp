@@ -71,9 +71,9 @@ namespace rviz_rendering
 class ResourceIOStream : public Assimp::IOStream
 {
 public:
-  explicit ResourceIOStream(const resource_retriever::MemoryResource & res)
+  explicit ResourceIOStream(resource_retriever::ResourceSharedPtr res)
   : res_(res),
-    pos_(res.data.get())
+    pos_(res->data.data())
   {}
 
   ~ResourceIOStream() override = default;
@@ -81,8 +81,8 @@ public:
   size_t Read(void * buffer, size_t size, size_t count) override
   {
     size_t to_read = size * count;
-    if (pos_ + to_read > res_.data.get() + res_.size) {
-      to_read = res_.size - (pos_ - res_.data.get());
+    if (pos_ + to_read > res_->data.data() + res_->data.size()) {
+      to_read = res_->data.size() - (pos_ - res_->data.data());
     }
 
     memcpy(buffer, pos_, to_read);
@@ -101,22 +101,22 @@ public:
 
   aiReturn Seek(size_t offset, aiOrigin origin) override
   {
-    uint8_t * new_pos = nullptr;
+    const uint8_t * new_pos = nullptr;
     switch (origin) {
       case aiOrigin_SET:
-        new_pos = res_.data.get() + offset;
+        new_pos = res_->data.data() + offset;
         break;
       case aiOrigin_CUR:
         new_pos = pos_ + offset;  // TODO(anyone): is this right? Can offset really not be negative
         break;
       case aiOrigin_END:
-        new_pos = res_.data.get() + res_.size - offset;  // TODO(anyone): is this right?
+        new_pos = res_->data.data() + res_->data.size() - offset;  // TODO(anyone): is this right?
         break;
       default:
         throw std::runtime_error("unexpected default in switch statement");
     }
 
-    if (new_pos < res_.data.get() || new_pos > res_.data.get() + res_.size) {
+    if (new_pos < res_->data.data() || new_pos > res_->data.data() + res_->data.size()) {
       return aiReturn_FAILURE;
     }
 
@@ -126,26 +126,28 @@ public:
 
   size_t Tell() const override
   {
-    return pos_ - res_.data.get();
+    return pos_ - res_->data.data();
   }
 
   size_t FileSize() const override
   {
-    return res_.size;
+    return res_->data.size();
   }
 
   void Flush() override
   {}
 
 private:
-  resource_retriever::MemoryResource res_;
-  uint8_t * pos_;
+  resource_retriever::ResourceSharedPtr res_;
+  const uint8_t * pos_;
 };
 
 class ResourceIOSystem final : public Assimp::IOSystem
 {
 public:
-  ResourceIOSystem() = default;
+  explicit ResourceIOSystem(resource_retriever::Retriever * retriever)
+  : retriever_(retriever)
+  {}
 
   ~ResourceIOSystem() override = default;
 
@@ -158,32 +160,24 @@ public:
   // Check whether a specific file exists
   bool Exists(const char * file) const override
   {
-    try {
-      resource_retriever::MemoryResource res = retriever_.get(file);
-    } catch (const resource_retriever::Exception & e) {
-      (void) e;  // do nothing on exception
-      return false;
-    }
-
-    return true;
+    auto res = retriever_->get_shared(file);
+    return res != nullptr;
   }
 
   // ... and finally a method to open a custom stream
-  Assimp::IOStream * Open(const char * file, const char * mode = "rb") override
+  Assimp::IOStream * Open(const char * file, const char * mode) override
   {
     (void) mode;
     assert(mode == std::string("r") || mode == std::string("rb"));
 
-    resource_retriever::MemoryResource res;
-    try {
-      res = retriever_.get(file);
-    } catch (const resource_retriever::Exception & e) {
-      (void) e;  // do nothing on exception
-      return nullptr;
+    auto res = retriever_->get_shared(file);
+
+    if (res != nullptr) {
+      // This will get freed when 'Close' is called
+      return new ResourceIOStream(res);
     }
 
-    // This will get freed when 'Close' is called
-    return new ResourceIOStream(res);
+    return nullptr;
   }
 
   void Close(Assimp::IOStream * stream) override
@@ -192,13 +186,14 @@ public:
   }
 
 private:
-  mutable resource_retriever::Retriever retriever_;
+  resource_retriever::Retriever * retriever_;
 };
 
-AssimpLoader::AssimpLoader()
+AssimpLoader::AssimpLoader(resource_retriever::Retriever * retriever)
+: retriever_(retriever),
+  importer_(std::make_unique<Assimp::Importer>())
 {
-  importer_ = std::make_unique<Assimp::Importer>();
-  importer_->SetIOHandler(new ResourceIOSystem());
+  importer_->SetIOHandler(new ResourceIOSystem(retriever_));
   // ASSIMP wants to change the orientation of the axis, but that's wrong for rviz.
   importer_->SetPropertyBool(AI_CONFIG_IMPORT_COLLADA_IGNORE_UP_DIRECTION, true);
 }
@@ -399,31 +394,28 @@ void AssimpLoader::loadEmbeddedTexture(
 void AssimpLoader::loadTexture(const std::string & resource_path)
 {
   if (!Ogre::TextureManager::getSingleton().resourceExists(resource_path, ROS_PACKAGE_NAME)) {
-    resource_retriever::Retriever retriever;
-    resource_retriever::MemoryResource res;
-    try {
-      res = retriever.get(resource_path);
-    } catch (resource_retriever::Exception & e) {
-      RVIZ_RENDERING_LOG_ERROR(e.what());
+    auto res = retriever_->get_shared(resource_path);
+
+    if (res == nullptr || res->data.empty()) {
+      return;
     }
 
-    if (res.size != 0) {
-      Ogre::DataStreamPtr stream(new Ogre::MemoryDataStream(res.data.get(), res.size));
-      Ogre::Image image;
-      QFileInfo resource_path_finfo(QString::fromStdString(resource_path));
-      std::string extension = resource_path_finfo.completeSuffix().toStdString();
+    Ogre::DataStreamPtr stream(
+      new Ogre::MemoryDataStream(const_cast<uint8_t *>(res->data.data()), res->data.size()));
+    Ogre::Image image;
+    QFileInfo resource_path_finfo(QString::fromStdString(resource_path));
+    std::string extension = resource_path_finfo.completeSuffix().toStdString();
 
-      if (extension[0] == '.') {
-        extension = extension.substr(1, extension.size() - 1);
-      }
+    if (extension[0] == '.') {
+      extension = extension.substr(1, extension.size() - 1);
+    }
 
-      try {
-        image.load(stream, extension);
-        Ogre::TextureManager::getSingleton().loadImage(resource_path, ROS_PACKAGE_NAME, image);
-      } catch (Ogre::Exception & e) {
-        RVIZ_RENDERING_LOG_ERROR_STREAM(
-          "Could not load texture [" << resource_path.c_str() << "]: " << e.what());
-      }
+    try {
+      image.load(stream, extension);
+      Ogre::TextureManager::getSingleton().loadImage(resource_path, ROS_PACKAGE_NAME, image);
+    } catch (Ogre::Exception & e) {
+      RVIZ_RENDERING_LOG_ERROR_STREAM(
+        "Could not load texture [" << resource_path.c_str() << "]: " << e.what());
     }
   }
 }

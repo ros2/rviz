@@ -33,6 +33,7 @@
 #include <OgreRoot.h>
 #include <OgreSceneNode.h>
 
+#include <exception>
 #include <memory>
 
 #include "../ogre_testing_environment.hpp"
@@ -139,4 +140,12 @@ TEST_F(EffortVisualTestFixture, setEffort_hides_force_arrow_for_larger_width_tha
   EXPECT_THAT(arrows, SizeIs(1u));
   auto force_arrow = findForceArrow(root_node);
   EXPECT_THAT(force_arrow->getScale(), Vector3Eq(Ogre::Vector3(1, 1, 1)));
+}
+
+TEST_F(EffortVisualTestFixture, verify_no_memory_leak_on_exception) {
+  auto scene_manager = Ogre::Root::getSingletonPtr()->createSceneManager();
+  auto root_node = scene_manager->getRootSceneNode();
+  // Intentionally passing nullptr
+  EXPECT_THROW(auto effort_visual = std::make_shared<rviz_rendering::EffortVisual>(
+    nullptr, root_node, 0.0f, 0.0f), std::runtime_error);
 }

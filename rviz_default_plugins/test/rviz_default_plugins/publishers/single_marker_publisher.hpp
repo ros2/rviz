@@ -31,6 +31,7 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__PUBLISHERS__SINGLE_MARKER_PUBLISHER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__PUBLISHERS__SINGLE_MARKER_PUBLISHER_HPP_
 
+#include <chrono>
 #include <string>
 #include <vector>
 

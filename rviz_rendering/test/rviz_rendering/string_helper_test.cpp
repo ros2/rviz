@@ -77,3 +77,19 @@ TEST(String_Helper__Test, correctly_split_string_with_other_whitespace) {
 
   ASSERT_THAT(expected, Eq(actual));
 }
+
+TEST(String_Helper__Test, split_string_with_empty_and_space_items) {
+  std::vector<std::string> expected {"Test", "Test2"};
+  std::string test_string(" \n Test \n \n Test2 \n ");
+  std::vector<std::string> actual = rviz_rendering::string_helper::splitStringIntoTrimmedItems(
+    test_string, '\n');
+  ASSERT_THAT(expected, Eq(actual));
+}
+
+TEST(String_Helper__Test, HandlesNothingBesidesDelimiters) {
+    std::vector<std::string> expected{};
+    std::string test_string(",,\n,\n,,");
+    std::vector<std::string> actual = rviz_rendering::string_helper::splitStringIntoTrimmedItems(
+        test_string, ',');
+    ASSERT_THAT(expected, Eq(actual));
+}

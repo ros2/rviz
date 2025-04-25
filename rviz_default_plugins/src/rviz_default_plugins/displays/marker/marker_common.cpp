@@ -28,17 +28,18 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-
 #include "rviz_default_plugins/displays/marker/marker_common.hpp"
 
+#include <cinttypes>
 #include <memory>
 #include <set>
 #include <sstream>
 #include <string>
+#include <string_view>
 #include <utility>
 #include <vector>
 
-#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+#include "QString"
 
 #include "rclcpp/duration.hpp"
 
@@ -48,6 +49,8 @@
 #include "rviz_common/validate_floats.hpp"
 
 #include "rviz_default_plugins/displays/marker/markers/marker_factory.hpp"
+
+#include "rviz_default_plugins/ros_resource_retriever.hpp"
 
 namespace rviz_default_plugins
 {
@@ -71,6 +74,13 @@ void MarkerCommon::initialize(rviz_common::DisplayContext * context, Ogre::Scene
 {
   context_ = context;
   scene_node_ = scene_node;
+
+  resource_retriever::RetrieverVec plugins;
+  plugins.push_back(std::make_shared<RosResourceRetriever>(context_->getRosNodeAbstraction()));
+  for (const auto & plugin : resource_retriever::default_plugins()) {
+    plugins.push_back(plugin);
+  }
+  retriever_ = resource_retriever::Retriever(plugins);
 
   namespace_config_enabled_state_.clear();
 
@@ -146,6 +156,11 @@ void MarkerCommon::deleteMarkerStatus(MarkerID id)
 {
   std::string marker_name = id.first + "/" + std::to_string(id.second);
   display_->deleteStatusStd(marker_name);
+}
+
+resource_retriever::Retriever * MarkerCommon::getResourceRetriever()
+{
+  return &this->retriever_;
 }
 
 void MarkerCommon::addMessage(const visualization_msgs::msg::Marker::ConstSharedPtr marker)

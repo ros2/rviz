@@ -49,6 +49,10 @@
 #include "../mock_selection_manager.hpp"
 #include "../mock_handler_manager.hpp"
 
+#include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
+#include "rviz_common/ros_integration/ros_client_abstraction_iface.hpp"
+#include "rviz_common/ros_integration/ros_client_abstraction.hpp"
+
 class DisplayTestFixture : public testing::Test
 {
 public:
@@ -73,7 +77,7 @@ public:
   std::shared_ptr<MockHandlerManager> handler_manager_;
   std::shared_ptr<rclcpp::Clock> clock_;
 
-  std::string fixed_frame = "fixed_frame";
+  std::string fixed_frame{"fixed_frame"};
 };
 
 

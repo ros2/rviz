@@ -60,12 +60,40 @@ class MarkerCommonFixture : public DisplayTestFixture
 {
 public:
   MarkerCommonFixture()
+  : DisplayTestFixture()
   {
+    EXPECT_CALL(*context_, getRosNodeAbstraction()).WillRepeatedly(
+      testing::Invoke([]() {
+        return rviz_ros_node_;
+      }));
+
     display_ = std::make_unique<rviz_common::Display>();
+
+    scene_manager_ = Ogre::Root::getSingletonPtr()->createSceneManager();
 
     auto scene_node = scene_manager_->getRootSceneNode()->createChildSceneNode();
     common_ = std::make_unique<rviz_default_plugins::displays::MarkerCommon>(display_.get());
     common_->initialize(context_.get(), scene_node);
+  }
+
+  static void TearDownTestCase()
+  {
+    DisplayTestFixture::TearDownTestCase();
+    rclcpp::shutdown();
+  }
+
+  static void SetUpTestCase()
+  {
+    testing_environment_ = std::make_shared<rviz_default_plugins::OgreTestingEnvironment>();
+    testing_environment_->setUpOgreTestEnvironment();
+
+    ros_client_abstraction_ =
+      std::make_unique<rviz_common::ros_integration::RosClientAbstraction>();
+    int argc = 1;
+    const auto arg0 = "MockDisplayContext";
+    char * argv0 = const_cast<char *>(arg0);
+    char ** argv = &argv0;
+    rviz_ros_node_ = ros_client_abstraction_->init(argc, argv, "rviz", false /* anonymous_name */);
   }
 
   ~MarkerCommonFixture() override
@@ -75,7 +103,14 @@ public:
 
   std::unique_ptr<rviz_default_plugins::displays::MarkerCommon> common_;
   std::unique_ptr<rviz_common::Display> display_;
+  static rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node_;
+  static std::unique_ptr<rviz_common::ros_integration::RosClientAbstractionIface>
+  ros_client_abstraction_;
 };
+
+rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr MarkerCommonFixture::rviz_ros_node_;
+std::unique_ptr<rviz_common::ros_integration::RosClientAbstractionIface> MarkerCommonFixture::
+ros_client_abstraction_ = nullptr;
 
 visualization_msgs::msg::Marker::SharedPtr createSharedPtrMessage(
   int32_t action, int32_t type, int id = 0)

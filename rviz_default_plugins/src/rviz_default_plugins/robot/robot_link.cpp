@@ -78,6 +78,8 @@
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/interaction/selection_manager.hpp"
 
+#include "rviz_default_plugins/ros_resource_retriever.hpp"
+
 #define RVIZ_RESOURCE_GROUP "rviz_rendering"
 
 using rviz_rendering::Axes;
@@ -225,6 +227,18 @@ RobotLink::RobotLink(
 
   color_material_ =
     rviz_rendering::MaterialManager::createMaterialWithLighting(color_material_name);
+
+  resource_retriever::RetrieverVec plugins;
+  if (context_ != nullptr) {
+    std::shared_ptr node_ptr = context_->getRosNodeAbstraction().lock();
+    if (node_ptr != nullptr) {
+      plugins.push_back(std::make_shared<RosResourceRetriever>(context_->getRosNodeAbstraction()));
+    }
+  }
+  for (const auto & plugin : resource_retriever::default_plugins()) {
+    plugins.push_back(plugin);
+  }
+  retriever_ = resource_retriever::Retriever(plugins);
 
   // create the ogre objects to display
   if (visual) {
@@ -673,7 +687,7 @@ Ogre::Entity * RobotLink::createEntityForGeometryElement(
         const std::string & model_name = mesh.filename;
 
         try {
-          if (rviz_rendering::loadMeshFromResource(model_name) == nullptr) {
+          if (rviz_rendering::loadMeshFromResource(&retriever_, model_name) == nullptr) {
             addError("Could not load mesh resource '%s'", model_name.c_str());
           } else {
             entity = scene_manager_->createEntity(entity_name, model_name);
@@ -801,16 +815,10 @@ void RobotLink::loadMaterialFromTexture(
 {
   std::string filename = visual->material->texture_filename;
   if (!Ogre::TextureManager::getSingleton().resourceExists(filename, RVIZ_RESOURCE_GROUP)) {
-    resource_retriever::Retriever retriever;
-    resource_retriever::MemoryResource res;
-    try {
-      res = retriever.get(filename);
-    } catch (resource_retriever::Exception & e) {
-      RVIZ_COMMON_LOG_ERROR(e.what());
-    }
-
-    if (res.size != 0) {
-      Ogre::DataStreamPtr stream(new Ogre::MemoryDataStream(res.data.get(), res.size));
+    auto res = retriever_.get_shared(filename);
+    if (nullptr != res && !res->data.empty()) {
+      Ogre::DataStreamPtr stream(
+        new Ogre::MemoryDataStream(const_cast<uint8_t *>(res->data.data()), res->data.size()));
       Ogre::Image image;
       std::string extension =
         QFileInfo(QString::fromStdString(filename)).completeSuffix().toStdString();
