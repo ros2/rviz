@@ -185,8 +185,9 @@ void BillboardLine::addPoint(const Ogre::Vector3 & point, const Ogre::ColourValu
 
   rviz_rendering::MaterialManager::enableAlphaBlending(material_, color.a);
 
-  if (chain_containers_[current_chain_container_]->getNumChainElements(current_line_ %
-    chains_per_container_) >= max_points_per_line_)
+  if (chain_containers_[current_chain_container_]->getNumChainElements(
+      current_line_ %
+      chains_per_container_) >= max_points_per_line_)
   {
     throw std::out_of_range("Exceeded max_points_per_line limit.");
   }
