@@ -76,3 +76,11 @@ TEST_F(TrianglePolygonTestFixture, setPoints_sets_the_line_position_and_size) {
   ASSERT_THAT(aabb.getMaximum(), Vector3Eq(Ogre::Vector3(1, 1, 0)));
   delete triangle_polygon;
 }
+
+TEST_F(TrianglePolygonTestFixture, trianglePolygon_constructor_nullptr_parameters_throws)
+{
+  EXPECT_THROW(
+    auto triangle = rviz_rendering::TrianglePolygon(nullptr, nullptr, Ogre::Vector3(),
+    Ogre::Vector3(), Ogre::Vector3(), "", Ogre::ColourValue(), false, false),
+    std::invalid_argument);
+}
