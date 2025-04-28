@@ -498,14 +498,19 @@ TEST_F(MarkerCommonFixture, onEnableChanged_in_namespace_removes_all_markers_in_
   marker->ns = "new_ns";
   common_->processMessage(marker);
 
-  EXPECT_TRUE(rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode()));
+  auto pointcloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
+  ASSERT_TRUE(pointcloud);
+  EXPECT_TRUE(pointcloud->getVisible());
   EXPECT_TRUE(rviz_default_plugins::findOneMovableText(scene_manager_->getRootSceneNode()));
 
   auto namespace_property = dynamic_cast<rviz_default_plugins::displays::MarkerNamespace *>(
     display_->findProperty("Namespaces")->childAt(0));
   namespace_property->setValue(false);
 
-  EXPECT_FALSE(rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode()));
+  // Pointcloud should still exist but not visible
+  pointcloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
+  ASSERT_TRUE(pointcloud != nullptr);
+  EXPECT_FALSE(pointcloud->getVisible());
   EXPECT_TRUE(rviz_default_plugins::findOneMovableText(scene_manager_->getRootSceneNode()));
 }
 
@@ -518,7 +523,9 @@ TEST_F(MarkerCommonFixture, processMessage_does_not_add_message_with_disabled_na
   // this is necessary to initialize namespace as we don't load a config
   common_->processMessage(marker);
 
-  EXPECT_TRUE(rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode()));
+  auto pointcloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
+  ASSERT_TRUE(pointcloud != nullptr);
+  EXPECT_TRUE(pointcloud->getVisible());
 
   auto namespace_property = dynamic_cast<rviz_default_plugins::displays::MarkerNamespace *>(
     display_->findProperty("Namespaces")->childAt(0));
@@ -527,6 +534,9 @@ TEST_F(MarkerCommonFixture, processMessage_does_not_add_message_with_disabled_na
   marker->type = visualization_msgs::msg::Marker::TEXT_VIEW_FACING;
   common_->processMessage(marker);
 
-  EXPECT_FALSE(rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode()));
+  // Pointcloud should still exist but not visible
+  pointcloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
+  ASSERT_TRUE(pointcloud != nullptr);
+  EXPECT_FALSE(pointcloud->getVisible());
   EXPECT_FALSE(rviz_default_plugins::findOneMovableText(scene_manager_->getRootSceneNode()));
 }
