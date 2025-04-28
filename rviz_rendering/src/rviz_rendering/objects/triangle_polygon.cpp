@@ -52,6 +52,10 @@ TrianglePolygon::TrianglePolygon(
   bool use_color,
   bool upper_triangle)
 {
+  if (!manager || !node) {
+    throw std::invalid_argument("SceneManager and SceneNode must not be null.");
+  }
+
   // uniq string is requred for name
   manual_ = manager->createManualObject();
   manual_->clear();
