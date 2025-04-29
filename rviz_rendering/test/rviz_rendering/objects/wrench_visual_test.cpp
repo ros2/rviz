@@ -121,3 +121,17 @@ TEST_F(WrenchVisualTestFixture, constructor_handles_null_pointers_gracefully) {
     auto wrench_visual = std::make_shared<rviz_rendering::WrenchVisual>(scene_manager, root_node);
   }, std::invalid_argument);
 }
+
+TEST_F(WrenchVisualTestFixture, setForceColor_validates_color_range) {
+  auto scene_manager = Ogre::Root::getSingletonPtr()->createSceneManager();
+  auto root_node = scene_manager->getRootSceneNode();
+  auto wrench_visual = std::make_shared<rviz_rendering::WrenchVisual>(scene_manager, root_node);
+
+  // Valid range
+  EXPECT_NO_THROW(wrench_visual->setForceColor(0.0f, 0.0f, 0.0f, 0.0f));
+  EXPECT_NO_THROW(wrench_visual->setForceColor(1.0f, 1.0f, 1.0f, 1.0f));
+
+  // Invalid range
+  EXPECT_NO_THROW(wrench_visual->setForceColor(-0.1f, 0.5f, 0.5f, 1.0f));
+  EXPECT_NO_THROW(wrench_visual->setForceColor(0.5f, 1.1f, 0.5f, 1.0f));
+}
