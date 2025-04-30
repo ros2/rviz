@@ -240,7 +240,6 @@ add_library(rviz_default_plugins SHARED
 target_include_directories(rviz_default_plugins PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
-  ${Qt5Widgets_INCLUDE_DIRS}
 )
 
 target_link_libraries(rviz_default_plugins PUBLIC
@@ -262,6 +261,12 @@ target_link_libraries(rviz_default_plugins PUBLIC
   tf2_ros::tf2_ros
   urdf::urdf
   ${visualization_msgs_TARGETS}
+<<<<<<< HEAD
+=======
+  resource_retriever::resource_retriever
+  ${rviz_resource_interfaces_TARGETS}
+  Qt5::Widgets
+>>>>>>> d3eabab4 (Do not use ${Qt5Widgets_INCLUDE_DIRS} to avoid creating non-relocatable CMake config files (#1450))
 )
 
 target_link_libraries(rviz_default_plugins PRIVATE
