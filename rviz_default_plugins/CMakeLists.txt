@@ -242,7 +242,6 @@ add_library(rviz_default_plugins SHARED
 target_include_directories(rviz_default_plugins PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
-  ${Qt5Widgets_INCLUDE_DIRS}
 )
 
 target_link_libraries(rviz_default_plugins PUBLIC
@@ -266,6 +265,7 @@ target_link_libraries(rviz_default_plugins PUBLIC
   ${visualization_msgs_TARGETS}
   resource_retriever::resource_retriever
   ${rviz_resource_interfaces_TARGETS}
+  Qt5::Widgets
 )
 
 target_link_libraries(rviz_default_plugins PRIVATE
