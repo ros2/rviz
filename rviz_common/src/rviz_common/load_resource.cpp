@@ -50,8 +50,12 @@ namespace rviz_common
 resource_retriever::ResourceSharedPtr getResource(const std::string & resource_path)
 {
   RVIZ_COMMON_LOG_DEBUG("rviz_common::getResource() loading resource: " + resource_path);
-  resource_retriever::Retriever retriever;
-  return retriever.get_shared(resource_path);
+  try {
+    resource_retriever::Retriever retriever;
+    return retriever.get_shared(resource_path);
+  } catch (...) {
+    return nullptr;
+  }
 }
 
 QPixmap loadPixmap(QString url, bool fill_cache)
