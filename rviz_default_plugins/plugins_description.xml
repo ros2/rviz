@@ -457,7 +457,15 @@
       Control the camera like in a First Person Shooter game: drag left to look left, etc.
     </description>
   </class>
-
+  <class
+    name="rviz_default_plugins/FrameAligned"
+    type="rviz_default_plugins::view_controllers::FrameViewController"
+    base_class_type="rviz_common::ViewController"
+  >
+    <description>
+      Align the camera with a TF frame.
+    </description>
+  </class>
   <class
     name="rviz_default_plugins/Orbit"
     type="rviz_default_plugins::view_controllers::OrbitViewController"
