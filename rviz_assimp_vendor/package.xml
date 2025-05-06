@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>rviz_assimp_vendor</name>
-  <version>15.1.0</version>
+  <version>15.1.1</version>
   <description>
     Wrapper around assimp, providing nothing but a dependency on assimp, on some systems.
     On others, it provides a fixed CMake module or even an ExternalProject build of assimp.

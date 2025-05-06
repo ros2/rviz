@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>rviz_default_plugins</name>
-  <version>15.1.0</version>
+  <version>15.1.1</version>
   <description>
     Several default plugins for rviz to cover the basic functionality.
   </description>

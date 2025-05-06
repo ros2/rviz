@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>rviz_resource_interfaces</name>
-  <version>15.1.0</version>
+  <version>15.1.1</version>
   <description>ROS interfaces for working with resources like meshes.</description>
 
   <maintainer email="alejandro@openrobotics.org">Alejandro Hernandez Cordero</maintainer>

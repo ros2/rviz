@@ -2,6 +2,11 @@
 Changelog for package rviz_assimp_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.1 (2025-05-05)
+-------------------
+* Clean ogre CMakeLists.txt (`#1251 <https://github.com/ros2/rviz/issues/1251>`_)
+* Contributors: mosfet80
+
 15.1.0 (2025-04-25)
 -------------------
 

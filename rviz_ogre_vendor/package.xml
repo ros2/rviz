@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>rviz_ogre_vendor</name>
-  <version>15.1.0</version>
+  <version>15.1.1</version>
   <description>
     Wrapper around ogre3d, it provides a fixed CMake module and an ExternalProject build of ogre.
   </description>

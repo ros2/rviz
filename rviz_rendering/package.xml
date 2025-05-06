@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>rviz_rendering</name>
-  <version>15.1.0</version>
+  <version>15.1.1</version>
   <description>
     Library which provides the 3D rendering functionality in rviz.
   </description>
