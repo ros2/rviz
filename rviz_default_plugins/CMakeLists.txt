@@ -402,9 +402,7 @@ if(BUILD_TESTING)
     target_include_directories(frame_view_controller_test PRIVATE ${TEST_INCLUDE_DIRS})
     target_link_libraries(frame_view_controller_test
       ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
-      rviz_default_plugins
-      Qt5::Widgets
-      ogre_testing_environment
+      ${TEST_LINK_LIBRARIES}
     )
   endif()
 
@@ -1136,4 +1134,3 @@ endif()
 ament_package(
   CONFIG_EXTRAS "rviz_default_plugins-extras.cmake"
 )
-
