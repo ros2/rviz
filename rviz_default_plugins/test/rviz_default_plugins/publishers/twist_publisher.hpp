@@ -31,8 +31,8 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__PUBLISHERS__TWIST_PUBLISHER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__PUBLISHERS__TWIST_PUBLISHER_HPP_
 
-#include <string>
 #include <chrono>
+#include <string>
 
 #include "rclcpp/rclcpp.hpp"
 

@@ -29,6 +29,7 @@
 
 
 #include <algorithm>
+#include <array>
 
 #include "rviz_default_plugins/displays/pointcloud/point_cloud_helpers.hpp"
 
@@ -75,10 +76,14 @@ bool RGB8PCTransformer::transform(
   const uint32_t point_step = cloud->point_step;
 
   // Create a look-up table for colors
-  float rgb_lut[256];
-  for (int i = 0; i < 256; ++i) {
-    rgb_lut[i] = static_cast<float>(i) / 255.0f;
-  }
+  constexpr static std::array<float, 256> rgb_lut = [](){
+      std::array<float, 256> result{};
+      for (int i = 0; i < 256; ++i) {
+        result[i] = static_cast<float>(i) / 255.0f;
+      }
+      return result;
+    }();
+
   if (rgb != -1) {  // rgb
     for (V_PointCloudPoint::iterator iter = points_out.begin(); iter != points_out.end();
       ++iter, rgb_ptr += point_step)

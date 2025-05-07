@@ -2,6 +2,64 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.1 (2025-05-05)
+-------------------
+* Changed Marker Displays to allow toggling visibility of namespaces (`#1402 <https://github.com/ros2/rviz/issues/1402>`_)
+* Do not use ${Qt5Widgets_INCLUDE_DIRS} to avoid creating non-relocatable CMake config files (`#1450 <https://github.com/ros2/rviz/issues/1450>`_)
+* Contributors: Silvio Traversaro, Stefan Fabian
+
+15.1.0 (2025-04-25)
+-------------------
+
+15.0.0 (2025-04-25)
+-------------------
+* PointCloudDisplay: Fix decay time 0 keeping more than the last message (`#1400 <https://github.com/ros2/rviz/issues/1400>`_)
+* Work in progress using the new resource retriever apis (`#1262 <https://github.com/ros2/rviz/issues/1262>`_)
+* Include chrono (`#1353 <https://github.com/ros2/rviz/issues/1353>`_)
+* Contributors: Matthew Foran, Michael Carroll, Stefan Fabian
+
+14.4.4 (2025-03-20)
+-------------------
+* fix: add rclcpp::shutdown (`#1343 <https://github.com/ros2/rviz/issues/1343>`_)
+* Contributors: Yuyuan Yuan
+
+14.4.3 (2025-02-27)
+-------------------
+* Nv12 color format (`#1318 <https://github.com/ros2/rviz/issues/1318>`_)
+  Co-authored-by: zycczy <zycczyby@gmail.com>
+* uniform CMAKE requirement (`#1335 <https://github.com/ros2/rviz/issues/1335>`_)
+* Contributors: mosfet80, quic-zhaoyuan
+
+14.4.2 (2025-01-31)
+-------------------
+* Initialize lookup table only once at compile time (`#1330 <https://github.com/ros2/rviz/issues/1330>`_)
+  Co-authored-by: Alejandro Hernández Cordero <ahcorde@gmail.com>
+* Contributors: Patrick Roncagliolo
+
+14.4.1 (2025-01-15)
+-------------------
+* Fixed the XY Orbit controller move (`#1327 <https://github.com/ros2/rviz/issues/1327>`_)
+  Co-authored-by: Terry Scott <tscott@seegrid.com>
+* Contributors: Terry Scott
+
+14.4.0 (2024-12-20)
+-------------------
+* Fix Deprecated tf2 headers (`#1289 <https://github.com/ros2/rviz/issues/1289>`_)
+* Change EffortDisplay superclass from MessageFilterDisplay to RosTopicDisplay to avoid dropping messages with empty frame_id. (`#1312 <https://github.com/ros2/rviz/issues/1312>`_)
+* Fix access control for Accel, Effort and Twist displays (`#1311 <https://github.com/ros2/rviz/issues/1311>`_)
+* Contributors: Lucas Wendland, disRecord, suchetanrs
+
+14.3.3 (2024-11-25)
+-------------------
+* remove unused variable (`#1301 <https://github.com/ros2/rviz/issues/1301>`_)
+* Contributors: Alejandro Hernández Cordero
+
+14.3.2 (2024-11-20)
+-------------------
+* include QString (`#1298 <https://github.com/ros2/rviz/issues/1298>`_)
+* Clean code for Image display (`#1271 <https://github.com/ros2/rviz/issues/1271>`_)
+* Contributors: Matthew Foran, Peng Wang
+
 14.3.1 (2024-10-11)
 -------------------
 * Handle time source exception (`#1285 <https://github.com/ros2/rviz/issues/1285>`_)

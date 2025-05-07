@@ -32,6 +32,7 @@
 #include "failed_display.hpp"
 
 #include <QColor>  // NOLINT: cpplint is unable to handle the include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/load_resource.hpp"
 #include "rviz_common/properties/status_property.hpp"

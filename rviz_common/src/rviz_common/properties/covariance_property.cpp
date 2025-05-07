@@ -36,6 +36,8 @@
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "rviz_rendering/objects/covariance_visual.hpp"
 
 #include "rviz_common/properties/color_property.hpp"

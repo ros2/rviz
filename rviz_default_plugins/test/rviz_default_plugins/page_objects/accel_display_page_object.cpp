@@ -31,9 +31,10 @@
 
 #include "accel_display_page_object.hpp"
 
-#include <QString>
 #include <memory>
 #include <vector>
+
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 AccelDisplayPageObject::AccelDisplayPageObject()
 : BasePageObject(0, "AccelStamped")

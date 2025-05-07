@@ -27,10 +27,12 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+#include "rviz_common/properties/grouped_checkbox_property.hpp"
 
 #include <memory>
 
-#include "rviz_common/properties/grouped_checkbox_property.hpp"
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "rviz_common/properties/grouped_checkbox_property_group.hpp"
 
 namespace rviz_common

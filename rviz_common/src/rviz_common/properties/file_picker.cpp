@@ -31,6 +31,7 @@
 #include "file_picker.hpp"
 
 #include <QFileDialog>
+#include <QString>
 
 
 namespace rviz_common

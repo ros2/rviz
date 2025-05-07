@@ -28,9 +28,9 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 
-#include <QString>
-
 #include "range_display_page_object.hpp"
+
+#include <QString>
 
 RangeDisplayPageObject::RangeDisplayPageObject()
 : BasePageObject(0, "Range")

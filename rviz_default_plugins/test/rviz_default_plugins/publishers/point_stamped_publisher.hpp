@@ -31,6 +31,7 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__PUBLISHERS__POINT_STAMPED_PUBLISHER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__PUBLISHERS__POINT_STAMPED_PUBLISHER_HPP_
 
+#include <chrono>
 #include <vector>
 
 #include "geometry_msgs/msg/point_stamped.hpp"

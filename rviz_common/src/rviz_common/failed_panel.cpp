@@ -34,6 +34,7 @@
 #include <cstdio>
 
 #include <QHBoxLayout>  // NOLINT: cpplint is unable to handle the include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTextBrowser>  // NOLINT: cpplint is unable to handle the include order here
 
 namespace rviz_common

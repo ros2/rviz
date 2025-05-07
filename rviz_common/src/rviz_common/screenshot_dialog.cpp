@@ -44,6 +44,7 @@
 // Included so we know that QPushButton inherits QAbstractButton
 #include <QPushButton>  // NOLINT: cpplint is unable to handle the include order here
 #include <QScreen>  // NOLINT: cpplint is unable to handle the include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
 #include <QVBoxLayout>  // NOLINT: cpplint is unable to handle the include order here
 #include <QWindow>  // NOLINT: cpplint is unable to handle the include order here

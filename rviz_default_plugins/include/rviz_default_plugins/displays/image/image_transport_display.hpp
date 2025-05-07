@@ -36,6 +36,8 @@
 #include <memory>
 #include <string>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "get_transport_from_topic.hpp"
 #include "image_transport/image_transport.hpp"
 #include "image_transport/subscriber_filter.hpp"

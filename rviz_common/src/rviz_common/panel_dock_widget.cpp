@@ -36,6 +36,7 @@
 #include <QCloseEvent>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QString>
 #include <QToolButton>
 
 #include "rviz_common/load_resource.hpp"

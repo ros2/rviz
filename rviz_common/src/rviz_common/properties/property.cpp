@@ -39,6 +39,7 @@
 #include <QPalette>  // NOLINT: cpplint is unable to handle the include order here
 #include <QLineEdit>  // NOLINT: cpplint is unable to handle the include order here
 #include <QSpinBox>  // NOLINT: cpplint is unable to handle the include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/properties/float_edit.hpp"
 #include "rviz_common/properties/property_tree_model.hpp"

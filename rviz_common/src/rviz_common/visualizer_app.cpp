@@ -40,8 +40,9 @@
 // #include <OgreMaterialManager.h>
 
 #include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
-#include <QCommandLineParser>  // NOLINT: cpplint is unable to handle the include order here
 #include <QCommandLineOption>  // NOLINT: cpplint is unable to handle the include order here
+#include <QCommandLineParser>  // NOLINT: cpplint is unable to handle the include order here
+#include <QString>  // NOLINT: cpplint cannot handle the include order here
 #include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/interaction/selection_manager.hpp"
@@ -70,6 +71,9 @@ void VisualizerApp::setApp(QApplication * app)
 
 rviz_rendering::RenderWindow * VisualizerApp::getRenderWindow()
 {
+  if (!frame_) {
+    return nullptr;
+  }
   return frame_->getRenderWindow();
 }
 

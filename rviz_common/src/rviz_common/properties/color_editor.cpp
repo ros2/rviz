@@ -34,6 +34,7 @@
 
 #include <QPainter>
 #include <QColorDialog>
+#include <QString>
 
 #include "rviz_common/properties/color_property.hpp"
 #include "rviz_common/properties/parse_color.hpp"

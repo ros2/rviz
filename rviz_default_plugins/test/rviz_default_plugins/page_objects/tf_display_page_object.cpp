@@ -30,10 +30,10 @@
 
 #include "tf_display_page_object.hpp"
 
-#include <QString>
-
 #include <memory>
 #include <vector>
+
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 TFDisplayPageObject::TFDisplayPageObject()
 : BasePageObject(0, "TF")

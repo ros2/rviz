@@ -37,10 +37,15 @@
 
 #include "rviz_rendering/visibility_control.hpp"
 
+#include "resource_retriever/retriever.hpp"
+
 namespace rviz_rendering
 {
+
 RVIZ_RENDERING_PUBLIC
-Ogre::MeshPtr loadMeshFromResource(const std::string & resource_path);
+Ogre::MeshPtr loadMeshFromResource(
+  resource_retriever::Retriever * retriever,
+  const std::string & resource_uri);
 
 }  // namespace rviz_rendering
 

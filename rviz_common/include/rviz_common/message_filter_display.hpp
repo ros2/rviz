@@ -35,6 +35,8 @@
 #include <memory>
 #include <string>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include <message_filters/subscriber.hpp>
 
 #include "rviz_common/ros_topic_display.hpp"

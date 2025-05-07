@@ -34,6 +34,8 @@
 
 #include "rviz_common/view_controller.hpp"
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 namespace rviz_common
 {
 

@@ -31,8 +31,8 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__PUBLISHERS__EFFORT_PUBLISHER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__PUBLISHERS__EFFORT_PUBLISHER_HPP_
 
-#include <string>
 #include <chrono>
+#include <string>
 
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>

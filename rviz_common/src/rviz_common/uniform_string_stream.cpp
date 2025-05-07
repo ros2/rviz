@@ -58,7 +58,8 @@ void UniformStringStream::parseFloat(float & f)
   }
   UniformStringStream float_reader(float_string);
   float_reader >> f;
-  if (float_reader.fail()) {
+  // Ensure the entire string is correctly parsed
+  if (float_reader.fail() || !float_reader.eof()) {
     this->setstate(std::ios::failbit);
   }
 }

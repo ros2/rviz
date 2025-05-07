@@ -33,6 +33,8 @@
 
 #include <memory>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 namespace rviz_default_plugins
 {
 namespace displays

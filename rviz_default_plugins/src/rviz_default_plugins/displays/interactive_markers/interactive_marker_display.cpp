@@ -34,6 +34,8 @@
 #include <utility>
 #include <vector>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/validate_floats.hpp"
 #include "rviz_common/display_context.hpp"

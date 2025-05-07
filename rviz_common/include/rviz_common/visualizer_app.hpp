@@ -36,6 +36,7 @@
 
 #include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/ros_integration/ros_client_abstraction_iface.hpp"
 #include "rviz_common/visibility_control.hpp"

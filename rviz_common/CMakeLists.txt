@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 
 project(rviz_common)
 
@@ -135,6 +135,7 @@ set(rviz_common_headers_to_moc
   include/rviz_common/visualization_frame.hpp
   src/rviz_common/widget_geometry_change_detector.hpp
   include/rviz_common/ros_topic_display.hpp
+  include/rviz_common/ros_adapter_display.hpp
 )
 
 foreach(header "${rviz_common_headers_to_moc}")

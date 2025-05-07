@@ -79,7 +79,6 @@ MovableText::MovableText(
   horizontal_alignment_(H_LEFT),
   vertical_alignment_(V_BELOW),
   color_(color),
-  char_height_(charHeight),
   line_spacing_(0.01f),
   space_width_(0),
   needs_color_update_(true),
@@ -88,6 +87,7 @@ MovableText::MovableText(
   local_translation_(0.0f),
   font_(nullptr)
 {
+  char_height_ = (charHeight > 0.0f) ? charHeight : 1.0f;
   static int count = 0;
   std::stringstream ss;
   ss << "MovableText" << count++;
@@ -540,6 +540,10 @@ void MovableText::getRenderOperation(Ogre::RenderOperation & op)
 
 void MovableText::update()
 {
+  if (caption_.empty()) {
+    return;
+  }
+
   if (needs_update_) {
     setupGeometry();
   }

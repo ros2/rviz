@@ -31,6 +31,8 @@
 
 #include "camera_info_display_page_object.hpp"
 
+#include <QString>
+
 CameraInfoDisplayPageObject::CameraInfoDisplayPageObject()
 : BasePageObject(0, "CameraInfo")
 {

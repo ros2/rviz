@@ -32,6 +32,8 @@
 #ifndef RVIZ_COMMON__DISPLAY_GROUP_HPP_
 #define RVIZ_COMMON__DISPLAY_GROUP_HPP_
 
+#include <QString>
+
 #include "rviz_common/display.hpp"
 #include "rviz_common/visibility_control.hpp"
 

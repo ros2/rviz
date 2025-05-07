@@ -64,6 +64,10 @@ Grid::Grid(
   height_count_(0),
   color_(color)
 {
+  if (!scene_manager_) {
+    throw std::invalid_argument("SceneManager cannot be null");
+  }
+
   static uint32_t grid_count = 0;
   std::string grid_name = "Grid" + std::to_string(grid_count++);
 

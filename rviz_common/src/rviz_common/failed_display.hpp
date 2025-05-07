@@ -32,6 +32,8 @@
 #ifndef RVIZ_COMMON__FAILED_DISPLAY_HPP_
 #define RVIZ_COMMON__FAILED_DISPLAY_HPP_
 
+#include <QString>
+
 #include "rviz_common/display.hpp"
 
 namespace rviz_common

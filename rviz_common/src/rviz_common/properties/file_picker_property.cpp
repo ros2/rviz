@@ -29,6 +29,9 @@
 
 
 #include "rviz_common/properties/file_picker_property.hpp"
+
+#include <QString>
+
 #include "file_picker.hpp"
 
 namespace rviz_common

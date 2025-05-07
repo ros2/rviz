@@ -32,6 +32,7 @@
 #include <QApplication>
 #include <QColor>
 #include <QPalette>
+#include <QString>
 
 #include "rviz_common/load_resource.hpp"
 #include "rviz_common/properties/property_tree_model.hpp"

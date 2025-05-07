@@ -53,8 +53,9 @@
 
 #include <urdf/model.hpp>  // can be replaced later by urdf_model/types.h
 
-#include "rviz_rendering/objects/object.hpp"
+#include "resource_retriever/retriever.hpp"
 #include "rviz_common/interaction/forwards.hpp"
+#include "rviz_rendering/objects/object.hpp"
 
 #include "rviz_default_plugins/robot/robot_element_base_class.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
@@ -234,6 +235,8 @@ private:
 protected:
   Ogre::SceneManager * scene_manager_;
   rviz_common::DisplayContext * context_;
+
+  mutable resource_retriever::Retriever retriever_;
 
   std::string parent_joint_name_;
   std::vector<std::string> child_joint_names_;

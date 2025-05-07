@@ -210,3 +210,11 @@ TEST_F(BillboardLineTestFixture, create_chain_with_extremely_many_elements) {
   ASSERT_THAT(chains, SizeIs(200000 / 16384 + 1));
   ASSERT_THAT(chains[0]->getNumberOfChains(), Eq(1u));
 }
+
+TEST_F(BillboardLineTestFixture, addPoint_checks_for_max_points_per_line_boundary) {
+  rviz_rendering::BillboardLine grid_cell(Ogre::Root::getSingletonPtr()->createSceneManager());
+  grid_cell.setMaxPointsPerLine(2);
+  grid_cell.addPoint(Ogre::Vector3(0, 0, 0));
+  grid_cell.addPoint(Ogre::Vector3(1, 1, 0));
+  EXPECT_THROW(grid_cell.addPoint(Ogre::Vector3(2, 2, 0)), std::out_of_range);
+}

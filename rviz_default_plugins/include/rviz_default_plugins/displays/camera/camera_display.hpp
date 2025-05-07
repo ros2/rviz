@@ -39,6 +39,7 @@
 #include <string>
 
 #include <QObject>  // NOLINT: cpplint cannot handle the include order here
+#include <QString>  // NOLINT: cpplint cannot handle the include order here
 
 #ifndef Q_MOC_RUN
 

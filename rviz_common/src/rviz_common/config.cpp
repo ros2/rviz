@@ -32,6 +32,7 @@
 #include "rviz_common/config.hpp"
 
 #include <QLocale>
+#include <QString>
 
 namespace rviz_common
 {

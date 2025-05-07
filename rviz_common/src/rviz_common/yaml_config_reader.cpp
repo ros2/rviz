@@ -35,6 +35,8 @@
 #include <sstream>
 #include <string>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 // TODO(wjwwood): consider restoring support for yamlcpp < 0.5, force 0.5 for now
 #define RVIZ_HAVE_YAMLCPP_05 1
 

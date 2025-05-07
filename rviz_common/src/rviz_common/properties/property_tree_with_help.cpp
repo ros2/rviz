@@ -30,6 +30,7 @@
 
 #include "rviz_common/properties/property_tree_with_help.hpp"
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTextBrowser>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/properties/property_tree_widget.hpp"

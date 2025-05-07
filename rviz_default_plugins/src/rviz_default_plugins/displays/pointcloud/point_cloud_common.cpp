@@ -39,6 +39,8 @@
 #include <OgreSceneNode.h>
 #include <OgreWireBoundingBox.h>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "rclcpp/clock.hpp"
 
 #include "rviz_default_plugins/displays/pointcloud/point_cloud_to_point_cloud2.hpp"
@@ -423,7 +425,7 @@ void PointCloudCommon::removeObsoleteCloudInfos()
 bool PointCloudCommon::cloudInfoIsDecayed(
   CloudInfoPtr cloud_info, float point_decay_time, const rclcpp::Time & now)
 {
-  return (now.nanoseconds() - cloud_info->receive_time_.nanoseconds()) / 1000000000.0 >
+  return (now.nanoseconds() - cloud_info->receive_time_.nanoseconds()) / 1E9 >=
          point_decay_time;
 }
 

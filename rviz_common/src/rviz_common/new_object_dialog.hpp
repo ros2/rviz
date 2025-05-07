@@ -33,6 +33,7 @@
 #define RVIZ_COMMON__NEW_OBJECT_DIALOG_HPP_
 
 #include <QDialog>
+#include <QString>
 
 #include "rviz_common/factory/factory.hpp"
 

@@ -31,6 +31,7 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__PUBLISHERS__POSE_ARRAY_PUBLISHER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__PUBLISHERS__POSE_ARRAY_PUBLISHER_HPP_
 
+#include <chrono>
 #include <vector>
 
 #include "rclcpp/rclcpp.hpp"

@@ -130,6 +130,7 @@ private:
   ImageData convertTo8bit(const uint8_t * data_ptr, size_t data_size_in_bytes);
   ImageData convertUYVYToRGBData(const uint8_t * data_ptr, size_t data_size_in_bytes);
   ImageData convertYUYVToRGBData(const uint8_t * data_ptr, size_t data_size_in_bytes);
+  ImageData convertNV12ToRGBData(const uint8_t * data_ptr, size_t data_size_in_bytes);
 
   ImageData setFormatAndNormalizeDataIfNecessary(
     const std::string & encoding, const uint8_t * data_ptr, size_t data_size_in_bytes);

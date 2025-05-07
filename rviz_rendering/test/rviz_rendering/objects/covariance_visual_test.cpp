@@ -186,3 +186,9 @@ TEST_F(CovarianceVisualTestFixture, covariance_visual_2D)
   EXPECT_FALSE(all_orientation_uncertainties[1]->isVisible());
   EXPECT_FALSE(all_orientation_uncertainties[2]->isVisible());
 }
+
+TEST_F(CovarianceVisualTestFixture, CovarianceVisualNullScene)
+{
+  EXPECT_THROW(auto cov_visual = std::make_unique<rviz_rendering::CovarianceVisual>(
+    nullptr, nullptr, false, true, .1f, .1f, 2.0f), std::runtime_error);
+}

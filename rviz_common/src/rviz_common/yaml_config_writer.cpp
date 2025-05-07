@@ -33,6 +33,8 @@
 
 #include <fstream>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "yaml-cpp/emitter.h"
 
 namespace rviz_common

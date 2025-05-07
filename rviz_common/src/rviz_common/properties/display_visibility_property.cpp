@@ -30,6 +30,8 @@
 
 #include "rviz_common/properties/display_visibility_property.hpp"
 
+#include <QString>
+
 #include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/bit_allocator.hpp"

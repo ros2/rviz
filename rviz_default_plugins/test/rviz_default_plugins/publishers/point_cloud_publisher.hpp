@@ -30,11 +30,12 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__PUBLISHERS__POINT_CLOUD_PUBLISHER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__PUBLISHERS__POINT_CLOUD_PUBLISHER_HPP_
 
+#include <chrono>
 #include <string>
 #include <vector>
 
 #include "geometry_msgs/msg/transform_stamped.hpp"
-#include "tf2/LinearMath/Quaternion.h"
+#include "tf2/LinearMath/Quaternion.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/header.hpp"
 #include "sensor_msgs/msg/point_cloud.hpp"

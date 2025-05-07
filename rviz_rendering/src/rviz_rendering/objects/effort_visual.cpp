@@ -40,6 +40,9 @@ EffortVisual::EffortVisual(
   Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node, float width, float scale)
 : scene_manager_(scene_manager), parent_node_(parent_node), width_(width), scale_(scale)
 {
+  if (scene_manager_ == nullptr) {
+    throw std::runtime_error("EffortVisual: Scene Manager is null.");
+  }
 }
 
 void EffortVisual::getRainbowColor(float value, Ogre::ColourValue & color)

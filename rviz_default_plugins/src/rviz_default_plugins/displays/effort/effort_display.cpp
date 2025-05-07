@@ -30,17 +30,17 @@
 
 #include "rviz_default_plugins/displays/effort/effort_display.hpp"
 
-#include <OgreSceneNode.h>
-#include <OgreSceneManager.h>
-
-#include <QString>
-
 #include <chrono>
 #include <cstddef>
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
+
+#include <OgreSceneNode.h>
+#include <OgreSceneManager.h>
+
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include <rviz_common/validate_floats.hpp>
 
@@ -112,7 +112,7 @@ bool JointInfo::getEnabled() const
 }
 
 EffortDisplay::EffortDisplay()
-: rviz_common::MessageFilterDisplay<sensor_msgs::msg::JointState>()
+: rviz_common::RosTopicDisplay<sensor_msgs::msg::JointState>()
 {
   alpha_property_ = new rviz_common::properties::FloatProperty(
     "Alpha", 1.0f, "0 is fully transparent, 1.0 is fully opaque.",
@@ -155,7 +155,7 @@ EffortDisplay::~EffortDisplay()
 
 void EffortDisplay::onInitialize()
 {
-  MFDClass::onInitialize();
+  RTDClass::onInitialize();
   updateHistoryLength();
 }
 
@@ -170,7 +170,7 @@ void EffortDisplay::updateHistoryLength()
 // Clear the visuals by deleting their objects.
 void EffortDisplay::reset()
 {
-  MFDClass::reset();
+  RTDClass::reset();
   visuals_.clear();
 }
 
@@ -288,11 +288,23 @@ std::string concat(const std::string & prefix, const std::string & frame)
 
 void EffortDisplay::processMessage(sensor_msgs::msg::JointState::ConstSharedPtr msg)
 {
+  if (!msg) {
+    return;
+  }
+
+  // Use type erased signal/slot machinery to ensure messages are
+  // processed in the main thread.
+  Q_EMIT typeErasedMessageTaken(std::static_pointer_cast<const void>(msg));
+}
+
+void EffortDisplay::processTypeErasedMessage(std::shared_ptr<const void> type_erased_msg)
+{
+  auto msg = std::static_pointer_cast<const sensor_msgs::msg::JointState>(type_erased_msg);
+
   // Robot model might not be loaded yet
   if (!robot_model_) {
     setStatus(
-      rviz_common::properties::StatusLevel::Error,
-      "Process message",
+      rviz_common::properties::StatusLevel::Error, "Topic",
       QString("Robot model might not be loaded yet"));
     return;
   }

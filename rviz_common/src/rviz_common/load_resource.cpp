@@ -36,6 +36,7 @@
 #include <QFile>  // NOLINT: cpplint cannot handle the include order here
 #include <QPainter>  // NOLINT: cpplint cannot handle the include order here
 #include <QPixmapCache>  // NOLINT: cpplint cannot handle the include order here
+#include <QString>  // NOLINT: cpplint cannot handle the include order here
 
 #include "ament_index_cpp/get_package_share_directory.hpp"
 #include "ament_index_cpp/get_package_prefix.hpp"
@@ -46,18 +47,15 @@
 namespace rviz_common
 {
 
-resource_retriever::MemoryResource getResource(const std::string & resource_path)
+resource_retriever::ResourceSharedPtr getResource(const std::string & resource_path)
 {
-  resource_retriever::Retriever retriever;
-  resource_retriever::MemoryResource res;
+  RVIZ_COMMON_LOG_DEBUG("rviz_common::getResource() loading resource: " + resource_path);
   try {
-    res = retriever.get(resource_path);
-  } catch (resource_retriever::Exception & e) {
-    RVIZ_COMMON_LOG_DEBUG(e.what());
-    return resource_retriever::MemoryResource();
+    resource_retriever::Retriever retriever;
+    return retriever.get_shared(resource_path);
+  } catch (...) {
+    return nullptr;
   }
-
-  return res;
 }
 
 QPixmap loadPixmap(QString url, bool fill_cache)
@@ -72,8 +70,8 @@ QPixmap loadPixmap(QString url, bool fill_cache)
   RVIZ_COMMON_LOG_DEBUG("Load pixmap at " + url.toStdString());
 
   auto image = getResource(url.toStdString());
-  if (image.size != 0) {
-    if (!pixmap.loadFromData(image.data.get(), static_cast<uint32_t>(image.size))) {
+  if (image != nullptr && !image->data.empty()) {
+    if (!pixmap.loadFromData(image->data.data(), static_cast<uint32_t>(image->data.size()))) {
       RVIZ_COMMON_LOG_ERROR("Could not load pixmap " + url.toStdString());
     }
   }

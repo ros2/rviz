@@ -34,6 +34,8 @@
 
 #include <string>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/visibility_control.hpp"
 

@@ -221,7 +221,6 @@ sensor_msgs::msg::PointCloud::ConstSharedPtr createPointCloudWithPoints(std::vec
   message.header.stamp = rclcpp::Clock().now();
   message.header.frame_id = "base_link";
 
-  std::vector<geometry_msgs::msg::Point32> points32;
   for (auto const & point : points) {
     geometry_msgs::msg::Point32 p;
     p.x = point.x;

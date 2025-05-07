@@ -34,7 +34,7 @@
 
 #include <string>
 
-#include "tf2/time.h"
+#include "tf2/time.hpp"
 
 #include "rviz_default_plugins/displays/tf/tf_display.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"

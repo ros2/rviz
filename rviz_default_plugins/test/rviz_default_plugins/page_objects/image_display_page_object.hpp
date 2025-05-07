@@ -31,6 +31,8 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__IMAGE_DISPLAY_PAGE_OBJECT_HPP_
 #define RVIZ_DEFAULT_PLUGINS__PAGE_OBJECTS__IMAGE_DISPLAY_PAGE_OBJECT_HPP_
 
+#include <QString>
+
 #include "rviz_visual_testing_framework/page_objects/page_object_with_window.hpp"
 
 class ImageDisplayPageObject : public PageObjectWithWindow

@@ -37,6 +37,7 @@
 #include <QLabel>
 #include <QListWidget>
 #include <QPushButton>
+#include <QString>
 #include <QVBoxLayout>
 
 #include "rviz_common/visualization_manager.hpp"

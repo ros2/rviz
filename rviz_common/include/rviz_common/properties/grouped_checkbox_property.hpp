@@ -33,6 +33,8 @@
 
 #include <memory>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "rviz_common/properties/bool_property.hpp"
 
 namespace rviz_common

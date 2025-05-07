@@ -34,6 +34,8 @@
 #include <map>
 #include <utility>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "rclcpp/qos.hpp"
 
 #include "rviz_common/properties/editable_enum_property.hpp"

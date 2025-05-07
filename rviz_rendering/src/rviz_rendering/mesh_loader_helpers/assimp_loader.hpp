@@ -60,7 +60,7 @@ namespace rviz_rendering
 class AssimpLoader
 {
 public:
-  AssimpLoader();
+  explicit AssimpLoader(resource_retriever::Retriever * retriever = nullptr);
   Ogre::MeshPtr meshFromAssimpScene(const std::string & name, const aiScene * scene);
   const aiScene * getScene(const std::string & resource_path);
   std::string getErrorMessage();
@@ -151,6 +151,7 @@ private:
     index_buffer->unlock();
   }
 
+  resource_retriever::Retriever * retriever_;
   std::unique_ptr<Assimp::Importer> importer_;
 };
 

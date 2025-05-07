@@ -35,6 +35,8 @@
 
 #include <OgreSceneNode.h>
 
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/axes.hpp"
 #include "rviz_rendering/objects/movable_text.hpp"

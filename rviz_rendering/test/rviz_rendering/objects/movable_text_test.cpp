@@ -241,3 +241,15 @@ TEST_F(MovableTextTestFixture, getBoundingRadius_gets_squared_length_from_origin
   ASSERT_THAT(
     movable_text->getBoundingRadius(), Eq(Ogre::Math::Sqrt(farthest_point.squaredLength())));
 }
+
+TEST_F(MovableTextTestFixture, handle_invalid_char_height) {
+  auto movable_text = std::make_shared<rviz_rendering::MovableText>("A", "Liberation Sans", -1.0f);
+  // Expect that default char height is used when invalid
+  ASSERT_EQ(movable_text->getCharacterHeight(), 1.0f);
+}
+
+TEST_F(MovableTextTestFixture, EmptyCaptionDoesNotCrash) {
+  auto movable_text = std::make_shared<rviz_rendering::MovableText>("");
+  movable_text->update();
+  ASSERT_THAT(movable_text->getBoundingBox(), Eq(Ogre::AxisAlignedBox::BOX_NULL));
+}

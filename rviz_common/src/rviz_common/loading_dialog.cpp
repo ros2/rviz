@@ -33,6 +33,7 @@
 
 #include <QApplication>
 #include <QLabel>
+#include <QString>
 #include <QVBoxLayout>
 
 namespace rviz_common

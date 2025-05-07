@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 
 project(rviz_default_plugins)
 
@@ -80,6 +80,7 @@ find_package(pluginlib REQUIRED)
 find_package(point_cloud_transport REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(resource_retriever REQUIRED)
+find_package(rviz_resource_interfaces REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
@@ -136,6 +137,7 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/tools/interaction/interaction_tool.hpp
   include/rviz_default_plugins/tools/pose_estimate/initial_pose_tool.hpp
   include/rviz_default_plugins/tools/point/point_tool.hpp
+  include/rviz_default_plugins/view_controllers/frame/frame_view_controller.hpp
   include/rviz_default_plugins/view_controllers/orbit/orbit_view_controller.hpp
   include/rviz_default_plugins/view_controllers/ortho/fixed_orientation_ortho_view_controller.hpp
   include/rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller.hpp
@@ -234,9 +236,11 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/transformation/tf_wrapper.cpp
   src/rviz_default_plugins/view_controllers/follower/third_person_follower_view_controller.cpp
   src/rviz_default_plugins/view_controllers/fps/fps_view_controller.cpp
+  src/rviz_default_plugins/view_controllers/frame/frame_view_controller.cpp
   src/rviz_default_plugins/view_controllers/orbit/orbit_view_controller.cpp
   src/rviz_default_plugins/view_controllers/ortho/fixed_orientation_ortho_view_controller.cpp
   src/rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller.cpp
+  src/rviz_default_plugins/ros_resource_retriever.cpp
 )
 
 add_library(rviz_default_plugins SHARED
@@ -269,11 +273,13 @@ target_link_libraries(rviz_default_plugins PUBLIC
   tf2_ros::tf2_ros
   urdf::urdf
   ${visualization_msgs_TARGETS}
+  resource_retriever::resource_retriever
+  ${rviz_resource_interfaces_TARGETS}
+  Qt5::Widgets
 )
 
 target_link_libraries(rviz_default_plugins PRIVATE
   gz-math::core
-  resource_retriever::resource_retriever
 )
 
 # Causes the visibility macros to use dllexport rather than dllimport,
@@ -374,6 +380,20 @@ if(BUILD_TESTING)
       ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
       rviz_default_plugins
       Qt${QT_VERSION_MAJOR}::Widgets
+      ogre_testing_environment
+    )
+  endif()
+
+  ament_add_gmock(frame_view_controller_test
+    test/rviz_default_plugins/view_controllers/frame/frame_view_controller_test.cpp
+    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET frame_view_controller_test)
+    target_include_directories(frame_view_controller_test PRIVATE ${TEST_INCLUDE_DIRS})
+    target_link_libraries(frame_view_controller_test
+      ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
+      rviz_default_plugins
+      Qt5::Widgets
       ogre_testing_environment
     )
   endif()

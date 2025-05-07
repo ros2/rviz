@@ -2,6 +2,59 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.1 (2025-05-05)
+-------------------
+* Fixed crash when a resource is not available (`#1455 <https://github.com/ros2/rviz/issues/1455>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.0 (2025-04-25)
+-------------------
+
+15.0.0 (2025-04-25)
+-------------------
+* Work in progress using the new resource retriever apis (`#1262 <https://github.com/ros2/rviz/issues/1262>`_)
+* addTrackedObject Function Fails to Handle Null Pointer, Causing Crash When nullptr is Passed (`#1375 <https://github.com/ros2/rviz/issues/1375>`_)
+* Add test to check mapGetString when key is missing (`#1361 <https://github.com/ros2/rviz/issues/1361>`_)
+* UniformStringStream::parseFloat Fails to Handle Invalid Float Formats Correctly (`#1360 <https://github.com/ros2/rviz/issues/1360>`_)
+* Fix Potential Null Pointer Dereference in VisualizerApp::getRenderWindow() to Prevent Crashes (`#1359 <https://github.com/ros2/rviz/issues/1359>`_)
+* Extend support for type adaptation (REP 2007) in rviz_common for TF-filtered displays (`#1346 <https://github.com/ros2/rviz/issues/1346>`_)
+* Contributors: Alejandro Hernández Cordero, Michael Carroll, Patrick Roncagliolo
+
+14.4.4 (2025-03-20)
+-------------------
+* Expose the possibility to create ROS node with custom `NodeOptions` (`#1347 <https://github.com/ros2/rviz/issues/1347>`_)
+* Contributors: Patrick Roncagliolo
+
+14.4.3 (2025-02-27)
+-------------------
+* uniform CMAKE requirement (`#1335 <https://github.com/ros2/rviz/issues/1335>`_)
+* Contributors: mosfet80
+
+14.4.2 (2025-01-31)
+-------------------
+* Add basic support for type adaptation (REP 2007) in `rviz_common` for displays (`#1331 <https://github.com/ros2/rviz/issues/1331>`_)
+* Contributors: Patrick Roncagliolo
+
+14.4.1 (2025-01-15)
+-------------------
+* Fix preferred tools loading names (`#1321 <https://github.com/ros2/rviz/issues/1321>`_)
+* Add RVIZ_COMMON_PUBLIC macro to ToolManager (`#1323 <https://github.com/ros2/rviz/issues/1323>`_)
+* Clean visualization_manager.cpp (`#1317 <https://github.com/ros2/rviz/issues/1317>`_)
+* Contributors: RaduPopescu, Silvio Traversaro, mosfet80
+
+14.4.0 (2024-12-20)
+-------------------
+* Fix Deprecated tf2 headers (`#1289 <https://github.com/ros2/rviz/issues/1289>`_)
+* Contributors: Lucas Wendland
+
+14.3.3 (2024-11-25)
+-------------------
+
+14.3.2 (2024-11-20)
+-------------------
+* include QString (`#1298 <https://github.com/ros2/rviz/issues/1298>`_)
+* Contributors: Matthew Foran
+
 14.3.1 (2024-10-11)
 -------------------
 * Handle time source exception (`#1285 <https://github.com/ros2/rviz/issues/1285>`_)

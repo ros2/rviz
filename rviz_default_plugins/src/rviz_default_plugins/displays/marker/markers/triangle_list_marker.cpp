@@ -44,7 +44,6 @@
 #include <OgreTextureManager.h>
 #include <OgreTechnique.h>
 
-#include "resource_retriever/retriever.hpp"
 #include "rviz_rendering/mesh_loader.hpp"
 #include "rviz_rendering/material_manager.hpp"
 #include "rviz_common/display_context.hpp"

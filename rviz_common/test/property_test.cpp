@@ -32,6 +32,8 @@
 
 #include <gtest/gtest.h>
 
+#include <QString>
+
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/properties/color_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
