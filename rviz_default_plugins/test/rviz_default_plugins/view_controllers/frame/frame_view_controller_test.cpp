@@ -92,8 +92,8 @@ public:
     ASSERT_THAT(enum_property, NotNull()) << "Property is not an EnumProperty";
 
     auto axisString = [](int i) {
-      return QString("%1%2 axis").arg(QChar(i % 2 ? '+' : '-')).arg(QChar('x' + (i - 1) / 2));
-    };
+        return QString("%1%2 axis").arg(QChar(i % 2 ? '+' : '-')).arg(QChar('x' + (i - 1) / 2));
+      };
     // Use a direct approach: first store the current string
     QString currentString = enum_property->getString();
     // Set the property using the string value
