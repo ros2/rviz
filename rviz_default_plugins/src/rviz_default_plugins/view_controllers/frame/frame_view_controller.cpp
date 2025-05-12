@@ -70,9 +70,10 @@ static const Ogre::Vector3 DEFAULT_FPS_POSITION = Ogre::Vector3(5, 5, 10);
 
 FrameViewController::FrameViewController()
 {
-  axis_property_ = new rviz_common::properties::EnumProperty("Point towards", fmtAxis(6),
-                                    "Point the camera along the given axis of the frame.", this,
-                                    SLOT(changedAxis()));
+  axis_property_ = new rviz_common::properties::EnumProperty(
+    "Point towards", fmtAxis(6),
+    "Point the camera along the given axis of the frame.", this,
+    SLOT(changedAxis()));
   axis_property_->addOption(ANY_AXIS, -1);
 
   // x,y,z axes get integers from 1..6: +x, -x, +y, -y, +z, -z
@@ -81,7 +82,8 @@ FrameViewController::FrameViewController()
   }
   previous_axis_ = axis_property_->getOptionInt();
 
-  locked_property_ = new rviz_common::properties::BoolProperty("Lock Camera", false,
+  locked_property_ = new rviz_common::properties::BoolProperty(
+    "Lock Camera", false,
     "Lock camera in its current pose relative to the frame", this);
 }
 
