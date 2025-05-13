@@ -304,6 +304,8 @@ ament_export_dependencies(
   tf2_ros
   urdf
   visualization_msgs
+  resource_retriever
+  rviz_resource_interfaces
 )
 
 install(
