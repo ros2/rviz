@@ -42,7 +42,6 @@
 #include <rclcpp/executors/single_threaded_executor.hpp>
 #include <rclcpp/logger.hpp>
 #include <rclcpp/node.hpp>
-#include <resource_retriever/memory_resource.hpp>
 #include <resource_retriever/plugins/retriever_plugin.hpp>
 #include <rviz_common/ros_integration/ros_node_abstraction_iface.hpp>
 #include <rviz_resource_interfaces/srv/get_resource.hpp>
