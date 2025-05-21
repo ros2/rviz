@@ -3,7 +3,11 @@ find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
 add_executable(send_lots_of_points_node send_lots_of_points_node.cpp)
-ament_target_dependencies(send_lots_of_points_node rclcpp sensor_msgs geometry_msgs)
+target_link_libraries(send_lots_of_points_node PRIVATE
+  ${geometry_msgs_TARGETS}
+  rclcpp::rclcpp
+  ${sensor_msgs_TARGETS}
+)
 
 get_filename_component(script_path "${PROJECT_SOURCE_DIR}/scripts/rviz1_to_rviz2.py" ABSOLUTE)
 get_filename_component(config_path "${CMAKE_CURRENT_SOURCE_DIR}/configs" ABSOLUTE BASE_DIR)

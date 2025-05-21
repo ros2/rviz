@@ -1,33 +1,34 @@
-/*
- * Copyright (c) 2008, Willow Garage, Inc.
- * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
- * Copyright (c) 2018, Bosch Software Innovations GmbH.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
- *       contributors may be used to endorse or promote products derived from
- *       this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
+// Copyright (c) 2008, Willow Garage, Inc.
+// Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+// Copyright (c) 2018, Bosch Software Innovations GmbH.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright
+//      notice, this list of conditions and the following disclaimer.
+//
+//    * Redistributions in binary form must reproduce the above copyright
+//      notice, this list of conditions and the following disclaimer in the
+//      documentation and/or other materials provided with the distribution.
+//
+//    * Neither the name of the copyright holder nor the names of its
+//      contributors may be used to endorse or promote products derived from
+//      this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+
 
 #ifndef RVIZ_COMMON__VISUALIZATION_FRAME_HPP_
 #define RVIZ_COMMON__VISUALIZATION_FRAME_HPP_
@@ -95,13 +96,6 @@ public:
   void
   setApp(QApplication * app);
 
-  // TODO(wjwwood): figure out how to preserve the "choost new master" feature
-#if 0
-  /// Call this before initialize() to have it take effect.
-  void
-  setShowChooseNewMaster(bool show);
-#endif
-
   /// Set the path to the html help file.
   /**
    * Default is a file within the rviz_common package.
@@ -132,6 +126,19 @@ public:
   initialize(
     ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
     const QString & display_config_file = "");
+
+  /// Set the display title format.
+  /**
+   * Sets the format of the window title.
+   * Three replacement tokens are supported:
+   *  - {NAMESPACE} - replace with the namespace this node is in
+   *  - {CONFIG_PATH} - replace with the path (but not the filename) of the configuration file in use.
+   *  - {CONFIG_FILENAME} - replace with the filename (but not the path) of the configuration file in use.
+   * The default is "RViz[*]" if the default configuration file is in use,
+   * or "{CONFIG_PATH}/{CONFIG_FILENAME}[*] - RViz" if a custom configuration file is in use.
+   */
+  void
+  setDisplayTitleFormat(const QString & title_format);
 
   /// Return the visualization manager.
   VisualizationManager *
@@ -232,6 +239,14 @@ public Q_SLOTS:
   void
   setStatus(const QString & message) override;
 
+  /// Set full screen mode.
+  void
+  setFullScreen(bool full_screen);
+
+  /// Exit full screen mode.
+  void
+  exitFullScreen();
+
 Q_SIGNALS:
   /// Emitted during file-loading and initialization to indicate progress.
   void
@@ -318,17 +333,6 @@ protected Q_SLOTS:
   void
   indicateToolIsCurrent(Tool * tool);
 
-  // TODO(wjwwood): figure out how to reenable this, or how it might be useful in ROS 2
-#if 0
-  /// Restart rviz with a new master.
-  /**
-   * Save the current state and quit with exit code 255 to signal the wrapper
-   * that we would like to restart with a different ROS master URI.
-   */
-  void
-  changeMaster();
-#endif
-
   /// Delete a panel widget.
   /**
    * The sender() of the signal should be a QAction whose text() is
@@ -336,14 +340,6 @@ protected Q_SLOTS:
    */
   void
   onDeletePanel();
-
-  /// Set full screen mode.
-  void
-  setFullScreen(bool full_screen);
-
-  /// Exit full screen mode.
-  void
-  exitFullScreen();
 
   /// Indicate that loading is done.
   void
@@ -462,6 +458,7 @@ protected:
 
   std::string config_dir_;
   std::string persistent_settings_file_;
+  std::string display_title_format_;
   std::string display_config_file_;
   std::string default_display_config_file_;
   std::string last_config_dir_;

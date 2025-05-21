@@ -309,7 +309,8 @@ Clock" (aka real) time has passed.
 
 The time panel also lets you reset the visualizer's internal time
 state -- this causes a reset of all the displays, as well as a reset
-of tf's internal cache of data.
+of tf's internal cache of data. The keyboard shortcut for this "reset" 
+functionality is "r".
 
 .. image:: time-panel.png
 

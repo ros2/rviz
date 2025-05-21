@@ -1,32 +1,33 @@
-/*
- * Copyright (c) 2008, Willow Garage, Inc.
- * Copyright (c) 2018, Bosch Software Innovations GmbH.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
- *       contributors may be used to endorse or promote products derived from
- *       this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
+// Copyright (c) 2008, Willow Garage, Inc.
+// Copyright (c) 2018, Bosch Software Innovations GmbH.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright
+//      notice, this list of conditions and the following disclaimer.
+//
+//    * Redistributions in binary form must reproduce the above copyright
+//      notice, this list of conditions and the following disclaimer in the
+//      documentation and/or other materials provided with the distribution.
+//
+//    * Neither the name of the copyright holder nor the names of its
+//      contributors may be used to endorse or promote products derived from
+//      this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+
 
 #include "rviz_default_plugins/robot/robot_link.hpp"
 
@@ -49,12 +50,13 @@
 #include <OgreTechnique.h>
 
 #include <QFileInfo>  // NOLINT cpplint cannot handle include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
-#include <ignition/math/Inertial.hh>
-#include <ignition/math/MassMatrix3.hh>
-#include <ignition/math/Pose3.hh>
-#include <ignition/math/Quaternion.hh>
-#include <ignition/math/Vector3.hh>
+#include <gz/math/Inertial.hh>
+#include <gz/math/MassMatrix3.hh>
+#include <gz/math/Pose3.hh>
+#include <gz/math/Quaternion.hh>
+#include <gz/math/Vector3.hh>
 
 #include "resource_retriever/retriever.hpp"
 
@@ -75,6 +77,8 @@
 #include "rviz_common/properties/quaternion_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/interaction/selection_manager.hpp"
+
+#include "rviz_default_plugins/ros_resource_retriever.hpp"
 
 #define RVIZ_RESOURCE_GROUP "rviz_rendering"
 
@@ -223,6 +227,18 @@ RobotLink::RobotLink(
 
   color_material_ =
     rviz_rendering::MaterialManager::createMaterialWithLighting(color_material_name);
+
+  resource_retriever::RetrieverVec plugins;
+  if (context_ != nullptr) {
+    std::shared_ptr node_ptr = context_->getRosNodeAbstraction().lock();
+    if (node_ptr != nullptr) {
+      plugins.push_back(std::make_shared<RosResourceRetriever>(context_->getRosNodeAbstraction()));
+    }
+  }
+  for (const auto & plugin : resource_retriever::default_plugins()) {
+    plugins.push_back(plugin);
+  }
+  retriever_ = resource_retriever::Retriever(plugins);
 
   // create the ogre objects to display
   if (visual) {
@@ -671,7 +687,7 @@ Ogre::Entity * RobotLink::createEntityForGeometryElement(
         const std::string & model_name = mesh.filename;
 
         try {
-          if (rviz_rendering::loadMeshFromResource(model_name) == nullptr) {
+          if (rviz_rendering::loadMeshFromResource(&retriever_, model_name) == nullptr) {
             addError("Could not load mesh resource '%s'", model_name.c_str());
           } else {
             entity = scene_manager_->createEntity(entity_name, model_name);
@@ -799,16 +815,10 @@ void RobotLink::loadMaterialFromTexture(
 {
   std::string filename = visual->material->texture_filename;
   if (!Ogre::TextureManager::getSingleton().resourceExists(filename, RVIZ_RESOURCE_GROUP)) {
-    resource_retriever::Retriever retriever;
-    resource_retriever::MemoryResource res;
-    try {
-      res = retriever.get(filename);
-    } catch (resource_retriever::Exception & e) {
-      RVIZ_COMMON_LOG_ERROR(e.what());
-    }
-
-    if (res.size != 0) {
-      Ogre::DataStreamPtr stream(new Ogre::MemoryDataStream(res.data.get(), res.size));
+    auto res = retriever_.get_shared(filename);
+    if (nullptr != res && !res->data.empty()) {
+      Ogre::DataStreamPtr stream(
+        new Ogre::MemoryDataStream(const_cast<uint8_t *>(res->data.data()), res->data.size()));
       Ogre::Image image;
       std::string extension =
         QFileInfo(QString::fromStdString(filename)).completeSuffix().toStdString();
@@ -871,24 +881,24 @@ void RobotLink::createMass(const urdf::LinkConstSharedPtr & link)
 void RobotLink::createInertia(const urdf::LinkConstSharedPtr & link)
 {
   if (link->inertial) {
-    const ignition::math::Vector3d i_xx_yy_zz(
+    const gz::math::Vector3d i_xx_yy_zz(
       link->inertial->ixx,
       link->inertial->iyy,
       link->inertial->izz);
-    const ignition::math::Vector3d Ixyxzyz(
+    const gz::math::Vector3d Ixyxzyz(
       link->inertial->ixy,
       link->inertial->ixz,
       link->inertial->iyz);
-    ignition::math::MassMatrix3d mass_matrix(link->inertial->mass, i_xx_yy_zz, Ixyxzyz);
+    gz::math::MassMatrix3d mass_matrix(link->inertial->mass, i_xx_yy_zz, Ixyxzyz);
 
-    ignition::math::Vector3d box_scale;
-    ignition::math::Quaterniond box_rot;
+    gz::math::Vector3d box_scale;
+    gz::math::Quaterniond box_rot;
     if (!mass_matrix.EquivalentBox(box_scale, box_rot)) {
       // Invalid inertia, load with default scale
       if (link->parent_joint && link->parent_joint->type != urdf::Joint::FIXED) {
         // Do not show error message for base link or static links
         RVIZ_COMMON_LOG_ERROR_STREAM(
-          "The link " << link->name << " is has unrealistic "
+          "The link " << link->name << " has unrealistic "
             "inertia, so the equivalent inertia box will not be shown.\n");
       }
       return;
@@ -897,8 +907,14 @@ void RobotLink::createInertia(const urdf::LinkConstSharedPtr & link)
       link->inertial->origin.position.x,
       link->inertial->origin.position.y,
       link->inertial->origin.position.z);
+
+    double x, y, z, w;
+    link->inertial->origin.rotation.getQuaternion(x, y, z, w);
+    Ogre::Quaternion originRotate(w, x, y, z);
+
     Ogre::Quaternion rotate(box_rot.W(), box_rot.X(), box_rot.Y(), box_rot.Z());
-    Ogre::SceneNode * offset_node = inertia_node_->createChildSceneNode(translate, rotate);
+    Ogre::SceneNode * offset_node = inertia_node_->createChildSceneNode(
+      translate, originRotate * rotate);
     inertia_shape_ = new Shape(Shape::Cube, scene_manager_, offset_node);
 
     inertia_shape_->setColor(1, 0, 0, 1);

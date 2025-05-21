@@ -1,37 +1,39 @@
-/*
- * Copyright (c) 2012, Willow Garage, Inc.
- * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
- * Copyright (c) 2018, Bosch Software Innovations GmbH.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
- *       contributors may be used to endorse or promote products derived from
- *       this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
+// Copyright (c) 2012, Willow Garage, Inc.
+// Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+// Copyright (c) 2018, Bosch Software Innovations GmbH.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright
+//      notice, this list of conditions and the following disclaimer.
+//
+//    * Redistributions in binary form must reproduce the above copyright
+//      notice, this list of conditions and the following disclaimer in the
+//      documentation and/or other materials provided with the distribution.
+//
+//    * Neither the name of the copyright holder nor the names of its
+//      contributors may be used to endorse or promote products derived from
+//      this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+
 
 #include "rviz_common/visualization_frame.hpp"
 
 #include <exception>
+#include <filesystem>
 #include <fstream>
 #include <memory>
 #include <string>
@@ -41,6 +43,7 @@
 #include <OgreMeshManager.h>
 #include <OgreMaterialManager.h>
 
+#include <QActionGroup>  // NOLINT cpplint cannot handle include order here
 #include <QApplication>  // NOLINT cpplint cannot handle include order here
 #include <QCloseEvent>  // NOLINT cpplint cannot handle include order here
 #include <QDesktopServices>  // NOLINT cpplint cannot handle include order here
@@ -54,6 +57,7 @@
 #include <QShortcut>  // NOLINT cpplint cannot handle include order here
 #include <QSplashScreen>  // NOLINT cpplint cannot handle include order here
 #include <QStatusBar>  // NOLINT cpplint cannot handle include order here
+#include <QString>  // NOLINT cpplint cannot handle include order here
 #include <QTimer>  // NOLINT cpplint cannot handle include order here
 #include <QToolBar>  // NOLINT cpplint cannot handle include order here
 #include <QToolButton>  // NOLINT cpplint cannot handle include order here
@@ -218,20 +222,6 @@ void VisualizationFrame::reset()
   manager_->resetTime();
 }
 
-#if 0
-void VisualizationFrame::changeMaster()
-{
-  if (prepareToExit()) {
-    QApplication::exit(255);
-  }
-}
-
-void VisualizationFrame::setShowChooseNewMaster(bool show)
-{
-  show_choose_new_master_option_ = show;
-}
-#endif
-
 void VisualizationFrame::setHelpPath(const QString & help_path)
 {
   help_path_ = help_path;
@@ -275,7 +265,7 @@ void VisualizationFrame::initialize(
   QWidget * central_widget = new QWidget(this);
   QHBoxLayout * central_layout = new QHBoxLayout;
   central_layout->setSpacing(0);
-  central_layout->setMargin(0);
+  central_layout->setContentsMargins(0, 0, 0, 0);
 
   render_panel_ = new RenderPanel(central_widget);
 
@@ -344,6 +334,7 @@ void VisualizationFrame::initialize(
   ToolManager * tool_man = manager_->getToolManager();
 
   connect(manager_, SIGNAL(configChanged()), this, SLOT(setDisplayConfigModified()));
+  connect(manager_, SIGNAL(escapePressed()), this, SLOT(exitFullScreen()));
   connect(tool_man, SIGNAL(toolAdded(Tool*)), this, SLOT(addTool(Tool*)));
   connect(tool_man, SIGNAL(toolRemoved(Tool*)), this, SLOT(removeTool(Tool*)));
   connect(tool_man, SIGNAL(toolRefreshed(Tool*)), this, SLOT(refreshTool(Tool*)));
@@ -499,7 +490,6 @@ void VisualizationFrame::initMenus()
   this->addAction(fullscreen_action);  // Also add to window, or the shortcut doest work
                                        // when the menu is hidden.
   connect(this, SIGNAL(fullScreenChange(bool)), fullscreen_action, SLOT(setChecked(bool)));
-  new QShortcut(Qt::Key_Escape, this, SLOT(exitFullScreen()));
   view_menu_->addSeparator();
 
   QMenu * help_menu = menuBar()->addMenu("&Help");
@@ -752,16 +742,43 @@ void VisualizationFrame::setDisplayConfigModified()
   }
 }
 
+void VisualizationFrame::setDisplayTitleFormat(const QString & title_format)
+{
+  display_title_format_ = title_format.toStdString();
+}
+
 void VisualizationFrame::setDisplayConfigFile(const std::string & path)
 {
   display_config_file_ = path;
-
   std::string title;
-  if (path == default_display_config_file_) {
-    title = "RViz[*]";
+
+  if (display_title_format_.empty()) {
+    if (path == default_display_config_file_) {
+      title = "RViz[*]";
+    } else {
+      title = QDir::toNativeSeparators(QString::fromStdString(path)).toStdString() + "[*] - RViz";
+    }
   } else {
-    title = QDir::toNativeSeparators(QString::fromStdString(path)).toStdString() + "[*] - RViz";
+    auto find_and_replace_token =
+      [](std::string & title, const std::string & token, const std::string & replacement)
+      {
+        std::size_t found = title.find(token);
+        if (found != std::string::npos) {
+          title.replace(found, token.length(), replacement);
+        }
+      };
+    title = display_title_format_;
+    std::filesystem::path full_filename(path.c_str());
+    find_and_replace_token(
+      title, "{NAMESPACE}",
+      rviz_ros_node_.lock()->get_raw_node()->get_namespace());
+    find_and_replace_token(title, "{CONFIG_PATH}", full_filename.parent_path().string());
+    find_and_replace_token(title, "{CONFIG_FILENAME}", full_filename.filename().string());
+    if (title.find("[*]") == std::string::npos) {
+      title.append("[*]");
+    }
   }
+
   setWindowTitle(QString::fromStdString(title));
 }
 

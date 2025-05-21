@@ -14,8 +14,8 @@ if(WIN32)
   endif()
 
   ament_vendor(freetype_vendor
-    VCS_URL https://git.savannah.gnu.org/git/freetype/freetype2.git
-    VCS_VERSION VER-2-11-1
+    VCS_URL https://github.com/freetype/freetype.git
+    VCS_VERSION VER-2-13-2
     CMAKE_ARGS
       -DFT_DISABLE_ZLIB:BOOL=ON
       -DFT_DISABLE_BZIP2:BOOL=ON
@@ -31,7 +31,7 @@ if(WIN32)
 
   ament_vendor(zlib_vendor
     VCS_URL https://github.com/madler/zlib.git
-    VCS_VERSION v1.2.13
+    VCS_VERSION v1.3
     CMAKE_ARGS
       # zlib doesn't use CMAKE_INSTALL_PREFIX correctly, so we need to override
       -DINSTALL_BIN_DIR=<INSTALL_DIR>/bin
@@ -56,18 +56,27 @@ else()
   set(OGRE_CXX_FLAGS "-Wno-mismatched-new-delete ${OGRE_CXX_FLAGS}")
   set(OGRE_CXX_FLAGS "-Wno-range-loop-construct ${OGRE_CXX_FLAGS}")
   set(OGRE_CXX_FLAGS "-Wno-undef ${OGRE_CXX_FLAGS}")
+  set(OGRE_CXX_FLAGS "-Wno-misleading-indentation ${OGRE_CXX_FLAGS}")
 
-  if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    set(OGRE_CXX_FLAGS "-Wno-implicit-const-int-float-conversion ${OGRE_CXX_FLAGS}")
+  else()
     set(OGRE_CXX_FLAGS "-Wno-maybe-uninitialized ${OGRE_CXX_FLAGS}")
     set(OGRE_CXX_FLAGS "-Wno-format-overflow ${OGRE_CXX_FLAGS}")
     set(OGRE_CXX_FLAGS "-Wno-dangling-pointer ${OGRE_CXX_FLAGS}")
     set(OGRE_CXX_FLAGS "-Wno-array-compare ${OGRE_CXX_FLAGS}")
+    set(OGRE_CXX_FLAGS "-Wno-stringop-overflow ${OGRE_CXX_FLAGS}")
   endif()
 endif()
 
 set(OGRE_CMAKE_ARGS)
 if(NOT WIN32)
   list(APPEND OGRE_CMAKE_ARGS -DCMAKE_SKIP_INSTALL_RPATH:BOOL=ON)
+endif()
+
+if(APPLE)
+  list(APPEND OGRE_CMAKE_ARGS -DOGRE_ENABLE_PRECOMPILED_HEADERS:BOOL=OFF)
+  list(APPEND OGRE_CMAKE_ARGS -DCMAKE_OSX_ARCHITECTURES=arm64;x86_64)
 endif()
 
 ament_vendor(ogre_vendor

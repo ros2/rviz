@@ -1,32 +1,33 @@
-/*
- * Copyright (c) 2012, Willow Garage, Inc.
- * Copyright (c) 2017, Bosch Software Innovations GmbH.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
- *       contributors may be used to endorse or promote products derived from
- *       this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
+// Copyright (c) 2012, Willow Garage, Inc.
+// Copyright (c) 2017, Bosch Software Innovations GmbH.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright
+//      notice, this list of conditions and the following disclaimer.
+//
+//    * Redistributions in binary form must reproduce the above copyright
+//      notice, this list of conditions and the following disclaimer in the
+//      documentation and/or other materials provided with the distribution.
+//
+//    * Neither the name of the copyright holder nor the names of its
+//      contributors may be used to endorse or promote products derived from
+//      this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+
 #ifndef RVIZ_COMMON__ROS_TOPIC_DISPLAY_HPP_
 #define RVIZ_COMMON__ROS_TOPIC_DISPLAY_HPP_
 
@@ -38,6 +39,8 @@
 
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
+
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #endif
 
@@ -215,12 +218,14 @@ protected:
         };
 
       // TODO(anhosi,wjwwood): replace with abstraction for subscriptions once available
+      rclcpp::Node::SharedPtr node = rviz_ros_node_.lock()->get_raw_node();
       subscription_ =
-        rviz_ros_node_.lock()->get_raw_node()->template create_subscription<MessageType>(
+        node->template create_subscription<MessageType>(
         topic_property_->getTopicStd(),
         qos_profile,
         [this](const typename MessageType::ConstSharedPtr message) {incomingMessage(message);},
         sub_opts);
+      subscription_start_time_ = node->now();
       setStatus(properties::StatusProperty::Ok, "Topic", "OK");
     } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
       setStatus(
@@ -260,10 +265,35 @@ protected:
     }
 
     ++messages_received_;
+    QString topic_str = QString::number(messages_received_) + " messages received";
+    rviz_common::properties::StatusProperty::Level topic_status_level =
+      rviz_common::properties::StatusProperty::Ok;
+    // Append topic subscription frequency if we can lock rviz_ros_node_.
+    std::shared_ptr<ros_integration::RosNodeAbstractionIface> node_interface =
+      rviz_ros_node_.lock();
+    if (node_interface != nullptr) {
+      try {
+        const double duration =
+          (node_interface->get_raw_node()->now() - subscription_start_time_).seconds();
+        const double subscription_frequency =
+          static_cast<double>(messages_received_) / duration;
+        topic_str += " at " + QString::number(subscription_frequency, 'f', 1) + " hz.";
+      } catch (const std::runtime_error & e) {
+        if (std::string(e.what()).find("can't subtract times with different time sources") !=
+          std::string::npos)
+        {
+          topic_status_level = rviz_common::properties::StatusProperty::Warn;
+          topic_str += ". ";
+          topic_str += e.what();
+        } else {
+          throw;
+        }
+      }
+    }
     setStatus(
-      properties::StatusProperty::Ok,
+      topic_status_level,
       "Topic",
-      QString::number(messages_received_) + " messages received");
+      topic_str);
 
     processMessage(msg);
   }
@@ -274,6 +304,7 @@ protected:
   virtual void processMessage(typename MessageType::ConstSharedPtr msg) = 0;
 
   typename rclcpp::Subscription<MessageType>::SharedPtr subscription_;
+  rclcpp::Time subscription_start_time_;
   uint32_t messages_received_;
 };
 
