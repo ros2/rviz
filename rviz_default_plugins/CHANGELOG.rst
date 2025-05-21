@@ -2,6 +2,199 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.3 (2025-05-20)
+-------------------
+* Removed unused headers from resouce retriever (`#1463 <https://github.com/ros2/rviz/issues/1463>`_)
+* feat: support both qt5 and qt6 (`#1187 <https://github.com/ros2/rviz/issues/1187>`_)
+* Contributors: Alejandro Hernández Cordero, Daisuke Nishimatsu
+
+15.1.2 (2025-05-14)
+-------------------
+* [rviz_default_plugins] Add missing export dependencies (`#1461 <https://github.com/ros2/rviz/issues/1461>`_)
+* Backported FrameAligned camera (`#1453 <https://github.com/ros2/rviz/issues/1453>`_)
+* Contributors: Felix Exner (fexner), Georg Flick
+
+15.1.1 (2025-05-05)
+-------------------
+* Changed Marker Displays to allow toggling visibility of namespaces (`#1402 <https://github.com/ros2/rviz/issues/1402>`_)
+* Do not use ${Qt5Widgets_INCLUDE_DIRS} to avoid creating non-relocatable CMake config files (`#1450 <https://github.com/ros2/rviz/issues/1450>`_)
+* Contributors: Silvio Traversaro, Stefan Fabian
+
+15.1.0 (2025-04-25)
+-------------------
+
+15.0.0 (2025-04-25)
+-------------------
+* PointCloudDisplay: Fix decay time 0 keeping more than the last message (`#1400 <https://github.com/ros2/rviz/issues/1400>`_)
+* Work in progress using the new resource retriever apis (`#1262 <https://github.com/ros2/rviz/issues/1262>`_)
+* Include chrono (`#1353 <https://github.com/ros2/rviz/issues/1353>`_)
+* Contributors: Matthew Foran, Michael Carroll, Stefan Fabian
+
+14.4.4 (2025-03-20)
+-------------------
+* fix: add rclcpp::shutdown (`#1343 <https://github.com/ros2/rviz/issues/1343>`_)
+* Contributors: Yuyuan Yuan
+
+14.4.3 (2025-02-27)
+-------------------
+* Nv12 color format (`#1318 <https://github.com/ros2/rviz/issues/1318>`_)
+  Co-authored-by: zycczy <zycczyby@gmail.com>
+* uniform CMAKE requirement (`#1335 <https://github.com/ros2/rviz/issues/1335>`_)
+* Contributors: mosfet80, quic-zhaoyuan
+
+14.4.2 (2025-01-31)
+-------------------
+* Initialize lookup table only once at compile time (`#1330 <https://github.com/ros2/rviz/issues/1330>`_)
+  Co-authored-by: Alejandro Hernández Cordero <ahcorde@gmail.com>
+* Contributors: Patrick Roncagliolo
+
+14.4.1 (2025-01-15)
+-------------------
+* Fixed the XY Orbit controller move (`#1327 <https://github.com/ros2/rviz/issues/1327>`_)
+  Co-authored-by: Terry Scott <tscott@seegrid.com>
+* Contributors: Terry Scott
+
+14.4.0 (2024-12-20)
+-------------------
+* Fix Deprecated tf2 headers (`#1289 <https://github.com/ros2/rviz/issues/1289>`_)
+* Change EffortDisplay superclass from MessageFilterDisplay to RosTopicDisplay to avoid dropping messages with empty frame_id. (`#1312 <https://github.com/ros2/rviz/issues/1312>`_)
+* Fix access control for Accel, Effort and Twist displays (`#1311 <https://github.com/ros2/rviz/issues/1311>`_)
+* Contributors: Lucas Wendland, disRecord, suchetanrs
+
+14.3.3 (2024-11-25)
+-------------------
+* remove unused variable (`#1301 <https://github.com/ros2/rviz/issues/1301>`_)
+* Contributors: Alejandro Hernández Cordero
+
+14.3.2 (2024-11-20)
+-------------------
+* include QString (`#1298 <https://github.com/ros2/rviz/issues/1298>`_)
+* Clean code for Image display (`#1271 <https://github.com/ros2/rviz/issues/1271>`_)
+* Contributors: Matthew Foran, Peng Wang
+
+14.3.1 (2024-10-11)
+-------------------
+* Handle time source exception (`#1285 <https://github.com/ros2/rviz/issues/1285>`_)
+* Contributors: Matthew Foran
+
+14.3.0 (2024-10-03)
+-------------------
+* replace deprecated encodings 'yuv422' and 'yuv422_yuy2' (`#1276 <https://github.com/ros2/rviz/issues/1276>`_)
+* Contributors: Christian Rauch
+
+14.2.6 (2024-08-28)
+-------------------
+* Update urdf model.h deprecation (`#1266 <https://github.com/ros2/rviz/issues/1266>`_)
+* Enabling manual space width for TextViewFacingMarker (`#1261 <https://github.com/ros2/rviz/issues/1261>`_)
+* Contributors: Alejandro Hernández Cordero, Tom Moore
+
+14.2.5 (2024-07-29)
+-------------------
+* Added more time to copyright on Windwos (`#1252 <https://github.com/ros2/rviz/issues/1252>`_)
+* Contributors: Alejandro Hernández Cordero
+
+14.2.4 (2024-07-19)
+-------------------
+* Updated deprecated message filter headers (`#1239 <https://github.com/ros2/rviz/issues/1239>`_)
+* Fixed RViz default plugin license linter (`#1230 <https://github.com/ros2/rviz/issues/1230>`_)
+* Contributors: Alejandro Hernández Cordero
+
+14.2.3 (2024-06-25)
+-------------------
+
+14.2.2 (2024-06-17)
+-------------------
+
+14.2.1 (2024-05-24)
+-------------------
+
+14.2.0 (2024-04-26)
+-------------------
+
+14.1.0 (2024-04-16)
+-------------------
+
+14.0.0 (2024-04-07)
+-------------------
+* Make sure to export all rviz_default_plugins dependencies. (`#1181 <https://github.com/ros2/rviz/issues/1181>`_)
+* Increase the cpplint timeout to 180 seconds. (`#1179 <https://github.com/ros2/rviz/issues/1179>`_)
+* Switch to gz_math_vendor. (`#1177 <https://github.com/ros2/rviz/issues/1177>`_)
+* Contributors: Chris Lalancette
+
+13.4.2 (2024-03-27)
+-------------------
+* Fixed camera info warning (`#1175 <https://github.com/ros2/rviz/issues/1175>`_)
+* Contributors: Alejandro Hernández Cordero
+
+13.4.1 (2024-03-26)
+-------------------
+* Added CameraInfo display (`#1166 <https://github.com/ros2/rviz/issues/1166>`_)
+* apply origin rotation to inertia box visualization (`#1171 <https://github.com/ros2/rviz/issues/1171>`_)
+* Added regex filter field for TF display (`#1032 <https://github.com/ros2/rviz/issues/1032>`_)
+* Added point_cloud_transport (`#1008 <https://github.com/ros2/rviz/issues/1008>`_)
+* Contributors: Alejandro Hernández Cordero, Jonas Otto
+
+13.4.0 (2024-03-09)
+-------------------
+* Select QoS reliability policy in DepthCloud Plugin (`#1159 <https://github.com/ros2/rviz/issues/1159>`_)
+* Fixed crash on DepthCloud plugin (`#1161 <https://github.com/ros2/rviz/issues/1161>`_)
+* Fixes for uncrustify 0.78. (`#1155 <https://github.com/ros2/rviz/issues/1155>`_)
+  Mostly what we do here is to disable the indentation on
+  certain constructs that are different between 0.72 and
+  0.78.  It isn't my preferred solution, but since it only
+  affects a small amount of code (and most of that in macros),
+  this seems acceptable to me.
+* Fixed crash on DepthCloudPlugin (`#1133 <https://github.com/ros2/rviz/issues/1133>`_)
+* Wrench accepth nan values fix (`#1141 <https://github.com/ros2/rviz/issues/1141>`_)
+* DepthCloud plugin: Append measured subscription frequency to topic status (`#1137 <https://github.com/ros2/rviz/issues/1137>`_)
+* Added Cache to camera display for TimeExact (`#1138 <https://github.com/ros2/rviz/issues/1138>`_)
+* Fixed transport name in DepthCloud plugin (`#1134 <https://github.com/ros2/rviz/issues/1134>`_)
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette
+
+13.3.1 (2024-01-24)
+-------------------
+* Fix time-syncing message (`#1121 <https://github.com/ros2/rviz/issues/1121>`_)
+* Switch from ROS_TIME to SYSTEM_TIME on rclcpp::Time construction (`#1117 <https://github.com/ros2/rviz/issues/1117>`_)
+* Append measured subscription frequency to topic status (`#1113 <https://github.com/ros2/rviz/issues/1113>`_)
+* Contributors: Alejandro Hernández Cordero, Austin Moore, Yadu
+
+13.3.0 (2023-12-26)
+-------------------
+* Fix typo (`#1104 <https://github.com/ros2/rviz/issues/1104>`_)
+* Fix potencial leak / seg fault (`#726 <https://github.com/ros2/rviz/issues/726>`_)
+* Fixed screw display (`#1093 <https://github.com/ros2/rviz/issues/1093>`_)
+* Explicit time conversions and comparisons (`#1087 <https://github.com/ros2/rviz/issues/1087>`_)
+* Handle missing effort limit in URDF (`#1084 <https://github.com/ros2/rviz/issues/1084>`_)
+* Contributors: AiVerisimilitude, Alejandro Hernández Cordero, Christoph Fröhlich, Patrick Roncagliolo
+
+13.2.0 (2023-11-06)
+-------------------
+* (robot) fix styling of log msg (`#1080 <https://github.com/ros2/rviz/issues/1080>`_)
+* Fix image display wrapping (`#1038 <https://github.com/ros2/rviz/issues/1038>`_)
+* removed enableInteraction reference (`#1075 <https://github.com/ros2/rviz/issues/1075>`_)
+* Contributors: Alejandro Hernández Cordero, Lewe Christiansen, Matthijs van der Burgh
+
+13.1.2 (2023-10-09)
+-------------------
+* Fix ODR violations in interactive_marker displays. (`#1068 <https://github.com/ros2/rviz/issues/1068>`_)
+* Contributors: Chris Lalancette
+
+13.1.1 (2023-10-04)
+-------------------
+
+13.1.0 (2023-09-07)
+-------------------
+* Improve error handling in LaserScanDisplay (`#1035 <https://github.com/ros2/rviz/issues/1035>`_)
+* Fix implicit capture of "this" warning in C++20 (`#1053 <https://github.com/ros2/rviz/issues/1053>`_)
+* Removed unused code (`#1044 <https://github.com/ros2/rviz/issues/1044>`_)
+* Contributors: AiVerisimilitude, Alejandro Hernández Cordero
+
+13.0.0 (2023-08-21)
+-------------------
+* Fixed AccelStamped, TwistStamped and Wrench icons (`#1041 <https://github.com/ros2/rviz/issues/1041>`_)
+* Fix the flakey rviz_rendering tests (`#1026 <https://github.com/ros2/rviz/issues/1026>`_)
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette
+
 12.8.0 (2023-08-27)
 -------------------
 * Don't pass screw_display.hpp to the moc generator. (`#1018 <https://github.com/ros2/rviz/issues/1018>`_)

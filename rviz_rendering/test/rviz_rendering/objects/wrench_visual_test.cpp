@@ -1,30 +1,32 @@
-/*
- * Copyright (c) 2019, Martin Idel
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
- *       contributors may be used to endorse or promote products derived from
- *       this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
+// Copyright (c) 2019, Martin Idel
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright
+//      notice, this list of conditions and the following disclaimer.
+//
+//    * Redistributions in binary form must reproduce the above copyright
+//      notice, this list of conditions and the following disclaimer in the
+//      documentation and/or other materials provided with the distribution.
+//
+//    * Neither the name of the copyright holder nor the names of its
+//      contributors may be used to endorse or promote products derived from
+//      this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+
 
 #include <gmock/gmock.h>
 
@@ -111,4 +113,27 @@ TEST_F(WrenchVisualTestFixture, setWrench_hides_force_arrow_for_larger_width_tha
   for (const auto & object : objects) {
     EXPECT_THAT(object->isVisible(), IsFalse());
   }
+}
+
+TEST_F(WrenchVisualTestFixture, constructor_handles_null_pointers_gracefully) {
+  Ogre::SceneManager * scene_manager = nullptr;
+  Ogre::SceneNode * root_node = nullptr;
+
+  EXPECT_THROW({
+    auto wrench_visual = std::make_shared<rviz_rendering::WrenchVisual>(scene_manager, root_node);
+  }, std::invalid_argument);
+}
+
+TEST_F(WrenchVisualTestFixture, setForceColor_validates_color_range) {
+  auto scene_manager = Ogre::Root::getSingletonPtr()->createSceneManager();
+  auto root_node = scene_manager->getRootSceneNode();
+  auto wrench_visual = std::make_shared<rviz_rendering::WrenchVisual>(scene_manager, root_node);
+
+  // Valid range
+  EXPECT_NO_THROW(wrench_visual->setForceColor(0.0f, 0.0f, 0.0f, 0.0f));
+  EXPECT_NO_THROW(wrench_visual->setForceColor(1.0f, 1.0f, 1.0f, 1.0f));
+
+  // Invalid range
+  EXPECT_NO_THROW(wrench_visual->setForceColor(-0.1f, 0.5f, 0.5f, 1.0f));
+  EXPECT_NO_THROW(wrench_visual->setForceColor(0.5f, 1.1f, 0.5f, 1.0f));
 }

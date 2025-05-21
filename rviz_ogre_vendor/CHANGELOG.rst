@@ -2,6 +2,153 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.3 (2025-05-20)
+-------------------
+
+15.1.2 (2025-05-14)
+-------------------
+
+15.1.1 (2025-05-05)
+-------------------
+
+15.1.0 (2025-04-25)
+-------------------
+
+15.0.0 (2025-04-25)
+-------------------
+* Add missing glew dependency for ogre vendor package (`#1350 <https://github.com/ros2/rviz/issues/1350>`_)
+* Contributors: Stefan Fabian
+
+14.4.4 (2025-03-20)
+-------------------
+* Use official freetype github mirror instead of savannah (`#1348 <https://github.com/ros2/rviz/issues/1348>`_)
+* Contributors: Silvio Traversaro
+
+14.4.3 (2025-02-27)
+-------------------
+
+14.4.2 (2025-01-31)
+-------------------
+
+14.4.1 (2025-01-15)
+-------------------
+
+14.4.0 (2024-12-20)
+-------------------
+
+14.3.3 (2024-11-25)
+-------------------
+
+14.3.2 (2024-11-20)
+-------------------
+
+14.3.1 (2024-10-11)
+-------------------
+
+14.3.0 (2024-10-03)
+-------------------
+
+14.2.6 (2024-08-28)
+-------------------
+
+14.2.5 (2024-07-29)
+-------------------
+
+14.2.4 (2024-07-19)
+-------------------
+
+14.2.3 (2024-06-25)
+-------------------
+* Fix flags for both clang and gcc. (`#1219 <https://github.com/ros2/rviz/issues/1219>`_)
+* Update freetype lib (`#1216 <https://github.com/ros2/rviz/issues/1216>`_)
+* Contributors: Chris Lalancette, mosfet80
+
+14.2.2 (2024-06-17)
+-------------------
+
+14.2.1 (2024-05-24)
+-------------------
+* Update zlib into CMakeLists.txt (`#1128 <https://github.com/ros2/rviz/issues/1128>`_)
+  Changes in 1.3 (18 Aug 2023)
+  - Remove K&R function definitions and zlib2ansi
+  - Fix bug in deflateBound() for level 0 and memLevel 9
+  - Fix bug when gzungetc() is used immediately after gzopen()
+  - Fix bug when using gzflush() with a very small buffer
+  - Fix crash when gzsetparams() attempted for transparent write
+  - Fix test/example.c to work with FORCE_STORED
+  - Rewrite of zran in examples (see zran.c version history)
+  - Fix minizip to allow it to open an empty zip file
+  - Fix reading disk number start on zip64 files in minizip
+  - Fix logic error in minizip argument processing
+  - Add minizip testing to Makefile
+  - Read multiple bytes instead of byte-by-byte in minizip unzip.c
+  - Add memory sanitizer to configure (--memory)
+  - Various portability improvements
+  - Various documentation improvements
+  - Various spelling and typo corrections
+  Co-authored-by: Chris Lalancette <clalancette@gmail.com>
+* Contributors: mosfet80
+
+14.2.0 (2024-04-26)
+-------------------
+
+14.1.0 (2024-04-16)
+-------------------
+
+14.0.0 (2024-04-07)
+-------------------
+
+13.4.2 (2024-03-27)
+-------------------
+
+13.4.1 (2024-03-26)
+-------------------
+
+13.4.0 (2024-03-09)
+-------------------
+* Change an rviz_ogre_vendor dependency to libfreetype-dev. (`#1167 <https://github.com/ros2/rviz/issues/1167>`_)
+  The situation is complicated, but in versions of Ubuntu
+  prior to Focal and versions of Debian prior to Bookworm,
+  the name of the library was 'libfreetype6-dev'.  Since
+  Focal and Bookworm, the name of the library is 'libfreetype-dev'.
+  While 'libfreetype-dev' provides a "virtual package"
+  for 'libfreetype6-dev', we should really use the new canonical
+  name.
+  Further, there is currently a bug on ros_buildfarm where
+  it doesn't properly deal with "virtual packages" like this.
+  This is currently preventing this package from building on
+  Ubuntu Noble.  That bug is being worked on separately.
+  Finally, I'll note that we already have a libfreetype-dev
+  key in rosdep, so we just switch to using that here which
+  should work around the bug on the buildfarm, and also use
+  the correct canonical name going forward.
+* fix: modify typo in cmake args for mac (`#1160 <https://github.com/ros2/rviz/issues/1160>`_)
+* feat: support macos (`#1156 <https://github.com/ros2/rviz/issues/1156>`_)
+* Contributors: Chris Lalancette, Daisuke Nishimatsu
+
+13.3.1 (2024-01-24)
+-------------------
+
+13.3.0 (2023-12-26)
+-------------------
+* Suppress a couple more of clang warnings in rviz_ogre_vendor. (`#1102 <https://github.com/ros2/rviz/issues/1102>`_)
+* Contributors: Chris Lalancette
+
+13.2.0 (2023-11-06)
+-------------------
+
+13.1.2 (2023-10-09)
+-------------------
+
+13.1.1 (2023-10-04)
+-------------------
+
+13.1.0 (2023-09-07)
+-------------------
+
+13.0.0 (2023-08-21)
+-------------------
+
 12.8.0 (2023-08-27)
 -------------------
 

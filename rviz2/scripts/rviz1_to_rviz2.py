@@ -1,9 +1,38 @@
 #!/usr/bin/env python3
+# Copyright 2024 Open Source Robotics Foundation, Inc.
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+#    * Redistributions of source code must retain the above copyright
+#      notice, this list of conditions and the following disclaimer.
+#
+#    * Redistributions in binary form must reproduce the above copyright
+#      notice, this list of conditions and the following disclaimer in the
+#      documentation and/or other materials provided with the distribution.
+#
+#    * Neither the name of the copyright holder nor the names of its
+#      contributors may be used to endorse or promote products derived from
+#      this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
 
 import argparse
 import copy
 import sys
-import warnings
+
 import yaml
 
 
@@ -32,8 +61,6 @@ def migrate_panels(panels):
             panels_rviz2.append(migrate_panel_time(panel_dict))
         else:
             print('Unknown panel type, skipping:' + panel_dict['Class'], file=sys.stderr)
-
-
     return panels_rviz2
 
 
@@ -82,7 +109,8 @@ def migrate_visualization_manager(vm_dict):
         'Views': migrate_visualization_manager_views(vm_dict['Views']),
         'Transformation': {'Current': {'Class': 'rviz_default_plugins/TF'}},
         'Global Options': {
-            'Background Color': str(vm_dict.get('Global Options', {}).get('Background Color', '48; 48; 48')),
+            'Background Color': str(vm_dict.get('Global Options', {}).get(
+                'Background Color', '48; 48; 48')),
             'Fixed Frame': str(vm_dict.get('Global Options', {}).get('Fixed Frame', 'map')),
             'Frame Rate': int(vm_dict.get('Global Options', {}).get('Frame Rate', 30)),
         }
@@ -266,9 +294,9 @@ def migrate_display_robot_model(display_dict):
     rviz2 = copy.deepcopy(display_dict)
     rviz2['Class'] = 'rviz_default_plugins/RobotModel'
     del rviz2['Robot Description']
-    rviz2['Description File'] = ""
-    rviz2['Description Source'] = "Topic"
-    rviz2['Description Topic'] = migrate_topic(name="robot_description")
+    rviz2['Description File'] = ''
+    rviz2['Description Source'] = 'Topic'
+    rviz2['Description Topic'] = migrate_topic(name='robot_description')
     del rviz2['Description Topic']['Filter size']
     rviz2['Mass Properties'] = {'Inertia': False, 'Mass': False}
     return rviz2
@@ -299,9 +327,9 @@ def migrate_visualization_manager_tools(tools_list):
     for tool_dict in tools_list:
         name = tool_dict['Class']
         if name in ('rviz/Interact', 'rviz/MoveCamera', 'rviz/Select', 'rviz/FocusCamera'):
-           rviz2_dict = copy.deepcopy(tool_dict)
-           rviz2_dict['Class'] = 'rviz_default_plugins' + name[4:]
-           tools_rviz2.append(rviz2_dict)
+            rviz2_dict = copy.deepcopy(tool_dict)
+            rviz2_dict['Class'] = 'rviz_default_plugins' + name[4:]
+            tools_rviz2.append(rviz2_dict)
         elif name == 'rviz/Measure':
             tools_rviz2.append({
                 'Class': 'rviz_default_plugins/Measure',
@@ -310,7 +338,7 @@ def migrate_visualization_manager_tools(tools_list):
         elif name == 'rviz/SetInitialPose':
             rviz2 = {
                 'Class': 'rviz_default_plugins/SetInitialPose',
-                'Topic': migrate_topic(name = tool_dict.get('Topic', '/initialpose')),
+                'Topic': migrate_topic(name=tool_dict.get('Topic', '/initialpose')),
                 }
             if 'X std deviation' in tool_dict:
                 rviz2['Covariance x'] = float(tool_dict['X std deviation'])**2
@@ -323,7 +351,7 @@ def migrate_visualization_manager_tools(tools_list):
         elif name == 'rviz/SetGoal':
             rviz2 = {
                 'Class': 'rviz_default_plugins/SetGoal',
-                'Topic': migrate_topic(name = tool_dict.get('Topic', '/goal_pose')),
+                'Topic': migrate_topic(name=tool_dict.get('Topic', '/goal_pose')),
                 }
             del rviz2['Topic']['Filter size']
             tools_rviz2.append(rviz2)
@@ -331,7 +359,7 @@ def migrate_visualization_manager_tools(tools_list):
             rviz2 = {
                 'Class': 'rviz_default_plugins/PublishPoint',
                 'Single click': bool(tool_dict.get('Single click', True)),
-                'Topic': migrate_topic(name = tool_dict.get('Topic', '/clicked_point')),
+                'Topic': migrate_topic(name=tool_dict.get('Topic', '/clicked_point')),
                 }
             del rviz2['Topic']['Filter size']
             tools_rviz2.append(rviz2)
@@ -357,7 +385,6 @@ def migrate_visualization_manager_views(view_dict):
 
 
 def migrate_view(view_dict):
-    rviz2_view = {}
     if 'rviz/Orbit' == view_dict['Class']:
         return migrate_view_orbit(view_dict)
     elif 'rviz/FPS' == view_dict['Class']:
@@ -428,7 +455,6 @@ def migrate_window_geometry(window_geometry):
 
 def migrate_to_rviz2(rviz1_config):
     """Given an RViz 1 config dictionary, return an RViz 2 config dictionary."""
-
     rviz1_sections = {
         'Panels',
         'Preferences',

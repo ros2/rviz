@@ -1,33 +1,32 @@
-/*
- * Copyright (c) 2018, Bosch Software Innovations GmbH.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted (subject to the limitations in the disclaimer
- * below) provided that the following conditions are met:
- *
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the copyright holder nor the names of its
- *       contributors may be used to endorse or promote products derived from
- *       this software without specific prior written permission.
- *
- * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
- * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
+// Copyright (c) 2018, Bosch Software Innovations GmbH.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright
+//      notice, this list of conditions and the following disclaimer.
+//
+//    * Redistributions in binary form must reproduce the above copyright
+//      notice, this list of conditions and the following disclaimer in the
+//      documentation and/or other materials provided with the distribution.
+//
+//    * Neither the name of the copyright holder nor the names of its
+//      contributors may be used to endorse or promote products derived from
+//      this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+
 
 #include <gmock/gmock.h>
 
@@ -61,12 +60,40 @@ class MarkerCommonFixture : public DisplayTestFixture
 {
 public:
   MarkerCommonFixture()
+  : DisplayTestFixture()
   {
+    EXPECT_CALL(*context_, getRosNodeAbstraction()).WillRepeatedly(
+      testing::Invoke([]() {
+        return rviz_ros_node_;
+      }));
+
     display_ = std::make_unique<rviz_common::Display>();
+
+    scene_manager_ = Ogre::Root::getSingletonPtr()->createSceneManager();
 
     auto scene_node = scene_manager_->getRootSceneNode()->createChildSceneNode();
     common_ = std::make_unique<rviz_default_plugins::displays::MarkerCommon>(display_.get());
     common_->initialize(context_.get(), scene_node);
+  }
+
+  static void TearDownTestCase()
+  {
+    DisplayTestFixture::TearDownTestCase();
+    rclcpp::shutdown();
+  }
+
+  static void SetUpTestCase()
+  {
+    testing_environment_ = std::make_shared<rviz_default_plugins::OgreTestingEnvironment>();
+    testing_environment_->setUpOgreTestEnvironment();
+
+    ros_client_abstraction_ =
+      std::make_unique<rviz_common::ros_integration::RosClientAbstraction>();
+    int argc = 1;
+    const auto arg0 = "MockDisplayContext";
+    char * argv0 = const_cast<char *>(arg0);
+    char ** argv = &argv0;
+    rviz_ros_node_ = ros_client_abstraction_->init(argc, argv, "rviz", false /* anonymous_name */);
   }
 
   ~MarkerCommonFixture() override
@@ -76,7 +103,14 @@ public:
 
   std::unique_ptr<rviz_default_plugins::displays::MarkerCommon> common_;
   std::unique_ptr<rviz_common::Display> display_;
+  static rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node_;
+  static std::unique_ptr<rviz_common::ros_integration::RosClientAbstractionIface>
+  ros_client_abstraction_;
 };
+
+rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr MarkerCommonFixture::rviz_ros_node_;
+std::unique_ptr<rviz_common::ros_integration::RosClientAbstractionIface> MarkerCommonFixture::
+ros_client_abstraction_ = nullptr;
 
 visualization_msgs::msg::Marker::SharedPtr createSharedPtrMessage(
   int32_t action, int32_t type, int id = 0)
@@ -464,14 +498,19 @@ TEST_F(MarkerCommonFixture, onEnableChanged_in_namespace_removes_all_markers_in_
   marker->ns = "new_ns";
   common_->processMessage(marker);
 
-  EXPECT_TRUE(rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode()));
+  auto pointcloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
+  ASSERT_TRUE(pointcloud);
+  EXPECT_TRUE(pointcloud->getVisible());
   EXPECT_TRUE(rviz_default_plugins::findOneMovableText(scene_manager_->getRootSceneNode()));
 
   auto namespace_property = dynamic_cast<rviz_default_plugins::displays::MarkerNamespace *>(
     display_->findProperty("Namespaces")->childAt(0));
   namespace_property->setValue(false);
 
-  EXPECT_FALSE(rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode()));
+  // Pointcloud should still exist but not visible
+  pointcloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
+  ASSERT_TRUE(pointcloud != nullptr);
+  EXPECT_FALSE(pointcloud->getVisible());
   EXPECT_TRUE(rviz_default_plugins::findOneMovableText(scene_manager_->getRootSceneNode()));
 }
 
@@ -484,15 +523,18 @@ TEST_F(MarkerCommonFixture, processMessage_does_not_add_message_with_disabled_na
   // this is necessary to initialize namespace as we don't load a config
   common_->processMessage(marker);
 
-  EXPECT_TRUE(rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode()));
+  auto pointclouds = rviz_default_plugins::findAllPointClouds(scene_manager_->getRootSceneNode());
+  ASSERT_EQ(pointclouds.size(), 1);
+  EXPECT_TRUE(pointclouds[0]->getVisible());
 
   auto namespace_property = dynamic_cast<rviz_default_plugins::displays::MarkerNamespace *>(
     display_->findProperty("Namespaces")->childAt(0));
   namespace_property->setValue(false);
 
-  marker->type = visualization_msgs::msg::Marker::TEXT_VIEW_FACING;
   common_->processMessage(marker);
 
-  EXPECT_FALSE(rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode()));
-  EXPECT_FALSE(rviz_default_plugins::findOneMovableText(scene_manager_->getRootSceneNode()));
+  // Pointcloud should still exist but not visible
+  pointclouds = rviz_default_plugins::findAllPointClouds(scene_manager_->getRootSceneNode());
+  ASSERT_EQ(pointclouds.size(), 1);
+  EXPECT_FALSE(pointclouds[0]->getVisible());
 }

@@ -17,9 +17,9 @@ For some displays, the [documentation is updated](docs/FEATURES.md).
 | Axes                  | Move Camera   | Orbit                 | Displays        |
 | Camera                | Focus Camera  | XY Orbit              | Help            |
 | DepthCloud            | Measure       | First Person          | Selections      |
-| Effort                | Select        | Third Person Follower | Time            |
-| Fluid                 | 2D Nav Goal   | Top Down Orthographic | Tool Properties |
-| Grid                  | Publish Point |                       | Views           |
+| Effort                | Select        | Frame Aligned         | Time            |
+| Fluid                 | 2D Nav Goal   | Third Person Follower | Tool Properties |
+| Grid                  | Publish Point | Top Down Orthographic | Views           |
 | Grid Cells            | Initial Pose  |
 | Illuminance           | Interact      |
 | Image                 |

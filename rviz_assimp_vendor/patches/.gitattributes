@@ -1,4 +1,0 @@
-# Because the assimp repo declares eol=lf on all its .cpp files, we also
-# need to declare this on the patch file so that the line endings match
-# on Windows checkouts.
-*.patch text eol=lf

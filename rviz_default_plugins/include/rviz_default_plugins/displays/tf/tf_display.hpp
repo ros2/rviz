@@ -1,32 +1,33 @@
-/*
- * Copyright (c) 2012, Willow Garage, Inc.
- * Copyright (c) 2018, Bosch Software Innovations GmbH.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
- *       contributors may be used to endorse or promote products derived from
- *       this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
+// Copyright (c) 2012, Willow Garage, Inc.
+// Copyright (c) 2018, Bosch Software Innovations GmbH.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright
+//      notice, this list of conditions and the following disclaimer.
+//
+//    * Redistributions in binary form must reproduce the above copyright
+//      notice, this list of conditions and the following disclaimer in the
+//      documentation and/or other materials provided with the distribution.
+//
+//    * Neither the name of the copyright holder nor the names of its
+//      contributors may be used to endorse or promote products derived from
+//      this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+
 
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__TF__TF_DISPLAY_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__TF__TF_DISPLAY_HPP_
@@ -41,9 +42,9 @@
 #include <OgreVector.h>
 
 #include "geometry_msgs/msg/transform_stamped.hpp"
-#include "tf2/exceptions.h"
-#include "tf2/buffer_core.h"
-#include "tf2/time.h"
+#include "tf2/exceptions.hpp"
+#include "tf2/buffer_core.hpp"
+#include "tf2/time.hpp"
 
 #include "rviz_common/interaction/forwards.hpp"
 #include "rviz_common/display.hpp"
@@ -72,6 +73,7 @@ namespace properties
 class BoolProperty;
 class FloatProperty;
 class QuaternionProperty;
+class RegexFilterProperty;
 class StringProperty;
 class VectorProperty;
 }  // namespace properties
@@ -118,6 +120,8 @@ private:
   FrameInfo * createFrame(const std::string & frame);
   void updateFrame(FrameInfo * frame);
   void deleteFrame(FrameInfo * frame, bool delete_properties);
+  typedef std::map<std::string, FrameInfo *> M_FrameInfo;
+  M_FrameInfo::iterator deleteFrame(M_FrameInfo::iterator it, bool delete_properties);
   FrameInfo * getFrameInfo(const std::string & frame);
   void clear();
 
@@ -129,7 +133,6 @@ private:
   Ogre::SceneNode * arrows_node_;
   Ogre::SceneNode * axes_node_;
 
-  typedef std::map<std::string, FrameInfo *> M_FrameInfo;
   M_FrameInfo frames_;
 
   typedef std::map<std::string, bool> M_EnabledState;
@@ -145,6 +148,9 @@ private:
   rviz_common::properties::BoolProperty * all_enabled_property_;
 
   rviz_common::properties::FloatProperty * scale_property_;
+
+  rviz_common::properties::RegexFilterProperty * filter_whitelist_property_;
+  rviz_common::properties::RegexFilterProperty * filter_blacklist_property_;
 
   rviz_common::properties::Property * frames_category_;
   rviz_common::properties::Property * tree_category_;
@@ -169,7 +175,6 @@ private:
   void updateParentTreeProperty(FrameInfo * frame) const;
 
   void deleteObsoleteFrames(std::set<FrameInfo *> & current_frames);
-  S_FrameInfo createOrUpdateFrames(const std::vector<std::string> & frames);
 
   friend class FrameInfo;
 };

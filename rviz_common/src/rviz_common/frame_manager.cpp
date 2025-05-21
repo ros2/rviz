@@ -1,32 +1,33 @@
-/*
- * Copyright (c) 2009, Willow Garage, Inc.
- * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
- *       contributors may be used to endorse or promote products derived from
- *       this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
+// Copyright (c) 2009, Willow Garage, Inc.
+// Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright
+//      notice, this list of conditions and the following disclaimer.
+//
+//    * Redistributions in binary form must reproduce the above copyright
+//      notice, this list of conditions and the following disclaimer in the
+//      documentation and/or other materials provided with the distribution.
+//
+//    * Neither the name of the copyright holder nor the names of its
+//      contributors may be used to endorse or promote products derived from
+//      this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+
 
 #include "frame_manager.hpp"
 
@@ -291,48 +292,6 @@ const std::string & FrameManager::getFixedFrame()
   return fixed_frame_;
 }
 
-std::string getTransformStatusName(const std::string & caller_id)
-{
-  std::stringstream ss;
-  ss << "Transform [sender=" << caller_id << "]";
-  return ss.str();
-}
-
-#if 0
-std::string FrameManager::discoverFailureReason(
-  const std::string & frame_id,
-  const rclcpp::Time & stamp,
-  const std::string & caller_id,
-  tf::FilterFailureReason reason)
-{
-  if (reason == tf::filter_failure_reasons::OutTheBack) {
-    std::stringstream ss;
-    ss << "Message removed because it is too old (frame=[" << frame_id << "], stamp=[" << stamp <<
-      "])";
-    return ss.str();
-  } else {
-    std::string error;
-    if (transformHasProblems(frame_id, stamp, error)) {
-      return error;
-    }
-  }
-
-  return "Unknown reason for transform failure";
-}
-#endif
-
-void FrameManager::messageArrived(
-  const std::string & frame_id,
-  const rclcpp::Time & stamp,
-  const std::string & caller_id,
-  Display * display)
-{
-  Q_UNUSED(frame_id);
-  Q_UNUSED(stamp);
-  using rviz_common::properties::StatusProperty;
-  display->setStatusStd(StatusProperty::Ok, getTransformStatusName(caller_id), "Transform OK");
-}
-
 transformation::TransformationLibraryConnector::WeakPtr FrameManager::getConnector()
 {
   return transformer_->getConnector();
@@ -364,20 +323,5 @@ void FrameManager::setTransformerPlugin(
 {
   transformer_ = transformer;
 }
-
-#if 0
-void FrameManager::messageFailed(
-  const std::string & frame_id,
-  const rclcpp::Time & stamp,
-  const std::string & caller_id,
-  tf::FilterFailureReason reason,
-  Display * display)
-{
-  std::string status_name = getTransformStatusName(caller_id);
-  std::string status_text = discoverFailureReason(frame_id, stamp, caller_id, reason);
-
-  display->setStatusStd(StatusProperty::Error, status_name, status_text);
-}
-#endif
 
 }  // namespace rviz_common

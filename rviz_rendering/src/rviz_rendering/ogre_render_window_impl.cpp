@@ -1,32 +1,33 @@
-/*
- * Copyright (c) 2012, Willow Garage, Inc.
- * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
- *       contributors may be used to endorse or promote products derived from
- *       this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
+// Copyright (c) 2012, Willow Garage, Inc.
+// Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright
+//      notice, this list of conditions and the following disclaimer.
+//
+//    * Redistributions in binary form must reproduce the above copyright
+//      notice, this list of conditions and the following disclaimer in the
+//      documentation and/or other materials provided with the distribution.
+//
+//    * Neither the name of the copyright holder nor the names of its
+//      contributors may be used to endorse or promote products derived from
+//      this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+
 
 #include "ogre_render_window_impl.hpp"
 
@@ -67,25 +68,8 @@ RenderWindowImpl::RenderWindowImpl(QWindow * parent)
   ogre_viewport_(nullptr),
   ortho_scale_(1.0f),
   pending_listeners_()
-  // auto_render_(true),
-  // overlays_enabled_(true),    // matches the default of Ogre::Viewport.
-  // stereo_enabled_(false),
-  // rendering_stereo_(false),
-  // left_camera_(0),
-  // right_camera_(0),
-  // right_viewport_(0)
 {
   RenderSystem::get();  // side-effect is that the render system is setup
-  // this->initialize();
-  // render_window_->setVisible(true);
-  // render_window_->setAutoUpdated(true);
-
-// #if OGRE_STEREO_ENABLE
-//   viewport_->setDrawBuffer(Ogre::CBT_BACK);
-// #endif
-//   enableStereo(true);
-
-  // setCameraAspectRatio();
 }
 
 RenderWindowImpl::~RenderWindowImpl()
@@ -93,7 +77,6 @@ RenderWindowImpl::~RenderWindowImpl()
   if (ogre_render_window_) {
     Ogre::Root::getSingletonPtr()->detachRenderTarget(ogre_render_window_);
     Ogre::Root::getSingletonPtr()->destroyRenderTarget(ogre_render_window_);
-    // enableStereo(false);  // free stereo resources
   }
 }
 
@@ -133,18 +116,6 @@ void
 RenderWindowImpl::renderLater()
 {
   parent_->requestUpdate();
-
-  // Alternative impl?:
-
-  // // This function forces QWindow to keep rendering.
-  // // Omitting this causes the renderNow() function to only get called when the
-  // // window is resized, moved, etc. as opposed to all of the time; which is
-  // // generally what we need.
-  // if (!m_update_pending)
-  // {
-  //   m_update_pending = true;
-  //   QApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
-  // }
 }
 
 
@@ -164,7 +135,6 @@ RenderWindowImpl::renderNow()
       setup_scene_callback_ = 0;
     }
   }
-
   this->render();
 
   if (animating_) {
@@ -275,131 +245,6 @@ RenderWindowImpl::resize(size_t width, size_t height)
   this->renderLater();
 }
 
-#if 0
-bool RenderWindowImpl::enableStereo(bool enable)
-{
-  bool was_enabled = stereo_enabled_;
-  stereo_enabled_ = enable;
-  setupStereo();
-  return was_enabled;
-}
-#endif
-
-#if 0
-void RenderWindowImpl::setupStereo()
-{
-  bool render_stereo = stereo_enabled_ && RenderSystem::get()->isStereoSupported();
-
-  if (render_stereo == rendering_stereo_) {
-    return;
-  }
-
-  rendering_stereo_ = render_stereo;
-
-  if (rendering_stereo_) {
-    right_viewport_ = render_window_->addViewport(nullptr, 1);
-#if OGRE_STEREO_ENABLE
-    right_viewport_->setDrawBuffer(Ogre::CBT_BACK_RIGHT);
-    viewport_->setDrawBuffer(Ogre::CBT_BACK_LEFT);
-#endif
-
-    setOverlaysEnabled(overlays_enabled_);
-    setBackgroundColor(background_color_);
-    if (camera_) {
-      setCamera(camera_);
-    }
-
-    // addListener causes preViewportUpdate() to be called when rendering.
-    render_window_->addListener(this);
-  } else {
-    render_window_->removeListener(this);
-    render_window_->removeViewport(1);
-    right_viewport_ = nullptr;
-
-#if OGRE_STEREO_ENABLE
-    viewport_->setDrawBuffer(Ogre::CBT_BACK);
-#endif
-
-    if (left_camera_) {
-      left_camera_->getSceneManager()->destroyCamera(left_camera_);
-    }
-    left_camera_ = nullptr;
-    if (right_camera_) {
-      right_camera_->getSceneManager()->destroyCamera(right_camera_);
-    }
-    right_camera_ = nullptr;
-  }
-}
-#endif
-
-#if 0
-// this is called just before rendering either viewport when stereo is enabled.
-void RenderWindowImpl::preViewportUpdate(
-  const Ogre::RenderTargetViewportEvent & evt)
-{
-  Ogre::Viewport * viewport = evt.source;
-
-  const Ogre::Vector2 & offset = camera_->getFrustumOffset();
-  const Ogre::Vector3 pos = camera_->getPosition();
-  const Ogre::Vector3 right = camera_->getRight();
-  const Ogre::Vector3 up = camera_->getUp();
-
-  if (viewport == right_viewport_) {
-    if (camera_->getProjectionType() != Ogre::PT_PERSPECTIVE || !right_camera_) {
-      viewport->setCamera(camera_);
-      return;
-    }
-
-    Ogre::Vector3 newpos = pos +
-      right * offset.x +
-      up * offset.y;
-
-    right_camera_->synchroniseBaseSettingsWith(camera_);
-    right_camera_->setFrustumOffset(-offset);
-    right_camera_->setPosition(newpos);
-    viewport->setCamera(right_camera_);
-  } else if (viewport == viewport_) {
-    if (camera_->getProjectionType() != Ogre::PT_PERSPECTIVE || !left_camera_) {
-      viewport->setCamera(camera_);
-      return;
-    }
-
-    Ogre::Vector3 newpos = pos -
-      right * offset.x -
-      up * offset.y;
-
-    left_camera_->synchroniseBaseSettingsWith(camera_);
-    left_camera_->setFrustumOffset(offset);
-    left_camera_->setPosition(newpos);
-    viewport->setCamera(left_camera_);
-  } else {
-    ROS_WARN("Begin rendering to unknown viewport.");
-  }
-}
-#endif
-
-#if 0
-void RenderWindowImpl::postViewportUpdate(
-  const Ogre::RenderTargetViewportEvent & evt)
-{
-  Ogre::Viewport * viewport = evt.source;
-
-  if (viewport == right_viewport_) {
-    // nothing to do here
-  } else if (viewport == viewport_) {
-    viewport->setCamera(camera_);
-  } else {
-    ROS_WARN("End rendering to unknown viewport.");
-  }
-
-  if (!right_camera_->isCustomProjectionMatrixEnabled()) {
-    right_camera_->synchroniseBaseSettingsWith(camera_);
-    right_camera_->setFrustumOffset(-camera_->getFrustumOffset());
-  }
-  right_viewport_->setCamera(right_camera_);
-}
-#endif
-
 Ogre::Viewport * RenderWindowImpl::getViewport() const
 {
   return ogre_viewport_;
@@ -413,19 +258,13 @@ void RenderWindowImpl::setCamera(Ogre::Camera * ogre_camera)
       ogre_viewport_->setCamera(ogre_camera);
       this->setCameraAspectRatio();
     }
+  }
+}
 
-    // if (ogre_camera_ && rendering_stereo_ && !left_ogre_camera_) {
-    //   left_ogre_camera_ =
-    //     ogre_camera_->getSceneManager()->createCamera(ogre_camera_->getName() + "-left");
-    // }
-    // if (ogre_camera_ && rendering_stereo_ && !right_ogre_camera_) {
-    //   right_ogre_camera_ =
-    //     ogre_camera_->getSceneManager()->createCamera(ogre_camera_->getName() + "-right");
-    // }
-
-    // TODO(wjwwood): not sure where this was going before, need to figure that out
-    //                and see if it is still needed, could have been QWidget before
-    // this->update();
+void RenderWindowImpl::setSceneNodeCamera(Ogre::SceneNode * ogre_camera)
+{
+  if (ogre_camera) {
+    ogre_camera_node_ = ogre_camera;
   }
 }
 
@@ -478,39 +317,18 @@ void RenderWindowImpl::setVisibilityMask(uint32_t mask)
 }
 
 
-#if 0
-void RenderWindowImpl::setOverlaysEnabled(bool overlays_enabled)
-{
-  overlays_enabled_ = overlays_enabled;
-  viewport_->setOverlaysEnabled(overlays_enabled);
-  if (right_viewport_) {
-    right_viewport_->setOverlaysEnabled(overlays_enabled);
-  }
-}
-#endif
-
 void RenderWindowImpl::setBackgroundColor(Ogre::ColourValue background_color)
 {
   background_color_ = background_color;
   ogre_viewport_->setBackgroundColour(background_color);
-#if 0
-  if (ogre_right_viewport_) {
-    ogre_right_viewport_->setBackgroundColour(background_color);
-  }
-#endif
 }
 
 void RenderWindowImpl::setCameraAspectRatio()
 {
-  // auto width = parent_->width();
   auto width = parent_->width() ? parent_->width() : 100;
-  // auto height = parent_->height();
   auto height = parent_->height() ? parent_->height() : 100;
   if (ogre_camera_) {
     ogre_camera_->setAspectRatio(Ogre::Real(width) / Ogre::Real(height));
-    // if (right_ogre_camera_) {
-    //   right_ogre_camera_->setAspectRatio(Ogre::Real(width()) / Ogre::Real(height()));
-    // }
 
     if (ogre_camera_->getProjectionType() == Ogre::PT_ORTHOGRAPHIC) {
       Ogre::Matrix4 proj = buildScaledOrthoMatrix(
@@ -521,50 +339,4 @@ void RenderWindowImpl::setCameraAspectRatio()
     }
   }
 }
-
-#if 0
-void RenderWindowImpl::setOrthoScale(float scale)
-{
-  ortho_scale_ = scale;
-
-  setCameraAspectRatio();
-}
-#endif
-
-#if 0
-void RenderWindowImpl::setPreRenderCallback(boost::function<void()> func)
-{
-  pre_render_callback_ = func;
-}
-#endif
-
-#if 0
-void RenderWindowImpl::setPostRenderCallback(boost::function<void()> func)
-{
-  post_render_callback_ = func;
-}
-#endif
-
-//------------------------------------------------------------------------------
-#if 0
-void RenderWindowImpl::paintEvent(QPaintEvent * e)
-{
-  if (auto_render_ && render_window_) {
-    if (pre_render_callback_) {
-      pre_render_callback_();
-    }
-
-    if (ogre_root_->_fireFrameStarted()) {
-      ogre_root_->_fireFrameRenderingQueued();
-      render_window_->update();
-      ogre_root_->_fireFrameEnded();
-    }
-
-    if (post_render_callback_) {
-      post_render_callback_();
-    }
-  }
-}
-#endif
-
 }  // namespace rviz_rendering

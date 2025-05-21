@@ -1,10 +1,11 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 
 project(rviz_rendering)
 
-# Default to C++14
+# Default to C++17
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -26,13 +27,20 @@ else()
   set(SKIP_DISPLAY_TESTS "SKIP_TEST")
 endif()
 
-find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_ros REQUIRED)
 
 # do find_package(rviz_ogre_vendor) first to make sure the custom OGRE is found
 find_package(rviz_ogre_vendor REQUIRED)
 find_package(rviz_assimp_vendor REQUIRED)
 
-find_package(Qt5 REQUIRED COMPONENTS Widgets)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+if(${QT_VERSION} VERSION_LESS 5.15.0)
+  function(qt_wrap_cpp out)
+    qt5_wrap_cpp(_sources ${ARGN})
+    set("${out}" ${_sources} PARENT_SCOPE)
+  endfunction()
+endif()
 
 find_package(ament_index_cpp REQUIRED)
 find_package(eigen3_cmake_module REQUIRED)
@@ -40,29 +48,29 @@ find_package(Eigen3 REQUIRED)
 find_package(resource_retriever REQUIRED)
 
 # TODO(wjwwood): this block is to setup the windeployqt tool, could be removed later.
-if(Qt5_FOUND AND WIN32 AND TARGET Qt5::qmake AND NOT TARGET Qt5::windeployqt)
-  get_target_property(_qt5_qmake_location Qt5::qmake IMPORTED_LOCATION)
+if(Qt${QT_VERSION_MAJOR}_FOUND AND WIN32 AND TARGET Qt${QT_VERSION_MAJOR}::qmake AND NOT TARGET Qt${QT_VERSION_MAJOR}::windeployqt)
+  get_target_property(_qt_qmake_location Qt${QT_VERSION_MAJOR}::qmake IMPORTED_LOCATION)
 
   execute_process(
-    COMMAND "${_qt5_qmake_location}" -query QT_INSTALL_PREFIX
+    COMMAND "${_qt_qmake_location}" -query Qt${QT_VERSION_MAJOR}_INSTALL_PREFIX
     RESULT_VARIABLE return_code
-    OUTPUT_VARIABLE qt5_install_prefix
+    OUTPUT_VARIABLE qt_install_prefix
     OUTPUT_STRIP_TRAILING_WHITESPACE
   )
 
-  set(imported_location "${qt5_install_prefix}/bin/windeployqt.exe")
+  set(imported_location "${qt_install_prefix}/bin/windeployqt.exe")
 
   if(EXISTS ${imported_location})
-    add_executable(Qt5::windeployqt IMPORTED)
+    add_executable(Qt${QT_VERSION_MAJOR}::windeployqt IMPORTED)
 
-    set_target_properties(Qt5::windeployqt PROPERTIES
+    set_target_properties(Qt${QT_VERSION_MAJOR}::windeployqt PROPERTIES
       IMPORTED_LOCATION ${imported_location}
     )
   endif()
 endif()
 
 # These need to be added in the add_library() call
-qt5_wrap_cpp(rviz_rendering_moc_files include/rviz_rendering/render_window.hpp)
+qt_wrap_cpp(rviz_rendering_moc_files include/rviz_rendering/render_window.hpp)
 
 add_library(rviz_rendering SHARED
   ${rviz_rendering_moc_files}
@@ -72,13 +80,13 @@ add_library(rviz_rendering SHARED
   src/rviz_rendering/logging.cpp
   src/rviz_rendering/material_manager.cpp
   src/rviz_rendering/mesh_loader.cpp
+  src/rviz_rendering/objects/mesh_shape.cpp
   src/rviz_rendering/ogre_logging.cpp
   src/rviz_rendering/ogre_render_window_impl.cpp
   src/rviz_rendering/orthographic.cpp
   src/rviz_rendering/render_system.cpp
   src/rviz_rendering/render_window.cpp
   src/rviz_rendering/resource_config.cpp
-  src/rviz_rendering/mesh_loader_helpers/stl_loader.cpp
   src/rviz_rendering/mesh_loader_helpers/assimp_loader.cpp
   src/rviz_rendering/string_helper.cpp
   src/rviz_rendering/objects/arrow.cpp
@@ -94,15 +102,25 @@ add_library(rviz_rendering SHARED
   src/rviz_rendering/objects/point_cloud_renderable.cpp
   src/rviz_rendering/objects/screw_visual.cpp
   src/rviz_rendering/objects/shape.cpp
+  src/rviz_rendering/objects/triangle_polygon.cpp
   src/rviz_rendering/objects/wrench_visual.cpp
 )
 
-target_link_libraries(rviz_rendering
-  PUBLIC
+target_link_libraries(rviz_rendering PUBLIC
+  Qt${QT_VERSION_MAJOR}::Widgets
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
-  Qt5::Widgets
+)
+if(TARGET Eigen3::Eigen)
+  # TODO(sloretz) require target to exist when https://github.com/ros2/choco-packages/issues/19 is addressed
+  target_link_libraries(rviz_rendering PUBLIC Eigen3::Eigen)
+else()
+  target_include_directories(rviz_rendering PUBLIC ${Eigen3_INCLUDE_DIRS})
+endif()
+
+target_link_libraries(rviz_rendering PRIVATE
   ament_index_cpp::ament_index_cpp
+  assimp::assimp
   resource_retriever::resource_retriever
 )
 
@@ -110,23 +128,16 @@ target_include_directories(rviz_rendering
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
-    ${Eigen3_INCLUDE_DIRS}
 )
 # Causes the visibility macros to use dllexport rather than dllimport,
 # which is appropriate when building the dll but not consuming it.
 target_compile_definitions(rviz_rendering PRIVATE "RVIZ_RENDERING_BUILDING_LIBRARY")
 
-ament_target_dependencies(rviz_rendering
-  SYSTEM PUBLIC
-  rviz_assimp_vendor
-)
 ament_export_dependencies(
-  rviz_assimp_vendor
-  rviz_ogre_vendor
-  eigen3_cmake_module
   Eigen3
-  resource_retriever
-  ament_index_cpp)
+  Qt${QT_VERSION_MAJOR}
+  rviz_ogre_vendor
+)
 
 # Export old-style CMake variables
 ament_export_include_directories("include/${PROJECT_NAME}")
@@ -169,6 +180,8 @@ if(BUILD_TESTING)
     test/rviz_rendering/ogre_testing_environment.cpp
     test/rviz_rendering/scene_graph_introspection.cpp
   )
+  target_compile_definitions(rviz_rendering_test_utils PRIVATE
+    "TEST_RVIZ_RENDERING_BUILDING_LIBRARY")
   target_link_libraries(rviz_rendering_test_utils
     PUBLIC
     rviz_ogre_vendor::OgreMain
@@ -188,7 +201,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt${QT_VERSION_MAJOR}::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -200,7 +213,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt${QT_VERSION_MAJOR}::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -212,7 +225,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt${QT_VERSION_MAJOR}::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -224,7 +237,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt${QT_VERSION_MAJOR}::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -236,7 +249,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt${QT_VERSION_MAJOR}::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -248,7 +261,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt${QT_VERSION_MAJOR}::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -261,7 +274,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreOverlay
       rviz_rendering
       rviz_rendering_test_utils
-      Qt5::Widgets
+      Qt${QT_VERSION_MAJOR}::Widgets
     )
   endif()
 
@@ -273,7 +286,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt${QT_VERSION_MAJOR}::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -285,7 +298,19 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt${QT_VERSION_MAJOR}::Widgets  # explicitly do this for include directories (not necessary for external use)
+    )
+  endif()
+
+  ament_add_gmock(triangle_polygon_visual_test_target
+    test/rviz_rendering/objects/triangle_polygon_test.cpp
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET triangle_polygon_visual_test_target)
+    target_link_libraries(triangle_polygon_visual_test_target
+      rviz_ogre_vendor::OgreMain
+      rviz_rendering
+      rviz_rendering_test_utils
+      Qt${QT_VERSION_MAJOR}::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -297,7 +322,19 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt5::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt${QT_VERSION_MAJOR}::Widgets  # explicitly do this for include directories (not necessary for external use)
+    )
+  endif()
+
+  ament_add_gmock(mesh_shape_visual_test_target
+    test/rviz_rendering/mesh_shape_test.cpp
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET mesh_shape_visual_test_target)
+    target_link_libraries(mesh_shape_visual_test_target
+      rviz_ogre_vendor::OgreMain
+      rviz_rendering
+      rviz_rendering_test_utils
+      Qt${QT_VERSION_MAJOR}::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 endif()
@@ -309,3 +346,7 @@ list(APPEND ${PROJECT_NAME}_CONFIG_EXTRAS
 ament_package(
   CONFIG_EXTRAS "rviz_rendering-extras.cmake"
 )
+
+if(TEST copyright)
+  set_tests_properties(copyright PROPERTIES TIMEOUT 600)
+endif()

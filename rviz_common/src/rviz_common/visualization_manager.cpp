@@ -1,32 +1,33 @@
-/*
- * Copyright (c) 2008, Willow Garage, Inc.
- * Copyright (c) 2017, Open Source Robotics Foundation, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
- *       contributors may be used to endorse or promote products derived from
- *       this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
+// Copyright (c) 2008, Willow Garage, Inc.
+// Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright
+//      notice, this list of conditions and the following disclaimer.
+//
+//    * Redistributions in binary form must reproduce the above copyright
+//      notice, this list of conditions and the following disclaimer in the
+//      documentation and/or other materials provided with the distribution.
+//
+//    * Neither the name of the copyright holder nor the names of its
+//      contributors may be used to endorse or promote products derived from
+//      this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+
 
 #include "rviz_common/visualization_manager.hpp"
 
@@ -51,6 +52,8 @@
 
 #include <QApplication>  // NOLINT: cpplint cannot handle include order here
 #include <QCursor>  // NOLINT: cpplint cannot handle include order here
+#include <QKeyEvent>  // NOLINT: cpplint cannot handle include order here
+#include <QString>  // NOLINT: cpplint cannot handle include order here
 #include <QTimer>  // NOLINT: cpplint cannot handle include order here
 #include <QWindow>  // NOLINT: cpplint cannot handle include order here
 
@@ -135,6 +138,8 @@ VisualizationManager::VisualizationManager(
   update_timer_(0),
   shutting_down_(false),
   render_panel_(render_panel),
+  wall_clock_elapsed_(0),
+  ros_time_elapsed_(0),
   time_update_timer_(0.0f),
   frame_update_timer_(0.0f),
   render_requested_(1),
@@ -158,18 +163,6 @@ VisualizationManager::VisualizationManager(
     SIGNAL(transformerChanged(std::shared_ptr<rviz_common::transformation::FrameTransformer>)),
     frame_manager_,
     SLOT(setTransformerPlugin(std::shared_ptr<rviz_common::transformation::FrameTransformer>)));
-
-// TODO(wjwwood): is this needed?
-#if 0
-  render_panel->setAutoRender(false);
-#endif
-
-  // scene_manager_ = ogre_root_->createSceneManager(Ogre::ST_GENERIC);
-
-// TODO(wjwwood): is this needed?
-#if 0
-  rviz::RenderSystem::RenderSystem::get()->prepareOverlays(scene_manager_);
-#endif
 
   root_display_group_ = new DisplayGroup();
   root_display_group_->setName("root");
@@ -236,20 +229,8 @@ VisualizationManager::VisualizationManager(
   connect(this, SIGNAL(timeJumped()), this, SLOT(resetTime()));
 
   executor_->add_node(rviz_ros_node_.lock()->get_raw_node());
-// TODO(wjwwood): redo with executors?
-#if 0
-  private_->threaded_queue_threads_.create_thread(
-    std::bind(&VisualizationManager::threadedQueueThreadFunc, this));
-#endif
 
   display_factory_ = new DisplayFactory();
-
-// TODO(wjwwood): move this to rviz_rendering somewhere?
-#if 0
-  ogre_render_queue_clearer_ = new OgreRenderQueueClearer();
-  Ogre::Root::getSingletonPtr()->addFrameListener(ogre_render_queue_clearer_);
-#endif
-
   update_timer_ = new QTimer;
   connect(update_timer_, SIGNAL(timeout()), this, SLOT(onUpdate()));
 }
@@ -259,9 +240,6 @@ VisualizationManager::~VisualizationManager()
   delete update_timer_;
 
   shutting_down_ = true;
-#if 0
-  private_->threaded_queue_threads_.join_all();
-#endif
 
   delete display_property_tree_model_;
   delete tool_manager_;
@@ -269,11 +247,6 @@ VisualizationManager::~VisualizationManager()
   delete frame_manager_;
   delete private_;
   delete transformation_manager_;
-
-#if 0
-  Ogre::Root::getSingletonPtr()->removeFrameListener(ogre_render_queue_clearer_);
-  delete ogre_render_queue_clearer_;
-#endif
 }
 
 void VisualizationManager::initialize()
@@ -288,13 +261,6 @@ void VisualizationManager::initialize()
   last_update_ros_time_ = clock_->now();
   last_update_wall_time_ = std::chrono::system_clock::now();
 }
-
-#if 0
-ros::CallbackQueueInterface * VisualizationManager::getThreadedQueue()
-{
-  return &private_->threaded_queue_;
-}
-#endif
 
 void VisualizationManager::lockRender()
 {
@@ -311,13 +277,6 @@ VisualizationManager::getRosNodeAbstraction() const
 {
   return rviz_ros_node_;
 }
-
-#if 0
-ros::CallbackQueueInterface * VisualizationManager::getUpdateQueue()
-{
-  return ros::getGlobalCallbackQueue();
-}
-#endif
 
 void VisualizationManager::startUpdate()
 {
@@ -405,7 +364,6 @@ void VisualizationManager::onUpdate()
 
   if (time_update_timer_ > 0.1f) {
     time_update_timer_ = 0.0f;
-
     updateTime();
   }
 
@@ -413,7 +371,6 @@ void VisualizationManager::onUpdate()
 
   if (frame_update_timer_ > 1.0f) {
     frame_update_timer_ = 0.0f;
-
     updateFrames();
   }
 
@@ -476,18 +433,15 @@ void VisualizationManager::updateFrames()
   std::string error;
   if (frame_manager_->frameHasProblems(getFixedFrame().toStdString(), error)) {
     if (!frame_manager_->anyTransformationDataAvailable()) {
-      // fixed_prop->setToWarn();
       std::stringstream ss;
       ss << "No tf data.  Actual error: " << error;
       global_status_->setStatus(
         StatusProperty::Warn, "Fixed Frame", QString::fromStdString(ss.str()));
     } else {
-      // fixed_prop->setToError();
       global_status_->setStatus(
         StatusProperty::Error, "Fixed Frame", QString::fromStdString(error));
     }
   } else {
-    // fixed_prop->setToOK();
     global_status_->setStatus(StatusProperty::Ok, "Fixed Frame", "OK");
   }
 }
@@ -679,17 +633,19 @@ void VisualizationManager::handleMouseEvent(const ViewportMouseEvent & vme)
 
 void VisualizationManager::handleChar(QKeyEvent * event, RenderPanel * panel)
 {
-  tool_manager_->handleChar(event, panel);
-}
-
-void VisualizationManager::threadedQueueThreadFunc()
-{
-  // TODO(wjwwood): redo with executors
-#if 0
-  while (!shutting_down_) {
-    private_->threaded_queue_.callOne(ros::WallDuration(0.1));
+  if (event->key() == Qt::Key_Escape) {
+    Q_EMIT escapePressed();
   }
-#endif
+
+  int flags = tool_manager_->handleChar(event, panel);
+
+  if (flags & Tool::Render) {
+    queueRender();
+  }
+
+  if (flags & Tool::Finished) {
+    tool_manager_->setCurrentTool(tool_manager_->getDefaultTool());
+  }
 }
 
 void VisualizationManager::notifyConfigChanged()
