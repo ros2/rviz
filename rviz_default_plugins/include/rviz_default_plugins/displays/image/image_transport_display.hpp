@@ -168,7 +168,7 @@ protected:
 */
   void incomingMessage(const typename MessageType::ConstSharedPtr msg)
   {
-    if (!msg) {
+    if (!msg || !isEnabled()) {
       return;
     }
 
