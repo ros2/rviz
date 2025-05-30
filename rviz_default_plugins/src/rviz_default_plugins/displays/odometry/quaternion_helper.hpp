@@ -40,11 +40,12 @@ namespace rviz_default_plugins
 
 float ogreQuaternionAngularDistance(Ogre::Quaternion first, Ogre::Quaternion second)
 {
-  Ogre::Quaternion product = first * Ogre::Quaternion(second.w, -second.x, -second.y, -second.z);
-  float imaginary_norm =
-    sqrtf(powf(product.x, 2.0f) + powf(product.y, 2.0f) + powf(product.z, 2.0f));
+  first.normalise();
+  second.normalise();
+  float dot = first.Dot(second);
+  dot = std::clamp(dot, -1.0f, 1.0f);
 
-  return 2.0f * atan2f(imaginary_norm, sqrtf(powf(product.w, 2.0f)));
+  return 2.0f * acosf(fabs(dot));
 }
 
 }  // namespace rviz_default_plugins

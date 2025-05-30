@@ -49,16 +49,21 @@ TEST(QuaternionHelper, ogreQuaternionHelper_returns_angle) {
   Ogre::Vector3 axis(1, 2, 3);
   axis.normalise();
   Ogre::Quaternion quaternion1;
-  quaternion1.FromAngleAxis(Ogre::Radian(0), axis);
+  quaternion1.FromAngleAxis(Ogre::Radian(0.0f), axis);
   Ogre::Quaternion quaternion2;
   quaternion2.FromAngleAxis(Ogre::Radian(0.5f), axis);
   Ogre::Quaternion quaternion3;
   quaternion3.FromAngleAxis(Ogre::Radian(1.2f), axis);
+  Ogre::Quaternion quaternion4;
+  quaternion4.FromAngleAxis(Ogre::Radian(1.0e-6f), axis);
 
   EXPECT_THAT(
     rviz_default_plugins::ogreQuaternionAngularDistance(quaternion1, quaternion2),
-    FloatNear(0.5f, 0.001f));
+    FloatNear(0.5f, 1.0e-6f));
   EXPECT_THAT(
     rviz_default_plugins::ogreQuaternionAngularDistance(quaternion1, quaternion3),
-    FloatNear(1.2f, 0.001f));
+    FloatNear(1.2f, 1.0e-6f));
+  EXPECT_THAT(
+    rviz_default_plugins::ogreQuaternionAngularDistance(quaternion1, quaternion4),
+    FloatNear(1.0e-6f, 1.0e-6f));
 }
