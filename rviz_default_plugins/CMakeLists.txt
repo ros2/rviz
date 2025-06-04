@@ -275,7 +275,6 @@ target_link_libraries(rviz_default_plugins PUBLIC
   ${visualization_msgs_TARGETS}
   resource_retriever::resource_retriever
   ${rviz_resource_interfaces_TARGETS}
-  Qt5::Widgets
 )
 
 target_link_libraries(rviz_default_plugins PRIVATE
