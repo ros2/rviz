@@ -394,7 +394,7 @@ if(BUILD_TESTING)
     target_link_libraries(frame_view_controller_test
       ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
       rviz_default_plugins
-      Qt5::Widgets
+      Qt${QT_VERSION_MAJOR}::Widgets
       ogre_testing_environment
     )
   endif()
