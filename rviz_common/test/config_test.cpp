@@ -81,6 +81,17 @@ TEST(Config, mapGetValue_key_not_found_null_check) {
   EXPECT_EQ(s_default, "my_default_value");
 }
 
+TEST(Config, handle_mixed_type_values_for_keys) {
+  rviz_common::Config c;
+  c.mapSetValue("mixed_key", "123abc");
+  EXPECT_FALSE(c.mapGetInt("mixed_key", nullptr));
+  EXPECT_FALSE(c.mapGetBool("mixed_key", nullptr));
+  EXPECT_FALSE(c.mapGetFloat("mixed_key", nullptr));
+  QString string_value;
+  EXPECT_TRUE(c.mapGetString("mixed_key", &string_value));
+  EXPECT_EQ(string_value, "123abc");
+}
+
 int main(int argc, char ** argv)
 {
   testing::InitGoogleTest(&argc, argv);
