@@ -262,6 +262,10 @@ bool Config::mapGetFloat(const QString & key, float * value_out) const
 
 bool Config::mapGetBool(const QString & key, bool * value_out) const
 {
+  if (value_out == nullptr) {
+    return false;
+  }
+
   QVariant v;
   if (mapGetValue(key, &v) && (v.type() == QVariant::Bool || v.type() == QVariant::String)) {
     *value_out = v.toBool();
