@@ -215,7 +215,7 @@ Ogre::MeshPtr AssimpLoader::meshFromAssimpScene(const std::string & name, const 
     // by applying a 90 degree rotation about the X-axis,
     // effectively going from (x, y, z) to (x, -z, y)
     aiMatrix4x4 transform;
-    aiMatrix4x4::RotationX(AI_MATH_HALF_PI, transform);
+    aiMatrix4x4::RotationX(static_cast<float>(AI_MATH_HALF_PI), transform);
     scene->mRootNode->mTransformation = scene->mRootNode->mTransformation * transform;
   }
 
