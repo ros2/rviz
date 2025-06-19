@@ -7,12 +7,12 @@ find_package(ament_cmake_vendor_package REQUIRED)
 
 # TODO: Switch to version range in find_package in CMake 3.19
 find_package(assimp QUIET)
-if(NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LESS 5.4.3)
+if(NOT assimp_FOUND OR "${assimp_VERSION}" VERSION_LESS 6.0.2)
   set(assimp_FOUND FALSE)
 endif()
 
 if(MSVC)
-  # TODO(clalancette): When building assimp 5.2.2 on Windows Debug,
+  # TODO(clalancette): When building assimp 6.0.2 on Windows Debug,
   # it fails to install the PDB file with a "File exists" error.
   # Since we don't really need the PDB file, just unconditionally
   # disable it.
@@ -23,7 +23,7 @@ if(MSVC)
 else()
   set(ASSIMP_CMAKE_FLAGS "-DCMAKE_INSTALL_LIBDIR=lib")
 
-  set(ASSIMP_CXX_FLAGS "-std=c++14 ${CMAKE_CXX_FLAGS}")
+  set(ASSIMP_CXX_FLAGS "-std=c++17 ${CMAKE_CXX_FLAGS}")
   # assimp version 5.3.1 still uses K&R style function prototypes,
   # which are deprecated as of gcc 13.2 (in Ubuntu 24.04).
   # Suppress the warning here for now.
@@ -33,7 +33,7 @@ endif()
 ament_vendor(assimp_vendor
   SATISFIED ${assimp_FOUND}
   VCS_URL https://github.com/assimp/assimp.git
-  VCS_VERSION v5.4.3
+  VCS_VERSION v6.0.2
   CMAKE_ARGS
     -DASSIMP_BUILD_ASSIMP_TOOLS:BOOL=OFF
     -DASSIMP_BUILD_TESTS:BOOL=OFF
