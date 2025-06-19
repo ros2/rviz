@@ -270,9 +270,9 @@ QVariant Property::getViewData(int column, int role) const
     case 1:  // right column: values
       switch (role) {
         case Qt::DisplayRole:
-        case Qt::EditRole: return value_.type() == QVariant::Bool ? QVariant() : getValue();
+        case Qt::EditRole: return value_.typeId() == QVariant::Bool ? QVariant() : getValue();
         case Qt::CheckStateRole:
-          if (value_.type() == QVariant::Bool) {
+          if (value_.typeId() == QVariant::Bool) {
             return value_.toBool() ? Qt::Checked : Qt::Unchecked;
           } else {
             return QVariant();
@@ -304,7 +304,7 @@ Qt::ItemFlags Property::getViewFlags(int column) const
     return enabled_flag | Qt::ItemIsSelectable;
   }
   if (value_.isValid() ) {
-    if (value_.type() == QVariant::Bool) {
+    if (value_.typeId() == QVariant::Bool) {
       return Qt::ItemIsUserCheckable | enabled_flag | Qt::ItemIsSelectable;
     }
     return Qt::ItemIsEditable | enabled_flag | Qt::ItemIsSelectable;
@@ -451,7 +451,7 @@ void Property::load(const Config & config)
 void Property::loadValue(const Config & config)
 {
   if (config.getType() == Config::Value) {
-    switch (static_cast<int>(value_.type() )) {
+    switch (static_cast<int>(value_.typeId() )) {
       case QVariant::Int: setValue(config.getValue().toInt() ); break;
       case QMetaType::Float:
       case QVariant::Double: setValue(config.getValue().toDouble() ); break;
@@ -460,7 +460,7 @@ void Property::loadValue(const Config & config)
       default:
         printf(
           "Property::loadValue() TODO: error handling - unexpected QVariant type %d.\n",
-          static_cast<int>(value_.type() ));
+          static_cast<int>(value_.typeId() ));
         break;
     }
   }
@@ -518,7 +518,7 @@ QWidget * Property::createEditor(
 {
   Q_UNUSED(option);
 
-  switch (static_cast<int>(value_.type() )) {
+  switch (static_cast<int>(value_.typeId() )) {
     case QVariant::Int:
       {
         QSpinBox * editor = new QSpinBox(parent);
