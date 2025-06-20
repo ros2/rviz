@@ -121,7 +121,7 @@ protected:
         required_interfaces,
         getPointCloud2BaseTopicFromTopic(topic_property_->getTopicStd()),
         getPointCloud2TransportFromTopic(topic_property_->getTopicStd()),
-        qos_profile.get_rmw_qos_profile());
+        qos_profile);
       subscription_start_time_ = rviz_ros_node_.lock()->get_raw_node()->now();
       subscription_callback_ = subscription_->registerCallback(
         std::bind(
