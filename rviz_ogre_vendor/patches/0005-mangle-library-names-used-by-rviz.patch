@@ -1,0 +1,59 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index f4d8fd4aa..286b80366 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -404,6 +404,8 @@ if (MSVC OR CMAKE_GENERATOR MATCHES Xcode)
+ 	option(OGRE_PROJECT_FOLDERS "Organize project into project folders." TRUE)
+ endif ()
+ 
++option(OGRE_MANGLE_NAME_OF_LIBRARIES_USED_BY_RVIZ "If enabled, append a unique name to OgreMain, OgreOverlay and OgreGLSupport." FALSE)
++
+ # hide advanced options
+ mark_as_advanced(
+   OGRE_BUILD_RTSHADERSYSTEM_CORE_SHADERS
+diff --git a/Components/Overlay/CMakeLists.txt b/Components/Overlay/CMakeLists.txt
+index 64a2a4ed7..014e1a8a7 100644
+--- a/Components/Overlay/CMakeLists.txt
++++ b/Components/Overlay/CMakeLists.txt
+@@ -71,6 +71,10 @@ if(OGRE_BUILD_COMPONENT_OVERLAY_IMGUI)
+     ${IMGUI_DIR}/imconfig.h)
+ endif()
+ 
++if(OGRE_MANGLE_NAME_OF_LIBRARIES_USED_BY_RVIZ)
++  set_target_properties(OgreOverlay PROPERTIES OUTPUT_NAME OgreOverlay_rviz)
++endif()
++
+ generate_export_header(OgreOverlay 
+     EXPORT_MACRO_NAME _OgreOverlayExport
+     EXPORT_FILE_NAME ${PROJECT_BINARY_DIR}/include/OgreOverlayPrerequisites.h)
+diff --git a/OgreMain/CMakeLists.txt b/OgreMain/CMakeLists.txt
+index 918f102ed..631a0225a 100644
+--- a/OgreMain/CMakeLists.txt
++++ b/OgreMain/CMakeLists.txt
+@@ -248,6 +248,11 @@ if (APPLE)
+     set_target_properties(OgreMain PROPERTIES	OUTPUT_NAME Ogre)
+   endif()
+ endif ()
++
++if(OGRE_MANGLE_NAME_OF_LIBRARIES_USED_BY_RVIZ)
++  set_target_properties(OgreMain PROPERTIES	OUTPUT_NAME OgreMain_rviz)
++endif()
++
+ target_link_libraries(OgreMain PUBLIC ${PLATFORM_LIBS} PRIVATE ${LIBRARIES} ${CMAKE_DL_LIBS})
+ 
+ # specify a precompiled header to use
+diff --git a/RenderSystems/GLSupport/CMakeLists.txt b/RenderSystems/GLSupport/CMakeLists.txt
+index 31c750729..e455d75ea 100644
+--- a/RenderSystems/GLSupport/CMakeLists.txt
++++ b/RenderSystems/GLSupport/CMakeLists.txt
+@@ -112,6 +112,10 @@ target_include_directories(OgreGLSupport PUBLIC
+     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/GLSL>"
+     PRIVATE "$<BUILD_INTERFACE:${NATIVE_INCLUDES}>")
+ 
++if(OGRE_MANGLE_NAME_OF_LIBRARIES_USED_BY_RVIZ)
++  set_target_properties(OgreGLSupport PROPERTIES OUTPUT_NAME OgreGLSupport_rviz)
++endif()
++
+ set_property(TARGET OgreGLSupport PROPERTY POSITION_INDEPENDENT_CODE ON)
+ generate_export_header(OgreGLSupport 
+     EXPORT_MACRO_NAME _OgreGLExport
