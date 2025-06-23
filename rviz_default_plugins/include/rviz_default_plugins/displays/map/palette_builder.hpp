@@ -42,13 +42,13 @@ namespace displays
 {
 
 RVIZ_DEFAULT_PLUGINS_PUBLIC std::vector<unsigned char> makeRawPalette(
-  bool binary = false, 
+  bool binary = false,
   int threshold = 100);
 RVIZ_DEFAULT_PLUGINS_PUBLIC std::vector<unsigned char> makeMapPalette(
-  bool binary = false, 
+  bool binary = false,
   int threshold = 100);
 RVIZ_DEFAULT_PLUGINS_PUBLIC std::vector<unsigned char> makeCostmapPalette(
-  bool binary = false, 
+  bool binary = false,
   int threshold = 100);
 
 class PaletteBuilder : public
