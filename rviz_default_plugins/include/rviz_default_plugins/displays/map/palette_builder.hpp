@@ -40,9 +40,21 @@ namespace rviz_default_plugins
 namespace displays
 {
 
+<<<<<<< HEAD
 std::vector<unsigned char> makeRawPalette();
 std::vector<unsigned char> makeMapPalette();
 std::vector<unsigned char> makeCostmapPalette();
+=======
+RVIZ_DEFAULT_PLUGINS_PUBLIC std::vector<unsigned char> makeRawPalette(
+  bool binary = false,
+  int threshold = 100);
+RVIZ_DEFAULT_PLUGINS_PUBLIC std::vector<unsigned char> makeMapPalette(
+  bool binary = false,
+  int threshold = 100);
+RVIZ_DEFAULT_PLUGINS_PUBLIC std::vector<unsigned char> makeCostmapPalette(
+  bool binary = false,
+  int threshold = 100);
+>>>>>>> 007c6e9a (Add symbol visibility macros to make*Palette public functions (#1492))
 
 class PaletteBuilder : public
   std::enable_shared_from_this<PaletteBuilder>
