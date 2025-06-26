@@ -74,7 +74,8 @@ void MeshShape::beginTriangles()
 
   if (!started_) {
     started_ = true;
-    manual_object_->begin(material_name_, Ogre::RenderOperation::OT_TRIANGLE_LIST);
+    manual_object_->begin(material_name_, Ogre::RenderOperation::OT_TRIANGLE_LIST,
+      "rviz_rendering");
   }
 }
 
