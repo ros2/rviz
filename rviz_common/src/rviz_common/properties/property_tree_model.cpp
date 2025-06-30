@@ -114,9 +114,6 @@ QModelIndex PropertyTreeModel::parentIndex(const Property * child) const
     return QModelIndex();
   }
   Property * parent = child->getParent();
-  if (parent == root_property_ || !parent) {
-    return QModelIndex();
-  }
   return indexOf(parent);
 }
 
