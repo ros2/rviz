@@ -126,6 +126,10 @@ protected:
       setStatus(
         rviz_common::properties::StatusProperty::Error, "Topic",
         QString("Error subscribing: ") + e.what());
+    } catch (image_transport::TransportLoadException & e) {
+      setStatus(
+        rviz_common::properties::StatusProperty::Error, "Topic",
+        QString("Error subscribing: ") + e.what());
     }
   }
 
