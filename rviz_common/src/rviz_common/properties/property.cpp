@@ -387,11 +387,12 @@ void Property::setModel(PropertyTreeModel * model)
   model_ = model;
   if (model_ && hidden_) {
     // process propertyHiddenChanged after insertion into model has finishedAdd commentMore actions
-    QTimer::singleShot(0, model_, [this]() {
+    QTimer::singleShot(
+      0, model_, [this]() {
         if (model_) {
           model_->emitPropertyHiddenChanged(this);
         }
-    });
+      });
   }
   int num_children = numChildren();
   for (int i = 0; i < num_children; i++) {
