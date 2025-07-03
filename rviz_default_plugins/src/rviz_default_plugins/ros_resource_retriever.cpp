@@ -104,6 +104,10 @@ RosResourceRetriever::get_shared(const std::string & url)
     }
   }
 
+  if (!this->client_->service_is_ready()) {
+    return nullptr;
+  }
+
   // Request the resource with an etag, if it is set.
   RCLCPP_DEBUG(
     this->logger_,

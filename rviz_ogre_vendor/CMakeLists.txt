@@ -4,6 +4,8 @@ project(rviz_ogre_vendor)
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_vendor_package REQUIRED)
 
+option(RVIZ_OGRE_VENDOR_MANGLE_NAME_OF_LIBRARIES_USED_BY_RVIZ "If enabled, append a unique name to OgreMain, OgreOverlay and OgreGLSupport." FALSE)
+
 if(WIN32)
   set(FREETYPE_C_FLAGS "${CMAKE_C_FLAGS}")
   if(MSVC)
@@ -104,6 +106,7 @@ ament_vendor(ogre_vendor
     -DOGRE_BUILD_RENDERSYSTEM_D3D11:BOOL=OFF
     -DOGRE_BUILD_RENDERSYSTEM_D3D9:BOOL=OFF
     -DCMAKE_POLICY_DEFAULT_CMP0074=NEW
+    -DOGRE_MANGLE_NAME_OF_LIBRARIES_USED_BY_RVIZ:BOOL=${RVIZ_OGRE_VENDOR_MANGLE_NAME_OF_LIBRARIES_USED_BY_RVIZ}
     "-DCMAKE_CXX_FLAGS=${OGRE_CXX_FLAGS}"
     ${OGRE_CMAKE_ARGS}
   PATCHES patches

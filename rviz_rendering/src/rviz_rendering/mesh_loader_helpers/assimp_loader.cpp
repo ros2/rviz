@@ -209,6 +209,16 @@ Ogre::MeshPtr AssimpLoader::meshFromAssimpScene(const std::string & name, const 
 
   Ogre::MeshPtr mesh = Ogre::MeshManager::getSingleton().createManual(name, ROS_PACKAGE_NAME);
 
+  const std::string ext = std::filesystem::path(name).extension().string();
+  if (ext == ".gltf" || ext == ".glb" || ext == ".vrm") {
+    // Transform mesh from glTF Y-Up space to ROS Z-Up space
+    // by applying a 90 degree rotation about the X-axis,
+    // effectively going from (x, y, z) to (x, -z, y)
+    aiMatrix4x4 transform;
+    aiMatrix4x4::RotationX(static_cast<float>(AI_MATH_HALF_PI), transform);
+    scene->mRootNode->mTransformation = scene->mRootNode->mTransformation * transform;
+  }
+
   Ogre::AxisAlignedBox axis_aligned_box(Ogre::AxisAlignedBox::EXTENT_NULL);
   float radius = 0.0f;
   buildMesh(scene, scene->mRootNode, mesh, axis_aligned_box, radius, material_table);

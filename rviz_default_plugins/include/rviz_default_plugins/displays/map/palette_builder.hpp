@@ -41,9 +41,15 @@ namespace rviz_default_plugins
 namespace displays
 {
 
-std::vector<unsigned char> makeRawPalette(bool binary = false, int threshold = 100);
-std::vector<unsigned char> makeMapPalette(bool binary = false, int threshold = 100);
-std::vector<unsigned char> makeCostmapPalette(bool binary = false, int threshold = 100);
+RVIZ_DEFAULT_PLUGINS_PUBLIC std::vector<unsigned char> makeRawPalette(
+  bool binary = false,
+  int threshold = 100);
+RVIZ_DEFAULT_PLUGINS_PUBLIC std::vector<unsigned char> makeMapPalette(
+  bool binary = false,
+  int threshold = 100);
+RVIZ_DEFAULT_PLUGINS_PUBLIC std::vector<unsigned char> makeCostmapPalette(
+  bool binary = false,
+  int threshold = 100);
 
 class PaletteBuilder : public
   std::enable_shared_from_this<PaletteBuilder>

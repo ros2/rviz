@@ -110,12 +110,18 @@ protected:
     }
 
     try {
+      auto required_interfaces = std::make_shared<rclcpp::node_interfaces::NodeInterfaces<
+            rclcpp::node_interfaces::NodeBaseInterface,
+            rclcpp::node_interfaces::NodeParametersInterface,
+            rclcpp::node_interfaces::NodeTopicsInterface,
+            rclcpp::node_interfaces::NodeLoggingInterface>>(*rviz_ros_node_.lock()->get_raw_node());
+
       subscription_ = std::make_shared<point_cloud_transport::SubscriberFilter>();
       subscription_->subscribe(
-        rviz_ros_node_.lock()->get_raw_node(),
+        required_interfaces,
         getPointCloud2BaseTopicFromTopic(topic_property_->getTopicStd()),
         getPointCloud2TransportFromTopic(topic_property_->getTopicStd()),
-        qos_profile.get_rmw_qos_profile());
+        qos_profile);
       subscription_start_time_ = rviz_ros_node_.lock()->get_raw_node()->now();
       subscription_callback_ = subscription_->registerCallback(
         std::bind(
