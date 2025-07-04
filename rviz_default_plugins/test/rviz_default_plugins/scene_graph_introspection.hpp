@@ -33,9 +33,7 @@
 
 #include <gmock/gmock.h>
 
-#include <functional>
 #include <vector>
-
 #include <OgreBillboardChain.h>
 #include <OgreQuaternion.h>
 #include <OgreSceneManager.h>

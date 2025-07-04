@@ -52,9 +52,6 @@
 #if defined(ASSIMP_UNIFIED_HEADER_NAMES)
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
-#include "assimp/postprocess.h"
-#include "assimp/IOStream.hpp"
-#include "assimp/IOSystem.hpp"
 #else
 #include "assimp/assimp.hpp"
 #include "assimp/aiScene.h"

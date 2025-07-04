@@ -31,14 +31,6 @@
 
 #include "rviz_common/visualizer_app.hpp"
 
-#include <iostream>
-#include <memory>
-#include <utility>
-
-// #include <OgreGpuProgramManager.h>
-// #include <OgreHighLevelGpuProgramManager.h>
-// #include <OgreMaterialManager.h>
-
 #include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
 #include <QCommandLineOption>  // NOLINT: cpplint is unable to handle the include order here
 #include <QCommandLineParser>  // NOLINT: cpplint is unable to handle the include order here

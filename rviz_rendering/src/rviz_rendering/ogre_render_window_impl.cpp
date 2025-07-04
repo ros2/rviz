@@ -32,7 +32,6 @@
 #include "ogre_render_window_impl.hpp"
 
 #include <cstdlib>
-#include <functional>
 
 #include "OgreEntity.h"
 #include "OgreCamera.h"

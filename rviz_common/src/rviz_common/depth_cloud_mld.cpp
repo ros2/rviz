@@ -30,14 +30,9 @@
 
 #include "rviz_common/depth_cloud_mld.hpp"
 
-#include <chrono>
 #include <cmath>
 #include <cstdint>
 #include <cstring>
-#include <memory>
-#include <string>
-#include <sstream>
-#include <vector>
 
 #include <sensor_msgs/msg/camera_info.hpp>
 #include <sensor_msgs/msg/image.hpp>

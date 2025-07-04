@@ -33,11 +33,6 @@
 #ifndef RVIZ_COMMON__DISPLAYS_PANEL_HPP_
 #define RVIZ_COMMON__DISPLAYS_PANEL_HPP_
 
-#include <map>
-#include <set>
-#include <string>
-#include <vector>
-
 #include "rviz_common/config.hpp"
 #include "rviz_common/panel.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"

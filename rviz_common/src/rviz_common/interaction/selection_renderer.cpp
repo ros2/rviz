@@ -32,9 +32,6 @@
 
 #include "rviz_common/interaction/selection_renderer.hpp"
 
-#include <string>
-#include <utility>
-
 #include <OgreCamera.h>
 #include <OgreHardwarePixelBuffer.h>
 #include <OgreMaterialManager.h>

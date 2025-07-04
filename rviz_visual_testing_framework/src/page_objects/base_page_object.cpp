@@ -28,12 +28,6 @@
 // POSSIBILITY OF SUCH DAMAGE.
 #include "rviz_visual_testing_framework/page_objects/base_page_object.hpp"
 
-
-#include <memory>
-#include <string>
-#include <utility>
-#include <vector>
-
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTest>  // NOLINT
 

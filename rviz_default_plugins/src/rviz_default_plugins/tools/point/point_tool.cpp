@@ -31,8 +31,6 @@
 
 #include "rviz_default_plugins/tools/point/point_tool.hpp"
 
-#include <sstream>
-
 #include <OgreVector.h>
 
 #include "rclcpp/qos.hpp"

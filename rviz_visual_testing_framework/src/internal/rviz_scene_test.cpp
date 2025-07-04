@@ -29,11 +29,6 @@
 
 #include "rviz_visual_testing_framework/internal/rviz_scene_test.hpp"
 
-#include <iostream>
-#include <memory>
-#include <string>
-#include <thread>
-
 RvizTestScene::RvizTestScene(
   rviz_common::VisualizerApp * vapp,
   Ogre::Vector3 pose,

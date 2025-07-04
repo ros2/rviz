@@ -31,8 +31,6 @@
 #ifndef RVIZ_RENDERING__LOGGING_HPP_
 #define RVIZ_RENDERING__LOGGING_HPP_
 
-#include <memory>
-#include <sstream>
 #include <string>
 
 #include "rviz_rendering/logging_handler.hpp"

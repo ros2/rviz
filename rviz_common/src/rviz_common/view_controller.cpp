@@ -31,8 +31,6 @@
 
 #include "rviz_common/view_controller.hpp"
 
-#include <string>
-
 #include <OgreCamera.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>

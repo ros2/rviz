@@ -30,9 +30,6 @@
 
 #include "effort_display_page_object.hpp"
 
-#include <memory>
-#include <vector>
-
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 EffortDisplayPageObject::EffortDisplayPageObject()

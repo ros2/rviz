@@ -30,10 +30,6 @@
 
 #include "rviz_common/properties/qos_profile_property.hpp"
 
-#include <functional>
-#include <map>
-#include <utility>
-
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rclcpp/qos.hpp"

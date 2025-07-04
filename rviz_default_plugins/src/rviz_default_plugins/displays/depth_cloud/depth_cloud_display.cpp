@@ -36,14 +36,6 @@
 #include <QRegularExpression>
 #include <QString>
 
-#include <iostream>
-#include <functional>
-#include <utility>
-#include <vector>
-#include <string>
-#include <memory>
-#include <mutex>
-
 #include <image_transport/camera_common.hpp>
 #include <image_transport/subscriber_plugin.hpp>
 

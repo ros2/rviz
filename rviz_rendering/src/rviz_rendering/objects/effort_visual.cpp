@@ -31,7 +31,6 @@
 #define _USE_MATH_DEFINES
 #include "rviz_rendering/objects/effort_visual.hpp"
 
-#include <algorithm>
 #include <cmath>
 
 namespace rviz_rendering

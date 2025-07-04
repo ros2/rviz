@@ -29,10 +29,6 @@
 
 #include "rviz_visual_testing_framework/visual_test_fixture.hpp"
 
-#include <memory>
-#include <string>
-#include <vector>
-
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/ros_integration/ros_client_abstraction.hpp"

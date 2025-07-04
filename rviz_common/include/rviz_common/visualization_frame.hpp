@@ -33,7 +33,6 @@
 #ifndef RVIZ_COMMON__VISUALIZATION_FRAME_HPP_
 #define RVIZ_COMMON__VISUALIZATION_FRAME_HPP_
 
-#include <chrono>
 #include <deque>
 #include <map>
 #include <string>

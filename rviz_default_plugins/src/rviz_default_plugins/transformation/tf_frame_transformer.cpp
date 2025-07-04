@@ -30,10 +30,6 @@
 
 #include "rviz_default_plugins/transformation/tf_frame_transformer.hpp"
 
-#include <memory>
-#include <string>
-#include <vector>
-
 #include "rviz_common/logging.hpp"
 #include "rviz_common/transformation/frame_transformer.hpp"
 #include "rviz_common/transformation/tf2_helpers/tf2_conversion_helpers.hpp"

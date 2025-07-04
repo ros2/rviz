@@ -32,9 +32,7 @@
 #define RVIZ_DEFAULT_PLUGINS__PUBLISHERS__LASER_SCAN_PUBLISHER_HPP_
 
 #define _USE_MATH_DEFINES
-#include <chrono>
 #include <cmath>
-#include <string>
 
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/laser_scan.hpp"

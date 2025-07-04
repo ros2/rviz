@@ -53,7 +53,6 @@
 #ifndef RVIZ_COMMON__LOGGING_HPP_
 #define RVIZ_COMMON__LOGGING_HPP_
 
-#include <memory>
 #include <sstream>
 #include <string>
 

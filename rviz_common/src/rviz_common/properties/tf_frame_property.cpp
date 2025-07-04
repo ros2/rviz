@@ -31,10 +31,6 @@
 
 #include "rviz_common/properties/tf_frame_property.hpp"
 
-#include <algorithm>  // for std::sort
-#include <string>
-#include <vector>
-
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "tf2_ros/transform_listener.h"

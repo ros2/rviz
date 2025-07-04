@@ -30,10 +30,6 @@
 
 #include <gmock/gmock.h>
 
-#include <memory>
-#include <string>
-#include <vector>
-
 #include "rviz_common/interaction/selection_manager.hpp"
 #include "rviz_common/interaction/selection_handler.hpp"
 #include "rviz_common/display_context.hpp"

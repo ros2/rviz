@@ -44,11 +44,6 @@
 
 #include "rviz_rendering/objects/movable_text.hpp"
 
-#include <algorithm>
-#include <limits>
-#include <sstream>
-#include <string>
-
 #include <OgreCamera.h>
 #include <OgreHardwareBufferManager.h>
 #include <OgreMaterialManager.h>

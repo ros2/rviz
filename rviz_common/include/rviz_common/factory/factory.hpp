@@ -33,7 +33,6 @@
 #ifndef RVIZ_COMMON__FACTORY__FACTORY_HPP_
 #define RVIZ_COMMON__FACTORY__FACTORY_HPP_
 
-#include <utility>
 #include <vector>
 
 #include <QIcon>  // NOLINT

@@ -30,10 +30,6 @@
 
 #include "rviz_default_plugins/tools/pose/pose_tool.hpp"
 
-#include <memory>
-#include <string>
-#include <utility>
-
 #include <OgrePlane.h>
 #include <OgreRay.h>
 #include <OgreSceneNode.h>

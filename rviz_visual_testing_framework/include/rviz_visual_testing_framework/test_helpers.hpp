@@ -31,7 +31,7 @@
 #define RVIZ_VISUAL_TESTING_FRAMEWORK__TEST_HELPERS_HPP_
 
 #include <vector>
-
+#include <memory>
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTreeView>  // NOLINT
 

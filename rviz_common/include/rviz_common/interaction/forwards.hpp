@@ -32,7 +32,6 @@
 #ifndef RVIZ_COMMON__INTERACTION__FORWARDS_HPP_
 #define RVIZ_COMMON__INTERACTION__FORWARDS_HPP_
 
-#include <map>
 #include <set>
 #include <unordered_map>
 #include <vector>

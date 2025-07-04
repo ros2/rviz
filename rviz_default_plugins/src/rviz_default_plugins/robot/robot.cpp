@@ -31,10 +31,6 @@
 
 #include "rviz_default_plugins/robot/robot.hpp"
 
-#include <map>
-#include <string>
-#include <vector>
-
 #include <OgreEntity.h>
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>

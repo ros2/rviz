@@ -33,11 +33,6 @@
 #include "rviz_rendering/render_system.hpp"
 
 #include <iostream>
-#include <map>
-#include <memory>
-#include <string>
-#include <vector>
-
 #include <OgreRenderWindow.h>
 #include <OgreLogManager.h>
 #include <OgreMeshManager.h>

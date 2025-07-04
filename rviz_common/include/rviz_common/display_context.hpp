@@ -32,7 +32,6 @@
 #ifndef RVIZ_COMMON__DISPLAY_CONTEXT_HPP_
 #define RVIZ_COMMON__DISPLAY_CONTEXT_HPP_
 
-#include <cstdint>
 #include <memory>
 
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here

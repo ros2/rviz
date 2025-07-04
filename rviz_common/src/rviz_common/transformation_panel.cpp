@@ -27,13 +27,9 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-
 #include "transformation_panel.hpp"
 
-#include <memory>
-#include <string>
 #include <utility>
-#include <vector>
 
 #include <QPushButton>  // NOLINT
 #include <QString>  // NOLINT

@@ -30,12 +30,13 @@
 #ifndef RVIZ_RENDERING__OBJECTS__SCREW_VISUAL_HPP_
 #define RVIZ_RENDERING__OBJECTS__SCREW_VISUAL_HPP_
 
+#include <map>
+#include <memory>
+
 #include "rviz_rendering/objects/screw_visual.hpp"
 
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
-
-#include <memory>
 
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/billboard_line.hpp"

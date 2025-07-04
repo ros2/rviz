@@ -33,7 +33,6 @@
 #define RVIZ_COMMON__ROS_INTEGRATION__ROS_NODE_ABSTRACTION_HPP_
 
 #include <map>
-#include <memory>
 #include <string>
 #include <vector>
 

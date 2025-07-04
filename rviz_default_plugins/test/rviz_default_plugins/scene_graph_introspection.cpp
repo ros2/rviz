@@ -29,9 +29,6 @@
 
 
 #include <algorithm>
-#include <memory>
-#include <string>
-#include <vector>
 
 #include <OgreEntity.h>
 #include <OgreMesh.h>

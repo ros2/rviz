@@ -29,8 +29,6 @@
 
 #include "rviz_common/properties/grouped_checkbox_property.hpp"
 
-#include <memory>
-
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/properties/grouped_checkbox_property_group.hpp"

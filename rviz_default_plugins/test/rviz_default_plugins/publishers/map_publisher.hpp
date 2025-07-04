@@ -31,9 +31,7 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__PUBLISHERS__MAP_PUBLISHER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__PUBLISHERS__MAP_PUBLISHER_HPP_
 
-#include <chrono>
 #include <cmath>
-#include <memory>
 #include <vector>
 
 #include "rclcpp/rclcpp.hpp"

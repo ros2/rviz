@@ -33,7 +33,6 @@
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__MESH_RESOURCE_MARKER_HPP_
 
 #include <string>
-#include <vector>
 
 #include <OgreMaterial.h>
 

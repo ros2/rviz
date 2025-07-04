@@ -31,8 +31,8 @@
 #ifndef RVIZ_RENDERING__RENDER_WINDOW_HPP_
 #define RVIZ_RENDERING__RENDER_WINDOW_HPP_
 
-#include <functional>
 #include <string>
+
 
 #include <QObject>  // NOLINT
 #include <QWindow>  // NOLINT

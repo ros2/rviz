@@ -32,7 +32,6 @@
 
 #include "displays_panel.hpp"
 
-#include <string>
 
 #include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
 #include <QHBoxLayout>  // NOLINT: cpplint is unable to handle the include order here
@@ -43,7 +42,6 @@
 #include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
 #include <QVBoxLayout>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "display_factory.hpp"
 #include "rviz_common/display.hpp"
 #include "add_display_dialog.hpp"
 #include "rviz_common/properties/property.hpp"

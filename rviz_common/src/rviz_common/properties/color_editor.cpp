@@ -28,7 +28,6 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 
-#include <stdio.h>
 #include <QMetaObject>
 #include <QMetaProperty>
 

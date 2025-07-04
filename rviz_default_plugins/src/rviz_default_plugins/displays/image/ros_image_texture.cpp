@@ -32,16 +32,6 @@
 
 #include <algorithm>
 #include <deque>
-#include <limits>
-#include <map>
-#include <memory>
-#include <mutex>
-#include <sstream>
-#include <iostream>
-#include <string>
-#include <tuple>
-#include <vector>
-#include <utility>
 
 #include <OgreTextureManager.h>  // NOLINT: cpplint cannot handle include order
 

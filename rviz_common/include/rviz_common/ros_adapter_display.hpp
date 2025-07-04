@@ -32,7 +32,6 @@
 #define RVIZ_COMMON__ROS_ADAPTER_DISPLAY_HPP_
 
 #include <cstdint>
-#include <functional>
 #include <memory>
 #include <sstream>
 #include <stdexcept>

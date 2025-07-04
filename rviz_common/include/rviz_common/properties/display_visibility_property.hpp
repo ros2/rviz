@@ -31,9 +31,7 @@
 #ifndef RVIZ_COMMON__PROPERTIES__DISPLAY_VISIBILITY_PROPERTY_HPP_
 #define RVIZ_COMMON__PROPERTIES__DISPLAY_VISIBILITY_PROPERTY_HPP_
 
-#include <cstdint>
 #include <map>
-#include <string>
 
 #include <QObject>  // NOLINT: cpplint cannot handle the include order here
 #include <QString>  // NOLINT: cpplint cannot handle the include order here

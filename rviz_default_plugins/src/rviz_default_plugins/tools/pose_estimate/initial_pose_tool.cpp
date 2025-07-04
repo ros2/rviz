@@ -32,8 +32,6 @@
 #define _USE_MATH_DEFINES
 #include "rviz_default_plugins/tools/pose_estimate/initial_pose_tool.hpp"
 
-#include <string>
-
 #include "rclcpp/qos.hpp"
 
 #include "rviz_common/display_context.hpp"

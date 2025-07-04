@@ -31,7 +31,6 @@
 #ifndef RVIZ_COMMON__TRANSFORMATION__IDENTITY_FRAME_TRANSFORMER_HPP_
 #define RVIZ_COMMON__TRANSFORMATION__IDENTITY_FRAME_TRANSFORMER_HPP_
 
-#include <chrono>
 #include <string>
 #include <vector>
 

@@ -32,7 +32,6 @@
 #include "rviz_common/display.hpp"
 
 #include <cstdio>
-#include <string>
 
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>

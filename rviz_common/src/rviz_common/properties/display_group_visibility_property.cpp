@@ -34,8 +34,6 @@
  *      Author: gossow
  */
 
-#include <map>
-
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/properties/display_group_visibility_property.hpp"

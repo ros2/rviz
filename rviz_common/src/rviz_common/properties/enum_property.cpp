@@ -31,8 +31,6 @@
 
 #include "rviz_common/properties/enum_property.hpp"
 
-#include <string>
-
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/properties/combo_box.hpp"

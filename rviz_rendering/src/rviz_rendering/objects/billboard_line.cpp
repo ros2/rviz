@@ -39,10 +39,6 @@
 #include <OgreMaterialManager.h>
 #include <OgreTechnique.h>
 
-#include <iostream>
-#include <stdexcept>
-#include <string>
-
 #include "rviz_rendering/material_manager.hpp"
 
 static const uint32_t MAX_ELEMENTS = (65536 / 4);

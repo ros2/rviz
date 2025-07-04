@@ -31,7 +31,7 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__POINTCLOUD_MESSAGES_HPP_
 #define RVIZ_DEFAULT_PLUGINS__POINTCLOUD_MESSAGES_HPP_
 
-#include <string>
+#include <memory>
 #include <vector>
 
 #include "sensor_msgs/msg/point_cloud2.hpp"

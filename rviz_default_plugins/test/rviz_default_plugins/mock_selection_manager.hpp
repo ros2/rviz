@@ -32,9 +32,6 @@
 #define RVIZ_DEFAULT_PLUGINS__MOCK_SELECTION_MANAGER_HPP_
 
 #include <gmock/gmock.h>
-
-#include <memory>
-#include <string>
 #include <vector>
 
 #include "rviz_common/interaction/forwards.hpp"

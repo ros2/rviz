@@ -32,10 +32,6 @@
 
 #include "rviz_default_plugins/displays/camera/camera_display.hpp"
 
-#include <memory>
-#include <string>
-#include <sstream>
-
 #include <OgreManualObject.h>
 #include <OgreMaterialManager.h>
 #include <OgreRectangle2D.h>

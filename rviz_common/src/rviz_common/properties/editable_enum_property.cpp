@@ -31,8 +31,6 @@
 
 #include "rviz_common/properties/editable_enum_property.hpp"
 
-#include <string>
-
 #include <QCompleter>  // NOLINT: cpplint is unable to handle the include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 

@@ -31,9 +31,7 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__PUBLISHERS__GRID_CELLS_PUBLISHER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__PUBLISHERS__GRID_CELLS_PUBLISHER_HPP_
 
-#include <chrono>
 #include <vector>
-
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp/clock.hpp"
 #include "std_msgs/msg/header.hpp"

@@ -31,13 +31,7 @@
 
 #include "rviz_common/visualization_manager.hpp"
 
-#include <algorithm>
-#include <chrono>
-#include <functional>
-#include <memory>
 #include <mutex>
-#include <string>
-#include <vector>
 
 #include <OgreCamera.h>
 #include <OgreLight.h>

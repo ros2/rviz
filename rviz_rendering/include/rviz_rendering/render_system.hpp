@@ -32,8 +32,6 @@
 #ifndef RVIZ_RENDERING__RENDER_SYSTEM_HPP_
 #define RVIZ_RENDERING__RENDER_SYSTEM_HPP_
 
-
-#include <cstdint>
 #include <string>
 
 #include <OgreRoot.h>

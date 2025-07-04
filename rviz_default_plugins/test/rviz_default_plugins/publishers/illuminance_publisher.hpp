@@ -31,8 +31,6 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__PUBLISHERS__ILLUMINANCE_PUBLISHER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__PUBLISHERS__ILLUMINANCE_PUBLISHER_HPP_
 
-#include <string>
-#include <chrono>
 
 #include "rclcpp/rclcpp.hpp"
 

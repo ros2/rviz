@@ -31,10 +31,7 @@
 
 #include "rviz_common/view_manager.hpp"
 
-#include <algorithm>
 #include <cstdio>
-#include <memory>
-#include <sstream>
 
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 

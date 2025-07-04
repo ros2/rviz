@@ -30,7 +30,6 @@
 
 #include <gmock/gmock.h>
 
-#include <memory>
 #include <string>
 
 #include "rclcpp/rclcpp.hpp"

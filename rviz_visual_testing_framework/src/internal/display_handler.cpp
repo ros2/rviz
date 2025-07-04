@@ -29,8 +29,6 @@
 
 #include "rviz_visual_testing_framework/internal/display_handler.hpp"
 
-#include <memory>
-#include <vector>
 
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTest>  // NOLINT

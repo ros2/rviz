@@ -33,10 +33,10 @@
 #ifndef RVIZ_COMMON__INTERACTION__VIEW_PICKER_HPP_
 #define RVIZ_COMMON__INTERACTION__VIEW_PICKER_HPP_
 
-#include "rviz_common/interaction/view_picker_iface.hpp"
-
-#include <memory>
+#include <memory.h>
 #include <vector>
+
+#include "rviz_common/interaction/view_picker_iface.hpp"
 
 #include <OgreMaterialManager.h>
 #include <OgreRenderQueueListener.h>

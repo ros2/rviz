@@ -31,8 +31,6 @@
 #ifndef INTERACTION__MOCK_SELECTION_RENDERER_HPP_
 #define INTERACTION__MOCK_SELECTION_RENDERER_HPP_
 
-#include <memory>
-#include <string>
 #include <vector>
 
 #include <OgreDataStream.h>
@@ -41,8 +39,6 @@
 
 #include "rviz_common/interaction/selection_manager.hpp"
 #include "rviz_common/interaction/selection_renderer.hpp"
-
-#include "../display_context_fixture.hpp"
 
 class VisibleObject
 {

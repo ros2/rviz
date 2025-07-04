@@ -33,7 +33,6 @@
 
 #include <cstdio>  // for printf()
 #include <climits>  // for INT_MIN and INT_MAX
-#include <string>
 
 #include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
 #include <QPalette>  // NOLINT: cpplint is unable to handle the include order here

@@ -37,9 +37,6 @@
 
 #include "rviz_default_plugins/tools/measure/measure_tool.hpp"
 
-#include <memory>
-#include <sstream>
-
 #include <OgreSceneNode.h>
 
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here

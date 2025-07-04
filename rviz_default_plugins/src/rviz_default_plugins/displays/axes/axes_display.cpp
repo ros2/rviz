@@ -30,9 +30,6 @@
 
 #include "rviz_default_plugins/displays/axes/axes_display.hpp"
 
-#include <memory>
-#include <string>
-
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 

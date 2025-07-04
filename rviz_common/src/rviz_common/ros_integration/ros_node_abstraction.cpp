@@ -31,12 +31,6 @@
 
 #include "rviz_common/ros_integration/ros_node_abstraction.hpp"
 
-#include <map>
-#include <memory>
-#include <mutex>
-#include <string>
-#include <vector>
-
 #include "rclcpp/rclcpp.hpp"
 
 namespace rviz_common

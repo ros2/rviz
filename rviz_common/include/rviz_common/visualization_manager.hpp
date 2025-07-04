@@ -32,8 +32,7 @@
 #ifndef RVIZ_COMMON__VISUALIZATION_MANAGER_HPP_
 #define RVIZ_COMMON__VISUALIZATION_MANAGER_HPP_
 
-#include <chrono>
-#include <deque>
+#include <algorithm>
 #include <memory>
 
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here

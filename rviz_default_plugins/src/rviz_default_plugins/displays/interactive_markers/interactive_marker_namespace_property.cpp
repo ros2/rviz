@@ -27,11 +27,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-
-#include <map>
-#include <string>
-#include <vector>
-
 #include <QApplication>  // NOLINT: cpplint cannot handle the include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 

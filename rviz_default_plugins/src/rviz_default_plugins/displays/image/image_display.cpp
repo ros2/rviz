@@ -29,10 +29,6 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 
-#include <memory>
-#include <string>
-#include <utility>
-
 #include <OgreCamera.h>
 #include <OgreManualObject.h>
 #include <OgreMaterialManager.h>

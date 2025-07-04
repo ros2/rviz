@@ -32,9 +32,7 @@
 #define RVIZ_DEFAULT_PLUGINS__PUBLISHERS__RANGE_PUBLISHER_HPP_
 
 #define _USE_MATH_DEFINES
-#include <chrono>
 #include <cmath>
-#include <vector>
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp/clock.hpp"

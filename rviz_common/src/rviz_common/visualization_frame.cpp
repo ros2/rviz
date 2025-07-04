@@ -32,13 +32,6 @@
 
 #include "rviz_common/visualization_frame.hpp"
 
-#include <exception>
-#include <filesystem>
-#include <fstream>
-#include <memory>
-#include <string>
-#include <utility>
-
 #include <OgreRenderWindow.h>
 #include <OgreMeshManager.h>
 #include <OgreMaterialManager.h>
@@ -86,14 +79,6 @@
 #include "rviz_common/tool_manager.hpp"
 #include "rviz_common/visualization_manager.hpp"
 #include "./widget_geometry_change_detector.hpp"
-
-// #include "./displays_panel.hpp"
-#include "./help_panel.hpp"
-// #include "./interaction/selection_manager.hpp"
-// #include "./selection_panel.hpp"
-// #include "./time_panel.hpp"
-// #include "./tool_properties_panel.hpp"
-// #include "./views_panel.hpp"
 
 #define CONFIG_EXTENSION "rviz"
 #define CONFIG_EXTENSION_WILDCARD "*." CONFIG_EXTENSION

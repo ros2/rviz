@@ -32,7 +32,6 @@
 #ifndef RVIZ_RENDERING__OGRE_RENDER_WINDOW_IMPL_HPP_
 #define RVIZ_RENDERING__OGRE_RENDER_WINDOW_IMPL_HPP_
 
-#include <functional>
 #include <vector>
 
 #include <OgreRenderTargetListener.h>

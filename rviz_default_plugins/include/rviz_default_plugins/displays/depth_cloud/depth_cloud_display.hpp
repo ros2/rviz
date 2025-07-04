@@ -38,7 +38,6 @@
 #include <tf2_ros/message_filter.h>
 
 #include <memory>
-#include <mutex>
 #include <set>
 #include <string>
 

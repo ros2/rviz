@@ -30,12 +30,7 @@
 
 #include "rviz_default_plugins/displays/effort/effort_display.hpp"
 
-#include <chrono>
-#include <cstddef>
-#include <memory>
 #include <string>
-#include <utility>
-#include <vector>
 
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>

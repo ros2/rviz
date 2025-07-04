@@ -40,8 +40,6 @@
 #include <OgreWireBoundingBox.h>
 
 #include <cassert>
-#include <string>
-#include <utility>
 
 #include "rviz_common/logging.hpp"
 

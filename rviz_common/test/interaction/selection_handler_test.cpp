@@ -35,9 +35,6 @@
 #include <OgreMaterialManager.h>
 #include <OgreWireBoundingBox.h>
 
-#include <memory>
-#include <vector>
-
 #include "rviz_common/interaction/selection_handler.hpp"
 #include "rviz_common/display_context.hpp"
 

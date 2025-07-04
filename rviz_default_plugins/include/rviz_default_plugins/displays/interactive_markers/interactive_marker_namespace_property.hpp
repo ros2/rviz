@@ -33,6 +33,7 @@
   RVIZ_DEFAULT_PLUGINS__DISPLAYS__INTERACTIVE_MARKERS__INTERACTIVE_MARKER_NAMESPACE_PROPERTY_HPP_
 
 #include <string>
+#include <memory>
 
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 

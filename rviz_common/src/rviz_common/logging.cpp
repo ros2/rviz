@@ -31,7 +31,6 @@
 #include "rviz_common/logging.hpp"
 
 #include <cstdio>
-#include <memory>
 #include <mutex>
 #include <string>
 

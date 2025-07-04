@@ -34,9 +34,8 @@
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__IMAGE_DISPLAY_HPP_
 
 #ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
-# include <memory>
-# include <string>
 
+# include <memory>
 # include <QObject>  // NOLINT cpplint cannot handle include order here
 
 # include <OgreMaterial.h>

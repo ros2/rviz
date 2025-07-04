@@ -32,7 +32,6 @@
 #include "rviz_common/tool_manager.hpp"
 
 #include <cassert>
-#include <vector>
 
 #include <QKeyEvent>  // NOLINT: cpplint is unable to handle the include order here
 #include <QKeySequence>  // NOLINT: cpplint is unable to handle the include order here

@@ -30,10 +30,7 @@
 
 #include "identity_frame_transformer.hpp"
 
-#include <future>
 #include <memory>
-#include <string>
-#include <vector>
 
 #include "rviz_common/transformation/tf2_helpers/tf2_conversion_helpers.hpp"
 

@@ -47,8 +47,6 @@
 
 #include <OgreCamera.h>
 
-#include <string>
-
 #include <QMouseEvent>  // NOLINT
 #include <QTimer>   // NOLINT
 #include <QWindow>   // NOLINT

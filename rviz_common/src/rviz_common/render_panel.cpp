@@ -31,9 +31,6 @@
 
 #include "rviz_common/render_panel.hpp"
 
-#include <memory>
-#include <string>
-
 #include <OgreCamera.h>
 #include <OgreSceneManager.h>
 

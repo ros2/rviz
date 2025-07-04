@@ -33,8 +33,6 @@
 
 #include <map>
 #include <memory>
-#include <string>
-#include <vector>
 
 #include <QPushButton>  // NOLINT: cpplint cannot handle the include order here
 #include <QVBoxLayout>  // NOLINT: cpplint cannot handle the include order here

@@ -31,8 +31,6 @@
 #include <gmock/gmock.h>
 
 #include <memory>
-#include <utility>
-
 #include <OgreVector.h>
 
 #include "rviz_default_plugins/tools/pose/pose_tool.hpp"
@@ -41,7 +39,6 @@
 #include "../../scene_graph_introspection.hpp"
 #include "../tool_test_fixture.hpp"
 #include "../../displays/display_test_fixture.hpp"
-#include "../../mock_display_context.hpp"
 
 using namespace ::testing;  // NOLINT
 

@@ -29,8 +29,6 @@
 
 #include "rviz_visual_testing_framework/test_helpers.hpp"
 
-#include <vector>
-
 #include <QApplication>  // NOLINT
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 

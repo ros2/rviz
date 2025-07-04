@@ -31,8 +31,6 @@
 #ifndef RVIZ_COMMON__PROPERTIES__QOS_PROFILE_PROPERTY_HPP_
 #define RVIZ_COMMON__PROPERTIES__QOS_PROFILE_PROPERTY_HPP_
 
-#include <functional>
-
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rclcpp/qos.hpp"

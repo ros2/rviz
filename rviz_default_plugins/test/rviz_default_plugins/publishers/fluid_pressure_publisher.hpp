@@ -31,8 +31,6 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__PUBLISHERS__FLUID_PRESSURE_PUBLISHER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__PUBLISHERS__FLUID_PRESSURE_PUBLISHER_HPP_
 
-#include <string>
-#include <chrono>
 
 #include "rclcpp/rclcpp.hpp"
 

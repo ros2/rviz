@@ -44,7 +44,6 @@
 #include "rviz_default_plugins/transformation/tf_wrapper.hpp"
 
 #include "../displays/display_test_fixture.hpp"
-#include "../mock_display_context.hpp"
 #include "./mock_frame_transformer.hpp"
 
 using namespace ::testing;  // NOLINT

@@ -33,10 +33,6 @@
 
 #define _USE_MATH_DEFINES
 #include <cmath>
-#include <map>
-#include <memory>
-#include <string>
-#include <vector>
 
 #include <OgreEntity.h>
 #include <OgreMaterial.h>

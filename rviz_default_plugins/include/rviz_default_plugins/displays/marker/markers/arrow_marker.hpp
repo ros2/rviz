@@ -33,7 +33,6 @@
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__ARROW_MARKER_HPP_
 
 #include <memory>
-
 #include "marker_base.hpp"
 
 #include "rviz_rendering/objects/arrow.hpp"

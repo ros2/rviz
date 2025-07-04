@@ -30,11 +30,9 @@
 
 #include <gtest/gtest.h>
 
-#include <memory>
 #ifdef _WIN32
 #include <stdlib.h>
 #endif
-#include <string>
 
 #include <QDir>  // NOLINT
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here

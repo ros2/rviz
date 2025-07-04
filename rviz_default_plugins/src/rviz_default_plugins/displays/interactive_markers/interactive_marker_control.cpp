@@ -28,11 +28,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include <limits>
-#include <memory>
-#include <set>
-#include <utility>
-#include <vector>
 
 #include <OgreViewport.h>
 #include <OgreCamera.h>

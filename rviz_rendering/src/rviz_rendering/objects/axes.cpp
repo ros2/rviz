@@ -31,8 +31,6 @@
 
 #include "rviz_rendering/objects/axes.hpp"
 
-#include <memory>
-#include <sstream>
 
 #include <OgreQuaternion.h>
 #include <OgreSceneManager.h>

@@ -31,7 +31,6 @@
 #ifndef RVIZ_COMMON__TRANSFORMATION__TF2_HELPERS__TF2_CONVERSION_HELPERS_HPP_
 #define RVIZ_COMMON__TRANSFORMATION__TF2_HELPERS__TF2_CONVERSION_HELPERS_HPP_
 
-#include <chrono>
 #include <string>
 
 #include "rclcpp/rclcpp.hpp"

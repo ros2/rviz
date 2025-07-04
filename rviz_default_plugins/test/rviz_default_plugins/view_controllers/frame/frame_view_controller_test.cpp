@@ -30,8 +30,6 @@
 
 #include <gmock/gmock.h>
 
-#include <memory>
-
 #include <QApplication>  // NOLINT cpplint cannot handle include order
 #include <QKeyEvent>  // NOLINT cpplint cannot handle include order
 
@@ -48,8 +46,6 @@
 #include "rviz_default_plugins/view_controllers/frame/frame_view_controller.hpp"
 #include "rviz_default_plugins/view_controllers/orbit/orbit_view_controller.hpp"
 
-#include "../../displays/display_test_fixture.hpp"
-#include "../../scene_graph_introspection.hpp"
 #include "../view_controller_test_fixture.hpp"
 
 using namespace ::testing;  // NOLINT

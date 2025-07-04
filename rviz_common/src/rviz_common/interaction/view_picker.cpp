@@ -32,10 +32,6 @@
 
 #include "rviz_common/interaction/view_picker.hpp"
 
-#include <memory>
-#include <string>
-#include <vector>
-
 #include <OgreCamera.h>
 #include <OgreHardwarePixelBuffer.h>
 #include <OgreRectangle2D.h>

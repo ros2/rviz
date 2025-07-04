@@ -32,8 +32,6 @@
 #ifndef RVIZ_COMMON__FAILED_PANEL_HPP_
 #define RVIZ_COMMON__FAILED_PANEL_HPP_
 
-#include <memory>
-
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/panel.hpp"

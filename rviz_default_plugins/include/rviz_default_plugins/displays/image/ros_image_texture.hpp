@@ -34,11 +34,9 @@
 #include "rviz_default_plugins/displays/image/ros_image_texture_iface.hpp"
 
 #include <deque>
-#include <memory>
 #include <mutex>
 #include <stdexcept>
 #include <string>
-#include <vector>
 
 #include <OgreTexture.h>
 #include <OgreImage.h>

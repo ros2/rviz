@@ -31,10 +31,6 @@
 
 #include "rviz_default_plugins/displays/grid/grid_display.hpp"
 
-#include <cstdint>
-#include <memory>
-#include <string>
-
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 

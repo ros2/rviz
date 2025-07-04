@@ -29,13 +29,6 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 
-#include <map>
-#include <memory>
-#include <set>
-#include <string>
-#include <thread>
-#include <vector>
-
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 #include <OgreMaterialManager.h>

@@ -34,9 +34,7 @@
 
 #include <algorithm>
 #include <map>
-#include <memory>
 #include <string>
-#include <utility>
 #include <vector>
 
 #include <QCheckBox>  // NOLINT: cpplint is unable to handle the include order here

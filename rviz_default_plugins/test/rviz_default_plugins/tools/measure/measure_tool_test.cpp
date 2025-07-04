@@ -43,7 +43,6 @@
 #include "../tool_test_fixture.hpp"
 #include "../../displays/display_test_fixture.hpp"
 #include "../../scene_graph_introspection.hpp"
-#include "../../mock_display_context.hpp"
 #include "../../mock_view_picker.hpp"
 
 using namespace ::testing;  // NOLINT

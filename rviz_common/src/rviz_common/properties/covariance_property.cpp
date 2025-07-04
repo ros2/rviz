@@ -31,8 +31,6 @@
 
 #include "rviz_common/properties/covariance_property.hpp"
 
-#include <memory>
-
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 

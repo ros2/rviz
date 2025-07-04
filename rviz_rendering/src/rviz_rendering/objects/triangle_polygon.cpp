@@ -30,7 +30,6 @@
 
 #include "rviz_rendering/objects/triangle_polygon.hpp"
 
-#include <string>
 
 #include <OgreColourValue.h>
 #include <OgreManualObject.h>

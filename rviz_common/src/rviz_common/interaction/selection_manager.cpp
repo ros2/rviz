@@ -32,13 +32,6 @@
 
 #include "rviz_common/interaction/selection_manager.hpp"
 
-#include <algorithm>
-#include <memory>
-#include <mutex>
-#include <string>
-#include <utility>
-#include <vector>
-
 #include <OgreCamera.h>
 #include <OgreHardwarePixelBuffer.h>
 #include <OgreRectangle2D.h>

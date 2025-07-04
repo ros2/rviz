@@ -32,11 +32,9 @@
 #define RVIZ_DEFAULT_PLUGINS__PUBLISHERS__ODOMETRY_PUBLISHER_HPP_
 
 #define _USE_MATH_DEFINES
-#include <chrono>
 #include <cmath>
 #include <memory>
 #include <string>
-#include <vector>
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp/clock.hpp"

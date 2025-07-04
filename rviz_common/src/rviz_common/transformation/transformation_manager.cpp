@@ -30,10 +30,6 @@
 
 #include "rviz_common/transformation/transformation_manager.hpp"
 
-#include <memory>
-#include <string>
-#include <vector>
-
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/factory/pluginlib_factory.hpp"

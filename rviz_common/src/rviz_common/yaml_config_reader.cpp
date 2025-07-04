@@ -32,8 +32,6 @@
 #include "rviz_common/yaml_config_reader.hpp"
 
 #include <fstream>
-#include <sstream>
-#include <string>
 
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 

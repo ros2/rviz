@@ -30,7 +30,6 @@
 #ifndef RVIZ_VISUAL_TESTING_FRAMEWORK__INTERNAL__RVIZ_SCENE_TEST_HPP_
 #define RVIZ_VISUAL_TESTING_FRAMEWORK__INTERNAL__RVIZ_SCENE_TEST_HPP_
 
-#include <memory>
 
 #ifdef _WIN32
 # pragma warning(push)
@@ -42,6 +41,8 @@
 #ifdef _WIN32
 # pragma warning(pop)
 #endif
+
+#include <memory>
 
 #include "rviz_rendering/render_window.hpp"
 #include "rviz_common/visualizer_app.hpp"

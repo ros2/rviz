@@ -30,8 +30,6 @@
 
 #include "display_context_fixture.hpp"
 
-#include <memory>
-
 #include <OgreSceneNode.h>
 
 void DisplayContextFixture::SetUp()

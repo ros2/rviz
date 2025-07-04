@@ -33,10 +33,7 @@
 
 #include <gmock/gmock.h>
 
-#include <memory>
 #include <mutex>
-#include <string>
-#include <vector>
 
 #include "rviz_common/interaction/forwards.hpp"
 #include "rviz_common/interaction/handler_manager_iface.hpp"

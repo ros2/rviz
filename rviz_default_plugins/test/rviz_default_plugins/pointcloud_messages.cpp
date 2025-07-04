@@ -31,7 +31,6 @@
 #include "pointcloud_messages.hpp"
 
 #include <cassert>
-#include <memory>
 #include <vector>
 
 #include "geometry_msgs/msg/point32.hpp"

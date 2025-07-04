@@ -30,9 +30,6 @@
 
 #include "grid_cells_display_page_object.hpp"
 
-#include <memory>
-#include <vector>
-
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_visual_testing_framework/test_helpers.hpp"

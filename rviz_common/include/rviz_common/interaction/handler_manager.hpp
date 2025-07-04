@@ -35,6 +35,7 @@
 
 #include "handler_manager_iface.hpp"
 
+#include <memory>
 #include <mutex>
 #include <vector>
 

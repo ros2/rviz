@@ -32,7 +32,6 @@
 #include "rviz_common/display_group.hpp"
 
 #include <cstdio>  // for debug-write printf
-#include <map>
 
 #include <QColor>  // NOLINT: cpplint is unable to handle the include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here

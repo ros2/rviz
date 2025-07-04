@@ -32,7 +32,6 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__LINE_LIST_MARKER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__MARKER__MARKERS__LINE_LIST_MARKER_HPP_
 
-#include <memory>
 
 #include "rviz_default_plugins/displays/marker/markers/marker_base.hpp"
 #include "rviz_default_plugins/displays/marker/markers/line_marker_base.hpp"

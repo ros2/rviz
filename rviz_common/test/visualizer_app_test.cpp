@@ -32,7 +32,6 @@
 
 #include <memory>
 #include <string>
-#include <utility>
 
 #include "rviz_common/visualizer_app.hpp"
 #include "rviz_common/ros_integration/ros_client_abstraction_iface.hpp"

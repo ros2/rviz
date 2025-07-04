@@ -37,8 +37,8 @@
 #include <mutex>
 #include <set>
 #include <string>
-#include <vector>
 #include <utility>
+#include <vector>
 
 #include <OgreSceneNode.h>
 

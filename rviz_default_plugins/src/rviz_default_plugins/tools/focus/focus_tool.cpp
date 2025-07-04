@@ -28,8 +28,6 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 
-#include <sstream>
-
 #include <OgreCamera.h>
 #include <OgreRay.h>
 #include <OgreVector.h>

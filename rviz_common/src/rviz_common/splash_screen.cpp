@@ -30,8 +30,6 @@
 
 #include "splash_screen.hpp"
 
-#include <iostream>
-
 #include <QCoreApplication>  // NOLINT: cpplint is unable to handle the include order here
 #include <QPainter>  // NOLINT: cpplint is unable to handle the include order here
 #include <QPoint>  // NOLINT: cpplint is unable to handle the include order here

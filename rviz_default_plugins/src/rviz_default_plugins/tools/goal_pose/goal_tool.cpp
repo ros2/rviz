@@ -31,8 +31,6 @@
 
 #include "rviz_default_plugins/tools/goal_pose/goal_tool.hpp"
 
-#include <string>
-
 #include "geometry_msgs/msg/pose_stamped.hpp"
 
 #include "rviz_common/display_context.hpp"

@@ -30,9 +30,6 @@
 
 #include "pose_array_display_page_object.hpp"
 
-#include <memory>
-#include <vector>
-
 PoseArrayDisplayPageObject::PoseArrayDisplayPageObject()
 : PoseDisplayPageObject()
 {

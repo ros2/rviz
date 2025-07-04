@@ -30,7 +30,6 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__ACCEL__ACCEL_DISPLAY_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__ACCEL__ACCEL_DISPLAY_HPP_
 
-#include <memory>
 
 #include "rviz_default_plugins/displays/screw/screw_display.hpp"
 

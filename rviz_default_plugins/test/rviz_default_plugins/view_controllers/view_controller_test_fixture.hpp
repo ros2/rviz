@@ -31,9 +31,8 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__VIEW_CONTROLLER_TEST_FIXTURE_HPP_
 #define RVIZ_DEFAULT_PLUGINS__VIEW_CONTROLLERS__VIEW_CONTROLLER_TEST_FIXTURE_HPP_
 
-#include <memory>
-
 #include <OgreViewport.h>
+#include <memory>
 
 #include "../displays/display_test_fixture.hpp"
 

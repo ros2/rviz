@@ -31,8 +31,6 @@
 #ifndef RVIZ_COMMON__INTERACTION__SELECTION_RENDERER_HPP_
 #define RVIZ_COMMON__INTERACTION__SELECTION_RENDERER_HPP_
 
-#include <map>
-#include <memory>
 #include <string>
 
 #include <OgreMaterialManager.h>

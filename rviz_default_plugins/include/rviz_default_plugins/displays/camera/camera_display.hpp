@@ -33,10 +33,9 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__CAMERA__CAMERA_DISPLAY_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__CAMERA__CAMERA_DISPLAY_HPP_
 
-#include <cstdint>
 #include <memory>
-#include <mutex>
 #include <string>
+
 
 #include <QObject>  // NOLINT: cpplint cannot handle the include order here
 #include <QString>  // NOLINT: cpplint cannot handle the include order here

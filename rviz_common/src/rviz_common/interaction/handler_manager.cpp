@@ -32,9 +32,6 @@
 
 #include "rviz_common/interaction/handler_manager.hpp"
 
-#include <mutex>
-#include <utility>
-
 
 namespace rviz_common
 {

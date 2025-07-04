@@ -30,12 +30,7 @@
 #include "rviz_default_plugins/ros_resource_retriever.hpp"
 
 #include <cinttypes>
-#include <memory>
 #include <stdexcept>
-#include <string>
-#include <string_view>
-#include <unordered_map>
-#include <utility>
 
 #include <rclcpp/callback_group.hpp>
 #include <rclcpp/client.hpp>

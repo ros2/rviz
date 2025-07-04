@@ -31,7 +31,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <memory>
 #include <string>
 
 #include "../../src/rviz_common/transformation/identity_frame_transformer.hpp"

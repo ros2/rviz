@@ -31,10 +31,6 @@
 
 #include "rviz_rendering/objects/grid.hpp"
 
-#include <functional>
-#include <memory>
-#include <string>
-
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 #include <OgreVector.h>

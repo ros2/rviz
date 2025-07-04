@@ -31,10 +31,6 @@
 
 #include "rviz_default_plugins/robot/robot_joint.hpp"
 
-#include <memory>
-#include <string>
-#include <vector>
-
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_default_plugins/robot/robot.hpp"

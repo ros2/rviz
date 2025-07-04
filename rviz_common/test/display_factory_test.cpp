@@ -31,7 +31,6 @@
 #include <gmock/gmock.h>
 
 #include <memory>
-#include <utility>
 
 #include <QString>  // NOLINT: cpplint cannot handle include order here
 

@@ -30,8 +30,6 @@
 
 #include <gmock/gmock.h>
 
-#include <memory>
-
 #include <QApplication>  // NOLINT cpplint cannot handle include order
 #include <QKeyEvent>  // NOLINT cpplint cannot handle include order
 

@@ -31,10 +31,6 @@
 
 #include "rviz_default_plugins/displays/grid_cells/grid_cells_display.hpp"
 
-#include <memory>
-#include <string>
-#include <vector>
-
 #include <OgreBillboardSet.h>
 #include <OgreManualObject.h>
 

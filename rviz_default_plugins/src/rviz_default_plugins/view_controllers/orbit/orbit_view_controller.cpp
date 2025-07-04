@@ -33,11 +33,7 @@
 #include "rviz_default_plugins/view_controllers/orbit/orbit_view_controller.hpp"
 
 #include <cmath>
-#include <complex>
-#include <cstdint>
 #include <ctgmath>
-#include <memory>
-#include <valarray>
 
 #include <OgreCamera.h>
 #include <OgreQuaternion.h>

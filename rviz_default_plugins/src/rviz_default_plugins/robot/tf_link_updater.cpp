@@ -31,8 +31,6 @@
 
 #include "rviz_default_plugins/robot/tf_link_updater.hpp"
 
-#include <string>
-
 #include <OgreVector.h>
 
 #include "rviz_common/frame_manager_iface.hpp"

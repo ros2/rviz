@@ -29,10 +29,6 @@
 
 #include "rviz_visual_testing_framework/page_objects/point_cloud_display_page_object.hpp"
 
-#include <memory>
-#include <iostream>
-#include <vector>
-
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTest>  // NOLINT
 

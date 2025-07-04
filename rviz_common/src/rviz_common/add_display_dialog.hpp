@@ -33,9 +33,6 @@
 #ifndef RVIZ_COMMON__ADD_DISPLAY_DIALOG_HPP_
 #define RVIZ_COMMON__ADD_DISPLAY_DIALOG_HPP_
 
-#include <memory>
-#include <string>
-
 #include <QComboBox>  // NOLINT: cpplint is unable to handle the include order here
 #include <QDialog>  // NOLINT: cpplint is unable to handle the include order here
 #include <QMultiMap>  // NOLINT: cpplint is unable to handle the include order here

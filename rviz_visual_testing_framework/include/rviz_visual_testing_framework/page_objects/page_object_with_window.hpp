@@ -30,9 +30,7 @@
 #ifndef RVIZ_VISUAL_TESTING_FRAMEWORK__PAGE_OBJECTS__PAGE_OBJECT_WITH_WINDOW_HPP_
 #define RVIZ_VISUAL_TESTING_FRAMEWORK__PAGE_OBJECTS__PAGE_OBJECT_WITH_WINDOW_HPP_
 
-#include <memory>
 #include <string>
-#include <vector>
 
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 

@@ -31,9 +31,6 @@
 
 #include "rviz_rendering/ogre_logging.hpp"
 
-#include <memory>
-#include <string>
-
 #include <OgreLogManager.h>
 #include <OgreLog.h>
 

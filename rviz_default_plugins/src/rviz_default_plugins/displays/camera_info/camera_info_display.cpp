@@ -31,11 +31,6 @@
 
 #include "rviz_default_plugins/displays/camera_info/camera_info_display.hpp"
 
-#include <memory>
-#include <sstream>
-#include <string>
-#include <vector>
-
 #include <OgreMaterialManager.h>
 #include <OgreTextureManager.h>
 #include <OgreTechnique.h>

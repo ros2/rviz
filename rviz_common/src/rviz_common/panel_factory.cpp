@@ -32,8 +32,6 @@
 
 #include "panel_factory.hpp"
 
-#include <string>
-
 #include "displays_panel.hpp"
 #include "help_panel.hpp"
 #include "selection_panel.hpp"

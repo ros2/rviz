@@ -32,7 +32,6 @@
 #ifndef RVIZ_COMMON__VIEW_MANAGER_HPP_
 #define RVIZ_COMMON__VIEW_MANAGER_HPP_
 
-#include <algorithm>
 #include <memory>
 
 #include <QList>  // NOLINT: cpplint is unable to handle the include order here

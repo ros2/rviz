@@ -29,10 +29,6 @@
 
 #include "rviz_visual_testing_framework/page_objects/page_object_with_window.hpp"
 
-#include <memory>
-#include <string>
-#include <vector>
-
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 PageObjectWithWindow::PageObjectWithWindow(int display_category, QString display_name)

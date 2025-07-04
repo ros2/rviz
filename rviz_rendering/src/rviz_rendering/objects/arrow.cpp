@@ -31,8 +31,6 @@
 
 #include "rviz_rendering/objects/arrow.hpp"
 
-#include <sstream>
-
 #include <OgreQuaternion.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
