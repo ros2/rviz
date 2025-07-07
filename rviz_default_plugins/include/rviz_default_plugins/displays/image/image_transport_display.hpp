@@ -118,7 +118,7 @@ protected:
         node.get(),
         getBaseTopicFromTopic(topic_property_->getTopicStd()),
         getTransportFromTopic(topic_property_->getTopicStd()),
-        qos_profile.get_rmw_qos_profile());
+        qos_profile);
       subscription_start_time_ = node->now();
       subscription_callback_ = subscription_->registerCallback(
         std::bind(
