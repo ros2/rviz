@@ -73,11 +73,10 @@ if(${QT_VERSION} VERSION_LESS 5.15.0)
   endfunction()
 endif()
 
+find_package(eigen3_cmake_module REQUIRED)
+find_package(Eigen3 REQUIRED)
+
 find_package(geometry_msgs REQUIRED)
-
-find_package(gz_math_vendor REQUIRED)
-find_package(gz-math REQUIRED)
-
 find_package(image_transport REQUIRED)
 find_package(interactive_markers REQUIRED)
 find_package(laser_geometry REQUIRED)
@@ -284,7 +283,7 @@ target_link_libraries(rviz_default_plugins PUBLIC
 )
 
 target_link_libraries(rviz_default_plugins PRIVATE
-  gz-math::core
+  Eigen3::Eigen
 )
 
 # Causes the visibility macros to use dllexport rather than dllimport,
