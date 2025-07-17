@@ -31,7 +31,7 @@
 #include "rviz_default_plugins/displays/depth_cloud/depth_cloud_display.hpp"
 
 #include <Ogre.h>
-#include <tf2_ros/message_filter.h>
+#include <tf2_ros/message_filter.hpp>
 
 #include <QRegularExpression>
 #include <QString>

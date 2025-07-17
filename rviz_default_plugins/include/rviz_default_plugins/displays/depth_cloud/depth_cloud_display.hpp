@@ -35,7 +35,7 @@
 #include <QObject>  // NOLINT: cpplint cannot handle the include order here
 #include <Ogre.h>
 
-#include <tf2_ros/message_filter.h>
+#include <tf2_ros/message_filter.hpp>
 
 #include <memory>
 #include <mutex>

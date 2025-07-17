@@ -39,7 +39,7 @@
 #include "rclcpp/clock.hpp"
 #include "std_msgs/msg/header.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
-#include "tf2_ros/static_transform_broadcaster.h"
+#include "tf2_ros/static_transform_broadcaster.hpp"
 #include "internal/transform_message_creator.hpp"
 
 struct StaticTransform
