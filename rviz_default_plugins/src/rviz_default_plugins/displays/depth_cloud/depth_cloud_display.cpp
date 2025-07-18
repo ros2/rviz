@@ -31,7 +31,6 @@
 #include "rviz_default_plugins/displays/depth_cloud/depth_cloud_display.hpp"
 
 #include <Ogre.h>
-#include <tf2_ros/message_filter.h>
 
 #include <QRegularExpression>
 #include <QString>
@@ -64,6 +63,7 @@
 
 #include <rviz_common/depth_cloud_mld.hpp>
 #include <sensor_msgs/msg/image.hpp>
+#include <tf2_ros/message_filter.hpp>
 
 namespace rviz_default_plugins
 {

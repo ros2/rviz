@@ -40,7 +40,7 @@
 
 #include "rclcpp/clock.hpp"
 #include "rclcpp/time.hpp"
-#include "tf2_ros/transform_listener.h"
+#include "tf2_ros/transform_listener.hpp"
 
 #include "rviz_common/bit_allocator.hpp"
 #include "rviz_common/config.hpp"

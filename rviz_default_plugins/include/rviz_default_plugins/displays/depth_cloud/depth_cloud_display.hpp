@@ -35,8 +35,6 @@
 #include <QObject>  // NOLINT: cpplint cannot handle the include order here
 #include <Ogre.h>
 
-#include <tf2_ros/message_filter.h>
-
 #include <memory>
 #include <mutex>
 #include <set>
@@ -65,6 +63,8 @@
 
 #include <sensor_msgs/msg/image.hpp>
 #include <sensor_msgs/msg/camera_info.hpp>
+
+#include <tf2_ros/message_filter.hpp>
 #endif
 
 #include "rviz_default_plugins/visibility_control.hpp"

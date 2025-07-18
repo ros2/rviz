@@ -34,7 +34,7 @@
 #include <string>
 
 #include "rclcpp/rclcpp.hpp"
-#include "tf2_ros/buffer.h"
+#include "tf2_ros/buffer.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "geometry_msgs/msg/point.hpp"
 

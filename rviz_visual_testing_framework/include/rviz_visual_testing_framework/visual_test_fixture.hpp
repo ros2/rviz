@@ -39,7 +39,7 @@
 #include "std_msgs/msg/header.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "tf2/LinearMath/Quaternion.hpp"
-#include "tf2_ros/static_transform_broadcaster.h"
+#include "tf2_ros/static_transform_broadcaster.hpp"
 
 #include "rviz_visual_testing_framework/internal/display_handler.hpp"
 #include "rviz_visual_testing_framework/internal/executor.hpp"
