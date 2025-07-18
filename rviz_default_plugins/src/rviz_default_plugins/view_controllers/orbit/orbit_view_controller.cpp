@@ -34,7 +34,6 @@
 #include <cmath>
 #include <complex>
 #include <cstdint>
-#include <ctgmath>
 #include <memory>
 #include <valarray>
 
