@@ -35,8 +35,6 @@
 #include <QObject>  // NOLINT: cpplint cannot handle the include order here
 #include <Ogre.h>
 
-#include <tf2_ros/message_filter.h>
-
 #include <memory>
 #include <mutex>
 #include <set>
@@ -65,6 +63,8 @@
 
 #include <sensor_msgs/msg/image.hpp>
 #include <sensor_msgs/msg/camera_info.hpp>
+
+#include <tf2_ros/message_filter.hpp>
 #endif
 
 #include "rviz_default_plugins/visibility_control.hpp"
@@ -165,7 +165,7 @@ protected:
 
   // RVIZ properties
   rviz_common::properties::EditableEnumProperty * reliability_policy_property_;
-  rmw_qos_profile_t qos_profile_;
+  rclcpp::QoS qos_profile_;
   rviz_common::properties::Property * topic_filter_property_;
   rviz_common::properties::IntProperty * queue_size_property_;
   rviz_common::properties::BoolProperty * use_auto_size_property_;

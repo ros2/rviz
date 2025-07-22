@@ -37,7 +37,7 @@
 
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "tf2_ros/transform_listener.h"
+#include "tf2_ros/transform_listener.hpp"
 
 #include "../frame_manager.hpp"
 

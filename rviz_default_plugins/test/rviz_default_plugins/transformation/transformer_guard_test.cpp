@@ -34,7 +34,7 @@
 
 #include <QApplication>  // NOLINT
 
-#include "tf2_ros/buffer.h"
+#include "tf2_ros/buffer.hpp"
 
 #include "rviz_common/display.hpp"
 #include "rviz_common/transformation/frame_transformer.hpp"
