@@ -342,7 +342,7 @@ void VisualizationManager::onUpdate()
     std::chrono::duration_cast<std::chrono::nanoseconds> (wall_now - last_update_wall_time_);
   const auto ros_now = clock_->now();
   const auto ros_dt = std::chrono::nanoseconds(
-      static_cast<int>(std::round(ros_now.nanoseconds() - last_update_ros_time_.nanoseconds())));
+      std::lround(ros_now.nanoseconds() - last_update_ros_time_.nanoseconds()));
   last_update_ros_time_ = ros_now;
   last_update_wall_time_ = wall_now;
 
