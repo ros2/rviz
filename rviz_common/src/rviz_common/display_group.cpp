@@ -237,7 +237,7 @@ void DisplayGroup::update(std::chrono::nanoseconds wall_dt, std::chrono::nanosec
 
 void DisplayGroup::update(float wall_dt, float ros_dt)
 {
-  this->update(std::chrono::nanoseconds(std::lround(wall_dt)), 
+  this->update(std::chrono::nanoseconds(std::lround(wall_dt)),
                std::chrono::nanoseconds(std::lround(ros_dt)));
 }
 

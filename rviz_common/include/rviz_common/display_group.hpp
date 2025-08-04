@@ -32,8 +32,6 @@
 #ifndef RVIZ_COMMON__DISPLAY_GROUP_HPP_
 #define RVIZ_COMMON__DISPLAY_GROUP_HPP_
 
-#include <chrono>
-
 #include <QString>
 
 #include "rviz_common/display.hpp"

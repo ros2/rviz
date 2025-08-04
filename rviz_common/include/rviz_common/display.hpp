@@ -32,7 +32,6 @@
 #ifndef RVIZ_COMMON__DISPLAY_HPP_
 #define RVIZ_COMMON__DISPLAY_HPP_
 
-#include <chrono>
 #include <string>
 
 #include <QIcon>  // NOLINT: cpplint is unable to handle the include order here

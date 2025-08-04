@@ -32,7 +32,6 @@
 #ifndef RVIZ_COMMON__VISUALIZATION_MANAGER_HPP_
 #define RVIZ_COMMON__VISUALIZATION_MANAGER_HPP_
 
-#include <chrono>
 #include <deque>
 #include <memory>
 

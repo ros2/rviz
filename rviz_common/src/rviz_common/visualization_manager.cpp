@@ -336,9 +336,9 @@ BitAllocator * VisualizationManager::visibilityBits()
 
 void VisualizationManager::onUpdate()
 {
-  const std::chrono::time_point<std::chrono::system_clock> wall_now = 
+  const std::chrono::time_point<std::chrono::system_clock> wall_now =
     std::chrono::system_clock::now();
-  const std::chrono::nanoseconds wall_dt = 
+  const std::chrono::nanoseconds wall_dt =
     std::chrono::duration_cast<std::chrono::nanoseconds> (wall_now - last_update_wall_time_);
   const auto ros_now = clock_->now();
   const auto ros_dt = std::chrono::nanoseconds(
