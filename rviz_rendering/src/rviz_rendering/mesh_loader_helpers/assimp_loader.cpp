@@ -375,6 +375,7 @@ void AssimpLoader::setLightColorsFromAssimp(
 void AssimpLoader::loadEmbeddedTexture(
   const aiTexture * texture, const std::string & resource_path)
 {
+  // Check for an already existing texture before proceeding to load it
   if (!Ogre::TextureManager::getSingleton().resourceExists(resource_path, ROS_PACKAGE_NAME)) {
     if (texture == nullptr) {
       RVIZ_RENDERING_LOG_ERROR_STREAM("null texture!");
