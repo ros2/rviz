@@ -77,7 +77,10 @@ void InitialPoseTool::onInitialize()
 {
   PoseTool::onInitialize();
   qos_profile_property_->initialize(
-    [this](rclcpp::QoS profile) {this->qos_profile_ = profile;});
+    [this](rclcpp::QoS profile) {
+      this->qos_profile_ = profile;
+      updateTopic();
+    });
   setName("2D Pose Estimate");
   updateTopic();
 }
