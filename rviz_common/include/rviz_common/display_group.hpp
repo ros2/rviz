@@ -37,135 +37,138 @@
 namespace rviz_common
 {
 
-class DisplayFactory;
+  class DisplayFactory;
 
-/// A Display object which stores other Displays as children.
-/**
- * A DisplayGroup can have non-Display child properties as well as
- * Display children, but they are kept separate.
- * Non-display properties come first, and Display children come after.
- * The Property superclass stores the non-Display properties and this
- * class stores the Display objects in a separate list.
- * The separation is enforced in addChild().
- */
-class RVIZ_COMMON_PUBLIC DisplayGroup : public Display
-{
-  Q_OBJECT
-
-public:
-  DisplayGroup();
-  virtual ~DisplayGroup();
-
-  virtual Display * createDisplay(const QString & class_id);
-
-  /// Return the number of child objects (Property and Display).
+  /// A Display object which stores other Displays as children.
   /**
-   * Overridden from Property to include the number of child Displays.
+   * A DisplayGroup can have non-Display child properties as well as
+   * Display children, but they are kept separate.
+   * Non-display properties come first, and Display children come after.
+   * The Property superclass stores the non-Display properties and this
+   * class stores the Display objects in a separate list.
+   * The separation is enforced in addChild().
    */
-  int numChildren() const override;
+  class RVIZ_COMMON_PUBLIC DisplayGroup : public Display
+  {
+    Q_OBJECT
 
-  /// Return the child with the given index, without checking whether the index is within bounds.
-  /**
-   * Overridden from Property to include Display children.
-   */
-  Property * childAtUnchecked(int index) const override;
+  public:
+    DisplayGroup();
+    virtual ~DisplayGroup();
 
-  /// Take a child out of the child list, but don't destroy it.
-  /**
-   * This notifies the model about the removal.
-   *
-   * This is overridden from Property to include Display children.
-   *
-   * \return the child property at the given index, or nullptr if the index is out of bounds.
-   */
-  Property * takeChildAt(int index) override;
+    virtual Display *createDisplay(const QString &class_id);
 
-  /// Add a child Property or Display.
-  /**
-   * This notifies the model about the addition.
-   *
-   * This is overridden from Property to keep non-Display child
-   * Properties in Property's list of children and Display children in
-   * DisplayGroup's list of child Displays.
-   *
-   * \param child The child to add.
-   * \param index [optional] The index at which to add the child.  If
-   *   less than 0 or greater than the number of child properties, the
-   *   child will be added at the end.
-   */
-  void addChild(Property * child, int index = -1) override;
+    /// Return the number of child objects (Property and Display).
+    /**
+     * Overridden from Property to include the number of child Displays.
+     */
+    int numChildren() const override;
 
-  /// Return item flags appropriate for the given column (0 or 1) for this DisplayGroup.
-  Qt::ItemFlags getViewFlags(int column) const override;
+    /// Return the child with the given index, without checking whether the index is within bounds.
+    /**
+     * Overridden from Property to include Display children.
+     */
+    Property *childAtUnchecked(int index) const override;
 
-  /// Load subproperties and the list of displays in this group from the given Config node.
-  /**
-   * The given Config node must be a map.
-   */
-  void load(const Config & config) override;
+    /// Take a child out of the child list, but don't destroy it.
+    /**
+     * This notifies the model about the removal.
+     *
+     * This is overridden from Property to include Display children.
+     *
+     * \return the child property at the given index, or nullptr if the index is out of bounds.
+     */
+    Property *takeChildAt(int index) override;
 
-  /// Save subproperties and the list of displays in this group to the given Config node.
-  void save(Config config) const override;
+    /// Add a child Property or Display.
+    /**
+     * This notifies the model about the addition.
+     *
+     * This is overridden from Property to keep non-Display child
+     * Properties in Property's list of children and Display children in
+     * DisplayGroup's list of child Displays.
+     *
+     * \param child The child to add.
+     * \param index [optional] The index at which to add the child.  If
+     *   less than 0 or greater than the number of child properties, the
+     *   child will be added at the end.
+     */
+    void addChild(Property *child, int index = -1) override;
 
-  /// Add a child Display to the end of the list of Displays.
-  /**
-   * This also tells the model that we are adding a child, so it can
-   * update widgets.
-   *
-   * This does not remove child from its parent.
-   * That must be done first to avoid problems.
-   */
-  virtual void addDisplay(Display * child);
+    /// Return item flags appropriate for the given column (0 or 1) for this DisplayGroup.
+    Qt::ItemFlags getViewFlags(int column) const override;
 
-  /// Remove a child Display from the the list of Displays, but don't destroy it.
-  /**
-   * This also tells the model that we are removing a child, so it can
-   * update widgets.
-   *
-   * \return child if it is found, or nullptr if child is not found.
-   */
-  virtual Display * takeDisplay(Display * child);
+    /// Load subproperties and the list of displays in this group from the given Config node.
+    /**
+     * The given Config node must be a map.
+     */
+    void load(const Config &config) override;
 
-  /// Remove and destroy all child Displays, but preserve any non-Display children.
-  virtual void removeAllDisplays();
+    /// Save subproperties and the list of displays in this group to the given Config node.
+    void save(Config config) const override;
 
-  /// Return the number of child Displays.
-  virtual int numDisplays() const;
+    /// Add a child Display to the end of the list of Displays.
+    /**
+     * This also tells the model that we are adding a child, so it can
+     * update widgets.
+     *
+     * This does not remove child from its parent.
+     * That must be done first to avoid problems.
+     */
+    virtual void addDisplay(Display *child);
 
-  /// Return the index-th Display in this group, or nullptr if the index is invalid.
-  virtual Display * getDisplayAt(int index) const;
+    /// Remove a child Display from the the list of Displays, but don't destroy it.
+    /**
+     * This also tells the model that we are removing a child, so it can
+     * update widgets.
+     *
+     * \return child if it is found, or nullptr if child is not found.
+     */
+    virtual Display *takeDisplay(Display *child);
 
-  /// Find the index-th child Display in this group.
-  /**
-   * If the child is itself a DisplayGroup, return the pointer to it.
-   * If it is not, return nullptr.
-   */
-  virtual DisplayGroup * getGroupAt(int index) const;
+    /// Remove and destroy all child Displays, but preserve any non-Display children.
+    virtual void removeAllDisplays();
 
-  /// Call update() on all child Displays.
-  void update(float wall_dt, float ros_dt) override;
+    /// Return the number of child Displays.
+    virtual int numDisplays() const;
 
-  /// Reset this and all child Displays.
-  void reset() override;
+    /// Return the index-th Display in this group, or nullptr if the index is invalid.
+    virtual Display *getDisplayAt(int index) const;
 
-public Q_SLOTS:
-  void onEnableChanged() override;
+    /// Find the index-th child Display in this group.
+    /**
+     * If the child is itself a DisplayGroup, return the pointer to it.
+     * If it is not, return nullptr.
+     */
+    virtual DisplayGroup *getGroupAt(int index) const;
 
-protected:
-  /// Update the fixed frame in all contained displays.
-  void fixedFrameChanged() override;
+    /// Call update() on all child Displays.
+    void update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt) override;
 
-  /// Add a child Display to the end of the list of Displays, but without telling the model.
-  virtual void addDisplayWithoutSignallingModel(Display * child);
+    /// Call update() on all child Displays.
+    void update(float wall_dt, float ros_dt) override;
 
-Q_SIGNALS:
-  void displayAdded(Display * display);
-  void displayRemoved(Display * display);
+    /// Reset this and all child Displays.
+    void reset() override;
 
-private:
-  QList<Display *> displays_;
-};
+  public Q_SLOTS:
+    void onEnableChanged() override;
 
-}  // namespace rviz_common
+  protected:
+    /// Update the fixed frame in all contained displays.
+    void fixedFrameChanged() override;
 
-#endif  // RVIZ_COMMON__DISPLAY_GROUP_HPP_
+    /// Add a child Display to the end of the list of Displays, but without telling the model.
+    virtual void addDisplayWithoutSignallingModel(Display *child);
+
+  Q_SIGNALS:
+    void displayAdded(Display *display);
+    void displayRemoved(Display *display);
+
+  private:
+    QList<Display *> displays_;
+  };
+
+} // namespace rviz_common
+
+#endif // RVIZ_COMMON__DISPLAY_GROUP_HPP_
