@@ -79,6 +79,11 @@ bool Tool::accessAllKeys() const
   return access_all_keys_;
 }
 
+void Tool::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt)
+{
+  update(wall_dt.count(), ros_dt.count());
+}
+
 void Tool::update(float wall_dt, float ros_dt)
 {
   (void) wall_dt;

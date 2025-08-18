@@ -183,6 +183,11 @@ void Display::setTopic(const QString & topic, const QString & datatype)
   (void) datatype;
 }
 
+void Display::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt)
+{
+  update(wall_dt.count(), ros_dt.count());
+}
+
 void Display::update(float wall_dt, float ros_dt)
 {
   (void) wall_dt;
