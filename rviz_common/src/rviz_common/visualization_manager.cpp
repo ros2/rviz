@@ -140,8 +140,8 @@ VisualizationManager::VisualizationManager(
   render_panel_(render_panel),
   wall_clock_elapsed_(0),
   ros_time_elapsed_(0),
-  time_update_timer_(0.0f),
-  frame_update_timer_(0.0f),
+  time_update_timer_(0),
+  frame_update_timer_(0),
   render_requested_(1),
   frame_count_(0),
   window_manager_(wm),
@@ -336,15 +336,17 @@ BitAllocator * VisualizationManager::visibilityBits()
 
 void VisualizationManager::onUpdate()
 {
-  const auto wall_now = std::chrono::system_clock::now();
-  const auto wall_diff = wall_now - last_update_wall_time_;
-  const uint64_t wall_dt = std::chrono::duration_cast<std::chrono::nanoseconds>(wall_diff).count();
+  const std::chrono::time_point<std::chrono::system_clock> wall_now =
+    std::chrono::system_clock::now();
+  const std::chrono::nanoseconds wall_dt =
+    std::chrono::duration_cast<std::chrono::nanoseconds>(wall_now - last_update_wall_time_);
   const auto ros_now = clock_->now();
-  const uint64_t ros_dt = ros_now.nanoseconds() - last_update_ros_time_.nanoseconds();
+  const auto ros_dt = std::chrono::nanoseconds(
+      std::lround(ros_now.nanoseconds() - last_update_ros_time_.nanoseconds()));
   last_update_ros_time_ = ros_now;
   last_update_wall_time_ = wall_now;
 
-  if (ros_dt < 0.0) {
+  if (ros_dt < std::chrono::nanoseconds(0)) {
     resetTime();
   }
 
@@ -362,15 +364,15 @@ void VisualizationManager::onUpdate()
 
   time_update_timer_ += wall_dt;
 
-  if (time_update_timer_ > 0.1f) {
-    time_update_timer_ = 0.0f;
+  if (time_update_timer_ > std::chrono::nanoseconds(0)) {
+    time_update_timer_ = std::chrono::nanoseconds(0);
     updateTime();
   }
 
   frame_update_timer_ += wall_dt;
 
-  if (frame_update_timer_ > 1.0f) {
-    frame_update_timer_ = 0.0f;
+  if (frame_update_timer_ > std::chrono::nanoseconds(1)) {
+    frame_update_timer_ = std::chrono::nanoseconds(0);
     updateFrames();
   }
 
@@ -390,7 +392,7 @@ void VisualizationManager::onUpdate()
   }
 
   frame_count_++;
-  if (render_requested_ || wall_diff > std::chrono::milliseconds(10)) {
+  if (render_requested_ || wall_dt > std::chrono::milliseconds(10)) {
     render_requested_ = 0;
     std::lock_guard<std::mutex> lock(private_->render_mutex_);
     ogre_root_->renderOneFrame();

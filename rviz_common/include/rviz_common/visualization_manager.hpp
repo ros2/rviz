@@ -32,7 +32,6 @@
 #ifndef RVIZ_COMMON__VISUALIZATION_MANAGER_HPP_
 #define RVIZ_COMMON__VISUALIZATION_MANAGER_HPP_
 
-#include <chrono>
 #include <deque>
 #include <memory>
 
@@ -372,8 +371,8 @@ protected:
 
   rviz_common::properties::ColorProperty * background_color_property_;
 
-  float time_update_timer_;
-  float frame_update_timer_;
+  std::chrono::nanoseconds time_update_timer_;
+  std::chrono::nanoseconds frame_update_timer_;
 
   std::shared_ptr<rviz_common::interaction::HandlerManagerIface> handler_manager_;
   std::shared_ptr<rviz_common::interaction::SelectionManagerIface> selection_manager_;
