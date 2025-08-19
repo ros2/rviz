@@ -133,7 +133,6 @@ public:
   /**
    * Override with code that needs to run repeatedly.
    */
-  [[deprecated("Use update(std::chrono::nanoseconds, std::chrono::nanoseconds)")]]
   virtual void update(float dt, float ros_dt);
 
   /// Called when mouse events are fired.

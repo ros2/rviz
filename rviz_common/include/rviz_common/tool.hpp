@@ -113,7 +113,6 @@ public:
    * \param wall_dt Wall-clock time, in nanoseconds, since the last time the update list was run through.
    * \param ros_dt ROS time, in nanoseconds, since the last time the update list was run through.
    */
-  [[deprecated("Use update(std::chrono::nanoseconds, std::chrono::nanoseconds)")]]
   virtual void update(float wall_dt, float ros_dt);
 
   enum
