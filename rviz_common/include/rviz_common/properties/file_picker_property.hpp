@@ -31,12 +31,11 @@
 #ifndef RVIZ_COMMON__PROPERTIES__FILE_PICKER_PROPERTY_HPP_
 #define RVIZ_COMMON__PROPERTIES__FILE_PICKER_PROPERTY_HPP_
 
+#include <QFileDialog>
 #include <QString>
 
 #include "rviz_common/properties/string_property.hpp"
 #include "rviz_common/visibility_control.hpp"
-
-#include <QFileDialog>
 
 namespace rviz_common
 {
