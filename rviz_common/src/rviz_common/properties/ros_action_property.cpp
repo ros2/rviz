@@ -28,10 +28,15 @@
  */
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include <QApplication>  // NOLINT: cpplint can't handle Qt imports
+#include <QObject>  // NOLINT: cpplint can't handle Qt imports
+#include <QRegExp>  // NOLINT: cpplint can't handle Qt imports
+#include <QString>  // NOLINT: cpplint can't handle Qt imports
+#include <QStringList>  // NOLINT: cpplint can't handle Qt imports
 
 #include "rviz_common/properties/ros_action_property.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"

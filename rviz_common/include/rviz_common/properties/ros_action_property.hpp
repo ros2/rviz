@@ -29,6 +29,11 @@
 #ifndef RVIZ_COMMON__PROPERTIES__ROS_ACTION_PROPERTY_HPP_
 #define RVIZ_COMMON__PROPERTIES__ROS_ACTION_PROPERTY_HPP_
 
+#include <QObject>
+#include <QRegExp>
+#include <QString>
+
+#include <memory>
 #include <string>
 
 #include "rviz_common/properties/editable_enum_property.hpp"
