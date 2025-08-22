@@ -209,6 +209,16 @@ Ogre::MeshPtr AssimpLoader::meshFromAssimpScene(const std::string & name, const 
 
   Ogre::MeshPtr mesh = Ogre::MeshManager::getSingleton().createManual(name, ROS_PACKAGE_NAME);
 
+  const std::string ext = std::filesystem::path(name).extension().string();
+  if (ext == ".gltf" || ext == ".glb" || ext == ".vrm") {
+    // Transform mesh from glTF Y-Up space to ROS Z-Up space
+    // by applying a 90 degree rotation about the X-axis,
+    // effectively going from (x, y, z) to (x, -z, y)
+    aiMatrix4x4 transform;
+    aiMatrix4x4::RotationX(static_cast<float>(AI_MATH_HALF_PI), transform);
+    scene->mRootNode->mTransformation = scene->mRootNode->mTransformation * transform;
+  }
+
   Ogre::AxisAlignedBox axis_aligned_box(Ogre::AxisAlignedBox::EXTENT_NULL);
   float radius = 0.0f;
   buildMesh(scene, scene->mRootNode, mesh, axis_aligned_box, radius, material_table);
@@ -365,29 +375,33 @@ void AssimpLoader::setLightColorsFromAssimp(
 void AssimpLoader::loadEmbeddedTexture(
   const aiTexture * texture, const std::string & resource_path)
 {
-  if (texture == nullptr) {
-    RVIZ_RENDERING_LOG_ERROR_STREAM("null texture!");
-    return;
-  }
+  // Check if the embedded texture already exists within TextureManager before proceeding to
+  // load it.
+  if (!Ogre::TextureManager::getSingleton().resourceExists(resource_path, ROS_PACKAGE_NAME)) {
+    if (texture == nullptr) {
+      RVIZ_RENDERING_LOG_ERROR_STREAM("null texture!");
+      return;
+    }
 
-  // use the format hint to try to load the image
-  std::string format_hint(
-    texture->achFormatHint,
-    strnlen(texture->achFormatHint, sizeof(texture->achFormatHint)));
+    // use the format hint to try to load the image
+    std::string format_hint(
+      texture->achFormatHint,
+      strnlen(texture->achFormatHint, sizeof(texture->achFormatHint)));
 
-  Ogre::DataStreamPtr stream(
-    new Ogre::MemoryDataStream(
-      (unsigned char *)texture->pcData, texture->mWidth));
+    Ogre::DataStreamPtr stream(
+      new Ogre::MemoryDataStream(
+        (unsigned char *)texture->pcData, texture->mWidth));
 
-  try {
-    Ogre::Image image;
-    image.load(stream, format_hint.c_str());
-    Ogre::TextureManager::getSingleton().loadImage(
-      resource_path, ROS_PACKAGE_NAME, image);
-  } catch (Ogre::Exception & e) {
-    RVIZ_RENDERING_LOG_ERROR_STREAM(
-      "Could not load texture [" << resource_path.c_str() <<
-        "] with format hint [" << format_hint << "]: " << e.what());
+    try {
+      Ogre::Image image;
+      image.load(stream, format_hint.c_str());
+      Ogre::TextureManager::getSingleton().loadImage(
+        resource_path, ROS_PACKAGE_NAME, image);
+    } catch (Ogre::Exception & e) {
+      RVIZ_RENDERING_LOG_ERROR_STREAM(
+        "Could not load texture [" << resource_path.c_str() <<
+          "] with format hint [" << format_hint << "]: " << e.what());
+    }
   }
 }
 

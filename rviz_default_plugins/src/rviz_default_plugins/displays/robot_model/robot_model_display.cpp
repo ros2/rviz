@@ -39,7 +39,7 @@
 #include <QFile>  // NOLINT cpplint cannot handle include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "tf2_ros/transform_listener.h"
+#include "tf2_ros/transform_listener.hpp"
 
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/properties/enum_property.hpp"

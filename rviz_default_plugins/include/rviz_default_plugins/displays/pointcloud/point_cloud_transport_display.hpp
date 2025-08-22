@@ -112,10 +112,10 @@ protected:
     try {
       subscription_ = std::make_shared<point_cloud_transport::SubscriberFilter>();
       subscription_->subscribe(
-        rviz_ros_node_.lock()->get_raw_node(),
+        *rviz_ros_node_.lock()->get_raw_node(),
         getPointCloud2BaseTopicFromTopic(topic_property_->getTopicStd()),
         getPointCloud2TransportFromTopic(topic_property_->getTopicStd()),
-        qos_profile.get_rmw_qos_profile());
+        qos_profile);
       subscription_start_time_ = rviz_ros_node_.lock()->get_raw_node()->now();
       subscription_callback_ = subscription_->registerCallback(
         std::bind(

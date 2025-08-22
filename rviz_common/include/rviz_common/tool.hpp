@@ -102,6 +102,18 @@ public:
   virtual void deactivate() = 0;
 
   /// Called periodically, typically at 30Hz.
+  /**
+   * \param wall_dt Wall-clock time since the last time the update list was run through.
+   * \param ros_dt ROS time since the last time the update list was run through.
+   */
+  virtual void update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt);
+
+  /// Called periodically, typically at 30Hz.
+  /**
+   * \param wall_dt Wall-clock time, in nanoseconds, since the last time the update list was run through.
+   * \param ros_dt ROS time, in nanoseconds, since the last time the update list was run through.
+   */
+  [[deprecated("Use update(std::chrono::nanoseconds, std::chrono::nanoseconds)")]]
   virtual void update(float wall_dt, float ros_dt);
 
   enum

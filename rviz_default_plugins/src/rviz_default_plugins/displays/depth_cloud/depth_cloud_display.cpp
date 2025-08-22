@@ -31,7 +31,6 @@
 #include "rviz_default_plugins/displays/depth_cloud/depth_cloud_display.hpp"
 
 #include <Ogre.h>
-#include <tf2_ros/message_filter.h>
 
 #include <QRegularExpression>
 #include <QString>
@@ -64,6 +63,7 @@
 
 #include <rviz_common/depth_cloud_mld.hpp>
 #include <sensor_msgs/msg/image.hpp>
+#include <tf2_ros/message_filter.hpp>
 
 namespace rviz_default_plugins
 {
@@ -76,6 +76,7 @@ DepthCloudDisplay::DepthCloudDisplay()
   , depthmap_tf_filter_(nullptr)
   , rgb_sub_()
   , cam_info_sub_()
+  , qos_profile_(rclcpp::SensorDataQoS())
   , queue_size_(5)
   , angular_thres_(0.5f)
   , trans_thres_(0.01f)
@@ -94,8 +95,6 @@ DepthCloudDisplay::DepthCloudDisplay()
   reliability_policy_property_->addOption("System Default");
   reliability_policy_property_->addOption("Reliable");
   reliability_policy_property_->addOption("Best effort");
-
-  qos_profile_ = rmw_qos_profile_sensor_data;
 
   topic_filter_property_ =
     new rviz_common::properties::Property(
@@ -178,18 +177,18 @@ DepthCloudDisplay::DepthCloudDisplay()
 void DepthCloudDisplay::updateQosProfile()
 {
   updateQueueSize();
-  qos_profile_ = rmw_qos_profile_default;
-  qos_profile_.depth = queue_size_;
+  qos_profile_ = rclcpp::SystemDefaultsQoS();
+  qos_profile_.keep_last(queue_size_);
 
   auto policy = reliability_policy_property_->getString().toStdString();
 
   if (policy == "Best effort") {
-    qos_profile_.reliability = RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT;
+    qos_profile_.best_effort();
 
   } else if (policy == "Reliable") {
-    qos_profile_.reliability = RMW_QOS_POLICY_RELIABILITY_RELIABLE;
+    qos_profile_.reliable();
   } else {
-    qos_profile_.reliability = RMW_QOS_POLICY_RELIABILITY_SYSTEM_DEFAULT;
+    qos_profile_.reliability_best_available();
   }
 
   updateTopic();
@@ -205,9 +204,9 @@ void DepthCloudDisplay::onInitialize()
   auto rviz_ros_node_ = context_->getRosNodeAbstraction().lock();
 
   depthmap_it_ = std::make_unique<image_transport::ImageTransport>(
-    rviz_ros_node_->get_raw_node());
+    *rviz_ros_node_->get_raw_node());
   rgb_it_ = std::make_unique<image_transport::ImageTransport>(
-    rviz_ros_node_->get_raw_node());
+    *rviz_ros_node_->get_raw_node());
 
   // Instantiate PointCloudCommon class for displaying point clouds
   pointcloud_common_ = std::make_unique<PointCloudCommon>(this);
@@ -258,7 +257,7 @@ void DepthCloudDisplay::updateQueueSize()
     depthmap_tf_filter_->setQueueSize(static_cast<uint32_t>(queue_size_property_->getInt()));
   }
   queue_size_ = queue_size_property_->getInt();
-  qos_profile_.depth = queue_size_;
+  qos_profile_.keep_last(queue_size_);
 }
 
 void DepthCloudDisplay::updateUseAutoSize()
@@ -343,7 +342,7 @@ void DepthCloudDisplay::subscribe()
     if (!depthmap_topic.empty() && !depthmap_transport.empty()) {
       // subscribe to depth map topic
       depthmap_sub_->subscribe(
-        rviz_ros_node_->get_raw_node().get(),
+        *rviz_ros_node_->get_raw_node(),
         depthmap_topic,
         depthmap_transport,
         qos_profile_);
@@ -387,7 +386,7 @@ void DepthCloudDisplay::subscribe()
       if (!color_topic.empty() && !color_transport.empty()) {
         // subscribe to color image topic
         rgb_sub_->subscribe(
-          rviz_ros_node_->get_raw_node().get(),
+          *rviz_ros_node_->get_raw_node(),
           color_topic, color_transport, qos_profile_);
 
         // connect message filters to synchronizer

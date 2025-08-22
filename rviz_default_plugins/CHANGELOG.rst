@@ -2,6 +2,41 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.7 (2025-07-25)
+-------------------
+* Replace rmw_qos_profile_t with rclcpp::QoS (`#1525 <https://github.com/ros2/rviz/issues/1525>`_)
+* Replace deprecated tf2_ros headers (`#1529 <https://github.com/ros2/rviz/issues/1529>`_)
+* fix deprecated include (`#1530 <https://github.com/ros2/rviz/issues/1530>`_)
+* point_cloud_transport update API call (`#1526 <https://github.com/ros2/rviz/issues/1526>`_)
+* Contributors: Alejandro Hernández Cordero, mosfet80
+
+15.1.6 (2025-07-01)
+-------------------
+* Better handling of missing transport plugins (`#1488 <https://github.com/ros2/rviz/issues/1488>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.5 (2025-06-27)
+-------------------
+* Fixed deprecation warning on point_cloud_transport: rmw_qos_profile_t (`#1491 <https://github.com/ros2/rviz/issues/1491>`_)
+* Add symbol visibility macros to make*Palette public functions (`#1492 <https://github.com/ros2/rviz/issues/1492>`_)
+* Contributors: Alejandro Hernández Cordero, Silvio Traversaro
+
+15.1.4 (2025-06-20)
+-------------------
+* Fix /rviz/get_resource (`#1487 <https://github.com/ros2/rviz/issues/1487>`_)
+* Removed point_cloud_transport deprecation (`#1474 <https://github.com/ros2/rviz/issues/1474>`_)
+* Frame view controller: Removed warnings (`#1470 <https://github.com/ros2/rviz/issues/1470>`_)
+* Fix compile with qt6 (`#1475 <https://github.com/ros2/rviz/issues/1475>`_)
+* Fix Issue with Quaternion Angular Distance (`#1473 <https://github.com/ros2/rviz/issues/1473>`_)
+* PointStampedDisplay: Ignore incoming messages if disabled (`#1036 <https://github.com/ros2/rviz/issues/1036>`_)
+* Contributors: Alejandro Hernández Cordero, Harrison Chen, mosfet80
+
+15.1.3 (2025-05-20)
+-------------------
+* Removed unused headers from resouce retriever (`#1463 <https://github.com/ros2/rviz/issues/1463>`_)
+* feat: support both qt5 and qt6 (`#1187 <https://github.com/ros2/rviz/issues/1187>`_)
+* Contributors: Alejandro Hernández Cordero, Daisuke Nishimatsu
+
 15.1.2 (2025-05-14)
 -------------------
 * [rviz_default_plugins] Add missing export dependencies (`#1461 <https://github.com/ros2/rviz/issues/1461>`_)

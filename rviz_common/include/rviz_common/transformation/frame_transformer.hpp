@@ -38,7 +38,7 @@
 
 #include "tf2/buffer_core_interface.hpp"
 #include "tf2/exceptions.hpp"
-#include "tf2_ros/async_buffer_interface.h"
+#include "tf2_ros/async_buffer_interface.hpp"
 
 #include <QString>  // NOLINT
 

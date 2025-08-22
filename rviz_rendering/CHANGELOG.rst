@@ -2,6 +2,29 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.7 (2025-07-25)
+-------------------
+
+15.1.6 (2025-07-01)
+-------------------
+
+15.1.5 (2025-06-27)
+-------------------
+* Assign the geometry to the resource group "rviz_rendering" (`#1502 <https://github.com/ros2/rviz/issues/1502>`_)
+* Removed windows warning (`#1486 <https://github.com/ros2/rviz/issues/1486>`_)
+* Contributors: Alejandro Hernández Cordero, matthias88
+
+15.1.4 (2025-06-20)
+-------------------
+* Handle glTF Y-Up frame convention on mesh load (`#1482 <https://github.com/ros2/rviz/issues/1482>`_)
+* Contributors: Michel Hidalgo
+
+15.1.3 (2025-05-20)
+-------------------
+* Removed unused headers from resouce retriever (`#1463 <https://github.com/ros2/rviz/issues/1463>`_)
+* feat: support both qt5 and qt6 (`#1187 <https://github.com/ros2/rviz/issues/1187>`_)
+* Contributors: Alejandro Hernández Cordero, Daisuke Nishimatsu
+
 15.1.2 (2025-05-14)
 -------------------
 
