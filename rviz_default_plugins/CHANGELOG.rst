@@ -2,6 +2,12 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.8 (2025-08-22)
+-------------------
+* Support image transport lifecycle (`#1472 <https://github.com/ros2/rviz//issues/1472>`_)
+* Fix QoS profile loading for InitialPoseTool from rviz config files (`#1544 <https://github.com/ros2/rviz//issues/1544>`_)
+* Contributors: Alejandro Hernández Cordero, Kosuke Takeuchi
+
 15.1.7 (2025-07-25)
 -------------------
 * Replace rmw_qos_profile_t with rclcpp::QoS (`#1525 <https://github.com/ros2/rviz/issues/1525>`_)

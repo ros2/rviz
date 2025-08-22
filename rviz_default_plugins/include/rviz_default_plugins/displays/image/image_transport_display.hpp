@@ -115,7 +115,7 @@ protected:
       subscription_ = std::make_shared<image_transport::SubscriberFilter>();
       rclcpp::Node::SharedPtr node = rviz_ros_node_.lock()->get_raw_node();
       subscription_->subscribe(
-        node.get(),
+        *node,
         getBaseTopicFromTopic(topic_property_->getTopicStd()),
         getTransportFromTopic(topic_property_->getTopicStd()),
         qos_profile);
