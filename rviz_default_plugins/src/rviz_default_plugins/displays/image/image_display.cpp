@@ -137,7 +137,15 @@ void ImageDisplay::onInitialize()
     [this](Ogre::SceneNode * scene_node) {scene_node->attachObject(screen_rect_.get());});
 
   // Populate message types and transport overrides based on installed image_transport plugins
-  image_transport::ImageTransport image_transport_(rviz_ros_node_.lock()->get_raw_node());
+  std::shared_ptr<rclcpp::Node> node = rviz_ros_node_.lock()->get_raw_node();
+  image_transport::ImageTransport image_transport_(
+    image_transport::RequiredInterfaces(
+      node->get_node_base_interface(),
+      node->get_node_parameters_interface(),
+      node->get_node_logging_interface(),
+      node->get_node_timers_interface(),
+      node->get_node_topics_interface()
+  ));
   std::vector<std::string> loadable_transports = image_transport_.getLoadableTransports();
   std::vector<QString> message_types;
   // Map to message types
@@ -234,7 +242,13 @@ void ImageDisplay::subscribe()
   }
   try {
     rclcpp::Node::SharedPtr node = rviz_ros_node_.lock()->get_raw_node();
-    image_transport::ImageTransport image_transport_(node);
+    image_transport::ImageTransport image_transport_(image_transport::RequiredInterfaces(
+      node->get_node_base_interface(),
+      node->get_node_parameters_interface(),
+      node->get_node_logging_interface(),
+      node->get_node_timers_interface(),
+      node->get_node_topics_interface()
+    ));
     // Check which image_transport plugins are installed
     std::vector<std::string> transports = image_transport_.getLoadableTransports();
     std::string transports_str = "";
@@ -267,10 +281,16 @@ void ImageDisplay::subscribe()
     // automatically converted.
     subscription_ = std::make_shared<image_transport::SubscriberFilter>();
     subscription_->subscribe(
-      node.get(),
+      image_transport::RequiredInterfaces(
+        node->get_node_base_interface(),
+        node->get_node_parameters_interface(),
+        node->get_node_logging_interface(),
+        node->get_node_timers_interface(),
+        node->get_node_topics_interface()
+      ),
       getBaseTopicFromTopic(topic_property_->getTopicStd()),
       transport_hint,
-      qos_profile.get_rmw_qos_profile());
+      qos_profile);
     subscription_start_time_ = node->now();
     subscription_callback_ = subscription_->registerCallback(
       std::bind(
