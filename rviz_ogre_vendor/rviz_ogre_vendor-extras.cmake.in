@@ -138,8 +138,6 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
         pkg_check_modules(waylands IMPORTED_TARGET wayland-client wayland-egl egl)
       endif()
 
-
-
     endif()
     if(APPLE)
       list(APPEND _extra_interface_link_libraries "-framework Cocoa")

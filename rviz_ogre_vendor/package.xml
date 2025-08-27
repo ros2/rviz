@@ -2,7 +2,7 @@
 <?xml-model
   href="http://download.ros.org/schema/package_format2.xsd"
   schematypens="http://www.w3.org/2001/XMLSchema"?>
-<package format="2">
+<package format="3">
   <name>rviz_ogre_vendor</name>
   <version>15.1.9</version>
   <description>
@@ -28,7 +28,8 @@
   <build_export_depend>libglew-dev</build_export_depend>
   <exec_depend>libfreetype6</exec_depend>
 
-  <depend>libx11-dev</depend>
+  <depend condition="$XDG_SESSION_TYPE == 'x11'">libx11-dev</depend>
+  <depend condition="$XDG_SESSION_TYPE == 'wayland'">libwayland-dev</depend>
   <depend>libxaw</depend>
   <depend>libxrandr</depend>
   <depend>opengl</depend>
