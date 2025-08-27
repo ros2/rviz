@@ -63,17 +63,13 @@ public:
 
   void setActionType(const QString & action_type);
 
-  QString getActionType() const
-  {return action_type_;}
+  QString getActionType() const;
 
-  QString getAction() const
-  {return getValue().toString();}
+  QString getAction() const;
 
-  std::string getActionStd() const
-  {return getValue().toString().toStdString();}
+  std::string getActionStd() const;
 
-  bool isEmpty() const
-  {return getActionStd().empty();}
+  bool isEmpty() const;
 
 protected Q_SLOTS:
   virtual void fillActionList();

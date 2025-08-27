@@ -73,6 +73,26 @@ void RosActionProperty::setActionType(const QString & action_type)
   action_type_ = action_type;
 }
 
+QString RosActionProperty::getActionType() const
+{
+  return action_type_;
+}
+
+QString RosActionProperty::getAction() const
+{
+  return getValue().toString();
+}
+
+std::string RosActionProperty::getActionStd() const
+{
+  return getValue().toString().toStdString();
+}
+
+bool RosActionProperty::isEmpty() const
+{
+  return getActionStd().empty();
+}
+
 void RosActionProperty::fillActionList()
 {
   QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
