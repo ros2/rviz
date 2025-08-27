@@ -63,17 +63,13 @@ public:
 
   void setServiceType(const QString & service_type);
 
-  QString getServiceType() const
-  {return service_type_;}
+  QString getServiceType() const;
 
-  QString getService() const
-  {return getValue().toString();}
+  QString getService() const;
 
-  std::string getServiceStd() const
-  {return getValue().toString().toStdString();}
+  std::string getServiceStd() const;
 
-  bool isEmpty() const
-  {return getServiceStd().empty();}
+  bool isEmpty() const;
 
 protected Q_SLOTS:
   virtual void fillServiceList();

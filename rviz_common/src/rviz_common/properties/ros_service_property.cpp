@@ -73,6 +73,26 @@ void RosServiceProperty::setServiceType(const QString & service_type)
   service_type_ = service_type;
 }
 
+QString RosServiceProperty::getServiceType() const
+{
+  return service_type_;
+}
+
+QString RosServiceProperty::getService() const
+{
+  return getValue().toString();
+}
+
+std::string RosServiceProperty::getServiceStd() const
+{
+  return getValue().toString().toStdString();
+}
+
+bool RosServiceProperty::isEmpty() const
+{
+  return getServiceStd().empty();
+}
+
 void RosServiceProperty::fillServiceList()
 {
   QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
