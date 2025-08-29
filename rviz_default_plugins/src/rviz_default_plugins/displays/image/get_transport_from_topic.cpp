@@ -39,8 +39,10 @@ namespace displays
 bool isRawTransport(const std::string & topic)
 {
   std::string last_subtopic = topic.substr(topic.find_last_of('/') + 1);
-  return last_subtopic != "compressed" && last_subtopic != "compressedDepth" &&
-         last_subtopic != "theora";
+  return last_subtopic != "compressed" &&
+         last_subtopic != "compressedDepth" &&
+         last_subtopic != "theora" &&
+         last_subtopic != "ffmpeg";
 }
 
 std::string getTransportFromTopic(const std::string & topic)
