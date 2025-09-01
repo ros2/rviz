@@ -2,6 +2,9 @@
 Changelog for package rviz_resource_interfaces
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.8 (2025-08-22)
+-------------------
+
 15.1.7 (2025-07-25)
 -------------------
 * fix cmake deprecation (`#1534 <https://github.com/ros2/rviz/issues/1534>`_)
