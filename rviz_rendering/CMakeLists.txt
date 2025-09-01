@@ -31,7 +31,7 @@ find_package(ament_cmake_ros REQUIRED)
 
 # do find_package(rviz_ogre_vendor) first to make sure the custom OGRE is found
 find_package(rviz_ogre_vendor REQUIRED)
-find_package(rviz_assimp_vendor REQUIRED)
+find_package(assimp REQUIRED)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
