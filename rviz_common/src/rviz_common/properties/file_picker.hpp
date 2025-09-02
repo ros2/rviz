@@ -32,6 +32,7 @@
 #define RVIZ_COMMON__PROPERTIES__FILE_PICKER_HPP_
 
 #include <QFileDialog>
+#include <QWidget>
 
 #include "rviz_common/properties/line_edit_with_button.hpp"
 #include "rviz_common/properties/string_property.hpp"

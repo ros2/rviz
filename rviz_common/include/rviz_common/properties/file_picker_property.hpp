@@ -32,7 +32,10 @@
 #define RVIZ_COMMON__PROPERTIES__FILE_PICKER_PROPERTY_HPP_
 
 #include <QFileDialog>
+#include <QObject>
 #include <QString>
+#include <QStyleOptionViewItem>
+#include <QWidget>
 
 #include "rviz_common/properties/string_property.hpp"
 #include "rviz_common/visibility_control.hpp"

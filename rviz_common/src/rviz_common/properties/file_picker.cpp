@@ -32,6 +32,7 @@
 
 #include <QFileDialog>
 #include <QString>
+#include <QWidget>
 
 
 namespace rviz_common

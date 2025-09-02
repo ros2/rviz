@@ -30,7 +30,11 @@
 
 #include "rviz_common/properties/file_picker_property.hpp"
 
+#include <QFileDialog>
+#include <QObject>
 #include <QString>
+#include <QStyleOptionViewItem>
+#include <QWidget>
 
 #include "file_picker.hpp"
 
