@@ -51,7 +51,7 @@
   <depend>message_filters</depend>
   <depend>tinyxml2_vendor</depend>
   <depend>urdf</depend>
-  <depend>yaml_cpp_vendor</depend>
+  <depend>yaml-cpp</depend>
 
   <test_depend>ament_lint_common</test_depend>
   <test_depend>ament_cmake_gmock</test_depend>
