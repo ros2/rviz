@@ -192,7 +192,7 @@ void Display::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds 
 # pragma warning(push)
 # pragma warning(disable: 4996)
 #endif
-  update(dt.count(), ros_dt.count());
+  update(wall_dt.count(), ros_dt.count());
 // remove warning suppression
 #if !defined(_WIN32)
 # pragma GCC diagnostic pop
