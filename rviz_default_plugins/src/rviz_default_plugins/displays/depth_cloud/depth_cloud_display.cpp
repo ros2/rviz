@@ -204,9 +204,9 @@ void DepthCloudDisplay::onInitialize()
   auto rviz_ros_node_ = context_->getRosNodeAbstraction().lock();
 
   depthmap_it_ = std::make_unique<image_transport::ImageTransport>(
-    rviz_ros_node_->get_raw_node());
+    *rviz_ros_node_->get_raw_node());
   rgb_it_ = std::make_unique<image_transport::ImageTransport>(
-    rviz_ros_node_->get_raw_node());
+    *rviz_ros_node_->get_raw_node());
 
   // Instantiate PointCloudCommon class for displaying point clouds
   pointcloud_common_ = std::make_unique<PointCloudCommon>(this);
@@ -342,7 +342,7 @@ void DepthCloudDisplay::subscribe()
     if (!depthmap_topic.empty() && !depthmap_transport.empty()) {
       // subscribe to depth map topic
       depthmap_sub_->subscribe(
-        rviz_ros_node_->get_raw_node().get(),
+        *rviz_ros_node_->get_raw_node(),
         depthmap_topic,
         depthmap_transport,
         qos_profile_);
@@ -386,7 +386,7 @@ void DepthCloudDisplay::subscribe()
       if (!color_topic.empty() && !color_transport.empty()) {
         // subscribe to color image topic
         rgb_sub_->subscribe(
-          rviz_ros_node_->get_raw_node().get(),
+          *rviz_ros_node_->get_raw_node(),
           color_topic, color_transport, qos_profile_);
 
         // connect message filters to synchronizer

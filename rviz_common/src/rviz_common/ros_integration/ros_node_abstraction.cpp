@@ -62,5 +62,11 @@ RosNodeAbstraction::get_topic_names_and_types() const
   return raw_node_->get_topic_names_and_types();
 }
 
+std::map<std::string, std::vector<std::string>>
+RosNodeAbstraction::get_service_names_and_types() const
+{
+  return raw_node_->get_service_names_and_types();
+}
+
 }  // namespace ros_integration
 }  // namespace rviz_common

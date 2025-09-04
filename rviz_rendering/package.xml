@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>rviz_rendering</name>
-  <version>15.1.7</version>
+  <version>15.1.8</version>
   <description>
     Library which provides the 3D rendering functionality in rviz.
   </description>
@@ -33,7 +33,7 @@
   <build_depend>eigen</build_depend>
   <build_depend>qtbase5-dev</build_depend>
   <build_depend>resource_retriever</build_depend>
-  <build_depend>rviz_assimp_vendor</build_depend>
+  <build_depend>assimp-dev</build_depend>
   <build_depend>rviz_ogre_vendor</build_depend>
 
   <build_export_depend>eigen</build_export_depend>
@@ -46,14 +46,14 @@
   <exec_depend>libqt5-opengl</exec_depend>
   <exec_depend>libqt5-widgets</exec_depend>
   <exec_depend>resource_retriever</exec_depend>
-  <exec_depend>rviz_assimp_vendor</exec_depend>
+  <exec_depend>assimp</exec_depend>
   <exec_depend>rviz_ogre_vendor</exec_depend>
 
   <test_depend>ament_lint_common</test_depend>
   <test_depend>ament_cmake_gtest</test_depend>
   <test_depend>ament_cmake_gmock</test_depend>
   <test_depend>ament_lint_auto</test_depend>
-  <test_depend>rviz_assimp_vendor</test_depend>
+  <test_depend>assimp</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

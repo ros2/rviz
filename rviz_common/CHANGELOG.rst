@@ -2,6 +2,11 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.8 (2025-08-22)
+-------------------
+* Deprecates update(float, float) methods and provides update(std::chrono::duration, std::chrono::duration) replacements. (`#1533 <https://github.com/ros2/rviz//issues/1533>`_)
+* Contributors: Mark Johnson
+
 15.1.7 (2025-07-25)
 -------------------
 * Replace deprecated tf2_ros headers (`#1529 <https://github.com/ros2/rviz/issues/1529>`_)
