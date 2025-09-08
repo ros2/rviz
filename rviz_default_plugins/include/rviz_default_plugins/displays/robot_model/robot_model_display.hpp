@@ -134,7 +134,7 @@ protected:
   bool has_new_transforms_;      ///< Callback sets this to tell our update function
   ///< it needs to update the transforms
 
-  float time_since_last_transform_;
+  std::chrono::nanoseconds time_since_last_transform_;
 
   std::string robot_description_;
 
