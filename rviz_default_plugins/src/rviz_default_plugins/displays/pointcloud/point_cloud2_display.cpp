@@ -171,7 +171,7 @@ bool PointCloud2Display::validateFloatsAtPosition(
          rviz_common::validateFloats(z);
 }
 
-void PointCloud2Display::update(float wall_dt, float ros_dt)
+void PointCloud2Display::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt)
 {
   point_cloud_common_->update(wall_dt, ros_dt);
 }

@@ -323,7 +323,7 @@ void RobotModelDisplay::onDisable()
   clear();
 }
 
-void RobotModelDisplay::update(float wall_dt, float ros_dt)
+void RobotModelDisplay::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt)
 {
   if (!transformer_guard_->checkTransformer()) {
     return;

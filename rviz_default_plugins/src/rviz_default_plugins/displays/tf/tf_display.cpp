@@ -280,7 +280,7 @@ void TFDisplay::allEnabledChanged()
   }
 }
 
-void TFDisplay::update(float wall_dt, float ros_dt)
+void TFDisplay::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt)
 {
   if (!transformer_guard_->checkTransformer()) {
     return;

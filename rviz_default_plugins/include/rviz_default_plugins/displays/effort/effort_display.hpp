@@ -104,7 +104,7 @@ public:
 
   void load(const rviz_common::Config & config) override;
 
-  void update(float wall_dt, float ros_dt) override;
+  void update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt) override;
 
 private Q_SLOTS:
   // Helper function to apply color and alpha to all visuals.

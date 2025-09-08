@@ -428,7 +428,7 @@ void CameraDisplay::clear()
   }
 }
 
-void CameraDisplay::update(float wall_dt, float ros_dt)
+void CameraDisplay::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt)
 {
   (void) wall_dt;
   (void) ros_dt;

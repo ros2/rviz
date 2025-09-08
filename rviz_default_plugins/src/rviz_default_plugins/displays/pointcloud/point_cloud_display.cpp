@@ -59,7 +59,7 @@ void PointCloudDisplay::processMessage(const sensor_msgs::msg::PointCloud::Const
   point_cloud_common_->addMessage(cloud);
 }
 
-void PointCloudDisplay::update(float wall_dt, float ros_dt)
+void PointCloudDisplay::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt)
 {
   point_cloud_common_->update(wall_dt, ros_dt);
 }

@@ -437,7 +437,7 @@ void DepthCloudDisplay::clear()
   }
 }
 
-void DepthCloudDisplay::update(float wall_dt, float ros_dt)
+void DepthCloudDisplay::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt)
 {
   pointcloud_common_->update(wall_dt, ros_dt);
 }

@@ -74,7 +74,7 @@ public:
 
   void reset() override;
 
-  void update(float wall_dt, float ros_dt) override;
+  void update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt) override;
 
   /**
    * Filter any NAN values out of the cloud.  Any NAN values that make it through to PointCloudBase
