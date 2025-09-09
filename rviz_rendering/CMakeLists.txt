@@ -189,9 +189,6 @@ if(BUILD_TESTING)
   )
 
   ament_add_gmock(string_helper_test test/rviz_rendering/string_helper_test.cpp)
-  if(TARGET string_helper_test)
-    target_link_libraries(string_helper_test rviz_rendering)
-  endif()
 
   ament_add_gmock(point_cloud_test_target
     test/rviz_rendering/objects/point_cloud_test.cpp
