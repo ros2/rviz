@@ -288,7 +288,7 @@ void TFDisplay::update(std::chrono::nanoseconds wall_dt, std::chrono::nanosecond
 
   (void) ros_dt;
   update_timer_ += wall_dt;
-  std::chrono::nanoseconds update_rate(std::roundl(update_rate_property_->getFloat() * 1e9));
+  std::chrono::nanoseconds update_rate = std::chrono::nanoseconds(std::roundl(update_rate_property_->getFloat() * 1e9));
   if (update_rate < std::chrono::microseconds(100) || update_timer_ > update_rate) {
     updateFrames();
 
