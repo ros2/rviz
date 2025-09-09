@@ -331,7 +331,7 @@ void RobotModelDisplay::update(std::chrono::nanoseconds wall_dt, std::chrono::na
 
   (void) ros_dt;
   time_since_last_transform_ += wall_dt;
-  std::chrono::nanoseconds rate = std::lround(update_rate_property_->getFloat() * 1e9);
+  std::chrono::nanoseconds rate(std::lround(update_rate_property_->getFloat() * 1e9));
   bool update = rate < std::chrono::microseconds(100) || time_since_last_transform_ >= rate;
 
   if (has_new_transforms_ || update) {
@@ -339,7 +339,7 @@ void RobotModelDisplay::update(std::chrono::nanoseconds wall_dt, std::chrono::na
     context_->queueRender();
 
     has_new_transforms_ = false;
-    time_since_last_transform_ = 0;
+    time_since_last_transform_ = std::chrono::nanoseconds(0);
   }
 }
 
