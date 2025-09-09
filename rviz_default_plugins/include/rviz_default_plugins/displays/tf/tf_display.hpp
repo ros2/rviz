@@ -138,7 +138,7 @@ private:
   typedef std::map<std::string, bool> M_EnabledState;
   M_EnabledState frame_config_enabled_state_;
 
-  float update_timer_;
+  std::chrono::nanoseconds update_timer_;
 
   rviz_common::properties::BoolProperty * show_names_property_;
   rviz_common::properties::BoolProperty * show_arrows_property_;
