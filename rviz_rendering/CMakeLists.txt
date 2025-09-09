@@ -219,6 +219,7 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET billboard_line_test_target)
     target_link_libraries(billboard_line_test_target
+      assimp::assimp
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
