@@ -136,7 +136,8 @@ TEST_F(OrthoViewControllerTestFixture, moving_the_wheel_zooms) {
 TEST_F(OrthoViewControllerTestFixture, update_sets_camera_to_position_indicated_by_properties) {
   dragMouse(30, 30, 10, 10, Qt::MiddleButton);
 
-  ortho_view_->update(0, 0);
+  auto zero = std::chrono::nanoseconds::zero();
+  ortho_view_->update(zero, zero);
 
   auto camera_parent = ortho_view_->getCamera()->getParentSceneNode();
   EXPECT_THAT(camera_parent->getPosition(), Vector3Eq(Ogre::Vector3(-2, 2, 500)));
@@ -151,7 +152,8 @@ TEST_F(
   orbit_view->move(10, 12, 1);
 
   ortho_view_->mimic(orbit_view.get());
-  ortho_view_->update(0, 0);
+  auto zero = std::chrono::nanoseconds::zero();
+  ortho_view_->update(zero, zero);
 
   auto x_property = ortho_view_->childAt(6);
   EXPECT_THAT(x_property->getNameStd(), StrEq("X"));
