@@ -139,7 +139,7 @@ void TFWrapper::initialize(
       *buffer_, true);
   } else {
     tf_listener_ = std::make_shared<tf2_ros::TransformListener>(
-      *buffer_, rviz_ros_node.lock()->get_raw_node(), false);
+      *buffer_, *rviz_ros_node.lock()->get_raw_node(), false);
   }
 }
 

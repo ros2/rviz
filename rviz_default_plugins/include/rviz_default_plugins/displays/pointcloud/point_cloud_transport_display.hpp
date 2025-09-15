@@ -86,7 +86,7 @@ protected:
           rviz_common::transformation::FrameTransformer>>(
               *this->context_->getFrameManager()->getTransformer(),
             this->fixed_frame_.toStdString(),
-              static_cast<uint32_t>(this->message_queue_property_->getInt()), node);
+              static_cast<uint32_t>(this->message_queue_property_->getInt()), *node);
       this->tf_filter_->connectInput(*subscriber_filter_);
       this->tf_filter_->registerCallback(
           std::bind(&PointCloud2TransportDisplay<MessageType>::messageTaken, this,

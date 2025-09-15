@@ -353,7 +353,7 @@ void DepthCloudDisplay::subscribe()
         *context_->getFrameManager()->getTransformer(),
         fixed_frame_.toStdString(),
         queue_size_,
-        rviz_ros_node_->get_raw_node());
+        *rviz_ros_node_->get_raw_node());
 
       depthmap_tf_filter_->connectInput(*depthmap_sub_);
 
