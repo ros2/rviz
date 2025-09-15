@@ -325,7 +325,7 @@ void CameraDisplay::subscribe()
     tf2_ros::MessageFilter<sensor_msgs::msg::Image,
     rviz_common::transformation::FrameTransformer>>(
     *context_->getFrameManager()->getTransformer(),
-    fixed_frame_.toStdString(), 10, rviz_ros_node_.lock()->get_raw_node());
+    fixed_frame_.toStdString(), 10, *rviz_ros_node_.lock()->get_raw_node());
 
   tf_filter_->connectInput(*subscription_);
   tf_filter_->registerCallback(
