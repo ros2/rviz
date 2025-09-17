@@ -167,8 +167,7 @@ void TFWrapper::initializeBuffer(
   }
   std::chrono::milliseconds cache_time{cache_time_ms};
   buffer_ = std::make_shared<tf2_ros::Buffer>(clock, cache_time);
-  auto timer_interface = std::make_shared<tf2_ros::CreateTimerROS>(
-    node->get_node_base_interface(), node->get_node_timers_interface());
+  auto timer_interface = std::make_shared<tf2_ros::CreateTimerROS>(*node);
   buffer_->setCreateTimerInterface(timer_interface);
   buffer_->setUsingDedicatedThread(using_dedicated_thread);
 }
