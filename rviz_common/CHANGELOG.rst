@@ -2,6 +2,11 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.22 (2025-09-26)
+--------------------
+* fix crash(segmentation fault) in propertyHiddenChanged (backport `#1587 <https://github.com/ros2/rviz/issues/1587>`_) (`#1590 <https://github.com/ros2/rviz/issues/1590>`_)
+* Contributors: mergify[bot]
+
 11.2.21 (2025-09-17)
 --------------------
 * add ros action property (`#1549 <https://github.com/ros2/rviz/issues/1549>`_) (`#1578 <https://github.com/ros2/rviz/issues/1578>`_)
