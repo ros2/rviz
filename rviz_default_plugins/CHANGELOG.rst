@@ -2,6 +2,9 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.0.7 (2025-09-26)
+-------------------
+
 15.0.6 (2025-09-17)
 -------------------
 * Fix pointcloud2 display divide by 0 (`#1581 <https://github.com/ros2/rviz/issues/1581>`_) (`#1582 <https://github.com/ros2/rviz/issues/1582>`_)
