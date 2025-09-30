@@ -49,7 +49,7 @@
   <depend>tf2</depend>
   <depend>tf2_ros</depend>
   <depend>message_filters</depend>
-  <depend>tinyxml2_vendor</depend>
+  <depend>tinyxml2</depend>
   <depend>urdf</depend>
   <depend>yaml_cpp_vendor</depend>
 
