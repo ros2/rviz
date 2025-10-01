@@ -34,7 +34,7 @@
 
 #include <QApplication>  // NOLINT: cpplint can't handle Qt imports
 #include <QObject>  // NOLINT: cpplint can't handle Qt imports
-#include <QRegExp>  // NOLINT: cpplint can't handle Qt imports
+#include <QRegularExpression>  // NOLINT: cpplint can't handle Qt imports
 #include <QString>  // NOLINT: cpplint can't handle Qt imports
 #include <QStringList>  // NOLINT: cpplint can't handle Qt imports
 
@@ -119,7 +119,7 @@ RosFilteredServiceProperty::RosFilteredServiceProperty(
   const QString & default_value,
   const QString & service_type,
   const QString & description,
-  const QRegExp & filter,
+  const QRegularExpression & filter,
   Property * parent,
   const char * changed_slot,
   QObject * receiver)
@@ -135,7 +135,7 @@ void RosFilteredServiceProperty::enableFilter(bool enabled)
   fillServiceList();
 }
 
-QRegExp RosFilteredServiceProperty::filter() const
+QRegularExpression RosFilteredServiceProperty::filter() const
 {
   return filter_;
 }
