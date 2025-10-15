@@ -211,8 +211,6 @@ VisualizationManager::VisualizationManager(
   visibility_property_->setIcon(
     rviz_common::loadPixmap("package://rviz_default_plugins/icons/visibility.svg", true));
 
-  QTimer::singleShot(500, this, &VisualizationManager::updateVisibilityMask);
-
   root_display_group_->initialize(this);   // only initialize() a Display
                                            // after its sub-properties are created.
   root_display_group_->setEnabled(true);
@@ -367,6 +365,8 @@ void VisualizationManager::onUpdate()
   executor_->spin_some(std::chrono::milliseconds(10));
 
   Q_EMIT preUpdate();
+
+  updateVisibilityMask();
 
   frame_manager_->update();
 
