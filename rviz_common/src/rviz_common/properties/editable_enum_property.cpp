@@ -80,8 +80,10 @@ QWidget * EditableEnumProperty::createEditor(QWidget * parent, const QStyleOptio
   cb->addItems(strings_);
   cb->setEditText(getValue().toString() );
   QObject::connect(
-    cb, SIGNAL(currentIndexChanged(const QString&)), this,
-    SLOT(setString(const QString&)));
+    cb, &QComboBox::currentIndexChanged, this,
+    [this, cb](int index) {
+      this->setString(cb->itemText(index));
+  });
 
   // TODO(unknown): need to better handle string value which is not in list.
   return cb;
