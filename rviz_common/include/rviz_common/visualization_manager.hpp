@@ -295,7 +295,7 @@ public:
   rclcpp::Clock::SharedPtr getClock() override;
 
   int addRenderPanel(RenderPanel* rp);
-  void updateRenderMask(int id, bool mask);
+  void updateRenderMask(std::size_t id, bool mask);
 
 public Q_SLOTS:
   /// Resets the wall and ROS elapsed time to zero and calls resetDisplays().

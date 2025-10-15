@@ -200,7 +200,9 @@ VisualizationManager::VisualizationManager(
     "RViz will try to render this many frames per second.",
     global_options_, SLOT(updateFps()), this);
 
-  rviz_rendering::RenderWindowOgreAdapter::setVisibilityMask(getRenderPanel()->getRenderWindow(), default_visibility_bit_);
+  rviz_rendering::RenderWindowOgreAdapter::setVisibilityMask(
+    getRenderPanel()->getRenderWindow(),
+    default_visibility_bit_);
 
   visibility_property_ = new rviz_common::properties::DisplayGroupVisibilityProperty(
     default_visibility_bit_, getRootDisplayGroup(), nullptr, "Visibility", true,
@@ -209,13 +211,14 @@ VisualizationManager::VisualizationManager(
   visibility_property_->setIcon(
     rviz_common::loadPixmap("package://rviz_default_plugins/icons/visibility.svg", true));
 
+  QTimer::singleShot(500, this, &VisualizationManager::updateVisibilityMask);
+
   root_display_group_->initialize(this);   // only initialize() a Display
                                            // after its sub-properties are created.
   root_display_group_->setEnabled(true);
 
   updateFixedFrame();
   updateBackgroundColor();
-  updateVisibilityMask();
 
   global_status_ = new StatusList("Global Status", root_display_group_);
   global_status_->setReadOnly(true);
@@ -441,9 +444,9 @@ int VisualizationManager::addRenderPanel( RenderPanel* rp )
   return render_panel_list_.size()-1;
 }
 
-void VisualizationManager::updateRenderMask(int id, bool mask)
+void VisualizationManager::updateRenderMask(std::size_t id, bool mask)
 {
-  if(id >= 0 && id < render_panel_render_mask_.size()) {
+  if(id < render_panel_render_mask_.size()) {
     render_panel_render_mask_[id] = mask;
   }
 }
