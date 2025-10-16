@@ -42,6 +42,7 @@
 #include "rviz_common/frame_position_tracking_view_controller.hpp"
 #include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
+#include "rviz_common/properties/property.hpp"
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_rendering/objects/shape.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
@@ -68,6 +69,8 @@ class RVIZ_DEFAULT_PLUGINS_PUBLIC OrbitViewController : public
 
 public:
   OrbitViewController();
+  OrbitViewController(rviz_common::properties::Property * parent);
+
   ~OrbitViewController() override;
 
   /// Do subclass-specific initialization.

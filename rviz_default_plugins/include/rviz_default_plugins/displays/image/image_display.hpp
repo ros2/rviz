@@ -96,6 +96,8 @@ protected:
   /* This is called by incomingMessage(). */
   void processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg) override;
 
+  bool allow_visibility() const override;
+
 private:
   void setupScreenRectangle();
   void setupRenderPanel();

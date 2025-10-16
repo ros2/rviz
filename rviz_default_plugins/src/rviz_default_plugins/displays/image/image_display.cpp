@@ -157,6 +157,11 @@ void ImageDisplay::clear()
   texture_->clear();
 }
 
+bool ImageDisplay::allow_visibility() const
+{
+  return false;
+}
+
 void ImageDisplay::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt)
 {
   (void) wall_dt;

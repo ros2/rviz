@@ -61,8 +61,8 @@ ViewController::ViewController(properties::Property * parent)
 : context_(nullptr),
   camera_(nullptr),
   is_active_(false),
-  type_property_(nullptr),
-  parent_(parent)
+  parent_(parent),
+  type_property_(nullptr)
 {
   if (parent_ == nullptr)
   {

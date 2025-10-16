@@ -53,23 +53,13 @@ FramePositionTrackingViewController::FramePositionTrackingViewController(propert
   reference_position_(Ogre::Vector3::ZERO),
   camera_scene_node_(nullptr)
 {
-  if (parent_ == nullptr) {
-    target_frame_property_ = new rviz_common::properties::TfFrameProperty(
-      "Target Frame",
-      rviz_common::properties::TfFrameProperty::FIXED_FRAME_STRING,
-      "TF frame whose motion this view will follow.",
-      this,
-      nullptr,
-      true);
-  } else {
-    target_frame_property_ = new rviz_common::properties::TfFrameProperty(
-      "Target Frame",
-      rviz_common::properties::TfFrameProperty::FIXED_FRAME_STRING,
-      "TF frame whose motion this view will follow.",
-      parent_,
-      nullptr,
-      true);
-  }
+  target_frame_property_ = new rviz_common::properties::TfFrameProperty(
+    "Target Frame",
+    rviz_common::properties::TfFrameProperty::FIXED_FRAME_STRING,
+    "TF frame whose motion this view will follow.",
+    parent_,
+    nullptr,
+    true);
 }
 
 FramePositionTrackingViewController::FramePositionTrackingViewController()

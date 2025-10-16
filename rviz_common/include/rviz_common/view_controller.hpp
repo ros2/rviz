@@ -272,6 +272,8 @@ protected:
 
   bool is_active_;
 
+  properties::Property * parent_;
+
   // this cursor will be displayed when the mouse is within the
   // window controlled by this view controller
   // use SetCursor to modify.
@@ -286,8 +288,6 @@ protected:
 
   /// Set the status on the main render frame.
   void setStatus(const QString & message);
-
-  properties::Property * parent_;
 
 private:
   rviz_common::properties::EnumProperty * type_property_;

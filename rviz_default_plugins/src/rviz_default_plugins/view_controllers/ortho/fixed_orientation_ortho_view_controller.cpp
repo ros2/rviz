@@ -55,30 +55,18 @@ FixedOrientationOrthoViewController::FixedOrientationOrthoViewController(rviz_co
 : rviz_common::FramePositionTrackingViewController(parent),
   dragging_(false)
 {
-  if (parent_ == nullptr) {
-    scale_property_ = new rviz_common::properties::FloatProperty(
-      "Scale", 10, "How much to scale up the size of things in the scene.", this);
-    angle_property_ = new rviz_common::properties::FloatProperty(
-      "Angle", 0, "Angle around the Z axis to rotate.", this);
-    x_property_ = new rviz_common::properties::FloatProperty(
-      "X", 0, "X component of camera position.", this);
-    y_property_ = new rviz_common::properties::FloatProperty(
-      "Y", 0, "Y component of camera position.", this);
-  } else {
-    scale_property_ = new rviz_common::properties::FloatProperty(
-      "Scale", 10, "How much to scale up the size of things in the scene.", parent_);
-    angle_property_ = new rviz_common::properties::FloatProperty(
-      "Angle", 0, "Angle around the Z axis to rotate.", parent_);
-    x_property_ = new rviz_common::properties::FloatProperty(
-      "X", 0, "X component of camera position.", parent_);
-    y_property_ = new rviz_common::properties::FloatProperty(
-      "Y", 0, "Y component of camera position.", parent_);
-  }
+  scale_property_ = new rviz_common::properties::FloatProperty(
+    "Scale", 10, "How much to scale up the size of things in the scene.", parent_);
+  angle_property_ = new rviz_common::properties::FloatProperty(
+    "Angle", 0, "Angle around the Z axis to rotate.", parent_);
+  x_property_ = new rviz_common::properties::FloatProperty(
+    "X", 0, "X component of camera position.", parent_);
+  y_property_ = new rviz_common::properties::FloatProperty(
+    "Y", 0, "Y component of camera position.", parent_);
 }
 FixedOrientationOrthoViewController::FixedOrientationOrthoViewController()
   : FixedOrientationOrthoViewController(nullptr)
 {
-
 }
 
 void FixedOrientationOrthoViewController::onInitialize()
@@ -204,6 +192,9 @@ void FixedOrientationOrthoViewController::onTargetFrameChanged(
 void FixedOrientationOrthoViewController::updateCamera()
 {
   orientCamera();
+
+  if (!camera_->getViewport())
+    return;
 
   float width = camera_->getViewport()->getActualWidth();
   float height = camera_->getViewport()->getActualHeight();

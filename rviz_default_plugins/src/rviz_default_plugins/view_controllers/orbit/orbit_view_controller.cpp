@@ -66,8 +66,10 @@ using rviz_common::properties::FloatProperty;
 using rviz_common::properties::VectorProperty;
 using rviz_rendering::Shape;
 
-OrbitViewController::OrbitViewController()
-: focal_shape_(nullptr), dragging_(false)
+OrbitViewController::OrbitViewController(rviz_common::properties::Property * parent)
+: rviz_common::FramePositionTrackingViewController(parent),
+  focal_shape_(nullptr),
+  dragging_(false)
 {
   distance_property_ = new FloatProperty(
     "Distance", DISTANCE_START,
@@ -96,6 +98,11 @@ OrbitViewController::OrbitViewController()
   focal_point_property_ = new VectorProperty(
     "Focal Point", Ogre::Vector3::ZERO,
     "The center point which the camera orbits.", this);
+}
+
+OrbitViewController::OrbitViewController()
+: OrbitViewController(nullptr)
+{
 }
 
 void OrbitViewController::onInitialize()
