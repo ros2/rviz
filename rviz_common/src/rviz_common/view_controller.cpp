@@ -57,16 +57,21 @@ namespace rviz_common
 using properties::BoolProperty;
 using properties::FloatProperty;
 
-ViewController::ViewController()
+ViewController::ViewController(properties::Property * parent)
 : context_(nullptr),
   camera_(nullptr),
   is_active_(false),
-  type_property_(nullptr)
+  type_property_(nullptr),
+  parent_(parent)
 {
+  if (parent_ == nullptr)
+  {
+    parent = this;
+  }
   near_clip_property_ = new FloatProperty(
     "Near Clip Distance", 0.01f,
     "Anything closer to the camera than this threshold will not get rendered.",
-    this, SLOT(updateNearClipDistance()));
+    parent, SLOT(updateNearClipDistance()), this);
   near_clip_property_->setMin(0.001f);
   near_clip_property_->setMax(10000);
 
@@ -75,7 +80,7 @@ ViewController::ViewController()
     "Render the main view in stereo if supported."
     "  On Linux this requires a recent version of Ogre and"
     " an NVIDIA Quadro card with 3DVision glasses.",
-    this, SLOT(updateStereoProperties()));
+    parent, SLOT(updateStereoProperties()), this);
   stereo_eye_swap_ = new BoolProperty(
     "Swap Stereo Eyes", false,
     "Swap eyes if the monitor shows the left eye on the right.",
@@ -91,7 +96,12 @@ ViewController::ViewController()
   invert_z_ = new BoolProperty(
     "Invert Z Axis", false,
     "Invert camera's Z axis for Z-down environments/models.",
-    this, SLOT(updateStereoProperties()));
+    parent, SLOT(updateStereoProperties()), this);
+}
+
+ViewController::ViewController()
+  : ViewController(nullptr)
+{
 }
 
 void ViewController::initialize(DisplayContext * context)

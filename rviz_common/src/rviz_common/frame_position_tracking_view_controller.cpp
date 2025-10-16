@@ -46,19 +46,36 @@
 namespace rviz_common
 {
 
-FramePositionTrackingViewController::FramePositionTrackingViewController()
-: target_scene_node_(nullptr),
+FramePositionTrackingViewController::FramePositionTrackingViewController(properties::Property * parent)
+: rviz_common::ViewController(parent),
+  target_scene_node_(nullptr),
   reference_orientation_(Ogre::Quaternion::IDENTITY),
   reference_position_(Ogre::Vector3::ZERO),
   camera_scene_node_(nullptr)
 {
-  target_frame_property_ = new rviz_common::properties::TfFrameProperty(
-    "Target Frame",
-    rviz_common::properties::TfFrameProperty::FIXED_FRAME_STRING,
-    "TF frame whose motion this view will follow.",
-    this,
-    nullptr,
-    true);
+  if (parent_ == nullptr) {
+    target_frame_property_ = new rviz_common::properties::TfFrameProperty(
+      "Target Frame",
+      rviz_common::properties::TfFrameProperty::FIXED_FRAME_STRING,
+      "TF frame whose motion this view will follow.",
+      this,
+      nullptr,
+      true);
+  } else {
+    target_frame_property_ = new rviz_common::properties::TfFrameProperty(
+      "Target Frame",
+      rviz_common::properties::TfFrameProperty::FIXED_FRAME_STRING,
+      "TF frame whose motion this view will follow.",
+      parent_,
+      nullptr,
+      true);
+  }
+}
+
+FramePositionTrackingViewController::FramePositionTrackingViewController()
+  : FramePositionTrackingViewController(nullptr)
+{
+
 }
 
 void FramePositionTrackingViewController::onInitialize()

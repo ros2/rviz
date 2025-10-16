@@ -97,6 +97,7 @@ class RVIZ_COMMON_PUBLIC ViewController : public properties::Property
 
 public:
   ViewController();
+  ViewController(properties::Property * parent);
   ~ViewController() override;
 
   /// Do all setup that can't be done in the constructor.
@@ -285,6 +286,8 @@ protected:
 
   /// Set the status on the main render frame.
   void setStatus(const QString & message);
+
+  properties::Property * parent_;
 
 private:
   rviz_common::properties::EnumProperty * type_property_;
