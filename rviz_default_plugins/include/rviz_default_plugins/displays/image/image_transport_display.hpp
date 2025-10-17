@@ -73,6 +73,7 @@ public:
   void onInitialize() override
   {
     _RosTopicDisplay::onInitialize();
+    subscription_ = std::make_shared<image_transport::SubscriberFilter>();
   }
 
   ~ImageTransportDisplay() override
@@ -112,7 +113,6 @@ protected:
     }
 
     try {
-      subscription_ = std::make_shared<image_transport::SubscriberFilter>();
       rclcpp::Node::SharedPtr node = rviz_ros_node_.lock()->get_raw_node();
       subscription_->subscribe(
         *node,
@@ -150,7 +150,7 @@ protected:
 
   virtual void unsubscribe()
   {
-    subscription_.reset();
+    subscription_->unsubscribe();
   }
 
   void onEnable() override
