@@ -2,6 +2,9 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.0.8 (2025-10-20)
+-------------------
+
 15.0.7 (2025-09-26)
 -------------------
 * fix crash (`#1587 <https://github.com/ros2/rviz/issues/1587>`_) (`#1588 <https://github.com/ros2/rviz/issues/1588>`_)

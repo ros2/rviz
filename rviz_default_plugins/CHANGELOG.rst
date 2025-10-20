@@ -2,6 +2,13 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.0.8 (2025-10-20)
+-------------------
+* Fixed issue 1593 (`#1598 <https://github.com/ros2/rviz/issues/1598>`_) (`#1599 <https://github.com/ros2/rviz/issues/1599>`_)
+  (cherry picked from commit ef84b87fefe4e8fd81b170ce12d41094d1bc44d9)
+  Co-authored-by: Alejandro Hernández Cordero <alejandro@openrobotics.org>
+* Contributors: mergify[bot]
+
 15.0.7 (2025-09-26)
 -------------------
 
