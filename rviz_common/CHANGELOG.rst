@@ -2,6 +2,13 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.11 (2025-10-20)
+--------------------
+* Fix incorrect Qt signal connection in combo box (`#1596 <https://github.com/ros2/rviz/issues/1596>`_)
+* Removed tinyxml2_vendor dependency (`#1591 <https://github.com/ros2/rviz/issues/1591>`_)
+* Replace QRegExp with QRegularExpression to support Qt6 (`#1592 <https://github.com/ros2/rviz/issues/1592>`_)
+* Contributors: Alejandro Hernández Cordero, mini-1235
+
 15.1.10 (2025-09-26)
 --------------------
 * fix crash (`#1587 <https://github.com/ros2/rviz/issues/1587>`_)

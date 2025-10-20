@@ -2,6 +2,11 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.11 (2025-10-20)
+--------------------
+* Fixed issue 1593 (`#1598 <https://github.com/ros2/rviz/issues/1598>`_)
+* Contributors: Alejandro Hernández Cordero
+
 15.1.10 (2025-09-26)
 --------------------
 * Removed tf2 warning (`#1586 <https://github.com/ros2/rviz/issues/1586>`_)
