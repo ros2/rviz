@@ -31,8 +31,6 @@
 #ifndef RVIZ_RENDERING__MESH_LOADER_HPP_
 #define RVIZ_RENDERING__MESH_LOADER_HPP_
 
-#include <string>
-
 #include <OgreMesh.h>
 
 #include "rviz_rendering/visibility_control.hpp"

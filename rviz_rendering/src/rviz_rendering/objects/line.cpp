@@ -30,8 +30,6 @@
 
 #include "rviz_rendering/objects/line.hpp"
 
-#include <string>
-
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 #include <OgreManualObject.h>

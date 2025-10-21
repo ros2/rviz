@@ -32,10 +32,7 @@
 #include "rviz_rendering/objects/covariance_visual.hpp"
 
 #include <cmath>
-#include <memory>
-#include <sstream>
 #include <tuple>
-#include <vector>
 
 #include <OgreEntity.h>
 #include <OgreSceneManager.h>

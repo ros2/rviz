@@ -36,6 +36,7 @@
 #include <memory>
 #include <vector>
 
+
 // GCC 11 has a false positive warning about uninitialized variables in Eigen.  There is an open
 // issue about it at https://gitlab.com/libeigen/eigen/-/issues/2304 .  Just disable the warning
 // for Eigen for now.

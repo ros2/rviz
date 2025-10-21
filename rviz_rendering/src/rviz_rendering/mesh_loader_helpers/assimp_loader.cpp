@@ -34,9 +34,7 @@
 #include <algorithm>
 #include <cctype>
 #include <filesystem>
-#include <memory>
 #include <string>
-#include <vector>
 
 #include <OgreHardwareBufferManager.h>
 #include <OgreMaterial.h>

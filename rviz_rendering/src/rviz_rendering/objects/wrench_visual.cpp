@@ -29,9 +29,6 @@
 
 
 #define _USE_MATH_DEFINES
-#include <algorithm>
-#include <cmath>
-#include <memory>
 
 #include <OgreVector.h>
 #include <OgreSceneNode.h>

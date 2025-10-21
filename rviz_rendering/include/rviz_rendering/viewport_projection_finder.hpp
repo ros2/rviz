@@ -33,8 +33,6 @@
 #ifndef RVIZ_RENDERING__VIEWPORT_PROJECTION_FINDER_HPP_
 #define RVIZ_RENDERING__VIEWPORT_PROJECTION_FINDER_HPP_
 
-#include <utility>
-
 #include <OgreVector.h>
 
 #include "rviz_rendering/visibility_control.hpp"

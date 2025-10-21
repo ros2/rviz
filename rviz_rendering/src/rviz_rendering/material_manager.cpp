@@ -31,8 +31,6 @@
 
 #include "rviz_rendering/material_manager.hpp"
 
-#include <string>
-
 #include <OgreMaterial.h>
 #include <OgreTechnique.h>
 

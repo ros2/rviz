@@ -31,10 +31,7 @@
 
 #include "rviz_rendering/objects/point_cloud.hpp"
 
-#include <algorithm>
 #include <cassert>
-#include <sstream>
-#include <vector>
 
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>

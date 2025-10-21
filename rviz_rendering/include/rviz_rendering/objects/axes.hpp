@@ -32,13 +32,9 @@
 #ifndef RVIZ_RENDERING__OBJECTS__AXES_HPP_
 #define RVIZ_RENDERING__OBJECTS__AXES_HPP_
 
-#include <cstddef>
-#include <cstdint>
-#include <memory>
-#include <vector>
 
 #include <OgreVector.h>
-
+#include <memory>
 #include "object.hpp"
 #include "shape.hpp"
 #include "rviz_rendering/visibility_control.hpp"

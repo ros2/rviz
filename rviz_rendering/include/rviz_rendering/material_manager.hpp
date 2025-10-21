@@ -32,12 +32,10 @@
 #ifndef RVIZ_RENDERING__MATERIAL_MANAGER_HPP_
 #define RVIZ_RENDERING__MATERIAL_MANAGER_HPP_
 
-#include <string>
-
 #include <OgreColourValue.h>
 #include <OgreMaterialManager.h>
 #include <OgreSceneManager.h>
-
+#include <string>
 #include "rviz_rendering/visibility_control.hpp"
 
 namespace rviz_rendering

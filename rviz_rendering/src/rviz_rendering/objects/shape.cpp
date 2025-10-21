@@ -31,9 +31,6 @@
 
 #include "rviz_rendering/objects/shape.hpp"
 
-#include <cstdint>
-#include <string>
-
 #include <OgreEntity.h>
 #include <OgreMaterialManager.h>
 #include <OgreQuaternion.h>

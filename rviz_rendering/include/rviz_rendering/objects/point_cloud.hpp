@@ -33,8 +33,6 @@
 #define RVIZ_RENDERING__OBJECTS__POINT_CLOUD_HPP_
 
 #include <cstdint>
-#include <deque>
-#include <memory>
 #include <string>
 #include <vector>
 

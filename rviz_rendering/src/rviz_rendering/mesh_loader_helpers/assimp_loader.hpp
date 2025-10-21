@@ -32,9 +32,7 @@
 #ifndef RVIZ_RENDERING__MESH_LOADER_HELPERS__ASSIMP_LOADER_HPP_
 #define RVIZ_RENDERING__MESH_LOADER_HELPERS__ASSIMP_LOADER_HPP_
 
-#include <memory>
 #include <string>
-#include <vector>
 
 #include "OgreHardwareBufferManager.h"
 #include "OgreMesh.h"

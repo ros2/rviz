@@ -31,7 +31,6 @@
 #ifndef RVIZ_RENDERING__OBJECTS__TRIANGLE_POLYGON_HPP_
 #define RVIZ_RENDERING__OBJECTS__TRIANGLE_POLYGON_HPP_
 
-#include <string>
 
 #include <OgreColourValue.h>
 #include <OgreManualObject.h>

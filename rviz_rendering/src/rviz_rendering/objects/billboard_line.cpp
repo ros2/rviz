@@ -39,9 +39,6 @@
 #include <OgreMaterialManager.h>
 #include <OgreTechnique.h>
 
-#include <iostream>
-#include <stdexcept>
-#include <string>
 
 #include "rviz_rendering/material_manager.hpp"
 

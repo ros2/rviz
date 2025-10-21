@@ -29,8 +29,6 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 
-#include <utility>
-
 #include <OgreRay.h>
 #include <OgrePlane.h>
 #include <OgreCamera.h>
