@@ -367,7 +367,7 @@ protected:
   rclcpp::Time ros_time_begin_;
   std::chrono::system_clock::duration wall_clock_elapsed_;
   // TODO(wjwwood): replace with rclcpp::Duration when available
-  uint64_t ros_time_elapsed_;
+  rclcpp::Duration ros_time_elapsed_;
 
   rviz_common::properties::ColorProperty * background_color_property_;
 
