@@ -44,9 +44,6 @@
 
 #include "rviz_default_plugins/visibility_control.hpp"
 
-// TODO(botteroa): Originally the display extended the MessageFilterDisplay. Revisit when available.
-// #include "rviz_common/message_filter_display.hpp"
-
 namespace Ogre
 {
 class ManualObject;
