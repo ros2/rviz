@@ -31,13 +31,13 @@
 
 #include "rviz_common/yaml_config_reader.hpp"
 
+#include <yaml-cpp/yaml.h>
+
 #include <fstream>
 #include <sstream>
 #include <string>
 
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
-
-#include <yaml-cpp/yaml.h>
 
 namespace rviz_common
 {
@@ -78,8 +78,7 @@ void YamlConfigReader::readYamlNode(Config & config, const YAML::Node & yaml_nod
   switch (yaml_node.Type() ) {
     case YAML::NodeType::Map:
       {
-        for (YAML::const_iterator it = yaml_node.begin(); it != yaml_node.end(); ++it)
-        {
+        for (YAML::const_iterator it = yaml_node.begin(); it != yaml_node.end(); ++it) {
           std::string key;
           key = it->first.as<std::string>();
           Config child = config.mapMakeChild(QString::fromStdString(key));
@@ -89,8 +88,7 @@ void YamlConfigReader::readYamlNode(Config & config, const YAML::Node & yaml_nod
       }
     case YAML::NodeType::Sequence:
       {
-        for (YAML::const_iterator it = yaml_node.begin(); it != yaml_node.end(); ++it)
-        {
+        for (YAML::const_iterator it = yaml_node.begin(); it != yaml_node.end(); ++it) {
           Config child = config.listAppendNew();
           readYamlNode(child, *it);
         }
