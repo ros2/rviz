@@ -31,21 +31,13 @@
 
 #include "rviz_common/yaml_config_reader.hpp"
 
+#include <yaml-cpp/yaml.h>
+
 #include <fstream>
 #include <sstream>
 #include <string>
 
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
-
-// TODO(wjwwood): consider restoring support for yamlcpp < 0.5, force 0.5 for now
-#define RVIZ_HAVE_YAMLCPP_05 1
-
-#ifdef RVIZ_HAVE_YAMLCPP_05
-#include <yaml-cpp/yaml.h>
-#else
-#include <yaml-cpp/node.h>
-#include <yaml-cpp/parser.h>
-#endif
 
 namespace rviz_common
 {
@@ -71,12 +63,7 @@ void YamlConfigReader::readStream(Config & config, std::istream & in, const QStr
   (void) filename;
   try {
     YAML::Node yaml_node;
-#ifdef RVIZ_HAVE_YAMLCPP_05
     yaml_node = YAML::Load(in);
-#else
-    YAML::Parser parser(in);
-    parser.GetNextDocument(yaml_node);
-#endif
     error_ = false;
     message_ = "";
     readYamlNode(config, yaml_node);
@@ -91,35 +78,17 @@ void YamlConfigReader::readYamlNode(Config & config, const YAML::Node & yaml_nod
   switch (yaml_node.Type() ) {
     case YAML::NodeType::Map:
       {
-#ifdef RVIZ_HAVE_YAMLCPP_05
-        for (YAML::const_iterator it = yaml_node.begin(); it != yaml_node.end(); ++it)
-#else
-        for (YAML::Iterator it = yaml_node.begin(); it != yaml_node.end(); ++it)
-#endif
-        {
+        for (YAML::const_iterator it = yaml_node.begin(); it != yaml_node.end(); ++it) {
           std::string key;
-#ifdef RVIZ_HAVE_YAMLCPP_05
           key = it->first.as<std::string>();
-#else
-          it.first() >> key;
-#endif
           Config child = config.mapMakeChild(QString::fromStdString(key));
-#ifdef RVIZ_HAVE_YAMLCPP_05
           readYamlNode(child, it->second);
-#else
-          readYamlNode(child, it.second() );
-#endif
         }
         break;
       }
     case YAML::NodeType::Sequence:
       {
-#ifdef RVIZ_HAVE_YAMLCPP_05
-        for (YAML::const_iterator it = yaml_node.begin(); it != yaml_node.end(); ++it)
-#else
-        for (YAML::Iterator it = yaml_node.begin(); it != yaml_node.end(); ++it)
-#endif
-        {
+        for (YAML::const_iterator it = yaml_node.begin(); it != yaml_node.end(); ++it) {
           Config child = config.listAppendNew();
           readYamlNode(child, *it);
         }
@@ -128,11 +97,7 @@ void YamlConfigReader::readYamlNode(Config & config, const YAML::Node & yaml_nod
     case YAML::NodeType::Scalar:
       {
         std::string s;
-#ifdef RVIZ_HAVE_YAMLCPP_05
         s = yaml_node.as<std::string>();
-#else
-        yaml_node >> s;
-#endif
         config.setValue(QString::fromStdString(s));
         break;
       }
