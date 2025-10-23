@@ -53,7 +53,6 @@ namespace properties
 
 class Property;
 class BoolProperty;
-class BoolProperty;
 class DisplayVisibilityProperty;
 
 /*
