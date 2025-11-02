@@ -44,6 +44,7 @@ find_package(geometry_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(resource_retriever REQUIRED)
+find_package(rviz_resource_interfaces REQUIRED)
 find_package(rviz_rendering REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
@@ -260,6 +261,7 @@ target_link_libraries(rviz_common PUBLIC
   tf2::tf2
   tf2_ros::tf2_ros
   yaml-cpp::yaml-cpp
+  ${rviz_resource_interfaces_TARGETS}
 )
 
 target_link_libraries(rviz_common PRIVATE
@@ -286,6 +288,7 @@ ament_export_dependencies(
   tf2_ros
   yaml_cpp_vendor
   yaml-cpp
+  rviz_resource_interfaces
 )
 
 # Export old-style CMake variables
