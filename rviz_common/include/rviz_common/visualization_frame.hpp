@@ -177,7 +177,7 @@ public:
    * \param path The full path of the config file to load from.
    */
   void
-  loadDisplayConfig(const QString & path);
+  loadDisplayConfig(const QString & config_string);
 
   // TODO(wjwwood): consider changing this function to raise an exception
   //                when there is a failure, rather than the getErrorMessage()

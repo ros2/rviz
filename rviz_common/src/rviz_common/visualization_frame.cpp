@@ -670,14 +670,16 @@ void VisualizationFrame::markRecentConfig(const std::string & path)
   updateRecentConfigMenu();
 }
 
-void VisualizationFrame::loadDisplayConfig(const QString & qpath)
+void VisualizationFrame::loadDisplayConfig(const QString & config_string)
 {
-  std::string path = qpath.toStdString();
-  QFileInfo path_info(qpath);
+  std::string path = config_string.toStdString();
+  QFileInfo path_info(config_string);
   std::string actual_load_path = path;
-  if (!path_info.exists() || path_info.isDir()) {
+  bool is_loadable_path = (path_info.exists() && !path_info.isDir());
+  if (!is_loadable_path) {
     actual_load_path = package_path_ + "/default.rviz";
-    if (!QFile(QString::fromStdString(actual_load_path)).exists()) {
+    is_loadable_path = QFile(QString::fromStdString(actual_load_path)).exists();
+    if (!is_loadable_path) {
       RVIZ_COMMON_LOG_ERROR_STREAM(
         "Default display config '" <<
           actual_load_path.c_str() << "' not found.  RViz will be very empty at first.");
@@ -705,7 +707,12 @@ void VisualizationFrame::loadDisplayConfig(const QString & qpath)
 
   YamlConfigReader reader;
   Config config;
+  if (is_loadable_path) {
   reader.readFile(config, QString::fromStdString(actual_load_path));
+  } else { // Treat as yaml string content
+    reader.readString(config, config_string);
+  }
+
   if (!reader.error()) {
     try {
       load(config);
@@ -714,11 +721,11 @@ void VisualizationFrame::loadDisplayConfig(const QString & qpath)
     }
   }
 
+  if (is_loadable_path) {
   markRecentConfig(path);
-
   setDisplayConfigFile(path);
-
   last_config_dir_ = path_info.absolutePath().toStdString();
+  }
 
   post_load_timer_->start(1000);
 }
