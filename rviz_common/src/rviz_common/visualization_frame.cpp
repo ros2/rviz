@@ -61,6 +61,8 @@
 #include <QTimer>  // NOLINT cpplint cannot handle include order here
 #include <QToolBar>  // NOLINT cpplint cannot handle include order here
 #include <QToolButton>  // NOLINT cpplint cannot handle include order here
+#include <rclcpp/service.hpp>
+#include <rviz_resource_interfaces/srv/load_config.hpp>
 
 #include "rclcpp/clock.hpp"
 #include "tf2_ros/buffer.hpp"
@@ -350,6 +352,14 @@ void VisualizationFrame::initialize(
   } else {
     loadDisplayConfig(QString::fromStdString(default_display_config_file_));
   }
+
+  auto node_abstraction = rviz_ros_node.lock();
+  auto node = node_abstraction->get_raw_node();
+  load_config_service_ = node->create_service<LoadConfig>(
+    node_abstraction->get_node_name() + "/load_config",
+    std::bind(
+      &VisualizationFrame::loadDisplayConfigService, this,
+      std::placeholders::_1, std::placeholders::_2));
 
   // Periodically process events for the splash screen.
   QCoreApplication::processEvents();
@@ -670,6 +680,18 @@ void VisualizationFrame::markRecentConfig(const std::string & path)
   updateRecentConfigMenu();
 }
 
+void VisualizationFrame::loadDisplayConfigService(
+  const std::shared_ptr<LoadConfig::Request> request,
+  std::shared_ptr<LoadConfig::Response> response)
+{
+  RVIZ_COMMON_LOG_INFO_STREAM(
+    "Requested loadConfig" << request->config_string.c_str()
+  );
+  loadDisplayConfig(QString::fromStdString(request->config_string));
+  response->success = true;
+  response->message = "Loaded display config.";
+}
+
 void VisualizationFrame::loadDisplayConfig(const QString & config_string)
 {
   std::string path = config_string.toStdString();
@@ -708,7 +730,7 @@ void VisualizationFrame::loadDisplayConfig(const QString & config_string)
   YamlConfigReader reader;
   Config config;
   if (is_loadable_path) {
-  reader.readFile(config, QString::fromStdString(actual_load_path));
+    reader.readFile(config, QString::fromStdString(actual_load_path));
   } else { // Treat as yaml string content
     reader.readString(config, config_string);
   }
@@ -722,9 +744,9 @@ void VisualizationFrame::loadDisplayConfig(const QString & config_string)
   }
 
   if (is_loadable_path) {
-  markRecentConfig(path);
-  setDisplayConfigFile(path);
-  last_config_dir_ = path_info.absolutePath().toStdString();
+    markRecentConfig(path);
+    setDisplayConfigFile(path);
+    last_config_dir_ = path_info.absolutePath().toStdString();
   }
 
   post_load_timer_->start(1000);

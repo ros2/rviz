@@ -42,6 +42,8 @@
 #include <QMainWindow>  // NOLINT: cpplint is unable to handle the include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <Qt>  // NOLINT: cpplint is unable to handle the include order here
+#include <rclcpp/service.hpp>
+#include <rviz_resource_interfaces/srv/load_config.hpp>
 
 #include "rviz_common/config.hpp"
 #include "rviz_rendering/render_window.hpp"
@@ -83,6 +85,7 @@ class WidgetGeometryChangeDetector;
  */
 class RVIZ_COMMON_PUBLIC VisualizationFrame : public QMainWindow, public WindowManagerInterface
 {
+  using LoadConfig = rviz_resource_interfaces::srv::LoadConfig;
   Q_OBJECT
 
 public:
@@ -171,6 +174,13 @@ public:
    */
   void
   savePersistentSettings();
+
+  rclcpp::Service<LoadConfig>::SharedPtr load_config_service_;
+
+  void
+  loadDisplayConfigService(
+    const std::shared_ptr<LoadConfig::Request> request,
+    std::shared_ptr<LoadConfig::Response> response);
 
   /// Load display settings from the given file.
   /**
