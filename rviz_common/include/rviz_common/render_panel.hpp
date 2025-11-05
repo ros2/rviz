@@ -177,7 +177,6 @@ private Q_SLOTS:
   void onContextMenuHide();
 
 private:
-
   // TODO(wjwwood): I think this can be stored in rviz_rendering::RenderWindowImpl
   /// A default camera created in initialize().
   // Ogre::Camera * default_camera_;
