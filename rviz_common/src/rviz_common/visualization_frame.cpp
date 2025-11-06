@@ -61,10 +61,9 @@
 #include <QTimer>  // NOLINT cpplint cannot handle include order here
 #include <QToolBar>  // NOLINT cpplint cannot handle include order here
 #include <QToolButton>  // NOLINT cpplint cannot handle include order here
-#include <rclcpp/service.hpp>
-#include <rviz_resource_interfaces/srv/load_config.hpp>
 
 #include "rclcpp/clock.hpp"
+#include <rclcpp/service.hpp>
 #include "tf2_ros/buffer.hpp"
 #include "tf2_ros/transform_listener.hpp"
 
@@ -77,6 +76,7 @@
 #include "rviz_common/yaml_config_reader.hpp"
 #include "rviz_common/yaml_config_writer.hpp"
 #include "rviz_rendering/render_window.hpp"
+#include <rviz_resource_interfaces/srv/load_config.hpp>
 
 #include "./env_config.hpp"
 #include "./failed_panel.hpp"
