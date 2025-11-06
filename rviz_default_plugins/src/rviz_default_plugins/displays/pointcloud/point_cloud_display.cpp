@@ -52,6 +52,8 @@ void PointCloudDisplay::onInitialize()
 {
   MFDClass::onInitialize();
   point_cloud_common_->initialize(context_, scene_node_);
+
+  qos_profile_property_->setBestEffort();
 }
 
 void PointCloudDisplay::processMessage(const sensor_msgs::msg::PointCloud::ConstSharedPtr cloud)
