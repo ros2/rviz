@@ -2,6 +2,11 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.12 (2025-11-07)
+--------------------
+* Removed already done TODO (`#1604 <https://github.com/ros2/rviz//issues/1604>`_)
+* Contributors: Alejandro Hernández Cordero
+
 15.1.11 (2025-10-20)
 --------------------
 * Fixed issue 1593 (`#1598 <https://github.com/ros2/rviz/issues/1598>`_)

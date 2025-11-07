@@ -2,6 +2,14 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.12 (2025-11-07)
+--------------------
+* Cleanup deprecated code (`#1619 <https://github.com/ros2/rviz//issues/1619>`_)
+* Removed support for yaml-cpp lower than 0.5 (`#1605 <https://github.com/ros2/rviz//issues/1605>`_)
+* Removed duplicated forward class declaration (`#1602 <https://github.com/ros2/rviz//issues/1602>`_)
+* resolved TODO in visualization manager (`#1603 <https://github.com/ros2/rviz//issues/1603>`_)
+* Contributors: Alejandro Hernández Cordero, mini-1235
+
 15.1.11 (2025-10-20)
 --------------------
 * Fix incorrect Qt signal connection in combo box (`#1596 <https://github.com/ros2/rviz/issues/1596>`_)

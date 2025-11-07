@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.12 (2025-11-07)
+--------------------
+* Removed unused files (`#1600 <https://github.com/ros2/rviz//issues/1600>`_)
+* Contributors: mosfet80
+
 15.1.11 (2025-10-20)
 --------------------
 
