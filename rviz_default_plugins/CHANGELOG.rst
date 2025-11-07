@@ -2,6 +2,11 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.1.17 (2025-11-07)
+--------------------
+* Removed already done TODO (`#1604 <https://github.com/ros2/rviz//issues/1604>`_) (`#1610 <https://github.com/ros2/rviz//issues/1610>`_)
+* Contributors: mergify[bot]
+
 14.1.16 (2025-09-26)
 --------------------
 
