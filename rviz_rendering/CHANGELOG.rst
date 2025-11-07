@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.23 (2025-11-07)
+--------------------
+* Removed unused files (`#1600 <https://github.com/ros2/rviz//issues/1600>`_) (`#1608 <https://github.com/ros2/rviz//issues/1608>`_)
+* Contributors: mergify[bot]
+
 11.2.22 (2025-09-26)
 --------------------
 
