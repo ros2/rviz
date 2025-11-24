@@ -210,11 +210,11 @@ void XYOrbitViewController::handleMouseEvent(rviz_common::ViewportMouseEvent & e
     bool moved = OrbitViewController::setMouseMovementFromEvent(event, diff_x, diff_y);
     if (moved && (event.type == QEvent::MouseMove)) {
       float distance = distance_property_->getFloat();
-      //Pass the last mouse position to maintain consistent motion
+      // Pass the last mouse position to maintain consistent motion
       moveFocalPoint(distance, diff_x, diff_y, event.last_x, event.last_y);
       context_->queueRender();
       return;
-    } 
+    }
   }
   // For other mouse events, delegate to the base class
   OrbitViewController::handleMouseEvent(event);

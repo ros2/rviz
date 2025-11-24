@@ -285,11 +285,11 @@ TEST_F(
   focal_point_moves_proportionally_with_mouse_drag)
 {
   setCameraToDefaultYawPitch();
-  
+
   auto x_property = xy_orbit_->childAt(9)->childAt(0);
   auto y_property = xy_orbit_->childAt(9)->childAt(1);
   auto z_property = xy_orbit_->childAt(9)->childAt(2);
-  
+
   EXPECT_THAT(x_property->getValue().toFloat(), FloatNear(0.0f, 0.001f));
   EXPECT_THAT(y_property->getValue().toFloat(), FloatNear(0.0f, 0.001f));
   EXPECT_THAT(z_property->getValue().toFloat(), FloatNear(0.0f, 0.001f));
@@ -303,7 +303,7 @@ TEST_F(
   EXPECT_THAT(new_z, FloatNear(0.0f, 0.001f));
   EXPECT_THAT(new_x, Not(FloatNear(0.0f, 0.001f)));
   EXPECT_THAT(new_y, Not(FloatNear(0.0f, 0.001f)));
-  
+
   float motion_magnitude = std::sqrt(new_x * new_x + new_y * new_y);
   EXPECT_THAT(motion_magnitude, Le(1.1f));
 }

@@ -78,7 +78,7 @@ public:
    */
   void mimic(ViewController * source_view) override;
 
-  //Override to handle motion in XY plane, with proper mouse position access
+  // Override to handle motion in XY plane, with proper mouse position access
   void handleMouseEvent(rviz_common::ViewportMouseEvent & event) override;
 
 protected:
