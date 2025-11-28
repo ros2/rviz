@@ -2,6 +2,9 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.1.18 (2025-11-28)
+--------------------
+
 14.1.17 (2025-11-07)
 --------------------
 * Removed duplicated forward class declaration (`#1602 <https://github.com/ros2/rviz//issues/1602>`_) (`#1613 <https://github.com/ros2/rviz//issues/1613>`_)
