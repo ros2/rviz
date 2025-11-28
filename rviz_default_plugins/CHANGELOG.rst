@@ -2,6 +2,12 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.24 (2025-11-28)
+--------------------
+* Fix Translation Issue in XYOrbitViewController (`#1630 <https://github.com/ros2/rviz/issues/1630>`_) (`#1633 <https://github.com/ros2/rviz/issues/1633>`_)
+* Overcome 16384 size limit (`#1622 <https://github.com/ros2/rviz/issues/1622>`_) (`#1629 <https://github.com/ros2/rviz/issues/1629>`_)
+* Contributors: mergify[bot]
+
 11.2.23 (2025-11-07)
 --------------------
 * Removed already done TODO (`#1604 <https://github.com/ros2/rviz//issues/1604>`_) (`#1611 <https://github.com/ros2/rviz//issues/1611>`_)
