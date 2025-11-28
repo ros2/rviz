@@ -2,6 +2,9 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.13 (2025-11-28)
+--------------------
+
 15.1.12 (2025-11-07)
 --------------------
 * Cleanup deprecated code (`#1619 <https://github.com/ros2/rviz//issues/1619>`_)
