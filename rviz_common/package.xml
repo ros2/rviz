@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>rviz_common</name>
-  <version>14.1.17</version>
+  <version>14.1.18</version>
   <description>
     Common rviz API, used by rviz plugins and applications.
   </description>
