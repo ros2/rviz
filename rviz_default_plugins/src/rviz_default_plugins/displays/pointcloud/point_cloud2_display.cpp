@@ -57,6 +57,8 @@ void PointCloud2Display::onInitialize()
 {
   PC2RDClass::onInitialize();
   point_cloud_common_->initialize(context_, scene_node_);
+
+  qos_profile_property_->setBestEffort();
 }
 
 void PointCloud2Display::processMessage(const sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud)
