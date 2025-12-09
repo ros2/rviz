@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>rviz_default_plugins</name>
-  <version>15.1.8</version>
+  <version>15.1.13</version>
   <description>
     Several default plugins for rviz to cover the basic functionality.
   </description>
@@ -26,15 +26,15 @@
 
   <buildtool_depend>ament_cmake_ros</buildtool_depend>
 
-  <build_depend>qtbase5-dev</build_depend>
+  <build_depend>qt6-base-dev</build_depend>
   <build_depend>rviz_ogre_vendor</build_depend>
 
   <build_export_depend>rviz_ogre_vendor</build_export_depend>
 
-  <exec_depend>libqt5-core</exec_depend>
-  <exec_depend>libqt5-gui</exec_depend>
-  <exec_depend>libqt5-opengl</exec_depend>
-  <exec_depend>libqt5-widgets</exec_depend>
+  <exec_depend>libqt6-core</exec_depend>
+  <exec_depend>libqt6gui6t64</exec_depend>
+  <exec_depend>libqt6opengl6t64</exec_depend>
+  <exec_depend>libqt6widgets6t64</exec_depend>
   <exec_depend>rviz_ogre_vendor</exec_depend>
 
   <depend>geometry_msgs</depend>

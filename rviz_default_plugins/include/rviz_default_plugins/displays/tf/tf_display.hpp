@@ -101,7 +101,7 @@ public:
 
   ~TFDisplay() override;
 
-  void update(float wall_dt, float ros_dt) override;
+  void update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt) override;
 
 protected:
   void onInitialize() override;
@@ -138,7 +138,7 @@ private:
   typedef std::map<std::string, bool> M_EnabledState;
   M_EnabledState frame_config_enabled_state_;
 
-  float update_timer_;
+  std::chrono::nanoseconds update_timer_;
 
   rviz_common::properties::BoolProperty * show_names_property_;
   rviz_common::properties::BoolProperty * show_arrows_property_;

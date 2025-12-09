@@ -147,7 +147,7 @@ void GridDisplay::onInitialize()
   updatePlane();
 }
 
-void GridDisplay::update(float dt, float ros_dt)
+void GridDisplay::update(std::chrono::nanoseconds dt, std::chrono::nanoseconds ros_dt)
 {
   Q_UNUSED(dt);
   Q_UNUSED(ros_dt);

@@ -157,7 +157,7 @@ void ImageDisplay::clear()
   texture_->clear();
 }
 
-void ImageDisplay::update(float wall_dt, float ros_dt)
+void ImageDisplay::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt)
 {
   (void) wall_dt;
   (void) ros_dt;

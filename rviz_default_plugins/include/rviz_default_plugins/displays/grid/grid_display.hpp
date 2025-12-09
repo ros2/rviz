@@ -78,7 +78,7 @@ public:
 
   // Overrides from Display
   void onInitialize() override;
-  void update(float dt, float ros_dt) override;
+  void update(std::chrono::nanoseconds dt, std::chrono::nanoseconds ros_dt) override;
 
 private Q_SLOTS:
   void updateCellCount();

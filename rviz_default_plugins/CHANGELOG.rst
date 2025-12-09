@@ -2,6 +2,36 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.13 (2025-11-28)
+--------------------
+* Fix Translation Issue in XYOrbitViewController (`#1630 <https://github.com/ros2/rviz/issues/1630>`_)
+* Overcome 16384 size limit (`#1622 <https://github.com/ros2/rviz/issues/1622>`_)
+* Contributors: Eesha Kumar, Guillaume Doisy
+
+15.1.12 (2025-11-07)
+--------------------
+* Removed already done TODO (`#1604 <https://github.com/ros2/rviz//issues/1604>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.11 (2025-10-20)
+--------------------
+* Fixed issue 1593 (`#1598 <https://github.com/ros2/rviz/issues/1598>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.10 (2025-09-26)
+--------------------
+* Removed tf2 warning (`#1586 <https://github.com/ros2/rviz/issues/1586>`_)
+* Removed deprecation warning in tf2 (`#1585 <https://github.com/ros2/rviz/issues/1585>`_)
+* Std chrono update in default plugins (`#1579 <https://github.com/ros2/rviz/issues/1579>`_)
+* Fix pointcloud2 display divide by 0 (`#1581 <https://github.com/ros2/rviz/issues/1581>`_)
+* Contributors: Alejandro Hernández Cordero, Antonio Brandi, Mark Johnson
+
+15.1.9 (2025-09-04)
+-------------------
+* add support for ffmpeg_image_transport and point_cloud_transport (`#1568 <https://github.com/ros2/rviz/issues/1568>`_)
+* Extend the message filter display for point cloud 2 display (`#1566 <https://github.com/ros2/rviz/issues/1566>`_)
+* Contributors: Kenji Brameld (TRACLabs), Lennart Reiher
+
 15.1.8 (2025-08-22)
 -------------------
 * Support image transport lifecycle (`#1472 <https://github.com/ros2/rviz//issues/1472>`_)

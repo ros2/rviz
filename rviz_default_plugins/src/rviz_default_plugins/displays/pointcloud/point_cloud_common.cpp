@@ -288,7 +288,7 @@ void PointCloudCommon::causeRetransform()
   needs_retransform_ = true;
 }
 
-void PointCloudCommon::update(float wall_dt, float ros_dt)
+void PointCloudCommon::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt)
 {
   (void) wall_dt;
   (void) ros_dt;

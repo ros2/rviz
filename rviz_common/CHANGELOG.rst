@@ -2,6 +2,39 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.13 (2025-11-28)
+--------------------
+
+15.1.12 (2025-11-07)
+--------------------
+* Cleanup deprecated code (`#1619 <https://github.com/ros2/rviz//issues/1619>`_)
+* Removed support for yaml-cpp lower than 0.5 (`#1605 <https://github.com/ros2/rviz//issues/1605>`_)
+* Removed duplicated forward class declaration (`#1602 <https://github.com/ros2/rviz//issues/1602>`_)
+* resolved TODO in visualization manager (`#1603 <https://github.com/ros2/rviz//issues/1603>`_)
+* Contributors: Alejandro Hernández Cordero, mini-1235
+
+15.1.11 (2025-10-20)
+--------------------
+* Fix incorrect Qt signal connection in combo box (`#1596 <https://github.com/ros2/rviz/issues/1596>`_)
+* Removed tinyxml2_vendor dependency (`#1591 <https://github.com/ros2/rviz/issues/1591>`_)
+* Replace QRegExp with QRegularExpression to support Qt6 (`#1592 <https://github.com/ros2/rviz/issues/1592>`_)
+* Contributors: Alejandro Hernández Cordero, mini-1235
+
+15.1.10 (2025-09-26)
+--------------------
+* fix crash (`#1587 <https://github.com/ros2/rviz/issues/1587>`_)
+* added option to change filemode (`#1537 <https://github.com/ros2/rviz/issues/1537>`_)
+* Removed deprecation warning in tf2 (`#1585 <https://github.com/ros2/rviz/issues/1585>`_)
+* Std chrono update in default plugins (`#1579 <https://github.com/ros2/rviz/issues/1579>`_)
+* Contributors: Alejandro Hernández Cordero, Joshua Supratman, Mark Johnson, nelson
+
+15.1.9 (2025-09-04)
+-------------------
+* Removed deprecations (`#1556 <https://github.com/ros2/rviz/issues/1556>`_)
+* rviz common ros service property (`#1548 <https://github.com/ros2/rviz/issues/1548>`_)
+* add ros action property (`#1549 <https://github.com/ros2/rviz/issues/1549>`_)
+* Contributors: Alejandro Hernández Cordero, Joshua Supratman
+
 15.1.8 (2025-08-22)
 -------------------
 * Deprecates update(float, float) methods and provides update(std::chrono::duration, std::chrono::duration) replacements. (`#1533 <https://github.com/ros2/rviz//issues/1533>`_)

@@ -353,7 +353,7 @@ void DepthCloudDisplay::subscribe()
         *context_->getFrameManager()->getTransformer(),
         fixed_frame_.toStdString(),
         queue_size_,
-        rviz_ros_node_->get_raw_node());
+        *rviz_ros_node_->get_raw_node());
 
       depthmap_tf_filter_->connectInput(*depthmap_sub_);
 
@@ -437,7 +437,7 @@ void DepthCloudDisplay::clear()
   }
 }
 
-void DepthCloudDisplay::update(float wall_dt, float ros_dt)
+void DepthCloudDisplay::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt)
 {
   pointcloud_common_->update(wall_dt, ros_dt);
 }

@@ -80,7 +80,8 @@ TEST_F(PointCloudCommonTestFixture, update_adds_pointcloud_to_scene_graph) {
   mockValidTransform();
 
   point_cloud_common_->addMessage(cloud);
-  point_cloud_common_->update(0, 0);
+  auto zero = std::chrono::nanoseconds::zero();
+  point_cloud_common_->update(zero, zero);
 
   auto point_cloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
 
@@ -99,13 +100,14 @@ TEST_F(PointCloudCommonTestFixture, update_removes_old_point_clouds) {
   auto cloud = createPointCloud2WithPoints(std::vector<rviz_default_plugins::Point>{p});
 
   point_cloud_common_->addMessage(cloud);
-  point_cloud_common_->update(0, 0);
+  auto zero = std::chrono::nanoseconds::zero();
+  point_cloud_common_->update(zero, zero);
 
   p = {4, 5, 6};
   cloud = createPointCloud2WithPoints(std::vector<rviz_default_plugins::Point>{p});
 
   point_cloud_common_->addMessage(cloud);
-  point_cloud_common_->update(0, 0);
+  point_cloud_common_->update(zero, zero);
 
   auto point_clouds = rviz_default_plugins::findAllPointClouds(scene_manager_->getRootSceneNode());
   ASSERT_THAT(point_clouds.size(), Eq(1u));
@@ -125,7 +127,8 @@ TEST_F(PointCloudCommonTestFixture, update_sets_size_and_alpha_on_renderable) {
   mockValidTransform();
 
   point_cloud_common_->addMessage(cloud);
-  point_cloud_common_->update(0, 0);
+  auto zero = std::chrono::nanoseconds::zero();
+  point_cloud_common_->update(zero, zero);
 
   auto point_cloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
   auto size = point_cloud->getRenderables()[0]->getCustomParameter(RVIZ_RENDERING_SIZE_PARAMETER);
@@ -148,7 +151,8 @@ TEST_F(PointCloudCommonTestFixture, update_adds_nothing_if_transform_fails) {
   EXPECT_CALL(*frame_manager_, getTransform(_, _, _, _)).WillRepeatedly(Return(false));  // NOLINT
 
   point_cloud_common_->addMessage(cloud);
-  point_cloud_common_->update(0, 0);
+  auto zero = std::chrono::nanoseconds::zero();
+  point_cloud_common_->update(zero, zero);
 
   auto point_cloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
   EXPECT_FALSE(point_cloud);
@@ -172,7 +176,8 @@ TEST_F(PointCloudCommonTestFixture, update_colors_the_points_using_the_selected_
   color_property->setValue(QColor(255, 0, 0));
 
   point_cloud_common_->addMessage(cloud);
-  point_cloud_common_->update(0, 0);
+  auto zero = std::chrono::nanoseconds::zero();
+  point_cloud_common_->update(zero, zero);
 
   auto point_cloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
 
@@ -223,7 +228,8 @@ TEST_F(
   }
 
   point_cloud_common_->addMessage(cloud);
-  point_cloud_common_->update(0, 0);
+  auto zero = std::chrono::nanoseconds::zero();
+  point_cloud_common_->update(zero, zero);
 
   auto point_clouds = rviz_default_plugins::findAllPointClouds(scene_manager_->getRootSceneNode());
   ASSERT_THAT(point_clouds.size(), Eq(0u));
