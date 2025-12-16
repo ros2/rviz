@@ -110,6 +110,10 @@ DepthCloudDisplay::DepthCloudDisplay()
     "Depth Map Transport Hint", "raw", "Preferred method of sending images.",
     this, SLOT(updateTopic()));
 
+  camera_info_topic_property_ = new rviz_common::properties::RosFilteredTopicProperty(
+    "CameraInfo Topic", "", "sensor_msgs/msg/CameraInfo",
+    "sensor_msgs::msg::CameraInfo topic to subscribe to.", depth_filter, this, SLOT(updateTopic()));
+
   QObject::connect(
     depth_transport_property_,
     SIGNAL(requestOptions(rviz_common::properties::EnumProperty*)),
@@ -221,6 +225,7 @@ void DepthCloudDisplay::onInitialize()
   pointcloud_common_->xyz_transformer_property_->hide();
 
   depth_topic_property_->initialize(rviz_ros_node_);
+  camera_info_topic_property_->initialize(rviz_ros_node_);
   color_topic_property_->initialize(rviz_ros_node_);
 
   QObject::connect(
@@ -279,6 +284,7 @@ void DepthCloudDisplay::updateTopicFilter()
 {
   bool enabled = topic_filter_property_->getValue().toBool();
   depth_topic_property_->enableFilter(enabled);
+  camera_info_topic_property_->enableFilter(enabled);
   color_topic_property_->enableFilter(enabled);
 }
 
@@ -332,6 +338,7 @@ void DepthCloudDisplay::subscribe()
     cam_info_sub_.reset();
 
     std::string depthmap_topic = depth_topic_property_->getTopicStd();
+    std::string info_topic = camera_info_topic_property_->getTopicStd();
     std::string color_topic = color_topic_property_->getTopicStd();
 
     std::string depthmap_transport = depth_transport_property_->getStdString();
@@ -358,7 +365,10 @@ void DepthCloudDisplay::subscribe()
       depthmap_tf_filter_->connectInput(*depthmap_sub_);
 
       // subscribe to CameraInfo  topic
-      std::string info_topic = image_transport::getCameraInfoTopic(depthmap_topic);
+      if (info_topic.empty()) {
+        info_topic = image_transport::getCameraInfoTopic(depthmap_topic);
+        camera_info_topic_property_->setStdString(info_topic);
+      }
 
       rclcpp::SubscriptionOptions sub_opts;
       sub_opts.event_callbacks.message_lost_callback =
