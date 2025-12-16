@@ -172,6 +172,7 @@ protected:
   rviz_common::properties::FloatProperty * auto_size_factor_property_;
   rviz_common::properties::RosFilteredTopicProperty * depth_topic_property_;
   rviz_common::properties::EnumProperty * depth_transport_property_;
+  rviz_common::properties::RosFilteredTopicProperty * camera_info_topic_property_;
   rviz_common::properties::RosFilteredTopicProperty * color_topic_property_;
   rviz_common::properties::EnumProperty * color_transport_property_;
   rviz_common::properties::BoolProperty * use_occlusion_compensation_property_;
