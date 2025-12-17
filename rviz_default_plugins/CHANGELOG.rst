@@ -2,6 +2,11 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.25 (2025-12-17)
+--------------------
+* Add CameraInfo topic property to DepthCloudDisplay (`#1643 <https://github.com/ros2/rviz/issues/1643>`_) (`#1646 <https://github.com/ros2/rviz/issues/1646>`_)
+* Contributors: mergify[bot]
+
 11.2.24 (2025-11-28)
 --------------------
 * Fix Translation Issue in XYOrbitViewController (`#1630 <https://github.com/ros2/rviz/issues/1630>`_) (`#1633 <https://github.com/ros2/rviz/issues/1633>`_)
