@@ -2,6 +2,13 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.14 (2025-12-17)
+--------------------
+* Fix crash with no tools (`#1639 <https://github.com/ros2/rviz/issues/1639>`_)
+* Use qt6 as the default dependency from rosdep (`#1635 <https://github.com/ros2/rviz/issues/1635>`_)
+* Pointcloud2 display set QoS to best effort (`#1621 <https://github.com/ros2/rviz/issues/1621>`_)
+* Contributors: Alejandro Hernández Cordero, David V. Lu!!
+
 15.1.13 (2025-11-28)
 --------------------
 

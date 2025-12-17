@@ -2,6 +2,11 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.14 (2025-12-17)
+--------------------
+* Use qt6 as the default dependency from rosdep (`#1635 <https://github.com/ros2/rviz/issues/1635>`_)
+* Contributors: Alejandro Hernández Cordero
+
 15.1.13 (2025-11-28)
 --------------------
 

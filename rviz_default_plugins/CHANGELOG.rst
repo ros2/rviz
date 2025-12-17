@@ -2,6 +2,13 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.14 (2025-12-17)
+--------------------
+* Add CameraInfo topic property to DepthCloudDisplay (`#1643 <https://github.com/ros2/rviz/issues/1643>`_)
+* Use qt6 as the default dependency from rosdep (`#1635 <https://github.com/ros2/rviz/issues/1635>`_)
+* Pointcloud2 display set QoS to best effort (`#1621 <https://github.com/ros2/rviz/issues/1621>`_)
+* Contributors: Alejandro Hernández Cordero, Alexis Tsogias
+
 15.1.13 (2025-11-28)
 --------------------
 * Fix Translation Issue in XYOrbitViewController (`#1630 <https://github.com/ros2/rviz/issues/1630>`_)
