@@ -2,6 +2,11 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.0.11 (2025-12-17)
+--------------------
+* Fix crash with no tools (`#1639 <https://github.com/ros2/rviz/issues/1639>`_) (`#1640 <https://github.com/ros2/rviz/issues/1640>`_)
+* Contributors: mergify[bot]
+
 15.0.10 (2025-11-28)
 --------------------
 
