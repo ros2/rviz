@@ -91,6 +91,7 @@ public:
     RM_SPHERES,
     RM_TILES,
     RM_BOXES,
+    RM_DEPTH_FADE_POINTS,
   };
 
   RVIZ_RENDERING_PUBLIC
@@ -313,6 +314,7 @@ private:
   Ogre::MaterialPtr tile_material_;
   Ogre::MaterialPtr box_material_;
   Ogre::MaterialPtr current_material_;
+  Ogre::MaterialPtr depth_fade_point_material_;
   float alpha_;
 
   bool color_by_index_;
