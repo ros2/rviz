@@ -227,11 +227,11 @@ RenderSystem::loadOgrePlugins()
 {
   std::filesystem::path plugin_prefix = get_ogre_plugin_directory();
 #if defined _WIN32 && !NDEBUG
-  ogre_root_->loadPlugin(plugin_prefix / "RenderSystem_GL_d");
+  ogre_root_->loadPlugin((plugin_prefix / "RenderSystem_GL_d").string());
 #else
-  ogre_root_->loadPlugin(plugin_prefix / "RenderSystem_GL");
+  ogre_root_->loadPlugin((plugin_prefix / "RenderSystem_GL").string());
 #endif
-  ogre_root_->loadPlugin(plugin_prefix / "Codec_STBI");
+  ogre_root_->loadPlugin((plugin_prefix / "Codec_STBI").string());
 }
 
 void

@@ -60,7 +60,7 @@ TEST_F(VisualTestFixture, robot_model_display_test) {
   ament_index_cpp::get_package_prefix("rviz_rendering_tests", prefix_path);
   QString prefix = QString::fromStdString(prefix_path.string());
   robot_model_display->setFile(QString::fromStdString(
-      (prefix_path / "share" / "rviz_rendering_tests" / "test_meshes" / "test.urdf")));
+      (prefix_path / "share" / "rviz_rendering_tests" / "test_meshes" / "test.urdf").string()));
   robot_model_display->setVisualEnabled(true);
 
   captureMainWindow("robot_model_display_with_visuals");

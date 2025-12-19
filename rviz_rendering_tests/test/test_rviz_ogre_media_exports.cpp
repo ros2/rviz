@@ -60,6 +60,6 @@ TEST(CMake_Macro__Test, folders_are_installed_to_correct_location) {
     "ogre_media_resources" / "scripts";
   std::filesystem::path meshes = result.first.value() / "share" / "rviz_rendering_tests" /
     "ogre_media_resources" / "meshes";
-  ASSERT_EQ(stat(scripts.c_str(), &info), 0);
-  ASSERT_EQ(stat(meshes.c_str(), &info), 0);
+  ASSERT_EQ(stat(scripts.string().c_str(), &info), 0);
+  ASSERT_EQ(stat(meshes.string().c_str(), &info), 0);
 }
