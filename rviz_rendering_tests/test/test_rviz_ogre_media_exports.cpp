@@ -38,7 +38,7 @@
 
 TEST(CMake_Macro__Test, correctly_registers_plugin_in_ament_index) {
   auto result = ament_index_cpp::get_resource("rviz_ogre_media_exports", "rviz_rendering_tests");
-  EXPECT_NE(result.first, std::nullopt);
+  EXPECT_NE(result.resourcePath, std::nullopt);
 }
 
 TEST(CMake_Macro__Test, ament_index_resource_file_has_correct_content) {
@@ -46,7 +46,7 @@ TEST(CMake_Macro__Test, ament_index_resource_file_has_correct_content) {
     "rviz_ogre_media_exports", "rviz_rendering_tests");
 
   ASSERT_EQ(
-    result.second,
+    result.contents,
     "rviz_rendering_tests/ogre_media_resources/scripts\n"
     "rviz_rendering_tests/ogre_media_resources/meshes\n");
 }
@@ -56,9 +56,9 @@ TEST(CMake_Macro__Test, folders_are_installed_to_correct_location) {
     "rviz_ogre_media_exports", "rviz_rendering_tests");
 
   struct stat info;
-  std::filesystem::path scripts = result.first.value() / "share" / "rviz_rendering_tests" /
+  std::filesystem::path scripts = result.resourcePath.value() / "share" / "rviz_rendering_tests" /
     "ogre_media_resources" / "scripts";
-  std::filesystem::path meshes = result.first.value() / "share" / "rviz_rendering_tests" /
+  std::filesystem::path meshes = result.resourcePath.value() / "share" / "rviz_rendering_tests" /
     "ogre_media_resources" / "meshes";
   ASSERT_EQ(stat(scripts.string().c_str(), &info), 0);
   ASSERT_EQ(stat(meshes.string().c_str(), &info), 0);
