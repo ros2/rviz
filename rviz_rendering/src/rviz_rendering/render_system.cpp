@@ -323,7 +323,7 @@ void
 RenderSystem::setResourceDirectory()
 {
   auto result = ament_index_cpp::get_resource("packages", "rviz_rendering");
-  set_resource_directory((result.first.value() / "share" / "rviz_rendering").string());
+  set_resource_directory((result.resourcePath.value() / "share" / "rviz_rendering").string());
 }
 
 void
@@ -334,7 +334,7 @@ RenderSystem::setPluginDirectory()
   set_ogre_plugin_directory((result.first.value() / "opt" / "rviz_ogre_vendor" / "bin").string());
 #else
   set_ogre_plugin_directory(
-    (result.first.value() / "opt" / "rviz_ogre_vendor" / "lib" / "OGRE").string());
+    (result.resourcePath.value() / "opt" / "rviz_ogre_vendor" / "lib" / "OGRE").string());
 #endif
 }
 
@@ -390,11 +390,11 @@ void RenderSystem::addAdditionalResourcesFromAmentIndex() const
     RVIZ_OGRE_MEDIA_RESOURCE_NAME);
   for (auto resource : resource_locations) {
     auto result = ament_index_cpp::get_resource(RVIZ_OGRE_MEDIA_RESOURCE_NAME, resource.first);
-    if (result.first != std::nullopt) {
+    if (result.resourcePath != std::nullopt) {
       std::vector<std::string> filenames =
-        string_helper::splitStringIntoTrimmedItems(result.second, '\n');
+        string_helper::splitStringIntoTrimmedItems(result.contents, '\n');
       for (const auto & line : filenames) {
-        std::string resource_path = (result.first.value() / "share" / line).string();
+        std::string resource_path = (result.resourcePath.value() / "share" / line).string();
         if (!QDir(QString::fromStdString(resource_path)).exists()) {
           RVIZ_RENDERING_LOG_WARNING_STREAM("Could not find folder " << resource_path);
         }
