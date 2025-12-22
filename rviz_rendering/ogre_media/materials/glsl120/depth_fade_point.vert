@@ -30,16 +30,23 @@ float hash21(vec3 p)
 
 void main()
 {
+  gl_Position = worldviewproj_matrix * gl_Vertex;
+
   vec4 pos_rel_view = worldview_matrix * gl_Vertex;
   float depth = -pos_rel_view.z;
 
-  gl_Position = worldviewproj_matrix * gl_Vertex;
+  if (depth < 1e-6)
+  {
+    // point is behind the camera, remove it
+    gl_Position.w = -1.0; // outside frustum
+    return;
+  }
 
   float focal = projection_matrix[1][1];
   // Compute pixel size from world-size (size.x), focal, depth and viewport height
   // pixel_size = world_size * focal / depth * (viewport_height / 2)
   float pixelSize = size.x * focal / depth * (viewport_height * 0.5);
-  gl_PointSize = min(max(pixelSize, 1.0), MAX_PIXEL_SIZE);
+  gl_PointSize = clamp(pixelSize, 1.0, MAX_PIXEL_SIZE);
 
   // For very small points, reduce alpha to create a fading effect
   // alpha scales with pixel size squared (area)
@@ -53,6 +60,7 @@ void main()
     {
       // remove point
       gl_Position.w = -1.0; // outside frustum
+      return;
     }
     finalAlpha = MIN_ALPHA_THRESHOLD;
   }
