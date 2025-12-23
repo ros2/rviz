@@ -32,6 +32,7 @@
 
 #include "rviz_rendering/render_system.hpp"
 
+#include <filesystem>
 #include <iostream>
 #include <map>
 #include <memory>
@@ -224,13 +225,13 @@ RenderSystem::setupDummyWindowId()
 void
 RenderSystem::loadOgrePlugins()
 {
-  std::string plugin_prefix = get_ogre_plugin_directory();
+  std::filesystem::path plugin_prefix = get_ogre_plugin_directory();
 #if defined _WIN32 && !NDEBUG
-  ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL_d");
+  ogre_root_->loadPlugin((plugin_prefix / "RenderSystem_GL_d").string());
 #else
-  ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL");
+  ogre_root_->loadPlugin((plugin_prefix / "RenderSystem_GL").string());
 #endif
-  ogre_root_->loadPlugin(plugin_prefix + "Codec_STBI");
+  ogre_root_->loadPlugin((plugin_prefix / "Codec_STBI").string());
 }
 
 void
@@ -321,22 +322,20 @@ RenderSystem::setupRenderSystem()
 void
 RenderSystem::setResourceDirectory()
 {
-  std::string content;
-  std::string prefix_path;
-  ament_index_cpp::get_resource("packages", "rviz_rendering", content, &prefix_path);
-  set_resource_directory(prefix_path + "/share/rviz_rendering");
+  auto result = ament_index_cpp::get_resource("packages", "rviz_rendering");
+  set_resource_directory((result.resourcePath.value() / "share" / "rviz_rendering").string());
 }
 
 void
 RenderSystem::setPluginDirectory()
 {
-  std::string content;
-  std::string prefix_path;
-  ament_index_cpp::get_resource("packages", "rviz_ogre_vendor", content, &prefix_path);
+  auto result = ament_index_cpp::get_resource("packages", "rviz_ogre_vendor");
 #ifdef _WIN32
-  set_ogre_plugin_directory(prefix_path + "\\opt\\rviz_ogre_vendor\\bin\\");
+  set_ogre_plugin_directory(
+    (result.resourcePath.value() / "opt" / "rviz_ogre_vendor" / "bin").string());
 #else
-  set_ogre_plugin_directory(prefix_path + "/opt/rviz_ogre_vendor/lib/OGRE/");
+  set_ogre_plugin_directory(
+    (result.resourcePath.value() / "opt" / "rviz_ogre_vendor" / "lib" / "OGRE").string());
 #endif
 }
 
@@ -388,18 +387,15 @@ void RenderSystem::addAdditionalResourcesFromAmentIndex() const
 {
   const std::string RVIZ_OGRE_MEDIA_RESOURCE_NAME = "rviz_ogre_media_exports";
   std::map<std::string,
-    std::string> resource_locations = ament_index_cpp::get_resources(
+    std::filesystem::path> resource_locations = ament_index_cpp::get_resources_by_name(
     RVIZ_OGRE_MEDIA_RESOURCE_NAME);
   for (auto resource : resource_locations) {
-    std::string content;
-    std::string prefix_path;
-    if (ament_index_cpp::get_resource(
-        RVIZ_OGRE_MEDIA_RESOURCE_NAME, resource.first, content, &prefix_path))
-    {
+    auto result = ament_index_cpp::get_resource(RVIZ_OGRE_MEDIA_RESOURCE_NAME, resource.first);
+    if (result.resourcePath != std::nullopt) {
       std::vector<std::string> filenames =
-        string_helper::splitStringIntoTrimmedItems(content, '\n');
+        string_helper::splitStringIntoTrimmedItems(result.contents, '\n');
       for (const auto & line : filenames) {
-        std::string resource_path = prefix_path + "/share/" + line;
+        std::string resource_path = (result.resourcePath.value() / "share" / line).string();
         if (!QDir(QString::fromStdString(resource_path)).exists()) {
           RVIZ_RENDERING_LOG_WARNING_STREAM("Could not find folder " << resource_path);
         }

@@ -132,11 +132,13 @@ VisualizationFrame::VisualizationFrame(
 
   post_load_timer_->setSingleShot(true);
   connect(post_load_timer_, SIGNAL(timeout()), this, SLOT(markLoadingDone()));
-
-  package_path_ = ament_index_cpp::get_package_share_directory("rviz_common");
-  QDir help_path(QString::fromStdString(package_path_) + "/help/help.html");
+  std::filesystem::path package_path_;
+  ament_index_cpp::get_package_share_directory("rviz_common", package_path_);
+  std::filesystem::path help_path_p = package_path_ / "help" / "help.html";
+  QDir help_path(help_path_p.string().c_str());
   help_path_ = help_path.absolutePath();
-  QDir splash_path(QString::fromStdString(package_path_) + "/images/splash.png");
+  std::filesystem::path splash_path_p = package_path_ / "images" / "splash.png";
+  QDir splash_path(splash_path_p.string().c_str());
   splash_path_ = splash_path.absolutePath();
 
   auto * reset_button = new QToolButton();
