@@ -70,7 +70,7 @@ void VisualTestFixture::SetUpTestCase()
     visualizer_app_->loadConfig(
       QDir::toNativeSeparators(
         QString::fromStdString(
-          (package_share_directory.string() / "config" /
+          (package_share_directory / "config" /
           "visual_tests_test_image_config.rviz").string())));
   }
 }
