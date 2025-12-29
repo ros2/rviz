@@ -29,6 +29,7 @@
 
 #include "rviz_visual_testing_framework/visual_test_fixture.hpp"
 
+#include <filesystem>
 #include <memory>
 #include <string>
 #include <vector>
@@ -55,20 +56,22 @@ void VisualTestFixture::SetUpTestCase()
 
   visualizer_app_->init(argc, argv);
 
-  std::string package_share_directory = ament_index_cpp::get_package_share_directory(
-    "rviz_visual_testing_framework");
+  std::filesystem::path package_share_directory;
+  ament_index_cpp::get_package_share_directory(
+    "rviz_visual_testing_framework",
+    package_share_directory);
   if (VisualTest::generateReferenceImages()) {
     visualizer_app_->loadConfig(
       QDir::toNativeSeparators(
         QString::fromStdString(
-          package_share_directory +
-          "/config/visual_tests_default_config.rviz")));
+          (package_share_directory / "config" /
+          "visual_tests_default_config.rviz").string())));
   } else {
     visualizer_app_->loadConfig(
       QDir::toNativeSeparators(
         QString::fromStdString(
-          package_share_directory +
-          "/config/visual_tests_test_image_config.rviz")));
+          (package_share_directory / "config" /
+          "visual_tests_test_image_config.rviz").string())));
   }
 }
 
