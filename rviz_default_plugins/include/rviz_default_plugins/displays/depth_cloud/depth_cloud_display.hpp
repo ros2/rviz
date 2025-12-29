@@ -92,7 +92,7 @@ public:
   void onInitialize() override;
 
   // Overrides from Display
-  void update(float wall_dt, float ros_dt) override;
+  void update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt) override;
   void reset() override;
   void setTopic(const QString & topic, const QString & datatype) override;
 
@@ -172,6 +172,7 @@ protected:
   rviz_common::properties::FloatProperty * auto_size_factor_property_;
   rviz_common::properties::RosFilteredTopicProperty * depth_topic_property_;
   rviz_common::properties::EnumProperty * depth_transport_property_;
+  rviz_common::properties::RosFilteredTopicProperty * camera_info_topic_property_;
   rviz_common::properties::RosFilteredTopicProperty * color_topic_property_;
   rviz_common::properties::EnumProperty * color_transport_property_;
   rviz_common::properties::BoolProperty * use_occlusion_compensation_property_;

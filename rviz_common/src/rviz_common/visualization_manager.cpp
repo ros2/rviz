@@ -139,7 +139,7 @@ VisualizationManager::VisualizationManager(
   shutting_down_(false),
   render_panel_(render_panel),
   wall_clock_elapsed_(0),
-  ros_time_elapsed_(0),
+  ros_time_elapsed_(0, 0),
   time_update_timer_(0),
   frame_update_timer_(0),
   render_requested_(1),
@@ -415,12 +415,11 @@ void VisualizationManager::onTimeJump(const rcl_time_jump_t & jump)
 
 void VisualizationManager::updateTime()
 {
-  rclcpp::Clock clock;  // TODO(wjwwood): replace with clock attached to node for ROS Time
   if (ros_time_begin_.nanoseconds() == 0) {
-    ros_time_begin_ = clock_->now();
+    ros_time_begin_ = rviz_ros_node_.lock()->get_raw_node()->get_clock()->now();
   }
 
-  ros_time_elapsed_ = (clock_->now() - ros_time_begin_).nanoseconds();
+  ros_time_elapsed_ = rviz_ros_node_.lock()->get_raw_node()->get_clock()->now() - ros_time_begin_;
 
   if (wall_clock_begin_.time_since_epoch().count() == 0) {
     wall_clock_begin_ = std::chrono::system_clock::now();
@@ -578,7 +577,7 @@ double VisualizationManager::getWallClockElapsed()
 
 double VisualizationManager::getROSTimeElapsed()
 {
-  return static_cast<double>(ros_time_elapsed_) / 1e9;
+  return ros_time_elapsed_.seconds();
 }
 
 void VisualizationManager::updateBackgroundColor()

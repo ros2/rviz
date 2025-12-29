@@ -408,7 +408,8 @@ TEST_F(MarkerCommonFixture, update_retransforms_frame_locked_messages) {
     pointCloud->getParentSceneNode()->getOrientation(),
     QuaternionEq(starting_orientation));
 
-  common_->update(0, 0);
+  auto zero = std::chrono::nanoseconds::zero();
+  common_->update(zero, zero);
 
   EXPECT_THAT(pointCloud->getParentSceneNode()->getPosition(), Vector3Eq(next_position));
   EXPECT_THAT(
@@ -442,7 +443,8 @@ TEST_F(MarkerCommonFixture, update_does_not_retransform_normal_messages) {
     pointCloud->getParentSceneNode()->getOrientation(),
     QuaternionEq(starting_orientation));
 
-  common_->update(0, 0);
+  auto zero = std::chrono::nanoseconds::zero();
+  common_->update(zero, zero);
 
   EXPECT_THAT(pointCloud->getParentSceneNode()->getPosition(), Vector3Eq(starting_position));
   EXPECT_THAT(

@@ -91,7 +91,7 @@ namespace displays
 {
 
 TFDisplay::TFDisplay()
-: update_timer_(0.0f),
+: update_timer_(0),
   changing_single_frame_enabled_state_(false),
   transformer_guard_(
     std::make_unique<rviz_default_plugins::transformation::TransformerGuard<
@@ -221,7 +221,7 @@ void TFDisplay::clear()
 
   frames_.clear();
 
-  update_timer_ = 0.0f;
+  update_timer_ = std::chrono::nanoseconds(0);
 
   clearStatuses();
 }
@@ -280,7 +280,7 @@ void TFDisplay::allEnabledChanged()
   }
 }
 
-void TFDisplay::update(float wall_dt, float ros_dt)
+void TFDisplay::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt)
 {
   if (!transformer_guard_->checkTransformer()) {
     return;
@@ -288,11 +288,11 @@ void TFDisplay::update(float wall_dt, float ros_dt)
 
   (void) ros_dt;
   update_timer_ += wall_dt;
-  float update_rate = update_rate_property_->getFloat();
-  if (update_rate < 0.0001f || update_timer_ > update_rate * 1000000000) {
+  std::chrono::nanoseconds update_rate(std::lround(update_rate_property_->getFloat() * 1e9));
+  if (update_rate < std::chrono::microseconds(100) || update_timer_ > update_rate) {
     updateFrames();
 
-    update_timer_ = 0.0f;
+    update_timer_ = std::chrono::nanoseconds(0);
   }
 }
 
@@ -633,7 +633,7 @@ void TFDisplay::deleteFrame(FrameInfo * frame, bool delete_properties)
 
 void TFDisplay::fixedFrameChanged()
 {
-  update_timer_ = update_rate_property_->getFloat();
+  update_timer_ = std::chrono::nanoseconds(std::lround(update_rate_property_->getFloat() * 1e9));
 }
 
 void TFDisplay::reset()

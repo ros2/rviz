@@ -345,7 +345,7 @@ void MarkerCommon::processDelete(const visualization_msgs::msg::Marker::ConstSha
   context_->queueRender();
 }
 
-void MarkerCommon::update(float wall_dt, float ros_dt)
+void MarkerCommon::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt)
 {
   (void) wall_dt;
   (void) ros_dt;

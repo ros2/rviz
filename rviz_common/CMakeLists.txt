@@ -48,15 +48,13 @@ find_package(rviz_rendering REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
-find_package(tinyxml2_vendor REQUIRED)
+find_package(TinyXML2 REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(message_filters REQUIRED)
 find_package(urdf REQUIRED)
 find_package(yaml_cpp_vendor REQUIRED)
 find_package(yaml-cpp REQUIRED)
-
-find_package(TinyXML2 REQUIRED)  # provided by tinyxml2_vendor
 
 # Copy env_config.hpp so that env_config.cpp can find it
 # TODO(jsquare): Get rid of copy hpp file
@@ -110,6 +108,8 @@ set(rviz_common_headers_to_moc
   include/rviz_common/properties/property_tree_model.hpp
   include/rviz_common/properties/property_tree_with_help.hpp
   include/rviz_common/properties/qos_profile_property.hpp
+  include/rviz_common/properties/ros_action_property.hpp
+  include/rviz_common/properties/ros_service_property.hpp
   include/rviz_common/properties/ros_topic_property.hpp
   include/rviz_common/properties/ros_topic_multi_property.hpp
   include/rviz_common/properties/status_list.hpp
@@ -191,6 +191,8 @@ set(rviz_common_source_files
   src/rviz_common/properties/property_tree_widget.cpp
   src/rviz_common/properties/property_tree_with_help.cpp
   src/rviz_common/properties/property.cpp
+  src/rviz_common/properties/ros_action_property.cpp
+  src/rviz_common/properties/ros_service_property.cpp
   src/rviz_common/properties/ros_topic_property.cpp
   src/rviz_common/properties/ros_topic_multi_property.cpp
   src/rviz_common/properties/quaternion_property.cpp

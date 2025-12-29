@@ -2,6 +2,41 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.15 (2025-12-23)
+--------------------
+* Updated deprecated ament_index_cpp API (`#1647 <https://github.com/ros2/rviz/issues/1647>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.14 (2025-12-17)
+--------------------
+* Use qt6 as the default dependency from rosdep (`#1635 <https://github.com/ros2/rviz/issues/1635>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.13 (2025-11-28)
+--------------------
+
+15.1.12 (2025-11-07)
+--------------------
+* Removed unused files (`#1600 <https://github.com/ros2/rviz//issues/1600>`_)
+* Contributors: mosfet80
+
+15.1.11 (2025-10-20)
+--------------------
+
+15.1.10 (2025-09-26)
+--------------------
+
+15.1.9 (2025-09-04)
+-------------------
+* Removed assimp vendor package (`#1574 <https://github.com/ros2/rviz/issues/1574>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.8 (2025-08-22)
+-------------------
+* Update OGRE mesh files from ROS1 RViz (`#1536 <https://github.com/ros2/rviz//issues/1536>`_) (`#1559 <https://github.com/ros2/rviz//issues/1559>`_)
+* add resourceExists check to loadEmbeddedTexture before loading texture (`#1542 <https://github.com/ros2/rviz//issues/1542>`_)
+* Contributors: John TGZ, mergify[bot]
+
 15.1.7 (2025-07-25)
 -------------------
 

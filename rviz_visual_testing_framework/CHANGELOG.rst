@@ -2,6 +2,34 @@
 Changelog for package rviz_visual_testing_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.15 (2025-12-23)
+--------------------
+
+15.1.14 (2025-12-17)
+--------------------
+* Use qt6 as the default dependency from rosdep (`#1635 <https://github.com/ros2/rviz/issues/1635>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.13 (2025-11-28)
+--------------------
+
+15.1.12 (2025-11-07)
+--------------------
+
+15.1.11 (2025-10-20)
+--------------------
+
+15.1.10 (2025-09-26)
+--------------------
+* Removed deprecation warning in tf2 (`#1585 <https://github.com/ros2/rviz/issues/1585>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.9 (2025-09-04)
+-------------------
+
+15.1.8 (2025-08-22)
+-------------------
+
 15.1.7 (2025-07-25)
 -------------------
 * Replace deprecated tf2_ros headers (`#1529 <https://github.com/ros2/rviz/issues/1529>`_)

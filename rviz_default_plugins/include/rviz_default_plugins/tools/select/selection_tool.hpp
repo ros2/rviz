@@ -64,7 +64,7 @@ public:
   virtual int processMouseEvent(rviz_common::ViewportMouseEvent & event);
   virtual int processKeyEvent(QKeyEvent * event, rviz_common::RenderPanel * panel);
 
-  virtual void update(float wall_dt, float ros_dt);
+  virtual void update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt);
 
 private:
   MoveTool * move_tool_;

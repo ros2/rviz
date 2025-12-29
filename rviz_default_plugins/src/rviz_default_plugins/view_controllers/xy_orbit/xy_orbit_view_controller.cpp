@@ -201,6 +201,25 @@ void XYOrbitViewController::handleWheelEvent(
   zoom(diff * 0.001f * distance);
 }
 
+void XYOrbitViewController::handleMouseEvent(rviz_common::ViewportMouseEvent & event)
+{
+  // Handle XY movement with proper mouse position access
+  if (event.middle() || (event.shift() && event.left())) {
+    int32_t diff_x = 0;
+    int32_t diff_y = 0;
+    bool moved = OrbitViewController::setMouseMovementFromEvent(event, diff_x, diff_y);
+    if (moved && (event.type == QEvent::MouseMove)) {
+      float distance = distance_property_->getFloat();
+      // Pass the last mouse position to maintain consistent motion
+      moveFocalPoint(distance, diff_x, diff_y, event.last_x, event.last_y);
+      context_->queueRender();
+      return;
+    }
+  }
+  // For other mouse events, delegate to the base class
+  OrbitViewController::handleMouseEvent(event);
+}
+
 }  // namespace view_controllers
 }  // namespace rviz_default_plugins
 

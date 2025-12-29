@@ -143,7 +143,7 @@ public:
   void initialize(rviz_common::DisplayContext * context, Ogre::SceneNode * scene_node);
 
   void reset();
-  void update(float wall_dt, float ros_dt);
+  void update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt);
 
   void addMessage(sensor_msgs::msg::PointCloud::ConstSharedPtr cloud);
   void addMessage(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud);

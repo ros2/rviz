@@ -112,7 +112,7 @@ void MarkerDisplay::processMessage(const visualization_msgs::msg::Marker::ConstS
   marker_common_->addMessage(msg);
 }
 
-void MarkerDisplay::update(float wall_dt, float ros_dt)
+void MarkerDisplay::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt)
 {
   marker_common_->update(wall_dt, ros_dt);
 }

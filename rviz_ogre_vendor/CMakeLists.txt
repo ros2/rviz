@@ -6,45 +6,6 @@ find_package(ament_cmake_vendor_package REQUIRED)
 
 option(RVIZ_OGRE_VENDOR_MANGLE_NAME_OF_LIBRARIES_USED_BY_RVIZ "If enabled, append a unique name to OgreMain, OgreOverlay and OgreGLSupport." FALSE)
 
-if(WIN32)
-  set(FREETYPE_C_FLAGS "${CMAKE_C_FLAGS}")
-  if(MSVC)
-    set(FREETYPE_C_FLAGS "/wd4244 ${FREETYPE_C_FLAGS}")
-    set(FREETYPE_C_FLAGS "/wd4267 ${FREETYPE_C_FLAGS}")
-    set(FREETYPE_C_FLAGS "/wd4312 ${FREETYPE_C_FLAGS}")
-    set(FREETYPE_C_FLAGS "/wd4996 ${FREETYPE_C_FLAGS}")
-  endif()
-
-  ament_vendor(freetype_vendor
-    VCS_URL https://github.com/freetype/freetype.git
-    VCS_VERSION VER-2-13-2
-    CMAKE_ARGS
-      -DFT_DISABLE_ZLIB:BOOL=ON
-      -DFT_DISABLE_BZIP2:BOOL=ON
-      -DFT_DISABLE_PNG:BOOL=ON
-      -DFT_DISABLE_HARFBUZZ:BOOL=ON
-      "-DCMAKE_C_FLAGS=${FREETYPE_C_FLAGS}"
-  )
-
-  set(ZLIB_C_FLAGS "${ZLIB_C_FLAGS}")
-  if(MSVC)
-    set(ZLIB_C_FLAGS "/wd4267 ${ZLIB_C_FLAGS}")
-  endif()
-
-  ament_vendor(zlib_vendor
-    VCS_URL https://github.com/madler/zlib.git
-    VCS_VERSION v1.3
-    CMAKE_ARGS
-      # zlib doesn't use CMAKE_INSTALL_PREFIX correctly, so we need to override
-      -DINSTALL_BIN_DIR=<INSTALL_DIR>/bin
-      -DINSTALL_LIB_DIR=<INSTALL_DIR>/lib
-      -DINSTALL_INC_DIR=<INSTALL_DIR>/include
-      -DINSTALL_MAN_DIR=<INSTALL_DIR>/share/man
-      -DINSTALL_PKGCONFIG_DIR=<INSTALL_DIR>/share/pkgconfig
-      "-DCMAKE_C_FLAGS=${ZLIB_C_FLAGS}"
-  )
-endif()
-
 set(OGRE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 if(MSVC)
   set(OGRE_CXX_FLAGS "/wd4101 ${OGRE_CXX_FLAGS}")
@@ -111,16 +72,6 @@ ament_vendor(ogre_vendor
     ${OGRE_CMAKE_ARGS}
   PATCHES patches
 )
-
-if(TARGET ogre_vendor)
-  if(TARGET freetype_vendor)
-    ExternalProject_Add_StepDependencies(ogre_vendor configure freetype_vendor)
-  endif()
-
-  if(TARGET zlib_vendor)
-    ExternalProject_Add_StepDependencies(ogre_vendor configure zlib_vendor)
-  endif()
-endif()
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

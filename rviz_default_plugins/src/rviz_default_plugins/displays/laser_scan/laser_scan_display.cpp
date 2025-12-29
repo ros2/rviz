@@ -117,7 +117,7 @@ void LaserScanDisplay::processMessage(sensor_msgs::msg::LaserScan::ConstSharedPt
   }
 }
 
-void LaserScanDisplay::update(float wall_dt, float ros_dt)
+void LaserScanDisplay::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt)
 {
   if (transformer_guard_->checkTransformer()) {
     point_cloud_common_->update(wall_dt, ros_dt);

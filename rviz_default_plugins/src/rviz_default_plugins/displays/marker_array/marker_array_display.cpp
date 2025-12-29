@@ -66,7 +66,7 @@ void MarkerArrayDisplay::processMessage(visualization_msgs::msg::MarkerArray::Co
   marker_common_->addMessage(msg);
 }
 
-void MarkerArrayDisplay::update(float wall_dt, float ros_dt)
+void MarkerArrayDisplay::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt)
 {
   marker_common_->update(wall_dt, ros_dt);
 }
