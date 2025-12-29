@@ -36,6 +36,7 @@
 #include <chrono>
 #include <deque>
 #include <map>
+#include <memory>
 #include <string>
 
 #include <QList>  // NOLINT: cpplint is unable to handle the include order here
@@ -43,10 +44,12 @@
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <Qt>  // NOLINT: cpplint is unable to handle the include order here
 
+#include <rclcpp/service.hpp>
 #include "rviz_common/config.hpp"
-#include "rviz_rendering/render_window.hpp"
 #include "rviz_common/window_manager_interface.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
+#include "rviz_rendering/render_window.hpp"
+#include <rviz_resource_interfaces/srv/load_config.hpp>
 
 class QAction;
 class QActionGroup;
@@ -83,6 +86,7 @@ class WidgetGeometryChangeDetector;
  */
 class RVIZ_COMMON_PUBLIC VisualizationFrame : public QMainWindow, public WindowManagerInterface
 {
+  using LoadConfig = rviz_resource_interfaces::srv::LoadConfig;
   Q_OBJECT
 
 public:
@@ -172,12 +176,19 @@ public:
   void
   savePersistentSettings();
 
-  /// Load display settings from the given file.
+  rclcpp::Service<LoadConfig>::SharedPtr load_config_service_;
+
+  void
+  loadDisplayConfigService(
+    const std::shared_ptr<LoadConfig::Request> request,
+    std::shared_ptr<LoadConfig::Response> response);
+
+  /// Load display settings from the configuration string.
   /**
-   * \param path The full path of the config file to load from.
+   * \param config_string Can be path to the config file to load from or a yaml configuration string.
    */
   void
-  loadDisplayConfig(const QString & path);
+  loadDisplayConfig(const QString & config_string);
 
   // TODO(wjwwood): consider changing this function to raise an exception
   //                when there is a failure, rather than the getErrorMessage()

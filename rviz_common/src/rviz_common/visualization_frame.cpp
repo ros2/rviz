@@ -63,6 +63,7 @@
 #include <QToolButton>  // NOLINT cpplint cannot handle include order here
 
 #include "rclcpp/clock.hpp"
+#include <rclcpp/service.hpp>
 #include "tf2_ros/buffer.hpp"
 #include "tf2_ros/transform_listener.hpp"
 
@@ -75,6 +76,7 @@
 #include "rviz_common/yaml_config_reader.hpp"
 #include "rviz_common/yaml_config_writer.hpp"
 #include "rviz_rendering/render_window.hpp"
+#include <rviz_resource_interfaces/srv/load_config.hpp>
 
 #include "./env_config.hpp"
 #include "./failed_panel.hpp"
@@ -352,6 +354,14 @@ void VisualizationFrame::initialize(
   } else {
     loadDisplayConfig(QString::fromStdString(default_display_config_file_));
   }
+
+  auto node_abstraction = rviz_ros_node.lock();
+  auto node = node_abstraction->get_raw_node();
+  load_config_service_ = node->create_service<LoadConfig>(
+    node_abstraction->get_node_name() + "/load_config",
+    std::bind(
+      &VisualizationFrame::loadDisplayConfigService, this,
+      std::placeholders::_1, std::placeholders::_2));
 
   // Periodically process events for the splash screen.
   QCoreApplication::processEvents();
@@ -672,14 +682,28 @@ void VisualizationFrame::markRecentConfig(const std::string & path)
   updateRecentConfigMenu();
 }
 
-void VisualizationFrame::loadDisplayConfig(const QString & qpath)
+void VisualizationFrame::loadDisplayConfigService(
+  const std::shared_ptr<LoadConfig::Request> request,
+  std::shared_ptr<LoadConfig::Response> response)
 {
-  std::string path = qpath.toStdString();
-  QFileInfo path_info(qpath);
+  RVIZ_COMMON_LOG_INFO_STREAM(
+    "Requested loadConfig" << request->config_string.c_str()
+  );
+  loadDisplayConfig(QString::fromStdString(request->config_string));
+  response->success = true;
+  response->message = "Loaded display config.";
+}
+
+void VisualizationFrame::loadDisplayConfig(const QString & config_string)
+{
+  std::string path = config_string.toStdString();
+  QFileInfo path_info(config_string);
   std::string actual_load_path = path;
-  if (!path_info.exists() || path_info.isDir()) {
+  bool is_loadable_path = (path_info.exists() && !path_info.isDir());
+  if (!is_loadable_path) {
     actual_load_path = package_path_ + "/default.rviz";
-    if (!QFile(QString::fromStdString(actual_load_path)).exists()) {
+    is_loadable_path = QFile(QString::fromStdString(actual_load_path)).exists();
+    if (!is_loadable_path) {
       RVIZ_COMMON_LOG_ERROR_STREAM(
         "Default display config '" <<
           actual_load_path.c_str() << "' not found.  RViz will be very empty at first.");
@@ -707,7 +731,12 @@ void VisualizationFrame::loadDisplayConfig(const QString & qpath)
 
   YamlConfigReader reader;
   Config config;
-  reader.readFile(config, QString::fromStdString(actual_load_path));
+  if (is_loadable_path) {
+    reader.readFile(config, QString::fromStdString(actual_load_path));
+  } else { // Treat as yaml string content
+    reader.readString(config, config_string);
+  }
+
   if (!reader.error()) {
     try {
       load(config);
@@ -716,11 +745,11 @@ void VisualizationFrame::loadDisplayConfig(const QString & qpath)
     }
   }
 
-  markRecentConfig(path);
-
-  setDisplayConfigFile(path);
-
-  last_config_dir_ = path_info.absolutePath().toStdString();
+  if (is_loadable_path) {
+    markRecentConfig(path);
+    setDisplayConfigFile(path);
+    last_config_dir_ = path_info.absolutePath().toStdString();
+  }
 
   post_load_timer_->start(1000);
 }

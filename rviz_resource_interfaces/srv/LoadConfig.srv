@@ -1,0 +1,4 @@
+string config_string
+---
+bool success
+string message
