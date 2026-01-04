@@ -54,7 +54,7 @@ TEST_F(VisualTestFixture, test_image_display_with_published_image) {
   assertScreenShotsIdentity();
 }
 
-TEST_F(VisualTestFixture, test_compressed_image_display_with_published_image) {
+TEST_F(VisualTestFixture, test_image_display_with_published_compressed_image) {
   auto compressed_image_publisher = std::make_unique<VisualTestPublisher>(
     std::make_shared<nodes::CompressedImagePublisher>(), "image_frame");
 
