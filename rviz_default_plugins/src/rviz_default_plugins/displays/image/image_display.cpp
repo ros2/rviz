@@ -139,14 +139,7 @@ void ImageDisplay::onInitialize()
 
   // Populate message types and transport overrides based on installed image_transport plugins
   std::shared_ptr<rclcpp::Node> node = rviz_ros_node_.lock()->get_raw_node();
-  image_transport::ImageTransport image_transport_(
-    image_transport::RequiredInterfaces(
-      node->get_node_base_interface(),
-      node->get_node_parameters_interface(),
-      node->get_node_logging_interface(),
-      node->get_node_timers_interface(),
-      node->get_node_topics_interface()
-  ));
+  image_transport::ImageTransport image_transport_{*node};
   std::vector<std::string> loadable_transports = image_transport_.getLoadableTransports();
   std::vector<QString> message_types;
   // Map to message types
@@ -243,13 +236,7 @@ void ImageDisplay::subscribe()
   }
   try {
     rclcpp::Node::SharedPtr node = rviz_ros_node_.lock()->get_raw_node();
-    image_transport::ImageTransport image_transport_(image_transport::RequiredInterfaces(
-      node->get_node_base_interface(),
-      node->get_node_parameters_interface(),
-      node->get_node_logging_interface(),
-      node->get_node_timers_interface(),
-      node->get_node_topics_interface()
-    ));
+    image_transport::ImageTransport image_transport_{*node};
     // Check which image_transport plugins are installed
     std::vector<std::string> transports = image_transport_.getLoadableTransports();
     std::string transports_str = "";
@@ -281,13 +268,7 @@ void ImageDisplay::subscribe()
     // image_transport::Subscriber only requires one callback for "raw" and the other types are
     // automatically converted.
     subscription_->subscribe(
-      image_transport::RequiredInterfaces(
-        node->get_node_base_interface(),
-        node->get_node_parameters_interface(),
-        node->get_node_logging_interface(),
-        node->get_node_timers_interface(),
-        node->get_node_topics_interface()
-      ),
+      *node,
       getBaseTopicFromTopic(topic_property_->getTopicStd()),
       transport_hint,
       qos_profile);
