@@ -208,7 +208,7 @@ void FPSViewController::mimic(rviz_common::ViewController * source_view)
   setPropertiesFromCamera(source_view->getCamera());
 }
 
-void FPSViewController::update(float dt, float ros_dt)
+void FPSViewController::update(std::chrono::nanoseconds dt, std::chrono::nanoseconds ros_dt)
 {
   FramePositionTrackingViewController::update(dt, ros_dt);
   updateCamera();

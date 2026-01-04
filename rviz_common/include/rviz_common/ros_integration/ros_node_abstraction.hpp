@@ -85,6 +85,16 @@ public:
   std::map<std::string, std::vector<std::string>>
   get_topic_names_and_types() const override;
 
+  /// Return a map with service names mapped to a list of types for that service.
+  /**
+   * The node name is what was given when initializing this API.
+   *
+   * \return map of service names and their types
+   */
+  RVIZ_COMMON_PUBLIC
+  std::map<std::string, std::vector<std::string>>
+  get_service_names_and_types() const override;
+
   // TODO(wjwwood): think about a suitable way to extend the abstraction to also cover subscriptions
   RVIZ_COMMON_PUBLIC
   rclcpp::Node::SharedPtr

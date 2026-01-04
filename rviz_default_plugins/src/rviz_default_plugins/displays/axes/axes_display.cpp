@@ -95,7 +95,7 @@ void AxesDisplay::updateShape()
   context_->queueRender();
 }
 
-void AxesDisplay::update(float dt, float ros_dt)
+void AxesDisplay::update(std::chrono::nanoseconds dt, std::chrono::nanoseconds ros_dt)
 {
   (void) dt;
   (void) ros_dt;

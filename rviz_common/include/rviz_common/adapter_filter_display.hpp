@@ -137,7 +137,7 @@ protected:
         *context_->getFrameManager()->getTransformer(),
         fixed_frame_.toStdString(),
         static_cast<uint32_t>(message_queue_property_->getInt()),
-        node);
+        *node);
       tf_filter_->connectInput(*subscription_);
       tf_filter_->registerCallback(
         std::bind(

@@ -129,6 +129,7 @@ void ImageDisplay::setTopic(const QString & topic, const QString & datatype)
 void ImageDisplay::onInitialize()
 {
   _RosTopicDisplay::onInitialize();
+  subscription_ = std::make_shared<image_transport::SubscriberFilter>();
   updateNormalizeOptions();
   setupScreenRectangle();
   setupRenderPanel();
@@ -279,7 +280,6 @@ void ImageDisplay::subscribe()
     }
     // image_transport::Subscriber only requires one callback for "raw" and the other types are
     // automatically converted.
-    subscription_ = std::make_shared<image_transport::SubscriberFilter>();
     subscription_->subscribe(
       image_transport::RequiredInterfaces(
         node->get_node_base_interface(),
@@ -316,7 +316,7 @@ void ImageDisplay::resetSubscription()
   context_->queueRender();
 }
 
-void ImageDisplay::unsubscribe() {subscription_.reset();}
+void ImageDisplay::unsubscribe() {subscription_->unsubscribe();}
 
 void ImageDisplay::updateNormalizeOptions()
 {
@@ -341,7 +341,7 @@ void ImageDisplay::updateNormalizeOptions()
 
 void ImageDisplay::clear() {texture_->clear();}
 
-void ImageDisplay::update(float wall_dt, float ros_dt)
+void ImageDisplay::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt)
 {
   (void)wall_dt;
   (void)ros_dt;

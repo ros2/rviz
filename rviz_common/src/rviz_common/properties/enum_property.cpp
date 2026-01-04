@@ -89,9 +89,17 @@ QWidget * EnumProperty::createEditor(QWidget * parent, const QStyleOptionViewIte
   ComboBox * cb = new ComboBox(parent);
   cb->addItems(strings_);
   cb->setCurrentIndex(strings_.indexOf(getValue().toString() ));
+  #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
   QObject::connect(
     cb, SIGNAL(currentIndexChanged(const QString&)), this,
     SLOT(setString(const QString&)));
+  #else
+  QObject::connect(
+    cb, &QComboBox::currentIndexChanged, this,
+    [this, cb](int index) {
+      this->setString(cb->itemText(index));
+  });
+  #endif
 
   // TODO(anyone): need to better handle string value which is not in list.
   return cb;

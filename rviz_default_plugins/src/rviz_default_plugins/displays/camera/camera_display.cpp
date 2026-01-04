@@ -70,6 +70,7 @@
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/load_resource.hpp"
 
+#include "rviz_default_plugins/displays/image/get_transport_from_topic.hpp"
 #include "rviz_default_plugins/displays/image/ros_image_texture.hpp"
 
 namespace rviz_default_plugins
@@ -186,7 +187,6 @@ void CameraDisplay::onInitialize()
 
   this->addChild(visibility_property_, 0);
 }
-
 
 void CameraDisplay::setupSceneNodes()
 {
@@ -324,7 +324,7 @@ void CameraDisplay::subscribe()
     tf2_ros::MessageFilter<sensor_msgs::msg::Image,
     rviz_common::transformation::FrameTransformer>>(
     *context_->getFrameManager()->getTransformer(),
-    fixed_frame_.toStdString(), 10, rviz_ros_node_.lock()->get_raw_node());
+    fixed_frame_.toStdString(), 10, *rviz_ros_node_.lock()->get_raw_node());
 
   tf_filter_->connectInput(*subscription_);
   tf_filter_->registerCallback(
@@ -348,7 +348,7 @@ void CameraDisplay::createCameraInfoSubscription()
     // TODO(anyone) Store this in a member variable
 
     std::string camera_info_topic = image_transport::getCameraInfoTopic(
-      topic_property_->getTopicStd());
+      getBaseTopicFromTopic(topic_property_->getTopicStd()));
 
     rclcpp::SubscriptionOptions sub_opts;
     sub_opts.event_callbacks.message_lost_callback =
@@ -411,7 +411,7 @@ void CameraDisplay::clear()
   current_caminfo_.reset();
 
   std::string camera_info_topic =
-    image_transport::getCameraInfoTopic(topic_property_->getTopicStd());
+    image_transport::getCameraInfoTopic(getBaseTopicFromTopic(topic_property_->getTopicStd()));
 
   setStatus(
     StatusLevel::Warn, CAM_INFO_STATUS,
@@ -427,7 +427,7 @@ void CameraDisplay::clear()
   }
 }
 
-void CameraDisplay::update(float wall_dt, float ros_dt)
+void CameraDisplay::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt)
 {
   (void) wall_dt;
   (void) ros_dt;
@@ -458,7 +458,7 @@ bool CameraDisplay::updateCamera()
 
   if (!info) {
     std::string camera_info_topic = image_transport::getCameraInfoTopic(
-      topic_property_->getTopicStd());
+      getBaseTopicFromTopic(topic_property_->getTopicStd()));
 
     setStatus(
       StatusLevel::Warn, CAM_INFO_STATUS,

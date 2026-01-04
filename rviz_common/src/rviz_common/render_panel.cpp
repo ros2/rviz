@@ -73,8 +73,7 @@ RenderPanel::RenderPanel(QWidget * parent)
   // default_camera_(0),
   context_menu_visible_(false),
   display_(nullptr),
-  render_window_(new rviz_rendering::RenderWindow()),
-  fake_mouse_move_event_timer_(new QTimer())
+  render_window_(new rviz_rendering::RenderWindow())
 {
   setFocus(Qt::OtherFocusReason);
   render_window_container_widget_ = QWidget::createWindowContainer(render_window_, this);
@@ -90,7 +89,6 @@ RenderPanel::RenderPanel(QWidget * parent)
 
 RenderPanel::~RenderPanel()
 {
-  delete fake_mouse_move_event_timer_;
   // if (scene_manager_ && default_camera_) {
   //   scene_manager_->destroyCamera(default_camera_);
   // }
@@ -124,10 +122,6 @@ void RenderPanel::initialize(DisplayContext * context, bool use_main_scene)
   }
   // scene_manager_ = scene_manager;
   // scene_manager_->addListener(this);
-
-  // TODO(wjwwood) what is the purpose of this fake mouse move event?
-  // connect(fake_mouse_move_event_timer_, SIGNAL(timeout()), this, SLOT(sendMouseMoveEvent()));
-  // fake_mouse_move_event_timer_->start(33 /*milliseconds*/);
 }
 
 DisplayContext * RenderPanel::getManager()
@@ -138,33 +132,6 @@ DisplayContext * RenderPanel::getManager()
 ViewController * RenderPanel::getViewController()
 {
   return view_controller_;
-}
-
-void RenderPanel::sendMouseMoveEvent()
-{
-  QPoint cursor_pos = QCursor::pos();
-  QPoint mouse_rel_widget = mapFromGlobal(cursor_pos);
-  if (rect().contains(mouse_rel_widget)) {
-    bool mouse_over_this = false;
-    QWidget * w = QApplication::widgetAt(cursor_pos);
-    while (w) {
-      if (w == this) {
-        mouse_over_this = true;
-        break;
-      }
-      w = w->parentWidget();
-    }
-    if (!mouse_over_this) {
-      return;
-    }
-
-    QMouseEvent fake_event(QEvent::MouseMove,
-      mouse_rel_widget,
-      Qt::NoButton,
-      QApplication::mouseButtons(),
-      QApplication::keyboardModifiers());
-    onRenderWindowMouseEvents(&fake_event);
-  }
 }
 
 template<typename EnumType>

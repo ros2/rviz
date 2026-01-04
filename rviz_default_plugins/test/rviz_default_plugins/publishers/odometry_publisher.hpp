@@ -64,7 +64,7 @@ public:
   // constructor once available.
   void initialize()
   {
-    broadcaster = std::make_shared<tf2_ros::TransformBroadcaster>(shared_from_this());
+    broadcaster = std::make_shared<tf2_ros::TransformBroadcaster>(*shared_from_this());
   }
 
 private:

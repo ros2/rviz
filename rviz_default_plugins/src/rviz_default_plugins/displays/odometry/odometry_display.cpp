@@ -384,7 +384,7 @@ std::unique_ptr<rviz_rendering::CovarianceVisual> OdometryDisplay::createAndSetC
   return covariance_visual;
 }
 
-void OdometryDisplay::update(float wall_dt, float ros_dt)
+void OdometryDisplay::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt)
 {
   (void) wall_dt;
   (void) ros_dt;

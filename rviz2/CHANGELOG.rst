@@ -2,6 +2,31 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.14 (2025-12-17)
+--------------------
+* Use qt6 as the default dependency from rosdep (`#1635 <https://github.com/ros2/rviz/issues/1635>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.13 (2025-11-28)
+--------------------
+
+15.1.12 (2025-11-07)
+--------------------
+
+15.1.11 (2025-10-20)
+--------------------
+
+15.1.10 (2025-09-26)
+--------------------
+
+15.1.9 (2025-09-04)
+-------------------
+* get rid of deprecated rclcpp::spin_some() (`#1567 <https://github.com/ros2/rviz/issues/1567>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.8 (2025-08-22)
+-------------------
+
 15.1.7 (2025-07-25)
 -------------------
 

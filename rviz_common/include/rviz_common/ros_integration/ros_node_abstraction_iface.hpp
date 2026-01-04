@@ -56,6 +56,9 @@ public:
   virtual std::map<std::string, std::vector<std::string>>
   get_topic_names_and_types() const = 0;
 
+  virtual std::map<std::string, std::vector<std::string>>
+  get_service_names_and_types() const = 0;
+
   // TODO(anhosi): remove once the RosNodeAbstraction is extended to handle subscriptions
   //               and clock
   virtual rclcpp::Node::SharedPtr

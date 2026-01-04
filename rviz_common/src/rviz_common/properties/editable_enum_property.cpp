@@ -79,9 +79,17 @@ QWidget * EditableEnumProperty::createEditor(QWidget * parent, const QStyleOptio
   EditableComboBox * cb = new EditableComboBox(parent);
   cb->addItems(strings_);
   cb->setEditText(getValue().toString() );
+  #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
   QObject::connect(
     cb, SIGNAL(currentIndexChanged(const QString&)), this,
     SLOT(setString(const QString&)));
+  #else
+  QObject::connect(
+    cb, &QComboBox::currentIndexChanged, this,
+    [this, cb](int index) {
+      this->setString(cb->itemText(index));
+  });
+  #endif
 
   // TODO(unknown): need to better handle string value which is not in list.
   return cb;

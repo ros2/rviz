@@ -185,7 +185,20 @@ void Display::setTopic(const QString & topic, const QString & datatype)
 
 void Display::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt)
 {
+#if !defined(_WIN32)
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#else  // !defined(_WIN32)
+# pragma warning(push)
+# pragma warning(disable: 4996)
+#endif
   update(wall_dt.count(), ros_dt.count());
+// remove warning suppression
+#if !defined(_WIN32)
+# pragma GCC diagnostic pop
+#else  // !defined(_WIN32)
+# pragma warning(pop)
+#endif
 }
 
 void Display::update(float wall_dt, float ros_dt)
