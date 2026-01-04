@@ -27,7 +27,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "rviz_common/properties/ros_topic_multi_property.hpp"
+#include "rviz_common/properties/ros_topic_multi_type_property.hpp"
 
 #include <QApplication>  // NOLINT: cpplint can't handle Qt imports
 #include <algorithm>
@@ -42,7 +42,7 @@ namespace rviz_common
 namespace properties
 {
 
-void RosTopicMultiProperty::fillTopicList()
+void RosTopicMultiTypeProperty::fillTopicList()
 {
   QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
   clearOptions();

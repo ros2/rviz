@@ -27,8 +27,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef RVIZ_COMMON__PROPERTIES__ROS_TOPIC_MULTI_PROPERTY_HPP_
-#define RVIZ_COMMON__PROPERTIES__ROS_TOPIC_MULTI_PROPERTY_HPP_
+#ifndef RVIZ_COMMON__PROPERTIES__ROS_TOPIC_MULTI_TYPE_PROPERTY_HPP_
+#define RVIZ_COMMON__PROPERTIES__ROS_TOPIC_MULTI_TYPE_PROPERTY_HPP_
 
 #include <QString>
 
@@ -45,12 +45,12 @@ namespace properties
 {
 
 // Like RosTopicProperty but can accept multiple message types
-class RVIZ_COMMON_PUBLIC RosTopicMultiProperty : public RosTopicProperty
+class RVIZ_COMMON_PUBLIC RosTopicMultiTypeProperty : public RosTopicProperty
 {
   Q_OBJECT
 
 public:
-  explicit RosTopicMultiProperty(
+  explicit RosTopicMultiTypeProperty(
     const QString & name = QString(), const QString & default_value = QString(),
     const std::vector<QString> & message_types = std::vector<QString>(),
     const QString & description = QString(), Property * parent = nullptr,
@@ -82,4 +82,4 @@ private:
 }  // end namespace properties
 }  // end namespace rviz_common
 
-#endif  // RVIZ_COMMON__PROPERTIES__ROS_TOPIC_MULTI_PROPERTY_HPP_
+#endif  // RVIZ_COMMON__PROPERTIES__ROS_TOPIC_MULTI_TYPE_PROPERTY_HPP_

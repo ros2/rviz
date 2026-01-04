@@ -56,7 +56,7 @@
 #include "image_transport/subscriber.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
-#include "rviz_common/properties/ros_topic_multi_property.hpp"
+#include "rviz_common/properties/ros_topic_multi_type_property.hpp"
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
 #include "rviz_common/validate_floats.hpp"
@@ -83,7 +83,7 @@ ImageDisplay::ImageDisplay(std::unique_ptr<ROSImageTextureIface> texture)
   // Remove the default single-type topic and replace with a multi-type topic property
   // This allows us to display image and compressed image topics in the topic list
   delete this->topic_property_;
-  this->topic_property_ = new rviz_common::properties::RosTopicMultiProperty(
+  this->topic_property_ = new rviz_common::properties::RosTopicMultiTypeProperty(
     "Topic", "", std::vector<QString>(), "Image transport topic to subscribe to.", this,
     SLOT(updateTopic()));
 
@@ -118,11 +118,11 @@ ImageDisplay::ImageDisplay(std::unique_ptr<ROSImageTextureIface> texture)
   got_float_image_ = false;
 }
 
-// Need to override this method because of the new type RosTopicMultiProperty
+// Need to override this method because of the new type RosTopicMultiTypeProperty
 void ImageDisplay::setTopic(const QString & topic, const QString & datatype)
 {
   (void) datatype;
-  ((rviz_common::properties::RosTopicMultiProperty *)topic_property_)
+  ((rviz_common::properties::RosTopicMultiTypeProperty *)topic_property_)
   ->setString(topic);
 }
 
@@ -158,7 +158,7 @@ void ImageDisplay::onInitialize()
   message_types.erase(
     std::unique(message_types.begin(), message_types.end()), message_types.end());
   // Update the message types to allow in the topic_property_
-  ((rviz_common::properties::RosTopicMultiProperty *)topic_property_)
+  ((rviz_common::properties::RosTopicMultiTypeProperty *)topic_property_)
   ->setMessageTypes(message_types);
 }
 
