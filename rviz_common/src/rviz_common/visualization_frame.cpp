@@ -679,7 +679,7 @@ void VisualizationFrame::loadDisplayConfig(const QString & qpath)
   std::filesystem::path actual_load_path = path;
   if (!path_info.exists() || path_info.isDir()) {
     actual_load_path = package_path_ / "default.rviz";
-    if (!QFile(QString::fromStdString(actual_load_path.string())).exists()) {
+    if (!std::filesystem::exists(actual_load_path)) {
       RVIZ_COMMON_LOG_ERROR_STREAM(
         "Default display config '" <<
           actual_load_path.c_str() << "' not found.  RViz will be very empty at first.");
