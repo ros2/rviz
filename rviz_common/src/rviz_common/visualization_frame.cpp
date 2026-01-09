@@ -244,7 +244,7 @@ void VisualizationFrame::initialize(
 
   if (app_) {
     QDir app_icon_path(QString::fromStdString(
-      (package_path_ / "icons" / "package.png").string()));
+        (package_path_ / "icons" / "package.png").string()));
     QIcon app_icon(app_icon_path.absolutePath());
     app_->setWindowIcon(app_icon);
   }
