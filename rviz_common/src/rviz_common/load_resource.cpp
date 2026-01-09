@@ -33,7 +33,6 @@
 
 #include <string>
 
-#include <QFile>  // NOLINT: cpplint cannot handle the include order here
 #include <QPainter>  // NOLINT: cpplint cannot handle the include order here
 #include <QPixmapCache>  // NOLINT: cpplint cannot handle the include order here
 #include <QString>  // NOLINT: cpplint cannot handle the include order here
