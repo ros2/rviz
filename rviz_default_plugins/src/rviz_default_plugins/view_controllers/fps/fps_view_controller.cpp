@@ -87,15 +87,15 @@ void FPSViewController::onInitialize()
 
 void FPSViewController::reset()
 {
-  camera_scene_node_->setPosition(DEFAULT_FPS_POSITION);
-  camera_scene_node_->lookAt(Ogre::Vector3::ZERO, Ogre::Node::TransformSpace::TS_WORLD);
+  camera_scene_node_->setPosition(reference_position_ + DEFAULT_FPS_POSITION);
+  camera_scene_node_->lookAt(Ogre::Vector3::ZERO, Ogre::Node::TransformSpace::TS_LOCAL);
   setPropertiesFromCamera(camera_);
 
   // The following is necessary due to gimbal lock and/or fixed axis problems of yaw/pitch axis.
   // This happens for instance when changing from the TopDownOrthoViewController to
   // FPSViewController.
   updateCamera();
-  camera_scene_node_->lookAt(Ogre::Vector3::ZERO, Ogre::Node::TransformSpace::TS_WORLD);
+  camera_scene_node_->lookAt(Ogre::Vector3::ZERO, Ogre::Node::TransformSpace::TS_LOCAL);
   setPropertiesFromCamera(camera_);
 }
 
