@@ -2,6 +2,9 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.16 (2026-01-13)
+--------------------
+
 15.1.15 (2025-12-23)
 --------------------
 * Remove vendoring freetype and zlib on Windows (`#1636 <https://github.com/ros2/rviz/issues/1636>`_)

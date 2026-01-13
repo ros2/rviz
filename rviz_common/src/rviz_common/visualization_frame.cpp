@@ -712,7 +712,7 @@ void VisualizationFrame::loadDisplayConfig(const QString & qpath)
 
   YamlConfigReader reader;
   Config config;
-  reader.readFile(config, QString::fromStdString(actual_load_path));
+  reader.readFile(config, QString::fromStdString(actual_load_path.string()));
   if (!reader.error()) {
     try {
       load(config);
