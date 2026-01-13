@@ -2,6 +2,11 @@
 Changelog for package rviz_visual_testing_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.16 (2026-01-13)
+--------------------
+* Update ament_index_cpp API (`#1649 <https://github.com/ros2/rviz/issues/1649>`_)
+* Contributors: Alejandro Hernández Cordero
+
 15.1.15 (2025-12-23)
 --------------------
 
