@@ -59,6 +59,15 @@ inline QString fmtAxis(int i)
   return QString("%1%2 axis").arg(QChar(i % 2 ? '+' : '-')).arg(QChar('x' + (i - 1) / 2));
 }
 
+inline Ogre::Vector3 getAxis(int option)
+{
+    Ogre::Vector3 axis(0, 0, 0);
+    if (option >= 1 && option <= 6) {
+        axis[(option - 1) / 2] = (option % 2) ? +1 : -1;
+    }
+    return axis;
+}
+
 static const Ogre::Quaternion ROBOT_TO_CAMERA_ROTATION =
   Ogre::Quaternion(Ogre::Radian(-Ogre::Math::HALF_PI), Ogre::Vector3::UNIT_Y) *
   Ogre::Quaternion(Ogre::Radian(-Ogre::Math::HALF_PI), Ogre::Vector3::UNIT_Z);
@@ -83,6 +92,7 @@ FrameViewController::FrameViewController()
 void FrameViewController::onInitialize()
 {
   FPSViewController::onInitialize();
+  invert_z_->show();
   changedAxis();
 }
 
@@ -118,7 +128,7 @@ void FrameViewController::setAxisFromCamera()
 void FrameViewController::changedAxis()
 {
   rememberAxis(axis_property_->getOptionInt());
-  reset();
+  resetOrientation();
 }
 
 inline void FrameViewController::rememberAxis(int current)
@@ -131,20 +141,40 @@ inline void FrameViewController::rememberAxis(int current)
 void FrameViewController::reset()
 {
   camera_scene_node_->setPosition(Ogre::Vector3::ZERO);
-  Ogre::Vector3 axis(0, 0, 0);
+  resetOrientation();
+}
+
+void FrameViewController::resetOrientation()
+{
   int option = previous_axis_;
-  if (option >= 1 && option <= 6) {
-    axis[(option - 1) / 2] = (option % 2) ? +1 : -1;
-    Ogre::Quaternion q;
-    if (option == 2) {  // special case for the -X axis
-      // Create a rotation of 180 degrees around the Z axis
-      q = Ogre::Quaternion(Ogre::Radian(Ogre::Math::PI), Ogre::Vector3::UNIT_Z);
-    } else {
-      q = Ogre::Vector3::UNIT_X.getRotationTo(axis);
-    }
-    camera_scene_node_->setOrientation(q * ROBOT_TO_CAMERA_ROTATION);
+  Ogre::Quaternion q;
+  if (option == 2) {  // special case for the -X axis
+    // Create a rotation of 180 degrees around the Z axis
+    q = Ogre::Quaternion(Ogre::Radian(Ogre::Math::PI), Ogre::Vector3::UNIT_Z);
+  } else {
+    Ogre::Vector3 axis = getAxis(option);
+    q = Ogre::Vector3::UNIT_X.getRotationTo(axis);
   }
+  camera_scene_node_->setOrientation(q * ROBOT_TO_CAMERA_ROTATION);
   setPropertiesFromCamera(camera_);
+}
+
+void FrameViewController::update(float dt, float ros_dt)
+{
+  FPSViewController::update(dt, ros_dt);
+
+  // continuously track the orientation of the reference frame
+  if (getNewTransform()) {
+    Ogre::Quaternion quat = reference_orientation_;
+
+    // use "z inversion" to switch to flipped frame around current axis
+    if (invert_z_->getBool()) {
+      Ogre::Vector3 axis = getAxis(previous_axis_);
+      quat = quat * Ogre::Quaternion(Ogre::Radian(Ogre::Math::PI), axis);
+    }
+
+    target_scene_node_->setOrientation(quat);
+  }
 }
 
 void FrameViewController::handleMouseEvent(rviz_common::ViewportMouseEvent & event)

@@ -69,9 +69,9 @@ public:
 
   void reset() override;
 
-  void yaw(float angle);
+  void resetOrientation();
 
-  void pitch(float angle);
+  void update(float dt, float ros_dt) override;
 
 protected:
   void onTargetFrameChanged(
