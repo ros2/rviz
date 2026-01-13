@@ -132,7 +132,6 @@ VisualizationFrame::VisualizationFrame(
 
   post_load_timer_->setSingleShot(true);
   connect(post_load_timer_, SIGNAL(timeout()), this, SLOT(markLoadingDone()));
-  std::filesystem::path package_path_;
   ament_index_cpp::get_package_share_directory("rviz_common", package_path_);
   std::filesystem::path help_path_p = package_path_ / "help" / "help.html";
   QDir help_path(help_path_p.string().c_str());
@@ -244,7 +243,8 @@ void VisualizationFrame::initialize(
   loadPersistentSettings();
 
   if (app_) {
-    QDir app_icon_path(QString::fromStdString(package_path_) + "/icons/package.png");
+    QDir app_icon_path(QString::fromStdString(
+        (package_path_ / "icons" / "package.png").string()));
     QIcon app_icon(app_icon_path.absolutePath());
     app_->setWindowIcon(app_icon);
   }
@@ -676,10 +676,10 @@ void VisualizationFrame::loadDisplayConfig(const QString & qpath)
 {
   std::string path = qpath.toStdString();
   QFileInfo path_info(qpath);
-  std::string actual_load_path = path;
+  std::filesystem::path actual_load_path = path;
   if (!path_info.exists() || path_info.isDir()) {
-    actual_load_path = package_path_ + "/default.rviz";
-    if (!QFile(QString::fromStdString(actual_load_path)).exists()) {
+    actual_load_path = package_path_ / "default.rviz";
+    if (!std::filesystem::exists(actual_load_path)) {
       RVIZ_COMMON_LOG_ERROR_STREAM(
         "Default display config '" <<
           actual_load_path.c_str() << "' not found.  RViz will be very empty at first.");
@@ -707,7 +707,7 @@ void VisualizationFrame::loadDisplayConfig(const QString & qpath)
 
   YamlConfigReader reader;
   Config config;
-  reader.readFile(config, QString::fromStdString(actual_load_path));
+  reader.readFile(config, QString::fromStdString(actual_load_path.string()));
   if (!reader.error()) {
     try {
       load(config);
