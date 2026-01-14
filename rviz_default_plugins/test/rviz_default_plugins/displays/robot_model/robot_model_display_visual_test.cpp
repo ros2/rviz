@@ -28,6 +28,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 
+#include <filesystem>
 #include <memory>
 #include <string>
 #include <vector>
@@ -55,9 +56,11 @@ TEST_F(VisualTestFixture, robot_model_display_test) {
   auto robot_model_display = addDisplay<RobotModelDisplayPageObject>();
   robot_model_display->setDescriptionSource("File");
 
-  QString prefix = QString::fromStdString(
-    ament_index_cpp::get_package_prefix("rviz_rendering_tests"));
-  robot_model_display->setFile(prefix + "/share/rviz_rendering_tests/test_meshes/test.urdf");
+  std::filesystem::path prefix_path;
+  ament_index_cpp::get_package_prefix("rviz_rendering_tests", prefix_path);
+  QString prefix = QString::fromStdString(prefix_path.string());
+  robot_model_display->setFile(QString::fromStdString(
+      (prefix_path / "share" / "rviz_rendering_tests" / "test_meshes" / "test.urdf").string()));
   robot_model_display->setVisualEnabled(true);
 
   captureMainWindow("robot_model_display_with_visuals");

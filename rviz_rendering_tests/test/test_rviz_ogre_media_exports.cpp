@@ -37,36 +37,29 @@
 #include "ament_index_cpp/get_resource.hpp"
 
 TEST(CMake_Macro__Test, correctly_registers_plugin_in_ament_index) {
-  std::string content;
-  std::string prefix_path;
-  ASSERT_TRUE(
-    ament_index_cpp::get_resource(
-      "rviz_ogre_media_exports", "rviz_rendering_tests",
-      content,
-      &prefix_path));
+  auto result = ament_index_cpp::get_resource("rviz_ogre_media_exports", "rviz_rendering_tests");
+  EXPECT_NE(result.resourcePath, std::nullopt);
 }
 
 TEST(CMake_Macro__Test, ament_index_resource_file_has_correct_content) {
-  std::string content;
-  std::string prefix_path;
-  ament_index_cpp::get_resource(
-    "rviz_ogre_media_exports", "rviz_rendering_tests", content, &prefix_path);
+  auto result = ament_index_cpp::get_resource(
+    "rviz_ogre_media_exports", "rviz_rendering_tests");
 
   ASSERT_EQ(
-    content,
+    result.contents,
     "rviz_rendering_tests/ogre_media_resources/scripts\n"
     "rviz_rendering_tests/ogre_media_resources/meshes\n");
 }
 
 TEST(CMake_Macro__Test, folders_are_installed_to_correct_location) {
-  std::string content;
-  std::string prefix_path;
-  ament_index_cpp::get_resource(
-    "rviz_ogre_media_exports", "rviz_rendering_tests", content, &prefix_path);
+  auto result = ament_index_cpp::get_resource(
+    "rviz_ogre_media_exports", "rviz_rendering_tests");
 
   struct stat info;
-  std::string scripts = prefix_path + "/share/rviz_rendering_tests/ogre_media_resources/scripts";
-  std::string meshes = prefix_path + "/share/rviz_rendering_tests/ogre_media_resources/meshes";
-  ASSERT_EQ(stat(scripts.c_str(), &info), 0);
-  ASSERT_EQ(stat(meshes.c_str(), &info), 0);
+  std::filesystem::path scripts = result.resourcePath.value() / "share" / "rviz_rendering_tests" /
+    "ogre_media_resources" / "scripts";
+  std::filesystem::path meshes = result.resourcePath.value() / "share" / "rviz_rendering_tests" /
+    "ogre_media_resources" / "meshes";
+  ASSERT_EQ(stat(scripts.string().c_str(), &info), 0);
+  ASSERT_EQ(stat(meshes.string().c_str(), &info), 0);
 }
