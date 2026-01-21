@@ -33,6 +33,7 @@
 #define RVIZ_RENDERING__OBJECTS__GRID_HPP_
 
 #include <cstdint>
+#include <functional>
 #include <memory>
 #include <vector>
 

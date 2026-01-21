@@ -42,6 +42,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <sstream>
 
 #include "rviz_rendering/material_manager.hpp"
 

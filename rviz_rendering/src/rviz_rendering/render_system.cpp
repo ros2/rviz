@@ -242,11 +242,14 @@ RenderSystem::detectGlVersion()
   } else {
     Ogre::RenderSystem * renderSys = ogre_root_->getRenderSystem();
     // createRenderSystemCapabilities() called for side effects only
-    std::unique_ptr<Ogre::RenderSystemCapabilities>(renderSys->createRenderSystemCapabilities());
+    // std::unique_ptr<Ogre::RenderSystemCapabilities>(renderSys->createRenderSystemCapabilities());
+    Ogre::Root::getSingleton().getRenderSystem()->getCapabilities();
     const Ogre::RenderSystemCapabilities * caps = renderSys->getCapabilities();
     int major = caps->getDriverVersion().major;
     int minor = caps->getDriverVersion().minor;
     gl_version_ = major * 100 + minor * 10;
+
+    std::cout << "major " << major << " minor " << minor << std::endl;
   }
 
   switch (gl_version_) {

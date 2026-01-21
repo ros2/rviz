@@ -33,6 +33,7 @@
 #define RVIZ_RENDERING__OBJECTS__BILLBOARD_LINE_HPP_
 
 #include <cstdint>
+#include <functional>
 #include <vector>
 
 #include <OgreBillboardChain.h>

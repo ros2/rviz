@@ -67,7 +67,7 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
 
     set_property(TARGET rviz_ogre_vendor::OgreMain
       PROPERTY
-        INTERFACE_INCLUDE_DIRECTORIES ${OGRE_INCLUDE_DIRS}
+        INTERFACE_INCLUDE_DIRECTORIES ${OGRE_INCLUDE_DIRS} ${OGRE_INCLUDE_DIRS}/RenderSystems/glad
     )
     if(_ogre_main_static_library_abs)
       set_property(TARGET rviz_ogre_vendor::OgreMain APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
