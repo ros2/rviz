@@ -50,7 +50,8 @@
 
 #include "rviz_default_plugins/displays/marker/markers/marker_factory.hpp"
 
-#include "rviz_default_plugins/ros_resource_retriever.hpp"
+#include "resource_retriever/retriever.hpp"
+#include "resource_retriever_service_plugin/resource_retriever_service_plugin.hpp"
 
 namespace rviz_default_plugins
 {
@@ -75,10 +76,13 @@ void MarkerCommon::initialize(rviz_common::DisplayContext * context, Ogre::Scene
   context_ = context;
   scene_node_ = scene_node;
 
-  resource_retriever::RetrieverVec plugins;
-  plugins.push_back(std::make_shared<RosResourceRetriever>(context_->getRosNodeAbstraction()));
-  for (const auto & plugin : resource_retriever::default_plugins()) {
-    plugins.push_back(plugin);
+  resource_retriever::RetrieverVec plugins = resource_retriever::default_plugins();
+
+  auto ros_iface = context_->getRosNodeAbstraction().lock();
+  if (ros_iface) {
+    plugins.push_back(std::make_shared<RosServiceResourceRetriever>(ros_iface->get_raw_node()));
+  } else {
+    throw std::invalid_argument("ROS node abstraction interface not valid");
   }
   retriever_ = resource_retriever::Retriever(plugins);
 
