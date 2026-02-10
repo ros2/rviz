@@ -38,6 +38,7 @@
 #include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
 #include <QPalette>  // NOLINT: cpplint is unable to handle the include order here
 #include <QLineEdit>  // NOLINT: cpplint is unable to handle the include order here
+#include <QPointer>  // NOLINT: cpplint is unable to handle the include order here
 #include <QSpinBox>  // NOLINT: cpplint is unable to handle the include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
@@ -387,10 +388,12 @@ void Property::setModel(PropertyTreeModel * model)
 {
   model_ = model;
   if (model_ && hidden_) {
-    // process propertyHiddenChanged after insertion into model has finishedAdd commentMore actions
-    QTimer::singleShot(0, model_, [this]() {
-        if (model_) {
-          model_->emitPropertyHiddenChanged(this);
+    // process propertyHiddenChanged after insertion into model has finished
+    // Use QPointer to track Property lifetime and avoid use-after-free
+    QPointer<Property> self = this;
+    QTimer::singleShot(0, model_, [self]() {
+        if (self && self->model_) {
+          self->model_->emitPropertyHiddenChanged(self);
         }
     });
   }
