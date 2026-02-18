@@ -190,6 +190,7 @@ private Q_SLOTS:
   void stateChanged(int state);
   void onCurrentItemChanged(QTreeWidgetItem * curr);
   void onComboBoxClicked(QTreeWidgetItem * curr);
+  void applyFilter();
 
 private:
   void findPlugins(DisplayFactory *);
@@ -203,6 +204,8 @@ private:
 
   QTreeWidget * tree_;
   QCheckBox * enable_hidden_box_;
+  QLabel * filter_text;
+  QLineEdit * filter_box_;
 
   // Map from ROS topic type to all displays that can visualize it.
   // One key may have multiple values.
