@@ -2,6 +2,12 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.1.20 (2026-02-24)
+--------------------
+* Fix setHidden regression in PropertyTreeWidget (`#1667 <https://github.com/ros2/rviz/issues/1667>`_) (`#1669 <https://github.com/ros2/rviz/issues/1669>`_)
+* Add topic name filtering when adding new visualizations (`#1662 <https://github.com/ros2/rviz/issues/1662>`_) (`#1664 <https://github.com/ros2/rviz/issues/1664>`_)
+* Contributors: mergify[bot]
+
 14.1.19 (2025-12-17)
 --------------------
 * Fix crash with no tools (`#1639 <https://github.com/ros2/rviz/issues/1639>`_) (`#1641 <https://github.com/ros2/rviz/issues/1641>`_)
