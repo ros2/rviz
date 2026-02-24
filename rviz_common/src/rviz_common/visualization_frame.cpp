@@ -132,7 +132,7 @@ VisualizationFrame::VisualizationFrame(
 
   post_load_timer_->setSingleShot(true);
   connect(post_load_timer_, SIGNAL(timeout()), this, SLOT(markLoadingDone()));
-  ament_index_cpp::get_package_share_directory("rviz_common", package_path_);
+  package_path_ = ament_index_cpp::get_package_share_path("rviz_common");
   std::filesystem::path help_path_p = package_path_ / "help" / "help.html";
   QDir help_path(help_path_p.string().c_str());
   help_path_ = help_path.absolutePath();
