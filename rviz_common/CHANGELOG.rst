@@ -2,6 +2,13 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.0.12 (2026-02-24)
+--------------------
+* Fix setHidden regression in PropertyTreeWidget (`#1667 <https://github.com/ros2/rviz/issues/1667>`_) (`#1668 <https://github.com/ros2/rviz/issues/1668>`_)
+* Add topic name filtering when adding new visualizations (`#1662 <https://github.com/ros2/rviz/issues/1662>`_) (`#1663 <https://github.com/ros2/rviz/issues/1663>`_)
+* use QPointer in QTimer::singleShot to prevent use-after-free (`#1657 <https://github.com/ros2/rviz/issues/1657>`_) (`#1658 <https://github.com/ros2/rviz/issues/1658>`_)
+* Contributors: mergify[bot]
+
 15.0.11 (2025-12-17)
 --------------------
 * Fix crash with no tools (`#1639 <https://github.com/ros2/rviz/issues/1639>`_) (`#1640 <https://github.com/ros2/rviz/issues/1640>`_)

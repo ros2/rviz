@@ -2,6 +2,9 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.0.12 (2026-02-24)
+--------------------
+
 15.0.11 (2025-12-17)
 --------------------
 * Add CameraInfo topic property to DepthCloudDisplay (`#1643 <https://github.com/ros2/rviz/issues/1643>`_) (`#1644 <https://github.com/ros2/rviz/issues/1644>`_)
