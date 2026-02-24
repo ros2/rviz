@@ -2,6 +2,12 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.26 (2026-02-24)
+--------------------
+* Fix setHidden regression in PropertyTreeWidget  (backport `#1667 <https://github.com/ros2/rviz/issues/1667>`_) (`#1670 <https://github.com/ros2/rviz/issues/1670>`_)
+* use QPointer in QTimer::singleShot to prevent use-after-free (backport `#1657 <https://github.com/ros2/rviz/issues/1657>`_) (`#1660 <https://github.com/ros2/rviz/issues/1660>`_)
+* Contributors: mergify[bot]
+
 11.2.25 (2025-12-17)
 --------------------
 * Fix crash with no tools (`#1639 <https://github.com/ros2/rviz/issues/1639>`_) (`#1642 <https://github.com/ros2/rviz/issues/1642>`_)
