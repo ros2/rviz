@@ -62,6 +62,7 @@
 #include <QToolBar>  // NOLINT cpplint cannot handle include order here
 #include <QToolButton>  // NOLINT cpplint cannot handle include order here
 
+#include "ament_index_cpp/get_package_share_path.hpp"
 #include "rclcpp/clock.hpp"
 #include "tf2_ros/buffer.hpp"
 #include "tf2_ros/transform_listener.hpp"
