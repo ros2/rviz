@@ -62,6 +62,7 @@
 #include <QToolBar>  // NOLINT cpplint cannot handle include order here
 #include <QToolButton>  // NOLINT cpplint cannot handle include order here
 
+#include "ament_index_cpp/get_package_share_path.hpp"
 #include "rclcpp/clock.hpp"
 #include "tf2_ros/buffer.hpp"
 #include "tf2_ros/transform_listener.hpp"
@@ -132,7 +133,7 @@ VisualizationFrame::VisualizationFrame(
 
   post_load_timer_->setSingleShot(true);
   connect(post_load_timer_, SIGNAL(timeout()), this, SLOT(markLoadingDone()));
-  ament_index_cpp::get_package_share_directory("rviz_common", package_path_);
+  package_path_ = ament_index_cpp::get_package_share_path("rviz_common");
   std::filesystem::path help_path_p = package_path_ / "help" / "help.html";
   QDir help_path(help_path_p.string().c_str());
   help_path_ = help_path.absolutePath();
