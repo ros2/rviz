@@ -275,7 +275,6 @@ ament_export_dependencies(
   geometry_msgs
   message_filters
   pluginlib
-  Qt${QT_VERSION_MAJOR}
   rclcpp
   rviz_ogre_vendor
   rviz_rendering

@@ -135,7 +135,6 @@ target_compile_definitions(rviz_rendering PRIVATE "RVIZ_RENDERING_BUILDING_LIBRA
 
 ament_export_dependencies(
   Eigen3
-  Qt${QT_VERSION_MAJOR}
   rviz_ogre_vendor
 )
 
