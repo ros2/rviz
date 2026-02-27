@@ -43,9 +43,13 @@ void main()
   }
 
   float focal = projection_matrix[1][1];
-  // Compute pixel size from world-size (size.x), focal, depth and viewport height
-  // pixel_size = world_size * focal / depth * (viewport_height / 2)
-  float pixelSize = size.x * focal / depth * (viewport_height * 0.5);
+  // Perspective projection needs distance attenuation, orthographic does not.
+  // In OpenGL-style projection matrices, m[3][3] is 0 for perspective and 1 for ortho.
+  bool is_ortho = projection_matrix[3][3] > 0.5;
+
+  // Compute pixel size from world-size (size.x), projection scale and viewport height.
+  float depth_for_scale = is_ortho ? 1.0 : depth;
+  float pixelSize = size.x * focal / depth_for_scale * (viewport_height * 0.5);
   gl_PointSize = clamp(pixelSize, 1.0, MAX_PIXEL_SIZE);
 
   // For very small points, reduce alpha to create a fading effect
