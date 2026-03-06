@@ -54,7 +54,6 @@
 #include "rviz_common/viewport_mouse_event.hpp"
 
 #include "rviz_default_plugins/displays/marker/markers/marker_base.hpp"
-#include "rviz_default_plugins/displays/marker/markers/points_marker.hpp"
 
 namespace Ogre
 {
@@ -76,6 +75,12 @@ namespace rviz_default_plugins
 namespace displays
 {
 class InteractiveMarker;
+
+namespace markers
+{
+class PointsMarker;
+class MarkerFactory;
+}
 
 /// A single control element of an InteractiveMarker.
 class InteractiveMarkerControl
@@ -445,7 +450,7 @@ protected:
 
   std::string name_;
 
-  std::vector<markers::MarkerBase::SharedPtr> markers_;
+  std::vector<std::shared_ptr<markers::MarkerBase>> markers_;
 
   InteractiveMarker * parent_;
 
@@ -456,7 +461,9 @@ protected:
    * regular highlighting method does not work for them.
    * Keep a vector of them so we can call their setHighlightColor() function.
    */
-  std::vector<markers::PointsMarker::SharedPtr> points_markers_;
+  std::vector<std::shared_ptr<markers::PointsMarker>> points_markers_;
+
+  std::unique_ptr<markers::MarkerFactory> marker_factory_;
 
   /// Stores the rotation around the x axis of the control.
   /**

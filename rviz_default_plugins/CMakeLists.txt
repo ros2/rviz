@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.10)
 
 project(rviz_default_plugins)
 
+# Limit concurrent link jobs to reduce peak memory usage
+set_property(GLOBAL PROPERTY JOB_POOLS link_job_pool=2)
+set(CMAKE_JOB_POOL_LINK link_job_pool)
+
 # Default to C++17
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 17)
