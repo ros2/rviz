@@ -6,6 +6,8 @@ project(rviz_default_plugins)
 set_property(GLOBAL PROPERTY JOB_POOLS link_job_pool=2)
 set(CMAKE_JOB_POOL_LINK link_job_pool)
 
+set(CMAKE_UNITY_BUILD ON)
+
 # Default to C++17
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 17)
