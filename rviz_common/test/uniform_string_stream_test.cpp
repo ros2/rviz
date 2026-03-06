@@ -102,8 +102,3 @@ TEST(UniformStringStream, parse_floats_invalid_float_format) {
   EXPECT_FALSE(!!uss);
 }
 
-int main(int argc, char ** argv)
-{
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
