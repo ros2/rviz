@@ -37,6 +37,7 @@
 
 #include "../../page_objects/point_cloud_common_page_object.hpp"
 #include "../../publishers/illuminance_publisher.hpp"
+namespace illuminance_display_visual_test {
 
 class IlluminanceDisplayPageObject
   : public PointCloudCommonPageObject
@@ -73,3 +74,4 @@ TEST_F(VisualTestFixture, sphere_changes_color_depending_on_illuminance) {
   captureMainWindow("illuminance_display_high_illuminance");
   assertScreenShotsIdentity();
 }
+}  // namespace illuminance_display_visual_test

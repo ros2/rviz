@@ -36,6 +36,7 @@
 
 #include "../../page_objects/pose_array_display_page_object.hpp"
 #include "../../publishers/pose_array_publisher.hpp"
+namespace pose_array_display_visual_test {
 
 TEST_F(VisualTestFixture, pose_array_visual_test) {
   auto path_publisher = std::make_unique<VisualTestPublisher>(
@@ -64,3 +65,4 @@ TEST_F(VisualTestFixture, pose_array_visual_test) {
 
   assertScreenShotsIdentity();
 }
+}  // namespace pose_array_display_visual_test

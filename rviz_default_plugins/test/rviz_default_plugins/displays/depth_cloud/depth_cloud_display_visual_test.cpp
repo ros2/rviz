@@ -38,6 +38,7 @@
 #include "../../publishers/camera_info_publisher.hpp"
 #include "../../publishers/image_publisher.hpp"
 #include "../../page_objects/depth_cloud_page_object.hpp"
+namespace depth_cloud_display_visual_test {
 
 TEST_F(VisualTestFixture, test_depth_cloud_display_with_published_image) {
   std::vector<PublisherWithFrame> publishers = {
@@ -66,3 +67,4 @@ TEST_F(VisualTestFixture, test_depth_cloud_display_with_published_image) {
   /// Compare test screenshots with the reference ones (if in TEST mode):
   assertScreenShotsIdentity();
 }
+}  // namespace depth_cloud_display_visual_test

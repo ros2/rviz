@@ -36,6 +36,7 @@
 
 #include "../../page_objects/effort_display_page_object.hpp"
 #include "../../publishers/effort_publisher.hpp"
+namespace effort_display_visual_test {
 
 TEST_F(VisualTestFixture, wrenches_are_displayed) {
   auto effort_publisher = std::make_shared<nodes::EffortPublisher>();
@@ -58,3 +59,4 @@ TEST_F(VisualTestFixture, wrenches_are_displayed) {
 
   assertScreenShotsIdentity();
 }
+}  // namespace effort_display_visual_test

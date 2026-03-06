@@ -308,9 +308,3 @@ TEST_F(
   EXPECT_THAT(motion_magnitude, Le(1.1f));
 }
 
-int main(int argc, char ** argv)
-{
-  QApplication app(argc, argv);
-  InitGoogleMock(&argc, argv);
-  return RUN_ALL_TESTS();
-}

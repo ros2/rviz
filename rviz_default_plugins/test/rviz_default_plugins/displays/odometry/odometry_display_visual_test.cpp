@@ -36,6 +36,7 @@
 
 #include "../../page_objects/odometry_display_page_object.hpp"
 #include "../../publishers/odometry_publisher.hpp"
+namespace odometry_display_visual_test {
 
 TEST_F(VisualTestFixture, test_odometry_display) {
   auto odometry = std::make_shared<nodes::OdometryPublisher>();
@@ -81,3 +82,4 @@ TEST_F(VisualTestFixture, test_odometry_display) {
 
   assertScreenShotsIdentity();
 }
+}  // namespace odometry_display_visual_test

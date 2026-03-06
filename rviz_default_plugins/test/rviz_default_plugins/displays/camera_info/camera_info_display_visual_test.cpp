@@ -38,6 +38,7 @@
 
 #include "../../publishers/camera_info_publisher.hpp"
 #include "../../page_objects/camera_info_display_page_object.hpp"
+namespace camera_info_display_visual_test {
 
 TEST_F(VisualTestFixture, camera_info_displayed) {
   std::vector<PublisherWithFrame> publishers = {
@@ -56,3 +57,4 @@ TEST_F(VisualTestFixture, camera_info_displayed) {
 
   assertScreenShotsIdentity();
 }
+}  // namespace camera_info_display_visual_test

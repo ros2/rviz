@@ -39,6 +39,7 @@
 
 #include "../../page_objects/pose_with_covariance_display_page_object.hpp"
 #include "../../publishers/pose_with_covariance_publisher.hpp"
+namespace pose_with_covariance_display_visual_test {
 
 TEST_F(VisualTestFixture, test_pose_with_covariance_display) {
   auto pose_with_covariance_publisher = std::make_unique<VisualTestPublisher>(
@@ -76,3 +77,4 @@ TEST_F(VisualTestFixture, test_pose_with_covariance_display) {
 
   assertScreenShotsIdentity();
 }
+}  // namespace pose_with_covariance_display_visual_test

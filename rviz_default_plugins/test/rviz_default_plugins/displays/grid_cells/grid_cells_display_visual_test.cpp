@@ -36,6 +36,7 @@
 
 #include "../../page_objects/grid_cells_display_page_object.hpp"
 #include "../../publishers/grid_cells_publisher.hpp"
+namespace grid_cells_display_visual_test {
 
 TEST_F(VisualTestFixture, grid_cells_display_visual_test) {
   auto grid_cells_publisher = std::make_unique<VisualTestPublisher>(
@@ -55,3 +56,4 @@ TEST_F(VisualTestFixture, grid_cells_display_visual_test) {
 
   assertScreenShotsIdentity();
 }
+}  // namespace grid_cells_display_visual_test

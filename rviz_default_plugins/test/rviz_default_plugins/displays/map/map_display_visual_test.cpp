@@ -39,6 +39,7 @@
 #include "../../page_objects/marker_display_page_object.hpp"
 #include "../../publishers/map_publisher.hpp"
 #include "../../publishers/single_marker_publisher.hpp"
+namespace map_display_visual_test {
 
 TEST_F(VisualTestFixture, test_map_display_with_large_map) {
   auto publishers = std::vector<PublisherWithFrame>();
@@ -74,3 +75,4 @@ TEST_F(VisualTestFixture, test_map_display_with_large_map) {
 
   assertScreenShotsIdentity();
 }
+}  // namespace map_display_visual_test

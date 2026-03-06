@@ -36,6 +36,7 @@
 
 #include "../../page_objects/accel_display_page_object.hpp"
 #include "../../publishers/accel_publisher.hpp"
+namespace accel_display_visual_test {
 
 TEST_F(VisualTestFixture, accels_are_displayed) {
   auto accel_publisher = std::make_shared<nodes::AccelPublisher>();
@@ -60,3 +61,4 @@ TEST_F(VisualTestFixture, accels_are_displayed) {
 
   assertScreenShotsIdentity();
 }
+}  // namespace accel_display_visual_test

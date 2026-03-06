@@ -34,6 +34,7 @@
 #include "rviz_visual_testing_framework/visual_test_fixture.hpp"
 
 #include "../../page_objects/grid_display_page_object.hpp"
+namespace grid_display_visual_test {
 
 TEST_F(VisualTestFixture, grid_visual_test) {
   setCamPose(Ogre::Vector3(10, 0, 0));
@@ -51,3 +52,4 @@ TEST_F(VisualTestFixture, grid_visual_test) {
 
   assertScreenShotsIdentity();
 }
+}  // namespace grid_display_visual_test

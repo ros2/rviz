@@ -35,6 +35,7 @@
 
 #include "../../page_objects/range_display_page_object.hpp"
 #include "../../publishers/range_publisher.hpp"
+namespace range_display_visual_test {
 
 TEST_F(VisualTestFixture, range_display_visual_test) {
   auto range_publisher = std::make_unique<VisualTestPublisher>(
@@ -54,3 +55,4 @@ TEST_F(VisualTestFixture, range_display_visual_test) {
 
   assertScreenShotsIdentity();
 }
+}  // namespace range_display_visual_test

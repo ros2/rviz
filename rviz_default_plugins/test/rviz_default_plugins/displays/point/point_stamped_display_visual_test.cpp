@@ -36,6 +36,7 @@
 
 #include "../../page_objects/point_display_page_object.hpp"
 #include "../../publishers/point_stamped_publisher.hpp"
+namespace point_stamped_display_visual_test {
 
 TEST_F(VisualTestFixture, test_with_three_points) {
   auto point_publisher = std::make_unique<VisualTestPublisher>(
@@ -53,3 +54,4 @@ TEST_F(VisualTestFixture, test_with_three_points) {
 
   assertMainWindowIdentity();
 }
+}  // namespace point_stamped_display_visual_test
