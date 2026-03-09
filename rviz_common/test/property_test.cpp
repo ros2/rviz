@@ -335,4 +335,3 @@ TEST(EnumProperty, basic) {
   p.clearOptions();
   EXPECT_EQ(0, p.getOptionInt() );
 }
-

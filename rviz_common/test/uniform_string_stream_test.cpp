@@ -101,4 +101,3 @@ TEST(UniformStringStream, parse_floats_invalid_float_format) {
   uss.parseFloat(b);
   EXPECT_FALSE(!!uss);
 }
-

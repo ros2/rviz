@@ -194,4 +194,3 @@ TEST(DisplayGroup, save_properties) {
       "Name: Charles\n"
     ), out.toStdString());
 }
-
