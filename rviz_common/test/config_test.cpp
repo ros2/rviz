@@ -91,9 +91,3 @@ TEST(Config, handle_mixed_type_values_for_keys) {
   EXPECT_TRUE(c.mapGetString("mixed_key", &string_value));
   EXPECT_EQ(string_value, "123abc");
 }
-
-int main(int argc, char ** argv)
-{
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
