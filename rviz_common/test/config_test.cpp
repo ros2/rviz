@@ -92,7 +92,7 @@ TEST(Config, handle_mixed_type_values_for_keys) {
   EXPECT_EQ(string_value, "123abc");
 }
 
-TEST(Config, Config_copy_constructor_shallow_copy_check) {
+TEST(Config, config_constructor_shallow_copy_check) {
   rviz_common::Config c1;
   c1.mapSetValue("key", "value");
   rviz_common::Config c2 = c1;
@@ -102,7 +102,7 @@ TEST(Config, Config_copy_constructor_shallow_copy_check) {
   EXPECT_EQ(value, "new_value");
 }
 
-TEST(Config, Config_copy_method_deep_copy_check) {
+TEST(Config, config_deep_copy_check) {
   rviz_common::Config source;
   source.mapSetValue("name", "before");
 
