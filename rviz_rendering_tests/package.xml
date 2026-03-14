@@ -24,6 +24,7 @@
 
   <build_depend>qt6-base-dev</build_depend>
 
+  <depend>libogre-1.12-dev</depend>
   <depend>rviz_rendering</depend>
   <depend>resource_retriever</depend>
 

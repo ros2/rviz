@@ -37,6 +37,7 @@
   <test_depend>ament_lint_auto</test_depend>
 
   <export>
+    <deprecated>Use the rosdep keys libogre-1-12-dev and libogre-1.12.10 instead</deprecated>
     <build_type>ament_cmake</build_type>
   </export>
 </package>

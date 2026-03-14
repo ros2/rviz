@@ -55,7 +55,7 @@ find_package(ament_cmake_ros REQUIRED)
 
 find_package(rviz_common REQUIRED)
 find_package(rviz_rendering REQUIRED)
-find_package(rviz_ogre_vendor REQUIRED)
+find_package(OGRE REQUIRED)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Test Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Test Widgets)
@@ -264,8 +264,8 @@ target_link_libraries(rviz_default_plugins PUBLIC
   Qt${QT_VERSION_MAJOR}::Widgets
   rclcpp::rclcpp
   rviz_common::rviz_common
-  rviz_ogre_vendor::OgreMain
-  rviz_ogre_vendor::OgreOverlay
+  OgreMain
+  OgreOverlay
   rviz_rendering::rviz_rendering
   ${sensor_msgs_TARGETS}
   tf2::tf2
@@ -304,7 +304,7 @@ ament_export_dependencies(
   Qt${QT_VERSION_MAJOR}
   rclcpp
   rviz_common
-  rviz_ogre_vendor
+  OGRE
   rviz_rendering
   sensor_msgs
   tf2
@@ -351,7 +351,7 @@ if(BUILD_TESTING)
   ament_find_gmock()
 
   add_library(ogre_testing_environment STATIC test/rviz_default_plugins/ogre_testing_environment.cpp)
-  target_link_libraries(ogre_testing_environment PRIVATE rviz_ogre_vendor::OgreMain rviz_rendering::rviz_rendering)
+  target_link_libraries(ogre_testing_environment PRIVATE OgreMain rviz_rendering::rviz_rendering)
 
   # We can't compile these fixtures into a library to be used by every test because that would
   # require linking against gtest/gmock libraries, which would cause ODR violations down the line
@@ -374,7 +374,7 @@ if(BUILD_TESTING)
   target_link_libraries(test_fixture_objects PUBLIC
     rclcpp::rclcpp
     rviz_common::rviz_common
-    rviz_ogre_vendor::OgreMain
+    OgreMain
     ogre_testing_environment
     Qt${QT_VERSION_MAJOR}::Widgets
   )
@@ -384,7 +384,7 @@ if(BUILD_TESTING)
   set(TEST_FIXTURE_WITH_MOCK_LIBRARIES
     rclcpp::rclcpp
     rviz_common::rviz_common
-    rviz_ogre_vendor::OgreMain
+    OgreMain
     ogre_testing_environment
   )
 
@@ -462,7 +462,7 @@ if(BUILD_TESTING)
     rclcpp::rclcpp
     ${std_msgs_TARGETS}
     ${visualization_msgs_TARGETS}
-    rviz_ogre_vendor::OgreMain
+    OgreMain
   )
 
   ament_add_gmock(marker_test
