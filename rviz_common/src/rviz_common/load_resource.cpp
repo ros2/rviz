@@ -38,7 +38,6 @@
 #include <QPixmapCache>  // NOLINT: cpplint cannot handle the include order here
 #include <QString>  // NOLINT: cpplint cannot handle the include order here
 
-#include "ament_index_cpp/get_package_share_directory.hpp"
 #include "ament_index_cpp/get_package_prefix.hpp"
 #include "resource_retriever/retriever.hpp"
 

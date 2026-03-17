@@ -463,11 +463,16 @@ TopicDisplayWidget::TopicDisplayWidget(
   enable_hidden_box_ = new QCheckBox("Show unvisualizable topics");
   enable_hidden_box_->setCheckState(Qt::Unchecked);
 
+  filter_text = new QLabel("Filter topics by name:");
+  filter_box_ = new QLineEdit;
+
   auto layout = new QVBoxLayout;
   layout->setContentsMargins(QMargins(0, 0, 0, 0));
 
   layout->addWidget(tree_);
   layout->addWidget(enable_hidden_box_);
+  layout->addWidget(filter_text);
+  layout->addWidget(filter_box_);
 
   // *INDENT-OFF* - uncrustify cannot deal with commas here
   connect(tree_, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)),
@@ -481,6 +486,10 @@ TopicDisplayWidget::TopicDisplayWidget(
   connect(
     enable_hidden_box_, SIGNAL(stateChanged(int)),
     this, SLOT(stateChanged(int)));
+  // Connect signal from filter box
+  connect(
+    filter_box_, SIGNAL(textChanged(const QString&)),
+    this, SLOT(applyFilter()));
 
   setLayout(layout);
 }
@@ -518,11 +527,60 @@ void TopicDisplayWidget::onComboBoxClicked(QTreeWidgetItem * curr)
 
 void TopicDisplayWidget::stateChanged(int state)
 {
-  bool hide_disabled = state == Qt::Unchecked;
-  QTreeWidgetItemIterator it(tree_, QTreeWidgetItemIterator::Disabled);
+  Q_UNUSED(state);
+  applyFilter();
+}
+
+void TopicDisplayWidget::applyFilter()
+{
+  const int TOPIC_ROLE = Qt::UserRole + 1;
+  const int FILTER_ROLE = Qt::UserRole + 2;
+
+  std::vector<QTreeWidgetItem *> items;
+
+  const QString filter = filter_box_->text().trimmed();
+  const bool hide_unvisualizable = (enable_hidden_box_->checkState() == Qt::Unchecked);
+
+  // Create list of all items and set data to track whether it matches the filter.
+  QTreeWidgetItemIterator it(tree_);
   for (; *it; ++it) {
     QTreeWidgetItem * item = *it;
-    item->setHidden(hide_disabled);
+    items.push_back(item);
+
+    QString topic_path;
+    QTreeWidgetItem * parent = item->parent();
+    if (parent) {
+      topic_path = parent->data(0, TOPIC_ROLE).toString();
+    }
+
+    if (item->text(0).startsWith('/')) {
+      topic_path += item->text(0);
+    }
+
+    item->setData(0, TOPIC_ROLE, topic_path);
+    item->setData(
+      0, FILTER_ROLE,
+      filter.isEmpty() || topic_path.contains(filter, Qt::CaseInsensitive));
+  }
+
+  // Propagate match information from children nodes to parent nodes.
+  for (auto item_it = items.rbegin(); item_it != items.rend(); ++item_it) {
+    QTreeWidgetItem * item = *item_it;
+    bool matches_filter = item->data(0, FILTER_ROLE).toBool();
+    for (int i = 0; i < item->childCount(); ++i) {
+      matches_filter = item->child(i)->data(0, FILTER_ROLE).toBool();
+      if (matches_filter) {
+        break;
+      }
+    }
+    item->setData(0, FILTER_ROLE, matches_filter);
+  }
+
+  // Set visibility of items based on filter and hidden checkbox.
+  for (QTreeWidgetItem * item : items) {
+    const bool matches_filter = item->data(0, FILTER_ROLE).toBool();
+    const bool hide_disabled = hide_unvisualizable && item->isDisabled();
+    item->setHidden(!matches_filter || hide_disabled);
   }
 }
 
@@ -577,7 +635,7 @@ void TopicDisplayWidget::fill(DisplayFactory * factory)
   }
 
   // Hide unvisualizable topics if necessary
-  stateChanged(enable_hidden_box_->isChecked());
+  applyFilter();
 }
 
 void TopicDisplayWidget::findPlugins(DisplayFactory * factory)

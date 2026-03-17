@@ -336,14 +336,85 @@ if(BUILD_TESTING)
   find_package(ament_cmake_gmock REQUIRED)
   find_package(ament_cmake_gtest REQUIRED)
 
-  qt_wrap_cpp(rviz_common_test_moc_files test/mock_display.hpp)
-  qt_wrap_cpp(rviz_common_test_moc_files test/mock_property_change_receiver.hpp)
+  # This is needed for the fixture sources down below...
+  ament_find_gmock()
 
-  qt_wrap_cpp(rviz_common_test_frame_manager_moc src/rviz_common/frame_manager.hpp)
+  # Prepare MOC files for mocks
+  qt_wrap_cpp(rviz_common_test_moc_files
+    test/mock_display.hpp
+    test/mock_property_change_receiver.hpp
+  )
 
+  # Common test support objects to avoid redundant compilation
+  add_library(test_support_objects OBJECT
+    test/mock_display.cpp
+    test/mock_property_change_receiver.cpp
+    test/display_context_fixture.cpp
+    test/ogre_testing_environment.cpp
+    ${rviz_common_test_moc_files}
+  )
+  target_include_directories(test_support_objects PRIVATE
+    include
+    test
+    ${rviz_common_INCLUDE_DIRS}
+    ${GMOCK_INCLUDE_DIRS}
+    ${GTEST_INCLUDE_DIRS}
+  )
+  target_link_libraries(test_support_objects PUBLIC
+    rviz_common
+    Qt${QT_VERSION_MAJOR}::Widgets
+    rviz_ogre_vendor::OgreMain
+    rviz_ogre_vendor::OgreOverlay
+  )
+
+  set(TEST_SUPPORT_OBJECTS $<TARGET_OBJECTS:test_support_objects>)
+
+  # Consolidate core tests
+  ament_add_gmock(rviz_common_core_tests
+    test/config_test.cpp
+    test/uniform_string_stream_test.cpp
+    test/property_test.cpp
+    test/display_test.cpp
+    test/mock_display_group.cpp
+    test/properties/qos_profile_property_test.cpp
+    test/visualizer_app_test.cpp
+    test/ros_node_abstraction_test.cpp
+    test/transformation/identity_frame_transformer_test.cpp
+    ${TEST_SUPPORT_OBJECTS}
+    ${SKIP_DISPLAY_TESTS}
+  )
+  if(TARGET rviz_common_core_tests)
+    target_include_directories(rviz_common_core_tests PRIVATE test)
+    target_link_libraries(rviz_common_core_tests
+      rviz_common
+      rviz_ogre_vendor::OgreMain
+      rviz_ogre_vendor::OgreOverlay
+      Qt${QT_VERSION_MAJOR}::Widgets
+      yaml-cpp::yaml-cpp
+    )
+  endif()
+
+  # Consolidate interaction tests
+  ament_add_gmock(rviz_common_interaction_tests
+    test/interaction/selection_manager_test.cpp
+    test/interaction/selection_handler_test.cpp
+    ${TEST_SUPPORT_OBJECTS}
+    ${SKIP_DISPLAY_TESTS}
+  )
+  if(TARGET rviz_common_interaction_tests)
+    target_include_directories(rviz_common_interaction_tests PRIVATE test)
+    target_link_libraries(rviz_common_interaction_tests
+      rviz_common
+      rviz_ogre_vendor::OgreMain
+      rviz_ogre_vendor::OgreOverlay
+    )
+  endif()
+
+  # Display factory test (keeps its unique src compilation for now)
   ament_add_gmock(display_factory_test
     test/display_factory_test.cpp
     src/rviz_common/display_factory.cpp
+    ${TEST_SUPPORT_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET display_factory_test)
     target_compile_definitions(display_factory_test PUBLIC
@@ -351,10 +422,13 @@ if(BUILD_TESTING)
     target_link_libraries(display_factory_test rviz_common Qt${QT_VERSION_MAJOR}::Widgets)
   endif()
 
+  # Frame manager test (keeps its unique moc)
+  qt_wrap_cpp(rviz_common_test_frame_manager_moc src/rviz_common/frame_manager.hpp)
   ament_add_gmock(frame_manager_test
     test/frame_manager_test.cpp
     src/rviz_common/frame_manager.cpp
     ${rviz_common_test_frame_manager_moc}
+    ${TEST_SUPPORT_OBJECTS}
   )
   if(TARGET frame_manager_test)
     target_link_libraries(frame_manager_test
@@ -362,102 +436,6 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_ogre_vendor::OgreOverlay
     )
-  endif()
-
-  ament_add_gtest(rviz_common_config_test
-    test/config_test.cpp
-  )
-  if(TARGET rviz_common_config_test)
-    target_link_libraries(rviz_common_config_test
-      rviz_common
-      rviz_ogre_vendor::OgreMain
-      rviz_ogre_vendor::OgreOverlay
-    )
-  endif()
-
-  ament_add_gtest(rviz_common_uniform_string_stream_test
-    test/uniform_string_stream_test.cpp
-  )
-  if(TARGET rviz_common_uniform_string_stream_test)
-    target_link_libraries(rviz_common_uniform_string_stream_test
-      rviz_common
-      rviz_ogre_vendor::OgreMain
-      rviz_ogre_vendor::OgreOverlay
-    )
-  endif()
-
-  ament_add_gtest(rviz_common_property_test
-    ${rviz_common_test_moc_files}
-    test/property_test.cpp
-    test/mock_display.cpp
-    test/mock_property_change_receiver.cpp
-  )
-  if(TARGET rviz_common_property_test)
-    target_link_libraries(rviz_common_property_test rviz_common)
-  endif()
-
-  ament_add_gmock(qos_profile_property_test test/properties/qos_profile_property_test.cpp)
-  if(TARGET qos_profile_property_test)
-    target_link_libraries(qos_profile_property_test rviz_common)
-  endif()
-
-  ament_add_gmock(rviz_common_visualizer_app_test test/visualizer_app_test.cpp)
-  if(TARGET rviz_common_visualizer_app_test)
-    target_link_libraries(rviz_common_visualizer_app_test rviz_common)
-  endif()
-
-  ament_add_gmock(rviz_common_ros_node_abstraction_test
-    test/ros_node_abstraction_test.cpp
-  )
-  if(TARGET rviz_common_ros_node_abstraction_test)
-    target_link_libraries(rviz_common_ros_node_abstraction_test rviz_common)
-  endif()
-
-  ament_add_gmock(identity_transformer_test
-    test/transformation/identity_frame_transformer_test.cpp
-  )
-  if(TARGET identity_transformer_test)
-    target_link_libraries(identity_transformer_test rviz_common)
-  endif()
-
-  ament_add_gmock(selection_manager_test
-    test/interaction/selection_manager_test.cpp
-    test/interaction/mock_selection_renderer.hpp
-    test/interaction/selection_test_fixture.hpp
-    test/display_context_fixture.cpp
-    test/ogre_testing_environment.cpp
-    ${SKIP_DISPLAY_TESTS})
-  if(TARGET selection_manager_test)
-    target_link_libraries(selection_manager_test
-      rviz_common
-      rviz_ogre_vendor::OgreMain
-      rviz_ogre_vendor::OgreOverlay
-    )
-  endif()
-
-  ament_add_gmock(selection_handler_test
-    test/interaction/selection_handler_test.cpp
-    test/interaction/selection_test_fixture.hpp
-    test/display_context_fixture.cpp
-    test/ogre_testing_environment.cpp
-    ${SKIP_DISPLAY_TESTS})
-  if(TARGET selection_handler_test)
-    target_link_libraries(selection_handler_test
-      rviz_common
-      rviz_ogre_vendor::OgreMain
-      rviz_ogre_vendor::OgreOverlay
-    )
-  endif()
-
-  ament_add_gtest(rviz_common_display_test
-    ${rviz_common_test_moc_files}
-    test/display_test.cpp
-    test/mock_display.cpp
-    test/mock_display_group.cpp
-    test/mock_property_change_receiver.cpp
-    ${SKIP_DISPLAY_TESTS})
-  if(TARGET rviz_common_display_test)
-    target_link_libraries(rviz_common_display_test rviz_common Qt${QT_VERSION_MAJOR}::Widgets yaml-cpp::yaml-cpp)
   endif()
 endif()
 

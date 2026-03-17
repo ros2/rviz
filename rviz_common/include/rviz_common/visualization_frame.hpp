@@ -35,6 +35,7 @@
 
 #include <chrono>
 #include <deque>
+#include <filesystem>
 #include <map>
 #include <string>
 
@@ -479,7 +480,7 @@ protected:
 
   VisualizationManager * manager_;
 
-  std::string package_path_;
+  std::filesystem::path package_path_;
   QString help_path_;
   QString splash_path_;
 
