@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Willow Garage, Inc.
+// Copyright (c) 2026, Open Source Robotics Foundation, Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -35,8 +35,6 @@
 #include <string>
 #include <vector>
 
-#include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
-
 namespace rviz_common
 {
 namespace properties
@@ -51,13 +49,14 @@ void RosTopicMultiTypeProperty::fillTopicList()
     rviz_ros_node_.lock()->get_topic_names_and_types();
 
   for (const auto & topic : published_topics) {
-    // Only add topics whose type matches.
+    // Only add topics whose type matches one of the allowed types.
     for (const auto & type : topic.second) {
       if (
         std::find(message_types_.begin(), message_types_.end(), QString::fromStdString(type)) !=
         message_types_.end())
       {
         addOptionStd(topic.first);
+        break;  // avoid duplicates if the topic matches more than one allowed type
       }
     }
   }

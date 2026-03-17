@@ -63,10 +63,9 @@
   <test_depend>ament_cmake_lint_cmake</test_depend>
   <test_depend>ament_index_cpp</test_depend>
   <test_depend>ament_lint_auto</test_depend>
+  <test_depend>libopencv-dev</test_depend>
   <test_depend>rviz_rendering_tests</test_depend>
   <test_depend>rviz_visual_testing_framework</test_depend>
-  <test_depend>vision_opencv</test_depend>
-  <test_depend>compressed_image_transport</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
