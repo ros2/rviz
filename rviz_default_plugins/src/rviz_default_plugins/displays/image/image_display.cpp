@@ -54,6 +54,8 @@
 
 #include "image_transport/image_transport.hpp"
 #include "image_transport/subscriber.hpp"
+#include "image_transport/subscriber_plugin.hpp"
+#include "pluginlib/class_loader.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/properties/ros_topic_multi_type_property.hpp"
@@ -122,8 +124,14 @@ ImageDisplay::ImageDisplay(std::unique_ptr<ROSImageTextureIface> texture)
 void ImageDisplay::setTopic(const QString & topic, const QString & datatype)
 {
   (void) datatype;
+  const std::string topic_str = topic.toStdString();
+  // Strip transport hint suffix if present (e.g. /camera/image/compressed -> /camera/image)
+  const std::string transport = getTransportFromTopic(topic_str);
+  if (transport != "raw") {
+    transport_override_property_->setString(QString::fromStdString(transport));
+  }
   ((rviz_common::properties::RosTopicMultiTypeProperty *)topic_property_)
-  ->setString(topic);
+  ->setString(QString::fromStdString(getBaseTopicFromTopic(topic_str)));
 }
 
 void ImageDisplay::onInitialize()
@@ -136,6 +144,19 @@ void ImageDisplay::onInitialize()
 
   render_panel_->getRenderWindow()->setupSceneAfterInit(
     [this](Ogre::SceneNode * scene_node) {scene_node->attachObject(screen_rect_.get());});
+
+  // Populate transport->message type map dynamically from installed image_transport plugins
+  pluginlib::ClassLoader<image_transport::SubscriberPlugin> sub_loader(
+    "image_transport", "image_transport::SubscriberPlugin");
+  for (const std::string & plugin_class : sub_loader.getDeclaredClasses()) {
+    try {
+      auto plugin = sub_loader.createUniqueInstance(plugin_class);
+      const std::string message_type = plugin->getMessageType();
+      if (!message_type.empty()) {
+        transport_message_types_[plugin->getTransportName()] = message_type;
+      }
+    } catch (...) {}
+  }
 
   // Populate message types and transport overrides based on installed image_transport plugins
   std::shared_ptr<rclcpp::Node> node = rviz_ros_node_.lock()->get_raw_node();
