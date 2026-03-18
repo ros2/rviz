@@ -31,6 +31,7 @@
 #include <string>
 #include <unordered_set>
 
+#include "image_transport/camera_common.hpp"
 #include "image_transport/subscriber_plugin.hpp"
 #include "pluginlib/class_loader.hpp"
 #include "rviz_default_plugins/displays/image/get_transport_from_topic.hpp"
@@ -50,13 +51,17 @@ const std::unordered_set<std::string> & getKnownNonRawTransports()
       pluginlib::ClassLoader<image_transport::SubscriberPlugin> sub_loader(
         "image_transport", "image_transport::SubscriberPlugin");
       for (const std::string & plugin_class : sub_loader.getDeclaredClasses()) {
-        try {
-          auto plugin = sub_loader.createUniqueInstance(plugin_class);
-          const std::string name = plugin->getTransportName();
-          if (name != "raw") {
-            result.insert(name);
+        const std::string message_type = image_transport::get_message_type_from_manifest(
+          sub_loader.getPluginManifestPath(plugin_class), plugin_class);
+        if (!message_type.empty()) {
+          const std::string without_suffix =
+            image_transport::erase_last_copy(plugin_class, "_sub");
+          const std::string transport_name =
+            without_suffix.substr(without_suffix.find_last_of('/') + 1);
+          if (transport_name != "raw") {
+            result.insert(transport_name);
           }
-        } catch (...) {}
+        }
       }
     } catch (...) {}
     return result;
