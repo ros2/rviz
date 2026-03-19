@@ -359,10 +359,27 @@ if(BUILD_TESTING)
   #
   # There are also issues even if we manage to defer the linking, because the fixture class inherits
   # from gtest classes, which are not exported.
-  set(TEST_FIXTURE_SOURCES_WITH_MOCK
+  #
+  # However, an OBJECT library allows us to compile the sources once and reuse them.
+  add_library(test_fixture_objects OBJECT
     test/rviz_default_plugins/displays/display_test_fixture.cpp
     test/rviz_default_plugins/scene_graph_introspection.cpp
   )
+  target_include_directories(test_fixture_objects PRIVATE
+    ${TEST_INCLUDE_DIRS}
+    include
+    ${GMOCK_INCLUDE_DIRS}
+    ${GTEST_INCLUDE_DIRS}
+  )
+  target_link_libraries(test_fixture_objects PUBLIC
+    rclcpp::rclcpp
+    rviz_common::rviz_common
+    rviz_ogre_vendor::OgreMain
+    ogre_testing_environment
+    Qt${QT_VERSION_MAJOR}::Widgets
+  )
+
+  set(TEST_FIXTURE_OBJECTS $<TARGET_OBJECTS:test_fixture_objects>)
 
   set(TEST_FIXTURE_WITH_MOCK_LIBRARIES
     rclcpp::rclcpp
@@ -373,7 +390,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(fps_view_controller_test
     test/rviz_default_plugins/view_controllers/fps/fps_view_controller_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET fps_view_controller_test)
     target_include_directories(fps_view_controller_test PRIVATE ${TEST_INCLUDE_DIRS})
@@ -387,7 +404,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(frame_view_controller_test
     test/rviz_default_plugins/view_controllers/frame/frame_view_controller_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET frame_view_controller_test)
     target_include_directories(frame_view_controller_test PRIVATE ${TEST_INCLUDE_DIRS})
@@ -401,7 +418,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(frame_info_test
     test/rviz_default_plugins/displays/tf/frame_info_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET frame_info_test)
     target_include_directories(frame_info_test PRIVATE test)
@@ -410,7 +427,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(get_transport_from_topic_test
     test/rviz_default_plugins/displays/image/get_transport_from_topic_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK})
+    ${TEST_FIXTURE_OBJECTS})
   if(TARGET get_transport_from_topic_test)
     target_include_directories(get_transport_from_topic_test PRIVATE test)
     target_link_libraries(get_transport_from_topic_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins ogre_testing_environment)
@@ -418,7 +435,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(grid_cells_display_test
     test/rviz_default_plugins/displays/grid_cells/grid_cells_display_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET grid_cells_display_test)
     target_include_directories(grid_cells_display_test PRIVATE test)
@@ -427,7 +444,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(image_display_test
     test/rviz_default_plugins/displays/image/image_display_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET image_display_test)
     target_include_directories(image_display_test PRIVATE test)
@@ -457,7 +474,7 @@ if(BUILD_TESTING)
     test/rviz_default_plugins/displays/marker/markers/text_view_facing_marker_test.cpp
     test/rviz_default_plugins/displays/marker/markers/triangle_list_marker_test.cpp
     test/rviz_default_plugins/displays/marker/markers/markers_test_fixture.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET marker_test)
     target_include_directories(marker_test PRIVATE test)
@@ -472,7 +489,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(marker_common_test
     test/rviz_default_plugins/displays/marker/marker_common_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET marker_common_test)
     target_include_directories(marker_common_test PRIVATE test)
@@ -486,7 +503,7 @@ if(BUILD_TESTING)
   endif()
 
   ament_add_gmock(map_display_test
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     test/rviz_default_plugins/displays/map/map_display_test.cpp
     ${SKIP_DISPLAY_TESTS})
   if(TARGET map_display_test)
@@ -496,7 +513,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(measure_tool_test
     test/rviz_default_plugins/tools/measure/measure_tool_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET measure_tool_test)
     target_include_directories(measure_tool_test PRIVATE test)
@@ -505,7 +522,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(odometry_display_test
     test/rviz_default_plugins/displays/odometry/odometry_display_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET odometry_display_test)
     target_include_directories(odometry_display_test PRIVATE test)
@@ -514,7 +531,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(odometry_ogre_helper_test
     test/rviz_default_plugins/displays/odometry/quaternion_helper_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET odometry_ogre_helper_test)
     target_include_directories(odometry_ogre_helper_test PRIVATE test)
@@ -523,7 +540,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(orbit_view_controller_test
     test/rviz_default_plugins/view_controllers/orbit/orbit_view_controller_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET orbit_view_controller_test)
     target_include_directories(orbit_view_controller_test PRIVATE test)
@@ -537,7 +554,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(ortho_view_controller_test
     test/rviz_default_plugins/view_controllers/ortho/ortho_view_controller_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET ortho_view_controller_test)
     target_include_directories(ortho_view_controller_test PRIVATE test)
@@ -551,7 +568,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(palette_builder_test
     test/rviz_default_plugins/displays/map/palette_builder_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET palette_builder_test)
     target_include_directories(palette_builder_test PRIVATE test)
@@ -560,7 +577,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(path_display_test
     test/rviz_default_plugins/displays/path/path_display_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET path_display_test)
     target_include_directories(path_display_test PRIVATE test)
@@ -583,7 +600,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(point_cloud2_display_test
     test/rviz_default_plugins/displays/pointcloud/point_cloud2_display_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET point_cloud2_display_test)
     target_include_directories(point_cloud2_display_test PRIVATE test)
@@ -597,7 +614,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(point_cloud_common_test
     test/rviz_default_plugins/displays/pointcloud/point_cloud_common_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET point_cloud_common_test)
     target_include_directories(point_cloud_common_test PRIVATE test)
@@ -611,7 +628,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(point_cloud_scalar_display_test
     test/rviz_default_plugins/displays/pointcloud/point_cloud_scalar_display_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET point_cloud_scalar_display_test)
     target_include_directories(point_cloud_scalar_display_test PRIVATE test)
@@ -630,7 +647,7 @@ if(BUILD_TESTING)
     test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/rgb8_pc_transformer_test.cpp
     test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/rgbf32_pc_transformer_test.cpp
     test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/xyz_pc_transformer_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET point_cloud_transformers_test)
     target_include_directories(point_cloud_transformers_test PRIVATE test)
@@ -645,7 +662,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(point_display_test
     test/rviz_default_plugins/displays/point/point_stamped_display_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET point_display_test)
     target_include_directories(point_display_test PRIVATE test)
@@ -659,7 +676,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(pose_array_display_test
     test/rviz_default_plugins/displays/pose_array/pose_array_display_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET pose_array_display_test)
     target_include_directories(pose_array_display_test PRIVATE test)
@@ -668,7 +685,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(pose_tool_test
     test/rviz_default_plugins/tools/pose/pose_tool_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET pose_tool_test)
     target_include_directories(pose_tool_test PRIVATE test)
@@ -677,7 +694,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(range_display_test
     test/rviz_default_plugins/displays/range/range_display_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET range_display_test)
     target_include_directories(range_display_test PRIVATE test)
@@ -686,7 +703,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(robot_test
     test/rviz_default_plugins/robot/robot_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET robot_test)
     target_include_directories(robot_test PRIVATE test)
@@ -701,7 +718,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(ros_image_texture_test
     test/rviz_default_plugins/displays/image/ros_image_texture_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET ros_image_texture_test)
     target_include_directories(ros_image_texture_test PRIVATE test)
@@ -715,7 +732,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(selection_tool_test
     test/rviz_default_plugins/tools/select/selection_tool_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET selection_tool_test)
     target_include_directories(selection_tool_test PRIVATE test)
@@ -724,7 +741,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(xy_orbit_view_controller_test
     test/rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET xy_orbit_view_controller_test)
     target_include_directories(xy_orbit_view_controller_test PRIVATE test)
@@ -738,7 +755,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(frame_transformer_tf_test
     test/rviz_default_plugins/transformation/frame_transformer_tf_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET frame_transformer_tf_test)
     target_include_directories(frame_transformer_tf_test PRIVATE test)
@@ -753,7 +770,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(transformer_guard_test
     test/rviz_default_plugins/transformation/transformer_guard_test.cpp
-    ${TEST_FIXTURE_SOURCES_WITH_MOCK}
+    ${TEST_FIXTURE_OBJECTS}
     ${SKIP_DISPLAY_TESTS})
   if(TARGET transformer_guard_test)
     target_include_directories(transformer_guard_test PRIVATE test)

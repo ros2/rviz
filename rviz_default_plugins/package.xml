@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>rviz_default_plugins</name>
-  <version>15.1.15</version>
+  <version>15.1.18</version>
   <description>
     Several default plugins for rviz to cover the basic functionality.
   </description>
@@ -63,9 +63,9 @@
   <test_depend>ament_cmake_lint_cmake</test_depend>
   <test_depend>ament_index_cpp</test_depend>
   <test_depend>ament_lint_auto</test_depend>
+  <test_depend>libopencv-dev</test_depend>
   <test_depend>rviz_rendering_tests</test_depend>
   <test_depend>rviz_visual_testing_framework</test_depend>
-  <test_depend>vision_opencv</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

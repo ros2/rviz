@@ -112,15 +112,7 @@ protected:
   uint32_t messages_received_;
   rclcpp::Time subscription_start_time_;
   message_filters::Connection subscription_callback_;
-  const std::unordered_map<std::string, std::string> transport_message_types_ = {
-    /* *INDENT-OFF* */
-    {"raw",             "sensor_msgs/msg/Image"},
-    {"compressed",      "sensor_msgs/msg/CompressedImage"},
-    {"compressedDepth", "sensor_msgs/msg/CompressedImage"},
-    {"theora",          "theora_image_transport/msg/Packet"},
-    {"zstd",            "sensor_msgs/msg/CompressedImage"},
-    /* *INDENT-ON* */
-  };
+  std::unordered_map<std::string, std::string> transport_message_types_;
   std::unique_ptr<ROSImageTextureIface> texture_;
   std::unique_ptr<rviz_common::RenderPanel> render_panel_;
 

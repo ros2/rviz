@@ -29,7 +29,11 @@
 
 
 #include <string>
+#include <unordered_set>
 
+#include "image_transport/camera_common.hpp"
+#include "image_transport/subscriber_plugin.hpp"
+#include "pluginlib/class_loader.hpp"
 #include "rviz_default_plugins/displays/image/get_transport_from_topic.hpp"
 
 namespace rviz_default_plugins
@@ -37,13 +41,40 @@ namespace rviz_default_plugins
 namespace displays
 {
 
+namespace
+{
+const std::unordered_set<std::string> & getKnownNonRawTransports()
+{
+  static const std::unordered_set<std::string> known_transports = []() {
+    std::unordered_set<std::string> result;
+    try {
+      pluginlib::ClassLoader<image_transport::SubscriberPlugin> sub_loader(
+        "image_transport", "image_transport::SubscriberPlugin");
+      for (const std::string & plugin_class : sub_loader.getDeclaredClasses()) {
+        const std::string message_type = image_transport::get_message_type_from_manifest(
+          sub_loader.getPluginManifestPath(plugin_class), plugin_class);
+        if (!message_type.empty()) {
+          const std::string without_suffix =
+            image_transport::erase_last_copy(plugin_class, "_sub");
+          const std::string transport_name =
+            without_suffix.substr(without_suffix.find_last_of('/') + 1);
+          if (transport_name != "raw") {
+            result.insert(transport_name);
+          }
+        }
+      }
+    } catch (...) {}
+    return result;
+  }();
+  return known_transports;
+}
+}  // namespace
+
 bool isRawTransport(const std::string & topic)
 {
-  std::string last_subtopic = topic.substr(topic.find_last_of('/') + 1);
-  return last_subtopic != "compressed" &&
-         last_subtopic != "compressedDepth" &&
-         last_subtopic != "theora" &&
-         last_subtopic != "ffmpeg";
+  const std::string last_subtopic = topic.substr(topic.find_last_of('/') + 1);
+  const auto & transports = getKnownNonRawTransports();
+  return transports.find(last_subtopic) == transports.end();
 }
 
 std::string getTransportFromTopic(const std::string & topic)

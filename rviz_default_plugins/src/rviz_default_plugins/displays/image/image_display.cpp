@@ -52,11 +52,14 @@
 #include <utility>
 #include <vector>
 
+#include "image_transport/camera_common.hpp"
 #include "image_transport/image_transport.hpp"
 #include "image_transport/subscriber.hpp"
+#include "image_transport/subscriber_plugin.hpp"
+#include "pluginlib/class_loader.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
-#include "rviz_common/properties/ros_topic_multi_property.hpp"
+#include "rviz_common/properties/ros_topic_multi_type_property.hpp"
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
 #include "rviz_common/validate_floats.hpp"
@@ -83,7 +86,7 @@ ImageDisplay::ImageDisplay(std::unique_ptr<ROSImageTextureIface> texture)
   // Remove the default single-type topic and replace with a multi-type topic property
   // This allows us to display image and compressed image topics in the topic list
   delete this->topic_property_;
-  this->topic_property_ = new rviz_common::properties::RosTopicMultiProperty(
+  this->topic_property_ = new rviz_common::properties::RosTopicMultiTypeProperty(
     "Topic", "", std::vector<QString>(), "Image transport topic to subscribe to.", this,
     SLOT(updateTopic()));
 
@@ -118,12 +121,18 @@ ImageDisplay::ImageDisplay(std::unique_ptr<ROSImageTextureIface> texture)
   got_float_image_ = false;
 }
 
-// Need to override this method because of the new type RosTopicMultiProperty
+// Need to override this method because of the new type RosTopicMultiTypeProperty
 void ImageDisplay::setTopic(const QString & topic, const QString & datatype)
 {
   (void) datatype;
-  ((rviz_common::properties::RosTopicMultiProperty *)topic_property_)
-  ->setString(topic);
+  const std::string topic_str = topic.toStdString();
+  // Strip transport hint suffix if present (e.g. /camera/image/compressed -> /camera/image)
+  const std::string transport = getTransportFromTopic(topic_str);
+  if (transport != "raw") {
+    transport_override_property_->setString(QString::fromStdString(transport));
+  }
+  ((rviz_common::properties::RosTopicMultiTypeProperty *)topic_property_)
+  ->setString(QString::fromStdString(getBaseTopicFromTopic(topic_str)));
 }
 
 void ImageDisplay::onInitialize()
@@ -137,16 +146,24 @@ void ImageDisplay::onInitialize()
   render_panel_->getRenderWindow()->setupSceneAfterInit(
     [this](Ogre::SceneNode * scene_node) {scene_node->attachObject(screen_rect_.get());});
 
+  // Populate transport->message type map dynamically from installed image_transport plugins
+  pluginlib::ClassLoader<image_transport::SubscriberPlugin> sub_loader(
+    "image_transport", "image_transport::SubscriberPlugin");
+  for (const std::string & plugin_class : sub_loader.getDeclaredClasses()) {
+      const std::string message_type = image_transport::get_message_type_from_manifest(
+        sub_loader.getPluginManifestPath(plugin_class), plugin_class);
+      if (!message_type.empty()) {
+        const std::string without_suffix =
+          image_transport::erase_last_copy(plugin_class, "_sub");
+        const std::string transport_name =
+          without_suffix.substr(without_suffix.find_last_of('/') + 1);
+        transport_message_types_[transport_name] = message_type;
+      }
+  }
+
   // Populate message types and transport overrides based on installed image_transport plugins
   std::shared_ptr<rclcpp::Node> node = rviz_ros_node_.lock()->get_raw_node();
-  image_transport::ImageTransport image_transport_(
-    image_transport::RequiredInterfaces(
-      node->get_node_base_interface(),
-      node->get_node_parameters_interface(),
-      node->get_node_logging_interface(),
-      node->get_node_timers_interface(),
-      node->get_node_topics_interface()
-  ));
+  image_transport::ImageTransport image_transport_{*node};
   std::vector<std::string> loadable_transports = image_transport_.getLoadableTransports();
   std::vector<QString> message_types;
   // Map to message types
@@ -165,7 +182,7 @@ void ImageDisplay::onInitialize()
   message_types.erase(
     std::unique(message_types.begin(), message_types.end()), message_types.end());
   // Update the message types to allow in the topic_property_
-  ((rviz_common::properties::RosTopicMultiProperty *)topic_property_)
+  ((rviz_common::properties::RosTopicMultiTypeProperty *)topic_property_)
   ->setMessageTypes(message_types);
 }
 
@@ -243,13 +260,7 @@ void ImageDisplay::subscribe()
   }
   try {
     rclcpp::Node::SharedPtr node = rviz_ros_node_.lock()->get_raw_node();
-    image_transport::ImageTransport image_transport_(image_transport::RequiredInterfaces(
-      node->get_node_base_interface(),
-      node->get_node_parameters_interface(),
-      node->get_node_logging_interface(),
-      node->get_node_timers_interface(),
-      node->get_node_topics_interface()
-    ));
+    image_transport::ImageTransport image_transport_{*node};
     // Check which image_transport plugins are installed
     std::vector<std::string> transports = image_transport_.getLoadableTransports();
     std::string transports_str = "";
@@ -281,13 +292,7 @@ void ImageDisplay::subscribe()
     // image_transport::Subscriber only requires one callback for "raw" and the other types are
     // automatically converted.
     subscription_->subscribe(
-      image_transport::RequiredInterfaces(
-        node->get_node_base_interface(),
-        node->get_node_parameters_interface(),
-        node->get_node_logging_interface(),
-        node->get_node_timers_interface(),
-        node->get_node_topics_interface()
-      ),
+      *node,
       getBaseTopicFromTopic(topic_property_->getTopicStd()),
       transport_hint,
       qos_profile);

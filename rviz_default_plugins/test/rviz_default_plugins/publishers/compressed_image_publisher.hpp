@@ -1,4 +1,4 @@
-// Copyright (c) 2018, Bosch Software Innovations GmbH.
+// Copyright (c) 2026, Open Source Robotics Foundation, Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -32,8 +32,6 @@
 #define RVIZ_DEFAULT_PLUGINS__PUBLISHERS__COMPRESSED_IMAGE_PUBLISHER_HPP_
 
 #include <chrono>
-#include <cmath>
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -51,38 +49,34 @@ namespace nodes
 class CompressedImagePublisher : public rclcpp::Node
 {
 public:
-  explicit CompressedImagePublisher(const std::string & topic_name);
+  explicit CompressedImagePublisher(const std::string & topic_name = "image")
+  : Node("compressed_image_publisher")
+  {
+    publisher = this->create_publisher<sensor_msgs::msg::CompressedImage>(topic_name, 10);
+    timer = this->create_wall_timer(
+      100ms, std::bind(&CompressedImagePublisher::timer_callback, this));
+  }
 
 private:
-  void timer_callback();
+  void timer_callback()
+  {
+    auto message = sensor_msgs::msg::CompressedImage();
+    message.header = std_msgs::msg::Header();
+    message.header.frame_id = "image_frame";
+    message.header.stamp = rclcpp::Clock().now();
+
+    cv::Mat image(200, 300, CV_8UC3, cv::Scalar(0, 255, 0));
+    std::vector<uchar> compressed_image;
+    cv::imencode(".jpg", image, compressed_image);
+
+    message.data.assign(compressed_image.begin(), compressed_image.end());
+    message.format = "jpeg";
+    publisher->publish(message);
+  }
 
   rclcpp::TimerBase::SharedPtr timer;
   rclcpp::Publisher<sensor_msgs::msg::CompressedImage>::SharedPtr publisher;
 };
-
-CompressedImagePublisher::CompressedImagePublisher(const std::string & topic_name = "image")
-: Node("compressed_image_publisher")
-{
-  publisher = this->create_publisher<sensor_msgs::msg::CompressedImage>(topic_name, 10);
-  timer = this->create_wall_timer(100ms,
-      std::bind(&CompressedImagePublisher::timer_callback, this));
-}
-
-void CompressedImagePublisher::timer_callback()
-{
-  auto message = sensor_msgs::msg::CompressedImage();
-  message.header = std_msgs::msg::Header();
-  message.header.frame_id = "image_frame";
-  message.header.stamp = rclcpp::Clock().now();
-
-  cv::Mat image(200, 300, CV_8UC3, cv::Scalar(0, 255, 0));
-  std::vector<uchar> compressed_image;
-  cv::imencode(".jpg", image, compressed_image);
-
-  message.data.assign(compressed_image.begin(), compressed_image.end());
-  message.format = "jpeg";
-  publisher->publish(message);
-}
 
 }  // namespace nodes
 
