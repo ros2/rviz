@@ -31,14 +31,13 @@
 
 #include "rviz_common/properties/property_tree_model.hpp"
 
-#include <cstdio>
-
 #include <QIODevice>  // NOLINT: cpplint is unable to handle the include order here
 #include <QMimeData>  // NOLINT: cpplint is unable to handle the include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <QStringList>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/properties/property.hpp"
+#include "rviz_common/logging.hpp"
 
 namespace rviz_common
 {
@@ -231,7 +230,7 @@ bool PropertyTreeModel::dropMimeData(
   while (!stream.atEnd()) {
     void * pointer;
     if (sizeof(void *) != stream.readRawData(reinterpret_cast<char *>(&pointer), sizeof(void *))) {
-      printf("ERROR: dropped mime data has invalid pointer data.\n");
+      RVIZ_COMMON_LOG_ERROR("dropped mime data has invalid pointer data.");
       return false;
     }
     Property * prop = static_cast<Property *>(pointer);
@@ -331,13 +330,13 @@ void PropertyTreeModel::printPersistentIndices()
   QModelIndexList::ConstIterator it = indexes.begin();
   for (; it != indexes.end(); ++it) {
     if (!(*it).isValid()) {
-      printf("  invalid index\n");
+      RVIZ_COMMON_LOG_DEBUG("  invalid index");
     } else {
       Property * prop = getProp(*it);
       if (!prop) {
-        printf("  null property\n");
+        RVIZ_COMMON_LOG_DEBUG("  null property");
       } else {
-        printf("  prop name '%s'\n", qPrintable(prop->getName()));
+        RVIZ_COMMON_LOG_DEBUG_STREAM("  prop name '" << qPrintable(prop->getName()) << "'");
       }
     }
   }
