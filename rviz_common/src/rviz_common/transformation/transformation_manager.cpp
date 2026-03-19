@@ -109,7 +109,7 @@ void TransformationManager::setTransformer(const PluginInfo & plugin_info)
   } else {
     RVIZ_COMMON_LOG_ERROR_STREAM(
       "Failed to load transformer plugin '" << plugin_info.id.toStdString() <<
-      "'. Keeping current transformer.");
+        "'. Keeping current transformer.");
   }
 }
 

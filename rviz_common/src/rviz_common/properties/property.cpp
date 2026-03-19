@@ -210,7 +210,7 @@ Property * Property::subProp(const QString & sub_name)
   }
   RVIZ_COMMON_LOG_ERROR_STREAM(
     "Undefined property " << ancestry.toStdString() <<
-    " \"" << sub_name.toStdString() << "\" accessed.");
+      " \"" << sub_name.toStdString() << "\" accessed.");
   return failprop_;
 }
 
@@ -469,7 +469,7 @@ void Property::loadValue(const Config & config)
       default:
         RVIZ_COMMON_LOG_WARNING_STREAM(
           "Property::loadValue() TODO: error handling - unexpected QVariant type " <<
-          static_cast<int>(value_.type()));
+            static_cast<int>(value_.type()));
         break;
     }
   }
