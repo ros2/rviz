@@ -90,9 +90,9 @@ public:
     window_manager_ = std::make_shared<MockWindowManagerInterface>();
     ON_CALL(*context_, getWindowManager()).WillByDefault(Return(window_manager_.get()));
     ON_CALL(*context_, getTransformationManager())
-      .WillByDefault(Return(transformation_manager_.get()));
+    .WillByDefault(Return(transformation_manager_.get()));
     ON_CALL(*context_, getRosNodeAbstraction())
-      .WillByDefault(Invoke([]() {return rviz_ros_node_;}));
+    .WillByDefault(Invoke([]() {return rviz_ros_node_;}));
   }
 
   static std::shared_ptr<rviz_default_plugins::OgreTestingEnvironment> testing_environment_;

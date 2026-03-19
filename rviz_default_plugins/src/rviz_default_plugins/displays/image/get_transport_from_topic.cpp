@@ -46,26 +46,27 @@ namespace
 const std::unordered_set<std::string> & getKnownNonRawTransports()
 {
   static const std::unordered_set<std::string> known_transports = []() {
-    std::unordered_set<std::string> result;
-    try {
-      pluginlib::ClassLoader<image_transport::SubscriberPlugin> sub_loader(
-        "image_transport", "image_transport::SubscriberPlugin");
-      for (const std::string & plugin_class : sub_loader.getDeclaredClasses()) {
-        const std::string message_type = image_transport::get_message_type_from_manifest(
+      std::unordered_set<std::string> result;
+      try {
+        pluginlib::ClassLoader<image_transport::SubscriberPlugin> sub_loader(
+          "image_transport", "image_transport::SubscriberPlugin");
+        for (const std::string & plugin_class : sub_loader.getDeclaredClasses()) {
+          const std::string message_type = image_transport::get_message_type_from_manifest(
           sub_loader.getPluginManifestPath(plugin_class), plugin_class);
-        if (!message_type.empty()) {
-          const std::string without_suffix =
-            image_transport::erase_last_copy(plugin_class, "_sub");
-          const std::string transport_name =
-            without_suffix.substr(without_suffix.find_last_of('/') + 1);
-          if (transport_name != "raw") {
-            result.insert(transport_name);
+          if (!message_type.empty()) {
+            const std::string without_suffix =
+              image_transport::erase_last_copy(plugin_class, "_sub");
+            const std::string transport_name =
+              without_suffix.substr(without_suffix.find_last_of('/') + 1);
+            if (transport_name != "raw") {
+              result.insert(transport_name);
+            }
           }
         }
+      } catch (...) {
       }
-    } catch (...) {}
-    return result;
-  }();
+      return result;
+    }();
   return known_transports;
 }
 }  // namespace

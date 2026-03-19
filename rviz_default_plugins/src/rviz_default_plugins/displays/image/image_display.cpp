@@ -149,15 +149,15 @@ void ImageDisplay::onInitialize()
   pluginlib::ClassLoader<image_transport::SubscriberPlugin> sub_loader(
     "image_transport", "image_transport::SubscriberPlugin");
   for (const std::string & plugin_class : sub_loader.getDeclaredClasses()) {
-      const std::string message_type = image_transport::get_message_type_from_manifest(
-        sub_loader.getPluginManifestPath(plugin_class), plugin_class);
-      if (!message_type.empty()) {
-        const std::string without_suffix =
-          image_transport::erase_last_copy(plugin_class, "_sub");
-        const std::string transport_name =
-          without_suffix.substr(without_suffix.find_last_of('/') + 1);
-        transport_message_types_[transport_name] = message_type;
-      }
+    const std::string message_type = image_transport::get_message_type_from_manifest(
+      sub_loader.getPluginManifestPath(plugin_class), plugin_class);
+    if (!message_type.empty()) {
+      const std::string without_suffix =
+        image_transport::erase_last_copy(plugin_class, "_sub");
+      const std::string transport_name =
+        without_suffix.substr(without_suffix.find_last_of('/') + 1);
+      transport_message_types_[transport_name] = message_type;
+    }
   }
 
   // Populate message types and transport overrides based on installed image_transport plugins
@@ -180,7 +180,7 @@ void ImageDisplay::onInitialize()
   // Update the message types to allow in the topic_property_
   ((rviz_common::properties::RosTopicMultiTypeProperty *)topic_property_)
   ->setMessageTypes(message_types);
-  DisplayFactory factory = * _context->getDisplayFactory();
+  DisplayFactory factory = *_context->getDisplayFactory();
   if (factory) {
     factory->updatePluginMessageTypes(this->getClassId(), QSet<QString>(message_types));
   }
