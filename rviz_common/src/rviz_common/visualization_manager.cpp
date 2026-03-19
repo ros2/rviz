@@ -37,6 +37,7 @@
 #include <memory>
 #include <mutex>
 #include <string>
+#include <thread>
 #include <vector>
 
 #include <OgreCamera.h>
@@ -229,6 +230,7 @@ VisualizationManager::VisualizationManager(
   connect(this, SIGNAL(timeJumped()), this, SLOT(resetTime()));
 
   executor_->add_node(rviz_ros_node_.lock()->get_raw_node());
+  executor_thread_ = std::thread([this]() {executor_->spin();});
 
   display_factory_ = new DisplayFactory();
   update_timer_ = new QTimer;
@@ -240,6 +242,10 @@ VisualizationManager::~VisualizationManager()
   delete update_timer_;
 
   shutting_down_ = true;
+  executor_->cancel();
+  if (executor_thread_.joinable()) {
+    executor_thread_.join();
+  }
 
   delete display_property_tree_model_;
   delete tool_manager_;
@@ -349,8 +355,6 @@ void VisualizationManager::onUpdate()
   if (ros_dt < std::chrono::nanoseconds(0)) {
     resetTime();
   }
-
-  executor_->spin_some(std::chrono::milliseconds(10));
 
   Q_EMIT preUpdate();
 
