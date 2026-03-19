@@ -67,7 +67,6 @@ void DisplayFactory::updatePluginMessageTypes(const QString & class_id,QSet<QStr
   message_type_cache_[class_id] = message_types;
 }
 
-
 QSet<QString> DisplayFactory::getMessageTypes(const QString & class_id)
 {
   // lookup in cache
