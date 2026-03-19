@@ -31,7 +31,6 @@
 
 #include "rviz_common/properties/property.hpp"
 
-#include <cstdio>  // for printf()
 #include <climits>  // for INT_MIN and INT_MAX
 #include <string>
 
@@ -45,6 +44,7 @@
 
 #include "rviz_common/properties/float_edit.hpp"
 #include "rviz_common/properties/property_tree_model.hpp"
+#include "rviz_common/logging.hpp"
 
 namespace rviz_common
 {
@@ -208,9 +208,9 @@ Property * Property::subProp(const QString & sub_name)
   for (Property * prop = this; prop != nullptr; prop = prop->getParent() ) {
     ancestry = "\"" + prop->getName() + "\"->" + ancestry;
   }
-  printf(
-    "ERROR: Undefined property %s \"%s\" accessed.\n", qPrintable(ancestry),
-    qPrintable(sub_name));
+  RVIZ_COMMON_LOG_ERROR_STREAM(
+    "Undefined property " << ancestry.toStdString() <<
+      " \"" << sub_name.toStdString() << "\" accessed.");
   return failprop_;
 }
 
@@ -467,9 +467,9 @@ void Property::loadValue(const Config & config)
       case QVariant::String: setValue(config.getValue().toString() ); break;
       case QVariant::Bool: setValue(config.getValue().toBool() ); break;
       default:
-        printf(
-          "Property::loadValue() TODO: error handling - unexpected QVariant type %d.\n",
-          static_cast<int>(value_.type() ));
+        RVIZ_COMMON_LOG_WARNING_STREAM(
+          "Property::loadValue() TODO: error handling - unexpected QVariant type " <<
+            static_cast<int>(value_.type()));
         break;
     }
   }

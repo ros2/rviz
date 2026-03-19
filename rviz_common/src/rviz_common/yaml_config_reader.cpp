@@ -49,6 +49,11 @@ YamlConfigReader::YamlConfigReader()
 void YamlConfigReader::readFile(Config & config, const QString & filename)
 {
   std::ifstream in(qPrintable(filename));
+  if (!in.is_open()) {
+    message_ = "Could not open file: " + filename;
+    error_ = true;
+    return;
+  }
   readStream(config, in, filename);
 }
 
