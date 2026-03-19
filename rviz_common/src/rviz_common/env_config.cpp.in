@@ -50,11 +50,12 @@ std::string get_distro()
   return "@ROS_DISTRO@";
 }
 
+[[deprecated("rviz no longer uses rviz_ogre_vendor")]]
 std::string get_ogre_plugin_path()
 {
   // The return string here is replaced at compile time by
   // CMakeLists.txt in this directory.
-  return "@OGRE_PLUGIN_PATH@";
+  return "rviz_ogre_vendor";
 }
 
 }

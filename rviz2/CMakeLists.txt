@@ -16,7 +16,7 @@ find_package(ament_cmake REQUIRED)
 
 find_package(rviz_common REQUIRED)
 
-find_package(rviz_ogre_vendor REQUIRED)
+find_package(OGRE REQUIRED)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
@@ -47,8 +47,8 @@ add_executable(${PROJECT_NAME}
 )
 target_link_libraries(${PROJECT_NAME}
   rviz_common::rviz_common
-  rviz_ogre_vendor::OgreMain
-  rviz_ogre_vendor::OgreOverlay
+  OgreMain
+  OgreOverlay
   Qt${QT_VERSION_MAJOR}::Widgets
 )
 

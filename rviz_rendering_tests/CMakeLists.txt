@@ -30,8 +30,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 
 if(BUILD_TESTING)
-  # do find_package(rviz_ogre_vendor) first to make sure the custom OGRE is found
-  find_package(rviz_ogre_vendor REQUIRED)
+  find_package(OGRE REQUIRED)
   find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
   find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
   if(${QT_VERSION} VERSION_LESS 5.15.0)
@@ -68,7 +67,7 @@ if(BUILD_TESTING)
     ${SKIP_DISPLAY_TESTS})
   if(TARGET mesh_loader_test_target)
     target_link_libraries(mesh_loader_test_target
-      rviz_ogre_vendor::OgreMain
+      OgreMain
       rviz_rendering::rviz_rendering
       resource_retriever::resource_retriever
     )

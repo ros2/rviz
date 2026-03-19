@@ -41,7 +41,7 @@
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
   <depend>resource_retriever</depend>
-  <depend>rviz_ogre_vendor</depend>
+  <depend>libogre-1.12-dev</depend>
   <depend>rviz_rendering</depend>
   <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>

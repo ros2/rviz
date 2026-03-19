@@ -34,11 +34,11 @@
   <build_depend>qt6-base-dev</build_depend>
   <build_depend>resource_retriever</build_depend>
   <build_depend>assimp-dev</build_depend>
-  <build_depend>rviz_ogre_vendor</build_depend>
+  <build_depend>libogre-1.12-dev</build_depend>
 
   <build_export_depend>eigen</build_export_depend>
   <build_export_depend>qt6-base-dev</build_export_depend>
-  <build_export_depend>rviz_ogre_vendor</build_export_depend>
+  <build_export_depend>libogre-1.12-dev</build_export_depend>
 
   <exec_depend>ament_index_cpp</exec_depend>
   <exec_depend>libqt6-core</exec_depend>
@@ -47,7 +47,7 @@
   <exec_depend>libqt6svg6</exec_depend>
   <exec_depend>resource_retriever</exec_depend>
   <exec_depend>assimp</exec_depend>
-  <exec_depend>rviz_ogre_vendor</exec_depend>
+  <exec_depend>libogre-1.12.10</exec_depend>
 
   <test_depend>ament_lint_common</test_depend>
   <test_depend>ament_cmake_gtest</test_depend>
