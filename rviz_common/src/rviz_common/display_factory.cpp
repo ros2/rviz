@@ -63,6 +63,11 @@ Display * DisplayFactory::makeRaw(const QString & class_id, QString * error_retu
   return display;
 }
 
+void DisplayFactory::updatePluginMessageTypes(const QString & class_id,QSet<QString> message_types) {
+  message_type_cache_[class_id] = message_types;
+}
+
+
 QSet<QString> DisplayFactory::getMessageTypes(const QString & class_id)
 {
   // lookup in cache

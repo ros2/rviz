@@ -30,9 +30,8 @@
 #ifndef RVIZ_COMMON__PROPERTIES__ROS_TOPIC_MULTI_TYPE_PROPERTY_HPP_
 #define RVIZ_COMMON__PROPERTIES__ROS_TOPIC_MULTI_TYPE_PROPERTY_HPP_
 
+#include <QSet>
 #include <QString>
-
-#include <vector>
 
 #include "rviz_common/properties/ros_topic_property.hpp"
 #include "rviz_common/visibility_control.hpp"
@@ -50,7 +49,7 @@ class RVIZ_COMMON_PUBLIC RosTopicMultiTypeProperty : public RosTopicProperty
 public:
   explicit RosTopicMultiTypeProperty(
     const QString & name = QString(), const QString & default_value = QString(),
-    const std::vector<QString> & message_types = std::vector<QString>(),
+    const QSet<QString> & message_types = QSet<QString>(),
     const QString & description = QString(), Property * parent = nullptr,
     const char * changed_slot = nullptr, QObject * receiver = nullptr)
   : RosTopicProperty(name, default_value, "", description, parent, changed_slot, receiver),
@@ -58,12 +57,12 @@ public:
   {
   }
 
-  void setMessageTypes(const std::vector<QString> & message_types)
+  void setMessageTypes(const QSet<QString> & message_types)
   {
     message_types_ = message_types;
   }
 
-  std::vector<QString> getMessageTypes() const {return message_types_;}
+  QSet<QString> getMessageTypes() const {return message_types_;}
 
 protected Q_SLOTS:
   void fillTopicList() override;
@@ -74,7 +73,7 @@ private:
   using RosTopicProperty::setMessageType;
 
   // Instead of one message type, store a list of allowed types
-  std::vector<QString> message_types_;
+  QSet<QString> message_types_;
 };
 
 }  // end namespace properties

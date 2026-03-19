@@ -41,9 +41,8 @@
 #include <OgreTechnique.h>
 #include <OgreTextureManager.h>
 #include <OgreViewport.h>
+#include <QSet>
 #include <QString>
-
-#include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include <algorithm>
 #include <memory>
@@ -165,25 +164,26 @@ void ImageDisplay::onInitialize()
   std::shared_ptr<rclcpp::Node> node = rviz_ros_node_.lock()->get_raw_node();
   image_transport::ImageTransport image_transport_{*node};
   std::vector<std::string> loadable_transports = image_transport_.getLoadableTransports();
-  std::vector<QString> message_types;
+  QSet<QString> message_types;
   // Map to message types
   transport_override_property_->clearOptions();
   transport_override_property_->addOptionStd("");
   for (std::string & transport : loadable_transports) {
     transport = transport.substr(transport.find_last_of('/') + 1);
     try {
-      message_types.push_back(QString::fromStdString(transport_message_types_.at(transport)));
+      message_types.insert(QString::fromStdString(transport_message_types_.at(transport)));
       transport_override_property_->addOptionStd(transport);
     } catch (const std::out_of_range & e) {
       // This case will be handled in subscribe
     }
   }
-  // Remove duplicates
-  message_types.erase(
-    std::unique(message_types.begin(), message_types.end()), message_types.end());
   // Update the message types to allow in the topic_property_
   ((rviz_common::properties::RosTopicMultiTypeProperty *)topic_property_)
   ->setMessageTypes(message_types);
+  DisplayFactory factory = * _context->getDisplayFactory();
+  if (factory) {
+    factory->updatePluginMessageTypes(this->getClassId(), QSet<QString>(message_types));
+  }
 }
 
 ImageDisplay::~ImageDisplay()
