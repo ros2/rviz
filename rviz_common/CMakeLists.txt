@@ -435,6 +435,53 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreOverlay
     )
   endif()
+
+  # Executor benchmark: compares spin_some-in-update-loop (old) vs spin-in-thread (new)
+  ament_add_gtest(executor_benchmark_test
+    test/executor_benchmark_test.cpp
+  )
+  if(TARGET executor_benchmark_test)
+    target_link_libraries(executor_benchmark_test
+      rclcpp::rclcpp
+      ${std_msgs_TARGETS}
+    )
+  endif()
+
+  # VisualizationManager executor benchmark.
+  #
+  # Benchmarks the executor patterns of:
+  #   - VisualizationManagerSpinSome (visualization_manager_spin_some.hpp/.cpp):
+  #     faithful copy of pre-9716a8a code; spin_some(10ms) in onUpdate().
+  #   - VisualizationManager (visualization_manager.hpp/.cpp):
+  #     current code; executor runs spin() in a dedicated std::thread.
+  #
+  # Both class headers are included for compile-time verification.
+  # visualization_manager_spin_some.cpp is compiled into the test binary so
+  # the old implementation is always built alongside the benchmark.
+  # The benchmark itself uses lightweight harness classes (no Ogre/Qt needed).
+  qt_wrap_cpp(
+    viz_manager_spin_some_moc
+    include/rviz_common/visualization_manager_spin_some.hpp
+  )
+  ament_add_gtest(visualization_manager_executor_benchmark_test
+    test/visualization_manager_executor_benchmark_test.cpp
+    src/rviz_common/visualization_manager_spin_some.cpp
+    ${viz_manager_spin_some_moc}
+  )
+  if(TARGET visualization_manager_executor_benchmark_test)
+    target_include_directories(visualization_manager_executor_benchmark_test PRIVATE
+      include
+      src/rviz_common
+    )
+    target_link_libraries(visualization_manager_executor_benchmark_test
+      rviz_common
+      rclcpp::rclcpp
+      ${std_msgs_TARGETS}
+      Qt${QT_VERSION_MAJOR}::Widgets
+      rviz_ogre_vendor::OgreMain
+      rviz_ogre_vendor::OgreOverlay
+    )
+  endif()
 endif()
 
 ament_package(
