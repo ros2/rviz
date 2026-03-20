@@ -254,12 +254,12 @@ target_include_directories(rviz_default_plugins PUBLIC
 )
 
 target_link_libraries(rviz_default_plugins PUBLIC
-  ${geometry_msgs_TARGETS}
+  geometry_msgs::geometry_msgs
   image_transport::image_transport
   interactive_markers::interactive_markers
   laser_geometry::laser_geometry
-  ${map_msgs_TARGETS}
-  ${nav_msgs_TARGETS}
+  map_msgs::map_msgs
+  nav_msgs::nav_msgs
   point_cloud_transport::point_cloud_transport
   Qt${QT_VERSION_MAJOR}::Widgets
   rclcpp::rclcpp
@@ -267,14 +267,14 @@ target_link_libraries(rviz_default_plugins PUBLIC
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
   rviz_rendering::rviz_rendering
-  ${sensor_msgs_TARGETS}
+  sensor_msgs::sensor_msgs
   tf2::tf2
-  ${tf2_geometry_msgs_TARGETS}
+  tf2_geometry_msgs::tf2_geometry_msgs
   tf2_ros::tf2_ros
   urdf::urdf
-  ${visualization_msgs_TARGETS}
+  visualization_msgs::visualization_msgs
   resource_retriever::resource_retriever
-  ${rviz_resource_interfaces_TARGETS}
+  rviz_resource_interfaces::rviz_resource_interfaces
 )
 
 target_link_libraries(rviz_default_plugins PRIVATE
@@ -458,10 +458,10 @@ if(BUILD_TESTING)
 
   add_library(marker_messages STATIC test/rviz_default_plugins/displays/marker/marker_messages.cpp)
   target_link_libraries(marker_messages PRIVATE
-    ${geometry_msgs_TARGETS}
+    geometry_msgs::geometry_msgs
     rclcpp::rclcpp
-    ${std_msgs_TARGETS}
-    ${visualization_msgs_TARGETS}
+    std_msgs::std_msgs
+    visualization_msgs::visualization_msgs
     rviz_ogre_vendor::OgreMain
   )
 
@@ -482,7 +482,7 @@ if(BUILD_TESTING)
       ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
       rviz_default_plugins
       marker_messages
-      ${visualization_msgs_TARGETS}
+      visualization_msgs::visualization_msgs
       ogre_testing_environment
     )
   endif()
@@ -495,7 +495,7 @@ if(BUILD_TESTING)
     target_include_directories(marker_common_test PRIVATE test)
     target_link_libraries(marker_common_test
       ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
-      ${visualization_msgs_TARGETS}
+      visualization_msgs::visualization_msgs
       rviz_default_plugins
       marker_messages
       ogre_testing_environment
@@ -583,7 +583,7 @@ if(BUILD_TESTING)
     target_include_directories(path_display_test PRIVATE test)
     target_link_libraries(path_display_test
       ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
-      ${visualization_msgs_TARGETS}
+      visualization_msgs::visualization_msgs
       rviz_default_plugins
       ogre_testing_environment
     )
@@ -591,11 +591,11 @@ if(BUILD_TESTING)
 
   add_library(pointcloud_messages STATIC test/rviz_default_plugins/pointcloud_messages.cpp)
   target_link_libraries(pointcloud_messages PRIVATE
-    ${sensor_msgs_TARGETS}
-    ${geometry_msgs_TARGETS}
+    sensor_msgs::sensor_msgs
+    geometry_msgs::geometry_msgs
     rclcpp::rclcpp
-    ${sensor_msgs_TARGETS}
-    ${std_msgs_TARGETS}
+    sensor_msgs::sensor_msgs
+    std_msgs::std_msgs
   )
 
   ament_add_gmock(point_cloud2_display_test
@@ -635,7 +635,7 @@ if(BUILD_TESTING)
     target_link_libraries(point_cloud_scalar_display_test
       ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
       rviz_default_plugins
-      ${sensor_msgs_TARGETS}
+      sensor_msgs::sensor_msgs
       ogre_testing_environment
     )
   endif()
@@ -668,7 +668,7 @@ if(BUILD_TESTING)
     target_include_directories(point_display_test PRIVATE test)
     target_link_libraries(point_display_test
       ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
-      ${geometry_msgs_TARGETS}
+      geometry_msgs::geometry_msgs
       rviz_default_plugins
       ogre_testing_environment
     )
@@ -724,7 +724,7 @@ if(BUILD_TESTING)
     target_include_directories(ros_image_texture_test PRIVATE test)
     target_link_libraries(ros_image_texture_test
       ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
-      ${sensor_msgs_TARGETS}
+      sensor_msgs::sensor_msgs
       rviz_default_plugins
       ogre_testing_environment
     )
@@ -762,7 +762,7 @@ if(BUILD_TESTING)
     target_link_libraries(frame_transformer_tf_test
       ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
       tf2_ros::tf2_ros
-      ${geometry_msgs_TARGETS}
+      geometry_msgs::geometry_msgs
       rviz_default_plugins
       ogre_testing_environment
     )
@@ -791,8 +791,8 @@ if(BUILD_TESTING)
     target_include_directories(accel_display_visual_test PRIVATE test)
     target_link_libraries(accel_display_visual_test
       rviz_visual_testing_framework::rviz_visual_testing_framework
-      ${geometry_msgs_TARGETS}
-      ${std_msgs_TARGETS}
+      geometry_msgs::geometry_msgs
+      std_msgs::std_msgs
       rclcpp::rclcpp
     )
   endif()
@@ -840,10 +840,10 @@ if(BUILD_TESTING)
     target_link_libraries(camera_display_visual_test
       rviz_visual_testing_framework::rviz_visual_testing_framework
       rclcpp::rclcpp
-      ${sensor_msgs_TARGETS}
-      ${std_msgs_TARGETS}
+      sensor_msgs::sensor_msgs
+      std_msgs::std_msgs
       Qt${QT_VERSION_MAJOR}::Test
-      ${geometry_msgs_TARGETS}
+      geometry_msgs::geometry_msgs
       tf2::tf2
       point_cloud_common_page_object
     )
@@ -873,7 +873,7 @@ if(BUILD_TESTING)
     target_link_libraries(effort_display_visual_test
       rviz_visual_testing_framework::rviz_visual_testing_framework
       rclcpp::rclcpp
-      ${sensor_msgs_TARGETS}
+      sensor_msgs::sensor_msgs
     )
   endif()
 
@@ -914,7 +914,7 @@ if(BUILD_TESTING)
     target_include_directories(grid_cells_display_visual_test PRIVATE test)
     target_link_libraries(grid_cells_display_visual_test
       rviz_visual_testing_framework::rviz_visual_testing_framework
-      ${nav_msgs_TARGETS}
+      nav_msgs::nav_msgs
     )
   endif()
 
@@ -943,8 +943,8 @@ if(BUILD_TESTING)
       Qt${QT_VERSION_MAJOR}::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework
       rclcpp::rclcpp
-      ${sensor_msgs_TARGETS}
-      ${std_msgs_TARGETS}
+      sensor_msgs::sensor_msgs
+      std_msgs::std_msgs
     )
   endif()
 
@@ -992,10 +992,10 @@ if(BUILD_TESTING)
       rviz_visual_testing_framework::rviz_visual_testing_framework
       Qt${QT_VERSION_MAJOR}::Widgets
       rclcpp::rclcpp
-      ${std_msgs_TARGETS}
-      ${geometry_msgs_TARGETS}
-      ${nav_msgs_TARGETS}
-      ${visualization_msgs_TARGETS}
+      std_msgs::std_msgs
+      geometry_msgs::geometry_msgs
+      nav_msgs::nav_msgs
+      visualization_msgs::visualization_msgs
       marker_display_page_object
     )
   endif()
@@ -1011,8 +1011,8 @@ if(BUILD_TESTING)
       rviz_visual_testing_framework::rviz_visual_testing_framework
       Qt${QT_VERSION_MAJOR}::Widgets
       rclcpp::rclcpp
-      ${std_msgs_TARGETS}
-      ${visualization_msgs_TARGETS}
+      std_msgs::std_msgs
+      visualization_msgs::visualization_msgs
       marker_display_page_object
     )
   endif()
@@ -1027,8 +1027,8 @@ if(BUILD_TESTING)
       rviz_visual_testing_framework::rviz_visual_testing_framework
       Qt${QT_VERSION_MAJOR}::Widgets
       rclcpp::rclcpp
-      ${std_msgs_TARGETS}
-      ${visualization_msgs_TARGETS}
+      std_msgs::std_msgs
+      visualization_msgs::visualization_msgs
       marker_display_page_object
     )
   endif()
@@ -1044,9 +1044,9 @@ if(BUILD_TESTING)
       rviz_visual_testing_framework::rviz_visual_testing_framework
       Qt${QT_VERSION_MAJOR}::Widgets
       rclcpp::rclcpp
-      ${std_msgs_TARGETS}
-      ${geometry_msgs_TARGETS}
-      ${nav_msgs_TARGETS}
+      std_msgs::std_msgs
+      geometry_msgs::geometry_msgs
+      nav_msgs::nav_msgs
       tf2_ros::tf2_ros
     )
   endif()
@@ -1062,9 +1062,9 @@ if(BUILD_TESTING)
       Qt${QT_VERSION_MAJOR}::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework
       rclcpp::rclcpp
-      ${std_msgs_TARGETS}
-      ${geometry_msgs_TARGETS}
-      ${nav_msgs_TARGETS}
+      std_msgs::std_msgs
+      geometry_msgs::geometry_msgs
+      nav_msgs::nav_msgs
     )
   endif()
 
@@ -1078,9 +1078,9 @@ if(BUILD_TESTING)
     target_link_libraries(point_display_visual_test
       rviz_visual_testing_framework::rviz_visual_testing_framework
       Qt${QT_VERSION_MAJOR}::Widgets
-      ${geometry_msgs_TARGETS}
+      geometry_msgs::geometry_msgs
       rclcpp::rclcpp
-      ${std_msgs_TARGETS}
+      std_msgs::std_msgs
     )
   endif()
 
@@ -1093,11 +1093,11 @@ if(BUILD_TESTING)
     target_link_libraries(point_cloud_display_visual_test
       Qt${QT_VERSION_MAJOR}::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework
-      ${geometry_msgs_TARGETS}
+      geometry_msgs::geometry_msgs
       tf2::tf2
       rclcpp::rclcpp
-      ${std_msgs_TARGETS}
-      ${sensor_msgs_TARGETS}
+      std_msgs::std_msgs
+      sensor_msgs::sensor_msgs
       point_cloud_common_page_object
     )
   endif()
@@ -1134,8 +1134,8 @@ if(BUILD_TESTING)
       rviz_visual_testing_framework::rviz_visual_testing_framework
       Qt${QT_VERSION_MAJOR}::Widgets
       rclcpp::rclcpp
-      ${std_msgs_TARGETS}
-      ${geometry_msgs_TARGETS}
+      std_msgs::std_msgs
+      geometry_msgs::geometry_msgs
       pose_display_page_object
     )
   endif()
@@ -1149,9 +1149,9 @@ if(BUILD_TESTING)
     target_link_libraries(pose_display_visual_test
       rviz_visual_testing_framework::rviz_visual_testing_framework
       Qt${QT_VERSION_MAJOR}::Widgets
-      ${geometry_msgs_TARGETS}
+      geometry_msgs::geometry_msgs
       rclcpp::rclcpp
-      ${std_msgs_TARGETS}
+      std_msgs::std_msgs
       pose_display_page_object
     )
   endif()
@@ -1166,9 +1166,9 @@ if(BUILD_TESTING)
     target_link_libraries(pose_with_covariance_display_visual_test
       rviz_visual_testing_framework::rviz_visual_testing_framework
       Qt${QT_VERSION_MAJOR}::Widgets
-      ${geometry_msgs_TARGETS}
+      geometry_msgs::geometry_msgs
       rclcpp::rclcpp
-      ${std_msgs_TARGETS}
+      std_msgs::std_msgs
       tf2_ros::tf2_ros
     )
   endif()
@@ -1247,8 +1247,8 @@ if(BUILD_TESTING)
     target_include_directories(twist_display_visual_test PRIVATE test)
     target_link_libraries(twist_display_visual_test
       rviz_visual_testing_framework::rviz_visual_testing_framework
-      ${geometry_msgs_TARGETS}
-      ${std_msgs_TARGETS}
+      geometry_msgs::geometry_msgs
+      std_msgs::std_msgs
       rclcpp::rclcpp
     )
   endif()

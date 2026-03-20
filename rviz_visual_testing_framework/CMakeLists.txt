@@ -71,7 +71,7 @@ target_include_directories(rviz_visual_testing_framework
     ${GTEST_INCLUDE_DIRS})
 
 target_link_libraries(rviz_visual_testing_framework PUBLIC
-  ${geometry_msgs_TARGETS}
+  geometry_msgs::geometry_msgs
   Qt${QT_VERSION_MAJOR}::Test
   Qt${QT_VERSION_MAJOR}::Widgets
   rclcpp::rclcpp
@@ -79,7 +79,7 @@ target_link_libraries(rviz_visual_testing_framework PUBLIC
   rviz_common::rviz_common
   rviz_ogre_vendor::OgreMain
   rviz_rendering::rviz_rendering
-  ${std_msgs_TARGETS}
+  std_msgs::std_msgs
   tf2::tf2
   tf2_ros::tf2_ros
 )

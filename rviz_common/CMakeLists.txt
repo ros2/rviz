@@ -246,7 +246,7 @@ target_include_directories(rviz_common
 )
 
 target_link_libraries(rviz_common PUBLIC
-  ${geometry_msgs_TARGETS}
+  geometry_msgs::geometry_msgs
   message_filters::message_filters
   pluginlib::pluginlib
   Qt${QT_VERSION_MAJOR}::Widgets
@@ -254,9 +254,9 @@ target_link_libraries(rviz_common PUBLIC
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
   rviz_rendering::rviz_rendering
-  ${sensor_msgs_TARGETS}
-  ${std_msgs_TARGETS}
-  ${std_srvs_TARGETS}
+  sensor_msgs::sensor_msgs
+  std_msgs::std_msgs
+  std_srvs::std_srvs
   tf2::tf2
   tf2_ros::tf2_ros
   yaml-cpp::yaml-cpp
