@@ -18,8 +18,15 @@ find_package(rviz_common REQUIRED)
 
 find_package(rviz_ogre_vendor REQUIRED)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+# Avoid find_package(QT NAMES Qt6 Qt5 ...) due to CMake's default ascending path resolution
+find_package(Qt6 QUIET COMPONENTS Widgets)
+if(Qt6_FOUND)
+  set(QT_VERSION_MAJOR 6)
+else()
+  find_package(Qt5 REQUIRED COMPONENTS Widgets)
+  set(QT_VERSION_MAJOR 5)
+endif()
+set(QT_VERSION "${Qt${QT_VERSION_MAJOR}_VERSION}")
 # TODO(wjwwood): this block is to setup the windeployqt tool, could be removed later.
 if(Qt${QT_VERSION_MAJOR}_FOUND AND WIN32 AND TARGET Qt${QT_VERSION_MAJOR}::qmake AND NOT TARGET Qt${QT_VERSION_MAJOR}::windeployqt)
   get_target_property(_qt_qmake_location Qt${QT_VERSION_MAJOR}::qmake IMPORTED_LOCATION)

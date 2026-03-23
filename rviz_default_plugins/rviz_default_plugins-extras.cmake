@@ -27,7 +27,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# find package Qt5 because otherwise using the rviz_default_plugins::rviz_default_plugins
-# exported target will complain that the Qt5::Widgets target does not exist
-find_package(QT NAMES Qt6 Qt5 QUIET COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} QUIET COMPONENTS Widgets)
+# Avoid find_package(QT NAMES Qt6 Qt5 ...) due to CMake's default ascending path resolution
+find_package(Qt6 QUIET COMPONENTS Widgets)
+if(NOT Qt6_FOUND)
+  find_package(Qt5 QUIET COMPONENTS Widgets)
+endif()
