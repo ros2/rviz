@@ -2,6 +2,11 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.19 (2026-03-24)
+--------------------
+* Bump cmake version and suppress warning for rviz_ogre_vendor (`#1684 <https://github.com/ros2/rviz/issues/1684>`_)
+* Contributors: Shane Loretz
+
 15.1.18 (2026-02-25)
 --------------------
 

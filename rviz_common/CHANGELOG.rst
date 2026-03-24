@@ -2,6 +2,15 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.19 (2026-03-24)
+--------------------
+* Use new ROSIDL aggregate CMake target (`#1688 <https://github.com/ros2/rviz/issues/1688>`_)
+* Fix Qt version resolution when both Qt5 and Qt6 are installed - CMake defaults to ascending resolution and Qt5 will be found when Qt6 is desired (Rolling, L-Turtle, and beyond). (`#1689 <https://github.com/ros2/rviz/issues/1689>`_)
+* Cleanups in rviz_common (`#1686 <https://github.com/ros2/rviz/issues/1686>`_)
+* Add tests for shallow and deep copy in Config (`#1682 <https://github.com/ros2/rviz/issues/1682>`_)
+* Build performance optimizations for rviz_common (`#1677 <https://github.com/ros2/rviz/issues/1677>`_)
+* Contributors: Alejandro Hernández Cordero, Emerson Knapp, Michael Carroll, Nathan Brooks, Oscmoar07
+
 15.1.18 (2026-02-25)
 --------------------
 * Use get_package_share_path (`#1671 <https://github.com/ros2/rviz/issues/1671>`_)
