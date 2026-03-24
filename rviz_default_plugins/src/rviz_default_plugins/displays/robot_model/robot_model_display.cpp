@@ -30,7 +30,9 @@
 
 #include "rviz_default_plugins/displays/robot_model/robot_model_display.hpp"
 
+#include <fstream>
 #include <memory>
+#include <sstream>
 #include <string>
 
 #include <OgreSceneManager.h>
@@ -252,7 +254,6 @@ void RobotModelDisplay::load_urdf_from_file(const std::string & filepath)
     std::stringstream buffer;
     buffer << urdf_file.rdbuf();
     content = std::string(buffer.str());
-    urdf_file.close();
   }
   if (content.empty()) {
     clear();

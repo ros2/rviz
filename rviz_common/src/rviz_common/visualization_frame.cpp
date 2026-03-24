@@ -385,26 +385,23 @@ void VisualizationFrame::initConfigs()
   persistent_settings_file_ = config_dir_ + "/persistent_settings";
   default_display_config_file_ = config_dir_ + "/default." CONFIG_EXTENSION;
 
-  std::filesystem::path config_dir_as_file(config_dir_);
-  std::filesystem::path config_dir_as_dir(config_dir_);
-  if (!std::filesystem::is_directory(config_dir_as_file) &&
-    std::filesystem::exists(config_dir_as_file) &&
-    std::filesystem::is_directory(config_dir_as_dir) && std::filesystem::exists(config_dir_as_dir))
-  {
+  std::filesystem::path config_dir_path(config_dir_);
+  if (std::filesystem::exists(config_dir_path) && !std::filesystem::is_directory(config_dir_path)) {
     RVIZ_COMMON_LOG_ERROR_STREAM(
       "Moving file [" << config_dir_.c_str() << "] out of the way to recreate it as a directory.");
     std::filesystem::path backup_file = config_dir_ + ".bak";
 
     std::error_code err;
-    std::filesystem::rename(config_dir_as_file, backup_file, err);
+    std::filesystem::rename(config_dir_path, backup_file, err);
 
     if (err) {
       RVIZ_COMMON_LOG_ERROR("Failed to rename config directory while backing up.");
     }
   }
 
-  QDir config_dir_as_qdir;
-  if (!config_dir_as_qdir.mkpath(QString::fromStdString(config_dir_))) {
+  std::error_code mk_err;
+  std::filesystem::create_directories(config_dir_path, mk_err);
+  if (mk_err) {
     RVIZ_COMMON_LOG_ERROR_STREAM("failed to make config dir: " << config_dir_);
   }
 }
