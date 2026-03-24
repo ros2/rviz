@@ -142,8 +142,6 @@ QRegularExpression RosFilteredServiceProperty::filter() const
 
 void RosFilteredServiceProperty::fillServiceList()
 {
-  QStringList filtered_strings_;
-
   // Obtain list of available services
   RosServiceProperty::fillServiceList();
   // Apply filter

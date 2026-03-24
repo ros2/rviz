@@ -2,6 +2,18 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.18 (2026-02-25)
+--------------------
+* Use get_package_share_path (`#1671 <https://github.com/ros2/rviz/issues/1671>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.17 (2026-02-24)
+--------------------
+* Fix setHidden regression in PropertyTreeWidget (`#1667 <https://github.com/ros2/rviz/issues/1667>`_)
+* Add topic name filtering when adding new visualizations (`#1662 <https://github.com/ros2/rviz/issues/1662>`_)
+* use QPointer in QTimer::singleShot to prevent use-after-free (`#1657 <https://github.com/ros2/rviz/issues/1657>`_)
+* Contributors: Mateusz Żak, Matteo Princisgh, t0k0shi
+
 15.1.16 (2026-01-13)
 --------------------
 * Fix Not loading plugins due to incorrect package path (`#1651 <https://github.com/ros2/rviz/issues/1651>`_)

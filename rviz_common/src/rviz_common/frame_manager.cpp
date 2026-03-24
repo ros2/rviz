@@ -142,7 +142,9 @@ void FrameManager::syncTime(rclcpp::Time time)
       if (clock_->now() >= time) {
         sync_delta_ = (clock_->now() - time).nanoseconds();
       } else {
-        setSyncMode(SyncApprox);
+        // Timestamp is in the future; clamp delta to zero to avoid
+        // producing a sync_time_ ahead of the clock.
+        sync_delta_ = 0;
       }
       break;
   }
@@ -283,8 +285,13 @@ bool FrameManager::transformHasProblems(
     return false;
   }
 
+  std::string fixed_frame_copy;
+  {
+    std::lock_guard<std::mutex> lock(cache_mutex_);
+    fixed_frame_copy = fixed_frame_;
+  }
   return !transformer_->canTransform(
-    fixed_frame_, frame, transformation::tf2_helpers::toTf2TimePoint(time), &error);
+    fixed_frame_copy, frame, transformation::tf2_helpers::toTf2TimePoint(time), &error);
 }
 
 const std::string & FrameManager::getFixedFrame()

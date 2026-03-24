@@ -31,19 +31,20 @@
 
 #include "rviz_common/properties/property.hpp"
 
-#include <cstdio>  // for printf()
 #include <climits>  // for INT_MIN and INT_MAX
 #include <string>
 
 #include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
 #include <QPalette>  // NOLINT: cpplint is unable to handle the include order here
 #include <QLineEdit>  // NOLINT: cpplint is unable to handle the include order here
+#include <QPointer>  // NOLINT: cpplint is unable to handle the include order here
 #include <QSpinBox>  // NOLINT: cpplint is unable to handle the include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/properties/float_edit.hpp"
 #include "rviz_common/properties/property_tree_model.hpp"
+#include "rviz_common/logging.hpp"
 
 namespace rviz_common
 {
@@ -207,9 +208,9 @@ Property * Property::subProp(const QString & sub_name)
   for (Property * prop = this; prop != nullptr; prop = prop->getParent() ) {
     ancestry = "\"" + prop->getName() + "\"->" + ancestry;
   }
-  printf(
-    "ERROR: Undefined property %s \"%s\" accessed.\n", qPrintable(ancestry),
-    qPrintable(sub_name));
+  RVIZ_COMMON_LOG_ERROR_STREAM(
+    "Undefined property " << ancestry.toStdString() <<
+      " \"" << sub_name.toStdString() << "\" accessed.");
   return failprop_;
 }
 
@@ -387,10 +388,12 @@ void Property::setModel(PropertyTreeModel * model)
 {
   model_ = model;
   if (model_ && hidden_) {
-    // process propertyHiddenChanged after insertion into model has finishedAdd commentMore actions
-    QTimer::singleShot(0, model_, [this]() {
-        if (model_) {
-          model_->emitPropertyHiddenChanged(this);
+    // process propertyHiddenChanged after insertion into model has finished
+    // Use QPointer to track Property lifetime and avoid use-after-free
+    QPointer<Property> self = this;
+    QTimer::singleShot(0, model_, [self]() {
+        if (self && self->model_) {
+          self->model_->emitPropertyHiddenChanged(self);
         }
     });
   }
@@ -464,9 +467,9 @@ void Property::loadValue(const Config & config)
       case QVariant::String: setValue(config.getValue().toString() ); break;
       case QVariant::Bool: setValue(config.getValue().toBool() ); break;
       default:
-        printf(
-          "Property::loadValue() TODO: error handling - unexpected QVariant type %d.\n",
-          static_cast<int>(value_.type() ));
+        RVIZ_COMMON_LOG_WARNING_STREAM(
+          "Property::loadValue() TODO: error handling - unexpected QVariant type " <<
+            static_cast<int>(value_.type()));
         break;
     }
   }

@@ -2,6 +2,14 @@
 Changelog for package rviz_visual_testing_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.1.18 (2026-02-25)
+--------------------
+* Use get_package_share_path (`#1671 <https://github.com/ros2/rviz/issues/1671>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.17 (2026-02-24)
+--------------------
+
 15.1.16 (2026-01-13)
 --------------------
 * Update ament_index_cpp API (`#1649 <https://github.com/ros2/rviz/issues/1649>`_)

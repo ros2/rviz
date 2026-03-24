@@ -37,7 +37,7 @@
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/ros_integration/ros_client_abstraction.hpp"
-#include "ament_index_cpp/get_package_share_directory.hpp"
+#include "ament_index_cpp/get_package_share_path.hpp"
 
 void VisualTestFixture::SetUpTestCase()
 {
@@ -56,10 +56,9 @@ void VisualTestFixture::SetUpTestCase()
 
   visualizer_app_->init(argc, argv);
 
-  std::filesystem::path package_share_directory;
-  ament_index_cpp::get_package_share_directory(
-    "rviz_visual_testing_framework",
-    package_share_directory);
+  std::filesystem::path package_share_directory =
+    ament_index_cpp::get_package_share_path(
+      "rviz_visual_testing_framework");
   if (VisualTest::generateReferenceImages()) {
     visualizer_app_->loadConfig(
       QDir::toNativeSeparators(

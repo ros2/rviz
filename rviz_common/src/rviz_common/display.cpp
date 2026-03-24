@@ -359,7 +359,9 @@ void Display::onEnableChanged()
   QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
   queueRender();
   if (isEnabled()) {
-    scene_node_->setVisible(true);
+    if (scene_node_) {
+      scene_node_->setVisible(true);
+    }
 
     if (associated_widget_panel_) {
       associated_widget_panel_->show();
@@ -379,7 +381,9 @@ void Display::onEnableChanged()
       associated_widget_->hide();
     }
 
-    scene_node_->setVisible(false);
+    if (scene_node_) {
+      scene_node_->setVisible(false);
+    }
   }
   QApplication::restoreOverrideCursor();
 }
