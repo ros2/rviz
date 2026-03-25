@@ -1,0 +1,24 @@
+diff --git a/OgreMain/src/OgreLodStrategy.cpp b/OgreMain/src/OgreLodStrategy.cpp
+index bce3d3e6d..9c4b0c814 100644
+--- a/OgreMain/src/OgreLodStrategy.cpp
++++ b/OgreMain/src/OgreLodStrategy.cpp
+@@ -85,8 +85,7 @@ namespace Ogre {
+         return true;
+     }
+     //---------------------------------------------------------------------
+-    struct LodUsageSortLess :
+-    public std::binary_function<const MeshLodUsage&, const MeshLodUsage&, bool>
++    struct LodUsageSortLess
+     {
+         bool operator() (const MeshLodUsage& mesh1, const MeshLodUsage& mesh2)
+         {
+@@ -100,8 +99,7 @@ namespace Ogre {
+         std::sort(meshLodUsageList.begin(), meshLodUsageList.end(), LodUsageSortLess());
+     }
+     //---------------------------------------------------------------------
+-    struct LodUsageSortGreater :
+-    public std::binary_function<const MeshLodUsage&, const MeshLodUsage&, bool>
++    struct LodUsageSortGreater
+     {
+         bool operator() (const MeshLodUsage& mesh1, const MeshLodUsage& mesh2)
+         {
