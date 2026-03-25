@@ -2,6 +2,38 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.1.20 (2026-02-24)
+--------------------
+* Fix setHidden regression in PropertyTreeWidget (`#1667 <https://github.com/ros2/rviz/issues/1667>`_) (`#1669 <https://github.com/ros2/rviz/issues/1669>`_)
+* Add topic name filtering when adding new visualizations (`#1662 <https://github.com/ros2/rviz/issues/1662>`_) (`#1664 <https://github.com/ros2/rviz/issues/1664>`_)
+* Contributors: mergify[bot]
+
+14.1.19 (2025-12-17)
+--------------------
+* Fix crash with no tools (`#1639 <https://github.com/ros2/rviz/issues/1639>`_) (`#1641 <https://github.com/ros2/rviz/issues/1641>`_)
+* Contributors: mergify[bot]
+
+14.1.18 (2025-11-28)
+--------------------
+
+14.1.17 (2025-11-07)
+--------------------
+* Removed duplicated forward class declaration (`#1602 <https://github.com/ros2/rviz//issues/1602>`_) (`#1613 <https://github.com/ros2/rviz//issues/1613>`_)
+* Contributors: mergify[bot]
+
+14.1.16 (2025-09-26)
+--------------------
+* fix crash (`#1587 <https://github.com/ros2/rviz/issues/1587>`_) (`#1589 <https://github.com/ros2/rviz/issues/1589>`_)
+* Contributors: mergify[bot]
+
+14.1.15 (2025-09-17)
+--------------------
+* add ros action property (`#1549 <https://github.com/ros2/rviz/issues/1549>`_) (`#1577 <https://github.com/ros2/rviz/issues/1577>`_)
+* Contributors: mergify[bot]
+
+14.1.14 (2025-08-22)
+--------------------
+
 14.1.13 (2025-07-25)
 --------------------
 * Postpone hiding of properties until insertion into model is finished (backport `#1508 <https://github.com/ros2/rviz/issues/1508>`_) (`#1521 <https://github.com/ros2/rviz/issues/1521>`_)

@@ -2,6 +2,39 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.1.20 (2026-02-24)
+--------------------
+
+14.1.19 (2025-12-17)
+--------------------
+* Add CameraInfo topic property to DepthCloudDisplay (`#1643 <https://github.com/ros2/rviz/issues/1643>`_) (`#1645 <https://github.com/ros2/rviz/issues/1645>`_)
+* Contributors: mergify[bot]
+
+14.1.18 (2025-11-28)
+--------------------
+* Fix Translation Issue in XYOrbitViewController (`#1630 <https://github.com/ros2/rviz/issues/1630>`_) (`#1632 <https://github.com/ros2/rviz/issues/1632>`_)
+* Overcome 16384 size limit (`#1622 <https://github.com/ros2/rviz/issues/1622>`_) (`#1628 <https://github.com/ros2/rviz/issues/1628>`_)
+* Contributors: mergify[bot]
+
+14.1.17 (2025-11-07)
+--------------------
+* Removed already done TODO (`#1604 <https://github.com/ros2/rviz//issues/1604>`_) (`#1610 <https://github.com/ros2/rviz//issues/1610>`_)
+* Contributors: mergify[bot]
+
+14.1.16 (2025-09-26)
+--------------------
+
+14.1.15 (2025-09-17)
+--------------------
+* Fix pointcloud2 display divide by 0 (`#1581 <https://github.com/ros2/rviz/issues/1581>`_) (`#1583 <https://github.com/ros2/rviz/issues/1583>`_)
+* add support for ffmpeg_image_transport and point_cloud_transport (`#1568 <https://github.com/ros2/rviz/issues/1568>`_) (`#1571 <https://github.com/ros2/rviz/issues/1571>`_)
+* Contributors: mergify[bot]
+
+14.1.14 (2025-08-22)
+--------------------
+* Fix QoS profile loading for InitialPoseTool from rviz config files (`#1544 <https://github.com/ros2/rviz//issues/1544>`_) (`#1554 <https://github.com/ros2/rviz//issues/1554>`_)
+* Contributors: mergify[bot]
+
 14.1.13 (2025-07-25)
 --------------------
 * fix deprecated include (`#1530 <https://github.com/ros2/rviz/issues/1530>`_) (`#1532 <https://github.com/ros2/rviz/issues/1532>`_)

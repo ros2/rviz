@@ -2,6 +2,32 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.1.20 (2026-02-24)
+--------------------
+
+14.1.19 (2025-12-17)
+--------------------
+
+14.1.18 (2025-11-28)
+--------------------
+
+14.1.17 (2025-11-07)
+--------------------
+* Removed unused files (`#1600 <https://github.com/ros2/rviz//issues/1600>`_) (`#1607 <https://github.com/ros2/rviz//issues/1607>`_)
+* Contributors: mergify[bot]
+
+14.1.16 (2025-09-26)
+--------------------
+
+14.1.15 (2025-09-17)
+--------------------
+
+14.1.14 (2025-08-22)
+--------------------
+* Update OGRE mesh files from ROS1 RViz (`#1536 <https://github.com/ros2/rviz//issues/1536>`_) (`#1558 <https://github.com/ros2/rviz//issues/1558>`_)
+* add resourceExists check to loadEmbeddedTexture before loading texture (`#1542 <https://github.com/ros2/rviz//issues/1542>`_) (`#1551 <https://github.com/ros2/rviz//issues/1551>`_)
+* Contributors: mergify[bot]
+
 14.1.13 (2025-07-25)
 --------------------
 * Assign the geometry to the resource group "rviz_rendering" (`#1502 <https://github.com/ros2/rviz/issues/1502>`_) (`#1504 <https://github.com/ros2/rviz/issues/1504>`_)

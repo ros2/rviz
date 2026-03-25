@@ -173,7 +173,7 @@ void ToolManager::handleChar(QKeyEvent * event, RenderPanel * panel)
         setCurrentTool(tool);
       }
     }
-  } else {
+  } else if (current_tool_) {
     // if the incoming key triggers no other tool,
     // just hand down the key event
     flags = current_tool_->processKeyEvent(event, panel);
