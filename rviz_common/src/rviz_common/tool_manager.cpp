@@ -138,7 +138,7 @@ bool ToolManager::toKey(QString const & str, uint & key)
 
   // We should only working with a single key here
   if (seq.count() == 1) {
-    key = seq[0];
+    key = seq[0].toCombined();
     return true;
   } else {
     return false;
