@@ -82,6 +82,9 @@ TEST_F(MeshShapeTestFixture, mesh_shape_test) {
 
   std::vector<Ogre::Vector3> normals = {
     {0.0f, 0.0f, 1.0f},
+    {0.0f, 0.0f, 1.0f},
+    {0.0f, 0.0f, 1.0f},
+    {0.0f, 0.0f, 1.0f},
     {0.0f, 0.0f, 1.0f}
   };
 
