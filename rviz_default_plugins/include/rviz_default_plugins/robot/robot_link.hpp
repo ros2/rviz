@@ -49,16 +49,25 @@
 
 #include <QObject>
 
-#include <urdf_model/pose.h>
-
-#include <urdf/model.hpp>  // can be replaced later by urdf_model/types.h
-
 #include "resource_retriever/retriever.hpp"
 #include "rviz_common/interaction/forwards.hpp"
 #include "rviz_rendering/objects/object.hpp"
 
 #include "rviz_default_plugins/robot/robot_element_base_class.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
+
+namespace urdf
+{
+class Link;
+class Geometry;
+class Pose;
+class Visual;
+class Collision;
+typedef std::shared_ptr<Link> LinkSharedPtr;
+typedef std::shared_ptr<const Link> LinkConstSharedPtr;
+typedef std::shared_ptr<Visual> VisualSharedPtr;
+typedef std::shared_ptr<Collision> CollisionSharedPtr;
+}  // namespace urdf
 
 namespace Ogre
 {
@@ -207,30 +216,7 @@ private:
     std::vector<Ogre::Entity *> & meshes_vector,
     const std::vector<T> & visualizables_array,
     const T & visualizable_element,
-    Ogre::SceneNode * scene_node)
-  {
-    bool valid_visualizable_found = false;
-
-    for (const auto & vector_element : visualizables_array) {
-      T link_visual_element = vector_element;
-      if (link_visual_element && link_visual_element->geometry) {
-        Ogre::Entity * mesh = createEntityForGeometryElement(
-          link, *link_visual_element->geometry, link_visual_element->origin, "", scene_node);
-        if (mesh) {
-          meshes_vector.push_back(mesh);
-          valid_visualizable_found = true;
-        }
-      }
-    }
-
-    if (!valid_visualizable_found && visualizable_element && visualizable_element->geometry) {
-      Ogre::Entity * mesh = createEntityForGeometryElement(
-        link, *visualizable_element->geometry, visualizable_element->origin, "", scene_node);
-      if (mesh) {
-        meshes_vector.push_back(mesh);
-      }
-    }
-  }
+    Ogre::SceneNode * scene_node);
 
 protected:
   Ogre::SceneManager * scene_manager_;

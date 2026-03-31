@@ -49,7 +49,7 @@
 
 #include "interactive_markers/tools.hpp"
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/time.hpp"
 
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/interaction/view_picker_iface.hpp"

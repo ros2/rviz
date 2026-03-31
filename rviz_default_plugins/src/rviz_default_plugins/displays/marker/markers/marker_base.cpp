@@ -40,7 +40,7 @@
 #include <OgreSceneManager.h>
 #include <OgreSharedPtr.h>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/time.hpp"
 
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
