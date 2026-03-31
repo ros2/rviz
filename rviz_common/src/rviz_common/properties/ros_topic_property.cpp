@@ -119,8 +119,6 @@ QRegularExpression RosFilteredTopicProperty::filter() const
 
 void RosFilteredTopicProperty::fillTopicList()
 {
-  QStringList filtered_strings_;
-
   // Obtain list of available topics
   RosTopicProperty::fillTopicList();
   // Apply filter

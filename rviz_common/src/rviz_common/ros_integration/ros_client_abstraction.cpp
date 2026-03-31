@@ -58,12 +58,12 @@ RosClientAbstraction::init(int argc, char ** argv, const std::string & name, boo
     throw std::runtime_error("'anonymous_name' feature not implemented");
     // final_name = <the full anonymous node name>;
   }
-  // TODO(wjwwood): this will throw on repeated calls, maybe avoid that?
-  rclcpp::init(argc, argv);
   if (rviz_ros_node_ && rviz_ros_node_->get_node_name() == final_name) {
     // TODO(wjwwood): make a better exception type rather than using std::runtime_error.
     throw std::runtime_error("Node with name " + final_name + " already exists.");
   }
+  // TODO(wjwwood): this will throw on repeated calls, maybe avoid that?
+  rclcpp::init(argc, argv);
   rviz_ros_node_ = std::make_shared<RosNodeAbstraction>(final_name, options_);
   return rviz_ros_node_;
 }

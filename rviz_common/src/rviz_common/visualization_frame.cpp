@@ -48,7 +48,6 @@
 #include <QCloseEvent>  // NOLINT cpplint cannot handle include order here
 #include <QDesktopServices>  // NOLINT cpplint cannot handle include order here
 #include <QDir>  // NOLINT cpplint cannot handle include order here
-#include <QFile>  // NOLINT cpplint cannot handle include order here
 #include <QFileDialog>  // NOLINT cpplint cannot handle include order here
 #include <QHBoxLayout>  // NOLINT cpplint cannot handle include order here
 #include <QMenu>  // NOLINT cpplint cannot handle include order here
@@ -387,20 +386,23 @@ void VisualizationFrame::initConfigs()
   persistent_settings_file_ = config_dir_ + "/persistent_settings";
   default_display_config_file_ = config_dir_ + "/default." CONFIG_EXTENSION;
 
-  QFile config_dir_as_file(QString::fromStdString(config_dir_));
-  QDir config_dir_as_dir(QString::fromStdString(config_dir_));
-  if (config_dir_as_file.exists() && !config_dir_as_dir.exists()) {
+  std::filesystem::path config_dir_path(config_dir_);
+  if (std::filesystem::exists(config_dir_path) && !std::filesystem::is_directory(config_dir_path)) {
     RVIZ_COMMON_LOG_ERROR_STREAM(
       "Moving file [" << config_dir_.c_str() << "] out of the way to recreate it as a directory.");
-    std::string backup_file = config_dir_ + ".bak";
+    std::filesystem::path backup_file = config_dir_ + ".bak";
 
-    if (!config_dir_as_file.rename(QString::fromStdString(backup_file))) {
+    std::error_code err;
+    std::filesystem::rename(config_dir_path, backup_file, err);
+
+    if (err) {
       RVIZ_COMMON_LOG_ERROR("Failed to rename config directory while backing up.");
     }
   }
 
-  QDir config_dir_as_qdir;
-  if (!config_dir_as_qdir.mkpath(QString::fromStdString(config_dir_))) {
+  std::error_code mk_err;
+  std::filesystem::create_directories(config_dir_path, mk_err);
+  if (mk_err) {
     RVIZ_COMMON_LOG_ERROR_STREAM("failed to make config dir: " << config_dir_);
   }
 }
@@ -676,9 +678,9 @@ void VisualizationFrame::markRecentConfig(const std::string & path)
 void VisualizationFrame::loadDisplayConfig(const QString & qpath)
 {
   std::string path = qpath.toStdString();
-  QFileInfo path_info(qpath);
+  std::filesystem::path path_info(path);
   std::filesystem::path actual_load_path = path;
-  if (!path_info.exists() || path_info.isDir()) {
+  if (!std::filesystem::exists(path_info) || std::filesystem::is_directory(path_info)) {
     actual_load_path = package_path_ / "default.rviz";
     if (!std::filesystem::exists(actual_load_path)) {
       RVIZ_COMMON_LOG_ERROR_STREAM(
@@ -721,7 +723,7 @@ void VisualizationFrame::loadDisplayConfig(const QString & qpath)
 
   setDisplayConfigFile(path);
 
-  last_config_dir_ = path_info.absolutePath().toStdString();
+  last_config_dir_ = std::filesystem::absolute(path_info).string();
 
   post_load_timer_->start(1000);
 }
@@ -989,7 +991,7 @@ void VisualizationFrame::onOpen()
     "RViz config files (" CONFIG_EXTENSION_WILDCARD ")");
 
   if (!filename.isEmpty()) {
-    if (!QFile(filename).exists()) {
+    if (!std::filesystem::exists(filename.toStdString())) {
       QString message = filename + " does not exist!";
       QMessageBox::critical(this, "Config file does not exist", message);
       return;
@@ -1059,15 +1061,15 @@ void VisualizationFrame::onRecentConfigSelected()
 {
   QAction * action = dynamic_cast<QAction *>(sender());
   if (action) {
-    QString path = action->data().toString();
-    if (path.size() != 0) {
-      if (!QFile(path).exists()) {
-        QString message = path + " does not exist!";
-        QMessageBox::critical(this, "Config file does not exist", message);
+    std::string path = action->data().toString().toStdString();
+    if (!path.empty()) {
+      if (!std::filesystem::exists(path)) {
+        std::string message = path + " does not exist!";
+        QMessageBox::critical(this, "Config file does not exist", QString::fromStdString(message));
         return;
       }
 
-      loadDisplayConfig(path);
+      loadDisplayConfig(QString::fromStdString(path));
     }
   }
 }

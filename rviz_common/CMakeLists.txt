@@ -31,8 +31,15 @@ find_package(ament_cmake REQUIRED)
 # do find_package(rviz_ogre_vendor) first to make sure the custom OGRE is found
 find_package(rviz_ogre_vendor REQUIRED)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+# Avoid find_package(QT NAMES Qt6 Qt5 ...) due to CMake's default ascending path resolution
+find_package(Qt6 QUIET COMPONENTS Widgets)
+if(Qt6_FOUND)
+  set(QT_VERSION_MAJOR 6)
+else()
+  find_package(Qt5 REQUIRED COMPONENTS Widgets)
+  set(QT_VERSION_MAJOR 5)
+endif()
+set(QT_VERSION "${Qt${QT_VERSION_MAJOR}_VERSION}")
 if(${QT_VERSION} VERSION_LESS 5.15.0)
   function(qt_wrap_cpp out)
     qt5_wrap_cpp(_sources ${ARGN})
@@ -248,7 +255,7 @@ target_include_directories(rviz_common
 )
 
 target_link_libraries(rviz_common PUBLIC
-  ${geometry_msgs_TARGETS}
+  geometry_msgs::geometry_msgs
   message_filters::message_filters
   pluginlib::pluginlib
   Qt${QT_VERSION_MAJOR}::Widgets
@@ -256,9 +263,9 @@ target_link_libraries(rviz_common PUBLIC
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
   rviz_rendering::rviz_rendering
-  ${sensor_msgs_TARGETS}
-  ${std_msgs_TARGETS}
-  ${std_srvs_TARGETS}
+  sensor_msgs::sensor_msgs
+  std_msgs::std_msgs
+  std_srvs::std_srvs
   tf2::tf2
   tf2_ros::tf2_ros
   yaml-cpp::yaml-cpp

@@ -4,9 +4,9 @@ find_package(sensor_msgs REQUIRED)
 
 add_executable(send_lots_of_points_node send_lots_of_points_node.cpp)
 target_link_libraries(send_lots_of_points_node PRIVATE
-  ${geometry_msgs_TARGETS}
+  geometry_msgs::geometry_msgs
   rclcpp::rclcpp
-  ${sensor_msgs_TARGETS}
+  sensor_msgs::sensor_msgs
 )
 
 get_filename_component(script_path "${PROJECT_SOURCE_DIR}/scripts/rviz1_to_rviz2.py" ABSOLUTE)

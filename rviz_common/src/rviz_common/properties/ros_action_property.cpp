@@ -144,8 +144,6 @@ QRegularExpression RosFilteredActionProperty::filter() const
 
 void RosFilteredActionProperty::fillActionList()
 {
-  QStringList filtered_strings_;
-
   // Obtain list of available actions
   RosActionProperty::fillActionList();
   // Apply filter

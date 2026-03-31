@@ -30,13 +30,14 @@
 
 #include "rviz_default_plugins/displays/robot_model/robot_model_display.hpp"
 
+#include <fstream>
 #include <memory>
+#include <sstream>
 #include <string>
 
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 
-#include <QFile>  // NOLINT cpplint cannot handle include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "tf2_ros/transform_listener.hpp"
@@ -246,10 +247,13 @@ void RobotModelDisplay::load_urdf()
 void RobotModelDisplay::load_urdf_from_file(const std::string & filepath)
 {
   std::string content;
-  QFile urdf_file(QString::fromStdString(filepath));
-  if (urdf_file.open(QIODevice::ReadOnly)) {
-    content = urdf_file.readAll().toStdString();
-    urdf_file.close();
+  std::ifstream urdf_file;
+  urdf_file.open(filepath, std::ifstream::in);
+
+  if (urdf_file) {
+    std::stringstream buffer;
+    buffer << urdf_file.rdbuf();
+    content = std::string(buffer.str());
   }
   if (content.empty()) {
     clear();
