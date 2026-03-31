@@ -120,6 +120,7 @@
       The Image display creates a new rendering window with an image.
     </description>
     <message_type>sensor_msgs/msg/Image</message_type>
+    <message_type>sensor_msgs/msg/CompressedImage</message_type>
   </class>
 
   <class
