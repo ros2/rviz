@@ -36,6 +36,7 @@
 #include <memory>
 
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
+#include <QSet>  // NOLINT: cpplint is unable to handle the include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
@@ -158,6 +159,11 @@ public:
   virtual
   DisplayFactory *
   getDisplayFactory() const = 0;
+
+  /// Update the set of message types supported by the given display class id.
+  virtual
+  void
+  updatePluginMessageTypes(const QString & class_id, const QSet<QString> & message_types) = 0;
 
   /// Return a weak pointer to the ros node (abstraction) used by rviz
   virtual

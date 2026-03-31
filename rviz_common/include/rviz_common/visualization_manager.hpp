@@ -272,6 +272,10 @@ public:
   /// Return a factory for creating Display subclasses based on a class id string.
   DisplayFactory * getDisplayFactory() const override;
 
+  /// Update the set of message types supported by the given display class id.
+  void updatePluginMessageTypes(
+    const QString & class_id, const QSet<QString> & message_types) override;
+
   /// Return the display tree model.
   properties::PropertyTreeModel * getDisplayTreeModel() const;
 

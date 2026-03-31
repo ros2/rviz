@@ -86,7 +86,7 @@ ImageDisplay::ImageDisplay(std::unique_ptr<ROSImageTextureIface> texture)
   // This allows us to display image and compressed image topics in the topic list
   delete this->topic_property_;
   this->topic_property_ = new rviz_common::properties::RosTopicMultiTypeProperty(
-    "Topic", "", std::vector<QString>(), "Image transport topic to subscribe to.", this,
+    "Topic", "", QSet<QString>(), "Image transport topic to subscribe to.", this,
     SLOT(updateTopic()));
 
   delete this->qos_profile_property_;
@@ -180,10 +180,7 @@ void ImageDisplay::onInitialize()
   // Update the message types to allow in the topic_property_
   ((rviz_common::properties::RosTopicMultiTypeProperty *)topic_property_)
   ->setMessageTypes(message_types);
-  DisplayFactory factory = *_context->getDisplayFactory();
-  if (factory) {
-    factory->updatePluginMessageTypes(this->getClassId(), QSet<QString>(message_types));
-  }
+  context_->updatePluginMessageTypes(this->getClassId(), QSet<QString>(message_types));
 }
 
 ImageDisplay::~ImageDisplay()
