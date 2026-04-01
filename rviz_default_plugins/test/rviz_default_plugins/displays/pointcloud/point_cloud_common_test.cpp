@@ -235,9 +235,3 @@ TEST_F(
   ASSERT_THAT(point_clouds.size(), Eq(0u));
 }
 
-int main(int argc, char ** argv)
-{
-  QApplication app(argc, argv);
-  InitGoogleMock(&argc, argv);
-  return RUN_ALL_TESTS();
-}

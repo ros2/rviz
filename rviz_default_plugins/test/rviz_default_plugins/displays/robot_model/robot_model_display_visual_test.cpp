@@ -41,6 +41,7 @@
 #include "rviz_visual_testing_framework/transform_publisher.hpp"
 
 #include "../../page_objects/robot_model_display_page_object.hpp"
+namespace robot_model_display_visual_test {
 
 TEST_F(VisualTestFixture, robot_model_display_test) {
   std::vector<StaticTransform> transforms;
@@ -72,3 +73,4 @@ TEST_F(VisualTestFixture, robot_model_display_test) {
 
   assertScreenShotsIdentity();
 }
+}  // namespace robot_model_display_visual_test

@@ -37,6 +37,7 @@
 
 #include "../../page_objects/point_cloud_common_page_object.hpp"
 #include "../../publishers/temperature_publisher.hpp"
+namespace temperature_display_visual_test {
 
 class TemperatureDisplayPageObject
   : public PointCloudCommonPageObject
@@ -73,3 +74,4 @@ TEST_F(VisualTestFixture, sphere_changes_color_depending_on_temperature) {
   captureMainWindow("temperature_display_high_temperature");
   assertScreenShotsIdentity();
 }
+}  // namespace temperature_display_visual_test

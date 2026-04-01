@@ -36,6 +36,7 @@
 
 #include "../../page_objects/path_display_page_object.hpp"
 #include "../../publishers/path_publisher.hpp"
+namespace path_display_visual_test {
 
 TEST_F(VisualTestFixture, test_with_path) {
   auto path_publisher = std::make_unique<VisualTestPublisher>(
@@ -55,3 +56,4 @@ TEST_F(VisualTestFixture, test_with_path) {
 
   assertMainWindowIdentity();
 }
+}  // namespace path_display_visual_test

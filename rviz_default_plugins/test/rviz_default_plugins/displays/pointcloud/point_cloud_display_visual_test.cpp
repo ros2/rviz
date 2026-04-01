@@ -35,6 +35,7 @@
 
 #include "../../page_objects/point_cloud_common_page_object.hpp"
 #include "../../publishers/point_cloud_publisher.hpp"
+namespace point_cloud_display_visual_test {
 
 class PointCloudDisplayPageObject
   : public PointCloudCommonPageObject
@@ -65,3 +66,4 @@ TEST_F(VisualTestFixture, pointcloud_containing_one_big_point) {
   /// Compare test screenshots with the reference ones (if in TEST mode):
   assertScreenShotsIdentity();
 }
+}  // namespace point_cloud_display_visual_test

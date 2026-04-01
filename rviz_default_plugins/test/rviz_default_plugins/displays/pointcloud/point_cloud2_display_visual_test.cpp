@@ -35,6 +35,7 @@
 
 #include "../../page_objects/point_cloud_common_page_object.hpp"
 #include "../../publishers/point_cloud2_publisher.hpp"
+namespace point_cloud2_display_visual_test {
 
 class PointCloud2DisplayPageObject
   : public PointCloudCommonPageObject
@@ -61,3 +62,4 @@ TEST_F(VisualTestFixture, pointcloud2_containing_one_big_point) {
 
   assertMainWindowIdentity();
 }
+}  // namespace point_cloud2_display_visual_test

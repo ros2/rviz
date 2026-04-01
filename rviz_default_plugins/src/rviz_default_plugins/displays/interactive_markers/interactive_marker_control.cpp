@@ -58,15 +58,8 @@
 #include "rviz_rendering/objects/line.hpp"
 #include "rviz_rendering/render_window.hpp"
 
-#include "rviz_default_plugins/displays/marker/markers/shape_marker.hpp"
-#include "rviz_default_plugins/displays/marker/markers/arrow_marker.hpp"
-#include "rviz_default_plugins/displays/marker/markers/line_list_marker.hpp"
-#include "rviz_default_plugins/displays/marker/markers/line_strip_marker.hpp"
+#include "rviz_default_plugins/displays/marker/markers/marker_factory.hpp"
 #include "rviz_default_plugins/displays/marker/markers/points_marker.hpp"
-#include "rviz_default_plugins/displays/marker/markers/text_view_facing_marker.hpp"
-#include "rviz_default_plugins/displays/marker/markers/mesh_resource_marker.hpp"
-#include "rviz_default_plugins/displays/marker/markers/triangle_list_marker.hpp"
-#include "rviz_default_plugins/displays/marker/markers/marker_base.hpp"
 
 #include "rviz_default_plugins/displays/interactive_markers/interactive_marker.hpp"
 #include "rviz_default_plugins/displays/interactive_markers/interactive_marker_control.hpp"
@@ -101,6 +94,9 @@ InteractiveMarkerControl::InteractiveMarkerControl(
   show_visual_aids_(false),
   line_(new rviz_rendering::Line(context->getSceneManager(), control_frame_node_))
 {
+  marker_factory_ = std::make_unique<markers::MarkerFactory>();
+  marker_factory_->initialize(nullptr, context_, markers_node_);
+
   line_->setVisible(false);
 }
 
@@ -108,63 +104,14 @@ void InteractiveMarkerControl::makeMarkers(
   const visualization_msgs::msg::InteractiveMarkerControl & message)
 {
   for (const auto & message_marker : message.markers) {
-    markers::MarkerBase::SharedPtr marker;
+    auto marker = marker_factory_->createMarkerForType(message_marker.type);
+    if (!marker) {
+      continue;
+    }
 
-    // create a marker with the given type
-    switch (message_marker.type) {
-      case visualization_msgs::msg::Marker::CUBE:
-      case visualization_msgs::msg::Marker::CYLINDER:
-      case visualization_msgs::msg::Marker::SPHERE:
-        {
-          marker.reset(new markers::ShapeMarker(nullptr, context_, markers_node_));
-        }
-        break;
-
-      case visualization_msgs::msg::Marker::ARROW:
-        {
-          marker.reset(new markers::ArrowMarker(nullptr, context_, markers_node_));
-        }
-        break;
-
-      case visualization_msgs::msg::Marker::LINE_STRIP:
-        {
-          marker.reset(new markers::LineStripMarker(nullptr, context_, markers_node_));
-        }
-        break;
-      case visualization_msgs::msg::Marker::LINE_LIST:
-        {
-          marker.reset(new markers::LineListMarker(nullptr, context_, markers_node_));
-        }
-        break;
-      case visualization_msgs::msg::Marker::SPHERE_LIST:
-      case visualization_msgs::msg::Marker::CUBE_LIST:
-      case visualization_msgs::msg::Marker::POINTS:
-        {
-          auto points_marker = std::make_shared<markers::PointsMarker>(
-            nullptr, context_, markers_node_);
-          points_markers_.push_back(points_marker);
-          marker = points_marker;
-        }
-        break;
-      case visualization_msgs::msg::Marker::TEXT_VIEW_FACING:
-        {
-          marker.reset(new markers::TextViewFacingMarker(nullptr, context_, markers_node_));
-        }
-        break;
-      case visualization_msgs::msg::Marker::MESH_RESOURCE:
-        {
-          marker.reset(new markers::MeshResourceMarker(nullptr, context_, markers_node_));
-        }
-        break;
-
-      case visualization_msgs::msg::Marker::TRIANGLE_LIST:
-        {
-          marker.reset(new markers::TriangleListMarker(nullptr, context_, markers_node_));
-        }
-        break;
-      default:
-        RVIZ_COMMON_LOG_ERROR_STREAM("Unknown marker type: " << message_marker.type);
-        break;
+    auto points_marker = std::dynamic_pointer_cast<markers::PointsMarker>(marker);
+    if (points_marker) {
+      points_markers_.push_back(points_marker);
     }
 
     auto marker_msg = std::make_shared<visualization_msgs::msg::Marker>(message_marker);

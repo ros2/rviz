@@ -37,6 +37,7 @@
 
 #include "../../page_objects/point_cloud_common_page_object.hpp"
 #include "../../publishers/relative_humidity_publisher.hpp"
+namespace relative_humidity_display_visual_test {
 
 class RelativeHumidityDisplayPageObject
   : public PointCloudCommonPageObject
@@ -73,3 +74,4 @@ TEST_F(VisualTestFixture, sphere_changes_color_depending_on_relative_humidity) {
   captureMainWindow("relative_humidity_display_high_relative_humidity");
   assertScreenShotsIdentity();
 }
+}  // namespace relative_humidity_display_visual_test

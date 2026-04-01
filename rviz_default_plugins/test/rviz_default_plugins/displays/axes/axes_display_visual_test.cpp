@@ -35,6 +35,7 @@
 #include "rviz_visual_testing_framework/visual_test_publisher.hpp"
 
 #include "../../page_objects/axes_display_page_object.hpp"
+namespace axes_display_visual_test {
 
 TEST_F(VisualTestFixture, axes_display_visual_test) {
   // we need tf data to display axes - this can be achieved via a dummy publisher
@@ -51,3 +52,4 @@ TEST_F(VisualTestFixture, axes_display_visual_test) {
 
   assertMainWindowIdentity();
 }
+}  // namespace axes_display_visual_test

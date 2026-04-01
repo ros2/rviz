@@ -37,6 +37,7 @@
 #include "../../page_objects/marker_display_page_object.hpp"
 #include "../../publishers/marker_array_publisher.hpp"
 #include "../../publishers/marker_publisher.hpp"
+namespace marker_display_visual_test {
 
 TEST_F(VisualTestFixture, test_marker_with_multiple_marker_types) {
   auto marker_publisher = std::make_unique<VisualTestPublisher>(
@@ -65,3 +66,4 @@ TEST_F(VisualTestFixture, test_marker_with_marker_array) {
 
   assertMainWindowIdentity();
 }
+}  // namespace marker_display_visual_test

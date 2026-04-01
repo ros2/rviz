@@ -37,6 +37,7 @@
 
 #include "../../page_objects/point_cloud_common_page_object.hpp"
 #include "../../publishers/fluid_pressure_publisher.hpp"
+namespace fluid_pressure_display_visual_test {
 
 class FluidPressureDisplayPageObject
   : public PointCloudCommonPageObject
@@ -73,3 +74,4 @@ TEST_F(VisualTestFixture, sphere_changes_color_depending_on_fluid_pressure) {
   captureMainWindow("fluid_pressure_display_high_fluid_pressure");
   assertScreenShotsIdentity();
 }
+}  // namespace fluid_pressure_display_visual_test

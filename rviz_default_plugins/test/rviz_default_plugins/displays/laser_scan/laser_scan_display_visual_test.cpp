@@ -36,6 +36,7 @@
 
 #include "../../page_objects/point_cloud_common_page_object.hpp"
 #include "../../publishers/laser_scan_publisher.hpp"
+namespace laser_scan_display_visual_test {
 
 class LaserScanDisplayPageObject
   : public PointCloudCommonPageObject
@@ -63,3 +64,4 @@ TEST_F(VisualTestFixture, laser_scan_display) {
 
   assertMainWindowIdentity();
 }
+}  // namespace laser_scan_display_visual_test

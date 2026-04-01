@@ -36,6 +36,7 @@
 
 #include "../../page_objects/twist_display_page_object.hpp"
 #include "../../publishers/twist_publisher.hpp"
+namespace twist_display_visual_test {
 
 TEST_F(VisualTestFixture, twists_are_displayed) {
   auto twist_publisher = std::make_shared<nodes::TwistPublisher>();
@@ -60,3 +61,4 @@ TEST_F(VisualTestFixture, twists_are_displayed) {
 
   assertScreenShotsIdentity();
 }
+}  // namespace twist_display_visual_test

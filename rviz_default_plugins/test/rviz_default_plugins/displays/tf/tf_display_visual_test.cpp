@@ -35,6 +35,7 @@
 #include "rviz_visual_testing_framework/transform_publisher.hpp"
 
 #include "../../page_objects/tf_display_page_object.hpp"
+namespace tf_display_visual_test {
 
 TEST_F(VisualTestFixture, tf_visual_test) {
   auto transform_publisher = std::make_unique<TransformPublisher>("tf_frame", 1, 0, 0, 0, 0, 0);
@@ -56,3 +57,4 @@ TEST_F(VisualTestFixture, tf_visual_test) {
 
   assertScreenShotsIdentity();
 }
+}  // namespace tf_display_visual_test

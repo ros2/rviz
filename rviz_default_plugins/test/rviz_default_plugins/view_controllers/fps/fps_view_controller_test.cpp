@@ -215,9 +215,3 @@ TEST_F(FPSViewControllerTestFixture, mimic_does_not_change_view_when_given_any_v
   EXPECT_THAT(z_position->getValue().toFloat(), FloatNear(orbit_camera_position.z, 0.001f));
 }
 
-int main(int argc, char ** argv)
-{
-  QApplication app(argc, argv);
-  InitGoogleMock(&argc, argv);
-  return RUN_ALL_TESTS();
-}

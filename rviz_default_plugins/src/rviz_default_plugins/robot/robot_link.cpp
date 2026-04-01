@@ -31,6 +31,9 @@
 
 #include "rviz_default_plugins/robot/robot_link.hpp"
 
+#include <urdf_model/pose.h>
+#include <urdf/model.hpp>
+
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <map>
@@ -933,6 +936,51 @@ void RobotLink::createSelection()
     selection_handler_->addTrackedObject(collision_mesh);
   }
 }
+
+template<typename T>
+void RobotLink::createVisualizable(
+  const urdf::LinkConstSharedPtr & link,
+  std::vector<Ogre::Entity *> & meshes_vector,
+  const std::vector<T> & visualizables_array,
+  const T & visualizable_element,
+  Ogre::SceneNode * scene_node)
+{
+  bool valid_visualizable_found = false;
+
+  for (const auto & vector_element : visualizables_array) {
+    T link_visual_element = vector_element;
+    if (link_visual_element && link_visual_element->geometry) {
+      Ogre::Entity * mesh = createEntityForGeometryElement(
+        link, *link_visual_element->geometry, link_visual_element->origin, "", scene_node);
+      if (mesh) {
+        meshes_vector.push_back(mesh);
+        valid_visualizable_found = true;
+      }
+    }
+  }
+
+  if (!valid_visualizable_found && visualizable_element && visualizable_element->geometry) {
+    Ogre::Entity * mesh = createEntityForGeometryElement(
+      link, *visualizable_element->geometry, visualizable_element->origin, "", scene_node);
+    if (mesh) {
+      meshes_vector.push_back(mesh);
+    }
+  }
+}
+
+template void RobotLink::createVisualizable<urdf::VisualSharedPtr>(
+  const urdf::LinkConstSharedPtr & link,
+  std::vector<Ogre::Entity *> & meshes_vector,
+  const std::vector<urdf::VisualSharedPtr> & visualizables_array,
+  const urdf::VisualSharedPtr & visualizable_element,
+  Ogre::SceneNode * scene_node);
+
+template void RobotLink::createVisualizable<urdf::CollisionSharedPtr>(
+  const urdf::LinkConstSharedPtr & link,
+  std::vector<Ogre::Entity *> & meshes_vector,
+  const std::vector<urdf::CollisionSharedPtr> & visualizables_array,
+  const urdf::CollisionSharedPtr & visualizable_element,
+  Ogre::SceneNode * scene_node);
 
 }  // namespace robot
 }  // namespace rviz_default_plugins

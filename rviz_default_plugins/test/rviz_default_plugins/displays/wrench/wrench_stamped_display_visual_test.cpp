@@ -36,6 +36,7 @@
 
 #include "../../page_objects/wrench_display_page_object.hpp"
 #include "../../publishers/wrench_publisher.hpp"
+namespace wrench_stamped_display_visual_test {
 
 TEST_F(VisualTestFixture, wrenches_are_displayed) {
   auto wrench_publisher = std::make_shared<nodes::WrenchPublisher>();
@@ -60,3 +61,4 @@ TEST_F(VisualTestFixture, wrenches_are_displayed) {
 
   assertScreenShotsIdentity();
 }
+}  // namespace wrench_stamped_display_visual_test

@@ -45,7 +45,6 @@
 
 //# include <message_filters/time_sequencer.h>
 
-#include "pluginlib/class_loader.hpp"
 #include "rclcpp/clock.hpp"
 #include "rclcpp/time.hpp"
 
@@ -56,9 +55,6 @@
 #include "rviz_common/interaction/selection_manager.hpp"
 #include "rviz_common/properties/color_property.hpp"
 #include "rviz_rendering/objects/point_cloud.hpp"
-
-#include "point_cloud_transformer.hpp"
-#include "point_cloud_selection_handler.hpp"
 
 #include "rviz_default_plugins/displays/pointcloud/point_cloud_selection_handler.hpp"
 #include "rviz_default_plugins/displays/pointcloud/point_cloud_transformer.hpp"

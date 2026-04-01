@@ -246,9 +246,3 @@ TEST_F(OrbitViewControllerTestFixture, mimic_does_not_move_camera_when_given_sam
   EXPECT_THAT(pitch_property->getValue().toFloat(), FloatNear(0.5f, 0.001f));
 }
 
-int main(int argc, char ** argv)
-{
-  QApplication app(argc, argv);
-  InitGoogleMock(&argc, argv);
-  return RUN_ALL_TESTS();
-}

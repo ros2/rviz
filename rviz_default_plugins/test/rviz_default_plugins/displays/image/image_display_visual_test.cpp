@@ -36,6 +36,7 @@
 
 #include "../../page_objects/image_display_page_object.hpp"
 #include "../../publishers/image_publisher.hpp"
+namespace image_display_visual_test {
 
 TEST_F(VisualTestFixture, test_image_display_with_published_image) {
   auto path_publisher = std::make_unique<VisualTestPublisher>(
@@ -51,3 +52,4 @@ TEST_F(VisualTestFixture, test_image_display_with_published_image) {
 
   assertScreenShotsIdentity();
 }
+}  // namespace image_display_visual_test
