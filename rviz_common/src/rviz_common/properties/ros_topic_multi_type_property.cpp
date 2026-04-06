@@ -51,8 +51,7 @@ void RosTopicMultiTypeProperty::fillTopicList()
   for (const auto & topic : published_topics) {
     // Only add topics whose type matches one of the allowed types.
     for (const auto & type : topic.second) {
-      if (message_types_.contains(QString::fromStdString(type)))
-      {
+      if (message_types_.contains(QString::fromStdString(type))) {
         addOptionStd(topic.first);
         break;  // avoid duplicates if the topic matches more than one allowed type
       }

@@ -43,7 +43,7 @@
 #include <cstdint>
 #include <memory>
 #include <string>
-#include <set>
+#include <unordered_set>
 
 #include <sensor_msgs/msg/image.hpp>
 

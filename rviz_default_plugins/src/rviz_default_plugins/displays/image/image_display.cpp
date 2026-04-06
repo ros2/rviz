@@ -144,7 +144,7 @@ void ImageDisplay::onInitialize()
     [this](Ogre::SceneNode * scene_node) {scene_node->attachObject(screen_rect_.get());});
 
   // Populate transport->message type map dynamically from installed image_transport plugins
-  
+
   pluginlib::ClassLoader<image_transport::SubscriberPlugin> sub_loader(
     "image_transport", "image_transport::SubscriberPlugin");
   transport_override_property_->clearOptions();
