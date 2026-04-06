@@ -43,7 +43,7 @@
 #include <cstdint>
 #include <memory>
 #include <string>
-#include <unordered_map>
+#include <set>
 
 #include <sensor_msgs/msg/image.hpp>
 
@@ -112,7 +112,7 @@ protected:
   uint32_t messages_received_;
   rclcpp::Time subscription_start_time_;
   message_filters::Connection subscription_callback_;
-  std::unordered_map<std::string, std::string> transport_message_types_;
+  std::unordered_set<std::string> unknown_transports_;
   std::unique_ptr<ROSImageTextureIface> texture_;
   std::unique_ptr<rviz_common::RenderPanel> render_panel_;
 

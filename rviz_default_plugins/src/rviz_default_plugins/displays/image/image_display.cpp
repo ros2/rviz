@@ -47,9 +47,9 @@
 #include <algorithm>
 #include <memory>
 #include <string>
-#include <unordered_map>
 #include <utility>
 #include <vector>
+#include <unordered_set>
 
 #include "image_transport/camera_common.hpp"
 #include "image_transport/image_transport.hpp"
@@ -68,8 +68,6 @@
 #include "rviz_rendering/material_manager.hpp"
 #include "rviz_rendering/render_window.hpp"
 #include "sensor_msgs/image_encodings.hpp"
-
-
 namespace rviz_default_plugins
 {
 namespace displays
@@ -146,41 +144,31 @@ void ImageDisplay::onInitialize()
     [this](Ogre::SceneNode * scene_node) {scene_node->attachObject(screen_rect_.get());});
 
   // Populate transport->message type map dynamically from installed image_transport plugins
+  
   pluginlib::ClassLoader<image_transport::SubscriberPlugin> sub_loader(
     "image_transport", "image_transport::SubscriberPlugin");
+  transport_override_property_->clearOptions();
+  transport_override_property_->addOptionStd("");
+  QSet<QString> message_types;
   for (const std::string & plugin_class : sub_loader.getDeclaredClasses()) {
     const std::string message_type = image_transport::get_message_type_from_manifest(
       sub_loader.getPluginManifestPath(plugin_class), plugin_class);
+    const std::string class_without_suffix =
+      image_transport::erase_last_copy(plugin_class, "_sub");
+    const std::string transport_name =
+      class_without_suffix.substr(class_without_suffix.find_last_of('/') + 1);
     if (!message_type.empty()) {
-      const std::string without_suffix =
-        image_transport::erase_last_copy(plugin_class, "_sub");
-      const std::string transport_name =
-        without_suffix.substr(without_suffix.find_last_of('/') + 1);
-      transport_message_types_[transport_name] = message_type;
-    }
-  }
-
-  // Populate message types and transport overrides based on installed image_transport plugins
-  std::shared_ptr<rclcpp::Node> node = rviz_ros_node_.lock()->get_raw_node();
-  image_transport::ImageTransport image_transport_{*node};
-  std::vector<std::string> loadable_transports = image_transport_.getLoadableTransports();
-  QSet<QString> message_types;
-  // Map to message types
-  transport_override_property_->clearOptions();
-  transport_override_property_->addOptionStd("");
-  for (std::string & transport : loadable_transports) {
-    transport = transport.substr(transport.find_last_of('/') + 1);
-    try {
-      message_types.insert(QString::fromStdString(transport_message_types_.at(transport)));
-      transport_override_property_->addOptionStd(transport);
-    } catch (const std::out_of_range & e) {
-      // This case will be handled in subscribe
+      transport_override_property_->addOptionStd(transport_name);
+      message_types.insert(QString::fromStdString(message_type));
+    } else {
+      unknown_transports_.insert(transport_name);
     }
   }
   // Update the message types to allow in the topic_property_
   ((rviz_common::properties::RosTopicMultiTypeProperty *)topic_property_)
   ->setMessageTypes(message_types);
-  context_->updatePluginMessageTypes(this->getClassId(), QSet<QString>(message_types));
+  // Register this panel for the discovered message types
+  context_->updatePluginMessageTypes(this->getClassId(), message_types);
 }
 
 ImageDisplay::~ImageDisplay()
@@ -255,37 +243,27 @@ void ImageDisplay::subscribe()
       QString("Error subscribing: Empty topic name"));
     return;
   }
+
+  // Only need to do this once but setStatusStd doesn't work in onInitialize
+  if (!unknown_transports_.empty()) {
+    std::string transports_str;
+    for (const std::string & transport : unknown_transports_) {
+      transports_str += transport + ", ";
+    }
+    // Trim the trailing comma
+    transports_str = transports_str.substr(0, transports_str.size() - 2);
+    setStatusStd(rviz_common::properties::StatusProperty::Warn,
+      "Unregistered image_transport Plugins", transports_str +
+      "\nEnsure plugins.xml includes the message_type tag!");
+  }
+
+  // Use override property for transport hint if set, otherwise deduce from topic name
+  std::string transport_hint = transport_override_property_->getStdString();
+  if (transport_hint.empty()) {
+    transport_hint = getTransportFromTopic(topic_property_->getStdString());
+  }
+  rclcpp::Node::SharedPtr node = rviz_ros_node_.lock()->get_raw_node();
   try {
-    rclcpp::Node::SharedPtr node = rviz_ros_node_.lock()->get_raw_node();
-    image_transport::ImageTransport image_transport_{*node};
-    // Check which image_transport plugins are installed
-    std::vector<std::string> transports = image_transport_.getLoadableTransports();
-    std::string transports_str = "";
-    rviz_common::properties::StatusProperty::Level transports_status_level =
-      rviz_common::properties::StatusProperty::Ok;
-    // Strip down to basic transport names, construct string for status display
-    for (std::string & transport : transports) {
-      transport = transport.substr(transport.find_last_of('/') + 1);
-      if (transport_message_types_.find(transport) == transport_message_types_.end()) {
-        transports_status_level = rviz_common::properties::StatusProperty::Warn;
-        transports_str += "(unknown: " + transport + "), ";
-      } else {
-        transports_str += transport + ", ";
-      }
-    }
-    setStatusStd(transports_status_level, "Image Transports Installed", transports_str);
-    // Use override property for transport hint if set, otherwise deduce from topic name
-    std::string transport_hint = transport_override_property_->getStdString();
-    if (transport_hint.empty()) {
-      transport_hint = getTransportFromTopic(topic_property_->getStdString());
-    }
-    // Check if the specified transport is in the list of loadable transports
-    if (std::find(transports.begin(), transports.end(), transport_hint) == transports.end()) {
-      setStatus(
-      rviz_common::properties::StatusProperty::Error, "Topic",
-      QString("Error subscribing: Specified image transport is not installed"));
-      return;
-    }
     // image_transport::Subscriber only requires one callback for "raw" and the other types are
     // automatically converted.
     subscription_->subscribe(

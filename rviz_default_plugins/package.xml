@@ -66,6 +66,7 @@
   <test_depend>libopencv-dev</test_depend>
   <test_depend>rviz_rendering_tests</test_depend>
   <test_depend>rviz_visual_testing_framework</test_depend>
+  <test_depend>image_transport_plugins</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
