@@ -54,7 +54,9 @@ public:
   /// Get all supported message types for the given class id.
   virtual QSet<QString> getMessageTypes(const QString & class_id);
   /// Set all supported message types for the given class id.
-  virtual void updatePluginMessageTypes(const QString & class_id, QSet<QString> message_types);
+  virtual void updatePluginMessageTypes(
+    const QString & class_id,
+    const QSet<QString> & message_types);
 
 protected:
   /// Overridden from PluginlibFactory<Display> to set the icon of the Display.

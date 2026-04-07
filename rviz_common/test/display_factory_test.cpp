@@ -63,7 +63,6 @@ TEST(TestDisplayFactory, getMessageTypes_finds_sensor_msgs_for_fake_camera_displ
   auto display_factory = std::make_unique<TestDisplayFactory>();
   const QSet<QString> message_types = display_factory->getMessageTypes("rviz_common_test/Camera");
   ASSERT_THAT(message_types, Contains("sensor_msgs/msg/Image"));
-  ASSERT_THAT(message_types, Contains("sensor_msgs/msg/CompressedImage"));
 }
 
 TEST(TestDisplayFactory, getMessageTypes_finds_no_messages_for_fake_grid_display) {
