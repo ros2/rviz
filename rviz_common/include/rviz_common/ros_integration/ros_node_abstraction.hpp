@@ -85,6 +85,14 @@ public:
   std::map<std::string, std::vector<std::string>>
   get_topic_names_and_types() const override;
 
+  /// Count the number of publishers for a given topic.
+  /**
+   * \param topic_name the name of the topic to count publishers for
+   * \return the number of publishers for the given topic
+   */
+  RVIZ_COMMON_PUBLIC
+  size_t count_publishers(const std::string & topic_name) const override;
+
   /// Return a map with service names mapped to a list of types for that service.
   /**
    * The node name is what was given when initializing this API.
