@@ -87,6 +87,8 @@ protected:
   /** create a status warning when tolerance is larger than 1s */
   void checkTolerance(rclcpp::Duration tolerance);
 
+  void subscribe() override;
+
   std::unique_ptr<PointCloudCommon> point_cloud_common_;
   std::unique_ptr<laser_geometry::LaserProjection> projector_;
   rclcpp::Duration filter_tolerance_;

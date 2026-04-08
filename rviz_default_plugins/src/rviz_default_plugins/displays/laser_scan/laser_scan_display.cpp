@@ -137,6 +137,13 @@ void LaserScanDisplay::onDisable()
   point_cloud_common_->onDisable();
 }
 
+void LaserScanDisplay::subscribe()
+{
+  MFDClass::subscribe();
+  // Subscribe resets the tf_filter_, so update filter_tolerance_ to reflect that.
+  filter_tolerance_ = rclcpp::Duration{0, 0};
+}
+
 }  // namespace displays
 }  // namespace rviz_default_plugins
 
