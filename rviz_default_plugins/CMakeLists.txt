@@ -374,10 +374,9 @@ if(BUILD_TESTING)
   target_include_directories(test_fixture_objects PRIVATE
     ${TEST_INCLUDE_DIRS}
     include
-    ${GMOCK_INCLUDE_DIRS}
-    ${GTEST_INCLUDE_DIRS}
   )
   target_link_libraries(test_fixture_objects PUBLIC
+    GTest::gmock
     rclcpp::rclcpp
     rviz_common::rviz_common
     rviz_ogre_vendor::OgreMain
