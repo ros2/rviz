@@ -361,12 +361,10 @@ if(BUILD_TESTING)
   target_include_directories(test_support_objects PRIVATE
     include
     test
-    ${rviz_common_INCLUDE_DIRS}
-    ${GMOCK_INCLUDE_DIRS}
-    ${GTEST_INCLUDE_DIRS}
   )
   target_link_libraries(test_support_objects PUBLIC
     rviz_common
+    GTest::gmock
     Qt${QT_VERSION_MAJOR}::Widgets
     rviz_ogre_vendor::OgreMain
     rviz_ogre_vendor::OgreOverlay
