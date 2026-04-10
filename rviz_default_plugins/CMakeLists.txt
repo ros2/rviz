@@ -87,7 +87,7 @@ find_package(pluginlib REQUIRED)
 find_package(point_cloud_transport REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(resource_retriever REQUIRED)
-find_package(rviz_resource_interfaces REQUIRED)
+find_package(resource_retriever_service_plugin REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
@@ -247,7 +247,6 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/view_controllers/orbit/orbit_view_controller.cpp
   src/rviz_default_plugins/view_controllers/ortho/fixed_orientation_ortho_view_controller.cpp
   src/rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller.cpp
-  src/rviz_default_plugins/ros_resource_retriever.cpp
 )
 
 add_library(rviz_default_plugins SHARED
@@ -281,7 +280,7 @@ target_link_libraries(rviz_default_plugins PUBLIC
   urdf::urdf
   visualization_msgs::visualization_msgs
   resource_retriever::resource_retriever
-  rviz_resource_interfaces::rviz_resource_interfaces
+  resource_retriever_service_plugin::resource_retriever_service_plugin
 )
 
 target_link_libraries(rviz_default_plugins PRIVATE
@@ -320,7 +319,7 @@ ament_export_dependencies(
   urdf
   visualization_msgs
   resource_retriever
-  rviz_resource_interfaces
+  resource_retriever_service_plugin
 )
 
 install(
