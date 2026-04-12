@@ -122,13 +122,7 @@ ImageDisplay::ImageDisplay(std::unique_ptr<ROSImageTextureIface> texture)
 void ImageDisplay::setTopic(const QString & topic, const QString & datatype)
 {
   (void) datatype;
-  const std::string topic_str = topic.toStdString();
-  // Strip transport hint suffix if present (e.g. /camera/image/compressed -> /camera/image)
-  const std::string transport = getTransportFromTopic(topic_str);
-  if (transport != "raw") {
-    transport_override_property_->setString(QString::fromStdString(transport));
-  }
-  topic_property_->setString(QString::fromStdString(getBaseTopicFromTopic(topic_str)));
+  topic_property_->setString(topic);
 }
 
 void ImageDisplay::onInitialize()
