@@ -128,8 +128,7 @@ void ImageDisplay::setTopic(const QString & topic, const QString & datatype)
   if (transport != "raw") {
     transport_override_property_->setString(QString::fromStdString(transport));
   }
-  ((rviz_common::properties::RosTopicMultiTypeProperty *)topic_property_)
-  ->setString(QString::fromStdString(getBaseTopicFromTopic(topic_str)));
+  topic_property_->setString(QString::fromStdString(getBaseTopicFromTopic(topic_str)));
 }
 
 void ImageDisplay::onInitialize()
@@ -141,7 +140,9 @@ void ImageDisplay::onInitialize()
   setupRenderPanel();
 
   render_panel_->getRenderWindow()->setupSceneAfterInit(
-    [this](Ogre::SceneNode * scene_node) {scene_node->attachObject(screen_rect_.get());});
+    [this](Ogre::SceneNode * scene_node) {
+      scene_node->attachObject(screen_rect_.get());
+    });
 
   // Populate transport->message type map dynamically from installed image_transport plugins
 
@@ -153,10 +154,8 @@ void ImageDisplay::onInitialize()
   for (const std::string & plugin_class : sub_loader.getDeclaredClasses()) {
     const std::string message_type = image_transport::get_message_type_from_manifest(
       sub_loader.getPluginManifestPath(plugin_class), plugin_class);
-    const std::string class_without_suffix =
-      image_transport::erase_last_copy(plugin_class, "_sub");
-    const std::string transport_name =
-      class_without_suffix.substr(class_without_suffix.find_last_of('/') + 1);
+    const std::string transport_name = image_transport::get_transport_name_from_manifest(
+      sub_loader.getPluginManifestPath(plugin_class), plugin_class);
     if (!message_type.empty()) {
       transport_override_property_->addOptionStd(transport_name);
       message_types.insert(QString::fromStdString(message_type));
@@ -165,7 +164,7 @@ void ImageDisplay::onInitialize()
     }
   }
   // Update the message types to allow in the topic_property_
-  ((rviz_common::properties::RosTopicMultiTypeProperty *)topic_property_)
+  dynamic_cast<rviz_common::properties::RosTopicMultiTypeProperty *>(topic_property_)
   ->setMessageTypes(message_types);
   // Register this panel for the discovered message types
   context_->updatePluginMessageTypes(this->getClassId(), message_types);

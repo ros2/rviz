@@ -52,12 +52,10 @@ const std::unordered_set<std::string> & getKnownNonRawTransports()
           "image_transport", "image_transport::SubscriberPlugin");
         for (const std::string & plugin_class : sub_loader.getDeclaredClasses()) {
           const std::string message_type = image_transport::get_message_type_from_manifest(
-          sub_loader.getPluginManifestPath(plugin_class), plugin_class);
+            sub_loader.getPluginManifestPath(plugin_class), plugin_class);
           if (!message_type.empty()) {
-            const std::string without_suffix =
-              image_transport::erase_last_copy(plugin_class, "_sub");
-            const std::string transport_name =
-              without_suffix.substr(without_suffix.find_last_of('/') + 1);
+            const std::string transport_name = image_transport::get_transport_name_from_manifest(
+              sub_loader.getPluginManifestPath(plugin_class), plugin_class);
             if (transport_name != "raw") {
               result.insert(transport_name);
             }
