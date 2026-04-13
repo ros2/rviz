@@ -279,7 +279,8 @@ QVariant Property::getViewData(int column, int role) const
     case 1:  // right column: values
       switch (role) {
         case Qt::DisplayRole:
-        case Qt::EditRole: return QVARIANT_TYPE_ID(value_) == QMetaType::Bool ? QVariant() : getValue();
+        case Qt::EditRole: return QVARIANT_TYPE_ID(value_) ==
+                 QMetaType::Bool ? QVariant() : getValue();
         case Qt::CheckStateRole:
           if (QVARIANT_TYPE_ID(value_) == QMetaType::Bool) {
             return value_.toBool() ? Qt::Checked : Qt::Unchecked;
