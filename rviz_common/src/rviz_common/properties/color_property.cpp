@@ -33,6 +33,7 @@
 #include <QString>
 #include <QStringList>
 #include <QStyleOptionViewItem>
+#include <QtCore/qglobal.h>
 
 #include "rviz_common/properties/parse_color.hpp"
 #include "rviz_common/properties/color_property.hpp"
@@ -70,7 +71,11 @@ bool ColorProperty::setColor(const QColor & new_color)
 
 bool ColorProperty::setValue(const QVariant & new_value)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  if (new_value.typeId() == QMetaType::QColor) {
+#else
   if (new_value.type() == QVariant::Color) {
+#endif
     return setColor(new_value.value<QColor>());
   }
 
