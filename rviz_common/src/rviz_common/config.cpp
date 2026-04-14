@@ -231,7 +231,9 @@ bool Config::mapGetValue(const QString & key, QVariant * value_out) const
 bool Config::mapGetInt(const QString & key, int * value_out) const
 {
   QVariant v;
-  if (mapGetValue(key, &v) && (QVARIANT_TYPE_ID(v) == QMetaType::Int || QVARIANT_TYPE_ID(v) == QMetaType::QString)) {
+  if (mapGetValue(key,
+      &v) && (QVARIANT_TYPE_ID(v) == QMetaType::Int || QVARIANT_TYPE_ID(v) == QMetaType::QString))
+  {
     bool ok;
     int i = v.toInt(&ok);
     if (ok) {
@@ -276,7 +278,9 @@ bool Config::mapGetBool(const QString & key, bool * value_out) const
   }
 
   QVariant v;
-  if (mapGetValue(key, &v) && (QVARIANT_TYPE_ID(v) == QMetaType::Bool || QVARIANT_TYPE_ID(v) == QMetaType::QString)) {
+  if (mapGetValue(key,
+      &v) && (QVARIANT_TYPE_ID(v) == QMetaType::Bool || QVARIANT_TYPE_ID(v) == QMetaType::QString))
+  {
     *value_out = v.toBool();
     return true;
   }
