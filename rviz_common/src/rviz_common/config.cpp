@@ -33,6 +33,13 @@
 
 #include <QLocale>
 #include <QString>
+#include <QtCore/qglobal.h>
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#define QVARIANT_TYPE_ID(v) (v).typeId()
+#else
+#define QVARIANT_TYPE_ID(v) static_cast<int>((v).type())
+#endif
 
 namespace rviz_common
 {
@@ -224,7 +231,7 @@ bool Config::mapGetValue(const QString & key, QVariant * value_out) const
 bool Config::mapGetInt(const QString & key, int * value_out) const
 {
   QVariant v;
-  if (mapGetValue(key, &v) && (v.typeId() == QMetaType::Int || v.typeId() == QMetaType::QString)) {
+  if (mapGetValue(key, &v) && (QVARIANT_TYPE_ID(v) == QMetaType::Int || QVARIANT_TYPE_ID(v) == QMetaType::QString)) {
     bool ok;
     int i = v.toInt(&ok);
     if (ok) {
@@ -240,9 +247,9 @@ bool Config::mapGetFloat(const QString & key, float * value_out) const
   QVariant v;
   if (
     mapGetValue(key, &v) &&
-    (v.typeId() == QMetaType::Float ||
-    v.typeId() == QMetaType::Double ||
-    v.typeId() == QMetaType::QString))
+    (QVARIANT_TYPE_ID(v) == QMetaType::Float ||
+    QVARIANT_TYPE_ID(v) == QMetaType::Double ||
+    QVARIANT_TYPE_ID(v) == QMetaType::QString))
   {
     bool ok;
     float f = v.toFloat(&ok);
@@ -269,7 +276,7 @@ bool Config::mapGetBool(const QString & key, bool * value_out) const
   }
 
   QVariant v;
-  if (mapGetValue(key, &v) && (v.typeId() == QMetaType::Bool || v.typeId() == QMetaType::QString)) {
+  if (mapGetValue(key, &v) && (QVARIANT_TYPE_ID(v) == QMetaType::Bool || QVARIANT_TYPE_ID(v) == QMetaType::QString)) {
     *value_out = v.toBool();
     return true;
   }
@@ -279,7 +286,7 @@ bool Config::mapGetBool(const QString & key, bool * value_out) const
 bool Config::mapGetString(const QString & key, QString * value_out) const
 {
   QVariant v;
-  if (mapGetValue(key, &v) && v.typeId() == QMetaType::QString) {
+  if (mapGetValue(key, &v) && QVARIANT_TYPE_ID(v) == QMetaType::QString) {
     *value_out = v.toString();
     return true;
   }
