@@ -160,7 +160,7 @@ void RenderPanel::onRenderWindowMouseEvents(QMouseEvent * event)
   int last_x = mouse_x_;
   int last_y = mouse_y_;
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
   mouse_x_ = event->position().x();
   mouse_y_ = event->position().y();
 #else
