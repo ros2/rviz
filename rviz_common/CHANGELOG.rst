@@ -2,6 +2,12 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.2.0 (2026-05-15)
+-------------------
+* Removed Qt6 warnings (`#1704 <https://github.com/ros2/rviz/issues/1704>`_)
+* Fixed regresion is RHEL (`#1703 <https://github.com/ros2/rviz/issues/1703>`_)
+* Contributors: Alejandro Hernández Cordero
+
 15.1.20 (2026-04-14)
 --------------------
 
