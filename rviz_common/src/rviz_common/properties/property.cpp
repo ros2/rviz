@@ -41,6 +41,13 @@
 #include <QSpinBox>  // NOLINT: cpplint is unable to handle the include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
+#include <QtCore/qglobal.h>  // NOLINT: cpplint is unable to handle the include order here
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#define QVARIANT_TYPE_ID(v) (v).typeId()
+#else
+#define QVARIANT_TYPE_ID(v) static_cast<int>((v).type())
+#endif
 
 #include "rviz_common/properties/float_edit.hpp"
 #include "rviz_common/properties/property_tree_model.hpp"
@@ -278,7 +285,8 @@ QVariant Property::getViewData(int column, int role) const
     case 1:  // right column: values
       switch (role) {
         case Qt::DisplayRole:
-        case Qt::EditRole: return QVARIANT_TYPE_ID(value_) == QMetaType::Bool ? QVariant() : getValue();
+        case Qt::EditRole: return QVARIANT_TYPE_ID(value_) ==
+                 QMetaType::Bool ? QVariant() : getValue();
         case Qt::CheckStateRole:
           if (QVARIANT_TYPE_ID(value_) == QMetaType::Bool) {
             return value_.toBool() ? Qt::Checked : Qt::Unchecked;

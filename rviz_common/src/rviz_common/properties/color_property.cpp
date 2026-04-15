@@ -33,6 +33,7 @@
 #include <QString>
 #include <QStringList>
 #include <QStyleOptionViewItem>
+#include <QtCore/qglobal.h>
 
 #include "rviz_common/properties/parse_color.hpp"
 #include "rviz_common/properties/color_property.hpp"
