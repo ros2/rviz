@@ -708,7 +708,7 @@ void VisualizationFrame::loadDisplayConfig(const QString & qpath)
     if (!std::filesystem::exists(actual_load_path)) {
       RVIZ_COMMON_LOG_ERROR_STREAM(
         "Default display config '" <<
-          actual_load_path.c_str() << "' not found.  RViz will be very empty at first.");
+          actual_load_path.string() << "' not found.  RViz will be very empty at first.");
       return;
     }
   }
