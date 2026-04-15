@@ -80,7 +80,8 @@ public:
     Qt::MouseButton button, Qt::KeyboardModifiers modifiers = Qt::NoModifier)
   {
     auto mouseEvent = new QMouseEvent(
-      QMouseEvent::MouseMove, QPointF(to_x, to_y), Qt::LeftButton, button, modifiers);
+      QMouseEvent::MouseMove, QPointF(to_x, to_y), QPointF(to_x, to_y), Qt::LeftButton, button,
+      modifiers);
     return {render_panel_.get(), mouseEvent, from_x, from_y};
   }
 
@@ -134,7 +135,8 @@ private:
   rviz_common::ViewportMouseEvent generateMouseEvent(
     int x, int y, QMouseEvent::Type type, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
   {
-    auto mouseEvent = new QMouseEvent(type, QPointF(x, y), button, button, modifiers);
+    auto mouseEvent = new QMouseEvent(type, QPointF(x, y), QPointF(x, y), button, button,
+      modifiers);
     return {render_panel_.get(), mouseEvent, x, y};
   }
 

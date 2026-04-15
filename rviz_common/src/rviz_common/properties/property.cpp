@@ -53,6 +53,12 @@
 #include "rviz_common/properties/property_tree_model.hpp"
 #include "rviz_common/logging.hpp"
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#define QVARIANT_TYPE_ID(v) (v).typeId()
+#else
+#define QVARIANT_TYPE_ID(v) static_cast<int>((v).type())
+#endif
+
 namespace rviz_common
 {
 namespace properties

@@ -93,7 +93,11 @@ void SplitterHandle::mousePressEvent(QMouseEvent * event)
 {
   if (event->button() == Qt::LeftButton) {
     // position of mouse press inside this QWidget
-    x_press_offset_ = event->x();
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    x_press_offset_ = static_cast<int>(event->position().x());
+#else
+    x_press_offset_ = event->pos().x();
+#endif
   }
 }
 
@@ -102,7 +106,11 @@ void SplitterHandle::mouseMoveEvent(QMouseEvent * event)
   int padding = 55;
 
   if (event->buttons() & Qt::LeftButton) {
-    QPoint pos_rel_parent = parent_->mapFromGlobal(event->globalPos() );
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    QPoint pos_rel_parent = parent_->mapFromGlobal(event->globalPosition().toPoint());
+#else
+    QPoint pos_rel_parent = parent_->mapFromGlobal(event->globalPos());
+#endif
 
     int new_x = pos_rel_parent.x() - x_press_offset_ - parent_->columnViewportPosition(0);
 
