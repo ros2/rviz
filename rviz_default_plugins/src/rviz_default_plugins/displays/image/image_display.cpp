@@ -52,6 +52,7 @@
 #include <unordered_set>
 
 #include "image_transport/camera_common.hpp"
+#include "image_transport/exception.hpp"
 #include "image_transport/image_transport.hpp"
 #include "image_transport/subscriber.hpp"
 #include "image_transport/subscriber_plugin.hpp"
@@ -158,8 +159,11 @@ void ImageDisplay::onInitialize()
     }
   }
   // Update the message types to allow in the topic_property_
-  dynamic_cast<rviz_common::properties::RosTopicMultiTypeProperty *>(topic_property_)
-  ->setMessageTypes(message_types);
+  auto * multi_type_property =
+    dynamic_cast<rviz_common::properties::RosTopicMultiTypeProperty *>(topic_property_);
+  if (multi_type_property) {
+    multi_type_property->setMessageTypes(message_types);
+  }
   // Register this panel for the discovered message types
   context_->updatePluginMessageTypes(this->getClassId(), message_types);
 }
@@ -169,7 +173,10 @@ ImageDisplay::~ImageDisplay()
   unsubscribe();
 }
 
-void ImageDisplay::onEnable() {subscribe();}
+void ImageDisplay::onEnable()
+{
+  subscribe();
+}
 
 void ImageDisplay::onDisable()
 {
@@ -274,6 +281,10 @@ void ImageDisplay::subscribe()
     setStatus(
       rviz_common::properties::StatusProperty::Error, "Topic",
       QString("Error subscribing: ") + e.what());
+  } catch (image_transport::TransportLoadException & e) {
+    setStatus(
+      rviz_common::properties::StatusProperty::Error, "Topic",
+      QString("Error subscribing: ") + e.what());
   }
 }
 
@@ -289,7 +300,12 @@ void ImageDisplay::resetSubscription()
   context_->queueRender();
 }
 
-void ImageDisplay::unsubscribe() {subscription_->unsubscribe();}
+void ImageDisplay::unsubscribe()
+{
+  if (subscription_) {
+    subscription_->unsubscribe();
+  }
+}
 
 void ImageDisplay::updateNormalizeOptions()
 {

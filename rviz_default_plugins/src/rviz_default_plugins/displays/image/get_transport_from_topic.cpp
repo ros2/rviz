@@ -34,6 +34,7 @@
 #include "image_transport/camera_common.hpp"
 #include "image_transport/subscriber_plugin.hpp"
 #include "pluginlib/class_loader.hpp"
+#include "rcutils/logging_macros.h"
 #include "rviz_default_plugins/displays/image/get_transport_from_topic.hpp"
 
 namespace rviz_default_plugins
@@ -61,7 +62,14 @@ const std::unordered_set<std::string> & getKnownNonRawTransports()
             }
           }
         }
+      } catch (const std::exception & e) {
+        RCUTILS_LOG_WARN_NAMED(
+          "rviz_default_plugins",
+          "Failed to load image_transport subscriber plugins: %s", e.what());
       } catch (...) {
+        RCUTILS_LOG_WARN_NAMED(
+          "rviz_default_plugins",
+          "Failed to load image_transport subscriber plugins: unknown error");
       }
       return result;
     }();

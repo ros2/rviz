@@ -103,7 +103,7 @@ QSet<QString> DisplayFactory::getMessageTypes(const QString & class_id)
   }
   // If class_id was not found in the xml description, add an empty
   // cache element to avoid re-parsing the xml next time
-  if (message_type_cache_.find(class_id) == message_type_cache_.end() ) {
+  if (message_type_cache_.find(class_id) == message_type_cache_.end()) {
     message_type_cache_[class_id] = QSet<QString>();
   }
   return message_type_cache_[class_id];
