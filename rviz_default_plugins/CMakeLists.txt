@@ -945,8 +945,6 @@ if(BUILD_TESTING)
     ${SKIP_VISUAL_TESTS}
     TIMEOUT 180)
   if(TARGET image_display_visual_test)
-    find_package(OpenCV REQUIRED)
-    include_directories(${OpenCV_INCLUDE_DIRS})
     target_include_directories(image_display_visual_test PRIVATE test)
     target_link_libraries(image_display_visual_test
       Qt${QT_VERSION_MAJOR}::Test
@@ -954,7 +952,6 @@ if(BUILD_TESTING)
       rclcpp::rclcpp
       sensor_msgs::sensor_msgs
       std_msgs::std_msgs
-      ${OpenCV_LIBRARIES}
     )
   endif()
 
