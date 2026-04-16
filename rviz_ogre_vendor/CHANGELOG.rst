@@ -2,6 +2,16 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.2.0 (2026-05-15)
+-------------------
+
+15.1.20 (2026-04-14)
+--------------------
+
+* Add patch to remove ``binary_function`` (`#1691 <https://github.com/ros2/rviz/issues/1691>`_)
+
+* Contributors: Dhruv Patel
+
 15.1.19 (2026-03-24)
 --------------------
 * Bump cmake version and suppress warning for rviz_ogre_vendor (`#1684 <https://github.com/ros2/rviz/issues/1684>`_)

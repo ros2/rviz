@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>rviz_default_plugins</name>
-  <version>15.1.19</version>
+  <version>15.2.0</version>
   <description>
     Several default plugins for rviz to cover the basic functionality.
   </description>
@@ -48,7 +48,7 @@
   <depend>point_cloud_transport</depend>
   <depend>rclcpp</depend>
   <depend>resource_retriever</depend>
-  <depend>rviz_resource_interfaces</depend>
+  <depend>resource_retriever_service_plugin</depend>
   <depend>rviz_common</depend>
   <depend>rviz_rendering</depend>
   <depend>tf2</depend>

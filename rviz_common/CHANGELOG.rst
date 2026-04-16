@@ -2,6 +2,21 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.2.0 (2026-05-15)
+-------------------
+* Removed Qt6 warnings (`#1704 <https://github.com/ros2/rviz/issues/1704>`_)
+* Fixed regresion is RHEL (`#1703 <https://github.com/ros2/rviz/issues/1703>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.20 (2026-04-14)
+--------------------
+
+* Remove warnings (`#1693 <https://github.com/ros2/rviz/issues/1693>`_)
+* Link against ``GTest::gmock`` target (`#1699 <https://github.com/ros2/rviz/issues/1699>`_)
+* Reduce ``QFile`` dependency (`#1652 <https://github.com/ros2/rviz/issues/1652>`_)
+
+* Contributors: Alejandro Hernández Cordero, Shane Loretz
+
 15.1.19 (2026-03-24)
 --------------------
 * Use new ROSIDL aggregate CMake target (`#1688 <https://github.com/ros2/rviz/issues/1688>`_)
