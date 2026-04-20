@@ -2,6 +2,21 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.2.0 (2026-05-15)
+-------------------
+
+15.1.19 (2026-03-24)
+--------------------
+* Use new ROSIDL aggregate CMake target (`#1688 <https://github.com/ros2/rviz/issues/1688>`_)
+* Fix Qt version resolution when both Qt5 and Qt6 are installed - CMake defaults to ascending resolution and Qt5 will be found when Qt6 is desired (Rolling, L-Turtle, and beyond). (`#1689 <https://github.com/ros2/rviz/issues/1689>`_)
+* Contributors: Emerson Knapp, Nathan Brooks
+
+15.1.18 (2026-02-25)
+--------------------
+
+15.1.17 (2026-02-24)
+--------------------
+
 15.1.16 (2026-01-13)
 --------------------
 

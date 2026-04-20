@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Willow Garage, Inc.
+// Copyright (c) 2026, Open Source Robotics Foundation, Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -27,53 +27,39 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+#include "rviz_common/properties/ros_topic_multi_type_property.hpp"
 
-#include "help_panel.hpp"
-
+#include <QApplication>  // NOLINT: cpplint can't handle Qt imports
+#include <algorithm>
+#include <map>
 #include <string>
-
-#include <QDir>  // NOLINT: cpplint is unable to handle the include order here
-#include <QString>  // NOLINT: cpplint is unable to handle the include order here
-#include <QTextBrowser>  // NOLINT: cpplint is unable to handle the include order here
-#include <QVBoxLayout>  // NOLINT: cpplint is unable to handle the include order here
-
-#include "rviz_common/display_context.hpp"
+#include <vector>
 
 namespace rviz_common
 {
-
-HelpPanel::HelpPanel(QWidget * parent)
-: Panel(parent),
-  browser_(nullptr)
+namespace properties
 {
-  const auto layout = new QVBoxLayout(this);
-  browser_ = new QTextBrowser();
-  layout->addWidget(browser_);
-}
 
-HelpPanel::~HelpPanel() = default;
-
-void HelpPanel::onInitialize()
+void RosTopicMultiTypeProperty::fillTopicList()
 {
-  setHelpFile(getDisplayContext()->getHelpPath());
-}
+  QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+  clearOptions();
 
-void HelpPanel::setHelpFile(const QString & qfile_path)
-{
-  std::filesystem::path path_info(qfile_path.toStdString());
+  std::map<std::string, std::vector<std::string>> published_topics =
+    rviz_ros_node_.lock()->get_topic_names_and_types();
 
-  if (!std::filesystem::exists(path_info)) {
-    browser_->setText("Help file '" + qfile_path + "' does not exist.");
-  } else if (std::filesystem::is_directory(path_info)) {
-    browser_->setText("Help file '" + qfile_path + "' is a directory, not a file.");
-  } else {
-    QUrl url = QUrl::fromLocalFile(qfile_path);
-    if (browser_->source() == url) {
-      browser_->reload();
-    } else {
-      browser_->setSource(url);
+  for (const auto & topic : published_topics) {
+    // Only add topics whose type matches one of the allowed types.
+    for (const auto & type : topic.second) {
+      if (message_types_.contains(QString::fromStdString(type))) {
+        addOptionStd(topic.first);
+        break;  // avoid duplicates if the topic matches more than one allowed type
+      }
     }
   }
+  sortOptions();
+  QApplication::restoreOverrideCursor();
 }
 
-}  // namespace rviz_common
+}  // end namespace properties
+}  // end namespace rviz_common

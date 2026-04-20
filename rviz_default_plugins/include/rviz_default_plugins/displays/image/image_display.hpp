@@ -29,37 +29,43 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__IMAGE_DISPLAY_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__IMAGE_DISPLAY_HPP_
 
 #ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
-# include <memory>
-# include <string>
+#include <OgreMaterial.h>
+#include <OgreRenderTargetListener.h>
+#include <OgreSharedPtr.h>
 
-# include <QObject>  // NOLINT cpplint cannot handle include order here
+#include <QObject>  // NOLINT cpplint cannot handle include order here
+#include <QString>  // NOLINT cpplint cannot handle include order here
 
-# include <OgreMaterial.h>
-# include <OgreRenderTargetListener.h>
-# include <OgreSharedPtr.h>
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <unordered_set>
 
-# include "rviz_common/message_filter_display.hpp"
-# include "rviz_common/render_panel.hpp"
-# include "rviz_common/properties/bool_property.hpp"
-# include "rviz_common/properties/float_property.hpp"
-# include "rviz_common/properties/int_property.hpp"
+#include <sensor_msgs/msg/image.hpp>
 
-# include "rviz_default_plugins/displays/image/ros_image_texture_iface.hpp"
-# include "rviz_default_plugins/visibility_control.hpp"
-#include "rviz_default_plugins/displays/image/image_transport_display.hpp"
+#include "rviz_common/message_filter_display.hpp"
+#include "rviz_common/properties/bool_property.hpp"
+#include "rviz_common/properties/enum_property.hpp"
+#include "rviz_common/properties/float_property.hpp"
+#include "rviz_common/properties/int_property.hpp"
+#include "rviz_common/render_panel.hpp"
+#include "rviz_default_plugins/displays/image/ros_image_texture_iface.hpp"
+#include "rviz_default_plugins/visibility_control.hpp"
+#include "get_transport_from_topic.hpp"
+#include "image_transport/image_transport.hpp"
+#include "image_transport/subscriber_filter.hpp"
+#include "rviz_common/ros_topic_display.hpp"
 #endif
-
 
 namespace Ogre
 {
 class SceneNode;
 class Rectangle2D;
-}
+}  // namespace Ogre
 
 namespace rviz_default_plugins
 {
@@ -70,8 +76,7 @@ namespace displays
  * \class ImageDisplay
  *
  */
-class RVIZ_DEFAULT_PLUGINS_PUBLIC ImageDisplay : public
-  rviz_default_plugins::displays::ImageTransportDisplay<sensor_msgs::msg::Image>
+class RVIZ_DEFAULT_PLUGINS_PUBLIC ImageDisplay : public rviz_common::_RosTopicDisplay
 {
   Q_OBJECT
 
@@ -80,7 +85,6 @@ public:
   ImageDisplay();
   ~ImageDisplay() override;
 
-  // Overrides from Display
   void onInitialize() override;
   void update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt) override;
   void reset() override;
@@ -88,13 +92,29 @@ public:
 public Q_SLOTS:
   virtual void updateNormalizeOptions();
 
+protected Q_SLOTS:
+  virtual void subscribe();
+
 protected:
-  // overrides from Display
   void onEnable() override;
   void onDisable() override;
+  virtual void unsubscribe();
+  void updateTopic() override;
+  void transformerChangedCallback() override;
+  void resetSubscription();
+  void incomingMessage(const sensor_msgs::msg::Image::ConstSharedPtr & img_msg);
+  void setTopic(const QString & topic, const QString & datatype) override;
 
   /* This is called by incomingMessage(). */
-  void processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg) override;
+  virtual void processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg);
+
+  std::shared_ptr<image_transport::SubscriberFilter> subscription_;
+  uint32_t messages_received_;
+  rclcpp::Time subscription_start_time_;
+  message_filters::Connection subscription_callback_;
+  std::unordered_set<std::string> unknown_transports_;
+  std::unique_ptr<ROSImageTextureIface> texture_;
+  std::unique_ptr<rviz_common::RenderPanel> render_panel_;
 
 private:
   void setupScreenRectangle();
@@ -105,10 +125,7 @@ private:
   std::unique_ptr<Ogre::Rectangle2D> screen_rect_;
   Ogre::MaterialPtr material_;
 
-  std::unique_ptr<ROSImageTextureIface> texture_;
-
-  std::unique_ptr<rviz_common::RenderPanel> render_panel_;
-
+  rviz_common::properties::EnumProperty * transport_override_property_;
   rviz_common::properties::BoolProperty * normalize_property_;
   rviz_common::properties::FloatProperty * min_property_;
   rviz_common::properties::FloatProperty * max_property_;

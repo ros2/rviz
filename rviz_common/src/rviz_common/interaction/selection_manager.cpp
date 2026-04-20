@@ -140,11 +140,13 @@ void SelectionManager::initialize()
   name += std::to_string(count++);
   highlight_rectangle_ = new Ogre::Rectangle2D(true);
 
-  static const uint32_t texture_data[1] = {0xffff0080};
+  // Use a mutable copy so that Ogre::MemoryDataStream does not require
+  // casting away const from a static object (which would be UB).
+  uint32_t texture_pixel = 0xffff0080;
   Ogre::DataStreamPtr pixel_stream;
   pixel_stream.reset(
     new Ogre::MemoryDataStream(
-      reinterpret_cast<void *>(const_cast<uint32_t *>(&texture_data[0])), 4
+      reinterpret_cast<void *>(&texture_pixel), 4
   ));
 
   Ogre::TexturePtr tex = Ogre::TextureManager::getSingleton().loadRawData(

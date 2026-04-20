@@ -83,7 +83,8 @@ private:
   rviz_common::ViewportMouseEvent generateMouseEvent(
     int x, int y, QMouseEvent::Type type, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
   {
-    auto mouseEvent = new QMouseEvent(type, QPointF(x, y), button, button, modifiers);
+    auto mouseEvent = new QMouseEvent(type, QPointF(x, y), QPointF(x, y), button, button,
+      modifiers);
     return {render_panel_.get(), mouseEvent, x, y};
   }
 

@@ -20,6 +20,7 @@ else()
   set(OGRE_CXX_FLAGS "-Wno-range-loop-construct ${OGRE_CXX_FLAGS}")
   set(OGRE_CXX_FLAGS "-Wno-undef ${OGRE_CXX_FLAGS}")
   set(OGRE_CXX_FLAGS "-Wno-misleading-indentation ${OGRE_CXX_FLAGS}")
+  set(OGRE_CXX_FLAGS "-Wno-format-truncation ${OGRE_CXX_FLAGS}")
 
   if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(OGRE_CXX_FLAGS "-Wno-implicit-const-int-float-conversion ${OGRE_CXX_FLAGS}")

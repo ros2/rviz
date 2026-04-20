@@ -160,8 +160,13 @@ void RenderPanel::onRenderWindowMouseEvents(QMouseEvent * event)
   int last_x = mouse_x_;
   int last_y = mouse_y_;
 
-  mouse_x_ = event->x();
-  mouse_y_ = event->y();
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  mouse_x_ = event->position().x();
+  mouse_y_ = event->position().y();
+#else
+  mouse_x_ = event->pos().x();
+  mouse_y_ = event->pos().y();
+#endif
 
   if (context_) {
     setFocus(Qt::MouseFocusReason);
@@ -215,8 +220,8 @@ void RenderPanel::wheelEvent(QWheelEvent * event)
   mouse_x_ = rounded_position.x();
   mouse_y_ = rounded_position.y();
 #else
-  mouse_x_ = event->x();
-  mouse_y_ = event->y();
+  mouse_x_ = event->pos().x();
+  mouse_y_ = event->pos().y();
 #endif
 
   if (context_) {
@@ -279,7 +284,8 @@ void RenderPanel::showContextMenu(std::shared_ptr<QMenu> menu)
   context_menu_ = menu;
   context_menu_visible_ = true;
 
-  QApplication::postEvent(this, new QContextMenuEvent(QContextMenuEvent::Mouse, QPoint()));
+  QApplication::postEvent(
+    this, new QContextMenuEvent(QContextMenuEvent::Mouse, QPoint(), mapToGlobal(QPoint())));
 }
 
 void RenderPanel::onContextMenuHide()

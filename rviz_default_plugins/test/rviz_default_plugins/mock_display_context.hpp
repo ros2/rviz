@@ -60,6 +60,8 @@ public:
   MOCK_CONST_METHOD0(getFixedFrame, QString());
   MOCK_CONST_METHOD0(getFrameCount, uint64_t());
   MOCK_CONST_METHOD0(getDisplayFactory, rviz_common::DisplayFactory * ());
+  MOCK_METHOD2(
+    updatePluginMessageTypes, void(const QString & class_id, const QSet<QString> & message_types));
   MOCK_CONST_METHOD0(
     getRosNodeAbstraction, rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr());
 

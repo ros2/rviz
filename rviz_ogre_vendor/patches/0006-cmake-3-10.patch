@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index dff54c2da..2e6b2a986 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -14,7 +14,7 @@
+ # and provide build configuration options.
+ ######################################################################
+ 
+-cmake_minimum_required(VERSION 3.3.0)
++cmake_minimum_required(VERSION 3.10)
+ 
+ set(CMAKE_CXX_STANDARD 11)
+ set(CMAKE_CXX_STANDARD_REQUIRED ON)

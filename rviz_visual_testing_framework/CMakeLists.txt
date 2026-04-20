@@ -25,8 +25,15 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 find_package(geometry_msgs REQUIRED)
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Test Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Test Widgets)
+# Avoid find_package(QT NAMES Qt6 Qt5 ...) due to CMake's default ascending path resolution
+find_package(Qt6 QUIET COMPONENTS Test Widgets)
+if(Qt6_FOUND)
+  set(QT_VERSION_MAJOR 6)
+else()
+  find_package(Qt5 REQUIRED COMPONENTS Test Widgets)
+  set(QT_VERSION_MAJOR 5)
+endif()
+set(QT_VERSION "${Qt${QT_VERSION_MAJOR}_VERSION}")
 find_package(rclcpp REQUIRED)
 find_package(rcutils REQUIRED)
 find_package(rviz_common REQUIRED)
@@ -71,7 +78,7 @@ target_include_directories(rviz_visual_testing_framework
     ${GTEST_INCLUDE_DIRS})
 
 target_link_libraries(rviz_visual_testing_framework PUBLIC
-  ${geometry_msgs_TARGETS}
+  geometry_msgs::geometry_msgs
   Qt${QT_VERSION_MAJOR}::Test
   Qt${QT_VERSION_MAJOR}::Widgets
   rclcpp::rclcpp
@@ -79,7 +86,7 @@ target_link_libraries(rviz_visual_testing_framework PUBLIC
   rviz_common::rviz_common
   rviz_ogre_vendor::OgreMain
   rviz_rendering::rviz_rendering
-  ${std_msgs_TARGETS}
+  std_msgs::std_msgs
   tf2::tf2
   tf2_ros::tf2_ros
 )

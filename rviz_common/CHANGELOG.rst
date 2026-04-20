@@ -2,6 +2,42 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.2.0 (2026-05-15)
+-------------------
+* Removed Qt6 warnings (`#1704 <https://github.com/ros2/rviz/issues/1704>`_)
+* Fixed regresion is RHEL (`#1703 <https://github.com/ros2/rviz/issues/1703>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.20 (2026-04-14)
+--------------------
+
+* Remove warnings (`#1693 <https://github.com/ros2/rviz/issues/1693>`_)
+* Link against ``GTest::gmock`` target (`#1699 <https://github.com/ros2/rviz/issues/1699>`_)
+* Reduce ``QFile`` dependency (`#1652 <https://github.com/ros2/rviz/issues/1652>`_)
+
+* Contributors: Alejandro Hernández Cordero, Shane Loretz
+
+15.1.19 (2026-03-24)
+--------------------
+* Use new ROSIDL aggregate CMake target (`#1688 <https://github.com/ros2/rviz/issues/1688>`_)
+* Fix Qt version resolution when both Qt5 and Qt6 are installed - CMake defaults to ascending resolution and Qt5 will be found when Qt6 is desired (Rolling, L-Turtle, and beyond). (`#1689 <https://github.com/ros2/rviz/issues/1689>`_)
+* Cleanups in rviz_common (`#1686 <https://github.com/ros2/rviz/issues/1686>`_)
+* Add tests for shallow and deep copy in Config (`#1682 <https://github.com/ros2/rviz/issues/1682>`_)
+* Build performance optimizations for rviz_common (`#1677 <https://github.com/ros2/rviz/issues/1677>`_)
+* Contributors: Alejandro Hernández Cordero, Emerson Knapp, Michael Carroll, Nathan Brooks, Oscmoar07
+
+15.1.18 (2026-02-25)
+--------------------
+* Use get_package_share_path (`#1671 <https://github.com/ros2/rviz/issues/1671>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.17 (2026-02-24)
+--------------------
+* Fix setHidden regression in PropertyTreeWidget (`#1667 <https://github.com/ros2/rviz/issues/1667>`_)
+* Add topic name filtering when adding new visualizations (`#1662 <https://github.com/ros2/rviz/issues/1662>`_)
+* use QPointer in QTimer::singleShot to prevent use-after-free (`#1657 <https://github.com/ros2/rviz/issues/1657>`_)
+* Contributors: Mateusz Żak, Matteo Princisgh, t0k0shi
+
 15.1.16 (2026-01-13)
 --------------------
 * Fix Not loading plugins due to incorrect package path (`#1651 <https://github.com/ros2/rviz/issues/1651>`_)

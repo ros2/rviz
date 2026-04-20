@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Willow Garage, Inc.
+// Copyright (c) 2026, Open Source Robotics Foundation, Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -27,53 +27,56 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+#ifndef RVIZ_COMMON__PROPERTIES__ROS_TOPIC_MULTI_TYPE_PROPERTY_HPP_
+#define RVIZ_COMMON__PROPERTIES__ROS_TOPIC_MULTI_TYPE_PROPERTY_HPP_
 
-#include "help_panel.hpp"
+#include <QSet>
+#include <QString>
 
-#include <string>
-
-#include <QDir>  // NOLINT: cpplint is unable to handle the include order here
-#include <QString>  // NOLINT: cpplint is unable to handle the include order here
-#include <QTextBrowser>  // NOLINT: cpplint is unable to handle the include order here
-#include <QVBoxLayout>  // NOLINT: cpplint is unable to handle the include order here
-
-#include "rviz_common/display_context.hpp"
+#include "rviz_common/properties/ros_topic_property.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
-
-HelpPanel::HelpPanel(QWidget * parent)
-: Panel(parent),
-  browser_(nullptr)
+namespace properties
 {
-  const auto layout = new QVBoxLayout(this);
-  browser_ = new QTextBrowser();
-  layout->addWidget(browser_);
-}
 
-HelpPanel::~HelpPanel() = default;
-
-void HelpPanel::onInitialize()
+// Like RosTopicProperty but can accept multiple message types
+class RVIZ_COMMON_PUBLIC RosTopicMultiTypeProperty : public RosTopicProperty
 {
-  setHelpFile(getDisplayContext()->getHelpPath());
-}
+  Q_OBJECT
 
-void HelpPanel::setHelpFile(const QString & qfile_path)
-{
-  std::filesystem::path path_info(qfile_path.toStdString());
-
-  if (!std::filesystem::exists(path_info)) {
-    browser_->setText("Help file '" + qfile_path + "' does not exist.");
-  } else if (std::filesystem::is_directory(path_info)) {
-    browser_->setText("Help file '" + qfile_path + "' is a directory, not a file.");
-  } else {
-    QUrl url = QUrl::fromLocalFile(qfile_path);
-    if (browser_->source() == url) {
-      browser_->reload();
-    } else {
-      browser_->setSource(url);
-    }
+public:
+  explicit RosTopicMultiTypeProperty(
+    const QString & name = QString(), const QString & default_value = QString(),
+    const QSet<QString> & message_types = QSet<QString>(),
+    const QString & description = QString(), Property * parent = nullptr,
+    const char * changed_slot = nullptr, QObject * receiver = nullptr)
+  : RosTopicProperty(name, default_value, "", description, parent, changed_slot, receiver),
+    message_types_(message_types)
+  {
   }
-}
 
-}  // namespace rviz_common
+  void setMessageTypes(const QSet<QString> & message_types)
+  {
+    message_types_ = message_types;
+  }
+
+  QSet<QString> getMessageTypes() const {return message_types_;}
+
+protected Q_SLOTS:
+  void fillTopicList() override;
+
+private:
+  // Hide the parent class methods which only take a single type
+  using RosTopicProperty::getMessageType;
+  using RosTopicProperty::setMessageType;
+
+  // Instead of one message type, store a list of allowed types
+  QSet<QString> message_types_;
+};
+
+}  // end namespace properties
+}  // end namespace rviz_common
+
+#endif  // RVIZ_COMMON__PROPERTIES__ROS_TOPIC_MULTI_TYPE_PROPERTY_HPP_

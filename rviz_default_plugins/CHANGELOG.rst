@@ -2,6 +2,34 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.2.0 (2026-05-15)
+-------------------
+* Removed Qt6 warnings (`#1704 <https://github.com/ros2/rviz/issues/1704>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.20 (2026-04-14)
+--------------------
+
+* Switch rviz service resource retriever to use new repo's code (`#1698 <https://github.com/ros2/rviz/issues/1698>`_)
+* Link against ``GTest::gmock`` target (`#1699 <https://github.com/ros2/rviz/issues/1699>`_)
+* Improve marker common (`#1687 <https://github.com/ros2/rviz/issues/1687>`_)
+* Reduce ``QFile`` dependency (`#1652 <https://github.com/ros2/rviz/issues/1652>`_)
+
+* Contributors: Alejandro Hernández Cordero, Shane Loretz, Stoyan Gaydarov
+
+15.1.19 (2026-03-24)
+--------------------
+* Use new ROSIDL aggregate CMake target (`#1688 <https://github.com/ros2/rviz/issues/1688>`_)
+* Fix Qt version resolution when both Qt5 and Qt6 are installed - CMake defaults to ascending resolution and Qt5 will be found when Qt6 is desired (Rolling, L-Turtle, and beyond). (`#1689 <https://github.com/ros2/rviz/issues/1689>`_)
+* Remove redundant compilation of test fixtures (`#1673 <https://github.com/ros2/rviz/issues/1673>`_)
+* Contributors: Emerson Knapp, Michael Carroll, Nathan Brooks
+
+15.1.18 (2026-02-25)
+--------------------
+
+15.1.17 (2026-02-24)
+--------------------
+
 15.1.16 (2026-01-13)
 --------------------
 

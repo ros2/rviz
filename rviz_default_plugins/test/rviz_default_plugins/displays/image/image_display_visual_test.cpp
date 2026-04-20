@@ -37,8 +37,9 @@
 #include "../../page_objects/image_display_page_object.hpp"
 #include "../../publishers/image_publisher.hpp"
 
+
 TEST_F(VisualTestFixture, test_image_display_with_published_image) {
-  auto path_publisher = std::make_unique<VisualTestPublisher>(
+  auto image_publisher = std::make_unique<VisualTestPublisher>(
     std::make_shared<nodes::ImagePublisher>(), "image_frame");
 
   setCamPose(Ogre::Vector3(0, 0, 16));
