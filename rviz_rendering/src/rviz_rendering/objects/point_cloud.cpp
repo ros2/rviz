@@ -294,7 +294,11 @@ void PointCloud::clear()
 
   if (getParentSceneNode()) {
     for (auto const & renderable : renderables_) {
-      getParentSceneNode()->detachObject(renderable.get());
+      // Ogre 14.x asserts that the object is attached to this node; only
+      // detach renderables that were actually attached.
+      if (renderable->isAttached()) {
+        getParentSceneNode()->detachObject(renderable.get());
+      }
     }
     getParentSceneNode()->needUpdate();
   }
