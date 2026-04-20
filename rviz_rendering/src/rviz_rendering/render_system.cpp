@@ -101,13 +101,9 @@ void RenderSystem::Destroy()
 #if __linux__
   if (this->dummyDisplay) {
     Display * x11Display = static_cast<Display *>(this->dummyDisplay);
-    GLXContext x11Context = static_cast<GLXContext>(this->dummyContext);
-    glXDestroyContext(x11Display, x11Context);
     XDestroyWindow(x11Display, this->dummy_window_id_);
     XCloseDisplay(x11Display);
     this->dummyDisplay = nullptr;
-    XFree(this->dummyVisual);
-    this->dummyVisual = nullptr;
   }
 #endif
   instance_ = 0;
@@ -190,35 +186,21 @@ RenderSystem::setupDummyWindowId()
 {
   this->dummy_window_id_ = 0;
 #ifdef __linux__
-  this->dummyDisplay = XOpenDisplay(0);
+  this->dummyDisplay = XOpenDisplay(nullptr);
   if (!this->dummyDisplay) {
-    std::cerr << "Unable to open display: " << XDisplayName(0) << std::endl;
+    std::cerr << "Unable to open display: " << XDisplayName(nullptr) << std::endl;
     return;
   }
   Display * x11Display = static_cast<Display *>(this->dummyDisplay);
 
   int screen = DefaultScreen(x11Display);
 
-  int attribList[] = {GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 16,
-    GLX_STENCIL_SIZE, 8, None};
-
-  this->dummyVisual = glXChooseVisual(x11Display, screen, attribList);
-  if (!this->dummyVisual) {
-    std::cerr << "Unable to create glx visual" << std::endl;
-    return;
-  }
-
   this->dummy_window_id_ = XCreateSimpleWindow(
-    x11Display, RootWindow(this->dummyDisplay, screen), 0, 0, 1, 1, 0, 0, 0);
+    x11Display, RootWindow(x11Display, screen), 0, 0, 1, 1, 0, 0, 0);
 
-  this->dummyContext = glXCreateContext(x11Display, this->dummyVisual, nullptr, 1);
-  GLXContext x11Context = static_cast<GLXContext>(this->dummyContext);
-  if (!this->dummyContext) {
-    std::cerr << "Unable to create glx context" << std::endl;
-    return;
-  }
-
-  glXMakeCurrent(x11Display, this->dummy_window_id_, x11Context);
+  // Ensure the server has processed the window creation before Ogre
+  // (on a separate display connection) queries the window.
+  XSync(x11Display, False);
 #endif
 }
 
