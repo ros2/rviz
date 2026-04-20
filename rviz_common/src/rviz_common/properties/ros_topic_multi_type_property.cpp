@@ -1,4 +1,4 @@
-// Copyright (c) 2020, TNG Technology Consulting GmbH.
+// Copyright (c) 2026, Open Source Robotics Foundation, Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -27,27 +27,39 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+#include "rviz_common/properties/ros_topic_multi_type_property.hpp"
 
-#include <gmock/gmock.h>
+#include <QApplication>  // NOLINT: cpplint can't handle Qt imports
+#include <algorithm>
+#include <map>
 #include <string>
+#include <vector>
 
-#include "rviz_default_plugins/displays/image/get_transport_from_topic.hpp"
-
-using namespace rviz_default_plugins::displays;  //  NOLINT
-
-TEST(getTransportFromTopicTest, get_transport_from_topic_finds_right_transport)
+namespace rviz_common
 {
-  EXPECT_EQ(getTransportFromTopic("/image_transport"), "raw");
-  EXPECT_EQ(getTransportFromTopic("/image_compressed"), "raw");
-  EXPECT_EQ(getTransportFromTopic("/topic_name/publisher_name/compressed_and_theora"), "raw");
+namespace properties
+{
+
+void RosTopicMultiTypeProperty::fillTopicList()
+{
+  QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+  clearOptions();
+
+  std::map<std::string, std::vector<std::string>> published_topics =
+    rviz_ros_node_.lock()->get_topic_names_and_types();
+
+  for (const auto & topic : published_topics) {
+    // Only add topics whose type matches one of the allowed types.
+    for (const auto & type : topic.second) {
+      if (message_types_.contains(QString::fromStdString(type))) {
+        addOptionStd(topic.first);
+        break;  // avoid duplicates if the topic matches more than one allowed type
+      }
+    }
+  }
+  sortOptions();
+  QApplication::restoreOverrideCursor();
 }
 
-TEST(getBaseTopicFromTopicTest, get_transport_from_topic_finds_right_topic)
-{
-  EXPECT_EQ(getBaseTopicFromTopic("/image_transport"), "/image_transport");
-  EXPECT_EQ(getBaseTopicFromTopic("/image_compressed"), "/image_compressed");
-  EXPECT_EQ(
-    getBaseTopicFromTopic(
-      "/topic_name/publisher_name/compressed_and_theora"),
-    "/topic_name/publisher_name/compressed_and_theora");
-}
+}  // end namespace properties
+}  // end namespace rviz_common

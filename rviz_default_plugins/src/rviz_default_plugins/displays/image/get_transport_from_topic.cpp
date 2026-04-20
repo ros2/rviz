@@ -29,7 +29,12 @@
 
 
 #include <string>
+#include <unordered_set>
 
+#include "image_transport/camera_common.hpp"
+#include "image_transport/subscriber_plugin.hpp"
+#include "pluginlib/class_loader.hpp"
+#include "rcutils/logging_macros.h"
 #include "rviz_default_plugins/displays/image/get_transport_from_topic.hpp"
 
 namespace rviz_default_plugins
@@ -37,13 +42,46 @@ namespace rviz_default_plugins
 namespace displays
 {
 
+namespace
+{
+const std::unordered_set<std::string> & getKnownNonRawTransports()
+{
+  static const std::unordered_set<std::string> known_transports = []() {
+      std::unordered_set<std::string> result;
+      try {
+        pluginlib::ClassLoader<image_transport::SubscriberPlugin> sub_loader(
+          "image_transport", "image_transport::SubscriberPlugin");
+        for (const std::string & plugin_class : sub_loader.getDeclaredClasses()) {
+          const std::string message_type = image_transport::get_message_type_from_manifest(
+            sub_loader.getPluginManifestPath(plugin_class), plugin_class);
+          if (!message_type.empty()) {
+            const std::string transport_name = image_transport::get_transport_name_from_manifest(
+              sub_loader.getPluginManifestPath(plugin_class), plugin_class);
+            if (transport_name != "raw") {
+              result.insert(transport_name);
+            }
+          }
+        }
+      } catch (const std::exception & e) {
+        RCUTILS_LOG_WARN_NAMED(
+          "rviz_default_plugins",
+          "Failed to load image_transport subscriber plugins: %s", e.what());
+      } catch (...) {
+        RCUTILS_LOG_WARN_NAMED(
+          "rviz_default_plugins",
+          "Failed to load image_transport subscriber plugins: unknown error");
+      }
+      return result;
+    }();
+  return known_transports;
+}
+}  // namespace
+
 bool isRawTransport(const std::string & topic)
 {
-  std::string last_subtopic = topic.substr(topic.find_last_of('/') + 1);
-  return last_subtopic != "compressed" &&
-         last_subtopic != "compressedDepth" &&
-         last_subtopic != "theora" &&
-         last_subtopic != "ffmpeg";
+  const std::string last_subtopic = topic.substr(topic.find_last_of('/') + 1);
+  const auto & transports = getKnownNonRawTransports();
+  return transports.find(last_subtopic) == transports.end();
 }
 
 std::string getTransportFromTopic(const std::string & topic)
