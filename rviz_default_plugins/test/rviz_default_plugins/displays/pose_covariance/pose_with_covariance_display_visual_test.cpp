@@ -56,17 +56,7 @@ TEST_F(VisualTestFixture, test_pose_with_covariance_display) {
 
   auto pose_with_covariance_display = addDisplay<PoseWithCovarianceDisplayPageObject>();
   pose_with_covariance_display->setTopic("/pose_with_covariance");
-  // The reference images were captured on Qt 5 / Ogre 1.12 where some of the
-  // property edits below silently failed to commit, so we carefully match the
-  // state that actually reached the display back then:
-  //   - the "RGB" color-style combo didn't commit, leaving the default
-  //     "Unique" yellow — so we don't set RGB here;
-  //   - the arrow alpha-zero edit didn't commit either, so the arrow stayed
-  //     visible in the orientation capture — so we don't set alpha=0 here;
-  //   - the arrow colour edit committed for the first capture but had
-  //     reverted to the display default by the time the second snapshot was
-  //     taken — so we set purple for the first capture and reset to the
-  //     default red before the second one.
+  pose_with_covariance_display->setCovarianceOrientationColorStyle("RGB");
   pose_with_covariance_display->setCovarianceOrientationAlpha(1);
   pose_with_covariance_display->setCovarianceOrientationScale(5);
 
@@ -79,9 +69,7 @@ TEST_F(VisualTestFixture, test_pose_with_covariance_display) {
 
   captureMainWindow("pose_with_covariance_arrow");
 
-  // Reset arrow colour to the display's default (QColor(255, 25, 0)) so the
-  // orientation capture matches the stored reference.
-  pose_with_covariance_display->setArrowColor(255, 25, 0);
+  pose_with_covariance_display->setArrowAlpha(0);
   pose_with_covariance_display->setCovariance(true);
 
   captureMainWindow("pose_with_covariance_orientation");
