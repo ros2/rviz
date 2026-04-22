@@ -70,6 +70,11 @@ BillboardLine::BillboardLine(Ogre::SceneManager * scene_manager, Ogre::SceneNode
   static int count = 0;
   std::string material_name = "BillboardLineMaterial" + std::to_string(count++);
   material_ = MaterialManager::createMaterialWithNoLighting(material_name);
+  // Colour is supplied per-vertex on each BillboardChain element; tell the
+  // pass (and the RTShaderSystem-generated shader) to read the diffuse
+  // channel from the vertex stream so those colours actually reach the
+  // fragment output.
+  material_->getTechnique(0)->getPass(0)->setVertexColourTracking(Ogre::TVC_DIFFUSE);
 
   setNumLines(num_lines_);
   setMaxPointsPerLine(max_points_per_line_);
@@ -197,8 +202,42 @@ void BillboardLine::addPoint(const Ogre::Vector3 & point, const Ogre::ColourValu
   e.position = point;
   e.width = width_;
   e.colour = color;
-  chain_containers_[current_chain_container_]->addChainElement(
-    current_line_ % chains_per_container_, e);
+  auto * chain = chain_containers_[current_chain_container_];
+  const auto chain_idx =
+    static_cast<size_t>(current_line_ % chains_per_container_);
+  chain->addChainElement(chain_idx, e);
+
+  // Adding this point promotes the previously-last element to a middle
+  // element. BillboardChain computes its tangent as (next - prev), so the
+  // quad width at a sharp turn projects only width*cos(theta/2) along each
+  // outgoing segment, which leaves a visible gap where the neighbouring
+  // quads meet. Widen the corner element by the miter factor (1/cos(theta/2))
+  // so the corner quad still covers a span of `width_` along both segments.
+  const size_t n = chain->getNumChainElements(chain_idx);
+  if (n >= 3) {
+    applyMiterWidthAt(chain_idx, n - 2);
+  }
+}
+
+void BillboardLine::applyMiterWidthAt(size_t chain_idx, size_t elem_idx)
+{
+  auto * chain = chain_containers_[current_chain_container_];
+  const auto prev = chain->getChainElement(chain_idx, elem_idx - 1).position;
+  auto corner = chain->getChainElement(chain_idx, elem_idx);
+  const auto next = chain->getChainElement(chain_idx, elem_idx + 1).position;
+
+  const Ogre::Vector3 in_dir = (corner.position - prev).normalisedCopy();
+  const Ogre::Vector3 out_dir = (next - corner.position).normalisedCopy();
+  const float cos_turn =
+    Ogre::Math::Clamp(in_dir.dotProduct(out_dir), -1.0f, 1.0f);
+  // cos(theta/2) using the half-angle identity, guarding against the
+  // degenerate 180° case (reversing direction) that would otherwise divide
+  // by zero.
+  const float cos_half = std::sqrt((1.0f + cos_turn) * 0.5f);
+  const float miter = cos_half > 0.05f ? 1.0f / cos_half : 1.0f;
+
+  corner.width = width_ * miter;
+  chain->updateChainElement(chain_idx, elem_idx, corner);
 }
 
 void BillboardLine::incrementChainContainerIfNecessary()
@@ -219,6 +258,17 @@ void BillboardLine::setLineWidth(float width)
       element.width = width;
       return element;
     });
+
+  // After resetting every element to the base width, re-apply the miter
+  // widening at every interior corner so sharp turns stay seamless.
+  for (uint32_t line = 0; line < num_lines_; ++line) {
+    auto * chain = chain_containers_[line / chains_per_container_];
+    const auto chain_idx = static_cast<size_t>(line % chains_per_container_);
+    const size_t n = chain->getNumChainElements(chain_idx);
+    for (size_t i = 1; i + 1 < n; ++i) {
+      applyMiterWidthAt(chain_idx, i);
+    }
+  }
 }
 
 void BillboardLine::setPosition(const Ogre::Vector3 & position)

@@ -45,6 +45,7 @@
 #include "OgreTechnique.h"
 #include "OgreTextureManager.h"
 #include "OgreViewport.h"
+#include "RTShaderSystem/OgreShaderGenerator.h"
 
 #include "rviz_rendering/orthographic.hpp"
 #include "rviz_rendering/render_system.hpp"
@@ -187,6 +188,9 @@ RenderWindowImpl::initialize()
 
   if (!ogre_scene_manager_) {
     ogre_scene_manager_ = ogre_root->createSceneManager();
+    if (auto * generator = Ogre::RTShader::ShaderGenerator::getSingletonPtr()) {
+      generator->addSceneManager(ogre_scene_manager_);
+    }
 
     ogre_directional_light_ = ogre_scene_manager_->createLight("MainDirectional");
     ogre_directional_light_->setType(Ogre::Light::LT_DIRECTIONAL);
@@ -208,6 +212,9 @@ RenderWindowImpl::initialize()
 
   if (ogre_camera_) {
     ogre_viewport_ = ogre_render_window_->addViewport(ogre_camera_);
+    // Route all material lookups through RTShaderSystem so FFP-only techniques
+    // are replaced at render time with auto-generated shader techniques.
+    ogre_viewport_->setMaterialScheme(Ogre::MSN_SHADERGEN);
     auto bg_color = Ogre::ColourValue(0.937254902f, 0.921568627f, 0.905882353f);  // Qt background
     ogre_viewport_->setBackgroundColour(bg_color);
 

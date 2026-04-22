@@ -41,7 +41,10 @@
 
 #include <OgreRenderWindow.h>
 #include <OgreLogManager.h>
+#include <OgreMaterialManager.h>
 #include <OgreMeshManager.h>
+#include <OgreTechnique.h>
+#include <RTShaderSystem/OgreShaderGenerator.h>  // NOLINT: cpplint include-order is confused by Ogre's subdirectory layout
 
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
@@ -153,6 +156,50 @@ RenderSystem::forceNoStereo()
   RVIZ_RENDERING_LOG_INFO("Forcing Stereo OFF");
 }
 
+namespace
+{
+
+// Resolves MSN_SHADERGEN scheme lookups for FFP-only materials by asking the
+// RTShaderSystem to synthesize a shader-based technique from the Default
+// technique. Ogre 14's legacy GL FFP path does not produce lit output for
+// runtime-created materials, so every shaded material needs this fallback.
+class RvizShaderSchemeResolver : public Ogre::MaterialManager::Listener
+{
+public:
+  Ogre::Technique * handleSchemeNotFound(
+    uint16_t, const Ogre::String & scheme_name,
+    Ogre::Material * original_material, uint16_t,
+    const Ogre::Renderable *) override
+  {
+    auto * generator = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
+    if (!generator || scheme_name != Ogre::MSN_SHADERGEN) {
+      return nullptr;
+    }
+
+    if (generator->createShaderBasedTechnique(
+        *original_material, Ogre::MSN_DEFAULT, scheme_name))
+    {
+      generator->validateMaterial(
+        scheme_name, original_material->getName(), original_material->getGroup());
+      for (auto * t : original_material->getTechniques()) {
+        if (t->getSchemeName() == scheme_name) {
+          return t;
+        }
+      }
+    }
+    // Material cannot be converted to a shader-generated technique (e.g. it
+    // already ships custom GLSL programs like rviz/PointCloudBox). Fall back to
+    // the first existing technique so it still renders under MSN_SHADERGEN
+    // instead of being silently skipped.
+    if (original_material->getNumTechniques() > 0) {
+      return original_material->getTechnique(0);
+    }
+    return nullptr;
+  }
+};
+
+}  // namespace
+
 RenderSystem::RenderSystem()
 : dummy_window_id_(0), ogre_overlay_system_(nullptr), stereo_supported_(false)
 {
@@ -171,6 +218,37 @@ RenderSystem::RenderSystem()
   detectGlVersion();
   setupResources();
   Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+  setupShaderGenerator();
+}
+
+void
+RenderSystem::setupShaderGenerator()
+{
+  // RTShaderSystem needs access to its shader template library (shipped with
+  // Ogre's Media/ directory) and to the Main include dir for OgreUnifiedShader.h.
+  // Register those into the OgreInternal group before initializing the generator.
+  auto result = ament_index_cpp::get_resource("packages", "rviz_ogre_vendor");
+  if (result.resourcePath) {
+    const std::filesystem::path ogre_media =
+      result.resourcePath.value() / "opt" / "rviz_ogre_vendor" / "share" / "OGRE-14.5" / "Media";
+    const std::string group =
+      Ogre::ResourceGroupManager::INTERNAL_RESOURCE_GROUP_NAME;
+    auto & rgm = Ogre::ResourceGroupManager::getSingleton();
+    rgm.addResourceLocation((ogre_media / "RTShaderLib").string(), "FileSystem", group);
+    rgm.addResourceLocation((ogre_media / "Main").string(), "FileSystem", group);
+    rgm.initialiseResourceGroup(group);
+  }
+
+  if (!Ogre::RTShader::ShaderGenerator::initialize()) {
+    RVIZ_RENDERING_LOG_ERROR("Failed to initialize Ogre RTShaderSystem");
+    return;
+  }
+  // Per-SceneManager registration happens in RenderWindowImpl when the scene
+  // manager is created. Here we just install the scheme resolver so materials
+  // requested via the MSN_SHADERGEN scheme get shader-based techniques generated
+  // on demand.
+  static RvizShaderSchemeResolver scheme_resolver;
+  Ogre::MaterialManager::getSingleton().addListener(&scheme_resolver);
 }
 
 void
@@ -230,6 +308,7 @@ RenderSystem::detectGlVersion()
     int minor = caps->getDriverVersion().minor;
     gl_version_ = major * 100 + minor * 10;
   }
+
 
   switch (gl_version_) {
     case 200:

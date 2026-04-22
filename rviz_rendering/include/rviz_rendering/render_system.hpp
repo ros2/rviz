@@ -144,6 +144,8 @@ private:
   addAdditionalResourcesFromAmentIndex() const;
   void
   detectGlVersion();
+  void
+  setupShaderGenerator();
 
   static RenderSystem * instance_;
 

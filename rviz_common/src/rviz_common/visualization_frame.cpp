@@ -204,11 +204,16 @@ void VisualizationFrame::updateFps()
 
 void VisualizationFrame::closeEvent(QCloseEvent * event)
 {
-  if (prepareToExit()) {
+  if (shutting_down_ || prepareToExit()) {
     event->accept();
   } else {
     event->ignore();
   }
+}
+
+void VisualizationFrame::setShuttingDown(bool shutting_down)
+{
+  shutting_down_ = shutting_down;
 }
 
 void VisualizationFrame::leaveEvent(QEvent * event)
@@ -917,11 +922,16 @@ void VisualizationFrame::saveWindowGeometry(Config config)
 void VisualizationFrame::loadPanels(const Config & config)
 {
   // First destroy any existing custom panels.
-  for (int i = 0; i < custom_panels_.size(); i++) {
-    delete custom_panels_[i].dock;
-    delete custom_panels_[i].delete_action;
+  // Clear custom_panels_ up front because deleting a dock emits QObject::destroyed,
+  // which fires onPanelDeleted and mutates custom_panels_ — iterating it by index
+  // while it's being mutated would skip entries and leave stale panels behind,
+  // producing duplicate panels on the next load.
+  QList<PanelRecord> panels_to_delete;
+  panels_to_delete.swap(custom_panels_);
+  for (auto & record : panels_to_delete) {
+    delete record.dock;
+    delete record.delete_action;
   }
-  custom_panels_.clear();
 
   // Then load the ones in the config.
   int num_custom_panels = config.listLength();
@@ -960,6 +970,9 @@ void VisualizationFrame::savePanels(Config config)
 bool VisualizationFrame::prepareToExit()
 {
   if (!initialized_) {
+    return true;
+  }
+  if (shutting_down_) {
     return true;
   }
 

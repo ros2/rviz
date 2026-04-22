@@ -74,7 +74,7 @@ class RVIZ_COMMON_PUBLIC _RosTopicDisplay : public Display
 public:
   _RosTopicDisplay()
   : rviz_ros_node_(),
-    qos_profile(5)
+    qos_profile(10)
   {
     qRegisterMetaType<std::shared_ptr<const void>>();
 

@@ -49,11 +49,32 @@ int findIndex(int display_id, const std::vector<int> & displays_ids_vector)
 
 QTreeView * getDisplaysTreeView()
 {
-  return QApplication::activeWindow()
-         ->findChild<QWidget *>("Displays")
-         ->findChild<QWidget *>("Displays/DisplayPanel")
-         ->findChild<QWidget *>("DisplayPanel/TreeWithHelp")
-         ->findChild<QTreeView *>("TreeWithHelp/PropertyTree");
+  QWidget * visualization_frame = nullptr;
+  for (QWidget * top_level : QApplication::topLevelWidgets()) {
+    if (top_level->objectName() == "VisualizationFrame") {
+      visualization_frame = top_level;
+      break;
+    }
+  }
+  if (!visualization_frame) {
+    visualization_frame = QApplication::activeWindow();
+  }
+  if (!visualization_frame) {
+    return nullptr;
+  }
+  auto displays = visualization_frame->findChild<QWidget *>("Displays");
+  if (!displays) {
+    return nullptr;
+  }
+  auto display_panel = displays->findChild<QWidget *>("Displays/DisplayPanel");
+  if (!display_panel) {
+    return nullptr;
+  }
+  auto tree_with_help = display_panel->findChild<QWidget *>("DisplayPanel/TreeWithHelp");
+  if (!tree_with_help) {
+    return nullptr;
+  }
+  return tree_with_help->findChild<QTreeView *>("TreeWithHelp/PropertyTree");
 }
 
 rviz_rendering::RenderWindow * findWindow(const QString & window_name)
