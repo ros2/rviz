@@ -2,8 +2,8 @@
 Changelog for package rviz_rendering_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+15.2.2 (2026-04-24)
+-------------------
 * Use rosdep keys that select Qt5 or Qt6 by platform (`#1720 <https://github.com/ros2/rviz/issues/1720>`_)
 * Contributors: Shane Loretz
 
