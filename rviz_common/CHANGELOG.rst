@@ -2,6 +2,12 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.2.1 (2026-04-24)
+-------------------
+* Compressed Image Display (`#1288 <https://github.com/ros2/rviz//issues/1288>`_)
+* fix: Fixed compilation on MSVC 2022 (`#1706 <https://github.com/ros2/rviz//issues/1706>`_)
+* Contributors: Janosch Machowinski, Matthew Foran
+
 15.2.0 (2026-05-15)
 -------------------
 * Removed Qt6 warnings (`#1704 <https://github.com/ros2/rviz/issues/1704>`_)
