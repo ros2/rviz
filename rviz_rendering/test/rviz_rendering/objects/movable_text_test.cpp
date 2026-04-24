@@ -253,3 +253,14 @@ TEST_F(MovableTextTestFixture, EmptyCaptionDoesNotCrash) {
   movable_text->update();
   ASSERT_THAT(movable_text->getBoundingBox(), Eq(Ogre::AxisAlignedBox::BOX_NULL));
 }
+
+TEST_F(MovableTextTestFixture, bounding_box_max_components_are_not_FLT_MIN_garbage) {
+  auto movable_text = std::make_shared<rviz_rendering::MovableText>("A");
+
+  auto max = movable_text->getBoundingBox().getMaximum();
+  // Regression: TextBuffer's max_ must be initialized to lowest() (= -FLT_MAX),
+  // not min() (= smallest positive normal). With the old init, makeCeil left
+  // FLT_MIN in y/z whenever no vertex pushed those components above ~1.18e-38.
+  ASSERT_EQ(max.y, 0.0f);
+  ASSERT_EQ(max.z, 0.0f);
+}

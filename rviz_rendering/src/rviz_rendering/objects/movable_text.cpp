@@ -231,7 +231,10 @@ struct TextBuffer
   explicit TextBuffer(float * buffer)
   : buffer_(buffer),
     min_(std::numeric_limits<float>::max()),
-    max_(std::numeric_limits<float>::min()),
+    // Use lowest() (= -FLT_MAX), not min() which is the smallest positive
+    // normal value. With min(), makeCeil would never lower the y/z components
+    // to actual vertex values like 0, leaving FLT_MIN garbage in the AABB.
+    max_(std::numeric_limits<float>::lowest()),
     max_squared_radius_(0),
     top_(0),
     left_(0)
