@@ -35,6 +35,7 @@
 #include <algorithm>
 #include <memory>
 #include <mutex>
+#include <stdexcept>
 #include <string>
 #include <utility>
 #include <vector>
@@ -190,8 +191,13 @@ void SelectionManager::initialize()
 
 void SelectionManager::setTextureSize(unsigned size)
 {
-  if (size > 1024) {
-    size = 1024;
+  // Reject values above the supported maximum. A negative int passed by the
+  // caller wraps to a very large unsigned value, so this same bound catches
+  // both excessively large inputs and accidental negative inputs.
+  constexpr unsigned kMaxTextureSize = 1024;
+  if (size > kMaxTextureSize) {
+    throw std::out_of_range(
+            "SelectionManager::setTextureSize: size must be in [0, 1024]");
   }
 
   texture_size_ = size;
