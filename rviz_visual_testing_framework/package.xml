@@ -24,7 +24,7 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <build_depend>qt6-base-dev</build_depend>
+  <build_depend>qt-base-dev</build_depend>
 
   <depend>geometry_msgs</depend>
   <depend>rclcpp</depend>
