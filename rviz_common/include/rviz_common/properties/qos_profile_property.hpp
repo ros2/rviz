@@ -59,6 +59,8 @@ public:
     rclcpp::QoS default_profile = rclcpp::QoS(5)
   );
 
+  ~QosProfileProperty() override;
+
   /**
    * This function needs to be called after initialization to set the callback for when the
    * property value changes. Note that this is not done in the constructor to allow using member
