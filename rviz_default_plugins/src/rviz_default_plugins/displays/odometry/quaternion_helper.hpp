@@ -31,7 +31,9 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__ODOMETRY__QUATERNION_HELPER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__ODOMETRY__QUATERNION_HELPER_HPP_
 
+#include <algorithm>
 #include <cmath>
+#include <limits>
 
 #include <OgreQuaternion.h>
 
@@ -40,6 +42,15 @@ namespace rviz_default_plugins
 
 float ogreQuaternionAngularDistance(Ogre::Quaternion first, Ogre::Quaternion second)
 {
+  // The angular distance between zero / near-zero quaternions is undefined:
+  // normalise() would divide by ~0 and produce NaN/Inf components. Surface
+  // that explicitly so callers can detect it with std::isnan instead of
+  // silently propagating garbage.
+  constexpr float kQuaternionNormEpsilon = 1e-6f;
+  if (first.Norm() < kQuaternionNormEpsilon || second.Norm() < kQuaternionNormEpsilon) {
+    return std::numeric_limits<float>::quiet_NaN();
+  }
+
   first.normalise();
   second.normalise();
   float dot = first.Dot(second);
