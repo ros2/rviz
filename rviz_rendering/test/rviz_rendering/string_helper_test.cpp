@@ -93,3 +93,19 @@ TEST(String_Helper__Test, HandlesNothingBesidesDelimiters) {
         test_string, ',');
     ASSERT_THAT(expected, Eq(actual));
 }
+
+TEST(String_Helper__Test, preserves_carriage_return_and_form_feed_within_items) {
+  std::vector<std::string> expected {"String1", "String2\r  \f String3"};
+  std::string test_string("String1\n\t  String2\r  \f String3");
+  std::vector<std::string> actual = rviz_rendering::string_helper::splitStringIntoTrimmedItems(
+    test_string, '\n');
+  ASSERT_THAT(expected, Eq(actual));
+}
+
+TEST(String_Helper__Test, preserves_carriage_return_and_form_feed_at_item_boundaries) {
+  std::vector<std::string> expected {"\rString1\f"};
+  std::string test_string(" \t\rString1\f \t");
+  std::vector<std::string> actual = rviz_rendering::string_helper::splitStringIntoTrimmedItems(
+    test_string, '\n');
+  ASSERT_THAT(expected, Eq(actual));
+}

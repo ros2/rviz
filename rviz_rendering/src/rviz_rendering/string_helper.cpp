@@ -35,6 +35,17 @@
 #include <string>
 #include <vector>
 
+// Treat std::isspace's whitespace set minus \r and \f, so carriage returns and
+// form feeds embedded in CMake-derived strings are preserved instead of being
+// silently stripped during trimming.
+static bool is_trim_whitespace(char character)
+{
+  if (character == '\r' || character == '\f') {
+    return false;
+  }
+  return std::isspace<char>(character, std::locale(""));
+}
+
 // Used to parse strings derived from CMake
 // using the system locale, since CMake seems to take the system locale to parse strings
 std::vector<std::string> rviz_rendering::string_helper::splitStringIntoTrimmedItems(
@@ -44,20 +55,11 @@ std::vector<std::string> rviz_rendering::string_helper::splitStringIntoTrimmedIt
   std::string item;
   std::vector<std::string> filenames;
   while (std::getline(stringstream, item, delimiter)) {
-    if (std::all_of(item.begin(), item.end(), [](char character) {
-        return std::isspace<char>(character, std::locale(""));
-    }))
-    {
+    if (std::all_of(item.begin(), item.end(), is_trim_whitespace)) {
       item.clear();
     } else {
-      auto whitespace_front = std::find_if_not(
-        item.begin(), item.end(), [](char character) {
-          return std::isspace<char>(character, std::locale(""));
-        });
-      auto whitespace_back = std::find_if_not(
-        item.rbegin(), item.rend(), [](char character) {
-          return std::isspace<char>(character, std::locale(""));
-        });
+      auto whitespace_front = std::find_if_not(item.begin(), item.end(), is_trim_whitespace);
+      auto whitespace_back = std::find_if_not(item.rbegin(), item.rend(), is_trim_whitespace);
 
       // Only perform erase operation if the string is not empty
       if (whitespace_front != item.end() && whitespace_back != item.rend()) {
