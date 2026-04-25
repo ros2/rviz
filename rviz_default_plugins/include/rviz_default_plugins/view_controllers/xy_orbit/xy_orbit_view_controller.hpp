@@ -94,8 +94,6 @@ protected:
   void handleRightClick(
     rviz_common::ViewportMouseEvent & event, float distance, int32_t diff_y) override;
 
-  void setShiftOrbitStatus() override;
-
   void setNewFocalPointKeepingViewIfPossible(ViewController * source_view);
 
   void calculateNewCameraPositionAndOrientation(
