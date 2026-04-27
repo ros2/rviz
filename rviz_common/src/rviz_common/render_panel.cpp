@@ -44,12 +44,6 @@
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
 #include <QWidget>  // NOLINT: cpplint is unable to handle the include order here
-// TODO(wjwwood): remove
-#include <QDebug>  // NOLINT: cpplint is unable to handle the include order here
-#include <QMetaEnum>  // NOLINT: cpplint is unable to handle the include order here
-#include <QMetaObject>  // NOLINT: cpplint is unable to handle the include order here
-#include <QTime>  // NOLINT: cpplint is unable to handle the include order here
-
 #include "rviz_rendering/render_window.hpp"
 
 // #include "./display.hpp"
@@ -134,29 +128,8 @@ ViewController * RenderPanel::getViewController()
   return view_controller_;
 }
 
-template<typename EnumType>
-QString
-ToString(const EnumType & enumValue)
-{
-  const char * enumName = qt_getEnumName(enumValue);
-  const QMetaObject * metaObject = qt_getEnumMetaObject(enumValue);
-  if (metaObject) {
-    const int enumIndex = metaObject->indexOfEnumerator(enumName);
-    return QString("%1::%2::%3").arg(
-      metaObject->className(),
-      enumName,
-      metaObject->enumerator(enumIndex).valueToKey(enumValue));
-  }
-
-  return QString("%1::%2").arg(enumName).arg(static_cast<int>(enumValue));
-}
-
 void RenderPanel::onRenderWindowMouseEvents(QMouseEvent * event)
 {
-  // qDebug() <<
-  //   "in RenderPanel::onRenderWindowMouseEvents(): "
-  //   "[" << QTime::currentTime().toString("HH:mm:ss:zzz") << "]:" <<
-  //   "event->type() ==" << ToString(event->type());
   int last_x = mouse_x_;
   int last_y = mouse_y_;
 
