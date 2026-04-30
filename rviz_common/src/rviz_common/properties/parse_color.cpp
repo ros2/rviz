@@ -70,7 +70,11 @@ QColor parseColor(const QString & color_string)
   if (QColor::colorNames().contains(color_string, Qt::CaseInsensitive) ||
     (color_string.size() > 0 && color_string[0] == '#' ))
   {
-    new_color.setNamedColor(color_string.toLower() );
+#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
+    new_color = QColor::fromString(color_string.toLower());
+#else
+    new_color.setNamedColor(color_string.toLower());
+#endif
   }
   return new_color;
 }
