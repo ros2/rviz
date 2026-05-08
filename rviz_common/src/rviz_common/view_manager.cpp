@@ -94,12 +94,6 @@ void ViewManager::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseco
   }
 }
 
-void ViewManager::update(float wall_dt, float ros_dt)
-{
-  this->update(std::chrono::nanoseconds(std::lround(wall_dt)),
-               std::chrono::nanoseconds(std::lround(ros_dt)));
-}
-
 ViewController * ViewManager::create(const QString & class_id)
 {
   QString error;

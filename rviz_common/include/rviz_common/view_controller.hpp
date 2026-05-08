@@ -129,13 +129,6 @@ public:
    */
   virtual void update(std::chrono::nanoseconds dt, std::chrono::nanoseconds ros_dt);
 
-  /// Called at 30Hz by ViewManager::update() while this view is active.
-  /**
-   * Override with code that needs to run repeatedly.
-   */
-  [[deprecated("Use update(std::chrono::nanoseconds, std::chrono::nanoseconds)")]]
-  virtual void update(float dt, float ros_dt);
-
   /// Called when mouse events are fired.
   virtual void handleMouseEvent(ViewportMouseEvent & evt);
 
