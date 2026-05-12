@@ -713,6 +713,9 @@ void RobotLink::assignMaterialsToEntities(
   static int material_count = 0;
   if (default_material_name_.empty()) {
     default_material_ = getMaterialForLink(link);
+    if (!default_material_) {
+      default_material_ = Ogre::MaterialManager::getSingleton().getByName("RVIZ/ShadedRed");
+    }
 
     std::string cloned_name =
       default_material_->getName() + "_" + std::to_string(material_count++) + "Robot";
@@ -723,18 +726,24 @@ void RobotLink::assignMaterialsToEntities(
 
   for (uint32_t i = 0; i < entity->getNumSubEntities(); ++i) {
     default_material_ = getMaterialForLink(link, material_name);
+    const bool has_urdf_material = static_cast<bool>(default_material_);
+    if (!has_urdf_material) {
+      default_material_ = Ogre::MaterialManager::getSingleton().getByName("RVIZ/ShadedRed");
+    }
     std::string cloned_name =
       default_material_->getName() + "_" + std::to_string(material_count++) + "Robot";
 
     default_material_ = default_material_->clone(cloned_name);
     default_material_name_ = default_material_->getName();
 
-    // Assign materials only if the submesh does not have one already
+    // Assign materials only if material tag is present or submesh does not have one already
 
     Ogre::SubEntity * sub = entity->getSubEntity(i);
     const std::string & sub_material_name = sub->getMaterialName();
-
-    if (sub_material_name == "BaseWhite" || sub_material_name == "BaseWhiteNoLighting") {
+    if (has_urdf_material ||
+      sub_material_name == "BaseWhite" ||
+      sub_material_name == "BaseWhiteNoLighting")
+    {
       sub->setMaterialName(default_material_name_);
     } else {
       // Need to clone here due to how selection works.
@@ -754,7 +763,7 @@ Ogre::MaterialPtr RobotLink::getMaterialForLink(
   const urdf::LinkConstSharedPtr & link, const std::string material_name)
 {
   if (!link->visual || !link->visual->material) {
-    return Ogre::MaterialManager::getSingleton().getByName("RVIZ/ShadedRed");
+    return Ogre::MaterialPtr{};
   }
 
   static int count = 0;
