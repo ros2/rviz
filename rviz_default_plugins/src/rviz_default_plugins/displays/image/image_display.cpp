@@ -613,7 +613,7 @@ QString formatPixel(const sensor_msgs::msg::Image & msg, int px, int py)
     return prefix + QString("mono16=%1").arg(v);
   }
   if (msg.encoding == sensor_msgs::image_encodings::RGB8) {
-    return prefix + QString("R=%1 G=%2 B=%3").arg(p[0]).arg(p[1]).arg(p[2]);
+    return prefix + QString("R:%1 G:%2 B:%3").arg(p[0]).arg(p[1]).arg(p[2]);
   }
   if (msg.encoding == sensor_msgs::image_encodings::BGR8) {
     return prefix + QString("R=%1 G=%2 B=%3").arg(p[2]).arg(p[1]).arg(p[0]);
