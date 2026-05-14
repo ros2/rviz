@@ -605,31 +605,47 @@ QString formatPixel(const sensor_msgs::msg::Image & msg, int px, int py)
   const uint8_t * p = msg.data.data() + offset;
 
   if (msg.encoding == sensor_msgs::image_encodings::MONO8) {
-    return prefix + QString("mono=%1").arg(p[0]);
+    return prefix + QString("mono:%1").arg(p[0]);
   }
   if (msg.encoding == sensor_msgs::image_encodings::MONO16) {
     uint16_t v;
     std::memcpy(&v, p, sizeof(v));
-    return prefix + QString("mono16=%1").arg(v);
+    return prefix + QString("mono16:%1").arg(v);
   }
   if (msg.encoding == sensor_msgs::image_encodings::RGB8) {
-    return prefix + QString("R:%1 G:%2 B:%3").arg(p[0]).arg(p[1]).arg(p[2]);
+    return prefix + QString(
+      "<span style='color:#c00'>R:%1</span> "
+      "<span style='color:#0a0'>G:%2</span> "
+      "<span style='color:#06c'>B:%3</span>")
+      .arg(p[0]).arg(p[1]).arg(p[2]);
   }
   if (msg.encoding == sensor_msgs::image_encodings::BGR8) {
-    return prefix + QString("R=%1 G=%2 B=%3").arg(p[2]).arg(p[1]).arg(p[0]);
+    return prefix + QString(
+      "<span style='color:#c00'>R:%1</span> "
+      "<span style='color:#0a0'>G:%2</span> "
+      "<span style='color:#06c'>B:%3</span>")
+      .arg(p[2]).arg(p[1]).arg(p[0]);
   }
   if (msg.encoding == sensor_msgs::image_encodings::RGBA8) {
-    return prefix +
-           QString("R=%1 G=%2 B=%3 A=%4").arg(p[0]).arg(p[1]).arg(p[2]).arg(p[3]);
+    return prefix + QString(
+      "<span style='color:#c00'>R:%1</span> "
+      "<span style='color:#0a0'>G:%2</span> "
+      "<span style='color:#06c'>B:%3</span> "
+      "<span style='color:#aaa'>A:%4</span>")
+      .arg(p[0]).arg(p[1]).arg(p[2]).arg(p[3]);
   }
   if (msg.encoding == sensor_msgs::image_encodings::BGRA8) {
-    return prefix +
-           QString("R=%1 G=%2 B=%3 A=%4").arg(p[2]).arg(p[1]).arg(p[0]).arg(p[3]);
+    return prefix + QString(
+      "<span style='color:#c00'>R:%1</span> "
+      "<span style='color:#0a0'>G:%2</span> "
+      "<span style='color:#06c'>B:%3</span> "
+      "<span style='color:#aaa'>A:%4</span>")
+      .arg(p[2]).arg(p[1]).arg(p[0]).arg(p[3]);
   }
   if (msg.encoding == sensor_msgs::image_encodings::TYPE_32FC1) {
     float v;
     std::memcpy(&v, p, sizeof(v));
-    return prefix + QString("value=%1").arg(static_cast<double>(v));
+    return prefix + QString("value:%1").arg(static_cast<double>(v));
   }
   // Should not reach here because pixel_size>0 only for the above encodings,
   // but guard with a raw-byte fallback just in case.
