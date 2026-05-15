@@ -676,10 +676,13 @@ Ogre::Entity * RobotLink::createEntityForGeometryElement(
         rotX.FromAngleAxis(Ogre::Degree(90), Ogre::Vector3::UNIT_X);
         offset_orientation = offset_orientation * rotX;
 
-        entity = Shape::createEntity(entity_name, Shape::Cylinder, scene_manager_);
+        entity = Shape::createEntity(entity_name, Shape::Capsule, scene_manager_);
+        // Unit capsule mesh is X=Z=1 (diameter) and Y=2 (total length:
+        // cylinder length 1 + two hemispheres of radius 0.5), so the Y
+        // scale is halved.
         scale = Ogre::Vector3(
           static_cast<float>(capsule.radius * 2),
-          static_cast<float>(capsule.length + 2 * capsule.radius),
+          static_cast<float>((capsule.length + 2 * capsule.radius) / 2.0),
           static_cast<float>(capsule.radius * 2));
         break;
       }
