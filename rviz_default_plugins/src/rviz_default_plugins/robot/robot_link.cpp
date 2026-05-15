@@ -668,6 +668,21 @@ Ogre::Entity * RobotLink::createEntityForGeometryElement(
           static_cast<float>(cylinder.radius * 2));
         break;
       }
+    case urdf::Geometry::CAPSULE:
+      {
+        auto capsule = dynamic_cast<const urdf::Capsule &>(geom);
+
+        Ogre::Quaternion rotX;
+        rotX.FromAngleAxis(Ogre::Degree(90), Ogre::Vector3::UNIT_X);
+        offset_orientation = offset_orientation * rotX;
+
+        entity = Shape::createEntity(entity_name, Shape::Cylinder, scene_manager_);
+        scale = Ogre::Vector3(
+          static_cast<float>(capsule.radius * 2),
+          static_cast<float>(capsule.length + 2 * capsule.radius),
+          static_cast<float>(capsule.radius * 2));
+        break;
+      }
     case urdf::Geometry::MESH:
       {
         auto mesh = dynamic_cast<const urdf::Mesh &>(geom);
