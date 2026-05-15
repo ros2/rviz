@@ -617,14 +617,14 @@ QString formatPixel(const sensor_msgs::msg::Image & msg, int px, int py)
       "<span style='color:#c00'>R:%1</span> "
       "<span style='color:#0a0'>G:%2</span> "
       "<span style='color:#06c'>B:%3</span>")
-      .arg(p[0]).arg(p[1]).arg(p[2]);
+           .arg(p[0]).arg(p[1]).arg(p[2]);
   }
   if (msg.encoding == sensor_msgs::image_encodings::BGR8) {
     return prefix + QString(
       "<span style='color:#c00'>R:%1</span> "
       "<span style='color:#0a0'>G:%2</span> "
       "<span style='color:#06c'>B:%3</span>")
-      .arg(p[2]).arg(p[1]).arg(p[0]);
+           .arg(p[2]).arg(p[1]).arg(p[0]);
   }
   if (msg.encoding == sensor_msgs::image_encodings::RGBA8) {
     return prefix + QString(
@@ -632,7 +632,7 @@ QString formatPixel(const sensor_msgs::msg::Image & msg, int px, int py)
       "<span style='color:#0a0'>G:%2</span> "
       "<span style='color:#06c'>B:%3</span> "
       "<span style='color:#aaa'>A:%4</span>")
-      .arg(p[0]).arg(p[1]).arg(p[2]).arg(p[3]);
+           .arg(p[0]).arg(p[1]).arg(p[2]).arg(p[3]);
   }
   if (msg.encoding == sensor_msgs::image_encodings::BGRA8) {
     return prefix + QString(
@@ -640,7 +640,7 @@ QString formatPixel(const sensor_msgs::msg::Image & msg, int px, int py)
       "<span style='color:#0a0'>G:%2</span> "
       "<span style='color:#06c'>B:%3</span> "
       "<span style='color:#aaa'>A:%4</span>")
-      .arg(p[2]).arg(p[1]).arg(p[0]).arg(p[3]);
+           .arg(p[2]).arg(p[1]).arg(p[0]).arg(p[3]);
   }
   if (msg.encoding == sensor_msgs::image_encodings::TYPE_32FC1) {
     float v;
