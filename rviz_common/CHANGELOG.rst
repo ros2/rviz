@@ -2,8 +2,8 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+15.2.3 (2026-05-16)
+-------------------
 * Fixed Qcolor deprecation (`#1725 <https://github.com/ros2/rviz/issues/1725>`_) (`#1732 <https://github.com/ros2/rviz/issues/1732>`_)
 * Contributors: mergify[bot]
 
