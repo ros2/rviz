@@ -2,6 +2,11 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Don't use windeployqt (`#1738 <https://github.com/ros2/rviz/issues/1738>`_) (`#1739 <https://github.com/ros2/rviz/issues/1739>`_)
+* Contributors: mergify[bot]
+
 15.2.2 (2026-04-24)
 -------------------
 * Use rosdep keys that select Qt5 or Qt6 by platform (`#1720 <https://github.com/ros2/rviz/issues/1720>`_)
