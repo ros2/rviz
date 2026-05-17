@@ -116,6 +116,14 @@ ImageDisplay::ImageDisplay(std::unique_ptr<ROSImageTextureIface> texture)
     "Median window", 5, "Window size for median filter used for computing min/max.", this,
     SLOT(updateNormalizeOptions()));
 
+  smooth_scaling_property_ = new rviz_common::properties::BoolProperty(
+    "Smooth scaling", false,
+    "If enabled, downsampling approximately weights all pixels based on area, "
+    "providing good anti-aliasing. "
+    "When disabled, sampling uses nearest-neighbour, "
+    "which tends to show aliasing artifacts.",
+    this, SLOT(updateSmoothScaling()));
+
   got_float_image_ = false;
 }
 
@@ -133,6 +141,7 @@ void ImageDisplay::onInitialize()
   updateNormalizeOptions();
   setupScreenRectangle();
   setupRenderPanel();
+  updateSmoothScaling();
 
   render_panel_->getRenderWindow()->setupSceneAfterInit(
     [this](Ogre::SceneNode * scene_node) {
@@ -328,6 +337,21 @@ void ImageDisplay::updateNormalizeOptions()
   }
 }
 
+void ImageDisplay::updateSmoothScaling()
+{
+  texture_->setSmoothScaling(smooth_scaling_property_->getBool());
+  applySmoothScalingToMaterial(material_);
+}
+
+void ImageDisplay::applySmoothScalingToMaterial(const Ogre::MaterialPtr & material) const
+{
+  if (!material) {return;}
+  Ogre::Pass * pass = material->getTechnique(0)->getPass(0);
+  if (pass->getNumTextureUnitStates() == 0) {return;}
+  pass->getTextureUnitState(0)->setTextureFiltering(
+    smooth_scaling_property_->getBool() ? Ogre::TFO_TRILINEAR : Ogre::TFO_NONE);
+}
+
 void ImageDisplay::clear() {texture_->clear();}
 
 void ImageDisplay::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt)
@@ -402,8 +426,8 @@ void ImageDisplay::setupScreenRectangle()
 
   Ogre::TextureUnitState * tu = material_->getTechnique(0)->getPass(0)->createTextureUnitState();
   tu->setTextureName(texture_->getName());
-  tu->setTextureFiltering(Ogre::TFO_NONE);
   tu->setTextureAddressingMode(Ogre::TextureUnitState::TAM_CLAMP);
+  applySmoothScalingToMaterial(material_);
 
   material_->setCullingMode(Ogre::CULL_NONE);
   Ogre::AxisAlignedBox aabInf;

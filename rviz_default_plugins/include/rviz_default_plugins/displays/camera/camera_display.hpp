@@ -138,6 +138,12 @@ protected:
 
   void processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg) override;
 
+public Q_SLOTS:
+  // Override to also apply the filter setting to the camera display's own
+  // background and overlay materials, which are created separately from the
+  // parent ImageDisplay's material_.
+  void updateSmoothScaling() override;
+
 private Q_SLOTS:
   void updateAlpha();
 
@@ -152,7 +158,7 @@ private:
 
   void clear();
 
-  Ogre::MaterialPtr createMaterial(std::string name) const;
+  Ogre::MaterialPtr createMaterial(std::string name);
 
   std::unique_ptr<Ogre::Rectangle2D> createScreenRectangle(
     const Ogre::AxisAlignedBox & bounding_box,
