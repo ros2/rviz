@@ -148,6 +148,7 @@ protected:
 
   virtual void unsubscribe()
   {
+    subscription_callback_.disconnect();
     subscription_.reset();
   }
 
