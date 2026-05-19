@@ -309,6 +309,7 @@ void ImageDisplay::resetSubscription()
 
 void ImageDisplay::unsubscribe()
 {
+  subscription_callback_.disconnect();
   if (subscription_) {
     subscription_->unsubscribe();
   }
