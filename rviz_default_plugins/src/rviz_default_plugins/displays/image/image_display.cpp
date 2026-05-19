@@ -124,8 +124,137 @@ void ImageDisplay::onEnable()
 
 void ImageDisplay::onDisable()
 {
+<<<<<<< HEAD
   ITDClass::unsubscribe();
   clear();
+=======
+  unsubscribe();
+  reset();
+}
+
+/// Incoming message callback.
+/**
+* Checks if the message pointer
+* is valid, increments messages_received_, then calls
+* processMessage().
+*/
+void ImageDisplay::incomingMessage(const sensor_msgs::msg::Image::ConstSharedPtr & img_msg)
+{
+  if (!img_msg) {
+    return;
+  }
+
+  ++messages_received_;
+  QString topic_str = QString::number(messages_received_) + " messages received";
+  rviz_common::properties::StatusProperty::Level topic_status_level =
+    rviz_common::properties::StatusProperty::Ok;
+  // Append topic subscription frequency if we can lock rviz_ros_node_.
+  std::shared_ptr<rviz_common::ros_integration::RosNodeAbstractionIface> node_interface =
+    rviz_ros_node_.lock();
+  if (node_interface != nullptr) {
+    try {
+      const double duration =
+        (node_interface->get_raw_node()->now() - subscription_start_time_).seconds();
+      const double subscription_frequency =
+        static_cast<double>(messages_received_) / duration;
+      topic_str += " at " + QString::number(subscription_frequency, 'f', 1) + " hz.";
+    } catch (const std::runtime_error & e) {
+      if (std::string(e.what()).find("can't subtract times with different time sources") !=
+        std::string::npos)
+      {
+        topic_status_level = rviz_common::properties::StatusProperty::Warn;
+        topic_str += ". ";
+        topic_str += e.what();
+      } else {
+        throw;
+      }
+    }
+  }
+  setStatus(
+    topic_status_level,
+    "Topic",
+    topic_str);
+
+  processMessage(img_msg);
+}
+
+
+void ImageDisplay::subscribe()
+{
+  if (!isEnabled()) {
+    return;
+  }
+
+  if (topic_property_->isEmpty()) {
+    setStatus(
+      rviz_common::properties::StatusProperty::Error, "Topic",
+      QString("Error subscribing: Empty topic name"));
+    return;
+  }
+
+  // Only need to do this once but setStatusStd doesn't work in onInitialize
+  if (!unknown_transports_.empty()) {
+    std::string transports_str;
+    for (const std::string & transport : unknown_transports_) {
+      transports_str += transport + ", ";
+    }
+    // Trim the trailing comma
+    transports_str = transports_str.substr(0, transports_str.size() - 2);
+    setStatusStd(rviz_common::properties::StatusProperty::Warn,
+      "Unregistered image_transport Plugins", transports_str +
+      "\nEnsure plugins.xml includes the message_type tag!");
+  }
+
+  // Use override property for transport hint if set, otherwise deduce from topic name
+  std::string transport_hint = transport_override_property_->getStdString();
+  if (transport_hint.empty()) {
+    transport_hint = getTransportFromTopic(topic_property_->getStdString());
+  }
+  rclcpp::Node::SharedPtr node = rviz_ros_node_.lock()->get_raw_node();
+  try {
+    // image_transport::Subscriber only requires one callback for "raw" and the other types are
+    // automatically converted.
+    subscription_->subscribe(
+      *node,
+      getBaseTopicFromTopic(topic_property_->getTopicStd()),
+      transport_hint,
+      qos_profile);
+    subscription_start_time_ = node->now();
+    subscription_callback_ = subscription_->registerCallback(
+      std::bind(
+        &rviz_default_plugins::displays::ImageDisplay::incomingMessage,
+        this, std::placeholders::_1));
+    setStatus(rviz_common::properties::StatusProperty::Ok, "Topic", "OK");
+  } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
+    setStatus(
+      rviz_common::properties::StatusProperty::Error, "Topic",
+      QString("Error subscribing: ") + e.what());
+  } catch (image_transport::TransportLoadException & e) {
+    setStatus(
+      rviz_common::properties::StatusProperty::Error, "Topic",
+      QString("Error subscribing: ") + e.what());
+  }
+}
+
+void ImageDisplay::updateTopic() {resetSubscription();}
+
+void ImageDisplay::transformerChangedCallback() {resetSubscription();}
+
+void ImageDisplay::resetSubscription()
+{
+  unsubscribe();
+  reset();
+  subscribe();
+  context_->queueRender();
+}
+
+void ImageDisplay::unsubscribe()
+{
+  subscription_callback_.disconnect();
+  if (subscription_) {
+    subscription_->unsubscribe();
+  }
+>>>>>>> c853c3c4 (Make sure to disconnect subscription callback when unsubscribing (#1742))
 }
 
 void ImageDisplay::updateNormalizeOptions()
