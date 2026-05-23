@@ -61,7 +61,12 @@ ROSImageTexture::ROSImageTexture()
 : new_image_(false),
   width_(0),
   height_(0),
-  median_frames_(5)
+  median_frames_(5),
+  smooth_scaling_(false),
+  tex_smooth_(false),
+  tex_width_(0),
+  tex_height_(0),
+  tex_format_(Ogre::PF_UNKNOWN)
 {
   empty_image_.load("no_image.png", "rviz_rendering");
 

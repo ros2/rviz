@@ -171,11 +171,11 @@ private:
   // Desired smooth-scaling state (toggled by setSmoothScaling); tex_smooth_
   // tracks what the currently allocated texture actually has. They differ
   // only briefly between setSmoothScaling and the next ensureTexture call.
-  bool smooth_scaling_ = false;
-  bool tex_smooth_ = false;
-  uint32_t tex_width_ = 0;
-  uint32_t tex_height_ = 0;
-  Ogre::PixelFormat tex_format_ = Ogre::PF_UNKNOWN;
+  bool smooth_scaling_;
+  bool tex_smooth_;
+  uint32_t tex_width_;
+  uint32_t tex_height_;
+  Ogre::PixelFormat tex_format_;
 };
 
 }  // namespace displays
