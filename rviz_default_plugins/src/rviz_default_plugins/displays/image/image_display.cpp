@@ -122,10 +122,9 @@ ImageDisplay::ImageDisplay(std::unique_ptr<ROSImageTextureIface> texture)
 
   smooth_scaling_property_ = new rviz_common::properties::BoolProperty(
     "Smooth scaling", false,
-    "If enabled, downsampling approximately weights all pixels based on area, "
-    "providing good anti-aliasing. "
-    "When disabled, sampling uses nearest-neighbour, "
-    "which tends to show aliasing artifacts.",
+    "If enabled, sampling approximately weights all pixels based on area, "
+    "providing good anti-aliasing when downsampling. "
+    "If disabled, sampling uses nearest-neighbour.",
     this, SLOT(updateSmoothScaling()));
 
   got_float_image_ = false;
