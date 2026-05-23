@@ -158,7 +158,7 @@ private:
 
   void clear();
 
-  Ogre::MaterialPtr createMaterial(std::string name);
+  Ogre::MaterialPtr createMaterial(std::string name) const;
 
   std::unique_ptr<Ogre::Rectangle2D> createScreenRectangle(
     const Ogre::AxisAlignedBox & bounding_box,

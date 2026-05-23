@@ -246,7 +246,7 @@ std::unique_ptr<Ogre::Rectangle2D> CameraDisplay::createScreenRectangle(
   return screen_rect;
 }
 
-Ogre::MaterialPtr CameraDisplay::createMaterial(std::string name)
+Ogre::MaterialPtr CameraDisplay::createMaterial(std::string name) const
 {
   auto material = rviz_rendering::MaterialManager::createMaterialWithNoLighting(name);
   material->setDepthWriteEnabled(false);
