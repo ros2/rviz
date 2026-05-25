@@ -1,4 +1,5 @@
 // Copyright (c) 2009, Willow Garage, Inc.
+// Copyright (c) 2026, Arne Baeyens.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -131,6 +132,8 @@ private:
   ImageData convertUYVYToRGBData(const uint8_t * data_ptr, size_t data_size_in_bytes);
   ImageData convertYUYVToRGBData(const uint8_t * data_ptr, size_t data_size_in_bytes);
   ImageData convertNV12ToRGBData(const uint8_t * data_ptr, size_t data_size_in_bytes);
+  ImageData convertBayerToRGBData(
+    const std::string & encoding, const uint8_t * data_ptr, size_t data_size_in_bytes);
 
   ImageData setFormatAndNormalizeDataIfNecessary(
     const std::string & encoding, const uint8_t * data_ptr, size_t data_size_in_bytes);

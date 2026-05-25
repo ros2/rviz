@@ -1,6 +1,7 @@
 // Copyright (c) 2012, Willow Garage, Inc.
 // Copyright (c) 2017, Bosch Software Innovations GmbH.
 // Copyright (c) 2020, TNG Technology Consulting GmbH.
+// Copyright (c) 2026, Arne Baeyens.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -147,7 +148,11 @@ private:
   rviz_common::properties::FloatProperty * min_property_;
   rviz_common::properties::FloatProperty * max_property_;
   rviz_common::properties::IntProperty * median_buffer_size_property_;
-  bool got_float_image_;
+  // True for encodings whose pixel values need a min/max range mapping before
+  // they can be shown as 8-bit RGB: float, single-channel 16-bit, and 16-bit
+  // Bayer. Controls the visibility of the Normalize Range / Min Value /
+  // Max Value / Median window properties.
+  bool has_normalizable_range_;
 };
 
 }  // namespace displays

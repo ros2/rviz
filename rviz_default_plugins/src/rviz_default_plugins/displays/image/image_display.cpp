@@ -1,5 +1,6 @@
 // Copyright (c) 2012, Willow Garage, Inc.
 // Copyright (c) 2017, Bosch Software Innovations GmbH.
+// Copyright (c) 2026, Arne Baeyens.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -105,7 +106,8 @@ ImageDisplay::ImageDisplay(std::unique_ptr<ROSImageTextureIface> texture)
 
   normalize_property_ = new rviz_common::properties::BoolProperty(
     "Normalize Range", true,
-    "If set to true, will try to estimate the range of possible values from the received images.",
+    "If set to true, will try to estimate the range of possible values from the received images. "
+    "Applies to single-channel 16-bit, float, and 16-bit Bayer encodings.",
     this, SLOT(updateNormalizeOptions()));
 
   min_property_ = new rviz_common::properties::FloatProperty(
@@ -120,7 +122,7 @@ ImageDisplay::ImageDisplay(std::unique_ptr<ROSImageTextureIface> texture)
     "Median window", 5, "Window size for median filter used for computing min/max.", this,
     SLOT(updateNormalizeOptions()));
 
-  got_float_image_ = false;
+  has_normalizable_range_ = false;
 }
 
 // Need to override this method because of the new type RosTopicMultiTypeProperty
@@ -317,7 +319,7 @@ void ImageDisplay::unsubscribe()
 
 void ImageDisplay::updateNormalizeOptions()
 {
-  if (got_float_image_) {
+  if (has_normalizable_range_) {
     bool normalize = normalize_property_->getBool();
 
     normalize_property_->setHidden(false);
@@ -383,14 +385,18 @@ void ImageDisplay::reset()
 /* This is called by incomingMessage(). */
 void ImageDisplay::processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg)
 {
-  bool got_float_image =
+  const bool has_normalizable_range =
     msg->encoding == sensor_msgs::image_encodings::TYPE_32FC1 ||
     msg->encoding == sensor_msgs::image_encodings::TYPE_16UC1 ||
     msg->encoding == sensor_msgs::image_encodings::TYPE_16SC1 ||
-    msg->encoding == sensor_msgs::image_encodings::MONO16;
+    msg->encoding == sensor_msgs::image_encodings::MONO16 ||
+    msg->encoding == sensor_msgs::image_encodings::BAYER_RGGB16 ||
+    msg->encoding == sensor_msgs::image_encodings::BAYER_BGGR16 ||
+    msg->encoding == sensor_msgs::image_encodings::BAYER_GBRG16 ||
+    msg->encoding == sensor_msgs::image_encodings::BAYER_GRBG16;
 
-  if (got_float_image != got_float_image_) {
-    got_float_image_ = got_float_image;
+  if (has_normalizable_range != has_normalizable_range_) {
+    has_normalizable_range_ = has_normalizable_range;
     updateNormalizeOptions();
   }
   last_msg_ = msg;
