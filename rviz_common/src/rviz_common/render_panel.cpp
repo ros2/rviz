@@ -44,12 +44,6 @@
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
 #include <QWidget>  // NOLINT: cpplint is unable to handle the include order here
-// TODO(wjwwood): remove
-#include <QDebug>  // NOLINT: cpplint is unable to handle the include order here
-#include <QMetaEnum>  // NOLINT: cpplint is unable to handle the include order here
-#include <QMetaObject>  // NOLINT: cpplint is unable to handle the include order here
-#include <QTime>  // NOLINT: cpplint is unable to handle the include order here
-
 #include "rviz_rendering/render_window.hpp"
 
 // #include "./display.hpp"
@@ -134,34 +128,18 @@ ViewController * RenderPanel::getViewController()
   return view_controller_;
 }
 
-template<typename EnumType>
-QString
-ToString(const EnumType & enumValue)
-{
-  const char * enumName = qt_getEnumName(enumValue);
-  const QMetaObject * metaObject = qt_getEnumMetaObject(enumValue);
-  if (metaObject) {
-    const int enumIndex = metaObject->indexOfEnumerator(enumName);
-    return QString("%1::%2::%3").arg(
-      metaObject->className(),
-      enumName,
-      metaObject->enumerator(enumIndex).valueToKey(enumValue));
-  }
-
-  return QString("%1::%2").arg(enumName).arg(static_cast<int>(enumValue));
-}
-
 void RenderPanel::onRenderWindowMouseEvents(QMouseEvent * event)
 {
-  // qDebug() <<
-  //   "in RenderPanel::onRenderWindowMouseEvents(): "
-  //   "[" << QTime::currentTime().toString("HH:mm:ss:zzz") << "]:" <<
-  //   "event->type() ==" << ToString(event->type());
   int last_x = mouse_x_;
   int last_y = mouse_y_;
 
-  mouse_x_ = event->x();
-  mouse_y_ = event->y();
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  mouse_x_ = event->position().x();
+  mouse_y_ = event->position().y();
+#else
+  mouse_x_ = event->pos().x();
+  mouse_y_ = event->pos().y();
+#endif
 
   if (context_) {
     setFocus(Qt::MouseFocusReason);
@@ -215,8 +193,8 @@ void RenderPanel::wheelEvent(QWheelEvent * event)
   mouse_x_ = rounded_position.x();
   mouse_y_ = rounded_position.y();
 #else
-  mouse_x_ = event->x();
-  mouse_y_ = event->y();
+  mouse_x_ = event->pos().x();
+  mouse_y_ = event->pos().y();
 #endif
 
   if (context_) {
@@ -279,7 +257,8 @@ void RenderPanel::showContextMenu(std::shared_ptr<QMenu> menu)
   context_menu_ = menu;
   context_menu_visible_ = true;
 
-  QApplication::postEvent(this, new QContextMenuEvent(QContextMenuEvent::Mouse, QPoint()));
+  QApplication::postEvent(
+    this, new QContextMenuEvent(QContextMenuEvent::Mouse, QPoint(), mapToGlobal(QPoint())));
 }
 
 void RenderPanel::onContextMenuHide()

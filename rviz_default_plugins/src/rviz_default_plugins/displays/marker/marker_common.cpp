@@ -50,12 +50,15 @@
 
 #include "rviz_default_plugins/displays/marker/markers/marker_factory.hpp"
 
-#include "rviz_default_plugins/ros_resource_retriever.hpp"
+#include "resource_retriever/retriever.hpp"
+#include "resource_retriever_service_plugin/resource_retriever_service_plugin.hpp"
 
 namespace rviz_default_plugins
 {
 namespace displays
 {
+
+using ::resource_retriever_service_plugin::RosServiceResourceRetriever;
 
 MarkerCommon::MarkerCommon(rviz_common::Display * display)
 : display_(display)
@@ -75,10 +78,13 @@ void MarkerCommon::initialize(rviz_common::DisplayContext * context, Ogre::Scene
   context_ = context;
   scene_node_ = scene_node;
 
-  resource_retriever::RetrieverVec plugins;
-  plugins.push_back(std::make_shared<RosResourceRetriever>(context_->getRosNodeAbstraction()));
-  for (const auto & plugin : resource_retriever::default_plugins()) {
-    plugins.push_back(plugin);
+  resource_retriever::RetrieverVec plugins = resource_retriever::default_plugins();
+
+  auto ros_iface = context_->getRosNodeAbstraction().lock();
+  if (ros_iface) {
+    plugins.push_back(std::make_shared<RosServiceResourceRetriever>(*ros_iface->get_raw_node()));
+  } else {
+    throw std::invalid_argument("ROS node abstraction interface not valid");
   }
   retriever_ = resource_retriever::Retriever(plugins);
 
@@ -102,6 +108,7 @@ void MarkerCommon::clearMarkers()
   markers_.clear();
   markers_with_expiration_.clear();
   frame_locked_markers_.clear();
+  ns_to_ids_.clear();
   namespaces_category_->removeChildren();
   namespaces_.clear();
 }
@@ -115,44 +122,66 @@ void MarkerCommon::deleteMarker(MarkerID id)
     markers_with_expiration_.erase(it->second);
     frame_locked_markers_.erase(it->second);
     markers_.erase(it);
+    removeFromNamespaceIndex(id);
+  }
+}
+
+void MarkerCommon::removeFromNamespaceIndex(const MarkerID & id)
+{
+  auto ns_it = ns_to_ids_.find(id.first);
+  if (ns_it == ns_to_ids_.end()) {
+    return;
+  }
+  auto & ids = ns_it->second;
+  for (auto it = ids.begin(); it != ids.end(); ++it) {
+    if (*it == id) {
+      // Swap with last element and pop — O(1), order is irrelevant.
+      *it = ids.back();
+      ids.pop_back();
+      break;
+    }
+  }
+  if (ids.empty()) {
+    ns_to_ids_.erase(ns_it);
   }
 }
 
 void MarkerCommon::setVisibilityForMarkersInNamespace(const std::string & ns, bool visible)
 {
-  for (auto const & marker : markers_) {
-    if (marker.first.first == ns) {
-      marker.second->setVisible(visible);
+  auto ns_it = ns_to_ids_.find(ns);
+  if (ns_it == ns_to_ids_.end()) {
+    return;
+  }
+  for (const auto & id : ns_it->second) {
+    auto it = markers_.find(id);
+    if (it != markers_.end()) {
+      it->second->setVisible(visible);
     }
   }
 }
 
 void MarkerCommon::deleteMarkersInNamespace(const std::string & ns)
 {
-  std::vector<MarkerID> to_delete;
-
-  // TODO(anon): this is inefficient, should store every in-use id per namespace and lookup by that
-  for (auto const & marker : markers_) {
-    if (marker.first.first == ns) {
-      to_delete.push_back(marker.first);
-    }
+  auto ns_it = ns_to_ids_.find(ns);
+  if (ns_it == ns_to_ids_.end()) {
+    return;
   }
-
-  for (auto & marker : to_delete) {
-    deleteMarker(marker);
+  // Copy the ID list: deleteMarker modifies ns_to_ids_.
+  const std::vector<MarkerID> to_delete = ns_it->second;
+  for (const auto & id : to_delete) {
+    deleteMarker(id);
   }
 }
 
 void MarkerCommon::deleteAllMarkers()
 {
-  std::vector<MarkerID> to_delete;
   for (auto const & marker : markers_) {
-    to_delete.push_back(marker.first);
+    deleteMarkerStatus(marker.first);
+    markers_with_expiration_.erase(marker.second);
+    frame_locked_markers_.erase(marker.second);
   }
-
-  for (auto & marker : to_delete) {
-    deleteMarker(marker);
-  }
+  markers_.clear();
+  ns_to_ids_.clear();
 }
 
 void MarkerCommon::setMarkerStatus(MarkerID id, StatusLevel level, const std::string & text)
@@ -301,6 +330,7 @@ MarkerBasePtr MarkerCommon::createOrGetOldMarker(
     markers_with_expiration_.erase(marker);
     frame_locked_markers_.erase(marker);
     if (message->type != marker->getMessage()->type) {
+      removeFromNamespaceIndex(it->first);
       markers_.erase(it);
       marker = createMarker(message);
     }
@@ -314,7 +344,9 @@ MarkerBasePtr MarkerCommon::createMarker(
   const visualization_msgs::msg::Marker::ConstSharedPtr & message)
 {
   auto marker = marker_factory_->createMarkerForType(message->type);
-  markers_.insert(make_pair(MarkerID(message->ns, message->id), marker));
+  MarkerID id(message->ns, message->id);
+  markers_.insert(make_pair(id, marker));
+  ns_to_ids_[id.first].push_back(id);
   return marker;
 }
 

@@ -2,6 +2,27 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.0 (2026-05-06)
+-------------------
+
+15.2.2 (2026-04-24)
+-------------------
+* Use rosdep keys that select Qt5 or Qt6 by platform (`#1720 <https://github.com/ros2/rviz/issues/1720>`_)
+* Contributors: Shane Loretz
+
+15.2.1 (2026-04-24)
+-------------------
+
+15.2.0 (2026-05-15)
+-------------------
+
+15.1.20 (2026-04-14)
+--------------------
+
+* Fix build for Ubuntu 26 (`#1694 <https://github.com/ros2/rviz/issues/1694>`_)
+
+* Contributors: Michael Carlstrom
+
 15.1.19 (2026-03-24)
 --------------------
 * Fix Qt version resolution when both Qt5 and Qt6 are installed - CMake defaults to ascending resolution and Qt5 will be found when Qt6 is desired (Rolling, L-Turtle, and beyond). (`#1689 <https://github.com/ros2/rviz/issues/1689>`_)

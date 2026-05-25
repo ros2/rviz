@@ -37,6 +37,7 @@
 #include <mutex>
 #include <set>
 #include <string>
+#include <unordered_map>
 #include <vector>
 #include <utility>
 
@@ -156,11 +157,16 @@ private:
   void configureMarker(
     const visualization_msgs::msg::Marker::ConstSharedPtr & message, MarkerBasePtr & marker);
 
+  /// Remove a single MarkerID from the namespace reverse index.
+  void removeFromNamespaceIndex(const MarkerID & id);
+
   typedef std::map<MarkerID, MarkerBasePtr> M_IDToMarker;
   typedef std::set<MarkerBasePtr> S_MarkerBase;
   M_IDToMarker markers_;                  ///< Map of marker id to the marker info structure
   S_MarkerBase markers_with_expiration_;
   S_MarkerBase frame_locked_markers_;
+  /// Reverse index: namespace string -> all MarkerIDs in that namespace.
+  std::unordered_map<std::string, std::vector<MarkerID>> ns_to_ids_;
   ///< Marker message queue.  Messages are added to this as they are received, and then processed
   ///< in our update() function
   V_MarkerMessage message_queue_;

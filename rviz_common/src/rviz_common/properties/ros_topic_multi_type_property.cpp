@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Willow Garage, Inc.
+// Copyright (c) 2026, Open Source Robotics Foundation, Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -27,75 +27,39 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+#include "rviz_common/properties/ros_topic_multi_type_property.hpp"
 
-#include "rviz_common/properties/parse_color.hpp"
-
-#include <QString>
+#include <QApplication>  // NOLINT: cpplint can't handle Qt imports
+#include <algorithm>
+#include <map>
+#include <string>
+#include <vector>
 
 namespace rviz_common
 {
 namespace properties
 {
 
-static int limit(int i)
+void RosTopicMultiTypeProperty::fillTopicList()
 {
-  if (i < 0) {
-    return 0;
-  }
-  if (i > 255) {
-    return 255;
-  }
-  return i;
-}
+  QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+  clearOptions();
 
-QColor parseColor(const QString & color_string)
-{
-  if (color_string.indexOf(';') != -1) {
-    QStringList strings = color_string.split(';');
-    if (strings.size() >= 3) {
-      bool r_ok = true;
-      int r = strings[0].toInt(&r_ok);
-      bool g_ok = true;
-      int g = strings[1].toInt(&g_ok);
-      bool b_ok = true;
-      int b = strings[2].toInt(&b_ok);
-      if (r_ok && g_ok && b_ok) {
-        return QColor(limit(r), limit(g), limit(b));
+  std::map<std::string, std::vector<std::string>> published_topics =
+    rviz_ros_node_.lock()->get_topic_names_and_types();
+
+  for (const auto & topic : published_topics) {
+    // Only add topics whose type matches one of the allowed types.
+    for (const auto & type : topic.second) {
+      if (message_types_.contains(QString::fromStdString(type))) {
+        addOptionStd(topic.first);
+        break;  // avoid duplicates if the topic matches more than one allowed type
       }
     }
-    return QColor();
   }
-
-  QColor new_color;
-  if (QColor::colorNames().contains(color_string, Qt::CaseInsensitive) ||
-    (color_string.size() > 0 && color_string[0] == '#' ))
-  {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
-    new_color = QColor::fromString(color_string.toLower());
-#else
-    new_color.setNamedColor(color_string.toLower());
-#endif
-  }
-  return new_color;
+  sortOptions();
+  QApplication::restoreOverrideCursor();
 }
 
-QString printColor(const QColor & color)
-{
-  return QString("%1; %2; %3")
-         .arg(color.red() )
-         .arg(color.green() )
-         .arg(color.blue() );
-}
-
-QColor ogreToQt(const Ogre::ColourValue & c)
-{
-  return QColor::fromRgbF(c.r, c.g, c.b, c.a);
-}
-
-Ogre::ColourValue qtToOgre(const QColor & c)
-{
-  return Ogre::ColourValue(c.redF(), c.greenF(), c.blueF(), c.alphaF() );
-}
-
-}  // namespace properties
-}  // namespace rviz_common
+}  // end namespace properties
+}  // end namespace rviz_common

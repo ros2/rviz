@@ -30,13 +30,14 @@
 
 #include "rviz_default_plugins/displays/robot_model/robot_model_display.hpp"
 
+#include <fstream>
 #include <memory>
+#include <sstream>
 #include <string>
 
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 
-#include <QFile>  // NOLINT cpplint cannot handle include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "tf2_ros/transform_listener.hpp"
@@ -49,6 +50,7 @@
 #include "rviz_common/properties/string_property.hpp"
 
 #include "rviz_default_plugins/robot/robot.hpp"
+#include "rviz_default_plugins/robot/robot_joint.hpp"
 #include "rviz_default_plugins/robot/robot_link.hpp"
 #include "rviz_default_plugins/robot/tf_link_updater.hpp"
 
@@ -162,6 +164,14 @@ void RobotModelDisplay::onInitialize()
   transformer_guard_->initialize(context_);
 }
 
+void RobotModelDisplay::load(const rviz_common::Config & config)
+{
+  // Cache the "Links" subtree and replay it once the URDF has been parsed
+  // and the per-link / per-joint properties exist (done in display_urdf_content).
+  RTDClass::load(config);
+  saved_robot_config_ = config.mapGetChild("Links");
+}
+
 void RobotModelDisplay::updateAlpha()
 {
   robot_->setAlpha(alpha_property_->getFloat());
@@ -246,10 +256,13 @@ void RobotModelDisplay::load_urdf()
 void RobotModelDisplay::load_urdf_from_file(const std::string & filepath)
 {
   std::string content;
-  QFile urdf_file(QString::fromStdString(filepath));
-  if (urdf_file.open(QIODevice::ReadOnly)) {
-    content = urdf_file.readAll().toStdString();
-    urdf_file.close();
+  std::ifstream urdf_file;
+  urdf_file.open(filepath, std::ifstream::in);
+
+  if (urdf_file) {
+    std::stringstream buffer;
+    buffer << urdf_file.rdbuf();
+    content = std::string(buffer.str());
   }
   if (content.empty()) {
     clear();
@@ -283,6 +296,26 @@ void RobotModelDisplay::display_urdf_content()
 
   setStatus(StatusProperty::Ok, "URDF", "URDF parsed OK");
   robot_->load(descr);
+
+  // Re-apply per-link / per-joint settings from the saved config that were
+  // dropped during initial load() because the URDF had not yet been parsed.
+  if (saved_robot_config_.isValid()) {
+    for (const auto & name_link_pair : robot_->getLinks()) {
+      rviz_common::Config link_cfg =
+        saved_robot_config_.mapGetChild(QString::fromStdString(name_link_pair.first));
+      if (link_cfg.isValid()) {
+        name_link_pair.second->getLinkProperty()->load(link_cfg);
+      }
+    }
+    for (const auto & name_joint_pair : robot_->getJoints()) {
+      rviz_common::Config joint_cfg =
+        saved_robot_config_.mapGetChild(QString::fromStdString(name_joint_pair.first));
+      if (joint_cfg.isValid()) {
+        name_joint_pair.second->getJointProperty()->load(joint_cfg);
+      }
+    }
+  }
+
   std::stringstream ss;
   for (const auto & name_link_pair : robot_->getLinks()) {
     const std::string err = name_link_pair.second->getGeometryErrors();

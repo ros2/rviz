@@ -35,9 +35,22 @@
 #include <QMimeData>  // NOLINT: cpplint is unable to handle the include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <QStringList>  // NOLINT: cpplint is unable to handle the include order here
+#include <QtCore/qglobal.h>  // NOLINT: cpplint is unable to handle the include order here
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#define QVARIANT_TYPE_ID(v) (v).typeId()
+#else
+#define QVARIANT_TYPE_ID(v) static_cast<int>((v).type())
+#endif
 
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/logging.hpp"
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#define QVARIANT_TYPE_ID(v) (v).typeId()
+#else
+#define QVARIANT_TYPE_ID(v) static_cast<int>((v).type())
+#endif
 
 namespace rviz_common
 {
@@ -152,7 +165,7 @@ bool PropertyTreeModel::setData(const QModelIndex & index, const QVariant & valu
 {
   Property * property = getProp(index);
 
-  if (property->getValue().type() == QVariant::Bool && role == Qt::CheckStateRole) {
+  if (QVARIANT_TYPE_ID(property->getValue()) == QMetaType::Bool && role == Qt::CheckStateRole) {
     if (property->setValue(value.toInt() != Qt::Unchecked)) {
       return true;
     }

@@ -8,6 +8,5 @@
       Displays an image from a camera, with the visualized world rendered behind it.  &lt;a href="http://www.ros.org/wiki/rviz/DisplayTypes/Camera"&gt;More Information&lt;/a&gt;.
     </description>
     <message_type>sensor_msgs/msg/Image</message_type>
-    <message_type>sensor_msgs/msg/CompressedImage</message_type>
   </class>
 </no-library>

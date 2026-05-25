@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Willow Garage, Inc.
+// Copyright (c) 2026, Open Source Robotics Foundation, Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -27,75 +27,56 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+#ifndef RVIZ_COMMON__PROPERTIES__ROS_TOPIC_MULTI_TYPE_PROPERTY_HPP_
+#define RVIZ_COMMON__PROPERTIES__ROS_TOPIC_MULTI_TYPE_PROPERTY_HPP_
 
-#include "rviz_common/properties/parse_color.hpp"
-
+#include <QSet>
 #include <QString>
+
+#include "rviz_common/properties/ros_topic_property.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
 namespace properties
 {
 
-static int limit(int i)
+// Like RosTopicProperty but can accept multiple message types
+class RVIZ_COMMON_PUBLIC RosTopicMultiTypeProperty : public RosTopicProperty
 {
-  if (i < 0) {
-    return 0;
-  }
-  if (i > 255) {
-    return 255;
-  }
-  return i;
-}
+  Q_OBJECT
 
-QColor parseColor(const QString & color_string)
-{
-  if (color_string.indexOf(';') != -1) {
-    QStringList strings = color_string.split(';');
-    if (strings.size() >= 3) {
-      bool r_ok = true;
-      int r = strings[0].toInt(&r_ok);
-      bool g_ok = true;
-      int g = strings[1].toInt(&g_ok);
-      bool b_ok = true;
-      int b = strings[2].toInt(&b_ok);
-      if (r_ok && g_ok && b_ok) {
-        return QColor(limit(r), limit(g), limit(b));
-      }
-    }
-    return QColor();
-  }
-
-  QColor new_color;
-  if (QColor::colorNames().contains(color_string, Qt::CaseInsensitive) ||
-    (color_string.size() > 0 && color_string[0] == '#' ))
+public:
+  explicit RosTopicMultiTypeProperty(
+    const QString & name = QString(), const QString & default_value = QString(),
+    const QSet<QString> & message_types = QSet<QString>(),
+    const QString & description = QString(), Property * parent = nullptr,
+    const char * changed_slot = nullptr, QObject * receiver = nullptr)
+  : RosTopicProperty(name, default_value, "", description, parent, changed_slot, receiver),
+    message_types_(message_types)
   {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
-    new_color = QColor::fromString(color_string.toLower());
-#else
-    new_color.setNamedColor(color_string.toLower());
-#endif
   }
-  return new_color;
-}
 
-QString printColor(const QColor & color)
-{
-  return QString("%1; %2; %3")
-         .arg(color.red() )
-         .arg(color.green() )
-         .arg(color.blue() );
-}
+  void setMessageTypes(const QSet<QString> & message_types)
+  {
+    message_types_ = message_types;
+  }
 
-QColor ogreToQt(const Ogre::ColourValue & c)
-{
-  return QColor::fromRgbF(c.r, c.g, c.b, c.a);
-}
+  QSet<QString> getMessageTypes() const {return message_types_;}
 
-Ogre::ColourValue qtToOgre(const QColor & c)
-{
-  return Ogre::ColourValue(c.redF(), c.greenF(), c.blueF(), c.alphaF() );
-}
+protected Q_SLOTS:
+  void fillTopicList() override;
 
-}  // namespace properties
-}  // namespace rviz_common
+private:
+  // Hide the parent class methods which only take a single type
+  using RosTopicProperty::getMessageType;
+  using RosTopicProperty::setMessageType;
+
+  // Instead of one message type, store a list of allowed types
+  QSet<QString> message_types_;
+};
+
+}  // end namespace properties
+}  // end namespace rviz_common
+
+#endif  // RVIZ_COMMON__PROPERTIES__ROS_TOPIC_MULTI_TYPE_PROPERTY_HPP_

@@ -59,7 +59,6 @@ find_package(TinyXML2 REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(message_filters REQUIRED)
-find_package(urdf REQUIRED)
 find_package(yaml_cpp_vendor REQUIRED)
 find_package(yaml-cpp REQUIRED)
 
@@ -118,6 +117,7 @@ set(rviz_common_headers_to_moc
   include/rviz_common/properties/ros_action_property.hpp
   include/rviz_common/properties/ros_service_property.hpp
   include/rviz_common/properties/ros_topic_property.hpp
+  include/rviz_common/properties/ros_topic_multi_type_property.hpp
   include/rviz_common/properties/status_list.hpp
   include/rviz_common/properties/status_property.hpp
   include/rviz_common/properties/string_property.hpp
@@ -200,6 +200,7 @@ set(rviz_common_source_files
   src/rviz_common/properties/ros_action_property.cpp
   src/rviz_common/properties/ros_service_property.cpp
   src/rviz_common/properties/ros_topic_property.cpp
+  src/rviz_common/properties/ros_topic_multi_type_property.cpp
   src/rviz_common/properties/quaternion_property.cpp
   src/rviz_common/properties/qos_profile_property.cpp
   src/rviz_common/properties/regex_filter_property.cpp
@@ -361,12 +362,10 @@ if(BUILD_TESTING)
   target_include_directories(test_support_objects PRIVATE
     include
     test
-    ${rviz_common_INCLUDE_DIRS}
-    ${GMOCK_INCLUDE_DIRS}
-    ${GTEST_INCLUDE_DIRS}
   )
   target_link_libraries(test_support_objects PUBLIC
     rviz_common
+    GTest::gmock
     Qt${QT_VERSION_MAJOR}::Widgets
     rviz_ogre_vendor::OgreMain
     rviz_ogre_vendor::OgreOverlay

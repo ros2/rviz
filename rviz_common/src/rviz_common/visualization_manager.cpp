@@ -314,6 +314,14 @@ DisplayFactory * VisualizationManager::getDisplayFactory() const
   return display_factory_;
 }
 
+void VisualizationManager::updatePluginMessageTypes(
+  const QString & class_id, const QSet<QString> & message_types)
+{
+  if (display_factory_) {
+    display_factory_->updatePluginMessageTypes(class_id, message_types);
+  }
+}
+
 properties::PropertyTreeModel * VisualizationManager::getDisplayTreeModel() const
 {
   return display_property_tree_model_;
