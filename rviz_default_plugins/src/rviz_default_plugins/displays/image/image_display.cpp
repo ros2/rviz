@@ -49,8 +49,10 @@
 #include <QString>
 
 #include <algorithm>
+#include <cstdint>
 #include <cstring>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
@@ -582,9 +584,98 @@ QString formatRawBytes(const uint8_t * p, size_t n)
   return out;
 }
 
+// Bayer 2x2 cell description: which channel sits at each of the four
+// (top-left, top-right, bottom-left, bottom-right) positions, plus bit depth.
+struct BayerCell
+{
+  char tl;
+  char tr;
+  char bl;
+  char br;
+  bool is_16bit;
+};
+
+std::optional<BayerCell> bayerCellLayout(const std::string & encoding)
+{
+  namespace enc = sensor_msgs::image_encodings;
+  if (encoding == enc::BAYER_RGGB8) {return BayerCell{'R', 'G', 'G', 'B', false};}
+  if (encoding == enc::BAYER_BGGR8) {return BayerCell{'B', 'G', 'G', 'R', false};}
+  if (encoding == enc::BAYER_GBRG8) {return BayerCell{'G', 'B', 'R', 'G', false};}
+  if (encoding == enc::BAYER_GRBG8) {return BayerCell{'G', 'R', 'B', 'G', false};}
+  if (encoding == enc::BAYER_RGGB16) {return BayerCell{'R', 'G', 'G', 'B', true};}
+  if (encoding == enc::BAYER_BGGR16) {return BayerCell{'B', 'G', 'G', 'R', true};}
+  if (encoding == enc::BAYER_GBRG16) {return BayerCell{'G', 'B', 'R', 'G', true};}
+  if (encoding == enc::BAYER_GRBG16) {return BayerCell{'G', 'R', 'B', 'G', true};}
+  return std::nullopt;
+}
+
+const char * htmlColorForBayerChannel(char ch)
+{
+  switch (ch) {
+    case 'R': return "#c00";
+    case 'G': return "#0a0";
+    case 'B': return "#06c";
+    default: return "#000";
+  }
+}
+
+QString formatBayerSensel(char ch, int value)
+{
+  return QString("<span style='color:%1'>%2:%3</span>")
+         .arg(htmlColorForBayerChannel(ch))
+         .arg(ch)
+         .arg(value);
+}
+
+// Show the four sensel values of the 2x2 Bayer cell containing (px, py).
+// The cell is anchored at (px & ~1, py & ~1); read-out positions are clamped
+// to the image bounds for pixels at the edge.
+QString formatBayerCellAt(
+  const sensor_msgs::msg::Image & msg, int px, int py, const BayerCell & cell)
+{
+  const int cell_x = px & ~1;
+  const int cell_y = py & ~1;
+  const int bpp = cell.is_16bit ? 2 : 1;
+  const int max_x = static_cast<int>(msg.width) - 1;
+  const int max_y = static_cast<int>(msg.height) - 1;
+
+  auto read_at = [&](int y, int x) -> int {
+      y = std::clamp(y, 0, max_y);
+      x = std::clamp(x, 0, max_x);
+      const size_t offset = static_cast<size_t>(y) * msg.step +
+        static_cast<size_t>(x) * static_cast<size_t>(bpp);
+      if (offset + static_cast<size_t>(bpp) > msg.data.size()) {return 0;}
+      if (cell.is_16bit) {
+        uint16_t v = 0;
+        std::memcpy(&v, msg.data.data() + offset, sizeof(v));
+        return v;
+      }
+      return msg.data[offset];
+    };
+
+  const int tl = read_at(cell_y, cell_x);
+  const int tr = read_at(cell_y, cell_x + 1);
+  const int bl = read_at(cell_y + 1, cell_x);
+  const int br = read_at(cell_y + 1, cell_x + 1);
+
+  return formatBayerSensel(cell.tl, tl) + " " +
+         formatBayerSensel(cell.tr, tr) + " | " +
+         formatBayerSensel(cell.bl, bl) + " " +
+         formatBayerSensel(cell.br, br);
+}
+
 QString formatPixel(const sensor_msgs::msg::Image & msg, int px, int py)
 {
   QString prefix = "[" + QString::fromStdString(msg.encoding) + "] ";
+
+  // Bayer encodings: show the four raw sensel values of the 2x2 cell
+  // containing (px, py), each labelled by channel. The on-screen pixel comes
+  // from a bilinear interpolation of these (and their neighbours); showing
+  // them is honest about what the sensor actually recorded.
+  if (const auto cell = bayerCellLayout(msg.encoding)) {
+    return prefix + formatBayerCellAt(msg, px, py, *cell);
+  }
+
   const size_t pixel_size = pixelSizeForEncoding(msg.encoding);
 
   // Even when pixel_size is 0 (encoding not decoded inline) try to show the
