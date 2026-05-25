@@ -142,22 +142,19 @@ void ROSImageTexture::setNormalizeFloatImage(bool normalize, double min, double 
 // planar) — those are handled explicitly by their converters using stride.
 static size_t bytesPerPixelForEncoding(const std::string & encoding)
 {
-  using namespace sensor_msgs::image_encodings;  // NOLINT
-  if (encoding == MONO8 || encoding == TYPE_8UC1 || encoding == TYPE_8SC1) {return 1;}
-  if (encoding == MONO16 || encoding == TYPE_16UC1 || encoding == TYPE_16SC1) {return 2;}
-  if (encoding == RGB8 || encoding == BGR8 ||
-    encoding == TYPE_8UC3 || encoding == TYPE_8SC3)
+  namespace enc = sensor_msgs::image_encodings;
+  if (encoding == enc::YUV422 || encoding == enc::YUV422_YUY2 ||
+    encoding == enc::UYVY || encoding == enc::YUYV ||
+    encoding == enc::NV12 || encoding == enc::NV21 || encoding == enc::NV24)
   {
-    return 3;
+    return 0;
   }
-  if (encoding == RGBA8 || encoding == BGRA8 ||
-    encoding == TYPE_8UC4 || encoding == TYPE_8SC4)
-  {
-    return 4;
+  try {
+    return static_cast<size_t>(enc::numChannels(encoding)) *
+           enc::bitDepth(encoding) / 8;
+  } catch (const std::runtime_error &) {
+    return 0;  // unknown encoding — skip repack
   }
-  if (encoding == TYPE_32FC1) {return 4;}
-  if (encoding.rfind("bayer", 0) == 0) {return 1;}
-  return 0;
 }
 
 static double
