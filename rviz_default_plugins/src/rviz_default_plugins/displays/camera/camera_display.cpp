@@ -220,6 +220,11 @@ void CameraDisplay::setupSceneNodes()
   updateAlpha();
 }
 
+bool CameraDisplay::allow_visibility() const
+{
+  return false;
+}
+
 void CameraDisplay::setupRenderPanel()
 {
   render_panel_ = std::make_unique<rviz_common::RenderPanel>();

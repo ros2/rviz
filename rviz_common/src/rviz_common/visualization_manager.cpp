@@ -69,6 +69,7 @@
 #include "frame_manager.hpp"
 #include "rviz_common/load_resource.hpp"
 #include "rviz_common/properties/color_property.hpp"
+#include "rviz_common/properties/display_group_visibility_property.hpp"
 #include "rviz_common/properties/int_property.hpp"
 #include "rviz_common/properties/parse_color.hpp"
 #include "rviz_common/properties/property.hpp"
@@ -198,6 +199,17 @@ VisualizationManager::VisualizationManager(
     "Frame Rate", 30,
     "RViz will try to render this many frames per second.",
     global_options_, SLOT(updateFps()), this);
+
+  rviz_rendering::RenderWindowOgreAdapter::setVisibilityMask(
+    getRenderPanel()->getRenderWindow(),
+    default_visibility_bit_);
+
+  visibility_property_ = new rviz_common::properties::DisplayGroupVisibilityProperty(
+    default_visibility_bit_, getRootDisplayGroup(), nullptr, "Visibility", true,
+    "Changes the visibility of other Displays in the camera view.", global_options_,
+    SLOT(updateVisibilityMask()), this);
+  visibility_property_->setIcon(
+    rviz_common::loadPixmap("package://rviz_default_plugins/icons/visibility.svg", true));
 
   root_display_group_->initialize(this);   // only initialize() a Display
                                            // after its sub-properties are created.
@@ -362,6 +374,8 @@ void VisualizationManager::onUpdate()
 
   Q_EMIT preUpdate();
 
+  updateVisibilityMask();
+
   frame_manager_->update();
 
   root_display_group_->update(wall_dt, ros_dt);
@@ -404,6 +418,16 @@ void VisualizationManager::onUpdate()
     render_requested_ = 0;
     std::lock_guard<std::mutex> lock(private_->render_mutex_);
     ogre_root_->renderOneFrame();
+
+    for (unsigned int i = 0; i < render_panel_list_.size(); i++) {
+      if(render_panel_render_mask_[i]) {
+        auto viewport =
+          rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(render_panel_list_[i]->getRenderWindow());
+        if (viewport) {
+          viewport->update();
+        }
+      }
+    }
   }
 }
 
@@ -418,6 +442,20 @@ void VisualizationManager::onTimeJump(const rcl_time_jump_t & jump)
     RVIZ_COMMON_LOG_WARNING_STREAM(
       "Detected jump back in time. Resetting RViz.");
     Q_EMIT timeJumped();
+  }
+}
+
+int VisualizationManager::addRenderPanel( RenderPanel* rp )
+{
+  render_panel_list_.push_back(rp);
+  render_panel_render_mask_.push_back(true);
+  return render_panel_list_.size()-1;
+}
+
+void VisualizationManager::updateRenderMask(std::size_t id, bool mask)
+{
+  if(id < render_panel_render_mask_.size()) {
+    render_panel_render_mask_[id] = mask;
   }
 }
 
@@ -586,6 +624,12 @@ double VisualizationManager::getWallClockElapsed()
 double VisualizationManager::getROSTimeElapsed()
 {
   return ros_time_elapsed_.seconds();
+}
+
+void VisualizationManager::updateVisibilityMask()
+{
+  visibility_property_->update();
+  queueRender();
 }
 
 void VisualizationManager::updateBackgroundColor()

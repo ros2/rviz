@@ -123,6 +123,8 @@ protected:
   // override processMessage.
   sensor_msgs::msg::Image::ConstSharedPtr last_msg_;
 
+  bool allow_visibility() const override;
+
 private:
   void setupScreenRectangle();
   void setupRenderPanel();

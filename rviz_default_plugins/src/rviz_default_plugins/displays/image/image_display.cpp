@@ -342,6 +342,11 @@ void ImageDisplay::clear()
   last_msg_.reset();
 }
 
+bool ImageDisplay::allow_visibility() const
+{
+  return false;
+}
+
 void ImageDisplay::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt)
 {
   (void)wall_dt;

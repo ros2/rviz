@@ -303,6 +303,10 @@ public:
   /// Get transform to the frame at the given time and update the scene node. True on success.
   bool updateFrame(const std::string & frame, rclcpp::Time time);
 
+  virtual
+  bool
+  allow_visibility() const;
+
 Q_SIGNALS:
   void
   timeSignal(rviz_common::Display * display, rclcpp::Time time);

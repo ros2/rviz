@@ -36,6 +36,7 @@
 #include <OgreQuaternion.h>
 
 #include "rviz_common/frame_position_tracking_view_controller.hpp"
+#include "rviz_common/properties/property.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 
 namespace rviz_rendering
@@ -69,6 +70,8 @@ class RVIZ_DEFAULT_PLUGINS_PUBLIC FixedOrientationOrthoViewController : public
 
 public:
   FixedOrientationOrthoViewController();
+  FixedOrientationOrthoViewController(rviz_common::properties::Property * parent);
+
   ~FixedOrientationOrthoViewController() override = default;
 
   void onInitialize() override;

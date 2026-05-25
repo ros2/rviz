@@ -97,6 +97,7 @@ class RVIZ_COMMON_PUBLIC ViewController : public properties::Property
 
 public:
   ViewController();
+  ViewController(properties::Property * parent);
   ~ViewController() override;
 
   /// Do all setup that can't be done in the constructor.
@@ -270,6 +271,8 @@ protected:
   Ogre::Camera * camera_;
 
   bool is_active_;
+
+  properties::Property * parent_;
 
   // this cursor will be displayed when the mouse is within the
   // window controlled by this view controller

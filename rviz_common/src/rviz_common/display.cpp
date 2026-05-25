@@ -394,6 +394,11 @@ void Display::setVisibilityBits(uint32_t bits)
   rviz_rendering::applyVisibilityBits(visibility_bits_, scene_node_);
 }
 
+bool Display::allow_visibility() const
+{
+  return true;
+}
+
 void Display::unsetVisibilityBits(uint32_t bits)
 {
   visibility_bits_ &= ~bits;

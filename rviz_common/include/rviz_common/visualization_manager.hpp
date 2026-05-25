@@ -68,7 +68,7 @@ class Property;
 class PropertyTreeModel;
 class StatusList;
 class TfFrameProperty;
-
+class DisplayGroupVisibilityProperty;
 }  // namespace properties
 
 class Display;
@@ -298,6 +298,9 @@ public:
 
   rclcpp::Clock::SharedPtr getClock() override;
 
+  int addRenderPanel(RenderPanel* rp);
+  void updateRenderMask(std::size_t id, bool mask);
+
 public Q_SLOTS:
   /// Resets the wall and ROS elapsed time to zero and calls resetDisplays().
   void resetTime();
@@ -364,6 +367,7 @@ protected:
   properties::TfFrameProperty * fixed_frame_property_;
   properties::StatusList * global_status_;
   properties::IntProperty * fps_property_;
+  properties::DisplayGroupVisibilityProperty * visibility_property_;
 
   RenderPanel * render_panel_;
 
@@ -394,9 +398,13 @@ protected:
   rclcpp::Clock::SharedPtr clock_;
   rclcpp::JumpHandler::SharedPtr clock_jump_handler_;
 
+  std::vector<RenderPanel*> render_panel_list_;
+  std::vector<bool> render_panel_render_mask_;
+
 private Q_SLOTS:
   void updateFixedFrame();
   void updateBackgroundColor();
+  void updateVisibilityMask();
   void updateFps();
 
 private:

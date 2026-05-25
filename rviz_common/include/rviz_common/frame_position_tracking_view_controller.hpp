@@ -37,6 +37,7 @@
 
 #include "rviz_common/view_controller.hpp"
 #include "rviz_common/visibility_control.hpp"
+#include "rviz_common/properties/property.hpp"
 
 namespace rviz_common
 {
@@ -56,6 +57,7 @@ class RVIZ_COMMON_PUBLIC FramePositionTrackingViewController : public ViewContro
 
 public:
   FramePositionTrackingViewController();
+  FramePositionTrackingViewController(properties::Property * parent);
 
   ~FramePositionTrackingViewController() override;
 

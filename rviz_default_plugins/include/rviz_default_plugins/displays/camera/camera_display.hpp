@@ -138,7 +138,9 @@ protected:
 
   void processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg) override;
 
-private Q_SLOTS:
+  bool allow_visibility() const override;
+
+  private Q_SLOTS:
   void updateAlpha();
 
 private:

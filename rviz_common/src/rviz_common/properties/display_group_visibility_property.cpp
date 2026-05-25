@@ -115,9 +115,13 @@ void DisplayGroupVisibilityProperty::onDisplayAdded(Display * display)
       vis_bit_, display_group, parent_display_, "",
       true, "Uncheck to hide everything in this Display Group", this);
   } else {
-    vis_prop = new DisplayVisibilityProperty(
-      vis_bit_, display, "", true,
-      "Show or hide this Display", this);
+    if (display->allow_visibility()) {
+      vis_prop = new DisplayVisibilityProperty(
+        vis_bit_, display, "", true,
+        "Show or hide this Display", this);
+    } else {
+      return;
+    }
   }
   disp_vis_props_[display] = vis_prop;
   sortDisplayList();
