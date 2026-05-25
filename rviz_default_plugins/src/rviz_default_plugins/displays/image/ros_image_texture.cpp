@@ -400,15 +400,14 @@ ROSImageTexture::convertTo8bit(const uint8_t * data_ptr, size_t data_size_in_byt
   // Rescale T image and convert it to 8-bit. All arithmetic in double so
   // user-supplied min/max outside T's range (e.g. 65536 for 16UC1) still
   // produce meaningful output instead of an overflow-to-zero surprise.
-  double range = max_value - min_value;
-  if (range > 0.0) {
+  const double range = max_value - min_value;
+  if (range > 0.0 && std::isfinite(range)) {
     const T * input_ptr = reinterpret_cast<const T *>(data_ptr);
     uint8_t * output_ptr = new_data;
 
     for (size_t i = 0; i < new_size_in_bytes; ++i, ++output_ptr, ++input_ptr) {
       double val = (static_cast<double>(*input_ptr) - min_value) / range;
-      if (val < 0) {val = 0;}
-      if (val > 1) {val = 1;}
+      val = std::clamp(val, 0.0, 1.0);
       *output_ptr = static_cast<uint8_t>(val * 255u);
     }
   }
