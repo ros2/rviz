@@ -86,6 +86,11 @@ void ROSImageTexture::clear()
 
   new_image_ = false;
   current_image_.reset();
+
+  // Drop median history so reset/resubscribe doesn't carry stale min/max
+  // into the first frame of the new stream.
+  min_buffer_.clear();
+  max_buffer_.clear();
 }
 
 const sensor_msgs::msg::Image::ConstSharedPtr ROSImageTexture::getImage()
@@ -390,6 +395,7 @@ void imageConvertYUV422_YUY2ToRGB(
 
 ImageData ROSImageTexture::setFormatAndNormalizeDataIfNecessary(ImageData image_data)
 {
+<<<<<<< HEAD
   if (image_data.encoding_ == sensor_msgs::image_encodings::RGB8) {
     image_data.pixel_format_ = Ogre::PF_BYTE_RGB;
   } else if (image_data.encoding_ == sensor_msgs::image_encodings::RGBA8) {
@@ -441,8 +447,37 @@ ImageData ROSImageTexture::setFormatAndNormalizeDataIfNecessary(ImageData image_
       bufferptr_ = std::make_shared<std::vector<uint8_t>>(new_size);
     } else if (static_cast<size_t>(bufferptr_->size()) != new_size) {
       bufferptr_->resize(new_size, 0);
-    }
+=======
+}
 
+ImageData::~ImageData()
+{
+  if (has_ownership_) {
+    delete[] data_ptr_;
+  }
+}
+
+template<typename T>
+void
+ROSImageTexture::getMinimalAndMaximalValueToNormalize(
+  const T * data_ptr, size_t num_elements,
+  double & min_value, double & max_value)
+{
+  if (normalize_) {
+    // Accumulate in T to avoid per-pixel double conversions, then promote.
+    T t_min = std::numeric_limits<T>::max();
+    T t_max = std::numeric_limits<T>::lowest();
+    const T * input_ptr = data_ptr;
+    for (size_t i = 0; i < num_elements; ++i) {
+      t_min = std::min(t_min, *input_ptr);
+      t_max = std::max(t_max, *input_ptr);
+      input_ptr++;
+>>>>>>> 4b8d1e07 (Fixed Unexpected pixels for mono Image (#1718))
+    }
+    min_value = static_cast<double>(t_min);
+    max_value = static_cast<double>(t_max);
+
+<<<<<<< HEAD
     if (image_data.encoding_ == sensor_msgs::image_encodings::YUV422) {
       imageConvertYUV422ToRGB(
         bufferptr_->data(), const_cast<uint8_t *>(image_data.data_ptr_),
@@ -451,6 +486,11 @@ ImageData ROSImageTexture::setFormatAndNormalizeDataIfNecessary(ImageData image_
       imageConvertYUV422_YUY2ToRGB(
         bufferptr_->data(), const_cast<uint8_t *>(image_data.data_ptr_),
         0, height_, width_, stride_);
+=======
+    if (median_frames_ > 1) {
+      min_value = computeMedianOfSeveralFrames(min_buffer_, min_value, this->median_frames_);
+      max_value = computeMedianOfSeveralFrames(max_buffer_, max_value, this->median_frames_);
+>>>>>>> 4b8d1e07 (Fixed Unexpected pixels for mono Image (#1718))
     }
 
 
@@ -458,7 +498,15 @@ ImageData ROSImageTexture::setFormatAndNormalizeDataIfNecessary(ImageData image_
     image_data.data_ptr_ = bufferptr_->data();
     image_data.size_ = new_size;
   } else {
+<<<<<<< HEAD
     throw UnsupportedImageEncoding(image_data.encoding_);
+=======
+    // User-supplied min/max are doubles. Use them directly — no cast through
+    // T — so a 16UC1 user can enter values up to 65535 (or above) and a
+    // 32FC1 user can enter fractional values without losing precision.
+    min_value = min_;
+    max_value = max_;
+>>>>>>> 4b8d1e07 (Fixed Unexpected pixels for mono Image (#1718))
   }
   return image_data;
 }
@@ -467,12 +515,134 @@ void ROSImageTexture::loadImageToOgreImage(
   const ImageData & image_data,
   Ogre::Image & ogre_image) const
 {
+<<<<<<< HEAD
   Ogre::DataStreamPtr pixel_stream;
   // C-style cast is used to bypass the const modifier
   pixel_stream.reset(
     new Ogre::MemoryDataStream(
       (uint8_t *) &image_data.data_ptr_[0], image_data.size_));  // NOLINT
   ogre_image.loadRawData(pixel_stream, width_, height_, 1, image_data.pixel_format_, 1, 0);
+=======
+  size_t new_size_in_bytes = data_size_in_bytes / sizeof(T);
+
+  // Zero-initialize so a degenerate range (<= 0) produces a valid all-black
+  // image instead of handing uninitialized heap memory to Ogre.
+  uint8_t * new_data = new uint8_t[new_size_in_bytes]();
+
+  double min_value;
+  double max_value;
+
+  getMinimalAndMaximalValueToNormalize<T>(
+    reinterpret_cast<const T *>(data_ptr), new_size_in_bytes, min_value, max_value);
+
+  // Rescale T image and convert it to 8-bit. All arithmetic in double so
+  // user-supplied min/max outside T's range (e.g. 65536 for 16UC1) still
+  // produce meaningful output instead of an overflow-to-zero surprise.
+  const double range = max_value - min_value;
+  if (range > 0.0 && std::isfinite(range)) {
+    const T * input_ptr = reinterpret_cast<const T *>(data_ptr);
+    uint8_t * output_ptr = new_data;
+
+    for (size_t i = 0; i < new_size_in_bytes; ++i, ++output_ptr, ++input_ptr) {
+      double val = (static_cast<double>(*input_ptr) - min_value) / range;
+      val = std::clamp(val, 0.0, 1.0);
+      *output_ptr = static_cast<uint8_t>(val * 255u);
+    }
+  }
+  // range <= 0: uniform-value frame or user-set min >= max. Leave the
+  // zero-initialized buffer so we display solid black rather than garbage.
+
+  return ImageData(Ogre::PF_BYTE_L, new_data, new_size_in_bytes, true);
+}
+
+ImageData
+ROSImageTexture::convertUYVYToRGBData(const uint8_t * data_ptr, size_t data_size_in_bytes)
+{
+  size_t new_size_in_bytes = data_size_in_bytes * 3 / 2;
+
+  uint8_t * new_data = new uint8_t[new_size_in_bytes];
+
+  imageConvertUYVYToRGB(
+    new_data, const_cast<uint8_t *>(data_ptr),
+    0, height_, width_, stride_);
+
+  return ImageData(Ogre::PF_BYTE_RGB, new_data, new_size_in_bytes, true);
+}
+
+ImageData
+ROSImageTexture::convertYUYVToRGBData(const uint8_t * data_ptr, size_t data_size_in_bytes)
+{
+  size_t new_size_in_bytes = data_size_in_bytes * 3 / 2;
+
+  uint8_t * new_data = new uint8_t[new_size_in_bytes];
+
+  imageConvertYUYVToRGB(
+    new_data, const_cast<uint8_t *>(data_ptr),
+    0, height_, width_, stride_);
+
+  return ImageData(Ogre::PF_BYTE_RGB, new_data, new_size_in_bytes, true);
+}
+
+ImageData
+ROSImageTexture::convertNV12ToRGBData(const uint8_t * data_ptr, size_t data_size_in_bytes)
+{
+  size_t new_size_in_bytes = data_size_in_bytes * 2;
+
+  uint8_t * new_data = new uint8_t[new_size_in_bytes];
+
+  imageConvertNV12ToRGB(
+    new_data, const_cast<uint8_t *>(data_ptr),
+    0, height_, width_, stride_);
+
+  return ImageData(Ogre::PF_BYTE_RGB, new_data, new_size_in_bytes, true);
+}
+
+ImageData
+ROSImageTexture::setFormatAndNormalizeDataIfNecessary(
+  const std::string & encoding, const uint8_t * data_ptr, size_t data_size_in_bytes)
+{
+  if (encoding == sensor_msgs::image_encodings::RGB8) {
+    return ImageData(Ogre::PF_BYTE_RGB, data_ptr, data_size_in_bytes, false);
+  } else if (encoding == sensor_msgs::image_encodings::RGBA8) {
+    return ImageData(Ogre::PF_BYTE_RGBA, data_ptr, data_size_in_bytes, false);
+  } else if (  // NOLINT enforces bracket on the same line, which makes code unreadable
+    encoding == sensor_msgs::image_encodings::TYPE_8UC4 ||
+    encoding == sensor_msgs::image_encodings::TYPE_8SC4 ||
+    encoding == sensor_msgs::image_encodings::BGRA8)
+  {
+    return ImageData(Ogre::PF_BYTE_BGRA, data_ptr, data_size_in_bytes, false);
+  } else if (  // NOLINT enforces bracket on the same line, which makes code unreadable
+    encoding == sensor_msgs::image_encodings::TYPE_8UC3 ||
+    encoding == sensor_msgs::image_encodings::TYPE_8SC3 ||
+    encoding == sensor_msgs::image_encodings::BGR8)
+  {
+    return ImageData(Ogre::PF_BYTE_BGR, data_ptr, data_size_in_bytes, false);
+  } else if (  // NOLINT enforces bracket on the same line, which makes code unreadable
+    encoding == sensor_msgs::image_encodings::TYPE_8UC1 ||
+    encoding == sensor_msgs::image_encodings::TYPE_8SC1 ||
+    encoding == sensor_msgs::image_encodings::MONO8)
+  {
+    return ImageData(Ogre::PF_BYTE_L, data_ptr, data_size_in_bytes, false);
+  } else if (  // NOLINT enforces bracket on the same line, which makes code unreadable
+    encoding == sensor_msgs::image_encodings::TYPE_16UC1 ||
+    encoding == sensor_msgs::image_encodings::TYPE_16SC1 ||
+    encoding == sensor_msgs::image_encodings::MONO16)
+  {
+    return convertTo8bit<uint16_t>(data_ptr, data_size_in_bytes);
+  } else if (encoding.find("bayer") == 0) {
+    return ImageData(Ogre::PF_BYTE_L, data_ptr, data_size_in_bytes, false);
+  } else if (encoding == sensor_msgs::image_encodings::TYPE_32FC1) {
+    return convertTo8bit<float>(data_ptr, data_size_in_bytes);
+  } else if (encoding == sensor_msgs::image_encodings::UYVY) {
+    return convertUYVYToRGBData(data_ptr, data_size_in_bytes);
+  } else if (encoding == sensor_msgs::image_encodings::YUYV) {
+    return convertYUYVToRGBData(data_ptr, data_size_in_bytes);
+  } else if (encoding == sensor_msgs::image_encodings::NV12) {
+    return convertNV12ToRGBData(data_ptr, data_size_in_bytes);
+  } else {
+    throw UnsupportedImageEncoding(encoding);
+  }
+>>>>>>> 4b8d1e07 (Fixed Unexpected pixels for mono Image (#1718))
 }
 
 void ROSImageTexture::addMessage(sensor_msgs::msg::Image::ConstSharedPtr msg)

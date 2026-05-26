@@ -112,7 +112,12 @@ public:
 
 private:
   template<typename T>
+<<<<<<< HEAD
   std::vector<uint8_t> normalize(const T * image_data, size_t image_data_size);
+=======
+  void getMinimalAndMaximalValueToNormalize(
+    const T * data_ptr, size_t num_elements, double & min_value, double & max_value);
+>>>>>>> 4b8d1e07 (Fixed Unexpected pixels for mono Image (#1718))
   template<typename T>
   std::vector<uint8_t> createNewNormalizedBuffer(
     const T * image_data, size_t image_data_size, T minValue, T maxValue) const;
