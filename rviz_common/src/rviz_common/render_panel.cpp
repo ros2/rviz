@@ -44,12 +44,6 @@
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
 #include <QWidget>  // NOLINT: cpplint is unable to handle the include order here
-// TODO(wjwwood): remove
-#include <QDebug>  // NOLINT: cpplint is unable to handle the include order here
-#include <QMetaEnum>  // NOLINT: cpplint is unable to handle the include order here
-#include <QMetaObject>  // NOLINT: cpplint is unable to handle the include order here
-#include <QTime>  // NOLINT: cpplint is unable to handle the include order here
-
 #include "rviz_rendering/render_window.hpp"
 
 // #include "./display.hpp"
@@ -73,8 +67,7 @@ RenderPanel::RenderPanel(QWidget * parent)
   // default_camera_(0),
   context_menu_visible_(false),
   display_(nullptr),
-  render_window_(new rviz_rendering::RenderWindow()),
-  fake_mouse_move_event_timer_(new QTimer())
+  render_window_(new rviz_rendering::RenderWindow())
 {
   setFocus(Qt::OtherFocusReason);
   render_window_container_widget_ = QWidget::createWindowContainer(render_window_, this);
@@ -90,7 +83,6 @@ RenderPanel::RenderPanel(QWidget * parent)
 
 RenderPanel::~RenderPanel()
 {
-  delete fake_mouse_move_event_timer_;
   // if (scene_manager_ && default_camera_) {
   //   scene_manager_->destroyCamera(default_camera_);
   // }
@@ -124,10 +116,6 @@ void RenderPanel::initialize(DisplayContext * context, bool use_main_scene)
   }
   // scene_manager_ = scene_manager;
   // scene_manager_->addListener(this);
-
-  // TODO(wjwwood) what is the purpose of this fake mouse move event?
-  // connect(fake_mouse_move_event_timer_, SIGNAL(timeout()), this, SLOT(sendMouseMoveEvent()));
-  // fake_mouse_move_event_timer_->start(33 /*milliseconds*/);
 }
 
 DisplayContext * RenderPanel::getManager()
@@ -140,61 +128,18 @@ ViewController * RenderPanel::getViewController()
   return view_controller_;
 }
 
-void RenderPanel::sendMouseMoveEvent()
-{
-  QPoint cursor_pos = QCursor::pos();
-  QPoint mouse_rel_widget = mapFromGlobal(cursor_pos);
-  if (rect().contains(mouse_rel_widget)) {
-    bool mouse_over_this = false;
-    QWidget * w = QApplication::widgetAt(cursor_pos);
-    while (w) {
-      if (w == this) {
-        mouse_over_this = true;
-        break;
-      }
-      w = w->parentWidget();
-    }
-    if (!mouse_over_this) {
-      return;
-    }
-
-    QMouseEvent fake_event(QEvent::MouseMove,
-      mouse_rel_widget,
-      Qt::NoButton,
-      QApplication::mouseButtons(),
-      QApplication::keyboardModifiers());
-    onRenderWindowMouseEvents(&fake_event);
-  }
-}
-
-template<typename EnumType>
-QString
-ToString(const EnumType & enumValue)
-{
-  const char * enumName = qt_getEnumName(enumValue);
-  const QMetaObject * metaObject = qt_getEnumMetaObject(enumValue);
-  if (metaObject) {
-    const int enumIndex = metaObject->indexOfEnumerator(enumName);
-    return QString("%1::%2::%3").arg(
-      metaObject->className(),
-      enumName,
-      metaObject->enumerator(enumIndex).valueToKey(enumValue));
-  }
-
-  return QString("%1::%2").arg(enumName).arg(static_cast<int>(enumValue));
-}
-
 void RenderPanel::onRenderWindowMouseEvents(QMouseEvent * event)
 {
-  // qDebug() <<
-  //   "in RenderPanel::onRenderWindowMouseEvents(): "
-  //   "[" << QTime::currentTime().toString("HH:mm:ss:zzz") << "]:" <<
-  //   "event->type() ==" << ToString(event->type());
   int last_x = mouse_x_;
   int last_y = mouse_y_;
 
-  mouse_x_ = event->x();
-  mouse_y_ = event->y();
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  mouse_x_ = event->position().x();
+  mouse_y_ = event->position().y();
+#else
+  mouse_x_ = event->pos().x();
+  mouse_y_ = event->pos().y();
+#endif
 
   if (context_) {
     setFocus(Qt::MouseFocusReason);
@@ -248,8 +193,8 @@ void RenderPanel::wheelEvent(QWheelEvent * event)
   mouse_x_ = rounded_position.x();
   mouse_y_ = rounded_position.y();
 #else
-  mouse_x_ = event->x();
-  mouse_y_ = event->y();
+  mouse_x_ = event->pos().x();
+  mouse_y_ = event->pos().y();
 #endif
 
   if (context_) {
@@ -312,7 +257,8 @@ void RenderPanel::showContextMenu(std::shared_ptr<QMenu> menu)
   context_menu_ = menu;
   context_menu_visible_ = true;
 
-  QApplication::postEvent(this, new QContextMenuEvent(QContextMenuEvent::Mouse, QPoint()));
+  QApplication::postEvent(
+    this, new QContextMenuEvent(QContextMenuEvent::Mouse, QPoint(), mapToGlobal(QPoint())));
 }
 
 void RenderPanel::onContextMenuHide()

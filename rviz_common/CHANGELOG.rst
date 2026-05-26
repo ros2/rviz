@@ -2,6 +2,132 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.0 (2026-05-06)
+-------------------
+
+15.2.2 (2026-04-24)
+-------------------
+* Use rosdep keys that select Qt5 or Qt6 by platform (`#1720 <https://github.com/ros2/rviz/issues/1720>`_)
+* Contributors: Shane Loretz
+
+15.2.1 (2026-04-24)
+-------------------
+* Compressed Image Display (`#1288 <https://github.com/ros2/rviz//issues/1288>`_)
+* fix: Fixed compilation on MSVC 2022 (`#1706 <https://github.com/ros2/rviz//issues/1706>`_)
+* Contributors: Janosch Machowinski, Matthew Foran
+
+15.2.0 (2026-05-15)
+-------------------
+* Removed Qt6 warnings (`#1704 <https://github.com/ros2/rviz/issues/1704>`_)
+* Fixed regresion is RHEL (`#1703 <https://github.com/ros2/rviz/issues/1703>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.20 (2026-04-14)
+--------------------
+
+* Remove warnings (`#1693 <https://github.com/ros2/rviz/issues/1693>`_)
+* Link against ``GTest::gmock`` target (`#1699 <https://github.com/ros2/rviz/issues/1699>`_)
+* Reduce ``QFile`` dependency (`#1652 <https://github.com/ros2/rviz/issues/1652>`_)
+
+* Contributors: Alejandro Hernández Cordero, Shane Loretz
+
+15.1.19 (2026-03-24)
+--------------------
+* Use new ROSIDL aggregate CMake target (`#1688 <https://github.com/ros2/rviz/issues/1688>`_)
+* Fix Qt version resolution when both Qt5 and Qt6 are installed - CMake defaults to ascending resolution and Qt5 will be found when Qt6 is desired (Rolling, L-Turtle, and beyond). (`#1689 <https://github.com/ros2/rviz/issues/1689>`_)
+* Cleanups in rviz_common (`#1686 <https://github.com/ros2/rviz/issues/1686>`_)
+* Add tests for shallow and deep copy in Config (`#1682 <https://github.com/ros2/rviz/issues/1682>`_)
+* Build performance optimizations for rviz_common (`#1677 <https://github.com/ros2/rviz/issues/1677>`_)
+* Contributors: Alejandro Hernández Cordero, Emerson Knapp, Michael Carroll, Nathan Brooks, Oscmoar07
+
+15.1.18 (2026-02-25)
+--------------------
+* Use get_package_share_path (`#1671 <https://github.com/ros2/rviz/issues/1671>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.17 (2026-02-24)
+--------------------
+* Fix setHidden regression in PropertyTreeWidget (`#1667 <https://github.com/ros2/rviz/issues/1667>`_)
+* Add topic name filtering when adding new visualizations (`#1662 <https://github.com/ros2/rviz/issues/1662>`_)
+* use QPointer in QTimer::singleShot to prevent use-after-free (`#1657 <https://github.com/ros2/rviz/issues/1657>`_)
+* Contributors: Mateusz Żak, Matteo Princisgh, t0k0shi
+
+15.1.16 (2026-01-13)
+--------------------
+* Fix Not loading plugins due to incorrect package path (`#1651 <https://github.com/ros2/rviz/issues/1651>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.15 (2025-12-23)
+--------------------
+* Updated deprecated ament_index_cpp API (`#1647 <https://github.com/ros2/rviz/issues/1647>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.14 (2025-12-17)
+--------------------
+* Fix crash with no tools (`#1639 <https://github.com/ros2/rviz/issues/1639>`_)
+* Use qt6 as the default dependency from rosdep (`#1635 <https://github.com/ros2/rviz/issues/1635>`_)
+* Pointcloud2 display set QoS to best effort (`#1621 <https://github.com/ros2/rviz/issues/1621>`_)
+* Contributors: Alejandro Hernández Cordero, David V. Lu!!
+
+15.1.13 (2025-11-28)
+--------------------
+
+15.1.12 (2025-11-07)
+--------------------
+* Cleanup deprecated code (`#1619 <https://github.com/ros2/rviz//issues/1619>`_)
+* Removed support for yaml-cpp lower than 0.5 (`#1605 <https://github.com/ros2/rviz//issues/1605>`_)
+* Removed duplicated forward class declaration (`#1602 <https://github.com/ros2/rviz//issues/1602>`_)
+* resolved TODO in visualization manager (`#1603 <https://github.com/ros2/rviz//issues/1603>`_)
+* Contributors: Alejandro Hernández Cordero, mini-1235
+
+15.1.11 (2025-10-20)
+--------------------
+* Fix incorrect Qt signal connection in combo box (`#1596 <https://github.com/ros2/rviz/issues/1596>`_)
+* Removed tinyxml2_vendor dependency (`#1591 <https://github.com/ros2/rviz/issues/1591>`_)
+* Replace QRegExp with QRegularExpression to support Qt6 (`#1592 <https://github.com/ros2/rviz/issues/1592>`_)
+* Contributors: Alejandro Hernández Cordero, mini-1235
+
+15.1.10 (2025-09-26)
+--------------------
+* fix crash (`#1587 <https://github.com/ros2/rviz/issues/1587>`_)
+* added option to change filemode (`#1537 <https://github.com/ros2/rviz/issues/1537>`_)
+* Removed deprecation warning in tf2 (`#1585 <https://github.com/ros2/rviz/issues/1585>`_)
+* Std chrono update in default plugins (`#1579 <https://github.com/ros2/rviz/issues/1579>`_)
+* Contributors: Alejandro Hernández Cordero, Joshua Supratman, Mark Johnson, nelson
+
+15.1.9 (2025-09-04)
+-------------------
+* Removed deprecations (`#1556 <https://github.com/ros2/rviz/issues/1556>`_)
+* rviz common ros service property (`#1548 <https://github.com/ros2/rviz/issues/1548>`_)
+* add ros action property (`#1549 <https://github.com/ros2/rviz/issues/1549>`_)
+* Contributors: Alejandro Hernández Cordero, Joshua Supratman
+
+15.1.8 (2025-08-22)
+-------------------
+* Deprecates update(float, float) methods and provides update(std::chrono::duration, std::chrono::duration) replacements. (`#1533 <https://github.com/ros2/rviz//issues/1533>`_)
+* Contributors: Mark Johnson
+
+15.1.7 (2025-07-25)
+-------------------
+* Replace deprecated tf2_ros headers (`#1529 <https://github.com/ros2/rviz/issues/1529>`_)
+* Postpone hiding of properties until insertion into model is finished (`#1508 <https://github.com/ros2/rviz/issues/1508>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.6 (2025-07-01)
+-------------------
+* Don't hide rows of properties not within the model (`#1507 <https://github.com/ros2/rviz/issues/1507>`_)
+* Remove redundant check (`#1506 <https://github.com/ros2/rviz/issues/1506>`_)
+* Fix panel deletion (`#1037 <https://github.com/ros2/rviz/issues/1037>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.5 (2025-06-27)
+-------------------
+
+15.1.4 (2025-06-20)
+-------------------
+* Config::mapGetBool causes segmentation fault when value_out is nullptr (`#1471 <https://github.com/ros2/rviz/issues/1471>`_)
+* Contributors: Alejandro Hernández Cordero
+
 15.1.3 (2025-05-20)
 -------------------
 * feat: support both qt5 and qt6 (`#1187 <https://github.com/ros2/rviz/issues/1187>`_)

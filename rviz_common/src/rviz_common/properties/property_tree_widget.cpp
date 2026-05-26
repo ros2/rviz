@@ -103,7 +103,7 @@ void PropertyTreeWidget::setModel(PropertyTreeModel * model)
   if (model_) {
     connect(
       model_, SIGNAL(propertyHiddenChanged(const Property*)),
-      this, SLOT(propertyHiddenChanged(const Property*)), Qt::QueuedConnection);
+      this, SLOT(propertyHiddenChanged(const Property*)), Qt::DirectConnection);
     connect(
       model_, SIGNAL(expand(const QModelIndex&)),
       this, SLOT(expand(const QModelIndex&)));
@@ -119,9 +119,13 @@ void PropertyTreeWidget::setModel(PropertyTreeModel * model)
 void PropertyTreeWidget::propertyHiddenChanged(const Property * property)
 {
   if (model_) {
-    setRowHidden(
-      property->rowNumberInParent(), model_->parentIndex(property),
-      property->getHidden() );
+    const auto & parent_index = model_->parentIndex(property);
+    if (parent_index.isValid()) {
+      setRowHidden(property->rowNumberInParent(), parent_index, property->getHidden());
+    } else {
+      printf("Trying to hide property '%s' that is not part of the model.\n",
+        qPrintable(property->getName()));
+    }
   }
 }
 

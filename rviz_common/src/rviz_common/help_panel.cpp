@@ -60,11 +60,11 @@ void HelpPanel::onInitialize()
 
 void HelpPanel::setHelpFile(const QString & qfile_path)
 {
-  QFileInfo path_info(qfile_path);
+  std::filesystem::path path_info(qfile_path.toStdString());
 
-  if (!path_info.exists()) {
+  if (!std::filesystem::exists(path_info)) {
     browser_->setText("Help file '" + qfile_path + "' does not exist.");
-  } else if (path_info.isDir()) {
+  } else if (std::filesystem::is_directory(path_info)) {
     browser_->setText("Help file '" + qfile_path + "' is a directory, not a file.");
   } else {
     QUrl url = QUrl::fromLocalFile(qfile_path);

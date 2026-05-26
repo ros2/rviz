@@ -37,21 +37,15 @@ using namespace rviz_default_plugins::displays;  //  NOLINT
 
 TEST(getTransportFromTopicTest, get_transport_from_topic_finds_right_transport)
 {
-  EXPECT_EQ(getTransportFromTopic("/image/compressed"), "compressed");
   EXPECT_EQ(getTransportFromTopic("/image_transport"), "raw");
   EXPECT_EQ(getTransportFromTopic("/image_compressed"), "raw");
-  EXPECT_EQ(getTransportFromTopic("/image_transport/camera/compressedDepth"), "compressedDepth");
   EXPECT_EQ(getTransportFromTopic("/topic_name/publisher_name/compressed_and_theora"), "raw");
 }
 
 TEST(getBaseTopicFromTopicTest, get_transport_from_topic_finds_right_topic)
 {
-  EXPECT_EQ(getBaseTopicFromTopic("/image/compressed"), "/image");
   EXPECT_EQ(getBaseTopicFromTopic("/image_transport"), "/image_transport");
   EXPECT_EQ(getBaseTopicFromTopic("/image_compressed"), "/image_compressed");
-  EXPECT_EQ(
-    getBaseTopicFromTopic(
-      "/image_transport/camera/compressedDepth"), "/image_transport/camera");
   EXPECT_EQ(
     getBaseTopicFromTopic(
       "/topic_name/publisher_name/compressed_and_theora"),

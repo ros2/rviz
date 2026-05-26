@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>rviz_common</name>
-  <version>15.1.3</version>
+  <version>16.0.0</version>
   <description>
     Common rviz API, used by rviz plugins and applications.
   </description>
@@ -26,16 +26,16 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <build_depend>libqt5-svg-dev</build_depend>
-  <build_depend>qtbase5-dev</build_depend>
+  <build_depend>qt-svg-dev</build_depend>
+  <build_depend>qt-base-dev</build_depend>
 
-  <build_export_depend>qtbase5-dev</build_export_depend>
+  <build_export_depend>qt-base-dev</build_export_depend>
 
-  <exec_depend>libqt5-core</exec_depend>
-  <exec_depend>libqt5-gui</exec_depend>
-  <exec_depend>libqt5-opengl</exec_depend>
-  <exec_depend>libqt5-svg</exec_depend>
-  <exec_depend>libqt5-widgets</exec_depend>
+  <exec_depend>libqtcore</exec_depend>
+  <exec_depend>libqtgui</exec_depend>
+  <exec_depend>libqtopengl</exec_depend>
+  <exec_depend>libqtsvg</exec_depend>
+  <exec_depend>libqtwidgets</exec_depend>
 
   <depend>geometry_msgs</depend>
   <depend>pluginlib</depend>
@@ -49,8 +49,7 @@
   <depend>tf2</depend>
   <depend>tf2_ros</depend>
   <depend>message_filters</depend>
-  <depend>tinyxml2_vendor</depend>
-  <depend>urdf</depend>
+  <depend>tinyxml2</depend>
   <depend>yaml_cpp_vendor</depend>
 
   <test_depend>ament_lint_common</test_depend>

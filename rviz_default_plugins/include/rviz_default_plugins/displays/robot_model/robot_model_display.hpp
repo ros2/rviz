@@ -39,6 +39,7 @@
 
 #include "std_msgs/msg/string.hpp"
 
+#include "rviz_common/config.hpp"
 #include "rviz_common/ros_topic_display.hpp"
 
 #include "rviz_default_plugins/transformation/transformer_guard.hpp"
@@ -95,7 +96,8 @@ public:
 
   // Overrides from Display
   void onInitialize() override;
-  void update(float wall_dt, float ros_dt) override;
+  void load(const rviz_common::Config & config) override;
+  void update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt) override;
   void fixedFrameChanged() override;
   void reset() override;
 
@@ -134,7 +136,7 @@ protected:
   bool has_new_transforms_;      ///< Callback sets this to tell our update function
   ///< it needs to update the transforms
 
-  float time_since_last_transform_;
+  std::chrono::nanoseconds time_since_last_transform_;
 
   std::string robot_description_;
 
@@ -152,6 +154,10 @@ protected:
 
   std::unique_ptr<rviz_default_plugins::transformation::TransformerGuard<
       rviz_default_plugins::transformation::TFFrameTransformer>> transformer_guard_;
+
+  // Cache of the "Links" subtree of the saved config, applied to per-link
+  // and per-joint properties once the URDF is parsed and they are created.
+  rviz_common::Config saved_robot_config_;
 };
 
 }  // namespace displays

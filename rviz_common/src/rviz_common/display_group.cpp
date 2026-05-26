@@ -31,7 +31,6 @@
 
 #include "rviz_common/display_group.hpp"
 
-#include <cstdio>  // for debug-write printf
 #include <map>
 
 #include <QColor>  // NOLINT: cpplint is unable to handle the include order here
@@ -136,7 +135,7 @@ Display * DisplayGroup::createDisplay(const QString & class_id)
 void DisplayGroup::onEnableChanged()
 {
   Display::onEnableChanged();
-  for (int i = displays_.size() - 1; i >= 0; i--) {
+  for (int i = 0; i < displays_.size(); i++) {
     displays_[i]->onEnableChanged();
   }
 }
@@ -224,7 +223,7 @@ void DisplayGroup::fixedFrameChanged()
   }
 }
 
-void DisplayGroup::update(float wall_dt, float ros_dt)
+void DisplayGroup::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt)
 {
   int num_children = displays_.size();
   for (int i = 0; i < num_children; i++) {
@@ -233,6 +232,12 @@ void DisplayGroup::update(float wall_dt, float ros_dt)
       display->update(wall_dt, ros_dt);
     }
   }
+}
+
+void DisplayGroup::update(float wall_dt, float ros_dt)
+{
+  this->update(std::chrono::nanoseconds(std::lround(wall_dt)),
+               std::chrono::nanoseconds(std::lround(ros_dt)));
 }
 
 void DisplayGroup::reset()
@@ -247,7 +252,6 @@ void DisplayGroup::reset()
 
 void DisplayGroup::addDisplayWithoutSignallingModel(Display * child)
 {
-//  printf("  displaygroup4 displays_.append( child )\n" );
   displays_.append(child);
   child_indexes_valid_ = false;
   child->setModel(model_);

@@ -41,7 +41,7 @@
 #include "std_msgs/msg/header.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "tf2/LinearMath/Quaternion.hpp"
-#include "tf2_ros/static_transform_broadcaster.h"
+#include "tf2_ros/static_transform_broadcaster.hpp"
 #include "internal/transform_message_creator.hpp"
 
 struct PublisherWithFrame
@@ -85,7 +85,7 @@ private:
   void publishOnFrame(std::vector<PublisherWithFrame> publishers)
   {
     auto transformer_publisher_node = std::make_shared<rclcpp::Node>("static_transform_publisher");
-    tf2_ros::StaticTransformBroadcaster broadcaster(transformer_publisher_node);
+    tf2_ros::StaticTransformBroadcaster broadcaster(*transformer_publisher_node);
 
     rclcpp::executors::SingleThreadedExecutor executor;
     executor.add_node(transformer_publisher_node);

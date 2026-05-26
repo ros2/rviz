@@ -174,12 +174,9 @@ protected:
   QGridLayout * layout_;
 
 private Q_SLOTS:
-  void sendMouseMoveEvent();
   void onContextMenuHide();
 
 private:
-  QTimer * fake_mouse_move_event_timer_;
-
   // TODO(wjwwood): I think this can be stored in rviz_rendering::RenderWindowImpl
   /// A default camera created in initialize().
   // Ogre::Camera * default_camera_;

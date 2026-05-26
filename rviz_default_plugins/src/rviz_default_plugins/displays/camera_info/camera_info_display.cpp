@@ -162,7 +162,9 @@ void CameraInfoDisplay::processMessage(
   camera_info_ = msg;
 }
 
-void CameraInfoDisplay::update(float /*wall_dt*/, float /*ros_dt*/)
+void CameraInfoDisplay::update(
+  std::chrono::nanoseconds /*wall_dt*/,
+  std::chrono::nanoseconds /*ros_dt*/)
 {
 }
 

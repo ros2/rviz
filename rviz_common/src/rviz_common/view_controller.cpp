@@ -192,6 +192,24 @@ void ViewController::activate()
   onActivate();
 }
 
+void ViewController::update(std::chrono::nanoseconds dt, std::chrono::nanoseconds ros_dt)
+{
+#if !defined(_WIN32)
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#else  // !defined(_WIN32)
+# pragma warning(push)
+# pragma warning(disable: 4996)
+#endif
+  update(dt.count(), ros_dt.count());
+// remove warning suppression
+#if !defined(_WIN32)
+# pragma GCC diagnostic pop
+#else  // !defined(_WIN32)
+# pragma warning(pop)
+#endif
+}
+
 void ViewController::update(float dt, float ros_dt)
 {
   (void) dt;

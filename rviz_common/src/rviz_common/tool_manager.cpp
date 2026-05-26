@@ -138,7 +138,11 @@ bool ToolManager::toKey(QString const & str, uint & key)
 
   // We should only working with a single key here
   if (seq.count() == 1) {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    key = seq[0].toCombined();
+#else
     key = seq[0];
+#endif
     return true;
   } else {
     return false;
@@ -175,7 +179,7 @@ int ToolManager::handleChar(QKeyEvent * event, RenderPanel * panel)
         setCurrentTool(tool);
       }
     }
-  } else {
+  } else if (current_tool_) {
     // if the incoming key triggers no other tool,
     // just hand down the key event
     flags = current_tool_->processKeyEvent(event, panel);

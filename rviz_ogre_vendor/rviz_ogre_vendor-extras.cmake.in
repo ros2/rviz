@@ -11,9 +11,6 @@ else()
 endif()
 message(STATUS "Setting OGRE_DIR to: '${OGRE_DIR}'")
 
-set(FREETYPE_HOME "${rviz_ogre_vendor_DIR}/../../../opt/rviz_ogre_vendor")
-set(ZLIB_HOME "${rviz_ogre_vendor_DIR}/../../../opt/rviz_ogre_vendor")
-
 find_package(OGRE REQUIRED NO_SYSTEM_ENVIRONMENT_PATH)
 message(STATUS "OGRE_LIBRARIES: ${OGRE_LIBRARIES}")
 message(STATUS "OGRE_LIBRARY_DIRS: ${OGRE_LIBRARY_DIRS}")
@@ -23,12 +20,18 @@ message(STATUS "OGRE_PLUGIN_DIR: ${OGRE_PLUGIN_DIR}")
 list(APPEND OGRE_LIBRARIES ${OGRE_PLUGINS})
 list(APPEND OGRE_LIBRARY_DIRS ${OGRE_PLUGIN_DIR})
 
+if(@RVIZ_OGRE_VENDOR_MANGLE_NAME_OF_LIBRARIES_USED_BY_RVIZ@)
+    set(LIBRARY_MANGLING_SUFFIX "_rviz")
+else()
+    set(LIBRARY_MANGLING_SUFFIX "")
+endif()
+
 foreach(_lib IN LISTS OGRE_LIBRARIES)
   # Remove debug suffix from library name for matching
   string(REPLACE "_d" "" _lib ${_lib})
 
   if("OgreMainStatic" STREQUAL ${_lib} OR "OgreMain" STREQUAL ${_lib})
-    find_library(_ogre_main_static_library_abs ${_lib}
+    find_library(_ogre_main_static_library_abs ${_lib}${LIBRARY_MANGLING_SUFFIX}
       PATHS
         ${OGRE_LIBRARY_DIRS}
       NO_DEFAULT_PATH
@@ -38,7 +41,7 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
       NO_CMAKE_SYSTEM_PATH
       NO_CMAKE_FIND_ROOT_PATH
     )
-    find_library(_ogre_main_static_library_debug_abs ${_lib}_d
+    find_library(_ogre_main_static_library_debug_abs ${_lib}${LIBRARY_MANGLING_SUFFIX}_d
       PATHS
         ${OGRE_LIBRARY_DIRS}
       NO_DEFAULT_PATH
@@ -97,15 +100,7 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
       message(FATAL_ERROR "Could not find freetype package")
     endif()
 
-    if(WIN32)
-      if(_ogre_main_static_library_debug_abs)
-        set(ZLIB_LIBRARIES "${ZLIB_HOME}/lib/zlibstaticd.lib")
-      else()
-        set(ZLIB_LIBRARIES "${ZLIB_HOME}/lib/zlibstatic.lib")
-      endif()
-    else()
-      find_package(ZLIB REQUIRED)
-    endif()
+    find_package(ZLIB REQUIRED)
 
     if(NOT ZLIB_LIBRARIES)
       message(FATAL_ERROR "Could not find zlib library")
@@ -133,7 +128,7 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
     )
   endif()
   if("OgreOverlayStatic" STREQUAL ${_lib} OR "OgreOverlay" STREQUAL ${_lib})
-    find_library(_ogre_overlay_static_library_abs ${_lib}
+    find_library(_ogre_overlay_static_library_abs ${_lib}${LIBRARY_MANGLING_SUFFIX}
       PATHS
         ${OGRE_LIBRARY_DIRS}
       NO_DEFAULT_PATH
@@ -143,7 +138,7 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
       NO_CMAKE_SYSTEM_PATH
       NO_CMAKE_FIND_ROOT_PATH
     )
-    find_library(_ogre_overlay_static_library_debug_abs ${_lib}_d
+    find_library(_ogre_overlay_static_library_debug_abs ${_lib}${LIBRARY_MANGLING_SUFFIX}_d
       PATHS
         ${OGRE_LIBRARY_DIRS}
       NO_DEFAULT_PATH
@@ -185,7 +180,7 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
     )
   endif()
   if("OgreGLSupportStatic" STREQUAL ${_lib} OR "OgreGLSupport" STREQUAL ${_lib})
-    find_library(_ogre_gl_support_static_library_abs ${_lib}
+    find_library(_ogre_gl_support_static_library_abs ${_lib}${LIBRARY_MANGLING_SUFFIX}
       PATHS
         ${OGRE_LIBRARY_DIRS}
       NO_DEFAULT_PATH
@@ -195,7 +190,7 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
       NO_CMAKE_SYSTEM_PATH
       NO_CMAKE_FIND_ROOT_PATH
     )
-    find_library(_ogre_gl_support_static_library_debug_abs ${_lib}_d
+    find_library(_ogre_gl_support_static_library_debug_abs ${_lib}${LIBRARY_MANGLING_SUFFIX}_d
       PATHS
         ${OGRE_LIBRARY_DIRS}
       NO_DEFAULT_PATH

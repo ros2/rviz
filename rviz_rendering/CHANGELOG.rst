@@ -2,6 +2,93 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.0 (2026-05-06)
+-------------------
+
+15.2.2 (2026-04-24)
+-------------------
+* Use rosdep keys that select Qt5 or Qt6 by platform (`#1720 <https://github.com/ros2/rviz/issues/1720>`_)
+* Contributors: Shane Loretz
+
+15.2.1 (2026-04-24)
+-------------------
+
+15.2.0 (2026-05-15)
+-------------------
+
+15.1.20 (2026-04-14)
+--------------------
+
+* Fix build for Ubuntu 26 (`#1694 <https://github.com/ros2/rviz/issues/1694>`_)
+
+* Contributors: Michael Carlstrom
+
+15.1.19 (2026-03-24)
+--------------------
+* Fix Qt version resolution when both Qt5 and Qt6 are installed - CMake defaults to ascending resolution and Qt5 will be found when Qt6 is desired (Rolling, L-Turtle, and beyond). (`#1689 <https://github.com/ros2/rviz/issues/1689>`_)
+* Contributors: Nathan Brooks
+
+15.1.18 (2026-02-25)
+--------------------
+
+15.1.17 (2026-02-24)
+--------------------
+
+15.1.16 (2026-01-13)
+--------------------
+
+15.1.15 (2025-12-23)
+--------------------
+* Updated deprecated ament_index_cpp API (`#1647 <https://github.com/ros2/rviz/issues/1647>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.14 (2025-12-17)
+--------------------
+* Use qt6 as the default dependency from rosdep (`#1635 <https://github.com/ros2/rviz/issues/1635>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.13 (2025-11-28)
+--------------------
+
+15.1.12 (2025-11-07)
+--------------------
+* Removed unused files (`#1600 <https://github.com/ros2/rviz//issues/1600>`_)
+* Contributors: mosfet80
+
+15.1.11 (2025-10-20)
+--------------------
+
+15.1.10 (2025-09-26)
+--------------------
+
+15.1.9 (2025-09-04)
+-------------------
+* Removed assimp vendor package (`#1574 <https://github.com/ros2/rviz/issues/1574>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.8 (2025-08-22)
+-------------------
+* Update OGRE mesh files from ROS1 RViz (`#1536 <https://github.com/ros2/rviz//issues/1536>`_) (`#1559 <https://github.com/ros2/rviz//issues/1559>`_)
+* add resourceExists check to loadEmbeddedTexture before loading texture (`#1542 <https://github.com/ros2/rviz//issues/1542>`_)
+* Contributors: John TGZ, mergify[bot]
+
+15.1.7 (2025-07-25)
+-------------------
+
+15.1.6 (2025-07-01)
+-------------------
+
+15.1.5 (2025-06-27)
+-------------------
+* Assign the geometry to the resource group "rviz_rendering" (`#1502 <https://github.com/ros2/rviz/issues/1502>`_)
+* Removed windows warning (`#1486 <https://github.com/ros2/rviz/issues/1486>`_)
+* Contributors: Alejandro Hernández Cordero, matthias88
+
+15.1.4 (2025-06-20)
+-------------------
+* Handle glTF Y-Up frame convention on mesh load (`#1482 <https://github.com/ros2/rviz/issues/1482>`_)
+* Contributors: Michel Hidalgo
+
 15.1.3 (2025-05-20)
 -------------------
 * Removed unused headers from resouce retriever (`#1463 <https://github.com/ros2/rviz/issues/1463>`_)

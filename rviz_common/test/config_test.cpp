@@ -81,8 +81,55 @@ TEST(Config, mapGetValue_key_not_found_null_check) {
   EXPECT_EQ(s_default, "my_default_value");
 }
 
-int main(int argc, char ** argv)
-{
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
+TEST(Config, handle_mixed_type_values_for_keys) {
+  rviz_common::Config c;
+  c.mapSetValue("mixed_key", "123abc");
+  EXPECT_FALSE(c.mapGetInt("mixed_key", nullptr));
+  EXPECT_FALSE(c.mapGetBool("mixed_key", nullptr));
+  EXPECT_FALSE(c.mapGetFloat("mixed_key", nullptr));
+  QString string_value;
+  EXPECT_TRUE(c.mapGetString("mixed_key", &string_value));
+  EXPECT_EQ(string_value, "123abc");
+}
+
+TEST(Config, config_constructor_shallow_copy_check) {
+  rviz_common::Config c1;
+  c1.mapSetValue("key", "value");
+  rviz_common::Config c2 = c1;
+  c1.mapSetValue("key", "new_value");
+  QString value;
+  EXPECT_TRUE(c2.mapGetString("key", &value));
+  EXPECT_EQ(value, "new_value");
+}
+
+TEST(Config, config_deep_copy_check) {
+  rviz_common::Config source;
+  source.mapSetValue("name", "before");
+
+  rviz_common::Config child = source.mapMakeChild("child");
+  child.mapSetValue("leaf", "leaf_before");
+
+  rviz_common::Config list = source.mapMakeChild("list");
+  list.listAppendNew().setValue("item0");
+  list.listAppendNew().setValue("item1");
+
+  rviz_common::Config copied;
+  copied.copy(source);
+
+  source.mapSetValue("name", "after");
+  child.mapSetValue("leaf", "leaf_after");
+  list.listChildAt(0).setValue("changed_item0");
+
+  QString name_value;
+  EXPECT_TRUE(copied.mapGetString("name", &name_value));
+  EXPECT_EQ(name_value, "before");
+
+  QString leaf_value;
+  EXPECT_TRUE(copied.mapGetChild("child").mapGetString("leaf", &leaf_value));
+  EXPECT_EQ(leaf_value, "leaf_before");
+
+  rviz_common::Config copied_list = copied.mapGetChild("list");
+  ASSERT_EQ(copied_list.listLength(), 2);
+  EXPECT_EQ(copied_list.listChildAt(0).getValue().toString(), "item0");
+  EXPECT_EQ(copied_list.listChildAt(1).getValue().toString(), "item1");
 }

@@ -18,28 +18,13 @@ find_package(rviz_common REQUIRED)
 
 find_package(rviz_ogre_vendor REQUIRED)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
-# TODO(wjwwood): this block is to setup the windeployqt tool, could be removed later.
-if(Qt${QT_VERSION_MAJOR}_FOUND AND WIN32 AND TARGET Qt${QT_VERSION_MAJOR}::qmake AND NOT TARGET Qt${QT_VERSION_MAJOR}::windeployqt)
-  get_target_property(_qt_qmake_location Qt${QT_VERSION_MAJOR}::qmake IMPORTED_LOCATION)
-
-  execute_process(
-    COMMAND "${_qt_qmake_location}" -query QT${QT_VERSION_MAJOR}_INSTALL_PREFIX
-    RESULT_VARIABLE return_code
-    OUTPUT_VARIABLE qt_install_prefix
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
-
-  set(imported_location "${qt_install_prefix}/bin/windeployqt.exe")
-
-  if(EXISTS ${imported_location})
-    add_executable(Qt${QT_VERSION_MAJOR}::windeployqt IMPORTED)
-
-    set_target_properties(Qt${QT_VERSION_MAJOR}::windeployqt PROPERTIES
-      IMPORTED_LOCATION ${imported_location}
-    )
-  endif()
+# Avoid find_package(QT NAMES Qt6 Qt5 ...) due to CMake's default ascending path resolution
+find_package(Qt6 QUIET COMPONENTS Widgets)
+if(Qt6_FOUND)
+  set(QT_VERSION_MAJOR 6)
+else()
+  find_package(Qt5 REQUIRED COMPONENTS Widgets)
+  set(QT_VERSION_MAJOR 5)
 endif()
 
 add_executable(${PROJECT_NAME}
@@ -51,35 +36,6 @@ target_link_libraries(${PROJECT_NAME}
   rviz_ogre_vendor::OgreOverlay
   Qt${QT_VERSION_MAJOR}::Widgets
 )
-
-# TODO(wjwwood): find a way to make this optional or to run without "deploying" the
-#                necessary dlls and stuff to the bin folder.
-#                see:
-# https://stackoverflow.com/questions/41193584/deploy-all-qt-dependencies-when-building#41199492
-if(TARGET Qt${QT_VERSION_MAJOR}::windeployqt)
-  # execute windeployqt in a tmp directory after build
-  add_custom_command(TARGET ${PROJECT_NAME}
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
-    COMMAND set PATH=%PATH%$<SEMICOLON>${qt_install_prefix}/bin
-    COMMAND
-    Qt${QT_VERSION_MAJOR}::windeployqt
-    --dir "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
-    "$<TARGET_FILE_DIR:${PROJECT_NAME}>/$<TARGET_FILE_NAME:${PROJECT_NAME}>"
-  )
-
-  # copy deployment directory during installation
-  install(
-    DIRECTORY
-    "${CMAKE_CURRENT_BINARY_DIR}/windeployqt/"
-    DESTINATION bin
-  )
-  install(
-    DIRECTORY
-    "${CMAKE_CURRENT_BINARY_DIR}/windeployqt/"
-    DESTINATION lib/${PROJECT_NAME}
-  )
-endif()
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 install(TARGETS ${PROJECT_NAME} DESTINATION lib/${PROJECT_NAME})

@@ -43,7 +43,7 @@
 #include "std_msgs/msg/header.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "nav_msgs/msg/odometry.hpp"
-#include "tf2_ros/transform_broadcaster.h"
+#include "tf2_ros/transform_broadcaster.hpp"
 
 using namespace std::chrono_literals;  // NOLINT
 
@@ -64,7 +64,7 @@ public:
   // constructor once available.
   void initialize()
   {
-    broadcaster = std::make_shared<tf2_ros::TransformBroadcaster>(shared_from_this());
+    broadcaster = std::make_shared<tf2_ros::TransformBroadcaster>(*shared_from_this());
   }
 
 private:

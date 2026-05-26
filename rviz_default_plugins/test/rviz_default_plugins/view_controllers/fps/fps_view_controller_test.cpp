@@ -80,7 +80,8 @@ public:
     position_property->childAt(0)->setValue(0);
     position_property->childAt(1)->setValue(0);
     position_property->childAt(2)->setValue(0);
-    fps_->update(0, 0);  // Camera now looks in x-direction, located at the origin
+    auto zero = std::chrono::nanoseconds::zero();
+    fps_->update(zero, zero);  // Camera now looks in x-direction, located at the origin
 
     EXPECT_THAT(yaw_property->getValue().toFloat(), FloatNear(0, 0.001f));
     EXPECT_THAT(pitch_property->getValue().toFloat(), FloatNear(0, 0.001f));
@@ -192,10 +193,11 @@ TEST_F(FPSViewControllerTestFixture, mimic_does_not_change_view_when_given_any_v
   old_yaw_property->setValue(1);
   old_pitch_property->setValue(2);
   orbit_view->move(10, 12, 0);
-  orbit_view->update(0, 0);
+  auto zero = std::chrono::nanoseconds::zero();
+  orbit_view->update(zero, zero);
 
   fps_->mimic(orbit_view.get());
-  fps_->update(0, 0);
+  fps_->update(zero, zero);
 
   // Yaw and Pitch cannot be equal since the orbit view's yaw and pitch are relative to its focal
   // point, while the fps yaw and pitch are absolute. However, the orientation of the camera

@@ -63,11 +63,6 @@ static const Ogre::Quaternion ROBOT_TO_CAMERA_ROTATION =
   Ogre::Quaternion(Ogre::Radian(-Ogre::Math::HALF_PI), Ogre::Vector3::UNIT_Y) *
   Ogre::Quaternion(Ogre::Radian(-Ogre::Math::HALF_PI), Ogre::Vector3::UNIT_Z);
 
-static const float PITCH_LIMIT_LOW = -Ogre::Math::HALF_PI + 0.001f;
-static const float PITCH_LIMIT_HIGH = Ogre::Math::HALF_PI - 0.001f;
-
-static const Ogre::Vector3 DEFAULT_FPS_POSITION = Ogre::Vector3(5, 5, 10);
-
 FrameViewController::FrameViewController()
 {
   axis_property_ = new rviz_common::properties::EnumProperty("Point towards", fmtAxis(6),

@@ -31,7 +31,7 @@
 #ifndef RVIZ_COMMON__MESSAGE_FILTER_DISPLAY_HPP_
 #define RVIZ_COMMON__MESSAGE_FILTER_DISPLAY_HPP_
 
-#include <tf2_ros/message_filter.h>
+#include <tf2_ros/message_filter.hpp>
 #include <memory>
 #include <string>
 
@@ -134,7 +134,7 @@ protected:
         *context_->getFrameManager()->getTransformer(),
         fixed_frame_.toStdString(),
         static_cast<uint32_t>(message_queue_property_->getInt()),
-        node);
+        *node);
       tf_filter_->connectInput(*subscription_);
       tf_filter_->registerCallback(
         std::bind(

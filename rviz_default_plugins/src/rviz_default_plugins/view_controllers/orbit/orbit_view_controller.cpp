@@ -35,7 +35,6 @@
 #include <cmath>
 #include <complex>
 #include <cstdint>
-#include <ctgmath>
 #include <memory>
 #include <valarray>
 
@@ -293,7 +292,7 @@ rviz_common::FocalPointStatus OrbitViewController::getFocalPointStatus()
   return {true, focal_point_property_->getVector()};
 }
 
-void OrbitViewController::update(float dt, float ros_dt)
+void OrbitViewController::update(std::chrono::nanoseconds dt, std::chrono::nanoseconds ros_dt)
 {
   rviz_common::FramePositionTrackingViewController::update(dt, ros_dt);
   updateCamera();

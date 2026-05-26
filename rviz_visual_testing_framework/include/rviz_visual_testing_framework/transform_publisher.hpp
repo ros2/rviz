@@ -39,7 +39,7 @@
 #include "rclcpp/clock.hpp"
 #include "std_msgs/msg/header.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
-#include "tf2_ros/static_transform_broadcaster.h"
+#include "tf2_ros/static_transform_broadcaster.hpp"
 #include "internal/transform_message_creator.hpp"
 
 struct StaticTransform
@@ -98,7 +98,7 @@ private:
   void publishOnFrame()
   {
     auto transformer_publisher_node = std::make_shared<rclcpp::Node>("static_transform_publisher");
-    tf2_ros::StaticTransformBroadcaster broadcaster(transformer_publisher_node);
+    tf2_ros::StaticTransformBroadcaster broadcaster(*transformer_publisher_node);
 
     rclcpp::WallRate loop_rate(0.2);
     rclcpp::executors::SingleThreadedExecutor executor;

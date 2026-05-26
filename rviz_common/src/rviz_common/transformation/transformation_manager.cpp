@@ -38,6 +38,7 @@
 
 #include "rviz_common/factory/pluginlib_factory.hpp"
 #include "./identity_frame_transformer.hpp"
+#include "rviz_common/logging.hpp"
 
 namespace rviz_common
 {
@@ -105,6 +106,10 @@ void TransformationManager::setTransformer(const PluginInfo & plugin_info)
 
     Q_EMIT transformerChanged(current_transformer_);
     Q_EMIT configChanged();
+  } else {
+    RVIZ_COMMON_LOG_ERROR_STREAM(
+      "Failed to load transformer plugin '" << plugin_info.id.toStdString() <<
+        "'. Keeping current transformer.");
   }
 }
 

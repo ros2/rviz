@@ -35,8 +35,6 @@
 #include <QObject>  // NOLINT: cpplint cannot handle the include order here
 #include <Ogre.h>
 
-#include <tf2_ros/message_filter.h>
-
 #include <memory>
 #include <mutex>
 #include <set>
@@ -65,6 +63,8 @@
 
 #include <sensor_msgs/msg/image.hpp>
 #include <sensor_msgs/msg/camera_info.hpp>
+
+#include <tf2_ros/message_filter.hpp>
 #endif
 
 #include "rviz_default_plugins/visibility_control.hpp"
@@ -92,7 +92,7 @@ public:
   void onInitialize() override;
 
   // Overrides from Display
-  void update(float wall_dt, float ros_dt) override;
+  void update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt) override;
   void reset() override;
   void setTopic(const QString & topic, const QString & datatype) override;
 
@@ -165,13 +165,14 @@ protected:
 
   // RVIZ properties
   rviz_common::properties::EditableEnumProperty * reliability_policy_property_;
-  rmw_qos_profile_t qos_profile_;
+  rclcpp::QoS qos_profile_;
   rviz_common::properties::Property * topic_filter_property_;
   rviz_common::properties::IntProperty * queue_size_property_;
   rviz_common::properties::BoolProperty * use_auto_size_property_;
   rviz_common::properties::FloatProperty * auto_size_factor_property_;
   rviz_common::properties::RosFilteredTopicProperty * depth_topic_property_;
   rviz_common::properties::EnumProperty * depth_transport_property_;
+  rviz_common::properties::RosFilteredTopicProperty * camera_info_topic_property_;
   rviz_common::properties::RosFilteredTopicProperty * color_topic_property_;
   rviz_common::properties::EnumProperty * color_transport_property_;
   rviz_common::properties::BoolProperty * use_occlusion_compensation_property_;

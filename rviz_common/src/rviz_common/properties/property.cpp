@@ -31,18 +31,33 @@
 
 #include "rviz_common/properties/property.hpp"
 
-#include <cstdio>  // for printf()
 #include <climits>  // for INT_MIN and INT_MAX
 #include <string>
 
 #include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
 #include <QPalette>  // NOLINT: cpplint is unable to handle the include order here
 #include <QLineEdit>  // NOLINT: cpplint is unable to handle the include order here
+#include <QPointer>  // NOLINT: cpplint is unable to handle the include order here
 #include <QSpinBox>  // NOLINT: cpplint is unable to handle the include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
+#include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
+#include <QtCore/qglobal.h>  // NOLINT: cpplint is unable to handle the include order here
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#define QVARIANT_TYPE_ID(v) (v).typeId()
+#else
+#define QVARIANT_TYPE_ID(v) static_cast<int>((v).type())
+#endif
 
 #include "rviz_common/properties/float_edit.hpp"
 #include "rviz_common/properties/property_tree_model.hpp"
+#include "rviz_common/logging.hpp"
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#define QVARIANT_TYPE_ID(v) (v).typeId()
+#else
+#define QVARIANT_TYPE_ID(v) static_cast<int>((v).type())
+#endif
 
 namespace rviz_common
 {
@@ -206,9 +221,9 @@ Property * Property::subProp(const QString & sub_name)
   for (Property * prop = this; prop != nullptr; prop = prop->getParent() ) {
     ancestry = "\"" + prop->getName() + "\"->" + ancestry;
   }
-  printf(
-    "ERROR: Undefined property %s \"%s\" accessed.\n", qPrintable(ancestry),
-    qPrintable(sub_name));
+  RVIZ_COMMON_LOG_ERROR_STREAM(
+    "Undefined property " << ancestry.toStdString() <<
+      " \"" << sub_name.toStdString() << "\" accessed.");
   return failprop_;
 }
 
@@ -270,9 +285,10 @@ QVariant Property::getViewData(int column, int role) const
     case 1:  // right column: values
       switch (role) {
         case Qt::DisplayRole:
-        case Qt::EditRole: return value_.type() == QVariant::Bool ? QVariant() : getValue();
+        case Qt::EditRole: return QVARIANT_TYPE_ID(value_) ==
+                 QMetaType::Bool ? QVariant() : getValue();
         case Qt::CheckStateRole:
-          if (value_.type() == QVariant::Bool) {
+          if (QVARIANT_TYPE_ID(value_) == QMetaType::Bool) {
             return value_.toBool() ? Qt::Checked : Qt::Unchecked;
           } else {
             return QVariant();
@@ -304,7 +320,7 @@ Qt::ItemFlags Property::getViewFlags(int column) const
     return enabled_flag | Qt::ItemIsSelectable;
   }
   if (value_.isValid() ) {
-    if (value_.type() == QVariant::Bool) {
+    if (QVARIANT_TYPE_ID(value_) == QMetaType::Bool) {
       return Qt::ItemIsUserCheckable | enabled_flag | Qt::ItemIsSelectable;
     }
     return Qt::ItemIsEditable | enabled_flag | Qt::ItemIsSelectable;
@@ -386,7 +402,14 @@ void Property::setModel(PropertyTreeModel * model)
 {
   model_ = model;
   if (model_ && hidden_) {
-    model_->emitPropertyHiddenChanged(this);
+    // process propertyHiddenChanged after insertion into model has finished
+    // Use QPointer to track Property lifetime and avoid use-after-free
+    QPointer<Property> self = this;
+    QTimer::singleShot(0, model_, [self]() {
+        if (self && self->model_) {
+          self->model_->emitPropertyHiddenChanged(self);
+        }
+    });
   }
   int num_children = numChildren();
   for (int i = 0; i < num_children; i++) {
@@ -451,16 +474,16 @@ void Property::load(const Config & config)
 void Property::loadValue(const Config & config)
 {
   if (config.getType() == Config::Value) {
-    switch (static_cast<int>(value_.type() )) {
-      case QVariant::Int: setValue(config.getValue().toInt() ); break;
+    switch (QVARIANT_TYPE_ID(value_)) {
+      case QMetaType::Int: setValue(config.getValue().toInt() ); break;
       case QMetaType::Float:
-      case QVariant::Double: setValue(config.getValue().toDouble() ); break;
-      case QVariant::String: setValue(config.getValue().toString() ); break;
-      case QVariant::Bool: setValue(config.getValue().toBool() ); break;
+      case QMetaType::Double: setValue(config.getValue().toDouble() ); break;
+      case QMetaType::QString: setValue(config.getValue().toString() ); break;
+      case QMetaType::Bool: setValue(config.getValue().toBool() ); break;
       default:
-        printf(
-          "Property::loadValue() TODO: error handling - unexpected QVariant type %d.\n",
-          static_cast<int>(value_.type() ));
+        RVIZ_COMMON_LOG_WARNING_STREAM(
+          "Property::loadValue() TODO: error handling - unexpected QVariant type " <<
+            QVARIANT_TYPE_ID(value_));
         break;
     }
   }
@@ -518,8 +541,8 @@ QWidget * Property::createEditor(
 {
   Q_UNUSED(option);
 
-  switch (static_cast<int>(value_.type() )) {
-    case QVariant::Int:
+  switch (QVARIANT_TYPE_ID(value_)) {
+    case QMetaType::Int:
       {
         QSpinBox * editor = new QSpinBox(parent);
         editor->setFrame(false);
@@ -527,12 +550,12 @@ QWidget * Property::createEditor(
         return editor;
       }
     case QMetaType::Float:
-    case QVariant::Double:
+    case QMetaType::Double:
       {
         FloatEdit * editor = new FloatEdit(parent);
         return editor;
       }
-    case QVariant::String:
+    case QMetaType::QString:
     default:
       {
         QLineEdit * editor = new QLineEdit(parent);

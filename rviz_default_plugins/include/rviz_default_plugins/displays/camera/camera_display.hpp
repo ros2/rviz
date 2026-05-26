@@ -51,9 +51,9 @@
 #include <message_filters/cache.hpp>
 
 # include "sensor_msgs/msg/camera_info.hpp"
-# include "tf2_ros/message_filter.h"
+# include "tf2_ros/message_filter.hpp"
 
-# include "rviz_default_plugins/displays/image/image_transport_display.hpp"
+# include "rviz_default_plugins/displays/image/image_display.hpp"
 # include "rviz_default_plugins/displays/image/ros_image_texture_iface.hpp"
 # include "rviz_default_plugins/visibility_control.hpp"
 # include "rviz_rendering/render_window.hpp"
@@ -102,7 +102,7 @@ struct ImageDimensions
  *
  */
 class RVIZ_DEFAULT_PLUGINS_PUBLIC CameraDisplay
-  : public rviz_default_plugins::displays::ImageTransportDisplay<sensor_msgs::msg::Image>,
+  : public ImageDisplay,
   public Ogre::RenderTargetListener
 {
   Q_OBJECT
@@ -115,7 +115,7 @@ public:
   // Overrides from Display
   void onInitialize() override;
 
-  void update(float wall_dt, float ros_dt) override;
+  void update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt) override;
 
   void reset() override;
 
@@ -191,9 +191,6 @@ private:
 
   std::shared_ptr<tf2_ros::MessageFilter<sensor_msgs::msg::Image,
     rviz_common::transformation::FrameTransformer>> tf_filter_;
-
-  std::unique_ptr<ROSImageTextureIface> texture_;
-  std::unique_ptr<rviz_common::RenderPanel> render_panel_;
 
   std::shared_ptr<message_filters::Cache<sensor_msgs::msg::Image>> cache_images_;
 

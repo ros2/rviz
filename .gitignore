@@ -7,3 +7,5 @@ lib
 **/.idea/**
 *.project
 *.cproject
+.externalToolBuilders/*
+.vscode/

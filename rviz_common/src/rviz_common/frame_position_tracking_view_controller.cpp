@@ -90,7 +90,9 @@ void FramePositionTrackingViewController::onActivate()
   connect(target_frame_property_, SIGNAL(changed()), this, SLOT(updateTargetFrame()));
 }
 
-void FramePositionTrackingViewController::update(float dt, float ros_dt)
+void FramePositionTrackingViewController::update(
+  std::chrono::nanoseconds dt,
+  std::chrono::nanoseconds ros_dt)
 {
   Q_UNUSED(dt);
   Q_UNUSED(ros_dt);

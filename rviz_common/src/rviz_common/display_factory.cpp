@@ -63,16 +63,19 @@ Display * DisplayFactory::makeRaw(const QString & class_id, QString * error_retu
   return display;
 }
 
+void DisplayFactory::updatePluginMessageTypes(
+  const QString & class_id,
+  const QSet<QString> & message_types)
+{
+  message_type_cache_[class_id] = message_types;
+}
+
 QSet<QString> DisplayFactory::getMessageTypes(const QString & class_id)
 {
   // lookup in cache
   if (message_type_cache_.find(class_id) != message_type_cache_.end()) {
     return message_type_cache_[class_id];
   }
-
-  // Always initialize cache as empty so if we don't find it, next time
-  // we won't look for it anymore either.
-  message_type_cache_[class_id] = QSet<QString>();
 
   // parse xml plugin description to find out message types of all displays in it.
   QString xml_file = getPluginManifestPath(class_id);
@@ -98,13 +101,12 @@ QSet<QString> DisplayFactory::getMessageTypes(const QString & class_id)
       library = library->NextSiblingElement("library");
     }
   }
-
-  // search cache again.
-  if (message_type_cache_.find(class_id) != message_type_cache_.end()) {
-    return message_type_cache_[class_id];
+  // If class_id was not found in the xml description, add an empty
+  // cache element to avoid re-parsing the xml next time
+  if (message_type_cache_.find(class_id) == message_type_cache_.end()) {
+    message_type_cache_[class_id] = QSet<QString>();
   }
-
-  return QSet<QString>();
+  return message_type_cache_[class_id];
 }
 
 bool DisplayFactory::hasRootNode(tinyxml2::XMLElement * root_element, const std::string & xml_file)
@@ -141,7 +143,12 @@ void DisplayFactory::fillCacheForAllClassElements(tinyxml2::XMLElement * library
     const std::string current_class_id = lookupClassId(class_element, derived_class);
     QSet<QString> message_types = parseMessageTypes(class_element, current_class_id);
 
-    message_type_cache_[QString::fromStdString(current_class_id)] = message_types;
+    // Don't overwrite message types previously set via updatePluginMessageTypes
+    if (message_type_cache_.find(QString::fromStdString(current_class_id)) ==
+      message_type_cache_.end() )
+    {
+      message_type_cache_[QString::fromStdString(current_class_id)] = message_types;
+    }
 
     class_element = class_element->NextSiblingElement("class");
   }

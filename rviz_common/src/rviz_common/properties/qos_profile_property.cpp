@@ -124,6 +124,11 @@ void QosProfileProperty::initialize(std::function<void(rclcpp::QoS)> qos_changed
   qos_changed_callback_ = std::move(qos_changed_callback);
 }
 
+void QosProfileProperty::setBestEffort()
+{
+  reliability_policy_property_->setStdString("Best Effort");
+}
+
 void QosProfileProperty::updateQosProfile()
 {
   rmw_qos_profile_t profile = rmw_qos_profile_default;

@@ -2,6 +2,81 @@
 Changelog for package rviz_visual_testing_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.0 (2026-05-06)
+-------------------
+
+15.2.2 (2026-04-24)
+-------------------
+* Use rosdep keys that select Qt5 or Qt6 by platform (`#1720 <https://github.com/ros2/rviz/issues/1720>`_)
+* Contributors: Shane Loretz
+
+15.2.1 (2026-04-24)
+-------------------
+
+15.2.0 (2026-05-15)
+-------------------
+
+15.1.19 (2026-03-24)
+--------------------
+* Use new ROSIDL aggregate CMake target (`#1688 <https://github.com/ros2/rviz/issues/1688>`_)
+* Fix Qt version resolution when both Qt5 and Qt6 are installed - CMake defaults to ascending resolution and Qt5 will be found when Qt6 is desired (Rolling, L-Turtle, and beyond). (`#1689 <https://github.com/ros2/rviz/issues/1689>`_)
+* Contributors: Emerson Knapp, Nathan Brooks
+
+15.1.18 (2026-02-25)
+--------------------
+* Use get_package_share_path (`#1671 <https://github.com/ros2/rviz/issues/1671>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.17 (2026-02-24)
+--------------------
+
+15.1.16 (2026-01-13)
+--------------------
+* Update ament_index_cpp API (`#1649 <https://github.com/ros2/rviz/issues/1649>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.15 (2025-12-23)
+--------------------
+
+15.1.14 (2025-12-17)
+--------------------
+* Use qt6 as the default dependency from rosdep (`#1635 <https://github.com/ros2/rviz/issues/1635>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.13 (2025-11-28)
+--------------------
+
+15.1.12 (2025-11-07)
+--------------------
+
+15.1.11 (2025-10-20)
+--------------------
+
+15.1.10 (2025-09-26)
+--------------------
+* Removed deprecation warning in tf2 (`#1585 <https://github.com/ros2/rviz/issues/1585>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.9 (2025-09-04)
+-------------------
+
+15.1.8 (2025-08-22)
+-------------------
+
+15.1.7 (2025-07-25)
+-------------------
+* Replace deprecated tf2_ros headers (`#1529 <https://github.com/ros2/rviz/issues/1529>`_)
+* Contributors: Alejandro Hernández Cordero
+
+15.1.6 (2025-07-01)
+-------------------
+
+15.1.5 (2025-06-27)
+-------------------
+
+15.1.4 (2025-06-20)
+-------------------
+
 15.1.3 (2025-05-20)
 -------------------
 * feat: support both qt5 and qt6 (`#1187 <https://github.com/ros2/rviz/issues/1187>`_)

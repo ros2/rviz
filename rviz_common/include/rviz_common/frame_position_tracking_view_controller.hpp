@@ -74,7 +74,7 @@ public:
    */
   void onActivate() override;
 
-  void update(float dt, float ros_dt) override;
+  void update(std::chrono::nanoseconds dt, std::chrono::nanoseconds ros_dt) override;
 
   /// Configure the settings of this view controller to give a similar view as the source_view.
   /**

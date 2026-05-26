@@ -450,6 +450,12 @@ void MapDisplay::createSwatches()
         width << " x " << height << " using " << number_swatches << " swatches");
     swatches_.clear();
     try {
+      // OpenGL size limit is 16384x16384
+      // TODO(Guillaume): find a cleaner way and autodetect size limit
+      if (swatch_width > 16384 || swatch_height > 16384) {
+        doubleSwatchNumber(swatch_width, swatch_height, number_swatches);
+        continue;
+      }
       tryCreateSwatches(width, height, resolution, swatch_width, swatch_height, number_swatches);
       updateDrawUnder();
       return;
@@ -699,7 +705,7 @@ void MapDisplay::reset()
   clear();
 }
 
-void MapDisplay::update(float wall_dt, float ros_dt)
+void MapDisplay::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt)
 {
   (void) wall_dt;
   (void) ros_dt;
