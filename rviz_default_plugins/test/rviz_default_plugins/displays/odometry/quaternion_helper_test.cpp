@@ -61,3 +61,12 @@ TEST(QuaternionHelper, ogreQuaternionHelper_returns_angle) {
     rviz_default_plugins::ogreQuaternionAngularDistance(quaternion1, quaternion3),
     FloatNear(1.2f, 0.001f));
 }
+
+TEST(QuaternionHelper, ogreQuaternionAngularDistance_returns_nan_for_zero_quaternions) {
+  Ogre::Quaternion zero(0.0f, 0.0f, 0.0f, 0.0f);
+  Ogre::Quaternion identity(1.0f, 0.0f, 0.0f, 0.0f);
+
+  EXPECT_TRUE(std::isnan(rviz_default_plugins::ogreQuaternionAngularDistance(zero, zero)));
+  EXPECT_TRUE(std::isnan(rviz_default_plugins::ogreQuaternionAngularDistance(zero, identity)));
+  EXPECT_TRUE(std::isnan(rviz_default_plugins::ogreQuaternionAngularDistance(identity, zero)));
+}
