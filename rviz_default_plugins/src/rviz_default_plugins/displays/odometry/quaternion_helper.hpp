@@ -31,7 +31,9 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__ODOMETRY__QUATERNION_HELPER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__ODOMETRY__QUATERNION_HELPER_HPP_
 
+#include <algorithm>
 #include <cmath>
+#include <limits>
 
 #include <OgreQuaternion.h>
 
@@ -40,9 +42,25 @@ namespace rviz_default_plugins
 
 float ogreQuaternionAngularDistance(Ogre::Quaternion first, Ogre::Quaternion second)
 {
+<<<<<<< HEAD
   Ogre::Quaternion product = first * Ogre::Quaternion(second.w, -second.x, -second.y, -second.z);
   float imaginary_norm =
     sqrtf(powf(product.x, 2.0f) + powf(product.y, 2.0f) + powf(product.z, 2.0f));
+=======
+  // The angular distance between zero / near-zero quaternions is undefined:
+  // normalise() would divide by ~0 and produce NaN/Inf components. Surface
+  // that explicitly so callers can detect it with std::isnan instead of
+  // silently propagating garbage.
+  constexpr float kQuaternionNormEpsilon = 1e-6f;
+  if (first.Norm() < kQuaternionNormEpsilon || second.Norm() < kQuaternionNormEpsilon) {
+    return std::numeric_limits<float>::quiet_NaN();
+  }
+
+  first.normalise();
+  second.normalise();
+  float dot = first.Dot(second);
+  dot = std::clamp(dot, -1.0f, 1.0f);
+>>>>>>> 90078fd6 (ogreQuaternionAngularDistance does not properly handle invalid quaternion input (#1714))
 
   return 2.0f * atan2f(imaginary_norm, sqrtf(powf(product.w, 2.0f)));
 }
