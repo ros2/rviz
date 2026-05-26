@@ -81,11 +81,7 @@ TrianglePolygon::TrianglePolygon(
     manual_->colour(color);
   }
   manual_->position(B.x, B.y, B.z);
-  if (upper_triangle) {
-    manual_->textureCoord(0, 1);
-  } else {
-    manual_->textureCoord(0, 1);
-  }
+  manual_->textureCoord(0, 1);
   if (use_color) {
     manual_->colour(color);
   }
