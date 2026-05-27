@@ -87,6 +87,11 @@ void ROSImageTexture::clear()
 
   new_image_ = false;
   current_image_.reset();
+
+  // Drop median history so reset/resubscribe doesn't carry stale min/max
+  // into the first frame of the new stream.
+  min_buffer_.clear();
+  max_buffer_.clear();
 }
 
 const Ogre::String ROSImageTexture::getName() const
@@ -348,30 +353,31 @@ template<typename T>
 void
 ROSImageTexture::getMinimalAndMaximalValueToNormalize(
   const T * data_ptr, size_t num_elements,
-  T & min_value, T & max_value)
+  double & min_value, double & max_value)
 {
   if (normalize_) {
+    // Accumulate in T to avoid per-pixel double conversions, then promote.
+    T t_min = std::numeric_limits<T>::max();
+    T t_max = std::numeric_limits<T>::lowest();
     const T * input_ptr = data_ptr;
-
-    min_value = std::numeric_limits<uint16_t>::max();
-    max_value = std::numeric_limits<uint16_t>::min();
     for (size_t i = 0; i < num_elements; ++i) {
-      min_value = std::min(min_value, *input_ptr);
-      max_value = std::max(max_value, *input_ptr);
+      t_min = std::min(t_min, *input_ptr);
+      t_max = std::max(t_max, *input_ptr);
       input_ptr++;
     }
+    min_value = static_cast<double>(t_min);
+    max_value = static_cast<double>(t_max);
 
     if (median_frames_ > 1) {
-      min_value =
-        static_cast<uint16_t>(
-        computeMedianOfSeveralFrames(min_buffer_, min_value, this->median_frames_));
-      max_value =
-        static_cast<uint16_t>(
-        computeMedianOfSeveralFrames(max_buffer_, max_value, this->median_frames_));
+      min_value = computeMedianOfSeveralFrames(min_buffer_, min_value, this->median_frames_);
+      max_value = computeMedianOfSeveralFrames(max_buffer_, max_value, this->median_frames_);
     }
   } else {
-    min_value = static_cast<uint16_t>(min_);
-    max_value = static_cast<uint16_t>(max_);
+    // User-supplied min/max are doubles. Use them directly — no cast through
+    // T — so a 16UC1 user can enter values up to 65535 (or above) and a
+    // 32FC1 user can enter fractional values without losing precision.
+    min_value = min_;
+    max_value = max_;
   }
 }
 
@@ -381,30 +387,32 @@ ROSImageTexture::convertTo8bit(const uint8_t * data_ptr, size_t data_size_in_byt
 {
   size_t new_size_in_bytes = data_size_in_bytes / sizeof(T);
 
-  uint8_t * new_data = new uint8_t[new_size_in_bytes];
+  // Zero-initialize so a degenerate range (<= 0) produces a valid all-black
+  // image instead of handing uninitialized heap memory to Ogre.
+  uint8_t * new_data = new uint8_t[new_size_in_bytes]();
 
-  T min_value;
-  T max_value;
+  double min_value;
+  double max_value;
 
-  getMinimalAndMaximalValueToNormalize(
+  getMinimalAndMaximalValueToNormalize<T>(
     reinterpret_cast<const T *>(data_ptr), new_size_in_bytes, min_value, max_value);
 
-  uint8_t * output_ptr = new_data;
-
-  // Rescale T image and convert it to 8-bit
-  double range = max_value - min_value;
-  if (range > 0.0) {
+  // Rescale T image and convert it to 8-bit. All arithmetic in double so
+  // user-supplied min/max outside T's range (e.g. 65536 for 16UC1) still
+  // produce meaningful output instead of an overflow-to-zero surprise.
+  const double range = max_value - min_value;
+  if (range > 0.0 && std::isfinite(range)) {
     const T * input_ptr = reinterpret_cast<const T *>(data_ptr);
+    uint8_t * output_ptr = new_data;
 
-    // Rescale and quantize
     for (size_t i = 0; i < new_size_in_bytes; ++i, ++output_ptr, ++input_ptr) {
-      double val = (static_cast<double>(*input_ptr - min_value) / range);
-      if (val < 0) {val = 0;}
-      if (val > 1) {val = 1;}
+      double val = (static_cast<double>(*input_ptr) - min_value) / range;
+      val = std::clamp(val, 0.0, 1.0);
       *output_ptr = static_cast<uint8_t>(val * 255u);
     }
   }
-  // TODO(clalancette): What happens when range is <= 0.0?
+  // range <= 0: uniform-value frame or user-set min >= max. Leave the
+  // zero-initialized buffer so we display solid black rather than garbage.
 
   return ImageData(Ogre::PF_BYTE_L, new_data, new_size_in_bytes, true);
 }
