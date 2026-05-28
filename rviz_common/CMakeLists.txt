@@ -59,7 +59,6 @@ find_package(TinyXML2 REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(message_filters REQUIRED)
-find_package(urdf REQUIRED)
 find_package(yaml_cpp_vendor REQUIRED)
 find_package(yaml-cpp REQUIRED)
 

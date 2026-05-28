@@ -41,10 +41,14 @@
 #include <OgreTechnique.h>
 #include <OgreTextureManager.h>
 #include <OgreViewport.h>
+#include <QCoreApplication>
+#include <QEvent>
+#include <QMouseEvent>
 #include <QSet>
 #include <QString>
 
 #include <algorithm>
+#include <cstring>
 #include <memory>
 #include <string>
 #include <utility>
@@ -170,6 +174,9 @@ void ImageDisplay::onInitialize()
 
 ImageDisplay::~ImageDisplay()
 {
+  if (auto * app = QCoreApplication::instance()) {
+    app->removeEventFilter(this);
+  }
   unsubscribe();
 }
 
@@ -302,6 +309,7 @@ void ImageDisplay::resetSubscription()
 
 void ImageDisplay::unsubscribe()
 {
+  subscription_callback_.disconnect();
   if (subscription_) {
     subscription_->unsubscribe();
   }
@@ -328,7 +336,11 @@ void ImageDisplay::updateNormalizeOptions()
   }
 }
 
-void ImageDisplay::clear() {texture_->clear();}
+void ImageDisplay::clear()
+{
+  texture_->clear();
+  last_msg_.reset();
+}
 
 void ImageDisplay::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt)
 {
@@ -381,6 +393,7 @@ void ImageDisplay::processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg)
     got_float_image_ = got_float_image;
     updateNormalizeOptions();
   }
+  last_msg_ = msg;
   texture_->addMessage(msg);
 }
 
@@ -422,6 +435,260 @@ void ImageDisplay::setupRenderPanel()
   static int count = 0;
   render_panel_->getRenderWindow()->setObjectName(
     "ImageDisplayRenderWindow" + QString::number(count++));
+
+  // Watch mouse motion over the image area. The Ogre render surface is a
+  // QWindow embedded via QWidget::createWindowContainer, and mouse events
+  // are routed through an internal callback — they don't reach Qt widget
+  // event filters. Installing at the application level guarantees we see
+  // them, and we gate on the actual target in eventFilter().
+  if (auto * app = QCoreApplication::instance()) {
+    app->installEventFilter(this);
+  }
+}
+
+bool ImageDisplay::eventFilter(QObject * watched, QEvent * event)
+{
+  if (!render_panel_) {
+    return _RosTopicDisplay::eventFilter(watched, event);
+  }
+
+  const QObject * render_window = render_panel_->getRenderWindow();
+
+  // The mouse target is either the Ogre QWindow itself or the container
+  // QWidget Qt synthesized around it. Both live under render_panel_.
+  bool target_is_image_surface = (watched == render_window);
+  if (!target_is_image_surface) {
+    if (auto * w = qobject_cast<QWidget *>(watched)) {
+      // A descendant widget of render_panel_ — i.e. the container that
+      // hosts the Ogre QWindow.
+      for (QWidget * p = w; p != nullptr; p = p->parentWidget()) {
+        if (p == render_panel_.get()) {
+          target_is_image_surface = true;
+          break;
+        }
+      }
+    }
+  }
+
+  if (target_is_image_surface) {
+    if (event->type() == QEvent::MouseMove) {
+      auto * me = static_cast<QMouseEvent *>(event);
+      // Qt reports the position relative to the event's target. Map to
+      // render_panel_ coords so our letterbox math (which uses the panel's
+      // width/height) is consistent.
+      QPoint pos_in_panel;
+      if (auto * w = qobject_cast<QWidget *>(watched)) {
+        pos_in_panel = w->mapTo(render_panel_.get(), me->position().toPoint());
+      } else {
+        // watched is the QWindow; its geometry is aligned with the panel
+        // contents (layout margins are 0), so use the event position as-is.
+        pos_in_panel = me->position().toPoint();
+      }
+      updatePixelStatusFromWidgetPos(pos_in_panel.x(), pos_in_panel.y());
+    } else if (event->type() == QEvent::Leave) {
+      if (render_panel_) {
+        render_panel_->setToolTip(QString());
+      }
+      if (context_) {
+        context_->setStatus("");
+      }
+    }
+  }
+  return _RosTopicDisplay::eventFilter(watched, event);
+}
+
+bool ImageDisplay::mapWidgetPosToImagePixel(int widget_x, int widget_y, int & px, int & py) const
+{
+  if (!last_msg_ || last_msg_->width == 0 || last_msg_->height == 0 ||
+    !render_panel_)
+  {
+    return false;
+  }
+
+  const float win_width = render_panel_->width();
+  const float win_height = render_panel_->height();
+  if (win_width <= 0.0f || win_height <= 0.0f) {
+    return false;
+  }
+
+  const float img_width = static_cast<float>(last_msg_->width);
+  const float img_height = static_cast<float>(last_msg_->height);
+  const float img_aspect = img_width / img_height;
+  const float win_aspect = win_width / win_height;
+
+  // Match the letterbox / pillarbox layout in update().
+  float disp_width;
+  float disp_height;
+  float disp_x_offset;
+  float disp_y_offset;
+  if (img_aspect > win_aspect) {
+    disp_width = win_width;
+    disp_height = win_width / img_aspect;
+    disp_x_offset = 0.0f;
+    disp_y_offset = (win_height - disp_height) * 0.5f;
+  } else {
+    disp_height = win_height;
+    disp_width = win_height * img_aspect;
+    disp_x_offset = (win_width - disp_width) * 0.5f;
+    disp_y_offset = 0.0f;
+  }
+
+  const float rel_x = widget_x - disp_x_offset;
+  const float rel_y = widget_y - disp_y_offset;
+  if (rel_x < 0.0f || rel_y < 0.0f || rel_x >= disp_width || rel_y >= disp_height) {
+    return false;
+  }
+
+  px = std::clamp(
+    static_cast<int>(rel_x * img_width / disp_width),
+    0, static_cast<int>(last_msg_->width) - 1);
+  py = std::clamp(
+    static_cast<int>(rel_y * img_height / disp_height),
+    0, static_cast<int>(last_msg_->height) - 1);
+  return true;
+}
+
+namespace
+{
+
+// Width of one pixel in bytes for encodings this display decodes inline.
+// Returns 0 for unsupported encodings.
+size_t pixelSizeForEncoding(const std::string & encoding)
+{
+  if (encoding == sensor_msgs::image_encodings::MONO8) {return 1;}
+  if (encoding == sensor_msgs::image_encodings::MONO16) {return 2;}
+  if (encoding == sensor_msgs::image_encodings::RGB8) {return 3;}
+  if (encoding == sensor_msgs::image_encodings::BGR8) {return 3;}
+  if (encoding == sensor_msgs::image_encodings::RGBA8) {return 4;}
+  if (encoding == sensor_msgs::image_encodings::BGRA8) {return 4;}
+  if (encoding == sensor_msgs::image_encodings::TYPE_32FC1) {return 4;}
+  return 0;
+}
+
+QString formatRawBytes(const uint8_t * p, size_t n)
+{
+  QString out = "raw=[";
+  for (size_t i = 0; i < n; ++i) {
+    if (i != 0) {out += " ";}
+    out += QString("%1").arg(p[i], 2, 16, QChar('0')).toUpper();
+  }
+  out += "]";
+  return out;
+}
+
+QString formatPixel(const sensor_msgs::msg::Image & msg, int px, int py)
+{
+  QString prefix = "[" + QString::fromStdString(msg.encoding) + "] ";
+  const size_t pixel_size = pixelSizeForEncoding(msg.encoding);
+
+  // Even when pixel_size is 0 (encoding not decoded inline) try to show the
+  // raw bytes at (px, py) based on step, so the user always sees *something*.
+  if (pixel_size == 0 && msg.step > 0 &&
+    msg.data.size() >= static_cast<size_t>(msg.height) * msg.step)
+  {
+    const size_t row_stride = msg.step;
+    const size_t bytes_per_pixel = row_stride / std::max(msg.width, 1u);
+    if (bytes_per_pixel > 0) {
+      const size_t offset = static_cast<size_t>(py) * row_stride +
+        static_cast<size_t>(px) * bytes_per_pixel;
+      if (offset + bytes_per_pixel <= msg.data.size()) {
+        return prefix + formatRawBytes(msg.data.data() + offset, bytes_per_pixel);
+      }
+    }
+    return prefix + "(unsupported)";
+  }
+
+  const size_t offset = static_cast<size_t>(py) * msg.step +
+    static_cast<size_t>(px) * pixel_size;
+  if (offset + pixel_size > msg.data.size()) {
+    return prefix + "(out of bounds)";
+  }
+  const uint8_t * p = msg.data.data() + offset;
+
+  if (msg.encoding == sensor_msgs::image_encodings::MONO8) {
+    return prefix + QString("mono:%1").arg(p[0]);
+  }
+  if (msg.encoding == sensor_msgs::image_encodings::MONO16) {
+    uint16_t v;
+    std::memcpy(&v, p, sizeof(v));
+    return prefix + QString("mono16:%1").arg(v);
+  }
+  if (msg.encoding == sensor_msgs::image_encodings::RGB8) {
+    return prefix + QString(
+      "<span style='color:#c00'>R:%1</span> "
+      "<span style='color:#0a0'>G:%2</span> "
+      "<span style='color:#06c'>B:%3</span>")
+           .arg(p[0]).arg(p[1]).arg(p[2]);
+  }
+  if (msg.encoding == sensor_msgs::image_encodings::BGR8) {
+    return prefix + QString(
+      "<span style='color:#c00'>R:%1</span> "
+      "<span style='color:#0a0'>G:%2</span> "
+      "<span style='color:#06c'>B:%3</span>")
+           .arg(p[2]).arg(p[1]).arg(p[0]);
+  }
+  if (msg.encoding == sensor_msgs::image_encodings::RGBA8) {
+    return prefix + QString(
+      "<span style='color:#c00'>R:%1</span> "
+      "<span style='color:#0a0'>G:%2</span> "
+      "<span style='color:#06c'>B:%3</span> "
+      "<span style='color:#aaa'>A:%4</span>")
+           .arg(p[0]).arg(p[1]).arg(p[2]).arg(p[3]);
+  }
+  if (msg.encoding == sensor_msgs::image_encodings::BGRA8) {
+    return prefix + QString(
+      "<span style='color:#c00'>R:%1</span> "
+      "<span style='color:#0a0'>G:%2</span> "
+      "<span style='color:#06c'>B:%3</span> "
+      "<span style='color:#aaa'>A:%4</span>")
+           .arg(p[2]).arg(p[1]).arg(p[0]).arg(p[3]);
+  }
+  if (msg.encoding == sensor_msgs::image_encodings::TYPE_32FC1) {
+    float v;
+    std::memcpy(&v, p, sizeof(v));
+    return prefix + QString("value:%1").arg(static_cast<double>(v));
+  }
+  // Should not reach here because pixel_size>0 only for the above encodings,
+  // but guard with a raw-byte fallback just in case.
+  return prefix + formatRawBytes(p, pixel_size);
+}
+
+}  // namespace
+
+QString ImageDisplay::formatPixelAt(int px, int py) const
+{
+  if (!last_msg_) {
+    return {};
+  }
+  return formatPixel(*last_msg_, px, py);
+}
+
+void ImageDisplay::updatePixelStatusFromWidgetPos(int widget_x, int widget_y)
+{
+  int px = 0;
+  int py = 0;
+  if (!mapWidgetPosToImagePixel(widget_x, widget_y, px, py)) {
+    if (render_panel_) {
+      render_panel_->setToolTip(QString());
+    }
+    if (context_) {
+      context_->setStatus("");
+    }
+    return;
+  }
+  const QString value = formatPixelAt(px, py);
+  QString text = QString("(%1, %2)").arg(px).arg(py);
+  if (!value.isEmpty()) {
+    text += "  " + value;
+  }
+  // Tooltip near the cursor.
+  if (render_panel_) {
+    render_panel_->setToolTip(text);
+  }
+  // Main-window status bar at the bottom of the rviz2 window.
+  if (context_) {
+    context_->setStatus("Image pixel " + text);
+  }
 }
 
 }  // namespace displays
