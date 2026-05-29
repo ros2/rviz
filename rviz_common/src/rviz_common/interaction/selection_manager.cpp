@@ -587,6 +587,14 @@ void SelectionManager::pick(
   int y2,
   M_Picked & results)
 {
+  // Reject invalid pick rectangles. Negative screen coordinates can produce
+  // garbage handles when fed to the offscreen render texture, and a degenerate
+  // rectangle (x2 <= x1 or y2 <= y1) selects nothing by definition.
+  if (x1 < 0 || y1 < 0 || x2 <= x1 || y2 <= y1) {
+    results.clear();
+    return;
+  }
+
   auto handler_lock = handler_manager_->lock(std::defer_lock);
   std::lock(selection_mutex_, handler_lock);
   std::lock_guard<std::recursive_mutex> lock(selection_mutex_, std::adopt_lock);
