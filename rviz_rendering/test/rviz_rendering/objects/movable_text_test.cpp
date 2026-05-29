@@ -53,6 +53,10 @@ protected:
     testing_environment_->setUpOgreTestEnvironment();
   }
 
+  void TearDown() override
+  {
+    testing_environment_.reset();
+  }
   std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
 };
 
@@ -263,4 +267,26 @@ TEST_F(MovableTextTestFixture, bounding_box_max_components_are_not_FLT_MIN_garba
   // FLT_MIN in y/z whenever no vertex pushed those components above ~1.18e-38.
   ASSERT_EQ(max.y, 0.0f);
   ASSERT_EQ(max.z, 0.0f);
+}
+
+float calculateGlyphWidth(std::shared_ptr<rviz_rendering::MovableText> movable_text, char character)
+{
+  auto font = Ogre::FontManager::getSingleton().getByName("Liberation Sans", "rviz_rendering").get();
+  font->load();
+  return font->getGlyphAspectRatio(character) * movable_text->getCharacterHeight() * 2.0f;
+}
+
+TEST_F(MovableTextTestFixture, centerAlignmentWorksCorrectlyWithSpaces)
+{
+  auto movable_text = std::make_shared<rviz_rendering::MovableText>("G G");
+  movable_text->setTextAlignment(
+      rviz_rendering::MovableText::HorizontalAlignment::H_CENTER,
+      rviz_rendering::MovableText::VerticalAlignment::V_BELOW);
+  movable_text->update();
+  float char_width = calculateGlyphWidth(movable_text, 'G');
+  EXPECT_THAT(
+      movable_text->getBoundingBox(),
+      AllOf(
+          HasMinimum(Ogre::Vector3(-3 * char_width / 2, -2, 0)),
+          HasMaximum(Ogre::Vector3(3 * char_width / 2, 0, 0))));
 }
