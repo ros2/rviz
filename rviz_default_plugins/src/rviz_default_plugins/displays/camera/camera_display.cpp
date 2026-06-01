@@ -665,6 +665,7 @@ Ogre::Matrix4 CameraDisplay::calculateProjectionMatrix(
 
 void CameraDisplay::processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg)
 {
+  last_msg_ = msg;
   texture_->addMessage(msg);
 }
 
