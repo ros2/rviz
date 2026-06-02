@@ -89,6 +89,8 @@ public:
   void update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt) override;
   void reset() override;
 
+  bool eventFilter(QObject * watched, QEvent * event) override;
+
 public Q_SLOTS:
   virtual void updateNormalizeOptions();
 
@@ -116,11 +118,26 @@ protected:
   std::unique_ptr<ROSImageTextureIface> texture_;
   std::unique_ptr<rviz_common::RenderPanel> render_panel_;
 
+  // Latest image for pixel-value readout under the mouse pointer. Exposed to
+  // subclasses (e.g. CameraDisplay) so they can keep it in sync when they
+  // override processMessage.
+  sensor_msgs::msg::Image::ConstSharedPtr last_msg_;
+
 private:
   void setupScreenRectangle();
   void setupRenderPanel();
 
   void clear();
+
+  /// Map a mouse position in render_panel_ coordinates to image pixel (x, y).
+  /// Returns false if the position falls outside the letterboxed image area.
+  bool mapWidgetPosToImagePixel(int widget_x, int widget_y, int & px, int & py) const;
+
+  /// Format the pixel value at (px, py) from last_msg_ for display. Returns
+  /// an empty string if the encoding is not supported.
+  QString formatPixelAt(int px, int py) const;
+
+  void updatePixelStatusFromWidgetPos(int widget_x, int widget_y);
 
   std::unique_ptr<Ogre::Rectangle2D> screen_rect_;
   Ogre::MaterialPtr material_;
