@@ -2,6 +2,29 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixed Unexpected pixels for mono Image (`#1718 <https://github.com/ros2/rviz/issues/1718>`_) (`#1766 <https://github.com/ros2/rviz/issues/1766>`_)
+  (cherry picked from commit 4b8d1e07fef900cb0a27c215356f6cc942698ee0)
+  Co-authored-by: Alejandro Hernández Cordero <alejandro@openrobotics.org>
+* ogreQuaternionAngularDistance does not properly handle invalid quaternion input (backport `#1714 <https://github.com/ros2/rviz/issues/1714>`_) (`#1758 <https://github.com/ros2/rviz/issues/1758>`_)
+  * ogreQuaternionAngularDistance does not properly handle invalid quaternion input (`#1714 <https://github.com/ros2/rviz/issues/1714>`_)
+  (cherry picked from commit 90078fd641dfc69cc77fdb5b99139be1192acdbe)
+  # Conflicts:
+  #	rviz_default_plugins/src/rviz_default_plugins/displays/odometry/quaternion_helper.hpp
+  * fix merge
+  ---------
+  Co-authored-by: Alejandro Hernández Cordero <alejandro@openrobotics.org>
+  Co-authored-by: Alejandro Hernandez Cordero <ahcorde@gmail.com>
+* Make sure to disconnect subscription callback when unsubscribing (backport `#1742 <https://github.com/ros2/rviz/issues/1742>`_) (`#1745 <https://github.com/ros2/rviz/issues/1745>`_)
+  (cherry picked from commit c853c3c4be79836dee3bf8419caa9ff64bc0ccfa)
+  Co-authored-by: cwit-vcas <cwit@vestergaardcompany.com>
+  Co-authored-by: Alejandro Hernandez Cordero <ahcorde@gmail.com>
+* Remove redundant compilation of test fixtures (`#1673 <https://github.com/ros2/rviz/issues/1673>`_) (`#1680 <https://github.com/ros2/rviz/issues/1680>`_)
+  (cherry picked from commit 6a1832e0239b6493b9ed0fa30757db9b421494f8)
+  Co-authored-by: Michael Carroll <carroll.michael@gmail.com>
+* Contributors: mergify[bot]
+
 14.1.20 (2026-02-24)
 --------------------
 

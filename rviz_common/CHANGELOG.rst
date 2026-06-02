@@ -2,6 +2,13 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* SelectionManager::select Function Not Returning Empty Selection Result for Invalid Coordinates (`#1713 <https://github.com/ros2/rviz/issues/1713>`_) (`#1770 <https://github.com/ros2/rviz/issues/1770>`_)
+  (cherry picked from commit 73c3d45c27a0c426d7dce3ef502b4a64b813ee6f)
+  Co-authored-by: Alejandro Hernández Cordero <alejandro@openrobotics.org>
+* Contributors: mergify[bot]
+
 14.1.20 (2026-02-24)
 --------------------
 * Fix setHidden regression in PropertyTreeWidget (`#1667 <https://github.com/ros2/rviz/issues/1667>`_) (`#1669 <https://github.com/ros2/rviz/issues/1669>`_)
