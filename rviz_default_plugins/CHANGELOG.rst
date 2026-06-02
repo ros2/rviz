@@ -2,8 +2,8 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+14.1.21 (2026-06-02)
+--------------------
 * Fixed Unexpected pixels for mono Image (`#1718 <https://github.com/ros2/rviz/issues/1718>`_) (`#1766 <https://github.com/ros2/rviz/issues/1766>`_)
   (cherry picked from commit 4b8d1e07fef900cb0a27c215356f6cc942698ee0)
   Co-authored-by: Alejandro Hernández Cordero <alejandro@openrobotics.org>

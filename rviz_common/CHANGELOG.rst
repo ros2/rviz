@@ -2,8 +2,8 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+14.1.21 (2026-06-02)
+--------------------
 * SelectionManager::select Function Not Returning Empty Selection Result for Invalid Coordinates (`#1713 <https://github.com/ros2/rviz/issues/1713>`_) (`#1770 <https://github.com/ros2/rviz/issues/1770>`_)
   (cherry picked from commit 73c3d45c27a0c426d7dce3ef502b4a64b813ee6f)
   Co-authored-by: Alejandro Hernández Cordero <alejandro@openrobotics.org>
