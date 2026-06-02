@@ -143,7 +143,7 @@ static size_t bytesPerPixelForEncoding(const std::string & encoding)
   namespace enc = sensor_msgs::image_encodings;
   if (encoding == enc::YUV422 || encoding == enc::YUV422_YUY2 ||
     encoding == enc::UYVY || encoding == enc::YUYV ||
-    encoding == enc::NV12 || encoding == enc::NV21 || encoding == enc::NV24)
+    encoding == enc::NV21 || encoding == enc::NV24)
   {
     return 0;
   }
