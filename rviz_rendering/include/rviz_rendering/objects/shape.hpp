@@ -61,6 +61,7 @@ public:
     Cube,
     Cylinder,
     Sphere,
+    Capsule,
     Mesh,
   };
 
