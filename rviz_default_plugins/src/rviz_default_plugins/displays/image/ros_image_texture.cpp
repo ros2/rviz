@@ -41,6 +41,8 @@
 #include <vector>
 #include <utility>
 
+#include <cstring>
+
 #include <OgreTextureManager.h>  // NOLINT: cpplint cannot handle include order
 
 #include "sensor_msgs/image_encodings.hpp"
@@ -138,6 +140,26 @@ void ROSImageTexture::setNormalizeFloatImage(bool normalize, double min, double 
   max_ = max;
 }
 
+// Bytes per pixel for encodings that have a fixed linear row layout. Returns
+// 0 for encodings whose per-row layout is non-trivial (YUV 4:2:2 packed, NV12
+// planar) — those are handled explicitly by their converters using stride.
+static size_t bytesPerPixelForEncoding(const std::string & encoding)
+{
+  namespace enc = sensor_msgs::image_encodings;
+  if (encoding == enc::YUV422 || encoding == enc::YUV422_YUY2 ||
+    encoding == enc::UYVY || encoding == enc::YUYV ||
+    encoding == enc::NV21 || encoding == enc::NV24)
+  {
+    return 0;
+  }
+  try {
+    return static_cast<size_t>(enc::numChannels(encoding)) *
+           enc::bitDepth(encoding) / 8;
+  } catch (const std::runtime_error &) {
+    return 0;  // unknown encoding — skip repack
+  }
+}
+
 static double
 computeMedianOfSeveralFrames(std::deque<double> & buffer, double value, unsigned median_frames)
 {
@@ -172,8 +194,42 @@ bool ROSImageTexture::update()
   height_ = image->height;
   stride_ = image->step;
 
+  // If the publisher sent rows with trailing padding (step > width * bpp),
+  // repack into a contiguous buffer. Ogre::Image::loadRawData and the
+  // convertTo8bit rescale loop both assume packed rows — without this,
+  // each row drifts right by `padding` bytes, producing a diagonal shear.
+  // YUV/NV12 encodings are left alone because their converters honor stride
+  // directly.
+  std::vector<uint8_t> repacked;
+  const uint8_t * data_ptr = image->data.data();
+  size_t data_size = image->data.size();
+  const size_t bpp = bytesPerPixelForEncoding(image->encoding);
+  if (bpp != 0) {
+    const size_t packed_row = static_cast<size_t>(width_) * bpp;
+    if (stride_ > packed_row) {
+      if (image->data.size() < static_cast<size_t>(stride_) * height_) {
+        RVIZ_COMMON_LOG_ERROR_STREAM(
+          "Image data size " << image->data.size() <<
+            " smaller than step*height (" << stride_ * height_ << ")");
+        return false;
+      }
+      repacked.resize(packed_row * height_);
+      for (uint32_t y = 0; y < height_; ++y) {
+        std::memcpy(
+          repacked.data() + y * packed_row,
+          image->data.data() + y * stride_,
+          packed_row);
+      }
+      data_ptr = repacked.data();
+      data_size = repacked.size();
+      // Reflect the repack so any downstream code reading stride_ sees the
+      // new (packed) layout.
+      stride_ = packed_row;
+    }
+  }
+
   ImageData image_data = setFormatAndNormalizeDataIfNecessary(
-    image->encoding, image->data.data(), image->data.size());
+    image->encoding, data_ptr, data_size);
 
   Ogre::Image ogre_image;
   try {
