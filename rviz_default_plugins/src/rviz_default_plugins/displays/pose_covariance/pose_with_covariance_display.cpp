@@ -208,7 +208,9 @@ void PoseWithCovarianceDisplay::updateShapeVisibility()
 
 void PoseWithCovarianceDisplay::updateCovariance()
 {
-  covariance_->updateUserData(covariance_property_->getUserData());
+  auto user_data = covariance_property_->getUserData();
+  user_data.visible = isEnabled() && user_data.visible;
+  covariance_->updateUserData(user_data);
   context_->queueRender();
 }
 
