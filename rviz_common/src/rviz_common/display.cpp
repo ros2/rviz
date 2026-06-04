@@ -407,6 +407,11 @@ void Display::setAssociatedWidget(QWidget * widget)
         SLOT(associatedPanelVisibilityChange(bool)));
       connect(associated_widget_panel_, SIGNAL(closed()), this, SLOT(disable()));
       associated_widget_panel_->setIcon(getIcon());
+
+      // If this display is not enabled, hide this panel immediately so it won't appear on startup
+      if (!isEnabled()) {
+        associated_widget_panel_->hide();
+      }
     } else {
       associated_widget_panel_ = nullptr;
       associated_widget_->setWindowTitle(getName());
