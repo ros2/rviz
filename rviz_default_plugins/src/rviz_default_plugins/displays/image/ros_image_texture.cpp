@@ -226,7 +226,7 @@ bool ROSImageTexture::update()
       data_size = repacked.size();
       // Reflect the repack so any downstream code reading stride_ sees the
       // new (packed) layout.
-      stride_ = packed_row;
+      stride_ = static_cast<uint32_t>(packed_row);
     }
   }
 
