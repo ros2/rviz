@@ -127,16 +127,12 @@ void XYOrbitViewController::lookAt(const Ogre::Vector3 & point)
   Ogre::Vector3 camera_position = camera_->getParentSceneNode()->getPosition();
   Ogre::Vector3 new_focal_point =
     target_scene_node_->getOrientation().Inverse() * (point - target_scene_node_->getPosition());
-  new_focal_point.z = 0;
+  // Preserve the current focal point Z value
+  new_focal_point.z = focal_point_property_->getVector().z;
   distance_property_->setFloat(new_focal_point.distance(camera_position));
   focal_point_property_->setVector(new_focal_point);
 
   calculatePitchYawFromPosition(camera_position);
-}
-
-void XYOrbitViewController::setShiftOrbitStatus()
-{
-  setStatus("<b>Left-Click:</b> Move X/Y.  <b>Right-Click:</b> Zoom.");
 }
 
 void XYOrbitViewController::moveFocalPoint(
@@ -189,16 +185,28 @@ std::pair<bool, Ogre::Vector3> XYOrbitViewController::intersectGroundPlane(Ogre:
 void XYOrbitViewController::handleRightClick(
   rviz_common::ViewportMouseEvent & event, float distance, int32_t diff_y)
 {
-  (void) event;
-  setCursor(Zoom);
-  zoom(-diff_y * 0.1f * (distance / 10.0f));
+  if (event.shift()) {
+    setCursor(MoveZ);
+    Ogre::Vector3 focal = focal_point_property_->getVector();
+    focal.z += diff_y * 0.001f * distance;
+    focal_point_property_->setVector(focal);
+  } else {
+    setCursor(Zoom);
+    zoom(-diff_y * 0.1f * (distance / 10.0f));
+  }
 }
 
 void XYOrbitViewController::handleWheelEvent(
   rviz_common::ViewportMouseEvent & event, float distance)
 {
   int diff = event.wheel_delta;
-  zoom(diff * 0.001f * distance);
+  if (event.shift()) {
+    Ogre::Vector3 focal = focal_point_property_->getVector();
+    focal.z += -diff * 0.001f * distance;
+    focal_point_property_->setVector(focal);
+  } else {
+    zoom(diff * 0.001f * distance);
+  }
 }
 
 void XYOrbitViewController::handleMouseEvent(rviz_common::ViewportMouseEvent & event)
