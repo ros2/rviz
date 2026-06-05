@@ -752,20 +752,27 @@ void RobotLink::assignMaterialsToEntities(
     default_material_name_ = default_material_->getName();
   }
 
+  const urdf::VisualSharedPtr visual = getVisualWithMaterial(link, material_name);
+  const bool has_urdf_material = visual && visual->material;
+
   for (uint32_t i = 0; i < entity->getNumSubEntities(); ++i) {
-    default_material_ = getMaterialForLink(link, material_name);
-    std::string cloned_name =
-      default_material_->getName() + "_" + std::to_string(material_count++) + "Robot";
-
-    default_material_ = default_material_->clone(cloned_name);
-    default_material_name_ = default_material_->getName();
-
-    // Assign materials only if the submesh does not have one already
+    // Assign the link material if the URDF visual has a material tag or
+    // the submesh does not have a material of its own
 
     Ogre::SubEntity * sub = entity->getSubEntity(i);
     const std::string & sub_material_name = sub->getMaterialName();
 
-    if (sub_material_name == "BaseWhite" || sub_material_name == "BaseWhiteNoLighting") {
+    if (has_urdf_material ||
+      sub_material_name == "BaseWhite" ||
+      sub_material_name == "BaseWhiteNoLighting")
+    {
+      default_material_ = getMaterialForLink(link, material_name);
+      std::string cloned_name =
+        default_material_->getName() + "_" + std::to_string(material_count++) + "Robot";
+
+      default_material_ = default_material_->clone(cloned_name);
+      default_material_name_ = default_material_->getName();
+
       sub->setMaterialName(default_material_name_);
     } else {
       // Need to clone here due to how selection works.
@@ -784,7 +791,8 @@ void RobotLink::assignMaterialsToEntities(
 Ogre::MaterialPtr RobotLink::getMaterialForLink(
   const urdf::LinkConstSharedPtr & link, const std::string material_name)
 {
-  if (!link->visual || !link->visual->material) {
+  urdf::VisualSharedPtr visual = getVisualWithMaterial(link, material_name);
+  if (!visual || !visual->material) {
     return Ogre::MaterialManager::getSingleton().getByName("RVIZ/ShadedRed");
   }
 
@@ -793,8 +801,6 @@ Ogre::MaterialPtr RobotLink::getMaterialForLink(
 
   auto material_for_link =
     rviz_rendering::MaterialManager::createMaterialWithShadowsAndLighting(link_material_name);
-
-  urdf::VisualSharedPtr visual = getVisualWithMaterial(link, material_name);
 
   if (visual->material->texture_filename.empty()) {
     const urdf::Color & color = visual->material->color;
