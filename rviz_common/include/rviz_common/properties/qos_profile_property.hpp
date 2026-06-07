@@ -34,6 +34,7 @@
 #include <functional>
 
 #include <QObject>  // NOLINT: cpplint is unable to handle the include order here
+#include <QPointer>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rclcpp/qos.hpp"
 
@@ -59,6 +60,8 @@ public:
     rclcpp::QoS default_profile = rclcpp::QoS(5)
   );
 
+  ~QosProfileProperty() override;
+
   /**
    * This function needs to be called after initialization to set the callback for when the
    * property value changes. Note that this is not done in the constructor to allow using member
@@ -74,10 +77,14 @@ private Q_SLOTS:
   void updateQosProfile();
 
 private:
-  rviz_common::properties::IntProperty * depth_property_;
-  rviz_common::properties::EditableEnumProperty * history_policy_property_;
-  rviz_common::properties::EditableEnumProperty * reliability_policy_property_;
-  rviz_common::properties::EditableEnumProperty * durability_policy_property_;
+  // Guarded pointers: these sub-properties are parented to the caller-supplied
+  // parent_property, so the parent may delete them before (or instead of) this
+  // object. QPointer auto-nulls when that happens, making the destructor's
+  // delete a safe no-op regardless of teardown order.
+  QPointer<rviz_common::properties::IntProperty> depth_property_;
+  QPointer<rviz_common::properties::EditableEnumProperty> history_policy_property_;
+  QPointer<rviz_common::properties::EditableEnumProperty> reliability_policy_property_;
+  QPointer<rviz_common::properties::EditableEnumProperty> durability_policy_property_;
   rclcpp::QoS qos_profile_;
   std::function<void(rclcpp::QoS)> qos_changed_callback_;
 };

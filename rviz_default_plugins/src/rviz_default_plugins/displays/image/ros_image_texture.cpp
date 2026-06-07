@@ -43,6 +43,8 @@
 #include <vector>
 #include <utility>
 
+#include <cstring>
+
 #include <OgreHardwarePixelBuffer.h>  // NOLINT: cpplint cannot handle include order
 #include <OgreTextureManager.h>  // NOLINT: cpplint cannot handle include order
 
@@ -99,6 +101,11 @@ void ROSImageTexture::clear()
 
   new_image_ = false;
   current_image_.reset();
+
+  // Drop median history so reset/resubscribe doesn't carry stale min/max
+  // into the first frame of the new stream.
+  min_buffer_.clear();
+  max_buffer_.clear();
 }
 
 const Ogre::String ROSImageTexture::getName() const
@@ -162,6 +169,26 @@ void ROSImageTexture::setSmoothScaling(bool enabled)
   }
 }
 
+// Bytes per pixel for encodings that have a fixed linear row layout. Returns
+// 0 for encodings whose per-row layout is non-trivial (YUV 4:2:2 packed, NV12
+// planar) — those are handled explicitly by their converters using stride.
+static size_t bytesPerPixelForEncoding(const std::string & encoding)
+{
+  namespace enc = sensor_msgs::image_encodings;
+  if (encoding == enc::YUV422 || encoding == enc::YUV422_YUY2 ||
+    encoding == enc::UYVY || encoding == enc::YUYV ||
+    encoding == enc::NV12 || encoding == enc::NV21 || encoding == enc::NV24)
+  {
+    return 0;
+  }
+  try {
+    return static_cast<size_t>(enc::numChannels(encoding)) *
+           enc::bitDepth(encoding) / 8;
+  } catch (const std::runtime_error &) {
+    return 0;  // unknown encoding — skip repack
+  }
+}
+
 static double
 computeMedianOfSeveralFrames(std::deque<double> & buffer, double value, unsigned median_frames)
 {
@@ -196,8 +223,42 @@ bool ROSImageTexture::update()
   height_ = image->height;
   stride_ = image->step;
 
+  // If the publisher sent rows with trailing padding (step > width * bpp),
+  // repack into a contiguous buffer. Ogre::Image::loadRawData and the
+  // convertTo8bit rescale loop both assume packed rows — without this,
+  // each row drifts right by `padding` bytes, producing a diagonal shear.
+  // YUV/NV12 encodings are left alone because their converters honor stride
+  // directly.
+  std::vector<uint8_t> repacked;
+  const uint8_t * data_ptr = image->data.data();
+  size_t data_size = image->data.size();
+  const size_t bpp = bytesPerPixelForEncoding(image->encoding);
+  if (bpp != 0) {
+    const size_t packed_row = static_cast<size_t>(width_) * bpp;
+    if (stride_ > packed_row) {
+      if (image->data.size() < static_cast<size_t>(stride_) * height_) {
+        RVIZ_COMMON_LOG_ERROR_STREAM(
+          "Image data size " << image->data.size() <<
+            " smaller than step*height (" << stride_ * height_ << ")");
+        return false;
+      }
+      repacked.resize(packed_row * height_);
+      for (uint32_t y = 0; y < height_; ++y) {
+        std::memcpy(
+          repacked.data() + y * packed_row,
+          image->data.data() + y * stride_,
+          packed_row);
+      }
+      data_ptr = repacked.data();
+      data_size = repacked.size();
+      // Reflect the repack so any downstream code reading stride_ sees the
+      // new (packed) layout.
+      stride_ = static_cast<uint32_t>(packed_row);
+    }
+  }
+
   ImageData image_data = setFormatAndNormalizeDataIfNecessary(
-    image->encoding, image->data.data(), image->data.size());
+    image->encoding, data_ptr, data_size);
 
   try {
     ensureTexture(width_, height_, image_data.pixel_format_);
@@ -421,30 +482,31 @@ template<typename T>
 void
 ROSImageTexture::getMinimalAndMaximalValueToNormalize(
   const T * data_ptr, size_t num_elements,
-  T & min_value, T & max_value)
+  double & min_value, double & max_value)
 {
   if (normalize_) {
+    // Accumulate in T to avoid per-pixel double conversions, then promote.
+    T t_min = std::numeric_limits<T>::max();
+    T t_max = std::numeric_limits<T>::lowest();
     const T * input_ptr = data_ptr;
-
-    min_value = std::numeric_limits<uint16_t>::max();
-    max_value = std::numeric_limits<uint16_t>::min();
     for (size_t i = 0; i < num_elements; ++i) {
-      min_value = std::min(min_value, *input_ptr);
-      max_value = std::max(max_value, *input_ptr);
+      t_min = std::min(t_min, *input_ptr);
+      t_max = std::max(t_max, *input_ptr);
       input_ptr++;
     }
+    min_value = static_cast<double>(t_min);
+    max_value = static_cast<double>(t_max);
 
     if (median_frames_ > 1) {
-      min_value =
-        static_cast<uint16_t>(
-        computeMedianOfSeveralFrames(min_buffer_, min_value, this->median_frames_));
-      max_value =
-        static_cast<uint16_t>(
-        computeMedianOfSeveralFrames(max_buffer_, max_value, this->median_frames_));
+      min_value = computeMedianOfSeveralFrames(min_buffer_, min_value, this->median_frames_);
+      max_value = computeMedianOfSeveralFrames(max_buffer_, max_value, this->median_frames_);
     }
   } else {
-    min_value = static_cast<uint16_t>(min_);
-    max_value = static_cast<uint16_t>(max_);
+    // User-supplied min/max are doubles. Use them directly — no cast through
+    // T — so a 16UC1 user can enter values up to 65535 (or above) and a
+    // 32FC1 user can enter fractional values without losing precision.
+    min_value = min_;
+    max_value = max_;
   }
 }
 
@@ -454,30 +516,32 @@ ROSImageTexture::convertTo8bit(const uint8_t * data_ptr, size_t data_size_in_byt
 {
   size_t new_size_in_bytes = data_size_in_bytes / sizeof(T);
 
-  uint8_t * new_data = new uint8_t[new_size_in_bytes];
+  // Zero-initialize so a degenerate range (<= 0) produces a valid all-black
+  // image instead of handing uninitialized heap memory to Ogre.
+  uint8_t * new_data = new uint8_t[new_size_in_bytes]();
 
-  T min_value;
-  T max_value;
+  double min_value;
+  double max_value;
 
-  getMinimalAndMaximalValueToNormalize(
+  getMinimalAndMaximalValueToNormalize<T>(
     reinterpret_cast<const T *>(data_ptr), new_size_in_bytes, min_value, max_value);
 
-  uint8_t * output_ptr = new_data;
-
-  // Rescale T image and convert it to 8-bit
-  double range = max_value - min_value;
-  if (range > 0.0) {
+  // Rescale T image and convert it to 8-bit. All arithmetic in double so
+  // user-supplied min/max outside T's range (e.g. 65536 for 16UC1) still
+  // produce meaningful output instead of an overflow-to-zero surprise.
+  const double range = max_value - min_value;
+  if (range > 0.0 && std::isfinite(range)) {
     const T * input_ptr = reinterpret_cast<const T *>(data_ptr);
+    uint8_t * output_ptr = new_data;
 
-    // Rescale and quantize
     for (size_t i = 0; i < new_size_in_bytes; ++i, ++output_ptr, ++input_ptr) {
-      double val = (static_cast<double>(*input_ptr - min_value) / range);
-      if (val < 0) {val = 0;}
-      if (val > 1) {val = 1;}
+      double val = (static_cast<double>(*input_ptr) - min_value) / range;
+      val = std::clamp(val, 0.0, 1.0);
       *output_ptr = static_cast<uint8_t>(val * 255u);
     }
   }
-  // TODO(clalancette): What happens when range is <= 0.0?
+  // range <= 0: uniform-value frame or user-set min >= max. Leave the
+  // zero-initialized buffer so we display solid black rather than garbage.
 
   return ImageData(Ogre::PF_BYTE_L, new_data, new_size_in_bytes, true);
 }

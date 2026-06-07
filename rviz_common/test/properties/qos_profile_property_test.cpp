@@ -94,3 +94,12 @@ TEST(QosProfilePropertyTest, depth_is_set_by_property) {
   EXPECT_THAT(called, IsTrue());
   EXPECT_THAT(qos_profile.get_rmw_qos_profile().depth, Eq(14u));
 }
+
+TEST(QosProfilePropertyTest, ensure_proper_destruction) {
+  rviz_common::properties::Property parent;
+  auto profile_property = std::make_unique<rviz_common::properties::QosProfileProperty>(&parent);
+
+  profile_property.reset();
+
+  EXPECT_EQ(parent.numChildren(), 0);
+}
