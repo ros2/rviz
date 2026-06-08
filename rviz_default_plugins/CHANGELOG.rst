@@ -2,6 +2,17 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix disabled displays (addresses `#1773 <https://github.com/ros2/rviz/issues/1773>`_) (`#1774 <https://github.com/ros2/rviz/issues/1774>`_) (`#1778 <https://github.com/ros2/rviz/issues/1778>`_)
+  (cherry picked from commit 26b578fa1d3a4c4a3578d57bd4c24c36feba1f67)
+  Co-authored-by: Tom Moore <automatom@protonmail.com>
+* Fix when with pitch != width*BBP in Image Display (backport `#1719 <https://github.com/ros2/rviz/issues/1719>`_) (`#1762 <https://github.com/ros2/rviz/issues/1762>`_)
+  (cherry picked from commit 9eebc57c6b949466c95869d6a31a878cf10bf222)
+  Co-authored-by: Alejandro Hernández Cordero <alejandro@openrobotics.org>
+  Co-authored-by: Alejandro Hernandez Cordero <ahcorde@gmail.com>
+* Contributors: mergify[bot]
+
 14.1.21 (2026-06-02)
 --------------------
 * Fixed Unexpected pixels for mono Image (`#1718 <https://github.com/ros2/rviz/issues/1718>`_) (`#1766 <https://github.com/ros2/rviz/issues/1766>`_)

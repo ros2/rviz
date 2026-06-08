@@ -2,6 +2,13 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix disabled displays (addresses `#1773 <https://github.com/ros2/rviz/issues/1773>`_) (`#1774 <https://github.com/ros2/rviz/issues/1774>`_) (`#1778 <https://github.com/ros2/rviz/issues/1778>`_)
+  (cherry picked from commit 26b578fa1d3a4c4a3578d57bd4c24c36feba1f67)
+  Co-authored-by: Tom Moore <automatom@protonmail.com>
+* Contributors: mergify[bot]
+
 14.1.21 (2026-06-02)
 --------------------
 * SelectionManager::select Function Not Returning Empty Selection Result for Invalid Coordinates (`#1713 <https://github.com/ros2/rviz/issues/1713>`_) (`#1770 <https://github.com/ros2/rviz/issues/1770>`_)
