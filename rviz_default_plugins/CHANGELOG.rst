@@ -2,8 +2,8 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+14.1.22 (2026-06-08)
+--------------------
 * Fix disabled displays (addresses `#1773 <https://github.com/ros2/rviz/issues/1773>`_) (`#1774 <https://github.com/ros2/rviz/issues/1774>`_) (`#1778 <https://github.com/ros2/rviz/issues/1778>`_)
   (cherry picked from commit 26b578fa1d3a4c4a3578d57bd4c24c36feba1f67)
   Co-authored-by: Tom Moore <automatom@protonmail.com>
