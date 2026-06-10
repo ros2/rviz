@@ -63,6 +63,15 @@ public:
   virtual void setNormalizeFloatImage(bool normalize) = 0;
   virtual void setNormalizeFloatImage(bool normalize, double min, double max) = 0;
   virtual void setMedianFrames(unsigned median_frames) = 0;
+
+  // When enabled, the texture is built with a full mipmap chain (driver
+  // generates mips on each upload via TU_AUTOMIPMAP). The display's material
+  // should pair this with a trilinear or anisotropic filter to actually
+  // sample the chain; when disabled, the texture has no mip chain and the
+  // display should fall back to TFO_NONE. The default implementation is a
+  // no-op so that out-of-tree implementors of this interface keep building
+  // and silently ignore the setting until they opt in.
+  virtual void setSmoothScaling(bool /*enabled*/) {}
 };
 
 }  // namespace displays

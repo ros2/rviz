@@ -122,7 +122,19 @@ public:
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   void setMedianFrames(unsigned median_frames) override;
 
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
+  void setSmoothScaling(bool enabled) override;
+
 private:
+  // Ensures the underlying Ogre texture matches the requested dimensions,
+  // pixel format and smooth-scaling state, recreating it if any of those
+  // differ from the current allocation. The texture's name is preserved
+  // across recreations so material bindings (via setTextureName) stay valid.
+  void ensureTexture(uint32_t width, uint32_t height, Ogre::PixelFormat pixel_format);
+
+  // Uploads the no_image.png placeholder via the current ensureTexture path.
+  void loadEmpty();
+
   template<typename T>
   void getMinimalAndMaximalValueToNormalize(
     const T * data_ptr, size_t num_elements, double & min_value, double & max_value);
@@ -153,6 +165,17 @@ private:
   unsigned median_frames_;
   std::deque<double> min_buffer_;
   std::deque<double> max_buffer_;
+
+  // Name of the underlying Ogre texture. Stable across recreations.
+  std::string texture_name_;
+  // Desired smooth-scaling state (toggled by setSmoothScaling); tex_smooth_
+  // tracks what the currently allocated texture actually has. They differ
+  // only briefly between setSmoothScaling and the next ensureTexture call.
+  bool smooth_scaling_;
+  bool tex_smooth_;
+  uint32_t tex_width_;
+  uint32_t tex_height_;
+  Ogre::PixelFormat tex_format_;
 };
 
 }  // namespace displays
