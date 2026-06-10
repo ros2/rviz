@@ -45,6 +45,7 @@
 
 #include <cstring>
 
+#include <OgreHardwarePixelBuffer.h>  // NOLINT: cpplint cannot handle include order
 #include <OgreTextureManager.h>  // NOLINT: cpplint cannot handle include order
 
 #include "sensor_msgs/image_encodings.hpp"
@@ -62,23 +63,33 @@ ROSImageTexture::ROSImageTexture()
 : new_image_(false),
   width_(0),
   height_(0),
-  median_frames_(5)
+  median_frames_(5),
+  smooth_scaling_(false),
+  tex_smooth_(false),
+  tex_width_(0),
+  tex_height_(0),
+  tex_format_(Ogre::PF_UNKNOWN)
 {
   empty_image_.load("no_image.png", "rviz_rendering");
 
   static uint32_t count = 0;
   rviz_common::UniformStringStream ss;
   ss << "ROSImageTexture" << count++;
-  texture_ = Ogre::TextureManager::getSingleton().loadImage(
-    ss.str(), "rviz_rendering", empty_image_,
-    Ogre::TEX_TYPE_2D,
-    0);
+  texture_name_ = ss.str();
+
+  loadEmpty();
 
   setNormalizeFloatImage(true);
 }
 
 ROSImageTexture::~ROSImageTexture()
 {
+  if (texture_) {
+    if (auto * mgr = Ogre::TextureManager::getSingletonPtr()) {
+      mgr->remove(texture_);
+    }
+    texture_.reset();
+  }
   current_image_.reset();
 }
 
@@ -86,8 +97,7 @@ void ROSImageTexture::clear()
 {
   std::lock_guard<std::mutex> lock(mutex_);
 
-  texture_->unload();
-  texture_->loadImage(empty_image_);
+  loadEmpty();
 
   new_image_ = false;
   current_image_.reset();
@@ -140,6 +150,23 @@ void ROSImageTexture::setNormalizeFloatImage(bool normalize, double min, double 
   normalize_ = normalize;
   min_ = min;
   max_ = max;
+}
+
+void ROSImageTexture::setSmoothScaling(bool enabled)
+{
+  std::lock_guard<std::mutex> lock(mutex_);
+  if (smooth_scaling_ == enabled) {
+    return;
+  }
+  smooth_scaling_ = enabled;
+  if (current_image_) {
+    // Re-upload the held frame on the next update() rather than overwriting
+    // with the placeholder here — latched topics or paused bags would
+    // otherwise lose the live image until the next publish.
+    new_image_ = true;
+  } else {
+    loadEmpty();
+  }
 }
 
 // Bytes per pixel for encodings that have a fixed linear row layout. Returns
@@ -233,21 +260,16 @@ bool ROSImageTexture::update()
   ImageData image_data = setFormatAndNormalizeDataIfNecessary(
     image->encoding, data_ptr, data_size);
 
-  Ogre::Image ogre_image;
   try {
-    Ogre::DataStreamPtr pixel_stream;
-    pixel_stream.reset(
-      new Ogre::MemoryDataStream(
-        const_cast<uint8_t *>(&image_data.data_ptr_[0]),
-        image_data.size_in_bytes_));
-    ogre_image.loadRawData(pixel_stream, width_, height_, 1, image_data.pixel_format_, 1, 0);
+    ensureTexture(width_, height_, image_data.pixel_format_);
+    Ogre::PixelBox box(
+      width_, height_, 1, image_data.pixel_format_,
+      const_cast<uint8_t *>(image_data.data_ptr_));
+    texture_->getBuffer(0, 0)->blitFromMemory(box);
   } catch (const Ogre::Exception & e) {
     RVIZ_COMMON_LOG_ERROR_STREAM("Error loading image: " << e.what());
     return false;
   }
-
-  texture_->unload();
-  texture_->loadImage(ogre_image);
 
   return true;
 }
@@ -403,6 +425,57 @@ ImageData::~ImageData()
   if (has_ownership_) {
     delete[] data_ptr_;
   }
+}
+
+void ROSImageTexture::ensureTexture(uint32_t width, uint32_t height, Ogre::PixelFormat pixel_format)
+{
+  if (texture_ &&
+    tex_width_ == width && tex_height_ == height &&
+    tex_format_ == pixel_format && tex_smooth_ == smooth_scaling_)
+  {
+    return;
+  }
+
+  // MIP_UNLIMITED, not MIP_DEFAULT: setNumMipmaps() takes uint32 and does no
+  // translation, so MIP_DEFAULT (-1) would become 0xFFFFFFFF before backend
+  // clamping.
+  const uint32_t num_mips = smooth_scaling_ ? Ogre::MIP_UNLIMITED : 0;
+  const int usage = smooth_scaling_ ? Ogre::TU_DEFAULT : Ogre::TU_STATIC_WRITE_ONLY;
+
+  if (!texture_) {
+    // First-time allocation. Subsequent calls reconfigure this same Ogre
+    // texture in place so callers that cached the TexturePtr by name (e.g.
+    // TextureUnitState::setTextureName) see the new state on the existing
+    // pointer.
+    texture_ = Ogre::TextureManager::getSingleton().createManual(
+      texture_name_, "rviz_rendering",
+      Ogre::TEX_TYPE_2D, width, height, num_mips, pixel_format, usage);
+  } else {
+    // freeInternalResources(), not unload(): unload() is a no-op while the
+    // LoadingState is UNLOADED (manually created textures are never load()-ed),
+    // so createInternalResources() below would short-circuit and silently
+    // skip rebuilding the GL texture.
+    texture_->freeInternalResources();
+    texture_->setTextureType(Ogre::TEX_TYPE_2D);
+    texture_->setWidth(width);
+    texture_->setHeight(height);
+    texture_->setDepth(1);
+    texture_->setNumMipmaps(num_mips);
+    texture_->setFormat(pixel_format);
+    texture_->setUsage(usage);
+    texture_->createInternalResources();
+  }
+
+  tex_width_ = width;
+  tex_height_ = height;
+  tex_format_ = pixel_format;
+  tex_smooth_ = smooth_scaling_;
+}
+
+void ROSImageTexture::loadEmpty()
+{
+  ensureTexture(empty_image_.getWidth(), empty_image_.getHeight(), empty_image_.getFormat());
+  texture_->getBuffer(0, 0)->blitFromMemory(empty_image_.getPixelBox());
 }
 
 template<typename T>

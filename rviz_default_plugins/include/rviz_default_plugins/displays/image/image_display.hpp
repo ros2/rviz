@@ -93,6 +93,7 @@ public:
 
 public Q_SLOTS:
   virtual void updateNormalizeOptions();
+  virtual void updateSmoothScaling();
 
 protected Q_SLOTS:
   virtual void subscribe();
@@ -109,6 +110,11 @@ protected:
 
   /* This is called by incomingMessage(). */
   virtual void processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg);
+
+  // Applies the current "Smooth scaling" filter setting to a single
+  // material's first TextureUnitState. Shared with CameraDisplay so its
+  // background and overlay materials can be updated by the same code.
+  void applySmoothScalingToMaterial(const Ogre::MaterialPtr & material) const;
 
   std::shared_ptr<image_transport::SubscriberFilter> subscription_;
   uint32_t messages_received_;
@@ -147,6 +153,7 @@ private:
   rviz_common::properties::FloatProperty * min_property_;
   rviz_common::properties::FloatProperty * max_property_;
   rviz_common::properties::IntProperty * median_buffer_size_property_;
+  rviz_common::properties::BoolProperty * smooth_scaling_property_;
   bool got_float_image_;
 };
 
