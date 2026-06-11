@@ -35,7 +35,7 @@
 
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "tf2_ros/buffer.hpp"
+#include "tf2/exceptions.hpp"
 
 #include "rviz_common/properties/int_property.hpp"
 #include "rviz_common/properties/status_property.hpp"

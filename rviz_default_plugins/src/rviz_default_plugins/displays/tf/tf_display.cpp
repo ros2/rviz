@@ -48,7 +48,9 @@
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <QToolTip>  // NOLINT: cpplint cannot handle the include order here
 
-#include "tf2_ros/transform_listener.hpp"
+// tf2_ros/buffer.hpp needed: getBuffer() returns shared_ptr<tf2_ros::Buffer> which
+// is assigned to shared_ptr<tf2::BufferCore> — requires full inheritance knowledge.
+// tf2_ros/transform_listener.hpp removed: no TransformListener types used here.
 #include "tf2_ros/buffer.hpp"
 
 #include "rviz_rendering/objects/arrow.hpp"
