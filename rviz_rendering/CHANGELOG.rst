@@ -2,6 +2,13 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.1 (2026-06-11)
+-------------------
+* Support capsule geometry in robot links (`#1735 <https://github.com/ros2/rviz/issues/1735>`_)
+* Remove no-op upper_triangle conditional in TrianglePolygon UV mapping (`#1717 <https://github.com/ros2/rviz/issues/1717>`_)
+* Removed unused code in render_window.cpp (`#1722 <https://github.com/ros2/rviz/issues/1722>`_)
+* Contributors: Alejandro Hernández Cordero, Yixuan Xu
+
 16.0.0 (2026-05-06)
 -------------------
 
