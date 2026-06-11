@@ -37,7 +37,9 @@
 #include <string>
 #include <vector>
 
-#include "rclcpp/rclcpp.hpp"
+// Only rclcpp::Node::SharedPtr is needed here — use the narrow header
+// instead of rclcpp/rclcpp.hpp to minimize transitive includes for all consumers.
+#include "rclcpp/node.hpp"
 
 namespace rviz_common
 {
