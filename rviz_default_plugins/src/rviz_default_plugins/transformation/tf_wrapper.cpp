@@ -35,6 +35,15 @@
 #include <string>
 #include <vector>
 
+// Full tf2 implementation headers — intentionally kept out of tf_wrapper.hpp.
+#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
+#include "tf2_ros/buffer.hpp"
+#include "tf2_ros/create_timer_ros.hpp"
+#include "tf2_ros/transform_listener.hpp"
+
+#include "rclcpp/clock.hpp"
+#include "rclcpp/node.hpp"
+
 namespace rviz_default_plugins
 {
 namespace transformation

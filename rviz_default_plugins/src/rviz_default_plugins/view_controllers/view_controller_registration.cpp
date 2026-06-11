@@ -1,5 +1,4 @@
-// Copyright (c) 2012, Willow Garage, Inc.
-// Copyright (c) 2018, Bosch Software Innovations GmbH.
+// Copyright (c) 2024, Open Source Robotics Foundation, Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,33 +27,31 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+// Consolidated pluginlib exports for all view controllers.
+// Keeping PLUGINLIB_EXPORT_CLASS in a single TU means pluginlib/class_list_macros.hpp
+// (~347 headers) is parsed exactly once instead of once per view controller .cpp file.
 
 #include "rviz_default_plugins/view_controllers/follower/third_person_follower_view_controller.hpp"
+#include "rviz_default_plugins/view_controllers/fps/fps_view_controller.hpp"
+#include "rviz_default_plugins/view_controllers/frame/frame_view_controller.hpp"
+#include "rviz_default_plugins/view_controllers/orbit/orbit_view_controller.hpp"
+#include "rviz_default_plugins/view_controllers/ortho/fixed_orientation_ortho_view_controller.hpp"
+#include "rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller.hpp"
 
-#include <OgreQuaternion.h>
-#include <OgreSceneNode.h>
-#include <OgreMath.h>
+#include <pluginlib/class_list_macros.hpp>  // NOLINT(build/include_order)
 
-#include "rviz_common/display_context.hpp"
-
-namespace rviz_default_plugins
-{
-namespace view_controllers
-{
-
-void ThirdPersonFollowerViewController::updateTargetSceneNode()
-{
-  if (FramePositionTrackingViewController::getNewTransform()) {
-    target_scene_node_->setPosition(reference_position_);
-
-    // OGRE camera frame looks along -Z, so they call rotation around Z "roll".
-    Ogre::Radian ref_yaw = reference_orientation_.getRoll(false);
-    Ogre::Quaternion ref_yaw_quat(ref_yaw, Ogre::Vector3::UNIT_Z);
-    target_scene_node_->setOrientation(ref_yaw_quat);
-
-    context_->queueRender();
-  }
-}
-
-}  // namespace view_controllers
-}  // namespace rviz_default_plugins
+PLUGINLIB_EXPORT_CLASS(
+  rviz_default_plugins::view_controllers::ThirdPersonFollowerViewController,
+  rviz_common::ViewController)
+PLUGINLIB_EXPORT_CLASS(
+  rviz_default_plugins::view_controllers::FPSViewController, rviz_common::ViewController)
+PLUGINLIB_EXPORT_CLASS(
+  rviz_default_plugins::view_controllers::FrameViewController, rviz_common::ViewController)
+PLUGINLIB_EXPORT_CLASS(
+  rviz_default_plugins::view_controllers::OrbitViewController, rviz_common::ViewController)
+PLUGINLIB_EXPORT_CLASS(
+  rviz_default_plugins::view_controllers::FixedOrientationOrthoViewController,
+  rviz_common::ViewController)
+PLUGINLIB_EXPORT_CLASS(
+  rviz_default_plugins::view_controllers::XYOrbitViewController,
+  rviz_common::ViewController)

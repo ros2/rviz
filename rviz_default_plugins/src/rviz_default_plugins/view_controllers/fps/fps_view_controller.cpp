@@ -260,7 +260,3 @@ void FPSViewController::move(float x, float y, float z)  // NOLINT (this is not 
 }
 }  // namespace view_controllers
 }  // namespace rviz_default_plugins
-
-#include <pluginlib/class_list_macros.hpp>  // NOLINT(build/include_order)
-PLUGINLIB_EXPORT_CLASS(
-  rviz_default_plugins::view_controllers::FPSViewController, rviz_common::ViewController)

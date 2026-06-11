@@ -42,8 +42,8 @@
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <Qt>  // NOLINT: cpplint is unable to handle the include order here
 #include <QVariant>  // NOLINT: cpplint is unable to handle the include order here
-#include <rclcpp/service.hpp>
-#include <std_srvs/srv/empty.hpp>
+// rclcpp/service.hpp and std_srvs are intentionally excluded from this public header.
+// reset_time_srv_ is stored as std::shared_ptr<void> and cast in view_controller.cpp.
 
 #include "rviz_common/properties/property.hpp"
 #include "rviz_common/visibility_control.hpp"
@@ -286,12 +286,9 @@ private:
   // Default cursors for the most common actions
   QMap<CursorType, QCursor> standard_cursors_;
 
-  rclcpp::Service<std_srvs::srv::Empty>::SharedPtr reset_time_srv_;
-
-  void resetService(
-    const std::shared_ptr<rmw_request_id_t>,
-    const std::shared_ptr<std_srvs::srv::Empty::Request>,
-    const std::shared_ptr<std_srvs::srv::Empty::Response>);
+  // Type-erased service handle — concrete type is rclcpp::Service<std_srvs::srv::Empty>.
+  // Stored as void to avoid pulling rclcpp/service.hpp + std_srvs into this public header.
+  std::shared_ptr<void> reset_time_srv_;
 };
 
 }  // namespace rviz_common

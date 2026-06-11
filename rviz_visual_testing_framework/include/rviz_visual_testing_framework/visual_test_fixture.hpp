@@ -34,17 +34,15 @@
 #include <string>
 #include <vector>
 
-#include "rclcpp/rclcpp.hpp"
-#include "rclcpp/clock.hpp"
-#include "std_msgs/msg/header.hpp"
-#include "geometry_msgs/msg/transform_stamped.hpp"
-#include "tf2/LinearMath/Quaternion.hpp"
-#include "tf2_ros/static_transform_broadcaster.hpp"
+// NOTE: rclcpp, tf2_ros, geometry_msgs, std_msgs are NOT included here intentionally.
+// VisualTestFixture itself uses none of those types. Tests that publish messages
+// should include visual_test_publisher.hpp or transform_publisher.hpp directly.
 
 #include "rviz_visual_testing_framework/internal/display_handler.hpp"
 #include "rviz_visual_testing_framework/internal/executor.hpp"
 #include "rviz_visual_testing_framework/internal/visual_test.hpp"
 #include "rviz_visual_testing_framework/page_objects/page_object_with_window.hpp"
+
 
 class VisualTestFixture : public testing::Test
 {

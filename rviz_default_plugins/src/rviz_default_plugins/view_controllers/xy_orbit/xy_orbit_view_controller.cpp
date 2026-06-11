@@ -230,8 +230,3 @@ void XYOrbitViewController::handleMouseEvent(rviz_common::ViewportMouseEvent & e
 
 }  // namespace view_controllers
 }  // namespace rviz_default_plugins
-
-#include <pluginlib/class_list_macros.hpp>  // NOLINT
-PLUGINLIB_EXPORT_CLASS(
-  rviz_default_plugins::view_controllers::XYOrbitViewController,
-  rviz_common::ViewController)
