@@ -715,7 +715,4 @@ void ImageDisplay::updatePixelStatusFromWidgetPos(int widget_x, int widget_y)
 }
 
 }  // namespace displays
-}  // namespace rviz_default_plugins
-
-#include <pluginlib/class_list_macros.hpp>  // NOLINT
-PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::ImageDisplay, rviz_common::Display)
+}

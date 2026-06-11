@@ -31,6 +31,8 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__TOOLS__FOCUS__FOCUS_TOOL_HPP_
 #define RVIZ_DEFAULT_PLUGINS__TOOLS__FOCUS__FOCUS_TOOL_HPP_
 
+#include <OgreVector.h>  // Ogre::Vector3 used in processMouseEvent/setStatusFrom signatures
+
 #include <QCursor>
 
 #include "rviz_common/tool.hpp"

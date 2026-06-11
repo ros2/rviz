@@ -195,7 +195,4 @@ void PointCloud2Display::onDisable()
 }
 
 }  // namespace displays
-}  // namespace rviz_default_plugins
-
-#include <pluginlib/class_list_macros.hpp>  // NOLINT
-PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::PointCloud2Display, rviz_common::Display)
+}

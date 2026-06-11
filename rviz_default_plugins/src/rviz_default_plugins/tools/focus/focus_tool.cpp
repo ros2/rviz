@@ -119,7 +119,4 @@ void FocusTool::computePositionForDirection(
 }
 
 }  // namespace tools
-}  // namespace rviz_default_plugins
-
-#include <pluginlib/class_list_macros.hpp>  // NOLINT
-PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::tools::FocusTool, rviz_common::Tool)
+}

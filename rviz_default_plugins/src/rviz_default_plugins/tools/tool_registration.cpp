@@ -1,5 +1,4 @@
-// Copyright (c) 2008, Willow Garage, Inc.
-// Copyright (c) 2017, Open Source Robotics Foundation, Inc.
+// Copyright (c) 2024, Open Source Robotics Foundation, Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,55 +27,28 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+// Consolidated pluginlib exports for all default tool plugins.
+// Keeping PLUGINLIB_EXPORT_CLASS in a single TU means pluginlib/class_list_macros.hpp
+// is parsed exactly once instead of once per tool .cpp file.
 
+#include "rviz_default_plugins/tools/focus/focus_tool.hpp"
+#include "rviz_default_plugins/tools/goal_pose/goal_tool.hpp"
+#include "rviz_default_plugins/tools/interaction/interaction_tool.hpp"
+#include "rviz_default_plugins/tools/measure/measure_tool.hpp"
 #include "rviz_default_plugins/tools/move/move_tool.hpp"
+#include "rviz_default_plugins/tools/point/point_tool.hpp"
+#include "rviz_default_plugins/tools/pose_estimate/initial_pose_tool.hpp"
+#include "rviz_default_plugins/tools/select/selection_tool.hpp"
 
-#include "rviz_common/display_context.hpp"
-#include "rviz_common/load_resource.hpp"
-#include "rviz_common/render_panel.hpp"
-#include "rviz_common/view_controller.hpp"
-#include "rviz_common/view_manager.hpp"
-#include "rviz_common/viewport_mouse_event.hpp"
+#include <pluginlib/class_list_macros.hpp>  // NOLINT(build/include_order)
 
-namespace rviz_default_plugins
-{
-namespace tools
-{
-
-MoveTool::MoveTool()
-: rviz_common::Tool()
-{
-  shortcut_key_ = 'm';
-  // this is needed as the move tool is instantiated by other tools
-  setIcon(rviz_common::loadPixmap("package://rviz_default_plugins/icons/classes/MoveCamera.png"));
-}
-
-MoveTool::~MoveTool() = default;
-
-void MoveTool::activate()
-{}
-
-void MoveTool::deactivate()
-{}
-
-int MoveTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
-{
-  if (event.panel->getViewController()) {
-    event.panel->getViewController()->handleMouseEvent(event);
-    setCursor(event.panel->getViewController()->getCursor());
-  }
-  return 0;
-}
-
-int MoveTool::processKeyEvent(QKeyEvent * event, rviz_common::RenderPanel * panel)
-{
-  Q_UNUSED(event);
-  Q_UNUSED(panel);
-  if (context_->getViewManager()->getCurrent()) {
-    context_->getViewManager()->getCurrent()->handleKeyEvent(event, panel);
-  }
-  return Render;
-}
-
-}  // namespace tools
-}
+// clang-format off
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::tools::FocusTool,       rviz_common::Tool)
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::tools::GoalTool,         rviz_common::Tool)
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::tools::InitialPoseTool,  rviz_common::Tool)
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::tools::InteractionTool,  rviz_common::Tool)
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::tools::MeasureTool,      rviz_common::Tool)
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::tools::MoveTool,         rviz_common::Tool)
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::tools::PointTool,        rviz_common::Tool)
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::tools::SelectionTool,    rviz_common::Tool)
+// clang-format on

@@ -126,7 +126,4 @@ void AxesDisplay::update(std::chrono::nanoseconds dt, std::chrono::nanoseconds r
 }
 
 }  // namespace displays
-}  // namespace rviz_default_plugins
-
-#include <pluginlib/class_list_macros.hpp>  // NOLINT
-PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::AxesDisplay, rviz_common::Display)
+}

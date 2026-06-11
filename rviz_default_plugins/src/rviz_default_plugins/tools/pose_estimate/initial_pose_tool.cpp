@@ -120,7 +120,4 @@ void InitialPoseTool::onPoseSet(double x, double y, double theta)
 }
 
 }  // namespace tools
-}  // namespace rviz_default_plugins
-
-#include <pluginlib/class_list_macros.hpp>  // NOLINT
-PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::tools::InitialPoseTool, rviz_common::Tool)
+}

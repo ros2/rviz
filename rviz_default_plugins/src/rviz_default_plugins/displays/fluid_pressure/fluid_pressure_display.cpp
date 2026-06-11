@@ -67,7 +67,4 @@ void FluidPressureDisplay::processMessage(sensor_msgs::msg::FluidPressure::Const
 }
 
 }  // namespace displays
-}  // namespace rviz_default_plugins
-
-#include <pluginlib/class_list_macros.hpp>  // NOLINT
-PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::FluidPressureDisplay, rviz_common::Display)
+}

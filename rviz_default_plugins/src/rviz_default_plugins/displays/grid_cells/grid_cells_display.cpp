@@ -197,7 +197,4 @@ void GridCellsDisplay::convertMessageToCloud(nav_msgs::msg::GridCells::ConstShar
 }
 
 }  // namespace displays
-}  // namespace rviz_default_plugins
-
-#include <pluginlib/class_list_macros.hpp>  // NOLINT
-PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::GridCellsDisplay, rviz_common::Display)
+}
