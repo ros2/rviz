@@ -147,4 +147,7 @@ void MeasureTool::processRightButton()
 }
 
 }  // namespace tools
-}
+}  // namespace rviz_default_plugins
+
+#include <pluginlib/class_list_macros.hpp>  // NOLINT
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::tools::MeasureTool, rviz_common::Tool)

@@ -134,4 +134,7 @@ void PolygonDisplay::processMessage(geometry_msgs::msg::PolygonStamped::ConstSha
 }
 
 }  // namespace displays
-}
+}  // namespace rviz_default_plugins
+
+#include <pluginlib/class_list_macros.hpp>  // NOLINT
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::PolygonDisplay, rviz_common::Display)

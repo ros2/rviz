@@ -143,4 +143,7 @@ void PointTool::publishPosition(const Ogre::Vector3 & position) const
 }
 
 }  // namespace tools
-}
+}  // namespace rviz_default_plugins
+
+#include <pluginlib/class_list_macros.hpp>  // NOLINT
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::tools::PointTool, rviz_common::Tool)

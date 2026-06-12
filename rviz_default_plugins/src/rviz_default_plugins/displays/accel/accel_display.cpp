@@ -32,6 +32,11 @@
 
 // Tell pluginlib about these classes.  It is important to do this in
 // global scope, outside our package's namespace.
+#include <pluginlib/class_list_macros.hpp>
+PLUGINLIB_EXPORT_CLASS(
+  rviz_default_plugins::displays::AccelStampedDisplay,
+  rviz_common::Display)
+
 namespace rviz_default_plugins
 {
 namespace displays

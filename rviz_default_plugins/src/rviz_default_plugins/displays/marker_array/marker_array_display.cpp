@@ -78,4 +78,7 @@ void MarkerArrayDisplay::reset()
 }
 
 }  // end namespace displays
-}
+}  // end namespace rviz_default_plugins
+
+#include <pluginlib/class_list_macros.hpp>  // NOLINT
+PLUGINLIB_EXPORT_CLASS(rviz_default_plugins::displays::MarkerArrayDisplay, rviz_common::Display)

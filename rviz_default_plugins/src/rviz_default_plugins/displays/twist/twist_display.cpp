@@ -44,3 +44,7 @@ void TwistStampedDisplay::processMessage(geometry_msgs::msg::TwistStamped::Const
 
 // Tell pluginlib about these classes.  It is important to do this in
 // global scope, outside our package's namespace.
+#include <pluginlib/class_list_macros.hpp>
+PLUGINLIB_EXPORT_CLASS(
+  rviz_default_plugins::displays::TwistStampedDisplay,
+  rviz_common::Display)

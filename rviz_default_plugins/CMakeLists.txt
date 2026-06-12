@@ -248,8 +248,6 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/view_controllers/ortho/fixed_orientation_ortho_view_controller.cpp
   src/rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller.cpp
   src/rviz_default_plugins/view_controllers/view_controller_registration.cpp
-  src/rviz_default_plugins/displays/display_registration.cpp
-  src/rviz_default_plugins/tools/tool_registration.cpp
 )
 
 add_library(rviz_default_plugins SHARED

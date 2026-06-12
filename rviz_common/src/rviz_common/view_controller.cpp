@@ -28,7 +28,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-
 #include "rviz_common/view_controller.hpp"
 
 #include <string>
@@ -258,8 +257,6 @@ void ViewController::handleKeyEvent(QKeyEvent * event, RenderPanel * panel)
     resetTime();
   }
 }
-
-
 
 void ViewController::resetTime()
 {
