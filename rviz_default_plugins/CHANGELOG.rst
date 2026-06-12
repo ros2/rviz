@@ -2,6 +2,17 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.2.4 (2026-06-12)
+-------------------
+* Merge pull request `#1780 <https://github.com/ros2/rviz/issues/1780>`_ from ros2/mergify/bp/lyrical/pr-1775
+* Fix disabled displays (addresses `#1773 <https://github.com/ros2/rviz/issues/1773>`_) (`#1774 <https://github.com/ros2/rviz/issues/1774>`_) (`#1776 <https://github.com/ros2/rviz/issues/1776>`_)
+* Removed warning ros_image_texture.cpp (`#1775 <https://github.com/ros2/rviz/issues/1775>`_)
+* Make sure to disconnect subscription callback when unsubscribing (`#1742 <https://github.com/ros2/rviz/issues/1742>`_) (`#1743 <https://github.com/ros2/rviz/issues/1743>`_)
+* Fixed Unexpected pixels for mono Image (`#1718 <https://github.com/ros2/rviz/issues/1718>`_) (`#1764 <https://github.com/ros2/rviz/issues/1764>`_)
+* Fix when with pitch != width*BBP in Image Display (`#1719 <https://github.com/ros2/rviz/issues/1719>`_) (`#1760 <https://github.com/ros2/rviz/issues/1760>`_)
+* ogreQuaternionAngularDistance does not properly handle invalid quaternion input (`#1714 <https://github.com/ros2/rviz/issues/1714>`_) (`#1756 <https://github.com/ros2/rviz/issues/1756>`_)
+* Contributors: Alejandro Hernández Cordero, Skyler Medeiros, mergify[bot]
+
 15.2.3 (2026-05-16)
 -------------------
 

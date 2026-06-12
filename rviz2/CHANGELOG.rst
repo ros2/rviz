@@ -2,6 +2,9 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.2.4 (2026-06-12)
+-------------------
+
 15.2.3 (2026-05-16)
 -------------------
 * Don't use windeployqt (`#1738 <https://github.com/ros2/rviz/issues/1738>`_) (`#1739 <https://github.com/ros2/rviz/issues/1739>`_)

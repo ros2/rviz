@@ -2,6 +2,12 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.2.4 (2026-06-12)
+-------------------
+* Fix disabled displays (addresses `#1773 <https://github.com/ros2/rviz/issues/1773>`_) (`#1774 <https://github.com/ros2/rviz/issues/1774>`_) (`#1776 <https://github.com/ros2/rviz/issues/1776>`_)
+* SelectionManager::select Function Not Returning Empty Selection Result for Invalid Coordinates (`#1713 <https://github.com/ros2/rviz/issues/1713>`_) (`#1768 <https://github.com/ros2/rviz/issues/1768>`_)
+* Contributors: mergify[bot]
+
 15.2.3 (2026-05-16)
 -------------------
 * Fixed Qcolor deprecation (`#1725 <https://github.com/ros2/rviz/issues/1725>`_) (`#1732 <https://github.com/ros2/rviz/issues/1732>`_)
