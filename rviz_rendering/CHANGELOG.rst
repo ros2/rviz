@@ -2,6 +2,12 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.0.13 (2026-06-12)
+--------------------
+* Remove no-op upper_triangle conditional in TrianglePolygon UV mapping (`#1717 <https://github.com/ros2/rviz/issues/1717>`_) (`#1753 <https://github.com/ros2/rviz/issues/1753>`_)
+* fix for ubuntu 26 (`#1694 <https://github.com/ros2/rviz/issues/1694>`_) (`#1695 <https://github.com/ros2/rviz/issues/1695>`_)
+* Contributors: mergify[bot]
+
 15.0.12 (2026-02-24)
 --------------------
 

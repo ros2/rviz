@@ -2,6 +2,18 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.0.13 (2026-06-12)
+--------------------
+* Merge pull request `#1781 <https://github.com/ros2/rviz/issues/1781>`_ from ros2/mergify/bp/kilted/pr-1775
+* Fix disabled displays (addresses `#1773 <https://github.com/ros2/rviz/issues/1773>`_) (`#1774 <https://github.com/ros2/rviz/issues/1774>`_) (`#1777 <https://github.com/ros2/rviz/issues/1777>`_)
+* Removed warning ros_image_texture.cpp (`#1775 <https://github.com/ros2/rviz/issues/1775>`_)
+* Fixed Unexpected pixels for mono Image (`#1718 <https://github.com/ros2/rviz/issues/1718>`_) (`#1765 <https://github.com/ros2/rviz/issues/1765>`_)
+* Fix when with pitch != width*BBP in Image Display (`#1719 <https://github.com/ros2/rviz/issues/1719>`_) (`#1761 <https://github.com/ros2/rviz/issues/1761>`_)
+* ogreQuaternionAngularDistance does not properly handle invalid quaternion input (backport `#1714 <https://github.com/ros2/rviz/issues/1714>`_) (`#1757 <https://github.com/ros2/rviz/issues/1757>`_)
+* Make sure to disconnect subscription callback when unsubscribing (backport `#1742 <https://github.com/ros2/rviz/issues/1742>`_) (`#1744 <https://github.com/ros2/rviz/issues/1744>`_)
+* Remove redundant compilation of test fixtures (`#1673 <https://github.com/ros2/rviz/issues/1673>`_) (`#1679 <https://github.com/ros2/rviz/issues/1679>`_)
+* Contributors: Alejandro Hernández Cordero, Skyler Medeiros, mergify[bot]
+
 15.0.12 (2026-02-24)
 --------------------
 

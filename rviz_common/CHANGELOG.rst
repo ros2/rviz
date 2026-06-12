@@ -2,6 +2,12 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.0.13 (2026-06-12)
+--------------------
+* Fix disabled displays (addresses `#1773 <https://github.com/ros2/rviz/issues/1773>`_) (`#1774 <https://github.com/ros2/rviz/issues/1774>`_) (`#1777 <https://github.com/ros2/rviz/issues/1777>`_)
+* SelectionManager::select Function Not Returning Empty Selection Result for Invalid Coordinates (`#1713 <https://github.com/ros2/rviz/issues/1713>`_) (`#1769 <https://github.com/ros2/rviz/issues/1769>`_)
+* Contributors: mergify[bot]
+
 15.0.12 (2026-02-24)
 --------------------
 * Fix setHidden regression in PropertyTreeWidget (`#1667 <https://github.com/ros2/rviz/issues/1667>`_) (`#1668 <https://github.com/ros2/rviz/issues/1668>`_)
