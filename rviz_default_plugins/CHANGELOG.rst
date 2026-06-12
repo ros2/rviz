@@ -2,6 +2,13 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.27 (2026-06-12)
+--------------------
+* Fix disabled displays (addresses `#1773 <https://github.com/ros2/rviz/issues/1773>`_) (`#1774 <https://github.com/ros2/rviz/issues/1774>`_) (`#1779 <https://github.com/ros2/rviz/issues/1779>`_)
+* ogreQuaternionAngularDistance does not properly handle invalid quaternion input (backport `#1714 <https://github.com/ros2/rviz/issues/1714>`_) (`#1759 <https://github.com/ros2/rviz/issues/1759>`_)
+* Make sure to disconnect subscription callback when unsubscribing (backport `#1742 <https://github.com/ros2/rviz/issues/1742>`_) (`#1746 <https://github.com/ros2/rviz/issues/1746>`_)
+* Contributors: mergify[bot]
+
 11.2.26 (2026-02-24)
 --------------------
 
