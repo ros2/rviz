@@ -139,9 +139,7 @@ RenderWindow::event(QEvent * event)
 {
   switch (event->type()) {
     case QEvent::Resize:
-      if (this->isExposed()) {
-        impl_->resize(this->width(), this->height());
-      }
+      impl_->resize(this->width(), this->height());
       return QWindow::event(event);
     case QEvent::UpdateRequest:
       this->renderNow();
@@ -163,18 +161,6 @@ RenderWindow::event(QEvent * event)
       return false;
   }
 }
-
-void
-RenderWindow::exposeEvent(QExposeEvent * expose_event)
-{
-  Q_UNUSED(expose_event);
-
-  if (this->isExposed()) {
-    impl_->resize(this->width(), this->height());
-    this->renderNow();
-  }
-}
-
 
 void
 RenderWindowOgreAdapter::setOgreCamera(RenderWindow * render_window, Ogre::Camera * ogre_camera)
