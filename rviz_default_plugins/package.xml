@@ -25,9 +25,11 @@
   <author email="william@openrobotics.org">William Woodall</author>
 
   <buildtool_depend>ament_cmake_ros</buildtool_depend>
+  <buildtool_depend>eigen3_cmake_module</buildtool_depend>
 
   <build_depend>qt-base-dev</build_depend>
   <build_depend>rviz_ogre_vendor</build_depend>
+  <build_depend>eigen</build_depend>
 
   <build_export_depend>rviz_ogre_vendor</build_export_depend>
 
@@ -38,7 +40,6 @@
   <exec_depend>rviz_ogre_vendor</exec_depend>
 
   <depend>geometry_msgs</depend>
-  <depend>gz_math_vendor</depend>
   <depend>image_transport</depend>
   <depend>interactive_markers</depend>
   <depend>laser_geometry</depend>
