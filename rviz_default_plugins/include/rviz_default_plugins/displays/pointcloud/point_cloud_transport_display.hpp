@@ -56,8 +56,19 @@ public:
 /// the long templated class name to refer to their super class.
   typedef PointCloud2TransportDisplay<MessageType> PC2RDClass;
 
+<<<<<<< HEAD
   PointCloud2TransportDisplay()
   : messages_received_(0)
+=======
+  // Ensure subscriber_filter_ outlives tf_filter_ during destruction.
+  ~PointCloud2TransportDisplay() override
+  {
+    unsubscribe();
+  }
+
+protected:
+  void subscribe() override
+>>>>>>> 6c8f6d9b (Implement destructor for PointCloud2TransportDisplay to unsubscribe on destruction (#1788))
   {
     QString message_type = QString::fromStdString(rosidl_generator_traits::name<MessageType>());
     topic_property_->setMessageType(message_type);
