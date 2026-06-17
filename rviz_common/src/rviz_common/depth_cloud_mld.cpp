@@ -34,9 +34,9 @@
 #include <cmath>
 #include <cstdint>
 #include <cstring>
+#include <format>  // NOLINT(build/include_order) cpplint predates C++20 headers
 #include <memory>
 #include <string>
-#include <sstream>
 #include <vector>
 
 #include <sensor_msgs/msg/camera_info.hpp>
@@ -135,13 +135,12 @@ void MultiLayerDepth::initializeConversion(
   uint32_t expected_height = roi_height / binning_y;
 
   if (expected_width != depth_msg->width || expected_height != depth_msg->height) {
-    std::ostringstream s;
-    s << "Depth image size and camera info don't match: ";
-    s << depth_msg->width << " x " << depth_msg->height;
-    s << " vs " << expected_width << " x " << expected_height;
-    s << "(binning: " << binning_x << " x " << binning_y;
-    s << ", ROI size: " << roi_width << " x " << roi_height << ")";
-    throw(rviz_common::MultiLayerDepthException(s.str()));
+    throw rviz_common::MultiLayerDepthException(
+            std::format(
+              "Depth image size and camera info don't match: {} x {} vs {} x {}"
+              "(binning: {} x {}, ROI size: {} x {})",
+              depth_msg->width, depth_msg->height, expected_width, expected_height,
+              binning_x, binning_y, roi_width, roi_height));
   }
 
   uint32_t width = depth_msg->width;
@@ -498,14 +497,12 @@ MultiLayerDepth::generatePointCloudFromDepth(
 
   if (color_msg) {
     if (depth_msg->width != color_msg->width || depth_msg->height != color_msg->height) {
-      std::stringstream error_msg;
-      error_msg << "Depth image resolution (" << static_cast<int>(depth_msg->width) << "x" <<
-        static_cast<int>(depth_msg->height)
-                << ") "
-        "does not match color image resolution ("
-                << static_cast<int>(color_msg->width) << "x"
-                << static_cast<int>(color_msg->height) << ")";
-      throw(rviz_common::MultiLayerDepthException(error_msg.str()));
+      throw rviz_common::MultiLayerDepthException(
+              std::format(
+                "Depth image resolution ({}x{}) "
+                "does not match color image resolution ({}x{})",
+                static_cast<int>(depth_msg->width), static_cast<int>(depth_msg->height),
+                static_cast<int>(color_msg->width), static_cast<int>(color_msg->height)));
     }
 
     // convert color coding to 8-bit rgb data
