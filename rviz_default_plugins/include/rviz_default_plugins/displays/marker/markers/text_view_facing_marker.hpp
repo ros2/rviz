@@ -60,7 +60,7 @@ public:
 
   ~TextViewFacingMarker() override;
 
-  void setOrientation(const Ogre::Quaternion & orientation) override {(void) orientation;}
+  void setOrientation(const Ogre::Quaternion & orientation) override;
 
   S_MaterialPtr getMaterials() override;
 

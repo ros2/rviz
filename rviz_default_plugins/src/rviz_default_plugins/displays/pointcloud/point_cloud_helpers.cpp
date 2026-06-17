@@ -1,6 +1,4 @@
-// Copyright (c) 2012, Willow Garage, Inc.
-// Copyright (c) 2017, Open Source Robotics Foundation, Inc.
-// Copyright (c) 2018, Bosch Software Innovations GmbH.
+// Copyright (c) 2026, Open Source Robotics Foundation, Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -29,47 +27,56 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "rviz_rendering/viewport_projection_finder.hpp"
+#include "rviz_default_plugins/displays/pointcloud/point_cloud_helpers.hpp"
 
-#include <utility>
+#include <algorithm>
+#include <cmath>
+#include <string>
 
-#include <OgreCamera.h>
-#include <OgrePlane.h>
-#include <OgreRay.h>
-#include <OgreVector.h>
-#include <OgreViewport.h>
+#include <OgreColourValue.h>
 
-#include "rviz_rendering/render_window.hpp"
-
-namespace rviz_rendering
+namespace rviz_default_plugins
 {
 
-ViewportProjectionFinder::~ViewportProjectionFinder() = default;
-
-std::pair<bool, Ogre::Vector3> ViewportProjectionFinder::getViewportPointProjectionOnXYPlane(
-  RenderWindow * render_window, int x, int y)
+int32_t findChannelIndex(
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
+  const std::string & channel)
 {
-  auto xy_plane = Ogre::Plane(Ogre::Vector3::UNIT_Z, 0.0f);
-  return getViewportProjectionOnPlane(render_window, x, y, xy_plane);
-}
-
-std::pair<bool, Ogre::Vector3> ViewportProjectionFinder::getViewportProjectionOnPlane(
-  RenderWindow * render_window, int x, int y, Ogre::Plane & plane)
-{
-  auto viewport = RenderWindowOgreAdapter::getOgreViewport(render_window);
-  int width = viewport->getActualWidth();
-  int height = viewport->getActualHeight();
-  Ogre::Ray mouse_ray = viewport->getCamera()->getCameraToViewportRay(
-    static_cast<float>(x) / static_cast<float>(width),
-    static_cast<float>(y) / static_cast<float>(height));
-
-  auto intersection = mouse_ray.intersects(plane);
-  if (!intersection.first) {
-    return {false, Ogre::Vector3()};
+  for (size_t i = 0; i < cloud->fields.size(); ++i) {
+    if (cloud->fields[i].name == channel) {
+      return static_cast<uint32_t>(i);
+    }
   }
 
-  auto intersection_point = mouse_ray.getPoint(intersection.second);
-  return {true, intersection_point};
+  return -1;
 }
 
-}  // namespace rviz_rendering
+void getRainbowColor(float value, Ogre::ColourValue & color)
+{
+  // this is HSV color palette with hue values going only from 0.0 to 0.833333.
+
+  value = std::min(value, 1.0f);
+  value = std::max(value, 0.0f);
+
+  float h = value * 5.0f + 1.0f;
+  int i = floor(h);
+  float f = h - i;
+  if (!(i & 1) ) {
+    f = 1 - f;             // if i is even
+  }
+  float n = 1 - f;
+
+  if (i <= 1) {
+    color[0] = n, color[1] = 0, color[2] = 1;
+  } else if (i == 2) {
+    color[0] = 0, color[1] = n, color[2] = 1;
+  } else if (i == 3) {
+    color[0] = 0, color[1] = 1, color[2] = n;
+  } else if (i == 4) {
+    color[0] = n, color[1] = 1, color[2] = 0;
+  } else if (i >= 5) {
+    color[0] = 1, color[1] = n, color[2] = 0;
+  }
+}
+
+}  // end namespace rviz_default_plugins

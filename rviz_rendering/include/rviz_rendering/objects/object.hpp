@@ -59,7 +59,7 @@ public:
    * @param scene_manager The scene manager this object should be part of.
    */
   explicit Object(Ogre::SceneManager * scene_manager);
-  virtual ~Object() {}
+  virtual ~Object();
 
   /**
    * \brief Set the position of this object

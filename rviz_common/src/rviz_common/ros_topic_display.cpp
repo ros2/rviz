@@ -1,4 +1,4 @@
-// Copyright (c) 2019, Open Source Robotics Foundation, Inc.
+// Copyright (c) 2026, Bosch Software Innovations GmbH.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -27,39 +27,64 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+#include "rviz_common/ros_topic_display.hpp"
 
-#ifndef RVIZ_COMMON__TRANSFORMATION__TF2_HELPERS__TF2_CONVERSION_HELPERS_HPP_
-#define RVIZ_COMMON__TRANSFORMATION__TF2_HELPERS__TF2_CONVERSION_HELPERS_HPP_
-
-#include <string>
-
-#include "rclcpp/rclcpp.hpp"
-#include "std_msgs/msg/header.hpp"
-#include "tf2/time.hpp"
-
-#include "rviz_common/visibility_control.hpp"
+#include <memory>
 
 namespace rviz_common
 {
-namespace transformation
+
+_RosTopicDisplay::_RosTopicDisplay()
+: rviz_ros_node_(),
+  qos_profile(5)
 {
-namespace tf2_helpers
+  qRegisterMetaType<std::shared_ptr<const void>>();
+
+  topic_property_ = new properties::RosTopicProperty(
+    "Topic", "",
+    "", "", this, SLOT(updateTopic()));
+
+  qos_profile_property_ = new properties::QosProfileProperty(topic_property_, qos_profile);
+}
+
+void _RosTopicDisplay::onInitialize()
 {
+  rviz_ros_node_ = context_->getRosNodeAbstraction();
+  topic_property_->initialize(rviz_ros_node_);
 
-RVIZ_COMMON_PUBLIC
-std_msgs::msg::Header
-createHeader(const tf2::TimePoint & tf2_time, const std::string & frame_id);
+  connect(
+    reinterpret_cast<QObject *>(context_->getTransformationManager()),
+    SIGNAL(transformerChanged(std::shared_ptr<rviz_common::transformation::FrameTransformer>)),
+    this,
+    SLOT(transformerChangedCallback()));
+  qos_profile_property_->initialize(
+    [this](rclcpp::QoS profile) {
+      this->qos_profile = profile;
+      updateTopic();
+    });
 
-RVIZ_COMMON_PUBLIC
-rclcpp::Time
-fromTf2TimePoint(const tf2::TimePoint & tf2_time);
+  // Useful to _ROSTopicDisplay subclasses to ensure GUI updates
+  // are performed by the main thread only.
+  connect(
+    this,
+    SIGNAL(typeErasedMessageTaken(std::shared_ptr<const void>)),
+    this,
+    SLOT(processTypeErasedMessage(std::shared_ptr<const void>)),
+    // Force queued connections regardless of QObject thread affinity
+    Qt::QueuedConnection);
+}
 
-RVIZ_COMMON_PUBLIC
-tf2::TimePoint
-toTf2TimePoint(const rclcpp::Time & time);
+void _RosTopicDisplay::processTypeErasedMessage(std::shared_ptr<const void> type_erased_message)
+{
+  (void)type_erased_message;
+}
 
-}  // namespace tf2_helpers
-}  // namespace transformation
+void _RosTopicDisplay::transformerChangedCallback()
+{
+}
+
+void _RosTopicDisplay::updateMessageQueueSize()
+{
+}
+
 }  // namespace rviz_common
-
-#endif  // RVIZ_COMMON__TRANSFORMATION__TF2_HELPERS__TF2_CONVERSION_HELPERS_HPP_

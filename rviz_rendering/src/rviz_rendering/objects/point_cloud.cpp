@@ -287,6 +287,21 @@ void PointCloud::getWorldTransforms(Ogre::Matrix4 * xform) const
   *xform = _getParentNodeFullTransform();
 }
 
+const Ogre::String & PointCloud::getMovableType() const
+{
+  return sm_Type;
+}
+
+uint16_t PointCloud::getNumWorldTransforms() const
+{
+  return 1;
+}
+
+void PointCloud::setName(const std::string & name)
+{
+  mName = name;
+}
+
 void PointCloud::clear()
 {
   point_count_ = 0;

@@ -203,7 +203,9 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/pointcloud/transformers/xyz_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/get_transport_from_topic.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_common.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_helpers.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_to_point_cloud2.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_transformer_factory.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_selection_handler.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_display.cpp
@@ -241,6 +243,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/tools/select/selection_tool.cpp
   src/rviz_default_plugins/transformation/tf_frame_transformer.cpp
   src/rviz_default_plugins/transformation/tf_wrapper.cpp
+  src/rviz_default_plugins/transformation/transformer_guard.cpp
   src/rviz_default_plugins/view_controllers/follower/third_person_follower_view_controller.cpp
   src/rviz_default_plugins/view_controllers/fps/fps_view_controller.cpp
   src/rviz_default_plugins/view_controllers/frame/frame_view_controller.cpp

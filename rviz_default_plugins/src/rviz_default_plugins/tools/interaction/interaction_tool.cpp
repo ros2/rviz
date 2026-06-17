@@ -139,6 +139,17 @@ void InteractionTool::updateFocus(const rviz_common::ViewportMouseEvent & event)
   focused_object_ = new_focused_object;
 }
 
+bool InteractionTool::isMouseEventDragging(const rviz_common::ViewportMouseEvent & event)
+{
+  // We are dragging if a button was down and is still down
+  Qt::MouseButtons buttons = event.buttons_down &
+    (Qt::LeftButton | Qt::RightButton | Qt::MiddleButton);
+  if (event.type == QEvent::MouseButtonPress) {
+    buttons &= ~event.acting_button;
+  }
+  return buttons != 0;
+}
+
 int InteractionTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
 {
   int flags = 0;

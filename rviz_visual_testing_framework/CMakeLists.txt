@@ -68,7 +68,9 @@ add_library(rviz_visual_testing_framework STATIC
   src/internal/executor.cpp
   src/internal/transform_message_creator.cpp
   src/internal/visual_test.cpp
+  src/transform_publisher.cpp
   src/visual_test_fixture.cpp
+  src/visual_test_publisher.cpp
 )
 
 target_include_directories(rviz_visual_testing_framework

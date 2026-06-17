@@ -120,7 +120,7 @@ public:
 
   const Ogre::Quaternion & getOrientation();
 
-  virtual S_MaterialPtr getMaterials() {return S_MaterialPtr();}
+  virtual S_MaterialPtr getMaterials();
 
   bool isVisible() const;
 

@@ -1,6 +1,4 @@
-// Copyright (c) 2012, Willow Garage, Inc.
-// Copyright (c) 2017, Open Source Robotics Foundation, Inc.
-// Copyright (c) 2018, Bosch Software Innovations GmbH.
+// Copyright (c) 2026, Open Source Robotics Foundation, Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -29,47 +27,51 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "rviz_rendering/viewport_projection_finder.hpp"
+#include "rviz_visual_testing_framework/transform_publisher.hpp"
 
-#include <utility>
+#include <memory>
+#include <vector>
 
-#include <OgreCamera.h>
-#include <OgrePlane.h>
-#include <OgreRay.h>
-#include <OgreVector.h>
-#include <OgreViewport.h>
+#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/clock.hpp"
+#include "tf2_ros/static_transform_broadcaster.hpp"
 
-#include "rviz_rendering/render_window.hpp"
+#include "rviz_visual_testing_framework/internal/transform_message_creator.hpp"
 
-namespace rviz_rendering
+geometry_msgs::msg::TransformStamped StaticTransform::createStaticTransformMessage()
 {
-
-ViewportProjectionFinder::~ViewportProjectionFinder() = default;
-
-std::pair<bool, Ogre::Vector3> ViewportProjectionFinder::getViewportPointProjectionOnXYPlane(
-  RenderWindow * render_window, int x, int y)
-{
-  auto xy_plane = Ogre::Plane(Ogre::Vector3::UNIT_Z, 0.0f);
-  return getViewportProjectionOnPlane(render_window, x, y, xy_plane);
+  return createStaticTransformMessageFor(
+    origin_frame, destination_frame, x, y, z, roll, pitch, yaw);
 }
 
-std::pair<bool, Ogre::Vector3> ViewportProjectionFinder::getViewportProjectionOnPlane(
-  RenderWindow * render_window, int x, int y, Ogre::Plane & plane)
+TransformPublisher::TransformPublisher(std::vector<StaticTransform> transforms)
 {
-  auto viewport = RenderWindowOgreAdapter::getOgreViewport(render_window);
-  int width = viewport->getActualWidth();
-  int height = viewport->getActualHeight();
-  Ogre::Ray mouse_ray = viewport->getCamera()->getCameraToViewportRay(
-    static_cast<float>(x) / static_cast<float>(width),
-    static_cast<float>(y) / static_cast<float>(height));
+  nodes_spinning_ = true;
+  transforms_ = transforms;
+  publisher_thread_ = std::thread(
+    &TransformPublisher::publishOnFrame, this);
+}
 
-  auto intersection = mouse_ray.intersects(plane);
-  if (!intersection.first) {
-    return {false, Ogre::Vector3()};
+TransformPublisher::~TransformPublisher()
+{
+  nodes_spinning_ = false;
+  publisher_thread_.join();
+}
+
+void TransformPublisher::publishOnFrame()
+{
+  auto transformer_publisher_node = std::make_shared<rclcpp::Node>("static_transform_publisher");
+  tf2_ros::StaticTransformBroadcaster broadcaster(*transformer_publisher_node);
+
+  rclcpp::WallRate loop_rate(0.2);
+  rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_node(transformer_publisher_node);
+
+  while (nodes_spinning_) {
+    for (auto transform : transforms_) {
+      broadcaster.sendTransform(transform.createStaticTransformMessage());
+    }
+    executor.spin_some();
+    loop_rate.sleep();
   }
-
-  auto intersection_point = mouse_ray.getPoint(intersection.second);
-  return {true, intersection_point};
 }
-
-}  // namespace rviz_rendering

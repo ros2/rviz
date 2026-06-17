@@ -176,6 +176,11 @@ void MarkerBase::extractMaterials(Ogre::Entity * entity, S_MaterialPtr & materia
   }
 }
 
+S_MaterialPtr MarkerBase::getMaterials()
+{
+  return S_MaterialPtr();
+}
+
 }  // namespace markers
 }  // namespace displays
 }  // namespace rviz_default_plugins

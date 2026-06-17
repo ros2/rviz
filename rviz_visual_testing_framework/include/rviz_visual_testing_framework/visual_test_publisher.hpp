@@ -30,19 +30,13 @@
 #ifndef RVIZ_VISUAL_TESTING_FRAMEWORK__VISUAL_TEST_PUBLISHER_HPP_
 #define RVIZ_VISUAL_TESTING_FRAMEWORK__VISUAL_TEST_PUBLISHER_HPP_
 
-#include <chrono>
+#include <atomic>
 #include <memory>
 #include <string>
 #include <thread>
 #include <vector>
 
 #include "rclcpp/rclcpp.hpp"
-#include "rclcpp/clock.hpp"
-#include "std_msgs/msg/header.hpp"
-#include "geometry_msgs/msg/transform_stamped.hpp"
-#include "tf2/LinearMath/Quaternion.hpp"
-#include "tf2_ros/static_transform_broadcaster.hpp"
-#include "internal/transform_message_creator.hpp"
 
 struct PublisherWithFrame
 {
@@ -61,49 +55,14 @@ struct PublisherWithFrame
 class VisualTestPublisher
 {
 public:
-  VisualTestPublisher(std::shared_ptr<rclcpp::Node> publisher_node, std::string frame_name)
-  {
-    nodes_spinning_ = true;
-    std::vector<PublisherWithFrame> publishers = {PublisherWithFrame(publisher_node, frame_name)};
-    publisher_thread_ = std::thread(
-      &VisualTestPublisher::publishOnFrame, this, publishers);
-  }
+  VisualTestPublisher(std::shared_ptr<rclcpp::Node> publisher_node, std::string frame_name);
 
-  explicit VisualTestPublisher(std::vector<PublisherWithFrame> publishers)
-  {
-    nodes_spinning_ = true;
-    publisher_thread_ = std::thread(&VisualTestPublisher::publishOnFrame, this, publishers);
-  }
+  explicit VisualTestPublisher(std::vector<PublisherWithFrame> publishers);
 
-  ~VisualTestPublisher()
-  {
-    nodes_spinning_ = false;
-    publisher_thread_.join();
-  }
+  ~VisualTestPublisher();
 
 private:
-  void publishOnFrame(std::vector<PublisherWithFrame> publishers)
-  {
-    auto transformer_publisher_node = std::make_shared<rclcpp::Node>("static_transform_publisher");
-    tf2_ros::StaticTransformBroadcaster broadcaster(*transformer_publisher_node);
-
-    rclcpp::executors::SingleThreadedExecutor executor;
-    executor.add_node(transformer_publisher_node);
-
-    std::vector<geometry_msgs::msg::TransformStamped> transform_messages;
-    for (auto publisherWithFrame : publishers) {
-      executor.add_node(publisherWithFrame.publisher_node_);
-      transform_messages.push_back(
-        createStaticTransformMessageFor("map", publisherWithFrame.frame_name_));
-    }
-    while (nodes_spinning_) {
-      for (const auto & msg : transform_messages) {
-        broadcaster.sendTransform(msg);
-      }
-      executor.spin_some();
-      std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    }
-  }
+  void publishOnFrame(std::vector<PublisherWithFrame> publishers);
 
   std::atomic<bool> nodes_spinning_;
   std::thread publisher_thread_;

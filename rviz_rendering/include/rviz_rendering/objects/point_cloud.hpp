@@ -196,7 +196,7 @@ public:
   void setHighlightColor(float r, float g, float b);
 
   RVIZ_RENDERING_PUBLIC
-  const Ogre::String & getMovableType() const override {return sm_Type;}
+  const Ogre::String & getMovableType() const override;
 
   RVIZ_RENDERING_PUBLIC
   const Ogre::AxisAlignedBox & getBoundingBox() const override;
@@ -208,7 +208,7 @@ public:
   virtual void getWorldTransforms(Ogre::Matrix4 * xform) const;
 
   RVIZ_RENDERING_PUBLIC
-  virtual uint16_t getNumWorldTransforms() const {return 1;}
+  virtual uint16_t getNumWorldTransforms() const;
 
   RVIZ_RENDERING_PUBLIC
   void _updateRenderQueue(Ogre::RenderQueue * queue) override;
@@ -223,7 +223,7 @@ public:
   void visitRenderables(Ogre::Renderable::Visitor * visitor, bool debugRenderables) override;
 
   RVIZ_RENDERING_PUBLIC
-  virtual void setName(const std::string & name) {mName = name;}
+  virtual void setName(const std::string & name);
 
   RVIZ_RENDERING_PUBLIC
   PointCloudRenderableQueue getRenderables();
