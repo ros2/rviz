@@ -40,6 +40,7 @@
 #include <OgrePixelFormat.h>
 #include <OgreColourValue.h>
 
+#include "rviz_common/logging.hpp"
 #include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
