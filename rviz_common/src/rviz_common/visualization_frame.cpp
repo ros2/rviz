@@ -889,9 +889,6 @@ void VisualizationFrame::loadPanels(const Config & config)
 {
   // First destroy any existing custom panels.
   for (auto & panel_record : custom_panels_) {
-    // Avoid mutating custom_panels_ from onPanelDeleted() while bulk-clearing.
-    disconnect(panel_record.dock, &QObject::destroyed, this, &VisualizationFrame::onPanelDeleted);
-
     if (panel_record.delete_action) {
       delete_view_menu_->removeAction(panel_record.delete_action);
       panel_record.delete_action->deleteLater();
