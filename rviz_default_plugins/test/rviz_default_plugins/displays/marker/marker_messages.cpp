@@ -105,7 +105,7 @@ visualization_msgs::msg::Marker createDefaultMessage(int32_t type)
   return marker;
 }
 
-visualization_msgs::msg::Marker createMessageWithPoints(int32_t type)
+visualization_msgs::msg::Marker createMessageWithTwoPoints(int32_t type)
 {
   auto marker = createDefaultMessage(type);
   marker.points.push_back(create_point(2, 0, 0));
@@ -113,9 +113,18 @@ visualization_msgs::msg::Marker createMessageWithPoints(int32_t type)
   return marker;
 }
 
+visualization_msgs::msg::Marker createMessageWithThreePoints(int32_t type)
+{
+  auto marker = createDefaultMessage(type);
+  marker.points.push_back(create_point(2, 0, 0));
+  marker.points.push_back(create_point(1, 1, 0));
+  marker.points.push_back(create_point(0, 2, 0));
+  return marker;
+}
+
 visualization_msgs::msg::Marker createMessageWithColorPerPoint(int32_t type)
 {
-  auto marker = createMessageWithPoints(type);
+  auto marker = createMessageWithTwoPoints(type);
   marker.colors.push_back(color(1.0f, 0.0f, 0.5f, 0.5f));
   marker.colors.push_back(color(0.5f, 0.6f, 0.0f, 0.3f));
   return marker;

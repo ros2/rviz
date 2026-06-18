@@ -43,7 +43,9 @@ std_msgs::msg::ColorRGBA color(float r, float g, float b, float a);
 
 visualization_msgs::msg::Marker createDefaultMessage(int32_t type);
 
-visualization_msgs::msg::Marker createMessageWithPoints(int32_t type);
+visualization_msgs::msg::Marker createMessageWithTwoPoints(int32_t type);
+
+visualization_msgs::msg::Marker createMessageWithThreePoints(int32_t type);
 
 visualization_msgs::msg::Marker createMessageWithColorPerPoint(int32_t type);
 }  // namespace testing

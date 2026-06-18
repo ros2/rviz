@@ -56,7 +56,7 @@ TEST_F(MarkersTestFixture, setMessage_sets_points_correctly) {
   marker_ = makeMarker<rviz_default_plugins::displays::markers::PointsMarker>();
   mockValidTransform();
 
-  marker_->setMessage(createMessageWithPoints(visualization_msgs::msg::Marker::SPHERE_LIST));
+  marker_->setMessage(createMessageWithTwoPoints(visualization_msgs::msg::Marker::SPHERE_LIST));
 
   auto point_cloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
   float expected_bounding_radius = 2.236068f;
@@ -68,7 +68,7 @@ TEST_F(MarkersTestFixture, setMessage_sets_position_and_orientation_correctly) {
   marker_ = makeMarker<rviz_default_plugins::displays::markers::PointsMarker>();
   mockValidTransform();
 
-  marker_->setMessage(createMessageWithPoints(visualization_msgs::msg::Marker::CUBE_LIST));
+  marker_->setMessage(createMessageWithTwoPoints(visualization_msgs::msg::Marker::CUBE_LIST));
 
   EXPECT_THAT(marker_->getPosition(), Vector3Eq(Ogre::Vector3(0, 1, 0)));
   EXPECT_THAT(marker_->getOrientation(), QuaternionEq(Ogre::Quaternion(0, 0, 1, 0)));
@@ -78,7 +78,7 @@ TEST_F(MarkersTestFixture, setMessage_sets_single_color_correctly) {
   marker_ = makeMarker<rviz_default_plugins::displays::markers::PointsMarker>();
   mockValidTransform();
 
-  marker_->setMessage(createMessageWithPoints(visualization_msgs::msg::Marker::SPHERE_LIST));
+  marker_->setMessage(createMessageWithTwoPoints(visualization_msgs::msg::Marker::SPHERE_LIST));
   auto point_cloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
 
   Ogre::ColourValue expected_color(0.0f, 1.0f, 1.0f, 1.0f);

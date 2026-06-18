@@ -78,8 +78,29 @@ bool axesAreVisible(Ogre::SceneNode * scene_node);
 
 bool arrowIsVisible(Ogre::SceneNode * scene_manager);
 
+bool noArrowsAreVisible(Ogre::SceneNode * scene_manager);
+
 std::vector<Ogre::SceneNode *> findAllArrows(Ogre::SceneNode * scene_node);
 Ogre::SceneNode * findOneArrow(Ogre::SceneNode * scene_node);
+
+template <int N>
+void assertArrowsWithTransforms(
+  Ogre::SceneManager * scene_manager,
+  std::array<Ogre::Vector3, N> positions,
+  std::array<Ogre::Vector3, N> scales,
+  std::array<Ogre::Quaternion, N> orientations
+) {
+  auto arrow_scene_nodes = findAllArrows(scene_manager->getRootSceneNode());
+  ASSERT_EQ(arrow_scene_nodes.size(), N);
+  for (unsigned i = 0; i < N; i++) {
+    auto arrow_node = arrow_scene_nodes.at(i);
+    ASSERT_TRUE(arrow_node);
+    EXPECT_THAT(arrow_node->getPosition(), Vector3Eq(positions.at(i)));
+    // Have to mangle the scale because of the default orientation of the cylinders (see arrow.cpp).
+    EXPECT_THAT(arrow_node->getScale(), Vector3Eq(Ogre::Vector3(scales.at(i).z, scales.at(i).x, scales.at(i).y)));
+    EXPECT_THAT(arrow_node->getOrientation(), QuaternionEq(orientations.at(i)));
+  }
+}
 
 std::vector<Ogre::SceneNode *> findAllAxes(Ogre::SceneNode * scene_node);
 Ogre::SceneNode * findOneAxes(Ogre::SceneNode * scene_node);

@@ -97,7 +97,10 @@ void ScrewVisual::setScrew(const Ogre::Vector3 & linear, const Ogre::Vector3 & a
       orientation = Ogre::Quaternion::IDENTITY;
     }
     // circle_arrow_angular_->setScale(Ogre::Vector3(width_, width_, 0.05));
-    circle_arrow_angular_->set(0, width_ * 0.1f, width_ * 0.1f * 1.0f, width_ * 0.1f * 2.0f);
+    circle_arrow_angular_->setShaftLength(0);
+    circle_arrow_angular_->setShaftDiameter(width_ * 0.1f);
+    circle_arrow_angular_->setHeadLength(width_ * 0.1f);
+    circle_arrow_angular_->setHeadDiameter(width_ * 0.2f);
     circle_arrow_angular_->setDirection(orientation * Ogre::Vector3(0, 1, 0));
     circle_arrow_angular_->setPosition(
       orientation *

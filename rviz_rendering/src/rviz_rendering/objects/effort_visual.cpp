@@ -115,7 +115,10 @@ void EffortVisual::setEffort(const std::string & joint_name, double effort, doub
     effort_value = static_cast<float>(fabs(effort) + 0.05f);
   }
 
-  effort_arrow_[joint_name]->set(0, width_ * 2.0f, width_ * 2.0f * 1.0f, width_ * 2.0f * 2.0f);
+  effort_arrow_[joint_name]->setShaftLength(0);
+  effort_arrow_[joint_name]->setShaftDiameter(width_ * 2.0f);
+  effort_arrow_[joint_name]->setHeadLength(width_ * 2.0f);
+  effort_arrow_[joint_name]->setHeadDiameter(width_ * 4.0f);
   if (effort > 0) {
     effort_arrow_[joint_name]->setDirection(orientation_[joint_name] * Ogre::Vector3(-1, 0, 0));
   } else {

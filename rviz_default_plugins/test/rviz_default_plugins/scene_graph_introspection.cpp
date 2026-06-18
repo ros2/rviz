@@ -82,6 +82,23 @@ bool arrowIsVisible(Ogre::SceneNode * scene_node)
   return arrow_head->isVisible() && arrow_shaft->isVisible();
 }
 
+bool noArrowsAreVisible(Ogre::SceneNode * scene_node)
+{
+  auto arrow_heads = findAllEntitiesByMeshName(scene_node, "rviz_cone.mesh");
+  auto arrow_shafts = findAllEntitiesByMeshName(scene_node, "rviz_cylinder.mesh");
+  for (const auto & arrow_head : arrow_heads) {
+    if (arrow_head->isVisible()) {
+      return false;
+    }
+  }
+  for (const auto & arrow_shaft : arrow_shafts) {
+    if (arrow_shaft->isVisible()) {
+      return false;
+    }
+  }
+  return true;
+}
+
 std::vector<Ogre::Entity *> findAllEntitiesByMeshName(
   Ogre::SceneNode * scene_node, const Ogre::String & resource_name)
 {
