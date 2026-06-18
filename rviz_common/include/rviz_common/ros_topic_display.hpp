@@ -44,6 +44,7 @@
 
 #endif
 
+#include "rclcpp/node.hpp"
 #include "rclcpp/qos.hpp"
 
 #include "rviz_common/display.hpp"
