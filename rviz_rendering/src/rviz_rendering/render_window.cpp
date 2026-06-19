@@ -171,7 +171,9 @@ RenderWindow::exposeEvent(QExposeEvent * expose_event)
 
   if (this->isExposed()) {
     impl_->resize(this->width(), this->height());
-    this->renderNow();
+    if (this->width() > 0 && this->height() > 0) {
+      this->renderNow();
+    }
   }
 }
 

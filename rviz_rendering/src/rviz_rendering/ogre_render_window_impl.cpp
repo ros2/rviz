@@ -128,6 +128,10 @@ RenderWindowImpl::renderNow()
     return;
   }
 
+  if (parent_->width() == 0 || parent_->height() == 0) {
+    return;
+  }
+
   if (!render_system_ || !ogre_render_window_) {
     this->initialize();
     if (setup_scene_callback_) {
@@ -234,6 +238,13 @@ RenderWindowImpl::initialize()
 void
 RenderWindowImpl::resize(size_t width, size_t height)
 {
+  // Guard against zero dimensions: OGRE's GLXWindow::windowMovedOrResized()
+  // fails to create a drawable for a zero-size window and then XFree()s a bad
+  // pointer, aborting the process. Nothing can be drawn at zero size anyway.
+  if (width == 0 || height == 0) {
+    this->renderLater();
+    return;
+  }
   if (ogre_render_window_) {
     this->setCameraAspectRatio();
     ogre_render_window_->resize(
