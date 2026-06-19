@@ -238,9 +238,6 @@ RenderWindowImpl::initialize()
 void
 RenderWindowImpl::resize(size_t width, size_t height)
 {
-  // Guard against zero dimensions: OGRE's GLXWindow::windowMovedOrResized()
-  // fails to create a drawable for a zero-size window and then XFree()s a bad
-  // pointer, aborting the process. Nothing can be drawn at zero size anyway.
   if (width == 0 || height == 0) {
     this->renderLater();
     return;
