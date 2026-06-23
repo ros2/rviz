@@ -39,7 +39,6 @@
 #include "rviz_common/properties/property.hpp"
 
 #include "rviz_default_plugins/displays/pointcloud/point_cloud_transformer.hpp"
-#include "rviz_default_plugins/visibility_control.hpp"
 
 namespace rviz_common
 {
@@ -60,10 +59,18 @@ namespace rviz_default_plugins
 
 typedef std::vector<std::string> V_string;
 
-RVIZ_DEFAULT_PLUGINS_PUBLIC
-int32_t findChannelIndex(
+inline int32_t findChannelIndex(
   const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
-  const std::string & channel);
+  const std::string & channel)
+{
+  for (size_t i = 0; i < cloud->fields.size(); ++i) {
+    if (cloud->fields[i].name == channel) {
+      return static_cast<uint32_t>(i);
+    }
+  }
+
+  return -1;
+}
 
 template<typename T>
 inline T valueFromCloud(
@@ -121,8 +128,33 @@ inline T valueFromCloud(
   return ret;
 }
 
-RVIZ_DEFAULT_PLUGINS_PUBLIC
-void getRainbowColor(float value, Ogre::ColourValue & color);
+inline void getRainbowColor(float value, Ogre::ColourValue & color)
+{
+  // this is HSV color palette with hue values going only from 0.0 to 0.833333.
+
+  value = std::min(value, 1.0f);
+  value = std::max(value, 0.0f);
+
+  float h = value * 5.0f + 1.0f;
+  int i = floor(h);
+  float f = h - i;
+  if (!(i & 1) ) {
+    f = 1 - f;             // if i is even
+  }
+  float n = 1 - f;
+
+  if (i <= 1) {
+    color[0] = n, color[1] = 0, color[2] = 1;
+  } else if (i == 2) {
+    color[0] = 0, color[1] = n, color[2] = 1;
+  } else if (i == 3) {
+    color[0] = 0, color[1] = 1, color[2] = n;
+  } else if (i == 4) {
+    color[0] = n, color[1] = 1, color[2] = 0;
+  } else if (i >= 5) {
+    color[0] = 1, color[1] = n, color[2] = 0;
+  }
+}
 
 }  // end namespace rviz_default_plugins
 
