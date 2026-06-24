@@ -33,6 +33,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <format>  // NOLINT(build/include_order) cpplint predates C++20 headers
 #include <functional>
 #include <memory>
 #include <mutex>
@@ -442,10 +443,9 @@ void VisualizationManager::updateFrames()
   std::string error;
   if (frame_manager_->frameHasProblems(getFixedFrame().toStdString(), error)) {
     if (!frame_manager_->anyTransformationDataAvailable()) {
-      std::stringstream ss;
-      ss << "No tf data.  Actual error: " << error;
       global_status_->setStatus(
-        StatusProperty::Warn, "Fixed Frame", QString::fromStdString(ss.str()));
+        StatusProperty::Warn, "Fixed Frame",
+        QString::fromStdString(std::format("No tf data.  Actual error: {}", error)));
     } else {
       global_status_->setStatus(
         StatusProperty::Error, "Fixed Frame", QString::fromStdString(error));

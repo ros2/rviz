@@ -98,8 +98,9 @@ QString YamlConfigWriter::errorMessage()
 
 void YamlConfigWriter::writeConfigNode(const Config & config, YAML::Emitter & emitter)
 {
+  using enum Config::Type;
   switch (config.getType() ) {
-    case Config::List:
+    case List:
       {
         emitter << YAML::BeginSeq;
         for (int i = 0; i < config.listLength(); i++) {
@@ -108,7 +109,7 @@ void YamlConfigWriter::writeConfigNode(const Config & config, YAML::Emitter & em
         emitter << YAML::EndSeq;
         break;
       }
-    case Config::Map:
+    case Map:
       {
         emitter << YAML::BeginMap;
         Config::MapIterator map_iter = config.mapIterator();
@@ -125,7 +126,7 @@ void YamlConfigWriter::writeConfigNode(const Config & config, YAML::Emitter & em
         emitter << YAML::EndMap;
         break;
       }
-    case Config::Value:
+    case Value:
       {
         QString value = config.getValue().toString();
         if (value.size() == 0) {
