@@ -819,7 +819,7 @@ if(BUILD_TESTING)
     target_include_directories(depth_cloud_display_visual_test PRIVATE test)
     target_link_libraries(depth_cloud_display_visual_test
       rviz_visual_testing_framework::rviz_visual_testing_framework
-      )
+    )
   endif()
 
   ament_add_gtest(effort_display_visual_test
