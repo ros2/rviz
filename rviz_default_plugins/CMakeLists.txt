@@ -368,6 +368,7 @@ if(BUILD_TESTING)
     include
   )
   target_link_libraries(test_fixture_objects PUBLIC
+    GTest::gmock
     rclcpp::rclcpp
     rviz_common::rviz_common
     rviz_ogre_vendor::OgreMain
