@@ -61,6 +61,7 @@
 #include "image_transport/subscriber.hpp"
 #include "image_transport/subscriber_plugin.hpp"
 #include "pluginlib/class_loader.hpp"
+#include "rclcpp/node.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/properties/ros_topic_multi_type_property.hpp"

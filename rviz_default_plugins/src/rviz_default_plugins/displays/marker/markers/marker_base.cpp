@@ -45,6 +45,7 @@
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/interactive_object.hpp"
+#include "rviz_common/logging.hpp"
 
 #include "rviz_default_plugins/displays/marker/marker_common.hpp"
 #include "rviz_default_plugins/displays/marker/markers/marker_selection_handler.hpp"

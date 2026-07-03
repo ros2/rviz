@@ -44,6 +44,7 @@
 
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
+#include "rclcpp/node.hpp"
 #include "rclcpp/time.hpp"
 
 #include "rviz_rendering/material_manager.hpp"

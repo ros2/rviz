@@ -70,6 +70,7 @@
 #include "./displays_panel.hpp"
 #include "frame_manager.hpp"
 #include "rviz_common/load_resource.hpp"
+#include "rviz_common/logging.hpp"
 #include "rviz_common/properties/color_property.hpp"
 #include "rviz_common/properties/int_property.hpp"
 #include "rviz_common/properties/parse_color.hpp"

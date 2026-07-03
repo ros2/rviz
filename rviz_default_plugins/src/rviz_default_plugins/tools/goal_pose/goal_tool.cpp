@@ -35,6 +35,8 @@
 
 #include "geometry_msgs/msg/pose_stamped.hpp"
 
+#include "rclcpp/node.hpp"
+
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/logging.hpp"
 #include "rviz_common/properties/string_property.hpp"
