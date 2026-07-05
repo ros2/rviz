@@ -144,12 +144,13 @@ QVariant Display::getViewData(int column, int role) const
         if (column == 0) {
           if (isEnabled()) {
             using rviz_common::properties::StatusProperty;
-            StatusProperty::Level level = status_ ? status_->getLevel() : StatusProperty::Ok;
+            using enum StatusProperty::Level;
+            StatusProperty::Level level = status_ ? status_->getLevel() : Ok;
             switch (level) {
-              case StatusProperty::Ok:
+              case Ok:
                 return getIcon();
-              case StatusProperty::Warn:
-              case StatusProperty::Error:
+              case Warn:
+              case Error:
                 return status_->statusIcon(status_->getLevel());
             }
           } else {
@@ -184,24 +185,6 @@ void Display::setTopic(const QString & topic, const QString & datatype)
 }
 
 void Display::update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt)
-{
-#if !defined(_WIN32)
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#else  // !defined(_WIN32)
-# pragma warning(push)
-# pragma warning(disable: 4996)
-#endif
-  update(wall_dt.count(), ros_dt.count());
-// remove warning suppression
-#if !defined(_WIN32)
-# pragma GCC diagnostic pop
-#else  // !defined(_WIN32)
-# pragma warning(pop)
-#endif
-}
-
-void Display::update(float wall_dt, float ros_dt)
 {
   (void) wall_dt;
   (void) ros_dt;
@@ -429,6 +412,11 @@ void Display::setAssociatedWidget(QWidget * widget)
         SLOT(associatedPanelVisibilityChange(bool)));
       connect(associated_widget_panel_, SIGNAL(closed()), this, SLOT(disable()));
       associated_widget_panel_->setIcon(getIcon());
+
+      // If this display is not enabled, hide this panel immediately so it won't appear on startup
+      if (!isEnabled()) {
+        associated_widget_panel_->hide();
+      }
     } else {
       associated_widget_panel_ = nullptr;
       associated_widget_->setWindowTitle(getName());

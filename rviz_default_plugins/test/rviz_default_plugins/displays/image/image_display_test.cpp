@@ -138,6 +138,17 @@ TEST_F(ImageDisplayTestFixture, update_calls_texture_update) {
   imageDisplay.update(zero, zero);
 }
 
+TEST_F(ImageDisplayTestFixture, initialize_propagates_smooth_scaling_to_texture) {
+  auto panelDockWidget = new rviz_common::PanelDockWidget("panelDockWidget");
+  EXPECT_CALL(*window_manager_, addPane(_, _, _, _)).WillOnce(Return(panelDockWidget));
+  EXPECT_CALL(*context_, getFixedFrame()).WillOnce(Return(""));
+
+  EXPECT_CALL(*texture_, setSmoothScaling(false)).Times(AtLeast(1));
+
+  ImageDisplay imageDisplay(std::move(texture_));
+  imageDisplay.initialize(context_.get());
+}
+
 int main(int argc, char ** argv)
 {
   QApplication app(argc, argv);

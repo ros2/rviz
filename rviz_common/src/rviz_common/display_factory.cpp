@@ -73,7 +73,7 @@ void DisplayFactory::updatePluginMessageTypes(
 QSet<QString> DisplayFactory::getMessageTypes(const QString & class_id)
 {
   // lookup in cache
-  if (message_type_cache_.find(class_id) != message_type_cache_.end()) {
+  if (message_type_cache_.contains(class_id)) {
     return message_type_cache_[class_id];
   }
 
@@ -103,7 +103,7 @@ QSet<QString> DisplayFactory::getMessageTypes(const QString & class_id)
   }
   // If class_id was not found in the xml description, add an empty
   // cache element to avoid re-parsing the xml next time
-  if (message_type_cache_.find(class_id) == message_type_cache_.end()) {
+  if (!message_type_cache_.contains(class_id)) {
     message_type_cache_[class_id] = QSet<QString>();
   }
   return message_type_cache_[class_id];
@@ -144,9 +144,7 @@ void DisplayFactory::fillCacheForAllClassElements(tinyxml2::XMLElement * library
     QSet<QString> message_types = parseMessageTypes(class_element, current_class_id);
 
     // Don't overwrite message types previously set via updatePluginMessageTypes
-    if (message_type_cache_.find(QString::fromStdString(current_class_id)) ==
-      message_type_cache_.end() )
-    {
+    if (!message_type_cache_.contains(QString::fromStdString(current_class_id))) {
       message_type_cache_[QString::fromStdString(current_class_id)] = message_types;
     }
 

@@ -2,6 +2,17 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.1 (2026-06-11)
+-------------------
+* Fix disabled displays (addresses `#1773 <https://github.com/ros2/rviz/issues/1773>`_) (`#1774 <https://github.com/ros2/rviz/issues/1774>`_)
+* QosProfileProperty Destructor (`#1715 <https://github.com/ros2/rviz/issues/1715>`_)
+* SelectionManager::select Function Not Returning Empty Selection Result for Invalid Coordinates (`#1713 <https://github.com/ros2/rviz/issues/1713>`_)
+* Removed deprecated API (`#1731 <https://github.com/ros2/rviz/issues/1731>`_)
+* Removed unused code in render_window.cpp (`#1722 <https://github.com/ros2/rviz/issues/1722>`_)
+* Removed URDF dependency in rviz_common (`#1723 <https://github.com/ros2/rviz/issues/1723>`_)
+* Fixed Qcolor deprecation (`#1725 <https://github.com/ros2/rviz/issues/1725>`_)
+* Contributors: Alejandro Hernández Cordero, Tom Moore
+
 16.0.0 (2026-05-06)
 -------------------
 

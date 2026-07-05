@@ -2,6 +2,12 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.1 (2026-06-11)
+-------------------
+* Suppress the CMake unused variable warning (`#1772 <https://github.com/ros2/rviz/issues/1772>`_)
+* Removed warning rviz_ogre_vendor (`#1708 <https://github.com/ros2/rviz/issues/1708>`_)
+* Contributors: Alejandro Hernández Cordero, Michael Carroll
+
 16.0.0 (2026-05-06)
 -------------------
 

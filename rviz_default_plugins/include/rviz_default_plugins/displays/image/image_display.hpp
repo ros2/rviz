@@ -94,6 +94,7 @@ public:
 
 public Q_SLOTS:
   virtual void updateNormalizeOptions();
+  virtual void updateSmoothScaling();
 
 protected Q_SLOTS:
   virtual void subscribe();
@@ -110,6 +111,11 @@ protected:
 
   /* This is called by incomingMessage(). */
   virtual void processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg);
+
+  // Applies the current "Smooth scaling" filter setting to a single
+  // material's first TextureUnitState. Shared with CameraDisplay so its
+  // background and overlay materials can be updated by the same code.
+  void applySmoothScalingToMaterial(const Ogre::MaterialPtr & material) const;
 
   std::shared_ptr<image_transport::SubscriberFilter> subscription_;
   uint32_t messages_received_;
@@ -148,6 +154,7 @@ private:
   rviz_common::properties::FloatProperty * min_property_;
   rviz_common::properties::FloatProperty * max_property_;
   rviz_common::properties::IntProperty * median_buffer_size_property_;
+  rviz_common::properties::BoolProperty * smooth_scaling_property_;
   // True for encodings whose pixel values need a min/max range mapping before
   // they can be shown as 8-bit RGB: float, single-channel 16-bit, and 16-bit
   // Bayer. Controls the visibility of the Normalize Range / Min Value /

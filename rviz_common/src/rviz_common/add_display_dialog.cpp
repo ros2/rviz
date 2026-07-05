@@ -33,6 +33,7 @@
 #include "add_display_dialog.hpp"
 
 #include <algorithm>
+#include <format>  // NOLINT(build/include_order) cpplint predates C++20 headers
 #include <map>
 #include <memory>
 #include <string>
@@ -157,14 +158,13 @@ void getPluginGroups(
       throw std::runtime_error("topic '" + map_pair.first + "' unexpectedly has not types.");
     }
     if (map_pair.second.size() > 1) {
-      std::stringstream ss;
-      ss << "topic '" << map_pair.first <<
-        "' has more than one types associated, rviz will arbitrarily use the type '" <<
-        map_pair.second[0] << "' -- all types for the topic:";
+      std::string warning = std::format(
+        "topic '{}' has more than one types associated, rviz will arbitrarily use the type "
+        "'{}' -- all types for the topic:", map_pair.first, map_pair.second[0]);
       for (const auto & topic_type_name : map_pair.second) {
-        ss << " '" << topic_type_name << "'";
+        warning += std::format(" '{}'", topic_type_name);
       }
-      RVIZ_COMMON_LOG_WARNING(ss.str());
+      RVIZ_COMMON_LOG_WARNING(warning);
     }
     QString datatype = QString::fromStdString(map_pair.second[0]);
 
