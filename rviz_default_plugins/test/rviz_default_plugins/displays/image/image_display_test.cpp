@@ -154,9 +154,9 @@ TEST_F(ImageDisplayTestFixture, initialize_propagates_linear_input_default_to_te
   EXPECT_CALL(*window_manager_, addPane(_, _, _, _)).WillOnce(Return(panelDockWidget));
   EXPECT_CALL(*context_, getFixedFrame()).WillOnce(Return(""));
 
-  // Default is unchecked; the display must push `false` down so a fresh
-  // texture doesn't inherit a stale sRGB state from a previous frame.
-  EXPECT_CALL(*texture_, setLinearInput(false)).Times(AtLeast(1));
+  // Default is unchecked; the display must push `false` down exactly once
+  // during initialize().
+  EXPECT_CALL(*texture_, setLinearInput(false)).Times(1);
 
   ImageDisplay imageDisplay(std::move(texture_));
   imageDisplay.initialize(context_.get());
