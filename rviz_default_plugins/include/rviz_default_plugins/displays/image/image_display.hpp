@@ -1,7 +1,6 @@
 // Copyright (c) 2012, Willow Garage, Inc.
 // Copyright (c) 2017, Bosch Software Innovations GmbH.
 // Copyright (c) 2020, TNG Technology Consulting GmbH.
-// Copyright (c) 2026, Arne Baeyens.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
