@@ -95,11 +95,14 @@ public:
 public Q_SLOTS:
   virtual void updateNormalizeOptions();
   virtual void updateSmoothScaling();
+  virtual void updateLinearInput();
 
 protected Q_SLOTS:
   virtual void subscribe();
 
 protected:
+  void refreshLinearInputVisibility();
+
   void onEnable() override;
   void onDisable() override;
   virtual void unsubscribe();
@@ -155,11 +158,15 @@ private:
   rviz_common::properties::FloatProperty * max_property_;
   rviz_common::properties::IntProperty * median_buffer_size_property_;
   rviz_common::properties::BoolProperty * smooth_scaling_property_;
+  rviz_common::properties::BoolProperty * linear_input_property_;
   // True for encodings whose pixel values need a min/max range mapping before
   // they can be shown as 8-bit RGB: float, single-channel 16-bit, and 16-bit
   // Bayer. Controls the visibility of the Normalize Range / Min Value /
   // Max Value / Median window properties.
   bool has_normalizable_range_;
+  // True when the last received message was Bayer;
+  // gates visibility of the Linear Input property.
+  bool has_bayer_encoding_;
 };
 
 }  // namespace displays

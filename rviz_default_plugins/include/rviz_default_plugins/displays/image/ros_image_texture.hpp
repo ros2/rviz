@@ -126,6 +126,9 @@ public:
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   void setSmoothScaling(bool enabled) override;
 
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
+  void setLinearInput(bool enabled) override;
+
 private:
   // Ensures the underlying Ogre texture matches the requested dimensions,
   // pixel format and smooth-scaling state, recreating it if any of those
@@ -176,6 +179,10 @@ private:
   // only briefly between setSmoothScaling and the next ensureTexture call.
   bool smooth_scaling_;
   bool tex_smooth_;
+  // When true, apply sRGB gamma encoding before emitting 8-bit output.
+  // When false, values pass through the linear rescale straight to 8-bit.
+  // Currently only applied by the bayer demosaicing path.
+  bool linear_input_;
   uint32_t tex_width_;
   uint32_t tex_height_;
   Ogre::PixelFormat tex_format_;

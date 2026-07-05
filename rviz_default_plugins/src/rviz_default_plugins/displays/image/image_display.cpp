@@ -131,7 +131,16 @@ ImageDisplay::ImageDisplay(std::unique_ptr<ROSImageTextureIface> texture)
     "If disabled, sampling uses nearest-neighbour.",
     this, SLOT(updateSmoothScaling()));
 
+  linear_input_property_ = new rviz_common::properties::BoolProperty(
+    "Linear input", false,
+    "Treat pixel values as linear light and apply sRGB encoding before display. "
+    "Use this for sources that output linear-response images, "
+    "which would otherwise appear too dark on a standard display. "
+    "This option only affects Bayer-encoded images.",
+    this, SLOT(updateLinearInput()));
+
   has_normalizable_range_ = false;
+  has_bayer_encoding_ = false;
 }
 
 // Need to override this method because of the new type RosTopicMultiTypeProperty
@@ -146,6 +155,8 @@ void ImageDisplay::onInitialize()
   _RosTopicDisplay::onInitialize();
   subscription_ = std::make_shared<image_transport::SubscriberFilter>();
   updateNormalizeOptions();
+  refreshLinearInputVisibility();
+  updateLinearInput();
   setupScreenRectangle();
   setupRenderPanel();
   updateSmoothScaling();
@@ -354,6 +365,16 @@ void ImageDisplay::updateSmoothScaling()
   applySmoothScalingToMaterial(material_);
 }
 
+void ImageDisplay::updateLinearInput()
+{
+  texture_->setLinearInput(linear_input_property_->getBool());
+}
+
+void ImageDisplay::refreshLinearInputVisibility()
+{
+  linear_input_property_->setHidden(!has_bayer_encoding_);
+}
+
 void ImageDisplay::applySmoothScalingToMaterial(const Ogre::MaterialPtr & material) const
 {
   if (!material) {return;}
@@ -424,6 +445,13 @@ void ImageDisplay::processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg)
     has_normalizable_range_ = has_normalizable_range;
     updateNormalizeOptions();
   }
+
+  const bool is_bayer = sensor_msgs::image_encodings::isBayer(msg->encoding);
+  if (is_bayer != has_bayer_encoding_) {
+    has_bayer_encoding_ = is_bayer;
+    refreshLinearInputVisibility();
+  }
+
   last_msg_ = msg;
   texture_->addMessage(msg);
 }

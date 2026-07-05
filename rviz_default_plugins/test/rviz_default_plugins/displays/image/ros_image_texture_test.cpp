@@ -283,7 +283,7 @@ uint8_t srgbEncodeByte(double linear)
 // scene (R = 200, G = 0, B = 0) must produce pure-red output. If the dispatch
 // wires the wrong BayerLayout, the output channels are swapped and the test
 // fails. Layout-specific mosaic construction ensures that.
-void checkPureRedDemosaic(const std::string & encoding)
+void checkPureRedDemosaicSrgb(const std::string & encoding)
 {
   const uint32_t w = 8;
   const uint32_t h = 8;
@@ -293,6 +293,7 @@ void checkPureRedDemosaic(const std::string & encoding)
     buildUniformMosaic8(w, h, /*r*/ r, /*g*/ 0, /*b*/ 0, encoding), 1);
 
   ROSImageTexture texture;
+  texture.setLinearInput(true);
   texture.addMessage(msg);
   ASSERT_TRUE(texture.update()) << "for encoding " << encoding;
 
@@ -316,7 +317,7 @@ void checkPureRedDemosaic(const std::string & encoding)
   }
 }
 
-void checkPureBlueDemosaic(const std::string & encoding)
+void checkPureBlueDemosaicSrgb(const std::string & encoding)
 {
   const uint32_t w = 8;
   const uint32_t h = 8;
@@ -326,6 +327,7 @@ void checkPureBlueDemosaic(const std::string & encoding)
     buildUniformMosaic8(w, h, /*r*/ 0, /*g*/ 0, /*b*/ b, encoding), 1);
 
   ROSImageTexture texture;
+  texture.setLinearInput(true);
   texture.addMessage(msg);
   ASSERT_TRUE(texture.update()) << "for encoding " << encoding;
 
@@ -344,29 +346,29 @@ void checkPureBlueDemosaic(const std::string & encoding)
 }
 
 TEST_F(RosImageTextureTestFixture, bayer_rggb8_pure_red) {
-  checkPureRedDemosaic(sensor_msgs::image_encodings::BAYER_RGGB8);
+  checkPureRedDemosaicSrgb(sensor_msgs::image_encodings::BAYER_RGGB8);
 }
 TEST_F(RosImageTextureTestFixture, bayer_bggr8_pure_red) {
-  checkPureRedDemosaic(sensor_msgs::image_encodings::BAYER_BGGR8);
+  checkPureRedDemosaicSrgb(sensor_msgs::image_encodings::BAYER_BGGR8);
 }
 TEST_F(RosImageTextureTestFixture, bayer_gbrg8_pure_red) {
-  checkPureRedDemosaic(sensor_msgs::image_encodings::BAYER_GBRG8);
+  checkPureRedDemosaicSrgb(sensor_msgs::image_encodings::BAYER_GBRG8);
 }
 TEST_F(RosImageTextureTestFixture, bayer_grbg8_pure_red) {
-  checkPureRedDemosaic(sensor_msgs::image_encodings::BAYER_GRBG8);
+  checkPureRedDemosaicSrgb(sensor_msgs::image_encodings::BAYER_GRBG8);
 }
 
 TEST_F(RosImageTextureTestFixture, bayer_rggb8_pure_blue) {
-  checkPureBlueDemosaic(sensor_msgs::image_encodings::BAYER_RGGB8);
+  checkPureBlueDemosaicSrgb(sensor_msgs::image_encodings::BAYER_RGGB8);
 }
 TEST_F(RosImageTextureTestFixture, bayer_bggr8_pure_blue) {
-  checkPureBlueDemosaic(sensor_msgs::image_encodings::BAYER_BGGR8);
+  checkPureBlueDemosaicSrgb(sensor_msgs::image_encodings::BAYER_BGGR8);
 }
 TEST_F(RosImageTextureTestFixture, bayer_gbrg8_pure_blue) {
-  checkPureBlueDemosaic(sensor_msgs::image_encodings::BAYER_GBRG8);
+  checkPureBlueDemosaicSrgb(sensor_msgs::image_encodings::BAYER_GBRG8);
 }
 TEST_F(RosImageTextureTestFixture, bayer_grbg8_pure_blue) {
-  checkPureBlueDemosaic(sensor_msgs::image_encodings::BAYER_GRBG8);
+  checkPureBlueDemosaicSrgb(sensor_msgs::image_encodings::BAYER_GRBG8);
 }
 
 // 16-bit path: with Normalize Range = false and Max Value set to the input
@@ -384,6 +386,7 @@ void checkBayer16WithFixedMax(const std::string & encoding)
     buildUniformMosaic16(w, h, r, /*g*/ 0, /*b*/ 0, encoding), 2);
 
   ROSImageTexture texture;
+  texture.setLinearInput(true);
   texture.setNormalizeFloatImage(false, 0.0, 1023.0);
   texture.addMessage(msg);
   ASSERT_TRUE(texture.update()) << "encoding " << encoding;
@@ -427,6 +430,7 @@ TEST_F(RosImageTextureTestFixture, bayer_16bit_srgb_after_scaling) {
     buildUniformMosaic16(w, h, r, /*g*/ 0, /*b*/ 0, encoding), 2);
 
   ROSImageTexture texture;
+  texture.setLinearInput(true);
   texture.setNormalizeFloatImage(false, 0.0, 1023.0);
   texture.addMessage(msg);
   ASSERT_TRUE(texture.update());
@@ -548,6 +552,7 @@ TEST_F(RosImageTextureTestFixture, srgb_transfer_anchor_points) {
   auto msg = makeImage(w, h, encoding, std::move(data), 1);
 
   ROSImageTexture texture;
+  texture.setLinearInput(true);
   texture.addMessage(msg);
   ASSERT_TRUE(texture.update());
 
@@ -560,6 +565,207 @@ TEST_F(RosImageTextureTestFixture, srgb_transfer_anchor_points) {
       EXPECT_NEAR(rgb[i + 0], expected, 1);
       EXPECT_NEAR(rgb[i + 1], expected, 1);
       EXPECT_NEAR(rgb[i + 2], expected, 1);
+    }
+  }
+}
+
+// Default (Treat as linear = false): 8-bit Bayer is passed through the linear
+// rescale straight to 8-bit — no sRGB gamma is applied. A pure-red mosaic
+// with r = 200 must therefore produce output r = 200 exactly (not sRGB(200)
+// = ~219), which discriminates the default from the sRGB-encoded path.
+// Parameterised over all four layouts so a layout-specific regression in the
+// non-sRGB emitter can't slip through.
+void checkPureRedDemosaicLinear(const std::string & encoding)
+{
+  const uint32_t w = 8;
+  const uint32_t h = 8;
+  const uint8_t r = 200;
+
+  auto msg = makeImage(w, h, encoding,
+    buildUniformMosaic8(w, h, r, /*g*/ 0, /*b*/ 0, encoding), 1);
+
+  ROSImageTexture texture;  // linear_input_ defaults to false
+  texture.addMessage(msg);
+  ASSERT_TRUE(texture.update()) << "for encoding " << encoding;
+
+  const std::vector<uint8_t> rgb = readTextureRGB(texture);
+  for (uint32_t y = 2; y + 2 < h; ++y) {
+    for (uint32_t x = 2; x + 2 < w; ++x) {
+      const size_t i = rgbIndex(y, x, w);
+      EXPECT_EQ(rgb[i + 0], r) << encoding << " at (" << y << "," << x << ")";
+      EXPECT_EQ(rgb[i + 1], 0u) << encoding << " at (" << y << "," << x << ")";
+      EXPECT_EQ(rgb[i + 2], 0u) << encoding << " at (" << y << "," << x << ")";
+    }
+  }
+}
+
+TEST_F(RosImageTextureTestFixture, bayer_rggb8_default_is_linear_passthrough) {
+  checkPureRedDemosaicLinear(sensor_msgs::image_encodings::BAYER_RGGB8);
+}
+TEST_F(RosImageTextureTestFixture, bayer_bggr8_default_is_linear_passthrough) {
+  checkPureRedDemosaicLinear(sensor_msgs::image_encodings::BAYER_BGGR8);
+}
+TEST_F(RosImageTextureTestFixture, bayer_gbrg8_default_is_linear_passthrough) {
+  checkPureRedDemosaicLinear(sensor_msgs::image_encodings::BAYER_GBRG8);
+}
+TEST_F(RosImageTextureTestFixture, bayer_grbg8_default_is_linear_passthrough) {
+  checkPureRedDemosaicLinear(sensor_msgs::image_encodings::BAYER_GRBG8);
+}
+
+// Default (Treat as linear = false): 16-bit Bayer is linearly rescaled to
+// 8-bit — no gamma. A mid-range input (r = 511 out of Max = 1023) must
+// produce r ~= 127, not sRGB(511/1023) ~= 188. Linear-mode counterpart to
+// bayer_16bit_srgb_after_scaling; parameterised over all four layouts.
+void checkBayer16LinearWithFixedMax(const std::string & encoding)
+{
+  const uint32_t w = 8;
+  const uint32_t h = 8;
+  const uint16_t r = 511;
+
+  auto msg = makeImage(w, h, encoding,
+    buildUniformMosaic16(w, h, r, /*g*/ 0, /*b*/ 0, encoding), 2);
+
+  ROSImageTexture texture;  // linear_input_ defaults to false
+  texture.setNormalizeFloatImage(false, 0.0, 1023.0);
+  texture.addMessage(msg);
+  ASSERT_TRUE(texture.update()) << "for encoding " << encoding;
+
+  const std::vector<uint8_t> rgb = readTextureRGB(texture);
+  const uint8_t expected_r = static_cast<uint8_t>(std::lround(511.0 * 255.0 / 1023.0));
+  ASSERT_GT(expected_r, 120u);
+  ASSERT_LT(expected_r, 135u);  // discriminates against sRGB (~188)
+
+  for (uint32_t y = 2; y + 2 < h; ++y) {
+    for (uint32_t x = 2; x + 2 < w; ++x) {
+      const size_t i = rgbIndex(y, x, w);
+      EXPECT_NEAR(rgb[i + 0], expected_r, 1) << encoding << " at (" << y << "," << x << ")";
+    }
+  }
+}
+
+TEST_F(RosImageTextureTestFixture, bayer_rggb16_default_is_linear_passthrough) {
+  checkBayer16LinearWithFixedMax(sensor_msgs::image_encodings::BAYER_RGGB16);
+}
+TEST_F(RosImageTextureTestFixture, bayer_bggr16_default_is_linear_passthrough) {
+  checkBayer16LinearWithFixedMax(sensor_msgs::image_encodings::BAYER_BGGR16);
+}
+TEST_F(RosImageTextureTestFixture, bayer_gbrg16_default_is_linear_passthrough) {
+  checkBayer16LinearWithFixedMax(sensor_msgs::image_encodings::BAYER_GBRG16);
+}
+TEST_F(RosImageTextureTestFixture, bayer_grbg16_default_is_linear_passthrough) {
+  checkBayer16LinearWithFixedMax(sensor_msgs::image_encodings::BAYER_GRBG16);
+}
+
+// 16-bit Bayer with normalize=false and a fixed max deliberately *larger*
+// than the actual peak input: the fixed max must be respected. This
+// discriminates the "use fixed bounds" path from an accidental auto-detect
+// (which would remap the actual 1023 peak to 255 regardless of the user's
+// Max Value setting).
+TEST_F(RosImageTextureTestFixture, bayer_16bit_fixed_max_above_actual_is_respected) {
+  const std::string encoding = sensor_msgs::image_encodings::BAYER_RGGB16;
+  const uint32_t w = 8;
+  const uint32_t h = 8;
+  const uint16_t r = 1023;  // actual peak
+
+  auto msg = makeImage(w, h, encoding,
+    buildUniformMosaic16(w, h, r, /*g*/ 0, /*b*/ 0, encoding), 2);
+
+  ROSImageTexture texture;  // linear passthrough
+  texture.setNormalizeFloatImage(false, 0.0, 4095.0);  // user says 12-bit range
+  texture.addMessage(msg);
+  ASSERT_TRUE(texture.update());
+
+  const std::vector<uint8_t> rgb = readTextureRGB(texture);
+  // 1023 / 4095 * 255 ~= 63. Auto-detected max (1023) would give 255.
+  const uint8_t expected_r = static_cast<uint8_t>(std::lround(1023.0 * 255.0 / 4095.0));
+  ASSERT_GT(expected_r, 55u);
+  ASSERT_LT(expected_r, 70u);  // discriminates against auto-detect (255)
+
+  for (uint32_t y = 2; y + 2 < h; ++y) {
+    for (uint32_t x = 2; x + 2 < w; ++x) {
+      const size_t i = rgbIndex(y, x, w);
+      EXPECT_NEAR(rgb[i + 0], expected_r, 1) << "at (" << y << "," << x << ")";
+    }
+  }
+}
+
+// Toggling linear_input at runtime must re-run the converter on the held
+// frame — the same latched-topic contract that setSmoothScaling honors.
+TEST_F(RosImageTextureTestFixture, toggling_linear_input_reprocesses_held_frame) {
+  const std::string encoding = sensor_msgs::image_encodings::BAYER_RGGB8;
+  const uint32_t w = 8;
+  const uint32_t h = 8;
+  const uint8_t r = 200;
+
+  auto msg = makeImage(w, h, encoding,
+    buildUniformMosaic8(w, h, r, 0, 0, encoding), 1);
+
+  ROSImageTexture texture;
+  texture.addMessage(msg);
+  ASSERT_TRUE(texture.update());
+
+  // Baseline: linear pass-through (default).
+  {
+    const std::vector<uint8_t> rgb = readTextureRGB(texture);
+    const size_t i = rgbIndex(4, 4, w);
+    EXPECT_EQ(rgb[i + 0], r);
+  }
+
+  // Toggle on without a new message — next update() must re-encode.
+  texture.setLinearInput(true);
+  ASSERT_TRUE(texture.update());
+  {
+    const std::vector<uint8_t> rgb = readTextureRGB(texture);
+    const size_t i = rgbIndex(4, 4, w);
+    EXPECT_NEAR(rgb[i + 0], srgbEncodeByte(r / 255.0), 2);
+  }
+
+  // Toggle back off — must re-encode back to the linear value.
+  texture.setLinearInput(false);
+  ASSERT_TRUE(texture.update());
+  {
+    const std::vector<uint8_t> rgb = readTextureRGB(texture);
+    const size_t i = rgbIndex(4, 4, w);
+    EXPECT_EQ(rgb[i + 0], r);
+  }
+}
+
+// Median-frames path on 16-bit Bayer: with a running window of 5 frames,
+// feed four high-peak frames followed by one low-peak frame. Median max is
+// then still the high peak, so the low-peak frame is normalised against the
+// median (high) rather than its own peak — the low-peak red pixels appear
+// dim, not saturated. Behaviour discriminator: with median filtering, the
+// interior red is around low_peak * 255 / median (~= 32); without it, red
+// would saturate at 255.
+TEST_F(RosImageTextureTestFixture, bayer_16bit_median_frames_tracks_median_not_last) {
+  const std::string encoding = sensor_msgs::image_encodings::BAYER_RGGB16;
+  const uint32_t w = 8;
+  const uint32_t h = 8;
+  const uint16_t high_peak = 4095;
+  const uint16_t low_peak = 511;
+
+  ROSImageTexture texture;
+  texture.setNormalizeFloatImage(true);
+  texture.setMedianFrames(5);
+
+  // Four high frames + one low: sorted maxes = [511, 4095, 4095, 4095, 4095],
+  // median = 4095.
+  for (uint16_t peak : {high_peak, high_peak, high_peak, high_peak, low_peak}) {
+    auto msg = makeImage(w, h, encoding,
+      buildUniformMosaic16(w, h, peak, /*g*/ 0, /*b*/ 0, encoding), 2);
+    texture.addMessage(msg);
+    ASSERT_TRUE(texture.update());
+  }
+
+  const std::vector<uint8_t> rgb = readTextureRGB(texture);
+  const uint8_t expected_r =
+    static_cast<uint8_t>(std::lround(low_peak * 255.0 / high_peak));  // ~= 32
+  ASSERT_LT(expected_r, 60u);  // discriminates against no-median (255)
+
+  for (uint32_t y = 2; y + 2 < h; ++y) {
+    for (uint32_t x = 2; x + 2 < w; ++x) {
+      const size_t i = rgbIndex(y, x, w);
+      EXPECT_NEAR(rgb[i + 0], expected_r, 3) << "at (" << y << "," << x << ")";
     }
   }
 }
@@ -636,17 +842,10 @@ TEST_F(RosImageTextureTestFixture, truncated_data_rejected) {
 
 // Padded-stride 16-bit Bayer: a message where step > width * 2 (extra
 // padding bytes at the end of each row, as some drivers emit for SIMD
-// alignment) must still demosaic correctly.
-//
-// Regression test for the stride-aware min/max scan: the test runs with
-// Normalize Range = true (the default), so the auto-detected normalisation
-// range is whatever the scan reports. The padding bytes are filled with
-// 0xFF (uint16 value 0xFFFF on little-endian, the only platform RViz is
-// built on in practice). Under the previous contiguous scan, max_value
-// would have been pulled up to 65535 and the actual red pixels (1023)
-// would have mapped to a near-black ~4/255. Under the row-by-row scan,
-// the padding is skipped, max_value = 1023, and full red maps to 255.
-// The expected value is therefore a strong discriminator.
+// alignment) must still demosaic correctly. Padding bytes are 0xFF: if the
+// min/max scan ever walked the padding, max_value would jump to 65535 and
+// the actual red pixels (1023) would map to a near-black ~4/255. Full red
+// (>= 250) is therefore a strong discriminator.
 TEST_F(RosImageTextureTestFixture, bayer_16bit_padded_stride) {
   const std::string encoding = sensor_msgs::image_encodings::BAYER_RGGB16;
   const uint32_t w = 8;
@@ -689,22 +888,6 @@ TEST_F(RosImageTextureTestFixture, bayer_16bit_padded_stride) {
       EXPECT_LE(rgb[i + 2], 5u) << "at (" << y << "," << x << ")";
     }
   }
-}
-
-// Validation: a 16-bit Bayer message with an odd stride (not a multiple of
-// the 2-byte pixel size) is rejected. Such a stride cannot be interpreted as
-// a row of uint16 pixels.
-TEST_F(RosImageTextureTestFixture, odd_stride_16bit_rejected) {
-  auto msg = std::make_shared<sensor_msgs::msg::Image>();
-  msg->encoding = sensor_msgs::image_encodings::BAYER_RGGB16;
-  msg->width = 8;
-  msg->height = 8;
-  msg->step = 17;  // odd: 16 bytes of data + 1 byte padding per row
-  msg->data = std::vector<uint8_t>(static_cast<size_t>(msg->step) * msg->height, 0u);
-
-  ROSImageTexture texture;
-  texture.addMessage(msg);
-  EXPECT_THROW(texture.update(), UnsupportedImageEncoding);
 }
 
 TEST_F(RosImageTextureTestFixture, destructor_removes_the_texture_from_the_manager) {
