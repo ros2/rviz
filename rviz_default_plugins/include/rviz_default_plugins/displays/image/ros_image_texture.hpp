@@ -61,6 +61,17 @@ public:
   {}
 };
 
+// A message whose encoding is supported but whose fields are inconsistent
+// with each other or with the data buffer
+// (zero / oversize dimensions, bad step, truncated data).
+class MalformedImageMessage : public std::runtime_error
+{
+public:
+  explicit MalformedImageMessage(const std::string & description)
+  : std::runtime_error("Malformed image message: " + description)
+  {}
+};
+
 struct ImageData final
 {
   ImageData(

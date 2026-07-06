@@ -444,11 +444,20 @@ void CameraDisplay::update(std::chrono::nanoseconds wall_dt, std::chrono::nanose
   (void) wall_dt;
   (void) ros_dt;
   try {
-    if (texture_->update() || force_render_) {
+    const bool new_image = texture_->update();
+    if (new_image) {
+      // A new frame was converted and uploaded; clear any error a previous
+      // (e.g. malformed) frame may have latched.
+      setStatus(StatusLevel::Ok, "Image", "OK");
+    }
+    if (new_image || force_render_) {
       caminfo_ok_ = updateCamera();
       force_render_ = false;
     }
-  } catch (UnsupportedImageEncoding & e) {
+  } catch (std::exception & e) {
+    // UnsupportedImageEncoding, MalformedImageMessage, and also allocation
+    // failure on absurdly large frames - degrade to an error status rather
+    // than letting the exception take down the application.
     setStatus(StatusLevel::Error, "Image", e.what());
   }
 }

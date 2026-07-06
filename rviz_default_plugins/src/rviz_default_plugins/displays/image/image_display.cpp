@@ -51,6 +51,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <cstring>
+#include <limits>
 #include <memory>
 #include <optional>
 #include <string>
@@ -76,6 +77,8 @@
 #include "rviz_rendering/material_manager.hpp"
 #include "rviz_rendering/render_window.hpp"
 #include "sensor_msgs/image_encodings.hpp"
+
+#include "./bayer_format.hpp"
 namespace rviz_default_plugins
 {
 namespace displays
@@ -395,7 +398,11 @@ void ImageDisplay::update(std::chrono::nanoseconds wall_dt, std::chrono::nanosec
   (void)wall_dt;
   (void)ros_dt;
   try {
-    texture_->update();
+    if (texture_->update()) {
+      // A new frame was converted and uploaded; clear any error a previous
+      // (e.g. malformed) frame may have latched.
+      setStatus(rviz_common::properties::StatusProperty::Ok, "Image", "OK");
+    }
 
     // make sure the aspect ratio of the image is preserved
     float win_width = render_panel_->width();
@@ -416,7 +423,10 @@ void ImageDisplay::update(std::chrono::nanoseconds wall_dt, std::chrono::nanosec
           -1.0f * img_aspect / win_aspect, 1.0f, 1.0f * img_aspect / win_aspect, -1.0f, false);
       }
     }
-  } catch (UnsupportedImageEncoding & e) {
+  } catch (std::exception & e) {
+    // UnsupportedImageEncoding, MalformedImageMessage, and also allocation
+    // failure on absurdly large frames — degrade to an error status rather
+    // than letting the exception take down the application.
     setStatus(rviz_common::properties::StatusProperty::Error, "Image", e.what());
   }
 }
@@ -431,22 +441,24 @@ void ImageDisplay::reset()
 /* This is called by incomingMessage(). */
 void ImageDisplay::processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg)
 {
+  // Gate the Bayer-dependent UI on the converter's own whitelist (via
+  // bayer_format.hpp) rather than image_encodings::isBayer(), so the
+  // properties only appear for encodings the demosaic actually supports.
+  const auto bayer_format = bayerFormatFromEncoding(msg->encoding);
+
   const bool has_normalizable_range =
     msg->encoding == sensor_msgs::image_encodings::TYPE_32FC1 ||
     msg->encoding == sensor_msgs::image_encodings::TYPE_16UC1 ||
     msg->encoding == sensor_msgs::image_encodings::TYPE_16SC1 ||
     msg->encoding == sensor_msgs::image_encodings::MONO16 ||
-    msg->encoding == sensor_msgs::image_encodings::BAYER_RGGB16 ||
-    msg->encoding == sensor_msgs::image_encodings::BAYER_BGGR16 ||
-    msg->encoding == sensor_msgs::image_encodings::BAYER_GBRG16 ||
-    msg->encoding == sensor_msgs::image_encodings::BAYER_GRBG16;
+    (bayer_format && bayer_format->is_16bit);
 
   if (has_normalizable_range != has_normalizable_range_) {
     has_normalizable_range_ = has_normalizable_range;
     updateNormalizeOptions();
   }
 
-  const bool is_bayer = sensor_msgs::image_encodings::isBayer(msg->encoding);
+  const bool is_bayer = bayer_format.has_value();
   if (is_bayer != has_bayer_encoding_) {
     has_bayer_encoding_ = is_bayer;
     refreshLinearInputVisibility();
@@ -646,28 +658,26 @@ struct BayerCell
   bool is_16bit;
 };
 
+// Derive the four cell corners from the shared layout table so the read-out
+// cannot drift from what the demosaic in ros_image_texture.cpp implements.
 std::optional<BayerCell> bayerCellLayout(const std::string & encoding)
 {
-  namespace enc = sensor_msgs::image_encodings;
-  if (encoding == enc::BAYER_RGGB8) {return BayerCell{'R', 'G', 'G', 'B', false};}
-  if (encoding == enc::BAYER_BGGR8) {return BayerCell{'B', 'G', 'G', 'R', false};}
-  if (encoding == enc::BAYER_GBRG8) {return BayerCell{'G', 'B', 'R', 'G', false};}
-  if (encoding == enc::BAYER_GRBG8) {return BayerCell{'G', 'R', 'B', 'G', false};}
-  if (encoding == enc::BAYER_RGGB16) {return BayerCell{'R', 'G', 'G', 'B', true};}
-  if (encoding == enc::BAYER_BGGR16) {return BayerCell{'B', 'G', 'G', 'R', true};}
-  if (encoding == enc::BAYER_GBRG16) {return BayerCell{'G', 'B', 'R', 'G', true};}
-  if (encoding == enc::BAYER_GRBG16) {return BayerCell{'G', 'R', 'B', 'G', true};}
-  return std::nullopt;
+  const auto format = bayerFormatFromEncoding(encoding);
+  if (!format) {
+    return std::nullopt;
+  }
+  char corners[2][2] = {{'G', 'G'}, {'G', 'G'}};
+  corners[bayerRedRow(format->layout)][bayerRedCol(format->layout)] = 'R';
+  corners[1 - bayerRedRow(format->layout)][1 - bayerRedCol(format->layout)] = 'B';
+  return BayerCell{corners[0][0], corners[0][1], corners[1][0], corners[1][1], format->is_16bit};
 }
 
-const char * htmlColorForBayerChannel(char ch)
+// ch is one of 'R', 'G', 'B' (the only values BayerCell holds).
+constexpr const char * htmlColorForBayerChannel(char ch)
 {
-  switch (ch) {
-    case 'R': return "#c00";
-    case 'G': return "#0a0";
-    case 'B': return "#06c";
-    default: return "#000";
-  }
+  if (ch == 'R') {return "#c00";}
+  if (ch == 'G') {return "#0a0";}
+  return "#06c";
 }
 
 QString formatBayerSensel(char ch, int value)
@@ -687,8 +697,13 @@ QString formatBayerCellAt(
   const int cell_x = px & ~1;
   const int cell_y = py & ~1;
   const int bpp = cell.is_16bit ? 2 : 1;
-  const int max_x = static_cast<int>(msg.width) - 1;
-  const int max_y = static_cast<int>(msg.height) - 1;
+  // Clamp the dimensions into int range first: a hostile width/height above
+  // INT_MAX would otherwise make max_x/max_y negative and feed std::clamp a
+  // lo > hi precondition violation. Reads beyond the actual buffer are still
+  // caught by the data-size guard in read_at below.
+  constexpr uint32_t kMaxInt = static_cast<uint32_t>(std::numeric_limits<int>::max());
+  const int max_x = static_cast<int>(std::min(msg.width, kMaxInt)) - 1;
+  const int max_y = static_cast<int>(std::min(msg.height, kMaxInt)) - 1;
 
   auto read_at = [&](int y, int x) -> int {
       y = std::clamp(y, 0, max_y);

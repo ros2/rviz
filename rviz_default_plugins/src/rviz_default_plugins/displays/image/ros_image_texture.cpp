@@ -59,6 +59,8 @@
 #include "rviz_common/logging.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
 
+#include "./bayer_format.hpp"
+
 namespace rviz_default_plugins
 {
 namespace displays
@@ -431,65 +433,8 @@ static void imageConvertYUYVToRGB(
 // to avoid an OpenCV / cv_bridge dependency. Output is 8-bit RGB; the caller
 // decides whether to apply sRGB gamma (via linear_input_) or emit
 // the demosaiced linear values directly.
-//
-// Layout encoding: the position of R within the 2x2 Bayer cell uniquely
-// identifies the layout. B sits at the opposite corner; G occupies the other
-// two cells.
-//   RGGB -> R at (0, 0)
-//   BGGR -> R at (1, 1)
-//   GBRG -> R at (1, 0)
-//   GRBG -> R at (0, 1)
-
-enum class BayerLayout
-{
-  RGGB,
-  BGGR,
-  GBRG,
-  GRBG
-};
-
-enum class BayerBitDepth
-{
-  Bits8,
-  Bits16
-};
-
-struct BayerEncodingProperties
-{
-  BayerLayout layout;
-  BayerBitDepth bit_depth;
-};
-
-static std::optional<BayerEncodingProperties>
-bayerEncodingProperties(const std::string & encoding)
-{
-  namespace enc = sensor_msgs::image_encodings;
-  if (encoding == enc::BAYER_RGGB8) {
-    return BayerEncodingProperties{BayerLayout::RGGB, BayerBitDepth::Bits8};
-  }
-  if (encoding == enc::BAYER_BGGR8) {
-    return BayerEncodingProperties{BayerLayout::BGGR, BayerBitDepth::Bits8};
-  }
-  if (encoding == enc::BAYER_GBRG8) {
-    return BayerEncodingProperties{BayerLayout::GBRG, BayerBitDepth::Bits8};
-  }
-  if (encoding == enc::BAYER_GRBG8) {
-    return BayerEncodingProperties{BayerLayout::GRBG, BayerBitDepth::Bits8};
-  }
-  if (encoding == enc::BAYER_RGGB16) {
-    return BayerEncodingProperties{BayerLayout::RGGB, BayerBitDepth::Bits16};
-  }
-  if (encoding == enc::BAYER_BGGR16) {
-    return BayerEncodingProperties{BayerLayout::BGGR, BayerBitDepth::Bits16};
-  }
-  if (encoding == enc::BAYER_GBRG16) {
-    return BayerEncodingProperties{BayerLayout::GBRG, BayerBitDepth::Bits16};
-  }
-  if (encoding == enc::BAYER_GRBG16) {
-    return BayerEncodingProperties{BayerLayout::GRBG, BayerBitDepth::Bits16};
-  }
-  return std::nullopt;
-}
+// Note: the encoding -> layout / bit-depth mapping lives in bayer_format.hpp,
+// shared with the encoding gates and pixel read-out in image_display.cpp.
 
 // Piecewise sRGB transfer function (linear -> sRGB), input in [0, 1].
 static double srgbEncode(double linear)
@@ -925,56 +870,73 @@ ImageData
 ROSImageTexture::convertBayerToRGBData(
   const std::string & encoding, const uint8_t * data_ptr, size_t data_size_in_bytes)
 {
-  const auto props = bayerEncodingProperties(encoding);
-  if (!props) {
+  const auto format = bayerFormatFromEncoding(encoding);
+  if (!format) {
     throw UnsupportedImageEncoding(encoding);
   }
 
   // Input validation: untrusted ROS publishers can send malformed messages.
   // Catch undersized / inconsistent inputs upfront so the demosaic loops can
   // index without bounds checks.
-  const uint32_t bytes_per_pixel = (props->bit_depth == BayerBitDepth::Bits16) ? 2u : 1u;
-  // 32768 = 2^15: comfortably larger than any real camera (≈ 1 GB at 16-bit
-  // RGB) while still leaving room for width * height * 3 in size_t on 32-bit
-  // platforms (~3.2 * 10^9 = below the 32-bit size_t ceiling of 4.3 * 10^9).
+  const uint32_t bytes_per_pixel = format->is_16bit ? 2u : 1u;
+  // 32768 = 2^15 per dimension and 2^28 (~268 megapixel) in total:
+  // comfortably larger than any real camera while bounding the RGB output
+  // allocation (width * height * 3, ~800 MB worst case, below the 32-bit
+  // size_t ceiling of ~4.3 * 10^9).
   constexpr uint32_t kMaxDimension = 32768u;
+  constexpr uint64_t kMaxPixels = uint64_t{1} << 28;
   if (width_ == 0 || height_ == 0) {
-    throw UnsupportedImageEncoding(encoding);
+    throw MalformedImageMessage(
+      "zero image dimension (" +
+      std::to_string(width_) + "x" + std::to_string(height_) + ")");
   }
-  if (width_ > kMaxDimension || height_ > kMaxDimension) {
-    throw UnsupportedImageEncoding(encoding);
+  if (width_ > kMaxDimension || height_ > kMaxDimension ||
+    static_cast<uint64_t>(width_) * height_ > kMaxPixels)
+  {
+    throw MalformedImageMessage(
+      "image dimensions too large (" +
+      std::to_string(width_) + "x" + std::to_string(height_) + ")");
   }
-  if (stride_ < width_ * bytes_per_pixel) {
-    throw UnsupportedImageEncoding(encoding);
+  // update() repacks padded rows before conversion, so a step mismatch here
+  // means a malformed message. Requiring exact packing also pins down the
+  // precondition the 16-bit min/max scan below relies on.
+  if (stride_ != width_ * bytes_per_pixel) {
+    throw MalformedImageMessage(
+      "step " + std::to_string(stride_) + " does not match width " +
+      std::to_string(width_) + " at " + std::to_string(bytes_per_pixel) +
+      " byte(s) per pixel");
   }
   if (data_size_in_bytes < static_cast<size_t>(height_) * stride_) {
-    throw UnsupportedImageEncoding(encoding);
+    throw MalformedImageMessage(
+      "data size " + std::to_string(data_size_in_bytes) + " below the " +
+      std::to_string(static_cast<size_t>(height_) * stride_) +
+      " bytes implied by height and step");
   }
 
   const size_t out_size = static_cast<size_t>(width_) * height_ * 3u;
   auto out_buf = std::make_unique<uint8_t[]>(out_size);
 
-  if (props->bit_depth == BayerBitDepth::Bits8) {
+  if (!format->is_16bit) {
     // 8-bit Bayer: the demosaiced linear value is already in [0, 255], so
     // when linear_input_ is true we apply the 256-entry sRGB LUT;
     // when false we clamp and emit the linear value directly.
     if (linear_input_) {
       const auto & lut = srgbLut8();
       demosaicBayer<uint8_t>(
-        out_buf.get(), data_ptr, props->layout, height_, width_, stride_,
+        out_buf.get(), data_ptr, format->layout, height_, width_, stride_,
         [&lut](int v) -> uint8_t {
           return lut[static_cast<size_t>(std::clamp(v, 0, 255))];
         });
     } else {
       demosaicBayer<uint8_t>(
-        out_buf.get(), data_ptr, props->layout, height_, width_, stride_,
+        out_buf.get(), data_ptr, format->layout, height_, width_, stride_,
         [](int v) -> uint8_t {
           return static_cast<uint8_t>(std::clamp(v, 0, 255));
         });
     }
   } else {
-    // 16-bit Bayer. update() (post-#1719) guarantees a tightly packed buffer
-    // here, so min/max is a plain contiguous scan.
+    // 16-bit Bayer. The validation above guarantees tightly packed rows, so
+    // min/max is a plain contiguous scan.
     const uint16_t * src16 = reinterpret_cast<const uint16_t *>(data_ptr);
     const uint32_t stride_in_pixels = stride_ / bytes_per_pixel;
 
@@ -985,33 +947,40 @@ ROSImageTexture::convertBayerToRGBData(
 
     const double range = max_value - min_value;
 
-    if (range > 0.0) {
+    if (range > 0.0 && std::isfinite(range)) {
+      // Demosaiced 16-bit averages stay within [0, 65535], so fold the
+      // rescale (and, for linear input, the sRGB transfer) into a per-frame
+      // 16-bit -> 8-bit LUT: the inner loop then does one table lookup per
+      // channel instead of floating-point math. Building the 65536 entries
+      // once per frame amortizes over the pixels.
       const double offset = min_value;
+      std::vector<uint8_t> quantize_lut(65536);
       if (linear_input_) {
-        // Apply sRGB gamma via a 16-bit LUT so the steep toe of the curve
-        // isn't banded by 8-bit quantisation. The 16-bit-precision claim
-        // holds when the user-supplied range stays within 65535; wider
-        // ranges reduce precision proportionally.
-        const auto & lut = srgbLut16();
+        // Rescale at 16-bit precision before the sRGB transfer so the steep
+        // toe of the curve isn't banded by 8-bit quantisation. The
+        // 16-bit-precision claim holds when the user-supplied range stays
+        // within 65535; wider ranges reduce precision proportionally.
+        const auto & srgb = srgbLut16();
         const double scale = 65535.0 / range;
-        demosaicBayer<uint16_t>(
-          out_buf.get(), src16, props->layout, height_, width_, stride_in_pixels,
-          [&lut, scale, offset](int v) -> uint8_t {
-            const double scaled = (static_cast<double>(v) - offset) * scale;
-            return lut[static_cast<size_t>(
-                     std::lround(std::clamp(scaled, 0.0, 65535.0)))];
-          });
+        for (int i = 0; i < 65536; ++i) {
+          const double scaled = (static_cast<double>(i) - offset) * scale;
+          quantize_lut[static_cast<size_t>(i)] = srgb[static_cast<size_t>(
+                std::lround(std::clamp(scaled, 0.0, 65535.0)))];
+        }
       } else {
         // No gamma: rescale linearly straight into the 8-bit range.
         const double scale = 255.0 / range;
-        demosaicBayer<uint16_t>(
-          out_buf.get(), src16, props->layout, height_, width_, stride_in_pixels,
-          [scale, offset](int v) -> uint8_t {
-            const double scaled = (static_cast<double>(v) - offset) * scale;
-            return static_cast<uint8_t>(
-              std::lround(std::clamp(scaled, 0.0, 255.0)));
-          });
+        for (int i = 0; i < 65536; ++i) {
+          const double scaled = (static_cast<double>(i) - offset) * scale;
+          quantize_lut[static_cast<size_t>(i)] = static_cast<uint8_t>(
+            std::lround(std::clamp(scaled, 0.0, 255.0)));
+        }
       }
+      demosaicBayer<uint16_t>(
+        out_buf.get(), src16, format->layout, height_, width_, stride_in_pixels,
+        [&quantize_lut](int v) -> uint8_t {
+          return quantize_lut[static_cast<size_t>(v)];
+        });
     } else {
       // No dynamic range in the input; there is no meaningful rescale, so
       // emit uniform black by convention (matches convertTo8bit<T>).
