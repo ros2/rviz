@@ -241,9 +241,7 @@ size_t rgbIndex(uint32_t y, uint32_t x, uint32_t width)
   return (static_cast<size_t>(y) * width + x) * 3;
 }
 
-// Expected sRGB output (8-bit) for a normalized linear input. Computed via
-// the same piecewise transfer function the implementation uses, so tests
-// can cross-check anchor points without re-baking the curve.
+// Expected sRGB output (8-bit) for a normalized linear input
 uint8_t srgbEncodeByte(double linear)
 {
   double s;
@@ -466,9 +464,9 @@ TEST_F(RosImageTextureTestFixture, bayer_16bit_input_at_max_value_maps_to_white)
 // sRGB transfer-function anchor points, verified end-to-end via the demosaic
 // output rather than by cross-checking the test-side reference. Multiple
 // anchors catch a wrong-exponent bug that a single midpoint could miss.
-// Note: the piecewise linear segment (linear <= 0.0031308) cannot be reached
-// via 8-bit input because 1/255 > 0.0031308; testing it would require a
-// 16-bit encoding and is left to the 16-bit tests.
+// Note: the piecewise linear segment (linear <= 0.0031308) is not exercised
+// here — 1/255 > 0.0031308, so 8-bit input can't reach it, and the existing
+// 16-bit tests all sit far above the knee.
 TEST_F(RosImageTextureTestFixture, srgb_transfer_anchor_points_via_demosaic_output) {
   const std::string encoding = sensor_msgs::image_encodings::BAYER_RGGB8;
   const uint32_t w = 6;
@@ -513,10 +511,11 @@ TEST_F(RosImageTextureTestFixture, srgb_transfer_anchor_points_via_demosaic_outp
 // rescale straight to 8-bit — no sRGB gamma is applied. A pure-red mosaic
 // with r = 200 must therefore produce output r = 200 exactly (not sRGB(200)
 // = ~219), which discriminates the default from the sRGB-encoded path.
-// Parameterised over all four layouts so a layout-specific regression in the
-// non-sRGB emitter can't slip through.
-void checkPureRedDemosaicLinear(const std::string & encoding)
-{
+// One layout is enough — layout dispatch is exercised end-to-end by the
+// 8-bit sRGB matrix, and the quantizer choice (linear vs sRGB) is orthogonal
+// to the layout template parameter in demosaicBayerImpl.
+TEST_F(RosImageTextureTestFixture, bayer_8bit_default_is_linear_passthrough) {
+  const std::string encoding = sensor_msgs::image_encodings::BAYER_RGGB8;
   const uint32_t w = 8;
   const uint32_t h = 8;
   const uint8_t r = 200;
@@ -526,43 +525,27 @@ void checkPureRedDemosaicLinear(const std::string & encoding)
 
   ROSImageTexture texture;  // linear_input_ defaults to false
   texture.addMessage(msg);
-  ASSERT_TRUE(texture.update()) << "for encoding " << encoding;
+  ASSERT_TRUE(texture.update());
 
   const std::vector<uint8_t> rgb = readTextureRGB(texture);
   for (uint32_t y = 2; y + 2 < h; ++y) {
     for (uint32_t x = 2; x + 2 < w; ++x) {
       const size_t i = rgbIndex(y, x, w);
-      EXPECT_EQ(rgb[i + 0], r) << encoding << " at (" << y << "," << x << ")";
-      EXPECT_EQ(rgb[i + 1], 0u) << encoding << " at (" << y << "," << x << ")";
-      EXPECT_EQ(rgb[i + 2], 0u) << encoding << " at (" << y << "," << x << ")";
+      EXPECT_EQ(rgb[i + 0], r) << "at (" << y << "," << x << ")";
+      EXPECT_EQ(rgb[i + 1], 0u) << "at (" << y << "," << x << ")";
+      EXPECT_EQ(rgb[i + 2], 0u) << "at (" << y << "," << x << ")";
     }
   }
 }
 
-class Bayer8bitLinearTestFixture
-  : public RosImageTextureTestFixture,
-  public ::testing::WithParamInterface<std::string>
-{};
-
-TEST_P(Bayer8bitLinearTestFixture, default_is_linear_passthrough) {
-  checkPureRedDemosaicLinear(GetParam());
-}
-
-INSTANTIATE_TEST_SUITE_P(
-  AllLayouts,
-  Bayer8bitLinearTestFixture,
-  ::testing::Values(
-    sensor_msgs::image_encodings::BAYER_RGGB8,
-    sensor_msgs::image_encodings::BAYER_BGGR8,
-    sensor_msgs::image_encodings::BAYER_GBRG8,
-    sensor_msgs::image_encodings::BAYER_GRBG8));
-
 // Default (Treat as linear = false): 16-bit Bayer is linearly rescaled to
 // 8-bit — no gamma. A mid-range input (r = 511 out of Max = 1023) must
 // produce r ~= 127, not sRGB(511/1023) ~= 188. Linear-mode counterpart to
-// bayer_16bit_srgb_after_scaling; parameterised over all four layouts.
-void checkBayer16LinearWithFixedMax(const std::string & encoding)
-{
+// bayer_16bit_srgb_after_scaling. One layout is enough — 16-bit layout
+// dispatch is covered by the sRGB matrix; this test only discriminates
+// linear vs sRGB quantization.
+TEST_F(RosImageTextureTestFixture, bayer_16bit_default_is_linear_passthrough) {
+  const std::string encoding = sensor_msgs::image_encodings::BAYER_RGGB16;
   const uint32_t w = 8;
   const uint32_t h = 8;
   const uint16_t r = 511;
@@ -573,7 +556,7 @@ void checkBayer16LinearWithFixedMax(const std::string & encoding)
   ROSImageTexture texture;  // linear_input_ defaults to false
   texture.setNormalizeFloatImage(false, 0.0, 1023.0);
   texture.addMessage(msg);
-  ASSERT_TRUE(texture.update()) << "for encoding " << encoding;
+  ASSERT_TRUE(texture.update());
 
   const std::vector<uint8_t> rgb = readTextureRGB(texture);
   const uint8_t expected_r = static_cast<uint8_t>(std::lround(511.0 * 255.0 / 1023.0));
@@ -582,28 +565,10 @@ void checkBayer16LinearWithFixedMax(const std::string & encoding)
   for (uint32_t y = 2; y + 2 < h; ++y) {
     for (uint32_t x = 2; x + 2 < w; ++x) {
       const size_t i = rgbIndex(y, x, w);
-      EXPECT_NEAR(rgb[i + 0], expected_r, 1) << encoding << " at (" << y << "," << x << ")";
+      EXPECT_NEAR(rgb[i + 0], expected_r, 1) << "at (" << y << "," << x << ")";
     }
   }
 }
-
-class Bayer16bitLinearFixedMaxTestFixture
-  : public RosImageTextureTestFixture,
-  public ::testing::WithParamInterface<std::string>
-{};
-
-TEST_P(Bayer16bitLinearFixedMaxTestFixture, default_is_linear_passthrough) {
-  checkBayer16LinearWithFixedMax(GetParam());
-}
-
-INSTANTIATE_TEST_SUITE_P(
-  AllLayouts,
-  Bayer16bitLinearFixedMaxTestFixture,
-  ::testing::Values(
-    sensor_msgs::image_encodings::BAYER_RGGB16,
-    sensor_msgs::image_encodings::BAYER_BGGR16,
-    sensor_msgs::image_encodings::BAYER_GBRG16,
-    sensor_msgs::image_encodings::BAYER_GRBG16));
 
 // 16-bit Bayer with normalize=false and a fixed max deliberately *larger*
 // than the actual peak input: the fixed max must be respected. This
