@@ -2,11 +2,10 @@ cmake_minimum_required(VERSION 3.10)
 
 project(rviz_default_plugins)
 
-# Default to C++20
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 20)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-endif()
+# The C++ standard (C++20) is provided by ament_cmake_ros_core via the
+# ament_cmake_ros_core::ament_ros_defaults interface target, which is linked
+# PUBLIC into the rviz_default_plugins target below (and thus propagated to
+# consumers).
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic -Wnon-virtual-dtor -Woverloaded-virtual)
@@ -52,6 +51,7 @@ endif()
 # we create individual moc files that can be compiled separately.
 
 find_package(ament_cmake_ros REQUIRED)
+find_package(ament_cmake_ros_core REQUIRED)
 
 find_package(rviz_common REQUIRED)
 find_package(rviz_rendering REQUIRED)
@@ -260,6 +260,7 @@ target_include_directories(rviz_default_plugins PUBLIC
 )
 
 target_link_libraries(rviz_default_plugins PUBLIC
+  ament_cmake_ros_core::ament_ros_defaults
   geometry_msgs::geometry_msgs
   image_transport::image_transport
   interactive_markers::interactive_markers
@@ -292,6 +293,7 @@ ament_export_include_directories("include/${PROJECT_NAME}")
 ament_export_targets(rviz_default_plugins HAS_LIBRARY_TARGET)
 
 ament_export_dependencies(
+  ament_cmake_ros_core
   geometry_msgs
   image_transport
   interactive_markers

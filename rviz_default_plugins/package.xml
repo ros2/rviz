@@ -25,6 +25,8 @@
   <author email="william@openrobotics.org">William Woodall</author>
 
   <buildtool_depend>ament_cmake_ros</buildtool_depend>
+  <buildtool_depend>ament_cmake_ros_core</buildtool_depend>
+  <buildtool_export_depend>ament_cmake_ros_core</buildtool_export_depend>
 
   <build_depend>qt-base-dev</build_depend>
   <build_depend>rviz_ogre_vendor</build_depend>
