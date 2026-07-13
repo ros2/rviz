@@ -34,6 +34,7 @@
 
 #include <deque>
 #include <memory>
+#include <thread>
 
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
@@ -406,6 +407,7 @@ private:
   BitAllocator visibility_bit_allocator_;
   QString help_path_;
   rclcpp::executors::SingleThreadedExecutor::SharedPtr executor_;
+  std::thread executor_thread_;
   ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node_;
   rviz_common::transformation::TransformationManager * transformation_manager_;
 };
