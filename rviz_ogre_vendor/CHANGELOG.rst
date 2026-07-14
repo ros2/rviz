@@ -2,6 +2,9 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.2.5 (2026-07-14)
+-------------------
+
 15.2.4 (2026-06-12)
 -------------------
 * Removed warning rviz_ogre_vendor (`#1708 <https://github.com/ros2/rviz/issues/1708>`_) (`#1736 <https://github.com/ros2/rviz/issues/1736>`_)

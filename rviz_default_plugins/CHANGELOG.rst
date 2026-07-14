@@ -2,6 +2,12 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.2.5 (2026-07-14)
+-------------------
+* Use URDF visual material when it exists (`#1782 <https://github.com/ros2/rviz/issues/1782>`_) (`#1805 <https://github.com/ros2/rviz/issues/1805>`_)
+* Implement destructor for PointCloud2TransportDisplay to unsubscribe on destruction (`#1788 <https://github.com/ros2/rviz/issues/1788>`_) (`#1794 <https://github.com/ros2/rviz/issues/1794>`_)
+* Contributors: mergify[bot]
+
 15.2.4 (2026-06-12)
 -------------------
 * Merge pull request `#1780 <https://github.com/ros2/rviz/issues/1780>`_ from ros2/mergify/bp/lyrical/pr-1775
