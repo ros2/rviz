@@ -2,6 +2,11 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.28 (2026-07-14)
+--------------------
+* Use URDF visual material when it exists (`#1782 <https://github.com/ros2/rviz/issues/1782>`_) (`#1808 <https://github.com/ros2/rviz/issues/1808>`_)
+* Contributors: mergify[bot]
+
 11.2.27 (2026-06-12)
 --------------------
 * Fix disabled displays (addresses `#1773 <https://github.com/ros2/rviz/issues/1773>`_) (`#1774 <https://github.com/ros2/rviz/issues/1774>`_) (`#1779 <https://github.com/ros2/rviz/issues/1779>`_)
