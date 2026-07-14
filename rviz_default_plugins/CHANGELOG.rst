@@ -2,6 +2,11 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.0.14 (2026-07-14)
+--------------------
+* Use URDF visual material when it exists (`#1782 <https://github.com/ros2/rviz/issues/1782>`_) (`#1806 <https://github.com/ros2/rviz/issues/1806>`_)
+* Contributors: mergify[bot]
+
 15.0.13 (2026-06-12)
 --------------------
 * Merge pull request `#1781 <https://github.com/ros2/rviz/issues/1781>`_ from ros2/mergify/bp/kilted/pr-1775

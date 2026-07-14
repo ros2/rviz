@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.0.14 (2026-07-14)
+--------------------
+* Add rendering guard for width and/or height being 0 (`#1800 <https://github.com/ros2/rviz/issues/1800>`_) (`#1802 <https://github.com/ros2/rviz/issues/1802>`_)
+* Contributors: mergify[bot]
+
 15.0.13 (2026-06-12)
 --------------------
 * Remove no-op upper_triangle conditional in TrianglePolygon UV mapping (`#1717 <https://github.com/ros2/rviz/issues/1717>`_) (`#1753 <https://github.com/ros2/rviz/issues/1753>`_)

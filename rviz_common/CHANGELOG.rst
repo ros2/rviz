@@ -2,6 +2,11 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.0.14 (2026-07-14)
+--------------------
+* Refactor panel deletion logic in VisualizationFrame to prevent issue during bulk-clearing (backport `#1789 <https://github.com/ros2/rviz/issues/1789>`_) (`#1791 <https://github.com/ros2/rviz/issues/1791>`_)
+* Contributors: mergify[bot]
+
 15.0.13 (2026-06-12)
 --------------------
 * Fix disabled displays (addresses `#1773 <https://github.com/ros2/rviz/issues/1773>`_) (`#1774 <https://github.com/ros2/rviz/issues/1774>`_) (`#1777 <https://github.com/ros2/rviz/issues/1777>`_)
