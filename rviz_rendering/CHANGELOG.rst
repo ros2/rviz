@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.1.23 (2026-07-14)
+--------------------
+* Add rendering guard for width and/or height being 0 (`#1800 <https://github.com/ros2/rviz/issues/1800>`_) (`#1803 <https://github.com/ros2/rviz/issues/1803>`_)
+* Contributors: mergify[bot]
+
 14.1.22 (2026-06-08)
 --------------------
 
