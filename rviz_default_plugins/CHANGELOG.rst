@@ -2,6 +2,14 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.2 (2026-07-14)
+-------------------
+* use C++ 20 in default. (`#1810 <https://github.com/ros2/rviz/issues/1810>`_)
+* Clean up rviz_default_plugins CMakeLists.txt by removing unused libraries (`#1785 <https://github.com/ros2/rviz/issues/1785>`_)
+* Use URDF visual material when it exists (`#1782 <https://github.com/ros2/rviz/issues/1782>`_)
+* Implement destructor for PointCloud2TransportDisplay to unsubscribe on destruction (`#1788 <https://github.com/ros2/rviz/issues/1788>`_)
+* Contributors: Alejandro Hernández Cordero, Tomoya Fujita, Tony Najjar, mosfet80
+
 16.0.1 (2026-06-11)
 -------------------
 * Add Smooth scaling option to Image and Camera displays (`#1740 <https://github.com/ros2/rviz/issues/1740>`_)

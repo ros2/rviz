@@ -2,6 +2,12 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.2 (2026-07-14)
+-------------------
+* use C++ 20 in default. (`#1810 <https://github.com/ros2/rviz/issues/1810>`_)
+* Add rendering guard for width and/or height being 0 (`#1800 <https://github.com/ros2/rviz/issues/1800>`_)
+* Contributors: Tomoya Fujita, Tony Najjar
+
 16.0.1 (2026-06-11)
 -------------------
 * Support capsule geometry in robot links (`#1735 <https://github.com/ros2/rviz/issues/1735>`_)

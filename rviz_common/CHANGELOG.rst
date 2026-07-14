@@ -2,6 +2,13 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.2 (2026-07-14)
+-------------------
+* SelectionHandler::registerHandle() handle null pointer (`#1710 <https://github.com/ros2/rviz/issues/1710>`_)
+* Modernize rviz_common to C++20 (`#1787 <https://github.com/ros2/rviz/issues/1787>`_)
+* Refactor panel deletion logic in VisualizationFrame to prevent issues during bulk-clearing (`#1789 <https://github.com/ros2/rviz/issues/1789>`_)
+* Contributors: Alejandro Hernández Cordero, Tony Najjar
+
 16.0.1 (2026-06-11)
 -------------------
 * Fix disabled displays (addresses `#1773 <https://github.com/ros2/rviz/issues/1773>`_) (`#1774 <https://github.com/ros2/rviz/issues/1774>`_)
