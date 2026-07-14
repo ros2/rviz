@@ -37,7 +37,9 @@
 #include <string>
 #include <vector>
 
+#include <OgreCommon.h>
 #include <OgreHardwareBufferManager.h>
+#include <OgreHardwareVertexBuffer.h>
 #include <OgreMaterial.h>
 #include <OgreMaterialManager.h>
 #include <OgreMeshManager.h>
@@ -495,6 +497,12 @@ void AssimpLoader::buildMesh(
     createAndFillIndexBuffer(input_mesh, submesh, vertex_data);
 
     submesh->setMaterialName(material_table[input_mesh->mMaterialIndex]->getName());
+
+    // if this mesh carries per-vertex colours, make its material render them
+    if (input_mesh->HasVertexColors(0)) {
+      material_table[input_mesh->mMaterialIndex]->getTechnique(0)->getPass(0)
+      ->setVertexColourTracking(Ogre::TVC_DIFFUSE);
+    }
   }
 
   for (uint32_t i = 0; i < node->mNumChildren; ++i) {
@@ -536,7 +544,11 @@ void AssimpLoader::declareVertexBufferOrdering(
     offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT2);
   }
 
-  // TODO(anyone): vertex colors
+  // vertex colors
+  if (input_mesh->HasVertexColors(0)) {
+    vertex_decl->addElement(0, offset, Ogre::VET_COLOUR, Ogre::VES_DIFFUSE);
+    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_COLOUR);
+  }
   (void)offset;
 }
 
@@ -590,6 +602,14 @@ void AssimpLoader::fillVertexBuffer(
     if (input_mesh->HasTextureCoords(0)) {
       *vertices++ = input_mesh->mTextureCoords[0][j].x;
       *vertices++ = input_mesh->mTextureCoords[0][j].y;
+    }
+
+    if (input_mesh->HasVertexColors(0)) {
+      const aiColor4D & c = input_mesh->mColors[0][j];
+      Ogre::ColourValue colour(c.r, c.g, c.b, c.a);
+      *reinterpret_cast<uint32_t *>(vertices) =
+        Ogre::VertexElement::convertColourValue(colour, Ogre::VET_COLOUR);
+      ++vertices;  // VET_COLOUR is 4 bytes = one float slot
     }
   }
 
