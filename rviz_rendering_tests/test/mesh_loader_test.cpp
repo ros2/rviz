@@ -202,7 +202,7 @@ TEST_F(MeshLoaderTestFixture, assimp_loader_reads_per_vertex_colors) {
   // diffuse (colour) vertex element so the colours are rendered.
   std::string mesh_path = "package://rviz_rendering_tests/test_meshes/colored_box.glb";
 
-  auto mesh = rviz_rendering::loadMeshFromResource(&this->retriever_, mesh_path);
+  auto mesh = rviz_rendering::loadMeshFromResource(mesh_path);
 
   ASSERT_TRUE(mesh);
   ASSERT_GT(mesh->getNumSubMeshes(), 0u);
@@ -214,7 +214,7 @@ TEST_F(MeshLoaderTestFixture, meshes_without_vertex_colors_have_no_diffuse_eleme
   // A plain STL has no per-vertex colours, so no diffuse vertex element is added.
   std::string mesh_path = "package://rviz_rendering_tests/test_meshes/F2.stl";
 
-  auto mesh = rviz_rendering::loadMeshFromResource(&this->retriever_, mesh_path);
+  auto mesh = rviz_rendering::loadMeshFromResource(mesh_path);
 
   ASSERT_TRUE(mesh);
   const auto * declaration = mesh->getSubMesh(0)->vertexData->vertexDeclaration;
