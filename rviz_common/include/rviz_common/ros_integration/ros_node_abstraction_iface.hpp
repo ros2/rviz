@@ -61,7 +61,7 @@ public:
 
   // TODO(anhosi): remove once the RosNodeAbstraction is extended to handle subscriptions
   //               and clock
-  virtual std::shared_ptr<rclcpp::Node>
+  virtual rclcpp::Node::SharedPtr
   get_raw_node() = 0;
 };
 
