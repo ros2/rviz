@@ -53,6 +53,7 @@
 
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/interaction/view_picker_iface.hpp"
+#include "rviz_common/logging.hpp"
 #include "rviz_common/render_panel.hpp"
 #include "rviz_rendering/geometry.hpp"
 #include "rviz_rendering/render_window.hpp"

@@ -93,7 +93,7 @@ public:
   void _notifyCurrentCamera(Ogre::Camera * camera) override;
 
   RVIZ_RENDERING_PUBLIC
-  uint16_t getNumWorldTransforms() const override {return 1;}
+  uint16_t getNumWorldTransforms() const override;
 
   RVIZ_RENDERING_PUBLIC
   void getWorldTransforms(Ogre::Matrix4 * xform) const override;

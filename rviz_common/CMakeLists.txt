@@ -212,9 +212,11 @@ set(rviz_common_source_files
   src/rviz_common/render_panel.cpp
   src/rviz_common/ros_integration/ros_client_abstraction.cpp
   src/rviz_common/ros_integration/ros_node_abstraction.cpp
+  src/rviz_common/ros_topic_display.cpp
   src/rviz_common/scaled_image_widget.cpp
   src/rviz_common/screenshot_dialog.cpp
   src/rviz_common/selection_panel.cpp
+  src/rviz_common/interaction/forwards.cpp
   src/rviz_common/interaction/handler_manager.cpp
   src/rviz_common/interaction/selection_handler.cpp
   src/rviz_common/interaction/selection_manager.cpp
@@ -223,6 +225,7 @@ set(rviz_common_source_files
   src/rviz_common/splash_screen.cpp
   src/rviz_common/time_panel.cpp
   src/rviz_common/transformation/identity_frame_transformer.cpp
+  src/rviz_common/transformation/tf2_helpers/tf2_conversion_helpers.cpp
   src/rviz_common/tool_manager.cpp
   src/rviz_common/tool_properties_panel.cpp
   src/rviz_common/tool.cpp

@@ -77,5 +77,8 @@ void LineEditWithButton::resizeEvent(QResizeEvent * event)
     width() - button_width - padding, padding,
     button_width, button_height);
 }
+
+void LineEditWithButton::onButtonClick()
+{}
 }  // namespace properties
 }  // namespace rviz_common

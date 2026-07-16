@@ -44,6 +44,7 @@
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/shape.hpp"
 #include "rviz_common/display_context.hpp"
+#include "rviz_common/logging.hpp"
 #include "rviz_common/msg_conversions.hpp"
 
 #include "rviz_default_plugins/displays/marker/marker_common.hpp"
