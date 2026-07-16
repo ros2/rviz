@@ -47,6 +47,7 @@
 #include "rviz_default_plugins/displays/pointcloud/point_cloud_helpers.hpp"
 #include "rviz_common/display.hpp"
 #include "rviz_common/display_context.hpp"
+#include "rviz_common/logging.hpp"
 #include "rviz_common/properties/enum_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/vector_property.hpp"

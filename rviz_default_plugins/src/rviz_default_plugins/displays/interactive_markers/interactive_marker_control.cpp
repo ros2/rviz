@@ -51,6 +51,7 @@
 #include "rviz_common/interaction/handler_manager.hpp"
 #include "rviz_common/interaction/view_picker_iface.hpp"
 #include "rviz_common/load_resource.hpp"
+#include "rviz_common/logging.hpp"
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/view_controller.hpp"
 #include "rviz_common/window_manager_interface.hpp"
