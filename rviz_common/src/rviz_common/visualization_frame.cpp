@@ -918,11 +918,19 @@ void VisualizationFrame::saveWindowGeometry(Config config)
 void VisualizationFrame::loadPanels(const Config & config)
 {
   // First destroy any existing custom panels.
-  for (int i = 0; i < custom_panels_.size(); i++) {
-    delete custom_panels_[i].dock;
-    delete custom_panels_[i].delete_action;
+  for (auto & panel_record : custom_panels_) {
+    // Avoid mutating custom_panels_ from onPanelDeleted() while bulk-clearing.
+    disconnect(panel_record.dock, &QObject::destroyed, this, &VisualizationFrame::onPanelDeleted);
+
+    if (panel_record.delete_action) {
+      delete_view_menu_->removeAction(panel_record.delete_action);
+      panel_record.delete_action->deleteLater();
+    }
+
+    delete panel_record.dock;
   }
   custom_panels_.clear();
+  delete_view_menu_->setDisabled(delete_view_menu_->actions().isEmpty());
 
   // Then load the ones in the config.
   int num_custom_panels = config.listLength();

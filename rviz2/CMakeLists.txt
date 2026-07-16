@@ -2,17 +2,16 @@ cmake_minimum_required(VERSION 3.10)
 
 project(rviz2)
 
-# Default to C++17
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 17)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-endif()
+# The C++ standard (C++20) is provided by ament_cmake_ros_core via the
+# ament_cmake_ros_core::ament_ros_defaults interface target, which is linked
+# into the rviz2 target below.
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic -Wnon-virtual-dtor -Woverloaded-virtual)
 endif()
 
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_ros_core REQUIRED)
 
 find_package(rviz_common REQUIRED)
 
@@ -31,6 +30,7 @@ add_executable(${PROJECT_NAME}
   src/main.cpp
 )
 target_link_libraries(${PROJECT_NAME}
+  ament_cmake_ros_core::ament_ros_defaults
   rviz_common::rviz_common
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
