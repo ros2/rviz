@@ -165,7 +165,3 @@ void FrameViewController::onTargetFrameChanged(
 
 }  // namespace view_controllers
 }  // namespace rviz_default_plugins
-
-#include <pluginlib/class_list_macros.hpp>  // NOLINT(build/include_order)
-PLUGINLIB_EXPORT_CLASS(
-  rviz_default_plugins::view_controllers::FrameViewController, rviz_common::ViewController)

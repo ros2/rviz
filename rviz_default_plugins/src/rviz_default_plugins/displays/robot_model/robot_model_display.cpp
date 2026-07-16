@@ -40,7 +40,7 @@
 
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "tf2_ros/transform_listener.hpp"
+// tf2_ros/transform_listener.hpp removed: no tf2_ros:: types used directly here.
 
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/properties/enum_property.hpp"

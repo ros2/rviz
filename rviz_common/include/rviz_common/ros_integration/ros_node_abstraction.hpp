@@ -37,7 +37,11 @@
 #include <string>
 #include <vector>
 
-#include "rclcpp/rclcpp.hpp"
+// Use targeted headers instead of rclcpp/rclcpp.hpp:
+//   rclcpp/node.hpp       — for rclcpp::Node::SharedPtr
+//   rclcpp/node_options.hpp — for rclcpp::NodeOptions constructor parameter
+#include "rclcpp/node.hpp"
+#include "rclcpp/node_options.hpp"
 
 #include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
 #include "rviz_common/visibility_control.hpp"

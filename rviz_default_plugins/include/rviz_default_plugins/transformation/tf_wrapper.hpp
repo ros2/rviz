@@ -35,13 +35,28 @@
 #include <string>
 #include <vector>
 
-#include "tf2_ros/buffer.hpp"
-#include "tf2_ros/create_timer_ros.hpp"
-#include "tf2_ros/transform_listener.hpp"
-#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
+// Minimal tf2 headers — only what the public API actually needs.
+// Heavy impl headers (buffer.hpp, transform_listener.hpp, create_timer_ros.hpp,
+// tf2_geometry_msgs.hpp) are included in tf_wrapper.cpp only.
+#include "geometry_msgs/msg/pose_stamped.hpp"
+#include "geometry_msgs/msg/transform_stamped.hpp"
+#include "tf2/time.hpp"
+#include "tf2_ros/async_buffer_interface.hpp"  // TransformStampedFuture, TransformReadyCallback
 
 #include "rviz_common/transformation/frame_transformer.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
+
+namespace tf2_ros
+{
+class Buffer;
+class TransformListener;
+}  // namespace tf2_ros
+
+namespace rclcpp
+{
+class Clock;
+class Node;
+}  // namespace rclcpp
 
 namespace rviz_default_plugins
 {

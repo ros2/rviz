@@ -28,7 +28,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-
 #include "rviz_common/view_controller.hpp"
 
 #include <string>
@@ -42,6 +41,9 @@
 #include <QString>  // NOLINT: cpplint cannot handle include order here
 
 #include "rviz_rendering/render_window.hpp"
+
+#include "rclcpp/service.hpp"
+#include "std_srvs/srv/empty.hpp"
 
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/load_resource.hpp"
@@ -132,11 +134,16 @@ void ViewController::initialize(DisplayContext * context)
   auto ros_node_abstraction = context_->getRosNodeAbstraction().lock();
   if (ros_node_abstraction) {
     auto node = ros_node_abstraction->get_raw_node();
+    // Store as std::shared_ptr<void> so rclcpp/service.hpp stays out of the public header.
     reset_time_srv_ = node->create_service<std_srvs::srv::Empty>(
       ros_node_abstraction->get_node_name() + "/reset_time",
-      std::bind(
-        &ViewController::resetService, this,
-        std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+      [this](
+        const std::shared_ptr<rmw_request_id_t>,
+        const std::shared_ptr<std_srvs::srv::Empty::Request>,
+        const std::shared_ptr<std_srvs::srv::Empty::Response>)
+      {
+        resetTime();
+      });
   }
 }
 
@@ -249,14 +256,6 @@ void ViewController::handleKeyEvent(QKeyEvent * event, RenderPanel * panel)
   if (event->key() == Qt::Key_R) {
     resetTime();
   }
-}
-
-void ViewController::resetService(
-  const std::shared_ptr<rmw_request_id_t>,
-  const std::shared_ptr<std_srvs::srv::Empty::Request>,
-  const std::shared_ptr<std_srvs::srv::Empty::Response>)
-{
-  resetTime();
 }
 
 void ViewController::resetTime()

@@ -38,8 +38,10 @@
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rclcpp/clock.hpp"
+#include "rclcpp/executors/single_threaded_executor.hpp"
 #include "rclcpp/time.hpp"
-#include "tf2_ros/transform_listener.hpp"
+// tf2_ros/transform_listener.hpp is not included here — TransformListener only
+// appears in a doc comment. Include it in the .cpp file if needed.
 
 #include "rviz_common/bit_allocator.hpp"
 #include "rviz_common/config.hpp"
