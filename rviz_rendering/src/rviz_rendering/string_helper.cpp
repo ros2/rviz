@@ -31,19 +31,18 @@
 #include "string_helper.hpp"
 
 #include <algorithm>
-#include <locale>
 #include <string>
 #include <vector>
 
-// Treat std::isspace's whitespace set minus \r and \f, so carriage returns and
-// form feeds embedded in CMake-derived strings are preserved instead of being
-// silently stripped during trimming.
+// Trim only space, tab, and newline. Carriage return (\r) and form feed (\f) are
+// intentionally excluded so they are preserved in CMake-derived strings instead of
+// being silently stripped. The set is enumerated explicitly rather than derived from
+// std::isspace(c, std::locale("")) because that constructs a locale per character,
+// makes the result depend on the (possibly misconfigured) system locale, and can throw
+// std::runtime_error when that locale is invalid.
 static bool is_trim_whitespace(char character)
 {
-  if (character == '\r' || character == '\f') {
-    return false;
-  }
-  return std::isspace<char>(character, std::locale(""));
+  return character == ' ' || character == '\t' || character == '\n';
 }
 
 // Used to parse strings derived from CMake
