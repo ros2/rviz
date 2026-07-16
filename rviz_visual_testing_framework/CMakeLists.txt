@@ -13,17 +13,17 @@ add_definitions(-D_SRC_DIR_PATH="${CMAKE_CURRENT_SOURCE_DIR}")
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_images)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/test/reference_images)
 
-# Default to C++17
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 17)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-endif()
+# The C++ standard (C++20) is provided by ament_cmake_ros_core via the
+# ament_cmake_ros_core::ament_ros_defaults interface target, which is linked
+# PUBLIC into the rviz_visual_testing_framework target below (and thus
+# propagated to consumers).
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic -Wnon-virtual-dtor -Woverloaded-virtual)
 endif()
 
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_ros_core REQUIRED)
 find_package(geometry_msgs REQUIRED)
 # Avoid find_package(QT NAMES Qt6 Qt5 ...) due to CMake's default ascending path resolution
 find_package(Qt6 QUIET COMPONENTS Test Widgets)
@@ -80,6 +80,7 @@ target_include_directories(rviz_visual_testing_framework
     ${GTEST_INCLUDE_DIRS})
 
 target_link_libraries(rviz_visual_testing_framework PUBLIC
+  ament_cmake_ros_core::ament_ros_defaults
   geometry_msgs::geometry_msgs
   Qt${QT_VERSION_MAJOR}::Test
   Qt${QT_VERSION_MAJOR}::Widgets
@@ -95,6 +96,7 @@ target_link_libraries(rviz_visual_testing_framework PUBLIC
 
 # export information to downstream packages
 ament_export_dependencies(
+  ament_cmake_ros_core
   geometry_msgs
   Qt${QT_VERSION_MAJOR}
   rclcpp

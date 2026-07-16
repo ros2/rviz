@@ -144,12 +144,13 @@ QVariant Display::getViewData(int column, int role) const
         if (column == 0) {
           if (isEnabled()) {
             using rviz_common::properties::StatusProperty;
-            StatusProperty::Level level = status_ ? status_->getLevel() : StatusProperty::Ok;
+            using enum StatusProperty::Level;
+            StatusProperty::Level level = status_ ? status_->getLevel() : Ok;
             switch (level) {
-              case StatusProperty::Ok:
+              case Ok:
                 return getIcon();
-              case StatusProperty::Warn:
-              case StatusProperty::Error:
+              case Warn:
+              case Error:
                 return status_->statusIcon(status_->getLevel());
             }
           } else {

@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>rviz_common</name>
-  <version>16.0.1</version>
+  <version>16.0.2</version>
   <description>
     Common rviz API, used by rviz plugins and applications.
   </description>
@@ -25,6 +25,8 @@
   <author email="william@openrobotics.org">William Woodall</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_ros_core</buildtool_depend>
+  <buildtool_export_depend>ament_cmake_ros_core</buildtool_export_depend>
 
   <build_depend>qt-svg-dev</build_depend>
   <build_depend>qt-base-dev</build_depend>

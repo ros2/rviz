@@ -55,6 +55,12 @@ public:
   /// the long templated class name to refer to their super class.
   typedef PointCloud2TransportDisplay<MessageType> PC2RDClass;
 
+  // Ensure subscriber_filter_ outlives tf_filter_ during destruction.
+  ~PointCloud2TransportDisplay() override
+  {
+    unsubscribe();
+  }
+
 protected:
   void subscribe() override
   {

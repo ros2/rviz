@@ -159,7 +159,7 @@ int ToolManager::handleChar(QKeyEvent * event, RenderPanel * panel)
 
   // check if the incoming key triggers the activation of another tool
   Tool * tool = nullptr;
-  if (shortkey_to_tool_map_.find(event->key()) != shortkey_to_tool_map_.end()) {
+  if (shortkey_to_tool_map_.contains(event->key())) {
     tool = shortkey_to_tool_map_[event->key()];
   }
 

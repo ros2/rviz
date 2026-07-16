@@ -37,6 +37,7 @@
 #include <OgreRoot.h>
 #include <OgreSubMesh.h>
 #include <OgreMaterialManager.h>
+#include <OgreHardwareVertexBuffer.h>
 #include "resource_retriever/retriever.hpp"
 
 #include "ogre_testing_environment.hpp"
@@ -193,4 +194,28 @@ TEST_F(MeshLoaderTestFixture, loading_solidworks_binary_stl) {
   std::string mesh_path = "package://rviz_rendering_tests/test_meshes/solidworks.stl";
 
   ASSERT_TRUE(rviz_rendering::loadMeshFromResource(&this->retriever_, mesh_path));
+}
+
+TEST_F(MeshLoaderTestFixture, assimp_loader_reads_per_vertex_colors) {
+  // A glb cube whose vertices carry per-vertex colours. The loader must add a
+  // diffuse (colour) vertex element so the colours are rendered.
+  std::string mesh_path = "package://rviz_rendering_tests/test_meshes/colored_box.glb";
+
+  auto mesh = rviz_rendering::loadMeshFromResource(&this->retriever_, mesh_path);
+
+  ASSERT_TRUE(mesh);
+  ASSERT_GT(mesh->getNumSubMeshes(), 0u);
+  const auto * declaration = mesh->getSubMesh(0)->vertexData->vertexDeclaration;
+  ASSERT_NE(nullptr, declaration->findElementBySemantic(Ogre::VES_DIFFUSE));
+}
+
+TEST_F(MeshLoaderTestFixture, meshes_without_vertex_colors_have_no_diffuse_element) {
+  // A plain STL has no per-vertex colours, so no diffuse vertex element is added.
+  std::string mesh_path = "package://rviz_rendering_tests/test_meshes/F2.stl";
+
+  auto mesh = rviz_rendering::loadMeshFromResource(&this->retriever_, mesh_path);
+
+  ASSERT_TRUE(mesh);
+  const auto * declaration = mesh->getSubMesh(0)->vertexData->vertexDeclaration;
+  ASSERT_EQ(nullptr, declaration->findElementBySemantic(Ogre::VES_DIFFUSE));
 }

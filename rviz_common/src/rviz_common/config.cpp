@@ -300,7 +300,7 @@ bool Config::mapGetString(const QString & key, QString * value_out) const
 void Config::makeValid()
 {
   if (node_ == nullptr) {
-    node_.reset(new Node());
+    node_ = std::make_shared<Node>();
   }
 }
 
