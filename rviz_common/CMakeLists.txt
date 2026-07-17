@@ -427,7 +427,10 @@ if(BUILD_TESTING)
   if(TARGET display_factory_test)
     target_compile_definitions(display_factory_test PUBLIC
       -D_TEST_PLUGIN_DESCRIPTIONS="${CMAKE_CURRENT_SOURCE_DIR}")
-    target_link_libraries(display_factory_test rviz_common Qt${QT_VERSION_MAJOR}::Widgets)
+    target_link_libraries(display_factory_test
+      rviz_common
+      Qt${QT_VERSION_MAJOR}::Widgets
+      tinyxml2::tinyxml2)
   endif()
 
   # Frame manager test (keeps its unique moc)
