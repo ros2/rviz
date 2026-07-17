@@ -44,7 +44,9 @@
 
 #include "geometry_msgs/msg/pose_stamped.hpp"
 
-#include "rviz_common/ros_integration/ros_node_abstraction.hpp"
+#include "rclcpp/clock.hpp"
+
+#include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
 #include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common

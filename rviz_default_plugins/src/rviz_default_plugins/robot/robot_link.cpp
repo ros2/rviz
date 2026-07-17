@@ -58,6 +58,8 @@
 #include <gz/math/Quaternion.hh>
 #include <gz/math/Vector3.hh>
 
+#include "rclcpp/node.hpp"
+
 #include "resource_retriever/retriever.hpp"
 #include "resource_retriever_service_plugin/resource_retriever_service_plugin.hpp"
 

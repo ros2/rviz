@@ -41,6 +41,8 @@
 #include <QKeyEvent>  // NOLINT: cpplint cannot handle include order here
 #include <QString>  // NOLINT: cpplint cannot handle include order here
 
+#include "rclcpp/node.hpp"
+
 #include "rviz_rendering/render_window.hpp"
 
 #include "rviz_common/display_context.hpp"

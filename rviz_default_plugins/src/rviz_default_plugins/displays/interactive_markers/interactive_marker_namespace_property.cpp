@@ -35,6 +35,8 @@
 #include <QApplication>  // NOLINT: cpplint cannot handle the include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
+#include "rclcpp/node.hpp"
+
 #include "rviz_common/logging.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
 

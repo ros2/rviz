@@ -59,7 +59,9 @@
 #include <QWindow>  // NOLINT: cpplint cannot handle include order here
 
 #include "rclcpp/clock.hpp"
+#include "rclcpp/node.hpp"
 #include "rclcpp/time.hpp"
+#include "rclcpp/executors/single_threaded_executor.hpp"
 #include "rviz_rendering/material_manager.hpp"
 #include "rviz_rendering/render_window.hpp"
 
@@ -69,6 +71,7 @@
 #include "./displays_panel.hpp"
 #include "frame_manager.hpp"
 #include "rviz_common/load_resource.hpp"
+#include "rviz_common/logging.hpp"
 #include "rviz_common/properties/color_property.hpp"
 #include "rviz_common/properties/int_property.hpp"
 #include "rviz_common/properties/parse_color.hpp"
