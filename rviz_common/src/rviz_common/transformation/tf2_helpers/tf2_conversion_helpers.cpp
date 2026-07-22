@@ -30,6 +30,7 @@
 #include "rviz_common/transformation/tf2_helpers/tf2_conversion_helpers.hpp"
 
 #include <chrono>
+#include <cstdint>
 #include <string>
 
 namespace rviz_common
@@ -46,8 +47,8 @@ createHeader(const tf2::TimePoint & tf2_time, const std::string & frame_id)
   const auto seconds = std::chrono::time_point_cast<std::chrono::seconds>(tf2_time);
   const auto nanoseconds = std::chrono::time_point_cast<std::chrono::nanoseconds>(tf2_time) -
     std::chrono::time_point_cast<std::chrono::nanoseconds>(seconds);
-  header.stamp.sec = seconds.time_since_epoch().count();
-  header.stamp.nanosec = nanoseconds.count();
+  header.stamp.sec = static_cast<std::int32_t>(seconds.time_since_epoch().count());
+  header.stamp.nanosec = static_cast<std::uint32_t>(nanoseconds.count());
   header.frame_id = frame_id;
   return header;
 }
