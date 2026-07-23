@@ -213,6 +213,7 @@ set(rviz_common_source_files
   src/rviz_common/ros_integration/ros_client_abstraction.cpp
   src/rviz_common/ros_integration/ros_node_abstraction.cpp
   src/rviz_common/ros_topic_display.cpp
+  src/rviz_common/ros_topic_utils.cpp
   src/rviz_common/scaled_image_widget.cpp
   src/rviz_common/screenshot_dialog.cpp
   src/rviz_common/selection_panel.cpp
@@ -387,6 +388,7 @@ if(BUILD_TESTING)
     test/properties/qos_profile_property_test.cpp
     test/visualizer_app_test.cpp
     test/ros_node_abstraction_test.cpp
+    test/ros_topic_utils_test.cpp
     test/transformation/identity_frame_transformer_test.cpp
     ${TEST_SUPPORT_OBJECTS}
     ${SKIP_DISPLAY_TESTS}
