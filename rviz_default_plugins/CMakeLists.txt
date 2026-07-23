@@ -167,6 +167,8 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/illuminance/illuminance_display.cpp
   src/rviz_default_plugins/displays/image/get_transport_from_topic.cpp
   src/rviz_default_plugins/displays/image/image_display.cpp
+  src/rviz_default_plugins/displays/image/image_message_type_provider.cpp
+  src/rviz_default_plugins/displays/image/image_transport_discovery.cpp
   src/rviz_default_plugins/displays/image/ros_image_texture.cpp
   src/rviz_default_plugins/displays/interactive_markers/integer_action.cpp
   src/rviz_default_plugins/displays/interactive_markers/interactive_marker_control.cpp
@@ -440,6 +442,14 @@ if(BUILD_TESTING)
   if(TARGET grid_cells_display_test)
     target_include_directories(grid_cells_display_test PRIVATE test)
     target_link_libraries(grid_cells_display_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins ogre_testing_environment)
+  endif()
+
+  ament_add_gmock(image_message_type_provider_test
+    test/rviz_default_plugins/displays/image/image_message_type_provider_test.cpp
+    ${TEST_FIXTURE_OBJECTS})
+  if(TARGET image_message_type_provider_test)
+    target_include_directories(image_message_type_provider_test PRIVATE test)
+    target_link_libraries(image_message_type_provider_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins ogre_testing_environment)
   endif()
 
   ament_add_gmock(image_display_test

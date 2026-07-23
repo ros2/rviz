@@ -65,6 +65,8 @@
 #include <sensor_msgs/msg/image.hpp>
 #include <tf2_ros/message_filter.hpp>
 
+#include "rviz_default_plugins/displays/image/get_transport_from_topic.hpp"
+
 namespace rviz_default_plugins
 {
 namespace displays
@@ -245,15 +247,11 @@ DepthCloudDisplay::~DepthCloudDisplay()
 
 void DepthCloudDisplay::setTopic(const QString & topic, const QString & datatype)
 {
-  if (datatype == "sensor_msgs::msgs::Image") {
-    depth_transport_property_->setStdString("raw");
-    depth_topic_property_->setString(topic);
-  } else {
-    setStatus(
-      rviz_common::properties::StatusProperty::Warn,
-      "Message",
-      "Expected topic type of 'sensor_msgs/msg/Image', saw topic type '" + datatype + "'");
-  }
+  (void) datatype;
+  // The topic may be an image_transport subtopic, e.g. <base>/compressedDepth.
+  const std::string topic_std = topic.toStdString();
+  depth_transport_property_->setStdString(getTransportFromTopic(topic_std));
+  depth_topic_property_->setString(QString::fromStdString(getBaseTopicFromTopic(topic_std)));
 }
 
 void DepthCloudDisplay::updateQueueSize()

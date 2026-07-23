@@ -69,6 +69,7 @@
 #include "rviz_common/uniform_string_stream.hpp"
 #include "rviz_common/validate_floats.hpp"
 #include "rviz_default_plugins/displays/image/get_transport_from_topic.hpp"
+#include "rviz_default_plugins/displays/image/image_transport_discovery.hpp"
 #include "rviz_default_plugins/displays/image/ros_image_texture.hpp"
 #include "rviz_default_plugins/displays/image/ros_image_texture_iface.hpp"
 #include "rviz_rendering/material_manager.hpp"
@@ -154,21 +155,15 @@ void ImageDisplay::onInitialize()
 
   // Populate transport->message type map dynamically from installed image_transport plugins
 
-  pluginlib::ClassLoader<image_transport::SubscriberPlugin> sub_loader(
-    "image_transport", "image_transport::SubscriberPlugin");
   transport_override_property_->clearOptions();
   transport_override_property_->addOptionStd("");
   QSet<QString> message_types;
-  for (const std::string & plugin_class : sub_loader.getDeclaredClasses()) {
-    const std::string message_type = image_transport::get_message_type_from_manifest(
-      sub_loader.getPluginManifestPath(plugin_class), plugin_class);
-    const std::string transport_name = image_transport::get_transport_name_from_manifest(
-      sub_loader.getPluginManifestPath(plugin_class), plugin_class);
-    if (!message_type.empty()) {
-      transport_override_property_->addOptionStd(transport_name);
-      message_types.insert(QString::fromStdString(message_type));
+  for (const auto & plugin : discoverImageTransportSubscriberPlugins()) {
+    if (!plugin.message_type.empty()) {
+      transport_override_property_->addOptionStd(plugin.transport_name);
+      message_types.insert(QString::fromStdString(plugin.message_type));
     } else {
-      unknown_transports_.insert(transport_name);
+      unknown_transports_.insert(plugin.transport_name);
     }
   }
   // Update the message types to allow in the topic_property_
