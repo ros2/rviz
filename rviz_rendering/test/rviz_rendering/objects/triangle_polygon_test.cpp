@@ -34,7 +34,10 @@
 #include <memory>
 #include <vector>
 
-#include <Ogre.h>
+#include <OgreColourValue.h>
+#include <OgreRoot.h>
+#include <OgreSceneNode.h>
+#include <OgreVector.h>
 
 #include "rviz_rendering/objects/triangle_polygon.hpp"
 #include "../ogre_testing_environment.hpp"
