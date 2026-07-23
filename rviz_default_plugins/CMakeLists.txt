@@ -46,6 +46,12 @@ if(MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
 endif()
 
+# Do not relink dependent executables/libraries when a shared library they
+# link against is relinked; on ELF platforms the symbols are resolved at
+# runtime, so the relink is unnecessary.  This makes incremental builds much
+# cheaper: editing one display no longer relinks every test executable.
+set(CMAKE_LINK_DEPENDS_NO_SHARED ON)
+
 # We specifically don't turn on CMAKE_AUTOMOC, since it generates one huge
 # mocs_compilation.cpp file that takes a lot of memory to compile.  Instead
 # we create individual moc files that can be compiled separately.
@@ -99,30 +105,17 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/accel/accel_display.hpp
   include/rviz_default_plugins/displays/axes/axes_display.hpp
   include/rviz_default_plugins/displays/camera_info/camera_info_display.hpp
-  include/rviz_default_plugins/displays/camera/camera_display.hpp
-  include/rviz_default_plugins/displays/depth_cloud/depth_cloud_display.hpp
   include/rviz_default_plugins/displays/effort/effort_display.hpp
   include/rviz_default_plugins/displays/fluid_pressure/fluid_pressure_display.hpp
   include/rviz_default_plugins/displays/grid/grid_display.hpp
   include/rviz_default_plugins/displays/grid_cells/grid_cells_display.hpp
   include/rviz_default_plugins/displays/illuminance/illuminance_display.hpp
-  include/rviz_default_plugins/displays/image/image_display.hpp
   include/rviz_default_plugins/displays/laser_scan/laser_scan_display.hpp
   include/rviz_default_plugins/displays/map/map_display.hpp
-  include/rviz_default_plugins/displays/marker/marker_common.hpp
   include/rviz_default_plugins/displays/odometry/odometry_display.hpp
   include/rviz_default_plugins/transformation/transformer_guard.hpp
-  include/rviz_default_plugins/displays/interactive_markers/integer_action.hpp
-  include/rviz_default_plugins/displays/interactive_markers/interactive_marker.hpp
-  include/rviz_default_plugins/displays/interactive_markers/interactive_marker_display.hpp
-  include/rviz_default_plugins/displays/interactive_markers/interactive_marker_namespace_property.hpp
   include/rviz_default_plugins/displays/path/path_display.hpp
   include/rviz_default_plugins/displays/point/point_stamped_display.hpp
-  include/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp
-  include/rviz_default_plugins/displays/pointcloud/point_cloud_transformer.hpp
-  include/rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.hpp
-  include/rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.hpp
-  include/rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.hpp
   include/rviz_default_plugins/displays/polygon/polygon_display.hpp
   include/rviz_default_plugins/displays/pose/pose_display.hpp
   include/rviz_default_plugins/displays/pose_array/pose_array_display.hpp
@@ -150,65 +143,61 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller.hpp
 )
 
+set(rviz_default_plugins_pointcloud_headers_to_moc
+  include/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp
+  include/rviz_default_plugins/displays/pointcloud/point_cloud_transformer.hpp
+  include/rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.hpp
+  include/rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.hpp
+  include/rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.hpp
+)
+
+set(rviz_default_plugins_image_headers_to_moc
+  include/rviz_default_plugins/displays/camera/camera_display.hpp
+  include/rviz_default_plugins/displays/depth_cloud/depth_cloud_display.hpp
+  include/rviz_default_plugins/displays/image/image_display.hpp
+)
+
+set(rviz_default_plugins_marker_headers_to_moc
+  include/rviz_default_plugins/displays/marker/marker_common.hpp
+  include/rviz_default_plugins/displays/interactive_markers/integer_action.hpp
+  include/rviz_default_plugins/displays/interactive_markers/interactive_marker.hpp
+  include/rviz_default_plugins/displays/interactive_markers/interactive_marker_display.hpp
+  include/rviz_default_plugins/displays/interactive_markers/interactive_marker_namespace_property.hpp
+)
+
 foreach(header "${rviz_default_plugins_headers_to_moc}")
   qt_wrap_cpp(rviz_default_plugins_moc_files "${header}")
+endforeach()
+
+foreach(header "${rviz_default_plugins_pointcloud_headers_to_moc}")
+  qt_wrap_cpp(rviz_default_plugins_pointcloud_moc_files "${header}")
+endforeach()
+
+foreach(header "${rviz_default_plugins_image_headers_to_moc}")
+  qt_wrap_cpp(rviz_default_plugins_image_moc_files "${header}")
+endforeach()
+
+foreach(header "${rviz_default_plugins_marker_headers_to_moc}")
+  qt_wrap_cpp(rviz_default_plugins_marker_moc_files "${header}")
 endforeach()
 
 set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/accel/accel_display.cpp
   src/rviz_default_plugins/displays/axes/axes_display.cpp
   src/rviz_default_plugins/displays/camera_info/camera_info_display.cpp
-  src/rviz_default_plugins/displays/camera/camera_display.cpp
-  src/rviz_default_plugins/displays/depth_cloud/depth_cloud_display.cpp
   src/rviz_default_plugins/displays/effort/effort_display.cpp
   src/rviz_default_plugins/displays/grid/grid_display.cpp
   src/rviz_default_plugins/displays/grid_cells/grid_cells_display.cpp
   src/rviz_default_plugins/displays/fluid_pressure/fluid_pressure_display.cpp
   src/rviz_default_plugins/displays/illuminance/illuminance_display.cpp
-  src/rviz_default_plugins/displays/image/get_transport_from_topic.cpp
-  src/rviz_default_plugins/displays/image/image_display.cpp
-  src/rviz_default_plugins/displays/image/ros_image_texture.cpp
-  src/rviz_default_plugins/displays/interactive_markers/integer_action.cpp
-  src/rviz_default_plugins/displays/interactive_markers/interactive_marker_control.cpp
-  src/rviz_default_plugins/displays/interactive_markers/interactive_marker.cpp
-  src/rviz_default_plugins/displays/interactive_markers/interactive_marker_display.cpp
-  src/rviz_default_plugins/displays/interactive_markers/interactive_marker_namespace_property.cpp
   src/rviz_default_plugins/displays/laser_scan/laser_scan_display.cpp
   src/rviz_default_plugins/displays/map/map_display.cpp
   src/rviz_default_plugins/displays/map/palette_builder.cpp
   src/rviz_default_plugins/displays/map/swatch.cpp
-  src/rviz_default_plugins/displays/marker/markers/arrow_marker.cpp
-  src/rviz_default_plugins/displays/marker/markers/line_list_marker.cpp
-  src/rviz_default_plugins/displays/marker/markers/line_marker_base.cpp
-  src/rviz_default_plugins/displays/marker/markers/line_strip_marker.cpp
-  src/rviz_default_plugins/displays/marker/markers/marker_base.cpp
-  src/rviz_default_plugins/displays/marker/markers/marker_selection_handler.cpp
-  src/rviz_default_plugins/displays/marker/markers/mesh_resource_marker.cpp
-  src/rviz_default_plugins/displays/marker/markers/text_view_facing_marker.cpp
-  src/rviz_default_plugins/displays/marker/markers/points_marker.cpp
-  src/rviz_default_plugins/displays/marker/markers/shape_marker.cpp
-  src/rviz_default_plugins/displays/marker/markers/triangle_list_marker.cpp
-  src/rviz_default_plugins/displays/marker/markers/marker_factory.cpp
-  src/rviz_default_plugins/displays/marker/marker_common.cpp
-  src/rviz_default_plugins/displays/marker/marker_display.cpp
   src/rviz_default_plugins/displays/marker_array/marker_array_display.cpp
   src/rviz_default_plugins/displays/odometry/odometry_display.cpp
   src/rviz_default_plugins/displays/path/path_display.cpp
   src/rviz_default_plugins/displays/point/point_stamped_display.cpp
-  src/rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.cpp
-  src/rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.cpp
-  src/rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.cpp
-  src/rviz_default_plugins/displays/pointcloud/transformers/rgb8_pc_transformer.cpp
-  src/rviz_default_plugins/displays/pointcloud/transformers/rgbf32_pc_transformer.cpp
-  src/rviz_default_plugins/displays/pointcloud/transformers/xyz_pc_transformer.cpp
-  src/rviz_default_plugins/displays/pointcloud/get_transport_from_topic.cpp
-  src/rviz_default_plugins/displays/pointcloud/point_cloud_common.cpp
-  src/rviz_default_plugins/displays/pointcloud/point_cloud_to_point_cloud2.cpp
-  src/rviz_default_plugins/displays/pointcloud/point_cloud_transformer.cpp
-  src/rviz_default_plugins/displays/pointcloud/point_cloud_transformer_factory.cpp
-  src/rviz_default_plugins/displays/pointcloud/point_cloud_selection_handler.cpp
-  src/rviz_default_plugins/displays/pointcloud/point_cloud_display.cpp
-  src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.cpp
   src/rviz_default_plugins/displays/polygon/polygon_display.cpp
   src/rviz_default_plugins/displays/pose/pose_display.cpp
   src/rviz_default_plugins/displays/pose/pose_display_selection_handler.cpp
@@ -251,17 +240,54 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/view_controllers/xy_orbit/xy_orbit_view_controller.cpp
 )
 
-add_library(rviz_default_plugins SHARED
-  ${rviz_default_plugins_moc_files}
-  ${rviz_default_plugins_source_files}
+set(rviz_default_plugins_pointcloud_source_files
+  src/rviz_default_plugins/displays/pointcloud/transformers/axis_color_pc_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/transformers/flat_color_pc_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/transformers/rgb8_pc_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/transformers/rgbf32_pc_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/transformers/xyz_pc_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/get_transport_from_topic.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_common.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_to_point_cloud2.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_transformer.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_transformer_factory.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_selection_handler.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_display.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.cpp
 )
 
-target_include_directories(rviz_default_plugins PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+set(rviz_default_plugins_image_source_files
+  src/rviz_default_plugins/displays/camera/camera_display.cpp
+  src/rviz_default_plugins/displays/depth_cloud/depth_cloud_display.cpp
+  src/rviz_default_plugins/displays/image/get_transport_from_topic.cpp
+  src/rviz_default_plugins/displays/image/image_display.cpp
+  src/rviz_default_plugins/displays/image/ros_image_texture.cpp
 )
 
-target_link_libraries(rviz_default_plugins PUBLIC
+set(rviz_default_plugins_marker_source_files
+  src/rviz_default_plugins/displays/interactive_markers/integer_action.cpp
+  src/rviz_default_plugins/displays/interactive_markers/interactive_marker_control.cpp
+  src/rviz_default_plugins/displays/interactive_markers/interactive_marker.cpp
+  src/rviz_default_plugins/displays/interactive_markers/interactive_marker_display.cpp
+  src/rviz_default_plugins/displays/interactive_markers/interactive_marker_namespace_property.cpp
+  src/rviz_default_plugins/displays/marker/markers/arrow_marker.cpp
+  src/rviz_default_plugins/displays/marker/markers/line_list_marker.cpp
+  src/rviz_default_plugins/displays/marker/markers/line_marker_base.cpp
+  src/rviz_default_plugins/displays/marker/markers/line_strip_marker.cpp
+  src/rviz_default_plugins/displays/marker/markers/marker_base.cpp
+  src/rviz_default_plugins/displays/marker/markers/marker_selection_handler.cpp
+  src/rviz_default_plugins/displays/marker/markers/mesh_resource_marker.cpp
+  src/rviz_default_plugins/displays/marker/markers/text_view_facing_marker.cpp
+  src/rviz_default_plugins/displays/marker/markers/points_marker.cpp
+  src/rviz_default_plugins/displays/marker/markers/shape_marker.cpp
+  src/rviz_default_plugins/displays/marker/markers/triangle_list_marker.cpp
+  src/rviz_default_plugins/displays/marker/markers/marker_factory.cpp
+  src/rviz_default_plugins/displays/marker/marker_common.cpp
+  src/rviz_default_plugins/displays/marker/marker_display.cpp
+)
+
+set(rviz_default_plugins_public_link_libraries
   ament_cmake_ros_core::ament_ros_defaults
   geometry_msgs::geometry_msgs
   image_transport::image_transport
@@ -277,6 +303,73 @@ target_link_libraries(rviz_default_plugins PUBLIC
   resource_retriever::resource_retriever
   resource_retriever_service_plugin::resource_retriever_service_plugin
 )
+
+add_library(rviz_default_plugins_pointcloud SHARED
+  ${rviz_default_plugins_pointcloud_moc_files}
+  ${rviz_default_plugins_pointcloud_source_files}
+)
+target_include_directories(rviz_default_plugins_pointcloud PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+)
+target_link_libraries(rviz_default_plugins_pointcloud PUBLIC
+  ${rviz_default_plugins_public_link_libraries}
+)
+target_link_libraries(rviz_default_plugins_pointcloud PRIVATE gz-math::core)
+target_compile_definitions(rviz_default_plugins_pointcloud PRIVATE "RVIZ_DEFAULT_PLUGINS_BUILDING_LIBRARY")
+
+add_library(rviz_default_plugins_image SHARED
+  ${rviz_default_plugins_image_moc_files}
+  ${rviz_default_plugins_image_source_files}
+)
+target_include_directories(rviz_default_plugins_image PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+)
+target_link_libraries(rviz_default_plugins_image PUBLIC
+  rviz_default_plugins_pointcloud
+  ${rviz_default_plugins_public_link_libraries}
+)
+target_link_libraries(rviz_default_plugins_image PRIVATE gz-math::core)
+target_compile_definitions(rviz_default_plugins_image PRIVATE "RVIZ_DEFAULT_PLUGINS_BUILDING_LIBRARY")
+
+add_library(rviz_default_plugins_marker SHARED
+  ${rviz_default_plugins_marker_moc_files}
+  ${rviz_default_plugins_marker_source_files}
+)
+target_include_directories(rviz_default_plugins_marker PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+)
+target_link_libraries(rviz_default_plugins_marker PUBLIC
+  ${rviz_default_plugins_public_link_libraries}
+)
+target_link_libraries(rviz_default_plugins_marker PRIVATE gz-math::core)
+target_compile_definitions(rviz_default_plugins_marker PRIVATE "RVIZ_DEFAULT_PLUGINS_BUILDING_LIBRARY")
+
+add_library(rviz_default_plugins SHARED
+  ${rviz_default_plugins_moc_files}
+  ${rviz_default_plugins_source_files}
+)
+
+target_include_directories(rviz_default_plugins PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+)
+
+target_link_libraries(rviz_default_plugins PUBLIC
+  rviz_default_plugins_pointcloud
+  rviz_default_plugins_image
+  rviz_default_plugins_marker
+  ${rviz_default_plugins_public_link_libraries}
+)
+# pluginlib dlopens only this library; the plugin factories of the family
+# libraries register when they are loaded as its dependencies.  Keep them in
+# DT_NEEDED even when no symbol of theirs is referenced directly, otherwise
+# --as-needed (default on many distros) drops them and their plugins vanish.
+if(UNIX AND NOT APPLE)
+  target_link_options(rviz_default_plugins PRIVATE "LINKER:--no-as-needed")
+endif()
 
 target_link_libraries(rviz_default_plugins PRIVATE
   gz-math::core
@@ -319,7 +412,11 @@ ament_export_dependencies(
 )
 
 install(
-  TARGETS rviz_default_plugins
+  TARGETS
+    rviz_default_plugins
+    rviz_default_plugins_pointcloud
+    rviz_default_plugins_image
+    rviz_default_plugins_marker
   EXPORT rviz_default_plugins
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
