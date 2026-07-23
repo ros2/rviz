@@ -36,6 +36,7 @@
 
 #include <OgreRoot.h>
 
+#include "rclcpp/utilities.hpp"
 #include "visualization_msgs/msg/marker.hpp"
 
 #include "rviz_common/display.hpp"
