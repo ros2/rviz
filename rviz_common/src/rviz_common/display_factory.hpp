@@ -34,14 +34,18 @@
 
 #include <tinyxml2.h>
 
+#include <memory>
 #include <string>
 
 #include <QMap>  // NOLINT: cpplint cannot handle include order here
 #include <QSet>  // NOLINT: cpplint cannot handle include order here
 #include <QString>  // NOLINT: cpplint cannot handle include order here
 
+#include "pluginlib/class_loader.hpp"
+
 #include "rviz_common/factory/pluginlib_factory.hpp"
 #include "rviz_common/display.hpp"
+#include "rviz_common/message_type_provider.hpp"
 
 namespace rviz_common
 {
@@ -65,6 +69,10 @@ protected:
   QMap<QString, QSet<QString>> message_type_cache_;
 
 private:
+  /// Load all declared MessageTypeProvider plugins once and merge their
+  /// message types into the cache.
+  void loadMessageTypeProviders();
+
   bool hasRootNode(tinyxml2::XMLElement * root_element, const std::string & xml_file);
   bool hasLibraryRoot(tinyxml2::XMLElement * root_element, const std::string & xml_file);
   void fillCacheForAllClassElements(tinyxml2::XMLElement * library);
@@ -73,6 +81,9 @@ private:
   std::string lookupClassId(
     const tinyxml2::XMLElement * class_element, const std::string & derived_class) const;
   std::string lookupDerivedClass(const tinyxml2::XMLElement * class_element) const;
+
+  std::unique_ptr<pluginlib::ClassLoader<MessageTypeProvider>> message_type_provider_loader_;
+  bool message_type_providers_loaded_ = false;
 };
 
 }  // namespace rviz_common

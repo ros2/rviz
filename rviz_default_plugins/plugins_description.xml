@@ -122,6 +122,17 @@
   </class>
 
   <class
+    name="rviz_default_plugins/ImageMessageTypeProvider"
+    type="rviz_default_plugins::displays::ImageMessageTypeProvider"
+    base_class_type="rviz_common::MessageTypeProvider"
+  >
+    <description>
+      Registers the message types of the installed image_transport plugins
+      for the Image, Camera and DepthCloud displays.
+    </description>
+  </class>
+
+  <class
     name="rviz_default_plugins/InteractiveMarkers"
     type="rviz_default_plugins::displays::InteractiveMarkerDisplay"
     base_class_type="rviz_common::Display"

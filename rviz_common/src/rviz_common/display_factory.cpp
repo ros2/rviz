@@ -31,6 +31,7 @@
 
 #include "display_factory.hpp"
 
+#include <memory>
 #include <string>
 
 #include <tinyxml2.h>  // NOLINT: cpplint is unable to handle the include order here
@@ -70,8 +71,39 @@ void DisplayFactory::updatePluginMessageTypes(
   message_type_cache_[class_id] = message_types;
 }
 
+void DisplayFactory::loadMessageTypeProviders()
+{
+  if (message_type_providers_loaded_) {
+    return;
+  }
+  message_type_providers_loaded_ = true;
+
+  try {
+    message_type_provider_loader_ = std::make_unique<pluginlib::ClassLoader<MessageTypeProvider>>(
+      "rviz_common", "rviz_common::MessageTypeProvider");
+  } catch (const pluginlib::PluginlibException & e) {
+    RVIZ_COMMON_LOG_ERROR_STREAM("Failed to create MessageTypeProvider loader: " << e.what());
+    return;
+  }
+
+  for (const std::string & lookup_name : message_type_provider_loader_->getDeclaredClasses()) {
+    try {
+      auto provider = message_type_provider_loader_->createUniqueInstance(lookup_name);
+      const QMap<QString, QSet<QString>> types_by_class = provider->getMessageTypes();
+      for (auto it = types_by_class.cbegin(); it != types_by_class.cend(); ++it) {
+        message_type_cache_[it.key()].unite(it.value());
+      }
+    } catch (const pluginlib::PluginlibException & e) {
+      RVIZ_COMMON_LOG_ERROR_STREAM(
+        "Failed to load MessageTypeProvider '" << lookup_name << "': " << e.what());
+    }
+  }
+}
+
 QSet<QString> DisplayFactory::getMessageTypes(const QString & class_id)
 {
+  loadMessageTypeProviders();
+
   // lookup in cache
   if (message_type_cache_.contains(class_id)) {
     return message_type_cache_[class_id];
