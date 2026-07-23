@@ -27,7 +27,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-
 #include <gmock/gmock.h>
 
 #include <memory>
@@ -125,11 +124,4 @@ TEST_F(SelectionToolTestFixture, processKeyEvent_F_key_should_focus_on_selection
 
   QKeyEvent * keyEvent = new QKeyEvent(QKeyEvent::KeyPress, Qt::Key_F, Qt::NoModifier);
   selection_tool_->processKeyEvent(keyEvent, nullptr);
-}
-
-int main(int argc, char ** argv)
-{
-  QApplication app(argc, argv);
-  InitGoogleMock(&argc, argv);
-  return RUN_ALL_TESTS();
 }

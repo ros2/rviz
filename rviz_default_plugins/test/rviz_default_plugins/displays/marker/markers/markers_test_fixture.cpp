@@ -61,6 +61,9 @@ void MarkersTestFixture::SetUpTestCase()
 void MarkersTestFixture::TearDownTestCase()
 {
   DisplayTestFixture::TearDownTestCase();
+  // Destroy the node before shutting down its context, otherwise it lives
+  // until static destruction at process exit, which aborts.
+  ros_client_abstraction_.reset();
   rclcpp::shutdown();
 }
 

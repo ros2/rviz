@@ -27,7 +27,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
@@ -199,11 +198,4 @@ TEST_F(
   EXPECT_THAT(y_property->getNameStd(), StrEq("Y"));
   EXPECT_THAT(x_property->getValue().toFloat(), FloatNear(0, 0.001f));
   EXPECT_THAT(y_property->getValue().toFloat(), FloatNear(0, 0.001f));
-}
-
-int main(int argc, char ** argv)
-{
-  QApplication app(argc, argv);
-  InitGoogleMock(&argc, argv);
-  return RUN_ALL_TESTS();
 }

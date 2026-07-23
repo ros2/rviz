@@ -27,7 +27,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-
 #include <gmock/gmock.h>
 
 #include <cmath>
@@ -306,11 +305,4 @@ TEST_F(
 
   float motion_magnitude = std::sqrt(new_x * new_x + new_y * new_y);
   EXPECT_THAT(motion_magnitude, Le(1.1f));
-}
-
-int main(int argc, char ** argv)
-{
-  QApplication app(argc, argv);
-  InitGoogleMock(&argc, argv);
-  return RUN_ALL_TESTS();
 }

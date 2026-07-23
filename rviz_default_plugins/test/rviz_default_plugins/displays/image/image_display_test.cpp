@@ -27,7 +27,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-
 #include <gmock/gmock.h>
 
 #include <memory>
@@ -77,6 +76,9 @@ public:
   static void TearDownTestCase()
   {
     transformation_manager_.reset();
+    // Destroy the node before shutting down its context, otherwise it lives
+    // until static destruction at process exit, which aborts.
+    ros_client_abstraction_.reset();
     rclcpp::shutdown();
   }
 
@@ -147,11 +149,4 @@ TEST_F(ImageDisplayTestFixture, initialize_propagates_smooth_scaling_to_texture)
 
   ImageDisplay imageDisplay(std::move(texture_));
   imageDisplay.initialize(context_.get());
-}
-
-int main(int argc, char ** argv)
-{
-  QApplication app(argc, argv);
-  InitGoogleMock(&argc, argv);
-  return RUN_ALL_TESTS();
 }

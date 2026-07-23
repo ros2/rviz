@@ -77,6 +77,10 @@ RosClientAbstraction::ok()
 void
 RosClientAbstraction::shutdown()
 {
+  // Destroy the node before shutting down the context it was created with,
+  // otherwise it is destroyed during static destruction at process exit,
+  // which aborts.
+  rviz_ros_node_.reset();
   rclcpp::shutdown();
 }
 

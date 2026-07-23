@@ -27,7 +27,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-
 #include <gmock/gmock.h>
 
 #include <memory>
@@ -82,7 +81,6 @@ public:
     auto enum_property = dynamic_cast<rviz_common::properties::EnumProperty *>(axis_property);
     return enum_property->getOptionInt();
   }
-
 
   void setAxisPropertyOption(int option)
   {
@@ -249,11 +247,4 @@ TEST_F(FrameViewControllerTestFixture,
   frame_->update(zero, zero);
 
   checkCameraLooksAlong(Ogre::Vector3(0, 0, -1));
-}
-
-int main(int argc, char ** argv)
-{
-  QApplication app(argc, argv);
-  InitGoogleMock(&argc, argv);
-  return RUN_ALL_TESTS();
 }

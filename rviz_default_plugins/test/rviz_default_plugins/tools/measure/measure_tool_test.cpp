@@ -27,7 +27,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-
 #include <gmock/gmock.h>
 
 #include <memory>
@@ -72,7 +71,6 @@ public:
 
   std::shared_ptr<rviz_default_plugins::tools::MeasureTool> measure_tool_;
 };
-
 
 TEST_F(MeasureToolTestFixture, choosing_two_objects_shows_a_line_and_the_distance) {
   auto obj1 = addVisible3DObject(10, 10, {1.0, 1.0, 0.0});
@@ -130,11 +128,4 @@ TEST_F(MeasureToolTestFixture, right_clicking_removes_the_measurement_line) {
   measure_tool_->processMouseEvent(click);
 
   ASSERT_FALSE(line->isVisible());
-}
-
-int main(int argc, char ** argv)
-{
-  QApplication app(argc, argv);
-  InitGoogleMock(&argc, argv);
-  return RUN_ALL_TESTS();
 }

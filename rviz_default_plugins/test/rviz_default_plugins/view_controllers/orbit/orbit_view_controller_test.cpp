@@ -27,7 +27,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-
 #include <gmock/gmock.h>
 
 #include <memory>
@@ -244,11 +243,4 @@ TEST_F(OrbitViewControllerTestFixture, mimic_does_not_move_camera_when_given_sam
   EXPECT_THAT(z_property->getValue().toFloat(), FloatNear(old_z_value, 0.001f));
   EXPECT_THAT(yaw_property->getValue().toFloat(), FloatNear(0, 0.001f));
   EXPECT_THAT(pitch_property->getValue().toFloat(), FloatNear(0.5f, 0.001f));
-}
-
-int main(int argc, char ** argv)
-{
-  QApplication app(argc, argv);
-  InitGoogleMock(&argc, argv);
-  return RUN_ALL_TESTS();
 }
