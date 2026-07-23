@@ -187,6 +187,17 @@
   </class>
 
   <class
+    name="rviz_default_plugins/PointCloudMessageTypeProvider"
+    type="rviz_default_plugins::displays::PointCloudMessageTypeProvider"
+    base_class_type="rviz_common::MessageTypeProvider"
+  >
+    <description>
+      Registers the message types of the installed point_cloud_transport
+      plugins for the PointCloud2 display.
+    </description>
+  </class>
+
+  <class
     name="rviz_default_plugins/Polygon"
     type="rviz_default_plugins::displays::PolygonDisplay"
     base_class_type="rviz_common::Display"

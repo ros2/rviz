@@ -205,6 +205,8 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/pointcloud/transformers/xyz_pc_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/get_transport_from_topic.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_common.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_message_type_provider.cpp
+  src/rviz_default_plugins/displays/pointcloud/point_cloud_transport_discovery.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_to_point_cloud2.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_transformer.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_transformer_factory.cpp
@@ -450,6 +452,14 @@ if(BUILD_TESTING)
   if(TARGET image_message_type_provider_test)
     target_include_directories(image_message_type_provider_test PRIVATE test)
     target_link_libraries(image_message_type_provider_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins ogre_testing_environment)
+  endif()
+
+  ament_add_gmock(point_cloud_message_type_provider_test
+    test/rviz_default_plugins/displays/pointcloud/point_cloud_message_type_provider_test.cpp
+    ${TEST_FIXTURE_OBJECTS})
+  if(TARGET point_cloud_message_type_provider_test)
+    target_include_directories(point_cloud_message_type_provider_test PRIVATE test)
+    target_link_libraries(point_cloud_message_type_provider_test ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins ogre_testing_environment)
   endif()
 
   ament_add_gmock(image_display_test
