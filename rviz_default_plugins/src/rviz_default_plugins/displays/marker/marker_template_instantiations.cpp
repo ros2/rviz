@@ -39,5 +39,10 @@
 #include <visualization_msgs/msg/marker.hpp>
 #include <visualization_msgs/msg/marker_array.hpp>
 
+// On Windows the display headers do not declare these "extern template", so
+// every translation unit keeps instantiating implicitly and nothing may be
+// defined here.
+#ifndef _WIN32
 template class rviz_common::MessageFilterDisplay<visualization_msgs::msg::Marker>;
 template class rviz_common::RosTopicDisplay<visualization_msgs::msg::MarkerArray>;
+#endif

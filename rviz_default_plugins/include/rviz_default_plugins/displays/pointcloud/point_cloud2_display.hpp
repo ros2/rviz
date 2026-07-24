@@ -51,7 +51,11 @@ class IntProperty;
 // The base class template is explicitly instantiated once for this message
 // type (see the *_template_instantiations.cpp files); do not instantiate it
 // again in every translation unit that includes this header.
+// Not on Windows: the explicitly instantiated symbols would not be exported
+// from the library, so consumers keep instantiating implicitly there.
+#ifndef _WIN32
 extern template class rviz_common::MessageFilterDisplay<sensor_msgs::msg::PointCloud2>;
+#endif
 
 namespace rviz_default_plugins
 {

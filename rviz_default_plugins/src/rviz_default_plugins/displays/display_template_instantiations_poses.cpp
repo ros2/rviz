@@ -40,7 +40,12 @@
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <geometry_msgs/msg/pose_with_covariance_stamped.hpp>
 
+// On Windows the display headers do not declare these "extern template", so
+// every translation unit keeps instantiating implicitly and nothing may be
+// defined here.
+#ifndef _WIN32
 template class rviz_common::MessageFilterDisplay<geometry_msgs::msg::PoseStamped>;
 template class rviz_common::MessageFilterDisplay<geometry_msgs::msg::PoseArray>;
 template class rviz_common::MessageFilterDisplay<geometry_msgs::msg::PoseWithCovarianceStamped>;
 template class rviz_common::MessageFilterDisplay<geometry_msgs::msg::PointStamped>;
+#endif

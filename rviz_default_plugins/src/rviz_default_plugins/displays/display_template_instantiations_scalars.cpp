@@ -40,7 +40,12 @@
 #include <sensor_msgs/msg/relative_humidity.hpp>
 #include <sensor_msgs/msg/temperature.hpp>
 
+// On Windows the display headers do not declare these "extern template", so
+// every translation unit keeps instantiating implicitly and nothing may be
+// defined here.
+#ifndef _WIN32
 template class rviz_common::MessageFilterDisplay<sensor_msgs::msg::FluidPressure>;
 template class rviz_common::MessageFilterDisplay<sensor_msgs::msg::Temperature>;
 template class rviz_common::MessageFilterDisplay<sensor_msgs::msg::RelativeHumidity>;
 template class rviz_common::MessageFilterDisplay<sensor_msgs::msg::Illuminance>;
+#endif

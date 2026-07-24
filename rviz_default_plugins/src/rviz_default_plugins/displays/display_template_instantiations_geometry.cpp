@@ -40,7 +40,12 @@
 #include <geometry_msgs/msg/twist_stamped.hpp>
 #include <geometry_msgs/msg/wrench_stamped.hpp>
 
+// On Windows the display headers do not declare these "extern template", so
+// every translation unit keeps instantiating implicitly and nothing may be
+// defined here.
+#ifndef _WIN32
 template class rviz_common::MessageFilterDisplay<geometry_msgs::msg::TwistStamped>;
 template class rviz_common::MessageFilterDisplay<geometry_msgs::msg::AccelStamped>;
 template class rviz_common::MessageFilterDisplay<geometry_msgs::msg::WrenchStamped>;
 template class rviz_common::MessageFilterDisplay<geometry_msgs::msg::PolygonStamped>;
+#endif

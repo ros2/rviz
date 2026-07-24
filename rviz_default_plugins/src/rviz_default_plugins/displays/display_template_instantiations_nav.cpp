@@ -40,7 +40,12 @@
 #include <nav_msgs/msg/odometry.hpp>
 #include <nav_msgs/msg/path.hpp>
 
+// On Windows the display headers do not declare these "extern template", so
+// every translation unit keeps instantiating implicitly and nothing may be
+// defined here.
+#ifndef _WIN32
 template class rviz_common::MessageFilterDisplay<nav_msgs::msg::GridCells>;
 template class rviz_common::MessageFilterDisplay<nav_msgs::msg::Path>;
 template class rviz_common::MessageFilterDisplay<nav_msgs::msg::Odometry>;
 template class rviz_common::MessageFilterDisplay<nav_msgs::msg::OccupancyGrid>;
+#endif

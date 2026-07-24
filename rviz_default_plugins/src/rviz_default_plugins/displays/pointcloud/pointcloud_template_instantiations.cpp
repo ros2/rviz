@@ -38,5 +38,10 @@
 #include <sensor_msgs/msg/point_cloud.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
+// On Windows the display headers do not declare these "extern template", so
+// every translation unit keeps instantiating implicitly and nothing may be
+// defined here.
+#ifndef _WIN32
 template class rviz_common::MessageFilterDisplay<sensor_msgs::msg::PointCloud2>;
 template class rviz_common::MessageFilterDisplay<sensor_msgs::msg::PointCloud>;
+#endif

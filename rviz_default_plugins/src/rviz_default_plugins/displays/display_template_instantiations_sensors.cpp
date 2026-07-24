@@ -41,7 +41,12 @@
 #include <sensor_msgs/msg/laser_scan.hpp>
 #include <sensor_msgs/msg/range.hpp>
 
+// On Windows the display headers do not declare these "extern template", so
+// every translation unit keeps instantiating implicitly and nothing may be
+// defined here.
+#ifndef _WIN32
 template class rviz_common::MessageFilterDisplay<sensor_msgs::msg::Range>;
 template class rviz_common::MessageFilterDisplay<sensor_msgs::msg::LaserScan>;
 template class rviz_common::MessageFilterDisplay<sensor_msgs::msg::CameraInfo>;
 template class rviz_common::RosTopicDisplay<sensor_msgs::msg::JointState>;
+#endif
