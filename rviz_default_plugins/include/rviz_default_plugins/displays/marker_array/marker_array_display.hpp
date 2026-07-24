@@ -41,6 +41,11 @@
 #include "rviz_default_plugins/displays/marker/marker_common.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 
+// The base class template is explicitly instantiated once for this message
+// type (see the *_template_instantiations.cpp files); do not instantiate it
+// again in every translation unit that includes this header.
+extern template class rviz_common::RosTopicDisplay<visualization_msgs::msg::MarkerArray>;
+
 namespace rviz_default_plugins
 {
 namespace displays

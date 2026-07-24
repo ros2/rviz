@@ -35,6 +35,11 @@
 #include "rviz_default_plugins/displays/pointcloud/point_cloud_scalar_display.hpp"
 #include "sensor_msgs/msg/fluid_pressure.hpp"
 
+// The base class template is explicitly instantiated once for this message
+// type (see the *_template_instantiations.cpp files); do not instantiate it
+// again in every translation unit that includes this header.
+extern template class rviz_common::MessageFilterDisplay<sensor_msgs::msg::FluidPressure>;
+
 namespace rviz_default_plugins
 {
 

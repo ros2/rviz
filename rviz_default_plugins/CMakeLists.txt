@@ -160,6 +160,11 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/camera_info/camera_info_display.cpp
   src/rviz_default_plugins/displays/camera/camera_display.cpp
   src/rviz_default_plugins/displays/depth_cloud/depth_cloud_display.cpp
+  src/rviz_default_plugins/displays/display_template_instantiations_geometry.cpp
+  src/rviz_default_plugins/displays/display_template_instantiations_nav.cpp
+  src/rviz_default_plugins/displays/display_template_instantiations_poses.cpp
+  src/rviz_default_plugins/displays/display_template_instantiations_scalars.cpp
+  src/rviz_default_plugins/displays/display_template_instantiations_sensors.cpp
   src/rviz_default_plugins/displays/effort/effort_display.cpp
   src/rviz_default_plugins/displays/grid/grid_display.cpp
   src/rviz_default_plugins/displays/grid_cells/grid_cells_display.cpp
@@ -191,6 +196,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/marker/markers/marker_factory.cpp
   src/rviz_default_plugins/displays/marker/marker_common.cpp
   src/rviz_default_plugins/displays/marker/marker_display.cpp
+  src/rviz_default_plugins/displays/marker/marker_template_instantiations.cpp
   src/rviz_default_plugins/displays/marker_array/marker_array_display.cpp
   src/rviz_default_plugins/displays/odometry/odometry_display.cpp
   src/rviz_default_plugins/displays/path/path_display.cpp
@@ -209,6 +215,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/pointcloud/point_cloud_selection_handler.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud_display.cpp
   src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.cpp
+  src/rviz_default_plugins/displays/pointcloud/pointcloud_template_instantiations.cpp
   src/rviz_default_plugins/displays/polygon/polygon_display.cpp
   src/rviz_default_plugins/displays/pose/pose_display.cpp
   src/rviz_default_plugins/displays/pose/pose_display_selection_handler.cpp

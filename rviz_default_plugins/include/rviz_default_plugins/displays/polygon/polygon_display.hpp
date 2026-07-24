@@ -50,6 +50,11 @@ class FloatProperty;
 }  // namespace properties
 }  // namespace rviz_common
 
+// The base class template is explicitly instantiated once for this message
+// type (see the *_template_instantiations.cpp files); do not instantiate it
+// again in every translation unit that includes this header.
+extern template class rviz_common::MessageFilterDisplay<geometry_msgs::msg::PolygonStamped>;
+
 namespace rviz_default_plugins
 {
 namespace displays
