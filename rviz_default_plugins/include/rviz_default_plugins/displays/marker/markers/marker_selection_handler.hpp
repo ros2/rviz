@@ -61,7 +61,7 @@ class InteractiveMarkerControl;
 class MarkerBase;
 typedef std::pair<std::string, int32_t> MarkerID;
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC MarkerSelectionHandler : public
+class RVIZ_DEFAULT_PLUGINS_MARKER_PUBLIC MarkerSelectionHandler : public
   rviz_common::interaction::SelectionHandler
 {
 public:

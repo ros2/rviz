@@ -66,7 +66,7 @@ namespace rviz_default_plugins
 {
 namespace displays
 {
-class RVIZ_DEFAULT_PLUGINS_PUBLIC InteractiveMarker : public QObject
+class RVIZ_DEFAULT_PLUGINS_MARKER_PUBLIC InteractiveMarker : public QObject
 {
   Q_OBJECT
 

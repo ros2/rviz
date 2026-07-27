@@ -52,7 +52,7 @@ namespace displays
 namespace markers
 {
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC TextViewFacingMarker : public MarkerBase
+class RVIZ_DEFAULT_PLUGINS_MARKER_PUBLIC TextViewFacingMarker : public MarkerBase
 {
 public:
   TextViewFacingMarker(

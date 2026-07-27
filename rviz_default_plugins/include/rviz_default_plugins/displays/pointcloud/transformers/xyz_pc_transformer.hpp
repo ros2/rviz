@@ -43,7 +43,7 @@
 namespace rviz_default_plugins
 {
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC XYZPCTransformer : public PointCloudTransformer
+class RVIZ_DEFAULT_PLUGINS_POINTCLOUD_PUBLIC XYZPCTransformer : public PointCloudTransformer
 {
 public:
   uint8_t supports(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) override;

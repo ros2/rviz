@@ -316,7 +316,7 @@ target_link_libraries(rviz_default_plugins_pointcloud PUBLIC
   ${rviz_default_plugins_public_link_libraries}
 )
 target_link_libraries(rviz_default_plugins_pointcloud PRIVATE gz-math::core)
-target_compile_definitions(rviz_default_plugins_pointcloud PRIVATE "RVIZ_DEFAULT_PLUGINS_BUILDING_LIBRARY")
+target_compile_definitions(rviz_default_plugins_pointcloud PRIVATE "RVIZ_DEFAULT_PLUGINS_POINTCLOUD_BUILDING_LIBRARY")
 
 add_library(rviz_default_plugins_image SHARED
   ${rviz_default_plugins_image_moc_files}
@@ -331,7 +331,7 @@ target_link_libraries(rviz_default_plugins_image PUBLIC
   ${rviz_default_plugins_public_link_libraries}
 )
 target_link_libraries(rviz_default_plugins_image PRIVATE gz-math::core)
-target_compile_definitions(rviz_default_plugins_image PRIVATE "RVIZ_DEFAULT_PLUGINS_BUILDING_LIBRARY")
+target_compile_definitions(rviz_default_plugins_image PRIVATE "RVIZ_DEFAULT_PLUGINS_IMAGE_BUILDING_LIBRARY")
 
 add_library(rviz_default_plugins_marker SHARED
   ${rviz_default_plugins_marker_moc_files}
@@ -345,7 +345,7 @@ target_link_libraries(rviz_default_plugins_marker PUBLIC
   ${rviz_default_plugins_public_link_libraries}
 )
 target_link_libraries(rviz_default_plugins_marker PRIVATE gz-math::core)
-target_compile_definitions(rviz_default_plugins_marker PRIVATE "RVIZ_DEFAULT_PLUGINS_BUILDING_LIBRARY")
+target_compile_definitions(rviz_default_plugins_marker PRIVATE "RVIZ_DEFAULT_PLUGINS_MARKER_BUILDING_LIBRARY")
 
 add_library(rviz_default_plugins SHARED
   ${rviz_default_plugins_moc_files}

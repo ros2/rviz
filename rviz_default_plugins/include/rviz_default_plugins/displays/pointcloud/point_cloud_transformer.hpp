@@ -67,7 +67,7 @@ namespace rviz_default_plugins
 
 typedef std::vector<rviz_rendering::PointCloud::Point> V_PointCloudPoint;
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC PointCloudTransformer : public QObject
+class RVIZ_DEFAULT_PLUGINS_POINTCLOUD_PUBLIC PointCloudTransformer : public QObject
 {
   Q_OBJECT
 

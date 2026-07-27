@@ -76,7 +76,7 @@ namespace displays
  * \class ImageDisplay
  *
  */
-class RVIZ_DEFAULT_PLUGINS_PUBLIC ImageDisplay : public rviz_common::_RosTopicDisplay
+class RVIZ_DEFAULT_PLUGINS_IMAGE_PUBLIC ImageDisplay : public rviz_common::_RosTopicDisplay
 {
   Q_OBJECT
 

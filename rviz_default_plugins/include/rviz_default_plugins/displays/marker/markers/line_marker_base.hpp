@@ -61,7 +61,7 @@ namespace displays
 namespace markers
 {
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC LineMarkerBase : public MarkerBase
+class RVIZ_DEFAULT_PLUGINS_MARKER_PUBLIC LineMarkerBase : public MarkerBase
 {
 public:
   LineMarkerBase(

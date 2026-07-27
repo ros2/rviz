@@ -62,7 +62,7 @@ struct IndexAndMessage
   uint64_t message;
 };
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC PointCloudSelectionHandler : public
+class RVIZ_DEFAULT_PLUGINS_POINTCLOUD_PUBLIC PointCloudSelectionHandler : public
   rviz_common::interaction::SelectionHandler
 {
 public:

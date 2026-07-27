@@ -90,7 +90,7 @@ typedef std::pair<std::string, int32_t> MarkerID;
  * \class MarkerCommon
  * Common code shared by MarkerDisplay and MarkerArrayDisplay
  */
-class RVIZ_DEFAULT_PLUGINS_PUBLIC MarkerCommon
+class RVIZ_DEFAULT_PLUGINS_MARKER_PUBLIC MarkerCommon
 {
 public:
   explicit MarkerCommon(rviz_common::Display * display);
@@ -195,7 +195,7 @@ private:
 
 /** @brief Manager of a single marker namespace.  Keeps a hash from
  * marker IDs to MarkerBasePtr, and creates or destroys them when necessary. */
-class RVIZ_DEFAULT_PLUGINS_PUBLIC MarkerNamespace : public rviz_common::properties::BoolProperty
+class RVIZ_DEFAULT_PLUGINS_MARKER_PUBLIC MarkerNamespace : public rviz_common::properties::BoolProperty
 {
   Q_OBJECT
 

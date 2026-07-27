@@ -43,7 +43,7 @@
 namespace rviz_default_plugins
 {
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC PointCloudTransformerFactory : public
+class RVIZ_DEFAULT_PLUGINS_POINTCLOUD_PUBLIC PointCloudTransformerFactory : public
   rviz_common::PluginlibFactory<PointCloudTransformer>
 {
 public:

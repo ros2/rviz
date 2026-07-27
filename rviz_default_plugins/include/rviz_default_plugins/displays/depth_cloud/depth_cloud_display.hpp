@@ -81,7 +81,7 @@ namespace displays
  * \class DepthCloudDisplay
  *
  */
-class RVIZ_DEFAULT_PLUGINS_PUBLIC DepthCloudDisplay : public rviz_common::Display
+class RVIZ_DEFAULT_PLUGINS_IMAGE_PUBLIC DepthCloudDisplay : public rviz_common::Display
 {
   Q_OBJECT
 
