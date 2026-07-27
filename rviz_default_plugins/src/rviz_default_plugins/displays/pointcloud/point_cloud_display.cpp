@@ -32,8 +32,6 @@
 #include <memory>
 #include <utility>
 
-#include <Ogre.h>
-
 #include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"

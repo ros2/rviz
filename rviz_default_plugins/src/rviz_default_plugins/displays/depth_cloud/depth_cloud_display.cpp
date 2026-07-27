@@ -30,7 +30,9 @@
 
 #include "rviz_default_plugins/displays/depth_cloud/depth_cloud_display.hpp"
 
-#include <Ogre.h>
+#include <OgreMath.h>
+#include <OgreQuaternion.h>
+#include <OgreVector.h>
 
 #include <QRegularExpression>
 #include <QString>

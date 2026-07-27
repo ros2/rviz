@@ -33,7 +33,8 @@
 
 #ifndef Q_MOC_RUN
 #include <QObject>  // NOLINT: cpplint cannot handle the include order here
-#include <Ogre.h>
+#include <OgreQuaternion.h>
+#include <OgreVector.h>
 
 #include <memory>
 #include <mutex>
