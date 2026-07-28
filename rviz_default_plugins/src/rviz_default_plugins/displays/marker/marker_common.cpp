@@ -42,6 +42,7 @@
 #include "QString"
 
 #include "rclcpp/duration.hpp"
+#include "rclcpp/node.hpp"
 
 #include "rviz_common/display.hpp"
 #include "rviz_common/display_context.hpp"
