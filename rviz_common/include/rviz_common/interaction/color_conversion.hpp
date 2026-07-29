@@ -1,4 +1,5 @@
-// Copyright (c) 2018, Bosch Software Innovations GmbH.
+// Copyright (c) 2008, Willow Garage, Inc.
+// Copyright (c) 2017, Open Source Robotics Foundation, Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,61 +29,29 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 
-#ifndef RVIZ_DEFAULT_PLUGINS__PUBLISHERS__POINT_CLOUD2_PUBLISHER_HPP_
-#define RVIZ_DEFAULT_PLUGINS__PUBLISHERS__POINT_CLOUD2_PUBLISHER_HPP_
+#ifndef RVIZ_COMMON__INTERACTION__COLOR_CONVERSION_HPP_
+#define RVIZ_COMMON__INTERACTION__COLOR_CONVERSION_HPP_
 
-#include <chrono>
-#include <string>
-#include <vector>
+#include <cstdint>
 
-#include "geometry_msgs/msg/transform_stamped.hpp"
-#include "tf2/LinearMath/Quaternion.hpp"
-#include "rclcpp/node.hpp"
-#include "sensor_msgs/msg/point_cloud2.hpp"
-#include "std_msgs/msg/header.hpp"
+#include <OgrePixelFormat.h>
+#include <OgreColourValue.h>
 
-#include "../pointcloud_messages.hpp"
+#include "rviz_common/interaction/forwards.hpp"
+#include "rviz_common/visibility_control.hpp"
 
-using namespace std::chrono_literals;  // NOLINT
-
-namespace nodes
+namespace rviz_common
+{
+namespace interaction
 {
 
-geometry_msgs::msg::Point32 createPoint(float x, float y, float z)
-{
-  geometry_msgs::msg::Point32 point;
-  point.x = x;
-  point.y = y;
-  point.z = z;
+RVIZ_COMMON_PUBLIC
+uint32_t colorToHandle(Ogre::PixelFormat fmt, uint32_t col);
 
-  return point;
-}
+RVIZ_COMMON_PUBLIC
+CollObjectHandle colorToHandle(const Ogre::ColourValue & color);
 
-class PointCloud2Publisher : public rclcpp::Node
-{
-public:
-  PointCloud2Publisher()
-  : Node("pointcloud2_publisher"),
-    timer_(nullptr),
-    publisher_(nullptr)
-  {
-    publisher_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("pointcloud2", 10);
-    timer_ = this->create_wall_timer(500ms, std::bind(&PointCloud2Publisher::timer_callback, this));
-  }
+}  // namespace interaction
+}  // namespace rviz_common
 
-private:
-  void timer_callback()
-  {
-    auto message = rviz_default_plugins::createPointCloud2WithPoints({{0, 0, 0}});
-    message->header.frame_id = "pointcloud2_frame";
-
-    publisher_->publish(*message);
-  }
-
-  rclcpp::TimerBase::SharedPtr timer_;
-  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr publisher_;
-};
-
-}  // namespace nodes
-
-#endif  // RVIZ_DEFAULT_PLUGINS__PUBLISHERS__POINT_CLOUD2_PUBLISHER_HPP_
+#endif  // RVIZ_COMMON__INTERACTION__COLOR_CONVERSION_HPP_

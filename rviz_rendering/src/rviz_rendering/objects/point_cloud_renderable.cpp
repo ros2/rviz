@@ -34,6 +34,7 @@
 #include <algorithm>
 
 #include <OgreCamera.h>
+#include <OgreHardwareBufferManager.h>
 
 #include "rviz_rendering/objects/point_cloud.hpp"
 

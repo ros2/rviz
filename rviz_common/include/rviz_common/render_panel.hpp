@@ -32,10 +32,8 @@
 #ifndef RVIZ_COMMON__RENDER_PANEL_HPP_
 #define RVIZ_COMMON__RENDER_PANEL_HPP_
 
-#include <map>
 #include <memory>
 #include <mutex>
-#include <vector>
 
 #include <OgreVector.h>
 

@@ -34,7 +34,7 @@
 #include <string>
 #include <chrono>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/node.hpp"
 
 #include "geometry_msgs/msg/wrench_stamped.hpp"
 #include "std_msgs/msg/header.hpp"

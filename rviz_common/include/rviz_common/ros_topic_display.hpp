@@ -37,9 +37,6 @@
 #include <sstream>
 #include <string>
 
-#include <OgreSceneNode.h>
-#include <OgreSceneManager.h>
-
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #endif
@@ -49,7 +46,6 @@
 
 #include "rviz_common/display.hpp"
 #include "rviz_common/display_context.hpp"
-#include "frame_manager_iface.hpp"
 #include "rviz_common/properties/ros_topic_property.hpp"
 #include "rviz_common/properties/qos_profile_property.hpp"
 #include "rviz_common/properties/status_property.hpp"
