@@ -1,5 +1,4 @@
-// Copyright (c) 2008, Willow Garage, Inc.
-// Copyright (c) 2018, TNG Technology Consulting GmbH.
+// Copyright (c) 2026, Open Source Robotics Foundation, Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,53 +27,21 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+// Explicit instantiations of the display base class templates.  Every display
+// header declares its instantiation "extern template", so the member
+// functions, vtables and the underlying tf2_ros::MessageFilter /
+// message_filters::Subscriber stacks are compiled once here instead of in
+// every display translation unit.
 
-#ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__TEMPERATURE__TEMPERATURE_DISPLAY_HPP_
-#define RVIZ_DEFAULT_PLUGINS__DISPLAYS__TEMPERATURE__TEMPERATURE_DISPLAY_HPP_
+#include "rviz_common/message_filter_display.hpp"
 
-#include "rviz_default_plugins/displays/pointcloud/point_cloud_scalar_display.hpp"
-#include "sensor_msgs/msg/temperature.hpp"
+#include <sensor_msgs/msg/point_cloud.hpp>
+#include <sensor_msgs/msg/point_cloud2.hpp>
 
-// The base class template is explicitly instantiated once for this message
-// type (see the *_template_instantiations.cpp files); do not instantiate it
-// again in every translation unit that includes this header.
-// Not on Windows: the explicitly instantiated symbols would not be exported
-// from the library, so consumers keep instantiating implicitly there.
+// On Windows the display headers do not declare these "extern template", so
+// every translation unit keeps instantiating implicitly and nothing may be
+// defined here.
 #ifndef _WIN32
-extern template class rviz_common::MessageFilterDisplay<sensor_msgs::msg::Temperature>;
+template class rviz_common::MessageFilterDisplay<sensor_msgs::msg::PointCloud2>;
+template class rviz_common::MessageFilterDisplay<sensor_msgs::msg::PointCloud>;
 #endif
-
-namespace rviz_default_plugins
-{
-
-class PointCloudCommon;
-
-namespace displays
-{
-
-/// Display a Temperature message of type sensor_msgs::Temperature
-/**
- * \class TemperatureDisplay
- */
-
-class RVIZ_DEFAULT_PLUGINS_PUBLIC TemperatureDisplay
-  : public PointCloudScalarDisplay<sensor_msgs::msg::Temperature>
-{
-  Q_OBJECT
-
-public:
-  TemperatureDisplay();
-  ~TemperatureDisplay() override;
-
-protected:
-  void processMessage(const sensor_msgs::msg::Temperature::ConstSharedPtr message) override;
-
-private:
-  void setInitialValues() override;
-  void hideUnneededProperties() override;
-};
-
-}  // namespace displays
-}  // namespace rviz_default_plugins
-
-#endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__TEMPERATURE__TEMPERATURE_DISPLAY_HPP_
