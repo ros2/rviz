@@ -153,6 +153,7 @@ set(rviz_default_plugins_marker_headers_to_moc
 
 set(rviz_default_plugins_overlay_headers_to_moc
   include/rviz_default_plugins/displays/overlay_image/overlay_image_display.hpp
+  include/rviz_default_plugins/tools/overlay_picker/overlay_picker_tool.hpp
 )
 
 foreach(header "${rviz_default_plugins_headers_to_moc}")
@@ -284,6 +285,7 @@ set(rviz_default_plugins_marker_source_files
 set(rviz_default_plugins_overlay_source_files
   src/rviz_default_plugins/displays/overlay/overlay_utils.cpp
   src/rviz_default_plugins/displays/overlay_image/overlay_image_display.cpp
+  src/rviz_default_plugins/tools/overlay_picker/overlay_picker_tool.cpp
 )
 
 set(rviz_default_plugins_public_link_libraries
@@ -687,6 +689,13 @@ if(BUILD_TESTING)
       rviz_default_plugins
       ogre_testing_environment
     )
+  endif()
+
+  ament_add_gmock(overlay_picker_tool_test
+    test/rviz_default_plugins/tools/overlay_picker/overlay_picker_tool_test.cpp)
+  if(TARGET overlay_picker_tool_test)
+    target_include_directories(overlay_picker_tool_test PRIVATE test)
+    target_link_libraries(overlay_picker_tool_test rviz_default_plugins)
   endif()
 
   ament_add_gmock(palette_builder_test

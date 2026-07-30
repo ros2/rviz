@@ -395,6 +395,16 @@
   </class>
 
   <class
+    name="rviz_default_plugins/OverlayPicker"
+    type="rviz_default_plugins::tools::OverlayPickerTool"
+    base_class_type="rviz_common::Tool"
+  >
+    <description>
+      Drag OverlayImage displays in screen space.
+    </description>
+  </class>
+
+  <class
     name="rviz_default_plugins/SetGoal"
     type="rviz_default_plugins::tools::GoalTool"
     base_class_type="rviz_common::Tool"
