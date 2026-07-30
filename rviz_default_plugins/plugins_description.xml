@@ -122,6 +122,17 @@
   </class>
 
   <class
+    name="rviz_default_plugins/OverlayImage"
+    type="rviz_default_plugins::displays::OverlayImageDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays a sensor_msgs/msg/Image as a 2D overlay on top of the 3D scene.
+    </description>
+    <message_type>sensor_msgs/msg/Image</message_type>
+  </class>
+
+  <class
     name="rviz_default_plugins/InteractiveMarkers"
     type="rviz_default_plugins::displays::InteractiveMarkerDisplay"
     base_class_type="rviz_common::Display"

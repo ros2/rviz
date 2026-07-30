@@ -151,6 +151,10 @@ set(rviz_default_plugins_marker_headers_to_moc
   include/rviz_default_plugins/displays/interactive_markers/interactive_marker_namespace_property.hpp
 )
 
+set(rviz_default_plugins_overlay_headers_to_moc
+  include/rviz_default_plugins/displays/overlay_image/overlay_image_display.hpp
+)
+
 foreach(header "${rviz_default_plugins_headers_to_moc}")
   qt_wrap_cpp(rviz_default_plugins_moc_files "${header}")
 endforeach()
@@ -165,6 +169,10 @@ endforeach()
 
 foreach(header "${rviz_default_plugins_marker_headers_to_moc}")
   qt_wrap_cpp(rviz_default_plugins_marker_moc_files "${header}")
+endforeach()
+
+foreach(header "${rviz_default_plugins_overlay_headers_to_moc}")
+  qt_wrap_cpp(rviz_default_plugins_overlay_moc_files "${header}")
 endforeach()
 
 set(rviz_default_plugins_source_files
@@ -273,6 +281,11 @@ set(rviz_default_plugins_marker_source_files
   src/rviz_default_plugins/displays/marker/marker_display.cpp
 )
 
+set(rviz_default_plugins_overlay_source_files
+  src/rviz_default_plugins/displays/overlay/overlay_utils.cpp
+  src/rviz_default_plugins/displays/overlay_image/overlay_image_display.cpp
+)
+
 set(rviz_default_plugins_public_link_libraries
   ament_cmake_ros_core::ament_ros_defaults
   geometry_msgs::geometry_msgs
@@ -333,6 +346,22 @@ target_link_libraries(rviz_default_plugins_marker PUBLIC
 target_link_libraries(rviz_default_plugins_marker PRIVATE gz-math::core)
 target_compile_definitions(rviz_default_plugins_marker PRIVATE "RVIZ_DEFAULT_PLUGINS_MARKER_BUILDING_LIBRARY")
 
+add_library(rviz_default_plugins_overlay SHARED
+  ${rviz_default_plugins_overlay_moc_files}
+  ${rviz_default_plugins_overlay_source_files}
+)
+target_include_directories(rviz_default_plugins_overlay PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+)
+# The overlay displays decode images with the image family's ROSImageTexture.
+target_link_libraries(rviz_default_plugins_overlay PUBLIC
+  rviz_default_plugins_image
+  ${rviz_default_plugins_public_link_libraries}
+)
+target_link_libraries(rviz_default_plugins_overlay PRIVATE gz-math::core)
+target_compile_definitions(rviz_default_plugins_overlay PRIVATE "RVIZ_DEFAULT_PLUGINS_OVERLAY_BUILDING_LIBRARY")
+
 add_library(rviz_default_plugins SHARED
   ${rviz_default_plugins_moc_files}
   ${rviz_default_plugins_source_files}
@@ -347,6 +376,7 @@ target_link_libraries(rviz_default_plugins PUBLIC
   rviz_default_plugins_pointcloud
   rviz_default_plugins_image
   rviz_default_plugins_marker
+  rviz_default_plugins_overlay
   ${rviz_default_plugins_public_link_libraries}
 )
 # pluginlib dlopens only this library; the plugin factories of the family
@@ -403,6 +433,7 @@ install(
     rviz_default_plugins_pointcloud
     rviz_default_plugins_image
     rviz_default_plugins_marker
+    rviz_default_plugins_overlay
   EXPORT rviz_default_plugins
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
@@ -641,6 +672,20 @@ if(BUILD_TESTING)
     target_link_libraries(ortho_view_controller_test
       ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
       rviz_default_plugins
+    )
+  endif()
+
+  ament_add_gmock(overlay_image_display_test
+    test/rviz_default_plugins/displays/overlay_image/overlay_image_display_test.cpp
+    ${TEST_FIXTURE_OBJECTS}
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET overlay_image_display_test)
+    target_include_directories(overlay_image_display_test PRIVATE test)
+    target_link_libraries(overlay_image_display_test
+      ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
+      sensor_msgs::sensor_msgs
+      rviz_default_plugins
+      ogre_testing_environment
     )
   endif()
 
