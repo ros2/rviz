@@ -152,6 +152,7 @@ set(rviz_default_plugins_marker_headers_to_moc
 )
 
 set(rviz_default_plugins_overlay_headers_to_moc
+  include/rviz_default_plugins/displays/overlay_camera/overlay_camera_display.hpp
   include/rviz_default_plugins/displays/overlay_image/overlay_image_display.hpp
   include/rviz_default_plugins/tools/overlay_picker/overlay_picker_tool.hpp
 )
@@ -284,6 +285,7 @@ set(rviz_default_plugins_marker_source_files
 
 set(rviz_default_plugins_overlay_source_files
   src/rviz_default_plugins/displays/overlay/overlay_utils.cpp
+  src/rviz_default_plugins/displays/overlay_camera/overlay_camera_display.cpp
   src/rviz_default_plugins/displays/overlay_image/overlay_image_display.cpp
   src/rviz_default_plugins/tools/overlay_picker/overlay_picker_tool.cpp
 )

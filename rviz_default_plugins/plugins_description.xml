@@ -35,6 +35,17 @@
   </class>
 
   <class
+    name="rviz_default_plugins/OverlayCamera"
+    type="rviz_default_plugins::displays::OverlayCameraDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays a camera image composited as an overlay in the main 3D view.
+    </description>
+    <message_type>sensor_msgs/msg/Image</message_type>
+  </class>
+
+  <class
     name="rviz_default_plugins/DepthCloud"
     type="rviz_default_plugins::displays::DepthCloudDisplay"
     base_class_type="rviz_common::Display"
