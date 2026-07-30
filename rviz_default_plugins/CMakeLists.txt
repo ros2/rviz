@@ -126,6 +126,7 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/temperature/temperature_display.hpp
   include/rviz_default_plugins/displays/tf/frame_info.hpp
   include/rviz_default_plugins/displays/tf/tf_display.hpp
+  include/rviz_default_plugins/displays/tf_trajectory/tf_trajectory_display.hpp
   include/rviz_default_plugins/displays/twist/twist_display.hpp
   include/rviz_default_plugins/displays/wrench/wrench_display.hpp
   include/rviz_default_plugins/robot/robot.hpp
@@ -213,6 +214,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/tf/frame_info.cpp
   src/rviz_default_plugins/displays/tf/frame_selection_handler.cpp
   src/rviz_default_plugins/displays/tf/tf_display.cpp
+  src/rviz_default_plugins/displays/tf_trajectory/tf_trajectory_display.cpp
   src/rviz_default_plugins/displays/wrench/wrench_display.cpp
   src/rviz_default_plugins/displays/twist/twist_display.cpp
   src/rviz_default_plugins/robot/robot.cpp
@@ -839,6 +841,19 @@ if(BUILD_TESTING)
     target_link_libraries(frame_transformer_tf_test
       ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
       rviz_default_plugins
+    )
+  endif()
+
+  ament_add_gmock(tf_trajectory_display_test
+    test/rviz_default_plugins/displays/tf_trajectory/tf_trajectory_display_test.cpp
+    ${TEST_FIXTURE_OBJECTS}
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET tf_trajectory_display_test)
+    target_include_directories(tf_trajectory_display_test PRIVATE test)
+    target_link_libraries(tf_trajectory_display_test
+      ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
+      rviz_default_plugins
+      ogre_testing_environment
     )
   endif()
 

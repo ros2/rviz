@@ -263,6 +263,16 @@
   </class>
 
   <class
+    name="rviz_default_plugins/TFTrajectory"
+    type="rviz_default_plugins::displays::TFTrajectoryDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays the trajectory of a selected TF frame relative to the fixed frame.
+    </description>
+  </class>
+
+  <class
     name="rviz_default_plugins/TwistStamped"
     type="rviz_default_plugins::displays::TwistStampedDisplay"
     base_class_type="rviz_common::Display"
