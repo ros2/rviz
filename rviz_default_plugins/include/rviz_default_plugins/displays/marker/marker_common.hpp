@@ -195,7 +195,8 @@ private:
 
 /** @brief Manager of a single marker namespace.  Keeps a hash from
  * marker IDs to MarkerBasePtr, and creates or destroys them when necessary. */
-class RVIZ_DEFAULT_PLUGINS_MARKER_PUBLIC MarkerNamespace : public rviz_common::properties::BoolProperty
+class RVIZ_DEFAULT_PLUGINS_MARKER_PUBLIC MarkerNamespace
+  : public rviz_common::properties::BoolProperty
 {
   Q_OBJECT
 
