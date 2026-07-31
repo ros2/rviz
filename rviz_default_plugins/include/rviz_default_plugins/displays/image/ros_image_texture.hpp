@@ -85,44 +85,44 @@ struct ImageData final
 class ROSImageTexture : public ROSImageTextureIface
 {
 public:
-  RVIZ_DEFAULT_PLUGINS_PUBLIC ROSImageTexture();
-  RVIZ_DEFAULT_PLUGINS_PUBLIC ~ROSImageTexture() override;
+  RVIZ_DEFAULT_PLUGINS_IMAGE_PUBLIC ROSImageTexture();
+  RVIZ_DEFAULT_PLUGINS_IMAGE_PUBLIC ~ROSImageTexture() override;
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
+  RVIZ_DEFAULT_PLUGINS_IMAGE_PUBLIC
   void addMessage(sensor_msgs::msg::Image::ConstSharedPtr image) override;
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
+  RVIZ_DEFAULT_PLUGINS_IMAGE_PUBLIC
   bool update() override;
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
+  RVIZ_DEFAULT_PLUGINS_IMAGE_PUBLIC
   void clear() override;
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
+  RVIZ_DEFAULT_PLUGINS_IMAGE_PUBLIC
   const Ogre::String getName() const override;
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
+  RVIZ_DEFAULT_PLUGINS_IMAGE_PUBLIC
   const Ogre::TexturePtr & getTexture() override;
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
+  RVIZ_DEFAULT_PLUGINS_IMAGE_PUBLIC
   const sensor_msgs::msg::Image::ConstSharedPtr getImage() override;
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
+  RVIZ_DEFAULT_PLUGINS_IMAGE_PUBLIC
   uint32_t getWidth() const override;
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
+  RVIZ_DEFAULT_PLUGINS_IMAGE_PUBLIC
   uint32_t getHeight() const override;
 
   // automatic range normalization
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
+  RVIZ_DEFAULT_PLUGINS_IMAGE_PUBLIC
   void setNormalizeFloatImage(bool normalize) override;
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
+  RVIZ_DEFAULT_PLUGINS_IMAGE_PUBLIC
   void setNormalizeFloatImage(bool normalize, double min, double max) override;
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
+  RVIZ_DEFAULT_PLUGINS_IMAGE_PUBLIC
   void setMedianFrames(unsigned median_frames) override;
 
-  RVIZ_DEFAULT_PLUGINS_PUBLIC
+  RVIZ_DEFAULT_PLUGINS_IMAGE_PUBLIC
   void setSmoothScaling(bool enabled) override;
 
 private:

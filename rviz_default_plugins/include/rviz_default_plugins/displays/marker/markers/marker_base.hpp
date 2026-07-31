@@ -79,7 +79,7 @@ class MarkerSelectionHandler;
 typedef std::pair<std::string, int32_t> MarkerID;
 typedef std::set<Ogre::MaterialPtr> S_MaterialPtr;
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC MarkerBase
+class RVIZ_DEFAULT_PLUGINS_MARKER_PUBLIC MarkerBase
 {
 public:
   using Marker = visualization_msgs::msg::Marker;

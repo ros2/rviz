@@ -101,7 +101,7 @@ struct ImageDimensions
  * \class CameraDisplay
  *
  */
-class RVIZ_DEFAULT_PLUGINS_PUBLIC CameraDisplay
+class RVIZ_DEFAULT_PLUGINS_IMAGE_PUBLIC CameraDisplay
   : public ImageDisplay,
   public Ogre::RenderTargetListener
 {

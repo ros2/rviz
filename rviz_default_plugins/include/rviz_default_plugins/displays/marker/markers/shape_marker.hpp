@@ -57,7 +57,7 @@ namespace displays
 namespace markers
 {
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC ShapeMarker : public MarkerBase
+class RVIZ_DEFAULT_PLUGINS_MARKER_PUBLIC ShapeMarker : public MarkerBase
 {
 public:
   ShapeMarker(

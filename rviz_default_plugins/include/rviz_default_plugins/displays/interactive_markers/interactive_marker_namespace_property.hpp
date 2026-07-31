@@ -46,7 +46,7 @@ namespace rviz_default_plugins
 namespace displays
 {
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC InteractiveMarkerNamespaceProperty
+class RVIZ_DEFAULT_PLUGINS_MARKER_PUBLIC InteractiveMarkerNamespaceProperty
   : public rviz_common::properties::EditableEnumProperty
 {
   Q_OBJECT

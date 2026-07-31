@@ -40,10 +40,10 @@ namespace rviz_default_plugins
 namespace displays
 {
 
-RVIZ_DEFAULT_PLUGINS_PUBLIC
+RVIZ_DEFAULT_PLUGINS_POINTCLOUD_PUBLIC
 std::string getPointCloud2TransportFromTopic(const std::string & topic);
 
-RVIZ_DEFAULT_PLUGINS_PUBLIC
+RVIZ_DEFAULT_PLUGINS_POINTCLOUD_PUBLIC
 std::string getPointCloud2BaseTopicFromTopic(const std::string & topic);
 
 

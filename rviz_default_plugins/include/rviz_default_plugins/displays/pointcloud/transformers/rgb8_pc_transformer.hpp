@@ -43,7 +43,7 @@
 namespace rviz_default_plugins
 {
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC RGB8PCTransformer : public
+class RVIZ_DEFAULT_PLUGINS_POINTCLOUD_PUBLIC RGB8PCTransformer : public
   rviz_default_plugins::PointCloudTransformer
 {
 public:

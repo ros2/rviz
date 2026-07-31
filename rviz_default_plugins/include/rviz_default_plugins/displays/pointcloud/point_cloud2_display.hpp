@@ -66,7 +66,7 @@ struct Offsets
  * If you set the channel's name to "rgb", it will interpret the channel as an integer rgb value, with r, g and b
  * all being 8 bits.
  */
-class RVIZ_DEFAULT_PLUGINS_PUBLIC PointCloud2Display : public
+class RVIZ_DEFAULT_PLUGINS_POINTCLOUD_PUBLIC PointCloud2Display : public
   rviz_default_plugins::displays::PointCloud2TransportDisplay<sensor_msgs::msg::PointCloud2>
 {
 public:

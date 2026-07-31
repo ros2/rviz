@@ -63,7 +63,7 @@ namespace displays
 namespace markers
 {
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC ArrowMarker : public MarkerBase
+class RVIZ_DEFAULT_PLUGINS_MARKER_PUBLIC ArrowMarker : public MarkerBase
 {
 public:
   ArrowMarker(
