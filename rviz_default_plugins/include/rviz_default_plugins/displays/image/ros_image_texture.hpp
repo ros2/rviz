@@ -122,8 +122,15 @@ public:
   RVIZ_DEFAULT_PLUGINS_PUBLIC
   void setMedianFrames(unsigned median_frames) override;
 
+  // When enabled, the texture is built with a full mipmap chain (driver
+  // generates mips on each upload via TU_AUTOMIPMAP). The display's material
+  // should pair this with a trilinear or anisotropic filter to actually
+  // sample the chain; when disabled, the texture has no mip chain and the
+  // display should fall back to TFO_NONE.
+  // Note: put here instead of in ROSImageTextureIface
+  //       to avoid breaking ABI in this backport.
   RVIZ_DEFAULT_PLUGINS_PUBLIC
-  void setSmoothScaling(bool enabled) override;
+  void setSmoothScaling(bool enabled);
 
 private:
   // Ensures the underlying Ogre texture matches the requested dimensions,

@@ -339,7 +339,9 @@ void ImageDisplay::updateNormalizeOptions()
 
 void ImageDisplay::updateSmoothScaling()
 {
-  texture_->setSmoothScaling(smooth_scaling_property_->getBool());
+  if (auto * concrete = dynamic_cast<ROSImageTexture *>(texture_.get())) {
+    concrete->setSmoothScaling(smooth_scaling_property_->getBool());
+  }
   applySmoothScalingToMaterial(material_);
 }
 
