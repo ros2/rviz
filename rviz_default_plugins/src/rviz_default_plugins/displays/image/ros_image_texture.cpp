@@ -58,8 +58,7 @@
 
 #include "rviz_common/logging.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
-
-#include "./bayer_format.hpp"
+#include "rviz_default_plugins/displays/image/bayer_format.hpp"
 
 namespace rviz_default_plugins
 {

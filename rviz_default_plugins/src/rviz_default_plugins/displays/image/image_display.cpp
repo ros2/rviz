@@ -71,6 +71,7 @@
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
 #include "rviz_common/validate_floats.hpp"
+#include "rviz_default_plugins/displays/image/bayer_format.hpp"
 #include "rviz_default_plugins/displays/image/get_transport_from_topic.hpp"
 #include "rviz_default_plugins/displays/image/ros_image_texture.hpp"
 #include "rviz_default_plugins/displays/image/ros_image_texture_iface.hpp"
@@ -78,7 +79,6 @@
 #include "rviz_rendering/render_window.hpp"
 #include "sensor_msgs/image_encodings.hpp"
 
-#include "./bayer_format.hpp"
 namespace rviz_default_plugins
 {
 namespace displays
