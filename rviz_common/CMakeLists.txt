@@ -383,6 +383,7 @@ if(BUILD_TESTING)
     test/uniform_string_stream_test.cpp
     test/property_test.cpp
     test/display_test.cpp
+    test/message_filter_display_test.cpp
     test/mock_display_group.cpp
     test/properties/qos_profile_property_test.cpp
     test/visualizer_app_test.cpp
