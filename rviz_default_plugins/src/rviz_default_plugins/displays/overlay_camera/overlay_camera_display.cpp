@@ -1,3 +1,4 @@
+// Copyright (c) 2026, Iori Yanokura
 // Copyright (c) 2014, JSK Lab
 // All rights reserved.
 //
@@ -56,6 +57,16 @@ namespace rviz_default_plugins
 {
 namespace displays
 {
+
+namespace
+{
+
+// The overlay buffer is PF_A8R8G8B8, so every pixel packs alpha into the top
+// byte and the color channels into the lower three.
+constexpr Ogre::uint32 kRgbChannelMask = 0x00FFFFFFu;
+constexpr Ogre::uint32 kAlphaChannelShift = 24U;
+
+}  // namespace
 
 OverlayCameraDisplay::OverlayCameraDisplay()
 : overlay_(nullptr),
@@ -282,13 +293,13 @@ void OverlayCameraDisplay::redraw(Ogre::RenderTarget * render_target)
   }
 
   const int alpha = static_cast<int>(std::clamp(texture_alpha_, 0.0f, 1.0f) * 255.0f);
-  const Ogre::uint32 alpha_bits = static_cast<Ogre::uint32>(alpha) << 24;
+  const Ogre::uint32 alpha_bits = static_cast<Ogre::uint32>(alpha) << kAlphaChannelShift;
   const int alpha_width = std::min(texture_width, image.width());
   const int alpha_height = std::min(texture_height, image.height());
   for (int y = 0; y < alpha_height; ++y) {
     auto * row = reinterpret_cast<Ogre::uint32 *>(image.scanLine(y));
     for (int x = 0; x < alpha_width; ++x) {
-      row[x] = (row[x] & 0x00FFFFFFu) | alpha_bits;
+      row[x] = (row[x] & kRgbChannelMask) | alpha_bits;
     }
   }
 }
