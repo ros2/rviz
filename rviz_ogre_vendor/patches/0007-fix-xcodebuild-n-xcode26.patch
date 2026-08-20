@@ -1,8 +1,8 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -272,10 +272,10 @@ elseif (APPLE AND NOT APPLE_IOS)
-
+@@ -272,12 +272,12 @@ elseif (APPLE AND NOT APPLE_IOS)
+ 
    set(XCODE_ATTRIBUTE_SDKROOT macosx)
    if(CMAKE_GENERATOR STREQUAL "Unix Makefiles")
 -    execute_process(COMMAND xcodebuild -version -sdk "${XCODE_ATTRIBUTE_SDKROOT}" Path | head -n 1 OUTPUT_VARIABLE CMAKE_OSX_SYSROOT)
@@ -11,7 +11,7 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
    else()
      set(CMAKE_OSX_SYSROOT macosx)
    endif()
-
+ 
    # Make sure that the OpenGL render system is selected for non-iOS Apple builds
    set(OGRE_BUILD_RENDERSYSTEM_GLES2 FALSE)
  endif ()
