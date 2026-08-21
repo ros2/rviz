@@ -38,11 +38,9 @@
 #include <memory>
 #include <vector>
 
-#include <OgreMaterialManager.h>
-#include <OgreRenderQueueListener.h>
+#include <OgrePixelFormat.h>
+#include <OgreTexture.h>
 #include <OgreVector.h>
-
-#include <QObject>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/interaction/forwards.hpp"
 #include "rviz_common/interaction/selection_handler.hpp"

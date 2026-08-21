@@ -39,7 +39,7 @@
 #include <OgreQuaternion.h>
 
 #include "rviz_common/transformation/frame_transformer.hpp"
-#include "rviz_common/ros_integration/ros_node_abstraction.hpp"
+#include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
 #include "rviz_default_plugins/transformation/tf_wrapper.hpp"
 
 #include "rviz_default_plugins/visibility_control.hpp"

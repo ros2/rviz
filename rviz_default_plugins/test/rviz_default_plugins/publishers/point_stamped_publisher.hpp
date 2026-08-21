@@ -35,7 +35,7 @@
 #include <vector>
 
 #include "geometry_msgs/msg/point_stamped.hpp"
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/node.hpp"
 #include "rclcpp/clock.hpp"
 #include "std_msgs/msg/header.hpp"
 

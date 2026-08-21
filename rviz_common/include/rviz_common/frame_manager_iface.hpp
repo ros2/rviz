@@ -32,9 +32,7 @@
 #ifndef RVIZ_COMMON__FRAME_MANAGER_IFACE_HPP_
 #define RVIZ_COMMON__FRAME_MANAGER_IFACE_HPP_
 
-#include <map>
 #include <memory>
-#include <mutex>
 #include <string>
 #include <vector>
 

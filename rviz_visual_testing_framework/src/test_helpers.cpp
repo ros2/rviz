@@ -33,6 +33,7 @@
 
 #include <QApplication>  // NOLINT
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
+#include <QWidget>  // NOLINT
 
 namespace helpers
 {

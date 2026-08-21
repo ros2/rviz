@@ -34,8 +34,6 @@
 #include <string>
 #include <vector>
 
-#include "rclcpp/rclcpp.hpp"
-#include "rclcpp/clock.hpp"
 #include "std_msgs/msg/header.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "tf2/LinearMath/Quaternion.hpp"
@@ -45,6 +43,8 @@
 #include "rviz_visual_testing_framework/internal/executor.hpp"
 #include "rviz_visual_testing_framework/internal/visual_test.hpp"
 #include "rviz_visual_testing_framework/page_objects/page_object_with_window.hpp"
+
+class QApplication;
 
 class VisualTestFixture : public testing::Test
 {

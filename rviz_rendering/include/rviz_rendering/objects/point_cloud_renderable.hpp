@@ -41,8 +41,7 @@
 #include <OgreVector.h>
 #include <OgreMaterial.h>
 #include <OgreColourValue.h>
-#include <OgreRoot.h>
-#include <OgreHardwareBufferManager.h>
+#include <OgreHardwareVertexBuffer.h>
 #include <OgreSharedPtr.h>
 
 #include "rviz_rendering/visibility_control.hpp"

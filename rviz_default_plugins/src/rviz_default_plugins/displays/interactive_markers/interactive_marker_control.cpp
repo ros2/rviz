@@ -48,6 +48,7 @@
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/display_context.hpp"
+#include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/interaction/handler_manager.hpp"
 #include "rviz_common/interaction/view_picker_iface.hpp"
 #include "rviz_common/load_resource.hpp"

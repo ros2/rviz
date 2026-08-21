@@ -33,7 +33,6 @@
 #define RVIZ_RENDERING__OBJECTS__POINT_CLOUD_HPP_
 
 #include <cstdint>
-#include <deque>
 #include <memory>
 #include <string>
 #include <vector>
@@ -45,8 +44,6 @@
 #include <OgreVector.h>
 #include <OgreMaterial.h>
 #include <OgreColourValue.h>
-#include <OgreRoot.h>
-#include <OgreHardwareBufferManager.h>
 #include <OgreSharedPtr.h>
 
 #include "point_cloud_renderable.hpp"

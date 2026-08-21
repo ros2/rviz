@@ -40,6 +40,8 @@
 #include <OgreTextureManager.h>
 #include <OgreTechnique.h>
 #include <OgreHardwarePixelBuffer.h>
+#include <OgreSceneManager.h>
+#include <OgreSceneNode.h>
 
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 

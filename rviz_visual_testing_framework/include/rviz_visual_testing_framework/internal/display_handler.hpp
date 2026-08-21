@@ -34,6 +34,7 @@
 #include <memory>
 #include <vector>
 
+#include <QPushButton>  // NOLINT: cpplint is unable to handle the include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_visual_testing_framework/page_objects/base_page_object.hpp"
