@@ -39,6 +39,27 @@
 #include "rviz_common/ros_integration/ros_client_abstraction.hpp"
 #include "ament_index_cpp/get_package_share_path.hpp"
 
+#include "rviz_visual_testing_framework/internal/executor.hpp"
+#include "rviz_visual_testing_framework/internal/visual_test.hpp"
+#include "rviz_visual_testing_framework/internal/display_handler.hpp"
+#include "rviz_visual_testing_framework/page_objects/base_page_object.hpp"
+
+VisualTestFixture::VisualTestFixture()
+{
+  test_name_ = ::testing::UnitTest::GetInstance()->current_test_info()->name();
+  executor_ = std::make_shared<Executor>();
+  src_directory_path_ = std::string(_SRC_DIR_PATH);
+  build_directory_path_ = std::string(_BUILD_DIR_PATH);
+  visual_test_ = std::make_unique<VisualTest>(
+    visualizer_app_, executor_, src_directory_path_, build_directory_path_);
+  all_display_ids_vector_ = std::make_shared<std::vector<int>>();
+  display_handler_ = std::make_unique<DisplayHandler>(executor_, all_display_ids_vector_);
+
+  visual_test_->setCamera();
+}
+
+VisualTestFixture::~VisualTestFixture() = default;
+
 void VisualTestFixture::SetUpTestCase()
 {
   QLocale::setDefault(QLocale::English);
@@ -159,6 +180,11 @@ void VisualTestFixture::assertMainWindowIdentity(Ogre::String image_name)
   captureMainWindow(image_name);
   startApplication();
   visual_test_->assertVisualIdentity(image_name);
+}
+
+void VisualTestFixture::addDisplayHelper(std::shared_ptr<BasePageObject> page_object)
+{
+  display_handler_->addDisplayHelper(page_object);
 }
 
 void VisualTestFixture::startApplication()
