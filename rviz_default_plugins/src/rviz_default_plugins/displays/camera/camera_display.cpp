@@ -677,7 +677,11 @@ Ogre::Matrix4 CameraDisplay::calculateProjectionMatrix(
 
 void CameraDisplay::processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg)
 {
-  last_msg_ = msg;
+  // Do not set last_msg_ here to disable the cursor-pixel readout inherited
+  // from ImageDisplay because it's broken for CameraDisplay because its mapping
+  // ignores the Zoom Factor and some more in calculateScreenCorners().
+  // With last_msg_ left unset, mapWidgetPosToImagePixel() returns false
+  // and the tooltip/status stay empty instead of reporting wrong pixel values.
   texture_->addMessage(msg);
 }
 

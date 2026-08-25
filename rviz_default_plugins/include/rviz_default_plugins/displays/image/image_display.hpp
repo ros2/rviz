@@ -124,8 +124,8 @@ protected:
   std::unique_ptr<rviz_common::RenderPanel> render_panel_;
 
   // Latest image for pixel-value readout under the mouse pointer. Exposed to
-  // subclasses (e.g. CameraDisplay) so they can keep it in sync when they
-  // override processMessage.
+  // subclasses so they can keep it in sync when they override processMessage,
+  // or leave it unset to disable the pixel-value readout feature.
   sensor_msgs::msg::Image::ConstSharedPtr last_msg_;
 
 private:
