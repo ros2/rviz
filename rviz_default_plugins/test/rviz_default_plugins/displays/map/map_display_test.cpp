@@ -269,3 +269,41 @@ TEST_F(MapTestFixture, repeatedly_resizing_the_map_does_not_accumulate_scene_nod
 
   EXPECT_THAT(map_node->numChildren(), Eq(1u));
 }
+
+  static size_t countResourcesNamed(Ogre::ResourceManager & manager, const std::string & prefix)
+  {
+    size_t count = 0;
+    auto resources = manager.getResourceIterator();
+    while (resources.hasMoreElements()) {
+      if (resources.getNext()->getName().compare(0, prefix.size(), prefix) == 0) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+TEST_F(MapTestFixture, repeatedly_resizing_the_map_does_not_accumulate_textures_or_materials) {
+  mockValidTransform();
+
+  map_display_->processMessage(createMapMessage(50, 50));
+
+  auto & texture_manager = Ogre::TextureManager::getSingleton();
+  auto & material_manager = Ogre::MaterialManager::getSingleton();
+  auto textures = countResourcesNamed(texture_manager, "MapTexture");
+  auto materials = countResourcesNamed(material_manager, "MapMaterial");
+  ASSERT_THAT(textures, Eq(1u));
+  ASSERT_THAT(materials, Eq(1u));
+
+  for (uint32_t size = 51; size <= 60; size++) {
+    map_display_->processMessage(createMapMessage(size, size));
+  }
+
+  EXPECT_THAT(countResourcesNamed(texture_manager, "MapTexture"), Eq(1u));
+  EXPECT_THAT(countResourcesNamed(material_manager, "MapMaterial"), Eq(1u));
+
+  map_display_->reset();
+
+  EXPECT_THAT(countResourcesNamed(texture_manager, "MapTexture"), Eq(0u));
+  EXPECT_THAT(countResourcesNamed(material_manager, "MapMaterial"), Eq(0u));
+}
+
