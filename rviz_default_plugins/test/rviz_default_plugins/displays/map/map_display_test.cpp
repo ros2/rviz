@@ -36,6 +36,9 @@
 #include <vector>
 
 #include <OgreManualObject.h>
+#include <OgreMaterialManager.h>
+#include <OgreResourceManager.h>
+#include <OgreTextureManager.h>
 
 #include "rviz_default_plugins/displays/map/map_display.hpp"
 #include "../../scene_graph_introspection.hpp"
