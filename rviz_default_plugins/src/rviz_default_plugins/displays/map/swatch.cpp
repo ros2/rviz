@@ -107,7 +107,7 @@ Swatch::~Swatch()
 {
   scene_manager_->destroyManualObject(manual_object_);
   scene_manager_->destroySceneNode(scene_node_);
-  
+
   // The texture and the cloned material are owned by this swatch alone, so they have to be
   // unregistered from their managers as well; otherwise they outlive the swatch.
   resetOldTexture();
