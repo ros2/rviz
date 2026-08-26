@@ -85,6 +85,7 @@ Swatch::Swatch(
   float resolution, bool draw_under)
 : scene_manager_(scene_manager),
   parent_scene_node_(parent_scene_node),
+  scene_node_(nullptr),
   manual_object_(nullptr),
   x_(x), y_(y), width_(width), height_(height)
 {
