@@ -105,6 +105,7 @@ Swatch::Swatch(
 Swatch::~Swatch()
 {
   scene_manager_->destroyManualObject(manual_object_);
+  scene_manager_->destroySceneNode(scene_node_);
 }
 
 void Swatch::updateAlpha(

@@ -212,3 +212,60 @@ TEST_F(MapTestFixture, createSwatches_creates_more_swatches_if_map_is_too_big) {
 
   EXPECT_THAT(manual_objects, SizeIs(8));
 }
+
+TEST_F(MapTestFixture, reset_destroys_the_swatch_scene_nodes) {
+  mockValidTransform();
+
+  map_display_->processMessage(createMapMessage());
+
+  auto manual_objects = rviz_default_plugins::findAllOgreObjectByType<Ogre::ManualObject>(
+    scene_manager_->getRootSceneNode(), "ManualObject");
+  ASSERT_THAT(manual_objects, SizeIs(1));
+
+  auto swatch_node = manual_objects[0]->getParentSceneNode();
+  auto swatch_node_name = swatch_node->getName();
+  auto map_node = swatch_node->getParentSceneNode();
+  ASSERT_TRUE(scene_manager_->hasSceneNode(swatch_node_name));
+
+  map_display_->reset();
+
+  EXPECT_FALSE(scene_manager_->hasSceneNode(swatch_node_name));
+  EXPECT_THAT(map_node->numChildren(), Eq(0u));
+}
+
+TEST_F(MapTestFixture, recreating_swatches_destroys_the_previous_swatch_scene_nodes) {
+  mockValidTransform();
+
+  map_display_->processMessage(createMapMessage(50, 50));
+
+  auto manual_objects = rviz_default_plugins::findAllOgreObjectByType<Ogre::ManualObject>(
+    scene_manager_->getRootSceneNode(), "ManualObject");
+  ASSERT_THAT(manual_objects, SizeIs(1));
+
+  auto old_swatch_node = manual_objects[0]->getParentSceneNode();
+  auto old_swatch_node_name = old_swatch_node->getName();
+  auto map_node = old_swatch_node->getParentSceneNode();
+
+  // a differently sized map forces the swatches to be recreated
+  map_display_->processMessage(createMapMessage(60, 60));
+
+  EXPECT_FALSE(scene_manager_->hasSceneNode(old_swatch_node_name));
+  EXPECT_THAT(map_node->numChildren(), Eq(1u));
+}
+
+TEST_F(MapTestFixture, repeatedly_resizing_the_map_does_not_accumulate_scene_nodes) {
+  mockValidTransform();
+
+  map_display_->processMessage(createMapMessage(50, 50));
+
+  auto manual_objects = rviz_default_plugins::findAllOgreObjectByType<Ogre::ManualObject>(
+    scene_manager_->getRootSceneNode(), "ManualObject");
+  ASSERT_THAT(manual_objects, SizeIs(1));
+  auto map_node = manual_objects[0]->getParentSceneNode()->getParentSceneNode();
+
+  for (uint32_t size = 51; size <= 60; size++) {
+    map_display_->processMessage(createMapMessage(size, size));
+  }
+
+  EXPECT_THAT(map_node->numChildren(), Eq(1u));
+}
