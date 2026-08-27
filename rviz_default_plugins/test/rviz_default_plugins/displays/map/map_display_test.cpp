@@ -309,4 +309,3 @@ TEST_F(MapTestFixture, repeatedly_resizing_the_map_does_not_accumulate_textures_
   EXPECT_THAT(countResourcesNamed(texture_manager, "MapTexture"), Eq(0u));
   EXPECT_THAT(countResourcesNamed(material_manager, "MapMaterial"), Eq(0u));
 }
-
