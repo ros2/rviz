@@ -141,7 +141,7 @@ ImageDisplay::ImageDisplay(std::unique_ptr<ROSImageTextureIface> texture)
 
   smooth_scaling_property_ = new rviz_common::properties::EnumProperty(
     "Smooth scaling", kSmoothScalingWhenDownscaling,
-    "When to let the rescale sampling weight pixels based on area instead of using nearest-neighbour.\n"
+    "When to rescale area-weighted instead of using nearest-neighbour.\n"
     "\"Always\": good anti-aliasing when shrinking, smooth when enlarging.\n"
     "\"When downscaling\": same but crisp when enlarging.\n"
     "\"Never\": not recommended because this may show aliasing.",
