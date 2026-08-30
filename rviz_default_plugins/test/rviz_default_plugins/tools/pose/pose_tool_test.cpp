@@ -27,7 +27,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-
 #include <gmock/gmock.h>
 
 #include <memory>
@@ -131,12 +130,4 @@ TEST_F(PoseToolTestFixture, deactivate_makes_arrow_invisible) {
   auto arrows = rviz_default_plugins::findAllArrows(scene_manager_->getRootSceneNode());
   ASSERT_THAT(arrows, SizeIs(1));
   EXPECT_FALSE(rviz_default_plugins::arrowIsVisible(arrows[0]));
-}
-
-
-int main(int argc, char ** argv)
-{
-  QApplication app(argc, argv);
-  InitGoogleMock(&argc, argv);
-  return RUN_ALL_TESTS();
 }

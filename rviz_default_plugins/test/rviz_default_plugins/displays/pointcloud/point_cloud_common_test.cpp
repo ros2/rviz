@@ -27,7 +27,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-
 #include <gtest/gtest.h>
 
 #include <memory>
@@ -233,11 +232,4 @@ TEST_F(
 
   auto point_clouds = rviz_default_plugins::findAllPointClouds(scene_manager_->getRootSceneNode());
   ASSERT_THAT(point_clouds.size(), Eq(0u));
-}
-
-int main(int argc, char ** argv)
-{
-  QApplication app(argc, argv);
-  InitGoogleMock(&argc, argv);
-  return RUN_ALL_TESTS();
 }

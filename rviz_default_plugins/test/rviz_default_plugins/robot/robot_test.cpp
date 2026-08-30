@@ -27,7 +27,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-
 #include <gmock/gmock.h>
 
 #include <cmath>
@@ -401,7 +400,6 @@ TEST_F(RobotTestFixture, changedExpandTree_hides_link_and_joint_properties_on_de
   EXPECT_FALSE(test_robot_link->isExpanded());
 }
 
-
 TEST_F(RobotTestFixture, changedExpandLinkDetails_shows_link_details) {
   robot_->load(urdf_model_);
 
@@ -475,11 +473,4 @@ TEST_F(RobotTestFixture, changedEnableAllLinks_toggles_all_links) {
   EXPECT_FALSE(prop->childAt(6)->getValue().toBool());
   EXPECT_FALSE(prop->childAt(7)->getValue().toBool());
   EXPECT_FALSE(prop->childAt(8)->getValue().toBool());
-}
-
-int main(int argc, char ** argv)
-{
-  QApplication app(argc, argv);
-  InitGoogleMock(&argc, argv);
-  return RUN_ALL_TESTS();
 }

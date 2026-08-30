@@ -1,4 +1,4 @@
-// Copyright (c) 2017, Bosch Software Innovations GmbH.
+// Copyright (c) 2026, Open Source Robotics Foundation, Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,40 +28,16 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 
-#include "ogre_testing_environment.hpp"
+#include <gmock/gmock.h>
 
-#include <string>
+#include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
 
-#include <OgreLogManager.h>
-
-#include "rviz_rendering/render_window.hpp"
-#include "rviz_rendering/render_system.hpp"
-
-namespace rviz_default_plugins
+// Shared main for the consolidated display tests binary.  Some of the test
+// suites drive Qt widgets, so a QApplication has to exist for the whole run.
+// Suites that need rclcpp manage init/shutdown themselves in their fixtures.
+int main(int argc, char ** argv)
 {
-
-void OgreTestingEnvironment::setUpOgreTestEnvironment(bool debug)
-{
-  // Ogre::LogManager is a singleton, creating it twice is not allowed.
-  // SetUpTestCase() runs once per test suite, and a consolidated test binary
-  // runs several suites in the same process.
-  if (!debug && Ogre::LogManager::getSingletonPtr() == nullptr) {
-    const std::string & name = "";
-    auto lm = new Ogre::LogManager();
-    lm->createLog(name, false, debug, true);
-  }
-  setUpRenderSystem();
+  QApplication app(argc, argv);
+  testing::InitGoogleMock(&argc, argv);
+  return RUN_ALL_TESTS();
 }
-
-void OgreTestingEnvironment::setUpRenderSystem()
-{
-  rviz_rendering::RenderSystem::get();
-}
-
-Ogre::RenderWindow * OgreTestingEnvironment::createOgreRenderWindow()
-{
-  auto test = new rviz_rendering::RenderWindow();
-  return rviz_rendering::RenderSystem::get()->makeRenderWindow(test->winId(), 10, 10, 1.0);
-}
-
-}  // end namespace rviz_default_plugins
