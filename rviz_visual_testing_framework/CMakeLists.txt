@@ -25,15 +25,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_ros_core REQUIRED)
 find_package(geometry_msgs REQUIRED)
-# Avoid find_package(QT NAMES Qt6 Qt5 ...) due to CMake's default ascending path resolution
-find_package(Qt6 QUIET COMPONENTS Test Widgets)
-if(Qt6_FOUND)
-  set(QT_VERSION_MAJOR 6)
-else()
-  find_package(Qt5 REQUIRED COMPONENTS Test Widgets)
-  set(QT_VERSION_MAJOR 5)
-endif()
-set(QT_VERSION "${Qt${QT_VERSION_MAJOR}_VERSION}")
+find_package(Qt6 6.4 REQUIRED COMPONENTS Test Widgets)
 find_package(rclcpp REQUIRED)
 find_package(rcutils REQUIRED)
 find_package(rviz_common REQUIRED)
@@ -47,11 +39,11 @@ find_package(ament_cmake_gtest REQUIRED)
 ament_find_gtest()
 
 # TODO(wjwwood): this block is to setup the windeployqt tool, could be removed later.
-if(Qt${QT_VERSION_MAJOR}_FOUND AND WIN32 AND TARGET Qt${QT_VERSION_MAJOR}::qmake AND NOT TARGET Qt${QT_VERSION_MAJOR}::windeployqt)
-  get_target_property(_qt_qmake_location Qt${QT_VERSION_MAJOR}::qmake IMPORTED_LOCATION)
+if(Qt6_FOUND AND WIN32 AND TARGET Qt6::qmake AND NOT TARGET Qt6::windeployqt)
+  get_target_property(_qt_qmake_location Qt6::qmake IMPORTED_LOCATION)
 
   execute_process(
-    COMMAND "${_qt_qmake_location}" -query QT${QT_VERSION_MAJOR}_INSTALL_PREFIX
+    COMMAND "${_qt_qmake_location}" -query QT6_INSTALL_PREFIX
     RESULT_VARIABLE return_code
     OUTPUT_VARIABLE qt_install_prefix
     OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -82,8 +74,8 @@ target_include_directories(rviz_visual_testing_framework
 target_link_libraries(rviz_visual_testing_framework PUBLIC
   ament_cmake_ros_core::ament_ros_defaults
   geometry_msgs::geometry_msgs
-  Qt${QT_VERSION_MAJOR}::Test
-  Qt${QT_VERSION_MAJOR}::Widgets
+  Qt6::Test
+  Qt6::Widgets
   rclcpp::rclcpp
   rcutils::rcutils
   rviz_common::rviz_common
@@ -98,7 +90,7 @@ target_link_libraries(rviz_visual_testing_framework PUBLIC
 ament_export_dependencies(
   ament_cmake_ros_core
   geometry_msgs
-  Qt${QT_VERSION_MAJOR}
+  Qt6
   rclcpp
   rcutils
   rviz_common
