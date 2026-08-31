@@ -31,11 +31,11 @@
 #ifndef RVIZ_COMMON__TRANSFORMATION__TF2_HELPERS__TF2_CONVERSION_HELPERS_HPP_
 #define RVIZ_COMMON__TRANSFORMATION__TF2_HELPERS__TF2_CONVERSION_HELPERS_HPP_
 
-#include <chrono>
 #include <string>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/time.hpp"
 #include "std_msgs/msg/header.hpp"
+#include "tf2/time.hpp"
 
 #include "rviz_common/visibility_control.hpp"
 
@@ -47,36 +47,16 @@ namespace tf2_helpers
 {
 
 RVIZ_COMMON_PUBLIC
-inline std_msgs::msg::Header
-createHeader(const tf2::TimePoint & tf2_time, const std::string & frame_id)
-{
-  std_msgs::msg::Header header;
-  const auto seconds = std::chrono::time_point_cast<std::chrono::seconds>(tf2_time);
-  const auto nanoseconds = std::chrono::time_point_cast<std::chrono::nanoseconds>(tf2_time) -
-    std::chrono::time_point_cast<std::chrono::nanoseconds>(seconds);
-  header.stamp.sec = seconds.time_since_epoch().count();
-  header.stamp.nanosec = nanoseconds.count();
-  header.frame_id = frame_id;
-  return header;
-}
+std_msgs::msg::Header
+createHeader(const tf2::TimePoint & tf2_time, const std::string & frame_id);
 
 RVIZ_COMMON_PUBLIC
-inline rclcpp::Time
-fromTf2TimePoint(const tf2::TimePoint & tf2_time)
-{
-  const auto seconds = std::chrono::time_point_cast<std::chrono::seconds>(tf2_time);
-  const auto nanoseconds = std::chrono::time_point_cast<std::chrono::nanoseconds>(tf2_time) -
-    std::chrono::time_point_cast<std::chrono::nanoseconds>(seconds);
-  return rclcpp::Time(seconds.time_since_epoch().count(), nanoseconds.count());
-}
+rclcpp::Time
+fromTf2TimePoint(const tf2::TimePoint & tf2_time);
 
 RVIZ_COMMON_PUBLIC
-inline tf2::TimePoint
-toTf2TimePoint(const rclcpp::Time & time)
-{
-  return std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>(
-    std::chrono::nanoseconds{time.nanoseconds()});
-}
+tf2::TimePoint
+toTf2TimePoint(const rclcpp::Time & time);
 
 }  // namespace tf2_helpers
 }  // namespace transformation

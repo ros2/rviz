@@ -129,6 +129,10 @@ RenderWindowImpl::renderNow()
     return;
   }
 
+  if (parent_->width() == 0 || parent_->height() == 0) {
+    return;
+  }
+
   if (!render_system_ || !ogre_render_window_) {
     this->initialize();
     if (setup_scene_callback_) {
@@ -241,6 +245,10 @@ RenderWindowImpl::initialize()
 void
 RenderWindowImpl::resize(size_t width, size_t height)
 {
+  if (width == 0 || height == 0) {
+    this->renderLater();
+    return;
+  }
   if (ogre_render_window_) {
     this->setCameraAspectRatio();
     ogre_render_window_->resize(

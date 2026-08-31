@@ -41,6 +41,8 @@
 #include <QKeyEvent>  // NOLINT: cpplint cannot handle include order here
 #include <QString>  // NOLINT: cpplint cannot handle include order here
 
+#include "rclcpp/node.hpp"
+
 #include "rviz_rendering/render_window.hpp"
 
 #include "rviz_common/display_context.hpp"
@@ -193,24 +195,6 @@ void ViewController::activate()
 }
 
 void ViewController::update(std::chrono::nanoseconds dt, std::chrono::nanoseconds ros_dt)
-{
-#if !defined(_WIN32)
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#else  // !defined(_WIN32)
-# pragma warning(push)
-# pragma warning(disable: 4996)
-#endif
-  update(dt.count(), ros_dt.count());
-// remove warning suppression
-#if !defined(_WIN32)
-# pragma GCC diagnostic pop
-#else  // !defined(_WIN32)
-# pragma warning(pop)
-#endif
-}
-
-void ViewController::update(float dt, float ros_dt)
 {
   (void) dt;
   (void) ros_dt;

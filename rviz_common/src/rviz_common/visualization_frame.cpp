@@ -63,6 +63,7 @@
 
 #include "ament_index_cpp/get_package_share_path.hpp"
 #include "rclcpp/clock.hpp"
+#include "rclcpp/node.hpp"
 #include "tf2_ros/buffer.hpp"
 #include "tf2_ros/transform_listener.hpp"
 
@@ -922,16 +923,19 @@ void VisualizationFrame::saveWindowGeometry(Config config)
 void VisualizationFrame::loadPanels(const Config & config)
 {
   // First destroy any existing custom panels.
-  // Clear custom_panels_ up front because deleting a dock emits QObject::destroyed,
-  // which fires onPanelDeleted and mutates custom_panels_ — iterating it by index
-  // while it's being mutated would skip entries and leave stale panels behind,
-  // producing duplicate panels on the next load.
-  QList<PanelRecord> panels_to_delete;
-  panels_to_delete.swap(custom_panels_);
-  for (auto & record : panels_to_delete) {
-    delete record.dock;
-    delete record.delete_action;
+  for (auto & panel_record : custom_panels_) {
+    // Avoid mutating custom_panels_ from onPanelDeleted() while bulk-clearing.
+    disconnect(panel_record.dock, &QObject::destroyed, this, &VisualizationFrame::onPanelDeleted);
+
+    if (panel_record.delete_action) {
+      delete_view_menu_->removeAction(panel_record.delete_action);
+      panel_record.delete_action->deleteLater();
+    }
+
+    delete panel_record.dock;
   }
+  custom_panels_.clear();
+  delete_view_menu_->setDisabled(delete_view_menu_->actions().isEmpty());
 
   // Then load the ones in the config.
   int num_custom_panels = config.listLength();

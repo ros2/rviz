@@ -34,7 +34,8 @@
 # pragma warning(push)
 # pragma warning(disable : 4996)
 #endif
-#include <Ogre.h>
+#include <OgreImage.h>
+#include <OgreString.h>
 #ifdef _WIN32
 # pragma warning(pop)
 #endif

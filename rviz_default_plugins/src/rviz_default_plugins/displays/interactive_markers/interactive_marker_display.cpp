@@ -36,9 +36,13 @@
 
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
+#include "rclcpp/node.hpp"
+
 #include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/validate_floats.hpp"
 #include "rviz_common/display_context.hpp"
+#include "rviz_common/frame_manager_iface.hpp"
+#include "rviz_common/logging.hpp"
 
 #include \
   "rviz_default_plugins/displays/interactive_markers/interactive_marker_namespace_property.hpp"

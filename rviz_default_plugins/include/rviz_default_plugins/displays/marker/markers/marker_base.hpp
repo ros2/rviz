@@ -40,7 +40,7 @@
 #include <OgreVector.h>
 
 #include "visualization_msgs/msg/marker.hpp"
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/time.hpp"
 
 #include "rviz_common/interaction/forwards.hpp"
 #include "rviz_common/interactive_object.hpp"
@@ -79,7 +79,7 @@ class MarkerSelectionHandler;
 typedef std::pair<std::string, int32_t> MarkerID;
 typedef std::set<Ogre::MaterialPtr> S_MaterialPtr;
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC MarkerBase
+class RVIZ_DEFAULT_PLUGINS_MARKER_PUBLIC MarkerBase
 {
 public:
   using Marker = visualization_msgs::msg::Marker;
@@ -120,7 +120,7 @@ public:
 
   const Ogre::Quaternion & getOrientation();
 
-  virtual S_MaterialPtr getMaterials() {return S_MaterialPtr();}
+  virtual S_MaterialPtr getMaterials();
 
   bool isVisible() const;
 

@@ -30,6 +30,7 @@
 
 #include "help_panel.hpp"
 
+#include <filesystem>
 #include <string>
 
 #include <QDir>  // NOLINT: cpplint is unable to handle the include order here

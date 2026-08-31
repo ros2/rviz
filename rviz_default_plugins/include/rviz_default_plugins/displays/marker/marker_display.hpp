@@ -54,7 +54,7 @@ namespace displays
  * Markers come in as visualization_msgs::msg::Marker messages.
  * See the Marker message for more information.
  */
-class RVIZ_DEFAULT_PLUGINS_PUBLIC MarkerDisplay
+class RVIZ_DEFAULT_PLUGINS_MARKER_PUBLIC MarkerDisplay
   : public rviz_common::MessageFilterDisplay<visualization_msgs::msg::Marker>
 {
 public:

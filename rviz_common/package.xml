@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>rviz_common</name>
-  <version>15.2.0</version>
+  <version>16.0.2</version>
   <description>
     Common rviz API, used by rviz plugins and applications.
   </description>
@@ -25,17 +25,19 @@
   <author email="william@openrobotics.org">William Woodall</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_ros_core</buildtool_depend>
+  <buildtool_export_depend>ament_cmake_ros_core</buildtool_export_depend>
 
-  <build_depend>qt6-svg-dev</build_depend>
-  <build_depend>qt6-base-dev</build_depend>
+  <build_depend>qt-svg-dev</build_depend>
+  <build_depend>qt-base-dev</build_depend>
 
-  <build_export_depend>qt6-base-dev</build_export_depend>
+  <build_export_depend>qt-base-dev</build_export_depend>
 
-  <exec_depend>libqt6-core</exec_depend>
-  <exec_depend>libqt6gui6t64</exec_depend>
-  <exec_depend>libqt6opengl6t64</exec_depend>
-  <exec_depend>libqt6svg6</exec_depend>
-  <exec_depend>libqt6widgets6t64</exec_depend>
+  <exec_depend>libqtcore</exec_depend>
+  <exec_depend>libqtgui</exec_depend>
+  <exec_depend>libqtopengl</exec_depend>
+  <exec_depend>libqtsvg</exec_depend>
+  <exec_depend>libqtwidgets</exec_depend>
 
   <depend>geometry_msgs</depend>
   <depend>pluginlib</depend>
@@ -50,7 +52,6 @@
   <depend>tf2_ros</depend>
   <depend>message_filters</depend>
   <depend>tinyxml2</depend>
-  <depend>urdf</depend>
   <depend>yaml_cpp_vendor</depend>
 
   <test_depend>ament_lint_common</test_depend>

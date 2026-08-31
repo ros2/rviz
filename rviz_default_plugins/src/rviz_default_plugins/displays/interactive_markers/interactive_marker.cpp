@@ -49,10 +49,13 @@
 
 #include "interactive_markers/tools.hpp"
 
+#include "geometry_msgs/msg/transform_stamped.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 #include "rviz_common/display_context.hpp"
+#include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/interaction/view_picker_iface.hpp"
+#include "rviz_common/logging.hpp"
 #include "rviz_common/render_panel.hpp"
 #include "rviz_rendering/geometry.hpp"
 #include "rviz_rendering/render_window.hpp"

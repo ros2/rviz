@@ -32,8 +32,8 @@
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__DEPTH_CLOUD__DEPTH_CLOUD_DISPLAY_HPP_
 
 #ifndef Q_MOC_RUN
-#include <QObject>  // NOLINT: cpplint cannot handle the include order here
-#include <Ogre.h>
+#include <OgreQuaternion.h>
+#include <OgreVector.h>
 
 #include <memory>
 #include <mutex>
@@ -69,7 +69,6 @@
 
 #include "rviz_default_plugins/visibility_control.hpp"
 
-#include <QMap>  // NOLINT: cpplint cannot handle the include order here
 #include <QString>  // NOLINT: cpplint cannot handle the include order here
 
 namespace rviz_default_plugins
@@ -81,7 +80,7 @@ namespace displays
  * \class DepthCloudDisplay
  *
  */
-class RVIZ_DEFAULT_PLUGINS_PUBLIC DepthCloudDisplay : public rviz_common::Display
+class RVIZ_DEFAULT_PLUGINS_IMAGE_PUBLIC DepthCloudDisplay : public rviz_common::Display
 {
   Q_OBJECT
 

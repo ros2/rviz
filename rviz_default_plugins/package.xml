@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>rviz_default_plugins</name>
-  <version>15.2.0</version>
+  <version>16.0.2</version>
   <description>
     Several default plugins for rviz to cover the basic functionality.
   </description>
@@ -25,16 +25,18 @@
   <author email="william@openrobotics.org">William Woodall</author>
 
   <buildtool_depend>ament_cmake_ros</buildtool_depend>
+  <buildtool_depend>ament_cmake_ros_core</buildtool_depend>
+  <buildtool_export_depend>ament_cmake_ros_core</buildtool_export_depend>
 
-  <build_depend>qt6-base-dev</build_depend>
+  <build_depend>qt-base-dev</build_depend>
   <build_depend>rviz_ogre_vendor</build_depend>
 
   <build_export_depend>rviz_ogre_vendor</build_export_depend>
 
-  <exec_depend>libqt6-core</exec_depend>
-  <exec_depend>libqt6gui6t64</exec_depend>
-  <exec_depend>libqt6opengl6t64</exec_depend>
-  <exec_depend>libqt6widgets6t64</exec_depend>
+  <exec_depend>libqtcore</exec_depend>
+  <exec_depend>libqtgui</exec_depend>
+  <exec_depend>libqtopengl</exec_depend>
+  <exec_depend>libqtwidgets</exec_depend>
   <exec_depend>rviz_ogre_vendor</exec_depend>
 
   <depend>geometry_msgs</depend>

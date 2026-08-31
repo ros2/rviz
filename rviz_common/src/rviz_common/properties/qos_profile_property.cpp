@@ -108,6 +108,17 @@ QosProfileProperty::QosProfileProperty(Property * parent_property, rclcpp::QoS d
   updateQosProfile();
 }
 
+QosProfileProperty::~QosProfileProperty()
+{
+  // Children were created with `new` and parented to the caller-supplied
+  // parent_property, so they outlive `this` unless we delete them. Each
+  // Property destructor detaches itself from its parent.
+  delete depth_property_;
+  delete history_policy_property_;
+  delete reliability_policy_property_;
+  delete durability_policy_property_;
+}
+
 template<class T>
 T get_profile(std::map<T, QString> enum_map, EditableEnumProperty * enum_property, T default_entry)
 {

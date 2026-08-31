@@ -31,9 +31,8 @@
 #ifndef RVIZ_COMMON__VALIDATE_FLOATS_HPP_
 #define RVIZ_COMMON__VALIDATE_FLOATS_HPP_
 
-#include <array>
 #include <cmath>
-#include <vector>
+#include <ranges>  // NOLINT(build/include_order) cpplint predates C++20 headers
 
 #include <OgreVector.h>
 #include <OgreQuaternion.h>
@@ -150,34 +149,13 @@ inline bool validateFloats(const geometry_msgs::msg::PoseStamped & msg)
   return validateFloats(msg.pose);
 }
 
-template<typename T>
-inline bool validateFloats(const std::vector<T> & vec)
+/// Validate any range (vector, array, span, ...) whose elements are themselves validatable.
+template<typename Range>
+requires std::ranges::input_range<Range>
+inline bool validateFloats(const Range & range)
 {
-  typedef std::vector<T> VecType;
-  typename VecType::const_iterator it = vec.begin();
-  typename VecType::const_iterator end = vec.end();
-  for (; it != end; ++it) {
-    if (!validateFloats(*it)) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-template<typename T, size_t N>
-inline bool validateFloats(const std::array<T, N> & arr)
-{
-  typedef std::array<T, N> ArrType;
-  typename ArrType::const_iterator it = arr.begin();
-  typename ArrType::const_iterator end = arr.end();
-  for (; it != end; ++it) {
-    if (!validateFloats(*it)) {
-      return false;
-    }
-  }
-
-  return true;
+  return std::ranges::all_of(
+    range, [](const auto & elem) {return validateFloats(elem);});
 }
 
 }  // namespace rviz_common

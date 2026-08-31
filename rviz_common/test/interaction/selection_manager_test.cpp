@@ -117,3 +117,14 @@ TEST_F(SelectionManagerTestFixture, subtracting_from_a_selection) {
   EXPECT_THAT(selection, SizeIs(1));
   EXPECT_THAT(selection, Contains(Key(o2.getHandle())));
 }
+
+TEST_F(SelectionManagerTestFixture, select_handles_invalid_coordinates_gracefully) {
+  auto o1 = addVisibleObject(10, 10);
+  auto o2 = addVisibleObject(150, 150);
+
+  selection_manager_->select(
+    render_window_, -10, -10, 100, 100, rviz_common::interaction::SelectionManager::Replace);
+
+  auto selection = selection_manager_->getSelection();
+  EXPECT_THAT(selection, SizeIs(0));
+}

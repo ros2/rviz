@@ -50,6 +50,7 @@
 #include "rviz_common/properties/string_property.hpp"
 
 #include "rviz_default_plugins/robot/robot.hpp"
+#include "rviz_default_plugins/robot/robot_joint.hpp"
 #include "rviz_default_plugins/robot/robot_link.hpp"
 #include "rviz_default_plugins/robot/tf_link_updater.hpp"
 
@@ -161,6 +162,14 @@ void RobotModelDisplay::onInitialize()
   updatePropertyVisibility();
 
   transformer_guard_->initialize(context_);
+}
+
+void RobotModelDisplay::load(const rviz_common::Config & config)
+{
+  // Cache the "Links" subtree and replay it once the URDF has been parsed
+  // and the per-link / per-joint properties exist (done in display_urdf_content).
+  RTDClass::load(config);
+  saved_robot_config_ = config.mapGetChild("Links");
 }
 
 void RobotModelDisplay::updateAlpha()
@@ -287,6 +296,26 @@ void RobotModelDisplay::display_urdf_content()
 
   setStatus(StatusProperty::Ok, "URDF", "URDF parsed OK");
   robot_->load(descr);
+
+  // Re-apply per-link / per-joint settings from the saved config that were
+  // dropped during initial load() because the URDF had not yet been parsed.
+  if (saved_robot_config_.isValid()) {
+    for (const auto & name_link_pair : robot_->getLinks()) {
+      rviz_common::Config link_cfg =
+        saved_robot_config_.mapGetChild(QString::fromStdString(name_link_pair.first));
+      if (link_cfg.isValid()) {
+        name_link_pair.second->getLinkProperty()->load(link_cfg);
+      }
+    }
+    for (const auto & name_joint_pair : robot_->getJoints()) {
+      rviz_common::Config joint_cfg =
+        saved_robot_config_.mapGetChild(QString::fromStdString(name_joint_pair.first));
+      if (joint_cfg.isValid()) {
+        name_joint_pair.second->getJointProperty()->load(joint_cfg);
+      }
+    }
+  }
+
   std::stringstream ss;
   for (const auto & name_link_pair : robot_->getLinks()) {
     const std::string err = name_link_pair.second->getGeometryErrors();

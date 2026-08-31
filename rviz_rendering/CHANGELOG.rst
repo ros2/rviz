@@ -2,6 +2,30 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.2 (2026-07-14)
+-------------------
+* use C++ 20 in default. (`#1810 <https://github.com/ros2/rviz/issues/1810>`_)
+* Add rendering guard for width and/or height being 0 (`#1800 <https://github.com/ros2/rviz/issues/1800>`_)
+* Contributors: Tomoya Fujita, Tony Najjar
+
+16.0.1 (2026-06-11)
+-------------------
+* Support capsule geometry in robot links (`#1735 <https://github.com/ros2/rviz/issues/1735>`_)
+* Remove no-op upper_triangle conditional in TrianglePolygon UV mapping (`#1717 <https://github.com/ros2/rviz/issues/1717>`_)
+* Removed unused code in render_window.cpp (`#1722 <https://github.com/ros2/rviz/issues/1722>`_)
+* Contributors: Alejandro Hernández Cordero, Yixuan Xu
+
+16.0.0 (2026-05-06)
+-------------------
+
+15.2.2 (2026-04-24)
+-------------------
+* Use rosdep keys that select Qt5 or Qt6 by platform (`#1720 <https://github.com/ros2/rviz/issues/1720>`_)
+* Contributors: Shane Loretz
+
+15.2.1 (2026-04-24)
+-------------------
+
 15.2.0 (2026-05-15)
 -------------------
 

@@ -45,7 +45,7 @@ namespace displays
 namespace markers
 {
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC LineListMarker : public LineMarkerBase
+class RVIZ_DEFAULT_PLUGINS_MARKER_PUBLIC LineListMarker : public LineMarkerBase
 {
 public:
   LineListMarker(

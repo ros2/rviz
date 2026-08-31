@@ -34,7 +34,7 @@
 #include <chrono>
 #include <string>
 
-#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/node.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
 
 using namespace std::chrono_literals;  // NOLINT

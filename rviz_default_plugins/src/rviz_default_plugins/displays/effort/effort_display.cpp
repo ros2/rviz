@@ -42,6 +42,10 @@
 
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
+#include <tf2/LinearMath/Quaternion.hpp>
+#include <tf2/LinearMath/Vector3.hpp>
+
+#include <rviz_common/frame_manager_iface.hpp>
 #include <rviz_common/validate_floats.hpp>
 
 #include <rviz_common/properties/property.hpp>

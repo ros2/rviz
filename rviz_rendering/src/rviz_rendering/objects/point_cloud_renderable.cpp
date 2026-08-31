@@ -34,6 +34,7 @@
 #include <algorithm>
 
 #include <OgreCamera.h>
+#include <OgreHardwareBufferManager.h>
 
 #include "rviz_rendering/objects/point_cloud.hpp"
 
@@ -88,6 +89,11 @@ Ogre::Real PointCloudRenderable::getSquaredViewDepth(const Ogre::Camera * cam) c
 void PointCloudRenderable::getWorldTransforms(Ogre::Matrix4 * xform) const
 {
   parent_->getWorldTransforms(xform);
+}
+
+uint16_t PointCloudRenderable::getNumWorldTransforms() const
+{
+  return 1;
 }
 
 const Ogre::LightList & PointCloudRenderable::getLights() const

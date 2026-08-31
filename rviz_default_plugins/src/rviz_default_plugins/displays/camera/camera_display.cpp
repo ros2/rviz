@@ -258,9 +258,9 @@ Ogre::MaterialPtr CameraDisplay::createMaterial(std::string name) const
   Ogre::TextureUnitState * tu =
     material->getTechnique(0)->getPass(0)->createTextureUnitState();
   tu->setTextureName(texture_->getTexture()->getName());
-  tu->setTextureFiltering(Ogre::TFO_NONE);
   tu->setTextureAddressingMode(Ogre::TextureUnitState::TAM_CLAMP);
   tu->setAlphaOperation(Ogre::LBX_SOURCE1, Ogre::LBS_MANUAL, Ogre::LBS_CURRENT, 0.0);
+  applySmoothScalingToMaterial(material);
 
   return material;
 }
@@ -382,6 +382,18 @@ void CameraDisplay::unsubscribe()
   ImageDisplay::unsubscribe();
   caminfo_sub_.reset();
   tf_filter_.reset();
+}
+
+void CameraDisplay::updateSmoothScaling()
+{
+  ImageDisplay::updateSmoothScaling();
+  // background_material_ and overlay_material_ may not exist yet on the very
+  // first call (which fires from ImageDisplay::onInitialize() before
+  // setupSceneNodes()); applySmoothScalingToMaterial no-ops on null.
+  applySmoothScalingToMaterial(background_material_);
+  applySmoothScalingToMaterial(overlay_material_);
+  force_render_ = true;
+  context_->queueRender();
 }
 
 void CameraDisplay::updateAlpha()
@@ -665,6 +677,11 @@ Ogre::Matrix4 CameraDisplay::calculateProjectionMatrix(
 
 void CameraDisplay::processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg)
 {
+  // Do not set last_msg_ here to disable the cursor-pixel readout inherited
+  // from ImageDisplay because it's broken for CameraDisplay because its mapping
+  // ignores the Zoom Factor and some more in calculateScreenCorners().
+  // With last_msg_ left unset, mapWidgetPosToImagePixel() returns false
+  // and the tooltip/status stay empty instead of reporting wrong pixel values.
   texture_->addMessage(msg);
 }
 

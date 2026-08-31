@@ -35,7 +35,6 @@
 #include <cstdint>
 #include <functional>
 #include <memory>
-#include <vector>
 
 #include <OgreColourValue.h>
 #include <OgreMaterial.h>

@@ -47,7 +47,6 @@
 
 #include <sensor_msgs/msg/image.hpp>
 
-#include "rviz_common/message_filter_display.hpp"
 #include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/properties/enum_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
@@ -76,7 +75,7 @@ namespace displays
  * \class ImageDisplay
  *
  */
-class RVIZ_DEFAULT_PLUGINS_PUBLIC ImageDisplay : public rviz_common::_RosTopicDisplay
+class RVIZ_DEFAULT_PLUGINS_IMAGE_PUBLIC ImageDisplay : public rviz_common::_RosTopicDisplay
 {
   Q_OBJECT
 
@@ -89,8 +88,11 @@ public:
   void update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt) override;
   void reset() override;
 
+  bool eventFilter(QObject * watched, QEvent * event) override;
+
 public Q_SLOTS:
   virtual void updateNormalizeOptions();
+  virtual void updateSmoothScaling();
 
 protected Q_SLOTS:
   virtual void subscribe();
@@ -108,6 +110,11 @@ protected:
   /* This is called by incomingMessage(). */
   virtual void processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg);
 
+  // Applies the current "Smooth scaling" filter setting to a single
+  // material's first TextureUnitState. Shared with CameraDisplay so its
+  // background and overlay materials can be updated by the same code.
+  void applySmoothScalingToMaterial(const Ogre::MaterialPtr & material) const;
+
   std::shared_ptr<image_transport::SubscriberFilter> subscription_;
   uint32_t messages_received_;
   rclcpp::Time subscription_start_time_;
@@ -116,11 +123,26 @@ protected:
   std::unique_ptr<ROSImageTextureIface> texture_;
   std::unique_ptr<rviz_common::RenderPanel> render_panel_;
 
+  // Latest image for pixel-value readout under the mouse pointer. Exposed to
+  // subclasses so they can keep it in sync when they override processMessage,
+  // or leave it unset to disable the pixel-value readout feature.
+  sensor_msgs::msg::Image::ConstSharedPtr last_msg_;
+
 private:
   void setupScreenRectangle();
   void setupRenderPanel();
 
   void clear();
+
+  /// Map a mouse position in render_panel_ coordinates to image pixel (x, y).
+  /// Returns false if the position falls outside the letterboxed image area.
+  bool mapWidgetPosToImagePixel(int widget_x, int widget_y, int & px, int & py) const;
+
+  /// Format the pixel value at (px, py) from last_msg_ for display. Returns
+  /// an empty string if the encoding is not supported.
+  QString formatPixelAt(int px, int py) const;
+
+  void updatePixelStatusFromWidgetPos(int widget_x, int widget_y);
 
   std::unique_ptr<Ogre::Rectangle2D> screen_rect_;
   Ogre::MaterialPtr material_;
@@ -130,6 +152,7 @@ private:
   rviz_common::properties::FloatProperty * min_property_;
   rviz_common::properties::FloatProperty * max_property_;
   rviz_common::properties::IntProperty * median_buffer_size_property_;
+  rviz_common::properties::BoolProperty * smooth_scaling_property_;
   bool got_float_image_;
 };
 

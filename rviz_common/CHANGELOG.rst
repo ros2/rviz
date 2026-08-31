@@ -2,6 +2,38 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.2 (2026-07-14)
+-------------------
+* SelectionHandler::registerHandle() handle null pointer (`#1710 <https://github.com/ros2/rviz/issues/1710>`_)
+* Modernize rviz_common to C++20 (`#1787 <https://github.com/ros2/rviz/issues/1787>`_)
+* Refactor panel deletion logic in VisualizationFrame to prevent issues during bulk-clearing (`#1789 <https://github.com/ros2/rviz/issues/1789>`_)
+* Contributors: Alejandro Hernández Cordero, Tony Najjar
+
+16.0.1 (2026-06-11)
+-------------------
+* Fix disabled displays (addresses `#1773 <https://github.com/ros2/rviz/issues/1773>`_) (`#1774 <https://github.com/ros2/rviz/issues/1774>`_)
+* QosProfileProperty Destructor (`#1715 <https://github.com/ros2/rviz/issues/1715>`_)
+* SelectionManager::select Function Not Returning Empty Selection Result for Invalid Coordinates (`#1713 <https://github.com/ros2/rviz/issues/1713>`_)
+* Removed deprecated API (`#1731 <https://github.com/ros2/rviz/issues/1731>`_)
+* Removed unused code in render_window.cpp (`#1722 <https://github.com/ros2/rviz/issues/1722>`_)
+* Removed URDF dependency in rviz_common (`#1723 <https://github.com/ros2/rviz/issues/1723>`_)
+* Fixed Qcolor deprecation (`#1725 <https://github.com/ros2/rviz/issues/1725>`_)
+* Contributors: Alejandro Hernández Cordero, Tom Moore
+
+16.0.0 (2026-05-06)
+-------------------
+
+15.2.2 (2026-04-24)
+-------------------
+* Use rosdep keys that select Qt5 or Qt6 by platform (`#1720 <https://github.com/ros2/rviz/issues/1720>`_)
+* Contributors: Shane Loretz
+
+15.2.1 (2026-04-24)
+-------------------
+* Compressed Image Display (`#1288 <https://github.com/ros2/rviz//issues/1288>`_)
+* fix: Fixed compilation on MSVC 2022 (`#1706 <https://github.com/ros2/rviz//issues/1706>`_)
+* Contributors: Janosch Machowinski, Matthew Foran
+
 15.2.0 (2026-05-15)
 -------------------
 * Removed Qt6 warnings (`#1704 <https://github.com/ros2/rviz/issues/1704>`_)

@@ -33,6 +33,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <format>  // NOLINT(build/include_order) cpplint predates C++20 headers
 #include <functional>
 #include <memory>
 #include <mutex>
@@ -58,7 +59,9 @@
 #include <QWindow>  // NOLINT: cpplint cannot handle include order here
 
 #include "rclcpp/clock.hpp"
+#include "rclcpp/node.hpp"
 #include "rclcpp/time.hpp"
+#include "rclcpp/executors/single_threaded_executor.hpp"
 #include "rviz_rendering/material_manager.hpp"
 #include "rviz_rendering/render_window.hpp"
 
@@ -68,6 +71,7 @@
 #include "./displays_panel.hpp"
 #include "frame_manager.hpp"
 #include "rviz_common/load_resource.hpp"
+#include "rviz_common/logging.hpp"
 #include "rviz_common/properties/color_property.hpp"
 #include "rviz_common/properties/int_property.hpp"
 #include "rviz_common/properties/parse_color.hpp"
@@ -442,10 +446,9 @@ void VisualizationManager::updateFrames()
   std::string error;
   if (frame_manager_->frameHasProblems(getFixedFrame().toStdString(), error)) {
     if (!frame_manager_->anyTransformationDataAvailable()) {
-      std::stringstream ss;
-      ss << "No tf data.  Actual error: " << error;
       global_status_->setStatus(
-        StatusProperty::Warn, "Fixed Frame", QString::fromStdString(ss.str()));
+        StatusProperty::Warn, "Fixed Frame",
+        QString::fromStdString(std::format("No tf data.  Actual error: {}", error)));
     } else {
       global_status_->setStatus(
         StatusProperty::Error, "Fixed Frame", QString::fromStdString(error));

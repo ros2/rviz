@@ -34,6 +34,9 @@
 #include <string>
 #include <vector>
 
+#include <QApplication>  // NOLINT
+#include <QDir>  // NOLINT
+#include <QLocale>  // NOLINT
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/ros_integration/ros_client_abstraction.hpp"

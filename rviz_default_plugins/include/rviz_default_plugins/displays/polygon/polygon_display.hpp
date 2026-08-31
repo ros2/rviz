@@ -30,6 +30,8 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__POLYGON__POLYGON_DISPLAY_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__POLYGON__POLYGON_DISPLAY_HPP_
 
+#include <OgreMaterial.h>
+
 #include "geometry_msgs/msg/polygon_stamped.hpp"
 
 #include "rviz_common/message_filter_display.hpp"

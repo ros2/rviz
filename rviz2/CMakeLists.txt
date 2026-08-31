@@ -2,17 +2,16 @@ cmake_minimum_required(VERSION 3.10)
 
 project(rviz2)
 
-# Default to C++17
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 17)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-endif()
+# The C++ standard (C++20) is provided by ament_cmake_ros_core via the
+# ament_cmake_ros_core::ament_ros_defaults interface target, which is linked
+# into the rviz2 target below.
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic -Wnon-virtual-dtor -Woverloaded-virtual)
 endif()
 
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_ros_core REQUIRED)
 
 find_package(rviz_common REQUIRED)
 
@@ -26,67 +25,17 @@ else()
   find_package(Qt5 REQUIRED COMPONENTS Widgets)
   set(QT_VERSION_MAJOR 5)
 endif()
-set(QT_VERSION "${Qt${QT_VERSION_MAJOR}_VERSION}")
-# TODO(wjwwood): this block is to setup the windeployqt tool, could be removed later.
-if(Qt${QT_VERSION_MAJOR}_FOUND AND WIN32 AND TARGET Qt${QT_VERSION_MAJOR}::qmake AND NOT TARGET Qt${QT_VERSION_MAJOR}::windeployqt)
-  get_target_property(_qt_qmake_location Qt${QT_VERSION_MAJOR}::qmake IMPORTED_LOCATION)
-
-  execute_process(
-    COMMAND "${_qt_qmake_location}" -query QT${QT_VERSION_MAJOR}_INSTALL_PREFIX
-    RESULT_VARIABLE return_code
-    OUTPUT_VARIABLE qt_install_prefix
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
-
-  set(imported_location "${qt_install_prefix}/bin/windeployqt.exe")
-
-  if(EXISTS ${imported_location})
-    add_executable(Qt${QT_VERSION_MAJOR}::windeployqt IMPORTED)
-
-    set_target_properties(Qt${QT_VERSION_MAJOR}::windeployqt PROPERTIES
-      IMPORTED_LOCATION ${imported_location}
-    )
-  endif()
-endif()
 
 add_executable(${PROJECT_NAME}
   src/main.cpp
 )
 target_link_libraries(${PROJECT_NAME}
+  ament_cmake_ros_core::ament_ros_defaults
   rviz_common::rviz_common
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
   Qt${QT_VERSION_MAJOR}::Widgets
 )
-
-# TODO(wjwwood): find a way to make this optional or to run without "deploying" the
-#                necessary dlls and stuff to the bin folder.
-#                see:
-# https://stackoverflow.com/questions/41193584/deploy-all-qt-dependencies-when-building#41199492
-if(TARGET Qt${QT_VERSION_MAJOR}::windeployqt)
-  # execute windeployqt in a tmp directory after build
-  add_custom_command(TARGET ${PROJECT_NAME}
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
-    COMMAND set PATH=%PATH%$<SEMICOLON>${qt_install_prefix}/bin
-    COMMAND
-    Qt${QT_VERSION_MAJOR}::windeployqt
-    --dir "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
-    "$<TARGET_FILE_DIR:${PROJECT_NAME}>/$<TARGET_FILE_NAME:${PROJECT_NAME}>"
-  )
-
-  # copy deployment directory during installation
-  install(
-    DIRECTORY
-    "${CMAKE_CURRENT_BINARY_DIR}/windeployqt/"
-    DESTINATION bin
-  )
-  install(
-    DIRECTORY
-    "${CMAKE_CURRENT_BINARY_DIR}/windeployqt/"
-    DESTINATION lib/${PROJECT_NAME}
-  )
-endif()
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 install(TARGETS ${PROJECT_NAME} DESTINATION lib/${PROJECT_NAME})

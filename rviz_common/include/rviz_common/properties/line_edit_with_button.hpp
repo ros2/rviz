@@ -60,7 +60,7 @@ protected:
 
 protected Q_SLOTS:
   /** @brief Override this to do something when the button is clicked. */
-  virtual void onButtonClick() {}
+  virtual void onButtonClick();
 
 private:
   QPushButton * button_;

@@ -36,6 +36,7 @@
 #include <sstream>
 #include <vector>
 
+#include <OgreHardwareBuffer.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 #include <OgreVector.h>
@@ -285,6 +286,21 @@ float PointCloud::getBoundingRadius() const
 void PointCloud::getWorldTransforms(Ogre::Matrix4 * xform) const
 {
   *xform = _getParentNodeFullTransform();
+}
+
+const Ogre::String & PointCloud::getMovableType() const
+{
+  return sm_Type;
+}
+
+uint16_t PointCloud::getNumWorldTransforms() const
+{
+  return 1;
+}
+
+void PointCloud::setName(const std::string & name)
+{
+  mName = name;
 }
 
 void PointCloud::clear()

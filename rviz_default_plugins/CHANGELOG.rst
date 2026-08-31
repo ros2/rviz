@@ -2,6 +2,42 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.2 (2026-07-14)
+-------------------
+* use C++ 20 in default. (`#1810 <https://github.com/ros2/rviz/issues/1810>`_)
+* Clean up rviz_default_plugins CMakeLists.txt by removing unused libraries (`#1785 <https://github.com/ros2/rviz/issues/1785>`_)
+* Use URDF visual material when it exists (`#1782 <https://github.com/ros2/rviz/issues/1782>`_)
+* Implement destructor for PointCloud2TransportDisplay to unsubscribe on destruction (`#1788 <https://github.com/ros2/rviz/issues/1788>`_)
+* Contributors: Alejandro Hernández Cordero, Tomoya Fujita, Tony Najjar, mosfet80
+
+16.0.1 (2026-06-11)
+-------------------
+* Add Smooth scaling option to Image and Camera displays (`#1740 <https://github.com/ros2/rviz/issues/1740>`_)
+* XYOrbitViewController support Z translation (`#1721 <https://github.com/ros2/rviz/issues/1721>`_)
+* Removed warning ros_image_texture.cpp (`#1775 <https://github.com/ros2/rviz/issues/1775>`_)
+* Fix disabled displays (addresses `#1773 <https://github.com/ros2/rviz/issues/1773>`_) (`#1774 <https://github.com/ros2/rviz/issues/1774>`_)
+* Support capsule geometry in robot links (`#1735 <https://github.com/ros2/rviz/issues/1735>`_)
+* Fix when with pitch != width*BBP in Image Display (`#1719 <https://github.com/ros2/rviz/issues/1719>`_)
+* ogreQuaternionAngularDistance does not properly handle invalid quaternion input (`#1714 <https://github.com/ros2/rviz/issues/1714>`_)
+* Fixed Unexpected pixels for mono Image (`#1718 <https://github.com/ros2/rviz/issues/1718>`_)
+* Make sure to disconnect subscription callback when unsubscribing (`#1742 <https://github.com/ros2/rviz/issues/1742>`_)
+* Show pixel co-ordinate with their pixel value in image (`#1716 <https://github.com/ros2/rviz/issues/1716>`_)
+* Persist per-link/per-joint properties across RobotModel reloads (`#1729 <https://github.com/ros2/rviz/issues/1729>`_)
+* Contributors: Alejandro Hernández Cordero, Arne Baeyens, Saif Sidhik, Tom Moore, Yixuan Xu, cwit-vcas
+
+16.0.0 (2026-05-06)
+-------------------
+
+15.2.2 (2026-04-24)
+-------------------
+* Use rosdep keys that select Qt5 or Qt6 by platform (`#1720 <https://github.com/ros2/rviz/issues/1720>`_)
+* Contributors: Shane Loretz
+
+15.2.1 (2026-04-24)
+-------------------
+* Compressed Image Display (`#1288 <https://github.com/ros2/rviz//issues/1288>`_)
+* Contributors: Matthew Foran
+
 15.2.0 (2026-05-15)
 -------------------
 * Removed Qt6 warnings (`#1704 <https://github.com/ros2/rviz/issues/1704>`_)

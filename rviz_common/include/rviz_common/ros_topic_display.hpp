@@ -37,18 +37,15 @@
 #include <sstream>
 #include <string>
 
-#include <OgreSceneNode.h>
-#include <OgreSceneManager.h>
-
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #endif
 
+#include "rclcpp/node.hpp"
 #include "rclcpp/qos.hpp"
 
 #include "rviz_common/display.hpp"
 #include "rviz_common/display_context.hpp"
-#include "frame_manager_iface.hpp"
 #include "rviz_common/properties/ros_topic_property.hpp"
 #include "rviz_common/properties/qos_profile_property.hpp"
 #include "rviz_common/properties/status_property.hpp"
@@ -72,65 +69,22 @@ class RVIZ_COMMON_PUBLIC _RosTopicDisplay : public Display
   Q_OBJECT
 
 public:
-  _RosTopicDisplay()
-  : rviz_ros_node_(),
-    qos_profile(10)
-  {
-    qRegisterMetaType<std::shared_ptr<const void>>();
-
-    topic_property_ = new properties::RosTopicProperty(
-      "Topic", "",
-      "", "", this, SLOT(updateTopic()));
-
-    qos_profile_property_ = new properties::QosProfileProperty(topic_property_, qos_profile);
-  }
+  _RosTopicDisplay();
 
   /**
    * When overriding this method, the onInitialize() method of this superclass has to be called.
    * Otherwise, the ros node will not be initialized.
    */
-  void onInitialize() override
-  {
-    rviz_ros_node_ = context_->getRosNodeAbstraction();
-    topic_property_->initialize(rviz_ros_node_);
-
-    connect(
-      reinterpret_cast<QObject *>(context_->getTransformationManager()),
-      SIGNAL(transformerChanged(std::shared_ptr<rviz_common::transformation::FrameTransformer>)),
-      this,
-      SLOT(transformerChangedCallback()));
-    qos_profile_property_->initialize(
-      [this](rclcpp::QoS profile) {
-        this->qos_profile = profile;
-        updateTopic();
-      });
-
-    // Useful to _ROSTopicDisplay subclasses to ensure GUI updates
-    // are performed by the main thread only.
-    connect(
-      this,
-      SIGNAL(typeErasedMessageTaken(std::shared_ptr<const void>)),
-      this,
-      SLOT(processTypeErasedMessage(std::shared_ptr<const void>)),
-      // Force queued connections regardless of QObject thread affinity
-      Qt::QueuedConnection);
-  }
+  void onInitialize() override;
 
 Q_SIGNALS:
   void typeErasedMessageTaken(std::shared_ptr<const void> type_erased_message);
 
 protected Q_SLOTS:
-  virtual void processTypeErasedMessage(std::shared_ptr<const void> type_erased_message)
-  {
-    (void)type_erased_message;
-  }
+  virtual void processTypeErasedMessage(std::shared_ptr<const void> type_erased_message);
 
-  virtual void transformerChangedCallback()
-  {
-  }
-  virtual void updateMessageQueueSize()
-  {
-  }
+  virtual void transformerChangedCallback();
+  virtual void updateMessageQueueSize();
   virtual void updateTopic() = 0;
 
 protected:

@@ -62,7 +62,7 @@ namespace displays
 namespace markers
 {
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC TriangleListMarker : public MarkerBase
+class RVIZ_DEFAULT_PLUGINS_MARKER_PUBLIC TriangleListMarker : public MarkerBase
 {
 public:
   TriangleListMarker(

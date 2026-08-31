@@ -93,7 +93,7 @@ typedef std::shared_ptr<PointCloudTransformer> PointCloudTransformerPtr;
 
 typedef std::vector<std::string> V_string;
 
-struct RVIZ_DEFAULT_PLUGINS_PUBLIC CloudInfo
+struct RVIZ_DEFAULT_PLUGINS_POINTCLOUD_PUBLIC CloudInfo
 {
   CloudInfo();
   ~CloudInfo();
@@ -128,7 +128,7 @@ struct RVIZ_DEFAULT_PLUGINS_PUBLIC CloudInfo
  * If you set the channel's name to "rgb", it will interpret the channel as an integer rgb value, with r, g and b
  * all being 8 bits.
  */
-class RVIZ_DEFAULT_PLUGINS_PUBLIC PointCloudCommon : public QObject
+class RVIZ_DEFAULT_PLUGINS_POINTCLOUD_PUBLIC PointCloudCommon : public QObject
 {
   Q_OBJECT
 

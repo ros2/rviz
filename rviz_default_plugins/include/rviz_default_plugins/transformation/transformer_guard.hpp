@@ -39,9 +39,9 @@
 
 #include "rviz_common/display.hpp"
 #include "rviz_common/display_context.hpp"
+#include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/transformation/frame_transformer.hpp"
 #include "rviz_common/transformation/transformation_manager.hpp"
-#include "rviz_default_plugins/transformation/tf_wrapper.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 
 namespace rviz_default_plugins
@@ -62,30 +62,10 @@ class RVIZ_DEFAULT_PLUGINS_PUBLIC _TransformerGuard : public QObject
 public:
   _TransformerGuard(
     rviz_common::Display * display,
-    const std::string & transformer_name)
-  : display_(display),
-    allowed_transformer_name_(transformer_name),
-    using_allowed_transformer_(true),
-    display_disabled_by_user_(false),
-    context_(nullptr)
-  {}
+    const std::string & transformer_name);
 
   void
-  initialize(rviz_common::DisplayContext * context)
-  {
-    context_ = context;
-    connect(
-      context_->getTransformationManager(),
-      SIGNAL(transformerChanged(std::shared_ptr<rviz_common::transformation::FrameTransformer>)),
-      this,
-      SLOT(transformerChanged(std::shared_ptr<rviz_common::transformation::FrameTransformer>)));
-    connect(display_, SIGNAL(changed()), this, SLOT(displayEnabledChanged()));
-
-    if (!checkTransformer()) {
-      using_allowed_transformer_ = false;
-      Q_EMIT (display_->changed());
-    }
-  }
+  initialize(rviz_common::DisplayContext * context);
 
   virtual
   bool

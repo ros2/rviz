@@ -85,6 +85,7 @@ Swatch::Swatch(
   float resolution, bool draw_under)
 : scene_manager_(scene_manager),
   parent_scene_node_(parent_scene_node),
+  scene_node_(nullptr),
   manual_object_(nullptr),
   x_(x), y_(y), width_(width), height_(height)
 {
@@ -105,6 +106,19 @@ Swatch::Swatch(
 Swatch::~Swatch()
 {
   scene_manager_->destroyManualObject(manual_object_);
+  scene_manager_->destroySceneNode(scene_node_);
+
+  // The texture and the cloned material are owned by this swatch alone, so they have to be
+  // unregistered from their managers as well; otherwise they outlive the swatch.
+  resetOldTexture();
+  if (texture_) {
+    Ogre::TextureManager::getSingleton().remove(texture_);
+    texture_.reset();
+  }
+  if (material_) {
+    Ogre::MaterialManager::getSingleton().remove(material_);
+    material_.reset();
+  }
 }
 
 void Swatch::updateAlpha(

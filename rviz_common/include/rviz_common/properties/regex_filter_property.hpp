@@ -36,7 +36,6 @@
 #include <QValidator>  // NOLINT: cpplint is unable to handle the include order here
 #include <QLineEdit>  // NOLINT: cpplint is unable to handle the include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
-#include <QToolTip>  // NOLINT: cpplint is unable to handle the include order here
 #include <QWidget>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/properties/string_property.hpp"

@@ -32,14 +32,14 @@
 #ifndef RVIZ_COMMON__VISUALIZATION_MANAGER_HPP_
 #define RVIZ_COMMON__VISUALIZATION_MANAGER_HPP_
 
-#include <deque>
 #include <memory>
 
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rclcpp/clock.hpp"
 #include "rclcpp/time.hpp"
-#include "tf2_ros/transform_listener.hpp"
+
+namespace rclcpp {namespace executors {class SingleThreadedExecutor;}}
 
 #include "rviz_common/bit_allocator.hpp"
 #include "rviz_common/config.hpp"
@@ -405,7 +405,7 @@ private:
   uint32_t default_visibility_bit_;
   BitAllocator visibility_bit_allocator_;
   QString help_path_;
-  rclcpp::executors::SingleThreadedExecutor::SharedPtr executor_;
+  std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> executor_;
   ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node_;
   rviz_common::transformation::TransformationManager * transformation_manager_;
 };

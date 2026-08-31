@@ -2,6 +2,27 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.2 (2026-07-14)
+-------------------
+* use C++ 20 in default. (`#1810 <https://github.com/ros2/rviz/issues/1810>`_)
+* Contributors: Tomoya Fujita
+
+16.0.1 (2026-06-11)
+-------------------
+* Don't use windeployqt (`#1738 <https://github.com/ros2/rviz/issues/1738>`_)
+* Contributors: Shane Loretz
+
+16.0.0 (2026-05-06)
+-------------------
+
+15.2.2 (2026-04-24)
+-------------------
+* Use rosdep keys that select Qt5 or Qt6 by platform (`#1720 <https://github.com/ros2/rviz/issues/1720>`_)
+* Contributors: Shane Loretz
+
+15.2.1 (2026-04-24)
+-------------------
+
 15.2.0 (2026-05-15)
 -------------------
 
