@@ -180,13 +180,18 @@ private:
   Ogre::Entity * createEntityForGeometryElement(
     const urdf::LinkConstSharedPtr & link,
     const urdf::Geometry & geom, const urdf::Pose & origin,
-    std::string material_name, Ogre::SceneNode * scene_node);
+    Ogre::SceneNode * scene_node);
   void assignMaterialsToEntities(
     const urdf::LinkConstSharedPtr & link,
     const std::string & material_name,
     const Ogre::Entity * entity);
   Ogre::MaterialPtr getMaterialForLink(
     const urdf::LinkConstSharedPtr & link, std::string material_name = "");
+  Ogre::MaterialPtr getMaterialForVisual(const urdf::VisualSharedPtr & visual);
+  void getMaterialForVisualizable(Ogre::Entity * entity, const urdf::VisualSharedPtr & visual);
+  void getMaterialForVisualizable(
+    Ogre::Entity * /* entity */,
+    const urdf::CollisionSharedPtr & /* collision */ ) {};
   urdf::VisualSharedPtr getVisualWithMaterial(
     const urdf::LinkConstSharedPtr & link, const std::string & material_name) const;
   void loadMaterialFromTexture(
@@ -215,8 +220,10 @@ private:
       T link_visual_element = vector_element;
       if (link_visual_element && link_visual_element->geometry) {
         Ogre::Entity * mesh = createEntityForGeometryElement(
-          link, *link_visual_element->geometry, link_visual_element->origin, "", scene_node);
+          link, *link_visual_element->geometry, link_visual_element->origin, scene_node);
         if (mesh) {
+          getMaterialForVisualizable(mesh, link_visual_element);
+          assignMaterialsToEntities(link, "", mesh);
           meshes_vector.push_back(mesh);
           valid_visualizable_found = true;
         }
@@ -225,8 +232,10 @@ private:
 
     if (!valid_visualizable_found && visualizable_element && visualizable_element->geometry) {
       Ogre::Entity * mesh = createEntityForGeometryElement(
-        link, *visualizable_element->geometry, visualizable_element->origin, "", scene_node);
+        link, *visualizable_element->geometry, visualizable_element->origin, scene_node);
       if (mesh) {
+        getMaterialForVisualizable(mesh, visualizable_element);
+        assignMaterialsToEntities(link, "", mesh);
         meshes_vector.push_back(mesh);
       }
     }
