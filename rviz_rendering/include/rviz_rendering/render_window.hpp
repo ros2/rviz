@@ -102,7 +102,7 @@ public:
   void
   windowMovedOrResized();
 
-public slots:
+public Q_SLOTS:
   virtual
   void
   renderLater();

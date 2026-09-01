@@ -98,7 +98,7 @@ void FrameManager::setFixedFrame(const std::string & frame)
   }
   if (should_emit) {
     // This emission must be kept outside of the mutex lock to avoid deadlocks.
-    emit fixedFrameChanged();
+    Q_EMIT fixedFrameChanged();
   }
 }
 
