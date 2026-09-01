@@ -168,6 +168,11 @@ void getPluginGroups(
     }
     QString datatype = QString::fromStdString(map_pair.second[0]);
 
+    // Check if there is a publisher for this topic, if not we skip it
+    if (!rviz_ros_node.lock()->count_publishers(map_pair.first)) {
+      continue;
+    }
+
     if (datatype_plugins.contains(datatype)) {
       if (
         groups->empty() ||
