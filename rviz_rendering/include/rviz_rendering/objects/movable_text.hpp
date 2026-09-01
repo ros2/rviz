@@ -245,6 +245,9 @@ private:
   Ogre::Real char_height_;
   Ogre::Real line_spacing_;
   Ogre::Real space_width_;
+  // When false, a space takes the width of the preceding glyph; when true, the
+  // explicit space_width_ set via setSpaceWidth() is used instead.
+  bool space_width_set_;
 
   bool needs_update_;
   bool needs_color_update_;

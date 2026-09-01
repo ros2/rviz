@@ -81,6 +81,7 @@ MovableText::MovableText(
   color_(color),
   line_spacing_(0.01f),
   space_width_(0),
+  space_width_set_(false),
   needs_color_update_(true),
   on_top_(false),
   global_translation_(0.0f),
@@ -178,8 +179,9 @@ void MovableText::setLineSpacing(Ogre::Real height)
 
 void MovableText::setSpaceWidth(Ogre::Real width)
 {
-  if (width != space_width_) {
+  if (width != space_width_ || !space_width_set_) {
     space_width_ = width;
+    space_width_set_ = true;
     needs_update_ = true;
   }
 }
@@ -231,7 +233,10 @@ struct TextBuffer
   explicit TextBuffer(float * buffer)
   : buffer_(buffer),
     min_(std::numeric_limits<float>::max()),
-    max_(std::numeric_limits<float>::min()),
+    // Use lowest() (= -FLT_MAX), not min() which is the smallest positive
+    // normal value. With min(), makeCeil would never lower the y/z components
+    // to actual vertex values like 0, leaving FLT_MIN garbage in the AABB.
+    max_(std::numeric_limits<float>::lowest()),
     max_squared_radius_(0),
     top_(0),
     left_(0)
@@ -387,15 +392,18 @@ MovableText::calculateTotalDimensionsForPositioning(float & total_height, float 
   total_height = effective_char_height;
   total_width = 0.0f;
   float current_width = 0.0f;
+  float previous_glyph_width = space_width_;
   for (auto & character : caption_) {
     if (character == '\n') {
       total_height += effective_char_height + line_spacing_;
       total_width = current_width > total_width ? current_width : total_width;
       current_width = 0;
+      previous_glyph_width = space_width_;
     } else if (character == ' ') {
-      current_width += space_width_;
+      current_width += space_width_set_ ? space_width_ : previous_glyph_width;
     } else {
-      current_width += font_->getGlyphAspectRatio(character) * effective_char_height;
+      previous_glyph_width = font_->getGlyphAspectRatio(character) * effective_char_height;
+      current_width += previous_glyph_width;
     }
   }
   total_width = current_width > total_width ? current_width : total_width;
@@ -439,15 +447,17 @@ void MovableText::fillVertexBuffer(
   buffer.left_ = starting_left;
   buffer.top_ = top;
 
+  float previous_glyph_width = space_width_;
   for (auto & character : caption_) {
     if (character == '\n') {
       buffer.left_ = starting_left;
       buffer.top_ -= effective_char_height + line_spacing_;
+      previous_glyph_width = space_width_;
       continue;
     }
 
     if (character == ' ') {
-      buffer.left_ += space_width_;
+      buffer.left_ += space_width_set_ ? space_width_ : previous_glyph_width;
       continue;
     }
 
@@ -463,7 +473,8 @@ void MovableText::fillVertexBuffer(
     buffer.addBottomLeft(char_height_);
     buffer.addBottomRight(char_width, char_height_);
 
-    buffer.left_ += char_aspect_ratio * effective_char_height;
+    previous_glyph_width = char_aspect_ratio * effective_char_height;
+    buffer.left_ += previous_glyph_width;
   }
 
   position_and_texture_buffer->unlock();
