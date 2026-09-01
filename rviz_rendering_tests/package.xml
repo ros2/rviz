@@ -23,7 +23,7 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>ament_cmake_ros_core</buildtool_depend>
 
-  <build_depend>qt-base-dev</build_depend>
+  <build_depend>qt6-base-dev</build_depend>
 
   <depend>rviz_rendering</depend>
   <depend>resource_retriever</depend>

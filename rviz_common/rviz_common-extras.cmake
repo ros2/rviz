@@ -28,8 +28,4 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-# Avoid find_package(QT NAMES Qt6 Qt5 ...) due to CMake's default ascending path resolution
-find_package(Qt6 QUIET COMPONENTS Widgets)
-if(NOT Qt6_FOUND)
-  find_package(Qt5 QUIET COMPONENTS Widgets)
-endif()
+find_package(Qt6 6.4 REQUIRED COMPONENTS Widgets)
