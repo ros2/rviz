@@ -2,6 +2,11 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.3 (2026-09-02)
+-------------------
+* Removed Qt5 dependency (`#1847 <https://github.com/ros2/rviz/issues/1847>`_)
+* Contributors: Alejandro Hernández Cordero
+
 16.0.2 (2026-07-14)
 -------------------
 * use C++ 20 in default. (`#1810 <https://github.com/ros2/rviz/issues/1810>`_)

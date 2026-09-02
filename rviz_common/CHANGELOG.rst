@@ -2,6 +2,18 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.3 (2026-09-02)
+-------------------
+* Removed Qt5 dependency (`#1847 <https://github.com/ros2/rviz/issues/1847>`_)
+* Fix implicit narrowing in tf2 time conversion (`#1834 <https://github.com/ros2/rviz/issues/1834>`_)
+* Cleanup headers (`#1829 <https://github.com/ros2/rviz/issues/1829>`_)
+* Optimize rclcpp headers (`#1824 <https://github.com/ros2/rviz/issues/1824>`_)
+* Fix tinyxml link error (`#1817 <https://github.com/ros2/rviz/issues/1817>`_)
+* Removed windows warning (`#1819 <https://github.com/ros2/rviz/issues/1819>`_)
+* Optimize include headers (`#1799 <https://github.com/ros2/rviz/issues/1799>`_)
+* Moved implementation to cpp (`#1798 <https://github.com/ros2/rviz/issues/1798>`_)
+* Contributors: Alejandro Hernández Cordero, ktyang512
+
 16.0.2 (2026-07-14)
 -------------------
 * SelectionHandler::registerHandle() handle null pointer (`#1710 <https://github.com/ros2/rviz/issues/1710>`_)

@@ -2,6 +2,12 @@
 Changelog for package rviz_rendering_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.3 (2026-09-02)
+-------------------
+* Removed Qt5 dependency (`#1847 <https://github.com/ros2/rviz/issues/1847>`_)
+* Support per-vertex mesh colors in the assimp loader (`#1811 <https://github.com/ros2/rviz/issues/1811>`_)
+* Contributors: Alejandro Hernández Cordero, Iori Yanokura
+
 16.0.2 (2026-07-14)
 -------------------
 * use C++ 20 in default. (`#1810 <https://github.com/ros2/rviz/issues/1810>`_)
