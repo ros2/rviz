@@ -75,15 +75,28 @@ void VisualTestFixture::SetUpTestCase()
           (package_share_directory / "config" /
           "visual_tests_test_image_config.rviz").string())));
   }
+
+  // Tests are non-interactive: suppress the save-changes prompt for the entire
+  // test lifetime so any close event (from teardown or otherwise) never blocks.
+  visualizer_app_->setShuttingDown(true);
 }
 
 void VisualTestFixture::TearDown()
 {
+  if (VisualTestFixture::visualizer_app_) {
+    // Suppress save-changes prompt from any close event that may fire during or
+    // after teardown; tests are non-interactive.
+    VisualTestFixture::visualizer_app_->setShuttingDown(true);
+  }
   display_handler_->removeAllDisplays();
 }
 
 void VisualTestFixture::TearDownTestCase()
 {
+  if (VisualTestFixture::visualizer_app_) {
+    // Suppress the save-changes prompt before teardown; tests are non-interactive.
+    VisualTestFixture::visualizer_app_->setShuttingDown(true);
+  }
   delete VisualTestFixture::visualizer_app_;
   delete VisualTestFixture::qapp_;
   VisualTestFixture::visualizer_app_ = nullptr;

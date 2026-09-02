@@ -47,10 +47,12 @@ namespace nodes
 class CameraInfoPublisher : public rclcpp::Node
 {
 public:
-  explicit CameraInfoPublisher(std::string frame_id = "camera_info_frame")
+  explicit CameraInfoPublisher(
+    std::string frame_id = "camera_info_frame",
+    std::string topic = "/image/camera_info")
   : Node("camera_info_publisher")
   {
-    publisher = this->create_publisher<sensor_msgs::msg::CameraInfo>("/image/camera_info", 10);
+    publisher = this->create_publisher<sensor_msgs::msg::CameraInfo>(topic, 10);
     timer = this->create_wall_timer(500ms, std::bind(&CameraInfoPublisher::timer_callback, this));
     this->frame_id = frame_id;
   }

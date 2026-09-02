@@ -65,10 +65,31 @@ QPushButton * DisplayHandler::getRemoveDisplayButton()
 
 QPushButton * DisplayHandler::getDisplayActionButton(QString button_name)
 {
-  auto visualization_frame = QApplication::activeWindow();
+  // Prefer finding the VisualizationFrame by object name; QApplication::activeWindow()
+  // can be nullptr in Qt 6 test environments (no focused top-level), which used to
+  // segfault when chained into findChild.
+  QWidget * visualization_frame = nullptr;
+  for (QWidget * top_level : QApplication::topLevelWidgets()) {
+    if (top_level->objectName() == "VisualizationFrame") {
+      visualization_frame = top_level;
+      break;
+    }
+  }
+  if (!visualization_frame) {
+    visualization_frame = QApplication::activeWindow();
+  }
+  if (!visualization_frame) {
+    return nullptr;
+  }
 
   auto displays = visualization_frame->findChild<QWidget *>("Displays");
+  if (!displays) {
+    return nullptr;
+  }
   auto display_panel = displays->findChild<QWidget *>("Displays/DisplayPanel");
+  if (!display_panel) {
+    return nullptr;
+  }
 
   if (button_name == "Add") {
     return display_panel->findChild<QPushButton *>(
@@ -94,11 +115,18 @@ void DisplayHandler::removeDisplayWithoutDelay(int display_id)
 
   if (display_index >= 0) {
     auto remove_display_button = getRemoveDisplayButton();
+    if (!remove_display_button) {
+      return;
+    }
+    auto tree_view = helpers::getDisplaysTreeView();
+    if (!tree_view) {
+      return;
+    }
 
     auto relative_display_index =
-      helpers::getDisplaysTreeView()->model()->index(2 + display_index, 0);
-    auto viewport = helpers::getDisplaysTreeView()->viewport();
-    auto rect = helpers::getDisplaysTreeView()->visualRect(relative_display_index);
+      tree_view->model()->index(2 + display_index, 0);
+    auto viewport = tree_view->viewport();
+    auto rect = tree_view->visualRect(relative_display_index);
     QTest::mouseClick(
       viewport, Qt::MouseButton::LeftButton, Qt::KeyboardModifiers(),
       rect.center());
@@ -114,6 +142,9 @@ void DisplayHandler::removeAllDisplays()
   std::vector<int> current_displays = *all_display_ids_vector_;
   if (current_displays.size() > 0) {
     auto remove_display_button = getRemoveDisplayButton();
+    if (!remove_display_button) {
+      return;
+    }
     removeDisplayWithoutDelay(current_displays[current_displays.size() - 1]);
     for (size_t i = 0; i < current_displays.size() - 1; ++i) {
       QTest::mouseClick(remove_display_button, Qt::MouseButton::LeftButton);
@@ -146,15 +177,38 @@ void DisplayHandler::selectDisplayAndConfirm(std::shared_ptr<BasePageObject> pag
 {
   executor_->queueAction(
     [page_object]() {
-      auto add_display_dialog_window = QApplication::activeWindow();
+      // Locate the AddDisplayDialog by object name; on Qt 6 activeWindow() can
+      // be nullptr in between tests, which would crash the findChild chain.
+      QWidget * add_display_dialog_window = nullptr;
+      for (QWidget * top_level : QApplication::topLevelWidgets()) {
+        if (top_level->objectName() == "AddDisplayDialog" && top_level->isVisible()) {
+          add_display_dialog_window = top_level;
+          break;
+        }
+      }
+      if (!add_display_dialog_window) {
+        add_display_dialog_window = QApplication::activeWindow();
+      }
+      if (!add_display_dialog_window) {
+        return;
+      }
 
       auto create_visualization_type_box = add_display_dialog_window->findChild<QWidget *>(
         "AddDisplayDialog/Visualization_Typebox");
+      if (!create_visualization_type_box) {
+        return;
+      }
       QTabWidget * select_display_tab_widget =
       create_visualization_type_box->findChild<QTabWidget *>("Visualization_Typebox/TabWidget");
+      if (!select_display_tab_widget) {
+        return;
+      }
 
       QTreeWidget * add_by_name_tree = qobject_cast<QTreeWidget *>(
         select_display_tab_widget->currentWidget());
+      if (!add_by_name_tree) {
+        return;
+      }
 
       auto items = add_by_name_tree->findItems(page_object->getDisplayName(), Qt::MatchRecursive);
 
@@ -177,8 +231,14 @@ void DisplayHandler::selectDisplayAndConfirm(std::shared_ptr<BasePageObject> pag
 
       auto add_display_dialog_buttons = add_display_dialog_window->findChild<QDialogButtonBox *>(
         "AddDisplayDialog/ButtonBox");
+      if (!add_display_dialog_buttons) {
+        return;
+      }
 
       QWidget * ok_button = add_display_dialog_buttons->button(QDialogButtonBox::Ok);
+      if (!ok_button) {
+        return;
+      }
       QTest::mouseClick(ok_button, Qt::MouseButton::LeftButton);
     }
   );

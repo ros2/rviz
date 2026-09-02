@@ -36,7 +36,7 @@ namespace rviz_common
 
 _RosTopicDisplay::_RosTopicDisplay()
 : rviz_ros_node_(),
-  qos_profile(5)
+  qos_profile(10)
 {
   qRegisterMetaType<std::shared_ptr<const void>>();
 

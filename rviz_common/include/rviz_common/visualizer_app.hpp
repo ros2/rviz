@@ -72,6 +72,14 @@ public:
    */
   bool init(int argc, char ** argv);
 
+  /// Suppress the save-changes prompt so the app can be torn down non-interactively.
+  /**
+   * Intended for tests. After calling this, closing or deleting the underlying
+   * VisualizationFrame will skip prepareToExit() and never show the
+   * "unsaved changes" dialog.
+   */
+  void setShuttingDown(bool shutting_down);
+
 private Q_SLOTS:
   /// Ensure the application should continue running, otherwise close all windows.
   void checkContinue();
