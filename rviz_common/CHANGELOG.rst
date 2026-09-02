@@ -2,6 +2,9 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.29 (2026-09-02)
+--------------------
+
 11.2.28 (2026-07-14)
 --------------------
 * Refactor panel deletion logic in VisualizationFrame to prevent issue during bulk-clearing (backport `#1789 <https://github.com/ros2/rviz/issues/1789>`_) (`#1793 <https://github.com/ros2/rviz/issues/1793>`_)

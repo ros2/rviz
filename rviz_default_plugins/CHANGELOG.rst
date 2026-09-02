@@ -2,6 +2,11 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+11.2.29 (2026-09-02)
+--------------------
+* Fix memory leaks related to OdometryDisplay (`#1833 <https://github.com/ros2/rviz/issues/1833>`_) (`#1841 <https://github.com/ros2/rviz/issues/1841>`_)
+* Contributors: mergify[bot]
+
 11.2.28 (2026-07-14)
 --------------------
 * Use URDF visual material when it exists (`#1782 <https://github.com/ros2/rviz/issues/1782>`_) (`#1808 <https://github.com/ros2/rviz/issues/1808>`_)
