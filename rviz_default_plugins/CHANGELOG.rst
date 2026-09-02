@@ -2,6 +2,12 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.2.6 (2026-09-02)
+-------------------
+* Discover point cloud transports dynamically (`#1842 <https://github.com/ros2/rviz/issues/1842>`_) (`#1844 <https://github.com/ros2/rviz/issues/1844>`_)
+* Fix memory leaks related to OdometryDisplay (`#1833 <https://github.com/ros2/rviz/issues/1833>`_) (`#1838 <https://github.com/ros2/rviz/issues/1838>`_)
+* Contributors: mergify[bot]
+
 15.2.5 (2026-07-14)
 -------------------
 * Use URDF visual material when it exists (`#1782 <https://github.com/ros2/rviz/issues/1782>`_) (`#1805 <https://github.com/ros2/rviz/issues/1805>`_)
