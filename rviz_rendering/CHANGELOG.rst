@@ -2,6 +2,12 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.0.15 (2026-09-02)
+--------------------
+* Fix memory leaks related to OdometryDisplay (`#1833 <https://github.com/ros2/rviz/issues/1833>`_) (`#1839 <https://github.com/ros2/rviz/issues/1839>`_)
+* Support per-vertex mesh colors in the assimp loader (`#1811 <https://github.com/ros2/rviz/issues/1811>`_) (`#1814 <https://github.com/ros2/rviz/issues/1814>`_)
+* Contributors: mergify[bot]
+
 15.0.14 (2026-07-14)
 --------------------
 * Add rendering guard for width and/or height being 0 (`#1800 <https://github.com/ros2/rviz/issues/1800>`_) (`#1802 <https://github.com/ros2/rviz/issues/1802>`_)
