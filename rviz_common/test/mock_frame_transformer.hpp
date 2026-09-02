@@ -37,7 +37,7 @@
 #include <string>
 #include <vector>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/clock.hpp"
 #include "rviz_common/transformation/frame_transformer.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction.hpp"
 

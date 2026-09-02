@@ -32,7 +32,7 @@
 
 #include <string>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/utilities.hpp"
 
 #include "rviz_common/ros_integration/ros_node_abstraction.hpp"
 

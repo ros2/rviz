@@ -37,6 +37,7 @@
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rclcpp/clock.hpp"
+#include "rclcpp/duration.hpp"
 #include "rclcpp/time.hpp"
 
 namespace rclcpp {namespace executors {class SingleThreadedExecutor;}}

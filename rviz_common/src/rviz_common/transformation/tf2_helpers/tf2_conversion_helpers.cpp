@@ -33,6 +33,8 @@
 #include <cstdint>
 #include <string>
 
+#include "rclcpp/time.hpp"
+
 namespace rviz_common
 {
 namespace transformation

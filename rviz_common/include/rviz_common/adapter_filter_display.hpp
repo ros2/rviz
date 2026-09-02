@@ -41,6 +41,11 @@
 
 #include <tf2_ros/message_filter.hpp>
 
+#include "rclcpp/exceptions/exceptions.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/time.hpp"
+#include "rclcpp/type_adapter.hpp"
+
 #include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/ros_topic_display.hpp"
 #include "rviz_common/properties/int_property.hpp"
