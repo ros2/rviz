@@ -39,6 +39,8 @@
 #include <OgreManualObject.h>
 
 #include "visualization_msgs/msg/marker.hpp"
+#include "rclcpp/clock.hpp"
+
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/shape.hpp"
 #include "../../scene_graph_introspection.hpp"

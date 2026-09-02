@@ -38,6 +38,14 @@
 #include "get_transport_from_topic.hpp"
 #include "point_cloud_transport/point_cloud_transport.hpp"
 #include "point_cloud_transport/subscriber_filter.hpp"
+#include "rclcpp/exceptions/exceptions.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/node_interfaces/node_base_interface.hpp"
+#include "rclcpp/node_interfaces/node_interfaces.hpp"
+#include "rclcpp/node_interfaces/node_logging_interface.hpp"
+#include "rclcpp/node_interfaces/node_parameters_interface.hpp"
+#include "rclcpp/node_interfaces/node_topics_interface.hpp"
+
 #include "rviz_common/message_filter_display.hpp"
 
 namespace rviz_default_plugins

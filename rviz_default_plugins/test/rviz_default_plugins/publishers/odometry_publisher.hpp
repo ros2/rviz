@@ -38,8 +38,10 @@
 #include <string>
 #include <vector>
 
-#include "rclcpp/node.hpp"
 #include "rclcpp/clock.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/publisher.hpp"
+#include "rclcpp/timer.hpp"
 #include "std_msgs/msg/header.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "nav_msgs/msg/odometry.hpp"

@@ -34,7 +34,10 @@
 #include <chrono>
 #include <string>
 
+#include "rclcpp/clock.hpp"
 #include "rclcpp/node.hpp"
+#include "rclcpp/publisher.hpp"
+#include "rclcpp/timer.hpp"
 
 #include "geometry_msgs/msg/accel_stamped.hpp"
 #include "std_msgs/msg/header.hpp"

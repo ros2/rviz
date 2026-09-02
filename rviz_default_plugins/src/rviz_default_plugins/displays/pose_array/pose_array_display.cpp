@@ -41,6 +41,8 @@
 
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
+#include "rclcpp/time.hpp"
+
 #include "rviz_common/logging.hpp"
 #include "rviz_common/msg_conversions.hpp"
 #include "rviz_common/properties/enum_property.hpp"

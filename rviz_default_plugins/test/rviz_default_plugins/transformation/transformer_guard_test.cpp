@@ -36,6 +36,10 @@
 
 #include "tf2_ros/buffer.hpp"
 
+#include "rclcpp/clock.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/utilities.hpp"
+
 #include "rviz_common/display.hpp"
 #include "rviz_common/transformation/frame_transformer.hpp"
 

@@ -33,6 +33,8 @@
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 
+#include "rclcpp/time.hpp"
+
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/properties/color_property.hpp"

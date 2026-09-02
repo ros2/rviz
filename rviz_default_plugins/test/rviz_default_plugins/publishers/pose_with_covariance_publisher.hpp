@@ -43,6 +43,8 @@
 #include "geometry_msgs/msg/pose_with_covariance_stamped.hpp"
 #include "rclcpp/clock.hpp"
 #include "rclcpp/node.hpp"
+#include "rclcpp/publisher.hpp"
+#include "rclcpp/timer.hpp"
 #include "std_msgs/msg/header.hpp"
 #include "tf2_ros/transform_broadcaster.hpp"
 

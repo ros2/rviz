@@ -40,6 +40,8 @@
 #include <OgreResourceManager.h>
 #include <OgreTextureManager.h>
 
+#include "rclcpp/clock.hpp"
+
 #include "rviz_default_plugins/displays/map/map_display.hpp"
 #include "../../scene_graph_introspection.hpp"
 #include "../display_test_fixture.hpp"

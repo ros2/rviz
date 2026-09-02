@@ -37,6 +37,8 @@
 #include <OgreManualObject.h>
 #include <OgreRoot.h>
 
+#include "rclcpp/clock.hpp"
+
 #include "rviz_common/properties/enum_property.hpp"
 
 #include "rviz_default_plugins/displays/odometry/odometry_display.hpp"

@@ -35,6 +35,8 @@
 #include <string>
 
 #include <rclcpp/node.hpp>
+#include <rclcpp/publisher.hpp>
+#include <rclcpp/timer.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
 
 using namespace std::chrono_literals;  // NOLINT

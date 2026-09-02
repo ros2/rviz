@@ -47,6 +47,10 @@
 #include <image_transport/image_transport.hpp>
 #include <image_transport/subscriber_filter.hpp>
 
+#include "rclcpp/qos.hpp"
+#include "rclcpp/subscription.hpp"
+#include "rclcpp/time.hpp"
+
 #include <rviz_common/depth_cloud_mld.hpp>
 #include <rviz_common/display.hpp>
 #include <rviz_common/properties/property.hpp>

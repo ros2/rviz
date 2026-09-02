@@ -53,6 +53,7 @@
 #include <visualization_msgs/msg/interactive_marker_feedback.hpp>
 
 #include <rclcpp/publisher.hpp>
+#include <rclcpp/time.hpp>
 
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/properties/status_property.hpp"
