@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+14.1.24 (2026-09-02)
+--------------------
+* Support per-vertex mesh colors in the assimp loader (backport `#1811 <https://github.com/ros2/rviz/issues/1811>`_) (`#1815 <https://github.com/ros2/rviz/issues/1815>`_)
+* Contributors: mergify[bot]
+
 14.1.23 (2026-07-14)
 --------------------
 
