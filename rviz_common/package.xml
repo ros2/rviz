@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>rviz_common</name>
-  <version>16.0.2</version>
+  <version>16.0.3</version>
   <description>
     Common rviz API, used by rviz plugins and applications.
   </description>
@@ -28,16 +28,16 @@
   <buildtool_depend>ament_cmake_ros_core</buildtool_depend>
   <buildtool_export_depend>ament_cmake_ros_core</buildtool_export_depend>
 
-  <build_depend>qt-svg-dev</build_depend>
-  <build_depend>qt-base-dev</build_depend>
+  <build_depend>qt6-svg-dev</build_depend>
+  <build_depend>qt6-base-dev</build_depend>
 
-  <build_export_depend>qt-base-dev</build_export_depend>
+  <build_export_depend>qt6-base-dev</build_export_depend>
 
-  <exec_depend>libqtcore</exec_depend>
-  <exec_depend>libqtgui</exec_depend>
-  <exec_depend>libqtopengl</exec_depend>
-  <exec_depend>libqtsvg</exec_depend>
-  <exec_depend>libqtwidgets</exec_depend>
+  <exec_depend>libqt6-core</exec_depend>
+  <exec_depend>libqt6-gui</exec_depend>
+  <exec_depend>libqt6-opengl</exec_depend>
+  <exec_depend>libqt6svg6</exec_depend>
+  <exec_depend>libqt6-widgets</exec_depend>
 
   <depend>geometry_msgs</depend>
   <depend>pluginlib</depend>

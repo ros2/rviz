@@ -33,6 +33,8 @@
 
 #include <vector>
 
+#include <OgreSceneNode.h>
+
 #include "rviz_common/interaction/selection_manager.hpp"
 
 #include "rviz_default_plugins/displays/marker/marker_common.hpp"

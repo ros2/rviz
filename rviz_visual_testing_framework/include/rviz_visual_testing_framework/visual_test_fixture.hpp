@@ -49,6 +49,8 @@ namespace rviz_common {
 class VisualizerApp;
 }
 
+class QApplication;
+
 class VisualTestFixture : public testing::Test
 {
 public:

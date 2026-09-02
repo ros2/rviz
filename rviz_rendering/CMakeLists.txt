@@ -32,21 +32,7 @@ find_package(ament_cmake_ros_core REQUIRED)
 find_package(rviz_ogre_vendor REQUIRED)
 find_package(assimp REQUIRED)
 
-# Avoid find_package(QT NAMES Qt6 Qt5 ...) due to CMake's default ascending path resolution
-find_package(Qt6 QUIET COMPONENTS Widgets)
-if(Qt6_FOUND)
-  set(QT_VERSION_MAJOR 6)
-else()
-  find_package(Qt5 REQUIRED COMPONENTS Widgets)
-  set(QT_VERSION_MAJOR 5)
-endif()
-set(QT_VERSION "${Qt${QT_VERSION_MAJOR}_VERSION}")
-if(${QT_VERSION} VERSION_LESS 5.15.0)
-  function(qt_wrap_cpp out)
-    qt5_wrap_cpp(_sources ${ARGN})
-    set("${out}" ${_sources} PARENT_SCOPE)
-  endfunction()
-endif()
+find_package(Qt6 6.4 REQUIRED COMPONENTS Widgets)
 
 find_package(ament_index_cpp REQUIRED)
 find_package(eigen3_cmake_module REQUIRED)
@@ -54,11 +40,11 @@ find_package(Eigen3 REQUIRED)
 find_package(resource_retriever REQUIRED)
 
 # TODO(wjwwood): this block is to setup the windeployqt tool, could be removed later.
-if(Qt${QT_VERSION_MAJOR}_FOUND AND WIN32 AND TARGET Qt${QT_VERSION_MAJOR}::qmake AND NOT TARGET Qt${QT_VERSION_MAJOR}::windeployqt)
-  get_target_property(_qt_qmake_location Qt${QT_VERSION_MAJOR}::qmake IMPORTED_LOCATION)
+if(Qt6_FOUND AND WIN32 AND TARGET Qt6::qmake AND NOT TARGET Qt6::windeployqt)
+  get_target_property(_qt_qmake_location Qt6::qmake IMPORTED_LOCATION)
 
   execute_process(
-    COMMAND "${_qt_qmake_location}" -query Qt${QT_VERSION_MAJOR}_INSTALL_PREFIX
+    COMMAND "${_qt_qmake_location}" -query Qt6_INSTALL_PREFIX
     RESULT_VARIABLE return_code
     OUTPUT_VARIABLE qt_install_prefix
     OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -67,9 +53,9 @@ if(Qt${QT_VERSION_MAJOR}_FOUND AND WIN32 AND TARGET Qt${QT_VERSION_MAJOR}::qmake
   set(imported_location "${qt_install_prefix}/bin/windeployqt.exe")
 
   if(EXISTS ${imported_location})
-    add_executable(Qt${QT_VERSION_MAJOR}::windeployqt IMPORTED)
+    add_executable(Qt6::windeployqt IMPORTED)
 
-    set_target_properties(Qt${QT_VERSION_MAJOR}::windeployqt PROPERTIES
+    set_target_properties(Qt6::windeployqt PROPERTIES
       IMPORTED_LOCATION ${imported_location}
     )
   endif()
@@ -114,7 +100,7 @@ add_library(rviz_rendering SHARED
 
 target_link_libraries(rviz_rendering PUBLIC
   ament_cmake_ros_core::ament_ros_defaults
-  Qt${QT_VERSION_MAJOR}::Widgets
+  Qt6::Widgets
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
 )
@@ -143,7 +129,7 @@ target_compile_definitions(rviz_rendering PRIVATE "RVIZ_RENDERING_BUILDING_LIBRA
 ament_export_dependencies(
   ament_cmake_ros_core
   Eigen3
-  Qt${QT_VERSION_MAJOR}
+  Qt6
   rviz_ogre_vendor
 )
 
@@ -209,7 +195,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt${QT_VERSION_MAJOR}::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt6::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -221,7 +207,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt${QT_VERSION_MAJOR}::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt6::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -233,7 +219,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt${QT_VERSION_MAJOR}::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt6::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -245,7 +231,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt${QT_VERSION_MAJOR}::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt6::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -257,7 +243,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt${QT_VERSION_MAJOR}::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt6::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -269,7 +255,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt${QT_VERSION_MAJOR}::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt6::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -282,7 +268,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreOverlay
       rviz_rendering
       rviz_rendering_test_utils
-      Qt${QT_VERSION_MAJOR}::Widgets
+      Qt6::Widgets
     )
   endif()
 
@@ -294,7 +280,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt${QT_VERSION_MAJOR}::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt6::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -306,7 +292,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt${QT_VERSION_MAJOR}::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt6::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -318,7 +304,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt${QT_VERSION_MAJOR}::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt6::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -330,7 +316,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt${QT_VERSION_MAJOR}::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt6::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 
@@ -342,7 +328,7 @@ if(BUILD_TESTING)
       rviz_ogre_vendor::OgreMain
       rviz_rendering
       rviz_rendering_test_utils
-      Qt${QT_VERSION_MAJOR}::Widgets  # explicitly do this for include directories (not necessary for external use)
+      Qt6::Widgets  # explicitly do this for include directories (not necessary for external use)
     )
   endif()
 endif()

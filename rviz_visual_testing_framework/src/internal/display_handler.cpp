@@ -32,8 +32,16 @@
 #include <memory>
 #include <vector>
 
+#include <QApplication>  // NOLINT
+#include <QDialog>  // NOLINT
+#include <QDialogButtonBox>  // NOLINT
+#include <QPushButton>  // NOLINT
+#include <QRect>  // NOLINT
+#include <QTabWidget>  // NOLINT
+#include <QTreeWidget>  // NOLINT
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTest>  // NOLINT
+#include <QWidget>  // NOLINT
 
 #include "rviz_visual_testing_framework/test_helpers.hpp"
 

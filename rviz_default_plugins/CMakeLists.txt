@@ -63,21 +63,7 @@ find_package(rviz_common REQUIRED)
 find_package(rviz_rendering REQUIRED)
 find_package(rviz_ogre_vendor REQUIRED)
 
-# Avoid find_package(QT NAMES Qt6 Qt5 ...) due to CMake's default ascending path resolution
-find_package(Qt6 QUIET COMPONENTS Test Widgets)
-if(Qt6_FOUND)
-  set(QT_VERSION_MAJOR 6)
-else()
-  find_package(Qt5 REQUIRED COMPONENTS Test Widgets)
-  set(QT_VERSION_MAJOR 5)
-endif()
-set(QT_VERSION "${Qt${QT_VERSION_MAJOR}_VERSION}")
-if(${QT_VERSION} VERSION_LESS 5.15.0)
-  function(qt_wrap_cpp out)
-    qt5_wrap_cpp(_sources ${ARGN})
-    set("${out}" ${_sources} PARENT_SCOPE)
-  endfunction()
-endif()
+find_package(Qt6 6.4 REQUIRED COMPONENTS Test Widgets)
 
 find_package(geometry_msgs REQUIRED)
 
@@ -396,7 +382,7 @@ ament_export_dependencies(
   map_msgs
   nav_msgs
   point_cloud_transport
-  Qt${QT_VERSION_MAJOR}
+  Qt6
   rclcpp
   rviz_common
   rviz_ogre_vendor
@@ -473,7 +459,7 @@ if(BUILD_TESTING)
     rclcpp::rclcpp
     rviz_common::rviz_common
     rviz_ogre_vendor::OgreMain
-    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt6::Widgets
   )
 
   set(TEST_FIXTURE_OBJECTS $<TARGET_OBJECTS:test_fixture_objects>)
@@ -494,7 +480,7 @@ if(BUILD_TESTING)
     target_link_libraries(fps_view_controller_test
       ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
       rviz_default_plugins
-      Qt${QT_VERSION_MAJOR}::Widgets
+      Qt6::Widgets
       ogre_testing_environment
     )
   endif()
@@ -508,7 +494,7 @@ if(BUILD_TESTING)
     target_link_libraries(frame_view_controller_test
       ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
       rviz_default_plugins
-      Qt${QT_VERSION_MAJOR}::Widgets
+      Qt6::Widgets
       ogre_testing_environment
     )
   endif()
@@ -640,7 +626,7 @@ if(BUILD_TESTING)
     target_include_directories(orbit_view_controller_test PRIVATE test)
     target_link_libraries(orbit_view_controller_test
       ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
-      Qt${QT_VERSION_MAJOR}::Widgets
+      Qt6::Widgets
       rviz_default_plugins
       ogre_testing_environment
     )
@@ -893,7 +879,7 @@ if(BUILD_TESTING)
   add_library(point_cloud_common_page_object STATIC test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp)
   target_link_libraries(point_cloud_common_page_object
     PRIVATE
-      Qt${QT_VERSION_MAJOR}::Test
+      Qt6::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework
   )
 
@@ -1024,7 +1010,7 @@ if(BUILD_TESTING)
   add_library(marker_display_page_object STATIC test/rviz_default_plugins/page_objects/marker_display_page_object.cpp)
   target_link_libraries(marker_display_page_object
     PRIVATE
-      Qt${QT_VERSION_MAJOR}::Widgets
+      Qt6::Widgets
       rviz_visual_testing_framework::rviz_visual_testing_framework
   )
 

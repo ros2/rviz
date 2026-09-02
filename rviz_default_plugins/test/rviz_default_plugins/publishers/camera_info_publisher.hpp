@@ -34,7 +34,7 @@
 #include <chrono>
 #include <string>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/node.hpp"
 #include "rclcpp/clock.hpp"
 #include "sensor_msgs/msg/camera_info.hpp"
 #include "std_msgs/msg/header.hpp"

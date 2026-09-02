@@ -36,7 +36,7 @@
 #include <cmath>
 #include <string>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/node.hpp"
 #include "sensor_msgs/msg/laser_scan.hpp"
 #include "std_msgs/msg/header.hpp"
 #include "tf2/LinearMath/Quaternion.hpp"

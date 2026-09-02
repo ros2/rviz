@@ -35,6 +35,7 @@
 #include <vector>
 
 #include <OgreCamera.h>
+#include <OgreRoot.h>
 
 #include "rviz_rendering/objects/point_cloud.hpp"
 #include "rviz_rendering/objects/point_cloud_renderable.hpp"

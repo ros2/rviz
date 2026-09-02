@@ -645,7 +645,9 @@ void TopicDisplayWidget::findPlugins(DisplayFactory * factory)
 
   for (const auto & plugin : plugins) {
     QSet<QString> topic_types = factory->getMessageTypes(plugin.id);
-    Q_FOREACH (QString topic_type, topic_types) {
+    // topic_type is taken by value: it is rewritten below when the declared type is not
+    // fully qualified.
+    for (QString topic_type : topic_types) {
       // Check if the type name is fully qualified (e.g. in 'msg' namespace).
       // If not, then insert 'msg' and log a warning.
       // For now, we assume that all types supported by plugins have the form

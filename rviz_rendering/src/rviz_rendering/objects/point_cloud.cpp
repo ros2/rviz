@@ -36,6 +36,7 @@
 #include <sstream>
 #include <vector>
 
+#include <OgreHardwareBuffer.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 #include <OgreVector.h>

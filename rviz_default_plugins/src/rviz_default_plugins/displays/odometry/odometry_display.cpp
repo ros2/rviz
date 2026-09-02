@@ -34,6 +34,8 @@
 #include <memory>
 #include <string>
 
+#include <OgreSceneNode.h>
+
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/axes.hpp"
 
@@ -339,7 +341,7 @@ std::unique_ptr<rviz_rendering::Arrow> OdometryDisplay::createAndSetArrow(
   float alpha = alpha_property_->getFloat();
 
   auto arrow = std::make_unique<rviz_rendering::Arrow>(
-    scene_manager_, scene_node_->createChildSceneNode(),
+    scene_manager_, scene_node_,
     shaft_length_property_->getFloat(),
     shaft_radius_property_->getFloat(),
     head_length_property_->getFloat(),
@@ -357,7 +359,7 @@ std::unique_ptr<rviz_rendering::Axes> OdometryDisplay::createAndSetAxes(
   const Ogre::Vector3 & position, const Ogre::Quaternion & orientation, bool use_axes)
 {
   auto axes = std::make_unique<rviz_rendering::Axes>(
-    scene_manager_, scene_node_->createChildSceneNode(),
+    scene_manager_, scene_node_,
     axes_length_property_->getFloat(),
     axes_radius_property_->getFloat());
   axes->setPosition(position);
@@ -373,7 +375,7 @@ std::unique_ptr<rviz_rendering::CovarianceVisual> OdometryDisplay::createAndSetC
   nav_msgs::msg::Odometry::ConstSharedPtr message)
 {
   auto covariance_visual = std::make_unique<rviz_rendering::CovarianceVisual>(
-    scene_manager_, scene_node_->createChildSceneNode());
+    scene_manager_, scene_node_);
   covariance_visual->setPosition(position);
   covariance_visual->setOrientation(orientation);
   auto quaternion = message->pose.pose.orientation;

@@ -35,16 +35,12 @@
 #include <memory>
 #include <string>
 
-#include <OgreSceneNode.h>
-#include <OgreSceneManager.h>
-
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/message_filter_display.hpp"
 #include "rviz_common/validate_floats.hpp"
 #include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
-#include "rviz_rendering/objects/point_cloud.hpp"
 
 #include "sensor_msgs/msg/point_cloud2.hpp"
 #include "std_msgs/msg/header.hpp"

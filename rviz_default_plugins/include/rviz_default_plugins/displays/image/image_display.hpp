@@ -47,7 +47,6 @@
 
 #include <sensor_msgs/msg/image.hpp>
 
-#include "rviz_common/message_filter_display.hpp"
 #include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/properties/enum_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
@@ -125,8 +124,8 @@ protected:
   std::unique_ptr<rviz_common::RenderPanel> render_panel_;
 
   // Latest image for pixel-value readout under the mouse pointer. Exposed to
-  // subclasses (e.g. CameraDisplay) so they can keep it in sync when they
-  // override processMessage.
+  // subclasses so they can keep it in sync when they override processMessage,
+  // or leave it unset to disable the pixel-value readout feature.
   sensor_msgs::msg::Image::ConstSharedPtr last_msg_;
 
 private:

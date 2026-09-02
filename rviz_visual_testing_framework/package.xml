@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>rviz_visual_testing_framework</name>
-  <version>16.0.2</version>
+  <version>16.0.3</version>
   <description>
     3D testing framework for RViz.
   </description>
@@ -26,7 +26,7 @@
   <buildtool_depend>ament_cmake_ros_core</buildtool_depend>
   <buildtool_export_depend>ament_cmake_ros_core</buildtool_export_depend>
 
-  <build_depend>qt-base-dev</build_depend>
+  <build_depend>qt6-base-dev</build_depend>
 
   <depend>geometry_msgs</depend>
   <depend>rclcpp</depend>

@@ -27,7 +27,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "rviz_common/interaction/forwards.hpp"
+#include "rviz_common/interaction/color_conversion.hpp"
 
 #include <cstdint>
 

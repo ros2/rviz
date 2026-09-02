@@ -17,14 +17,7 @@ find_package(rviz_common REQUIRED)
 
 find_package(rviz_ogre_vendor REQUIRED)
 
-# Avoid find_package(QT NAMES Qt6 Qt5 ...) due to CMake's default ascending path resolution
-find_package(Qt6 QUIET COMPONENTS Widgets)
-if(Qt6_FOUND)
-  set(QT_VERSION_MAJOR 6)
-else()
-  find_package(Qt5 REQUIRED COMPONENTS Widgets)
-  set(QT_VERSION_MAJOR 5)
-endif()
+find_package(Qt6 6.4 REQUIRED COMPONENTS Widgets)
 
 add_executable(${PROJECT_NAME}
   src/main.cpp
@@ -34,7 +27,7 @@ target_link_libraries(${PROJECT_NAME}
   rviz_common::rviz_common
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
-  Qt${QT_VERSION_MAJOR}::Widgets
+  Qt6::Widgets
 )
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)

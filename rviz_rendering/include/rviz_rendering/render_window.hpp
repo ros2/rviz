@@ -68,7 +68,7 @@ class RVIZ_RENDERING_PUBLIC RenderWindow : public QWindow
 public:
   friend RenderWindowOgreAdapter;
 
-  explicit RenderWindow(QWindow * parent = Q_NULLPTR);
+  explicit RenderWindow(QWindow * parent = nullptr);
   virtual ~RenderWindow();
 
   void

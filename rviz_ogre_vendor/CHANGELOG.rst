@@ -2,6 +2,11 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.3 (2026-09-02)
+-------------------
+* Removed unused variable to supress warning (`#1812 <https://github.com/ros2/rviz/issues/1812>`_)
+* Contributors: Miguel Angel Gonzalez Rodriguez
+
 16.0.2 (2026-07-14)
 -------------------
 
