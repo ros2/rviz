@@ -38,7 +38,7 @@
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/quaternion.hpp"
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/clock.hpp"
 
 #include "rviz_common/transformation/frame_transformer.hpp"
 #include "rviz_common/visibility_control.hpp"

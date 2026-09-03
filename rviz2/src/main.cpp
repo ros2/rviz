@@ -29,6 +29,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 
+#include <algorithm>
+#include <cstddef>
 #include <memory>
 #include <string>
 #include <vector>
@@ -36,7 +38,10 @@
 #include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
 #include <QProcessEnvironment> // NOLINT: cpplint is unable to hande the include order here
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/logger.hpp"
+#include "rclcpp/logging.hpp"
+#include "rclcpp/node_options.hpp"
+#include "rclcpp/utilities.hpp"
 #include "rviz_common/logging.hpp"
 #include "rviz_common/ros_integration/ros_client_abstraction.hpp"
 #include "rviz_common/visualizer_app.hpp"

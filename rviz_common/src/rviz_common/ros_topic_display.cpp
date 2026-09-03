@@ -31,6 +31,8 @@
 
 #include <memory>
 
+#include "rclcpp/qos.hpp"
+
 namespace rviz_common
 {
 
