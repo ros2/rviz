@@ -35,7 +35,9 @@
 #include <string>
 #include <vector>
 
+#include "rclcpp/clock.hpp"
 #include "rclcpp/node.hpp"
+#include "rclcpp/publisher.hpp"
 #include "std_msgs/msg/header.hpp"
 
 // TODO(greimela): Workaround for duplicate constant definition

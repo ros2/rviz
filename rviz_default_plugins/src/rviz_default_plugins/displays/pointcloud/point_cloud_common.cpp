@@ -43,6 +43,7 @@
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rclcpp/clock.hpp"
+#include "rclcpp/time.hpp"
 
 #include "rviz_default_plugins/displays/pointcloud/point_cloud_to_point_cloud2.hpp"
 #include "rviz_default_plugins/displays/pointcloud/point_cloud_helpers.hpp"

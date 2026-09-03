@@ -40,6 +40,8 @@
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 
+#include "rclcpp/time.hpp"
+
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/point_cloud.hpp"
 #include "rviz_common/logging.hpp"

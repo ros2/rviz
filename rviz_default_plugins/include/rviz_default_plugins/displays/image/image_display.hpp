@@ -47,6 +47,8 @@
 
 #include <sensor_msgs/msg/image.hpp>
 
+#include "rclcpp/time.hpp"
+
 #include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/properties/enum_property.hpp"
 #include "rviz_common/properties/float_property.hpp"

@@ -52,6 +52,12 @@
 
 #include "image_transport/camera_common.hpp"
 
+#include "rclcpp/event_handler.hpp"
+#include "rclcpp/exceptions/exceptions.hpp"
+#include "rclcpp/qos.hpp"
+#include "rclcpp/subscription_options.hpp"
+#include "rclcpp/time.hpp"
+
 #include "rviz_rendering/material_manager.hpp"
 #include "rviz_rendering/objects/axes.hpp"
 #include "rviz_rendering/render_window.hpp"

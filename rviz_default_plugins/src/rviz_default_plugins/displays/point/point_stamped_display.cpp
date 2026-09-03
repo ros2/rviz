@@ -38,6 +38,8 @@
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 
+#include "rclcpp/time.hpp"
+
 #include "rviz_rendering/objects/shape.hpp"
 
 #include "rviz_common/display_context.hpp"

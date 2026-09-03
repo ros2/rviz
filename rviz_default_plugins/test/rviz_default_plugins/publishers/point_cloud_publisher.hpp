@@ -36,7 +36,10 @@
 
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "tf2/LinearMath/Quaternion.hpp"
+#include "rclcpp/clock.hpp"
 #include "rclcpp/node.hpp"
+#include "rclcpp/publisher.hpp"
+#include "rclcpp/timer.hpp"
 #include "std_msgs/msg/header.hpp"
 #include "sensor_msgs/msg/point_cloud.hpp"
 

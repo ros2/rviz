@@ -42,6 +42,8 @@
 
 #include "tf2_ros/transform_listener.hpp"
 
+#include "rclcpp/qos.hpp"
+
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/properties/enum_property.hpp"
 #include "rviz_common/properties/file_picker_property.hpp"

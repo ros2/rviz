@@ -33,6 +33,8 @@
 #include <memory>
 #include <vector>
 
+#include "rclcpp/clock.hpp"
+
 #include "rviz_common/display.hpp"
 #include "rviz_common/properties/enum_property.hpp"
 #include "rviz_rendering/custom_parameter_indices.hpp"

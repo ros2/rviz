@@ -38,6 +38,9 @@
 #include <OgreRectangle2D.h>  // NOLINT
 
 #include "../../ogre_testing_environment.hpp"
+#include "rclcpp/clock.hpp"
+#include "rclcpp/utilities.hpp"
+
 #include "rviz_common/viewport_mouse_event.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/panel_dock_widget.hpp"

@@ -50,6 +50,9 @@
 
 #include <message_filters/cache.hpp>
 
+# include "rclcpp/subscription.hpp"
+# include "rclcpp/time.hpp"
+
 # include "sensor_msgs/msg/camera_info.hpp"
 # include "tf2_ros/message_filter.hpp"
 

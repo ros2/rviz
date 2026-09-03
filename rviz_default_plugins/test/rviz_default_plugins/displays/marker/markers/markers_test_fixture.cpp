@@ -33,6 +33,8 @@
 #include <memory>
 #include <string>
 
+#include "rclcpp/utilities.hpp"
+
 MarkersTestFixture::MarkersTestFixture()
 : DisplayTestFixture()
 {
