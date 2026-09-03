@@ -69,7 +69,7 @@ target_include_directories(rviz_visual_testing_framework
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
-    ${GTEST_INCLUDE_DIRS})
+)
 
 target_link_libraries(rviz_visual_testing_framework PUBLIC
   ament_cmake_ros_core::ament_ros_defaults
@@ -84,6 +84,7 @@ target_link_libraries(rviz_visual_testing_framework PUBLIC
   std_msgs::std_msgs
   tf2::tf2
   tf2_ros::tf2_ros
+  GTest::gtest
 )
 
 # export information to downstream packages
