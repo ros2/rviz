@@ -30,38 +30,33 @@
 #ifndef RVIZ_VISUAL_TESTING_FRAMEWORK__VISUAL_TEST_FIXTURE_HPP_
 #define RVIZ_VISUAL_TESTING_FRAMEWORK__VISUAL_TEST_FIXTURE_HPP_
 
+#include <gtest/gtest.h>
+#include <OgreVector.h>
+#include <OgreString.h>
+
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "std_msgs/msg/header.hpp"
-#include "geometry_msgs/msg/transform_stamped.hpp"
-#include "tf2/LinearMath/Quaternion.hpp"
-#include "tf2_ros/static_transform_broadcaster.hpp"
+class BasePageObject;
+class PageObjectWithWindow;
+class VisualTest;
+class DisplayHandler;
+class Executor;
+class QApplication;
 
-#include "rviz_visual_testing_framework/internal/display_handler.hpp"
-#include "rviz_visual_testing_framework/internal/executor.hpp"
-#include "rviz_visual_testing_framework/internal/visual_test.hpp"
-#include "rviz_visual_testing_framework/page_objects/page_object_with_window.hpp"
+namespace rviz_common
+{
+class VisualizerApp;
+}
 
 class QApplication;
 
 class VisualTestFixture : public testing::Test
 {
 public:
-  VisualTestFixture()
-  {
-    test_name_ = ::testing::UnitTest::GetInstance()->current_test_info()->name();
-    executor_ = std::make_shared<Executor>();
-    src_directory_path_ = std::string(_SRC_DIR_PATH);
-    build_directory_path_ = std::string(_BUILD_DIR_PATH);
-    visual_test_ = std::make_unique<VisualTest>(
-      visualizer_app_, executor_, src_directory_path_, build_directory_path_);
-    all_display_ids_vector_ = std::make_shared<std::vector<int>>();
-    display_handler_ = std::make_unique<DisplayHandler>(executor_, all_display_ids_vector_);
-
-    visual_test_->setCamera();
-  }
+  VisualTestFixture();
+  ~VisualTestFixture() override;
 
   static void SetUpTestCase();
   void TearDown() override;
@@ -108,7 +103,9 @@ public:
   template<typename T>
   std::shared_ptr<T> addDisplay()
   {
-    return display_handler_->addDisplay<T>();
+    auto page_object = std::make_shared<T>();
+    addDisplayHelper(page_object);
+    return page_object;
   }
 
   /**
@@ -176,6 +173,7 @@ public:
 private:
   void startApplication();
   void setNameIfEmpty(Ogre::String & name);
+  void addDisplayHelper(std::shared_ptr<BasePageObject> page_object);
 };
 
 #endif  // RVIZ_VISUAL_TESTING_FRAMEWORK__VISUAL_TEST_FIXTURE_HPP_

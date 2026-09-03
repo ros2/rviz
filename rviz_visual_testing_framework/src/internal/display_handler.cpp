@@ -53,6 +53,17 @@ DisplayHandler::DisplayHandler(
   all_display_ids_vector_ = all_displays_ids;
 }
 
+void DisplayHandler::addDisplayHelper(std::shared_ptr<BasePageObject> page_object)
+{
+  page_object->initialize(absolute_displays_number_, executor_, all_display_ids_vector_);
+
+  openAddDisplayDialog();
+  selectDisplayAndConfirm(page_object);
+
+  addDisplayToIdsVector();
+  absolute_displays_number_++;
+}
+
 QPushButton * DisplayHandler::getAddDisplayButton()
 {
   return getDisplayActionButton("Add");
