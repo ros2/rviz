@@ -30,13 +30,13 @@
 #ifndef RVIZ_VISUAL_TESTING_FRAMEWORK__VISUAL_TEST_FIXTURE_HPP_
 #define RVIZ_VISUAL_TESTING_FRAMEWORK__VISUAL_TEST_FIXTURE_HPP_
 
-#include <memory>
-#include <string>
-#include <vector>
-
 #include <gtest/gtest.h>
 #include <OgreVector.h>
 #include <OgreString.h>
+
+#include <memory>
+#include <string>
+#include <vector>
 
 class BasePageObject;
 class PageObjectWithWindow;
@@ -45,7 +45,8 @@ class DisplayHandler;
 class Executor;
 class QApplication;
 
-namespace rviz_common {
+namespace rviz_common
+{
 class VisualizerApp;
 }
 
@@ -55,7 +56,7 @@ class VisualTestFixture : public testing::Test
 {
 public:
   VisualTestFixture();
-  virtual ~VisualTestFixture() override;
+  ~VisualTestFixture() override;
 
   static void SetUpTestCase();
   void TearDown() override;
