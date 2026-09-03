@@ -27,44 +27,28 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "rviz_common/properties/ros_topic_multi_type_property.hpp"
+#ifndef RVIZ_COMMON__ROS_TOPIC_UTILS_HPP_
+#define RVIZ_COMMON__ROS_TOPIC_UTILS_HPP_
 
-#include <QApplication>  // NOLINT: cpplint can't handle Qt imports
-#include <algorithm>
-#include <map>
 #include <string>
-#include <vector>
 
-#include "rviz_common/ros_topic_utils.hpp"
+#include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
 {
-namespace properties
-{
 
-void RosTopicMultiTypeProperty::fillTopicList()
-{
-  QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-  clearOptions();
+/// Return true if the given topic or service name is hidden.
+/**
+ * Following the ROS 2 naming conventions, a name is hidden if any of its
+ * '/'-separated tokens starts with an underscore, e.g. the internal
+ * "<topic>/_buf_cpu" channels created by buffer-aware rmw implementations or
+ * the "<action>/_action/feedback" topics used by actions.
+ * This mirrors rclpy's topic_or_service_is_hidden(), which is what
+ * "ros2 topic list" uses to hide such names by default.
+ */
+RVIZ_COMMON_PUBLIC
+bool isTopicOrServiceHidden(const std::string & name);
 
-  std::map<std::string, std::vector<std::string>> published_topics =
-    rviz_ros_node_.lock()->get_topic_names_and_types();
+}  // namespace rviz_common
 
-  for (const auto & topic : published_topics) {
-    if (isTopicOrServiceHidden(topic.first)) {
-      continue;
-    }
-    // Only add topics whose type matches one of the allowed types.
-    for (const auto & type : topic.second) {
-      if (message_types_.contains(QString::fromStdString(type))) {
-        addOptionStd(topic.first);
-        break;  // avoid duplicates if the topic matches more than one allowed type
-      }
-    }
-  }
-  sortOptions();
-  QApplication::restoreOverrideCursor();
-}
-
-}  // end namespace properties
-}  // end namespace rviz_common
+#endif  // RVIZ_COMMON__ROS_TOPIC_UTILS_HPP_
