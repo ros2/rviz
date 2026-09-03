@@ -87,6 +87,7 @@ public:
   void onInitialize() override;
   void update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt) override;
   void reset() override;
+  void load(const rviz_common::Config & config) override;
 
   bool eventFilter(QObject * watched, QEvent * event) override;
 
@@ -152,7 +153,7 @@ private:
   rviz_common::properties::FloatProperty * min_property_;
   rviz_common::properties::FloatProperty * max_property_;
   rviz_common::properties::IntProperty * median_buffer_size_property_;
-  rviz_common::properties::BoolProperty * smooth_scaling_property_;
+  rviz_common::properties::EnumProperty * smooth_scaling_property_;
   bool got_float_image_;
 };
 

@@ -38,6 +38,7 @@
 #include <OgreRectangle2D.h>  // NOLINT
 
 #include "../../ogre_testing_environment.hpp"
+#include "rviz_common/config.hpp"
 #include "rviz_common/viewport_mouse_event.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/panel_dock_widget.hpp"
@@ -143,10 +144,31 @@ TEST_F(ImageDisplayTestFixture, initialize_propagates_smooth_scaling_to_texture)
   EXPECT_CALL(*window_manager_, addPane(_, _, _, _)).WillOnce(Return(panelDockWidget));
   EXPECT_CALL(*context_, getFixedFrame()).WillOnce(Return(""));
 
+  EXPECT_CALL(*texture_, setSmoothScaling(true)).Times(AtLeast(1));
+
+  ImageDisplay imageDisplay(std::move(texture_));
+  imageDisplay.initialize(context_.get());
+}
+
+TEST_F(ImageDisplayTestFixture, legacy_false_smooth_scaling_config_disables_mipmaps) {
+  auto panelDockWidget = new rviz_common::PanelDockWidget("panelDockWidget");
+  EXPECT_CALL(*window_manager_, addPane(_, _, _, _)).WillOnce(Return(panelDockWidget));
+  EXPECT_CALL(*context_, getFixedFrame()).WillRepeatedly(Return(""));
+
+  // Loading a pre-enum config with "Smooth scaling: false" must map to "Never"
+  // (nearest, no mipmaps) so the image looks identical to before. The default
+  // "When downscaling" enables mipmaps at init, so allow those calls too and
+  // assert the migration flips the texture back off.
+  EXPECT_CALL(*texture_, setSmoothScaling(_)).Times(AnyNumber());
   EXPECT_CALL(*texture_, setSmoothScaling(false)).Times(AtLeast(1));
 
   ImageDisplay imageDisplay(std::move(texture_));
   imageDisplay.initialize(context_.get());
+
+  rviz_common::Config config;
+  config.mapSetValue("Enabled", false);
+  config.mapSetValue("Smooth scaling", "false");
+  imageDisplay.load(config);
 }
 
 int main(int argc, char ** argv)

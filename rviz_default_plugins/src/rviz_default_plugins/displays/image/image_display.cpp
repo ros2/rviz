@@ -46,6 +46,7 @@
 #include <QMouseEvent>
 #include <QSet>
 #include <QString>
+#include <QVariant>
 
 #include <algorithm>
 #include <cstring>
@@ -62,6 +63,7 @@
 #include "image_transport/subscriber_plugin.hpp"
 #include "pluginlib/class_loader.hpp"
 #include "rclcpp/node.hpp"
+#include "rviz_common/config.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/properties/ros_topic_multi_type_property.hpp"
@@ -78,6 +80,22 @@ namespace rviz_default_plugins
 {
 namespace displays
 {
+
+namespace
+{
+/// "Smooth scaling" modes
+enum class SmoothScaling : int
+{
+  Always = 0,
+  WhenDownscaling = 1,
+  Never = 2,
+};
+
+// Keep these constants as-is to avoid breaking the loading of old configs
+constexpr const char * kSmoothScalingAlways = "Always";
+constexpr const char * kSmoothScalingWhenDownscaling = "When downscaling";
+constexpr const char * kSmoothScalingNever = "Never";
+}  // namespace
 
 ImageDisplay::ImageDisplay()
 : ImageDisplay(std::make_unique<ROSImageTexture>()) {}
@@ -121,12 +139,19 @@ ImageDisplay::ImageDisplay(std::unique_ptr<ROSImageTextureIface> texture)
     "Median window", 5, "Window size for median filter used for computing min/max.", this,
     SLOT(updateNormalizeOptions()));
 
-  smooth_scaling_property_ = new rviz_common::properties::BoolProperty(
-    "Smooth scaling", false,
-    "If enabled, sampling approximately weights all pixels based on area, "
-    "providing good anti-aliasing when downsampling. "
-    "If disabled, sampling uses nearest-neighbour.",
+  smooth_scaling_property_ = new rviz_common::properties::EnumProperty(
+    "Smooth scaling", kSmoothScalingWhenDownscaling,
+    "When to rescale area-weighted instead of using nearest-neighbour.\n"
+    "\"Always\": good anti-aliasing when shrinking, smooth when enlarging.\n"
+    "\"When downscaling\": same but crisp when enlarging.\n"
+    "\"Never\": not recommended because this may show aliasing.",
     this, SLOT(updateSmoothScaling()));
+  smooth_scaling_property_->addOption(
+    kSmoothScalingAlways, static_cast<int>(SmoothScaling::Always));
+  smooth_scaling_property_->addOption(
+    kSmoothScalingWhenDownscaling, static_cast<int>(SmoothScaling::WhenDownscaling));
+  smooth_scaling_property_->addOption(
+    kSmoothScalingNever, static_cast<int>(SmoothScaling::Never));
 
   got_float_image_ = false;
 }
@@ -347,7 +372,12 @@ void ImageDisplay::updateNormalizeOptions()
 
 void ImageDisplay::updateSmoothScaling()
 {
-  texture_->setSmoothScaling(smooth_scaling_property_->getBool());
+  // The texture only needs to know whether a mipmap chain is required, which
+  // both smoothing modes need; the minification-vs-magnification distinction
+  // is handled entirely by the material's texture filtering below.
+  const bool needs_mipmaps =
+    smooth_scaling_property_->getOptionInt() != static_cast<int>(SmoothScaling::Never);
+  texture_->setSmoothScaling(needs_mipmaps);
   applySmoothScalingToMaterial(material_);
 }
 
@@ -356,8 +386,22 @@ void ImageDisplay::applySmoothScalingToMaterial(const Ogre::MaterialPtr & materi
   if (!material) {return;}
   Ogre::Pass * pass = material->getTechnique(0)->getPass(0);
   if (pass->getNumTextureUnitStates() == 0) {return;}
-  pass->getTextureUnitState(0)->setTextureFiltering(
-    smooth_scaling_property_->getBool() ? Ogre::TFO_TRILINEAR : Ogre::TFO_NONE);
+  Ogre::TextureUnitState * tu = pass->getTextureUnitState(0);
+  switch (static_cast<SmoothScaling>(smooth_scaling_property_->getOptionInt())) {
+    case SmoothScaling::Always:
+      tu->setTextureFiltering(Ogre::TFO_TRILINEAR);
+      break;
+    case SmoothScaling::WhenDownscaling:
+      // Linear minification with mipmaps anti-aliases when the image is drawn
+      // smaller than native; point magnification keeps individual pixels crisp
+      // when it is drawn larger. The GPU picks min vs mag per fragment from the
+      // actual sampling footprint, so no resolution comparison is needed here.
+      tu->setTextureFiltering(Ogre::FO_LINEAR, Ogre::FO_POINT, Ogre::FO_LINEAR);
+      break;
+    case SmoothScaling::Never:
+      tu->setTextureFiltering(Ogre::TFO_NONE);
+      break;
+  }
 }
 
 void ImageDisplay::clear()
@@ -402,6 +446,23 @@ void ImageDisplay::reset()
   Display::reset();
   messages_received_ = 0;
   clear();
+}
+
+void ImageDisplay::load(const rviz_common::Config & config)
+{
+  _RosTopicDisplay::load(config);
+
+  // Migrate configs written before "Smooth scaling" became an enum
+  // (was a boolean before) such that their appearance stays identical.
+  QVariant legacy;
+  if (config.mapGetValue("Smooth scaling", &legacy)) {
+    const QString value = legacy.toString();
+    if (value == "true" || value == "false") {
+      smooth_scaling_property_->setStringStd(
+        value == "true" ? kSmoothScalingAlways : kSmoothScalingNever);
+      updateSmoothScaling();
+    }
+  }
 }
 
 /* This is called by incomingMessage(). */
