@@ -59,6 +59,19 @@ TEST(PointCloud2Display, filter_keeps_valid_points) {
   ASSERT_THAT(buffer[5], Eq(6));
 }
 
+TEST(PointCloud2Display, filter_passes_the_message_through_when_no_point_is_invalid) {
+  // just plain Point is ambiguous on macOS
+  rviz_default_plugins::Point p1 = {1, 2, 3};
+  rviz_default_plugins::Point p2 = {4, 5, 6};
+  auto cloud = createPointCloud2WithPoints(std::vector<rviz_default_plugins::Point>{p1, p2});
+
+  PointCloud2Display display;
+  auto filtered = display.filterOutInvalidPoints(cloud);
+
+  // Nothing had to be dropped, so the original message is reused instead of being copied.
+  ASSERT_THAT(filtered.get(), Eq(cloud.get()));
+}
+
 TEST(PointCloud2Display, hasXYZChannels_returns_true_for_valid_pointcloud) {
   // just plain Point is ambiguous on macOS
   rviz_default_plugins::Point p1 = {1, 2, 3};
