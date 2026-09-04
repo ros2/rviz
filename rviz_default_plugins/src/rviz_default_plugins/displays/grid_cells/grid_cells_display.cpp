@@ -33,6 +33,7 @@
 
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <OgreBillboardSet.h>
@@ -197,7 +198,7 @@ void GridCellsDisplay::convertMessageToCloud(nav_msgs::msg::GridCells::ConstShar
     points.push_back(rendering_point);
   }
 
-  cloud_->addPoints(points.begin(), points.end());
+  cloud_->addPoints(std::move(points));
 }
 
 }  // namespace displays
