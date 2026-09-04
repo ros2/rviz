@@ -41,7 +41,7 @@ namespace rviz_default_plugins
 
 RVIZ_DEFAULT_PLUGINS_POINTCLOUD_PUBLIC
 sensor_msgs::msg::PointCloud2::ConstSharedPtr
-convertPointCloudToPointCloud2(sensor_msgs::msg::PointCloud::ConstSharedPtr input);
+convertPointCloudToPointCloud2(const sensor_msgs::msg::PointCloud::ConstSharedPtr & input);
 
 }  // namespace rviz_default_plugins
 

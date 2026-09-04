@@ -118,7 +118,7 @@ PoseWithCovSelectionHandler::getAABBs(const rviz_common::interaction::Picked & o
 }
 
 void PoseWithCovSelectionHandler::setMessage(
-  geometry_msgs::msg::PoseWithCovarianceStamped::ConstSharedPtr message)
+  const geometry_msgs::msg::PoseWithCovarianceStamped::ConstSharedPtr & message)
 {
   // properties_.size() should only be > 0 after createProperties()
   // and before destroyProperties(), during which frame_property_,
