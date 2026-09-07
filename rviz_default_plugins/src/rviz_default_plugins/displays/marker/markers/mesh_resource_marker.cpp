@@ -42,6 +42,9 @@
 #include <OgreTechnique.h>
 #include <OgreTextureManager.h>
 
+#include "resource_retriever/retriever.hpp"
+#include "resource_retriever_service_plugin/resource_retriever_service_plugin.hpp"
+
 #include "rviz_rendering/mesh_loader.hpp"
 #include "rviz_rendering/material_manager.hpp"
 #include "rviz_common/display_context.hpp"
@@ -57,10 +60,24 @@ namespace displays
 namespace markers
 {
 
+using ::resource_retriever_service_plugin::RosServiceResourceRetriever;
+
 MeshResourceMarker::MeshResourceMarker(
   MarkerCommon * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node)
 : MarkerBase(owner, context, parent_node), entity_(nullptr)
-{}
+{
+  if (owner_ == nullptr) {
+    resource_retriever::RetrieverVec plugins = resource_retriever::default_plugins();
+
+    auto ros_iface = context_->getRosNodeAbstraction().lock();
+    if (ros_iface) {
+      plugins.push_back(std::make_shared<RosServiceResourceRetriever>(*ros_iface->get_raw_node()));
+    } else {
+      throw std::invalid_argument("ROS node abstraction interface not valid");
+    }
+    retriever_ = resource_retriever::Retriever(plugins);
+  }
+}
 
 MeshResourceMarker::~MeshResourceMarker()
 {
@@ -112,7 +129,7 @@ void MeshResourceMarker::onNewMessage(
 
     if (
       !rviz_rendering::loadMeshFromResource(
-        owner_->getResourceRetriever(),
+        owner_ ? owner_->getResourceRetriever() : &retriever_,
         new_message->mesh_resource))
     {
       printMeshLoadingError(new_message);
