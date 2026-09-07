@@ -1,4 +1,5 @@
 // Copyright (c) 2009, Willow Garage, Inc.
+// Copyright (c) 2026, Arne Baeyens.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -31,11 +32,15 @@
 #include "rviz_default_plugins/displays/image/ros_image_texture.hpp"
 
 #include <algorithm>
+#include <array>
+#include <cmath>
+#include <cstdint>
 #include <deque>
 #include <limits>
 #include <map>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <sstream>
 #include <iostream>
 #include <string>
@@ -53,6 +58,7 @@
 
 #include "rviz_common/logging.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
+#include "rviz_default_plugins/displays/image/bayer_format.hpp"
 
 namespace rviz_default_plugins
 {
@@ -66,6 +72,7 @@ ROSImageTexture::ROSImageTexture()
   median_frames_(5),
   smooth_scaling_(false),
   tex_smooth_(false),
+  linear_input_(false),
   tex_width_(0),
   tex_height_(0),
   tex_format_(Ogre::PF_UNKNOWN)
@@ -166,6 +173,19 @@ void ROSImageTexture::setSmoothScaling(bool enabled)
     new_image_ = true;
   } else {
     loadEmpty();
+  }
+}
+
+void ROSImageTexture::setLinearInput(bool enabled)
+{
+  std::lock_guard<std::mutex> lock(mutex_);
+  if (linear_input_ == enabled) {
+    return;
+  }
+  linear_input_ = enabled;
+  // Re-arm so latched topics pick up the change without a new publish.
+  if (current_image_) {
+    new_image_ = true;
   }
 }
 
@@ -408,6 +428,263 @@ static void imageConvertYUYVToRGB(
   }
 }
 
+// Bayer demosaic helpers (file-scope). Bilinear interpolation, hand-rolled
+// to avoid an OpenCV / cv_bridge dependency. Output is 8-bit RGB; the caller
+// decides whether to apply sRGB gamma (via linear_input_) or emit
+// the demosaiced linear values directly.
+// Note: the encoding -> layout / bit-depth mapping lives in bayer_format.hpp,
+// shared with the encoding gates and pixel read-out in image_display.cpp.
+
+// Piecewise sRGB transfer function (linear -> sRGB), input in [0, 1].
+static double srgbEncode(double linear)
+{
+  if (linear <= 0.0031308) {
+    return 12.92 * linear;
+  }
+  return 1.055 * std::pow(linear, 1.0 / 2.4) - 0.055;
+}
+
+// 256-entry LUT: 8-bit linear -> 8-bit sRGB. Constructed once on first use.
+static const std::array<uint8_t, 256> & srgbLut8()
+{
+  static const std::array<uint8_t, 256> lut = []() {
+      std::array<uint8_t, 256> t{};
+      for (int i = 0; i < 256; ++i) {
+        const double s = std::clamp(srgbEncode(i / 255.0), 0.0, 1.0);
+        t[static_cast<size_t>(i)] = static_cast<uint8_t>(std::lround(s * 255.0));
+      }
+      return t;
+    }();
+  return lut;
+}
+
+// 65536-entry LUT: 16-bit linear -> 8-bit sRGB. 64 KiB; fits in L2; built once.
+static const std::array<uint8_t, 65536> & srgbLut16()
+{
+  static const std::array<uint8_t, 65536> lut = []() {
+      std::array<uint8_t, 65536> t{};
+      for (int i = 0; i < 65536; ++i) {
+        const double s = std::clamp(srgbEncode(i / 65535.0), 0.0, 1.0);
+        t[static_cast<size_t>(i)] = static_cast<uint8_t>(std::lround(s * 255.0));
+      }
+      return t;
+    }();
+  return lut;
+}
+
+// Demosaic implementation. T is the input pixel type (uint8_t or uint16_t).
+// R_DY / R_DX encode the layout (position of R within the 2x2 cell).
+// `q` is a callable that maps an integer linear value to the final uint8_t
+// output; the caller decides whether that mapping applies sRGB gamma or is
+// a plain clamp/rescale.
+template<typename T, int R_DY, int R_DX, typename Quantize>
+static void demosaicBayerImpl(
+  uint8_t * dst_rgb,
+  const T * src_mosaic,
+  uint32_t height,
+  uint32_t width,
+  uint32_t stride_in_pixels,
+  Quantize && q)
+{
+  constexpr int B_DY = 1 - R_DY;
+  constexpr int B_DX = 1 - R_DX;
+
+  auto write_pixel = [&](uint32_t y, uint32_t x, int r_lin, int g_lin, int b_lin) {
+      const size_t out_idx = (static_cast<size_t>(y) * width + x) * 3;
+      dst_rgb[out_idx + 0] = q(r_lin);
+      dst_rgb[out_idx + 1] = q(g_lin);
+      dst_rgb[out_idx + 2] = q(b_lin);
+    };
+
+  // Border-pixel handler: bounds-checked neighbour access, averages over the
+  // count of valid neighbours (not a fixed denominator). Used for the 1-pixel
+  // border (and for the whole image if w < 3 or h < 3).
+  //
+  // Edge pixels use clamp-to-edge for missing neighbours. For a G-position
+  // pixel on the boundary, the clamped neighbour is itself a G (not R or B),
+  // which is a small chromatic miscolouring of edge pixels. Acceptable for
+  // a display path; mirror-padding would complicate the hot loop for an
+  // artifact that only shows up on thin sub-pixel edge features.
+  auto handle_border = [&](uint32_t y, uint32_t x) {
+      auto p = [&](int32_t dy, int32_t dx) -> int {
+          int32_t yy = std::clamp(
+          static_cast<int32_t>(y) + dy, int32_t{0},
+          static_cast<int32_t>(height) - 1);
+          int32_t xx = std::clamp(
+          static_cast<int32_t>(x) + dx, int32_t{0},
+          static_cast<int32_t>(width) - 1);
+          return src_mosaic[static_cast<size_t>(yy) * stride_in_pixels +
+                   static_cast<size_t>(xx)];
+        };
+      const bool has_n = y > 0;
+      const bool has_s = y + 1 < height;
+      const bool has_w = x > 0;
+      const bool has_e = x + 1 < width;
+
+      auto avg_cardinal = [&]() -> int {
+          int sum = 0;
+          int count = 0;
+          if (has_n) {sum += p(-1, 0); ++count;}
+          if (has_s) {sum += p(1, 0); ++count;}
+          if (has_w) {sum += p(0, -1); ++count;}
+          if (has_e) {sum += p(0, 1); ++count;}
+          return count ? (sum + count / 2) / count : 0;
+        };
+      auto avg_diagonal = [&]() -> int {
+          int sum = 0;
+          int count = 0;
+          if (has_n && has_w) {sum += p(-1, -1); ++count;}
+          if (has_n && has_e) {sum += p(-1, 1); ++count;}
+          if (has_s && has_w) {sum += p(1, -1); ++count;}
+          if (has_s && has_e) {sum += p(1, 1); ++count;}
+          return count ? (sum + count / 2) / count : 0;
+        };
+      auto avg_horizontal = [&]() -> int {
+          int sum = 0;
+          int count = 0;
+          if (has_w) {sum += p(0, -1); ++count;}
+          if (has_e) {sum += p(0, 1); ++count;}
+          return count ? (sum + count / 2) / count : 0;
+        };
+      auto avg_vertical = [&]() -> int {
+          int sum = 0;
+          int count = 0;
+          if (has_n) {sum += p(-1, 0); ++count;}
+          if (has_s) {sum += p(1, 0); ++count;}
+          return count ? (sum + count / 2) / count : 0;
+        };
+
+      const int yp = static_cast<int>(y & 1u);
+      const int xp = static_cast<int>(x & 1u);
+      int r_lin;
+      int g_lin;
+      int b_lin;
+
+      if (yp == R_DY && xp == R_DX) {
+        r_lin = p(0, 0);
+        g_lin = avg_cardinal();
+        b_lin = avg_diagonal();
+      } else if (yp == B_DY && xp == B_DX) {
+        r_lin = avg_diagonal();
+        g_lin = avg_cardinal();
+        b_lin = p(0, 0);
+      } else {
+        g_lin = p(0, 0);
+        if (yp == R_DY) {
+          r_lin = avg_horizontal();
+          b_lin = avg_vertical();
+        } else {
+          r_lin = avg_vertical();
+          b_lin = avg_horizontal();
+        }
+      }
+      write_pixel(y, x, r_lin, g_lin, b_lin);
+    };
+
+  if (height < 3 || width < 3) {
+    for (uint32_t y = 0; y < height; ++y) {
+      for (uint32_t x = 0; x < width; ++x) {
+        handle_border(y, x);
+      }
+    }
+    return;
+  }
+
+  // Border passes.
+  for (uint32_t x = 0; x < width; ++x) {
+    handle_border(0, x);
+  }
+  for (uint32_t x = 0; x < width; ++x) {
+    handle_border(height - 1, x);
+  }
+  for (uint32_t y = 1; y + 1 < height; ++y) {
+    handle_border(y, 0);
+  }
+  for (uint32_t y = 1; y + 1 < height; ++y) {
+    handle_border(y, width - 1);
+  }
+
+  // Interior. No bounds checks, fixed 2-tap or 4-tap averages.
+  for (uint32_t y = 1; y + 1 < height; ++y) {
+    const T * row_m1 = src_mosaic + static_cast<size_t>(y - 1) * stride_in_pixels;
+    const T * row_0 = src_mosaic + static_cast<size_t>(y) * stride_in_pixels;
+    const T * row_p1 = src_mosaic + static_cast<size_t>(y + 1) * stride_in_pixels;
+    const int yp = static_cast<int>(y & 1u);
+
+    for (uint32_t x = 1; x + 1 < width; ++x) {
+      const int p_nw = row_m1[x - 1];
+      const int p_n = row_m1[x];
+      const int p_ne = row_m1[x + 1];
+      const int p_w = row_0[x - 1];
+      const int p_c = row_0[x];
+      const int p_e = row_0[x + 1];
+      const int p_sw = row_p1[x - 1];
+      const int p_s = row_p1[x];
+      const int p_se = row_p1[x + 1];
+
+      const int xp = static_cast<int>(x & 1u);
+      int r_lin;
+      int g_lin;
+      int b_lin;
+
+      if (yp == R_DY && xp == R_DX) {
+        r_lin = p_c;
+        g_lin = (p_n + p_s + p_w + p_e + 2) / 4;
+        b_lin = (p_nw + p_ne + p_sw + p_se + 2) / 4;
+      } else if (yp == B_DY && xp == B_DX) {
+        r_lin = (p_nw + p_ne + p_sw + p_se + 2) / 4;
+        g_lin = (p_n + p_s + p_w + p_e + 2) / 4;
+        b_lin = p_c;
+      } else {
+        g_lin = p_c;
+        if (yp == R_DY) {
+          r_lin = (p_w + p_e + 1) / 2;
+          b_lin = (p_n + p_s + 1) / 2;
+        } else {
+          r_lin = (p_n + p_s + 1) / 2;
+          b_lin = (p_w + p_e + 1) / 2;
+        }
+      }
+      write_pixel(y, x, r_lin, g_lin, b_lin);
+    }
+  }
+}
+
+// Dispatch the layout to the templated implementation.
+template<typename T, typename Quantize>
+static void demosaicBayer(
+  uint8_t * dst_rgb,
+  const T * src_mosaic,
+  BayerLayout layout,
+  uint32_t height,
+  uint32_t width,
+  uint32_t stride_in_pixels,
+  Quantize && q)
+{
+  switch (layout) {
+    case BayerLayout::RGGB:
+      demosaicBayerImpl<T, 0, 0>(
+        dst_rgb, src_mosaic, height, width, stride_in_pixels,
+        std::forward<Quantize>(q));
+      return;
+    case BayerLayout::BGGR:
+      demosaicBayerImpl<T, 1, 1>(
+        dst_rgb, src_mosaic, height, width, stride_in_pixels,
+        std::forward<Quantize>(q));
+      return;
+    case BayerLayout::GBRG:
+      demosaicBayerImpl<T, 1, 0>(
+        dst_rgb, src_mosaic, height, width, stride_in_pixels,
+        std::forward<Quantize>(q));
+      return;
+    case BayerLayout::GRBG:
+      demosaicBayerImpl<T, 0, 1>(
+        dst_rgb, src_mosaic, height, width, stride_in_pixels,
+        std::forward<Quantize>(q));
+      return;
+  }
+}
+
 ImageData::ImageData(
   Ogre::PixelFormat pixformat,
   const uint8_t * data_ptr,
@@ -589,6 +866,132 @@ ROSImageTexture::convertNV12ToRGBData(const uint8_t * data_ptr, size_t data_size
 }
 
 ImageData
+ROSImageTexture::convertBayerToRGBData(
+  const std::string & encoding, const uint8_t * data_ptr, size_t data_size_in_bytes)
+{
+  const auto format = bayerFormatFromEncoding(encoding);
+  if (!format) {
+    throw UnsupportedImageEncoding(encoding);
+  }
+
+  // Input validation: untrusted ROS publishers can send malformed messages.
+  // Catch undersized / inconsistent inputs upfront so the demosaic loops can
+  // index without bounds checks.
+  const uint32_t bytes_per_pixel = format->is_16bit ? 2u : 1u;
+  // 32768 = 2^15 per dimension and 2^28 (~268 megapixel) in total:
+  // comfortably larger than any real camera while bounding the RGB output
+  // allocation (width * height * 3, ~800 MB worst case, below the 32-bit
+  // size_t ceiling of ~4.3 * 10^9).
+  constexpr uint32_t kMaxDimension = 32768u;
+  constexpr uint64_t kMaxPixels = uint64_t{1} << 28;
+  if (width_ == 0 || height_ == 0) {
+    throw MalformedImageMessage(
+      "zero image dimension (" +
+      std::to_string(width_) + "x" + std::to_string(height_) + ")");
+  }
+  if (width_ > kMaxDimension || height_ > kMaxDimension ||
+    static_cast<uint64_t>(width_) * height_ > kMaxPixels)
+  {
+    throw MalformedImageMessage(
+      "image dimensions too large (" +
+      std::to_string(width_) + "x" + std::to_string(height_) + ")");
+  }
+  // update() repacks padded rows before conversion, so a step mismatch here
+  // means a malformed message. Requiring exact packing also pins down the
+  // precondition the 16-bit min/max scan below relies on.
+  if (stride_ != width_ * bytes_per_pixel) {
+    throw MalformedImageMessage(
+      "step " + std::to_string(stride_) + " does not match width " +
+      std::to_string(width_) + " at " + std::to_string(bytes_per_pixel) +
+      " byte(s) per pixel");
+  }
+  if (data_size_in_bytes < static_cast<size_t>(height_) * stride_) {
+    throw MalformedImageMessage(
+      "data size " + std::to_string(data_size_in_bytes) + " below the " +
+      std::to_string(static_cast<size_t>(height_) * stride_) +
+      " bytes implied by height and step");
+  }
+
+  const size_t out_size = static_cast<size_t>(width_) * height_ * 3u;
+  auto out_buf = std::make_unique<uint8_t[]>(out_size);
+
+  if (!format->is_16bit) {
+    // 8-bit Bayer: the demosaiced linear value is already in [0, 255], so
+    // when linear_input_ is true we apply the 256-entry sRGB LUT;
+    // when false we clamp and emit the linear value directly.
+    if (linear_input_) {
+      const auto & lut = srgbLut8();
+      demosaicBayer<uint8_t>(
+        out_buf.get(), data_ptr, format->layout, height_, width_, stride_,
+        [&lut](int v) -> uint8_t {
+          return lut[static_cast<size_t>(std::clamp(v, 0, 255))];
+        });
+    } else {
+      demosaicBayer<uint8_t>(
+        out_buf.get(), data_ptr, format->layout, height_, width_, stride_,
+        [](int v) -> uint8_t {
+          return static_cast<uint8_t>(std::clamp(v, 0, 255));
+        });
+    }
+  } else {
+    // 16-bit Bayer. The validation above guarantees tightly packed rows, so
+    // min/max is a plain contiguous scan.
+    const uint16_t * src16 = reinterpret_cast<const uint16_t *>(data_ptr);
+    const uint32_t stride_in_pixels = stride_ / bytes_per_pixel;
+
+    double min_value;
+    double max_value;
+    getMinimalAndMaximalValueToNormalize<uint16_t>(
+      src16, static_cast<size_t>(width_) * height_, min_value, max_value);
+
+    const double range = max_value - min_value;
+
+    if (range > 0.0 && std::isfinite(range)) {
+      // Demosaiced 16-bit averages stay within [0, 65535], so fold the
+      // rescale (and, for linear input, the sRGB transfer) into a per-frame
+      // 16-bit -> 8-bit LUT: the inner loop then does one table lookup per
+      // channel instead of floating-point math. Building the 65536 entries
+      // once per frame amortizes over the pixels.
+      const double offset = min_value;
+      std::vector<uint8_t> quantize_lut(65536);
+      if (linear_input_) {
+        // Rescale at 16-bit precision before the sRGB transfer so the steep
+        // toe of the curve isn't banded by 8-bit quantisation. The
+        // 16-bit-precision claim holds when the user-supplied range stays
+        // within 65535; wider ranges reduce precision proportionally.
+        const auto & srgb = srgbLut16();
+        const double scale = 65535.0 / range;
+        for (int i = 0; i < 65536; ++i) {
+          const double scaled = (static_cast<double>(i) - offset) * scale;
+          quantize_lut[static_cast<size_t>(i)] = srgb[static_cast<size_t>(
+                std::lround(std::clamp(scaled, 0.0, 65535.0)))];
+        }
+      } else {
+        // No gamma: rescale linearly straight into the 8-bit range.
+        const double scale = 255.0 / range;
+        for (int i = 0; i < 65536; ++i) {
+          const double scaled = (static_cast<double>(i) - offset) * scale;
+          quantize_lut[static_cast<size_t>(i)] = static_cast<uint8_t>(
+            std::lround(std::clamp(scaled, 0.0, 255.0)));
+        }
+      }
+      demosaicBayer<uint16_t>(
+        out_buf.get(), src16, format->layout, height_, width_, stride_in_pixels,
+        [&quantize_lut](int v) -> uint8_t {
+          return quantize_lut[static_cast<size_t>(v)];
+        });
+    } else {
+      // No dynamic range in the input; there is no meaningful rescale, so
+      // emit uniform black by convention (matches convertTo8bit<T>).
+      std::fill_n(out_buf.get(), out_size, uint8_t{0});
+    }
+  }
+
+  uint8_t * raw = out_buf.release();
+  return ImageData(Ogre::PF_BYTE_RGB, raw, out_size, true);
+}
+
+ImageData
 ROSImageTexture::setFormatAndNormalizeDataIfNecessary(
   const std::string & encoding, const uint8_t * data_ptr, size_t data_size_in_bytes)
 {
@@ -621,7 +1024,7 @@ ROSImageTexture::setFormatAndNormalizeDataIfNecessary(
   {
     return convertTo8bit<uint16_t>(data_ptr, data_size_in_bytes);
   } else if (encoding.find("bayer") == 0) {
-    return ImageData(Ogre::PF_BYTE_L, data_ptr, data_size_in_bytes, false);
+    return convertBayerToRGBData(encoding, data_ptr, data_size_in_bytes);
   } else if (encoding == sensor_msgs::image_encodings::TYPE_32FC1) {
     return convertTo8bit<float>(data_ptr, data_size_in_bytes);
   } else if (encoding == sensor_msgs::image_encodings::UYVY) {
