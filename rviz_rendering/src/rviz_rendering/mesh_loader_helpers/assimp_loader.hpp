@@ -142,10 +142,14 @@ private:
     auto * indices =
       static_cast<T *>(index_buffer->lock(Ogre::HardwareBuffer::HBL_DISCARD));
 
-    for (T j = 0; j < input_mesh->mNumFaces; j++) {
-      aiFace & face = input_mesh->mFaces[j];
-      for (T k = 0; k < face.mNumIndices; ++k) {
-        *indices++ = face.mIndices[k];
+    // The loop counters must not use the index element type T: for a 16 bit
+    // index buffer, T is uint16_t and a mesh with 65536 or more faces would
+    // make the counter wrap around instead of terminating, writing past the
+    // end of the index buffer. Use the same type assimp uses for the counts.
+    for (unsigned int j = 0; j < input_mesh->mNumFaces; j++) {
+      const aiFace & face = input_mesh->mFaces[j];
+      for (unsigned int k = 0; k < face.mNumIndices; ++k) {
+        *indices++ = static_cast<T>(face.mIndices[k]);
       }
     }
     index_buffer->unlock();
