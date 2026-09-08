@@ -34,6 +34,7 @@
 #include <algorithm>
 #include <cassert>
 #include <sstream>
+#include <utility>
 #include <vector>
 
 #include <OgreHardwareBuffer.h>
@@ -489,8 +490,33 @@ void PointCloud::addPoints(
   if (stop_iterator - start_iterator <= 0) {
     return;
   }
-  auto num_points = static_cast<uint32_t>(std::distance(start_iterator, stop_iterator));
+  const size_t offset = points_.size();
   points_.insert(points_.cend(), start_iterator, stop_iterator);
+  createRenderablesForPointsFrom(offset);
+}
+
+void PointCloud::addPoints(std::vector<Point> && points)
+{
+  if (points.empty()) {
+    return;
+  }
+  const size_t offset = points_.size();
+  if (points_.empty()) {
+    points_ = std::move(points);
+  } else {
+    points_.insert(
+      points_.cend(),
+      std::make_move_iterator(points.begin()),
+      std::make_move_iterator(points.end()));
+  }
+  createRenderablesForPointsFrom(offset);
+}
+
+void PointCloud::createRenderablesForPointsFrom(size_t offset)
+{
+  const auto start_iterator = points_.begin() + static_cast<std::ptrdiff_t>(offset);
+  const auto stop_iterator = points_.end();
+  auto num_points = static_cast<uint32_t>(std::distance(start_iterator, stop_iterator));
 
   RenderableInternals internals = createNewRenderable(num_points);
 
@@ -649,7 +675,7 @@ void PointCloud::popPoints(uint32_t num_points)
   }
 }
 
-std::vector<PointCloud::Point> PointCloud::getPoints()
+const std::vector<PointCloud::Point> & PointCloud::getPoints() const
 {
   return points_;
 }
