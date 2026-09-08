@@ -52,14 +52,14 @@ namespace
 std::shared_ptr<rclcpp::Clock> createFrozenClock(int64_t nanoseconds)
 {
   auto clock = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);
-  rcl_enable_ros_time_override(clock->get_clock_handle());
-  rcl_set_ros_time_override(clock->get_clock_handle(), nanoseconds);
+  EXPECT_EQ(RCL_RET_OK, rcl_enable_ros_time_override(clock->get_clock_handle()));
+  EXPECT_EQ(RCL_RET_OK, rcl_set_ros_time_override(clock->get_clock_handle(), nanoseconds));
   return clock;
 }
 
 void setClock(const std::shared_ptr<rclcpp::Clock> & clock, int64_t nanoseconds)
 {
-  rcl_set_ros_time_override(clock->get_clock_handle(), nanoseconds);
+  EXPECT_EQ(RCL_RET_OK, rcl_set_ros_time_override(clock->get_clock_handle(), nanoseconds));
 }
 
 size_t countTrajectoryPoints(Ogre::SceneNode * scene_node)
