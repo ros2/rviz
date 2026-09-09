@@ -1,4 +1,4 @@
-// Copyright (c) 2026, Canonical Ltd.
+// Copyright (c) 2026, Open Source Robotics Foundation, Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
