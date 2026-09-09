@@ -35,6 +35,17 @@
   </class>
 
   <class
+    name="rviz_default_plugins/OverlayCamera"
+    type="rviz_default_plugins::displays::OverlayCameraDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays a camera image composited as an overlay in the main 3D view.
+    </description>
+    <message_type>sensor_msgs/msg/Image</message_type>
+  </class>
+
+  <class
     name="rviz_default_plugins/DepthCloud"
     type="rviz_default_plugins::displays::DepthCloudDisplay"
     base_class_type="rviz_common::Display"
@@ -117,6 +128,17 @@
   >
     <description>
       The Image display creates a new rendering window with an image.
+    </description>
+    <message_type>sensor_msgs/msg/Image</message_type>
+  </class>
+
+  <class
+    name="rviz_default_plugins/OverlayImage"
+    type="rviz_default_plugins::displays::OverlayImageDisplay"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays a sensor_msgs/msg/Image as a 2D overlay on top of the 3D scene.
     </description>
     <message_type>sensor_msgs/msg/Image</message_type>
   </class>
@@ -390,6 +412,16 @@
     <description>
       Drag with the left button to select objects in the 3D scene.
       Hold the Alt key to change viewpoint as in the Move tool.
+    </description>
+  </class>
+
+  <class
+    name="rviz_default_plugins/OverlayPicker"
+    type="rviz_default_plugins::tools::OverlayPickerTool"
+    base_class_type="rviz_common::Tool"
+  >
+    <description>
+      Drag OverlayImage displays in screen space.
     </description>
   </class>
 
