@@ -254,6 +254,8 @@ public:
 
   ros_integration::RosNodeAbstractionIface::WeakPtr getRosNodeAbstraction() const override;
 
+  resource_retriever::Retriever & getResourceRetriever() override;
+
   /// Return the FrameManager instance.
   FrameManagerIface * getFrameManager() const override;
 
@@ -409,6 +411,7 @@ private:
   std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> executor_;
   ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node_;
   rviz_common::transformation::TransformationManager * transformation_manager_;
+  std::unique_ptr<resource_retriever::Retriever> resource_retriever_;
 };
 
 }  // namespace rviz_common

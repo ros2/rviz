@@ -37,8 +37,6 @@
 
 #include <OgreMaterial.h>
 
-#include "resource_retriever/retriever.hpp"
-
 #include "rviz_default_plugins/displays/marker/markers/marker_base.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 
@@ -86,8 +84,6 @@ protected:
 
   Ogre::Entity * entity_;
   S_MaterialPtr materials_;
-
-  resource_retriever::Retriever retriever_;
 
 private:
   void destroyEntity();

@@ -36,6 +36,7 @@ find_package(geometry_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(resource_retriever REQUIRED)
+find_package(resource_retriever_service_plugin REQUIRED)
 find_package(rviz_rendering REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
@@ -261,6 +262,7 @@ target_link_libraries(rviz_common PUBLIC
 
 target_link_libraries(rviz_common PRIVATE
   resource_retriever::resource_retriever
+  resource_retriever_service_plugin::resource_retriever_service_plugin
   tinyxml2::tinyxml2
 )
 
