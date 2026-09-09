@@ -273,7 +273,7 @@ void MapDisplay::subscribeToUpdateTopic()
       node->
       template create_subscription<map_msgs::msg::OccupancyGridUpdate>(
       update_topic_property_->getTopicStd(), update_profile_,
-      [this](const map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr message) {
+      [this](const map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr & message) {
         incomingUpdate(message);
       },
       sub_opts);
@@ -358,7 +358,7 @@ void MapDisplay::processMessage(nav_msgs::msg::OccupancyGrid::ConstSharedPtr msg
   Q_EMIT mapUpdated();
 }
 
-void MapDisplay::incomingUpdate(const map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr update)
+void MapDisplay::incomingUpdate(const map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr & update)
 {
   // Only update the map if we have gotten a full one first.
   if (!loaded_) {
@@ -411,7 +411,7 @@ void MapDisplay::incomingUpdate(const map_msgs::msg::OccupancyGridUpdate::ConstS
 }
 
 bool MapDisplay::updateDataOutOfBounds(
-  const map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr update) const
+  const map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr & update) const
 {
   return update->x < 0 ||
          update->y < 0 ||
@@ -420,7 +420,7 @@ bool MapDisplay::updateDataOutOfBounds(
 }
 
 void MapDisplay::updateMapDataInMemory(
-  const map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr update)
+  const map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr & update)
 {
   for (size_t y = 0; y < update->height; y++) {
     auto offset = update->data.begin() + y * update->width;

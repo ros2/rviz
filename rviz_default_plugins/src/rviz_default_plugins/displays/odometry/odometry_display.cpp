@@ -372,7 +372,7 @@ std::unique_ptr<rviz_rendering::Axes> OdometryDisplay::createAndSetAxes(
 std::unique_ptr<rviz_rendering::CovarianceVisual> OdometryDisplay::createAndSetCovarianceVisual(
   const Ogre::Vector3 & position,
   const Ogre::Quaternion & orientation,
-  nav_msgs::msg::Odometry::ConstSharedPtr message)
+  const nav_msgs::msg::Odometry::ConstSharedPtr & message)
 {
   auto covariance_visual = std::make_unique<rviz_rendering::CovarianceVisual>(
     scene_manager_, scene_node_);

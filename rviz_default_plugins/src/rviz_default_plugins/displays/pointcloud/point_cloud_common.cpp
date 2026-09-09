@@ -198,8 +198,8 @@ void PointCloudCommon::loadTransformers()
 }
 
 void PointCloudCommon::loadTransformer(
-  PointCloudTransformerPtr trans,
-  std::string name,
+  const PointCloudTransformerPtr & trans,
+  const std::string & name,
   const std::string & lookup_name)
 {
   trans->init();
@@ -376,7 +376,7 @@ void PointCloudCommon::updateTransformerProperties()
   std::unique_lock<std::mutex> lock(new_clouds_mutex_);
 
   if (new_xyz_transformer_ || new_color_transformer_) {
-    for (auto transformer : transformers_) {
+    for (auto & transformer : transformers_) {
       const std::string & name = transformer.first;
       TransformerInfo & info = transformer.second;
 
@@ -427,7 +427,7 @@ void PointCloudCommon::removeObsoleteCloudInfos()
 }
 
 bool PointCloudCommon::cloudInfoIsDecayed(
-  CloudInfoPtr cloud_info, float point_decay_time, const rclcpp::Time & now)
+  const CloudInfoPtr & cloud_info, float point_decay_time, const rclcpp::Time & now)
 {
   return (now.nanoseconds() - cloud_info->receive_time_.nanoseconds()) / 1E9 >=
          point_decay_time;
@@ -457,7 +457,7 @@ void PointCloudCommon::updateTransformers(
   bool cur_xyz_valid = false;
   bool cur_color_valid = false;
   bool has_rgb_transformer = false;
-  for (auto transformer : transformers_) {
+  for (const auto & transformer : transformers_) {
     const std::string & name = transformer.first;
     const PointCloudTransformerPtr & trans = transformer.second.transformer;
     uint32_t mask = trans->supports(cloud);
@@ -707,7 +707,7 @@ void PointCloudCommon::fillTransformerOptions(
 
   const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg = cloud_infos_.front()->message_;
 
-  for (auto transformer : transformers_) {
+  for (const auto & transformer : transformers_) {
     const PointCloudTransformerPtr & trans = transformer.second.transformer;
     if ((trans->supports(msg) & mask) == mask) {
       prop->addOption(QString::fromStdString(transformer.first));
@@ -717,10 +717,10 @@ void PointCloudCommon::fillTransformerOptions(
 
 void PointCloudCommon::onDisable()
 {
-  for (auto cloud_info : cloud_infos_) {
+  for (const auto & cloud_info : cloud_infos_) {
     cloud_info->selection_handler_.reset();
   }
-  for (auto obsolete_cloud_info : obsolete_cloud_infos_) {
+  for (const auto & obsolete_cloud_info : obsolete_cloud_infos_) {
     obsolete_cloud_info->selection_handler_.reset();
   }
 }

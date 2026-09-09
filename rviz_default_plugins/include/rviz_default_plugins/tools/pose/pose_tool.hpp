@@ -76,11 +76,11 @@ protected:
   geometry_msgs::msg::Quaternion orientationAroundZAxis(double angle);
 
   void logPose(
-    std::string designation,
+    const std::string & designation,
     geometry_msgs::msg::Point position,
     geometry_msgs::msg::Quaternion orientation,
     double angle,
-    std::string frame);
+    const std::string & frame);
 
   std::shared_ptr<rviz_rendering::Arrow> arrow_;
 

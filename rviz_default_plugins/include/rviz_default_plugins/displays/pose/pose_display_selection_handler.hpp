@@ -66,7 +66,7 @@ public:
 
   rviz_common::interaction::V_AABB getAABBs(const rviz_common::interaction::Picked & obj) override;
 
-  void setMessage(geometry_msgs::msg::PoseStamped::ConstSharedPtr message);
+  void setMessage(const geometry_msgs::msg::PoseStamped::ConstSharedPtr & message);
 
 private:
   PoseDisplaySelectionHandler(PoseDisplay * display, rviz_common::DisplayContext * context);
