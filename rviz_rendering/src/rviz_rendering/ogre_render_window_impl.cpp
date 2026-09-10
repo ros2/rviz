@@ -49,6 +49,7 @@
 #include "OgreViewport.h"
 
 #include "rviz_rendering/orthographic.hpp"
+#include "rviz_rendering/pixel_scaling.hpp"
 #include "rviz_rendering/render_system.hpp"
 #include "rviz_rendering/objects/grid.hpp"
 #include "rviz_rendering/logging.hpp"
@@ -71,7 +72,9 @@ toOgreSurfaceSize(const QWindow * window, int logical_width, int logical_height)
   return QSize(logical_width, logical_height);
 #else
   const qreal pixel_ratio = window->devicePixelRatio();
-  return QSize(qRound(logical_width * pixel_ratio), qRound(logical_height * pixel_ratio));
+  return QSize(
+    toDevicePixels(logical_width, pixel_ratio),
+    toDevicePixels(logical_height, pixel_ratio));
 #endif
 }
 
