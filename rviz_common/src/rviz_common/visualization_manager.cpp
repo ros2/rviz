@@ -62,6 +62,8 @@
 #include "rclcpp/node.hpp"
 #include "rclcpp/time.hpp"
 #include "rclcpp/executors/single_threaded_executor.hpp"
+#include "resource_retriever/retriever.hpp"
+#include "resource_retriever_service_plugin/resource_retriever_service_plugin.hpp"
 #include "rviz_rendering/material_manager.hpp"
 #include "rviz_rendering/render_window.hpp"
 
@@ -104,6 +106,7 @@ using rviz_common::interaction::HandlerManager;
 using rviz_common::interaction::SelectionManager;
 using rviz_common::interaction::ViewPicker;
 using rviz_common::interaction::M_Picked;
+using ::resource_retriever_service_plugin::RosServiceResourceRetriever;
 
 // helper class needed to display an icon besides "Global Options"
 class IconizedProperty : public rviz_common::properties::Property
@@ -280,6 +283,19 @@ ros_integration::RosNodeAbstractionIface::WeakPtr
 VisualizationManager::getRosNodeAbstraction() const
 {
   return rviz_ros_node_;
+}
+
+resource_retriever::Retriever & VisualizationManager::getResourceRetriever()
+{
+  if (!resource_retriever_) {
+    resource_retriever::RetrieverVec plugins = resource_retriever::default_plugins();
+    auto ros_iface = rviz_ros_node_.lock();
+    if (ros_iface) {
+      plugins.push_back(std::make_shared<RosServiceResourceRetriever>(*ros_iface->get_raw_node()));
+    }
+    resource_retriever_ = std::make_unique<resource_retriever::Retriever>(std::move(plugins));
+  }
+  return *resource_retriever_;
 }
 
 void VisualizationManager::startUpdate()
