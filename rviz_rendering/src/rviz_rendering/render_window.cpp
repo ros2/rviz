@@ -159,8 +159,7 @@ RenderWindow::event(QEvent * event)
       }
       return QWindow::event(event);
     default:
-      QWindow::event(event);
-      return false;
+      return QWindow::event(event);
   }
 }
 
