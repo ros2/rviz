@@ -107,7 +107,7 @@ void InteractionTool::updateFocus(const rviz_common::ViewportMouseEvent & event)
   // look for a valid handle in the result.
   auto result_it = results.begin();
   if (result_it != results.end()) {
-    const rviz_common::interaction::Picked pick = result_it->second;
+    const rviz_common::interaction::Picked & pick = result_it->second;
     const auto handler = context_->getHandlerManager()->getHandler(pick.handle);
     if (pick.pixel_count > 0 && handler) {
       const rviz_common::InteractiveObjectPtr object = handler->getInteractiveObject().lock();

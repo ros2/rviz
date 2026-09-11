@@ -81,16 +81,18 @@ public:
    * will get their points put off in lala land, but it means they still do get processed/rendered
    * which can be a big performance hit
    * @param cloud The cloud to be filtered
-   * @return A new cloud containing only the filtered points
+   * @return \a cloud itself when every point is valid, otherwise a new cloud containing only
+   *   the valid points
    */
   sensor_msgs::msg::PointCloud2::ConstSharedPtr filterOutInvalidPoints(
-    sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
+    const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) const;
 
   /// Move to public for testing
-  bool hasXYZChannels(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
+  bool hasXYZChannels(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) const;
 
   /// Move to public for testing
-  bool cloudDataMatchesDimensions(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
+  bool cloudDataMatchesDimensions(
+    const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) const;
 
   void onDisable() override;
 
@@ -104,13 +106,15 @@ protected:
 private:
   std::unique_ptr<PointCloudCommon> point_cloud_common_;
 
-  sensor_msgs::msg::PointCloud2::_data_type
-  filterData(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
+  sensor_msgs::msg::PointCloud2::_data_type filterData(
+    const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
+    Offsets offsets,
+    sensor_msgs::msg::PointCloud2::_data_type::const_iterator first_invalid) const;
 
   bool validateFloatsAtPosition(
     sensor_msgs::msg::PointCloud2::_data_type::const_iterator position, Offsets offsets) const;
 
-  Offsets determineOffsets(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const;
+  Offsets determineOffsets(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) const;
 };
 
 }  // namespace displays
