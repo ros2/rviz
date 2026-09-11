@@ -57,7 +57,6 @@ namespace rviz_rendering
 {
 
 RenderSystem * RenderSystem::instance_ = nullptr;
-int RenderSystem::force_gl_version_ = 0;
 bool RenderSystem::force_no_stereo_ = false;
 
 // Disable anti aliasing on Windows for now,
@@ -118,25 +117,6 @@ RenderSystem::~RenderSystem()
   this->Destroy();
 }
 
-int
-RenderSystem::getGlVersion()
-{
-  return gl_version_;
-}
-
-int
-RenderSystem::getGlslVersion()
-{
-  return glsl_version_;
-}
-
-void
-RenderSystem::forceGlVersion(int version)
-{
-  force_gl_version_ = version;
-  RVIZ_RENDERING_LOG_INFO_STREAM("Forcing OpenGl version " << version / 100.0 << ".");
-}
-
 void
 RenderSystem::disableAntiAliasing()
 {
@@ -172,7 +152,6 @@ RenderSystem::RenderSystem()
   setupRenderSystem();
   ogre_root_->initialise(false);
   makeRenderWindow(dummy_window_id_, 1, 1);
-  detectGlVersion();
   setupResources();
   Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 }
@@ -363,22 +342,8 @@ RenderSystem::setupResources()
     rviz_path + "/ogre_media/materials/glsl120/include", "FileSystem", "rviz_rendering");
   Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
     rviz_path + "/ogre_media/materials/glsl120/nogp", "FileSystem", "rviz_rendering");
-  // Add resources that depend on a specific glsl version.
-  // Unfortunately, Ogre doesn't have a notion of glsl versions so we can't go
-  // the 'official' way of defining multiple schemes per material and let Ogre
-  // decide which one to use.
-  if (getGlslVersion() >= 120) {
-    Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+  Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
       rviz_path + "/ogre_media/materials/scripts120", "FileSystem", "rviz_rendering");
-  } else {
-    std::string s =
-      "Your graphics driver does not support OpenGL 2.1. "
-      "Please enable software rendering before running RViz "
-      "(e.g. type 'export LIBGL_ALWAYS_SOFTWARE=1').";
-    RVIZ_RENDERING_LOG_ERROR(s);
-    throw std::runtime_error(s);
-  }
-
   addAdditionalResourcesFromAmentIndex();
   MaterialManager::createDefaultMaterials();
 }
