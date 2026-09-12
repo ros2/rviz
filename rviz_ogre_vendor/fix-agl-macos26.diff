@@ -1,0 +1,12 @@
+diff --git a/RenderSystems/GL/CMakeLists.txt b/RenderSystems/GL/CMakeLists.txt
+--- a/RenderSystems/GL/CMakeLists.txt
++++ b/RenderSystems/GL/CMakeLists.txt
+@@ -68,7 +68,7 @@
+ 
+ if (APPLE)
+     set_target_properties(RenderSystem_GL PROPERTIES
+-        LINK_FLAGS "-framework Cocoa -framework Carbon -framework OpenGL -framework AGL")
++        LINK_FLAGS "-framework Cocoa -framework Carbon -framework OpenGL")
+ else()
+     target_include_directories(RenderSystem_GL PUBLIC ${OPENGL_INCLUDE_DIR})
+ endif ()
