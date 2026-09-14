@@ -72,6 +72,8 @@ static const Ogre::Quaternion ROBOT_TO_CAMERA_ROTATION =
   Ogre::Quaternion(Ogre::Radian(-Ogre::Math::HALF_PI), Ogre::Vector3::UNIT_Y) *
   Ogre::Quaternion(Ogre::Radian(-Ogre::Math::HALF_PI), Ogre::Vector3::UNIT_Z);
 
+static const Ogre::Vector3 DEFAULT_FRAMEVIEW_POSITION = Ogre::Vector3(-5, 0, 0);
+
 FrameViewController::FrameViewController()
 {
   axis_property_ = new rviz_common::properties::EnumProperty("Point towards", fmtAxis(6),
@@ -140,8 +142,9 @@ inline void FrameViewController::rememberAxis(int current)
 
 void FrameViewController::reset()
 {
-  camera_scene_node_->setPosition(Ogre::Vector3::ZERO);
+  camera_scene_node_->setPosition(DEFAULT_FRAMEVIEW_POSITION);
   resetOrientation();
+  setPropertiesFromCamera(camera_);
 }
 
 void FrameViewController::resetOrientation()
@@ -156,7 +159,6 @@ void FrameViewController::resetOrientation()
     q = Ogre::Vector3::UNIT_X.getRotationTo(axis);
   }
   camera_scene_node_->setOrientation(q * ROBOT_TO_CAMERA_ROTATION);
-  setPropertiesFromCamera(camera_);
 }
 
 void FrameViewController::update(float dt, float ros_dt)
@@ -191,6 +193,7 @@ void FrameViewController::onTargetFrameChanged(
   const Ogre::Quaternion & /*old_reference_orientation*/)
 {
   // don't adapt the camera pose to the old reference position, but just jump to new frame
+  // this empty method overrides the one from FPSViewController
 }
 
 }  // namespace view_controllers
