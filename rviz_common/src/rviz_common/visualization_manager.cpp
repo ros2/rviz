@@ -61,7 +61,7 @@
 #include "rclcpp/clock.hpp"
 #include "rclcpp/node.hpp"
 #include "rclcpp/time.hpp"
-#include "rclcpp/executors/events_cbg_executor.hpp"
+#include "rclcpp/executors/events_cbg_executor/events_cbg_executor.hpp"
 #include "rviz_rendering/material_manager.hpp"
 #include "rviz_rendering/render_window.hpp"
 
