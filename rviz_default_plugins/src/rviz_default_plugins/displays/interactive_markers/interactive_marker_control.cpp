@@ -58,6 +58,7 @@
 #include "rviz_common/window_manager_interface.hpp"
 #include "rviz_rendering/geometry.hpp"
 #include "rviz_rendering/objects/line.hpp"
+#include "rviz_rendering/pixel_scaling.hpp"
 #include "rviz_rendering/render_window.hpp"
 
 #include "rviz_default_plugins/displays/marker/markers/shape_marker.hpp"
@@ -1124,7 +1125,11 @@ void InteractiveMarkerControl::handle3DCursorEvent(
         Ogre::Vector2 mouse_pos = rviz_rendering::project3DPointToViewportXY(
           rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(event.panel->getRenderWindow()),
           three_d_point);
-        QCursor::setPos(event.panel->mapToGlobal(QPoint(mouse_pos.x, mouse_pos.y)));
+        // The projection is in viewport (device) pixels; mapToGlobal expects logical ones.
+        const qreal pixel_ratio = event.panel->getRenderWindow()->devicePixelRatio();
+        QCursor::setPos(
+          event.panel->mapToGlobal(
+            rviz_rendering::toLogicalPixels(QPoint(mouse_pos.x, mouse_pos.y), pixel_ratio)));
         parent_->showMenu(event, name_, three_d_point, valid_point);
       }
       break;
@@ -1361,6 +1366,7 @@ void InteractiveMarkerControl::beginMouseMovement(
   parent_position_at_mouse_down_ = parent_->getPosition();
   parent_orientation_at_mouse_down_ = parent_->getOrientation();
 
+  // Mixed units are harmless: event.x is added back in getRelativeMouseMotion().
   QPoint absolute_mouse = QCursor::pos();
   mouse_relative_to_absolute_x_ = absolute_mouse.x() - event.x;
   mouse_relative_to_absolute_y_ = absolute_mouse.y() - event.y;

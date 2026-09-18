@@ -68,6 +68,15 @@ public:
   RenderSystem *
   get();
 
+  /// Create an Ogre render window bound to an existing native window.
+  /**
+   * \param width surface width in device pixels, not logical pixels
+   * \param height surface height in device pixels, not logical pixels
+   * \param pixel_ratio display scale factor, forwarded to Ogre as
+   *   "contentScalingFactor"; Ogre documents it as iOS/Android specific and the
+   *   desktop GL render systems ignore it, so the caller is responsible for
+   *   supplying already-scaled dimensions
+   */
   Ogre::RenderWindow *
   makeRenderWindow(
     WindowIDType window_id,
