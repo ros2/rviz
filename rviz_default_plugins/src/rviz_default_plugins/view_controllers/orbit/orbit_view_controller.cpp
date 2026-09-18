@@ -163,16 +163,18 @@ void OrbitViewController::handleMouseEvent(rviz_common::ViewportMouseEvent & eve
 
 void OrbitViewController::setShiftOrbitStatus()
 {
-  setStatus("<b>Left-Click:</b> Move X/Y.  <b>Right-Click/Mouse Wheel:</b> Move Z.");
+  setStatus(
+    QStringLiteral("<b>Left-Click:</b> Move X/Y.  <b>Right-Click/Mouse Wheel:</b> Move Z."));
 }
 
 void OrbitViewController::setDefaultOrbitStatus()
 {
   setStatus(
-    "<b>Left-Click:</b> Rotate.  "
-    "<b>Middle-Click:</b> Move X/Y.  "
-    "<b>Right-Click/Mouse Wheel:</b> Zoom.  "
-    "<b>Shift:</b> More options.");
+    QStringLiteral(
+      "<b>Left-Click:</b> Rotate.  "
+      "<b>Middle-Click:</b> Move X/Y.  "
+      "<b>Right-Click/Mouse Wheel:</b> Zoom.  "
+      "<b>Shift:</b> More options."));
 }
 
 bool OrbitViewController::setMouseMovementFromEvent(
