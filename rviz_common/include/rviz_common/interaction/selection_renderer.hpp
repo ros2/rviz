@@ -34,6 +34,7 @@
 #include <memory>
 #include <string>
 
+#include <OgreMaterial.h>
 #include <OgreMaterialManager.h>
 #include <OgreRenderQueueListener.h>
 
