@@ -27,44 +27,27 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "rviz_common/properties/ros_topic_multi_type_property.hpp"
-
-#include <QApplication>  // NOLINT: cpplint can't handle Qt imports
-#include <algorithm>
-#include <map>
-#include <string>
-#include <vector>
-
 #include "rviz_common/ros_topic_utils.hpp"
+
+#include <string>
 
 namespace rviz_common
 {
-namespace properties
+
+bool isTopicOrServiceHidden(const std::string & name)
 {
-
-void RosTopicMultiTypeProperty::fillTopicList()
-{
-  QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-  clearOptions();
-
-  std::map<std::string, std::vector<std::string>> published_topics =
-    rviz_ros_node_.lock()->get_topic_names_and_types();
-
-  for (const auto & topic : published_topics) {
-    if (isTopicOrServiceHidden(topic.first)) {
-      continue;
+  size_t start = 0;
+  while (start < name.size()) {
+    size_t end = name.find('/', start);
+    if (end == std::string::npos) {
+      end = name.size();
     }
-    // Only add topics whose type matches one of the allowed types.
-    for (const auto & type : topic.second) {
-      if (message_types_.contains(QString::fromStdString(type))) {
-        addOptionStd(topic.first);
-        break;  // avoid duplicates if the topic matches more than one allowed type
-      }
+    if (end > start && name[start] == '_') {
+      return true;
     }
+    start = end + 1;
   }
-  sortOptions();
-  QApplication::restoreOverrideCursor();
+  return false;
 }
 
-}  // end namespace properties
-}  // end namespace rviz_common
+}  // namespace rviz_common
