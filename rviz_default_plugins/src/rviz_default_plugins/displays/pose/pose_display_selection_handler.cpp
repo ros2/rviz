@@ -109,7 +109,7 @@ rviz_common::interaction::V_AABB PoseDisplaySelectionHandler::getAABBs(
 }
 
 void PoseDisplaySelectionHandler::setMessage(
-  geometry_msgs::msg::PoseStamped::ConstSharedPtr message)
+  const geometry_msgs::msg::PoseStamped::ConstSharedPtr & message)
 {
   // properties_.size() should only be > 0 after createProperties()
   // and before destroyProperties(), during which frame_property_,

@@ -76,7 +76,7 @@ public:
 
   void setEnabled(bool enabled);
 
-  void setParentName(std::string parent_name);
+  void setParentName(const std::string & parent_name);
 
   void setPosition(const Ogre::Vector3 & position);
 
