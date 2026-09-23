@@ -161,7 +161,7 @@ void FrameViewController::resetOrientation()
   camera_scene_node_->setOrientation(q * ROBOT_TO_CAMERA_ROTATION);
 }
 
-void FrameViewController::update(float dt, float ros_dt)
+void FrameViewController::update(std::chrono::nanoseconds dt, std::chrono::nanoseconds ros_dt)
 {
   FPSViewController::update(dt, ros_dt);
 

@@ -71,7 +71,7 @@ public:
 
   void resetOrientation();
 
-  void update(float dt, float ros_dt) override;
+  void update(std::chrono::nanoseconds dt, std::chrono::nanoseconds ros_dt) override;
 
 protected:
   void onTargetFrameChanged(
