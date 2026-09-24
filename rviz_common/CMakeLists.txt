@@ -249,6 +249,7 @@ target_link_libraries(rviz_common PUBLIC
   pluginlib::pluginlib
   Qt6::Widgets
   rclcpp::rclcpp
+  resource_retriever::resource_retriever
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
   rviz_rendering::rviz_rendering
@@ -261,7 +262,6 @@ target_link_libraries(rviz_common PUBLIC
 )
 
 target_link_libraries(rviz_common PRIVATE
-  resource_retriever::resource_retriever
   resource_retriever_service_plugin::resource_retriever_service_plugin
   tinyxml2::tinyxml2
 )
@@ -277,6 +277,7 @@ ament_export_dependencies(
   pluginlib
   Qt6
   rclcpp
+  resource_retriever
   rviz_ogre_vendor
   rviz_rendering
   sensor_msgs
