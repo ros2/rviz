@@ -40,7 +40,7 @@
 #include "rclcpp/duration.hpp"
 #include "rclcpp/time.hpp"
 
-namespace rclcpp {namespace executors {class SingleThreadedExecutor;}}
+namespace rclcpp {namespace executors {class EventsCBGExecutor;}}
 
 #include "rviz_common/bit_allocator.hpp"
 #include "rviz_common/config.hpp"
@@ -408,7 +408,7 @@ private:
   uint32_t default_visibility_bit_;
   BitAllocator visibility_bit_allocator_;
   QString help_path_;
-  std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> executor_;
+  std::shared_ptr<rclcpp::executors::EventsCBGExecutor> executor_;
   ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node_;
   rviz_common::transformation::TransformationManager * transformation_manager_;
   std::unique_ptr<resource_retriever::Retriever> resource_retriever_;

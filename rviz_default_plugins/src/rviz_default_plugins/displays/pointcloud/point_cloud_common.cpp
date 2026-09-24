@@ -415,12 +415,12 @@ void PointCloudCommon::collectObsoleteCloudInfos(float point_decay_time, const r
 void PointCloudCommon::removeObsoleteCloudInfos()
 {
   auto it = obsolete_cloud_infos_.begin();
-  auto end = obsolete_cloud_infos_.end();
-  while (it != end) {
+  while (it != obsolete_cloud_infos_.end()) {
     if (!(*it)->selection_handler_.get() || !(*it)->selection_handler_->hasSelections()) {
+      // erase() already returns an iterator to the next element; advancing again here would
+      // skip it, so only step forward when nothing was removed.
       it = obsolete_cloud_infos_.erase(it);
-    }
-    if (it != end) {
+    } else {
       ++it;
     }
   }
