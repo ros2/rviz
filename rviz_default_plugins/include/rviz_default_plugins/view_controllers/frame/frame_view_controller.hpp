@@ -69,9 +69,9 @@ public:
 
   void reset() override;
 
-  void yaw(float angle);
+  void resetOrientation();
 
-  void pitch(float angle);
+  void update(std::chrono::nanoseconds dt, std::chrono::nanoseconds ros_dt) override;
 
 protected:
   void onTargetFrameChanged(
