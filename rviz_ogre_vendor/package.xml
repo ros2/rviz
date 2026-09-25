@@ -11,7 +11,7 @@
 
   <maintainer email="alejandro@openrobotics.org">Alejandro Hernandez Cordero</maintainer>
 
-  <license>Apache License 2.0</license>  <!-- the contents of this package are Apache 2.0 -->
+  <license>Apache-2.0</license>  <!-- the contents of this package are Apache 2.0 -->
   <license>MIT</license>  <!-- ogre is MIT (https://www.ogre3d.org/licensing) -->
 
   <url type="website">https://www.ogre3d.org/</url>
