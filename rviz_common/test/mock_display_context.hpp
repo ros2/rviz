@@ -40,6 +40,8 @@
 #include "rclcpp/clock.hpp"
 #include "rclcpp/node.hpp"
 
+#include "resource_retriever/retriever.hpp"
+
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/panel_dock_widget.hpp"
@@ -67,6 +69,8 @@ public:
     updatePluginMessageTypes, void(const QString & class_id, const QSet<QString> & message_types));
   MOCK_CONST_METHOD0(
     getRosNodeAbstraction, rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr());
+
+  MOCK_METHOD0(getResourceRetriever, resource_retriever::Retriever & ());
 
   MOCK_METHOD1(addNodeToMainExecutor, void(std::shared_ptr<rclcpp::Node> node));
   MOCK_METHOD1(removeNodeFromMainExecutor, void(std::shared_ptr<rclcpp::Node> node));
