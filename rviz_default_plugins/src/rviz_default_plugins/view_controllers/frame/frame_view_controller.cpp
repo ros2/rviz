@@ -150,7 +150,7 @@ void FrameViewController::reset()
 void FrameViewController::handleMouseEvent(rviz_common::ViewportMouseEvent & event)
 {
   if (locked_property_->getBool()) {
-    setStatus("Unlock camera in settings to enable mouse interaction.");
+    setStatus(QStringLiteral("Unlock camera in settings to enable mouse interaction."));
     return;
   }
   FPSViewController::handleMouseEvent(event);
