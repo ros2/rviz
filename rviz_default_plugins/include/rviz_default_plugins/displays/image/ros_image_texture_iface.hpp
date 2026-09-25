@@ -72,6 +72,10 @@ public:
   // no-op so that out-of-tree implementors of this interface keep building
   // and silently ignore the setting until they opt in.
   virtual void setSmoothScaling(bool /*enabled*/) {}
+
+  // When enabled, apply sRGB gamma to converter output instead of passthrough.
+  // Default no-op for out-of-tree implementors.
+  virtual void setLinearInput(bool /*enabled*/) {}
 };
 
 }  // namespace displays

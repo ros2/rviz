@@ -1,5 +1,6 @@
 // Copyright (c) 2012, Willow Garage, Inc.
 // Copyright (c) 2017, Bosch Software Innovations GmbH.
+// Copyright (c) 2026, Arne Baeyens.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -48,8 +49,11 @@
 #include <QString>
 
 #include <algorithm>
+#include <cstdint>
 #include <cstring>
+#include <limits>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
@@ -70,12 +74,14 @@
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
 #include "rviz_common/validate_floats.hpp"
+#include "rviz_default_plugins/displays/image/bayer_format.hpp"
 #include "rviz_default_plugins/displays/image/get_transport_from_topic.hpp"
 #include "rviz_default_plugins/displays/image/ros_image_texture.hpp"
 #include "rviz_default_plugins/displays/image/ros_image_texture_iface.hpp"
 #include "rviz_rendering/material_manager.hpp"
 #include "rviz_rendering/render_window.hpp"
 #include "sensor_msgs/image_encodings.hpp"
+
 namespace rviz_default_plugins
 {
 namespace displays
@@ -108,7 +114,8 @@ ImageDisplay::ImageDisplay(std::unique_ptr<ROSImageTextureIface> texture)
 
   normalize_property_ = new rviz_common::properties::BoolProperty(
     "Normalize Range", true,
-    "If set to true, will try to estimate the range of possible values from the received images.",
+    "If set to true, will try to estimate the range of possible values from the received images. "
+    "Applies to single-channel 16-bit, float, and 16-bit Bayer encodings.",
     this, SLOT(updateNormalizeOptions()));
 
   min_property_ = new rviz_common::properties::FloatProperty(
@@ -130,7 +137,16 @@ ImageDisplay::ImageDisplay(std::unique_ptr<ROSImageTextureIface> texture)
     "If disabled, sampling uses nearest-neighbour.",
     this, SLOT(updateSmoothScaling()));
 
-  got_float_image_ = false;
+  linear_input_property_ = new rviz_common::properties::BoolProperty(
+    "Linear input", false,
+    "Treat pixel values as linear light and apply sRGB encoding before display. "
+    "Use this for sources that output linear-response images, "
+    "which would otherwise appear too dark on a standard display. "
+    "This option only affects Bayer-encoded images.",
+    this, SLOT(updateLinearInput()));
+
+  has_normalizable_range_ = false;
+  has_bayer_encoding_ = false;
 }
 
 // Need to override this method because of the new type RosTopicMultiTypeProperty
@@ -145,6 +161,8 @@ void ImageDisplay::onInitialize()
   _RosTopicDisplay::onInitialize();
   subscription_ = std::make_shared<image_transport::SubscriberFilter>();
   updateNormalizeOptions();
+  refreshLinearInputVisibility();
+  updateLinearInput();
   setupScreenRectangle();
   setupRenderPanel();
   updateSmoothScaling();
@@ -328,7 +346,7 @@ void ImageDisplay::unsubscribe()
 
 void ImageDisplay::updateNormalizeOptions()
 {
-  if (got_float_image_) {
+  if (has_normalizable_range_) {
     bool normalize = normalize_property_->getBool();
 
     normalize_property_->setHidden(false);
@@ -353,6 +371,16 @@ void ImageDisplay::updateSmoothScaling()
   applySmoothScalingToMaterial(material_);
 }
 
+void ImageDisplay::updateLinearInput()
+{
+  texture_->setLinearInput(linear_input_property_->getBool());
+}
+
+void ImageDisplay::refreshLinearInputVisibility()
+{
+  linear_input_property_->setHidden(!has_bayer_encoding_);
+}
+
 void ImageDisplay::applySmoothScalingToMaterial(const Ogre::MaterialPtr & material) const
 {
   if (!material) {return;}
@@ -373,7 +401,11 @@ void ImageDisplay::update(std::chrono::nanoseconds wall_dt, std::chrono::nanosec
   (void)wall_dt;
   (void)ros_dt;
   try {
-    texture_->update();
+    if (texture_->update()) {
+      // A new frame was converted and uploaded; clear any error a previous
+      // (e.g. malformed) frame may have latched.
+      setStatus(rviz_common::properties::StatusProperty::Ok, "Image", "OK");
+    }
 
     // make sure the aspect ratio of the image is preserved
     float win_width = render_panel_->width();
@@ -394,7 +426,10 @@ void ImageDisplay::update(std::chrono::nanoseconds wall_dt, std::chrono::nanosec
           -1.0f * img_aspect / win_aspect, 1.0f, 1.0f * img_aspect / win_aspect, -1.0f, false);
       }
     }
-  } catch (UnsupportedImageEncoding & e) {
+  } catch (std::exception & e) {
+    // UnsupportedImageEncoding, MalformedImageMessage, and also allocation
+    // failure on absurdly large frames — degrade to an error status rather
+    // than letting the exception take down the application.
     setStatus(rviz_common::properties::StatusProperty::Error, "Image", e.what());
   }
 }
@@ -409,16 +444,29 @@ void ImageDisplay::reset()
 /* This is called by incomingMessage(). */
 void ImageDisplay::processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg)
 {
-  bool got_float_image =
+  // Gate the Bayer-dependent UI on the converter's own whitelist (via
+  // bayer_format.hpp) rather than image_encodings::isBayer(), so the
+  // properties only appear for encodings the demosaic actually supports.
+  const auto bayer_format = bayerFormatFromEncoding(msg->encoding);
+
+  const bool has_normalizable_range =
     msg->encoding == sensor_msgs::image_encodings::TYPE_32FC1 ||
     msg->encoding == sensor_msgs::image_encodings::TYPE_16UC1 ||
     msg->encoding == sensor_msgs::image_encodings::TYPE_16SC1 ||
-    msg->encoding == sensor_msgs::image_encodings::MONO16;
+    msg->encoding == sensor_msgs::image_encodings::MONO16 ||
+    (bayer_format && bayer_format->is_16bit);
 
-  if (got_float_image != got_float_image_) {
-    got_float_image_ = got_float_image;
+  if (has_normalizable_range != has_normalizable_range_) {
+    has_normalizable_range_ = has_normalizable_range;
     updateNormalizeOptions();
   }
+
+  const bool is_bayer = bayer_format.has_value();
+  if (is_bayer != has_bayer_encoding_) {
+    has_bayer_encoding_ = is_bayer;
+    refreshLinearInputVisibility();
+  }
+
   last_msg_ = msg;
   texture_->addMessage(msg);
 }
@@ -602,9 +650,101 @@ QString formatRawBytes(const uint8_t * p, size_t n)
   return out;
 }
 
+// Bayer 2x2 cell description: which channel sits at each of the four
+// (top-left, top-right, bottom-left, bottom-right) positions, plus bit depth.
+struct BayerCell
+{
+  char tl;
+  char tr;
+  char bl;
+  char br;
+  bool is_16bit;
+};
+
+// Derive the four cell corners from the shared layout table so the read-out
+// cannot drift from what the demosaic in ros_image_texture.cpp implements.
+std::optional<BayerCell> bayerCellLayout(const std::string & encoding)
+{
+  const auto format = bayerFormatFromEncoding(encoding);
+  if (!format) {
+    return std::nullopt;
+  }
+  char corners[2][2] = {{'G', 'G'}, {'G', 'G'}};
+  corners[bayerRedRow(format->layout)][bayerRedCol(format->layout)] = 'R';
+  corners[1 - bayerRedRow(format->layout)][1 - bayerRedCol(format->layout)] = 'B';
+  return BayerCell{corners[0][0], corners[0][1], corners[1][0], corners[1][1], format->is_16bit};
+}
+
+// ch is one of 'R', 'G', 'B' (the only values BayerCell holds).
+constexpr const char * htmlColorForBayerChannel(char ch)
+{
+  if (ch == 'R') {return "#c00";}
+  if (ch == 'G') {return "#0a0";}
+  return "#06c";
+}
+
+QString formatBayerSensel(char ch, int value)
+{
+  return QString("<span style='color:%1'>%2:%3</span>")
+         .arg(htmlColorForBayerChannel(ch))
+         .arg(ch)
+         .arg(value);
+}
+
+// Show the four sensel values of the 2x2 Bayer cell containing (px, py).
+// The cell is anchored at (px & ~1, py & ~1); read-out positions are clamped
+// to the image bounds for pixels at the edge.
+QString formatBayerCellAt(
+  const sensor_msgs::msg::Image & msg, int px, int py, const BayerCell & cell)
+{
+  const int cell_x = px & ~1;
+  const int cell_y = py & ~1;
+  const int bpp = cell.is_16bit ? 2 : 1;
+  // Clamp the dimensions into int range first: a hostile width/height above
+  // INT_MAX would otherwise make max_x/max_y negative and feed std::clamp a
+  // lo > hi precondition violation. Reads beyond the actual buffer are still
+  // caught by the data-size guard in read_at below.
+  constexpr uint32_t kMaxInt = static_cast<uint32_t>(std::numeric_limits<int>::max());
+  const int max_x = static_cast<int>(std::min(msg.width, kMaxInt)) - 1;
+  const int max_y = static_cast<int>(std::min(msg.height, kMaxInt)) - 1;
+
+  auto read_at = [&](int y, int x) -> int {
+      y = std::clamp(y, 0, max_y);
+      x = std::clamp(x, 0, max_x);
+      const size_t offset = static_cast<size_t>(y) * msg.step +
+        static_cast<size_t>(x) * static_cast<size_t>(bpp);
+      if (offset + static_cast<size_t>(bpp) > msg.data.size()) {return 0;}
+      if (cell.is_16bit) {
+        uint16_t v = 0;
+        std::memcpy(&v, msg.data.data() + offset, sizeof(v));
+        return v;
+      }
+      return msg.data[offset];
+    };
+
+  const int tl = read_at(cell_y, cell_x);
+  const int tr = read_at(cell_y, cell_x + 1);
+  const int bl = read_at(cell_y + 1, cell_x);
+  const int br = read_at(cell_y + 1, cell_x + 1);
+
+  return formatBayerSensel(cell.tl, tl) + " " +
+         formatBayerSensel(cell.tr, tr) + " | " +
+         formatBayerSensel(cell.bl, bl) + " " +
+         formatBayerSensel(cell.br, br);
+}
+
 QString formatPixel(const sensor_msgs::msg::Image & msg, int px, int py)
 {
   QString prefix = "[" + QString::fromStdString(msg.encoding) + "] ";
+
+  // Bayer encodings: show the four raw sensel values of the 2x2 cell
+  // containing (px, py), each labelled by channel. The on-screen pixel comes
+  // from a bilinear interpolation of these (and their neighbours); showing
+  // them is honest about what the sensor actually recorded.
+  if (const auto cell = bayerCellLayout(msg.encoding)) {
+    return prefix + formatBayerCellAt(msg, px, py, *cell);
+  }
+
   const size_t pixel_size = pixelSizeForEncoding(msg.encoding);
 
   // Even when pixel_size is 0 (encoding not decoded inline) try to show the
