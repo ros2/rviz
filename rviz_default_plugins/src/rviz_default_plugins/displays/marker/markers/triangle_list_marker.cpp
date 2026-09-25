@@ -243,8 +243,13 @@ void TriangleListMarker::updateMaterial(
 {
   if (hasVertexColors(new_message) || hasFaceColors(new_message)) {
     material_->getTechnique(0)->setLightingEnabled(false);
+    // Colour supplied per-vertex via manual_object_->colour(); tell the pass
+    // (and the RTShaderSystem-generated shader) to read the diffuse from the
+    // vertex stream so the colours actually show up.
+    material_->getTechnique(0)->getPass(0)->setVertexColourTracking(Ogre::TVC_DIFFUSE);
   } else {
     material_->getTechnique(0)->setLightingEnabled(true);
+    material_->getTechnique(0)->getPass(0)->setVertexColourTracking(Ogre::TVC_NONE);
     float r, g, b, a;
     r = new_message->color.r;
     g = new_message->color.g;

@@ -33,6 +33,7 @@
 #define RVIZ_RENDERING__OBJECTS__BILLBOARD_LINE_HPP_
 
 #include <cstdint>
+#include <functional>
 #include <vector>
 
 #include <OgreBillboardChain.h>
@@ -128,6 +129,10 @@ private:
     std::function<Ogre::BillboardChain::Element(Ogre::BillboardChain::Element)> change_element);
   void incrementChainContainerIfNecessary();
   void setupChainsInChainContainers() const;
+  /// Widen the element at `elem_idx` to the miter width of the corner formed
+  /// with its immediate neighbours, so adjacent billboard quads still meet
+  /// without leaving a gap at sharp turns.
+  void applyMiterWidthAt(std::size_t chain_idx, std::size_t elem_idx);
 
   Ogre::SceneNode * scene_node_;
 

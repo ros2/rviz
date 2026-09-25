@@ -103,6 +103,7 @@ target_link_libraries(rviz_rendering PUBLIC
   Qt6::Widgets
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
+  rviz_ogre_vendor::OgreRTShaderSystem
 )
 if(TARGET Eigen3::Eigen)
   # TODO(sloretz) require target to exist when https://github.com/ros2/choco-packages/issues/19 is addressed
@@ -188,8 +189,7 @@ if(BUILD_TESTING)
   endif()
 
   ament_add_gmock(point_cloud_test_target
-    test/rviz_rendering/objects/point_cloud_test.cpp
-    ${SKIP_DISPLAY_TESTS})
+    test/rviz_rendering/objects/point_cloud_test.cpp)
   if(TARGET point_cloud_test_target)
     target_link_libraries(point_cloud_test_target
       rviz_ogre_vendor::OgreMain
@@ -200,8 +200,7 @@ if(BUILD_TESTING)
   endif()
 
   ament_add_gmock(point_cloud_renderable_test_target
-    test/rviz_rendering/objects/point_cloud_renderable_test.cpp
-    ${SKIP_DISPLAY_TESTS})
+    test/rviz_rendering/objects/point_cloud_renderable_test.cpp)
   if(TARGET point_cloud_renderable_test_target)
     target_link_libraries(point_cloud_renderable_test_target
       rviz_ogre_vendor::OgreMain
@@ -212,8 +211,7 @@ if(BUILD_TESTING)
   endif()
 
   ament_add_gmock(billboard_line_test_target
-    test/rviz_rendering/objects/billboard_line_test.cpp
-    ${SKIP_DISPLAY_TESTS})
+    test/rviz_rendering/objects/billboard_line_test.cpp)
   if(TARGET billboard_line_test_target)
     target_link_libraries(billboard_line_test_target
       rviz_ogre_vendor::OgreMain
@@ -224,8 +222,7 @@ if(BUILD_TESTING)
   endif()
 
   ament_add_gmock(covariance_visual_test_target
-    test/rviz_rendering/objects/covariance_visual_test.cpp
-    ${SKIP_DISPLAY_TESTS})
+    test/rviz_rendering/objects/covariance_visual_test.cpp)
   if(TARGET covariance_visual_test_target)
     target_link_libraries(covariance_visual_test_target
       rviz_ogre_vendor::OgreMain
@@ -236,8 +233,7 @@ if(BUILD_TESTING)
   endif()
 
   ament_add_gmock(effort_visual_test_target
-    test/rviz_rendering/objects/effort_visual_test.cpp
-    ${SKIP_DISPLAY_TESTS})
+    test/rviz_rendering/objects/effort_visual_test.cpp)
   if(TARGET effort_visual_test_target)
     target_link_libraries(effort_visual_test_target
       rviz_ogre_vendor::OgreMain
@@ -248,8 +244,7 @@ if(BUILD_TESTING)
   endif()
 
   ament_add_gmock(grid_test_target
-    test/rviz_rendering/objects/grid_test.cpp
-    ${SKIP_DISPLAY_TESTS})
+    test/rviz_rendering/objects/grid_test.cpp)
   if(TARGET grid_test_target)
     target_link_libraries(grid_test_target
       rviz_ogre_vendor::OgreMain
@@ -260,8 +255,7 @@ if(BUILD_TESTING)
   endif()
 
   ament_add_gmock(movable_text_test_target
-    test/rviz_rendering/objects/movable_text_test.cpp
-    ${SKIP_DISPLAY_TESTS})
+    test/rviz_rendering/objects/movable_text_test.cpp)
   if(TARGET movable_text_test_target)
     target_link_libraries(movable_text_test_target
       rviz_ogre_vendor::OgreMain
@@ -273,8 +267,7 @@ if(BUILD_TESTING)
   endif()
 
   ament_add_gmock(line_test_target
-    test/rviz_rendering/objects/line_test.cpp
-    ${SKIP_DISPLAY_TESTS})
+    test/rviz_rendering/objects/line_test.cpp)
   if(TARGET line_test_target)
     target_link_libraries(line_test_target
       rviz_ogre_vendor::OgreMain
@@ -285,8 +278,7 @@ if(BUILD_TESTING)
   endif()
 
   ament_add_gmock(screw_visual_test_target
-    test/rviz_rendering/objects/screw_visual_test.cpp
-    ${SKIP_DISPLAY_TESTS})
+    test/rviz_rendering/objects/screw_visual_test.cpp)
   if(TARGET screw_visual_test_target)
     target_link_libraries(screw_visual_test_target
       rviz_ogre_vendor::OgreMain
@@ -297,8 +289,7 @@ if(BUILD_TESTING)
   endif()
 
   ament_add_gmock(triangle_polygon_visual_test_target
-    test/rviz_rendering/objects/triangle_polygon_test.cpp
-    ${SKIP_DISPLAY_TESTS})
+    test/rviz_rendering/objects/triangle_polygon_test.cpp)
   if(TARGET triangle_polygon_visual_test_target)
     target_link_libraries(triangle_polygon_visual_test_target
       rviz_ogre_vendor::OgreMain
@@ -309,8 +300,7 @@ if(BUILD_TESTING)
   endif()
 
   ament_add_gmock(wrench_visual_test_target
-    test/rviz_rendering/objects/wrench_visual_test.cpp
-    ${SKIP_DISPLAY_TESTS})
+    test/rviz_rendering/objects/wrench_visual_test.cpp)
   if(TARGET wrench_visual_test_target)
     target_link_libraries(wrench_visual_test_target
       rviz_ogre_vendor::OgreMain
@@ -321,8 +311,7 @@ if(BUILD_TESTING)
   endif()
 
   ament_add_gmock(mesh_shape_visual_test_target
-    test/rviz_rendering/mesh_shape_test.cpp
-    ${SKIP_DISPLAY_TESTS})
+    test/rviz_rendering/mesh_shape_test.cpp)
   if(TARGET mesh_shape_visual_test_target)
     target_link_libraries(mesh_shape_visual_test_target
       rviz_ogre_vendor::OgreMain
