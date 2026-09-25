@@ -92,17 +92,17 @@ private:
   void beginManualObject(
     const MarkerConstSharedPtr & old_message,
     const MarkerConstSharedPtr & new_message) const;
-  bool fillManualObjectAndDetermineAlpha(MarkerConstSharedPtr new_message) const;
+  bool fillManualObjectAndDetermineAlpha(const MarkerConstSharedPtr & new_message) const;
   void updateMaterial(const MarkerConstSharedPtr & new_message, bool any_vertex_has_alpha) const;
 
   void loadTexture(const MarkerConstSharedPtr & new_message) const;
 
-  bool hasVertexColors(MarkerConstSharedPtr new_message) const;
-  bool hasFaceColors(MarkerConstSharedPtr new_message) const;
-  bool hasTexture(MarkerConstSharedPtr new_message) const;
-  bool textureEmbedded(MarkerConstSharedPtr new_message) const;
+  bool hasVertexColors(const MarkerConstSharedPtr & new_message) const;
+  bool hasFaceColors(const MarkerConstSharedPtr & new_message) const;
+  bool hasTexture(const MarkerConstSharedPtr & new_message) const;
+  bool textureEmbedded(const MarkerConstSharedPtr & new_message) const;
 
-  std::string getTextureName(MarkerConstSharedPtr new_message) const;
+  std::string getTextureName(const MarkerConstSharedPtr & new_message) const;
 };
 
 }  // namespace markers

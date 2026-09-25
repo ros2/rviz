@@ -470,9 +470,10 @@ void PathDisplay::updateManualObject(
   manual_object->begin(
     lines_material_->getName(), Ogre::RenderOperation::OT_LINE_STRIP, "rviz_rendering");
 
-  for (auto pose_stamped : msg->poses) {
+  rviz_rendering::MaterialManager::enableAlphaBlending(lines_material_, color.a);
+
+  for (const auto & pose_stamped : msg->poses) {
     manual_object->position(transform * rviz_common::pointMsgToOgre(pose_stamped.pose.position));
-    rviz_rendering::MaterialManager::enableAlphaBlending(lines_material_, color.a);
     manual_object->colour(color);
   }
 
@@ -490,7 +491,7 @@ void PathDisplay::updateBillBoardLine(
   billboard_line->setMaxPointsPerLine(static_cast<uint32_t>(msg->poses.size()));
   billboard_line->setLineWidth(line_width_property_->getFloat());
 
-  for (auto pose_stamped : msg->poses) {
+  for (const auto & pose_stamped : msg->poses) {
     Ogre::Vector3 xpos = transform * rviz_common::pointMsgToOgre(pose_stamped.pose.position);
     billboard_line->addPoint(xpos, color);
   }
