@@ -248,6 +248,8 @@ protected:
 private:
   typedef std::map<Ogre::SubEntity *, Ogre::MaterialPtr> M_SubEntityToMaterial;
   M_SubEntityToMaterial materials_;
+  /// Materials this link registered with Ogre, removed again in the destructor.
+  std::vector<Ogre::MaterialPtr> owned_materials_;
   Ogre::MaterialPtr default_material_;
   std::string default_material_name_;
 
