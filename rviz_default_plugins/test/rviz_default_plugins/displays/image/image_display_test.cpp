@@ -35,6 +35,7 @@
 
 #include <QApplication>  // NOLINT
 #include <QKeyEvent>  // NOLINT
+#include <OgreMaterialManager.h>  // NOLINT
 #include <OgreRectangle2D.h>  // NOLINT
 
 #include "../../ogre_testing_environment.hpp"
@@ -150,6 +151,31 @@ TEST_F(ImageDisplayTestFixture, initialize_propagates_smooth_scaling_to_texture)
 
   ImageDisplay imageDisplay(std::move(texture_));
   imageDisplay.initialize(context_.get());
+}
+
+TEST_F(ImageDisplayTestFixture, destroying_display_releases_its_material) {
+  auto panel = new rviz_common::PanelDockWidget("panelDockWidget");
+  EXPECT_CALL(*window_manager_, addPane(_, _, _, _)).WillOnce(Return(panel));
+  EXPECT_CALL(*context_, getFixedFrame()).WillOnce(Return(""));
+
+  auto & materials = Ogre::MaterialManager::getSingleton();
+  auto count_image_materials = [&materials]() {
+      size_t count = 0;
+      auto resources = materials.getResourceIterator();
+      while (resources.hasMoreElements()) {
+        if (resources.getNext()->getName().find("ImageDisplayObject") == 0) {
+          ++count;
+        }
+      }
+      return count;
+    };
+  const auto before = count_image_materials();
+  {
+    ImageDisplay display(std::move(texture_));
+    display.initialize(context_.get());
+    EXPECT_EQ(count_image_materials(), before + 1);
+  }
+  EXPECT_EQ(count_image_materials(), before);
 }
 
 int main(int argc, char ** argv)
