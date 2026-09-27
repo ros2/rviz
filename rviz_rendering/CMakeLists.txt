@@ -199,6 +199,17 @@ if(BUILD_TESTING)
     )
   endif()
 
+  ament_add_gmock(render_window_test
+    test/rviz_rendering/render_window_test.cpp
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET render_window_test)
+    target_link_libraries(render_window_test
+      rviz_rendering
+      rviz_rendering_test_utils
+      Qt6::Widgets
+    )
+  endif()
+
   ament_add_gmock(point_cloud_renderable_test_target
     test/rviz_rendering/objects/point_cloud_renderable_test.cpp
     ${SKIP_DISPLAY_TESTS})
