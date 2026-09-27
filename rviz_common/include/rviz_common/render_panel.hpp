@@ -75,6 +75,8 @@ public:
   /// Initialize the render panel.
   /**
     * This sets up the Camera for this widget.
+    * When use_main_scene is true, the manager's scene must outlive the panel.
+    * The panel owns the default camera and camera node it creates in that scene.
     */
   void initialize(DisplayContext * manager, bool use_main_scene = false);
   // void initialize(Ogre::SceneManager * scene_manager, DisplayContext * manager);

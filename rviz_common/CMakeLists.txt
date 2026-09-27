@@ -363,6 +363,14 @@ if(BUILD_TESTING)
 
   set(TEST_SUPPORT_OBJECTS $<TARGET_OBJECTS:test_support_objects>)
 
+  ament_add_gmock(render_panel_test
+    test/render_panel_test.cpp
+    test/ogre_testing_environment.cpp
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET render_panel_test)
+    target_link_libraries(render_panel_test rviz_common Qt6::Widgets)
+  endif()
+
   # Consolidate core tests
   ament_add_gmock(rviz_common_core_tests
     test/config_test.cpp

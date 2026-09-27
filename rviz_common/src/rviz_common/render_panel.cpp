@@ -35,6 +35,7 @@
 #include <string>
 
 #include <OgreCamera.h>
+#include <OgreRoot.h>
 #include <OgreSceneManager.h>
 
 #include <QApplication>  // NOLINT: cpplint is unable to handle the include order here
@@ -81,15 +82,7 @@ RenderPanel::RenderPanel(QWidget * parent)
     std::bind(&RenderPanel::wheelEvent, this, std::placeholders::_1));
 }
 
-RenderPanel::~RenderPanel()
-{
-  // if (scene_manager_ && default_camera_) {
-  //   scene_manager_->destroyCamera(default_camera_);
-  // }
-  // if (scene_manager_) {
-  //   scene_manager_->removeListener(this);
-  // }
-}
+RenderPanel::~RenderPanel() = default;
 
 void RenderPanel::initialize(DisplayContext * context, bool use_main_scene)
 // void RenderPanel::initialize(Ogre::SceneManager * scene_manager, DisplayContext * context)
@@ -107,12 +100,32 @@ void RenderPanel::initialize(DisplayContext * context, bool use_main_scene)
     auto default_camera = scene_manager->createCamera(camera_name);
     default_camera->setNearClipDistance(0.01f);
 
-    auto camera_node = scene_manager->getRootSceneNode()->createChildSceneNode();
+    auto camera_node =
+      scene_manager->getRootSceneNode()->createChildSceneNode(camera_name + "Node");
     camera_node->attachObject(default_camera);
     camera_node->setPosition(default_camera_pose_);
     camera_node->lookAt(Ogre::Vector3(0, 0, 0), Ogre::Node::TS_WORLD);
     rviz_rendering::RenderWindowOgreAdapter::setSceneNodeCamera(render_window_, camera_node);
     rviz_rendering::RenderWindowOgreAdapter::setOgreCamera(render_window_, default_camera);
+
+    // Release the camera and node created here when the render window is deleted, not when
+    // Qt recreates its native surface. Look them up by name: during application teardown the
+    // scene, or the camera, may already be gone.
+    connect(
+      render_window_, &QObject::destroyed,
+      [scene_name = scene_manager->getName(), camera_name]() {
+        auto * root = Ogre::Root::getSingletonPtr();
+        if (!root || !root->hasSceneManager(scene_name)) {
+          return;
+        }
+        auto * scene = root->getSceneManager(scene_name);
+        if (scene->hasCamera(camera_name)) {
+          scene->destroyCamera(camera_name);
+        }
+        if (scene->hasSceneNode(camera_name + "Node")) {
+          scene->destroySceneNode(camera_name + "Node");
+        }
+      });
   }
   // scene_manager_ = scene_manager;
   // scene_manager_->addListener(this);
