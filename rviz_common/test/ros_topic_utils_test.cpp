@@ -27,44 +27,30 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "rviz_common/properties/ros_topic_multi_type_property.hpp"
 
-#include <QApplication>  // NOLINT: cpplint can't handle Qt imports
-#include <algorithm>
-#include <map>
-#include <string>
-#include <vector>
+#include <gmock/gmock.h>
 
 #include "rviz_common/ros_topic_utils.hpp"
 
-namespace rviz_common
-{
-namespace properties
-{
+using rviz_common::isTopicOrServiceHidden;
 
-void RosTopicMultiTypeProperty::fillTopicList()
-{
-  QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-  clearOptions();
-
-  std::map<std::string, std::vector<std::string>> published_topics =
-    rviz_ros_node_.lock()->get_topic_names_and_types();
-
-  for (const auto & topic : published_topics) {
-    if (isTopicOrServiceHidden(topic.first)) {
-      continue;
-    }
-    // Only add topics whose type matches one of the allowed types.
-    for (const auto & type : topic.second) {
-      if (message_types_.contains(QString::fromStdString(type))) {
-        addOptionStd(topic.first);
-        break;  // avoid duplicates if the topic matches more than one allowed type
-      }
-    }
-  }
-  sortOptions();
-  QApplication::restoreOverrideCursor();
+TEST(IsTopicOrServiceHidden, regular_topics_are_not_hidden) {
+  EXPECT_FALSE(isTopicOrServiceHidden("/camera/image"));
+  EXPECT_FALSE(isTopicOrServiceHidden("/camera/image/compressed"));
+  EXPECT_FALSE(isTopicOrServiceHidden("relative/topic"));
+  EXPECT_FALSE(isTopicOrServiceHidden(""));
+  EXPECT_FALSE(isTopicOrServiceHidden("/"));
 }
 
-}  // end namespace properties
-}  // end namespace rviz_common
+TEST(IsTopicOrServiceHidden, underscore_inside_a_token_is_not_hidden) {
+  EXPECT_FALSE(isTopicOrServiceHidden("/foo_bar/baz"));
+  EXPECT_FALSE(isTopicOrServiceHidden("/foo/bar_baz"));
+}
+
+TEST(IsTopicOrServiceHidden, token_starting_with_underscore_is_hidden) {
+  EXPECT_TRUE(isTopicOrServiceHidden("/camera/image/_buf_cpu"));
+  EXPECT_TRUE(isTopicOrServiceHidden("/_private/topic"));
+  EXPECT_TRUE(isTopicOrServiceHidden("/fibonacci/_action/feedback"));
+  EXPECT_TRUE(isTopicOrServiceHidden("relative/_hidden"));
+  EXPECT_TRUE(isTopicOrServiceHidden("_hidden"));
+}
