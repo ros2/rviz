@@ -80,7 +80,7 @@ void PointCloud2Display::processMessage(const sensor_msgs::msg::PointCloud2::Con
 }
 
 bool PointCloud2Display::hasXYZChannels(
-  const sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) const
 {
   int32_t xi = findChannelIndex(cloud, "x");
   int32_t yi = findChannelIndex(cloud, "y");
@@ -90,45 +90,65 @@ bool PointCloud2Display::hasXYZChannels(
 }
 
 bool PointCloud2Display::cloudDataMatchesDimensions(
-  const sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) const
 {
   return cloud->width * cloud->height * cloud->point_step == cloud->data.size();
 }
 
 sensor_msgs::msg::PointCloud2::ConstSharedPtr PointCloud2Display::filterOutInvalidPoints(
-  const sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) const
 {
-  auto filtered = std::make_shared<sensor_msgs::msg::PointCloud2>();
-
-  if (cloud->width * cloud->height > 0) {
-    filtered->data = filterData(cloud);
+  if (cloud->width * cloud->height == 0 || cloud->point_step == 0) {
+    return cloud;
   }
 
+  const Offsets offsets = determineOffsets(cloud);
+  const auto point_step = static_cast<std::ptrdiff_t>(cloud->point_step);
+
+  auto first_invalid = cloud->data.begin();
+  for (; first_invalid < cloud->data.end(); first_invalid += point_step) {
+    if (!validateFloatsAtPosition(first_invalid, offsets)) {
+      break;
+    }
+  }
+
+  // Nothing to drop, which is by far the most common case: hand the message on untouched instead
+  // of allocating and memcpy-ing a byte-identical copy of it.
+  if (first_invalid >= cloud->data.end()) {
+    return cloud;
+  }
+
+  auto filtered = std::make_shared<sensor_msgs::msg::PointCloud2>();
+  filtered->data = filterData(cloud, offsets, first_invalid);
   filtered->header = cloud->header;
   filtered->fields = cloud->fields;
   filtered->height = 1;
-  if (cloud->point_step > 0) {
-    filtered->width = static_cast<uint32_t>(filtered->data.size() / cloud->point_step);
-  } else {
-    filtered->width = 0;
-  }
+  filtered->width = static_cast<uint32_t>(filtered->data.size() / cloud->point_step);
   filtered->is_bigendian = cloud->is_bigendian;
   filtered->point_step = cloud->point_step;
-  filtered->row_step = filtered->width;
+  filtered->row_step = filtered->width * filtered->point_step;
 
   return filtered;
 }
 
-sensor_msgs::msg::PointCloud2::_data_type
-PointCloud2Display::filterData(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const
+sensor_msgs::msg::PointCloud2::_data_type PointCloud2Display::filterData(
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
+  Offsets offsets,
+  sensor_msgs::msg::PointCloud2::_data_type::const_iterator first_invalid) const
 {
+  const auto data_end = cloud->data.end();
+  const auto point_step = static_cast<std::ptrdiff_t>(cloud->point_step);
+
   sensor_msgs::msg::PointCloud2::_data_type filteredData;
   filteredData.reserve(cloud->data.size());
 
-  Offsets offsets = determineOffsets(cloud);
+  // Everything before the first invalid point is known to be valid, so copy it in one go and
+  // resume scanning after it.  This keeps the whole filter to a single pass over the cloud.
+  filteredData.insert(filteredData.end(), cloud->data.begin(), first_invalid);
+
   size_t points_to_copy = 0;
-  sensor_msgs::msg::PointCloud2::_data_type::const_iterator copy_start_pos;
-  for (auto it = cloud->data.begin(); it < cloud->data.end(); it += cloud->point_step) {
+  sensor_msgs::msg::PointCloud2::_data_type::const_iterator copy_start_pos = data_end;
+  for (auto it = first_invalid + point_step; it < data_end; it += point_step) {
     if (validateFloatsAtPosition(it, offsets)) {
       if (points_to_copy == 0) {
         copy_start_pos = it;
@@ -138,7 +158,7 @@ PointCloud2Display::filterData(sensor_msgs::msg::PointCloud2::ConstSharedPtr clo
       filteredData.insert(
         filteredData.end(),
         copy_start_pos,
-        copy_start_pos + points_to_copy * cloud->point_step);
+        copy_start_pos + points_to_copy * point_step);
       points_to_copy = 0;
     }
   }
@@ -147,14 +167,14 @@ PointCloud2Display::filterData(sensor_msgs::msg::PointCloud2::ConstSharedPtr clo
     filteredData.insert(
       filteredData.end(),
       copy_start_pos,
-      copy_start_pos + points_to_copy * cloud->point_step);
+      copy_start_pos + points_to_copy * point_step);
   }
 
   return filteredData;
 }
 
 Offsets PointCloud2Display::determineOffsets(
-  const sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud) const
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud) const
 {
   Offsets offsets{
     cloud->fields[findChannelIndex(cloud, "x")].offset,
