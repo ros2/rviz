@@ -287,10 +287,6 @@ ament_export_dependencies(
   yaml-cpp
 )
 
-# Export old-style CMake variables
-ament_export_include_directories("include/${PROJECT_NAME}")
-ament_export_libraries(rviz_common)
-
 # Export modern CMake targets
 ament_export_targets(rviz_common)
 
