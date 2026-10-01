@@ -363,6 +363,23 @@ if(BUILD_TESTING)
 
   set(TEST_SUPPORT_OBJECTS $<TARGET_OBJECTS:test_support_objects>)
 
+  find_package(Qt6 REQUIRED COMPONENTS Test)
+  ament_add_gmock_executable(viewport_mouse_event_test test/viewport_mouse_event_test.cpp test/ogre_testing_environment.cpp)
+  if(TARGET viewport_mouse_event_test)
+    target_link_libraries(viewport_mouse_event_test rviz_common Qt6::Widgets Qt6::Test)
+    foreach(scale 1 1.25 1.5 2)
+      set(test_name viewport_mouse_event_test_${scale})
+      set(result_file "${AMENT_TEST_RESULTS_DIR}/${PROJECT_NAME}/${test_name}.gtest.xml")
+      ament_add_test(${test_name}
+        COMMAND "$<TARGET_FILE:viewport_mouse_event_test>" "--gtest_output=xml:${result_file}"
+        ENV "QT_SCALE_FACTOR=${scale}"
+        RESULT_FILE "${result_file}"
+        ${SKIP_DISPLAY_TESTS}
+      )
+      set_tests_properties(${test_name} PROPERTIES LABELS "gmock")
+    endforeach()
+  endif()
+
   # Consolidate core tests
   ament_add_gmock(rviz_common_core_tests
     test/config_test.cpp

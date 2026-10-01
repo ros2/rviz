@@ -130,16 +130,17 @@ ViewController * RenderPanel::getViewController()
 
 void RenderPanel::onRenderWindowMouseEvents(QMouseEvent * event)
 {
-  int last_x = mouse_x_;
-  int last_y = mouse_y_;
-
-  mouse_x_ = event->position().x();
-  mouse_y_ = event->position().y();
+  ViewportMouseEvent vme(this, event, 0, 0);
+  // Keep the previous coordinates exactly as delivered, without rounding them
+  // to logical pixels and scaling them a second time on the next event.
+  vme.last_x = mouse_x_;
+  vme.last_y = mouse_y_;
+  mouse_x_ = vme.x;
+  mouse_y_ = vme.y;
 
   if (context_) {
     setFocus(Qt::MouseFocusReason);
 
-    ViewportMouseEvent vme(this, event, last_x, last_y);
     context_->handleMouseEvent(vme);
     event->accept();
   }
@@ -180,21 +181,15 @@ void RenderPanel::mouseDoubleClickEvent(QMouseEvent * event)
 
 void RenderPanel::wheelEvent(QWheelEvent * event)
 {
-  int last_x = mouse_x_;
-  int last_y = mouse_y_;
-
-  const QPoint rounded_position = event->position().toPoint();
-  mouse_x_ = rounded_position.x();
-  mouse_y_ = rounded_position.y();
+  ViewportMouseEvent vme(this, event, 0, 0);
+  vme.last_x = mouse_x_;
+  vme.last_y = mouse_y_;
+  mouse_x_ = vme.x;
+  mouse_y_ = vme.y;
 
   if (context_) {
     setFocus(Qt::MouseFocusReason);
 
-    // using rviz_rendering::RenderWindowOgreAdapter;
-    ViewportMouseEvent vme(
-      this,
-      // RenderWindowOgreAdapter::getOgreViewport(render_window_),
-      event, last_x, last_y);
     context_->handleMouseEvent(vme);
     event->accept();
   }
