@@ -33,11 +33,7 @@
 #include "add_display_dialog.hpp"
 
 #include <algorithm>
-<<<<<<< HEAD
-=======
-#include <format>  // NOLINT(build/include_order) cpplint predates C++20 headers
 #include <iostream>
->>>>>>> 0f06414 (Removed _buf_cpu topic from Image display selection (#1820))
 #include <map>
 #include <memory>
 #include <string>
@@ -157,9 +153,13 @@ void getPluginGroups(
   std::map<std::string, std::vector<std::string>> topic_names_and_types =
     rviz_ros_node.lock()->get_topic_names_and_types();
 
-  std::erase_if(
-    topic_names_and_types,
-    [](const auto & map_pair) {return isTopicOrServiceHidden(map_pair.first);});
+  for (auto it = topic_names_and_types.begin(); it != topic_names_and_types.end(); ) {
+    if (isTopicOrServiceHidden(it->first)) {
+      it = topic_names_and_types.erase(it);
+    } else {
+      ++it;
+    }
+  }
 
   for (const auto & map_pair : topic_names_and_types) {
     QString topic = QString::fromStdString(map_pair.first);
