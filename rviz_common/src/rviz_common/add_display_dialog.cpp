@@ -33,6 +33,7 @@
 #include "add_display_dialog.hpp"
 
 #include <algorithm>
+#include <iostream>
 #include <map>
 #include <memory>
 #include <string>
@@ -59,6 +60,7 @@
 #include "rviz_common/load_resource.hpp"
 #include "rviz_common/logging.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction.hpp"
+#include "rviz_common/ros_topic_utils.hpp"
 
 namespace rviz_common
 {
@@ -150,6 +152,14 @@ void getPluginGroups(
 {
   std::map<std::string, std::vector<std::string>> topic_names_and_types =
     rviz_ros_node.lock()->get_topic_names_and_types();
+
+  for (auto it = topic_names_and_types.begin(); it != topic_names_and_types.end(); ) {
+    if (isTopicOrServiceHidden(it->first)) {
+      it = topic_names_and_types.erase(it);
+    } else {
+      ++it;
+    }
+  }
 
   for (const auto & map_pair : topic_names_and_types) {
     QString topic = QString::fromStdString(map_pair.first);
