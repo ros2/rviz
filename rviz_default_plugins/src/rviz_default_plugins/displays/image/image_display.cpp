@@ -189,6 +189,9 @@ ImageDisplay::~ImageDisplay()
     app->removeEventFilter(this);
   }
   unsubscribe();
+  if (material_) {
+    Ogre::MaterialManager::getSingleton().remove(material_);
+  }
 }
 
 void ImageDisplay::onEnable()
