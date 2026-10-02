@@ -43,6 +43,7 @@
 
 #include "rclcpp/node.hpp"
 
+#include "rviz_rendering/pixel_scaling.hpp"
 #include "rviz_rendering/render_window.hpp"
 
 #include "rviz_common/display_context.hpp"
@@ -232,7 +233,11 @@ void ViewController::save(Config config) const
 void ViewController::handleKeyEvent(QKeyEvent * event, RenderPanel * panel)
 {
   if (event->key() == Qt::Key_F && context_->getViewPicker()) {
-    QPoint mouse_rel_panel = panel->mapFromGlobal(QCursor::pos());
+    // mapFromGlobal returns logical pixels, but the picker works in the viewport's
+    // device pixels, the same space ViewportMouseEvent delivers its coordinates in.
+    const qreal pixel_ratio = panel->getRenderWindow()->devicePixelRatio();
+    QPoint mouse_rel_panel = rviz_rendering::toDevicePixels(
+      panel->mapFromGlobal(QCursor::pos()), pixel_ratio);
     Ogre::Vector3 point_rel_world;  // output of get3DPoint().
     if (
       context_->getViewPicker()->get3DPoint(

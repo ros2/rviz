@@ -56,7 +56,6 @@
 #include <QKeyEvent>  // NOLINT: cpplint cannot handle include order here
 #include <QString>  // NOLINT: cpplint cannot handle include order here
 #include <QTimer>  // NOLINT: cpplint cannot handle include order here
-#include <QWindow>  // NOLINT: cpplint cannot handle include order here
 
 #include "rclcpp/clock.hpp"
 #include "rclcpp/node.hpp"
@@ -616,16 +615,8 @@ void VisualizationManager::handleMouseEvent(const ViewportMouseEvent & vme)
 
   int flags = 0;
   if (current_tool) {
+    // Scaling the coordinates here again used to apply the device pixel ratio twice.
     ViewportMouseEvent _vme = vme;
-
-    QWindow * window = vme.panel->windowHandle();
-    if (window) {
-      double pixel_ratio = window->devicePixelRatio();
-      _vme.x = static_cast<int>(pixel_ratio * _vme.x);
-      _vme.y = static_cast<int>(pixel_ratio * _vme.y);
-      _vme.last_x = static_cast<int>(pixel_ratio * _vme.last_x);
-      _vme.last_y = static_cast<int>(pixel_ratio * _vme.last_y);
-    }
 
     flags = current_tool->processMouseEvent(_vme);
     vme.panel->setCursor(current_tool->getCursor());
