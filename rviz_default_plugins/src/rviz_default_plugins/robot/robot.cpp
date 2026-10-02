@@ -378,8 +378,9 @@ void Robot::setLinkTreeStyle(LinkTreeStyle style)
 {
   std::map<LinkTreeStyle, std::string>::const_iterator style_it = style_name_map_.find(style);
   if (style_it == style_name_map_.end()) {
-    link_tree_style_->setValue(style_name_map_[STYLE_DEFAULT].c_str());
-  } else {
+    style_it = style_name_map_.find(STYLE_DEFAULT);
+  }
+  if (style_it != style_name_map_.end()) {
     link_tree_style_->setValue(style_it->second.c_str());
   }
 }
