@@ -369,9 +369,6 @@ target_compile_definitions(rviz_default_plugins PRIVATE "RVIZ_DEFAULT_PLUGINS_BU
 
 pluginlib_export_plugin_description_file(rviz_common plugins_description.xml)
 
-# Export old-style CMake variables
-ament_export_include_directories("include/${PROJECT_NAME}")
-
 # Export modern CMake targets
 ament_export_targets(rviz_default_plugins HAS_LIBRARY_TARGET)
 
