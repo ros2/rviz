@@ -305,10 +305,15 @@ void Robot::setInertiaVisible(bool visible)
 
 void Robot::updateLinkVisibilities()
 {
+  // Each link would recompute the joint checkboxes over the whole tree; do it once instead.
+  const bool was_in_changed_enable_all_links = in_changed_enable_all_links_;
+  in_changed_enable_all_links_ = true;
   for (auto & link_map_entry : links_) {
     RobotLink * link = link_map_entry.second;
     link->updateVisibility();
   }
+  in_changed_enable_all_links_ = was_in_changed_enable_all_links;
+  calculateJointCheckboxes();
 }
 
 bool Robot::isVisible()
