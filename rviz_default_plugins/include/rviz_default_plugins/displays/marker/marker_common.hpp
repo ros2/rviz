@@ -41,6 +41,7 @@
 #include <vector>
 #include <utility>
 
+#include <OgreMaterial.h>
 #include <OgreSceneNode.h>
 
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here

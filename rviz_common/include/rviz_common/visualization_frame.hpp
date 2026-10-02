@@ -231,6 +231,10 @@ public:
     Qt::DockWidgetArea area = Qt::LeftDockWidgetArea,
     bool floating = true);
 
+  /// Mark the frame as shutting down so that closeEvent skips the save-changes prompt.
+  void
+  setShuttingDown(bool shutting_down);
+
 public Q_SLOTS:
   /// Notification that something would change in the display config if saved.
   void
@@ -516,6 +520,8 @@ protected:
   WidgetGeometryChangeDetector * geom_change_detector_;
   /// True just when loading a display config file, false all other times.
   bool loading_;
+  /// True while the app is being torn down; suppresses the save-changes prompt in closeEvent.
+  bool shutting_down_ = false;
   /// Single-shot timer for calling postLoad() a short time after loadDisplayConfig() finishes.
   QTimer * post_load_timer_;
 
