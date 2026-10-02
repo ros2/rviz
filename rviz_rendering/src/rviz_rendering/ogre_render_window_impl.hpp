@@ -78,6 +78,9 @@ public:
   void
   initialize();
 
+  /// Release the render target before Qt destroys its native surface.
+  void destroyRenderWindow();
+
   void
   render();
 
@@ -169,7 +172,7 @@ protected:
   // Ogre::Viewport * right_viewport_;
 
   setupSceneCallback setup_scene_callback_;
-  std::vector<Ogre::RenderTargetListener *> pending_listeners_;
+  std::vector<Ogre::RenderTargetListener *> listeners_;
   std::vector<uint32_t> pending_visibility_masks_;
 };
 
