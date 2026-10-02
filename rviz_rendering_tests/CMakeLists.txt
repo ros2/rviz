@@ -67,6 +67,19 @@ if(BUILD_TESTING)
     )
   endif()
 
+  ament_add_gtest(mesh_loader_large_mesh_test_target
+    test/mesh_loader_large_mesh_test.cpp
+    test/ogre_testing_environment.cpp
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET mesh_loader_large_mesh_test_target)
+    target_link_libraries(mesh_loader_large_mesh_test_target
+      ament_cmake_ros_core::ament_ros_defaults
+      rviz_ogre_vendor::OgreMain
+      rviz_rendering::rviz_rendering
+      resource_retriever::resource_retriever
+    )
+  endif()
+
   ament_add_gtest(test_rviz_rendering_tests
     test/test_rviz_ogre_media_exports.cpp
     ${SKIP_DISPLAY_TESTS})
