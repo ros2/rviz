@@ -34,6 +34,7 @@
 #include <algorithm>
 #include <cassert>
 #include <sstream>
+#include <utility>
 #include <vector>
 
 #include <OgreHardwareBuffer.h>
@@ -506,7 +507,7 @@ void PointCloud::addPoints(
     }
     internals.aabb.merge(current_point->position);
     internals = addPointToHardwareBuffer(
-      internals, current_point,
+      std::move(internals), current_point,
       static_cast<uint32_t>(current_point - start_iterator));
   }
 
@@ -601,7 +602,8 @@ PointCloud::addPointToHardwareBuffer(
   float y = point->position.y;
   float z = point->position.z;
 
-  for (uint32_t j = 0; j < getVerticesPerPoint(); ++j, ++internals.current_vertex_count) {
+  const uint32_t vertices_per_point = getVerticesPerPoint();
+  for (uint32_t j = 0; j < vertices_per_point; ++j, ++internals.current_vertex_count) {
     *float_buffer++ = x;
     *float_buffer++ = y;
     *float_buffer++ = z;
