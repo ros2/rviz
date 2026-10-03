@@ -183,6 +183,17 @@ if(BUILD_TESTING)
     target_link_libraries(string_helper_test rviz_rendering)
   endif()
 
+  if(APPLE)
+    find_package(Qt6 REQUIRED COMPONENTS Test)
+    ament_add_gmock(render_window_exposure_test
+      test/rviz_rendering/render_window_exposure_test.cpp
+      TIMEOUT 45)
+    if(TARGET render_window_exposure_test)
+      target_link_libraries(render_window_exposure_test
+        rviz_rendering rviz_rendering_test_utils Qt6::Widgets Qt6::Test)
+    endif()
+  endif()
+
   ament_add_gmock(point_cloud_test_target
     test/rviz_rendering/objects/point_cloud_test.cpp
     ${SKIP_DISPLAY_TESTS})

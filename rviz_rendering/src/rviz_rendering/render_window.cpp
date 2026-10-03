@@ -51,6 +51,7 @@
 
 #include <QMouseEvent>  // NOLINT
 #include <QTimer>   // NOLINT
+#include <QVariant>  // NOLINT
 #include <QWindow>   // NOLINT
 #include <QString>  // NOLINT: cpplint cannot handle the include order here
 
@@ -141,6 +142,10 @@ RenderWindow::event(QEvent * event)
     case QEvent::Resize:
       if (this->isExposed()) {
         impl_->resize(this->width(), this->height());
+#ifdef __APPLE__
+      } else {
+        setProperty("_rviz_cocoa_surface_initialized", false);
+#endif
       }
       return QWindow::event(event);
     case QEvent::UpdateRequest:
@@ -169,7 +174,26 @@ RenderWindow::exposeEvent(QExposeEvent * expose_event)
   Q_UNUSED(expose_event);
 
   if (this->isExposed()) {
+#ifdef __APPLE__
+    // Defer backing-surface updates until Cocoa attaches the view. Resizing on
+    // every expose can loop, so repeat only after a resize while hidden.
+    if (!property("_rviz_cocoa_surface_initialized").toBool() &&
+      !property("_rviz_cocoa_surface_resize_pending").toBool())
+    {
+      setProperty("_rviz_cocoa_surface_resize_pending", true);
+      QTimer::singleShot(0, this, [this]() {
+          setProperty("_rviz_cocoa_surface_resize_pending", false);
+          if (!isExposed() || width() <= 0 || height() <= 0) {
+            return;
+          }
+          setProperty("_rviz_cocoa_surface_initialized", true);
+          impl_->resize(this->width(), this->height());
+          this->renderNow();
+        });
+    }
+#else
     impl_->resize(this->width(), this->height());
+#endif
     if (this->width() > 0 && this->height() > 0) {
       this->renderNow();
     }
