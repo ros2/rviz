@@ -51,6 +51,7 @@
 
 #include <QMouseEvent>  // NOLINT
 #include <QTimer>   // NOLINT
+#include <QVariant>  // NOLINT
 #include <QWindow>   // NOLINT
 #include <QString>  // NOLINT: cpplint cannot handle the include order here
 
@@ -169,7 +170,20 @@ RenderWindow::exposeEvent(QExposeEvent * expose_event)
   Q_UNUSED(expose_event);
 
   if (this->isExposed()) {
+#ifdef __APPLE__
+    // Wait until Cocoa has attached the native view before sizing the initial
+    // OpenGL backing surface. Updating it inside expose can trigger an endless
+    // expose loop, so perform this once on the next event-loop iteration.
+    if (!property("_rviz_cocoa_surface_initialized").toBool()) {
+      setProperty("_rviz_cocoa_surface_initialized", true);
+      QTimer::singleShot(0, this, [this]() {
+          impl_->resize(this->width(), this->height());
+          this->renderNow();
+        });
+    }
+#else
     impl_->resize(this->width(), this->height());
+#endif
     if (this->width() > 0 && this->height() > 0) {
       this->renderNow();
     }
