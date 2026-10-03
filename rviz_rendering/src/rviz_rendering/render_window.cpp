@@ -142,6 +142,10 @@ RenderWindow::event(QEvent * event)
     case QEvent::Resize:
       if (this->isExposed()) {
         impl_->resize(this->width(), this->height());
+#ifdef __APPLE__
+      } else {
+        setProperty("_rviz_cocoa_surface_initialized", false);
+#endif
       }
       return QWindow::event(event);
     case QEvent::UpdateRequest:
@@ -171,12 +175,18 @@ RenderWindow::exposeEvent(QExposeEvent * expose_event)
 
   if (this->isExposed()) {
 #ifdef __APPLE__
-    // Wait until Cocoa has attached the native view before sizing the initial
-    // OpenGL backing surface. Updating it inside expose can trigger an endless
-    // expose loop, so perform this once on the next event-loop iteration.
-    if (!property("_rviz_cocoa_surface_initialized").toBool()) {
-      setProperty("_rviz_cocoa_surface_initialized", true);
+    // Defer backing-surface updates until Cocoa attaches the view. Resizing on
+    // every expose can loop, so repeat only after a resize while hidden.
+    if (!property("_rviz_cocoa_surface_initialized").toBool() &&
+      !property("_rviz_cocoa_surface_resize_pending").toBool())
+    {
+      setProperty("_rviz_cocoa_surface_resize_pending", true);
       QTimer::singleShot(0, this, [this]() {
+          setProperty("_rviz_cocoa_surface_resize_pending", false);
+          if (!isExposed() || width() <= 0 || height() <= 0) {
+            return;
+          }
+          setProperty("_rviz_cocoa_surface_initialized", true);
           impl_->resize(this->width(), this->height());
           this->renderNow();
         });
