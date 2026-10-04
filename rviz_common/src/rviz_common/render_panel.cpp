@@ -71,6 +71,7 @@ RenderPanel::RenderPanel(QWidget * parent)
 {
   setFocus(Qt::OtherFocusReason);
   render_window_container_widget_ = QWidget::createWindowContainer(render_window_, this);
+  render_window_->installEventFilter(this);
   layout_ = new QGridLayout(this);
   layout_->setContentsMargins(0, 0, 0, 0);
   layout_->addWidget(render_window_container_widget_);
@@ -205,6 +206,17 @@ void RenderPanel::keyPressEvent(QKeyEvent * event)
   if (context_) {
     context_->handleChar(event, this);
   }
+}
+
+bool RenderPanel::eventFilter(QObject * watched, QEvent * event)
+{
+  if (watched == render_window_ && event->type() == QEvent::KeyPress) {
+    // Mouse interaction can give the native window keyboard focus. Dispatch through
+    // QWidget so that Tab navigation is handled before the tool's key handler.
+    QApplication::sendEvent(this, event);
+    return true;
+  }
+  return QWidget::eventFilter(watched, event);
 }
 
 void RenderPanel::setViewController(ViewController * controller)
