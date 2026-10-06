@@ -87,6 +87,10 @@ public:
   void
   renderNow();
 
+  /// Resize the render surface.
+  /**
+   * \param width, height - these are expressed in logical Qt pixels
+   */
   void
   resize(size_t width, size_t height);
 

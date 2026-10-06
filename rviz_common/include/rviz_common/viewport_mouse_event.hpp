@@ -90,7 +90,15 @@ public:
 
   RenderPanel * panel;
   QEvent::Type type;
+  /// Display scale factor, truncated to an integer. Retained for compatibility only.
+  /**
+   * Do not use this to convert coordinates. Fractional scale factors such as 1.25 and
+   * 1.5 are common on desktop and truncate to 1 here, which silently drops the
+   * conversion. The coordinates below are scaled with the full-precision ratio instead;
+   * see rviz_rendering/pixel_scaling.hpp.
+   */
   int device_pixel_ratio;
+  /// Cursor position in device pixels, matching the Ogre viewport's dimensions.
   int x;
   int y;
   /// Angle that the common vertical mouse wheel was rotated

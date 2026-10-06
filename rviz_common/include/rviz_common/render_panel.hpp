@@ -148,9 +148,9 @@ protected:
 
   /* End QWidget overrides. */
 
-  /// X position of the last mouse event.
+  /// X position of the last mouse or wheel event in device pixels.
   int mouse_x_;
-  /// Y position of the last mouse event.
+  /// Y position of the last mouse or wheel event in device pixels.
   int mouse_y_;
 
   DisplayContext * context_;
