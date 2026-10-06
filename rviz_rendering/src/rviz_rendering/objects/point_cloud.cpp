@@ -492,6 +492,9 @@ void PointCloud::addPoints(
   auto num_points = static_cast<uint32_t>(std::distance(start_iterator, stop_iterator));
   points_.insert(points_.cend(), start_iterator, stop_iterator);
 
+  const float * vertices = getVertices();
+  const uint32_t vertices_per_point = getVerticesPerPoint();
+
   RenderableInternals internals = createNewRenderable(num_points);
 
   for (auto current_point = start_iterator; current_point < stop_iterator; ++current_point) {
@@ -505,9 +508,10 @@ void PointCloud::addPoints(
       internals = createNewRenderable(static_cast<uint32_t>(stop_iterator - current_point));
     }
     internals.aabb.merge(current_point->position);
-    internals = addPointToHardwareBuffer(
+    addPointToHardwareBuffer(
       internals, current_point,
-      static_cast<uint32_t>(current_point - start_iterator));
+      static_cast<uint32_t>(current_point - start_iterator),
+      vertices, vertices_per_point);
   }
 
   finishRenderable(internals, internals.current_vertex_count);
@@ -588,20 +592,20 @@ uint32_t PointCloud::getColorForPoint(
   return color;
 }
 
-PointCloud::RenderableInternals
+void
 PointCloud::addPointToHardwareBuffer(
-  PointCloud::RenderableInternals internals,
-  std::vector<PointCloud::Point>::iterator point, uint32_t current_point)
+  PointCloud::RenderableInternals & internals,
+  std::vector<PointCloud::Point>::iterator point, uint32_t current_point,
+  const float * vertices, uint32_t vertices_per_point)
 {
   uint32_t color = getColorForPoint(current_point, point);
-  float * vertices = getVertices();
   float * float_buffer = internals.float_buffer;
 
   float x = point->position.x;
   float y = point->position.y;
   float z = point->position.z;
 
-  for (uint32_t j = 0; j < getVerticesPerPoint(); ++j, ++internals.current_vertex_count) {
+  for (uint32_t j = 0; j < vertices_per_point; ++j) {
     *float_buffer++ = x;
     *float_buffer++ = y;
     *float_buffer++ = z;
@@ -626,6 +630,15 @@ PointCloud::addPointToHardwareBuffer(
 #endif
 
   internals.float_buffer = float_buffer;
+  internals.current_vertex_count += vertices_per_point;
+}
+
+PointCloud::RenderableInternals
+PointCloud::addPointToHardwareBuffer(
+  PointCloud::RenderableInternals internals,
+  std::vector<PointCloud::Point>::iterator point, uint32_t current_point)
+{
+  addPointToHardwareBuffer(internals, point, current_point, getVertices(), getVerticesPerPoint());
   return internals;
 }
 
