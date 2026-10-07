@@ -134,7 +134,9 @@ TEST_F(RenderPanelTest, render_window_preserves_tab_navigation_and_text_input)
       return QGuiApplication::focusWindow() == render_window;
   }));
 
-  EXPECT_CALL(*context_, handleChar(testing::_, testing::_)).Times(0);
+  int handled_keys = 0;
+  EXPECT_CALL(*context_, handleChar(testing::_, testing::_)).WillRepeatedly(
+    testing::InvokeWithoutArgs([&handled_keys]() {++handled_keys;}));
   sendKey(QGuiApplication::focusWindow(), Qt::Key_Tab);
   ASSERT_TRUE(waitUntil([&field, render_window]() {
       return field.hasFocus() && QGuiApplication::focusWindow() != render_window;
@@ -142,14 +144,30 @@ TEST_F(RenderPanelTest, render_window_preserves_tab_navigation_and_text_input)
   sendKey(QGuiApplication::focusWindow(), Qt::Key_F, QStringLiteral("f"));
   sendKey(QGuiApplication::focusWindow(), Qt::Key_M, QStringLiteral("m"));
   EXPECT_EQ(field.text(), QStringLiteral("fm"));
-  testing::Mock::VerifyAndClearExpectations(context_.get());
+  EXPECT_EQ(handled_keys, 0);
 
   render_window->requestActivate();
   ASSERT_TRUE(waitUntil([render_window]() {
       return QGuiApplication::focusWindow() == render_window;
   }));
-  EXPECT_CALL(*context_, handleChar(testing::_, &panel)).Times(1);
   sendKey(QGuiApplication::focusWindow(), Qt::Key_M);
+  EXPECT_EQ(handled_keys, 1);
+}
+
+TEST_F(RenderPanelTest, render_window_does_not_swallow_keys_the_panel_cannot_handle)
+{
+  rviz_common::RenderPanel uninitialized_panel;
+  QKeyEvent press(QEvent::KeyPress, Qt::Key_F, Qt::NoModifier);
+  QApplication::sendEvent(uninitialized_panel.getRenderWindow(), &press);
+  EXPECT_FALSE(press.isAccepted());
+
+  rviz_common::RenderPanel disabled_panel;
+  disabled_panel.initialize(context_.get());
+  disabled_panel.setEnabled(false);
+  EXPECT_CALL(*context_, handleChar(testing::_, testing::_)).Times(0);
+  QKeyEvent disabled_press(QEvent::KeyPress, Qt::Key_F, Qt::NoModifier);
+  QApplication::sendEvent(disabled_panel.getRenderWindow(), &disabled_press);
+  EXPECT_FALSE(disabled_press.isAccepted());
 }
 
 int main(int argc, char ** argv)

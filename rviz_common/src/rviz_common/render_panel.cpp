@@ -205,16 +205,27 @@ void RenderPanel::keyPressEvent(QKeyEvent * event)
 {
   if (context_) {
     context_->handleChar(event, this);
+  } else {
+    QWidget::keyPressEvent(event);
   }
 }
 
 bool RenderPanel::eventFilter(QObject * watched, QEvent * event)
 {
-  if (watched == render_window_ && event->type() == QEvent::KeyPress) {
-    // Mouse interaction can give the native window keyboard focus. Dispatch through
-    // QWidget so that Tab navigation is handled before the tool's key handler.
-    QApplication::sendEvent(this, event);
-    return true;
+  if (watched == render_window_ && isEnabled()) {
+    switch (event->type()) {
+      case QEvent::KeyPress:
+      case QEvent::KeyRelease:
+      case QEvent::ShortcutOverride:
+        // Mouse interaction can give the native window keyboard focus. Dispatch through
+        // QWidget::event() so that Tab navigation is handled before the tool's key handler.
+        // Calling it directly rather than via QApplication::sendEvent() avoids running the
+        // shortcut map a second time for the same key press.
+        this->event(event);
+        return event->isAccepted();
+      default:
+        break;
+    }
   }
   return QWidget::eventFilter(watched, event);
 }
