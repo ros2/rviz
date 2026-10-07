@@ -185,6 +185,89 @@ TEST_F(RenderWindowExposureTest, hiding_before_the_deferred_resize_retries_when_
   EXPECT_EQ(window_->viewportSize(), expectedViewportSize());
 }
 
+enum class BackingScaleChange
+{
+  Screen,
+  DevicePixelRatio
+};
+
+class RenderWindowBackingScaleTest : public RenderWindowExposureTest,
+  public testing::WithParamInterface<BackingScaleChange>
+{
+protected:
+  void deliverBackingScaleChange()
+  {
+    if (GetParam() == BackingScaleChange::Screen) {
+      window_->screenChanged(window_->screen());
+    } else {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
+      QEvent event(QEvent::DevicePixelRatioChange);
+      QApplication::sendEvent(window_.get(), &event);
+#endif
+    }
+  }
+};
+
+TEST_P(RenderWindowBackingScaleTest, scale_change_without_resize_refreshes_once)
+{
+  ASSERT_TRUE(showAndWaitForInitialResize());
+  QTest::qWait(25);
+  const auto logical_size = window_->size();
+  const auto updates = window_->viewport_updates;
+
+  // Simulate the notification without changing logical size or physical displays.
+  deliverBackingScaleChange();
+  for (int exposure = 0; exposure < 3; ++exposure) {
+    window_->deliverExpose();
+  }
+  ASSERT_TRUE(QTest::qWaitFor([this, updates]() {
+      return window_->viewport_updates > updates;
+  }));
+  QTest::qWait(25);
+
+  EXPECT_EQ(window_->viewport_updates, updates + 1);
+  EXPECT_EQ(window_->size(), logical_size);
+  EXPECT_EQ(window_->viewportSize(), expectedViewportSize());
+}
+
+TEST_P(RenderWindowBackingScaleTest, scale_change_while_hidden_refreshes_when_shown)
+{
+  ASSERT_TRUE(showAndWaitForInitialResize());
+  QTest::qWait(25);
+  const auto logical_size = window_->size();
+  window_->hide();
+  ASSERT_TRUE(QTest::qWaitFor([this]() {return !window_->isExposed();}));
+  const auto updates = window_->viewport_updates;
+
+  deliverBackingScaleChange();
+  window_->deliverExpose();
+  QTest::qWait(25);
+  EXPECT_EQ(window_->viewport_updates, updates);
+
+  window_->show();
+  ASSERT_TRUE(QTest::qWaitForWindowExposed(window_.get()));
+  ASSERT_TRUE(QTest::qWaitFor([this, updates]() {
+      return window_->viewport_updates > updates;
+  }));
+  QTest::qWait(25);
+
+  EXPECT_EQ(window_->viewport_updates, updates + 1);
+  EXPECT_EQ(window_->size(), logical_size);
+  EXPECT_EQ(window_->viewportSize(), expectedViewportSize());
+}
+
+INSTANTIATE_TEST_SUITE_P(
+  BackingScaleChanges, RenderWindowBackingScaleTest,
+  testing::Values(
+    BackingScaleChange::Screen
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
+    , BackingScaleChange::DevicePixelRatio
+#endif
+  ),
+  [](const testing::TestParamInfo<BackingScaleChange> & info) {
+    return info.param == BackingScaleChange::Screen ? "ScreenChange" : "DevicePixelRatioChange";
+  });
+
 int main(int argc, char ** argv)
 {
   QApplication app(argc, argv);

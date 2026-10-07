@@ -67,6 +67,11 @@ RenderWindow::RenderWindow(QWindow * parent)
   on_mouse_events_callback_(nullptr), on_wheel_events_callback_(nullptr)
 {
   this->installEventFilter(this);
+#ifdef __APPLE__
+  connect(this, &QWindow::screenChanged, this, [this]() {
+      setProperty("_rviz_cocoa_surface_initialized", false);
+    });
+#endif
 }
 
 RenderWindow::~RenderWindow()
@@ -148,6 +153,11 @@ RenderWindow::event(QEvent * event)
 #endif
       }
       return QWindow::event(event);
+#if defined(__APPLE__) && QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
+    case QEvent::DevicePixelRatioChange:
+      setProperty("_rviz_cocoa_surface_initialized", false);
+      return QWindow::event(event);
+#endif
     case QEvent::UpdateRequest:
       this->renderNow();
       return true;
@@ -176,7 +186,7 @@ RenderWindow::exposeEvent(QExposeEvent * expose_event)
   if (this->isExposed()) {
 #ifdef __APPLE__
     // Defer backing-surface updates until Cocoa attaches the view. Resizing on
-    // every expose can loop, so repeat only after a resize while hidden.
+    // every expose can loop, so repeat only after hidden resizes or scale changes.
     if (!property("_rviz_cocoa_surface_initialized").toBool() &&
       !property("_rviz_cocoa_surface_resize_pending").toBool())
     {
