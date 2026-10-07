@@ -150,6 +150,10 @@ protected:
 
   bool animating_;
 
+  /// Size passed to the last Ogre resize, to skip resizes that do not change it.
+  unsigned int last_resize_width_{0};
+  unsigned int last_resize_height_{0};
+
   Ogre::Viewport * ogre_viewport_;
 
   // std::function<void()> pre_render_callback_;  ///< Functor which is called before each render
