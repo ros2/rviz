@@ -64,9 +64,9 @@ public:
   : DisplayTestFixture()
   {
     EXPECT_CALL(*context_, getRosNodeAbstraction()).WillRepeatedly(
-      testing::Invoke([]() {
+      []() {
         return rviz_ros_node_;
-      }));
+      });
 
     display_ = std::make_unique<rviz_common::Display>();
 
