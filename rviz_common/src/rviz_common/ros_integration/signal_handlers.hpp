@@ -31,6 +31,8 @@
 #ifndef RVIZ_COMMON__ROS_INTEGRATION__SIGNAL_HANDLERS_HPP_
 #define RVIZ_COMMON__ROS_INTEGRATION__SIGNAL_HANDLERS_HPP_
 
+#include "rviz_common/visibility_control.hpp"
+
 namespace rviz_common
 {
 namespace ros_integration
@@ -47,6 +49,7 @@ void installSignalHandlers();
 bool exitRequested();
 
 /// Put back the handlers that installSignalHandlers() replaced, if they are still replaced.
+RVIZ_COMMON_PUBLIC
 void restoreSignalHandlers();
 
 }  // namespace ros_integration
