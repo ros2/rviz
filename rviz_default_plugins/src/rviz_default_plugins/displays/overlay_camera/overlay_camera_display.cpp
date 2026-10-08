@@ -37,10 +37,12 @@
 #include <OgreRenderTexture.h>
 #include <OgreRenderTarget.h>
 #include <OgreResourceGroupManager.h>
+#include <OgreTexture.h>
 #include <OgreTextureManager.h>
 #include <OgreViewport.h>
 
 #include <algorithm>
+#include <cstdint>
 #include <cstring>
 #include <limits>
 #include <memory>

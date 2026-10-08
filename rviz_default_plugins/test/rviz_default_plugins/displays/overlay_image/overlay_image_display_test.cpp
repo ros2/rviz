@@ -29,6 +29,8 @@
 
 #include <gmock/gmock.h>
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 
 #include "sensor_msgs/msg/image.hpp"

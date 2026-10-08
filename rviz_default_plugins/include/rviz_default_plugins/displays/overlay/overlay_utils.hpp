@@ -35,16 +35,8 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__OVERLAY__OVERLAY_UTILS_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__OVERLAY__OVERLAY_UTILS_HPP_
 
-#include <OgreHardwarePixelBuffer.h>
-#include <OgreMaterialManager.h>
-#include <OgreTechnique.h>
-#include <OgreTexture.h>
-#include <OgreTextureManager.h>
-#include <Overlay/OgreOverlay.h>
-#include <Overlay/OgreOverlayContainer.h>
-#include <Overlay/OgreOverlayElement.h>
-#include <Overlay/OgreOverlayManager.h>
-#include <Overlay/OgrePanelOverlayElement.h>
+#include <OgrePrerequisites.h>
+#include <OgreSharedPtr.h>
 
 #include <QColor>
 #include <QImage>
@@ -54,6 +46,12 @@
 #include <string>
 
 #include "rviz_default_plugins/visibility_control.hpp"
+
+namespace Ogre
+{
+class Overlay;
+class PanelOverlayElement;
+}  // namespace Ogre
 
 namespace rviz_default_plugins
 {

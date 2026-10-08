@@ -33,6 +33,7 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__DISPLAYS__OVERLAY_CAMERA__OVERLAY_CAMERA_DISPLAY_HPP_
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__OVERLAY_CAMERA__OVERLAY_CAMERA_DISPLAY_HPP_
 
+#include <chrono>
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -42,6 +43,12 @@
 #include "rviz_default_plugins/displays/camera/camera_display.hpp"
 #include "rviz_default_plugins/displays/overlay/overlay_utils.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
+
+namespace Ogre
+{
+class RenderTarget;
+class Viewport;
+}  // namespace Ogre
 
 namespace rviz_common
 {

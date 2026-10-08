@@ -34,7 +34,22 @@
 
 #include "rviz_default_plugins/displays/overlay/overlay_utils.hpp"
 
+#include <OgreHardwarePixelBuffer.h>
+#include <OgreMaterialManager.h>
+#include <OgrePass.h>
+#include <OgrePixelFormat.h>
+#include <OgreResourceGroupManager.h>
+#include <OgreTechnique.h>
+#include <OgreTexture.h>
+#include <OgreTextureManager.h>
+#include <Overlay/OgreOverlay.h>
+#include <Overlay/OgreOverlayManager.h>
+#include <Overlay/OgrePanelOverlayElement.h>
+
+#include <QtGlobal>
+
 #include <atomic>
+#include <cstddef>
 #include <cstring>
 #include <string>
 

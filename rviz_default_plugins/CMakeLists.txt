@@ -363,7 +363,6 @@ target_link_libraries(rviz_default_plugins_overlay PUBLIC
   rviz_default_plugins_image
   ${rviz_default_plugins_public_link_libraries}
 )
-target_link_libraries(rviz_default_plugins_overlay PRIVATE gz-math::core)
 target_compile_definitions(rviz_default_plugins_overlay PRIVATE "RVIZ_DEFAULT_PLUGINS_OVERLAY_BUILDING_LIBRARY")
 
 add_library(rviz_default_plugins SHARED

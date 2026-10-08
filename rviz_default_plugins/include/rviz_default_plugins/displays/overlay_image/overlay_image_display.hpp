@@ -35,8 +35,6 @@
 
 #ifndef Q_MOC_RUN
 
-#include <OgreException.h>
-
 #include <QString>  // NOLINT cpplint cannot handle include order here
 
 #include <chrono>
@@ -47,6 +45,7 @@
 #include <unordered_set>
 #include <utility>
 
+#include <message_filters/connection.hpp>
 #include <sensor_msgs/msg/image.hpp>
 
 #include "rviz_common/properties/bool_property.hpp"
@@ -54,13 +53,16 @@
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/int_property.hpp"
 #include "rviz_common/ros_topic_display.hpp"
-#include "rviz_default_plugins/displays/image/get_transport_from_topic.hpp"
 #include "rviz_default_plugins/displays/image/ros_image_texture.hpp"
 #include "rviz_default_plugins/displays/overlay/overlay_utils.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
-#include "image_transport/image_transport.hpp"
 #include "image_transport/subscriber_filter.hpp"
 #endif
+
+namespace rviz_common
+{
+class DisplayContext;
+}  // namespace rviz_common
 
 namespace rviz_default_plugins
 {

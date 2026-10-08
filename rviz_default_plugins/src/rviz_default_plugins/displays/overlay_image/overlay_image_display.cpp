@@ -32,7 +32,9 @@
 
 #include "rviz_default_plugins/displays/overlay_image/overlay_image_display.hpp"
 
+#include <OgreException.h>
 #include <OgreHardwarePixelBuffer.h>
+#include <OgrePixelFormat.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 #include <OgreTexture.h>
@@ -43,8 +45,12 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdint>
 #include <cstring>
+#include <exception>
+#include <functional>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <unordered_set>
 #include <utility>
@@ -52,14 +58,18 @@
 
 #include "image_transport/camera_common.hpp"
 #include "image_transport/exception.hpp"
-#include "image_transport/image_transport.hpp"
 #include "image_transport/subscriber_plugin.hpp"
 #include "pluginlib/class_list_macros.hpp"
 #include "pluginlib/class_loader.hpp"
+#include "rclcpp/exceptions/exceptions.hpp"
 #include "rclcpp/node.hpp"
+#include "rclcpp/qos.hpp"
 #include "rviz_common/display_context.hpp"
+#include "rviz_common/properties/qos_profile_property.hpp"
 #include "rviz_common/properties/ros_topic_multi_type_property.hpp"
+#include "rviz_common/properties/status_property.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
+#include "rviz_default_plugins/displays/image/get_transport_from_topic.hpp"
 #include "rviz_rendering/render_system.hpp"
 #include "sensor_msgs/image_encodings.hpp"
 
