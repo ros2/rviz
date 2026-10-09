@@ -138,7 +138,7 @@ private:
   std::unique_ptr<rviz_rendering::CovarianceVisual> createAndSetCovarianceVisual(
     const Ogre::Vector3 & position,
     const Ogre::Quaternion & orientation,
-    nav_msgs::msg::Odometry::ConstSharedPtr message);
+    const nav_msgs::msg::Odometry::ConstSharedPtr & message);
 
   void clear();
 

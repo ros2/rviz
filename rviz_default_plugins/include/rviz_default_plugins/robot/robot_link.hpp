@@ -154,11 +154,11 @@ public:
   Ogre::SceneNode * getVisualNode() const {return visual_node_;}
   Ogre::SceneNode * getCollisionNode() const {return collision_node_;}
   Robot * getRobot() const {return robot_;}
-  const std::string getGeometryErrors() const;
+  const std::string & getGeometryErrors() const;
 
   // get the meshes vector to be used in robot_test.cpp
-  std::vector<Ogre::Entity *> getVisualMeshes() {return visual_meshes_;}
-  std::vector<Ogre::Entity *> getCollisionMeshes() {return collision_meshes_;}
+  const std::vector<Ogre::Entity *> & getVisualMeshes() const {return visual_meshes_;}
+  const std::vector<Ogre::Entity *> & getCollisionMeshes() const {return collision_meshes_;}
 
 public Q_SLOTS:
   /** @brief Update the visibility of the link elements: visual mesh,
@@ -180,13 +180,13 @@ private:
   Ogre::Entity * createEntityForGeometryElement(
     const urdf::LinkConstSharedPtr & link,
     const urdf::Geometry & geom, const urdf::Pose & origin,
-    std::string material_name, Ogre::SceneNode * scene_node);
+    const std::string & material_name, Ogre::SceneNode * scene_node);
   void assignMaterialsToEntities(
     const urdf::LinkConstSharedPtr & link,
     const std::string & material_name,
     const Ogre::Entity * entity);
   Ogre::MaterialPtr getMaterialForLink(
-    const urdf::LinkConstSharedPtr & link, std::string material_name = "");
+    const urdf::LinkConstSharedPtr & link, const std::string & material_name = "");
   urdf::VisualSharedPtr getVisualWithMaterial(
     const urdf::LinkConstSharedPtr & link, const std::string & material_name) const;
   void loadMaterialFromTexture(

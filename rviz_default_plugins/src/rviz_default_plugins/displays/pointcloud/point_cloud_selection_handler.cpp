@@ -179,8 +179,6 @@ void PointCloudSelectionHandler::onSelect(const rviz_common::interaction::Picked
   for (auto handle : obj.extra_handles) {
     uint64_t index = handleToIndex(handle);
 
-    sensor_msgs::msg::PointCloud2::ConstSharedPtr message = cloud_info_->message_;
-
     Ogre::Vector3 pos = cloud_info_->transformed_points_[index].position;
     pos = cloud_info_->scene_node_->convertLocalToWorldPosition(pos);
 

@@ -137,10 +137,11 @@ protected:
   void onEnable() override;
 
   /** @brief Copy update's data into current_map_ and call showMap(). */
-  void incomingUpdate(map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr update);
+  void incomingUpdate(const map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr & update);
 
-  bool updateDataOutOfBounds(map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr update) const;
-  void updateMapDataInMemory(map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr update);
+  bool updateDataOutOfBounds(
+    const map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr & update) const;
+  void updateMapDataInMemory(const map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr & update);
 
   void clear();
 

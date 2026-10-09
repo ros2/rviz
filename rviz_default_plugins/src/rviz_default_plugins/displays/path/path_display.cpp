@@ -460,7 +460,7 @@ void PathDisplay::processMessage(nav_msgs::msg::Path::ConstSharedPtr msg)
 }
 
 void PathDisplay::updateManualObject(
-  Ogre::ManualObject * manual_object, nav_msgs::msg::Path::ConstSharedPtr msg,
+  Ogre::ManualObject * manual_object, const nav_msgs::msg::Path::ConstSharedPtr & msg,
   const Ogre::Matrix4 & transform)
 {
   auto color = color_property_->getOgreColor();
@@ -481,7 +481,7 @@ void PathDisplay::updateManualObject(
 }
 
 void PathDisplay::updateBillBoardLine(
-  rviz_rendering::BillboardLine * billboard_line, nav_msgs::msg::Path::ConstSharedPtr msg,
+  rviz_rendering::BillboardLine * billboard_line, const nav_msgs::msg::Path::ConstSharedPtr & msg,
   const Ogre::Matrix4 & transform)
 {
   auto color = color_property_->getOgreColor();
@@ -498,7 +498,8 @@ void PathDisplay::updateBillBoardLine(
 }
 
 void PathDisplay::updatePoseMarkers(
-  size_t buffer_index, nav_msgs::msg::Path::ConstSharedPtr msg, const Ogre::Matrix4 & transform)
+  size_t buffer_index, const nav_msgs::msg::Path::ConstSharedPtr & msg,
+  const Ogre::Matrix4 & transform)
 {
   auto pose_style = static_cast<PoseStyle>(pose_style_property_->getOptionInt());
   auto & arrow_vect = arrow_chain_[buffer_index];
@@ -513,7 +514,7 @@ void PathDisplay::updatePoseMarkers(
 }
 
 void PathDisplay::updateAxesMarkers(
-  std::vector<rviz_rendering::Axes *> & axes_vect, nav_msgs::msg::Path::ConstSharedPtr msg,
+  std::vector<rviz_rendering::Axes *> & axes_vect, const nav_msgs::msg::Path::ConstSharedPtr & msg,
   const Ogre::Matrix4 & transform)
 {
   auto num_points = msg->poses.size();
@@ -531,7 +532,8 @@ void PathDisplay::updateAxesMarkers(
 }
 
 void PathDisplay::updateArrowMarkers(
-  std::vector<rviz_rendering::Arrow *> & arrow_vect, nav_msgs::msg::Path::ConstSharedPtr msg,
+  std::vector<rviz_rendering::Arrow *> & arrow_vect,
+  const nav_msgs::msg::Path::ConstSharedPtr & msg,
   const Ogre::Matrix4 & transform)
 {
   auto num_points = msg->poses.size();
