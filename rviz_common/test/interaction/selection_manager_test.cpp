@@ -31,6 +31,7 @@
 #include <gmock/gmock.h>
 
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -116,6 +117,13 @@ TEST_F(SelectionManagerTestFixture, subtracting_from_a_selection) {
   auto selection = selection_manager_->getSelection();
   EXPECT_THAT(selection, SizeIs(1));
   EXPECT_THAT(selection, Contains(Key(o2.getHandle())));
+}
+
+TEST_F(SelectionManagerTestFixture, texture_size_range_check) {
+  EXPECT_THROW(selection_manager_->setTextureSize(-1), std::out_of_range);
+  EXPECT_THROW(selection_manager_->setTextureSize(2048), std::out_of_range);
+  EXPECT_NO_THROW(selection_manager_->setTextureSize(256));
+  EXPECT_NO_THROW(selection_manager_->setTextureSize(1024));
 }
 
 TEST_F(SelectionManagerTestFixture, select_handles_invalid_coordinates_gracefully) {
