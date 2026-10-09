@@ -45,7 +45,6 @@
 #if !defined(__APPLE__) && !defined(_WIN32)
 
 #include <X11/Xutil.h>
-#include <GL/glx.h>
 
 #endif
 
@@ -145,6 +144,8 @@ private:
   addAdditionalResourcesFromAmentIndex() const;
   void
   detectGlVersion();
+  void
+  setupShaderGenerator();
 
   static RenderSystem * instance_;
 
@@ -163,8 +164,6 @@ private:
   rviz_rendering::OgreLogging * ogre_logging;
 #if !defined(__APPLE__) && !defined(_WIN32)
   void * dummyDisplay = nullptr;
-  void * dummyContext = nullptr;
-  XVisualInfo * dummyVisual = nullptr;
 #endif
 };
 

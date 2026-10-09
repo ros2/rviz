@@ -45,7 +45,7 @@ endif()
 
 ament_vendor(ogre_vendor
   VCS_URL https://github.com/OGRECave/ogre.git
-  VCS_VERSION v1.12.10
+  VCS_VERSION v14.5.1
   CMAKE_ARGS
     -DOGRE_STATIC:BOOL=OFF
     -DOGRE_INSTALL_PDB:BOOL=OFF
@@ -70,7 +70,7 @@ ament_vendor(ogre_vendor
     -DOGRE_MANGLE_NAME_OF_LIBRARIES_USED_BY_RVIZ:BOOL=${RVIZ_OGRE_VENDOR_MANGLE_NAME_OF_LIBRARIES_USED_BY_RVIZ}
     "-DCMAKE_CXX_FLAGS=${OGRE_CXX_FLAGS}"
     ${OGRE_CMAKE_ARGS}
-  PATCHES patches
+  # PATCHES patches
 )
 
 if(BUILD_TESTING)
