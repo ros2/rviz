@@ -30,10 +30,13 @@
 
 #include <gmock/gmock.h>
 
+#include <algorithm>
+#include <cmath>
 #include <memory>
 #include <vector>
 
 #include <Ogre.h>  // NOLINT
+#include <OgreTextureManager.h>  // NOLINT
 
 #include "sensor_msgs/image_encodings.hpp"
 
@@ -112,4 +115,134 @@ TEST_F(RosImageTextureTestFixture, update_writes_new_image_to_the_texture) {
   ASSERT_EQ(textureImage.getWidth(), testImage.getWidth());
   ASSERT_EQ(textureImage.getHeight(), testImage.getHeight());
 #endif  // OGRE_MIN_VERSION(13, 4, 3)
+}
+
+TEST_F(RosImageTextureTestFixture, destructor_removes_the_texture_from_the_manager) {
+  // Each ROSImageTexture instance creates a uniquely-named Ogre texture; if
+  // the destructor failed to remove it, repeatedly allocating displays in a
+  // session would leak GPU memory.
+  std::string name;
+  {
+    ROSImageTexture texture;
+    name = texture.getTexture()->getName();
+    ASSERT_TRUE(Ogre::TextureManager::getSingleton().resourceExists(name, "rviz_rendering"));
+  }
+  ASSERT_FALSE(Ogre::TextureManager::getSingleton().resourceExists(name, "rviz_rendering"));
+}
+
+TEST_F(RosImageTextureTestFixture, default_construction_does_not_allocate_a_mipmap_chain) {
+  ROSImageTexture texture;
+  ASSERT_EQ(texture.getTexture()->getNumMipmaps(), 0u);
+}
+
+TEST_F(RosImageTextureTestFixture, enabling_smooth_scaling_allocates_a_mipmap_chain) {
+  ROSImageTexture texture;
+  texture.setSmoothScaling(true);
+
+  // Ogre's GL3+ backend clamps the requested mip count to
+  // floor(log2(max(w, h))) — getNumMipmaps() returns the number of levels
+  // above level 0, so this is the count we expect to land on regardless of
+  // what sentinel we passed in. Asserting the exact value pins behaviour
+  // that a plain ASSERT_GT(..., 0u) would let drift (e.g. silently treating
+  // (uint32)-1 as "all the mips").
+  const auto tex = texture.getTexture();
+  const auto expected_mips = static_cast<uint32_t>(
+    std::floor(std::log2(std::max(tex->getWidth(), tex->getHeight()))));
+  ASSERT_EQ(tex->getNumMipmaps(), expected_mips);
+}
+
+TEST_F(RosImageTextureTestFixture, toggling_smooth_scaling_preserves_the_texture_pointer) {
+  // Displays bind to this texture by name; Ogre::TextureUnitState caches the
+  // resolved TexturePtr after first lookup, so the pointer must be stable.
+  ROSImageTexture texture;
+  const auto * original = texture.getTexture().get();
+
+  texture.setSmoothScaling(true);
+  ASSERT_EQ(texture.getTexture().get(), original);
+
+  texture.setSmoothScaling(false);
+  ASSERT_EQ(texture.getTexture().get(), original);
+}
+
+TEST_F(RosImageTextureTestFixture, toggling_smooth_scaling_with_a_held_image_re_uploads_it) {
+  // Regression: an earlier implementation overwrote the held frame with the
+  // no_image.png placeholder on toggle, leaving the live image lost until
+  // the next ROS message arrived — indefinite on latched topics.
+  Ogre::Image testImage;
+  testImage.load("test_20x20.png", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+
+  sensor_msgs::msg::Image::SharedPtr msg = std::make_shared<sensor_msgs::msg::Image>();
+  msg->width = testImage.getWidth();
+  msg->height = testImage.getHeight();
+  msg->encoding = sensor_msgs::image_encodings::RGB8;
+  msg->data = std::vector<uint8_t>(
+    testImage.getData(), testImage.getData() + testImage.getSize());
+
+  ROSImageTexture texture;
+  texture.addMessage(msg);
+  ASSERT_TRUE(texture.update());
+
+  // No further messages — toggling must arm a re-upload so the next
+  // update() refreshes the texture rather than no-oping.
+  texture.setSmoothScaling(true);
+  ASSERT_TRUE(texture.update());
+
+  // And the result must still match the source image, not the placeholder.
+  Ogre::Image textureImage;
+  texture.getTexture()->convertToImage(textureImage);
+  ASSERT_EQ(textureImage.getWidth(), testImage.getWidth());
+  ASSERT_EQ(textureImage.getHeight(), testImage.getHeight());
+
+#if OGRE_MIN_VERSION(13, 4, 3)
+  ASSERT_THAT(
+    std::vector<uint8_t>(textureImage.getData(), textureImage.getData() + textureImage.getSize()),
+    testing::ElementsAreArray(testImage.getData(), testImage.getSize()));
+#endif  // OGRE_MIN_VERSION(13, 4, 3) — see update_writes_new_image_to_the_texture
+}
+
+TEST_F(RosImageTextureTestFixture, update_with_smooth_scaling_writes_new_image_to_the_texture) {
+  Ogre::Image testImage;
+  testImage.load("test_20x20.png", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+
+  sensor_msgs::msg::Image::SharedPtr msg = std::make_shared<sensor_msgs::msg::Image>();
+  msg->width = testImage.getWidth();
+  msg->height = testImage.getHeight();
+  msg->encoding = sensor_msgs::image_encodings::RGB8;
+  msg->data = std::vector<uint8_t>(
+    testImage.getData(), testImage.getData() + testImage.getSize());
+
+  ROSImageTexture texture;
+  texture.setSmoothScaling(true);
+  texture.addMessage(msg);
+  texture.update();
+
+  Ogre::TexturePtr ogreTexture = texture.getTexture();
+  ASSERT_GT(ogreTexture->getNumMipmaps(), 0u);
+
+  Ogre::Image textureImage;
+  ogreTexture->convertToImage(textureImage);
+
+#if OGRE_MIN_VERSION(13, 4, 3)
+  ASSERT_THAT(
+    std::vector<uint8_t>(textureImage.getData(), textureImage.getData() + textureImage.getSize()),
+    testing::ElementsAreArray(testImage.getData(), testImage.getSize()));
+#else
+  // Can't compare the two images directly because the of a bug that was introduced in Ogre 1.12.10
+  // and only fixed in Ogre 13.4.3
+  // See https://github.com/OGRECave/ogre/pull/2519
+  ASSERT_EQ(textureImage.getWidth(), testImage.getWidth());
+  ASSERT_EQ(textureImage.getHeight(), testImage.getHeight());
+#endif  // OGRE_MIN_VERSION(13, 4, 3)
+
+  // Verify mip level 1 was actually populated, not just allocated. Reading the
+  // buffer back catches a TU_AUTOMIPMAP regression where the driver allocates
+  // the chain but never generates content — which getNumMipmaps() alone, and
+  // the convertToImage check above (level 0 only), would both miss.
+  const auto & mip1 = ogreTexture->getBuffer(0, 1);
+  ASSERT_EQ(mip1->getWidth(), testImage.getWidth() / 2u);
+  ASSERT_EQ(mip1->getHeight(), testImage.getHeight() / 2u);
+  std::vector<uint8_t> mip1_data(mip1->getWidth() * mip1->getHeight() * 3u);
+  Ogre::PixelBox dst(mip1->getWidth(), mip1->getHeight(), 1, Ogre::PF_BYTE_RGB, mip1_data.data());
+  mip1->blitToMemory(dst);
+  ASSERT_TRUE(std::any_of(mip1_data.begin(), mip1_data.end(), [](uint8_t v) {return v != 0;}));
 }
