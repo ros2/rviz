@@ -63,11 +63,14 @@ static const Ogre::Quaternion ROBOT_TO_CAMERA_ROTATION =
   Ogre::Quaternion(Ogre::Radian(-Ogre::Math::HALF_PI), Ogre::Vector3::UNIT_Y) *
   Ogre::Quaternion(Ogre::Radian(-Ogre::Math::HALF_PI), Ogre::Vector3::UNIT_Z);
 
+static const Ogre::Vector3 DEFAULT_FRAMEVIEW_POSITION = Ogre::Vector3(-5, 0, 0);
+
 FrameViewController::FrameViewController()
 {
-  axis_property_ = new rviz_common::properties::EnumProperty("Point towards", fmtAxis(6),
-                                    "Point the camera along the given axis of the frame.", this,
-                                    SLOT(changedAxis()));
+  axis_property_ = new rviz_common::properties::EnumProperty(
+    "Point towards", fmtAxis(1),
+    "Point the camera along the given axis of the frame.", this,
+    SLOT(changedAxis()));
   axis_property_->addOption(ANY_AXIS, -1);
 
   // x,y,z axes get integers from 1..6: +x, -x, +y, -y, +z, -z
@@ -76,31 +79,35 @@ FrameViewController::FrameViewController()
   }
   previous_axis_ = axis_property_->getOptionInt();
 
-  locked_property_ = new rviz_common::properties::BoolProperty("Lock Camera", false,
+  locked_property_ = new rviz_common::properties::BoolProperty(
+    "Lock Camera", false,
     "Lock camera in its current pose relative to the frame", this);
 }
 
 void FrameViewController::onInitialize()
 {
   FPSViewController::onInitialize();
+  invert_z_->show();
   changedAxis();
 }
 
 int FrameViewController::actualCameraAxisOption(double precision) const
 {
-  // compare current camera direction with unit axes
+  // compare current camera direction with unit axes, select the axis that is most aligned with camera
   Ogre::Vector3 actual =
-    (camera_scene_node_->getOrientation() * ROBOT_TO_CAMERA_ROTATION.Inverse()) *
-    Ogre::Vector3::UNIT_X;
+    (camera_scene_node_->getOrientation() * ROBOT_TO_CAMERA_ROTATION.Inverse()) * Ogre::Vector3::UNIT_X;
+  double best = 0;
+  int sel = -1;
   for (unsigned int i = 0; i < 3; ++i) {
     Ogre::Vector3 axis(0, 0, 0);
     axis[i] = 1.0;
     auto scalar_product = axis.dotProduct(actual);
-    if (std::abs(scalar_product) > 1.0 - precision) {
-      return 1 + 2 * i + (scalar_product > 0 ? 0 : 1);
+    if (std::abs(scalar_product) > best) {
+      best = std::abs(scalar_product);
+      sel = 1 + 2 * i + (scalar_product > 0 ? 0 : 1);
     }
   }
-  return -1;
+  return sel;
 }
 
 void FrameViewController::setAxisFromCamera()
@@ -117,8 +124,13 @@ void FrameViewController::setAxisFromCamera()
 
 void FrameViewController::changedAxis()
 {
+  /**
+   * Changed axis property only has effect when reset() is called afterwards.
+   * We cannot reset the orientation here, otherwise saved/recalled orientation properties
+   * would be overwritten by the axis property being recalled and triggering changedAxis().
+   */
   rememberAxis(axis_property_->getOptionInt());
-  reset();
+  //resetOrientation();
 }
 
 inline void FrameViewController::rememberAxis(int current)
@@ -128,23 +140,65 @@ inline void FrameViewController::rememberAxis(int current)
   }
 }
 
-void FrameViewController::reset()
+Ogre::Vector3 FrameViewController::getAxis(int option)
 {
-  camera_scene_node_->setPosition(Ogre::Vector3::ZERO);
   Ogre::Vector3 axis(0, 0, 0);
-  int option = previous_axis_;
   if (option >= 1 && option <= 6) {
     axis[(option - 1) / 2] = (option % 2) ? +1 : -1;
-    Ogre::Quaternion q;
-    if (option == 2) {  // special case for the -X axis
-      // Create a rotation of 180 degrees around the Z axis
-      q = Ogre::Quaternion(Ogre::Radian(Ogre::Math::PI), Ogre::Vector3::UNIT_Z);
-    } else {
-      q = Ogre::Vector3::UNIT_X.getRotationTo(axis);
+    if (option >= 3 && invert_z_->getBool()) {
+      // When in inverted z mode, y and z axes need sign flip
+      axis[(option - 1) / 2] *= -1;
     }
-    camera_scene_node_->setOrientation(q * ROBOT_TO_CAMERA_ROTATION);
   }
+  return axis;
+}
+Ogre::Quaternion FrameViewController::getRotationToAxis(int option)
+{
+  Ogre::Quaternion q;
+  if (option == 2) {  // special case for the -X axis
+    // Create a rotation of 180 degrees around the Z axis
+    q = Ogre::Quaternion(Ogre::Radian(Ogre::Math::PI), Ogre::Vector3::UNIT_Z);
+  } else {
+    Ogre::Vector3 axis = getAxis(option);
+    q = Ogre::Vector3::UNIT_X.getRotationTo(axis);
+  }
+  return q;
+}
+
+void FrameViewController::reset()
+{
+  int option = previous_axis_;
+
+  Ogre::Quaternion rotationToAxis = getRotationToAxis(option);
+  Ogre::Vector3 position_behind_axis = rotationToAxis * DEFAULT_FRAMEVIEW_POSITION;
+  camera_scene_node_->setPosition(position_behind_axis);
+
+  camera_scene_node_->setOrientation(rotationToAxis * ROBOT_TO_CAMERA_ROTATION);
+
   setPropertiesFromCamera(camera_);
+}
+
+void FrameViewController::updateTargetSceneNode()
+{
+  /*
+   * Overrides updateTargetSceneNode() of FramePositionTrackingViewController to
+   * update both position and orientation tracking ot the target frame.
+   *
+   * Compared to FramePositionTrackingViewController::updateTargetSceneNode():
+   * Track both position AND ORIENTATION of the target frame.
+   * Take into account z inversion, when activated.
+   */
+  if (getNewTransform()) {
+    target_scene_node_->setPosition(reference_position_);
+
+    Ogre::Quaternion ref_quat = reference_orientation_;
+    if (invert_z_->getBool()) {
+      ref_quat = ref_quat * Ogre::Quaternion(Ogre::Radian(Ogre::Math::PI), Ogre::Vector3::UNIT_X);
+    }
+    target_scene_node_->setOrientation(ref_quat);
+
+    context_->queueRender();
+  }
 }
 
 void FrameViewController::handleMouseEvent(rviz_common::ViewportMouseEvent & event)
@@ -160,7 +214,10 @@ void FrameViewController::onTargetFrameChanged(
   const Ogre::Vector3 & /*old_reference_position*/,
   const Ogre::Quaternion & /*old_reference_orientation*/)
 {
-  // don't adapt the camera pose to the old reference position, but just jump to new frame
+  /**
+   * This empty method overrides the one from FPSViewController.
+   * On target frame changed, no offset is applied to position. Just jump to new frame.
+   */
 }
 
 }  // namespace view_controllers
