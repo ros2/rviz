@@ -2,6 +2,9 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.2.7 (2026-10-09)
+-------------------
+
 15.2.6 (2026-09-02)
 -------------------
 * Fix memory leaks related to OdometryDisplay (`#1833 <https://github.com/ros2/rviz/issues/1833>`_) (`#1838 <https://github.com/ros2/rviz/issues/1838>`_)

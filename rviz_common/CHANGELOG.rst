@@ -2,6 +2,11 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.2.7 (2026-10-09)
+-------------------
+* Removed _buf_cpu topic from Image display selection (backport `#1820 <https://github.com/ros2/rviz/issues/1820>`_) (`#1888 <https://github.com/ros2/rviz/issues/1888>`_)
+* Contributors: mergify[bot]
+
 15.2.6 (2026-09-02)
 -------------------
 

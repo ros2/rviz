@@ -2,6 +2,9 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+15.2.7 (2026-10-09)
+-------------------
+
 15.2.6 (2026-09-02)
 -------------------
 * Discover point cloud transports dynamically (`#1842 <https://github.com/ros2/rviz/issues/1842>`_) (`#1844 <https://github.com/ros2/rviz/issues/1844>`_)
