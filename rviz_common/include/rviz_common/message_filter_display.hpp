@@ -131,9 +131,10 @@ protected:
           "New publisher discovered on topic '%s', offering incompatible QoS. "
           "No messages will be received from it. Last incompatible policy: %s",
           topic.c_str(), policy_name.c_str());
+        // Use a separate entry so that messages from compatible publishers do not clear it.
         setStatus(
           properties::StatusProperty::Error,
-          "Topic",
+          "Incompatible QoS",
           QString("Incompatible QoS. No messages will be received from this publisher. "
             "Last incompatible policy: %1")
           .arg(QString::fromStdString(policy_name)));
@@ -156,9 +157,6 @@ protected:
     try {
       rclcpp::Node::SharedPtr node = rviz_ros_node_.lock()->get_raw_node();
       const std::string topic = topic_property_->getTopicStd();
-      // Incompatible QoS discovery may run as soon as the subscription is created.
-      // Set the initial status first so that an event cannot be overwritten with a false OK.
-      setStatus(properties::StatusProperty::Ok, "Topic", "OK");
       subscription_ = std::make_shared<message_filters::Subscriber<MessageType>>(
         node,
         topic,
@@ -176,6 +174,7 @@ protected:
         std::bind(
           &MessageFilterDisplay<MessageType>::messageTaken, this,
           std::placeholders::_1));
+      setStatus(properties::StatusProperty::Ok, "Topic", "OK");
     } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
       setStatus(
         properties::StatusProperty::Error, "Topic", QString("Error subscribing: ") + e.what());
@@ -206,6 +205,8 @@ protected:
   {
     tf_filter_.reset();
     subscription_.reset();
+    // The publishers reported by the old subscription no longer apply.
+    deleteStatus("Incompatible QoS");
   }
 
   void onEnable() override

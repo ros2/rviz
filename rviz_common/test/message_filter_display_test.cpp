@@ -30,6 +30,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <map>
 #include <memory>
 #include <string>
 
@@ -56,20 +57,30 @@ public:
     processTypeErasedMessage(std::static_pointer_cast<const void>(message));
   }
 
+  void unsubscribeForTest()
+  {
+    unsubscribe();
+  }
+
   void setStatus(
     rviz_common::properties::StatusProperty::Level level,
     const QString & name,
     const QString & text) override
   {
-    status_level_ = level;
-    status_name_ = name;
-    status_text_ = text;
+    statuses_[name.toStdString()] = {level, text.toStdString()};
   }
 
-  rviz_common::properties::StatusProperty::Level status_level_ =
-    rviz_common::properties::StatusProperty::Ok;
-  QString status_name_;
-  QString status_text_;
+  void deleteStatus(const QString & name) override
+  {
+    statuses_.erase(name.toStdString());
+  }
+
+  struct Status
+  {
+    rviz_common::properties::StatusProperty::Level level;
+    std::string text;
+  };
+  std::map<std::string, Status> statuses_;
   size_t processed_messages_ = 0;
 
 protected:
@@ -79,7 +90,7 @@ protected:
   }
 };
 
-TEST(MessageFilterDisplay, incompatible_qos_updates_topic_status_and_compatible_message_recovers)
+TEST(MessageFilterDisplay, incompatible_qos_status_survives_compatible_messages)
 {
   TestMessageFilterDisplay display;
   auto options = display.subscriptionOptions();
@@ -91,16 +102,25 @@ TEST(MessageFilterDisplay, incompatible_qos_updates_topic_status_and_compatible_
   info.last_policy_kind = RMW_QOS_POLICY_RELIABILITY;
   options.event_callbacks.incompatible_qos_callback(info);
 
-  EXPECT_EQ(rviz_common::properties::StatusProperty::Error, display.status_level_);
-  EXPECT_EQ("Topic", display.status_name_);
-  EXPECT_THAT(display.status_text_.toStdString(), HasSubstr("Incompatible QoS"));
-  EXPECT_THAT(display.status_text_.toStdString(), HasSubstr("RELIABILITY_QOS_POLICY"));
+  ASSERT_EQ(1u, display.statuses_.count("Incompatible QoS"));
+  const auto & qos_status = display.statuses_.at("Incompatible QoS");
+  EXPECT_EQ(rviz_common::properties::StatusProperty::Error, qos_status.level);
+  EXPECT_THAT(qos_status.text, HasSubstr("Incompatible QoS"));
+  EXPECT_THAT(qos_status.text, HasSubstr("RELIABILITY_QOS_POLICY"));
   EXPECT_EQ(0u, display.processed_messages_);
 
+  // A message from another, compatible publisher must not hide the incompatible one.
   display.receiveMessage(std::make_shared<const geometry_msgs::msg::PoseStamped>());
 
-  EXPECT_EQ(rviz_common::properties::StatusProperty::Ok, display.status_level_);
-  EXPECT_EQ("Topic", display.status_name_);
-  EXPECT_THAT(display.status_text_.toStdString(), HasSubstr("1 messages received"));
+  ASSERT_EQ(1u, display.statuses_.count("Topic"));
+  EXPECT_EQ(rviz_common::properties::StatusProperty::Ok, display.statuses_.at("Topic").level);
+  EXPECT_THAT(display.statuses_.at("Topic").text, HasSubstr("1 messages received"));
+  ASSERT_EQ(1u, display.statuses_.count("Incompatible QoS"));
+  EXPECT_EQ(
+    rviz_common::properties::StatusProperty::Error,
+    display.statuses_.at("Incompatible QoS").level);
   EXPECT_EQ(1u, display.processed_messages_);
+
+  display.unsubscribeForTest();
+  EXPECT_EQ(0u, display.statuses_.count("Incompatible QoS"));
 }
