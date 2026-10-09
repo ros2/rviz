@@ -31,6 +31,7 @@
 
 #include "ogre_render_window_impl.hpp"
 
+#include <algorithm>
 #include <cstdlib>
 #include <functional>
 
@@ -67,17 +68,28 @@ RenderWindowImpl::RenderWindowImpl(QWindow * parent)
   animating_(false),
   ogre_viewport_(nullptr),
   ortho_scale_(1.0f),
-  pending_listeners_()
+  background_color_(0.937254902f, 0.921568627f, 0.905882353f),  // Qt background
+  listeners_()
 {
   RenderSystem::get();  // side-effect is that the render system is setup
 }
 
 RenderWindowImpl::~RenderWindowImpl()
 {
-  if (ogre_render_window_) {
-    Ogre::Root::getSingletonPtr()->detachRenderTarget(ogre_render_window_);
-    Ogre::Root::getSingletonPtr()->destroyRenderTarget(ogre_render_window_);
+  destroyRenderWindow();
+}
+
+void RenderWindowImpl::destroyRenderWindow()
+{
+  if (ogre_viewport_) {
+    background_color_ = ogre_viewport_->getBackgroundColour();
+    pending_visibility_masks_.assign(1, ogre_viewport_->getVisibilityMask());
   }
+  if (ogre_render_window_) {
+    Ogre::Root::getSingletonPtr()->destroyRenderTarget(ogre_render_window_);
+    ogre_render_window_ = nullptr;
+  }
+  ogre_viewport_ = nullptr;
 }
 
 void
@@ -103,6 +115,9 @@ RenderWindowImpl::render()
   // This function would process native platform messages for each render window. However, this
   // should be done by Qt for us. If the behavior is different, consider reimplementing the
   // method using Qt onboard features.
+  if (!ogre_render_window_) {
+    return;
+  }
   if (ogre_render_window_->isClosed()) {
     RVIZ_RENDERING_LOG_ERROR("in RenderSystemImpl::render() - ogre window is closed");
     return;
@@ -158,25 +173,25 @@ RenderWindowImpl::setupSceneAfterInit(setupSceneCallback setup_scene_callback)
 
 void RenderWindowImpl::addListener(Ogre::RenderTargetListener * listener)
 {
+  listeners_.emplace_back(listener);
   if (ogre_render_window_) {
     ogre_render_window_->addListener(listener);
-  } else {
-    pending_listeners_.emplace_back(listener);
   }
 }
 void RenderWindowImpl::removeListener(Ogre::RenderTargetListener * listener)
 {
   if (ogre_render_window_) {
     ogre_render_window_->removeListener(listener);
-  } else {
-    pending_listeners_.erase(
-      std::find(pending_listeners_.begin(), pending_listeners_.end(), listener));
   }
+  listeners_.erase(std::remove(listeners_.begin(), listeners_.end(), listener), listeners_.end());
 }
 
 void
 RenderWindowImpl::initialize()
 {
+  if (ogre_render_window_) {
+    return;
+  }
   render_system_ = RenderSystem::get();
   double pixel_ratio = parent_->devicePixelRatio();
   ogre_render_window_ = render_system_->makeRenderWindow(
@@ -212,8 +227,7 @@ RenderWindowImpl::initialize()
 
   if (ogre_camera_) {
     ogre_viewport_ = ogre_render_window_->addViewport(ogre_camera_);
-    auto bg_color = Ogre::ColourValue(0.937254902f, 0.921568627f, 0.905882353f);  // Qt background
-    ogre_viewport_->setBackgroundColour(bg_color);
+    ogre_viewport_->setBackgroundColour(background_color_);
 
     ogre_camera_->setAspectRatio(
       Ogre::Real(ogre_render_window_->getWidth()) / Ogre::Real(ogre_render_window_->getHeight()));
@@ -223,10 +237,8 @@ RenderWindowImpl::initialize()
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
   }
 
-  if (!pending_listeners_.empty()) {
-    for (auto listener : pending_listeners_) {
-      ogre_render_window_->addListener(listener);
-    }
+  for (auto listener : listeners_) {
+    ogre_render_window_->addListener(listener);
   }
   if (!pending_visibility_masks_.empty()) {
     for (auto mask : pending_visibility_masks_) {
@@ -333,7 +345,9 @@ void RenderWindowImpl::setVisibilityMask(uint32_t mask)
 void RenderWindowImpl::setBackgroundColor(Ogre::ColourValue background_color)
 {
   background_color_ = background_color;
-  ogre_viewport_->setBackgroundColour(background_color);
+  if (ogre_viewport_) {
+    ogre_viewport_->setBackgroundColour(background_color);
+  }
 }
 
 void RenderWindowImpl::setCameraAspectRatio()
