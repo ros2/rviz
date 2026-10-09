@@ -2,6 +2,9 @@
 Changelog for package rviz_rendering_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.4 (2026-10-09)
+-------------------
+
 16.0.3 (2026-09-02)
 -------------------
 * Removed Qt5 dependency (`#1847 <https://github.com/ros2/rviz/issues/1847>`_)

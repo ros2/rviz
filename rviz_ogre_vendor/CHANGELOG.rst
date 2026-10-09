@@ -2,6 +2,12 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.4 (2026-10-09)
+-------------------
+* Use the SPDX identifier Apache-2.0 in package.xml license tags (`#1876 <https://github.com/ros2/rviz/issues/1876>`_)
+* Fix Ogre build failure on Xcode 26 (xcodebuild -n removed) (`#1751 <https://github.com/ros2/rviz/issues/1751>`_)
+* Contributors: Dhruv Patel, Michael Carroll
+
 16.0.3 (2026-09-02)
 -------------------
 * Removed unused variable to supress warning (`#1812 <https://github.com/ros2/rviz/issues/1812>`_)

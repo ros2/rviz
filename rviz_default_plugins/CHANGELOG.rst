@@ -2,6 +2,21 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.4 (2026-10-09)
+-------------------
+* Add OverlayImage and OverlayCamera displays and an OverlayPicker tool (`#1830 <https://github.com/ros2/rviz/issues/1830>`_)
+* Fix Invoke deprecation (`#1892 <https://github.com/ros2/rviz/issues/1892>`_)
+* Replace retained points when retransforming clouds (`#1882 <https://github.com/ros2/rviz/issues/1882>`_)
+* Remove old CMake export calls (`#1889 <https://github.com/ros2/rviz/issues/1889>`_)
+* rviz_default_plugins optimizations (`#1860 <https://github.com/ros2/rviz/issues/1860>`_)
+* String optimization (`#1861 <https://github.com/ros2/rviz/issues/1861>`_)
+* Minor fixes (`#1864 <https://github.com/ros2/rviz/issues/1864>`_)
+* Fix TF trajectory build warnings (`#1867 <https://github.com/ros2/rviz/issues/1867>`_)
+* Add TFTrajectory display to visualize the path a TF frame has taken (`#1831 <https://github.com/ros2/rviz/issues/1831>`_)
+* Decouple template-heavy dependencies from VisualTestFixture (`#1857 <https://github.com/ros2/rviz/issues/1857>`_)
+* rviz_default_plugins: Granular includes and include what you use (`#1855 <https://github.com/ros2/rviz/issues/1855>`_)
+* Contributors: Alejandro Hernández Cordero, Iori Yanokura, John Cameron Furey, Maurice Alexander Purnawan, Scott K Logan, Tanish Jain, mosfet80
+
 16.0.3 (2026-09-02)
 -------------------
 * Removed Qt5 dependency (`#1847 <https://github.com/ros2/rviz/issues/1847>`_)
