@@ -112,7 +112,7 @@ void MeshResourceMarker::onNewMessage(
 
     if (
       !rviz_rendering::loadMeshFromResource(
-        owner_->getResourceRetriever(),
+        &context_->getResourceRetriever(),
         new_message->mesh_resource))
     {
       printMeshLoadingError(new_message);

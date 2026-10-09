@@ -54,6 +54,11 @@ namespace rclcpp
 class Clock;
 }  // namespace rclcpp
 
+namespace resource_retriever
+{
+class Retriever;
+}  // namespace resource_retriever
+
 // namespace tf
 // {
 // class TransformListener;
@@ -169,6 +174,11 @@ public:
   virtual
   ros_integration::RosNodeAbstractionIface::WeakPtr
   getRosNodeAbstraction() const = 0;
+
+  /// Return the resource retriever shared by all displays.
+  virtual
+  resource_retriever::Retriever &
+  getResourceRetriever() = 0;
 
   /// Handle a single key event for a given RenderPanel.
   virtual
