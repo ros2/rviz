@@ -34,6 +34,7 @@
 
 #include <algorithm>
 #include <format>  // NOLINT(build/include_order) cpplint predates C++20 headers
+#include <iostream>
 #include <map>
 #include <memory>
 #include <string>
@@ -60,6 +61,7 @@
 #include "rviz_common/load_resource.hpp"
 #include "rviz_common/logging.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction.hpp"
+#include "rviz_common/ros_topic_utils.hpp"
 
 namespace rviz_common
 {
@@ -151,6 +153,10 @@ void getPluginGroups(
 {
   std::map<std::string, std::vector<std::string>> topic_names_and_types =
     rviz_ros_node.lock()->get_topic_names_and_types();
+
+  std::erase_if(
+    topic_names_and_types,
+    [](const auto & map_pair) {return isTopicOrServiceHidden(map_pair.first);});
 
   for (const auto & map_pair : topic_names_and_types) {
     QString topic = QString::fromStdString(map_pair.first);

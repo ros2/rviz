@@ -4,14 +4,14 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>rviz_ogre_vendor</name>
-  <version>16.0.3</version>
+  <version>16.0.4</version>
   <description>
     Wrapper around ogre3d, it provides a fixed CMake module and an ExternalProject build of ogre.
   </description>
 
   <maintainer email="alejandro@openrobotics.org">Alejandro Hernandez Cordero</maintainer>
 
-  <license>Apache License 2.0</license>  <!-- the contents of this package are Apache 2.0 -->
+  <license>Apache-2.0</license>  <!-- the contents of this package are Apache 2.0 -->
   <license>MIT</license>  <!-- ogre is MIT (https://www.ogre3d.org/licensing) -->
 
   <url type="website">https://www.ogre3d.org/</url>
