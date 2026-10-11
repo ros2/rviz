@@ -122,6 +122,11 @@ TEST(RenderWindowScaling, viewport_matches_native_size_after_resizing)
   rviz_rendering::OgreTestingEnvironment environment;
   environment.setUpOgreTestEnvironment();
   ResizeProbeWindow window;
+#ifdef _WIN32
+  // Ogre's external Win32 window does not account for frame decorations.
+  // Match the frameless window embedded in RenderPanel.
+  window.setFlag(Qt::FramelessWindowHint);
+#endif
   // Multiples of 16 remain exact when the tested scales combine with quarter-step
   // desktop scales. Odd sizes can be rounded in multiple coordinate spaces by Qt
   // and the window system; their conversion is covered in pixel_scaling_test.

@@ -36,6 +36,7 @@
 #include <OgreViewport.h>
 
 #include "../displays/display_test_fixture.hpp"
+#include "rviz_rendering/render_window.hpp"
 
 using namespace ::testing;  // NOLINT
 
@@ -79,10 +80,17 @@ public:
     int to_x, int to_y, int from_x, int from_y,
     Qt::MouseButton button, Qt::KeyboardModifiers modifiers = Qt::NoModifier)
   {
+    // Controller fixtures specify device pixels, independently of the screen
+    // scale. Qt input positions must first be expressed in logical pixels.
+    const auto ratio = render_panel_->getRenderWindow()->devicePixelRatio();
+    const QPointF position(to_x / ratio, to_y / ratio);
     auto mouseEvent = new QMouseEvent(
-      QMouseEvent::MouseMove, QPointF(to_x, to_y), QPointF(to_x, to_y), Qt::LeftButton, button,
+      QMouseEvent::MouseMove, position, position, Qt::LeftButton, button,
       modifiers);
-    return {render_panel_.get(), mouseEvent, from_x, from_y};
+    rviz_common::ViewportMouseEvent event(render_panel_.get(), mouseEvent, 0, 0);
+    event.last_x = from_x;
+    event.last_y = from_y;
+    return event;
   }
 
   rviz_common::ViewportMouseEvent generateMousePressEvent(
@@ -130,9 +138,14 @@ private:
   rviz_common::ViewportMouseEvent generateMouseEvent(
     int x, int y, QMouseEvent::Type type, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
   {
-    auto mouseEvent = new QMouseEvent(type, QPointF(x, y), QPointF(x, y), button, button,
+    const auto ratio = render_panel_->getRenderWindow()->devicePixelRatio();
+    const QPointF position(x / ratio, y / ratio);
+    auto mouseEvent = new QMouseEvent(type, position, position, button, button,
       modifiers);
-    return {render_panel_.get(), mouseEvent, x, y};
+    rviz_common::ViewportMouseEvent event(render_panel_.get(), mouseEvent, 0, 0);
+    event.last_x = x;
+    event.last_y = y;
+    return event;
   }
 
 public:
