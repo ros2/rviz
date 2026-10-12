@@ -163,8 +163,8 @@ geometry_msgs::msg::Quaternion PoseTool::orientationAroundZAxis(double angle)
 }
 
 void PoseTool::logPose(
-  std::string designation, geometry_msgs::msg::Point position,
-  geometry_msgs::msg::Quaternion orientation, double angle, std::string frame)
+  const std::string & designation, geometry_msgs::msg::Point position,
+  geometry_msgs::msg::Quaternion orientation, double angle, const std::string & frame)
 {
   RVIZ_COMMON_LOG_INFO_STREAM(
     "Setting " << designation << " pose: Frame:" << frame << ", Position(" << position.x << ", " <<

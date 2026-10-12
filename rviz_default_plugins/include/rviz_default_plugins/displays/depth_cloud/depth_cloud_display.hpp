@@ -101,8 +101,8 @@ public:
 
   void processDepthMessage(const sensor_msgs::msg::Image::ConstSharedPtr msg);
   void processMessage(
-    const sensor_msgs::msg::Image::ConstSharedPtr depth_msg,
-    const sensor_msgs::msg::Image::ConstSharedPtr rgb_msg);
+    const sensor_msgs::msg::Image::ConstSharedPtr & depth_msg,
+    const sensor_msgs::msg::Image::ConstSharedPtr & rgb_msg);
 
 protected Q_SLOTS:
   void updateQueueSize();

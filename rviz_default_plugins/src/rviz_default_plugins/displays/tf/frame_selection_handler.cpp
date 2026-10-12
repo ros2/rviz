@@ -123,7 +123,7 @@ void FrameSelectionHandler::setEnabled(bool enabled)
   }
 }
 
-void FrameSelectionHandler::setParentName(std::string parent_name)
+void FrameSelectionHandler::setParentName(const std::string & parent_name)
 {
   if (parent_property_) {
     parent_property_->setStdString(parent_name);
