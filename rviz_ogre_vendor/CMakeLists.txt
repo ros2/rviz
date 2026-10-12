@@ -40,7 +40,28 @@ endif()
 
 if(APPLE)
   list(APPEND OGRE_CMAKE_ARGS -DOGRE_ENABLE_PRECOMPILED_HEADERS:BOOL=OFF)
-  list(APPEND OGRE_CMAKE_ARGS -DCMAKE_OSX_ARCHITECTURES=arm64;x86_64)
+  list(APPEND OGRE_CMAKE_ARGS -DCMAKE_OSX_ARCHITECTURES=x86_64)
+
+  # Add MacPorts-specific linker paths and minizip configuration
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -L/opt/local/lib")
+  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -L/opt/local/lib")
+  set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -L/opt/local/lib")
+
+list(APPEND OGRE_CMAKE_ARGS
+  -DCMAKE_EXE_LINKER_FLAGS="-L/opt/local/lib"
+  -DCMAKE_SHARED_LINKER_FLAGS="-L/opt/local/lib"
+  -DCMAKE_MODULE_LINKER_FLAGS="-L/opt/local/lib"
+)
+
+  # Explicit minizip configuration
+  find_library(MINIZIP_LIBRARY minizip
+    PATHS /opt/local/lib
+    NO_DEFAULT_PATH
+    REQUIRED)
+  list(APPEND OGRE_CMAKE_ARGS
+    -DMINIZIP_INCLUDE_DIR=/opt/local/include
+    -DMINIZIP_LIBRARY=${MINIZIP_LIBRARY}
+  )
 endif()
 
 ament_vendor(ogre_vendor
@@ -81,3 +102,4 @@ endif()
 ament_package(
   CONFIG_EXTRAS_POST "rviz_ogre_vendor-extras.cmake.in"
 )
+
