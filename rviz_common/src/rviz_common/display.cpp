@@ -330,7 +330,7 @@ void Display::setFixedFrame(const QString & fixed_frame)
 
 void Display::emitTimeSignal(rclcpp::Time time)
 {
-  emit timeSignal(this, time);
+  Q_EMIT timeSignal(this, time);
 }
 
 void Display::reset()
