@@ -504,6 +504,32 @@ if(BUILD_TESTING)
     ogre_testing_environment
   )
 
+  ament_add_gmock_executable(viewport_coordinate_conversion_test
+    test/rviz_default_plugins/viewport_coordinate_conversion_test.cpp
+    ${TEST_FIXTURE_OBJECTS})
+  if(TARGET viewport_coordinate_conversion_test)
+    target_include_directories(viewport_coordinate_conversion_test PRIVATE ${TEST_INCLUDE_DIRS})
+    target_link_libraries(viewport_coordinate_conversion_test
+      ${TEST_FIXTURE_WITH_MOCK_LIBRARIES} rviz_default_plugins Qt6::Test)
+    # Cocoa's viewport uses the native backing scale. At forced Qt scales,
+    # exercise the focus shortcut independently of Ogre's projection size.
+    foreach(scale 1 1.25 1.5 2)
+      set(test_filter "*")
+      if(APPLE AND NOT scale STREQUAL "1")
+        set(test_filter "*focus_shortcut*")
+      endif()
+      set(test_name viewport_coordinate_conversion_test_${scale})
+      set(result_file "${AMENT_TEST_RESULTS_DIR}/${PROJECT_NAME}/${test_name}.gtest.xml")
+      ament_add_test(${test_name}
+        COMMAND "$<TARGET_FILE:viewport_coordinate_conversion_test>" "--gtest_filter=${test_filter}" "--gtest_output=xml:${result_file}"
+        ENV "QT_SCALE_FACTOR=${scale}"
+        RESULT_FILE "${result_file}"
+        ${SKIP_DISPLAY_TESTS}
+      )
+      set_tests_properties(${test_name} PROPERTIES LABELS "gmock")
+    endforeach()
+  endif()
+
   ament_add_gmock(fps_view_controller_test
     test/rviz_default_plugins/view_controllers/fps/fps_view_controller_test.cpp
     ${TEST_FIXTURE_OBJECTS}

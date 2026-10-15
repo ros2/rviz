@@ -65,16 +65,49 @@ TEST_F(ViewportMouseEventTest, mouse_coordinates_include_fractional_scaling)
   QMouseEvent mouse(
     QEvent::MouseMove, QPointF(101.5, 73.5), QPointF(101.5, 73.5),
     Qt::NoButton, Qt::LeftButton, Qt::ShiftModifier);
-  rviz_common::ViewportMouseEvent event(&panel, &mouse, 99, 71);
+  rviz_common::ViewportMouseEvent event(&panel, &mouse, QPoint(151, 109));
   EXPECT_EQ(event.x, qRound(101.5 * ratio));
   EXPECT_EQ(event.y, qRound(73.5 * ratio));
-  EXPECT_EQ(event.last_x, qRound(99 * ratio));
-  EXPECT_EQ(event.last_y, qRound(71 * ratio));
+  EXPECT_EQ(event.last_x, 151);
+  EXPECT_EQ(event.last_y, 109);
   EXPECT_TRUE(event.left());
   EXPECT_TRUE(event.shift());
 }
 
 TEST_F(ViewportMouseEventTest, wheel_coordinates_include_fractional_scaling)
+{
+  rviz_common::RenderPanel panel;
+  const auto ratio = panel.getRenderWindow()->devicePixelRatio();
+  QWheelEvent wheel(
+    QPointF(101.5, 73.5), QPointF(101.5, 73.5), QPoint(), QPoint(0, 120),
+    Qt::NoButton, Qt::ControlModifier, Qt::NoScrollPhase, false);
+  rviz_common::ViewportMouseEvent event(&panel, &wheel, QPoint(151, 109));
+  EXPECT_EQ(event.x, qRound(101.5 * ratio));
+  EXPECT_EQ(event.y, qRound(73.5 * ratio));
+  EXPECT_EQ(event.last_x, 151);
+  EXPECT_EQ(event.last_y, 109);
+  EXPECT_EQ(event.wheel_delta, 120);
+  EXPECT_TRUE(event.control());
+}
+
+// Exercise the deprecated overloads explicitly to preserve their logical-pixel API.
+QT_WARNING_PUSH
+QT_WARNING_DISABLE_DEPRECATED
+TEST_F(ViewportMouseEventTest, legacy_mouse_constructor_scales_logical_history)
+{
+  rviz_common::RenderPanel panel;
+  const auto ratio = panel.getRenderWindow()->devicePixelRatio();
+  QMouseEvent mouse(
+    QEvent::MouseMove, QPointF(101.5, 73.5), QPointF(101.5, 73.5),
+    Qt::NoButton, Qt::LeftButton, Qt::ShiftModifier);
+  rviz_common::ViewportMouseEvent event(&panel, &mouse, 99, 71);
+  EXPECT_EQ(event.x, qRound(101.5 * ratio));
+  EXPECT_EQ(event.y, qRound(73.5 * ratio));
+  EXPECT_EQ(event.last_x, qRound(99 * ratio));
+  EXPECT_EQ(event.last_y, qRound(71 * ratio));
+}
+
+TEST_F(ViewportMouseEventTest, legacy_wheel_constructor_scales_logical_history)
 {
   rviz_common::RenderPanel panel;
   const auto ratio = panel.getRenderWindow()->devicePixelRatio();
@@ -87,8 +120,8 @@ TEST_F(ViewportMouseEventTest, wheel_coordinates_include_fractional_scaling)
   EXPECT_EQ(event.last_x, qRound(99 * ratio));
   EXPECT_EQ(event.last_y, qRound(71 * ratio));
   EXPECT_EQ(event.wheel_delta, 120);
-  EXPECT_TRUE(event.control());
 }
+QT_WARNING_POP
 
 class RecordingTool : public rviz_common::Tool
 {
@@ -129,11 +162,11 @@ TEST_F(ViewportMouseEventTest, manager_delivers_device_coordinates_without_scali
   QMouseEvent mouse(
     QEvent::MouseMove, QPointF(101, 73), QPointF(101, 73),
     Qt::NoButton, Qt::NoButton, Qt::NoModifier);
-  rviz_common::ViewportMouseEvent event(&panel, &mouse, 99, 71);
+  rviz_common::ViewportMouseEvent event(&panel, &mouse, QPoint(151, 109));
   manager.handleMouseEvent(event);
   const auto ratio = panel.getRenderWindow()->devicePixelRatio();
   EXPECT_EQ(tool.position, QPoint(qRound(101 * ratio), qRound(73 * ratio)));
-  EXPECT_EQ(tool.previous_position, QPoint(qRound(99 * ratio), qRound(71 * ratio)));
+  EXPECT_EQ(tool.previous_position, QPoint(151, 109));
   manager.getToolManager()->setCurrentTool(nullptr);
 }
 

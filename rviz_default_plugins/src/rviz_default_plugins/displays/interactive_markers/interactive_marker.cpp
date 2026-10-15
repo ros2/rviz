@@ -45,6 +45,7 @@
 #include <OgreRenderWindow.h>
 
 #include <QMenu>  // NOLINT: cpplint cannot handle the include order here
+#include <QPointF>  // NOLINT: cpplint cannot handle the include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "interactive_markers/tools.hpp"
@@ -59,7 +60,6 @@
 #include "rviz_common/logging.hpp"
 #include "rviz_common/render_panel.hpp"
 #include "rviz_rendering/geometry.hpp"
-#include "rviz_rendering/pixel_scaling.hpp"
 #include "rviz_rendering/render_window.hpp"
 
 #include "rviz_default_plugins/displays/interactive_markers/integer_action.hpp"
@@ -374,7 +374,7 @@ bool InteractiveMarker::handle3DCursorEvent(
       const qreal pixel_ratio = event.panel->getRenderWindow()->devicePixelRatio();
       QCursor::setPos(
         event.panel->mapToGlobal(
-          rviz_rendering::toLogicalPixels(QPoint(mouse_pos.x, mouse_pos.y), pixel_ratio)));
+          (QPointF(QPoint(mouse_pos.x, mouse_pos.y)) / pixel_ratio).toPoint()));
       showMenu(event, control_name, three_d_point, valid_point);
       return true;
     }

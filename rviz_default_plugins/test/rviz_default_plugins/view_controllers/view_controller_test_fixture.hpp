@@ -87,10 +87,7 @@ public:
     auto mouseEvent = new QMouseEvent(
       QMouseEvent::MouseMove, position, position, Qt::LeftButton, button,
       modifiers);
-    rviz_common::ViewportMouseEvent event(render_panel_.get(), mouseEvent, 0, 0);
-    event.last_x = from_x;
-    event.last_y = from_y;
-    return event;
+    return {render_panel_.get(), mouseEvent, QPoint(from_x, from_y)};
   }
 
   rviz_common::ViewportMouseEvent generateMousePressEvent(
@@ -120,7 +117,7 @@ public:
       Qt::NoModifier,
       Qt::NoScrollPhase,
       false);
-    return {render_panel_.get(), mouseEvent, 0, 0};
+    return {render_panel_.get(), mouseEvent, QPoint()};
   }
 
 protected:
@@ -142,10 +139,7 @@ private:
     const QPointF position(x / ratio, y / ratio);
     auto mouseEvent = new QMouseEvent(type, position, position, button, button,
       modifiers);
-    rviz_common::ViewportMouseEvent event(render_panel_.get(), mouseEvent, 0, 0);
-    event.last_x = x;
-    event.last_y = y;
-    return event;
+    return {render_panel_.get(), mouseEvent, QPoint(x, y)};
   }
 
 public:

@@ -49,7 +49,6 @@
 #include "OgreViewport.h"
 
 #include "rviz_rendering/orthographic.hpp"
-#include "rviz_rendering/pixel_scaling.hpp"
 #include "rviz_rendering/render_system.hpp"
 #include "rviz_rendering/objects/grid.hpp"
 #include "rviz_rendering/logging.hpp"
@@ -58,23 +57,18 @@ namespace rviz_rendering
 {
 
 
-// Qt expresses window geometry in logical (device independent) pixels, but
-// the surface Ogre renders into is sized in device pixels.  Ogre has no
-// notion of the display scale factor here. So the conversion shall happen here
+// Qt expresses window geometry in logical pixels. Convert to the units
+// expected by the Ogre backend at this boundary.
 static
 QSize
 toOgreSurfaceSize(const QWindow * window, int logical_width, int logical_height)
 {
 #if __APPLE__
-  // Ogre on apple has different scaling mechanism, so
-  // left unchanged because this path could not be tested
+  // Cocoa applies the native backing scale itself, so pass logical dimensions.
   (void) window;
   return QSize(logical_width, logical_height);
 #else
-  const qreal pixel_ratio = window->devicePixelRatio();
-  return QSize(
-    toDevicePixels(logical_width, pixel_ratio),
-    toDevicePixels(logical_height, pixel_ratio));
+  return QSize(logical_width, logical_height) * window->devicePixelRatio();
 #endif
 }
 

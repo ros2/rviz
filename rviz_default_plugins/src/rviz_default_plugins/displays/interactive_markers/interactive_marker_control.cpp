@@ -45,6 +45,7 @@
 #include <OgreSharedPtr.h>
 #include <OgreTechnique.h>
 
+#include <QPointF>  // NOLINT: cpplint is unable to handle the include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/display_context.hpp"
@@ -58,7 +59,6 @@
 #include "rviz_common/window_manager_interface.hpp"
 #include "rviz_rendering/geometry.hpp"
 #include "rviz_rendering/objects/line.hpp"
-#include "rviz_rendering/pixel_scaling.hpp"
 #include "rviz_rendering/render_window.hpp"
 
 #include "rviz_default_plugins/displays/marker/markers/shape_marker.hpp"
@@ -1129,7 +1129,7 @@ void InteractiveMarkerControl::handle3DCursorEvent(
         const qreal pixel_ratio = event.panel->getRenderWindow()->devicePixelRatio();
         QCursor::setPos(
           event.panel->mapToGlobal(
-            rviz_rendering::toLogicalPixels(QPoint(mouse_pos.x, mouse_pos.y), pixel_ratio)));
+            (QPointF(QPoint(mouse_pos.x, mouse_pos.y)) / pixel_ratio).toPoint()));
         parent_->showMenu(event, name_, three_d_point, valid_point);
       }
       break;
@@ -1366,7 +1366,9 @@ void InteractiveMarkerControl::beginMouseMovement(
   parent_position_at_mouse_down_ = parent_->getPosition();
   parent_orientation_at_mouse_down_ = parent_->getOrientation();
 
-  // Mixed units are harmless: event.x is added back in getRelativeMouseMotion().
+  // getRelativeMouseMotion() adds event.x/y back to recover the logical cursor
+  // position. Warping to whole logical pixels can introduce a rounding error
+  // of up to +/-1 device pixel at scale factors up to 2x.
   QPoint absolute_mouse = QCursor::pos();
   mouse_relative_to_absolute_x_ = absolute_mouse.x() - event.x;
   mouse_relative_to_absolute_y_ = absolute_mouse.y() - event.y;

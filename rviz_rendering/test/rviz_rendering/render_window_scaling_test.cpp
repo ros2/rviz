@@ -129,7 +129,7 @@ TEST(RenderWindowScaling, viewport_matches_native_size_after_resizing)
 #endif
   // Multiples of 16 remain exact when the tested scales combine with quarter-step
   // desktop scales. Odd sizes can be rounded in multiple coordinate spaces by Qt
-  // and the window system; their conversion is covered in pixel_scaling_test.
+  // and the window system.
   window.resize(320, 240);
   window.show();
   ASSERT_TRUE(QTest::qWaitForWindowExposed(&window));

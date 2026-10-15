@@ -39,11 +39,11 @@
 
 #include <QFont>  // NOLINT: cpplint cannot handle include order here
 #include <QKeyEvent>  // NOLINT: cpplint cannot handle include order here
+#include <QPointF>  // NOLINT: cpplint cannot handle include order here
 #include <QString>  // NOLINT: cpplint cannot handle include order here
 
 #include "rclcpp/node.hpp"
 
-#include "rviz_rendering/pixel_scaling.hpp"
 #include "rviz_rendering/render_window.hpp"
 
 #include "rviz_common/display_context.hpp"
@@ -236,8 +236,8 @@ void ViewController::handleKeyEvent(QKeyEvent * event, RenderPanel * panel)
     // mapFromGlobal returns logical pixels, but the picker works in the viewport's
     // device pixels, the same space ViewportMouseEvent delivers its coordinates in.
     const qreal pixel_ratio = panel->getRenderWindow()->devicePixelRatio();
-    QPoint mouse_rel_panel = rviz_rendering::toDevicePixels(
-      panel->mapFromGlobal(QCursor::pos()), pixel_ratio);
+    QPoint mouse_rel_panel =
+      (QPointF(panel->mapFromGlobal(QCursor::pos())) * pixel_ratio).toPoint();
     Ogre::Vector3 point_rel_world;  // output of get3DPoint().
     if (
       context_->getViewPicker()->get3DPoint(

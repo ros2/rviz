@@ -183,11 +183,6 @@ if(BUILD_TESTING)
     target_link_libraries(string_helper_test rviz_rendering)
   endif()
 
-  ament_add_gmock(pixel_scaling_test test/rviz_rendering/pixel_scaling_test.cpp)
-  if(TARGET pixel_scaling_test)
-    target_link_libraries(pixel_scaling_test rviz_rendering)
-  endif()
-
   find_package(Qt6 REQUIRED COMPONENTS Test)
   ament_add_gmock_executable(render_window_scaling_test test/rviz_rendering/render_window_scaling_test.cpp)
   if(TARGET render_window_scaling_test)

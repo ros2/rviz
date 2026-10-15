@@ -31,10 +31,10 @@
 #include "rviz_common/viewport_mouse_event.hpp"
 
 #include <QMouseEvent>
+#include <QPointF>
 #include <QWheelEvent>
 
 #include "rviz_common/render_panel.hpp"
-#include "rviz_rendering/pixel_scaling.hpp"
 #include "rviz_rendering/render_window.hpp"
 
 namespace rviz_common
@@ -42,6 +42,12 @@ namespace rviz_common
 
 // Qt reports positions in logical pixels, the Ogre viewport is in device pixels.
 ViewportMouseEvent::ViewportMouseEvent(RenderPanel * p, QMouseEvent * e, int lx, int ly)
+: ViewportMouseEvent(
+    p, e, (QPointF(lx, ly) * p->getRenderWindow()->devicePixelRatio()).toPoint())
+{}
+
+ViewportMouseEvent::ViewportMouseEvent(
+  RenderPanel * p, QMouseEvent * e, const QPoint & previous_position)
 : panel(p),
   type(e->type()),
   device_pixel_ratio(static_cast<int>(panel->getRenderWindow()->devicePixelRatio())),
@@ -51,17 +57,21 @@ ViewportMouseEvent::ViewportMouseEvent(RenderPanel * p, QMouseEvent * e, int lx,
   acting_button(e->button()),
   buttons_down(e->buttons()),
   modifiers(e->modifiers()),
-  last_x(0),
-  last_y(0)
+  last_x(previous_position.x()),
+  last_y(previous_position.y())
 {
-  const qreal pixel_ratio = panel->getRenderWindow()->devicePixelRatio();
-  x = rviz_rendering::toDevicePixels(e->position().x(), pixel_ratio);
-  y = rviz_rendering::toDevicePixels(e->position().y(), pixel_ratio);
-  last_x = rviz_rendering::toDevicePixels(lx, pixel_ratio);
-  last_y = rviz_rendering::toDevicePixels(ly, pixel_ratio);
+  const QPoint position = (e->position() * panel->getRenderWindow()->devicePixelRatio()).toPoint();
+  x = position.x();
+  y = position.y();
 }
 
 ViewportMouseEvent::ViewportMouseEvent(RenderPanel * p, QWheelEvent * e, int lx, int ly)
+: ViewportMouseEvent(
+    p, e, (QPointF(lx, ly) * p->getRenderWindow()->devicePixelRatio()).toPoint())
+{}
+
+ViewportMouseEvent::ViewportMouseEvent(
+  RenderPanel * p, QWheelEvent * e, const QPoint & previous_position)
 : panel(p),
   type(e->type()),
   device_pixel_ratio(static_cast<int>(panel->getRenderWindow()->devicePixelRatio())),
@@ -71,14 +81,12 @@ ViewportMouseEvent::ViewportMouseEvent(RenderPanel * p, QWheelEvent * e, int lx,
   acting_button(Qt::NoButton),
   buttons_down(e->buttons()),
   modifiers(e->modifiers()),
-  last_x(0),
-  last_y(0)
+  last_x(previous_position.x()),
+  last_y(previous_position.y())
 {
-  const qreal pixel_ratio = panel->getRenderWindow()->devicePixelRatio();
-  x = rviz_rendering::toDevicePixels(e->position().x(), pixel_ratio);
-  y = rviz_rendering::toDevicePixels(e->position().y(), pixel_ratio);
-  last_x = rviz_rendering::toDevicePixels(lx, pixel_ratio);
-  last_y = rviz_rendering::toDevicePixels(ly, pixel_ratio);
+  const QPoint position = (e->position() * panel->getRenderWindow()->devicePixelRatio()).toPoint();
+  x = position.x();
+  y = position.y();
 }
 
 bool ViewportMouseEvent::left()
