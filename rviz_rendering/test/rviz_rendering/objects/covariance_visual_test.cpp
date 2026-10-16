@@ -72,11 +72,33 @@ protected:
     covariance_visual_ = std::make_unique<rviz_rendering::CovarianceVisual>(
       scene_manager, root_node, false, true, .1f, .1f, offset);
     covariance_visual_->setPosition(position);
-    covariance_visual_->setCovariance(Ogre::Quaternion(1.57f, 0.0, 0.0, 1.0f), covariances);
+    updateCovariance(covariances);
 
     covariance_visual_node_ = dynamic_cast<Ogre::SceneNode *>(root_node->getChild(0));
 
     return std::make_tuple(position, offset);
+  }
+
+  void updateCovariance(const std::array<double, 36> & covariances)
+  {
+    covariance_visual_->setCovariance(Ogre::Quaternion(1.57f, 0.0, 0.0, 1.0f), covariances);
+  }
+
+  void expectVisibility(bool position, bool orientation_3d, bool orientation_2d)
+  {
+    auto spheres = findAllSpheres(covariance_visual_node_);
+    ASSERT_THAT(spheres, SizeIs(1));
+    EXPECT_EQ(position, spheres[0]->isVisible());
+
+    auto cylinders = findAllCylinders(covariance_visual_node_);
+    ASSERT_THAT(cylinders, SizeIs(3));
+    for (const auto & cylinder : cylinders) {
+      EXPECT_EQ(orientation_3d, cylinder->isVisible());
+    }
+
+    auto cones = findAllCones(covariance_visual_node_);
+    ASSERT_THAT(cones, SizeIs(1));
+    EXPECT_EQ(orientation_2d, cones[0]->isVisible());
   }
 
   std::shared_ptr<rviz_rendering::OgreTestingEnvironment> testing_environment_;
@@ -111,6 +133,17 @@ std::array<double, 36> getCovariances2D()
 }
 // *INDENT-ON*
 
+// zeroes the size x size block on the diagonal that starts at (first, first)
+std::array<double, 36> withZeroBlock(
+  std::array<double, 36> covariances, size_t first, size_t size)
+{
+  for (size_t row = first; row < first + size; ++row) {
+    for (size_t column = first; column < first + size; ++column) {
+      covariances[row * 6 + column] = 0.0;
+    }
+  }
+  return covariances;
+}
 
 void assertCovarianceOrientationOffsetIsPresent(
   std::vector<Ogre::Entity *> entities, Ogre::Vector3 direction, Ogre::Real length)
@@ -189,6 +222,70 @@ TEST_F(CovarianceVisualTestFixture, covariance_visual_2D)
   EXPECT_FALSE(all_orientation_uncertainties[0]->isVisible());
   EXPECT_FALSE(all_orientation_uncertainties[1]->isVisible());
   EXPECT_FALSE(all_orientation_uncertainties[2]->isVisible());
+}
+
+TEST_F(CovarianceVisualTestFixture, CovarianceVisualEmptyCovariance)
+{
+  Ogre::Vector3 position;
+  Ogre::Real offset;
+  std::array<double, 36> empty_covariances{};
+  std::tie(position, offset) = setupCovarianceVisual(empty_covariances);
+
+  EXPECT_THAT(covariance_visual_node_->getPosition(), Vector3Eq(position));
+  auto all_spheres = findAllSpheres(covariance_visual_node_);
+  ASSERT_THAT(all_spheres, SizeIs(1));
+  EXPECT_THAT(
+    all_spheres[0]->getParentSceneNode()->getPosition(),
+    Vector3Eq(Ogre::Vector3(0.0, 0.0, 0.0)));
+  EXPECT_FALSE(all_spheres[0]->isVisible());
+  expectVisibility(false, false, false);
+}
+
+TEST_F(CovarianceVisualTestFixture, CovarianceVisualOnlyShowsPartsWithCovariance)
+{
+  setupCovarianceVisual(withZeroBlock(getCovariances3D(), 0, 3));
+  expectVisibility(false, true, false);
+
+  updateCovariance(withZeroBlock(getCovariances3D(), 3, 3));
+  expectVisibility(true, false, false);
+
+  auto covariances_2d = getCovariances2D();
+  covariances_2d[35] = 0.0;
+  updateCovariance(covariances_2d);
+  expectVisibility(true, false, false);
+}
+
+TEST_F(CovarianceVisualTestFixture, CovarianceVisualEmptyCovarianceStaysHiddenAfterUserDataUpdate)
+{
+  setupCovarianceVisual(std::array<double, 36>{});
+
+  // the displays do this right after setting the covariance
+  rviz_rendering::CovarianceUserData user_data;
+  user_data.visible = true;
+  user_data.position_visible = true;
+  user_data.position_scale = 1.0f;
+  user_data.orientation_visible = true;
+  user_data.orientation_frame = rviz_rendering::Fixed;
+  user_data.orientation_color_style = rviz_rendering::Unique;
+  user_data.orientation_offset = 0.1f;
+  user_data.orientation_scale = 0.1f;
+  covariance_visual_->updateUserData(user_data);
+  expectVisibility(false, false, false);
+
+  updateCovariance(getCovariances3D());
+  expectVisibility(true, true, false);
+}
+
+TEST_F(CovarianceVisualTestFixture, CovarianceVisualKeepsVisibilitySetByUser)
+{
+  setupCovarianceVisual(getCovariances3D());
+
+  covariance_visual_->setVisible(false);
+  updateCovariance(getCovariances3D());
+  expectVisibility(false, false, false);
+
+  covariance_visual_->setVisible(true);
+  expectVisibility(true, true, false);
 }
 
 TEST_F(CovarianceVisualTestFixture, CovarianceVisualNullScene)
