@@ -197,7 +197,7 @@ RenderWindow::exposeEvent(QExposeEvent * expose_event)
             return;
           }
           setProperty("_rviz_cocoa_surface_initialized", true);
-          impl_->resize(this->width(), this->height());
+          impl_->resize(this->width(), this->height(), true);
           this->renderNow();
         });
     }
