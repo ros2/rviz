@@ -156,7 +156,7 @@ public:
   /** @brief Set the covariance.
    *
    * This effectively changes the orientation and scale of position and orientation
-   * covariance shapes
+   * covariance shapes. Shapes whose covariance is all zeros are hidden.
    */
   RVIZ_RENDERING_PUBLIC
   virtual void setCovariance(
@@ -249,6 +249,8 @@ private:
 
   void updateOrientation(const Eigen::Matrix6d & covariance, ShapeIndex index);
 
+  void updatePositionVisibility();
+
   void updateOrientationVisibility();
 
   Ogre::SceneManager * scene_manager_;
@@ -270,7 +272,11 @@ private:
 
   bool pose_2d_;
 
+  bool position_visible_;
   bool orientation_visible_;  ///< If the orientation component is visible.
+
+  bool position_covariance_is_zero_;
+  bool orientation_covariance_is_zero_;
 
   std::array<Ogre::Vector3, kNumOrientationShapes> current_orientation_scales_;
   float current_orientation_scale_factor_;
