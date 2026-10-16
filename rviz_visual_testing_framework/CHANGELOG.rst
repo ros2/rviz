@@ -2,6 +2,13 @@
 Changelog for package rviz_visual_testing_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.4 (2026-10-09)
+-------------------
+* Remove old CMake export calls (`#1889 <https://github.com/ros2/rviz/issues/1889>`_)
+* Decouple template-heavy dependencies from VisualTestFixture (`#1857 <https://github.com/ros2/rviz/issues/1857>`_)
+* Granular includes and include what you use (`#1854 <https://github.com/ros2/rviz/issues/1854>`_)
+* Contributors: Alejandro Hernández Cordero, Scott K Logan, Tanish Jain
+
 16.0.3 (2026-09-02)
 -------------------
 * Removed Qt5 dependency (`#1847 <https://github.com/ros2/rviz/issues/1847>`_)

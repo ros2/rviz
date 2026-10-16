@@ -582,7 +582,7 @@ void PointCloudCommon::retransform()
 
   for (auto const & cloud_info : cloud_infos_) {
     transformCloud(cloud_info, false);
-    cloud_info->cloud_->clear();
+    cloud_info->cloud_->clearAndRemoveAllPoints();
     cloud_info->cloud_->addPoints(
       cloud_info->transformed_points_.begin(), cloud_info->transformed_points_.end());
   }

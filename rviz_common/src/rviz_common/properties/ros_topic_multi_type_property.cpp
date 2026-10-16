@@ -35,6 +35,8 @@
 #include <string>
 #include <vector>
 
+#include "rviz_common/ros_topic_utils.hpp"
+
 namespace rviz_common
 {
 namespace properties
@@ -49,6 +51,9 @@ void RosTopicMultiTypeProperty::fillTopicList()
     rviz_ros_node_.lock()->get_topic_names_and_types();
 
   for (const auto & topic : published_topics) {
+    if (isTopicOrServiceHidden(topic.first)) {
+      continue;
+    }
     // Only add topics whose type matches one of the allowed types.
     for (const auto & type : topic.second) {
       if (message_types_.contains(QString::fromStdString(type))) {
