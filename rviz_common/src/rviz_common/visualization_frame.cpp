@@ -162,13 +162,18 @@ VisualizationFrame::VisualizationFrame(
 
 VisualizationFrame::~VisualizationFrame()
 {
-  delete manager_;
-  delete render_panel_;
-
-  for (auto & custom_panel : custom_panels_) {
+  if (manager_) {
+    manager_->stopUpdate();
+  }
+  // Panels can own scene objects and use the manager during teardown. A dock's destruction
+  // also removes its record, so iterate over a copy while those dependencies are still alive.
+  const auto custom_panels = custom_panels_;
+  for (const auto & custom_panel : custom_panels) {
     delete custom_panel.dock;
   }
 
+  delete manager_;
+  delete render_panel_;
   delete panel_factory_;
 }
 
