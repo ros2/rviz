@@ -174,7 +174,13 @@ void FrameViewController::reset()
 
   camera_scene_node_->setOrientation(rotationToAxis * ROBOT_TO_CAMERA_ROTATION);
 
+  camera_scene_node_->_update(true, true);
+
   setPropertiesFromCamera(camera_);
+
+  if (getModel()) {
+    Q_EMIT getModel()->layoutChanged();
+  }
 }
 
 void FrameViewController::updateTargetSceneNode()
