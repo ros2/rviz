@@ -243,12 +243,17 @@ RenderWindowImpl::resize(size_t width, size_t height)
     return;
   }
   if (ogre_render_window_) {
-    this->setCameraAspectRatio();
-    ogre_render_window_->resize(
-      static_cast<unsigned int>(width),  // NOLINT
-      static_cast<unsigned int>(height)  // NOLINT
-    );
-    ogre_render_window_->windowMovedOrResized();
+    // Skip unchanged Ogre resizes: windowMovedOrResized() updates the macOS
+    // NSOpenGLContext, which can trigger another expose and repeat this call.
+    const auto w = static_cast<unsigned int>(width);
+    const auto h = static_cast<unsigned int>(height);
+    if (w != last_resize_width_ || h != last_resize_height_) {
+      last_resize_width_ = w;
+      last_resize_height_ = h;
+      this->setCameraAspectRatio();
+      ogre_render_window_->resize(w, h);
+      ogre_render_window_->windowMovedOrResized();
+    }
   }
   this->renderLater();
 }

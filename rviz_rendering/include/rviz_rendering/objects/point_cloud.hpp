@@ -287,6 +287,13 @@ private:
     std::vector<PointCloud::Point>::iterator point) const;
 
   RVIZ_RENDERING_PUBLIC
+  void addPointToHardwareBuffer(
+    RenderableInternals & internals,
+    std::vector<PointCloud::Point>::iterator point, uint32_t current_point,
+    const float * vertices, uint32_t vertices_per_point);
+
+  [[deprecated("Use the addPointToHardwareBuffer overload taking RenderableInternals &")]]
+  RVIZ_RENDERING_PUBLIC
   RenderableInternals addPointToHardwareBuffer(
     RenderableInternals internals,
     std::vector<PointCloud::Point>::iterator point, uint32_t current_point);
