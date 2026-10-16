@@ -130,7 +130,6 @@ void FrameViewController::changedAxis()
    * would be overwritten by the axis property being recalled and triggering changedAxis().
    */
   rememberAxis(axis_property_->getOptionInt());
-  //resetOrientation();
 }
 
 inline void FrameViewController::rememberAxis(int current)
