@@ -91,7 +91,7 @@ void FrameViewController::onInitialize()
   changedAxis();
 }
 
-int FrameViewController::actualCameraAxisOption(double precision) const
+int FrameViewController::actualCameraAxisOption(double /*precision*/) const
 {
   // compare current camera direction with unit axes, select the axis that is most aligned with camera
   Ogre::Vector3 actual =
