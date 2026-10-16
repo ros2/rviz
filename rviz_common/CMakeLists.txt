@@ -199,6 +199,7 @@ set(rviz_common_source_files
   src/rviz_common/ros_integration/ros_client_abstraction.cpp
   src/rviz_common/ros_integration/ros_node_abstraction.cpp
   src/rviz_common/ros_topic_display.cpp
+  src/rviz_common/ros_topic_utils.cpp
   src/rviz_common/scaled_image_widget.cpp
   src/rviz_common/screenshot_dialog.cpp
   src/rviz_common/selection_panel.cpp
@@ -286,10 +287,6 @@ ament_export_dependencies(
   yaml-cpp
 )
 
-# Export old-style CMake variables
-ament_export_include_directories("include/${PROJECT_NAME}")
-ament_export_libraries(rviz_common)
-
 # Export modern CMake targets
 ament_export_targets(rviz_common)
 
@@ -363,16 +360,33 @@ if(BUILD_TESTING)
 
   set(TEST_SUPPORT_OBJECTS $<TARGET_OBJECTS:test_support_objects>)
 
+  ament_add_gmock(render_panel_test
+    test/render_panel_test.cpp
+    ${TEST_SUPPORT_OBJECTS}
+    ${SKIP_DISPLAY_TESTS}
+  )
+  if(TARGET render_panel_test)
+    target_include_directories(render_panel_test PRIVATE test)
+    target_link_libraries(render_panel_test
+      rviz_common
+      rviz_ogre_vendor::OgreMain
+      rviz_ogre_vendor::OgreOverlay
+      Qt6::Widgets
+    )
+  endif()
+
   # Consolidate core tests
   ament_add_gmock(rviz_common_core_tests
     test/config_test.cpp
     test/uniform_string_stream_test.cpp
     test/property_test.cpp
     test/display_test.cpp
+    test/message_filter_display_test.cpp
     test/mock_display_group.cpp
     test/properties/qos_profile_property_test.cpp
     test/visualizer_app_test.cpp
     test/ros_node_abstraction_test.cpp
+    test/ros_topic_utils_test.cpp
     test/transformation/identity_frame_transformer_test.cpp
     ${TEST_SUPPORT_OBJECTS}
     ${SKIP_DISPLAY_TESTS}
