@@ -84,6 +84,11 @@ void RenderWindowImpl::destroyRenderWindow()
   if (ogre_viewport_) {
     background_color_ = ogre_viewport_->getBackgroundColour();
     pending_visibility_masks_.assign(1, ogre_viewport_->getVisibilityMask());
+    // Ogre leaves a camera's last-viewport pointer set when the viewport is destroyed.
+    auto * camera = ogre_viewport_->getCamera();
+    if (camera && camera->getViewport() == ogre_viewport_) {
+      camera->_notifyViewport(nullptr);
+    }
   }
   if (ogre_render_window_) {
     Ogre::Root::getSingletonPtr()->destroyRenderTarget(ogre_render_window_);

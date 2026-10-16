@@ -134,6 +134,61 @@ TEST_F(RenderWindowTest, initializing_twice_preserves_render_target)
     RenderWindowOgreAdapter::getOgreViewport(&window)->getTarget()->getName(), target_name);
 }
 
+TEST_F(RenderWindowTest, destroying_surface_clears_the_cameras_last_viewport)
+{
+  RenderWindow window;
+  window.resize(64, 64);
+  window.initialize();
+  auto * camera = RenderWindowOgreAdapter::getOgreCamera(&window);
+  ASSERT_EQ(camera->getViewport(), RenderWindowOgreAdapter::getOgreViewport(&window));
+
+  window.destroy();
+
+  EXPECT_EQ(camera->getViewport(), nullptr);
+  window.create();
+  window.initialize();
+  EXPECT_EQ(camera->getViewport(), RenderWindowOgreAdapter::getOgreViewport(&window));
+}
+
+TEST_F(RenderWindowTest, deleting_window_clears_a_borrowed_cameras_last_viewport)
+{
+  auto * root = rviz_rendering::RenderSystem::get()->getOgreRoot();
+  auto * scene = root->createSceneManager();
+  auto * camera = scene->createCamera("BorrowedCamera");
+  {
+    RenderWindow window;
+    window.resize(64, 64);
+    RenderWindowOgreAdapter::setSceneManager(&window, scene);
+    RenderWindowOgreAdapter::setOgreCamera(&window, camera);
+    window.initialize();
+    ASSERT_EQ(camera->getViewport(), RenderWindowOgreAdapter::getOgreViewport(&window));
+  }
+
+  EXPECT_EQ(camera->getViewport(), nullptr);
+  root->destroySceneManager(scene);
+}
+
+TEST_F(RenderWindowTest, destroying_surface_preserves_a_cameras_other_viewport)
+{
+  RenderWindow first;
+  first.resize(64, 64);
+  first.initialize();
+  auto * camera = RenderWindowOgreAdapter::getOgreCamera(&first);
+
+  RenderWindow second;
+  second.resize(64, 64);
+  RenderWindowOgreAdapter::setSceneManager(
+    &second, RenderWindowOgreAdapter::getSceneManager(&first));
+  RenderWindowOgreAdapter::setOgreCamera(&second, camera);
+  second.initialize();
+  auto * other_viewport = RenderWindowOgreAdapter::getOgreViewport(&second);
+  ASSERT_EQ(camera->getViewport(), other_viewport);
+
+  first.destroy();
+
+  EXPECT_EQ(camera->getViewport(), other_viewport);
+}
+
 int main(int argc, char ** argv)
 {
   QApplication app(argc, argv);
