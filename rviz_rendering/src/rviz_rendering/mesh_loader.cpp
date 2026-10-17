@@ -31,7 +31,11 @@
 
 #include "rviz_rendering/mesh_loader.hpp"
 
+#include <algorithm>
+#include <cctype>
+#include <filesystem>
 #include <string>
+#include <vector>
 
 #include "OgreHardwareBufferManager.h"
 #include "OgreMaterial.h"
@@ -116,6 +120,39 @@ Ogre::MeshPtr loadMeshFromResource(
     }
     return assimp_loader.meshFromAssimpScene(resource_uri, scene);
   }
+}
+
+Ogre::MeshPtr loadMeshFromMemory(
+  const std::string & resource_name,
+  const std::string & filename,
+  const std::vector<uint8_t> & data)
+{
+  // Check for cached resources
+  if (Ogre::MeshManager::getSingleton().resourceExists(resource_name, ROS_PACKAGE_NAME)) {
+    return Ogre::MeshManager::getSingleton().getByName(resource_name, ROS_PACKAGE_NAME);
+  }
+
+  if (data.empty()) {
+    RVIZ_RENDERING_LOG_ERROR_STREAM(
+      "Could not load embedded mesh [" << resource_name << "]: no mesh data was provided");
+    return nullptr;
+  }
+
+  // The extension of the file name (not of the resource name) determines the file format.
+  std::string ext = std::filesystem::path(filename).extension().string();
+  std::transform(
+    ext.begin(), ext.end(), ext.begin(),
+    [](unsigned char c) {return std::tolower(c);});
+
+  AssimpLoader assimp_loader(nullptr);
+  const aiScene * scene = assimp_loader.getSceneFromMemory(filename, data.data(), data.size());
+  if (scene == nullptr) {
+    RVIZ_RENDERING_LOG_ERROR_STREAM(
+      "Could not load embedded mesh [" << resource_name << "] (file name [" << filename <<
+        "]): " << assimp_loader.getErrorMessage());
+    return nullptr;
+  }
+  return assimp_loader.meshFromAssimpScene(resource_name, scene, ext);
 }
 
 }  // namespace rviz_rendering

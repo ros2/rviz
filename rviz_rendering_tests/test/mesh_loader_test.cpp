@@ -30,6 +30,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
@@ -54,9 +55,51 @@ protected:
     testing_environment_->setUpOgreTestEnvironment();
   }
 
+  std::vector<uint8_t> readFile(const std::string & uri)
+  {
+    auto res = retriever_.get_shared(uri);
+    return std::vector<uint8_t>(res->data.begin(), res->data.end());
+  }
+
   std::shared_ptr<rviz_rendering_tests::OgreTestingEnvironment> testing_environment_;
   resource_retriever::Retriever retriever_;
 };
+
+namespace
+{
+// A single triangle with vertices (0, 0, 0), (1, 0, 0) and (0, 2, 0) in glTF's Y-up convention,
+// stored as a self-contained .gltf file (the vertex buffer is embedded as a data URI).
+// Once converted to RViz's Z-up convention, the triangle spans 2 units along the z-axis and none
+// along the y-axis.
+const char kTriangleGltf[] =
+  "{\"asset\":{\"version\":\"2.0\"},\"scene\":0,\"scenes\":[{\"nodes\":[0]}],"
+  "\"nodes\":[{\"mesh\":0}],\"meshes\":[{\"primitives\":[{\"attributes\":{\"POSITION\":0}}]}],"
+  "\"accessors\":[{\"bufferView\":0,\"componentType\":5126,\"count\":3,\"type\":\"VEC3\","
+  "\"min\":[0,0,0],\"max\":[1,2,0]}],\"bufferViews\":[{\"buffer\":0,\"byteLength\":36}],"
+  "\"buffers\":[{\"byteLength\":36,\"uri\":\"data:application/octet-stream;base64,"
+  "AAAAAAAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAAEAAAAAA\"}]}";
+
+// Like kTriangleGltf, but its material refers to a texture file that is not part of the data.
+const char kTriangleWithExternalTextureGltf[] =
+  "{\"asset\":{\"version\":\"2.0\"},\"scene\":0,\"scenes\":[{\"nodes\":[0]}],"
+  "\"nodes\":[{\"mesh\":0}],\"meshes\":[{\"primitives\":[{\"attributes\":{\"POSITION\":0},"
+  "\"material\":0}]}],"
+  "\"materials\":[{\"pbrMetallicRoughness\":{\"baseColorTexture\":{\"index\":0}}}],"
+  "\"textures\":[{\"source\":0}],\"images\":[{\"uri\":\"missing_texture.png\"}],"
+  "\"accessors\":[{\"bufferView\":0,\"componentType\":5126,\"count\":3,\"type\":\"VEC3\","
+  "\"min\":[0,0,0],\"max\":[1,2,0]}],\"bufferViews\":[{\"buffer\":0,\"byteLength\":36}],"
+  "\"buffers\":[{\"byteLength\":36,\"uri\":\"data:application/octet-stream;base64,"
+  "AAAAAAAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAAEAAAAAA\"}]}";
+
+// Ogre pads the bounds of a mesh slightly, therefore compare with a tolerance.
+void assertTriangleIsZUp(const Ogre::MeshPtr & mesh)
+{
+  const Ogre::Vector3 size = mesh->getBounds().getSize();
+  EXPECT_NEAR(size.x, 1.0f, 0.1f);
+  EXPECT_NEAR(size.y, 0.0f, 0.1f);
+  EXPECT_NEAR(size.z, 2.0f, 0.1f);
+}
+}  // namespace
 
 void assertVector3Equality(Ogre::Vector3 actual, Ogre::Vector3 expected)
 {
@@ -218,4 +261,116 @@ TEST_F(MeshLoaderTestFixture, meshes_without_vertex_colors_have_no_diffuse_eleme
   ASSERT_TRUE(mesh);
   const auto * declaration = mesh->getSubMesh(0)->vertexData->vertexDeclaration;
   ASSERT_EQ(nullptr, declaration->findElementBySemantic(Ogre::VES_DIFFUSE));
+}
+
+TEST_F(MeshLoaderTestFixture, can_load_glb_mesh_from_memory) {
+  auto data = readFile("package://rviz_rendering_tests/test_meshes/colored_box.glb");
+  std::string name = "embedded://memory_colored_box";
+
+  auto mesh = rviz_rendering::loadMeshFromMemory(name, "colored_box.glb", data);
+
+  ASSERT_TRUE(mesh);
+  ASSERT_TRUE(mesh->isManuallyLoaded());
+  ASSERT_EQ(name, mesh->getName());
+  ASSERT_GT(mesh->getNumSubMeshes(), 0u);
+  const auto * declaration = mesh->getSubMesh(0)->vertexData->vertexDeclaration;
+  ASSERT_NE(nullptr, declaration->findElementBySemantic(Ogre::VES_DIFFUSE));
+}
+
+TEST_F(MeshLoaderTestFixture, can_load_stl_mesh_from_memory) {
+  auto data = readFile("package://rviz_rendering_tests/test_meshes/F2.stl");
+  std::string name = "embedded://memory_f2";
+
+  auto mesh = rviz_rendering::loadMeshFromMemory(name, "F2.stl", data);
+
+  ASSERT_TRUE(mesh);
+  size_t actual_vertex_count = 0;
+  for (size_t i = 0; i < mesh->getNumSubMeshes(); ++i) {
+    actual_vertex_count += mesh->getSubMesh(i)->vertexData->vertexCount;
+  }
+  ASSERT_EQ(name, mesh->getName());
+  ASSERT_EQ(35532u, actual_vertex_count);
+  ASSERT_FLOAT_EQ(34.920441f, mesh->getBoundingSphereRadius());
+}
+
+TEST_F(MeshLoaderTestFixture, can_load_assimp_mesh_from_memory_matches_file_loading) {
+  auto data = readFile("package://rviz_rendering_tests/test_meshes/pr2-base.dae");
+
+  auto mesh = rviz_rendering::loadMeshFromMemory(
+    "embedded://memory_pr2_base", "pr2-base.dae", data);
+
+  ASSERT_TRUE(mesh);
+  // Same expectations as can_load_assimp_mesh_files
+  ASSERT_EQ(3600u, mesh->getSubMesh(0)->vertexData->vertexCount);
+  ASSERT_FLOAT_EQ(0.754754f, mesh->getBoundingSphereRadius());
+  assertBoundingBoxEquality(
+    Ogre::AxisAlignedBox(
+      Ogre::Vector3(-0.342375f, -0.340043f, -0.00656401f),
+      Ogre::Vector3(0.340425f, 0.340043f, 0.662748f)),
+    mesh->getBounds());
+}
+
+TEST_F(MeshLoaderTestFixture, file_format_of_mesh_from_memory_is_taken_from_the_file_name) {
+  // The name of the resource ("embedded://...") has no file extension. The glTF specific
+  // conversion from Y-up to Z-up must still be applied based on the extension of the file name.
+  std::vector<uint8_t> data(kTriangleGltf, kTriangleGltf + sizeof(kTriangleGltf) - 1);
+
+  auto mesh = rviz_rendering::loadMeshFromMemory(
+    "embedded://memory_triangle", "triangle.gltf", data);
+
+  ASSERT_TRUE(mesh);
+  assertTriangleIsZUp(mesh);
+}
+
+TEST_F(MeshLoaderTestFixture, file_extension_of_mesh_from_memory_is_case_insensitive) {
+  std::vector<uint8_t> data(kTriangleGltf, kTriangleGltf + sizeof(kTriangleGltf) - 1);
+
+  auto mesh = rviz_rendering::loadMeshFromMemory(
+    "embedded://memory_triangle_upper", "TRIANGLE.GLTF", data);
+
+  ASSERT_TRUE(mesh);
+  assertTriangleIsZUp(mesh);
+}
+
+TEST_F(MeshLoaderTestFixture, loading_mesh_from_memory_without_data_fails) {
+  EXPECT_FALSE(
+    rviz_rendering::loadMeshFromMemory("embedded://memory_empty", "empty.stl", {}));
+}
+
+TEST_F(MeshLoaderTestFixture, loading_invalid_mesh_from_memory_fails) {
+  std::vector<uint8_t> garbage = {'n', 'o', 't', ' ', 'a', ' ', 'm', 'e', 's', 'h'};
+
+  EXPECT_FALSE(
+    rviz_rendering::loadMeshFromMemory("embedded://memory_garbage_stl", "mesh.stl", garbage));
+  EXPECT_FALSE(
+    rviz_rendering::loadMeshFromMemory("embedded://memory_garbage_dae", "mesh.dae", garbage));
+  EXPECT_FALSE(
+    rviz_rendering::loadMeshFromMemory("embedded://memory_garbage_none", "", garbage));
+}
+
+TEST_F(MeshLoaderTestFixture, loading_mesh_from_memory_twice_returns_the_cached_mesh) {
+  auto data = readFile("package://rviz_rendering_tests/test_meshes/F2.stl");
+  std::string name = "embedded://memory_cached_f2";
+
+  auto first = rviz_rendering::loadMeshFromMemory(name, "F2.stl", data);
+  // The data is not needed anymore once the mesh has been loaded under this name.
+  auto second = rviz_rendering::loadMeshFromMemory(name, "F2.stl", {});
+
+  ASSERT_TRUE(first);
+  ASSERT_TRUE(second);
+  ASSERT_EQ(first, second);
+}
+
+TEST_F(MeshLoaderTestFixture, loading_mesh_from_memory_with_external_texture_does_not_crash) {
+  // Files that are referenced by a mesh from memory cannot be resolved. The mesh itself should
+  // still load.
+  std::vector<uint8_t> data(
+    kTriangleWithExternalTextureGltf,
+    kTriangleWithExternalTextureGltf + sizeof(kTriangleWithExternalTextureGltf) - 1);
+
+  auto mesh = rviz_rendering::loadMeshFromMemory(
+    "embedded://memory_triangle_external_texture", "triangle.gltf", data);
+
+  ASSERT_TRUE(mesh);
+  assertTriangleIsZUp(mesh);
 }

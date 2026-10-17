@@ -31,7 +31,9 @@
 #ifndef RVIZ_RENDERING__MESH_LOADER_HPP_
 #define RVIZ_RENDERING__MESH_LOADER_HPP_
 
+#include <cstdint>
 #include <string>
+#include <vector>
 
 #include <OgreMesh.h>
 
@@ -46,6 +48,20 @@ RVIZ_RENDERING_PUBLIC
 Ogre::MeshPtr loadMeshFromResource(
   resource_retriever::Retriever * retriever,
   const std::string & resource_uri);
+
+/// Load a mesh from the raw contents of a mesh file, e.g. one embedded in a message.
+/**
+ * The mesh is registered under \p resource_name; if a mesh with that name already exists, it is
+ * returned without parsing \p data. The file format is determined by the extension of
+ * \p filename. Files referenced by the mesh (e.g. textures) are not resolved.
+ *
+ * \return The mesh, or nullptr if \p data is empty or could not be parsed.
+ */
+RVIZ_RENDERING_PUBLIC
+Ogre::MeshPtr loadMeshFromMemory(
+  const std::string & resource_name,
+  const std::string & filename,
+  const std::vector<uint8_t> & data);
 
 }  // namespace rviz_rendering
 
