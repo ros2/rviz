@@ -32,6 +32,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 #include <OgreEntity.h>
 #include <OgreMaterialManager.h>
@@ -48,6 +49,29 @@
 #include "../marker_messages.hpp"
 
 using namespace ::testing;  // NOLINT
+
+namespace
+{
+// A single triangle stored as a self-contained .gltf file (the vertex buffer is embedded as a
+// data URI), as it could be sent in the mesh_file field of a marker.
+const char kTriangleGltf[] =
+  "{\"asset\":{\"version\":\"2.0\"},\"scene\":0,\"scenes\":[{\"nodes\":[0]}],"
+  "\"nodes\":[{\"mesh\":0}],\"meshes\":[{\"primitives\":[{\"attributes\":{\"POSITION\":0}}]}],"
+  "\"accessors\":[{\"bufferView\":0,\"componentType\":5126,\"count\":3,\"type\":\"VEC3\","
+  "\"min\":[0,0,0],\"max\":[1,2,0]}],\"bufferViews\":[{\"buffer\":0,\"byteLength\":36}],"
+  "\"buffers\":[{\"byteLength\":36,\"uri\":\"data:application/octet-stream;base64,"
+  "AAAAAAAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAAEAAAAAA\"}]}";
+
+visualization_msgs::msg::Marker createEmbeddedMeshMessage(const std::string & mesh_name)
+{
+  auto message = createDefaultMessage(visualization_msgs::msg::Marker::MESH_RESOURCE);
+  message.mesh_resource = "embedded://" + mesh_name;
+  message.mesh_file.filename = "triangle.gltf";
+  message.mesh_file.data.assign(kTriangleGltf, kTriangleGltf + sizeof(kTriangleGltf) - 1);
+  message.mesh_use_embedded_materials = false;
+  return message;
+}
+}  // namespace
 
 TEST_F(MarkersTestFixture, setMessage_with_no_transform_makes_node_invisible) {
   marker_ =
@@ -210,4 +234,50 @@ TEST_F(MarkersTestFixture, setMessage_with_new_object_clears_old_entities_and_ma
   ASSERT_FALSE(deleted_entity);
   EXPECT_FALSE(
     Ogre::MaterialManager::getSingletonPtr()->getByName(material_name, "rviz_rendering"));
+}
+
+TEST_F(MarkersTestFixture, setMessage_attaches_entity_for_embedded_mesh) {
+  marker_ =
+    makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
+  mockValidTransform();
+  auto message = createEmbeddedMeshMessage("marker_test_embedded_triangle");
+
+  marker_->setMessage(message);
+
+  auto entity = rviz_default_plugins::findEntityByMeshName(
+    scene_manager_->getRootSceneNode(), message.mesh_resource);
+  ASSERT_TRUE(entity);
+  EXPECT_TRUE(entity->isVisible());
+  EXPECT_THAT(entity->getMesh()->getName(), StrEq(message.mesh_resource));
+  EXPECT_THAT(
+    entity->getSubEntity(0)->getMaterial()->getName(),
+    MatchesRegex("mesh_resource_marker_.Material"));
+}
+
+TEST_F(MarkersTestFixture, setMessage_does_not_attach_entity_when_embedded_mesh_has_no_data) {
+  marker_ =
+    makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
+  mockValidTransform();
+  auto message = createEmbeddedMeshMessage("marker_test_embedded_without_data");
+  message.mesh_file.data.clear();
+
+  marker_->setMessage(message);
+
+  auto entity = rviz_default_plugins::findEntityByMeshName(
+    scene_manager_->getRootSceneNode(), message.mesh_resource);
+  ASSERT_FALSE(entity);
+}
+
+TEST_F(MarkersTestFixture, setMessage_does_not_attach_entity_when_embedded_mesh_is_invalid) {
+  marker_ =
+    makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
+  mockValidTransform();
+  auto message = createEmbeddedMeshMessage("marker_test_embedded_invalid");
+  message.mesh_file.data = {'n', 'o', 't', ' ', 'a', ' ', 'm', 'e', 's', 'h'};
+
+  marker_->setMessage(message);
+
+  auto entity = rviz_default_plugins::findEntityByMeshName(
+    scene_manager_->getRootSceneNode(), message.mesh_resource);
+  ASSERT_FALSE(entity);
 }

@@ -57,6 +57,16 @@ namespace displays
 namespace markers
 {
 
+namespace
+{
+constexpr char kEmbeddedMeshPrefix[] = "embedded://";
+
+bool isEmbeddedMesh(const std::string & mesh_resource)
+{
+  return mesh_resource.rfind(kEmbeddedMeshPrefix, 0) == 0;
+}
+}  // namespace
+
 MeshResourceMarker::MeshResourceMarker(
   MarkerCommon * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node)
 : MarkerBase(owner, context, parent_node), entity_(nullptr)
@@ -110,11 +120,21 @@ void MeshResourceMarker::onNewMessage(
       return;
     }
 
-    if (
-      !rviz_rendering::loadMeshFromResource(
+    // A mesh_resource of the form "embedded://mesh_name" means that the mesh file is sent
+    // in the message itself (mesh_file), instead of being retrieved from a URI.
+    Ogre::MeshPtr mesh;
+    if (isEmbeddedMesh(new_message->mesh_resource)) {
+      mesh = rviz_rendering::loadMeshFromMemory(
+        new_message->mesh_resource,
+        new_message->mesh_file.filename,
+        new_message->mesh_file.data);
+    } else {
+      mesh = rviz_rendering::loadMeshFromResource(
         owner_->getResourceRetriever(),
-        new_message->mesh_resource))
-    {
+        new_message->mesh_resource);
+    }
+
+    if (!mesh) {
       printMeshLoadingError(new_message);
       return;
     }
