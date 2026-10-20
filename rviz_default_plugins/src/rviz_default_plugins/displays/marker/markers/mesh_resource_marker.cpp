@@ -32,6 +32,7 @@
 #include "rviz_default_plugins/displays/marker/markers/mesh_resource_marker.hpp"
 
 #include <string>
+#include <utility>
 
 #include <OgreEntity.h>
 #include <OgreSubEntity.h>
@@ -65,6 +66,16 @@ bool isEmbeddedMesh(const std::string & mesh_resource)
 {
   return mesh_resource.rfind(kEmbeddedMeshPrefix, 0) == 0;
 }
+
+// Messages may send the data of an embedded mesh only once and leave it empty afterwards.
+bool embeddedMeshDataChanged(
+  const visualization_msgs::msg::Marker & old_message,
+  const visualization_msgs::msg::Marker & new_message)
+{
+  return isEmbeddedMesh(new_message.mesh_resource) && !new_message.mesh_file.data.empty() &&
+         (old_message.mesh_file.filename != new_message.mesh_file.filename ||
+         old_message.mesh_file.data != new_message.mesh_file.data);
+}
 }  // namespace
 
 MeshResourceMarker::MeshResourceMarker(
@@ -82,6 +93,10 @@ void MeshResourceMarker::reset()
   destroyEntity();
   destroyMaterials();
   materials_.clear();
+  if (!embedded_mesh_.empty()) {
+    rviz_rendering::releaseMeshFromMemory(embedded_mesh_);
+    embedded_mesh_.clear();
+  }
 }
 
 void MeshResourceMarker::destroyEntity()
@@ -112,13 +127,13 @@ void MeshResourceMarker::onNewMessage(
 
   if (!entity_ ||
     old_message->mesh_resource != new_message->mesh_resource ||
-    old_message->mesh_use_embedded_materials != new_message->mesh_use_embedded_materials)
+    old_message->mesh_use_embedded_materials != new_message->mesh_use_embedded_materials ||
+    embeddedMeshDataChanged(*old_message, *new_message))
   {
+    // Release the previous embedded mesh only once the new mesh is loaded, so that a mesh whose
+    // data is not sent again is not removed in between.
+    const std::string previous_embedded_mesh = std::exchange(embedded_mesh_, std::string());
     reset();
-
-    if (new_message->mesh_resource.empty()) {
-      return;
-    }
 
     // A mesh_resource of the form "embedded://mesh_name" means that the mesh file is sent
     // in the message itself (mesh_file), instead of being retrieved from a URI.
@@ -128,10 +143,21 @@ void MeshResourceMarker::onNewMessage(
         new_message->mesh_resource,
         new_message->mesh_file.filename,
         new_message->mesh_file.data);
-    } else {
+      if (mesh) {
+        embedded_mesh_ = new_message->mesh_resource;
+      }
+    } else if (!new_message->mesh_resource.empty()) {
       mesh = rviz_rendering::loadMeshFromResource(
         owner_->getResourceRetriever(),
         new_message->mesh_resource);
+    }
+
+    if (!previous_embedded_mesh.empty()) {
+      rviz_rendering::releaseMeshFromMemory(previous_embedded_mesh);
+    }
+
+    if (new_message->mesh_resource.empty()) {
+      return;
     }
 
     if (!mesh) {

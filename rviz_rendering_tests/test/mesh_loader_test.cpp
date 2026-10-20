@@ -38,6 +38,7 @@
 #include <OgreRoot.h>
 #include <OgreSubMesh.h>
 #include <OgreMaterialManager.h>
+#include <OgreMeshManager.h>
 #include <OgreHardwareVertexBuffer.h>
 #include "resource_retriever/retriever.hpp"
 
@@ -373,4 +374,51 @@ TEST_F(MeshLoaderTestFixture, loading_mesh_from_memory_with_external_texture_doe
 
   ASSERT_TRUE(mesh);
   assertTriangleIsZUp(mesh);
+}
+
+TEST_F(MeshLoaderTestFixture, loading_mesh_from_memory_without_file_extension_fails) {
+  // Assimp could parse the data, but format specific handling such as glTF's conversion to Z-up
+  // would silently be skipped.
+  std::vector<uint8_t> data(kTriangleGltf, kTriangleGltf + sizeof(kTriangleGltf) - 1);
+
+  EXPECT_FALSE(rviz_rendering::loadMeshFromMemory("embedded://memory_no_filename", "", data));
+  EXPECT_FALSE(
+    rviz_rendering::loadMeshFromMemory("embedded://memory_no_extension", "triangle", data));
+}
+
+TEST_F(MeshLoaderTestFixture, loading_mesh_from_memory_with_new_data_replaces_the_mesh) {
+  std::vector<uint8_t> triangle(kTriangleGltf, kTriangleGltf + sizeof(kTriangleGltf) - 1);
+  auto stl = readFile("package://rviz_rendering_tests/test_meshes/F2.stl");
+  std::string name = "embedded://memory_replaced";
+
+  auto first = rviz_rendering::loadMeshFromMemory(name, "triangle.gltf", triangle);
+  auto second = rviz_rendering::loadMeshFromMemory(name, "F2.stl", stl);
+
+  ASSERT_TRUE(first);
+  ASSERT_TRUE(second);
+  EXPECT_NE(first, second);
+  EXPECT_FLOAT_EQ(34.920441f, second->getBoundingSphereRadius());
+  EXPECT_EQ(second, Ogre::MeshManager::getSingleton().getByName(name, "rviz_rendering"));
+  rviz_rendering::releaseMeshFromMemory(name);
+  rviz_rendering::releaseMeshFromMemory(name);
+}
+
+TEST_F(MeshLoaderTestFixture, released_mesh_from_memory_is_removed_with_its_materials) {
+  auto data = readFile("package://rviz_rendering_tests/test_meshes/colored_box.glb");
+  std::string name = "embedded://memory_released";
+
+  ASSERT_TRUE(rviz_rendering::loadMeshFromMemory(name, "colored_box.glb", data));
+  ASSERT_TRUE(rviz_rendering::loadMeshFromMemory(name, "colored_box.glb", {}));
+  ASSERT_TRUE(
+    Ogre::MaterialManager::getSingleton().resourceExists(name + "Material0", "rviz_rendering"));
+
+  // The mesh is kept while it is still used.
+  rviz_rendering::releaseMeshFromMemory(name);
+  EXPECT_TRUE(Ogre::MeshManager::getSingleton().resourceExists(name, "rviz_rendering"));
+
+  rviz_rendering::releaseMeshFromMemory(name);
+  EXPECT_FALSE(Ogre::MeshManager::getSingleton().resourceExists(name, "rviz_rendering"));
+  EXPECT_FALSE(
+    Ogre::MaterialManager::getSingleton().resourceExists(name + "Material0", "rviz_rendering"));
+  EXPECT_FALSE(rviz_rendering::loadMeshFromMemory(name, "colored_box.glb", {}));
 }

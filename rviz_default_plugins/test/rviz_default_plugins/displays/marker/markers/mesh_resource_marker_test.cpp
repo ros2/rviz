@@ -37,6 +37,7 @@
 #include <OgreEntity.h>
 #include <OgreMaterialManager.h>
 #include <OgreMesh.h>
+#include <OgreMeshManager.h>
 #include <OgreSubEntity.h>
 #include <OgreTechnique.h>
 
@@ -280,4 +281,59 @@ TEST_F(MarkersTestFixture, setMessage_does_not_attach_entity_when_embedded_mesh_
   auto entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), message.mesh_resource);
   ASSERT_FALSE(entity);
+}
+
+TEST_F(MarkersTestFixture, setMessage_reloads_embedded_mesh_when_its_data_changes) {
+  marker_ =
+    makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
+  mockValidTransform();
+  auto message = createEmbeddedMeshMessage("marker_test_embedded_changing");
+  marker_->setMessage(message);
+
+  // The same triangle, but three units wide instead of one.
+  std::string wider_triangle(kTriangleGltf);
+  wider_triangle.replace(wider_triangle.find("[1,2,0]"), 7, "[3,2,0]");
+  wider_triangle.replace(
+    wider_triangle.find("AAAAAAAAAAAAAAAAAACAPw"), 22, "AAAAAAAAAAAAAAAAAABAQA");
+  message.mesh_file.data.assign(wider_triangle.begin(), wider_triangle.end());
+  marker_->setMessage(message);
+
+  auto entity = rviz_default_plugins::findEntityByMeshName(
+    scene_manager_->getRootSceneNode(), message.mesh_resource);
+  ASSERT_TRUE(entity);
+  EXPECT_NEAR(entity->getMesh()->getBounds().getSize().x, 3.0f, 0.1f);
+}
+
+TEST_F(MarkersTestFixture, setMessage_keeps_embedded_mesh_when_its_data_is_not_sent_again) {
+  marker_ =
+    makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
+  mockValidTransform();
+  auto message = createEmbeddedMeshMessage("marker_test_embedded_sent_once");
+  marker_->setMessage(message);
+
+  message.mesh_file.data.clear();
+  marker_->setMessage(message);
+  // Reloading the mesh for other reasons must not need the data either.
+  message.mesh_use_embedded_materials = true;
+  marker_->setMessage(message);
+
+  auto entity = rviz_default_plugins::findEntityByMeshName(
+    scene_manager_->getRootSceneNode(), message.mesh_resource);
+  ASSERT_TRUE(entity);
+  EXPECT_TRUE(entity->isVisible());
+}
+
+TEST_F(MarkersTestFixture, deleting_marker_removes_its_embedded_mesh) {
+  marker_ =
+    makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
+  mockValidTransform();
+  auto message = createEmbeddedMeshMessage("marker_test_embedded_deleted");
+  marker_->setMessage(message);
+  ASSERT_TRUE(
+    Ogre::MeshManager::getSingleton().resourceExists(message.mesh_resource, "rviz_rendering"));
+
+  marker_.reset();
+
+  EXPECT_FALSE(
+    Ogre::MeshManager::getSingleton().resourceExists(message.mesh_resource, "rviz_rendering"));
 }

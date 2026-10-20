@@ -51,9 +51,13 @@ Ogre::MeshPtr loadMeshFromResource(
 
 /// Load a mesh from the raw contents of a mesh file, e.g. one embedded in a message.
 /**
- * The mesh is registered under \p resource_name; if a mesh with that name already exists, it is
- * returned without parsing \p data. The file format is determined by the extension of
- * \p filename. Files referenced by the mesh (e.g. textures) are not resolved.
+ * The mesh is registered under \p resource_name. If a mesh with that name was already loaded
+ * from the same \p data, or \p data is empty, the loaded mesh is returned without parsing.
+ * Different \p data replaces the loaded mesh. The file format is determined by the extension
+ * of \p filename, which is therefore required. Files referenced by the mesh (e.g. textures) are
+ * not resolved.
+ *
+ * Every successful call must be paired with a call to releaseMeshFromMemory().
  *
  * \return The mesh, or nullptr if \p data is empty or could not be parsed.
  */
@@ -62,6 +66,14 @@ Ogre::MeshPtr loadMeshFromMemory(
   const std::string & resource_name,
   const std::string & filename,
   const std::vector<uint8_t> & data);
+
+/// Release a mesh obtained from loadMeshFromMemory().
+/**
+ * Once every successful load of \p resource_name has been released, the mesh and the materials
+ * and textures loaded with it are removed.
+ */
+RVIZ_RENDERING_PUBLIC
+void releaseMeshFromMemory(const std::string & resource_name);
 
 }  // namespace rviz_rendering
 
