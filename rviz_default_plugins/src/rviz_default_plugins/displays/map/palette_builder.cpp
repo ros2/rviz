@@ -32,7 +32,6 @@
 
 #include <cstring>
 #include <memory>
-#include <utility>
 #include <vector>
 
 namespace rviz_default_plugins
@@ -83,7 +82,7 @@ std::shared_ptr<PaletteBuilder> PaletteBuilder::setColorForValue(
 
 std::vector<unsigned char> PaletteBuilder::buildPalette()
 {
-  return std::move(palette_);
+  return palette_;
 }
 
 std::vector<unsigned char> makeMapPalette(bool binary, int threshold)
