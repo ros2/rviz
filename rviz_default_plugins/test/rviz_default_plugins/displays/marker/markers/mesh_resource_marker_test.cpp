@@ -30,6 +30,7 @@
 
 #include <gmock/gmock.h>
 
+#include <cstdio>
 #include <memory>
 #include <string>
 #include <vector>
@@ -44,6 +45,7 @@
 #include "visualization_msgs/msg/marker.hpp"
 
 #include "rviz_default_plugins/displays/marker/markers/mesh_resource_marker.hpp"
+#include "rviz_rendering/logging.hpp"
 
 #include "../../../scene_graph_introspection.hpp"
 #include "markers_test_fixture.hpp"
@@ -53,8 +55,7 @@ using namespace ::testing;  // NOLINT
 
 namespace
 {
-// A single triangle stored as a self-contained .gltf file (the vertex buffer is embedded as a
-// data URI), as it could be sent in the mesh_file field of a marker.
+// A minimal .gltf triangle with its buffer inlined as a data URI.
 const char kTriangleGltf[] =
   "{\"asset\":{\"version\":\"2.0\"},\"scene\":0,\"scenes\":[{\"nodes\":[0]}],"
   "\"nodes\":[{\"mesh\":0}],\"meshes\":[{\"primitives\":[{\"attributes\":{\"POSITION\":0}}]}],"
@@ -72,6 +73,31 @@ visualization_msgs::msg::Marker createEmbeddedMeshMessage(const std::string & me
   message.mesh_use_embedded_materials = false;
   return message;
 }
+
+int error_count = 0;
+
+// Counts the errors logged by rviz_rendering while it is alive.
+class ErrorLogCounter
+{
+public:
+  ErrorLogCounter()
+  {
+    error_count = 0;
+    auto ignore = [](const std::string &, const std::string &, size_t) {};
+    auto count_error = [](const std::string &, const std::string &, size_t) {++error_count;};
+    rviz_rendering::set_logging_handlers(ignore, ignore, ignore, count_error);
+  }
+
+  ~ErrorLogCounter()
+  {
+    auto print = [](const std::string & message, const std::string & file, size_t line) {
+        fprintf(stderr, "%s, at %s:%zu\n", message.c_str(), file.c_str(), line);
+      };
+    rviz_rendering::set_logging_handlers(print, print, print, print);
+  }
+
+  int count() const {return error_count;}
+};
 }  // namespace
 
 TEST_F(MarkersTestFixture, setMessage_with_no_transform_makes_node_invisible) {
@@ -336,4 +362,48 @@ TEST_F(MarkersTestFixture, deleting_marker_removes_its_embedded_mesh) {
 
   EXPECT_FALSE(
     Ogre::MeshManager::getSingleton().resourceExists(message.mesh_resource, "rviz_rendering"));
+}
+
+TEST_F(MarkersTestFixture, setMessage_logs_unchanged_invalid_embedded_mesh_only_once) {
+  marker_ =
+    makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
+  mockValidTransform();
+  auto message = createEmbeddedMeshMessage("marker_test_embedded_logged_once");
+  message.mesh_file.data = {'n', 'o', 't', ' ', 'a', ' ', 'm', 'e', 's', 'h'};
+  ErrorLogCounter errors;
+
+  for (int i = 0; i < 5; ++i) {
+    marker_->setMessage(message);
+  }
+
+  EXPECT_EQ(1, errors.count());
+
+  // Valid data afterwards still loads.
+  message = createEmbeddedMeshMessage("marker_test_embedded_logged_once");
+  marker_->setMessage(message);
+  auto entity = rviz_default_plugins::findEntityByMeshName(
+    scene_manager_->getRootSceneNode(), message.mesh_resource);
+  ASSERT_TRUE(entity);
+}
+
+TEST_F(MarkersTestFixture, setMessage_does_not_log_errors_while_embedded_mesh_data_is_missing) {
+  marker_ =
+    makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
+  mockValidTransform();
+  auto message = createEmbeddedMeshMessage("marker_test_embedded_data_later");
+  message.mesh_file.data.clear();
+  ErrorLogCounter errors;
+
+  for (int i = 0; i < 5; ++i) {
+    marker_->setMessage(message);
+  }
+
+  EXPECT_EQ(0, errors.count());
+
+  // The data may arrive later, so this is retried.
+  message = createEmbeddedMeshMessage("marker_test_embedded_data_later");
+  marker_->setMessage(message);
+  auto entity = rviz_default_plugins::findEntityByMeshName(
+    scene_manager_->getRootSceneNode(), message.mesh_resource);
+  ASSERT_TRUE(entity);
 }

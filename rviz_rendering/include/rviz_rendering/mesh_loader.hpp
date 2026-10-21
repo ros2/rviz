@@ -57,6 +57,8 @@ Ogre::MeshPtr loadMeshFromResource(
  * of \p filename, which is therefore required. Files referenced by the mesh (e.g. textures) are
  * not resolved.
  *
+ * Use one name per mesh: different data under the same name replaces it for every user.
+ *
  * Every successful call must be paired with a call to releaseMeshFromMemory().
  *
  * \return The mesh, or nullptr if \p data is empty or could not be parsed.

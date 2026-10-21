@@ -197,7 +197,8 @@ Ogre::MeshPtr loadMeshFromMemory(
   }
 
   if (data.empty()) {
-    RVIZ_RENDERING_LOG_ERROR_STREAM(
+    // Retried with every message and the data may come later, so this is not logged as an error.
+    RVIZ_RENDERING_LOG_DEBUG_STREAM(
       "Could not load embedded mesh [" << resource_name << "]: no mesh data was provided");
     return nullptr;
   }

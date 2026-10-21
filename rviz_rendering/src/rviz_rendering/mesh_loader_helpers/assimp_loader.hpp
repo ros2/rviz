@@ -36,6 +36,7 @@
 #include <cstdint>
 #include <memory>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 #include "OgreHardwareBufferManager.h"
@@ -161,6 +162,7 @@ private:
 
   resource_retriever::Retriever * retriever_;
   std::unique_ptr<Assimp::Importer> importer_;
+  std::unordered_set<std::string> ignored_textures_;
 };
 
 }  // namespace rviz_rendering

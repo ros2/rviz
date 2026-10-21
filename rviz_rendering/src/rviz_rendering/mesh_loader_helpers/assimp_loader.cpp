@@ -258,8 +258,7 @@ const aiScene * AssimpLoader::getScene(const std::string & resource_path)
 const aiScene * AssimpLoader::getSceneFromMemory(
   const std::string & filename, const uint8_t * data, size_t size)
 {
-  // Assimp uses the extension (without the leading dot) to pick the importer; it falls back to
-  // detecting the format from the content if the hint is empty or does not match.
+  // The extension (without the dot) is only a hint; Assimp falls back to the content.
   std::string hint = std::filesystem::path(filename).extension().string();
   if (!hint.empty() && hint.front() == '.') {
     hint.erase(0, 1);
@@ -348,6 +347,15 @@ void AssimpLoader::setLightColorsFromAssimp(
       std::string texture_path;
       const aiTexture * texture = ai_scene->GetEmbeddedTexture(texture_name.C_Str());
       if (texture == nullptr) {
+        if (nullptr == retriever_) {
+          // No retriever (loaded from memory), so the texture file can't be found.
+          if (ignored_textures_.insert(texture_name.data).second) {
+            RVIZ_RENDERING_LOG_WARNING_STREAM(
+              "Ignoring texture [" << texture_name.data << "] of mesh [" << resource_path <<
+                "]: it is not part of the mesh data");
+          }
+          continue;
+        }
         // It's not an embedded texture. We have to go find it.
         // Assume textures are in paths relative to the mesh
         QFileInfo resource_path_finfo(QString::fromStdString(resource_path));
@@ -440,10 +448,6 @@ void AssimpLoader::loadEmbeddedTexture(
 void AssimpLoader::loadTexture(const std::string & resource_path)
 {
   if (!Ogre::TextureManager::getSingleton().resourceExists(resource_path, ROS_PACKAGE_NAME)) {
-    if (nullptr == retriever_) {
-      // Without a retriever, external resources (e.g. textures next to the mesh) cannot be found.
-      return;
-    }
     auto res = retriever_->get_shared(resource_path);
 
     if (res == nullptr || res->data.empty()) {
