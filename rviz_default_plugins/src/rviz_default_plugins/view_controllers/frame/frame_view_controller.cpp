@@ -93,9 +93,11 @@ void FrameViewController::onInitialize()
 
 int FrameViewController::actualCameraAxisOption(double /*precision*/) const
 {
-  // compare current camera direction with unit axes, select the axis that is most aligned with camera
+  // Compare current camera direction with unit axes and select the axis
+  // that is most aligned with the camera.
   Ogre::Vector3 actual =
-    (camera_scene_node_->getOrientation() * ROBOT_TO_CAMERA_ROTATION.Inverse()) * Ogre::Vector3::UNIT_X;
+    (camera_scene_node_->getOrientation() * ROBOT_TO_CAMERA_ROTATION.Inverse()) *
+    Ogre::Vector3::UNIT_X;
   double best = 0;
   int sel = -1;
   for (unsigned int i = 0; i < 3; ++i) {
