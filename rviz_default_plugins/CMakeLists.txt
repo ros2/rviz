@@ -344,7 +344,7 @@ target_link_libraries(rviz_default_plugins_pointcloud PUBLIC
 target_link_libraries(rviz_default_plugins_pointcloud PRIVATE gz-math::core)
 target_compile_definitions(rviz_default_plugins_pointcloud PRIVATE "RVIZ_DEFAULT_PLUGINS_POINTCLOUD_BUILDING_LIBRARY")
 if(RVIZ_DEFAULT_PLUGINS_ENABLE_PCH)
-  target_precompile_headers(rviz_default_plugins_pointcloud PRIVATE src/precompile.hpp)
+  target_precompile_headers(rviz_default_plugins_pointcloud PRIVATE src/rviz_default_plugins/precompile.hpp)
 endif()
 
 add_library(rviz_default_plugins_image SHARED
@@ -362,7 +362,7 @@ target_link_libraries(rviz_default_plugins_image PUBLIC
 target_link_libraries(rviz_default_plugins_image PRIVATE gz-math::core)
 target_compile_definitions(rviz_default_plugins_image PRIVATE "RVIZ_DEFAULT_PLUGINS_IMAGE_BUILDING_LIBRARY")
 if(RVIZ_DEFAULT_PLUGINS_ENABLE_PCH)
-  target_precompile_headers(rviz_default_plugins_image PRIVATE src/precompile.hpp)
+  target_precompile_headers(rviz_default_plugins_image PRIVATE src/rviz_default_plugins/precompile.hpp)
 endif()
 
 add_library(rviz_default_plugins_marker SHARED
@@ -379,7 +379,7 @@ target_link_libraries(rviz_default_plugins_marker PUBLIC
 target_link_libraries(rviz_default_plugins_marker PRIVATE gz-math::core)
 target_compile_definitions(rviz_default_plugins_marker PRIVATE "RVIZ_DEFAULT_PLUGINS_MARKER_BUILDING_LIBRARY")
 if(RVIZ_DEFAULT_PLUGINS_ENABLE_PCH)
-  target_precompile_headers(rviz_default_plugins_marker PRIVATE src/precompile.hpp)
+  target_precompile_headers(rviz_default_plugins_marker PRIVATE src/rviz_default_plugins/precompile.hpp)
 endif()
 
 add_library(rviz_default_plugins_overlay SHARED
@@ -397,7 +397,7 @@ target_link_libraries(rviz_default_plugins_overlay PUBLIC
 )
 target_compile_definitions(rviz_default_plugins_overlay PRIVATE "RVIZ_DEFAULT_PLUGINS_OVERLAY_BUILDING_LIBRARY")
 if(RVIZ_DEFAULT_PLUGINS_ENABLE_PCH)
-  target_precompile_headers(rviz_default_plugins_overlay PRIVATE src/precompile.hpp)
+  target_precompile_headers(rviz_default_plugins_overlay PRIVATE src/rviz_default_plugins/precompile.hpp)
 endif()
 
 add_library(rviz_default_plugins SHARED
@@ -433,7 +433,7 @@ target_link_libraries(rviz_default_plugins PRIVATE
 # which is appropriate when building the dll but not consuming it.
 target_compile_definitions(rviz_default_plugins PRIVATE "RVIZ_DEFAULT_PLUGINS_BUILDING_LIBRARY")
 if(RVIZ_DEFAULT_PLUGINS_ENABLE_PCH)
-  target_precompile_headers(rviz_default_plugins PRIVATE src/precompile.hpp)
+  target_precompile_headers(rviz_default_plugins PRIVATE src/rviz_default_plugins/precompile.hpp)
 endif()
 
 pluginlib_export_plugin_description_file(rviz_common plugins_description.xml)

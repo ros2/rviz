@@ -36,15 +36,20 @@
 // message_filter_display.hpp: those are template-heavy and re-instantiated
 // differently per translation unit, so a PCH can't amortize that cost.
 
+#ifndef RVIZ_DEFAULT_PLUGINS__PRECOMPILE_HPP_
+#define RVIZ_DEFAULT_PLUGINS__PRECOMPILE_HPP_
+
 #include <chrono>
 #include <memory>
-#include <format>
+#include <format>  // NOLINT: cpplint is unable to handle the include order here
 
-#include <QCursor>
-#include <QIcon>
-#include <QObject>
-#include <QString>
-#include <QVariant>
+#include <QCursor>  // NOLINT: cpplint is unable to handle the include order here
+#include <QIcon>  // NOLINT: cpplint is unable to handle the include order here
+#include <QObject>  // NOLINT: cpplint is unable to handle the include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+#include <QVariant>  // NOLINT: cpplint is unable to handle the include order here
 
 #include <OgrePrerequisites.h>
 #include <OgreStdHeaders.h>
+
+#endif  // RVIZ_DEFAULT_PLUGINS__PRECOMPILE_HPP_
