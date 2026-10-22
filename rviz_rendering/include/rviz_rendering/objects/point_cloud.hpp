@@ -144,6 +144,14 @@ public:
   RVIZ_RENDERING_PUBLIC
   std::vector<Point> getPoints();
 
+  /// The point at \p index, counted from the oldest point; no bounds checking.
+  RVIZ_RENDERING_PUBLIC
+  const Point & getPoint(uint32_t index) const {return points_[index];}
+
+  /// The number of points in the cloud.
+  RVIZ_RENDERING_PUBLIC
+  uint32_t getNumPoints() const {return point_count_;}
+
   /// Set type of rendering primitive to used; supports points, billboards, spheres and boxes.
   RVIZ_RENDERING_PUBLIC
   void setRenderMode(RenderMode mode);
