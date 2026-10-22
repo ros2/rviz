@@ -280,7 +280,7 @@ target_link_libraries(rviz_common PRIVATE
 target_compile_definitions(rviz_common PRIVATE "RVIZ_COMMON_BUILDING_LIBRARY")
 
 if(RVIZ_COMMON_ENABLE_PCH)
-  target_precompile_headers(rviz_common PRIVATE src/precompile.hpp)
+  target_precompile_headers(rviz_common PRIVATE src/rviz_common/precompile.hpp)
 endif()
 
 ament_export_dependencies(

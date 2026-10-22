@@ -41,24 +41,29 @@
 // macro-state mismatch that ruled out REUSE_FROM for rviz_default_plugins'
 // multi-target PCH.
 
+#ifndef RVIZ_COMMON__PRECOMPILE_HPP_
+#define RVIZ_COMMON__PRECOMPILE_HPP_
+
 #include <chrono>
-#include <format>
+#include <format>  // NOLINT: cpplint is unable to handle the include order here
 #include <functional>
 #include <memory>
 #include <string>
 
-#include <QAction>
-#include <QComboBox>
-#include <QDebug>
-#include <QFrame>
-#include <QIcon>
-#include <QObject>
-#include <QPixmap>
-#include <QString>
-#include <QVariant>
-#include <QWidget>
+#include <QAction>  // NOLINT: cpplint is unable to handle the include order here
+#include <QComboBox>  // NOLINT: cpplint is unable to handle the include order here
+#include <QDebug>  // NOLINT: cpplint is unable to handle the include order here
+#include <QFrame>  // NOLINT: cpplint is unable to handle the include order here
+#include <QIcon>  // NOLINT: cpplint is unable to handle the include order here
+#include <QObject>  // NOLINT: cpplint is unable to handle the include order here
+#include <QPixmap>  // NOLINT: cpplint is unable to handle the include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+#include <QVariant>  // NOLINT: cpplint is unable to handle the include order here
+#include <QWidget>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/display.hpp"
 #include "rviz_common/panel.hpp"
 #include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/properties/property.hpp"
+
+#endif  // RVIZ_COMMON__PRECOMPILE_HPP_
