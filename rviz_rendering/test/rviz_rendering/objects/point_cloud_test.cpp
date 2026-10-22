@@ -196,6 +196,30 @@ TEST_F(PointCloudTestFixture, setHighlightColor_sets_correct_CustomParameter) {
   }
 }
 
+TEST_F(PointCloudTestFixture, colors_survive_repeated_regeneration_unchanged) {
+  std::vector<rviz_rendering::PointCloud::Point> points;
+  for (int i = 0; i < 256; ++i) {
+    points.push_back({Ogre::Vector3(static_cast<float>(i), 0, 0),
+        Ogre::ColourValue(i / 255.0f, 1.0f - i / 255.0f, 0.3f, 0.7f)});
+  }
+  auto point_cloud = std::make_shared<rviz_rendering::PointCloud>();
+  point_cloud->addPoints(points.begin(), points.end());
+  const auto before = point_cloud->getPoints();
+
+  // Selection regenerates the buffers twice per pick.
+  for (int i = 0; i < 10; ++i) {
+    point_cloud->setColorByIndex(true);
+    point_cloud->setColorByIndex(false);
+  }
+
+  const auto after = point_cloud->getPoints();
+  ASSERT_THAT(after, SizeIs(before.size()));
+  for (size_t i = 0; i < before.size(); ++i) {
+    EXPECT_THAT(after[i].color, Eq(before[i].color));
+    EXPECT_THAT(after[i].position, Vector3Eq(before[i].position));
+  }
+}
+
 TEST_F(PointCloudTestFixture, setDimensions_changes_dimensions_of_points_and_newly_added_points) {
   auto point_cloud = std::make_shared<rviz_rendering::PointCloud>();
   point_cloud->addPoints(singlePointArray.begin(), singlePointArray.end());
