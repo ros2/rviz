@@ -178,6 +178,16 @@ if(BUILD_TESTING)
     rviz_rendering
   )
 
+  if(APPLE)
+    ament_add_gtest(render_window_lifetime_test
+      test/rviz_rendering/render_window_lifetime_test.cpp
+      SKIP_LINKING_MAIN_LIBRARIES)
+    if(TARGET render_window_lifetime_test)
+      target_link_libraries(render_window_lifetime_test
+        rviz_rendering rviz_ogre_vendor::OgreMain Qt6::Widgets)
+    endif()
+  endif()
+
   ament_add_gmock(string_helper_test test/rviz_rendering/string_helper_test.cpp)
   if(TARGET string_helper_test)
     target_link_libraries(string_helper_test rviz_rendering)
