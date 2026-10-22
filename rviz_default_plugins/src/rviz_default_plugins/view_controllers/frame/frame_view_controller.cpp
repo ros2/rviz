@@ -91,39 +91,6 @@ void FrameViewController::onInitialize()
   changedAxis();
 }
 
-int FrameViewController::actualCameraAxisOption(double /*precision*/) const
-{
-  // Compare current camera direction with unit axes and select the axis
-  // that is most aligned with the camera.
-  Ogre::Vector3 actual =
-    (camera_scene_node_->getOrientation() * ROBOT_TO_CAMERA_ROTATION.Inverse()) *
-    Ogre::Vector3::UNIT_X;
-  double best = 0;
-  int sel = -1;
-  for (unsigned int i = 0; i < 3; ++i) {
-    Ogre::Vector3 axis(0, 0, 0);
-    axis[i] = 1.0;
-    auto scalar_product = axis.dotProduct(actual);
-    if (std::abs(scalar_product) > best) {
-      best = std::abs(scalar_product);
-      sel = 1 + 2 * i + (scalar_product > 0 ? 0 : 1);
-    }
-  }
-  return sel;
-}
-
-void FrameViewController::setAxisFromCamera()
-{
-  int actual = actualCameraAxisOption();
-  if (axis_property_->getOptionInt() == actual) {  // no change?
-    return;
-  }
-
-  QSignalBlocker block(axis_property_);
-  axis_property_->setString(actual == -1 ? ANY_AXIS : fmtAxis(actual));
-  rememberAxis(actual);
-}
-
 void FrameViewController::changedAxis()
 {
   /**

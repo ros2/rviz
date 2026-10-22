@@ -77,10 +77,6 @@ protected:
   rviz_common::properties::EnumProperty * axis_property_;
   rviz_common::properties::BoolProperty * locked_property_;
 
-  int actualCameraAxisOption(double precision = 0.001) const;
-
-  void setAxisFromCamera();
-
   /**
    * Overrides updateTargetSceneNode() of FramePositionTrackingViewController to
    * update both position and orientation tracking ot the target frame.
