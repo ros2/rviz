@@ -40,6 +40,10 @@
 #include <QTimer>  // NOLINT
 #include <QWidget>  // NOLINT
 
+#include <OgreRoot.h>
+#include <OgreSceneManager.h>
+#include <OgreSceneNode.h>
+
 #include "rviz_rendering/objects/point_cloud.hpp"
 #include "rviz_rendering/render_window.hpp"
 #include "rviz_rendering/custom_parameter_indices.hpp"
@@ -311,4 +315,91 @@ TEST_F(
   }
 
   ASSERT_THAT(point_cloud->getRenderables(), SizeIs(10));
+}
+
+static size_t drawnVertices(const std::shared_ptr<rviz_rendering::PointCloud> & point_cloud)
+{
+  size_t count = 0;
+  for (auto const & renderable : point_cloud->getRenderables()) {
+    Ogre::RenderOperation op;
+    renderable->getRenderOperation(op);
+    count += op.vertexData->vertexCount;
+  }
+  return count;
+}
+
+static std::vector<rviz_rendering::PointCloud::Point> gridOfPoints(int count)
+{
+  std::vector<rviz_rendering::PointCloud::Point> points;
+  for (int i = 0; i < count; ++i) {
+    points.push_back({Ogre::Vector3(static_cast<float>(i % 10), static_cast<float>(i / 10), 0),
+        colorValue});
+  }
+  return points;
+}
+
+TEST_F(PointCloudTestFixture, point_budget_limits_drawn_vertices_only_with_level_of_detail) {
+  auto points = gridOfPoints(1000);
+  auto point_cloud = std::make_shared<rviz_rendering::PointCloud>();
+  point_cloud->setRenderMode(rviz_rendering::PointCloud::RM_POINTS);
+  point_cloud->addPoints(points.begin(), points.end());
+
+  point_cloud->setPointBudget(250);
+  EXPECT_THAT(drawnVertices(point_cloud), Eq(1000u));  // level of detail is off
+
+  point_cloud->setLevelOfDetail(true);
+  point_cloud->setPointBudget(250);
+  EXPECT_THAT(drawnVertices(point_cloud), Eq(250u));
+  EXPECT_THAT(point_cloud->getNumPoints(), Eq(1000u));
+
+  point_cloud->setLevelOfDetail(false);
+  EXPECT_THAT(drawnVertices(point_cloud), Eq(1000u));
+}
+
+TEST_F(PointCloudTestFixture, point_budget_only_applies_to_the_camera_it_was_computed_for) {
+  auto scene_manager = Ogre::Root::getSingletonPtr()->createSceneManager();
+  auto main_camera = scene_manager->createCamera("main");
+  auto selection_camera = scene_manager->createCamera("selection");
+  auto points = gridOfPoints(1000);
+  auto point_cloud = std::make_shared<rviz_rendering::PointCloud>();
+  point_cloud->setRenderMode(rviz_rendering::PointCloud::RM_POINTS);
+  point_cloud->setLevelOfDetail(true);
+  point_cloud->addPoints(points.begin(), points.end());
+  point_cloud->setPointBudget(250, main_camera);
+
+  point_cloud->_notifyCurrentCamera(selection_camera);
+  EXPECT_THAT(drawnVertices(point_cloud), Eq(1000u));
+
+  point_cloud->_notifyCurrentCamera(main_camera);
+  EXPECT_THAT(drawnVertices(point_cloud), Eq(250u));
+
+  Ogre::Root::getSingletonPtr()->destroySceneManager(scene_manager);
+}
+
+TEST_F(PointCloudTestFixture, level_of_detail_order_keeps_sparse_regions_in_a_short_prefix) {
+  // A dense cluster near the origin and a few points far away.
+  std::vector<rviz_rendering::PointCloud::Point> points;
+  for (int i = 0; i < 990; ++i) {
+    points.push_back({Ogre::Vector3(i * 0.01f, 0, 0), colorValue});
+  }
+  for (int i = 0; i < 10; ++i) {
+    points.push_back({Ogre::Vector3(100.0f + i, 0, 0), colorValue});
+  }
+  auto point_cloud = std::make_shared<rviz_rendering::PointCloud>();
+  point_cloud->setRenderMode(rviz_rendering::PointCloud::RM_POINTS);
+  point_cloud->setLevelOfDetail(true);
+  point_cloud->addPoints(points.begin(), points.end());
+
+  auto renderable = point_cloud->getRenderables().front();
+  auto buffer = renderable->getBuffer();
+  const size_t floats_per_vertex = buffer->getVertexSize() / sizeof(float);
+  auto data = static_cast<const float *>(buffer->lock(Ogre::HardwareBuffer::HBL_READ_ONLY));
+  int far_points_in_prefix = 0;
+  for (size_t i = 0; i < 100; ++i) {
+    far_points_in_prefix += data[i * floats_per_vertex] >= 100.0f ? 1 : 0;
+  }
+  buffer->unlock();
+
+  // Drawing a tenth of the cloud still shows the sparse far region completely.
+  EXPECT_THAT(far_points_in_prefix, Eq(10));
 }

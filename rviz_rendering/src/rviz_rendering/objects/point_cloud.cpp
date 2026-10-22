@@ -33,8 +33,15 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cmath>
+#include <limits>
+#include <numeric>
 #include <sstream>
 #include <vector>
+
+#ifdef _MSC_VER
+#include <intrin.h>
+#endif
 
 #include <OgreHardwareBuffer.h>
 #include <OgreSceneManager.h>
@@ -209,6 +216,8 @@ PointCloud::PointCloud()
   common_direction_(Ogre::Vector3::NEGATIVE_UNIT_Z),
   common_up_vector_(Ogre::Vector3::UNIT_Y),
   color_by_index_(false),
+  level_of_detail_(false),
+  point_budget_camera_(nullptr),
   current_mode_supports_geometry_shader_(false)
 {
   std::stringstream ss;
@@ -482,6 +491,132 @@ void PointCloud::setColor(const Ogre::ColourValue & color)
   regenerateAll();
 }
 
+// A step through [0, n) that visits every index once and spreads consecutive visits evenly
+// (golden ratio), so that any prefix of the visiting order is a uniform subset.
+static uint32_t lowDiscrepancyStride(uint32_t n)
+{
+  if (n < 3) {
+    return 1;
+  }
+  auto stride = static_cast<uint32_t>(n * 0.6180339887);
+  while (std::gcd(stride, n) != 1) {
+    ++stride;
+  }
+  return stride;
+}
+
+// Index of the highest set bit of v, which must not be 0.
+static int highestSetBit(uint64_t v)
+{
+#ifdef _MSC_VER
+  unsigned long index;  // NOLINT(runtime/int): _BitScanReverse64 takes an unsigned long
+  _BitScanReverse64(&index, v);
+  return static_cast<int>(index);
+#else
+  return 63 - __builtin_clzll(v);
+#endif
+}
+
+// Spreads the low 21 bits of v so that there are two zero bits between each of them.
+static uint64_t spreadBits(uint64_t v)
+{
+  v &= 0x1fffff;
+  v = (v | v << 32) & 0x1f00000000ffffull;
+  v = (v | v << 16) & 0x1f0000ff0000ffull;
+  v = (v | v << 8) & 0x100f00f00f00f00full;
+  v = (v | v << 4) & 0x10c30c30c30c30c3ull;
+  v = (v | v << 2) & 0x1249249249249249ull;
+  return v;
+}
+
+// Orders n points so that every prefix of the order covers the space they occupy evenly:
+// first one point per coarse voxel, then one more per voxel of half that size, and so on.
+// Sparse regions are therefore kept when a prefix is drawn, redundant points go last.
+static std::vector<uint32_t> levelOfDetailOrder(
+  std::vector<PointCloud::Point>::const_iterator first, uint32_t n)
+{
+  constexpr int kLevels = 12;
+  // Level l has voxels with an edge of extent / 2^(l + 2), so it uses the top l + 2 bits of
+  // each axis of a voxel index with kBits bits.
+  constexpr int kBits = kLevels + 1;
+  constexpr int kIndexBits = 25;
+  static_assert(3 * kBits + kIndexBits <= 64, "voxel code and index must fit in 64 bits");
+  assert(n < (1u << kIndexBits));
+
+  Ogre::AxisAlignedBox box;
+  for (uint32_t i = 0; i < n; ++i) {
+    box.merge(first[i].position);
+  }
+  const Ogre::Real extent = box.isFinite() ? box.getSize().length() : 0.0f;
+  std::vector<uint8_t> level(n, kLevels);
+
+  if (extent > 0.0f && std::isfinite(extent)) {
+    // Sort the points by the Morton code of their finest voxel (index in the low bits), so the
+    // voxels of every level are contiguous. A point is the first of its voxel at the coarsest
+    // level at which its code differs from the previous one.
+    const Ogre::Vector3 minimum = box.getMinimum();
+    const Ogre::Real scale = static_cast<Ogre::Real>(1 << kBits) / extent;
+    const auto quantize = [scale](Ogre::Real v) {
+        return static_cast<uint64_t>(
+          std::min(std::max(v * scale, 0.0f), static_cast<Ogre::Real>((1 << kBits) - 1)));
+      };
+    std::vector<uint64_t> codes(n);
+    for (uint32_t i = 0; i < n; ++i) {
+      const Ogre::Vector3 v = first[i].position - minimum;
+      codes[i] = (spreadBits(quantize(v.x)) << 2 | spreadBits(quantize(v.y)) << 1 |
+        spreadBits(quantize(v.z))) << kIndexBits | i;
+    }
+    std::vector<uint64_t> sorted(n);
+    for (int shift = kIndexBits; shift < 64; shift += 8) {
+      uint32_t count[257] = {0};
+      for (uint64_t code : codes) {
+        ++count[((code >> shift) & 255) + 1];
+      }
+      std::partial_sum(count, count + 257, count);
+      for (uint64_t code : codes) {
+        sorted[count[(code >> shift) & 255]++] = code;
+      }
+      codes.swap(sorted);
+    }
+    for (uint32_t k = 0; k < n; ++k) {
+      const auto i = static_cast<uint32_t>(codes[k] & ((1u << kIndexBits) - 1));
+      const uint64_t difference = k == 0 ? ~0ull : (codes[k] ^ codes[k - 1]) >> kIndexBits;
+      if (difference != 0) {
+        const int highest_bit = highestSetBit(difference);
+        const int depth = k == 0 ? 0 : kBits - 1 - highest_bit / 3;
+        level[i] = static_cast<uint8_t>(std::min(kLevels, std::max(0, depth - 1)));
+      }
+    }
+  }
+
+  // Sort by level; inside a level, spread the points with a low discrepancy stride.
+  std::vector<uint32_t> count(kLevels + 2, 0);
+  for (uint32_t i = 0; i < n; ++i) {
+    ++count[level[i] + 1];
+  }
+  std::partial_sum(count.begin(), count.end(), count.begin());
+  std::vector<uint32_t> by_level(n);
+  std::vector<uint32_t> next(count.begin(), count.end() - 1);
+  for (uint32_t i = 0; i < n; ++i) {
+    by_level[next[level[i]]++] = i;
+  }
+  std::vector<uint32_t> order(n);
+  for (int l = 0; l <= kLevels; ++l) {
+    const uint32_t begin = count[l];
+    const uint32_t size = count[l + 1] - begin;
+    const uint32_t stride = lowDiscrepancyStride(size);
+    uint32_t index = 0;
+    for (uint32_t k = 0; k < size; ++k) {
+      order[begin + k] = by_level[begin + index];
+      index += stride;
+      if (index >= size) {
+        index -= size;
+      }
+    }
+  }
+  return order;
+}
+
 void PointCloud::addPoints(
   std::vector<Point>::iterator start_iterator,
   std::vector<Point>::iterator stop_iterator)
@@ -495,26 +630,28 @@ void PointCloud::addPoints(
   const float * vertices = getVertices();
   const uint32_t vertices_per_point = getVerticesPerPoint();
 
-  RenderableInternals internals = createNewRenderable(num_points);
+  for (auto chunk_start = start_iterator; chunk_start < stop_iterator; ) {
+    RenderableInternals internals =
+      createNewRenderable(static_cast<uint32_t>(stop_iterator - chunk_start));
+    const uint32_t chunk_size = internals.buffer_size / vertices_per_point;
+    // With level of detail, a renderable draws a prefix of its buffer, so fill it in an order
+    // in which every prefix covers the whole chunk.
+    const std::vector<uint32_t> order =
+      level_of_detail_ ? levelOfDetailOrder(chunk_start, chunk_size) : std::vector<uint32_t>();
 
-  for (auto current_point = start_iterator; current_point < stop_iterator; ++current_point) {
-    if (internals.bufferIsFull()) {
-      assert(internals.noBufferOverflowOccurred());
-
-      finishRenderable(
-        internals,
-        static_cast<uint32_t>(internals.rend->getBuffer()->getNumVertices()));
-
-      internals = createNewRenderable(static_cast<uint32_t>(stop_iterator - current_point));
+    for (uint32_t i = 0; i < chunk_size; ++i) {
+      auto current_point = chunk_start + (order.empty() ? i : order[i]);
+      internals.aabb.merge(current_point->position);
+      addPointToHardwareBuffer(
+        internals, current_point,
+        static_cast<uint32_t>(current_point - start_iterator),
+        vertices, vertices_per_point);
     }
-    internals.aabb.merge(current_point->position);
-    addPointToHardwareBuffer(
-      internals, current_point,
-      static_cast<uint32_t>(current_point - start_iterator),
-      vertices, vertices_per_point);
-  }
+    assert(internals.noBufferOverflowOccurred());
 
-  finishRenderable(internals, internals.current_vertex_count);
+    finishRenderable(internals, internals.current_vertex_count);
+    chunk_start += chunk_size;
+  }
 
   point_count_ += num_points;
 
@@ -649,6 +786,15 @@ void PointCloud::popPoints(uint32_t num_points)
   points_.erase(points_.begin(), points_.begin() + num_points);
   point_count_ -= num_points;
 
+  if (level_of_detail_) {
+    // The oldest points are spread over the buffers in level of detail order; rebuild them.
+    V_Point points = getPoints();
+    points_.clear();
+    clear();
+    addPoints(points.begin(), points.end());
+    return;
+  }
+
   uint32_t vpp = getVerticesPerPoint();
   size_t popped_count = removePointsFromRenderables(num_points, vpp);
   (void) popped_count;
@@ -700,9 +846,42 @@ void PointCloud::resetBoundingBoxForCurrentPoints()
   }
 }
 
+void PointCloud::setLevelOfDetail(bool enabled)
+{
+  if (enabled != level_of_detail_) {
+    level_of_detail_ = enabled;
+    regenerateAll();
+  }
+  if (!enabled) {
+    setPointBudget(std::numeric_limits<size_t>::max());
+  }
+}
+
+void PointCloud::setPointBudget(size_t max_points, const Ogre::Camera * camera)
+{
+  point_budget_camera_ = camera;
+  const double fraction = point_count_ > 0 && level_of_detail_ ?
+    std::min(1.0, static_cast<double>(max_points) / point_count_) : 1.0;
+  const uint32_t vertices_per_point = getVerticesPerPoint();
+  for (auto & renderable : renderables_) {
+    size_t limit = std::numeric_limits<size_t>::max();
+    if (fraction < 1.0) {
+      const size_t points = renderable->getRenderOperation()->vertexData->vertexCount /
+        vertices_per_point;
+      limit = static_cast<size_t>(std::ceil(fraction * points)) * vertices_per_point;
+    }
+    renderable->setVertexLimit(limit);
+  }
+}
+
 void PointCloud::_notifyCurrentCamera(Ogre::Camera * camera)
 {
   Ogre::MovableObject::_notifyCurrentCamera(camera);
+  // The render queue is built and drawn for one camera at a time.
+  const bool budget_applies = !point_budget_camera_ || camera == point_budget_camera_;
+  for (auto & renderable : renderables_) {
+    renderable->setVertexLimitEnabled(budget_applies);
+  }
 }
 
 void PointCloud::_updateRenderQueue(Ogre::RenderQueue * queue)
