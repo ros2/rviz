@@ -95,6 +95,9 @@ private:
   void cloneMaterials(const std::string & id);
   void useClonedMaterials(const std::string & id, const Ogre::MaterialPtr & default_material) const;
   void updateMaterialColor(const MarkerBase::MarkerConstSharedPtr & new_message) const;
+
+  /// Name of the mesh loaded from the message itself, released on reset().
+  std::string embedded_mesh_;
 };
 
 }  // namespace markers
