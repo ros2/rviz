@@ -30,6 +30,7 @@
 
 #include "rviz_default_plugins/displays/range/range_display.hpp"
 
+#include <cmath>
 #include <limits>
 #include <memory>
 
@@ -38,6 +39,7 @@
 #include "rclcpp/time.hpp"
 
 #include "rviz_rendering/objects/shape.hpp"
+#include "rviz_common/properties/bool_property.hpp"
 #include "rviz_common/properties/color_property.hpp"
 #include "rviz_common/properties/float_property.hpp"
 #include "rviz_common/properties/int_property.hpp"
@@ -75,6 +77,22 @@ RangeDisplay::RangeDisplay()
     "Number of prior measurements to display.",
     this, SLOT(updateBufferLength()));
   buffer_length_property_->setMin(1);
+
+  show_variance_property_ = new rviz_common::properties::BoolProperty(
+    "Show Variance", false,
+    "Draw the +/- one standard deviation band around the measured range. "
+    "A variance of 0 means unknown and is never drawn.",
+    this, SLOT(updateVariance()));
+
+  variance_color_property_ = new rviz_common::properties::ColorProperty(
+    "Variance Color", Qt::white,
+    "Color to draw the variance band.",
+    show_variance_property_, SLOT(updateVariance()), this);
+
+  variance_alpha_property_ = new rviz_common::properties::FloatProperty(
+    "Variance Alpha", 0.2f,
+    "Amount of transparency to apply to the variance band.",
+    show_variance_property_, SLOT(updateVariance()), this);
 }
 
 void RangeDisplay::onInitialize()
@@ -82,6 +100,7 @@ void RangeDisplay::onInitialize()
   MFDClass::onInitialize();
   updateBufferLength();
   updateColorAndAlpha();
+  updateVariance();
 }
 
 RangeDisplay::~RangeDisplay() = default;
@@ -102,6 +121,43 @@ void RangeDisplay::updateColorAndAlpha()
   context_->queueRender();
 }
 
+void RangeDisplay::updateVariance()
+{
+  // The band's cones only exist while it is switched on, so a display left at the
+  // defaults adds nothing to the scene.
+  if (show_variance_property_->getBool()) {
+    createVarianceBands();
+  } else {
+    destroyVarianceBands();
+  }
+  context_->queueRender();
+}
+
+void RangeDisplay::createVarianceBands()
+{
+  variance_bands_.resize(cones_.size());
+  for (auto & band : variance_bands_) {
+    createBandEdge(band.near_edge);
+    createBandEdge(band.far_edge);
+  }
+}
+
+void RangeDisplay::createBandEdge(std::shared_ptr<rviz_rendering::Shape> & edge)
+{
+  if (!edge) {
+    edge = std::make_shared<rviz_rendering::Shape>(
+      rviz_rendering::Shape::Cone, context_->getSceneManager(), scene_node_);
+    edge->setScale(Ogre::Vector3(0, 0, 0));
+  }
+  const auto color = variance_color_property_->getOgreColor();
+  edge->setColor(color.r, color.g, color.b, variance_alpha_property_->getFloat());
+}
+
+void RangeDisplay::destroyVarianceBands()
+{
+  variance_bands_.clear();
+}
+
 void RangeDisplay::updateBufferLength()
 {
   int buffer_length = buffer_length_property_->getInt();
@@ -115,6 +171,12 @@ void RangeDisplay::updateBufferLength()
 
     cone->setScale(Ogre::Vector3(0, 0, 0));
     cone->setColor(color.r, color.g, color.b, 0);
+  }
+
+  // Bands are per measurement, so they have to be rebuilt with the buffer.
+  destroyVarianceBands();
+  if (show_variance_property_->getBool()) {
+    createVarianceBands();
   }
 }
 
@@ -145,6 +207,66 @@ void RangeDisplay::processMessage(const sensor_msgs::msg::Range::ConstSharedPtr 
 
   auto color = color_property_->getOgreColor();
   cone->setColor(color.r, color.g, color.b, alpha_property_->getFloat());
+
+  updateVarianceBand(
+    messages_received_ % buffer_length_property_->getInt(), msg, displayed_range);
+}
+
+void RangeDisplay::updateVarianceBand(
+  size_t index,
+  sensor_msgs::msg::Range::ConstSharedPtr msg,
+  float displayed_range)
+{
+  if (index >= variance_bands_.size()) {
+    return;
+  }
+  const VarianceBand & band = variance_bands_[index];
+
+  // sensor_msgs/Range documents a variance of 0 as "variance unknown".
+  if (!std::isfinite(msg->variance) || msg->variance <= 0.0f || displayed_range <= 0.0f) {
+    hideBand(band);
+    return;
+  }
+
+  const float sigma = std::sqrt(msg->variance);
+  showBandEdge(band.near_edge, msg, displayed_range - sigma);
+  showBandEdge(band.far_edge, msg, displayed_range + sigma);
+}
+
+void RangeDisplay::showBandEdge(
+  const std::shared_ptr<rviz_rendering::Shape> & edge,
+  sensor_msgs::msg::Range::ConstSharedPtr msg,
+  float length)
+{
+  // A sigma wider than the measurement itself puts the near edge at or behind the
+  // sensor, where there is nothing meaningful to draw.
+  if (length <= 0.0f) {
+    edge->setScale(Ogre::Vector3(0, 0, 0));
+    return;
+  }
+
+  Ogre::Vector3 position;
+  Ogre::Quaternion orientation;
+  const rclcpp::Time time_stamp(msg->header.stamp, RCL_ROS_TIME);
+
+  if (!context_->getFrameManager()->transform(
+      msg->header.frame_id, time_stamp, getPose(length), position, orientation))
+  {
+    edge->setScale(Ogre::Vector3(0, 0, 0));
+    return;
+  }
+
+  edge->setPosition(position);
+  edge->setOrientation(orientation);
+
+  const float width = 2.0f * length * std::tan(msg->field_of_view / 2.0f);
+  edge->setScale(Ogre::Vector3(width, length, width));
+}
+
+void RangeDisplay::hideBand(const VarianceBand & band)
+{
+  band.near_edge->setScale(Ogre::Vector3(0, 0, 0));
+  band.far_edge->setScale(Ogre::Vector3(0, 0, 0));
 }
 
 float RangeDisplay::getDisplayedRange(sensor_msgs::msg::Range::ConstSharedPtr msg)
