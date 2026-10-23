@@ -309,9 +309,6 @@ void PointCloud::clear()
   bounding_box_.setNull();
 
   if (getParentSceneNode()) {
-    for (auto const & renderable : renderables_) {
-      getParentSceneNode()->detachObject(renderable.get());
-    }
     getParentSceneNode()->needUpdate();
   }
 
@@ -746,9 +743,8 @@ PointCloudRenderablePtr PointCloud::createRenderable(
   rend->setCustomParameter(RVIZ_RENDERING_PICK_COLOR_PARAMETER, pick_col);
   rend->setCustomParameter(RVIZ_RENDERING_NORMAL_PARAMETER, Ogre::Vector4(common_direction_));
   rend->setCustomParameter(RVIZ_RENDERING_UP_PARAMETER, Ogre::Vector4(common_up_vector_));
-  if (getParentSceneNode()) {
-    getParentSceneNode()->attachObject(rend.get());
-  }
+  // Not attached to the scene node: _updateRenderQueue() queues the renderables, attaching them
+  // as well would draw them twice.
   renderables_.push_back(rend);
 
   return rend;
