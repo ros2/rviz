@@ -45,6 +45,7 @@
 #include <OgreRenderWindow.h>
 
 #include <QMenu>  // NOLINT: cpplint cannot handle the include order here
+#include <QPointF>  // NOLINT: cpplint cannot handle the include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "interactive_markers/tools.hpp"
@@ -369,7 +370,11 @@ bool InteractiveMarker::handle3DCursorEvent(
       Ogre::Vector2 mouse_pos = rviz_rendering::project3DPointToViewportXY(
         rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(event.panel->getRenderWindow()),
         cursor_pos);
-      QCursor::setPos(event.panel->mapToGlobal(QPoint(mouse_pos.x, mouse_pos.y)));
+      // The projection is in viewport (device) pixels; mapToGlobal expects logical ones.
+      const qreal pixel_ratio = event.panel->getRenderWindow()->devicePixelRatio();
+      QCursor::setPos(
+        event.panel->mapToGlobal(
+          (QPointF(QPoint(mouse_pos.x, mouse_pos.y)) / pixel_ratio).toPoint()));
       showMenu(event, control_name, three_d_point, valid_point);
       return true;
     }
