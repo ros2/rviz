@@ -30,6 +30,7 @@
 
 #include <algorithm>
 #include <string>
+#include <utility>
 
 #include "rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.hpp"
 
@@ -202,6 +203,7 @@ void IntensityPCTransformer::updateChannels(
   const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
 {
   V_string channels;
+  channels.reserve(cloud->fields.size());
   for (size_t i = 0; i < cloud->fields.size(); ++i) {
     channels.push_back(cloud->fields[i].name);
   }
@@ -216,7 +218,7 @@ void IntensityPCTransformer::updateChannels(
       }
       channel_name_property_->addOptionStd(channel);
     }
-    available_channels_ = channels;
+    available_channels_ = std::move(channels);
   }
 }
 

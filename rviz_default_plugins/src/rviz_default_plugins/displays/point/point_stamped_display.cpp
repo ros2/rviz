@@ -107,7 +107,7 @@ void PointStampedDisplay::updateColorAndAlpha()
   float radius = radius_property_->getFloat();
   Ogre::ColourValue color = color_property_->getOgreColor();
 
-  for (auto visual : visuals_) {
+  for (const auto & visual : visuals_) {
     visual->setColor(color.r, color.g, color.b, alpha);
     visual->setScale(Ogre::Vector3(radius, radius, radius));
   }
