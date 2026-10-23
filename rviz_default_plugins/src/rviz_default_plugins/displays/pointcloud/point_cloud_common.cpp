@@ -30,14 +30,18 @@
 
 #include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
 
+#include <algorithm>
+#include <limits>
 #include <memory>
 #include <set>
 #include <string>
 #include <vector>
 #include <utility>
 
+#include <OgreCamera.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
+#include <OgreViewport.h>
 #include <OgreWireBoundingBox.h>
 
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
@@ -56,6 +60,8 @@
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
 #include "rviz_common/validate_floats.hpp"
+#include "rviz_common/view_controller.hpp"
+#include "rviz_common/view_manager.hpp"
 
 namespace rviz_default_plugins
 {
@@ -145,6 +151,14 @@ PointCloudCommon::PointCloudCommon(rviz_common::Display * display)
     "Duration, in seconds, to keep the incoming points.  0 means only show the latest points.",
     display_, SLOT(queueRender()));
   decay_time_property_->setMin(0);
+
+  screen_density_property_ = new rviz_common::properties::FloatProperty(
+    "Max Points Per Pixel", 0.0f,
+    "Level of detail: parts of the cloud that are small on screen are drawn with at most this "
+    "many points per pixel they cover. Speeds up large or accumulated clouds viewed from afar. "
+    "0 draws every point.",
+    display_, SLOT(updateScreenDensity()), this);
+  screen_density_property_->setMin(0);
 
   xyz_transformer_property_ = new rviz_common::properties::EnumProperty(
     "Position Transformer", "",
@@ -237,6 +251,101 @@ void PointCloudCommon::updateAlpha()
   }
 }
 
+void PointCloudCommon::updateScreenDensity()
+{
+  for (auto const & cloud_info : cloud_infos_) {
+    cloud_info->cloud_->setLevelOfDetail(screen_density_property_->getFloat() > 0.0f);
+  }
+  context_->queueRender();
+}
+
+// Approximate number of pixels covered by a box on screen, from its bounding sphere.
+static double projectedArea(
+  const Ogre::Camera * camera, const Ogre::AxisAlignedBox & box, double screen_area)
+{
+  // Pixels per world unit (at unit distance for perspective cameras), taken from the projection
+  // matrix so that view controllers which set a custom projection are covered too.
+  const Ogre::Real pixels_per_unit =
+    camera->getProjectionMatrix()[1][1] * camera->getViewport()->getActualHeight() * 0.5f;
+  const Ogre::Real radius = box.getHalfSize().length();
+  Ogre::Real radius_pixels = radius * pixels_per_unit;
+  if (camera->getProjectionType() == Ogre::PT_PERSPECTIVE) {
+    const Ogre::Real distance = (camera->getDerivedPosition() - box.getCenter()).length();
+    if (distance <= radius) {
+      return screen_area;
+    }
+    radius_pixels /= distance;
+  }
+  return std::min(screen_area, static_cast<double>(Ogre::Math::PI * radius_pixels * radius_pixels));
+}
+
+void PointCloudCommon::updateLevelOfDetail()
+{
+  const float points_per_pixel = screen_density_property_->getFloat();
+  auto view_manager = context_->getViewManager();
+  auto view = view_manager ? view_manager->getCurrent() : nullptr;
+  Ogre::Camera * camera = view ? view->getCamera() : nullptr;
+  if (points_per_pixel <= 0.0f || !camera || !camera->getViewport()) {
+    return;
+  }
+  const double screen_area = static_cast<double>(camera->getViewport()->getActualWidth()) *
+    camera->getViewport()->getActualHeight();
+
+  struct VisibleCloud
+  {
+    rviz_rendering::PointCloud * cloud;
+    double points;
+    double area;
+  };
+  std::vector<VisibleCloud> visible;
+  double total_points = 0.0;
+  for (auto const & cloud_info : cloud_infos_) {
+    rviz_rendering::PointCloud * cloud = cloud_info->cloud_.get();
+    const Ogre::AxisAlignedBox & box = cloud->getWorldBoundingBox(true);
+    if (box.isNull() || box.isInfinite() || !camera->isVisible(box)) {
+      // Culled in this view anyway; it does not take a share of the budget.
+      cloud->setPointBudget(std::numeric_limits<size_t>::max(), camera);
+      continue;
+    }
+    visible.push_back({cloud, static_cast<double>(cloud->getNumPoints()),
+        std::max(1.0, projectedArea(camera, box, screen_area))});
+    total_points += visible.back().points;
+  }
+
+  // Share points_per_pixel * screen_area points between the visible clouds: each cloud draws
+  // min(points, level * area), with the level chosen to use up the budget ("water filling").
+  // Clouds that are sparse on screen keep all their points, dense ones are thinned evenly.
+  double remaining_budget = points_per_pixel * screen_area;
+  double remaining_area = 0.0;
+  for (auto const & entry : visible) {
+    remaining_area += entry.area;
+  }
+  double level = std::numeric_limits<double>::max();
+  if (total_points > remaining_budget) {
+    std::sort(
+      visible.begin(), visible.end(), [](const VisibleCloud & a, const VisibleCloud & b) {
+        return a.points * b.area < b.points * a.area;
+      });
+    for (auto const & entry : visible) {
+      level = remaining_budget / remaining_area;
+      if (entry.points > level * entry.area) {
+        break;
+      }
+      remaining_budget -= entry.points;
+      remaining_area -= entry.area;
+    }
+  }
+  // Keep a few points of every visible cloud, so that no cloud disappears entirely.
+  const size_t min_points = 64;
+  for (auto const & entry : visible) {
+    const double points = level * entry.area;
+    entry.cloud->setPointBudget(
+      points < entry.points ?
+      std::max(min_points, static_cast<size_t>(points)) : std::numeric_limits<size_t>::max(),
+      camera);
+  }
+}
+
 void PointCloudCommon::updateSelectable()
 {
   bool selectable = selectable_property_->getBool();
@@ -309,6 +418,7 @@ void PointCloudCommon::update(std::chrono::nanoseconds wall_dt, std::chrono::nan
   removeObsoleteCloudInfos();
 
   insertNewClouds(point_decay_time, now);
+  updateLevelOfDetail();
 
   updateTransformerProperties();
   updateStatus();
@@ -337,8 +447,11 @@ void PointCloudCommon::insertNewClouds(float point_decay_time, const rclcpp::Tim
 
       cloud_info->cloud_.reset(new rviz_rendering::PointCloud());
       cloud_info->cloud_->setRenderMode(mode);
+      cloud_info->cloud_->setLevelOfDetail(screen_density_property_->getFloat() > 0.0f);
       cloud_info->cloud_->addPoints(
         cloud_info->transformed_points_.begin(), cloud_info->transformed_points_.end());
+      // The cloud keeps its own copy of the points.
+      V_PointCloudPoint().swap(cloud_info->transformed_points_);
       cloud_info->cloud_->setAlpha(alpha_property_->getFloat(), per_point_alpha);
       cloud_info->cloud_->setDimensions(size, size, size);
       cloud_info->cloud_->setAutoSize(auto_size_);
@@ -503,7 +616,7 @@ void PointCloudCommon::updateStatus()
   std::stringstream ss;
   uint64_t total_point_count = 0;
   for (const auto & cloud_info : cloud_infos_) {
-    total_point_count += cloud_info->transformed_points_.size();
+    total_point_count += cloud_info->cloud_->getNumPoints();
   }
   ss << "Showing [" << total_point_count << "] points from [" << cloud_infos_.size() <<
     "] messages";
@@ -585,6 +698,7 @@ void PointCloudCommon::retransform()
     cloud_info->cloud_->clearAndRemoveAllPoints();
     cloud_info->cloud_->addPoints(
       cloud_info->transformed_points_.begin(), cloud_info->transformed_points_.end());
+    V_PointCloudPoint().swap(cloud_info->transformed_points_);
   }
 }
 

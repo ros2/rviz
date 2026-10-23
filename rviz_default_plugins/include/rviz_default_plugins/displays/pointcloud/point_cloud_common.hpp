@@ -114,6 +114,7 @@ struct RVIZ_DEFAULT_PLUGINS_POINTCLOUD_PUBLIC CloudInfo
   std::shared_ptr<rviz_rendering::PointCloud> cloud_;
   PointCloudSelectionHandlerPtr selection_handler_;
 
+  /// Points of message_ while they are being transformed; empty once they are in cloud_.
   std::vector<rviz_rendering::PointCloud::Point> transformed_points_;
 
   Ogre::Quaternion orientation_;
@@ -162,6 +163,7 @@ public:
   rviz_common::properties::EnumProperty * color_transformer_property_;
   rviz_common::properties::EnumProperty * style_property_;
   rviz_common::properties::FloatProperty * decay_time_property_;
+  rviz_common::properties::FloatProperty * screen_density_property_;
 
   void setAutoSize(bool auto_size);
 
@@ -173,6 +175,7 @@ private Q_SLOTS:
   void updateStyle();
   void updateBillboardSize();
   void updateAlpha();
+  void updateScreenDensity();
   void updateXyzTransformer();
   void updateColorTransformer();
   void setXyzTransformerOptions(rviz_common::properties::EnumProperty * prop);
@@ -206,6 +209,8 @@ private:
   void fillTransformerOptions(rviz_common::properties::EnumProperty * prop, uint32_t mask);
 
   void insertNewClouds(float point_decay_time, const rclcpp::Time & now);
+
+  void updateLevelOfDetail();
   float getSizeForRenderMode(const rviz_rendering::PointCloud::RenderMode & mode);
 
   void updateTransformerProperties();
