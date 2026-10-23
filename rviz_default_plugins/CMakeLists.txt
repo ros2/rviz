@@ -766,6 +766,12 @@ if(BUILD_TESTING)
     )
   endif()
 
+  ament_add_gmock(point_cloud_helpers_test
+    test/rviz_default_plugins/displays/pointcloud/point_cloud_helpers_test.cpp)
+  if(TARGET point_cloud_helpers_test)
+    target_link_libraries(point_cloud_helpers_test rviz_default_plugins)
+  endif()
+
   ament_add_gmock(point_cloud_transformers_test
     test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/axis_color_pc_transformer_test.cpp
     test/rviz_default_plugins/displays/pointcloud/point_cloud_transformers/flat_color_pc_transformer_test.cpp
