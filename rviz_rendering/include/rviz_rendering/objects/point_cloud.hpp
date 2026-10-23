@@ -257,6 +257,10 @@ private:
   RVIZ_RENDERING_PUBLIC
   bool changingGeometrySupportIsNecessary(const Ogre::MaterialPtr materialPtr);
 
+  /// Switch to the shared materials with or without alpha blending.
+  RVIZ_RENDERING_PUBLIC
+  void setMaterials(bool alpha_blending);
+
   RVIZ_RENDERING_PUBLIC
   PointCloudRenderablePtr createRenderable(
     int num_points,
