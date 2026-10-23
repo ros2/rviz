@@ -32,6 +32,7 @@
 
 #include <QApplication>
 
+#include <algorithm>
 #include <sstream>
 #include <string>
 
@@ -39,6 +40,9 @@
 
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/properties/color_property.hpp"
+#include "rviz_common/properties/display_group_visibility_property.hpp"
+#include "rviz_common/properties/property_tree_model.hpp"
+#include "rviz_common/display_group.hpp"
 #include "rviz_common/config.hpp"
 #include "rviz_common/yaml_config_reader.hpp"
 #include "rviz_common/yaml_config_writer.hpp"
@@ -193,4 +197,64 @@ TEST(DisplayGroup, save_properties) {
       "Enabled: false\n"
       "Name: Charles\n"
     ), out.toStdString());
+}
+
+// Counts how deeply row removals nest while a display group changes.
+class RemovalDepth
+{
+public:
+  explicit RemovalDepth(QAbstractItemModel * model)
+  {
+    QObject::connect(
+      model, &QAbstractItemModel::rowsAboutToBeRemoved, [this]() {
+        deepest = std::max(deepest, ++open);
+      });
+    QObject::connect(model, &QAbstractItemModel::rowsRemoved, [this]() {--open;});
+  }
+
+  int open = 0;
+  int deepest = 0;
+};
+
+// A group with three displays, the first of which lists the others for visibility the way
+// a Camera display does. That list removes a row of its own whenever a display is removed.
+rviz_common::DisplayGroup * groupWithVisibilityList(
+  rviz_common::properties::PropertyTreeModel ** model)
+{
+  auto group = new rviz_common::DisplayGroup();
+  *model = new rviz_common::properties::PropertyTreeModel(group);
+  for (int i = 0; i < 3; ++i) {
+    group->addDisplay(new rviz_common::Display());
+  }
+  auto camera = group->getDisplayAt(0);
+  new rviz_common::properties::DisplayGroupVisibilityProperty(
+    1, group, camera, "Visibility", true, "", camera);
+  return group;
+}
+
+TEST(DisplayGroup, removing_all_displays_does_not_nest_row_removals) {
+  rviz_common::properties::PropertyTreeModel * model;
+  auto group = groupWithVisibilityList(&model);
+  RemovalDepth depth(model);
+
+  group->removeAllDisplays();
+
+  EXPECT_EQ(depth.deepest, 1);
+  EXPECT_EQ(depth.open, 0);
+  EXPECT_EQ(group->numDisplays(), 0);
+  delete model;
+}
+
+TEST(DisplayGroup, taking_a_display_does_not_nest_row_removals) {
+  rviz_common::properties::PropertyTreeModel * model;
+  auto group = groupWithVisibilityList(&model);
+  RemovalDepth depth(model);
+
+  delete group->takeDisplay(group->getDisplayAt(2));
+  delete group->takeChildAt(group->numChildren() - 1);
+
+  EXPECT_EQ(depth.deepest, 1);
+  EXPECT_EQ(depth.open, 0);
+  EXPECT_EQ(group->numDisplays(), 1);
+  delete model;
 }

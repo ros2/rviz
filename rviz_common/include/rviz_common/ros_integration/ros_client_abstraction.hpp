@@ -75,9 +75,11 @@ public:
   RosNodeAbstractionIface::WeakPtr
   init(int argc, char ** argv, const std::string & name, bool anonymous_name) override;
 
-  /// Check if ROS is "ok" or not, usually if ROS has been shutdown or not.
+  /// Check whether ROS is running and no SIGINT or SIGTERM has requested exit.
   /**
-   * \param node_name the name of the node returned by ros_integration::init()
+   * A signal requests exit without shutting ROS down, so displays can be destroyed
+   * while ROS is still valid.
+   *
    * \return true if ok, otherwise false
    */
   RVIZ_COMMON_PUBLIC
