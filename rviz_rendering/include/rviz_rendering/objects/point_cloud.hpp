@@ -141,8 +141,18 @@ public:
   RVIZ_RENDERING_PUBLIC
   void popPoints(uint32_t num_points);
 
+  /// A copy of all points, oldest first. Colours have the 8 bit precision of the hardware buffers.
   RVIZ_RENDERING_PUBLIC
   std::vector<Point> getPoints();
+
+  /// The point at \p index, counted from the oldest point; no bounds checking.
+  /// The colour has the 8 bit precision of the hardware buffers.
+  RVIZ_RENDERING_PUBLIC
+  Point getPoint(uint32_t index) const;
+
+  /// The number of points in the cloud.
+  RVIZ_RENDERING_PUBLIC
+  uint32_t getNumPoints() const {return point_count_;}
 
   /// Set type of rendering primitive to used; supports points, billboards, spheres and boxes.
   RVIZ_RENDERING_PUBLIC
@@ -301,8 +311,15 @@ private:
   Ogre::AxisAlignedBox bounding_box_;       ///< The bounding box of this point cloud
 
   typedef std::vector<Point> V_Point;
+
+  /// A point as kept to rebuild the hardware buffers; the colour is stored like in the buffers.
+  struct StoredPoint
+  {
+    Ogre::Vector3 position;
+    Ogre::RGBA color;
+  };
   ///< The list of points we're displaying. Allocates to a high-water-mark.
-  V_Point points_;
+  std::vector<StoredPoint> points_;
   uint32_t point_count_;                    ///< The number of points currently in #points_
 
   RenderMode render_mode_;

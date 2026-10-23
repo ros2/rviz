@@ -93,6 +93,14 @@ TEST_F(MarkersTestFixture, setMessage_sets_per_point_color_correctly) {
   marker_->setMessage(createMessageWithColorPerPoint(visualization_msgs::msg::Marker::POINTS));
   auto point_cloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
 
-  EXPECT_THAT(point_cloud->getPoints()[0].color, Eq(Ogre::ColourValue(1.0f, 0.0f, 0.5f, 0.5f)));
-  EXPECT_THAT(point_cloud->getPoints()[1].color, Eq(Ogre::ColourValue(0.5f, 0.6f, 0.0f, 0.3f)));
+  // The point cloud keeps colours at the 8 bit precision of its hardware buffers.
+  auto as_stored = [](const Ogre::ColourValue & color) {
+      Ogre::ColourValue stored;
+      stored.setAsRGBA(color.getAsRGBA());
+      return stored;
+    };
+  EXPECT_THAT(
+    point_cloud->getPoints()[0].color, Eq(as_stored(Ogre::ColourValue(1.0f, 0.0f, 0.5f, 0.5f))));
+  EXPECT_THAT(
+    point_cloud->getPoints()[1].color, Eq(as_stored(Ogre::ColourValue(0.5f, 0.6f, 0.0f, 0.3f))));
 }

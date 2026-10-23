@@ -109,7 +109,7 @@ std::shared_ptr<rviz_default_plugins::CloudInfo> createCloudInfoWithSquare(
   cloud_info->manager_ = scene_manager;
   cloud_info->scene_node_ = scene_manager->getRootSceneNode()->createChildSceneNode();
   cloud_info->cloud_ = cloud;
-  cloud_info->transformed_points_ = points;
+  // Like PointCloudCommon, leave transformed_points_ empty once the cloud holds the points.
   cloud_info->orientation_ = Ogre::Quaternion::IDENTITY;
   cloud_info->position_ = Ogre::Vector3::ZERO;
   cloud_info->setSelectable(true, 1, context);
