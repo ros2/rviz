@@ -281,6 +281,14 @@ target_compile_definitions(rviz_common PRIVATE "RVIZ_COMMON_BUILDING_LIBRARY")
 
 if(RVIZ_COMMON_ENABLE_PCH)
   target_precompile_headers(rviz_common PRIVATE src/rviz_common/precompile.hpp)
+  if(CMAKE_COMPILER_IS_GNUCXX)
+    # Required for ccache to still cache compilations that consume the PCH
+    # under GCC -- without -fpch-preprocess, every such TU reports "Could
+    # not use precompiled header" and silently stops being cacheable.
+    # Clang's -include-pch path doesn't need this. See ccache(1),
+    # PRECOMPILED HEADERS.
+    target_compile_options(rviz_common PRIVATE -fpch-preprocess)
+  endif()
 endif()
 
 ament_export_dependencies(
