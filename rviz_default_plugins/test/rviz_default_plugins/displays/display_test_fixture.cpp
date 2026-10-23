@@ -61,6 +61,8 @@ DisplayTestFixture::DisplayTestFixture()
     testing::Return(selection_manager_));
   EXPECT_CALL(*context_, getHandlerManager()).WillRepeatedly(
     testing::Return(handler_manager_));
+  EXPECT_CALL(*context_, getResourceRetriever()).WillRepeatedly(
+    testing::ReturnRef(resource_retriever_));
 }
 
 DisplayTestFixture::~DisplayTestFixture()
