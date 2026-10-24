@@ -1,4 +1,5 @@
 // Copyright (c) 2026, Miko Parkkinen
+// Copyright (c) 2026, John C. Furey
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -31,6 +32,9 @@
 
 #include <vector>
 
+#include <OgreSceneManager.h>
+#include <OgreSceneNode.h>
+
 #include <QApplication>  // NOLINT
 #include <QElapsedTimer>  // NOLINT
 #include <QEventLoop>  // NOLINT
@@ -44,6 +48,8 @@
 #include "rviz_rendering/render_window.hpp"
 
 #include "display_context_fixture.hpp"
+
+using rviz_rendering::RenderWindowOgreAdapter;
 
 namespace
 {
@@ -168,6 +174,40 @@ TEST_F(RenderPanelTest, render_window_does_not_swallow_keys_the_panel_cannot_han
   QKeyEvent disabled_press(QEvent::KeyPress, Qt::Key_F, Qt::NoModifier);
   QApplication::sendEvent(disabled_panel.getRenderWindow(), &disabled_press);
   EXPECT_FALSE(disabled_press.isAccepted());
+}
+
+TEST_F(RenderPanelTest, destroying_panels_releases_their_cameras_and_nodes)
+{
+  const auto cameras = scene_manager_->getCameras().size();
+  const auto nodes = scene_manager_->getRootSceneNode()->numChildren();
+  for (int cycle = 0; cycle < 5; ++cycle) {
+    {
+      rviz_common::RenderPanel panel;
+      panel.initialize(context_.get(), true);
+      panel.getRenderWindow()->resize(64, 64);
+      panel.getRenderWindow()->initialize();
+      EXPECT_EQ(scene_manager_->getCameras().size(), cameras + 1);
+      EXPECT_EQ(scene_manager_->getRootSceneNode()->numChildren(), nodes + 1);
+    }
+    EXPECT_EQ(scene_manager_->getCameras().size(), cameras);
+    EXPECT_EQ(scene_manager_->getRootSceneNode()->numChildren(), nodes);
+  }
+}
+
+TEST_F(RenderPanelTest, destroying_panel_preserves_a_borrowed_camera)
+{
+  auto * borrowed_camera = scene_manager_->createCamera("BorrowedCamera");
+  {
+    rviz_common::RenderPanel panel;
+    panel.initialize(context_.get(), true);
+    auto * window = panel.getRenderWindow();
+    window->resize(64, 64);
+    window->initialize();
+    RenderWindowOgreAdapter::setOgreCamera(window, borrowed_camera);
+  }
+  ASSERT_TRUE(scene_manager_->hasCamera("BorrowedCamera"));
+  EXPECT_EQ(scene_manager_->getCameras().size(), 1u);
+  EXPECT_EQ(scene_manager_->getRootSceneNode()->numChildren(), 0u);
 }
 
 int main(int argc, char ** argv)
