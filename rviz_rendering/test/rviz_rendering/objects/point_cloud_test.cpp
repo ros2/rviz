@@ -33,6 +33,7 @@
 
 #include <memory>
 #include <regex>
+#include <utility>
 #include <vector>
 
 #include <QApplication>  // NOLINT
@@ -83,6 +84,36 @@ TEST_F(PointCloudTestFixture, addPoints_for_the_first_time_adds_renderable) {
 
   auto renderables = point_cloud->getRenderables();
   ASSERT_THAT(renderables, SizeIs(1u));
+}
+
+TEST_F(PointCloudTestFixture, addPoints_by_move_adds_the_same_points_as_the_iterator_overload) {
+  auto point_cloud = std::make_shared<rviz_rendering::PointCloud>();
+
+  auto points = squareCenteredAtZero;
+  point_cloud->addPoints(std::move(points));
+
+  ASSERT_THAT(point_cloud->getPoints(), SizeIs(squareCenteredAtZero.size()));
+  ASSERT_THAT(point_cloud->getRenderables(), SizeIs(1u));
+  ASSERT_THAT(
+    point_cloud->getBoundingBox(),
+    AllOf(
+      HasMinimum(Ogre::Vector3(-1, -1, 0)),
+      HasMaximum(Ogre::Vector3(1, 1, 0))
+  ));
+}
+
+TEST_F(PointCloudTestFixture, addPoints_by_move_appends_to_points_already_present) {
+  auto point_cloud = std::make_shared<rviz_rendering::PointCloud>();
+
+  point_cloud->addPoints(singlePointArray.begin(), singlePointArray.end());
+  auto points = squareCenteredAtZero;
+  point_cloud->addPoints(std::move(points));
+
+  ASSERT_THAT(
+    point_cloud->getPoints(),
+    SizeIs(singlePointArray.size() + squareCenteredAtZero.size()));
+  ASSERT_THAT(point_cloud->getPoints()[0].position, Eq(singlePointArray[0].position));
+  ASSERT_THAT(point_cloud->getPoints()[1].position, Eq(squareCenteredAtZero[0].position));
 }
 
 TEST_F(PointCloudTestFixture, addPoints_many_points_gets_a_good_bounding_box_for_points) {
