@@ -374,6 +374,16 @@ if(BUILD_TESTING)
 
   set(TEST_SUPPORT_OBJECTS $<TARGET_OBJECTS:test_support_objects>)
 
+  ament_add_gmock(selection_viewport_lifetime_test
+    test/interaction/selection_viewport_lifetime_test.cpp
+    ${TEST_SUPPORT_OBJECTS}
+    ${SKIP_DISPLAY_TESTS}
+  )
+  if(TARGET selection_viewport_lifetime_test)
+    target_include_directories(selection_viewport_lifetime_test PRIVATE test)
+    target_link_libraries(selection_viewport_lifetime_test rviz_common Qt6::Widgets)
+  endif()
+
   ament_add_gmock(render_panel_test
     test/render_panel_test.cpp
     ${TEST_SUPPORT_OBJECTS}
