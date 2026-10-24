@@ -125,7 +125,7 @@ void PanelDockWidget::setContentWidget(QWidget * child)
 void PanelDockWidget::closeEvent(QCloseEvent * event)
 {
   Q_UNUSED(event);
-  emit closed();
+  Q_EMIT closed();
 }
 
 void PanelDockWidget::onChildDestroyed(QObject *)  // NOLINT: cpplint thinks this is a cast?
