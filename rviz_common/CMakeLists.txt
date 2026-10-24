@@ -374,6 +374,15 @@ if(BUILD_TESTING)
 
   set(TEST_SUPPORT_OBJECTS $<TARGET_OBJECTS:test_support_objects>)
 
+  ament_add_gmock(visualization_frame_test
+    test/visualization_frame_test.cpp
+    ${TEST_SUPPORT_OBJECTS}
+    ${SKIP_DISPLAY_TESTS}
+  )
+  if(TARGET visualization_frame_test)
+    target_link_libraries(visualization_frame_test rviz_common Qt6::Widgets)
+  endif()
+
   ament_add_gmock(render_panel_test
     test/render_panel_test.cpp
     ${TEST_SUPPORT_OBJECTS}
