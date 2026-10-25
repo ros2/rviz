@@ -37,6 +37,7 @@
 #include <QKeyEvent>  // NOLINT
 #include <QMouseEvent>  // NOLINT
 #include <QTest>  // NOLINT
+#include <QWidget>  // NOLINT
 #include <OgreSceneNode.h>  // NOLINT
 
 #include "rviz_common/render_panel.hpp"
@@ -61,9 +62,12 @@ protected:
   {
     original_cursor_ = QCursor::pos();
     mockValidTransform(Ogre::Vector3::ZERO, Ogre::Quaternion::IDENTITY);
-    panel_ = std::make_unique<rviz_common::RenderPanel>();
+    // Keep the panel's size independent of top-level window-manager policies.
+    panel_ = std::make_unique<rviz_common::RenderPanel>(&host_);
     panel_->resize(320, 240);
     panel_->winId();
+    host_.resize(640, 480);
+    host_.show();
     panel_->show();
     ASSERT_TRUE(QTest::qWaitForWindowExposed(panel_->windowHandle()));
     panel_->getRenderWindow()->renderNow();
@@ -105,6 +109,7 @@ protected:
     return Ogre::Vector3(0, 0, -10);
   }
 
+  QWidget host_;
   std::unique_ptr<rviz_common::RenderPanel> panel_;
   QPoint original_cursor_;
 };

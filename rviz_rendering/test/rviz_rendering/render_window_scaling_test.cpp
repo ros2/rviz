@@ -36,6 +36,7 @@
 #include <QApplication>  // NOLINT
 #include <QResizeEvent>  // NOLINT
 #include <QTest>  // NOLINT
+#include <QWindow>  // NOLINT
 #include <OgreViewport.h>  // NOLINT
 
 #include "rviz_rendering/render_window.hpp"
@@ -121,7 +122,13 @@ TEST(RenderWindowScaling, viewport_matches_native_size_after_resizing)
 {
   rviz_rendering::OgreTestingEnvironment environment;
   environment.setUpOgreTestEnvironment();
+  // Match RenderPanel's embedded window so window managers such as Matchbox
+  // cannot replace the requested sizes with maximized top-level geometry.
+  QWindow host;
+  host.resize(640, 480);
+  host.show();
   ResizeProbeWindow window;
+  window.setParent(&host);
 #ifdef _WIN32
   // Ogre's external Win32 window does not account for frame decorations.
   // Match the frameless window embedded in RenderPanel.

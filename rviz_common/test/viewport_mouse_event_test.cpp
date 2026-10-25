@@ -38,6 +38,7 @@
 #include <QTest>  // NOLINT
 #include <QWheelEvent>  // NOLINT
 
+#include "rviz_common/interaction/selection_manager_iface.hpp"
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction.hpp"
 #include "rviz_common/tool.hpp"
@@ -155,7 +156,9 @@ TEST_F(ViewportMouseEventTest, manager_delivers_device_coordinates_without_scali
   rviz_common::VisualizationManager manager(
     &panel, node, nullptr, std::make_shared<rclcpp::Clock>());
   panel.initialize(&manager);
-  manager.initialize();
+  // Mouse dispatch only needs the tool installed below. Initialize selection for
+  // teardown, without loading downstream view/tool plugins via manager.initialize().
+  manager.getSelectionManager()->initialize();
   RecordingTool tool;
   manager.getToolManager()->setCurrentTool(&tool);
 
@@ -182,7 +185,8 @@ TEST_F(ViewportMouseEventTest, panel_preserves_device_pixel_history_between_mous
   rviz_common::VisualizationManager manager(
     &panel, node, nullptr, std::make_shared<rclcpp::Clock>());
   panel.initialize(&manager);
-  manager.initialize();
+  // Keep this test runnable with only rviz_common and its dependencies installed.
+  manager.getSelectionManager()->initialize();
   RecordingTool tool;
   manager.getToolManager()->setCurrentTool(&tool);
 
