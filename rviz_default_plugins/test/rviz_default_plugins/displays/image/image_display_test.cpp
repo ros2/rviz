@@ -152,6 +152,19 @@ TEST_F(ImageDisplayTestFixture, initialize_propagates_smooth_scaling_to_texture)
   imageDisplay.initialize(context_.get());
 }
 
+TEST_F(ImageDisplayTestFixture, initialize_propagates_linear_input_default_to_texture) {
+  auto panelDockWidget = new rviz_common::PanelDockWidget("panelDockWidget");
+  EXPECT_CALL(*window_manager_, addPane(_, _, _, _)).WillOnce(Return(panelDockWidget));
+  EXPECT_CALL(*context_, getFixedFrame()).WillOnce(Return(""));
+
+  // Default is unchecked; the display must push `false` down exactly once
+  // during initialize().
+  EXPECT_CALL(*texture_, setLinearInput(false)).Times(1);
+
+  ImageDisplay imageDisplay(std::move(texture_));
+  imageDisplay.initialize(context_.get());
+}
+
 int main(int argc, char ** argv)
 {
   QApplication app(argc, argv);
