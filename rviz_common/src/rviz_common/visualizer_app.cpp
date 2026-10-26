@@ -82,6 +82,16 @@ void VisualizerApp::loadConfig(QString config_path)
   frame_->loadDisplayConfig(config_path);
 }
 
+void VisualizerApp::setShuttingDown(bool shutting_down)
+{
+  if (frame_) {
+    frame_->setShuttingDown(shutting_down);
+    if (shutting_down) {
+      frame_->setWindowModified(false);
+    }
+  }
+}
+
 bool VisualizerApp::init(int argc, char ** argv)
 {
   rviz_common::install_rviz_rendering_log_handlers();
@@ -186,6 +196,12 @@ VisualizerApp::~VisualizerApp()
 {
   delete continue_timer_;
   ros_client_abstraction_->shutdown();
+  if (frame_) {
+    // Suppress the save-changes prompt during teardown — user has already had
+    // the chance to save interactively.
+    frame_->setShuttingDown(true);
+    frame_->setWindowModified(false);
+  }
   delete frame_;
 }
 
