@@ -28,6 +28,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+#include <functional>
 #include <limits>
 #include <memory>
 #include <set>
@@ -81,6 +82,46 @@ namespace rviz_default_plugins
 {
 namespace displays
 {
+
+namespace
+{
+
+// Tie the viewport subscription to the saved event's lifetime. Replacing the event or
+// destroying the control also removes the listener.
+class DraggingInPlaceEvent : public rviz_common::ViewportMouseEvent,
+  public Ogre::Viewport::Listener
+{
+public:
+  DraggingInPlaceEvent(
+    const rviz_common::ViewportMouseEvent & event, Ogre::Viewport * viewport,
+    std::function<void()> on_destroyed)
+  : ViewportMouseEvent(event), viewport_(viewport), on_destroyed_(std::move(on_destroyed))
+  {
+    if (viewport_) {
+      viewport_->addListener(this);
+    }
+  }
+
+  ~DraggingInPlaceEvent() override
+  {
+    if (viewport_) {
+      viewport_->removeListener(this);
+    }
+  }
+
+  void viewportDestroyed(Ogre::Viewport *) override
+  {
+    viewport_ = nullptr;
+    auto on_destroyed = std::move(on_destroyed_);
+    on_destroyed();
+  }
+
+private:
+  Ogre::Viewport * viewport_;
+  std::function<void()> on_destroyed_;
+};
+
+}  // namespace
 
 InteractiveMarkerControl::InteractiveMarkerControl(
   rviz_common::DisplayContext * context,
@@ -1076,7 +1117,19 @@ void InteractiveMarkerControl::setHighlight(float a)
 
 void InteractiveMarkerControl::recordDraggingInPlaceEvent(rviz_common::ViewportMouseEvent & event)
 {
-  dragging_in_place_event_.reset(new rviz_common::ViewportMouseEvent(event));
+  std::weak_ptr<InteractiveMarkerControl> weak_control = shared_from_this();
+  auto * viewport = drag_viewport_;
+  dragging_in_place_event_ = std::make_shared<DraggingInPlaceEvent>(
+    event, viewport, [weak_control, viewport]() {
+      if (auto control = weak_control.lock()) {
+        if (control->drag_viewport_ == viewport) {
+          control->mouse_down_ = false;
+          control->has_focus_ = false;
+          control->setHighlight(kNoHighlightValue);
+          control->stopDragging(true);
+        }
+      }
+    });
   dragging_in_place_event_->type = QEvent::MouseMove;
 }
 
@@ -1101,6 +1154,9 @@ void InteractiveMarkerControl::handle3DCursorEvent(
   const Ogre::Vector3 & cursor_3D_pos,
   const Ogre::Quaternion & cursor_3D_orientation)
 {
+  if (!rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(event.panel->getRenderWindow())) {
+    return;
+  }
   // change dragging state
   switch (interaction_mode_) {
     case visualization_msgs::msg::InteractiveMarkerControl::BUTTON:
@@ -1140,6 +1196,7 @@ void InteractiveMarkerControl::handle3DCursorEvent(
         parent_->startDragging();
         drag_viewport_ = rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(
           event.panel->getRenderWindow());
+        recordDraggingInPlaceEvent(event);
 
         grab_point_in_reference_frame_ = reference_node_->convertWorldToLocalPosition(
           cursor_3D_pos);
@@ -1235,6 +1292,9 @@ void InteractiveMarkerControl::handle3DCursorEvent(
 
 void InteractiveMarkerControl::handleMouseEvent(rviz_common::ViewportMouseEvent & event)
 {
+  if (!rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(event.panel->getRenderWindow())) {
+    return;
+  }
   // * check if this is just a receive/lost focus event
   // * try to hand over the mouse event to the parent interactive marker
   // * otherwise, execute mouse move handling
