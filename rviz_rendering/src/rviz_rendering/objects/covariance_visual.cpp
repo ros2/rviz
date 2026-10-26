@@ -238,6 +238,12 @@ computeShapeScaleAndOrientation2D(const Eigen::Matrix2d & covariance, Plane plan
   return std::make_tuple(scale, orientation);
 }
 
+template<typename Derived>
+bool isZeroMatrix(const Eigen::MatrixBase<Derived> & matrix)
+{
+  return (matrix.array() == 0.0).all();
+}
+
 Ogre::Real radianScaleToMetricScaleBounded(Ogre::Real radian_scale, float max_degrees)
 {
   if (radian_scale > 2.0 * deg2rad(max_degrees)) {
@@ -256,7 +262,10 @@ CovarianceVisual::CovarianceVisual(
 : scene_manager_(scene_manager),
   local_rotation_(is_local_rotation),
   pose_2d_(false),
-  orientation_visible_(is_visible)
+  position_visible_(is_visible),
+  orientation_visible_(is_visible),
+  position_covariance_is_zero_(false),
+  orientation_covariance_is_zero_(false)
 {
   // Check if the passed pointers are valid
   if (!scene_manager_ || !parent_node) {
@@ -392,14 +401,24 @@ void CovarianceVisual::setCovariance(
   // The 3rd, 4th, and 5th diagonal entries are empty for 2D case
   pose_2d_ = (covariances[14] <= 0 && covariances[21] <= 0 && covariances[28] <= 0);
 
+  // Map covariance to a Eigen::Matrix
+  Eigen::Map<const Eigen::Matrix<double, 6, 6>> covariance(covariances.data());
+
+  // all zeros means no uncertainty was given, so there is nothing to show
+  if (pose_2d_) {
+    position_covariance_is_zero_ = isZeroMatrix(covariance.topLeftCorner<2, 2>());
+    orientation_covariance_is_zero_ = covariance(5, 5) == 0.0;
+  } else {
+    position_covariance_is_zero_ = isZeroMatrix(covariance.topLeftCorner<3, 3>());
+    orientation_covariance_is_zero_ = isZeroMatrix(covariance.bottomRightCorner<3, 3>());
+  }
+  updatePositionVisibility();
   updateOrientationVisibility();
 
   // store orientation in Ogre structure
   // Set the orientation of the fixed node. Since this node is attached to the root node,
   // it's orientation will be the inverse of pose's orientation.
   fixed_orientation_node_->setOrientation(pose_orientation.Inverse());
-  // Map covariance to a Eigen::Matrix
-  Eigen::Map<const Eigen::Matrix<double, 6, 6>> covariance(covariances.data());
 
   updatePosition(covariance);
   if (!pose_2d_) {
@@ -588,7 +607,8 @@ void CovarianceVisual::setVisible(bool visible)
 
 void CovarianceVisual::setPositionVisible(bool visible)
 {
-  position_node_->setVisible(visible);
+  position_visible_ = visible;
+  updatePositionVisibility();
 }
 
 void CovarianceVisual::setOrientationVisible(bool visible)
@@ -597,12 +617,18 @@ void CovarianceVisual::setOrientationVisible(bool visible)
   updateOrientationVisibility();
 }
 
+void CovarianceVisual::updatePositionVisibility()
+{
+  position_node_->setVisible(position_visible_ && !position_covariance_is_zero_);
+}
+
 void CovarianceVisual::updateOrientationVisibility()
 {
-  orientation_offset_nodes_[kRoll]->setVisible(orientation_visible_ && !pose_2d_);
-  orientation_offset_nodes_[kPitch]->setVisible(orientation_visible_ && !pose_2d_);
-  orientation_offset_nodes_[kYaw]->setVisible(orientation_visible_ && !pose_2d_);
-  orientation_offset_nodes_[kYaw2D]->setVisible(orientation_visible_ && pose_2d_);
+  bool visible = orientation_visible_ && !orientation_covariance_is_zero_;
+  orientation_offset_nodes_[kRoll]->setVisible(visible && !pose_2d_);
+  orientation_offset_nodes_[kPitch]->setVisible(visible && !pose_2d_);
+  orientation_offset_nodes_[kYaw]->setVisible(visible && !pose_2d_);
+  orientation_offset_nodes_[kYaw2D]->setVisible(visible && pose_2d_);
 }
 
 void CovarianceVisual::setPosition(const Ogre::Vector3 & position)
