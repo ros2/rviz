@@ -375,14 +375,14 @@ void VisualizationManager::onUpdate()
 
   time_update_timer_ += wall_dt;
 
-  if (time_update_timer_ > std::chrono::nanoseconds(0)) {
+  if (time_update_timer_ > std::chrono::milliseconds(100)) {
     time_update_timer_ = std::chrono::nanoseconds(0);
     updateTime();
   }
 
   frame_update_timer_ += wall_dt;
 
-  if (frame_update_timer_ > std::chrono::nanoseconds(1)) {
+  if (frame_update_timer_ > std::chrono::seconds(1)) {
     frame_update_timer_ = std::chrono::nanoseconds(0);
     updateFrames();
   }

@@ -25,6 +25,16 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+option(RVIZ_COMMON_ENABLE_PCH
+  "Precompile common Qt6/std headers to speed up rviz_common compilation"
+  ON)
+if(APPLE)
+  set(RVIZ_COMMON_ENABLE_PCH OFF)
+endif()
+if(CMAKE_VERSION VERSION_LESS 3.16)
+  set(RVIZ_COMMON_ENABLE_PCH OFF)
+endif()
+
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_ros_core REQUIRED)
 # do find_package(rviz_ogre_vendor) first to make sure the custom OGRE is found
@@ -268,6 +278,18 @@ target_link_libraries(rviz_common PRIVATE
 # Causes the visibility macros to use dllexport rather than dllimport,
 # which is appropriate when building the dll but not consuming it.
 target_compile_definitions(rviz_common PRIVATE "RVIZ_COMMON_BUILDING_LIBRARY")
+
+if(RVIZ_COMMON_ENABLE_PCH)
+  target_precompile_headers(rviz_common PRIVATE src/rviz_common/precompile.hpp)
+  if(CMAKE_COMPILER_IS_GNUCXX)
+    # Required for ccache to still cache compilations that consume the PCH
+    # under GCC -- without -fpch-preprocess, every such TU reports "Could
+    # not use precompiled header" and silently stops being cacheable.
+    # Clang's -include-pch path doesn't need this. See ccache(1),
+    # PRECOMPILED HEADERS.
+    target_compile_options(rviz_common PRIVATE -fpch-preprocess)
+  endif()
+endif()
 
 ament_export_dependencies(
   ament_cmake_ros_core

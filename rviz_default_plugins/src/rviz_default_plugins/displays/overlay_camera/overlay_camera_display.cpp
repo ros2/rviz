@@ -284,7 +284,9 @@ void OverlayCameraDisplay::redraw(Ogre::RenderTarget * render_target)
   Ogre::PixelBox pixel_box(
     static_cast<size_t>(target_width), static_cast<size_t>(target_height), 1,
     Ogre::PF_A8R8G8B8, pixel_data.data());
-  render_target->copyContentsToMemory(pixel_box);
+  render_target->copyContentsToMemory(
+    Ogre::Box(0, 0, static_cast<uint32_t>(target_width), static_cast<uint32_t>(target_height)),
+    pixel_box);
 
   const size_t copy_row_bytes = static_cast<size_t>(copy_width) * sizeof(Ogre::uint32);
   for (int y = 0; y < copy_height; ++y) {
