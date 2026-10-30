@@ -339,6 +339,8 @@ void PointCloudCommon::insertNewClouds(float point_decay_time, const rclcpp::Tim
       cloud_info->cloud_->setRenderMode(mode);
       cloud_info->cloud_->addPoints(
         cloud_info->transformed_points_.begin(), cloud_info->transformed_points_.end());
+      // The cloud keeps its own copy of the points.
+      V_PointCloudPoint().swap(cloud_info->transformed_points_);
       cloud_info->cloud_->setAlpha(alpha_property_->getFloat(), per_point_alpha);
       cloud_info->cloud_->setDimensions(size, size, size);
       cloud_info->cloud_->setAutoSize(auto_size_);
@@ -503,7 +505,7 @@ void PointCloudCommon::updateStatus()
   std::stringstream ss;
   uint64_t total_point_count = 0;
   for (const auto & cloud_info : cloud_infos_) {
-    total_point_count += cloud_info->transformed_points_.size();
+    total_point_count += cloud_info->cloud_->getNumPoints();
   }
   ss << "Showing [" << total_point_count << "] points from [" << cloud_infos_.size() <<
     "] messages";
@@ -585,6 +587,7 @@ void PointCloudCommon::retransform()
     cloud_info->cloud_->clearAndRemoveAllPoints();
     cloud_info->cloud_->addPoints(
       cloud_info->transformed_points_.begin(), cloud_info->transformed_points_.end());
+    V_PointCloudPoint().swap(cloud_info->transformed_points_);
   }
 }
 
