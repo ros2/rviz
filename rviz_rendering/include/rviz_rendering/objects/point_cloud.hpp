@@ -144,6 +144,14 @@ public:
   RVIZ_RENDERING_PUBLIC
   std::vector<Point> getPoints();
 
+  /// The point at \p index, counted from the oldest point; no bounds checking.
+  RVIZ_RENDERING_PUBLIC
+  const Point & getPoint(uint32_t index) const {return points_[index];}
+
+  /// The number of points in the cloud.
+  RVIZ_RENDERING_PUBLIC
+  uint32_t getNumPoints() const {return point_count_;}
+
   /// Set type of rendering primitive to used; supports points, billboards, spheres and boxes.
   RVIZ_RENDERING_PUBLIC
   void setRenderMode(RenderMode mode);
@@ -191,6 +199,27 @@ public:
 
   RVIZ_RENDERING_PUBLIC
   void setHighlightColor(float r, float g, float b);
+
+  /**
+   * \brief Store points so that any prefix of each renderable covers it evenly.
+   *
+   * Points are written in a voxel hierarchy order: one point per coarse voxel first, then one
+   * more per voxel of half the size, and so on. Needed for setPointBudget(). Changing it
+   * rebuilds the hardware buffers.
+   */
+  RVIZ_RENDERING_PUBLIC
+  void setLevelOfDetail(bool enabled);
+
+  /**
+   * \brief Draw at most about \p max_points points (level of detail).
+   *
+   * Every renderable draws the same fraction of its points. Only has an effect with
+   * setLevelOfDetail(true). If \p camera is given, the budget only applies when rendering
+   * through that camera; other cameras, such as the one used for selection, draw all points.
+   * Without \p camera it applies to every camera.
+   */
+  RVIZ_RENDERING_PUBLIC
+  void setPointBudget(size_t max_points, const Ogre::Camera * camera = nullptr);
 
   RVIZ_RENDERING_PUBLIC
   const Ogre::String & getMovableType() const override;
@@ -320,6 +349,8 @@ private:
   float alpha_;
 
   bool color_by_index_;
+  bool level_of_detail_;
+  const Ogre::Camera * point_budget_camera_;
 
   PointCloudRenderableQueue renderables_;
 

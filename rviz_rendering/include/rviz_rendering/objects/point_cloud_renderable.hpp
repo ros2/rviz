@@ -76,8 +76,20 @@ public:
   RVIZ_RENDERING_PUBLIC
   Ogre::RenderOperation * getRenderOperation() {return &mRenderOp;}
 
-  // Avoid hidding parent class overload.
-  using Ogre::SimpleRenderable::getRenderOperation;
+  /// Returns the render operation, limited to the first getVertexLimit() vertices.
+  RVIZ_RENDERING_PUBLIC
+  void getRenderOperation(Ogre::RenderOperation & op) override;
+
+  /// Draw at most this many vertices (counted from vertexStart); used for level of detail.
+  RVIZ_RENDERING_PUBLIC
+  void setVertexLimit(size_t limit) {vertex_limit_ = limit;}
+
+  RVIZ_RENDERING_PUBLIC
+  size_t getVertexLimit() const {return vertex_limit_;}
+
+  /// Whether the vertex limit applies to the camera that is currently rendering.
+  RVIZ_RENDERING_PUBLIC
+  void setVertexLimitEnabled(bool enabled) {vertex_limit_enabled_ = enabled;}
 
   RVIZ_RENDERING_PUBLIC
   Ogre::HardwareVertexBufferSharedPtr getBuffer();
@@ -111,6 +123,11 @@ private:
   void createAndBindBuffer(int num_points);
 
   PointCloud * parent_;
+
+  // Shares the vertex buffer of mRenderOp, but with a vertex count capped at vertex_limit_.
+  std::unique_ptr<Ogre::VertexData> limited_vertex_data_;
+  size_t vertex_limit_;
+  bool vertex_limit_enabled_;
 };
 typedef std::shared_ptr<PointCloudRenderable> PointCloudRenderablePtr;
 typedef std::deque<PointCloudRenderablePtr> PointCloudRenderableQueue;
