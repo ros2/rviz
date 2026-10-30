@@ -211,31 +211,6 @@ PointCloud::PointCloud()
   color_by_index_(false),
   current_mode_supports_geometry_shader_(false)
 {
-  std::stringstream ss;
-  static int count = 0;
-  ss << "PointCloudMaterial" << count++;
-  point_material_ = Ogre::MaterialManager::getSingleton().getByName("rviz/PointCloudPoint");
-  square_material_ = Ogre::MaterialManager::getSingleton().getByName("rviz/PointCloudSquare");
-  flat_square_material_ = Ogre::MaterialManager::getSingleton().getByName(
-    "rviz/PointCloudFlatSquare");
-  sphere_material_ = Ogre::MaterialManager::getSingleton().getByName("rviz/PointCloudSphere");
-  tile_material_ = Ogre::MaterialManager::getSingleton().getByName("rviz/PointCloudTile");
-  box_material_ = Ogre::MaterialManager::getSingleton().getByName("rviz/PointCloudBox");
-
-  point_material_ = Ogre::MaterialPtr(point_material_)->clone(ss.str() + "Point");
-  square_material_ = Ogre::MaterialPtr(square_material_)->clone(ss.str() + "Square");
-  flat_square_material_ = Ogre::MaterialPtr(flat_square_material_)->clone(ss.str() + "FlatSquare");
-  sphere_material_ = Ogre::MaterialPtr(sphere_material_)->clone(ss.str() + "Sphere");
-  tile_material_ = Ogre::MaterialPtr(tile_material_)->clone(ss.str() + "Tiles");
-  box_material_ = Ogre::MaterialPtr(box_material_)->clone(ss.str() + "Box");
-
-  point_material_->load();
-  square_material_->load();
-  flat_square_material_->load();
-  sphere_material_->load();
-  tile_material_->load();
-  box_material_->load();
-
   setAlpha(1.0f);
   setRenderMode(RM_SPHERES);
   setDimensions(0.01f, 0.01f, 0.01f);
@@ -243,29 +218,9 @@ PointCloud::PointCloud()
   clear();
 }
 
-static void removeMaterial(Ogre::MaterialPtr & material)
-{
-  Ogre::ResourcePtr resource(material);
-  Ogre::MaterialManager::getSingleton().remove(resource);
-}
-
 PointCloud::~PointCloud()
 {
   clear();
-
-  point_material_->unload();
-  square_material_->unload();
-  flat_square_material_->unload();
-  sphere_material_->unload();
-  tile_material_->unload();
-  box_material_->unload();
-
-  removeMaterial(point_material_);
-  removeMaterial(square_material_);
-  removeMaterial(flat_square_material_);
-  removeMaterial(sphere_material_);
-  removeMaterial(tile_material_);
-  removeMaterial(box_material_);
 }
 
 const Ogre::AxisAlignedBox & PointCloud::getBoundingBox() const
@@ -448,25 +403,49 @@ void setReplace(const Ogre::MaterialPtr & mat)
   }
 }
 
+// The materials of all point clouds only differ in their blending mode; everything else is set
+// per renderable with custom parameters. Sharing them lets Ogre render many clouds in one pass
+// instead of switching materials for every cloud. They are shared by every PointCloud, so never
+// change them for a single cloud, and they live as long as the MaterialManager.
+static Ogre::MaterialPtr getSharedMaterial(const std::string & base_name, bool alpha_blending)
+{
+  const std::string name = base_name + (alpha_blending ? "/AlphaBlended" : "/Opaque");
+  auto & manager = Ogre::MaterialManager::getSingleton();
+  Ogre::MaterialPtr material = manager.getByName(name);
+  if (!material) {
+    material = manager.getByName(base_name)->clone(name);
+    material->load();
+    if (alpha_blending) {
+      setAlphaBlending(material);
+    } else {
+      setReplace(material);
+    }
+  }
+  return material;
+}
+
+void PointCloud::setMaterials(bool alpha_blending)
+{
+  point_material_ = getSharedMaterial("rviz/PointCloudPoint", alpha_blending);
+  square_material_ = getSharedMaterial("rviz/PointCloudSquare", alpha_blending);
+  flat_square_material_ = getSharedMaterial("rviz/PointCloudFlatSquare", alpha_blending);
+  sphere_material_ = getSharedMaterial("rviz/PointCloudSphere", alpha_blending);
+  tile_material_ = getSharedMaterial("rviz/PointCloudTile", alpha_blending);
+  box_material_ = getSharedMaterial("rviz/PointCloudBox", alpha_blending);
+
+  if (current_material_) {
+    current_material_ = getMaterialForRenderMode(render_mode_);
+    for (auto & renderable : renderables_) {
+      renderable->setMaterial(current_material_);
+    }
+  }
+}
+
 void PointCloud::setAlpha(float alpha, bool per_point_alpha)
 {
   alpha_ = alpha;
 
-  if (alpha < rviz_rendering::unit_alpha_threshold || per_point_alpha) {
-    setAlphaBlending(point_material_);
-    setAlphaBlending(square_material_);
-    setAlphaBlending(flat_square_material_);
-    setAlphaBlending(sphere_material_);
-    setAlphaBlending(tile_material_);
-    setAlphaBlending(box_material_);
-  } else {
-    setReplace(point_material_);
-    setReplace(square_material_);
-    setReplace(flat_square_material_);
-    setReplace(sphere_material_);
-    setReplace(tile_material_);
-    setReplace(box_material_);
-  }
+  setMaterials(alpha < rviz_rendering::unit_alpha_threshold || per_point_alpha);
 
   Ogre::Vector4 alpha4(alpha_, alpha_, alpha_, alpha_);
   for (auto & renderable : renderables_) {
