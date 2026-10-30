@@ -38,6 +38,7 @@
 
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/viewport_mouse_event.hpp"
+#include "rviz_rendering/render_window.hpp"
 
 class ToolTestFixture
 {
@@ -83,9 +84,12 @@ private:
   rviz_common::ViewportMouseEvent generateMouseEvent(
     int x, int y, QMouseEvent::Type type, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
   {
-    auto mouseEvent = new QMouseEvent(type, QPointF(x, y), QPointF(x, y), button, button,
+    // Tool fixtures and their mock pickers specify device pixels.
+    const auto ratio = render_panel_->getRenderWindow()->devicePixelRatio();
+    const QPointF position(x / ratio, y / ratio);
+    auto mouseEvent = new QMouseEvent(type, position, position, button, button,
       modifiers);
-    return {render_panel_.get(), mouseEvent, x, y};
+    return {render_panel_.get(), mouseEvent, QPoint(x, y)};
   }
 
   std::shared_ptr<rviz_common::RenderPanel> render_panel_;

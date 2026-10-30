@@ -45,6 +45,7 @@
 #include <OgreSharedPtr.h>
 #include <OgreTechnique.h>
 
+#include <QPointF>  // NOLINT: cpplint is unable to handle the include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include "rviz_common/display_context.hpp"
@@ -1124,7 +1125,11 @@ void InteractiveMarkerControl::handle3DCursorEvent(
         Ogre::Vector2 mouse_pos = rviz_rendering::project3DPointToViewportXY(
           rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(event.panel->getRenderWindow()),
           three_d_point);
-        QCursor::setPos(event.panel->mapToGlobal(QPoint(mouse_pos.x, mouse_pos.y)));
+        // The projection is in viewport (device) pixels; mapToGlobal expects logical ones.
+        const qreal pixel_ratio = event.panel->getRenderWindow()->devicePixelRatio();
+        QCursor::setPos(
+          event.panel->mapToGlobal(
+            (QPointF(QPoint(mouse_pos.x, mouse_pos.y)) / pixel_ratio).toPoint()));
         parent_->showMenu(event, name_, three_d_point, valid_point);
       }
       break;
@@ -1361,6 +1366,9 @@ void InteractiveMarkerControl::beginMouseMovement(
   parent_position_at_mouse_down_ = parent_->getPosition();
   parent_orientation_at_mouse_down_ = parent_->getOrientation();
 
+  // getRelativeMouseMotion() adds event.x/y back to recover the logical cursor
+  // position. Warping to whole logical pixels can introduce a rounding error
+  // of up to +/-1 device pixel at scale factors up to 2x.
   QPoint absolute_mouse = QCursor::pos();
   mouse_relative_to_absolute_x_ = absolute_mouse.x() - event.x;
   mouse_relative_to_absolute_y_ = absolute_mouse.y() - event.y;
