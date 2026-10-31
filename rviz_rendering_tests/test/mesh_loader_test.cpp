@@ -396,41 +396,125 @@ TEST_F(MeshLoaderTestFixture, loading_mesh_from_memory_without_file_extension_fa
     rviz_rendering::loadMeshFromMemory("embedded://memory_no_extension", "triangle", data));
 }
 
-TEST_F(MeshLoaderTestFixture, loading_mesh_from_memory_with_new_data_replaces_the_mesh) {
+TEST_F(MeshLoaderTestFixture, loading_mesh_from_memory_with_new_data_replaces_an_unused_mesh) {
   std::vector<uint8_t> triangle(kTriangleGltf, kTriangleGltf + sizeof(kTriangleGltf) - 1);
   auto stl = readFile("package://rviz_rendering_tests/test_meshes/F2.stl");
   ASSERT_FALSE(stl.empty());
   std::string name = "embedded://memory_replaced";
 
   auto first = rviz_rendering::loadMeshFromMemory(name, "triangle.gltf", triangle);
+  ASSERT_TRUE(first);
+  rviz_rendering::releaseMeshFromMemory(first->getName());
+  auto second = rviz_rendering::loadMeshFromMemory(name, "F2.stl", stl);
+
+  ASSERT_TRUE(second);
+  EXPECT_NE(first, second);
+  EXPECT_EQ(name, second->getName());
+  EXPECT_FLOAT_EQ(34.920441f, second->getBoundingSphereRadius());
+  EXPECT_EQ(second, Ogre::MeshManager::getSingleton().getByName(name, "rviz_rendering"));
+  rviz_rendering::releaseMeshFromMemory(second->getName());
+}
+
+TEST_F(MeshLoaderTestFixture, new_data_does_not_replace_a_mesh_from_memory_that_is_in_use) {
+  std::vector<uint8_t> triangle(kTriangleGltf, kTriangleGltf + sizeof(kTriangleGltf) - 1);
+  auto stl = readFile("package://rviz_rendering_tests/test_meshes/F2.stl");
+  ASSERT_FALSE(stl.empty());
+  std::string name = "embedded://memory_in_use";
+
+  auto first = rviz_rendering::loadMeshFromMemory(name, "triangle.gltf", triangle);
   auto second = rviz_rendering::loadMeshFromMemory(name, "F2.stl", stl);
 
   ASSERT_TRUE(first);
   ASSERT_TRUE(second);
-  EXPECT_NE(first, second);
-  EXPECT_FLOAT_EQ(34.920441f, second->getBoundingSphereRadius());
-  EXPECT_EQ(second, Ogre::MeshManager::getSingleton().getByName(name, "rviz_rendering"));
-  rviz_rendering::releaseMeshFromMemory(name);
-  rviz_rendering::releaseMeshFromMemory(name);
+  EXPECT_NE(first->getName(), second->getName());
+  // The first mesh and its materials are left alone.
+  EXPECT_EQ(name, first->getName());
+  EXPECT_EQ(first, Ogre::MeshManager::getSingleton().getByName(name, "rviz_rendering"));
+  EXPECT_TRUE(
+    Ogre::MaterialManager::getSingleton().resourceExists(name + "Material0", "rviz_rendering"));
+
+  // Each mesh is released on its own.
+  rviz_rendering::releaseMeshFromMemory(first->getName());
+  EXPECT_TRUE(
+    Ogre::MeshManager::getSingleton().resourceExists(second->getName(), "rviz_rendering"));
+  rviz_rendering::releaseMeshFromMemory(second->getName());
 }
 
-TEST_F(MeshLoaderTestFixture, released_mesh_from_memory_is_removed_with_its_materials) {
+TEST_F(MeshLoaderTestFixture, failing_to_load_new_data_does_not_affect_a_mesh_in_use) {
+  std::vector<uint8_t> triangle(kTriangleGltf, kTriangleGltf + sizeof(kTriangleGltf) - 1);
+  std::vector<uint8_t> garbage = {'n', 'o', 'p', 'e'};
+  auto stl = readFile("package://rviz_rendering_tests/test_meshes/F2.stl");
+  ASSERT_FALSE(stl.empty());
+  std::string name = "embedded://memory_failing";
+
+  auto first = rviz_rendering::loadMeshFromMemory(name, "triangle.gltf", triangle);
+  ASSERT_TRUE(first);
+  ASSERT_TRUE(rviz_rendering::loadMeshFromMemory(name, "triangle.gltf", {}));  // Second user.
+  EXPECT_FALSE(rviz_rendering::loadMeshFromMemory(name, "other.gltf", garbage));
+  EXPECT_EQ(first, Ogre::MeshManager::getSingleton().getByName(name, "rviz_rendering"));
+
+  // The failure did not lose a user: one is left after a release, so new data gets its own mesh.
+  rviz_rendering::releaseMeshFromMemory(name);
+  auto other = rviz_rendering::loadMeshFromMemory(name, "F2.stl", stl);
+  ASSERT_TRUE(other);
+  EXPECT_NE(name, other->getName());
+  rviz_rendering::releaseMeshFromMemory(name);
+  rviz_rendering::releaseMeshFromMemory(other->getName());
+}
+
+TEST_F(MeshLoaderTestFixture, mesh_from_memory_does_not_replace_a_foreign_mesh) {
+  std::vector<uint8_t> triangle(kTriangleGltf, kTriangleGltf + sizeof(kTriangleGltf) - 1);
+  std::string name = "embedded://memory_foreign";
+  auto foreign = Ogre::MeshManager::getSingleton().createManual(name, "rviz_rendering");
+
+  auto mesh = rviz_rendering::loadMeshFromMemory(name, "triangle.gltf", triangle);
+
+  ASSERT_TRUE(mesh);
+  EXPECT_NE(name, mesh->getName());
+  EXPECT_EQ(foreign, Ogre::MeshManager::getSingleton().getByName(name, "rviz_rendering"));
+  rviz_rendering::releaseMeshFromMemory(mesh->getName());
+  Ogre::MeshManager::getSingleton().remove(foreign);
+}
+
+TEST_F(MeshLoaderTestFixture, released_mesh_from_memory_can_be_loaded_again_without_data) {
   auto data = readFile("package://rviz_rendering_tests/test_meshes/colored_box.glb");
   ASSERT_FALSE(data.empty());
   std::string name = "embedded://memory_released";
 
-  ASSERT_TRUE(rviz_rendering::loadMeshFromMemory(name, "colored_box.glb", data));
-  ASSERT_TRUE(rviz_rendering::loadMeshFromMemory(name, "colored_box.glb", {}));
-  ASSERT_TRUE(
-    Ogre::MaterialManager::getSingleton().resourceExists(name + "Material0", "rviz_rendering"));
+  auto first = rviz_rendering::loadMeshFromMemory(name, "colored_box.glb", data);
+  ASSERT_TRUE(first);
+  rviz_rendering::releaseMeshFromMemory(first->getName());
+  auto again = rviz_rendering::loadMeshFromMemory(name, "colored_box.glb", {});
 
-  // The mesh is kept while it is still used.
-  rviz_rendering::releaseMeshFromMemory(name);
-  EXPECT_TRUE(Ogre::MeshManager::getSingleton().resourceExists(name, "rviz_rendering"));
+  EXPECT_EQ(first, again);
+  rviz_rendering::releaseMeshFromMemory(again->getName());
+}
 
-  rviz_rendering::releaseMeshFromMemory(name);
-  EXPECT_FALSE(Ogre::MeshManager::getSingleton().resourceExists(name, "rviz_rendering"));
+TEST_F(MeshLoaderTestFixture, unused_meshes_from_memory_are_removed_beyond_a_size_limit) {
+  // Large payloads that are cheap to parse: a glTF followed by white space.
+  auto padded = [](size_t megabytes) {
+      std::vector<uint8_t> data(kTriangleGltf, kTriangleGltf + sizeof(kTriangleGltf) - 1);
+      data.resize(megabytes * 1024 * 1024, ' ');
+      return data;
+    };
+  std::string old_name = "embedded://memory_old";
+  std::string new_name = "embedded://memory_new";
+
+  auto old_mesh = rviz_rendering::loadMeshFromMemory(old_name, "old.gltf", padded(40));
+  ASSERT_TRUE(old_mesh);
+  rviz_rendering::releaseMeshFromMemory(old_name);
+  EXPECT_TRUE(Ogre::MeshManager::getSingleton().resourceExists(old_name, "rviz_rendering"));
+  EXPECT_TRUE(
+    Ogre::MaterialManager::getSingleton().resourceExists(old_name + "Material0", "rviz_rendering"));
+
+  auto new_mesh = rviz_rendering::loadMeshFromMemory(new_name, "new.gltf", padded(41));
+  ASSERT_TRUE(new_mesh);
+  rviz_rendering::releaseMeshFromMemory(new_name);
+
+  // Together they are over the limit, so the one that was released first is removed.
+  EXPECT_FALSE(Ogre::MeshManager::getSingleton().resourceExists(old_name, "rviz_rendering"));
   EXPECT_FALSE(
-    Ogre::MaterialManager::getSingleton().resourceExists(name + "Material0", "rviz_rendering"));
-  EXPECT_FALSE(rviz_rendering::loadMeshFromMemory(name, "colored_box.glb", {}));
+    Ogre::MaterialManager::getSingleton().resourceExists(old_name + "Material0", "rviz_rendering"));
+  EXPECT_FALSE(rviz_rendering::loadMeshFromMemory(old_name, "old.gltf", {}));
+  EXPECT_TRUE(Ogre::MeshManager::getSingleton().resourceExists(new_name, "rviz_rendering"));
 }

@@ -51,17 +51,17 @@ Ogre::MeshPtr loadMeshFromResource(
 
 /// Load a mesh from the raw contents of a mesh file, e.g. one embedded in a message.
 /**
- * The mesh is registered under \p resource_name. If a mesh with that name was already loaded
- * from the same \p data, or \p data is empty, the loaded mesh is returned without parsing.
- * Different \p data replaces the loaded mesh. The file format is determined by the extension
- * of \p filename, which is therefore required. Files referenced by the mesh (e.g. textures) are
- * not resolved.
+ * The file format is determined by the extension of \p filename, which is therefore required.
+ * Files referenced by the mesh (e.g. textures) are not resolved.
  *
- * Use one name per mesh: different data under the same name replaces it for every user.
+ * The mesh is registered under \p resource_name. Loading the same data again returns the same
+ * mesh, and empty \p data returns the mesh that was loaded last under \p resource_name. Different
+ * data is never allowed to replace a mesh that is in use: it gets a mesh of its own, whose name
+ * then differs from \p resource_name. Use Ogre::Mesh::getName() to refer to the returned mesh.
  *
  * Every successful call must be paired with a call to releaseMeshFromMemory().
  *
- * \return The mesh, or nullptr if \p data is empty or could not be parsed.
+ * \return The mesh, or nullptr if the data is missing or could not be parsed.
  */
 RVIZ_RENDERING_PUBLIC
 Ogre::MeshPtr loadMeshFromMemory(
@@ -71,11 +71,14 @@ Ogre::MeshPtr loadMeshFromMemory(
 
 /// Release a mesh obtained from loadMeshFromMemory().
 /**
- * Once every successful load of \p resource_name has been released, the mesh and the materials
- * and textures loaded with it are removed.
+ * \param mesh_name The name of the mesh, as returned by Ogre::Mesh::getName().
+ *
+ * A mesh that is not used anymore is kept for a while, so that it can be loaded again without
+ * sending the data again (e.g. after a reset). It is removed together with its materials and
+ * textures once the unused meshes exceed a size limit.
  */
 RVIZ_RENDERING_PUBLIC
-void releaseMeshFromMemory(const std::string & resource_name);
+void releaseMeshFromMemory(const std::string & mesh_name);
 
 }  // namespace rviz_rendering
 

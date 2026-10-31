@@ -32,7 +32,6 @@
 #include "rviz_default_plugins/displays/marker/markers/mesh_resource_marker.hpp"
 
 #include <string>
-#include <utility>
 
 #include <OgreEntity.h>
 #include <OgreSubEntity.h>
@@ -134,11 +133,13 @@ void MeshResourceMarker::onNewMessage(
 
   scene_node_->setVisible(false);
 
-  // Don't parse and log a payload that already failed with every message. Empty data is still
-  // retried, since another marker may have loaded the mesh by now.
+  // Don't parse and log a payload that already failed with every message. The status is cleared
+  // before every message, so it has to be reported again. Empty data is still retried, since
+  // another marker may have loaded the mesh by now.
   if (!entity_ && old_message && isEmbeddedMesh(new_message->mesh_resource) &&
     !new_message->mesh_file.data.empty() && sameEmbeddedMesh(*old_message, *new_message))
   {
+    printMeshLoadingError(new_message);
     return;
   }
 
@@ -147,9 +148,8 @@ void MeshResourceMarker::onNewMessage(
     old_message->mesh_use_embedded_materials != new_message->mesh_use_embedded_materials ||
     embeddedMeshDataChanged(*old_message, *new_message))
   {
-    // Release the previous embedded mesh only once the new mesh is loaded, so that a mesh whose
-    // data is not sent again is not removed in between.
-    const std::string previous_embedded_mesh = std::exchange(embedded_mesh_, std::string());
+    // This releases an embedded mesh we used before. It stays loaded for a while, so a mesh whose
+    // data is not sent again can still be loaded below.
     reset();
 
     // "embedded://" meshes come with the message (mesh_file) instead of behind a URI.
@@ -160,16 +160,12 @@ void MeshResourceMarker::onNewMessage(
         new_message->mesh_file.filename,
         new_message->mesh_file.data);
       if (mesh) {
-        embedded_mesh_ = new_message->mesh_resource;
+        embedded_mesh_ = mesh->getName();
       }
     } else if (!new_message->mesh_resource.empty()) {
       mesh = rviz_rendering::loadMeshFromResource(
         owner_->getResourceRetriever(),
         new_message->mesh_resource);
-    }
-
-    if (!previous_embedded_mesh.empty()) {
-      rviz_rendering::releaseMeshFromMemory(previous_embedded_mesh);
     }
 
     if (new_message->mesh_resource.empty()) {
@@ -233,7 +229,10 @@ void MeshResourceMarker::createMeshWithMaterials(
 {
   static uint32_t count = 0;
   std::string id = "mesh_resource_marker_" + std::to_string(count++);
-  entity_ = context_->getSceneManager()->createEntity(id, new_message->mesh_resource);
+  // An embedded mesh may have a different name than the resource, see loadMeshFromMemory().
+  const std::string & mesh_name =
+    embedded_mesh_.empty() ? new_message->mesh_resource : embedded_mesh_;
+  entity_ = context_->getSceneManager()->createEntity(id, mesh_name);
   scene_node_->attachObject(entity_);
 
   // create a default material for any sub-entities which don't have their own.
