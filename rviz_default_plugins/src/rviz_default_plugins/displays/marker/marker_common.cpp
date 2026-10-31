@@ -52,15 +52,10 @@
 
 #include "rviz_default_plugins/displays/marker/markers/marker_factory.hpp"
 
-#include "resource_retriever/retriever.hpp"
-#include "resource_retriever_service_plugin/resource_retriever_service_plugin.hpp"
-
 namespace rviz_default_plugins
 {
 namespace displays
 {
-
-using ::resource_retriever_service_plugin::RosServiceResourceRetriever;
 
 MarkerCommon::MarkerCommon(rviz_common::Display * display)
 : display_(display)
@@ -79,16 +74,6 @@ void MarkerCommon::initialize(rviz_common::DisplayContext * context, Ogre::Scene
 {
   context_ = context;
   scene_node_ = scene_node;
-
-  resource_retriever::RetrieverVec plugins = resource_retriever::default_plugins();
-
-  auto ros_iface = context_->getRosNodeAbstraction().lock();
-  if (ros_iface) {
-    plugins.push_back(std::make_shared<RosServiceResourceRetriever>(*ros_iface->get_raw_node()));
-  } else {
-    throw std::invalid_argument("ROS node abstraction interface not valid");
-  }
-  retriever_ = resource_retriever::Retriever(plugins);
 
   namespace_config_enabled_state_.clear();
 
@@ -196,11 +181,6 @@ void MarkerCommon::deleteMarkerStatus(MarkerID id)
 {
   std::string marker_name = id.first + "/" + std::to_string(id.second);
   display_->deleteStatusStd(marker_name);
-}
-
-resource_retriever::Retriever * MarkerCommon::getResourceRetriever()
-{
-  return &this->retriever_;
 }
 
 void MarkerCommon::addMessage(const visualization_msgs::msg::Marker::ConstSharedPtr marker)

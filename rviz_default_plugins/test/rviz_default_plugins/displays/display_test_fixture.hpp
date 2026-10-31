@@ -42,6 +42,8 @@
 
 #include "rclcpp/clock.hpp"
 
+#include "resource_retriever/retriever.hpp"
+
 #include "../ogre_testing_environment.hpp"
 
 #include "../mock_display_context.hpp"
@@ -76,6 +78,7 @@ public:
   std::shared_ptr<MockSelectionManager> selection_manager_;
   std::shared_ptr<MockHandlerManager> handler_manager_;
   std::shared_ptr<rclcpp::Clock> clock_;
+  resource_retriever::Retriever resource_retriever_;
 
   std::string fixed_frame{"fixed_frame"};
 };
