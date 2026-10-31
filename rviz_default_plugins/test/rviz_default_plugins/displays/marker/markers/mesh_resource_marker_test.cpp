@@ -30,24 +30,118 @@
 
 #include <gmock/gmock.h>
 
+#include <algorithm>
+#include <cstdio>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include <OgreEntity.h>
 #include <OgreMaterialManager.h>
 #include <OgreMesh.h>
+#include <OgreMeshManager.h>
+#include <OgreSceneManager.h>
 #include <OgreSubEntity.h>
 #include <OgreTechnique.h>
 
 #include "visualization_msgs/msg/marker.hpp"
 
 #include "rviz_default_plugins/displays/marker/markers/mesh_resource_marker.hpp"
+#include "rviz_common/logging.hpp"
+#include "rviz_rendering/logging.hpp"
 
 #include "../../../scene_graph_introspection.hpp"
 #include "markers_test_fixture.hpp"
 #include "../marker_messages.hpp"
 
 using namespace ::testing;  // NOLINT
+
+namespace
+{
+// A minimal .gltf triangle with its buffer inlined as a data URI.
+const char kTriangleGltf[] =
+  "{\"asset\":{\"version\":\"2.0\"},\"scene\":0,\"scenes\":[{\"nodes\":[0]}],"
+  "\"nodes\":[{\"mesh\":0}],\"meshes\":[{\"primitives\":[{\"attributes\":{\"POSITION\":0}}]}],"
+  "\"accessors\":[{\"bufferView\":0,\"componentType\":5126,\"count\":3,\"type\":\"VEC3\","
+  "\"min\":[0,0,0],\"max\":[1,2,0]}],\"bufferViews\":[{\"buffer\":0,\"byteLength\":36}],"
+  "\"buffers\":[{\"byteLength\":36,\"uri\":\"data:application/octet-stream;base64,"
+  "AAAAAAAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAAEAAAAAA\"}]}";
+
+visualization_msgs::msg::Marker createEmbeddedMeshMessage(const std::string & mesh_name)
+{
+  auto message = createDefaultMessage(visualization_msgs::msg::Marker::MESH_RESOURCE);
+  message.mesh_resource = "embedded://" + mesh_name;
+  message.mesh_file.filename = "triangle.gltf";
+  message.mesh_file.data.assign(kTriangleGltf, kTriangleGltf + sizeof(kTriangleGltf) - 1);
+  message.mesh_use_embedded_materials = false;
+  return message;
+}
+
+int error_count = 0;
+
+// Counts the errors logged by rviz_rendering while it is alive.
+class ErrorLogCounter
+{
+public:
+  ErrorLogCounter()
+  {
+    error_count = 0;
+    auto ignore = [](const std::string &, const std::string &, size_t) {};
+    auto count_error = [](const std::string &, const std::string &, size_t) {++error_count;};
+    rviz_rendering::set_logging_handlers(ignore, ignore, ignore, count_error);
+  }
+
+  ~ErrorLogCounter()
+  {
+    auto print = [](const std::string & message, const std::string & file, size_t line) {
+        fprintf(stderr, "%s, at %s:%zu\n", message.c_str(), file.c_str(), line);
+      };
+    rviz_rendering::set_logging_handlers(print, print, print, print);
+  }
+
+  int count() const {return error_count;}
+};
+
+int report_count = 0;
+
+// Counts how often a marker reports that a mesh could not be loaded. That also sets the status of
+// the marker, which is cleared before every message, so it has to happen for every message.
+class LoadFailureReportCounter
+{
+public:
+  LoadFailureReportCounter()
+  {
+    report_count = 0;
+    auto ignore = [](const std::string &, const std::string &, size_t) {};
+    auto count_report = [](const std::string & message, const std::string &, size_t) {
+        if (message.find("could not load") != std::string::npos) {
+          ++report_count;
+        }
+      };
+    rviz_common::set_logging_handlers(count_report, ignore, ignore, ignore);
+  }
+
+  ~LoadFailureReportCounter()
+  {
+    auto print = [](const std::string & message, const std::string & file, size_t line) {
+        fprintf(stderr, "%s, at %s:%zu\n", message.c_str(), file.c_str(), line);
+      };
+    rviz_common::set_logging_handlers(print, print, print, print);
+  }
+
+  int count() const {return report_count;}
+};
+
+// The triangle of createEmbeddedMeshMessage(), but three units wide instead of one.
+std::vector<uint8_t> createWiderTriangleData()
+{
+  std::string wider_triangle(kTriangleGltf);
+  wider_triangle.replace(wider_triangle.find("[1,2,0]"), 7, "[3,2,0]");
+  wider_triangle.replace(
+    wider_triangle.find("AAAAAAAAAAAAAAAAAACAPw"), 22, "AAAAAAAAAAAAAAAAAABAQA");
+  return std::vector<uint8_t>(wider_triangle.begin(), wider_triangle.end());
+}
+}  // namespace
 
 TEST_F(MarkersTestFixture, setMessage_with_no_transform_makes_node_invisible) {
   marker_ =
@@ -210,4 +304,182 @@ TEST_F(MarkersTestFixture, setMessage_with_new_object_clears_old_entities_and_ma
   ASSERT_FALSE(deleted_entity);
   EXPECT_FALSE(
     Ogre::MaterialManager::getSingletonPtr()->getByName(material_name, "rviz_rendering"));
+}
+
+TEST_F(MarkersTestFixture, setMessage_attaches_entity_for_embedded_mesh) {
+  marker_ =
+    makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
+  mockValidTransform();
+  auto message = createEmbeddedMeshMessage("marker_test_embedded_triangle");
+
+  marker_->setMessage(message);
+
+  auto entity = rviz_default_plugins::findEntityByMeshName(
+    scene_manager_->getRootSceneNode(), message.mesh_resource);
+  ASSERT_TRUE(entity);
+  EXPECT_TRUE(entity->isVisible());
+  EXPECT_THAT(entity->getMesh()->getName(), StrEq(message.mesh_resource));
+  EXPECT_THAT(
+    entity->getSubEntity(0)->getMaterial()->getName(),
+    MatchesRegex("mesh_resource_marker_.Material"));
+}
+
+TEST_F(MarkersTestFixture, setMessage_does_not_attach_entity_when_embedded_mesh_has_no_data) {
+  marker_ =
+    makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
+  mockValidTransform();
+  auto message = createEmbeddedMeshMessage("marker_test_embedded_without_data");
+  message.mesh_file.data.clear();
+
+  marker_->setMessage(message);
+
+  auto entity = rviz_default_plugins::findEntityByMeshName(
+    scene_manager_->getRootSceneNode(), message.mesh_resource);
+  ASSERT_FALSE(entity);
+}
+
+TEST_F(MarkersTestFixture, setMessage_does_not_attach_entity_when_embedded_mesh_is_invalid) {
+  marker_ =
+    makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
+  mockValidTransform();
+  auto message = createEmbeddedMeshMessage("marker_test_embedded_invalid");
+  message.mesh_file.data = {'n', 'o', 't', ' ', 'a', ' ', 'm', 'e', 's', 'h'};
+
+  marker_->setMessage(message);
+
+  auto entity = rviz_default_plugins::findEntityByMeshName(
+    scene_manager_->getRootSceneNode(), message.mesh_resource);
+  ASSERT_FALSE(entity);
+}
+
+TEST_F(MarkersTestFixture, setMessage_reloads_embedded_mesh_when_its_data_changes) {
+  marker_ =
+    makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
+  mockValidTransform();
+  auto message = createEmbeddedMeshMessage("marker_test_embedded_changing");
+  marker_->setMessage(message);
+
+  // The same triangle, but three units wide instead of one.
+  std::string wider_triangle(kTriangleGltf);
+  wider_triangle.replace(wider_triangle.find("[1,2,0]"), 7, "[3,2,0]");
+  wider_triangle.replace(
+    wider_triangle.find("AAAAAAAAAAAAAAAAAACAPw"), 22, "AAAAAAAAAAAAAAAAAABAQA");
+  message.mesh_file.data.assign(wider_triangle.begin(), wider_triangle.end());
+  marker_->setMessage(message);
+
+  auto entity = rviz_default_plugins::findEntityByMeshName(
+    scene_manager_->getRootSceneNode(), message.mesh_resource);
+  ASSERT_TRUE(entity);
+  EXPECT_NEAR(entity->getMesh()->getBounds().getSize().x, 3.0f, 0.1f);
+}
+
+TEST_F(MarkersTestFixture, setMessage_keeps_embedded_mesh_when_its_data_is_not_sent_again) {
+  marker_ =
+    makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
+  mockValidTransform();
+  auto message = createEmbeddedMeshMessage("marker_test_embedded_sent_once");
+  marker_->setMessage(message);
+
+  message.mesh_file.data.clear();
+  marker_->setMessage(message);
+  // Reloading the mesh for other reasons must not need the data either.
+  message.mesh_use_embedded_materials = true;
+  marker_->setMessage(message);
+
+  auto entity = rviz_default_plugins::findEntityByMeshName(
+    scene_manager_->getRootSceneNode(), message.mesh_resource);
+  ASSERT_TRUE(entity);
+  EXPECT_TRUE(entity->isVisible());
+}
+
+TEST_F(MarkersTestFixture, embedded_mesh_data_sent_once_survives_deleting_the_marker) {
+  marker_ =
+    makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
+  mockValidTransform();
+  auto message = createEmbeddedMeshMessage("marker_test_embedded_survives_delete");
+  marker_->setMessage(message);
+
+  marker_.reset();
+
+  // The publisher does not send the data again.
+  message.mesh_file.data.clear();
+  marker_ =
+    makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
+  marker_->setMessage(message);
+  auto entity = rviz_default_plugins::findEntityByMeshName(
+    scene_manager_->getRootSceneNode(), message.mesh_resource);
+  ASSERT_TRUE(entity);
+}
+
+TEST_F(MarkersTestFixture, markers_with_different_data_under_one_name_keep_their_own_mesh) {
+  auto first_marker =
+    makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
+  auto second_marker =
+    makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
+  mockValidTransform();
+  auto first = createEmbeddedMeshMessage("marker_test_embedded_clash");
+  auto second = first;
+  second.mesh_file.data = createWiderTriangleData();
+
+  first_marker->setMessage(first);
+  second_marker->setMessage(second);
+
+  std::vector<float> widths;
+  for (const auto & object : scene_manager_->getMovableObjects("Entity")) {
+    auto * entity = static_cast<Ogre::Entity *>(object.second);
+    if (entity->getMesh()->getName().rfind(first.mesh_resource, 0) == 0) {
+      widths.push_back(entity->getMesh()->getBounds().getSize().x);
+    }
+  }
+  std::sort(widths.begin(), widths.end());
+  ASSERT_EQ(2u, widths.size());
+  EXPECT_NEAR(widths[0], 1.0f, 0.1f);
+  EXPECT_NEAR(widths[1], 3.0f, 0.1f);
+}
+
+TEST_F(MarkersTestFixture, setMessage_logs_unchanged_invalid_embedded_mesh_only_once) {
+  marker_ =
+    makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
+  mockValidTransform();
+  auto message = createEmbeddedMeshMessage("marker_test_embedded_logged_once");
+  message.mesh_file.data = {'n', 'o', 't', ' ', 'a', ' ', 'm', 'e', 's', 'h'};
+  ErrorLogCounter errors;
+
+  LoadFailureReportCounter reports;
+
+  for (int i = 0; i < 5; ++i) {
+    marker_->setMessage(message);
+  }
+
+  EXPECT_EQ(1, errors.count());
+  EXPECT_EQ(5, reports.count());
+
+  // Valid data afterwards still loads.
+  message = createEmbeddedMeshMessage("marker_test_embedded_logged_once");
+  marker_->setMessage(message);
+  auto entity = rviz_default_plugins::findEntityByMeshName(
+    scene_manager_->getRootSceneNode(), message.mesh_resource);
+  ASSERT_TRUE(entity);
+}
+
+TEST_F(MarkersTestFixture, setMessage_does_not_log_errors_while_embedded_mesh_data_is_missing) {
+  marker_ =
+    makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
+  mockValidTransform();
+  auto message = createEmbeddedMeshMessage("marker_test_embedded_data_later");
+  message.mesh_file.data.clear();
+  ErrorLogCounter errors;
+
+  for (int i = 0; i < 5; ++i) {
+    marker_->setMessage(message);
+  }
+
+  EXPECT_EQ(0, errors.count());
+
+  // The data may arrive later, so this is retried.
+  message = createEmbeddedMeshMessage("marker_test_embedded_data_later");
+  marker_->setMessage(message);
+  auto entity = rviz_default_plugins::findEntityByMeshName(
+    scene_manager_->getRootSceneNode(), message.mesh_resource);
+  ASSERT_TRUE(entity);
 }

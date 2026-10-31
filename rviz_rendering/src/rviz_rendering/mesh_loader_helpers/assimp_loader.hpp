@@ -32,8 +32,11 @@
 #ifndef RVIZ_RENDERING__MESH_LOADER_HELPERS__ASSIMP_LOADER_HPP_
 #define RVIZ_RENDERING__MESH_LOADER_HELPERS__ASSIMP_LOADER_HPP_
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 #include "OgreHardwareBufferManager.h"
@@ -61,8 +64,13 @@ class AssimpLoader
 {
 public:
   explicit AssimpLoader(resource_retriever::Retriever * retriever = nullptr);
-  Ogre::MeshPtr meshFromAssimpScene(const std::string & name, const aiScene * scene);
+  /// \param format_extension Extension (with dot) used instead of the one of \p name, if given.
+  Ogre::MeshPtr meshFromAssimpScene(
+    const std::string & name, const aiScene * scene, const std::string & format_extension = "");
   const aiScene * getScene(const std::string & resource_path);
+  /// Only the extension of \p filename is used, to select the parser.
+  const aiScene * getSceneFromMemory(
+    const std::string & filename, const uint8_t * data, size_t size);
   std::string getErrorMessage();
 
 private:
@@ -102,7 +110,8 @@ private:
   };
 
   std::vector<Ogre::MaterialPtr> loadMaterials(
-    const std::string & resource_path, const aiScene * scene);
+    const std::string & resource_path, const aiScene * scene,
+    const std::string & format_extension = "");
   void setLightColorsFromAssimp(
     const std::string & resource_path,
     Ogre::MaterialPtr & mat,
@@ -153,6 +162,7 @@ private:
 
   resource_retriever::Retriever * retriever_;
   std::unique_ptr<Assimp::Importer> importer_;
+  std::unordered_set<std::string> ignored_textures_;
 };
 
 }  // namespace rviz_rendering
