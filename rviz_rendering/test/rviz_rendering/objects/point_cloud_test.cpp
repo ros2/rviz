@@ -31,6 +31,9 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <OgrePass.h>
+#include <OgreTechnique.h>
+
 #include <memory>
 #include <regex>
 #include <vector>
@@ -227,7 +230,7 @@ TEST_F(PointCloudTestFixture, setRenderMode_changes_material) {
 
   auto renderables = point_cloud->getRenderables();
   for (auto const & renderable : renderables) {
-    std::regex regex("^PointCloudMaterial\\d+Point$");
+    std::regex regex("^rviz/PointCloudPoint/Opaque$");
     ASSERT_TRUE(std::regex_match(renderable->getMaterial()->getName(), regex));
   }
 
@@ -235,9 +238,28 @@ TEST_F(PointCloudTestFixture, setRenderMode_changes_material) {
 
   renderables = point_cloud->getRenderables();
   for (auto const & renderable : renderables) {
-    std::regex regex("^PointCloudMaterial\\d+Tiles$");
+    std::regex regex("^rviz/PointCloudTile/Opaque$");
     ASSERT_TRUE(std::regex_match(renderable->getMaterial()->getName(), regex));
   }
+}
+
+TEST_F(PointCloudTestFixture, point_clouds_share_materials_and_alpha_only_changes_its_own_cloud) {
+  auto first = std::make_shared<rviz_rendering::PointCloud>();
+  auto second = std::make_shared<rviz_rendering::PointCloud>();
+  for (auto cloud : {first, second}) {
+    cloud->setRenderMode(rviz_rendering::PointCloud::RM_FLAT_SQUARES);
+    cloud->addPoints(singlePointArray.begin(), singlePointArray.end());
+  }
+  auto material = [](const std::shared_ptr<rviz_rendering::PointCloud> & cloud) {
+      return cloud->getRenderables().front()->getMaterial();
+    };
+  EXPECT_THAT(material(first), Eq(material(second)));
+
+  first->setAlpha(0.5f);
+
+  EXPECT_THAT(material(first), Ne(material(second)));
+  EXPECT_FALSE(material(first)->getBestTechnique()->getPass(0)->getDepthWriteEnabled());
+  EXPECT_TRUE(material(second)->getBestTechnique()->getPass(0)->getDepthWriteEnabled());
 }
 
 TEST_F(
