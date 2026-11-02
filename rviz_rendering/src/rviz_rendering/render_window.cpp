@@ -50,6 +50,7 @@
 #include <string>
 
 #include <QMouseEvent>  // NOLINT
+#include <QPlatformSurfaceEvent>  // NOLINT
 #include <QTimer>   // NOLINT
 #include <QWindow>   // NOLINT
 #include <QString>  // NOLINT: cpplint cannot handle the include order here
@@ -138,6 +139,20 @@ bool
 RenderWindow::event(QEvent * event)
 {
   switch (event->type()) {
+#ifdef Q_OS_MACOS
+    case QEvent::Hide:
+      impl_->setActive(false);
+      return QWindow::event(event);
+    case QEvent::PlatformSurface:
+      if (static_cast<QPlatformSurfaceEvent *>(event)->surfaceEventType() ==
+        QPlatformSurfaceEvent::SurfaceAboutToBeDestroyed)
+      {
+        // Other windows and VisualizationManager can render through Ogre::Root.
+        // Stop swapping this target before Qt releases the native Cocoa view.
+        impl_->setActive(false);
+      }
+      return QWindow::event(event);
+#endif
     case QEvent::Resize:
       if (this->isExposed()) {
         impl_->resize(this->width(), this->height());
@@ -167,6 +182,11 @@ void
 RenderWindow::exposeEvent(QExposeEvent * expose_event)
 {
   Q_UNUSED(expose_event);
+
+#ifdef Q_OS_MACOS
+  // Resume only after Qt exposes the native surface again.
+  impl_->setActive(this->isExposed());
+#endif
 
   if (this->isExposed()) {
     impl_->resize(this->width(), this->height());
