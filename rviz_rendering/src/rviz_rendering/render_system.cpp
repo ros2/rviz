@@ -363,6 +363,9 @@ RenderSystem::setupResources()
     rviz_path + "/ogre_media/materials/glsl120/include", "FileSystem", "rviz_rendering");
   Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
     rviz_path + "/ogre_media/materials/glsl120/nogp", "FileSystem", "rviz_rendering");
+  // Geometry shaders used by the point cloud materials when the driver supports them.
+  Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+    rviz_path + "/ogre_media/materials/glsl150", "FileSystem", "rviz_rendering");
   // Add resources that depend on a specific glsl version.
   // Unfortunately, Ogre doesn't have a notion of glsl versions so we can't go
   // the 'official' way of defining multiple schemes per material and let Ogre
