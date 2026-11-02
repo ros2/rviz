@@ -50,6 +50,7 @@ namespace rviz_common
 class QueueSizeProperty;
 namespace properties
 {
+class BoolProperty;
 class ColorProperty;
 class FloatProperty;
 class IntProperty;
@@ -89,16 +90,47 @@ protected:
 private Q_SLOTS:
   void updateBufferLength();
   void updateColorAndAlpha();
+  void updateVariance();
 
 private:
+  /// The near and far edges of one measurement's +/- one standard deviation band.
+  struct VarianceBand
+  {
+    std::shared_ptr<rviz_rendering::Shape> near_edge;
+    std::shared_ptr<rviz_rendering::Shape> far_edge;
+  };
+
   float getDisplayedRange(sensor_msgs::msg::Range::ConstSharedPtr msg);
   geometry_msgs::msg::Pose getPose(float displayed_range);
 
+  /// Create one band per buffer slot, reusing any that already exist.
+  void createVarianceBands();
+  /// Create the cone for one band edge if needed, and apply the band's colour.
+  void createBandEdge(std::shared_ptr<rviz_rendering::Shape> & edge);
+  /// Destroy every band, removing its cones from the scene.
+  void destroyVarianceBands();
+  /// Draw the band for one measurement, or hide it if there is nothing to show.
+  void updateVarianceBand(
+    size_t index,
+    sensor_msgs::msg::Range::ConstSharedPtr msg,
+    float displayed_range);
+  /// Place one edge of a band, hiding it if its length is not drawable.
+  void showBandEdge(
+    const std::shared_ptr<rviz_rendering::Shape> & edge,
+    sensor_msgs::msg::Range::ConstSharedPtr msg,
+    float length);
+  static void hideBand(const VarianceBand & band);
+
   std::vector<std::shared_ptr<rviz_rendering::Shape>> cones_;
+  /// Only populated while "Show Variance" is enabled; stays in step with cones_.
+  std::vector<VarianceBand> variance_bands_;
 
   rviz_common::properties::ColorProperty * color_property_;
   rviz_common::properties::FloatProperty * alpha_property_;
   rviz_common::properties::IntProperty * buffer_length_property_;
+  rviz_common::properties::BoolProperty * show_variance_property_;
+  rviz_common::properties::ColorProperty * variance_color_property_;
+  rviz_common::properties::FloatProperty * variance_alpha_property_;
 };
 
 }  // namespace displays
