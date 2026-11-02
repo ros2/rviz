@@ -143,6 +143,7 @@ protected:
   Ogre::RenderWindow * ogre_render_window_;
   Ogre::FrameListener * ogre_frame_listener_;
   Ogre::SceneManager * ogre_scene_manager_;
+  Ogre::SceneManager * owned_scene_manager_;
   Ogre::Camera * ogre_camera_;
   Ogre::Light * ogre_directional_light_;
   Ogre::SceneNode * ogre_camera_node_;

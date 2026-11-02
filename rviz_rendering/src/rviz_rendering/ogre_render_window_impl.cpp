@@ -60,6 +60,7 @@ RenderWindowImpl::RenderWindowImpl(QWindow * parent)
   ogre_render_window_(nullptr),
   ogre_frame_listener_(nullptr),
   ogre_scene_manager_(nullptr),
+  owned_scene_manager_(nullptr),
   ogre_camera_(nullptr),
   ogre_directional_light_(nullptr),
   ogre_camera_node_(nullptr),
@@ -77,6 +78,9 @@ RenderWindowImpl::~RenderWindowImpl()
   if (ogre_render_window_) {
     Ogre::Root::getSingletonPtr()->detachRenderTarget(ogre_render_window_);
     Ogre::Root::getSingletonPtr()->destroyRenderTarget(ogre_render_window_);
+  }
+  if (owned_scene_manager_) {
+    Ogre::Root::getSingletonPtr()->destroySceneManager(owned_scene_manager_);
   }
 }
 
@@ -191,6 +195,7 @@ RenderWindowImpl::initialize()
 
   if (!ogre_scene_manager_) {
     ogre_scene_manager_ = ogre_root->createSceneManager();
+    owned_scene_manager_ = ogre_scene_manager_;
 
     ogre_directional_light_ = ogre_scene_manager_->createLight("MainDirectional");
     ogre_directional_light_->setType(Ogre::Light::LT_DIRECTIONAL);
