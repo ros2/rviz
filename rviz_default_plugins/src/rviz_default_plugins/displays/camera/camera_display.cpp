@@ -168,6 +168,15 @@ CameraDisplay::~CameraDisplay()
     unsubscribe();
     context_->visibilityBits()->freeBits(vis_bit_);
     rviz_rendering::RenderWindowOgreAdapter::removeListener(render_panel_->getRenderWindow(), this);
+    // Destroying scene_node_ only detaches its children, so destroy the ones created here.
+    scene_manager_->destroySceneNode(background_scene_node_);
+    scene_manager_->destroySceneNode(overlay_scene_node_);
+  }
+  if (background_material_) {
+    Ogre::MaterialManager::getSingleton().remove(background_material_);
+  }
+  if (overlay_material_) {
+    Ogre::MaterialManager::getSingleton().remove(overlay_material_);
   }
 }
 
