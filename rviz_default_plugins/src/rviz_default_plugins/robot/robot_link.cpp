@@ -230,6 +230,7 @@ RobotLink::RobotLink(
 
   color_material_ =
     rviz_rendering::MaterialManager::createMaterialWithLighting(color_material_name);
+  owned_materials_.push_back(color_material_);
 
   resource_retriever::RetrieverVec plugins = resource_retriever::default_plugins();
   if (context_ != nullptr) {
@@ -360,6 +361,10 @@ void RobotLink::createDescription(const urdf::LinkConstSharedPtr & link)
 
 RobotLink::~RobotLink()
 {
+  // The shapes destroy their own scene nodes, so delete them before their parents below.
+  delete mass_shape_;
+  delete inertia_shape_;
+
   for (auto & visual_mesh : visual_meshes_) {
     scene_manager_->destroyEntity(visual_mesh);
   }
@@ -368,6 +373,11 @@ RobotLink::~RobotLink()
     scene_manager_->destroyEntity(collision_mesh);
   }
 
+  // destroySceneNode() only detaches children, so destroy the per-geometry offset nodes too.
+  visual_node_->removeAndDestroyAllChildren();
+  collision_node_->removeAndDestroyAllChildren();
+  mass_node_->removeAndDestroyAllChildren();
+  inertia_node_->removeAndDestroyAllChildren();
   scene_manager_->destroySceneNode(visual_node_);
   scene_manager_->destroySceneNode(collision_node_);
   scene_manager_->destroySceneNode(mass_node_);
@@ -375,6 +385,11 @@ RobotLink::~RobotLink()
 
   if (trail_) {
     scene_manager_->destroyRibbonTrail(trail_);
+  }
+
+  for (auto & material : owned_materials_) {
+    material->unload();
+    Ogre::MaterialManager::getSingleton().remove(material);
   }
 
   delete details_;
@@ -753,6 +768,7 @@ void RobotLink::assignMaterialsToEntities(
       default_material_->getName() + "_" + std::to_string(material_count++) + "Robot";
 
     default_material_ = default_material_->clone(cloned_name);
+    owned_materials_.push_back(default_material_);
     default_material_name_ = default_material_->getName();
   }
 
@@ -775,6 +791,7 @@ void RobotLink::assignMaterialsToEntities(
         default_material_->getName() + "_" + std::to_string(material_count++) + "Robot";
 
       default_material_ = default_material_->clone(cloned_name);
+      owned_materials_.push_back(default_material_);
       default_material_name_ = default_material_->getName();
 
       sub->setMaterialName(default_material_name_);
@@ -784,7 +801,7 @@ void RobotLink::assignMaterialsToEntities(
       // this can go away
       std::string sub_cloned_name =
         sub_material_name + "_" + std::to_string(material_count++) + "Robot";
-      sub->getMaterial()->clone(sub_cloned_name);
+      owned_materials_.push_back(sub->getMaterial()->clone(sub_cloned_name));
       sub->setMaterialName(sub_cloned_name);
     }
 
@@ -805,6 +822,7 @@ Ogre::MaterialPtr RobotLink::getMaterialForLink(
 
   auto material_for_link =
     rviz_rendering::MaterialManager::createMaterialWithShadowsAndLighting(link_material_name);
+  owned_materials_.push_back(material_for_link);
 
   if (visual->material->texture_filename.empty()) {
     const urdf::Color & color = visual->material->color;
