@@ -32,6 +32,7 @@
 #include "rviz_rendering/objects/shape.hpp"
 
 #include <cstdint>
+#include <iostream>
 #include <string>
 
 #include <OgreEntity.h>
@@ -42,6 +43,7 @@
 #include <OgreTechnique.h>
 #include <OgreTextureManager.h>
 #include <OgreVector.h>
+#include <RTShaderSystem/OgreShaderGenerator.h>  // NOLINT
 
 #include "rviz_rendering/logging.hpp"
 #include "rviz_rendering/material_manager.hpp"
@@ -134,6 +136,14 @@ void Shape::setColor(const Ogre::ColourValue & c)
   material_->getTechnique(0)->setDiffuse(c);
 
   rviz_rendering::MaterialManager::enableAlphaBlending(material_, c.a);
+
+  // Invalidate any RTSS-generated shader for this material so it regenerates
+  // with the new ambient/diffuse values. Ogre 14's RTShaderSystem bakes the
+  // material colour into the shader at generation time and doesn't refresh
+  // when setAmbient/setDiffuse are called later.
+  if (auto * generator = Ogre::RTShader::ShaderGenerator::getSingletonPtr()) {
+    generator->invalidateMaterial(Ogre::MSN_SHADERGEN, *material_);
+  }
 }
 
 void Shape::setColor(float r, float g, float b, float a)

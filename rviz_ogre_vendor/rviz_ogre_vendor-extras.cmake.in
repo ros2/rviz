@@ -67,7 +67,7 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
 
     set_property(TARGET rviz_ogre_vendor::OgreMain
       PROPERTY
-        INTERFACE_INCLUDE_DIRECTORIES ${OGRE_INCLUDE_DIRS}
+        INTERFACE_INCLUDE_DIRECTORIES ${OGRE_INCLUDE_DIRS} ${OGRE_INCLUDE_DIRS}/RenderSystems/glad
     )
     if(_ogre_main_static_library_abs)
       set_property(TARGET rviz_ogre_vendor::OgreMain APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
@@ -232,3 +232,26 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
     )
   endif()
 endforeach()
+
+# Expose Ogre RTShaderSystem component as an imported target so rviz packages can
+# use it to auto-generate shaders for FFP-only materials.
+if(NOT TARGET rviz_ogre_vendor::OgreRTShaderSystem)
+  find_library(_ogre_rtshader_library OgreRTShaderSystem${LIBRARY_MANGLING_SUFFIX}
+    PATHS ${OGRE_LIBRARY_DIRS}
+    NO_DEFAULT_PATH
+    NO_CMAKE_ENVIRONMENT_PATH
+    NO_CMAKE_PATH
+    NO_SYSTEM_ENVIRONMENT_PATH
+    NO_CMAKE_SYSTEM_PATH
+    NO_CMAKE_FIND_ROOT_PATH
+  )
+  if(_ogre_rtshader_library)
+    add_library(rviz_ogre_vendor::OgreRTShaderSystem UNKNOWN IMPORTED)
+    set_target_properties(rviz_ogre_vendor::OgreRTShaderSystem
+      PROPERTIES
+        IMPORTED_LOCATION ${_ogre_rtshader_library}
+        INTERFACE_INCLUDE_DIRECTORIES "${OGRE_INCLUDE_DIRS};${OGRE_INCLUDE_DIRS}/RTShaderSystem"
+        INTERFACE_LINK_LIBRARIES "rviz_ogre_vendor::OgreMain"
+    )
+  endif()
+endif()

@@ -89,18 +89,16 @@ void BasePageObject::setComboBox(
       auto index_to_change =
       getValueToChangeFromAllProperties(property_to_change, super_properties);
 
-      helpers::getDisplaysTreeView()->setCurrentIndex(index_to_change);
-
-      QComboBox * property_combo_box =
-      qobject_cast<QComboBox *>(helpers::getDisplaysTreeView()->focusWidget());
-
-      auto value_index = property_combo_box->findText(value_to_set);
-
-      if (value_index == -1) {
-        GTEST_FAIL() << "[  ERROR   ]  The value '" << value_to_set.toStdString() << "' does "
-          "not exist!";
+      // Commit via the model directly. Opening the editor and calling
+      // QComboBox::setCurrentIndex(...) does not commit the change through the
+      // item delegate in Qt 6 (commitData would fire on the wrong view, which is
+      // what the "QAbstractItemView::commitData called with an editor that does
+      // not belong to this view" warning is telling us), leaving the cell stuck
+      // in edit mode and the property never updated.
+      auto * tree_view = helpers::getDisplaysTreeView();
+      if (tree_view) {
+        tree_view->model()->setData(index_to_change, value_to_set, Qt::EditRole);
       }
-      property_combo_box->setCurrentIndex(value_index);
     }
   );
 }

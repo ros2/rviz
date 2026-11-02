@@ -205,11 +205,16 @@ void VisualizationFrame::updateFps()
 
 void VisualizationFrame::closeEvent(QCloseEvent * event)
 {
-  if (prepareToExit()) {
+  if (shutting_down_ || prepareToExit()) {
     event->accept();
   } else {
     event->ignore();
   }
+}
+
+void VisualizationFrame::setShuttingDown(bool shutting_down)
+{
+  shutting_down_ = shutting_down;
 }
 
 void VisualizationFrame::leaveEvent(QEvent * event)
@@ -944,6 +949,9 @@ void VisualizationFrame::savePanels(Config config)
 bool VisualizationFrame::prepareToExit()
 {
   if (!initialized_) {
+    return true;
+  }
+  if (shutting_down_) {
     return true;
   }
 

@@ -45,6 +45,12 @@ TEST_F(VisualTestFixture, test_pose_with_covariance_display) {
     std::make_shared<nodes::PoseWithCovariancePublisher>(),
     "pose_with_covariance_frame");
 
+  // Ogre 14.5's RTShaderSystem-generated lighting produces slightly different
+  // per-pixel values than Ogre 1.12's fixed-function path the reference was
+  // captured against, so allow a small amount of per-pixel drift here. The
+  // covariance/arrow topology is what this test is really checking.
+  setTesterThreshold(0.02);
+
   setCamPose(Ogre::Vector3(2, 2, 16));
   setCamLookAt(Ogre::Vector3(2, 2, 0));
 
