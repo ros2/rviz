@@ -36,6 +36,7 @@
 
 #include <QApplication>  // NOLINT
 
+#include <OgreEntity.h>
 #include <OgreRoot.h>
 #include <OgreSceneNode.h>
 
@@ -475,6 +476,28 @@ TEST_F(RobotTestFixture, changedEnableAllLinks_toggles_all_links) {
   EXPECT_FALSE(prop->childAt(6)->getValue().toBool());
   EXPECT_FALSE(prop->childAt(7)->getValue().toBool());
   EXPECT_FALSE(prop->childAt(8)->getValue().toBool());
+}
+
+TEST_F(RobotTestFixture, setVisible_keeps_the_all_links_checkbox_in_sync) {
+  robot_->load(urdf_model_);
+
+  auto prop = robot_->getLinkTreeProperty();
+  auto all_links_enabled = prop->childAt(4);
+  auto body_link_property = prop->childAt(5);
+  ASSERT_THAT(all_links_enabled->getNameStd(), StrEq("All Links Enabled"));
+  ASSERT_THAT(body_link_property->getNameStd(), StrEq("test_robot_link"));
+  auto body_mesh = robot_->getLink("test_robot_link")->getVisualMeshes()[0];
+
+  robot_->setVisible(false);
+  EXPECT_FALSE(body_mesh->getVisible());
+  robot_->setVisible(true);
+  EXPECT_TRUE(body_mesh->getVisible());
+  EXPECT_TRUE(all_links_enabled->getValue().toBool());
+
+  // A link toggled after a robot-level visibility change still updates the checkbox.
+  body_link_property->setValue(false);
+  EXPECT_FALSE(body_mesh->getVisible());
+  EXPECT_FALSE(all_links_enabled->getValue().toBool());
 }
 
 int main(int argc, char ** argv)

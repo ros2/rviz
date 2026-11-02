@@ -329,8 +329,8 @@ protected:
   bool doing_set_checkbox_;   // used only inside setEnableAllLinksCheckbox()
   bool robot_loaded_;         // true after robot model is loaded.
 
-  // true inside changedEnableAllLinks().  Prevents calculateJointCheckboxes()
-  // from recalculating over and over.
+  // true inside changedEnableAllLinks() and updateLinkVisibilities().  Prevents
+  // calculateJointCheckboxes() from recalculating over and over.
   bool in_changed_enable_all_links_;
 
   std::string name_;
