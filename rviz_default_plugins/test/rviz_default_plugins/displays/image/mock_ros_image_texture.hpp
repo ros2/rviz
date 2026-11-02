@@ -56,6 +56,7 @@ public:
   MOCK_METHOD3(setNormalizeFloatImage, void(bool normalize, double min, double max));
   MOCK_METHOD1(setMedianFrames, void(unsigned median_frames));
   MOCK_METHOD1(setSmoothScaling, void(bool enabled));
+  MOCK_METHOD1(setLinearInput, void(bool enabled));
 };
 
 #endif  // RVIZ_DEFAULT_PLUGINS__DISPLAYS__IMAGE__MOCK_ROS_IMAGE_TEXTURE_HPP_

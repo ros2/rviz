@@ -61,6 +61,17 @@ public:
   {}
 };
 
+// A message whose encoding is supported but whose fields are inconsistent
+// with each other or with the data buffer
+// (zero / oversize dimensions, bad step, truncated data).
+class MalformedImageMessage : public std::runtime_error
+{
+public:
+  explicit MalformedImageMessage(const std::string & description)
+  : std::runtime_error("Malformed image message: " + description)
+  {}
+};
+
 struct ImageData final
 {
   ImageData(
@@ -125,6 +136,9 @@ public:
   RVIZ_DEFAULT_PLUGINS_IMAGE_PUBLIC
   void setSmoothScaling(bool enabled) override;
 
+  RVIZ_DEFAULT_PLUGINS_PUBLIC
+  void setLinearInput(bool enabled) override;
+
 private:
   // Ensures the underlying Ogre texture matches the requested dimensions,
   // pixel format and smooth-scaling state, recreating it if any of those
@@ -143,6 +157,8 @@ private:
   ImageData convertUYVYToRGBData(const uint8_t * data_ptr, size_t data_size_in_bytes);
   ImageData convertYUYVToRGBData(const uint8_t * data_ptr, size_t data_size_in_bytes);
   ImageData convertNV12ToRGBData(const uint8_t * data_ptr, size_t data_size_in_bytes);
+  ImageData convertBayerToRGBData(
+    const std::string & encoding, const uint8_t * data_ptr, size_t data_size_in_bytes);
 
   ImageData setFormatAndNormalizeDataIfNecessary(
     const std::string & encoding, const uint8_t * data_ptr, size_t data_size_in_bytes);
@@ -173,6 +189,10 @@ private:
   // only briefly between setSmoothScaling and the next ensureTexture call.
   bool smooth_scaling_;
   bool tex_smooth_;
+  // When true, apply sRGB gamma encoding before emitting 8-bit output.
+  // When false, values pass through the linear rescale straight to 8-bit.
+  // Currently only applied by the bayer demosaicing path.
+  bool linear_input_;
   uint32_t tex_width_;
   uint32_t tex_height_;
   Ogre::PixelFormat tex_format_;

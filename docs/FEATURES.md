@@ -11,6 +11,11 @@ In addition and as before, it needs information about the camera via a `sensor_m
 *Changed behaviour:* The CameraInfo topic is assumed to be relative to the Image topic: 
 If the image topic is "/image", the CameraInfo topic is assumed to be "/image/camera_info".
 
+## Image Display
+
+Bayer-encoded images (the eight `bayer_*` encodings, 8- and 16-bit) are demosaiced and shown in color, in both the Image and Camera displays. 
+The *Linear input* property applies sRGB encoding for cameras that publish linear-response Bayer images.
+
 ## Map Display
 
 #### Topics
