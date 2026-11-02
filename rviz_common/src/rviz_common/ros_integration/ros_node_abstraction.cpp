@@ -62,6 +62,11 @@ RosNodeAbstraction::get_topic_names_and_types() const
   return raw_node_->get_topic_names_and_types();
 }
 
+size_t RosNodeAbstraction::count_publishers(const std::string & topic_name) const
+{
+  return raw_node_->count_publishers(topic_name);
+}
+
 std::map<std::string, std::vector<std::string>>
 RosNodeAbstraction::get_service_names_and_types() const
 {

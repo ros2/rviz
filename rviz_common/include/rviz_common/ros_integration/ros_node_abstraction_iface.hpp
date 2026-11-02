@@ -56,6 +56,8 @@ public:
   virtual std::map<std::string, std::vector<std::string>>
   get_topic_names_and_types() const = 0;
 
+  virtual size_t count_publishers(const std::string & topic_name) const = 0;
+
   virtual std::map<std::string, std::vector<std::string>>
   get_service_names_and_types() const = 0;
 
