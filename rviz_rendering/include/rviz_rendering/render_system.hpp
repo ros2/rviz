@@ -82,28 +82,10 @@ public:
 
   void Destroy();
 
-  // Prepare a scene_manager to render overlays.
-  // Needed for Ogre >= 1.9 to use fonts; does nothing for prior versions.
-  void
-  prepareOverlays(Ogre::SceneManager * scene_manager);
-
-  /// return OpenGl Version as integer, e.g. 320 for OpenGl 3.20
-  int
-  getGlVersion();
-
-  /// return GLSL Version as integer, e.g. 150 for GLSL 1.50
-  int
-  getGlslVersion();
-
   /// Disables the use of Anti Aliasing
   static
   void
   disableAntiAliasing();
-
-  /// Force to use the provided OpenGL version on startup
-  static
-  void
-  forceGlVersion(int version);
 
   /// Disable stereo rendering even if supported in HW.
   static
@@ -154,10 +136,7 @@ private:
   Ogre::Root * ogre_root_;
   Ogre::OverlaySystem * ogre_overlay_system_;
 
-  int gl_version_;
-  int glsl_version_;
   static bool use_anti_aliasing_;
-  static int force_gl_version_;
   bool stereo_supported_;
   static bool force_no_stereo_;
   rviz_rendering::OgreLogging * ogre_logging;
