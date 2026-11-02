@@ -40,6 +40,10 @@
 #include <QTimer>  // NOLINT
 #include <QWidget>  // NOLINT
 
+#include <OgreRoot.h>
+#include <OgreSceneManager.h>
+#include <OgreSceneNode.h>
+
 #include "rviz_rendering/objects/point_cloud.hpp"
 #include "rviz_rendering/render_window.hpp"
 #include "rviz_rendering/custom_parameter_indices.hpp"
@@ -261,6 +265,24 @@ TEST_F(
     size_t number_of_vertices_per_box = point_cloud->getVerticesPerPoint();
     ASSERT_THAT(renderable->getBuffer()->getNumVertices(), Eq(number_of_vertices_per_box));
   }
+}
+
+TEST_F(PointCloudTestFixture, regenerating_an_attached_cloud_does_not_attach_its_renderables) {
+  auto scene_manager = Ogre::Root::getSingletonPtr()->createSceneManager();
+  auto node = scene_manager->getRootSceneNode()->createChildSceneNode();
+  auto point_cloud = std::make_shared<rviz_rendering::PointCloud>();
+  point_cloud->addPoints(squareCenteredAtZero.begin(), squareCenteredAtZero.end());
+  node->attachObject(point_cloud.get());
+
+  // Rebuilds the renderables while the cloud is attached; they are queued by the cloud itself,
+  // so attaching them to the node as well would render them twice.
+  point_cloud->setRenderMode(rviz_rendering::PointCloud::RM_BOXES);
+
+  ASSERT_THAT(point_cloud->getRenderables(), SizeIs(1));
+  EXPECT_THAT(node->numAttachedObjects(), Eq(1u));
+
+  node->detachAllObjects();
+  Ogre::Root::getSingletonPtr()->destroySceneManager(scene_manager);
 }
 
 TEST_F(PointCloudTestFixture, addPoints_adds_new_renderable_whenever_it_is_called) {
