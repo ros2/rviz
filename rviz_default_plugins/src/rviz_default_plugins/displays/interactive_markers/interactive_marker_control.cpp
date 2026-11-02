@@ -1537,7 +1537,7 @@ bool InteractiveMarkerControl::intersectSomeYzPlane(
 
 void InteractiveMarkerControl::addHighlightPass(markers::S_MaterialPtr materials)
 {
-  for (auto material : materials) {
+  for (const auto & material : materials) {
     Ogre::Pass * original_pass = material->getTechnique(0)->getPass(0);
     Ogre::Pass * pass = material->getTechnique(0)->createPass();
 

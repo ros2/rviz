@@ -174,17 +174,17 @@ private:
 
   void translatePosition(
     Ogre::Vector3 & position,
-    sensor_msgs::msg::CameraInfo::ConstSharedPtr info,
+    const sensor_msgs::msg::CameraInfo::ConstSharedPtr & info,
     Ogre::Quaternion orientation);
 
   ImageDimensions getImageDimensions(
     const sensor_msgs::msg::CameraInfo::ConstSharedPtr & info) const;
 
   Ogre::Vector2 getZoomFromInfo(
-    sensor_msgs::msg::CameraInfo::ConstSharedPtr info, ImageDimensions dimensions) const;
+    const sensor_msgs::msg::CameraInfo::ConstSharedPtr & info, ImageDimensions dimensions) const;
 
   Ogre::Matrix4 calculateProjectionMatrix(
-    sensor_msgs::msg::CameraInfo::ConstSharedPtr info,
+    const sensor_msgs::msg::CameraInfo::ConstSharedPtr & info,
     ImageDimensions dimensions,
     const Ogre::Vector2 & zoom) const;
 
