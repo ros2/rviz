@@ -552,6 +552,22 @@ if(BUILD_TESTING)
     ogre_testing_environment
   )
 
+  # Compile the internal control implementation because it is not exported on Windows.
+  ament_add_gmock(interactive_marker_control_lifetime_test
+    test/rviz_default_plugins/displays/interactive_markers/interactive_marker_control_lifetime_test.cpp
+    src/rviz_default_plugins/displays/interactive_markers/interactive_marker_control.cpp
+    ${TEST_FIXTURE_OBJECTS}
+    ${SKIP_DISPLAY_TESTS}
+  )
+  if(TARGET interactive_marker_control_lifetime_test)
+    target_include_directories(interactive_marker_control_lifetime_test PRIVATE test)
+    target_link_libraries(interactive_marker_control_lifetime_test
+      ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
+      rviz_default_plugins_marker
+      Qt6::Widgets
+    )
+  endif()
+
   ament_add_gmock(fps_view_controller_test
     test/rviz_default_plugins/view_controllers/fps/fps_view_controller_test.cpp
     ${TEST_FIXTURE_OBJECTS}

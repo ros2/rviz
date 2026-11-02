@@ -75,6 +75,51 @@ namespace interaction
 using rviz_common::properties::Property;
 using rviz_common::properties::PropertyTreeModel;
 
+namespace
+{
+
+// Tie the viewport subscription to the owned highlight object's lifetime.
+class HighlightRectangle : public Ogre::Rectangle2D, public Ogre::Viewport::Listener
+{
+public:
+  explicit HighlightRectangle(SelectionManager * manager)
+  : Ogre::Rectangle2D(true), manager_(manager) {}
+
+  ~HighlightRectangle() override
+  {
+    setViewport(nullptr);
+  }
+
+  void setViewport(Ogre::Viewport * viewport)
+  {
+    if (viewport_ == viewport) {
+      return;
+    }
+    if (viewport_) {
+      viewport_->removeListener(this);
+    }
+    viewport_ = viewport;
+    if (viewport_) {
+      viewport_->addListener(this);
+    }
+  }
+
+  void viewportDestroyed(Ogre::Viewport * viewport) override
+  {
+    if (viewport_ == viewport) {
+      viewport_ = nullptr;
+      manager_->removeHighlight();
+      setVisible(false);
+    }
+  }
+
+private:
+  SelectionManager * manager_;
+  Ogre::Viewport * viewport_ = nullptr;
+};
+
+}  // namespace
+
 SelectionManager::SelectionManager(
   DisplayContext * context, std::shared_ptr<SelectionRenderer> renderer)
 : context_(context),
@@ -140,7 +185,7 @@ void SelectionManager::initialize()
   std::string name("SelectionRect");
   static int count = 0;
   name += std::to_string(count++);
-  highlight_rectangle_ = new Ogre::Rectangle2D(true);
+  highlight_rectangle_ = new HighlightRectangle(this);
 
   // Use a mutable copy so that Ogre::MemoryDataStream does not require
   // casting away const from a static object (which would be UB).
@@ -242,6 +287,7 @@ void SelectionManager::removeHighlight()
   std::lock_guard<std::recursive_mutex> lock(selection_mutex_);
 
   highlight_enabled_ = false;
+  highlight_.viewport = nullptr;
 }
 
 void SelectionManager::setHighlightRect(Ogre::Viewport * viewport, int x1, int y1, int x2, int y2)
@@ -551,6 +597,11 @@ void SelectionManager::highlight(
   Ogre::Viewport * viewport = rviz_rendering::RenderWindowOgreAdapter::getOgreViewport(window);
   std::lock_guard<std::recursive_mutex> lock(selection_mutex_);
 
+  if (!viewport) {
+    removeHighlight();
+    return;
+  }
+  static_cast<HighlightRectangle *>(highlight_rectangle_)->setViewport(viewport);
   highlight_enabled_ = true;
 
   highlight_.viewport = viewport;
