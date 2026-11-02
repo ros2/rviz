@@ -236,18 +236,18 @@ RenderWindowImpl::initialize()
 }
 
 void
-RenderWindowImpl::resize(size_t width, size_t height)
+RenderWindowImpl::resize(size_t width, size_t height, bool force)
 {
   if (width == 0 || height == 0) {
     this->renderLater();
     return;
   }
   if (ogre_render_window_) {
-    // Skip unchanged Ogre resizes: windowMovedOrResized() updates the macOS
-    // NSOpenGLContext, which can trigger another expose and repeat this call.
+    // Skip unchanged resizes to avoid macOS expose loops. A backing-scale change still needs
+    // an NSOpenGLContext update even when the window's logical size stays the same.
     const auto w = static_cast<unsigned int>(width);
     const auto h = static_cast<unsigned int>(height);
-    if (w != last_resize_width_ || h != last_resize_height_) {
+    if (force || w != last_resize_width_ || h != last_resize_height_) {
       last_resize_width_ = w;
       last_resize_height_ = h;
       this->setCameraAspectRatio();
