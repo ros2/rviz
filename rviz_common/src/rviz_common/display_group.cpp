@@ -161,19 +161,21 @@ void DisplayGroup::removeAllDisplays()
 
   int num_non_display_children = Display::numChildren();
 
-  if (model_) {
-    model_->beginRemove(this, num_non_display_children, displays_.size() );
-  }
+  // Finish removing each row before notifying listeners: a listener may remove rows of its own,
+  // such as a Camera display's visibility list, and must not see displays already deleted.
   for (int i = displays_.size() - 1; i >= 0; i--) {
+    if (model_) {
+      model_->beginRemove(this, num_non_display_children + i, 1);
+    }
     Display * child = displays_.takeAt(i);
-    Q_EMIT displayRemoved(child);
     child->setParent(nullptr);  // prevent child destructor from calling getParent()->takeChild().
     child->setModel(nullptr);
     child_indexes_valid_ = false;
+    if (model_) {
+      model_->endRemove();
+    }
+    Q_EMIT displayRemoved(child);
     delete child;
-  }
-  if (model_) {
-    model_->endRemove();
   }
   Q_EMIT childListChanged(this);
 }
@@ -188,13 +190,13 @@ Display * DisplayGroup::takeDisplay(Display * child)
         model_->beginRemove(this, Display::numChildren() + i, 1);
       }
       result = displays_.takeAt(i);
-      Q_EMIT displayRemoved(result);
       result->setParent(nullptr);
       result->setModel(nullptr);
       child_indexes_valid_ = false;
       if (model_) {
         model_->endRemove();
       }
+      Q_EMIT displayRemoved(result);
       Q_EMIT childListChanged(this);
       break;
     }
@@ -306,13 +308,13 @@ Property * DisplayGroup::takeChildAt(int index)
   }
 //  printf("  displaygroup5 displays_.takeAt( %d ) ( index = %d )\n", disp_index, index );
   Display * child = displays_.takeAt(disp_index);
-  Q_EMIT displayRemoved(child);
   child->setModel(nullptr);
   child->setParent(nullptr);
   child_indexes_valid_ = false;
   if (model_) {
     model_->endRemove();
   }
+  Q_EMIT displayRemoved(child);
   Q_EMIT childListChanged(this);
   return child;
 }
