@@ -31,7 +31,9 @@
 #ifndef RVIZ_RENDERING__MESH_LOADER_HPP_
 #define RVIZ_RENDERING__MESH_LOADER_HPP_
 
+#include <cstdint>
 #include <string>
+#include <vector>
 
 #include <OgreMesh.h>
 
@@ -46,6 +48,41 @@ RVIZ_RENDERING_PUBLIC
 Ogre::MeshPtr loadMeshFromResource(
   resource_retriever::Retriever * retriever,
   const std::string & resource_uri);
+
+/// Load a mesh from the raw contents of a mesh file, e.g. one embedded in a message.
+/**
+ * The file format is determined by the extension of \p filename, which is therefore required.
+ * Files referenced by the mesh (e.g. textures) are not resolved.
+ *
+ * The mesh is registered under \p resource_name. Loading the same data again returns the same
+ * mesh, and empty \p data returns the mesh that was loaded last under \p resource_name. Different
+ * data is never allowed to replace a mesh that is in use: it gets a mesh of its own, whose name
+ * then differs from \p resource_name. Use Ogre::Mesh::getName() to refer to the returned mesh.
+ *
+ * Every successful call must be paired with a call to releaseMeshFromMemory().
+ *
+ * Data that could not be parsed is remembered, and fails again without being parsed and logged
+ * again. Other failures, such as a name that is taken, are tried again by the next call.
+ *
+ * \return The mesh, or nullptr if the data is missing or could not be loaded.
+ */
+RVIZ_RENDERING_PUBLIC
+Ogre::MeshPtr loadMeshFromMemory(
+  const std::string & resource_name,
+  const std::string & filename,
+  const std::vector<uint8_t> & data);
+
+/// Release a mesh obtained from loadMeshFromMemory().
+/**
+ * \param mesh_name The name of the mesh, as returned by Ogre::Mesh::getName().
+ *
+ * A mesh that is not used anymore is kept, so that it can be loaded again without sending the data
+ * again, e.g. when a marker is updated. Unused meshes are removed together with their materials
+ * and textures, oldest first, once they exceed a size limit. The mesh released last is always
+ * kept.
+ */
+RVIZ_RENDERING_PUBLIC
+void releaseMeshFromMemory(const std::string & mesh_name);
 
 }  // namespace rviz_rendering
 

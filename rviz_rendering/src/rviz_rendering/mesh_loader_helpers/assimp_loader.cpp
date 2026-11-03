@@ -70,6 +70,13 @@
 namespace rviz_rendering
 {
 
+namespace
+{
+constexpr unsigned int kAssimpPostProcessFlags =
+  aiProcess_SortByPType | aiProcess_GenNormals | aiProcess_Triangulate |
+  aiProcess_GenUVCoords | aiProcess_FlipUVs;
+}  // namespace
+
 class ResourceIOStream : public Assimp::IOStream
 {
 public:
@@ -162,6 +169,9 @@ public:
   // Check whether a specific file exists
   bool Exists(const char * file) const override
   {
+    if (nullptr == retriever_) {
+      return false;
+    }
     auto res = retriever_->get_shared(file);
     return res != nullptr;
   }
@@ -171,6 +181,10 @@ public:
   {
     (void) mode;
     assert(mode == std::string("r") || mode == std::string("rb"));
+
+    if (nullptr == retriever_) {
+      return nullptr;
+    }
 
     auto res = retriever_->get_shared(file);
 
@@ -200,18 +214,20 @@ AssimpLoader::AssimpLoader(resource_retriever::Retriever * retriever)
   importer_->SetPropertyBool(AI_CONFIG_IMPORT_COLLADA_IGNORE_UP_DIRECTION, true);
 }
 
-Ogre::MeshPtr AssimpLoader::meshFromAssimpScene(const std::string & name, const aiScene * scene)
+Ogre::MeshPtr AssimpLoader::meshFromAssimpScene(
+  const std::string & name, const aiScene * scene, const std::string & format_extension)
 {
   if (!scene->HasMeshes()) {
     RVIZ_RENDERING_LOG_ERROR_STREAM("No meshes found in file [" << name.c_str() << "]");
     return Ogre::MeshPtr();
   }
 
-  auto material_table = loadMaterials(name, scene);
+  auto material_table = loadMaterials(name, scene, format_extension);
 
   Ogre::MeshPtr mesh = Ogre::MeshManager::getSingleton().createManual(name, ROS_PACKAGE_NAME);
 
-  const std::string ext = std::filesystem::path(name).extension().string();
+  const std::string ext =
+    format_extension.empty() ? std::filesystem::path(name).extension().string() : format_extension;
   if (ext == ".gltf" || ext == ".glb" || ext == ".vrm") {
     // Transform mesh from glTF Y-Up space to ROS Z-Up space
     // by applying a 90 degree rotation about the X-axis,
@@ -236,10 +252,22 @@ Ogre::MeshPtr AssimpLoader::meshFromAssimpScene(const std::string & name, const 
 
 const aiScene * AssimpLoader::getScene(const std::string & resource_path)
 {
-  return importer_->ReadFile(
-    resource_path,
-    aiProcess_SortByPType | aiProcess_GenNormals | aiProcess_Triangulate |
-    aiProcess_GenUVCoords | aiProcess_FlipUVs);
+  return importer_->ReadFile(resource_path, kAssimpPostProcessFlags);
+}
+
+const aiScene * AssimpLoader::getSceneFromMemory(
+  const std::string & filename, const uint8_t * data, size_t size)
+{
+  // The extension (without the dot) is only a hint; Assimp falls back to the content.
+  std::string hint = std::filesystem::path(filename).extension().string();
+  if (!hint.empty() && hint.front() == '.') {
+    hint.erase(0, 1);
+  }
+  std::transform(
+    hint.begin(), hint.end(), hint.begin(),
+    [](unsigned char c) {return std::tolower(c);});
+
+  return importer_->ReadFileFromMemory(data, size, kAssimpPostProcessFlags, hint.c_str());
 }
 
 std::string AssimpLoader::getErrorMessage()
@@ -255,11 +283,12 @@ std::string AssimpLoader::getErrorMessage()
  * @param material_table_out Reference to the resultant material table, filled out by this function.  Is indexed the same as scene->mMaterials[].
  */
 std::vector<Ogre::MaterialPtr> AssimpLoader::loadMaterials(
-  const std::string & resource_path, const aiScene * scene)
+  const std::string & resource_path, const aiScene * scene, const std::string & format_extension)
 {
   std::vector<Ogre::MaterialPtr> material_table_out;
 
-  std::string ext = std::filesystem::path(resource_path).extension().string();
+  std::string ext = format_extension.empty() ?
+    std::filesystem::path(resource_path).extension().string() : format_extension;
   std::transform(ext.begin(), ext.end(), ext.begin(),
     [](unsigned char c) {return std::tolower(c);});
   // STL meshes don't support proper
@@ -318,6 +347,15 @@ void AssimpLoader::setLightColorsFromAssimp(
       std::string texture_path;
       const aiTexture * texture = ai_scene->GetEmbeddedTexture(texture_name.C_Str());
       if (texture == nullptr) {
+        if (nullptr == retriever_) {
+          // No retriever (loaded from memory), so the texture file can't be found.
+          if (ignored_textures_.insert(texture_name.data).second) {
+            RVIZ_RENDERING_LOG_WARNING_STREAM(
+              "Ignoring texture [" << texture_name.data << "] of mesh [" << resource_path <<
+                "]: it is not part of the mesh data");
+          }
+          continue;
+        }
         // It's not an embedded texture. We have to go find it.
         // Assume textures are in paths relative to the mesh
         QFileInfo resource_path_finfo(QString::fromStdString(resource_path));
