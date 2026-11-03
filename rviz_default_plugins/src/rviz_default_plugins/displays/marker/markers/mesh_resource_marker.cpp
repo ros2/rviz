@@ -66,15 +66,6 @@ bool isEmbeddedMesh(const std::string & mesh_resource)
   return mesh_resource.rfind(kEmbeddedMeshPrefix, 0) == 0;
 }
 
-bool sameEmbeddedMesh(
-  const visualization_msgs::msg::Marker & old_message,
-  const visualization_msgs::msg::Marker & new_message)
-{
-  return old_message.mesh_resource == new_message.mesh_resource &&
-         old_message.mesh_file.filename == new_message.mesh_file.filename &&
-         old_message.mesh_file.data == new_message.mesh_file.data;
-}
-
 // Messages may send the data of an embedded mesh only once and leave it empty afterwards.
 bool embeddedMeshDataChanged(
   const visualization_msgs::msg::Marker & old_message,
@@ -132,16 +123,6 @@ void MeshResourceMarker::onNewMessage(
   assert(new_message->type == visualization_msgs::msg::Marker::MESH_RESOURCE);
 
   scene_node_->setVisible(false);
-
-  // Don't parse and log a payload that already failed with every message. The status is cleared
-  // before every message, so it has to be reported again. Empty data is still retried, since
-  // another marker may have loaded the mesh by now.
-  if (!entity_ && old_message && isEmbeddedMesh(new_message->mesh_resource) &&
-    !new_message->mesh_file.data.empty() && sameEmbeddedMesh(*old_message, *new_message))
-  {
-    printMeshLoadingError(new_message);
-    return;
-  }
 
   if (!entity_ ||
     old_message->mesh_resource != new_message->mesh_resource ||

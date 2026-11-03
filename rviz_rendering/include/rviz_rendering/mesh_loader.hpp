@@ -61,7 +61,10 @@ Ogre::MeshPtr loadMeshFromResource(
  *
  * Every successful call must be paired with a call to releaseMeshFromMemory().
  *
- * \return The mesh, or nullptr if the data is missing or could not be parsed.
+ * Data that could not be parsed is remembered, and fails again without being parsed and logged
+ * again. Other failures, such as a name that is taken, are tried again by the next call.
+ *
+ * \return The mesh, or nullptr if the data is missing or could not be loaded.
  */
 RVIZ_RENDERING_PUBLIC
 Ogre::MeshPtr loadMeshFromMemory(
@@ -73,9 +76,10 @@ Ogre::MeshPtr loadMeshFromMemory(
 /**
  * \param mesh_name The name of the mesh, as returned by Ogre::Mesh::getName().
  *
- * A mesh that is not used anymore is kept for a while, so that it can be loaded again without
- * sending the data again (e.g. after a reset). It is removed together with its materials and
- * textures once the unused meshes exceed a size limit.
+ * A mesh that is not used anymore is kept, so that it can be loaded again without sending the data
+ * again, e.g. when a marker is updated. Unused meshes are removed together with their materials
+ * and textures, oldest first, once they exceed a size limit. The mesh released last is always
+ * kept.
  */
 RVIZ_RENDERING_PUBLIC
 void releaseMeshFromMemory(const std::string & mesh_name);

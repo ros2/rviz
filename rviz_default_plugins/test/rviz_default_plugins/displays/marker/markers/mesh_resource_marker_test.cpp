@@ -49,6 +49,7 @@
 #include "rviz_default_plugins/displays/marker/markers/mesh_resource_marker.hpp"
 #include "rviz_common/logging.hpp"
 #include "rviz_rendering/logging.hpp"
+#include "rviz_rendering/mesh_loader.hpp"
 
 #include "../../../scene_graph_introspection.hpp"
 #include "markers_test_fixture.hpp"
@@ -442,7 +443,8 @@ TEST_F(MarkersTestFixture, setMessage_logs_unchanged_invalid_embedded_mesh_only_
     makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
   mockValidTransform();
   auto message = createEmbeddedMeshMessage("marker_test_embedded_logged_once");
-  message.mesh_file.data = {'n', 'o', 't', ' ', 'a', ' ', 'm', 'e', 's', 'h'};
+  const std::string invalid_data = "invalid data that is only logged once";
+  message.mesh_file.data.assign(invalid_data.begin(), invalid_data.end());
   ErrorLogCounter errors;
 
   LoadFailureReportCounter reports;
@@ -460,6 +462,46 @@ TEST_F(MarkersTestFixture, setMessage_logs_unchanged_invalid_embedded_mesh_only_
   auto entity = rviz_default_plugins::findEntityByMeshName(
     scene_manager_->getRootSceneNode(), message.mesh_resource);
   ASSERT_TRUE(entity);
+}
+
+TEST_F(MarkersTestFixture, setMessage_retries_embedded_mesh_after_failure_not_caused_by_data) {
+  marker_ =
+    makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
+  mockValidTransform();
+  auto message = createEmbeddedMeshMessage("marker_test_embedded_retried");
+  auto & mesh_manager = Ogre::MeshManager::getSingleton();
+
+  // Take the names the mesh can get, so that loading fails, but not because of its data. The
+  // second name is the one the mesh gets when the first is taken.
+  mesh_manager.createManual(message.mesh_resource, "rviz_rendering");
+  auto probe = rviz_rendering::loadMeshFromMemory(
+    message.mesh_resource, message.mesh_file.filename, message.mesh_file.data);
+  ASSERT_TRUE(probe);
+  const std::string second_name = probe->getName();
+  rviz_rendering::releaseMeshFromMemory(second_name);
+  mesh_manager.remove(second_name, "rviz_rendering");
+  // Releasing another mesh makes the loader forget the mesh that was removed.
+  auto other = rviz_rendering::loadMeshFromMemory(
+    "embedded://marker_test_embedded_retried_other", message.mesh_file.filename,
+    message.mesh_file.data);
+  ASSERT_TRUE(other);
+  rviz_rendering::releaseMeshFromMemory(other->getName());
+  mesh_manager.createManual(second_name, "rviz_rendering");
+
+  ErrorLogCounter errors;
+  marker_->setMessage(message);
+  EXPECT_EQ(1, errors.count());
+  ASSERT_FALSE(
+    rviz_default_plugins::findEntityByMeshName(
+      scene_manager_->getRootSceneNode(), message.mesh_resource));
+
+  mesh_manager.remove(message.mesh_resource, "rviz_rendering");
+  mesh_manager.remove(second_name, "rviz_rendering");
+  marker_->setMessage(message);
+
+  ASSERT_TRUE(
+    rviz_default_plugins::findEntityByMeshName(
+      scene_manager_->getRootSceneNode(), message.mesh_resource));
 }
 
 TEST_F(MarkersTestFixture, setMessage_does_not_log_errors_while_embedded_mesh_data_is_missing) {

@@ -33,6 +33,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <deque>
 #include <exception>
 #include <filesystem>
 #include <functional>
@@ -40,6 +41,7 @@
 #include <string>
 #include <string_view>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 #include "OgreHardwareBufferManager.h"
@@ -130,8 +132,9 @@ Ogre::MeshPtr loadMeshFromResource(
 namespace
 {
 // Meshes loaded from memory are reference counted and removed once unused. Unused meshes are
-// kept up to a size limit, so that data which is sent only once survives a reset.
+// kept up to a size limit, so that data which is sent only once can be loaded again.
 constexpr size_t kMaxUnusedBytes = 64 * 1024 * 1024;
+constexpr size_t kMaxInvalidPayloads = 16;
 
 struct MemoryMesh
 {
@@ -150,6 +153,8 @@ struct MemoryMeshes
   // Meshes without users, oldest first.
   std::list<std::string> unused;
   size_t unused_bytes = 0;
+  // Data that could not be parsed, as (hash, size), so that it is not parsed and logged again.
+  std::deque<std::pair<size_t, size_t>> invalid_payloads;
 };
 
 MemoryMeshes & memoryMeshes()
@@ -234,7 +239,7 @@ Ogre::MeshPtr useMemoryMesh(const std::string & mesh_name)
   return Ogre::MeshManager::getSingleton().getByName(mesh_name, ROS_PACKAGE_NAME);
 }
 
-/// Whether the mesh is loaded from exactly this data. Forgets meshes that Ogre has lost.
+/// Whether the mesh is loaded from exactly this data.
 bool holdsMemoryMesh(const std::string & mesh_name, size_t data_hash, size_t data_size)
 {
   auto & meshes = memoryMeshes();
@@ -243,10 +248,55 @@ bool holdsMemoryMesh(const std::string & mesh_name, size_t data_hash, size_t dat
     return false;
   }
   if (!meshExists(mesh_name)) {
-    removeMemoryMesh(mesh_name);
+    // Ogre lost the mesh, e.g. when RViz is reset. Whoever used it still releases it under this
+    // name, so the entry stays until then, and the name is not given to another mesh.
+    if (mesh->second.users == 0) {
+      removeMemoryMesh(mesh_name);
+    }
     return false;
   }
   return mesh->second.data_hash == data_hash && mesh->second.data_size == data_size;
+}
+
+/// Remove unused meshes until they fit the size limit, oldest first. The mesh that was released
+/// last is always kept, since it is the one that is loaded again when a marker is updated.
+void trimUnusedMeshes()
+{
+  auto & meshes = memoryMeshes();
+
+  // Meshes that Ogre has lost are of no use and should not push out the ones that are still there.
+  std::vector<std::string> lost;
+  for (const auto & name : meshes.unused) {
+    if (!meshExists(name)) {
+      lost.push_back(name);
+    }
+  }
+  for (const auto & name : lost) {
+    removeMemoryMesh(name);
+  }
+
+  while (meshes.unused_bytes > kMaxUnusedBytes && meshes.unused.size() > 1) {
+    const std::string oldest = meshes.unused.front();
+    removeMemoryMesh(oldest);
+  }
+}
+
+// Only data that fails because of what it contains is remembered. Failures that depend on the
+// current state, such as a name that is taken, are tried again with the next message.
+bool isKnownInvalid(size_t data_hash, size_t data_size)
+{
+  const auto & invalid = memoryMeshes().invalid_payloads;
+  return std::find(invalid.begin(), invalid.end(), std::make_pair(data_hash, data_size)) !=
+         invalid.end();
+}
+
+void rememberInvalid(size_t data_hash, size_t data_size)
+{
+  auto & invalid = memoryMeshes().invalid_payloads;
+  if (invalid.size() >= kMaxInvalidPayloads) {
+    invalid.pop_front();
+  }
+  invalid.emplace_back(data_hash, data_size);
 }
 }  // namespace
 
@@ -277,6 +327,12 @@ Ogre::MeshPtr loadMeshFromMemory(
     }
   }
 
+  if (isKnownInvalid(data_hash, data.size())) {
+    RVIZ_RENDERING_LOG_DEBUG_STREAM(
+      "Could not load embedded mesh [" << resource_name << "]: the data was invalid before");
+    return nullptr;
+  }
+
   // The extension of the file name (not of the resource name) determines the file format, and
   // with it format specific conversions such as glTF's Y-up to Z-up.
   std::string ext = std::filesystem::path(filename).extension().string();
@@ -287,6 +343,7 @@ Ogre::MeshPtr loadMeshFromMemory(
     RVIZ_RENDERING_LOG_ERROR_STREAM(
       "Could not load embedded mesh [" << resource_name << "]: file name [" << filename <<
         "] has no extension to determine the file format from");
+    rememberInvalid(data_hash, data.size());
     return nullptr;
   }
 
@@ -296,6 +353,7 @@ Ogre::MeshPtr loadMeshFromMemory(
     RVIZ_RENDERING_LOG_ERROR_STREAM(
       "Could not load embedded mesh [" << resource_name << "] (file name [" << filename <<
         "]): " << assimp_loader.getErrorMessage());
+    rememberInvalid(data_hash, data.size());
     return nullptr;
   }
 
@@ -348,10 +406,7 @@ void releaseMeshFromMemory(const std::string & mesh_name)
 
   meshes.unused.push_back(mesh_name);
   meshes.unused_bytes += mesh->second.data_size;
-  while (meshes.unused_bytes > kMaxUnusedBytes && !meshes.unused.empty()) {
-    const std::string oldest = meshes.unused.front();
-    removeMemoryMesh(oldest);
-  }
+  trimUnusedMeshes();
 }
 
 }  // namespace rviz_rendering
