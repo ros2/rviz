@@ -142,9 +142,9 @@ private:
     auto * indices =
       static_cast<T *>(index_buffer->lock(Ogre::HardwareBuffer::HBL_DISCARD));
 
-    for (T j = 0; j < input_mesh->mNumFaces; j++) {
+    for (uint32_t j = 0; j < input_mesh->mNumFaces; j++) {
       aiFace & face = input_mesh->mFaces[j];
-      for (T k = 0; k < face.mNumIndices; ++k) {
+      for (uint32_t k = 0; k < face.mNumIndices; ++k) {
         *indices++ = face.mIndices[k];
       }
     }
