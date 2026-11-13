@@ -223,8 +223,7 @@ TEST_F(MeshLoaderTestFixture, meshes_without_vertex_colors_have_no_diffuse_eleme
 
 TEST_F(MeshLoaderTestFixture, can_load_meshes_with_16_bit_indices_and_more_than_65535_faces) {
   // A flat grid of 183 x 183 vertices: few enough vertices for 16 bit indices, but 66248
-  // faces, more than a 16 bit counter can count. It has normals, because generating them
-  // gives every face its own vertices.
+  // faces, more than a 16 bit counter can count.
   std::string mesh_path =
     "package://rviz_rendering_tests/test_meshes/16bit_indices_more_than_65535_faces.glb";
 
