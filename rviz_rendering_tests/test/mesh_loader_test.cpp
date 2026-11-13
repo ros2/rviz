@@ -30,8 +30,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <filesystem>
-#include <fstream>
 #include <memory>
 #include <string>
 #include <vector>
@@ -40,6 +38,7 @@
 #include <OgreSubMesh.h>
 #include <OgreMaterialManager.h>
 #include <OgreHardwareVertexBuffer.h>
+#include <OgreHardwareIndexBuffer.h>
 #include "resource_retriever/retriever.hpp"
 
 #include "ogre_testing_environment.hpp"
@@ -223,41 +222,19 @@ TEST_F(MeshLoaderTestFixture, meshes_without_vertex_colors_have_no_diffuse_eleme
 }
 
 TEST_F(MeshLoaderTestFixture, can_load_meshes_with_16_bit_indices_and_more_than_65535_faces) {
-  // A flat grid of 200 x 200 vertices: few enough vertices for 16 bit indices, but 79202
-  // faces, more than a 16 bit counter can count. A ply file keeps its vertices shared.
-  const uint32_t side = 200;
-  const uint32_t expected_vertex_count = side * side;
-  const uint32_t expected_face_count = 2 * (side - 1) * (side - 1);
-  std::filesystem::path mesh_file =
-    std::filesystem::temp_directory_path() / "rviz_rendering_tests_large_grid.ply";
-  {
-    std::ofstream ply(mesh_file);
-    ply << "ply\nformat ascii 1.0\n";
-    ply << "element vertex " << expected_vertex_count << "\n";
-    ply << "property float x\nproperty float y\nproperty float z\n";
-    ply << "element face " << expected_face_count << "\n";
-    ply << "property list uchar uint vertex_indices\nend_header\n";
-    for (uint32_t y = 0; y < side; ++y) {
-      for (uint32_t x = 0; x < side; ++x) {
-        ply << x << " " << y << " 0\n";
-      }
-    }
-    for (uint32_t y = 0; y < side - 1; ++y) {
-      for (uint32_t x = 0; x < side - 1; ++x) {
-        uint32_t corner = y * side + x;
-        ply << "3 " << corner << " " << corner + 1 << " " << corner + side + 1 << "\n";
-        ply << "3 " << corner << " " << corner + side + 1 << " " << corner + side << "\n";
-      }
-    }
-  }
+  // A flat grid of 183 x 183 vertices: few enough vertices for 16 bit indices, but 66248
+  // faces, more than a 16 bit counter can count.
+  std::string mesh_path =
+    "package://rviz_rendering_tests/test_meshes/16bit_indices_more_than_65535_faces.glb";
 
-  auto mesh = rviz_rendering::loadMeshFromResource("file://" + mesh_file.string());
-  std::filesystem::remove(mesh_file);
+  auto mesh = rviz_rendering::loadMeshFromResource(&this->retriever_, mesh_path);
 
+  size_t expected_vertex_count = 33489;
+  size_t expected_index_count = 3 * 66248;
   ASSERT_TRUE(mesh);
   ASSERT_EQ(1u, mesh->getNumSubMeshes());
   const auto * submesh = mesh->getSubMesh(0);
   ASSERT_EQ(expected_vertex_count, submesh->vertexData->vertexCount);
   ASSERT_EQ(Ogre::HardwareIndexBuffer::IT_16BIT, submesh->indexData->indexBuffer->getType());
-  ASSERT_EQ(3 * expected_face_count, submesh->indexData->indexCount);
+  ASSERT_EQ(expected_index_count, submesh->indexData->indexCount);
 }
