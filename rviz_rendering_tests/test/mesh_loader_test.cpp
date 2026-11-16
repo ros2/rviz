@@ -38,6 +38,7 @@
 #include <OgreSubMesh.h>
 #include <OgreMaterialManager.h>
 #include <OgreHardwareVertexBuffer.h>
+#include <OgreHardwareIndexBuffer.h>
 #include "resource_retriever/retriever.hpp"
 
 #include "ogre_testing_environment.hpp"
@@ -218,4 +219,22 @@ TEST_F(MeshLoaderTestFixture, meshes_without_vertex_colors_have_no_diffuse_eleme
   ASSERT_TRUE(mesh);
   const auto * declaration = mesh->getSubMesh(0)->vertexData->vertexDeclaration;
   ASSERT_EQ(nullptr, declaration->findElementBySemantic(Ogre::VES_DIFFUSE));
+}
+
+TEST_F(MeshLoaderTestFixture, can_load_meshes_with_16_bit_indices_and_more_than_65535_faces) {
+  // A flat grid of 183 x 183 vertices: few enough vertices for 16 bit indices, but 66248
+  // faces, more than a 16 bit counter can count.
+  std::string mesh_path =
+    "package://rviz_rendering_tests/test_meshes/16bit_indices_more_than_65535_faces.glb";
+
+  auto mesh = rviz_rendering::loadMeshFromResource(&this->retriever_, mesh_path);
+
+  size_t expected_vertex_count = 33489;
+  size_t expected_index_count = 3 * 66248;
+  ASSERT_TRUE(mesh);
+  ASSERT_EQ(1u, mesh->getNumSubMeshes());
+  const auto * submesh = mesh->getSubMesh(0);
+  ASSERT_EQ(expected_vertex_count, submesh->vertexData->vertexCount);
+  ASSERT_EQ(Ogre::HardwareIndexBuffer::IT_16BIT, submesh->indexData->indexBuffer->getType());
+  ASSERT_EQ(expected_index_count, submesh->indexData->indexCount);
 }
