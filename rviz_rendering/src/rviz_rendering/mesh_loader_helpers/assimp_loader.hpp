@@ -32,6 +32,7 @@
 #ifndef RVIZ_RENDERING__MESH_LOADER_HELPERS__ASSIMP_LOADER_HPP_
 #define RVIZ_RENDERING__MESH_LOADER_HELPERS__ASSIMP_LOADER_HPP_
 
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
@@ -142,10 +143,10 @@ private:
     auto * indices =
       static_cast<T *>(index_buffer->lock(Ogre::HardwareBuffer::HBL_DISCARD));
 
-    for (T j = 0; j < input_mesh->mNumFaces; j++) {
+    for (uint32_t j = 0; j < input_mesh->mNumFaces; j++) {
       aiFace & face = input_mesh->mFaces[j];
-      for (T k = 0; k < face.mNumIndices; ++k) {
-        *indices++ = face.mIndices[k];
+      for (uint32_t k = 0; k < face.mNumIndices; ++k) {
+        *indices++ = static_cast<T>(face.mIndices[k]);
       }
     }
     index_buffer->unlock();
