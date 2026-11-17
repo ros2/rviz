@@ -154,7 +154,7 @@ public:
   void popPoints(uint32_t num_points);
 
   RVIZ_RENDERING_PUBLIC
-  const std::vector<Point> & getPoints() const;
+  std::vector<Point> getPoints();
 
   /// Set type of rendering primitive to used; supports points, billboards, spheres and boxes.
   RVIZ_RENDERING_PUBLIC
