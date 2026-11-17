@@ -336,7 +336,7 @@ void PointCloud::regenerateAll()
 
   clear();
 
-  addPoints(points.begin(), points.end());
+  addPoints(std::move(points));
 }
 
 void PointCloud::setColorByIndex(bool set)
@@ -688,7 +688,7 @@ void PointCloud::popPoints(uint32_t num_points)
   }
 }
 
-const std::vector<PointCloud::Point> & PointCloud::getPoints() const
+std::vector<PointCloud::Point> PointCloud::getPoints()
 {
   return points_;
 }
