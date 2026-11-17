@@ -38,6 +38,8 @@
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
 #include <message_filters/subscriber.hpp>
+#include <rclcpp/logging.hpp>
+#include <rclcpp/subscription_options.hpp>
 
 #include "rclcpp/exceptions/exceptions.hpp"
 #include "rclcpp/node.hpp"
@@ -115,6 +117,31 @@ protected:
     resetSubscription();
   }
 
+  rclcpp::SubscriptionOptions createSubscriptionOptions(
+    const rclcpp::Logger & logger, const std::string & topic)
+  {
+    rclcpp::SubscriptionOptions options;
+    options.event_callbacks.incompatible_qos_callback =
+      [this, logger, topic](rclcpp::QOSRequestedIncompatibleQoSInfo & info)
+      {
+        const std::string policy_name =
+          rclcpp::qos_policy_name_from_kind(info.last_policy_kind);
+        RCLCPP_WARN(
+          logger,
+          "New publisher discovered on topic '%s', offering incompatible QoS. "
+          "No messages will be received from it. Last incompatible policy: %s",
+          topic.c_str(), policy_name.c_str());
+        // Use a separate entry so that messages from compatible publishers do not clear it.
+        setStatus(
+          properties::StatusProperty::Error,
+          "Incompatible QoS",
+          QString("Incompatible QoS. No messages will be received from this publisher. "
+            "Last incompatible policy: %1")
+          .arg(QString::fromStdString(policy_name)));
+      };
+    return options;
+  }
+
   virtual void subscribe()
   {
     if (!isEnabled()) {
@@ -129,10 +156,12 @@ protected:
 
     try {
       rclcpp::Node::SharedPtr node = rviz_ros_node_.lock()->get_raw_node();
+      const std::string topic = topic_property_->getTopicStd();
       subscription_ = std::make_shared<message_filters::Subscriber<MessageType>>(
         node,
-        topic_property_->getTopicStd(),
-        qos_profile);
+        topic,
+        qos_profile,
+        createSubscriptionOptions(node->get_logger(), topic));
       subscription_start_time_ = node->now();
       tf_filter_ =
         std::make_shared<tf2_ros::MessageFilter<MessageType, transformation::FrameTransformer>>(
@@ -176,6 +205,8 @@ protected:
   {
     tf_filter_.reset();
     subscription_.reset();
+    // The publishers reported by the old subscription no longer apply.
+    deleteStatus("Incompatible QoS");
   }
 
   void onEnable() override

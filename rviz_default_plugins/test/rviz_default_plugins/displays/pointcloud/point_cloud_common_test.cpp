@@ -30,6 +30,7 @@
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <memory>
 #include <vector>
 
@@ -38,6 +39,7 @@
 #include "rviz_common/display.hpp"
 #include "rviz_common/properties/enum_property.hpp"
 #include "rviz_rendering/custom_parameter_indices.hpp"
+#include "rviz_rendering/objects/point_cloud_renderable.hpp"
 
 #include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
 
@@ -235,6 +237,81 @@ TEST_F(
 
   auto point_clouds = rviz_default_plugins::findAllPointClouds(scene_manager_->getRootSceneNode());
   ASSERT_THAT(point_clouds.size(), Eq(0u));
+}
+
+size_t drawnVertexCount(rviz_rendering::PointCloud * point_cloud)
+{
+  size_t count = 0;
+  for (const auto & renderable : point_cloud->getRenderables()) {
+    count += renderable->getRenderOperation()->vertexData->vertexCount;
+  }
+  return count;
+}
+
+TEST_F(PointCloudCommonTestFixture, changing_color_replaces_retained_points) {
+  point_cloud_common_->initialize(
+    context_.get(), scene_manager_->getRootSceneNode()->createChildSceneNode());
+  mockValidTransform();
+  parent_display_->findProperty("Color Transformer")->setValue("FlatColor");
+  parent_display_->findProperty("Color")->setValue(QColor(255, 0, 0));
+
+  point_cloud_common_->addMessage(
+    createPointCloud2WithPoints(std::vector<rviz_default_plugins::Point>{{1, 2, 3}, {4, 5, 6}}));
+  const auto zero = std::chrono::nanoseconds::zero();
+  point_cloud_common_->update(zero, zero);
+
+  for (const auto & color : {QColor(0, 255, 0), QColor(0, 0, 255), QColor(255, 0, 0)}) {
+    parent_display_->findProperty("Color")->setValue(color);
+    point_cloud_common_->update(zero, zero);
+    auto point_cloud = rviz_default_plugins::findOnePointCloud(scene_manager_->getRootSceneNode());
+    ASSERT_THAT(point_cloud, NotNull());
+    const auto points = point_cloud->getPoints();
+    ASSERT_THAT(points, SizeIs(2u));
+    EXPECT_THAT(points[0].position, Vector3Eq(Ogre::Vector3(1, 2, 3)));
+    EXPECT_THAT(points[1].position, Vector3Eq(Ogre::Vector3(4, 5, 6)));
+    EXPECT_THAT(
+      points[0].color,
+      ColourValueEq(Ogre::ColourValue(color.redF(), color.greenF(), color.blueF())));
+
+    // Selection and style changes regenerate the drawn geometry from the retained points.
+    point_cloud->setColorByIndex(true);
+    point_cloud->setColorByIndex(false);
+    EXPECT_THAT(drawnVertexCount(point_cloud), Eq(2u * point_cloud->getVerticesPerPoint()));
+  }
+}
+
+TEST_F(PointCloudCommonTestFixture, changing_color_keeps_each_decaying_cloud_separate) {
+  point_cloud_common_->initialize(
+    context_.get(), scene_manager_->getRootSceneNode()->createChildSceneNode());
+  mockValidTransform();
+  parent_display_->findProperty("Decay Time")->setValue(1000.0f);
+  parent_display_->findProperty("Color Transformer")->setValue("FlatColor");
+
+  const auto zero = std::chrono::nanoseconds::zero();
+  for (float x : {1.0f, 2.0f, 3.0f}) {
+    point_cloud_common_->addMessage(
+      createPointCloud2WithPoints(std::vector<rviz_default_plugins::Point>{{x, 0, 0}, {x, 1, 0}}));
+    point_cloud_common_->update(zero, zero);
+  }
+
+  const QColor color(0, 0, 255);
+  parent_display_->findProperty("Color")->setValue(color);
+  point_cloud_common_->update(zero, zero);
+
+  auto point_clouds = rviz_default_plugins::findAllPointClouds(scene_manager_->getRootSceneNode());
+  ASSERT_THAT(point_clouds, SizeIs(3u));
+  std::vector<float> xs;
+  for (auto * point_cloud : point_clouds) {
+    const auto points = point_cloud->getPoints();
+    ASSERT_THAT(points, SizeIs(2u));
+    EXPECT_THAT(points[1].position.x, Eq(points[0].position.x));
+    EXPECT_THAT(
+      points[1].color,
+      ColourValueEq(Ogre::ColourValue(color.redF(), color.greenF(), color.blueF())));
+    xs.push_back(points[0].position.x);
+  }
+  std::sort(xs.begin(), xs.end());
+  EXPECT_THAT(xs, ElementsAre(1.0f, 2.0f, 3.0f));
 }
 
 int main(int argc, char ** argv)

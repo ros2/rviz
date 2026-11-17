@@ -69,10 +69,6 @@ public:
 
   void reset() override;
 
-  void yaw(float angle);
-
-  void pitch(float angle);
-
 protected:
   void onTargetFrameChanged(
     const Ogre::Vector3 & old_reference_position,
@@ -81,15 +77,19 @@ protected:
   rviz_common::properties::EnumProperty * axis_property_;
   rviz_common::properties::BoolProperty * locked_property_;
 
-  int actualCameraAxisOption(double precision = 0.001) const;
-
-  void setAxisFromCamera();
+  /**
+   * Overrides updateTargetSceneNode() of FramePositionTrackingViewController to
+   * update both position and orientation tracking ot the target frame.
+   */
+  void updateTargetSceneNode() override;
 
 protected Q_SLOTS:
   void changedAxis();
 
 private:
   void rememberAxis(int current);
+  Ogre::Vector3 getAxis(int option);
+  Ogre::Quaternion getRotationToAxis(int option);
 
   int previous_axis_;
 };

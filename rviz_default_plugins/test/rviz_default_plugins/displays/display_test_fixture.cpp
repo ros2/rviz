@@ -55,8 +55,7 @@ DisplayTestFixture::DisplayTestFixture()
   EXPECT_CALL(*frame_manager_, getFixedFrame()).WillRepeatedly(testing::ReturnRef(fixed_frame));
 
   EXPECT_CALL(*context_, getClock()).WillRepeatedly(testing::Return(clock_));
-  EXPECT_CALL(*context_, getSceneManager()).WillRepeatedly(
-    testing::Invoke([]() {return scene_manager_;}));
+  EXPECT_CALL(*context_, getSceneManager()).WillRepeatedly([]() {return scene_manager_;});
   EXPECT_CALL(*context_, getFrameManager()).WillRepeatedly(testing::Return(frame_manager_.get()));
   EXPECT_CALL(*context_, getSelectionManager()).WillRepeatedly(
     testing::Return(selection_manager_));

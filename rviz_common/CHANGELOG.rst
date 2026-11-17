@@ -2,6 +2,19 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.4 (2026-10-09)
+-------------------
+* Report incompatible QoS in message filter displays (`#1837 <https://github.com/ros2/rviz/issues/1837>`_)
+* Fix Invoke deprecation (`#1892 <https://github.com/ros2/rviz/issues/1892>`_)
+* Restore keyboard shortcuts after camera interaction (`#1891 <https://github.com/ros2/rviz/issues/1891>`_)
+* Remove old CMake export calls (`#1889 <https://github.com/ros2/rviz/issues/1889>`_)
+* Removed _buf_cpu topic from Image display selection (`#1820 <https://github.com/ros2/rviz/issues/1820>`_)
+* perf: use EventsCBGExecutor in visualization manager (`#1874 <https://github.com/ros2/rviz/issues/1874>`_)
+* Granular includes and include what you use (`#1854 <https://github.com/ros2/rviz/issues/1854>`_)
+* Remove unused point_idx variable (`#1856 <https://github.com/ros2/rviz/issues/1856>`_)
+* Minor cleanups (`#1848 <https://github.com/ros2/rviz/issues/1848>`_)
+* Contributors: Alejandro Hernández Cordero, Dylan Gallagher, Miko Parkkinen, Skyler Medeiros, Tanish Jain, mosfet80
+
 16.0.3 (2026-09-02)
 -------------------
 * Removed Qt5 dependency (`#1847 <https://github.com/ros2/rviz/issues/1847>`_)

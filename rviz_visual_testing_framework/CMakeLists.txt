@@ -102,9 +102,6 @@ ament_export_dependencies(
   tf2_ros
 )
 
-# Export old-style CMake variables
-ament_export_include_directories("include/${PROJECT_NAME}")
-
 # Export modern CMake targets
 ament_export_targets(rviz_visual_testing_framework)
 

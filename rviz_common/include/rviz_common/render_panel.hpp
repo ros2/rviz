@@ -116,6 +116,9 @@ public:
   // virtual void sceneManagerDestroyed(Ogre::SceneManager * source);
 
 protected:
+  /// Forward key presses received by the native render window to this widget.
+  bool eventFilter(QObject * watched, QEvent * event) override;
+
   /// Called when any mouse event happens inside the render window.
   void onRenderWindowMouseEvents(QMouseEvent * event);
 

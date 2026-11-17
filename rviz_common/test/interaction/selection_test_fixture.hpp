@@ -64,9 +64,9 @@ public:
     std::weak_ptr<rviz_common::interaction::SelectionManagerIface>
     selection_manager_weak_ptr(selection_manager_);
     EXPECT_CALL(*context_, getHandlerManager()).WillRepeatedly(
-      Invoke([handler_manager_weak_ptr]() {return handler_manager_weak_ptr.lock();}));
+      [handler_manager_weak_ptr]() {return handler_manager_weak_ptr.lock();});
     EXPECT_CALL(*context_, getSelectionManager()).WillRepeatedly(
-      Invoke([selection_manager_weak_ptr]() {return selection_manager_weak_ptr.lock();}));
+      [selection_manager_weak_ptr]() {return selection_manager_weak_ptr.lock();});
   }
 
   std::shared_ptr<MockSelectionRenderer> renderer_;

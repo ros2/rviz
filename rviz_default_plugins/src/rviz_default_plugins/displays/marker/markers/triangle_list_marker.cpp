@@ -31,6 +31,7 @@
 
 #include "rviz_default_plugins/displays/marker/markers/triangle_list_marker.hpp"
 
+#include <array>
 #include <string>
 #include <vector>
 
@@ -189,14 +190,19 @@ void TriangleListMarker::beginManualObject(
 }
 
 bool TriangleListMarker::fillManualObjectAndDetermineAlpha(
-  const MarkerBase::MarkerConstSharedPtr new_message) const
+  const MarkerBase::MarkerConstSharedPtr & new_message) const
 {
   bool any_vertex_has_alpha = false;
+
+  // These only depend on the message as a whole, so evaluate them once instead of per vertex.
+  const bool has_vertex_colors = hasVertexColors(new_message);
+  const bool has_face_colors = hasFaceColors(new_message);
+  const bool has_texture = hasTexture(new_message);
 
   size_t num_points = new_message->points.size();
   const std::vector<geometry_msgs::msg::Point> & points = new_message->points;
   for (size_t i = 0; i < num_points; i += 3) {
-    std::vector<Ogre::Vector3> corners(3);
+    std::array<Ogre::Vector3, 3> corners;
     for (size_t c = 0; c < 3; c++) {
       corners[c] = Ogre::Vector3(
         static_cast<Ogre::Real>(points[i + c].x),
@@ -209,7 +215,7 @@ bool TriangleListMarker::fillManualObjectAndDetermineAlpha(
     for (size_t c = 0; c < 3; c++) {
       manual_object_->position(corners[c]);
       manual_object_->normal(normal);
-      if (hasVertexColors(new_message)) {
+      if (has_vertex_colors) {
         any_vertex_has_alpha = any_vertex_has_alpha ||
           (new_message->colors[i + c].a < rviz_rendering::unit_alpha_threshold);
         manual_object_->colour(
@@ -217,7 +223,7 @@ bool TriangleListMarker::fillManualObjectAndDetermineAlpha(
           new_message->colors[i + c].g,
           new_message->colors[i + c].b,
           new_message->color.a * new_message->colors[i + c].a);
-      } else if (hasFaceColors(new_message)) {
+      } else if (has_face_colors) {
         any_vertex_has_alpha = any_vertex_has_alpha ||
           (new_message->colors[i / 3].a < rviz_rendering::unit_alpha_threshold);
         manual_object_->colour(
@@ -227,7 +233,7 @@ bool TriangleListMarker::fillManualObjectAndDetermineAlpha(
           new_message->color.a * new_message->colors[i / 3].a);
       }
 
-      if (hasTexture(new_message)) {
+      if (has_texture) {
         manual_object_->textureCoord(
           new_message->uv_coordinates[i + c].u,
           new_message->uv_coordinates[i + c].v);
@@ -296,29 +302,29 @@ void TriangleListMarker::loadTexture(const MarkerBase::MarkerConstSharedPtr & ne
     texture_name_, "rviz_rendering", img, Ogre::TEX_TYPE_2D);
 }
 
-bool TriangleListMarker::hasFaceColors(const MarkerBase::MarkerConstSharedPtr new_message) const
+bool TriangleListMarker::hasFaceColors(const MarkerBase::MarkerConstSharedPtr & new_message) const
 {
   return new_message->colors.size() == new_message->points.size() / 3;
 }
 
-bool TriangleListMarker::hasVertexColors(const MarkerBase::MarkerConstSharedPtr new_message) const
+bool TriangleListMarker::hasVertexColors(const MarkerBase::MarkerConstSharedPtr & new_message) const
 {
   return new_message->colors.size() == new_message->points.size();
 }
 
-bool TriangleListMarker::hasTexture(const MarkerBase::MarkerConstSharedPtr new_message) const
+bool TriangleListMarker::hasTexture(const MarkerBase::MarkerConstSharedPtr & new_message) const
 {
   return !new_message->texture_resource.empty() &&
          new_message->uv_coordinates.size() == new_message->points.size();
 }
 
-bool TriangleListMarker::textureEmbedded(const MarkerBase::MarkerConstSharedPtr new_message) const
+bool TriangleListMarker::textureEmbedded(const MarkerBase::MarkerConstSharedPtr & new_message) const
 {
   return !new_message->texture_resource.empty() &&
          new_message->texture_resource.find("embedded://") == 0;
 }
 
-std::string TriangleListMarker::getTextureName(const MarkerBase::MarkerConstSharedPtr new_message)
+std::string TriangleListMarker::getTextureName(const MarkerBase::MarkerConstSharedPtr & new_message)
 const
 {
   if (new_message->texture_resource.empty()) {

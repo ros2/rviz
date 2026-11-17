@@ -133,10 +133,6 @@ ament_export_dependencies(
   rviz_ogre_vendor
 )
 
-# Export old-style CMake variables
-ament_export_include_directories("include/${PROJECT_NAME}")
-ament_export_libraries(rviz_rendering)
-
 # Export modern CMake targets
 ament_export_targets(rviz_rendering)
 

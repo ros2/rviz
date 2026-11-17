@@ -198,8 +198,8 @@ void PointCloudCommon::loadTransformers()
 }
 
 void PointCloudCommon::loadTransformer(
-  PointCloudTransformerPtr trans,
-  std::string name,
+  const PointCloudTransformerPtr & trans,
+  const std::string & name,
   const std::string & lookup_name)
 {
   trans->init();
@@ -376,7 +376,7 @@ void PointCloudCommon::updateTransformerProperties()
   std::unique_lock<std::mutex> lock(new_clouds_mutex_);
 
   if (new_xyz_transformer_ || new_color_transformer_) {
-    for (auto transformer : transformers_) {
+    for (auto & transformer : transformers_) {
       const std::string & name = transformer.first;
       TransformerInfo & info = transformer.second;
 
@@ -415,19 +415,19 @@ void PointCloudCommon::collectObsoleteCloudInfos(float point_decay_time, const r
 void PointCloudCommon::removeObsoleteCloudInfos()
 {
   auto it = obsolete_cloud_infos_.begin();
-  auto end = obsolete_cloud_infos_.end();
-  while (it != end) {
+  while (it != obsolete_cloud_infos_.end()) {
     if (!(*it)->selection_handler_.get() || !(*it)->selection_handler_->hasSelections()) {
+      // erase() already returns an iterator to the next element; advancing again here would
+      // skip it, so only step forward when nothing was removed.
       it = obsolete_cloud_infos_.erase(it);
-    }
-    if (it != end) {
+    } else {
       ++it;
     }
   }
 }
 
 bool PointCloudCommon::cloudInfoIsDecayed(
-  CloudInfoPtr cloud_info, float point_decay_time, const rclcpp::Time & now)
+  const CloudInfoPtr & cloud_info, float point_decay_time, const rclcpp::Time & now)
 {
   return (now.nanoseconds() - cloud_info->receive_time_.nanoseconds()) / 1E9 >=
          point_decay_time;
@@ -457,7 +457,7 @@ void PointCloudCommon::updateTransformers(
   bool cur_xyz_valid = false;
   bool cur_color_valid = false;
   bool has_rgb_transformer = false;
-  for (auto transformer : transformers_) {
+  for (const auto & transformer : transformers_) {
     const std::string & name = transformer.first;
     const PointCloudTransformerPtr & trans = transformer.second.transformer;
     uint32_t mask = trans->supports(cloud);
@@ -582,7 +582,7 @@ void PointCloudCommon::retransform()
 
   for (auto const & cloud_info : cloud_infos_) {
     transformCloud(cloud_info, false);
-    cloud_info->cloud_->clear();
+    cloud_info->cloud_->clearAndRemoveAllPoints();
     cloud_info->cloud_->addPoints(
       cloud_info->transformed_points_.begin(), cloud_info->transformed_points_.end());
   }
@@ -707,7 +707,7 @@ void PointCloudCommon::fillTransformerOptions(
 
   const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg = cloud_infos_.front()->message_;
 
-  for (auto transformer : transformers_) {
+  for (const auto & transformer : transformers_) {
     const PointCloudTransformerPtr & trans = transformer.second.transformer;
     if ((trans->supports(msg) & mask) == mask) {
       prop->addOption(QString::fromStdString(transformer.first));
@@ -717,10 +717,10 @@ void PointCloudCommon::fillTransformerOptions(
 
 void PointCloudCommon::onDisable()
 {
-  for (auto cloud_info : cloud_infos_) {
+  for (const auto & cloud_info : cloud_infos_) {
     cloud_info->selection_handler_.reset();
   }
-  for (auto obsolete_cloud_info : obsolete_cloud_infos_) {
+  for (const auto & obsolete_cloud_info : obsolete_cloud_infos_) {
     obsolete_cloud_info->selection_handler_.reset();
   }
 }

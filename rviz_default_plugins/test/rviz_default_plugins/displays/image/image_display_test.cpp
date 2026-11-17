@@ -95,7 +95,7 @@ public:
     ON_CALL(*context_, getTransformationManager())
     .WillByDefault(Return(transformation_manager_.get()));
     ON_CALL(*context_, getRosNodeAbstraction())
-    .WillByDefault(Invoke([]() {return rviz_ros_node_;}));
+    .WillByDefault([]() {return rviz_ros_node_;});
   }
 
   static std::shared_ptr<rviz_default_plugins::OgreTestingEnvironment> testing_environment_;

@@ -2,6 +2,15 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.4 (2026-10-09)
+-------------------
+* Avoid repeated Ogre resizes on macOS expose events (`#1893 <https://github.com/ros2/rviz/issues/1893>`_)
+* Reduce point cloud upload overhead (`#1883 <https://github.com/ros2/rviz/issues/1883>`_)
+* Remove old CMake export calls (`#1889 <https://github.com/ros2/rviz/issues/1889>`_)
+* Minor fixes (`#1864 <https://github.com/ros2/rviz/issues/1864>`_)
+* Minor cleanups (`#1848 <https://github.com/ros2/rviz/issues/1848>`_)
+* Contributors: Alejandro Hernández Cordero, John Cameron Furey, Maurice Alexander Purnawan, Tanish Jain
+
 16.0.3 (2026-09-02)
 -------------------
 * Removed Qt5 dependency (`#1847 <https://github.com/ros2/rviz/issues/1847>`_)
