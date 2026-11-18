@@ -230,7 +230,7 @@ TEST_F(MeshLoaderTestFixture, can_load_meshes_with_16_bit_indices_and_more_than_
   std::string mesh_path =
     "package://rviz_rendering_tests/test_meshes/16bit_indices_more_than_65535_faces.glb";
 
-  auto mesh = rviz_rendering::loadMeshFromResource(&this->retriever_, mesh_path);
+  auto mesh = rviz_rendering::loadMeshFromResource(mesh_path);
 
   size_t expected_vertex_count = 33489;
   size_t expected_index_count = 3 * 66248;
