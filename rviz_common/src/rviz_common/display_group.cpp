@@ -159,6 +159,13 @@ void DisplayGroup::removeAllDisplays()
     return;
   }
 
+  // Notify listeners before the model removal starts: they may edit the model
+  // themselves (e.g. DisplayGroupVisibilityProperty::takeChild), and nesting that
+  // inside beginRemove() makes Qt walk indexes of already-deleted properties.
+  for (int i = displays_.size() - 1; i >= 0; i--) {
+    Q_EMIT displayRemoved(displays_.at(i));
+  }
+
   int num_non_display_children = Display::numChildren();
 
   if (model_) {
@@ -166,7 +173,6 @@ void DisplayGroup::removeAllDisplays()
   }
   for (int i = displays_.size() - 1; i >= 0; i--) {
     Display * child = displays_.takeAt(i);
-    Q_EMIT displayRemoved(child);
     child->setParent(nullptr);  // prevent child destructor from calling getParent()->takeChild().
     child->setModel(nullptr);
     child_indexes_valid_ = false;
@@ -184,11 +190,11 @@ Display * DisplayGroup::takeDisplay(Display * child)
   int num_displays = displays_.size();
   for (int i = 0; i < num_displays; i++) {
     if (displays_.at(i) == child) {
+      Q_EMIT displayRemoved(child);
       if (model_) {
         model_->beginRemove(this, Display::numChildren() + i, 1);
       }
       result = displays_.takeAt(i);
-      Q_EMIT displayRemoved(result);
       result->setParent(nullptr);
       result->setModel(nullptr);
       child_indexes_valid_ = false;
@@ -301,12 +307,12 @@ Property * DisplayGroup::takeChildAt(int index)
     return Display::takeChildAt(index);
   }
   int disp_index = index - Display::numChildren();
+  Q_EMIT displayRemoved(displays_.at(disp_index));
   if (model_) {
     model_->beginRemove(this, index, 1);
   }
 //  printf("  displaygroup5 displays_.takeAt( %d ) ( index = %d )\n", disp_index, index );
   Display * child = displays_.takeAt(disp_index);
-  Q_EMIT displayRemoved(child);
   child->setModel(nullptr);
   child->setParent(nullptr);
   child_indexes_valid_ = false;
