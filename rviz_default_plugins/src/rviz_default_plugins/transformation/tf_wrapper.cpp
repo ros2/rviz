@@ -41,7 +41,11 @@ namespace transformation
 {
 
 TFWrapper::TFWrapper()
-: buffer_(nullptr), tf_listener_(nullptr)
+: buffer_(nullptr),
+  tf_listener_(nullptr),
+  cache_time_(
+    std::chrono::duration_cast<std::chrono::milliseconds>(tf2::BUFFER_CORE_DEFAULT_CACHE_TIME)),
+  using_dedicated_thread_(false)
 {}
 
 void TFWrapper::transform(
@@ -130,17 +134,9 @@ void TFWrapper::initialize(
   rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node,
   bool using_dedicated_thread)
 {
+  rviz_ros_node_ = rviz_ros_node;
   initializeBuffer(clock, rviz_ros_node.lock()->get_raw_node(), using_dedicated_thread);
-  if (using_dedicated_thread) {
-    // TODO(pull/551): The TransformListener needs very quick spinning so it uses its own node
-    // here. Remove this in favor of a multithreaded spinner and ensure that the listener callback
-    // queue does not fill up.
-    tf_listener_ = std::make_shared<tf2_ros::TransformListener>(
-      *buffer_, true);
-  } else {
-    tf_listener_ = std::make_shared<tf2_ros::TransformListener>(
-      *buffer_, *rviz_ros_node.lock()->get_raw_node(), false);
-  }
+  createTransformListener();
 }
 
 void TFWrapper::initializeBuffer(
@@ -165,16 +161,60 @@ void TFWrapper::initializeBuffer(
       "Specified parameter 'tf_buffer_cache_time_ms' is < 0, using the default tf buffer"
       " cache time");
   }
-  std::chrono::milliseconds cache_time{cache_time_ms};
-  buffer_ = std::make_shared<tf2_ros::Buffer>(clock, cache_time);
-  auto timer_interface = std::make_shared<tf2_ros::CreateTimerROS>(*node);
+  clock_ = clock;
+  node_ = node;
+  cache_time_ = std::chrono::milliseconds{cache_time_ms};
+  using_dedicated_thread_ = using_dedicated_thread;
+  createBuffer(*node);
+}
+
+void TFWrapper::createBuffer(rclcpp::Node & node)
+{
+  buffer_ = std::make_shared<tf2_ros::Buffer>(clock_, cache_time_);
+  auto timer_interface = std::make_shared<tf2_ros::CreateTimerROS>(node);
   buffer_->setCreateTimerInterface(timer_interface);
-  buffer_->setUsingDedicatedThread(using_dedicated_thread);
+  buffer_->setUsingDedicatedThread(using_dedicated_thread_);
+}
+
+void TFWrapper::createTransformListener()
+{
+  if (using_dedicated_thread_) {
+    // TODO(pull/551): The TransformListener needs very quick spinning so it uses its own node
+    // here. Remove this in favor of a multithreaded spinner and ensure that the listener callback
+    // queue does not fill up.
+    tf_listener_ = std::make_shared<tf2_ros::TransformListener>(
+      *buffer_, true);
+  } else {
+    tf_listener_ = std::make_shared<tf2_ros::TransformListener>(
+      *buffer_, *rviz_ros_node_.lock()->get_raw_node(), false);
+  }
 }
 
 void TFWrapper::clear()
 {
-  buffer_->clear();
+  // Do not use tf2::BufferCore::clear() here: it also empties the static transform caches,
+  // but /tf_static is only delivered once to a subscription, so all static frames would be lost.
+  // Worse, it leaves the buffer in an inconsistent state where canTransform() still succeeds
+  // for chains containing a cleared static frame while lookupTransform() throws "Static cache
+  // is empty". That exception escapes tf2_ros::Buffer::waitForTransform() inside the tf2_ros
+  // MessageFilter and terminates rviz (e.g. when pressing "Reset" or on a time jump).
+  //
+  // Instead, start over with a fresh buffer and a new TransformListener. The new /tf_static
+  // subscription makes all (transient local) static transform publishers which are still alive
+  // re-send their transforms, while static transforms of publishers that are gone are dropped.
+  // The listener is destroyed first, since it writes into the old buffer.
+  // Users of the buffer (message filters, displays) access it through this class on every call,
+  // so they automatically switch to the new buffer.
+  auto node = node_.lock();
+  if (!node) {
+    return;  // shutting down
+  }
+  const bool had_listener = tf_listener_ != nullptr;
+  tf_listener_.reset();
+  createBuffer(*node);
+  if (had_listener) {
+    createTransformListener();
+  }
 }
 
 }  // namespace transformation

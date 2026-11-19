@@ -773,6 +773,17 @@ if(BUILD_TESTING)
     )
   endif()
 
+  ament_add_gmock(tf_wrapper_test
+    test/rviz_default_plugins/transformation/tf_wrapper_test.cpp)
+  if(TARGET tf_wrapper_test)
+    target_link_libraries(tf_wrapper_test
+      rviz_default_plugins
+      rviz_common::rviz_common
+      sensor_msgs::sensor_msgs
+      tf2_ros::tf2_ros
+    )
+  endif()
+
   ament_add_gmock(transformer_guard_test
     test/rviz_default_plugins/transformation/transformer_guard_test.cpp
     ${TEST_FIXTURE_OBJECTS}
