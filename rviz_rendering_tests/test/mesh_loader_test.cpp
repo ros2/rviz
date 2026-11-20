@@ -30,10 +30,15 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <chrono>
 #include <cstdint>
 #include <cstdio>
+#include <cstring>
+#include <filesystem>
+#include <fstream>
 #include <memory>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include <OgreRoot.h>
@@ -41,6 +46,9 @@
 #include <OgreTechnique.h>
 #include <OgreMaterialManager.h>
 #include <OgreMeshManager.h>
+#include <OgrePass.h>
+#include <OgreTextureManager.h>
+#include <OgreTextureUnitState.h>
 #include <OgreHardwareVertexBuffer.h>
 #include <OgreHardwareIndexBuffer.h>
 #include "resource_retriever/retriever.hpp"
@@ -104,6 +112,33 @@ std::vector<uint8_t> createPaddedTriangle(size_t megabytes)
   std::vector<uint8_t> data(kTriangleGltf, kTriangleGltf + sizeof(kTriangleGltf) - 1);
   data.resize(megabytes * 1024 * 1024, ' ');
   return data;
+}
+
+// Data of the same size, with the same std::hash as `data` if std::hash is libstdc++'s
+// MurmurHash64A, made by changing its first two 8 byte blocks. Each step of that hash can be
+// inverted, so the second block can undo the change of the first.
+std::vector<uint8_t> createHashCollision(const std::vector<uint8_t> & data)
+{
+  constexpr uint64_t mul = 0xc6a4a7935bd1e995ull;
+  uint64_t mul_inverse = mul;  // Newton's iteration for the inverse modulo 2^64.
+  for (int i = 0; i < 5; ++i) {
+    mul_inverse *= 2 - mul * mul_inverse;
+  }
+  auto mix = [](uint64_t k) {k *= mul; k ^= k >> 47; return k * mul;};
+  auto unmix = [mul_inverse](uint64_t k) {k *= mul_inverse; k ^= k >> 47; return k * mul_inverse;};
+
+  uint64_t first, second;
+  std::memcpy(&first, data.data(), 8);
+  std::memcpy(&second, data.data() + 8, 8);
+  const uint64_t start = 0xc70f6907ull ^ (data.size() * mul);
+  const uint64_t new_first = first ^ 1;
+  const uint64_t new_second =
+    unmix(((start ^ mix(first)) * mul) ^ mix(second) ^ ((start ^ mix(new_first)) * mul));
+
+  std::vector<uint8_t> collision = data;
+  std::memcpy(collision.data(), &new_first, 8);
+  std::memcpy(collision.data() + 8, &new_second, 8);
+  return collision;
 }
 
 // Ogre pads mesh bounds a bit, so compare with a tolerance.
@@ -604,8 +639,11 @@ TEST_F(MeshLoaderTestFixture, invalid_mesh_data_is_parsed_and_logged_only_once) 
   rviz_rendering::set_logging_handlers(ignore, ignore, ignore, count_error);
 
   for (int i = 0; i < 3; ++i) {
+    bool data_is_invalid = false;
     EXPECT_FALSE(
-      rviz_rendering::loadMeshFromMemory("embedded://memory_invalid_once", "once.stl", garbage));
+      rviz_rendering::loadMeshFromMemory(
+        "embedded://memory_invalid_once", "once.stl", garbage, "", &data_is_invalid));
+    EXPECT_TRUE(data_is_invalid);
   }
 
   auto print = [](const std::string & message, const std::string & file, size_t line) {
@@ -635,10 +673,218 @@ TEST_F(MeshLoaderTestFixture, failing_because_the_names_are_taken_is_tried_again
 
   // Both names are taken now. That is not a problem of the data, so it must not be remembered.
   mesh_manager.createManual(second_name, "rviz_rendering");
-  EXPECT_FALSE(rviz_rendering::loadMeshFromMemory(name, "taken.gltf", triangle));
+  bool data_is_invalid = true;
+  EXPECT_FALSE(
+    rviz_rendering::loadMeshFromMemory(name, "taken.gltf", triangle, "", &data_is_invalid));
+  EXPECT_FALSE(data_is_invalid);
   mesh_manager.remove(name, "rviz_rendering");
   mesh_manager.remove(second_name, "rviz_rendering");
   EXPECT_TRUE(rviz_rendering::loadMeshFromMemory(name, "taken.gltf", triangle));
+}
+
+TEST_F(MeshLoaderTestFixture, loading_without_data_prefers_the_callers_previous_mesh) {
+  std::vector<uint8_t> triangle(kTriangleGltf, kTriangleGltf + sizeof(kTriangleGltf) - 1);
+  auto stl = readFile("package://rviz_rendering_tests/test_meshes/F2.stl");
+  ASSERT_FALSE(stl.empty());
+  std::string name = "embedded://memory_previous";
+
+  // Two callers send different data under the same name; the second one is sent last.
+  auto first = rviz_rendering::loadMeshFromMemory(name, "triangle.gltf", triangle);
+  auto second = rviz_rendering::loadMeshFromMemory(name, "F2.stl", stl);
+  ASSERT_TRUE(first);
+  ASSERT_TRUE(second);
+  ASSERT_NE(first->getName(), second->getName());
+
+  // The first caller reloads without data, e.g. because another field of its message changed.
+  const std::string first_name = first->getName();
+  rviz_rendering::releaseMeshFromMemory(first_name);
+  auto reloaded = rviz_rendering::loadMeshFromMemory(name, "triangle.gltf", {}, first_name);
+  EXPECT_EQ(first, reloaded);
+
+  // That does not change the mesh that callers without a previous mesh get.
+  auto newcomer = rviz_rendering::loadMeshFromMemory(name, "F2.stl", {});
+  EXPECT_EQ(second, newcomer);
+
+  rviz_rendering::releaseMeshFromMemory(first_name);
+  rviz_rendering::releaseMeshFromMemory(second->getName());
+  rviz_rendering::releaseMeshFromMemory(second->getName());
+}
+
+TEST_F(MeshLoaderTestFixture, previous_mesh_of_another_resource_is_not_used) {
+  std::vector<uint8_t> triangle(kTriangleGltf, kTriangleGltf + sizeof(kTriangleGltf) - 1);
+
+  auto other = rviz_rendering::loadMeshFromMemory(
+    "embedded://memory_previous_other", "triangle.gltf", triangle);
+  ASSERT_TRUE(other);
+
+  EXPECT_FALSE(
+    rviz_rendering::loadMeshFromMemory(
+      "embedded://memory_previous_unknown", "triangle.gltf", {}, other->getName()));
+  rviz_rendering::releaseMeshFromMemory(other->getName());
+}
+
+TEST_F(MeshLoaderTestFixture, loadMeshFromResource_does_not_return_meshes_loaded_from_memory) {
+  std::vector<uint8_t> triangle(kTriangleGltf, kTriangleGltf + sizeof(kTriangleGltf) - 1);
+  std::string name = "embedded://memory_not_a_resource";
+  auto mesh = rviz_rendering::loadMeshFromMemory(name, "triangle.gltf", triangle);
+  ASSERT_TRUE(mesh);
+  ASSERT_EQ(name, mesh->getName());
+
+  // It would get the mesh without being counted as a user, so the mesh could be removed under it.
+  EXPECT_FALSE(rviz_rendering::loadMeshFromResource(&this->retriever_, name));
+  EXPECT_TRUE(Ogre::MeshManager::getSingleton().resourceExists(name, "rviz_rendering"));
+  rviz_rendering::releaseMeshFromMemory(name);
+}
+
+TEST_F(MeshLoaderTestFixture, data_without_meshes_is_remembered_as_invalid) {
+  // A glTF scene that Assimp parses, but that has no meshes.
+  const std::string no_meshes =
+    "{\"asset\":{\"version\":\"2.0\"},\"scene\":0,\"scenes\":[{\"nodes\":[0]}],"
+    "\"nodes\":[{\"name\":\"empty\"}]}";
+  std::vector<uint8_t> data(no_meshes.begin(), no_meshes.end());
+  int errors = 0;
+  auto ignore = [](const std::string &, const std::string &, size_t) {};
+  auto count_error = [&errors](const std::string &, const std::string &, size_t) {++errors;};
+  rviz_rendering::set_logging_handlers(ignore, ignore, ignore, count_error);
+
+  bool data_is_invalid = false;
+  for (int i = 0; i < 3; ++i) {
+    data_is_invalid = false;
+    EXPECT_FALSE(
+      rviz_rendering::loadMeshFromMemory(
+        "embedded://memory_no_meshes", "empty.gltf", data, "", &data_is_invalid));
+    EXPECT_TRUE(data_is_invalid);
+  }
+
+  auto print = [](const std::string & message, const std::string & file, size_t line) {
+      fprintf(stderr, "%s, at %s:%zu\n", message.c_str(), file.c_str(), line);
+    };
+  rviz_rendering::set_logging_handlers(print, print, print, print);
+  EXPECT_EQ(1, errors);
+  EXPECT_FALSE(
+    Ogre::MeshManager::getSingleton().resourceExists(
+      "embedded://memory_no_meshes", "rviz_rendering"));
+}
+
+TEST_F(MeshLoaderTestFixture, can_load_ogre_mesh_from_memory) {
+  auto data = readFile("package://rviz_rendering/ogre_media/models/rviz_sphere.mesh");
+  ASSERT_FALSE(data.empty());
+  std::string name = "embedded://memory_ogre_sphere";
+
+  auto mesh = rviz_rendering::loadMeshFromMemory(name, "rviz_sphere.mesh", data);
+  auto from_file = rviz_rendering::loadMeshFromResource(
+    &this->retriever_, "package://rviz_rendering/ogre_media/models/rviz_sphere.mesh");
+
+  ASSERT_TRUE(mesh);
+  ASSERT_TRUE(from_file);
+  EXPECT_EQ(name, mesh->getName());
+  ASSERT_EQ(from_file->getNumSubMeshes(), mesh->getNumSubMeshes());
+  EXPECT_FLOAT_EQ(from_file->getBoundingSphereRadius(), mesh->getBoundingSphereRadius());
+  // Read like the file, by Ogre: Assimp would replace the materials the mesh refers to.
+  for (uint16_t i = 0; i < mesh->getNumSubMeshes(); ++i) {
+    EXPECT_EQ(
+      from_file->getSubMesh(i)->getMaterialName(), mesh->getSubMesh(i)->getMaterialName());
+  }
+  rviz_rendering::releaseMeshFromMemory(name);
+}
+
+TEST_F(MeshLoaderTestFixture, loading_invalid_ogre_mesh_from_memory_fails) {
+  std::vector<uint8_t> garbage = {'n', 'o', 't', ' ', 'a', ' ', 'm', 'e', 's', 'h'};
+  std::string name = "embedded://memory_invalid_ogre_mesh";
+
+  bool data_is_invalid = false;
+  EXPECT_FALSE(
+    rviz_rendering::loadMeshFromMemory(name, "invalid.mesh", garbage, "", &data_is_invalid));
+  EXPECT_TRUE(data_is_invalid);
+  EXPECT_FALSE(Ogre::MeshManager::getSingleton().resourceExists(name, "rviz_rendering"));
+}
+
+TEST_F(MeshLoaderTestFixture, embedded_textures_are_removed_with_their_mesh) {
+  // The triangle, with a 1x1 PNG texture that is part of the data.
+  const std::string textured =
+    "{\"asset\":{\"version\":\"2.0\"},\"scene\":0,\"scenes\":[{\"nodes\":[0]}],"
+    "\"nodes\":[{\"mesh\":0}],\"meshes\":[{\"primitives\":[{\"attributes\":{\"POSITION\":0},"
+    "\"material\":0}]}],"
+    "\"materials\":[{\"pbrMetallicRoughness\":{\"baseColorTexture\":{\"index\":0}}}],"
+    "\"textures\":[{\"source\":0}],\"images\":[{\"uri\":\"data:image/png;base64,"
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAAB"
+    "JRU5ErkJggg=="
+    "\"}],"
+    "\"accessors\":[{\"bufferView\":0,\"componentType\":5126,\"count\":3,\"type\":\"VEC3\","
+    "\"min\":[0,0,0],\"max\":[1,2,0]}],\"bufferViews\":[{\"buffer\":0,\"byteLength\":36}],"
+    "\"buffers\":[{\"byteLength\":36,\"uri\":\"data:application/octet-stream;base64,"
+    "AAAAAAAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAAEAAAAAA\"}]}";
+  std::vector<uint8_t> data(textured.begin(), textured.end());
+  std::string name = "embedded://memory_textured";
+  auto & texture_manager = Ogre::TextureManager::getSingleton();
+  auto & material_manager = Ogre::MaterialManager::getSingleton();
+
+  auto mesh = rviz_rendering::loadMeshFromMemory(name, "textured.gltf", data);
+  ASSERT_TRUE(mesh);
+  auto material = material_manager.getByName(name + "Material0", "rviz_rendering");
+  ASSERT_TRUE(material);
+  std::vector<std::string> texture_names;
+  for (const auto * texture_unit : material->getTechnique(0)->getPass(0)->getTextureUnitStates()) {
+    texture_names.push_back(texture_unit->getTextureName());
+    ASSERT_TRUE(texture_manager.resourceExists(texture_names.back(), "rviz_rendering"));
+  }
+  ASSERT_FALSE(texture_names.empty());
+  rviz_rendering::releaseMeshFromMemory(name);
+
+  // Push the mesh out by releasing others after it, beyond the size limit.
+  for (const std::string pad :
+    {"embedded://memory_texture_pad_a", "embedded://memory_texture_pad_b"})
+  {
+    auto padding = rviz_rendering::loadMeshFromMemory(pad, "pad.gltf", createPaddedTriangle(40));
+    ASSERT_TRUE(padding);
+    rviz_rendering::releaseMeshFromMemory(pad);
+  }
+
+  EXPECT_FALSE(Ogre::MeshManager::getSingleton().resourceExists(name, "rviz_rendering"));
+  EXPECT_FALSE(material_manager.resourceExists(name + "Material0", "rviz_rendering"));
+  for (const auto & texture_name : texture_names) {
+    EXPECT_FALSE(texture_manager.resourceExists(texture_name, "rviz_rendering"));
+  }
+}
+
+TEST_F(MeshLoaderTestFixture, file_extension_of_mesh_resource_is_case_insensitive) {
+  const auto path = std::filesystem::temp_directory_path() /
+    ("rviz_rendering_test_" +
+    std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()) +
+    "_TRIANGLE.GLTF");
+  {
+    std::ofstream file(path, std::ios::binary);
+    file << kTriangleGltf;
+  }
+
+  const std::string uri = "file://" + path.generic_string();
+  auto mesh = rviz_rendering::loadMeshFromResource(&this->retriever_, uri);
+  std::filesystem::remove(path);
+
+  ASSERT_TRUE(mesh);
+  assertTriangleIsZUp(mesh);
+}
+
+TEST_F(MeshLoaderTestFixture, data_with_the_same_hash_and_size_is_not_taken_for_a_loaded_mesh) {
+  std::vector<uint8_t> triangle(kTriangleGltf, kTriangleGltf + sizeof(kTriangleGltf) - 1);
+  const auto collision = createHashCollision(triangle);
+  auto hash = [](const std::vector<uint8_t> & bytes) {
+      return std::hash<std::string_view>{}(
+        std::string_view(reinterpret_cast<const char *>(bytes.data()), bytes.size()));
+    };
+  ASSERT_NE(triangle, collision);
+  if (hash(triangle) != hash(collision)) {
+    GTEST_SKIP() << "std::hash is not MurmurHash64A here, so no collision could be made";
+  }
+  std::string name = "embedded://memory_collision";
+
+  auto mesh = rviz_rendering::loadMeshFromMemory(name, "triangle.gltf", triangle);
+  ASSERT_TRUE(mesh);
+  // The changed blocks make the data invalid, so it fails instead of getting the loaded mesh.
+  auto other = rviz_rendering::loadMeshFromMemory(name, "triangle.gltf", collision);
+
+  EXPECT_FALSE(other);
+  rviz_rendering::releaseMeshFromMemory(name);
 }
 
 TEST_F(MeshLoaderTestFixture, can_load_meshes_with_16_bit_indices_and_more_than_65535_faces) {

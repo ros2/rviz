@@ -52,25 +52,33 @@ Ogre::MeshPtr loadMeshFromResource(
 /// Load a mesh from the raw contents of a mesh file, e.g. one embedded in a message.
 /**
  * The file format is determined by the extension of \p filename, which is therefore required.
- * Files referenced by the mesh (e.g. textures) are not resolved.
+ * Ogre's own ".mesh" files are supported, other formats are read by Assimp. Files referenced by
+ * the mesh (e.g. textures) are not resolved.
  *
  * The mesh is registered under \p resource_name. Loading the same data again returns the same
- * mesh, and empty \p data returns the mesh that was loaded last under \p resource_name. Different
- * data is never allowed to replace a mesh that is in use: it gets a mesh of its own, whose name
- * then differs from \p resource_name. Use Ogre::Mesh::getName() to refer to the returned mesh.
+ * mesh. Empty \p data returns the mesh \p previous_mesh_name if it is still loaded and was sent
+ * under \p resource_name, and otherwise the mesh whose data was sent last under \p resource_name.
+ * Different data is never allowed to replace a mesh that is in use: it gets a mesh of its own,
+ * whose name then differs from \p resource_name. Use Ogre::Mesh::getName() to refer to the
+ * returned mesh. loadMeshFromResource() does not return meshes loaded from memory.
  *
  * Every successful call must be paired with a call to releaseMeshFromMemory().
  *
- * Data that could not be parsed is remembered, and fails again without being parsed and logged
- * again. Other failures, such as a name that is taken, are tried again by the next call.
+ * Data that could not be loaded because of what it contains is remembered, and fails again without
+ * being parsed and logged again. Other failures, such as a name that is taken, are tried again by
+ * the next call.
  *
+ * \param previous_mesh_name The mesh the caller used before, if any, e.g. one it just released.
+ * \param data_is_invalid If given, set to whether the call failed because of the data itself.
  * \return The mesh, or nullptr if the data is missing or could not be loaded.
  */
 RVIZ_RENDERING_PUBLIC
 Ogre::MeshPtr loadMeshFromMemory(
   const std::string & resource_name,
   const std::string & filename,
-  const std::vector<uint8_t> & data);
+  const std::vector<uint8_t> & data,
+  const std::string & previous_mesh_name = "",
+  bool * data_is_invalid = nullptr);
 
 /// Release a mesh obtained from loadMeshFromMemory().
 /**

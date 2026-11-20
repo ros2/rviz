@@ -77,6 +77,15 @@ constexpr unsigned int kAssimpPostProcessFlags =
   aiProcess_GenUVCoords | aiProcess_FlipUVs;
 }  // namespace
 
+std::string lowercaseExtension(const std::string & filename)
+{
+  std::string ext = std::filesystem::path(filename).extension().string();
+  std::transform(
+    ext.begin(), ext.end(), ext.begin(),
+    [](unsigned char c) {return std::tolower(c);});
+  return ext;
+}
+
 class ResourceIOStream : public Assimp::IOStream
 {
 public:
@@ -227,7 +236,7 @@ Ogre::MeshPtr AssimpLoader::meshFromAssimpScene(
   Ogre::MeshPtr mesh = Ogre::MeshManager::getSingleton().createManual(name, ROS_PACKAGE_NAME);
 
   const std::string ext =
-    format_extension.empty() ? std::filesystem::path(name).extension().string() : format_extension;
+    format_extension.empty() ? lowercaseExtension(name) : format_extension;
   if (ext == ".gltf" || ext == ".glb" || ext == ".vrm") {
     // Transform mesh from glTF Y-Up space to ROS Z-Up space
     // by applying a 90 degree rotation about the X-axis,
@@ -259,13 +268,10 @@ const aiScene * AssimpLoader::getSceneFromMemory(
   const std::string & filename, const uint8_t * data, size_t size)
 {
   // The extension (without the dot) is only a hint; Assimp falls back to the content.
-  std::string hint = std::filesystem::path(filename).extension().string();
+  std::string hint = lowercaseExtension(filename);
   if (!hint.empty() && hint.front() == '.') {
     hint.erase(0, 1);
   }
-  std::transform(
-    hint.begin(), hint.end(), hint.begin(),
-    [](unsigned char c) {return std::tolower(c);});
 
   return importer_->ReadFileFromMemory(data, size, kAssimpPostProcessFlags, hint.c_str());
 }
@@ -287,10 +293,8 @@ std::vector<Ogre::MaterialPtr> AssimpLoader::loadMaterials(
 {
   std::vector<Ogre::MaterialPtr> material_table_out;
 
-  std::string ext = format_extension.empty() ?
-    std::filesystem::path(resource_path).extension().string() : format_extension;
-  std::transform(ext.begin(), ext.end(), ext.begin(),
-    [](unsigned char c) {return std::tolower(c);});
+  const std::string ext =
+    format_extension.empty() ? lowercaseExtension(resource_path) : format_extension;
   // STL meshes don't support proper
   // materials: use Ogre's default material
   if (ext == ".stl" || ext == ".stlb") {
@@ -306,6 +310,7 @@ std::vector<Ogre::MaterialPtr> AssimpLoader::loadMaterials(
       material_name, ROS_PACKAGE_NAME, true);
     Ogre::MaterialPtr mat = std::static_pointer_cast<Ogre::Material>(result.first);
     material_table_out.push_back(mat);
+    material_names_.push_back(material_name);
 
     aiMaterial * ai_material = scene->mMaterials[i];
 
@@ -366,6 +371,7 @@ void AssimpLoader::setLightColorsFromAssimp(
         // it's an embedded texture, like in GLB / glTF
         texture_path = resource_path + texture_name.data;
         loadEmbeddedTexture(texture, texture_path);
+        texture_names_.push_back(texture_path);
       }
       Ogre::TextureUnitState * tu = material_internals.pass_->createTextureUnitState();
       tu->setTextureName(texture_path);

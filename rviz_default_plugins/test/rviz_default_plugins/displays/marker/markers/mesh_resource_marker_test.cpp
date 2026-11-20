@@ -525,3 +525,117 @@ TEST_F(MarkersTestFixture, setMessage_does_not_log_errors_while_embedded_mesh_da
     scene_manager_->getRootSceneNode(), message.mesh_resource);
   ASSERT_TRUE(entity);
 }
+
+namespace
+{
+std::vector<float> embeddedMeshWidths(
+  Ogre::SceneManager * scene_manager, const std::string & mesh_resource)
+{
+  std::vector<float> widths;
+  for (const auto & object : scene_manager->getMovableObjects("Entity")) {
+    auto * entity = static_cast<Ogre::Entity *>(object.second);
+    if (entity->getMesh()->getName().rfind(mesh_resource, 0) == 0) {
+      widths.push_back(entity->getMesh()->getBounds().getSize().x);
+    }
+  }
+  std::sort(widths.begin(), widths.end());
+  return widths;
+}
+
+int load_attempt_count = 0;
+
+// Counts how often rviz_rendering is asked to load data it already knows to be invalid.
+class InvalidDataLoadCounter
+{
+public:
+  InvalidDataLoadCounter()
+  {
+    load_attempt_count = 0;
+    auto ignore = [](const std::string &, const std::string &, size_t) {};
+    auto count_attempt = [](const std::string & message, const std::string &, size_t) {
+        if (message.find("the data was invalid before") != std::string::npos) {
+          ++load_attempt_count;
+        }
+      };
+    rviz_rendering::set_logging_handlers(count_attempt, ignore, ignore, ignore);
+  }
+
+  ~InvalidDataLoadCounter()
+  {
+    auto print = [](const std::string & message, const std::string & file, size_t line) {
+        fprintf(stderr, "%s, at %s:%zu\n", message.c_str(), file.c_str(), line);
+      };
+    rviz_rendering::set_logging_handlers(print, print, print, print);
+  }
+
+  int count() const {return load_attempt_count;}
+};
+}  // namespace
+
+TEST_F(MarkersTestFixture, marker_reloading_without_data_keeps_its_own_embedded_mesh) {
+  auto first_marker =
+    makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
+  auto second_marker =
+    makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
+  mockValidTransform();
+  auto first = createEmbeddedMeshMessage("marker_test_embedded_own_mesh");
+  auto second = first;
+  second.mesh_file.data = createWiderTriangleData();
+  first_marker->setMessage(first);
+  // Sent last, so it is the mesh that markers without a mesh of their own get.
+  second_marker->setMessage(second);
+
+  // The first marker reloads its mesh, without the data.
+  first.mesh_file.data.clear();
+  first.mesh_use_embedded_materials = true;
+  first_marker->setMessage(first);
+
+  auto widths = embeddedMeshWidths(scene_manager_, first.mesh_resource);
+  ASSERT_EQ(2u, widths.size());
+  EXPECT_NEAR(widths[0], 1.0f, 0.1f);
+  EXPECT_NEAR(widths[1], 3.0f, 0.1f);
+}
+
+TEST_F(MarkersTestFixture, setMessage_does_not_rebuild_embedded_mesh_when_its_data_is_sent_again) {
+  marker_ =
+    makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
+  mockValidTransform();
+  auto message = createEmbeddedMeshMessage("marker_test_embedded_sent_again");
+  marker_->setMessage(message);
+  auto entity = rviz_default_plugins::findEntityByMeshName(
+    scene_manager_->getRootSceneNode(), message.mesh_resource);
+  ASSERT_TRUE(entity);
+  const std::string entity_name = entity->getName();
+
+  // The publisher sends the data only now and then.
+  auto without_data = message;
+  without_data.mesh_file.data.clear();
+  marker_->setMessage(without_data);
+  marker_->setMessage(message);
+  marker_->setMessage(without_data);
+  marker_->setMessage(message);
+
+  entity = rviz_default_plugins::findEntityByMeshName(
+    scene_manager_->getRootSceneNode(), message.mesh_resource);
+  ASSERT_TRUE(entity);
+  EXPECT_EQ(entity_name, entity->getName());
+}
+
+TEST_F(MarkersTestFixture, setMessage_does_not_load_unchanged_invalid_embedded_mesh_again) {
+  marker_ =
+    makeMarker<rviz_default_plugins::displays::markers::MeshResourceMarker>();
+  mockValidTransform();
+  auto message = createEmbeddedMeshMessage("marker_test_embedded_not_loaded_again");
+  const std::string invalid_data = "invalid data that is not loaded again";
+  message.mesh_file.data.assign(invalid_data.begin(), invalid_data.end());
+  InvalidDataLoadCounter load_attempts;
+  LoadFailureReportCounter reports;
+
+  for (int i = 0; i < 5; ++i) {
+    marker_->setMessage(message);
+  }
+
+  // Loading it again would hash all of the data just to fail again.
+  EXPECT_EQ(0, load_attempts.count());
+  EXPECT_EQ(5, reports.count());
+}

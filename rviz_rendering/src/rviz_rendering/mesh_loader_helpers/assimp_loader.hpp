@@ -60,6 +60,10 @@
 
 namespace rviz_rendering
 {
+
+/// The extension of \p filename, with the dot and in lower case, e.g. ".glb".
+std::string lowercaseExtension(const std::string & filename);
+
 class AssimpLoader
 {
 public:
@@ -72,6 +76,11 @@ public:
   const aiScene * getSceneFromMemory(
     const std::string & filename, const uint8_t * data, size_t size);
   std::string getErrorMessage();
+
+  /// Materials that meshFromAssimpScene() created or reused for its mesh.
+  const std::vector<std::string> & getMaterialNames() const {return material_names_;}
+  /// Embedded textures that meshFromAssimpScene() loaded or reused for its mesh.
+  const std::vector<std::string> & getTextureNames() const {return texture_names_;}
 
 private:
   struct SubMeshInternals
@@ -163,6 +172,8 @@ private:
   resource_retriever::Retriever * retriever_;
   std::unique_ptr<Assimp::Importer> importer_;
   std::unordered_set<std::string> ignored_textures_;
+  std::vector<std::string> material_names_;
+  std::vector<std::string> texture_names_;
 };
 
 }  // namespace rviz_rendering
