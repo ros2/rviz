@@ -1,3 +1,5 @@
+import * from "point_cloud_gp.material"
+
 material rviz/PointCloudBox
 {
   // The gp techniques use geometry shaders to expand each point on the GPU, so the
@@ -6,10 +8,8 @@ material rviz/PointCloudBox
 
   technique gp
   {
-    pass
+    pass gp : rviz/PointCloudGpBox
     {
-      vertex_program_ref   rviz/glsl150/pass_pos_color.vert {}
-      geometry_program_ref rviz/glsl150/box.geom {}
       fragment_program_ref rviz/glsl120/nogp/box.frag {}
     }
   }
@@ -17,10 +17,8 @@ material rviz/PointCloudBox
   technique gp_depth
   {
     scheme Depth
-    pass
+    pass gp_depth : rviz/PointCloudGpBoxDepth
     {
-      vertex_program_ref   rviz/glsl150/pass_pos_color.vert {}
-      geometry_program_ref rviz/glsl150/box.geom(with_depth) {}
       fragment_program_ref rviz/glsl120/depth.frag {}
     }
   }
@@ -28,10 +26,8 @@ material rviz/PointCloudBox
   technique gp_selection_first_pass
   {
     scheme Pick
-    pass
+    pass gp_selection_first_pass : rviz/PointCloudGpBox
     {
-      vertex_program_ref   rviz/glsl150/pass_pos_color.vert {}
-      geometry_program_ref rviz/glsl150/box.geom {}
       fragment_program_ref rviz/glsl120/pickcolor.frag {}
     }
   }
@@ -39,10 +35,8 @@ material rviz/PointCloudBox
   technique gp_selection_second_pass
   {
     scheme Pick1
-    pass
+    pass gp_selection_second_pass : rviz/PointCloudGpBox
     {
-      vertex_program_ref   rviz/glsl150/pass_pos_color.vert {}
-      geometry_program_ref rviz/glsl150/box.geom {}
       fragment_program_ref rviz/glsl120/pass_color.frag {}
     }
   }

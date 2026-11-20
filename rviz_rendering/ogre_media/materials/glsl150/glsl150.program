@@ -1,9 +1,17 @@
+//includes
+geometry_program rviz/glsl150/include/pass_depth.geom glsl { source pass_depth.geom }
+
 //all shaders, sorted by name
+
+// Ogre's GL render system passes input_operation_type, output_operation_type and
+// max_output_vertices to glProgramParameteriEXT, defaulting to triangles and 3 vertices
+// (unknown values such as "points" also fall back to triangles),
+// so they are required. They must match the layout() qualifiers in each shader.
 
 geometry_program rviz/glsl150/billboard.geom glsl
 {
   source billboard.geom
-  input_operation_type points
+  input_operation_type point_list
   output_operation_type triangle_strip
   max_output_vertices 4
   default_params
@@ -17,7 +25,8 @@ geometry_program rviz/glsl150/billboard.geom glsl
 geometry_program rviz/glsl150/billboard.geom(with_depth) glsl
 {
   source billboard.geom
-  input_operation_type points
+  attach rviz/glsl150/include/pass_depth.geom
+  input_operation_type point_list
   output_operation_type triangle_strip
   max_output_vertices 4
   preprocessor_defines WITH_DEPTH=1
@@ -34,7 +43,7 @@ geometry_program rviz/glsl150/billboard.geom(with_depth) glsl
 geometry_program rviz/glsl150/box.geom glsl
 {
   source box.geom
-  input_operation_type points
+  input_operation_type point_list
   output_operation_type triangle_strip
   max_output_vertices 24
   default_params
@@ -47,7 +56,8 @@ geometry_program rviz/glsl150/box.geom glsl
 geometry_program rviz/glsl150/box.geom(with_depth) glsl
 {
   source box.geom
-  input_operation_type points
+  attach rviz/glsl150/include/pass_depth.geom
+  input_operation_type point_list
   output_operation_type triangle_strip
   max_output_vertices 24
   preprocessor_defines WITH_DEPTH=1

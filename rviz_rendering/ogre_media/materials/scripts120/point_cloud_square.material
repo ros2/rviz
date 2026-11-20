@@ -1,14 +1,14 @@
+import * from "point_cloud_gp.material"
+
 material rviz/PointCloudSquare {
   // The gp techniques use geometry shaders to expand each point on the GPU, so the
   // vertex buffer only holds one vertex per point. Ogre skips them when geometry
   // shaders are not supported and falls back to the nogp techniques below.
   technique gp
   {
-    pass
+    pass gp : rviz/PointCloudGpBillboard
     {
       alpha_rejection greater_equal 1
-      vertex_program_ref   rviz/glsl150/pass_pos_color.vert {}
-      geometry_program_ref rviz/glsl150/billboard.geom {}
       fragment_program_ref rviz/glsl120/smooth_square.frag {}
     }
   }
@@ -16,11 +16,9 @@ material rviz/PointCloudSquare {
   technique gp_depth
   {
     scheme Depth
-    pass
+    pass gp_depth : rviz/PointCloudGpBillboardDepth
     {
       alpha_rejection greater_equal 1
-      vertex_program_ref   rviz/glsl150/pass_pos_color.vert {}
-      geometry_program_ref rviz/glsl150/billboard.geom(with_depth) {}
       fragment_program_ref rviz/glsl120/depth.frag {}
     }
   }
@@ -28,10 +26,8 @@ material rviz/PointCloudSquare {
   technique gp_selection_first_pass
   {
     scheme Pick
-    pass
+    pass gp_selection_first_pass : rviz/PointCloudGpBillboard
     {
-      vertex_program_ref   rviz/glsl150/pass_pos_color.vert {}
-      geometry_program_ref rviz/glsl150/billboard.geom {}
       fragment_program_ref rviz/glsl120/pickcolor.frag {}
     }
   }
@@ -39,11 +35,9 @@ material rviz/PointCloudSquare {
   technique gp_selection_second_pass
   {
     scheme Pick1
-    pass
+    pass gp_selection_second_pass : rviz/PointCloudGpBillboard
     {
       alpha_rejection greater_equal 1
-      vertex_program_ref   rviz/glsl150/pass_pos_color.vert {}
-      geometry_program_ref rviz/glsl150/billboard.geom {}
       fragment_program_ref rviz/glsl120/pass_color.frag {}
     }
   }
