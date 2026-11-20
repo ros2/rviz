@@ -61,7 +61,6 @@ namespace rviz_default_plugins
 namespace displays
 {
 
-// TODO(Martin-Idel-SI): This display previously used tf message filter. Use again once available.
 /**
  * \class GridCellsDisplay
  * \brief Displays a nav_msgs::GridCells message

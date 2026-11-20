@@ -228,7 +228,7 @@ public:
   void
   update() = 0;
 
-  /// Check to see if a frame exists in the tf::TransformListener.
+  /// Check to see if a frame exists in the frame transformer.
   /**
    * \param[in] frame The name of the frame to check.
    * \param[out] error If the frame does not exist, an error message is
