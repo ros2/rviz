@@ -365,7 +365,18 @@ TEST_F(PointCloudTestFixture, gp_techniques_draw_the_same_shapes_as_their_nogp_c
   }
 }
 
+static bool driverSupportsGeometryShaders()
+{
+  return Ogre::Root::getSingleton().getRenderSystem()->getCapabilities()->hasCapability(
+    Ogre::RSC_GEOMETRY_PROGRAM);
+}
+
 TEST_F(PointCloudTestFixture, gp_program_parameters_match_the_shader_layout) {
+  // Without geometry shader support (e.g. on Mesa, which lacks GL_EXT_geometry_shader4)
+  // Ogre does not apply these parameters, and they are not used either.
+  if (!driverSupportsGeometryShaders()) {
+    GTEST_SKIP() << "The driver does not support geometry shaders";
+  }
   for (const std::string name : {"rviz/glsl150/billboard.geom",
       "rviz/glsl150/billboard.geom(with_depth)", "rviz/glsl150/box.geom",
       "rviz/glsl150/box.geom(with_depth)"})
@@ -419,8 +430,7 @@ TEST_F(
 }
 
 TEST_F(PointCloudTestFixture, loadPointCloudMaterial_keeps_gp_techniques_the_driver_supports) {
-  const auto * capabilities = Ogre::Root::getSingleton().getRenderSystem()->getCapabilities();
-  if (!capabilities->hasCapability(Ogre::RSC_GEOMETRY_PROGRAM)) {
+  if (!driverSupportsGeometryShaders()) {
     GTEST_SKIP() << "The driver does not support geometry shaders";
   }
   for (const auto & material_name : kGeometryShaderMaterials) {
