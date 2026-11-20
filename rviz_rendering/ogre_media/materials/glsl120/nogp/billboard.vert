@@ -20,6 +20,10 @@ void main()
   vec3 at = camera_pos.xyz - gl_Vertex.xyz;
   at = normalize(at);
   vec3 right = cross(vec3( 0.0, 1.0, 0.0 ), at);
+  // Looking along the Y axis makes right zero; use the Z axis instead.
+  if (dot(right, right) < 1e-12) {
+    right = cross(vec3( 0.0, 0.0, 1.0 ), at);
+  }
   vec3 up = cross(at, right);
   right = normalize(right);
   up = normalize(up);
