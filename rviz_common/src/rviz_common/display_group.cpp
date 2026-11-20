@@ -162,8 +162,16 @@ void DisplayGroup::removeAllDisplays()
   // Notify listeners before the model removal starts: they may edit the model
   // themselves (e.g. DisplayGroupVisibilityProperty::takeChild), and nesting that
   // inside beginRemove() makes Qt walk indexes of already-deleted properties.
-  for (int i = displays_.size() - 1; i >= 0; i--) {
-    Q_EMIT displayRemoved(displays_.at(i));
+  // Iterate over a copy, since a listener may take displays out of this group.
+  const QList<Display *> displays_to_signal = displays_;
+  for (int i = displays_to_signal.size() - 1; i >= 0; i--) {
+    Display * child = displays_to_signal.at(i);
+    if (displays_.contains(child)) {
+      Q_EMIT displayRemoved(child);
+    }
+  }
+  if (displays_.size() == 0) {
+    return;
   }
 
   int num_non_display_children = Display::numChildren();
@@ -171,40 +179,47 @@ void DisplayGroup::removeAllDisplays()
   if (model_) {
     model_->beginRemove(this, num_non_display_children, displays_.size() );
   }
-  for (int i = displays_.size() - 1; i >= 0; i--) {
-    Display * child = displays_.takeAt(i);
+  QList<Display *> removed_displays;
+  removed_displays.swap(displays_);
+  for (Display * child : removed_displays) {
     child->setParent(nullptr);  // prevent child destructor from calling getParent()->takeChild().
     child->setModel(nullptr);
-    child_indexes_valid_ = false;
-    delete child;
   }
+  child_indexes_valid_ = false;
   if (model_) {
     model_->endRemove();
+  }
+  // Delete only after the model removal has finished: a nested DisplayGroup's
+  // destructor emits displayRemoved for its own displays, and its listeners may
+  // edit the model too.
+  for (int i = removed_displays.size() - 1; i >= 0; i--) {
+    delete removed_displays.at(i);
   }
   Q_EMIT childListChanged(this);
 }
 
 Display * DisplayGroup::takeDisplay(Display * child)
 {
-  Display * result = nullptr;
-  int num_displays = displays_.size();
-  for (int i = 0; i < num_displays; i++) {
-    if (displays_.at(i) == child) {
-      Q_EMIT displayRemoved(child);
-      if (model_) {
-        model_->beginRemove(this, Display::numChildren() + i, 1);
-      }
-      result = displays_.takeAt(i);
-      result->setParent(nullptr);
-      result->setModel(nullptr);
-      child_indexes_valid_ = false;
-      if (model_) {
-        model_->endRemove();
-      }
-      Q_EMIT childListChanged(this);
-      break;
-    }
+  if (!displays_.contains(child)) {
+    return nullptr;
   }
+  Q_EMIT displayRemoved(child);
+  // A listener may have changed the list of displays, so look the display up again.
+  int i = displays_.indexOf(child);
+  if (i < 0) {
+    return nullptr;
+  }
+  if (model_) {
+    model_->beginRemove(this, Display::numChildren() + i, 1);
+  }
+  Display * result = displays_.takeAt(i);
+  result->setParent(nullptr);
+  result->setModel(nullptr);
+  child_indexes_valid_ = false;
+  if (model_) {
+    model_->endRemove();
+  }
+  Q_EMIT childListChanged(this);
   return result;
 }
 
@@ -307,12 +322,19 @@ Property * DisplayGroup::takeChildAt(int index)
     return Display::takeChildAt(index);
   }
   int disp_index = index - Display::numChildren();
-  Q_EMIT displayRemoved(displays_.at(disp_index));
+  Display * child = displays_.at(disp_index);
+  Q_EMIT displayRemoved(child);
+  // A listener may have changed the list of displays, so look the display up again.
+  disp_index = displays_.indexOf(child);
+  if (disp_index < 0) {
+    return nullptr;
+  }
+  index = Display::numChildren() + disp_index;
   if (model_) {
     model_->beginRemove(this, index, 1);
   }
 //  printf("  displaygroup5 displays_.takeAt( %d ) ( index = %d )\n", disp_index, index );
-  Display * child = displays_.takeAt(disp_index);
+  displays_.takeAt(disp_index);
   child->setModel(nullptr);
   child->setParent(nullptr);
   child_indexes_valid_ = false;
