@@ -115,7 +115,6 @@ VisualizationFrame::VisualizationFrame(
   manager_(nullptr),
   splash_(nullptr),
   toolbar_actions_(nullptr),
-  show_choose_new_master_option_(false),
   panel_factory_(nullptr),
   add_tool_action_(nullptr),
   remove_tool_menu_(nullptr),
@@ -473,10 +472,6 @@ void VisualizationFrame::initMenus()
 
   recent_configs_menu_ = file_menu_->addMenu("&Recent Configs");
   file_menu_->addAction("Save &Image", this, SLOT(onSaveImage()));
-  if (show_choose_new_master_option_) {
-    file_menu_->addSeparator();
-    file_menu_->addAction("Change &Master", this, SLOT(changeMaster()));
-  }
   file_menu_->addSeparator();
 
   QAction * file_menu_quit_action = file_menu_->addAction("&Quit", QKeySequence("Ctrl+Q"));

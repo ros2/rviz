@@ -328,5 +328,5 @@ panels can be added through plugins.
 Installed plugins are indexed and made available within RViz automatically.
 
 For information on writing your own RViz plugin, see the plugin
-tutorials within `the RViz tutorials  wiki page
-<http://ros.org/wiki/rviz/Tutorials>`_.
+tutorials within `the RViz tutorials
+<https://docs.ros.org/en/rolling/Developer-Tools/Visualization/RViz/RViz-Main.html>`_.
