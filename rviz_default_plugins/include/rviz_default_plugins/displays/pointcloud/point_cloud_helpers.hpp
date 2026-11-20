@@ -32,6 +32,8 @@
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__POINTCLOUD__POINT_CLOUD_HELPERS_HPP_
 
 #include <algorithm>
+#include <cstdint>
+#include <cstring>
 #include <string>
 #include <vector>
 
@@ -72,6 +74,52 @@ inline int32_t findChannelIndex(
   return -1;
 }
 
+/// Size in bytes of a sensor_msgs::msg::PointField datatype, or 0 if it is unknown.
+inline size_t pointFieldTypeSize(uint8_t type)
+{
+  switch (type) {
+    case sensor_msgs::msg::PointField::INT8:
+    case sensor_msgs::msg::PointField::UINT8:
+      return 1;
+    case sensor_msgs::msg::PointField::INT16:
+    case sensor_msgs::msg::PointField::UINT16:
+      return 2;
+    case sensor_msgs::msg::PointField::INT32:
+    case sensor_msgs::msg::PointField::UINT32:
+    case sensor_msgs::msg::PointField::FLOAT32:
+      return 4;
+    case sensor_msgs::msg::PointField::FLOAT64:
+      return 8;
+    default:
+      return 0;
+  }
+}
+
+inline bool hostIsBigEndian()
+{
+  const uint16_t one = 1;
+  uint8_t first_byte;
+  std::memcpy(&first_byte, &one, 1);
+  return first_byte == 0;
+}
+
+/// Read a FieldT stored at data, which need not be aligned, reversing its bytes if
+/// swap_bytes is set.
+template<typename FieldT>
+inline FieldT readFieldValue(const uint8_t * data, bool swap_bytes)
+{
+  uint8_t bytes[sizeof(FieldT)];
+  std::memcpy(bytes, data, sizeof(FieldT));
+  if (swap_bytes) {
+    std::reverse(bytes, bytes + sizeof(FieldT));
+  }
+  FieldT value;
+  std::memcpy(&value, bytes, sizeof(FieldT));
+  return value;
+}
+
+/// Read field `type` at `offset` of point `index`, converted to T. Returns 0 if the type
+/// is unknown or the value would lie outside cloud->data.
 template<typename T>
 inline T valueFromCloud(
   const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud,
@@ -80,70 +128,34 @@ inline T valueFromCloud(
   uint32_t point_step,
   uint64_t index)
 {
-  const uint8_t * data = &cloud->data[(point_step * index) + offset];
-  T ret = 0;
+  const size_t size = pointFieldTypeSize(type);
+  const uint64_t start = static_cast<uint64_t>(point_step) * index + offset;
+  if (size == 0 || start > cloud->data.size() || cloud->data.size() - start < size) {
+    return 0;
+  }
+  const uint8_t * data = &cloud->data[start];
+  const bool swap_bytes = static_cast<bool>(cloud->is_bigendian) != hostIsBigEndian();
 
   switch (type) {
     case sensor_msgs::msg::PointField::INT8:
-      {
-        int8_t val = *reinterpret_cast<const int8_t *>(data);
-        ret = static_cast<T>(val);
-        break;
-      }
-
+      return static_cast<T>(readFieldValue<int8_t>(data, swap_bytes));
     case sensor_msgs::msg::PointField::UINT8:
-      {
-        uint8_t val = *reinterpret_cast<const uint8_t *>(data);
-        ret = static_cast<T>(val);
-        break;
-      }
-
+      return static_cast<T>(readFieldValue<uint8_t>(data, swap_bytes));
     case sensor_msgs::msg::PointField::INT16:
-      {
-        int16_t val = *reinterpret_cast<const int16_t *>(data);
-        ret = static_cast<T>(val);
-        break;
-      }
-
+      return static_cast<T>(readFieldValue<int16_t>(data, swap_bytes));
     case sensor_msgs::msg::PointField::UINT16:
-      {
-        uint16_t val = *reinterpret_cast<const uint16_t *>(data);
-        ret = static_cast<T>(val);
-        break;
-      }
-
+      return static_cast<T>(readFieldValue<uint16_t>(data, swap_bytes));
     case sensor_msgs::msg::PointField::INT32:
-      {
-        int32_t val = *reinterpret_cast<const int32_t *>(data);
-        ret = static_cast<T>(val);
-        break;
-      }
-
+      return static_cast<T>(readFieldValue<int32_t>(data, swap_bytes));
     case sensor_msgs::msg::PointField::UINT32:
-      {
-        uint32_t val = *reinterpret_cast<const uint32_t *>(data);
-        ret = static_cast<T>(val);
-        break;
-      }
-
+      return static_cast<T>(readFieldValue<uint32_t>(data, swap_bytes));
     case sensor_msgs::msg::PointField::FLOAT32:
-      {
-        float val = *reinterpret_cast<const float *>(data);
-        ret = static_cast<T>(val);
-        break;
-      }
-
+      return static_cast<T>(readFieldValue<float>(data, swap_bytes));
     case sensor_msgs::msg::PointField::FLOAT64:
-      {
-        double val = *reinterpret_cast<const double *>(data);
-        ret = static_cast<T>(val);
-        break;
-      }
+      return static_cast<T>(readFieldValue<double>(data, swap_bytes));
     default:
-      break;
+      return 0;
   }
-
-  return ret;
 }
 
 inline void getRainbowColor(float value, Ogre::ColourValue & color)

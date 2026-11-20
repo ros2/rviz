@@ -257,6 +257,14 @@ uint32_t PointCloudSelectionHandler::convertValueToColor(
   const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message,
   const sensor_msgs::msg::PointField & f) const
 {
+  // Integer fields already hold the packed color; converting them through float would
+  // change the bits.
+  if (f.datatype == sensor_msgs::msg::PointField::INT32 ||
+    f.datatype == sensor_msgs::msg::PointField::UINT32)
+  {
+    return valueFromCloud<uint32_t>(
+      message, f.offset, f.datatype, message->point_step, index);
+  }
   auto float_val = valueFromCloud<float>(
     message, f.offset, f.datatype, message->point_step, index);
   // Conversion hack because rgb are stored in float (datatype=7) and valueFromCloud
