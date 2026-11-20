@@ -38,7 +38,7 @@ uint32_t size(size_t value)
 }
 
 sensor_msgs::msg::PointCloud2::ConstSharedPtr rviz_default_plugins::convertPointCloudToPointCloud2(
-  const sensor_msgs::msg::PointCloud::ConstSharedPtr input)
+  const sensor_msgs::msg::PointCloud::ConstSharedPtr & input)
 {
   auto output = std::make_shared<sensor_msgs::msg::PointCloud2>();
   output->header = input->header;
