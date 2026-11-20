@@ -801,6 +801,19 @@ if(BUILD_TESTING)
     )
   endif()
 
+  ament_add_gmock(point_cloud_selection_handler_test
+    test/rviz_default_plugins/displays/pointcloud/point_cloud_selection_handler_test.cpp
+    ${TEST_FIXTURE_OBJECTS}
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET point_cloud_selection_handler_test)
+    target_include_directories(point_cloud_selection_handler_test PRIVATE test)
+    target_link_libraries(point_cloud_selection_handler_test
+      ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
+      rviz_default_plugins
+      pointcloud_messages
+    )
+  endif()
+
   ament_add_gmock(point_cloud_scalar_display_test
     test/rviz_default_plugins/displays/pointcloud/point_cloud_scalar_display_test.cpp
     ${TEST_FIXTURE_OBJECTS}
@@ -812,6 +825,12 @@ if(BUILD_TESTING)
       rviz_default_plugins
       rviz_ogre_vendor::OgreMain
     )
+  endif()
+
+  ament_add_gmock(point_cloud_helpers_test
+    test/rviz_default_plugins/displays/pointcloud/point_cloud_helpers_test.cpp)
+  if(TARGET point_cloud_helpers_test)
+    target_link_libraries(point_cloud_helpers_test rviz_default_plugins)
   endif()
 
   ament_add_gmock(point_cloud_transformers_test

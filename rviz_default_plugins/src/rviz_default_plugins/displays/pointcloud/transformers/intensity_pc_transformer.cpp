@@ -29,6 +29,8 @@
 
 
 #include <algorithm>
+#include <cmath>
+#include <limits>
 #include <string>
 #include <utility>
 
@@ -80,20 +82,24 @@ bool IntensityPCTransformer::transform(
   const uint32_t point_step = cloud->point_step;
   const uint32_t num_points = cloud->width * cloud->height;
 
-  float min_intensity = 999999.0f;
-  float max_intensity = -999999.0f;
+  float min_intensity = std::numeric_limits<float>::max();
+  float max_intensity = std::numeric_limits<float>::lowest();
   if (auto_compute_intensity_bounds_property_->getBool()) {
     for (uint32_t i = 0; i < num_points; ++i) {
       float val = valueFromCloud<float>(cloud, offset, type, point_step, i);
+      // Infinite or NaN intensities would make every other point the same color.
+      if (!std::isfinite(val)) {
+        continue;
+      }
       min_intensity = std::min(val, min_intensity);
       max_intensity = std::max(val, max_intensity);
     }
-
-    min_intensity = std::max(-999999.0f, min_intensity);
-    max_intensity = std::min(999999.0f, max_intensity);
+  }
+  if (auto_compute_intensity_bounds_property_->getBool() && min_intensity <= max_intensity) {
     min_intensity_property_->setFloat(min_intensity);
     max_intensity_property_->setFloat(max_intensity);
   } else {
+    // Bounds are set by hand, or there was no finite intensity to compute them from.
     min_intensity = min_intensity_property_->getFloat();
     max_intensity = max_intensity_property_->getFloat();
   }

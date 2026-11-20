@@ -30,6 +30,7 @@
 
 #include <gmock/gmock.h>
 
+#include <limits>
 #include <vector>
 
 #include <QList>  // NOLINT: cpplint is unable to handle the include order here
@@ -121,4 +122,53 @@ TEST(
   ASSERT_THAT(points_out[0].color, Eq(Ogre::ColourValue(1, 0, 0)));  // 0
   ASSERT_THAT(points_out[1].color, Eq(Ogre::ColourValue(0.75, 1, 0)));  // 1/4
   ASSERT_THAT(points_out[2].color, Eq(Ogre::ColourValue(0, 1, 0.5)));  // 1/2
+}
+
+TEST(IntensityPCTransformer, transform_autocomputes_bounds_beyond_one_million) {
+  PointWithIntensity p1 = {0, 0, 0, -5000000};
+  PointWithIntensity p2 = {0, 0, 0, -2500000};
+  PointWithIntensity p3 = {0, 0, 0, 2000000};
+  auto cloud = createPointCloud2WithIntensity(std::vector<PointWithIntensity>{p1, p2, p3});
+
+  V_PointCloudPoint points_out;
+  points_out.resize(3);
+
+  QList<rviz_common::properties::Property *> out_props;
+
+  IntensityPCTransformer transformer;
+  transformer.createProperties(nullptr, PointCloudTransformer::Support_Color, out_props);
+
+  transformer.transform(
+    cloud, PointCloudTransformer::Support_Color, Ogre::Matrix4::IDENTITY, points_out);
+
+  ASSERT_THAT(out_props[6]->getNameStd(), StrEq("Min Intensity"));
+  EXPECT_THAT(out_props[6]->getValue().toFloat(), FloatEq(-5000000.0f));
+  ASSERT_THAT(out_props[7]->getNameStd(), StrEq("Max Intensity"));
+  EXPECT_THAT(out_props[7]->getValue().toFloat(), FloatEq(2000000.0f));
+  EXPECT_THAT(points_out[0].color, Ne(points_out[1].color));
+}
+
+TEST(IntensityPCTransformer, transform_ignores_non_finite_intensities_when_computing_bounds) {
+  PointWithIntensity p1 = {0, 0, 0, 0};
+  PointWithIntensity p2 = {0, 0, 0, 2};
+  PointWithIntensity p3 = {0, 0, 0, std::numeric_limits<float>::infinity()};
+  PointWithIntensity p4 = {0, 0, 0, std::numeric_limits<float>::quiet_NaN()};
+  auto cloud = createPointCloud2WithIntensity(
+    std::vector<PointWithIntensity>{p1, p2, p3, p4});
+
+  V_PointCloudPoint points_out;
+  points_out.resize(4);
+
+  QList<rviz_common::properties::Property *> out_props;
+
+  IntensityPCTransformer transformer;
+  transformer.createProperties(nullptr, PointCloudTransformer::Support_Color, out_props);
+
+  transformer.transform(
+    cloud, PointCloudTransformer::Support_Color, Ogre::Matrix4::IDENTITY, points_out);
+
+  EXPECT_THAT(out_props[6]->getValue().toFloat(), FloatEq(0.0f));
+  EXPECT_THAT(out_props[7]->getValue().toFloat(), FloatEq(2.0f));
+  ASSERT_THAT(points_out[0].color, Eq(Ogre::ColourValue(1, 0, 0)));  // 0
+  ASSERT_THAT(points_out[1].color, Eq(Ogre::ColourValue(1, 0, 1)));  // 1
 }

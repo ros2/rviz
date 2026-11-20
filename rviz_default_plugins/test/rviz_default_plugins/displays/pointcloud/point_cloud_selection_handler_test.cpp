@@ -30,6 +30,7 @@
 
 #include <gmock/gmock.h>
 
+#include <cstring>
 #include <memory>
 #include <vector>
 
@@ -40,12 +41,12 @@
 #include "rviz_rendering/objects/point_cloud.hpp"
 #include "rviz_common/interaction/selection_handler.hpp"
 
-#include "../../../../src/rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
-#include "../../../../src/rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp"
+#include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
+#include "rviz_default_plugins/displays/pointcloud/point_cloud2_display.hpp"
 
 #include "../../scene_graph_introspection.hpp"
 #include "../display_test_fixture.hpp"
-#include "./message_creators.hpp"
+#include "../../pointcloud_messages.hpp"
 
 using namespace ::testing;  // NOLINT
 using namespace rviz_default_plugins::displays;  // NOLINT
@@ -235,6 +236,38 @@ TEST_F(
   ASSERT_THAT(parent, HasNumberOfSubproperties(2));
   EXPECT_THAT(parent->childAt(0), HasColorProperty("0; 0; 0", 0.0f));
   EXPECT_THAT(parent->childAt(1), HasColorProperty("1; 1; 1", 0.0f));
+}
+
+TEST_F(
+  PointCloudSelectionHandlerFixture,
+  createProperties_reads_integer_rgba_fields_as_packed_colors)
+{
+  std::vector<rviz_default_plugins::ColoredPoint> message_points =
+  {{1, 1, 1, 0, 0, 0}, {-1, -1, 1, 0, 0, 0}, {-1, 1, 1, 0, 0, 0}, {1, -1, 1, 0, 0, 0}};
+  auto message = std::make_shared<sensor_msgs::msg::PointCloud2>(
+    *rviz_default_plugins::create8BitColoredPointCloud2(message_points));
+  // Opaque green in an INT32 field: the sign bit is set, so reading it as a number would
+  // change the color.
+  message->fields[3].name = "rgba";
+  message->fields[3].datatype = sensor_msgs::msg::PointField::INT32;
+  const int32_t opaque_green = static_cast<int32_t>(0xFF00FF00u);
+  for (uint32_t i = 0; i < message->width; ++i) {
+    std::memcpy(
+      &message->data[i * message->point_step + message->fields[3].offset],
+      &opaque_green, sizeof(opaque_green));
+  }
+  auto cloud_info = createCloudInfoWithSquare(scene_manager_, context_.get(), message);
+
+  rviz_common::interaction::Picked picked_object(cloud_info->selection_handler_->getHandle());
+  picked_object.extra_handles.clear();
+  picked_object.extra_handles.insert(1);
+  cloud_info->selection_handler_->onSelect(picked_object);
+
+  rviz_common::properties::Property * parent = new rviz_common::properties::Property();
+  cloud_info->selection_handler_->createProperties(picked_object, parent);
+
+  ASSERT_THAT(parent, HasNumberOfSubproperties(1));
+  EXPECT_THAT(parent->childAt(0), HasColorProperty("0; 255; 0", 1.0f));
 }
 
 TEST_F(
