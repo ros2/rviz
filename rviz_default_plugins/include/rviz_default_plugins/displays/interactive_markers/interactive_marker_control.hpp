@@ -55,6 +55,7 @@
 
 #include "rviz_default_plugins/displays/marker/markers/marker_base.hpp"
 #include "rviz_default_plugins/displays/marker/markers/points_marker.hpp"
+#include "rviz_default_plugins/visibility_control.hpp"
 
 namespace Ogre
 {
@@ -78,7 +79,7 @@ namespace displays
 class InteractiveMarker;
 
 /// A single control element of an InteractiveMarker.
-class InteractiveMarkerControl
+class RVIZ_DEFAULT_PLUGINS_MARKER_PUBLIC InteractiveMarkerControl
   : public Ogre::SceneManager::Listener,
   public rviz_common::InteractiveObject,
   public std::enable_shared_from_this<InteractiveMarkerControl>

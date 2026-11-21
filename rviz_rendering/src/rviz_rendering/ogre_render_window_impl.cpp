@@ -34,6 +34,8 @@
 #include <cstdlib>
 #include <functional>
 
+#include <QSize>  // NOLINT: cpplint cannot handle include order here
+
 #include "OgreEntity.h"
 #include "OgreCamera.h"
 #include "OgreGpuProgramManager.h"
@@ -53,6 +55,23 @@
 
 namespace rviz_rendering
 {
+
+
+// Qt expresses window geometry in logical pixels. Convert to the units
+// expected by the Ogre backend at this boundary.
+static
+QSize
+toOgreSurfaceSize(const QWindow * window, int logical_width, int logical_height)
+{
+#if __APPLE__
+  // Cocoa applies the native backing scale itself, so pass logical dimensions.
+  (void) window;
+  return QSize(logical_width, logical_height);
+#else
+  return QSize(logical_width, logical_height) * window->devicePixelRatio();
+#endif
+}
+
 
 RenderWindowImpl::RenderWindowImpl(QWindow * parent)
 : parent_(parent),
@@ -179,8 +198,9 @@ RenderWindowImpl::initialize()
 {
   render_system_ = RenderSystem::get();
   double pixel_ratio = parent_->devicePixelRatio();
+  QSize surface_size = toOgreSurfaceSize(parent_, parent_->width(), parent_->height());
   ogre_render_window_ = render_system_->makeRenderWindow(
-    parent_->winId(), parent_->width(), parent_->height(), pixel_ratio);
+    parent_->winId(), surface_size.width(), surface_size.height(), pixel_ratio);
 
   Ogre::Root * ogre_root = render_system_->getOgreRoot();
   if (!ogre_root) {
@@ -245,8 +265,10 @@ RenderWindowImpl::resize(size_t width, size_t height)
   if (ogre_render_window_) {
     // Skip unchanged Ogre resizes: windowMovedOrResized() updates the macOS
     // NSOpenGLContext, which can trigger another expose and repeat this call.
-    const auto w = static_cast<unsigned int>(width);
-    const auto h = static_cast<unsigned int>(height);
+    const QSize surface_size = toOgreSurfaceSize(
+      parent_, static_cast<int>(width), static_cast<int>(height));
+    const auto w = static_cast<unsigned int>(surface_size.width());
+    const auto h = static_cast<unsigned int>(surface_size.height());
     if (w != last_resize_width_ || h != last_resize_height_) {
       last_resize_width_ = w;
       last_resize_height_ = h;
