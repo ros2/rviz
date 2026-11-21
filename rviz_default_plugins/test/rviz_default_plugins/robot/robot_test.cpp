@@ -36,7 +36,9 @@
 
 #include <QApplication>  // NOLINT
 
+#include <OgreMaterialManager.h>
 #include <OgreRoot.h>
+#include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 
 #include "resource_retriever/retriever.hpp"
@@ -475,6 +477,83 @@ TEST_F(RobotTestFixture, changedEnableAllLinks_toggles_all_links) {
   EXPECT_FALSE(prop->childAt(6)->getValue().toBool());
   EXPECT_FALSE(prop->childAt(7)->getValue().toBool());
   EXPECT_FALSE(prop->childAt(8)->getValue().toBool());
+}
+
+class DestroyedNodeCounter : public Ogre::Node::Listener
+{
+public:
+  void nodeDestroyed(const Ogre::Node *) override {++destroyed;}
+
+  int destroyed = 0;
+};
+
+size_t countMaterials()
+{
+  size_t count = 0;
+  auto it = Ogre::MaterialManager::getSingleton().getResourceIterator();
+  for (; it.hasMoreElements(); it.moveNext()) {
+    ++count;
+  }
+  return count;
+}
+
+TEST_F(RobotTestFixture, clear_releases_the_ogre_resources_of_all_links) {
+  // Mesh with its own materials, primitive with a URDF material, and mass/inertia shapes.
+  urdf::Model model;
+  ASSERT_TRUE(
+    model.initString(
+      R"(<robot name="resource_test">
+        <link name="base">
+          <inertial>
+            <mass value="1"/>
+            <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/>
+          </inertial>
+          <visual><geometry>
+            <mesh filename="package://rviz_rendering_tests/test_meshes/pr2-base.dae"/>
+          </geometry></visual>
+          <collision><geometry><box size="1 1 1"/></geometry></collision>
+        </link>
+        <link name="head">
+          <visual>
+            <geometry><sphere radius="1"/></geometry>
+            <material name="green"><color rgba="0 1 0 1"/></material>
+          </visual>
+        </link>
+        <joint name="head_joint" type="fixed">
+          <parent link="base"/>
+          <child link="head"/>
+        </joint>
+      </robot>)"));
+
+  // The first load caches resources shared by all loads, e.g. the mesh and its materials.
+  robot_->load(model);
+  robot_->clear();
+  const size_t materials = countMaterials();
+  const size_t entities = scene_manager_->getMovableObjects("Entity").size();
+
+  robot_->load(model);
+  EXPECT_THAT(countMaterials(), Gt(materials));
+  EXPECT_THAT(scene_manager_->getMovableObjects("Entity").size(), Gt(entities));
+
+  // Static: without the fix the nodes outlive this test and notify on scene manager teardown.
+  static DestroyedNodeCounter counter;
+  int offset_nodes = 0;
+  for (const auto & link_entry : robot_->getLinks()) {
+    for (auto node : {link_entry.second->getVisualNode(), link_entry.second->getCollisionNode()}) {
+      for (auto child : node->getChildren()) {
+        child->setListener(&counter);
+        ++offset_nodes;
+      }
+    }
+  }
+  ASSERT_THAT(offset_nodes, Gt(0));
+
+  counter.destroyed = 0;
+  robot_->clear();
+
+  EXPECT_THAT(countMaterials(), Eq(materials));
+  EXPECT_THAT(scene_manager_->getMovableObjects("Entity").size(), Eq(entities));
+  EXPECT_THAT(counter.destroyed, Eq(offset_nodes));
 }
 
 int main(int argc, char ** argv)
