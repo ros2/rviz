@@ -50,6 +50,7 @@
 #include <string>
 
 #include <QMouseEvent>  // NOLINT
+#include <QPlatformSurfaceEvent>  // NOLINT
 #include <QTimer>   // NOLINT
 #include <QWindow>   // NOLINT
 #include <QString>  // NOLINT: cpplint cannot handle the include order here
@@ -138,6 +139,13 @@ bool
 RenderWindow::event(QEvent * event)
 {
   switch (event->type()) {
+    case QEvent::PlatformSurface:
+      if (static_cast<QPlatformSurfaceEvent *>(event)->surfaceEventType() ==
+        QPlatformSurfaceEvent::SurfaceAboutToBeDestroyed)
+      {
+        impl_->destroyRenderWindow();
+      }
+      return QWindow::event(event);
     case QEvent::Resize:
       if (this->isExposed()) {
         impl_->resize(this->width(), this->height());
