@@ -52,12 +52,22 @@ public:
 
 TEST_F(VisualTestFixture, test_camera_display_with_published_image) {
   auto points = {nodes::createPoint(0, 0, 10)};
+  // image_transport::getCameraInfoTopic("/image") resolves to "/camera_info"
+  // (it strips the last segment and appends "/camera_info"), so the
+  // CameraInfoPublisher must publish on "/camera_info" for the CameraDisplay's
+  // camera info subscription to match.
   std::vector<PublisherWithFrame> publishers = {
-    PublisherWithFrame(std::make_shared<nodes::CameraInfoPublisher>(), "image"),
+    PublisherWithFrame(
+      std::make_shared<nodes::CameraInfoPublisher>("camera_info_frame", "/camera_info"), "image"),
     PublisherWithFrame(std::make_shared<nodes::ImagePublisher>(), "image_frame"),
     PublisherWithFrame(std::make_shared<nodes::PointCloudPublisher>(points), "pointcloud_frame")
   };
   auto cam_publisher = std::make_unique<VisualTestPublisher>(publishers);
+
+  // Ogre 14.5's RTShaderSystem-generated shaders produce slightly different
+  // per-pixel values than Ogre 1.12's fixed-function path the reference was
+  // captured against, so allow a small amount of per-pixel drift here.
+  setTesterThreshold(0.02);
 
   setCamPose(Ogre::Vector3(0, 0, 16));
   setCamLookAt(Ogre::Vector3(0, 0, 0));

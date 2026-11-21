@@ -37,6 +37,7 @@
 
 #include <OgreCamera.h>
 #include <OgreHardwarePixelBuffer.h>
+#include <OgreMaterial.h>
 #include <OgreMaterialManager.h>
 #include <OgreRectangle2D.h>
 #include <OgreRenderTexture.h>

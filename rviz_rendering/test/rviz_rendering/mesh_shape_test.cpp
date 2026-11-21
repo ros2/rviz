@@ -90,7 +90,7 @@ TEST_F(MeshShapeTestFixture, mesh_shape_test) {
 
   Ogre::ManualObject * object = mesh_shape_visual->getManualObject();
 
-  EXPECT_THROW(object->convertToMesh("mesh"), Ogre::InvalidParametersException);
+  EXPECT_THROW(object->convertToMesh("mesh"), Ogre::RuntimeAssertionException);
 
   mesh_shape_visual->estimateVertexCount(vertices.size());
   mesh_shape_visual->beginTriangles();
@@ -110,5 +110,8 @@ TEST_F(MeshShapeTestFixture, mesh_shape_test) {
 
   mesh_shape_visual->clear();
 
-  EXPECT_THROW(object->convertToMesh("mesh"), Ogre::InvalidParametersException);
+  // Ogre 14 converted several user-error conditions (including
+  // ManualObject::convertToMesh on an empty object) from
+  // InvalidParametersException to RuntimeAssertionException.
+  EXPECT_THROW(object->convertToMesh("mesh"), Ogre::RuntimeAssertionException);
 }
