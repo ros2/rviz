@@ -52,6 +52,8 @@
 #include "rviz_common/visualization_frame.hpp"
 #include "rviz_common/visualization_manager.hpp"
 
+#include "./ros_integration/signal_handlers.hpp"
+
 namespace rviz_common
 {
 
@@ -184,7 +186,14 @@ bool VisualizerApp::init(int argc, char ** argv)
 
 VisualizerApp::~VisualizerApp()
 {
+  // From here on, a repeated signal interrupts a teardown that does not finish.
+  ros_integration::restoreSignalHandlers();
   delete continue_timer_;
+  if (frame_ && frame_->getManager()) {
+    // Destroy displays while ROS is still valid. Plugin libraries stay loaded until the frame
+    // is deleted, after ROS shutdown has run any callbacks those libraries registered.
+    frame_->getManager()->removeAllDisplays();
+  }
   ros_client_abstraction_->shutdown();
   delete frame_;
 }

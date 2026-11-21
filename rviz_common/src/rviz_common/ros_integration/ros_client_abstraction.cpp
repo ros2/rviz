@@ -40,6 +40,8 @@
 
 #include "rviz_common/ros_integration/ros_node_abstraction.hpp"
 
+#include "./signal_handlers.hpp"
+
 namespace rviz_common
 {
 namespace ros_integration
@@ -64,20 +66,23 @@ RosClientAbstraction::init(int argc, char ** argv, const std::string & name, boo
     throw std::runtime_error("Node with name " + final_name + " already exists.");
   }
   // TODO(wjwwood): this will throw on repeated calls, maybe avoid that?
-  rclcpp::init(argc, argv);
+  // RViz handles SIGINT and SIGTERM itself, so ROS stays valid while displays are destroyed.
+  rclcpp::init(argc, argv, rclcpp::InitOptions(), rclcpp::SignalHandlerOptions::None);
   rviz_ros_node_ = std::make_shared<RosNodeAbstraction>(final_name, options_);
+  installSignalHandlers();
   return rviz_ros_node_;
 }
 
 bool
 RosClientAbstraction::ok()
 {
-  return rclcpp::ok() && rviz_ros_node_;
+  return rclcpp::ok() && rviz_ros_node_ && !exitRequested();
 }
 
 void
 RosClientAbstraction::shutdown()
 {
+  restoreSignalHandlers();
   rclcpp::shutdown();
 }
 
