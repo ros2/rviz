@@ -67,12 +67,12 @@ namespace rviz_default_plugins
 
 typedef std::vector<rviz_rendering::PointCloud::Point> V_PointCloudPoint;
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC PointCloudTransformer : public QObject
+class RVIZ_DEFAULT_PLUGINS_POINTCLOUD_PUBLIC PointCloudTransformer : public QObject
 {
   Q_OBJECT
 
 public:
-  virtual void init() {}
+  virtual void init();
 
   /**
    * \brief Enumeration of support levels.  Basic levels (Support_None, Support_XYZ, Support_Color) can be
@@ -106,11 +106,7 @@ public:
    * return a score of 0 here since it should not be preferred over others that explicitly support fields in the message.  This allows that
    * "flat color" transformer to still be selectable, but generally not chosen automatically.
    */
-  virtual uint8_t score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
-  {
-    (void) cloud;
-    return 0;
-  }
+  virtual uint8_t score(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud);
 
   /**
    * \brief Create any properties necessary for this transformer.
@@ -120,17 +116,12 @@ public:
   virtual void createProperties(
     rviz_common::properties::Property * parent_property,
     uint32_t mask,
-    QList<rviz_common::properties::Property *> & out_props)
-  {
-    (void) parent_property;
-    (void) mask;
-    (void) out_props;
-  }
+    QList<rviz_common::properties::Property *> & out_props);
 
   /**
  * \brief Hide properties that are currently not in use.
  */
-  virtual void hideUnusedProperties() {}
+  virtual void hideUnusedProperties();
 
   // class_id and description are required to be used with rviz_common::PluginlibFactory
   QString getClassId() const {return class_id_;}

@@ -42,8 +42,11 @@
 
 #include "rviz_common/ros_topic_display.hpp"
 
-#include "rclcpp/qos.hpp"
+#include "rclcpp/event_handler.hpp"
+#include "rclcpp/exceptions/exceptions.hpp"
 #include "rclcpp/node.hpp"
+#include "rclcpp/qos.hpp"
+#include "rclcpp/subscription.hpp"
 #include "rclcpp/subscription_options.hpp"
 #include "rclcpp/time.hpp"
 #include "rclcpp/type_adapter.hpp"

@@ -30,7 +30,9 @@
 
 #include "rviz_default_plugins/displays/depth_cloud/depth_cloud_display.hpp"
 
-#include <Ogre.h>
+#include <OgreMath.h>
+#include <OgreQuaternion.h>
+#include <OgreVector.h>
 
 #include <QRegularExpression>
 #include <QString>
@@ -45,6 +47,11 @@
 
 #include <image_transport/camera_common.hpp>
 #include <image_transport/subscriber_plugin.hpp>
+
+#include "rclcpp/duration.hpp"
+#include "rclcpp/event_handler.hpp"
+#include "rclcpp/qos.hpp"
+#include "rclcpp/subscription_options.hpp"
 
 #include <rviz_common/properties/property.hpp>
 #include <rviz_common/properties/bool_property.hpp>
@@ -466,8 +473,8 @@ void DepthCloudDisplay::processDepthMessage(const sensor_msgs::msg::Image::Const
 }
 
 void DepthCloudDisplay::processMessage(
-  const sensor_msgs::msg::Image::ConstSharedPtr depth_msg,
-  const sensor_msgs::msg::Image::ConstSharedPtr rgb_msg)
+  const sensor_msgs::msg::Image::ConstSharedPtr & depth_msg,
+  const sensor_msgs::msg::Image::ConstSharedPtr & rgb_msg)
 {
   if (context_->getFrameManager()->getPause()) {
     return;

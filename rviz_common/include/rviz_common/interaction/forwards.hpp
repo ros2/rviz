@@ -32,15 +32,11 @@
 #ifndef RVIZ_COMMON__INTERACTION__FORWARDS_HPP_
 #define RVIZ_COMMON__INTERACTION__FORWARDS_HPP_
 
-#include <map>
+#include <cstdint>
 #include <set>
 #include <unordered_map>
 #include <vector>
 
-#include <OgrePixelFormat.h>
-#include <OgreColourValue.h>
-
-#include "rviz_common/logging.hpp"
 #include "rviz_common/visibility_control.hpp"
 
 namespace rviz_common
@@ -69,29 +65,6 @@ struct Picked
 };
 
 using M_Picked = std::unordered_map<CollObjectHandle, Picked>;
-
-inline uint32_t colorToHandle(Ogre::PixelFormat fmt, uint32_t col)
-{
-  uint32_t handle = 0;
-  if (fmt == Ogre::PF_A8R8G8B8 || fmt == Ogre::PF_X8R8G8B8) {
-    handle = col & 0x00ffffff;
-  } else if (fmt == Ogre::PF_R8G8B8A8) {
-    handle = col >> 8;
-  } else {
-    RVIZ_COMMON_LOG_DEBUG_STREAM("Incompatible pixel format [" << fmt << "]");
-  }
-
-  return handle;
-}
-
-inline CollObjectHandle colorToHandle(const Ogre::ColourValue & color)
-{
-  return
-    (static_cast<int>(color.r * 255) << 16) |
-    (static_cast<int>(color.g * 255) << 8) |
-    static_cast<int>(color.b * 255);
-}
-
 
 }  // namespace interaction
 }  // namespace rviz_common

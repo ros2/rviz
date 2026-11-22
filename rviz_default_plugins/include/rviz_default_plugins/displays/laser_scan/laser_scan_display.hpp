@@ -40,11 +40,9 @@
 #include "laser_geometry/laser_geometry.hpp"
 
 #include "rviz_common/message_filter_display.hpp"
-#include "rviz_common/transformation/frame_transformer.hpp"
 
 #include "rviz_default_plugins/displays/pointcloud/point_cloud_common.hpp"
 #include "rviz_default_plugins/transformation/transformer_guard.hpp"
-#include "rviz_default_plugins/transformation/tf_wrapper.hpp"
 #include "rviz_default_plugins/transformation/tf_frame_transformer.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 

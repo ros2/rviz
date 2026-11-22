@@ -63,7 +63,7 @@ namespace rviz_rendering
 /// Implementation for the rviz_rendering::RenderWindow class that uses Ogre.
 /**
  * Based on the QtOgreRenderWindow from previous versions of rviz and new
- * Ogre/Qt5 integration recommendationd.
+ * Ogre/Qt integration recommendations.
  */
 class RenderWindowImpl
 {
@@ -149,6 +149,10 @@ protected:
   Ogre::SceneNode * ogre_light_node_;
 
   bool animating_;
+
+  /// Size passed to the last Ogre resize, to skip resizes that do not change it.
+  unsigned int last_resize_width_{0};
+  unsigned int last_resize_height_{0};
 
   Ogre::Viewport * ogre_viewport_;
 

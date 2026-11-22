@@ -31,6 +31,10 @@
 
 #include <gtest/gtest.h>
 
+#include <OgreColourValue.h>
+#include <OgreDataStream.h>
+#include <OgreMath.h>
+
 ImageTester::ImageTester(Ogre::String reference_directory_path, Ogre::String test_directory_path)
 : reference_directory_path_(reference_directory_path),
   test_directory_path_(test_directory_path),

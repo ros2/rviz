@@ -110,6 +110,16 @@ void PointCloudSelectionHandler::postRenderPass(uint32_t pass)
   }
 }
 
+PointCloudSelectionHandler::S_int
+PointCloudSelectionHandler::getIndicesOfSelectedPoints(const rviz_common::interaction::Picked & obj)
+{
+  S_int indices;
+  for (auto handle : obj.extra_handles) {
+    indices.insert(handleToIndex(handle));
+  }
+  return indices;
+}
+
 void PointCloudSelectionHandler::createProperties(
   const rviz_common::interaction::Picked & obj,
   rviz_common::properties::Property * parent_property)
@@ -168,8 +178,6 @@ void PointCloudSelectionHandler::onSelect(const rviz_common::interaction::Picked
 {
   for (auto handle : obj.extra_handles) {
     uint64_t index = handleToIndex(handle);
-
-    sensor_msgs::msg::PointCloud2::ConstSharedPtr message = cloud_info_->message_;
 
     Ogre::Vector3 pos = cloud_info_->transformed_points_[index].position;
     pos = cloud_info_->scene_node_->convertLocalToWorldPosition(pos);

@@ -48,8 +48,9 @@
 #include "nav_msgs/msg/map_meta_data.hpp"
 #include "nav_msgs/msg/occupancy_grid.hpp"
 #include "map_msgs/msg/occupancy_grid_update.hpp"
-#include "rclcpp/time.hpp"
 #include "rclcpp/qos.hpp"
+#include "rclcpp/subscription.hpp"
+#include "rclcpp/time.hpp"
 
 #include "rviz_common/message_filter_display.hpp"
 
@@ -136,10 +137,11 @@ protected:
   void onEnable() override;
 
   /** @brief Copy update's data into current_map_ and call showMap(). */
-  void incomingUpdate(map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr update);
+  void incomingUpdate(const map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr & update);
 
-  bool updateDataOutOfBounds(map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr update) const;
-  void updateMapDataInMemory(map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr update);
+  bool updateDataOutOfBounds(
+    const map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr & update) const;
+  void updateMapDataInMemory(const map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr & update);
 
   void clear();
 

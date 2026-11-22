@@ -90,7 +90,7 @@ typedef std::pair<std::string, int32_t> MarkerID;
  * \class MarkerCommon
  * Common code shared by MarkerDisplay and MarkerArrayDisplay
  */
-class RVIZ_DEFAULT_PLUGINS_PUBLIC MarkerCommon
+class RVIZ_DEFAULT_PLUGINS_MARKER_PUBLIC MarkerCommon
 {
 public:
   explicit MarkerCommon(rviz_common::Display * display);
@@ -101,17 +101,17 @@ public:
 
   void update(std::chrono::nanoseconds wall_dt, std::chrono::nanoseconds ros_dt);
 
-  void deleteMarker(MarkerID id);
+  void deleteMarker(const MarkerID & id);
 
   /** @brief Add a new message to the queue, will be drawn on the next update(). */
-  void addMessage(visualization_msgs::msg::Marker::ConstSharedPtr marker);
-  void addMessage(visualization_msgs::msg::MarkerArray::ConstSharedPtr array);
+  void addMessage(const visualization_msgs::msg::Marker::ConstSharedPtr & marker);
+  void addMessage(const visualization_msgs::msg::MarkerArray::ConstSharedPtr & array);
 
   /**
    * \brief Processes a marker message
    * @param message The message to process
    */
-  void processMessage(visualization_msgs::msg::Marker::ConstSharedPtr message);
+  void processMessage(const visualization_msgs::msg::Marker::ConstSharedPtr & message);
 
   /**
    * \brief Removes all the markers
@@ -121,8 +121,8 @@ public:
   /** @brief Delete all known markers to this plugin, regardless of id or namespace **/
   void deleteAllMarkers();
 
-  void setMarkerStatus(MarkerID id, StatusLevel level, const std::string & text);
-  void deleteMarkerStatus(MarkerID id);
+  void setMarkerStatus(const MarkerID & id, StatusLevel level, const std::string & text);
+  void deleteMarkerStatus(const MarkerID & id);
 
   resource_retriever::Retriever * getResourceRetriever();
 
@@ -136,12 +136,12 @@ private:
    * \brief Processes an "Add" marker message
    * @param message The message to process
    */
-  void processAdd(visualization_msgs::msg::Marker::ConstSharedPtr message);
+  void processAdd(const visualization_msgs::msg::Marker::ConstSharedPtr & message);
   /**
    * \brief Processes a "Delete" marker message
    * @param message The message to process
    */
-  void processDelete(visualization_msgs::msg::Marker::ConstSharedPtr message);
+  void processDelete(const visualization_msgs::msg::Marker::ConstSharedPtr & message);
 
   typedef std::vector<visualization_msgs::msg::Marker::ConstSharedPtr> V_MarkerMessage;
   V_MarkerMessage takeSnapshotOfMessageQueue();
@@ -195,7 +195,8 @@ private:
 
 /** @brief Manager of a single marker namespace.  Keeps a hash from
  * marker IDs to MarkerBasePtr, and creates or destroys them when necessary. */
-class RVIZ_DEFAULT_PLUGINS_PUBLIC MarkerNamespace : public rviz_common::properties::BoolProperty
+class RVIZ_DEFAULT_PLUGINS_MARKER_PUBLIC MarkerNamespace
+  : public rviz_common::properties::BoolProperty
 {
   Q_OBJECT
 

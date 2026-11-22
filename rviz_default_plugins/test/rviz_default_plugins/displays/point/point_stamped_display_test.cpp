@@ -39,6 +39,8 @@
 #include <OgreManualObject.h>
 
 #include "geometry_msgs/msg/point_stamped.hpp"
+#include "rclcpp/clock.hpp"
+
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/shape.hpp"
 

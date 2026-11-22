@@ -35,7 +35,9 @@
 #include <QObject>
 
 #include "geometry_msgs/msg/pose_with_covariance_stamped.hpp"
+#include "rclcpp/clock.hpp"
 #include "rclcpp/node.hpp"
+#include "rclcpp/publisher.hpp"
 #include "rclcpp/qos.hpp"
 
 #include "rviz_default_plugins/tools/pose/pose_tool.hpp"

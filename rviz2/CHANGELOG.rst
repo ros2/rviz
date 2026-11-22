@@ -2,6 +2,21 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.4 (2026-10-09)
+-------------------
+* Granular includes and include what you use (`#1854 <https://github.com/ros2/rviz/issues/1854>`_)
+* Contributors: Alejandro Hernández Cordero
+
+16.0.3 (2026-09-02)
+-------------------
+* Removed Qt5 dependency (`#1847 <https://github.com/ros2/rviz/issues/1847>`_)
+* Contributors: Alejandro Hernández Cordero
+
+16.0.2 (2026-07-14)
+-------------------
+* use C++ 20 in default. (`#1810 <https://github.com/ros2/rviz/issues/1810>`_)
+* Contributors: Tomoya Fujita
+
 16.0.1 (2026-06-11)
 -------------------
 * Don't use windeployqt (`#1738 <https://github.com/ros2/rviz/issues/1738>`_)

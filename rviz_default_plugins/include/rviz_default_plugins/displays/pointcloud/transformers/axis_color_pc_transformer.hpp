@@ -45,7 +45,7 @@
 namespace rviz_default_plugins
 {
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC AxisColorPCTransformer : public PointCloudTransformer
+class RVIZ_DEFAULT_PLUGINS_POINTCLOUD_PUBLIC AxisColorPCTransformer : public PointCloudTransformer
 {
   Q_OBJECT
 

@@ -39,6 +39,7 @@
 #include <string>
 #include <vector>
 
+#include <rclcpp/node.hpp>
 #include <sensor_msgs/msg/camera_info.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <sensor_msgs/image_encodings.hpp>
@@ -218,7 +219,6 @@ MultiLayerDepth::generatePointCloudSL(
   float * cloud_data_ptr = reinterpret_cast<float *>(cloud_msg->data.data());
 
   std::size_t point_count = 0;
-  std::size_t point_idx = 0;
 
   const T * depth_img_ptr = reinterpret_cast<const T *>(depth_msg->data.data());
 
@@ -231,7 +231,7 @@ MultiLayerDepth::generatePointCloudSL(
   // iterate over projection matrix
   for (proj_y = projection_map_y_.begin(); proj_y != proj_y_end; ++proj_y) {
     for (proj_x = projection_map_x_.begin(); proj_x != proj_x_end;
-      ++proj_x, ++point_idx, ++depth_img_ptr)
+      ++proj_x, ++depth_img_ptr)
     {
       T depth_raw = *depth_img_ptr;
       if (DepthTraits<T>::valid(depth_raw)) {

@@ -202,7 +202,7 @@ protected:
   /**
    * This is called by Tool::initialize().
    */
-  virtual void onInitialize() {}
+  virtual void onInitialize();
 
   Ogre::SceneManager * scene_manager_;
   DisplayContext * context_;

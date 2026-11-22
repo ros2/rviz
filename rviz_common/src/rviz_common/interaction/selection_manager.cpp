@@ -60,6 +60,7 @@
 #include "rviz_common/logging.hpp"
 #include "rviz_common/render_panel.hpp"
 #include "rviz_common/view_manager.hpp"
+#include "rviz_common/interaction/color_conversion.hpp"
 #include "rviz_common/interaction/handler_manager_iface.hpp"
 #include "rviz_common/interaction/selection_renderer.hpp"
 #include "rviz_common/properties/property.hpp"

@@ -85,11 +85,12 @@ void FixedOrientationOrthoViewController::reset()
 void FixedOrientationOrthoViewController::handleMouseEvent(rviz_common::ViewportMouseEvent & event)
 {
   if (event.shift()) {
-    setStatus("<b>Left-Click:</b> Move X/Y.");
+    setStatus(QStringLiteral("<b>Left-Click:</b> Move X/Y."));
   } else {
     setStatus(
-      "<b>Left-Click:</b> Rotate.  <b>Middle-Click:</b> Move X/Y. "
-      " <b>Right-Click:</b> Zoom.  <b>Shift:</b> More options.");
+      QStringLiteral(
+        "<b>Left-Click:</b> Rotate.  <b>Middle-Click:</b> Move X/Y. "
+        " <b>Right-Click:</b> Zoom.  <b>Shift:</b> More options."));
   }
 
   int32_t diff_x = 0;

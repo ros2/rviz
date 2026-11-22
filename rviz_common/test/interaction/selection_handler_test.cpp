@@ -36,6 +36,7 @@
 #include <OgreWireBoundingBox.h>
 
 #include <memory>
+#include <stdexcept>
 #include <vector>
 
 #include "rviz_common/interaction/selection_handler.hpp"
@@ -156,4 +157,11 @@ TEST_F(SelectionHandlerFixture, onDeselect_removes_wirebox_around_object) {
 TEST_F(SelectionHandlerFixture, addTrackedObject_invalid_pointer_does_not_crash) {
   Ogre::MovableObject * invalid_object = nullptr;
   EXPECT_NO_THROW(handler_->addTrackedObject(invalid_object));
+}
+
+TEST_F(SelectionHandlerFixture, createSelectionHandler_throws_on_null_context) {
+  EXPECT_THROW(
+    rviz_common::interaction::createSelectionHandler<
+      rviz_common::interaction::SelectionHandler>(nullptr),
+    std::invalid_argument);
 }

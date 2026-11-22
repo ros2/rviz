@@ -171,4 +171,7 @@ void Tool::setStatus(const QString & message)
   }
 }
 
+void Tool::onInitialize()
+{}
+
 }  // namespace rviz_common

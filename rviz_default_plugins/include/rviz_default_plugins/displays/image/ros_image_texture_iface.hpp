@@ -42,7 +42,7 @@ namespace rviz_default_plugins
 namespace displays
 {
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC ROSImageTextureIface
+class RVIZ_DEFAULT_PLUGINS_IMAGE_PUBLIC ROSImageTextureIface
 {
 public:
   ROSImageTextureIface() = default;

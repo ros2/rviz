@@ -62,7 +62,7 @@ struct IndexAndMessage
   uint64_t message;
 };
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC PointCloudSelectionHandler : public
+class RVIZ_DEFAULT_PLUGINS_POINTCLOUD_PUBLIC PointCloudSelectionHandler : public
   rviz_common::interaction::SelectionHandler
 {
 public:
@@ -104,14 +104,7 @@ private:
     return (handle & 0xffffffff) - 1;
   }
 
-  S_int getIndicesOfSelectedPoints(const rviz_common::interaction::Picked & obj)
-  {
-    S_int indices;
-    for (auto handle : obj.extra_handles) {
-      indices.insert(handleToIndex(handle));
-    }
-    return indices;
-  }
+  S_int getIndicesOfSelectedPoints(const rviz_common::interaction::Picked & obj);
 
   rviz_common::properties::Property * createParentPropertyForPoint(
     rviz_common::properties::Property * parent_property,

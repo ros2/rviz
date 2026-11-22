@@ -35,7 +35,10 @@
 #include <string>
 #include <chrono>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/clock.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/publisher.hpp"
+#include "rclcpp/timer.hpp"
 
 #include "sensor_msgs/msg/temperature.hpp"
 #include "std_msgs/msg/header.hpp"

@@ -44,6 +44,8 @@
 namespace rviz_rendering
 {
 
+ViewportProjectionFinder::~ViewportProjectionFinder() = default;
+
 std::pair<bool, Ogre::Vector3> ViewportProjectionFinder::getViewportPointProjectionOnXYPlane(
   RenderWindow * render_window, int x, int y)
 {

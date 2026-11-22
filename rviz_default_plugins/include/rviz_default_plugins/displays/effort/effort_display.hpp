@@ -37,7 +37,9 @@
 #include <memory>
 #include <string>
 
-#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/executors/single_threaded_executor.hpp>
+#include <rclcpp/subscription.hpp>
+#include <rclcpp/time.hpp>
 #include <rviz_common/ros_topic_display.hpp>
 #include <rviz_common/properties/bool_property.hpp>
 #include <rviz_common/properties/int_property.hpp>

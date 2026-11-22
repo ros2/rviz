@@ -38,6 +38,9 @@
 #include <OgreRectangle2D.h>  // NOLINT
 
 #include "../../ogre_testing_environment.hpp"
+#include "rclcpp/clock.hpp"
+#include "rclcpp/utilities.hpp"
+
 #include "rviz_common/viewport_mouse_event.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/panel_dock_widget.hpp"
@@ -92,7 +95,7 @@ public:
     ON_CALL(*context_, getTransformationManager())
     .WillByDefault(Return(transformation_manager_.get()));
     ON_CALL(*context_, getRosNodeAbstraction())
-    .WillByDefault(Invoke([]() {return rviz_ros_node_;}));
+    .WillByDefault([]() {return rviz_ros_node_;});
   }
 
   static std::shared_ptr<rviz_default_plugins::OgreTestingEnvironment> testing_environment_;

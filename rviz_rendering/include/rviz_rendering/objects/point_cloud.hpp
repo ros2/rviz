@@ -33,7 +33,6 @@
 #define RVIZ_RENDERING__OBJECTS__POINT_CLOUD_HPP_
 
 #include <cstdint>
-#include <deque>
 #include <memory>
 #include <string>
 #include <vector>
@@ -45,8 +44,6 @@
 #include <OgreVector.h>
 #include <OgreMaterial.h>
 #include <OgreColourValue.h>
-#include <OgreRoot.h>
-#include <OgreHardwareBufferManager.h>
 #include <OgreSharedPtr.h>
 
 #include "point_cloud_renderable.hpp"
@@ -138,6 +135,18 @@ public:
     std::vector<Point>::iterator end_iterator);
 
   /**
+   * \brief Add points to this point cloud, taking ownership of the vector
+   *
+   * Equivalent to the iterator overload, but avoids copying the points when the caller has no
+   * further use for them.  When this cloud is still empty - the usual case, since callers clear
+   * it first - the vector's buffer is taken over as is.
+   *
+   * \param points The points to add.  Left in a valid but unspecified state.
+   */
+  RVIZ_RENDERING_PUBLIC
+  void addPoints(std::vector<Point> && points);
+
+  /**
    * \brief Remove a number of points from this point cloud
    * \param num_points The number of points to pop
    */
@@ -196,7 +205,7 @@ public:
   void setHighlightColor(float r, float g, float b);
 
   RVIZ_RENDERING_PUBLIC
-  const Ogre::String & getMovableType() const override {return sm_Type;}
+  const Ogre::String & getMovableType() const override;
 
   RVIZ_RENDERING_PUBLIC
   const Ogre::AxisAlignedBox & getBoundingBox() const override;
@@ -208,7 +217,7 @@ public:
   virtual void getWorldTransforms(Ogre::Matrix4 * xform) const;
 
   RVIZ_RENDERING_PUBLIC
-  virtual uint16_t getNumWorldTransforms() const {return 1;}
+  virtual uint16_t getNumWorldTransforms() const;
 
   RVIZ_RENDERING_PUBLIC
   void _updateRenderQueue(Ogre::RenderQueue * queue) override;
@@ -223,7 +232,7 @@ public:
   void visitRenderables(Ogre::Renderable::Visitor * visitor, bool debugRenderables) override;
 
   RVIZ_RENDERING_PUBLIC
-  virtual void setName(const std::string & name) {mName = name;}
+  virtual void setName(const std::string & name);
 
   RVIZ_RENDERING_PUBLIC
   PointCloudRenderableQueue getRenderables();
@@ -290,9 +299,19 @@ private:
     std::vector<PointCloud::Point>::iterator point) const;
 
   RVIZ_RENDERING_PUBLIC
+  void addPointToHardwareBuffer(
+    RenderableInternals & internals,
+    std::vector<PointCloud::Point>::iterator point, uint32_t current_point,
+    const float * vertices, uint32_t vertices_per_point);
+
+  [[deprecated("Use the addPointToHardwareBuffer overload taking RenderableInternals &")]]
+  RVIZ_RENDERING_PUBLIC
   RenderableInternals addPointToHardwareBuffer(
     RenderableInternals internals,
     std::vector<PointCloud::Point>::iterator point, uint32_t current_point);
+
+  /// Build the renderables for the points appended to #points_ at or after \a offset.
+  void createRenderablesForPointsFrom(size_t offset);
 
   Ogre::AxisAlignedBox bounding_box_;       ///< The bounding box of this point cloud
 

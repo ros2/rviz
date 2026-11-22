@@ -51,7 +51,7 @@ namespace displays
 namespace markers
 {
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC PointsMarker : public MarkerBase
+class RVIZ_DEFAULT_PLUGINS_MARKER_PUBLIC PointsMarker : public MarkerBase
 {
 public:
   using SharedPtr = std::shared_ptr<PointsMarker>;

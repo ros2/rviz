@@ -41,23 +41,10 @@
 #include <QSpinBox>  // NOLINT: cpplint is unable to handle the include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 #include <QTimer>  // NOLINT: cpplint is unable to handle the include order here
-#include <QtCore/qglobal.h>  // NOLINT: cpplint is unable to handle the include order here
-
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#define QVARIANT_TYPE_ID(v) (v).typeId()
-#else
-#define QVARIANT_TYPE_ID(v) static_cast<int>((v).type())
-#endif
 
 #include "rviz_common/properties/float_edit.hpp"
 #include "rviz_common/properties/property_tree_model.hpp"
 #include "rviz_common/logging.hpp"
-
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#define QVARIANT_TYPE_ID(v) (v).typeId()
-#else
-#define QVARIANT_TYPE_ID(v) static_cast<int>((v).type())
-#endif
 
 namespace rviz_common
 {
@@ -285,10 +272,10 @@ QVariant Property::getViewData(int column, int role) const
     case 1:  // right column: values
       switch (role) {
         case Qt::DisplayRole:
-        case Qt::EditRole: return QVARIANT_TYPE_ID(value_) ==
+        case Qt::EditRole: return value_.typeId() ==
                  QMetaType::Bool ? QVariant() : getValue();
         case Qt::CheckStateRole:
-          if (QVARIANT_TYPE_ID(value_) == QMetaType::Bool) {
+          if (value_.typeId() == QMetaType::Bool) {
             return value_.toBool() ? Qt::Checked : Qt::Unchecked;
           } else {
             return QVariant();
@@ -320,7 +307,7 @@ Qt::ItemFlags Property::getViewFlags(int column) const
     return enabled_flag | Qt::ItemIsSelectable;
   }
   if (value_.isValid() ) {
-    if (QVARIANT_TYPE_ID(value_) == QMetaType::Bool) {
+    if (value_.typeId() == QMetaType::Bool) {
       return Qt::ItemIsUserCheckable | enabled_flag | Qt::ItemIsSelectable;
     }
     return Qt::ItemIsEditable | enabled_flag | Qt::ItemIsSelectable;
@@ -474,7 +461,7 @@ void Property::load(const Config & config)
 void Property::loadValue(const Config & config)
 {
   if (config.getType() == Config::Value) {
-    switch (QVARIANT_TYPE_ID(value_)) {
+    switch (value_.typeId()) {
       case QMetaType::Int: setValue(config.getValue().toInt() ); break;
       case QMetaType::Float:
       case QMetaType::Double: setValue(config.getValue().toDouble() ); break;
@@ -483,7 +470,7 @@ void Property::loadValue(const Config & config)
       default:
         RVIZ_COMMON_LOG_WARNING_STREAM(
           "Property::loadValue() TODO: error handling - unexpected QVariant type " <<
-            QVARIANT_TYPE_ID(value_));
+            value_.typeId());
         break;
     }
   }
@@ -541,7 +528,7 @@ QWidget * Property::createEditor(
 {
   Q_UNUSED(option);
 
-  switch (QVARIANT_TYPE_ID(value_)) {
+  switch (value_.typeId()) {
     case QMetaType::Int:
       {
         QSpinBox * editor = new QSpinBox(parent);

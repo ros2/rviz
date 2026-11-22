@@ -36,7 +36,11 @@
 #include <tuple>
 #include <vector>
 
-#include <Ogre.h>
+#include <OgreEntity.h>
+#include <OgreQuaternion.h>
+#include <OgreRoot.h>
+#include <OgreSceneNode.h>
+#include <OgreVector.h>
 
 #include "rviz_rendering/objects/covariance_visual.hpp"
 #include "../matcher.hpp"

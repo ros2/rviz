@@ -42,6 +42,7 @@
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "rclcpp/clock.hpp"
+#include "rclcpp/time.hpp"
 #include "std_msgs/msg/float32.hpp"
 
 #include "rviz_common/display.hpp"

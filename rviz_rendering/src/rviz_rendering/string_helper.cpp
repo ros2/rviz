@@ -31,9 +31,19 @@
 #include "string_helper.hpp"
 
 #include <algorithm>
-#include <locale>
 #include <string>
 #include <vector>
+
+// Trim only space, tab, and newline. Carriage return (\r) and form feed (\f) are
+// intentionally excluded so they are preserved in CMake-derived strings instead of
+// being silently stripped. The set is enumerated explicitly rather than derived from
+// std::isspace(c, std::locale("")) because that constructs a locale per character,
+// makes the result depend on the (possibly misconfigured) system locale, and can throw
+// std::runtime_error when that locale is invalid.
+static bool is_trim_whitespace(char character)
+{
+  return character == ' ' || character == '\t' || character == '\n';
+}
 
 // Used to parse strings derived from CMake
 // using the system locale, since CMake seems to take the system locale to parse strings
@@ -44,20 +54,11 @@ std::vector<std::string> rviz_rendering::string_helper::splitStringIntoTrimmedIt
   std::string item;
   std::vector<std::string> filenames;
   while (std::getline(stringstream, item, delimiter)) {
-    if (std::all_of(item.begin(), item.end(), [](char character) {
-        return std::isspace<char>(character, std::locale(""));
-    }))
-    {
+    if (std::all_of(item.begin(), item.end(), is_trim_whitespace)) {
       item.clear();
     } else {
-      auto whitespace_front = std::find_if_not(
-        item.begin(), item.end(), [](char character) {
-          return std::isspace<char>(character, std::locale(""));
-        });
-      auto whitespace_back = std::find_if_not(
-        item.rbegin(), item.rend(), [](char character) {
-          return std::isspace<char>(character, std::locale(""));
-        });
+      auto whitespace_front = std::find_if_not(item.begin(), item.end(), is_trim_whitespace);
+      auto whitespace_back = std::find_if_not(item.rbegin(), item.rend(), is_trim_whitespace);
 
       // Only perform erase operation if the string is not empty
       if (whitespace_front != item.end() && whitespace_back != item.rend()) {

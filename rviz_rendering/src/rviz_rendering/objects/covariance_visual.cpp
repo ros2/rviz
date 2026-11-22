@@ -347,6 +347,7 @@ CovarianceVisual::~CovarianceVisual()
   for (auto orientation_offset_node : orientation_offset_nodes_) {
     scene_manager_->destroySceneNode(orientation_offset_node);
   }
+  scene_manager_->destroySceneNode(orientation_root_node_);
 
   scene_manager_->destroySceneNode(position_scale_node_);
   scene_manager_->destroySceneNode(fixed_orientation_node_);

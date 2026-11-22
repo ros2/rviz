@@ -31,10 +31,10 @@
 
 #include "rviz_default_plugins/tools/point/point_tool.hpp"
 
-#include <sstream>
 
 #include <OgreVector.h>
 
+#include "rclcpp/node.hpp"
 #include "rclcpp/qos.hpp"
 
 #include "rviz_common/display_context.hpp"
@@ -125,11 +125,11 @@ int PointTool::processMouseEvent(rviz_common::ViewportMouseEvent & event)
 
 void PointTool::setStatusForPosition(const Ogre::Vector3 & position)
 {
-  std::ostringstream s;
-  s << "<b>Left-Click:</b> Select this point.";
-  s.precision(3);
-  s << " [" << position.x << "," << position.y << "," << position.z << "]";
-  setStatus(s.str().c_str());
+  setStatus(
+    QStringLiteral("<b>Left-Click:</b> Select this point. [%1,%2,%3]")
+    .arg(position.x, 0, 'g', 3)
+    .arg(position.y, 0, 'g', 3)
+    .arg(position.z, 0, 'g', 3));
 }
 
 void PointTool::publishPosition(const Ogre::Vector3 & position) const

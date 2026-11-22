@@ -38,6 +38,8 @@
 #include <QObject>  // NOLINT
 #include <QString>  // NOLINT
 
+#include "rclcpp/clock.hpp"
+
 #include "rviz_common/config.hpp"
 #include "rviz_common/factory/factory.hpp"
 #include "rviz_common/factory/pluginlib_factory.hpp"

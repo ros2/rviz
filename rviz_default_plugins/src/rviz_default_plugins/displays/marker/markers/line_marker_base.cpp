@@ -130,6 +130,12 @@ S_MaterialPtr LineMarkerBase::getMaterials()
   return materials;
 }
 
+bool LineMarkerBase::additionalConstraintsAreNotMet(const MarkerConstSharedPtr & new_message)
+{
+  (void) new_message;
+  return false;
+}
+
 }  // namespace markers
 }  // namespace displays
 }  // namespace rviz_default_plugins

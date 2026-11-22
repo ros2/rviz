@@ -66,7 +66,7 @@ namespace displays
 namespace markers
 {
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC MeshResourceMarker : public MarkerBase
+class RVIZ_DEFAULT_PLUGINS_MARKER_PUBLIC MeshResourceMarker : public MarkerBase
 {
 public:
   MeshResourceMarker(

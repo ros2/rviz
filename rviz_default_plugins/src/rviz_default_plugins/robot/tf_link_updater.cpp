@@ -61,11 +61,13 @@ bool TFLinkUpdater::getLinkTransforms(
   Ogre::Quaternion & collision_orientation) const
 {
   // Replacing tf::resolve. We know that the name has no leading "/". If we assume that the
-  // tf_prefix_ has no leading "/", this is what should happen
-  std::string link_name = _link_name;
+  // tf_prefix_ has no leading "/", this is what should happen.  This runs once per link per
+  // frame, so avoid copying the name in the common case where there is no prefix.
+  std::string prefixed_link_name;
   if (!tf_prefix_.empty()) {
-    link_name = tf_prefix_ + "/" + link_name;
+    prefixed_link_name = tf_prefix_ + "/" + _link_name;
   }
+  const std::string & link_name = tf_prefix_.empty() ? _link_name : prefixed_link_name;
 
   Ogre::Vector3 position;
   Ogre::Quaternion orientation;

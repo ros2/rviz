@@ -30,6 +30,7 @@
 
 #include <algorithm>
 #include <string>
+#include <utility>
 
 #include "rviz_default_plugins/displays/pointcloud/transformers/intensity_pc_transformer.hpp"
 
@@ -60,10 +61,11 @@ bool IntensityPCTransformer::transform(
     return false;
   }
 
-  int32_t index = findChannelIndex(cloud, channel_name_property_->getStdString());
+  const std::string channel_name = channel_name_property_->getStdString();
+  int32_t index = findChannelIndex(cloud, channel_name);
 
   if (index == -1) {
-    if (channel_name_property_->getStdString() == "intensity") {
+    if (channel_name == "intensity") {
       index = findChannelIndex(cloud, "intensities");
       if (index == -1) {
         return false;
@@ -107,10 +109,11 @@ bool IntensityPCTransformer::transform(
   Ogre::ColourValue min_color = min_color_property_->getOgreColor();
 
   if (use_rainbow_property_->getBool()) {
+    const bool invert_rainbow = invert_rainbow_property_->getBool();
     for (uint32_t i = 0; i < num_points; ++i) {
       float val = valueFromCloud<float>(cloud, offset, type, point_step, i);
       float value = 1.0f - (val - min_intensity) / diff_intensity;
-      if (invert_rainbow_property_->getBool()) {
+      if (invert_rainbow) {
         value = 1.0f - value;
       }
       getRainbowColor(value, points_out[i].color);
@@ -200,6 +203,7 @@ void IntensityPCTransformer::updateChannels(
   const sensor_msgs::msg::PointCloud2::ConstSharedPtr & cloud)
 {
   V_string channels;
+  channels.reserve(cloud->fields.size());
   for (size_t i = 0; i < cloud->fields.size(); ++i) {
     channels.push_back(cloud->fields[i].name);
   }
@@ -214,7 +218,7 @@ void IntensityPCTransformer::updateChannels(
       }
       channel_name_property_->addOptionStd(channel);
     }
-    available_channels_ = channels;
+    available_channels_ = std::move(channels);
   }
 }
 

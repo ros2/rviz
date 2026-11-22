@@ -37,7 +37,7 @@
 #include <string>
 #include <vector>
 
-#include "rclcpp/rclcpp.hpp"
+namespace rclcpp {class Node;}  // forward declaration
 
 namespace rviz_common
 {
@@ -61,7 +61,7 @@ public:
 
   // TODO(anhosi): remove once the RosNodeAbstraction is extended to handle subscriptions
   //               and clock
-  virtual rclcpp::Node::SharedPtr
+  virtual std::shared_ptr<rclcpp::Node>
   get_raw_node() = 0;
 };
 

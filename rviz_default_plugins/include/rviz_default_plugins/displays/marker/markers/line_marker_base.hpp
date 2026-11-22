@@ -61,7 +61,7 @@ namespace displays
 namespace markers
 {
 
-class RVIZ_DEFAULT_PLUGINS_PUBLIC LineMarkerBase : public MarkerBase
+class RVIZ_DEFAULT_PLUGINS_MARKER_PUBLIC LineMarkerBase : public MarkerBase
 {
 public:
   LineMarkerBase(
@@ -74,11 +74,7 @@ protected:
     const MarkerConstSharedPtr & old_message, const MarkerConstSharedPtr & new_message) override;
 
   virtual void convertNewMessageToBillboardLine(const MarkerConstSharedPtr & new_message) = 0;
-  virtual bool additionalConstraintsAreNotMet(const MarkerConstSharedPtr & new_message)
-  {
-    (void) new_message;
-    return false;
-  }
+  virtual bool additionalConstraintsAreNotMet(const MarkerConstSharedPtr & new_message);
   Ogre::ColourValue setColor(const std_msgs::msg::ColorRGBA & color) const;
   void addPoint(const MarkerBase::MarkerConstSharedPtr & new_message, size_t point_number) const;
   std::shared_ptr<rviz_rendering::BillboardLine> lines_;

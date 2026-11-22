@@ -36,8 +36,9 @@
 #include <memory>
 #include <vector>
 
+#include <QModelIndex>  // NOLINT
+#include <QObject>  // NOLINT
 #include <QString>  // NOLINT
-#include <QtWidgets>  // NOLINT
 
 #include "rviz_visual_testing_framework/internal/executor.hpp"
 

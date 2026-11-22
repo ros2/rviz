@@ -53,6 +53,7 @@
 #include <visualization_msgs/msg/interactive_marker_feedback.hpp>
 
 #include <rclcpp/publisher.hpp>
+#include <rclcpp/time.hpp>
 
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/properties/status_property.hpp"
@@ -66,7 +67,7 @@ namespace rviz_default_plugins
 {
 namespace displays
 {
-class RVIZ_DEFAULT_PLUGINS_PUBLIC InteractiveMarker : public QObject
+class RVIZ_DEFAULT_PLUGINS_MARKER_PUBLIC InteractiveMarker : public QObject
 {
   Q_OBJECT
 

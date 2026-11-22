@@ -71,6 +71,7 @@ RenderPanel::RenderPanel(QWidget * parent)
 {
   setFocus(Qt::OtherFocusReason);
   render_window_container_widget_ = QWidget::createWindowContainer(render_window_, this);
+  render_window_->installEventFilter(this);
   layout_ = new QGridLayout(this);
   layout_->setContentsMargins(0, 0, 0, 0);
   layout_->addWidget(render_window_container_widget_);
@@ -133,13 +134,8 @@ void RenderPanel::onRenderWindowMouseEvents(QMouseEvent * event)
   int last_x = mouse_x_;
   int last_y = mouse_y_;
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
   mouse_x_ = event->position().x();
   mouse_y_ = event->position().y();
-#else
-  mouse_x_ = event->pos().x();
-  mouse_y_ = event->pos().y();
-#endif
 
   if (context_) {
     setFocus(Qt::MouseFocusReason);
@@ -188,14 +184,9 @@ void RenderPanel::wheelEvent(QWheelEvent * event)
   int last_x = mouse_x_;
   int last_y = mouse_y_;
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
   const QPoint rounded_position = event->position().toPoint();
   mouse_x_ = rounded_position.x();
   mouse_y_ = rounded_position.y();
-#else
-  mouse_x_ = event->pos().x();
-  mouse_y_ = event->pos().y();
-#endif
 
   if (context_) {
     setFocus(Qt::MouseFocusReason);
@@ -214,7 +205,29 @@ void RenderPanel::keyPressEvent(QKeyEvent * event)
 {
   if (context_) {
     context_->handleChar(event, this);
+  } else {
+    QWidget::keyPressEvent(event);
   }
+}
+
+bool RenderPanel::eventFilter(QObject * watched, QEvent * event)
+{
+  if (watched == render_window_ && isEnabled()) {
+    switch (event->type()) {
+      case QEvent::KeyPress:
+      case QEvent::KeyRelease:
+      case QEvent::ShortcutOverride:
+        // Mouse interaction can give the native window keyboard focus. Dispatch through
+        // QWidget::event() so that Tab navigation is handled before the tool's key handler.
+        // Calling it directly rather than via QApplication::sendEvent() avoids running the
+        // shortcut map a second time for the same key press.
+        this->event(event);
+        return event->isAccepted();
+      default:
+        break;
+    }
+  }
+  return QWidget::eventFilter(watched, event);
 }
 
 void RenderPanel::setViewController(ViewController * controller)

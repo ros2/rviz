@@ -91,6 +91,50 @@ TEST_F(SelectionManagerTestFixture, adding_a_new_selection) {
   EXPECT_THAT(selection, Contains(Key(o2.getHandle())));
 }
 
+TEST_F(SelectionManagerTestFixture, adding_a_non_overlapping_selection) {
+  auto o1 = addVisibleObject(10, 10);
+  auto o2 = addVisibleObject(30, 30);
+  selection_manager_->select(
+    render_window_, 0, 0, 15, 15, rviz_common::interaction::SelectionManager::Replace);
+
+  selection_manager_->select(
+    render_window_, 25, 25, 35, 35, rviz_common::interaction::SelectionManager::Add);
+
+  auto selection = selection_manager_->getSelection();
+  EXPECT_THAT(selection, SizeIs(2));
+  EXPECT_THAT(selection, Contains(Key(o1.getHandle())));
+  EXPECT_THAT(selection, Contains(Key(o2.getHandle())));
+}
+
+TEST_F(SelectionManagerTestFixture, adding_an_empty_selection_keeps_existing_selection) {
+  // Same setup as #1371: o2 is outside the second rectangle, so only o1 stays selected
+  auto o1 = addVisibleObject(10, 10);
+  auto o2 = addVisibleObject(20, 20);
+  selection_manager_->select(
+    render_window_, 0, 0, 15, 15, rviz_common::interaction::SelectionManager::Replace);
+
+  selection_manager_->select(
+    render_window_, 25, 25, 35, 35, rviz_common::interaction::SelectionManager::Add);
+
+  auto selection = selection_manager_->getSelection();
+  EXPECT_THAT(selection, SizeIs(1));
+  EXPECT_THAT(selection, Contains(Key(o1.getHandle())));
+  EXPECT_THAT(selection, Not(Contains(Key(o2.getHandle()))));
+}
+
+TEST_F(SelectionManagerTestFixture, select_ignores_objects_outside_an_offset_selection) {
+  auto o1 = addVisibleObject(105, 105);
+  auto o2 = addVisibleObject(150, 150);
+
+  selection_manager_->select(
+    render_window_, 100, 100, 110, 110, rviz_common::interaction::SelectionManager::Replace);
+
+  auto selection = selection_manager_->getSelection();
+  EXPECT_THAT(selection, SizeIs(1));
+  EXPECT_THAT(selection, Contains(Key(o1.getHandle())));
+  EXPECT_THAT(selection, Not(Contains(Key(o2.getHandle()))));
+}
+
 TEST_F(SelectionManagerTestFixture, adding_an_exising_selection_has_no_effect) {
   auto o1 = addVisibleObject(10, 10);
   selection_manager_->select(

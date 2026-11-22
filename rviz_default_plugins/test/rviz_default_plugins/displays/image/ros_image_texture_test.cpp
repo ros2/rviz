@@ -40,8 +40,13 @@
 #include <string>
 #include <vector>
 
-#include <Ogre.h>  // NOLINT
+#include <OgreHardwarePixelBuffer.h>  // NOLINT
+#include <OgreImage.h>  // NOLINT
+#include <OgrePixelFormat.h>  // NOLINT
+#include <OgreResourceGroupManager.h>  // NOLINT
+#include <OgreTexture.h>  // NOLINT
 #include <OgreTextureManager.h>  // NOLINT
+#include <OgreTextureUnitState.h>  // NOLINT
 
 #include "sensor_msgs/image_encodings.hpp"
 

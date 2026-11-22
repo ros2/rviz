@@ -35,6 +35,8 @@
 #include <memory>
 #include <string>
 
+#include "rclcpp/node_options.hpp"
+
 #include "ros_client_abstraction_iface.hpp"
 #include "ros_node_abstraction_iface.hpp"
 #include "rviz_common/visibility_control.hpp"

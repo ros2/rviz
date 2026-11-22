@@ -36,6 +36,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <OgreEntity.h>
@@ -57,6 +58,8 @@
 #include <gz/math/Pose3.hh>
 #include <gz/math/Quaternion.hh>
 #include <gz/math/Vector3.hh>
+
+#include "rclcpp/node.hpp"
 
 #include "resource_retriever/retriever.hpp"
 #include "resource_retriever_service_plugin/resource_retriever_service_plugin.hpp"
@@ -235,7 +238,7 @@ RobotLink::RobotLink(
       plugins.push_back(std::make_shared<RosServiceResourceRetriever>(*node_ptr->get_raw_node()));
     }
   }
-  retriever_ = resource_retriever::Retriever(plugins);
+  retriever_ = resource_retriever::Retriever(std::move(plugins));
 
   // create the ogre objects to display
   if (visual) {
@@ -330,6 +333,7 @@ void RobotLink::createDescription(const urdf::LinkConstSharedPtr & link)
       desc << " child joint: ";
     }
 
+    child_joint_names_.reserve(link->child_joints.size());
     auto child_it = link->child_joints.begin();
     auto child_end = link->child_joints.end();
     for (; child_it != child_end; ++child_it) {
@@ -391,7 +395,7 @@ void RobotLink::addError(const char * format, ...)
   error.append(buffer);
 }
 
-const std::string RobotLink::getGeometryErrors() const
+const std::string & RobotLink::getGeometryErrors() const
 {
   return error;
 }
@@ -588,7 +592,7 @@ void RobotLink::setRenderQueueGroup(Ogre::uint8 group)
   for (auto child_node : visual_node_->getChildren()) {
     auto child = dynamic_cast<Ogre::SceneNode *>(child_node);
     if (child) {
-      auto attached_objects = child->getAttachedObjects();
+      const auto & attached_objects = child->getAttachedObjects();
       for (const auto & object : attached_objects) {
         object->setRenderQueueGroup(group);
       }
@@ -608,7 +612,7 @@ Ogre::Entity * RobotLink::createEntityForGeometryElement(
   const urdf::LinkConstSharedPtr & link,
   const urdf::Geometry & geom,
   const urdf::Pose & origin,
-  const std::string material_name,
+  const std::string & material_name,
   Ogre::SceneNode * scene_node)
 {
   Ogre::Entity * entity = nullptr;  // default in case nothing works.
@@ -789,7 +793,7 @@ void RobotLink::assignMaterialsToEntities(
 }
 
 Ogre::MaterialPtr RobotLink::getMaterialForLink(
-  const urdf::LinkConstSharedPtr & link, const std::string material_name)
+  const urdf::LinkConstSharedPtr & link, const std::string & material_name)
 {
   urdf::VisualSharedPtr visual = getVisualWithMaterial(link, material_name);
   if (!visual || !visual->material) {

@@ -2,39 +2,32 @@ cmake_minimum_required(VERSION 3.10)
 
 project(rviz2)
 
-# Default to C++17
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 17)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-endif()
+# The C++ standard (C++20) is provided by ament_cmake_ros_core via the
+# ament_cmake_ros_core::ament_ros_defaults interface target, which is linked
+# into the rviz2 target below.
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic -Wnon-virtual-dtor -Woverloaded-virtual)
 endif()
 
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_ros_core REQUIRED)
 
 find_package(rviz_common REQUIRED)
 
 find_package(rviz_ogre_vendor REQUIRED)
 
-# Avoid find_package(QT NAMES Qt6 Qt5 ...) due to CMake's default ascending path resolution
-find_package(Qt6 QUIET COMPONENTS Widgets)
-if(Qt6_FOUND)
-  set(QT_VERSION_MAJOR 6)
-else()
-  find_package(Qt5 REQUIRED COMPONENTS Widgets)
-  set(QT_VERSION_MAJOR 5)
-endif()
+find_package(Qt6 6.4 REQUIRED COMPONENTS Widgets)
 
 add_executable(${PROJECT_NAME}
   src/main.cpp
 )
 target_link_libraries(${PROJECT_NAME}
+  ament_cmake_ros_core::ament_ros_defaults
   rviz_common::rviz_common
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
-  Qt${QT_VERSION_MAJOR}::Widgets
+  Qt6::Widgets
 )
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)

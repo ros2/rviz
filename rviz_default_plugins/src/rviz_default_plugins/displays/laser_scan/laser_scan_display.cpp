@@ -37,6 +37,7 @@
 
 #include "tf2_ros/buffer.hpp"
 
+#include "rviz_common/logging.hpp"
 #include "rviz_common/properties/int_property.hpp"
 #include "rviz_common/properties/status_property.hpp"
 #include "rviz_common/transformation/transformation_manager.hpp"

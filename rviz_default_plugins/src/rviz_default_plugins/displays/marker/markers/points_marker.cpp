@@ -31,7 +31,10 @@
 
 #include "rviz_default_plugins/displays/marker/markers/points_marker.hpp"
 
+#include <utility>
 #include <vector>
+
+#include <OgreSceneNode.h>
 
 #include "rviz_common/interaction/selection_manager.hpp"
 
@@ -168,7 +171,7 @@ void PointsMarker::addPointsFromMessage(const MarkerConstSharedPtr & new_message
     points_->setAlpha(alpha);
   }
 
-  points_->addPoints(points.begin(), points.end());
+  points_->addPoints(std::move(points));
 }
 
 void PointsMarker::setHighlightColor(float r, float g, float b)

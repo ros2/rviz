@@ -55,7 +55,7 @@ namespace markers
  * Markers come in as visualization_msgs::msg::Marker messages.
  * See the Marker message for more information.
 */
-class RVIZ_DEFAULT_PLUGINS_PUBLIC MarkerFactory
+class RVIZ_DEFAULT_PLUGINS_MARKER_PUBLIC MarkerFactory
 {
 public:
   /// Initialization of the marker factory
