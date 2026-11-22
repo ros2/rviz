@@ -897,6 +897,17 @@ if(BUILD_TESTING)
     )
   endif()
 
+  ament_add_gmock(ros_image_texture_bayer_test
+    test/rviz_default_plugins/displays/image/ros_image_texture_bayer_test.cpp
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET ros_image_texture_bayer_test)
+    target_include_directories(ros_image_texture_bayer_test PRIVATE test)
+    target_link_libraries(ros_image_texture_bayer_test
+      ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
+      rviz_default_plugins
+    )
+  endif()
+
   ament_add_gmock(selection_tool_test
     test/rviz_default_plugins/tools/select/selection_tool_test.cpp
     ${TEST_FIXTURE_OBJECTS}
